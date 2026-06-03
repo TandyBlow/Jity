@@ -1,0 +1,27 @@
+# === API Keys — DO NOT COMMIT ===
+config.js
+
+# === Python ===
+__pycache__/
+*.pyc
+translate_docx.py
+translate_latex.py
+translation_cache.json
+
+# === Research Pipeline ===
+.pipeline/
+.claude/
+
+# === Literature Review & Personal Docs ===
+LiteratureReview.*
+*.pdf
+*.docx
+WorkAssignment.*
+2330034047.pdf
+26LiteratureReview.Guideline.Dyce.pdf
+
+# === Experiments (contain API keys) ===
+experiments/
+
+# === Dependencies ===
+node_modules/
