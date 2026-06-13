@@ -34,7 +34,6 @@ class CreateSessionRequest(BaseModel):
 class GenerateRequest(BaseModel):
     player_action: str
     model: Optional[str] = None
-    narrative_profile: str = "default"
     style: str = ""
     constraints: str = ""
 

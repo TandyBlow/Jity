@@ -1,25 +1,62 @@
 "use client";
 
-import { BookOpen, Loader2, RefreshCw, Send, Sparkles } from "lucide-react";
+import { BookOpen, History, Loader2, RefreshCw, Send, Sparkles } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 import { createSession, generateScene } from "@/lib/api";
 import type { GameState, GenerateResponse, RetrievedChunk, StoryOutput } from "@/types";
 
 const initialOutput: StoryOutput = {
-  narration: "报到大厅的雨声贴着彩窗滑落。你站在卡塞尔学院的入口，临时通行卡还带着火漆的温度，下一句话就会决定这场入学调查从哪里裂开。",
+  narration: `雨是在你下车后三分钟开始变大的。
+
+你拖着那只从婶婶家带来的旧行李箱，站在卡塞尔学院报到处大厅门口。箱轮卡在门槛细缝里，发出一声很丢人的“咔哒”。你低头用力拽了两下，没拽动。
+
+大厅里没人笑。
+
+这反而更可怕。
+
+头顶的水晶吊灯亮得像某种审判现场，光落在黑色大理石地面上，碎成一片片冰冷的白。周围来来往往的学生都穿着深色制服，肩线挺拔，步伐安静，眼神锐利得不像是在上大学，更像是刚从某个不许写进新闻里的军事训练基地出来。
+
+你看见一个男生手里拎着小提琴盒，盒角却露出金属锁扣。另一个女生路过报到台时，袖口下方闪过一枚细小的银色徽章。投影屏正在滚动新生名单，你的名字混在一串英文、编号和血红色的校徽之间，像一只误入狼群的土狗。
+
+你咽了口唾沫。
+
+你本来想找个角落站着，先装作自己只是来送外卖的。可就在这时，身后有人轻轻拍了拍你的肩膀。
+
+你回头，看见一个红发女孩站在雨幕和大厅灯光交界的地方。她的校服外套随意搭在肩上，手里捏着一张临时通行卡，卡面上的火漆纹路像刚被点燃过。
+
+她看了看你，又看了看你那个旧行李箱。
+
+她的表情像是在确认一件快递有没有送错地址。`,
   dialogue: [
-    { speaker: "诺诺", text: "说吧，新生。你打算先相信规则，还是先相信直觉？" },
-    { speaker: "芬格尔", text: "我建议相信我，虽然这个建议本身风险很高。" },
+    {
+      speaker: "诺诺",
+      text: `路明非对吧？
+
+古德里安教授让我来接你。
+
+不过说实话，你看起来比档案里还要……朴素一点。
+
+没人告诉过你，这里不是普通大学吗？`,
+    },
   ],
-  scene_prompt: "rainy gothic academy registration hall, cinematic fantasy investigation",
+  scene_prompt: "dark gothic academy registration hall, nervous freshman, crystal chandelier",
   sanity_delta: 0,
   health_delta: 0,
-  options: ["询问学院给出的三个预备任务", "检查临时通行卡上的异常标记", "先观察大厅里执行部学生的动向"],
+  options: [
+    "愣住两秒，然后硬着头皮打招呼：“学姐好……那个，这里到底有什么不普通的？”",
+    "下意识后退半步，抓紧行李箱拉杆：“等等，你怎么知道我的名字？这是什么整蛊节目吗？”",
+    "试图挤出个笑脸，但声音有点抖：“照片？什么照片？我那张高考准考证上的照片可丑了……”",
+  ],
   game_over: false,
   game_over_reason: "",
-  current_location: "卡塞尔学院新生报到处",
+  current_location: "卡塞尔学院报到处大厅",
 };
+
+const DEFAULT_STORY_STYLE = "黑暗学院奇幻，带一点黑色幽默，强调 NPC 反应。";
+const DEFAULT_CONSTRAINTS = "关键 NPC 不能突然死亡；不要跳出当前入学调查。";
+const INITIAL_ACTION = "愣住两秒，然后硬着头皮打招呼：“学姐好……那个，这里到底有什么不普通的？”";
 
 export default function Home() {
   const [sessionId, setSessionId] = useState("");
@@ -27,10 +64,7 @@ export default function Home() {
   const [state, setState] = useState<GameState | null>(null);
   const [output, setOutput] = useState<StoryOutput>(initialOutput);
   const [chunks, setChunks] = useState<RetrievedChunk[]>([]);
-  const [action, setAction] = useState("玩家决定先检查临时通行卡，确认它是否记录了异常权限。");
-  const [narrativeProfile, setNarrativeProfile] = useState("longzu_youth");
-  const [style, setStyle] = useState("黑暗学院奇幻，带一点黑色幽默，强调 NPC 反应。");
-  const [constraints, setConstraints] = useState("关键 NPC 不能突然死亡；不要跳出当前入学调查。");
+  const [action, setAction] = useState(INITIAL_ACTION);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -58,9 +92,8 @@ export default function Home() {
         sessionId,
         playerAction: nextAction,
         model,
-        narrativeProfile,
-        style,
-        constraints,
+        style: DEFAULT_STORY_STYLE,
+        constraints: DEFAULT_CONSTRAINTS,
       });
       setOutput(response.output);
       setState(response.state);
@@ -83,6 +116,7 @@ export default function Home() {
       setState(session.state);
       setOutput(initialOutput);
       setChunks([]);
+      setAction(INITIAL_ACTION);
     } catch (err) {
       setError(err instanceof Error ? err.message : "创建会话失败");
     } finally {
@@ -98,9 +132,14 @@ export default function Home() {
             <div className="brand-mark">Jity</div>
             <div className="brand-subtitle">GM scenario console</div>
           </div>
-          <button className="icon-button" onClick={handleNewSession} title="新建会话" type="button">
-            <RefreshCw size={17} />
-          </button>
+          <div className="brand-actions">
+            <Link className="icon-button" href="/dev-log" title="开发日志">
+              <History size={17} />
+            </Link>
+            <button className="icon-button" onClick={handleNewSession} title="新建会话" type="button">
+              <RefreshCw size={17} />
+            </button>
+          </div>
         </div>
 
         <label className="label" htmlFor="model">
@@ -109,19 +148,6 @@ export default function Home() {
         <select className="select" id="model" value={model} onChange={(event) => setModel(event.target.value)}>
           <option value="deepseek-chat">deepseek-chat</option>
           <option value="deepseek-reasoner">deepseek-reasoner</option>
-        </select>
-
-        <label className="label" htmlFor="narrative-profile">
-          叙事模式
-        </label>
-        <select
-          className="select"
-          id="narrative-profile"
-          value={narrativeProfile}
-          onChange={(event) => setNarrativeProfile(event.target.value)}
-        >
-          <option value="longzu_youth">龙族式少年感</option>
-          <option value="default">默认 RPG</option>
         </select>
 
         <label className="label" htmlFor="action">
@@ -133,26 +159,6 @@ export default function Home() {
           value={action}
           onChange={(event) => setAction(event.target.value)}
           placeholder="输入玩家行动、当前场景或 GM 限制"
-        />
-
-        <label className="label" htmlFor="style">
-          故事风格
-        </label>
-        <textarea
-          className="textarea small-textarea"
-          id="style"
-          value={style}
-          onChange={(event) => setStyle(event.target.value)}
-        />
-
-        <label className="label" htmlFor="constraints">
-          特殊限制
-        </label>
-        <textarea
-          className="textarea small-textarea"
-          id="constraints"
-          value={constraints}
-          onChange={(event) => setConstraints(event.target.value)}
         />
 
         <button className="primary-button" disabled={isLoading || !sessionId} onClick={() => handleGenerate()} type="button">
@@ -174,7 +180,7 @@ export default function Home() {
             {output.dialogue.map((line, index) => (
               <div className="dialogue-line" key={`${line.speaker}-${index}`}>
                 <span className="speaker">{line.speaker}：</span>
-                {line.text}
+                <span className="dialogue-text">{quoteDialogue(line.text)}</span>
               </div>
             ))}
           </div>
@@ -239,6 +245,13 @@ export default function Home() {
       </aside>
     </main>
   );
+}
+
+function quoteDialogue(text: string) {
+  const trimmed = text.trim();
+  if (!trimmed) return "";
+  if (trimmed.startsWith("“") && trimmed.endsWith("”")) return trimmed;
+  return `“${trimmed}”`;
 }
 
 function MemorySection({ title, items }: { title: string; items: string[] }) {

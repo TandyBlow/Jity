@@ -37,12 +37,16 @@ class ScenarioGenerator:
             user_action=request.player_action,
             state=state,
             retrieved_chunks=retrieved,
-            narrative_profile=request.narrative_profile,
             style=request.style,
             constraints=request.constraints,
         )
         model = request.model or session["model"] or self.default_model
-        output, latency_ms = await self.llm_client.generate(prompt, model)
+        scripted_output = self.llm_client.scripted_output(request.player_action, state)
+        if scripted_output:
+            output = scripted_output
+            latency_ms = 0
+        else:
+            output, latency_ms = await self.llm_client.generate(prompt, model)
         next_state = self.state_manager.apply_output(state, request.player_action, output)
 
         self.db.add_message(session_id, "user", request.player_action)

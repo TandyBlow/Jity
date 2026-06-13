@@ -13,7 +13,14 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 
   if (!response.ok) {
     const text = await response.text();
-    throw new Error(text || `Request failed: ${response.status}`);
+    let message = text || `Request failed: ${response.status}`;
+    try {
+      const payload = JSON.parse(text) as { detail?: string };
+      message = payload.detail || message;
+    } catch {
+      // Keep the raw response text when the error body is not JSON.
+    }
+    throw new Error(message);
   }
 
   return response.json() as Promise<T>;
@@ -30,7 +37,6 @@ export function generateScene(params: {
   sessionId: string;
   playerAction: string;
   model?: string;
-  narrativeProfile?: string;
   style?: string;
   constraints?: string;
 }): Promise<GenerateResponse> {
@@ -39,7 +45,6 @@ export function generateScene(params: {
     body: JSON.stringify({
       player_action: params.playerAction,
       model: params.model,
-      narrative_profile: params.narrativeProfile,
       style: params.style,
       constraints: params.constraints,
     }),

@@ -9,7 +9,7 @@ from app.schemas import CreateSessionRequest, GenerateRequest, GenerateResponse,
 from app.services.evaluation import EvaluationModule
 from app.services.game_state import GameStateManager
 from app.services.knowledge_base import KnowledgeBase
-from app.services.llm_client import LLMClient
+from app.services.llm_client import LLMClient, MissingAPIKeyError
 from app.services.prompt_builder import PromptBuilder
 from app.services.retriever import RAGRetriever
 from app.services.scenario_generator import ScenarioGenerator
@@ -73,7 +73,10 @@ def get_session(session_id: str) -> SessionResponse:
 
 @app.post("/sessions/{session_id}/generate", response_model=GenerateResponse)
 async def generate(session_id: str, request: GenerateRequest) -> GenerateResponse:
-    response = await scenario_generator.generate(session_id, request)
+    try:
+        response = await scenario_generator.generate(session_id, request)
+    except MissingAPIKeyError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
     if not response:
         raise HTTPException(status_code=404, detail="Session not found")
     return response

@@ -13,11 +13,11 @@ def default_state() -> dict[str, Any]:
         "sanity": 80,
         "health": 100,
         "turn": 0,
-        "current_location": "卡塞尔学院新生报到处",
+        "current_location": "卡塞尔学院报到处大厅",
         "items": [],
         "npcs": [],
         "quests": [],
-        "recent_events": ["路明非刚进入卡塞尔学院，报到流程尚未完全结束。"],
+        "recent_events": ["路明非拖着旧行李箱抵达卡塞尔学院报到处大厅，诺诺前来接应。"],
         "world_facts": [],
     }
 

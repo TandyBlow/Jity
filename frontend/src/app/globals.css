@@ -25,14 +25,21 @@ body {
 
 button,
 textarea,
-select {
+select,
+input {
   font: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
 }
 
 .app-shell {
   display: grid;
   grid-template-columns: 320px minmax(0, 1fr) 360px;
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
   background:
     radial-gradient(circle at 45% 18%, rgba(201, 164, 106, 0.12), transparent 32%),
     linear-gradient(135deg, #121211 0%, #1a1814 48%, #10100f 100%);
@@ -44,6 +51,7 @@ select {
   border-color: var(--border);
   background: rgba(18, 18, 17, 0.88);
   backdrop-filter: blur(16px);
+  min-height: 0;
   overflow-y: auto;
 }
 
@@ -67,6 +75,11 @@ select {
 
 .brand-row {
   margin-bottom: 24px;
+}
+
+.brand-actions {
+  display: flex;
+  gap: 8px;
 }
 
 .brand-mark {
@@ -153,25 +166,29 @@ select {
 
 .story-panel {
   min-width: 0;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   padding: 22px 28px;
+  overflow-y: auto;
 }
 
 .scene-output {
-  flex: 1;
+  flex: 0 0 auto;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   max-width: 860px;
   margin: 0 auto;
+  padding: clamp(56px, 12vh, 132px) 0 40px;
   width: 100%;
 }
 
 .narration {
+  font-family: "Noto Serif SC", "Songti SC", "STSong", SimSun, serif;
   font-size: 22px;
   line-height: 1.85;
   margin-bottom: 24px;
+  white-space: pre-line;
 }
 
 .dialogue-list {
@@ -184,12 +201,18 @@ select {
   padding: 12px 14px;
   border-left: 3px solid var(--accent);
   background: rgba(0, 0, 0, 0.24);
+  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
   line-height: 1.65;
+  white-space: pre-line;
 }
 
 .speaker {
   color: var(--accent-2);
   font-weight: 700;
+}
+
+.dialogue-text {
+  color: var(--text);
 }
 
 .option-list {
@@ -271,6 +294,208 @@ select {
   color: var(--muted);
 }
 
+.dev-log-shell {
+  min-height: 100vh;
+  padding: 32px;
+  background:
+    radial-gradient(circle at 18% 14%, rgba(135, 179, 141, 0.1), transparent 30%),
+    linear-gradient(135deg, #11110f 0%, #181713 52%, #10100f 100%);
+}
+
+.dev-log-header {
+  max-width: 1080px;
+  margin: 0 auto 22px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.back-link {
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--accent-2);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.dev-log-header h1 {
+  margin: 18px 0 10px;
+  font-size: 38px;
+  line-height: 1.1;
+  letter-spacing: 0;
+}
+
+.dev-log-header p {
+  max-width: 720px;
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.dev-log-count {
+  min-width: 116px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(24, 24, 24, 0.76);
+  text-align: right;
+}
+
+.dev-log-count strong,
+.dev-log-count span {
+  display: block;
+}
+
+.dev-log-count strong {
+  font-size: 32px;
+  line-height: 1;
+}
+
+.dev-log-count span {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.dev-log-tools {
+  max-width: 1080px;
+  margin: 0 auto 18px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 220px;
+  gap: 12px;
+}
+
+.search-field,
+.area-field {
+  height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(24, 24, 24, 0.9);
+  color: var(--muted);
+  padding: 0 12px;
+}
+
+.search-field input,
+.area-field select {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--text);
+}
+
+.area-field select {
+  appearance: none;
+}
+
+.dev-log-list {
+  max-width: 1080px;
+  margin: 0 auto;
+  display: grid;
+  gap: 14px;
+}
+
+.dev-log-entry,
+.empty-log {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(18, 18, 17, 0.88);
+}
+
+.dev-log-entry {
+  padding: 22px;
+}
+
+.empty-log {
+  padding: 26px;
+  color: var(--muted);
+}
+
+.entry-topline,
+.tag-row,
+.entry-author,
+.entry-date {
+  display: flex;
+  align-items: center;
+}
+
+.entry-topline {
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.entry-author,
+.entry-date {
+  gap: 7px;
+}
+
+.dev-log-entry h2 {
+  margin: 12px 0 8px;
+  font-size: 24px;
+  letter-spacing: 0;
+}
+
+.entry-summary {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.tag-row {
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.area-tag {
+  padding: 5px 9px;
+  border: 1px solid rgba(135, 179, 141, 0.45);
+  border-radius: 999px;
+  color: var(--accent-2);
+  font-size: 12px;
+}
+
+.entry-section {
+  margin-top: 18px;
+}
+
+.entry-section h3 {
+  margin: 0 0 8px;
+  color: var(--accent);
+  font-size: 13px;
+}
+
+.entry-section ul {
+  margin: 0;
+  padding-left: 20px;
+  color: var(--text);
+  line-height: 1.7;
+}
+
+.file-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.file-list code {
+  padding: 6px 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.22);
+  color: var(--muted);
+  font-size: 12px;
+}
+
 @media (max-width: 1100px) {
   .app-shell {
     grid-template-columns: 280px minmax(0, 1fr);
@@ -298,5 +523,28 @@ select {
 
   .narration {
     font-size: 18px;
+  }
+
+  .dev-log-shell {
+    padding: 22px 16px;
+  }
+
+  .dev-log-header,
+  .entry-topline {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .dev-log-header h1 {
+    font-size: 31px;
+  }
+
+  .dev-log-count {
+    width: 100%;
+    text-align: left;
+  }
+
+  .dev-log-tools {
+    grid-template-columns: 1fr;
   }
 }
