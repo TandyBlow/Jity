@@ -1,0 +1,1 @@
+"""Jity backend application package."""
