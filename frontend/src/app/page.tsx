@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 import { createSession, generateScene } from "@/lib/api";
-import type { GameState, GenerateResponse, RetrievedChunk, StoryOutput } from "@/types";
+import type { GameState, GenerateResponse, ItemMemory, NPCMemory, QuestMemory, RetrievedChunk, StoryOutput, WorldFactMemory } from "@/types";
 
 const initialOutput: StoryOutput = {
   narration: `雨是在你下车后三分钟开始变大的。
@@ -203,6 +203,17 @@ export default function Home() {
           <span>Context Memory</span>
           <Sparkles size={16} />
         </div>
+
+        <MemorySection
+          title="当前状态"
+          items={[
+            `地点：${state?.current_location ?? output.current_location}`,
+            `状态：${state?.player_status?.condition ?? "新生报到中"}`,
+            `危险等级：${state?.player_status?.danger_level ?? "medium"}`,
+            `当前目标：${state?.player_status?.current_goal ?? "完成卡塞尔学院入学报到"}`,
+          ]}
+        />
+
         <div className="stat-block">
           <div className="stat-row">
             <span>血统稳定</span>
@@ -222,10 +233,11 @@ export default function Home() {
           </div>
         </div>
 
-        <MemorySection title="地点" items={[state?.current_location ?? output.current_location]} />
-        <MemorySection title="近期事件" items={state?.recent_events ?? []} />
-        <MemoryObjects title="NPC" items={state?.npcs ?? []} />
-        <MemoryObjects title="任务" items={state?.quests ?? []} />
+        <MemoryObjects title="同伴与 NPC" items={state?.npcs ?? []} kind="npc" />
+        <MemoryObjects title="关键物品" items={state?.items ?? []} kind="item" />
+        <MemoryObjects title="任务" items={state?.quests ?? []} kind="quest" />
+        <MemoryObjects title="长期事实" items={state?.world_facts ?? []} kind="world_fact" />
+        <MemorySection title="最近事件" items={state?.recent_events ?? []} />
 
         <div className="section-title">
           <span>RAG Hits</span>
@@ -277,7 +289,15 @@ function MemorySection({ title, items }: { title: string; items: string[] }) {
   );
 }
 
-function MemoryObjects({ title, items }: { title: string; items: Array<Record<string, string>> }) {
+function MemoryObjects({
+  title,
+  items,
+  kind,
+}: {
+  title: string;
+  items: Array<ItemMemory | NPCMemory | QuestMemory | WorldFactMemory>;
+  kind: "item" | "npc" | "quest" | "world_fact";
+}) {
   return (
     <>
       <div className="section-title">{title}</div>
@@ -285,8 +305,11 @@ function MemoryObjects({ title, items }: { title: string; items: Array<Record<st
         {items.length ? (
           items.map((item, index) => (
             <div className="memory-item" key={`${item.name}-${index}`}>
-              <strong>{item.name ?? "未命名"}</strong>
-              <div className="meta">{item.status ?? item.disposition ?? item.description ?? item.notes ?? "已记录"}</div>
+              <div className="memory-head">
+                <strong>{item.name ?? "未命名"}</strong>
+                {item.status ? <span className="memory-status">{item.status}</span> : null}
+              </div>
+              <div className="meta">{memoryDetail(item, kind)}</div>
             </div>
           ))
         ) : (
@@ -295,4 +318,21 @@ function MemoryObjects({ title, items }: { title: string; items: Array<Record<st
       </div>
     </>
   );
+}
+
+function memoryDetail(item: ItemMemory | NPCMemory | QuestMemory | WorldFactMemory, kind: "item" | "npc" | "quest" | "world_fact") {
+  if (kind === "npc") {
+    const npc = item as NPCMemory;
+    return [npc.relationship, npc.current_location, npc.description, npc.notes].filter(Boolean).join(" · ") || "已记录";
+  }
+  if (kind === "quest") {
+    const quest = item as QuestMemory;
+    return [quest.objective, quest.description, quest.notes].filter(Boolean).join(" · ") || "已记录";
+  }
+  if (kind === "world_fact") {
+    const fact = item as WorldFactMemory;
+    return [fact.description, fact.source, fact.notes].filter(Boolean).join(" · ") || "已记录";
+  }
+  const itemMemory = item as ItemMemory;
+  return [itemMemory.description, itemMemory.location, itemMemory.notes].filter(Boolean).join(" · ") || "已记录";
 }

@@ -10,6 +10,57 @@ class DialogueLine(BaseModel):
     text: str = ""
 
 
+class ItemMemory(BaseModel):
+    name: str
+    status: str = "owned"
+    description: str = ""
+    location: str = ""
+    notes: str = ""
+
+
+class NPCMemory(BaseModel):
+    name: str
+    status: str = "present"
+    relationship: str = ""
+    current_location: str = ""
+    description: str = ""
+    notes: str = ""
+
+
+class QuestMemory(BaseModel):
+    name: str
+    status: str = "active"
+    description: str = ""
+    objective: str = ""
+    notes: str = ""
+
+
+class WorldFactMemory(BaseModel):
+    name: str
+    status: str = "known"
+    description: str = ""
+    source: str = ""
+    notes: str = ""
+
+
+class PlayerStatus(BaseModel):
+    condition: str = ""
+    danger_level: str = ""
+    current_goal: str = ""
+    notes: str = ""
+
+
+class MemoryUpdates(BaseModel):
+    current_location: str = ""
+    items_upserted: list[ItemMemory] = Field(default_factory=list)
+    items_removed: list[ItemMemory] = Field(default_factory=list)
+    npcs_upserted: list[NPCMemory] = Field(default_factory=list)
+    quests_upserted: list[QuestMemory] = Field(default_factory=list)
+    world_facts_upserted: list[WorldFactMemory] = Field(default_factory=list)
+    player_status_patch: PlayerStatus = Field(default_factory=PlayerStatus)
+    key_event: str = ""
+
+
 class StoryOutput(BaseModel):
     narration: str
     dialogue: list[DialogueLine] = Field(default_factory=list)
@@ -24,6 +75,7 @@ class StoryOutput(BaseModel):
     items_lost: list[dict[str, Any]] = Field(default_factory=list)
     npcs_encountered: list[dict[str, Any]] = Field(default_factory=list)
     quests_updated: list[dict[str, Any]] = Field(default_factory=list)
+    memory_updates: MemoryUpdates = Field(default_factory=MemoryUpdates)
 
 
 class CreateSessionRequest(BaseModel):

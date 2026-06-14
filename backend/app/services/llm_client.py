@@ -99,7 +99,39 @@ class LLMClient:
         payload["items_lost"] = LLMClient._normalize_named_objects(payload.get("items_lost", []), "description")
         payload["npcs_encountered"] = LLMClient._normalize_named_objects(payload.get("npcs_encountered", []), "notes")
         payload["quests_updated"] = LLMClient._normalize_named_objects(payload.get("quests_updated", []), "description")
+        payload["memory_updates"] = LLMClient._normalize_memory_updates(payload.get("memory_updates", {}), payload)
         return payload
+
+    @staticmethod
+    def _normalize_memory_updates(memory_updates: Any, payload: dict[str, Any]) -> dict[str, Any]:
+        if not isinstance(memory_updates, dict):
+            memory_updates = {}
+        normalized = dict(memory_updates)
+        normalized["current_location"] = str(normalized.get("current_location") or payload.get("current_location") or "")
+        normalized["items_upserted"] = LLMClient._normalize_named_objects(
+            normalized.get("items_upserted", []),
+            "description",
+        )
+        normalized["items_removed"] = LLMClient._normalize_named_objects(
+            normalized.get("items_removed", []),
+            "description",
+        )
+        normalized["npcs_upserted"] = LLMClient._normalize_named_objects(
+            normalized.get("npcs_upserted", []),
+            "notes",
+        )
+        normalized["quests_upserted"] = LLMClient._normalize_named_objects(
+            normalized.get("quests_upserted", []),
+            "description",
+        )
+        normalized["world_facts_upserted"] = LLMClient._normalize_named_objects(
+            normalized.get("world_facts_upserted", []),
+            "description",
+        )
+        if not isinstance(normalized.get("player_status_patch"), dict):
+            normalized["player_status_patch"] = {}
+        normalized["key_event"] = str(normalized.get("key_event") or "")
+        return normalized
 
     @staticmethod
     def _normalize_named_objects(items: Any, detail_key: str) -> list[dict[str, Any]]:

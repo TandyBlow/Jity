@@ -305,6 +305,26 @@ a {
   line-height: 1.55;
 }
 
+.memory-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 3px;
+}
+
+.memory-status {
+  max-width: 120px;
+  border: 1px solid rgba(201, 164, 106, 0.32);
+  border-radius: 999px;
+  padding: 1px 7px;
+  color: var(--accent);
+  font-size: 11px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .chunk-title {
   font-weight: 700;
 }

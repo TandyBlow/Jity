@@ -11,6 +11,7 @@ env/
 backend/.venv/
 backend/env/
 backend/.conda/
+backend/.deps/
 translate_docx.py
 translate_latex.py
 translation_cache.json
