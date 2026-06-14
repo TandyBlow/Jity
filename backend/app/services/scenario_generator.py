@@ -3,9 +3,16 @@ from __future__ import annotations
 from app.database import Database
 from app.schemas import GenerateRequest, GenerateResponse, RetrievedChunk
 from app.services.game_state import GameStateManager
-from app.services.llm_client import LLMClient
+from app.services.llm_client import LLMClient, LLMOutputParseError, LLMRequestError
 from app.services.prompt_builder import PromptBuilder
 from app.services.retriever import RAGRetriever
+from app.services.scripted_story import ScriptedStoryService
+
+
+class ScenarioGenerationError(RuntimeError):
+    def __init__(self, message: str, model_output_id: int | None = None) -> None:
+        super().__init__(message)
+        self.model_output_id = model_output_id
 
 
 class ScenarioGenerator:
@@ -16,6 +23,7 @@ class ScenarioGenerator:
         retriever: RAGRetriever,
         prompt_builder: PromptBuilder,
         llm_client: LLMClient,
+        scripted_story: ScriptedStoryService,
         default_model: str,
     ) -> None:
         self.db = db
@@ -23,6 +31,7 @@ class ScenarioGenerator:
         self.retriever = retriever
         self.prompt_builder = prompt_builder
         self.llm_client = llm_client
+        self.scripted_story = scripted_story
         self.default_model = default_model
 
     async def generate(self, session_id: str, request: GenerateRequest) -> GenerateResponse | None:
@@ -41,12 +50,45 @@ class ScenarioGenerator:
             constraints=request.constraints,
         )
         model = request.model or session["model"] or self.default_model
-        scripted_output = self.llm_client.scripted_output(request.player_action, state)
+        scripted_output = self.scripted_story.generate(request.player_action, state)
         if scripted_output:
             output = scripted_output
             latency_ms = 0
+            source = "scripted"
         else:
-            output, latency_ms = await self.llm_client.generate(prompt, model)
+            try:
+                output, latency_ms = await self.llm_client.generate(prompt, model)
+            except LLMRequestError as exc:
+                self.db.add_message(session_id, "user", request.player_action)
+                self.db.add_message(session_id, "assistant_error", str(exc))
+                output_id = self.db.add_model_output(
+                    session_id=session_id,
+                    model=model,
+                    input_text=request.player_action,
+                    output={},
+                    latency_ms=exc.latency_ms,
+                    source="llm",
+                    status="request_error",
+                    raw_output_text=exc.response_text,
+                    error_text=str(exc),
+                )
+                raise ScenarioGenerationError(f"{exc} model_output_id={output_id}", output_id) from exc
+            except LLMOutputParseError as exc:
+                self.db.add_message(session_id, "user", request.player_action)
+                self.db.add_message(session_id, "assistant_error", exc.raw_output)
+                output_id = self.db.add_model_output(
+                    session_id=session_id,
+                    model=model,
+                    input_text=request.player_action,
+                    output={},
+                    latency_ms=exc.latency_ms,
+                    source="llm",
+                    status="parse_error",
+                    raw_output_text=exc.raw_output,
+                    error_text=str(exc),
+                )
+                raise ScenarioGenerationError(f"{exc} model_output_id={output_id}", output_id) from exc
+            source = "llm"
         next_state = self.state_manager.apply_output(state, request.player_action, output)
 
         self.db.add_message(session_id, "user", request.player_action)
@@ -58,6 +100,9 @@ class ScenarioGenerator:
             input_text=request.player_action,
             output=output.model_dump(),
             latency_ms=latency_ms,
+            source=source,
+            status="ok",
+            raw_output_text=output.model_dump_json(),
         )
 
         return GenerateResponse(
@@ -76,6 +121,7 @@ class ScenarioGenerator:
             ],
             model_output_id=output_id,
             used_model=model,
+            source=source,
         )
 
     @staticmethod

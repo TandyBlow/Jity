@@ -5,14 +5,22 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import get_settings
 from app.database import Database
-from app.schemas import CreateSessionRequest, GenerateRequest, GenerateResponse, SessionResponse, StoryOutput
+from app.schemas import (
+    CreateSessionRequest,
+    GenerateRequest,
+    GenerateResponse,
+    SessionHistoryResponse,
+    SessionResponse,
+    StoryOutput,
+)
 from app.services.evaluation import EvaluationModule
 from app.services.game_state import GameStateManager
 from app.services.knowledge_base import KnowledgeBase
 from app.services.llm_client import LLMClient, MissingAPIKeyError
 from app.services.prompt_builder import PromptBuilder
 from app.services.retriever import RAGRetriever
-from app.services.scenario_generator import ScenarioGenerator
+from app.services.scenario_generator import ScenarioGenerationError, ScenarioGenerator
+from app.services.scripted_story import ScriptedStoryService
 
 settings = get_settings()
 db = Database(settings.database_file)
@@ -22,6 +30,7 @@ state_manager = GameStateManager(db)
 retriever = RAGRetriever(chunks)
 prompt_builder = PromptBuilder()
 llm_client = LLMClient(settings)
+scripted_story = ScriptedStoryService()
 evaluation_module = EvaluationModule()
 scenario_generator = ScenarioGenerator(
     db=db,
@@ -29,6 +38,7 @@ scenario_generator = ScenarioGenerator(
     retriever=retriever,
     prompt_builder=prompt_builder,
     llm_client=llm_client,
+    scripted_story=scripted_story,
     default_model=settings.llm_model,
 )
 
@@ -71,12 +81,22 @@ def get_session(session_id: str) -> SessionResponse:
     return SessionResponse(**payload)
 
 
+@app.get("/sessions/{session_id}/history", response_model=SessionHistoryResponse)
+def get_session_history(session_id: str) -> SessionHistoryResponse:
+    payload = state_manager.get_session_payload(session_id)
+    if not payload:
+        raise HTTPException(status_code=404, detail="Session not found")
+    return SessionHistoryResponse(session_id=session_id, messages=db.get_messages(session_id))
+
+
 @app.post("/sessions/{session_id}/generate", response_model=GenerateResponse)
 async def generate(session_id: str, request: GenerateRequest) -> GenerateResponse:
     try:
         response = await scenario_generator.generate(session_id, request)
     except MissingAPIKeyError as exc:
         raise HTTPException(status_code=503, detail=str(exc)) from exc
+    except ScenarioGenerationError as exc:
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
     if not response:
         raise HTTPException(status_code=404, detail="Session not found")
     return response
@@ -98,6 +118,7 @@ def reload_knowledge() -> dict[str, object]:
         retriever=retriever,
         prompt_builder=prompt_builder,
         llm_client=llm_client,
+        scripted_story=scripted_story,
         default_model=settings.llm_model,
     )
     return {"status": "reloaded", "knowledge_chunks": len(chunks)}

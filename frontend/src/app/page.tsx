@@ -63,6 +63,7 @@ export default function Home() {
   const [model, setModel] = useState("deepseek-chat");
   const [state, setState] = useState<GameState | null>(null);
   const [output, setOutput] = useState<StoryOutput>(initialOutput);
+  const [outputSource, setOutputSource] = useState<GenerateResponse["source"]>("scripted");
   const [chunks, setChunks] = useState<RetrievedChunk[]>([]);
   const [action, setAction] = useState(INITIAL_ACTION);
   const [isLoading, setIsLoading] = useState(false);
@@ -96,6 +97,7 @@ export default function Home() {
         constraints: DEFAULT_CONSTRAINTS,
       });
       setOutput(response.output);
+      setOutputSource(response.source);
       setState(response.state);
       setChunks(response.retrieved_chunks);
       setModel(response.used_model);
@@ -115,6 +117,7 @@ export default function Home() {
       setSessionId(session.session_id);
       setState(session.state);
       setOutput(initialOutput);
+      setOutputSource("scripted");
       setChunks([]);
       setAction(INITIAL_ACTION);
     } catch (err) {
@@ -172,6 +175,7 @@ export default function Home() {
         <div className="toolbar-row">
           <div className="meta">Session {sessionId ? sessionId.slice(0, 8) : "initializing"}</div>
           <div className="meta">Turn {state?.turn ?? 0}</div>
+          <div className={`source-pill ${outputSource}`}>{outputSource === "scripted" ? "Scripted opening" : "LLM generated"}</div>
         </div>
 
         <article className="scene-output">

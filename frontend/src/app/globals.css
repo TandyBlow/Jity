@@ -95,6 +95,26 @@ a {
   font-size: 12px;
 }
 
+.source-pill {
+  margin-left: auto;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 4px 9px;
+  color: var(--muted);
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.source-pill.llm {
+  border-color: rgba(123, 178, 132, 0.38);
+  color: #9bcf9f;
+}
+
+.source-pill.scripted {
+  border-color: rgba(202, 167, 90, 0.38);
+  color: var(--accent);
+}
+
 .label {
   display: block;
   margin: 16px 0 7px;

@@ -48,4 +48,17 @@ export type GenerateResponse = {
   retrieved_chunks: RetrievedChunk[];
   model_output_id: number | null;
   used_model: string;
+  source: "scripted" | "llm";
+};
+
+export type SessionMessage = {
+  id: number;
+  role: string;
+  content: string;
+  created_at: string;
+};
+
+export type SessionHistoryResponse = {
+  session_id: string;
+  messages: SessionMessage[];
 };

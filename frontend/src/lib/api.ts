@@ -1,4 +1,4 @@
-import type { GenerateResponse, SessionResponse } from "@/types";
+import type { GenerateResponse, SessionHistoryResponse, SessionResponse } from "@/types";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
 
@@ -49,4 +49,8 @@ export function generateScene(params: {
       constraints: params.constraints,
     }),
   });
+}
+
+export function getSessionHistory(sessionId: string): Promise<SessionHistoryResponse> {
+  return request<SessionHistoryResponse>(`/sessions/${sessionId}/history`);
 }

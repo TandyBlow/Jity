@@ -62,6 +62,10 @@ class Database:
                   input_text TEXT NOT NULL,
                   output_json TEXT NOT NULL,
                   latency_ms INTEGER NOT NULL DEFAULT 0,
+                  source TEXT NOT NULL DEFAULT 'llm',
+                  status TEXT NOT NULL DEFAULT 'ok',
+                  raw_output_text TEXT NOT NULL DEFAULT '',
+                  error_text TEXT NOT NULL DEFAULT '',
                   created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
                   FOREIGN KEY (session_id) REFERENCES game_sessions(id)
                 );
@@ -82,6 +86,16 @@ class Database:
                 );
                 """
             )
+            self._ensure_column(db, "model_outputs", "source", "TEXT NOT NULL DEFAULT 'llm'")
+            self._ensure_column(db, "model_outputs", "status", "TEXT NOT NULL DEFAULT 'ok'")
+            self._ensure_column(db, "model_outputs", "raw_output_text", "TEXT NOT NULL DEFAULT ''")
+            self._ensure_column(db, "model_outputs", "error_text", "TEXT NOT NULL DEFAULT ''")
+
+    @staticmethod
+    def _ensure_column(db: sqlite3.Connection, table: str, column: str, definition: str) -> None:
+        columns = {row["name"] for row in db.execute(f"PRAGMA table_info({table})").fetchall()}
+        if column not in columns:
+            db.execute(f"ALTER TABLE {table} ADD COLUMN {column} {definition}")
 
     def write_session(self, session_id: str, game_name: str, model: str, state: dict[str, Any]) -> None:
         with self.connect() as db:
@@ -108,6 +122,19 @@ class Database:
                 "INSERT INTO session_messages (session_id, role, content) VALUES (?, ?, ?)",
                 (session_id, role, content),
             )
+
+    def get_messages(self, session_id: str) -> list[dict[str, Any]]:
+        with self.connect() as db:
+            rows = db.execute(
+                """
+                SELECT id, role, content, created_at
+                FROM session_messages
+                WHERE session_id = ?
+                ORDER BY id ASC
+                """,
+                (session_id,),
+            ).fetchall()
+            return [dict(row) for row in rows]
 
     def replace_knowledge_chunks(self, chunks: list[dict[str, Any]]) -> None:
         with self.connect() as db:
@@ -137,13 +164,37 @@ class Database:
         input_text: str,
         output: dict[str, Any],
         latency_ms: int,
+        source: str = "llm",
+        status: str = "ok",
+        raw_output_text: str = "",
+        error_text: str = "",
     ) -> int:
         with self.connect() as db:
             cursor = db.execute(
                 """
-                INSERT INTO model_outputs (session_id, model, input_text, output_json, latency_ms)
-                VALUES (?, ?, ?, ?, ?)
+                INSERT INTO model_outputs (
+                  session_id,
+                  model,
+                  input_text,
+                  output_json,
+                  latency_ms,
+                  source,
+                  status,
+                  raw_output_text,
+                  error_text
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
-                (session_id, model, input_text, json.dumps(output, ensure_ascii=False), latency_ms),
+                (
+                    session_id,
+                    model,
+                    input_text,
+                    json.dumps(output, ensure_ascii=False),
+                    latency_ms,
+                    source,
+                    status,
+                    raw_output_text,
+                    error_text,
+                ),
             )
             return int(cursor.lastrowid)

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Optional
+from typing import Any, Literal, Optional
 
 from pydantic import BaseModel, Field
 
@@ -53,6 +53,18 @@ class RetrievedChunk(BaseModel):
     score: float
 
 
+class MessageResponse(BaseModel):
+    id: int
+    role: str
+    content: str
+    created_at: str
+
+
+class SessionHistoryResponse(BaseModel):
+    session_id: str
+    messages: list[MessageResponse]
+
+
 class GenerateResponse(BaseModel):
     session_id: str
     state: dict[str, Any]
@@ -60,3 +72,4 @@ class GenerateResponse(BaseModel):
     retrieved_chunks: list[RetrievedChunk]
     model_output_id: Optional[int] = None
     used_model: str
+    source: Literal["scripted", "llm"]
