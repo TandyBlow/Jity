@@ -86,6 +86,8 @@ export type RetrievedChunk = {
   source_type: string;
   content: string;
   score: number;
+  keywords?: string[];
+  importance?: number;
 };
 
 export type SessionResponse = {

@@ -42,6 +42,7 @@ class ScenarioGenerator:
         state = session["state"]
         query = self._build_query(request.player_action, state)
         retrieved = self.retriever.retrieve(query)
+        retrieved_for_storage = self._serialize_retrieved_chunks(retrieved)
         prompt = self.prompt_builder.build(
             user_action=request.player_action,
             state=state,
@@ -71,6 +72,7 @@ class ScenarioGenerator:
                     status="request_error",
                     raw_output_text=exc.response_text,
                     error_text=str(exc),
+                    retrieved_chunks=retrieved_for_storage,
                 )
                 raise ScenarioGenerationError(f"{exc} model_output_id={output_id}", output_id) from exc
             except LLMOutputParseError as exc:
@@ -86,6 +88,7 @@ class ScenarioGenerator:
                     status="parse_error",
                     raw_output_text=exc.raw_output,
                     error_text=str(exc),
+                    retrieved_chunks=retrieved_for_storage,
                 )
                 raise ScenarioGenerationError(f"{exc} model_output_id={output_id}", output_id) from exc
             source = "llm"
@@ -103,6 +106,7 @@ class ScenarioGenerator:
             source=source,
             status="ok",
             raw_output_text=output.model_dump_json(),
+            retrieved_chunks=retrieved_for_storage,
         )
 
         return GenerateResponse(
@@ -116,6 +120,8 @@ class ScenarioGenerator:
                     source_type=chunk["source_type"],
                     content=chunk["content"][:700],
                     score=chunk["score"],
+                    keywords=chunk.get("keywords", []),
+                    importance=int(chunk.get("importance", 3)),
                 )
                 for chunk in retrieved
             ],
@@ -134,3 +140,18 @@ class ScenarioGenerator:
             " ".join(item.get("name", "") for item in state.get("quests", [])),
         ]
         return "\n".join(part for part in parts if part)
+
+    @staticmethod
+    def _serialize_retrieved_chunks(chunks: list[dict]) -> list[dict]:
+        return [
+            {
+                "id": chunk.get("id", ""),
+                "source_type": chunk.get("source_type", ""),
+                "title": chunk.get("title", ""),
+                "score": chunk.get("score", 0),
+                "keywords": chunk.get("keywords", []),
+                "importance": int(chunk.get("importance", 3)),
+                "content": str(chunk.get("content", ""))[:700],
+            }
+            for chunk in chunks
+        ]

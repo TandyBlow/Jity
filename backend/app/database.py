@@ -51,6 +51,7 @@ class Database:
                   title TEXT NOT NULL,
                   content TEXT NOT NULL,
                   keywords TEXT NOT NULL DEFAULT '[]',
+                  importance INTEGER NOT NULL DEFAULT 3,
                   source_path TEXT NOT NULL,
                   updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
                 );
@@ -66,6 +67,7 @@ class Database:
                   status TEXT NOT NULL DEFAULT 'ok',
                   raw_output_text TEXT NOT NULL DEFAULT '',
                   error_text TEXT NOT NULL DEFAULT '',
+                  retrieved_chunks_json TEXT NOT NULL DEFAULT '[]',
                   created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
                   FOREIGN KEY (session_id) REFERENCES game_sessions(id)
                 );
@@ -90,6 +92,8 @@ class Database:
             self._ensure_column(db, "model_outputs", "status", "TEXT NOT NULL DEFAULT 'ok'")
             self._ensure_column(db, "model_outputs", "raw_output_text", "TEXT NOT NULL DEFAULT ''")
             self._ensure_column(db, "model_outputs", "error_text", "TEXT NOT NULL DEFAULT ''")
+            self._ensure_column(db, "model_outputs", "retrieved_chunks_json", "TEXT NOT NULL DEFAULT '[]'")
+            self._ensure_column(db, "knowledge_chunks", "importance", "INTEGER NOT NULL DEFAULT 3")
 
     @staticmethod
     def _ensure_column(db: sqlite3.Connection, table: str, column: str, definition: str) -> None:
@@ -141,8 +145,8 @@ class Database:
             db.execute("DELETE FROM knowledge_chunks")
             db.executemany(
                 """
-                INSERT INTO knowledge_chunks (id, source_type, title, content, keywords, source_path)
-                VALUES (?, ?, ?, ?, ?, ?)
+                INSERT INTO knowledge_chunks (id, source_type, title, content, keywords, importance, source_path)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
                 """,
                 [
                     (
@@ -151,6 +155,7 @@ class Database:
                         chunk["title"],
                         chunk["content"],
                         json.dumps(chunk.get("keywords", []), ensure_ascii=False),
+                        int(chunk.get("importance", 3)),
                         chunk.get("source_path", ""),
                     )
                     for chunk in chunks
@@ -168,6 +173,7 @@ class Database:
         status: str = "ok",
         raw_output_text: str = "",
         error_text: str = "",
+        retrieved_chunks: list[dict[str, Any]] | None = None,
     ) -> int:
         with self.connect() as db:
             cursor = db.execute(
@@ -181,9 +187,10 @@ class Database:
                   source,
                   status,
                   raw_output_text,
-                  error_text
+                  error_text,
+                  retrieved_chunks_json
                 )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     session_id,
@@ -195,6 +202,7 @@ class Database:
                     status,
                     raw_output_text,
                     error_text,
+                    json.dumps(retrieved_chunks or [], ensure_ascii=False),
                 ),
             )
             return int(cursor.lastrowid)

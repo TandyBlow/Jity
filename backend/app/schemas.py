@@ -103,6 +103,8 @@ class RetrievedChunk(BaseModel):
     source_type: str
     content: str
     score: float
+    keywords: list[str] = Field(default_factory=list)
+    importance: int = 3
 
 
 class MessageResponse(BaseModel):

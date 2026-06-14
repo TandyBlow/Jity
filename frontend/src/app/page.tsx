@@ -247,11 +247,21 @@ export default function Home() {
           {chunks.length ? (
             chunks.map((chunk) => (
               <div className="chunk-item" key={chunk.id}>
-                <div className="chunk-title">{chunk.title}</div>
-                <div className="chunk-type">
-                  {chunk.source_type} · score {chunk.score}
+                <div className="chunk-head">
+                  <span className={`chunk-badge ${chunk.source_type}`}>{sourceTypeLabel(chunk.source_type)}</span>
+                  <span className="chunk-score">score {chunk.score.toFixed(2)}</span>
                 </div>
-                <p>{chunk.content}</p>
+                <div className="chunk-title">{chunk.title}</div>
+                <p>{shorten(chunk.content, 120)}</p>
+                {chunk.keywords?.length ? (
+                  <div className="keyword-row">
+                    {chunk.keywords.slice(0, 4).map((keyword) => (
+                      <span className="keyword-chip" key={`${chunk.id}-${keyword}`}>
+                        {keyword}
+                      </span>
+                    ))}
+                  </div>
+                ) : null}
               </div>
             ))
           ) : (
@@ -268,6 +278,25 @@ function quoteDialogue(text: string) {
   if (!trimmed) return "";
   if (trimmed.startsWith("“") && trimmed.endsWith("”")) return trimmed;
   return `“${trimmed}”`;
+}
+
+function sourceTypeLabel(sourceType: string) {
+  const labels: Record<string, string> = {
+    npc: "NPC",
+    npc_profile: "NPC",
+    location: "地点",
+    quest: "任务",
+    quest_template: "任务",
+    rule: "规则",
+    world_lore: "世界观",
+  };
+  return labels[sourceType] ?? sourceType;
+}
+
+function shorten(text: string, limit: number) {
+  const compact = text.replace(/\s+/g, " ").trim();
+  if (compact.length <= limit) return compact;
+  return `${compact.slice(0, limit)}...`;
 }
 
 function MemorySection({ title, items }: { title: string; items: string[] }) {

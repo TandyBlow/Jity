@@ -326,11 +326,53 @@ a {
 }
 
 .chunk-title {
+  margin-top: 8px;
   font-weight: 700;
 }
 
 .chunk-item p {
   margin: 8px 0 0;
+  color: var(--muted);
+}
+
+.chunk-head,
+.keyword-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.chunk-head {
+  justify-content: space-between;
+}
+
+.chunk-badge,
+.keyword-chip {
+  border: 1px solid rgba(135, 179, 141, 0.35);
+  border-radius: 999px;
+  color: var(--accent-2);
+  font-size: 11px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.chunk-badge {
+  padding: 4px 7px;
+}
+
+.chunk-score {
+  color: var(--muted);
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.keyword-row {
+  flex-wrap: wrap;
+  margin-top: 9px;
+}
+
+.keyword-chip {
+  padding: 3px 6px;
   color: var(--muted);
 }
 
