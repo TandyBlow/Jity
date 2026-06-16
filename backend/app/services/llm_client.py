@@ -44,21 +44,65 @@ class LLMClient:
         if not self.settings.deepseek_api_key:
             raise MissingAPIKeyError("AI 生成需要配置 backend/.env 里的 DEEPSEEK_API_KEY。固定开场结束后不会再使用本地兜底剧情。")
 
+        model_name = model or self.settings.llm_model
         started = time.perf_counter()
         async with httpx.AsyncClient(timeout=60) as client:
-            response = await client.post(
-                f"{self.settings.llm_base_url.rstrip('/')}/v1/chat/completions",
-                headers={
-                    "Authorization": f"Bearer {self.settings.deepseek_api_key}",
-                    "Content-Type": "application/json",
-                },
-                json={
-                    "model": model or self.settings.llm_model,
-                    "messages": [{"role": "user", "content": prompt}],
-                    "temperature": 0.35,
-                    "max_tokens": 1200,
-                },
+            raw_text = await self._request_completion(
+                client=client,
+                messages=[{"role": "user", "content": prompt}],
+                model=model_name,
+                temperature=0.35,
+                started=started,
             )
+
+            try:
+                return self._parse_story_output(raw_text), int((time.perf_counter() - started) * 1000)
+            except (json.JSONDecodeError, ValidationError, TypeError) as first_exc:
+                repaired_text = await self._request_completion(
+                    client=client,
+                    messages=[
+                        {
+                            "role": "user",
+                            "content": self._build_json_repair_prompt(raw_text, str(first_exc)),
+                        }
+                    ],
+                    model=model_name,
+                    temperature=0,
+                    started=started,
+                )
+
+            try:
+                return self._parse_story_output(repaired_text), int((time.perf_counter() - started) * 1000)
+            except (json.JSONDecodeError, ValidationError, TypeError) as repair_exc:
+                raise LLMOutputParseError(
+                    "模型返回不是有效剧情 JSON，原始输出和修复输出已保存到 model_outputs。",
+                    raw_output=self._format_failed_outputs(raw_text, repaired_text),
+                    cleaned_output=self._clean_json_text(repaired_text),
+                    latency_ms=int((time.perf_counter() - started) * 1000),
+                ) from repair_exc
+
+    async def _request_completion(
+        self,
+        client: httpx.AsyncClient,
+        messages: list[dict[str, str]],
+        model: str,
+        temperature: float,
+        started: float,
+    ) -> str:
+        response = await client.post(
+            f"{self.settings.llm_base_url.rstrip('/')}/v1/chat/completions",
+            headers={
+                "Authorization": f"Bearer {self.settings.deepseek_api_key}",
+                "Content-Type": "application/json",
+            },
+            json={
+                "model": model,
+                "messages": messages,
+                "temperature": temperature,
+                "max_tokens": 5000,
+                "response_format": {"type": "json_object"},
+            },
+        )
         latency_ms = int((time.perf_counter() - started) * 1000)
         try:
             response.raise_for_status()
@@ -69,19 +113,29 @@ class LLMClient:
                 response_text=response.text,
                 latency_ms=latency_ms,
             ) from exc
-        raw_text = response.json()["choices"][0]["message"]["content"]
-        cleaned_text = self._clean_json_text(raw_text)
-        try:
-            payload = json.loads(cleaned_text)
-            output = StoryOutput.model_validate(self._normalize_output(payload))
-        except (json.JSONDecodeError, ValidationError, TypeError) as exc:
-            raise LLMOutputParseError(
-                "模型返回不是有效剧情 JSON，原始输出已保存到 model_outputs。",
-                raw_output=raw_text,
-                cleaned_output=cleaned_text,
-                latency_ms=latency_ms,
-            ) from exc
-        return output, latency_ms
+        return str(response.json()["choices"][0]["message"]["content"])
+
+    @classmethod
+    def _parse_story_output(cls, raw_text: str) -> StoryOutput:
+        payload = json.loads(cls._clean_json_text(raw_text))
+        return StoryOutput.model_validate(cls._normalize_output(payload))
+
+    @staticmethod
+    def _build_json_repair_prompt(raw_text: str, error_text: str) -> str:
+        return f"""下面这段内容不是合法的剧情 JSON，可能原因包括字符串里有未转义的双引号、尾部被截断、字段类型不符合 schema。
+
+请在不改变剧情含义和字段结构的前提下修复它。只返回严格合法 JSON，不要 Markdown，不要解释，不要额外文本。
+如果 dialogue.text 里需要引用角色原话，不要使用裸双引号；改用中文引号、英文单引号，或改写为间接叙述。
+
+解析错误：
+{error_text}
+
+原始输出：
+{raw_text}"""
+
+    @staticmethod
+    def _format_failed_outputs(original_text: str, repaired_text: str) -> str:
+        return f"原始输出：\n{original_text}\n\n修复输出：\n{repaired_text}"
 
     @staticmethod
     def _parse_json(text: str) -> dict[str, Any]:

@@ -10,6 +10,7 @@ from app.schemas import StoryOutput
 
 RECENT_EVENT_LIMIT = 8
 RECENT_EVENT_MAX_CHARS = 120
+SANITY_RECOVERY_PER_TURN = 1
 
 
 def default_state() -> dict[str, Any]:
@@ -75,7 +76,7 @@ class GameStateManager:
 
     def apply_output(self, state: dict[str, Any], action: str, output: StoryOutput) -> dict[str, Any]:
         next_state = self._ensure_state_shape(state)
-        next_state["sanity"] = self._clamp(next_state.get("sanity", 80) + output.sanity_delta)
+        next_state["sanity"] = self._clamp(next_state.get("sanity", 80) + output.sanity_delta + SANITY_RECOVERY_PER_TURN)
         next_state["health"] = self._clamp(next_state.get("health", 100) + output.health_delta)
         next_state["turn"] = int(next_state.get("turn", 0)) + 1
 

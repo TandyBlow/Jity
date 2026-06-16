@@ -235,6 +235,48 @@ a {
   color: var(--text);
 }
 
+.status-hint-list {
+  display: grid;
+  gap: 8px;
+  margin: 0 0 22px;
+}
+
+.status-hint {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  max-width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 8px 10px;
+  background: rgba(0, 0, 0, 0.22);
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.status-hint strong {
+  color: var(--text);
+  font-size: 14px;
+}
+
+.status-hint.loss {
+  border-color: rgba(199, 109, 109, 0.42);
+}
+
+.status-hint.loss strong {
+  color: #e29a9a;
+}
+
+.status-hint.gain {
+  border-color: rgba(135, 179, 141, 0.42);
+}
+
+.status-hint.gain strong {
+  color: #a9d5ad;
+}
+
 .option-list {
   display: grid;
   gap: 10px;

@@ -68,6 +68,7 @@ export default function Home() {
   const [action, setAction] = useState(INITIAL_ACTION);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const statusDeltaHints = buildStatusDeltaHints(output);
 
   useEffect(() => {
     let mounted = true;
@@ -188,6 +189,17 @@ export default function Home() {
               </div>
             ))}
           </div>
+          {statusDeltaHints.length ? (
+            <div className="status-hint-list" aria-label="状态变化提示">
+              {statusDeltaHints.map((hint) => (
+                <div className={`status-hint ${hint.kind}`} key={hint.label}>
+                  <span>{hint.label}</span>
+                  <strong>{formatDelta(hint.delta)}</strong>
+                  <span>{hint.message}</span>
+                </div>
+              ))}
+            </div>
+          ) : null}
           <div className="option-list">
             {output.options.map((option) => (
               <button className="option-button" key={option} onClick={() => handleGenerate(option)} type="button">
@@ -297,6 +309,27 @@ function shorten(text: string, limit: number) {
   const compact = text.replace(/\s+/g, " ").trim();
   if (compact.length <= limit) return compact;
   return `${compact.slice(0, limit)}...`;
+}
+
+function buildStatusDeltaHints(output: StoryOutput) {
+  return [
+    {
+      label: "血统稳定",
+      delta: output.sanity_delta,
+      kind: output.sanity_delta < 0 ? "loss" : "gain",
+      message: output.sanity_delta < 0 ? "龙文、异常信息或精神压力造成了影响。" : "你暂时稳住了精神压力。",
+    },
+    {
+      label: "体力",
+      delta: output.health_delta,
+      kind: output.health_delta < 0 ? "loss" : "gain",
+      message: output.health_delta < 0 ? "这次行动带来了身体损耗。" : "身体状态有所恢复。",
+    },
+  ].filter((hint) => hint.delta !== 0);
+}
+
+function formatDelta(delta: number) {
+  return `${delta > 0 ? "+" : ""}${delta}`;
 }
 
 function MemorySection({ title, items }: { title: string; items: string[] }) {
