@@ -5,7 +5,7 @@ const CONFIG = {
   SILICONFLOW_API_KEY: "sk-your-siliconflow-api-key",
 
   // ===== 模型配置 =====
-  LLM_MODEL: "deepseek-v4-flash",
+  LLM_MODEL: "deepseek-v4-pro",
   LLM_BASE_URL: "https://api.deepseek.com",
   IMAGE_MODEL: "Kwai-Kolors/Kolors",
 

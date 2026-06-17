@@ -61,7 +61,7 @@ RAG 检索到的相关知识：
 
 严格返回纯 JSON，不要包含 Markdown、解释或额外文本：
 {{
-  "narration": "第二人称沉浸叙事，2-4句",
+  "narration": "第二人称沉浸叙事，30句左右",
   "dialogue": [{{"speaker": "角色名", "text": "对话内容"}}],
   "scene_prompt": "English scene description, max 30 words",
   "sanity_delta": 0,
