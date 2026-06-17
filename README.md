@@ -88,6 +88,30 @@ NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
 - `POST /evaluate`：对结构化剧情输出做轻量启发式评分。
 - `POST /knowledge/reload`：重新加载 `knowledge/` 和可选规则书。
 
+## 自动跑剧情
+
+仓库提供 `scripts/auto_play.py`，用于自动创建会话、选择更能推进剧情的选项，并把每轮生成的剧情、对话、选项、实际选择、Context Memory 和 RAG Hits 写入一个 Markdown 文件。
+
+先启动后端，然后运行默认长跑：
+
+```bash
+python3 scripts/auto_play.py
+```
+
+默认配置是 3 次 run，每次 300 轮；每跑满 300 轮会创建新 session 重新开始。输出默认写入 `playtest_logs/auto_play_时间戳.md`。
+
+小规模试跑可以用：
+
+```bash
+python3 scripts/auto_play.py --runs 1 --turns 5
+```
+
+常用参数：
+
+```bash
+python3 scripts/auto_play.py --api-base-url http://localhost:8000 --model deepseek-chat --runs 3 --turns 300 --retries 2
+```
+
 ## 知识库格式
 
 `knowledge/` 支持两类文件：
