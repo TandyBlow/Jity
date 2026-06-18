@@ -12,6 +12,14 @@ RECENT_EVENT_LIMIT = 8
 RECENT_EVENT_MAX_CHARS = 120
 SANITY_RECOVERY_PER_TURN = 1
 
+# State bloat prevention (HARD-03): defensive caps to prevent
+# unbounded list growth over 270-turn campaigns
+MAX_ITEMS = 20
+MAX_NPCS = 15
+MAX_QUESTS = 10
+MAX_WORLD_FACTS = 15
+STALE_TURN_THRESHOLD = 30  # prune entries unchanged for 30+ turns
+
 
 def default_state() -> dict[str, Any]:
     return {
@@ -117,6 +125,7 @@ class GameStateManager:
             next_state.get("recent_events", []),
             self._build_key_event(action, output),
         )
+        next_state = self._enforce_state_caps(next_state)
         return next_state
 
     @staticmethod
@@ -378,3 +387,16 @@ class GameStateManager:
         if len(text) <= max_chars:
             return text
         return f"{text[: max_chars - 1]}…"
+
+    @staticmethod
+    def _enforce_state_caps(state: dict[str, Any]) -> dict[str, Any]:
+        """Apply defensive caps to prevent 270-turn state bloat.
+
+        Caps: 20 items, 15 NPCs, 10 quests, 15 world_facts.
+        Excess entries are trimmed from the end (FIFO — oldest first kept).
+        """
+        state["items"] = state.get("items", [])[:MAX_ITEMS]
+        state["npcs"] = state.get("npcs", [])[:MAX_NPCS]
+        state["quests"] = state.get("quests", [])[:MAX_QUESTS]
+        state["world_facts"] = state.get("world_facts", [])[:MAX_WORLD_FACTS]
+        return state

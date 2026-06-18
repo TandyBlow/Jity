@@ -1,0 +1,615 @@
+"""CampaignManager — campaign lifecycle: load, FSM, anchors, context injection.
+
+Single coordinating service owning all campaign-aware concerns.
+Each concern in a focused method.
+"""
+from __future__ import annotations
+
+import json
+from pathlib import Path
+from typing import Any
+
+from app.database import Database
+from app.schemas.campaign import (
+    CampaignSchema,
+    CampaignProgress,
+    migrate,
+    campaign_adapter,
+    CURRENT_SCHEMA_VERSION,
+)
+from app.schemas.game import StoryOutput
+import tiktoken
+
+from app.services.campaign_fsm import CampaignStateMachine
+from app.services.context_strategy import ContextStrategy, SimpleTruncationStrategy
+from app.services.prompt_builder import build_fact_extraction
+
+class CampaignManager:
+    """Owns campaign lifecycle: load campaign.json, init FSM, manage progress,
+    evaluate anchors, inject context.
+
+    Each concern in a focused method. Constructor receives dependencies via
+    manual DI (same pattern as ScenarioGenerator).
+    """
+
+    def __init__(
+        self,
+        db: Database,
+        campaigns_dir: Path,
+        scripted_story,
+        prompt_builder=None,
+        llm_client=None,
+    ) -> None:
+        self.db = db
+        self.campaigns_dir = campaigns_dir
+        self.scripted_story = scripted_story
+        self.prompt_builder = prompt_builder
+        self.llm_client = llm_client
+        self.campaign: CampaignSchema | None = None
+        self.progress: CampaignProgress | None = None
+        self.fsm = CampaignStateMachine()
+        self._anchor_cooldowns: dict[str, int] = {}
+        self._strategy: ContextStrategy = SimpleTruncationStrategy()  # anchor_type -> last_triggered_turn
+
+    def load(self, campaign_path: Path, campaign_id: str | None = None) -> CampaignSchema:
+        """Load, version-check, migrate, validate campaign.json.
+
+        Steps:
+        1. Read JSON from campaign_path
+        2. Check version field against CURRENT_SCHEMA_VERSION
+        3. Run migration chain (v1→v2→v3)
+        4. Validate against CampaignSchema via TypeAdapter
+        5. Cache in self.campaign
+        6. Init FSM and progress
+        7. Return validated CampaignSchema
+
+        Raises:
+            FileNotFoundError: campaign_path does not exist
+            ValueError: JSON parse error or schema validation failure
+        """
+        if not campaign_path.exists():
+            raise FileNotFoundError(f"Campaign file not found: {campaign_path}")
+
+        raw = campaign_path.read_text(encoding="utf-8")
+        try:
+            data = json.loads(raw)
+        except json.JSONDecodeError as exc:
+            raise ValueError(f"Invalid JSON in campaign file: {exc}") from exc
+
+        # Version check + migration
+        source_version = data.get("version", 1)
+        if source_version < CURRENT_SCHEMA_VERSION:
+            data = migrate(data, CURRENT_SCHEMA_VERSION)
+
+        # Validate via TypeAdapter (independent validation)
+        try:
+            self.campaign = campaign_adapter.validate_python(data)
+        except Exception as exc:
+            raise ValueError(f"Campaign schema validation failed: {exc}") from exc
+
+        # Init progress and FSM
+        cid = campaign_id or self.campaign.title
+        existing = self.load_progress(cid)
+        if existing:
+            self.progress = existing
+            self._sync_fsm_from_progress()
+        else:
+            self.progress = CampaignProgress(campaign_id=cid)
+            self._init_fsm()
+
+        return self.campaign
+
+    def _init_fsm(self) -> None:
+        """Initialize FSM to start of campaign."""
+        self.fsm.start_campaign()
+        self._persist_progress()
+
+    def _sync_fsm_from_progress(self) -> None:
+        """Restore FSM state from persisted progress data."""
+        if self.progress is None:
+            return
+        row = self.db.read_campaign_progress(self.progress.campaign_id)
+        if row and row.get("fsm_state"):
+            saved_state = row["fsm_state"]
+            try:
+                self.fsm.machine.set_state(saved_state)
+            except Exception:
+                self.fsm.start_campaign()
+
+    def save_progress(self) -> None:
+        """Persist current progress and FSM state to database."""
+        if self.progress is None:
+            return
+        self._persist_progress()
+
+    def _persist_progress(self) -> None:
+        """Write progress to DB immediately (Pitfall 5: no deferred saves)."""
+        if self.progress is None:
+            return
+        self.db.write_campaign_progress(
+            campaign_id=self.progress.campaign_id,
+            arc_index=self.progress.arc_index,
+            session_index=self.progress.session_index,
+            turn_in_session=getattr(self.progress, "turn_in_session", 0),
+            fsm_state=str(self.fsm.state) if self.fsm.state else "idle",
+            revealed_anchors=self.progress.revealed_anchors,
+            completed_arcs=self.progress.completed_arcs,
+        )
+
+    def load_progress(self, campaign_id: str) -> CampaignProgress | None:
+        """Load progress from database. Returns None if no progress exists."""
+        row = self.db.read_campaign_progress(campaign_id)
+        if row is None:
+            return None
+        return CampaignProgress(
+            campaign_id=row["campaign_id"],
+            arc_index=row["arc_index"],
+            session_index=row["session_index"],
+            revealed_anchors=json.loads(row.get("revealed_anchors", "[]")),
+            completed_arcs=json.loads(row.get("completed_arcs", "[]")),
+        )
+
+    def get_opening_scene(self) -> str | None:
+        """Return opening_scene for current session if campaign is loaded.
+
+        Returns None if no campaign is loaded OR if the current session
+        has no opening_scene set. The caller (ScenarioGenerator) uses
+        None as the signal to fall through to ScriptedStory.
+        """
+        if self.campaign is None:
+            return None
+        if self.progress is None:
+            # If campaign loaded but no progress yet, use first session
+            if (
+                self.campaign.arcs
+                and self.campaign.arcs[0].sessions
+            ):
+                return self.campaign.arcs[0].sessions[0].opening_scene or None
+            return None
+        # Use progress to find current session
+        try:
+            arc = self.campaign.arcs[self.progress.arc_index]
+            session = arc.sessions[self.progress.session_index]
+            return session.opening_scene or None
+        except (IndexError, AttributeError):
+            return None
+
+    def is_loaded(self) -> bool:
+        """Return True if a campaign is currently loaded."""
+        return self.campaign is not None
+
+    # ── Session recap (CAMP-08) ──
+
+    async def generate_recap(self, session_id: str) -> str | None:
+        """Generate LLM-compressed recap from session_messages history.
+
+        Uses deepseek-v4-flash (cheap) for non-real-time boundary call.
+        Returns the compressed recap string, or None on failure.
+        """
+        if self.llm_client is None or self.prompt_builder is None:
+            return None
+
+        messages = self.db.get_messages(session_id)
+        if not messages:
+            return None
+
+        try:
+            recap_prompt = self.prompt_builder.build_recap(messages)
+            recap_text = await self.llm_client.generate_text(
+                recap_prompt, model="deepseek-v4-flash", max_tokens=800
+            )
+            return recap_text.strip()
+        except Exception:
+            return None
+
+    def store_recap(self, recap_text: str) -> None:
+        """Store both compressed and full recap in campaign_progress.
+
+        Full recap appends to existing full recap (cumulative history).
+        Compressed recap is the latest single-session summary.
+        """
+        if self.progress is None:
+            return
+        row = self.db.read_campaign_progress(self.progress.campaign_id)
+        existing_full = row.get("recap_full", "") if row else ""
+        self._persist_progress_with_recap(
+            compressed=recap_text,
+            full=(existing_full + "\n\n" + recap_text).strip() if existing_full else recap_text,
+        )
+
+    def _is_first_turn_of_session(self, turn: int) -> bool:
+        """Return True if this is the first turn of a new session."""
+        # FSM is in session_active after start_campaign or resume_session
+        if self.fsm is None:
+            return turn == 0
+        return self.fsm.get_substate() == "session_active" and turn == 0
+
+    def _load_recap_compressed(self) -> str:
+        """Load the compressed recap from campaign_progress."""
+        if self.progress is None:
+            return ""
+        row = self.db.read_campaign_progress(self.progress.campaign_id)
+        if row:
+            return row.get("recap_compressed", "")
+        return ""
+
+    def _persist_progress_with_recap(self, compressed: str, full: str) -> None:
+        """Write progress with recap fields to DB."""
+        if self.progress is None:
+            return
+        self.db.write_campaign_progress(
+            campaign_id=self.progress.campaign_id,
+            arc_index=self.progress.arc_index,
+            session_index=self.progress.session_index,
+            turn_in_session=getattr(self.progress, "turn_in_session", 0),
+            fsm_state=str(self.fsm.state) if self.fsm.state else "idle",
+            revealed_anchors=self.progress.revealed_anchors,
+            completed_arcs=self.progress.completed_arcs,
+            recap_compressed=compressed,
+            recap_full=full,
+        )
+
+    # ── Health monitoring integration (CAMP-09) ──
+
+    def inject_health(self) -> str | None:
+        """Return health guidance context string, or None if no guidance needed.
+
+        Called by inject_context() every turn. Guidance is throttled internally
+        by HealthMonitor cooldowns.
+        """
+        # HealthMonitor is set externally after construction
+        monitor = getattr(self, "_health_monitor", None)
+        if monitor is None or self.progress is None:
+            return None
+
+        turn = getattr(self.progress, "turn_in_session", 0)
+        try:
+            metrics = monitor.compute(self.progress.campaign_id, turn)
+        except Exception:
+            return None
+
+        if not metrics.needs_guidance:
+            return None
+
+        return self._build_health_guidance(metrics)
+
+    def _build_health_guidance(self, health: Any) -> str:
+        """Build diegetic narrative guidance from health metrics.
+
+        Maps each HealthGuidanceHint to a narrative instruction.
+        Never uses direct "your story is broken" language.
+        """
+        hints_map = {
+            "pacing_slow": "叙事节奏提示：当前剧情进展较慢，可适当引入新的环境变化或NPC行动来推动局面。",
+            "pacing_fast": "叙事节奏提示：当前事件推进较快，可适当放慢节奏，让玩家有时间消化线索和角色互动。",
+            "dialogue_heavy": "叙事平衡提示：对话占比较高，可适当增加环境描写和行动后果，保持叙事与互动的平衡。",
+            "tension_plateau": "叙事张力提示：当前局势趋于平稳，可在背景中埋设新的悬念或暗示即将到来的变化。",
+            "clue_starvation": "叙事线索提示：最近揭示的线索较少，可通过环境细节、NPC对话或意外发现提供新的调查方向。",
+        }
+
+        parts = ["## 叙事健康引导"]
+        for hint in health.guidance_hints:
+            hint_name = hint.value if hasattr(hint, "value") else str(hint)
+            if hint_name in hints_map:
+                parts.append(hints_map[hint_name])
+        return "\n".join(parts) if len(parts) > 1 else None
+
+    # ── Fact extraction (CAMP-07a) ──
+
+    async def extract_facts(self, narration_text: str, recent_events: list[str]) -> list[dict]:
+        """LLM-driven fact extraction from recent narrative content.
+
+        Uses deepseek-v4-flash (cheap) every 5 turns. Not in blocking path
+        — caller should fire-and-forget.
+
+        Returns list of world fact dicts ready for merge into game state.
+        """
+        if self.llm_client is None or self.prompt_builder is None:
+            return []
+
+        prompt = build_fact_extraction(narration_text, recent_events)
+        try:
+            facts = await self.llm_client.generate_json(
+                prompt, model="deepseek-v4-flash", max_tokens=2000, temperature=0.2
+            )
+            if isinstance(facts, list):
+                return [f for f in facts if isinstance(f, dict) and f.get("name")]
+            return []
+        except Exception:
+            return []
+
+    # ── Deviation detection (CAMP-07) ──
+
+    def detect_deviation(self, state: dict[str, Any], turn: int) -> bool:
+        """Detect if player has deviated from expected anchor path.
+
+        Returns True if the player has been in the same location for 3+
+        consecutive turns without triggering any anchor, suggesting
+        they are exploring off the planned path.
+        """
+        # Check if any anchors were triggered recently
+        if self.progress is None or self.campaign is None:
+            return False
+
+        # Sustained deviation: 3+ turns without anchor trigger in current session
+        try:
+            arc = self.campaign.arcs[self.progress.arc_index]
+            session = arc.sessions[self.progress.session_index]
+            total_session_anchors = len(session.anchor_events)
+            revealed_in_session = [
+                a_id for a_id in self.progress.revealed_anchors
+                if any(a.id == a_id for a in session.anchor_events)
+            ]
+            # If >3 turns into session and no anchors revealed yet, likely deviating
+            if turn >= 3 and total_session_anchors > 0 and len(revealed_in_session) == 0:
+                return True
+        except IndexError:
+            pass
+
+        return False
+
+    def generate_adaptive_anchors(self, state: dict[str, Any]) -> list[AnchorEvent]:
+        """Generate adaptive anchors when player deviates from planned path.
+
+        Creates temporary anchors based on current game state context.
+        Capped at 3 dynamic anchors per session.
+        """
+        from app.schemas.campaign import AnchorEvent, AnchorTriggerConditions
+
+        if self.progress is None or self.campaign is None:
+            return []
+
+        # Check dynamic anchor cap
+        dynamic_count = sum(
+            1 for a_id in self.progress.revealed_anchors
+            if a_id.startswith("dynamic-")
+        )
+        if dynamic_count >= 3:
+            return []
+
+        # Generate anchors based on current state
+        location = state.get("current_location", "")
+        npc_names = [n.get("name", "") for n in state.get("npcs", [])]
+
+        new_anchors = []
+        idx = dynamic_count + 1
+
+        # Location-based anchor
+        if location:
+            new_anchors.append(AnchorEvent(
+                id=f"dynamic-{self.progress.arc_index}-{self.progress.session_index}-{idx}",
+                name=f"探索：{location}",
+                description=f"玩家在当前地点 '{location}' 的探索中发现了新的线索",
+                priority=3,
+                trigger_conditions=AnchorTriggerConditions(location=location),
+            ))
+
+        return new_anchors[:3]  # cap at 3
+
+    # ── Anchor event evaluation (CAMP-02) ──
+
+    def evaluate_anchors(self, state: dict[str, Any], turn: int) -> list[AnchorEvent]:
+        """Evaluate all pending anchors for the current session against game state.
+
+        Hard-filter by location/NPC/item, check cooldown, sort by priority.
+        Returns at most 1 anchor (highest priority = lowest priority number) per turn.
+
+        Args:
+            state: Current game state dict
+            turn: Current turn number
+
+        Returns:
+            List of 0 or 1 AnchorEvent that should trigger this turn
+        """
+        from app.schemas.campaign import AnchorEvent
+
+        if self.campaign is None or self.progress is None:
+            return []
+
+        # Get current session's anchor events
+        try:
+            arc = self.campaign.arcs[self.progress.arc_index]
+            session = arc.sessions[self.progress.session_index]
+            anchors = session.anchor_events
+        except IndexError:
+            return []
+
+        # Filter: not already revealed
+        candidates = [
+            a for a in anchors
+            if a.id not in self.progress.revealed_anchors
+        ]
+
+        # Filter: hard conditions met
+        candidates = [
+            a for a in candidates
+            if self._conditions_met(a.trigger_conditions, state)
+        ]
+
+        # Filter: cooldown (>=3 turns since same anchor type)
+        candidates = [
+            a for a in candidates
+            if self._check_cooldown(a.id, turn)
+        ]
+
+        if not candidates:
+            return []
+
+        # Sort by priority (lower number = higher priority)
+        candidates.sort(key=lambda a: a.priority)
+
+        # Return at most 1 anchor per turn
+        return candidates[:1]
+
+    def _conditions_met(
+        self, conditions: AnchorTriggerConditions, state: dict[str, Any]
+    ) -> bool:
+        """Check if all non-None hard-filter conditions match current state.
+
+        All specified conditions must match (AND logic).
+        A None condition means "don't check" — it always passes.
+        """
+        from app.schemas.campaign import AnchorTriggerConditions
+
+        # Location match
+        if conditions.location is not None:
+            current_location = state.get("current_location", "")
+            if conditions.location not in current_location:
+                return False
+
+        # NPC present match
+        if conditions.npc_present is not None:
+            npc_names = [npc.get("name", "") for npc in state.get("npcs", [])]
+            if conditions.npc_present not in npc_names:
+                return False
+
+        # Item held match
+        if conditions.item_held is not None:
+            item_names = [item.get("name", "") for item in state.get("items", [])]
+            if conditions.item_held not in item_names:
+                return False
+
+        return True
+
+    def _check_cooldown(self, anchor_id: str, turn: int) -> bool:
+        """Return True if the anchor is off cooldown (>=3 turns since last trigger)."""
+        last_triggered = self._anchor_cooldowns.get(anchor_id, -999)
+        return (turn - last_triggered) >= 3
+
+    def mark_anchor_triggered(self, anchor_id: str, turn: int) -> None:
+        """Record that an anchor was triggered this turn."""
+        if self.progress is not None:
+            self.progress.revealed_anchors.append(anchor_id)
+        self._anchor_cooldowns[anchor_id] = turn
+        self._persist_progress()
+
+    def _describe_trigger(self, anchor: AnchorEvent) -> str:
+        """Build a diegetic redirection instruction for the anchor.
+
+        Returns a prompt instruction that guides the LLM to naturally steer
+        toward the anchor — no hard 'you cannot do that' denials.
+        """
+        return (
+            f"叙事引导：玩家即将触发锚点事件「{anchor.name}」。\n"
+            f"锚点描述：{anchor.description}\n"
+            "请通过环境线索、NPC暗示、或剧情推动自然地引导玩家接近该事件。\n"
+            "不要直接告诉玩家发生了什么，让玩家自己的选择引领他们到达那里。\n"
+            "如果玩家的当前行动与该锚点方向完全不同，等待更好的时机——今天的线索终将浮现。"
+        )
+
+    # ── Context injection (CAMP-03) ──
+
+    def inject_context(self, state: dict[str, Any], turn: int) -> str:
+        """Build campaign context string for injection into PromptInput.campaign_context.
+
+        Includes: arc/session position, anchor progress, candidate triggers,
+        next anchor hint. Called every turn when a campaign is loaded.
+
+        Args:
+            state: Current game state dict
+            turn: Current turn number
+
+        Returns:
+            Context string (Chinese) ready for prompt injection, or empty string
+        """
+        if self.campaign is None or self.progress is None:
+            return ""
+
+        parts = []
+
+        # Arc/session position
+        arc_idx = self.progress.arc_index
+        session_idx = self.progress.session_index
+        try:
+            current_arc = self.campaign.arcs[arc_idx]
+            current_session = current_arc.sessions[session_idx]
+            parts.append(f"当前章节：{current_arc.name} — {current_session.name}")
+            parts.append(f"章节目标：{current_arc.goal or '无'}")
+        except IndexError:
+            parts.append("当前章节：无")
+
+        # Anchor progress
+        total_anchors = sum(
+            len(s.anchor_events)
+            for a in self.campaign.arcs
+            for s in a.sessions
+        )
+        revealed_count = len(self.progress.revealed_anchors)
+        parts.append(f"锚点进度：{revealed_count}/{total_anchors} 已揭示")
+
+        # Recap layer (03-01): inject "Previously on..." at session start
+        if self._is_first_turn_of_session(turn):
+            recap = self._load_recap_compressed()
+            if recap:
+                parts.insert(0, "## 前情提要\n" + recap)
+
+        # Candidate triggers this turn
+        candidates = self.evaluate_anchors(state, turn)
+        if candidates:
+            anchor = candidates[0]
+            parts.append(self._describe_trigger(anchor))
+
+        # Health guidance layer (03-04)
+        health_context = self.inject_health()
+        if health_context:
+            parts.append(health_context)
+
+        return "\n".join(parts)
+
+    # ── Token budget (CAMP-03a) ──
+
+    TOKEN_BUDGET_LIMIT = 102400  # 80% of assumed 128K context window
+    _enc = None
+
+    @classmethod
+    def _get_encoder(cls):
+        if cls._enc is None:
+            cls._enc = tiktoken.get_encoding("cl100k_base")
+        return cls._enc
+
+    def check_token_budget(self, prompt: str) -> tuple[bool, int, str]:
+        """Check if prompt exceeds token budget.
+
+        Delegates to ContextStrategy for counting and threshold.
+        Uses cl100k_base encoding (conservative for Chinese).
+
+        Returns:
+            Tuple of (ok: bool, token_count: int, message: str)
+        """
+        token_count = self._strategy.count_tokens(prompt)
+        if self._strategy.should_truncate(token_count):
+            return (
+                False,
+                token_count,
+                f"警告：token计数 {token_count} 超过预算 {self._strategy.budget_limit}",
+            )
+        return True, token_count, ""
+
+    # ── Per-turn instrumentation (CAMP-09a) ──
+
+    def record_turn(
+        self,
+        output: StoryOutput,
+        state: dict[str, Any],
+        latency_ms: int,
+    ) -> dict[str, int]:
+        """Record lightweight per-turn instrumentation metrics.
+
+        Returns a dict of metric values to store alongside the model output.
+        """
+        narration = output.narration
+        dialogue = output.dialogue or []
+        options = output.options or []
+
+        location_before = state.get("current_location", "")
+        location_after = output.current_location or location_before
+
+        return {
+            "word_count": len(narration),
+            "option_count": len(options),
+            "sanity_delta": output.sanity_delta,
+            "health_delta": output.health_delta,
+            "dialogue_lines": len(dialogue),
+            "location_changed": 1 if location_after != location_before else 0,
+            "token_count": 0,  # filled by caller after prompt build
+        }

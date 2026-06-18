@@ -4,6 +4,14 @@ config.js
 # === Python ===
 __pycache__/
 *.pyc
+.venv/
+venv/
+env/
+.conda/
+backend/.venv/
+backend/env/
+backend/.conda/
+backend/.deps/
 translate_docx.py
 translate_latex.py
 translation_cache.json
@@ -26,3 +34,33 @@ experiments/
 
 # === Dependencies ===
 node_modules/
+frontend/node_modules/
+
+# === Local environment ===
+.env
+.env.*
+!.env.example
+backend/.env
+backend/.env.*
+!backend/.env.example
+frontend/.env
+frontend/.env.local
+frontend/.env.*
+!frontend/.env.example
+
+# === Runtime data ===
+*.sqlite3
+*.sqlite3-*
+backend/data/
+playtest_logs/
+
+# === Frontend build output ===
+.next/
+frontend/.next/
+out/
+
+# === Planning (not committed) ===
+.planning/
+TODOS.md
+frontend/tsconfig.tsbuildinfo
+backend/campaign_fsm.png

@@ -1,4 +1,11 @@
-import type { GenerateResponse, SessionHistoryResponse, SessionResponse } from "@/types";
+import type {
+  CampaignDetailResponse,
+  CampaignListResponse,
+  GenerateResponse,
+  SessionHistoryResponse,
+  SessionResponse,
+  WorldFactMemory,
+} from "@/types";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
 
@@ -53,4 +60,30 @@ export function generateScene(params: {
 
 export function getSessionHistory(sessionId: string): Promise<SessionHistoryResponse> {
   return request<SessionHistoryResponse>(`/sessions/${sessionId}/history`);
+}
+
+// ── Campaign API ──
+
+export function listCampaigns(): Promise<CampaignListResponse> {
+  return request<CampaignListResponse>("/campaigns");
+}
+
+export function getCampaign(filename: string): Promise<CampaignDetailResponse> {
+  return request<CampaignDetailResponse>(`/campaigns/${encodeURIComponent(filename)}`);
+}
+
+export function getSessionProgress(sessionId: string): Promise<{
+  session_id: string;
+  revealed_anchors: string[];
+  arc_index: number;
+  session_index: number;
+  world_facts: WorldFactMemory[];
+}> {
+  return request<{
+    session_id: string;
+    revealed_anchors: string[];
+    arc_index: number;
+    session_index: number;
+    world_facts: WorldFactMemory[];
+  }>(`/sessions/${sessionId}/progress`);
 }

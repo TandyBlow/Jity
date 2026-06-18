@@ -118,3 +118,64 @@ export type SessionHistoryResponse = {
   session_id: string;
   messages: SessionMessage[];
 };
+
+// ── Campaign types (CAMP-10) ──
+
+export type AnchorTriggerConditions = {
+  location?: string | null;
+  npc_present?: string | null;
+  item_held?: string | null;
+};
+
+export type CampaignAnchorEvent = {
+  id: string;
+  name: string;
+  description: string;
+  priority: number;
+  trigger_conditions: AnchorTriggerConditions;
+};
+
+export type CampaignSession = {
+  name: string;
+  opening_scene: string;
+  anchor_events: CampaignAnchorEvent[];
+};
+
+export type CampaignArc = {
+  name: string;
+  goal: string;
+  sessions: CampaignSession[];
+};
+
+export type CampaignSchema = {
+  version: number;
+  title: string;
+  core_conflict: string;
+  arcs: CampaignArc[];
+  constraints: string;
+  starting_state: Record<string, unknown>;
+};
+
+export type CampaignListItem = {
+  filename: string;
+  title: string;
+  version: number;
+  arc_count: number;
+};
+
+export type CampaignListResponse = {
+  campaigns: CampaignListItem[];
+};
+
+export type CampaignDetailResponse = {
+  filename: string;
+  campaign: CampaignSchema;
+};
+
+export type CampaignProgressData = {
+  campaign_id: string;
+  arc_index: number;
+  session_index: number;
+  revealed_anchors: string[];
+  completed_arcs: number[];
+};

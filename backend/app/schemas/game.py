@@ -1,9 +1,15 @@
+"""Game-related Pydantic schemas — request/response, state memory, story output.
+
+Migrated from schemas.py. Campaign-related schemas are in campaign.py.
+"""
 from __future__ import annotations
 
 from typing import Any, Literal, Optional
 
 from pydantic import BaseModel, Field
 
+
+# ── Memory models ──
 
 class DialogueLine(BaseModel):
     speaker: str = ""
@@ -61,6 +67,8 @@ class MemoryUpdates(BaseModel):
     key_event: str = ""
 
 
+# ── Core output ──
+
 class StoryOutput(BaseModel):
     narration: str
     dialogue: list[DialogueLine] = Field(default_factory=list)
@@ -78,6 +86,8 @@ class StoryOutput(BaseModel):
     memory_updates: MemoryUpdates = Field(default_factory=MemoryUpdates)
 
 
+# ── Request models ──
+
 class CreateSessionRequest(BaseModel):
     game_name: str = "卡塞尔入学档案"
     model: Optional[str] = None
@@ -89,6 +99,8 @@ class GenerateRequest(BaseModel):
     style: str = ""
     constraints: str = ""
 
+
+# ── Response models ──
 
 class SessionResponse(BaseModel):
     session_id: str

@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 from app.database import Database
-from app.schemas import GenerateRequest, GenerateResponse, RetrievedChunk
+from app.schemas import GenerateRequest, GenerateResponse, RetrievedChunk, StoryOutput
+from app.services.campaign_manager import CampaignManager
 from app.services.game_state import GameStateManager
 from app.services.llm_client import LLMClient, LLMOutputParseError, LLMRequestError
-from app.services.prompt_builder import PromptBuilder
+from app.services.prompt_builder import PromptBuilder, PromptInput
 from app.services.retriever import RAGRetriever
 from app.services.scripted_story import ScriptedStoryService
 
@@ -25,6 +26,7 @@ class ScenarioGenerator:
         llm_client: LLMClient,
         scripted_story: ScriptedStoryService,
         default_model: str,
+        campaign_manager: CampaignManager | None = None,
     ) -> None:
         self.db = db
         self.state_manager = state_manager
@@ -32,6 +34,7 @@ class ScenarioGenerator:
         self.prompt_builder = prompt_builder
         self.llm_client = llm_client
         self.scripted_story = scripted_story
+        self.campaign_manager = campaign_manager
         self.default_model = default_model
 
     async def generate(self, session_id: str, request: GenerateRequest) -> GenerateResponse | None:
@@ -40,17 +43,73 @@ class ScenarioGenerator:
             return None
 
         state = session["state"]
+        model = request.model or session["model"] or self.default_model
+
+        # ── Injection Point #1: Campaign opening_scene override (turn 0 only) ──
+        if self.campaign_manager is not None and self.campaign_manager.is_loaded():
+            opening = self.campaign_manager.get_opening_scene()
+            turn = int(state.get("turn", 0))
+            if turn == 0 and opening:
+                output = StoryOutput(
+                    narration=opening,
+                    dialogue=[],
+                    scene_prompt="campaign opening",
+                    sanity_delta=0,
+                    health_delta=0,
+                    options=["继续"],
+                    current_location=state.get("current_location", ""),
+                )
+                self.db.add_message(session_id, "user", request.player_action)
+                self.db.add_message(session_id, "assistant", output.model_dump_json())
+                self.state_manager.save_state(session_id, session["game_name"], model, state)
+                output_id = self.db.add_model_output(
+                    session_id=session_id,
+                    model=model,
+                    input_text=request.player_action,
+                    output=output.model_dump(),
+                    latency_ms=0,
+                    source="scripted",
+                    status="ok",
+                    raw_output_text=output.model_dump_json(),
+                    retrieved_chunks=[],
+                )
+                return GenerateResponse(
+                    session_id=session_id,
+                    state=state,
+                    output=output,
+                    retrieved_chunks=[],
+                    model_output_id=output_id,
+                    used_model=model,
+                    source="scripted",
+                )
+
         query = self._build_query(request.player_action, state)
         retrieved = self.retriever.retrieve(query)
         retrieved_for_storage = self._serialize_retrieved_chunks(retrieved)
+
+        # ── Injection Point #2: Campaign context injection ──
+        campaign_context = ""
+        if self.campaign_manager is not None and self.campaign_manager.is_loaded():
+            turn = int(state.get("turn", 0))
+            campaign_context = self.campaign_manager.inject_context(state, turn)
+
         prompt = self.prompt_builder.build(
-            user_action=request.player_action,
-            state=state,
-            retrieved_chunks=retrieved,
-            style=request.style,
-            constraints=request.constraints,
+            PromptInput(
+                player_action=request.player_action,
+                game_state=state,
+                retrieved_chunks=retrieved,
+                style=request.style,
+                constraints=request.constraints,
+                campaign_context=campaign_context,
+            )
         )
-        model = request.model or session["model"] or self.default_model
+
+        # ── Token budget check ──
+        if self.campaign_manager is not None and self.campaign_manager.is_loaded():
+            ok, token_count, warning = self.campaign_manager.check_token_budget(prompt)
+            if not ok:
+                # Log warning — token over budget
+                pass
         scripted_output = self.scripted_story.generate(request.player_action, state)
         if scripted_output:
             output = scripted_output
@@ -97,6 +156,12 @@ class ScenarioGenerator:
         self.db.add_message(session_id, "user", request.player_action)
         self.db.add_message(session_id, "assistant", output.model_dump_json())
         self.state_manager.save_state(session_id, session["game_name"], model, next_state)
+
+        # ── Per-turn instrumentation ──
+        metrics = {}
+        if self.campaign_manager is not None and self.campaign_manager.is_loaded():
+            metrics = self.campaign_manager.record_turn(output, state, latency_ms)
+
         output_id = self.db.add_model_output(
             session_id=session_id,
             model=model,
@@ -107,6 +172,7 @@ class ScenarioGenerator:
             status="ok",
             raw_output_text=output.model_dump_json(),
             retrieved_chunks=retrieved_for_storage,
+            **metrics,
         )
 
         return GenerateResponse(

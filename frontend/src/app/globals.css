@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 :root {
   --background: #10100f;
   --panel: #181818;
@@ -627,6 +629,271 @@ a {
 
   .memory-panel {
     display: none;
+  }
+}
+
+/* ── Timeline page ── */
+
+.timeline-shell {
+  min-height: 100vh;
+  padding: 32px;
+  background:
+    radial-gradient(circle at 18% 14%, rgba(135, 179, 141, 0.08), transparent 30%),
+    linear-gradient(135deg, #11110f 0%, #181713 52%, #10100f 100%);
+}
+
+.timeline-header {
+  max-width: 1080px;
+  margin: 0 auto 28px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.timeline-header h1 {
+  margin: 0;
+  font-size: 32px;
+  letter-spacing: 0.01em;
+}
+
+.timeline-layout {
+  max-width: 1080px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 28px;
+}
+
+.anchor-tree {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.arc-group {
+  margin-bottom: 16px;
+}
+
+.arc-label {
+  padding: 8px 12px;
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  color: var(--accent);
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  display: inline-block;
+}
+
+.session-group {
+  margin-left: 24px;
+  margin-bottom: 12px;
+}
+
+.session-label {
+  color: var(--muted);
+  font-size: 13px;
+  margin-bottom: 6px;
+  padding: 4px 0;
+}
+
+.anchor-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.anchor-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  position: relative;
+}
+
+.anchor-card.revealed {
+  border-left: 3px solid var(--accent-2);
+  background: rgba(135, 179, 141, 0.06);
+}
+
+.anchor-card.unrevealed {
+  border-left: 3px solid #444;
+  background: rgba(0, 0, 0, 0.12);
+  opacity: 0.65;
+}
+
+.anchor-connector {
+  width: 2px;
+  min-height: 20px;
+  background: var(--accent-2);
+  margin-left: 24px;
+  opacity: 0.3;
+}
+
+.anchor-connector.dim {
+  background: #444;
+  opacity: 0.2;
+}
+
+.anchor-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.anchor-body {
+  min-width: 0;
+}
+
+.anchor-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 3px;
+}
+
+.anchor-desc {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.anchor-tags {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+
+.anchor-tag {
+  padding: 2px 7px;
+  border: 1px solid rgba(135, 179, 141, 0.3);
+  border-radius: 999px;
+  color: var(--accent-2);
+  font-size: 11px;
+}
+
+.badge-revealed {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(135, 179, 141, 0.15);
+  color: var(--accent-2);
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.badge-unrevealed {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #666;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+/* Clue board */
+
+.clue-board {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: rgba(18, 18, 17, 0.88);
+  padding: 20px;
+  height: fit-content;
+  position: sticky;
+  top: 32px;
+}
+
+.clue-board h2 {
+  margin: 0 0 14px;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.clue-filters {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.clue-filter {
+  padding: 4px 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.clue-filter.active {
+  border-color: var(--accent-2);
+  color: var(--accent-2);
+  background: rgba(135, 179, 141, 0.1);
+}
+
+.clue-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.clue-card {
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.clue-card.known {
+  border-color: rgba(135, 179, 141, 0.25);
+}
+
+.clue-card.suspected {
+  border-color: rgba(201, 164, 106, 0.2);
+  opacity: 0.7;
+}
+
+.clue-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.clue-desc {
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.clue-source {
+  margin-top: 6px;
+  font-size: 11px;
+  color: var(--accent);
+}
+
+.clue-placeholder {
+  font-size: 13px;
+  color: var(--muted);
+  font-style: italic;
+}
+
+.empty-state {
+  padding: 24px;
+  color: var(--muted);
+  text-align: center;
+  font-size: 14px;
+}
+
+@media (max-width: 860px) {
+  .timeline-layout {
+    grid-template-columns: 1fr;
+  }
+  .clue-board {
+    position: static;
   }
 }
 

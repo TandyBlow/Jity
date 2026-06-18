@@ -1,6 +1,6 @@
 "use client";
 
-import { BookOpen, History, Loader2, RefreshCw, Send, Sparkles } from "lucide-react";
+import { BookOpen, History, Loader2, MapPin, PenTool, RefreshCw, Send, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -137,6 +137,16 @@ export default function Home() {
             <div className="brand-subtitle">GM scenario console</div>
           </div>
           <div className="brand-actions">
+            <Link
+              className="icon-button"
+              href={sessionId ? `/timeline?session=${sessionId}` : "/timeline"}
+              title="发现时间线"
+            >
+              <MapPin size={17} />
+            </Link>
+            <Link className="icon-button" href="/curator" title="战役编辑器">
+              <PenTool size={17} />
+            </Link>
             <Link className="icon-button" href="/dev-log" title="开发日志">
               <History size={17} />
             </Link>
