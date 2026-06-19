@@ -3,7 +3,6 @@
 Pure Python computation from model_outputs instrumentation data.
 Zero LLM calls. Metrics compared against auto_play.py baseline z-scores.
 """
-from __future__ import annotations
 
 import logging
 from dataclasses import dataclass, field

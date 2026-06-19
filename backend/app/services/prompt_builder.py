@@ -1,7 +1,14 @@
-from __future__ import annotations
 
 from dataclasses import dataclass, field
 from typing import Any
+
+
+@dataclass
+class PromptMeta:
+    """Metadata returned alongside the prompt string for downstream consumers."""
+    temperature: float = 0.7
+    sanity_multiplier: float = 1.0
+    clue_style: str = ""
 
 
 @dataclass
@@ -35,7 +42,7 @@ RECAP_SYSTEM_PROMPT = """你是一个TRPG战役的叙事记录员。根据最近
 
 
 class PromptBuilder:
-    def build(self, input: PromptInput) -> str:
+    def build(self, input: PromptInput) -> tuple[str, PromptMeta]:
         knowledge = "\n\n".join(
             f"[{chunk['source_type']}] {chunk['title']}\n{chunk['content'][:1200]}"
             for chunk in input.retrieved_chunks
@@ -170,7 +177,15 @@ class PromptBuilder:
             "}"
         )
 
-        return "\n".join(parts)
+        meta = PromptMeta()
+        # Extract difficulty from campaign_context
+        if input.campaign_context:
+            ctx = input.campaign_context
+            if "difficulty" in ctx.lower() or "难度" in ctx:
+                meta.temperature = 0.7  # default, overridden by difficulty settings
+                meta.clue_style = "通过环境细节和NPC对话间接暗示线索方向"
+
+        return "\n".join(parts), meta
 
     # ── Static helpers ──
 

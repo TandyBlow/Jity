@@ -1,4 +1,3 @@
-from __future__ import annotations
 
 import json
 import logging
@@ -55,6 +54,7 @@ class LLMClient:
         self,
         prompt: str,
         model: str | None = None,
+        temperature: float | None = None,
     ) -> tuple[StoryOutput, int]:
         if not self.settings.deepseek_api_key:
             raise MissingAPIKeyError(

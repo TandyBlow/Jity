@@ -33,10 +33,23 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   return response.json() as Promise<T>;
 }
 
-export function createSession(model?: string): Promise<SessionResponse> {
+export function createSession(
+  model?: string,
+  options?: {
+    campaignFilename?: string;
+    arcIndex?: number;
+    sessionIndex?: number;
+  },
+): Promise<SessionResponse> {
+  const body: Record<string, unknown> = { model };
+  if (options?.campaignFilename) {
+    body.campaign_filename = options.campaignFilename;
+    body.arc_index = options.arcIndex ?? 0;
+    body.session_index = options.sessionIndex ?? 0;
+  }
   return request<SessionResponse>("/sessions", {
     method: "POST",
-    body: JSON.stringify({ model }),
+    body: JSON.stringify(body),
   });
 }
 
@@ -86,4 +99,23 @@ export function getSessionProgress(sessionId: string): Promise<{
     session_index: number;
     world_facts: WorldFactMemory[];
   }>(`/sessions/${sessionId}/progress`);
+}
+
+// ── Save Slot API ──
+
+export function listSlots(): Promise<{
+  slots: Array<{ id: number; campaign_id: string; slot_name: string; arc_index: number; session_index: number; last_played: string }>;
+}> {
+  return request("/campaigns/slots");
+}
+
+export function createSlot(slotName: string, campaignId?: string): Promise<{ status: string; slot_name: string }> {
+  return request("/campaigns/slots", {
+    method: "POST",
+    body: JSON.stringify({ slot_name: slotName, campaign_id: campaignId }),
+  });
+}
+
+export function deleteSlot(slotName: string): Promise<{ status: string }> {
+  return request(`/campaigns/slots/${encodeURIComponent(slotName)}`, { method: "DELETE" });
 }

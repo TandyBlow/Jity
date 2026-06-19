@@ -195,3 +195,33 @@ class TestProgressPersistence:
             row = db.read_campaign_progress(mgr.progress.campaign_id)
             assert row is not None
             assert row["fsm_state"] == "active/session_active"
+
+    def test_advance_session_normal(self):
+        """advance_session: session_active → session_recap → session_active."""
+        fsm = CampaignStateMachine()
+        fsm.start_campaign()
+        assert fsm.get_substate() == "session_active"
+        fsm.end_session()
+        assert fsm.get_substate() == "session_recap"
+        fsm.resume_session()
+        assert fsm.get_substate() == "session_active"
+
+    def test_advance_arc_from_session_recap(self):
+        """advance_arc: session_recap → arc_transition → arc_intro → session_active."""
+        fsm = CampaignStateMachine()
+        fsm.start_campaign()
+        fsm.end_session()
+        assert fsm.get_substate() == "session_recap"
+        fsm.arc_transition()
+        assert fsm.get_substate() == "arc_transition"
+        fsm.begin_arc()
+        assert fsm.get_substate() == "arc_intro"
+        fsm.session_active()
+        assert fsm.get_substate() == "session_active"
+
+    def test_end_campaign_from_any_state(self):
+        """end_campaign works from any state (wildcard source)."""
+        fsm = CampaignStateMachine()
+        fsm.start_campaign()
+        fsm.end_campaign()
+        assert fsm.get_substate() == "campaign_end"

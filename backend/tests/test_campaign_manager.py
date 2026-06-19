@@ -201,7 +201,7 @@ class TestCampaignManagerLoading:
         campaign = mgr.load(campaign_path)
 
         assert campaign.title == "测试"
-        assert campaign.version == 3
+        assert campaign.version == 4
         assert len(campaign.arcs) == 1
         assert mgr.is_loaded() is True
 
@@ -298,6 +298,6 @@ class TestCampaignManagerLoading:
         db.read_campaign_progress.return_value = None
         mgr = CampaignManager(db=db, campaigns_dir=tmp_path, scripted_story=MagicMock())
         campaign = mgr.load(campaign_path)
-        assert campaign.version == 3
+        assert campaign.version == 4
         assert campaign.constraints == ""
         assert campaign.starting_state == {}

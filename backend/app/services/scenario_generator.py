@@ -1,4 +1,3 @@
-from __future__ import annotations
 
 from app.database import Database
 from app.schemas import GenerateRequest, GenerateResponse, RetrievedChunk, StoryOutput
@@ -45,6 +44,11 @@ class ScenarioGenerator:
         state = session["state"]
         model = request.model or session["model"] or self.default_model
 
+        # Get current campaign session index for message attribution
+        _campaign_session_index = 0
+        if self.campaign_manager is not None and self.campaign_manager.is_loaded():
+            _campaign_session_index = getattr(self.campaign_manager.progress, "session_index", 0)
+
         # ── Injection Point #1: Campaign opening_scene override (turn 0 only) ──
         if self.campaign_manager is not None and self.campaign_manager.is_loaded():
             opening = self.campaign_manager.get_opening_scene()
@@ -59,8 +63,8 @@ class ScenarioGenerator:
                     options=["继续"],
                     current_location=state.get("current_location", ""),
                 )
-                self.db.add_message(session_id, "user", request.player_action)
-                self.db.add_message(session_id, "assistant", output.model_dump_json())
+                self.db.add_message(session_id, "user", request.player_action, _campaign_session_index)
+                self.db.add_message(session_id, "assistant", output.model_dump_json(), _campaign_session_index)
                 self.state_manager.save_state(session_id, session["game_name"], model, state)
                 output_id = self.db.add_model_output(
                     session_id=session_id,
@@ -93,7 +97,7 @@ class ScenarioGenerator:
             turn = int(state.get("turn", 0))
             campaign_context = self.campaign_manager.inject_context(state, turn)
 
-        prompt = self.prompt_builder.build(
+        prompt, meta = self.prompt_builder.build(
             PromptInput(
                 player_action=request.player_action,
                 game_state=state,
@@ -117,10 +121,10 @@ class ScenarioGenerator:
             source = "scripted"
         else:
             try:
-                output, latency_ms = await self.llm_client.generate(prompt, model)
+                output, latency_ms = await self.llm_client.generate(prompt, model, temperature=meta.temperature)
             except LLMRequestError as exc:
-                self.db.add_message(session_id, "user", request.player_action)
-                self.db.add_message(session_id, "assistant_error", str(exc))
+                self.db.add_message(session_id, "user", request.player_action, _campaign_session_index)
+                self.db.add_message(session_id, "assistant_error", str(exc), _campaign_session_index)
                 output_id = self.db.add_model_output(
                     session_id=session_id,
                     model=model,
@@ -135,8 +139,8 @@ class ScenarioGenerator:
                 )
                 raise ScenarioGenerationError(f"{exc} model_output_id={output_id}", output_id) from exc
             except LLMOutputParseError as exc:
-                self.db.add_message(session_id, "user", request.player_action)
-                self.db.add_message(session_id, "assistant_error", exc.raw_output)
+                self.db.add_message(session_id, "user", request.player_action, _campaign_session_index)
+                self.db.add_message(session_id, "assistant_error", exc.raw_output, _campaign_session_index)
                 output_id = self.db.add_model_output(
                     session_id=session_id,
                     model=model,
@@ -153,9 +157,50 @@ class ScenarioGenerator:
             source = "llm"
         next_state = self.state_manager.apply_output(state, request.player_action, output)
 
-        self.db.add_message(session_id, "user", request.player_action)
-        self.db.add_message(session_id, "assistant", output.model_dump_json())
+        self.db.add_message(session_id, "user", request.player_action, _campaign_session_index)
+        self.db.add_message(session_id, "assistant", output.model_dump_json(), _campaign_session_index)
         self.state_manager.save_state(session_id, session["game_name"], model, next_state)
+
+        # ── NPC Relations delta processing ──
+        if (self.campaign_manager is not None
+            and self.campaign_manager.is_loaded()
+            and output.npc_relations_delta):
+            try:
+                progress = self.campaign_manager.progress
+                row = self.db.read_campaign_progress(progress.campaign_id)
+                existing_json = row.get("npc_relations", "[]") if row else "[]"
+                relations = json.loads(existing_json) if isinstance(existing_json, str) else existing_json
+                relations_by_name = {r["name"]: r for r in relations}
+                for delta in output.npc_relations_delta:
+                    name = delta.get("name", "")
+                    sentiment = delta.get("sentiment", "neutral")
+                    if not name:
+                        continue
+                    if name not in relations_by_name:
+                        relations_by_name[name] = {
+                            "name": name, "affinity": 0,
+                            "last_interaction_turn": state.get("turn", 0), "note": ""
+                        }
+                    entry = relations_by_name[name]
+                    if sentiment == "positive":
+                        entry["affinity"] = min(entry.get("affinity", 0) + 1, 10)
+                    elif sentiment == "negative":
+                        entry["affinity"] = max(entry.get("affinity", 0) - 1, -10)
+                    entry["last_interaction_turn"] = state.get("turn", 0)
+                    entry["note"] = delta.get("note", "") or entry.get("note", "")
+                self.db.update_npc_relations(
+                    progress.campaign_id,
+                    json.dumps(list(relations_by_name.values()), ensure_ascii=False)
+                )
+            except Exception:
+                pass
+
+        # ── Injection Point #3: Session auto-advance check ──
+        if self.campaign_manager is not None and self.campaign_manager.is_loaded():
+            turn_in_session = getattr(self.campaign_manager.progress, "turn_in_session", 0)
+            max_turns = self.campaign_manager._resolve_max_turns()
+            if turn_in_session >= max_turns:
+                await self.campaign_manager.advance_session()
 
         # ── Per-turn instrumentation ──
         metrics = {}

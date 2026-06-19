@@ -4,7 +4,7 @@ import { BookOpen, History, Loader2, MapPin, PenTool, RefreshCw, Send, Sparkles 
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-import { createSession, generateScene } from "@/lib/api";
+import { createSession, createSlot, generateScene, listSlots } from "@/lib/api";
 import type { GameState, GenerateResponse, ItemMemory, NPCMemory, QuestMemory, RetrievedChunk, StoryOutput, WorldFactMemory } from "@/types";
 
 const initialOutput: StoryOutput = {
@@ -68,22 +68,56 @@ export default function Home() {
   const [action, setAction] = useState(INITIAL_ACTION);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [slots, setSlots] = useState<Array<{ slot_name: string; arc_index: number; session_index: number }>>([]);
+  const [selectedSlot, setSelectedSlot] = useState("default");
   const statusDeltaHints = buildStatusDeltaHints(output);
 
   useEffect(() => {
     let mounted = true;
-    createSession(model)
-      .then((session) => {
+
+    // Check for campaign entry point from Timeline "从此处开始"
+    let campaignOpts: { campaignFilename?: string; arcIndex?: number; sessionIndex?: number } | undefined;
+    try {
+      const entryJson = sessionStorage.getItem("campaign_entry");
+      if (entryJson) {
+        const entry = JSON.parse(entryJson);
+        sessionStorage.removeItem("campaign_entry");
+        campaignOpts = {
+          campaignFilename: entry.campaignFilename,
+          arcIndex: entry.arcIndex,
+          sessionIndex: entry.sessionIndex,
+        };
+      }
+    } catch {
+      // Ignore parse errors
+    }
+
+    createSession(model, campaignOpts)
+      .then(async (session) => {
         if (!mounted) return;
         setSessionId(session.session_id);
         setState(session.state);
         setModel(session.model);
+        // If mid-campaign entry, auto-trigger generate to show campaign opening_scene
+        if (campaignOpts?.campaignFilename && (campaignOpts.arcIndex || 0) > 0) {
+          // Use a short delay to ensure sessionId is set before generate
+          setTimeout(() => {
+            handleGenerate("（入场）环顾四周，了解当前处境。");
+          }, 100);
+        }
       })
       .catch((err: Error) => setError(err.message));
     return () => {
       mounted = false;
     };
   }, []);
+
+  // Load save slots
+  useEffect(() => {
+    listSlots().then(r => {
+      if (r.slots?.length) setSlots(r.slots);
+    }).catch(() => {});
+  }, [sessionId]);
 
   async function handleGenerate(nextAction = action) {
     if (!sessionId || !nextAction.trim()) return;
@@ -167,6 +201,31 @@ export default function Home() {
         <label className="label" htmlFor="action">
           玩家行动
         </label>
+        {slots.length > 0 && (
+          <div style={{ marginBottom: 8, display: "flex", alignItems: "center", gap: 8, fontSize: "0.85rem" }}>
+            <span>存档:</span>
+            <select value={selectedSlot} onChange={(e) => setSelectedSlot(e.target.value)}
+              style={{ padding: "2px 6px" }}>
+              {slots.map(s => (
+                <option key={s.slot_name} value={s.slot_name}>
+                  {s.slot_name} (A{s.arc_index + 1}S{s.session_index + 1})
+                </option>
+              ))}
+            </select>
+            <button onClick={async () => {
+              const name = prompt("新存档名称:");
+              if (name) {
+                try {
+                  await createSlot(name);
+                  const updated = await listSlots();
+                  if (updated.slots?.length) setSlots(updated.slots);
+                } catch (e: unknown) {
+                  alert(e instanceof Error ? e.message : String(e));
+                }
+              }
+            }} style={{ padding: "2px 8px" }}>+</button>
+          </div>
+        )}
         <textarea
           className="textarea"
           id="action"

@@ -7,7 +7,6 @@ priority-ordered section dropping for truncation.
 cl100k_base overestimates Chinese by ~68% — this is a deliberate
 safety margin so we never accidentally exceed the real context window.
 """
-from __future__ import annotations
 
 import logging
 from typing import Protocol

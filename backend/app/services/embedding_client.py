@@ -3,7 +3,6 @@
 Auto-detects embedding dimension via test call.
 Falls back to SHA-256 hash if API is unavailable.
 """
-from __future__ import annotations
 
 import hashlib
 import logging

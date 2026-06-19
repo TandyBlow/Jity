@@ -3,11 +3,14 @@
 Uses deepseek-v4-pro for creative structured generation.
 Single-shot with validation gate; staged pipeline as fallback.
 """
-from __future__ import annotations
 
+import asyncio
 import json
 import logging
+import re
 from pathlib import Path
+
+import charset_normalizer
 from typing import Any
 
 from app.database import Database
@@ -120,3 +123,147 @@ class CampaignGenerator:
         if data.get("version", 1) < CURRENT_SCHEMA_VERSION:
             data = migrate(data, CURRENT_SCHEMA_VERSION)
         return data
+
+    async def generate_from_novel(self, text: str) -> dict[str, Any]:
+        """Full novel→campaign pipeline: detect chapters → extract anchors → assemble.
+
+        Args:
+            text: Full novel text (decoded to UTF-8 string).
+
+        Returns:
+            Validated campaign dict with _extraction_errors list.
+        """
+        chapters = NovelIngestor.split_chapters(text)
+        logger.info("Novel pipeline: detected %d chapters", len(chapters))
+
+        # Stage 1: Per-chapter anchor extraction
+        extraction_results: list[dict] = []
+        extraction_errors: list[str] = []
+        all_lines = text.split("\n")
+
+        for ch in chapters:
+            chapter_text = "\n".join(all_lines[ch["start_line"]:ch["end_line"]])
+            # Truncate very long chapters to ~3K chars for the extraction prompt
+            chapter_snippet = chapter_text[:3000]
+            for attempt in range(3):
+                try:
+                    result = await self.llm_client.generate_json(
+                        (
+                            "从以下小说章节中提取关键剧情事件、NPC（名称和简述）和地点变更。"
+                            "返回JSON格式：{\"events\": [{\"name\": \"事件名\", \"description\": \"简述\", \"priority\": 1-5}], "
+                            "\"npcs\": [{\"name\": \"NPC名\", \"description\": \"简述\"}], "
+                            "\"locations\": [\"地点名\"]}\n\n"
+                            f"章节：{ch['title']}\n\n{chapter_snippet}"
+                        ),
+                        model="deepseek-v4-flash",
+                        max_tokens=1000,
+                        temperature=0.3,
+                    )
+                    extraction_results.append({
+                        "chapter_index": ch["index"],
+                        "title": ch["title"],
+                        "data": result,
+                    })
+                    break
+                except Exception as e:
+                    if attempt == 2:
+                        extraction_errors.append(ch["title"])
+                        logger.warning("Chapter extraction failed after 3 retries: %s — %s", ch["title"], e)
+            # Brief delay to avoid rate limits
+            await asyncio.sleep(0.1)
+
+        # Stage 2: Cross-chapter assembly
+        assembly_input = json.dumps(extraction_results, ensure_ascii=False)
+        # Token budget guard: truncate if too long (>80K chars)
+        if len(assembly_input) > 80000:
+            assembly_input = assembly_input[:80000]
+            logger.warning("Novel pipeline: assembly input truncated to 80K chars")
+
+        assembly_prompt = (
+            "将以下小说章节的剧情提取结果合并为一个完整的campaign.json文件（3-5个叙事弧arcs，每个arc含2-4个session）。"
+            "请确保：\n"
+            "1. 按时间顺序组织arc\n"
+            "2. 每个session包含1-2个锚点事件\n"
+            "3. 为每个session生成opening_scene开场叙事（中文，50-100字）\n"
+            "4. NPC信息整合到core_conflict和constraints中\n\n"
+            f"## 章节提取结果\n{assembly_input}"
+        )
+
+        try:
+            campaign_data = await self.llm_client.generate_json(
+                assembly_prompt,
+                model="deepseek-v4-pro",
+                max_tokens=50000,
+                temperature=0.7,
+            )
+        except Exception as e:
+            raise CampaignGenerationError(f"Cross-chapter assembly failed: {e}") from e
+
+        campaign_data = self._ensure_minimal_structure(campaign_data)
+        try:
+            campaign_adapter.validate_python(campaign_data)
+        except Exception as e:
+            raise CampaignGenerationError(f"Assembled campaign validation failed: {e}") from e
+
+        campaign_data["_extraction_errors"] = extraction_errors
+        return campaign_data
+
+
+class NovelIngestor:
+    """TXT preprocessing and chapter detection for novel→campaign pipeline."""
+
+    CHAPTER_PATTERN = re.compile(
+        r'^\s*(?:第[零一二三四五六七八九十百千\d]+[章回卷节幕]|楔子|尾声|序[章言]|终[章章]|[第序][章幕])\s*[^\n]*$',
+        re.MULTILINE,
+    )
+
+    # Fallback: if fewer than this many chapters detected, use size-based chunking
+    MIN_CHAPTERS_FOR_REGEX = 3
+    CHUNK_LINES = 3000
+
+    @staticmethod
+    def detect_encoding(file_bytes: bytes) -> str:
+        """Detect text encoding using charset-normalizer."""
+        result = charset_normalizer.from_bytes(file_bytes).best()
+        return result.encoding if result else "utf-8"
+
+    @classmethod
+    def split_chapters(cls, text: str) -> list[dict[str, Any]]:
+        """Split text into chapters based on regex pattern.
+
+        Falls back to size-based chunking if fewer than MIN_CHAPTERS_FOR_REGEX detected.
+        Returns:
+            [{"index": 0, "title": "序章", "start_line": 0, "end_line": 42}, ...]
+        """
+        all_lines = text.split("\n")
+        matches = list(cls.CHAPTER_PATTERN.finditer(text))
+
+        if len(matches) >= cls.MIN_CHAPTERS_FOR_REGEX:
+            chapters = []
+            for i, match in enumerate(matches):
+                start_line = text[:match.start()].count("\n")
+                if i + 1 < len(matches):
+                    end_line = text[: matches[i + 1].start()].count("\n")
+                else:
+                    end_line = len(all_lines)
+                title = match.group(0).strip()
+                if start_line < end_line:
+                    chapters.append({
+                        "index": i, "title": title,
+                        "start_line": start_line, "end_line": end_line,
+                    })
+            return chapters
+
+        # Fallback: size-based chunking
+        chapters = []
+        chunk_idx = 0
+        for start in range(0, len(all_lines), cls.CHUNK_LINES):
+            end = min(start + cls.CHUNK_LINES, len(all_lines))
+            chapters.append({
+                "index": chunk_idx,
+                "title": f"第{chunk_idx + 1}段",
+                "start_line": start,
+                "end_line": end,
+            })
+            chunk_idx += 1
+        return chapters

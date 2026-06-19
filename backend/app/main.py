@@ -1,8 +1,6 @@
-from __future__ import annotations
+import json
 
-import json as json_module
-
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import get_settings
@@ -17,7 +15,7 @@ from app.schemas import (
 )
 from pathlib import Path
 
-from app.services.campaign_generator import CampaignGenerationError, CampaignGenerator
+from app.services.campaign_generator import CampaignGenerationError, CampaignGenerator, NovelIngestor
 from app.services.campaign_manager import CampaignManager
 from app.services.evaluation import EvaluationModule
 from app.services.game_state import GameStateManager
@@ -98,6 +96,47 @@ async def generate_campaign(request: dict[str, str]) -> dict[str, object]:
     }
 
 
+@app.post("/campaigns/generate-from-novel")
+async def generate_from_novel(file: UploadFile = File(...)) -> dict[str, object]:
+    """Generate campaign.json from uploaded novel TXT file.
+
+    Detects encoding, splits chapters, extracts anchors per chapter,
+    assembles into campaign, and saves.
+    """
+    if not file.filename or not file.filename.lower().endswith(".txt"):
+        raise HTTPException(status_code=400, detail="Only .txt files are supported")
+
+    try:
+        raw_bytes = await file.read()
+    except Exception as exc:
+        raise HTTPException(status_code=400, detail=f"Failed to read file: {exc}") from exc
+
+    if not raw_bytes:
+        raise HTTPException(status_code=400, detail="File is empty")
+
+    # Detect encoding and decode
+    encoding = NovelIngestor.detect_encoding(raw_bytes)
+    try:
+        text = raw_bytes.decode(encoding)
+    except (UnicodeDecodeError, LookupError):
+        text = raw_bytes.decode("utf-8", errors="replace")
+
+    try:
+        campaign_data = await campaign_generator.generate_from_novel(text)
+    except CampaignGenerationError as exc:
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
+    except MissingAPIKeyError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+
+    filepath = campaign_generator.save(campaign_data)
+    return {
+        "status": "ok",
+        "campaign": campaign_data,
+        "saved_to": str(filepath),
+        "extraction_errors": campaign_data.get("_extraction_errors", []),
+    }
+
+
 @app.get("/campaigns")
 def list_campaigns() -> dict[str, object]:
     """List all saved campaign.json files in campaigns_dir."""
@@ -108,14 +147,18 @@ def list_campaigns() -> dict[str, object]:
     campaign_files: list[dict[str, object]] = []
     for fpath in sorted(campaigns_dir.glob("*.json")):
         try:
-            data = json_module.loads(fpath.read_text(encoding="utf-8"))
+            data = json.loads(fpath.read_text(encoding="utf-8"))
             campaign_files.append({
                 "filename": fpath.name,
                 "title": data.get("title", fpath.stem),
                 "version": data.get("version", 1),
                 "arc_count": len(data.get("arcs", [])),
+                "description": data.get("description", ""),
+                "tags": data.get("tags", []),
+                "estimated_duration": data.get("estimated_duration", 0),
+                "difficulty": data.get("difficulty", "normal"),
             })
-        except (json_module.JSONDecodeError, OSError):
+        except (json.JSONDecodeError, OSError):
             continue
     return {"campaigns": campaign_files}
 
@@ -139,7 +182,7 @@ def save_campaign(request: dict[str, object]) -> dict[str, object]:
     campaigns_dir = settings.campaigns_dir
     campaigns_dir.mkdir(parents=True, exist_ok=True)
     fpath = campaigns_dir / filename
-    fpath.write_text(json_module.dumps(campaign_data, ensure_ascii=False, indent=2), encoding="utf-8")
+    fpath.write_text(json.dumps(campaign_data, ensure_ascii=False, indent=2), encoding="utf-8")
 
     return {"status": "saved", "filename": filename, "path": str(fpath)}
 
@@ -152,11 +195,64 @@ def get_campaign_file(filename: str) -> dict[str, object]:
         raise HTTPException(status_code=404, detail=f"Campaign file not found: {filename}")
 
     try:
-        data = json_module.loads(fpath.read_text(encoding="utf-8"))
-    except (json_module.JSONDecodeError, OSError) as exc:
+        data = json.loads(fpath.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError) as exc:
         raise HTTPException(status_code=500, detail=f"Failed to read campaign: {exc}")
 
     return {"filename": filename, "campaign": data}
+
+
+@app.get("/campaigns/slots")
+def list_slots() -> dict[str, object]:
+    """List all save slots."""
+    with db.connect() as conn:
+        rows = conn.execute(
+            """SELECT id, campaign_id, slot_name, arc_index, session_index, updated_at
+               FROM campaign_progress ORDER BY updated_at DESC"""
+        ).fetchall()
+        slots = [{
+            "id": row["id"],
+            "campaign_id": row["campaign_id"],
+            "slot_name": row["slot_name"],
+            "arc_index": row["arc_index"],
+            "session_index": row["session_index"],
+            "last_played": row["updated_at"],
+        } for row in rows]
+    return {"slots": slots}
+
+
+@app.post("/campaigns/slots")
+def create_slot(request: dict[str, str]) -> dict[str, object]:
+    """Create a named save slot."""
+    slot_name = request.get("slot_name", "").strip()
+    if not slot_name:
+        raise HTTPException(status_code=400, detail="slot_name is required")
+    import re
+    if not re.match(r'^[a-zA-Z0-9_一-鿿]+$', slot_name):
+        raise HTTPException(status_code=400, detail="slot_name contains invalid characters")
+    campaign_id = request.get("campaign_id", "default_campaign")
+    try:
+        with db.connect() as conn:
+            conn.execute(
+                """INSERT INTO campaign_progress (campaign_id, slot_name, arc_index, session_index)
+                   VALUES (?, ?, 0, 0)""",
+                (campaign_id, slot_name),
+            )
+    except Exception:
+        raise HTTPException(status_code=409, detail=f"Slot '{slot_name}' already exists")
+    return {"status": "created", "slot_name": slot_name}
+
+
+@app.delete("/campaigns/slots/{slot_name}")
+def delete_slot(slot_name: str) -> dict[str, object]:
+    """Delete a save slot by name."""
+    with db.connect() as conn:
+        result = conn.execute(
+            "DELETE FROM campaign_progress WHERE slot_name = ?", (slot_name,)
+        )
+        if result.rowcount == 0:
+            raise HTTPException(status_code=404, detail=f"Slot '{slot_name}' not found")
+    return {"status": "deleted", "slot_name": slot_name}
 
 
 @app.get("/sessions/{session_id}/progress")
@@ -181,7 +277,7 @@ def get_session_progress(session_id: str) -> dict[str, object]:
 
     row = db.read_campaign_progress(session_id)
     if row:
-        progress_data["revealed_anchors"] = json_module.loads(
+        progress_data["revealed_anchors"] = json.loads(
             row.get("revealed_anchors", "[]")
         )
         progress_data["arc_index"] = row.get("arc_index", 0)
@@ -208,6 +304,40 @@ def models() -> dict[str, list[str]]:
 @app.post("/sessions", response_model=SessionResponse)
 def create_session(request: CreateSessionRequest) -> SessionResponse:
     payload = state_manager.create_session(request.game_name, request.model or settings.llm_model)
+    session_id = payload["session_id"]
+
+    # ── Campaign wiring: load campaign if filename provided ──
+    if request.campaign_filename:
+        campaign_path = settings.campaigns_dir / request.campaign_filename
+        if not campaign_path.exists():
+            raise HTTPException(
+                status_code=404,
+                detail=f"Campaign file not found: {request.campaign_filename}",
+            )
+        try:
+            campaign_manager.load(
+                campaign_path,
+                campaign_id=session_id,
+                start_arc_index=request.arc_index,
+                start_session_index=request.session_index,
+            )
+            db.set_session_campaign_id(session_id, session_id)
+            # Merge entry_state for mid-campaign starts
+            if request.arc_index > 0 or request.session_index > 0:
+                payload["state"] = state_manager.merge_entry_state(
+                    payload["state"],
+                    campaign_manager.campaign,
+                    request.arc_index,
+                    request.session_index,
+                )
+                # Write merged state to DB so generate can read it
+                state_manager.save_state(
+                    session_id, payload["game_name"],
+                    payload["model"], payload["state"]
+                )
+        except (FileNotFoundError, ValueError) as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+
     return SessionResponse(**payload)
 
 

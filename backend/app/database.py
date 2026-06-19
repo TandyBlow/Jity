@@ -1,4 +1,3 @@
-from __future__ import annotations
 
 import json
 import sqlite3
@@ -42,7 +41,9 @@ class Database:
                 );
 
                 CREATE TABLE IF NOT EXISTS campaign_progress (
-                  campaign_id TEXT PRIMARY KEY,
+                  id INTEGER PRIMARY KEY AUTOINCREMENT,
+                  campaign_id TEXT NOT NULL,
+                  slot_name TEXT NOT NULL DEFAULT 'default',
                   arc_index INTEGER NOT NULL DEFAULT 0,
                   session_index INTEGER NOT NULL DEFAULT 0,
                   turn_in_session INTEGER NOT NULL DEFAULT 0,
@@ -50,7 +51,8 @@ class Database:
                   revealed_anchors TEXT NOT NULL DEFAULT '[]',
                   completed_arcs TEXT NOT NULL DEFAULT '[]',
                   created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+                  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                  UNIQUE(campaign_id, slot_name)
                 );
 
                 CREATE TABLE IF NOT EXISTS session_messages (
@@ -121,12 +123,62 @@ class Database:
             self._ensure_column(db, "model_outputs", "token_count", "INTEGER NOT NULL DEFAULT 0")
             self._ensure_column(db, "campaign_progress", "recap_compressed", "TEXT NOT NULL DEFAULT ''")
             self._ensure_column(db, "campaign_progress", "recap_full", "TEXT NOT NULL DEFAULT ''")
+            self._ensure_column(db, "game_sessions", "campaign_id", "TEXT")
+            self._ensure_column(db, "session_messages", "campaign_session_index", "INTEGER NOT NULL DEFAULT 0")
+            self._ensure_column(db, "campaign_progress", "npc_relations", "TEXT NOT NULL DEFAULT '[]'")
+
+            # Migrate campaign_progress: old PK → new auto-increment id + UNIQUE(campaign_id, slot_name)
+            existing_cols = {row["name"] for row in db.execute("PRAGMA table_info(campaign_progress)")}
+            if "id" not in existing_cols:
+                db.executescript("""
+                    CREATE TABLE IF NOT EXISTS campaign_progress_new (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        campaign_id TEXT NOT NULL,
+                        slot_name TEXT NOT NULL DEFAULT 'default',
+                        arc_index INTEGER NOT NULL DEFAULT 0,
+                        session_index INTEGER NOT NULL DEFAULT 0,
+                        turn_in_session INTEGER NOT NULL DEFAULT 0,
+                        fsm_state TEXT NOT NULL DEFAULT 'idle',
+                        revealed_anchors TEXT NOT NULL DEFAULT '[]',
+                        completed_arcs TEXT NOT NULL DEFAULT '[]',
+                        recap_compressed TEXT NOT NULL DEFAULT '',
+                        recap_full TEXT NOT NULL DEFAULT '',
+                        created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                        updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                        UNIQUE(campaign_id, slot_name)
+                    );
+                    INSERT OR IGNORE INTO campaign_progress_new
+                        (campaign_id, slot_name, arc_index, session_index, turn_in_session,
+                         fsm_state, revealed_anchors, completed_arcs, recap_compressed, recap_full)
+                        SELECT campaign_id, 'default', arc_index, session_index, turn_in_session,
+                               fsm_state, revealed_anchors, completed_arcs,
+                               COALESCE(recap_compressed, ''), COALESCE(recap_full, '')
+                        FROM campaign_progress;
+                    DROP TABLE campaign_progress;
+                    ALTER TABLE campaign_progress_new RENAME TO campaign_progress;
+                """)
 
     @staticmethod
     def _ensure_column(db: sqlite3.Connection, table: str, column: str, definition: str) -> None:
         columns = {row["name"] for row in db.execute(f"PRAGMA table_info({table})").fetchall()}
         if column not in columns:
             db.execute(f"ALTER TABLE {table} ADD COLUMN {column} {definition}")
+
+    def update_npc_relations(self, campaign_id: str, relations_json: str, slot_name: str = "default") -> None:
+        """Update npc_relations JSON for a campaign progress row."""
+        with self.connect() as db:
+            db.execute(
+                "UPDATE campaign_progress SET npc_relations = ?, updated_at = CURRENT_TIMESTAMP WHERE campaign_id = ? AND slot_name = ?",
+                (relations_json, campaign_id, slot_name),
+            )
+
+    def set_session_campaign_id(self, session_id: str, campaign_id: str) -> None:
+        """Set the campaign_id on a game session row."""
+        with self.connect() as db:
+            db.execute(
+                "UPDATE game_sessions SET campaign_id = ? WHERE id = ?",
+                (campaign_id, session_id),
+            )
 
     def write_session(
         self,
@@ -192,11 +244,11 @@ class Database:
         with self.connect() as db:
             return db.execute("SELECT * FROM game_sessions WHERE id = ?", (session_id,)).fetchone()
 
-    def add_message(self, session_id: str, role: str, content: str) -> None:
+    def add_message(self, session_id: str, role: str, content: str, campaign_session_index: int = 0) -> None:
         with self.connect() as db:
             db.execute(
-                "INSERT INTO session_messages (session_id, role, content) VALUES (?, ?, ?)",
-                (session_id, role, content),
+                "INSERT INTO session_messages (session_id, role, content, campaign_session_index) VALUES (?, ?, ?, ?)",
+                (session_id, role, content, campaign_session_index),
             )
 
     def get_messages(self, session_id: str) -> list[dict[str, Any]]:
@@ -212,24 +264,24 @@ class Database:
             ).fetchall()
             return [dict(row) for row in rows]
 
-    def read_campaign_progress(self, campaign_id: str) -> dict[str, Any] | None:
+    def read_campaign_progress(self, campaign_id: str, slot_name: str = "default") -> dict[str, Any] | None:
         with self.connect() as db:
             row = db.execute(
-                "SELECT * FROM campaign_progress WHERE campaign_id = ?",
-                (campaign_id,),
+                "SELECT * FROM campaign_progress WHERE campaign_id = ? AND slot_name = ?",
+                (campaign_id, slot_name),
             ).fetchone()
             if not row:
                 return None
             return dict(row)
 
-    def write_campaign_progress(self, campaign_id: str, arc_index: int, session_index: int, turn_in_session: int, fsm_state: str, revealed_anchors: list[str] | None = None, completed_arcs: list[int] | None = None, recap_compressed: str = "", recap_full: str = "") -> None:
+    def write_campaign_progress(self, campaign_id: str, arc_index: int, session_index: int, turn_in_session: int, fsm_state: str, revealed_anchors: list[str] | None = None, completed_arcs: list[int] | None = None, recap_compressed: str = "", recap_full: str = "", slot_name: str = "default") -> None:
         with self.connect() as db:
             db.execute(
                 """
                 INSERT INTO campaign_progress
-                  (campaign_id, arc_index, session_index, turn_in_session, fsm_state, revealed_anchors, completed_arcs, recap_compressed, recap_full)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-                ON CONFLICT(campaign_id) DO UPDATE SET
+                  (campaign_id, slot_name, arc_index, session_index, turn_in_session, fsm_state, revealed_anchors, completed_arcs, recap_compressed, recap_full)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(campaign_id, slot_name) DO UPDATE SET
                   arc_index = excluded.arc_index,
                   session_index = excluded.session_index,
                   turn_in_session = excluded.turn_in_session,
@@ -242,6 +294,7 @@ class Database:
                 """,
                 (
                     campaign_id,
+                    slot_name,
                     arc_index,
                     session_index,
                     turn_in_session,

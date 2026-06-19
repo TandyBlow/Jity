@@ -20,8 +20,8 @@ from app.schemas.campaign import (
 class TestMigrationChain:
     """Tests for version migration chain v1→v2→v3."""
 
-    def test_migrate_v1_to_v3(self):
-        """v1 data should be migrated to v3 and pass validation."""
+    def test_migrate_v1_to_v4(self):
+        """v1 data should be migrated to v4 and pass validation."""
         v1_data = {
             "version": 1,
             "title": "V1 测试",
@@ -29,15 +29,17 @@ class TestMigrationChain:
             "arcs": [],
         }
         migrated = migrate(v1_data)
-        assert migrated["version"] == 3
+        assert migrated["version"] == 4
         assert migrated["constraints"] == ""  # v2 default
         assert migrated["starting_state"] == {}  # v3 default
+        assert migrated["difficulty"] == "normal"  # v4 default
+        assert migrated["description"] == ""  # v4 default
         campaign = CampaignSchema.model_validate(migrated)
-        assert campaign.version == 3
+        assert campaign.version == 4
         assert campaign.title == "V1 测试"
 
-    def test_migrate_v2_to_v3(self):
-        """v2 data should be migrated to v3 (adds starting_state)."""
+    def test_migrate_v2_to_v4(self):
+        """v2 data should be migrated to v4."""
         v2_data = {
             "version": 2,
             "title": "V2 测试",
@@ -46,14 +48,15 @@ class TestMigrationChain:
             "constraints": "NPC不能死亡",
         }
         migrated = migrate(v2_data)
-        assert migrated["version"] == 3
+        assert migrated["version"] == 4
         assert migrated["constraints"] == "NPC不能死亡"  # preserved
         assert migrated["starting_state"] == {}  # v3 default added
+        assert migrated["difficulty"] == "normal"  # v4 default added
         campaign = CampaignSchema.model_validate(migrated)
-        assert campaign.version == 3
+        assert campaign.version == 4
 
-    def test_migrate_already_v3_is_idempotent(self):
-        """v3 data should remain unchanged by migration."""
+    def test_migrate_v3_to_v4_adds_fields(self):
+        """v3 data should be migrated to v4 (adds difficulty/description/tags/duration)."""
         v3_data = {
             "version": 3,
             "title": "V3 测试",
@@ -63,7 +66,11 @@ class TestMigrationChain:
             "starting_state": {"sanity": 50},
         }
         migrated = migrate(v3_data)
-        assert migrated == v3_data  # exact equality, no changes
+        assert migrated["version"] == 4
+        assert migrated["difficulty"] == "normal"
+        assert migrated["description"] == ""
+        assert migrated["tags"] == []
+        assert migrated["estimated_duration"] == 0
 
     def test_migrate_preserves_existing_fields(self):
         """Existing non-default values should not be overwritten."""
@@ -78,16 +85,17 @@ class TestMigrationChain:
         assert migrated["constraints"] == "自定义约束"  # NOT overwritten to ""
 
     def test_migrate_no_version_defaults_to_v1(self):
-        """Missing version field should be treated as v1."""
+        """Missing version field should be treated as v1, migrated to v4."""
         data = {
             "title": "无版本",
             "core_conflict": "冲突",
             "arcs": [],
         }
         migrated = migrate(data)
-        assert migrated["version"] == 3
+        assert migrated["version"] == 4
         assert migrated["constraints"] == ""
         assert migrated["starting_state"] == {}
+        assert migrated["difficulty"] == "normal"
 
 
 class TestTypeAdapter:

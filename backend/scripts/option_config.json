@@ -1,21 +1,4 @@
 {
   "strategy": "weighted_keyword",
-  "description": "auto_play.py option selection strategy — configurable keyword weights for autonomous play",
-  "keywords": [
-    {"term": "调查", "weight": 3.0, "note": "优先选择调查/探索类选项"},
-    {"term": "观察", "weight": 2.5, "note": "观察环境是克苏鲁TRPG的核心"},
-    {"term": "询问", "weight": 2.0, "note": "询问NPC获取信息"},
-    {"term": "检查", "weight": 2.5, "note": "检查物品/线索"},
-    {"term": "前往", "weight": 1.5, "note": "前往新地点推进剧情"},
-    {"term": "打开", "weight": 1.5, "note": "打开物品/包裹"},
-    {"term": "逃跑", "weight": 0.1, "note": "避免逃跑类选项（不符合调查员精神）"},
-    {"term": "放弃", "weight": 0.1, "note": "避免放弃类选项"},
-    {"term": "攻击", "weight": 0.5, "note": "降低暴力倾向"},
-    {"term": "继续", "weight": 1.0, "note": "默认选项"},
-    {"term": "等待", "weight": 0.2, "note": "避免消极等待"},
-    {"term": "无视", "weight": 0.1, "note": "避免无视线索"}
-  ],
-  "default_weight": 1.0,
-  "random_factor": 0.3,
   "max_turns_per_session": 30
 }

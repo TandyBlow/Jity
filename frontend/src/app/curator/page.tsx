@@ -26,6 +26,8 @@ export default function CuratorPage() {
   const [generating, setGenerating] = useState(false);
   const [saving, setSaving] = useState(false);
   const [status, setStatus] = useState("");
+  const [novelUploading, setNovelUploading] = useState(false);
+  const [novelErrors, setNovelErrors] = useState<string[]>([]);
 
   useEffect(() => {
     listCampaigns().then((r) => setCampaigns(r.campaigns ?? [])).catch(() => {});
@@ -36,6 +38,37 @@ export default function CuratorPage() {
       setCampaign(r.campaign as CampaignSchema);
       setFilename(fname);
     }).catch(() => setStatus("加载失败"));
+  }, []);
+
+  const handleNovelUpload = useCallback(async (file: File) => {
+    setNovelUploading(true);
+    setNovelErrors([]);
+    setStatus("从小说生成战役中…");
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      const res = await fetch(`${API_BASE}/campaigns/generate-from-novel`, {
+        method: "POST",
+        body: formData,
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ detail: "上传失败" }));
+        throw new Error((err as { detail?: string }).detail || "上传失败");
+      }
+      const data = await res.json();
+      if (data.campaign) {
+        setCampaign(data.campaign as CampaignSchema);
+        setFilename(file.name.replace(/\.\w+$/, "") + "_campaign.json");
+        setStatus("战役已生成，请审核后保存");
+      }
+      if (data.extraction_errors?.length) {
+        setNovelErrors(data.extraction_errors as string[]);
+      }
+    } catch (e: unknown) {
+      setStatus("生成失败: " + (e instanceof Error ? e.message : String(e)));
+    } finally {
+      setNovelUploading(false);
+    }
   }, []);
 
   const handleGenerate = useCallback(async () => {
@@ -226,6 +259,28 @@ export default function CuratorPage() {
             <button className="primary-button" style={{ marginTop: 0 }} onClick={handleGenerate} disabled={generating || !genPrompt.trim()}>
               {generating ? "生成中…" : "生成战役"}
             </button>
+
+            {/* Novel upload */}
+            <div style={{ marginTop: 16, padding: 12, border: "1px solid #333", borderRadius: 6 }}>
+              <h3 style={{ margin: "0 0 8px 0", fontSize: "0.95rem" }}>从小说 TXT 生成</h3>
+              <input
+                type="file"
+                accept=".txt"
+                disabled={novelUploading}
+                onChange={(e) => {
+                  const f = e.target.files?.[0];
+                  if (f) handleNovelUpload(f);
+                }}
+                style={{ fontSize: "0.85rem" }}
+              />
+              {novelUploading && <span style={{ marginLeft: 8, fontSize: "0.85rem" }}>正在分析小说…（约30-60秒）</span>}
+              {novelErrors.length > 0 && (
+                <div style={{ marginTop: 8, padding: 8, background: "#331111", borderRadius: 4, fontSize: "0.8rem" }}>
+                  <strong>以下章节提取失败，需人工标注：</strong>
+                  <ul style={{ margin: "4px 0 0 16px" }}>{novelErrors.map((e, i) => <li key={i}>{e}</li>)}</ul>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Basic info */}

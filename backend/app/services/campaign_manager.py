@@ -3,7 +3,6 @@
 Single coordinating service owning all campaign-aware concerns.
 Each concern in a focused method.
 """
-from __future__ import annotations
 
 import json
 from pathlib import Path
@@ -11,6 +10,8 @@ from typing import Any
 
 from app.database import Database
 from app.schemas.campaign import (
+    AnchorEvent,
+    AnchorTriggerConditions,
     CampaignSchema,
     CampaignProgress,
     migrate,
@@ -51,7 +52,13 @@ class CampaignManager:
         self._anchor_cooldowns: dict[str, int] = {}
         self._strategy: ContextStrategy = SimpleTruncationStrategy()  # anchor_type -> last_triggered_turn
 
-    def load(self, campaign_path: Path, campaign_id: str | None = None) -> CampaignSchema:
+    def load(
+        self,
+        campaign_path: Path,
+        campaign_id: str | None = None,
+        start_arc_index: int = 0,
+        start_session_index: int = 0,
+    ) -> CampaignSchema:
         """Load, version-check, migrate, validate campaign.json.
 
         Steps:
@@ -60,7 +67,7 @@ class CampaignManager:
         3. Run migration chain (v1→v2→v3)
         4. Validate against CampaignSchema via TypeAdapter
         5. Cache in self.campaign
-        6. Init FSM and progress
+        6. Init FSM and progress (from start_arc_index/start_session_index)
         7. Return validated CampaignSchema
 
         Raises:
@@ -94,13 +101,24 @@ class CampaignManager:
             self.progress = existing
             self._sync_fsm_from_progress()
         else:
-            self.progress = CampaignProgress(campaign_id=cid)
+            self.progress = CampaignProgress(
+                campaign_id=cid,
+                arc_index=start_arc_index,
+                session_index=start_session_index,
+            )
             self._init_fsm()
 
         return self.campaign
 
     def _init_fsm(self) -> None:
-        """Initialize FSM to start of campaign."""
+        """Initialize FSM to start of campaign.
+
+        Recreates the FSM to reset to idle state before starting.
+        This is needed because CampaignManager is a singleton and
+        may have leftover FSM state from a previous session.
+        """
+        from app.services.campaign_fsm import CampaignStateMachine
+        self.fsm = CampaignStateMachine()
         self.fsm.start_campaign()
         self._persist_progress()
 
@@ -108,13 +126,17 @@ class CampaignManager:
         """Restore FSM state from persisted progress data."""
         if self.progress is None:
             return
+        # Recreate FSM to reset to a clean state before applying saved state
+        from app.services.campaign_fsm import CampaignStateMachine
+        self.fsm = CampaignStateMachine()
+        self.fsm.start_campaign()
         row = self.db.read_campaign_progress(self.progress.campaign_id)
         if row and row.get("fsm_state"):
             saved_state = row["fsm_state"]
             try:
                 self.fsm.machine.set_state(saved_state)
             except Exception:
-                self.fsm.start_campaign()
+                pass
 
     def save_progress(self) -> None:
         """Persist current progress and FSM state to database."""
@@ -217,12 +239,15 @@ class CampaignManager:
             full=(existing_full + "\n\n" + recap_text).strip() if existing_full else recap_text,
         )
 
-    def _is_first_turn_of_session(self, turn: int) -> bool:
-        """Return True if this is the first turn of a new session."""
-        # FSM is in session_active after start_campaign or resume_session
+    def _is_first_turn_of_session(self, turn_in_session: int) -> bool:
+        """Return True if this is the first turn of a new campaign session.
+
+        Uses turn_in_session (campaign session counter, resets at boundaries)
+        instead of state["turn"] (game session total, never resets).
+        """
         if self.fsm is None:
-            return turn == 0
-        return self.fsm.get_substate() == "session_active" and turn == 0
+            return turn_in_session == 0
+        return turn_in_session == 0
 
     def _load_recap_compressed(self) -> str:
         """Load the compressed recap from campaign_progress."""
@@ -354,8 +379,6 @@ class CampaignManager:
         Creates temporary anchors based on current game state context.
         Capped at 3 dynamic anchors per session.
         """
-        from app.schemas.campaign import AnchorEvent, AnchorTriggerConditions
-
         if self.progress is None or self.campaign is None:
             return []
 
@@ -401,8 +424,6 @@ class CampaignManager:
         Returns:
             List of 0 or 1 AnchorEvent that should trigger this turn
         """
-        from app.schemas.campaign import AnchorEvent
-
         if self.campaign is None or self.progress is None:
             return []
 
@@ -449,8 +470,6 @@ class CampaignManager:
         All specified conditions must match (AND logic).
         A None condition means "don't check" — it always passes.
         """
-        from app.schemas.campaign import AnchorTriggerConditions
-
         # Location match
         if conditions.location is not None:
             current_location = state.get("current_location", "")
@@ -538,10 +557,35 @@ class CampaignManager:
         parts.append(f"锚点进度：{revealed_count}/{total_anchors} 已揭示")
 
         # Recap layer (03-01): inject "Previously on..." at session start
-        if self._is_first_turn_of_session(turn):
+        turn_in_session = getattr(self.progress, "turn_in_session", 0) if self.progress else 0
+        if self._is_first_turn_of_session(turn_in_session):
             recap = self._load_recap_compressed()
             if recap:
                 parts.insert(0, "## 前情提要\n" + recap)
+
+        # NPC relations block (top-3 by absolute affinity)
+        if self.progress:
+            row = self.db.read_campaign_progress(self.progress.campaign_id)
+            if row:
+                try:
+                    relations = json.loads(row.get("npc_relations", "[]"))
+                    if relations:
+                        sorted_rels = sorted(relations, key=lambda r: abs(r.get("affinity", 0)), reverse=True)
+                        top3 = sorted_rels[:3]
+                        rel_lines = ["## 人物关系变化"]
+                        for r in top3:
+                            name = r.get("name", "未知")
+                            affinity = r.get("affinity", 0)
+                            if affinity > 0:
+                                change_desc = "信任上升"
+                            elif affinity < 0:
+                                change_desc = "敌意加深"
+                            else:
+                                change_desc = "中性"
+                            rel_lines.append(f"- {name}: {change_desc} (当前好感: {affinity:+d})")
+                        parts.append("\n".join(rel_lines))
+                except (json.JSONDecodeError, KeyError):
+                    pass
 
         # Candidate triggers this turn
         candidates = self.evaluate_anchors(state, turn)
@@ -613,3 +657,133 @@ class CampaignManager:
             "location_changed": 1 if location_after != location_before else 0,
             "token_count": 0,  # filled by caller after prompt build
         }
+
+    # ── Session auto-advance (CAMP-PACE) ──
+
+    DEFAULT_MAX_TURNS = 30
+
+    def _resolve_max_turns(self) -> int:
+        """Resolve max_turns_per_session with precedence:
+        per-session override > campaign-level > option_config.json > DEFAULT (30).
+        """
+        # 1. Per-session override in campaign.json
+        if self.campaign and self.progress:
+            try:
+                arc = self.campaign.arcs[self.progress.arc_index]
+                session = arc.sessions[self.progress.session_index]
+                session_max = getattr(session, "max_turns_per_session", None)
+                if session_max is not None:
+                    return session_max
+            except (IndexError, AttributeError):
+                pass
+
+        # 2. Campaign-level default (future v4 schema field)
+        if self.campaign:
+            campaign_max = getattr(self.campaign, "max_turns_per_session", None)
+            if campaign_max is not None:
+                return campaign_max
+
+        # 3. option_config.json global default
+        try:
+            config_path = Path("backend/scripts/option_config.json")
+            if config_path.exists():
+                config = json.loads(config_path.read_text(encoding="utf-8"))
+                return config.get("max_turns_per_session", self.DEFAULT_MAX_TURNS)
+        except Exception:
+            pass
+
+        return self.DEFAULT_MAX_TURNS
+
+    def _build_structural_recap(self) -> str:
+        """Build a structural recap from campaign data when LLM recap fails."""
+        if self.progress is None or self.campaign is None:
+            return ""
+
+        parts = ["## 前情提要（结构摘要）", ""]
+        try:
+            arc = self.campaign.arcs[self.progress.arc_index]
+            parts.append(f"完成了 {self.progress.arc_index} 个叙事弧")
+            parts.append(f"当前弧：{arc.name}")
+            parts.append(f"弧目标：{arc.goal or '无'}")
+        except IndexError:
+            parts.append("战役完成")
+
+        if self.progress.revealed_anchors:
+            parts.append(f"已揭示锚点：{len(self.progress.revealed_anchors)} 个")
+
+        parts.append("（LLM 前情提要生成失败，此处为结构摘要。）")
+        return "\n".join(parts)
+
+    def _decay_npc_relations(self) -> None:
+        """Decay all NPC affinities toward 0 by 1 at session boundary."""
+        if self.progress is None:
+            return
+        row = self.db.read_campaign_progress(self.progress.campaign_id)
+        if not row:
+            return
+        try:
+            relations = json.loads(row.get("npc_relations", "[]"))
+            for r in relations:
+                current = r.get("affinity", 0)
+                if current > 0:
+                    r["affinity"] = max(current - 1, 0)
+                elif current < 0:
+                    r["affinity"] = min(current + 1, 0)
+            self.db.update_npc_relations(
+                self.progress.campaign_id,
+                json.dumps(relations, ensure_ascii=False)
+            )
+        except (json.JSONDecodeError, KeyError):
+            pass
+
+    async def advance_session(self) -> str:
+        """Advance to next campaign session. Returns recap text."""
+        if self.progress is None or self.campaign is None:
+            return ""
+
+        recap = ""
+        try:
+            recap = await self.generate_recap(self.progress.campaign_id)
+        except Exception:
+            recap = self._build_structural_recap()
+
+        self._decay_npc_relations()
+
+        # Check if this is the last session in the arc
+        try:
+            arc = self.campaign.arcs[self.progress.arc_index]
+            is_last_session = self.progress.session_index + 1 >= len(arc.sessions)
+        except IndexError:
+            is_last_session = True
+
+        if is_last_session:
+            return await self.advance_arc()
+
+        # Normal session advance: end_session → recap → resume → persist
+        self.fsm.end_session()
+        self.fsm.resume_session()
+        self.progress.session_index += 1
+        self._persist_progress()
+        return recap
+
+    async def advance_arc(self) -> str:
+        """Advance to next arc. Returns recap text."""
+        if self.progress is None or self.campaign is None:
+            return ""
+
+        recap = ""
+        try:
+            recap = await self.generate_recap(self.progress.campaign_id)
+        except Exception:
+            recap = self._build_structural_recap()
+
+        # Arc boundary: skip resume_session, go directly to arc transition
+        self.fsm.end_session()
+        self.fsm.arc_transition()
+        self.fsm.begin_arc()
+        self.fsm.session_active()
+        self.progress.arc_index += 1
+        self.progress.session_index = 0
+        self.progress.completed_arcs.append(self.progress.arc_index - 1)
+        self._persist_progress()
+        return recap

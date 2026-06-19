@@ -121,7 +121,26 @@ function TimelineContent() {
                   </div>
                   {arc.sessions?.map((session, si) => (
                     <div key={`session-${ai}-${si}`} className="session-group">
-                      <div className="session-label">{session.name}</div>
+                      <div className="session-label">
+                        {session.name}
+                        <button
+                          className="start-here-btn"
+                          style={{ marginLeft: 12, fontSize: "0.8rem", padding: "2px 8px", cursor: "pointer" }}
+                          onClick={() => {
+                            if (typeof window !== "undefined") {
+                              sessionStorage.setItem("campaign_entry", JSON.stringify({
+                                campaignFilename: selectedFile,
+                                arcIndex: ai,
+                                sessionIndex: si,
+                              }));
+                              window.location.href = "/";
+                            }
+                          }}
+                          title={`从 ${session.name} 开始新游戏`}
+                        >
+                          从此处开始
+                        </button>
+                      </div>
                       <div className="anchor-list">
                         {session.anchor_events?.map((anchor, ani) => {
                           const revealed = isAnchorRevealed(anchor.id);

@@ -8,3 +8,4 @@ faiss-cpu==1.14.2
 openai==2.41.0
 tiktoken==0.9.0
 transitions==0.9.3
+charset-normalizer>=3.0.0

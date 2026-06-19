@@ -2,7 +2,6 @@
 
 Migrated from schemas.py. Campaign-related schemas are in campaign.py.
 """
-from __future__ import annotations
 
 from typing import Any, Literal, Optional
 
@@ -84,6 +83,7 @@ class StoryOutput(BaseModel):
     npcs_encountered: list[dict[str, Any]] = Field(default_factory=list)
     quests_updated: list[dict[str, Any]] = Field(default_factory=list)
     memory_updates: MemoryUpdates = Field(default_factory=MemoryUpdates)
+    npc_relations_delta: list[dict[str, Any]] | None = None
 
 
 # ── Request models ──
@@ -91,6 +91,9 @@ class StoryOutput(BaseModel):
 class CreateSessionRequest(BaseModel):
     game_name: str = "卡塞尔入学档案"
     model: Optional[str] = None
+    campaign_filename: Optional[str] = None
+    arc_index: int = 0
+    session_index: int = 0
 
 
 class GenerateRequest(BaseModel):

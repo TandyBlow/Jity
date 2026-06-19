@@ -33,7 +33,7 @@ class TestCampaignGenerator:
         """_ensure_minimal_structure should fill missing top-level fields."""
         raw = {"title": "测试"}
         result = CampaignGenerator._ensure_minimal_structure(raw)
-        assert result["version"] == 3
+        assert result["version"] == 4
         assert result["title"] == "测试"
         assert result["core_conflict"] == "未知冲突"
         assert result["arcs"] == []
@@ -48,7 +48,7 @@ class TestCampaignGenerator:
         """_ensure_minimal_structure should migrate v1 to v3."""
         raw = {"version": 1, "title": "V1", "core_conflict": "冲突"}
         result = CampaignGenerator._ensure_minimal_structure(raw)
-        assert result["version"] == 3
+        assert result["version"] == 4
 
     def test_save_writes_file(self, tmp_path):
         """save() should write campaign JSON to output directory."""

@@ -2,10 +2,9 @@
 
 Used by CampaignManager (Phase 2).
 """
-from __future__ import annotations
 
 from enum import Enum
-from typing import Any, Callable, Optional
+from typing import Any, Callable, Literal, Optional
 
 from pydantic import BaseModel, Field, TypeAdapter
 
@@ -26,11 +25,21 @@ class AnchorEvent(BaseModel):
     trigger_conditions: AnchorTriggerConditions = Field(default_factory=AnchorTriggerConditions)
 
 
+class EntryState(BaseModel):
+    """Pre-authored game state for mid-campaign entry points."""
+    location: str | None = None
+    npc_relations: list[dict[str, Any]] = Field(default_factory=list)
+    world_facts_summary: list[str] = Field(default_factory=list)
+    items: list[str] = Field(default_factory=list)
+    quests: list[str] = Field(default_factory=list)
+
+
 class SessionSchema(BaseModel):
     """A single session within an arc."""
     name: str
     opening_scene: str = ""
     anchor_events: list[AnchorEvent] = Field(default_factory=list)
+    entry_state: dict[str, Any] | None = None
 
 
 class ArcSchema(BaseModel):
@@ -48,6 +57,12 @@ class CampaignSchema(BaseModel):
     arcs: list[ArcSchema] = Field(default_factory=list)
     constraints: str = ""
     starting_state: dict[str, Any] = Field(default_factory=dict)
+    # v4 additions
+    difficulty: Literal["easy", "normal", "hard", "insane"] = "normal"
+    difficulty_settings: dict[str, Any] | None = None
+    description: str = ""
+    tags: list[str] = Field(default_factory=list)
+    estimated_duration: int = 0
 
 
 class CampaignProgress(BaseModel):
@@ -84,13 +99,29 @@ def _migrate_v2_to_v3(data: dict) -> dict:
     return data
 
 
+def _migrate_v3_to_v4(data: dict) -> dict:
+    """v3 → v4: Add difficulty, description, tags, estimated_duration defaults.
+
+    v4 adds campaign-level difficulty settings and metadata.
+    """
+    data = dict(data)
+    data.setdefault("difficulty", "normal")
+    data.setdefault("difficulty_settings", None)
+    data.setdefault("description", "")
+    data.setdefault("tags", [])
+    data.setdefault("estimated_duration", 0)
+    data["version"] = 4
+    return data
+
+
 # Ordered: version N maps to function that transforms N → N+1
 _MIGRATIONS: dict[int, Callable[[dict], dict]] = {
     1: _migrate_v1_to_v2,
     2: _migrate_v2_to_v3,
+    3: _migrate_v3_to_v4,
 }
 
-CURRENT_SCHEMA_VERSION = 3
+CURRENT_SCHEMA_VERSION = 4
 
 
 def migrate(data: dict, target_version: int = CURRENT_SCHEMA_VERSION) -> dict:
