@@ -4,8 +4,8 @@ import { BookOpen, History, Loader2, MapPin, PenTool, RefreshCw, Send, Sparkles 
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-import { createSession, createSlot, generateScene, listSlots } from "@/lib/api";
-import type { GameState, GenerateResponse, ItemMemory, NPCMemory, QuestMemory, RetrievedChunk, StoryOutput, WorldFactMemory } from "@/types";
+import { createSession, createSlot, generateScene, listCampaigns, listSlots } from "@/lib/api";
+import type { CampaignListItem, GameState, GenerateResponse, ItemMemory, NPCMemory, QuestMemory, RetrievedChunk, StoryOutput, WorldFactMemory } from "@/types";
 
 const initialOutput: StoryOutput = {
   narration: `雨是在你下车后三分钟开始变大的。
@@ -68,8 +68,10 @@ export default function Home() {
   const [action, setAction] = useState(INITIAL_ACTION);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const [slots, setSlots] = useState<Array<{ slot_name: string; arc_index: number; session_index: number }>>([]);
+  const [slots, setSlots] = useState<Array<{ id: number; slot_name: string; arc_index: number; session_index: number }>>([]);
   const [selectedSlot, setSelectedSlot] = useState("default");
+  const [campaigns, setCampaigns] = useState<CampaignListItem[]>([]);
+  const [selectedCampaign, setSelectedCampaign] = useState("");
   const statusDeltaHints = buildStatusDeltaHints(output);
 
   useEffect(() => {
@@ -112,6 +114,27 @@ export default function Home() {
     };
   }, []);
 
+  // Load available campaigns for selector
+  useEffect(() => {
+    listCampaigns()
+      .then((r) => {
+        setCampaigns(r.campaigns ?? []);
+        // Auto-select campaign from Timeline entry if present
+        try {
+          const entryJson = sessionStorage.getItem("campaign_entry");
+          if (entryJson) {
+            const entry = JSON.parse(entryJson);
+            if (entry.campaignFilename) {
+              setSelectedCampaign(entry.campaignFilename);
+            }
+          }
+        } catch {
+          // Ignore
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   // Load save slots
   useEffect(() => {
     listSlots().then(r => {
@@ -119,13 +142,14 @@ export default function Home() {
     }).catch(() => {});
   }, [sessionId]);
 
-  async function handleGenerate(nextAction = action) {
-    if (!sessionId || !nextAction.trim()) return;
+  async function handleGenerate(nextAction = action, overrideSessionId?: string) {
+    const sid = overrideSessionId ?? sessionId;
+    if (!sid || !nextAction.trim()) return;
     setIsLoading(true);
     setError("");
     try {
       const response: GenerateResponse = await generateScene({
-        sessionId,
+        sessionId: sid,
         playerAction: nextAction,
         model,
         style: DEFAULT_STORY_STYLE,
@@ -148,13 +172,22 @@ export default function Home() {
     setIsLoading(true);
     setError("");
     try {
-      const session = await createSession(model);
+      const campaignOpts = selectedCampaign
+        ? { campaignFilename: selectedCampaign, arcIndex: 0, sessionIndex: 0 }
+        : undefined;
+      const session = await createSession(model, campaignOpts);
       setSessionId(session.session_id);
       setState(session.state);
       setOutput(initialOutput);
       setOutputSource("scripted");
       setChunks([]);
       setAction(INITIAL_ACTION);
+      // Auto-trigger generate for campaign sessions to fetch opening scene
+      if (campaignOpts) {
+        setTimeout(() => {
+          handleGenerate("（入场）环顾四周，了解当前处境。", session.session_id);
+        }, 100);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "创建会话失败");
     } finally {
@@ -198,6 +231,45 @@ export default function Home() {
           <option value="deepseek-reasoner">deepseek-reasoner</option>
         </select>
 
+        <label className="label" htmlFor="campaign">
+          战役
+        </label>
+        <select
+          className="select"
+          id="campaign"
+          value={selectedCampaign}
+          onChange={(e) => {
+            const val = e.target.value;
+            setSelectedCampaign(val);
+            setError("");
+            const opts = val
+              ? { campaignFilename: val, arcIndex: 0, sessionIndex: 0 }
+              : undefined;
+            createSession(model, opts)
+              .then((s) => {
+                setSessionId(s.session_id);
+                setState(s.state);
+                setOutput(initialOutput);
+                setOutputSource("scripted" as GenerateResponse["source"]);
+                setChunks([]);
+                setAction(INITIAL_ACTION);
+                // Auto-trigger generate to fetch campaign-specific opening scene
+                // Use setTimeout so React commits the new sessionId before generate reads it
+                setTimeout(() => {
+                  handleGenerate("（入场）环顾四周，了解当前处境。", s.session_id);
+                }, 100);
+              })
+              .catch((err: Error) => setError(err.message));
+          }}
+        >
+          <option value="">自由模式（无预设战役）</option>
+          {campaigns.map((c) => (
+            <option key={c.filename} value={c.filename}>
+              {c.title}（{c.arc_count}弧）
+            </option>
+          ))}
+        </select>
+
         <label className="label" htmlFor="action">
           玩家行动
         </label>
@@ -207,7 +279,7 @@ export default function Home() {
             <select value={selectedSlot} onChange={(e) => setSelectedSlot(e.target.value)}
               style={{ padding: "2px 6px" }}>
               {slots.map(s => (
-                <option key={s.slot_name} value={s.slot_name}>
+                <option key={s.id} value={s.slot_name}>
                   {s.slot_name} (A{s.arc_index + 1}S{s.session_index + 1})
                 </option>
               ))}

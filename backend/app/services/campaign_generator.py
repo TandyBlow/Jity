@@ -5,6 +5,7 @@ Single-shot with validation gate; staged pipeline as fallback.
 """
 
 import asyncio
+import copy
 import json
 import logging
 import re
@@ -124,6 +125,75 @@ class CampaignGenerator:
             data = migrate(data, CURRENT_SCHEMA_VERSION)
         return data
 
+    @staticmethod
+    def _remap_schema(data: dict) -> dict:
+        """Defensive field remapping for LLM output deviations.
+
+        Handles common LLM naming variations:
+        - arc_title / session_title / event_name / title → name
+        - String anchor events → auto-convert to dicts
+        - Missing anchor ids → auto-generated
+        - Extra per-session fields stripped
+        """
+        data = copy.deepcopy(data)
+        for ai, arc in enumerate(data.get("arcs", [])):
+            # Remap arc fields: try multiple possible name sources
+            for src in ("arc_title", "title"):
+                if src in arc and "name" not in arc:
+                    arc["name"] = arc.pop(src)
+                    break
+            if "name" not in arc:
+                arc["name"] = f"第{ai + 1}弧"
+            if "goal" not in arc:
+                arc["goal"] = ""
+            arc.pop("arc_id", None)
+
+            for si, session in enumerate(arc.get("sessions", [])):
+                # Remap session fields: try multiple possible name sources
+                for src in ("session_title", "title"):
+                    if src in session and "name" not in session:
+                        session["name"] = session.pop(src)
+                        break
+                if "name" not in session:
+                    session["name"] = f"第{si + 1}幕"
+                if "opening_scene" not in session:
+                    session["opening_scene"] = session.pop("opening", "")
+                session.pop("session_id", None)
+
+                # Normalize anchor_events: strings → dicts
+                raw_anchors = session.get("anchor_events", [])
+                normalized = []
+                for ani, anchor in enumerate(raw_anchors):
+                    if isinstance(anchor, str):
+                        anchor = {"name": anchor, "id": f"anchor-gen-{ai}-{si}-{ani}"}
+                    for src in ("event_name", "title"):
+                        if isinstance(anchor, dict) and src in anchor and "name" not in anchor:
+                            anchor["name"] = anchor.pop(src)
+                            break
+                    if isinstance(anchor, dict) and "name" not in anchor:
+                        anchor["name"] = f"锚点{ani + 1}"
+                    if isinstance(anchor, dict):
+                        if "id" not in anchor or not anchor.get("id"):
+                            anchor["id"] = f"anchor-gen-{ai}-{si}-{ani}"
+                        if "priority" not in anchor:
+                            anchor["priority"] = min(ani + 1, 5)
+                        if "trigger_conditions" not in anchor:
+                            anchor["trigger_conditions"] = {"location": None, "npc_present": None, "item_held": None}
+                        if "description" not in anchor:
+                            anchor["description"] = anchor.get("name", "")
+                    normalized.append(anchor)
+                session["anchor_events"] = normalized
+
+                # Strip session-level fields not in schema
+                for extra_key in ("core_conflict", "constraints", "npcs", "session_id", "opening"):
+                    session.pop(extra_key, None)
+
+        # Ensure top-level required fields
+        data.setdefault("core_conflict", data.get("core_conflict") or "未知冲突")
+        data.setdefault("constraints", "")
+        data.setdefault("starting_state", {})
+        return data
+
     async def generate_from_novel(self, text: str) -> dict[str, Any]:
         """Full novel→campaign pipeline: detect chapters → extract anchors → assemble.
 
@@ -155,7 +225,7 @@ class CampaignGenerator:
                             "\"locations\": [\"地点名\"]}\n\n"
                             f"章节：{ch['title']}\n\n{chapter_snippet}"
                         ),
-                        model="deepseek-v4-flash",
+                        model="deepseek-v4-pro",
                         max_tokens=1000,
                         temperature=0.3,
                     )
@@ -174,18 +244,53 @@ class CampaignGenerator:
 
         # Stage 2: Cross-chapter assembly
         assembly_input = json.dumps(extraction_results, ensure_ascii=False)
+
+        # Save intermediate extraction results for debugging/retry
+        debug_path = self.output_dir / "_last_extraction_results.json"
+        debug_path.write_text(assembly_input, encoding="utf-8")
+        logger.info("Saved %d chapter extraction results to %s", len(extraction_results), debug_path)
         # Token budget guard: truncate if too long (>80K chars)
         if len(assembly_input) > 80000:
             assembly_input = assembly_input[:80000]
             logger.warning("Novel pipeline: assembly input truncated to 80K chars")
 
         assembly_prompt = (
-            "将以下小说章节的剧情提取结果合并为一个完整的campaign.json文件（3-5个叙事弧arcs，每个arc含2-4个session）。"
-            "请确保：\n"
+            "将以下小说章节的剧情提取结果合并为一个完整的campaign.json文件（3-5个叙事弧arcs，每个arc含2-4个session）。\n"
+            "请严格使用以下JSON结构：\n"
+            "{\n"
+            '  "title": "战役标题",\n'
+            '  "core_conflict": "核心冲突（一句话）",\n'
+            '  "description": "战役简介（50-100字）",\n'
+            '  "arcs": [\n'
+            '    {\n'
+            '      "name": "弧名称",\n'
+            '      "goal": "弧目标",\n'
+            '      "sessions": [\n'
+            '        {\n'
+            '          "name": "幕名称",\n'
+            '          "opening_scene": "开场叙事（中文，50-150字）",\n'
+            '          "anchor_events": [\n'
+            '            {\n'
+            '              "id": "anchor-xxx",\n'
+            '              "name": "锚点事件名",\n'
+            '              "description": "事件简述",\n'
+            '              "priority": 1,\n'
+            '              "trigger_conditions": {"location": "地点名或null", "npc_present": "NPC名或null", "item_held": "物品名或null"}\n'
+            '            }\n'
+            '          ]\n'
+            '        }\n'
+            '      ]\n'
+            '    }\n'
+            '  ],\n'
+            '  "constraints": "叙事约束说明",\n'
+            '  "starting_state": {}\n'
+            '}\n\n'
+            "重要注意事项：\n"
             "1. 按时间顺序组织arc\n"
             "2. 每个session包含1-2个锚点事件\n"
-            "3. 为每个session生成opening_scene开场叙事（中文，50-100字）\n"
-            "4. NPC信息整合到core_conflict和constraints中\n\n"
+            "3. 字段名必须使用 name（不是arc_title、session_title、event_name）\n"
+            "4. 每个锚点事件必须有 id、name、description、priority、trigger_conditions 五个字段\n"
+            "5. 返回纯JSON，不要包裹在 {\"campaign\": {...}} 中\n\n"
             f"## 章节提取结果\n{assembly_input}"
         )
 
@@ -199,7 +304,27 @@ class CampaignGenerator:
         except Exception as e:
             raise CampaignGenerationError(f"Cross-chapter assembly failed: {e}") from e
 
+        logger.info("Assembly raw keys: %s, arc count: %d",
+                     list(campaign_data.keys()) if isinstance(campaign_data, dict) else type(campaign_data),
+                     len(campaign_data.get("arcs", [])) if isinstance(campaign_data, dict) else -1)
+
+        # Unwrap if LLM nests response under "campaign" key
+        if isinstance(campaign_data, dict) and "campaign" in campaign_data:
+            inner = campaign_data["campaign"]
+            if isinstance(inner, dict) and inner.get("arcs"):
+                logger.info("Unwrapping nested 'campaign' key with %d arcs", len(inner.get("arcs", [])))
+                campaign_data = inner
+        campaign_data = self._remap_schema(campaign_data)
         campaign_data = self._ensure_minimal_structure(campaign_data)
+
+        # Guard: refuse to save empty campaigns (LLM assembly likely failed)
+        if not campaign_data.get("arcs"):
+            raise CampaignGenerationError(
+                "Assembly produced an empty campaign (zero arcs). "
+                "The LLM likely returned a non-campaign response. "
+                "Check backend logs for assembly raw keys."
+            )
+
         try:
             campaign_adapter.validate_python(campaign_data)
         except Exception as e:

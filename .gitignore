@@ -21,6 +21,14 @@ WorkAssignment.*
 2330034047.pdf
 26LiteratureReview.Guideline.Dyce.pdf
 
+# === Novel source files (large, not tracked) ===
+13802-*.txt
+13803-*.txt
+13804-*.txt
+13805-*.txt
+13806-*.txt
+13807-*.txt
+
 # === Experiments (contain API keys) ===
 experiments/
 

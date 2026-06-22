@@ -63,7 +63,7 @@ scenario_generator = ScenarioGenerator(
 app = FastAPI(title="Jity RPG Scenario Generator API", version="0.1.0")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[settings.frontend_origin, "http://127.0.0.1:3000"],
+    allow_origins=[settings.frontend_origin, "http://127.0.0.1:3000", "http://localhost:3001"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -146,8 +146,15 @@ def list_campaigns() -> dict[str, object]:
 
     campaign_files: list[dict[str, object]] = []
     for fpath in sorted(campaigns_dir.glob("*.json")):
+        # Skip schema and debug files
+        if fpath.name in ("campaign.schema.json",) or fpath.name.startswith("_"):
+            continue
         try:
             data = json.loads(fpath.read_text(encoding="utf-8"))
+            if not isinstance(data, dict):
+                continue
+            if not data.get("arcs"):
+                continue
             campaign_files.append({
                 "filename": fpath.name,
                 "title": data.get("title", fpath.stem),
@@ -185,21 +192,6 @@ def save_campaign(request: dict[str, object]) -> dict[str, object]:
     fpath.write_text(json.dumps(campaign_data, ensure_ascii=False, indent=2), encoding="utf-8")
 
     return {"status": "saved", "filename": filename, "path": str(fpath)}
-
-
-@app.get("/campaigns/{filename}")
-def get_campaign_file(filename: str) -> dict[str, object]:
-    """Load a single campaign.json file by filename."""
-    fpath = settings.campaigns_dir / filename
-    if not fpath.exists():
-        raise HTTPException(status_code=404, detail=f"Campaign file not found: {filename}")
-
-    try:
-        data = json.loads(fpath.read_text(encoding="utf-8"))
-    except (json.JSONDecodeError, OSError) as exc:
-        raise HTTPException(status_code=500, detail=f"Failed to read campaign: {exc}")
-
-    return {"filename": filename, "campaign": data}
 
 
 @app.get("/campaigns/slots")
@@ -253,6 +245,21 @@ def delete_slot(slot_name: str) -> dict[str, object]:
         if result.rowcount == 0:
             raise HTTPException(status_code=404, detail=f"Slot '{slot_name}' not found")
     return {"status": "deleted", "slot_name": slot_name}
+
+
+@app.get("/campaigns/{filename}")
+def get_campaign_file(filename: str) -> dict[str, object]:
+    """Load a single campaign.json file by filename."""
+    fpath = settings.campaigns_dir / filename
+    if not fpath.exists():
+        raise HTTPException(status_code=404, detail=f"Campaign file not found: {filename}")
+
+    try:
+        data = json.loads(fpath.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError) as exc:
+        raise HTTPException(status_code=500, detail=f"Failed to read campaign: {exc}")
+
+    return {"filename": filename, "campaign": data}
 
 
 @app.get("/sessions/{session_id}/progress")
@@ -322,19 +329,18 @@ def create_session(request: CreateSessionRequest) -> SessionResponse:
                 start_session_index=request.session_index,
             )
             db.set_session_campaign_id(session_id, session_id)
-            # Merge entry_state for mid-campaign starts
-            if request.arc_index > 0 or request.session_index > 0:
-                payload["state"] = state_manager.merge_entry_state(
-                    payload["state"],
-                    campaign_manager.campaign,
-                    request.arc_index,
-                    request.session_index,
-                )
-                # Write merged state to DB so generate can read it
-                state_manager.save_state(
-                    session_id, payload["game_name"],
-                    payload["model"], payload["state"]
-                )
+            # Merge entry_state (includes campaign starting_state for fresh starts)
+            payload["state"] = state_manager.merge_entry_state(
+                payload["state"],
+                campaign_manager.campaign,
+                request.arc_index,
+                request.session_index,
+            )
+            # Write merged state to DB so generate can read it
+            state_manager.save_state(
+                session_id, payload["game_name"],
+                payload["model"], payload["state"]
+            )
         except (FileNotFoundError, ValueError) as exc:
             raise HTTPException(status_code=400, detail=str(exc)) from exc
 

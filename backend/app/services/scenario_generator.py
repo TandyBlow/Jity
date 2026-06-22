@@ -65,6 +65,7 @@ class ScenarioGenerator:
                 )
                 self.db.add_message(session_id, "user", request.player_action, _campaign_session_index)
                 self.db.add_message(session_id, "assistant", output.model_dump_json(), _campaign_session_index)
+                state = self.state_manager.apply_output(state, request.player_action, output)
                 self.state_manager.save_state(session_id, session["game_name"], model, state)
                 output_id = self.db.add_model_output(
                     session_id=session_id,
