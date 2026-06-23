@@ -1,0 +1,262 @@
+{
+  "title": "龙族Ⅱ·悼亡者之瞳",
+  "core_conflict": "路明非与同伴在都市阴影中追踪复活龙王，卷入学院内斗与古老秘密，最终在尼伯龙根面对命运抉择。",
+  "description": "暑假归来的路明非在同学聚会中感受到身份隔阂；楚子航为生日悬赏、突袭行动揭开序幕。学院内，龙骨十字显现引发校董会调查，昂热校长展示七宗罪并下达屠龙任务。混血种齐聚北京，恺撒获取王恭厂秘闻，楚子航探明地铁深处的尼伯龙根。在死人之国，他们与复苏的大地与山之王耶梦加得决战，最终在灭世言灵中走向终局。",
+  "arcs": [
+    {
+      "name": "重逢与暗涌",
+      "goal": "路明非回归日常，与旧友重逢；楚子航暗中执行任务，悬赏订餐；突袭行动揭开序幕。",
+      "sessions": [
+        {
+          "name": "同学少年都不贱",
+          "opening_scene": "暑假的午后，路明非提着刚买的马桶座圈，应婶婶使唤前往苏菲拉德披萨馆。他一身卡塞尔学院的挺拔姿态，却被侍者误认为上门推销。推开包间门，昔日的文学社同学徐岩岩、徐淼淼惊愕地看着他，空气里弥漫着错愕与疏离。",
+          "anchor_events": [
+            {
+              "id": "anchor-001",
+              "name": "文学社聚餐",
+              "description": "路明非参加文学社在披萨馆的聚会，与老同学重逢，气氛尴尬而微妙，展现身份变化带来的隔阂。",
+              "priority": 3,
+              "trigger_conditions": {
+                "location": "苏菲拉德披萨馆",
+                "npc_present": "徐岩岩",
+                "item_held": null
+              }
+            }
+          ]
+        },
+        {
+          "name": "悬赏与烛光",
+          "opening_scene": "楚子航驾车驶过城市的夜色，淡淡地问路明非生日想吃什么。随后一个电话，他在守夜人讨论区用ID“村雨”发布惊天悬赏：用一次承诺交换Aspasia订座。而路明非孤身走进湖园一号，发现整个餐厅只为他一人点亮烛光，陈雯雯一袭白裙，静静等待。",
+          "anchor_events": [
+            {
+              "id": "anchor-002",
+              "name": "楚子航发布悬赏",
+              "description": "楚子航为路明非的生日晚餐，在守夜人讨论区发布悬赏换取Aspasia餐馆订座，引来轰动。",
+              "priority": 5,
+              "trigger_conditions": {
+                "location": "守夜人讨论区",
+                "npc_present": null,
+                "item_held": null
+              }
+            },
+            {
+              "id": "anchor-003",
+              "name": "路明非与陈雯雯共进晚餐",
+              "description": "路明非在包场的Aspasia与暗恋过的陈雯雯共进意大利晚餐，展现自信与释然。",
+              "priority": 3,
+              "trigger_conditions": {
+                "location": "Aspasia餐馆",
+                "npc_present": "陈雯雯",
+                "item_held": null
+              }
+            }
+          ]
+        },
+        {
+          "name": "暴雨行动",
+          "opening_scene": "雷雨交加，楚子航与伪装成快递员的校工团队汇合。中央控制室里，曼施坦因教授紧盯着屏幕，计划在五分钟内突入润德大厦取回关键资料。与此同时，路明非的晚餐温馨宁静，两个世界在暴雨中短暂交错。",
+          "anchor_events": [
+            {
+              "id": "anchor-004",
+              "name": "学院突击润德大厦",
+              "description": "楚子航带领校工团队突袭润德大厦，执行资料夺还任务，全程仅五分钟。",
+              "priority": 5,
+              "trigger_conditions": {
+                "location": "润德大厦",
+                "npc_present": "楚子航",
+                "item_held": null
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "学院疑云",
+      "goal": "楚子航龙骨显现引发学院震动，校董会调查团介入，昂热校长下达新任务。",
+      "sessions": [
+        {
+          "name": "龙骨与调查团",
+          "opening_scene": "楚子航从任务中负伤，被送到医院。狮心会成员用鲜花堆满病房。当鲜花撤去，他沉睡的身躯呈现古铜色，双翼骨骼微展，宛如被钉十字架的耶稣。校董会调查团同时抵达学院，安德鲁·加图索准备弹劾校长。",
+          "anchor_events": [
+            {
+              "id": "anchor-005",
+              "name": "调查团抵达卡塞尔学院",
+              "description": "安德鲁·加图索率校董会调查团乘列车抵达，受到副校长老梅热烈欢迎，意图弹劾昂热。",
+              "priority": 4,
+              "trigger_conditions": {
+                "location": "卡塞尔学院月台",
+                "npc_present": "安德鲁·加图索",
+                "item_held": null
+              }
+            },
+            {
+              "id": "anchor-006",
+              "name": "龙骨十字显现",
+              "description": "楚子航在昏迷中呈现龙骨十字形态，震惊学院高层。",
+              "priority": 5,
+              "trigger_conditions": {
+                "location": "学院病房",
+                "npc_present": "楚子航",
+                "item_held": null
+              }
+            }
+          ]
+        },
+        {
+          "name": "罪与罚的密令",
+          "opening_scene": "校长昂热在晚间茶会上，捆住试图逃跑的芬格尔，宣布一项秘密任务：派遣路明非、楚子航和芬格尔前往中国调查龙王苏醒。他打开冰窖，展示炼金刀剑七宗罪，刀刃上的古老铭文在灯光下闪烁。",
+          "anchor_events": [
+            {
+              "id": "anchor-007",
+              "name": "昂热展示七宗罪并下达任务",
+              "description": "昂热向路明非、楚子航、芬格尔展示炼金刀剑七宗罪，并指派他们前往中国调查龙王。",
+              "priority": 4,
+              "trigger_conditions": {
+                "location": "校长办公室",
+                "npc_present": "昂热",
+                "item_held": "七宗罪刀剑"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "北京集结",
+      "goal": "混血种势力齐聚北京，各自为屠龙布局，线索指向地铁深处的尼伯龙根。",
+      "sessions": [
+        {
+          "name": "群龙之宴",
+          "opening_scene": "一架包机降临北京，乘客全是混血种，有人为屠龙，有人为旅游。路明非与芬格尔在机场遇见唐森，得知大量同行已涌入城市。而酒德麻衣走下私人飞机，钻进悍马，薯片妞传达了老板的死命令：必须路明非亲手杀死龙王。",
+          "anchor_events": [
+            {
+              "id": "anchor-008",
+              "name": "混血种包机抵达北京",
+              "description": "大量混血种从北美包机抵达北京，准备参与屠龙行动，路明非与芬格尔也到达。",
+              "priority": 4,
+              "trigger_conditions": {
+                "location": "北京国际机场",
+                "npc_present": "唐森",
+                "item_held": null
+              }
+            },
+            {
+              "id": "anchor-009",
+              "name": "酒德麻衣接到老板命令",
+              "description": "酒德麻衣与薯片妞在北京接头，接到指令必须让路明非亲手杀死龙王。",
+              "priority": 5,
+              "trigger_conditions": {
+                "location": "悍马车内",
+                "npc_present": "薯片妞",
+                "item_held": null
+              }
+            }
+          ]
+        },
+        {
+          "name": "王恭厂的秘密",
+          "opening_scene": "琉璃厂深处，恺撒找到凤隆堂的老猎人林凤隆。一袋二十万美元现金换来一个惊人线索：王恭厂大爆炸是龙族言灵“莱茵”所致，通古斯和印度死丘亦是如此。龙族掌握着远超核武的精神爆裂技术，而下一场灾难即将重演。",
+          "anchor_events": [
+            {
+              "id": "anchor-010",
+              "name": "恺撒支付二十万美元购买情报",
+              "description": "恺撒用现金换取林凤隆掌握的龙族秘密，后者指出王恭厂大爆炸由高危言灵“莱茵”引发。",
+              "priority": 4,
+              "trigger_conditions": {
+                "location": "凤隆堂古玩店",
+                "npc_present": "林凤隆",
+                "item_held": "二十万美元"
+              }
+            }
+          ]
+        },
+        {
+          "name": "地铁迷踪",
+          "opening_scene": "楚子航的计算有了结果：北京地铁深夜出现异常震动，路线与地铁路网完全重合。他携带装备潜入东方广场地下，靠近王府井站，听到清洁工诡异的低语。尼伯龙根的大门似乎就在前方，夏弥的短信却突然中断。",
+          "anchor_events": [
+            {
+              "id": "anchor-011",
+              "name": "楚子航夜探地铁站",
+              "description": "楚子航发现地铁震动异常后，独自潜入王府井地铁站调查，逼近尼伯龙根入口。",
+              "priority": 5,
+              "trigger_conditions": {
+                "location": "王府井地铁站",
+                "npc_present": "楚子航",
+                "item_held": null
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "尼伯龙根之歌",
+      "goal": "进入尼伯龙根，迎战龙王耶梦加得，阻止灭世言灵。",
+      "sessions": [
+        {
+          "name": "死人之国",
+          "opening_scene": "路明非在黑暗中跌入尼伯龙根，仿若坠入幽冥。楚子航随后赶到，昔日的地铁站化为龙类的国度。酒德麻衣向楚子航发送“芝麻开门”数据，但明言只有一人能活。龙王耶梦加得的身影在废墟中浮现，大地与山之王苏醒。",
+          "anchor_events": [
+            {
+              "id": "anchor-012",
+              "name": "路明非进入尼伯龙根",
+              "description": "路明非率先进入龙族国度尼伯龙根，四周死寂而危险。",
+              "priority": 5,
+              "trigger_conditions": {
+                "location": "尼伯龙根",
+                "npc_present": "路明非",
+                "item_held": null
+              }
+            },
+            {
+              "id": "anchor-013",
+              "name": "迎战龙王耶梦加得",
+              "description": "楚子航与路明非在尼伯龙根面对复苏的大地与山之王耶梦加得，展开殊死战斗。",
+              "priority": 5,
+              "trigger_conditions": {
+                "location": "尼伯龙根",
+                "npc_present": "耶梦加得",
+                "item_held": null
+              }
+            }
+          ]
+        },
+        {
+          "name": "终章谐谑曲",
+          "opening_scene": "战斗至终，龙王发动灭世言灵“湿婆业舞”，大地震动，信号中断。而在婚庆大厦，恺撒斩杀镰鼬，发现数万鬼车鸟聚集，紧急下令买下整栋大厦。酒德麻衣与薯片妞收到老板邮件：“这是终章前的谐谑曲”，一边饮香槟，一边等待终局。",
+          "anchor_events": [
+            {
+              "id": "anchor-014",
+              "name": "龙王释放“湿婆业舞”",
+              "description": "龙王耶梦加得发动灭世级言灵，引发地震，尼伯龙根濒临崩溃。",
+              "priority": 5,
+              "trigger_conditions": {
+                "location": "尼伯龙根",
+                "npc_present": "耶梦加得",
+                "item_held": null
+              }
+            },
+            {
+              "id": "anchor-015",
+              "name": "恺撒发现镰鼬群",
+              "description": "恺撒在西单婚庆大厦发现数万镰鼬聚集，紧急购买大厦并封锁。",
+              "priority": 4,
+              "trigger_conditions": {
+                "location": "婚庆大厦",
+                "npc_present": "恺撒",
+                "item_held": null
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "constraints": "1. 遵循龙族世界观，混血种和龙类能力设定；2. 角色性格需忠诚于原著，不可OOC；3. 关键剧情节点（如龙骨十字显现、尼伯龙根之战）不宜更改，但可以调整细节。",
+  "starting_state": {},
+  "version": 4,
+  "_extraction_errors": [
+    "序幕 雨落狂流之暗  A Dark Rainy Night"
+  ]
+}

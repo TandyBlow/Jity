@@ -33,7 +33,7 @@ RECAP_SYSTEM_PROMPT = """你是一个TRPG战役的叙事记录员。根据最近
 2. 必须涵盖：关键事件、角色发展、悬而未决的线索、当前目标
 3. 长度控制在200-400字（中文），适合在session开始时回顾
 4. 只基于提供的对话历史，不要编造未发生的事件
-5. 保持克苏鲁式的紧张氛围，但不要剧透未揭示的真相
+5. 保持紧张悬疑的叙事氛围，但不要剧透未揭示的真相
 6. 如果对话历史中出现了新NPC，简要描述他们与玩家的关系
 
 输出格式（纯中文文本，不要JSON）：
@@ -269,7 +269,7 @@ CAMPAIGN_GEN_PROMPT = """你是一个TRPG战役设计师。根据用户的提示
 3. 每个 session 包含 2-4 个 anchor_events（锚点事件）
 4. 每个 anchor 必须包含 id、name、description、priority(1-5)、trigger_conditions
 5. trigger_conditions 可包含 location、npc_present、item_held 三个可选字段
-6. 所有描述使用中文，保持克苏鲁神话风格
+6. 所有描述使用中文，保持一致的叙事风格
 7. core_conflict 应该是一个贯穿全战役的核心冲突
 8. opening_scene 应该是每个 session 的精彩开场白
 9. constraints 应该列出叙事约束（如"不要提前揭示最终真相"）
@@ -297,7 +297,7 @@ FACT_EXTRACTION_PROMPT = """你是一个TRPG叙事分析系统。从以下最近
 1. 只提取本轮新发现的事实——不要重复已经知道的信息
 2. 每个事实包含：name（简短名称）、description（详细描述）、status（已知known/推测suspected/确认resolved）
 3. 如果未发现新事实，返回空数组
-4. 保持克苏鲁式风格，关注异常、恐怖、神秘元素
+4. 关注异常、悬疑、重要叙事元素
 
 输出格式（严格的JSON数组）：
 [
@@ -307,7 +307,7 @@ FACT_EXTRACTION_PROMPT = """你是一个TRPG叙事分析系统。从以下最近
 
 def build_campaign_gen(user_prompt: str) -> str:
     """Build prompt for AI-powered campaign.json generation."""
-    return f"{CAMPAIGN_GEN_PROMPT}\n\n用户提示词：{user_prompt}\n\n请生成完整的中文克苏鲁TRPG战役JSON。"
+    return f"{CAMPAIGN_GEN_PROMPT}\n\n用户提示词：{user_prompt}\n\n请生成完整的中文TRPG战役JSON。"
 
 
 def build_fact_extraction(narration_text: str, recent_events: list[str]) -> str:

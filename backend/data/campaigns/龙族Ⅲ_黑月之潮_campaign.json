@@ -1,0 +1,315 @@
+{
+  "title": "龙族·白王降临",
+  "core_conflict": "阴谋家赫尔佐格企图利用圣骸复活白王，卡塞尔学院与蛇岐八家必须阻止他。",
+  "description": "从北极圈的黑天鹅港到现代东京，玩家将揭开跨越数十年的龙族阴谋，与雷娜塔、零号、恺撒等角色并肩作战，面对宿命的挑战，最终阻止白王赫尔佐格的灭世计划。",
+  "arcs": [
+    {
+      "name": "黑天鹅港的幽灵",
+      "goal": "探索黑天鹅港的秘密，了解雷娜塔与零号的过去。",
+      "sessions": [
+        {
+          "name": "楔子·黑蛇之夜",
+          "opening_scene": "黑天鹅港的月圆之夜，黑色巨蛇穿行于走廊，铁鳞开合如千万片金属摩擦。墙壁开裂，十字架坠入冰海，宛如世界崩溃。你感到一种原始的召唤……",
+          "anchor_events": [
+            {
+              "id": "anchor-001",
+              "name": "黑蛇现身",
+              "description": "月圆之夜，黑色巨蛇伴随着千万铁鳞开合声穿行于建筑走廊，墙壁开裂，十字架坠入冰海，仿佛世界崩溃。",
+              "priority": 4,
+              "trigger_conditions": {
+                "location": "黑天鹅港走廊",
+                "npc_present": "黑蛇",
+                "item_held": null
+              }
+            },
+            {
+              "id": "anchor-002",
+              "name": "雷娜塔逃出禁闭室",
+              "description": "雷娜塔在禁闭室等待黑蛇，黑蛇击碎铁门后她赤脚跑出，在月光下癫狂大笑，躺地仰望。",
+              "priority": 3,
+              "trigger_conditions": {
+                "location": "禁闭室",
+                "npc_present": "雷娜塔",
+                "item_held": null
+              }
+            }
+          ]
+        },
+        {
+          "name": "末代皇孙",
+          "opening_scene": "深夜，一个滑雪的身影从北冰洋方向靠近黑天鹅港。邦达列夫少校带着莫斯科的秘密指令抵达，他将炸毁列宁铜像，开启通往冻土层深处的密道。",
+          "anchor_events": [
+            {
+              "id": "anchor-003",
+              "name": "炸毁列宁铜像",
+              "description": "邦达列夫少校在深夜炸毁列宁铜像下的底座，暴露地下入口的隐藏铁门。",
+              "priority": 5,
+              "trigger_conditions": {
+                "location": "黑天鹅港列宁铜像处",
+                "npc_present": "邦达列夫少校",
+                "item_held": "炸药"
+              }
+            },
+            {
+              "id": "anchor-004",
+              "name": "开启地下铁门",
+              "description": "邦达列夫使用复制钥匙和密码，打开填有数百公斤火药的机械锁铁门，进入通往冻土层深处的隧道。",
+              "priority": 5,
+              "trigger_conditions": {
+                "location": "地下冻土隧道入口",
+                "npc_present": "邦达列夫少校",
+                "item_held": "复制钥匙"
+              }
+            }
+          ]
+        },
+        {
+          "name": "零号房与誓言",
+          "opening_scene": "雷娜塔趁护士喝酒打牌时巡视楼层，来到走廊尽头的零号房。挂锁意外弹开，她推门而入，看到了手术设备、血污和穿着拘束衣的苍白人形……",
+          "anchor_events": [
+            {
+              "id": "anchor-005",
+              "name": "发现零号房",
+              "description": "雷娜塔来到走廊尽头的零号房，挂锁意外弹开，她进入房间发现手术设备、血污和穿着拘束衣的苍白人形。",
+              "priority": 5,
+              "trigger_conditions": {
+                "location": "零号房",
+                "npc_present": "雷娜塔",
+                "item_held": null
+              }
+            },
+            {
+              "id": "anchor-006",
+              "name": "博士与邦达列夫决定转移黑天鹅港",
+              "description": "鉴于入侵者已闻悉秘密，两人决定放弃黑天鹅港，炸毁通道封存龙骨，用列宁号将重要物资转移至波罗的海新基地。",
+              "priority": 5,
+              "trigger_conditions": {
+                "location": "黑天鹅港地下室",
+                "npc_present": "赫尔佐格博士",
+                "item_held": null
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "东京暗流",
+      "goal": "在日本分部展开调查，应对蛇岐八家与猛鬼众的冲突。",
+      "sessions": [
+        {
+          "name": "日本分部行动",
+          "opening_scene": "夜叉和乌鸦闯入小山隆造的公寓，暴力劫持至海边码头。源稚生冷冷地逼问基因药的下落，卡塞尔学院日本分部的黑道真面目逐渐显露。",
+          "anchor_events": [
+            {
+              "id": "anchor-007",
+              "name": "绑架小山隆造",
+              "description": "夜叉和乌鸦闯入小山隆造的公寓，使用暴力将其劫持至海边码头。",
+              "priority": 4,
+              "trigger_conditions": {
+                "location": "小山隆造公寓",
+                "npc_present": "夜叉",
+                "item_held": null
+              }
+            },
+            {
+              "id": "anchor-008",
+              "name": "源稚生逼问基因药",
+              "description": "源稚生向小山隆造表明卡塞尔学院日本分部执行官身份，揭露其罪行并逼问基因药下落。",
+              "priority": 3,
+              "trigger_conditions": {
+                "location": "海边码头",
+                "npc_present": "源稚生",
+                "item_held": null
+              }
+            }
+          ]
+        },
+        {
+          "name": "极乐天都",
+          "opening_scene": "一个男人盯着路明非的照片，评价他的眼神卑贱悲伤，却又藏着狮子。与此同时，真仲英树蹒跚走入极乐馆，准备实现他的心愿……",
+          "anchor_events": [
+            {
+              "id": "anchor-009",
+              "name": "神秘男人评价路明非",
+              "description": "一个男人盯着路明非的照片，评价他的眼神卑贱悲伤，却又藏着狮子。",
+              "priority": 5,
+              "trigger_conditions": {
+                "location": "未知房间",
+                "npc_present": "神秘男人",
+                "item_held": "照片"
+              }
+            },
+            {
+              "id": "anchor-010",
+              "name": "真仲英树进入极乐馆实现心愿",
+              "description": "真仲英树缠着绷带、几天未进食，蹒跚走入极乐馆，女经理樱井小暮迎接他，即将为他实现心愿。",
+              "priority": 4,
+              "trigger_conditions": {
+                "location": "极乐馆",
+                "npc_present": "真仲英树",
+                "item_held": null
+              }
+            }
+          ]
+        },
+        {
+          "name": "源氏重工潜入",
+          "opening_scene": "楚子航乘坐的电梯突然失效，屏幕显示“神道”。他走出电梯，见到巨大影壁上描绘着半人半蛇巨人的战争，泼洒了大量鲜血。前方传来浓烈的血腥味……",
+          "anchor_events": [
+            {
+              "id": "anchor-011",
+              "name": "发现鲜血影壁",
+              "description": "楚子航见到巨大影壁上描绘着半人半蛇巨人的战争，泼洒了大量鲜血，血腥异常。",
+              "priority": 4,
+              "trigger_conditions": {
+                "location": "源氏重工神道",
+                "npc_present": "楚子航",
+                "item_held": null
+              }
+            },
+            {
+              "id": "anchor-012",
+              "name": "遭遇屠杀现场",
+              "description": "绕过影壁后，发现满地执行局干部的尸体，心脏被巨大武器贯穿，鲜血横流，场面惨烈。",
+              "priority": 5,
+              "trigger_conditions": {
+                "location": "源氏重工内部",
+                "npc_present": "恺撒",
+                "item_held": null
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "白王觉醒",
+      "goal": "阻止赫尔佐格复活白王，拯救绘梨衣，终结千年宿怨。",
+      "sessions": [
+        {
+          "name": "刺王杀驾之夜",
+          "opening_scene": "风间琉璃播放一段录音，揭露赫尔佐格博士未死并化名王将，橘政宗实为邦达列夫。他冷冷地说：“监听见面只是手段，真正的目的只有一个——杀死王将。”",
+          "anchor_events": [
+            {
+              "id": "anchor-013",
+              "name": "播放录音揭露身份",
+              "description": "源稚女播放一段录音，揭露赫尔佐格博士未死并化名为王将，橘政宗原为邦达列夫少校，二人曾在黑天鹅港事件中互相背叛。",
+              "priority": 4,
+              "trigger_conditions": {
+                "location": "后台",
+                "npc_present": "风间琉璃",
+                "item_held": "录音带"
+              }
+            },
+            {
+              "id": "anchor-014",
+              "name": "风间琉璃表明杀意",
+              "description": "风间琉璃表示监听见面只是手段，真正的目的只有一个——杀死王将，终结旧怨。",
+              "priority": 5,
+              "trigger_conditions": {
+                "location": "后台",
+                "npc_present": "风间琉璃",
+                "item_held": null
+              }
+            }
+          ]
+        },
+        {
+          "name": "樱之坠",
+          "opening_scene": "大批拥有膜翼和蛇尾的龙形死侍从东京塔四周升起，包围特别瞭望台。混乱中，源稚生发现杀死王将的竟是自己的孪生弟弟风间琉璃……",
+          "anchor_events": [
+            {
+              "id": "anchor-015",
+              "name": "龙形死侍群出现",
+              "description": "大批拥有膜翼和蛇尾的龙形死侍从东京塔四周升起，包围特别瞭望台，开始猎食。",
+              "priority": 5,
+              "trigger_conditions": {
+                "location": "东京塔",
+                "npc_present": "死侍",
+                "item_held": null
+              }
+            },
+            {
+              "id": "anchor-016",
+              "name": "源稚生认出风间琉璃",
+              "description": "源稚生发现杀死王将的是孪生弟弟风间琉璃，猜想是猛鬼众内斗。",
+              "priority": 4,
+              "trigger_conditions": {
+                "location": "东京塔特别瞭望台",
+                "npc_present": "源稚生",
+                "item_held": null
+              }
+            }
+          ]
+        },
+        {
+          "name": "漆黑之日",
+          "opening_scene": "海啸后，成田机场挤满逃离的人群。上杉越正要登机，却接到昂热的电话，被告知自己可能有两个儿子。与此同时，一个小女孩哭着要把机票让给自己的猫……",
+          "anchor_events": [
+            {
+              "id": "anchor-017",
+              "name": "昂热告知上杉越有两个儿子",
+              "description": "上杉越接到昂热电话，被告知根据情报他可能有两个儿子，震惊不已。",
+              "priority": 5,
+              "trigger_conditions": {
+                "location": "成田机场",
+                "npc_present": "上杉越",
+                "item_held": null
+              }
+            },
+            {
+              "id": "anchor-018",
+              "name": "成田机场大撤离",
+              "description": "海啸后东京成田机场挤满逃离的人群，机票瞬间售罄，家庭被迫分离，生离死别场景随处可见。",
+              "priority": 3,
+              "trigger_conditions": {
+                "location": "成田机场",
+                "npc_present": "小女孩",
+                "item_held": null
+              }
+            }
+          ]
+        },
+        {
+          "name": "天谴",
+          "opening_scene": "赫尔佐格融合八岐大蛇，化身白色龙王，继承白王权能，引发元素风暴，令火山群喷发。F-2战斗机拦截失败，被龙形生物击坠，新王降临的恐怖笼罩日本。",
+          "anchor_events": [
+            {
+              "id": "anchor-019",
+              "name": "龙王觉醒",
+              "description": "赫尔佐格化身白色龙王，继承白王权能，引发元素风暴，令火山群喷发，宣告新王降临。",
+              "priority": 5,
+              "trigger_conditions": {
+                "location": "红井",
+                "npc_present": "赫尔佐格",
+                "item_held": null
+              }
+            },
+            {
+              "id": "anchor-020",
+              "name": "空战遭遇",
+              "description": "两架F-2战斗机拦截未知飞行物，发射导弹无效，对方以物理攻击摧毁长机，随后附在僚机机腹下，杀死飞行员。",
+              "priority": 4,
+              "trigger_conditions": {
+                "location": "四国上空",
+                "npc_present": "大鸠",
+                "item_held": null
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "constraints": "玩家必须遵循主线剧情发展，关键抉择将决定角色生死。",
+  "starting_state": {},
+  "version": 4,
+  "_extraction_errors": [
+    "第二章　无解之结",
+    "第十章　每只象龟心中都有一处温暖的水坑",
+    "第三章　古事记",
+    "第十六章　神陨",
+    "第十七章　老板娘"
+  ]
+}
