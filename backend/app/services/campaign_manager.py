@@ -19,10 +19,13 @@ from app.schemas.campaign import (
     CURRENT_SCHEMA_VERSION,
 )
 from app.schemas.game import StoryOutput
-import tiktoken
 
 from app.services.campaign_fsm import CampaignStateMachine
-from app.services.context_strategy import ContextStrategy, SimpleTruncationStrategy
+from app.services.context_strategy import (
+    ContextStrategy,
+    SimpleTruncationStrategy,
+    get_token_encoder,
+)
 from app.services.prompt_builder import build_fact_extraction
 
 class CampaignManager:
@@ -40,16 +43,20 @@ class CampaignManager:
         scripted_story,
         prompt_builder=None,
         llm_client=None,
+        health_monitor=None,
     ) -> None:
         self.db = db
         self.campaigns_dir = campaigns_dir
         self.scripted_story = scripted_story
         self.prompt_builder = prompt_builder
         self.llm_client = llm_client
+        self._health_monitor = health_monitor
         self.campaign: CampaignSchema | None = None
         self.progress: CampaignProgress | None = None
+        self.slot_name = "default"
         self.fsm = CampaignStateMachine()
         self._anchor_cooldowns: dict[str, int] = {}
+        self._pending_anchor_triggers: list[tuple[str, int]] = []
         self._strategy: ContextStrategy = SimpleTruncationStrategy()  # anchor_type -> last_triggered_turn
 
     def load(
@@ -58,6 +65,7 @@ class CampaignManager:
         campaign_id: str | None = None,
         start_arc_index: int = 0,
         start_session_index: int = 0,
+        slot_name: str = "default",
     ) -> CampaignSchema:
         """Load, version-check, migrate, validate campaign.json.
 
@@ -96,6 +104,7 @@ class CampaignManager:
 
         # Init progress and FSM
         cid = campaign_id or self.campaign.title
+        self.slot_name = slot_name or "default"
         existing = self.load_progress(cid)
         if existing:
             self.progress = existing
@@ -105,6 +114,7 @@ class CampaignManager:
                 campaign_id=cid,
                 arc_index=start_arc_index,
                 session_index=start_session_index,
+                turn_in_session=0,
             )
             self._init_fsm()
 
@@ -130,7 +140,7 @@ class CampaignManager:
         from app.services.campaign_fsm import CampaignStateMachine
         self.fsm = CampaignStateMachine()
         self.fsm.start_campaign()
-        row = self.db.read_campaign_progress(self.progress.campaign_id)
+        row = self.db.read_campaign_progress(self.progress.campaign_id, self.slot_name)
         if row and row.get("fsm_state"):
             saved_state = row["fsm_state"]
             try:
@@ -148,6 +158,7 @@ class CampaignManager:
         """Write progress to DB immediately (Pitfall 5: no deferred saves)."""
         if self.progress is None:
             return
+        recap_compressed, recap_full = self._current_recap_fields()
         self.db.write_campaign_progress(
             campaign_id=self.progress.campaign_id,
             arc_index=self.progress.arc_index,
@@ -156,17 +167,21 @@ class CampaignManager:
             fsm_state=str(self.fsm.state) if self.fsm.state else "idle",
             revealed_anchors=self.progress.revealed_anchors,
             completed_arcs=self.progress.completed_arcs,
+            recap_compressed=recap_compressed,
+            recap_full=recap_full,
+            slot_name=self.slot_name,
         )
 
     def load_progress(self, campaign_id: str) -> CampaignProgress | None:
         """Load progress from database. Returns None if no progress exists."""
-        row = self.db.read_campaign_progress(campaign_id)
+        row = self.db.read_campaign_progress(campaign_id, self.slot_name)
         if row is None:
             return None
         return CampaignProgress(
             campaign_id=row["campaign_id"],
             arc_index=row["arc_index"],
             session_index=row["session_index"],
+            turn_in_session=row.get("turn_in_session", 0),
             revealed_anchors=json.loads(row.get("revealed_anchors", "[]")),
             completed_arcs=json.loads(row.get("completed_arcs", "[]")),
         )
@@ -232,7 +247,7 @@ class CampaignManager:
         """
         if self.progress is None:
             return
-        row = self.db.read_campaign_progress(self.progress.campaign_id)
+        row = self.db.read_campaign_progress(self.progress.campaign_id, self.slot_name)
         existing_full = row.get("recap_full", "") if row else ""
         self._persist_progress_with_recap(
             compressed=recap_text,
@@ -253,10 +268,19 @@ class CampaignManager:
         """Load the compressed recap from campaign_progress."""
         if self.progress is None:
             return ""
-        row = self.db.read_campaign_progress(self.progress.campaign_id)
+        row = self.db.read_campaign_progress(self.progress.campaign_id, self.slot_name)
         if row:
             return row.get("recap_compressed", "")
         return ""
+
+    def _current_recap_fields(self) -> tuple[str, str]:
+        """Preserve existing recap fields when writing unrelated progress."""
+        if self.progress is None:
+            return "", ""
+        row = self.db.read_campaign_progress(self.progress.campaign_id, self.slot_name)
+        if not isinstance(row, dict):
+            return "", ""
+        return row.get("recap_compressed", ""), row.get("recap_full", "")
 
     def _persist_progress_with_recap(self, compressed: str, full: str) -> None:
         """Write progress with recap fields to DB."""
@@ -272,6 +296,7 @@ class CampaignManager:
             completed_arcs=self.progress.completed_arcs,
             recap_compressed=compressed,
             recap_full=full,
+            slot_name=self.slot_name,
         )
 
     # ── Health monitoring integration (CAMP-09) ──
@@ -431,9 +456,12 @@ class CampaignManager:
         try:
             arc = self.campaign.arcs[self.progress.arc_index]
             session = arc.sessions[self.progress.session_index]
-            anchors = session.anchor_events
+            anchors = list(session.anchor_events)
         except IndexError:
             return []
+
+        if self.detect_deviation(state, turn) or (turn >= 3 and not anchors):
+            anchors.extend(self.generate_adaptive_anchors(state))
 
         # Filter: not already revealed
         candidates = [
@@ -498,9 +526,29 @@ class CampaignManager:
     def mark_anchor_triggered(self, anchor_id: str, turn: int) -> None:
         """Record that an anchor was triggered this turn."""
         if self.progress is not None:
-            self.progress.revealed_anchors.append(anchor_id)
+            if anchor_id not in self.progress.revealed_anchors:
+                self.progress.revealed_anchors.append(anchor_id)
         self._anchor_cooldowns[anchor_id] = turn
         self._persist_progress()
+
+    def commit_pending_anchors(self) -> list[str]:
+        """Mark anchors that were injected into a successful turn prompt."""
+        if not self._pending_anchor_triggers:
+            return []
+        triggered: list[str] = []
+        for anchor_id, turn in self._pending_anchor_triggers:
+            self.mark_anchor_triggered(anchor_id, turn)
+            triggered.append(anchor_id)
+        self._pending_anchor_triggers = []
+        return triggered
+
+    def advance_turn(self) -> int:
+        """Increment the campaign-local turn counter and persist it."""
+        if self.progress is None:
+            return 0
+        self.progress.turn_in_session += 1
+        self._persist_progress()
+        return self.progress.turn_in_session
 
     def _describe_trigger(self, anchor: AnchorEvent) -> str:
         """Build a diegetic redirection instruction for the anchor.
@@ -553,6 +601,8 @@ class CampaignManager:
             for a in self.campaign.arcs
             for s in a.sessions
         )
+        dynamic_revealed = sum(1 for a_id in self.progress.revealed_anchors if a_id.startswith("dynamic-"))
+        total_anchors += dynamic_revealed
         revealed_count = len(self.progress.revealed_anchors)
         parts.append(f"锚点进度：{revealed_count}/{total_anchors} 已揭示")
 
@@ -565,7 +615,7 @@ class CampaignManager:
 
         # NPC relations block (top-3 by absolute affinity)
         if self.progress:
-            row = self.db.read_campaign_progress(self.progress.campaign_id)
+            row = self.db.read_campaign_progress(self.progress.campaign_id, self.slot_name)
             if row:
                 try:
                     relations = json.loads(row.get("npc_relations", "[]"))
@@ -588,9 +638,12 @@ class CampaignManager:
                     pass
 
         # Candidate triggers this turn
-        candidates = self.evaluate_anchors(state, turn)
+        turn_in_session = getattr(self.progress, "turn_in_session", turn) if self.progress else turn
+        self._pending_anchor_triggers = []
+        candidates = self.evaluate_anchors(state, turn_in_session)
         if candidates:
             anchor = candidates[0]
+            self._pending_anchor_triggers = [(anchor.id, turn_in_session)]
             parts.append(self._describe_trigger(anchor))
 
         # Health guidance layer (03-04)
@@ -608,7 +661,7 @@ class CampaignManager:
     @classmethod
     def _get_encoder(cls):
         if cls._enc is None:
-            cls._enc = tiktoken.get_encoding("cl100k_base")
+            cls._enc = get_token_encoder("cl100k_base")
         return cls._enc
 
     def check_token_budget(self, prompt: str) -> tuple[bool, int, str]:
@@ -628,6 +681,15 @@ class CampaignManager:
                 f"警告：token计数 {token_count} 超过预算 {self._strategy.budget_limit}",
             )
         return True, token_count, ""
+
+    def truncate_prompt_sections(self, sections: dict[str, str]) -> tuple[str, int, bool]:
+        """Return a prompt built from sections, truncating low-priority blocks if needed."""
+        prompt = "\n\n".join(sections.values())
+        token_count = self._strategy.count_tokens(prompt)
+        if not self._strategy.should_truncate(token_count):
+            return prompt, token_count, False
+        truncated = self._strategy.truncate(sections)
+        return truncated, self._strategy.count_tokens(truncated), True
 
     # ── Per-turn instrumentation (CAMP-09a) ──
 
@@ -685,7 +747,7 @@ class CampaignManager:
 
         # 3. option_config.json global default
         try:
-            config_path = Path("backend/scripts/option_config.json")
+            config_path = Path(__file__).resolve().parents[2] / "scripts" / "option_config.json"
             if config_path.exists():
                 config = json.loads(config_path.read_text(encoding="utf-8"))
                 return config.get("max_turns_per_session", self.DEFAULT_MAX_TURNS)
@@ -718,7 +780,7 @@ class CampaignManager:
         """Decay all NPC affinities toward 0 by 1 at session boundary."""
         if self.progress is None:
             return
-        row = self.db.read_campaign_progress(self.progress.campaign_id)
+        row = self.db.read_campaign_progress(self.progress.campaign_id, self.slot_name)
         if not row:
             return
         try:
@@ -731,7 +793,8 @@ class CampaignManager:
                     r["affinity"] = min(current + 1, 0)
             self.db.update_npc_relations(
                 self.progress.campaign_id,
-                json.dumps(relations, ensure_ascii=False)
+                json.dumps(relations, ensure_ascii=False),
+                self.slot_name,
             )
         except (json.JSONDecodeError, KeyError):
             pass
@@ -746,6 +809,8 @@ class CampaignManager:
             recap = await self.generate_recap(self.progress.campaign_id)
         except Exception:
             recap = self._build_structural_recap()
+        if recap:
+            self.store_recap(recap)
 
         self._decay_npc_relations()
 
@@ -763,6 +828,8 @@ class CampaignManager:
         self.fsm.end_session()
         self.fsm.resume_session()
         self.progress.session_index += 1
+        self.progress.turn_in_session = 0
+        self._pending_anchor_triggers = []
         self._persist_progress()
         return recap
 
@@ -776,6 +843,8 @@ class CampaignManager:
             recap = await self.generate_recap(self.progress.campaign_id)
         except Exception:
             recap = self._build_structural_recap()
+        if recap:
+            self.store_recap(recap)
 
         # Arc boundary: skip resume_session, go directly to arc transition
         self.fsm.end_session()
@@ -784,6 +853,8 @@ class CampaignManager:
         self.fsm.session_active()
         self.progress.arc_index += 1
         self.progress.session_index = 0
+        self.progress.turn_in_session = 0
+        self._pending_anchor_triggers = []
         self.progress.completed_arcs.append(self.progress.arc_index - 1)
         self._persist_progress()
         return recap

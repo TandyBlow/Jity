@@ -8,12 +8,7 @@ script = ""
 [setup.darwin]
 script = '''
 cd "$CODEX_WORKTREE_PATH"
-
-conda env list | grep -q "^jity-backend " || conda env create -f backend/environment.yml
-conda env update -n jity-backend -f backend/environment.yml --prune
-
-cd frontend
-npm install
+scripts/setup_local.sh
 '''
 
 [cleanup]
@@ -22,24 +17,29 @@ script = ""
 [cleanup.darwin]
 script = '''
 cd "$CODEX_WORKTREE_PATH"
-
-rm -rf frontend/.next
-rm -rf frontend/node_modules
-rm -rf backend/data/*.sqlite3-shm backend/data/*.sqlite3-wal
+scripts/clean_local.sh
 '''
 
 [[actions]]
 name = "启动后端"
 icon = "run"
 command = '''
-cd "$CODEX_WORKTREE_PATH/backend"
-conda run -n jity-backend uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
+cd "$CODEX_WORKTREE_PATH"
+JITY_BACKEND_HOST=127.0.0.1 scripts/start_backend.sh
 '''
 
 [[actions]]
 name = "启动前端"
 icon = "run"
 command = '''
-cd "$CODEX_WORKTREE_PATH/frontend"
-npm run dev -- --hostname 127.0.0.1 --port 3000
+cd "$CODEX_WORKTREE_PATH"
+scripts/start_frontend.sh
+'''
+
+[[actions]]
+name = "启动前后端"
+icon = "run"
+command = '''
+cd "$CODEX_WORKTREE_PATH"
+JITY_BACKEND_HOST=127.0.0.1 scripts/start_local.sh
 '''

@@ -16,13 +16,24 @@ CJK_RE = re.compile(r"[\u4e00-\u9fff]+")
 
 
 class RAGRetriever:
-    def __init__(self, chunks: list[dict[str, Any]], dimensions: int = 384) -> None:
+    def __init__(
+        self,
+        chunks: list[dict[str, Any]],
+        dimensions: int = 384,
+        embedding_client: Any | None = None,
+    ) -> None:
         self.chunks = chunks
         self.dimensions = dimensions
+        self.embedding_client = embedding_client
+        self._api_vectors_ready = False
         self.vectors = np.array([self._embed(self._chunk_text(chunk)) for chunk in chunks], dtype="float32")
         self.index = None
+        self._rebuild_index()
+
+    def _rebuild_index(self) -> None:
+        self.index = None
         if faiss is not None and len(self.vectors):
-            self.index = faiss.IndexFlatIP(dimensions)
+            self.index = faiss.IndexFlatIP(self.dimensions)
             self.index.add(self.vectors)
 
     def retrieve(self, query: str, top_k: int = 5) -> list[dict[str, Any]]:
@@ -40,6 +51,44 @@ class RAGRetriever:
             for index in order
             if index >= 0
         ]
+
+    async def retrieve_async(self, query: str, top_k: int = 5) -> list[dict[str, Any]]:
+        """Retrieve chunks using API embeddings when configured, with hash fallback."""
+        if not self.chunks:
+            return []
+        if self.embedding_client is None:
+            return self.retrieve(query, top_k)
+
+        await self._ensure_api_vectors()
+        query_vec = await self.embedding_client.embed([query])
+        query_vec = self._normalize_vectors(query_vec.astype("float32"))
+        scores = self.vectors @ query_vec[0]
+        boosted_scores = [
+            float(score) + self._keyword_boost(query, self.chunks[index])
+            for index, score in enumerate(scores)
+        ]
+        order = np.argsort(boosted_scores)[::-1][:top_k]
+        return [
+            {**self.chunks[index], "score": round(float(boosted_scores[index]), 4)}
+            for index in order
+            if index >= 0
+        ]
+
+    async def _ensure_api_vectors(self) -> None:
+        if self._api_vectors_ready or self.embedding_client is None:
+            return
+        texts = [self._chunk_text(chunk) for chunk in self.chunks]
+        vectors = await self.embedding_client.embed(texts)
+        self.vectors = self._normalize_vectors(vectors.astype("float32"))
+        self.dimensions = int(self.vectors.shape[1]) if len(self.vectors.shape) == 2 else self.dimensions
+        self._rebuild_index()
+        self._api_vectors_ready = True
+
+    @staticmethod
+    def _normalize_vectors(vectors: np.ndarray) -> np.ndarray:
+        norms = np.linalg.norm(vectors, axis=1, keepdims=True)
+        norms[norms == 0] = 1.0
+        return vectors / norms
 
     def _embed(self, text: str) -> np.ndarray:
         vector = np.zeros(self.dimensions, dtype="float32")

@@ -70,6 +70,7 @@ class CampaignProgress(BaseModel):
     campaign_id: str
     arc_index: int = 0
     session_index: int = 0
+    turn_in_session: int = 0
     revealed_anchors: list[str] = Field(default_factory=list)
     completed_arcs: list[int] = Field(default_factory=list)
 

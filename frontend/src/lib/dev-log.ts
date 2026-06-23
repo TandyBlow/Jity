@@ -3,7 +3,7 @@ export type DevLogEntry = {
   date: string;
   title: string;
   summary: string;
-  author: string;
+  developer: string;
   areas: string[];
   changes: string[];
   relatedFiles: string[];
@@ -12,11 +12,58 @@ export type DevLogEntry = {
 
 export const devLogEntries: DevLogEntry[] = [
   {
+    id: "2026-06-24-campaign-runtime-slots-and-local-workflow",
+    date: "2026-06-24",
+    title: "Campaign Runtime 接线、存档槽隔离和本地工作流整理",
+    summary: "修复 Campaign 运行时进度、锚点揭示、全局 manager 串线和存档槽混用问题；补齐已实现模块在主流程中的实际接线，并整理本地启动、清理和开发日志展示。",
+    developer: "zjr",
+    areas: ["backend", "frontend", "campaign", "save-slots", "rag", "developer-tooling"],
+    changes: [
+      "CampaignProgress 增加 turn_in_session 并在生成成功后递增，session/arc 自动推进时重置，避免 30 回合切换、recap 注入和完整 Arc 推进失效。",
+      "锚点候选在成功生成后写入 revealed_anchors，动态锚点也接入主流程，Timeline 不再长期为空。",
+      "CampaignManager 改为按 session_id + slot_name 加载和缓存，避免全局单例导致新战役覆盖旧会话或自由模式继承战役上下文。",
+      "主流程接入 EmbeddingClient、HealthMonitor、动态锚点生成、LLM fact extraction、token section 截断和最近对话历史注入。",
+      "存档槽 API 和前端下拉框改为按当前 sessionId 过滤，避免多个历史 default (A1S1 · T0) 混在当前会话里。",
+      "新增存档槽加载接口，选择 slot 会切换对应 session/state/model；新建 slot 会复制并绑定当前会话的 Campaign progress。",
+      "新增本地 setup/start/clean 脚本，并将 Codex 环境动作接到这些脚本，减少重复手动命令。",
+      "开发日志字段升级为 developer，并在页面上明确显示每次开发工作的开发人员。",
+    ],
+    relatedFiles: [
+      "backend/app/main.py",
+      "backend/app/database.py",
+      "backend/app/schemas/campaign.py",
+      "backend/app/schemas/game.py",
+      "backend/app/services/campaign_manager.py",
+      "backend/app/services/scenario_generator.py",
+      "backend/app/services/prompt_builder.py",
+      "backend/app/services/retriever.py",
+      "backend/app/services/context_strategy.py",
+      "backend/app/services/health_monitor.py",
+      "backend/tests/test_campaign_runtime_wiring.py",
+      "backend/tests/test_campaign_wiring.py",
+      "frontend/src/app/page.tsx",
+      "frontend/src/app/dev-log/DevLogView.tsx",
+      "frontend/src/lib/api.ts",
+      "frontend/src/lib/dev-log.ts",
+      "frontend/src/types.ts",
+      "scripts/setup_local.sh",
+      "scripts/start_backend.sh",
+      "scripts/start_frontend.sh",
+      "scripts/start_local.sh",
+      "scripts/clean_local.sh",
+    ],
+    nextSteps: [
+      "用真实战役连续运行超过 30 个 campaign turn，确认 recap、session advance 和 revealed_anchors 在 UI 中稳定同步。",
+      "检查存档槽加载是否需要复制/恢复完整 game_state 快照，而不只是切换 Campaign progress。",
+      "根据真实 playtest 数据校准 HealthMonitor baseline。",
+    ],
+  },
+  {
     id: "2026-06-22-prompt-refactor-experiment",
     date: "2026-06-22",
     title: "Prompt 重构验证实验",
     summary: "基于 6 轮实验（L0/L1/L2）识别出 prompt 设计为主要瓶颈后，对系统 prompt 进行深度重构：降低 temperature、精简 JSON schema、调整 L0 卡片位置、清理措辞，并设计三条件对照实验验证效果。",
-    author: "TandyBlow",
+    developer: "TandyBlow",
     areas: ["backend", "frontend", "llm", "prompt", "experiment"],
     changes: [
       "LLM temperature 从 0.9 降至 0.3，减少非 JSON 输出和随机漫步。",
@@ -52,7 +99,7 @@ export const devLogEntries: DevLogEntry[] = [
     date: "2026-06-19",
     title: "Campaign Wiring 集成测试与小说管线脚本",
     summary: "完成 Campaign 系统 API 接线验证的集成测试框架，新增小说→战役自动生成管线脚本，修复 lazy imports 和 from __future__ 兼容性问题，为 Phase 6 执行做准备。",
-    author: "TandyBlow",
+    developer: "TandyBlow",
     areas: ["backend", "campaign", "testing", "pipeline", "knowledge-base"],
     changes: [
       "新增 backend/tests/test_campaign_wiring.py — Campaign load→opening→inject→anchor 全链路集成测试（WIRE-05）。",
@@ -92,7 +139,7 @@ export const devLogEntries: DevLogEntry[] = [
     date: "2026-06-18",
     title: "Campaign Narrative Engine v1 完成 — 5 阶段 18 计划 143 测试",
     summary: "经过 5 个阶段的系统化执行，Jity Campaign Narrative Engine v1 正式完成。实现了从基础技术栈升级到 AI 战役生成、锚点事件系统、叙事健康监控的完整闭环，auto_play.py 270 回合无崩溃通过。",
-    author: "TandyBlow",
+    developer: "TandyBlow",
     areas: ["backend", "frontend", "campaign", "llm", "rag", "testing", "ui", "milestone"],
     changes: [
       "Phase 1 Foundation（4 plans）：FastAPI/Pydantic/FAISS 升级、openai SDK 替换 httpx + json_repair、tiktoken token 计数、transitions FSM、Tailwind CSS v4 + shadcn/ui。",
@@ -135,7 +182,7 @@ export const devLogEntries: DevLogEntry[] = [
     date: "2026-06-17",
     title: "自动跑剧情脚本和长轮次记录",
     summary: "新增自动剧情 playtest 脚本，用于连续创建会话、自动选择更能推进剧情的选项，并把每轮生成内容、选择记录、Context Memory 和 RAG Hits 追加到 Markdown 日志中，方便做 300 轮 x 3 次的稳定性观察。",
-    author: "Codex",
+    developer: "Codex",
     areas: ["developer-tooling", "playtest", "backend", "llm"],
     changes: [
       "新增 scripts/auto_play.py，默认运行 3 个 session，每个 session 最多 300 轮，达到轮次后重新开始新会话。",
@@ -167,7 +214,7 @@ export const devLogEntries: DevLogEntry[] = [
     date: "2026-06-16",
     title: "状态变化提示、血统稳定恢复和 JSON 修复",
     summary: "增强游戏回合反馈和 AI 输出可靠性：前端直接提示本回合血统稳定/体力变化，后端统一处理血统稳定的自动恢复，并为模型 JSON 输出增加强制格式和二次修复。",
-    author: "Codex",
+    developer: "Codex",
     areas: ["backend", "frontend", "llm", "game-state"],
     changes: [
       "在主控制台剧情选项前新增状态变化提示，显示血统稳定和体力的本回合增减及对应原因说明。",
@@ -195,7 +242,7 @@ export const devLogEntries: DevLogEntry[] = [
     date: "2026-06-15",
     title: "第二阶段：强化 Context Memory",
     summary: "把原本偏临时记录的状态扩展成真正的游戏记忆系统：明确长期状态结构、稳定 NPC/任务/物品字段，并让每轮 AI 输出只提交增量记忆，由后端合并成下一轮 prompt 的上下文。",
-    author: "Codex",
+    developer: "Codex",
     areas: ["backend", "frontend", "game-state", "prompt"],
     changes: [
       "明确 state schema，补齐 current_location、items、npcs、quests、recent_events、world_facts 和 player_status。",
@@ -225,7 +272,7 @@ export const devLogEntries: DevLogEntry[] = [
     date: "2026-06-15",
     title: "第三阶段：扩充 Knowledge Base 和 RAG",
     summary: "把知识库从单一样例扩展为按类型组织的 RAG 数据源，并增强轻量检索、结果落库和前端命中展示，为项目报告中的 RAG 演示打基础。",
-    author: "Codex",
+    developer: "Codex",
     areas: ["backend", "frontend", "rag", "knowledge-base"],
     changes: [
       "将知识库拆分为 npcs.json、locations.json、quests.json、rules.md 和 world_lore.md，并保留 cassell_lore.json 兼容已有样例。",
@@ -263,7 +310,7 @@ export const devLogEntries: DevLogEntry[] = [
     date: "2026-06-13",
     title: "固定开场、AI 接管节点和开发日志",
     summary: "把游戏开场整理成可控的固定剧情，引导玩家进入三个调查方向；同时新增开发日志页面，方便记录后续代码改动。",
-    author: "Codex",
+    developer: "Codex",
     areas: ["backend", "frontend", "story", "developer-tooling"],
     changes: [
       "新增卡塞尔学院报到处大厅固定开场，并为三个初始玩家反应提供脚本化输出。",

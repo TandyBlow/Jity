@@ -9,6 +9,7 @@ safety margin so we never accidentally exceed the real context window.
 """
 
 import logging
+import re
 from typing import Protocol
 
 import tiktoken
@@ -30,6 +31,41 @@ TRUNCATION_PRIORITY = [
 PROTECTED_SECTIONS = {"system_prompt", "player_action"}
 
 DEFAULT_BUDGET = 102400  # 80% of assumed 128K context window
+
+
+class _FallbackEncoding:
+    """Offline-safe conservative token estimator.
+
+    tiktoken downloads the cl100k_base vocabulary on first use. When that
+    download is unavailable, this estimator keeps the backend and tests usable
+    while deliberately over-counting Chinese text.
+    """
+
+    name = "cl100k_base"
+
+    @staticmethod
+    def encode(text: str) -> list[int]:
+        pieces = re.findall(r"[\u4e00-\u9fff]|[A-Za-z0-9_]+|[^\s]", text)
+        tokens: list[int] = []
+        for piece in pieces:
+            if re.fullmatch(r"[A-Za-z0-9_]+", piece):
+                tokens.extend([0] * max(1, (len(piece) + 3) // 4))
+            else:
+                tokens.append(0)
+        return tokens
+
+
+def get_token_encoder(encoder_name: str = "cl100k_base"):
+    """Return tiktoken's encoder, or a conservative offline fallback."""
+    try:
+        return tiktoken.get_encoding(encoder_name)
+    except Exception as exc:
+        logger.warning(
+            "Unable to load %s tokenizer; using offline token estimator: %s",
+            encoder_name,
+            exc,
+        )
+        return _FallbackEncoding()
 
 
 class ContextStrategy(Protocol):
@@ -64,7 +100,7 @@ class SimpleTruncationStrategy:
 
     def _get_encoder(self):
         if self._enc is None:
-            self._enc = tiktoken.get_encoding(self._encoder_name)
+            self._enc = get_token_encoder(self._encoder_name)
         return self._enc
 
     def count_tokens(self, text: str) -> int:
@@ -90,7 +126,7 @@ class SimpleTruncationStrategy:
         """
         dropped: set[str] = set()
 
-        # Try dropping each droppable section in priority order
+        # Drop lower-priority sections until the remaining prompt fits.
         for section_name in TRUNCATION_PRIORITY:
             if section_name not in sections:
                 continue
@@ -103,8 +139,8 @@ class SimpleTruncationStrategy:
                 if k not in dropped and k != section_name
             }
             combined = "\n\n".join(remaining.values())
+            dropped.add(section_name)
             if self.count_tokens(combined) <= self.budget_limit:
-                dropped.add(section_name)
                 break
 
         # Assemble final result (protected sections always included)

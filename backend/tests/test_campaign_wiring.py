@@ -51,3 +51,32 @@ async def test_create_session_without_campaign():
         assert data["session_id"]
         # Without campaign, uses default state (ScriptedStory fallback)
         assert data["state"]["current_location"]
+
+
+@pytest.mark.asyncio
+async def test_list_slots_filters_by_session_id():
+    """GET /campaigns/slots?session_id=... should not return other sessions' default slots."""
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://test") as client:
+        first = await client.post("/sessions", json={
+            "game_name": "slot_filter_1",
+            "model": "deepseek-v4-flash",
+            "campaign_filename": "default_campaign.json",
+        })
+        second = await client.post("/sessions", json={
+            "game_name": "slot_filter_2",
+            "model": "deepseek-v4-flash",
+            "campaign_filename": "default_campaign.json",
+        })
+        assert first.status_code == 200
+        assert second.status_code == 200
+
+        first_id = first.json()["session_id"]
+        second_id = second.json()["session_id"]
+        resp = await client.get("/campaigns/slots", params={"session_id": first_id})
+
+        assert resp.status_code == 200
+        slots = resp.json()["slots"]
+        assert slots
+        assert {slot["campaign_id"] for slot in slots} == {first_id}
+        assert second_id not in {slot["campaign_id"] for slot in slots}

@@ -4,8 +4,8 @@ import { BookOpen, History, Loader2, MapPin, PenTool, RefreshCw, Send, Sparkles 
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-import { createSession, createSlot, generateScene, listCampaigns, listSlots } from "@/lib/api";
-import type { CampaignListItem, GameState, GenerateResponse, ItemMemory, NPCMemory, QuestMemory, RetrievedChunk, StoryOutput, WorldFactMemory } from "@/types";
+import { createSession, createSlot, generateScene, getSessionHistory, listCampaigns, listSlots, loadSlot } from "@/lib/api";
+import type { CampaignListItem, GameState, GenerateResponse, ItemMemory, NPCMemory, QuestMemory, RetrievedChunk, SaveSlot, StoryOutput, WorldFactMemory } from "@/types";
 
 const initialOutput: StoryOutput = {
   narration: `雨是在你下车后三分钟开始变大的。
@@ -68,8 +68,9 @@ export default function Home() {
   const [action, setAction] = useState(INITIAL_ACTION);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const [slots, setSlots] = useState<Array<{ id: number; slot_name: string; arc_index: number; session_index: number }>>([]);
+  const [slots, setSlots] = useState<SaveSlot[]>([]);
   const [selectedSlot, setSelectedSlot] = useState("default");
+  const [selectedSlotId, setSelectedSlotId] = useState<number | "">("");
   const [campaigns, setCampaigns] = useState<CampaignListItem[]>([]);
   const [selectedCampaign, setSelectedCampaign] = useState("");
   const statusDeltaHints = buildStatusDeltaHints(output);
@@ -100,6 +101,9 @@ export default function Home() {
         setSessionId(session.session_id);
         setState(session.state);
         setModel(session.model);
+        setSelectedSlot("default");
+        setSelectedSlotId("");
+        refreshSlots(session.session_id, "default").catch(() => {});
         // If mid-campaign entry, auto-trigger generate to show campaign opening_scene
         if (campaignOpts?.campaignFilename && (campaignOpts.arcIndex || 0) > 0) {
           // Use a short delay to ensure sessionId is set before generate
@@ -137,10 +141,64 @@ export default function Home() {
 
   // Load save slots
   useEffect(() => {
-    listSlots().then(r => {
-      if (r.slots?.length) setSlots(r.slots);
+    if (!sessionId) {
+      setSlots([]);
+      setSelectedSlot("default");
+      setSelectedSlotId("");
+      return;
+    }
+    listSlots(sessionId).then(r => {
+      const nextSlots = (r.slots ?? []).filter((slot) => slot.campaign_id === sessionId);
+      setSlots(nextSlots);
+      const active = nextSlots.find((slot) => slot.is_active)
+        ?? nextSlots.find((slot) => slot.slot_name === selectedSlot);
+      if (active) {
+        setSelectedSlot(active.slot_name);
+        setSelectedSlotId(active.id);
+      } else {
+        setSelectedSlot("default");
+        setSelectedSlotId("");
+      }
     }).catch(() => {});
   }, [sessionId]);
+
+  async function refreshSlots(currentSessionId = sessionId, preferredSlotName = selectedSlot) {
+    if (!currentSessionId) {
+      setSlots([]);
+      setSelectedSlot("default");
+      setSelectedSlotId("");
+      return;
+    }
+    const updated = await listSlots(currentSessionId);
+    const nextSlots = (updated.slots ?? []).filter((slot) => slot.campaign_id === currentSessionId);
+    setSlots(nextSlots);
+    const active = nextSlots.find((slot) => slot.slot_name === preferredSlotName)
+      ?? nextSlots.find((slot) => slot.is_active);
+    if (active) {
+      setSelectedSlot(active.slot_name);
+      setSelectedSlotId(active.id);
+    } else {
+      setSelectedSlot("default");
+      setSelectedSlotId("");
+    }
+  }
+
+  async function restoreLastOutput(nextSessionId: string) {
+    try {
+      const history = await getSessionHistory(nextSessionId);
+      const lastAssistant = [...history.messages].reverse().find((message) => message.role === "assistant");
+      if (lastAssistant) {
+        setOutput(JSON.parse(lastAssistant.content) as StoryOutput);
+        setOutputSource("llm");
+      } else {
+        setOutput(initialOutput);
+        setOutputSource("scripted");
+      }
+    } catch {
+      setOutput(initialOutput);
+      setOutputSource("scripted");
+    }
+  }
 
   async function handleGenerate(nextAction = action, overrideSessionId?: string) {
     const sid = overrideSessionId ?? sessionId;
@@ -154,6 +212,7 @@ export default function Home() {
         model,
         style: DEFAULT_STORY_STYLE,
         constraints: DEFAULT_CONSTRAINTS,
+        slotName: selectedSlot,
       });
       setOutput(response.output);
       setOutputSource(response.source);
@@ -173,7 +232,7 @@ export default function Home() {
     setError("");
     try {
       const campaignOpts = selectedCampaign
-        ? { campaignFilename: selectedCampaign, arcIndex: 0, sessionIndex: 0 }
+        ? { campaignFilename: selectedCampaign, arcIndex: 0, sessionIndex: 0, slotName: "default" }
         : undefined;
       const session = await createSession(model, campaignOpts);
       setSessionId(session.session_id);
@@ -182,6 +241,9 @@ export default function Home() {
       setOutputSource("scripted");
       setChunks([]);
       setAction(INITIAL_ACTION);
+      setSelectedSlot("default");
+      setSelectedSlotId("");
+      await refreshSlots(session.session_id, "default");
       // Auto-trigger generate for campaign sessions to fetch opening scene
       if (campaignOpts) {
         setTimeout(() => {
@@ -243,7 +305,7 @@ export default function Home() {
             setSelectedCampaign(val);
             setError("");
             const opts = val
-              ? { campaignFilename: val, arcIndex: 0, sessionIndex: 0 }
+              ? { campaignFilename: val, arcIndex: 0, sessionIndex: 0, slotName: "default" }
               : undefined;
             createSession(model, opts)
               .then((s) => {
@@ -253,6 +315,9 @@ export default function Home() {
                 setOutputSource("scripted" as GenerateResponse["source"]);
                 setChunks([]);
                 setAction(INITIAL_ACTION);
+                setSelectedSlot("default");
+                setSelectedSlotId("");
+                refreshSlots(s.session_id, "default").catch(() => {});
                 // Auto-trigger generate to fetch campaign-specific opening scene
                 // Use setTimeout so React commits the new sessionId before generate reads it
                 setTimeout(() => {
@@ -273,14 +338,37 @@ export default function Home() {
         <label className="label" htmlFor="action">
           玩家行动
         </label>
-        {slots.length > 0 && (
+        {sessionId && (
           <div style={{ marginBottom: 8, display: "flex", alignItems: "center", gap: 8, fontSize: "0.85rem" }}>
             <span>存档:</span>
-            <select value={selectedSlot} onChange={(e) => setSelectedSlot(e.target.value)}
-              style={{ padding: "2px 6px" }}>
+            <select
+              value={selectedSlotId}
+              onChange={async (e) => {
+                const slotId = Number(e.target.value);
+                if (!slotId) return;
+                setError("");
+                try {
+                  const loaded = await loadSlot(slotId);
+                  setSelectedSlotId(slotId);
+                  setSelectedSlot(loaded.slot.slot_name);
+                  setSessionId(loaded.session.session_id);
+                  setState(loaded.session.state);
+                  setModel(loaded.session.model);
+                  setChunks([]);
+                  if (loaded.slot.campaign_filename) setSelectedCampaign(loaded.slot.campaign_filename);
+                  await restoreLastOutput(loaded.session.session_id);
+                  await refreshSlots(loaded.session.session_id, loaded.slot.slot_name);
+                } catch (err) {
+                  setError(err instanceof Error ? err.message : "加载存档失败");
+                }
+              }}
+              style={{ padding: "2px 6px" }}
+            >
+              {slots.length === 0 && <option value="">无存档</option>}
+              {slots.length > 0 && selectedSlotId === "" && <option value="">选择存档</option>}
               {slots.map(s => (
-                <option key={s.id} value={s.slot_name}>
-                  {s.slot_name} (A{s.arc_index + 1}S{s.session_index + 1})
+                <option key={s.id} value={s.id}>
+                  {s.slot_name} (A{s.arc_index + 1}S{s.session_index + 1} · T{s.turn_in_session})
                 </option>
               ))}
             </select>
@@ -288,9 +376,8 @@ export default function Home() {
               const name = prompt("新存档名称:");
               if (name) {
                 try {
-                  await createSlot(name);
-                  const updated = await listSlots();
-                  if (updated.slots?.length) setSlots(updated.slots);
+                  await createSlot(name, sessionId, selectedSlot);
+                  await refreshSlots(sessionId, name);
                 } catch (e: unknown) {
                   alert(e instanceof Error ? e.message : String(e));
                 }

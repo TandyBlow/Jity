@@ -43,6 +43,11 @@ RECAP_SYSTEM_PROMPT = """你是一个TRPG战役的叙事记录员。根据最近
 
 class PromptBuilder:
     def build(self, input: PromptInput) -> tuple[str, PromptMeta]:
+        sections, meta = self.build_sections(input)
+        return "\n".join(sections.values()), meta
+
+    def build_sections(self, input: PromptInput) -> tuple[dict[str, str], PromptMeta]:
+        """Build a prompt as named sections so callers can truncate by priority."""
         knowledge = "\n\n".join(
             f"[{chunk['source_type']}] {chunk['title']}\n{chunk['content'][:1200]}"
             for chunk in input.retrieved_chunks
@@ -50,17 +55,17 @@ class PromptBuilder:
 
         player_status = input.game_state.get("player_status", {})
 
-        parts: list[str] = []
+        sections: dict[str, str] = {}
 
         # ── Campaign context (Phase 2) ──
         if input.campaign_context:
-            parts.append(
+            sections["campaign_context"] = (
                 "## 战役上下文\n"
                 f"{input.campaign_context}\n"
             )
 
         # ── System prompt header ──
-        parts.append(
+        system_parts = [
             "你是桌面 RPG 的中文 GM 辅助系统，负责根据玩家行动生成合理、连贯、可交互的下一段剧情。\n"
             "\n"
             "当前状态：\n"
@@ -78,34 +83,34 @@ class PromptBuilder:
             "\n"
             "最近事件：\n"
             f"{self._bullet_list(input.game_state.get('recent_events', [])[-6:])}\n"
-        )
+        ]
 
         # ── Recent dialogue history ──
         if input.recent_messages:
-            parts.append("## 最近对话历史")
+            message_parts = ["## 最近对话历史"]
             for msg in input.recent_messages[-10:]:
                 role_label = "[玩家]" if msg.get("role") == "user" else "[主持人]"
                 content = msg.get("content", "")
                 if len(content) > 300:
                     content = content[:300] + "..."
-                parts.append(f"{role_label}: {content}")
-            parts.append("")
+                message_parts.append(f"{role_label}: {content}")
+            sections["messages"] = "\n".join(message_parts) + "\n"
 
         # ── Style anchor ──
         if input.style_anchor:
-            parts.append(
+            system_parts.append(
                 "## 当前叙事风格\n"
                 f"{input.style_anchor}\n"
             )
 
         # ── RAG knowledge ──
-        parts.append(
+        sections["rag_chunks"] = (
             "RAG 检索到的相关知识：\n"
             f"{knowledge or '暂无额外知识。'}\n"
         )
 
         # ── Player action (delimited) ──
-        parts.append(
+        player_action = (
             "## 玩家行动\n"
             "[PLAYER_ACTION_START]\n"
             f"{input.player_action}\n"
@@ -116,7 +121,7 @@ class PromptBuilder:
         )
 
         # ── Style and constraints ──
-        parts.append(
+        system_parts.append(
             "风格要求：\n"
             f"{input.style or '延续当前故事风格，保持黑色幽默、校园悬疑和危险感。'}\n"
             "\n"
@@ -125,7 +130,7 @@ class PromptBuilder:
         )
 
         # ── Rules (including push-back) ──
-        parts.append(
+        system_parts.append(
             "## 后果执行\n"
             "如果玩家尝试了在当前状态下不可能的事情（没有对应物品、NPC不在场、"
             "信息不足），你必须通过剧情内的后果来回应——物品不存在、NPC表示不知道、"
@@ -177,6 +182,14 @@ class PromptBuilder:
             "}"
         )
 
+        sections["system_prompt"] = "\n".join(system_parts)
+        sections["player_action"] = player_action
+
+        ordered_sections: dict[str, str] = {}
+        for key in ("campaign_context", "system_prompt", "messages", "rag_chunks", "player_action"):
+            if key in sections:
+                ordered_sections[key] = sections[key]
+
         meta = PromptMeta()
         # Extract difficulty from campaign_context
         if input.campaign_context:
@@ -185,7 +198,7 @@ class PromptBuilder:
                 meta.temperature = 0.7  # default, overridden by difficulty settings
                 meta.clue_style = "通过环境细节和NPC对话间接暗示线索方向"
 
-        return "\n".join(parts), meta
+        return ordered_sections, meta
 
     # ── Static helpers ──
 

@@ -46,7 +46,7 @@ class HealthMonitor:
         Returns:
             HealthMetrics with computed values and guidance hints
         """
-        outputs = self._get_recent_outputs(limit=10)
+        outputs = self._get_recent_outputs(campaign_id, limit=10)
 
         word_count = sum(o.get("word_count", 0) for o in outputs) / max(len(outputs), 1)
         dialogue_lines = sum(o.get("dialogue_lines", 0) for o in outputs) / max(len(outputs), 1)
@@ -104,14 +104,13 @@ class HealthMonitor:
             last_guidance_turn=dict(cooldowns),
         )
 
-    def _get_recent_outputs(self, limit: int = 10) -> list[dict[str, Any]]:
+    def _get_recent_outputs(self, session_id: str, limit: int = 10) -> list[dict[str, Any]]:
         """Fetch recent model_outputs rows. Returns empty list if DB connection fails."""
         try:
-            from app.database import Database
             with self.db.connect() as conn:
                 rows = conn.execute(
-                    "SELECT * FROM model_outputs ORDER BY id DESC LIMIT ?",
-                    (limit,),
+                    "SELECT * FROM model_outputs WHERE session_id = ? ORDER BY id DESC LIMIT ?",
+                    (session_id, limit),
                 ).fetchall()
                 return [dict(r) for r in rows]
         except Exception:

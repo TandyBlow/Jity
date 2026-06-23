@@ -17,8 +17,10 @@ from pathlib import Path
 
 from app.services.campaign_generator import CampaignGenerationError, CampaignGenerator, NovelIngestor
 from app.services.campaign_manager import CampaignManager
+from app.services.embedding_client import EmbeddingClient
 from app.services.evaluation import EvaluationModule
 from app.services.game_state import GameStateManager
+from app.services.health_monitor import HealthMonitor
 from app.services.knowledge_base import KnowledgeBase
 from app.services.llm_client import LLMClient, MissingAPIKeyError
 from app.services.prompt_builder import PromptBuilder
@@ -31,17 +33,53 @@ db = Database(settings.database_file)
 knowledge = KnowledgeBase(db, settings.knowledge_dir, settings.rulebook_file)
 chunks = knowledge.load_chunks()
 state_manager = GameStateManager(db)
-retriever = RAGRetriever(chunks)
+embedding_client = (
+    EmbeddingClient(settings.deepseek_api_key, settings.llm_base_url)
+    if settings.deepseek_api_key
+    else None
+)
+retriever = RAGRetriever(chunks, embedding_client=embedding_client)
 prompt_builder = PromptBuilder()
 llm_client = LLMClient(settings)
 scripted_story = ScriptedStoryService()
-campaign_manager = CampaignManager(
-    db=db,
-    campaigns_dir=settings.campaigns_dir,
-    scripted_story=scripted_story,
-    prompt_builder=prompt_builder,
-    llm_client=llm_client,
-)
+health_monitor = HealthMonitor(db)
+campaign_managers: dict[tuple[str, str], CampaignManager] = {}
+
+
+def build_campaign_manager() -> CampaignManager:
+    return CampaignManager(
+        db=db,
+        campaigns_dir=settings.campaigns_dir,
+        scripted_story=scripted_story,
+        prompt_builder=prompt_builder,
+        llm_client=llm_client,
+        health_monitor=health_monitor,
+    )
+
+
+def get_campaign_manager_for_session(session_id: str, slot_name: str = "default") -> CampaignManager | None:
+    """Return the manager for this session/slot, loading it from persisted metadata if needed."""
+    session_row = db.get_session(session_id)
+    if not session_row or not session_row["campaign_filename"]:
+        return None
+    active_slot = slot_name or session_row["active_slot_name"] or "default"
+    key = (session_id, active_slot)
+    if key in campaign_managers:
+        return campaign_managers[key]
+
+    campaign_path = settings.campaigns_dir / session_row["campaign_filename"]
+    if not campaign_path.exists():
+        return None
+    manager = build_campaign_manager()
+    manager.load(
+        campaign_path,
+        campaign_id=session_row["campaign_id"] or session_id,
+        slot_name=active_slot,
+    )
+    campaign_managers[key] = manager
+    return manager
+
+
 campaign_generator = CampaignGenerator(
     llm_client=llm_client,
     prompt_builder=prompt_builder,
@@ -56,7 +94,7 @@ scenario_generator = ScenarioGenerator(
     prompt_builder=prompt_builder,
     llm_client=llm_client,
     scripted_story=scripted_story,
-    campaign_manager=campaign_manager,
+    campaign_manager_provider=get_campaign_manager_for_session,
     default_model=settings.llm_model,
 )
 
@@ -195,12 +233,31 @@ def save_campaign(request: dict[str, object]) -> dict[str, object]:
 
 
 @app.get("/campaigns/slots")
-def list_slots() -> dict[str, object]:
-    """List all save slots."""
+def list_slots(session_id: str | None = None) -> dict[str, object]:
+    """List save slots, optionally limited to one game session."""
+    where_clause = ""
+    params: tuple[str, ...] = ()
+    if session_id:
+        where_clause = "WHERE campaign_progress.campaign_id = ?"
+        params = (session_id,)
+
     with db.connect() as conn:
         rows = conn.execute(
-            """SELECT id, campaign_id, slot_name, arc_index, session_index, updated_at
-               FROM campaign_progress ORDER BY updated_at DESC"""
+            f"""SELECT
+                 campaign_progress.id,
+                 campaign_progress.campaign_id,
+                 campaign_progress.slot_name,
+                 campaign_progress.arc_index,
+                 campaign_progress.session_index,
+                 campaign_progress.turn_in_session,
+                 campaign_progress.updated_at,
+                 game_sessions.campaign_filename,
+                 game_sessions.active_slot_name
+               FROM campaign_progress
+               JOIN game_sessions ON game_sessions.id = campaign_progress.campaign_id
+               {where_clause}
+               ORDER BY campaign_progress.updated_at DESC""",
+            params,
         ).fetchall()
         slots = [{
             "id": row["id"],
@@ -208,31 +265,85 @@ def list_slots() -> dict[str, object]:
             "slot_name": row["slot_name"],
             "arc_index": row["arc_index"],
             "session_index": row["session_index"],
+            "turn_in_session": row["turn_in_session"],
             "last_played": row["updated_at"],
+            "campaign_filename": row["campaign_filename"],
+            "is_active": row["slot_name"] == row["active_slot_name"],
         } for row in rows]
     return {"slots": slots}
 
 
 @app.post("/campaigns/slots")
 def create_slot(request: dict[str, str]) -> dict[str, object]:
-    """Create a named save slot."""
+    """Create a named save slot for the current game session."""
     slot_name = request.get("slot_name", "").strip()
     if not slot_name:
         raise HTTPException(status_code=400, detail="slot_name is required")
     import re
     if not re.match(r'^[a-zA-Z0-9_一-鿿]+$', slot_name):
         raise HTTPException(status_code=400, detail="slot_name contains invalid characters")
-    campaign_id = request.get("campaign_id", "default_campaign")
-    try:
-        with db.connect() as conn:
-            conn.execute(
-                """INSERT INTO campaign_progress (campaign_id, slot_name, arc_index, session_index)
-                   VALUES (?, ?, 0, 0)""",
-                (campaign_id, slot_name),
-            )
-    except Exception:
+    session_id = request.get("session_id") or request.get("campaign_id")
+    if not session_id:
+        raise HTTPException(status_code=400, detail="session_id is required")
+
+    session_row = db.get_session(session_id)
+    if not session_row:
+        raise HTTPException(status_code=404, detail=f"Session '{session_id}' not found")
+
+    campaign_id = session_row["campaign_id"] or session_id
+    source_slot = request.get("source_slot_name") or session_row["active_slot_name"] or "default"
+    if db.read_campaign_progress(campaign_id, slot_name):
         raise HTTPException(status_code=409, detail=f"Slot '{slot_name}' already exists")
-    return {"status": "created", "slot_name": slot_name}
+
+    source = db.read_campaign_progress(campaign_id, source_slot) or {}
+    db.write_campaign_progress(
+        campaign_id=campaign_id,
+        slot_name=slot_name,
+        arc_index=int(source.get("arc_index", 0)),
+        session_index=int(source.get("session_index", 0)),
+        turn_in_session=int(source.get("turn_in_session", 0)),
+        fsm_state=str(source.get("fsm_state", "active/session_active")),
+        revealed_anchors=json.loads(source.get("revealed_anchors", "[]")) if source else [],
+        completed_arcs=json.loads(source.get("completed_arcs", "[]")) if source else [],
+        recap_compressed=str(source.get("recap_compressed", "")),
+        recap_full=str(source.get("recap_full", "")),
+    )
+    if source.get("npc_relations"):
+        db.update_npc_relations(campaign_id, source["npc_relations"], slot_name)
+    db.set_session_active_slot(session_id, slot_name)
+    return {"status": "created", "slot_name": slot_name, "campaign_id": campaign_id}
+
+
+@app.post("/campaigns/slots/{slot_id}/load")
+def load_slot(slot_id: int) -> dict[str, object]:
+    """Switch the backend and UI to a persisted campaign slot."""
+    progress = db.read_campaign_progress_by_id(slot_id)
+    if not progress:
+        raise HTTPException(status_code=404, detail=f"Slot '{slot_id}' not found")
+
+    session_id = progress["campaign_id"]
+    payload = state_manager.get_session_payload(session_id)
+    if not payload:
+        raise HTTPException(status_code=404, detail=f"Session '{session_id}' not found")
+
+    slot_name = progress["slot_name"]
+    db.set_session_active_slot(session_id, slot_name)
+    get_campaign_manager_for_session(session_id, slot_name)
+    session_row = db.get_session(session_id)
+    return {
+        "status": "loaded",
+        "slot": {
+            "id": progress["id"],
+            "campaign_id": progress["campaign_id"],
+            "slot_name": slot_name,
+            "arc_index": progress["arc_index"],
+            "session_index": progress["session_index"],
+            "turn_in_session": progress.get("turn_in_session", 0),
+            "campaign_filename": session_row["campaign_filename"] if session_row else None,
+            "is_active": True,
+        },
+        "session": payload,
+    }
 
 
 @app.delete("/campaigns/slots/{slot_name}")
@@ -282,7 +393,10 @@ def get_session_progress(session_id: str) -> dict[str, object]:
         "world_facts": state.get("world_facts", []),
     }
 
-    row = db.read_campaign_progress(session_id)
+    session_row = db.get_session(session_id)
+    slot_name = session_row["active_slot_name"] if session_row else "default"
+    campaign_id = session_row["campaign_id"] if session_row and session_row["campaign_id"] else session_id
+    row = db.read_campaign_progress(campaign_id, slot_name or "default")
     if row:
         progress_data["revealed_anchors"] = json.loads(
             row.get("revealed_anchors", "[]")
@@ -322,17 +436,26 @@ def create_session(request: CreateSessionRequest) -> SessionResponse:
                 detail=f"Campaign file not found: {request.campaign_filename}",
             )
         try:
-            campaign_manager.load(
+            slot_name = request.slot_name or "default"
+            manager = build_campaign_manager()
+            manager.load(
                 campaign_path,
                 campaign_id=session_id,
                 start_arc_index=request.arc_index,
                 start_session_index=request.session_index,
+                slot_name=slot_name,
             )
-            db.set_session_campaign_id(session_id, session_id)
+            campaign_managers[(session_id, slot_name)] = manager
+            db.set_session_campaign_id(
+                session_id,
+                session_id,
+                request.campaign_filename,
+                slot_name,
+            )
             # Merge entry_state (includes campaign starting_state for fresh starts)
             payload["state"] = state_manager.merge_entry_state(
                 payload["state"],
-                campaign_manager.campaign,
+                manager.campaign,
                 request.arc_index,
                 request.session_index,
             )
@@ -385,7 +508,7 @@ def evaluate(output: StoryOutput) -> dict[str, int]:
 def reload_knowledge() -> dict[str, object]:
     global chunks, retriever, scenario_generator
     chunks = knowledge.load_chunks()
-    retriever = RAGRetriever(chunks)
+    retriever = RAGRetriever(chunks, embedding_client=embedding_client)
     scenario_generator = ScenarioGenerator(
         db=db,
         state_manager=state_manager,
@@ -393,7 +516,7 @@ def reload_knowledge() -> dict[str, object]:
         prompt_builder=prompt_builder,
         llm_client=llm_client,
         scripted_story=scripted_story,
-        campaign_manager=campaign_manager,
+        campaign_manager_provider=get_campaign_manager_for_session,
         default_model=settings.llm_model,
     )
     return {"status": "reloaded", "knowledge_chunks": len(chunks)}

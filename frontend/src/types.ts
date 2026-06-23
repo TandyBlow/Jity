@@ -176,6 +176,19 @@ export type CampaignProgressData = {
   campaign_id: string;
   arc_index: number;
   session_index: number;
+  turn_in_session: number;
   revealed_anchors: string[];
   completed_arcs: number[];
+};
+
+export type SaveSlot = {
+  id: number;
+  campaign_id: string;
+  slot_name: string;
+  arc_index: number;
+  session_index: number;
+  turn_in_session: number;
+  last_played: string;
+  campaign_filename?: string | null;
+  is_active?: boolean;
 };

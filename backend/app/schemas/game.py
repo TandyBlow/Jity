@@ -94,6 +94,7 @@ class CreateSessionRequest(BaseModel):
     campaign_filename: Optional[str] = None
     arc_index: int = 0
     session_index: int = 0
+    slot_name: str = "default"
 
 
 class GenerateRequest(BaseModel):
@@ -101,6 +102,7 @@ class GenerateRequest(BaseModel):
     model: Optional[str] = None
     style: str = ""
     constraints: str = ""
+    slot_name: str = ""
 
 
 # ── Response models ──

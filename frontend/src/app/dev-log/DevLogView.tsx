@@ -22,7 +22,7 @@ export function DevLogView({ entries }: { entries: DevLogEntry[] }) {
       const searchableText = [
         entry.title,
         entry.summary,
-        entry.author,
+        entry.developer,
         ...entry.areas,
         ...entry.changes,
         ...entry.relatedFiles,
@@ -98,7 +98,7 @@ function DevLogEntryCard({ entry }: { entry: DevLogEntry }) {
         </div>
         <div className="entry-author">
           <GitCommit size={15} />
-          {entry.author}
+          <span>开发人员：{entry.developer}</span>
         </div>
       </div>
 

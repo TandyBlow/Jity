@@ -1,6 +1,7 @@
 """Tests for context injection, token budget, and per-turn instrumentation."""
 
 import json
+import os
 from pathlib import Path
 from unittest.mock import MagicMock
 
@@ -212,3 +213,19 @@ class TestInstrumentation:
         state = _make_state(location="卡塞尔学院报到大厅")
         metrics = mgr.record_turn(output, state, 500)
         assert metrics["location_changed"] == 1
+
+
+class TestOptionConfig:
+    def test_resolve_max_turns_is_independent_of_cwd(self, tmp_path):
+        """The repository option config should load from any working directory."""
+        mgr = CampaignManager(
+            db=MagicMock(),
+            campaigns_dir=Path("/tmp"),
+            scripted_story=MagicMock(),
+        )
+        previous_cwd = Path.cwd()
+        try:
+            os.chdir(tmp_path)
+            assert mgr._resolve_max_turns() == 30
+        finally:
+            os.chdir(previous_cwd)

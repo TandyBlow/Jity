@@ -121,9 +121,12 @@ class Database:
             self._ensure_column(db, "model_outputs", "dialogue_lines", "INTEGER NOT NULL DEFAULT 0")
             self._ensure_column(db, "model_outputs", "location_changed", "INTEGER NOT NULL DEFAULT 0")
             self._ensure_column(db, "model_outputs", "token_count", "INTEGER NOT NULL DEFAULT 0")
+            self._ensure_column(db, "campaign_progress", "turn_in_session", "INTEGER NOT NULL DEFAULT 0")
             self._ensure_column(db, "campaign_progress", "recap_compressed", "TEXT NOT NULL DEFAULT ''")
             self._ensure_column(db, "campaign_progress", "recap_full", "TEXT NOT NULL DEFAULT ''")
             self._ensure_column(db, "game_sessions", "campaign_id", "TEXT")
+            self._ensure_column(db, "game_sessions", "campaign_filename", "TEXT")
+            self._ensure_column(db, "game_sessions", "active_slot_name", "TEXT NOT NULL DEFAULT 'default'")
             self._ensure_column(db, "session_messages", "campaign_session_index", "INTEGER NOT NULL DEFAULT 0")
             self._ensure_column(db, "campaign_progress", "npc_relations", "TEXT NOT NULL DEFAULT '[]'")
 
@@ -172,12 +175,32 @@ class Database:
                 (relations_json, campaign_id, slot_name),
             )
 
-    def set_session_campaign_id(self, session_id: str, campaign_id: str) -> None:
-        """Set the campaign_id on a game session row."""
+    def set_session_campaign_id(
+        self,
+        session_id: str,
+        campaign_id: str,
+        campaign_filename: str | None = None,
+        active_slot_name: str = "default",
+    ) -> None:
+        """Set campaign metadata on a game session row."""
         with self.connect() as db:
             db.execute(
-                "UPDATE game_sessions SET campaign_id = ? WHERE id = ?",
-                (campaign_id, session_id),
+                """
+                UPDATE game_sessions
+                SET campaign_id = ?,
+                    campaign_filename = COALESCE(?, campaign_filename),
+                    active_slot_name = ?
+                WHERE id = ?
+                """,
+                (campaign_id, campaign_filename, active_slot_name, session_id),
+            )
+
+    def set_session_active_slot(self, session_id: str, slot_name: str) -> None:
+        """Remember which campaign progress slot should drive future turns."""
+        with self.connect() as db:
+            db.execute(
+                "UPDATE game_sessions SET active_slot_name = ? WHERE id = ?",
+                (slot_name, session_id),
             )
 
     def write_session(
@@ -264,6 +287,21 @@ class Database:
             ).fetchall()
             return [dict(row) for row in rows]
 
+    def get_recent_messages(self, session_id: str, limit: int = 10) -> list[dict[str, Any]]:
+        """Return the latest user/assistant messages in chronological order."""
+        with self.connect() as db:
+            rows = db.execute(
+                """
+                SELECT id, role, content, created_at
+                FROM session_messages
+                WHERE session_id = ? AND role IN ('user', 'assistant')
+                ORDER BY id DESC
+                LIMIT ?
+                """,
+                (session_id, limit),
+            ).fetchall()
+            return [dict(row) for row in reversed(rows)]
+
     def read_campaign_progress(self, campaign_id: str, slot_name: str = "default") -> dict[str, Any] | None:
         with self.connect() as db:
             row = db.execute(
@@ -273,6 +311,14 @@ class Database:
             if not row:
                 return None
             return dict(row)
+
+    def read_campaign_progress_by_id(self, progress_id: int) -> dict[str, Any] | None:
+        with self.connect() as db:
+            row = db.execute(
+                "SELECT * FROM campaign_progress WHERE id = ?",
+                (progress_id,),
+            ).fetchone()
+            return dict(row) if row else None
 
     def write_campaign_progress(self, campaign_id: str, arc_index: int, session_index: int, turn_in_session: int, fsm_state: str, revealed_anchors: list[str] | None = None, completed_arcs: list[int] | None = None, recap_compressed: str = "", recap_full: str = "", slot_name: str = "default") -> None:
         with self.connect() as db:

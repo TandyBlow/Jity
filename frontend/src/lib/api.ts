@@ -2,6 +2,7 @@ import type {
   CampaignDetailResponse,
   CampaignListResponse,
   GenerateResponse,
+  SaveSlot,
   SessionHistoryResponse,
   SessionResponse,
   WorldFactMemory,
@@ -39,6 +40,7 @@ export function createSession(
     campaignFilename?: string;
     arcIndex?: number;
     sessionIndex?: number;
+    slotName?: string;
   },
 ): Promise<SessionResponse> {
   const body: Record<string, unknown> = { model };
@@ -46,6 +48,7 @@ export function createSession(
     body.campaign_filename = options.campaignFilename;
     body.arc_index = options.arcIndex ?? 0;
     body.session_index = options.sessionIndex ?? 0;
+    body.slot_name = options.slotName ?? "default";
   }
   return request<SessionResponse>("/sessions", {
     method: "POST",
@@ -59,6 +62,7 @@ export function generateScene(params: {
   model?: string;
   style?: string;
   constraints?: string;
+  slotName?: string;
 }): Promise<GenerateResponse> {
   return request<GenerateResponse>(`/sessions/${params.sessionId}/generate`, {
     method: "POST",
@@ -67,6 +71,7 @@ export function generateScene(params: {
       model: params.model,
       style: params.style,
       constraints: params.constraints,
+      slot_name: params.slotName,
     }),
   });
 }
@@ -103,17 +108,22 @@ export function getSessionProgress(sessionId: string): Promise<{
 
 // ── Save Slot API ──
 
-export function listSlots(): Promise<{
-  slots: Array<{ id: number; campaign_id: string; slot_name: string; arc_index: number; session_index: number; last_played: string }>;
+export function listSlots(sessionId?: string): Promise<{
+  slots: SaveSlot[];
 }> {
-  return request("/campaigns/slots");
+  const query = sessionId ? `?session_id=${encodeURIComponent(sessionId)}` : "";
+  return request(`/campaigns/slots${query}`);
 }
 
-export function createSlot(slotName: string, campaignId?: string): Promise<{ status: string; slot_name: string }> {
+export function createSlot(slotName: string, sessionId: string, sourceSlotName?: string): Promise<{ status: string; slot_name: string; campaign_id: string }> {
   return request("/campaigns/slots", {
     method: "POST",
-    body: JSON.stringify({ slot_name: slotName, campaign_id: campaignId }),
+    body: JSON.stringify({ slot_name: slotName, session_id: sessionId, source_slot_name: sourceSlotName }),
   });
+}
+
+export function loadSlot(slotId: number): Promise<{ status: string; slot: SaveSlot; session: SessionResponse }> {
+  return request(`/campaigns/slots/${slotId}/load`, { method: "POST" });
 }
 
 export function deleteSlot(slotName: string): Promise<{ status: string }> {
