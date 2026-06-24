@@ -1,6 +1,7 @@
-"""Test that em dashes (—, U+2014) are replaced with Chinese periods in all player-facing text.
+"""Test that em dashes (—, U+2014) are replaced with commas in all player-facing text.
 
-Each individual — maps to one 。, so —— becomes 。。.
+Chinese 破折号 "——" (two em dashes) is treated as one unit → "，".
+A stray single "—" also → "，".
 """
 
 import json
@@ -21,11 +22,16 @@ from app.schemas.game import DialogueLine, ItemMemory, MemoryUpdates, NPCMemory,
     [
         ("", ""),
         ("普通文本没有破折号", "普通文本没有破折号"),
-        ("这句话——有一个破折号", "这句话。。有一个破折号"),
-        ("——开头有破折号", "。。开头有破折号"),
-        ("结尾有破折号——", "结尾有破折号。。"),
-        ("多个——破折号——混在——一起", "多个。。破折号。。混在。。一起"),
-        ("emoji 😀——text", "emoji 😀。。text"),
+        # "——" as a unit → one comma
+        ("这句话——有一个破折号", "这句话，有一个破折号"),
+        ("——开头有破折号", "，开头有破折号"),
+        ("结尾有破折号——", "结尾有破折号，"),
+        ("多个——破折号——混在——一起", "多个，破折号，混在，一起"),
+        ("emoji 😀——text", "emoji 😀，text"),
+        # stray single — → comma
+        ("dark — academy — hall", "dark ， academy ， hall"),
+        # —— adjacent to single — : —— consumed first, lone — then
+        ("——odd—case", "，odd，case"),
     ],
 )
 def test_replace_em_dash_utility(input_text: str, expected: str):
@@ -96,7 +102,7 @@ def test_replace_em_dashes_replaces_all_in_narration():
     output = _output_with_em_dashes()
     output.replace_em_dashes()
     assert "—" not in output.narration
-    assert output.narration == "你走进。。大厅。。看见。。红色标记。"
+    assert output.narration == "你走进，大厅，看见，红色标记。"
 
 
 def test_replace_em_dashes_replaces_all_in_dialogue():
@@ -105,8 +111,8 @@ def test_replace_em_dashes_replaces_all_in_dialogue():
     for d in output.dialogue:
         assert "—" not in d.speaker
         assert "—" not in d.text
-    assert output.dialogue[0].speaker == "诺。。诺"
-    assert output.dialogue[0].text == "你。。终于。。来了。"
+    assert output.dialogue[0].speaker == "诺，诺"
+    assert output.dialogue[0].text == "你，终于，来了。"
 
 
 def test_replace_em_dashes_replaces_all_in_options():
@@ -114,14 +120,14 @@ def test_replace_em_dashes_replaces_all_in_options():
     output.replace_em_dashes()
     for o in output.options:
         assert "—" not in o
-    assert output.options == ["向前。。走一步", "后退。。观察", "大声。。喊叫"]
+    assert output.options == ["向前，走一步", "后退，观察", "大声，喊叫"]
 
 
 def test_replace_em_dashes_replaces_all_in_current_location():
     output = _output_with_em_dashes()
     output.replace_em_dashes()
     assert "—" not in output.current_location
-    assert output.current_location == "卡塞尔。。学院。。报到处"
+    assert output.current_location == "卡塞尔，学院，报到处"
 
 
 def test_replace_em_dashes_replaces_all_in_items_gained():
@@ -167,7 +173,6 @@ def test_replace_em_dashes_replaces_all_in_npc_relations_delta():
 
 
 def test_replace_em_dashes_noop_on_clean_text():
-    """replace_em_dashes() on already-clean text should be a no-op."""
     clean = StoryOutput(
         narration="你走进了大厅。没有破折号。",
         dialogue=[DialogueLine(speaker="诺诺", text="你好。")],
@@ -180,12 +185,7 @@ def test_replace_em_dashes_noop_on_clean_text():
 
 
 def test_replace_em_dashes_handles_empty_fields():
-    """Empty strings and empty lists should be handled gracefully."""
-    output = StoryOutput(
-        narration="",
-        dialogue=[],
-        options=[],
-    )
+    output = StoryOutput(narration="", dialogue=[], options=[])
     result = output.replace_em_dashes()
     assert result.narration == ""
     assert result.options == []
@@ -193,7 +193,6 @@ def test_replace_em_dashes_handles_empty_fields():
 
 
 def test_replace_em_dashes_idempotent():
-    """Calling replace_em_dashes() twice should produce the same result."""
     output = _output_with_em_dashes()
     first = output.replace_em_dashes()
     second = first.replace_em_dashes()
@@ -203,7 +202,6 @@ def test_replace_em_dashes_idempotent():
 # ── Integration: API response has no em dashes ──────────────────────────
 
 def _build_mock_llm_output_with_em_dash() -> StoryOutput:
-    """Simulate an LLM that returns text full of em dashes."""
     return StoryOutput(
         narration="你推开——沉重的铁门——门后是一条——幽深的走廊。墙壁上——挂满了——古老的肖像画——他们的眼睛——似乎在——跟随你移动。",
         dialogue=[
@@ -222,11 +220,6 @@ def _build_mock_llm_output_with_em_dash() -> StoryOutput:
 
 @pytest.mark.asyncio
 async def test_generate_endpoint_replaces_em_dashes():
-    """POST /sessions/{id}/generate must return output with zero em dashes.
-
-    Mocks the LLM client to return text riddled with em dashes, then
-    verifies the API response has none (all replaced with periods).
-    """
     mock_output = _build_mock_llm_output_with_em_dash()
 
     from app.dependencies import knowledge_service
@@ -266,7 +259,6 @@ async def test_generate_endpoint_replaces_em_dashes():
 
 
 def _find_em_dashes(obj, path: str) -> list[dict]:
-    """Recursively search *obj* for strings containing '—'. Returns list of {path, value}."""
     violations: list[dict] = []
     if isinstance(obj, str):
         if "—" in obj:
@@ -284,7 +276,6 @@ def _find_em_dashes(obj, path: str) -> list[dict]:
 
 @pytest.mark.asyncio
 async def test_story_output_model_dump_has_no_em_dashes():
-    """After replace_em_dashes(), model_dump() must contain zero em dashes."""
     output = _output_with_em_dashes()
     output.replace_em_dashes()
     dumped = json.dumps(output.model_dump(), ensure_ascii=False)
