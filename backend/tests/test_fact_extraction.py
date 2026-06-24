@@ -6,8 +6,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from app.services.campaign_manager import CampaignManager
-from app.services.prompt_builder import build_fact_extraction, FACT_EXTRACTION_PROMPT
+from app.services.campaign_manager import CampaignManager, build_fact_extraction, _FACT_EXTRACTION_PROMPT
 
 
 class TestFactExtractionPrompt:
@@ -24,8 +23,8 @@ class TestFactExtractionPrompt:
 
     def test_prompt_has_output_format(self):
         """Fact extraction prompt should specify JSON output format."""
-        assert "JSON" in FACT_EXTRACTION_PROMPT
-        assert "name" in FACT_EXTRACTION_PROMPT
+        assert "JSON" in _FACT_EXTRACTION_PROMPT
+        assert "name" in _FACT_EXTRACTION_PROMPT
 
 
 class TestDeviationDetection:

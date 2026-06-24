@@ -7,6 +7,11 @@ import pytest
 from app.services.campaign_fsm import CampaignStateMachine
 
 
+def _leaf(state_name: str) -> str:
+    """Extract leaf state from hierarchical state name."""
+    return state_name.split("/")[-1] if "/" in state_name else state_name
+
+
 class TestFSMTransitions:
     """Tests for HierarchicalMachine state transitions."""
 
@@ -20,8 +25,7 @@ class TestFSMTransitions:
         fsm = CampaignStateMachine()
         fsm.start_campaign()
         assert str(fsm.state) == "active/session_active"
-        assert fsm.is_in_active_group() is True
-        assert fsm.get_substate() == "session_active"
+        assert _leaf(str(fsm.state)) == "session_active"
 
     def test_end_session_and_resume(self):
         """end_session → session_recap; resume_session → session_active."""
@@ -39,10 +43,10 @@ class TestFSMTransitions:
         fsm.end_session()
         fsm.arc_transition()
         assert str(fsm.state) == "active/arc_transition"
-        assert fsm.get_substate() == "arc_transition"
+        assert _leaf(str(fsm.state)) == "arc_transition"
         fsm.begin_arc()
         assert str(fsm.state) == "active/arc_intro"
-        assert fsm.get_substate() == "arc_intro"
+        assert _leaf(str(fsm.state)) == "arc_intro"
         fsm.session_active()
         assert str(fsm.state) == "active/session_active"
 
@@ -53,29 +57,12 @@ class TestFSMTransitions:
         fsm.end_campaign()
         assert str(fsm.state) == "campaign_end"
 
-    def test_get_substate_returns_leaf(self):
-        """get_substate() should return only the leaf state name."""
-        fsm = CampaignStateMachine()
-        assert fsm.get_substate() == "idle"
-        fsm.start_campaign()
-        assert fsm.get_substate() == "session_active"
-
-    def test_is_in_active_group(self):
-        """is_in_active_group() should return True only when in active/*."""
-        fsm = CampaignStateMachine()
-        assert fsm.is_in_active_group() is False
-        fsm.start_campaign()
-        assert fsm.is_in_active_group() is True
-        fsm.end_campaign()
-        assert fsm.is_in_active_group() is False
-
     def test_separator_is_slash(self):
         """State names should use '/' not '_' to separate hierarchy levels."""
         fsm = CampaignStateMachine()
         fsm.start_campaign()
         state_name = str(fsm.state)
         assert "/" in state_name
-        # 'session_active' contains '_' — but the hierarchy separator is '/'
         assert "active/session_active" == state_name
 
 
@@ -200,28 +187,28 @@ class TestProgressPersistence:
         """advance_session: session_active → session_recap → session_active."""
         fsm = CampaignStateMachine()
         fsm.start_campaign()
-        assert fsm.get_substate() == "session_active"
+        assert _leaf(str(fsm.state)) == "session_active"
         fsm.end_session()
-        assert fsm.get_substate() == "session_recap"
+        assert _leaf(str(fsm.state)) == "session_recap"
         fsm.resume_session()
-        assert fsm.get_substate() == "session_active"
+        assert _leaf(str(fsm.state)) == "session_active"
 
     def test_advance_arc_from_session_recap(self):
         """advance_arc: session_recap → arc_transition → arc_intro → session_active."""
         fsm = CampaignStateMachine()
         fsm.start_campaign()
         fsm.end_session()
-        assert fsm.get_substate() == "session_recap"
+        assert _leaf(str(fsm.state)) == "session_recap"
         fsm.arc_transition()
-        assert fsm.get_substate() == "arc_transition"
+        assert _leaf(str(fsm.state)) == "arc_transition"
         fsm.begin_arc()
-        assert fsm.get_substate() == "arc_intro"
+        assert _leaf(str(fsm.state)) == "arc_intro"
         fsm.session_active()
-        assert fsm.get_substate() == "session_active"
+        assert _leaf(str(fsm.state)) == "session_active"
 
     def test_end_campaign_from_any_state(self):
         """end_campaign works from any state (wildcard source)."""
         fsm = CampaignStateMachine()
         fsm.start_campaign()
         fsm.end_campaign()
-        assert fsm.get_substate() == "campaign_end"
+        assert _leaf(str(fsm.state)) == "campaign_end"

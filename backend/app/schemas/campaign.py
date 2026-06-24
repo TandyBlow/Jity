@@ -25,15 +25,6 @@ class AnchorEvent(BaseModel):
     trigger_conditions: AnchorTriggerConditions = Field(default_factory=AnchorTriggerConditions)
 
 
-class EntryState(BaseModel):
-    """Pre-authored game state for mid-campaign entry points."""
-    location: str | None = None
-    npc_relations: list[dict[str, Any]] = Field(default_factory=list)
-    world_facts_summary: list[str] = Field(default_factory=list)
-    items: list[str] = Field(default_factory=list)
-    quests: list[str] = Field(default_factory=list)
-
-
 class SessionSchema(BaseModel):
     """A single session within an arc."""
     name: str

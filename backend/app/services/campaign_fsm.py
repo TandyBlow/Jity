@@ -72,16 +72,3 @@ class CampaignStateMachine:
             transitions=CampaignStateMachine.transitions,
             initial="idle",
         )
-
-    def is_in_active_group(self) -> bool:
-        """Return True if FSM is in any active/* substate."""
-        state = self.state
-        if state is None:
-            return False
-        state_name = str(state)
-        return state_name.startswith("active/")
-
-    def get_substate(self) -> str:
-        """Return the leaf state name (e.g., 'session_active' from 'active/session_active')."""
-        state_name = str(self.state) if self.state is not None else "idle"
-        return state_name.split("/")[-1] if "/" in state_name else state_name
