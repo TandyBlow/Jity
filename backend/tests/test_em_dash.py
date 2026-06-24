@@ -1,41 +1,38 @@
-"""Test that em dashes (—, U+2014) are stripped from all player-facing text.
+"""Test that em dashes (—, U+2014) are replaced with Chinese periods in all player-facing text.
 
-Covers:
-1. StoryOutput.strip_em_dashes() — unit test on every text field
-2. strip_em_dash() utility function
-3. Integration: POST /sessions/{id}/generate returns output with no em dashes
+Each individual — maps to one 。, so —— becomes 。。.
 """
 
 import json
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, patch
 
 import pytest
 from httpx import ASGITransport, AsyncClient
 
 from app.main import app as fastapi_app
-from app.schemas import StoryOutput, strip_em_dash
+from app.schemas import StoryOutput, replace_em_dash
 from app.schemas.game import DialogueLine, ItemMemory, MemoryUpdates, NPCMemory, PlayerStatus, QuestMemory, WorldFactMemory
 
 
-# ── Unit: strip_em_dash ────────────────────────────────────────────────
+# ── Unit: replace_em_dash ──────────────────────────────────────────────
 
 @pytest.mark.parametrize(
     "input_text, expected",
     [
         ("", ""),
         ("普通文本没有破折号", "普通文本没有破折号"),
-        ("这句话——有一个破折号", "这句话有一个破折号"),
-        ("——开头有破折号", "开头有破折号"),
-        ("结尾有破折号——", "结尾有破折号"),
-        ("多个——破折号——混在——一起", "多个破折号混在一起"),
-        ("emoji 😀——text", "emoji 😀text"),
+        ("这句话——有一个破折号", "这句话。。有一个破折号"),
+        ("——开头有破折号", "。。开头有破折号"),
+        ("结尾有破折号——", "结尾有破折号。。"),
+        ("多个——破折号——混在——一起", "多个。。破折号。。混在。。一起"),
+        ("emoji 😀——text", "emoji 😀。。text"),
     ],
 )
-def test_strip_em_dash_utility(input_text: str, expected: str):
-    assert strip_em_dash(input_text) == expected
+def test_replace_em_dash_utility(input_text: str, expected: str):
+    assert replace_em_dash(input_text) == expected
 
 
-# ── Unit: StoryOutput.strip_em_dashes() ─────────────────────────────────
+# ── Unit: StoryOutput.replace_em_dashes() ───────────────────────────────
 
 def _output_with_em_dashes() -> StoryOutput:
     """Return a StoryOutput where every text field contains em dashes."""
@@ -95,50 +92,50 @@ def _output_with_em_dashes() -> StoryOutput:
     )
 
 
-def test_strip_em_dashes_removes_all_from_narration():
+def test_replace_em_dashes_replaces_all_in_narration():
     output = _output_with_em_dashes()
-    output.strip_em_dashes()
+    output.replace_em_dashes()
     assert "—" not in output.narration
-    assert output.narration == "你走进大厅看见红色标记。"
+    assert output.narration == "你走进。。大厅。。看见。。红色标记。"
 
 
-def test_strip_em_dashes_removes_all_from_dialogue():
+def test_replace_em_dashes_replaces_all_in_dialogue():
     output = _output_with_em_dashes()
-    output.strip_em_dashes()
+    output.replace_em_dashes()
     for d in output.dialogue:
         assert "—" not in d.speaker
         assert "—" not in d.text
-    assert output.dialogue[0].speaker == "诺诺"
-    assert output.dialogue[0].text == "你终于来了。"
+    assert output.dialogue[0].speaker == "诺。。诺"
+    assert output.dialogue[0].text == "你。。终于。。来了。"
 
 
-def test_strip_em_dashes_removes_all_from_options():
+def test_replace_em_dashes_replaces_all_in_options():
     output = _output_with_em_dashes()
-    output.strip_em_dashes()
+    output.replace_em_dashes()
     for o in output.options:
         assert "—" not in o
-    assert output.options == ["向前走一步", "后退观察", "大声喊叫"]
+    assert output.options == ["向前。。走一步", "后退。。观察", "大声。。喊叫"]
 
 
-def test_strip_em_dashes_removes_all_from_current_location():
+def test_replace_em_dashes_replaces_all_in_current_location():
     output = _output_with_em_dashes()
-    output.strip_em_dashes()
+    output.replace_em_dashes()
     assert "—" not in output.current_location
-    assert output.current_location == "卡塞尔学院报到处"
+    assert output.current_location == "卡塞尔。。学院。。报到处"
 
 
-def test_strip_em_dashes_removes_all_from_items_gained():
+def test_replace_em_dashes_replaces_all_in_items_gained():
     output = _output_with_em_dashes()
-    output.strip_em_dashes()
+    output.replace_em_dashes()
     for item in output.items_gained:
         for v in item.values():
             if isinstance(v, str):
                 assert "—" not in v
 
 
-def test_strip_em_dashes_removes_all_from_memory_updates():
+def test_replace_em_dashes_replaces_all_in_memory_updates():
     output = _output_with_em_dashes()
-    output.strip_em_dashes()
+    output.replace_em_dashes()
     mu = output.memory_updates
     assert "—" not in mu.current_location
     assert "—" not in mu.key_event
@@ -160,46 +157,46 @@ def test_strip_em_dashes_removes_all_from_memory_updates():
     assert "—" not in ps.notes
 
 
-def test_strip_em_dashes_removes_all_from_npc_relations_delta():
+def test_replace_em_dashes_replaces_all_in_npc_relations_delta():
     output = _output_with_em_dashes()
-    output.strip_em_dashes()
+    output.replace_em_dashes()
     for rel in (output.npc_relations_delta or []):
         for v in rel.values():
             if isinstance(v, str):
                 assert "—" not in v
 
 
-def test_strip_em_dashes_noop_on_clean_text():
-    """strip_em_dashes() on already-clean text should be a no-op."""
+def test_replace_em_dashes_noop_on_clean_text():
+    """replace_em_dashes() on already-clean text should be a no-op."""
     clean = StoryOutput(
         narration="你走进了大厅。没有破折号。",
         dialogue=[DialogueLine(speaker="诺诺", text="你好。")],
         options=["继续前进", "观察四周"],
         current_location="卡塞尔学院",
     )
-    result = clean.strip_em_dashes()
+    result = clean.replace_em_dashes()
     assert result.narration == "你走进了大厅。没有破折号。"
     assert result.dialogue[0].text == "你好。"
 
 
-def test_strip_em_dashes_handles_empty_fields():
+def test_replace_em_dashes_handles_empty_fields():
     """Empty strings and empty lists should be handled gracefully."""
     output = StoryOutput(
         narration="",
         dialogue=[],
         options=[],
     )
-    result = output.strip_em_dashes()
+    result = output.replace_em_dashes()
     assert result.narration == ""
     assert result.options == []
     assert result.dialogue == []
 
 
-def test_strip_em_dashes_idempotent():
-    """Calling strip_em_dashes() twice should produce the same result."""
+def test_replace_em_dashes_idempotent():
+    """Calling replace_em_dashes() twice should produce the same result."""
     output = _output_with_em_dashes()
-    first = output.strip_em_dashes()
-    second = first.strip_em_dashes()
+    first = output.replace_em_dashes()
+    second = first.replace_em_dashes()
     assert first.model_dump_json() == second.model_dump_json()
 
 
@@ -224,18 +221,14 @@ def _build_mock_llm_output_with_em_dash() -> StoryOutput:
 
 
 @pytest.mark.asyncio
-async def test_generate_endpoint_strips_em_dashes():
+async def test_generate_endpoint_replaces_em_dashes():
     """POST /sessions/{id}/generate must return output with zero em dashes.
 
     Mocks the LLM client to return text riddled with em dashes, then
-    verifies the API response has none.
+    verifies the API response has none (all replaced with periods).
     """
     mock_output = _build_mock_llm_output_with_em_dash()
 
-    # We must mock deep inside the dependency chain:
-    #   knowledge_service.scenario_generator.llm_client.generate
-    # The scenario_generator calls output.strip_em_dashes() after generation,
-    # so if the mock returns em-dash-filled text, the endpoint should strip it.
     from app.dependencies import knowledge_service
 
     with patch.object(
@@ -245,7 +238,6 @@ async def test_generate_endpoint_strips_em_dashes():
     ):
         transport = ASGITransport(app=fastapi_app)
         async with AsyncClient(transport=transport, base_url="http://test") as client:
-            # Create a session first
             create_resp = await client.post("/sessions", json={
                 "game_name": "em dash 测试",
                 "model": "deepseek-v4-flash",
@@ -253,7 +245,6 @@ async def test_generate_endpoint_strips_em_dashes():
             assert create_resp.status_code == 200
             session_id = create_resp.json()["session_id"]
 
-            # Now generate a scene
             gen_resp = await client.post(
                 f"/sessions/{session_id}/generate",
                 json={
@@ -266,11 +257,10 @@ async def test_generate_endpoint_strips_em_dashes():
             assert gen_resp.status_code == 200, f"Generate failed: {gen_resp.text}"
             data = gen_resp.json()
 
-            # Recursively check ALL strings in the response for em dashes
             output = data["output"]
             violations = _find_em_dashes(output, path="$")
             assert not violations, (
-                f"发现 {len(violations)} 处破折号(—)未清除:\n"
+                f"发现 {len(violations)} 处破折号(—)未被替换:\n"
                 + "\n".join(f"  {v['path']}: {v['value'][:80]}" for v in violations)
             )
 
@@ -290,18 +280,17 @@ def _find_em_dashes(obj, path: str) -> list[dict]:
     return violations
 
 
-# ── Sanity: the real scene_prompt in integration test also gets stripped ──
+# ── Sanity ──────────────────────────────────────────────────────────────
 
 @pytest.mark.asyncio
 async def test_story_output_model_dump_has_no_em_dashes():
-    """After strip_em_dashes(), model_dump() must contain zero em dashes."""
+    """After replace_em_dashes(), model_dump() must contain zero em dashes."""
     output = _output_with_em_dashes()
-    output.strip_em_dashes()
+    output.replace_em_dashes()
     dumped = json.dumps(output.model_dump(), ensure_ascii=False)
     if "—" in dumped:
-        # Find and report the exact locations
         violations = _find_em_dashes(output.model_dump(), "$")
         pytest.fail(
-            f"model_dump() after strip_em_dashes() still contains {len(violations)} em dash(es):\n"
+            f"model_dump() after replace_em_dashes() still contains {len(violations)} em dash(es):\n"
             + "\n".join(f"  {v['path']}: {v['value'][:80]}" for v in violations)
         )

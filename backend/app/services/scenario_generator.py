@@ -142,7 +142,7 @@ class ScenarioGenerator:
             health_delta=0,
             options=["继续"],
             current_location=state.get("current_location", ""),
-        ).strip_em_dashes()
+        ).replace_em_dashes()
         self.db.add_message(session_id, "user", request.player_action, _csi)
         self.db.add_message(session_id, "assistant", output.model_dump_json(), _csi)
         state = self.state_manager.apply_output(state, request.player_action, output)
@@ -244,7 +244,7 @@ class ScenarioGenerator:
                 current_location=state.get("current_location", ""),
                 game_over=False,
                 game_over_reason="",
-            ).strip_em_dashes()
+            ).replace_em_dashes()
             return rejection_output, 0, "examiner_blocked"
 
         # Stage 2: Director — narrative direction, anchor triggers, redirection
@@ -277,7 +277,7 @@ class ScenarioGenerator:
             output, latency_ms = await self.llm_client.generate(
                 augmented_prompt, model, temperature=meta.temperature
             )
-            output.strip_em_dashes()
+            output.replace_em_dashes()
             source = "llm"
         except LLMRequestError as exc:
             output_id = self._store_error(
@@ -468,7 +468,7 @@ class ScenarioGenerator:
             output, latency_ms = await self.llm_client.generate(
                 prompt, model, temperature=meta.temperature
             )
-            output.strip_em_dashes()
+            output.replace_em_dashes()
             return output, latency_ms, "llm"
         except LLMRequestError:
             raise
