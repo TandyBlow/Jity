@@ -352,6 +352,29 @@ class Database:
                 ),
             )
 
+    def add_knowledge_chunk(self, chunk_id: str, source_type: str, title: str, content: str, keywords: list[str] | None = None, importance: int = 3, source_path: str = "") -> None:
+        """Insert a single knowledge chunk (upsert by id). Used by MemoryController for NSB episodes."""
+        with self.connect() as db:
+            db.execute(
+                """
+                INSERT INTO knowledge_chunks (id, source_type, title, content, keywords, importance, source_path)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(id) DO UPDATE SET
+                    content = excluded.content,
+                    keywords = excluded.keywords,
+                    importance = excluded.importance
+                """,
+                (
+                    chunk_id,
+                    source_type,
+                    title,
+                    content,
+                    json.dumps(keywords or [], ensure_ascii=False),
+                    importance,
+                    source_path,
+                ),
+            )
+
     def replace_knowledge_chunks(self, chunks: list[dict[str, Any]]) -> None:
         with self.connect() as db:
             db.execute("DELETE FROM knowledge_chunks")

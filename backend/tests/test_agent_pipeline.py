@@ -8,6 +8,8 @@ from app.schemas.agent_io import (
     ActionRuling,
     DirectorInstruction,
     EpisodeSummary,
+    HallucinationFinding,
+    HallucinationType,
     ItemState,
     ItemStateRecord,
     MemoryRecord,
@@ -558,3 +560,149 @@ class TestScoreTrackerCampaign:
         items = [{"name": "神秘信件", "status": "owned"}]
         violations = st2.check_narration_continuity("你找到了神秘信件", 5, items)
         assert len(violations) == 1
+
+
+# ── HaluMem Evaluator ──────────────────────────────────────────
+
+class TestHaluMemEvaluator:
+    def test_parse_findings_empty(self):
+        from app.services.memory.halumem_eval import _parse_findings
+        assert _parse_findings({"findings": []}) == []
+
+    def test_parse_findings_real(self):
+        from app.services.memory.halumem_eval import _parse_findings
+        data = {
+            "findings": [
+                {
+                    "hallucination_type": "fabrication",
+                    "memory_id": "m1",
+                    "description": "LLM fabricated an item",
+                    "ground_truth": "物品不存在",
+                },
+                {
+                    "hallucination_type": "omission",
+                    "memory_id": "m2",
+                    "description": "Failed to record NPC appearance",
+                    "ground_truth": "诺诺出现在钟楼",
+                },
+            ]
+        }
+        findings = _parse_findings(data)
+        assert len(findings) == 2
+        assert findings[0].hallucination_type == HallucinationType.FABRICATION
+        assert findings[1].hallucination_type == HallucinationType.OMISSION
+
+    def test_compute_metrics_empty(self):
+        from app.services.memory.halumem_eval import HaluMemEvaluator
+        evaluator = HaluMemEvaluator(llm_client=None)
+        metrics = evaluator.compute_metrics([], [], [], total_expected_memories=10)
+        assert metrics["total_findings"] == 0
+        assert metrics["hallucination_rate"] == 0.0
+
+    def test_compute_metrics_with_findings(self):
+        from app.services.memory.halumem_eval import HaluMemEvaluator
+        evaluator = HaluMemEvaluator(llm_client=None)
+        f1 = HallucinationFinding(hallucination_type=HallucinationType.FABRICATION, description="fabricated")
+        f2 = HallucinationFinding(hallucination_type=HallucinationType.ERROR, description="wrong")
+        f3 = HallucinationFinding(hallucination_type=HallucinationType.OMISSION, description="missed")
+        metrics = evaluator.compute_metrics([f1], [f2], [f3], total_expected_memories=20)
+        assert metrics["total_findings"] == 3
+        assert metrics["fabrications"] == 1
+        assert metrics["errors"] == 1
+        assert metrics["omissions"] == 1
+        assert metrics["hallucination_rate"] == 3 / 20
+
+
+# ── Similarity ─────────────────────────────────────────────────
+
+class TestSimilarity:
+    def test_jaccard_same(self):
+        from app.services.memory.similarity import _jaccard_matrix
+        result = _jaccard_matrix(["寿司"], ["寿司"])
+        assert result[0, 0] == pytest.approx(1.0)
+
+    def test_jaccard_different(self):
+        from app.services.memory.similarity import _jaccard_matrix
+        result = _jaccard_matrix(["寿司"], ["拉面"])
+        assert result[0, 0] < 0.5
+
+    def test_top_k_similar_empty(self):
+        import asyncio
+        async def run():
+            from app.services.memory.similarity import top_k_similar
+            results = await top_k_similar("query", [], embedding_client=None)
+            assert results == []
+        asyncio.run(run())
+
+    def test_pcb_merge_with_embedding_constructor(self):
+        """PCB accepts embedding_client parameter."""
+        pcb = PersonaConstructionBranch(llm_client=None, embedding_client=None)
+        assert pcb._embedding is None
+
+
+# ── DB add_knowledge_chunk ─────────────────────────────────────
+
+class TestDatabaseKnowledgeChunk:
+    def test_add_knowledge_chunk(self, tmp_path):
+        from app.database import Database
+        db_path = tmp_path / "test.db"
+        db = Database(db_path)
+        db.add_knowledge_chunk(
+            chunk_id="test-ep-1",
+            source_type="narrative_memory",
+            title="测试摘要",
+            content="这是一个测试摘要内容",
+            keywords=["测试", "摘要"],
+            importance=4,
+        )
+        # Should not raise
+        assert db_path.exists()
+
+
+# ── Full integration: forget + track + store ────────────────────
+
+class TestMemoryIntegration:
+    """End-to-end test: forgetting pipeline feeding into SCORE tracker."""
+
+    def test_forget_then_track_continuity_works_together(self):
+        # Create narrative memories
+        records: list[MemoryRecord] = []
+        for i in range(20):
+            records.append(MemoryRecord(
+                memory_id=f"m{i}",
+                content=f"第{i}回合的叙事记忆",
+                created_round=i,
+                retrieved_rounds=[i - 1] if i > 0 else [],
+            ))
+        # Forget step
+        survived = forget_step(records, current_round=25)
+
+        # Track items from narrative context
+        st = ScoreTracker()
+        st.propose_transition("旧式左轮", ItemState.ACTIVE, 0)
+        st.propose_transition("弹药", ItemState.ACTIVE, 5)
+        st.propose_transition("旧式左轮", ItemState.LOST, 10)
+
+        # Both should work correctly side by side
+        assert len(survived) > 0
+        assert st.get_record("旧式左轮").state == ItemState.LOST
+
+    def test_nsb_pcb_lifecycle(self):
+        """NSB and PCB co-evolve across simulated turns."""
+        nsb = NarrativeSummarizationBranch(llm_client=None, theta1=6)
+        pcb = PersonaConstructionBranch(llm_client=None, interval=10)
+
+        for turn in range(25):
+            nsb.add_turn(f"行动{turn}", f"叙事{turn}", turn=turn)
+            pcb.on_turn()
+
+        assert nsb.should_summarize_level1()  # 25 >= 6, should trigger
+        assert pcb.should_extract()  # 25 >= 10, should trigger
+
+        # Level-1 summaries buffer
+        for i in range(5):
+            nsb.accept_level1(EpisodeSummary(
+                episode_id=f"ep1_{i}", turn_start=i*6, turn_end=i*6+5,
+                summary=f"摘要{i}",
+            ))
+        assert nsb.should_summarize_level2()

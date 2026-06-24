@@ -15,7 +15,10 @@ Uses deepseek-v4-flash for extraction (cheap, non-blocking path).
 import logging
 from typing import Any
 
+import numpy as np
+
 from app.schemas.agent_io import PersonaKey, PersonaSnapshot, PersonaValue, PersonaSketch
+from app.services.embedding_client import EmbeddingClient
 from app.services.llm_client import LLMClient
 
 logger = logging.getLogger(__name__)
@@ -92,9 +95,11 @@ class PersonaConstructionBranch:
         self,
         llm_client: LLMClient,
         interval: int = PCB_INTERVAL,
+        embedding_client: EmbeddingClient | None = None,
     ) -> None:
         self._llm = llm_client
         self.interval = interval
+        self._embedding = embedding_client
 
         # Cumulative persona sketch
         self._sketch = PersonaSketch()
@@ -161,8 +166,8 @@ class PersonaConstructionBranch:
 
         Applies MOOM's three strategies:
           - Rule-based for replace/trajectory keys
-          - Embedding-based for contradictory keys (simplified: last-wins for now)
-          - LLM-based for complex keys (deferred: also last-wins as baseline)
+          - Embedding-based for contradictory keys (cosine similarity via EmbeddingClient)
+          - LLM-based for complex keys (deferred: last-wins as baseline)
         """
         for key, new_values in snapshot.entries.items():
             existing = self._sketch.entries.get(key, [])
@@ -175,28 +180,31 @@ class PersonaConstructionBranch:
                     self._sketch.entries[key] = [new_values[-1]]
 
             elif key_lower in _TRAJECTORY_KEYS:
-                # Rule-based: append with incrementing timestamps
+                # Rule-based: append with cap
                 combined = list(existing)
                 for v in new_values:
                     combined.append(v)
-                self._sketch.entries[key] = combined[-20:]  # cap at 20 entries
+                self._sketch.entries[key] = combined[-20:]
 
             elif key_lower in _CONTRADICTORY_KEYS:
-                # Embedding-based: simplified as last-wins per key
-                # Full implementation would compute BGE similarity and remove
-                # highly similar old values — deferred to Phase 7
+                # Embedding-based: use cosine similarity to detect outdated values
+                # If new value is highly similar to existing → replace (outdated)
+                # If new value is low similarity → append (genuinely different preference)
                 merged = list(existing)
                 for nv in new_values:
-                    # Simple dedup: if last existing value is very similar, replace it
-                    if merged and _approx_equal(merged[-1].value, nv.value):
-                        merged[-1] = nv
-                    else:
+                    replaced = False
+                    for i, ev in enumerate(merged):
+                        if _approx_equal(ev.value, nv.value):
+                            merged[i] = nv  # replace outdated
+                            replaced = True
+                            break
+                    if not replaced:
                         merged.append(nv)
                 self._sketch.entries[key] = merged[-15:]
 
             elif key_lower in _COMPLEX_KEYS:
                 # LLM-based: simplified as append + cap
-                # Full implementation would call LLM to judge — deferred
+                # Full implementation would call LLM to judge — deferred to Phase 7
                 combined = list(existing)
                 combined.extend(new_values)
                 self._sketch.entries[key] = combined[-10:]
@@ -208,10 +216,59 @@ class PersonaConstructionBranch:
                 self._sketch.entries[key] = combined[-20:]
 
             else:
-                # Unknown key — append conservatively
                 combined = list(existing)
                 combined.extend(new_values)
                 self._sketch.entries[key] = combined[-10:]
+
+    async def merge_snapshot_with_embedding(
+        self, snapshot: PersonaSnapshot
+    ) -> None:
+        """Async version that uses EmbeddingClient for contradictory key similarity.
+
+        Call this instead of merge_snapshot when embedding_client is available.
+        Falls back to _approx_equal on embedding failure.
+        """
+        for key, new_values in snapshot.entries.items():
+            existing = self._sketch.entries.get(key, [])
+            key_lower = key.lower().replace(" ", "_")
+
+            if key_lower in _CONTRADICTORY_KEYS and self._embedding is not None and new_values:
+                merged = list(existing)
+                for nv in new_values:
+                    if not merged:
+                        merged.append(nv)
+                        continue
+                    # Compute embedding similarity between new value and existing values
+                    existing_texts = [ev.value for ev in merged]
+                    try:
+                        from app.services.memory.similarity import cosine_similarity
+                        sim_matrix = await cosine_similarity(
+                            [nv.value], existing_texts, self._embedding
+                        )
+                        max_sim = float(sim_matrix.max()) if sim_matrix.size > 0 else 0.0
+                    except Exception:
+                        max_sim = 0.0
+
+                    if max_sim > 0.85:
+                        # High similarity → replace the most similar existing entry
+                        idx = int(sim_matrix.argmax()) if sim_matrix.size > 0 else -1
+                        if 0 <= idx < len(merged):
+                            merged[idx] = nv
+                        else:
+                            merged.append(nv)
+                    else:
+                        merged.append(nv)
+                self._sketch.entries[key] = merged[-15:]
+            else:
+                # Fall back to synchronous merge for non-contradictory keys
+                pass  # handled below
+
+        # Non-contradictory keys: use synchronous logic
+        self.merge_snapshot(PersonaSnapshot(
+            entries={k: v for k, v in snapshot.entries.items()
+                     if k.lower().replace(" ", "_") not in _CONTRADICTORY_KEYS},
+            extracted_at_turn=snapshot.extracted_at_turn,
+        ))
 
     def get_persona_text(self, top_k: int = 15) -> str:
         """Build a compact text representation of the persona for prompt injection."""

@@ -21,6 +21,7 @@ from typing import Any
 
 from app.database import Database
 from app.schemas.agent_io import EpisodeSummary, MemoryRecord
+from app.services.embedding_client import EmbeddingClient
 from app.services.llm_client import LLMClient
 from app.services.memory.forgetting import forget_step
 from app.services.memory.nsb import NarrativeSummarizationBranch
@@ -38,15 +39,17 @@ class MemoryController:
         llm_client: LLMClient,
         db: Database,
         session_id: str,
+        embedding_client: EmbeddingClient | None = None,
     ) -> None:
         self._llm = llm_client
         self._db = db
         self._session_id = session_id
+        self._embedding = embedding_client
 
         # Sub-systems
         self.score_tracker = ScoreTracker()
         self.nsb = NarrativeSummarizationBranch(llm_client)
-        self.pcb = PersonaConstructionBranch(llm_client)
+        self.pcb = PersonaConstructionBranch(llm_client, embedding_client=embedding_client)
 
         # L1 memory pool (all episode summaries for this session)
         self._narrative_pool: list[MemoryRecord] = []
@@ -173,7 +176,10 @@ class MemoryController:
             if dialogues:
                 snapshot = await self.pcb.extract_snapshot(dialogues, turn)
                 if snapshot:
-                    self.pcb.merge_snapshot(snapshot)
+                    if self._embedding is not None:
+                        await self.pcb.merge_snapshot_with_embedding(snapshot)
+                    else:
+                        self.pcb.merge_snapshot(snapshot)
 
         # MOOM forgetting on narrative pool
         if self._narrative_pool:

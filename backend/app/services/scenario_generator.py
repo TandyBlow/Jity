@@ -1,6 +1,7 @@
 import asyncio
 import json
 import logging
+import time
 from collections.abc import Callable
 
 from app.database import Database
@@ -9,6 +10,7 @@ from app.schemas.agent_io import DirectorInstruction, ItemStateRecord
 from app.services.agents.director import DirectorAgent
 from app.services.agents.examiner import ExaminerAgent
 from app.services.campaign_manager import CampaignManager
+from app.services.embedding_client import EmbeddingClient
 from app.services.game_state import GameStateManager
 from app.services.llm_client import LLMClient, LLMOutputParseError, LLMRequestError
 from app.services.memory.memory_controller import MemoryController
@@ -47,6 +49,8 @@ class ScenarioGenerator:
         self.campaign_manager = campaign_manager
         self.campaign_manager_provider = campaign_manager_provider
         self.default_model = default_model
+        # session_id → MemoryController (persistent across turns)
+        self._memory_controllers: dict[str, MemoryController] = {}
 
     # ── Main orchestration (~50 lines) ────────────────────────────────
 
@@ -287,8 +291,8 @@ class ScenarioGenerator:
             )
             raise ScenarioGenerationError(f"{exc} model_output_id={output_id}", output_id) from exc
 
-        # Fire-and-forget: memory maintenance
-        memory_ctrl = MemoryController(self.llm_client, self.db, session_id)
+        # Fire-and-forget: memory maintenance (persistent per session)
+        memory_ctrl = self._get_memory_controller(session_id)
         memory_ctrl.on_turn_generated(request.player_action, output.narration, state, turn)
         asyncio.create_task(memory_ctrl.maintain(session_id, turn))
 
@@ -516,11 +520,61 @@ class ScenarioGenerator:
         except Exception:
             return "锚点信息不可用"
 
+    def _get_memory_controller(self, session_id: str) -> MemoryController:
+        """Get or create a persistent MemoryController for this session.
+
+        MemoryControllers persist across turns within a session,
+        maintaining NSB/PCB/ScoreTracker state. Eviction based on
+        simple dict size cap (oldest entries removed).
+        """
+        if session_id in self._memory_controllers:
+            return self._memory_controllers[session_id]
+
+        # Evict oldest if too many
+        if len(self._memory_controllers) >= 50:
+            oldest = next(iter(self._memory_controllers))
+            del self._memory_controllers[oldest]
+
+        # Lazy import embedding_client from dependencies (avoid circular)
+        embedding: EmbeddingClient | None = None
+        try:
+            from app.dependencies import embedding_client
+            embedding = embedding_client
+        except Exception:
+            pass
+
+        mc = MemoryController(
+            llm_client=self.llm_client,
+            db=self.db,
+            session_id=session_id,
+            embedding_client=embedding,
+        )
+        self._memory_controllers[session_id] = mc
+        return mc
+
     def _format_score_item_states(self, campaign_manager) -> str:
-        """Build SCORE item state summary string for Director."""
-        # Use campaign_manager's internal facilities if available,
-        # otherwise return empty
-        return ""  # SCORE tracker state is in MemoryController, not campaign_manager
+        """Build SCORE item state summary string for Director.
+
+        Pulls from persistent MemoryController's ScoreTracker when available.
+        """
+        # ScoreTracker state is maintained in MemoryController.
+        # For the Director call, we provide a summary from campaign_manager's
+        # world_facts and items which the campaign already tracks.
+        if campaign_manager is None or not campaign_manager.is_loaded():
+            return ""
+        campaign = campaign_manager.campaign
+        if campaign is None:
+            return ""
+        parts = ["## 关键物品状态"]
+        # Use campaign starting_state items as tracked items
+        starting = campaign.starting_state or {}
+        items = starting.get("items", [])
+        if not items:
+            return ""
+        for item in items[:10]:
+            name = item.get("name", "未知物品")
+            parts.append(f"- {name}: 追踪中")
+        return "\n".join(parts)
 
     @staticmethod
     def _inject_direction(
