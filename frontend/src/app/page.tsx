@@ -10,7 +10,7 @@ import type { CampaignListItem, GameState, GenerateResponse, ItemMemory, NPCMemo
 const initialOutput: StoryOutput = {
   narration: `雨是在你下车后三分钟开始变大的。
 
-你拖着那只从婶婶家带来的旧行李箱，站在卡塞尔学院报到处大厅门口。箱轮卡在门槛细缝里，发出一声很丢人的“咔哒”。你低头用力拽了两下，没拽动。
+你拖着那只从婶婶家带来的旧行李箱，站在卡塞尔学院报到处大厅门口。箱轮卡在门槛细缝里，发出一声很丢人的"咔哒"。你低头用力拽了两下，没拽动。
 
 大厅里没人笑。
 
@@ -45,37 +45,37 @@ const initialOutput: StoryOutput = {
   sanity_delta: 0,
   health_delta: 0,
   options: [
-    "愣住两秒，然后硬着头皮打招呼：“学姐好……那个，这里到底有什么不普通的？”",
-    "下意识后退半步，抓紧行李箱拉杆：“等等，你怎么知道我的名字？这是什么整蛊节目吗？”",
-    "试图挤出个笑脸，但声音有点抖：“照片？什么照片？我那张高考准考证上的照片可丑了……”",
+    `愣住两秒，然后硬着头皮打招呼："学姐好……那个，这里到底有什么不普通的？"`,
+    `下意识后退半步，抓紧行李箱拉杆："等等，你怎么知道我的名字？这是什么整蛊节目吗？"`,
+    `试图挤出个笑脸，但声音有点抖："照片？什么照片？我那张高考准考证上的照片可丑了……"`,
   ],
   game_over: false,
   game_over_reason: "",
   current_location: "卡塞尔学院报到处大厅",
 };
 
-const DEFAULT_STORY_STYLE = “黑暗学院奇幻，带一点黑色幽默，强调 NPC 反应。”;
-const DEFAULT_CONSTRAINTS = “关键 NPC 不能突然死亡；不要跳出当前入学调查。”;
-const INITIAL_ACTION = “愣住两秒，然后硬着头皮打招呼：”学姐好……那个，这里到底有什么不普通的？””;
-const SLOT_DEFAULT = “default” as const;
-const ENTRY_ACTION = “（入场）环顾四周，了解当前处境。”;
+const DEFAULT_STORY_STYLE = "黑暗学院奇幻，带一点黑色幽默，强调 NPC 反应。";
+const DEFAULT_CONSTRAINTS = "关键 NPC 不能突然死亡；不要跳出当前入学调查。";
+const INITIAL_ACTION = `愣住两秒，然后硬着头皮打招呼："学姐好……那个，这里到底有什么不普通的？"`;
+const SLOT_DEFAULT = "default" as const;
+const ENTRY_ACTION = "（入场）环顾四周，了解当前处境。";
 const STATE_COMMIT_DELAY = 100;
 
 export default function Home() {
-  const [sessionId, setSessionId] = useState(“”);
-  const [model, setModel] = useState(“deepseek-v4-flash”);
+  const [sessionId, setSessionId] = useState("");
+  const [model, setModel] = useState("deepseek-v4-flash");
   const [state, setState] = useState<GameState | null>(null);
   const [output, setOutput] = useState<StoryOutput>(initialOutput);
-  const [outputSource, setOutputSource] = useState<GenerateResponse[“source”]>(“scripted”);
+  const [outputSource, setOutputSource] = useState<GenerateResponse["source"]>("scripted");
   const [chunks, setChunks] = useState<RetrievedChunk[]>([]);
   const [action, setAction] = useState(INITIAL_ACTION);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(“”);
+  const [error, setError] = useState("");
   const [slots, setSlots] = useState<SaveSlot[]>([]);
   const [selectedSlot, setSelectedSlot] = useState(SLOT_DEFAULT);
-  const [selectedSlotId, setSelectedSlotId] = useState<number | “”>(“”);
+  const [selectedSlotId, setSelectedSlotId] = useState<number | "">("");
   const [campaigns, setCampaigns] = useState<CampaignListItem[]>([]);
-  const [selectedCampaign, setSelectedCampaign] = useState(“”);
+  const [selectedCampaign, setSelectedCampaign] = useState("");
   const [pendingGenerate, setPendingGenerate] = useState<string | null>(null);
 
   const statusDeltaHints = useMemo(() => buildStatusDeltaHints(output), [output]);
@@ -86,10 +86,10 @@ export default function Home() {
 
     let campaignOpts: { campaignFilename?: string; arcIndex?: number; sessionIndex?: number } | undefined;
     try {
-      const entryJson = sessionStorage.getItem(“campaign_entry”);
+      const entryJson = sessionStorage.getItem("campaign_entry");
       if (entryJson) {
         const entry = JSON.parse(entryJson);
-        sessionStorage.removeItem(“campaign_entry”);
+        sessionStorage.removeItem("campaign_entry");
         campaignOpts = {
           campaignFilename: entry.campaignFilename,
           arcIndex: entry.arcIndex,
@@ -107,8 +107,8 @@ export default function Home() {
         setState(session.state);
         setModel(session.model);
         setSelectedSlot(SLOT_DEFAULT);
-        setSelectedSlotId(“”);
-        refreshSlots(session.session_id, SLOT_DEFAULT).catch((err) => console.error(“refreshSlots failed:”, err));
+        setSelectedSlotId("");
+        refreshSlots(session.session_id, SLOT_DEFAULT).catch((err) => console.error("refreshSlots failed:", err));
         if (campaignOpts?.campaignFilename && (campaignOpts.arcIndex || 0) > 0) {
           setPendingGenerate(ENTRY_ACTION);
         }
@@ -123,14 +123,14 @@ export default function Home() {
       .then((r) => {
         setCampaigns(r.campaigns ?? []);
         try {
-          const entryJson = sessionStorage.getItem(“campaign_entry”);
+          const entryJson = sessionStorage.getItem("campaign_entry");
           if (entryJson) {
             const entry = JSON.parse(entryJson);
             if (entry.campaignFilename) setSelectedCampaign(entry.campaignFilename);
           }
         } catch { /* ignore */ }
       })
-      .catch((err) => console.error(“listCampaigns failed:”, err));
+      .catch((err) => console.error("listCampaigns failed:", err));
   }, []);
 
   // ── Load save slots ──
@@ -138,7 +138,7 @@ export default function Home() {
     if (!sessionId) {
       setSlots([]);
       setSelectedSlot(SLOT_DEFAULT);
-      setSelectedSlotId(“”);
+      setSelectedSlotId("");
       return;
     }
     listSlots(sessionId).then(r => {
@@ -151,9 +151,9 @@ export default function Home() {
         setSelectedSlotId(active.id);
       } else {
         setSelectedSlot(SLOT_DEFAULT);
-        setSelectedSlotId(“”);
+        setSelectedSlotId("");
       }
-    }).catch((err) => console.error(“listSlots failed:”, err));
+    }).catch((err) => console.error("listSlots failed:", err));
   /* selectedSlot intentionally excluded: changing preferred slot name while
      session stays the same should not reload the list — only a new session does */
   }, [sessionId]);
@@ -170,7 +170,7 @@ export default function Home() {
     if (!currentSessionId) {
       setSlots([]);
       setSelectedSlot(SLOT_DEFAULT);
-      setSelectedSlotId(“”);
+      setSelectedSlotId("");
       return;
     }
     const updated = await listSlots(currentSessionId);
@@ -183,25 +183,25 @@ export default function Home() {
       setSelectedSlotId(active.id);
     } else {
       setSelectedSlot(SLOT_DEFAULT);
-      setSelectedSlotId(“”);
+      setSelectedSlotId("");
     }
   }
 
   async function restoreLastOutput(nextSessionId: string) {
     try {
       const history = await getSessionHistory(nextSessionId);
-      const lastAssistant = [...history.messages].reverse().find((message) => message.role === “assistant”);
+      const lastAssistant = [...history.messages].reverse().find((message) => message.role === "assistant");
       if (lastAssistant) {
         setOutput(JSON.parse(lastAssistant.content) as StoryOutput);
-        setOutputSource(“llm”);
+        setOutputSource("llm");
       } else {
         setOutput(initialOutput);
-        setOutputSource(“scripted”);
+        setOutputSource("scripted");
       }
     } catch (err) {
-      console.error(“restoreLastOutput failed:”, err);
+      console.error("restoreLastOutput failed:", err);
       setOutput(initialOutput);
-      setOutputSource(“scripted”);
+      setOutputSource("scripted");
     }
   }
 
@@ -209,7 +209,7 @@ export default function Home() {
     const sid = overrideSessionId ?? sessionId;
     if (!sid || !nextAction.trim()) return;
     setIsLoading(true);
-    setError(“”);
+    setError("");
     try {
       const response: GenerateResponse = await generateScene({
         sessionId: sid,
@@ -224,9 +224,9 @@ export default function Home() {
       setState(response.state);
       setChunks(response.retrieved_chunks);
       setModel(response.used_model);
-      setAction(“”);
+      setAction("");
     } catch (err) {
-      setError(err instanceof Error ? err.message : “生成失败”);
+      setError(err instanceof Error ? err.message : "生成失败");
     } finally {
       setIsLoading(false);
     }
@@ -234,7 +234,7 @@ export default function Home() {
 
   const handleNewSession = useCallback(async () => {
     setIsLoading(true);
-    setError(“”);
+    setError("");
     try {
       const campaignOpts = selectedCampaign
         ? { campaignFilename: selectedCampaign, arcIndex: 0, sessionIndex: 0, slotName: SLOT_DEFAULT }
@@ -243,17 +243,17 @@ export default function Home() {
       setSessionId(session.session_id);
       setState(session.state);
       setOutput(initialOutput);
-      setOutputSource(“scripted”);
+      setOutputSource("scripted");
       setChunks([]);
       setAction(INITIAL_ACTION);
       setSelectedSlot(SLOT_DEFAULT);
-      setSelectedSlotId(“”);
+      setSelectedSlotId("");
       await refreshSlots(session.session_id, SLOT_DEFAULT);
       if (campaignOpts) {
         setPendingGenerate(ENTRY_ACTION);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : “创建会话失败”);
+      setError(err instanceof Error ? err.message : "创建会话失败");
     } finally {
       setIsLoading(false);
     }
