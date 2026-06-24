@@ -79,5 +79,6 @@ Thumbs.db
 .vscode/
 
 # === Local planning artifacts ===
+.planning/
 TODOS.md
 backend/campaign_fsm.png
