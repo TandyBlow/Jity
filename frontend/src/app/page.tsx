@@ -72,7 +72,7 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [slots, setSlots] = useState<SaveSlot[]>([]);
-  const [selectedSlot, setSelectedSlot] = useState(SLOT_DEFAULT);
+  const [selectedSlot, setSelectedSlot] = useState<string>(SLOT_DEFAULT);
   const [selectedSlotId, setSelectedSlotId] = useState<number | "">("");
   const [campaigns, setCampaigns] = useState<CampaignListItem[]>([]);
   const [selectedCampaign, setSelectedCampaign] = useState("");

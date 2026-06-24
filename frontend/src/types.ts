@@ -138,6 +138,7 @@ export type CampaignAnchorEvent = {
 export type CampaignSession = {
   name: string;
   opening_scene: string;
+  max_turns_per_session?: number;
   anchor_events: CampaignAnchorEvent[];
 };
 
