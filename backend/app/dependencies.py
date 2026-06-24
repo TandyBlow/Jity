@@ -120,7 +120,7 @@ class CampaignManagerCache:
                 return mgr
 
         # Not cached — try to load
-        if not session_row or not session_row.get("campaign_filename"):
+        if not session_row or not session_row["campaign_filename"]:
             return None
 
         campaign_path = settings.campaigns_dir / session_row["campaign_filename"]
