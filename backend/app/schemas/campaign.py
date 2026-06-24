@@ -29,6 +29,7 @@ class SessionSchema(BaseModel):
     """A single session within an arc."""
     name: str
     opening_scene: str = ""
+    max_turns_per_session: int | None = None
     anchor_events: list[AnchorEvent] = Field(default_factory=list)
     entry_state: dict[str, Any] | None = None
 
@@ -48,6 +49,7 @@ class CampaignSchema(BaseModel):
     arcs: list[ArcSchema] = Field(default_factory=list)
     constraints: str = ""
     starting_state: dict[str, Any] = Field(default_factory=dict)
+    max_turns_per_session: int | None = None
     # v4 additions
     difficulty: Literal["easy", "normal", "hard", "insane"] = "normal"
     difficulty_settings: dict[str, Any] | None = None

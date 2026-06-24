@@ -104,7 +104,7 @@ export type GenerateResponse = {
   retrieved_chunks: RetrievedChunk[];
   model_output_id: number | null;
   used_model: string;
-  source: "scripted" | "llm";
+  source: "scripted" | "llm" | "examiner_blocked";
 };
 
 export type SessionMessage = {

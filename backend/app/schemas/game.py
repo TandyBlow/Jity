@@ -143,4 +143,4 @@ class GenerateResponse(BaseModel):
     retrieved_chunks: list[RetrievedChunk]
     model_output_id: Optional[int] = None
     used_model: str
-    source: Literal["scripted", "llm"]
+    source: Literal["scripted", "llm", "examiner_blocked"]
