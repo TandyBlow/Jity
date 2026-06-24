@@ -1,6 +1,7 @@
 """Jity schemas package.
 
-Re-exports all models from game.py and campaign.py for backward compatibility.
+Re-exports all models from game.py, campaign.py, and agent_io.py for
+backward compatibility.
 """
 from app.schemas.game import (
     CreateSessionRequest,
@@ -32,6 +33,25 @@ from app.schemas.campaign import (
     SessionSchema,
 )
 
+from app.schemas.agent_io import (
+    ActionPermissibility,
+    ActionRuling,
+    DirectorInstruction,
+    EpisodeSummary,
+    HallucinationFinding,
+    HallucinationType,
+    ItemContinuityCheck,
+    ItemState,
+    ItemStateRecord,
+    MemoryRecord,
+    PersonaKey,
+    PersonaSketch,
+    PersonaSnapshot,
+    PersonaValue,
+    RedirectionStrategy,
+    TriggeredRule,
+)
+
 __all__ = [
     # game
     "CreateSessionRequest",
@@ -59,4 +79,21 @@ __all__ = [
     "HealthMetrics",
     "RecapData",
     "SessionSchema",
+    # agent_io
+    "ActionPermissibility",
+    "ActionRuling",
+    "DirectorInstruction",
+    "EpisodeSummary",
+    "HallucinationFinding",
+    "HallucinationType",
+    "ItemContinuityCheck",
+    "ItemState",
+    "ItemStateRecord",
+    "MemoryRecord",
+    "PersonaKey",
+    "PersonaSketch",
+    "PersonaSnapshot",
+    "PersonaValue",
+    "RedirectionStrategy",
+    "TriggeredRule",
 ]

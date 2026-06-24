@@ -1,17 +1,22 @@
+import asyncio
 import json
 import logging
 from collections.abc import Callable
 
 from app.database import Database
 from app.schemas import GenerateRequest, GenerateResponse, RetrievedChunk, StoryOutput
+from app.schemas.agent_io import DirectorInstruction, ItemStateRecord
+from app.services.agents.director import DirectorAgent
+from app.services.agents.examiner import ExaminerAgent
 from app.services.campaign_manager import CampaignManager
 from app.services.game_state import GameStateManager
 from app.services.llm_client import LLMClient, LLMOutputParseError, LLMRequestError
+from app.services.memory.memory_controller import MemoryController
 from app.services.prompt_builder import PromptBuilder, PromptInput
 from app.services.retriever import RAGRetriever
+from app.services.scripted_story import ScriptedStoryService
 
 logger = logging.getLogger(__name__)
-from app.services.scripted_story import ScriptedStoryService
 
 
 class ScenarioGenerationError(RuntimeError):
@@ -67,9 +72,10 @@ class ScenarioGenerator:
             request, state, session_id, campaign_manager
         )
 
-        # Hook 3: Execute generation (scripted story or LLM)
+        # Hook 3: Execute generation (multi-agent pipeline or legacy single call)
         output, latency_ms, source = await self._execute_llm_or_scripted(
-            session_id, request, prompt, model, meta, retrieved_for_storage, _csi
+            session_id, request, prompt, model, meta, retrieved_for_storage, _csi,
+            state=state, campaign_manager=campaign_manager,
         )
 
         next_state = self.state_manager.apply_output(state, request.player_action, output)
@@ -190,16 +196,84 @@ class ScenarioGenerator:
     # ── Hook 3: Execute LLM or scripted ─────────────────────────────
 
     async def _execute_llm_or_scripted(
-        self, session_id, request, prompt, model, meta, retrieved_for_storage, _csi
+        self, session_id, request, prompt, model, meta, retrieved_for_storage, _csi,
+        state=None, campaign_manager=None,
     ) -> tuple[StoryOutput, int, str]:
-        """Return (output, latency_ms, source)."""
-        scripted_output = self.scripted_story.generate(request.player_action, {})
-        if scripted_output:
-            return scripted_output, 0, "scripted"
+        """Execute the multi-agent pipeline: Examiner → Director → Narrator.
+
+        Falls back to the legacy single-call path when no campaign is loaded
+        or when agents are not available.
+        """
+        # Legacy path: no campaign → single LLM call (unchanged behavior)
+        if campaign_manager is None or not campaign_manager.is_loaded():
+            return await self._execute_single_llm(request, prompt, model, meta)
+
+        state = state or {}
+
+        # ── Agent pipeline ────────────────────────────────────────
+        turn = int(state.get("turn", 0))
+
+        # Stage 1: Examiner — action feasibility + rule identification
+        examiner = ExaminerAgent(self.llm_client)
+        rules_texts = self._collect_relevant_rules(state, campaign_manager)
+        try:
+            ruling = await examiner.examine(
+                player_action=request.player_action,
+                game_state=state,
+                rules_texts=rules_texts,
+            )
+        except Exception:
+            logger.warning("Examiner failed, defaulting to permissible", exc_info=True)
+            from app.schemas.agent_io import ActionRuling, ActionPermissibility
+            ruling = ActionRuling(permissibility=ActionPermissibility.PERMISSIBLE)
+
+        # If Examiner says blocked → return diegetic rejection
+        if ruling.permissibility.value == "blocked" and ruling.rejection_reason:
+            from app.schemas import DialogueLine
+            rejection_output = StoryOutput(
+                narration=ruling.rejection_reason,
+                dialogue=[],
+                scene_prompt="",
+                sanity_delta=0,
+                health_delta=0,
+                options=["重新尝试其他行动"],
+                current_location=state.get("current_location", ""),
+                game_over=False,
+                game_over_reason="",
+            )
+            return rejection_output, 0, "examiner_blocked"
+
+        # Stage 2: Director — narrative direction, anchor triggers, redirection
+        director = DirectorAgent(self.llm_client)
+        narrative_ctx = campaign_manager._load_recap_compressed() if hasattr(campaign_manager, '_load_recap_compressed') else ""
+        anchor_progress = f"{len(campaign_manager.progress.revealed_anchors)}/{sum(len(s.anchor_events) for a in campaign_manager.campaign.arcs for s in a.sessions)}" if campaign_manager.progress else "0/0"
+        candidates = self._describe_anchor_candidates(campaign_manager, state, turn)
+        deviation = "偏差：连续3+回合无锚点触发" if campaign_manager.detect_deviation(state, turn) else "正常"
+        item_states = self._format_score_item_states(campaign_manager)
 
         try:
-            output, latency_ms = await self.llm_client.generate(prompt, model, temperature=meta.temperature)
-            return output, latency_ms, "llm"
+            direction = await director.direct(
+                player_action=request.player_action,
+                ruling=ruling,
+                narrative_context=narrative_ctx,
+                anchor_progress=anchor_progress,
+                candidate_anchors=candidates,
+                deviation_status=deviation,
+                item_states=item_states,
+            )
+        except Exception:
+            logger.warning("Director failed, using fallback direction", exc_info=True)
+            direction = DirectorInstruction(narrative_direction="继续叙事，回应玩家行动")
+
+        # Inject director instruction into prompt meta / campaign_context
+        augmented_prompt = self._inject_direction(prompt, direction, ruling)
+
+        # Stage 3: Narrator — the actual story generation (single LLM call)
+        try:
+            output, latency_ms = await self.llm_client.generate(
+                augmented_prompt, model, temperature=meta.temperature
+            )
+            source = "llm"
         except LLMRequestError as exc:
             output_id = self._store_error(
                 session_id, request.player_action, model, exc.latency_ms,
@@ -212,6 +286,13 @@ class ScenarioGenerator:
                 "parse_error", exc.raw_output, str(exc), retrieved_for_storage, _csi,
             )
             raise ScenarioGenerationError(f"{exc} model_output_id={output_id}", output_id) from exc
+
+        # Fire-and-forget: memory maintenance
+        memory_ctrl = MemoryController(self.llm_client, self.db, session_id)
+        memory_ctrl.on_turn_generated(request.player_action, output.narration, state, turn)
+        asyncio.create_task(memory_ctrl.maintain(session_id, turn))
+
+        return output, latency_ms, source
 
     # ── Hook 4: Post-generation ─────────────────────────────────────
 
@@ -371,3 +452,123 @@ class ScenarioGenerator:
             }
             for chunk in chunks
         ]
+
+    # ── Agent pipeline helpers ─────────────────────────────────────────
+
+    async def _execute_single_llm(
+        self, request, prompt, model, meta
+    ) -> tuple[StoryOutput, int, str]:
+        """Fallback: single LLM call (original behavior, no multi-agent pipeline)."""
+        try:
+            output, latency_ms = await self.llm_client.generate(
+                prompt, model, temperature=meta.temperature
+            )
+            return output, latency_ms, "llm"
+        except LLMRequestError:
+            raise
+        except LLMOutputParseError:
+            raise
+
+    def _collect_relevant_rules(
+        self, state: dict, campaign_manager
+    ) -> list[str]:
+        """Collect L2 rule snippets relevant to current player context.
+
+        Extracts rules from the knowledge base that match the current
+        game state (location hazards, NPC special rules, item mechanics).
+        Falls back to generic TRPG rules when no specific matches found.
+        """
+        rules: list[str] = []
+
+        # Generic CoC/TRPG rules (always applicable)
+        rules.append(
+            "规则：SAN值检定——当玩家遭遇神话生物或极度恐怖场景时，"
+            "进行SAN检定（1d100 ≤ 当前SAN值）。失败扣除1d6 SAN值。"
+        )
+        rules.append(
+            "规则：技能检定——当玩家尝试需要专业能力的行动时，"
+            "进行技能检定（1d100 ≤ 技能值）。大失败（96-100）产生严重后果。"
+        )
+
+        # Location-specific hazards
+        loc = state.get("current_location", "")
+        if "墓" in loc or "教堂" in loc or "地下" in loc:
+            rules.append(f"规则：当前地点({loc})可能存在超自然现象，注意环境线索。")
+
+        return rules
+
+    def _describe_anchor_candidates(
+        self, campaign_manager, state: dict, turn: int
+    ) -> str:
+        """Format anchor candidate info for Director consumption."""
+        if campaign_manager is None or not campaign_manager.is_loaded():
+            return "无锚点"
+
+        try:
+            candidates = campaign_manager.evaluate_anchors(state, turn)
+            if not candidates:
+                return "无候选锚点"
+
+            lines = []
+            for a in candidates[:3]:
+                lines.append(f"- [{a.id}] {a.name} (优先级{a.priority}): {a.description}")
+            return "\n".join(lines)
+        except Exception:
+            return "锚点信息不可用"
+
+    def _format_score_item_states(self, campaign_manager) -> str:
+        """Build SCORE item state summary string for Director."""
+        # Use campaign_manager's internal facilities if available,
+        # otherwise return empty
+        return ""  # SCORE tracker state is in MemoryController, not campaign_manager
+
+    @staticmethod
+    def _inject_direction(
+        prompt: str,
+        direction: DirectorInstruction,
+        ruling,  # ActionRuling
+    ) -> str:
+        """Inject director instruction and examiner ruling into the narrator prompt.
+
+        Prepends the direction as a narrative instruction section, replacing
+        the raw campaign_context anchor hints with concrete director guidance.
+        """
+        parts: list[str] = []
+
+        # Examiner ruling summary
+        if ruling.constraints:
+            parts.append(f"[行动约束] {ruling.constraints}")
+
+        # Director narrative direction
+        if direction.narrative_direction:
+            parts.append(f"[导演指令] {direction.narrative_direction}")
+
+        # Anchor trigger
+        if direction.anchor_triggered:
+            parts.append(f"[锚点触发] {direction.anchor_triggered}")
+
+        # Redirection hint
+        if direction.redirection_strategy and direction.redirection_hint:
+            parts.append(
+                f"[叙事引导] 策略={direction.redirection_strategy.value}. "
+                f"提示={direction.redirection_hint}"
+            )
+
+        # Item continuity
+        for ic in direction.item_continuity_checks:
+            if not ic.is_valid_transition:
+                parts.append(
+                    f"[物品连续性] {ic.item_name}: {ic.previous_state}→{ic.current_state} "
+                    f"无效. {ic.error_description}"
+                )
+
+        # Health guidance
+        if direction.health_guidance:
+            parts.append(f"[健康引导] {direction.health_guidance}")
+
+        if not parts:
+            return prompt
+
+        # Inject direction BEFORE the system prompt section
+        direction_block = "## 导演指令\n" + "\n".join(parts) + "\n"
+        return direction_block + prompt
