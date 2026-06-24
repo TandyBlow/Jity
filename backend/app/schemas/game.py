@@ -3,9 +3,20 @@
 Migrated from schemas.py. Campaign-related schemas are in campaign.py.
 """
 
+import re
 from typing import Any, Literal, Optional
 
 from pydantic import BaseModel, Field
+
+# U+2014 em dash — the character we strip from all player-facing text
+_EM_DASH = "—"
+
+
+def strip_em_dash(text: str) -> str:
+    """Remove all em dashes (—, U+2014) from *text*."""
+    if not text:
+        return text
+    return text.replace(_EM_DASH, "")
 
 
 # ── Memory models ──
@@ -84,6 +95,87 @@ class StoryOutput(BaseModel):
     quests_updated: list[dict[str, Any]] = Field(default_factory=list)
     memory_updates: MemoryUpdates = Field(default_factory=MemoryUpdates)
     npc_relations_delta: list[dict[str, Any]] | None = None
+
+    def strip_em_dashes(self) -> "StoryOutput":
+        """Return a new StoryOutput with all em dashes removed from every text field."""
+        self.narration = strip_em_dash(self.narration)
+        self.scene_prompt = strip_em_dash(self.scene_prompt)
+        self.game_over_reason = strip_em_dash(self.game_over_reason)
+        self.current_location = strip_em_dash(self.current_location)
+        self.options = [strip_em_dash(o) for o in self.options]
+        self.dialogue = [
+            DialogueLine(speaker=strip_em_dash(d.speaker), text=strip_em_dash(d.text))
+            for d in self.dialogue
+        ]
+        # Named-object lists: strip any string value
+        self.items_gained = self._strip_named_list(self.items_gained)
+        self.items_lost = self._strip_named_list(self.items_lost)
+        self.npcs_encountered = self._strip_named_list(self.npcs_encountered)
+        self.quests_updated = self._strip_named_list(self.quests_updated)
+        # Memory updates
+        mu = self.memory_updates
+        mu.current_location = strip_em_dash(mu.current_location)
+        mu.key_event = strip_em_dash(mu.key_event)
+        mu.items_upserted = [self._strip_item_memory(i) for i in mu.items_upserted]
+        mu.items_removed = [self._strip_item_memory(i) for i in mu.items_removed]
+        mu.npcs_upserted = [self._strip_npc_memory(n) for n in mu.npcs_upserted]
+        mu.quests_upserted = [self._strip_quest_memory(q) for q in mu.quests_upserted]
+        mu.world_facts_upserted = [self._strip_world_fact_memory(w) for w in mu.world_facts_upserted]
+        mu.player_status_patch = PlayerStatus(
+            condition=strip_em_dash(mu.player_status_patch.condition),
+            danger_level=strip_em_dash(mu.player_status_patch.danger_level),
+            current_goal=strip_em_dash(mu.player_status_patch.current_goal),
+            notes=strip_em_dash(mu.player_status_patch.notes),
+        )
+        # npc_relations_delta
+        if self.npc_relations_delta is not None:
+            self.npc_relations_delta = self._strip_named_list(self.npc_relations_delta)
+        return self
+
+    @staticmethod
+    def _strip_item_memory(item: ItemMemory) -> ItemMemory:
+        item.name = strip_em_dash(item.name)
+        item.status = strip_em_dash(item.status)
+        item.description = strip_em_dash(item.description)
+        item.location = strip_em_dash(item.location)
+        item.notes = strip_em_dash(item.notes)
+        return item
+
+    @staticmethod
+    def _strip_npc_memory(npc: NPCMemory) -> NPCMemory:
+        npc.name = strip_em_dash(npc.name)
+        npc.status = strip_em_dash(npc.status)
+        npc.relationship = strip_em_dash(npc.relationship)
+        npc.current_location = strip_em_dash(npc.current_location)
+        npc.description = strip_em_dash(npc.description)
+        npc.notes = strip_em_dash(npc.notes)
+        return npc
+
+    @staticmethod
+    def _strip_quest_memory(quest: QuestMemory) -> QuestMemory:
+        quest.name = strip_em_dash(quest.name)
+        quest.status = strip_em_dash(quest.status)
+        quest.description = strip_em_dash(quest.description)
+        quest.objective = strip_em_dash(quest.objective)
+        quest.notes = strip_em_dash(quest.notes)
+        return quest
+
+    @staticmethod
+    def _strip_world_fact_memory(fact: WorldFactMemory) -> WorldFactMemory:
+        fact.name = strip_em_dash(fact.name)
+        fact.status = strip_em_dash(fact.status)
+        fact.description = strip_em_dash(fact.description)
+        fact.source = strip_em_dash(fact.source)
+        fact.notes = strip_em_dash(fact.notes)
+        return fact
+
+    @staticmethod
+    def _strip_named_list(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        for item in items:
+            for key, value in list(item.items()):
+                if isinstance(value, str):
+                    item[key] = strip_em_dash(value)
+        return items
 
 
 # ── Request models ──

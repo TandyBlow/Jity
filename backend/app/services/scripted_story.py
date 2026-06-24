@@ -58,4 +58,4 @@ class ScriptedStoryService:
             items_gained=scene.get("items_gained", []),
             quests_updated=scene.get("quests_updated", []),
             npcs_encountered=scene.get("npcs_encountered", []),
-        )
+        ).strip_em_dashes()

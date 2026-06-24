@@ -19,6 +19,7 @@ from app.schemas.game import (
     SessionResponse,
     StoryOutput,
     WorldFactMemory,
+    strip_em_dash,
 )
 
 from app.schemas.campaign import (
@@ -69,6 +70,7 @@ __all__ = [
     "SessionResponse",
     "StoryOutput",
     "WorldFactMemory",
+    "strip_em_dash",
     # campaign
     "AnchorEvent",
     "AnchorTriggerConditions",
