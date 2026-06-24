@@ -104,7 +104,7 @@ cp .env.example .env
 ```dotenv
 DEEPSEEK_API_KEY=your_api_key
 LLM_BASE_URL=https://api.deepseek.com
-LLM_MODEL=deepseek-chat
+LLM_MODEL=deepseek-v4-flash
 ```
 
 启动服务：
@@ -179,7 +179,7 @@ python3 scripts/auto_play.py --runs 1 --turns 5
 ```bash
 python3 scripts/auto_play.py \
   --api-base-url http://localhost:8000 \
-  --model deepseek-chat \
+  --model deepseek-v4-flash \
   --runs 3 \
   --turns 300 \
   --retries 2

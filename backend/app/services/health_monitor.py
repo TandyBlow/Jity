@@ -114,6 +114,7 @@ class HealthMonitor:
                 ).fetchall()
                 return [dict(r) for r in rows]
         except Exception:
+            logger.warning("DB read failed in _get_recent_outputs for session %s", session_id, exc_info=True)
             return []
 
     def _z_score(self, value: float, metric: str) -> float:

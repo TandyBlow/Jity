@@ -1,4 +1,5 @@
 import json
+import logging
 from collections.abc import Callable
 
 from app.database import Database
@@ -8,6 +9,8 @@ from app.services.game_state import GameStateManager
 from app.services.llm_client import LLMClient, LLMOutputParseError, LLMRequestError
 from app.services.prompt_builder import PromptBuilder, PromptInput
 from app.services.retriever import RAGRetriever
+
+logger = logging.getLogger(__name__)
 from app.services.scripted_story import ScriptedStoryService
 
 
@@ -86,7 +89,7 @@ class ScenarioGenerator:
                     **metrics,
                 )
                 campaign_turn = campaign_manager.advance_turn()
-                if campaign_turn >= campaign_manager._resolve_max_turns():
+                if campaign_turn >= campaign_manager.resolve_max_turns():
                     await campaign_manager.advance_session()
                 return GenerateResponse(
                     session_id=session_id,
@@ -176,12 +179,12 @@ class ScenarioGenerator:
                     next_state.get("recent_events", []),
                 )
                 if facts:
-                    next_state["world_facts"] = self.state_manager._merge_by_name(
+                    next_state["world_facts"] = self.state_manager.merge_by_name(
                         next_state.get("world_facts", []),
                         facts,
                         kind="world_fact",
                     )
-                    next_state = self.state_manager._enforce_state_caps(next_state)
+                    next_state = self.state_manager.enforce_state_caps(next_state)
 
         self.db.add_message(session_id, "user", request.player_action, _campaign_session_index)
         self.db.add_message(session_id, "assistant", output.model_dump_json(), _campaign_session_index)
@@ -220,7 +223,7 @@ class ScenarioGenerator:
                     campaign_manager.slot_name,
                 )
             except Exception:
-                pass
+                logger.warning("NPC relations processing failed for campaign %s", campaign_manager.progress.campaign_id, exc_info=True)
 
         # ── Per-turn instrumentation ──
         metrics = {}
@@ -245,7 +248,7 @@ class ScenarioGenerator:
         if campaign_manager is not None and campaign_manager.is_loaded():
             campaign_manager.commit_pending_anchors()
             turn_in_session = campaign_manager.advance_turn()
-            max_turns = campaign_manager._resolve_max_turns()
+            max_turns = campaign_manager.resolve_max_turns()
             if turn_in_session >= max_turns:
                 await campaign_manager.advance_session()
 

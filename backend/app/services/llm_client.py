@@ -92,6 +92,7 @@ class LLMClient:
                 logger.info("json_repair succeeded — recovered from parse failure")
                 return self._parse_story_output(repaired), latency_ms
             except Exception:
+                logger.debug("generate: json_repair local fallback failed", exc_info=True)
                 pass
 
             # Third attempt: LLM repair with temperature=0
@@ -218,6 +219,7 @@ class LLMClient:
                 logger.info("generate_json: json_repair succeeded")
                 return json.loads(self._clean_json_text(repaired))
             except Exception:
+                logger.debug("generate_json: json_repair local fallback failed", exc_info=True)
                 pass
 
         raise LLMOutputParseError(
@@ -250,10 +252,6 @@ class LLMClient:
     @staticmethod
     def _format_failed_outputs(original_text: str, repaired_text: str) -> str:
         return f"原始输出：\n{original_text}\n\n修复输出：\n{repaired_text}"
-
-    @staticmethod
-    def _parse_json(text: str) -> dict[str, Any]:
-        return json.loads(LLMClient._clean_json_text(text))
 
     @staticmethod
     def _clean_json_text(text: str) -> str:

@@ -2,7 +2,7 @@
 
 import { BookOpen, History, Loader2, MapPin, PenTool, RefreshCw, Send, Sparkles } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { createSession, createSlot, generateScene, getSessionHistory, listCampaigns, listSlots, loadSlot } from "@/lib/api";
 import type { CampaignListItem, GameState, GenerateResponse, ItemMemory, NPCMemory, QuestMemory, RetrievedChunk, SaveSlot, StoryOutput, WorldFactMemory } from "@/types";
@@ -54,37 +54,42 @@ const initialOutput: StoryOutput = {
   current_location: "卡塞尔学院报到处大厅",
 };
 
-const DEFAULT_STORY_STYLE = "黑暗学院奇幻，带一点黑色幽默，强调 NPC 反应。";
-const DEFAULT_CONSTRAINTS = "关键 NPC 不能突然死亡；不要跳出当前入学调查。";
-const INITIAL_ACTION = "愣住两秒，然后硬着头皮打招呼：“学姐好……那个，这里到底有什么不普通的？”";
+const DEFAULT_STORY_STYLE = “黑暗学院奇幻，带一点黑色幽默，强调 NPC 反应。”;
+const DEFAULT_CONSTRAINTS = “关键 NPC 不能突然死亡；不要跳出当前入学调查。”;
+const INITIAL_ACTION = “愣住两秒，然后硬着头皮打招呼：”学姐好……那个，这里到底有什么不普通的？””;
+const SLOT_DEFAULT = “default” as const;
+const ENTRY_ACTION = “（入场）环顾四周，了解当前处境。”;
+const STATE_COMMIT_DELAY = 100;
 
 export default function Home() {
-  const [sessionId, setSessionId] = useState("");
-  const [model, setModel] = useState("deepseek-chat");
+  const [sessionId, setSessionId] = useState(“”);
+  const [model, setModel] = useState(“deepseek-v4-flash”);
   const [state, setState] = useState<GameState | null>(null);
   const [output, setOutput] = useState<StoryOutput>(initialOutput);
-  const [outputSource, setOutputSource] = useState<GenerateResponse["source"]>("scripted");
+  const [outputSource, setOutputSource] = useState<GenerateResponse[“source”]>(“scripted”);
   const [chunks, setChunks] = useState<RetrievedChunk[]>([]);
   const [action, setAction] = useState(INITIAL_ACTION);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(“”);
   const [slots, setSlots] = useState<SaveSlot[]>([]);
-  const [selectedSlot, setSelectedSlot] = useState("default");
-  const [selectedSlotId, setSelectedSlotId] = useState<number | "">("");
+  const [selectedSlot, setSelectedSlot] = useState(SLOT_DEFAULT);
+  const [selectedSlotId, setSelectedSlotId] = useState<number | “”>(“”);
   const [campaigns, setCampaigns] = useState<CampaignListItem[]>([]);
-  const [selectedCampaign, setSelectedCampaign] = useState("");
-  const statusDeltaHints = buildStatusDeltaHints(output);
+  const [selectedCampaign, setSelectedCampaign] = useState(“”);
+  const [pendingGenerate, setPendingGenerate] = useState<string | null>(null);
 
+  const statusDeltaHints = useMemo(() => buildStatusDeltaHints(output), [output]);
+
+  // ── Session init ──
   useEffect(() => {
     let mounted = true;
 
-    // Check for campaign entry point from Timeline "从此处开始"
     let campaignOpts: { campaignFilename?: string; arcIndex?: number; sessionIndex?: number } | undefined;
     try {
-      const entryJson = sessionStorage.getItem("campaign_entry");
+      const entryJson = sessionStorage.getItem(“campaign_entry”);
       if (entryJson) {
         const entry = JSON.parse(entryJson);
-        sessionStorage.removeItem("campaign_entry");
+        sessionStorage.removeItem(“campaign_entry”);
         campaignOpts = {
           campaignFilename: entry.campaignFilename,
           arcIndex: entry.arcIndex,
@@ -101,50 +106,39 @@ export default function Home() {
         setSessionId(session.session_id);
         setState(session.state);
         setModel(session.model);
-        setSelectedSlot("default");
-        setSelectedSlotId("");
-        refreshSlots(session.session_id, "default").catch(() => {});
-        // If mid-campaign entry, auto-trigger generate to show campaign opening_scene
+        setSelectedSlot(SLOT_DEFAULT);
+        setSelectedSlotId(“”);
+        refreshSlots(session.session_id, SLOT_DEFAULT).catch((err) => console.error(“refreshSlots failed:”, err));
         if (campaignOpts?.campaignFilename && (campaignOpts.arcIndex || 0) > 0) {
-          // Use a short delay to ensure sessionId is set before generate
-          setTimeout(() => {
-            handleGenerate("（入场）环顾四周，了解当前处境。");
-          }, 100);
+          setPendingGenerate(ENTRY_ACTION);
         }
       })
       .catch((err: Error) => setError(err.message));
-    return () => {
-      mounted = false;
-    };
+    return () => { mounted = false; };
   }, []);
 
-  // Load available campaigns for selector
+  // ── Load campaigns ──
   useEffect(() => {
     listCampaigns()
       .then((r) => {
         setCampaigns(r.campaigns ?? []);
-        // Auto-select campaign from Timeline entry if present
         try {
-          const entryJson = sessionStorage.getItem("campaign_entry");
+          const entryJson = sessionStorage.getItem(“campaign_entry”);
           if (entryJson) {
             const entry = JSON.parse(entryJson);
-            if (entry.campaignFilename) {
-              setSelectedCampaign(entry.campaignFilename);
-            }
+            if (entry.campaignFilename) setSelectedCampaign(entry.campaignFilename);
           }
-        } catch {
-          // Ignore
-        }
+        } catch { /* ignore */ }
       })
-      .catch(() => {});
+      .catch((err) => console.error(“listCampaigns failed:”, err));
   }, []);
 
-  // Load save slots
+  // ── Load save slots ──
   useEffect(() => {
     if (!sessionId) {
       setSlots([]);
-      setSelectedSlot("default");
-      setSelectedSlotId("");
+      setSelectedSlot(SLOT_DEFAULT);
+      setSelectedSlotId(“”);
       return;
     }
     listSlots(sessionId).then(r => {
@@ -156,17 +150,27 @@ export default function Home() {
         setSelectedSlot(active.slot_name);
         setSelectedSlotId(active.id);
       } else {
-        setSelectedSlot("default");
-        setSelectedSlotId("");
+        setSelectedSlot(SLOT_DEFAULT);
+        setSelectedSlotId(“”);
       }
-    }).catch(() => {});
+    }).catch((err) => console.error(“listSlots failed:”, err));
+  /* selectedSlot intentionally excluded: changing preferred slot name while
+     session stays the same should not reload the list — only a new session does */
   }, [sessionId]);
+
+  // ── Auto-generate after session created for mid-campaign entry ──
+  useEffect(() => {
+    if (!pendingGenerate || !sessionId) return;
+    const action = pendingGenerate;
+    setPendingGenerate(null);
+    handleGenerate(action);
+  }, [pendingGenerate, sessionId]);
 
   async function refreshSlots(currentSessionId = sessionId, preferredSlotName = selectedSlot) {
     if (!currentSessionId) {
       setSlots([]);
-      setSelectedSlot("default");
-      setSelectedSlotId("");
+      setSelectedSlot(SLOT_DEFAULT);
+      setSelectedSlotId(“”);
       return;
     }
     const updated = await listSlots(currentSessionId);
@@ -178,33 +182,34 @@ export default function Home() {
       setSelectedSlot(active.slot_name);
       setSelectedSlotId(active.id);
     } else {
-      setSelectedSlot("default");
-      setSelectedSlotId("");
+      setSelectedSlot(SLOT_DEFAULT);
+      setSelectedSlotId(“”);
     }
   }
 
   async function restoreLastOutput(nextSessionId: string) {
     try {
       const history = await getSessionHistory(nextSessionId);
-      const lastAssistant = [...history.messages].reverse().find((message) => message.role === "assistant");
+      const lastAssistant = [...history.messages].reverse().find((message) => message.role === “assistant”);
       if (lastAssistant) {
         setOutput(JSON.parse(lastAssistant.content) as StoryOutput);
-        setOutputSource("llm");
+        setOutputSource(“llm”);
       } else {
         setOutput(initialOutput);
-        setOutputSource("scripted");
+        setOutputSource(“scripted”);
       }
-    } catch {
+    } catch (err) {
+      console.error(“restoreLastOutput failed:”, err);
       setOutput(initialOutput);
-      setOutputSource("scripted");
+      setOutputSource(“scripted”);
     }
   }
 
-  async function handleGenerate(nextAction = action, overrideSessionId?: string) {
+  const handleGenerate = useCallback(async (nextAction = action, overrideSessionId?: string) => {
     const sid = overrideSessionId ?? sessionId;
     if (!sid || !nextAction.trim()) return;
     setIsLoading(true);
-    setError("");
+    setError(“”);
     try {
       const response: GenerateResponse = await generateScene({
         sessionId: sid,
@@ -219,43 +224,40 @@ export default function Home() {
       setState(response.state);
       setChunks(response.retrieved_chunks);
       setModel(response.used_model);
-      setAction("");
+      setAction(“”);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "生成失败");
+      setError(err instanceof Error ? err.message : “生成失败”);
     } finally {
       setIsLoading(false);
     }
-  }
+  }, [sessionId, action, model, selectedSlot]);
 
-  async function handleNewSession() {
+  const handleNewSession = useCallback(async () => {
     setIsLoading(true);
-    setError("");
+    setError(“”);
     try {
       const campaignOpts = selectedCampaign
-        ? { campaignFilename: selectedCampaign, arcIndex: 0, sessionIndex: 0, slotName: "default" }
+        ? { campaignFilename: selectedCampaign, arcIndex: 0, sessionIndex: 0, slotName: SLOT_DEFAULT }
         : undefined;
       const session = await createSession(model, campaignOpts);
       setSessionId(session.session_id);
       setState(session.state);
       setOutput(initialOutput);
-      setOutputSource("scripted");
+      setOutputSource(“scripted”);
       setChunks([]);
       setAction(INITIAL_ACTION);
-      setSelectedSlot("default");
-      setSelectedSlotId("");
-      await refreshSlots(session.session_id, "default");
-      // Auto-trigger generate for campaign sessions to fetch opening scene
+      setSelectedSlot(SLOT_DEFAULT);
+      setSelectedSlotId(“”);
+      await refreshSlots(session.session_id, SLOT_DEFAULT);
       if (campaignOpts) {
-        setTimeout(() => {
-          handleGenerate("（入场）环顾四周，了解当前处境。", session.session_id);
-        }, 100);
+        setPendingGenerate(ENTRY_ACTION);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "创建会话失败");
+      setError(err instanceof Error ? err.message : “创建会话失败”);
     } finally {
       setIsLoading(false);
     }
-  }
+  }, [model, selectedCampaign]);
 
   return (
     <main className="app-shell">
@@ -289,7 +291,7 @@ export default function Home() {
           模型
         </label>
         <select className="select" id="model" value={model} onChange={(event) => setModel(event.target.value)}>
-          <option value="deepseek-chat">deepseek-chat</option>
+          <option value="deepseek-v4-flash">deepseek-v4-flash</option>
           <option value="deepseek-reasoner">deepseek-reasoner</option>
         </select>
 
@@ -305,24 +307,20 @@ export default function Home() {
             setSelectedCampaign(val);
             setError("");
             const opts = val
-              ? { campaignFilename: val, arcIndex: 0, sessionIndex: 0, slotName: "default" }
+              ? { campaignFilename: val, arcIndex: 0, sessionIndex: 0, slotName: SLOT_DEFAULT }
               : undefined;
             createSession(model, opts)
               .then((s) => {
                 setSessionId(s.session_id);
                 setState(s.state);
                 setOutput(initialOutput);
-                setOutputSource("scripted" as GenerateResponse["source"]);
+                setOutputSource("scripted");
                 setChunks([]);
                 setAction(INITIAL_ACTION);
-                setSelectedSlot("default");
+                setSelectedSlot(SLOT_DEFAULT);
                 setSelectedSlotId("");
-                refreshSlots(s.session_id, "default").catch(() => {});
-                // Auto-trigger generate to fetch campaign-specific opening scene
-                // Use setTimeout so React commits the new sessionId before generate reads it
-                setTimeout(() => {
-                  handleGenerate("（入场）环顾四周，了解当前处境。", s.session_id);
-                }, 100);
+                refreshSlots(s.session_id, SLOT_DEFAULT).catch((err) => console.error("refreshSlots failed:", err));
+                setPendingGenerate(ENTRY_ACTION);
               })
               .catch((err: Error) => setError(err.message));
           }}

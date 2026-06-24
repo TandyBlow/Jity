@@ -150,9 +150,10 @@ class TestTokenBudget:
         assert CampaignManager.TOKEN_BUDGET_LIMIT == 102400
 
     def test_encoding_uses_cl100k_base(self):
-        """Token budget should use cl100k_base encoder."""
-        mgr = CampaignManager(db=MagicMock(), campaigns_dir=Path("/tmp"), scripted_story=MagicMock())
-        enc = mgr._get_encoder()
+        """Token budget should use cl100k_base encoder via SimpleTruncationStrategy."""
+        from app.services.context_strategy import SimpleTruncationStrategy
+        strategy = SimpleTruncationStrategy(budget_limit=102400)
+        enc = strategy._get_encoder()
         assert enc.name == "cl100k_base"
 
 
@@ -226,6 +227,6 @@ class TestOptionConfig:
         previous_cwd = Path.cwd()
         try:
             os.chdir(tmp_path)
-            assert mgr._resolve_max_turns() == 30
+            assert mgr.resolve_max_turns() == 30
         finally:
             os.chdir(previous_cwd)

@@ -1,4 +1,5 @@
 import json
+import time
 
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
@@ -43,7 +44,16 @@ prompt_builder = PromptBuilder()
 llm_client = LLMClient(settings)
 scripted_story = ScriptedStoryService()
 health_monitor = HealthMonitor(db)
-campaign_managers: dict[tuple[str, str], CampaignManager] = {}
+campaign_managers: dict[tuple[str, str], tuple[float, CampaignManager]] = {}
+_CAMPAIGN_MGR_TTL = 3600  # evict cached managers after 1 hour idle
+
+
+def _evict_stale_managers() -> None:
+    """Remove cached CampaignManager instances older than TTL."""
+    now = time.time()
+    stale = [k for k, (ts, _) in campaign_managers.items() if now - ts > _CAMPAIGN_MGR_TTL]
+    for k in stale:
+        campaign_managers.pop(k, None)
 
 
 def build_campaign_manager() -> CampaignManager:
@@ -59,13 +69,16 @@ def build_campaign_manager() -> CampaignManager:
 
 def get_campaign_manager_for_session(session_id: str, slot_name: str = "default") -> CampaignManager | None:
     """Return the manager for this session/slot, loading it from persisted metadata if needed."""
+    _evict_stale_managers()
     session_row = db.get_session(session_id)
     if not session_row or not session_row["campaign_filename"]:
         return None
     active_slot = slot_name or session_row["active_slot_name"] or "default"
     key = (session_id, active_slot)
     if key in campaign_managers:
-        return campaign_managers[key]
+        _, mgr = campaign_managers[key]
+        campaign_managers[key] = (time.time(), mgr)  # refresh timestamp
+        return mgr
 
     campaign_path = settings.campaigns_dir / session_row["campaign_filename"]
     if not campaign_path.exists():
@@ -76,7 +89,7 @@ def get_campaign_manager_for_session(session_id: str, slot_name: str = "default"
         campaign_id=session_row["campaign_id"] or session_id,
         slot_name=active_slot,
     )
-    campaign_managers[key] = manager
+    campaign_managers[key] = (time.time(), manager)
     return manager
 
 
@@ -419,7 +432,7 @@ def health() -> dict[str, object]:
 
 @app.get("/models")
 def models() -> dict[str, list[str]]:
-    return {"models": [settings.llm_model, "deepseek-chat", "deepseek-reasoner"]}
+    return {"models": [settings.llm_model, "deepseek-v4-flash", "deepseek-reasoner"]}
 
 
 @app.post("/sessions", response_model=SessionResponse)
@@ -445,7 +458,7 @@ def create_session(request: CreateSessionRequest) -> SessionResponse:
                 start_session_index=request.session_index,
                 slot_name=slot_name,
             )
-            campaign_managers[(session_id, slot_name)] = manager
+            campaign_managers[(session_id, slot_name)] = (time.time(), manager)
             db.set_session_campaign_id(
                 session_id,
                 session_id,

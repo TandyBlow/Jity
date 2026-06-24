@@ -1,11 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
-import { getCampaign, listCampaigns } from "@/lib/api";
-import type { CampaignArc, CampaignListItem, CampaignSchema } from "@/types";
-
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { generateCampaign, generateFromNovel, getCampaign, listCampaigns, saveCampaign } from "@/lib/api";
+import type { CampaignListItem, CampaignSchema } from "@/types";
 
 function emptyCampaign(): CampaignSchema {
   return {
@@ -30,7 +28,7 @@ export default function CuratorPage() {
   const [novelErrors, setNovelErrors] = useState<string[]>([]);
 
   useEffect(() => {
-    listCampaigns().then((r) => setCampaigns(r.campaigns ?? [])).catch(() => {});
+    listCampaigns().then((r) => setCampaigns(r.campaigns ?? [])).catch((err) => console.error("listCampaigns failed:", err));
   }, []);
 
   const handleLoad = useCallback((fname: string) => {
@@ -45,24 +43,14 @@ export default function CuratorPage() {
     setNovelErrors([]);
     setStatus("从小说生成战役中…");
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-      const res = await fetch(`${API_BASE}/campaigns/generate-from-novel`, {
-        method: "POST",
-        body: formData,
-      });
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({ detail: "上传失败" }));
-        throw new Error((err as { detail?: string }).detail || "上传失败");
-      }
-      const data = await res.json();
+      const data = await generateFromNovel(file);
       if (data.campaign) {
         setCampaign(data.campaign as CampaignSchema);
         setFilename(file.name.replace(/\.\w+$/, "") + "_campaign.json");
         setStatus("战役已生成，请审核后保存");
       }
       if (data.extraction_errors?.length) {
-        setNovelErrors(data.extraction_errors as string[]);
+        setNovelErrors(data.extraction_errors);
       }
     } catch (e: unknown) {
       setStatus("生成失败: " + (e instanceof Error ? e.message : String(e)));
@@ -76,23 +64,17 @@ export default function CuratorPage() {
     setGenerating(true);
     setStatus("生成中…");
     try {
-      const res = await fetch(`${API_BASE}/campaigns/generate`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: genPrompt }),
-      });
-      const data = await res.json();
+      const data = await generateCampaign(genPrompt);
       if (data.campaign) {
         setCampaign(data.campaign as CampaignSchema);
         setFilename(data.saved_to?.split("/").pop() ?? "generated.json");
         setStatus("生成完成！请审查后保存。");
-        // Refresh campaign list
-        listCampaigns().then((r) => setCampaigns(r.campaigns ?? [])).catch(() => {});
+        listCampaigns().then((r) => setCampaigns(r.campaigns ?? [])).catch((err) => console.error("listCampaigns refresh failed:", err));
       } else {
         setStatus("生成失败：" + (data.detail ?? "未知错误"));
       }
     } catch (e) {
-      setStatus("请求失败：" + String(e));
+      setStatus("请求失败：" + (e instanceof Error ? e.message : String(e)));
     }
     setGenerating(false);
   }, [genPrompt]);
@@ -101,20 +83,15 @@ export default function CuratorPage() {
     setSaving(true);
     setStatus("保存中…");
     try {
-      const res = await fetch(`${API_BASE}/campaigns/save`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ filename, campaign }),
-      });
-      const data = await res.json();
+      const data = await saveCampaign(filename, campaign);
       if (data.status === "saved") {
         setStatus("已保存！");
-        listCampaigns().then((r) => setCampaigns(r.campaigns ?? [])).catch(() => {});
+        listCampaigns().then((r) => setCampaigns(r.campaigns ?? [])).catch((err) => console.error("listCampaigns refresh failed:", err));
       } else {
         setStatus("保存失败：" + (data.detail ?? ""));
       }
     } catch (e) {
-      setStatus("请求失败：" + String(e));
+      setStatus("请求失败：" + (e instanceof Error ? e.message : String(e)));
     }
     setSaving(false);
   }, [filename, campaign]);
@@ -128,6 +105,14 @@ export default function CuratorPage() {
     a.click();
     URL.revokeObjectURL(url);
   }, [campaign, filename]);
+
+  // Memoize review panel computations
+  const reviewStats = useMemo(() => {
+    const totalSessions = campaign.arcs.reduce((s, a) => s + a.sessions.length, 0);
+    const totalAnchors = campaign.arcs.reduce((s, a) => s + a.sessions.reduce((ss, ses) => ss + ses.anchor_events.length, 0), 0);
+    const allAnchors = campaign.arcs.flatMap((a) => a.sessions.flatMap((s) => s.anchor_events));
+    return { totalSessions, totalAnchors, allAnchors };
+  }, [campaign]);
 
   // Arc/session/anchor editing helpers
   const updateField = (field: string, value: unknown) => {
@@ -154,7 +139,7 @@ export default function CuratorPage() {
       const arcs = [...prev.arcs];
       arcs[ai] = {
         ...arcs[ai],
-        sessions: [...arcs[ai].sessions, { name: "新幕", opening_scene: "", anchor_events: [] }],
+        sessions: [...arcs[ai].sessions, { name: "新幕", opening_scene: "", max_turns_per_session: 30, anchor_events: [] }],
       };
       return { ...prev, arcs };
     });
@@ -183,7 +168,7 @@ export default function CuratorPage() {
             name: "新锚点",
             description: "",
             priority: 3,
-            trigger_conditions: {},
+            trigger_conditions: {} as Record<string, string | null>,
           },
         ],
       };
@@ -363,15 +348,15 @@ export default function CuratorPage() {
             <div><strong>标题：</strong>{campaign.title || "未设置"}</div>
             <div><strong>版本：</strong>v{campaign.version}</div>
             <div><strong>叙事弧：</strong>{campaign.arcs.length}个</div>
-            <div><strong>总幕数：</strong>{campaign.arcs.reduce((s, a) => s + a.sessions.length, 0)}</div>
-            <div><strong>总锚点：</strong>{campaign.arcs.reduce((s, a) => s + a.sessions.reduce((ss, ses) => ss + ses.anchor_events.length, 0), 0)}</div>
+            <div><strong>总幕数：</strong>{reviewStats.totalSessions}</div>
+            <div><strong>总锚点：</strong>{reviewStats.totalAnchors}</div>
             <div style={{ marginTop: 12 }}><strong>锚点：</strong></div>
             <ul style={{ paddingLeft: 18, margin: "4px 0" }}>
-              {campaign.arcs.flatMap((a) => a.sessions.flatMap((s) => s.anchor_events)).slice(0, 15).map((a) => (
+              {reviewStats.allAnchors.slice(0, 15).map((a) => (
                 <li key={a.id} style={{ fontSize: 12, color: "var(--muted)" }}>{a.name} (P{a.priority})</li>
               ))}
             </ul>
-            {campaign.arcs.flatMap((a) => a.sessions.flatMap((s) => s.anchor_events)).length > 15 && (
+            {reviewStats.allAnchors.length > 15 && (
               <div style={{ fontSize: 12, color: "var(--muted)" }}>…还有更多</div>
             )}
           </div>

@@ -1,6 +1,7 @@
 import type {
   CampaignDetailResponse,
   CampaignListResponse,
+  CampaignSchema,
   GenerateResponse,
   SaveSlot,
   SessionHistoryResponse,
@@ -126,6 +127,41 @@ export function loadSlot(slotId: number): Promise<{ status: string; slot: SaveSl
   return request(`/campaigns/slots/${slotId}/load`, { method: "POST" });
 }
 
-export function deleteSlot(slotName: string): Promise<{ status: string }> {
-  return request(`/campaigns/slots/${encodeURIComponent(slotName)}`, { method: "DELETE" });
+// ── Campaign Generation API ──
+
+export function generateCampaign(prompt: string): Promise<{ campaign?: CampaignSchema; saved_to?: string; detail?: string }> {
+  return request("/campaigns/generate", {
+    method: "POST",
+    body: JSON.stringify({ prompt }),
+  });
+}
+
+export async function generateFromNovel(file: File): Promise<{
+  campaign?: CampaignSchema;
+  extraction_errors?: string[];
+  detail?: string;
+}> {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  // FormData requires no Content-Type header (browser sets multipart boundary)
+  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
+  const response = await fetch(`${baseUrl}/campaigns/generate-from-novel`, {
+    method: "POST",
+    body: formData,
+  });
+
+  if (!response.ok) {
+    const payload = await response.json().catch(() => ({ detail: "上传失败" }));
+    throw new Error((payload as { detail?: string }).detail ?? "上传失败");
+  }
+
+  return response.json();
+}
+
+export function saveCampaign(filename: string, campaign: unknown): Promise<{ status?: string; detail?: string }> {
+  return request("/campaigns/save", {
+    method: "POST",
+    body: JSON.stringify({ filename, campaign }),
+  });
 }

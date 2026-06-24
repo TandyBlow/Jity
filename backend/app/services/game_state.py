@@ -99,17 +99,17 @@ class GameStateManager:
         world_facts = [*memory.get("world_facts_upserted", []), *self._infer_world_facts(action, output)]
 
         next_state["items"] = self._remove_by_name(
-            self._merge_by_name(next_state.get("items", []), items_upserted, kind="item"),
+            self.merge_by_name(next_state.get("items", []), items_upserted, kind="item"),
             items_removed,
         )
-        next_state["npcs"] = self._merge_by_name(
+        next_state["npcs"] = self.merge_by_name(
             next_state.get("npcs", []),
             npcs_upserted,
             kind="npc",
             default_location=next_state.get("current_location", ""),
         )
-        next_state["quests"] = self._merge_by_name(next_state.get("quests", []), quests_upserted, kind="quest")
-        next_state["world_facts"] = self._merge_by_name(
+        next_state["quests"] = self.merge_by_name(next_state.get("quests", []), quests_upserted, kind="quest")
+        next_state["world_facts"] = self.merge_by_name(
             next_state.get("world_facts", []),
             world_facts,
             kind="world_fact",
@@ -124,7 +124,7 @@ class GameStateManager:
             next_state.get("recent_events", []),
             self._build_key_event(action, output),
         )
-        next_state = self._enforce_state_caps(next_state)
+        next_state = self.enforce_state_caps(next_state)
         return next_state
 
     @staticmethod
@@ -167,7 +167,7 @@ class GameStateManager:
         )
         return next_state
 
-    def _merge_by_name(
+    def merge_by_name(
         self,
         current: list[dict[str, Any]],
         updates: list[dict[str, Any]],
@@ -388,7 +388,7 @@ class GameStateManager:
         return f"{text[: max_chars - 1]}…"
 
     @staticmethod
-    def _enforce_state_caps(state: dict[str, Any]) -> dict[str, Any]:
+    def enforce_state_caps(state: dict[str, Any]) -> dict[str, Any]:
         """Apply defensive caps to prevent 270-turn state bloat.
 
         Caps: 20 items, 15 NPCs, 10 quests, 15 world_facts.

@@ -5,8 +5,11 @@ Each concern in a focused method.
 """
 
 import json
+import logging
 from pathlib import Path
 from typing import Any
+
+logger = logging.getLogger(__name__)
 
 from app.database import Database
 from app.schemas.campaign import (
@@ -146,7 +149,7 @@ class CampaignManager:
             try:
                 self.fsm.machine.set_state(saved_state)
             except Exception:
-                pass
+                logger.warning("FSM state restore failed for %r — using default", saved_state)
 
     def save_progress(self) -> None:
         """Persist current progress and FSM state to database."""
@@ -237,6 +240,7 @@ class CampaignManager:
             )
             return recap_text.strip()
         except Exception:
+            logger.warning("Recap generation failed for campaign %s", self.progress.campaign_id, exc_info=True)
             return None
 
     def store_recap(self, recap_text: str) -> None:
@@ -316,6 +320,7 @@ class CampaignManager:
         try:
             metrics = monitor.compute(self.progress.campaign_id, turn)
         except Exception:
+            logger.warning("Health metric computation failed for campaign %s", self.progress.campaign_id, exc_info=True)
             return None
 
         if not metrics.needs_guidance:
@@ -366,6 +371,7 @@ class CampaignManager:
                 return [f for f in facts if isinstance(f, dict) and f.get("name")]
             return []
         except Exception:
+            logger.warning("Fact extraction failed for campaign %s", self.progress.campaign_id, exc_info=True)
             return []
 
     # ── Deviation detection (CAMP-07) ──
@@ -658,12 +664,6 @@ class CampaignManager:
     TOKEN_BUDGET_LIMIT = 102400  # 80% of assumed 128K context window
     _enc = None
 
-    @classmethod
-    def _get_encoder(cls):
-        if cls._enc is None:
-            cls._enc = get_token_encoder("cl100k_base")
-        return cls._enc
-
     def check_token_budget(self, prompt: str) -> tuple[bool, int, str]:
         """Check if prompt exceeds token budget.
 
@@ -724,7 +724,7 @@ class CampaignManager:
 
     DEFAULT_MAX_TURNS = 30
 
-    def _resolve_max_turns(self) -> int:
+    def resolve_max_turns(self) -> int:
         """Resolve max_turns_per_session with precedence:
         per-session override > campaign-level > option_config.json > DEFAULT (30).
         """
@@ -752,9 +752,7 @@ class CampaignManager:
                 config = json.loads(config_path.read_text(encoding="utf-8"))
                 return config.get("max_turns_per_session", self.DEFAULT_MAX_TURNS)
         except Exception:
-            pass
-
-        return self.DEFAULT_MAX_TURNS
+            logger.debug("option_config.json load failed", exc_info=True)
 
     def _build_structural_recap(self) -> str:
         """Build a structural recap from campaign data when LLM recap fails."""
@@ -797,7 +795,7 @@ class CampaignManager:
                 self.slot_name,
             )
         except (json.JSONDecodeError, KeyError):
-            pass
+            logger.warning("NPC relations decode failed for campaign %s", self.progress.campaign_id)
 
     async def advance_session(self) -> str:
         """Advance to next campaign session. Returns recap text."""
@@ -808,6 +806,7 @@ class CampaignManager:
         try:
             recap = await self.generate_recap(self.progress.campaign_id)
         except Exception:
+            logger.warning("Recap generation failed in advance_session, using structural fallback", exc_info=True)
             recap = self._build_structural_recap()
         if recap:
             self.store_recap(recap)
@@ -842,6 +841,7 @@ class CampaignManager:
         try:
             recap = await self.generate_recap(self.progress.campaign_id)
         except Exception:
+            logger.warning("Recap generation failed in advance_session, using structural fallback", exc_info=True)
             recap = self._build_structural_recap()
         if recap:
             self.store_recap(recap)
