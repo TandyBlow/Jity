@@ -342,8 +342,9 @@ class TestPersonaConstructionBranch:
             extracted_at_turn=10,
         )
         pcb.merge_snapshot(snap)
-        assert "name" in pcb._sketch.entries
-        assert pcb._sketch.entries["name"][0].value == "路明非"
+        sketch = pcb._sketches["player"]
+        assert "name" in sketch.entries
+        assert sketch.entries["name"][0].value == "路明非"
 
         # Update name — should replace
         snap2 = PersonaSnapshot(
@@ -351,8 +352,8 @@ class TestPersonaConstructionBranch:
             extracted_at_turn=20,
         )
         pcb.merge_snapshot(snap2)
-        assert len(pcb._sketch.entries["name"]) == 1
-        assert pcb._sketch.entries["name"][0].value == "楚子航"
+        assert len(sketch.entries["name"]) == 1
+        assert sketch.entries["name"][0].value == "楚子航"
 
     def test_merge_snapshot_add_keys_append(self):
         pcb = PersonaConstructionBranch(llm_client=None)
@@ -366,7 +367,7 @@ class TestPersonaConstructionBranch:
             extracted_at_turn=10,
         )
         pcb.merge_snapshot(snap2)
-        values = pcb._sketch.entries["liked_food"]
+        values = pcb._sketches["player"].entries["liked_food"]
         assert len(values) >= 1
 
     def test_get_persona_text(self):
@@ -383,6 +384,28 @@ class TestPersonaConstructionBranch:
         assert "路明非" in text
         assert "角色档案" in text
 
+    def test_get_persona_text_includes_npc(self):
+        pcb = PersonaConstructionBranch(llm_client=None)
+        snap = PersonaSnapshot(
+            entries={
+                "name": [PersonaValue(value="路明非", turn=0)],
+            },
+            extracted_at_turn=5,
+        )
+        pcb.merge_snapshot(snap)
+        npc_snap = PersonaSnapshot(
+            character_name="源稚生",
+            entries={
+                "personality": [PersonaValue(value="冷静威严", turn=5)],
+                "relationship_to_player": [PersonaValue(value="上级", turn=5)],
+            },
+            extracted_at_turn=5,
+        )
+        pcb.merge_snapshot(npc_snap)
+        text = pcb.get_persona_text(npc_names=["源稚生"])
+        assert "源稚生" in text
+        assert "冷静威严" in text
+
     def test_export_load_roundtrip(self):
         pcb = PersonaConstructionBranch(llm_client=None)
         snap = PersonaSnapshot(
@@ -390,12 +413,19 @@ class TestPersonaConstructionBranch:
             extracted_at_turn=5,
         )
         pcb.merge_snapshot(snap)
+        npc_snap = PersonaSnapshot(
+            character_name="楚子航",
+            entries={"personality": [PersonaValue(value="寡言冷面", turn=5)]},
+            extracted_at_turn=5,
+        )
+        pcb.merge_snapshot(npc_snap)
         for _ in range(5):
             pcb.on_turn()
         state = pcb.export_state()
         pcb2 = PersonaConstructionBranch(llm_client=None)
         pcb2.load_state(state)
-        assert "name" in pcb2._sketch.entries
+        assert "name" in pcb2._sketches["player"].entries
+        assert "personality" in pcb2._sketches["楚子航"].entries
 
     def test_approx_equal_same(self):
         assert _approx_equal("寿司", "寿司")

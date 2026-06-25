@@ -12,6 +12,39 @@ export type DevLogEntry = {
 
 export const devLogEntries: DevLogEntry[] = [
   {
+    id: "2026-06-26-memory-pcb-npc-cross-session",
+    date: "2026-06-26",
+    title: "记忆系统 Phase 3 — PCB 多角色扩展与跨 Session 记忆共享",
+    summary: "完成记忆系统优化方案的最后两项：P6 — PersonaConstructionBranch 从单玩家档案扩展为多角色档案（玩家 + NPC）；P7 — MemoryController 的 lookup key 从 session_id 改为 campaign-scoped，同一 Campaign 的不同 Session 共享 NSB/PCB/SCORE 状态。",
+    developer: "zjr",
+    areas: ["backend", "memory", "campaign", "persona"],
+    changes: [
+      "P6 PCB 多角色：PersonaConstructionBranch 内部 _sketch → _sketches: dict[str, PersonaSketch]，key 为角色名（默认 'player'）。",
+      "PCB extraction prompt 更新为同时提取玩家和在场 NPC 角色特征，LLM 输出新格式 {\"characters\": {\"player\": {entries}, \"NPC名\": {entries}}}，解析时兼容旧格式。",
+      "PersonaSnapshot schema 新增 character_name 字段（默认 'player'），merge_snapshot/merge_snapshot_with_embedding 自动使用角色名路由到正确的 sketch。",
+      "PCB get_persona_text() 新增 npc_names 参数：玩家档案优先（~60% token），当前在场 NPC 档案其次，顶部显示 ## 角色档案 + ### NPC名。",
+      "MemoryController.assemble_context() 传入当前 state 中的 NPC 名列表，确保在场 NPC 档案优先出现在 prompt 中。",
+      "PCB export_state/load_state 支持多角色序列化，load_state 兼容旧的单 sketch 格式（映射到 'player'）。",
+      "P7 跨 Session 记忆共享：ScenarioGenerator._get_memory_controller() 新增 campaign_manager 参数，当 Campaign 已加载时使用 campaign:{campaign_id}:{slot} 作为 lookup key，同一 Campaign 的多个 Session 共享同一个 MemoryController。",
+      "MemoryController 持久化到 session state 的代码简化为直接通过 scoped key 获取并 export，不再手动检查 session_id。",
+      "test_agent_pipeline.py 新增 test_get_persona_text_includes_npc 测试，export/load roundtrip 测试扩展为多角色场景。",
+      "全量 109 测试通过，0 回归。",
+    ],
+    relatedFiles: [
+      "backend/app/services/memory/pcb.py",
+      "backend/app/services/memory/memory_controller.py",
+      "backend/app/services/scenario_generator.py",
+      "backend/app/schemas/agent_io.py",
+      "backend/tests/test_agent_pipeline.py",
+      "frontend/src/lib/dev-log.ts",
+    ],
+    nextSteps: [
+      "真实游戏 session 中验证 P6：检查 LLM 是否成功提取 NPC 特征并出现在 prompt 中。",
+      "验证 P7：同一 Campaign 下创建两个 Session，确认第二个 Session 的 prompt 中包含第一个 Session 的 NSB L2/L3 摘要。",
+      "记忆系统优化方案（P0-P7）全部完成后，运行 auto_play.py 全流程验证。",
+    ],
+  },
+  {
     id: "2026-06-26-memory-retrieval-token-forgetting",
     date: "2026-06-26",
     title: "记忆系统 Phase 2 — 语义检索、Token 智能截断、遗忘参数自适应与 DB 回读",

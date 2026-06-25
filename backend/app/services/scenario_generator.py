@@ -90,8 +90,8 @@ class ScenarioGenerator:
         )
 
         # Persist memory controller state into session state
-        if session_id in self._memory_controllers:
-            next_state["_memory_controller"] = self._memory_controllers[session_id].export_state()
+        mc = self._get_memory_controller(session_id, next_state, campaign_manager)
+        next_state["_memory_controller"] = mc.export_state()
 
         self.db.add_message(session_id, "user", request.player_action, _csi)
         self.db.add_message(session_id, "assistant", output.model_dump_json(), _csi)
@@ -195,7 +195,7 @@ class ScenarioGenerator:
         prompt_sections, meta = self.prompt_builder.build_sections(prompt_input)
 
         # Inject narrative memory (NSB summaries + PCB persona + SCORE states)
-        memory_ctrl = self._get_memory_controller(session_id, state)
+        memory_ctrl = self._get_memory_controller(session_id, state, campaign_manager)
         narrative_memory = await memory_ctrl.assemble_context(
             state, int(state.get("turn", 0)), request.player_action
         )
@@ -305,8 +305,8 @@ class ScenarioGenerator:
             )
             raise ScenarioGenerationError(f"{exc} model_output_id={output_id}", output_id) from exc
 
-        # Fire-and-forget: memory maintenance (persistent per session)
-        memory_ctrl = self._get_memory_controller(session_id, state)
+        # Fire-and-forget: memory maintenance (persistent per campaign)
+        memory_ctrl = self._get_memory_controller(session_id, state, campaign_manager)
         memory_ctrl.on_turn_generated(request.player_action, output.narration, state, turn)
         asyncio.create_task(memory_ctrl.maintain(session_id, turn))
 
@@ -535,25 +535,40 @@ class ScenarioGenerator:
         except Exception:
             return "锚点信息不可用"
 
-    def _get_memory_controller(self, session_id: str, state: dict | None = None) -> MemoryController:
-        """Get or create a persistent MemoryController for this session.
+    def _get_memory_controller(
+        self, session_id: str, state: dict | None = None,
+        campaign_manager: CampaignManager | None = None,
+    ) -> MemoryController:
+        """Get or create a persistent MemoryController.
 
-        MemoryControllers persist across turns within a session,
-        maintaining NSB/PCB/ScoreTracker state. Eviction based on
-        simple dict size cap (oldest entries removed).
+        Key is campaign-scoped when a campaign is loaded (so sessions
+        within the same campaign share NSB/PCB/ScoreTracker state).
+        Falls back to session-scoped key for free-play mode.
 
-        When state is provided and contains a saved memory snapshot,
-        the controller is restored from that snapshot (survives restarts).
+        MemoryControllers persist across turns and sessions within a
+        campaign, maintaining NSB/PCB/ScoreTracker state. Eviction
+        based on simple dict size cap (oldest entries removed).
+
+        When state contains a saved memory snapshot, the controller
+        is restored from that snapshot (survives restarts).
         """
-        if session_id in self._memory_controllers:
-            return self._memory_controllers[session_id]
+        # Derive scoped key
+        if campaign_manager is not None and campaign_manager.is_loaded():
+            cid = getattr(campaign_manager.progress, "campaign_id", "")
+            slot = getattr(campaign_manager, "slot_name", "default")
+            scoped_key = f"campaign:{cid}:{slot}" if cid else session_id
+        else:
+            scoped_key = session_id
+
+        if scoped_key in self._memory_controllers:
+            return self._memory_controllers[scoped_key]
 
         # Evict oldest if too many
         if len(self._memory_controllers) >= 50:
             oldest = next(iter(self._memory_controllers))
             del self._memory_controllers[oldest]
 
-        # Lazy import embedding_client from dependencies (avoid circular)
+        # Lazy import embedding_client from dependencies
         embedding: EmbeddingClient | None = None
         try:
             from app.dependencies import embedding_client
@@ -572,14 +587,14 @@ class ScenarioGenerator:
         if state and "_memory_controller" in state:
             try:
                 mc.load_state(state["_memory_controller"])
-                logger.info("Restored memory controller state for session %s", session_id)
+                logger.info("Restored memory controller state for key %s", scoped_key)
             except Exception:
                 logger.warning(
-                    "Failed to restore memory controller state for session %s",
-                    session_id, exc_info=True,
+                    "Failed to restore memory controller state for key %s",
+                    scoped_key, exc_info=True,
                 )
 
-        self._memory_controllers[session_id] = mc
+        self._memory_controllers[scoped_key] = mc
         return mc
 
     def _format_score_item_states(self, campaign_manager) -> str:

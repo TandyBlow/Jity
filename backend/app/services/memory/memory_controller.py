@@ -90,7 +90,9 @@ class MemoryController:
         # PromptBuilder (location, items, NPCs, recent events).
         # We add persona context here.
 
-        persona_text = self.pcb.get_persona_text()
+        persona_text = self.pcb.get_persona_text(
+            npc_names=[n.get("name", "") for n in state.get("npcs", [])[:5]]
+        )
         if persona_text:
             parts.append(persona_text)
 
@@ -185,12 +187,13 @@ class MemoryController:
             if self.pcb.should_extract():
                 dialogues = self._get_recent_dialogues(session_id)
                 if dialogues:
-                    snapshot = await self.pcb.extract_snapshot(dialogues, turn)
-                    if snapshot:
-                        if self._embedding is not None:
-                            await self.pcb.merge_snapshot_with_embedding(snapshot)
-                        else:
-                            self.pcb.merge_snapshot(snapshot)
+                    snapshots = await self.pcb.extract_snapshot(dialogues, turn)
+                    if snapshots:
+                        for snapshot in snapshots.values():
+                            if self._embedding is not None:
+                                await self.pcb.merge_snapshot_with_embedding(snapshot)
+                            else:
+                                self.pcb.merge_snapshot(snapshot)
         except Exception:
             logger.warning("PCB persona extraction failed", exc_info=True)
 

@@ -160,6 +160,7 @@ class PersonaValue(BaseModel):
 class PersonaSnapshot(BaseModel):
     """Snapshot of persona extracted at a given interval by PCB."""
 
+    character_name: str = "player"
     entries: dict[str, list[PersonaValue]] = Field(default_factory=dict)
     extracted_at_turn: int = 0
 
