@@ -1,4 +1,3 @@
-from __future__ import annotations
 
 import json
 import re
@@ -11,6 +10,14 @@ from app.schemas import StoryOutput
 RECENT_EVENT_LIMIT = 8
 RECENT_EVENT_MAX_CHARS = 120
 SANITY_RECOVERY_PER_TURN = 1
+
+# State bloat prevention (HARD-03): defensive caps to prevent
+# unbounded list growth over 270-turn campaigns
+MAX_ITEMS = 20
+MAX_NPCS = 15
+MAX_QUESTS = 10
+MAX_WORLD_FACTS = 15
+STALE_TURN_THRESHOLD = 30  # prune entries unchanged for 30+ turns
 
 
 def default_state() -> dict[str, Any]:
@@ -92,17 +99,17 @@ class GameStateManager:
         world_facts = [*memory.get("world_facts_upserted", []), *self._infer_world_facts(action, output)]
 
         next_state["items"] = self._remove_by_name(
-            self._merge_by_name(next_state.get("items", []), items_upserted, kind="item"),
+            self.merge_by_name(next_state.get("items", []), items_upserted, kind="item"),
             items_removed,
         )
-        next_state["npcs"] = self._merge_by_name(
+        next_state["npcs"] = self.merge_by_name(
             next_state.get("npcs", []),
             npcs_upserted,
             kind="npc",
             default_location=next_state.get("current_location", ""),
         )
-        next_state["quests"] = self._merge_by_name(next_state.get("quests", []), quests_upserted, kind="quest")
-        next_state["world_facts"] = self._merge_by_name(
+        next_state["quests"] = self.merge_by_name(next_state.get("quests", []), quests_upserted, kind="quest")
+        next_state["world_facts"] = self.merge_by_name(
             next_state.get("world_facts", []),
             world_facts,
             kind="world_fact",
@@ -117,6 +124,7 @@ class GameStateManager:
             next_state.get("recent_events", []),
             self._build_key_event(action, output),
         )
+        next_state = self.enforce_state_caps(next_state)
         return next_state
 
     @staticmethod
@@ -159,7 +167,7 @@ class GameStateManager:
         )
         return next_state
 
-    def _merge_by_name(
+    def merge_by_name(
         self,
         current: list[dict[str, Any]],
         updates: list[dict[str, Any]],
@@ -378,3 +386,78 @@ class GameStateManager:
         if len(text) <= max_chars:
             return text
         return f"{text[: max_chars - 1]}…"
+
+    _INTERNAL_STATE_KEYS = {"_memory_controller"}
+
+    @staticmethod
+    def sanitize_state(state: dict[str, Any]) -> dict[str, Any]:
+        """Remove internal-only keys (e.g. _memory_controller) before returning state to the frontend."""
+        for key in GameStateManager._INTERNAL_STATE_KEYS:
+            state.pop(key, None)
+        return state
+
+    @staticmethod
+    def enforce_state_caps(state: dict[str, Any]) -> dict[str, Any]:
+        """Apply defensive caps to prevent 270-turn state bloat.
+
+        Caps: 20 items, 15 NPCs, 10 quests, 15 world_facts.
+        Excess entries are trimmed from the end (FIFO — oldest first kept).
+        """
+        state["items"] = state.get("items", [])[:MAX_ITEMS]
+        state["npcs"] = state.get("npcs", [])[:MAX_NPCS]
+        state["quests"] = state.get("quests", [])[:MAX_QUESTS]
+        state["world_facts"] = state.get("world_facts", [])[:MAX_WORLD_FACTS]
+        return state
+
+    def merge_entry_state(
+        self,
+        base_state: dict[str, Any],
+        campaign: Any,  # CampaignSchema (avoid circular import)
+        arc_index: int,
+        session_index: int,
+    ) -> dict[str, Any]:
+        """Merge entry_state from campaign session into base_state.
+
+        Merge order: default_state → campaign.starting_state → session.entry_state.
+        Later values override earlier ones key-by-key.
+        """
+        result = dict(base_state)
+
+        # Layer 1: campaign-level starting_state — only for campaign start (arc 0, session 0)
+        if arc_index == 0 and session_index == 0:
+            if getattr(campaign, "starting_state", None):
+                for key, value in campaign.starting_state.items():
+                    if value:  # non-empty override
+                        if key in ("items", "npcs", "quests", "world_facts", "recent_events"):
+                            continue
+                        result[key] = value
+
+        # Layer 2: session-level entry_state (always applied if present)
+        try:
+            arc = campaign.arcs[arc_index]
+            session = arc.sessions[session_index]
+            entry = session.entry_state
+            if entry:
+                if entry.get("location"):
+                    result["current_location"] = entry["location"]
+                if entry.get("items"):
+                    for item_name in entry["items"]:
+                        if not any(i.get("name") == item_name for i in result.get("items", [])):
+                            result.setdefault("items", []).append(
+                                {"name": item_name, "status": "初始"}
+                            )
+                if entry.get("quests"):
+                    for quest_name in entry["quests"]:
+                        if not any(q.get("name") == quest_name for q in result.get("quests", [])):
+                            result.setdefault("quests", []).append(
+                                {"name": quest_name, "objective": "", "status": "active"}
+                            )
+                if entry.get("world_facts_summary"):
+                    for fact in entry["world_facts_summary"]:
+                        result.setdefault("world_facts", []).append(
+                            {"name": fact[:80], "description": fact, "status": "known", "source": "entry_state"}
+                        )
+        except (IndexError, AttributeError):
+            pass
+
+        return result

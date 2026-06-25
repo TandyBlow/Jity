@@ -1,15 +1,17 @@
-from __future__ import annotations
 
 import json
+import logging
 import re
 import time
 from typing import Any
 
-import httpx
+from openai import AsyncOpenAI
 from pydantic import ValidationError
 
 from app.config import Settings
 from app.schemas import StoryOutput
+
+logger = logging.getLogger(__name__)
 
 
 class MissingAPIKeyError(RuntimeError):
@@ -35,31 +37,67 @@ class LLMRequestError(RuntimeError):
 class LLMClient:
     def __init__(self, settings: Settings) -> None:
         self.settings = settings
+        self._client: AsyncOpenAI | None = None
+
+    @property
+    def client(self) -> AsyncOpenAI:
+        if self._client is None:
+            self._client = AsyncOpenAI(
+                api_key=self.settings.deepseek_api_key,
+                base_url=self.settings.llm_base_url.rstrip("/"),
+                max_retries=3,
+                timeout=60.0,
+            )
+        return self._client
 
     async def generate(
         self,
         prompt: str,
         model: str | None = None,
+        temperature: float | None = None,
     ) -> tuple[StoryOutput, int]:
         if not self.settings.deepseek_api_key:
-            raise MissingAPIKeyError("AI 生成需要配置 backend/.env 里的 DEEPSEEK_API_KEY。固定开场结束后不会再使用本地兜底剧情。")
+            raise MissingAPIKeyError(
+                "AI 生成需要配置 backend/.env 里的 DEEPSEEK_API_KEY。"
+                "固定开场结束后不会再使用本地兜底剧情。"
+            )
 
         model_name = model or self.settings.llm_model
         started = time.perf_counter()
-        async with httpx.AsyncClient(timeout=60) as client:
+
+        try:
             raw_text = await self._request_completion(
-                client=client,
                 messages=[{"role": "user", "content": prompt}],
                 model=model_name,
                 temperature=0.35,
-                started=started,
             )
+        except Exception as exc:
+            latency_ms = int((time.perf_counter() - started) * 1000)
+            raise LLMRequestError(
+                f"LLM 请求失败。请检查 API Key、余额或模型权限。原始错误: {exc}",
+                status_code=getattr(exc, "status_code", 0),
+                response_text=str(exc),
+                latency_ms=latency_ms,
+            ) from exc
 
+        latency_ms = int((time.perf_counter() - started) * 1000)
+
+        # First attempt: direct parse
+        try:
+            return self._parse_story_output(raw_text), latency_ms
+        except (json.JSONDecodeError, ValidationError, TypeError) as first_exc:
+            # Second attempt: json_repair library (local, no API call)
             try:
-                return self._parse_story_output(raw_text), int((time.perf_counter() - started) * 1000)
-            except (json.JSONDecodeError, ValidationError, TypeError) as first_exc:
+                repaired = self._repair_json_local(raw_text)
+                logger.info("json_repair succeeded — recovered from parse failure")
+                return self._parse_story_output(repaired), latency_ms
+            except Exception:
+                logger.debug("generate: json_repair local fallback failed", exc_info=True)
+                pass
+
+            # Third attempt: LLM repair with temperature=0
+            try:
                 repaired_text = await self._request_completion(
-                    client=client,
                     messages=[
                         {
                             "role": "user",
@@ -68,52 +106,130 @@ class LLMClient:
                     ],
                     model=model_name,
                     temperature=0,
-                    started=started,
                 )
-
-            try:
-                return self._parse_story_output(repaired_text), int((time.perf_counter() - started) * 1000)
+                return self._parse_story_output(repaired_text), int(
+                    (time.perf_counter() - started) * 1000
+                )
             except (json.JSONDecodeError, ValidationError, TypeError) as repair_exc:
                 raise LLMOutputParseError(
                     "模型返回不是有效剧情 JSON，原始输出和修复输出已保存到 model_outputs。",
-                    raw_output=self._format_failed_outputs(raw_text, repaired_text),
-                    cleaned_output=self._clean_json_text(repaired_text),
+                    raw_output=self._format_failed_outputs(raw_text, ""),
+                    cleaned_output=self._clean_json_text(raw_text),
                     latency_ms=int((time.perf_counter() - started) * 1000),
                 ) from repair_exc
 
     async def _request_completion(
         self,
-        client: httpx.AsyncClient,
         messages: list[dict[str, str]],
         model: str,
         temperature: float,
-        started: float,
+        _json_object: bool = True,
+        max_tokens: int = 50000,
     ) -> str:
-        response = await client.post(
-            f"{self.settings.llm_base_url.rstrip('/')}/v1/chat/completions",
-            headers={
-                "Authorization": f"Bearer {self.settings.deepseek_api_key}",
-                "Content-Type": "application/json",
-            },
-            json={
-                "model": model,
-                "messages": messages,
-                "temperature": temperature,
-                "max_tokens": 50000,
-                "response_format": {"type": "json_object"},
-            },
-        )
-        latency_ms = int((time.perf_counter() - started) * 1000)
+        kwargs = {
+            "model": model,
+            "messages": messages,
+            "temperature": temperature,
+            "max_tokens": max_tokens,
+        }
+        if _json_object:
+            kwargs["response_format"] = {"type": "json_object"}
+        response = await self.client.chat.completions.create(**kwargs)
+        return response.choices[0].message.content or ""
+
+    def _repair_json_local(self, raw_text: str) -> str:
+        """Attempt local JSON repair before falling back to LLM repair."""
+        from json_repair import repair_json
+
+        cleaned = self._clean_json_text(raw_text)
+        return repair_json(cleaned)
+
+    async def generate_text(
+        self,
+        prompt: str,
+        model: str = "deepseek-v4-flash",
+        max_tokens: int = 1000,
+        temperature: float = 0.3,
+    ) -> str:
+        """Generate free-text response. No JSON parsing — caller handles the text.
+
+        Used for session recaps and other non-structured LLM calls.
+        """
+        started = time.perf_counter()
         try:
-            response.raise_for_status()
-        except httpx.HTTPStatusError as exc:
+            response = await self.client.chat.completions.create(
+                model=model,
+                messages=[{"role": "user", "content": prompt}],
+                temperature=temperature,
+                max_tokens=max_tokens,
+            )
+            return response.choices[0].message.content or ""
+        except Exception as exc:
+            latency_ms = int((time.perf_counter() - started) * 1000)
             raise LLMRequestError(
-                f"LLM 请求失败，状态码 {response.status_code}。请检查 API Key、余额或模型权限。",
-                status_code=response.status_code,
-                response_text=response.text,
+                f"LLM text generation failed. Original error: {exc}",
+                status_code=getattr(exc, "status_code", 0),
+                response_text=str(exc),
                 latency_ms=latency_ms,
             ) from exc
-        return str(response.json()["choices"][0]["message"]["content"])
+
+    async def generate_json(
+        self,
+        prompt: str,
+        model: str = "deepseek-v4-flash",
+        max_tokens: int = 50000,
+        temperature: float = 0.35,
+    ) -> dict:
+        """Generate and parse JSON output with repair fallback.
+
+        Uses json_object mode. If direct parse fails, applies json_repair.
+        Caller must validate with Pydantic/TypeAdapter.
+
+        Used for campaign.json generation, fact extraction, and other
+        structured LLM calls.
+        """
+        started = time.perf_counter()
+
+        try:
+            raw_text = await self._request_completion(
+                messages=[{"role": "user", "content": prompt}],
+                model=model,
+                temperature=temperature,
+                max_tokens=max_tokens,
+                _json_object=True,
+            )
+        except Exception as exc:
+            latency_ms = int((time.perf_counter() - started) * 1000)
+            raise LLMRequestError(
+                f"LLM JSON generation failed. Original error: {exc}",
+                status_code=getattr(exc, "status_code", 0),
+                response_text=str(exc),
+                latency_ms=latency_ms,
+            ) from exc
+
+        latency_ms = int((time.perf_counter() - started) * 1000)
+
+        # First attempt: direct JSON parse
+        try:
+            return json.loads(self._clean_json_text(raw_text))
+        except json.JSONDecodeError:
+            # Second attempt: json_repair
+            try:
+                repaired = self._repair_json_local(raw_text)
+                logger.info("generate_json: json_repair succeeded")
+                return json.loads(self._clean_json_text(repaired))
+            except Exception:
+                logger.debug("generate_json: json_repair local fallback failed", exc_info=True)
+                pass
+
+        raise LLMOutputParseError(
+            "generate_json: failed to parse JSON after repair",
+            raw_output=raw_text,
+            cleaned_output=self._clean_json_text(raw_text),
+            latency_ms=latency_ms,
+        )
+
+    # ── static helpers (unchanged from original) ──
 
     @classmethod
     def _parse_story_output(cls, raw_text: str) -> StoryOutput:
@@ -138,10 +254,6 @@ class LLMClient:
         return f"原始输出：\n{original_text}\n\n修复输出：\n{repaired_text}"
 
     @staticmethod
-    def _parse_json(text: str) -> dict[str, Any]:
-        return json.loads(LLMClient._clean_json_text(text))
-
-    @staticmethod
     def _clean_json_text(text: str) -> str:
         cleaned = re.sub(r"<think>[\s\S]*?</think>", "", text).strip()
         return cleaned.replace("```json", "").replace("```", "").strip()
@@ -149,11 +261,21 @@ class LLMClient:
     @staticmethod
     def _normalize_output(payload: dict[str, Any]) -> dict[str, Any]:
         payload = dict(payload)
-        payload["items_gained"] = LLMClient._normalize_named_objects(payload.get("items_gained", []), "description")
-        payload["items_lost"] = LLMClient._normalize_named_objects(payload.get("items_lost", []), "description")
-        payload["npcs_encountered"] = LLMClient._normalize_named_objects(payload.get("npcs_encountered", []), "notes")
-        payload["quests_updated"] = LLMClient._normalize_named_objects(payload.get("quests_updated", []), "description")
-        payload["memory_updates"] = LLMClient._normalize_memory_updates(payload.get("memory_updates", {}), payload)
+        payload["items_gained"] = LLMClient._normalize_named_objects(
+            payload.get("items_gained", []), "description"
+        )
+        payload["items_lost"] = LLMClient._normalize_named_objects(
+            payload.get("items_lost", []), "description"
+        )
+        payload["npcs_encountered"] = LLMClient._normalize_named_objects(
+            payload.get("npcs_encountered", []), "notes"
+        )
+        payload["quests_updated"] = LLMClient._normalize_named_objects(
+            payload.get("quests_updated", []), "description"
+        )
+        payload["memory_updates"] = LLMClient._normalize_memory_updates(
+            payload.get("memory_updates", {}), payload
+        )
         return payload
 
     @staticmethod
@@ -161,7 +283,9 @@ class LLMClient:
         if not isinstance(memory_updates, dict):
             memory_updates = {}
         normalized = dict(memory_updates)
-        normalized["current_location"] = str(normalized.get("current_location") or payload.get("current_location") or "")
+        normalized["current_location"] = str(
+            normalized.get("current_location") or payload.get("current_location") or ""
+        )
         normalized["items_upserted"] = LLMClient._normalize_named_objects(
             normalized.get("items_upserted", []),
             "description",

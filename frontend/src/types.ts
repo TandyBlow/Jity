@@ -104,7 +104,7 @@ export type GenerateResponse = {
   retrieved_chunks: RetrievedChunk[];
   model_output_id: number | null;
   used_model: string;
-  source: "scripted" | "llm";
+  source: "scripted" | "llm" | "examiner_blocked";
 };
 
 export type SessionMessage = {
@@ -117,4 +117,70 @@ export type SessionMessage = {
 export type SessionHistoryResponse = {
   session_id: string;
   messages: SessionMessage[];
+};
+
+// ── Campaign types (CAMP-10) ──
+
+export type AnchorTriggerConditions = {
+  location?: string | null;
+  npc_present?: string | null;
+  item_held?: string | null;
+};
+
+export type CampaignAnchorEvent = {
+  id: string;
+  name: string;
+  description: string;
+  priority: number;
+  trigger_conditions: AnchorTriggerConditions;
+};
+
+export type CampaignSession = {
+  name: string;
+  opening_scene: string;
+  max_turns_per_session?: number;
+  anchor_events: CampaignAnchorEvent[];
+};
+
+export type CampaignArc = {
+  name: string;
+  goal: string;
+  sessions: CampaignSession[];
+};
+
+export type CampaignSchema = {
+  version: number;
+  title: string;
+  core_conflict: string;
+  arcs: CampaignArc[];
+  constraints: string;
+  starting_state: Record<string, unknown>;
+};
+
+export type CampaignListItem = {
+  filename: string;
+  title: string;
+  version: number;
+  arc_count: number;
+};
+
+export type CampaignListResponse = {
+  campaigns: CampaignListItem[];
+};
+
+export type CampaignDetailResponse = {
+  filename: string;
+  campaign: CampaignSchema;
+};
+
+export type SaveSlot = {
+  id: number;
+  campaign_id: string;
+  slot_name: string;
+  arc_index: number;
+  session_index: number;
+  turn_in_session: number;
+  last_played: string;
+  campaign_filename?: string | null;
+  is_active?: boolean;
 };

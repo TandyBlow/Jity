@@ -1,4 +1,3 @@
-from __future__ import annotations
 
 import json
 import sqlite3
@@ -17,6 +16,10 @@ class Database:
     def connect(self) -> Iterator[sqlite3.Connection]:
         connection = sqlite3.connect(self.path)
         connection.row_factory = sqlite3.Row
+        connection.execute("PRAGMA busy_timeout = 5000")
+        connection.execute("PRAGMA cache_size = -2000")
+        connection.execute("PRAGMA synchronous = NORMAL")
+        connection.execute("PRAGMA journal_mode = WAL")
         try:
             yield connection
             connection.commit()
@@ -32,8 +35,24 @@ class Database:
                   game_name TEXT NOT NULL,
                   model TEXT NOT NULL,
                   state_json TEXT NOT NULL,
+                  version INTEGER NOT NULL DEFAULT 0,
                   created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
                   updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+                );
+
+                CREATE TABLE IF NOT EXISTS campaign_progress (
+                  id INTEGER PRIMARY KEY AUTOINCREMENT,
+                  campaign_id TEXT NOT NULL,
+                  slot_name TEXT NOT NULL DEFAULT 'default',
+                  arc_index INTEGER NOT NULL DEFAULT 0,
+                  session_index INTEGER NOT NULL DEFAULT 0,
+                  turn_in_session INTEGER NOT NULL DEFAULT 0,
+                  fsm_state TEXT NOT NULL DEFAULT 'idle',
+                  revealed_anchors TEXT NOT NULL DEFAULT '[]',
+                  completed_arcs TEXT NOT NULL DEFAULT '[]',
+                  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                  UNIQUE(campaign_id, slot_name)
                 );
 
                 CREATE TABLE IF NOT EXISTS session_messages (
@@ -94,6 +113,53 @@ class Database:
             self._ensure_column(db, "model_outputs", "error_text", "TEXT NOT NULL DEFAULT ''")
             self._ensure_column(db, "model_outputs", "retrieved_chunks_json", "TEXT NOT NULL DEFAULT '[]'")
             self._ensure_column(db, "knowledge_chunks", "importance", "INTEGER NOT NULL DEFAULT 3")
+            self._ensure_column(db, "game_sessions", "version", "INTEGER NOT NULL DEFAULT 0")
+            self._ensure_column(db, "model_outputs", "word_count", "INTEGER NOT NULL DEFAULT 0")
+            self._ensure_column(db, "model_outputs", "option_count", "INTEGER NOT NULL DEFAULT 0")
+            self._ensure_column(db, "model_outputs", "sanity_delta", "INTEGER NOT NULL DEFAULT 0")
+            self._ensure_column(db, "model_outputs", "health_delta", "INTEGER NOT NULL DEFAULT 0")
+            self._ensure_column(db, "model_outputs", "dialogue_lines", "INTEGER NOT NULL DEFAULT 0")
+            self._ensure_column(db, "model_outputs", "location_changed", "INTEGER NOT NULL DEFAULT 0")
+            self._ensure_column(db, "model_outputs", "token_count", "INTEGER NOT NULL DEFAULT 0")
+            self._ensure_column(db, "campaign_progress", "turn_in_session", "INTEGER NOT NULL DEFAULT 0")
+            self._ensure_column(db, "campaign_progress", "recap_compressed", "TEXT NOT NULL DEFAULT ''")
+            self._ensure_column(db, "campaign_progress", "recap_full", "TEXT NOT NULL DEFAULT ''")
+            self._ensure_column(db, "game_sessions", "campaign_id", "TEXT")
+            self._ensure_column(db, "game_sessions", "campaign_filename", "TEXT")
+            self._ensure_column(db, "game_sessions", "active_slot_name", "TEXT NOT NULL DEFAULT 'default'")
+            self._ensure_column(db, "session_messages", "campaign_session_index", "INTEGER NOT NULL DEFAULT 0")
+            self._ensure_column(db, "campaign_progress", "npc_relations", "TEXT NOT NULL DEFAULT '[]'")
+
+            # Migrate campaign_progress: old PK → new auto-increment id + UNIQUE(campaign_id, slot_name)
+            existing_cols = {row["name"] for row in db.execute("PRAGMA table_info(campaign_progress)")}
+            if "id" not in existing_cols:
+                db.executescript("""
+                    CREATE TABLE IF NOT EXISTS campaign_progress_new (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        campaign_id TEXT NOT NULL,
+                        slot_name TEXT NOT NULL DEFAULT 'default',
+                        arc_index INTEGER NOT NULL DEFAULT 0,
+                        session_index INTEGER NOT NULL DEFAULT 0,
+                        turn_in_session INTEGER NOT NULL DEFAULT 0,
+                        fsm_state TEXT NOT NULL DEFAULT 'idle',
+                        revealed_anchors TEXT NOT NULL DEFAULT '[]',
+                        completed_arcs TEXT NOT NULL DEFAULT '[]',
+                        recap_compressed TEXT NOT NULL DEFAULT '',
+                        recap_full TEXT NOT NULL DEFAULT '',
+                        created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                        updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                        UNIQUE(campaign_id, slot_name)
+                    );
+                    INSERT OR IGNORE INTO campaign_progress_new
+                        (campaign_id, slot_name, arc_index, session_index, turn_in_session,
+                         fsm_state, revealed_anchors, completed_arcs, recap_compressed, recap_full)
+                        SELECT campaign_id, 'default', arc_index, session_index, turn_in_session,
+                               fsm_state, revealed_anchors, completed_arcs,
+                               COALESCE(recap_compressed, ''), COALESCE(recap_full, '')
+                        FROM campaign_progress;
+                    DROP TABLE campaign_progress;
+                    ALTER TABLE campaign_progress_new RENAME TO campaign_progress;
+                """)
 
     @staticmethod
     def _ensure_column(db: sqlite3.Connection, table: str, column: str, definition: str) -> None:
@@ -101,30 +167,111 @@ class Database:
         if column not in columns:
             db.execute(f"ALTER TABLE {table} ADD COLUMN {column} {definition}")
 
-    def write_session(self, session_id: str, game_name: str, model: str, state: dict[str, Any]) -> None:
+    def update_npc_relations(self, campaign_id: str, relations_json: str, slot_name: str = "default") -> None:
+        """Update npc_relations JSON for a campaign progress row."""
+        with self.connect() as db:
+            db.execute(
+                "UPDATE campaign_progress SET npc_relations = ?, updated_at = CURRENT_TIMESTAMP WHERE campaign_id = ? AND slot_name = ?",
+                (relations_json, campaign_id, slot_name),
+            )
+
+    def set_session_campaign_id(
+        self,
+        session_id: str,
+        campaign_id: str,
+        campaign_filename: str | None = None,
+        active_slot_name: str = "default",
+    ) -> None:
+        """Set campaign metadata on a game session row."""
         with self.connect() as db:
             db.execute(
                 """
-                INSERT INTO game_sessions (id, game_name, model, state_json)
-                VALUES (?, ?, ?, ?)
-                ON CONFLICT(id) DO UPDATE SET
-                  game_name = excluded.game_name,
-                  model = excluded.model,
-                  state_json = excluded.state_json,
-                  updated_at = CURRENT_TIMESTAMP
+                UPDATE game_sessions
+                SET campaign_id = ?,
+                    campaign_filename = COALESCE(?, campaign_filename),
+                    active_slot_name = ?
+                WHERE id = ?
                 """,
-                (session_id, game_name, model, json.dumps(state, ensure_ascii=False)),
+                (campaign_id, campaign_filename, active_slot_name, session_id),
             )
+
+    def set_session_active_slot(self, session_id: str, slot_name: str) -> None:
+        """Remember which campaign progress slot should drive future turns."""
+        with self.connect() as db:
+            db.execute(
+                "UPDATE game_sessions SET active_slot_name = ? WHERE id = ?",
+                (slot_name, session_id),
+            )
+
+    def write_session(
+        self,
+        session_id: str,
+        game_name: str,
+        model: str,
+        state: dict[str, Any],
+        expected_version: int | None = None,
+    ) -> int:
+        """Persist game state with optional optimistic locking.
+
+        Returns the new version number.
+        Raises ConcurrentModificationError if expected_version doesn't match.
+        """
+        from app.exceptions import ConcurrentModificationError
+
+        with self.connect() as db:
+            if expected_version is not None:
+                cursor = db.execute(
+                    """
+                    UPDATE game_sessions
+                    SET game_name = ?,
+                        model = ?,
+                        state_json = ?,
+                        version = version + 1,
+                        updated_at = CURRENT_TIMESTAMP
+                    WHERE id = ? AND version = ?
+                    """,
+                    (
+                        game_name,
+                        model,
+                        json.dumps(state, ensure_ascii=False),
+                        session_id,
+                        expected_version,
+                    ),
+                )
+                if cursor.rowcount == 0:
+                    raise ConcurrentModificationError(
+                        f"State version mismatch for session {session_id}. "
+                        f"Expected version {expected_version}, but row was already updated."
+                    )
+                return expected_version + 1
+            else:
+                db.execute(
+                    """
+                    INSERT INTO game_sessions (id, game_name, model, state_json, version)
+                    VALUES (?, ?, ?, ?, 0)
+                    ON CONFLICT(id) DO UPDATE SET
+                      game_name = excluded.game_name,
+                      model = excluded.model,
+                      state_json = excluded.state_json,
+                      version = game_sessions.version + 1,
+                      updated_at = CURRENT_TIMESTAMP
+                    """,
+                    (session_id, game_name, model, json.dumps(state, ensure_ascii=False)),
+                )
+                row = db.execute(
+                    "SELECT version FROM game_sessions WHERE id = ?", (session_id,)
+                ).fetchone()
+                return row["version"] if row else 0
 
     def get_session(self, session_id: str) -> sqlite3.Row | None:
         with self.connect() as db:
             return db.execute("SELECT * FROM game_sessions WHERE id = ?", (session_id,)).fetchone()
 
-    def add_message(self, session_id: str, role: str, content: str) -> None:
+    def add_message(self, session_id: str, role: str, content: str, campaign_session_index: int = 0) -> None:
         with self.connect() as db:
             db.execute(
-                "INSERT INTO session_messages (session_id, role, content) VALUES (?, ?, ?)",
-                (session_id, role, content),
+                "INSERT INTO session_messages (session_id, role, content, campaign_session_index) VALUES (?, ?, ?, ?)",
+                (session_id, role, content, campaign_session_index),
             )
 
     def get_messages(self, session_id: str) -> list[dict[str, Any]]:
@@ -139,6 +286,115 @@ class Database:
                 (session_id,),
             ).fetchall()
             return [dict(row) for row in rows]
+
+    def get_recent_messages(self, session_id: str, limit: int = 10) -> list[dict[str, Any]]:
+        """Return the latest user/assistant messages in chronological order."""
+        with self.connect() as db:
+            rows = db.execute(
+                """
+                SELECT id, role, content, created_at
+                FROM session_messages
+                WHERE session_id = ? AND role IN ('user', 'assistant')
+                ORDER BY id DESC
+                LIMIT ?
+                """,
+                (session_id, limit),
+            ).fetchall()
+            return [dict(row) for row in reversed(rows)]
+
+    def read_campaign_progress(self, campaign_id: str, slot_name: str = "default") -> dict[str, Any] | None:
+        with self.connect() as db:
+            row = db.execute(
+                "SELECT * FROM campaign_progress WHERE campaign_id = ? AND slot_name = ?",
+                (campaign_id, slot_name),
+            ).fetchone()
+            if not row:
+                return None
+            return dict(row)
+
+    def read_campaign_progress_by_id(self, progress_id: int) -> dict[str, Any] | None:
+        with self.connect() as db:
+            row = db.execute(
+                "SELECT * FROM campaign_progress WHERE id = ?",
+                (progress_id,),
+            ).fetchone()
+            return dict(row) if row else None
+
+    def write_campaign_progress(self, campaign_id: str, arc_index: int, session_index: int, turn_in_session: int, fsm_state: str, revealed_anchors: list[str] | None = None, completed_arcs: list[int] | None = None, recap_compressed: str = "", recap_full: str = "", slot_name: str = "default") -> None:
+        with self.connect() as db:
+            db.execute(
+                """
+                INSERT INTO campaign_progress
+                  (campaign_id, slot_name, arc_index, session_index, turn_in_session, fsm_state, revealed_anchors, completed_arcs, recap_compressed, recap_full)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(campaign_id, slot_name) DO UPDATE SET
+                  arc_index = excluded.arc_index,
+                  session_index = excluded.session_index,
+                  turn_in_session = excluded.turn_in_session,
+                  fsm_state = excluded.fsm_state,
+                  revealed_anchors = excluded.revealed_anchors,
+                  completed_arcs = excluded.completed_arcs,
+                  recap_compressed = excluded.recap_compressed,
+                  recap_full = excluded.recap_full,
+                  updated_at = CURRENT_TIMESTAMP
+                """,
+                (
+                    campaign_id,
+                    slot_name,
+                    arc_index,
+                    session_index,
+                    turn_in_session,
+                    fsm_state,
+                    json.dumps(revealed_anchors or [], ensure_ascii=False),
+                    json.dumps(completed_arcs or [], ensure_ascii=False),
+                    recap_compressed,
+                    recap_full,
+                ),
+            )
+
+    def add_knowledge_chunk(self, chunk_id: str, source_type: str, title: str, content: str, keywords: list[str] | None = None, importance: int = 3, source_path: str = "") -> None:
+        """Insert a single knowledge chunk (upsert by id). Used by MemoryController for NSB episodes."""
+        with self.connect() as db:
+            db.execute(
+                """
+                INSERT INTO knowledge_chunks (id, source_type, title, content, keywords, importance, source_path)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(id) DO UPDATE SET
+                    content = excluded.content,
+                    keywords = excluded.keywords,
+                    importance = excluded.importance
+                """,
+                (
+                    chunk_id,
+                    source_type,
+                    title,
+                    content,
+                    json.dumps(keywords or [], ensure_ascii=False),
+                    importance,
+                    source_path,
+                ),
+            )
+
+    def get_narrative_episodes(self) -> list[dict[str, Any]]:
+        """Return all narrative_memory episodes from knowledge_chunks, ordered by updated_at."""
+        with self.connect() as db:
+            rows = db.execute(
+                """SELECT id, title, content, keywords, importance, updated_at
+                   FROM knowledge_chunks
+                   WHERE source_type = 'narrative_memory'
+                   ORDER BY updated_at ASC"""
+            ).fetchall()
+        return [
+            {
+                "id": row["id"],
+                "title": row["title"],
+                "content": row["content"],
+                "keywords": json.loads(row["keywords"]) if isinstance(row["keywords"], str) else (row["keywords"] or []),
+                "importance": row["importance"],
+                "updated_at": row["updated_at"],
+            }
+            for row in rows
+        ]
 
     def replace_knowledge_chunks(self, chunks: list[dict[str, Any]]) -> None:
         with self.connect() as db:
@@ -174,6 +430,13 @@ class Database:
         raw_output_text: str = "",
         error_text: str = "",
         retrieved_chunks: list[dict[str, Any]] | None = None,
+        word_count: int = 0,
+        option_count: int = 0,
+        sanity_delta: int = 0,
+        health_delta: int = 0,
+        dialogue_lines: int = 0,
+        location_changed: int = 0,
+        token_count: int = 0,
     ) -> int:
         with self.connect() as db:
             cursor = db.execute(
@@ -188,9 +451,16 @@ class Database:
                   status,
                   raw_output_text,
                   error_text,
-                  retrieved_chunks_json
+                  retrieved_chunks_json,
+                  word_count,
+                  option_count,
+                  sanity_delta,
+                  health_delta,
+                  dialogue_lines,
+                  location_changed,
+                  token_count
                 )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     session_id,
@@ -203,6 +473,13 @@ class Database:
                     raw_output_text,
                     error_text,
                     json.dumps(retrieved_chunks or [], ensure_ascii=False),
+                    word_count,
+                    option_count,
+                    sanity_delta,
+                    health_delta,
+                    dialogue_lines,
+                    location_changed,
+                    token_count,
                 ),
             )
             return int(cursor.lastrowid)

@@ -1,0 +1,152 @@
+{
+  "version": 3,
+  "title": "卡塞尔入学档案",
+  "core_conflict": "一个古老的邪恶在校园苏醒，新生入学流程背后隐藏着血统筛选的真相",
+  "arcs": [
+    {
+      "name": "第一弧：疑云",
+      "goal": "调查校园中的异常现象，完成三个预备任务",
+      "sessions": [
+        {
+          "name": "初入校园",
+          "opening_scene": "你站在卡塞尔学院的大门前。雨夜中，哥特式建筑的轮廓像一头蹲伏的巨兽。手里的临时通行卡正在发烫。一个红发女生靠在门柱旁，似乎已经等了你很久。",
+          "anchor_events": [
+            {
+              "id": "anchor-discover-mark",
+              "name": "发现红色标记",
+              "description": "玩家在报到大厅注意到投影屏上自己名字旁浮现的红色鳞片状标记",
+              "priority": 1,
+              "trigger_conditions": {
+                "location": "卡塞尔学院报到大厅",
+                "npc_present": null,
+                "item_held": null
+              }
+            },
+            {
+              "id": "anchor-receive-tasks",
+              "name": "接受三个预备任务",
+              "description": "诺诺将任务单交给玩家，S级观察对象的身份被确认",
+              "priority": 2,
+              "trigger_conditions": {
+                "location": "卡塞尔学院报到大厅",
+                "npc_present": "诺诺",
+                "item_held": null
+              }
+            }
+          ]
+        },
+        {
+          "name": "档案室之谜",
+          "opening_scene": "旧档案室的门在你面前缓缓打开。通风管道里低低的风声像有人在远处翻书。系统显示你的档案三分钟前被你自己取走了——但你现在才到。",
+          "anchor_events": [
+            {
+              "id": "anchor-archive-intruder",
+              "name": "发现冒充者痕迹",
+              "description": "在旧档案室发现有人冒充玩家取走了个人档案，留下异常痕迹",
+              "priority": 1,
+              "trigger_conditions": {
+                "location": "主楼地下二层旧档案室",
+                "npc_present": null,
+                "item_held": null
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "第二弧：暗流",
+      "goal": "深入调查学院隐藏的秘密，面对第一次真正的危险",
+      "sessions": [
+        {
+          "name": "钟楼听证",
+          "opening_scene": "钟楼的听证室里只有一张长桌、三把空椅子。桌面的台灯照着一份名单——你的名字被打印了一次，又被人用钢笔手写了一次。第二遍墨迹还没干。",
+          "entry_state": {
+            "location": "钟楼一层临时听证室",
+            "npc_relations": [
+              {"name": "诺诺", "affinity": 3, "note": "在第一弧中帮助了你多次"},
+              {"name": "芬格尔", "affinity": 1, "note": "提供了情报但不太可靠"}
+            ],
+            "world_facts_summary": [
+              "新生报到流程中发现了红色鳞片状标记，与你的血统有关",
+              "旧档案室中有人冒充你取走了个人档案",
+              "学院对你的特殊关注源于血统检测异常"
+            ],
+            "items": ["临时通行卡", "旧档案室异常记录"],
+            "quests": ["完成三个预备任务", "调查档案冒充事件"]
+          },
+          "anchor_events": [
+            {
+              "id": "anchor-hearing-reveal",
+              "name": "听证会上的真相",
+              "description": "听证过程中揭示学院对玩家的特殊关注源于血统检测异常",
+              "priority": 1,
+              "trigger_conditions": {
+                "location": "钟楼一层临时听证室",
+                "npc_present": null,
+                "item_held": null
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "第三弧：觉醒",
+      "goal": "面对古老邪恶的真相，做出最终的选择",
+      "sessions": [
+        {
+          "name": "便利店之夜",
+          "opening_scene": "便利店暖黄色的灯光在雨夜中像一座孤岛。取件柜里放着一个三年前寄出的箱子，收件人备注写着：别让他一个人去钟楼。",
+          "entry_state": {
+            "location": "校内24小时便利店",
+            "npc_relations": [
+              {"name": "诺诺", "affinity": 5, "note": "多次并肩作战，建立了深厚的信任"},
+              {"name": "芬格尔", "affinity": 2, "note": "虽然不靠谱但在关键时刻出现过"},
+              {"name": "楚子航", "affinity": 1, "note": "听证会上为你作证，开始认可你的能力"}
+            ],
+            "world_facts_summary": [
+              "新生报到时发现的红色鳞片标记与你的S级血统有关",
+              "旧档案室中有人冒充你取走了档案——至今身份不明",
+              "听证会揭示了学院对你血统异常的担忧",
+              "你已完成了三个预备任务，获得了执行部的初步认可"
+            ],
+            "items": ["临时通行卡", "旧档案室异常记录", "听证会决议书"],
+            "quests": ["调查三年前寄来的包裹", "查明冒充者身份", "准备面对古老邪恶的真相"]
+          },
+          "anchor_events": [
+            {
+              "id": "anchor-package-reveal",
+              "name": "三年前的包裹",
+              "description": "打开包裹发现三年前的自己寄来的警告信和一件神秘物品",
+              "priority": 1,
+              "trigger_conditions": {
+                "location": "校内24小时便利店",
+                "npc_present": null,
+                "item_held": null
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "constraints": "不要提前揭示最终反派的身份；保持渐进式的悬疑感和紧张氛围；NPC不能无故消失",
+  "starting_state": {
+    "sanity": 80,
+    "health": 100,
+    "turn": 0,
+    "current_location": "卡塞尔学院主楼入口",
+    "items": [],
+    "npcs": [],
+    "quests": [],
+    "world_facts": [],
+    "player_status": {
+      "condition": "正常",
+      "danger_level": "medium",
+      "current_goal": "完成新生报到",
+      "notes": ""
+    },
+    "recent_events": []
+  }
+}

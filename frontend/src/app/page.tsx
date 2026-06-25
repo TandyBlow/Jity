@@ -1,16 +1,16 @@
 "use client";
 
-import { BookOpen, History, Loader2, RefreshCw, Send, Sparkles } from "lucide-react";
+import { BookOpen, History, Loader2, MapPin, PenTool, RefreshCw, Send, Sparkles } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { createSession, generateScene } from "@/lib/api";
-import type { GameState, GenerateResponse, ItemMemory, NPCMemory, QuestMemory, RetrievedChunk, StoryOutput, WorldFactMemory } from "@/types";
+import { createSession, createSlot, generateScene, getSession, getSessionHistory, listCampaigns, listSlots, loadSlot } from "@/lib/api";
+import type { CampaignListItem, GameState, GenerateResponse, ItemMemory, NPCMemory, QuestMemory, RetrievedChunk, SaveSlot, StoryOutput, WorldFactMemory } from "@/types";
 
 const initialOutput: StoryOutput = {
   narration: `雨是在你下车后三分钟开始变大的。
 
-你拖着那只从婶婶家带来的旧行李箱，站在卡塞尔学院报到处大厅门口。箱轮卡在门槛细缝里，发出一声很丢人的“咔哒”。你低头用力拽了两下，没拽动。
+你拖着那只从婶婶家带来的旧行李箱，站在卡塞尔学院报到处大厅门口。箱轮卡在门槛细缝里，发出一声很丢人的"咔哒"。你低头用力拽了两下，没拽动。
 
 大厅里没人笑。
 
@@ -45,9 +45,9 @@ const initialOutput: StoryOutput = {
   sanity_delta: 0,
   health_delta: 0,
   options: [
-    "愣住两秒，然后硬着头皮打招呼：“学姐好……那个，这里到底有什么不普通的？”",
-    "下意识后退半步，抓紧行李箱拉杆：“等等，你怎么知道我的名字？这是什么整蛊节目吗？”",
-    "试图挤出个笑脸，但声音有点抖：“照片？什么照片？我那张高考准考证上的照片可丑了……”",
+    `愣住两秒，然后硬着头皮打招呼："学姐好……那个，这里到底有什么不普通的？"`,
+    `下意识后退半步，抓紧行李箱拉杆："等等，你怎么知道我的名字？这是什么整蛊节目吗？"`,
+    `试图挤出个笑脸，但声音有点抖："照片？什么照片？我那张高考准考证上的照片可丑了……"`,
   ],
   game_over: false,
   game_over_reason: "",
@@ -56,11 +56,30 @@ const initialOutput: StoryOutput = {
 
 const DEFAULT_STORY_STYLE = "黑暗学院奇幻，带一点黑色幽默，强调 NPC 反应。";
 const DEFAULT_CONSTRAINTS = "关键 NPC 不能突然死亡；不要跳出当前入学调查。";
-const INITIAL_ACTION = "愣住两秒，然后硬着头皮打招呼：“学姐好……那个，这里到底有什么不普通的？”";
+const INITIAL_ACTION = `愣住两秒，然后硬着头皮打招呼："学姐好……那个，这里到底有什么不普通的？"`;
+const SLOT_DEFAULT = "default" as const;
+const ENTRY_ACTION = "（入场）环顾四周，了解当前处境。";
+const STATE_COMMIT_DELAY = 100;
+const ACTIVE_SESSION_STORAGE_KEY = "jity_active_session_id";
+
+function readActiveSessionId() {
+  if (typeof window === "undefined") return "";
+  return window.localStorage.getItem(ACTIVE_SESSION_STORAGE_KEY) ?? "";
+}
+
+function rememberActiveSession(sessionId: string) {
+  if (typeof window === "undefined") return;
+  window.localStorage.setItem(ACTIVE_SESSION_STORAGE_KEY, sessionId);
+}
+
+function forgetActiveSession() {
+  if (typeof window === "undefined") return;
+  window.localStorage.removeItem(ACTIVE_SESSION_STORAGE_KEY);
+}
 
 export default function Home() {
   const [sessionId, setSessionId] = useState("");
-  const [model, setModel] = useState("deepseek-chat");
+  const [model, setModel] = useState("deepseek-v4-flash");
   const [state, setState] = useState<GameState | null>(null);
   const [output, setOutput] = useState<StoryOutput>(initialOutput);
   const [outputSource, setOutputSource] = useState<GenerateResponse["source"]>("scripted");
@@ -68,34 +87,196 @@ export default function Home() {
   const [action, setAction] = useState(INITIAL_ACTION);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const statusDeltaHints = buildStatusDeltaHints(output);
+  const [slots, setSlots] = useState<SaveSlot[]>([]);
+  const [selectedSlot, setSelectedSlot] = useState<string>(SLOT_DEFAULT);
+  const [selectedSlotId, setSelectedSlotId] = useState<number | "">("");
+  const [campaigns, setCampaigns] = useState<CampaignListItem[]>([]);
+  const [selectedCampaign, setSelectedCampaign] = useState("");
+  const [pendingGenerate, setPendingGenerate] = useState<string | null>(null);
 
+  const statusDeltaHints = useMemo(() => buildStatusDeltaHints(output), [output]);
+
+  // ── Session init ──
   useEffect(() => {
     let mounted = true;
-    createSession(model)
-      .then((session) => {
+
+    async function bootSession() {
+      // Timeline "从此处开始" is an explicit new entry point.
+      let campaignOpts: { campaignFilename?: string; arcIndex?: number; sessionIndex?: number } | undefined;
+      try {
+        const entryJson = sessionStorage.getItem("campaign_entry");
+        if (entryJson) {
+          const entry = JSON.parse(entryJson);
+          sessionStorage.removeItem("campaign_entry");
+          campaignOpts = {
+            campaignFilename: entry.campaignFilename,
+            arcIndex: entry.arcIndex,
+            sessionIndex: entry.sessionIndex,
+          };
+        }
+      } catch {
+        // Ignore parse errors
+      }
+
+      if (campaignOpts?.campaignFilename) {
+        const session = await createSession(model, campaignOpts);
         if (!mounted) return;
+        rememberActiveSession(session.session_id);
         setSessionId(session.session_id);
         setState(session.state);
         setModel(session.model);
-      })
-      .catch((err: Error) => setError(err.message));
+        setSelectedCampaign(campaignOpts.campaignFilename);
+        setSelectedSlot(SLOT_DEFAULT);
+        setSelectedSlotId("");
+        refreshSlots(session.session_id, SLOT_DEFAULT).catch((err) => console.error("refreshSlots failed:", err));
+        if (campaignOpts?.campaignFilename && (campaignOpts.arcIndex || 0) > 0) {
+          setPendingGenerate(ENTRY_ACTION);
+        }
+        return;
+      }
+
+      const activeSessionId = readActiveSessionId();
+      if (activeSessionId) {
+        try {
+          const session = await getSession(activeSessionId);
+          if (!mounted) return;
+          setSessionId(session.session_id);
+          setState(session.state);
+          setModel(session.model);
+          setChunks([]);
+          await restoreLastOutput(session.session_id);
+          await refreshSlots(session.session_id);
+          return;
+        } catch {
+          forgetActiveSession();
+        }
+      }
+
+      const session = await createSession(model);
+      if (!mounted) return;
+      rememberActiveSession(session.session_id);
+      setSessionId(session.session_id);
+      setState(session.state);
+      setModel(session.model);
+      setSelectedSlot(SLOT_DEFAULT);
+      setSelectedSlotId("");
+      refreshSlots(session.session_id, SLOT_DEFAULT).catch((err) => console.error("refreshSlots failed:", err));
+    }
+
+    bootSession().catch((err: Error) => {
+      if (mounted) setError(err.message);
+    });
+
     return () => {
       mounted = false;
     };
   }, []);
 
-  async function handleGenerate(nextAction = action) {
-    if (!sessionId || !nextAction.trim()) return;
+  // ── Load campaigns ──
+  useEffect(() => {
+    listCampaigns()
+      .then((r) => {
+        setCampaigns(r.campaigns ?? []);
+        try {
+          const entryJson = sessionStorage.getItem("campaign_entry");
+          if (entryJson) {
+            const entry = JSON.parse(entryJson);
+            if (entry.campaignFilename) setSelectedCampaign(entry.campaignFilename);
+          }
+        } catch { /* ignore */ }
+      })
+      .catch((err) => console.error("listCampaigns failed:", err));
+  }, []);
+
+  // ── Load save slots ──
+  useEffect(() => {
+    if (!sessionId) {
+      setSlots([]);
+      setSelectedSlot(SLOT_DEFAULT);
+      setSelectedSlotId("");
+      return;
+    }
+    listSlots(sessionId).then(r => {
+      const nextSlots = (r.slots ?? []).filter((slot) => slot.campaign_id === sessionId);
+      setSlots(nextSlots);
+      const active = nextSlots.find((slot) => slot.is_active)
+        ?? nextSlots.find((slot) => slot.slot_name === selectedSlot);
+      if (active) {
+        setSelectedSlot(active.slot_name);
+        setSelectedSlotId(active.id);
+      } else {
+        setSelectedSlot(SLOT_DEFAULT);
+        setSelectedSlotId("");
+      }
+    }).catch((err) => console.error("listSlots failed:", err));
+  /* selectedSlot intentionally excluded: changing preferred slot name while
+     session stays the same should not reload the list — only a new session does */
+  }, [sessionId]);
+
+  // ── Auto-generate after session created for mid-campaign entry ──
+  useEffect(() => {
+    if (!pendingGenerate || !sessionId) return;
+    const action = pendingGenerate;
+    setPendingGenerate(null);
+    handleGenerate(action);
+  }, [pendingGenerate, sessionId]);
+
+  async function refreshSlots(currentSessionId = sessionId, preferredSlotName = selectedSlot) {
+    if (!currentSessionId) {
+      setSlots([]);
+      setSelectedSlot(SLOT_DEFAULT);
+      setSelectedSlotId("");
+      return;
+    }
+    const updated = await listSlots(currentSessionId);
+    const nextSlots = updated.slots ?? [];
+    setSlots(nextSlots);
+    const active = (preferredSlotName
+      ? nextSlots.find((slot) => slot.slot_name === preferredSlotName)
+      : undefined)
+      ?? nextSlots.find((slot) => slot.is_active)
+      ?? nextSlots.find((slot) => slot.slot_name === selectedSlot);
+    if (active) {
+      setSelectedSlot(active.slot_name);
+      setSelectedSlotId(active.id);
+      if (active.campaign_filename) setSelectedCampaign(active.campaign_filename);
+    } else {
+      setSelectedSlot(SLOT_DEFAULT);
+      setSelectedSlotId("");
+    }
+  }
+
+  async function restoreLastOutput(nextSessionId: string) {
+    try {
+      const history = await getSessionHistory(nextSessionId);
+      const lastAssistant = [...history.messages].reverse().find((message) => message.role === "assistant");
+      if (lastAssistant) {
+        setOutput(JSON.parse(lastAssistant.content) as StoryOutput);
+        setOutputSource("llm");
+      } else {
+        setOutput(initialOutput);
+        setOutputSource("scripted");
+      }
+    } catch (err) {
+      console.error("restoreLastOutput failed:", err);
+      setOutput(initialOutput);
+      setOutputSource("scripted");
+    }
+  }
+
+  const handleGenerate = useCallback(async (nextAction = action, overrideSessionId?: string) => {
+    const sid = overrideSessionId ?? sessionId;
+    if (!sid || !nextAction.trim()) return;
     setIsLoading(true);
     setError("");
     try {
       const response: GenerateResponse = await generateScene({
-        sessionId,
+        sessionId: sid,
         playerAction: nextAction,
         model,
         style: DEFAULT_STORY_STYLE,
         constraints: DEFAULT_CONSTRAINTS,
+        slotName: selectedSlot,
       });
       setOutput(response.output);
       setOutputSource(response.source);
@@ -108,25 +289,35 @@ export default function Home() {
     } finally {
       setIsLoading(false);
     }
-  }
+  }, [sessionId, action, model, selectedSlot]);
 
-  async function handleNewSession() {
+  const handleNewSession = useCallback(async () => {
     setIsLoading(true);
     setError("");
     try {
-      const session = await createSession(model);
+      const campaignOpts = selectedCampaign
+        ? { campaignFilename: selectedCampaign, arcIndex: 0, sessionIndex: 0, slotName: SLOT_DEFAULT }
+        : undefined;
+      const session = await createSession(model, campaignOpts);
+      rememberActiveSession(session.session_id);
       setSessionId(session.session_id);
       setState(session.state);
       setOutput(initialOutput);
       setOutputSource("scripted");
       setChunks([]);
       setAction(INITIAL_ACTION);
+      setSelectedSlot(SLOT_DEFAULT);
+      setSelectedSlotId("");
+      await refreshSlots(session.session_id, SLOT_DEFAULT);
+      if (campaignOpts) {
+        setPendingGenerate(ENTRY_ACTION);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "创建会话失败");
     } finally {
       setIsLoading(false);
     }
-  }
+  }, [model, selectedCampaign]);
 
   return (
     <main className="app-shell">
@@ -137,6 +328,16 @@ export default function Home() {
             <div className="brand-subtitle">GM scenario console</div>
           </div>
           <div className="brand-actions">
+            <Link
+              className="icon-button"
+              href={sessionId ? `/timeline?session=${sessionId}` : "/timeline"}
+              title="发现时间线"
+            >
+              <MapPin size={17} />
+            </Link>
+            <Link className="icon-button" href="/curator" title="战役编辑器">
+              <PenTool size={17} />
+            </Link>
             <Link className="icon-button" href="/dev-log" title="开发日志">
               <History size={17} />
             </Link>
@@ -150,13 +351,100 @@ export default function Home() {
           模型
         </label>
         <select className="select" id="model" value={model} onChange={(event) => setModel(event.target.value)}>
-          <option value="deepseek-chat">deepseek-chat</option>
+          <option value="deepseek-v4-flash">deepseek-v4-flash</option>
           <option value="deepseek-reasoner">deepseek-reasoner</option>
+        </select>
+
+        <label className="label" htmlFor="campaign">
+          战役
+        </label>
+        <select
+          className="select"
+          id="campaign"
+          value={selectedCampaign}
+          onChange={(e) => {
+            const val = e.target.value;
+            setSelectedCampaign(val);
+            setError("");
+            const opts = val
+              ? { campaignFilename: val, arcIndex: 0, sessionIndex: 0, slotName: SLOT_DEFAULT }
+              : undefined;
+            createSession(model, opts)
+              .then((s) => {
+                rememberActiveSession(s.session_id);
+                setSessionId(s.session_id);
+                setState(s.state);
+                setOutput(initialOutput);
+                setOutputSource("scripted");
+                setChunks([]);
+                setAction(INITIAL_ACTION);
+                setSelectedSlot(SLOT_DEFAULT);
+                setSelectedSlotId("");
+                refreshSlots(s.session_id, SLOT_DEFAULT).catch((err) => console.error("refreshSlots failed:", err));
+                setPendingGenerate(ENTRY_ACTION);
+              })
+              .catch((err: Error) => setError(err.message));
+          }}
+        >
+          <option value="">自由模式（无预设战役）</option>
+          {campaigns.map((c) => (
+            <option key={c.filename} value={c.filename}>
+              {c.title}（{c.arc_count}弧）
+            </option>
+          ))}
         </select>
 
         <label className="label" htmlFor="action">
           玩家行动
         </label>
+        {sessionId && (
+          <div style={{ marginBottom: 8, display: "flex", alignItems: "center", gap: 8, fontSize: "0.85rem" }}>
+            <span>存档:</span>
+            <select
+              value={selectedSlotId}
+              onChange={async (e) => {
+                const slotId = Number(e.target.value);
+                if (!slotId) return;
+                setError("");
+                try {
+                  const loaded = await loadSlot(slotId);
+                  setSelectedSlotId(slotId);
+                  setSelectedSlot(loaded.slot.slot_name);
+                  rememberActiveSession(loaded.session.session_id);
+                  setSessionId(loaded.session.session_id);
+                  setState(loaded.session.state);
+                  setModel(loaded.session.model);
+                  setChunks([]);
+                  if (loaded.slot.campaign_filename) setSelectedCampaign(loaded.slot.campaign_filename);
+                  await restoreLastOutput(loaded.session.session_id);
+                  await refreshSlots(loaded.session.session_id, loaded.slot.slot_name);
+                } catch (err) {
+                  setError(err instanceof Error ? err.message : "加载存档失败");
+                }
+              }}
+              style={{ padding: "2px 6px" }}
+            >
+              {slots.length === 0 && <option value="">无存档</option>}
+              {slots.length > 0 && selectedSlotId === "" && <option value="">选择存档</option>}
+              {slots.map(s => (
+                <option key={s.id} value={s.id}>
+                  {s.slot_name} (A{s.arc_index + 1}S{s.session_index + 1} · T{s.turn_in_session})
+                </option>
+              ))}
+            </select>
+            <button onClick={async () => {
+              const name = prompt("新存档名称:");
+              if (name) {
+                try {
+                  await createSlot(name, sessionId, selectedSlot);
+                  await refreshSlots(sessionId, name);
+                } catch (e: unknown) {
+                  alert(e instanceof Error ? e.message : String(e));
+                }
+              }
+            }} style={{ padding: "2px 8px" }}>+</button>
+          </div>
+        )}
         <textarea
           className="textarea"
           id="action"

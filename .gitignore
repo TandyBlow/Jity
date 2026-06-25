@@ -1,19 +1,70 @@
-# === API Keys — DO NOT COMMIT ===
+# === Secrets and local configuration ===
 config.js
+.env
+.env.*
+!.env.example
+backend/.env
+backend/.env.*
+!backend/.env.example
+frontend/.env
+frontend/.env.local
+frontend/.env.*
+!frontend/.env.example
 
 # === Python ===
 __pycache__/
-*.pyc
-translate_docx.py
-translate_latex.py
-translation_cache.json
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.venv/
+venv/
+env/
+.conda/
+backend/.venv/
+backend/env/
+backend/.conda/
+backend/.deps/
 
-# === Research Pipeline ===
+# === Node / frontend ===
+node_modules/
+frontend/node_modules/
+.next/
+frontend/.next/
+out/
+frontend/tsconfig.tsbuildinfo
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# === Runtime data ===
+.local/
+*.sqlite3
+*.sqlite3-*
+backend/data/*
+!backend/data/campaigns/
+backend/data/campaigns/*
+!backend/data/campaigns/default_campaign.json
+!backend/data/scripted_story/
+!backend/data/scripted_story/*.json
+!backend/data/novels/
+!backend/data/novels/*.txt
+playtest_logs/
+
+# === Novel source files ===
+# Reviewed TXT source files under backend/data/novels/ may be committed.
+
+# === Experiments and local research files ===
+experiments/
 .pipeline/
 .claude/
 CLAUDE.md
-
-# === Literature Review & Personal Docs ===
+translate_docx.py
+translate_latex.py
+translation_cache.json
 LiteratureReview.*
 *.pdf
 *.docx
@@ -21,8 +72,14 @@ WorkAssignment.*
 2330034047.pdf
 26LiteratureReview.Guideline.Dyce.pdf
 
-# === Experiments (contain API keys) ===
-experiments/
+# === OS / editor ===
+.DS_Store
+Thumbs.db
+~$*
+.idea/
+.vscode/
 
-# === Dependencies ===
-node_modules/
+# === Local planning artifacts ===
+.planning/
+TODOS.md
+backend/campaign_fsm.png

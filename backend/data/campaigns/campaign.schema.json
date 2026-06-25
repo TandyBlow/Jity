@@ -1,0 +1,172 @@
+{
+  "$defs": {
+    "AnchorEvent": {
+      "description": "A single narrative milestone with trigger conditions.",
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "priority": {
+          "default": 3,
+          "maximum": 5,
+          "minimum": 1,
+          "title": "Priority",
+          "type": "integer"
+        },
+        "trigger_conditions": {
+          "$ref": "#/$defs/AnchorTriggerConditions"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description"
+      ],
+      "title": "AnchorEvent",
+      "type": "object"
+    },
+    "AnchorTriggerConditions": {
+      "description": "Hard-filter conditions for anchor event activation.",
+      "properties": {
+        "location": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Location"
+        },
+        "npc_present": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Npc Present"
+        },
+        "item_held": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Item Held"
+        }
+      },
+      "title": "AnchorTriggerConditions",
+      "type": "object"
+    },
+    "ArcSchema": {
+      "description": "A narrative arc containing multiple sessions.",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "goal": {
+          "default": "",
+          "title": "Goal",
+          "type": "string"
+        },
+        "sessions": {
+          "items": {
+            "$ref": "#/$defs/SessionSchema"
+          },
+          "title": "Sessions",
+          "type": "array"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "ArcSchema",
+      "type": "object"
+    },
+    "SessionSchema": {
+      "description": "A single session within an arc.",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "opening_scene": {
+          "default": "",
+          "title": "Opening Scene",
+          "type": "string"
+        },
+        "anchor_events": {
+          "items": {
+            "$ref": "#/$defs/AnchorEvent"
+          },
+          "title": "Anchor Events",
+          "type": "array"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "SessionSchema",
+      "type": "object"
+    }
+  },
+  "description": "Top-level campaign definition matching campaign.json format.",
+  "properties": {
+    "version": {
+      "default": 1,
+      "title": "Version",
+      "type": "integer"
+    },
+    "title": {
+      "title": "Title",
+      "type": "string"
+    },
+    "core_conflict": {
+      "title": "Core Conflict",
+      "type": "string"
+    },
+    "arcs": {
+      "items": {
+        "$ref": "#/$defs/ArcSchema"
+      },
+      "title": "Arcs",
+      "type": "array"
+    },
+    "constraints": {
+      "default": "",
+      "title": "Constraints",
+      "type": "string"
+    },
+    "starting_state": {
+      "additionalProperties": true,
+      "title": "Starting State",
+      "type": "object"
+    }
+  },
+  "required": [
+    "title",
+    "core_conflict"
+  ],
+  "title": "CampaignSchema",
+  "type": "object"
+}
