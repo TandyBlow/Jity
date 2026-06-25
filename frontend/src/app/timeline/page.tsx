@@ -74,7 +74,15 @@ function TimelineContent() {
     <div className="timeline-shell">
       <div className="timeline-header">
         <div>
-          <Link href="/" className="back-link">
+          <Link
+            href="/"
+            className="back-link"
+            onClick={() => {
+              if (sessionId && typeof window !== "undefined") {
+                window.localStorage.setItem("jity_active_session_id", sessionId);
+              }
+            }}
+          >
             ← 返回控制台
           </Link>
           <h1>发现时间线</h1>

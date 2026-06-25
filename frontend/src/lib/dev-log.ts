@@ -12,6 +12,36 @@ export type DevLogEntry = {
 
 export const devLogEntries: DevLogEntry[] = [
   {
+    id: "2026-06-25-timeline-session-restore-and-presentation-outputs",
+    date: "2026-06-25",
+    title: "Timeline 返回会话恢复与汇报材料归档",
+    summary: "同步远端最新 tian 分支后，修复从发现时间线返回控制台时误开新会话的问题，并归档本轮项目汇报分工材料。",
+    developer: "zjr",
+    areas: ["frontend", "timeline", "session", "developer-tooling", "presentation"],
+    changes: [
+      "控制台启动流程新增 active session 恢复：优先处理 Timeline 的 campaign entry，其次从 localStorage 读取并拉取现有 session，最后才创建新 session。",
+      "Timeline 返回控制台时写入当前 sessionId，避免查看时间线后返回主页丢失当前进度或创建重复会话。",
+      "前端 API 增加 getSession(sessionId)，用于根据 URL/本地记录恢复 session/state/model 和最近剧情输出。",
+      "保留远端新增的 pendingGenerate 流程，确保从 Timeline 中段进入战役时仍能在 React 状态提交后自动生成入场幕。",
+      "删除过时的 STORY_OUTLINE.md，避免旧固定剧情说明继续指向已经迁移的运行路径。",
+      "归档项目汇报分工与讲解内容的 DOCX/PPTX 输出文件，方便后续演示和报告整理。",
+      "忽略 Office 生成的 ~$ 临时锁文件，避免演示材料编辑时污染 Git 工作区。",
+    ],
+    relatedFiles: [
+      ".gitignore",
+      "frontend/src/app/page.tsx",
+      "frontend/src/app/timeline/page.tsx",
+      "frontend/src/lib/api.ts",
+      "frontend/src/lib/dev-log.ts",
+      "STORY_OUTLINE.md",
+      "outputs/Jity_项目汇报分工与讲解内容.docx",
+      "outputs/Jity_瑞士国际主义风格_汇报分工.pptx",
+    ],
+    nextSteps: [
+      "在浏览器里做一次控制台 → Timeline → 返回控制台的真实交互验证，确认当前剧情和存档槽不被重置。",
+    ],
+  },
+  {
     id: "2026-06-24-campaign-runtime-slots-and-local-workflow",
     date: "2026-06-24",
     title: "Campaign Runtime 接线、存档槽隔离和本地工作流整理",

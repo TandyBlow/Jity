@@ -4,7 +4,7 @@ import { BookOpen, History, Loader2, MapPin, PenTool, RefreshCw, Send, Sparkles 
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { createSession, createSlot, generateScene, getSessionHistory, listCampaigns, listSlots, loadSlot } from "@/lib/api";
+import { createSession, createSlot, generateScene, getSession, getSessionHistory, listCampaigns, listSlots, loadSlot } from "@/lib/api";
 import type { CampaignListItem, GameState, GenerateResponse, ItemMemory, NPCMemory, QuestMemory, RetrievedChunk, SaveSlot, StoryOutput, WorldFactMemory } from "@/types";
 
 const initialOutput: StoryOutput = {
@@ -60,6 +60,22 @@ const INITIAL_ACTION = `愣住两秒，然后硬着头皮打招呼："学姐好�
 const SLOT_DEFAULT = "default" as const;
 const ENTRY_ACTION = "（入场）环顾四周，了解当前处境。";
 const STATE_COMMIT_DELAY = 100;
+const ACTIVE_SESSION_STORAGE_KEY = "jity_active_session_id";
+
+function readActiveSessionId() {
+  if (typeof window === "undefined") return "";
+  return window.localStorage.getItem(ACTIVE_SESSION_STORAGE_KEY) ?? "";
+}
+
+function rememberActiveSession(sessionId: string) {
+  if (typeof window === "undefined") return;
+  window.localStorage.setItem(ACTIVE_SESSION_STORAGE_KEY, sessionId);
+}
+
+function forgetActiveSession() {
+  if (typeof window === "undefined") return;
+  window.localStorage.removeItem(ACTIVE_SESSION_STORAGE_KEY);
+}
 
 export default function Home() {
   const [sessionId, setSessionId] = useState("");
@@ -84,37 +100,76 @@ export default function Home() {
   useEffect(() => {
     let mounted = true;
 
-    let campaignOpts: { campaignFilename?: string; arcIndex?: number; sessionIndex?: number } | undefined;
-    try {
-      const entryJson = sessionStorage.getItem("campaign_entry");
-      if (entryJson) {
-        const entry = JSON.parse(entryJson);
-        sessionStorage.removeItem("campaign_entry");
-        campaignOpts = {
-          campaignFilename: entry.campaignFilename,
-          arcIndex: entry.arcIndex,
-          sessionIndex: entry.sessionIndex,
-        };
+    async function bootSession() {
+      // Timeline "从此处开始" is an explicit new entry point.
+      let campaignOpts: { campaignFilename?: string; arcIndex?: number; sessionIndex?: number } | undefined;
+      try {
+        const entryJson = sessionStorage.getItem("campaign_entry");
+        if (entryJson) {
+          const entry = JSON.parse(entryJson);
+          sessionStorage.removeItem("campaign_entry");
+          campaignOpts = {
+            campaignFilename: entry.campaignFilename,
+            arcIndex: entry.arcIndex,
+            sessionIndex: entry.sessionIndex,
+          };
+        }
+      } catch {
+        // Ignore parse errors
       }
-    } catch {
-      // Ignore parse errors
-    }
 
-    createSession(model, campaignOpts)
-      .then(async (session) => {
+      if (campaignOpts?.campaignFilename) {
+        const session = await createSession(model, campaignOpts);
         if (!mounted) return;
+        rememberActiveSession(session.session_id);
         setSessionId(session.session_id);
         setState(session.state);
         setModel(session.model);
+        setSelectedCampaign(campaignOpts.campaignFilename);
         setSelectedSlot(SLOT_DEFAULT);
         setSelectedSlotId("");
         refreshSlots(session.session_id, SLOT_DEFAULT).catch((err) => console.error("refreshSlots failed:", err));
         if (campaignOpts?.campaignFilename && (campaignOpts.arcIndex || 0) > 0) {
           setPendingGenerate(ENTRY_ACTION);
         }
-      })
-      .catch((err: Error) => setError(err.message));
-    return () => { mounted = false; };
+        return;
+      }
+
+      const activeSessionId = readActiveSessionId();
+      if (activeSessionId) {
+        try {
+          const session = await getSession(activeSessionId);
+          if (!mounted) return;
+          setSessionId(session.session_id);
+          setState(session.state);
+          setModel(session.model);
+          setChunks([]);
+          await restoreLastOutput(session.session_id);
+          await refreshSlots(session.session_id);
+          return;
+        } catch {
+          forgetActiveSession();
+        }
+      }
+
+      const session = await createSession(model);
+      if (!mounted) return;
+      rememberActiveSession(session.session_id);
+      setSessionId(session.session_id);
+      setState(session.state);
+      setModel(session.model);
+      setSelectedSlot(SLOT_DEFAULT);
+      setSelectedSlotId("");
+      refreshSlots(session.session_id, SLOT_DEFAULT).catch((err) => console.error("refreshSlots failed:", err));
+    }
+
+    bootSession().catch((err: Error) => {
+      if (mounted) setError(err.message);
+    });
+
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   // ── Load campaigns ──
@@ -176,11 +231,15 @@ export default function Home() {
     const updated = await listSlots(currentSessionId);
     const nextSlots = (updated.slots ?? []).filter((slot) => slot.campaign_id === currentSessionId);
     setSlots(nextSlots);
-    const active = nextSlots.find((slot) => slot.slot_name === preferredSlotName)
-      ?? nextSlots.find((slot) => slot.is_active);
+    const active = (preferredSlotName
+      ? nextSlots.find((slot) => slot.slot_name === preferredSlotName)
+      : undefined)
+      ?? nextSlots.find((slot) => slot.is_active)
+      ?? nextSlots.find((slot) => slot.slot_name === selectedSlot);
     if (active) {
       setSelectedSlot(active.slot_name);
       setSelectedSlotId(active.id);
+      if (active.campaign_filename) setSelectedCampaign(active.campaign_filename);
     } else {
       setSelectedSlot(SLOT_DEFAULT);
       setSelectedSlotId("");
@@ -240,6 +299,7 @@ export default function Home() {
         ? { campaignFilename: selectedCampaign, arcIndex: 0, sessionIndex: 0, slotName: SLOT_DEFAULT }
         : undefined;
       const session = await createSession(model, campaignOpts);
+      rememberActiveSession(session.session_id);
       setSessionId(session.session_id);
       setState(session.state);
       setOutput(initialOutput);
@@ -311,6 +371,7 @@ export default function Home() {
               : undefined;
             createSession(model, opts)
               .then((s) => {
+                rememberActiveSession(s.session_id);
                 setSessionId(s.session_id);
                 setState(s.state);
                 setOutput(initialOutput);
@@ -349,6 +410,7 @@ export default function Home() {
                   const loaded = await loadSlot(slotId);
                   setSelectedSlotId(slotId);
                   setSelectedSlot(loaded.slot.slot_name);
+                  rememberActiveSession(loaded.session.session_id);
                   setSessionId(loaded.session.session_id);
                   setState(loaded.session.state);
                   setModel(loaded.session.model);
