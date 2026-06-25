@@ -293,7 +293,8 @@ class TestNarrativeSummarizationBranch:
             ))
         assert nsb.should_summarize_level2()
 
-    def test_get_retrieval_context_by_query(self):
+    @pytest.mark.asyncio
+    async def test_get_retrieval_context_by_query(self):
         nsb = NarrativeSummarizationBranch(llm_client=None)
         nsb.accept_level1(EpisodeSummary(
             episode_id="ep1", turn_start=0, turn_end=5,
@@ -305,7 +306,7 @@ class TestNarrativeSummarizationBranch:
             summary="探索场景", tags=["探索"], entities_involved=["钟楼"],
             importance=0.5,
         ))
-        results = nsb.get_retrieval_context("老汤姆")
+        results = await nsb.get_retrieval_context("老汤姆")
         assert len(results) > 0
         # Entity match should rank higher
         assert results[0].episode_id == "ep1"

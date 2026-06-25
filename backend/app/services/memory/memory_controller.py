@@ -48,7 +48,7 @@ class MemoryController:
 
         # Sub-systems
         self.score_tracker = ScoreTracker()
-        self.nsb = NarrativeSummarizationBranch(llm_client)
+        self.nsb = NarrativeSummarizationBranch(llm_client, embedding_client=embedding_client)
         self.pcb = PersonaConstructionBranch(llm_client, embedding_client=embedding_client)
 
         # L1 memory pool (all episode summaries for this session)
@@ -60,7 +60,7 @@ class MemoryController:
 
     # ── Per-turn: build context for prompt injection ───────────────
 
-    def assemble_context(
+    async def assemble_context(
         self,
         state: dict[str, Any],
         turn: int,
@@ -69,11 +69,7 @@ class MemoryController:
         """Assemble L1+L0 memory context for prompt injection.
 
         Called by ScenarioGenerator BEFORE the LLM call.
-        Does NOT make any LLM calls — reads cached NSB/PCB/SCORE data.
-
-        Returns the narrative memory section (NSB summaries + persona +
-        SCORE item states). Campaign context (L2) is injected separately
-        via PromptBuilder to avoid duplication.
+        Retrieves relevant NSB summaries via semantic + keyword hybrid search.
         """
         parts: list[str] = []
 
@@ -82,7 +78,7 @@ class MemoryController:
         npc_names = [n.get("name", "") for n in state.get("npcs", [])]
         query = f"{player_action} {' '.join(npc_names)} {' '.join(recent_events[-3:])}"
 
-        relevant_summaries = self.nsb.get_retrieval_context(query, top_k=5)
+        relevant_summaries = await self.nsb.get_retrieval_context(query, top_k=5)
         if relevant_summaries:
             summary_texts: list[str] = ["## 长期叙事记忆"]
             for s in relevant_summaries:
@@ -148,6 +144,7 @@ class MemoryController:
                 summary = await self.nsb.summarize_level1(turn_start, turn)
                 if summary:
                     self.nsb.accept_level1(summary)
+                    await self.nsb.cache_summary_embedding(summary)
                     self._persist_episode(summary)
                     self._nsb_consecutive_failures = 0
                     logger.info("NSB level-1 summary generated: %s", summary.episode_id)
@@ -158,6 +155,7 @@ class MemoryController:
                         l2 = await self.nsb.summarize_level2(l2_start, turn)
                         if l2:
                             self.nsb.accept_level2(l2)
+                            await self.nsb.cache_summary_embedding(l2)
                             self._persist_episode(l2)
 
                             if self.nsb.should_summarize_level3():
@@ -165,6 +163,7 @@ class MemoryController:
                                 l3 = await self.nsb.summarize_level3(l3_start, turn)
                                 if l3:
                                     self.nsb.accept_level3(l3)
+                                    await self.nsb.cache_summary_embedding(l3)
                                     self._persist_episode(l3)
                 else:
                     self._nsb_consecutive_failures += 1
@@ -208,6 +207,7 @@ class MemoryController:
         """Store an episode summary in the DB as a knowledge chunk for RAG retrieval."""
         try:
             self._db.add_knowledge_chunk(
+                chunk_id=summary.episode_id,
                 title=f"episode_{summary.episode_id}",
                 source_type="narrative_memory",
                 content=summary.summary,
@@ -239,6 +239,83 @@ class MemoryController:
 
     def load_state(self, data: dict[str, Any]) -> None:
         self.nsb.load_state(data.get("nsb", {}))
+        self.nsb.invalidate_embedding_cache()
         self.pcb.load_state(data.get("pcb", {}))
         self.score_tracker.load_from_state(data.get("score_tracker", []))
         self._narrative_pool = [MemoryRecord(**d) for d in data.get("narrative_pool", [])]
+        # Fallback: if no NSB summaries were restored from session state,
+        # load episodes previously persisted to knowledge_chunks.
+        if not self.nsb._level1 and not self.nsb._level2 and not self.nsb._level3:
+            self._load_episodes_from_db()
+
+    def _load_episodes_from_db(self) -> None:
+        """Load previously persisted narrative episodes from knowledge_chunks.
+
+        Called when session state has no NSB summaries (e.g. after a fresh
+        deploy or state migration). Episodes are distributed by level into
+        the NSB buffers and the episode_counter is restored.
+        """
+        try:
+            episodes = self._db.get_narrative_episodes()
+        except Exception:
+            logger.warning("Failed to load narrative episodes from DB", exc_info=True)
+            return
+
+        if not episodes:
+            return
+
+        max_counter = 0
+        for ep in episodes:
+            summary = None
+            try:
+                ep_id: str = ep.get("id", "")
+                level = 1
+                if "_L1_" in ep_id:
+                    level = 1
+                elif "_L2_" in ep_id:
+                    level = 2
+                elif "_L3_" in ep_id:
+                    level = 3
+                # best-effort turn range from content
+                importance = max(0.1, min(1.0, ep.get("importance", 3) / 5.0))
+                summary = EpisodeSummary(
+                    episode_id=ep_id,
+                    turn_start=0,
+                    turn_end=0,
+                    summary=ep.get("content", ""),
+                    tags=ep.get("keywords", []),
+                    entities_involved=[],
+                    causal_links=[],
+                    state_changes={},
+                    importance=importance,
+                    level=level,
+                )
+            except Exception:
+                logger.debug("Skipping malformed episode %s", ep.get("id", ""), exc_info=True)
+                continue
+
+            if level == 1:
+                self.nsb.accept_level1(summary)
+            elif level == 2:
+                self.nsb.accept_level2(summary)
+            elif level == 3:
+                self.nsb.accept_level3(summary)
+            # Track max counter from episode ids like "ep_L1_42"
+            if summary.episode_id.startswith("ep_L"):
+                try:
+                    parts = summary.episode_id.split("_")
+                    counter = int(parts[-1])
+                    if counter > max_counter:
+                        max_counter = counter
+                except (ValueError, IndexError):
+                    pass
+
+        if max_counter > self.nsb._episode_counter:
+            self.nsb._episode_counter = max_counter
+
+        if episodes:
+            total = sum(len(getattr(self.nsb, attr, [])) for attr in ("_level1", "_level2", "_level3"))
+            logger.info(
+                "Loaded %d narrative episodes from DB (%d restored into NSB buffers)",
+                len(episodes), total,
+            )

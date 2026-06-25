@@ -105,7 +105,7 @@ class ScenarioGenerator:
 
         return GenerateResponse(
             session_id=session_id,
-            state=next_state,
+            state=self.state_manager.sanitize_state(next_state),
             output=output,
             retrieved_chunks=[
                 RetrievedChunk(
@@ -165,7 +165,7 @@ class ScenarioGenerator:
         await self._advance_campaign(campaign_manager)
 
         return GenerateResponse(
-            session_id=session_id, state=state, output=output,
+            session_id=session_id, state=self.state_manager.sanitize_state(state), output=output,
             retrieved_chunks=[], model_output_id=output_id,
             used_model=model, source="scripted",
         )
@@ -196,7 +196,7 @@ class ScenarioGenerator:
 
         # Inject narrative memory (NSB summaries + PCB persona + SCORE states)
         memory_ctrl = self._get_memory_controller(session_id, state)
-        narrative_memory = memory_ctrl.assemble_context(
+        narrative_memory = await memory_ctrl.assemble_context(
             state, int(state.get("turn", 0)), request.player_action
         )
         if narrative_memory:

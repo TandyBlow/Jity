@@ -20,7 +20,10 @@ import json
 import logging
 from typing import Any
 
+import numpy as np
+
 from app.schemas.agent_io import EpisodeSummary
+from app.services.embedding_client import EmbeddingClient
 from app.services.llm_client import LLMClient
 
 logger = logging.getLogger(__name__)
@@ -79,17 +82,22 @@ _LEVEL3_PROMPT = """你是TRPG叙事摘要系统。将以下{theta3}个二级摘
 class NarrativeSummarizationBranch:
     """Hierarchical summarization for long-term narrative memory."""
 
+    # Level weighting: higher levels get a retrieval boost
+    _LEVEL_WEIGHTS = {1: 1.0, 2: 1.15, 3: 1.3}
+
     def __init__(
         self,
         llm_client: LLMClient,
         theta1: int = THETA_1,
         theta2: int = THETA_2,
         theta3: int = THETA_3,
+        embedding_client: EmbeddingClient | None = None,
     ) -> None:
         self._llm = llm_client
         self.theta1 = theta1
         self.theta2 = theta2
         self.theta3 = theta3
+        self._embedding = embedding_client
 
         # Turn-level buffer (raw dialogue text)
         self._turn_buffer: list[str] = []
@@ -100,6 +108,9 @@ class NarrativeSummarizationBranch:
 
         # Monotonic counters
         self._episode_counter: int = 0
+
+        # Cached embeddings: list of (summary, embedding_vector)
+        self._embedding_cache: list[tuple[EpisodeSummary, np.ndarray]] = []
 
     # ── Public API ────────────────────────────────────────────────
 
@@ -189,30 +200,84 @@ class NarrativeSummarizationBranch:
         """Store a level-3 summary."""
         self._level3.append(summary)
 
-    def get_retrieval_context(self, query: str, top_k: int = 5) -> list[EpisodeSummary]:
-        """Return the top-k most relevant summaries across all levels for context injection.
+    async def cache_summary_embedding(self, summary: EpisodeSummary) -> None:
+        """Compute and cache the embedding for a newly accepted summary.
 
-        Simple keyword + recency heuristic. Semantic retrieval via FAISS
-        is handled externally by MemoryController combining NSB with the
-        existing RAGRetriever.
+        Called from MemoryController.maintain() after accept_level*().
+        No-op if no embedding client is available.
+        """
+        if self._embedding is None:
+            return
+        try:
+            vec = await self._embedding.embed([summary.summary])
+            self._embedding_cache.append((summary, vec[0]))
+        except Exception:
+            logger.debug("Failed to cache embedding for %s", summary.episode_id, exc_info=True)
+
+    def invalidate_embedding_cache(self) -> None:
+        """Clear cached embeddings (called after load_state restores summaries)."""
+        self._embedding_cache.clear()
+
+    async def get_retrieval_context(self, query: str, top_k: int = 5) -> list[EpisodeSummary]:
+        """Return the top-k most relevant summaries via semantic + keyword hybrid retrieval.
+
+        Retrieval formula:
+            score = 0.7 × cos_sim(query_emb, summary_emb) + 0.3 × keyword_boost × level_weight
+
+        Falls back to keyword-only scoring when no embedding client is available
+        or when a summary has no cached embedding.
         """
         all_summaries = self._level1 + self._level2 + self._level3
-        # Score by recency (most recent first) combined with tag/entity overlap
-        scored: list[tuple[EpisodeSummary, float]] = []
+        if not all_summaries:
+            return []
+
+        # ── Keyword boost per summary (same as before, normalized to [0, 1]) ──
         query_lower = query.lower()
+        keyword_scores: list[float] = []
         for s in all_summaries:
-            score = 0.0
-            # Tag overlap
+            kw = 0.0
             for tag in s.tags:
                 if tag.lower() in query_lower:
-                    score += 2.0
-            # Entity overlap
+                    kw += 2.0
             for ent in s.entities_involved:
                 if ent.lower() in query_lower:
-                    score += 3.0
-            # Recency bonus (more recent = higher score)
-            score += s.importance
-            scored.append((s, score))
+                    kw += 3.0
+            kw += s.importance
+            # Normalize: cap at 10 for reasonable boost range
+            keyword_scores.append(min(kw / 10.0, 1.0))
+
+        # ── Semantic similarity via embeddings ──
+        sim_scores: list[float]
+        if self._embedding is not None and self._embedding_cache:
+            try:
+                query_vec = await self._embedding.embed([query])
+                query_vec = query_vec / (np.linalg.norm(query_vec, axis=1, keepdims=True) + 1e-9)
+                sim_scores = []
+                for s, cached_vec in self._embedding_cache:
+                    idx = all_summaries.index(s) if s in all_summaries else -1
+                    if idx < 0:
+                        sim_scores.append(0.0)
+                        continue
+                    # Cosine similarity (both already normalized)
+                    sim = float(np.dot(query_vec[0], cached_vec))
+                    sim_scores.append(sim)
+                # Pad for summaries without cached embeddings
+                while len(sim_scores) < len(all_summaries):
+                    sim_scores.append(0.0)
+            except Exception:
+                logger.debug("Semantic retrieval failed, falling back to keyword", exc_info=True)
+                sim_scores = [0.0] * len(all_summaries)
+        else:
+            sim_scores = [0.0] * len(all_summaries)
+
+        # ── Combine scores ──
+        alpha = 0.7 if self._embedding is not None else 0.0  # semantic weight
+        beta = 0.3  # keyword weight
+        scored: list[tuple[EpisodeSummary, float]] = []
+        for i, s in enumerate(all_summaries):
+            level_weight = self._LEVEL_WEIGHTS.get(s.level, 1.0)
+            combined = (alpha * sim_scores[i] + beta * keyword_scores[i]) * level_weight
+            scored.append((s, combined))
 
         scored.sort(key=lambda x: x[1], reverse=True)
         return [s for s, _ in scored[:top_k]]

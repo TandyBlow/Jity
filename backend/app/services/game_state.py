@@ -387,6 +387,15 @@ class GameStateManager:
             return text
         return f"{text[: max_chars - 1]}…"
 
+    _INTERNAL_STATE_KEYS = {"_memory_controller"}
+
+    @staticmethod
+    def sanitize_state(state: dict[str, Any]) -> dict[str, Any]:
+        """Remove internal-only keys (e.g. _memory_controller) before returning state to the frontend."""
+        for key in GameStateManager._INTERNAL_STATE_KEYS:
+            state.pop(key, None)
+        return state
+
     @staticmethod
     def enforce_state_caps(state: dict[str, Any]) -> dict[str, Any]:
         """Apply defensive caps to prevent 270-turn state bloat.

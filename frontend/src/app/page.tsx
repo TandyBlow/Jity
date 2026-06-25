@@ -229,7 +229,7 @@ export default function Home() {
       return;
     }
     const updated = await listSlots(currentSessionId);
-    const nextSlots = (updated.slots ?? []).filter((slot) => slot.campaign_id === currentSessionId);
+    const nextSlots = updated.slots ?? [];
     setSlots(nextSlots);
     const active = (preferredSlotName
       ? nextSlots.find((slot) => slot.slot_name === preferredSlotName)

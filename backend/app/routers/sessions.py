@@ -69,6 +69,7 @@ def create_session(request: CreateSessionRequest) -> SessionResponse:
         except (FileNotFoundError, ValueError) as exc:
             raise HTTPException(status_code=400, detail=str(exc)) from exc
 
+    state_manager.sanitize_state(payload["state"])
     return SessionResponse(**payload)
 
 
@@ -77,6 +78,7 @@ def get_session(session_id: str) -> SessionResponse:
     payload = state_manager.get_session_payload(session_id)
     if not payload:
         raise HTTPException(status_code=404, detail="Session not found")
+    state_manager.sanitize_state(payload["state"])
     return SessionResponse(**payload)
 
 
