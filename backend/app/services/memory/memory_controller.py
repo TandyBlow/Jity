@@ -55,38 +55,32 @@ class MemoryController:
         self._narrative_pool: list[MemoryRecord] = []
         # L2 world memory is read from DB on demand (knowledge_chunks)
 
+        # NSB failure tracking (for retry logic)
+        self._nsb_consecutive_failures = 0
+
     # ── Per-turn: build context for prompt injection ───────────────
 
     def assemble_context(
         self,
         state: dict[str, Any],
         turn: int,
-        campaign_context: str,
+        player_action: str = "",
     ) -> str:
-        """Assemble the three-layer context string for prompt injection.
+        """Assemble L1+L0 memory context for prompt injection.
 
-        This is called by ScenarioGenerator BEFORE the LLM call.
-        It does NOT make any LLM calls itself — it reads cached data.
+        Called by ScenarioGenerator BEFORE the LLM call.
+        Does NOT make any LLM calls — reads cached NSB/PCB/SCORE data.
 
-        Layers:
-          L2: Rules + World Book (keyword triggered from player action + state)
-          L1: Relevant episode summaries (keyword + entity overlap)
-          L0: Current scene state (always included)
-          Campaign context (anchor progress + health guidance)
-          Persona context from PCB
+        Returns the narrative memory section (NSB summaries + persona +
+        SCORE item states). Campaign context (L2) is injected separately
+        via PromptBuilder to avoid duplication.
         """
         parts: list[str] = []
 
-        # L2 — World Memory (pass through existing campaign_context
-        # which already contains RAG chunks from CampaignContextBuilder)
-        if campaign_context:
-            parts.append(campaign_context)
-
         # L1 — Narrative Memory (relevant summaries)
         recent_events = state.get("recent_events", [])
-        action_text = state.get("_last_player_action", "")
         npc_names = [n.get("name", "") for n in state.get("npcs", [])]
-        query = f"{action_text} {' '.join(npc_names)} {' '.join(recent_events[-3:])}"
+        query = f"{player_action} {' '.join(npc_names)} {' '.join(recent_events[-3:])}"
 
         relevant_summaries = self.nsb.get_retrieval_context(query, top_k=5)
         if relevant_summaries:
@@ -145,45 +139,68 @@ class MemoryController:
         """Run periodic memory maintenance: NSB summaries, PCB extraction, forgetting.
 
         Called via asyncio.create_task — does not block the player-facing turn.
+        Failures in one subsystem do not cascade to others.
         """
-        # NSB level-1 summarization
-        if self.nsb.should_summarize_level1():
-            turn_start = max(0, turn - self.nsb.theta1)
-            summary = await self.nsb.summarize_level1(turn_start, turn)
-            if summary:
-                self.nsb.accept_level1(summary)
-                self._persist_episode(summary)
-                logger.info("NSB level-1 summary generated: %s", summary.episode_id)
+        # ── NSB summarization ────────────────────────────────────
+        try:
+            if self.nsb.should_summarize_level1():
+                turn_start = max(0, turn - self.nsb.theta1)
+                summary = await self.nsb.summarize_level1(turn_start, turn)
+                if summary:
+                    self.nsb.accept_level1(summary)
+                    self._persist_episode(summary)
+                    self._nsb_consecutive_failures = 0
+                    logger.info("NSB level-1 summary generated: %s", summary.episode_id)
 
-                # Check if level-2 should fire
-                if self.nsb.should_summarize_level2():
-                    l2_start = max(0, turn - self.nsb.theta1 * self.nsb.theta2)
-                    l2 = await self.nsb.summarize_level2(l2_start, turn)
-                    if l2:
-                        self.nsb.accept_level2(l2)
-                        self._persist_episode(l2)
+                    # Check if level-2 should fire
+                    if self.nsb.should_summarize_level2():
+                        l2_start = max(0, turn - self.nsb.theta1 * self.nsb.theta2)
+                        l2 = await self.nsb.summarize_level2(l2_start, turn)
+                        if l2:
+                            self.nsb.accept_level2(l2)
+                            self._persist_episode(l2)
 
-                        if self.nsb.should_summarize_level3():
-                            l3_start = max(0, turn - self.nsb.theta1 * self.nsb.theta2 * self.nsb.theta3)
-                            l3 = await self.nsb.summarize_level3(l3_start, turn)
-                            if l3:
-                                self.nsb.accept_level3(l3)
-                                self._persist_episode(l3)
+                            if self.nsb.should_summarize_level3():
+                                l3_start = max(0, turn - self.nsb.theta1 * self.nsb.theta2 * self.nsb.theta3)
+                                l3 = await self.nsb.summarize_level3(l3_start, turn)
+                                if l3:
+                                    self.nsb.accept_level3(l3)
+                                    self._persist_episode(l3)
+                else:
+                    self._nsb_consecutive_failures += 1
+                    if self._nsb_consecutive_failures >= 3:
+                        logger.warning(
+                            "NSB summarization failed %d consecutive times — "
+                            "check LLM API availability",
+                            self._nsb_consecutive_failures,
+                        )
+        except Exception:
+            self._nsb_consecutive_failures += 1
+            logger.warning(
+                "NSB maintenance error (failures=%d)", self._nsb_consecutive_failures,
+                exc_info=True,
+            )
 
-        # PCB persona extraction
-        if self.pcb.should_extract():
-            dialogues = self._get_recent_dialogues(session_id)
-            if dialogues:
-                snapshot = await self.pcb.extract_snapshot(dialogues, turn)
-                if snapshot:
-                    if self._embedding is not None:
-                        await self.pcb.merge_snapshot_with_embedding(snapshot)
-                    else:
-                        self.pcb.merge_snapshot(snapshot)
+        # ── PCB persona extraction ───────────────────────────────
+        try:
+            if self.pcb.should_extract():
+                dialogues = self._get_recent_dialogues(session_id)
+                if dialogues:
+                    snapshot = await self.pcb.extract_snapshot(dialogues, turn)
+                    if snapshot:
+                        if self._embedding is not None:
+                            await self.pcb.merge_snapshot_with_embedding(snapshot)
+                        else:
+                            self.pcb.merge_snapshot(snapshot)
+        except Exception:
+            logger.warning("PCB persona extraction failed", exc_info=True)
 
-        # MOOM forgetting on narrative pool
-        if self._narrative_pool:
-            self._narrative_pool = forget_step(self._narrative_pool, turn // 2)  # rounds ≈ half of turns
+        # ── MOOM forgetting on narrative pool ────────────────────
+        try:
+            if self._narrative_pool:
+                self._narrative_pool = forget_step(self._narrative_pool, turn // 2)
+        except Exception:
+            logger.warning("MOOM forgetting step failed", exc_info=True)
 
     # ── Persistence ───────────────────────────────────────────────
 

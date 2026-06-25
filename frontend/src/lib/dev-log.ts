@@ -12,6 +12,38 @@ export type DevLogEntry = {
 
 export const devLogEntries: DevLogEntry[] = [
   {
+    id: "2026-06-26-memory-system-integration-fix",
+    date: "2026-06-26",
+    title: "记忆系统集成修复 — assemble_context 接通、状态持久化与错误处理",
+    summary: "修复 Nyarlathotep 三层记忆架构的三个致命/高风险缺陷：P0 — assemble_context() 从未被调用导致 NSB/PCB/SCORE 产出全部死代码；P1 — MemoryController 状态不持久化导致服务重启丢失所有记忆；P4 — fire-and-forget 维护任务无错误处理导致摘要失败时静默丢失缓冲区数据。",
+    developer: "zjr",
+    areas: ["backend", "memory", "context", "reliability"],
+    changes: [
+      "P0 修复：在 ScenarioGenerator._build_prompt() 中调用 MemoryController.assemble_context()，将 NSB 分层摘要、PCB 角色档案、SCORE 物品状态追踪注入为新的 'narrative_memory' prompt section，结束三层记忆产出全部死代码的状态。",
+      "assemble_context() 移除 campaign_context 重复输出，改为接受显式 player_action 参数，避免与 PromptBuilder 中的 campaign_context 重复拼接。",
+      "context_strategy.py 的 TRUNCATION_PRIORITY 新增 'narrative_memory'，位于 health_guidance 和 campaign_context 之间，防止记忆内容被过早截断。",
+      "P1 修复：每回合 save_state() 前将 MemoryController.export_state() 序列化写入 session state 的 _memory_controller 字段，实现跨服务重启的记忆持久化。",
+      "ScenarioGenerator._get_memory_controller() 新增 state 参数，创建/恢复时自动调用 load_state() 还原 NSB 缓冲区、PCB 档案、SCORE 追踪和 MOOM narrative pool。",
+      "P4 修复：NSB 三个 summarize_level() 方法改为 LLM 调用成功后才消费缓冲区（此前在 LLM 调用前就 clear()，失败后数据永久丢失）。",
+      "nsb._generate_summary() 失败时返回 None 而非返回假的 fallback EpisodeSummary，由上层 maintain() 判断是否重试。",
+      "MemoryController.maintain() 中 NSB/PCB/MOOM 三个子系统各自 try/except 隔离，NSB 连续 3 次失败记录 WARNING 日志。",
+      "新增 _nsb_consecutive_failures 计数器，成功时自动清零，方便监控 API 可用性。",
+    ],
+    relatedFiles: [
+      "backend/app/services/scenario_generator.py",
+      "backend/app/services/memory/memory_controller.py",
+      "backend/app/services/memory/nsb.py",
+      "backend/app/services/context_strategy.py",
+      "frontend/src/lib/dev-log.ts",
+    ],
+    nextSteps: [
+      "用 auto_play.py 跑 20+ 回合验证 NSB 摘要是否出现在 LLM prompt 中（P0 验证）。",
+      "运行两轮 generate → 重启服务 → 再运行，检查 NSB buffer/PCB 档案是否恢复（P1 验证）。",
+      "评估 P0/P1/P4 修复效果后，按优先级推进 Phase 2（P2 语义检索升级、P3 动态 token 预算）和 Phase 3（P5 MOOM 参数自适应、P6 NPC 角色档案、P7 跨 Session 记忆共享）。",
+      "当前 memory 测试 65 个全部通过，上下文策略测试 9 个全部通过，无回归。",
+    ],
+  },
+  {
     id: "2026-06-25-timeline-session-restore-and-presentation-outputs",
     date: "2026-06-25",
     title: "Timeline 返回会话恢复与汇报材料归档",

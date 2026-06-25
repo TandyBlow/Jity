@@ -89,6 +89,10 @@ class ScenarioGenerator:
             output, next_state, state, session_id, session, model, campaign_manager
         )
 
+        # Persist memory controller state into session state
+        if session_id in self._memory_controllers:
+            next_state["_memory_controller"] = self._memory_controllers[session_id].export_state()
+
         self.db.add_message(session_id, "user", request.player_action, _csi)
         self.db.add_message(session_id, "assistant", output.model_dump_json(), _csi)
         self.state_manager.save_state(session_id, session["game_name"], model, next_state)
@@ -189,6 +193,15 @@ class ScenarioGenerator:
             recent_messages=self.db.get_recent_messages(session_id),
         )
         prompt_sections, meta = self.prompt_builder.build_sections(prompt_input)
+
+        # Inject narrative memory (NSB summaries + PCB persona + SCORE states)
+        memory_ctrl = self._get_memory_controller(session_id, state)
+        narrative_memory = memory_ctrl.assemble_context(
+            state, int(state.get("turn", 0)), request.player_action
+        )
+        if narrative_memory:
+            prompt_sections["narrative_memory"] = narrative_memory
+
         prompt = "\n\n".join(prompt_sections.values())
         token_count = 0
 
@@ -293,7 +306,7 @@ class ScenarioGenerator:
             raise ScenarioGenerationError(f"{exc} model_output_id={output_id}", output_id) from exc
 
         # Fire-and-forget: memory maintenance (persistent per session)
-        memory_ctrl = self._get_memory_controller(session_id)
+        memory_ctrl = self._get_memory_controller(session_id, state)
         memory_ctrl.on_turn_generated(request.player_action, output.narration, state, turn)
         asyncio.create_task(memory_ctrl.maintain(session_id, turn))
 
@@ -522,12 +535,15 @@ class ScenarioGenerator:
         except Exception:
             return "锚点信息不可用"
 
-    def _get_memory_controller(self, session_id: str) -> MemoryController:
+    def _get_memory_controller(self, session_id: str, state: dict | None = None) -> MemoryController:
         """Get or create a persistent MemoryController for this session.
 
         MemoryControllers persist across turns within a session,
         maintaining NSB/PCB/ScoreTracker state. Eviction based on
         simple dict size cap (oldest entries removed).
+
+        When state is provided and contains a saved memory snapshot,
+        the controller is restored from that snapshot (survives restarts).
         """
         if session_id in self._memory_controllers:
             return self._memory_controllers[session_id]
@@ -551,6 +567,18 @@ class ScenarioGenerator:
             session_id=session_id,
             embedding_client=embedding,
         )
+
+        # Restore from session state if available (survives server restart)
+        if state and "_memory_controller" in state:
+            try:
+                mc.load_state(state["_memory_controller"])
+                logger.info("Restored memory controller state for session %s", session_id)
+            except Exception:
+                logger.warning(
+                    "Failed to restore memory controller state for session %s",
+                    session_id, exc_info=True,
+                )
+
         self._memory_controllers[session_id] = mc
         return mc
 

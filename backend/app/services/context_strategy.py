@@ -20,6 +20,7 @@ logger = logging.getLogger(__name__)
 TRUNCATION_PRIORITY = [
     "rag_chunks",
     "health_guidance",
+    "narrative_memory",
     "campaign_context",
     "recap",
     "messages",

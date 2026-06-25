@@ -117,46 +117,65 @@ class NarrativeSummarizationBranch:
         return len(self._level2) >= self.theta3
 
     async def summarize_level1(self, turn_start: int, turn_end: int) -> EpisodeSummary | None:
-        """Produce a first-level summary from buffered turns. Consumes the buffer."""
+        """Produce a first-level summary from buffered turns. Consumes the buffer only on success."""
         if not self._turn_buffer:
             return None
 
         dialogue = "\n\n".join(self._turn_buffer)
-        self._turn_buffer.clear()
-
         prompt = _LEVEL1_PROMPT.format(theta1=self.theta1, dialogue=dialogue)
-        return await self._generate_summary(prompt, level=1, turn_start=turn_start, turn_end=turn_end)
+        try:
+            result = await self._generate_summary(prompt, level=1, turn_start=turn_start, turn_end=turn_end)
+        except Exception:
+            logger.warning("NSB level-1 LLM call failed, buffer retained for retry", exc_info=True)
+            return None
+        if result is None:
+            return None
+        self._turn_buffer.clear()
+        return result
 
     async def summarize_level2(self, turn_start: int, turn_end: int) -> EpisodeSummary | None:
-        """Produce a second-level summary from accumulated level-1 summaries."""
+        """Produce a second-level summary from accumulated level-1 summaries. Consumes only on success."""
         if not self._level1:
             return None
 
-        # Take theta2 summaries from the buffer
         batch = self._level1[:self.theta2]
-        self._level1 = self._level1[self.theta2:]
 
         summaries_text = "\n\n---\n\n".join(
             f"[摘要{i+1}]: {s.summary}" for i, s in enumerate(batch)
         )
         schema = '{"summary": "...", "tags": [...], "entities_involved": [...], "causal_links": [...], "state_changes": {...}, "importance": 0.7}'
         prompt = _LEVEL2_PROMPT.format(theta2=self.theta2, schema=schema, summaries=summaries_text)
-        return await self._generate_summary(prompt, level=2, turn_start=turn_start, turn_end=turn_end)
+        try:
+            result = await self._generate_summary(prompt, level=2, turn_start=turn_start, turn_end=turn_end)
+        except Exception:
+            logger.warning("NSB level-2 LLM call failed, buffer retained for retry", exc_info=True)
+            return None
+        if result is None:
+            return None
+        self._level1 = self._level1[self.theta2:]
+        return result
 
     async def summarize_level3(self, turn_start: int, turn_end: int) -> EpisodeSummary | None:
-        """Produce a third-level summary from accumulated level-2 summaries."""
+        """Produce a third-level summary from accumulated level-2 summaries. Consumes only on success."""
         if not self._level2:
             return None
 
         batch = self._level2[:self.theta3]
-        self._level2 = self._level2[self.theta3:]
 
         summaries_text = "\n\n---\n\n".join(
             f"[摘要{i+1}]: {s.summary}" for i, s in enumerate(batch)
         )
         schema = '{"summary": "...", "tags": [...], "entities_involved": [...], "causal_links": [...], "state_changes": {...}, "importance": 0.7}'
         prompt = _LEVEL3_PROMPT.format(theta3=self.theta3, schema=schema, summaries=summaries_text)
-        return await self._generate_summary(prompt, level=3, turn_start=turn_start, turn_end=turn_end)
+        try:
+            result = await self._generate_summary(prompt, level=3, turn_start=turn_start, turn_end=turn_end)
+        except Exception:
+            logger.warning("NSB level-3 LLM call failed, buffer retained for retry", exc_info=True)
+            return None
+        if result is None:
+            return None
+        self._level2 = self._level2[self.theta3:]
+        return result
 
     def accept_level1(self, summary: EpisodeSummary) -> None:
         """Store a level-1 summary (called after successful LLM generation)."""
@@ -220,8 +239,8 @@ class NarrativeSummarizationBranch:
 
     async def _generate_summary(
         self, prompt: str, level: int, turn_start: int, turn_end: int
-    ) -> EpisodeSummary:
-        """Call LLM and parse into EpisodeSummary."""
+    ) -> EpisodeSummary | None:
+        """Call LLM and parse into EpisodeSummary. Returns None on failure."""
         self._episode_counter += 1
         episode_id = f"ep_L{level}_{self._episode_counter}"
 
@@ -233,15 +252,8 @@ class NarrativeSummarizationBranch:
                 temperature=0.3,
             )
         except Exception:
-            logger.warning("NSB level-%d summarization failed", level, exc_info=True)
-            # Fallback: simple concatenation
-            return EpisodeSummary(
-                episode_id=episode_id,
-                turn_start=turn_start,
-                turn_end=turn_end,
-                summary="[摘要生成失败，原始对话已保留]",
-                level=level,
-            )
+            logger.warning("NSB level-%d summarization LLM call failed", level, exc_info=True)
+            return None
 
         return EpisodeSummary(
             episode_id=episode_id,
