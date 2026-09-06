@@ -1,0 +1,29 @@
+%%{init: {'theme': 'neutral', 'themeVariables': { 'fontSize': '15px'}}}%%
+sequenceDiagram
+    actor Player as 玩家
+    participant SG as ScenarioGenerator
+    participant Exam as Examiner T=0.1
+    participant Dir as Director T=0.3
+    participant Narr as Narrator T=0.35
+    participant GS as GameStateManager
+
+    Player->>SG: POST /sessions/{id}/generate
+
+    SG->>Exam: examine(action, state)
+    Exam-->>SG: verdict + triggered_rules
+
+    alt verdict == "blocked"
+        SG-->>Player: 叙事拒绝（短路返回）
+    else permissible / conditional
+        SG->>Dir: direct(ruling, L1_memory, anchors, score_items)
+        Dir-->>SG: narrative_direction + redirection_strategy
+
+        SG->>Narr: generate(prompt + director指令)
+        Narr-->>SG: StoryOutput
+
+        SG->>GS: apply_output(memory_updates)
+        GS-->>SG: updated_state
+
+        SG->>SG: 持久化 + 异步记忆维护
+        SG-->>Player: GenerateResponse
+    end
