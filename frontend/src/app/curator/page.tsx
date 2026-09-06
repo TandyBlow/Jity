@@ -10,8 +10,8 @@ import { useCuratorEditor } from "@/app/curator/useCuratorEditor";
 export default function CuratorPage() {
   const editor = useCuratorEditor();
   const {
-    campaigns, campaign, filename, setFilename, saving, status,
-    handleLoad, handleSave, handleDownload, updateField,
+    campaigns, filename, setFilename, saving, status,
+    handleLoad, handleSave, handleDownload,
   } = editor;
 
   return (

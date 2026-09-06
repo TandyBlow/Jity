@@ -11,7 +11,7 @@ import {
   SLOT_DEFAULT,
   initialOutput,
 } from "@/lib/game/initialOutput";
-import type { GenerateResponse, StoryOutput } from "@/types";
+import type { GenerateResponse } from "@/types";
 import type { GameSessionCore } from "@/components/game/useGameSession";
 
 export function useGameActions(core: GameSessionCore) {
@@ -21,12 +21,13 @@ export function useGameActions(core: GameSessionCore) {
     selectedSlot, setSelectedSlot, setSelectedSlotId,
     selectedCampaign, setSelectedCampaign,
     refreshSlots, restoreLastOutput,
+    setIsLoading, setPendingGenerate,
   } = core;
 
   const handleGenerate = useCallback(async (nextAction = action, overrideSessionId?: string) => {
     const sid = overrideSessionId ?? sessionId;
     if (!sid || !nextAction.trim()) return;
-    core.setIsLoading(true);
+    setIsLoading(true);
     setError("");
     try {
       const response: GenerateResponse = await generateScene({
@@ -46,12 +47,12 @@ export function useGameActions(core: GameSessionCore) {
     } catch (err) {
       setError(err instanceof Error ? err.message : "生成失败");
     } finally {
-      core.setIsLoading(false);
+      setIsLoading(false);
     }
-  }, [sessionId, action, model, selectedSlot]);
+  }, [sessionId, action, model, selectedSlot, setIsLoading, setError, setOutput, setOutputSource, setState, setChunks, setModel, setAction]);
 
   const handleNewSession = useCallback(async () => {
-    core.setIsLoading(true);
+    setIsLoading(true);
     setError("");
     try {
       const campaignOpts = selectedCampaign
@@ -68,14 +69,14 @@ export function useGameActions(core: GameSessionCore) {
       setSelectedSlotId("");
       await refreshSlots(session.session_id, SLOT_DEFAULT);
       if (campaignOpts) {
-        core.setPendingGenerate(ENTRY_ACTION);
+        setPendingGenerate(ENTRY_ACTION);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "创建会话失败");
     } finally {
-      core.setIsLoading(false);
+      setIsLoading(false);
     }
-  }, [model, selectedCampaign]);
+  }, [model, selectedCampaign, setIsLoading, setError, setSessionId, setState, setOutput, setOutputSource, setChunks, setAction, setSelectedSlot, setSelectedSlotId, refreshSlots, setPendingGenerate]);
 
   const handleCampaignChange = useCallback(async (value: string) => {
     setSelectedCampaign(value);
@@ -94,11 +95,11 @@ export function useGameActions(core: GameSessionCore) {
       setSelectedSlot(SLOT_DEFAULT);
       setSelectedSlotId("");
       refreshSlots(session.session_id, SLOT_DEFAULT).catch((err) => console.error("refreshSlots failed:", err));
-      core.setPendingGenerate(ENTRY_ACTION);
+      setPendingGenerate(ENTRY_ACTION);
     } catch (err: Error | unknown) {
       setError(err instanceof Error ? err.message : String(err));
     }
-  }, [model]);
+  }, [model, setSelectedCampaign, setError, setSessionId, setState, setOutput, setOutputSource, setChunks, setAction, setSelectedSlot, setSelectedSlotId, refreshSlots, setPendingGenerate]);
 
   const handleSlotChange = useCallback(async (slotId: number) => {
     if (!slotId) return;
@@ -117,7 +118,7 @@ export function useGameActions(core: GameSessionCore) {
     } catch (err) {
       setError(err instanceof Error ? err.message : "加载存档失败");
     }
-  }, []);
+  }, [setError, setSelectedSlotId, setSelectedSlot, setSessionId, setState, setModel, setChunks, setSelectedCampaign, restoreLastOutput, refreshSlots]);
 
   const handleCreateSlot = useCallback(async (name: string) => {
     if (!name || !sessionId) return;
@@ -127,7 +128,7 @@ export function useGameActions(core: GameSessionCore) {
     } catch (err: unknown) {
       alert(err instanceof Error ? err.message : String(err));
     }
-  }, [sessionId, selectedSlot]);
+  }, [sessionId, selectedSlot, refreshSlots]);
 
   return {
     handleGenerate, handleNewSession, handleCampaignChange, handleSlotChange, handleCreateSlot,

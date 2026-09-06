@@ -71,7 +71,6 @@ export function SidePanel({ session }: { session: GameSession }) {
       </label>
       {sessionId && (
         <SlotControls
-          sessionId={sessionId}
           slots={slots}
           selectedSlotId={selectedSlotId}
           onSlotChange={handleSlotChange}
@@ -96,13 +95,11 @@ export function SidePanel({ session }: { session: GameSession }) {
 }
 
 function SlotControls({
-  sessionId,
   slots,
   selectedSlotId,
   onSlotChange,
   onCreateSlot,
 }: {
-  sessionId: string;
   slots: GameSession["slots"];
   selectedSlotId: GameSession["selectedSlotId"];
   onSlotChange: (slotId: number) => void;

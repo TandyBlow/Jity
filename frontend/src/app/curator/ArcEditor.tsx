@@ -51,7 +51,7 @@ function SessionBlock({
   si: number;
   editor: CuratorEditor;
 }) {
-  const { updateSession, addAnchor, updateAnchor } = editor;
+  const { updateSession, addAnchor } = editor;
 
   return (
     <details open style={{ marginBottom: 8, marginLeft: 16 }}>
