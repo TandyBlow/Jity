@@ -7,8 +7,10 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 
 from app.schemas import StoryOutput
+from app.schemas.agent_io import EpisodeSummary, MemoryRecord
 from app.schemas.game.memory import ItemMemory, MemoryUpdates
 from app.services.memory.memory_controller import MemoryController
+from app.services.memory.nsb import NarrativeSummarizationBranch
 from app.services.scenario_generator.generator import ScenarioGenerator
 from app.services.scenario_generator.prompting import PromptBuildMixin
 
@@ -172,3 +174,89 @@ class TestNarratorStageMemory:
         gen._memory_tasks.add(task)
         gen._log_memory_task_done(task)  # must not raise
         assert task not in gen._memory_tasks
+
+
+class TestMoomPool:
+    def _make_controller(self) -> MemoryController:
+        return MemoryController(llm_client=MagicMock(), db=MagicMock(), session_id="sess-1")
+
+    @pytest.mark.asyncio
+    async def test_accepted_l1_enters_moom_pool(self):
+        mc = self._make_controller()
+        mc.nsb.should_summarize_level1 = MagicMock(return_value=True)
+        mc.nsb.summarize_level1 = AsyncMock(return_value=EpisodeSummary(
+            episode_id="ep_L1_1", turn_start=4, turn_end=10, summary="巷战摘要", level=1,
+        ))
+        mc.nsb.should_summarize_level2 = MagicMock(return_value=False)
+        mc.nsb.should_extract = MagicMock(return_value=False)
+        mc._persist_episode = MagicMock()
+
+        await mc.maintain("sess-1", turn=10)
+
+        assert len(mc._narrative_pool) == 1
+        rec = mc._narrative_pool[0]
+        assert rec.memory_id == "ep_L1_1"
+        assert rec.content == "巷战摘要"
+        assert rec.created_round == 5  # forget_step rounds ≈ turn // 2
+        mc._persist_episode.assert_called_once()
+
+    @pytest.mark.asyncio
+    async def test_pruned_episodes_sync_back_to_nsb(self):
+        mc = self._make_controller()
+        mc.nsb.accept_level1(EpisodeSummary(
+            episode_id="ep_L1_old", turn_start=0, turn_end=5, summary="陈旧摘要", level=1,
+        ))
+        mc._narrative_pool.append(MemoryRecord(
+            memory_id="ep_L1_old", content="陈旧摘要", created_round=0,
+        ))
+        mc.nsb.should_summarize_level1 = MagicMock(return_value=False)
+        mc.nsb.should_extract = MagicMock(return_value=False)
+
+        await mc.maintain("sess-1", turn=8)  # round 4: unreinforced score < threshold
+
+        assert mc._narrative_pool == []
+        assert mc.nsb._level1 == []  # pruned pool record removed from retrieval context
+
+    @pytest.mark.asyncio
+    async def test_promoted_l2_survives_l1_pruning(self):
+        mc = self._make_controller()
+        mc.nsb.accept_level1(EpisodeSummary(
+            episode_id="ep_L1_old", turn_start=0, turn_end=5, summary="陈旧摘要", level=1,
+        ))
+        mc.nsb.accept_level2(EpisodeSummary(
+            episode_id="ep_L2_1", turn_start=0, turn_end=5, summary="晋升的二级摘要", level=2,
+        ))
+        mc._narrative_pool.append(MemoryRecord(
+            memory_id="ep_L1_old", content="陈旧摘要", created_round=0,
+        ))
+        mc.nsb.should_summarize_level1 = MagicMock(return_value=False)
+        mc.nsb.should_extract = MagicMock(return_value=False)
+
+        await mc.maintain("sess-1", turn=8)
+
+        assert mc._narrative_pool == []
+        assert mc.nsb._level1 == []
+        assert [s.episode_id for s in mc.nsb._level2] == ["ep_L2_1"]  # gist survives
+
+    @pytest.mark.asyncio
+    async def test_failed_summary_leaves_pool_clean(self):
+        mc = self._make_controller()
+        mc.nsb.should_summarize_level1 = MagicMock(return_value=True)
+        mc.nsb.summarize_level1 = AsyncMock(return_value=None)
+        mc.nsb.should_summarize_level2 = MagicMock(return_value=False)
+        mc.nsb.should_extract = MagicMock(return_value=False)
+        mc._persist_episode = MagicMock()
+
+        await mc.maintain("sess-1", turn=6)
+
+        assert mc._narrative_pool == []
+        mc._persist_episode.assert_not_called()
+
+    def test_remove_episode_drops_from_l1(self):
+        nsb = NarrativeSummarizationBranch(llm_client=MagicMock())
+        nsb.accept_level1(EpisodeSummary(episode_id="ep_a", turn_start=0, turn_end=5, summary="A"))
+        nsb.accept_level1(EpisodeSummary(episode_id="ep_b", turn_start=6, turn_end=10, summary="B"))
+
+        nsb.remove_episode("ep_a")
+
+        assert [s.episode_id for s in nsb._level1] == ["ep_b"]

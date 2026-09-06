@@ -66,8 +66,8 @@ class SummaryGenerationMixin:
 
     async def _generate_summary(
         self, prompt: str, level: int, turn_start: int, turn_end: int
-    ) -> EpisodeSummary:
-        """Call LLM and parse into EpisodeSummary."""
+    ) -> EpisodeSummary | None:
+        """Call LLM and parse into EpisodeSummary. Returns None on LLM failure."""
         self._episode_counter += 1
         episode_id = f"ep_L{level}_{self._episode_counter}"
 
@@ -80,14 +80,7 @@ class SummaryGenerationMixin:
             )
         except Exception:
             logger.warning("NSB level-%d summarization failed", level, exc_info=True)
-            # Fallback: simple concatenation
-            return EpisodeSummary(
-                episode_id=episode_id,
-                turn_start=turn_start,
-                turn_end=turn_end,
-                summary="[摘要生成失败，原始对话已保留]",
-                level=level,
-            )
+            return None
 
         return EpisodeSummary(
             episode_id=episode_id,

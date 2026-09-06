@@ -24,6 +24,7 @@ class MemoryMaintenanceMixin:
             if summary:
                 self.nsb.accept_level1(summary)
                 self._persist_episode(summary)
+                self._record_episode_memory(summary, turn)
                 logger.info("NSB level-1 summary generated: %s", summary.episode_id)
 
                 # Check if level-2 should fire
@@ -52,9 +53,16 @@ class MemoryMaintenanceMixin:
                     else:
                         self.pcb.merge_snapshot(snapshot)
 
-        # MOOM forgetting on narrative pool
+        # MOOM forgetting on the narrative pool (accepted L1 episodes)
         if self._narrative_pool:
+            before_ids = {r.memory_id for r in self._narrative_pool}
             self._narrative_pool = forget_step(self._narrative_pool, turn // 2)  # rounds ≈ half of turns
+            pruned_ids = before_ids - {r.memory_id for r in self._narrative_pool}
+            for episode_id in pruned_ids:
+                # Sync the pool decision back: forgotten details leave retrieval context.
+                self.nsb.remove_episode(episode_id)
+            if pruned_ids:
+                logger.info("MOOM pruned %d episode(s): %s", len(pruned_ids), sorted(pruned_ids))
 
     # ── Persistence ───────────────────────────────────────────────
 
@@ -70,6 +78,22 @@ class MemoryMaintenanceMixin:
             )
         except Exception:
             logger.debug("Failed to persist episode %s", summary.episode_id, exc_info=True)
+
+    def _record_episode_memory(self, summary: EpisodeSummary, turn: int) -> None:
+        """Enter an accepted L1 episode into the MOOM competition pool.
+
+        memory_id = episode_id so pruned records can be synced back to NSB.
+        Episodes promoted into L2/L3 keep their consolidation even when the
+        pool record later decays — details are forgotten, gists survive.
+        """
+        self._narrative_pool.append(
+            MemoryRecord(
+                memory_id=summary.episode_id,
+                content=summary.summary,
+                created_round=turn // 2,  # forget_step rounds ≈ half of turns
+                memory_type="narrative",
+            )
+        )
 
     def _get_recent_dialogues(self, session_id: str, limit: int = 10) -> str:
         """Fetch recent dialogue from session_messages for PCB extraction."""

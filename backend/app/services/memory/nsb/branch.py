@@ -123,3 +123,7 @@ class NarrativeSummarizationBranch(SummaryGenerationMixin):
     def accept_level3(self, summary: EpisodeSummary) -> None:
         """Store a level-3 summary."""
         self._level3.append(summary)
+
+    def remove_episode(self, episode_id: str) -> None:
+        """Drop a level-1 episode — called when MOOM forgetting prunes it from the pool."""
+        self._level1 = [s for s in self._level1 if s.episode_id != episode_id]
