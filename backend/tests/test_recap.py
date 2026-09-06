@@ -2,7 +2,7 @@
 
 import json
 from pathlib import Path
-from unittest.mock import MagicMock
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
@@ -118,6 +118,15 @@ class TestCampaignManagerRecap:
         mgr.fsm.machine.set_state("active/session_active")
         result = mgr.inject_context({}, 0)
         assert "前情提要" in result
+
+    @pytest.mark.asyncio
+    async def test_generate_recap_awaits_inner(self):
+        """generate_recap must return the awaited recap, not a coroutine."""
+        mgr = CampaignManager(db=MagicMock(), campaigns_dir=Path("/tmp"), scripted_story=MagicMock())
+        mgr._recap = MagicMock()
+        mgr._recap.generate_recap = AsyncMock(return_value="前情提要：测试")
+        result = await mgr.generate_recap("sess-1")
+        assert result == "前情提要：测试"
 
 
 from app.services.campaign_manager import CampaignManager

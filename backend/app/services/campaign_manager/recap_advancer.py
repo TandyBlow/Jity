@@ -7,7 +7,7 @@ class RecapAdvancerFacade:
     # ── Recap ────────────────────────────────────────────────────────
 
     async def generate_recap(self, session_id: str) -> str | None:
-        return self._recap.generate_recap(session_id)
+        return await self._recap.generate_recap(session_id)
 
     def store_recap(self, recap_text: str) -> None:
         if self.progress is None:
