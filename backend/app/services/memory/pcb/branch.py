@@ -93,7 +93,7 @@ class PersonaConstructionBranch(PersonaMergeMixin):
     def get_persona_text(self, top_k: int = 15) -> str:
         """Build a compact text representation of the persona for prompt injection."""
         if not self._sketch.entries:
-            return "角色档案：暂无记录"
+            return ""
         parts: list[str] = ["## 角色档案"]
         count = 0
         for key, values in self._sketch.entries.items():

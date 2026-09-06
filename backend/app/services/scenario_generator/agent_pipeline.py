@@ -120,10 +120,15 @@ class AgentPipelineMixin:
             )
             raise ScenarioGenerationError(f"{exc} model_output_id={output_id}", output_id) from exc
 
-        # Fire-and-forget: memory maintenance (persistent per session)
+        # Persistent per-session memory: feed the turn, then maintain in background
         memory_ctrl = self._get_memory_controller(session_id)
-        memory_ctrl.on_turn_generated(request.player_action, output.narration, state, turn)
-        asyncio.create_task(memory_ctrl.maintain(session_id, turn))
+        memory_ctrl.on_turn_generated(
+            request.player_action, output.narration, turn,
+            memory_updates=output.memory_updates,
+        )
+        task = asyncio.create_task(memory_ctrl.maintain(session_id, turn))
+        self._memory_tasks.add(task)
+        task.add_done_callback(self._log_memory_task_done)
 
         return output, latency_ms, source
 

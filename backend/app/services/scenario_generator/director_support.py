@@ -5,9 +5,14 @@ DirectorAgent, injects the resulting direction into the narrator prompt,
 and owns the per-session MemoryController cache.
 """
 
+import asyncio
+import logging
+
 from app.services.embedding_client import EmbeddingClient
 from app.services.memory.memory_controller import MemoryController
 from app.schemas.agent_io import DirectorInstruction
+
+logger = logging.getLogger(__name__)
 
 
 class DirectorSupportMixin:
@@ -91,6 +96,12 @@ class DirectorSupportMixin:
         )
         self._memory_controllers[session_id] = mc
         return mc
+
+    def _log_memory_task_done(self, task: asyncio.Task) -> None:
+        """Discard a finished maintenance task, logging unexpected failures."""
+        self._memory_tasks.discard(task)
+        if not task.cancelled() and task.exception() is not None:
+            logger.warning("Memory maintenance task failed", exc_info=task.exception())
 
     def _format_score_item_states(self, campaign_manager) -> str:
         """Build SCORE item state summary string for Director.

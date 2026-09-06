@@ -14,6 +14,15 @@ class PromptBuildMixin:
         if campaign_manager is not None and campaign_manager.is_loaded():
             turn = getattr(campaign_manager.progress, "turn_in_session", int(state.get("turn", 0)))
             campaign_context = campaign_manager.inject_context(state, turn)
+            # Memory layers (L1 summaries, persona, SCORE states) ride in the
+            # campaign_context channel so token truncation covers them too.
+            memory_ctrl = self._get_memory_controller(session_id)
+            campaign_context = memory_ctrl.assemble_context(
+                state,
+                int(state.get("turn", 0)),
+                campaign_context=campaign_context,
+                player_action=request.player_action,
+            )
 
         prompt_input = PromptInput(
             player_action=request.player_action,

@@ -1,5 +1,6 @@
 """ScenarioGenerator — orchestrates one generation turn through five hooks."""
 
+import asyncio
 from collections.abc import Callable
 
 from app.database import Database
@@ -50,6 +51,8 @@ class ScenarioGenerator(
         self.default_model = default_model
         # session_id → MemoryController (persistent across turns)
         self._memory_controllers: dict[str, MemoryController] = {}
+        # Strong refs to background maintenance tasks (prevent GC mid-flight)
+        self._memory_tasks: set[asyncio.Task] = set()
 
     # ── Main orchestration ────────────────────────────────────────────
 

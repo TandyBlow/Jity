@@ -36,14 +36,14 @@ python scripts/verify_callmap.py missing docs/runtime_call_map.md
 routers/generate.py:17 ──出错──▶ 503 无Key / 502 LLM失败 / 404 会话不存在
   │
   ▼
-ScenarioGenerator.generate (generator.py:56)
+ScenarioGenerator.generate (generator.py:60)
   │
   ├─1▶ 取会话状态 + 取战役管理器(带TTL缓存)      manager.py:36  campaign_cache.py:105
   │
   ├─2▶ [Hook1] turn==0 且有开场白? ──是──▶ 返回剧本开场(source=scripted)，不调LLM
   │
   ├─3▶ [Hook2] 组装提示词                        prompting.py:7
-  │        RAG检索(向量+关键词) + 战役上下文注入 + 按优先级截断
+  │        RAG检索(向量+关键词) + 战役上下文注入 + 记忆层(L1/persona/SCORE) + 按优先级截断
   │
   ├─4▶ [Hook3] 生成                              agent_pipeline.py:17
   │        有战役: ①Examiner 行动可行? ──blocked──▶ 叙事内拒绝，提前返回
@@ -57,9 +57,9 @@ ScenarioGenerator.generate (generator.py:56)
   │
   ├─6▶ [Hook4] 每5回合LLM抽世界事实; NPC好感写库  post_generation.py:10
   │
-  ├─7▶ 对话×2落库 + 状态存盘                     generator.py:91-93
+  ├─7▶ 对话×2落库 + 状态存盘                     generator.py:94-96
   │
-  ├─8▶ [Hook5] 唯一推进点: 提交锚点→turn+1→满则进下一session   generator.py:124
+  ├─8▶ [Hook5] 唯一推进点: 提交锚点→turn+1→满则进下一session   generator.py:127
   │
   ▼
 GenerateResponse（新状态 + 剧情 + 检索块 + source标记）──▶ 前端
@@ -113,11 +113,11 @@ EDGE: backend/app/routers/generate.py:31 -> evaluation_module.score
 generate.py:56-64：读会话 payload；取 campaign_manager（provider 是注入的
 `get_campaign_manager_for_session`，带 TTL 缓存，未命中则从 campaigns 目录重新 load）。
 
-EDGE: backend/app/services/scenario_generator/generator.py:57 -> self.state_manager.get_session_payload
+EDGE: backend/app/services/scenario_generator/generator.py:60 -> self.state_manager.get_session_payload
 EDGE: backend/app/services/game_state/manager.py:37 -> self.db.get_session
-EDGE: backend/app/services/scenario_generator/generator.py:63 -> self._campaign_manager_for
-EDGE: backend/app/services/scenario_generator/generator.py:155 -> self.campaign_manager_provider
-EDGE: backend/app/services/scenario_generator/generator.py:160 -> campaign_manager.is_loaded
+EDGE: backend/app/services/scenario_generator/generator.py:66 -> self._campaign_manager_for
+EDGE: backend/app/services/scenario_generator/generator.py:158 -> self.campaign_manager_provider
+EDGE: backend/app/services/scenario_generator/generator.py:163 -> campaign_manager.is_loaded
 EDGE: backend/app/dependencies/campaign_cache.py:109 -> db.get_session
 EDGE: backend/app/dependencies/campaign_cache.py:113 -> campaign_manager_cache.get_or_load
 EDGE: backend/app/dependencies/campaign_cache.py:77 -> build_campaign_manager
@@ -129,7 +129,7 @@ EDGE: backend/app/dependencies/campaign_cache.py:78 -> manager.load
 `opening_scene.py`：turn==0 且战役带开场白时，直接返回剧本输出（source="scripted"），
 但落库与推进流程与普通回合一致。
 
-EDGE: backend/app/services/scenario_generator/generator.py:67 -> self._handle_opening_scene
+EDGE: backend/app/services/scenario_generator/generator.py:70 -> self._handle_opening_scene
 EDGE: backend/app/services/scenario_generator/opening_scene.py:11 -> campaign_manager.is_loaded
 EDGE: backend/app/services/scenario_generator/opening_scene.py:14 -> campaign_manager.get_opening_scene
 EDGE: backend/app/services/scenario_generator/opening_scene.py:19 -> StoryOutput
@@ -144,20 +144,22 @@ EDGE: backend/app/services/scenario_generator/opening_scene.py:45 -> GenerateRes
 
 ### Step 3 — Hook 2：组装提示（RAG + 战役上下文 + 截断）
 
-`prompting.py:7-34`。各协作对象实现位置：`retriever.retrieve_async`→`services/retriever.py:55`
+`prompting.py:7-41`。记忆层（L1 摘要/persona/SCORE）由 `MemoryController.assemble_context` 并入 campaign_context 通道（prompting.py:19-24）。各协作对象实现位置：`retriever.retrieve_async`→`services/retriever.py:55`
 （向量检索 :62-64、关键词加成 :45/:67）、`prompt_builder.build_sections`→`prompt_builder/builder.py:15`。
 
-EDGE: backend/app/services/scenario_generator/generator.py:74 -> self._build_prompt
+EDGE: backend/app/services/scenario_generator/generator.py:77 -> self._build_prompt
 EDGE: backend/app/services/scenario_generator/prompting.py:9 -> self._build_query
 EDGE: backend/app/services/scenario_generator/prompting.py:10 -> self.retriever.retrieve_async
 EDGE: backend/app/services/scenario_generator/prompting.py:11 -> self._serialize_retrieved_chunks
 EDGE: backend/app/services/scenario_generator/prompting.py:14 -> campaign_manager.is_loaded
 EDGE: backend/app/services/scenario_generator/prompting.py:16 -> campaign_manager.inject_context
-EDGE: backend/app/services/scenario_generator/prompting.py:18 -> PromptInput
-EDGE: backend/app/services/scenario_generator/prompting.py:25 -> self.db.get_recent_messages
-EDGE: backend/app/services/scenario_generator/prompting.py:27 -> self.prompt_builder.build_sections
-EDGE: backend/app/services/scenario_generator/prompting.py:31 -> campaign_manager.is_loaded
-EDGE: backend/app/services/scenario_generator/prompting.py:32 -> campaign_manager.truncate_prompt_sections
+EDGE: backend/app/services/scenario_generator/prompting.py:19 -> self._get_memory_controller
+EDGE: backend/app/services/scenario_generator/prompting.py:20 -> memory_ctrl.assemble_context
+EDGE: backend/app/services/scenario_generator/prompting.py:27 -> PromptInput
+EDGE: backend/app/services/scenario_generator/prompting.py:34 -> self.db.get_recent_messages
+EDGE: backend/app/services/scenario_generator/prompting.py:36 -> self.prompt_builder.build_sections
+EDGE: backend/app/services/scenario_generator/prompting.py:40 -> campaign_manager.is_loaded
+EDGE: backend/app/services/scenario_generator/prompting.py:41 -> campaign_manager.truncate_prompt_sections
 
 ### Step 4 — Hook 3：生成（三段 Agent 管线或单次调用）
 
@@ -165,7 +167,7 @@ EDGE: backend/app/services/scenario_generator/prompting.py:32 -> campaign_manage
 
 EDGE: backend/app/services/scenario_generator/agent_pipeline.py:27 -> campaign_manager.is_loaded
 EDGE: backend/app/services/scenario_generator/agent_pipeline.py:28 -> self._execute_single_llm
-EDGE: backend/app/services/scenario_generator/agent_pipeline.py:135 -> self.llm_client.generate
+EDGE: backend/app/services/scenario_generator/agent_pipeline.py:140 -> self.llm_client.generate
 
 **分支 B**：有战役 → 三段管线（每段各自调一次 LLM，失败都有兜底）。
 
@@ -183,24 +185,24 @@ Stage 2 Director（锚点评估、偏差检测、重定向策略）：
 EDGE: backend/app/services/scenario_generator/agent_pipeline.py:65 -> self._run_director_stage
 EDGE: backend/app/services/scenario_generator/agent_pipeline.py:79 -> campaign_manager._load_recap_compressed
 EDGE: backend/app/services/scenario_generator/agent_pipeline.py:81 -> self._describe_anchor_candidates
-EDGE: backend/app/services/scenario_generator/director_support.py:48 -> campaign_manager.is_loaded
-EDGE: backend/app/services/scenario_generator/director_support.py:52 -> campaign_manager.evaluate_anchors
+EDGE: backend/app/services/scenario_generator/director_support.py:53 -> campaign_manager.is_loaded
+EDGE: backend/app/services/scenario_generator/director_support.py:57 -> campaign_manager.evaluate_anchors
 EDGE: backend/app/services/scenario_generator/agent_pipeline.py:82 -> campaign_manager.detect_deviation
 EDGE: backend/app/services/scenario_generator/agent_pipeline.py:83 -> self._format_score_item_states
-EDGE: backend/app/services/scenario_generator/director_support.py:103 -> campaign_manager.is_loaded
+EDGE: backend/app/services/scenario_generator/director_support.py:114 -> campaign_manager.is_loaded
 EDGE: backend/app/services/scenario_generator/agent_pipeline.py:86 -> director.direct
 EDGE: backend/app/services/agents/director.py:123 -> self._llm.generate_json
 EDGE: backend/app/services/agents/director.py:129 -> _parse_instruction
 EDGE: backend/app/services/scenario_generator/agent_pipeline.py:68 -> self._inject_direction
 
-Stage 3 Narrator（真正的剧情生成；成功后 fire-and-forget 记忆维护）：
+Stage 3 Narrator（真正的剧情生成；成功后后台记忆维护（强引用防GC + 失败日志））：
 
 EDGE: backend/app/services/scenario_generator/agent_pipeline.py:71 -> self._run_narrator_stage
 EDGE: backend/app/services/scenario_generator/agent_pipeline.py:105 -> self.llm_client.generate
 EDGE: backend/app/services/scenario_generator/agent_pipeline.py:124 -> self._get_memory_controller
 EDGE: backend/app/services/scenario_generator/agent_pipeline.py:125 -> memory_ctrl.on_turn_generated
-EDGE: backend/app/services/scenario_generator/agent_pipeline.py:126 -> asyncio.create_task
-EDGE: backend/app/services/scenario_generator/agent_pipeline.py:126 -> memory_ctrl.maintain
+EDGE: backend/app/services/scenario_generator/agent_pipeline.py:129 -> asyncio.create_task
+EDGE: backend/app/services/scenario_generator/agent_pipeline.py:129 -> memory_ctrl.maintain
 
 LLM 调用与三级修复（`llm_client/client.py:41-121`）：直接解析 → 本地 json_repair →
 temperature=0 让模型自我修复。`_parse_story_output` 实现在 `output_normalizer.py:11`
@@ -220,11 +222,11 @@ EDGE: backend/app/services/llm_client/client.py:112 -> self._parse_story_output
 
 ### Step 5 — 状态推进（纯本地，无 LLM）
 
-`generator.py:84` → `game_state/manager.py:50-94`：sanity/health/turn 更新，物品/NPC/任务/
+`generator.py:87` → `game_state/manager.py:50-94`：sanity/health/turn 更新，物品/NPC/任务/
 世界事实按名字合并（`normalization.py:7` `merge_by_name`），关键事件追加，超限裁剪
 （`enforce_state_caps`，20/15/10/15 上限，`defaults.py` 定义）。
 
-EDGE: backend/app/services/scenario_generator/generator.py:84 -> self.state_manager.apply_output
+EDGE: backend/app/services/scenario_generator/generator.py:87 -> self.state_manager.apply_output
 EDGE: backend/app/services/game_state/manager.py:48 -> self.db.write_session
 EDGE: backend/app/services/game_state/manager.py:51 -> self._ensure_state_shape
 EDGE: backend/app/services/game_state/manager.py:65 -> self._infer_world_facts
@@ -242,7 +244,7 @@ EDGE: backend/app/services/game_state/manager.py:93 -> self.enforce_state_caps
 
 `post_generation.py:10-70`。
 
-EDGE: backend/app/services/scenario_generator/generator.py:87 -> self._apply_post_generation
+EDGE: backend/app/services/scenario_generator/generator.py:90 -> self._apply_post_generation
 EDGE: backend/app/services/scenario_generator/post_generation.py:14 -> campaign_manager.is_loaded
 EDGE: backend/app/services/scenario_generator/post_generation.py:18 -> campaign_manager.extract_facts
 EDGE: backend/app/services/scenario_generator/post_generation.py:23 -> self.state_manager.merge_by_name
@@ -253,32 +255,32 @@ EDGE: backend/app/services/scenario_generator/post_generation.py:61 -> self.db.u
 
 ### Step 7 — 对话落库
 
-EDGE: backend/app/services/scenario_generator/generator.py:91 -> self.db.add_message
-EDGE: backend/app/services/scenario_generator/generator.py:92 -> self.db.add_message
-EDGE: backend/app/services/scenario_generator/generator.py:93 -> self.state_manager.save_state
+EDGE: backend/app/services/scenario_generator/generator.py:94 -> self.db.add_message
+EDGE: backend/app/services/scenario_generator/generator.py:95 -> self.db.add_message
+EDGE: backend/app/services/scenario_generator/generator.py:96 -> self.state_manager.save_state
 
 ### Step 8 — Hook 5：记录与战役推进（唯一的推进点）
 
-`post_generation.py:72-93` → `_advance_campaign`（generator.py:124-132）：提交待定锚点 →
+`post_generation.py:72-93` → `_advance_campaign`（generator.py:127-135）：提交待定锚点 →
 turn+1 → 达到 session 最大回合则进入下一 session。
 
-EDGE: backend/app/services/scenario_generator/generator.py:96 -> self._record_and_finalize
+EDGE: backend/app/services/scenario_generator/generator.py:99 -> self._record_and_finalize
 EDGE: backend/app/services/scenario_generator/post_generation.py:78 -> campaign_manager.is_loaded
 EDGE: backend/app/services/scenario_generator/post_generation.py:79 -> campaign_manager.record_turn
 EDGE: backend/app/services/scenario_generator/post_generation.py:82 -> self.db.add_model_output
 EDGE: backend/app/services/scenario_generator/post_generation.py:91 -> self._advance_campaign
-EDGE: backend/app/services/scenario_generator/generator.py:126 -> campaign_manager.is_loaded
-EDGE: backend/app/services/scenario_generator/generator.py:128 -> campaign_manager.commit_pending_anchors
-EDGE: backend/app/services/scenario_generator/generator.py:129 -> campaign_manager.advance_turn
-EDGE: backend/app/services/scenario_generator/generator.py:130 -> campaign_manager.resolve_max_turns
-EDGE: backend/app/services/scenario_generator/generator.py:132 -> campaign_manager.advance_session
+EDGE: backend/app/services/scenario_generator/generator.py:129 -> campaign_manager.is_loaded
+EDGE: backend/app/services/scenario_generator/generator.py:131 -> campaign_manager.commit_pending_anchors
+EDGE: backend/app/services/scenario_generator/generator.py:132 -> campaign_manager.advance_turn
+EDGE: backend/app/services/scenario_generator/generator.py:133 -> campaign_manager.resolve_max_turns
+EDGE: backend/app/services/scenario_generator/generator.py:135 -> campaign_manager.advance_session
 
 ### Step 9 — 响应
 
-`generator.py:101-120` 返回 `GenerateResponse`（新状态 + 剧情输出 + 检索块截断至 700 字 +
+`generator.py:104-123` 返回 `GenerateResponse`（新状态 + 剧情输出 + 检索块截断至 700 字 +
 source 标记：`llm` / `scripted` / `examiner_blocked`）。
 
-EDGE: backend/app/services/scenario_generator/generator.py:101 -> GenerateResponse
+EDGE: backend/app/services/scenario_generator/generator.py:104 -> GenerateResponse
 
 （`create_session` 内部落库走 `manager.py:33 -> self.db.write_session`，不在本回合循环内：）
 
@@ -286,14 +288,14 @@ EDGE: backend/app/services/game_state/manager.py:33 -> self.db.write_session
 
 ### 错误路径
 
-LLM 请求/解析失败 → `_store_error`（generator.py:136-149，双消息 + model_outputs 错误行）
+LLM 请求/解析失败 → `_store_error`（generator.py:139-152，双消息 + model_outputs 错误行）
 → `ScenarioGenerationError` → 路由层转 502。
 
 EDGE: backend/app/services/scenario_generator/agent_pipeline.py:111 -> self._store_error
 EDGE: backend/app/services/scenario_generator/agent_pipeline.py:117 -> self._store_error
-EDGE: backend/app/services/scenario_generator/generator.py:141 -> self.db.add_message
-EDGE: backend/app/services/scenario_generator/generator.py:142 -> self.db.add_message
-EDGE: backend/app/services/scenario_generator/generator.py:143 -> self.db.add_model_output
+EDGE: backend/app/services/scenario_generator/generator.py:144 -> self.db.add_message
+EDGE: backend/app/services/scenario_generator/generator.py:145 -> self.db.add_message
+EDGE: backend/app/services/scenario_generator/generator.py:146 -> self.db.add_model_output
 
 ### 其他在线会话端点（routers/sessions.py）
 
@@ -325,7 +327,7 @@ EDGE: backend/app/routers/sessions.py:114 -> db.read_campaign_progress
 | `campaign_manager.load` / `is_loaded` / `get_opening_scene` | `services/campaign_manager/facade.py:109/121/124` |
 | `campaign_manager.record_turn` / `resolve_max_turns` / `truncate_prompt_sections` / `extract_facts` | `services/campaign_manager/metrics.py:62/32/35/45` |
 | `campaign_manager.advance_turn` / `advance_session` / `_load_recap_compressed` | `services/campaign_manager/recap_advancer.py:39/42/25` |
-| `memory_ctrl.on_turn_generated` / `maintain` | `services/memory/memory_controller/controller.py:105` / `maintenance.py:15` |
+| `memory_ctrl.on_turn_generated` / `maintain` | `services/memory/memory_controller/controller.py:107` / `maintenance.py:15` |
 | `retriever.retrieve_async` | `services/retriever.py:55` |
 | `evaluation_module.score` | `services/evaluation.py`（`EvaluationModule`） |
 | `db.*` | `services/database/` 各模块（Database 门面） |
