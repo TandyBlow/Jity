@@ -1,0 +1,40 @@
+import type { DevLogEntry } from "@/lib/dev-log/types";
+
+export const entry: DevLogEntry = {
+    id: "2026-06-15-knowledge-base-and-rag",
+    date: "2026-06-15",
+    title: "第三阶段：扩充 Knowledge Base 和 RAG",
+    summary: "把知识库从单一样例扩展为按类型组织的 RAG 数据源，并增强轻量检索、结果落库和前端命中展示，为项目报告中的 RAG 演示打基础。",
+    developer: "Codex",
+    areas: ["backend", "frontend", "rag", "knowledge-base"],
+    changes: [
+      "将知识库拆分为 npcs.json、locations.json、quests.json、rules.md 和 world_lore.md，并保留 cassell_lore.json 兼容已有样例。",
+      "JSON 与 Markdown chunk 支持 source_type、keywords、title、content 和 importance，Markdown 可在标题后写元数据。",
+      "KnowledgeBase 加载时跳过 README，自动解析 Markdown 元数据，并根据文件名推断 npc、location、quest、rule、world_lore 等来源类型。",
+      "轻量检索增加中文 2-4 字 n-gram token 展开、关键词命中加权、标题命中加权和 importance 加权，提升临时通行卡、诺诺、图书馆等短查询命中率。",
+      "ScenarioGenerator 会把本轮 retrieved_chunks 序列化写入 model_outputs，成功和失败输出都能追溯当时用了哪些知识。",
+      "RAG Hit 返回内容增加 keywords 和 importance，前端展示来源类型、分数、标题、短内容和关键词 chip。",
+      "更新 knowledge/README.md，说明知识库文件职责、JSON 字段和 Markdown 元数据格式。",
+    ],
+    relatedFiles: [
+      "backend/app/database.py",
+      "backend/app/schemas.py",
+      "backend/app/services/knowledge_base.py",
+      "backend/app/services/retriever.py",
+      "backend/app/services/scenario_generator.py",
+      "frontend/src/app/page.tsx",
+      "frontend/src/types.ts",
+      "knowledge/README.md",
+      "knowledge/cassell_lore.json",
+      "knowledge/locations.json",
+      "knowledge/npcs.json",
+      "knowledge/quests.json",
+      "knowledge/rules.md",
+      "knowledge/world_lore.md",
+      "frontend/src/lib/dev-log.ts",
+    ],
+    nextSteps: [
+      "用“临时通行卡”“诺诺”“图书馆”等输入做检索验收，确认 RAG Hits 能命中对应 NPC、地点、规则或任务资料。",
+      "继续观察轻量哈希检索的误命中情况，后续再评估是否接入真正 embedding 服务。",
+    ],
+  };
