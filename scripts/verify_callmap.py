@@ -21,8 +21,6 @@
 （StoryOutput(...).replace_em_dashes）记作 (...).replace_em_dashes。
 """
 
-from __future__ import annotations
-
 import ast
 import re
 import sys
