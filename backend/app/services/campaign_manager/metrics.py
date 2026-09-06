@@ -48,7 +48,7 @@ class MetricsFacade:
         prompt = build_fact_extraction(narration_text, recent_events)
         try:
             facts = await self.llm_client.generate_json(
-                prompt, model="deepseek-v4-flash", max_tokens=2000, temperature=0.2
+                prompt, max_tokens=2000, temperature=0.2
             )
             if isinstance(facts, list):
                 return [f for f in facts if isinstance(f, dict) and f.get("name")]

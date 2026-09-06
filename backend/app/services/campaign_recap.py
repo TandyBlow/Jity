@@ -36,7 +36,7 @@ class CampaignRecapGenerator:
         try:
             recap_prompt = self.prompt_builder.build_recap(messages)
             recap_text = await self.llm_client.generate_text(
-                recap_prompt, model="deepseek-v4-flash", max_tokens=800
+                recap_prompt, max_tokens=800
             )
             return recap_text.strip()
         except Exception:

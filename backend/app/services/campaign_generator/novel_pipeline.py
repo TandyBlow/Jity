@@ -66,7 +66,7 @@ class NovelPipelineMixin:
                             "\"locations\": [\"地点名\"]}\n\n"
                             f"章节：{ch['title']}\n\n{chapter_snippet}"
                         ),
-                        model="deepseek-v4-pro",
+                        model=self.llm_client.settings.llm_model_pro,
                         max_tokens=1000,
                         temperature=0.3,
                     )

@@ -73,7 +73,6 @@ class HaluMemEvaluator:
         try:
             result = await self._llm.generate_json(
                 prompt=prompt,
-                model="deepseek-v4-flash",
                 max_tokens=2000,
                 temperature=0.1,
             )
@@ -116,7 +115,6 @@ class HaluMemEvaluator:
         try:
             result = await self._llm.generate_json(
                 prompt=prompt,
-                model="deepseek-v4-flash",
                 max_tokens=2000,
                 temperature=0.1,
             )
@@ -147,7 +145,6 @@ class HaluMemEvaluator:
         try:
             result = await self._llm.generate_json(
                 prompt=prompt,
-                model="deepseek-v4-flash",
                 max_tokens=1000,
                 temperature=0.1,
             )

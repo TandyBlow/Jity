@@ -74,7 +74,6 @@ class SummaryGenerationMixin:
         try:
             raw = await self._llm.generate_json(
                 prompt=prompt,
-                model="deepseek-v4-flash",
                 max_tokens=1000,
                 temperature=0.3,
             )

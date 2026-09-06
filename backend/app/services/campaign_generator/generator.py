@@ -6,6 +6,7 @@ import logging
 from pathlib import Path
 from typing import Any
 
+from app.config import get_settings
 from app.database import Database
 from app.schemas.campaign import (
     CURRENT_SCHEMA_VERSION,
@@ -21,9 +22,9 @@ from app.services.campaign_generator.novel_pipeline import NovelPipelineMixin
 logger = logging.getLogger(__name__)
 
 # Campaign generation uses v4-pro (highest creative quality)
-CAMPAIGN_GEN_MODEL = "deepseek-v4-pro"
-# Fallback to v4-flash if pro is unavailable
-CAMPAIGN_GEN_FALLBACK = "deepseek-v4-flash"
+CAMPAIGN_GEN_MODEL = get_settings().llm_model_pro
+# Fallback if pro is unavailable
+CAMPAIGN_GEN_FALLBACK = get_settings().llm_model
 
 
 class CampaignGenerator(NovelPipelineMixin):

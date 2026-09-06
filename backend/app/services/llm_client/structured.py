@@ -13,7 +13,7 @@ class StructuredGenerationMixin:
     async def generate_text(
         self,
         prompt: str,
-        model: str = "deepseek-v4-flash",
+        model: str | None = None,
         max_tokens: int = 1000,
         temperature: float = 0.3,
     ) -> str:
@@ -21,6 +21,7 @@ class StructuredGenerationMixin:
 
         Used for session recaps and other non-structured LLM calls.
         """
+        model = model or self.settings.llm_model
         started = time.perf_counter()
         try:
             response = await self.client.chat.completions.create(
@@ -42,7 +43,7 @@ class StructuredGenerationMixin:
     async def generate_json(
         self,
         prompt: str,
-        model: str = "deepseek-v4-flash",
+        model: str | None = None,
         max_tokens: int = 50000,
         temperature: float = 0.35,
     ) -> dict:
@@ -54,6 +55,7 @@ class StructuredGenerationMixin:
         Used for campaign.json generation, fact extraction, and other
         structured LLM calls.
         """
+        model = model or self.settings.llm_model
         started = time.perf_counter()
 
         try:
