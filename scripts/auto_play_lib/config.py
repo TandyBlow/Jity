@@ -18,7 +18,7 @@ INITIAL_OPTIONS = [
 
 # Load optional config from backend/scripts/option_config.json
 def _load_option_config() -> dict[str, Any]:
-    config_path = Path(__file__).resolve().parents[1] / "backend" / "scripts" / "option_config.json"
+    config_path = Path(__file__).resolve().parents[2] / "backend" / "scripts" / "option_config.json"
     try:
         if config_path.exists():
             return json.loads(config_path.read_text(encoding="utf-8"))
