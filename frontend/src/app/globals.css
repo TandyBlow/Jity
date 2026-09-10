@@ -170,8 +170,9 @@ a {
   background-repeat: no-repeat;
   background-size: cover;
   opacity: 0;
-  transform: scale(1.02);
-  transition: opacity 900ms ease;
+  transform: translate3d(var(--background-shift-x, 0), var(--background-shift-y, 0), 0) scale(1.055);
+  transition: opacity 900ms ease, transform 180ms ease-out;
+  will-change: opacity, transform;
 }
 
 .scene-background::after {
@@ -189,6 +190,14 @@ a {
 
 .has-scene-background {
   background: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scene-background {
+    transform: scale(1.02);
+    transition: opacity 300ms ease;
+    will-change: opacity;
+  }
 }
 
 .side-panel,
