@@ -2,9 +2,10 @@
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from app.config import get_settings
-from app.routers import campaigns, generate, meta, sessions, slots
+from app.routers import backgrounds, campaigns, generate, meta, sessions, slots
 
 settings = get_settings()
 
@@ -23,4 +24,12 @@ app.include_router(slots.router)
 app.include_router(campaigns.router)
 app.include_router(sessions.router)
 app.include_router(generate.router)
+app.include_router(backgrounds.router)
 app.include_router(meta.router)
+
+settings.backgrounds_dir.mkdir(parents=True, exist_ok=True)
+app.mount(
+    "/background-assets",
+    StaticFiles(directory=settings.backgrounds_dir),
+    name="background-assets",
+)

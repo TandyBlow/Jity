@@ -1,10 +1,11 @@
 "use client";
 
-import { BookOpen, History, Loader2, MapPin, PenTool, RefreshCw, Send, Sparkles } from "lucide-react";
+import { BookOpen, History, Image as ImageIcon, Loader2, MapPin, PenTool, RefreshCw, Send, Sparkles } from "lucide-react";
 import Link from "next/link";
+import type { CSSProperties } from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { createSession, createSlot, generateScene, getSession, getSessionHistory, listCampaigns, listSlots, loadSlot } from "@/lib/api";
+import { createSession, createSlot, generateBackground, generateScene, getSession, getSessionHistory, listCampaigns, listSlots, loadSlot } from "@/lib/api";
 import type { CampaignListItem, GameState, GenerateResponse, ItemMemory, NPCMemory, QuestMemory, RetrievedChunk, SaveSlot, StoryOutput, WorldFactMemory } from "@/types";
 
 const initialOutput: StoryOutput = {
@@ -93,8 +94,54 @@ export default function Home() {
   const [campaigns, setCampaigns] = useState<CampaignListItem[]>([]);
   const [selectedCampaign, setSelectedCampaign] = useState("");
   const [pendingGenerate, setPendingGenerate] = useState<string | null>(null);
+  const [backgroundUrl, setBackgroundUrl] = useState("");
+  const [isBackgroundLoading, setIsBackgroundLoading] = useState(false);
+  const [backgroundError, setBackgroundError] = useState("");
+  const [backgroundRequestNonce, setBackgroundRequestNonce] = useState(0);
 
   const statusDeltaHints = useMemo(() => buildStatusDeltaHints(output), [output]);
+  const sceneLocation = state?.current_location || output.current_location;
+
+  // Keep one background for the entire location. Story turns at the same
+  // location reuse it; only a location change (or an explicit retry) redraws.
+  useEffect(() => {
+    const scenePrompt = output.scene_prompt?.trim();
+    if (!scenePrompt) return;
+
+    let cancelled = false;
+    setIsBackgroundLoading(true);
+    setBackgroundError("");
+    generateBackground({
+      scenePrompt,
+      location: sceneLocation,
+    })
+      .then(({ image_url: imageUrl }) => {
+        const image = new window.Image();
+        image.onload = () => {
+          if (!cancelled) {
+            setBackgroundUrl(imageUrl);
+            setIsBackgroundLoading(false);
+          }
+        };
+        image.onerror = () => {
+          if (!cancelled) setIsBackgroundLoading(false);
+        };
+        image.src = imageUrl;
+      })
+      .catch((err) => {
+        // Image generation is optional; keep the previous background if the
+        // provider is unavailable or not configured.
+        console.info("Background generation unavailable:", err);
+        if (!cancelled) {
+          setBackgroundError(err instanceof Error ? err.message : "场景背景生成失败");
+          setIsBackgroundLoading(false);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [sceneLocation, backgroundRequestNonce]);
 
   // ── Session init ──
   useEffect(() => {
@@ -320,7 +367,11 @@ export default function Home() {
   }, [model, selectedCampaign]);
 
   return (
-    <main className="app-shell">
+    <main
+      className={`app-shell${backgroundUrl ? " has-scene-background" : ""}`}
+      style={backgroundUrl ? ({ "--scene-background": `url("${backgroundUrl}")` } as CSSProperties) : undefined}
+    >
+      <div aria-hidden="true" className="scene-background" />
       <aside className="side-panel">
         <div className="brand-row">
           <div>
@@ -464,6 +515,24 @@ export default function Home() {
         <div className="toolbar-row">
           <div className="meta">Session {sessionId ? sessionId.slice(0, 8) : "initializing"}</div>
           <div className="meta">Turn {state?.turn ?? 0}</div>
+          {isBackgroundLoading ? (
+            <div className="background-status">
+              <ImageIcon size={13} />
+              场景绘制中
+            </div>
+          ) : null}
+          {backgroundError ? (
+            <button
+              className="background-button has-error"
+              disabled={isBackgroundLoading || !output.scene_prompt}
+              onClick={() => setBackgroundRequestNonce((value) => value + 1)}
+              title={backgroundError}
+              type="button"
+            >
+              <ImageIcon size={14} />
+              <span>重试背景</span>
+            </button>
+          ) : null}
           <div className={`source-pill ${outputSource}`}>{outputSource === "scripted" ? "Scripted opening" : "LLM generated"}</div>
         </div>
 

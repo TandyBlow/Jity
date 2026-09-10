@@ -38,6 +38,8 @@ a {
 }
 
 .app-shell {
+  position: relative;
+  isolation: isolate;
   display: grid;
   grid-template-columns: 320px minmax(0, 1fr) 360px;
   height: 100vh;
@@ -45,6 +47,36 @@ a {
   background:
     radial-gradient(circle at 45% 18%, rgba(201, 164, 106, 0.12), transparent 32%),
     linear-gradient(135deg, #121211 0%, #1a1814 48%, #10100f 100%);
+}
+
+.scene-background {
+  position: fixed;
+  z-index: -2;
+  inset: 0;
+  background-image: var(--scene-background);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  opacity: 0;
+  transform: scale(1.02);
+  transition: opacity 900ms ease;
+}
+
+.scene-background::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(9, 9, 9, 0.68), rgba(9, 9, 9, 0.28) 34%, rgba(9, 9, 9, 0.34) 68%, rgba(9, 9, 9, 0.72)),
+    linear-gradient(180deg, rgba(8, 8, 8, 0.2), rgba(8, 8, 8, 0.66));
+}
+
+.has-scene-background .scene-background {
+  opacity: 1;
+}
+
+.has-scene-background {
+  background: transparent;
 }
 
 .side-panel,
@@ -105,6 +137,53 @@ a {
   color: var(--muted);
   font-size: 11px;
   white-space: nowrap;
+}
+
+.background-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--accent);
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.background-status svg {
+  animation: background-pulse 1.4s ease-in-out infinite;
+}
+
+.background-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid rgba(201, 164, 106, 0.3);
+  border-radius: 999px;
+  padding: 4px 9px;
+  background: rgba(18, 18, 17, 0.52);
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 11px;
+}
+
+.background-button:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.background-button.has-error {
+  border-color: rgba(199, 109, 109, 0.65);
+  color: #e39a9a;
+}
+
+.background-button:disabled {
+  cursor: wait;
+  opacity: 0.5;
+}
+
+@keyframes background-pulse {
+  50% {
+    opacity: 0.38;
+  }
 }
 
 .source-pill.llm {
@@ -193,6 +272,7 @@ a {
   flex-direction: column;
   padding: 22px 28px;
   overflow-y: auto;
+  text-shadow: 0 1px 16px rgba(0, 0, 0, 0.72);
 }
 
 .scene-output {

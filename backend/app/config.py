@@ -14,6 +14,12 @@ class Settings(BaseSettings):
     deepseek_api_key: str = ""
     llm_base_url: str = "https://api.deepseek.com"
     llm_model: str = "deepseek-v4-flash"
+    image_api_key: str = ""
+    image_base_url: str = "https://api.openai.com/v1"
+    image_api_provider: str = "openai"
+    image_model: str = "gpt-image-1.5"
+    image_size: str = "1536x1024"
+    backgrounds_dir: Path = Path("data/backgrounds")
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
