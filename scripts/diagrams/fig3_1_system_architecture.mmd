@@ -1,0 +1,54 @@
+%%{init: {'theme': 'neutral', 'themeVariables': { 'fontSize': '16px'}}}%%
+graph TB
+    subgraph FRONTEND["Frontend"]
+        UI["GM Console"]
+    end
+
+    subgraph API["API Layer"]
+        ROUTERS["/sessions /campaigns /evaluate /knowledge"]
+    end
+
+    subgraph SERVICES["Service Layer"]
+        SG["ScenarioGenerator<br/>主编排器"]
+        GS["GameStateManager<br/>状态验证"]
+        PB["PromptBuilder<br/>提示组装"]
+        LLM["LLMClient<br/>API + JSON修复"]
+        CM["CampaignManager<br/>战役FSM"]
+        RET["RAGRetriever<br/>向量检索"]
+    end
+
+    subgraph AGENTS["Agent Layer"]
+        EXAM["Examiner<br/>T=0.1"]
+        DIR["Director<br/>T=0.3"]
+        NARR["Narrator<br/>T=0.35"]
+    end
+
+    subgraph MEMORY["Memory Layer (PIG)"]
+        MC["MemoryController"]
+        L0["L0 工作记忆"]
+        L1["L1 叙事记忆"]
+        L2["L2 世界记忆"]
+    end
+
+    subgraph DATA["Data Layer"]
+        SQLITE[("SQLite WAL")]
+        FAISS[("FAISS")]
+    end
+
+    UI --> ROUTERS
+    ROUTERS --> SG
+    SG --> PB --> LLM
+    SG --> GS --> SQLITE
+    SG --> CM
+    SG --> RET --> FAISS
+    SG --> EXAM --> DIR --> NARR --> LLM
+    SG --> MC --> L0
+    MC --> L1
+    MC --> L2
+
+    style FRONTEND fill:#e1f5fe,stroke:#0288d1
+    style API fill:#fff3e0,stroke:#f57c00
+    style SERVICES fill:#e8f5e9,stroke:#388e3c
+    style AGENTS fill:#fce4ec,stroke:#c62828
+    style MEMORY fill:#f3e5f5,stroke:#7b1fa2
+    style DATA fill:#eceff1,stroke:#546e7a

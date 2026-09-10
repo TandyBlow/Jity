@@ -1,93 +1,20 @@
 #!/usr/bin/env python3
-"""Campaign-mode playtest — verifies anchor events, multi-agent pipeline, progress tracking.
+"""Campaign-mode playtest — verifies anchors, multi-agent pipeline, progress tracking.
 
-Usage: python scripts/campaign_playtest.py [--api http://localhost:8000] [--turns 8]
-"""
-
+Usage: python scripts/campaign_playtest.py [--api http://localhost:8000] [--turns 8]"""
 import argparse
-import json
-import sys
-import time
-from datetime import datetime
-from typing import Any
-from urllib.error import HTTPError, URLError
-from urllib.request import Request, urlopen
+
+from playtest_common import APIError, api_get, api_post, fetch_new_anchors, generate_with_retry, t
 
 
 DEFAULT_API = "http://localhost:8000"
 DEFAULT_MODEL = "deepseek-v4-flash"
 
 
-class APIError(RuntimeError):
-    pass
-
-
-def _send(req: Request, timeout: float) -> dict:
-    try:
-        with urlopen(req, timeout=timeout) as resp:
-            body = resp.read().decode("utf-8")
-            return json.loads(body) if body else {}
-    except HTTPError as e:
-        body = e.read().decode("utf-8", errors="replace")
-        try:
-            detail = json.loads(body).get("detail", body)
-        except json.JSONDecodeError:
-            detail = body
-        raise APIError(f"HTTP {e.code}: {detail}") from e
-    except URLError as e:
-        raise APIError(str(e.reason)) from e
-
-
-def api_post(base: str, path: str, payload: dict, timeout: float = 180) -> dict:
-    data = json.dumps(payload, ensure_ascii=False).encode("utf-8")
-    req = Request(f"{base.rstrip('/')}{path}", data=data, method="POST",
-                  headers={"Content-Type": "application/json"})
-    return _send(req, timeout)
-
-
-def api_get(base: str, path: str, timeout: float = 30) -> dict:
-    req = Request(f"{base.rstrip('/')}{path}", method="GET")
-    return _send(req, timeout)
-
-
-def t(condition: bool, msg: str) -> int:
-    """Test assertion: returns 1 if pass, 0 if fail."""
-    if condition:
-        print(f"  [PASS] {msg}")
-        return 1
-    else:
-        print(f"  [FAIL] {msg}")
-        return 0
-
-
-def generate_with_retry(base: str, sid: str, action: str, slot: str, model: str, max_retries: int = 3) -> dict:
-    """Generate with retry on transient 500/502/503 errors."""
-    last_err = None
-    for attempt in range(max_retries):
-        try:
-            return api_post(base, f"/sessions/{sid}/generate", {
-                "player_action": action,
-                "model": model,
-                "slot_name": slot,
-            })
-        except APIError as e:
-            last_err = e
-            if "500" in str(e) or "502" in str(e) or "503" in str(e):
-                wait = 2 * (attempt + 1)
-                print(f"    [RETRY] {e} — waiting {wait}s (attempt {attempt+1}/{max_retries})")
-                time.sleep(wait)
-            else:
-                raise
-    raise last_err or APIError("unknown")
-
-
-def main() -> int:
-    args = parse_args()
-    base = args.api
+def check_health_and_campaigns(base: str) -> tuple[int, str]:
+    """Sections 1 & 2 — backend health and campaign listing. Returns (passed, target)."""
     passed = 0
-    failed = 0
 
-    # ─── 1. Health ───
     print("=" * 60)
     print("1. Backend health")
     try:
@@ -96,9 +23,8 @@ def main() -> int:
         passed += 1
     except APIError as e:
         print(f"  [FAIL] {e}")
-        return 1
+        raise
 
-    # ─── 2. Campaign list ───
     print("\n" + "=" * 60)
     print("2. Campaign listing")
     campaigns = api_get(base, "/campaigns", timeout=10)
@@ -109,22 +35,23 @@ def main() -> int:
     if target not in camp_files:
         target = camp_files[0]
     print(f"  Target: {target}")
+    return passed, target
 
-    # ─── 3. Create campaign session ───
+
+def create_and_verify_session(base: str, target: str) -> tuple[int, str, dict]:
+    """Sections 3 & 4 — create session and verify scripted opening. Returns (passed, sid, sess)."""
+    passed = 0
+
     print("\n" + "=" * 60)
     print("3. Campaign session creation (POST /sessions with campaign_filename)")
-    try:
-        sess = api_post(base, "/sessions", {
-            "game_name": "campaign-qa",
-            "model": DEFAULT_MODEL,
-            "campaign_filename": target,
-            "arc_index": 0,
-            "session_index": 0,
-            "slot_name": "qa-campaign",
-        })
-    except APIError as e:
-        print(f"  [FAIL] {e}")
-        return 1
+    sess = api_post(base, "/sessions", {
+        "game_name": "campaign-qa",
+        "model": DEFAULT_MODEL,
+        "campaign_filename": target,
+        "arc_index": 0,
+        "session_index": 0,
+        "slot_name": "qa-campaign",
+    })
     sid = sess["session_id"]
     st = sess["state"]
     print(f"  Session ID: {sid}")
@@ -135,41 +62,39 @@ def main() -> int:
     passed += t("诺诺" in [n["name"] for n in st.get("npcs", [])], "NPC loaded from campaign")
     passed += t(st["current_location"] != "", "Location set from campaign entry_state")
 
-    # ─── 4. Turn 0 — Opening scene ───
     print("\n" + "=" * 60)
     print("4. Turn 0 — Campaign scripted opening (first generate call)")
-    try:
-        t0 = api_post(base, f"/sessions/{sid}/generate", {
-            "player_action": "（入场）环顾四周，了解当前处境。",
-            "model": DEFAULT_MODEL,
-            "slot_name": "qa-campaign",
-        })
-    except APIError as e:
-        print(f"  [FAIL] {e}")
-        return 1
+    t0 = api_post(base, f"/sessions/{sid}/generate", {
+        "player_action": "（入场）环顾四周，了解当前处境。",
+        "model": DEFAULT_MODEL,
+        "slot_name": "qa-campaign",
+    })
     passed += t(t0["source"] == "scripted", f"Source is 'scripted' (got: {t0['source']})")
     passed += t(len(t0["output"]["narration"]) > 50, f"Opening narration is substantial ({len(t0['output']['narration'])} chars)")
     passed += t(
         t0["output"]["narration"] != sess.get("output", {}).get("narration", ""),
         "Opening scene is from campaign JSON, not frontend hardcode"
     )
+    return passed, sid, sess
 
-    # ─── 5. Gameplay loop with retry ───
-    print("\n" + "=" * 60)
-    print(f"5. Campaign gameplay loop ({args.turns} LLM turns)")
+
+def run_gameplay_loop(base: str, sid: str, turns: int) -> tuple[int, list[str]]:
+    """Play N LLM turns, tracking anchors. Returns (turn_count, anchors_seen)."""
     action = "观察周围环境，寻找报到处和线索"
     anchors_seen: list[str] = []
     turn_count = 0
     consecutive_failures = 0
 
-    for turn in range(1, args.turns + 1):
+    for turn in range(1, turns + 1):
         print(f"\n  --- Turn {turn} ---")
         try:
-            resp = generate_with_retry(base, sid, action, "qa-campaign", DEFAULT_MODEL)
+            resp = generate_with_retry(
+                lambda path, payload: api_post(base, path, payload),
+                sid, action, "qa-campaign", DEFAULT_MODEL,
+            )
             consecutive_failures = 0
         except APIError as e:
             print(f"    [FAIL] {e}")
-            failed += 1
             consecutive_failures += 1
             if consecutive_failures >= 2:
                 print("    [ABORT] 2 consecutive failures")
@@ -185,33 +110,26 @@ def main() -> int:
         if out.get("game_over"):
             print(f"    [GAME_OVER] {out.get('game_over_reason', '')}")
 
-        # Track anchors
-        try:
-            prog = api_get(base, f"/sessions/{sid}/progress", timeout=10)
-            new_anchors = [a for a in prog.get("revealed_anchors", []) if a not in anchors_seen]
-            if new_anchors:
-                print(f"    [ANCHOR] Triggered: {new_anchors}")
-                anchors_seen.extend(new_anchors)
-        except APIError:
-            pass
+        new_anchors = fetch_new_anchors(lambda path: api_get(base, path), sid, anchors_seen)
+        if new_anchors:
+            print(f"    [ANCHOR] Triggered: {new_anchors}")
 
-        # Next action
-        if out.get("options"):
-            action = out["options"][0]
-        else:
-            action = "继续调查"
+        action = out["options"][0] if out.get("options") else "继续调查"
 
-    passed += turn_count
+    return turn_count, anchors_seen
 
-    # ─── 6. Anchor verification ───
+
+def verify_phase(base: str, sid: str, turn_count: int, anchors_seen: list[str]) -> int:
+    """Sections 6-8 — anchor, progress endpoint and pipeline checks. Returns failures."""
+    failed = 0
+
     print("\n" + "=" * 60)
     print("6. Campaign anchor verification")
     print(f"  Total anchors triggered: {len(anchors_seen)}")
     for a in anchors_seen:
         print(f"    - {a}")
-    passed += t(len(anchors_seen) > 0, f"At least 1 anchor triggered (got {len(anchors_seen)})")
+    t(len(anchors_seen) > 0, f"At least 1 anchor triggered (got {len(anchors_seen)})")
 
-    # ─── 7. Progress endpoint ───
     print("\n" + "=" * 60)
     print("7. Progress endpoint (GET /sessions/{id}/progress)")
     try:
@@ -220,19 +138,45 @@ def main() -> int:
         print(f"  session_index: {prog.get('session_index')}")
         print(f"  revealed_anchors: {len(prog.get('revealed_anchors', []))}")
         print(f"  world_facts: {len(prog.get('world_facts', []))}")
-        passed += t(prog["session_id"] == sid, "Progress session_id matches")
-        passed += t(isinstance(prog.get("world_facts"), list), "World facts is a list")
-        passed += t(isinstance(prog.get("revealed_anchors"), list), "Revealed anchors is a list")
+        t(prog["session_id"] == sid, "Progress session_id matches")
+        t(isinstance(prog.get("world_facts"), list), "World facts is a list")
+        t(isinstance(prog.get("revealed_anchors"), list), "Revealed anchors is a list")
     except APIError as e:
         print(f"  [FAIL] {e}")
         failed += 1
 
-    # ─── 8. Multi-agent pipeline check ───
     print("\n" + "=" * 60)
     print("8. Multi-agent pipeline verification")
     # In campaign mode, the pipeline is: Examiner → Director → Narrator
-    # If any turn succeeded with source='llm' in campaign mode, the pipeline worked
-    passed += t(turn_count > 0, f"Multi-agent pipeline produced {turn_count} LLM turns in campaign mode")
+    t(turn_count > 0, f"Multi-agent pipeline produced {turn_count} LLM turns in campaign mode")
+
+    return failed
+
+
+def main() -> int:
+    args = parse_args()
+    base = args.api
+    passed = 0
+    failed = 0
+
+    try:
+        setup_passed, target = check_health_and_campaigns(base)
+        passed += setup_passed
+
+        session_passed, sid, _sess = create_and_verify_session(base, target)
+        passed += session_passed
+    except APIError as e:
+        print(f"  [FAIL] {e}")
+        return 1
+
+    # ─── 5. Gameplay loop with retry ───
+    print("\n" + "=" * 60)
+    print(f"5. Campaign gameplay loop ({args.turns} LLM turns)")
+    turn_count, anchors_seen = run_gameplay_loop(base, sid, args.turns)
+    passed += turn_count
+
+    # ─── 6-8. Anchor, progress and pipeline verification ───
+    failed += verify_phase(base, sid, turn_count, anchors_seen)
 
     # ─── Results ───
     print("\n" + "=" * 60)

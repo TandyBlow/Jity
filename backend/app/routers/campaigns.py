@@ -2,6 +2,7 @@
 
 import json
 import logging
+from pathlib import Path
 
 from fastapi import APIRouter, HTTPException
 
@@ -123,17 +124,23 @@ def list_campaigns() -> dict[str, object]:
     return {"campaigns": campaign_files}
 
 
+def _validated_filename(filename: str) -> str:
+    """Campaign files live in a flat directory — reject path components."""
+    if not filename:
+        raise HTTPException(status_code=400, detail="filename is required")
+    name = Path(filename).name
+    if name != filename:
+        raise HTTPException(status_code=400, detail=f"invalid filename: {filename}")
+    return name if name.endswith(".json") else name + ".json"
+
+
 @router.post("/save")
 def save_campaign(request: dict[str, object]) -> dict[str, object]:
     """Save a campaign.json file (created or edited in curator).
 
     Request body: {"filename": "...", "campaign": {...}}
     """
-    filename = str(request.get("filename", "")).strip()
-    if not filename:
-        raise HTTPException(status_code=400, detail="filename is required")
-    if not filename.endswith(".json"):
-        filename += ".json"
+    filename = _validated_filename(str(request.get("filename", "")).strip())
 
     campaign_data = request.get("campaign")
     if not isinstance(campaign_data, dict):
@@ -150,6 +157,8 @@ def save_campaign(request: dict[str, object]) -> dict[str, object]:
 @router.get("/{filename}")
 def get_campaign_file(filename: str) -> dict[str, object]:
     """Load a single campaign.json file by filename."""
+    if Path(filename).name != filename:
+        raise HTTPException(status_code=400, detail=f"invalid filename: {filename}")
     fpath = settings.campaigns_dir / filename
     if not fpath.exists():
         raise HTTPException(status_code=404, detail=f"Campaign file not found: {filename}")

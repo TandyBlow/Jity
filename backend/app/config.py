@@ -20,6 +20,7 @@ class Settings(BaseSettings):
     image_model: str = "gpt-image-1.5"
     image_size: str = "1536x1024"
     backgrounds_dir: Path = Path("data/backgrounds")
+    llm_model_pro: str = "deepseek-v4-pro"
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 

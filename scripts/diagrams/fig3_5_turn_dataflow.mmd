@@ -1,0 +1,46 @@
+%%{init: {'theme': 'neutral', 'themeVariables': { 'fontSize': '14px'}}}%%
+sequenceDiagram
+    actor Player as 玩家
+    participant FE as Frontend
+    participant API as FastAPI
+    participant SG as ScenarioGenerator
+    participant MC as MemoryController
+    participant Exam as Examiner
+    participant Dir as Director
+    participant LLM as LLMClient
+    participant GS as GameStateManager
+    participant DB as SQLite+FAISS
+
+    Player->>FE: 输入行动
+    FE->>API: POST /sessions/{id}/generate
+
+    API->>SG: generate()
+
+    Note over SG,DB: ① 加载状态 + ② RAG检索
+    SG->>DB: 加载session state + FAISS向量检索
+    DB-->>SG: state + RAG结果
+
+    Note over SG,MC: ③ 记忆上下文组装
+    SG->>MC: assemble_context()
+    MC-->>SG: L0全量 + L1 Top-5 + L2匹配
+
+    Note over SG,LLM: ④⑤ Prompt构建 + Agent管线
+    SG->>Exam: examine() → verdict
+    SG->>Dir: direct() → narrative_direction
+    SG->>LLM: generate(prompt, T=0.35)
+    LLM-->>SG: StoryOutput
+
+    Note over SG,GS: ⑥ 状态应用
+    SG->>GS: apply_output(memory_updates)
+    GS-->>SG: updated_state
+
+    Note over SG,DB: ⑦ 持久化（两阶段） + ⑧ 异步记忆维护
+    SG->>DB: INSERT messages + UPDATE state + INSERT model_output
+    SG->>MC: on_turn_generated() [Fire-and-Forget]
+    MC->>MC: NSB/PCB/SCORE/Forgetting → DB
+
+    Note over SG: ⑨ 每5轮: Fact Extraction → DB
+
+    SG-->>API: GenerateResponse
+    API-->>FE: JSON
+    FE-->>Player: 叙事 + 选项 + 状态

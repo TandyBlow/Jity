@@ -50,12 +50,13 @@ backend/data/campaigns/*
 !backend/data/campaigns/default_campaign.json
 !backend/data/scripted_story/
 !backend/data/scripted_story/*.json
-!backend/data/novels/
-!backend/data/novels/*.txt
 playtest_logs/
 
 # === Novel source files ===
-# Reviewed TXT source files under backend/data/novels/ may be committed.
+# Raw novel TXT stays local-only (README 本地文件约定).
+/1380*.txt
+/小说包.zip
+scripts/_*.txt
 
 # === Experiments and local research files ===
 experiments/
