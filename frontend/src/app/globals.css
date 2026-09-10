@@ -460,11 +460,16 @@ a {
 }
 
 .narration {
+  display: grid;
+  gap: 1em;
   font-family: "Noto Serif SC", "Songti SC", "STSong", SimSun, serif;
   font-size: 22px;
   line-height: 1.85;
   margin-bottom: 24px;
-  white-space: pre-line;
+}
+
+.narration p {
+  margin: 0;
 }
 
 .dialogue-list {

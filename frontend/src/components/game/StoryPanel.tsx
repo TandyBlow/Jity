@@ -5,6 +5,30 @@ import { Image as ImageIcon, Loader2, Send } from "lucide-react";
 import type { GameSession } from "@/components/game/useGameSession";
 import { formatDelta, quoteDialogue } from "@/lib/game/format";
 
+function narrationParagraphs(narration: string): string[] {
+  const explicitParagraphs = narration
+    .split(/\n+/)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean);
+
+  if (explicitParagraphs.length > 1 || narration.length < 180) return explicitParagraphs;
+
+  const sentences = narration.match(/[^。！？!?…]+(?:[。！？!?…]+|$)/g) ?? [narration];
+  const paragraphs: string[] = [];
+  let paragraph = "";
+
+  for (const sentence of sentences) {
+    paragraph += sentence.trim();
+    if (paragraph.length >= 120) {
+      paragraphs.push(paragraph);
+      paragraph = "";
+    }
+  }
+  if (paragraph) paragraphs.push(paragraph);
+
+  return paragraphs;
+}
+
 export function StoryPanel({ session }: { session: GameSession }) {
   const {
     sessionId,
@@ -49,7 +73,11 @@ export function StoryPanel({ session }: { session: GameSession }) {
       </div>
 
       <article className="scene-output">
-        <div className="narration">{output.narration}</div>
+        <div className="narration">
+          {narrationParagraphs(output.narration).map((paragraph, index) => (
+            <p key={`${index}-${paragraph.slice(0, 20)}`}>{paragraph}</p>
+          ))}
+        </div>
         <div className="dialogue-list">
           {output.dialogue.map((line, index) => (
             <div className="dialogue-line" key={`${line.speaker}-${index}`}>
