@@ -1,6 +1,6 @@
 "use client";
 
-import { Image as ImageIcon } from "lucide-react";
+import { Image as ImageIcon, Loader2, Send } from "lucide-react";
 
 import type { GameSession } from "@/components/game/useGameSession";
 import { formatDelta, quoteDialogue } from "@/lib/game/format";
@@ -12,7 +12,11 @@ export function StoryPanel({ session }: { session: GameSession }) {
     output,
     outputSource,
     statusDeltaHints,
+    action,
+    setAction,
     handleGenerate,
+    isLoading,
+    error,
     isBackgroundLoading,
     backgroundError,
     retryBackground,
@@ -73,6 +77,29 @@ export function StoryPanel({ session }: { session: GameSession }) {
           ))}
         </div>
       </article>
+
+      <div className="player-controls">
+        <label className="player-controls-label" htmlFor="action">你的行动</label>
+        <div className="player-controls-row">
+          <textarea
+            id="action"
+            value={action}
+            onChange={(event) => setAction(event.target.value)}
+            onKeyDown={(event) => {
+              if ((event.metaKey || event.ctrlKey) && event.key === "Enter" && !isLoading && sessionId) {
+                handleGenerate();
+              }
+            }}
+            placeholder="输入玩家行动、当前场景或 GM 限制"
+          />
+          <button disabled={isLoading || !sessionId} onClick={() => handleGenerate()} type="button">
+            {isLoading ? <Loader2 className="spin-icon" size={18} /> : <Send size={18} />}
+            <span>{isLoading ? "生成中" : "生成下一幕"}</span>
+          </button>
+        </div>
+        {error ? <div className="error">{error}</div> : null}
+        <div className="player-controls-hint">Ctrl / ⌘ + Enter 快速生成</div>
+      </div>
     </section>
   );
 }

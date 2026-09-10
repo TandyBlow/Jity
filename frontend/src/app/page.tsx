@@ -3,7 +3,7 @@
 import type { CSSProperties } from "react";
 
 import { MemoryPanel } from "@/components/game/MemoryPanel";
-import { SidePanel } from "@/components/game/SidePanel";
+import { SettingsMenu } from "@/components/game/SettingsMenu";
 import { StoryPanel } from "@/components/game/StoryPanel";
 import { useGameSession } from "@/components/game/useGameSession";
 
@@ -15,10 +15,14 @@ export default function Home() {
       className={`app-shell${session.backgroundUrl ? " has-scene-background" : ""}`}
       style={session.backgroundUrl
         ? ({ "--scene-background": `url("${session.backgroundUrl}")` } as CSSProperties)
-        : undefined}
+      : undefined}
     >
       <div aria-hidden="true" className="scene-background" />
-      <SidePanel session={session} />
+      <div className="game-brand" aria-label="Jity">
+        <span>Jity</span>
+        <small>GM scenario console</small>
+      </div>
+      <SettingsMenu session={session} />
       <StoryPanel session={session} />
       <MemoryPanel session={session} />
     </main>
