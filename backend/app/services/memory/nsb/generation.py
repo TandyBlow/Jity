@@ -61,6 +61,8 @@ class SummaryGenerationMixin:
         self._level2 = [EpisodeSummary(**d) for d in data.get("level2", [])]
         self._level3 = [EpisodeSummary(**d) for d in data.get("level3", [])]
         self._episode_counter = data.get("episode_counter", 0)
+        if hasattr(self, "_embedding_cache"):
+            self._embedding_cache.clear()
 
     # ── Private ───────────────────────────────────────────────────
 

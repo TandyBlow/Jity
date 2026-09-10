@@ -71,6 +71,7 @@ def load_slot(slot_id: int) -> dict[str, object]:
     db.set_session_active_slot(session_id, slot_name)
     get_campaign_manager_for_session(session_id, slot_name)
     session_row = db.get_session(session_id)
+    state_manager.sanitize_state(payload["state"])
     return {
         "status": "loaded",
         "slot": {

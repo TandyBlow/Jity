@@ -65,15 +65,22 @@ class DirectorSupportMixin:
         except Exception:
             return "锚点信息不可用"
 
-    def _get_memory_controller(self, session_id: str) -> MemoryController:
-        """Get or create a persistent MemoryController for this session.
+    def _get_memory_controller(
+        self,
+        session_id: str,
+        state: dict | None = None,
+        campaign_manager=None,
+    ) -> MemoryController:
+        """Get a controller scoped to a campaign slot when one is loaded."""
+        if campaign_manager is not None and campaign_manager.is_loaded():
+            campaign_id = getattr(campaign_manager.progress, "campaign_id", "")
+            slot_name = getattr(campaign_manager, "slot_name", "default")
+            scoped_key = f"campaign:{campaign_id}:{slot_name}" if campaign_id else session_id
+        else:
+            scoped_key = session_id
 
-        MemoryControllers persist across turns within a session,
-        maintaining NSB/PCB/ScoreTracker state. Eviction based on
-        simple dict size cap (oldest entries removed).
-        """
-        if session_id in self._memory_controllers:
-            return self._memory_controllers[session_id]
+        if scoped_key in self._memory_controllers:
+            return self._memory_controllers[scoped_key]
 
         # Evict oldest if too many
         if len(self._memory_controllers) >= 50:
@@ -94,7 +101,12 @@ class DirectorSupportMixin:
             session_id=session_id,
             embedding_client=embedding,
         )
-        self._memory_controllers[session_id] = mc
+        if state and "_memory_controller" in state:
+            try:
+                mc.load_state(state["_memory_controller"])
+            except Exception:
+                logger.warning("Failed to restore memory controller state", exc_info=True)
+        self._memory_controllers[scoped_key] = mc
         return mc
 
     def _log_memory_task_done(self, task: asyncio.Task) -> None:

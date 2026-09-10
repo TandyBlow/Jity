@@ -57,6 +57,10 @@ export function createSession(
   });
 }
 
+export function getSession(sessionId: string): Promise<SessionResponse> {
+  return request<SessionResponse>(`/sessions/${sessionId}`);
+}
+
 export function generateScene(params: {
   sessionId: string;
   playerAction: string;

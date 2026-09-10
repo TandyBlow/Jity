@@ -1,7 +1,6 @@
-"""PCB merge strategies (MOOM three-strategy merging)."""
+"""Persona sketch merge strategies."""
 
-from app.schemas.agent_io import PersonaSnapshot
-
+from app.schemas.agent_io import PersonaSketch, PersonaSnapshot
 from app.services.memory.pcb.keys import (
     _ADD_KEYS,
     _COMPLEX_KEYS,
@@ -12,125 +11,90 @@ from app.services.memory.pcb.keys import (
 
 
 class PersonaMergeMixin:
+    def _sketch_for(self, snapshot: PersonaSnapshot) -> PersonaSketch:
+        name = snapshot.character_name or "player"
+        sketch = self._sketches.setdefault(name, PersonaSketch())
+        return sketch
+
     def merge_snapshot(self, snapshot: PersonaSnapshot) -> None:
-        """Merge a new persona snapshot into the cumulative sketch.
-
-        Applies MOOM's three strategies:
-          - Rule-based for replace/trajectory keys
-          - Embedding-based for contradictory keys (cosine similarity via EmbeddingClient)
-          - LLM-based for complex keys (deferred: last-wins as baseline)
-        """
+        sketch = self._sketch_for(snapshot)
         for key, new_values in snapshot.entries.items():
-            existing = self._sketch.entries.get(key, [])
-
-            key_lower = key.lower().replace(" ", "_")
-
-            if key_lower in _REPLACE_KEYS:
-                # Rule-based: replace with latest value
+            existing = sketch.entries.get(key, [])
+            normalized_key = key.lower().replace(" ", "_")
+            if normalized_key in _REPLACE_KEYS:
                 if new_values:
-                    self._sketch.entries[key] = [new_values[-1]]
-
-            elif key_lower in _TRAJECTORY_KEYS:
-                # Rule-based: append with cap
-                combined = list(existing)
-                for v in new_values:
-                    combined.append(v)
-                self._sketch.entries[key] = combined[-20:]
-
-            elif key_lower in _CONTRADICTORY_KEYS:
-                # Embedding-based: use cosine similarity to detect outdated values
-                # If new value is highly similar to existing → replace (outdated)
-                # If new value is low similarity → append (genuinely different preference)
+                    sketch.entries[key] = [new_values[-1]]
+            elif normalized_key in _TRAJECTORY_KEYS:
+                sketch.entries[key] = (existing + new_values)[-20:]
+            elif normalized_key in _CONTRADICTORY_KEYS:
                 merged = list(existing)
-                for nv in new_values:
-                    replaced = False
-                    for i, ev in enumerate(merged):
-                        if _approx_equal(ev.value, nv.value):
-                            merged[i] = nv  # replace outdated
-                            replaced = True
+                for new_value in new_values:
+                    for index, old_value in enumerate(merged):
+                        if _approx_equal(old_value.value, new_value.value):
+                            merged[index] = new_value
                             break
-                    if not replaced:
-                        merged.append(nv)
-                self._sketch.entries[key] = merged[-15:]
-
-            elif key_lower in _COMPLEX_KEYS:
-                # LLM-based: simplified as append + cap
-                # Full implementation would call LLM to judge — deferred to Phase 7
-                combined = list(existing)
-                combined.extend(new_values)
-                self._sketch.entries[key] = combined[-10:]
-
-            elif key_lower in _ADD_KEYS:
-                # Append-only
-                combined = list(existing)
-                combined.extend(new_values)
-                self._sketch.entries[key] = combined[-20:]
-
-            else:
-                combined = list(existing)
-                combined.extend(new_values)
-                self._sketch.entries[key] = combined[-10:]
-
-    async def merge_snapshot_with_embedding(
-        self, snapshot: PersonaSnapshot
-    ) -> None:
-        """Async version that uses EmbeddingClient for contradictory key similarity.
-
-        Call this instead of merge_snapshot when embedding_client is available.
-        Falls back to _approx_equal on embedding failure.
-        """
-        for key, new_values in snapshot.entries.items():
-            existing = self._sketch.entries.get(key, [])
-            key_lower = key.lower().replace(" ", "_")
-
-            if key_lower in _CONTRADICTORY_KEYS and self._embedding is not None and new_values:
-                merged = list(existing)
-                for nv in new_values:
-                    if not merged:
-                        merged.append(nv)
-                        continue
-                    # Compute embedding similarity between new value and existing values
-                    existing_texts = [ev.value for ev in merged]
-                    try:
-                        from app.services.memory.similarity import cosine_similarity
-                        sim_matrix = await cosine_similarity(
-                            [nv.value], existing_texts, self._embedding
-                        )
-                        max_sim = float(sim_matrix.max()) if sim_matrix.size > 0 else 0.0
-                    except Exception:
-                        max_sim = 0.0
-
-                    if max_sim > 0.85:
-                        # High similarity → replace the most similar existing entry
-                        idx = int(sim_matrix.argmax()) if sim_matrix.size > 0 else -1
-                        if 0 <= idx < len(merged):
-                            merged[idx] = nv
-                        else:
-                            merged.append(nv)
                     else:
-                        merged.append(nv)
-                self._sketch.entries[key] = merged[-15:]
+                        merged.append(new_value)
+                sketch.entries[key] = merged[-15:]
+            elif normalized_key in _COMPLEX_KEYS:
+                sketch.entries[key] = (existing + new_values)[-10:]
+            elif normalized_key in _ADD_KEYS:
+                sketch.entries[key] = (existing + new_values)[-20:]
             else:
-                # Fall back to synchronous merge for non-contradictory keys
-                pass  # handled below
+                sketch.entries[key] = (existing + new_values)[-10:]
 
-        # Non-contradictory keys: use synchronous logic
-        self.merge_snapshot(PersonaSnapshot(
-            entries={k: v for k, v in snapshot.entries.items()
-                     if k.lower().replace(" ", "_") not in _CONTRADICTORY_KEYS},
-            extracted_at_turn=snapshot.extracted_at_turn,
-        ))
+    async def merge_snapshot_with_embedding(self, snapshot: PersonaSnapshot) -> None:
+        sketch = self._sketch_for(snapshot)
+        for key, new_values in snapshot.entries.items():
+            normalized_key = key.lower().replace(" ", "_")
+            if normalized_key not in _CONTRADICTORY_KEYS or self._embedding is None or not new_values:
+                continue
+
+            merged = list(sketch.entries.get(key, []))
+            for new_value in new_values:
+                if not merged:
+                    merged.append(new_value)
+                    continue
+                existing_texts = [old_value.value for old_value in merged]
+                try:
+                    from app.services.memory.similarity import cosine_similarity
+
+                    similarities = await cosine_similarity(
+                        [new_value.value], existing_texts, self._embedding
+                    )
+                    maximum = float(similarities.max()) if similarities.size else 0.0
+                except Exception:
+                    maximum = 0.0
+                    similarities = None
+                if maximum > 0.85 and similarities is not None:
+                    index = int(similarities.argmax())
+                    if 0 <= index < len(merged):
+                        merged[index] = new_value
+                        continue
+                merged.append(new_value)
+            sketch.entries[key] = merged[-15:]
+
+        non_contradictory = {
+            key: values
+            for key, values in snapshot.entries.items()
+            if key.lower().replace(" ", "_") not in _CONTRADICTORY_KEYS
+        }
+        if non_contradictory:
+            self.merge_snapshot(
+                PersonaSnapshot(
+                    character_name=snapshot.character_name,
+                    entries=non_contradictory,
+                    extracted_at_turn=snapshot.extracted_at_turn,
+                )
+            )
 
 
 def _approx_equal(a: str, b: str) -> bool:
-    """Crude string similarity for embedding-based dedup fallback."""
     a_lower = a.strip().lower()
     b_lower = b.strip().lower()
     if a_lower == b_lower:
         return True
-    # Simple character overlap ratio
     if not a_lower or not b_lower:
         return False
-    common = sum(1 for c in a_lower if c in b_lower)
-    ratio = common / max(len(a_lower), len(b_lower))
-    return ratio > 0.8
+    common = sum(1 for character in a_lower if character in b_lower)
+    return common / max(len(a_lower), len(b_lower)) > 0.8

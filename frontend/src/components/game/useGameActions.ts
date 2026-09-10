@@ -12,6 +12,14 @@ import {
   initialOutput,
 } from "@/lib/game/initialOutput";
 import type { GenerateResponse } from "@/types";
+
+const ACTIVE_SESSION_STORAGE_KEY = "jity_active_session_id";
+
+function rememberActiveSession(sessionId: string) {
+  if (typeof window !== "undefined") {
+    window.localStorage.setItem(ACTIVE_SESSION_STORAGE_KEY, sessionId);
+  }
+}
 import type { GameSessionCore } from "@/components/game/useGameSession";
 
 export function useGameActions(core: GameSessionCore) {
@@ -59,6 +67,7 @@ export function useGameActions(core: GameSessionCore) {
         ? { campaignFilename: selectedCampaign, arcIndex: 0, sessionIndex: 0, slotName: SLOT_DEFAULT }
         : undefined;
       const session = await createSession(model, campaignOpts);
+      rememberActiveSession(session.session_id);
       setSessionId(session.session_id);
       setState(session.state);
       setOutput(initialOutput);
@@ -86,6 +95,7 @@ export function useGameActions(core: GameSessionCore) {
       : undefined;
     try {
       const session = await createSession(model, opts);
+      rememberActiveSession(session.session_id);
       setSessionId(session.session_id);
       setState(session.state);
       setOutput(initialOutput);
@@ -106,6 +116,7 @@ export function useGameActions(core: GameSessionCore) {
     setError("");
     try {
       const loaded = await loadSlot(slotId);
+      rememberActiveSession(loaded.session.session_id);
       setSelectedSlotId(slotId);
       setSelectedSlot(loaded.slot.slot_name);
       setSessionId(loaded.session.session_id);

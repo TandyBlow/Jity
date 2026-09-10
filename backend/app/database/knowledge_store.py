@@ -28,6 +28,29 @@ class KnowledgeStoreMixin:
                 ),
             )
 
+    def get_narrative_episodes(self) -> list[dict[str, Any]]:
+        """Read persisted NSB episodes for memory restoration."""
+        with self.connect() as db:
+            rows = db.execute(
+                """SELECT id, title, content, keywords, importance, updated_at
+                   FROM knowledge_chunks
+                   WHERE source_type = 'narrative_memory'
+                   ORDER BY updated_at ASC"""
+            ).fetchall()
+        return [
+            {
+                "id": row["id"],
+                "title": row["title"],
+                "content": row["content"],
+                "keywords": json.loads(row["keywords"])
+                if isinstance(row["keywords"], str)
+                else (row["keywords"] or []),
+                "importance": row["importance"],
+                "updated_at": row["updated_at"],
+            }
+            for row in rows
+        ]
+
     def replace_knowledge_chunks(self, chunks: list[dict[str, Any]]) -> None:
         with self.connect() as db:
             db.execute("DELETE FROM knowledge_chunks")

@@ -14,7 +14,10 @@ Uses deepseek-v4-flash for summarization (cheap, non-blocking path).
 import logging
 from typing import Any
 
+import numpy as np
+
 from app.schemas.agent_io import EpisodeSummary
+from app.services.embedding_client import EmbeddingClient
 from app.services.llm_client import LLMClient
 
 from app.services.memory.nsb.prompts import (
@@ -33,17 +36,21 @@ logger = logging.getLogger(__name__)
 class NarrativeSummarizationBranch(SummaryGenerationMixin):
     """Hierarchical summarization for long-term narrative memory."""
 
+    _LEVEL_WEIGHTS = {1: 1.0, 2: 1.15, 3: 1.3}
+
     def __init__(
         self,
         llm_client: LLMClient,
         theta1: int = THETA_1,
         theta2: int = THETA_2,
         theta3: int = THETA_3,
+        embedding_client: EmbeddingClient | None = None,
     ) -> None:
         self._llm = llm_client
         self.theta1 = theta1
         self.theta2 = theta2
         self.theta3 = theta3
+        self._embedding = embedding_client
 
         # Turn-level buffer (raw dialogue text)
         self._turn_buffer: list[str] = []
@@ -54,6 +61,9 @@ class NarrativeSummarizationBranch(SummaryGenerationMixin):
 
         # Monotonic counters
         self._episode_counter: int = 0
+
+        # Cached embeddings for semantic retrieval.
+        self._embedding_cache: list[tuple[EpisodeSummary, np.ndarray]] = []
 
     # ── Public API ────────────────────────────────────────────────
 
@@ -127,3 +137,58 @@ class NarrativeSummarizationBranch(SummaryGenerationMixin):
     def remove_episode(self, episode_id: str) -> None:
         """Drop a level-1 episode — called when MOOM forgetting prunes it from the pool."""
         self._level1 = [s for s in self._level1 if s.episode_id != episode_id]
+
+    async def cache_summary_embedding(self, summary: EpisodeSummary) -> None:
+        """Cache an embedding for a newly accepted summary when available."""
+        if self._embedding is None:
+            return
+        try:
+            vectors = await self._embedding.embed([summary.summary])
+            if len(vectors):
+                self._embedding_cache.append((summary, vectors[0]))
+        except Exception:
+            logger.debug("Failed to cache embedding for %s", summary.episode_id, exc_info=True)
+
+    def invalidate_embedding_cache(self) -> None:
+        """Clear cached vectors after restoring summaries from persisted state."""
+        self._embedding_cache.clear()
+
+    async def get_retrieval_context_async(self, query: str, top_k: int = 5) -> list[EpisodeSummary]:
+        """Retrieve summaries using a semantic/keyword hybrid score."""
+        all_summaries = self._level1 + self._level2 + self._level3
+        if not all_summaries:
+            return []
+
+        query_lower = query.lower()
+        keyword_scores: list[float] = []
+        for summary in all_summaries:
+            score = summary.importance
+            score += sum(2.0 for tag in summary.tags if tag.lower() in query_lower)
+            score += sum(3.0 for entity in summary.entities_involved if entity.lower() in query_lower)
+            keyword_scores.append(min(score / 10.0, 1.0))
+
+        semantic_scores = [0.0] * len(all_summaries)
+        if self._embedding is not None and self._embedding_cache:
+            try:
+                query_vectors = await self._embedding.embed([query])
+                query_vector = query_vectors[0] / (np.linalg.norm(query_vectors[0]) + 1e-9)
+                for summary, vector in self._embedding_cache:
+                    try:
+                        index = all_summaries.index(summary)
+                    except ValueError:
+                        continue
+                    normalized_vector = vector / (np.linalg.norm(vector) + 1e-9)
+                    semantic_scores[index] = float(np.dot(query_vector, normalized_vector))
+            except Exception:
+                logger.debug("Semantic retrieval failed; using keyword scores", exc_info=True)
+
+        scored = [
+            (
+                summary,
+                (0.7 * semantic_scores[index] + 0.3 * keyword_scores[index])
+                * self._LEVEL_WEIGHTS.get(summary.level, 1.0),
+            )
+            for index, summary in enumerate(all_summaries)
+        ]
+        scored.sort(key=lambda item: item[1], reverse=True)
+        return [summary for summary, _ in scored[:top_k]]

@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 
-import { createSession, listCampaigns, listSlots } from "@/lib/api";
+import { createSession, getSession, listCampaigns, listSlots } from "@/lib/api";
 import { ENTRY_ACTION, SLOT_DEFAULT } from "@/lib/game/initialOutput";
 import type { CampaignListItem, SaveSlot } from "@/types";
 import type { GameSessionCore } from "@/components/game/useGameSession";
@@ -19,40 +19,86 @@ export function useGameEffects(
   const { sessionId, model, selectedSlot, pendingGenerate, refreshSlots } = core;
   const { setSlots, setCampaigns, handleGenerate } = extras;
 
+  const ACTIVE_SESSION_STORAGE_KEY = "jity_active_session_id";
+
+  function rememberActiveSession(sessionId: string) {
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem(ACTIVE_SESSION_STORAGE_KEY, sessionId);
+    }
+  }
+
   // ── Session init ──
   useEffect(() => {
     let mounted = true;
 
-    let campaignOpts: { campaignFilename?: string; arcIndex?: number; sessionIndex?: number } | undefined;
-    try {
-      const entryJson = sessionStorage.getItem("campaign_entry");
-      if (entryJson) {
-        const entry = JSON.parse(entryJson);
-        sessionStorage.removeItem("campaign_entry");
-        campaignOpts = {
-          campaignFilename: entry.campaignFilename,
-          arcIndex: entry.arcIndex,
-          sessionIndex: entry.sessionIndex,
-        };
+    async function bootSession() {
+      let campaignOpts: { campaignFilename?: string; arcIndex?: number; sessionIndex?: number } | undefined;
+      try {
+        const entryJson = sessionStorage.getItem("campaign_entry");
+        if (entryJson) {
+          const entry = JSON.parse(entryJson);
+          sessionStorage.removeItem("campaign_entry");
+          campaignOpts = {
+            campaignFilename: entry.campaignFilename,
+            arcIndex: entry.arcIndex,
+            sessionIndex: entry.sessionIndex,
+          };
+        }
+      } catch {
+        // Ignore parse errors
       }
-    } catch {
-      // Ignore parse errors
-    }
 
-    createSession(model, campaignOpts)
-      .then(async (session) => {
+      if (campaignOpts?.campaignFilename) {
+        const session = await createSession(model, campaignOpts);
         if (!mounted) return;
+        rememberActiveSession(session.session_id);
         core.setSessionId(session.session_id);
         core.setState(session.state);
         core.setModel(session.model);
+        core.setSelectedCampaign(campaignOpts.campaignFilename);
         core.setSelectedSlot(SLOT_DEFAULT);
         core.setSelectedSlotId("");
         refreshSlots(session.session_id, SLOT_DEFAULT).catch((err) => console.error("refreshSlots failed:", err));
-        if (campaignOpts?.campaignFilename && (campaignOpts.arcIndex || 0) > 0) {
+        if ((campaignOpts.arcIndex || 0) > 0) {
           core.setPendingGenerate(ENTRY_ACTION);
         }
-      })
-      .catch((err: Error) => core.setError(err.message));
+        return;
+      }
+
+      const activeSessionId = typeof window === "undefined"
+        ? ""
+        : window.localStorage.getItem(ACTIVE_SESSION_STORAGE_KEY) ?? "";
+      if (activeSessionId) {
+        try {
+          const session = await getSession(activeSessionId);
+          if (!mounted) return;
+          core.setSessionId(session.session_id);
+          core.setState(session.state);
+          core.setModel(session.model);
+          core.setChunks([]);
+          await core.restoreLastOutput(session.session_id);
+          await refreshSlots(session.session_id);
+          return;
+        } catch {
+          window.localStorage.removeItem(ACTIVE_SESSION_STORAGE_KEY);
+        }
+      }
+
+      const session = await createSession(model);
+      if (!mounted) return;
+      rememberActiveSession(session.session_id);
+      core.setSessionId(session.session_id);
+      core.setState(session.state);
+      core.setModel(session.model);
+      core.setSelectedSlot(SLOT_DEFAULT);
+      core.setSelectedSlotId("");
+      refreshSlots(session.session_id, SLOT_DEFAULT).catch((err) => console.error("refreshSlots failed:", err));
+    }
+
+    bootSession().catch((err: Error) => {
+      if (mounted) core.setError(err.message);
+    });
+
     return () => { mounted = false; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

@@ -27,15 +27,16 @@ from app.schemas.agent_io import MemoryRecord
 logger = logging.getLogger(__name__)
 
 
-# ── Default hyper-parameters (from MOOM paper Appendix D) ─────────
+# ── Adaptive hyper-parameters ─────────────────────────────────────
 
 ALPHA = 0.1  # temporal decay weight
 BETA = 0.9  # retrieval reinforcement weight
 GAMMA = 1.0  # decay rate in exponential
 EPSILON = 1e-9  # avoids division by zero
 K = 9  # top-k for reinforcement / suppression (2k retrieved total)
-SCORE_THRESHOLD = 0.01  # minimum score to retain in pool
-MAX_POOL_SIZE = 200  # hard cap on memory pool size
+SCORE_THRESHOLD_BASE = 0.01  # minimum score when pool is far from cap
+POOL_SIZE_MIN = 200  # floor for dynamic pool size
+POOL_SIZE_PER_TURN = 2  # additional slots per turn
 
 
 def compute_score(
@@ -104,15 +105,41 @@ def apply_retrieval_reinforcement(
     return updated
 
 
-def prune_pool(records: list[MemoryRecord], threshold: float = SCORE_THRESHOLD, max_size: int = MAX_POOL_SIZE) -> list[MemoryRecord]:
+def compute_dynamic_pool_size(current_round: int) -> int:
+    """Return the dynamic max pool size for the given round.
+
+    Scales linearly from POOL_SIZE_MIN at round 0 to POOL_SIZE_MIN
+    + POOL_SIZE_PER_TURN * current_round at higher rounds.
+    This prevents long campaigns (>150 turns) from being bottlenecked
+    by a fixed 200-slot memory pool.
+    """
+    return max(POOL_SIZE_MIN, current_round * POOL_SIZE_PER_TURN)
+
+
+def compute_adaptive_threshold(pool_size: int, max_size: int) -> float:
+    """Return an adaptive score threshold based on pool pressure.
+
+    When the pool is close to its max size, the threshold rises to
+    aggressively prune low-scored memories and make room for new ones.
+    Formula: threshold = base * (1 + 3 * fill_ratio), capped at 0.2.
+    """
+    if max_size <= 0:
+        return SCORE_THRESHOLD_BASE
+    fill_ratio = max(0.0, min(1.0, pool_size / max_size))
+    return min(SCORE_THRESHOLD_BASE * (1.0 + 3.0 * fill_ratio), 0.2)
+
+
+def prune_pool(
+    records: list[MemoryRecord],
+    threshold: float = SCORE_THRESHOLD_BASE,
+    max_size: int = POOL_SIZE_MIN,
+) -> list[MemoryRecord]:
     """Prune the memory pool: drop below-threshold, then cap at max_size.
 
     Records are assumed scored already (score field populated).
     """
-    # Drop below threshold
     above = [r for r in records if r.score >= threshold]
 
-    # Cap at max size (keep highest-scored)
     if len(above) > max_size:
         above.sort(key=lambda r: r.score, reverse=True)
         above = above[:max_size]
@@ -128,45 +155,47 @@ def forget_step(
 ) -> list[MemoryRecord]:
     """Full forgetting step: score → reinforce/suppress → prune.
 
-    similarity_scores: optional pre-computed similarity scores for the top-2k
-    retrieval (e.g. from BGE reranker). If None, uses score field directly
-    for ordering (which works when scores are already populated from a previous round).
+    Pool size and prune threshold adapt to current_round:
+    - max_size = max(200, current_round * 2) — scales with campaign length
+    - threshold rises when pool is near max (pressure-based pruning)
 
-    This is the main entry point called by MemoryController each turn.
+    similarity_scores: optional BGE reranker scores for top-2k re-ranking.
     """
     if not records:
         return []
+
+    max_pool_size = compute_dynamic_pool_size(current_round)
+    threshold = compute_adaptive_threshold(len(records), max_pool_size)
 
     # Step 1: Compute scores for all records
     scored = score_all(records, current_round)
 
     # Step 2: If similarity scores provided, re-rank top-2k by similarity
     if similarity_scores is not None and len(similarity_scores) > 0:
-        # Re-rank top 2k by similarity (higher similarity → higher rank)
         top_2k = scored[:2 * k]
         rest = scored[2 * k:]
-
-        # Pair each with similarity score and re-sort
-        sim_ranked: list[tuple[MemoryRecord, float]] = []
+        sim_ranked: list[tuple[MemoryRecord, float, float]] = []
         for i, (rec, base_score) in enumerate(top_2k):
             sim = similarity_scores[i] if i < len(similarity_scores) else 0.0
             sim_ranked.append((rec, base_score, sim))
-
-        # Sort by similarity descending within top-2k
         sim_ranked.sort(key=lambda x: x[2], reverse=True)
-
-        # Rebuild scored list with reranked top-2k + rest
         scored = [(rec, base) for rec, base, _ in sim_ranked] + rest
 
     # Step 3: Apply reinforcement and suppression
     reinforced = apply_retrieval_reinforcement(scored, current_round, k=k)
 
-    # Step 4: Prune pool
-    pruned = prune_pool(reinforced)
+    # Step 4: Prune pool with adaptive parameters
+    pruned = prune_pool(reinforced, threshold=threshold, max_size=max_pool_size)
+
+    prune_count = len(reinforced) - len(pruned)
+    prune_rate = prune_count / len(reinforced) if reinforced else 0.0
 
     logger.debug(
-        "forget_step: round=%d, pool_in=%d, pool_out=%d",
+        "forget_step: round=%d pool_in=%d pool_out=%d pruned=%d (%.0f%%) "
+        "max_size=%d threshold=%.4f",
         current_round, len(records), len(pruned),
+        prune_count, prune_rate * 100,
+        max_pool_size, threshold,
     )
 
     return pruned

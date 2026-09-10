@@ -71,6 +71,7 @@ class AgentPipelineMixin:
         return await self._run_narrator_stage(
             session_id, request, augmented_prompt, model, meta,
             retrieved_for_storage, _csi, state, turn,
+            campaign_manager=campaign_manager,
         )
 
     async def _run_director_stage(self, request, ruling, state, turn, campaign_manager):
@@ -98,7 +99,7 @@ class AgentPipelineMixin:
 
     async def _run_narrator_stage(
         self, session_id, request, augmented_prompt, model, meta,
-        retrieved_for_storage, _csi, state, turn,
+        retrieved_for_storage, _csi, state, turn, campaign_manager=None,
     ) -> tuple[StoryOutput, int, str]:
         """Stage 3: Narrator — the actual story generation (single LLM call)."""
         try:
@@ -121,7 +122,7 @@ class AgentPipelineMixin:
             raise ScenarioGenerationError(f"{exc} model_output_id={output_id}", output_id) from exc
 
         # Persistent per-session memory: feed the turn, then maintain in background
-        memory_ctrl = self._get_memory_controller(session_id)
+        memory_ctrl = self._get_memory_controller(session_id, state, campaign_manager)
         memory_ctrl.on_turn_generated(
             request.player_action, output.narration, turn,
             memory_updates=output.memory_updates,

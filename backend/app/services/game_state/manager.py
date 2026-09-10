@@ -152,6 +152,12 @@ class GameStateManager(MemoryNormalizationMixin, StateInferenceMixin, EntryState
         return f"{text[: max_chars - 1]}…"
 
     @staticmethod
+    def sanitize_state(state: dict[str, Any]) -> dict[str, Any]:
+        """Remove server-only state before returning a response to the client."""
+        state.pop("_memory_controller", None)
+        return state
+
+    @staticmethod
     def enforce_state_caps(state: dict[str, Any]) -> dict[str, Any]:
         """Apply defensive caps to prevent 270-turn state bloat.
 

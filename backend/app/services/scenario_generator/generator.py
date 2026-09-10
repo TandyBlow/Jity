@@ -91,6 +91,9 @@ class ScenarioGenerator(
             output, next_state, state, session_id, session, model, campaign_manager
         )
 
+        memory_ctrl = self._get_memory_controller(session_id, next_state, campaign_manager)
+        next_state["_memory_controller"] = memory_ctrl.export_state()
+
         self.db.add_message(session_id, "user", request.player_action, _csi)
         self.db.add_message(session_id, "assistant", output.model_dump_json(), _csi)
         self.state_manager.save_state(session_id, session["game_name"], model, next_state)
@@ -103,7 +106,7 @@ class ScenarioGenerator(
 
         return GenerateResponse(
             session_id=session_id,
-            state=next_state,
+            state=self.state_manager.sanitize_state(next_state),
             output=output,
             retrieved_chunks=[
                 RetrievedChunk(
