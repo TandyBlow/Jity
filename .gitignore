@@ -1,42 +1,5 @@
-# === API Keys — DO NOT COMMIT ===
+# === Secrets and local configuration ===
 config.js
-
-# === Python ===
-__pycache__/
-*.pyc
-.venv/
-venv/
-env/
-.conda/
-backend/.venv/
-backend/env/
-backend/.conda/
-backend/.deps/
-translate_docx.py
-translate_latex.py
-translation_cache.json
-
-# === Research Pipeline ===
-.pipeline/
-.claude/
-CLAUDE.md
-
-# === Literature Review & Personal Docs ===
-LiteratureReview.*
-*.pdf
-*.docx
-WorkAssignment.*
-2330034047.pdf
-26LiteratureReview.Guideline.Dyce.pdf
-
-# === Experiments (contain API keys) ===
-experiments/
-
-# === Dependencies ===
-node_modules/
-frontend/node_modules/
-
-# === Local environment ===
 .env
 .env.*
 !.env.example
@@ -48,13 +11,76 @@ frontend/.env.local
 frontend/.env.*
 !frontend/.env.example
 
-# === Runtime data ===
-*.sqlite3
-*.sqlite3-*
-backend/data/
-playtest_logs/
+# === Python ===
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.venv/
+venv/
+env/
+.conda/
+backend/.venv/
+backend/env/
+backend/.conda/
+backend/.deps/
 
-# === Frontend build output ===
+# === Node / frontend ===
+node_modules/
+frontend/node_modules/
 .next/
 frontend/.next/
 out/
+frontend/tsconfig.tsbuildinfo
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# === Runtime data ===
+.local/
+*.sqlite3
+*.sqlite3-*
+backend/data/*
+!backend/data/campaigns/
+backend/data/campaigns/*
+!backend/data/campaigns/default_campaign.json
+!backend/data/scripted_story/
+!backend/data/scripted_story/*.json
+playtest_logs/
+
+# === Novel source files ===
+# Raw novel TXT stays local-only (README 本地文件约定).
+/1380*.txt
+/小说包.zip
+scripts/_*.txt
+
+# === Experiments and local research files ===
+experiments/
+.pipeline/
+.claude/
+CLAUDE.md
+translate_docx.py
+translate_latex.py
+translation_cache.json
+LiteratureReview.*
+*.pdf
+*.docx
+WorkAssignment.*
+2330034047.pdf
+26LiteratureReview.Guideline.Dyce.pdf
+
+# === OS / editor ===
+.DS_Store
+Thumbs.db
+~$*
+.idea/
+.vscode/
+
+# === Local planning artifacts ===
+.planning/
+TODOS.md
+backend/campaign_fsm.png

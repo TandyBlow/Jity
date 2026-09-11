@@ -1,0 +1,26 @@
+%%{init: {'theme': 'neutral', 'themeVariables': { 'fontSize': '15px'}}}%%
+stateDiagram-v2
+    [*] --> idle
+
+    idle --> session_active : 开始会话
+
+    state session_active {
+        [*] --> turn_loop
+        turn_loop --> turn_loop : 3-Agent管线 + 记忆维护
+        turn_loop --> anchor_check : 每轮锚点评估
+        anchor_check --> anchor_triggered : 条件满足
+        anchor_triggered --> turn_loop
+        anchor_check --> deviation : ≥3轮未触发
+        deviation --> redirect : Director重定向
+        redirect --> turn_loop
+    }
+
+    session_active --> session_recap : ≥30轮 / 锚点完成
+
+    session_recap --> arc_transition : 下一session存在
+    arc_transition --> arc_intro : 下一arc存在
+    arc_intro --> session_active : 新arc开始
+
+    session_recap --> campaign_end : 全部完成
+    arc_transition --> campaign_end : 全部完成
+    campaign_end --> [*]
