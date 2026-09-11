@@ -1,0 +1,41 @@
+import type { DevLogEntry } from "@/lib/dev-log/types";
+
+export const entry: DevLogEntry = {
+  id: "2026-09-11-scene-background-and-game-ui",
+  date: "2026-09-11",
+  title: "场景背景系统与游戏化主界面",
+  summary: "为主页面加入根据剧情地点更新的 AI 场景背景，并将左侧控制台重构为右上角设置菜单，改善剧情阅读、操作布局和游戏沉浸感。",
+  developer: "shit",
+  areas: ["frontend", "backend", "ui", "background-generation", "llm"],
+  changes: [
+    "新增背景生成接口，接入硅基流动 Kwai-Kolors/Kolors 模型，并将返回图片保存到本地缓存目录。",
+    "背景生成使用剧情返回的英文 scene_prompt 与当前地点，加入无文字、无水印、宽幅环境概念图等统一画面约束。",
+    "前端仅在 current_location 发生变化时请求新背景；同一地点内继续复用当前背景，生成或加载失败时保留旧图并提供重试入口。",
+    "背景图片加载完成后再替换页面背景，避免生成过程中出现空白；相同提示词命中缓存时不重复调用生图服务。",
+    "主页面移除左侧控制面板，将模型、战役、存档、时间线、战役编辑器、开发日志和新建会话整合进右上角设置菜单。",
+    "将玩家行动输入框和生成按钮移动到剧情区域底部，支持 Ctrl/Command + Enter 快速生成下一幕。",
+    "增加剧情长文本自动分段，在模型未返回换行时按完整句子整理段落，恢复长篇剧情的阅读节奏。",
+    "加入轻量鼠标视差效果，背景会随指针方向微幅移动，并兼容系统的减少动态效果设置。",
+    "背景更新逻辑最终保留为每轮剧情同时生成 scene_prompt 和 current_location，再由前端根据地点变化决定是否绘制新背景。",
+  ],
+  relatedFiles: [
+    "backend/app/config.py",
+    "backend/app/main.py",
+    "backend/app/routers/backgrounds.py",
+    "backend/app/schemas/background.py",
+    "backend/app/services/background_generator.py",
+    "backend/tests/test_background_generator.py",
+    "frontend/src/app/page.tsx",
+    "frontend/src/app/globals.css",
+    "frontend/src/components/game/SettingsMenu.tsx",
+    "frontend/src/components/game/StoryPanel.tsx",
+    "frontend/src/components/game/useGameSession.ts",
+    "frontend/src/components/game/useSceneBackground.ts",
+    "frontend/src/lib/api.ts",
+  ],
+  nextSteps: [
+    "继续测试长剧情中的地点命名稳定性，避免同一地点因名称轻微变化而重复生成背景。",
+    "为地点增加稳定标识或名称归一化机制，并补充地点变化到背景替换的端到端测试。",
+    "根据实际使用体验调整背景亮度、遮罩强度和鼠标视差幅度。",
+  ],
+};
