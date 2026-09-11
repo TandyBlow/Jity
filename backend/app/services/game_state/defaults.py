@@ -21,7 +21,6 @@ def default_state() -> dict[str, Any]:
         "health": 100,
         "turn": 0,
         "current_location": "卡塞尔学院报到处大厅",
-        "_scene_prompt": "dark gothic academy registration hall, nervous freshman, crystal chandelier",
         "items": [],
         "npcs": [
             {
