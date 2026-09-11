@@ -1,0 +1,42 @@
+import type { DevLogEntry } from "@/lib/dev-log/types";
+
+export const entry: DevLogEntry = {
+    id: "2026-06-19-campaign-wiring-and-novel-pipeline",
+    date: "2026-06-19",
+    title: "Campaign Wiring 集成测试与小说管线脚本",
+    summary: "完成 Campaign 系统 API 接线验证的集成测试框架，新增小说→战役自动生成管线脚本，修复 lazy imports 和 from __future__ 兼容性问题，为 Phase 6 执行做准备。",
+    developer: "TandyBlow",
+    areas: ["backend", "campaign", "testing", "pipeline", "knowledge-base"],
+    changes: [
+      "新增 backend/tests/test_campaign_wiring.py — Campaign load→opening→inject→anchor 全链路集成测试（WIRE-05）。",
+      "新增 scripts/run_novel_pipeline.py — TXT→campaign.json 自动生成管线脚本，支持编码检测、章节提取、锚点生成、跨章组装。",
+      "全局移除 `from __future__ import annotations` 导入，修复 lazy imports 导致的类型解析问题。",
+      "新增 backend/tests/test_no_future_annotations.py — 静态检查确保不再引入 from __future__ import annotations。",
+      "知识库大幅扩展 world_lore.md：新增蛇岐八家、猛鬼众、黑天鹅港·δ计划、言灵体系、皇与鬼等 5 个龙族世界观条目。",
+      "知识库 npcs.json 扩展：新增日本分部相关 NPC（源稚生、源稚女/风间琉璃、上杉越、绘梨衣、赫尔佐格等）及关系网络。",
+      "知识库 locations.json 扩展：新增日本场景（源氏重工、极乐馆、黑天鹅港等）。",
+      "龙族 I/II/III 共 6 本 TXT 源文件就位（~4.5MB），为 Phase 8 内容创建做准备。",
+      "campaign_generator.py 新增 NovelIngestor 类——编码检测 + 章节边界识别 + 逐章锚点提取 + 跨章组装 pipeline。",
+    ],
+    relatedFiles: [
+      "backend/tests/test_campaign_wiring.py",
+      "backend/tests/test_no_future_annotations.py",
+      "scripts/run_novel_pipeline.py",
+      "backend/app/services/campaign_generator.py",
+      "backend/app/main.py",
+      "knowledge/world_lore.md",
+      "knowledge/npcs.json",
+      "knowledge/locations.json",
+      "13802-龙族Ⅰ_火之晨曦.txt",
+      "13803-龙族Ⅱ_悼亡者之瞳.txt",
+      "13804-龙族Ⅲ+_+黑月之潮（上）.txt",
+      "13805-龙族Ⅲ+_+黑月之潮（中）.txt",
+      "13806-龙族Ⅲ+_+黑月之潮（下）.txt",
+      "13807-龙族Ⅳ_奥丁之渊.txt",
+    ],
+    nextSteps: [
+      "执行 Phase 6 四个计划（06-01~06-04）：Campaign Wiring → Session Auto-Advance → Arc Selection API → Arc Selection UI。",
+      "Phase 6 完成后运行 auto_play.py 270 回合验证，确认 session 边界自动触发 recap + FSM 切换。",
+      "小说管线需 charset-normalizer 依赖安装后才能端到端测试（NOVEL-01）。",
+    ],
+  };

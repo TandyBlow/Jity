@@ -81,6 +81,23 @@ export function generateScene(params: {
   });
 }
 
+export async function generateBackground(params: {
+  scenePrompt: string;
+  location?: string;
+}): Promise<{ image_url: string; cached: boolean }> {
+  const result = await request<{ image_url: string; cached: boolean }>("/backgrounds/generate", {
+    method: "POST",
+    body: JSON.stringify({
+      scene_prompt: params.scenePrompt,
+      location: params.location ?? "",
+    }),
+  });
+  return {
+    ...result,
+    image_url: new URL(result.image_url, API_BASE_URL).toString(),
+  };
+}
+
 export function getSessionHistory(sessionId: string): Promise<SessionHistoryResponse> {
   return request<SessionHistoryResponse>(`/sessions/${sessionId}/history`);
 }

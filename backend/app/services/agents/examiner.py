@@ -99,7 +99,6 @@ class ExaminerAgent:
         try:
             result = await self._llm.generate_json(
                 prompt=f"{_EXAMINER_SYSTEM_PROMPT}\n\n{user_prompt}",
-                model="deepseek-v4-flash",
                 max_tokens=1000,
                 temperature=0.1,
             )

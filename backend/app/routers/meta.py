@@ -24,7 +24,7 @@ def health() -> dict[str, object]:
 
 @router.get("/models")
 def models() -> dict[str, list[str]]:
-    return {"models": [settings.llm_model, "deepseek-v4-flash", "deepseek-reasoner"]}
+    return {"models": [settings.llm_model, settings.llm_model_pro, "deepseek-reasoner"]}
 
 
 @router.post("/knowledge/reload")

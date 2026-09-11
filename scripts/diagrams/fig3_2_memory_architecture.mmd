@@ -1,0 +1,45 @@
+%%{init: {'theme': 'neutral', 'themeVariables': { 'fontSize': '16px'}}}%%
+flowchart TB
+    INPUT["玩家动作 + 游戏状态"]
+
+    subgraph L0["L0 工作记忆 · 全量注入 ~3K tok"]
+        L0_1["场景状态"]
+        L0_2["活跃NPC"]
+        L0_3["最近6轮摘要"]
+        L0_4["任务列表"]
+        L0_5["人格快照"]
+    end
+
+    subgraph L1["L1 叙事记忆 · 语义检索 ~2K tok"]
+        NSB["NSB三级摘要"]
+        L1_1["L1级·6轮/次<br/>微观情节"]
+        L1_2["L2级·30轮/次<br/>叙事弧线"]
+        L1_3["L3级·150轮/次<br/>宏大主题"]
+        NSB --> L1_1 --> L1_2 --> L1_3
+    end
+
+    subgraph L2["L2 世界记忆 · 触发匹配 ~2K tok"]
+        L2_KG["规则知识库"]
+        L2_WB["世界书"]
+        L2_NPC["NPC档案"]
+    end
+
+    INPUT --> L0
+    INPUT --> L1
+    INPUT --> L2
+    L0 --> ASSEMBLY["按优先级组装 Prompt"]
+    L1 --> ASSEMBLY
+    L2 --> ASSEMBLY
+    ASSEMBLY --> LLM["注入 LLM 上下文"]
+
+    ASSEMBLY -.->|"token预算紧张时从后向前裁剪"| TRUNC["SimpleTruncation<br/>永不裁剪: 系统提示 + 玩家动作"]
+
+    LLM -.->|"生成后异步维护"| MAINT["NSB摘要级联<br/>PCB人格抽取<br/>SCORE物品验证<br/>MOOM遗忘评分"]
+
+    style INPUT fill:#fff9c4,stroke:#f9a825
+    style L0 fill:#c8e6c9,stroke:#388e3c
+    style L1 fill:#b3e5fc,stroke:#0288d1
+    style L2 fill:#e1bee7,stroke:#7b1fa2
+    style ASSEMBLY fill:#ffe0b2,stroke:#e65100
+    style LLM fill:#ffccbc,stroke:#d84315
+    style MAINT fill:#cfd8dc,stroke:#455a64
