@@ -19,7 +19,6 @@ from app.services.scenario_generator.errors import ScenarioGenerationError
 from app.services.scenario_generator.opening_scene import OpeningSceneMixin
 from app.services.scenario_generator.post_generation import PostGenerationMixin
 from app.services.scenario_generator.prompting import PromptBuildMixin
-from app.services.scenario_generator.scene_prompt import attach_scene_prompt
 
 
 class ScenarioGenerator(
@@ -84,8 +83,6 @@ class ScenarioGenerator(
             session_id, request, prompt, model, meta, retrieved_for_storage, _csi,
             state=state, campaign_manager=campaign_manager,
         )
-
-        await attach_scene_prompt(self.llm_client, output, state, model)
 
         next_state = self.state_manager.apply_output(state, request.player_action, output)
 
