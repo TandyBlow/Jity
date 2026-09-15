@@ -10,6 +10,26 @@
         {
           "name": "初入校园",
           "opening_scene": "你站在卡塞尔学院的大门前。雨夜中，哥特式建筑的轮廓像一头蹲伏的巨兽。手里的临时通行卡正在发烫。一个红发女生靠在门柱旁，似乎已经等了你很久。",
+          "entry_state": {
+            "location": "卡塞尔学院大门前",
+            "items": [
+              "临时通行卡"
+            ],
+            "npcs": [
+              {
+                "name": "诺诺",
+                "status": "present",
+                "relationship": "等待你的红发女生",
+                "current_location": "卡塞尔学院大门前",
+                "description": "靠在门柱旁等待的红发女生。"
+              }
+            ],
+            "player_status": {
+              "condition": "刚到学院门外",
+              "current_goal": "与门柱旁的红发女生交谈，了解如何入校"
+            },
+            "scene_prompt": "rainy night outside gothic academy gates, wet stone pillars, distant silhouettes, cinematic moody lighting"
+          },
           "anchor_events": [
             {
               "id": "anchor-discover-mark",
@@ -38,6 +58,9 @@
         {
           "name": "档案室之谜",
           "opening_scene": "旧档案室的门在你面前缓缓打开。通风管道里低低的风声像有人在远处翻书。系统显示你的档案三分钟前被你自己取走了——但你现在才到。",
+          "entry_state": {
+            "location": "主楼地下二层旧档案室"
+          },
           "anchor_events": [
             {
               "id": "anchor-archive-intruder",

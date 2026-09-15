@@ -33,6 +33,7 @@ class SessionResponse(BaseModel):
     game_name: str
     model: str
     state: dict[str, Any]
+    campaign_filename: Optional[str] = None
 
 
 class RetrievedChunk(BaseModel):

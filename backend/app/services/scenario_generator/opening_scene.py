@@ -12,14 +12,21 @@ class OpeningSceneMixin:
             return None
 
         opening = campaign_manager.get_opening_scene()
-        turn = int(state.get("turn", 0))
+        turn = campaign_manager.progress.turn_in_session
         if turn != 0 or not opening:
             return None
+
+        # A chapter starts on the campaign-local clock, even when the global
+        # game turn is already positive. Apply its scene without resetting stats.
+        state = self.state_manager.merge_entry_state(
+            state, campaign_manager.campaign,
+            campaign_manager.progress.arc_index, campaign_manager.progress.session_index,
+        )
 
         output = StoryOutput(
             narration=opening,
             dialogue=[],
-            scene_prompt="campaign opening",
+            scene_prompt=state.get("_scene_prompt", ""),
             sanity_delta=0,
             health_delta=0,
             options=["继续"],

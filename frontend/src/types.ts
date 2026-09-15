@@ -95,6 +95,7 @@ export type SessionResponse = {
   game_name: string;
   model: string;
   state: GameState;
+  campaign_filename?: string | null;
 };
 
 export type GenerateResponse = {

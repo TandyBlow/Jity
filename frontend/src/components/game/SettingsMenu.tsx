@@ -55,7 +55,7 @@ export function SettingsMenu({ session }: { session: GameSession }) {
         <div aria-label="游戏设置" className="settings-dropdown" role="menu">
           <div className="settings-field-row">
             <label htmlFor="settings-model">模型</label>
-            <select id="settings-model" value={model} onChange={(event) => setModel(event.target.value)}>
+            <select disabled={session.isLoading || !!session.pendingGenerate} id="settings-model" value={model} onChange={(event) => setModel(event.target.value)}>
               <option value="deepseek-v4-flash">deepseek-v4-flash</option>
               <option value="deepseek-reasoner">deepseek-reasoner</option>
             </select>
@@ -65,6 +65,7 @@ export function SettingsMenu({ session }: { session: GameSession }) {
             <label htmlFor="settings-campaign">战役</label>
             <select
               id="settings-campaign"
+              disabled={session.isLoading || !!session.pendingGenerate}
               value={selectedCampaign}
               onChange={(event) => handleCampaignChange(event.target.value)}
             >
@@ -83,6 +84,7 @@ export function SettingsMenu({ session }: { session: GameSession }) {
               <div className="settings-slot-control">
                 <select
                   id="settings-slot"
+                  disabled={session.isLoading || !!session.pendingGenerate}
                   value={selectedSlotId}
                   onChange={(event) => handleSlotChange(Number(event.target.value))}
                 >
@@ -120,6 +122,7 @@ export function SettingsMenu({ session }: { session: GameSession }) {
 
           <button
             className="settings-link-row settings-new-session"
+            disabled={session.isLoading || !!session.pendingGenerate}
             onClick={() => {
               setIsOpen(false);
               handleNewSession();

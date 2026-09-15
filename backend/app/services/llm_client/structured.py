@@ -4,7 +4,7 @@ import json
 import logging
 import time
 
-from app.services.llm_client.errors import LLMOutputParseError, LLMRequestError
+from app.services.llm_client.errors import LLMOutputParseError, LLMRequestError, request_error_message
 
 logger = logging.getLogger(__name__)
 
@@ -34,7 +34,7 @@ class StructuredGenerationMixin:
         except Exception as exc:
             latency_ms = int((time.perf_counter() - started) * 1000)
             raise LLMRequestError(
-                f"LLM text generation failed. Original error: {exc}",
+                request_error_message(exc),
                 status_code=getattr(exc, "status_code", 0),
                 response_text=str(exc),
                 latency_ms=latency_ms,
@@ -69,7 +69,7 @@ class StructuredGenerationMixin:
         except Exception as exc:
             latency_ms = int((time.perf_counter() - started) * 1000)
             raise LLMRequestError(
-                f"LLM JSON generation failed. Original error: {exc}",
+                request_error_message(exc),
                 status_code=getattr(exc, "status_code", 0),
                 response_text=str(exc),
                 latency_ms=latency_ms,

@@ -51,6 +51,9 @@ class CampaignContextBuilder:
             return ""
 
         parts: list[str] = []
+        parts.append(f"当前战役：{campaign.title}")
+        if campaign.constraints:
+            parts.append(f"战役限制：{campaign.constraints}")
 
         # Arc/session position
         try:
@@ -58,6 +61,9 @@ class CampaignContextBuilder:
             current_session = current_arc.sessions[progress.session_index]
             parts.append(f"当前章节：{current_arc.name} — {current_session.name}")
             parts.append(f"章节目标：{current_arc.goal or '无'}")
+            if current_session.opening_scene:
+                parts.append("本幕开场背景：\n" + current_session.opening_scene)
+                parts.append("从本幕开场和最近行动的结果继续，保持当前时间、地点和人物连续；不要重新开始故事或跳到其他章节。")
         except IndexError:
             parts.append("当前章节：无")
 

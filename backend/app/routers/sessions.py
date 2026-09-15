@@ -60,12 +60,14 @@ def create_session(request: CreateSessionRequest) -> SessionResponse:
                 manager.campaign,
                 request.arc_index,
                 request.session_index,
+                initialize=True,
             )
             # Write merged state to DB so generate can read it
             state_manager.save_state(
                 session_id, payload["game_name"],
                 payload["model"], payload["state"]
             )
+            payload["campaign_filename"] = request.campaign_filename
         except (FileNotFoundError, ValueError) as exc:
             raise HTTPException(status_code=400, detail=str(exc)) from exc
 
