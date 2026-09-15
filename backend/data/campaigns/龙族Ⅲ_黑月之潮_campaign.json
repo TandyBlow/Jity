@@ -10,6 +10,15 @@
         {
           "name": "楔子·黑蛇之夜",
           "opening_scene": "黑天鹅港的月圆之夜，黑色巨蛇穿行于走廊，铁鳞开合如千万片金属摩擦。墙壁开裂，十字架坠入冰海，宛如世界崩溃。你感到一种原始的召唤……",
+          "entry_state": {
+            "location": "黑天鹅港走廊",
+            "npcs": [],
+            "player_status": {
+              "condition": "身处黑蛇穿行的月夜",
+              "current_goal": "观察走廊中的异变，回应原始的召唤并寻找安全的落脚处"
+            },
+            "scene_prompt": "frozen harbor corridor under full moon, colossal black serpent, cracked walls, icy sea beyond, ominous cinematic lighting"
+          },
           "anchor_events": [
             {
               "id": "anchor-001",
@@ -38,6 +47,9 @@
         {
           "name": "末代皇孙",
           "opening_scene": "深夜，一个滑雪的身影从北冰洋方向靠近黑天鹅港。邦达列夫少校带着莫斯科的秘密指令抵达，他将炸毁列宁铜像，开启通往冻土层深处的密道。",
+          "entry_state": {
+            "location": "黑天鹅港列宁铜像前"
+          },
           "anchor_events": [
             {
               "id": "anchor-003",
@@ -66,6 +78,9 @@
         {
           "name": "零号房与誓言",
           "opening_scene": "雷娜塔趁护士喝酒打牌时巡视楼层，来到走廊尽头的零号房。挂锁意外弹开，她推门而入，看到了手术设备、血污和穿着拘束衣的苍白人形……",
+          "entry_state": {
+            "location": "黑天鹅港零号房"
+          },
           "anchor_events": [
             {
               "id": "anchor-005",
@@ -100,6 +115,9 @@
         {
           "name": "日本分部行动",
           "opening_scene": "夜叉和乌鸦闯入小山隆造的公寓，暴力劫持至海边码头。源稚生冷冷地逼问基因药的下落，卡塞尔学院日本分部的黑道真面目逐渐显露。",
+          "entry_state": {
+            "location": "日本海边码头"
+          },
           "anchor_events": [
             {
               "id": "anchor-007",
@@ -128,6 +146,9 @@
         {
           "name": "极乐天都",
           "opening_scene": "一个男人盯着路明非的照片，评价他的眼神卑贱悲伤，却又藏着狮子。与此同时，真仲英树蹒跚走入极乐馆，准备实现他的心愿……",
+          "entry_state": {
+            "location": "极乐馆"
+          },
           "anchor_events": [
             {
               "id": "anchor-009",
@@ -156,6 +177,9 @@
         {
           "name": "源氏重工潜入",
           "opening_scene": "楚子航乘坐的电梯突然失效，屏幕显示“神道”。他走出电梯，见到巨大影壁上描绘着半人半蛇巨人的战争，泼洒了大量鲜血。前方传来浓烈的血腥味……",
+          "entry_state": {
+            "location": "源氏重工地下神道"
+          },
           "anchor_events": [
             {
               "id": "anchor-011",
@@ -190,6 +214,9 @@
         {
           "name": "刺王杀驾之夜",
           "opening_scene": "风间琉璃播放一段录音，揭露赫尔佐格博士未死并化名王将，橘政宗实为邦达列夫。他冷冷地说：“监听见面只是手段，真正的目的只有一个——杀死王将。”",
+          "entry_state": {
+            "location": "风间琉璃的密谈处"
+          },
           "anchor_events": [
             {
               "id": "anchor-013",
@@ -218,6 +245,9 @@
         {
           "name": "樱之坠",
           "opening_scene": "大批拥有膜翼和蛇尾的龙形死侍从东京塔四周升起，包围特别瞭望台。混乱中，源稚生发现杀死王将的竟是自己的孪生弟弟风间琉璃……",
+          "entry_state": {
+            "location": "东京塔特别瞭望台"
+          },
           "anchor_events": [
             {
               "id": "anchor-015",
@@ -246,6 +276,9 @@
         {
           "name": "漆黑之日",
           "opening_scene": "海啸后，成田机场挤满逃离的人群。上杉越正要登机，却接到昂热的电话，被告知自己可能有两个儿子。与此同时，一个小女孩哭着要把机票让给自己的猫……",
+          "entry_state": {
+            "location": "成田机场"
+          },
           "anchor_events": [
             {
               "id": "anchor-017",
@@ -274,6 +307,9 @@
         {
           "name": "天谴",
           "opening_scene": "赫尔佐格融合八岐大蛇，化身白色龙王，继承白王权能，引发元素风暴，令火山群喷发。F-2战斗机拦截失败，被龙形生物击坠，新王降临的恐怖笼罩日本。",
+          "entry_state": {
+            "location": "日本白王降临的战场"
+          },
           "anchor_events": [
             {
               "id": "anchor-019",

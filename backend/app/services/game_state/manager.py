@@ -42,6 +42,7 @@ class GameStateManager(MemoryNormalizationMixin, StateInferenceMixin, EntryState
             "game_name": row["game_name"],
             "model": row["model"],
             "state": json.loads(row["state_json"]),
+            "campaign_filename": row["campaign_filename"],
         }
 
     def save_state(self, session_id: str, game_name: str, model: str, state: dict[str, Any]) -> None:

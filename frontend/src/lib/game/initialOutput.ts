@@ -50,6 +50,14 @@ export const initialOutput: StoryOutput = {
 
 export const DEFAULT_STORY_STYLE = "黑暗学院奇幻，带一点黑色幽默，强调 NPC 反应。";
 export const DEFAULT_CONSTRAINTS = "关键 NPC 不能突然死亡；不要跳出当前入学调查。";
+export const CAMPAIGN_STORY_STYLE = "延续当前战役的叙事风格、时代背景和人物处境。";
+export const CAMPAIGN_CONSTRAINTS = "遵循当前战役及本幕设定，承接最近剧情和玩家行动，保持人物与物品连续。";
+export const loadingOutput: StoryOutput = {
+  narration: "正在读取当前剧情……",
+  dialogue: [], scene_prompt: "", options: [],
+  sanity_delta: 0, health_delta: 0,
+  game_over: false, game_over_reason: "", current_location: "",
+};
 export const INITIAL_ACTION = `愣住两秒，然后硬着头皮打招呼："学姐好……那个，这里到底有什么不普通的？"`;
 export const SLOT_DEFAULT = "default" as const;
 export const ENTRY_ACTION = "（入场）环顾四周，了解当前处境。";

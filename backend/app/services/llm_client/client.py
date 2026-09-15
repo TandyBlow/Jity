@@ -14,6 +14,7 @@ from app.services.llm_client.errors import (
     LLMOutputParseError,
     LLMRequestError,
     MissingAPIKeyError,
+    request_error_message,
 )
 from app.services.llm_client.output_normalizer import StoryOutputNormalizer
 from app.services.llm_client.repair import JSONRepairMixin
@@ -62,7 +63,7 @@ class LLMClient(JSONRepairMixin, StoryOutputNormalizer, StructuredGenerationMixi
         except Exception as exc:
             latency_ms = int((time.perf_counter() - started) * 1000)
             raise LLMRequestError(
-                f"LLM 请求失败。请检查 API Key、余额或模型权限。原始错误: {exc}",
+                request_error_message(exc),
                 status_code=getattr(exc, "status_code", 0),
                 response_text=str(exc),
                 latency_ms=latency_ms,

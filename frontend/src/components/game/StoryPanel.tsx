@@ -99,7 +99,7 @@ export function StoryPanel({ session }: { session: GameSession }) {
         ) : null}
         <div className="option-list">
           {output.options.map((option) => (
-            <button className="option-button" key={option} onClick={() => handleGenerate(option)} type="button">
+            <button className="option-button" disabled={isLoading || !!session.pendingGenerate || !sessionId} key={option} onClick={() => handleGenerate(option)} type="button">
               {option}
             </button>
           ))}
@@ -120,7 +120,7 @@ export function StoryPanel({ session }: { session: GameSession }) {
             }}
             placeholder="输入玩家行动、当前场景或 GM 限制"
           />
-          <button disabled={isLoading || !sessionId} onClick={() => handleGenerate()} type="button">
+          <button disabled={isLoading || !!session.pendingGenerate || !sessionId} onClick={() => handleGenerate()} type="button">
             {isLoading ? <Loader2 className="spin-icon" size={18} /> : <Send size={18} />}
             <span>{isLoading ? "生成中" : "生成下一幕"}</span>
           </button>
