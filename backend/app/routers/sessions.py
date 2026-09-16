@@ -3,6 +3,7 @@
 import json
 import logging
 import time
+from datetime import datetime
 
 from fastapi import APIRouter, HTTPException
 
@@ -39,7 +40,7 @@ def create_session(request: CreateSessionRequest) -> SessionResponse:
                 detail=f"Campaign file not found: {request.campaign_filename}",
             )
         try:
-            slot_name = request.slot_name or "default"
+            slot_name = request.slot_name or f"auto_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
             manager = build_campaign_manager()
             manager.load(
                 campaign_path,

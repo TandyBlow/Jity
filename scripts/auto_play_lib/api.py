@@ -16,7 +16,15 @@ class APIError(RuntimeError):
 
 
 def create_session(args: argparse.Namespace) -> dict[str, Any]:
-    return api_post(args.api_base_url, "/sessions", {"model": args.model}, args.timeout)
+    payload: dict[str, Any] = {"model": args.model}
+    if getattr(args, "campaign", None):
+        payload.update({
+            "campaign_filename": args.campaign,
+            "arc_index": 0,
+            "session_index": 0,
+            "slot_name": "default",
+        })
+    return api_post(args.api_base_url, "/sessions", payload, args.timeout)
 
 
 def generate_scene(args: argparse.Namespace, session_id: str, action: str) -> dict[str, Any]:
@@ -83,4 +91,3 @@ def send_request(request: Request, timeout: float) -> dict[str, Any]:
         raise APIError("request timed out") from exc
     except json.JSONDecodeError as exc:
         raise APIError(f"invalid JSON response: {exc}") from exc
-

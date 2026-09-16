@@ -46,7 +46,7 @@ ScenarioGenerator.generate (generator.py:60)
   │        RAG检索(向量+关键词) + 战役上下文注入 + 记忆层(L1/persona/SCORE) + 按优先级截断
   │
   ├─4▶ [Hook3] 生成                              agent_pipeline.py:17
-  │        有战役: ①Examiner 行动可行? ──blocked──▶ 叙事内拒绝，提前返回
+  │        有战役: ①本地 Examiner 行动可行? ──blocked──▶ 叙事内拒绝，提前返回
   │                ②Director 锚点/偏差/重定向 → 注入导演指令
   │                ③Narrator 调LLM 产出剧情JSON
   │        无战役: 一次LLM调用(旧行为)
@@ -55,7 +55,7 @@ ScenarioGenerator.generate (generator.py:60)
   ├─5▶ 状态推进(纯本地代码)                      manager.py:50
   │        SAN/体力/回合、物品NPC任务按名合并、事件追加、超限裁剪
   │
-  ├─6▶ [Hook4] 每5回合LLM抽世界事实; NPC好感写库  post_generation.py:10
+  ├─6▶ [Hook4] NPC好感写库（世界事实随主叙事输出合并）  post_generation.py:10
   │
   ├─7▶ 对话×2落库 + 状态存盘                     generator.py:94-96
   │
@@ -169,16 +169,13 @@ EDGE: backend/app/services/scenario_generator/agent_pipeline.py:27 -> campaign_m
 EDGE: backend/app/services/scenario_generator/agent_pipeline.py:28 -> self._execute_single_llm
 EDGE: backend/app/services/scenario_generator/agent_pipeline.py:140 -> self.llm_client.generate
 
-**分支 B**：有战役 → 三段管线（每段各自调一次 LLM，失败都有兜底）。
+**分支 B**：有战役 → 三段管线（Examiner 为本地 Python 检查，Director 和 Narrator 各调用一次 LLM）。
 
-Stage 1 Examiner（判定行动可行性；blocked 则叙事内拒绝、提前返回 source="examiner_blocked"，
+Stage 1 本地 Examiner（检查物品、NPC、地点及资源，标记 SAN／技能／战斗规则，不调用 API、不掷骰；blocked 则叙事内拒绝、提前返回 source="examiner_blocked"，
 agent_pipeline.py:50-62）：
 
 EDGE: backend/app/services/scenario_generator/agent_pipeline.py:36 -> ExaminerAgent
-EDGE: backend/app/services/scenario_generator/agent_pipeline.py:37 -> self._collect_relevant_rules
 EDGE: backend/app/services/scenario_generator/agent_pipeline.py:39 -> examiner.examine
-EDGE: backend/app/services/agents/examiner.py:100 -> self._llm.generate_json
-EDGE: backend/app/services/agents/examiner.py:106 -> _parse_ruling
 
 Stage 2 Director（锚点评估、偏差检测、重定向策略）：
 
@@ -217,7 +214,7 @@ EDGE: backend/app/services/llm_client/client.py:93 -> self._parse_story_output
 EDGE: backend/app/services/llm_client/client.py:102 -> self._request_completion
 EDGE: backend/app/services/llm_client/client.py:112 -> self._parse_story_output
 
-`generate_json`（Examiner/Director/事实抽取用）走同一 `_request_completion`，
+`generate_json`（Director 等结构化生成使用）走同一 `_request_completion`，
 见 `llm_client/structured.py:42-96`。
 
 ### Step 5 — 状态推进（纯本地，无 LLM）
@@ -240,15 +237,12 @@ EDGE: backend/app/services/game_state/manager.py:89 -> self._append_recent
 EDGE: backend/app/services/game_state/manager.py:91 -> self._build_key_event
 EDGE: backend/app/services/game_state/manager.py:93 -> self.enforce_state_caps
 
-### Step 6 — Hook 4：事后处理（每 5 回合抽事实 + NPC 好感）
+### Step 6 — Hook 4：事后处理（NPC 好感；不再独立抽取世界事实）
 
 `post_generation.py:10-70`。
 
 EDGE: backend/app/services/scenario_generator/generator.py:90 -> self._apply_post_generation
 EDGE: backend/app/services/scenario_generator/post_generation.py:14 -> campaign_manager.is_loaded
-EDGE: backend/app/services/scenario_generator/post_generation.py:18 -> campaign_manager.extract_facts
-EDGE: backend/app/services/scenario_generator/post_generation.py:23 -> self.state_manager.merge_by_name
-EDGE: backend/app/services/scenario_generator/post_generation.py:28 -> self.state_manager.enforce_state_caps
 EDGE: backend/app/services/scenario_generator/post_generation.py:32 -> self._process_npc_relations_delta
 EDGE: backend/app/services/scenario_generator/post_generation.py:40 -> self.db.read_campaign_progress
 EDGE: backend/app/services/scenario_generator/post_generation.py:61 -> self.db.update_npc_relations
@@ -325,7 +319,7 @@ EDGE: backend/app/routers/sessions.py:114 -> db.read_campaign_progress
 | `campaign_manager.commit_pending_anchors` | `services/campaign_manager/facades.py:22` |
 | `campaign_manager.detect_deviation` | `services/campaign_manager/facades.py:35` |
 | `campaign_manager.load` / `is_loaded` / `get_opening_scene` | `services/campaign_manager/facade.py:109/121/124` |
-| `campaign_manager.record_turn` / `resolve_max_turns` / `truncate_prompt_sections` / `extract_facts` | `services/campaign_manager/metrics.py:62/32/35/45` |
+| `campaign_manager.record_turn` / `resolve_max_turns` / `truncate_prompt_sections` | `services/campaign_manager/metrics.py` |
 | `campaign_manager.advance_turn` / `advance_session` / `_load_recap_compressed` | `services/campaign_manager/recap_advancer.py:39/42/25` |
 | `memory_ctrl.on_turn_generated` / `maintain` | `services/memory/memory_controller/controller.py:107` / `maintenance.py:15` |
 | `retriever.retrieve_async` | `services/retriever.py:55` |

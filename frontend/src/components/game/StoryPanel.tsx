@@ -81,6 +81,21 @@ export function StoryPanel({ session }: { session: GameSession }) {
       </div>
 
       <article className="scene-output">
+        {session.autoPlay.enabled ? (
+          <div className={`autoplay-banner ${session.autoPlay.status}`}>
+            <div>
+              <strong>自动跑剧情 · {session.autoPlay.currentTurn}/{session.autoPlay.targetTurns}</strong>
+              <span>当前目标：{session.autoPlay.goals.join("；") || "跟随主线推进"}</span>
+              {session.autoPlay.selectedAction ? <span>下一步：{session.autoPlay.selectedAction}</span> : null}
+              {session.autoPlay.selectionReason ? <small>{session.autoPlay.selectionReason}</small> : null}
+            </div>
+            {session.autoPlay.status !== "complete" ? (
+              <button onClick={() => session.autoPlay.setPaused(!session.autoPlay.paused)} type="button">
+                {session.autoPlay.paused ? "继续" : "暂停"}
+              </button>
+            ) : <span className="autoplay-complete">已完成</span>}
+          </div>
+        ) : null}
         <div className="narration">
           {narrationParagraphs(output.narration).map((paragraph, index) => (
             <p key={`${index}-${paragraph.slice(0, 20)}`}>{paragraph}</p>

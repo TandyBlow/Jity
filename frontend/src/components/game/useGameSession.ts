@@ -8,6 +8,7 @@ import { buildStatusDeltaHints } from "@/lib/game/format";
 import { useGameActions } from "@/components/game/useGameActions";
 import { useGameEffects } from "@/components/game/useGameEffects";
 import { useSceneBackground } from "@/components/game/useSceneBackground";
+import { useBrowserAutoPlay } from "@/components/game/useBrowserAutoPlay";
 import type {
   CampaignListItem,
   GameState,
@@ -71,11 +72,12 @@ export function useGameSession() {
       setSelectedSlotId("");
       return;
     }
-    const updated = await listSlots(currentSessionId);
-    const nextSlots = (updated.slots ?? []).filter((slot) => slot.campaign_id === currentSessionId);
+    const updated = await listSlots();
+    const nextSlots = updated.slots ?? [];
     setSlots(nextSlots);
-    const active = nextSlots.find((slot) => slot.slot_name === preferredSlotName)
-      ?? nextSlots.find((slot) => slot.is_active);
+    const current = nextSlots.filter((slot) => slot.campaign_id === currentSessionId);
+    const active = current.find((slot) => slot.slot_name === preferredSlotName)
+      ?? current.find((slot) => slot.is_active);
     if (active) {
       setSelectedSlot(active.slot_name);
       setSelectedSlotId(active.id);
@@ -136,13 +138,17 @@ export function useGameSession() {
   const actions = useGameActions(core);
 
   useGameEffects(core, { setSlots, setCampaigns, handleGenerate: actions.handleGenerate });
+  const autoPlay = useBrowserAutoPlay({
+    sessionId, selectedCampaign, state, output, isLoading, pendingGenerate, error,
+    handleGenerate: actions.handleGenerate,
+  });
   const sceneBackground = useSceneBackground(output, state);
 
   return {
     ...core, ...actions,
     ...sceneBackground,
     state, output, outputSource, chunks, isLoading, error,
-    statusDeltaHints, slots, selectedSlotId, campaigns, activeTurnId,
+    statusDeltaHints, slots, selectedSlotId, campaigns, activeTurnId, autoPlay,
   };
 }
 

@@ -13,14 +13,26 @@ class EntryStateMixin:
         session_index: int,
         *,
         initialize: bool = False,
+        reset_scene_context: bool = False,
     ) -> dict[str, Any]:
         """Merge entry_state from campaign session into base_state.
 
         Fresh entry uses neutral state → starting_state → session.entry_state.
-        Chapter transitions only apply entry_state, preserving accumulated stats
-        and inventory. Deep copies keep the source state and campaign immutable.
+        Chapter transitions preserve durable state, but may reset scene-local
+        NPCs and recent events before applying the next session's entry_state.
+        Deep copies keep the source state and campaign immutable.
         """
         result = deepcopy(base_state)
+        if reset_scene_context:
+            # ``npcs`` and ``recent_events`` describe the active scene and the
+            # short-term narration window.  Carrying them over makes a new
+            # scripted opening compete with the scene that just ended.  Durable
+            # continuity remains in items/quests/world_facts, relations and the
+            # campaign recap.
+            result["npcs"] = []
+            result["recent_events"] = []
+            result.pop("_memory_controller", None)
+            result["_scene_prompt"] = ""
         if initialize:
             # The free-play defaults describe a specific academy scene. A new
             # campaign (including timeline entry) must not inherit that story.
@@ -53,9 +65,10 @@ class EntryStateMixin:
                 if entry.get("location"):
                     if result.get("current_location") != entry["location"]:
                         result["_scene_prompt"] = ""
-                        for npc in result.get("npcs", []):
-                            if npc.get("status") == "present":
-                                npc["status"] = "away"
+                        if not reset_scene_context:
+                            for npc in result.get("npcs", []):
+                                if npc.get("status") == "present":
+                                    npc["status"] = "away"
                     result["current_location"] = entry["location"]
                 if "npcs" in entry:
                     result["npcs"] = self.merge_by_name(

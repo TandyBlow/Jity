@@ -24,6 +24,7 @@ export function useTimelineData(
   sessionId: string,
   requestedNodeId?: number,
   preferActiveParent = false,
+  live = false,
 ) {
   const [campaigns, setCampaigns] = useState<CampaignListItem[]>([]);
   const [selectedFile, setSelectedFile] = useState<string>("");
@@ -87,6 +88,31 @@ export function useTimelineData(
       setLoading(false);
     });
   }, [sessionId, requestedNodeId, preferActiveParent, loadNode]);
+
+  useEffect(() => {
+    if (!live || !sessionId) return;
+    let disposed = false;
+    const refresh = async () => {
+      const [progress, timeline] = await Promise.all([
+        getSessionProgress(sessionId).catch(() => null),
+        getTimeline(sessionId).catch(() => null),
+      ]);
+      if (disposed) return;
+      if (progress) {
+        setRevealedAnchors(progress.revealed_anchors ?? []);
+        setWorldFacts(progress.world_facts ?? []);
+      }
+      if (timeline) {
+        setTimelineNodes(timeline.nodes);
+        setActiveNodeId(timeline.active_node_id);
+      }
+    };
+    const timer = window.setInterval(refresh, 2000);
+    return () => {
+      disposed = true;
+      window.clearInterval(timer);
+    };
+  }, [live, sessionId]);
 
   const handleSelectCampaign = useCallback((filename: string) => {
     setSelectedFile(filename);

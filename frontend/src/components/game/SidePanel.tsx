@@ -4,6 +4,7 @@ import Link from "next/link";
 import { History, Loader2, MapPin, PenTool, RefreshCw, Send } from "lucide-react";
 
 import type { GameSession } from "@/components/game/useGameSession";
+import { formatSlotTime } from "@/lib/game/format";
 
 export function SidePanel({ session }: { session: GameSession }) {
   const {
@@ -119,7 +120,7 @@ function SlotControls({
         {slots.length > 0 && selectedSlotId === "" && <option value="">选择存档</option>}
         {slots.map(s => (
           <option key={s.id} value={s.id}>
-            {s.slot_name} (A{s.arc_index + 1}S{s.session_index + 1} · T{s.turn_in_session})
+            {s.slot_name} (A{s.arc_index + 1}S{s.session_index + 1} · {formatSlotTime(s.last_played)})
           </option>
         ))}
       </select>

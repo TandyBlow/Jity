@@ -5,6 +5,7 @@ import { ChevronDown, History, MapPin, PenTool, Plus, RefreshCw, Settings, X } f
 import { useEffect, useRef, useState } from "react";
 
 import type { GameSession } from "@/components/game/useGameSession";
+import { formatSlotTime } from "@/lib/game/format";
 
 export function SettingsMenu({ session }: { session: GameSession }) {
   const {
@@ -35,6 +36,12 @@ export function SettingsMenu({ session }: { session: GameSession }) {
   const createSlot = () => {
     const name = window.prompt("新存档名称:");
     if (name?.trim()) handleCreateSlot(name.trim());
+  };
+
+  const campaignTitle = (filename?: string | null) => {
+    if (!filename) return "自由模式";
+    const found = campaigns.find((campaign) => campaign.filename === filename);
+    return found?.title ?? filename;
   };
 
   return (
@@ -92,7 +99,7 @@ export function SettingsMenu({ session }: { session: GameSession }) {
                   {slots.length > 0 && selectedSlotId === "" ? <option value="">选择存档</option> : null}
                   {slots.map((slot) => (
                     <option key={slot.id} value={slot.id}>
-                      {slot.slot_name} · A{slot.arc_index + 1}S{slot.session_index + 1} · T{slot.turn_in_session}
+                      {slot.slot_name} · {campaignTitle(slot.campaign_filename)} · A{slot.arc_index + 1}S{slot.session_index + 1} · {formatSlotTime(slot.last_played)}
                     </option>
                   ))}
                 </select>
@@ -105,9 +112,13 @@ export function SettingsMenu({ session }: { session: GameSession }) {
 
           <div className="settings-divider" />
 
-          <Link className="settings-link-row" href={sessionId ? `/timeline?session=${sessionId}` : "/timeline"}>
+          <Link
+            className="settings-link-row"
+            href={session.autoPlay.enabled ? session.autoPlay.timelineUrl : (sessionId ? `/timeline?session=${sessionId}` : "/timeline")}
+            target={session.autoPlay.enabled ? "_blank" : undefined}
+          >
             <MapPin size={17} />
-            <span>发现时间线</span>
+            <span>{session.autoPlay.enabled ? "发现时间线（实时）" : "发现时间线"}</span>
           </Link>
           <Link className="settings-link-row" href="/curator">
             <PenTool size={17} />

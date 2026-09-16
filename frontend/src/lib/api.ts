@@ -53,7 +53,9 @@ export function createSession(
     body.campaign_filename = options.campaignFilename;
     body.arc_index = options.arcIndex ?? 0;
     body.session_index = options.sessionIndex ?? 0;
-    body.slot_name = options.slotName ?? "default";
+  }
+  if (options?.slotName) {
+    body.slot_name = options.slotName;
   }
   return request<SessionResponse>("/sessions", {
     method: "POST",

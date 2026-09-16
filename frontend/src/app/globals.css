@@ -1518,3 +1518,25 @@ a {
     overflow-x: auto;
   }
 }
+.autoplay-banner {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+  padding: 12px 14px;
+  border: 1px solid color-mix(in srgb, var(--accent-2) 45%, transparent);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--accent-2) 9%, rgba(8, 10, 14, 0.86));
+}
+
+.autoplay-banner > div { display: grid; gap: 4px; }
+.autoplay-banner span, .autoplay-banner small { color: var(--text-muted); }
+.autoplay-banner.paused { border-color: #b89146; }
+.autoplay-banner.error { border-color: #b84b4b; }
+.autoplay-banner.complete { border-color: #4e9b70; }
+.autoplay-banner button { padding: 6px 12px; white-space: nowrap; }
+.autoplay-complete { color: #77c99b !important; font-weight: 700; }
+.autoplay-anchors { display: grid; gap: 7px; }
+.autoplay-anchors .anchor-new { border-color: var(--accent-2); color: var(--accent-2); }
+.autoplay-anchor-link { color: var(--accent-2); font-size: 0.84rem; text-decoration: none; }

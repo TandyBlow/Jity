@@ -21,10 +21,17 @@ class OpeningSceneMixin:
 
         # A chapter starts on the campaign-local clock, even when the global
         # game turn is already positive. Apply its scene without resetting stats.
+        is_session_transition = int(state.get("turn", 0)) > 0
         state = self.state_manager.merge_entry_state(
             state, campaign_manager.campaign,
             campaign_manager.progress.arc_index, campaign_manager.progress.session_index,
+            reset_scene_context=is_session_transition,
         )
+        if is_session_transition:
+            # The controller contains raw turns, summaries and persona sketches
+            # from the previous scene.  The campaign recap is the deliberate
+            # cross-session continuity channel; start a fresh short-term cache.
+            self.invalidate_timeline_caches(session_id, campaign_manager.slot_name)
 
         output = StoryOutput(
             narration=opening,

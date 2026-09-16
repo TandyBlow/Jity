@@ -1,16 +1,12 @@
-"""CampaignManager facade — token budget, fact extraction and turn metrics."""
+"""CampaignManager facade — token budget and turn metrics."""
 
-import logging
 from typing import Any
 
 from app.schemas.game import StoryOutput
-from app.services.campaign_manager.fact_prompts import build_fact_extraction
-
-logger = logging.getLogger(__name__)
 
 
 class MetricsFacade:
-    """Token budget checks, fact extraction and per-turn instrumentation."""
+    """Token budget checks and per-turn instrumentation."""
 
     DEFAULT_MAX_TURNS = 30
 
@@ -39,23 +35,6 @@ class MetricsFacade:
             return prompt, token_count, False
         truncated = self._strategy.truncate(sections)
         return truncated, self._strategy.count_tokens(truncated), True
-
-    # ── Fact extraction ──────────────────────────────────────────────
-
-    async def extract_facts(self, narration_text: str, recent_events: list[str]) -> list[dict]:
-        if self.llm_client is None or self.prompt_builder is None:
-            return []
-        prompt = build_fact_extraction(narration_text, recent_events)
-        try:
-            facts = await self.llm_client.generate_json(
-                prompt, max_tokens=2000, temperature=0.2
-            )
-            if isinstance(facts, list):
-                return [f for f in facts if isinstance(f, dict) and f.get("name")]
-            return []
-        except Exception:
-            logger.warning("Fact extraction failed for campaign %s", self.progress.campaign_id if self.progress else "?", exc_info=True)
-            return []
 
     # ── Per-turn instrumentation ─────────────────────────────────────
 
