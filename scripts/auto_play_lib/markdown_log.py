@@ -29,8 +29,10 @@ def write_header(path: Path, args: argparse.Namespace) -> None:
             f"- runs: `{args.runs}`",
             f"- turns_per_run: `{args.turns}`",
             f"- seed: `{args.seed}`",
+            f"- campaign: `{getattr(args, 'campaign', '') or '自由模式'}`",
+            f"- browser_mode: `{getattr(args, 'browser', False)}`",
             "",
-            "选择策略：优先选择包含推进、继续、前往、调查、询问、检查、任务、地点、关键 NPC 或关键物品的选项；降低等待、拒绝、逃跑、沉默等被动选项权重。",
+            "选择策略：结合当前目标和未完成任务目标进行中文短语匹配，并优先推进、调查、询问、检查等主动选项；降低等待、拒绝、逃跑、沉默等被动选项权重。",
             "",
         ],
     )
@@ -46,6 +48,7 @@ def append_turn(
     action: str,
     score: int,
     response: dict[str, Any],
+    active_goals: list[str] | None = None,
 ) -> None:
     output = response.get("output", {})
     state = response.get("state", {})
@@ -60,6 +63,7 @@ def append_turn(
         f"- selected_option: `{selected_index if selected_index is not None else 'fallback'}`",
         f"- selection_score: `{score}`",
         f"- selected_action: {action}",
+        f"- active_goals: {'；'.join(active_goals or []) or '无'}",
         "",
         "### 本轮可选项",
         "",
@@ -132,4 +136,3 @@ def append_block(path: Path, lines: list[str]) -> None:
         file.write("\n".join(lines))
         if not lines or lines[-1] != "":
             file.write("\n")
-

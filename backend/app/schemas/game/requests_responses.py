@@ -15,7 +15,7 @@ class CreateSessionRequest(BaseModel):
     campaign_filename: Optional[str] = None
     arc_index: int = 0
     session_index: int = 0
-    slot_name: str = "default"
+    slot_name: Optional[str] = None
 
 
 class GenerateRequest(BaseModel):

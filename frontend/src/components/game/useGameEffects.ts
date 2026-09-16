@@ -35,6 +35,10 @@ export function useGameEffects(
     let mounted = true;
 
     async function loadInitialSession(): Promise<SessionResponse> {
+      const params = new URLSearchParams(window.location.search);
+      const requestedSessionId = params.get("autoplay") === "1" ? params.get("session") : null;
+      if (requestedSessionId) return getSession(requestedSessionId);
+
       let campaignOpts: { campaignFilename?: string; arcIndex?: number; sessionIndex?: number } | undefined;
       try {
         const entryJson = sessionStorage.getItem("campaign_entry");
@@ -97,11 +101,12 @@ export function useGameEffects(
       core.setSelectedSlotId("");
       return;
     }
-    listSlots(sessionId).then(r => {
-      const nextSlots = (r.slots ?? []).filter((slot) => slot.campaign_id === sessionId);
+    listSlots().then(r => {
+      const nextSlots = r.slots ?? [];
       setSlots(nextSlots);
-      const active = nextSlots.find((slot) => slot.is_active)
-        ?? nextSlots.find((slot) => slot.slot_name === selectedSlot);
+      const current = nextSlots.filter((slot) => slot.campaign_id === sessionId);
+      const active = current.find((slot) => slot.is_active)
+        ?? current.find((slot) => slot.slot_name === selectedSlot);
       if (active) {
         core.setSelectedSlot(active.slot_name);
         core.setSelectedSlotId(active.id);

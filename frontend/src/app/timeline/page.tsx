@@ -15,8 +15,12 @@ function TimelineContent() {
   const sessionId = searchParams.get("session") ?? "";
   const requestedNode = Number(searchParams.get("node")) || undefined;
   const preferActiveParent = searchParams.get("back") === "1";
-  const data = useTimelineData(sessionId, requestedNode, preferActiveParent);
-  const [tab, setTab] = useState<"story" | "anchors" | "clues">(sessionId ? "story" : "anchors");
+  const isAutoPlayView = searchParams.get("autoplay") === "1";
+  const data = useTimelineData(sessionId, requestedNode, preferActiveParent, isAutoPlayView);
+  const requestedTab = searchParams.get("tab");
+  const [tab, setTab] = useState<"story" | "anchors" | "clues">(
+    requestedTab === "anchors" || requestedTab === "clues" ? requestedTab : (sessionId ? "story" : "anchors"),
+  );
   const { campaigns, selectedFile, loading, handleSelectCampaign } = data;
 
   return (
@@ -24,15 +28,27 @@ function TimelineContent() {
       <div className="timeline-header">
         <div>
           <Link
-            href="/"
+            href={isAutoPlayView
+              ? `/?${new URLSearchParams({
+                  autoplay: "1",
+                  session: sessionId,
+                  turns: searchParams.get("turns") ?? "300",
+                  delay: searchParams.get("delay") ?? "200",
+                  seed: searchParams.get("seed") ?? "20260616",
+                }).toString()}`
+              : "/"}
             className="back-link"
-            onClick={() => {
+            onClick={(event) => {
               if (sessionId && typeof window !== "undefined") {
                 window.localStorage.setItem("jity_active_session_id", sessionId);
+                if (isAutoPlayView) {
+                  event.preventDefault();
+                  window.close();
+                }
               }
             }}
           >
-            ← 返回控制台
+            ← {isAutoPlayView ? "关闭时间线" : "返回控制台"}
           </Link>
           <h1>发现时间线</h1>
           {!sessionId && (
@@ -40,6 +56,7 @@ function TimelineContent() {
               提示：从控制台打开此页面以查看实际进度。当前显示战役结构预览。
             </p>
           )}
+          {isAutoPlayView ? <p className="meta" style={{ marginTop: 8 }}>实时观察模式：每 2 秒刷新，自动剧情在原页签继续运行。</p> : null}
         </div>
         {tab === "anchors" && campaigns.length > 0 && (
           <select

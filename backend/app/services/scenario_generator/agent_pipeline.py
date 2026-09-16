@@ -33,25 +33,14 @@ class AgentPipelineMixin:
         turn = int(state.get("turn", 0))
 
         # Stage 1: Examiner — action feasibility + rule identification
-        from app.schemas.agent_io import ActionRuling, ActionPermissibility
+        from app.schemas.agent_io import ActionRuling
         if is_passive_continuation_action(request.player_action):
-            # A scripted opening is itself valid narrative context.  The
-            # Examiner only sees structured state, so it can falsely block the
-            # UI's generic “继续” when the opening introduced characters that
-            # are not duplicated in entry_state.
-            ruling = ActionRuling(permissibility=ActionPermissibility.PERMISSIBLE)
+            ruling = ActionRuling()
         else:
-            examiner = ExaminerAgent(self.llm_client)
-            rules_texts = self._collect_relevant_rules(state, campaign_manager)
-            try:
-                ruling = await examiner.examine(
-                    player_action=request.player_action,
-                    game_state=state,
-                    rules_texts=rules_texts,
-                )
-            except Exception:
-                logger.warning("Examiner failed, defaulting to permissible", exc_info=True)
-                ruling = ActionRuling(permissibility=ActionPermissibility.PERMISSIBLE)
+            ruling = await ExaminerAgent().examine(
+                player_action=request.player_action,
+                game_state=state,
+            )
 
         # If Examiner says blocked → return diegetic rejection
         if ruling.permissibility.value == "blocked" and ruling.rejection_reason:

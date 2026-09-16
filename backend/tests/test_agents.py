@@ -21,8 +21,6 @@ from app.schemas.agent_io import (
 from app.services.agents.director import DirectorAgent, _parse_instruction, _fallback_instruction
 from app.services.agents.examiner import (
     ExaminerAgent,
-    _compact_entities,
-    _parse_ruling,
     is_passive_continuation_action,
 )
 from app.services.memory.forgetting import (
@@ -45,46 +43,6 @@ from app.services.memory.memory_controller import MemoryController
 # ── Examiner ────────────────────────────────────────────────
 
 class TestExaminerAgent:
-    def test_parse_ruling_permissible(self):
-        raw = {"permissibility": "permissible", "triggered_rules": [], "constraints": "", "rejection_reason": ""}
-        ruling = _parse_ruling(raw)
-        assert ruling.permissibility == ActionPermissibility.PERMISSIBLE
-        assert ruling.triggered_rules == []
-
-    def test_parse_ruling_blocked(self):
-        raw = {
-            "permissibility": "blocked",
-            "triggered_rules": [],
-            "constraints": "大门紧锁",
-            "rejection_reason": "你尝试推门，但门纹丝不动——似乎需要钥匙。",
-        }
-        ruling = _parse_ruling(raw)
-        assert ruling.permissibility == ActionPermissibility.BLOCKED
-        assert ruling.rejection_reason != ""
-
-    def test_parse_ruling_with_triggered_rules(self):
-        raw = {
-            "permissibility": "conditional",
-            "triggered_rules": [
-                {"rule_type": "sanity_check", "rule_name": "SAN检定", "rule_details": "1d100 ≤ SAN值"}
-            ],
-            "constraints": "需要SAN检定",
-            "rejection_reason": "",
-        }
-        ruling = _parse_ruling(raw)
-        assert ruling.permissibility == ActionPermissibility.CONDITIONAL
-        assert len(ruling.triggered_rules) == 1
-        assert ruling.triggered_rules[0].rule_type == "sanity_check"
-
-    def test_compact_entities_empty(self):
-        assert _compact_entities([]) == "无"
-
-    def test_compact_entities_with_items(self):
-        items = [{"name": "钥匙", "status": "owned"}, {"name": "手电筒"}]
-        result = _compact_entities(items)
-        assert "钥匙" in result
-        assert "手电筒" in result
-
     @pytest.mark.parametrize("action", ["继续", "继续剧情。", "接着", " 接着讲！ "])
     def test_passive_continuation_action(self, action):
         assert is_passive_continuation_action(action)

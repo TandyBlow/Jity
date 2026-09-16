@@ -144,7 +144,17 @@ async def test_next_chapter_uses_local_turn_and_survives_reload(runtime):
     manager = runtime.managers[sid]
     await runtime.generator.generate(sid, GenerateRequest(player_action="入场"))
     state = runtime.states.get_session_payload(sid)["state"]
-    state.update(turn=30, health=67, items=[{"name": "纪念物", "status": "owned"}])
+    state.update(
+        turn=30,
+        health=67,
+        items=[{"name": "纪念物", "status": "owned"}],
+        npcs=[
+            {"name": "婶婶", "status": "present", "current_location": "婶婶家中的卧室"},
+            {"name": "堂弟", "status": "present", "current_location": "婶婶家中的卧室"},
+        ],
+        recent_events=["你猛地从旧卧室的噩梦中惊醒，婶婶催你下楼洗碗。"],
+        _memory_controller={"nsb": {"level1_episodes": ["上一幕短期记忆"]}},
+    )
     runtime.states.save_state(sid, session["game_name"], "test", state)
     await manager.advance_session()
     result = await runtime.generator.generate(sid, GenerateRequest(player_action="继续"))
@@ -153,6 +163,9 @@ async def test_next_chapter_uses_local_turn_and_survives_reload(runtime):
     assert result.state["health"] == 67
     assert result.state["current_location"] == "芝加哥火车站候车大厅"
     assert any(i["name"] == "纪念物" for i in result.state["items"])
+    assert result.state["npcs"] == []
+    assert all("旧卧室" not in event and "婶婶" not in event for event in result.state["recent_events"])
+    assert "_memory_controller" not in runtime.states.get_session_payload(sid)["state"]
 
     runtime.llm.generate.return_value = (StoryOutput(
         narration="你在芝加哥火车站睁开眼，芬格尔仍坐在旁边。",
@@ -166,13 +179,17 @@ async def test_next_chapter_uses_local_turn_and_survives_reload(runtime):
     next_opening = manager.campaign.arcs[0].sessions[1].opening_scene
     assert next_opening in prompt
     assert first_opening not in prompt
+    assert "婶婶" not in prompt
+    assert "堂弟" not in prompt
+    assert "旧卧室" not in prompt
     director_context = DirectorAgent.direct.call_args.kwargs["narrative_context"]
     assert "当前幕固定开场（最高优先级" in director_context
     assert "芝加哥火车站候车大厅" in director_context
     assert next_opening in director_context
 
     reloaded = CampaignManager(db=runtime.db, campaigns_dir=CAMPAIGNS, scripted_story=MagicMock())
-    reloaded.load(CAMPAIGNS / FILES[1], campaign_id=sid)
+    active_slot = runtime.db.get_session(sid)["active_slot_name"]
+    reloaded.load(CAMPAIGNS / FILES[1], campaign_id=sid, slot_name=active_slot)
     runtime.managers[sid] = reloaded
     assert reloaded.progress.turn_in_session == 2
     payload = runtime.states.get_session_payload(sid)

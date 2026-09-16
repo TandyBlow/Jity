@@ -75,7 +75,7 @@ export function useGameActions(core: GameSessionCore) {
     setPendingGenerate(null);
     try {
       const campaignOpts = selectedCampaign
-        ? { campaignFilename: selectedCampaign, arcIndex: 0, sessionIndex: 0, slotName: SLOT_DEFAULT }
+        ? { campaignFilename: selectedCampaign, arcIndex: 0, sessionIndex: 0 }
         : undefined;
       const session = await createSession(model, campaignOpts);
       rememberActiveSession(session.session_id);
@@ -106,7 +106,7 @@ export function useGameActions(core: GameSessionCore) {
     setAction("");
     setPendingGenerate(null);
     const opts = value
-      ? { campaignFilename: value, arcIndex: 0, sessionIndex: 0, slotName: SLOT_DEFAULT }
+      ? { campaignFilename: value, arcIndex: 0, sessionIndex: 0 }
       : undefined;
     try {
       const session = await createSession(model, opts);

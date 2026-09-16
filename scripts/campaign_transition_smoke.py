@@ -62,6 +62,18 @@ def names(state: dict[str, Any]) -> list[str]:
     return [str(item.get("name", "")) for item in state.get("npcs", []) if item.get("name")]
 
 
+def npc_records(state: dict[str, Any]) -> list[dict[str, str]]:
+    return [
+        {
+            "name": str(item.get("name", "")),
+            "status": str(item.get("status", "")),
+            "location": str(item.get("current_location", "")),
+        }
+        for item in state.get("npcs", [])
+        if item.get("name")
+    ]
+
+
 def normalize(text: str) -> str:
     return re.sub(r"\s+|[，。！？、；：“”‘’（）()…,.!?;:\-—]", "", text)
 
@@ -135,6 +147,7 @@ def run_campaign(
                 "turn_in_session": progress.get("turn_in_session"),
                 "location": state.get("current_location", ""),
                 "npcs": names(state),
+                "npc_records": npc_records(state),
                 "narration": output.get("narration", ""),
                 "dialogue": output.get("dialogue", []),
                 "options": output.get("options", []),
@@ -145,6 +158,21 @@ def run_campaign(
     first_arc_sessions = campaign["arcs"][0]["sessions"]
     expected_first = first_arc_sessions[0]
     expected_next = first_arc_sessions[1]
+    previous_npcs = set(results[1]["npcs"])
+    declared_next_npcs = {
+        str(npc.get("name", ""))
+        for npc in expected_next.get("entry_state", {}).get("npcs", [])
+        if npc.get("name")
+    }
+    forbidden_previous_npcs = previous_npcs - declared_next_npcs
+    next_scene_text = "\n".join(
+        [results[2]["narration"], results[3]["narration"]]
+        + [str(item.get("text", "")) for item in results[3]["dialogue"]]
+    )
+    reintroduced_previous_npcs = sorted(
+        name for name in forbidden_previous_npcs
+        if name in results[2]["npcs"] or name in results[3]["npcs"] or name in next_scene_text
+    )
     combined = "\n".join(step["narration"] for step in results)
     marker_hits = [marker for marker in CONTAMINATION_MARKERS if marker in combined]
     if source_name == "default_campaign.json":
@@ -162,6 +190,13 @@ def run_campaign(
         "next_continue_uses_real_llm": results[3]["source"] == "llm",
         "first_opening_not_repeated": not repeated_opening(results[0]["narration"], results[1]["narration"]),
         "next_opening_not_repeated": not repeated_opening(results[2]["narration"], results[3]["narration"]),
+        "previous_continuation_not_reused": not repeated_opening(
+            results[1]["narration"], results[3]["narration"]
+        ),
+        "previous_session_npcs_cleared": not (
+            forbidden_previous_npcs & set(results[2]["npcs"])
+        ),
+        "previous_session_npcs_not_reintroduced": not reintroduced_previous_npcs,
         "no_enrollment_campaign_contamination": not marker_hits,
         "recorded_prompts_match": all(s["player_prompt"] == s["recorded_prompt"] for s in results),
     }
@@ -172,6 +207,7 @@ def run_campaign(
         "expected_first_session": expected_first.get("name", ""),
         "expected_next_session": expected_next.get("name", ""),
         "contamination_marker_hits": marker_hits,
+        "reintroduced_previous_npcs": reintroduced_previous_npcs,
         "checks": checks,
         "passed": all(checks.values()),
         "steps": results,
@@ -197,6 +233,9 @@ def render_markdown(evidence: dict[str, Any]) -> str:
                 f"- 会话：`{campaign['session_id']}`",
                 f"- 跨幕：{campaign['expected_first_session']} → {campaign['expected_next_session']}",
                 f"- 判定：{'通过' if campaign['passed'] else '失败'}",
+                f"- 地点连续性：{campaign['steps'][2]['location']} → {campaign['steps'][3]['location']}",
+                f"- 当前幕 NPC：{'、'.join(campaign['steps'][3]['npcs']) or '无'}",
+                f"- 叙事连续性：{'未复用上一幕开头，且无上一幕 NPC 回流' if campaign['checks']['previous_continuation_not_reused'] and campaign['checks']['previous_session_npcs_not_reintroduced'] else '存在跨幕污染，见失败检查项'}",
                 "",
                 "| 检查项 | 结果 |",
                 "|---|---|",
@@ -215,7 +254,7 @@ def render_markdown(evidence: dict[str, Any]) -> str:
                     f"- 来源 / 模型：`{step['source']}` / `{step['used_model']}`",
                     f"- 进度：arc={step['arc_index']}, session={step['session_index']}, turn={step['turn_in_session']}",
                     f"- 地点：{step['location'] or '未记录'}",
-                    f"- 人物：{'、'.join(step['npcs']) or '无'}",
+                    f"- 当前状态人物：{'、'.join(step['npcs']) or '无'}",
                     f"- 选项：{' / '.join(step['options']) or '无'}",
                     "",
                     "剧情：",

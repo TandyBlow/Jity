@@ -102,7 +102,7 @@ class ScenarioGenerator(
 
         next_state = self.state_manager.apply_output(state, request.player_action, output)
 
-        # Hook 4: Post-generation processing (facts + NPC relations + state save)
+        # Hook 4: Post-generation processing (NPC relations)
         next_state = await self._apply_post_generation(
             output, next_state, state, session_id, session, model, campaign_manager
         )

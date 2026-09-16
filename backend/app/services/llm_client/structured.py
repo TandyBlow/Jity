@@ -52,7 +52,7 @@ class StructuredGenerationMixin:
         Uses json_object mode. If direct parse fails, applies json_repair.
         Caller must validate with Pydantic/TypeAdapter.
 
-        Used for campaign.json generation, fact extraction, and other
+        Used for campaign.json generation and other
         structured LLM calls.
         """
         model = model or self.settings.llm_model

@@ -1,6 +1,6 @@
 """Director-facing support helpers for the agent pipeline.
 
-Collects rules, anchor candidates and item-state summaries fed to the
+Collects anchor candidates and item-state summaries fed to the
 DirectorAgent, injects the resulting direction into the narrator prompt,
 and owns the per-session MemoryController cache.
 """
@@ -17,34 +17,6 @@ logger = logging.getLogger(__name__)
 
 class DirectorSupportMixin:
     # ── Agent pipeline helpers ─────────────────────────────────────────
-
-    def _collect_relevant_rules(
-        self, state: dict, campaign_manager
-    ) -> list[str]:
-        """Collect L2 rule snippets relevant to current player context.
-
-        Extracts rules from the knowledge base that match the current
-        game state (location hazards, NPC special rules, item mechanics).
-        Falls back to generic TRPG rules when no specific matches found.
-        """
-        rules: list[str] = []
-
-        # Generic CoC/TRPG rules (always applicable)
-        rules.append(
-            "规则：SAN值检定——当玩家遭遇神话生物或极度恐怖场景时，"
-            "进行SAN检定（1d100 ≤ 当前SAN值）。失败扣除1d6 SAN值。"
-        )
-        rules.append(
-            "规则：技能检定——当玩家尝试需要专业能力的行动时，"
-            "进行技能检定（1d100 ≤ 技能值）。大失败（96-100）产生严重后果。"
-        )
-
-        # Location-specific hazards
-        loc = state.get("current_location", "")
-        if "墓" in loc or "教堂" in loc or "地下" in loc:
-            rules.append(f"规则：当前地点({loc})可能存在超自然现象，注意环境线索。")
-
-        return rules
 
     def _describe_anchor_candidates(
         self, campaign_manager, state: dict, turn: int
