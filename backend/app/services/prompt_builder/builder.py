@@ -156,6 +156,7 @@ def _style_and_rules(input: PromptInput) -> str:
         "- 不要复述原文长段落，不要突然跳到无关任务。\n"
         "- 普通失败也应推动故事继续，而不是直接结束。\n"
         "- 状态变化要能从剧情中解释。\n"
+        "- scene_prompt 必须是英文，少于 30 个词，用于生成背景图。\n"
         "- items_gained、items_lost、npcs_encountered、quests_updated "
         "必须是对象数组，不要返回字符串数组。\n"
         "- dialogue.text 和其他字符串字段不要包含未转义的英文双引号；"
@@ -171,6 +172,7 @@ def _style_and_rules(input: PromptInput) -> str:
         "{\n"
         '  "narration": "第二人称沉浸叙事，20句左右",\n'
         '  "dialogue": [{"speaker": "角色名", "text": "对话内容"}],\n'
+        '  "scene_prompt": "English scene description, max 30 words",\n'
         '  "sanity_delta": 0,\n'
         '  "health_delta": 0,\n'
         '  "options": ["选项1", "选项2", "选项3"],\n'

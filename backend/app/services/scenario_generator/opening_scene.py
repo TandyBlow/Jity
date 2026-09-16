@@ -66,7 +66,7 @@ class OpeningSceneMixin:
         )
 
         return GenerateResponse(
-            session_id=session_id, state=self.state_manager.sanitize_state(state), output=output,
+            session_id=session_id, state=state, output=output,
             retrieved_chunks=[], model_output_id=output_id,
             used_model=model, source="scripted",
             timeline_node_id=timeline_node_id,

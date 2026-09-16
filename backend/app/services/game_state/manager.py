@@ -66,8 +66,6 @@ class GameStateManager(MemoryNormalizationMixin, StateInferenceMixin, EntryState
         current_location = memory.get("current_location") or output.current_location
         if current_location:
             next_state["current_location"] = current_location
-        if output.scene_prompt:
-            next_state["_scene_prompt"] = output.scene_prompt
 
         items_upserted = [*output.items_gained, *memory.get("items_upserted", [])]
         items_removed = [*output.items_lost, *memory.get("items_removed", [])]
@@ -166,7 +164,6 @@ class GameStateManager(MemoryNormalizationMixin, StateInferenceMixin, EntryState
     def sanitize_state(state: dict[str, Any]) -> dict[str, Any]:
         """Remove server-only state before returning a response to the client."""
         state.pop("_memory_controller", None)
-        state.pop("_scene_prompt", None)
         return state
 
     @staticmethod
