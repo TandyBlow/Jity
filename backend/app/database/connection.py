@@ -10,6 +10,7 @@ from app.database.knowledge_store import KnowledgeStoreMixin
 from app.database.outputs import ModelOutputStoreMixin
 from app.database.schema import init_schema
 from app.database.sessions import SessionStoreMixin
+from app.database.timeline import TimelineStoreMixin
 
 
 class Database(
@@ -17,6 +18,7 @@ class Database(
     CampaignStoreMixin,
     KnowledgeStoreMixin,
     ModelOutputStoreMixin,
+    TimelineStoreMixin,
 ):
     def __init__(self, path: Path) -> None:
         self.path = path

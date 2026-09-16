@@ -24,6 +24,7 @@ class GenerateRequest(BaseModel):
     style: str = ""
     constraints: str = ""
     slot_name: str = ""
+    timeline_node_id: Optional[int] = None
 
 
 # ── Response models ──
@@ -34,6 +35,7 @@ class SessionResponse(BaseModel):
     model: str
     state: dict[str, Any]
     campaign_filename: Optional[str] = None
+    active_turn_id: Optional[int] = None
 
 
 class RetrievedChunk(BaseModel):
@@ -66,3 +68,5 @@ class GenerateResponse(BaseModel):
     model_output_id: Optional[int] = None
     used_model: str
     source: Literal["scripted", "llm", "examiner_blocked"]
+    timeline_node_id: int
+    parent_timeline_node_id: int

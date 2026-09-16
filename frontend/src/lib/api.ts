@@ -2,10 +2,14 @@ import type {
   CampaignDetailResponse,
   CampaignListResponse,
   CampaignSchema,
+  GameState,
   GenerateResponse,
   SaveSlot,
   SessionHistoryResponse,
   SessionResponse,
+  StoryOutput,
+  TimelineNodeDetail,
+  TimelineResponse,
   WorldFactMemory,
 } from "@/types";
 
@@ -68,6 +72,7 @@ export function generateScene(params: {
   style?: string;
   constraints?: string;
   slotName?: string;
+  timelineNodeId?: number | null;
 }): Promise<GenerateResponse> {
   return request<GenerateResponse>(`/sessions/${params.sessionId}/generate`, {
     method: "POST",
@@ -77,8 +82,30 @@ export function generateScene(params: {
       style: params.style,
       constraints: params.constraints,
       slot_name: params.slotName,
+      timeline_node_id: params.timelineNodeId,
     }),
   });
+}
+
+export function getTimeline(sessionId: string): Promise<TimelineResponse> {
+  return request<TimelineResponse>(`/sessions/${sessionId}/timeline`);
+}
+
+export function getTimelineNode(sessionId: string, nodeId: number): Promise<TimelineNodeDetail> {
+  return request<TimelineNodeDetail>(`/sessions/${sessionId}/timeline/${nodeId}`);
+}
+
+export function activateTimelineNode(sessionId: string, nodeId: number): Promise<{
+  status: string;
+  session_id: string;
+  active_turn_id: number;
+  state: GameState;
+  output: StoryOutput | null;
+  model: string;
+  campaign_filename?: string | null;
+  slot_name: string;
+}> {
+  return request(`/sessions/${sessionId}/timeline/${nodeId}/activate`, { method: "POST" });
 }
 
 export async function generateBackground(params: {

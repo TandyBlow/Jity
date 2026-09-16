@@ -11,6 +11,7 @@ deterministic rulings.
 
 import json
 import logging
+import re
 from typing import Any
 
 from app.schemas.agent_io import ActionPermissibility, ActionRuling, TriggeredRule
@@ -39,6 +40,7 @@ _EXAMINER_SYSTEM_PROMPT = """你是一个TRPG规则判定系统（Examiner）。
 - permissible：行动完全合理，无需额外检定
 - conditional：行动需要检定（SAN检定、技能检定等），在triggered_rules中说明
 - blocked：行动在当前状态下不可能（缺少物品、NPC不在场、信息不足等）
+- “继续”“继续剧情”等被动续写不依赖物品或在场NPC，必须判为permissible
 - 只基于提供的游戏状态判断，不要编造不存在的物品或NPC
 - 如果行动部分可行部分不可行，标记为conditional并说明约束"""
 
@@ -109,6 +111,21 @@ class ExaminerAgent:
 
 
 # ── Helpers ────────────────────────────────────────────────────────
+
+
+_PASSIVE_CONTINUATION_RE = re.compile(
+    r"^\s*(?:继续|继续剧情|继续故事|接着|接着讲|接着说)[。.!！?？…]*\s*$"
+)
+
+
+def is_passive_continuation_action(player_action: str) -> bool:
+    """Return whether the action merely asks the narrator to carry on.
+
+    Such an action is always feasible: blocking it because structured state has
+    no NPC or active quest strands the player immediately after a scripted
+    campaign opening.
+    """
+    return bool(_PASSIVE_CONTINUATION_RE.fullmatch(player_action))
 
 
 def _compact_entities(entities: list[dict[str, Any]]) -> str:

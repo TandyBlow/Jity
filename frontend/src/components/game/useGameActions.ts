@@ -28,7 +28,7 @@ import type { GameSessionCore } from "@/components/game/useGameSession";
 export function useGameActions(core: GameSessionCore) {
   const generating = useRef(false);
   const {
-    sessionId, setSessionId, setState, model, setModel,
+    sessionId, setSessionId, setState, activeTurnId, setActiveTurnId, model, setModel,
     action, setAction, setOutput, setOutputSource, setChunks, setError,
     selectedSlot, setSelectedSlot, setSelectedSlotId,
     selectedCampaign, setSelectedCampaign,
@@ -50,10 +50,12 @@ export function useGameActions(core: GameSessionCore) {
         style: selectedCampaign ? CAMPAIGN_STORY_STYLE : DEFAULT_STORY_STYLE,
         constraints: selectedCampaign ? CAMPAIGN_CONSTRAINTS : DEFAULT_CONSTRAINTS,
         slotName: selectedSlot,
+        timelineNodeId: activeTurnId,
       });
       setOutput(response.output);
       setOutputSource(response.source);
       setState(response.state);
+      setActiveTurnId(response.timeline_node_id);
       setChunks(response.retrieved_chunks);
       setModel(response.used_model);
       setAction("");
@@ -63,7 +65,7 @@ export function useGameActions(core: GameSessionCore) {
       generating.current = false;
       setIsLoading(false);
     }
-  }, [sessionId, action, model, selectedSlot, selectedCampaign, setIsLoading, setError, setOutput, setOutputSource, setState, setChunks, setModel, setAction]);
+  }, [sessionId, action, model, selectedSlot, selectedCampaign, activeTurnId, setIsLoading, setError, setOutput, setOutputSource, setState, setActiveTurnId, setChunks, setModel, setAction]);
 
   const handleNewSession = useCallback(async () => {
     setIsLoading(true);
@@ -79,6 +81,7 @@ export function useGameActions(core: GameSessionCore) {
       rememberActiveSession(session.session_id);
       setSessionId(session.session_id);
       setState(session.state);
+      setActiveTurnId(session.active_turn_id ?? null);
       setOutput(campaignOpts ? loadingOutput : initialOutput);
       setOutputSource("scripted");
       setChunks([]);
@@ -94,7 +97,7 @@ export function useGameActions(core: GameSessionCore) {
     } finally {
       setIsLoading(false);
     }
-  }, [model, selectedCampaign, setIsLoading, setError, setSessionId, setState, setOutput, setOutputSource, setChunks, setAction, setSelectedSlot, setSelectedSlotId, refreshSlots, setPendingGenerate]);
+  }, [model, selectedCampaign, setIsLoading, setError, setSessionId, setState, setActiveTurnId, setOutput, setOutputSource, setChunks, setAction, setSelectedSlot, setSelectedSlotId, refreshSlots, setPendingGenerate]);
 
   const handleCampaignChange = useCallback(async (value: string) => {
     setIsLoading(true);
@@ -111,6 +114,7 @@ export function useGameActions(core: GameSessionCore) {
       rememberActiveSession(session.session_id);
       setSessionId(session.session_id);
       setState(session.state);
+      setActiveTurnId(session.active_turn_id ?? null);
       setOutput(opts ? loadingOutput : initialOutput);
       setOutputSource("scripted");
       setChunks([]);
@@ -124,7 +128,7 @@ export function useGameActions(core: GameSessionCore) {
     } finally {
       setIsLoading(false);
     }
-  }, [model, setIsLoading, setSelectedCampaign, setError, setSessionId, setState, setOutput, setOutputSource, setChunks, setAction, setSelectedSlot, setSelectedSlotId, refreshSlots, setPendingGenerate]);
+  }, [model, setIsLoading, setSelectedCampaign, setError, setSessionId, setState, setActiveTurnId, setOutput, setOutputSource, setChunks, setAction, setSelectedSlot, setSelectedSlotId, refreshSlots, setPendingGenerate]);
 
   const handleSlotChange = useCallback(async (slotId: number) => {
     if (!slotId) return;
@@ -140,16 +144,17 @@ export function useGameActions(core: GameSessionCore) {
       setSelectedSlot(loaded.slot.slot_name);
       setSessionId(loaded.session.session_id);
       setState(loaded.session.state);
+      setActiveTurnId(loaded.session.active_turn_id ?? null);
       setModel(loaded.session.model);
       setChunks([]);
       await refreshSlots(loaded.session.session_id, loaded.slot.slot_name);
-      await restoreLastOutput(loaded.session.session_id, loaded.slot.campaign_filename);
+      await restoreLastOutput(loaded.session.session_id, loaded.slot.campaign_filename, loaded.session.active_turn_id);
     } catch (err) {
       setError(err instanceof Error ? err.message : "加载存档失败");
     } finally {
       setIsLoading(false);
     }
-  }, [setIsLoading, setError, setOutput, setAction, setPendingGenerate, setSelectedSlotId, setSelectedSlot, setSessionId, setState, setModel, setChunks, restoreLastOutput, refreshSlots]);
+  }, [setIsLoading, setError, setOutput, setAction, setPendingGenerate, setSelectedSlotId, setSelectedSlot, setSessionId, setState, setActiveTurnId, setModel, setChunks, restoreLastOutput, refreshSlots]);
 
   const handleCreateSlot = useCallback(async (name: string) => {
     if (!name || !sessionId) return;

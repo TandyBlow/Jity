@@ -75,12 +75,13 @@ class MemoryMaintenanceMixin:
     def _persist_episode(self, summary: EpisodeSummary) -> None:
         try:
             self._db.add_knowledge_chunk(
-                chunk_id=summary.episode_id,
+                chunk_id=f"{self._session_id}:{summary.episode_id}",
                 title=f"episode_{summary.episode_id}",
                 source_type="narrative_memory",
                 content=summary.summary,
                 keywords=summary.tags + summary.entities_involved,
                 importance=int(summary.importance * 5),
+                source_path=f"timeline-session:{self._session_id}",
             )
         except Exception:
             logger.debug("Failed to persist episode %s", summary.episode_id, exc_info=True)
@@ -119,8 +120,8 @@ class MemoryMaintenanceMixin:
         self._narrative_pool = [
             MemoryRecord(**record) for record in data.get("narrative_pool", [])
         ]
-        if not self.nsb._level1 and not self.nsb._level2 and not self.nsb._level3:
-            self._load_episodes_from_db()
+        # Timeline snapshots are authoritative. Loading global narrative
+        # episodes here would leak memories from sibling branches or sessions.
 
     def _load_episodes_from_db(self) -> None:
         try:

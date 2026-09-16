@@ -5,7 +5,7 @@ import logging
 
 from app.schemas.agent_io import DirectorInstruction
 from app.services.agents.director import DirectorAgent
-from app.services.agents.examiner import ExaminerAgent
+from app.services.agents.examiner import ExaminerAgent, is_passive_continuation_action
 from app.services.llm_client import LLMOutputParseError, LLMRequestError
 from app.services.scenario_generator.errors import ScenarioGenerationError
 from app.schemas import StoryOutput
@@ -33,18 +33,25 @@ class AgentPipelineMixin:
         turn = int(state.get("turn", 0))
 
         # Stage 1: Examiner — action feasibility + rule identification
-        examiner = ExaminerAgent(self.llm_client)
-        rules_texts = self._collect_relevant_rules(state, campaign_manager)
-        try:
-            ruling = await examiner.examine(
-                player_action=request.player_action,
-                game_state=state,
-                rules_texts=rules_texts,
-            )
-        except Exception:
-            logger.warning("Examiner failed, defaulting to permissible", exc_info=True)
-            from app.schemas.agent_io import ActionRuling, ActionPermissibility
+        from app.schemas.agent_io import ActionRuling, ActionPermissibility
+        if is_passive_continuation_action(request.player_action):
+            # A scripted opening is itself valid narrative context.  The
+            # Examiner only sees structured state, so it can falsely block the
+            # UI's generic “继续” when the opening introduced characters that
+            # are not duplicated in entry_state.
             ruling = ActionRuling(permissibility=ActionPermissibility.PERMISSIBLE)
+        else:
+            examiner = ExaminerAgent(self.llm_client)
+            rules_texts = self._collect_relevant_rules(state, campaign_manager)
+            try:
+                ruling = await examiner.examine(
+                    player_action=request.player_action,
+                    game_state=state,
+                    rules_texts=rules_texts,
+                )
+            except Exception:
+                logger.warning("Examiner failed, defaulting to permissible", exc_info=True)
+                ruling = ActionRuling(permissibility=ActionPermissibility.PERMISSIBLE)
 
         # If Examiner says blocked → return diegetic rejection
         if ruling.permissibility.value == "blocked" and ruling.rejection_reason:
@@ -62,7 +69,9 @@ class AgentPipelineMixin:
             return rejection_output, 0, "examiner_blocked"
 
         # Stage 2: Director — narrative direction, anchor triggers, redirection
-        direction = await self._run_director_stage(request, ruling, state, turn, campaign_manager)
+        direction = await self._run_director_stage(
+            session_id, request, ruling, state, turn, campaign_manager
+        )
 
         # Inject director instruction into prompt meta / campaign_context
         augmented_prompt = self._inject_direction(prompt, direction, ruling)
@@ -74,10 +83,39 @@ class AgentPipelineMixin:
             campaign_manager=campaign_manager,
         )
 
-    async def _run_director_stage(self, request, ruling, state, turn, campaign_manager):
+    async def _run_director_stage(
+        self, session_id, request, ruling, state, turn, campaign_manager
+    ):
         """Stage 2: Director — narrative direction, anchor triggers, redirection."""
         director = DirectorAgent(self.llm_client)
-        narrative_ctx = campaign_manager._load_recap_compressed() if hasattr(campaign_manager, '_load_recap_compressed') else ""
+        recap = (
+            campaign_manager._load_recap_compressed()
+            if hasattr(campaign_manager, "_load_recap_compressed")
+            else ""
+        )
+        current_opening = campaign_manager.get_opening_scene() or ""
+        current_session_index = getattr(campaign_manager.progress, "session_index", 0)
+        current_messages = self.db.get_recent_messages(
+            session_id,
+            limit=4,
+            campaign_session_index=current_session_index,
+        )
+        current_history = "\n".join(
+            f"{msg.get('role', 'unknown')}: {msg.get('content', '')[:800]}"
+            for msg in current_messages
+        )
+        narrative_parts = [
+            f"当前地点：{state.get('current_location', '未知')}",
+            "当前幕固定开场（最高优先级，必须从这里继续，不能回到上一幕）：\n"
+            + current_opening,
+        ]
+        if current_history:
+            narrative_parts.append("当前幕最近记录：\n" + current_history)
+        if recap:
+            narrative_parts.append(
+                "上一幕回顾（仅作因果背景，不是当前场景，不得从其结尾续写）：\n" + recap
+            )
+        narrative_ctx = "\n\n".join(narrative_parts)
         anchor_progress = f"{len(campaign_manager.progress.revealed_anchors)}/{sum(len(s.anchor_events) for a in campaign_manager.campaign.arcs for s in a.sessions)}" if campaign_manager.progress else "0/0"
         candidates = self._describe_anchor_candidates(campaign_manager, state, turn)
         deviation = "偏差：连续3+回合无锚点触发" if campaign_manager.detect_deviation(state, turn) else "正常"
