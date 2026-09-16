@@ -9,6 +9,7 @@ from app.dependencies import (
 from app.schemas import GenerateRequest, GenerateResponse, StoryOutput
 from app.services.llm_client import MissingAPIKeyError
 from app.services.scenario_generator import ScenarioGenerationError
+from app.exceptions import ConcurrentModificationError
 
 router = APIRouter(tags=["generate"])
 
@@ -21,6 +22,8 @@ async def generate(session_id: str, request: GenerateRequest) -> GenerateRespons
         raise HTTPException(status_code=503, detail=str(exc)) from exc
     except ScenarioGenerationError as exc:
         raise HTTPException(status_code=502, detail=str(exc)) from exc
+    except ConcurrentModificationError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
     if not response:
         raise HTTPException(status_code=404, detail="Session not found")
     return response

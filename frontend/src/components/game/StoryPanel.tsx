@@ -1,6 +1,8 @@
 "use client";
 
 import { Image as ImageIcon, Loader2, Send } from "lucide-react";
+import { GitBranch } from "lucide-react";
+import Link from "next/link";
 
 import type { GameSession } from "@/components/game/useGameSession";
 import { formatDelta, quoteDialogue } from "@/lib/game/format";
@@ -51,6 +53,12 @@ export function StoryPanel({ session }: { session: GameSession }) {
       <div className="toolbar-row">
         <div className="meta">Session {sessionId ? sessionId.slice(0, 8) : "initializing"}</div>
         <div className="meta">Turn {state?.turn ?? 0}</div>
+        {sessionId && session.activeTurnId ? (
+          <Link className="story-rewind-link" href={`/timeline?session=${sessionId}&back=1`}>
+            <GitBranch size={13} />
+            回溯上一步
+          </Link>
+        ) : null}
         {isBackgroundLoading ? (
           <div className="background-status">
             <ImageIcon size={13} />

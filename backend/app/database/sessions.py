@@ -98,37 +98,74 @@ class SessionStoreMixin:
         with self.connect() as db:
             return db.execute("SELECT * FROM game_sessions WHERE id = ?", (session_id,)).fetchone()
 
-    def add_message(self, session_id: str, role: str, content: str, campaign_session_index: int = 0) -> None:
+    def add_message(
+        self,
+        session_id: str,
+        role: str,
+        content: str,
+        campaign_session_index: int = 0,
+        turn_node_id: int | None = None,
+    ) -> None:
         with self.connect() as db:
             db.execute(
-                "INSERT INTO session_messages (session_id, role, content, campaign_session_index) VALUES (?, ?, ?, ?)",
-                (session_id, role, content, campaign_session_index),
+                """INSERT INTO session_messages
+                   (session_id, role, content, campaign_session_index, turn_node_id)
+                   VALUES (?, ?, ?, ?, ?)""",
+                (session_id, role, content, campaign_session_index, turn_node_id),
             )
 
     def get_messages(self, session_id: str) -> list[dict[str, Any]]:
         with self.connect() as db:
             rows = db.execute(
                 """
+                WITH RECURSIVE lineage(id) AS (
+                  SELECT active_turn_id FROM game_sessions WHERE id = ?
+                  UNION ALL
+                  SELECT story_turns.parent_turn_id
+                  FROM story_turns JOIN lineage ON story_turns.id = lineage.id
+                  WHERE story_turns.parent_turn_id IS NOT NULL
+                )
                 SELECT id, role, content, created_at
                 FROM session_messages
                 WHERE session_id = ?
+                  AND (turn_node_id IN (SELECT id FROM lineage) OR turn_node_id IS NULL)
                 ORDER BY id ASC
                 """,
-                (session_id,),
+                (session_id, session_id),
             ).fetchall()
             return [dict(row) for row in rows]
 
-    def get_recent_messages(self, session_id: str, limit: int = 10) -> list[dict[str, Any]]:
-        """Return the latest user/assistant messages in chronological order."""
+    def get_recent_messages(
+        self,
+        session_id: str,
+        limit: int = 10,
+        campaign_session_index: int | None = None,
+    ) -> list[dict[str, Any]]:
+        """Return recent branch messages, optionally scoped to one campaign session."""
         with self.connect() as db:
             rows = db.execute(
                 """
-                SELECT id, role, content, created_at
+                WITH RECURSIVE lineage(id) AS (
+                  SELECT active_turn_id FROM game_sessions WHERE id = ?
+                  UNION ALL
+                  SELECT story_turns.parent_turn_id
+                  FROM story_turns JOIN lineage ON story_turns.id = lineage.id
+                  WHERE story_turns.parent_turn_id IS NOT NULL
+                )
+                SELECT id, role, content, campaign_session_index, created_at
                 FROM session_messages
                 WHERE session_id = ? AND role IN ('user', 'assistant')
+                  AND (turn_node_id IN (SELECT id FROM lineage) OR turn_node_id IS NULL)
+                  AND (? IS NULL OR campaign_session_index = ?)
                 ORDER BY id DESC
                 LIMIT ?
                 """,
-                (session_id, limit),
+                (
+                    session_id,
+                    session_id,
+                    campaign_session_index,
+                    campaign_session_index,
+                    limit,
+                ),
             ).fetchall()
             return [dict(row) for row in reversed(rows)]

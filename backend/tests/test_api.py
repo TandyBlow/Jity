@@ -31,6 +31,27 @@ async def test_get_session_not_found():
 
 
 @pytest.mark.asyncio
+async def test_timeline_root_and_cross_session_lookup():
+    """A fresh session exposes a root node scoped to that session."""
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://test") as client:
+        first = (await client.post("/sessions", json={"game_name": "时间线一"})).json()
+        second = (await client.post("/sessions", json={"game_name": "时间线二"})).json()
+
+        tree = await client.get(f"/sessions/{first['session_id']}/timeline")
+        assert tree.status_code == 200
+        payload = tree.json()
+        assert payload["active_node_id"] == first["active_turn_id"]
+        assert len(payload["nodes"]) == 1
+        assert payload["nodes"][0]["label"] == "会话起点"
+
+        wrong_session = await client.get(
+            f"/sessions/{second['session_id']}/timeline/{first['active_turn_id']}"
+        )
+        assert wrong_session.status_code == 404
+
+
+@pytest.mark.asyncio
 async def test_knowledge_reload():
     """POST /knowledge/reload returns success."""
     transport = ASGITransport(app=app)

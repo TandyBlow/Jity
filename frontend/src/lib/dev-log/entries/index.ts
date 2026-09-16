@@ -1,5 +1,6 @@
 import type { DevLogEntry } from "@/lib/dev-log/types";
 
+import { entry as entry_2026_09_15_branching_timeline_and_real_llm_smoke } from "@/lib/dev-log/entries/2026-09-15-branching-timeline-and-real-llm-smoke";
 import { entry as entry_2026_09_15_campaign_openings_and_llm_errors } from "@/lib/dev-log/entries/2026-09-15-campaign-openings-and-llm-errors";
 
 import { entry as entry_2026_06_24_campaign_runtime_slots_and_local_workflow } from "@/lib/dev-log/entries/2026-06-24-campaign-runtime-slots-and-local-workflow";
@@ -13,6 +14,7 @@ import { entry as entry_2026_06_15_knowledge_base_and_rag } from "@/lib/dev-log/
 import { entry as entry_2026_06_13_scripted_opening_and_dev_log } from "@/lib/dev-log/entries/2026-06-13-scripted-opening-and-dev-log";
 
 export const devLogEntries: DevLogEntry[] = [
+  entry_2026_09_15_branching_timeline_and_real_llm_smoke,
   entry_2026_09_15_campaign_openings_and_llm_errors,
   entry_2026_06_24_campaign_runtime_slots_and_local_workflow,
   entry_2026_06_22_prompt_refactor_experiment,

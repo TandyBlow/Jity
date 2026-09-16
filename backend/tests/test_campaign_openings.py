@@ -154,14 +154,61 @@ async def test_next_chapter_uses_local_turn_and_survives_reload(runtime):
     assert result.state["current_location"] == "芝加哥火车站候车大厅"
     assert any(i["name"] == "纪念物" for i in result.state["items"])
 
+    runtime.llm.generate.return_value = (StoryOutput(
+        narration="你在芝加哥火车站睁开眼，芬格尔仍坐在旁边。",
+        current_location="芝加哥火车站候车大厅",
+        options=["询问芬格尔"],
+    ), 1)
+    continued = await runtime.generator.generate(sid, GenerateRequest(player_action="继续"))
+    assert continued.source == "llm"
+    prompt = runtime.llm.generate.call_args.args[0]
+    first_opening = manager.campaign.arcs[0].sessions[0].opening_scene
+    next_opening = manager.campaign.arcs[0].sessions[1].opening_scene
+    assert next_opening in prompt
+    assert first_opening not in prompt
+    director_context = DirectorAgent.direct.call_args.kwargs["narrative_context"]
+    assert "当前幕固定开场（最高优先级" in director_context
+    assert "芝加哥火车站候车大厅" in director_context
+    assert next_opening in director_context
+
     reloaded = CampaignManager(db=runtime.db, campaigns_dir=CAMPAIGNS, scripted_story=MagicMock())
     reloaded.load(CAMPAIGNS / FILES[1], campaign_id=sid)
     runtime.managers[sid] = reloaded
-    assert reloaded.progress.turn_in_session == 1
+    assert reloaded.progress.turn_in_session == 2
     payload = runtime.states.get_session_payload(sid)
     assert await runtime.generator._handle_opening_scene(
         sid, GenerateRequest(player_action="观察"), payload, payload["state"], "test", reloaded, 1
     ) is None
+
+
+@pytest.mark.asyncio
+async def test_continue_after_next_opening_cannot_be_blocked_by_examiner(runtime, monkeypatch):
+    """The generic UI continuation must reach Narrator after a sparse entry_state."""
+    async with AsyncClient(transport=ASGITransport(app=runtime.app), base_url="http://test") as client:
+        session = (await client.post("/sessions", json={
+            "campaign_filename": FILES[2], "session_index": 1,
+        })).json()
+    sid = session["session_id"]
+    opened = await runtime.generator.generate(sid, GenerateRequest(player_action="推进到下一幕"))
+    assert opened.source == "scripted"
+    assert "陈雯雯" in opened.output.narration
+
+    blocked = AsyncMock(return_value=ActionRuling(
+        permissibility=ActionPermissibility.BLOCKED,
+        rejection_reason="当前没有正在进行的事件或对话可供继续。",
+    ))
+    monkeypatch.setattr(ExaminerAgent, "examine", blocked)
+    runtime.llm.generate.return_value = (StoryOutput(
+        narration="你看见陈雯雯坐在烛光里，她抬头望向你。",
+        current_location="湖园一号餐厅",
+        options=["坐下交谈"],
+    ), 1)
+
+    continued = await runtime.generator.generate(sid, GenerateRequest(player_action="继续"))
+
+    assert continued.source == "llm"
+    assert "陈雯雯" in continued.output.narration
+    blocked.assert_not_awaited()
 
 
 def test_explicit_empty_starting_state_clears_free_play_memory(runtime):

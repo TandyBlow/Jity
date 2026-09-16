@@ -84,6 +84,7 @@ class CampaignSessionAdvancer:
         progress: Any,
         fsm: Any,
         slot_name: str,
+        pending_messages: list[dict[str, str]] | None = None,
     ) -> str:
         """Advance to next campaign session. Returns recap text."""
         if progress is None or campaign is None:
@@ -91,7 +92,7 @@ class CampaignSessionAdvancer:
 
         recap = ""
         try:
-            recap = await self.recap.generate_recap(progress.campaign_id)
+            recap = await self.recap.generate_recap(progress.campaign_id, pending_messages)
         except Exception:
             logger.warning("Recap generation failed in advance_session, using structural fallback", exc_info=True)
             recap = self.recap.build_structural_recap(campaign, progress)
@@ -113,7 +114,7 @@ class CampaignSessionAdvancer:
             is_last_session = True
 
         if is_last_session:
-            return await self.advance_arc(campaign, progress, fsm, slot_name)
+            return await self.advance_arc(campaign, progress, fsm, slot_name, pending_messages)
 
         # Normal session advance
         fsm.end_session()
@@ -138,6 +139,7 @@ class CampaignSessionAdvancer:
         progress: Any,
         fsm: Any,
         slot_name: str,
+        pending_messages: list[dict[str, str]] | None = None,
     ) -> str:
         """Advance to next arc. Returns recap text."""
         if progress is None or campaign is None:
@@ -145,7 +147,7 @@ class CampaignSessionAdvancer:
 
         recap = ""
         try:
-            recap = await self.recap.generate_recap(progress.campaign_id)
+            recap = await self.recap.generate_recap(progress.campaign_id, pending_messages)
         except Exception:
             logger.warning("Recap generation failed in advance_arc, using structural fallback", exc_info=True)
             recap = self.recap.build_structural_recap(campaign, progress)

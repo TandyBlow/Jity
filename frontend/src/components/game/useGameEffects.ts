@@ -63,11 +63,12 @@ export function useGameEffects(
       rememberActiveSession(session.session_id);
       core.setSessionId(session.session_id);
       core.setState(session.state);
+      core.setActiveTurnId(session.active_turn_id ?? null);
       core.setModel(session.model);
       core.setSelectedCampaign(session.campaign_filename ?? "");
       core.setChunks([]);
       await refreshSlots(session.session_id);
-      await core.restoreLastOutput(session.session_id, session.campaign_filename);
+      await core.restoreLastOutput(session.session_id, session.campaign_filename, session.active_turn_id);
     }).catch((err: Error) => {
       if (mounted) core.setError(err.message);
     }).finally(() => {

@@ -19,7 +19,12 @@ from app.schemas.agent_io import (
     TriggeredRule,
 )
 from app.services.agents.director import DirectorAgent, _parse_instruction, _fallback_instruction
-from app.services.agents.examiner import ExaminerAgent, _parse_ruling, _compact_entities
+from app.services.agents.examiner import (
+    ExaminerAgent,
+    _compact_entities,
+    _parse_ruling,
+    is_passive_continuation_action,
+)
 from app.services.memory.forgetting import (
     compute_score,
     score_all,
@@ -79,6 +84,14 @@ class TestExaminerAgent:
         result = _compact_entities(items)
         assert "钥匙" in result
         assert "手电筒" in result
+
+    @pytest.mark.parametrize("action", ["继续", "继续剧情。", "接着", " 接着讲！ "])
+    def test_passive_continuation_action(self, action):
+        assert is_passive_continuation_action(action)
+
+    @pytest.mark.parametrize("action", ["继续调查档案", "打开没有钥匙的门", "攻击诺诺"])
+    def test_non_passive_action_still_needs_examination(self, action):
+        assert not is_passive_continuation_action(action)
 
 
 # ── Director ────────────────────────────────────────────────

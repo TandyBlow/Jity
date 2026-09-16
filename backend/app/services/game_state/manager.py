@@ -31,7 +31,14 @@ class GameStateManager(MemoryNormalizationMixin, StateInferenceMixin, EntryState
         session_id = str(uuid.uuid4())
         state = default_state()
         self.db.write_session(session_id, game_name, model, state)
-        return {"session_id": session_id, "game_name": game_name, "model": model, "state": state}
+        active_turn_id = self.db.ensure_timeline_root(session_id, state, model)
+        return {
+            "session_id": session_id,
+            "game_name": game_name,
+            "model": model,
+            "state": state,
+            "active_turn_id": active_turn_id,
+        }
 
     def get_session_payload(self, session_id: str) -> dict[str, Any] | None:
         row = self.db.get_session(session_id)
@@ -43,6 +50,7 @@ class GameStateManager(MemoryNormalizationMixin, StateInferenceMixin, EntryState
             "model": row["model"],
             "state": json.loads(row["state_json"]),
             "campaign_filename": row["campaign_filename"],
+            "active_turn_id": row["active_turn_id"],
         }
 
     def save_state(self, session_id: str, game_name: str, model: str, state: dict[str, Any]) -> None:

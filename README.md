@@ -2,7 +2,7 @@
 
 Jity 是一个 AI 驱动的中文文字跑团项目。FastAPI 后端负责会话状态、知识库检索、提示词组装、LLM 调用和战役数据管理；Next.js 前端提供游戏控制台、战役编辑器和剧情时间线。
 
-当前 `tian` 分支正在开发 Campaign Narrative Engine，用结构化的 Arc、Session 和 Anchor Event 约束长篇剧情走向。该部分仍处于集成阶段，不建议直接作为稳定版本发布。
+Campaign Narrative Engine 使用结构化的 Arc、Session 和 Anchor Event 约束长篇剧情走向；剧情时间线会为每个回合保存不可变快照，允许恢复任意历史节点并从该节点建立新分支。
 
 ## 主要功能
 
@@ -10,7 +10,7 @@ Jity 是一个 AI 驱动的中文文字跑团项目。FastAPI 后端负责会话
 - 使用 SQLite 保存游戏会话、消息、模型输出和结构化记忆。
 - 从 `knowledge/` 加载 NPC、地点、任务、规则和世界观资料，进行轻量 RAG 检索。
 - 使用 Campaign 描述叙事弧、章节开场和关键锚点事件。
-- 提供战役策展编辑器、发现时间线和小说 TXT 转战役接口。
+- 提供战役策展编辑器、可恢复的分支剧情时间线和小说 TXT 转战役接口。
 - 没有配置 API Key 时仍可运行固定开场；进入 LLM 生成阶段后必须配置 API Key。
 
 ## 项目结构
@@ -24,7 +24,8 @@ Jity 是一个 AI 驱动的中文文字跑团项目。FastAPI 后端负责会话
 | `backend/data/` | 本地数据库、战役和小说运行数据 |
 | `frontend/` | Next.js 游戏控制台 |
 | `frontend/src/app/curator/` | 战役生成与编辑页面 |
-| `frontend/src/app/timeline/` | 锚点和世界事实时间线 |
+| `frontend/src/app/timeline/` | 剧情分支树、节点快照和恢复界面 |
+| `docs/branching_timeline.md` | 分支时间线、跨幕上下文和回归测试维护说明 |
 | `knowledge/` | RAG 知识库源文件 |
 | `scripts/auto_play.py` | 自动长回合跑测与日志记录 |
 | `index.html`、`api.js`、`game.js`、`ui.js` | 旧版 vanilla JS 原型，仅保留作参考 |
@@ -152,7 +153,7 @@ Campaign
 
 - `/`：游戏控制台与战役选择。
 - `/curator`：生成、上传、编辑和保存 Campaign。
-- `/timeline`：查看叙事弧、锚点揭示状态和世界事实。
+- `/timeline`：查看剧情分支树、节点剧情与状态，并从历史节点继续。
 - `/dev-log`：开发记录，生产环境默认关闭。
 
 相关 API：
@@ -165,6 +166,9 @@ Campaign
 - `POST /sessions`：创建自由模式或 Campaign 会话。
 - `POST /sessions/{session_id}/generate`：生成下一幕。
 - `GET /sessions/{session_id}/progress`：读取 Campaign 进度。
+- `GET /sessions/{session_id}/timeline`：读取完整剧情分支树和当前路径。
+- `GET /sessions/{session_id}/timeline/{node_id}`：读取节点的剧情、状态和 Campaign 快照。
+- `POST /sessions/{session_id}/timeline/{node_id}/activate`：恢复指定节点；下一次生成会从这里建立新分支。
 
 ## 自动跑测
 
@@ -186,6 +190,14 @@ python3 scripts/auto_play.py \
 ```
 
 日志默认写入 `playtest_logs/`，该目录不会提交到 Git。
+
+四战役跨幕真实 LLM 冒烟测试：
+
+```bash
+python scripts/campaign_transition_smoke.py
+```
+
+脚本通过临时的两回合 Campaign 副本依次执行“开场 → 继续 → 下一幕开场 → 继续”，记录提示词、地点、人物、剧情、模型来源与连续性检查，并在结束后删除临时 Campaign。报告写入 `artifacts/smoke/`；维护细节见 [分支剧情时间线开发文档](docs/branching_timeline.md)。
 
 ## 测试与构建
 

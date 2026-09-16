@@ -9,6 +9,7 @@ from app.dependencies import (
     campaign_manager_cache,
     db,
     get_campaign_manager_for_session,
+    knowledge_service,
     state_manager,
 )
 from app.repositories.campaign_progress import CampaignProgressRepository
@@ -63,13 +64,20 @@ def load_slot(slot_id: int) -> dict[str, object]:
         raise HTTPException(status_code=404, detail=f"Slot '{slot_id}' not found")
 
     session_id = progress["campaign_id"]
-    payload = state_manager.get_session_payload(session_id)
-    if not payload:
+    if not state_manager.get_session_payload(session_id):
         raise HTTPException(status_code=404, detail=f"Session '{session_id}' not found")
 
     slot_name = progress["slot_name"]
+    head_turn_id = progress.get("head_turn_id")
+    if head_turn_id:
+        snapshot = db.activate_story_turn(session_id, int(head_turn_id))
+        if not snapshot:
+            raise HTTPException(status_code=404, detail="Saved timeline node not found")
     db.set_session_active_slot(session_id, slot_name)
+    campaign_manager_cache.invalidate(session_id, slot_name)
+    knowledge_service.scenario_generator.invalidate_timeline_caches(session_id, slot_name)
     get_campaign_manager_for_session(session_id, slot_name)
+    payload = state_manager.get_session_payload(session_id)
     session_row = db.get_session(session_id)
     state_manager.sanitize_state(payload["state"])
     return {
@@ -81,6 +89,7 @@ def load_slot(slot_id: int) -> dict[str, object]:
             "arc_index": progress["arc_index"],
             "session_index": progress["session_index"],
             "turn_in_session": progress.get("turn_in_session", 0),
+            "head_turn_id": head_turn_id,
             "campaign_filename": session_row["campaign_filename"] if session_row else None,
             "is_active": True,
         },
