@@ -17,7 +17,7 @@ export const entry: DevLogEntry = {
     "纯续写动作『继续』『继续剧情』『接着』确定性放行，不再因 entry_state 未重复列出开场人物而被 Examiner 错误阻止；具体动作仍走完整规则判定。",
     "新增四战役 transition smoke 脚本，通过临时两回合副本走真实 HTTP 与 LLM 路径，记录每步提示词、地点、人物、剧情、来源、模型和连续性检查，测试后自动清理副本。",
     "真实模型验证使用当前配置 deepseek-chat：卡塞尔入学档案、火之晨曦、悼亡者之瞳、白王降临均完成『开场→继续→下一幕开场→继续』，未发现入学调查串入、开场重复或跨幕回跳。",
-    "验证：后端完整测试 324 项通过；最终真实 LLM 冒烟报告位于 artifacts/smoke/campaign-transition-smoke-20260915-165635.md。",
+    "验证：合并最新 master 后，后端完整测试 321 项通过；前端生产构建与 TypeScript 检查通过；最终真实 LLM 冒烟报告位于 artifacts/smoke/campaign-transition-smoke-20260915-165635.md。",
   ],
   relatedFiles: [
     "backend/app/database/timeline.py",
