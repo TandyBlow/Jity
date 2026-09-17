@@ -6,29 +6,14 @@ import { useState } from "react";
 
 import { MainCheckOverlay, type MainCheckCommit } from "@/components/game/MainCheckOverlay";
 import type { GameSession } from "@/components/game/useGameSession";
-import { defineCheck, type CheckSpec } from "@/components/dice-demo/dice-rules";
+import type { CheckSpec } from "@/components/dice-demo/dice-rules";
+import { formatActionWithCheckResult, toCheckSpec } from "@/lib/game/checks";
 import { formatDelta, quoteDialogue } from "@/lib/game/format";
-import type { StoryOptionCheck } from "@/types";
 
 type PendingCheck = {
   action: string;
   check: CheckSpec;
 };
-
-function toCheckSpec(metadata: StoryOptionCheck): CheckSpec | null {
-  if (metadata.requires_check === false) return null;
-
-  // The payload's own target is ignored: difficulty and the skill value decide
-  // the threshold, so a hard check cannot advertise a normal success rate.
-  return defineCheck({
-    name: metadata.name ?? "行动检定",
-    skill: metadata.skill ?? "行动",
-    system: metadata.system ?? "通用 d20",
-    normalTarget: metadata.normal_target ?? metadata.target ?? 12,
-    difficulty: metadata.difficulty ?? "普通",
-    stakes: metadata.stakes ?? "成功会推进当前行动，失败会带来相应后果。",
-  });
-}
 
 function narrationParagraphs(narration: string): string[] {
   const explicitParagraphs = narration
@@ -87,7 +72,7 @@ export function StoryPanel({ session }: { session: GameSession }) {
 
   async function commitCheck(result: MainCheckCommit) {
     if (!checkingAction) return;
-    const actionWithResult = `${checkingAction.action}\n\n[行动判定] ${checkingAction.check.system} ${checkingAction.check.expression}，骰面 ${result.roll}/20，${result.degree}。`;
+    const actionWithResult = formatActionWithCheckResult(checkingAction.action, checkingAction.check, result);
     await handleGenerate(actionWithResult);
     setCheckingAction(null);
   }

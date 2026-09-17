@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 import { getCampaign, getSessionProgress } from "@/lib/api";
 import { activeGoalsFromState, chooseGoalAwareOption } from "@/lib/game/autoPlay";
+import { formatActionWithCheckResult, resolveOptionCheck, rollCheck, seededRoll } from "@/lib/game/checks";
 import type { GameState, StoryOutput } from "@/types";
 
 type AutoPlayConfig = {
@@ -38,6 +39,7 @@ export function useBrowserAutoPlay(input: {
   const recentActions = useRef<string[]>([]);
   const lastScheduledTurn = useRef<number | null>(null);
   const scheduledTimer = useRef<number | null>(null);
+  const submittedAction = useRef("");
   const retryAttempts = useRef(0);
   const previousAnchorIds = useRef<string[]>([]);
   const anchorNames = useRef<Record<string, string>>({});
@@ -120,7 +122,7 @@ export function useBrowserAutoPlay(input: {
         scheduledTimer.current = null;
         retryAttempts.current += 1;
         lastScheduledTurn.current = null;
-        input.handleGenerate(selectedAction);
+        input.handleGenerate(submittedAction.current || selectedAction);
       }, retryDelay);
       return () => {
         if (scheduledTimer.current !== null) window.clearTimeout(scheduledTimer.current);
@@ -135,14 +137,26 @@ export function useBrowserAutoPlay(input: {
       recentActions.current,
       config.seed + currentTurn * 104729,
     );
+    // Auto-play drives no dice UI, so a check is rolled headlessly with a seeded
+    // d20 and reported in the action text exactly like the manual path does.
+    // chooseGoalAwareOption returns a 1-based index.
+    const check = choice.index === null ? null : resolveOptionCheck(input.output, choice.index - 1);
+    const roll = check
+      ? rollCheck(check, seededRoll(config.seed + currentTurn * 7919))
+      : null;
+    const action = check && roll
+      ? formatActionWithCheckResult(choice.action, check, roll)
+      : choice.action;
+
     setSelectedAction(choice.action);
-    setSelectionReason(choice.reason);
+    setSelectionReason(roll ? `${choice.reason} | ${check?.name} ${roll.degree}` : choice.reason);
     recentActions.current = [...recentActions.current, choice.action].slice(-12);
+    submittedAction.current = action;
 
     scheduledTimer.current = window.setTimeout(() => {
       scheduledTimer.current = null;
       lastScheduledTurn.current = currentTurn;
-      input.handleGenerate(choice.action);
+      input.handleGenerate(action);
     }, config.delayMs);
     return () => {
       if (scheduledTimer.current !== null) window.clearTimeout(scheduledTimer.current);
