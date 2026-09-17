@@ -156,6 +156,12 @@ def _style_and_rules(input: PromptInput) -> str:
         "- 不要复述原文长段落，不要突然跳到无关任务。\n"
         "- 普通失败也应推动故事继续，而不是直接结束。\n"
         "- 状态变化要能从剧情中解释。\n"
+        "- options 只列出玩家可以选择的行动文本；option_checks 必须与 options 等长并保持相同顺序。\n"
+        "- 对话、询问、移动、等待、购买等确定性行动，option_checks 对应位置必须填 null，不要强行掷骰。\n"
+        "- 只有结果具有不确定性、失败会改变局势的观察、调查、潜行、交涉或危险行动，才填写 option_checks 对象并将 requires_check 设为 true。\n"
+        "- option_checks 里只需填 normal_target 和 difficulty：normal_target 是该行动的技能值（1-20），"
+        "普通检定按此值判定，困难检定阈值自动减半、成功率大幅下降，所以只在真正棘手时用困难。\n"
+        "- target 和 expression 由系统根据 normal_target 与 difficulty 推导，不要填写。\n"
         "- scene_prompt 必须是英文，少于 30 个词，用于生成背景图。\n"
         "- items_gained、items_lost、npcs_encountered、quests_updated "
         "必须是对象数组，不要返回字符串数组。\n"
@@ -176,6 +182,7 @@ def _style_and_rules(input: PromptInput) -> str:
         '  "sanity_delta": 0,\n'
         '  "health_delta": 0,\n'
         '  "options": ["选项1", "选项2", "选项3"],\n'
+        '  "option_checks": [null, {"requires_check": true, "name": "调查检定", "skill": "调查", "system": "通用 d20", "normal_target": 12, "difficulty": "普通", "stakes": "成功发现线索，失败付出相应代价。"}, null],\n'
         '  "game_over": false,\n'
         '  "game_over_reason": "",\n'
         '  "current_location": "",\n'
