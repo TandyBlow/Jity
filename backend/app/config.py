@@ -21,6 +21,8 @@ class Settings(BaseSettings):
     image_size: str = "1536x1024"
     backgrounds_dir: Path = Path("data/backgrounds")
     llm_model_pro: str = "deepseek-v4-pro"
+    prompt_logging_enabled: bool = False
+    prompt_log_dir: Path = Path("data/prompt_logs")
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 

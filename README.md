@@ -140,7 +140,14 @@ cp .env.example .env
 DEEPSEEK_API_KEY=your_api_key
 LLM_BASE_URL=https://api.deepseek.com
 LLM_MODEL=deepseek-v4-flash
+PROMPT_LOGGING_ENABLED=false
+PROMPT_LOG_DIR=data/prompt_logs
 ```
+
+如需为论文分析归档所有生成式 API 的完整 Prompt，将
+`PROMPT_LOGGING_ENABLED` 改为 `true` 并重启后端。每次文本或图片生成请求会在
+`PROMPT_LOG_DIR/YYYY-MM-DD/` 下保存一个 JSON 文件；终端只显示文件路径。
+归档失败只会记录 warning，不会中断游戏。Embedding 输入、固定开场和图片缓存命中不会生成记录。
 
 启动服务：
 
