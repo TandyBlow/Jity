@@ -12,6 +12,7 @@ from app.schemas.game import (
     MemoryUpdates,
     MessageResponse,
     NPCMemory,
+    OptionCheck,
     PlayerStatus,
     QuestMemory,
     RetrievedChunk,
@@ -69,6 +70,7 @@ __all__ = [
     "SessionHistoryResponse",
     "SessionResponse",
     "StoryOutput",
+    "OptionCheck",
     "WorldFactMemory",
     "replace_em_dash",
     # campaign

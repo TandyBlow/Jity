@@ -54,6 +54,7 @@ class ScriptedStoryService:
             sanity_delta=0,
             health_delta=0,
             options=scene.get("options", []),
+            option_checks=scene.get("option_checks", []),
             current_location=scene.get("current_location", ""),
             items_gained=scene.get("items_gained", []),
             quests_updated=scene.get("quests_updated", []),
