@@ -10,6 +10,15 @@
         {
           "name": "Session 1: 平凡世界的裂痕",
           "opening_scene": "你，路明非，一个寄人篱下的普通高中生，在堂弟的嘲笑和婶婶的唠叨中度过每一天。然而，萦绕不去的梦境——白帝城的火海，高高悬挂的男孩，以及那个白衣哥哥的悲鸣——却是你无法向人倾诉的秘密。此刻，你刚刚从噩梦中惊醒，窗外是现实世界庸常的黄昏。",
+          "entry_state": {
+            "location": "婶婶家中的卧室",
+            "npcs": [],
+            "player_status": {
+              "condition": "刚从噩梦中惊醒",
+              "current_goal": "从梦境中回过神，面对黄昏时分的日常生活"
+            },
+            "scene_prompt": "modest teenage bedroom at dusk, fading orange window light, rumpled bedding, quiet uneasy atmosphere"
+          },
           "anchor_events": [
             {
               "id": "anchor-gen-0-0-0",
@@ -33,12 +42,14 @@
                 "item_held": null
               }
             }
-          ],
-          "entry_state": null
+          ]
         },
         {
           "name": "Session 2: 卡塞尔之门",
           "opening_scene": "芝加哥火车站，冰冷的雨夜。你独自拖着行李箱，寻找一趟传说中的CC1000次快车。时刻表上没有它的踪迹，只有一个嬉皮笑脸的白人青年和你一样在等待。他说他叫芬格尔，是卡塞尔学院的万年留级生。当你们在候车大厅昏昏欲睡时，一幅毁天灭地的画卷猛地闯入你的脑海——巨树、白骨、黑色的龙……",
+          "entry_state": {
+            "location": "芝加哥火车站候车大厅"
+          },
           "anchor_events": [
             {
               "id": "anchor-gen-0-1-0",
@@ -62,8 +73,7 @@
                 "item_held": null
               }
             }
-          ],
-          "entry_state": null
+          ]
         }
       ]
     },
@@ -74,6 +84,9 @@
         {
           "name": "Session 3: 自由一日",
           "opening_scene": "诺顿馆内，学生会的最后会议气氛凝重。自由一日的败北意味着他们必须交出这座标志性建筑，而击败他们的，竟是一个毫不起眼的新生。你，路明非，糊里糊涂地在狙击战中“击杀”了恺撒·加图索和楚子航，成为新生联谊会的老大。然而，胜利的喜悦还没尝够，奇兰就带着一群新生跪求你来领导他们。",
+          "entry_state": {
+            "location": "诺顿馆"
+          },
           "anchor_events": [
             {
               "id": "anchor-gen-1-0-0",
@@ -86,12 +99,14 @@
                 "item_held": null
               }
             }
-          ],
-          "entry_state": null
+          ]
         },
         {
           "name": "Session 4: 3E考试与S级评定",
           "opening_scene": "教室里一片死寂，曼施坦因教授宣布3E考试开始：一张空白的试卷，一段诡异的音乐。别人在苦思冥想，而你却从低音区的龙文咒文中听到了答案。你偷偷在胳膊上画满小抄，却不知这一切都被诺诺看在眼里。考试结束，你即将被评定为S级，那个叫奇兰的印度新生再次恳求你领导新生联谊会，甚至流下了眼泪。",
+          "entry_state": {
+            "location": "卡塞尔学院3E考试教室"
+          },
           "anchor_events": [
             {
               "id": "anchor-gen-1-1-0",
@@ -115,8 +130,7 @@
                 "item_held": null
               }
             }
-          ],
-          "entry_state": null
+          ]
         }
       ]
     },
@@ -127,6 +141,9 @@
         {
           "name": "Session 5: 龙渊之暗",
           "opening_scene": "卡塞尔学院地下，迷宫般的甬道深不见底。代号“13号”的职业探险家受雇潜入，沿着命运三女神的地图，前往没有出口的“诗蔻迪”区域。他的任务只是观察并报告一个黄铜罐，却不知罐中封印着龙王诺顿的心脏。与此同时，英灵殿中学生会B组全副武装，恺撒坐镇中央，防备着未来的风暴。",
+          "entry_state": {
+            "location": "卡塞尔学院地下甬道"
+          },
           "anchor_events": [
             {
               "id": "anchor-gen-2-0-0",
@@ -139,12 +156,14 @@
                 "item_held": null
               }
             }
-          ],
-          "entry_state": null
+          ]
         },
         {
           "name": "Session 6: 龙穴开启",
           "opening_scene": "13号在石英玻璃腔外窥视黄铜罐，罐中传来的低语让他头晕目眩。仓皇逃离中，他遗落了一个灰锡瓶。一名神秘人捡起瓶子，用黑卡打开封闭的龙穴，切断了诺玛的通讯，将瓶中的液体倾倒入真空室。沉睡的龙王之心，开始重新擂动！",
+          "entry_state": {
+            "location": "龙穴石英玻璃腔外"
+          },
           "anchor_events": [
             {
               "id": "anchor-gen-2-1-0",
@@ -157,12 +176,14 @@
                 "item_held": null
               }
             }
-          ],
-          "entry_state": null
+          ]
         },
         {
           "name": "Session 7: 青铜城绝地",
           "opening_scene": "青铜城的机械通道在你和诺诺身后轰然关闭，顶部青铜巨壁正一寸寸压下。你割开手腕，将鲜血涂满活灵门，祈祷它能再次开启。诺诺紧紧抱住你，氧气泄漏的咝咝声如同死神的低语。你们背负着从叶胜遗骸上取下的金属匣——那可能是唯一能杀死龙王的武器。",
+          "entry_state": {
+            "location": "青铜城机械通道"
+          },
           "anchor_events": [
             {
               "id": "anchor-gen-2-2-0",
@@ -186,8 +207,7 @@
                 "item_held": null
               }
             }
-          ],
-          "entry_state": null
+          ]
         }
       ]
     },
@@ -198,6 +218,9 @@
         {
           "name": "Session 8: 七宗罪的裁决",
           "opening_scene": "青铜城废墟之上，龙王诺顿以老唐的面貌冷冷注视着你。他身后，康斯坦丁的虚影在火光中若隐若现。你手中的金属匣展开为七把形态各异的刀剑——七宗罪。你必须做出选择：用这禁忌的武器斩杀昔日的朋友，抑或寻找另一条生路。但龙王不会给你时间，龙炎已经铺天盖地而来。",
+          "entry_state": {
+            "location": "青铜城废墟"
+          },
           "anchor_events": [
             {
               "id": "anchor-gen-3-0-0",
@@ -210,12 +233,14 @@
                 "item_held": null
               }
             }
-          ],
-          "entry_state": null
+          ]
         },
         {
           "name": "Session 9: 龙王的下午茶",
           "opening_scene": "校长办公室内，骨瓷杯中的大吉岭茶泛着金色光晕。昂热校长将一份满分成绩单推到你面前，然后平静地讲述了龙族四大君主、诺顿与康斯坦丁的双生子宿命，以及你亲手终结的那个悲剧。窗外阳光正好，但你手中的那封神秘信件，火漆封印上闪烁着未知的徽记，暗示着故事远未结束。",
+          "entry_state": {
+            "location": "昂热校长办公室"
+          },
           "anchor_events": [
             {
               "id": "anchor-gen-3-1-0",
@@ -239,8 +264,7 @@
                 "item_held": null
               }
             }
-          ],
-          "entry_state": null
+          ]
         }
       ]
     }

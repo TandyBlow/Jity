@@ -7,7 +7,7 @@ import { MemoryObjects, MemorySection } from "@/components/game/MemorySection";
 import { shorten, sourceTypeLabel } from "@/lib/game/format";
 
 export function MemoryPanel({ session }: { session: GameSession }) {
-  const { state, output, chunks } = session;
+  const { sessionId, state, output, chunks } = session;
 
   return (
     <aside className="memory-panel">
@@ -50,6 +50,18 @@ export function MemoryPanel({ session }: { session: GameSession }) {
       <MemoryObjects title="任务" items={state?.quests ?? []} kind="quest" />
       <MemoryObjects title="长期事实" items={state?.world_facts ?? []} kind="world_fact" />
       <MemorySection title="最近事件" items={state?.recent_events ?? []} />
+
+      {session.autoPlay.enabled ? (
+        <div className="autoplay-anchors">
+          <div className="section-title"><span>战役锚点 · {session.autoPlay.revealedAnchors.length}</span></div>
+          {session.autoPlay.revealedAnchors.length ? session.autoPlay.revealedAnchors.map((anchor) => (
+            <div className={`memory-item${anchor.isNew ? " anchor-new" : ""}`} key={anchor.id}>
+              {anchor.isNew ? "新触发 · " : "已揭示 · "}{anchor.name}
+            </div>
+          )) : <div className="memory-item">尚未触发锚点</div>}
+          {sessionId ? <a className="autoplay-anchor-link" href={session.autoPlay.timelineUrl} target="_blank">打开实时锚点树 ↗</a> : null}
+        </div>
+      ) : null}
 
       <RagHits chunks={chunks} />
     </aside>

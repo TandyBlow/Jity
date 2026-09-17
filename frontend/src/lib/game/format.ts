@@ -47,6 +47,11 @@ export function formatDelta(delta: number) {
   return `${delta > 0 ? "+" : ""}${delta}`;
 }
 
+export function formatSlotTime(lastPlayed: string) {
+  const match = lastPlayed.match(/^(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2})/);
+  return match ? `${match[2]}-${match[3]} ${match[4]}:${match[5]}` : lastPlayed;
+}
+
 export function memoryDetail(
   item: ItemMemory | NPCMemory | QuestMemory | WorldFactMemory,
   kind: "item" | "npc" | "quest" | "world_fact",

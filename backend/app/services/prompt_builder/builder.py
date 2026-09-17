@@ -170,7 +170,7 @@ def _style_and_rules(input: PromptInput) -> str:
         "\n"
         "严格返回纯 JSON，不要包含 Markdown、解释或额外文本：\n"
         "{\n"
-        '  "narration": "第二人称沉浸叙事，30句左右",\n'
+        '  "narration": "第二人称沉浸叙事，20句左右",\n'
         '  "dialogue": [{"speaker": "角色名", "text": "对话内容"}],\n'
         '  "scene_prompt": "English scene description, max 30 words",\n'
         '  "sanity_delta": 0,\n'

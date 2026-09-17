@@ -5,30 +5,44 @@ from app.schemas import GenerateResponse, StoryOutput
 
 class OpeningSceneMixin:
     async def _handle_opening_scene(
-        self, session_id, request, session, state, model, campaign_manager, _csi
+        self, session_id, request, session, state, model, campaign_manager, _csi,
+        parent_turn_id=None,
     ) -> GenerateResponse | None:
         """Return GenerateResponse for campaign opening scene, or None to continue."""
         if campaign_manager is None or not campaign_manager.is_loaded():
             return None
 
         opening = campaign_manager.get_opening_scene()
-        turn = int(state.get("turn", 0))
+        turn = campaign_manager.progress.turn_in_session
         if turn != 0 or not opening:
             return None
+        if parent_turn_id is None:
+            parent_turn_id = self.db.get_active_turn_id(session_id)
+
+        # A chapter starts on the campaign-local clock, even when the global
+        # game turn is already positive. Apply its scene without resetting stats.
+        is_session_transition = int(state.get("turn", 0)) > 0
+        state = self.state_manager.merge_entry_state(
+            state, campaign_manager.campaign,
+            campaign_manager.progress.arc_index, campaign_manager.progress.session_index,
+            reset_scene_context=is_session_transition,
+        )
+        if is_session_transition:
+            # The controller contains raw turns, summaries and persona sketches
+            # from the previous scene.  The campaign recap is the deliberate
+            # cross-session continuity channel; start a fresh short-term cache.
+            self.invalidate_timeline_caches(session_id, campaign_manager.slot_name)
 
         output = StoryOutput(
             narration=opening,
             dialogue=[],
-            scene_prompt="campaign opening",
+            scene_prompt=state.get("_scene_prompt", ""),
             sanity_delta=0,
             health_delta=0,
             options=["继续"],
             current_location=state.get("current_location", ""),
         ).replace_em_dashes()
-        self.db.add_message(session_id, "user", request.player_action, _csi)
-        self.db.add_message(session_id, "assistant", output.model_dump_json(), _csi)
         state = self.state_manager.apply_output(state, request.player_action, output)
-        self.state_manager.save_state(session_id, session["game_name"], model, state)
 
         metrics = campaign_manager.record_turn(output, session["state"], latency_ms=0)
         output_id = self.db.add_model_output(
@@ -40,10 +54,28 @@ class OpeningSceneMixin:
         )
 
         # Unified advance — same path as normal turns
-        await self._advance_campaign(campaign_manager)
+        await self._advance_campaign(campaign_manager, [
+            {"role": "user", "content": request.player_action},
+            {"role": "assistant", "content": output.model_dump_json()},
+        ])
+        progress_snapshot = self._campaign_progress_snapshot(session_id, campaign_manager)
+        timeline_node_id = self.db.commit_story_turn(
+            session_id=session_id,
+            expected_parent_id=parent_turn_id,
+            player_action=request.player_action,
+            output=output.model_dump(),
+            state=state,
+            campaign_progress=progress_snapshot,
+            model=model,
+            source="scripted",
+            model_output_id=output_id,
+            campaign_session_index=_csi,
+        )
 
         return GenerateResponse(
             session_id=session_id, state=state, output=output,
             retrieved_chunks=[], model_output_id=output_id,
             used_model=model, source="scripted",
+            timeline_node_id=timeline_node_id,
+            parent_timeline_node_id=parent_turn_id,
         )

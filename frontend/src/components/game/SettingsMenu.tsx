@@ -5,6 +5,7 @@ import { ChevronDown, History, MapPin, PenTool, Plus, RefreshCw, Settings, X } f
 import { useEffect, useRef, useState } from "react";
 
 import type { GameSession } from "@/components/game/useGameSession";
+import { formatSlotTime } from "@/lib/game/format";
 
 export function SettingsMenu({ session }: { session: GameSession }) {
   const {
@@ -37,6 +38,12 @@ export function SettingsMenu({ session }: { session: GameSession }) {
     if (name?.trim()) handleCreateSlot(name.trim());
   };
 
+  const campaignTitle = (filename?: string | null) => {
+    if (!filename) return "自由模式";
+    const found = campaigns.find((campaign) => campaign.filename === filename);
+    return found?.title ?? filename;
+  };
+
   return (
     <div className="settings-menu" ref={menuRef}>
       <button
@@ -55,7 +62,7 @@ export function SettingsMenu({ session }: { session: GameSession }) {
         <div aria-label="游戏设置" className="settings-dropdown" role="menu">
           <div className="settings-field-row">
             <label htmlFor="settings-model">模型</label>
-            <select id="settings-model" value={model} onChange={(event) => setModel(event.target.value)}>
+            <select disabled={session.isLoading || !!session.pendingGenerate} id="settings-model" value={model} onChange={(event) => setModel(event.target.value)}>
               <option value="deepseek-v4-flash">deepseek-v4-flash</option>
               <option value="deepseek-reasoner">deepseek-reasoner</option>
             </select>
@@ -65,6 +72,7 @@ export function SettingsMenu({ session }: { session: GameSession }) {
             <label htmlFor="settings-campaign">战役</label>
             <select
               id="settings-campaign"
+              disabled={session.isLoading || !!session.pendingGenerate}
               value={selectedCampaign}
               onChange={(event) => handleCampaignChange(event.target.value)}
             >
@@ -83,6 +91,7 @@ export function SettingsMenu({ session }: { session: GameSession }) {
               <div className="settings-slot-control">
                 <select
                   id="settings-slot"
+                  disabled={session.isLoading || !!session.pendingGenerate}
                   value={selectedSlotId}
                   onChange={(event) => handleSlotChange(Number(event.target.value))}
                 >
@@ -90,7 +99,7 @@ export function SettingsMenu({ session }: { session: GameSession }) {
                   {slots.length > 0 && selectedSlotId === "" ? <option value="">选择存档</option> : null}
                   {slots.map((slot) => (
                     <option key={slot.id} value={slot.id}>
-                      {slot.slot_name} · A{slot.arc_index + 1}S{slot.session_index + 1} · T{slot.turn_in_session}
+                      {slot.slot_name} · {campaignTitle(slot.campaign_filename)} · A{slot.arc_index + 1}S{slot.session_index + 1} · {formatSlotTime(slot.last_played)}
                     </option>
                   ))}
                 </select>
@@ -103,9 +112,13 @@ export function SettingsMenu({ session }: { session: GameSession }) {
 
           <div className="settings-divider" />
 
-          <Link className="settings-link-row" href={sessionId ? `/timeline?session=${sessionId}` : "/timeline"}>
+          <Link
+            className="settings-link-row"
+            href={session.autoPlay.enabled ? session.autoPlay.timelineUrl : (sessionId ? `/timeline?session=${sessionId}` : "/timeline")}
+            target={session.autoPlay.enabled ? "_blank" : undefined}
+          >
             <MapPin size={17} />
-            <span>发现时间线</span>
+            <span>{session.autoPlay.enabled ? "发现时间线（实时）" : "发现时间线"}</span>
           </Link>
           <Link className="settings-link-row" href="/curator">
             <PenTool size={17} />
@@ -120,6 +133,7 @@ export function SettingsMenu({ session }: { session: GameSession }) {
 
           <button
             className="settings-link-row settings-new-session"
+            disabled={session.isLoading || !!session.pendingGenerate}
             onClick={() => {
               setIsOpen(false);
               handleNewSession();

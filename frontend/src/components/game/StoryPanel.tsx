@@ -1,6 +1,8 @@
 "use client";
 
 import { Image as ImageIcon, Loader2, Send } from "lucide-react";
+import { GitBranch } from "lucide-react";
+import Link from "next/link";
 
 import type { GameSession } from "@/components/game/useGameSession";
 import { formatDelta, quoteDialogue } from "@/lib/game/format";
@@ -51,6 +53,12 @@ export function StoryPanel({ session }: { session: GameSession }) {
       <div className="toolbar-row">
         <div className="meta">Session {sessionId ? sessionId.slice(0, 8) : "initializing"}</div>
         <div className="meta">Turn {state?.turn ?? 0}</div>
+        {sessionId && session.activeTurnId ? (
+          <Link className="story-rewind-link" href={`/timeline?session=${sessionId}&back=1`}>
+            <GitBranch size={13} />
+            回溯上一步
+          </Link>
+        ) : null}
         {isBackgroundLoading ? (
           <div className="background-status">
             <ImageIcon size={13} />
@@ -73,6 +81,21 @@ export function StoryPanel({ session }: { session: GameSession }) {
       </div>
 
       <article className="scene-output">
+        {session.autoPlay.enabled ? (
+          <div className={`autoplay-banner ${session.autoPlay.status}`}>
+            <div>
+              <strong>自动跑剧情 · {session.autoPlay.currentTurn}/{session.autoPlay.targetTurns}</strong>
+              <span>当前目标：{session.autoPlay.goals.join("；") || "跟随主线推进"}</span>
+              {session.autoPlay.selectedAction ? <span>下一步：{session.autoPlay.selectedAction}</span> : null}
+              {session.autoPlay.selectionReason ? <small>{session.autoPlay.selectionReason}</small> : null}
+            </div>
+            {session.autoPlay.status !== "complete" ? (
+              <button onClick={() => session.autoPlay.setPaused(!session.autoPlay.paused)} type="button">
+                {session.autoPlay.paused ? "继续" : "暂停"}
+              </button>
+            ) : <span className="autoplay-complete">已完成</span>}
+          </div>
+        ) : null}
         <div className="narration">
           {narrationParagraphs(output.narration).map((paragraph, index) => (
             <p key={`${index}-${paragraph.slice(0, 20)}`}>{paragraph}</p>
@@ -99,7 +122,7 @@ export function StoryPanel({ session }: { session: GameSession }) {
         ) : null}
         <div className="option-list">
           {output.options.map((option) => (
-            <button className="option-button" key={option} onClick={() => handleGenerate(option)} type="button">
+            <button className="option-button" disabled={isLoading || !!session.pendingGenerate || !sessionId} key={option} onClick={() => handleGenerate(option)} type="button">
               {option}
             </button>
           ))}
@@ -120,7 +143,7 @@ export function StoryPanel({ session }: { session: GameSession }) {
             }}
             placeholder="输入玩家行动、当前场景或 GM 限制"
           />
-          <button disabled={isLoading || !sessionId} onClick={() => handleGenerate()} type="button">
+          <button disabled={isLoading || !!session.pendingGenerate || !sessionId} onClick={() => handleGenerate()} type="button">
             {isLoading ? <Loader2 className="spin-icon" size={18} /> : <Send size={18} />}
             <span>{isLoading ? "生成中" : "生成下一幕"}</span>
           </button>

@@ -95,6 +95,8 @@ export type SessionResponse = {
   game_name: string;
   model: string;
   state: GameState;
+  campaign_filename?: string | null;
+  active_turn_id?: number | null;
 };
 
 export type GenerateResponse = {
@@ -105,6 +107,8 @@ export type GenerateResponse = {
   model_output_id: number | null;
   used_model: string;
   source: "scripted" | "llm" | "examiner_blocked";
+  timeline_node_id: number;
+  parent_timeline_node_id: number;
 };
 
 export type SessionMessage = {
@@ -117,6 +121,42 @@ export type SessionMessage = {
 export type SessionHistoryResponse = {
   session_id: string;
   messages: SessionMessage[];
+};
+
+export type TimelineNodeSummary = {
+  id: number;
+  parent_id: number | null;
+  depth: number;
+  label: string;
+  player_action: string;
+  narration_preview: string;
+  location: string;
+  turn: number;
+  source: GenerateResponse["source"];
+  created_at: string;
+  is_active: boolean;
+  is_on_active_path: boolean;
+};
+
+export type TimelineResponse = {
+  session_id: string;
+  active_node_id: number | null;
+  campaign_filename?: string | null;
+  nodes: TimelineNodeSummary[];
+};
+
+export type TimelineNodeDetail = {
+  id: number;
+  session_id: string;
+  parent_id: number | null;
+  depth: number;
+  player_action: string;
+  output: StoryOutput | null;
+  state: GameState;
+  campaign_progress: Record<string, unknown>;
+  model: string;
+  source: GenerateResponse["source"];
+  created_at: string;
 };
 
 // ── Campaign types (CAMP-10) ──
@@ -183,4 +223,5 @@ export type SaveSlot = {
   last_played: string;
   campaign_filename?: string | null;
   is_active?: boolean;
+  head_turn_id?: number | null;
 };

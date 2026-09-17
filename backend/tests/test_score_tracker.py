@@ -19,7 +19,6 @@ from app.schemas.agent_io import (
     TriggeredRule,
 )
 from app.services.agents.director import DirectorAgent, _parse_instruction, _fallback_instruction
-from app.services.agents.examiner import ExaminerAgent, _parse_ruling, _compact_entities
 from app.services.memory.forgetting import (
     compute_score,
     score_all,

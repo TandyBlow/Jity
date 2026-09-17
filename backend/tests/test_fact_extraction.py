@@ -1,4 +1,4 @@
-"""Tests for LLM fact extraction and deviation detection."""
+"""Tests for removal of standalone fact extraction and deviation detection."""
 
 import json
 from pathlib import Path
@@ -6,25 +6,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from app.services.campaign_manager import CampaignManager, build_fact_extraction, _FACT_EXTRACTION_PROMPT
-
-
-class TestFactExtractionPrompt:
-    """Tests for fact extraction prompt building."""
-
-    def test_build_fact_extraction_includes_events(self):
-        """build_fact_extraction should include recent events."""
-        result = build_fact_extraction(
-            "最新叙事内容", ["事件1", "事件2"]
-        )
-        assert "事件1" in result
-        assert "事件2" in result
-        assert "最新叙事内容" in result
-
-    def test_prompt_has_output_format(self):
-        """Fact extraction prompt should specify JSON output format."""
-        assert "JSON" in _FACT_EXTRACTION_PROMPT
-        assert "name" in _FACT_EXTRACTION_PROMPT
+from app.services.campaign_manager import CampaignManager
 
 
 class TestDeviationDetection:

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { generateBackground } from "@/lib/api";
 import type { GameState, StoryOutput } from "@/types";
@@ -11,12 +11,15 @@ export function useSceneBackground(output: StoryOutput, state: GameState | null)
   const [backgroundError, setBackgroundError] = useState("");
   const [backgroundRequestNonce, setBackgroundRequestNonce] = useState(0);
   const sceneLocation = state?.current_location || output.current_location;
-  const scenePromptRef = useRef(output.scene_prompt);
-  scenePromptRef.current = output.scene_prompt;
+  const scenePrompt = output.scene_prompt?.trim() ?? "";
 
   useEffect(() => {
-    const scenePrompt = scenePromptRef.current?.trim();
-    if (!scenePrompt) return;
+    setBackgroundUrl("");
+    setBackgroundError("");
+    if (!scenePrompt) {
+      setIsBackgroundLoading(false);
+      return;
+    }
 
     let cancelled = false;
     setIsBackgroundLoading(true);
@@ -49,7 +52,7 @@ export function useSceneBackground(output: StoryOutput, state: GameState | null)
     return () => {
       cancelled = true;
     };
-  }, [sceneLocation, backgroundRequestNonce]);
+  }, [sceneLocation, scenePrompt, backgroundRequestNonce]);
 
   return {
     backgroundUrl,

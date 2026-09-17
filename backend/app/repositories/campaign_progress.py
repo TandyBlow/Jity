@@ -32,6 +32,7 @@ class CampaignProgressRepository:
                      campaign_progress.arc_index,
                      campaign_progress.session_index,
                      campaign_progress.turn_in_session,
+                     campaign_progress.head_turn_id,
                      campaign_progress.updated_at,
                      game_sessions.campaign_filename,
                      game_sessions.active_slot_name
@@ -50,6 +51,7 @@ class CampaignProgressRepository:
                 "arc_index": row["arc_index"],
                 "session_index": row["session_index"],
                 "turn_in_session": row["turn_in_session"],
+                "head_turn_id": row["head_turn_id"],
                 "last_played": row["updated_at"],
                 "campaign_filename": row["campaign_filename"],
                 "is_active": row["slot_name"] == row["active_slot_name"],
@@ -91,6 +93,7 @@ class CampaignProgressRepository:
             completed_arcs=json.loads(source.get("completed_arcs", "[]")) if source else [],
             recap_compressed=str(source.get("recap_compressed", "")),
             recap_full=str(source.get("recap_full", "")),
+            head_turn_id=int(source.get("head_turn_id") or session_row["active_turn_id"]),
         )
         if source.get("npc_relations"):
             self.db.update_npc_relations(campaign_id, source["npc_relations"], slot_name)

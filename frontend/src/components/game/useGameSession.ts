@@ -2,12 +2,13 @@
 
 import { useMemo, useState } from "react";
 
-import { getSessionHistory, listSlots } from "@/lib/api";
-import { SLOT_DEFAULT, initialOutput } from "@/lib/game/initialOutput";
+import { getTimelineNode, listSlots } from "@/lib/api";
+import { ENTRY_ACTION, SLOT_DEFAULT, initialOutput, loadingOutput } from "@/lib/game/initialOutput";
 import { buildStatusDeltaHints } from "@/lib/game/format";
 import { useGameActions } from "@/components/game/useGameActions";
 import { useGameEffects } from "@/components/game/useGameEffects";
 import { useSceneBackground } from "@/components/game/useSceneBackground";
+import { useBrowserAutoPlay } from "@/components/game/useBrowserAutoPlay";
 import type {
   CampaignListItem,
   GameState,
@@ -22,6 +23,8 @@ export type GameSessionCore = {
   sessionId: string;
   setSessionId: (sessionId: string) => void;
   setState: (state: GameState) => void;
+  activeTurnId: number | null;
+  setActiveTurnId: (turnId: number | null) => void;
   model: string;
   setModel: (model: string) => void;
   action: string;
@@ -39,18 +42,19 @@ export type GameSessionCore = {
   pendingGenerate: string | null;
   setPendingGenerate: (action: string | null) => void;
   refreshSlots: (sessionId?: string, preferredSlotName?: string) => Promise<void>;
-  restoreLastOutput: (sessionId: string) => Promise<void>;
+  restoreLastOutput: (sessionId: string, campaignFilename?: string | null, activeTurnId?: number | null) => Promise<void>;
 };
 
 export function useGameSession() {
   const [sessionId, setSessionId] = useState("");
   const [model, setModel] = useState("deepseek-v4-flash");
   const [state, setState] = useState<GameState | null>(null);
-  const [output, setOutput] = useState<StoryOutput>(initialOutput);
+  const [activeTurnId, setActiveTurnId] = useState<number | null>(null);
+  const [output, setOutput] = useState<StoryOutput>(loadingOutput);
   const [outputSource, setOutputSource] = useState<GenerateResponse["source"]>("scripted");
   const [chunks, setChunks] = useState<RetrievedChunk[]>([]);
-  const [action, setAction] = useState<string>(initialOutput.options[0] ?? "");
-  const [isLoading, setIsLoading] = useState(false);
+  const [action, setAction] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [slots, setSlots] = useState<SaveSlot[]>([]);
   const [selectedSlot, setSelectedSlot] = useState<string>(SLOT_DEFAULT);
@@ -68,11 +72,12 @@ export function useGameSession() {
       setSelectedSlotId("");
       return;
     }
-    const updated = await listSlots(currentSessionId);
-    const nextSlots = (updated.slots ?? []).filter((slot) => slot.campaign_id === currentSessionId);
+    const updated = await listSlots();
+    const nextSlots = updated.slots ?? [];
     setSlots(nextSlots);
-    const active = nextSlots.find((slot) => slot.slot_name === preferredSlotName)
-      ?? nextSlots.find((slot) => slot.is_active);
+    const current = nextSlots.filter((slot) => slot.campaign_id === currentSessionId);
+    const active = current.find((slot) => slot.slot_name === preferredSlotName)
+      ?? current.find((slot) => slot.is_active);
     if (active) {
       setSelectedSlot(active.slot_name);
       setSelectedSlotId(active.id);
@@ -82,21 +87,25 @@ export function useGameSession() {
     }
   }
 
-  async function restoreLastOutput(nextSessionId: string) {
-    try {
-      const history = await getSessionHistory(nextSessionId);
-      const lastAssistant = [...history.messages].reverse().find((message) => message.role === "assistant");
-      if (lastAssistant) {
-        setOutput(JSON.parse(lastAssistant.content) as StoryOutput);
-        setOutputSource("llm");
-      } else {
-        setOutput(initialOutput);
-        setOutputSource("scripted");
+  async function restoreLastOutput(nextSessionId: string, campaignFilename?: string | null, nextActiveTurnId?: number | null) {
+    setSelectedCampaign(campaignFilename ?? "");
+    setAction("");
+    if (nextActiveTurnId) {
+      const node = await getTimelineNode(nextSessionId, nextActiveTurnId);
+      setActiveTurnId(node.id);
+      if (node.output) {
+        setOutput(node.output);
+        setOutputSource(node.source);
+        return;
       }
-    } catch (err) {
-      console.error("restoreLastOutput failed:", err);
+    }
+    if (campaignFilename) {
+      setOutput(loadingOutput);
+      setPendingGenerate(ENTRY_ACTION);
+    } else {
       setOutput(initialOutput);
       setOutputSource("scripted");
+      setAction(initialOutput.options[0] ?? "");
     }
   }
 
@@ -104,6 +113,8 @@ export function useGameSession() {
     sessionId,
     setSessionId,
     setState: (next: GameState) => setState(next),
+    activeTurnId,
+    setActiveTurnId,
     model,
     setModel,
     action,
@@ -127,13 +138,17 @@ export function useGameSession() {
   const actions = useGameActions(core);
 
   useGameEffects(core, { setSlots, setCampaigns, handleGenerate: actions.handleGenerate });
+  const autoPlay = useBrowserAutoPlay({
+    sessionId, selectedCampaign, state, output, isLoading, pendingGenerate, error,
+    handleGenerate: actions.handleGenerate,
+  });
   const sceneBackground = useSceneBackground(output, state);
 
   return {
     ...core, ...actions,
     ...sceneBackground,
     state, output, outputSource, chunks, isLoading, error,
-    statusDeltaHints, slots, selectedSlotId, campaigns,
+    statusDeltaHints, slots, selectedSlotId, campaigns, activeTurnId, autoPlay,
   };
 }
 

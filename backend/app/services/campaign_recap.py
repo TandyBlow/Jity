@@ -20,7 +20,9 @@ class CampaignRecapGenerator:
 
     # ── Generation ───────────────────────────────────────────────────
 
-    async def generate_recap(self, session_id: str) -> str | None:
+    async def generate_recap(
+        self, session_id: str, pending_messages: list[dict[str, str]] | None = None
+    ) -> str | None:
         """Generate LLM-compressed recap from session_messages history.
 
         Uses deepseek-v4-flash (cheap) for non-real-time boundary call.
@@ -29,14 +31,17 @@ class CampaignRecapGenerator:
         if self.llm_client is None or self.prompt_builder is None:
             return None
 
-        messages = self.db.get_messages(session_id)
+        messages = [*self.db.get_messages(session_id), *(pending_messages or [])]
         if not messages:
             return None
 
         try:
             recap_prompt = self.prompt_builder.build_recap(messages)
             recap_text = await self.llm_client.generate_text(
-                recap_prompt, max_tokens=800
+                recap_prompt,
+                max_tokens=800,
+                purpose="campaign_recap",
+                context={"session_id": session_id},
             )
             return recap_text.strip()
         except Exception:

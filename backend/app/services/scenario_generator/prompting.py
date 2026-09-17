@@ -38,6 +38,10 @@ class PromptBuildMixin:
                     player_action=request.player_action,
                 )
 
+        current_campaign_session = None
+        if campaign_manager is not None and campaign_manager.is_loaded():
+            current_campaign_session = getattr(campaign_manager.progress, "session_index", 0)
+
         prompt_input = PromptInput(
             player_action=request.player_action,
             game_state=state,
@@ -45,7 +49,13 @@ class PromptBuildMixin:
             style=request.style,
             constraints=request.constraints,
             campaign_context=campaign_context,
-            recent_messages=self.db.get_recent_messages(session_id),
+            # Previous sessions are represented by the campaign recap.  Mixing
+            # their raw turns into "最近对话" after a scripted opening can pull
+            # Narrator back into the scene that just ended.
+            recent_messages=self.db.get_recent_messages(
+                session_id,
+                campaign_session_index=current_campaign_session,
+            ),
         )
         prompt_sections, meta = self.prompt_builder.build_sections(prompt_input)
         prompt = "\n\n".join(prompt_sections.values())

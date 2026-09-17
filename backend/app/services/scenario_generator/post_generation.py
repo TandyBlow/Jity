@@ -10,23 +10,8 @@ class PostGenerationMixin:
     async def _apply_post_generation(
         self, output, next_state, state, session_id, session, model, campaign_manager
     ):
-        """Fact extraction + NPC relations. Returns possibly-updated next_state."""
+        """NPC relations (world facts already merged from StoryOutput). Returns possibly-updated next_state."""
         if campaign_manager is not None and campaign_manager.is_loaded():
-            # Fact extraction every 5 campaign turns
-            upcoming_turn = getattr(campaign_manager.progress, "turn_in_session", 0) + 1
-            if upcoming_turn > 0 and upcoming_turn % 5 == 0:
-                facts = await campaign_manager.extract_facts(
-                    output.narration,
-                    next_state.get("recent_events", []),
-                )
-                if facts:
-                    next_state["world_facts"] = self.state_manager.merge_by_name(
-                        next_state.get("world_facts", []),
-                        facts,
-                        kind="world_fact",
-                    )
-                    next_state = self.state_manager.enforce_state_caps(next_state)
-
             # NPC relations delta processing
             if output.npc_relations_delta:
                 self._process_npc_relations_delta(output, state, campaign_manager)
@@ -88,6 +73,9 @@ class PostGenerationMixin:
         )
 
         # Unified advance — no duplication
-        await self._advance_campaign(campaign_manager)
+        await self._advance_campaign(campaign_manager, [
+            {"role": "user", "content": request.player_action},
+            {"role": "assistant", "content": output.model_dump_json()},
+        ])
 
         return output_id, metrics

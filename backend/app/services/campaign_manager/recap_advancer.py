@@ -39,12 +39,12 @@ class RecapAdvancerFacade:
     def advance_turn(self) -> int:
         return self._advancer.advance_turn(self.progress, self.fsm, self.slot_name)
 
-    async def advance_session(self) -> str:
+    async def advance_session(self, pending_messages: list[dict[str, str]] | None = None) -> str:
         return await self._advancer.advance_session(
-            self.campaign, self.progress, self.fsm, self.slot_name
+            self.campaign, self.progress, self.fsm, self.slot_name, pending_messages
         )
 
-    async def advance_arc(self) -> str:
+    async def advance_arc(self, pending_messages: list[dict[str, str]] | None = None) -> str:
         return await self._advancer.advance_arc(
-            self.campaign, self.progress, self.fsm, self.slot_name
+            self.campaign, self.progress, self.fsm, self.slot_name, pending_messages
         )

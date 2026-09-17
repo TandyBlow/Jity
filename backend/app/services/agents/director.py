@@ -44,6 +44,7 @@ _DIRECTOR_SYSTEM_PROMPT = """你是一个TRPG叙事导演系统（Director）。
 }
 
 导演原则：
+- 当前幕固定开场和当前地点优先于上一幕回顾；上一幕回顾只用于因果背景，绝不能当作当前场景续写
 - 如果Examiner判定为blocked，给出叙事内拒绝策略（redirection_strategy + redirection_hint）
 - 如果Examiner判定为conditional，在narrative_direction中说明需要什么检定
 - 检查锚点触发条件：如果玩家状态满足某个锚点的trigger_conditions，设置anchor_triggered
@@ -88,6 +89,7 @@ class DirectorAgent:
         candidate_anchors: str,
         deviation_status: str,
         item_states: str,
+        context: dict | None = None,
     ) -> DirectorInstruction:
         """Generate director instruction for the Narrator.
 
@@ -124,6 +126,8 @@ class DirectorAgent:
                 prompt=f"{_DIRECTOR_SYSTEM_PROMPT}\n\n{user_prompt}",
                 max_tokens=1500,
                 temperature=0.3,
+                purpose="campaign_director",
+                context=context,
             )
             return _parse_instruction(result)
         except Exception:
