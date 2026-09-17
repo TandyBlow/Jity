@@ -19,8 +19,8 @@ import {
   MapPin,
   PenTool,
 } from "lucide-react";
-import { DiceCanvas } from "@/components/dice-demo/DiceCanvas";
-import { defineCheck, getOutcome, type CheckSpec, type Outcome } from "@/components/dice-demo/dice-rules";
+import { DiceCanvas } from "@/components/dice/DiceCanvas";
+import { defineCheck, getOutcome, type CheckSpec, type Outcome } from "@/lib/dice/rules";
 
 type Phase = "idle" | "prepared" | "rolling" | "docking" | "revealed" | "resolved";
 type ActionId = "inspect" | "observe" | "leave" | "follow" | "take" | "return" | "retry";

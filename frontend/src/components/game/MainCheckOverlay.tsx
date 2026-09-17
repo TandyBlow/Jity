@@ -3,8 +3,8 @@
 import { Check, CircleAlert, Dices, ShieldCheck, X } from "lucide-react";
 import { useState } from "react";
 
-import { DiceCanvas } from "@/components/dice-demo/DiceCanvas";
-import { getOutcome, type CheckSpec, type Outcome } from "@/components/dice-demo/dice-rules";
+import { DiceCanvas } from "@/components/dice/DiceCanvas";
+import { getOutcome, type CheckSpec, type Outcome } from "@/lib/dice/rules";
 
 type CheckPhase = "prepared" | "rolling" | "docking" | "revealed";
 

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { checkExpression, defineCheck, getOutcome, requiredRoll, type CheckSpec } from "./dice-rules";
+import { checkExpression, defineCheck, getOutcome, requiredRoll, type CheckSpec } from "./rules";
 
 function makeCheck(overrides: Partial<Parameters<typeof defineCheck>[0]> = {}): CheckSpec {
   return defineCheck({

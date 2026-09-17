@@ -1,4 +1,4 @@
-import { defineCheck, getOutcome, type CheckSpec, type Outcome } from "@/components/dice-demo/dice-rules";
+import { defineCheck, getOutcome, type CheckSpec, type Outcome } from "@/lib/dice/rules";
 import type { StoryOptionCheck, StoryOutput } from "@/types";
 
 export type CheckRoll = { roll: number; outcome: Outcome; degree: string };

@@ -6,7 +6,7 @@ import { useState } from "react";
 
 import { MainCheckOverlay, type MainCheckCommit } from "@/components/game/MainCheckOverlay";
 import type { GameSession } from "@/components/game/useGameSession";
-import type { CheckSpec } from "@/components/dice-demo/dice-rules";
+import type { CheckSpec } from "@/lib/dice/rules";
 import { formatActionWithCheckResult, toCheckSpec } from "@/lib/game/checks";
 import { formatDelta, quoteDialogue } from "@/lib/game/format";
 
