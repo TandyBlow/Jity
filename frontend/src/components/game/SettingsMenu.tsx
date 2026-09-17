@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { ChevronDown, History, MapPin, PenTool, Plus, RefreshCw, Settings, X } from "lucide-react";
+import { ChevronDown, Dices, History, MapPin, PenTool, Plus, RefreshCw, Settings, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 import type { GameSession } from "@/components/game/useGameSession";
+import { diceDemoEnabled } from "@/lib/devFlags";
 import { formatSlotTime } from "@/lib/game/format";
 
 export function SettingsMenu({ session }: { session: GameSession }) {
@@ -128,6 +129,12 @@ export function SettingsMenu({ session }: { session: GameSession }) {
             <History size={17} />
             <span>开发日志</span>
           </Link>
+          {diceDemoEnabled() ? (
+            <Link className="settings-link-row" href="/dice-demo">
+              <Dices size={17} />
+              <span>骰子判定演示</span>
+            </Link>
+          ) : null}
 
           <div className="settings-divider" />
 

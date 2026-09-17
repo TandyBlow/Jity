@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Dices, History, Loader2, MapPin, PenTool, RefreshCw, Send } from "lucide-react";
+import { History, Loader2, MapPin, PenTool, RefreshCw, Send } from "lucide-react";
 
 import type { GameSession } from "@/components/game/useGameSession";
 import { formatSlotTime } from "@/lib/game/format";
@@ -33,9 +33,6 @@ export function SidePanel({ session }: { session: GameSession }) {
           </Link>
           <Link className="icon-button" href="/dev-log" title="开发日志">
             <History size={17} />
-          </Link>
-          <Link className="icon-button" href="/dice-demo" title="骰子判定演示">
-            <Dices size={17} />
           </Link>
           <button className="icon-button" onClick={handleNewSession} title="新建会话" type="button">
             <RefreshCw size={17} />
