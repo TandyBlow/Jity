@@ -139,8 +139,10 @@ export function useBrowserAutoPlay(input: {
     );
     // Auto-play drives no dice UI, so a check is rolled headlessly with a seeded
     // d20 and reported in the action text exactly like the manual path does.
-    // chooseGoalAwareOption returns a 1-based index.
-    const check = choice.index === null ? null : resolveOptionCheck(input.output, choice.index - 1);
+    // The chosen index is resolved against the raw options because
+    // chooseGoalAwareOption numbers the list after dropping blank entries.
+    const optionIndex = input.output.options.findIndex((option) => option.trim() === choice.action);
+    const check = optionIndex < 0 ? null : resolveOptionCheck(input.output, optionIndex);
     const roll = check
       ? rollCheck(check, seededRoll(config.seed + currentTurn * 7919))
       : null;
