@@ -1,0 +1,40 @@
+import type { DevLogEntry } from "@/lib/dev-log/types";
+
+export const entry: DevLogEntry = {
+  id: "2026-09-17-campaign-endings",
+  date: "2026-09-17",
+  title: "四战役多结局、确定性判定与结算界面",
+  summary: "为四个战役补齐独立最终章与七路线结局，并将结局选择从模型自由判断改为后端确定性判定。",
+  developer: "shit",
+  areas: ["backend", "frontend", "campaign", "gameplay", "tests"],
+  changes: [
+    "《卡塞尔入学档案》《火之晨曦》《悼亡者之瞳》《黑月之潮》各新增七条独立结局，共二十八条路线，并补充最终场景、人物状态、关键物品和剧情锚点。",
+    "Campaign Schema 新增 ending_routes，结局包含类型、条件说明、明确触发行动、剧情收束与尾声。",
+    "新增后端结局判定器，仅在最终章节根据玩家明确行动和生存状态锁定结局；模型负责生成文案，不再自行决定结局或提前结束战役。",
+    "结局成立后 Campaign FSM 持久化为 campaign_end，后端拒绝继续生成，避免结局被后续剧情覆盖。",
+    "前端新增战役结束结算卡，展示结局名称与摘要，并禁用自由输入、剧情选项和继续生成按钮。",
+    "章节初始物品状态统一为 owned，修复关键物品进入场景后无法使用的问题。",
+    "行动检查支持同一大场景内的子区域交互，修复人物位于王殿入口、红井核心或高架桥下时被误判为不在场的问题。",
+    "新增结局选择、最终章节限制、失败结局、物品状态与场景人物交互回归测试。",
+    "验证：后端全量 374 项测试通过，前端生产构建通过。",
+  ],
+  relatedFiles: [
+    "backend/app/schemas/campaign.py",
+    "backend/app/services/campaign_endings.py",
+    "backend/app/services/campaign_context.py",
+    "backend/app/services/agents/examiner.py",
+    "backend/app/services/game_state/entry_state.py",
+    "backend/app/services/scenario_generator/generator.py",
+    "backend/data/campaigns/default_campaign.json",
+    "backend/data/campaigns/龙族Ⅰ_火之晨曦_campaign.json",
+    "backend/data/campaigns/龙族Ⅱ_悼亡者之瞳_campaign.json",
+    "backend/data/campaigns/龙族Ⅲ_黑月之潮_campaign.json",
+    "frontend/src/components/game/StoryPanel.tsx",
+    "backend/tests/test_campaign_ending_selection.py",
+    "backend/tests/test_campaign_endings.py",
+  ],
+  nextSteps: [
+    "为自动跑剧情增加目标结局选择，以稳定覆盖二十八条路线。",
+    "更新战役编辑器，使结局条件和触发行动可以在界面中维护。",
+  ],
+};

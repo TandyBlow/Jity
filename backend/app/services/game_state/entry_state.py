@@ -83,7 +83,7 @@ class EntryStateMixin:
                     for item_name in entry["items"]:
                         if not any(i.get("name") == item_name for i in result.get("items", [])):
                             result.setdefault("items", []).append(
-                                {"name": item_name, "status": "初始"}
+                                {"name": item_name, "status": "owned"}
                             )
                 if entry.get("quests"):
                     for quest_name in entry["quests"]:

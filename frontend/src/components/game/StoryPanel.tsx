@@ -101,6 +101,12 @@ export function StoryPanel({ session }: { session: GameSession }) {
             <p key={`${index}-${paragraph.slice(0, 20)}`}>{paragraph}</p>
           ))}
         </div>
+        {output.game_over ? (
+          <div className="ending-card" role="status">
+            <strong>战役结束</strong>
+            <span>{output.game_over_reason}</span>
+          </div>
+        ) : null}
         <div className="dialogue-list">
           {output.dialogue.map((line, index) => (
             <div className="dialogue-line" key={`${line.speaker}-${index}`}>
@@ -122,18 +128,19 @@ export function StoryPanel({ session }: { session: GameSession }) {
         ) : null}
         <div className="option-list">
           {output.options.map((option) => (
-            <button className="option-button" disabled={isLoading || !!session.pendingGenerate || !sessionId} key={option} onClick={() => handleGenerate(option)} type="button">
+            <button className="option-button" disabled={output.game_over || isLoading || !!session.pendingGenerate || !sessionId} key={option} onClick={() => handleGenerate(option)} type="button">
               {option}
             </button>
           ))}
         </div>
       </article>
 
-      <div className="player-controls">
+      <div className={`player-controls${output.game_over ? " is-ended" : ""}`}>
         <label className="player-controls-label" htmlFor="action">你的行动</label>
         <div className="player-controls-row">
           <textarea
             id="action"
+            disabled={output.game_over}
             value={action}
             onChange={(event) => setAction(event.target.value)}
             onKeyDown={(event) => {
@@ -141,11 +148,11 @@ export function StoryPanel({ session }: { session: GameSession }) {
                 handleGenerate();
               }
             }}
-            placeholder="输入玩家行动、当前场景或 GM 限制"
+            placeholder={output.game_over ? "该战役已经结束" : "输入玩家行动、当前场景或 GM 限制"}
           />
-          <button disabled={isLoading || !!session.pendingGenerate || !sessionId} onClick={() => handleGenerate()} type="button">
+          <button disabled={output.game_over || isLoading || !!session.pendingGenerate || !sessionId} onClick={() => handleGenerate()} type="button">
             {isLoading ? <Loader2 className="spin-icon" size={18} /> : <Send size={18} />}
-            <span>{isLoading ? "生成中" : "生成下一幕"}</span>
+            <span>{output.game_over ? "战役已结束" : isLoading ? "生成中" : "生成下一幕"}</span>
           </button>
         </div>
         {error ? <div className="error">{error}</div> : null}

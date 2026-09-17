@@ -1540,3 +1540,28 @@ a {
 .autoplay-anchors { display: grid; gap: 7px; }
 .autoplay-anchors .anchor-new { border-color: var(--accent-2); color: var(--accent-2); }
 .autoplay-anchor-link { color: var(--accent-2); font-size: 0.84rem; text-decoration: none; }
+.ending-card {
+  display: grid;
+  gap: 8px;
+  margin: 22px 0 8px;
+  padding: 18px 20px;
+  border: 1px solid rgba(226, 178, 86, 0.62);
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(57, 37, 18, 0.92), rgba(20, 18, 24, 0.94));
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.32);
+}
+
+.ending-card strong {
+  color: #f0c878;
+  font-size: 1.05rem;
+  letter-spacing: 0.12em;
+}
+
+.ending-card span {
+  color: #f3eadb;
+  line-height: 1.7;
+}
+
+.player-controls.is-ended {
+  opacity: 0.72;
+}

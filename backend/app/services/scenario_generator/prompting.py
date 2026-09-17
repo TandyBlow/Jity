@@ -3,6 +3,7 @@
 import inspect
 
 from app.services.prompt_builder import PromptInput
+from app.services.campaign_endings import ending_instruction, select_ending
 
 
 class PromptBuildMixin:
@@ -16,6 +17,11 @@ class PromptBuildMixin:
         if campaign_manager is not None and campaign_manager.is_loaded():
             turn = getattr(campaign_manager.progress, "turn_in_session", int(state.get("turn", 0)))
             campaign_context = campaign_manager.inject_context(state, turn)
+            selected_ending = select_ending(
+                campaign_manager.campaign, campaign_manager.progress, state, request.player_action
+            )
+            if selected_ending is not None:
+                campaign_context += "\n" + ending_instruction(selected_ending)
 
             # Keep memory in the campaign context channel so token truncation
             # accounts for it.  The controller's async variant is used when

@@ -40,6 +40,7 @@ export type GameSessionCore = {
   selectedCampaign: string;
   setSelectedCampaign: (campaign: string) => void;
   pendingGenerate: string | null;
+  gameOver: boolean;
   setPendingGenerate: (action: string | null) => void;
   refreshSlots: (sessionId?: string, preferredSlotName?: string) => Promise<void>;
   restoreLastOutput: (sessionId: string, campaignFilename?: string | null, activeTurnId?: number | null) => Promise<void>;
@@ -130,6 +131,7 @@ export function useGameSession() {
     selectedCampaign,
     setSelectedCampaign: (next: string) => setSelectedCampaign(next),
     pendingGenerate,
+    gameOver: output.game_over,
     setPendingGenerate: (next: string | null) => setPendingGenerate(next),
     refreshSlots,
     restoreLastOutput,

@@ -118,6 +118,22 @@ class CampaignManager(AnchorFacade, RecapAdvancerFacade, MetricsFacade):
             campaign_path, campaign_id, start_arc_index, start_session_index, slot_name
         )
 
+    def end_campaign(self) -> None:
+        """Move the active campaign to its terminal FSM state and persist it."""
+        if self.progress is None:
+            return
+        self.fsm.end_campaign()
+        self._persistence.save(
+            campaign_id=self.progress.campaign_id,
+            slot_name=self.slot_name,
+            arc_index=self.progress.arc_index,
+            session_index=self.progress.session_index,
+            turn_in_session=self.progress.turn_in_session,
+            fsm_state=str(self.fsm.state),
+            revealed_anchors=self.progress.revealed_anchors,
+            completed_arcs=self.progress.completed_arcs,
+        )
+
     def is_loaded(self) -> bool:
         return self._loader.is_loaded()
 

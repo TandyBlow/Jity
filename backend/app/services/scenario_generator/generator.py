@@ -12,6 +12,7 @@ from app.services.memory.memory_controller import MemoryController
 from app.services.prompt_builder import PromptBuilder
 from app.services.retriever import RAGRetriever
 from app.services.scripted_story import ScriptedStoryService
+from app.services.campaign_endings import select_ending
 
 from app.services.scenario_generator.agent_pipeline import AgentPipelineMixin
 from app.services.scenario_generator.director_support import DirectorSupportMixin
@@ -81,6 +82,13 @@ class ScenarioGenerator(
         campaign_manager = self._campaign_manager_for(session_id, request.slot_name)
         _csi = self._campaign_session_index(campaign_manager)
 
+        active_turn = self.db.get_story_turn(session_id, parent_turn_id) if parent_turn_id else None
+        if active_turn:
+            import json
+            previous_output = json.loads(active_turn.get("output_json") or "{}")
+            if previous_output.get("game_over"):
+                raise ConcurrentModificationError("Campaign already ended")
+
         # Hook 1: Campaign opening scene (early return)
         opening_result = await self._handle_opening_scene(
             session_id, request, session, state, model, campaign_manager, _csi,
@@ -99,6 +107,22 @@ class ScenarioGenerator(
             session_id, request, prompt, model, meta, retrieved_for_storage, _csi,
             state=state, campaign_manager=campaign_manager,
         )
+
+        selected_ending = None
+        if campaign_manager is not None and campaign_manager.is_loaded():
+            selected_ending = select_ending(
+                campaign_manager.campaign, campaign_manager.progress, state, request.player_action
+            )
+        if selected_ending is not None:
+            output.game_over = True
+            output.game_over_reason = (
+                f"{selected_ending.name}：{selected_ending.epilogue or selected_ending.resolution}"
+            )
+            output.options = []
+        elif campaign_manager is not None and campaign_manager.is_loaded():
+            # Campaign endings are server-selected; the narrator cannot end one early.
+            output.game_over = False
+            output.game_over_reason = ""
 
         next_state = self.state_manager.apply_output(state, request.player_action, output)
 

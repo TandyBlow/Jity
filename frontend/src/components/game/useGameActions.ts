@@ -31,14 +31,14 @@ export function useGameActions(core: GameSessionCore) {
     sessionId, setSessionId, setState, activeTurnId, setActiveTurnId, model, setModel,
     action, setAction, setOutput, setOutputSource, setChunks, setError,
     selectedSlot, setSelectedSlot, setSelectedSlotId,
-    selectedCampaign, setSelectedCampaign,
+    selectedCampaign, setSelectedCampaign, gameOver,
     refreshSlots, restoreLastOutput,
     setIsLoading, setPendingGenerate,
   } = core;
 
   const handleGenerate = useCallback(async (nextAction = action, overrideSessionId?: string) => {
     const sid = overrideSessionId ?? sessionId;
-    if (!sid || !nextAction.trim() || generating.current) return;
+    if (!sid || !nextAction.trim() || generating.current || gameOver) return;
     generating.current = true;
     setIsLoading(true);
     setError("");
@@ -65,7 +65,7 @@ export function useGameActions(core: GameSessionCore) {
       generating.current = false;
       setIsLoading(false);
     }
-  }, [sessionId, action, model, selectedSlot, selectedCampaign, activeTurnId, setIsLoading, setError, setOutput, setOutputSource, setState, setActiveTurnId, setChunks, setModel, setAction]);
+  }, [sessionId, action, model, selectedSlot, selectedCampaign, activeTurnId, gameOver, setIsLoading, setError, setOutput, setOutputSource, setState, setActiveTurnId, setChunks, setModel, setAction]);
 
   const handleNewSession = useCallback(async () => {
     setIsLoading(true);

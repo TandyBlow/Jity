@@ -69,6 +69,16 @@ def _resolve_name(name: str) -> str:
     return name
 
 
+def _same_scene(left: str, right: str) -> bool:
+    """Treat named subareas of the same encounter as mutually reachable."""
+    if not left or not right:
+        return True
+    if left in right or right in left:
+        return True
+    shared = {token for token in re.split(r"[的中内外上下前后入口核心王座仪式场]+", left) if len(token) >= 2}
+    return any(token in right for token in shared)
+
+
 class ExaminerAgent:
     """Python rules over the existing item/NPC/location/sanity/health state."""
 
@@ -118,7 +128,7 @@ class ExaminerAgent:
             status = npc.get("status", "present")
             npc_location = npc.get("current_location", "")
             if status not in _PRESENT or (
-                status not in {"following", "同行"} and npc_location and location and npc_location != location
+                status not in {"following", "同行"} and not _same_scene(npc_location, location)
             ):
                 failures.append(f"“{name}”目前不在场，无法与其直接互动。")
 

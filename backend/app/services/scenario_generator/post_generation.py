@@ -73,9 +73,12 @@ class PostGenerationMixin:
         )
 
         # Unified advance — no duplication
-        await self._advance_campaign(campaign_manager, [
-            {"role": "user", "content": request.player_action},
-            {"role": "assistant", "content": output.model_dump_json()},
-        ])
+        if output.game_over and campaign_manager is not None and campaign_manager.is_loaded():
+            campaign_manager.end_campaign()
+        else:
+            await self._advance_campaign(campaign_manager, [
+                {"role": "user", "content": request.player_action},
+                {"role": "assistant", "content": output.model_dump_json()},
+            ])
 
         return output_id, metrics

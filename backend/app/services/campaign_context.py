@@ -64,6 +64,14 @@ class CampaignContextBuilder:
             if current_session.opening_scene:
                 parts.append("本幕开场背景：\n" + current_session.opening_scene)
                 parts.append("从本幕开场和最近行动的结果继续，保持当前时间、地点和人物连续；不要重新开始故事或跳到其他章节。")
+
+            is_final_session = (
+                progress.arc_index == len(campaign.arcs) - 1
+                and progress.session_index == len(current_arc.sessions) - 1
+            )
+            ending_routes = getattr(campaign, "ending_routes", [])
+            if is_final_session and ending_routes:
+                parts.append(self._describe_endings(ending_routes))
         except IndexError:
             parts.append("当前章节：无")
 
@@ -159,6 +167,23 @@ class CampaignContextBuilder:
             "不要直接告诉玩家发生了什么，让玩家自己的选择引领他们到达那里。\n"
             "如果玩家的当前行动与该锚点方向完全不同，等待更好的时机——今天的线索终将浮现。"
         )
+
+    @staticmethod
+    def _describe_endings(routes: list[Any]) -> str:
+        lines = [
+            "## 最终章结局导演规则",
+            "结局由后端根据玩家的明确行动判定，叙事模型不得自行选择或提前结束战役。",
+            "尚未收到“后端已锁定本回合结局”指令时，继续提供能清楚表达不同最终选择的行动选项，并保持 game_over=false。",
+            "可引导的结局方向：",
+        ]
+        for route in routes:
+            requirements = "；".join(route.requirements) or "无特殊条件"
+            choices = "；".join(route.trigger_phrases) or "根据条件继续推进"
+            lines.append(
+                f"- [{route.category}] {route.name}（{route.id}）：条件：{requirements}。"
+                f"可用于最终选项的明确行动：{choices}。"
+            )
+        return "\n".join(lines)
 
     @staticmethod
     def _build_health_guidance(health: Any) -> str | None:

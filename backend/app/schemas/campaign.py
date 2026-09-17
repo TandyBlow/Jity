@@ -41,6 +41,17 @@ class ArcSchema(BaseModel):
     sessions: list[SessionSchema] = Field(default_factory=list)
 
 
+class EndingRoute(BaseModel):
+    """A campaign-specific ending the GM may resolve in the final session."""
+    id: str
+    name: str
+    category: Literal["true", "good", "normal", "dark", "bad"] = "normal"
+    requirements: list[str] = Field(default_factory=list)
+    trigger_phrases: list[str] = Field(default_factory=list)
+    resolution: str
+    epilogue: str = ""
+
+
 class CampaignSchema(BaseModel):
     """Top-level campaign definition matching campaign.json format."""
     version: int = 1
@@ -56,6 +67,7 @@ class CampaignSchema(BaseModel):
     description: str = ""
     tags: list[str] = Field(default_factory=list)
     estimated_duration: int = 0
+    ending_routes: list[EndingRoute] = Field(default_factory=list)
 
 
 class CampaignProgress(BaseModel):
