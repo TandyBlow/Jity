@@ -137,6 +137,8 @@ npm run dev
 NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
 ```
 
+如果前端使用 `npm run dev -- -p 3100` 启动，后端也已允许 `http://localhost:3100` 和 `http://127.0.0.1:3100` 的跨域请求。
+
 ## Campaign 系统
 
 Campaign JSON 的主要层级为：
@@ -225,6 +227,14 @@ npm run build
 - 自动跑测日志和原始小说 TXT。
 
 需要提交的内容包括源码、依赖清单、`.env.example`、知识库源文件，以及经过审核的示例 Campaign。
+
+## Dice checks and third-party attribution
+
+Options that require a check open a dice overlay in the console, which rolls a physics d20 before the outcome is applied.
+
+That overlay uses `open-dice-dnd@1.3.1`, from [richardhealy/open-dice](https://github.com/richardhealy/open-dice), for the Three.js + Cannon-es 3D physics d20, face textures, authoritative `rolled` values, shadows, and settled effects. The integration locks the result before the animation and passes the same value to the renderer so the final number is shown on the landed die face.
+
+`open-dice-dnd` is MIT-licensed. Its license text is distributed in `frontend/node_modules/open-dice-dnd/LICENSE` during development and must be included in the release third-party notices.
 
 ## License
 
