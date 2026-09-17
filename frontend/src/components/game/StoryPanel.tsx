@@ -1,11 +1,34 @@
 "use client";
 
-import { Image as ImageIcon, Loader2, Send } from "lucide-react";
-import { GitBranch } from "lucide-react";
+import { Dices, GitBranch, Image as ImageIcon, Loader2, Send } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
 
+import { MainCheckOverlay, type MainCheckCommit } from "@/components/game/MainCheckOverlay";
 import type { GameSession } from "@/components/game/useGameSession";
+import { defineCheck, type CheckSpec } from "@/components/dice-demo/dice-rules";
 import { formatDelta, quoteDialogue } from "@/lib/game/format";
+import type { StoryOptionCheck } from "@/types";
+
+type PendingCheck = {
+  action: string;
+  check: CheckSpec;
+};
+
+function toCheckSpec(metadata: StoryOptionCheck): CheckSpec | null {
+  if (metadata.requires_check === false) return null;
+
+  // The payload's own target is ignored: difficulty and the skill value decide
+  // the threshold, so a hard check cannot advertise a normal success rate.
+  return defineCheck({
+    name: metadata.name ?? "行动检定",
+    skill: metadata.skill ?? "行动",
+    system: metadata.system ?? "通用 d20",
+    normalTarget: metadata.normal_target ?? metadata.target ?? 12,
+    difficulty: metadata.difficulty ?? "普通",
+    stakes: metadata.stakes ?? "成功会推进当前行动，失败会带来相应后果。",
+  });
+}
 
 function narrationParagraphs(narration: string): string[] {
   const explicitParagraphs = narration
@@ -47,6 +70,27 @@ export function StoryPanel({ session }: { session: GameSession }) {
     backgroundError,
     retryBackground,
   } = session;
+  const [checkingAction, setCheckingAction] = useState<PendingCheck | null>(null);
+
+  function handleOption(option: string, index: number) {
+    if (!sessionId || isLoading || session.pendingGenerate) return;
+
+    const metadata = output.option_checks?.[index];
+    const check = metadata ? toCheckSpec(metadata) : null;
+    if (check) {
+      setCheckingAction({ action: option, check });
+      return;
+    }
+
+    void handleGenerate(option);
+  }
+
+  async function commitCheck(result: MainCheckCommit) {
+    if (!checkingAction) return;
+    const actionWithResult = `${checkingAction.action}\n\n[行动判定] ${checkingAction.check.system} ${checkingAction.check.expression}，骰面 ${result.roll}/20，${result.degree}。`;
+    await handleGenerate(actionWithResult);
+    setCheckingAction(null);
+  }
 
   return (
     <section className="story-panel">
@@ -121,11 +165,27 @@ export function StoryPanel({ session }: { session: GameSession }) {
           </div>
         ) : null}
         <div className="option-list">
-          {output.options.map((option) => (
-            <button className="option-button" disabled={isLoading || !!session.pendingGenerate || !sessionId} key={option} onClick={() => handleGenerate(option)} type="button">
-              {option}
-            </button>
-          ))}
+          {output.options.map((option, index) => {
+            const metadata = output.option_checks?.[index];
+            const check = metadata ? toCheckSpec(metadata) : null;
+
+            return (
+              <button
+                className="option-button"
+                disabled={isLoading || !!session.pendingGenerate || !sessionId}
+                key={`${option}-${index}`}
+                onClick={() => handleOption(option, index)}
+                type="button"
+              >
+                <span className="option-button-label">{option}</span>
+                {check ? (
+                  <span className="option-check-badge">
+                    <Dices size={14} />需判定
+                  </span>
+                ) : null}
+              </button>
+            );
+          })}
         </div>
       </article>
 
@@ -151,6 +211,15 @@ export function StoryPanel({ session }: { session: GameSession }) {
         {error ? <div className="error">{error}</div> : null}
         <div className="player-controls-hint">Ctrl / ⌘ + Enter 快速生成</div>
       </div>
+      {checkingAction ? (
+        <MainCheckOverlay
+          action={checkingAction.action}
+          check={checkingAction.check}
+          busy={isLoading}
+          onCancel={() => setCheckingAction(null)}
+          onCommit={commitCheck}
+        />
+      ) : null}
     </section>
   );
 }
