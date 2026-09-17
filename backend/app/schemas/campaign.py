@@ -47,6 +47,8 @@ class EndingRoute(BaseModel):
     name: str
     category: Literal["true", "good", "normal", "dark", "bad"] = "normal"
     requirements: list[str] = Field(default_factory=list)
+    required_items: list[str] = Field(default_factory=list)
+    required_anchors: list[str] = Field(default_factory=list)
     trigger_phrases: list[str] = Field(default_factory=list)
     resolution: str
     epilogue: str = ""

@@ -228,6 +228,48 @@ async def test_continue_after_next_opening_cannot_be_blocked_by_examiner(runtime
     blocked.assert_not_awaited()
 
 
+@pytest.mark.asyncio
+async def test_lethal_finale_turn_selects_bad_ending_and_commits_anchor(runtime):
+    async with AsyncClient(transport=ASGITransport(app=runtime.app), base_url="http://test") as client:
+        session = (await client.post("/sessions", json={
+            "campaign_filename": "default_campaign.json",
+            "arc_index": 2,
+            "session_index": 1,
+        })).json()
+    sid = session["session_id"]
+    await runtime.generator.generate(sid, GenerateRequest(player_action="入场"))
+    runtime.llm.generate.return_value = (StoryOutput(
+        narration="你正准备继承封印。",
+        health_delta=-100,
+        current_location="钟楼地下封印室",
+        items_gained=[{"name": "错误路线奖励", "status": "owned"}],
+        memory_updates={
+            "world_facts_upserted": [{"name": "错误好结局事实"}],
+        },
+        options=["继续"],
+    ), 1)
+
+    result = await runtime.generator.generate(
+        sid,
+        GenerateRequest(player_action="继承封印"),
+    )
+
+    assert result.state["health"] == 0
+    assert result.output.game_over is True
+    assert result.output.game_over_reason.startswith("空座位：")
+    assert "镜像人格夺取玩家身份" in result.output.narration
+    assert result.output.options == []
+    assert not any(item["name"] == "错误路线奖励" for item in result.state["items"])
+    assert not any(fact["name"] == "错误好结局事实" for fact in result.state["world_facts"])
+    manager = runtime.managers[sid]
+    row = runtime.db.read_campaign_progress(
+        manager.progress.campaign_id,
+        manager.slot_name,
+    )
+    assert row["fsm_state"] == "campaign_end"
+    assert "anchor-seal-truth" in json.loads(row["revealed_anchors"])
+
+
 def test_explicit_empty_starting_state_clears_free_play_memory(runtime):
     from app.services.game_state.defaults import default_state
     campaign = SimpleNamespace(starting_state={"sanity": 0, "npcs": [], "items": [], "recent_events": [],

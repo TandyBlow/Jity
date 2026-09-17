@@ -74,6 +74,7 @@ class PostGenerationMixin:
 
         # Unified advance — no duplication
         if output.game_over and campaign_manager is not None and campaign_manager.is_loaded():
+            campaign_manager.commit_pending_anchors()
             campaign_manager.end_campaign()
         else:
             await self._advance_campaign(campaign_manager, [

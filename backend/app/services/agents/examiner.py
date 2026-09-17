@@ -69,14 +69,16 @@ def _resolve_name(name: str) -> str:
     return name
 
 
+_SHARED_SCENE_ROOTS = ("红井", "钟楼", "青铜城", "尼伯龙根", "高架桥")
+
+
 def _same_scene(left: str, right: str) -> bool:
     """Treat named subareas of the same encounter as mutually reachable."""
     if not left or not right:
         return True
     if left in right or right in left:
         return True
-    shared = {token for token in re.split(r"[的中内外上下前后入口核心王座仪式场]+", left) if len(token) >= 2}
-    return any(token in right for token in shared)
+    return any(root in left and root in right for root in _SHARED_SCENE_ROOTS)
 
 
 class ExaminerAgent:

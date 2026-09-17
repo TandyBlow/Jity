@@ -108,12 +108,37 @@ class ScenarioGenerator(
             state=state, campaign_manager=campaign_manager,
         )
 
+        prompted_ending = None
+        if campaign_manager is not None and campaign_manager.is_loaded():
+            prompted_ending = select_ending(
+                campaign_manager.campaign,
+                campaign_manager.progress,
+                state,
+                request.player_action,
+            )
+        preview_state = self.state_manager.apply_output(state, request.player_action, output)
         selected_ending = None
         if campaign_manager is not None and campaign_manager.is_loaded():
             selected_ending = select_ending(
-                campaign_manager.campaign, campaign_manager.progress, state, request.player_action
+                campaign_manager.campaign,
+                campaign_manager.progress,
+                preview_state,
+                request.player_action,
             )
         if selected_ending is not None:
+            if prompted_ending is None or selected_ending.id != prompted_ending.id:
+                output.narration = selected_ending.resolution
+                if selected_ending.epilogue:
+                    output.narration += "\n\n" + selected_ending.epilogue
+                output.dialogue = []
+                output.scene_prompt = ""
+                output.current_location = state.get("current_location", "")
+                output.items_gained = []
+                output.items_lost = []
+                output.npcs_encountered = []
+                output.quests_updated = []
+                output.memory_updates = type(output.memory_updates)()
+                output.npc_relations_delta = None
             output.game_over = True
             output.game_over_reason = (
                 f"{selected_ending.name}：{selected_ending.epilogue or selected_ending.resolution}"
