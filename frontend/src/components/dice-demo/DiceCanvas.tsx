@@ -22,6 +22,7 @@ const ROLLING_HEIGHT = 1.05;
 const SPAWN_EDGE_GAP = 0.18;
 const SETTLED_SPEED_SQUARED = 0.01;
 const STILLNESS_POLL_MS = 50;
+const ROLL_TIMEOUT_MS = 15000;
 
 type DiceRollerWithSpawnPhysics = DiceRoller & {
   _applyDiePhysics?: (die: DiceRoller["dice"][number], seed: unknown) => void;
@@ -135,6 +136,7 @@ export function DiceCanvas({ value, docking, onSettled, onDocked, onError }: Dic
     let restoreSpawnPhysics: (() => void) | null = null;
     let settleTimer: number | null = null;
     let settleScheduled = false;
+    let watchdogTimer: number | null = null;
     let finalEffectFactories: {
       scalePulse: (options?: { peak?: number; duration?: number }) => unknown;
       confetti: (options?: { count?: number; duration?: number }) => unknown;
@@ -146,6 +148,25 @@ export function DiceCanvas({ value, docking, onSettled, onDocked, onError }: Dic
       cancelAnimationFrame(dockFrameRef.current);
       dockFrameRef.current = null;
     }
+
+    const clearWatchdog = () => {
+      if (watchdogTimer !== null) {
+        window.clearTimeout(watchdogTimer);
+        watchdogTimer = null;
+      }
+    };
+
+    // The library only reports stillness through callbacks. If the physics keeps
+    // jittering those callbacks never fire and the roll would hang forever, so a
+    // hard deadline turns the hang into a retryable failure.
+    const startWatchdog = () => {
+      clearWatchdog();
+      watchdogTimer = window.setTimeout(() => {
+        watchdogTimer = null;
+        if (disposed || settledRef.current) return;
+        fail(new Error("3D 骰子超时未停稳"));
+      }, ROLL_TIMEOUT_MS);
+    };
 
     const areDiceStill = () => {
       if (!roller?.dice?.length) return false;
@@ -165,6 +186,7 @@ export function DiceCanvas({ value, docking, onSettled, onDocked, onError }: Dic
       if (disposed || settledRef.current) return;
       settledRef.current = true;
       settledResultRef.current = result;
+      clearWatchdog();
 
       const visible = result.results[0]?.visible;
       // Roll-under d20: natural 1 is the best face, natural 20 the worst.
@@ -249,6 +271,7 @@ export function DiceCanvas({ value, docking, onSettled, onDocked, onError }: Dic
 
     const fail = (error: unknown) => {
       if (disposed) return;
+      clearWatchdog();
       const message = error instanceof Error ? error.message : "3D 骰子初始化失败";
       setStatus("failed");
       onErrorRef.current(message);
@@ -288,6 +311,7 @@ export function DiceCanvas({ value, docking, onSettled, onDocked, onError }: Dic
         window.addEventListener("resize", applyWallBounds);
         setStatus("ready");
 
+        startWatchdog();
         await roller.roll([
           {
             dice: "d20",
@@ -314,6 +338,7 @@ export function DiceCanvas({ value, docking, onSettled, onDocked, onError }: Dic
         window.clearTimeout(settleTimer);
         settleTimer = null;
       }
+      clearWatchdog();
       if (resizeWalls) {
         window.removeEventListener("resize", resizeWalls);
       }
