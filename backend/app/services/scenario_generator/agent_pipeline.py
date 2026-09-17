@@ -25,7 +25,9 @@ class AgentPipelineMixin:
         """
         # Legacy path: no campaign → single LLM call (unchanged behavior)
         if campaign_manager is None or not campaign_manager.is_loaded():
-            return await self._execute_single_llm(request, prompt, model, meta)
+            return await self._execute_single_llm(
+                session_id, request, prompt, model, meta
+            )
 
         state = state or {}
 
@@ -119,6 +121,7 @@ class AgentPipelineMixin:
                 candidate_anchors=candidates,
                 deviation_status=deviation,
                 item_states=item_states,
+                context={"session_id": session_id, "turn": turn},
             )
         except Exception:
             logger.warning("Director failed, using fallback direction", exc_info=True)
@@ -131,7 +134,11 @@ class AgentPipelineMixin:
         """Stage 3: Narrator — the actual story generation (single LLM call)."""
         try:
             output, latency_ms = await self.llm_client.generate(
-                augmented_prompt, model, temperature=meta.temperature
+                augmented_prompt,
+                model,
+                temperature=meta.temperature,
+                purpose="story_narrator",
+                context={"session_id": session_id, "turn": turn},
             )
             output.replace_em_dashes()
             source = "llm"
@@ -161,12 +168,16 @@ class AgentPipelineMixin:
         return output, latency_ms, source
 
     async def _execute_single_llm(
-        self, request, prompt, model, meta
+        self, session_id, request, prompt, model, meta
     ) -> tuple[StoryOutput, int, str]:
         """Fallback: single LLM call (original behavior, no multi-agent pipeline)."""
         try:
             output, latency_ms = await self.llm_client.generate(
-                prompt, model, temperature=meta.temperature
+                prompt,
+                model,
+                temperature=meta.temperature,
+                purpose="story_narrator",
+                context={"session_id": session_id},
             )
             output.replace_em_dashes()
             return output, latency_ms, "llm"

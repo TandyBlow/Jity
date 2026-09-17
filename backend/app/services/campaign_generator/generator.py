@@ -58,14 +58,22 @@ class CampaignGenerator(NovelPipelineMixin):
         # Stage 1: single-shot generation with v4-pro
         try:
             data = await self.llm_client.generate_json(
-                prompt, model=CAMPAIGN_GEN_MODEL, max_tokens=50000, temperature=0.7
+                prompt,
+                model=CAMPAIGN_GEN_MODEL,
+                max_tokens=50000,
+                temperature=0.7,
+                purpose="campaign_generation",
             )
         except (LLMRequestError, LLMOutputParseError) as exc:
             # Fallback to flash model
             logger.warning("v4-pro generation failed, trying v4-flash: %s", exc)
             try:
                 data = await self.llm_client.generate_json(
-                    prompt, model=CAMPAIGN_GEN_FALLBACK, max_tokens=50000, temperature=0.7
+                    prompt,
+                    model=CAMPAIGN_GEN_FALLBACK,
+                    max_tokens=50000,
+                    temperature=0.7,
+                    purpose="campaign_generation",
                 )
             except Exception as exc2:
                 raise CampaignGenerationError(f"Both models failed: {exc2}") from exc2

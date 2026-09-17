@@ -75,6 +75,7 @@ class HaluMemEvaluator:
                 prompt=prompt,
                 max_tokens=2000,
                 temperature=0.1,
+                purpose="halumem_extraction_eval",
             )
             return _parse_findings(result)
         except Exception:
@@ -117,6 +118,7 @@ class HaluMemEvaluator:
                 prompt=prompt,
                 max_tokens=2000,
                 temperature=0.1,
+                purpose="halumem_updating_eval",
             )
             return _parse_findings(result)
         except Exception:
@@ -147,6 +149,7 @@ class HaluMemEvaluator:
                 prompt=prompt,
                 max_tokens=1000,
                 temperature=0.1,
+                purpose="halumem_qa_eval",
             )
             return _parse_findings(result)
         except Exception:

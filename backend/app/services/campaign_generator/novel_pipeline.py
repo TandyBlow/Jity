@@ -69,6 +69,12 @@ class NovelPipelineMixin:
                         model=self.llm_client.settings.llm_model_pro,
                         max_tokens=1000,
                         temperature=0.3,
+                        purpose="novel_chapter_extraction",
+                        context={
+                            "chapter_index": ch["index"],
+                            "chapter_title": ch["title"],
+                            "attempt": attempt + 1,
+                        },
                     )
                     extraction_results.append({
                         "chapter_index": ch["index"],
@@ -109,6 +115,7 @@ class NovelPipelineMixin:
                 model=CAMPAIGN_GEN_MODEL,
                 max_tokens=50000,
                 temperature=0.7,
+                purpose="novel_campaign_assembly",
             )
         except Exception as e:
             raise CampaignGenerationError(f"Cross-chapter assembly failed: {e}") from e

@@ -89,6 +89,7 @@ class DirectorAgent:
         candidate_anchors: str,
         deviation_status: str,
         item_states: str,
+        context: dict | None = None,
     ) -> DirectorInstruction:
         """Generate director instruction for the Narrator.
 
@@ -125,6 +126,8 @@ class DirectorAgent:
                 prompt=f"{_DIRECTOR_SYSTEM_PROMPT}\n\n{user_prompt}",
                 max_tokens=1500,
                 temperature=0.3,
+                purpose="campaign_director",
+                context=context,
             )
             return _parse_instruction(result)
         except Exception:

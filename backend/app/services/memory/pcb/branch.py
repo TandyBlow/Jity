@@ -55,6 +55,8 @@ class PersonaConstructionBranch(PersonaMergeMixin):
                 prompt=prompt,
                 max_tokens=2000,
                 temperature=0.2,
+                purpose="memory_pcb_extraction",
+                context={"turn": current_turn},
             )
         except Exception:
             logger.warning("PCB persona extraction failed", exc_info=True)
