@@ -1,8 +1,8 @@
 """StoryOutput — the per-turn LLM payload with em dash sanitization."""
 
-from typing import Any
+from typing import Any, Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 from app.schemas.game.em_dash import replace_em_dash
 from app.schemas.game.memory import (
@@ -15,6 +15,39 @@ from app.schemas.game.memory import (
     WorldFactMemory,
 )
 
+# Roll-high d20 targets. The model picks a band, never a number, so a check
+# cannot advertise a success rate its difficulty does not justify.
+DIFFICULTY_TARGETS = {"容易": 8, "普通": 12, "困难": 16, "极难": 19}
+
+
+class OptionCheck(BaseModel):
+    """Optional roll metadata attached to one story option.
+
+    The option text remains a plain string for backwards compatibility.  A
+    null entry in ``StoryOutput.option_checks`` means that the option is a
+    direct narrative action and must not open the dice UI.
+    """
+
+    requires_check: bool = True
+    name: str = "行动检定"
+    skill: str = "行动"
+    system: str = "通用 d20"
+    difficulty: Literal["容易", "普通", "困难", "极难"] = "普通"
+    stakes: str = "成功会推进当前行动，失败会带来相应后果。"
+    target: int = Field(default=12, ge=1, le=20, description="推导字段，由 difficulty 决定")
+    expression: str = "1d20 ≥ 12"
+
+    @model_validator(mode="after")
+    def _derive_threshold(self) -> "OptionCheck":
+        """Difficulty alone decides the threshold; target/expression are derived.
+
+        The bands are fixed so the difficulty a check advertises and the odds it
+        actually rolls can never drift apart.
+        """
+        self.target = DIFFICULTY_TARGETS[self.difficulty]
+        self.expression = f"1d20 ≥ {self.target}"
+        return self
+
 
 class StoryOutput(BaseModel):
     narration: str
@@ -23,6 +56,7 @@ class StoryOutput(BaseModel):
     sanity_delta: int = 0
     health_delta: int = 0
     options: list[str] = Field(default_factory=list)
+    option_checks: list[OptionCheck | None] = Field(default_factory=list)
     game_over: bool = False
     game_over_reason: str = ""
     current_location: str = ""
@@ -33,6 +67,18 @@ class StoryOutput(BaseModel):
     memory_updates: MemoryUpdates = Field(default_factory=MemoryUpdates)
     npc_relations_delta: list[dict[str, Any]] | None = None
 
+    @model_validator(mode="after")
+    def _align_option_checks(self) -> "StoryOutput":
+        """Keep option_checks index-aligned with options.
+
+        The model sometimes returns a shorter array or an empty one, which would
+        shift or silently drop every check once the UI indexes into it.
+        """
+        aligned = list(self.option_checks[: len(self.options)])
+        aligned.extend([None] * (len(self.options) - len(aligned)))
+        self.option_checks = aligned
+        return self
+
     def replace_em_dashes(self) -> "StoryOutput":
         """Return a new StoryOutput with all em dashes replaced by Chinese periods."""
         self.narration = replace_em_dash(self.narration)
@@ -40,6 +86,13 @@ class StoryOutput(BaseModel):
         self.game_over_reason = replace_em_dash(self.game_over_reason)
         self.current_location = replace_em_dash(self.current_location)
         self.options = [replace_em_dash(o) for o in self.options]
+        for check in self.option_checks:
+            if check is not None:
+                check.name = replace_em_dash(check.name)
+                check.skill = replace_em_dash(check.skill)
+                check.system = replace_em_dash(check.system)
+                check.expression = replace_em_dash(check.expression)
+                check.stakes = replace_em_dash(check.stakes)
         self.dialogue = [
             DialogueLine(speaker=replace_em_dash(d.speaker), text=replace_em_dash(d.text))
             for d in self.dialogue

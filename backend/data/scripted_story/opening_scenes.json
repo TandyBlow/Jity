@@ -21,6 +21,11 @@
         "检查临时通行卡上的异常标记：\"这卡为什么在发烫？它刚才是不是亮了一下？\"",
         "先观察大厅里执行部学生的动向：\"等等，那些穿制服的人为什么一直在看报到台？\""
       ],
+      "option_checks": [
+        null,
+        {"requires_check": true, "name": "调查检定", "skill": "调查", "system": "通用 d20", "difficulty": "容易", "stakes": "成功会确认通行卡的异常来源；失败可能错过短暂的变化。"},
+        {"requires_check": true, "name": "观察检定", "skill": "观察", "system": "通用 d20", "difficulty": "困难", "stakes": "成功会看出执行部学生的真实关注点；失败可能暴露你的视线。"}
+      ],
       "current_location": "卡塞尔学院报到大厅",
       "items_gained": [
         {
@@ -61,6 +66,11 @@
         "询问学院给出的三个预备任务：\"事故报告先放一边……我到底要办什么入学手续？\"",
         "检查临时通行卡上的异常标记：\"这张卡和投影屏上的红色标记是同一个东西吗？\"",
         "先观察大厅里执行部学生的动向：\"为什么我一靠近报到台，他们就开始调整站位？\""
+      ],
+      "option_checks": [
+        null,
+        {"requires_check": true, "name": "调查检定", "skill": "调查", "system": "通用 d20", "difficulty": "普通", "stakes": "成功会确认两个标记之间的联系；失败可能让你在错误的细节上浪费时间。"},
+        {"requires_check": true, "name": "观察检定", "skill": "观察", "system": "通用 d20", "difficulty": "困难", "stakes": "成功会看出站位变化的规律；失败可能让监视者先注意到你。"}
       ],
       "current_location": "卡塞尔学院报到大厅",
       "items_gained": [
@@ -103,6 +113,11 @@
         "询问学院给出的三个预备任务：\"如果我已经被标出来了，那我现在应该先完成什么？\"",
         "检查临时通行卡上的异常标记：\"这东西是在识别我，还是在警告别人离我远点？\"",
         "先观察大厅里执行部学生的动向：\"那些学生是在保护大厅，还是在监视我？\""
+      ],
+      "option_checks": [
+        null,
+        {"requires_check": true, "name": "调查检定", "skill": "调查", "system": "通用 d20", "difficulty": "普通", "stakes": "成功会判断标记的用途；失败可能引起不必要的警觉。"},
+        {"requires_check": true, "name": "观察检定", "skill": "观察", "system": "通用 d20", "difficulty": "困难", "stakes": "成功会识别保护与监视的区别；失败可能暴露你的意图。"}
       ],
       "current_location": "卡塞尔学院报到大厅",
       "items_gained": [
@@ -147,6 +162,11 @@
         "询问学院给出的三个预备任务：\"所以我现在应该做什么？你们总不能真的先让我写遗书吧？\"",
         "检查临时通行卡上的异常标记：\"这卡为什么在发烫？它刚才是不是亮了一下？\"",
         "先观察大厅里执行部学生的动向：\"等等，那些穿制服的人为什么一直在看报到台？\""
+      ],
+      "option_checks": [
+        null,
+        {"requires_check": true, "name": "调查检定", "skill": "调查", "system": "通用 d20", "difficulty": "容易", "stakes": "成功会确认通行卡的异常来源；失败可能错过短暂的变化。"},
+        {"requires_check": true, "name": "观察检定", "skill": "观察", "system": "通用 d20", "difficulty": "困难", "stakes": "成功会看出执行部学生的真实关注点；失败可能暴露你的视线。"}
       ],
       "current_location": "卡塞尔学院报到大厅",
       "items_gained": [

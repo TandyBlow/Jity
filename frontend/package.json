@@ -6,11 +6,13 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "vitest run"
   },
   "dependencies": {
     "lucide-react": "^0.468.0",
     "next": "^15.5.19",
+    "open-dice-dnd": "^1.3.1",
     "react": "19.0.0",
     "react-dom": "19.0.0"
   },
@@ -23,7 +25,8 @@
     "eslint": "^9.39.4",
     "eslint-config-next": "^15.5.19",
     "tailwindcss": "^4.3.0",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.2",
+    "vitest": "^5.0.1"
   },
   "overrides": {
     "postcss": "8.5.10"

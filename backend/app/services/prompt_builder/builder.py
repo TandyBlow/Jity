@@ -4,7 +4,7 @@ from typing import Any
 
 from app.services.prompt_builder.helpers import SectionHelpers
 from app.services.prompt_builder.input import PromptInput, PromptMeta
-from app.services.prompt_builder.prompts import RECAP_SYSTEM_PROMPT
+from app.services.prompt_builder.prompts import OPTION_CHECKS_CONTRACT, RECAP_SYSTEM_PROMPT
 
 
 class PromptBuilder(SectionHelpers):
@@ -156,7 +156,12 @@ def _style_and_rules(input: PromptInput) -> str:
         "- 不要复述原文长段落，不要突然跳到无关任务。\n"
         "- 普通失败也应推动故事继续，而不是直接结束。\n"
         "- 状态变化要能从剧情中解释。\n"
-        "- scene_prompt 必须是英文，少于 30 个词，用于生成背景图。\n"
+        "- 不要写与已知信息无关的空洞细节描写。narration 里出现的每个人名、地名、物品、"
+        "专有名词都必须能在下方 RAG 检索内容、当前状态或最近对话里找到出处，不要凭空发明新设定。\n"
+        "- 不要使用明喻。禁止“像……一样”“像……似的”“仿佛……”这类句式；"
+        "全文最多出现一次由“像”构成的比喻，最好一次都不要有。\n"
+        + OPTION_CHECKS_CONTRACT
+        + "- scene_prompt 必须是英文，少于 30 个词，用于生成背景图。\n"
         "- items_gained、items_lost、npcs_encountered、quests_updated "
         "必须是对象数组，不要返回字符串数组。\n"
         "- dialogue.text 和其他字符串字段不要包含未转义的英文双引号；"
@@ -176,6 +181,7 @@ def _style_and_rules(input: PromptInput) -> str:
         '  "sanity_delta": 0,\n'
         '  "health_delta": 0,\n'
         '  "options": ["选项1", "选项2", "选项3"],\n'
+        '  "option_checks": [null, {"requires_check": true, "name": "调查检定", "skill": "调查", "system": "通用 d20", "difficulty": "普通", "stakes": "成功发现线索，失败付出相应代价。"}, {"requires_check": true, "name": "行动检定", "skill": "行动", "system": "通用 d20", "difficulty": "困难", "stakes": "成功潜进去，失败留下痕迹。"}],\n'
         '  "game_over": false,\n'
         '  "game_over_reason": "",\n'
         '  "current_location": "",\n'

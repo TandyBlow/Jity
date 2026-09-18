@@ -10,9 +10,18 @@ from app.routers import backgrounds, campaigns, generate, meta, sessions, slots
 settings = get_settings()
 
 app = FastAPI(title="Jity RPG Scenario Generator API", version="0.1.0")
+allowed_origins = {
+    settings.frontend_origin,
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:3001",
+    "http://127.0.0.1:3001",
+    "http://localhost:3100",
+    "http://127.0.0.1:3100",
+}
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[settings.frontend_origin, "http://127.0.0.1:3000", "http://localhost:3001"],
+    allow_origins=sorted(allowed_origins),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
