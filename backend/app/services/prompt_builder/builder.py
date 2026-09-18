@@ -4,7 +4,7 @@ from typing import Any
 
 from app.services.prompt_builder.helpers import SectionHelpers
 from app.services.prompt_builder.input import PromptInput, PromptMeta
-from app.services.prompt_builder.prompts import RECAP_SYSTEM_PROMPT
+from app.services.prompt_builder.prompts import OPTION_CHECKS_CONTRACT, RECAP_SYSTEM_PROMPT
 
 
 class PromptBuilder(SectionHelpers):
@@ -160,13 +160,8 @@ def _style_and_rules(input: PromptInput) -> str:
         "专有名词都必须能在下方 RAG 检索内容、当前状态或最近对话里找到出处，不要凭空发明新设定。\n"
         "- 不要使用明喻。禁止“像……一样”“像……似的”“仿佛……”这类句式；"
         "全文最多出现一次由“像”构成的比喻，最好一次都不要有。\n"
-        "- options 只列出玩家可以选择的行动文本；option_checks 必须与 options 等长并保持相同顺序。\n"
-        "- 对话、询问、移动、等待、购买等确定性行动，option_checks 对应位置必须填 null，不要强行掷骰。\n"
-        "- 只有结果具有不确定性、失败会改变局势的观察、调查、潜行、交涉或危险行动，才填写 option_checks 对象并将 requires_check 设为 true。\n"
-        "- option_checks 里只需填 normal_target 和 difficulty：normal_target 是该行动的技能值（1-20），"
-        "普通检定按此值判定，困难检定阈值自动减半、成功率大幅下降，所以只在真正棘手时用困难。\n"
-        "- target 和 expression 由系统根据 normal_target 与 difficulty 推导，不要填写。\n"
-        "- scene_prompt 必须是英文，少于 30 个词，用于生成背景图。\n"
+        + OPTION_CHECKS_CONTRACT
+        + "- scene_prompt 必须是英文，少于 30 个词，用于生成背景图。\n"
         "- items_gained、items_lost、npcs_encountered、quests_updated "
         "必须是对象数组，不要返回字符串数组。\n"
         "- dialogue.text 和其他字符串字段不要包含未转义的英文双引号；"

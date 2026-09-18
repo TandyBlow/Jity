@@ -50,3 +50,45 @@ CAMPAIGN_GEN_PROMPT = """你是一个TRPG战役设计师。根据用户的提示
 def build_campaign_gen(user_prompt: str) -> str:
     """Build prompt for AI-powered campaign.json generation."""
     return f"{CAMPAIGN_GEN_PROMPT}\n\n用户提示词：{user_prompt}\n\n请生成完整的中文TRPG战役JSON。"
+
+
+# The Narrator prompt and the opening-options prompt must teach the model exactly
+# the same option_checks shape, so these lines live here and both reference them
+# instead of drifting apart.
+OPTION_CHECKS_CONTRACT = (
+    "- options 只列出玩家可以选择的行动文本；option_checks 必须与 options 等长并保持相同顺序，"
+    "一个都不需要判定时也要写成等长的全 null 数组，不要返回空数组。\n"
+    "- 对话、询问、移动、等待、购买等确定性行动，option_checks 对应位置必须填 null，不要强行掷骰。\n"
+    "- 只有结果具有不确定性、失败会改变局势的观察、调查、潜行、交涉或危险行动，才填写 option_checks 对象并将 requires_check 设为 true。\n"
+    "- option_checks 里只需填 normal_target 和 difficulty：normal_target 是该行动的技能值（1-20），"
+    "普通检定按此值判定，困难检定阈值自动减半、成功率大幅下降，所以只在真正棘手时用困难。\n"
+    "- target 和 expression 由系统根据 normal_target 与 difficulty 推导，不要填写。\n"
+)
+
+
+OPENING_OPTIONS_PROMPT = (
+    """你是一个TRPG战役的开场选项设计师。
+
+玩家刚刚读完本幕的开场白。你的唯一职责是为这一刻设计可选的行动，不要写任何叙事文本。
+
+要求：
+1. 设计 3 到 5 个选项，每个都是玩家可以立刻采取的具体行动，用第二人称行动语气，20 字以内。
+2. 选项之间要有区分度：至少一个推进主线，至少一个观察或打探，可以有一个偏向人际或冒险。
+3. 只能使用开场白和已知信息里出现过的人名、地名和物品，不要发明新设定。
+4. 选项必须能在当前场景内立刻被执行，不要给出离开当前场景或跳过剧情的选项。
+
+"""
+    + OPTION_CHECKS_CONTRACT
+    + """
+严格返回纯 JSON，不要包含 Markdown、解释或额外文本：
+{
+  "options": ["选项1", "选项2", "选项3"],
+  "option_checks": [null, {"requires_check": true, "name": "观察检定", "skill": "调查", "system": "通用 d20", "normal_target": 12, "difficulty": "普通", "stakes": "成功看到关键细节，失败引起旁人注意。"}, null]
+}
+"""
+)
+
+
+def build_opening_options(context: str) -> str:
+    """Build the prompt that asks for opening-turn options only."""
+    return f"{OPENING_OPTIONS_PROMPT}\n\n{context}\n\n请为这一开场设计玩家行动选项，严格返回 JSON。"
