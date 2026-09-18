@@ -60,6 +60,11 @@ backend/reports/
 /小说包.zip
 scripts/_*.txt
 
+# === Local-only research: deterministic state extractor (never shipped) ===
+/backend/app/services/memory/state_extractor.py
+/backend/scripts/download_state_extractor_models.py
+/backend/tests/test_state_extractor.py
+
 # === Experiments and local research files ===
 experiments/
 .pipeline/
