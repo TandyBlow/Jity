@@ -405,9 +405,6 @@ export function DiceCanvas({ value, docking, onSettled, onDocked, onError }: Dic
 
   return (
     <div className="real-dice-wrapper">
-      <div className={`real-dice-result-marker ${docking ? "visible" : ""}`} aria-hidden="true">
-        <span />
-      </div>
       <div className="real-dice-canvas-host" ref={containerRef} />
       {status === "loading" ? (
         <div className="real-dice-status">正在加载 Three.js 物理骰子…</div>
