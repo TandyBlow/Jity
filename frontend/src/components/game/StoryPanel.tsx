@@ -2,7 +2,7 @@
 
 import { Dices, GitBranch, Image as ImageIcon, Loader2, Send } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { MainCheckOverlay, type MainCheckCommit } from "@/components/game/MainCheckOverlay";
 import type { GameSession } from "@/components/game/useGameSession";
@@ -89,9 +89,17 @@ export function StoryPanel({ session }: { session: GameSession }) {
     });
   }
 
+  // The fill stays on the chosen option until the next scene replaces the list.
+  useEffect(() => {
+    setSweep(null);
+  }, [output]);
+
+  useEffect(() => {
+    if (error) setSweep(null);
+  }, [error]);
+
   /** The sweep's own animation decides when the next scene is generated. */
   function completeSweep(action: string) {
-    setSweep(null);
     void handleGenerate(action);
   }
 

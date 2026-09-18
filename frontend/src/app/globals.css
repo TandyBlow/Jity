@@ -580,13 +580,14 @@ a {
   white-space: nowrap;
 }
 
-/* Result colour, swept across the chosen option after the dice are applied. */
+/* Result colour filling the chosen option from the left once the dice are applied. */
 .option-sweep {
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, transparent, var(--sweep-color), transparent);
+  background: linear-gradient(90deg, transparent, var(--sweep-color) 40%);
+  clip-path: inset(0 100% 0 0);
   pointer-events: none;
-  animation: option-sweep 900ms cubic-bezier(0.22, 1, 0.36, 1);
+  animation: option-sweep 900ms cubic-bezier(0.32, 0, 0.67, 0) forwards;
 }
 
 .option-sweep.critical { --sweep-color: rgb(242 206 131 / 55%); }
@@ -595,11 +596,11 @@ a {
 
 @keyframes option-sweep {
   from {
-    transform: translateX(-100%);
+    clip-path: inset(0 100% 0 0);
   }
 
   to {
-    transform: translateX(100%);
+    clip-path: inset(0 0 0 0);
   }
 }
 
