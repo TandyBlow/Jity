@@ -27,11 +27,11 @@ class OpeningOptions(BaseModel):
 
     @field_validator("option_checks", mode="before")
     @classmethod
-    def _require_explicit_check_numbers(cls, values: Any) -> Any:
-        """Reject checks that omit normal_target or difficulty.
+    def _require_explicit_difficulty(cls, values: Any) -> Any:
+        """Reject checks that omit difficulty.
 
-        Both fields carry defaults, so a payload that forgets them would quietly
-        become an ordinary check on target 12 instead of failing loudly.
+        The field carries a default, so a payload that forgets it would quietly
+        become an ordinary check instead of failing loudly.
         """
         if not isinstance(values, list):
             return []
@@ -40,9 +40,8 @@ class OpeningOptions(BaseModel):
                 continue
             if not isinstance(entry, dict):
                 raise ValueError("option_checks 的元素必须是对象或 null")
-            missing = [key for key in ("normal_target", "difficulty") if key not in entry]
-            if missing:
-                raise ValueError(f"option_checks 缺少必填字段：{'、'.join(missing)}")
+            if "difficulty" not in entry:
+                raise ValueError("option_checks 缺少必填字段：difficulty")
         return values
 
     @model_validator(mode="after")

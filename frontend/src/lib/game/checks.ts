@@ -6,13 +6,13 @@ export type CheckRoll = { roll: number; outcome: Outcome; degree: string };
 export function toCheckSpec(metadata: StoryOptionCheck): CheckSpec | null {
   if (metadata.requires_check === false) return null;
 
-  // The payload's own target is ignored: difficulty and the skill value decide
-  // the threshold, so a hard check cannot advertise a normal success rate.
+  // The server resolves the target out of the difficulty band before the
+  // payload is ever built, so the number here is never the model's own.
   return defineCheck({
     name: metadata.name ?? "行动检定",
     skill: metadata.skill ?? "行动",
     system: metadata.system ?? "通用 d20",
-    normalTarget: metadata.normal_target ?? metadata.target ?? 12,
+    target: metadata.target ?? 12,
     difficulty: metadata.difficulty ?? "普通",
     stakes: metadata.stakes ?? "成功会推进当前行动，失败会带来相应后果。",
   });

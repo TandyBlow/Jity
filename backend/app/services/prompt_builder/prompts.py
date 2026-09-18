@@ -60,9 +60,14 @@ OPTION_CHECKS_CONTRACT = (
     "一个都不需要判定时也要写成等长的全 null 数组，不要返回空数组。\n"
     "- 对话、询问、移动、等待、购买等确定性行动，option_checks 对应位置必须填 null，不要强行掷骰。\n"
     "- 只有结果具有不确定性、失败会改变局势的观察、调查、潜行、交涉或危险行动，才填写 option_checks 对象并将 requires_check 设为 true。\n"
-    "- option_checks 里只需填 normal_target 和 difficulty：normal_target 是该行动的技能值（1-20），"
-    "普通检定按此值判定，困难检定阈值自动减半、成功率大幅下降，所以只在真正棘手时用困难。\n"
-    "- target 和 expression 由系统根据 normal_target 与 difficulty 推导，不要填写。\n"
+    "- option_checks 里只需填 difficulty，不要填任何数字。四档的含义：\n"
+    "  容易：环境有利、手上有工具或有人配合，失败几乎没有代价。\n"
+    "  普通：常规的观察、调查或交涉，成败都会正常推进剧情。\n"
+    "  困难：时间很紧、有人在盯着你、手上没有合适的工具，或对象本身在刻意隐藏。\n"
+    "  极难：以当前处境几乎做不到，只有极端手段或运气才有一点机会。\n"
+    "- 每个选项的难度必须单独判断，同一回合的几个选项通常不在同一档。整回合都填普通是不对的，"
+    "要按上面四档的具体条件如实选择。\n"
+    "- target 和 expression 由系统推导，不要填写。\n"
 )
 
 
@@ -83,7 +88,7 @@ OPENING_OPTIONS_PROMPT = (
 严格返回纯 JSON，不要包含 Markdown、解释或额外文本：
 {
   "options": ["选项1", "选项2", "选项3"],
-  "option_checks": [null, {"requires_check": true, "name": "观察检定", "skill": "调查", "system": "通用 d20", "normal_target": 12, "difficulty": "普通", "stakes": "成功看到关键细节，失败引起旁人注意。"}, null]
+  "option_checks": [null, {"requires_check": true, "name": "观察检定", "skill": "调查", "system": "通用 d20", "difficulty": "困难", "stakes": "成功看到关键细节，失败引起旁人注意。"}, {"requires_check": true, "name": "调查检定", "skill": "调查", "system": "通用 d20", "difficulty": "普通", "stakes": "成功确认线索，失败错过细节。"}]
 }
 """
 )

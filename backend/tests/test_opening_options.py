@@ -35,7 +35,6 @@ GOOD_PAYLOAD = {
             "name": "观察检定",
             "skill": "调查",
             "system": "通用 d20",
-            "normal_target": 12,
             "difficulty": "困难",
             "stakes": "成功看出异常，失败引起注意。",
         },
@@ -115,10 +114,10 @@ async def test_opening_options_come_from_the_model(runtime):
     output = _turn_output(response.json())
     assert output["options"] == GOOD_PAYLOAD["options"]
     # The check is index aligned and its threshold is derived on the way out:
-    # a hard check on skill 12 must land on 6.
+    # the hard band must land on 16.
     assert output["option_checks"][0] is None
-    assert output["option_checks"][1]["target"] == 6
-    assert output["option_checks"][1]["expression"] == "1d20 ≤ 6"
+    assert output["option_checks"][1]["target"] == 16
+    assert output["option_checks"][1]["expression"] == "1d20 ≥ 16"
     assert len(output["option_checks"]) == len(output["options"])
     assert response.json()["source"] == "scripted"
 
@@ -135,7 +134,7 @@ async def test_opening_prompt_carries_the_scene_and_the_contract(runtime):
     prompt = call["prompt"]
     assert location in prompt
     assert "option_checks" in prompt
-    assert "normal_target" in prompt
+    assert "difficulty" in prompt
     # The opening must not fall back to the default 50000 / 0.35.
     assert call["max_tokens"] == 1000
     assert call["temperature"] == 0.3
@@ -178,7 +177,7 @@ async def test_parse_error_returns_502(runtime):
 async def test_contract_violation_returns_502_not_a_default_check(runtime):
     runtime.llm.generate_json = AsyncMock(return_value={
         "options": ["环顾四周", "搭话"],
-        # Missing normal_target/difficulty would otherwise default to target 12.
+        # A missing difficulty would otherwise default to an ordinary check.
         "option_checks": [None, {"requires_check": True, "name": "观察检定"}],
     })
 

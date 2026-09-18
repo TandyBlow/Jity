@@ -60,9 +60,8 @@ export type StoryOptionCheck = {
   skill?: string;
   system?: string;
   expression?: string;
-  normal_target?: number;
   target?: number;
-  difficulty?: "普通" | "困难";
+  difficulty?: "容易" | "普通" | "困难" | "极难";
   stakes?: string;
 };
 

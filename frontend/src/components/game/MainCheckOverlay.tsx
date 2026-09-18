@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, CircleAlert, Dices, ShieldCheck } from "lucide-react";
+import { Check, CircleAlert, Dices } from "lucide-react";
 import { useState } from "react";
 
 import { DiceCanvas } from "@/components/dice/DiceCanvas";
@@ -76,9 +76,6 @@ export function MainCheckOverlay({ action, check, onCancel, onCommit }: MainChec
             <span className="main-check-overline">{check.name} · {check.expression}</span>
             {title ? <h2>{title}</h2> : null}
           </div>
-          {phase === "prepared" ? null : (
-            <span className="main-check-lock"><ShieldCheck size={14} />结果已锁定</span>
-          )}
         </div>
 
         <p className="main-check-action">{action}</p>
@@ -87,7 +84,7 @@ export function MainCheckOverlay({ action, check, onCancel, onCommit }: MainChec
           <>
             <div className="main-check-meta">
               <span><Dices size={15} />{check.skill} · {check.system}</span>
-              <span>目标 ≤ {check.target}</span>
+              <span>目标 ≥ {check.target}</span>
             </div>
             <p className="main-check-stakes">{check.stakes}</p>
             {error ? <p className="main-check-error"><CircleAlert size={15} />{error}</p> : null}

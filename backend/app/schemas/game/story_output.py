@@ -15,6 +15,10 @@ from app.schemas.game.memory import (
     WorldFactMemory,
 )
 
+# Roll-high d20 targets. The model picks a band, never a number, so a check
+# cannot advertise a success rate its difficulty does not justify.
+DIFFICULTY_TARGETS = {"容易": 8, "普通": 12, "困难": 16, "极难": 19}
+
 
 class OptionCheck(BaseModel):
     """Optional roll metadata attached to one story option.
@@ -28,21 +32,20 @@ class OptionCheck(BaseModel):
     name: str = "行动检定"
     skill: str = "行动"
     system: str = "通用 d20"
-    expression: str = "1d20 ≤ 12"
-    normal_target: int = Field(default=12, ge=1, le=20, description="技能值，普通检定即成功阈值")
-    target: int = Field(default=12, ge=1, le=20, description="推导字段，由 normal_target 和 difficulty 算出")
-    difficulty: Literal["普通", "困难"] = "普通"
+    difficulty: Literal["容易", "普通", "困难", "极难"] = "普通"
     stakes: str = "成功会推进当前行动，失败会带来相应后果。"
+    target: int = Field(default=12, ge=1, le=20, description="推导字段，由 difficulty 决定")
+    expression: str = "1d20 ≥ 12"
 
     @model_validator(mode="after")
     def _derive_threshold(self) -> "OptionCheck":
         """Difficulty alone decides the threshold; target/expression are derived.
 
-        A hard check needs a roll at or below half the skill value, which is why
-        the model must not be trusted to pick its own threshold.
+        The bands are fixed so the difficulty a check advertises and the odds it
+        actually rolls can never drift apart.
         """
-        self.target = self.normal_target // 2 if self.difficulty == "困难" else self.normal_target
-        self.expression = f"1d20 ≤ {self.target}"
+        self.target = DIFFICULTY_TARGETS[self.difficulty]
+        self.expression = f"1d20 ≥ {self.target}"
         return self
 
 

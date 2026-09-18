@@ -8,28 +8,26 @@ describe("toCheckSpec", () => {
     expect(toCheckSpec({ requires_check: false })).toBeNull();
   });
 
-  it("derives a hard threshold from the skill value", () => {
-    const spec = toCheckSpec({ normal_target: 12, difficulty: "困难" });
+  it("uses the target the server derived from the difficulty band", () => {
+    const spec = toCheckSpec({ target: 16, difficulty: "困难" });
 
-    expect(spec?.target).toBe(6);
-    expect(spec?.expression).toBe("1d20 ≤ 6");
+    expect(spec?.target).toBe(16);
+    expect(spec?.expression).toBe("1d20 ≥ 16");
   });
 
-  it("falls back to a normal check threshold", () => {
-    const spec = toCheckSpec({ normal_target: 14 });
-
-    expect(spec?.target).toBe(14);
+  it("falls back to an ordinary check", () => {
+    expect(toCheckSpec({})?.target).toBe(12);
   });
 });
 
 describe("resolveOptionCheck", () => {
   const output = {
     options: ["查看抽屉", "离开"],
-    option_checks: [null, { requires_check: true, normal_target: 10, difficulty: "困难" }],
+    option_checks: [null, { requires_check: true, target: 16, difficulty: "困难" }],
   } as unknown as StoryOutput;
 
   it("reads the check attached to the chosen option", () => {
-    expect(resolveOptionCheck(output, 1)?.target).toBe(5);
+    expect(resolveOptionCheck(output, 1)?.target).toBe(16);
   });
 
   it("returns null when the option has no check", () => {
@@ -38,12 +36,18 @@ describe("resolveOptionCheck", () => {
 });
 
 describe("rollCheck", () => {
-  it("reports a failure above the hard threshold", () => {
-    const spec = toCheckSpec({ normal_target: 12, difficulty: "困难" });
+  it("reports a failure below the hard threshold", () => {
+    const spec = toCheckSpec({ target: 16, difficulty: "困难" });
     const result = rollCheck(spec!, 9);
 
     expect(result.outcome).toBe("failure");
     expect(result.roll).toBe(9);
+  });
+
+  it("reports a success at or above it", () => {
+    const spec = toCheckSpec({ target: 16, difficulty: "困难" });
+
+    expect(rollCheck(spec!, 16).outcome).toBe("success");
   });
 });
 
@@ -69,7 +73,7 @@ describe("seededRoll", () => {
 
 describe("formatActionWithCheckResult", () => {
   it("appends the roll so the narrator sees the outcome", () => {
-    const spec = toCheckSpec({ normal_target: 12 })!;
+    const spec = toCheckSpec({})!;
     const text = formatActionWithCheckResult("查看抽屉", spec, rollCheck(spec, 11));
 
     expect(text).toContain("查看抽屉");

@@ -14,7 +14,7 @@ def test_empty_array_is_padded_so_every_option_index_resolves():
 
 
 def test_short_array_is_padded():
-    check = OptionCheck(normal_target=12)
+    check = OptionCheck(difficulty="普通")
     output = _output(["查看", "离开", "等待"], [check])
 
     assert output.option_checks[0] is check
@@ -23,7 +23,7 @@ def test_short_array_is_padded():
 
 
 def test_long_array_is_truncated():
-    checks = [OptionCheck(normal_target=12), OptionCheck(normal_target=10), None]
+    checks = [OptionCheck(difficulty="普通"), OptionCheck(difficulty="困难"), None]
     output = _output(["查看", "离开"], checks)
 
     assert len(output.option_checks) == 2
@@ -31,7 +31,7 @@ def test_long_array_is_truncated():
 
 
 def test_matching_length_is_untouched():
-    check = OptionCheck(normal_target=12)
+    check = OptionCheck(difficulty="普通")
     output = _output(["查看", "离开"], [None, check])
 
     assert output.option_checks[0] is None

@@ -23,8 +23,8 @@
       ],
       "option_checks": [
         null,
-        {"requires_check": true, "name": "调查检定", "skill": "调查", "system": "通用 d20", "expression": "1d20 ≤ 12", "normal_target": 12, "target": 12, "difficulty": "普通", "stakes": "成功会确认通行卡的异常来源；失败可能错过短暂的变化。"},
-        {"requires_check": true, "name": "观察检定", "skill": "观察", "system": "通用 d20", "expression": "1d20 ≤ 12", "normal_target": 12, "target": 12, "difficulty": "普通", "stakes": "成功会看出执行部学生的真实关注点；失败可能暴露你的视线。"}
+        {"requires_check": true, "name": "调查检定", "skill": "调查", "system": "通用 d20", "difficulty": "容易", "stakes": "成功会确认通行卡的异常来源；失败可能错过短暂的变化。"},
+        {"requires_check": true, "name": "观察检定", "skill": "观察", "system": "通用 d20", "difficulty": "困难", "stakes": "成功会看出执行部学生的真实关注点；失败可能暴露你的视线。"}
       ],
       "current_location": "卡塞尔学院报到大厅",
       "items_gained": [
@@ -69,8 +69,8 @@
       ],
       "option_checks": [
         null,
-        {"requires_check": true, "name": "调查检定", "skill": "调查", "system": "通用 d20", "expression": "1d20 ≤ 12", "normal_target": 12, "target": 12, "difficulty": "普通", "stakes": "成功会确认两个标记之间的联系；失败可能让你在错误的细节上浪费时间。"},
-        {"requires_check": true, "name": "观察检定", "skill": "观察", "system": "通用 d20", "expression": "1d20 ≤ 12", "normal_target": 12, "target": 12, "difficulty": "普通", "stakes": "成功会看出站位变化的规律；失败可能让监视者先注意到你。"}
+        {"requires_check": true, "name": "调查检定", "skill": "调查", "system": "通用 d20", "difficulty": "普通", "stakes": "成功会确认两个标记之间的联系；失败可能让你在错误的细节上浪费时间。"},
+        {"requires_check": true, "name": "观察检定", "skill": "观察", "system": "通用 d20", "difficulty": "困难", "stakes": "成功会看出站位变化的规律；失败可能让监视者先注意到你。"}
       ],
       "current_location": "卡塞尔学院报到大厅",
       "items_gained": [
@@ -116,8 +116,8 @@
       ],
       "option_checks": [
         null,
-        {"requires_check": true, "name": "调查检定", "skill": "调查", "system": "通用 d20", "expression": "1d20 ≤ 12", "normal_target": 12, "target": 12, "difficulty": "普通", "stakes": "成功会判断标记的用途；失败可能引起不必要的警觉。"},
-        {"requires_check": true, "name": "观察检定", "skill": "观察", "system": "通用 d20", "expression": "1d20 ≤ 12", "normal_target": 12, "target": 12, "difficulty": "普通", "stakes": "成功会识别保护与监视的区别；失败可能暴露你的意图。"}
+        {"requires_check": true, "name": "调查检定", "skill": "调查", "system": "通用 d20", "difficulty": "普通", "stakes": "成功会判断标记的用途；失败可能引起不必要的警觉。"},
+        {"requires_check": true, "name": "观察检定", "skill": "观察", "system": "通用 d20", "difficulty": "困难", "stakes": "成功会识别保护与监视的区别；失败可能暴露你的意图。"}
       ],
       "current_location": "卡塞尔学院报到大厅",
       "items_gained": [
@@ -165,8 +165,8 @@
       ],
       "option_checks": [
         null,
-        {"requires_check": true, "name": "调查检定", "skill": "调查", "system": "通用 d20", "expression": "1d20 ≤ 12", "normal_target": 12, "target": 12, "difficulty": "普通", "stakes": "成功会确认通行卡的异常来源；失败可能错过短暂的变化。"},
-        {"requires_check": true, "name": "观察检定", "skill": "观察", "system": "通用 d20", "expression": "1d20 ≤ 12", "normal_target": 12, "target": 12, "difficulty": "普通", "stakes": "成功会看出执行部学生的真实关注点；失败可能暴露你的视线。"}
+        {"requires_check": true, "name": "调查检定", "skill": "调查", "system": "通用 d20", "difficulty": "容易", "stakes": "成功会确认通行卡的异常来源；失败可能错过短暂的变化。"},
+        {"requires_check": true, "name": "观察检定", "skill": "观察", "system": "通用 d20", "difficulty": "困难", "stakes": "成功会看出执行部学生的真实关注点；失败可能暴露你的视线。"}
       ],
       "current_location": "卡塞尔学院报到大厅",
       "items_gained": [

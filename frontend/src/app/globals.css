@@ -1815,14 +1815,6 @@ a {
   color: var(--text);
 }
 
-.main-check-lock {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--accent-2);
-  font-size: 11px;
-}
-
 .main-check-action {
   max-height: 48px;
   margin: 14px 0 12px;

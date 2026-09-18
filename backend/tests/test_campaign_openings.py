@@ -35,7 +35,6 @@ OPENING_CHECKS = [
         "name": "观察检定",
         "skill": "调查",
         "system": "通用 d20",
-        "normal_target": 12,
         "difficulty": "普通",
         "stakes": "成功看清周围细节，失败引起旁人注意。",
     },

@@ -181,7 +181,7 @@ def _style_and_rules(input: PromptInput) -> str:
         '  "sanity_delta": 0,\n'
         '  "health_delta": 0,\n'
         '  "options": ["选项1", "选项2", "选项3"],\n'
-        '  "option_checks": [null, {"requires_check": true, "name": "调查检定", "skill": "调查", "system": "通用 d20", "normal_target": 12, "difficulty": "普通", "stakes": "成功发现线索，失败付出相应代价。"}, null],\n'
+        '  "option_checks": [null, {"requires_check": true, "name": "调查检定", "skill": "调查", "system": "通用 d20", "difficulty": "普通", "stakes": "成功发现线索，失败付出相应代价。"}, {"requires_check": true, "name": "行动检定", "skill": "行动", "system": "通用 d20", "difficulty": "困难", "stakes": "成功潜进去，失败留下痕迹。"}],\n'
         '  "game_over": false,\n'
         '  "game_over_reason": "",\n'
         '  "current_location": "",\n'

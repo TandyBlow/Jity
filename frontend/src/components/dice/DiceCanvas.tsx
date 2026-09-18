@@ -189,9 +189,9 @@ export function DiceCanvas({ value, docking, onSettled, onDocked, onError }: Dic
       clearWatchdog();
 
       const visible = result.results[0]?.visible;
-      // Roll-under d20: natural 1 is the best face, natural 20 the worst.
-      const isCritical = visible === 1;
-      const isFumble = visible === 20;
+      // Roll-high d20: natural 20 is the best face, natural 1 the worst.
+      const isCritical = visible === 20;
+      const isFumble = visible === 1;
 
       // Play result effects only after the final stillness check. The first
       // low-velocity report must remain visually neutral.
