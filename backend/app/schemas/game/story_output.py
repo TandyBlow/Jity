@@ -64,6 +64,18 @@ class StoryOutput(BaseModel):
     memory_updates: MemoryUpdates = Field(default_factory=MemoryUpdates)
     npc_relations_delta: list[dict[str, Any]] | None = None
 
+    @model_validator(mode="after")
+    def _align_option_checks(self) -> "StoryOutput":
+        """Keep option_checks index-aligned with options.
+
+        The model sometimes returns a shorter array or an empty one, which would
+        shift or silently drop every check once the UI indexes into it.
+        """
+        aligned = list(self.option_checks[: len(self.options)])
+        aligned.extend([None] * (len(self.options) - len(aligned)))
+        self.option_checks = aligned
+        return self
+
     def replace_em_dashes(self) -> "StoryOutput":
         """Return a new StoryOutput with all em dashes replaced by Chinese periods."""
         self.narration = replace_em_dash(self.narration)
