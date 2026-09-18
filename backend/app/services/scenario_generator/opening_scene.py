@@ -1,6 +1,11 @@
 """Hook 1 — campaign opening scene handling (early return path)."""
 
 from app.schemas import GenerateResponse, StoryOutput
+from app.schemas.agent_io import OpeningOptions
+from app.schemas.campaign import AnchorEvent
+from app.services.agents.opening_options import OpeningOptionsAgent
+from app.services.llm_client import LLMOutputParseError, LLMRequestError, MissingAPIKeyError
+from app.services.scenario_generator.errors import ScenarioGenerationError
 
 
 class OpeningSceneMixin:
@@ -33,13 +38,20 @@ class OpeningSceneMixin:
             # cross-session continuity channel; start a fresh short-term cache.
             self.invalidate_timeline_caches(session_id, campaign_manager.slot_name)
 
+        # Asked for before anything is written, so a failure below leaves the turn
+        # uncommitted and the retry lands back on the turn-0 guard.
+        opening_options = await self._generate_opening_options(
+            session_id, request, model, opening, state, campaign_manager, _csi
+        )
+
         output = StoryOutput(
             narration=opening,
             dialogue=[],
             scene_prompt=state.get("_scene_prompt", ""),
             sanity_delta=0,
             health_delta=0,
-            options=["继续"],
+            options=opening_options.options,
+            option_checks=opening_options.option_checks,
             current_location=state.get("current_location", ""),
         ).replace_em_dashes()
         state = self.state_manager.apply_output(state, request.player_action, output)
@@ -79,3 +91,48 @@ class OpeningSceneMixin:
             timeline_node_id=timeline_node_id,
             parent_timeline_node_id=parent_turn_id,
         )
+
+    # ── Opening options ────────────────────────────────────────────────
+
+    @staticmethod
+    def _current_session_anchors(campaign_manager) -> list[AnchorEvent]:
+        """The anchors of the session being opened, most important first."""
+        try:
+            progress = campaign_manager.progress
+            session = campaign_manager.campaign.arcs[progress.arc_index].sessions[
+                progress.session_index
+            ]
+            anchors = list(session.anchor_events or [])
+        except (AttributeError, IndexError, TypeError):
+            return []
+        return sorted(anchors, key=lambda anchor: anchor.priority, reverse=True)[:3]
+
+    async def _generate_opening_options(
+        self, session_id, request, model, opening, state, campaign_manager, _csi
+    ) -> OpeningOptions:
+        """Ask the model for this opening's options; fail loudly if it cannot.
+
+        There is deliberately no fallback option: silently dropping back to a
+        single continue button is the behaviour this call was added to remove.
+        """
+        agent = OpeningOptionsAgent(self.llm_client)
+        try:
+            return await agent.propose(
+                opening=opening,
+                state=state,
+                anchors=self._current_session_anchors(campaign_manager),
+                constraints=campaign_manager.campaign.constraints or "",
+            )
+        except MissingAPIKeyError:
+            # Already carries actionable advice and maps to 503 in the router.
+            raise
+        except (LLMRequestError, LLMOutputParseError) as exc:
+            status = "request_error" if isinstance(exc, LLMRequestError) else "parse_error"
+            raw = getattr(exc, "response_text", "") or getattr(exc, "raw_output", "")
+            output_id = self._store_error(
+                session_id, request.player_action, model, exc.latency_ms,
+                status, raw, str(exc), [], _csi,
+            )
+            raise ScenarioGenerationError(
+                f"开场行动选项生成失败，请重试。{exc}", output_id
+            ) from exc

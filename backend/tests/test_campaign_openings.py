@@ -26,6 +26,22 @@ FILES = ["default_campaign.json", "龙族Ⅰ_火之晨曦_campaign.json",
          "龙族Ⅱ_悼亡者之瞳_campaign.json", "龙族Ⅲ_黑月之潮_campaign.json"]
 LOCATIONS = ["卡塞尔学院大门前", "婶婶家中的卧室", "苏菲拉德披萨馆包间", "黑天鹅港走廊"]
 
+# The opening narration stays authored; only the choices come from the model.
+OPENING_OPTIONS = ["环顾四周确认处境", "向在场的人搭话", "低头检查随身物品"]
+OPENING_CHECKS = [
+    None,
+    {
+        "requires_check": True,
+        "name": "观察检定",
+        "skill": "调查",
+        "system": "通用 d20",
+        "normal_target": 12,
+        "difficulty": "普通",
+        "stakes": "成功看清周围细节，失败引起旁人注意。",
+    },
+    None,
+]
+
 
 @pytest.fixture
 def runtime(tmp_path, monkeypatch):
@@ -49,6 +65,11 @@ def runtime(tmp_path, monkeypatch):
 
     llm = MagicMock()
     llm.generate = AsyncMock()
+    llm.settings = SimpleNamespace(deepseek_api_key="test")
+    llm.generate_json = AsyncMock(return_value={
+        "options": list(OPENING_OPTIONS),
+        "option_checks": [dict(check) if check else None for check in OPENING_CHECKS],
+    })
     retriever = SimpleNamespace(retrieve_async=AsyncMock(return_value=[]))
     generator = ScenarioGenerator(db, states, retriever, PromptBuilder(), llm, MagicMock(), "test",
                                   campaign_manager_provider=lambda sid, slot: managers[sid])
@@ -82,8 +103,12 @@ async def test_opening_then_continue_uses_selected_campaign(runtime, filename, l
         opening = manager.get_opening_scene()
         assert opened.source == "scripted"
         assert opened.output.narration == opening.replace("——", "，").replace("—", "，")
-        assert opened.output.options == ["继续"]
+        assert opened.output.options == OPENING_OPTIONS
+        assert opened.output.option_checks[0] is None
+        assert opened.output.option_checks[1].name == "观察检定"
         assert opened.state["turn"] == manager.progress.turn_in_session == 1
+        # The opening asks for options only, so the Narrator is still never called.
+        runtime.llm.generate_json.assert_awaited_once()
         runtime.llm.generate.assert_not_awaited()
         runtime.retriever.retrieve_async.assert_not_awaited()
 
