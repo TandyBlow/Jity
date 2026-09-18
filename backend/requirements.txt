@@ -11,4 +11,3 @@ transitions==0.9.3
 charset-normalizer>=3.0.0
 python-multipart>=0.0.20
 json-repair>=0.39.0
-stanza==1.10.1
