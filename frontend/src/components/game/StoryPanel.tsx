@@ -94,6 +94,11 @@ export function StoryPanel({ session }: { session: GameSession }) {
     setSweep(null);
   }, [output]);
 
+  // An ended campaign must not leave the dice overlay on top of the ending card.
+  useEffect(() => {
+    if (output.game_over) setCheckingAction(null);
+  }, [output.game_over]);
+
   useEffect(() => {
     if (error) setSweep(null);
   }, [error]);
