@@ -55,6 +55,8 @@ export function MainCheckOverlay({ action, check, onCancel, onCommit }: MainChec
 
   const isCritical = result?.outcome === "critical";
   const isFailure = result?.outcome === "failure" || result?.outcome === "fumble";
+  // While the dice are in play the card stays wordless.
+  const title = phase === "prepared" ? "确认行动判定" : phase === "revealed" ? "判定完成" : "";
 
   return (
     <section className="main-check-overlay" aria-label={`${check.name}：${action}`}>
@@ -72,7 +74,7 @@ export function MainCheckOverlay({ action, check, onCancel, onCommit }: MainChec
         <div className="main-check-card-head">
           <div>
             <span className="main-check-overline">{check.name} · {check.expression}</span>
-            <h2>{phase === "prepared" ? "确认行动判定" : phase === "rolling" ? "骰子滚动中" : phase === "docking" ? "结果确认中" : "判定完成"}</h2>
+            {title ? <h2>{title}</h2> : null}
           </div>
           {phase === "prepared" ? null : (
             <span className="main-check-lock"><ShieldCheck size={14} />结果已锁定</span>
@@ -98,16 +100,12 @@ export function MainCheckOverlay({ action, check, onCancel, onCommit }: MainChec
           </>
         ) : null}
 
-        {phase === "rolling" ? <p className="main-check-status">物理骰子正在碰撞、翻滚并寻找停面…</p> : null}
-        {phase === "docking" ? <p className="main-check-status">骰面已停下，正在滑入结果位置…</p> : null}
-
         {phase === "revealed" && result ? (
           <div className={`main-check-result ${isCritical ? "critical" : isFailure ? "failure" : "success"}`}>
             <div className="main-check-result-title">
               <Check size={17} />
               <strong>{result.degree}</strong>
             </div>
-            <p>骰面上的数字就是本次行动判定结果。</p>
             <button
               className="primary-button main-check-primary"
               onClick={() => onCommit(result)}

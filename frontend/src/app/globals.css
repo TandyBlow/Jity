@@ -1845,9 +1845,7 @@ a {
   gap: 6px;
 }
 
-.main-check-stakes,
-.main-check-status,
-.main-check-result p {
+.main-check-stakes {
   margin: 12px 0 0;
   color: var(--muted);
   font-size: 12px;
@@ -1882,6 +1880,10 @@ a {
 }
 
 .main-check-result {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: flex-start;
   margin-top: 14px;
   padding-top: 14px;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
