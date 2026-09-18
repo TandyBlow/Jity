@@ -51,12 +51,19 @@ backend/data/campaigns/*
 !backend/data/scripted_story/
 !backend/data/scripted_story/*.json
 playtest_logs/
+backend/reports/
 
 # === Novel source files ===
 # Raw novel TXT stays local-only (README 本地文件约定).
 /1380*.txt
+/260731总结.txt
 /小说包.zip
 scripts/_*.txt
+
+# === Local-only research: deterministic state extractor (never shipped) ===
+/backend/app/services/memory/state_extractor.py
+/backend/scripts/download_state_extractor_models.py
+/backend/tests/test_state_extractor.py
 
 # === Experiments and local research files ===
 experiments/

@@ -2,5 +2,6 @@
 
 from app.services.agents.examiner import ExaminerAgent
 from app.services.agents.director import DirectorAgent
+from app.services.agents.opening_options import OpeningOptionsAgent
 
-__all__ = ["ExaminerAgent", "DirectorAgent"]
+__all__ = ["ExaminerAgent", "DirectorAgent", "OpeningOptionsAgent"]

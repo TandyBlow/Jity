@@ -43,6 +43,7 @@ export const initialOutput: StoryOutput = {
     `下意识后退半步，抓紧行李箱拉杆："等等，你怎么知道我的名字？这是什么整蛊节目吗？"`,
     `试图挤出个笑脸，但声音有点抖："照片？什么照片？我那张高考准考证上的照片可丑了……"`,
   ],
+  option_checks: [null, null, null],
   game_over: false,
   game_over_reason: "",
   current_location: "卡塞尔学院报到处大厅",

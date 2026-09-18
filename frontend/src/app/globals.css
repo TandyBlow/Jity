@@ -553,10 +553,55 @@ a {
 }
 
 .option-button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
   min-height: 44px;
   padding: 10px 14px;
+  overflow: hidden;
   background: rgba(24, 24, 24, 0.9);
   text-align: left;
+}
+
+.option-button-label {
+  flex: 1;
+  min-width: 0;
+}
+
+.option-check-badge {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 5px;
+  color: var(--accent);
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+/* Result colour filling the chosen option from the left once the dice are applied. */
+.option-sweep {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, var(--sweep-color) 40%);
+  clip-path: inset(0 100% 0 0);
+  pointer-events: none;
+  animation: option-sweep 900ms cubic-bezier(0.32, 0, 0.67, 0) forwards;
+}
+
+.option-sweep.critical { --sweep-color: rgb(242 206 131 / 55%); }
+.option-sweep.success { --sweep-color: rgb(135 179 141 / 50%); }
+.option-sweep.failure { --sweep-color: rgb(226 154 154 / 50%); }
+
+@keyframes option-sweep {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+
+  to {
+    clip-path: inset(0 0 0 0);
+  }
 }
 
 .option-button:hover,
@@ -1466,6 +1511,11 @@ a {
 
   .app-shell {
     display: block;
+    /* Panels stack here, so the fixed viewport height would clip everything
+       past the first screen and leave the page unscrollable. */
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
   }
 
   .side-panel {
@@ -1540,6 +1590,331 @@ a {
 .autoplay-anchors { display: grid; gap: 7px; }
 .autoplay-anchors .anchor-new { border-color: var(--accent-2); color: var(--accent-2); }
 .autoplay-anchor-link { color: var(--accent-2); font-size: 0.84rem; text-decoration: none; }
+
+.check-card {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr);
+  gap: 15px;
+  border-color: rgba(201, 164, 106, 0.42);
+  background: linear-gradient(135deg, rgba(47, 38, 25, 0.75), rgba(22, 21, 18, 0.96));
+}
+
+.real-dice-wrapper {
+  position: absolute;
+  inset: 0;
+  z-index: 90;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.real-dice-result-marker {
+  position: absolute;
+  right: 0;
+  bottom: 260px;
+  left: 50%;
+  z-index: 0;
+  width: 220px;
+  height: 128px;
+  transform: translate(-50%, 50%) scale(0.72);
+  border: 1px solid rgba(255, 209, 102, 0.18);
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(255, 209, 102, 0.16), rgba(255, 209, 102, 0.02) 58%, transparent 72%);
+  box-shadow: 0 0 24px rgba(255, 209, 102, 0.16), inset 0 0 24px rgba(255, 209, 102, 0.12);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 420ms ease, transform 1700ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.real-dice-result-marker::before,
+.real-dice-result-marker::after {
+  position: absolute;
+  top: 50%;
+  width: 5px;
+  height: 5px;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  background: #ffd166;
+  box-shadow: 0 0 12px 3px rgba(255, 209, 102, 0.68);
+  content: "";
+}
+
+.real-dice-result-marker::before {
+  left: -3px;
+}
+
+.real-dice-result-marker::after {
+  right: -3px;
+}
+
+.real-dice-result-marker span {
+  position: absolute;
+  top: 50%;
+  right: 50%;
+  width: 5px;
+  height: 5px;
+  transform: translate(50%, -50%);
+  border-radius: 50%;
+  background: #fff1b8;
+  box-shadow: 0 0 15px 5px rgba(255, 209, 102, 0.5);
+}
+
+.real-dice-result-marker.visible {
+  transform: translate(-50%, 50%) scale(1);
+  border-color: rgba(255, 209, 102, 0.48);
+  opacity: 1;
+  animation: dice-result-target-pulse 2200ms ease-in-out infinite;
+}
+
+@keyframes dice-result-target-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 24px rgba(255, 209, 102, 0.16), inset 0 0 24px rgba(255, 209, 102, 0.12);
+  }
+
+  50% {
+    box-shadow: 0 0 42px rgba(255, 209, 102, 0.28), inset 0 0 30px rgba(255, 209, 102, 0.2);
+  }
+}
+
+.real-dice-canvas-host {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.real-dice-canvas-host canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  outline: none;
+}
+
+.real-dice-status {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 2;
+  transform: translate(-50%, -50%);
+  padding: 9px 12px;
+  border: 1px solid rgba(201, 164, 106, 0.35);
+  border-radius: 999px;
+  background: rgba(18, 18, 17, 0.86);
+  color: var(--accent);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.real-dice-status.failed,
+.dice-demo-3d-error {
+  color: #e29a9a;
+}
+
+.demo-how-list {
+  display: grid;
+  gap: 15px;
+}
+
+.demo-how-list > div {
+  display: grid;
+  grid-template-columns: 25px minmax(0, 1fr);
+  gap: 8px;
+  align-items: start;
+}
+
+.demo-how-list span {
+  color: var(--accent);
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 11px;
+}
+
+.demo-how-list p {
+  margin: 0;
+  color: var(--text);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+@media (max-width: 780px) {
+
+  .check-card {
+    grid-template-columns: 1fr;
+  }
+
+  .real-dice-result-marker {
+    bottom: 315px;
+    width: 200px;
+    height: 112px;
+  }
+}
+
+/* ── Main game action judgment overlay ── */
+
+.main-check-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  isolation: isolate;
+  overflow: hidden;
+  background: rgba(8, 8, 7, 0.58);
+  backdrop-filter: blur(2px);
+}
+
+.main-check-card {
+  position: fixed;
+  top: 24px;
+  left: 50%;
+  z-index: 84;
+  width: min(560px, calc(100vw - 32px));
+  padding: 18px 20px;
+  transform: translateX(-50%);
+  border: 1px solid rgba(201, 164, 106, 0.42);
+  border-radius: 12px;
+  background: rgba(20, 20, 18, 0.92);
+  box-shadow: 0 16px 50px rgba(0, 0, 0, 0.36);
+}
+
+.main-check-card-head,
+.main-check-meta,
+.main-check-actions,
+.main-check-result-title {
+  display: flex;
+  align-items: center;
+}
+
+.main-check-card-head {
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.main-check-overline {
+  color: var(--accent);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.main-check-card h2 {
+  margin: 5px 0 0;
+  font-size: 20px;
+}
+
+.main-check-secondary {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.main-check-secondary:hover {
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+.main-check-action {
+  max-height: 48px;
+  margin: 14px 0 12px;
+  overflow: hidden;
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.main-check-meta {
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.main-check-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.main-check-stakes {
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.main-check-actions {
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.main-check-secondary {
+  min-height: 40px;
+  padding: 0 15px;
+}
+
+.main-check-primary {
+  width: auto;
+  min-width: 120px;
+  height: 40px;
+  margin-top: 0;
+}
+
+.main-check-error {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 12px 0 0;
+  color: var(--danger);
+  font-size: 12px;
+}
+
+.main-check-result {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: flex-start;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.main-check-result-title {
+  gap: 7px;
+  color: var(--accent-2);
+}
+
+.main-check-result.critical .main-check-result-title {
+  color: #f2ce83;
+}
+
+.main-check-result.failure .main-check-result-title {
+  color: #e29a9a;
+}
+
+.option-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+@media (max-width: 760px) {
+  .main-check-card {
+    top: 14px;
+    width: calc(100vw - 24px);
+    padding: 16px;
+  }
+
+  .main-check-card h2 {
+    font-size: 18px;
+  }
+
+  .main-check-meta {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
 .ending-card {
   display: grid;
   gap: 8px;

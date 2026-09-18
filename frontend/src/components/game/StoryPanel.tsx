@@ -1,11 +1,26 @@
 "use client";
 
-import { Image as ImageIcon, Loader2, Send } from "lucide-react";
-import { GitBranch } from "lucide-react";
+import { Dices, GitBranch, Image as ImageIcon, Loader2, Send } from "lucide-react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
+import { MainCheckOverlay, type MainCheckCommit } from "@/components/game/MainCheckOverlay";
 import type { GameSession } from "@/components/game/useGameSession";
+import type { CheckSpec, Outcome } from "@/lib/dice/rules";
+import { formatActionWithCheckResult, outcomeTone, toCheckSpec } from "@/lib/game/checks";
 import { formatDelta, quoteDialogue } from "@/lib/game/format";
+
+type PendingCheck = {
+  action: string;
+  index: number;
+  check: CheckSpec;
+};
+
+type PendingSweep = {
+  index: number;
+  outcome: Outcome;
+  action: string;
+};
 
 function narrationParagraphs(narration: string): string[] {
   const explicitParagraphs = narration
@@ -47,6 +62,51 @@ export function StoryPanel({ session }: { session: GameSession }) {
     backgroundError,
     retryBackground,
   } = session;
+  const [checkingAction, setCheckingAction] = useState<PendingCheck | null>(null);
+  const [sweep, setSweep] = useState<PendingSweep | null>(null);
+
+  function handleOption(option: string, index: number) {
+    if (!sessionId || isLoading || session.pendingGenerate || sweep) return;
+
+    const metadata = output.option_checks?.[index];
+    const check = metadata ? toCheckSpec(metadata) : null;
+    if (check) {
+      setCheckingAction({ action: option, index, check });
+      return;
+    }
+
+    void handleGenerate(option);
+  }
+
+  function commitCheck(result: MainCheckCommit) {
+    if (!checkingAction) return;
+    const { action, check, index } = checkingAction;
+    setCheckingAction(null);
+    setSweep({
+      index,
+      outcome: result.outcome,
+      action: formatActionWithCheckResult(action, check, result),
+    });
+  }
+
+  // The fill stays on the chosen option until the next scene replaces the list.
+  useEffect(() => {
+    setSweep(null);
+  }, [output]);
+
+  // An ended campaign must not leave the dice overlay on top of the ending card.
+  useEffect(() => {
+    if (output.game_over) setCheckingAction(null);
+  }, [output.game_over]);
+
+  useEffect(() => {
+    if (error) setSweep(null);
+  }, [error]);
+
+  /** The sweep's own animation decides when the next scene is generated. */
+  function completeSweep(action: string) {
+    void handleGenerate(action);
+  }
 
   return (
     <section className="story-panel">
@@ -127,11 +187,35 @@ export function StoryPanel({ session }: { session: GameSession }) {
           </div>
         ) : null}
         <div className="option-list">
-          {output.options.map((option) => (
-            <button className="option-button" disabled={output.game_over || isLoading || !!session.pendingGenerate || !sessionId} key={option} onClick={() => handleGenerate(option)} type="button">
-              {option}
-            </button>
-          ))}
+          {output.options.map((option, index) => {
+            const metadata = output.option_checks?.[index];
+            const check = metadata ? toCheckSpec(metadata) : null;
+            const sweeping = sweep?.index === index ? sweep : null;
+
+            return (
+              <button
+                className="option-button"
+                disabled={output.game_over || isLoading || !!session.pendingGenerate || !sessionId}
+                key={`${option}-${index}`}
+                onClick={() => handleOption(option, index)}
+                type="button"
+              >
+                <span className="option-button-label">{option}</span>
+                {check ? (
+                  <span className="option-check-badge">
+                    <Dices size={14} />需判定
+                  </span>
+                ) : null}
+                {sweeping ? (
+                  <span
+                    className={`option-sweep ${outcomeTone(sweeping.outcome)}`}
+                    aria-hidden="true"
+                    onAnimationEnd={() => completeSweep(sweeping.action)}
+                  />
+                ) : null}
+              </button>
+            );
+          })}
         </div>
       </article>
 
@@ -158,6 +242,14 @@ export function StoryPanel({ session }: { session: GameSession }) {
         {error ? <div className="error">{error}</div> : null}
         <div className="player-controls-hint">Ctrl / ⌘ + Enter 快速生成</div>
       </div>
+      {checkingAction ? (
+        <MainCheckOverlay
+          action={checkingAction.action}
+          check={checkingAction.check}
+          onCancel={() => setCheckingAction(null)}
+          onCommit={commitCheck}
+        />
+      ) : null}
     </section>
   );
 }

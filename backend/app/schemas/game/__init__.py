@@ -28,7 +28,7 @@ from app.schemas.game.requests_responses import (
     SessionHistoryResponse,
     SessionResponse,
 )
-from app.schemas.game.story_output import StoryOutput
+from app.schemas.game.story_output import OptionCheck, StoryOutput
 
 __all__ = [
     "replace_em_dash",
@@ -40,6 +40,7 @@ __all__ = [
     "QuestMemory",
     "WorldFactMemory",
     "StoryOutput",
+    "OptionCheck",
     "CreateSessionRequest",
     "GenerateRequest",
     "SessionResponse",

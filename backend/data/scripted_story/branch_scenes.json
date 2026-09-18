@@ -67,6 +67,13 @@
         "尝试用通行卡靠近报到台或门禁，看它是否再次发热。",
         "暂时把卡藏进校服外套内侧，避免被人看见。"
       ],
+      "option_checks": [
+        null,
+        {"requires_check": true, "name": "洞察检定", "skill": "洞察", "system": "通用 d20", "difficulty": "困难", "stakes": "成功会读出芬格尔反应中的真实信息；失败可能被他的玩笑带偏。"},
+        {"requires_check": true, "name": "观察检定", "skill": "观察", "system": "通用 d20", "difficulty": "普通", "stakes": "成功会发现监视者；失败可能让对方确认你已经察觉。"},
+        {"requires_check": true, "name": "调查检定", "skill": "调查", "system": "通用 d20", "difficulty": "普通", "stakes": "成功会确认卡片的反应规律；失败可能触发不想要的警报。"},
+        null
+      ],
       "current_location": "卡塞尔学院报到大厅",
       "items_gained": [
         {
@@ -101,6 +108,13 @@
         "向芬格尔打听执行部在新生报到时通常负责什么。",
         "故意远离报到台，测试执行部是否会改变站位。"
       ],
+      "option_checks": [
+        {"requires_check": true, "name": "交涉检定", "skill": "交涉", "system": "通用 d20", "difficulty": "困难", "stakes": "成功会获得查看信封的机会；失败会让对方提高戒备。"},
+        null,
+        {"requires_check": true, "name": "观察检定", "skill": "观察", "system": "通用 d20", "difficulty": "极难", "stakes": "成功会发现栏杆后的异常动静；失败可能被反向锁定。"},
+        null,
+        {"requires_check": true, "name": "观察检定", "skill": "观察", "system": "通用 d20", "difficulty": "普通", "stakes": "成功会确认执行部是否在跟随你；失败可能造成误判。"}
+      ],
       "current_location": "卡塞尔学院报到大厅"
     },
     {
@@ -125,6 +139,11 @@
         "刷临时通行卡进入档案室。",
         "先检查门锁和铜牌上的痕迹。",
         "询问芬格尔：有没有人能伪造学院系统记录？"
+      ],
+      "option_checks": [
+        {"requires_check": true, "name": "行动检定", "skill": "行动", "system": "通用 d20", "difficulty": "普通", "stakes": "成功会顺利进入档案室；失败可能触发门禁记录。"},
+        {"requires_check": true, "name": "调查检定", "skill": "调查", "system": "通用 d20", "difficulty": "普通", "stakes": "成功会发现门锁或铜牌上的异常痕迹；失败会错过线索。"},
+        null
       ],
       "current_location": "主楼地下二层旧档案室"
     },
@@ -151,6 +170,11 @@
         "坐到长桌前，等待听证开始。",
         "先绕到房间后方，查看是否有人隐藏在暗处。"
       ],
+      "option_checks": [
+        {"requires_check": true, "name": "调查检定", "skill": "调查", "system": "通用 d20", "difficulty": "普通", "stakes": "成功会发现名单差异背后的规律；失败会把它当成普通录入错误。"},
+        null,
+        {"requires_check": true, "name": "观察检定", "skill": "观察", "system": "通用 d20", "difficulty": "困难", "stakes": "成功会发现隐藏者；失败可能在绕行时发出声音。"}
+      ],
       "current_location": "钟楼一层临时听证室"
     },
     {
@@ -176,6 +200,12 @@
         "检查快递单上的寄件地址和字迹。",
         "询问店员：这个包裹是谁放进取件柜的？",
         "先买一桶泡面，边吃边整理线索。"
+      ],
+      "option_checks": [
+        {"requires_check": true, "name": "调查检定", "skill": "调查", "system": "通用 d20", "difficulty": "困难", "stakes": "成功会安全打开包裹并发现关键内容；失败可能损坏里面的东西。"},
+        {"requires_check": true, "name": "调查检定", "skill": "调查", "system": "通用 d20", "difficulty": "困难", "stakes": "成功会确认寄件时间与地址的异常；失败会漏掉细小的改写痕迹。"},
+        null,
+        null
       ],
       "current_location": "校内24小时便利店",
       "items_gained": [

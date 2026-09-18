@@ -54,6 +54,17 @@ export type MemoryUpdates = {
   key_event?: string;
 };
 
+export type StoryOptionCheck = {
+  requires_check?: boolean;
+  name?: string;
+  skill?: string;
+  system?: string;
+  expression?: string;
+  target?: number;
+  difficulty?: "容易" | "普通" | "困难" | "极难";
+  stakes?: string;
+};
+
 export type StoryOutput = {
   narration: string;
   dialogue: DialogueLine[];
@@ -61,6 +72,7 @@ export type StoryOutput = {
   sanity_delta: number;
   health_delta: number;
   options: string[];
+  option_checks?: Array<StoryOptionCheck | null>;
   game_over: boolean;
   game_over_reason: string;
   current_location: string;
