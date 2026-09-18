@@ -6,6 +6,7 @@ Also includes SCORE item-state tracking and MOOM memory data structures.
 Modules:
   - examiner:        ActionPermissibility, TriggeredRule, ActionRuling
   - director:        RedirectionStrategy, ItemContinuityCheck, DirectorInstruction
+  - opener:          OpeningOptions
   - memory_branches: SCORE / NSB / PCB / MOOM / HaluMem models
 """
 
@@ -19,6 +20,7 @@ from app.schemas.agent_io.examiner import (
     ActionRuling,
     TriggeredRule,
 )
+from app.schemas.agent_io.opener import OpeningOptions
 from app.schemas.agent_io.memory_branches import (
     EpisodeSummary,
     HallucinationFinding,
@@ -39,6 +41,7 @@ __all__ = [
     "RedirectionStrategy",
     "ItemContinuityCheck",
     "DirectorInstruction",
+    "OpeningOptions",
     "ItemState",
     "ItemStateRecord",
     "EpisodeSummary",
