@@ -10,12 +10,16 @@ import type { CheckSpec, Outcome } from "@/lib/dice/rules";
 import { formatActionWithCheckResult, outcomeTone, toCheckSpec } from "@/lib/game/checks";
 import { formatDelta, quoteDialogue } from "@/lib/game/format";
 
-const SWEEP_DURATION_MS = 900;
-
 type PendingCheck = {
   action: string;
   index: number;
   check: CheckSpec;
+};
+
+type PendingSweep = {
+  index: number;
+  outcome: Outcome;
+  action: string;
 };
 
 function narrationParagraphs(narration: string): string[] {
@@ -59,7 +63,7 @@ export function StoryPanel({ session }: { session: GameSession }) {
     retryBackground,
   } = session;
   const [checkingAction, setCheckingAction] = useState<PendingCheck | null>(null);
-  const [sweep, setSweep] = useState<{ index: number; outcome: Outcome } | null>(null);
+  const [sweep, setSweep] = useState<PendingSweep | null>(null);
 
   function handleOption(option: string, index: number) {
     if (!sessionId || isLoading || session.pendingGenerate || sweep) return;
@@ -74,15 +78,21 @@ export function StoryPanel({ session }: { session: GameSession }) {
     void handleGenerate(option);
   }
 
-  async function commitCheck(result: MainCheckCommit) {
+  function commitCheck(result: MainCheckCommit) {
     if (!checkingAction) return;
     const { action, check, index } = checkingAction;
-    const actionWithResult = formatActionWithCheckResult(action, check, result);
     setCheckingAction(null);
-    setSweep({ index, outcome: result.outcome });
-    await new Promise((resolve) => window.setTimeout(resolve, SWEEP_DURATION_MS));
+    setSweep({
+      index,
+      outcome: result.outcome,
+      action: formatActionWithCheckResult(action, check, result),
+    });
+  }
+
+  /** The sweep's own animation decides when the next scene is generated. */
+  function completeSweep(action: string) {
     setSweep(null);
-    void handleGenerate(actionWithResult);
+    void handleGenerate(action);
   }
 
   return (
@@ -161,7 +171,7 @@ export function StoryPanel({ session }: { session: GameSession }) {
           {output.options.map((option, index) => {
             const metadata = output.option_checks?.[index];
             const check = metadata ? toCheckSpec(metadata) : null;
-            const sweeping = sweep?.index === index ? sweep.outcome : null;
+            const sweeping = sweep?.index === index ? sweep : null;
 
             return (
               <button
@@ -178,7 +188,11 @@ export function StoryPanel({ session }: { session: GameSession }) {
                   </span>
                 ) : null}
                 {sweeping ? (
-                  <span className={`option-sweep ${outcomeTone(sweeping)}`} aria-hidden="true" />
+                  <span
+                    className={`option-sweep ${outcomeTone(sweeping.outcome)}`}
+                    aria-hidden="true"
+                    onAnimationEnd={() => completeSweep(sweeping.action)}
+                  />
                 ) : null}
               </button>
             );
