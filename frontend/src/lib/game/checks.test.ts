@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { formatActionWithCheckResult, resolveOptionCheck, rollCheck, seededRoll, toCheckSpec } from "./checks";
+import { formatActionWithCheckResult, outcomeTone, resolveOptionCheck, rollCheck, seededRoll, toCheckSpec } from "./checks";
 import type { StoryOutput } from "@/types";
 
 describe("toCheckSpec", () => {
@@ -44,6 +44,15 @@ describe("rollCheck", () => {
 
     expect(result.outcome).toBe("failure");
     expect(result.roll).toBe(9);
+  });
+});
+
+describe("outcomeTone", () => {
+  it("maps each outcome onto the overlay's result colours", () => {
+    expect(outcomeTone("critical")).toBe("critical");
+    expect(outcomeTone("success")).toBe("success");
+    expect(outcomeTone("failure")).toBe("failure");
+    expect(outcomeTone("fumble")).toBe("failure");
   });
 });
 

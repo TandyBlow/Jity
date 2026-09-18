@@ -553,12 +553,14 @@ a {
 }
 
 .option-button {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
   min-height: 44px;
   padding: 10px 14px;
+  overflow: hidden;
   background: rgba(24, 24, 24, 0.9);
   text-align: left;
 }
@@ -576,6 +578,29 @@ a {
   color: var(--accent);
   font-size: 11px;
   white-space: nowrap;
+}
+
+/* Result colour, swept across the chosen option after the dice are applied. */
+.option-sweep {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, var(--sweep-color), transparent);
+  pointer-events: none;
+  animation: option-sweep 900ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.option-sweep.critical { --sweep-color: rgb(242 206 131 / 55%); }
+.option-sweep.success { --sweep-color: rgb(135 179 141 / 50%); }
+.option-sweep.failure { --sweep-color: rgb(226 154 154 / 50%); }
+
+@keyframes option-sweep {
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(100%);
+  }
 }
 
 .option-button:hover,
@@ -1776,7 +1801,6 @@ a {
   font-size: 20px;
 }
 
-.main-check-close,
 .main-check-secondary {
   border: 1px solid var(--border);
   border-radius: 8px;
@@ -1785,14 +1809,6 @@ a {
   cursor: pointer;
 }
 
-.main-check-close {
-  display: grid;
-  width: 32px;
-  height: 32px;
-  place-items: center;
-}
-
-.main-check-close:hover,
 .main-check-secondary:hover {
   border-color: var(--accent);
   color: var(--text);

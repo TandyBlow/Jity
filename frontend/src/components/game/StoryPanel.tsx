@@ -6,12 +6,15 @@ import { useState } from "react";
 
 import { MainCheckOverlay, type MainCheckCommit } from "@/components/game/MainCheckOverlay";
 import type { GameSession } from "@/components/game/useGameSession";
-import type { CheckSpec } from "@/lib/dice/rules";
-import { formatActionWithCheckResult, toCheckSpec } from "@/lib/game/checks";
+import type { CheckSpec, Outcome } from "@/lib/dice/rules";
+import { formatActionWithCheckResult, outcomeTone, toCheckSpec } from "@/lib/game/checks";
 import { formatDelta, quoteDialogue } from "@/lib/game/format";
+
+const SWEEP_DURATION_MS = 900;
 
 type PendingCheck = {
   action: string;
+  index: number;
   check: CheckSpec;
 };
 
@@ -56,14 +59,15 @@ export function StoryPanel({ session }: { session: GameSession }) {
     retryBackground,
   } = session;
   const [checkingAction, setCheckingAction] = useState<PendingCheck | null>(null);
+  const [sweep, setSweep] = useState<{ index: number; outcome: Outcome } | null>(null);
 
   function handleOption(option: string, index: number) {
-    if (!sessionId || isLoading || session.pendingGenerate) return;
+    if (!sessionId || isLoading || session.pendingGenerate || sweep) return;
 
     const metadata = output.option_checks?.[index];
     const check = metadata ? toCheckSpec(metadata) : null;
     if (check) {
-      setCheckingAction({ action: option, check });
+      setCheckingAction({ action: option, index, check });
       return;
     }
 
@@ -72,9 +76,13 @@ export function StoryPanel({ session }: { session: GameSession }) {
 
   async function commitCheck(result: MainCheckCommit) {
     if (!checkingAction) return;
-    const actionWithResult = formatActionWithCheckResult(checkingAction.action, checkingAction.check, result);
-    await handleGenerate(actionWithResult);
+    const { action, check, index } = checkingAction;
+    const actionWithResult = formatActionWithCheckResult(action, check, result);
     setCheckingAction(null);
+    setSweep({ index, outcome: result.outcome });
+    await new Promise((resolve) => window.setTimeout(resolve, SWEEP_DURATION_MS));
+    setSweep(null);
+    void handleGenerate(actionWithResult);
   }
 
   return (
@@ -153,6 +161,7 @@ export function StoryPanel({ session }: { session: GameSession }) {
           {output.options.map((option, index) => {
             const metadata = output.option_checks?.[index];
             const check = metadata ? toCheckSpec(metadata) : null;
+            const sweeping = sweep?.index === index ? sweep.outcome : null;
 
             return (
               <button
@@ -167,6 +176,9 @@ export function StoryPanel({ session }: { session: GameSession }) {
                   <span className="option-check-badge">
                     <Dices size={14} />需判定
                   </span>
+                ) : null}
+                {sweeping ? (
+                  <span className={`option-sweep ${outcomeTone(sweeping)}`} aria-hidden="true" />
                 ) : null}
               </button>
             );
@@ -200,7 +212,6 @@ export function StoryPanel({ session }: { session: GameSession }) {
         <MainCheckOverlay
           action={checkingAction.action}
           check={checkingAction.check}
-          busy={isLoading}
           onCancel={() => setCheckingAction(null)}
           onCommit={commitCheck}
         />

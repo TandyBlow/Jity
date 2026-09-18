@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, CircleAlert, Dices, ShieldCheck, X } from "lucide-react";
+import { Check, CircleAlert, Dices, ShieldCheck } from "lucide-react";
 import { useState } from "react";
 
 import { DiceCanvas } from "@/components/dice/DiceCanvas";
@@ -17,12 +17,11 @@ export type MainCheckCommit = {
 type MainCheckOverlayProps = {
   action: string;
   check: CheckSpec;
-  busy: boolean;
   onCancel: () => void;
   onCommit: (result: MainCheckCommit) => Promise<void> | void;
 };
 
-export function MainCheckOverlay({ action, check, busy, onCancel, onCommit }: MainCheckOverlayProps) {
+export function MainCheckOverlay({ action, check, onCancel, onCommit }: MainCheckOverlayProps) {
   const [phase, setPhase] = useState<CheckPhase>("prepared");
   const [roll, setRoll] = useState<number | null>(null);
   const [result, setResult] = useState<MainCheckCommit | null>(null);
@@ -54,7 +53,6 @@ export function MainCheckOverlay({ action, check, busy, onCancel, onCommit }: Ma
     setPhase("prepared");
   }
 
-  const canCancel = phase === "prepared" || phase === "revealed";
   const isCritical = result?.outcome === "critical";
   const isFailure = result?.outcome === "failure" || result?.outcome === "fumble";
 
@@ -76,11 +74,7 @@ export function MainCheckOverlay({ action, check, busy, onCancel, onCommit }: Ma
             <span className="main-check-overline">{check.name} · {check.expression}</span>
             <h2>{phase === "prepared" ? "确认行动判定" : phase === "rolling" ? "骰子滚动中" : phase === "docking" ? "结果确认中" : "判定完成"}</h2>
           </div>
-          {canCancel ? (
-            <button className="main-check-close" onClick={onCancel} type="button" aria-label="关闭判定">
-              <X size={17} />
-            </button>
-          ) : (
+          {phase === "prepared" ? null : (
             <span className="main-check-lock"><ShieldCheck size={14} />结果已锁定</span>
           )}
         </div>
@@ -116,11 +110,10 @@ export function MainCheckOverlay({ action, check, busy, onCancel, onCommit }: Ma
             <p>骰面上的数字就是本次行动判定结果。</p>
             <button
               className="primary-button main-check-primary"
-              disabled={busy}
               onClick={() => onCommit(result)}
               type="button"
             >
-              {busy ? "提交剧情中" : "应用结果并继续"}
+              继续
             </button>
           </div>
         ) : null}

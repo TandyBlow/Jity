@@ -23,6 +23,13 @@ export function resolveOptionCheck(output: StoryOutput, optionIndex: number): Ch
   return metadata ? toCheckSpec(metadata) : null;
 }
 
+/** Result colour bucket, matching the overlay's revealed-state styling. */
+export function outcomeTone(outcome: Outcome): "critical" | "success" | "failure" {
+  if (outcome === "critical") return "critical";
+  if (outcome === "success") return "success";
+  return "failure";
+}
+
 export function rollCheck(check: CheckSpec, roll: number): CheckRoll {
   const evaluation = getOutcome(roll, check);
   return { roll, outcome: evaluation.outcome, degree: evaluation.degree };
