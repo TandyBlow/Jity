@@ -385,11 +385,6 @@ export function DiceCanvas({ value, docking, onSettled, onDocked, onError }: Dic
       }
 
       dockFrameRef.current = null;
-      dice.forEach((die) => {
-        // Keep the highlight long enough to read the face after the slide.
-        roller.glow(die, { color: 0xffd166, duration: 2800, intensity: 2.2 });
-        roller.haloRing(die, { color: 0xffd166, duration: 1500, endRadius: 2.5 });
-      });
       onDockedRef.current();
     };
 
@@ -405,6 +400,9 @@ export function DiceCanvas({ value, docking, onSettled, onDocked, onError }: Dic
 
   return (
     <div className="real-dice-wrapper">
+      <div className={`real-dice-result-marker ${docking ? "visible" : ""}`} aria-hidden="true">
+        <span />
+      </div>
       <div className="real-dice-canvas-host" ref={containerRef} />
       {status === "loading" ? (
         <div className="real-dice-status">正在加载 Three.js 物理骰子…</div>
