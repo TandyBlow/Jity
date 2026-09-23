@@ -1,6 +1,6 @@
 "use client";
 
-import { Dices, GitBranch, Image as ImageIcon, Loader2, Send } from "lucide-react";
+import { Dices, GitBranch, Image as ImageIcon, Loader2, Send, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
@@ -46,7 +46,13 @@ function narrationParagraphs(narration: string): string[] {
   return paragraphs;
 }
 
-export function StoryPanel({ session }: { session: GameSession }) {
+export function StoryPanel({
+  session,
+  onOpenMemory,
+}: {
+  session: GameSession;
+  onOpenMemory: () => void;
+}) {
   const {
     sessionId,
     state,
@@ -121,6 +127,11 @@ export function StoryPanel({ session }: { session: GameSession }) {
             回溯上一步
           </Link>
         ) : null}
+        {/* Only visible below 1100px, where the docked memory column is hidden. */}
+        <button className="memory-drawer-trigger" onClick={onOpenMemory} type="button">
+          <Sparkles size={13} />
+          记忆面板
+        </button>
         {isBackgroundLoading ? (
           <div className="background-status">
             <ImageIcon size={13} />

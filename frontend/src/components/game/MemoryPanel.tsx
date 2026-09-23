@@ -56,16 +56,24 @@ function occupancy(state: GameState | null, report: TurnReport | null, key: Memo
 }
 
 export function MemoryPanel({ session }: { session: GameSession }) {
-  const { sessionId, state, output, chunks, turnReport } = session;
-  const fold = useFolds();
-
   return (
     <aside className="memory-panel">
       <div className="section-title">
         <span>Context Memory</span>
         <Sparkles size={16} />
       </div>
+      <MemoryPanelBody session={session} />
+    </aside>
+  );
+}
 
+/** Shared by the docked column and the narrow-screen drawer. */
+export function MemoryPanelBody({ session }: { session: GameSession }) {
+  const { sessionId, state, output, chunks, turnReport } = session;
+  const fold = useFolds();
+
+  return (
+    <>
       <TurnMemory report={turnReport} state={state} />
 
       <MemorySection
@@ -140,7 +148,7 @@ export function MemoryPanel({ session }: { session: GameSession }) {
       ) : null}
 
       <RagHits chunks={chunks} fold={fold("rag_hits", String(chunks.length))} />
-    </aside>
+    </>
   );
 }
 

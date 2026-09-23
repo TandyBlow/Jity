@@ -6,7 +6,7 @@
   z-index: var(--layer-modal);
   isolation: isolate;
   overflow: hidden;
-  background: rgba(8, 8, 7, 0.58);
+  background: var(--color-scrim);
   backdrop-filter: blur(2px);
 }
 

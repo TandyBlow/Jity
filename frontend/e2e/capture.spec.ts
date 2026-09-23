@@ -29,7 +29,7 @@ for (const shot of SHOTS) {
     await seedSession(page);
     await installApiMocks(page);
 
-    for (const viewport of VIEWPORTS) {
+    for (const viewport of VIEWPORTS.filter((v) => !shot.only || shot.only.includes(v.name))) {
       await page.setViewportSize({ width: viewport.width, height: viewport.height });
       await page.goto(shot.path);
 

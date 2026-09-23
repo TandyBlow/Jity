@@ -197,10 +197,10 @@
         "background": "rgba(0, 0, 0, 0)"
       },
       ".scene-output": {
-        "top": 49,
+        "top": 50,
         "left": 82,
         "width": 860,
-        "height": 548,
+        "height": 546,
         "contentHeight": 1236,
         "display": "flex",
         "overflowY": "auto",
@@ -209,7 +209,7 @@
         "background": "rgba(0, 0, 0, 0)"
       },
       ".narration": {
-        "top": 141,
+        "top": 142,
         "left": 82,
         "width": 860,
         "height": 620,
@@ -221,7 +221,7 @@
         "background": "rgba(0, 0, 0, 0)"
       },
       ".dialogue-list": {
-        "top": 785,
+        "top": 786,
         "left": 82,
         "width": 860,
         "height": 216,
@@ -233,7 +233,7 @@
         "background": "rgba(0, 0, 0, 0)"
       },
       ".option-list": {
-        "top": 1087,
+        "top": 1088,
         "left": 82,
         "width": 860,
         "height": 158,

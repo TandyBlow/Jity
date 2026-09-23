@@ -37,8 +37,15 @@ export const VIEWPORTS = [
  * Shared by capture and verify so adding a route to one cannot silently skip
  * it in the other.
  */
-export const SHOTS = [
+export const SHOTS: Array<{
+  name: string;
+  path: string;
+  ready: string;
+  /** Restrict a shot to some viewports — e.g. a layout that only exists below a breakpoint. */
+  only?: string[];
+}> = [
   { name: "console", path: "/", ready: ".narration" },
+  { name: "console-drawer", path: "/?memory=1", ready: ".memory-drawer-panel", only: ["1024x768"] },
   { name: "timeline-story", path: `/timeline?session=${SESSION_ID}`, ready: ".story-timeline-layout" },
   { name: "timeline-anchors", path: `/timeline?session=${SESSION_ID}&tab=anchors`, ready: ".anchor-tree" },
   { name: "timeline-clues", path: `/timeline?session=${SESSION_ID}&tab=clues`, ready: ".clue-board" },

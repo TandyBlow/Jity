@@ -498,6 +498,31 @@ word_count         int    21
 
 **建议：不做整批合并。** 纯 token 化（只改名、不改值）也能做，但文档自己也说了"只改名不合并收益仅形式"。真觉得某处难看时再做那一处。
 
+## A30 / B3 窄屏抽屉 完成（2026-09-23）
+
+<1100px 时记忆面板不再直接消失，改成模态抽屉。
+
+- 开关按钮放在剧情区工具栏 `.toolbar-row`（与「回溯上一步」并列），窄屏才显示。放固定右上角会和 `.settings-menu` 直接重叠 —— 两者在窄屏下都是 `fixed`
+- 抽屉是 `role="dialog"` + `aria-modal="true"`，Tab 锁在内部、Escape 关闭、关闭后焦点归还给触发按钮。抽出的 `useModalFocus` 是通用的，A11（`MainCheckOverlay` 缺同一套东西）可以复用它
+- `z-index` 用 `--layer-drawer: 40`，落在 `--layer-menu`(20) 和 `--layer-modal`(80) 之间 —— 这正是 6E.4 那批 token 存在的理由
+- 视口重新变宽时抽屉自动关闭。否则 `display: none` 会把焦点陷阱留在不可见元素里
+- 遮罩色抽成 `--color-scrim`（`check-overlay.css` 一并改用它），裸色值预算 **81 → 80**
+
+新增 `e2e/memory-drawer.spec.ts` 四条：触发按钮存在、打开后焦点进入且 Escape 归还、连按 8 次 Tab 焦点不出抽屉、关了再开不丢焦点。
+
+`SHOTS` 支持 `only: ["1024x768"]` 按视口裁剪，并新增 `console-drawer` 一条；`?memory=1` 可在加载时打开抽屉（与 timeline 的 `?tab=` / `?node=` 一致）。
+
+### 本批像素差异（探针实测）
+
+```
+console@1024x768  .scene-output  top 49->50  height 548->546
+console@1024x768  .narration     top 141->142
+console@1024x768  .dialogue-list top 785->786
+console@1024x768  .option-list   top 1087->1088
+```
+
+只有 4 条，全部是工具栏里多了那个按钮导致整行高 1px，下面所有内容下移 1px。**`console@1536x730` 零变化**（按钮不显示）。
+
 ## 已知不在本批
 
 - **真正未加工的 LLM 原文全库没存**（`raw_output_text` 存的是 `output.model_dump_json()`，同样打过 pydantic 默认值）。补它要动 `LLMClient.generate` 的返回。关乎目标① 不是③。

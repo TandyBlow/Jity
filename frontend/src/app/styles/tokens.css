@@ -18,7 +18,10 @@
   --layer-scene: -2;
   --layer-brand: 4;
   --layer-menu: 20;
+  --layer-drawer: 40;
   --layer-modal: 80;
   --layer-modal-card: 84;
   --layer-top: 90;
+
+  --color-scrim: rgba(8, 8, 7, 0.58);
 }
