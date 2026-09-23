@@ -16,31 +16,39 @@ import { describe, expect, it } from "vitest";
  */
 
 const APP_DIR = fileURLToPath(new URL(".", import.meta.url));
-
-function collectCssFiles(dir: string): string[] {
-  const found: string[] = [];
-  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-    const full = path.join(dir, entry.name);
-    if (entry.isDirectory()) found.push(...collectCssFiles(full));
-    else if (entry.name.endsWith(".css")) found.push(full);
-  }
-  return found;
-}
-
-const sources = collectCssFiles(APP_DIR)
-  .sort()
-  .map((file) => ({
-    file: path.relative(APP_DIR, file).replace(/\\/g, "/"),
-    css: fs.readFileSync(file, "utf8").replace(/\/\*[\s\S]*?\*\//g, ""),
-  }));
+const SRC_DIR = fileURLToPath(new URL("..", import.meta.url));
 
 const DEFINITION = /(--[a-zA-Z0-9-]+)\s*:/g;
 const REFERENCE = /var\(\s*(--[a-zA-Z0-9-]+)\s*(,)?/g;
 
+function collectFiles(dir: string, matches: (name: string) => boolean): string[] {
+  const found: string[] = [];
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) found.push(...collectFiles(full, matches));
+    else if (matches(entry.name)) found.push(full);
+  }
+  return found;
+}
+
+const toRelative = (from: string, file: string) => path.relative(from, file).replace(/\\/g, "/");
+
+const sources = collectFiles(APP_DIR, (name) => name.endsWith(".css"))
+  .sort()
+  .map((file) => ({
+    file: toRelative(APP_DIR, file),
+    css: fs.readFileSync(file, "utf8").replace(/\/\*[\s\S]*?\*\//g, ""),
+  }));
+
+const definedTokens = new Set<string>();
+for (const { css } of sources) {
+  for (const match of css.matchAll(DEFINITION)) definedTokens.add(match[1]);
+}
+
 /**
  * Custom properties that are intentionally referenced without being defined:
- * either they are supplied from JavaScript at runtime, or the reference carries
- * its own fallback. Keep this empty unless there is a real reason.
+ * they are written from JavaScript at runtime. Keep this list short and
+ * justified — every entry is a hole in the check below.
  */
 const DEFINED_AT_RUNTIME = new Set<string>([
   // Written by app/page.tsx from the pointer-parallax handler.
@@ -57,21 +65,36 @@ const DEFINED_AT_RUNTIME = new Set<string>([
  * Lower this every time the refactor removes some, never raise it. Reaching 0
  * is the goal; until then it still fails if a *new* literal is introduced.
  */
-const RAW_COLOUR_BUDGET = 111;
+const RAW_COLOUR_BUDGET = 81;
 
 describe("stylesheet invariants", () => {
-  it("every var() reference resolves to a defined custom property", () => {
-    const defined = new Set<string>();
-    for (const { css } of sources) {
-      for (const match of css.matchAll(DEFINITION)) defined.add(match[1]);
-    }
-
+  it("every var() reference in CSS resolves to a defined custom property", () => {
     const dangling: string[] = [];
     for (const { file, css } of sources) {
       for (const match of css.matchAll(REFERENCE)) {
-        const name = match[1];
-        if (defined.has(name) || DEFINED_AT_RUNTIME.has(name)) continue;
-        dangling.push(`${name}  referenced in ${file}${match[2] ? " (has fallback)" : ""}`);
+        if (definedTokens.has(match[1]) || DEFINED_AT_RUNTIME.has(match[1])) continue;
+        dangling.push(`${match[1]}  referenced in ${file}${match[2] ? " (has fallback)" : ""}`);
+      }
+    }
+
+    expect([...new Set(dangling)].sort()).toEqual([]);
+  });
+
+  it("every var() reference in TSX resolves to a defined custom property", () => {
+    // Renaming a token in CSS silently breaks components that reference it from
+    // an inline style or an SVG presentation attribute.
+    const componentFiles = collectFiles(
+      SRC_DIR,
+      (name) => /\.tsx?$/.test(name) && !/\.test\.tsx?$/.test(name),
+    );
+
+    const dangling: string[] = [];
+    for (const file of componentFiles) {
+      const text = fs.readFileSync(file, "utf8");
+      for (const match of text.matchAll(REFERENCE)) {
+        if (definedTokens.has(match[1]) || DEFINED_AT_RUNTIME.has(match[1])) continue;
+        const line = text.slice(0, match.index).split("\n").length;
+        dangling.push(`${match[1]}  referenced in ${toRelative(SRC_DIR, file)}:${line}`);
       }
     }
 

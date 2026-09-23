@@ -17,11 +17,11 @@ export function ReviewPanel({ editor }: { editor: CuratorEditor }) {
         <div style={{ marginTop: 12 }}><strong>锚点：</strong></div>
         <ul style={{ paddingLeft: 18, margin: "4px 0" }}>
           {reviewStats.allAnchors.slice(0, 15).map((a) => (
-            <li key={a.id} style={{ fontSize: 12, color: "var(--muted)" }}>{a.name} (P{a.priority})</li>
+            <li key={a.id} style={{ fontSize: 12, color: "var(--color-muted)" }}>{a.name} (P{a.priority})</li>
           ))}
         </ul>
         {reviewStats.allAnchors.length > 15 && (
-          <div style={{ fontSize: 12, color: "var(--muted)" }}>…还有更多</div>
+          <div style={{ fontSize: 12, color: "var(--color-muted)" }}>…还有更多</div>
         )}
       </div>
     </div>

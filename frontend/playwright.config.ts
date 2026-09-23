@@ -5,6 +5,9 @@ const BASE_URL = `http://127.0.0.1:${PORT}`;
 
 export default defineConfig({
   testDir: "./e2e",
+  // Screenshot assertions resolve to the flat baseline directory, so the
+  // recorded baseline and the live comparison share exactly one path scheme.
+  snapshotPathTemplate: "{testDir}/../../docs/frontend-baseline/{arg}{ext}",
   // Screenshot capture must be reproducible and must not saturate the machine:
   // one worker, one browser, no parallel contexts.
   fullyParallel: false,

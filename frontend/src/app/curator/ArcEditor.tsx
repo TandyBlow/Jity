@@ -85,7 +85,7 @@ function AnchorBlock({
   const { updateAnchor } = editor;
 
   return (
-    <div style={{ marginBottom: 8, marginLeft: 16, padding: "8px 12px", border: "1px solid var(--border)", borderRadius: 8 }}>
+    <div style={{ marginBottom: 8, marginLeft: 16, padding: "8px 12px", border: "1px solid var(--color-border)", borderRadius: 8 }}>
       <div style={{ display: "flex", gap: 8, marginBottom: 4 }}>
         <input className="textarea" style={{ height: 32, flex: 1 }} value={anchor.name} onChange={(e) => updateAnchor(ai, si, ani, "name", e.target.value)} placeholder="锚点名称" />
         <input className="textarea" style={{ height: 32, width: 70 }} value={anchor.priority} onChange={(e) => updateAnchor(ai, si, ani, "priority", parseInt(e.target.value) || 3)} type="number" min={1} max={5} />
