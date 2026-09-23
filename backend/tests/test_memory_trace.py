@@ -163,6 +163,10 @@ def test_node_detail_carries_the_same_folded_memory(tmp_path, monkeypatch):
 
     assert detail["memory"]["npcs"] == {"declared": ["诺诺"], "held": ["诺诺"]}
     assert detail["memory"]["items"] == {"declared": [], "held": []}
+    # The raw declaration travels alongside, in merge order, for the panel to
+    # show what the model actually wrote.
+    assert [entry["name"] for entry in detail["declared"]["npcs"]["upserted"]] == ["诺诺"]
+    assert detail["caps"]["world_facts"] == MAX_WORLD_FACTS
 
 
 def test_route_404s_for_unknown_session(tmp_path, monkeypatch):

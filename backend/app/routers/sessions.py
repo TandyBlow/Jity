@@ -279,6 +279,10 @@ def get_timeline_node(session_id: str, node_id: int) -> dict[str, object]:
     output = json.loads(row["output_json"]) if row["output_json"] else None
     return {
         "context": _turn_context(row.get("model_output_id")),
+        "caps": CAPS,
+        # The declaration as the model wrote it, in merge order, so the client
+        # never has to know that legacy fields fold in ahead of memory_updates.
+        "declared": state_manager.declared_updates((output or {}).get("memory_updates") or {}, output or {}),
         # Folded server-side so the client never re-derives the merge order.
         "memory": state_manager.memory_trace_entry(output, state),
         "id": row["id"],

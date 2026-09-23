@@ -215,6 +215,35 @@ export const timelineNodeDetail: TimelineNodeDetail = {
   state: gameState,
   campaign_progress: { arc_index: 0, session_index: 0, revealed_anchors: ["anchor_arrival", "anchor_nono"] },
   context: turnContext,
+  caps: { items: 20, npcs: 15, quests: 10, world_facts: 15 },
+  declared: {
+    items: {
+      upserted: [
+        { name: "银色徽章", description: "某个女生袖口下闪过" },
+        { name: "临时通行卡", status: "owned", description: "卡面火漆纹路像刚被点燃过", location: "口袋" },
+      ],
+      removed: [],
+    },
+    npcs: {
+      upserted: [
+        { name: "古德里安教授", disposition: "未露面，仅被提及" },
+        { name: "诺诺", status: "present", relationship: "引路人", current_location: "报到处大厅门口" },
+      ],
+      removed: [],
+    },
+    quests: {
+      upserted: [{ name: "完成入学报到", status: "active", objective: "找到报到台并确认自己的身份档案" }],
+      removed: [],
+    },
+    world_facts: {
+      upserted: [
+        { name: "卡塞尔学院不是普通大学", status: "known", description: "学生步伐安静、眼神锐利" },
+        { name: "新生名单在投影屏滚动", status: "suspected", description: "你的名字混在英文与编号之间" },
+        { name: "小提琴盒里的金属锁扣", status: "suspected", description: "那个男生拎的琴盒盒角露出金属件" },
+      ],
+      removed: [],
+    },
+  },
   memory: {
     items: { declared: ["临时通行卡", "银色徽章"], held: ["临时通行卡", "旧行李箱", "银色徽章"] },
     npcs: { declared: ["诺诺", "古德里安教授"], held: ["诺诺", "古德里安教授"] },

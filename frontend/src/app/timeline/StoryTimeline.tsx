@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 
+import { MemoryDelta } from "@/app/timeline/MemoryDelta";
+import { TurnContextPanel } from "@/app/timeline/TurnContextPanel";
 import { TurnList } from "@/app/timeline/TurnList";
 import { TurnNavigator, type StoryView } from "@/app/timeline/TurnNavigator";
 import type { TimelineData } from "@/app/timeline/useTimelineData";
@@ -113,6 +115,8 @@ export function StoryTimeline({ data, hasSession }: { data: TimelineData; hasSes
                 <StateList title="关键事实" entries={state.world_facts.map((fact) => `${fact.name}${fact.status ? ` · ${fact.status}` : ""}`)} />
               </>
             ) : null}
+            <MemoryDelta detail={detail} />
+            <TurnContextPanel context={detail.context} />
             <button
               className="timeline-activate-button"
               disabled={data.activating || detail.id === data.activeNodeId}

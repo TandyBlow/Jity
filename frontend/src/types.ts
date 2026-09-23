@@ -196,6 +196,13 @@ export type TimelineNodeDetail = {
   state: GameState;
   campaign_progress: Record<string, unknown>;
   context: TurnContext;
+  /** Category limits, so a full category can be told apart from a quiet one. */
+  caps: Record<MemoryCategory, number>;
+  /**
+   * The turn's declaration in merge order, exactly as the server folds it.
+   * Server-derived for the same reason `memory` is.
+   */
+  declared: Record<MemoryCategory, { upserted: StoryDeltaEntry[]; removed: StoryDeltaEntry[] }>;
   /** Folded server-side; the client must not re-derive the merge order. */
   memory: MemoryTraceEntry;
   model: string;
