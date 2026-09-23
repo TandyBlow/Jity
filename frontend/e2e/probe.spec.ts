@@ -86,6 +86,8 @@ for (const page of PAGES) {
         ".timeline-layout",
         ".timeline-tab-panel",
         ".story-timeline-layout",
+        ".turn-navigator",
+        ".story-tree-scroll",
         ".anchor-tree",
         ".clue-board",
         ".dev-log-list",

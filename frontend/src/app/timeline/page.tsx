@@ -7,8 +7,19 @@ import { useState } from "react";
 
 import { AnchorTree } from "@/app/timeline/AnchorTree";
 import { ClueBoard } from "@/app/timeline/ClueBoard";
+import { MemoryTraceBoard } from "@/app/timeline/MemoryTraceBoard";
 import { StoryTimeline } from "@/app/timeline/StoryTimeline";
+import { useMemoryTrace } from "@/app/timeline/useMemoryTrace";
 import { useTimelineData } from "@/app/timeline/useTimelineData";
+
+const TABS = [
+  { key: "story", label: "剧情分支" },
+  { key: "anchors", label: "战役锚点" },
+  { key: "clues", label: "世界线索" },
+  { key: "trace", label: "记忆轨迹" },
+] as const;
+
+type TimelineTab = (typeof TABS)[number]["key"];
 
 function TimelineContent() {
   const searchParams = useSearchParams();
@@ -18,10 +29,34 @@ function TimelineContent() {
   const isAutoPlayView = searchParams.get("autoplay") === "1";
   const data = useTimelineData(sessionId, requestedNode, preferActiveParent, isAutoPlayView);
   const requestedTab = searchParams.get("tab");
-  const [tab, setTab] = useState<"story" | "anchors" | "clues">(
-    requestedTab === "anchors" || requestedTab === "clues" ? requestedTab : (sessionId ? "story" : "anchors"),
+  const [tab, setTab] = useState<TimelineTab>(
+    TABS.some((entry) => entry.key === requestedTab)
+      ? (requestedTab as TimelineTab)
+      : (sessionId ? "story" : "anchors"),
   );
+  const trace = useMemoryTrace(sessionId, tab === "trace" && Boolean(sessionId));
   const { campaigns, selectedFile, loading, handleSelectCampaign } = data;
+
+  // Arrow keys are what a tablist is expected to answer to; without them the
+  // roles below are decoration.
+  const onTabKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    const index = TABS.findIndex((entry) => entry.key === tab);
+    let next = index;
+    if (event.key === "ArrowRight") next = (index + 1) % TABS.length;
+    else if (event.key === "ArrowLeft") next = (index - 1 + TABS.length) % TABS.length;
+    else if (event.key === "Home") next = 0;
+    else if (event.key === "End") next = TABS.length - 1;
+    else return;
+    event.preventDefault();
+    const key = TABS[next].key;
+    setTab(key);
+    document.getElementById(`timeline-tab-${key}`)?.focus();
+  };
+
+  const openNode = (nodeId: number) => {
+    setTab("story");
+    data.selectNode(nodeId);
+  };
 
   return (
     <div className="timeline-shell">
@@ -78,15 +113,40 @@ function TimelineContent() {
         <p className="empty-state">加载中…</p>
       ) : (
         <>
-          <div className="timeline-tabs" role="tablist" aria-label="时间线视图">
-            <button className={tab === "story" ? "active" : ""} onClick={() => setTab("story")} role="tab" type="button">剧情分支</button>
-            <button className={tab === "anchors" ? "active" : ""} onClick={() => setTab("anchors")} role="tab" type="button">战役锚点</button>
-            <button className={tab === "clues" ? "active" : ""} onClick={() => setTab("clues")} role="tab" type="button">世界线索</button>
+          <div className="timeline-tabs" role="tablist" aria-label="时间线视图" onKeyDown={onTabKeyDown}>
+            {TABS.map(({ key, label }) => (
+              <button
+                aria-controls={`timeline-panel-${key}`}
+                aria-selected={tab === key}
+                className={tab === key ? "active" : ""}
+                id={`timeline-tab-${key}`}
+                key={key}
+                onClick={() => setTab(key)}
+                role="tab"
+                tabIndex={tab === key ? 0 : -1}
+                type="button"
+              >
+                {label}
+              </button>
+            ))}
           </div>
-          <div className={`timeline-tab-panel ${tab}`}>
+          <div
+            aria-labelledby={`timeline-tab-${tab}`}
+            className={`timeline-tab-panel ${tab}`}
+            id={`timeline-panel-${tab}`}
+            role="tabpanel"
+          >
             {tab === "story" ? <StoryTimeline data={data} hasSession={!!sessionId} /> : null}
             {tab === "anchors" ? <AnchorTree data={data} /> : null}
             {tab === "clues" ? <ClueBoard data={data} /> : null}
+            {tab === "trace" ? (
+              <MemoryTraceBoard
+                error={trace.error}
+                loading={trace.loading}
+                onOpenNode={openNode}
+                trace={trace.trace}
+              />
+            ) : null}
           </div>
         </>
       )}

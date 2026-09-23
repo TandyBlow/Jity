@@ -26,6 +26,27 @@ export const CAMPAIGN_FILENAME = "e2e_baseline_campaign.json";
 export const ACTIVE_TURN_ID = 7;
 export const MODEL = "deepseek-v4-flash";
 
+// 1536x730 is the author's real browser viewport: a 1536x864 screen at 125%
+// scaling, less browser chrome. 1024x768 is the narrow-desktop target.
+export const VIEWPORTS = [
+  { name: "1536x730", width: 1536, height: 730 },
+  { name: "1024x768", width: 1024, height: 768 },
+];
+
+/**
+ * Shared by capture and verify so adding a route to one cannot silently skip
+ * it in the other.
+ */
+export const SHOTS = [
+  { name: "console", path: "/", ready: ".narration" },
+  { name: "timeline-story", path: `/timeline?session=${SESSION_ID}`, ready: ".story-timeline-layout" },
+  { name: "timeline-anchors", path: `/timeline?session=${SESSION_ID}&tab=anchors`, ready: ".anchor-tree" },
+  { name: "timeline-clues", path: `/timeline?session=${SESSION_ID}&tab=clues`, ready: ".clue-board" },
+  { name: "timeline-trace", path: `/timeline?session=${SESSION_ID}&tab=trace`, ready: ".trace-board" },
+  { name: "curator", path: "/curator", ready: ".timeline-layout" },
+  { name: "dev-log", path: "/dev-log", ready: ".dev-log-list" },
+];
+
 const NARRATION = `雨是在你下车后三分钟开始变大的。
 
 你拖着那只从婶婶家带来的旧行李箱，站在卡塞尔学院报到处大厅门口。箱轮卡在门槛细缝里，发出一声很丢人的"咔哒"。你低头用力拽了两下，没拽动。

@@ -133,6 +133,8 @@
       ".timeline-layout": null,
       ".timeline-tab-panel": null,
       ".story-timeline-layout": null,
+      ".turn-navigator": null,
+      ".story-tree-scroll": null,
       ".anchor-tree": null,
       ".clue-board": null,
       ".dev-log-list": null
@@ -272,6 +274,8 @@
       ".timeline-layout": null,
       ".timeline-tab-panel": null,
       ".story-timeline-layout": null,
+      ".turn-navigator": null,
+      ".story-tree-scroll": null,
       ".anchor-tree": null,
       ".clue-board": null,
       ".dev-log-list": null
@@ -296,7 +300,7 @@
       ".player-controls": null,
       ".memory-panel": null,
       ".timeline-shell": {
-        "top": 0,
+        "top": -26,
         "left": 0,
         "width": 1536,
         "height": 927,
@@ -308,7 +312,7 @@
         "background": "rgba(0, 0, 0, 0)"
       },
       ".timeline-header": {
-        "top": 32,
+        "top": 6,
         "left": 228,
         "width": 1080,
         "height": 72,
@@ -320,7 +324,7 @@
         "background": "rgba(0, 0, 0, 0)"
       },
       ".timeline-tabs": {
-        "top": 132,
+        "top": 106,
         "left": 228,
         "width": 1080,
         "height": 53,
@@ -333,7 +337,7 @@
       },
       ".timeline-layout": null,
       ".timeline-tab-panel": {
-        "top": 205,
+        "top": 179,
         "left": 228,
         "width": 1080,
         "height": 690,
@@ -345,7 +349,7 @@
         "background": "rgba(0, 0, 0, 0)"
       },
       ".story-timeline-layout": {
-        "top": 205,
+        "top": 179,
         "left": 228,
         "width": 1080,
         "height": 690,
@@ -355,6 +359,30 @@
         "fontSize": "16px",
         "color": "rgb(240, 238, 232)",
         "background": "rgba(0, 0, 0, 0)"
+      },
+      ".turn-navigator": {
+        "top": 179,
+        "left": 228,
+        "width": 698,
+        "height": 46,
+        "contentHeight": 44,
+        "display": "flex",
+        "overflowY": "visible",
+        "fontSize": "12px",
+        "color": "rgb(240, 238, 232)",
+        "background": "rgb(24, 24, 24)"
+      },
+      ".story-tree-scroll": {
+        "top": 235,
+        "left": 228,
+        "width": 698,
+        "height": 510,
+        "contentHeight": 518,
+        "display": "block",
+        "overflowY": "auto",
+        "fontSize": "16px",
+        "color": "rgb(240, 238, 232)",
+        "background": "rgba(0, 0, 0, 0.16)"
       },
       ".anchor-tree": null,
       ".clue-board": null,
@@ -440,6 +468,30 @@
         "color": "rgb(240, 238, 232)",
         "background": "rgba(0, 0, 0, 0)"
       },
+      ".turn-navigator": {
+        "top": 205,
+        "left": 32,
+        "width": 578,
+        "height": 46,
+        "contentHeight": 44,
+        "display": "flex",
+        "overflowY": "visible",
+        "fontSize": "12px",
+        "color": "rgb(240, 238, 232)",
+        "background": "rgb(24, 24, 24)"
+      },
+      ".story-tree-scroll": {
+        "top": 261,
+        "left": 32,
+        "width": 578,
+        "height": 520,
+        "contentHeight": 518,
+        "display": "block",
+        "overflowY": "auto",
+        "fontSize": "16px",
+        "color": "rgb(240, 238, 232)",
+        "background": "rgba(0, 0, 0, 0.16)"
+      },
       ".anchor-tree": null,
       ".clue-board": null,
       ".dev-log-list": null
@@ -513,6 +565,8 @@
         "background": "rgba(0, 0, 0, 0)"
       },
       ".story-timeline-layout": null,
+      ".turn-navigator": null,
+      ".story-tree-scroll": null,
       ".anchor-tree": {
         "top": 205,
         "left": 228,
@@ -597,6 +651,8 @@
         "background": "rgba(0, 0, 0, 0)"
       },
       ".story-timeline-layout": null,
+      ".turn-navigator": null,
+      ".story-tree-scroll": null,
       ".anchor-tree": {
         "top": 205,
         "left": 32,
@@ -681,6 +737,8 @@
         "background": "rgba(0, 0, 0, 0)"
       },
       ".story-timeline-layout": null,
+      ".turn-navigator": null,
+      ".story-tree-scroll": null,
       ".anchor-tree": null,
       ".clue-board": {
         "top": 205,
@@ -765,6 +823,8 @@
         "background": "rgba(0, 0, 0, 0)"
       },
       ".story-timeline-layout": null,
+      ".turn-navigator": null,
+      ".story-tree-scroll": null,
       ".anchor-tree": null,
       ".clue-board": {
         "top": 205,
@@ -838,6 +898,8 @@
       },
       ".timeline-tab-panel": null,
       ".story-timeline-layout": null,
+      ".turn-navigator": null,
+      ".story-tree-scroll": null,
       ".anchor-tree": null,
       ".clue-board": {
         "top": 132,
@@ -911,6 +973,8 @@
       },
       ".timeline-tab-panel": null,
       ".story-timeline-layout": null,
+      ".turn-navigator": null,
+      ".story-tree-scroll": null,
       ".anchor-tree": null,
       ".clue-board": {
         "top": 132,
@@ -951,6 +1015,8 @@
       ".timeline-layout": null,
       ".timeline-tab-panel": null,
       ".story-timeline-layout": null,
+      ".turn-navigator": null,
+      ".story-tree-scroll": null,
       ".anchor-tree": null,
       ".clue-board": null,
       ".dev-log-list": {
@@ -991,6 +1057,8 @@
       ".timeline-layout": null,
       ".timeline-tab-panel": null,
       ".story-timeline-layout": null,
+      ".turn-navigator": null,
+      ".story-tree-scroll": null,
       ".anchor-tree": null,
       ".clue-board": null,
       ".dev-log-list": {

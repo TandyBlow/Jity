@@ -2,7 +2,7 @@ import path from "node:path";
 
 import { test } from "@playwright/test";
 
-import { SESSION_ID, installApiMocks, seedSession } from "./fixtures";
+import { SHOTS, VIEWPORTS, installApiMocks, seedSession } from "./fixtures";
 
 /**
  * Visual baseline capture.
@@ -20,20 +20,6 @@ import { SESSION_ID, installApiMocks, seedSession } from "./fixtures";
 // scaling on a 1920x1080 panel), working area 1536x816, minus browser chrome.
 // 1024x768 is the narrow-desktop target — it is where the memory panel
 // currently dies, and narrow support is confirmed in scope.
-const VIEWPORTS = [
-  { name: "1536x730", width: 1536, height: 730 },
-  { name: "1024x768", width: 1024, height: 768 },
-];
-
-const SHOTS = [
-  { name: "console", path: "/", ready: ".narration" },
-  { name: "timeline-story", path: `/timeline?session=${SESSION_ID}`, ready: ".story-timeline-layout" },
-  { name: "timeline-anchors", path: `/timeline?session=${SESSION_ID}&tab=anchors`, ready: ".anchor-tree" },
-  { name: "timeline-clues", path: `/timeline?session=${SESSION_ID}&tab=clues`, ready: ".clue-board" },
-  { name: "curator", path: "/curator", ready: ".timeline-layout" },
-  { name: "dev-log", path: "/dev-log", ready: ".dev-log-list" },
-];
-
 const OUT_DIR = process.env.BASELINE_DIR
   ? path.resolve(process.env.BASELINE_DIR)
   : path.resolve(__dirname, "../../docs/frontend-baseline");

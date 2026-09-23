@@ -357,6 +357,31 @@ TOTAL             252       31   (12.3%)
 
 world_facts 的 28 条缺失与离线脚本的结论一致。总声明数比离线脚本的 248 多 4 条（items 上），未追 —— 不影响判断，但知道有这 4 条的出入。
 
+## 前端批次的实际差异（探针实测）
+
+我预先写了一份白名单（`.turn-navigator` 让左列下移约 52px、tabs 多一个按钮等），**实测与预期不符**。下面按实测记录。
+
+探针 `docs/frontend-baseline/layout-probe.json` 是唯一可比的客观证据（改动前那份备份在 `test-results/probe-before.json`）。实测只有 5 条变化，全部在 `timeline-story`：
+
+```
+.timeline-shell          top  0   -> -26
+.timeline-header         top  32  -> 6
+.timeline-tabs           top  132 -> 106
+.timeline-tab-panel      top  205 -> 179
+.story-timeline-layout   top  205 -> 179
+```
+
+**全部是同一个 26px，方向相同 —— 是页面被滚了 26px，不是任何元素变了尺寸。** 原因是新增的 `scrollIntoView`：挂载时自动选中活跃节点，随后把它滚进视野。`.story-timeline-layout` 的 height 两次都是 690（被详情面板的 `max-height:100vh-40px` 钉住），height/width/contentHeight 全部不变。
+
+其它 5 个页面（含 `timeline-anchors`/`timeline-clues`）**探针零变化**。第 4 个 tab 按钮不改变 `.timeline-tabs` 的盒子（flex 容器宽度由父级决定），所以探针看不到它 —— 但 PNG 会变。
+
+### 两个流程失误，记下来
+
+1. **改动前的基线 PNG 被我这次重录直接覆盖了**（图不入库，没有副本）。所以像素级的 before/after 比对**不可复现**，只剩探针 JSON。下次改 UI 前先把 `docs/frontend-baseline/*.png` 复制到 `test-results/` 再动手。
+2. **探针原先不测树盒子和导航条**，所以 `.story-tree-scroll` 新增的 `max-height` 到底有没有影响，这次没法直接量。已把 `.turn-navigator` / `.story-tree-scroll` 加进 `probe.spec.ts` 的选择器列表。
+
+`SHOTS` 原先在 `capture.spec.ts` 和 `verify.spec.ts` 各写一份，已合并到 `fixtures.ts` —— 之前加一个截图忘了加对应的 verify 会静默漏掉。
+
 ## 已知不在本批
 
 - **真正未加工的 LLM 原文全库没存**（`raw_output_text` 存的是 `output.model_dump_json()`，同样打过 pydantic 默认值）。补它要动 `LLMClient.generate` 的返回。关乎目标① 不是③。
