@@ -20,6 +20,19 @@ from app.schemas import (
     SessionHistoryResponse,
     SessionResponse,
 )
+from app.services.game_state.defaults import (
+    MAX_ITEMS,
+    MAX_NPCS,
+    MAX_QUESTS,
+    MAX_WORLD_FACTS,
+)
+
+CAPS = {
+    "items": MAX_ITEMS,
+    "npcs": MAX_NPCS,
+    "quests": MAX_QUESTS,
+    "world_facts": MAX_WORLD_FACTS,
+}
 
 logger = logging.getLogger(__name__)
 
@@ -130,27 +143,46 @@ def get_session_progress(session_id: str) -> dict[str, object]:
     return progress_data
 
 
+def _walk_active_path(rows: list[dict], active_id: object) -> set[int]:
+    by_id = {int(row["id"]): row for row in rows}
+    path: set[int] = set()
+    cursor = int(active_id) if active_id else None
+    while cursor is not None and cursor in by_id:
+        path.add(cursor)
+        parent = by_id[cursor].get("parent_turn_id")
+        cursor = int(parent) if parent is not None else None
+    return path
+
+
+def _load_turns(session_id: str) -> tuple[dict, list[dict], object, set[int]] | None:
+    """Every turn of a session decoded once, shared by the two read routes."""
+    session = state_manager.get_session_payload(session_id)
+    if not session:
+        return None
+    active_id = session.get("active_turn_id")
+    rows = db.list_story_turns(session_id)
+    turns = [
+        {
+            "row": row,
+            "output": json.loads(row["output_json"]) if row.get("output_json") else None,
+            "state": json.loads(row["state_json"]),
+        }
+        for row in rows
+    ]
+    return session, turns, active_id, _walk_active_path(rows, active_id)
+
+
 @router.get("/{session_id}/timeline")
 def get_session_timeline(session_id: str) -> dict[str, object]:
     """Return the complete branching tree with lightweight node summaries."""
-    session = state_manager.get_session_payload(session_id)
-    if not session:
+    loaded = _load_turns(session_id)
+    if not loaded:
         raise HTTPException(status_code=404, detail="Session not found")
-
-    active_id = session.get("active_turn_id")
-    rows = db.list_story_turns(session_id)
-    by_id = {int(row["id"]): row for row in rows}
-    active_path: set[int] = set()
-    cursor = int(active_id) if active_id else None
-    while cursor is not None and cursor in by_id:
-        active_path.add(cursor)
-        parent = by_id[cursor].get("parent_turn_id")
-        cursor = int(parent) if parent is not None else None
+    session, turns, active_id, active_path = loaded
 
     nodes: list[dict[str, object]] = []
-    for row in rows:
-        output = json.loads(row["output_json"]) if row.get("output_json") else None
-        state = json.loads(row["state_json"])
+    for turn in turns:
+        row, output, state = turn["row"], turn["output"], turn["state"]
         action = row.get("player_action") or "会话起点"
         nodes.append({
             "id": row["id"],
@@ -171,6 +203,35 @@ def get_session_timeline(session_id: str) -> dict[str, object]:
         "active_node_id": active_id,
         "nodes": nodes,
         "campaign_filename": session.get("campaign_filename"),
+    }
+
+
+@router.get("/{session_id}/memory-trace")
+def get_memory_trace(session_id: str) -> dict[str, object]:
+    """What each turn declared it remembered against what state actually kept.
+
+    Name lists only. The prompts themselves live on the node detail route,
+    which is fetched one turn at a time.
+    """
+    loaded = _load_turns(session_id)
+    if not loaded:
+        raise HTTPException(status_code=404, detail="Session not found")
+    _session, turns, _active_id, active_path = loaded
+
+    return {
+        "session_id": session_id,
+        "caps": CAPS,
+        "nodes": [
+            {
+                "node_id": turn["row"]["id"],
+                "parent_id": turn["row"]["parent_turn_id"],
+                "depth": turn["row"]["depth"],
+                "turn": turn["state"].get("turn", turn["row"]["depth"]),
+                "is_on_active_path": turn["row"]["id"] in active_path,
+                **state_manager.memory_trace_entry(turn["output"], turn["state"]),
+            }
+            for turn in turns
+        ],
     }
 
 
