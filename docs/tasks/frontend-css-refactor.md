@@ -140,8 +140,15 @@
   - 裸色值 111 行 → 81 行
   - `--line` 三处按"保持不渲染"处理（未定义 `var()` 会让整条 border 简写失效）
 - **间距 / 字号 / 圆角 / 层级的 token 化：移到第 6 或第 10 项**，与像素改动一起做。理由：只改名不合并收益仅形式，要合并就改像素，而这一批的验收是零差异。
-- **第 4 项** `lib/api.ts` 测试 —— 进行中
-- **第 5 项** 三个已知 bug，改成"把原本不渲染的东西用正确值激活"：`--line` 三处边框、被删的 `.autoplay-banner span/small` 颜色、`start-here-btn` 补真实样式。**会改变像素**，需要重拍基线。
+- **第 4 项 完成** `0ac0a7b`：`lib/api.test.ts` 16 条，纯 Node + 假 fetch，不用 jsdom。
+- **第 5 项 完成**：把原本不渲染的东西用正确值激活。**这一批改变了像素，基线已重录。**
+  - `--line` 三处边框恢复为 `var(--color-border)`（`.timeline-tabs`、`.story-tree-scroll`、`.story-node-detail`）
+  - `.autoplay-banner span/small` 恢复为 `var(--color-muted)`
+  - `.start-here-btn` 补真实样式（此前无任何规则，被 Tailwind preflight 抹成裸文字），同时删掉 TSX 里的行内样式
+  - 量化：`.timeline-tabs` 高 52→53（那条边框），下方整体下移 1px；`.anchor-tree` 高 937→945。console/curator/dev-log **零变化**
+  - 基线文件 `layout-probe-before.json` 已被 `layout-probe.json` 取代
+
+**地基三件套（第 1–5 项）到此全部完成。** 下一步是第 6 项（主界面信息架构），间距/字号/圆角的 token 化并入其中。
 
 ## 自动播放是什么（回答 B8）
 

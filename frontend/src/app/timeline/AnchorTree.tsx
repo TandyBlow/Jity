@@ -61,7 +61,6 @@ function SessionGroup({
         {session.name}
         <button
           className="start-here-btn"
-          style={{ marginLeft: 12, fontSize: "0.8rem", padding: "2px 8px", cursor: "pointer" }}
           onClick={() => {
             if (typeof window !== "undefined") {
               sessionStorage.setItem("campaign_entry", JSON.stringify({

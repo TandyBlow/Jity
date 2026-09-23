@@ -241,6 +241,9 @@
 }
 
 .autoplay-banner > div { display: grid; gap: 4px; }
+/* Reinstated: the original rule referenced an undefined token, so it never
+   applied and these labels inherited the banner's own colour. */
+.autoplay-banner span, .autoplay-banner small { color: var(--color-muted); }
 .autoplay-banner.paused { border-color: #b89146; }
 .autoplay-banner.error { border-color: #b84b4b; }
 .autoplay-banner.complete { border-color: #4e9b70; }

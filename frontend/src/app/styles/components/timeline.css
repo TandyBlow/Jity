@@ -37,7 +37,7 @@
   display: flex;
   gap: 8px;
   padding-bottom: 10px;
-  /* var(--line) 从未定义，此声明原本即失效；保持不渲染 */
+  border-bottom: 1px solid var(--color-border);
 }
 
 .timeline-tabs button {
@@ -76,7 +76,7 @@
   min-height: 480px;
   overflow: auto;
   padding: 24px;
-  /* var(--line) 从未定义，此声明原本即失效；保持不渲染 */
+  border: 1px solid var(--color-border);
   border-radius: 14px;
   background: rgba(0, 0, 0, 0.16);
 }
@@ -192,7 +192,7 @@
   max-height: calc(100vh - 40px);
   overflow: auto;
   padding: 20px;
-  /* var(--line) 从未定义，此声明原本即失效；保持不渲染 */
+  border: 1px solid var(--color-border);
   border-radius: 14px;
   background: rgba(19, 20, 17, 0.96);
 }
@@ -346,6 +346,24 @@
   font-size: 13px;
   margin-bottom: 6px;
   padding: 4px 0;
+}
+
+/* Had no rule of its own, so preflight left it as bare text with no button
+   affordance. Styled as a chip to match .anchor-tag. */
+.start-here-btn {
+  margin-left: 12px;
+  padding: 2px 8px;
+  border: 1px solid color-mix(in srgb, var(--color-accent) 30%, transparent);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-muted);
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.start-here-btn:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
 }
 
 .anchor-list {
