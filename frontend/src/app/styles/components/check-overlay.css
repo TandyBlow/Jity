@@ -1,0 +1,142 @@
+/* ── Main game action judgment overlay ── */
+
+.main-check-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  isolation: isolate;
+  overflow: hidden;
+  background: rgba(8, 8, 7, 0.58);
+  backdrop-filter: blur(2px);
+}
+
+.main-check-card {
+  position: fixed;
+  top: 24px;
+  left: 50%;
+  z-index: 84;
+  width: min(560px, calc(100vw - 32px));
+  padding: 18px 20px;
+  transform: translateX(-50%);
+  border: 1px solid color-mix(in srgb, var(--color-accent) 42%, transparent);
+  border-radius: 12px;
+  background: rgba(20, 20, 18, 0.92);
+  box-shadow: 0 16px 50px rgba(0, 0, 0, 0.36);
+}
+
+.main-check-card-head,
+.main-check-meta,
+.main-check-actions,
+.main-check-result-title {
+  display: flex;
+  align-items: center;
+}
+
+.main-check-card-head {
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.main-check-overline {
+  color: var(--color-accent);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.main-check-card h2 {
+  margin: 5px 0 0;
+  font-size: 20px;
+}
+
+.main-check-secondary {
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--color-muted);
+  cursor: pointer;
+}
+
+.main-check-secondary:hover {
+  border-color: var(--color-accent);
+  color: var(--color-fg);
+}
+
+.main-check-action {
+  max-height: 48px;
+  margin: 14px 0 12px;
+  overflow: hidden;
+  color: var(--color-fg);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.main-check-meta {
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--color-muted);
+  font-size: 12px;
+}
+
+.main-check-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.main-check-stakes {
+  margin: 12px 0 0;
+  color: var(--color-muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.main-check-actions {
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.main-check-secondary {
+  min-height: 40px;
+  padding: 0 15px;
+}
+
+.main-check-primary {
+  width: auto;
+  min-width: 120px;
+  height: 40px;
+  margin-top: 0;
+}
+
+.main-check-error {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 12px 0 0;
+  color: var(--color-danger);
+  font-size: 12px;
+}
+
+.main-check-result {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: flex-start;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.main-check-result-title {
+  gap: 7px;
+  color: var(--color-accent-2);
+}
+
+.main-check-result.critical .main-check-result-title {
+  color: #f2ce83;
+}
+
+.main-check-result.failure .main-check-result-title {
+  color: #e29a9a;
+}
