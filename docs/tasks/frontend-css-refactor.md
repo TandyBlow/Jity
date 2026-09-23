@@ -325,6 +325,38 @@ legacy_only 17    mu_only 132    both 99
 - UI 全部落完后重录 `/timeline` 基线 + 差异白名单
 - `fixtures.ts:271` 的 `startsWith('/sessions/<id>/timeline/')` 兜底会吞掉新路由，mock 必须排在它前面；`storyOutput`（`:68-79`）要补 `memory_updates` 和上下文字段
 
+## 执行记录（2026-09-23）
+
+后端 7 项全部完成，4 个 commit：
+
+| commit | 内容 |
+|---|---|
+| `dc0a0a8` | 本文件的 6B 修订 |
+| `0e29177` | 第 1–4 项：prompt 落盘（`PromptMeta` → `model_outputs` 两列 → 读方法 + 测试） |
+| `82a2ef9` | 第 5 项：`/timeline/{node_id}` 加 `context` |
+| `3975eb9` | 第 6–7 项：`/memory-trace` + fold 语义抽成共用函数 |
+
+后端测试 **429 passed**（基线 420 + 新增 9）。服务端迁移已在真实的 `jity.sqlite3` 上跑通，两列均已存在。
+
+### 执行中发现的三件事
+
+1. **`recorded` 不能按"有没有 model_outputs 行"判。** 每个旧回合都有行，只是两列为空。必须按内容判（`bool(prompt_text or sections)`）。已实测：真实库里 18 个旧节点全部正确落在 `false`。
+2. **第 7 项的 fold 直接抽成了 `GameStateManager.declared_updates`，`apply_output` 也改成调它。** 这样"合并顺序"只有一个来源，轨迹接口和落库不可能各说各话 —— 比在测试里盯两套实现更彻底。
+3. **`output_json` 跨了 schema 版本。** 真实库里老回合的 `option_checks` 是 `1d20 ≤ 12` 且带一个 `normal_target` 键，而当前 `story_options.py:47` 生成的是 `1d20 ≥ N`。渲染历史节点时要注意，别以为是当前契约。（顺带：`sanitize_state` 只 pop 了 `_memory_controller`，`_scene_prompt` 会漏给前端。）
+
+### 轨迹接口的实测数字（176 会话 / 249 节点，走 HTTP）
+
+```
+类别          declared   missing
+items              48        3
+npcs               64        0
+quests             43        0
+world_facts        97       28
+TOTAL             252       31   (12.3%)
+```
+
+world_facts 的 28 条缺失与离线脚本的结论一致。总声明数比离线脚本的 248 多 4 条（items 上），未追 —— 不影响判断，但知道有这 4 条的出入。
+
 ## 已知不在本批
 
 - **真正未加工的 LLM 原文全库没存**（`raw_output_text` 存的是 `output.model_dump_json()`，同样打过 pydantic 默认值）。补它要动 `LLMClient.generate` 的返回。关乎目标① 不是③。
