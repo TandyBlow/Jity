@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 
 const FOCUSABLE = [
   "a[href]",
@@ -16,25 +16,33 @@ const FOCUSABLE = [
  * focus goes back to whatever opened it.
  *
  * A full-screen overlay without these is a keyboard trap that only mouse users
- * can leave — which is the state the check overlay is already in.
+ * can leave — which is the state the check overlay was in.
+ *
+ * `onClose` is held in a ref rather than a dependency: callers pass inline
+ * arrow functions, and re-running the effect per render would restore focus to
+ * the element behind the overlay each time.
  */
-export function useModalFocus(open: boolean, onClose: () => void) {
-  const ref = useRef<HTMLDivElement>(null);
+export function useModalFocus<T extends HTMLElement = HTMLDivElement>(open: boolean, onClose: () => void) {
+  const ref = useRef<T>(null);
   const restoreTo = useRef<HTMLElement | null>(null);
-  const close = useCallback(() => onClose(), [onClose]);
+  const close = useRef(onClose);
+
+  useEffect(() => {
+    close.current = onClose;
+  }, [onClose]);
 
   useEffect(() => {
     if (!open) return;
     restoreTo.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     const panel = ref.current;
-    // Focus the panel, not its first control: opening a drawer must not arm
+    // Focus the panel, not its first control: opening an overlay must not arm
     // whatever button happens to be first.
     panel?.focus();
 
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         event.preventDefault();
-        close();
+        close.current();
         return;
       }
       if (event.key !== "Tab" || !panel) return;
@@ -62,7 +70,7 @@ export function useModalFocus(open: boolean, onClose: () => void) {
       document.removeEventListener("keydown", onKeyDown);
       restoreTo.current?.focus();
     };
-  }, [open, close]);
+  }, [open]);
 
   return ref;
 }

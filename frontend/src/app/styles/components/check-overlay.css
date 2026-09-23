@@ -8,6 +8,8 @@
   overflow: hidden;
   background: var(--color-scrim);
   backdrop-filter: blur(2px);
+  /* Focused programmatically so the trap has somewhere to start. */
+  outline: none;
 }
 
 .main-check-card {

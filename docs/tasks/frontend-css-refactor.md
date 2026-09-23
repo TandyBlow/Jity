@@ -523,6 +523,16 @@ console@1024x768  .option-list   top 1087->1088
 
 只有 4 条，全部是工具栏里多了那个按钮导致整行高 1px，下面所有内容下移 1px。**`console@1536x730` 零变化**（按钮不显示）。
 
+## A11 顺手修掉
+
+`MainCheckOverlay` 是全屏 `fixed` 层，但只有 `aria-label` —— 键盘用户进去出不来，而掷骰动画期间卡片上连一个可见控件都没有（`phase !== "prepared"` 时 返回/掷骰 都不渲染）。
+
+复用 `useModalFocus`：`role="dialog"` + `aria-modal="true"` + Tab 锁内 + Escape 关闭（等同于「返回」）+ 焦点归还。`.main-check-overlay` 加 `outline: none`（它是纯程序化焦点目标，不是键盘可达控件 —— 和 A8 那个文本框的情况不同）。
+
+新增 `e2e/check-overlay.spec.ts` 三条。
+
+**写这个时发现钩子本身有个 bug**：`onClose` 原先在 effect 的依赖里，而调用方传的都是内联箭头函数（`onCancel={() => setCheckingAction(null)}`、`onClose={() => setMemoryOpen(false)}`），每次渲染都是新引用 → effect 每次渲染重跑清理 → **把焦点甩回遮罩背后的元素**。已改成用 ref 持有 `onClose`，依赖只剩 `[open]`。
+
 ## 已知不在本批
 
 - **真正未加工的 LLM 原文全库没存**（`raw_output_text` 存的是 `output.model_dump_json()`，同样打过 pydantic 默认值）。补它要动 `LLMClient.generate` 的返回。关乎目标① 不是③。
