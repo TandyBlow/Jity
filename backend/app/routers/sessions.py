@@ -174,6 +174,40 @@ def get_session_timeline(session_id: str) -> dict[str, object]:
     }
 
 
+def _turn_context(model_output_id: object) -> dict[str, object]:
+    """What was injected into this turn's prompt, plus its cost.
+
+    Always returns the same keys so the client can tell "nothing was recorded"
+    apart from "an empty prompt was recorded".
+    """
+    empty: dict[str, object] = {
+        "recorded": False,
+        "retrieved_chunks": [],
+        "token_count": 0,
+        "latency_ms": 0,
+        "word_count": 0,
+        "prompt_sections": {},
+        "prompt_text": "",
+    }
+    if model_output_id is None:
+        return empty
+    row = db.get_model_output(int(model_output_id))
+    if not row:
+        return empty
+    sections = json.loads(row["prompt_sections_json"] or "{}")
+    prompt_text = row["prompt_text"]
+    return {
+        # Turns stored before the prompt was recorded still have a row here.
+        "recorded": bool(prompt_text or sections),
+        "retrieved_chunks": json.loads(row["retrieved_chunks_json"] or "[]"),
+        "token_count": row["token_count"],
+        "latency_ms": row["latency_ms"],
+        "word_count": row["word_count"],
+        "prompt_sections": sections,
+        "prompt_text": prompt_text,
+    }
+
+
 @router.get("/{session_id}/timeline/{node_id}")
 def get_timeline_node(session_id: str, node_id: int) -> dict[str, object]:
     row = db.get_story_turn(session_id, node_id)
@@ -182,6 +216,7 @@ def get_timeline_node(session_id: str, node_id: int) -> dict[str, object]:
     state = json.loads(row["state_json"])
     state_manager.sanitize_state(state)
     return {
+        "context": _turn_context(row.get("model_output_id")),
         "id": row["id"],
         "session_id": session_id,
         "parent_id": row["parent_turn_id"],
