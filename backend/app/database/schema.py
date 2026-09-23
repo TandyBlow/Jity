@@ -81,6 +81,8 @@ CREATE TABLE IF NOT EXISTS model_outputs (
   raw_output_text TEXT NOT NULL DEFAULT '',
   error_text TEXT NOT NULL DEFAULT '',
   retrieved_chunks_json TEXT NOT NULL DEFAULT '[]',
+  prompt_sections_json TEXT NOT NULL DEFAULT '{}',
+  prompt_text TEXT NOT NULL DEFAULT '',
   created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (session_id) REFERENCES game_sessions(id)
 );
@@ -108,6 +110,10 @@ _COLUMN_MIGRATIONS = [
     ("model_outputs", "raw_output_text", "TEXT NOT NULL DEFAULT ''"),
     ("model_outputs", "error_text", "TEXT NOT NULL DEFAULT ''"),
     ("model_outputs", "retrieved_chunks_json", "TEXT NOT NULL DEFAULT '[]'"),
+    # What the prompt actually contained, per turn. Without these the injected
+    # campaign context is unrecoverable after the fact.
+    ("model_outputs", "prompt_sections_json", "TEXT NOT NULL DEFAULT '{}'"),
+    ("model_outputs", "prompt_text", "TEXT NOT NULL DEFAULT ''"),
     ("knowledge_chunks", "importance", "INTEGER NOT NULL DEFAULT 3"),
     ("game_sessions", "version", "INTEGER NOT NULL DEFAULT 0"),
     ("game_sessions", "active_turn_id", "INTEGER"),

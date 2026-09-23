@@ -5,6 +5,13 @@ from typing import Any
 
 
 class ModelOutputStoreMixin:
+    def get_model_output(self, output_id: int) -> dict[str, Any] | None:
+        with self.connect() as db:
+            row = db.execute(
+                "SELECT * FROM model_outputs WHERE id = ?", (output_id,)
+            ).fetchone()
+        return dict(row) if row else None
+
     def add_model_output(
         self,
         session_id: str,
@@ -24,6 +31,8 @@ class ModelOutputStoreMixin:
         dialogue_lines: int = 0,
         location_changed: int = 0,
         token_count: int = 0,
+        prompt_sections: dict[str, Any] | None = None,
+        prompt_text: str = "",
     ) -> int:
         with self.connect() as db:
             cursor = db.execute(
@@ -45,9 +54,11 @@ class ModelOutputStoreMixin:
                   health_delta,
                   dialogue_lines,
                   location_changed,
-                  token_count
+                  token_count,
+                  prompt_sections_json,
+                  prompt_text
                 )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     session_id,
@@ -67,6 +78,8 @@ class ModelOutputStoreMixin:
                     dialogue_lines,
                     location_changed,
                     token_count,
+                    json.dumps(prompt_sections or {}, ensure_ascii=False),
+                    prompt_text,
                 ),
             )
             return int(cursor.lastrowid)

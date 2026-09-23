@@ -71,6 +71,7 @@ class PromptBuilder(SectionHelpers):
                 ordered_sections[key] = sections[key]
 
         meta = PromptMeta()
+        meta.sections = dict(ordered_sections)
         # Extract difficulty from campaign_context
         if input.campaign_context:
             ctx = input.campaign_context

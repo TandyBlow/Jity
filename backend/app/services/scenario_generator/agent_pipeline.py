@@ -129,6 +129,7 @@ class AgentPipelineMixin:
         retrieved_for_storage, _csi, state, turn, campaign_manager=None,
     ) -> tuple[StoryOutput, int, str]:
         """Stage 3: Narrator — the actual story generation (single LLM call)."""
+        meta.final_prompt = augmented_prompt
         try:
             output, latency_ms = await self.llm_client.generate(
                 augmented_prompt, model, temperature=meta.temperature
@@ -139,12 +140,14 @@ class AgentPipelineMixin:
             output_id = self._store_error(
                 session_id, request.player_action, model, exc.latency_ms,
                 "request_error", exc.response_text, str(exc), retrieved_for_storage, _csi,
+                prompt_sections=meta.sections, prompt_text=meta.final_prompt,
             )
             raise ScenarioGenerationError(f"{exc} model_output_id={output_id}", output_id) from exc
         except LLMOutputParseError as exc:
             output_id = self._store_error(
                 session_id, request.player_action, model, exc.latency_ms,
                 "parse_error", exc.raw_output, str(exc), retrieved_for_storage, _csi,
+                prompt_sections=meta.sections, prompt_text=meta.final_prompt,
             )
             raise ScenarioGenerationError(f"{exc} model_output_id={output_id}", output_id) from exc
 
@@ -164,6 +167,7 @@ class AgentPipelineMixin:
         self, request, prompt, model, meta
     ) -> tuple[StoryOutput, int, str]:
         """Fallback: single LLM call (original behavior, no multi-agent pipeline)."""
+        meta.final_prompt = prompt
         try:
             output, latency_ms = await self.llm_client.generate(
                 prompt, model, temperature=meta.temperature

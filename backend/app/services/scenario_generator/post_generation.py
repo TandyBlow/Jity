@@ -56,7 +56,7 @@ class PostGenerationMixin:
 
     async def _record_and_finalize(
         self, session_id, request, output, model, latency_ms, source, state,
-        retrieved_for_storage, token_count, campaign_manager
+        retrieved_for_storage, token_count, campaign_manager, meta=None
     ) -> tuple[int, dict]:
         """Record metrics, store model output, advance campaign. Returns (output_id, metrics)."""
         metrics: dict = {}
@@ -69,7 +69,10 @@ class PostGenerationMixin:
             input_text=request.player_action, output=output.model_dump(),
             latency_ms=latency_ms, source=source, status="ok",
             raw_output_text=output.model_dump_json(),
-            retrieved_chunks=retrieved_for_storage, **metrics,
+            retrieved_chunks=retrieved_for_storage,
+            prompt_sections=getattr(meta, "sections", None),
+            prompt_text=getattr(meta, "final_prompt", ""),
+            **metrics,
         )
 
         # Unified advance — no duplication
