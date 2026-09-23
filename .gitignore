@@ -40,6 +40,15 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# === Playwright artifacts ===
+test-results/
+playwright-report/
+
+# === Visual baseline screenshots ===
+# Regenerable from the code at any commit, so they stay local. The small,
+# diffable probe report next to them (layout-probe-*.json) IS tracked.
+docs/frontend-baseline/*.png
+
 # === Runtime data ===
 .local/
 *.sqlite3
