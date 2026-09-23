@@ -231,3 +231,102 @@
 - `frontend/e2e/probe.spec.ts` —— 逐元素几何量测，输出 JSON
 - `frontend/src/app/styles.test.ts` —— CSS/TSX 的静态不变量。**加一条：改 token 名后它才会抓到 TSX 里的引用**
 - 跑任何 Playwright 命令**必须在 `frontend/` 目录**，在仓库根跑会加载错配置、连带把 Vitest 文件也吞进去
+
+---
+
+# 6B 执行清单（2026-09-23 定稿）
+
+## 基线状态（已实测）
+
+- 后端 `PYTHONUTF8=1 pytest`：**75 passed**
+- 前端 `npx vitest run`：**35 passed**（4 文件）
+- Playwright：**18 passed / 2.8 min**（`cd frontend`），之后 `git status` 干净
+- 服务端读路径已实测：`GET /sessions/{id}/timeline` 18 节点 = 11.8 KB；`GET /timeline/{node_id}` = 14.6 KB
+- `styles.test.ts` 裸色值实测**正好 81**，预算 81 —— **零余量，新 CSS 一个 `#hex`/`rgb()` 都不能加**
+
+## 真数据实测（`backend/data/jity.sqlite3`，69 个有 output 的节点 / 27 会话）
+
+按 `apply_output` 顺序 fold 后再比对声明与实际 state：
+
+```
+类别          唯一声明   缺失   缺失率   缺失时已满cap   该轮已满cap轮数
+items            44      3     6.8%          0              0
+npcs             64      0     0.0%          0              0
+quests           43      0     0.0%          0              0
+world_facts      97     28    28.9%         28             14
+合计            248     31    12.5%
+```
+
+结论：**31 条缺失里 28 条来自 world_facts 顶满 cap 15**（`manager.py:176-179` 的 `[:15]` 截尾，`merge_by_name` 把新名字追加在末尾，截掉的正是新来的）。`npcs`/`quests` 缺失率 **0** —— 它们的 cap 从没碰到过。items 那 3 条与 cap 无关，机制未测。
+
+legacy 字段（`items_gained`/`npcs_encountered`/`quests_updated`/`items_lost`）与 `memory_updates` 的重叠实测：
+
+```
+legacy_only 17    mu_only 132    both 99
+```
+
+即 legacy 只贡献 **17/248 = 6.9%** 的独有声明，不是"一半"。
+
+## 三条被推翻的前述判断
+
+1. **`diffDeclaration` 必须先 fold。** `apply_output`（`manager.py:70-74`）把 legacy 字段和 `memory_updates` 顺序合并，**后写的赢**。逐条单独比对会造出 **95 条假阳性 / 248 条**。按 apply_output 顺序 fold 后：applied 217 / missing 31 / **rewritten 0**。
+2. **`rewritten` 实测为 0，不是一类结果。** 原先以为元凶是 `_normalize_status` 的中英状态映射（`持有`→`owned`），实测 `status` 只错 4 次。
+3. **`_infer_world_facts` 在真实数据里命中 0 次**（`source == "system_inference"` 的 state 条目为 0）。侦察阶段的"它会很普遍"是过度推断。
+
+## 新增发现（本轮）
+
+- **270 轮下节点树当不了导航。** `timeline.css:90-98` 的树是纵向的，`.story-node` 是 `176×92px` + 28px 连接线，一个节点约 120px。线性 270 轮 → 一列约 **3.2 万像素**。`.story-tree-scroll`（`:75-82`）只有 `min-height:480px; overflow:auto`、**无高度约束**，所以滚的是整页。且全 `src/` 零 `scrollIntoView`/`scrollTop`/`scrollTo`（A33），**选中节点不会滚入视野**。→ 跳转必须配树内自动滚入视野，这是全仓第一处滚动管理。
+- **`scripts/auto_play_lib/markdown_log.py` 已在记目标③和④**：每轮写 `### 状态变化`、`### Context Memory 快照`（`format_state`）、`### RAG Hits`（`format_rag_hits`，含 score/importance/keywords）。原「能力盘点」表（本文件 `:178-186`）写 ③「缺后端接口」，对离线路径不成立。**但 `formatting.py:51` 是 `items[:12]`，超过写「另有 N 项」—— 正好把 cap 丢件藏在里面。**
+- **`state_json` 里存着 `_memory_controller`**（`generator.py:111`），只在响应边界被剥（`sessions.py:183`）。新接口直读 `state_json` 必须自己剥，否则把 NSB 叙事池/PCB persona 吐给前端。实测 detail 响应里确实已剥掉。
+- **`state` 里还有一个 `_scene_prompt`**，`sanitize_state` 没管它（只 pop 了 `_memory_controller`），前端 `GameState` 类型里没有。
+- `scripts/auto_play.py` 走 HTTP `/sessions/{id}/generate`（`auto_play_lib/api.py:30-41`）→ prompt 落盘的改动确实覆盖实验路径。
+
+## 清单（18 项，按依赖顺序）
+
+**第 0 commit**：本文件。
+
+### 后端 · 上下文落盘（目标③）
+
+1. `PromptMeta` 加 `sections: dict[str,str]` / `final_prompt: str`，都带默认值。
+   **不能改函数签名**：`tests/test_memory_wiring.py:104,122` 解包 `_build_prompt` 的 5 元组；`tests/test_local_examiner.py:96,114` 解包 `_execute_llm_or_scripted` 的 3 元组。加字段不破，改元数必破。
+2. `builder.py` 末尾把 `ordered_sections` 塞进 `meta.sections`；`_run_narrator_stage` / `_execute_single_llm` 把**实际发出的串**塞进 `meta.final_prompt`。
+   注意实际发出的不只是 sections 拼接 —— `director_support.py:158-160` 的 `_inject_direction` 往前面又插了一段 `## 导演指令`。
+3. `model_outputs` 加 `prompt_sections_json` / `prompt_text` 两列（CREATE TABLE `schema.py:72-86` + `_COLUMN_MIGRATIONS` `:105-129`；迁移器 `:143-144` 无条件跑，已确认）。打通写入：`_record_and_finalize` 从 `meta` 取，`_store_error` 两个失败点（`agent_pipeline.py:139/145`）同样落盘。
+   体积：270 轮 × 约 15–25KB × 2 列 ≈ 8–13MB。
+4. `outputs.py` 加按 `model_output_id` 取行的读方法 + 测试（照 `test_branching_timeline.py` 的 `Database(tmp_path/…)` 模式）。**目前 `model_outputs` 全仓没有任何读路径。**
+
+### 后端 · 接口
+
+5. `/timeline/{node_id}` **加字段**（不改路由，纯增量）：`retrieved_chunks` / `token_count` / `latency_ms` / `word_count` / `prompt_sections` / `prompt_text`。走 `story_turns.model_output_id` 左连接。
+6. 新路由 `GET /sessions/{id}/memory-trace`：每节点 `{node_id, parent_id, depth, turn, is_on_active_path, held:{四类名字}, declared:{五类名字}, cap:{四类上限}}`。**不带 prompt 正文**。**必须剥 `_memory_controller`**。
+7. **声明比对放后端**（原设计是前端纯函数，改）：在 `apply_output` 旁边、复用 `_normalize_memory`/`merge_by_name` 的同一批函数算 fold 与 diff，接口回结果。
+   理由：前端实现要在 TS 里重写这套语义，一旦漂移，错的是**研究结论**且界面上看不出来 —— 本轮已经在 Python 里复现过一次这种错误（95 条假阳性）。
+
+### 前端 · 类型
+
+8. `types.ts`：StoryOutput 补 5 字段（`items_gained`/`items_lost`/`npcs_encountered`/`quests_updated`/`npc_relations_delta`）；`NPCMemory` 补 `disposition`（`normalization.py:70` 会把它映射成 `relationship`）；`TimelineNodeDetail` 补上下文字段；新增 `MemoryTraceResponse`。
+
+### 前端 · 回放面
+
+9. `useTimelineData` 加第二节点槽（`compareNode` / `loadCompareNode`）。
+10. 轮次定位 + **选中节点滚入视野**。轮次不唯一（e2e fixture 里 id 5/6 都是 turn 4），优先 `is_on_active_path`。
+11. **回合列表视图**（剧情 tab 内树 / 列表切换，只列活跃路径，分支时切回树）。数据全在 `timelineNodes` 里，不用新接口。
+12. `MemoryDelta`：声明全集 + 被丢掉的那些。**主视图是 `world_facts N/15` 顶满告警 + 本轮被丢的声明列表。**
+13. 本轮注入的上下文区块：按段落列字数/token + RAG 命中与分数 + prompt 全文折叠。
+14. 轮询刷新选中详情（`useTimelineData.ts:92-115` 目前只刷列表，跑长局时详情静默过期）。
+15. 节点对比（`diffStates`）。
+16. 存续轨迹 tab（第 4 个 tab）。
+17. tab 无障碍（A15）：`aria-selected` / `aria-controls` / 方向键。
+
+### 验收
+
+- 后端项：`PYTHONUTF8=1 pytest`（75 条基线）
+- 前端纯函数：`npx vitest run`（35 条基线）
+- UI 全部落完后重录 `/timeline` 基线 + 差异白名单
+- `fixtures.ts:271` 的 `startsWith('/sessions/<id>/timeline/')` 兜底会吞掉新路由，mock 必须排在它前面；`storyOutput`（`:68-79`）要补 `memory_updates` 和上下文字段
+
+## 已知不在本批
+
+- **真正未加工的 LLM 原文全库没存**（`raw_output_text` 存的是 `output.model_dump_json()`，同样打过 pydantic 默认值）。补它要动 `LLMClient.generate` 的返回。关乎目标① 不是③。
+- 已跑的 69 个节点没有 prompt 落盘，第 13 项**只对以后跑的回合有效**。
+- 6D 剧情区滚动 / A35 自动滚回顶部，仍在第 6 项但不在 6B。
