@@ -160,3 +160,74 @@
 
 另有一条后端路径：`scripts/auto_play.py`。
 **待确认**：跑实验你走哪条——浏览器 `?autoplay=1`，还是 `scripts/auto_play.py`？若只走后者，A25 的轮询在正常使用中永不激活，可降级。
+
+---
+
+## 第 6 项（重新定义）：记忆观察面
+
+### 需求（2026-09-23 用户确认）
+
+- **观察方式**：实时盯着看 + 跑完回头翻，两者都要
+- **规模**：上百轮（如 270 回合）
+- **要判断的**：① AI 记对了没有（幻觉）② 系统该记的记了没（去重/裁剪/合并有没有弄丢）③ 上下文里塞了什么（检索命中与分数）④ 状态怎么递变（NPC/物品/任务/事实 的增删与遗忘）
+
+**结论：侧边栏面板做不到这件事。** 需要"实时侧 + 回放侧"两个面，且回放侧按轮次定位、可跨轮对比。6B 才是 270 轮实验真正用得上的那个，6A 是配菜但见效快。
+
+### 能力盘点：数据在哪、现有接口给不给
+
+| 判断维度 | 数据位置 | 现状 |
+|---|---|---|
+| ① AI 记对了没有 | 每轮的 `StoryOutput.memory_updates` | **纯前端可做** —— `/timeline` 节点详情已返回 `output` |
+| ② 系统该记的记了没 | 相邻两轮节点详情的 `state` 对比 + ①的声明 | **纯前端可做**，需前端算 delta |
+| ③ 上下文里塞了什么 | `model_outputs.retrieved_chunks_json` | **缺后端接口** —— `GenerateResponse.retrieved_chunks` 只回当前轮 |
+| ④ 状态怎么递变 | 节点链上的 `state` 序列 | **纯前端可做**，需跨轮聚合 |
+
+### 已验证的事实（后续可直接用）
+
+- **`memory_updates` 前端收得到、类型定义齐全（`src/types.ts:46-55`）、全仓零组件渲染它。** 这是本次最大的发现。
+- 456 条 `model_outputs`：**294 条（64%）有真实记忆变更**，162 条（36%）只有空的 `player_status_patch` 壳。字段频次：`npcs_upserted` 252、`world_facts_upserted` 247、`key_event` 292、`current_location` 291、`quests_upserted` 188、`items_upserted` 143、`items_removed` 3。
+- `memory_updates` 是 **LLM 的声明**，不等于应用结果 —— 之后 `apply_output` 去重归一化，`enforce_state_caps` 还会裁到 20 物品/15 NPC/10 任务/15 事实。**两者不一致才是研究价值所在，界面要能看出差异。**
+- `/timeline` 的 `TimelineNodeDetail` 已含每轮 `output`（含 `memory_updates`）与完整 `state`。
+- `_memory_controller`（MOOM/NSB/PCB/SCORE 子系统的状态）被 `game_state/manager.py:163-166` 的 `sanitize_state` **主动从响应里剥离**，前端永远看不到。27 个会话里只有 4 个有内容，且 `narrative_pool`/NSB 摘要/PCB persona 全空。**用户知情，暂不处理。**
+
+### 任务拆分
+
+**6A 实时侧（`/` 记忆面板）**
+- 6A.1 「本轮记忆变更」区块，渲染 `output.memory_updates`，置面板顶部；无有效变更时不显示。复用 `lib/game/format.ts` 的 `memoryDetail()`
+- 6A.2 同一区块里标出**声明与应用结果的差异**（哪些被裁掉/去重掉了）
+- 6A.3 `RagHits` 包进 `<details>`；默认展开（面板是观察窗口），收起状态记 `localStorage`
+- 6A.4 现有 NPC/物品/任务/事实/最近事件分组折叠
+
+**6B 回放侧（`/timeline`，270 轮实验的主力面）**
+- 6B.1 按轮次定位（跳转到第 N 轮），现有节点树无此能力
+- 6B.2 节点详情显示该轮的 `memory_updates`（目前只显示旁白/对话/选项/state 预览）
+- 6B.3 相邻轮 state 差异对比（选两轮，看谁进来了、谁丢了、什么被裁了）
+- 6B.4 某个 NPC/物品/事实/任务的存续轨迹（哪轮出现、哪轮消失）
+
+**6C 后端**：暴露历史轮次的检索命中与指标（`retrieved_chunks_json` / `token_count` / `latency_ms` / `word_count` 已在 `model_outputs` 里）。**只加接口，不动现有 `/sessions`。**
+
+**6D 剧情区滚动**（原 1–3 条，不变）
+- 6D.1 `.story-panel` 三段式：工具栏固定 / 剧情区自己滚动 / 输入栏固定成最后一行
+- 6D.2 剧情区 ref，`output` 变化时 `scrollTop = 0`
+- 6D.3 撤 `.player-controls` 的 `position: sticky`
+
+**6E 排版与间距阶梯**（需先定数值，会改全站像素）
+- 6E.1 字号：现在 14 个档位（10/11/12/13/14/15/18/20/22/25/28/31/32/38）
+- 6E.2 间距：61 处 padding/margin → 4px 基数
+- 6E.3 圆角：9 个值 → 3–4 档
+- 6E.4 层级：z-index 现为 2/4/20/80/84/90
+
+### 已知的坑（做之前先看）
+
+- **窄屏抽屉的开关按钮没地方放**：`.settings-menu` 是 `fixed; top:18; right:22; width:min(360px, calc(100vw-32px))`，窄屏下几乎占满宽度。需要先决定按钮位置。
+- 抽屉若做，**必须按模态处理**（`role="dialog"` + 焦点陷阱 + Escape + 焦点归还），否则就是重复交付 A11 那个缺陷。
+- 抽屉 z-index 必须落在 **20（设置菜单）和 80（判定浮层）之间**。
+- 6D 会改变像素；6E 更是全站。**基线要按"差异白名单"验收**，不能再用零差异：预先列出预期变化的元素与量级，实测只能命中白名单。
+
+### 验证设施（已完成，直接可用）
+
+- `frontend/e2e/verify.spec.ts` —— 对照 `docs/frontend-baseline/` 的像素比对，容差 0
+- `frontend/e2e/capture.spec.ts` —— 重拍基线（`BASELINE_DIR=…`）
+- `frontend/e2e/probe.spec.ts` —— 逐元素几何量测，输出 JSON
+- `frontend/src/app/styles.test.ts` —— CSS/TSX 的静态不变量。**加一条：改 token 名后它才会抓到 TSX 里的引用**
+- 跑任何 Playwright 命令**必须在 `frontend/` 目录**，在仓库根跑会加载错配置、连带把 Vitest 文件也吞进去
