@@ -16,8 +16,12 @@ import { SESSION_ID, installApiMocks, seedSession } from "./fixtures";
  * globals.css currently has no rules at all.
  */
 
+// 1536x730 is the author's real browser viewport: a 1536x864 screen (125%
+// scaling on a 1920x1080 panel), working area 1536x816, minus browser chrome.
+// 1024x768 is the narrow-desktop target — it is where the memory panel
+// currently dies, and narrow support is confirmed in scope.
 const VIEWPORTS = [
-  { name: "1440x900", width: 1440, height: 900 },
+  { name: "1536x730", width: 1536, height: 730 },
   { name: "1024x768", width: 1024, height: 768 },
 ];
 

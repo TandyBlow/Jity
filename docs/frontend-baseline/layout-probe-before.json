@@ -1,18 +1,18 @@
 {
-  "console@1440x900": {
+  "console@1536x730": {
     "viewport": {
-      "w": 1440,
-      "h": 900
+      "w": 1536,
+      "h": 730
     },
-    "documentScrollHeight": 900,
+    "documentScrollHeight": 730,
     "inlineStyledElements": 4,
     "boxes": {
       ".app-shell": {
         "top": 0,
         "left": 0,
-        "width": 1440,
-        "height": 900,
-        "contentHeight": 900,
+        "width": 1536,
+        "height": 730,
+        "contentHeight": 730,
         "display": "grid",
         "overflowY": "hidden",
         "fontSize": "16px",
@@ -33,7 +33,7 @@
       },
       ".settings-menu": {
         "top": 18,
-        "left": 1058,
+        "left": 1154,
         "width": 360,
         "height": 42,
         "contentHeight": 42,
@@ -46,9 +46,9 @@
       ".story-panel": {
         "top": 0,
         "left": 0,
-        "width": 1080,
-        "height": 900,
-        "contentHeight": 1473,
+        "width": 1176,
+        "height": 730,
+        "contentHeight": 1452,
         "display": "flex",
         "overflowY": "auto",
         "fontSize": "16px",
@@ -57,10 +57,10 @@
       },
       ".scene-output": {
         "top": 49,
-        "left": 110,
+        "left": 158,
         "width": 860,
-        "height": 1252,
-        "contentHeight": 1252,
+        "height": 1232,
+        "contentHeight": 1232,
         "display": "flex",
         "overflowY": "visible",
         "fontSize": "16px",
@@ -68,8 +68,8 @@
         "background": "rgba(0, 0, 0, 0)"
       },
       ".narration": {
-        "top": 157,
-        "left": 110,
+        "top": 136,
+        "left": 158,
         "width": 860,
         "height": 620,
         "contentHeight": 620,
@@ -80,8 +80,8 @@
         "background": "rgba(0, 0, 0, 0)"
       },
       ".dialogue-list": {
-        "top": 801,
-        "left": 110,
+        "top": 780,
+        "left": 158,
         "width": 860,
         "height": 216,
         "contentHeight": 216,
@@ -92,8 +92,8 @@
         "background": "rgba(0, 0, 0, 0)"
       },
       ".option-list": {
-        "top": 1103,
-        "left": 110,
+        "top": 1082,
+        "left": 158,
         "width": 860,
         "height": 158,
         "contentHeight": 158,
@@ -104,8 +104,8 @@
         "background": "rgba(0, 0, 0, 0)"
       },
       ".player-controls": {
-        "top": 728,
-        "left": 110,
+        "top": 558,
+        "left": 158,
         "width": 860,
         "height": 150,
         "contentHeight": 148,
@@ -117,9 +117,9 @@
       },
       ".memory-panel": {
         "top": 0,
-        "left": 1080,
+        "left": 1176,
         "width": 360,
-        "height": 900,
+        "height": 730,
         "contentHeight": 1943,
         "display": "block",
         "overflowY": "auto",
@@ -277,12 +277,12 @@
       ".dev-log-list": null
     }
   },
-  "timeline-story@1440x900": {
+  "timeline-story@1536x730": {
     "viewport": {
-      "w": 1440,
-      "h": 900
+      "w": 1536,
+      "h": 730
     },
-    "documentScrollHeight": 1096,
+    "documentScrollHeight": 926,
     "inlineStyledElements": 1,
     "boxes": {
       ".app-shell": null,
@@ -298,9 +298,9 @@
       ".timeline-shell": {
         "top": 0,
         "left": 0,
-        "width": 1440,
-        "height": 1096,
-        "contentHeight": 1096,
+        "width": 1536,
+        "height": 926,
+        "contentHeight": 926,
         "display": "block",
         "overflowY": "visible",
         "fontSize": "16px",
@@ -309,7 +309,7 @@
       },
       ".timeline-header": {
         "top": 32,
-        "left": 180,
+        "left": 228,
         "width": 1080,
         "height": 72,
         "contentHeight": 72,
@@ -321,7 +321,7 @@
       },
       ".timeline-tabs": {
         "top": 132,
-        "left": 180,
+        "left": 228,
         "width": 1080,
         "height": 52,
         "contentHeight": 52,
@@ -334,10 +334,10 @@
       ".timeline-layout": null,
       ".timeline-tab-panel": {
         "top": 204,
-        "left": 180,
+        "left": 228,
         "width": 1080,
-        "height": 860,
-        "contentHeight": 860,
+        "height": 690,
+        "contentHeight": 690,
         "display": "block",
         "overflowY": "visible",
         "fontSize": "16px",
@@ -346,10 +346,10 @@
       },
       ".story-timeline-layout": {
         "top": 204,
-        "left": 180,
+        "left": 228,
         "width": 1080,
-        "height": 860,
-        "contentHeight": 860,
+        "height": 690,
+        "contentHeight": 690,
         "display": "grid",
         "overflowY": "visible",
         "fontSize": "16px",
@@ -445,10 +445,10 @@
       ".dev-log-list": null
     }
   },
-  "timeline-anchors@1440x900": {
+  "timeline-anchors@1536x730": {
     "viewport": {
-      "w": 1440,
-      "h": 900
+      "w": 1536,
+      "h": 730
     },
     "documentScrollHeight": 1173,
     "inlineStyledElements": 16,
@@ -466,7 +466,7 @@
       ".timeline-shell": {
         "top": 0,
         "left": 0,
-        "width": 1440,
+        "width": 1536,
         "height": 1173,
         "contentHeight": 1173,
         "display": "block",
@@ -477,7 +477,7 @@
       },
       ".timeline-header": {
         "top": 32,
-        "left": 180,
+        "left": 228,
         "width": 1080,
         "height": 72,
         "contentHeight": 72,
@@ -489,7 +489,7 @@
       },
       ".timeline-tabs": {
         "top": 132,
-        "left": 180,
+        "left": 228,
         "width": 1080,
         "height": 52,
         "contentHeight": 52,
@@ -502,7 +502,7 @@
       ".timeline-layout": null,
       ".timeline-tab-panel": {
         "top": 204,
-        "left": 180,
+        "left": 228,
         "width": 1080,
         "height": 937,
         "contentHeight": 937,
@@ -515,7 +515,7 @@
       ".story-timeline-layout": null,
       ".anchor-tree": {
         "top": 204,
-        "left": 180,
+        "left": 228,
         "width": 820,
         "height": 937,
         "contentHeight": 937,
@@ -613,12 +613,12 @@
       ".dev-log-list": null
     }
   },
-  "timeline-clues@1440x900": {
+  "timeline-clues@1536x730": {
     "viewport": {
-      "w": 1440,
-      "h": 900
+      "w": 1536,
+      "h": 730
     },
-    "documentScrollHeight": 900,
+    "documentScrollHeight": 730,
     "inlineStyledElements": 1,
     "boxes": {
       ".app-shell": null,
@@ -634,9 +634,9 @@
       ".timeline-shell": {
         "top": 0,
         "left": 0,
-        "width": 1440,
-        "height": 900,
-        "contentHeight": 900,
+        "width": 1536,
+        "height": 730,
+        "contentHeight": 730,
         "display": "block",
         "overflowY": "visible",
         "fontSize": "16px",
@@ -645,7 +645,7 @@
       },
       ".timeline-header": {
         "top": 32,
-        "left": 180,
+        "left": 228,
         "width": 1080,
         "height": 72,
         "contentHeight": 72,
@@ -657,7 +657,7 @@
       },
       ".timeline-tabs": {
         "top": 132,
-        "left": 180,
+        "left": 228,
         "width": 1080,
         "height": 52,
         "contentHeight": 52,
@@ -670,7 +670,7 @@
       ".timeline-layout": null,
       ".timeline-tab-panel": {
         "top": 204,
-        "left": 180,
+        "left": 228,
         "width": 1080,
         "height": 359,
         "contentHeight": 359,
@@ -684,7 +684,7 @@
       ".anchor-tree": null,
       ".clue-board": {
         "top": 204,
-        "left": 180,
+        "left": 228,
         "width": 820,
         "height": 359,
         "contentHeight": 357,
@@ -781,10 +781,10 @@
       ".dev-log-list": null
     }
   },
-  "curator@1440x900": {
+  "curator@1536x730": {
     "viewport": {
-      "w": 1440,
-      "h": 900
+      "w": 1536,
+      "h": 730
     },
     "documentScrollHeight": 1078,
     "inlineStyledElements": 22,
@@ -802,7 +802,7 @@
       ".timeline-shell": {
         "top": 0,
         "left": 0,
-        "width": 1440,
+        "width": 1536,
         "height": 1078,
         "contentHeight": 1078,
         "display": "block",
@@ -813,7 +813,7 @@
       },
       ".timeline-header": {
         "top": 32,
-        "left": 180,
+        "left": 228,
         "width": 1080,
         "height": 72,
         "contentHeight": 75,
@@ -826,7 +826,7 @@
       ".timeline-tabs": null,
       ".timeline-layout": {
         "top": 132,
-        "left": 180,
+        "left": 228,
         "width": 1080,
         "height": 914,
         "contentHeight": 914,
@@ -841,7 +841,7 @@
       ".anchor-tree": null,
       ".clue-board": {
         "top": 132,
-        "left": 180,
+        "left": 228,
         "width": 672,
         "height": 314,
         "contentHeight": 312,
@@ -927,10 +927,10 @@
       ".dev-log-list": null
     }
   },
-  "dev-log@1440x900": {
+  "dev-log@1536x730": {
     "viewport": {
-      "w": 1440,
-      "h": 900
+      "w": 1536,
+      "h": 730
     },
     "documentScrollHeight": 10515,
     "inlineStyledElements": 1,
@@ -955,7 +955,7 @@
       ".clue-board": null,
       ".dev-log-list": {
         "top": 237,
-        "left": 180,
+        "left": 228,
         "width": 1080,
         "height": 10246,
         "contentHeight": 10246,

@@ -12,7 +12,7 @@ import { SESSION_ID, installApiMocks, seedSession } from "./fixtures";
  */
 
 const VIEWPORTS = [
-  { name: "1440x900", width: 1440, height: 900 },
+  { name: "1536x730", width: 1536, height: 730 },
   { name: "1024x768", width: 1024, height: 768 },
 ];
 
