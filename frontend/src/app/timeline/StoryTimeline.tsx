@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 
 import { MemoryDelta } from "@/app/timeline/MemoryDelta";
+import { NodeCompare } from "@/app/timeline/NodeCompare";
 import { TurnContextPanel } from "@/app/timeline/TurnContextPanel";
 import { TurnList } from "@/app/timeline/TurnList";
 import { TurnNavigator, type StoryView } from "@/app/timeline/TurnNavigator";
@@ -83,6 +84,22 @@ export function StoryTimeline({ data, hasSession }: { data: TimelineData; hasSes
               </div>
               {detail.id === data.activeNodeId ? <span className="timeline-current-badge">当前</span> : null}
             </div>
+            {/* Kept at the top: pinning a base and clicking through turns is
+                the whole interaction, and the result should not need scrolling. */}
+            <div className="node-compare-actions">
+              <button className="node-compare-pin" onClick={data.pinCompareNode} type="button">
+                设为对比基准
+              </button>
+              <button
+                className="node-compare-pin"
+                disabled={!data.activeNodeId || data.activeNodeId === detail.id}
+                onClick={() => { if (data.activeNodeId) void data.loadCompareNode(data.activeNodeId); }}
+                type="button"
+              >
+                以当前进度为基准
+              </button>
+            </div>
+            <NodeCompare currentTurn={summary?.turn} data={data} />
             {detail.output ? (
               <>
                 <div className="story-detail-narration">{detail.output.narration}</div>

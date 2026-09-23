@@ -72,6 +72,13 @@ export function useTimelineData(
     setCompareNode(null);
   }, []);
 
+  /** Pin the node already on screen; no refetch, the row cannot have changed. */
+  const pinCompareNode = useCallback(() => {
+    if (!selectedNode) return;
+    setCompareNodeId(selectedNode.id);
+    setCompareNode(selectedNode);
+  }, [selectedNode]);
+
   const selectNode = useCallback((nodeId: number) => {
     setFollowing(false);
     void loadNode(nodeId);
@@ -187,7 +194,7 @@ export function useTimelineData(
   return {
     campaigns, selectedFile, arcs, revealedAnchors, worldFacts,
     timelineNodes, activeNodeId, selectedNodeId, selectedNode,
-    compareNodeId, compareNode, loadCompareNode, clearCompareNode,
+    compareNodeId, compareNode, loadCompareNode, clearCompareNode, pinCompareNode,
     following, setFollowing, selectNode, live,
     timelineError, activating,
     filterMode, setFilterMode, loading,
