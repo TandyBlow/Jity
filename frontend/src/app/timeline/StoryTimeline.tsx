@@ -1,9 +1,25 @@
 "use client";
 
-import type { TimelineNodeSummary } from "@/types";
+import { useEffect, useRef, useState } from "react";
+
+import { TurnList } from "@/app/timeline/TurnList";
+import { TurnNavigator, type StoryView } from "@/app/timeline/TurnNavigator";
 import type { TimelineData } from "@/app/timeline/useTimelineData";
+import type { TimelineNodeSummary } from "@/types";
 
 export function StoryTimeline({ data, hasSession }: { data: TimelineData; hasSession: boolean }) {
+  const [view, setView] = useState<StoryView>("tree");
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (data.selectedNodeId === null) return;
+    const target = scrollRef.current?.querySelector(`[data-node-id="${data.selectedNodeId}"]`);
+    // Nothing scrolled this surface before. Without it, jumping to a late turn
+    // updates the detail pane while leaving the node itself tens of thousands
+    // of pixels away.
+    target?.scrollIntoView({ block: "nearest" });
+  }, [data.selectedNodeId, view]);
+
   if (!hasSession) {
     return <p className="empty-state">请从游戏控制台打开时间线，以查看当前会话的剧情分支。</p>;
   }
@@ -23,7 +39,8 @@ export function StoryTimeline({ data, hasSession }: { data: TimelineData; hasSes
     <li key={node.id}>
       <button
         className={`story-node${node.is_active ? " active" : ""}${node.is_on_active_path ? " on-path" : ""}${data.selectedNodeId === node.id ? " selected" : ""}`}
-        onClick={() => data.loadNode(node.id)}
+        data-node-id={node.id}
+        onClick={() => data.selectNode(node.id)}
         type="button"
       >
         <span className="story-node-turn">T{node.turn}</span>
@@ -39,17 +56,27 @@ export function StoryTimeline({ data, hasSession }: { data: TimelineData; hasSes
 
   const detail = data.selectedNode;
   const state = detail?.state;
+  const summary = detail ? data.timelineNodes.find((node) => node.id === detail.id) : undefined;
   return (
     <div className="story-timeline-layout">
-      <div className="story-tree-scroll" aria-label="剧情分支树">
-        <div className="story-tree"><ul>{roots.map(renderNode)}</ul></div>
+      <div className="story-tree-column">
+        <TurnNavigator data={data} onViewChange={setView} view={view} />
+        <div className="story-tree-scroll" ref={scrollRef}>
+          {view === "tree" ? (
+            <div className="story-tree" aria-label="剧情分支树"><ul>{roots.map(renderNode)}</ul></div>
+          ) : (
+            <TurnList data={data} />
+          )}
+        </div>
       </div>
       <aside className="story-node-detail">
         {!detail ? <p className="empty-state">选择一个节点查看剧情和状态。</p> : (
           <>
             <div className="story-detail-heading">
               <div>
-                <span className="meta">第 {detail.depth} 步</span>
+                <span className="meta">
+                  {summary ? `第 ${summary.turn} 轮 · ` : ""}第 {detail.depth} 步
+                </span>
                 <h2>{detail.parent_id === null ? "会话起点" : detail.player_action}</h2>
               </div>
               {detail.id === data.activeNodeId ? <span className="timeline-current-badge">当前</span> : null}
