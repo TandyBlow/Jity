@@ -215,6 +215,16 @@ export const timelineNodeDetail: TimelineNodeDetail = {
   state: gameState,
   campaign_progress: { arc_index: 0, session_index: 0, revealed_anchors: ["anchor_arrival", "anchor_nono"] },
   context: turnContext,
+  memory: {
+    items: { declared: ["临时通行卡", "银色徽章"], held: ["临时通行卡", "旧行李箱", "银色徽章"] },
+    npcs: { declared: ["诺诺", "古德里安教授"], held: ["诺诺", "古德里安教授"] },
+    quests: { declared: ["完成入学报到"], held: ["完成入学报到", "搞清这里是什么地方"] },
+    // The third fact never lands: the category is at its cap of 15.
+    world_facts: {
+      declared: ["卡塞尔学院不是普通大学", "新生名单在投影屏滚动", "小提琴盒里的金属锁扣"],
+      held: ["卡塞尔学院不是普通大学", "新生名单在投影屏滚动"],
+    },
+  },
   model: MODEL,
   source: "llm",
   created_at: "2026-09-20T10:10:00",

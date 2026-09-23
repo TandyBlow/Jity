@@ -137,6 +137,34 @@ def test_route_returns_a_node_per_turn(tmp_path, monkeypatch):
     assert turn["is_on_active_path"] is True
 
 
+def test_node_detail_carries_the_same_folded_memory(tmp_path, monkeypatch):
+    """The client renders node detail from this, so it must not have to fold."""
+    from app.routers import sessions
+
+    db = Database(tmp_path / "trace.db")
+    manager = GameStateManager(db)
+    monkeypatch.setattr(sessions, "db", db)
+    monkeypatch.setattr(sessions, "state_manager", manager)
+
+    app = FastAPI()
+    app.include_router(sessions.router)
+    http = TestClient(app)
+
+    session = manager.create_session("测试", "test")
+    sid, root = session["session_id"], session["active_turn_id"]
+    output = _story(memory_updates=MemoryUpdates(npcs_upserted=[{"name": "诺诺"}]))
+    node_id = db.commit_story_turn(
+        session_id=sid, expected_parent_id=root, player_action="搭话",
+        output=output.model_dump(), state=manager.apply_output(_state(), "搭话", output),
+        campaign_progress=None, model="test", source="llm", model_output_id=None,
+    )
+
+    detail = http.get(f"/sessions/{sid}/timeline/{node_id}").json()
+
+    assert detail["memory"]["npcs"] == {"declared": ["诺诺"], "held": ["诺诺"]}
+    assert detail["memory"]["items"] == {"declared": [], "held": []}
+
+
 def test_route_404s_for_unknown_session(tmp_path, monkeypatch):
     from app.routers import sessions
 

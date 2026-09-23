@@ -196,6 +196,8 @@ export type TimelineNodeDetail = {
   state: GameState;
   campaign_progress: Record<string, unknown>;
   context: TurnContext;
+  /** Folded server-side; the client must not re-derive the merge order. */
+  memory: MemoryTraceEntry;
   model: string;
   source: GenerateResponse["source"];
   created_at: string;

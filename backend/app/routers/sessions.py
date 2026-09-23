@@ -276,14 +276,17 @@ def get_timeline_node(session_id: str, node_id: int) -> dict[str, object]:
         raise HTTPException(status_code=404, detail="Timeline node not found")
     state = json.loads(row["state_json"])
     state_manager.sanitize_state(state)
+    output = json.loads(row["output_json"]) if row["output_json"] else None
     return {
         "context": _turn_context(row.get("model_output_id")),
+        # Folded server-side so the client never re-derives the merge order.
+        "memory": state_manager.memory_trace_entry(output, state),
         "id": row["id"],
         "session_id": session_id,
         "parent_id": row["parent_turn_id"],
         "depth": row["depth"],
         "player_action": row["player_action"],
-        "output": json.loads(row["output_json"]) if row["output_json"] else None,
+        "output": output,
         "state": state,
         "campaign_progress": json.loads(row["campaign_progress_json"] or "{}"),
         "model": row["model"],
