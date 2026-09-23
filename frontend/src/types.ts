@@ -135,7 +135,17 @@ export type GenerateResponse = {
   source: "scripted" | "llm" | "examiner_blocked";
   timeline_node_id: number;
   parent_timeline_node_id: number;
+  /** This turn's declaration folded and checked against the state it produced. */
+  memory: MemoryTraceEntry;
+  declared: DeclaredMemory;
+  caps: Record<MemoryCategory, number>;
 };
+
+/**
+ * The per-turn memory report the API attaches to a generated turn, or to a
+ * node detail when one is restored. Absent for local placeholder outputs.
+ */
+export type TurnReport = Pick<GenerateResponse, "memory" | "declared" | "caps">;
 
 export type SessionMessage = {
   id: number;
@@ -202,7 +212,7 @@ export type TimelineNodeDetail = {
    * The turn's declaration in merge order, exactly as the server folds it.
    * Server-derived for the same reason `memory` is.
    */
-  declared: Record<MemoryCategory, { upserted: StoryDeltaEntry[]; removed: StoryDeltaEntry[] }>;
+  declared: DeclaredMemory;
   /** Folded server-side; the client must not re-derive the merge order. */
   memory: MemoryTraceEntry;
   model: string;
@@ -214,6 +224,12 @@ export type MemoryCategory = "items" | "npcs" | "quests" | "world_facts";
 
 /** Names a turn declared, and the names state held once it was merged. */
 export type MemoryTraceEntry = Record<MemoryCategory, { declared: string[]; held: string[] }>;
+
+/** The turn's declaration in merge order, before any of it was applied. */
+export type DeclaredMemory = Record<
+  MemoryCategory,
+  { upserted: StoryDeltaEntry[]; removed: StoryDeltaEntry[] }
+>;
 
 export type MemoryTraceNode = MemoryTraceEntry & {
   node_id: number;

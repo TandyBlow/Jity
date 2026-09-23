@@ -409,6 +409,41 @@ world_facts 的 28 条缺失与离线脚本的结论一致。总声明数比离�
 - `TurnContextPanel` 与 `MemoryDelta` 排在节点详情最末（旁白/状态之后）。研究用途下它们应该在顶部，但那要重排现有面板，属于纯 UX 决策，没擅自做。
 - 轨迹 tab 的存续条在 fixture 的 4 节点下只有 4 格；270 轮下会折成多行热力图，**没在真实长局上看过**。
 
+## 6A + 6D 完成（2026-09-23）
+
+### 6D 剧情区滚动（含 A35）
+
+`.story-panel` 从"整块滚动 + 输入栏 sticky 浮在上面"改成三段：工具栏固定 / `.scene-output` 自己滚 / 输入栏是最后一行。A9 的遮挡是**结构上消失**的，不是靠补 padding。
+
+`.scene-output` 加 ref，`output` 变化时 `scrollTop = 0`（A35）。
+
+探针实测（`console@1536x730`）：
+
+```
+.story-panel    contentHeight 1452 -> 730    overflowY auto -> hidden
+.scene-output   height        1232 -> 510    overflowY visible -> auto
+.memory-panel   contentHeight 1943 -> 2526
+```
+
+新增 `e2e/story-scroll.spec.ts`：先把剧情区滚到底（断言 `scrollTop>0`），点一个选项生成下一轮，断言 `scrollTop === 0`。这条是 A35 唯一的行为验证 —— 截图看不出来。
+
+### 6A 实时侧面板
+
+- 「本轮记忆变更」置面板顶部：分类列出声明，未落库的标红并带徽章，每类带 `落库 N/cap`（满时标红）
+- 五个分组折叠（NPC / 物品 / 任务 / 长期事实 / 最近事件），RAG Hits 同样折叠
+- **折叠状态统一存 `jity_memory_folds` 一个键**。文档只要求 RAG Hits 持久化，但让一个记住、四个不记住更糟
+
+后端为此把 `GenerateResponse` 也补上了 `memory` / `declared` / `caps` —— 与节点详情同一批函数算的，前端依旧零合并逻辑。`STATE_CAPS` 提到 `game_state/defaults.py` 作为唯一来源，`routers/sessions.py` 改为引用它。
+
+### 顺带发现的一个静默失效（未修）
+
+`useGameActions.ts:41` 的 `if (!sid || !nextAction.trim() ...) return;` —— **输入框为空时点「生成下一幕」什么都不会发生，且界面上没有任何提示**。按钮也没有 `disabled`。写 A35 的测试时撞上的（原本用按钮触发，测试失败得很莫名）。归入 A19/B7 那类错误呈现问题，本批没动。
+
+### 仍未覆盖
+
+- 1024 下记忆面板仍是 `display: none`（A30/B3 确认需要窄屏，但那需要抽屉方案，属于另一次改动）
+- 抽屉必须按模态处理（`role="dialog"` + 焦点陷阱 + Escape），否则是重复交付 A11
+
 ## 已知不在本批
 
 - **真正未加工的 LLM 原文全库没存**（`raw_output_text` 存的是 `output.model_dump_json()`，同样打过 pydantic 默认值）。补它要动 `LLMClient.generate` 的返回。关乎目标① 不是③。

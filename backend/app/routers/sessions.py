@@ -20,19 +20,9 @@ from app.schemas import (
     SessionHistoryResponse,
     SessionResponse,
 )
-from app.services.game_state.defaults import (
-    MAX_ITEMS,
-    MAX_NPCS,
-    MAX_QUESTS,
-    MAX_WORLD_FACTS,
-)
+from app.services.game_state.defaults import STATE_CAPS
 
-CAPS = {
-    "items": MAX_ITEMS,
-    "npcs": MAX_NPCS,
-    "quests": MAX_QUESTS,
-    "world_facts": MAX_WORLD_FACTS,
-}
+CAPS = STATE_CAPS
 
 logger = logging.getLogger(__name__)
 

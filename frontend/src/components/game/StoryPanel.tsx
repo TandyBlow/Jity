@@ -2,7 +2,7 @@
 
 import { Dices, GitBranch, Image as ImageIcon, Loader2, Send } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { MainCheckOverlay, type MainCheckCommit } from "@/components/game/MainCheckOverlay";
 import type { GameSession } from "@/components/game/useGameSession";
@@ -64,6 +64,13 @@ export function StoryPanel({ session }: { session: GameSession }) {
   } = session;
   const [checkingAction, setCheckingAction] = useState<PendingCheck | null>(null);
   const [sweep, setSweep] = useState<PendingSweep | null>(null);
+  const sceneRef = useRef<HTMLElement>(null);
+
+  // A new turn replaces the whole scene. Without this the scroll position
+  // carries over, so the next turn opens part-way through its own narration.
+  useEffect(() => {
+    sceneRef.current?.scrollTo({ top: 0 });
+  }, [output]);
 
   function handleOption(option: string, index: number) {
     if (!sessionId || isLoading || session.pendingGenerate || sweep) return;
@@ -135,7 +142,7 @@ export function StoryPanel({ session }: { session: GameSession }) {
         <div className={`source-pill ${outputSource}`}>{outputSource === "scripted" ? "Scripted opening" : "LLM generated"}</div>
       </div>
 
-      <article className="scene-output">
+      <article className="scene-output" ref={sceneRef}>
         {session.autoPlay.enabled ? (
           <div className={`autoplay-banner ${session.autoPlay.status}`}>
             <div>

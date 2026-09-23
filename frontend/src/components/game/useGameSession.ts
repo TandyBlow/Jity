@@ -16,6 +16,7 @@ import type {
   RetrievedChunk,
   SaveSlot,
   StoryOutput,
+  TurnReport,
 } from "@/types";
 
 /** State surface + slot helpers shared with useGameActions. */
@@ -30,6 +31,7 @@ export type GameSessionCore = {
   action: string;
   setAction: (action: string) => void;
   setOutput: (output: StoryOutput) => void;
+  setTurnReport: (report: TurnReport | null) => void;
   setOutputSource: (source: GenerateResponse["source"]) => void;
   setChunks: (chunks: RetrievedChunk[]) => void;
   setIsLoading: (isLoading: boolean) => void;
@@ -51,6 +53,7 @@ export function useGameSession() {
   const [state, setState] = useState<GameState | null>(null);
   const [activeTurnId, setActiveTurnId] = useState<number | null>(null);
   const [output, setOutput] = useState<StoryOutput>(loadingOutput);
+  const [turnReport, setTurnReport] = useState<TurnReport | null>(null);
   const [outputSource, setOutputSource] = useState<GenerateResponse["source"]>("scripted");
   const [chunks, setChunks] = useState<RetrievedChunk[]>([]);
   const [action, setAction] = useState("");
@@ -96,9 +99,11 @@ export function useGameSession() {
       if (node.output) {
         setOutput(node.output);
         setOutputSource(node.source);
+        setTurnReport({ memory: node.memory, declared: node.declared, caps: node.caps });
         return;
       }
     }
+    setTurnReport(null);
     if (campaignFilename) {
       setOutput(loadingOutput);
       setPendingGenerate(ENTRY_ACTION);
@@ -120,6 +125,7 @@ export function useGameSession() {
     action,
     setAction: (next: string) => setAction(next),
     setOutput: (next: StoryOutput) => setOutput(next),
+    setTurnReport: (next: TurnReport | null) => setTurnReport(next),
     setOutputSource: (next: GenerateResponse["source"]) => setOutputSource(next),
     setChunks: (next: RetrievedChunk[]) => setChunks(next),
     setIsLoading: (next: boolean) => setIsLoading(next),
@@ -147,7 +153,7 @@ export function useGameSession() {
   return {
     ...core, ...actions,
     ...sceneBackground,
-    state, output, outputSource, chunks, isLoading, error,
+    state, output, turnReport, outputSource, chunks, isLoading, error,
     statusDeltaHints, slots, selectedSlotId, campaigns, activeTurnId, autoPlay,
   };
 }

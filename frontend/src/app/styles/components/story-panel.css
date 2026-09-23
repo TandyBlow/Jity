@@ -1,18 +1,24 @@
+/* Three rows: a fixed toolbar, the scene as the only scroller, and the input
+   as the last row. The input used to float over the scene on a sticky bottom,
+   hiding whatever ended up underneath it. */
 .story-panel {
   min-width: 0;
   min-height: 0;
   display: flex;
   flex-direction: column;
   padding: 22px 28px;
-  overflow-y: auto;
+  overflow: hidden;
   text-shadow: 0 1px 16px rgba(0, 0, 0, 0.72);
 }
 
+.story-panel > .toolbar-row {
+  flex: 0 0 auto;
+}
+
 .player-controls {
-  position: sticky;
-  bottom: 0;
+  flex: 0 0 auto;
   width: min(860px, 100%);
-  margin: auto auto 0;
+  margin: 0 auto;
   padding: 15px;
   border: 1px solid color-mix(in srgb, var(--color-accent) 30%, transparent);
   border-radius: 13px 13px 0 0;
@@ -71,7 +77,9 @@
 .spin-icon { animation: background-pulse 1.2s linear infinite; }
 
 .scene-output {
-  flex: 0 0 auto;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   max-width: 860px;

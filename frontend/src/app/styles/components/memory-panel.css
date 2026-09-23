@@ -232,6 +232,82 @@
   color: var(--color-muted);
 }
 
+.turn-memory {
+  margin-bottom: 18px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.turn-memory-group + .turn-memory-group {
+  margin-top: 10px;
+}
+
+.turn-memory-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 6px;
+  font-size: 12px;
+}
+
+.turn-memory-cap {
+  color: var(--color-muted);
+}
+
+.turn-memory-cap.full {
+  color: var(--color-danger);
+}
+
+.memory-item.missing strong,
+.memory-item.missing .memory-status {
+  color: var(--color-danger);
+}
+
+.memory-item.missing .memory-status {
+  border-color: var(--color-danger);
+}
+
+.memory-fold {
+  margin-top: 18px;
+}
+
+.memory-fold-summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  list-style: none;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+}
+
+.memory-fold-summary::-webkit-details-marker {
+  display: none;
+}
+
+.memory-fold-summary::before {
+  content: "▸";
+  display: inline-block;
+  color: var(--color-muted);
+  font-size: 10px;
+  transition: transform 120ms ease;
+}
+
+.memory-fold[open] > .memory-fold-summary::before {
+  transform: rotate(90deg);
+}
+
+.memory-fold-suffix {
+  margin-left: auto;
+  color: var(--color-muted);
+  font-size: 11px;
+}
+
+.memory-fold-body {
+  margin-top: 10px;
+}
+
 @media (max-width: 1100px) {
   .app-shell {
     grid-template-columns: minmax(0, 1fr);
