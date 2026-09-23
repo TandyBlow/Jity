@@ -1,6 +1,6 @@
 .settings-menu {
   position: fixed;
-  z-index: 20;
+  z-index: var(--layer-menu);
   top: 18px;
   right: 22px;
   width: min(360px, calc(100vw - 32px));

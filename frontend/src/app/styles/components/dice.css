@@ -9,7 +9,7 @@
 .real-dice-wrapper {
   position: absolute;
   inset: 0;
-  z-index: 90;
+  z-index: var(--layer-top);
   width: 100%;
   height: 100%;
   overflow: hidden;

@@ -444,6 +444,60 @@ world_facts 的 28 条缺失与离线脚本的结论一致。总声明数比离�
 - 1024 下记忆面板仍是 `display: none`（A30/B3 确认需要窄屏，但那需要抽屉方案，属于另一次改动）
 - 抽屉必须按模态处理（`role="dialog"` + 焦点陷阱 + Escape），否则是重复交付 A11
 
+## 6C 已由 6B-5 交付（2026-09-23 核实）
+
+文档里 6C 要的就是 `retrieved_chunks_json` / `token_count` / `latency_ms` / `word_count` 四项。实测 `/sessions/{id}/timeline/{node_id}` 的 `context` 已经全部返回，另外还多了 `prompt_sections` / `prompt_text` / `recorded`。路由形状没动，现有 `/sessions` 响应只是多了键。
+
+```
+retrieved_chunks   list   5 条
+token_count        int    5839
+latency_ms         int    0
+word_count         int    21
+额外：prompt_sections, prompt_text
+```
+
+**6C 不再单列，本项作废。**
+
+## 6E 重新实测：文档里的四个数字全错
+
+| | 文档说 | 实测 |
+|---|---|---|
+| 字号档位 | 14 | **17 档 / 100 处** |
+| 圆角 | 9 | **13 个 / 59 处** |
+| z-index | 6 | **9 个 / 10 处** |
+| 间距 | 61 处 | **25 个值 / 280 处**（15 个值不是 4 的倍数） |
+
+字号 17 档：10/11/12/13/14/15/18/20/22/24/25/28/31/32/38 px，外加 `0.8rem` / `0.84rem` 两个（`timeline.css:854`、`story-panel.css:259` —— 混在 px 文件里的 rem）。
+
+### 6E.4 层级：已完成，零像素差异
+
+`tokens.css` 加 `:root` 的应用层级，替换 6 处：
+
+```
+--layer-scene       -2   .scene-background
+--layer-brand        4   .game-brand
+--layer-menu        20   .settings-menu
+--layer-modal       80   .main-check-overlay
+--layer-modal-card  84   .main-check-card
+--layer-top         90   .real-dice-wrapper
+```
+
+`.story-node` 的 `z-index:1` 和骰子的 0/1/2 是**组件内部叠放**，留在原处。
+
+验收是**零像素差异** —— 只跑 `verify.spec.ts` 不重录，7/7 通过。
+
+间距的间隙是刻意的：窄屏抽屉必须落在 `--layer-menu` 和 `--layer-modal` 之间。
+
+### 6E.1/6E.2/6E.3 未做，需要先定数值
+
+这三项合计会改动 **280 处间距 + 100 处字号 + 59 处圆角**，等于全站每一块都位移。后果：
+
+- 验收从"差异白名单"退化成"全是白名单"，白名单就失去意义了
+- 我只能对比两个视口的截图，做不了真正的视觉 QA
+- 它对本项目的研究课题（上下文工程与记忆管理）零贡献
+
+**建议：不做整批合并。** 纯 token 化（只改名、不改值）也能做，但文档自己也说了"只改名不合并收益仅形式"。真觉得某处难看时再做那一处。
+
 ## 已知不在本批
 
 - **真正未加工的 LLM 原文全库没存**（`raw_output_text` 存的是 `output.model_dump_json()`，同样打过 pydantic 默认值）。补它要动 `LLMClient.generate` 的返回。关乎目标① 不是③。

@@ -12,7 +12,7 @@
 
 .game-brand {
   position: fixed;
-  z-index: 4;
+  z-index: var(--layer-brand);
   top: 22px;
   left: 28px;
   display: flex;
@@ -27,7 +27,7 @@
 
 .scene-background {
   position: fixed;
-  z-index: -2;
+  z-index: var(--layer-scene);
   inset: 0;
   background-image: var(--scene-background);
   background-position: center;

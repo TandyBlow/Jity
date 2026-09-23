@@ -11,3 +11,14 @@
   --color-accent-2: #87b38d;
   --color-danger: #c76d6d;
 }
+
+/* App-level stacking. Component-local z-index stays with its component.
+   The gaps are load-bearing: a narrow-screen drawer goes between menu and modal. */
+:root {
+  --layer-scene: -2;
+  --layer-brand: 4;
+  --layer-menu: 20;
+  --layer-modal: 80;
+  --layer-modal-card: 84;
+  --layer-top: 90;
+}
