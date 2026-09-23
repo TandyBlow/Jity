@@ -4,11 +4,13 @@ import type {
   CampaignDetailResponse,
   CampaignListItem,
   GameState,
+  MemoryUpdates,
   SaveSlot,
   SessionResponse,
   StoryOutput,
   TimelineNodeDetail,
   TimelineNodeSummary,
+  TurnContext,
 } from "../src/types";
 
 /**
@@ -65,6 +67,37 @@ const OPTION_CHECKS = [
   null,
 ];
 
+const MEMORY_UPDATES: MemoryUpdates = {
+  current_location: "卡塞尔学院报到处大厅",
+  items_upserted: [
+    { name: "临时通行卡", status: "owned", description: "卡面火漆纹路像刚被点燃过", location: "口袋" },
+  ],
+  items_removed: [],
+  npcs_upserted: [
+    {
+      name: "诺诺",
+      status: "present",
+      relationship: "引路人",
+      current_location: "报到处大厅门口",
+      description: "红发，校服外套随意搭在肩上",
+      notes: "古德里安教授派来接人",
+    },
+  ],
+  quests_upserted: [
+    { name: "完成入学报到", status: "active", objective: "找到报到台并确认自己的身份档案" },
+  ],
+  world_facts_upserted: [
+    { name: "卡塞尔学院不是普通大学", status: "known", description: "学生步伐安静、眼神锐利", source: "现场观察" },
+    { name: "新生名单在投影屏滚动", status: "suspected", description: "你的名字混在英文与编号之间" },
+  ],
+  player_status_patch: {
+    condition: "新生报到中，略紧张",
+    danger_level: "medium",
+    current_goal: "完成卡塞尔学院入学报到",
+  },
+  key_event: "被红发女孩诺诺从背后拍了拍肩膀",
+};
+
 export const storyOutput: StoryOutput = {
   narration: NARRATION,
   dialogue: DIALOGUE,
@@ -76,6 +109,32 @@ export const storyOutput: StoryOutput = {
   game_over: false,
   game_over_reason: "",
   current_location: "卡塞尔学院报到处大厅",
+  // The legacy delta lists the server still merges, ahead of memory_updates.
+  items_gained: [{ name: "银色徽章", description: "某个女生袖口下闪过" }],
+  items_lost: [],
+  npcs_encountered: [{ name: "古德里安教授", disposition: "未露面，仅被提及" }],
+  quests_updated: [],
+  memory_updates: MEMORY_UPDATES,
+  npc_relations_delta: null,
+};
+
+export const turnContext: TurnContext = {
+  recorded: true,
+  retrieved_chunks: [
+    { id: "lore-1", title: "卡塞尔学院简介", source_type: "location", content: "学院位于芝加哥郊外，表面是一所私立大学。", score: 0.82, keywords: ["学院", "入学"], importance: 4 },
+    { id: "npc-1", title: "诺诺", source_type: "npc_profile", content: "红发女生，古德里安教授的学生。", score: 0.71, keywords: ["诺诺"], importance: 3 },
+  ],
+  token_count: 4820,
+  latency_ms: 3120,
+  word_count: 392,
+  prompt_sections: {
+    campaign_context: "## 战役上下文\n第一幕 · 火之晨曦 / 入学日\n已揭示锚点：抵达卡塞尔学院",
+    system_prompt: "你是桌面 RPG 的中文 GM 辅助系统。\n当前状态：\n- 当前地点：卡塞尔学院报到处大厅",
+    messages: "## 最近对话历史\n[玩家]: 硬着头皮走向报到台。",
+    rag_chunks: "RAG 检索到的相关知识：\n[location] 卡塞尔学院简介\n学院位于芝加哥郊外。",
+    player_action: "玩家行动：愣住两秒，然后硬着头皮打招呼。",
+  },
+  prompt_text: "## 导演指令\n[导演指令] 回应玩家的招呼，让诺诺点破档案的存在。\n\n## 战役上下文\n第一幕 · 火之晨曦 / 入学日",
 };
 
 export const gameState: GameState = {
@@ -155,9 +214,37 @@ export const timelineNodeDetail: TimelineNodeDetail = {
   output: storyOutput,
   state: gameState,
   campaign_progress: { arc_index: 0, session_index: 0, revealed_anchors: ["anchor_arrival", "anchor_nono"] },
+  context: turnContext,
   model: MODEL,
   source: "llm",
   created_at: "2026-09-20T10:10:00",
+};
+
+/**
+ * Declared-versus-held names per turn. Node 7 declares a world fact the cap
+ * rejects, which is the case the trace tab exists to make visible.
+ */
+export const memoryTrace = {
+  session_id: SESSION_ID,
+  caps: { items: 20, npcs: 15, quests: 10, world_facts: 15 },
+  nodes: timelineNodes.map((node) => ({
+    node_id: node.id,
+    parent_id: node.parent_id,
+    depth: node.depth,
+    turn: node.turn,
+    is_on_active_path: node.is_on_active_path,
+    items: { declared: ["临时通行卡"], held: ["临时通行卡", "旧行李箱"] },
+    npcs: { declared: ["诺诺"], held: ["诺诺", "古德里安教授"] },
+    quests: { declared: ["完成入学报到"], held: ["完成入学报到", "搞清这里是什么地方"] },
+    world_facts:
+      node.id === ACTIVE_TURN_ID
+        ? {
+            declared: ["卡塞尔学院不是普通大学", "新生名单在投影屏滚动", "小提琴盒里的金属锁扣"],
+            // The third one never lands: world_facts is at its cap of 15.
+            held: ["卡塞尔学院不是普通大学", "新生名单在投影屏滚动"],
+          }
+        : { declared: ["卡塞尔学院不是普通大学"], held: ["卡塞尔学院不是普通大学"] },
+  })),
 };
 
 export const campaignDetail: CampaignDetailResponse = {
@@ -268,6 +355,7 @@ export async function installApiMocks(page: Page): Promise<void> {
     if (path === `/sessions/${SESSION_ID}/timeline`) {
       return json({ session_id: SESSION_ID, active_node_id: ACTIVE_TURN_ID, campaign_filename: CAMPAIGN_FILENAME, nodes: timelineNodes });
     }
+    if (path === `/sessions/${SESSION_ID}/memory-trace`) return json(memoryTrace);
     if (path.startsWith(`/sessions/${SESSION_ID}/timeline/`)) return json(timelineNodeDetail);
     if (path === `/sessions/${SESSION_ID}/history`) return json({ session_id: SESSION_ID, messages: [] });
 

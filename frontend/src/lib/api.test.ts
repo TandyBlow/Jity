@@ -7,6 +7,7 @@ import {
   generateFromNovel,
   generateScene,
   getCampaign,
+  getMemoryTrace,
   listSlots,
 } from "./api";
 
@@ -200,5 +201,39 @@ describe("activateTimelineNode", () => {
     const result = await activateTimelineNode("s1", 12);
 
     expect(result).toMatchObject({ status: "activated", active_turn_id: 12 });
+  });
+});
+
+describe("getMemoryTrace", () => {
+  it("requests the trace for the session", async () => {
+    const calls = stubFetch({
+      body: JSON.stringify({
+        session_id: "s1",
+        caps: { items: 20, npcs: 15, quests: 10, world_facts: 15 },
+        nodes: [
+          {
+            node_id: 7,
+            parent_id: 5,
+            depth: 3,
+            turn: 3,
+            is_on_active_path: true,
+            world_facts: { declared: ["新事实"], held: ["旧事实"] },
+          },
+        ],
+      }),
+    });
+
+    const result = await getMemoryTrace("s1");
+
+    expect(calls[0].url).toBe(`${BASE}/sessions/s1/memory-trace`);
+    expect(calls[0].init.method).toBeUndefined();
+    expect(result.caps.world_facts).toBe(15);
+    expect(result.nodes[0].world_facts).toEqual({ declared: ["新事实"], held: ["旧事实"] });
+  });
+
+  it("surfaces the server error detail", async () => {
+    stubFetch({ ok: false, status: 404, body: JSON.stringify({ detail: "Session not found" }) });
+
+    await expect(getMemoryTrace("nope")).rejects.toThrow("Session not found");
   });
 });

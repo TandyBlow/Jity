@@ -4,6 +4,7 @@ import type {
   CampaignSchema,
   GameState,
   GenerateResponse,
+  MemoryTraceResponse,
   SaveSlot,
   SessionHistoryResponse,
   SessionResponse,
@@ -95,6 +96,10 @@ export function getTimeline(sessionId: string): Promise<TimelineResponse> {
 
 export function getTimelineNode(sessionId: string, nodeId: number): Promise<TimelineNodeDetail> {
   return request<TimelineNodeDetail>(`/sessions/${sessionId}/timeline/${nodeId}`);
+}
+
+export function getMemoryTrace(sessionId: string): Promise<MemoryTraceResponse> {
+  return request<MemoryTraceResponse>(`/sessions/${sessionId}/memory-trace`);
 }
 
 export function activateTimelineNode(sessionId: string, nodeId: number): Promise<{
