@@ -382,6 +382,33 @@ world_facts 的 28 条缺失与离线脚本的结论一致。总声明数比离�
 
 `SHOTS` 原先在 `capture.spec.ts` 和 `verify.spec.ts` 各写一份，已合并到 `fixtures.ts` —— 之前加一个截图忘了加对应的 verify 会静默漏掉。
 
+## 6B 完成（2026-09-23）
+
+10 个 commit，`dc0a0a8` → `c244ed9`。18 项全做完。
+
+全绿：**后端 430 passed**（基线 420）、**前端 43 passed**（基线 35，5 文件）、**Playwright 20 passed**（基线 18，多了 `timeline-trace`）、`tsc --noEmit` 干净。
+
+### 交付面
+
+| 面 | 内容 |
+|---|---|
+| 后端 | `model_outputs` 两列存 prompt；`/timeline/{node_id}` 加 `context` / `memory` / `declared` / `caps`；新 `/memory-trace` |
+| 导航 | 轮次跳转 + 上一/下一轮 + 选中滚入视野 + 树/列表切换 |
+| 单轮 | 声明 vs 落库（含 cap 占用与「未落库」标记）+ 本轮注入的上下文（分段字数 / RAG 分数 / prompt 全文） |
+| 跨轮 | 节点对比（增/删/改字段）+ 存续轨迹 tab（实体首末轮、消失标记、逐轮存续条） |
+| 无障碍 | 四个 tab 补 `aria-selected` / `aria-controls` / 方向键 |
+
+### 三处实现与计划的偏离（都是实测逼出来的）
+
+1. **`declared_updates` 抽成 `apply_output` 与轨迹接口共用，节点详情直接回算好的 fold 结果。** 原计划让前端做 `diffDeclaration` —— 那要在 TS 里重写一遍 `_normalize_memory` 的语义，而本轮已经在 Python 里复现过一次这种错误（95 条假阳性）。现在前端一次合并逻辑都没有。
+2. **第 14 项从「轮询刷新选中详情」改成「跟随时间线头部」。** `story_turns` 的行提交后不可变（只有 `update_active_turn_snapshot` 改根节点，`timeline.py:51-62`），重拉同一个节点没有意义；真正会过期的是"选中位置被跑到后面去了"。
+3. **`MemoryDelta` 对"本轮无变更"也显示一行。** 原计划是"无变更时不显示"，但那会让"没有变更"和"还没加载"长得一样 —— 而 36% 的回合确实没有记忆变更，这本身是研究数据。
+
+### 没做的
+
+- `TurnContextPanel` 与 `MemoryDelta` 排在节点详情最末（旁白/状态之后）。研究用途下它们应该在顶部，但那要重排现有面板，属于纯 UX 决策，没擅自做。
+- 轨迹 tab 的存续条在 fixture 的 4 节点下只有 4 格；270 轮下会折成多行热力图，**没在真实长局上看过**。
+
 ## 已知不在本批
 
 - **真正未加工的 LLM 原文全库没存**（`raw_output_text` 存的是 `output.model_dump_json()`，同样打过 pydantic 默认值）。补它要动 `LLMClient.generate` 的返回。关乎目标① 不是③。
