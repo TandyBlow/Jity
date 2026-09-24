@@ -7,20 +7,23 @@
 
 ---
 
-## 当前状态（2026-09-23 收尾，接手先读这一块）
+## 当前状态（2026-09-24 更新，接手先读这一块）
 
 **已交付**：地基三件套（`60ce656`…`3d80f7b`）、6B 回放侧（`dc0a0a8`…`47a11ed`）、6A + 6D（`16c2e9c`）、
-6E.4 层级 + 窄屏抽屉 + A11（`b9e90b8`、`431b8eb`、`933677b`）。
+6E.4 层级 + 窄屏抽屉 + A11（`b9e90b8`、`431b8eb`、`933677b`）、
+**A19/B7 空输入静默无反应（`612bb84`）**。
 
-**验证状态**：后端 430 / 前端 43 / Playwright 30，全绿。跑法见文末"验证设施"。
+**验证状态**：后端 430 / 前端 43 / Playwright 30。**但那个 30 不含像素验收** —— 见文末"两个流程陷阱"，
+`capture.spec.ts` 按字母序排在 `verify.spec.ts` 前面，会先把当前渲染覆写成基线，verify 再拿它跟自己对。
 
 **下一步该做什么**：不是继续改前端。这套观察面已经能用了 —— 去跑 270 轮实验，让真实数据说明还缺什么。
 前端需求的源头是研究课题（上下文工程与记忆管理），不是相反。
 
 **若一定要继续改，剩下的按价值排序**：
-1. `useGameActions.ts:41` —— 输入框为空时点「生成下一幕」静默无反应，按钮也不 `disabled`（归 A19/B7）
-2. B4 四个页面的全局导航（未定，本文档中段有提问）
-3. 节点对比面板没有像素基线（只在单测与手查里覆盖）
+1. ~~`useGameActions.ts:41` 输入框为空时静默无反应~~ → **2026-09-24 已修，`612bb84`**，见文末。
+   顺带留了一条故意没修的：按钮 disabled 查 `pendingGenerate`，Ctrl/⌘+Enter 的守卫不查。
+2. B4 四个页面的全局导航（范围仍未定：四页，还是三页）→ **代价已实测，见文末"B4 的实测代价"**。
+3. 节点对比面板没有像素基线 → **已查清为什么现在做不出来，见同一节末段。**
 4. 6E.1/2/3 的字号/间距/圆角像素合并 —— **不推荐**，理由见下文 6E 那节
 
 **本文档读法**：下面的"问题清单"（A/B 两大类）是最早写成、部分已被后续实测推翻；
@@ -559,3 +562,108 @@ console@1024x768  .option-list   top 1087->1088
 - **真正未加工的 LLM 原文全库没存**（`raw_output_text` 存的是 `output.model_dump_json()`，同样打过 pydantic 默认值）。补它要动 `LLMClient.generate` 的返回。关乎目标① 不是③。
 - 已跑的 69 个节点没有 prompt 落盘，第 13 项**只对以后跑的回合有效**。
 - 6D 剧情区滚动 / A35 自动滚回顶部，仍在第 6 项但不在 6B。
+
+---
+
+# A19/B7 空输入静默无反应（2026-09-24，`612bb84`）
+
+**问题**：输入框为空时点「生成下一幕」，按钮是亮的，但点了什么都不发生、也没有提示。
+`useGameActions.ts:41` 的 `if (!sid || !nextAction.trim() || generating.current) return;` 把它静默吞掉。
+
+**改动**（全在 `StoryPanel.tsx`，四处）：
+
+- 抽出 `const hasAction = action.trim().length > 0;`
+- 按钮 `disabled` 补 `|| !hasAction`
+- textarea 的 Ctrl/⌘+Enter 守卫补 `&& hasAction`
+- `.player-controls-hint` 按 `hasAction` 切换文案（空时提示「先输入行动，或直接点上方选项」）
+
+新增 `e2e/generate-guard.spec.ts` 两条：空 → disabled；填字 → enabled；只填空格 → 又 disabled；
+外加一条**空输入时选项按钮仍然可用** —— 防的是过度禁用把选项路径一起堵死。
+
+**故意没修**：按钮的 disabled 查 `session.pendingGenerate`，Ctrl/⌘+Enter 的守卫不查，两者本来就不一致。
+本次只统一了 `action` 那一半。统一 `pendingGenerate` 是行为变更，不在这条的范围里。
+
+## 这个改动会改像素，而且知道是哪 3 张
+
+`story-panel.css:75` 有 `.player-controls-row button:disabled { cursor: not-allowed; opacity: 0.55; }`。
+e2e fixture 下 `#action` 是空的、按钮原本启用，加 `!hasAction` 后它变灰。一次性探针实测：
+`opacity 1 → 0.55`，按钮截图字节 `2764 → 2528`。
+
+15 张基线里受影响的是 3 张：`console--1536x730`、`console--1024x768`、`console-drawer--1024x768`。
+**其余 12 张不可能变**，理由是结构性的：`StoryPanel` 全仓只被 `src/app/page.tsx` 一个文件 import，
+所以它的标记只出现在 `/` 这一条路由上，而 `/` 的截图一共就这 3 张。
+
+## 我在这条上犯的错：基线备份放错了地方
+
+动手前把 15 张 PNG 备份到了 `frontend/test-results/`。**`playwright.config.ts` 没设 `outputDir`，
+用的是默认值 `test-results`，而 Playwright 每次启动都会清空重建它。** 备份在下一次跑测试时就被删了，
+随后 `capture.spec.ts` 又覆盖了 `docs/frontend-baseline/` —— **改动前的 15 张因此丢失。**
+
+正确做法：备份放到 runner 管不到的地方（仓库外，或 `frontend/` 下另建目录并加进 `.gitignore`）。
+要补 before/after，源码在 git 里：把改动过的文件临时换回 HEAD 版本，
+`BASELINE_DIR=<仓库外目录> npx playwright test e2e/capture.spec.ts` 渲染出"改前"再比。
+
+## 两个流程陷阱（都实测过）
+
+1. **整套 `npx playwright test` 的像素验收是恒真的。** 按字母序 `capture.spec.ts` 先跑，把当前渲染写进
+   `docs/frontend-baseline/`，`verify.spec.ts` 再拿这份跟自己对，`maxDiffPixels: 0` 永远成立。
+   **必须单独跑 `e2e/verify.spec.ts` 才算验收。**
+2. **`probe.spec.ts` 的 `afterAll` 无条件覆写被 track 的 `layout-probe.json`。** 代码没动时它是确定性的
+   （2026-09-24 实测：整套跑完 `git diff --stat` 为空），但改了几何之后再跑，改动前的探针基线就没了。
+
+本次实测的基线：后端 **430 passed**；前端 **43 passed / 5 files**；Playwright **30 passed**；
+新增 spec **2 passed**；`e2e/verify.spec.ts` 单独跑 **8 passed**；`tsc --noEmit` 干净。
+
+---
+
+# B4 的实测代价（2026-09-24，五路并行审计）
+
+**这不是"加一条导航栏"，是"引入一个全局垂直偏移量，然后重算全站每一处 viewport 高度预算"。**
+
+顶栏本身只占 2 个文件；真正的工作量是下面这些**被 `100vh` / `position: fixed` / `sticky top` 写死、
+需要重算的规则**，散在 9 个 CSS 文件里：
+
+| 位置 | 为什么被影响 | 处理 |
+|---|---|---|
+| `layout.css:6` `.app-shell { height: 100vh }` | 整页正好一个视口，顶栏占掉 56px | 改 `calc(100vh - var(--nav-height))` |
+| `timeline.css:1079-1086` `@media ≤760px { .app-shell { height: auto } }` | **压过上面那条 calc**（timeline.css 在 layout.css 之后 import） | 同样要减 |
+| `settings-menu.css:2-5` `.settings-menu { fixed; top: 18px }` | 被顶栏压住 | `top: calc(var(--nav-height) + 18px)` |
+| `layout.css:28-31` `.scene-background { fixed; inset: 0 }` | 背景图盖住顶栏 | `inset: var(--nav-height) 0 0 0` |
+| `timeline.css:308-311` `.story-node-detail { sticky; top: 20px }` | 在 `/timeline` 上**不在** `.app-shell` 内，头部被盖 36px | `top` 与 `max-height` 都要加 |
+| `timeline.css:963-970` `.clue-board { sticky; top: 32px }` | 同上，被盖 24px | 同左 |
+| `timeline.css:193-195` `max-height: calc(100vh - 220px)` | 那个 220px 没算顶栏 | 减 `--nav-height` |
+| `story-panel.css:87` `padding: clamp(56px, 12vh, 132px)` | 12vh 被顶栏吃掉一截 | 待定 |
+| `base.css:5-12` `html, body { min-height: 100% }` | 与裸 `body` 规则同特异性，且 `tokens.css` 在它**之前** import | body 规则必须写进 base.css |
+| `check-overlay.css:15-18`、`memory-panel.css:334-345` | 卡片 `top:24px`、抽屉头部 `top:0` 落在顶栏带里 | **由分层解决**，不靠偏移 |
+
+**分层是硬约束**：`.app-shell` 有 `isolation: isolate`，里面的判定浮层(80)、记忆抽屉(40)全被困在这一个
+层叠上下文里。顶栏只要 z-index 比它高，模态就被顶栏压住，A11 当场作废。所以顶栏和 `.app-shell` 必须
+**同层**，靠 DOM 顺序让壳子在后 —— 也就是 `layout.tsx` 里 `<AppNav/>` 必须写在 `{children}` 之前。
+另外 `.story-node` 有 `position: relative; z-index: 1`，所以顶栏也不能是 `z-index: auto`。
+
+**代价分布不均**：约三分之二在控制台 —— 它的 `height:100vh`、`isolation`、两个 fixed 子元素、
+一条窄屏媒体查询，全是为"这一页正好等于一个视口"服务的。`/timeline`、`/curator`、`/dev-log` 三页
+加起来只需要两个 shell 各加一行 padding，再加三条 sticky 偏移。**"四页还是三页"值得在动手前再定一次。**
+
+**审计排除掉的（都是好消息）**：
+
+- Tailwind v4.3.0 的 preflight 里**一个 `body` 选择器都没有**，`body { display:flex }` 安全
+- `src/` 里**零个 Tailwind 工具类**，全是项目自有 kebab 类，不存在工具类冲突
+- e2e 里**没有任何裸 anchor / `getByText` / 全文档文本定位**，顶栏加链接不会劫持 locator。
+  唯一的硬失败是 `verify.spec.ts` 的 15 张截图。理论上唯一暴露的是 `check-overlay.spec.ts:26/33/43`
+  那个不限定的 `getByRole("dialog")` —— 只要顶栏不引入 `role="dialog"` 就安全
+
+## 对比面板的像素基线为什么现在做不出来
+
+原计划是加 `?compare=1` 再补一张 shot。查下来有四处要改，而且**只加 `?compare=1` 会产出废图**：
+
+1. `NodeCompare` 只在 `compareNode && selectedNode && 两者 id 不同` 时才渲染真表，
+   否则渲染一句「基准和当前是同一个节点」。
+2. `fixtures.ts:426` 是 `if (path.startsWith(...timeline/)) return json(timelineNodeDetail)` ——
+   **任何 node id 都返回同一个常量**，它的 `id` 硬编码是 7。所以选中任何节点，拿回的 id 都是 7。
+3. 于是基准再取活跃节点 7，两者永远相同 → `fixtures.ts:426` 必须先改成按 node id 返回不同的 detail。
+4. shot 的 URL 必须带 `?node=`：`useTimelineData.ts:115-117` 的 `targetId` 在缺 `requestedNodeId` 时
+   会落到 `active_node_id`，只写 `?compare=1` 还是同一个节点。
+
+取基准的正确路径是 `StoryTimeline.tsx:96` 那条 `loadCompareNode(active_node_id)`，
+**不是** `pinCompareNode()`（后者正是把 selectedNode 自己钉成基准）。
