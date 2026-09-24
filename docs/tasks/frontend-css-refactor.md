@@ -13,8 +13,8 @@
 6E.4 层级 + 窄屏抽屉 + A11（`b9e90b8`、`431b8eb`、`933677b`）、
 **A19/B7 空输入静默无反应（`612bb84`）**。
 
-**验证状态**：后端 430 / 前端 43 / Playwright 30。**但那个 30 不含像素验收** —— 见文末"两个流程陷阱"，
-`capture.spec.ts` 按字母序排在 `verify.spec.ts` 前面，会先把当前渲染覆写成基线，verify 再拿它跟自己对。
+**验证状态**：后端 430 / 前端 43 / 完整 `npx playwright test` **18 passed / 14 skipped**（2026-09-24）。
+像素验收**现在是真的了** —— 见文末"验收设施已修"。
 
 **下一步该做什么**：不是继续改前端。这套观察面已经能用了 —— 去跑 270 轮实验，让真实数据说明还缺什么。
 前端需求的源头是研究课题（上下文工程与记忆管理），不是相反。
@@ -603,16 +603,34 @@ e2e fixture 下 `#action` 是空的、按钮原本启用，加 `!hasAction` 后�
 要补 before/after，源码在 git 里：把改动过的文件临时换回 HEAD 版本，
 `BASELINE_DIR=<仓库外目录> npx playwright test e2e/capture.spec.ts` 渲染出"改前"再比。
 
-## 两个流程陷阱（都实测过）
+## 验收设施已修（2026-09-24，`a2c433b`）
 
-1. **整套 `npx playwright test` 的像素验收是恒真的。** 按字母序 `capture.spec.ts` 先跑，把当前渲染写进
-   `docs/frontend-baseline/`，`verify.spec.ts` 再拿这份跟自己对，`maxDiffPixels: 0` 永远成立。
-   **必须单独跑 `e2e/verify.spec.ts` 才算验收。**
-2. **`probe.spec.ts` 的 `afterAll` 无条件覆写被 track 的 `layout-probe.json`。** 代码没动时它是确定性的
-   （2026-09-24 实测：整套跑完 `git diff --stat` 为空），但改了几何之后再跑，改动前的探针基线就没了。
+**修的什么。** `capture.spec.ts` 和 `probe.spec.ts` 默认就往 `docs/frontend-baseline/` 里写，
+而 `capture.spec.ts` 按字母序排在 `verify.spec.ts` 前面 —— 于是完整跑一次 = 先把当前渲染覆写成基线、
+再拿它跟自己对，`maxDiffPixels: 0` 永远成立。**此前所有"Playwright 全绿"都不含像素验收。**
 
-本次实测的基线：后端 **430 passed**；前端 **43 passed / 5 files**；Playwright **30 passed**；
-新增 spec **2 passed**；`e2e/verify.spec.ts` 单独跑 **8 passed**；`tsc --noEmit` 干净。
+**改法**（3 个文件）：
+
+- `capture.spec.ts` / `probe.spec.ts`：不给 `BASELINE_DIR` 就 `test.skip`。相对路径按仓库根解析。
+  `probe.spec.ts` 的 `PROBE_OUT` 仍在，只是默认变成 `<BASELINE_DIR>/layout-probe.json`。
+- `playwright.config.ts`：加 `updateSnapshots: "none"` —— 基线图缺失是失败，不是顺手写一张。
+
+**重录怎么跑**（只在需要改基线时）：
+
+```bash
+cd frontend
+BASELINE_DIR=docs/frontend-baseline npx playwright test e2e/capture.spec.ts e2e/probe.spec.ts
+```
+
+**实测**：完整 `npx playwright test` = **14 skipped / 18 passed**，跑完 `docs/frontend-baseline/`
+里 16 个文件的 md5 **一个字节都没变**；同一个开关指向别处时正常写出 16 个文件，正式基线不受影响。
+
+**顺带记一个我自己反复踩的坑**：Bash 工具的 cwd 跨调用保持。`cd <仓库根> && ...` 之后再跑
+`npx vitest run`，vitest 会在根目录扫描，把 `frontend/e2e/*.spec.ts` 这些 Playwright 文件也收进来，
+报 `9 failed | 5 passed` —— 看着像真回归。**每条前端命令都显式带 `cd frontend/ &&`。**
+
+本次实测的基线：后端 **430 passed**；前端 **43 passed / 5 files**；`tsc --noEmit` 干净；
+新增 spec `generate-guard` **2 passed**。
 
 ---
 
