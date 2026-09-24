@@ -71,6 +71,7 @@ export function StoryPanel({
   const [checkingAction, setCheckingAction] = useState<PendingCheck | null>(null);
   const [sweep, setSweep] = useState<PendingSweep | null>(null);
   const sceneRef = useRef<HTMLElement>(null);
+  const hasAction = action.trim().length > 0;
 
   // A new turn replaces the whole scene. Without this the scroll position
   // carries over, so the next turn opens part-way through its own narration.
@@ -234,19 +235,21 @@ export function StoryPanel({
             value={action}
             onChange={(event) => setAction(event.target.value)}
             onKeyDown={(event) => {
-              if ((event.metaKey || event.ctrlKey) && event.key === "Enter" && !isLoading && sessionId) {
+              if ((event.metaKey || event.ctrlKey) && event.key === "Enter" && !isLoading && sessionId && hasAction) {
                 handleGenerate();
               }
             }}
             placeholder="输入玩家行动、当前场景或 GM 限制"
           />
-          <button disabled={isLoading || !!session.pendingGenerate || !sessionId} onClick={() => handleGenerate()} type="button">
+          <button disabled={isLoading || !!session.pendingGenerate || !sessionId || !hasAction} onClick={() => handleGenerate()} type="button">
             {isLoading ? <Loader2 className="spin-icon" size={18} /> : <Send size={18} />}
             <span>{isLoading ? "生成中" : "生成下一幕"}</span>
           </button>
         </div>
         {error ? <div className="error">{error}</div> : null}
-        <div className="player-controls-hint">Ctrl / ⌘ + Enter 快速生成</div>
+        <div className="player-controls-hint">
+          {hasAction ? "Ctrl / ⌘ + Enter 快速生成" : "先输入行动，或直接点上方选项"}
+        </div>
       </div>
       {checkingAction ? (
         <MainCheckOverlay
