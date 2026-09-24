@@ -7,9 +7,22 @@ import { SESSION_ID, installApiMocks, seedSession } from "./fixtures";
 
 /**
  * Layout probe: dumps numeric geometry for every route so layout problems are
- * stated as measurements rather than impressions. Run with
- * `npx playwright test e2e/probe.spec.ts` and read the JSON on stdout.
+ * stated as measurements rather than impressions.
+ *
+ * Like capture, this is opt-in: without BASELINE_DIR it skips, because its
+ * output is the tracked reference and a plain test run must not move it.
+ *
+ *   BASELINE_DIR=docs/frontend-baseline npx playwright test e2e/probe.spec.ts
+ *
+ * PROBE_OUT overrides the file name; relative paths resolve like BASELINE_DIR.
  */
+
+const RECORD_DIR = process.env.BASELINE_DIR;
+
+test.skip(
+  !RECORD_DIR,
+  "Recording is opt-in: set BASELINE_DIR to the directory to record into.",
+);
 
 const VIEWPORTS = [
   { name: "1536x730", width: 1536, height: 730 },
@@ -97,9 +110,11 @@ for (const page of PAGES) {
 }
 
 test.afterAll(() => {
+  // Skipped files still reach this hook, so the guard has to be here too.
+  if (!RECORD_DIR) return;
   const outPath = process.env.PROBE_OUT
-    ? path.resolve(process.env.PROBE_OUT)
-    : path.resolve(__dirname, "../../docs/frontend-baseline/layout-probe.json");
+    ? path.resolve(__dirname, "../..", process.env.PROBE_OUT)
+    : path.resolve(__dirname, "../..", RECORD_DIR, "layout-probe.json");
   fs.mkdirSync(path.dirname(outPath), { recursive: true });
   fs.writeFileSync(outPath, JSON.stringify(report, null, 2), "utf8");
 });

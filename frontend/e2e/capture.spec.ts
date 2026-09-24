@@ -5,12 +5,15 @@ import { test } from "@playwright/test";
 import { SHOTS, VIEWPORTS, installApiMocks, seedSession } from "./fixtures";
 
 /**
- * Visual baseline capture.
+ * Visual baseline capture — the only thing that writes the recorded baseline.
  *
- * Every route is rendered against frozen API fixtures, at two viewports, and
- * written to a flat directory. Run it once before touching CSS, and again after
- * (`BASELINE_DIR=...`); the two directories must be pixel-identical except for
- * the intentional fixes listed in the plan.
+ * Recording is opt-in. Without BASELINE_DIR this file skips, so a plain
+ * `npx playwright test` compares the live app against the recorded baseline
+ * instead of overwriting it and then agreeing with itself.
+ *
+ *   BASELINE_DIR=docs/frontend-baseline npx playwright test e2e/capture.spec.ts
+ *
+ * Relative paths resolve against the repository root.
  *
  * 1024x768 is chosen deliberately: it lands in the 900-1100px band where
  * globals.css currently has no rules at all.
@@ -20,9 +23,14 @@ import { SHOTS, VIEWPORTS, installApiMocks, seedSession } from "./fixtures";
 // scaling on a 1920x1080 panel), working area 1536x816, minus browser chrome.
 // 1024x768 is the narrow-desktop target — it is where the memory panel
 // currently dies, and narrow support is confirmed in scope.
-const OUT_DIR = process.env.BASELINE_DIR
-  ? path.resolve(process.env.BASELINE_DIR)
-  : path.resolve(__dirname, "../../docs/frontend-baseline");
+const RECORD_DIR = process.env.BASELINE_DIR;
+
+test.skip(
+  !RECORD_DIR,
+  "Recording is opt-in: set BASELINE_DIR to the directory to record into.",
+);
+
+const OUT_DIR = path.resolve(__dirname, "../..", RECORD_DIR ?? "");
 
 for (const shot of SHOTS) {
   test(`capture ${shot.name}`, async ({ page }) => {
