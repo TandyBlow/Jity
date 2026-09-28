@@ -27,7 +27,9 @@ export function StoryTimeline({ data, hasSession }: { data: TimelineData; hasSes
     return <p className="empty-state">请从游戏控制台打开时间线，以查看当前会话的剧情分支。</p>;
   }
   if (data.timelineNodes.length === 0) {
-    return <p className="empty-state">当前会话还没有可显示的剧情节点。</p>;
+    // "No nodes" and "could not load" must not look the same; the banner above
+    // the tabs already says which one it is.
+    return data.loadError ? null : <p className="empty-state">当前会话还没有可显示的剧情节点。</p>;
   }
 
   const children = new Map<number | null, TimelineNodeSummary[]>();
@@ -142,7 +144,6 @@ export function StoryTimeline({ data, hasSession }: { data: TimelineData; hasSes
             >
               {detail.id === data.activeNodeId ? "这里已是当前进度" : data.activating ? "正在恢复…" : "从此处继续"}
             </button>
-            {data.timelineError ? <div className="error">{data.timelineError}</div> : null}
           </>
         )}
       </aside>

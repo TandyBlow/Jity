@@ -27,10 +27,19 @@ export function useCuratorEditor() {
   const [status, setStatus] = useState("");
   const [novelUploading, setNovelUploading] = useState(false);
   const [novelErrors, setNovelErrors] = useState<string[]>([]);
+  const [campaignsError, setCampaignsError] = useState("");
+
+  // An empty picker and a broken one look identical, so the failure is kept
+  // where the picker can show it.
+  const refreshCampaigns = useCallback(() => {
+    return listCampaigns()
+      .then((r) => { setCampaignsError(""); setCampaigns(r.campaigns ?? []); })
+      .catch((err) => setCampaignsError(err instanceof Error ? err.message : "战役列表加载失败"));
+  }, []);
 
   useEffect(() => {
-    listCampaigns().then((r) => setCampaigns(r.campaigns ?? [])).catch((err) => console.error("listCampaigns failed:", err));
-  }, []);
+    void refreshCampaigns();
+  }, [refreshCampaigns]);
 
   const handleLoad = useCallback((fname: string) => {
     getCampaign(fname).then((r) => {
@@ -70,7 +79,7 @@ export function useCuratorEditor() {
         setCampaign(data.campaign as CampaignSchema);
         setFilename(data.saved_to?.split("/").pop() ?? "generated.json");
         setStatus("生成完成！请审查后保存。");
-        listCampaigns().then((r) => setCampaigns(r.campaigns ?? [])).catch((err) => console.error("listCampaigns refresh failed:", err));
+        void refreshCampaigns();
       } else {
         setStatus("生成失败：" + (data.detail ?? "未知错误"));
       }
@@ -78,7 +87,7 @@ export function useCuratorEditor() {
       setStatus("请求失败：" + (e instanceof Error ? e.message : String(e)));
     }
     setGenerating(false);
-  }, [genPrompt]);
+  }, [genPrompt, refreshCampaigns]);
 
   const handleSave = useCallback(async () => {
     setSaving(true);
@@ -87,7 +96,7 @@ export function useCuratorEditor() {
       const data = await saveCampaign(filename, campaign);
       if (data.status === "saved") {
         setStatus("已保存！");
-        listCampaigns().then((r) => setCampaigns(r.campaigns ?? [])).catch((err) => console.error("listCampaigns refresh failed:", err));
+        void refreshCampaigns();
       } else {
         setStatus("保存失败：" + (data.detail ?? ""));
       }
@@ -95,7 +104,7 @@ export function useCuratorEditor() {
       setStatus("请求失败：" + (e instanceof Error ? e.message : String(e)));
     }
     setSaving(false);
-  }, [filename, campaign]);
+  }, [filename, campaign, refreshCampaigns]);
 
   const handleDownload = useCallback(() => {
     const blob = new Blob([JSON.stringify(campaign, null, 2)], { type: "application/json" });
@@ -120,7 +129,7 @@ export function useCuratorEditor() {
   return {
     ...arcEditing,
     campaigns, campaign, filename, setFilename, genPrompt, setGenPrompt,
-    generating, saving, status, novelUploading, novelErrors, reviewStats,
+    generating, saving, status, novelUploading, novelErrors, campaignsError, reviewStats,
     handleLoad, handleNovelUpload, handleGenerate, handleSave, handleDownload,
   };
 }

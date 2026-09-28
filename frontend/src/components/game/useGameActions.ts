@@ -162,13 +162,15 @@ export function useGameActions(core: GameSessionCore) {
     }
   }, [setIsLoading, setError, setOutput, setAction, setPendingGenerate, setSelectedSlotId, setSelectedSlot, setSessionId, setState, setActiveTurnId, setModel, setChunks, restoreLastOutput, refreshSlots, setTurnReport]);
 
-  const handleCreateSlot = useCallback(async (name: string) => {
-    if (!name || !sessionId) return;
+  /** Error message on failure, null when the slot was created. */
+  const handleCreateSlot = useCallback(async (name: string): Promise<string | null> => {
+    if (!name || !sessionId) return null;
     try {
       await createSlot(name, sessionId, selectedSlot);
       await refreshSlots(sessionId, name);
+      return null;
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : String(err));
+      return err instanceof Error ? err.message : String(err);
     }
   }, [sessionId, selectedSlot, refreshSlots]);
 

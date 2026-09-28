@@ -41,6 +41,9 @@ export function useTimelineData(
   // turn happened to be selected first. Picking a node opts out.
   const [following, setFollowing] = useState(true);
   const [timelineError, setTimelineError] = useState("");
+  // Page-level load failures live apart from per-node ones so refreshing a
+  // node cannot wipe the reason the page came up empty.
+  const [loadError, setLoadError] = useState("");
   const [activating, setActivating] = useState(false);
   const [filterMode, setFilterMode] = useState<FilterMode>("all");
   const [loading, setLoading] = useState(true);
@@ -95,11 +98,20 @@ export function useTimelineData(
 
   useEffect(() => {
     setLoading(true);
+    // A failed fetch used to fall back to an empty value, which renders exactly
+    // like a session that genuinely has nothing in it.
+    const failed: string[] = [];
+    const note = (message: string) => {
+      failed.push(message);
+      return null;
+    };
+
     Promise.all([
-      listCampaigns().catch(() => ({ campaigns: [] })),
-      sessionId ? getSessionProgress(sessionId).catch(() => null) : Promise.resolve(null),
-      sessionId ? getTimeline(sessionId).catch(() => null) : Promise.resolve(null),
+      listCampaigns().catch(() => { note("战役列表加载失败"); return { campaigns: [] }; }),
+      sessionId ? getSessionProgress(sessionId).catch(() => note("会话进度加载失败")) : Promise.resolve(null),
+      sessionId ? getTimeline(sessionId).catch(() => note("剧情时间线加载失败")) : Promise.resolve(null),
     ]).then(([list, progress, timeline]) => {
+      setLoadError(failed.join("；"));
       const files = list.campaigns ?? [];
       setCampaigns(files);
       if (progress) {
@@ -122,7 +134,11 @@ export function useTimelineData(
       if (campaignFile) {
         getCampaign(campaignFile)
           .then((detail) => setArcs(detail.campaign?.arcs ?? []))
-          .catch(() => setArcs([]));
+          .catch(() => {
+            note("战役结构加载失败");
+            setArcs([]);
+            setLoadError(failed.join("；"));
+          });
       }
     }).catch((error) => {
       setTimelineError(error instanceof Error ? error.message : "时间线加载失败");
@@ -196,7 +212,7 @@ export function useTimelineData(
     timelineNodes, activeNodeId, selectedNodeId, selectedNode,
     compareNodeId, compareNode, loadCompareNode, clearCompareNode, pinCompareNode,
     following, setFollowing, selectNode, live,
-    timelineError, activating,
+    timelineError, loadError, activating,
     filterMode, setFilterMode, loading,
     handleSelectCampaign, isAnchorRevealed, filteredFacts,
     loadNode, handleActivateNode,

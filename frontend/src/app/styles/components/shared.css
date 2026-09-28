@@ -1,3 +1,12 @@
+/* A load that failed, stated in the place the empty result would have gone. */
+.load-error {
+  max-width: 1080px;
+  margin: 0 auto 20px;
+  color: var(--color-danger);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
 .label {
   display: block;
   margin: 16px 0 7px;

@@ -10,7 +10,7 @@ import { useCuratorEditor } from "@/app/curator/useCuratorEditor";
 export default function CuratorPage() {
   const editor = useCuratorEditor();
   const {
-    campaigns, filename, setFilename, saving, status,
+    campaigns, campaignsError, filename, setFilename, saving, status,
     handleLoad, handleSave, handleDownload,
   } = editor;
 
@@ -39,6 +39,8 @@ export default function CuratorPage() {
           <button className="icon-button" onClick={handleDownload} title="下载JSON">⬇</button>
         </div>
       </div>
+
+      {campaignsError ? <p className="load-error" role="alert">{campaignsError}</p> : null}
 
       {status && (
         <div style={{ maxWidth: 1080, margin: "0 auto 16px" }} className={status.includes("失败") ? "error" : "meta"}>

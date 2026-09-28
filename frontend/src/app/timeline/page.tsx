@@ -113,6 +113,11 @@ function TimelineContent() {
         <p className="empty-state">加载中…</p>
       ) : (
         <>
+          {/* Above the tabs, so a failed load is visible on every view rather
+              than only inside the one panel that happens to check. */}
+          {data.loadError || data.timelineError ? (
+            <p className="load-error" role="alert">{data.loadError || data.timelineError}</p>
+          ) : null}
           <div className="timeline-tabs" role="tablist" aria-label="时间线视图" onKeyDown={onTabKeyDown}>
             {TABS.map(({ key, label }) => (
               <button
