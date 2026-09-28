@@ -18,7 +18,7 @@
 
 .player-controls {
   flex: 0 0 auto;
-  width: min(860px, 100%);
+  width: min(960px, 100%);
   margin: 0 auto;
   padding: 15px;
   border: 1px solid color-mix(in srgb, var(--color-accent) 30%, transparent);
@@ -94,7 +94,7 @@
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  max-width: 860px;
+  max-width: 960px;
   margin: 0 auto;
   /* The 12vh top pad is gone: the toolbar band above now supplies that air. */
   padding: 16px 0 40px;
