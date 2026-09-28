@@ -44,6 +44,10 @@ yarn-error.log*
 test-results/
 playwright-report/
 
+# Local before/after comparison shots. Not test-results/ -- the runner wipes
+# that directory from scratch on every start.
+frontend/.visual-out/
+
 # === Visual baseline screenshots ===
 # Regenerable from the code at any commit, so they stay local. The small,
 # diffable probe report next to them (layout-probe-*.json) IS tracked.
