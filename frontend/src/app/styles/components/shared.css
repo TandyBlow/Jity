@@ -40,6 +40,13 @@
   min-height: 82px;
 }
 
+/* .textarea on an <input> is a single-line field. */
+input.textarea {
+  min-height: 0;
+  padding: 0 10px;
+  resize: none;
+}
+
 .primary-button,
 .icon-button,
 .option-button {
