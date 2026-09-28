@@ -806,9 +806,12 @@
   cursor: pointer;
 }
 
+/* Same treatment as .primary-button: opacity leaves the accent fill loud. */
 .timeline-activate-button:disabled {
   cursor: default;
-  opacity: 0.5;
+  border-color: var(--color-border);
+  background: var(--color-panel-soft);
+  color: var(--color-muted);
 }
 
 .story-rewind-link {
