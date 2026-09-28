@@ -371,6 +371,15 @@
   border-color: var(--color-accent-2);
 }
 
+/* The fourth tab's own panel; it had no rule at all, so its content sat flush
+   against the container edge while the sibling tabs inset theirs. */
+.trace-board {
+  padding: 20px;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-panel);
+}
+
 .trace-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
