@@ -85,6 +85,8 @@ input.textarea {
 .icon-button {
   width: 36px;
   height: 36px;
+  /* A square icon button that shrinks stops being square. */
+  flex-shrink: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;

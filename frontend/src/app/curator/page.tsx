@@ -36,7 +36,7 @@ export default function CuratorPage() {
           <button className="primary-button" style={{ width: "auto", margin: 0, padding: "0 16px", flexShrink: 0, whiteSpace: "nowrap" }} onClick={handleSave} disabled={saving}>
             {saving ? "保存中…" : "保存"}
           </button>
-          <button className="icon-button" style={{ flexShrink: 0 }} onClick={handleDownload} title="下载JSON">⬇</button>
+          <button className="icon-button" onClick={handleDownload} title="下载JSON">⬇</button>
         </div>
       </div>
 
