@@ -56,11 +56,11 @@
         "background": "rgba(0, 0, 0, 0)"
       },
       ".scene-output": {
-        "top": 49,
+        "top": 95,
         "left": 158,
         "width": 860,
-        "height": 510,
-        "contentHeight": 1232,
+        "height": 464,
+        "contentHeight": 1160,
         "display": "flex",
         "overflowY": "auto",
         "fontSize": "16px",
@@ -68,7 +68,7 @@
         "background": "rgba(0, 0, 0, 0)"
       },
       ".narration": {
-        "top": 136,
+        "top": 111,
         "left": 158,
         "width": 860,
         "height": 620,
@@ -80,7 +80,7 @@
         "background": "rgba(0, 0, 0, 0)"
       },
       ".dialogue-list": {
-        "top": 780,
+        "top": 755,
         "left": 158,
         "width": 860,
         "height": 216,
@@ -92,7 +92,7 @@
         "background": "rgba(0, 0, 0, 0)"
       },
       ".option-list": {
-        "top": 1082,
+        "top": 1057,
         "left": 158,
         "width": 860,
         "height": 158,
@@ -197,11 +197,11 @@
         "background": "rgba(0, 0, 0, 0)"
       },
       ".scene-output": {
-        "top": 50,
+        "top": 96,
         "left": 82,
         "width": 860,
-        "height": 546,
-        "contentHeight": 1236,
+        "height": 500,
+        "contentHeight": 1160,
         "display": "flex",
         "overflowY": "auto",
         "fontSize": "16px",
@@ -209,7 +209,7 @@
         "background": "rgba(0, 0, 0, 0)"
       },
       ".narration": {
-        "top": 142,
+        "top": 112,
         "left": 82,
         "width": 860,
         "height": 620,
@@ -221,7 +221,7 @@
         "background": "rgba(0, 0, 0, 0)"
       },
       ".dialogue-list": {
-        "top": 786,
+        "top": 756,
         "left": 82,
         "width": 860,
         "height": 216,
@@ -233,7 +233,7 @@
         "background": "rgba(0, 0, 0, 0)"
       },
       ".option-list": {
-        "top": 1088,
+        "top": 1058,
         "left": 82,
         "width": 860,
         "height": 158,
@@ -846,7 +846,7 @@
       "w": 1536,
       "h": 730
     },
-    "documentScrollHeight": 1078,
+    "documentScrollHeight": 894,
     "inlineStyledElements": 22,
     "boxes": {
       ".app-shell": null,
@@ -863,8 +863,8 @@
         "top": 0,
         "left": 0,
         "width": 1536,
-        "height": 1078,
-        "contentHeight": 1078,
+        "height": 894,
+        "contentHeight": 894,
         "display": "block",
         "overflowY": "visible",
         "fontSize": "16px",
@@ -876,7 +876,7 @@
         "left": 228,
         "width": 1080,
         "height": 72,
-        "contentHeight": 75,
+        "contentHeight": 72,
         "display": "flex",
         "overflowY": "visible",
         "fontSize": "16px",
@@ -888,8 +888,8 @@
         "top": 132,
         "left": 228,
         "width": 1080,
-        "height": 914,
-        "contentHeight": 914,
+        "height": 730,
+        "contentHeight": 730,
         "display": "grid",
         "overflowY": "visible",
         "fontSize": "16px",
@@ -921,7 +921,7 @@
       "w": 1024,
       "h": 768
     },
-    "documentScrollHeight": 1078,
+    "documentScrollHeight": 894,
     "inlineStyledElements": 22,
     "boxes": {
       ".app-shell": null,
@@ -938,8 +938,8 @@
         "top": 0,
         "left": 0,
         "width": 1024,
-        "height": 1078,
-        "contentHeight": 1078,
+        "height": 894,
+        "contentHeight": 894,
         "display": "block",
         "overflowY": "visible",
         "fontSize": "16px",
@@ -951,7 +951,7 @@
         "left": 32,
         "width": 960,
         "height": 72,
-        "contentHeight": 75,
+        "contentHeight": 72,
         "display": "flex",
         "overflowY": "visible",
         "fontSize": "16px",
@@ -963,8 +963,8 @@
         "top": 132,
         "left": 32,
         "width": 960,
-        "height": 914,
-        "contentHeight": 914,
+        "height": 730,
+        "contentHeight": 730,
         "display": "grid",
         "overflowY": "visible",
         "fontSize": "16px",
