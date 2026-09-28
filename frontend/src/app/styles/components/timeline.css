@@ -958,11 +958,12 @@
   white-space: nowrap;
 }
 
+/* The parent card is at opacity .65, which compounds with this colour. */
 .badge-unrevealed {
   padding: 2px 8px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.05);
-  color: #666;
+  color: var(--color-fg);
   font-size: 11px;
   white-space: nowrap;
 }

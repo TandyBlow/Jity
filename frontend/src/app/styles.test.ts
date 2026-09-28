@@ -65,7 +65,7 @@ const DEFINED_AT_RUNTIME = new Set<string>([
  * Lower this every time the refactor removes some, never raise it. Reaching 0
  * is the goal; until then it still fails if a *new* literal is introduced.
  */
-const RAW_COLOUR_BUDGET = 80;
+const RAW_COLOUR_BUDGET = 79;
 
 describe("stylesheet invariants", () => {
   it("every var() reference in CSS resolves to a defined custom property", () => {
