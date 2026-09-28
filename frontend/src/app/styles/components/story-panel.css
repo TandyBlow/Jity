@@ -6,7 +6,8 @@
   min-height: 0;
   display: flex;
   flex-direction: column;
-  padding: 22px 28px;
+  /* Top pad clears the fixed .game-brand, which sits at (22, 28) and is 38 tall. */
+  padding: 68px 28px 22px;
   overflow: hidden;
   text-shadow: 0 1px 16px rgba(0, 0, 0, 0.72);
 }
@@ -84,7 +85,8 @@
   flex-direction: column;
   max-width: 860px;
   margin: 0 auto;
-  padding: clamp(56px, 12vh, 132px) 0 40px;
+  /* The 12vh top pad is gone: the toolbar band above now supplies that air. */
+  padding: 16px 0 40px;
   width: 100%;
 }
 
