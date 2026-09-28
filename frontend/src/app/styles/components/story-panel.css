@@ -101,6 +101,22 @@
   width: 100%;
 }
 
+/* Keeps a clipped bottom edge from reading as the end of the turn. */
+.scene-output::after {
+  content: "";
+  position: sticky;
+  bottom: 0;
+  flex: 0 0 auto;
+  height: 56px;
+  margin-top: -56px;
+  background: linear-gradient(to bottom, transparent, color-mix(in srgb, var(--color-bg) 90%, transparent));
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 160ms ease;
+}
+
+.scene-output[data-more="true"]::after { opacity: 1; }
+
 .narration {
   display: grid;
   gap: 1em;

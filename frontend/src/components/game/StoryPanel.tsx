@@ -2,7 +2,7 @@
 
 import { Dices, GitBranch, Image as ImageIcon, Loader2, Send, Sparkles } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { MainCheckOverlay, type MainCheckCommit } from "@/components/game/MainCheckOverlay";
 import type { GameSession } from "@/components/game/useGameSession";
@@ -71,13 +71,26 @@ export function StoryPanel({
   const [checkingAction, setCheckingAction] = useState<PendingCheck | null>(null);
   const [sweep, setSweep] = useState<PendingSweep | null>(null);
   const sceneRef = useRef<HTMLElement>(null);
+  const [hasMoreBelow, setHasMoreBelow] = useState(false);
   const hasAction = action.trim().length > 0;
+
+  // The scene clips silently: scrollbars are hidden app-wide and a single turn
+  // can run past the viewport, so the options at the end are off-screen with
+  // nothing saying so.
+  const updateOverflow = useCallback(() => {
+    const scene = sceneRef.current;
+    if (!scene) return;
+    setHasMoreBelow(scene.scrollTop + scene.clientHeight < scene.scrollHeight - 8);
+  }, []);
 
   // A new turn replaces the whole scene. Without this the scroll position
   // carries over, so the next turn opens part-way through its own narration.
   useEffect(() => {
     sceneRef.current?.scrollTo({ top: 0 });
-  }, [output]);
+    // Measure once the new scene has been laid out, not before it is painted.
+    const frame = requestAnimationFrame(updateOverflow);
+    return () => cancelAnimationFrame(frame);
+  }, [output, updateOverflow]);
 
   function handleOption(option: string, index: number) {
     if (!sessionId || isLoading || session.pendingGenerate || sweep) return;
@@ -154,7 +167,12 @@ export function StoryPanel({
         <div className={`source-pill ${outputSource}`}>{outputSource === "scripted" ? "Scripted opening" : "LLM generated"}</div>
       </div>
 
-      <article className="scene-output" ref={sceneRef}>
+      <article
+        className="scene-output"
+        data-more={hasMoreBelow ? "true" : "false"}
+        onScroll={updateOverflow}
+        ref={sceneRef}
+      >
         {session.autoPlay.enabled ? (
           <div className={`autoplay-banner ${session.autoPlay.status}`}>
             <div>
