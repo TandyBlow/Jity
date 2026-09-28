@@ -73,7 +73,13 @@
   cursor: pointer;
 }
 
-.player-controls-row button:disabled { cursor: not-allowed; opacity: 0.55; }
+/* Was opacity .55, which left the accent fill the brightest block on screen. */
+.player-controls-row button:disabled {
+  cursor: not-allowed;
+  border-color: var(--color-border);
+  background: var(--color-panel-soft);
+  color: var(--color-muted);
+}
 .player-controls-hint { margin-top: 7px; color: var(--color-muted); font-size: 10px; text-align: right; }
 .spin-icon { animation: background-pulse 1.2s linear infinite; }
 

@@ -69,9 +69,12 @@ input.textarea {
   font-weight: 700;
 }
 
+/* Not opacity: fading the accent fill still leaves a bright amber block. */
 .primary-button:disabled {
   cursor: not-allowed;
-  opacity: 0.55;
+  border-color: var(--color-border);
+  background: var(--color-panel-soft);
+  color: var(--color-muted);
 }
 
 .icon-button {
