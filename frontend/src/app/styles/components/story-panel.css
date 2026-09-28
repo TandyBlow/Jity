@@ -80,6 +80,11 @@
   background: var(--color-panel-soft);
   color: var(--color-muted);
 }
+
+.player-controls-row button:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--color-accent) 86%, white);
+  background: color-mix(in srgb, var(--color-accent) 86%, white);
+}
 .player-controls-hint { margin-top: 7px; color: var(--color-muted); font-size: 10px; text-align: right; }
 .spin-icon { animation: background-pulse 1.2s linear infinite; }
 

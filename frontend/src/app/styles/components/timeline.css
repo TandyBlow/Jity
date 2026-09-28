@@ -371,8 +371,7 @@
   border-color: var(--color-accent-2);
 }
 
-/* The fourth tab's own panel; it had no rule at all, so its content sat flush
-   against the container edge while the sibling tabs inset theirs. */
+/* The fourth tab's own panel; without it the content sat flush to the edge. */
 .trace-board {
   padding: 20px;
   border: 1px solid var(--color-border);
@@ -812,6 +811,11 @@
   border-color: var(--color-border);
   background: var(--color-panel-soft);
   color: var(--color-muted);
+}
+
+.timeline-activate-button:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--color-accent) 86%, white);
+  background: color-mix(in srgb, var(--color-accent) 86%, white);
 }
 
 .story-rewind-link {

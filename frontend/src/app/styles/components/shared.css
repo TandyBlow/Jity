@@ -77,6 +77,11 @@ input.textarea {
   color: var(--color-muted);
 }
 
+.primary-button:hover:not(:disabled) {
+  border-color: var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 86%, white);
+}
+
 .icon-button {
   width: 36px;
   height: 36px;
