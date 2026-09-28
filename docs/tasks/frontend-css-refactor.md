@@ -685,3 +685,65 @@ BASELINE_DIR=docs/frontend-baseline npx playwright test e2e/capture.spec.ts e2e/
 
 取基准的正确路径是 `StoryTimeline.tsx:96` 那条 `loadCompareNode(active_node_id)`，
 **不是** `pinCompareNode()`（后者正是把 selectedNode 自己钉成基准）。
+
+---
+
+# A17 / A18 / A19 / A32 错误被吞掉（2026-09-28，`e06dfba`）
+
+四条同一个病根：**失败被降级成空值**，于是"坏了"和"本来就没有"长得一模一样。
+
+## A17 时间线加载失败显示成「还没有剧情节点」
+
+`useTimelineData.ts` 的加载 effect 里三处 `.catch` 返回空值（空战役列表、null 进度、null 时间线），
+第四处 `getCampaign` 失败 `setArcs([])`。于是拉取失败 → `timelineNodes` 为空 →
+`StoryTimeline.tsx` 的提前返回抢先说「当前会话还没有可显示的剧情节点」。
+**真正的错误提示写在那句提前返回之后，永远到不了。**
+
+改法：
+
+- 四处失败各记一句（「战役列表加载失败」「会话进度加载失败」「剧情时间线加载失败」「战役结构加载失败」），
+  拼进一个新的 `loadError` 状态。
+- **用新状态而不是复用 `timelineError`**：`loadNode` 入口会无条件清空 `timelineError`
+  （`useTimelineData.ts:51`），复用的话节点一加载就把页面级失败擦掉了。
+- 红字提到 `timeline/page.tsx` 的标签栏**上方**，内容是 `loadError || timelineError`。
+  原来只有「剧情分支」渲染错误，另外三个标签页压根走不到 —— 现在四个都在。
+- `StoryTimeline` 的「还没有节点」在 `loadError` 非空时不显示，免得两句话打架。
+- 新样式 `.load-error`（`shared.css`）：1080 居中、`--color-danger`、13px。
+  **不复用 `.error`**：它自带 `margin-top: 12px`，和这里要的下边距会打架，
+  而谁赢取决于样式文件的加载顺序，太脆。
+
+## A18 战役列表加载失败只打 console
+
+`useCuratorEditor.ts` 三处 `.catch(console.error)`，界面上只有一个空下拉框。
+改成共用一个 `refreshCampaigns`，失败写 `campaignsError`，页头下面用同一条 `.load-error` 显示。
+
+## A19 / A32 系统弹窗
+
+`SettingsMenu` 用 `window.prompt` 问存档名，`useGameActions.handleCreateSlot` 用 `alert` 报错。
+改成：点加号把那一行换成内联输入框 + 确定/取消；`handleCreateSlot` 不再弹窗，
+**把错误文本返回给调用方**（成功返回 null），由设置菜单显示在输入框下面。
+输入框保留、名字保留，可以改名重试。
+
+两个实现细节：
+
+- Esc 要 `stopPropagation`。`SettingsMenu` 有个文档级 keydown 监听会在 Esc 时关掉整个菜单，
+  不拦住的话「取消表单」会变成「关掉菜单」。
+- 菜单关闭时重置表单状态，否则再打开会带着上次没打完的名字。
+
+`handleCreateSlot` 的活调用方只有 `SettingsMenu`（`SidePanel.tsx` 里那个是死代码，全仓无 import），
+所以不用改别处。
+
+## 验证
+
+新增 `e2e/error-surfacing.spec.ts` 三条，都故意让接口返回 500：
+
+1. 时间线红字出现且内容对；「还没有剧情节点」一次都不出现；切到「战役锚点」标签页红字仍在
+2. 挂监听器盯浏览器弹窗，点加号后断言输入框出现、且监听器一次都没响
+3. 只让 POST 那条存档请求失败（读列表走同一路径，用 `route.fallback()` 放行），
+   断言红字内容和输入框里的名字都还在
+
+**这三条不是空转**：红字文案只可能来自 mock 返回的 500 响应体；如果还留着 `window.prompt`，
+输入框根本不会出现。
+
+实测：后端 **430 passed**；前端 **43 passed**；完整 `npx playwright test` **21 passed / 14 skipped**；
+`docs/frontend-baseline/` 里 16 个文件 md5 **一字节未变**（设置菜单默认收起，两处红字只在出错时出现）。
