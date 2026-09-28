@@ -60,9 +60,11 @@
   margin: 0 auto;
 }
 
+/* Centred: left-aligned in a 1080 column it left 262px of dead space on the right. */
 .timeline-tab-panel.anchors .anchor-tree,
 .timeline-tab-panel.clues .clue-board {
   max-width: 820px;
+  margin-inline: auto;
 }
 
 .story-timeline-layout {
