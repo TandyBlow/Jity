@@ -11,10 +11,11 @@
 
 **已交付**：地基三件套（`60ce656`…`3d80f7b`）、6B 回放侧（`dc0a0a8`…`47a11ed`）、6A + 6D（`16c2e9c`）、
 6E.4 层级 + 窄屏抽屉 + A11（`b9e90b8`、`431b8eb`、`933677b`）、
-**A19/B7 空输入静默无反应（`612bb84`）**。
+A19/B7 空输入静默无反应（`612bb84`）、A17/A18/A19/A32 错误被吞掉（`e06dfba`）、
+**A36 全局隐藏滚动条（`1ba24d2`）**。
 
-**验证状态**：后端 430 / 前端 43 / 完整 `npx playwright test` **18 passed / 14 skipped**（2026-09-24）。
-像素验收**现在是真的了** —— 见文末"验收设施已修"。
+**验证状态**：后端 430 / 前端 43 / 完整 `npx playwright test` **21 passed / 23 skipped**（2026-09-28，
+多出的 9 条是 A36 的 opt-in spec）。像素验收**现在是真的了** —— 见文末"验收设施已修"。
 
 **下一步该做什么**：不是继续改前端。这套观察面已经能用了 —— 去跑 270 轮实验，让真实数据说明还缺什么。
 前端需求的源头是研究课题（上下文工程与记忆管理），不是相反。
@@ -154,6 +155,7 @@
   机制上确定（浏览器行为 + 代码零滚动管理）；**尚未端到端跑一次生成实测**，需要时加 mock 验证再定为缺陷。
 - **A34 已撤回。** 原先据 B8 判为"删除时间线 2 秒轮询"，但 B8 的答复被误解，条目作废。`useTimelineData.ts:110` 的轮询**保持不动**。B8 整条已删（我理解错了"关掉"的意思）。
 - **A35** 新一轮剧情到达时自动滚回 `.story-panel` 顶部（B1 已答"要"）。**行为变更，不属于 CSS 地基**，归入第 6 项。
+- **A36 所有滚动条的默认外观都露着。** 用户 2026-09-28 提的（"太丑了"）。四个路由 + 页面级都中。已修，见文末。
 
 ## 进度（2026-09-23）
 
@@ -747,3 +749,70 @@ BASELINE_DIR=docs/frontend-baseline npx playwright test e2e/capture.spec.ts e2e/
 
 实测：后端 **430 passed**；前端 **43 passed**；完整 `npx playwright test` **21 passed / 14 skipped**；
 `docs/frontend-baseline/` 里 16 个文件 md5 **一字节未变**（设置菜单默认收起，两处红字只在出错时出现）。
+
+---
+
+# A36 全局隐藏滚动条（2026-09-28，`1ba24d2`）
+
+用户提的：滚动条太丑，全去掉，并且加测试，有滚动条就不通过。
+
+## 改动
+
+`styles/base.css` 两处，`overflow` 一个都没动 —— 滚动照旧，只是不画条：
+
+- `* { scrollbar-width: none }`
+- `*::-webkit-scrollbar { display: none }`（不认标准属性的旧 WebKit）
+
+`story-scroll.spec.ts` 断言 `.scene-output` **能滚**（`scrollHeight > clientHeight`），这条继续绿，
+就是"只隐藏外观、没禁掉滚动"的证据。
+
+## 改之前有几根条（有头实测，15px）
+
+| 位置 | gutter |
+|---|---|
+| `article.scene-output`（`/` 和 `/timeline`） | 15px |
+| `aside.memory-panel` | 15.2px |
+| `div.memory-drawer-panel` | 15.2px |
+| `div.story-tree-scroll`、`aside.story-node-detail` | 15.4px |
+| 页面级（`/timeline`、`/curator`、`/dev-log`） | 15px |
+
+`/` 自己反而没有页面级条 —— `.app-shell` 是 `height: 100vh; overflow: hidden`，只有内部面板在滚。
+
+## 测试：`e2e/no-scrollbar.spec.ts`
+
+判定**不是猜的**，是量出来的：经典滚动条占布局空间，所以
+`offset - client - 该轴边框` 非 0 就是真画了一根条。只测滚动容器（只有它们能画条），
+视口单独测（`<html>` 永远不会写 `overflow: auto`，但照样长页面条）。
+
+**自检那条很关键。** 文件里有一条 `a forced scrollbar is visible to this run`：用 `addStyleTag`
+强行恢复一根条，断言量得到。没有它，整份 spec 会在一个根本画不出滚动条的环境里全绿。
+
+跑法（opt-in，因为必须有头）：
+
+```
+NO_SCROLLBAR=1 npx playwright test e2e/no-scrollbar.spec.ts
+```
+
+## 两个必须记下来的坑
+
+**1. headless 根本不画滚动条。** 所以纯 headless 的几何测量**结构上测不到**这个需求 ——
+`.scene-output` 明明 `scrollHeight 1230 > clientHeight 511`，headless 下 gutter 恒为 0。
+基线截图里也一根条都没有（截过图确认）。所以我第一版 spec 的"红"全是假阳性。
+**有头才有意义**，代价是弹一次真实 Edge 窗口，因此做成 opt-in 而不是默认跑。
+
+**2. 第一版判定公式是错的，而且是双重的。**
+- 漏扣边框：`code`、`span.area-tag`、`button.option-button` 这些 1px 边框的元素全被报成"滚动条"。
+- 内联元素 `clientWidth` 返回 0：`span.dialogue-text` 报了 `vertical 376px` —— 那是它的字宽，不是条。
+
+改法：扣掉该轴边框；只对计算样式 `overflow` 为 `auto`/`scroll`/`overlay` 的元素判定
+（内联盒**不可能**成为滚动容器，`overflow` 对非替换内联盒不生效，跳过是语义正确而非偷懒）；
+容差 1px（实测边框亚像素噪声最大 0.6，真条 15px）。
+
+## 验证
+
+- **反向验证**：CSS 注释掉跑 opt-in spec → **6 failed / 3 passed**，报出上面表格里的真实 15px 条。
+  自检那条通过。`/timeline-clues`、`/timeline-trace` 没报是因为内容真的没溢出，不是漏判。
+- CSS 恢复后跑同一 spec → **9 passed**。
+- 全量 `npx playwright test` → **21 passed / 23 skipped**，零窗口，`no-scrollbar` 整份 skip。
+- **像素基线零漂移**：`verify.spec.ts` 8 条全绿。headless 本来就不画滚动条，
+  隐藏它对截图没有任何影响，**不需要重录基线**。
