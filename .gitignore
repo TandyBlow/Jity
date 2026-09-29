@@ -53,6 +53,10 @@ frontend/.visual-out/
 # diffable probe report next to them (layout-probe-*.json) IS tracked.
 docs/frontend-baseline/*.png
 
+# === Docs stay local (workspace convention) ===
+# Already-tracked files under docs/ keep being tracked; this only stops new ones.
+docs/
+
 # === Runtime data ===
 .local/
 *.sqlite3
