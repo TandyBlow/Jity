@@ -3,15 +3,15 @@
   max-width: 1080px;
   margin: 0 auto 20px;
   color: var(--color-danger);
-  font-size: 13px;
-  line-height: 1.45;
+  font-size: var(--fs-md);
+  line-height: var(--lh-tight);
 }
 
 .label {
   display: block;
   margin: 16px 0 7px;
   color: var(--color-muted);
-  font-size: 13px;
+  font-size: var(--fs-md);
 }
 
 .select,
@@ -33,7 +33,7 @@
   min-height: 130px;
   padding: 11px;
   resize: vertical;
-  line-height: 1.55;
+  line-height: var(--lh-body);
 }
 
 .small-textarea {
@@ -66,7 +66,7 @@ input.textarea {
   gap: 8px;
   background: var(--color-accent);
   color: #17130b;
-  font-weight: 700;
+  font-weight: var(--fw-bold);
 }
 
 /* Not opacity: fading the accent fill still leaves a bright amber block. */

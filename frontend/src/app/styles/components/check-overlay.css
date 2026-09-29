@@ -41,14 +41,14 @@
 
 .main-check-overline {
   color: var(--color-accent);
-  font-size: 11px;
+  font-size: var(--fs-xs);
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
 .main-check-card h2 {
   margin: 5px 0 0;
-  font-size: 20px;
+  font-size: var(--fs-heading);
 }
 
 .main-check-secondary {
@@ -69,15 +69,15 @@
   margin: 14px 0 12px;
   overflow: hidden;
   color: var(--color-fg);
-  font-size: 13px;
-  line-height: 1.55;
+  font-size: var(--fs-md);
+  line-height: var(--lh-body);
 }
 
 .main-check-meta {
   justify-content: space-between;
   gap: 12px;
   color: var(--color-muted);
-  font-size: 12px;
+  font-size: var(--fs-sm);
 }
 
 .main-check-meta span {
@@ -89,8 +89,8 @@
 .main-check-stakes {
   margin: 12px 0 0;
   color: var(--color-muted);
-  font-size: 12px;
-  line-height: 1.5;
+  font-size: var(--fs-sm);
+  line-height: var(--lh-body);
 }
 
 .main-check-actions {
@@ -117,7 +117,7 @@
   gap: 6px;
   margin: 12px 0 0;
   color: var(--color-danger);
-  font-size: 12px;
+  font-size: var(--fs-sm);
 }
 
 .main-check-result {

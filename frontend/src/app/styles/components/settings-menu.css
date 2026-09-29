@@ -53,7 +53,7 @@
   padding: 6px 8px;
 }
 
-.settings-field-row label { color: var(--color-muted); font-size: 13px; }
+.settings-field-row label { color: var(--color-muted); font-size: var(--fs-md); }
 .settings-field-row select {
   min-width: 0;
   width: 100%;
@@ -98,7 +98,7 @@
   cursor: pointer;
 }
 .settings-slot-form button:hover { border-color: var(--color-accent); }
-.settings-slot-error { grid-column: 1 / -1; margin: 0; color: var(--color-danger); font-size: 12px; line-height: 1.4; }
+.settings-slot-error { grid-column: 1 / -1; margin: 0; color: var(--color-danger); font-size: var(--fs-sm); line-height: var(--lh-tight); }
 .settings-divider { height: 1px; margin: 6px 8px; background: var(--color-border); }
 
 .settings-link-row {
@@ -112,7 +112,7 @@
   border-radius: 8px;
   background: transparent;
   color: var(--color-fg);
-  font-size: 14px;
+  font-size: var(--fs-lg);
   cursor: pointer;
 }
 .settings-link-row:hover { background: color-mix(in srgb, var(--color-accent) 11%, transparent); color: var(--color-accent); }

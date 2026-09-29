@@ -22,8 +22,8 @@
   text-shadow: 0 2px 18px rgba(0, 0, 0, 0.9);
 }
 
-.game-brand span { font-size: 25px; font-weight: 800; letter-spacing: 0.03em; }
-.game-brand small { color: var(--color-muted); font-size: 11px; letter-spacing: 0.05em; text-transform: uppercase; }
+.game-brand span { font-size: var(--fs-brand); font-weight: var(--fw-black); letter-spacing: 0.03em; }
+.game-brand small { color: var(--color-muted); font-size: var(--fs-xs); letter-spacing: 0.05em; text-transform: uppercase; }
 
 .scene-background {
   position: fixed;

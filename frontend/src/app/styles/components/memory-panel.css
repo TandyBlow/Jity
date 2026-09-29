@@ -37,7 +37,7 @@
 
 .brand-mark {
   font-size: 28px;
-  font-weight: 700;
+  font-weight: var(--fw-bold);
   letter-spacing: 0.02em;
 }
 
@@ -45,7 +45,7 @@
 .meta,
 .chunk-type {
   color: var(--color-muted);
-  font-size: 12px;
+  font-size: var(--fs-sm);
 }
 
 .source-pill {
@@ -54,7 +54,7 @@
   border-radius: 999px;
   padding: 4px 9px;
   color: var(--color-muted);
-  font-size: 11px;
+  font-size: var(--fs-xs);
   white-space: nowrap;
 }
 
@@ -63,7 +63,7 @@
   align-items: center;
   gap: 6px;
   color: var(--color-accent);
-  font-size: 11px;
+  font-size: var(--fs-xs);
   white-space: nowrap;
 }
 
@@ -81,7 +81,7 @@
   background: color-mix(in srgb, var(--color-panel) 52%, transparent);
   color: var(--color-muted);
   cursor: pointer;
-  font-size: 11px;
+  font-size: var(--fs-xs);
 }
 
 .background-button:hover:not(:disabled) {
@@ -118,8 +118,8 @@
 .section-title {
   margin: 18px 0 10px;
   color: var(--color-accent);
-  font-size: 13px;
-  font-weight: 700;
+  font-size: var(--fs-md);
+  font-weight: var(--fw-bold);
 }
 
 .stat-block {
@@ -157,8 +157,8 @@
   border-radius: 8px;
   background: var(--surface-raised);
   color: var(--color-fg);
-  font-size: 13px;
-  line-height: 1.55;
+  font-size: var(--fs-md);
+  line-height: var(--lh-body);
 }
 
 .memory-head {
@@ -175,7 +175,7 @@
   border-radius: 999px;
   padding: 1px 7px;
   color: var(--color-accent);
-  font-size: 11px;
+  font-size: var(--fs-xs);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -183,7 +183,7 @@
 
 .chunk-title {
   margin-top: 8px;
-  font-weight: 700;
+  font-weight: var(--fw-bold);
 }
 
 .chunk-item p {
@@ -207,8 +207,8 @@
   border: 1px solid color-mix(in srgb, var(--color-accent-2) 35%, transparent);
   border-radius: 999px;
   color: var(--color-accent-2);
-  font-size: 11px;
-  line-height: 1;
+  font-size: var(--fs-xs);
+  line-height: var(--lh-chip);
   white-space: nowrap;
 }
 
@@ -218,7 +218,7 @@
 
 .chunk-score {
   color: var(--color-muted);
-  font-size: 11px;
+  font-size: var(--fs-xs);
   white-space: nowrap;
 }
 
@@ -248,7 +248,7 @@
   justify-content: space-between;
   gap: 12px;
   margin-bottom: 6px;
-  font-size: 12px;
+  font-size: var(--fs-sm);
 }
 
 .turn-memory-cap {
@@ -278,7 +278,7 @@
   gap: 8px;
   cursor: pointer;
   list-style: none;
-  font-size: 13px;
+  font-size: var(--fs-md);
   letter-spacing: 0.02em;
 }
 
@@ -290,7 +290,7 @@
   content: "▸";
   display: inline-block;
   color: var(--color-muted);
-  font-size: 10px;
+  font-size: var(--fs-xs);
   transition: transform 120ms ease;
 }
 
@@ -301,7 +301,7 @@
 .memory-fold-suffix {
   margin-left: auto;
   color: var(--color-muted);
-  font-size: 11px;
+  font-size: var(--fs-xs);
 }
 
 .memory-fold-body {
@@ -317,7 +317,7 @@
   border-radius: 999px;
   color: var(--color-muted);
   background: var(--color-panel-soft);
-  font-size: 12px;
+  font-size: var(--fs-sm);
   cursor: pointer;
 }
 
@@ -350,7 +350,7 @@
   justify-content: space-between;
   gap: 12px;
   margin-bottom: 18px;
-  font-size: 13px;
+  font-size: var(--fs-md);
   letter-spacing: 0.02em;
 }
 

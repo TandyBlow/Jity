@@ -21,14 +21,14 @@
   align-items: center;
   gap: 8px;
   color: var(--color-accent-2);
-  font-size: 13px;
-  font-weight: 700;
+  font-size: var(--fs-md);
+  font-weight: var(--fw-bold);
 }
 
 .dev-log-header h1 {
   margin: 18px 0 10px;
-  font-size: 38px;
-  line-height: 1.1;
+  font-size: var(--fs-display);
+  line-height: var(--lh-heading);
   letter-spacing: 0;
 }
 
@@ -36,7 +36,7 @@
   max-width: 720px;
   margin: 0;
   color: var(--color-muted);
-  line-height: 1.65;
+  line-height: var(--lh-relaxed);
 }
 
 .dev-log-count {
@@ -54,14 +54,14 @@
 }
 
 .dev-log-count strong {
-  font-size: 32px;
-  line-height: 1;
+  font-size: var(--fs-display);
+  line-height: var(--lh-chip);
 }
 
 .dev-log-count span {
   margin-top: 4px;
   color: var(--color-muted);
-  font-size: 12px;
+  font-size: var(--fs-sm);
 }
 
 .dev-log-tools {
@@ -134,7 +134,7 @@
   justify-content: space-between;
   gap: 12px;
   color: var(--color-muted);
-  font-size: 12px;
+  font-size: var(--fs-sm);
 }
 
 .entry-author,
@@ -144,14 +144,14 @@
 
 .dev-log-entry h2 {
   margin: 12px 0 8px;
-  font-size: 24px;
+  font-size: var(--fs-heading);
   letter-spacing: 0;
 }
 
 .entry-summary {
   margin: 0;
   color: var(--color-muted);
-  line-height: 1.65;
+  line-height: var(--lh-relaxed);
 }
 
 .tag-row {
@@ -165,7 +165,7 @@
   border: 1px solid color-mix(in srgb, var(--color-accent-2) 45%, transparent);
   border-radius: 999px;
   color: var(--color-accent-2);
-  font-size: 12px;
+  font-size: var(--fs-sm);
 }
 
 .entry-section {
@@ -175,14 +175,14 @@
 .entry-section h3 {
   margin: 0 0 8px;
   color: var(--color-accent);
-  font-size: 13px;
+  font-size: var(--fs-md);
 }
 
 .entry-section ul {
   margin: 0;
   padding-left: 20px;
   color: var(--color-fg);
-  line-height: 1.7;
+  line-height: var(--lh-relaxed);
 }
 
 .file-list {
@@ -197,5 +197,5 @@
   border-radius: 6px;
   background: var(--surface-sunken);
   color: var(--color-muted);
-  font-size: 12px;
+  font-size: var(--fs-sm);
 }
