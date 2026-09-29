@@ -17,7 +17,7 @@
   left: 28px;
   display: flex;
   align-items: baseline;
-  gap: 10px;
+  gap: var(--space-3);
   pointer-events: none;
   text-shadow: 0 2px 18px rgba(0, 0, 0, 0.9);
 }

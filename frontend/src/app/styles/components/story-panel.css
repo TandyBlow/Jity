@@ -7,7 +7,7 @@
   display: flex;
   flex-direction: column;
   /* Top pad clears the fixed .game-brand, which sits at (22, 28) and is 38 tall. */
-  padding: 68px 28px 22px;
+  padding: 68px var(--space-8) var(--space-6);
   overflow: hidden;
   text-shadow: 0 1px 16px rgba(0, 0, 0, 0.72);
 }
@@ -20,7 +20,7 @@
   flex: 0 0 auto;
   width: min(960px, 100%);
   margin: 0 auto;
-  padding: 15px;
+  padding: var(--space-5);
   border: 1px solid color-mix(in srgb, var(--color-accent) 30%, transparent);
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   background: var(--surface-glass);
@@ -31,7 +31,7 @@
 
 .player-controls-label {
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: var(--space-3);
   color: var(--color-accent);
   font-size: var(--fs-sm);
   font-weight: var(--fw-bold);
@@ -41,13 +41,13 @@
 .player-controls-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  gap: 10px;
+  gap: var(--space-3);
 }
 
 .player-controls-row textarea {
   min-height: 54px;
   max-height: 140px;
-  padding: 10px 12px;
+  padding: var(--space-3) var(--space-4);
   resize: vertical;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
@@ -60,11 +60,11 @@
 
 .player-controls-row button {
   min-width: 142px;
-  padding: 0 16px;
+  padding: 0 var(--space-5);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: var(--space-3);
   border: 1px solid var(--color-accent);
   border-radius: var(--radius-md);
   background: var(--color-accent);
@@ -97,7 +97,7 @@
   max-width: 960px;
   margin: 0 auto;
   /* The 12vh top pad is gone: the toolbar band above now supplies that air. */
-  padding: 16px 0 40px;
+  padding: var(--space-5) 0 var(--space-10);
   width: 100%;
 }
 
@@ -123,7 +123,7 @@
   font-family: "Noto Serif SC", "Songti SC", "STSong", SimSun, serif;
   font-size: var(--fs-reading);
   line-height: var(--lh-reading);
-  margin-bottom: 24px;
+  margin-bottom: var(--space-7);
 }
 
 .narration p {
@@ -132,12 +132,12 @@
 
 .dialogue-list {
   display: grid;
-  gap: 10px;
-  margin-bottom: 26px;
+  gap: var(--space-3);
+  margin-bottom: var(--space-7);
 }
 
 .dialogue-line {
-  padding: 12px 14px;
+  padding: var(--space-4) var(--space-4);
   border-left: 3px solid var(--color-accent);
   background: var(--surface-sunken);
   font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
@@ -156,19 +156,19 @@
 
 .status-hint-list {
   display: grid;
-  gap: 8px;
-  margin: 0 0 22px;
+  gap: var(--space-3);
+  margin: 0 0 var(--space-6);
 }
 
 .status-hint {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-3);
   width: fit-content;
   max-width: 100%;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: var(--radius-md);
-  padding: 8px 10px;
+  padding: var(--space-3) var(--space-3);
   background: var(--surface-sunken);
   color: var(--color-muted);
   font-size: var(--fs-md);
@@ -198,7 +198,7 @@
 
 .option-list {
   display: grid;
-  gap: 10px;
+  gap: var(--space-3);
 }
 
 .option-button {
@@ -206,9 +206,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: var(--space-4);
   min-height: 44px;
-  padding: 10px 14px;
+  padding: var(--space-3) var(--space-4);
   overflow: hidden;
   background: color-mix(in srgb, var(--color-panel) 90%, transparent);
   text-align: left;
@@ -223,7 +223,7 @@
   display: inline-flex;
   flex: 0 0 auto;
   align-items: center;
-  gap: 5px;
+  gap: var(--space-2);
   color: var(--color-accent);
   font-size: var(--fs-xs);
   white-space: nowrap;
@@ -259,7 +259,7 @@
 }
 
 .error {
-  margin-top: 12px;
+  margin-top: var(--space-4);
   color: var(--color-danger);
   font-size: var(--fs-md);
   line-height: var(--lh-tight);
@@ -269,9 +269,9 @@
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 18px;
-  padding: 12px 14px;
+  gap: var(--space-5);
+  margin-bottom: var(--space-5);
+  padding: var(--space-4) var(--space-4);
   border: 1px solid color-mix(in srgb, var(--color-accent-2) 45%, transparent);
   border-radius: var(--radius-lg);
   background: color-mix(in srgb, var(--color-accent-2) 9%, rgba(8, 10, 14, 0.86));
