@@ -91,7 +91,7 @@
 
 .background-button.has-error {
   border-color: color-mix(in srgb, var(--color-danger) 65%, transparent);
-  color: #e39a9a;
+  color: var(--color-danger-bright);
 }
 
 .background-button:disabled {
@@ -106,12 +106,12 @@
 }
 
 .source-pill.llm {
-  border-color: rgba(123, 178, 132, 0.38);
-  color: #9bcf9f;
+  border-color: color-mix(in srgb, var(--color-accent-2) 38%, transparent);
+  color: var(--color-accent-2-bright);
 }
 
 .source-pill.scripted {
-  border-color: rgba(202, 167, 90, 0.38);
+  border-color: color-mix(in srgb, var(--color-accent) 38%, transparent);
   color: var(--color-accent);
 }
 

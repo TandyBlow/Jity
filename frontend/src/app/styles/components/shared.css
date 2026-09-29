@@ -65,7 +65,7 @@ input.textarea {
   justify-content: center;
   gap: var(--space-3);
   background: var(--color-accent);
-  color: #17130b;
+  color: var(--color-on-accent);
   font-weight: var(--fw-bold);
 }
 

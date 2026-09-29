@@ -116,4 +116,4 @@
   cursor: pointer;
 }
 .settings-link-row:hover { background: color-mix(in srgb, var(--color-accent) 11%, transparent); color: var(--color-accent); }
-.settings-new-session { color: #e4a0a0; }
+.settings-new-session { color: var(--color-danger-bright); }

@@ -68,7 +68,7 @@
   border: 1px solid var(--color-accent);
   border-radius: var(--radius-md);
   background: var(--color-accent);
-  color: #17130b;
+  color: var(--color-on-accent);
   font-weight: var(--fw-bold);
   cursor: pointer;
 }
@@ -166,7 +166,7 @@
   gap: var(--space-3);
   width: fit-content;
   max-width: 100%;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid color-mix(in srgb, var(--color-fg) 8%);
   border-radius: var(--radius-md);
   padding: var(--space-3) var(--space-3);
   background: var(--surface-sunken);
@@ -185,7 +185,7 @@
 }
 
 .status-hint.loss strong {
-  color: #e29a9a;
+  color: var(--color-danger-bright);
 }
 
 .status-hint.gain {
@@ -193,7 +193,7 @@
 }
 
 .status-hint.gain strong {
-  color: #a9d5ad;
+  color: var(--color-accent-2-bright);
 }
 
 .option-list {
@@ -239,9 +239,9 @@
   animation: option-sweep 900ms cubic-bezier(0.32, 0, 0.67, 0) forwards;
 }
 
-.option-sweep.critical { --sweep-color: rgb(242 206 131 / 55%); }
-.option-sweep.success { --sweep-color: rgb(135 179 141 / 50%); }
-.option-sweep.failure { --sweep-color: rgb(226 154 154 / 50%); }
+.option-sweep.critical { --sweep-color: color-mix(in srgb, var(--fx-gold) 55%, transparent); }
+.option-sweep.success { --sweep-color: color-mix(in srgb, var(--color-accent-2) 50%, transparent); }
+.option-sweep.failure { --sweep-color: color-mix(in srgb, var(--color-danger) 50%, transparent); }
 
 @keyframes option-sweep {
   from {
@@ -281,11 +281,11 @@
 /* Reinstated: the original rule referenced an undefined token, so it never
    applied and these labels inherited the banner's own colour. */
 .autoplay-banner span, .autoplay-banner small { color: var(--color-muted); }
-.autoplay-banner.paused { border-color: #b89146; }
-.autoplay-banner.error { border-color: #b84b4b; }
-.autoplay-banner.complete { border-color: #4e9b70; }
+.autoplay-banner.paused { border-color: var(--color-accent); }
+.autoplay-banner.error { border-color: var(--color-danger); }
+.autoplay-banner.complete { border-color: var(--color-accent-2); }
 .autoplay-banner button { padding: 6px 12px; white-space: nowrap; }
-.autoplay-complete { color: #77c99b !important; font-weight: var(--fw-bold); }
+.autoplay-complete { color: var(--color-accent-2-bright) !important; font-weight: var(--fw-bold); }
 .autoplay-anchors { display: grid; gap: 7px; }
 .autoplay-anchors .anchor-new { border-color: var(--color-accent-2); color: var(--color-accent-2); }
 .autoplay-anchor-link { color: var(--color-accent-2); font-size: var(--fs-md); text-decoration: none; }
