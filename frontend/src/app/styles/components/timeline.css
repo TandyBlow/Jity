@@ -42,7 +42,7 @@
 
 .timeline-tabs button {
   border: 1px solid transparent;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   padding: 8px 16px;
   background: transparent;
   color: var(--color-muted);
@@ -90,7 +90,7 @@
   gap: 8px;
   padding: 8px 10px;
   border: 1px solid var(--color-border);
-  border-radius: 10px;
+  border-radius: var(--radius-lg);
   background: var(--color-panel);
   font-size: var(--fs-sm);
 }
@@ -104,7 +104,7 @@
 .turn-nav-follow {
   padding: 4px 9px;
   border: 1px solid var(--color-border);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   color: var(--color-muted);
   background: var(--color-panel-soft);
   font-size: var(--fs-sm);
@@ -126,7 +126,7 @@
   width: 68px;
   padding: 4px 8px;
   border: 1px solid var(--color-border);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   color: var(--color-fg);
   background: var(--color-panel-soft);
   font-size: var(--fs-sm);
@@ -159,7 +159,7 @@
   width: 100%;
   padding: 8px 10px;
   border: 1px solid var(--color-border);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   color: var(--color-fg);
   background: var(--color-panel);
   text-align: left;
@@ -198,7 +198,7 @@
   overflow: auto;
   padding: 24px;
   border: 1px solid var(--color-border);
-  border-radius: 14px;
+  border-radius: var(--radius-lg);
   background: var(--surface-sunken);
 }
 
@@ -265,7 +265,7 @@
   padding: 11px 12px;
   text-align: left;
   border: 1px solid color-mix(in srgb, var(--color-accent-2) 20%, var(--color-border));
-  border-radius: 10px;
+  border-radius: var(--radius-lg);
   color: var(--color-fg);
   background: var(--surface-raised);
   cursor: pointer;
@@ -314,7 +314,7 @@
   overflow: auto;
   padding: 20px;
   border: 1px solid var(--color-border);
-  border-radius: 14px;
+  border-radius: var(--radius-lg);
   background: var(--surface-glass);
 }
 
@@ -332,7 +332,7 @@
 .timeline-current-badge {
   height: fit-content;
   padding: 3px 8px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   color: var(--color-accent-2);
   background: color-mix(in srgb, var(--color-accent-2) 12%, transparent);
   font-size: var(--fs-xs);
@@ -361,7 +361,7 @@
 .trace-category button {
   padding: 4px 10px;
   border: 1px solid var(--color-border);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   color: var(--color-muted);
   background: var(--color-panel-soft);
   font-size: var(--fs-sm);
@@ -377,7 +377,7 @@
 .trace-board {
   padding: 20px;
   border: 1px solid var(--color-border);
-  border-radius: 10px;
+  border-radius: var(--radius-lg);
   background: var(--color-panel);
 }
 
@@ -406,7 +406,7 @@
   width: 100%;
   padding: 6px 9px;
   border: 1px solid var(--color-border);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   color: var(--color-fg);
   background: var(--color-panel);
   font-size: var(--fs-sm);
@@ -476,7 +476,7 @@
 .node-compare-pin {
   padding: 4px 9px;
   border: 1px solid var(--color-border);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   color: var(--color-muted);
   background: var(--color-panel-soft);
   font-size: var(--fs-sm);
@@ -492,7 +492,7 @@
   margin-bottom: 16px;
   padding: 12px;
   border: 1px solid var(--color-border);
-  border-radius: 10px;
+  border-radius: var(--radius-lg);
   background: var(--color-panel);
 }
 
@@ -561,7 +561,7 @@
   margin-top: 10px;
   padding: 4px 9px;
   border: 1px solid var(--color-border);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   color: var(--color-muted);
   background: transparent;
   font-size: var(--fs-sm);
@@ -715,7 +715,7 @@
   margin-top: 6px;
   padding: 10px;
   border: 1px solid var(--color-border);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   background: var(--color-panel);
   color: var(--color-fg);
   font-size: var(--fs-xs);
@@ -763,7 +763,7 @@
   flex-direction: column;
   gap: 3px;
   padding: 8px;
-  border-radius: 7px;
+  border-radius: var(--radius-sm);
   background: rgba(255, 255, 255, 0.035);
 }
 
@@ -792,7 +792,7 @@
 .story-state-list > div span {
   padding: 4px 7px;
   border: 1px solid #393c37;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   color: var(--color-muted);
   font-size: var(--fs-xs);
 }
@@ -801,7 +801,7 @@
   width: 100%;
   padding: 10px;
   border: 1px solid var(--color-accent);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   color: #111;
   background: var(--color-accent);
   cursor: pointer;
@@ -842,7 +842,7 @@
 .arc-label {
   padding: 8px 12px;
   border: 1px solid var(--color-accent);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   color: var(--color-accent);
   font-size: var(--fs-lg);
   font-weight: var(--fw-bold);
@@ -868,7 +868,7 @@
   margin-left: 12px;
   padding: 2px 8px;
   border: 1px solid color-mix(in srgb, var(--color-accent) 30%, transparent);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: transparent;
   color: var(--color-muted);
   font-size: var(--fs-md);
@@ -891,7 +891,7 @@
   align-items: flex-start;
   gap: 12px;
   padding: 10px 12px;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   position: relative;
 }
 
@@ -953,14 +953,14 @@
 .anchor-tag {
   padding: 2px 7px;
   border: 1px solid color-mix(in srgb, var(--color-accent-2) 30%, transparent);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   color: var(--color-accent-2);
   font-size: var(--fs-xs);
 }
 
 .badge-revealed {
   padding: 2px 8px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: color-mix(in srgb, var(--color-accent-2) 15%, transparent);
   color: var(--color-accent-2);
   font-size: var(--fs-xs);
@@ -970,7 +970,7 @@
 /* The parent card is at opacity .65, which compounds with this colour. */
 .badge-unrevealed {
   padding: 2px 8px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: rgba(255, 255, 255, 0.05);
   color: var(--color-fg);
   font-size: var(--fs-xs);
@@ -981,7 +981,7 @@
 
 .clue-board {
   border: 1px solid var(--color-border);
-  border-radius: 10px;
+  border-radius: var(--radius-lg);
   background: var(--surface-glass);
   padding: 20px;
   height: fit-content;
@@ -1004,7 +1004,7 @@
 .clue-filter {
   padding: 4px 12px;
   border: 1px solid var(--color-border);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: transparent;
   color: var(--color-muted);
   font-size: var(--fs-sm);
@@ -1026,7 +1026,7 @@
 .clue-card {
   padding: 12px;
   border: 1px solid var(--color-border);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   background: var(--surface-raised);
 }
 

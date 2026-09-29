@@ -16,7 +16,7 @@
   justify-content: center;
   gap: 8px;
   border: 1px solid color-mix(in srgb, var(--color-accent) 42%, transparent);
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   background: var(--surface-glass);
   color: var(--color-fg);
   cursor: pointer;
@@ -32,7 +32,7 @@
   margin-top: 10px;
   padding: 9px;
   border: 1px solid color-mix(in srgb, var(--color-accent) 34%, transparent);
-  border-radius: 13px;
+  border-radius: var(--radius-lg);
   background: var(--surface-glass);
   box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55);
   backdrop-filter: blur(22px);
@@ -60,7 +60,7 @@
   height: 36px;
   padding: 0 9px;
   border: 1px solid var(--color-border);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   background: var(--surface-sunken);
   color: var(--color-fg);
 }
@@ -70,7 +70,7 @@
   display: grid;
   place-items: center;
   border: 1px solid var(--color-border);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   background: var(--color-panel-soft);
   color: var(--color-fg);
   cursor: pointer;
@@ -82,7 +82,7 @@
   height: 36px;
   padding: 0 9px;
   border: 1px solid var(--color-border);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   background: var(--surface-sunken);
   color: var(--color-fg);
   outline: none;
@@ -92,7 +92,7 @@
   height: 36px;
   padding: 0 10px;
   border: 1px solid var(--color-border);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   background: var(--color-panel-soft);
   color: var(--color-fg);
   cursor: pointer;
@@ -109,7 +109,7 @@
   align-items: center;
   gap: 11px;
   border: 0;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   background: transparent;
   color: var(--color-fg);
   font-size: var(--fs-lg);

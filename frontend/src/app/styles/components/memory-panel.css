@@ -51,7 +51,7 @@
 .source-pill {
   margin-left: auto;
   border: 1px solid var(--color-border);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   padding: 4px 9px;
   color: var(--color-muted);
   font-size: var(--fs-xs);
@@ -76,7 +76,7 @@
   align-items: center;
   gap: 5px;
   border: 1px solid color-mix(in srgb, var(--color-accent) 30%, transparent);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   padding: 4px 9px;
   background: color-mix(in srgb, var(--color-panel) 52%, transparent);
   color: var(--color-muted);
@@ -129,7 +129,7 @@
 .bar {
   height: 8px;
   margin-top: 8px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   overflow: hidden;
   background: #2c2b28;
 }
@@ -154,7 +154,7 @@
 .chunk-item {
   padding: 10px;
   border: 1px solid var(--color-border);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   background: var(--surface-raised);
   color: var(--color-fg);
   font-size: var(--fs-md);
@@ -172,7 +172,7 @@
 .memory-status {
   max-width: 120px;
   border: 1px solid color-mix(in srgb, var(--color-accent) 32%, transparent);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   padding: 1px 7px;
   color: var(--color-accent);
   font-size: var(--fs-xs);
@@ -205,7 +205,7 @@
 .chunk-badge,
 .keyword-chip {
   border: 1px solid color-mix(in srgb, var(--color-accent-2) 35%, transparent);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   color: var(--color-accent-2);
   font-size: var(--fs-xs);
   line-height: var(--lh-chip);
@@ -314,7 +314,7 @@
   gap: 6px;
   padding: 4px 10px;
   border: 1px solid var(--color-border);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   color: var(--color-muted);
   background: var(--color-panel-soft);
   font-size: var(--fs-sm);
@@ -360,7 +360,7 @@
   justify-content: center;
   padding: 6px;
   border: 1px solid var(--color-border);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   color: var(--color-muted);
   background: var(--color-panel-soft);
   cursor: pointer;

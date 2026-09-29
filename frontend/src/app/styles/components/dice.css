@@ -108,7 +108,7 @@
   transform: translate(-50%, -50%);
   padding: 9px 12px;
   border: 1px solid color-mix(in srgb, var(--color-accent) 35%, transparent);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--surface-glass);
   color: var(--color-accent);
   font-size: var(--fs-sm);

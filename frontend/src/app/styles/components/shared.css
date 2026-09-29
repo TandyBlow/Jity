@@ -18,7 +18,7 @@
 .textarea {
   width: 100%;
   border: 1px solid var(--color-border);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   background: var(--surface-sunken);
   color: var(--color-fg);
   outline: none;
@@ -51,7 +51,7 @@ input.textarea {
 .icon-button,
 .option-button {
   border: 1px solid var(--color-border);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   color: var(--color-fg);
   cursor: pointer;
 }
