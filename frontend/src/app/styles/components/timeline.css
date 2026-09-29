@@ -926,6 +926,10 @@
   margin-top: var(--space-1);
 }
 
+/* Icon strokes live here so the colour invariant can see them. */
+.anchor-card.revealed .anchor-icon svg { stroke: var(--color-accent-2); }
+.anchor-card.unrevealed .anchor-icon svg { stroke: var(--color-muted); }
+
 .anchor-body {
   min-width: 0;
 }

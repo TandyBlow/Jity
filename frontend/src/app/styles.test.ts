@@ -67,6 +67,13 @@ const DEFINED_AT_RUNTIME = new Set<string>([
  */
 const RAW_COLOUR_BUDGET = 79;
 
+/**
+ * Component sources hold zero raw colours: CSS custom properties cannot reach
+ * WebGL, so the three.js material colours in this file are JS constants and
+ * the file is exempt.
+ */
+const CANVAS_COLOUR_FILES = new Set(["components/dice/DiceCanvas.tsx"]);
+
 describe("stylesheet invariants", () => {
   it("every var() reference in CSS resolves to a defined custom property", () => {
     const dangling: string[] = [];
@@ -118,6 +125,25 @@ describe("stylesheet invariants", () => {
       offenders.length,
       `${offenders.length} 处裸色值，预算 ${RAW_COLOUR_BUDGET}。前几处：\n${preview}`,
     ).toBeLessThanOrEqual(RAW_COLOUR_BUDGET);
+  });
+
+  it("keeps raw colours out of component sources", () => {
+    const offenders: string[] = [];
+    const componentFiles = collectFiles(
+      SRC_DIR,
+      (name) => /\.tsx?$/.test(name) && !/\.test\.tsx?$/.test(name),
+    );
+
+    for (const file of componentFiles) {
+      if (CANVAS_COLOUR_FILES.has(toRelative(SRC_DIR, file))) continue;
+      fs.readFileSync(file, "utf8").split("\n").forEach((line, index) => {
+        if (/#[0-9a-fA-F]{3,8}\b|\b(?:rgba?|hsla?)\(/.test(line)) {
+          offenders.push(`${toRelative(SRC_DIR, file)}:${index + 1}  ${line.trim().slice(0, 64)}`);
+        }
+      });
+    }
+
+    expect(offenders, `component sources hold raw colours:\n${offenders.join("\n")}`).toEqual([]);
   });
 
   it("does not declare the same @media condition twice in one file", () => {

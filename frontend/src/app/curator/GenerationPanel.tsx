@@ -37,7 +37,7 @@ function NovelUpload({
   onUpload: (file: File) => void;
 }) {
   return (
-    <div style={{ marginTop: 16, padding: 12, border: "1px solid #333", borderRadius: 6 }}>
+    <div style={{ marginTop: 16, padding: 12, border: "1px solid var(--color-border)", borderRadius: 6 }}>
       <h3 style={{ margin: "0 0 8px 0", fontSize: "0.95rem" }}>从小说 TXT 生成</h3>
       <input
         type="file"
@@ -51,7 +51,7 @@ function NovelUpload({
       />
       {uploading && <span style={{ marginLeft: 8, fontSize: "0.85rem" }}>正在分析小说…（约30-60秒）</span>}
       {errors.length > 0 && (
-        <div style={{ marginTop: 8, padding: 8, background: "#331111", borderRadius: 4, fontSize: "0.8rem" }}>
+        <div style={{ marginTop: 8, padding: 8, background: "color-mix(in srgb, var(--color-danger) 18%, var(--color-bg))", borderRadius: 4, fontSize: "0.8rem" }}>
           <strong>以下章节提取失败，需人工标注：</strong>
           <ul style={{ margin: "4px 0 0 16px" }}>{errors.map((e, i) => <li key={i}>{e}</li>)}</ul>
         </div>
