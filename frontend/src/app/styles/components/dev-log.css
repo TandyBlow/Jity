@@ -3,7 +3,7 @@
   padding: 32px;
   background:
     radial-gradient(circle at 18% 14%, color-mix(in srgb, var(--color-accent-2) 10%, transparent), transparent 30%),
-    linear-gradient(135deg, #11110f 0%, #181713 52%, var(--color-bg) 100%);
+    linear-gradient(135deg, var(--page-gradient-a) 0%, var(--page-gradient-b) 52%, var(--color-bg) 100%);
 }
 
 .dev-log-header {
@@ -110,7 +110,7 @@
 .empty-log {
   border: 1px solid var(--color-border);
   border-radius: 8px;
-  background: rgba(18, 18, 17, 0.88);
+  background: var(--surface-glass);
 }
 
 .dev-log-entry {
@@ -195,7 +195,7 @@
   padding: 6px 8px;
   border: 1px solid var(--color-border);
   border-radius: 6px;
-  background: rgba(0, 0, 0, 0.22);
+  background: var(--surface-sunken);
   color: var(--color-muted);
   font-size: 12px;
 }

@@ -3,7 +3,7 @@
   grid-template-columns: 48px minmax(0, 1fr);
   gap: 15px;
   border-color: color-mix(in srgb, var(--color-accent) 42%, transparent);
-  background: linear-gradient(135deg, rgba(47, 38, 25, 0.75), rgba(22, 21, 18, 0.96));
+  background: linear-gradient(135deg, color-mix(in srgb, var(--color-accent) 12%, var(--color-panel)), color-mix(in srgb, var(--color-accent) 2%, var(--color-panel)));
 }
 
 .real-dice-wrapper {
@@ -109,7 +109,7 @@
   padding: 9px 12px;
   border: 1px solid color-mix(in srgb, var(--color-accent) 35%, transparent);
   border-radius: 999px;
-  background: rgba(18, 18, 17, 0.86);
+  background: var(--surface-glass);
   color: var(--color-accent);
   font-size: 12px;
   white-space: nowrap;

@@ -17,14 +17,14 @@
   gap: 8px;
   border: 1px solid color-mix(in srgb, var(--color-accent) 42%, transparent);
   border-radius: 10px;
-  background: rgba(20, 20, 19, 0.88);
+  background: var(--surface-glass);
   color: var(--color-fg);
   cursor: pointer;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.24);
   backdrop-filter: blur(18px);
 }
 
-.settings-trigger:hover, .settings-trigger.is-open { border-color: var(--color-accent); background: rgba(35, 32, 27, 0.95); }
+.settings-trigger:hover, .settings-trigger.is-open { border-color: var(--color-accent); background: color-mix(in srgb, var(--color-accent) 7%, var(--color-panel)); }
 .settings-chevron { color: var(--color-muted); transition: transform 180ms ease; }
 .settings-trigger.is-open .settings-chevron { transform: rotate(180deg); }
 
@@ -33,7 +33,7 @@
   padding: 9px;
   border: 1px solid color-mix(in srgb, var(--color-accent) 34%, transparent);
   border-radius: 13px;
-  background: rgba(20, 20, 19, 0.96);
+  background: var(--surface-glass);
   box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55);
   backdrop-filter: blur(22px);
   animation: settings-reveal 180ms ease-out;
@@ -61,7 +61,7 @@
   padding: 0 9px;
   border: 1px solid var(--color-border);
   border-radius: 8px;
-  background: var(--color-panel-soft);
+  background: var(--surface-sunken);
   color: var(--color-fg);
 }
 
@@ -83,7 +83,7 @@
   padding: 0 9px;
   border: 1px solid var(--color-border);
   border-radius: 8px;
-  background: var(--color-panel-soft);
+  background: var(--surface-sunken);
   color: var(--color-fg);
   outline: none;
 }

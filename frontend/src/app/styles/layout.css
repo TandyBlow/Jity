@@ -7,7 +7,7 @@
   overflow: hidden;
   background:
     radial-gradient(circle at 45% 18%, color-mix(in srgb, var(--color-accent) 12%, transparent), transparent 32%),
-    linear-gradient(135deg, #121211 0%, #1a1814 48%, var(--color-bg) 100%);
+    linear-gradient(135deg, var(--page-gradient-a) 0%, var(--page-gradient-b) 48%, var(--color-bg) 100%);
 }
 
 .game-brand {

@@ -2,7 +2,7 @@
 .memory-panel {
   padding: 22px;
   border-color: var(--color-border);
-  background: rgba(18, 18, 17, 0.88);
+  background: var(--surface-glass);
   backdrop-filter: blur(16px);
   min-height: 0;
   overflow-y: auto;
@@ -78,7 +78,7 @@
   border: 1px solid color-mix(in srgb, var(--color-accent) 30%, transparent);
   border-radius: 999px;
   padding: 4px 9px;
-  background: rgba(18, 18, 17, 0.52);
+  background: color-mix(in srgb, var(--color-panel) 52%, transparent);
   color: var(--color-muted);
   cursor: pointer;
   font-size: 11px;
@@ -155,7 +155,7 @@
   padding: 10px;
   border: 1px solid var(--color-border);
   border-radius: 8px;
-  background: rgba(0, 0, 0, 0.18);
+  background: var(--surface-raised);
   color: var(--color-fg);
   font-size: 13px;
   line-height: 1.55;

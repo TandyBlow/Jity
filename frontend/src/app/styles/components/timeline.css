@@ -5,7 +5,7 @@
   padding: 32px;
   background:
     radial-gradient(circle at 18% 14%, color-mix(in srgb, var(--color-accent-2) 8%, transparent), transparent 30%),
-    linear-gradient(135deg, #11110f 0%, #181713 52%, var(--color-bg) 100%);
+    linear-gradient(135deg, var(--page-gradient-a) 0%, var(--page-gradient-b) 52%, var(--color-bg) 100%);
 }
 
 .timeline-header {
@@ -199,7 +199,7 @@
   padding: 24px;
   border: 1px solid var(--color-border);
   border-radius: 14px;
-  background: rgba(0, 0, 0, 0.16);
+  background: var(--surface-sunken);
 }
 
 .story-tree {
@@ -237,7 +237,7 @@
   left: 50%;
   width: 1px;
   height: 28px;
-  background: #4a5149;
+  background: color-mix(in srgb, var(--color-accent-2) 30%, var(--color-border));
 }
 
 .story-tree > ul > li::before {
@@ -251,7 +251,7 @@
   left: 8px;
   right: 8px;
   height: 1px;
-  background: #4a5149;
+  background: color-mix(in srgb, var(--color-accent-2) 30%, var(--color-border));
 }
 
 .story-node {
@@ -264,10 +264,10 @@
   gap: 5px;
   padding: 11px 12px;
   text-align: left;
-  border: 1px solid #3e423d;
+  border: 1px solid color-mix(in srgb, var(--color-accent-2) 20%, var(--color-border));
   border-radius: 10px;
   color: var(--color-fg);
-  background: #1a1b18;
+  background: var(--surface-raised);
   cursor: pointer;
 }
 
@@ -283,7 +283,7 @@
 }
 
 .story-node-turn {
-  color: #8d948b;
+  color: var(--color-muted);
   font-size: 10px;
   letter-spacing: 0.08em;
 }
@@ -293,7 +293,7 @@
 }
 
 .story-node.selected {
-  box-shadow: 0 0 0 2px rgba(214, 177, 91, 0.55);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-accent) 55%, transparent);
 }
 
 .story-node.active {
@@ -315,7 +315,7 @@
   padding: 20px;
   border: 1px solid var(--color-border);
   border-radius: 14px;
-  background: rgba(19, 20, 17, 0.96);
+  background: var(--surface-glass);
 }
 
 .story-detail-heading {
@@ -982,7 +982,7 @@
 .clue-board {
   border: 1px solid var(--color-border);
   border-radius: 10px;
-  background: rgba(18, 18, 17, 0.88);
+  background: var(--surface-glass);
   padding: 20px;
   height: fit-content;
   position: sticky;
@@ -1027,7 +1027,7 @@
   padding: 12px;
   border: 1px solid var(--color-border);
   border-radius: 8px;
-  background: rgba(0, 0, 0, 0.18);
+  background: var(--surface-raised);
 }
 
 .clue-card.known {
