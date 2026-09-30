@@ -115,34 +115,8 @@
   white-space: nowrap;
 }
 
-.real-dice-status.failed,
-.dice-demo-3d-error {
+.real-dice-status.failed {
   color: var(--color-danger-bright);
-}
-
-.demo-how-list {
-  display: grid;
-  gap: var(--space-5);
-}
-
-.demo-how-list > div {
-  display: grid;
-  grid-template-columns: 25px minmax(0, 1fr);
-  gap: var(--space-3);
-  align-items: start;
-}
-
-.demo-how-list span {
-  color: var(--color-accent);
-  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
-  font-size: var(--fs-xs);
-}
-
-.demo-how-list p {
-  margin: 0;
-  color: var(--color-fg);
-  font-size: var(--fs-sm);
-  line-height: var(--lh-body);
 }
 
 @media (max-width: 780px) {
