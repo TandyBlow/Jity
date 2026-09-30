@@ -34,7 +34,7 @@ function ArcBlock({ arc, ai, editor }: { arc: Arc; ai: number; editor: CuratorEd
         {arc.sessions.map((session, si) => (
           <SessionBlock key={`session-${si}`} session={session} ai={ai} si={si} editor={editor} />
         ))}
-        <button className="primary-button" style={{ marginTop: 4, height: 32, fontSize: 12 }} onClick={() => addSession(ai)}>+ 添加幕</button>
+        <button className="primary-button" style={{ marginTop: 4, height: 32, fontSize: "var(--fs-sm)" }} onClick={() => addSession(ai)}>+ 添加幕</button>
       </div>
     </details>
   );
@@ -63,7 +63,7 @@ function SessionBlock({
         {session.anchor_events.map((anchor, ani) => (
           <AnchorBlock key={anchor.id} anchor={anchor} ai={ai} si={si} ani={ani} editor={editor} />
         ))}
-        <button className="primary-button" style={{ marginTop: 4, height: 32, fontSize: 12 }} onClick={() => addAnchor(ai, si)}>+ 添加锚点</button>
+        <button className="primary-button" style={{ marginTop: 4, height: 32, fontSize: "var(--fs-sm)" }} onClick={() => addAnchor(ai, si)}>+ 添加锚点</button>
       </div>
     </details>
   );
@@ -92,9 +92,9 @@ function AnchorBlock({
       </div>
       <input className="textarea" style={{ height: 32, marginBottom: 4 }} value={anchor.description} onChange={(e) => updateAnchor(ai, si, ani, "description", e.target.value)} placeholder="描述" />
       <div style={{ display: "flex", gap: 6 }}>
-        <input className="textarea" style={{ height: 30, flex: 1, fontSize: 12 }} value={anchor.trigger_conditions?.location ?? ""} onChange={(e) => updateAnchor(ai, si, ani, "trigger_conditions", { ...anchor.trigger_conditions, location: e.target.value || null })} placeholder="地点" />
-        <input className="textarea" style={{ height: 30, flex: 1, fontSize: 12 }} value={anchor.trigger_conditions?.npc_present ?? ""} onChange={(e) => updateAnchor(ai, si, ani, "trigger_conditions", { ...anchor.trigger_conditions, npc_present: e.target.value || null })} placeholder="NPC" />
-        <input className="textarea" style={{ height: 30, flex: 1, fontSize: 12 }} value={anchor.trigger_conditions?.item_held ?? ""} onChange={(e) => updateAnchor(ai, si, ani, "trigger_conditions", { ...anchor.trigger_conditions, item_held: e.target.value || null })} placeholder="物品" />
+        <input className="textarea" style={{ height: 30, flex: 1, fontSize: "var(--fs-sm)" }} value={anchor.trigger_conditions?.location ?? ""} onChange={(e) => updateAnchor(ai, si, ani, "trigger_conditions", { ...anchor.trigger_conditions, location: e.target.value || null })} placeholder="地点" />
+        <input className="textarea" style={{ height: 30, flex: 1, fontSize: "var(--fs-sm)" }} value={anchor.trigger_conditions?.npc_present ?? ""} onChange={(e) => updateAnchor(ai, si, ani, "trigger_conditions", { ...anchor.trigger_conditions, npc_present: e.target.value || null })} placeholder="NPC" />
+        <input className="textarea" style={{ height: 30, flex: 1, fontSize: "var(--fs-sm)" }} value={anchor.trigger_conditions?.item_held ?? ""} onChange={(e) => updateAnchor(ai, si, ani, "trigger_conditions", { ...anchor.trigger_conditions, item_held: e.target.value || null })} placeholder="物品" />
       </div>
     </div>
   );

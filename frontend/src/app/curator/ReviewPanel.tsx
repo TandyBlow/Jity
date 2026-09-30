@@ -8,7 +8,7 @@ export function ReviewPanel({ editor }: { editor: CuratorEditor }) {
   return (
     <div className="clue-board">
       <h2>审查摘要</h2>
-      <div style={{ fontSize: 13, lineHeight: 1.8 }}>
+      <div style={{ fontSize: "var(--fs-md)", lineHeight: "var(--lh-reading)" }}>
         <div><strong>标题：</strong>{campaign.title || "未设置"}</div>
         <div><strong>版本：</strong>v{campaign.version}</div>
         <div><strong>叙事弧：</strong>{campaign.arcs.length}个</div>
@@ -17,11 +17,11 @@ export function ReviewPanel({ editor }: { editor: CuratorEditor }) {
         <div style={{ marginTop: 12 }}><strong>锚点：</strong></div>
         <ul style={{ paddingLeft: 18, margin: "4px 0" }}>
           {reviewStats.allAnchors.slice(0, 15).map((a) => (
-            <li key={a.id} style={{ fontSize: 12, color: "var(--color-muted)" }}>{a.name} (P{a.priority})</li>
+            <li key={a.id} style={{ fontSize: "var(--fs-sm)", color: "var(--color-muted)" }}>{a.name} (P{a.priority})</li>
           ))}
         </ul>
         {reviewStats.allAnchors.length > 15 && (
-          <div style={{ fontSize: 12, color: "var(--color-muted)" }}>…还有更多</div>
+          <div style={{ fontSize: "var(--fs-sm)", color: "var(--color-muted)" }}>…还有更多</div>
         )}
       </div>
     </div>

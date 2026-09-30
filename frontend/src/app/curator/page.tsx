@@ -80,7 +80,7 @@ function BasicInfo({
     <div style={{ marginBottom: 16 }}>
       <input
         className="textarea"
-        style={{ height: 40, marginBottom: 8, fontSize: 20, fontWeight: 700 }}
+        style={{ height: 40, marginBottom: 8, fontSize: "var(--fs-heading)", fontWeight: "var(--fw-bold)" }}
         value={campaign.title}
         onChange={(e) => updateField("title", e.target.value)}
         placeholder="战役标题"
