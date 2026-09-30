@@ -1097,7 +1097,7 @@
   .settings-menu { right: 16px; }
   .story-panel { padding: 20px 16px; }
   .player-controls-row { grid-template-columns: 1fr; }
-  .player-controls-row button { min-height: 44px; }
+  .player-controls-row button { min-height: var(--control-h-xl); }
 
   .app-shell {
     display: block;

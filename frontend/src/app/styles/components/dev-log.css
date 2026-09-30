@@ -74,7 +74,7 @@
 
 .search-field,
 .area-field {
-  height: 44px;
+  height: var(--control-h-xl);
   display: flex;
   align-items: center;
   gap: var(--space-3);

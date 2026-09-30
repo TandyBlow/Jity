@@ -8,7 +8,7 @@
 
 .settings-trigger {
   min-width: 108px;
-  height: 42px;
+  height: var(--control-h-lg);
   margin-left: auto;
   padding: 0 var(--space-4);
   display: flex;
@@ -57,7 +57,7 @@
 .settings-field-row select {
   min-width: 0;
   width: 100%;
-  height: 36px;
+  height: var(--control-h-md);
   padding: 0 var(--space-3);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
@@ -79,7 +79,7 @@
 .settings-slot-form { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 7px; }
 .settings-slot-form input {
   min-width: 0;
-  height: 36px;
+  height: var(--control-h-md);
   padding: 0 var(--space-3);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
@@ -89,7 +89,7 @@
 }
 .settings-slot-form input:focus { border-color: var(--color-accent); }
 .settings-slot-form button {
-  height: 36px;
+  height: var(--control-h-md);
   padding: 0 var(--space-3);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
@@ -103,7 +103,7 @@
 
 .settings-link-row {
   width: 100%;
-  min-height: 43px;
+  min-height: var(--control-h-xl);
   padding: 0 var(--space-3);
   display: flex;
   align-items: center;

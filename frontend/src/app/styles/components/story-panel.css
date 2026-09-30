@@ -207,7 +207,7 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-4);
-  min-height: 44px;
+  min-height: var(--control-h-xl);
   padding: var(--space-3) var(--space-4);
   overflow: hidden;
   background: color-mix(in srgb, var(--color-panel) 90%, transparent);

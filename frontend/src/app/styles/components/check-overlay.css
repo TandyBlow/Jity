@@ -100,14 +100,14 @@
 }
 
 .main-check-secondary {
-  min-height: 40px;
+  min-height: var(--control-h-lg);
   padding: 0 var(--space-5);
 }
 
 .main-check-primary {
   width: auto;
   min-width: 120px;
-  height: 40px;
+  height: var(--control-h-lg);
   margin-top: 0;
 }
 
