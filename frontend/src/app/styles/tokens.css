@@ -29,6 +29,7 @@
   --surface-raised: var(--color-panel-soft);
   --surface-sunken: #141413;
   --surface-glass: color-mix(in srgb, var(--color-panel) 92%, transparent);
+  --surface-receded: rgba(0, 0, 0, 0.12);
   --page-gradient-a: #121211;
   --page-gradient-b: #191713;
 

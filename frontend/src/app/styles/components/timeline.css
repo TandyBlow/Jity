@@ -877,7 +877,7 @@
 
 .anchor-card.unrevealed {
   border-left: 3px solid var(--color-border);
-  background: rgba(0, 0, 0, 0.12);
+  background: var(--surface-receded);
   opacity: 0.65;
 }
 
