@@ -55,6 +55,7 @@ class OpeningSceneMixin:
             current_location=state.get("current_location", ""),
         ).replace_em_dashes()
         state = self.state_manager.apply_output(state, request.player_action, output)
+        self._feed_memory(session_id, state, output, request.player_action, campaign_manager)
 
         metrics = campaign_manager.record_turn(output, session["state"], latency_ms=0)
         output_id = self.db.add_model_output(
@@ -83,9 +84,10 @@ class OpeningSceneMixin:
             model_output_id=output_id,
             campaign_session_index=_csi,
         )
+        self._schedule_memory(session_id, timeline_node_id, state, campaign_manager)
 
         return GenerateResponse(
-            session_id=session_id, state=state, output=output,
+            session_id=session_id, state=self.state_manager.sanitize_state(state), output=output,
             retrieved_chunks=[], model_output_id=output_id,
             used_model=model, source="scripted",
             timeline_node_id=timeline_node_id,

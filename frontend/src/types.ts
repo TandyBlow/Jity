@@ -9,6 +9,8 @@ export type ItemMemory = {
   description?: string;
   location?: string;
   notes?: string;
+  aliases?: string[];
+  transition?: "" | "recovered" | "repaired";
 };
 
 export type NPCMemory = {

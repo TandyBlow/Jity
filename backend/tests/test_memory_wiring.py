@@ -138,7 +138,7 @@ class TestNarratorStageMemory:
         )
 
     @pytest.mark.asyncio
-    async def test_narrator_stage_feeds_memory_and_schedules_maintain(self):
+    async def test_narrator_stage_leaves_memory_for_final_commit(self):
         gen = self._make_generator()
         output = StoryOutput(narration="你推开了档案室的门。")
         gen.llm_client.generate = AsyncMock(return_value=(output, 123))
@@ -154,11 +154,8 @@ class TestNarratorStageMemory:
 
         assert source == "llm"
         assert latency_ms == 123
-        memory_ctrl.on_turn_generated.assert_called_once_with(
-            "捡起通行卡", "你推开了档案室的门。", 5, memory_updates=output.memory_updates,
-        )
-        await asyncio.gather(*gen._memory_tasks)
-        memory_ctrl.maintain.assert_awaited_once()
+        memory_ctrl.on_turn_generated.assert_not_called()
+        memory_ctrl.maintain.assert_not_awaited()
         assert gen._memory_tasks == set()
 
     @pytest.mark.asyncio
@@ -197,8 +194,8 @@ class TestMoomPool:
         rec = mc._narrative_pool[0]
         assert rec.memory_id == "ep_L1_1"
         assert rec.content == "巷战摘要"
-        assert rec.created_round == 5  # forget_step rounds ≈ turn // 2
-        mc._persist_episode.assert_called_once()
+        assert rec.created_round == 10
+        mc._persist_episode.assert_not_called()  # branch snapshot is the persistence boundary
 
     @pytest.mark.asyncio
     async def test_pruned_episodes_sync_back_to_nsb(self):
@@ -212,7 +209,7 @@ class TestMoomPool:
         mc.nsb.should_summarize_level1 = MagicMock(return_value=False)
         mc.nsb.should_extract = MagicMock(return_value=False)
 
-        await mc.maintain("sess-1", turn=8)  # round 4: unreinforced score < threshold
+        await mc.maintain("sess-1", turn=200)
 
         assert mc._narrative_pool == []
         assert mc.nsb._level1 == []  # pruned pool record removed from retrieval context
@@ -232,7 +229,7 @@ class TestMoomPool:
         mc.nsb.should_summarize_level1 = MagicMock(return_value=False)
         mc.nsb.should_extract = MagicMock(return_value=False)
 
-        await mc.maintain("sess-1", turn=8)
+        await mc.maintain("sess-1", turn=200)
 
         assert mc._narrative_pool == []
         assert mc.nsb._level1 == []

@@ -70,11 +70,8 @@ def runtime(tmp_path, monkeypatch):
     retriever = SimpleNamespace(retrieve_async=AsyncMock(return_value=[]))
     generator = ScenarioGenerator(db, states, retriever, PromptBuilder(), llm, MagicMock(), "test",
                                   campaign_manager_provider=lambda sid, slot: managers[sid])
-    memory = MagicMock()
-    memory.assemble_context_async = AsyncMock(side_effect=lambda *args, **kw: kw["campaign_context"])
-    memory.export_state.return_value = {}
-    memory.maintain = AsyncMock()
-    monkeypatch.setattr(generator, "_get_memory_controller", lambda *args: memory)
+    from app import dependencies
+    monkeypatch.setattr(dependencies, "embedding_client", None)
     monkeypatch.setattr(ExaminerAgent, "examine", AsyncMock(return_value=ActionRuling(
         permissibility=ActionPermissibility.PERMISSIBLE)))
     monkeypatch.setattr(DirectorAgent, "direct", AsyncMock(return_value=DirectorInstruction(

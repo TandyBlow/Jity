@@ -38,8 +38,8 @@ async def test_create_session_campaign_not_found():
 
 
 @pytest.mark.asyncio
-async def test_create_session_without_campaign():
-    """POST /sessions without campaign_filename works normally (backward compat)."""
+async def test_create_session_defaults_to_campaign():
+    """Omitting the filename selects the default campaign, never free play."""
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as client:
         resp = await client.post("/sessions", json={
@@ -49,7 +49,7 @@ async def test_create_session_without_campaign():
         assert resp.status_code == 200
         data = resp.json()
         assert data["session_id"]
-        # Without campaign, uses default state (ScriptedStory fallback)
+        assert data["campaign_filename"] == "default_campaign.json"
         assert data["state"]["current_location"]
 
 

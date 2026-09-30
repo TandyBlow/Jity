@@ -28,7 +28,7 @@ export function useGameEffects(
   }
 
   // Retain the request across React Strict Mode effect replay. In particular,
-  // consume campaign_entry once and do not create a second free-play session.
+  // consume campaign_entry once and do not create a second campaign session.
   const bootRequest = useRef<Promise<SessionResponse> | null>(null);
 
   useEffect(() => {
@@ -37,7 +37,11 @@ export function useGameEffects(
     async function loadInitialSession(): Promise<SessionResponse> {
       const params = new URLSearchParams(window.location.search);
       const requestedSessionId = params.get("autoplay") === "1" ? params.get("session") : null;
-      if (requestedSessionId) return getSession(requestedSessionId);
+      if (requestedSessionId) {
+        const session = await getSession(requestedSessionId);
+        if (!session.campaign_filename) throw new Error("该历史会话未关联战役，请新建战役。");
+        return session;
+      }
 
       let campaignOpts: { campaignFilename?: string; arcIndex?: number; sessionIndex?: number } | undefined;
       try {
@@ -53,7 +57,8 @@ export function useGameEffects(
       const activeSessionId = window.localStorage.getItem(ACTIVE_SESSION_STORAGE_KEY);
       if (activeSessionId) {
         try {
-          return await getSession(activeSessionId);
+          const session = await getSession(activeSessionId);
+          if (session.campaign_filename) return session;
         } catch {
           window.localStorage.removeItem(ACTIVE_SESSION_STORAGE_KEY);
         }

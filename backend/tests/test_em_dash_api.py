@@ -31,10 +31,17 @@ def _build_mock_llm_output_with_em_dash() -> StoryOutput:
 
 
 @pytest.mark.asyncio
-async def test_generate_endpoint_replaces_em_dashes():
+async def test_generate_endpoint_replaces_em_dashes(monkeypatch):
     mock_output = _build_mock_llm_output_with_em_dash()
 
     from app.dependencies import knowledge_service
+    from app.schemas.agent_io import DirectorInstruction, OpeningOptions
+    from app.services.agents.director import DirectorAgent
+    from app.services.agents.opening_options import OpeningOptionsAgent
+
+    monkeypatch.setattr(OpeningOptionsAgent, "propose", AsyncMock(
+        return_value=OpeningOptions(options=["观察", "交谈", "调查"])))
+    monkeypatch.setattr(DirectorAgent, "direct", AsyncMock(return_value=DirectorInstruction(narrative_direction="继续当前剧情")))
 
     with patch.object(
         knowledge_service.scenario_generator.llm_client,
@@ -49,11 +56,13 @@ async def test_generate_endpoint_replaces_em_dashes():
             })
             assert create_resp.status_code == 200
             session_id = create_resp.json()["session_id"]
+            opened = await client.post(f"/sessions/{session_id}/generate", json={"player_action": "入场"})
+            assert opened.status_code == 200
 
             gen_resp = await client.post(
                 f"/sessions/{session_id}/generate",
                 json={
-                    "player_action": "推开铁门走进去",
+                    "player_action": "继续",
                     "model": "deepseek-v4-flash",
                     "style": "horror",
                     "constraints": "",
@@ -61,6 +70,8 @@ async def test_generate_endpoint_replaces_em_dashes():
             )
             assert gen_resp.status_code == 200, f"Generate failed: {gen_resp.text}"
             data = gen_resp.json()
+            assert data["source"] == "llm"
+            await knowledge_service.scenario_generator._wait_memory(session_id)
 
             output = data["output"]
             violations = _find_em_dashes(output, path="$")

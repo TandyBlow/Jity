@@ -5,6 +5,30 @@ from typing import Any
 
 
 class TimelineStoreMixin:
+    def commit_memory_snapshot(self, session_id: str, turn_id: int, expected_version: str, memory: dict) -> bool:
+        """Publish derived memory only while its source node is still active."""
+        with self.connect() as db:
+            db.execute("BEGIN IMMEDIATE")
+            row = db.execute(
+                "SELECT t.state_json, s.state_json AS live_state_json FROM story_turns t JOIN game_sessions s ON s.id = t.session_id "
+                "WHERE s.id = ? AND s.active_turn_id = ? AND t.id = ?",
+                (session_id, turn_id, turn_id),
+            ).fetchone()
+            if not row:
+                return False
+            state = json.loads(row["state_json"])
+            live_state = json.loads(row["live_state_json"])
+            if (state.get("_memory_controller", {}).get("version") != expected_version
+                    or live_state.get("_memory_controller", {}).get("version") != expected_version):
+                return False
+            state["_memory_controller"] = memory
+            live_state["_memory_controller"] = memory
+            encoded = json.dumps(state, ensure_ascii=False)
+            db.execute("UPDATE story_turns SET state_json = ? WHERE id = ? AND session_id = ?", (encoded, turn_id, session_id))
+            db.execute("UPDATE game_sessions SET state_json = ? WHERE id = ? AND active_turn_id = ?",
+                       (json.dumps(live_state, ensure_ascii=False), session_id, turn_id))
+            return True
+
     def ensure_timeline_root(
         self,
         session_id: str,

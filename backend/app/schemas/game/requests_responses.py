@@ -12,7 +12,7 @@ from app.schemas.game.story_output import StoryOutput
 class CreateSessionRequest(BaseModel):
     game_name: str = "卡塞尔入学档案"
     model: Optional[str] = None
-    campaign_filename: Optional[str] = None
+    campaign_filename: str = Field(default="default_campaign.json", min_length=1, pattern=r"^[\w.-]+\.json$")
     arc_index: int = 0
     session_index: int = 0
     slot_name: Optional[str] = None

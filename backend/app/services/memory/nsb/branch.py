@@ -29,11 +29,12 @@ from app.services.memory.nsb.prompts import (
     _LEVEL3_PROMPT,
 )
 from app.services.memory.nsb.generation import SummaryGenerationMixin
+from app.services.memory.nsb.retrieval import NarrativeRetrievalMixin
 
 logger = logging.getLogger(__name__)
 
 
-class NarrativeSummarizationBranch(SummaryGenerationMixin):
+class NarrativeSummarizationBranch(NarrativeRetrievalMixin, SummaryGenerationMixin):
     """Hierarchical summarization for long-term narrative memory."""
 
     _LEVEL_WEIGHTS = {1: 1.0, 2: 1.15, 3: 1.3}
@@ -85,11 +86,19 @@ class NarrativeSummarizationBranch(SummaryGenerationMixin):
         if not self._turn_buffer:
             return None
 
-        dialogue = "\n\n".join(self._turn_buffer)
-        self._turn_buffer.clear()
+        batch = list(self._turn_buffer[:self.theta1])
+        dialogue = "\n\n".join(batch)
+        import re
+        turns = [int(m.group(1)) for text in batch if (m := re.match(r"\[T(\d+)", text))]
+        if turns:
+            turn_start, turn_end = min(turns), max(turns)
 
         prompt = _LEVEL1_PROMPT.format(theta1=self.theta1, dialogue=dialogue)
-        return await self._generate_summary(prompt, level=1, turn_start=turn_start, turn_end=turn_end)
+        summary = await self._generate_summary(prompt, level=1, turn_start=turn_start, turn_end=turn_end)
+        if summary and summary.summary.strip():
+            del self._turn_buffer[:len(batch)]
+            return summary
+        return None
 
     async def summarize_level2(self, turn_start: int, turn_end: int) -> EpisodeSummary | None:
         """Produce a second-level summary from accumulated level-1 summaries."""
@@ -98,14 +107,18 @@ class NarrativeSummarizationBranch(SummaryGenerationMixin):
 
         # Take theta2 summaries from the buffer
         batch = self._level1[:self.theta2]
-        self._level1 = self._level1[self.theta2:]
 
         summaries_text = "\n\n---\n\n".join(
             f"[摘要{i+1}]: {s.summary}" for i, s in enumerate(batch)
         )
         schema = '{"summary": "...", "tags": [...], "entities_involved": [...], "causal_links": [...], "state_changes": {...}, "importance": 0.7}'
         prompt = _LEVEL2_PROMPT.format(theta2=self.theta2, schema=schema, summaries=summaries_text)
-        return await self._generate_summary(prompt, level=2, turn_start=turn_start, turn_end=turn_end)
+        summary = await self._generate_summary(prompt, level=2, turn_start=min(s.turn_start for s in batch), turn_end=max(s.turn_end for s in batch))
+        if summary and summary.summary.strip():
+            self._inherit_sources(summary, batch)
+            self._level1 = self._level1[len(batch):]
+            return summary
+        return None
 
     async def summarize_level3(self, turn_start: int, turn_end: int) -> EpisodeSummary | None:
         """Produce a third-level summary from accumulated level-2 summaries."""
@@ -113,14 +126,35 @@ class NarrativeSummarizationBranch(SummaryGenerationMixin):
             return None
 
         batch = self._level2[:self.theta3]
-        self._level2 = self._level2[self.theta3:]
 
         summaries_text = "\n\n---\n\n".join(
             f"[摘要{i+1}]: {s.summary}" for i, s in enumerate(batch)
         )
         schema = '{"summary": "...", "tags": [...], "entities_involved": [...], "causal_links": [...], "state_changes": {...}, "importance": 0.7}'
         prompt = _LEVEL3_PROMPT.format(theta3=self.theta3, schema=schema, summaries=summaries_text)
-        return await self._generate_summary(prompt, level=3, turn_start=turn_start, turn_end=turn_end)
+        summary = await self._generate_summary(prompt, level=3, turn_start=min(s.turn_start for s in batch), turn_end=max(s.turn_end for s in batch))
+        if summary and summary.summary.strip():
+            self._inherit_sources(summary, batch)
+            self._level2 = self._level2[len(batch):]
+            return summary
+        return None
+
+    @staticmethod
+    def _inherit_sources(summary, batch):
+        summary.source_ids = sorted({source for s in batch for source in (s.source_ids or [s.episode_id])})
+        summary.protected = any(s.protected for s in batch)
+        # Keep structured consequences even when prose is compressed.
+        summary.state_changes = {**{k: v for s in batch for k, v in s.state_changes.items()}, **summary.state_changes}
+
+    async def compact_level3(self) -> None:
+        if len(self._level3) < self.theta3:
+            return
+        batch = list(self._level3[:self.theta3])
+        prompt = _LEVEL3_PROMPT.format(theta3=len(batch), schema='{"summary": "...", "importance": 0.8}', summaries="\n".join(s.summary for s in batch))
+        summary = await self._generate_summary(prompt, 3, min(s.turn_start for s in batch), max(s.turn_end for s in batch))
+        if summary and summary.summary.strip():
+            self._inherit_sources(summary, batch)
+            self._level3 = [summary, *self._level3[len(batch):]]
 
     def accept_level1(self, summary: EpisodeSummary) -> None:
         """Store a level-1 summary (called after successful LLM generation)."""
@@ -154,41 +188,4 @@ class NarrativeSummarizationBranch(SummaryGenerationMixin):
         self._embedding_cache.clear()
 
     async def get_retrieval_context_async(self, query: str, top_k: int = 5) -> list[EpisodeSummary]:
-        """Retrieve summaries using a semantic/keyword hybrid score."""
-        all_summaries = self._level1 + self._level2 + self._level3
-        if not all_summaries:
-            return []
-
-        query_lower = query.lower()
-        keyword_scores: list[float] = []
-        for summary in all_summaries:
-            score = summary.importance
-            score += sum(2.0 for tag in summary.tags if tag.lower() in query_lower)
-            score += sum(3.0 for entity in summary.entities_involved if entity.lower() in query_lower)
-            keyword_scores.append(min(score / 10.0, 1.0))
-
-        semantic_scores = [0.0] * len(all_summaries)
-        if self._embedding is not None and self._embedding_cache:
-            try:
-                query_vectors = await self._embedding.embed([query])
-                query_vector = query_vectors[0] / (np.linalg.norm(query_vectors[0]) + 1e-9)
-                for summary, vector in self._embedding_cache:
-                    try:
-                        index = all_summaries.index(summary)
-                    except ValueError:
-                        continue
-                    normalized_vector = vector / (np.linalg.norm(vector) + 1e-9)
-                    semantic_scores[index] = float(np.dot(query_vector, normalized_vector))
-            except Exception:
-                logger.debug("Semantic retrieval failed; using keyword scores", exc_info=True)
-
-        scored = [
-            (
-                summary,
-                (0.7 * semantic_scores[index] + 0.3 * keyword_scores[index])
-                * self._LEVEL_WEIGHTS.get(summary.level, 1.0),
-            )
-            for index, summary in enumerate(all_summaries)
-        ]
-        scored.sort(key=lambda item: item[1], reverse=True)
-        return [summary for summary, _ in scored[:top_k]]
+        return await super().get_retrieval_context_async(query, top_k)

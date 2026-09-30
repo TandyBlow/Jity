@@ -59,7 +59,6 @@ export function SidePanel({ session }: { session: GameSession }) {
           handleCampaignChange(e.target.value);
         }}
       >
-        <option value="">自由模式（无预设战役）</option>
         {campaigns.map((c) => (
           <option key={c.filename} value={c.filename}>
             {c.title}（{c.arc_count}弧）

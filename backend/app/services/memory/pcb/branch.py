@@ -49,7 +49,6 @@ class PersonaConstructionBranch(PersonaMergeMixin):
     ) -> dict[str, PersonaSnapshot] | None:
         """Extract snapshots from the new multi-character format or the old format."""
         prompt = _EXTRACTION_PROMPT.format(dialogue=dialogue)
-        self._turns_since_extraction = 0
         try:
             raw = await self._llm.generate_json(
                 prompt=prompt,
@@ -77,10 +76,12 @@ class PersonaConstructionBranch(PersonaMergeMixin):
                         extracted_at_turn=current_turn,
                     )
             if snapshots:
+                self._turns_since_extraction = 0
                 return snapshots
 
         entries = self._parse_entries(raw.get("entries", {}), current_turn)
         if entries:
+            self._turns_since_extraction = 0
             return {
                 "player": PersonaSnapshot(
                     character_name="player",

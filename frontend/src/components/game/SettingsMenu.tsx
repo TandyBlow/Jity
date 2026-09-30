@@ -39,7 +39,7 @@ export function SettingsMenu({ session }: { session: GameSession }) {
   };
 
   const campaignTitle = (filename?: string | null) => {
-    if (!filename) return "自由模式";
+    if (!filename) return "未关联战役";
     const found = campaigns.find((campaign) => campaign.filename === filename);
     return found?.title ?? filename;
   };
@@ -76,7 +76,6 @@ export function SettingsMenu({ session }: { session: GameSession }) {
               value={selectedCampaign}
               onChange={(event) => handleCampaignChange(event.target.value)}
             >
-              <option value="">自由模式（无预设战役）</option>
               {campaigns.map((campaign) => (
                 <option key={campaign.filename} value={campaign.filename}>
                   {campaign.title}（{campaign.arc_count}弧）

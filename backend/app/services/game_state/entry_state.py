@@ -31,7 +31,13 @@ class EntryStateMixin:
             # campaign recap.
             result["npcs"] = []
             result["recent_events"] = []
-            result.pop("_memory_controller", None)
+            previous_memory = result.pop("_memory_controller", {})
+            if previous_memory.get("score_tracker"):
+                result["_memory_controller"] = {
+                    "score_tracker": previous_memory["score_tracker"],
+                    "item_aliases": previous_memory.get("item_aliases", {}),
+                    "round_unit": "turn",
+                }
             result["_scene_prompt"] = ""
         if initialize:
             # The free-play defaults describe a specific academy scene. A new

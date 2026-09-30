@@ -1,6 +1,5 @@
-"""Hook 3 — execute the generation step (multi-agent pipeline or legacy call)."""
+"""Hook 3 — execute the campaign agent pipeline."""
 
-import asyncio
 import logging
 
 from app.schemas.agent_io import DirectorInstruction
@@ -9,6 +8,7 @@ from app.services.agents.examiner import ExaminerAgent, is_passive_continuation_
 from app.services.llm_client import LLMOutputParseError, LLMRequestError
 from app.services.scenario_generator.errors import ScenarioGenerationError
 from app.schemas import StoryOutput
+from app.exceptions import CampaignRequiredError
 
 logger = logging.getLogger(__name__)
 
@@ -18,16 +18,9 @@ class AgentPipelineMixin:
         self, session_id, request, prompt, model, meta, retrieved_for_storage, _csi,
         state=None, campaign_manager=None,
     ) -> tuple[StoryOutput, int, str]:
-        """Execute the multi-agent pipeline: Examiner → Director → Narrator.
-
-        Falls back to the legacy single-call path when no campaign is loaded
-        or when agents are not available.
-        """
-        # Legacy path: no campaign → single LLM call (unchanged behavior)
+        """Execute the campaign pipeline: Examiner → Director → Narrator."""
         if campaign_manager is None or not campaign_manager.is_loaded():
-            return await self._execute_single_llm(
-                session_id, request, prompt, model, meta
-            )
+            raise CampaignRequiredError("请先创建战役会话，当前会话不支持继续生成。")
 
         state = state or {}
 
@@ -110,7 +103,7 @@ class AgentPipelineMixin:
         anchor_progress = f"{len(campaign_manager.progress.revealed_anchors)}/{sum(len(s.anchor_events) for a in campaign_manager.campaign.arcs for s in a.sessions)}" if campaign_manager.progress else "0/0"
         candidates = self._describe_anchor_candidates(campaign_manager, state, turn)
         deviation = "偏差：连续3+回合无锚点触发" if campaign_manager.detect_deviation(state, turn) else "正常"
-        item_states = self._format_score_item_states(campaign_manager)
+        item_states = self._format_score_item_states(campaign_manager, session_id, state)
 
         try:
             return await director.direct(
@@ -155,33 +148,4 @@ class AgentPipelineMixin:
             )
             raise ScenarioGenerationError(f"{exc} model_output_id={output_id}", output_id) from exc
 
-        # Persistent per-session memory: feed the turn, then maintain in background
-        memory_ctrl = self._get_memory_controller(session_id, state, campaign_manager)
-        memory_ctrl.on_turn_generated(
-            request.player_action, output.narration, turn,
-            memory_updates=output.memory_updates,
-        )
-        task = asyncio.create_task(memory_ctrl.maintain(session_id, turn))
-        self._memory_tasks.add(task)
-        task.add_done_callback(self._log_memory_task_done)
-
         return output, latency_ms, source
-
-    async def _execute_single_llm(
-        self, session_id, request, prompt, model, meta
-    ) -> tuple[StoryOutput, int, str]:
-        """Fallback: single LLM call (original behavior, no multi-agent pipeline)."""
-        try:
-            output, latency_ms = await self.llm_client.generate(
-                prompt,
-                model,
-                temperature=meta.temperature,
-                purpose="story_narrator",
-                context={"session_id": session_id},
-            )
-            output.replace_em_dashes()
-            return output, latency_ms, "llm"
-        except LLMRequestError:
-            raise
-        except LLMOutputParseError:
-            raise

@@ -164,6 +164,7 @@ class GameStateManager(MemoryNormalizationMixin, StateInferenceMixin, EntryState
     def sanitize_state(state: dict[str, Any]) -> dict[str, Any]:
         """Remove server-only state before returning a response to the client."""
         state.pop("_memory_controller", None)
+        state.pop("_campaign_session_index", None)
         return state
 
     @staticmethod

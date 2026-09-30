@@ -9,7 +9,7 @@ from app.dependencies import (
 from app.schemas import GenerateRequest, GenerateResponse, StoryOutput
 from app.services.llm_client import MissingAPIKeyError
 from app.services.scenario_generator import ScenarioGenerationError
-from app.exceptions import ConcurrentModificationError
+from app.exceptions import CampaignRequiredError, ConcurrentModificationError
 
 router = APIRouter(tags=["generate"])
 
@@ -18,6 +18,8 @@ router = APIRouter(tags=["generate"])
 async def generate(session_id: str, request: GenerateRequest) -> GenerateResponse:
     try:
         response = await knowledge_service.scenario_generator.generate(session_id, request)
+    except CampaignRequiredError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
     except MissingAPIKeyError as exc:
         raise HTTPException(status_code=503, detail=str(exc)) from exc
     except ScenarioGenerationError as exc:

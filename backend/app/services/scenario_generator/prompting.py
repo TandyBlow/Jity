@@ -69,5 +69,8 @@ class PromptBuildMixin:
 
         if campaign_manager is not None and campaign_manager.is_loaded():
             prompt, token_count, _ = campaign_manager.truncate_prompt_sections(prompt_sections)
+            from app.services.memory.memory_controller import MemoryController
+            if isinstance(memory_ctrl, MemoryController):
+                retrieved_for_storage.extend(memory_ctrl.record_injected(prompt, int(state.get("turn", 0))))
 
         return prompt, meta, retrieved, retrieved_for_storage, token_count

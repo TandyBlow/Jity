@@ -48,7 +48,7 @@ export function createSession(
     slotName?: string;
   },
 ): Promise<SessionResponse> {
-  const body: Record<string, unknown> = { model };
+  const body: Record<string, unknown> = { model, campaign_filename: options?.campaignFilename || "default_campaign.json" };
   if (options?.campaignFilename) {
     body.campaign_filename = options.campaignFilename;
     body.arc_index = options.arcIndex ?? 0;

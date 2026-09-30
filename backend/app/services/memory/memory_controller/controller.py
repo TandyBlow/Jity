@@ -1,6 +1,7 @@
 """Core orchestration for the L0/L1/L2 memory subsystem."""
 
 import logging
+from uuid import uuid4
 from typing import Any
 
 from app.database import Database
@@ -39,6 +40,10 @@ class MemoryController(MemoryMaintenanceMixin):
         )
         self._narrative_pool: list[MemoryRecord] = []
         self._nsb_consecutive_failures = 0
+        self.version = uuid4().hex
+        self.pending = False
+        self.last_hits = []
+        self._protected_turns: list[int] = []
 
     def assemble_context(
         self,
@@ -66,16 +71,40 @@ class MemoryController(MemoryMaintenanceMixin):
         player_action: str = "",
     ) -> str:
         """Build context with semantic retrieval when embeddings are enabled."""
-        summaries = await self.nsb.get_retrieval_context_async(
-            self._build_retrieval_query(state, player_action), top_k=5
+        self.last_hits = await self.nsb.retrieve_hits(
+            self._build_retrieval_query(state, player_action), turn=turn, top_k=5
         )
-        return self._render_context(state, campaign_context, summaries)
+        return self._render_context(state, campaign_context, self.last_hits)
+
+    def record_injected(self, prompt: str, turn: int) -> list[dict]:
+        from app.services.memory.forgetting import forget_step
+        # Check the complete rendered line after truncation, not just its ID.
+        hits = [h for h in self.last_hits if self._summary_line(h) in prompt]
+        selected = {h.memory_id for h in hits}
+        candidates = getattr(self.nsb, "last_candidates", [])
+        suppressed = [h.memory_id for h in candidates if h.memory_id not in selected][:len(hits)]
+        before = {r.memory_id for r in self._narrative_pool}
+        self._narrative_pool = forget_step(self._narrative_pool, turn, retrieved_ids=selected, suppressed_ids=suppressed)
+        live = {r.memory_id for r in self._narrative_pool}
+        for memory_id in before - live:
+            self.nsb.remove_episode(memory_id)
+        return [{**h.model_dump(), "id": h.memory_id, "source_type": "narrative_memory"} for h in hits]
 
     @staticmethod
     def _build_retrieval_query(state: dict[str, Any], player_action: str) -> str:
         recent_events = state.get("recent_events", [])
         npc_names = [npc.get("name", "") for npc in state.get("npcs", [])]
-        return f"{player_action} {' '.join(npc_names)} {' '.join(recent_events[-3:])}"
+        fields = [player_action, state.get("current_location", ""), *npc_names, *recent_events[-3:]]
+        for kind in ("quests", "items", "world_facts"):
+            for entry in state.get(kind, []):
+                if entry.get("status") not in {"completed", "failed", "destroyed", "lost"}:
+                    fields.extend(str(entry.get(key, "")) for key in ("name", "objective", "description"))
+        return " ".join(fields)
+
+    @staticmethod
+    def _summary_line(summary) -> str:
+        identifier = getattr(summary, "memory_id", getattr(summary, "episode_id", ""))
+        return f"[memory:{identifier} L{summary.level} T{summary.turn_start}-{summary.turn_end}] {summary.summary}"
 
     def _render_context(
         self,
@@ -89,7 +118,7 @@ class MemoryController(MemoryMaintenanceMixin):
         if summaries:
             lines = ["## 长期叙事记忆"]
             lines.extend(
-                f"[L{summary.level} T{summary.turn_start}-{summary.turn_end}] {summary.summary}"
+                self._summary_line(summary)
                 for summary in summaries
             )
             parts.append("\n".join(lines))
@@ -118,12 +147,21 @@ class MemoryController(MemoryMaintenanceMixin):
         """Feed one completed turn into NSB, PCB, and SCORE."""
         self.nsb.add_turn(player_action, output_narration, turn)
         self.pcb.on_turn()
+        self.version = uuid4().hex
+        self.pending = True
         if isinstance(memory_updates, MemoryUpdates):
             items = [item.model_dump() for item in memory_updates.items_upserted]
+            updates = memory_updates.model_dump()
         elif isinstance(memory_updates, dict):
             items = memory_updates.get("items_upserted", [])
+            updates = memory_updates
         else:
             items = []
+            updates = {}
+        if any(updates.get(key) for key in ("items_upserted", "items_removed", "quests_upserted", "world_facts_upserted")) or any(
+            npc.get("status") in {"dead", "死亡", "deceased"} for npc in updates.get("npcs_upserted", [])
+        ) or any(word in output_narration for word in ("承诺", "答应", "誓言", "死亡", "线索")):
+            self._protected_turns.append(turn)
         violations = self.score_tracker.check_narration_continuity(
             output_narration, turn, items
         )

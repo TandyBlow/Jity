@@ -43,16 +43,13 @@ class DirectorSupportMixin:
         state: dict | None = None,
         campaign_manager=None,
     ) -> MemoryController:
-        """Get a controller scoped to a campaign slot when one is loaded."""
-        if campaign_manager is not None and campaign_manager.is_loaded():
-            campaign_id = getattr(campaign_manager.progress, "campaign_id", "")
-            slot_name = getattr(campaign_manager, "slot_name", "default")
-            scoped_key = f"campaign:{campaign_id}:{slot_name}" if campaign_id else session_id
-        else:
-            scoped_key = session_id
+        """Reuse the active snapshot's controller; slot/branch restores invalidate it."""
+        scoped_key = session_id
 
         if scoped_key in self._memory_controllers:
-            return self._memory_controllers[scoped_key]
+            cached = self._memory_controllers[scoped_key]
+            if state is None or "_memory_controller" not in state or state["_memory_controller"].get("version") == cached.version:
+                return cached
 
         # Evict oldest if too many
         if len(self._memory_controllers) >= 50:
@@ -78,6 +75,8 @@ class DirectorSupportMixin:
                 mc.load_state(state["_memory_controller"])
             except Exception:
                 logger.warning("Failed to restore memory controller state", exc_info=True)
+        if state:
+            mc.score_tracker.seed(state.get("items", []), int(state.get("turn", 0)))
         self._memory_controllers[scoped_key] = mc
         return mc
 
@@ -87,7 +86,7 @@ class DirectorSupportMixin:
         if not task.cancelled() and task.exception() is not None:
             logger.warning("Memory maintenance task failed", exc_info=task.exception())
 
-    def _format_score_item_states(self, campaign_manager) -> str:
+    def _format_score_item_states(self, campaign_manager, session_id: str, state: dict) -> str:
         """Build SCORE item state summary string for Director.
 
         Pulls from persistent MemoryController's ScoreTracker when available.
@@ -97,18 +96,10 @@ class DirectorSupportMixin:
         # world_facts and items which the campaign already tracks.
         if campaign_manager is None or not campaign_manager.is_loaded():
             return ""
-        campaign = campaign_manager.campaign
-        if campaign is None:
-            return ""
+        tracker = self._get_memory_controller(session_id, state, campaign_manager).score_tracker
         parts = ["## 关键物品状态"]
-        # Use campaign starting_state items as tracked items
-        starting = campaign.starting_state or {}
-        items = starting.get("items", [])
-        if not items:
-            return ""
-        for item in items[:10]:
-            name = item.get("name", "未知物品")
-            parts.append(f"- {name}: 追踪中")
+        for name, status in tracker.get_all_states().items():
+            parts.append(f"- {name}: {status}")
         return "\n".join(parts)
 
     @staticmethod

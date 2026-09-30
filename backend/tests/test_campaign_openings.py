@@ -72,11 +72,8 @@ def runtime(tmp_path, monkeypatch):
     retriever = SimpleNamespace(retrieve_async=AsyncMock(return_value=[]))
     generator = ScenarioGenerator(db, states, retriever, PromptBuilder(), llm, MagicMock(), "test",
                                   campaign_manager_provider=lambda sid, slot: managers[sid])
-    memory = MagicMock()
-    memory.assemble_context_async = AsyncMock(side_effect=lambda *args, **kw: kw["campaign_context"])
-    memory.export_state.return_value = {}
-    memory.maintain = AsyncMock()
-    monkeypatch.setattr(generator, "_get_memory_controller", lambda *args: memory)
+    from app import dependencies
+    monkeypatch.setattr(dependencies, "embedding_client", None)
     monkeypatch.setattr(ExaminerAgent, "examine", AsyncMock(return_value=ActionRuling(
         permissibility=ActionPermissibility.PERMISSIBLE)))
     monkeypatch.setattr(DirectorAgent, "direct", AsyncMock(return_value=DirectorInstruction(
@@ -189,7 +186,8 @@ async def test_next_chapter_uses_local_turn_and_survives_reload(runtime):
     assert any(i["name"] == "纪念物" for i in result.state["items"])
     assert result.state["npcs"] == []
     assert all("旧卧室" not in event and "婶婶" not in event for event in result.state["recent_events"])
-    assert "_memory_controller" not in runtime.states.get_session_payload(sid)["state"]
+    memory = runtime.states.get_session_payload(sid)["state"]["_memory_controller"]
+    assert "上一幕短期记忆" not in str(memory)
 
     runtime.llm.generate.return_value = (StoryOutput(
         narration="你在芝加哥火车站睁开眼，芬格尔仍坐在旁边。",
@@ -310,8 +308,8 @@ def test_explicit_empty_starting_state_clears_free_play_memory(runtime):
 
 
 @pytest.mark.asyncio
-async def test_free_play_keeps_original_defaults(runtime):
+async def test_omitted_campaign_creates_default_campaign(runtime):
     async with AsyncClient(transport=ASGITransport(app=runtime.app), base_url="http://test") as client:
         session = (await client.post("/sessions", json={})).json()
-    assert session["campaign_filename"] is None
-    assert session["state"]["current_location"] == "卡塞尔学院报到处大厅"
+    assert session["campaign_filename"] == "default_campaign.json"
+    assert session["state"]["current_location"] == "卡塞尔学院大门前"

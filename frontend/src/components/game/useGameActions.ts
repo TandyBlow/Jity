@@ -4,14 +4,10 @@ import { useCallback, useRef } from "react";
 
 import { createSession, createSlot, generateScene, loadSlot } from "@/lib/api";
 import {
-  DEFAULT_CONSTRAINTS,
-  DEFAULT_STORY_STYLE,
   CAMPAIGN_CONSTRAINTS,
   CAMPAIGN_STORY_STYLE,
   ENTRY_ACTION,
-  INITIAL_ACTION,
   SLOT_DEFAULT,
-  initialOutput,
   loadingOutput,
 } from "@/lib/game/initialOutput";
 import type { GenerateResponse } from "@/types";
@@ -47,8 +43,8 @@ export function useGameActions(core: GameSessionCore) {
         sessionId: sid,
         playerAction: nextAction,
         model,
-        style: selectedCampaign ? CAMPAIGN_STORY_STYLE : DEFAULT_STORY_STYLE,
-        constraints: selectedCampaign ? CAMPAIGN_CONSTRAINTS : DEFAULT_CONSTRAINTS,
+        style: CAMPAIGN_STORY_STYLE,
+        constraints: CAMPAIGN_CONSTRAINTS,
         slotName: selectedSlot,
         timelineNodeId: activeTurnId,
       });
@@ -65,7 +61,7 @@ export function useGameActions(core: GameSessionCore) {
       generating.current = false;
       setIsLoading(false);
     }
-  }, [sessionId, action, model, selectedSlot, selectedCampaign, activeTurnId, gameOver, setIsLoading, setError, setOutput, setOutputSource, setState, setActiveTurnId, setChunks, setModel, setAction]);
+  }, [sessionId, action, model, selectedSlot, activeTurnId, gameOver, setIsLoading, setError, setOutput, setOutputSource, setState, setActiveTurnId, setChunks, setModel, setAction]);
 
   const handleNewSession = useCallback(async () => {
     setIsLoading(true);
@@ -74,40 +70,36 @@ export function useGameActions(core: GameSessionCore) {
     setAction("");
     setPendingGenerate(null);
     try {
-      const campaignOpts = selectedCampaign
-        ? { campaignFilename: selectedCampaign, arcIndex: 0, sessionIndex: 0 }
-        : undefined;
+      const campaignOpts = { campaignFilename: selectedCampaign || "default_campaign.json", arcIndex: 0, sessionIndex: 0 };
       const session = await createSession(model, campaignOpts);
       rememberActiveSession(session.session_id);
       setSessionId(session.session_id);
       setState(session.state);
       setActiveTurnId(session.active_turn_id ?? null);
-      setOutput(campaignOpts ? loadingOutput : initialOutput);
+      setSelectedCampaign(session.campaign_filename || campaignOpts.campaignFilename);
+      setOutput(loadingOutput);
       setOutputSource("scripted");
       setChunks([]);
-      setAction(campaignOpts ? "" : INITIAL_ACTION);
+      setAction("");
       setSelectedSlot(SLOT_DEFAULT);
       setSelectedSlotId("");
       await refreshSlots(session.session_id, SLOT_DEFAULT);
-      if (campaignOpts) {
-        setPendingGenerate(ENTRY_ACTION);
-      }
+      setPendingGenerate(ENTRY_ACTION);
     } catch (err) {
       setError(err instanceof Error ? err.message : "创建会话失败");
     } finally {
       setIsLoading(false);
     }
-  }, [model, selectedCampaign, setIsLoading, setError, setSessionId, setState, setActiveTurnId, setOutput, setOutputSource, setChunks, setAction, setSelectedSlot, setSelectedSlotId, refreshSlots, setPendingGenerate]);
+  }, [model, selectedCampaign, setSelectedCampaign, setIsLoading, setError, setSessionId, setState, setActiveTurnId, setOutput, setOutputSource, setChunks, setAction, setSelectedSlot, setSelectedSlotId, refreshSlots, setPendingGenerate]);
 
   const handleCampaignChange = useCallback(async (value: string) => {
+    if (!value) return;
     setIsLoading(true);
     setError("");
     setOutput(loadingOutput);
     setAction("");
     setPendingGenerate(null);
-    const opts = value
-      ? { campaignFilename: value, arcIndex: 0, sessionIndex: 0 }
-      : undefined;
+    const opts = { campaignFilename: value, arcIndex: 0, sessionIndex: 0 };
     try {
       const session = await createSession(model, opts);
       setSelectedCampaign(value);
@@ -115,14 +107,14 @@ export function useGameActions(core: GameSessionCore) {
       setSessionId(session.session_id);
       setState(session.state);
       setActiveTurnId(session.active_turn_id ?? null);
-      setOutput(opts ? loadingOutput : initialOutput);
+      setOutput(loadingOutput);
       setOutputSource("scripted");
       setChunks([]);
-      setAction(opts ? "" : INITIAL_ACTION);
+      setAction("");
       setSelectedSlot(SLOT_DEFAULT);
       setSelectedSlotId("");
       refreshSlots(session.session_id, SLOT_DEFAULT).catch((err) => console.error("refreshSlots failed:", err));
-      if (opts) setPendingGenerate(ENTRY_ACTION);
+      setPendingGenerate(ENTRY_ACTION);
     } catch (err: Error | unknown) {
       setError(err instanceof Error ? err.message : String(err));
     } finally {

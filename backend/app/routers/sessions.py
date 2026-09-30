@@ -28,6 +28,9 @@ router = APIRouter(prefix="/sessions", tags=["sessions"])
 
 @router.post("", response_model=SessionResponse)
 def create_session(request: CreateSessionRequest) -> SessionResponse:
+    campaign_path = settings.campaigns_dir / request.campaign_filename
+    if not campaign_path.is_file():
+        raise HTTPException(status_code=404, detail=f"Campaign file not found: {request.campaign_filename}")
     payload = state_manager.create_session(request.game_name, request.model or settings.llm_model)
     session_id = payload["session_id"]
 
