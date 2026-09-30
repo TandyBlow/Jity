@@ -80,14 +80,14 @@ function BasicInfo({
     <div style={{ marginBottom: 16 }}>
       <input
         className="textarea"
-        style={{ height: 40, marginBottom: 8, fontSize: "var(--fs-heading)", fontWeight: "var(--fw-bold)" }}
+        style={{ height: "var(--control-h-lg)", marginBottom: "var(--space-3)", fontSize: "var(--fs-heading)", fontWeight: "var(--fw-bold)" }}
         value={campaign.title}
         onChange={(e) => updateField("title", e.target.value)}
         placeholder="战役标题"
       />
       <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
-        <input className="textarea" style={{ height: 36, flex: 1 }} value={filename} onChange={(e) => onFilenameChange(e.target.value)} placeholder="文件名" />
-        <input className="textarea" style={{ height: 36, width: 80 }} value={campaign.version} onChange={(e) => updateField("version", parseInt(e.target.value) || 3)} placeholder="版本" type="number" />
+        <input className="textarea" style={{ height: "var(--control-h-md)", flex: 1 }} value={filename} onChange={(e) => onFilenameChange(e.target.value)} placeholder="文件名" />
+        <input className="textarea" style={{ height: "var(--control-h-md)", width: 80 }} value={campaign.version} onChange={(e) => updateField("version", parseInt(e.target.value) || 3)} placeholder="版本" type="number" />
       </div>
       <textarea
         className="textarea"

@@ -165,6 +165,25 @@ describe("stylesheet invariants", () => {
     expect(offenders, `component sources hold raw font sizes:\n${offenders.join("\n")}`).toEqual([]);
   });
 
+  it("keeps raw control heights out of component sources", () => {
+    const offenders: string[] = [];
+    const componentFiles = collectFiles(
+      SRC_DIR,
+      (name) => /\.tsx?$/.test(name) && !/\.test\.tsx?$/.test(name),
+    );
+
+    for (const file of componentFiles) {
+      if (CANVAS_COLOUR_FILES.has(toRelative(SRC_DIR, file))) continue;
+      fs.readFileSync(file, "utf8").split("\n").forEach((line, index) => {
+        if (/\b(minHeight|height):\s*["']?[0-9.]+\s*[},]/.test(line)) {
+          offenders.push(`${toRelative(SRC_DIR, file)}:${index + 1}  ${line.trim().slice(0, 64)}`);
+        }
+      });
+    }
+
+    expect(offenders, `component sources hold raw heights:\n${offenders.join("\n")}`).toEqual([]);
+  });
+
   it("does not declare the same @media condition twice in one file", () => {
     const duplicates: string[] = [];
     for (const { file, css } of sources) {

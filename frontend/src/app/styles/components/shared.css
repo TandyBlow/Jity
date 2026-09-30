@@ -82,6 +82,13 @@ input.textarea {
   background: color-mix(in srgb, var(--color-accent) 86%, white);
 }
 
+/* Compact variant for the dense add-rows in the curator editor. */
+.primary-button.compact {
+  height: var(--control-h-sm);
+  margin-top: var(--space-2);
+  font-size: var(--fs-sm);
+}
+
 .icon-button {
   width: var(--control-h-md);
   height: var(--control-h-md);

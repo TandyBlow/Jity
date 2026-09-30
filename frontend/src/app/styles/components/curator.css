@@ -1,0 +1,39 @@
+/* Curator-local patterns; nothing here is borrowed across routes. */
+
+.curator-anchor-card {
+  margin-bottom: var(--space-3);
+  margin-left: var(--space-5);
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.curator-field {
+  height: var(--control-h-md);
+  margin-bottom: var(--space-3);
+}
+
+.curator-name-row {
+  display: flex;
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
+}
+
+.curator-name-row input {
+  height: var(--control-h-sm);
+}
+
+.curator-input-sm {
+  height: var(--control-h-sm);
+}
+
+.curator-trigger-row {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.curator-trigger-row input {
+  flex: 1;
+  height: var(--control-h-sm);
+  font-size: var(--fs-sm);
+}
