@@ -3,6 +3,7 @@
 @import "./styles/tokens.css";
 @import "./styles/base.css";
 @import "./styles/layout.css";
+@import "./styles/shell.css";
 @import "./styles/components/settings-menu.css";
 @import "./styles/components/memory-panel.css";
 @import "./styles/components/shared.css";

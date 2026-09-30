@@ -6,7 +6,7 @@ export function ReviewPanel({ editor }: { editor: CuratorEditor }) {
   const { campaign, reviewStats } = editor;
 
   return (
-    <div className="clue-board" style={{ position: "static" }}>
+    <div className="clue-board">
       <h2>审查摘要</h2>
       <div style={{ fontSize: 13, lineHeight: 1.8 }}>
         <div><strong>标题：</strong>{campaign.title || "未设置"}</div>

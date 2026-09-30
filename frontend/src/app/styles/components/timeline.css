@@ -1,36 +1,5 @@
 /* ── Timeline page ── */
 
-.timeline-shell {
-  min-height: 100vh;
-  padding: var(--space-9);
-  background:
-    radial-gradient(circle at 18% 14%, color-mix(in srgb, var(--color-accent-2) 8%, transparent), transparent 30%),
-    linear-gradient(135deg, var(--page-gradient-a) 0%, var(--page-gradient-b) 52%, var(--color-bg) 100%);
-}
-
-.timeline-header {
-  max-width: 1080px;
-  margin: 0 auto var(--space-8);
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: var(--space-7);
-}
-
-.timeline-header h1 {
-  margin: 0;
-  font-size: var(--fs-display);
-  letter-spacing: 0.01em;
-}
-
-.timeline-layout {
-  max-width: 1080px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: 1fr 380px;
-  gap: var(--space-8);
-}
-
 .timeline-tabs {
   max-width: 1080px;
   margin: 0 auto var(--space-6);
@@ -58,6 +27,12 @@
 .timeline-tab-panel {
   max-width: 1080px;
   margin: 0 auto;
+}
+
+/* Sticky belongs to the timeline clues tab; other routes use the card static. */
+.timeline-tab-panel.clues .clue-board {
+  position: sticky;
+  top: var(--space-9);
 }
 
 /* Centred: left-aligned in a 1080 column it left 262px of dead space on the right. */
@@ -982,22 +957,6 @@
 }
 
 /* Clue board */
-
-.clue-board {
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  background: var(--surface-glass);
-  padding: var(--space-7);
-  height: fit-content;
-  position: sticky;
-  top: 32px;
-}
-
-.clue-board h2 {
-  margin: 0 0 var(--space-4);
-  font-size: var(--fs-lg);
-  font-weight: var(--fw-bold);
-}
 
 .clue-filters {
   display: flex;

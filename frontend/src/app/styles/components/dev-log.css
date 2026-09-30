@@ -15,16 +15,6 @@
   gap: var(--space-7);
 }
 
-.back-link {
-  width: fit-content;
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-3);
-  color: var(--color-accent-2);
-  font-size: var(--fs-md);
-  font-weight: var(--fw-bold);
-}
-
 .dev-log-header h1 {
   margin: var(--space-5) 0 var(--space-3);
   font-size: var(--fs-display);

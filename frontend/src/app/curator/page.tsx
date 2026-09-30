@@ -48,7 +48,7 @@ export default function CuratorPage() {
         </div>
       )}
 
-      <div className="timeline-layout" style={{ maxWidth: 1080, margin: "0 auto" }}>
+      <div className="timeline-layout">
         {/* Main editor */}
         <div>
           <GenerationPanel editor={editor} />

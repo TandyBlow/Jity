@@ -9,7 +9,7 @@ export function GenerationPanel({ editor }: { editor: CuratorEditor }) {
   } = editor;
 
   return (
-    <div className="clue-board" style={{ position: "static", marginBottom: 20 }}>
+    <div className="clue-board" style={{ marginBottom: "var(--space-6)" }}>
       <h2>AI 生成战役</h2>
       <textarea
         className="textarea small-textarea"
