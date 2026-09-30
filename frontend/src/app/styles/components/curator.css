@@ -1,5 +1,53 @@
 /* Curator-local patterns; nothing here is borrowed across routes. */
 
+.curator-header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.curator-header-actions select {
+  max-width: 260px;
+}
+
+.curator-status {
+  max-width: 1080px;
+  margin: 0 auto var(--space-5);
+}
+
+.curator-section {
+  margin-bottom: var(--space-5);
+}
+
+.curator-title-input {
+  height: var(--control-h-lg);
+  margin-bottom: var(--space-3);
+  font-size: var(--fs-heading);
+  font-weight: var(--fw-bold);
+}
+
+.curator-field-row {
+  display: flex;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.curator-field-row input {
+  height: var(--control-h-md);
+}
+
+.curator-field-row input[type="number"] {
+  width: 80px;
+}
+
+.curator-grow {
+  flex: 1;
+}
+
+.curator-follow {
+  margin-top: var(--space-3);
+}
+
 .curator-anchor-card {
   margin-bottom: var(--space-3);
   margin-left: var(--space-5);

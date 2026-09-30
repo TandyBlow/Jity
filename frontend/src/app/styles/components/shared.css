@@ -89,6 +89,15 @@ input.textarea {
   font-size: var(--fs-sm);
 }
 
+/* Toolbar variant: sits beside neighbours instead of spanning the column. */
+.primary-button.fitted {
+  width: auto;
+  margin: 0;
+  padding: 0 var(--space-5);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
 .icon-button {
   width: var(--control-h-md);
   height: var(--control-h-md);
