@@ -22,12 +22,12 @@ function ArcBlock({ arc, ai, editor }: { arc: Arc; ai: number; editor: CuratorEd
   const { updateArc, addSession, removeArc } = editor;
 
   return (
-    <details open style={{ marginBottom: 12 }}>
-      <summary style={{ cursor: "pointer", fontWeight: 700, display: "flex", justifyContent: "space-between", padding: "8px 0" }}>
+    <details open className="curator-block">
+      <summary className="curator-summary">
         <span>{arc.name || `弧 ${ai + 1}`}</span>
-        <button className="icon-button" style={{ width: "var(--control-h-sm)", height: "var(--control-h-sm)" }} onClick={(e) => { e.preventDefault(); removeArc(ai); }}>✕</button>
+        <button className="icon-button" onClick={(e) => { e.preventDefault(); removeArc(ai); }}>✕</button>
       </summary>
-      <div style={{ paddingLeft: 16 }}>
+      <div className="curator-indent">
         <input className="textarea curator-field" value={arc.name} onChange={(e) => updateArc(ai, "name", e.target.value)} placeholder="弧名称" />
         <input className="textarea curator-field" value={arc.goal} onChange={(e) => updateArc(ai, "goal", e.target.value)} placeholder="弧目标" />
 
@@ -54,11 +54,11 @@ function SessionBlock({
   const { updateSession, addAnchor } = editor;
 
   return (
-    <details open style={{ marginBottom: 8, marginLeft: 16 }}>
-      <summary style={{ cursor: "pointer", fontWeight: 600, padding: "4px 0" }}>{session.name || `幕 ${si + 1}`}</summary>
-      <div style={{ paddingLeft: 16 }}>
+    <details open className="curator-subblock">
+      <summary className="curator-subsummary">{session.name || `幕 ${si + 1}`}</summary>
+      <div className="curator-indent">
         <input className="textarea curator-field" value={session.name} onChange={(e) => updateSession(ai, si, "name", e.target.value)} placeholder="幕名称" />
-        <textarea className="textarea small-textarea" value={session.opening_scene} onChange={(e) => updateSession(ai, si, "opening_scene", e.target.value)} placeholder="开场白 (opening_scene)" style={{ marginBottom: 8 }} />
+        <textarea className="textarea small-textarea curator-scene-input" value={session.opening_scene} onChange={(e) => updateSession(ai, si, "opening_scene", e.target.value)} placeholder="开场白 (opening_scene)" />
 
         {session.anchor_events.map((anchor, ani) => (
           <AnchorBlock key={anchor.id} anchor={anchor} ai={ai} si={si} ani={ani} editor={editor} />
@@ -88,9 +88,9 @@ function AnchorBlock({
     <div className="curator-anchor-card">
       <div className="curator-name-row">
         <input className="textarea" value={anchor.name} onChange={(e) => updateAnchor(ai, si, ani, "name", e.target.value)} placeholder="锚点名称" />
-        <input className="textarea" style={{ width: 70 }} value={anchor.priority} onChange={(e) => updateAnchor(ai, si, ani, "priority", parseInt(e.target.value) || 3)} type="number" min={1} max={5} />
+        <input className="textarea curator-priority" value={anchor.priority} onChange={(e) => updateAnchor(ai, si, ani, "priority", parseInt(e.target.value) || 3)} type="number" min={1} max={5} />
       </div>
-      <input className="textarea curator-input-sm" style={{ marginBottom: "var(--space-2)" }} value={anchor.description} onChange={(e) => updateAnchor(ai, si, ani, "description", e.target.value)} placeholder="描述" />
+      <input className="textarea curator-anchor-desc" value={anchor.description} onChange={(e) => updateAnchor(ai, si, ani, "description", e.target.value)} placeholder="描述" />
       <div className="curator-trigger-row">
         <input className="textarea" value={anchor.trigger_conditions?.location ?? ""} onChange={(e) => updateAnchor(ai, si, ani, "trigger_conditions", { ...anchor.trigger_conditions, location: e.target.value || null })} placeholder="地点" />
         <input className="textarea" value={anchor.trigger_conditions?.npc_present ?? ""} onChange={(e) => updateAnchor(ai, si, ani, "trigger_conditions", { ...anchor.trigger_conditions, npc_present: e.target.value || null })} placeholder="NPC" />
