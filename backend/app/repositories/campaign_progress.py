@@ -105,11 +105,11 @@ class CampaignProgressRepository:
     # Delete
     # ------------------------------------------------------------------
 
-    def delete_slot(self, slot_name: str) -> bool:
-        """Delete a slot by name. Returns True if a row was deleted."""
+    def delete_slot_by_id(self, slot_id: int) -> bool:
+        """Delete a slot by row id. Returns True if a row was deleted."""
         with self.db.connect() as conn:
             result = conn.execute(
-                "DELETE FROM campaign_progress WHERE slot_name = ?",
-                (slot_name,),
+                "DELETE FROM campaign_progress WHERE id = ?",
+                (slot_id,),
             )
         return result.rowcount > 0

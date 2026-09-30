@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { History, Loader2, MapPin, PenTool, RefreshCw, Send } from "lucide-react";
+import { History, Loader2, MapPin, PenTool, RefreshCw, Send, Trash2 } from "lucide-react";
 
 import type { GameSession } from "@/components/game/useGameSession";
 import { formatSlotTime } from "@/lib/game/format";
@@ -9,7 +9,7 @@ import { formatSlotTime } from "@/lib/game/format";
 export function SidePanel({ session }: { session: GameSession }) {
   const {
     sessionId, model, setModel, campaigns, selectedCampaign, handleCampaignChange,
-    slots, selectedSlotId, handleSlotChange, handleCreateSlot,
+    slots, selectedSlotId, handleSlotChange, handleCreateSlot, handleDeleteSlot,
     action, setAction, isLoading, error, handleGenerate, handleNewSession,
   } = session;
 
@@ -75,6 +75,7 @@ export function SidePanel({ session }: { session: GameSession }) {
           selectedSlotId={selectedSlotId}
           onSlotChange={handleSlotChange}
           onCreateSlot={handleCreateSlot}
+          onDeleteSlot={handleDeleteSlot}
         />
       )}
       <textarea
@@ -99,12 +100,22 @@ function SlotControls({
   selectedSlotId,
   onSlotChange,
   onCreateSlot,
+  onDeleteSlot,
 }: {
   slots: GameSession["slots"];
   selectedSlotId: GameSession["selectedSlotId"];
   onSlotChange: (slotId: number) => void;
   onCreateSlot: (name: string) => void;
+  onDeleteSlot: (slotId: number) => void;
 }) {
+  const selected = slots.find((s) => s.id === selectedSlotId);
+  const deleteDisabled = !selected || selected.is_active;
+  const deleteTitle = !selected
+    ? "请先选择存档"
+    : selected.is_active
+      ? "当前存档不可删除，请先切换到其他存档"
+      : "删除选中存档";
+
   return (
     <div style={{ marginBottom: 8, display: "flex", alignItems: "center", gap: 8, fontSize: "0.85rem" }}>
       <span>存档:</span>
@@ -127,6 +138,25 @@ function SlotControls({
         const name = prompt("新存档名称:");
         if (name) onCreateSlot(name);
       }} style={{ padding: "2px 8px" }}>+</button>
+      <button
+        aria-label="删除存档"
+        disabled={deleteDisabled}
+        onClick={() => {
+          if (selected && window.confirm(`确定删除存档「${selected.slot_name}」？此操作不可恢复。`)) {
+            onDeleteSlot(selected.id);
+          }
+        }}
+        title={deleteTitle}
+        style={{
+          padding: "2px 8px",
+          display: "inline-flex",
+          alignItems: "center",
+          cursor: deleteDisabled ? "not-allowed" : "pointer",
+          opacity: deleteDisabled ? 0.5 : 1,
+        }}
+      >
+        <Trash2 size={14} />
+      </button>
     </div>
   );
 }

@@ -120,6 +120,46 @@ def test_true_ending_requires_configured_story_anchors():
     assert route.id == "ending-dawn-conspiracy"
 
 
+def test_labelled_final_choice_after_chinese_colon_selects_ending():
+    """Auto-play labels its final choice before the configured trigger phrase."""
+    campaign = _campaign("default_campaign.json")
+    progress = CampaignProgress(
+        campaign_id="test",
+        arc_index=2,
+        session_index=1,
+        revealed_anchors=["anchor-seal-truth", "anchor-impostor-truth"],
+    )
+
+    route = select_ending(
+        campaign,
+        progress,
+        {"health": 68, "sanity": 57, "items": []},
+        "我作出最终决定：共同关闭封印。保护同伴，承担这一选择的后果。",
+    )
+
+    assert route is not None
+    assert route.id == "ending-dawn-conspiracy"
+
+
+def test_hypothetical_label_before_colon_does_not_select_ending():
+    campaign = _campaign("default_campaign.json")
+    progress = CampaignProgress(
+        campaign_id="test",
+        arc_index=2,
+        session_index=1,
+        revealed_anchors=["anchor-seal-truth", "anchor-impostor-truth"],
+    )
+
+    route = select_ending(
+        campaign,
+        progress,
+        {"health": 68, "sanity": 57, "items": []},
+        "如果最终必须选择：共同关闭封印，会发生什么？",
+    )
+
+    assert route is None
+
+
 def test_non_final_session_cannot_trigger_ending():
     campaign = _campaign("default_campaign.json")
     progress = CampaignProgress(campaign_id="test", arc_index=0, session_index=0)
@@ -132,6 +172,22 @@ def test_exhausted_stats_select_bad_ending():
     route = select_ending(campaign, progress, {"health": 0, "sanity": 50}, "继续")
     assert route is not None
     assert route.id == "ending-shiva-dance"
+
+
+def test_overflowed_finale_progress_can_still_select_ending():
+    """Repair compatibility for sessions created before finale overflow was blocked."""
+    campaign = _campaign("default_campaign.json")
+    progress = CampaignProgress(campaign_id="test", arc_index=6, session_index=0)
+
+    route = select_ending(
+        campaign,
+        progress,
+        {"health": 0, "sanity": 0, "items": []},
+        "继续，面对最后的结局。",
+    )
+
+    assert route is not None
+    assert route.id == "ending-empty-seat"
 
 
 def test_finale_entry_items_are_owned():

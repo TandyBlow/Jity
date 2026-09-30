@@ -145,7 +145,7 @@ class ExaminerAgent:
         combat = bool(_COMBAT.search(action))
         sanity = bool(_SAN.search(action))
         if (combat or _PHYSICAL.search(action)) and game_state.get("health", 100) <= 0:
-            failures.append("你的体力已经耗尽，无法执行这项体力行动。")
+            failures.append("你的血条已经耗尽，无法执行这项血条行动。")
         if sanity and game_state.get("sanity", 80) <= 0:
             failures.append("你的血统稳定值已经耗尽，无法主动进行这项高风险行动。")
         if sanity:

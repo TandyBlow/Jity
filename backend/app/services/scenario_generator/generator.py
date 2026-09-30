@@ -12,7 +12,7 @@ from app.services.memory.memory_controller import MemoryController
 from app.services.prompt_builder import PromptBuilder
 from app.services.retriever import RAGRetriever
 from app.services.scripted_story import ScriptedStoryService
-from app.services.campaign_endings import select_ending
+from app.services.campaign_endings import is_final_session, select_ending
 
 from app.services.scenario_generator.agent_pipeline import AgentPipelineMixin
 from app.services.scenario_generator.director_support import DirectorSupportMixin
@@ -243,6 +243,11 @@ class ScenarioGenerator(
             return
         campaign_manager.commit_pending_anchors()
         turn_in_session = campaign_manager.advance_turn()
+        # The finale is choice-driven and may legitimately need more than the
+        # normal per-session turn budget. Never advance beyond the last arc;
+        # keep generating in this scene until an ending route is selected.
+        if is_final_session(campaign_manager.campaign, campaign_manager.progress):
+            return
         max_turns = campaign_manager.resolve_max_turns()
         if turn_in_session >= max_turns:
             await campaign_manager.advance_session(pending_messages)

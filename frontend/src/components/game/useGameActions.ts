@@ -2,7 +2,7 @@
 
 import { useCallback, useRef } from "react";
 
-import { createSession, createSlot, generateScene, loadSlot } from "@/lib/api";
+import { APIError, createSession, createSlot, deleteSlot, generateScene, getSession, loadSlot } from "@/lib/api";
 import {
   CAMPAIGN_CONSTRAINTS,
   CAMPAIGN_STORY_STYLE,
@@ -56,12 +56,22 @@ export function useGameActions(core: GameSessionCore) {
       setModel(response.used_model);
       setAction("");
     } catch (err) {
+      if (err instanceof APIError && err.status === 409) {
+        const latest = await getSession(sid);
+        setState(latest.state);
+        setActiveTurnId(latest.active_turn_id ?? null);
+        setModel(latest.model);
+        setChunks([]);
+        await restoreLastOutput(sid, latest.campaign_filename, latest.active_turn_id);
+        setError("");
+        return;
+      }
       setError(err instanceof Error ? err.message : "生成失败");
     } finally {
       generating.current = false;
       setIsLoading(false);
     }
-  }, [sessionId, action, model, selectedSlot, activeTurnId, gameOver, setIsLoading, setError, setOutput, setOutputSource, setState, setActiveTurnId, setChunks, setModel, setAction]);
+  }, [sessionId, action, model, selectedSlot, activeTurnId, gameOver, setIsLoading, setError, setOutput, setOutputSource, setState, setActiveTurnId, setChunks, setModel, setAction, restoreLastOutput]);
 
   const handleNewSession = useCallback(async () => {
     setIsLoading(true);
@@ -158,7 +168,16 @@ export function useGameActions(core: GameSessionCore) {
     }
   }, [sessionId, selectedSlot, refreshSlots]);
 
+  const handleDeleteSlot = useCallback(async (slotId: number) => {
+    try {
+      await deleteSlot(slotId);
+      await refreshSlots(sessionId, selectedSlot);
+    } catch (err: unknown) {
+      alert(err instanceof Error ? err.message : String(err));
+    }
+  }, [sessionId, selectedSlot, refreshSlots]);
+
   return {
-    handleGenerate, handleNewSession, handleCampaignChange, handleSlotChange, handleCreateSlot,
+    handleGenerate, handleNewSession, handleCampaignChange, handleSlotChange, handleCreateSlot, handleDeleteSlot,
   };
 }

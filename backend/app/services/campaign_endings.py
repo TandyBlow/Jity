@@ -10,6 +10,7 @@ from typing import Any
 
 
 _NEGATION = re.compile(r"(?:不想|不要|不愿|不能|不会|没有|没|拒绝|放弃|并非|不是|别)\s*$")
+_HYPOTHETICAL = re.compile(r"(?:如果|假如|假设|倘若|要是|是否|会不会)")
 _AFFIRMATION = re.compile(
     r"(?:选择|决定|我要|我将|我愿意|我接受|我来|我会|我打算|同时|并且|然后|再)\s*$"
 )
@@ -19,10 +20,17 @@ def is_final_session(campaign: Any, progress: Any) -> bool:
     if campaign is None or progress is None or not campaign.arcs:
         return False
     last_arc_index = len(campaign.arcs) - 1
-    return (
-        progress.arc_index == last_arc_index
-        and progress.session_index == len(campaign.arcs[last_arc_index].sessions) - 1
-    )
+    arc_index = getattr(progress, "arc_index", None)
+    session_index = getattr(progress, "session_index", None)
+    if not isinstance(arc_index, int) or not isinstance(session_index, int):
+        return False
+    if arc_index < last_arc_index:
+        return False
+    if arc_index > last_arc_index:
+        # Older runtimes could advance beyond the final arc after its turn
+        # limit. Keep those persisted sessions eligible for a real ending.
+        return True
+    return session_index >= len(campaign.arcs[last_arc_index].sessions) - 1
 
 
 def select_ending(campaign: Any, progress: Any, state: dict, player_action: str):
@@ -69,7 +77,11 @@ def _is_affirmative_match(action: str, phrase: str) -> bool:
             return False
         clause_prefix = re.split(r"[，。；！？,;!?]", action[:index])[-1]
         stripped_prefix = clause_prefix.strip()
-        if _NEGATION.search(stripped_prefix):
+        # A labelled decision such as “我作出最终决定：共同关闭封印” is
+        # still explicit. Remove only its trailing label separator, retaining
+        # the words before it so a hypothetical “如果选择：...” stays rejected.
+        stripped_prefix = stripped_prefix.rstrip("：:").rstrip()
+        if _NEGATION.search(stripped_prefix) or _HYPOTHETICAL.search(stripped_prefix):
             start = index + len(phrase)
             continue
         if stripped_prefix in {"", "我", "玩家"} or _AFFIRMATION.search(stripped_prefix):

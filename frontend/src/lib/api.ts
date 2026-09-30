@@ -15,6 +15,13 @@ import type {
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
 
+export class APIError extends Error {
+  constructor(message: string, readonly status: number) {
+    super(message);
+    this.name = "APIError";
+  }
+}
+
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(`${API_BASE_URL}${path}`, {
     ...init,
@@ -33,7 +40,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     } catch {
       // Keep the raw response text when the error body is not JSON.
     }
-    throw new Error(message);
+    throw new APIError(message, response.status);
   }
 
   return response.json() as Promise<T>;
@@ -175,6 +182,10 @@ export function createSlot(slotName: string, sessionId: string, sourceSlotName?:
 
 export function loadSlot(slotId: number): Promise<{ status: string; slot: SaveSlot; session: SessionResponse }> {
   return request(`/campaigns/slots/${slotId}/load`, { method: "POST" });
+}
+
+export function deleteSlot(slotId: number): Promise<{ status: string; slot_id: number; slot_name: string }> {
+  return request(`/campaigns/slots/${slotId}`, { method: "DELETE" });
 }
 
 // ── Campaign Generation API ──

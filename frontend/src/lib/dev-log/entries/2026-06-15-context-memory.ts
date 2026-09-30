@@ -11,7 +11,7 @@ export const entry: DevLogEntry = {
       "明确 state schema，补齐 current_location、items、npcs、quests、recent_events、world_facts 和 player_status。",
       "新增 ItemMemory、NPCMemory、QuestMemory、WorldFactMemory、PlayerStatus 和 MemoryUpdates 等结构化 schema。",
       "为 NPC、任务、物品和长期事实统一稳定字段，例如 name、status、description、relationship、objective、notes、source。",
-      "后端状态合并改为 upsert/remove 规则：AI 只通过 memory_updates 提供本回合新增或变化的记忆，系统负责回合数、血统稳定、体力裁剪、状态归一化和去重合并。",
+      "后端状态合并改为 upsert/remove 规则：AI 只通过 memory_updates 提供本回合新增或变化的记忆，系统负责回合数、血统稳定、血条裁剪、状态归一化和去重合并。",
       "增加 world_facts 的系统推断规则，用于记录红色标记、L-13 编号、S级观察对象、执行部观察等关键长期事实。",
       "recent_events 改为保存 key_event 或自动摘要，限制最多 8 条、单条最多 120 字，避免把长篇 narration 无限塞进状态。",
       "Prompt 中拆分当前状态、Context Memory/长期记忆和最近事件，下一轮生成会带上当前位置、同行 NPC、任务、关键物品、长期事实和玩家状态。",

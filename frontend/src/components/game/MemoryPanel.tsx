@@ -37,7 +37,7 @@ export function MemoryPanel({ session }: { session: GameSession }) {
       </div>
       <div className="stat-block">
         <div className="stat-row">
-          <span>体力</span>
+          <span>血条</span>
           <strong>{state?.health ?? 100}</strong>
         </div>
         <div className="bar">

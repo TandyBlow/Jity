@@ -292,6 +292,67 @@ async def test_lethal_finale_turn_selects_bad_ending_and_commits_anchor(runtime)
     assert "anchor-seal-truth" in json.loads(row["revealed_anchors"])
 
 
+@pytest.mark.asyncio
+async def test_labelled_final_choice_ends_campaign(runtime):
+    async with AsyncClient(transport=ASGITransport(app=runtime.app), base_url="http://test") as client:
+        session = (await client.post("/sessions", json={
+            "campaign_filename": "default_campaign.json",
+            "arc_index": 2,
+            "session_index": 1,
+        })).json()
+    sid = session["session_id"]
+    await runtime.generator.generate(sid, GenerateRequest(player_action="入场"))
+    manager = runtime.managers[sid]
+    manager.progress.revealed_anchors = ["anchor-seal-truth", "anchor-impostor-truth"]
+    runtime.llm.generate.return_value = (StoryOutput(
+        narration="你与同伴开始关闭封印。",
+        current_location="钟楼地下封印室",
+        options=["继续完成仪式"],
+    ), 1)
+
+    result = await runtime.generator.generate(
+        sid,
+        GenerateRequest(
+            player_action="我作出最终决定：共同关闭封印。保护同伴，承担这一选择的后果。"
+        ),
+    )
+
+    assert result.output.game_over is True
+    assert result.output.game_over_reason.startswith("破晓共犯：")
+    assert result.output.options == []
+    row = runtime.db.read_campaign_progress(manager.progress.campaign_id, manager.slot_name)
+    assert row["fsm_state"] == "campaign_end"
+
+
+@pytest.mark.asyncio
+async def test_final_session_does_not_advance_past_last_arc_at_turn_limit(runtime):
+    async with AsyncClient(transport=ASGITransport(app=runtime.app), base_url="http://test") as client:
+        session = (await client.post("/sessions", json={
+            "campaign_filename": "default_campaign.json",
+            "arc_index": 2,
+            "session_index": 1,
+        })).json()
+    sid = session["session_id"]
+    await runtime.generator.generate(sid, GenerateRequest(player_action="入场"))
+    manager = runtime.managers[sid]
+    manager.progress.turn_in_session = manager.resolve_max_turns() - 1
+    runtime.llm.generate.return_value = (StoryOutput(
+        narration="你仍在最终选择前调查祭坛。",
+        current_location="钟楼地下封印室",
+        options=["继续调查"],
+    ), 1)
+
+    result = await runtime.generator.generate(sid, GenerateRequest(player_action="观察祭坛"))
+
+    assert result.output.game_over is False
+    assert manager.progress.arc_index == 2
+    assert manager.progress.session_index == 1
+    assert manager.progress.turn_in_session == manager.resolve_max_turns()
+    row = runtime.db.read_campaign_progress(manager.progress.campaign_id, manager.slot_name)
+    assert row["arc_index"] == 2
+    assert row["session_index"] == 1
+
+
 def test_explicit_empty_starting_state_clears_free_play_memory(runtime):
     from app.services.game_state.defaults import default_state
     campaign = SimpleNamespace(starting_state={"sanity": 0, "npcs": [], "items": [], "recent_events": [],
