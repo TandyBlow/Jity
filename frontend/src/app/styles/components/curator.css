@@ -93,6 +93,75 @@
   margin-bottom: var(--space-3);
 }
 
+.curator-panel {
+  margin-bottom: var(--space-6);
+}
+
+.curator-gen-input {
+  margin-bottom: var(--space-3);
+}
+
+.curator-gen-submit {
+  margin-top: 0;
+}
+
+.curator-upload-card {
+  margin-top: var(--space-5);
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+}
+
+.curator-upload-card h3 {
+  margin: 0 0 var(--space-3);
+  font-size: var(--fs-lg);
+}
+
+.curator-upload-card input[type="file"] {
+  font-size: var(--fs-md);
+}
+
+.curator-upload-card span {
+  margin-left: var(--space-3);
+  font-size: var(--fs-md);
+}
+
+.curator-upload-errors {
+  margin-top: var(--space-3);
+  padding: var(--space-3);
+  background: color-mix(in srgb, var(--color-danger) 18%, var(--color-bg));
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-md);
+}
+
+.curator-upload-errors ul {
+  margin: var(--space-2) 0 0 var(--space-5);
+}
+
+.curator-review-body {
+  font-size: var(--fs-md);
+  line-height: var(--lh-reading);
+}
+
+.curator-review-label {
+  margin-top: var(--space-4);
+}
+
+.curator-review-list {
+  padding-left: var(--space-5);
+  margin: var(--space-2) 0;
+}
+
+.curator-review-list li {
+  font-size: var(--fs-sm);
+  color: var(--color-muted);
+}
+
+.curator-review-more {
+  font-size: var(--fs-sm);
+  color: var(--color-muted);
+}
+
 .curator-anchor-card {
   margin-bottom: var(--space-3);
   margin-left: var(--space-5);

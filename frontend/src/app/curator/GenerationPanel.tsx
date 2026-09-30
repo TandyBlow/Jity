@@ -9,16 +9,15 @@ export function GenerationPanel({ editor }: { editor: CuratorEditor }) {
   } = editor;
 
   return (
-    <div className="clue-board" style={{ marginBottom: "var(--space-6)" }}>
+    <div className="clue-board curator-panel">
       <h2>AI 生成战役</h2>
       <textarea
-        className="textarea small-textarea"
+        className="textarea small-textarea curator-gen-input"
         placeholder="描述你想创建的战役，例如：1920s 上海超自然侦探，调查外滩连环失踪案…"
         value={genPrompt}
         onChange={(e) => setGenPrompt(e.target.value)}
-        style={{ marginBottom: 8 }}
       />
-      <button className="primary-button" style={{ marginTop: 0 }} onClick={handleGenerate} disabled={generating || !genPrompt.trim()}>
+      <button className="primary-button curator-gen-submit" onClick={handleGenerate} disabled={generating || !genPrompt.trim()}>
         {generating ? "生成中…" : "生成战役"}
       </button>
 
@@ -37,8 +36,8 @@ function NovelUpload({
   onUpload: (file: File) => void;
 }) {
   return (
-    <div style={{ marginTop: 16, padding: 12, border: "1px solid var(--color-border)", borderRadius: "var(--radius-sm)" }}>
-      <h3 style={{ margin: "0 0 8px 0", fontSize: "var(--fs-lg)" }}>从小说 TXT 生成</h3>
+    <div className="curator-upload-card">
+      <h3>从小说 TXT 生成</h3>
       <input
         type="file"
         accept=".txt"
@@ -47,13 +46,12 @@ function NovelUpload({
           const f = e.target.files?.[0];
           if (f) onUpload(f);
         }}
-        style={{ fontSize: "var(--fs-md)" }}
       />
-      {uploading && <span style={{ marginLeft: 8, fontSize: "var(--fs-md)" }}>正在分析小说…（约30-60秒）</span>}
+      {uploading && <span>正在分析小说…（约30-60秒）</span>}
       {errors.length > 0 && (
-        <div style={{ marginTop: 8, padding: 8, background: "color-mix(in srgb, var(--color-danger) 18%, var(--color-bg))", borderRadius: 4, fontSize: "var(--fs-md)" }}>
+        <div className="curator-upload-errors">
           <strong>以下章节提取失败，需人工标注：</strong>
-          <ul style={{ margin: "4px 0 0 16px" }}>{errors.map((e, i) => <li key={i}>{e}</li>)}</ul>
+          <ul>{errors.map((e, i) => <li key={i}>{e}</li>)}</ul>
         </div>
       )}
     </div>
