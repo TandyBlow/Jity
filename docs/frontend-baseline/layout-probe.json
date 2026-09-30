@@ -847,7 +847,7 @@
       "h": 730
     },
     "documentScrollHeight": 893,
-    "inlineStyledElements": 20,
+    "inlineStyledElements": 2,
     "boxes": {
       ".app-shell": null,
       ".game-brand": null,
@@ -922,7 +922,7 @@
       "h": 768
     },
     "documentScrollHeight": 893,
-    "inlineStyledElements": 20,
+    "inlineStyledElements": 2,
     "boxes": {
       ".app-shell": null,
       ".game-brand": null,
