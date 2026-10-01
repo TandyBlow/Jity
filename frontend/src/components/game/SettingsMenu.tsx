@@ -13,7 +13,18 @@ export function SettingsMenu({ session }: { session: GameSession }) {
     slots, selectedSlotId, handleSlotChange, handleCreateSlot, handleNewSession,
   } = session;
   const [isOpen, setIsOpen] = useState(false);
+  const [addingSlot, setAddingSlot] = useState(false);
+  const [slotName, setSlotName] = useState("");
+  const [slotError, setSlotError] = useState("");
   const menuRef = useRef<HTMLDivElement>(null);
+
+  // Reopening the menu must not resurrect a half-typed name.
+  useEffect(() => {
+    if (isOpen) return;
+    setAddingSlot(false);
+    setSlotName("");
+    setSlotError("");
+  }, [isOpen]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -33,9 +44,21 @@ export function SettingsMenu({ session }: { session: GameSession }) {
     };
   }, [isOpen]);
 
-  const createSlot = () => {
-    const name = window.prompt("新存档名称:");
-    if (name?.trim()) handleCreateSlot(name.trim());
+  const cancelSlot = () => {
+    setAddingSlot(false);
+    setSlotName("");
+    setSlotError("");
+  };
+
+  const submitSlot = async () => {
+    const name = slotName.trim();
+    if (!name) return;
+    const error = await handleCreateSlot(name);
+    if (error) {
+      setSlotError(error);
+      return;
+    }
+    cancelSlot();
   };
 
   const campaignTitle = (filename?: string | null) => {
@@ -88,25 +111,50 @@ export function SettingsMenu({ session }: { session: GameSession }) {
           {sessionId ? (
             <div className="settings-field-row">
               <label htmlFor="settings-slot">存档</label>
-              <div className="settings-slot-control">
-                <select
-                  id="settings-slot"
-                  disabled={session.isLoading || !!session.pendingGenerate}
-                  value={selectedSlotId}
-                  onChange={(event) => handleSlotChange(Number(event.target.value))}
-                >
-                  {slots.length === 0 ? <option value="">无存档</option> : null}
-                  {slots.length > 0 && selectedSlotId === "" ? <option value="">选择存档</option> : null}
-                  {slots.map((slot) => (
-                    <option key={slot.id} value={slot.id}>
-                      {slot.slot_name} · {campaignTitle(slot.campaign_filename)} · A{slot.arc_index + 1}S{slot.session_index + 1} · {formatSlotTime(slot.last_played)}
-                    </option>
-                  ))}
-                </select>
-                <button aria-label="新增存档" className="settings-add-button" onClick={createSlot} type="button">
-                  <Plus size={16} />
-                </button>
-              </div>
+              {addingSlot ? (
+                <div className="settings-slot-form">
+                  <input
+                    aria-label="新存档名称"
+                    autoFocus
+                    onChange={(event) => setSlotName(event.target.value)}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter") {
+                        event.preventDefault();
+                        void submitSlot();
+                      } else if (event.key === "Escape") {
+                        // Cancel the form, not the menu behind it.
+                        event.stopPropagation();
+                        cancelSlot();
+                      }
+                    }}
+                    placeholder="存档名称"
+                    value={slotName}
+                  />
+                  <button onClick={() => void submitSlot()} type="button">确定</button>
+                  <button onClick={cancelSlot} type="button">取消</button>
+                  {slotError ? <p className="settings-slot-error" role="alert">{slotError}</p> : null}
+                </div>
+              ) : (
+                <div className="settings-slot-control">
+                  <select
+                    id="settings-slot"
+                    disabled={session.isLoading || !!session.pendingGenerate}
+                    value={selectedSlotId}
+                    onChange={(event) => handleSlotChange(Number(event.target.value))}
+                  >
+                    {slots.length === 0 ? <option value="">无存档</option> : null}
+                    {slots.length > 0 && selectedSlotId === "" ? <option value="">选择存档</option> : null}
+                    {slots.map((slot) => (
+                      <option key={slot.id} value={slot.id}>
+                        {slot.slot_name} · {campaignTitle(slot.campaign_filename)} · A{slot.arc_index + 1}S{slot.session_index + 1} · {formatSlotTime(slot.last_played)}
+                      </option>
+                    ))}
+                  </select>
+                  <button aria-label="新增存档" className="settings-add-button" onClick={() => setAddingSlot(true)} type="button">
+                    <Plus size={16} />
+                  </button>
+                </div>
+              )}
             </div>
           ) : null}
 

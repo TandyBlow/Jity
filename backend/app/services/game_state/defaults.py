@@ -14,6 +14,14 @@ MAX_QUESTS = 10
 MAX_WORLD_FACTS = 15
 STALE_TURN_THRESHOLD = 30  # prune entries unchanged for 30+ turns
 
+# Category -> cap, for surfaces that report occupancy rather than enforce it.
+STATE_CAPS = {
+    "items": MAX_ITEMS,
+    "npcs": MAX_NPCS,
+    "quests": MAX_QUESTS,
+    "world_facts": MAX_WORLD_FACTS,
+}
+
 
 def default_state() -> dict[str, Any]:
     return {

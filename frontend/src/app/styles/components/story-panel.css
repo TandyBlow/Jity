@@ -1,0 +1,323 @@
+/* Three rows: a fixed toolbar, the scene as the only scroller, and the input
+   as the last row. The input used to float over the scene on a sticky bottom,
+   hiding whatever ended up underneath it. */
+.story-panel {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  /* Top pad clears the fixed .game-brand, which sits at (22, 28) and is 38 tall. */
+  padding: 68px var(--space-8) var(--space-6);
+  overflow: hidden;
+  text-shadow: 0 1px 16px rgba(0, 0, 0, 0.72);
+}
+
+.story-panel > .toolbar-row {
+  flex: 0 0 auto;
+}
+
+.player-controls {
+  flex: 0 0 auto;
+  width: min(960px, 100%);
+  margin: 0 auto;
+  padding: var(--space-5);
+  border: 1px solid color-mix(in srgb, var(--color-accent) 30%, transparent);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  background: var(--surface-glass);
+  box-shadow: 0 -16px 40px rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(18px);
+  text-shadow: none;
+}
+
+.player-controls-label {
+  display: block;
+  margin-bottom: var(--space-3);
+  color: var(--color-accent);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-bold);
+  letter-spacing: 0.04em;
+}
+
+.player-controls-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--space-3);
+}
+
+.player-controls-row textarea {
+  min-height: 54px;
+  max-height: 140px;
+  padding: var(--space-3) var(--space-4);
+  resize: vertical;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--surface-sunken);
+  color: var(--color-fg);
+  line-height: var(--lh-body);
+}
+
+.player-controls-row textarea:focus { border-color: var(--color-accent); outline: none; }
+
+.player-controls-row button {
+  min-width: 142px;
+  padding: 0 var(--space-5);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-md);
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+  font-weight: var(--fw-bold);
+  cursor: pointer;
+}
+
+/* Was opacity .55, which left the accent fill the brightest block on screen. */
+.player-controls-row button:disabled {
+  cursor: not-allowed;
+  border-color: var(--color-border);
+  background: var(--color-panel-soft);
+  color: var(--color-muted);
+}
+
+.player-controls-row button:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--color-accent) 86%, white);
+  background: color-mix(in srgb, var(--color-accent) 86%, white);
+}
+.player-controls-hint { margin-top: 7px; color: var(--color-muted); font-size: var(--fs-xs); text-align: right; }
+.spin-icon { animation: background-pulse 1.2s linear infinite; }
+
+.scene-output {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  max-width: 960px;
+  margin: 0 auto;
+  /* The 12vh top pad is gone: the toolbar band above now supplies that air. */
+  padding: var(--space-5) 0 var(--space-10);
+  width: 100%;
+}
+
+/* Keeps a clipped bottom edge from reading as the end of the turn. */
+.scene-output::after {
+  content: "";
+  position: sticky;
+  bottom: 0;
+  flex: 0 0 auto;
+  height: 56px;
+  margin-top: -56px;
+  background: linear-gradient(to bottom, transparent, color-mix(in srgb, var(--color-bg) 90%, transparent));
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 160ms ease;
+}
+
+.scene-output[data-more="true"]::after { opacity: 1; }
+
+.narration {
+  display: grid;
+  gap: 1em;
+  font-family: "Noto Serif SC", "Songti SC", "STSong", SimSun, serif;
+  font-size: var(--fs-reading);
+  line-height: var(--lh-reading);
+  margin-bottom: var(--space-7);
+}
+
+.narration p {
+  margin: 0;
+}
+
+.dialogue-list {
+  display: grid;
+  gap: var(--space-3);
+  margin-bottom: var(--space-7);
+}
+
+.dialogue-line {
+  padding: var(--space-4) var(--space-4);
+  border-left: 3px solid var(--color-accent);
+  background: var(--surface-sunken);
+  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+  line-height: var(--lh-relaxed);
+  white-space: pre-line;
+}
+
+.speaker {
+  color: var(--color-accent-2);
+  font-weight: var(--fw-bold);
+}
+
+.dialogue-text {
+  color: var(--color-fg);
+}
+
+.status-hint-list {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0 0 var(--space-6);
+}
+
+.status-hint {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: fit-content;
+  max-width: 100%;
+  border: 1px solid color-mix(in srgb, var(--color-fg) 8%);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-3);
+  background: var(--surface-sunken);
+  color: var(--color-muted);
+  font-size: var(--fs-md);
+  line-height: var(--lh-tight);
+}
+
+.status-hint strong {
+  color: var(--color-fg);
+  font-size: var(--fs-lg);
+}
+
+.status-hint.loss {
+  border-color: color-mix(in srgb, var(--color-danger) 42%, transparent);
+}
+
+.status-hint.loss strong {
+  color: var(--color-danger-bright);
+}
+
+.status-hint.gain {
+  border-color: color-mix(in srgb, var(--color-accent-2) 42%, transparent);
+}
+
+.status-hint.gain strong {
+  color: var(--color-accent-2-bright);
+}
+
+.option-list {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.option-button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  min-height: var(--control-h-xl);
+  padding: var(--space-3) var(--space-4);
+  overflow: hidden;
+  background: color-mix(in srgb, var(--color-panel) 90%, transparent);
+  text-align: left;
+}
+
+.option-button-label {
+  flex: 1;
+  min-width: 0;
+}
+
+.option-check-badge {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-accent);
+  font-size: var(--fs-xs);
+  white-space: nowrap;
+}
+
+/* Result colour filling the chosen option from the left once the dice are applied. */
+.option-sweep {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, var(--sweep-color) 40%);
+  clip-path: inset(0 100% 0 0);
+  pointer-events: none;
+  animation: option-sweep 900ms cubic-bezier(0.32, 0, 0.67, 0) forwards;
+}
+
+.option-sweep.critical { --sweep-color: color-mix(in srgb, var(--fx-gold) 55%, transparent); }
+.option-sweep.success { --sweep-color: color-mix(in srgb, var(--color-accent-2) 50%, transparent); }
+.option-sweep.failure { --sweep-color: color-mix(in srgb, var(--color-danger) 50%, transparent); }
+
+@keyframes option-sweep {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+.option-button:hover,
+.icon-button:hover {
+  border-color: var(--color-accent);
+}
+
+.error {
+  margin-top: var(--space-4);
+  color: var(--color-danger);
+  font-size: var(--fs-md);
+  line-height: var(--lh-tight);
+}
+
+.autoplay-banner {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-5);
+  margin-bottom: var(--space-5);
+  padding: var(--space-4) var(--space-4);
+  border: 1px solid color-mix(in srgb, var(--color-accent-2) 45%, transparent);
+  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--color-accent-2) 9%, rgba(8, 10, 14, 0.86));
+}
+
+.autoplay-banner > div { display: grid; gap: 4px; }
+/* Reinstated: the original rule referenced an undefined token, so it never
+   applied and these labels inherited the banner's own colour. */
+.autoplay-banner span, .autoplay-banner small { color: var(--color-muted); }
+.autoplay-banner.paused { border-color: var(--color-accent); }
+.autoplay-banner.error { border-color: var(--color-danger); }
+.autoplay-banner.complete { border-color: var(--color-accent-2); }
+.autoplay-banner button { padding: 6px 12px; white-space: nowrap; }
+.autoplay-complete { color: var(--color-accent-2-bright) !important; font-weight: var(--fw-bold); }
+.autoplay-anchors { display: grid; gap: 7px; }
+.autoplay-anchors .anchor-new { border-color: var(--color-accent-2); color: var(--color-accent-2); }
+.autoplay-anchor-link { color: var(--color-accent-2); font-size: var(--fs-md); text-decoration: none; }
+
+.option-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+/* Campaign ending card (came in with master's endings feature). */
+.ending-card {
+  display: grid;
+  gap: var(--space-3);
+  margin: var(--space-6) 0 var(--space-3);
+  padding: var(--space-5) var(--space-6);
+  border: 1px solid color-mix(in srgb, var(--color-accent) 62%, transparent);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--color-accent) 14%, var(--color-bg)), color-mix(in srgb, var(--color-accent) 2%, var(--color-bg)));
+  box-shadow: 0 14px 34px color-mix(in srgb, black 32%, transparent);
+}
+
+.ending-card strong {
+  color: var(--fx-gold);
+  font-size: 1.05rem;
+  letter-spacing: 0.12em;
+}
+
+.ending-card span {
+  color: var(--color-fg);
+  line-height: var(--lh-relaxed);
+}
+
+.player-controls.is-ended {
+  opacity: 0.72;
+}

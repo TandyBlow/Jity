@@ -7,6 +7,7 @@ from app.database import Database
 from app.schemas import GenerateRequest, GenerateResponse, RetrievedChunk, StoryOutput
 from app.services.campaign_manager import CampaignManager
 from app.services.game_state import GameStateManager
+from app.services.game_state.defaults import STATE_CAPS
 from app.services.llm_client import LLMClient
 from app.services.memory.memory_controller import MemoryController
 from app.services.prompt_builder import PromptBuilder
@@ -137,7 +138,7 @@ class ScenarioGenerator(
         # Hook 5: Record + finalize (commit anchors, advance turn advance session — once)
         output_id, metrics = await self._record_and_finalize(
             session_id, request, output, model, latency_ms, source, state,
-            retrieved_for_storage, token_count, campaign_manager
+            retrieved_for_storage, token_count, campaign_manager, meta=meta
         )
 
         progress_snapshot = self._campaign_progress_snapshot(session_id, campaign_manager)
@@ -154,9 +155,14 @@ class ScenarioGenerator(
             campaign_session_index=_csi,
         )
 
+        sanitized = self.state_manager.sanitize_state(next_state)
+        serialized = output.model_dump()
         return GenerateResponse(
+            memory=self.state_manager.memory_trace_entry(serialized, sanitized),
+            declared=self.state_manager.declared_updates(serialized.get("memory_updates") or {}, serialized),
+            caps=STATE_CAPS,
             session_id=session_id,
-            state=self.state_manager.sanitize_state(next_state),
+            state=sanitized,
             output=output,
             retrieved_chunks=[
                 RetrievedChunk(
@@ -197,7 +203,8 @@ class ScenarioGenerator(
 
     def _store_error(
         self, session_id, input_text, model, latency_ms, status,
-        raw_output, error_text, retrieved_chunks, _csi
+        raw_output, error_text, retrieved_chunks, _csi,
+        prompt_sections=None, prompt_text=""
     ) -> int:
         """Store error details in model_outputs. Returns output_id."""
         return self.db.add_model_output(
@@ -206,6 +213,7 @@ class ScenarioGenerator(
             latency_ms=latency_ms, source="llm", status=status,
             raw_output_text=raw_output, error_text=error_text,
             retrieved_chunks=retrieved_chunks,
+            prompt_sections=prompt_sections, prompt_text=prompt_text,
         )
 
     # ── Utility helpers ───────────────────────────────────────────────

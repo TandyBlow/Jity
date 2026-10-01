@@ -1,0 +1,144 @@
+/* ── Main game action judgment overlay ── */
+
+.main-check-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--layer-modal);
+  isolation: isolate;
+  overflow: hidden;
+  background: var(--color-scrim);
+  backdrop-filter: blur(2px);
+  /* Focused programmatically so the trap has somewhere to start. */
+  outline: none;
+}
+
+.main-check-card {
+  position: fixed;
+  top: 24px;
+  left: 50%;
+  z-index: var(--layer-modal-card);
+  width: min(560px, calc(100vw - 32px));
+  padding: var(--space-5) var(--space-6);
+  transform: translateX(-50%);
+  border: 1px solid color-mix(in srgb, var(--color-accent) 42%, transparent);
+  border-radius: var(--radius-lg);
+  background: var(--surface-glass);
+  box-shadow: 0 16px 50px rgba(0, 0, 0, 0.36);
+}
+
+.main-check-card-head,
+.main-check-meta,
+.main-check-actions,
+.main-check-result-title {
+  display: flex;
+  align-items: center;
+}
+
+.main-check-card-head {
+  justify-content: space-between;
+  gap: var(--space-5);
+}
+
+.main-check-overline {
+  color: var(--color-accent);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.main-check-card h2 {
+  margin: var(--space-2) 0 0;
+  font-size: var(--fs-heading);
+}
+
+.main-check-secondary {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--color-fg) 4%);
+  color: var(--color-muted);
+  cursor: pointer;
+}
+
+.main-check-secondary:hover {
+  border-color: var(--color-accent);
+  color: var(--color-fg);
+}
+
+.main-check-action {
+  max-height: 48px;
+  margin: var(--space-4) 0 var(--space-4);
+  overflow: hidden;
+  color: var(--color-fg);
+  font-size: var(--fs-md);
+  line-height: var(--lh-body);
+}
+
+.main-check-meta {
+  justify-content: space-between;
+  gap: var(--space-4);
+  color: var(--color-muted);
+  font-size: var(--fs-sm);
+}
+
+.main-check-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.main-check-stakes {
+  margin: var(--space-4) 0 0;
+  color: var(--color-muted);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-body);
+}
+
+.main-check-actions {
+  justify-content: flex-end;
+  gap: var(--space-3);
+  margin-top: var(--space-5);
+}
+
+.main-check-secondary {
+  min-height: var(--control-h-lg);
+  padding: 0 var(--space-5);
+}
+
+.main-check-primary {
+  width: auto;
+  min-width: 120px;
+  height: var(--control-h-lg);
+  margin-top: 0;
+}
+
+.main-check-error {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: var(--space-4) 0 0;
+  color: var(--color-danger);
+  font-size: var(--fs-sm);
+}
+
+.main-check-result {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  align-items: flex-start;
+  margin-top: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: 1px solid color-mix(in srgb, var(--color-fg) 10%);
+}
+
+.main-check-result-title {
+  gap: var(--space-3);
+  color: var(--color-accent-2);
+}
+
+.main-check-result.critical .main-check-result-title {
+  color: #f2ce83;
+}
+
+.main-check-result.failure .main-check-result-title {
+  color: var(--color-danger-bright);
+}

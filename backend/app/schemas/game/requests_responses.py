@@ -70,3 +70,8 @@ class GenerateResponse(BaseModel):
     source: Literal["scripted", "llm", "examiner_blocked"]
     timeline_node_id: int
     parent_timeline_node_id: int
+    # This turn's declaration folded and checked against the state it produced,
+    # so the live panel reports it without reimplementing the merge order.
+    memory: dict[str, Any] = Field(default_factory=dict)
+    declared: dict[str, Any] = Field(default_factory=dict)
+    caps: dict[str, int] = Field(default_factory=dict)

@@ -1,0 +1,56 @@
+/* Page scaffolding and the shared card that routes borrow from each other. */
+
+.timeline-shell {
+  min-height: 100vh;
+  padding: var(--space-9);
+  background:
+    radial-gradient(circle at 18% 14%, color-mix(in srgb, var(--color-accent-2) 8%, transparent), transparent 30%),
+    linear-gradient(135deg, var(--page-gradient-a) 0%, var(--page-gradient-b) 52%, var(--color-bg) 100%);
+}
+
+.timeline-header {
+  max-width: 1080px;
+  margin: 0 auto var(--space-8);
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-7);
+}
+
+.timeline-header h1 {
+  margin: 0;
+  font-size: var(--fs-display);
+  letter-spacing: 0.01em;
+}
+
+.timeline-layout {
+  max-width: 1080px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: var(--space-8);
+}
+
+.back-link {
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--color-accent-2);
+  font-size: var(--fs-md);
+  font-weight: var(--fw-bold);
+}
+
+.clue-board {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--surface-glass);
+  padding: var(--space-7);
+  height: fit-content;
+}
+
+.clue-board h2 {
+  margin: 0 0 var(--space-4);
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-bold);
+}

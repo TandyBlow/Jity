@@ -23,6 +23,14 @@ from app.services.game_state.inference import StateInferenceMixin
 from app.services.game_state.normalization import MemoryNormalizationMixin
 
 
+_MEMORY_KINDS = {
+    "items": "item",
+    "npcs": "npc",
+    "quests": "quest",
+    "world_facts": "world_fact",
+}
+
+
 class GameStateManager(MemoryNormalizationMixin, StateInferenceMixin, EntryStateMixin):
     def __init__(self, db: Database) -> None:
         self.db = db
@@ -67,23 +75,22 @@ class GameStateManager(MemoryNormalizationMixin, StateInferenceMixin, EntryState
         if current_location:
             next_state["current_location"] = current_location
 
-        items_upserted = [*output.items_gained, *memory.get("items_upserted", [])]
-        items_removed = [*output.items_lost, *memory.get("items_removed", [])]
-        npcs_upserted = [*output.npcs_encountered, *memory.get("npcs_upserted", [])]
-        quests_upserted = [*output.quests_updated, *memory.get("quests_upserted", [])]
-        world_facts = [*memory.get("world_facts_upserted", []), *self._infer_world_facts(action, output)]
+        updates = self.declared_updates(memory, output.model_dump())
+        world_facts = [*updates["world_facts"]["upserted"], *self._infer_world_facts(action, output)]
 
         next_state["items"] = self._remove_by_name(
-            self.merge_by_name(next_state.get("items", []), items_upserted, kind="item"),
-            items_removed,
+            self.merge_by_name(next_state.get("items", []), updates["items"]["upserted"], kind="item"),
+            updates["items"]["removed"],
         )
         next_state["npcs"] = self.merge_by_name(
             next_state.get("npcs", []),
-            npcs_upserted,
+            updates["npcs"]["upserted"],
             kind="npc",
             default_location=next_state.get("current_location", ""),
         )
-        next_state["quests"] = self.merge_by_name(next_state.get("quests", []), quests_upserted, kind="quest")
+        next_state["quests"] = self.merge_by_name(
+            next_state.get("quests", []), updates["quests"]["upserted"], kind="quest"
+        )
         next_state["world_facts"] = self.merge_by_name(
             next_state.get("world_facts", []),
             world_facts,
@@ -101,6 +108,58 @@ class GameStateManager(MemoryNormalizationMixin, StateInferenceMixin, EntryState
         )
         next_state = self.enforce_state_caps(next_state)
         return next_state
+
+    @staticmethod
+    def declared_updates(memory: dict[str, Any], output: dict[str, Any]) -> dict[str, dict[str, list[dict[str, Any]]]]:
+        """Every upsert and removal a turn declares, legacy fields folded in.
+
+        Later entries win, which is the order apply_output merges them in. The
+        trace view reports this same mapping, so a change here cannot silently
+        desync what is stored from what the observation surface claims.
+        """
+        return {
+            "items": {
+                "upserted": [*(output.get("items_gained") or []), *(memory.get("items_upserted") or [])],
+                "removed": [*(output.get("items_lost") or []), *(memory.get("items_removed") or [])],
+            },
+            "npcs": {
+                "upserted": [*(output.get("npcs_encountered") or []), *(memory.get("npcs_upserted") or [])],
+                "removed": [],
+            },
+            "quests": {
+                "upserted": [*(output.get("quests_updated") or []), *(memory.get("quests_upserted") or [])],
+                "removed": [],
+            },
+            "world_facts": {
+                "upserted": list(memory.get("world_facts_upserted") or []),
+                "removed": [],
+            },
+        }
+
+    def memory_trace_entry(self, output: dict[str, Any] | None, state: dict[str, Any]) -> dict[str, Any]:
+        """Per turn: the names the model declared, and the names state kept.
+
+        A declared name absent from state was dropped — by the cap, by an empty
+        name, or by a removal in the same turn. The difference is the whole
+        point of watching a long run.
+        """
+        memory = (output or {}).get("memory_updates") or {}
+        updates = self.declared_updates(memory, output or {})
+        entry: dict[str, Any] = {}
+        for category, kind in _MEMORY_KINDS.items():
+            declared: list[str] = []
+            for item in updates[category]["upserted"]:
+                normalized = self._normalize_memory(item, kind)
+                name = normalized.get("name") if normalized else ""
+                if name and name not in declared:
+                    declared.append(name)
+            held = [
+                item["name"]
+                for item in (state.get(category) or [])
+                if isinstance(item, dict) and item.get("name")
+            ]
+            entry[category] = {"declared": declared, "held": held}
+        return entry
 
     @staticmethod
     def _clamp(value: int) -> int:

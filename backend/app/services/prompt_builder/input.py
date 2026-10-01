@@ -10,6 +10,10 @@ class PromptMeta:
     temperature: float = 0.7
     sanity_multiplier: float = 1.0
     clue_style: str = ""
+    # Named sections the prompt was assembled from, kept for replay.
+    sections: dict[str, str] = field(default_factory=dict)
+    # The exact string handed to the LLM, director block included.
+    final_prompt: str = ""
 
 
 @dataclass

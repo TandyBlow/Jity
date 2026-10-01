@@ -4,6 +4,7 @@ from app.schemas import GenerateResponse, StoryOutput
 from app.schemas.agent_io import OpeningOptions
 from app.schemas.campaign import AnchorEvent
 from app.services.agents.opening_options import OpeningOptionsAgent
+from app.services.game_state.defaults import STATE_CAPS
 from app.services.llm_client import LLMOutputParseError, LLMRequestError, MissingAPIKeyError
 from app.services.scenario_generator.errors import ScenarioGenerationError
 
@@ -84,7 +85,11 @@ class OpeningSceneMixin:
             campaign_session_index=_csi,
         )
 
+        serialized = output.model_dump()
         return GenerateResponse(
+            memory=self.state_manager.memory_trace_entry(serialized, state),
+            declared=self.state_manager.declared_updates(serialized.get("memory_updates") or {}, serialized),
+            caps=STATE_CAPS,
             session_id=session_id, state=state, output=output,
             retrieved_chunks=[], model_output_id=output_id,
             used_model=model, source="scripted",

@@ -1,0 +1,65 @@
+.app-shell {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  height: 100vh;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 45% 18%, color-mix(in srgb, var(--color-accent) 12%, transparent), transparent 32%),
+    linear-gradient(135deg, var(--page-gradient-a) 0%, var(--page-gradient-b) 48%, var(--color-bg) 100%);
+}
+
+.game-brand {
+  position: fixed;
+  z-index: var(--layer-brand);
+  top: 22px;
+  left: 28px;
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  pointer-events: none;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.9);
+}
+
+.game-brand span { font-size: var(--fs-brand); font-weight: var(--fw-black); letter-spacing: 0.03em; }
+.game-brand small { color: var(--color-muted); font-size: var(--fs-xs); letter-spacing: 0.05em; text-transform: uppercase; }
+
+.scene-background {
+  position: fixed;
+  z-index: var(--layer-scene);
+  inset: 0;
+  background-image: var(--scene-background);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  opacity: 0;
+  transform: translate3d(var(--background-shift-x, 0), var(--background-shift-y, 0), 0) scale(1.055);
+  transition: opacity 900ms ease, transform 180ms ease-out;
+  will-change: opacity, transform;
+}
+
+.scene-background::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(9, 9, 9, 0.68), rgba(9, 9, 9, 0.28) 34%, rgba(9, 9, 9, 0.34) 68%, rgba(9, 9, 9, 0.72)),
+    linear-gradient(180deg, rgba(8, 8, 8, 0.2), rgba(8, 8, 8, 0.66));
+}
+
+.has-scene-background .scene-background {
+  opacity: 1;
+}
+
+.has-scene-background {
+  background: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scene-background {
+    transform: scale(1.02);
+    transition: opacity 300ms ease;
+    will-change: opacity;
+  }
+}

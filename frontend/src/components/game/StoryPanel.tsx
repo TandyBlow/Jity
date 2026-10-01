@@ -1,8 +1,8 @@
 "use client";
 
-import { Dices, GitBranch, Image as ImageIcon, Loader2, Send } from "lucide-react";
+import { Dices, GitBranch, Image as ImageIcon, Loader2, Send, Sparkles } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { MainCheckOverlay, type MainCheckCommit } from "@/components/game/MainCheckOverlay";
 import type { GameSession } from "@/components/game/useGameSession";
@@ -46,7 +46,13 @@ function narrationParagraphs(narration: string): string[] {
   return paragraphs;
 }
 
-export function StoryPanel({ session }: { session: GameSession }) {
+export function StoryPanel({
+  session,
+  onOpenMemory,
+}: {
+  session: GameSession;
+  onOpenMemory: () => void;
+}) {
   const {
     sessionId,
     state,
@@ -64,6 +70,27 @@ export function StoryPanel({ session }: { session: GameSession }) {
   } = session;
   const [checkingAction, setCheckingAction] = useState<PendingCheck | null>(null);
   const [sweep, setSweep] = useState<PendingSweep | null>(null);
+  const sceneRef = useRef<HTMLElement>(null);
+  const [hasMoreBelow, setHasMoreBelow] = useState(false);
+  const hasAction = action.trim().length > 0;
+
+  // The scene clips silently: scrollbars are hidden app-wide and a single turn
+  // can run past the viewport, so the options at the end are off-screen with
+  // nothing saying so.
+  const updateOverflow = useCallback(() => {
+    const scene = sceneRef.current;
+    if (!scene) return;
+    setHasMoreBelow(scene.scrollTop + scene.clientHeight < scene.scrollHeight - 8);
+  }, []);
+
+  // A new turn replaces the whole scene. Without this the scroll position
+  // carries over, so the next turn opens part-way through its own narration.
+  useEffect(() => {
+    sceneRef.current?.scrollTo({ top: 0 });
+    // Measure once the new scene has been laid out, not before it is painted.
+    const frame = requestAnimationFrame(updateOverflow);
+    return () => cancelAnimationFrame(frame);
+  }, [output, updateOverflow]);
 
   function handleOption(option: string, index: number) {
     if (!sessionId || isLoading || session.pendingGenerate || sweep) return;
@@ -119,6 +146,11 @@ export function StoryPanel({ session }: { session: GameSession }) {
             回溯上一步
           </Link>
         ) : null}
+        {/* Only visible below 1100px, where the docked memory column is hidden. */}
+        <button className="memory-drawer-trigger" onClick={onOpenMemory} type="button">
+          <Sparkles size={13} />
+          记忆面板
+        </button>
         {isBackgroundLoading ? (
           <div className="background-status">
             <ImageIcon size={13} />
@@ -140,7 +172,12 @@ export function StoryPanel({ session }: { session: GameSession }) {
         <div className={`source-pill ${outputSource}`}>{outputSource === "scripted" ? "Scripted opening" : "LLM generated"}</div>
       </div>
 
-      <article className="scene-output">
+      <article
+        className="scene-output"
+        data-more={hasMoreBelow ? "true" : "false"}
+        onScroll={updateOverflow}
+        ref={sceneRef}
+      >
         {session.autoPlay.enabled ? (
           <div className={`autoplay-banner ${session.autoPlay.status}`}>
             <div>
@@ -228,19 +265,21 @@ export function StoryPanel({ session }: { session: GameSession }) {
             value={action}
             onChange={(event) => setAction(event.target.value)}
             onKeyDown={(event) => {
-              if ((event.metaKey || event.ctrlKey) && event.key === "Enter" && !isLoading && sessionId) {
+              if ((event.metaKey || event.ctrlKey) && event.key === "Enter" && !isLoading && sessionId && hasAction) {
                 handleGenerate();
               }
             }}
             placeholder={output.game_over ? "该战役已经结束" : "输入玩家行动、当前场景或 GM 限制"}
           />
-          <button disabled={output.game_over || isLoading || !!session.pendingGenerate || !sessionId} onClick={() => handleGenerate()} type="button">
+          <button disabled={output.game_over || isLoading || !!session.pendingGenerate || !sessionId || !hasAction} onClick={() => handleGenerate()} type="button">
             {isLoading ? <Loader2 className="spin-icon" size={18} /> : <Send size={18} />}
             <span>{output.game_over ? "战役已结束" : isLoading ? "生成中" : "生成下一幕"}</span>
           </button>
         </div>
         {error ? <div className="error">{error}</div> : null}
-        <div className="player-controls-hint">Ctrl / ⌘ + Enter 快速生成</div>
+        <div className="player-controls-hint">
+          {hasAction ? "Ctrl / ⌘ + Enter 快速生成" : "先输入行动，或直接点上方选项"}
+        </div>
       </div>
       {checkingAction ? (
         <MainCheckOverlay

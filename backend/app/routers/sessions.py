@@ -20,6 +20,9 @@ from app.schemas import (
     SessionHistoryResponse,
     SessionResponse,
 )
+from app.services.game_state.defaults import STATE_CAPS
+
+CAPS = STATE_CAPS
 
 logger = logging.getLogger(__name__)
 
@@ -130,27 +133,46 @@ def get_session_progress(session_id: str) -> dict[str, object]:
     return progress_data
 
 
+def _walk_active_path(rows: list[dict], active_id: object) -> set[int]:
+    by_id = {int(row["id"]): row for row in rows}
+    path: set[int] = set()
+    cursor = int(active_id) if active_id else None
+    while cursor is not None and cursor in by_id:
+        path.add(cursor)
+        parent = by_id[cursor].get("parent_turn_id")
+        cursor = int(parent) if parent is not None else None
+    return path
+
+
+def _load_turns(session_id: str) -> tuple[dict, list[dict], object, set[int]] | None:
+    """Every turn of a session decoded once, shared by the two read routes."""
+    session = state_manager.get_session_payload(session_id)
+    if not session:
+        return None
+    active_id = session.get("active_turn_id")
+    rows = db.list_story_turns(session_id)
+    turns = [
+        {
+            "row": row,
+            "output": json.loads(row["output_json"]) if row.get("output_json") else None,
+            "state": json.loads(row["state_json"]),
+        }
+        for row in rows
+    ]
+    return session, turns, active_id, _walk_active_path(rows, active_id)
+
+
 @router.get("/{session_id}/timeline")
 def get_session_timeline(session_id: str) -> dict[str, object]:
     """Return the complete branching tree with lightweight node summaries."""
-    session = state_manager.get_session_payload(session_id)
-    if not session:
+    loaded = _load_turns(session_id)
+    if not loaded:
         raise HTTPException(status_code=404, detail="Session not found")
-
-    active_id = session.get("active_turn_id")
-    rows = db.list_story_turns(session_id)
-    by_id = {int(row["id"]): row for row in rows}
-    active_path: set[int] = set()
-    cursor = int(active_id) if active_id else None
-    while cursor is not None and cursor in by_id:
-        active_path.add(cursor)
-        parent = by_id[cursor].get("parent_turn_id")
-        cursor = int(parent) if parent is not None else None
+    session, turns, active_id, active_path = loaded
 
     nodes: list[dict[str, object]] = []
-    for row in rows:
-        output = json.loads(row["output_json"]) if row.get("output_json") else None
-        state = json.loads(row["state_json"])
+    for turn in turns:
+        row, output, state = turn["row"], turn["output"], turn["state"]
         action = row.get("player_action") or "会话起点"
         nodes.append({
             "id": row["id"],
@@ -174,6 +196,69 @@ def get_session_timeline(session_id: str) -> dict[str, object]:
     }
 
 
+@router.get("/{session_id}/memory-trace")
+def get_memory_trace(session_id: str) -> dict[str, object]:
+    """What each turn declared it remembered against what state actually kept.
+
+    Name lists only. The prompts themselves live on the node detail route,
+    which is fetched one turn at a time.
+    """
+    loaded = _load_turns(session_id)
+    if not loaded:
+        raise HTTPException(status_code=404, detail="Session not found")
+    _session, turns, _active_id, active_path = loaded
+
+    return {
+        "session_id": session_id,
+        "caps": CAPS,
+        "nodes": [
+            {
+                "node_id": turn["row"]["id"],
+                "parent_id": turn["row"]["parent_turn_id"],
+                "depth": turn["row"]["depth"],
+                "turn": turn["state"].get("turn", turn["row"]["depth"]),
+                "is_on_active_path": turn["row"]["id"] in active_path,
+                **state_manager.memory_trace_entry(turn["output"], turn["state"]),
+            }
+            for turn in turns
+        ],
+    }
+
+
+def _turn_context(model_output_id: object) -> dict[str, object]:
+    """What was injected into this turn's prompt, plus its cost.
+
+    Always returns the same keys so the client can tell "nothing was recorded"
+    apart from "an empty prompt was recorded".
+    """
+    empty: dict[str, object] = {
+        "recorded": False,
+        "retrieved_chunks": [],
+        "token_count": 0,
+        "latency_ms": 0,
+        "word_count": 0,
+        "prompt_sections": {},
+        "prompt_text": "",
+    }
+    if model_output_id is None:
+        return empty
+    row = db.get_model_output(int(model_output_id))
+    if not row:
+        return empty
+    sections = json.loads(row["prompt_sections_json"] or "{}")
+    prompt_text = row["prompt_text"]
+    return {
+        # Turns stored before the prompt was recorded still have a row here.
+        "recorded": bool(prompt_text or sections),
+        "retrieved_chunks": json.loads(row["retrieved_chunks_json"] or "[]"),
+        "token_count": row["token_count"],
+        "latency_ms": row["latency_ms"],
+        "word_count": row["word_count"],
+        "prompt_sections": sections,
+        "prompt_text": prompt_text,
+    }
+
+
 @router.get("/{session_id}/timeline/{node_id}")
 def get_timeline_node(session_id: str, node_id: int) -> dict[str, object]:
     row = db.get_story_turn(session_id, node_id)
@@ -181,13 +266,21 @@ def get_timeline_node(session_id: str, node_id: int) -> dict[str, object]:
         raise HTTPException(status_code=404, detail="Timeline node not found")
     state = json.loads(row["state_json"])
     state_manager.sanitize_state(state)
+    output = json.loads(row["output_json"]) if row["output_json"] else None
     return {
+        "context": _turn_context(row.get("model_output_id")),
+        "caps": CAPS,
+        # The declaration as the model wrote it, in merge order, so the client
+        # never has to know that legacy fields fold in ahead of memory_updates.
+        "declared": state_manager.declared_updates((output or {}).get("memory_updates") or {}, output or {}),
+        # Folded server-side so the client never re-derives the merge order.
+        "memory": state_manager.memory_trace_entry(output, state),
         "id": row["id"],
         "session_id": session_id,
         "parent_id": row["parent_turn_id"],
         "depth": row["depth"],
         "player_action": row["player_action"],
-        "output": json.loads(row["output_json"]) if row["output_json"] else None,
+        "output": output,
         "state": state,
         "campaign_progress": json.loads(row["campaign_progress_json"] or "{}"),
         "model": row["model"],

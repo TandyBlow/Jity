@@ -13,6 +13,9 @@ export type ItemMemory = {
 
 export type NPCMemory = {
   name: string;
+  // The model still emits this older key for NPCs; the server folds it into
+  // `relationship` before merging, so it only appears in raw declarations.
+  disposition?: string;
   status?: string;
   relationship?: string;
   current_location?: string;
@@ -65,6 +68,12 @@ export type StoryOptionCheck = {
   stakes?: string;
 };
 
+/**
+ * Shape of one entry in the legacy delta lists. The server merges these into
+ * state before `memory_updates` does, so a name may appear in both.
+ */
+export type StoryDeltaEntry = Record<string, unknown>;
+
 export type StoryOutput = {
   narration: string;
   dialogue: DialogueLine[];
@@ -76,7 +85,12 @@ export type StoryOutput = {
   game_over: boolean;
   game_over_reason: string;
   current_location: string;
+  items_gained?: StoryDeltaEntry[];
+  items_lost?: StoryDeltaEntry[];
+  npcs_encountered?: StoryDeltaEntry[];
+  quests_updated?: StoryDeltaEntry[];
   memory_updates?: MemoryUpdates;
+  npc_relations_delta?: StoryDeltaEntry[] | null;
 };
 
 export type GameState = {
@@ -121,7 +135,17 @@ export type GenerateResponse = {
   source: "scripted" | "llm" | "examiner_blocked";
   timeline_node_id: number;
   parent_timeline_node_id: number;
+  /** This turn's declaration folded and checked against the state it produced. */
+  memory: MemoryTraceEntry;
+  declared: DeclaredMemory;
+  caps: Record<MemoryCategory, number>;
 };
+
+/**
+ * The per-turn memory report the API attaches to a generated turn, or to a
+ * node detail when one is restored. Absent for local placeholder outputs.
+ */
+export type TurnReport = Pick<GenerateResponse, "memory" | "declared" | "caps">;
 
 export type SessionMessage = {
   id: number;
@@ -157,6 +181,21 @@ export type TimelineResponse = {
   nodes: TimelineNodeSummary[];
 };
 
+/**
+ * What was injected into one turn's prompt. `recorded` is false for turns
+ * stored before the prompt was persisted; the other keys are then empty
+ * rather than absent, so the client never has to guess which case it hit.
+ */
+export type TurnContext = {
+  recorded: boolean;
+  retrieved_chunks: RetrievedChunk[];
+  token_count: number;
+  latency_ms: number;
+  word_count: number;
+  prompt_sections: Record<string, string>;
+  prompt_text: string;
+};
+
 export type TimelineNodeDetail = {
   id: number;
   session_id: string;
@@ -166,9 +205,44 @@ export type TimelineNodeDetail = {
   output: StoryOutput | null;
   state: GameState;
   campaign_progress: Record<string, unknown>;
+  context: TurnContext;
+  /** Category limits, so a full category can be told apart from a quiet one. */
+  caps: Record<MemoryCategory, number>;
+  /**
+   * The turn's declaration in merge order, exactly as the server folds it.
+   * Server-derived for the same reason `memory` is.
+   */
+  declared: DeclaredMemory;
+  /** Folded server-side; the client must not re-derive the merge order. */
+  memory: MemoryTraceEntry;
   model: string;
   source: GenerateResponse["source"];
   created_at: string;
+};
+
+export type MemoryCategory = "items" | "npcs" | "quests" | "world_facts";
+
+/** Names a turn declared, and the names state held once it was merged. */
+export type MemoryTraceEntry = Record<MemoryCategory, { declared: string[]; held: string[] }>;
+
+/** The turn's declaration in merge order, before any of it was applied. */
+export type DeclaredMemory = Record<
+  MemoryCategory,
+  { upserted: StoryDeltaEntry[]; removed: StoryDeltaEntry[] }
+>;
+
+export type MemoryTraceNode = MemoryTraceEntry & {
+  node_id: number;
+  parent_id: number | null;
+  depth: number;
+  turn: number;
+  is_on_active_path: boolean;
+};
+
+export type MemoryTraceResponse = {
+  session_id: string;
+  caps: Record<MemoryCategory, number>;
+  nodes: MemoryTraceNode[];
 };
 
 // ── Campaign types (CAMP-10) ──

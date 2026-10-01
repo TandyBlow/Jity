@@ -1,0 +1,110 @@
+/* A load that failed, stated in the place the empty result would have gone. */
+.load-error {
+  max-width: 1080px;
+  margin: 0 auto var(--space-6);
+  color: var(--color-danger);
+  font-size: var(--fs-md);
+  line-height: var(--lh-tight);
+}
+
+.label {
+  display: block;
+  margin: var(--space-5) 0 var(--space-3);
+  color: var(--color-muted);
+  font-size: var(--fs-md);
+}
+
+.select,
+.textarea {
+  width: 100%;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--surface-sunken);
+  color: var(--color-fg);
+  outline: none;
+}
+
+.select {
+  height: var(--control-h-md);
+  padding: 0 var(--space-3);
+}
+
+.textarea {
+  min-height: 130px;
+  padding: var(--space-4);
+  resize: vertical;
+  line-height: var(--lh-body);
+}
+
+.small-textarea {
+  min-height: 82px;
+}
+
+/* .textarea on an <input> is a single-line field. */
+input.textarea {
+  min-height: 0;
+  padding: 0 var(--space-3);
+  resize: none;
+}
+
+.primary-button,
+.icon-button,
+.option-button {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-fg);
+  cursor: pointer;
+}
+
+.primary-button {
+  width: 100%;
+  height: var(--control-h-lg);
+  margin-top: var(--space-5);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+  font-weight: var(--fw-bold);
+}
+
+/* Not opacity: fading the accent fill still leaves a bright amber block. */
+.primary-button:disabled {
+  cursor: not-allowed;
+  border-color: var(--color-border);
+  background: var(--color-panel-soft);
+  color: var(--color-muted);
+}
+
+.primary-button:hover:not(:disabled) {
+  border-color: var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 86%, white);
+}
+
+/* Compact variant for the dense add-rows in the curator editor. */
+.primary-button.compact {
+  height: var(--control-h-sm);
+  margin-top: var(--space-2);
+  font-size: var(--fs-sm);
+}
+
+/* Toolbar variant: sits beside neighbours instead of spanning the column. */
+.primary-button.fitted {
+  width: auto;
+  margin: 0;
+  padding: 0 var(--space-5);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.icon-button {
+  width: var(--control-h-md);
+  height: var(--control-h-md);
+  /* A square icon button that shrinks stops being square. */
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-panel-soft);
+}

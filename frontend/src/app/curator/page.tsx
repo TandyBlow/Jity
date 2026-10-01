@@ -10,7 +10,7 @@ import { useCuratorEditor } from "@/app/curator/useCuratorEditor";
 export default function CuratorPage() {
   const editor = useCuratorEditor();
   const {
-    campaigns, filename, setFilename, saving, status,
+    campaigns, campaignsError, filename, setFilename, saving, status,
     handleLoad, handleSave, handleDownload,
   } = editor;
 
@@ -21,10 +21,9 @@ export default function CuratorPage() {
           <Link href="/" className="back-link">← 返回控制台</Link>
           <h1>战役策展编辑器</h1>
         </div>
-        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+        <div className="curator-header-actions">
           <select
             className="select"
-            style={{ maxWidth: 260 }}
             value=""
             onChange={(e) => { if (e.target.value) handleLoad(e.target.value); }}
           >
@@ -33,20 +32,22 @@ export default function CuratorPage() {
               <option key={c.filename} value={c.filename}>{c.title}</option>
             ))}
           </select>
-          <button className="primary-button" style={{ width: "auto", margin: 0, padding: "0 16px" }} onClick={handleSave} disabled={saving}>
+          <button className="primary-button fitted" onClick={handleSave} disabled={saving}>
             {saving ? "保存中…" : "保存"}
           </button>
           <button className="icon-button" onClick={handleDownload} title="下载JSON">⬇</button>
         </div>
       </div>
 
+      {campaignsError ? <p className="load-error" role="alert">{campaignsError}</p> : null}
+
       {status && (
-        <div style={{ maxWidth: 1080, margin: "0 auto 16px" }} className={status.includes("失败") ? "error" : "meta"}>
+        <div className={`curator-status ${status.includes("失败") ? "error" : "meta"}`}>
           {status}
         </div>
       )}
 
-      <div className="timeline-layout" style={{ maxWidth: 1080, margin: "0 auto" }}>
+      <div className="timeline-layout">
         {/* Main editor */}
         <div>
           <GenerationPanel editor={editor} />
@@ -75,17 +76,16 @@ function BasicInfo({
   const { campaign, updateField } = editor;
 
   return (
-    <div style={{ marginBottom: 16 }}>
+    <div className="curator-section">
       <input
-        className="textarea"
-        style={{ height: 40, marginBottom: 8, fontSize: 20, fontWeight: 700 }}
+        className="textarea curator-title-input"
         value={campaign.title}
         onChange={(e) => updateField("title", e.target.value)}
         placeholder="战役标题"
       />
-      <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
-        <input className="textarea" style={{ height: 36, flex: 1 }} value={filename} onChange={(e) => onFilenameChange(e.target.value)} placeholder="文件名" />
-        <input className="textarea" style={{ height: 36, width: 80 }} value={campaign.version} onChange={(e) => updateField("version", parseInt(e.target.value) || 3)} placeholder="版本" type="number" />
+      <div className="curator-field-row">
+        <input className="textarea curator-grow" value={filename} onChange={(e) => onFilenameChange(e.target.value)} placeholder="文件名" />
+        <input className="textarea" value={campaign.version} onChange={(e) => updateField("version", parseInt(e.target.value) || 3)} placeholder="版本" type="number" />
       </div>
       <textarea
         className="textarea"
@@ -94,11 +94,10 @@ function BasicInfo({
         onChange={(e) => updateField("core_conflict", e.target.value)}
       />
       <textarea
-        className="textarea small-textarea"
+        className="textarea small-textarea curator-follow"
         placeholder="叙事约束 (constraints)"
         value={campaign.constraints}
         onChange={(e) => updateField("constraints", e.target.value)}
-        style={{ marginTop: 8 }}
       />
     </div>
   );

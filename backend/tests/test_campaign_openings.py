@@ -106,6 +106,9 @@ async def test_opening_then_continue_uses_selected_campaign(runtime, filename, l
         assert opened.output.option_checks[0] is None
         assert opened.output.option_checks[1].name == "观察检定"
         assert opened.state["turn"] == manager.progress.turn_in_session == 1
+        # The live panel reads the declaration from here, folded server side.
+        assert set(opened.memory) == {"items", "npcs", "quests", "world_facts"}
+        assert opened.caps["world_facts"] == 15
         # The opening asks for options only, so the Narrator is still never called.
         runtime.llm.generate_json.assert_awaited_once()
         runtime.llm.generate.assert_not_awaited()
@@ -117,6 +120,8 @@ async def test_opening_then_continue_uses_selected_campaign(runtime, filename, l
         continued = await runtime.generator.generate(sid, GenerateRequest(player_action="继续"))
         assert continued.source == "llm"
         assert continued.state["turn"] == manager.progress.turn_in_session == 2
+        assert set(continued.memory) == {"items", "npcs", "quests", "world_facts"}
+        assert set(continued.declared) == {"items", "npcs", "quests", "world_facts"}
         prompt = runtime.llm.generate.call_args.args[0]
         assert manager.campaign.title in prompt
         assert opening in prompt

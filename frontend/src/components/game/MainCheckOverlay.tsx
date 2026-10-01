@@ -4,6 +4,7 @@ import { Check, CircleAlert, Dices } from "lucide-react";
 import { useState } from "react";
 
 import { DiceCanvas } from "@/components/dice/DiceCanvas";
+import { useModalFocus } from "@/components/game/useModalFocus";
 import { getOutcome, type CheckSpec, type Outcome } from "@/lib/dice/rules";
 
 type CheckPhase = "prepared" | "rolling" | "docking" | "revealed";
@@ -26,6 +27,8 @@ export function MainCheckOverlay({ action, check, onCancel, onCommit }: MainChec
   const [roll, setRoll] = useState<number | null>(null);
   const [result, setResult] = useState<MainCheckCommit | null>(null);
   const [error, setError] = useState("");
+  // A full-screen overlay that only a mouse can leave is a keyboard trap.
+  const overlayRef = useModalFocus<HTMLElement>(true, onCancel);
 
   function startRoll() {
     if (phase !== "prepared") return;
@@ -59,7 +62,14 @@ export function MainCheckOverlay({ action, check, onCancel, onCommit }: MainChec
   const title = phase === "prepared" ? "确认行动判定" : phase === "revealed" ? "判定完成" : "";
 
   return (
-    <section className="main-check-overlay" aria-label={`${check.name}：${action}`}>
+    <section
+      aria-label={`${check.name}：${action}`}
+      aria-modal="true"
+      className="main-check-overlay"
+      ref={overlayRef}
+      role="dialog"
+      tabIndex={-1}
+    >
       {roll !== null ? (
         <DiceCanvas
           value={roll}
