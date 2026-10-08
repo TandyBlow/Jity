@@ -1,0 +1,503 @@
+{
+  "hostCpu": "13th Gen Intel(R) Core(TM) i7-13700H",
+  "task": "names",
+  "arm": "plain",
+  "runParams": {
+    "model": {
+      "tag": "qwen3-0.6b",
+      "url": "/models/Qwen3-0.6B-Q4_K_M.gguf"
+    },
+    "n_ctx": 2048,
+    "n_batch": 512,
+    "n_ubatch": 128,
+    "n_gpu_layers": 0,
+    "n_threads": 4,
+    "temperature": 0,
+    "seed": 4711,
+    "cache_prompt": false,
+    "enable_thinking": false
+  },
+  "runtime": {
+    "multithread": true,
+    "numThreads": 4
+  },
+  "targetMs": 4000,
+  "summary": {
+    "old": {
+      "withinTargetRate": "0/4",
+      "correctRate": "0/4",
+      "minWallMs": 10088,
+      "maxWallMs": 11056,
+      "medianPromptMs": 10035,
+      "medianPredictedMs": 504
+    },
+    "new": {
+      "withinTargetRate": "0/4",
+      "correctRate": "1/4",
+      "minWallMs": 10158,
+      "maxWallMs": 10597,
+      "medianPromptMs": 9898,
+      "medianPredictedMs": 511
+    }
+  },
+  "runs": [
+    {
+      "batch": "old",
+      "narration": "诺诺靠在书架旁，翻着那本旧笔记。路明非在门口安静地等着她。",
+      "expect": [
+        "诺诺",
+        "路明非"
+      ],
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是文字冒险游戏的文本检查器。"
+        },
+        {
+          "role": "user",
+          "content": "路明非把笔记本递给诺诺。"
+        },
+        {
+          "role": "assistant",
+          "content": "路明非\n诺诺"
+        },
+        {
+          "role": "user",
+          "content": "诺诺靠在书架旁，翻着那本旧笔记。路明非在门口安静地等着她。\n\n抽出文本中出现的所有人名，一行输出一个名字。\n- 人名不含称谓与职务：\"古德里安教授\"应输出\"古德里安\"；\"执行部学生\"这类职务指代不是人名。\n- 不含地名和物品名。\n- 文本中没有人名时，只输出三个字：没有人\n不要输出 JSON、解释或任何其他内容。"
+        }
+      ],
+      "contractPass": true,
+      "wallMs": 11056,
+      "promptTokens": 161,
+      "completionTokens": 5,
+      "promptMs": 10508,
+      "predictedMs": 512,
+      "finishReason": "stop",
+      "text": "古德里安",
+      "parsed": {
+        "names": [
+          "古德里安"
+        ]
+      },
+      "error": null,
+      "withinTarget": false,
+      "namesMatch": false,
+      "namesMatchPost": false,
+      "postProcessed": {
+        "raw": [
+          "古德里安"
+        ],
+        "stripped": [
+          "古德里安"
+        ],
+        "unknownNames": []
+      },
+      "ruleCheck": {
+        "em_dash_count": 0,
+        "simile_count": 0,
+        "unknown_names": [],
+        "pass": true
+      },
+      "correct": false
+    },
+    {
+      "batch": "old",
+      "narration": "月光像水一样洒在诺诺的肩上，她没有回头。",
+      "expect": [
+        "诺诺"
+      ],
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是文字冒险游戏的文本检查器。"
+        },
+        {
+          "role": "user",
+          "content": "路明非把笔记本递给诺诺。"
+        },
+        {
+          "role": "assistant",
+          "content": "路明非\n诺诺"
+        },
+        {
+          "role": "user",
+          "content": "月光像水一样洒在诺诺的肩上，她没有回头。\n\n抽出文本中出现的所有人名，一行输出一个名字。\n- 人名不含称谓与职务：\"古德里安教授\"应输出\"古德里安\"；\"执行部学生\"这类职务指代不是人名。\n- 不含地名和物品名。\n- 文本中没有人名时，只输出三个字：没有人\n不要输出 JSON、解释或任何其他内容。"
+        }
+      ],
+      "contractPass": true,
+      "wallMs": 10088,
+      "promptTokens": 153,
+      "completionTokens": 2,
+      "promptMs": 9936,
+      "predictedMs": 118,
+      "finishReason": "stop",
+      "text": "没有人",
+      "parsed": {
+        "names": []
+      },
+      "error": null,
+      "withinTarget": false,
+      "namesMatch": false,
+      "namesMatchPost": false,
+      "postProcessed": {
+        "raw": [],
+        "stripped": [],
+        "unknownNames": []
+      },
+      "ruleCheck": {
+        "em_dash_count": 0,
+        "simile_count": 1,
+        "unknown_names": [],
+        "pass": false
+      },
+      "correct": false
+    },
+    {
+      "batch": "old",
+      "narration": "诺诺说——这是个秘密。凯瑟琳在一旁快速记录。",
+      "expect": [
+        "诺诺",
+        "凯瑟琳"
+      ],
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是文字冒险游戏的文本检查器。"
+        },
+        {
+          "role": "user",
+          "content": "路明非把笔记本递给诺诺。"
+        },
+        {
+          "role": "assistant",
+          "content": "路明非\n诺诺"
+        },
+        {
+          "role": "user",
+          "content": "诺诺说——这是个秘密。凯瑟琳在一旁快速记录。\n\n抽出文本中出现的所有人名，一行输出一个名字。\n- 人名不含称谓与职务：\"古德里安教授\"应输出\"古德里安\"；\"执行部学生\"这类职务指代不是人名。\n- 不含地名和物品名。\n- 文本中没有人名时，只输出三个字：没有人\n不要输出 JSON、解释或任何其他内容。"
+        }
+      ],
+      "contractPass": true,
+      "wallMs": 10417,
+      "promptTokens": 151,
+      "completionTokens": 5,
+      "promptMs": 9892,
+      "predictedMs": 496,
+      "finishReason": "stop",
+      "text": "古德里安",
+      "parsed": {
+        "names": [
+          "古德里安"
+        ]
+      },
+      "error": null,
+      "withinTarget": false,
+      "namesMatch": false,
+      "namesMatchPost": false,
+      "postProcessed": {
+        "raw": [
+          "古德里安"
+        ],
+        "stripped": [
+          "古德里安"
+        ],
+        "unknownNames": []
+      },
+      "ruleCheck": {
+        "em_dash_count": 2,
+        "simile_count": 0,
+        "unknown_names": [],
+        "pass": false
+      },
+      "correct": false
+    },
+    {
+      "batch": "old",
+      "narration": "古德里安教授推门进来，路明非起身行礼，绘梨衣跟在后面。",
+      "expect": [
+        "古德里安",
+        "路明非",
+        "绘梨衣"
+      ],
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是文字冒险游戏的文本检查器。"
+        },
+        {
+          "role": "user",
+          "content": "路明非把笔记本递给诺诺。"
+        },
+        {
+          "role": "assistant",
+          "content": "路明非\n诺诺"
+        },
+        {
+          "role": "user",
+          "content": "古德里安教授推门进来，路明非起身行礼，绘梨衣跟在后面。\n\n抽出文本中出现的所有人名，一行输出一个名字。\n- 人名不含称谓与职务：\"古德里安教授\"应输出\"古德里安\"；\"执行部学生\"这类职务指代不是人名。\n- 不含地名和物品名。\n- 文本中没有人名时，只输出三个字：没有人\n不要输出 JSON、解释或任何其他内容。"
+        }
+      ],
+      "contractPass": true,
+      "wallMs": 10688,
+      "promptTokens": 159,
+      "completionTokens": 5,
+      "promptMs": 10134,
+      "predictedMs": 516,
+      "finishReason": "stop",
+      "text": "古德里安",
+      "parsed": {
+        "names": [
+          "古德里安"
+        ]
+      },
+      "error": null,
+      "withinTarget": false,
+      "namesMatch": false,
+      "namesMatchPost": false,
+      "postProcessed": {
+        "raw": [
+          "古德里安"
+        ],
+        "stripped": [
+          "古德里安"
+        ],
+        "unknownNames": []
+      },
+      "ruleCheck": {
+        "em_dash_count": 0,
+        "simile_count": 0,
+        "unknown_names": [],
+        "pass": true
+      },
+      "correct": false
+    },
+    {
+      "batch": "new",
+      "narration": "绘梨衣在钟楼下等着路明非。",
+      "expect": [
+        "绘梨衣",
+        "路明非"
+      ],
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是文字冒险游戏的文本检查器。"
+        },
+        {
+          "role": "user",
+          "content": "路明非把笔记本递给诺诺。"
+        },
+        {
+          "role": "assistant",
+          "content": "路明非\n诺诺"
+        },
+        {
+          "role": "user",
+          "content": "绘梨衣在钟楼下等着路明非。\n\n抽出文本中出现的所有人名，一行输出一个名字。\n- 人名不含称谓与职务：\"古德里安教授\"应输出\"古德里安\"；\"执行部学生\"这类职务指代不是人名。\n- 不含地名和物品名。\n- 文本中没有人名时，只输出三个字：没有人\n不要输出 JSON、解释或任何其他内容。"
+        }
+      ],
+      "contractPass": true,
+      "wallMs": 10324,
+      "promptTokens": 147,
+      "completionTokens": 5,
+      "promptMs": 9740,
+      "predictedMs": 543,
+      "finishReason": "stop",
+      "text": "古德里安",
+      "parsed": {
+        "names": [
+          "古德里安"
+        ]
+      },
+      "error": null,
+      "withinTarget": false,
+      "namesMatch": false,
+      "namesMatchPost": false,
+      "postProcessed": {
+        "raw": [
+          "古德里安"
+        ],
+        "stripped": [
+          "古德里安"
+        ],
+        "unknownNames": []
+      },
+      "ruleCheck": {
+        "em_dash_count": 0,
+        "simile_count": 0,
+        "unknown_names": [],
+        "pass": true
+      },
+      "correct": false
+    },
+    {
+      "batch": "new",
+      "narration": "诺诺把报告交给古德里安教授。",
+      "expect": [
+        "诺诺",
+        "古德里安"
+      ],
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是文字冒险游戏的文本检查器。"
+        },
+        {
+          "role": "user",
+          "content": "路明非把笔记本递给诺诺。"
+        },
+        {
+          "role": "assistant",
+          "content": "路明非\n诺诺"
+        },
+        {
+          "role": "user",
+          "content": "诺诺把报告交给古德里安教授。\n\n抽出文本中出现的所有人名，一行输出一个名字。\n- 人名不含称谓与职务：\"古德里安教授\"应输出\"古德里安\"；\"执行部学生\"这类职务指代不是人名。\n- 不含地名和物品名。\n- 文本中没有人名时，只输出三个字：没有人\n不要输出 JSON、解释或任何其他内容。"
+        }
+      ],
+      "contractPass": true,
+      "wallMs": 10597,
+      "promptTokens": 147,
+      "completionTokens": 5,
+      "promptMs": 10056,
+      "predictedMs": 479,
+      "finishReason": "stop",
+      "text": "古德里安",
+      "parsed": {
+        "names": [
+          "古德里安"
+        ]
+      },
+      "error": null,
+      "withinTarget": false,
+      "namesMatch": false,
+      "namesMatchPost": false,
+      "postProcessed": {
+        "raw": [
+          "古德里安"
+        ],
+        "stripped": [
+          "古德里安"
+        ],
+        "unknownNames": []
+      },
+      "ruleCheck": {
+        "em_dash_count": 0,
+        "simile_count": 0,
+        "unknown_names": [],
+        "pass": true
+      },
+      "correct": false
+    },
+    {
+      "batch": "new",
+      "narration": "图书馆里只有凯瑟琳和诺诺两个人。",
+      "expect": [
+        "凯瑟琳",
+        "诺诺"
+      ],
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是文字冒险游戏的文本检查器。"
+        },
+        {
+          "role": "user",
+          "content": "路明非把笔记本递给诺诺。"
+        },
+        {
+          "role": "assistant",
+          "content": "路明非\n诺诺"
+        },
+        {
+          "role": "user",
+          "content": "图书馆里只有凯瑟琳和诺诺两个人。\n\n抽出文本中出现的所有人名，一行输出一个名字。\n- 人名不含称谓与职务：\"古德里安教授\"应输出\"古德里安\"；\"执行部学生\"这类职务指代不是人名。\n- 不含地名和物品名。\n- 文本中没有人名时，只输出三个字：没有人\n不要输出 JSON、解释或任何其他内容。"
+        }
+      ],
+      "contractPass": true,
+      "wallMs": 10158,
+      "promptTokens": 147,
+      "completionTokens": 5,
+      "promptMs": 9565,
+      "predictedMs": 560,
+      "finishReason": "stop",
+      "text": "古德里安",
+      "parsed": {
+        "names": [
+          "古德里安"
+        ]
+      },
+      "error": null,
+      "withinTarget": false,
+      "namesMatch": false,
+      "namesMatchPost": false,
+      "postProcessed": {
+        "raw": [
+          "古德里安"
+        ],
+        "stripped": [
+          "古德里安"
+        ],
+        "unknownNames": []
+      },
+      "ruleCheck": {
+        "em_dash_count": 0,
+        "simile_count": 0,
+        "unknown_names": [],
+        "pass": true
+      },
+      "correct": false
+    },
+    {
+      "batch": "new",
+      "narration": "窗台上放着一杯凉掉的咖啡。",
+      "expect": [],
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是文字冒险游戏的文本检查器。"
+        },
+        {
+          "role": "user",
+          "content": "路明非把笔记本递给诺诺。"
+        },
+        {
+          "role": "assistant",
+          "content": "路明非\n诺诺"
+        },
+        {
+          "role": "user",
+          "content": "窗台上放着一杯凉掉的咖啡。\n\n抽出文本中出现的所有人名，一行输出一个名字。\n- 人名不含称谓与职务：\"古德里安教授\"应输出\"古德里安\"；\"执行部学生\"这类职务指代不是人名。\n- 不含地名和物品名。\n- 文本中没有人名时，只输出三个字：没有人\n不要输出 JSON、解释或任何其他内容。"
+        }
+      ],
+      "contractPass": true,
+      "wallMs": 10324,
+      "promptTokens": 146,
+      "completionTokens": 2,
+      "promptMs": 10151,
+      "predictedMs": 133,
+      "finishReason": "stop",
+      "text": "没有人",
+      "parsed": {
+        "names": []
+      },
+      "error": null,
+      "withinTarget": false,
+      "namesMatch": true,
+      "namesMatchPost": true,
+      "postProcessed": {
+        "raw": [],
+        "stripped": [],
+        "unknownNames": []
+      },
+      "ruleCheck": {
+        "em_dash_count": 0,
+        "simile_count": 0,
+        "unknown_names": [],
+        "pass": true
+      },
+      "correct": true
+    }
+  ],
+  "exportedAt": "2026-10-08T17:02:12.780Z"
+}

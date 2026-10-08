@@ -1,17 +1,25 @@
-// Task-level trial v4 (Qwen3 only). Changes from v3, per review:
-// - the plain-lines arm gets its OWN instruction, examples and empty-output
-//   convention (v3 asked for JSON and merely disabled constraint decoding,
-//   so the model's JSON reply was correct and the arm proved nothing);
-// - exported reports carry arm, actual messages per run, and run params;
-// - output filenames include the arm (v3 lost the zero report this way);
-// - the 校徽 case target is now verbatim (闸机); "楼" is NOT aliased;
-// - new minimal arm for parsing: no scene state at all — possession and
-//   presence live in code, so the state block is a compression variable;
-// - name post-processing (title stripping) is a fixed deterministic rule,
-//   recorded with the results; 漏名 / 无人名 / 名单外 cases stay in the set.
+// Task-level trial v5 (Qwen3 only). Changes from v4, per review of the
+// trial5 reports:
+// - BUGFIX: the plain arm's dedicated instruction never reached the model —
+//   v4 built userText as `plain ? narration : narration + instruction`, so
+//   plain ran unconstrained AND uninstructed, and its whole-sentence echoes
+//   proved nothing. The instruction is now appended for both arms.
+// - postProcessed (raw/stripped/unknownNames) is recorded per names run;
+//   v4 computed it for scoring but dropped it from the exported report.
+// - message contracts: before any request is sent, every run's actual
+//   messages are checked against the arm's instruction / output-convention
+//   phrases (ablation arms also against forbidden phrases); a violation
+//   aborts the run instead of exporting an uninterpretable report. Run with
+//   CONTRACT_CHECK_ONLY=1 to verify contracts without loading the model.
+// - parse arms are now the state-ablation pair compact vs no-state: same
+//   system prompt, same fewshot, same instruction position, same schema and
+//   constrained decoding — the ONLY variable is the scene-state block.
+//   minimal (no state, no fewshot, instruction moved into system) is not
+//   re-run: its trial5 speed result stands, but it changed three variables
+//   at once and cannot attribute anything to state alone.
 //
 // Usage: node scripts/run-task-trial.mjs [threads]
-// Output: artifacts/benchmark/task-trial5-<ts>-<task>-<arm>.json
+// Output: artifacts/benchmark/task-trial6-<ts>-<task>-<arm>.json
 
 import { mkdir, writeFile } from "node:fs/promises";
 import os from "node:os";
@@ -151,7 +159,8 @@ const NAMES_INSTRUCTION_JSON = `抽出文本中出现的所有人名，放入 na
 - 不含地名和物品名。
 只输出 JSON。`;
 
-// plain 臂的配套指令/示例/空约定（v3 的教训：只关约束不改指令等于没改）。
+// plain 臂的配套指令/示例/空约定（v3 的教训：只关约束不改指令等于没改；
+// v4 的教训：改了指令但没接进 messages 等于白跑）。
 const NAMES_INSTRUCTION_PLAIN = `抽出文本中出现的所有人名，一行输出一个名字。
 - 人名不含称谓与职务："古德里安教授"应输出"古德里安"；"执行部学生"这类职务指代不是人名。
 - 不含地名和物品名。
@@ -179,6 +188,85 @@ const NAMES_FEWSHOT_JSON = [
 const NAMES_FEWSHOT_PLAIN = [
   { user: "路明非把笔记本递给诺诺。", assistant: "路明非\n诺诺" },
 ];
+
+// ── 消息构造与契约检查 ────────────────────────────────────────────
+// 消息只在 Node 侧构造；每个臂发送任何请求之前，实际 messages 逐条对
+// 契约检查，违反即中止（不再产出无法解释的报告）。
+
+function buildParseMessages(arm, testCase) {
+  // 状态消融对 compact / no-state：系统提示、示例、指令位置、schema 与
+  // 约束解码全部相同，唯一变量是状态块。
+  const stateBlock = arm === "compact" ? `${PARSE_STATE}\n\n` : "";
+  const userText = `${stateBlock}玩家行动：${testCase.action}\n\n${PARSE_INSTRUCTION}`;
+  return [
+    { role: "system", content: "你是文字冒险游戏的输入解析器。" },
+    ...PARSE_FEWSHOT.flatMap((example) => [
+      { role: "user", content: example.user },
+      { role: "assistant", content: example.assistant },
+    ]),
+    { role: "user", content: userText },
+  ];
+}
+
+function buildNamesMessages(arm, testCase) {
+  const instruction = arm === "plain" ? NAMES_INSTRUCTION_PLAIN : NAMES_INSTRUCTION_JSON;
+  const fewshot = arm === "plain" ? NAMES_FEWSHOT_PLAIN : NAMES_FEWSHOT_JSON;
+  const userText = `${testCase.narration}\n\n${instruction}`;
+  return [
+    { role: "system", content: "你是文字冒险游戏的文本检查器。" },
+    ...fewshot.flatMap((example) => [
+      { role: "user", content: example.user },
+      { role: "assistant", content: example.assistant },
+    ]),
+    { role: "user", content: userText },
+  ];
+}
+
+// 每臂契约：mustContain 是该臂指令与输出约定的标识短语（含 fewshot 的
+// assistant 内容，防示例漏接）；no-state 额外断言状态块短语不出现。
+const MESSAGE_CONTRACTS = {
+  "parse/compact": {
+    mustContain: [
+      "把玩家行动解析为 JSON",
+      "只输出 JSON",
+      '{"action_type":"inspect","item_used":null,"target":"铜钥匙"}',
+      "当前地点：卡塞尔学院图书馆",
+      "持有物品：铜钥匙",
+      "在场 NPC：诺诺",
+    ],
+  },
+  "parse/no-state": {
+    mustContain: [
+      "把玩家行动解析为 JSON",
+      "只输出 JSON",
+      '{"action_type":"inspect","item_used":null,"target":"铜钥匙"}',
+    ],
+    mustNotContain: ["当前地点：", "已知地点：", "持有物品：", "在场 NPC：", "体力 88/100"],
+  },
+  "names/json": {
+    mustContain: ["抽出文本中出现的所有人名", "只输出 JSON", '{"names":["路明非","诺诺"]}'],
+  },
+  "names/plain": {
+    mustContain: [
+      "抽出文本中出现的所有人名",
+      "一行输出一个名字",
+      "没有人",
+      "不要输出 JSON",
+      "路明非\n诺诺",
+    ],
+  },
+};
+
+function checkMessageContract(taskArm, messages) {
+  const { mustContain = [], mustNotContain = [] } = MESSAGE_CONTRACTS[taskArm];
+  const text = messages.map((message) => message.content).join("\n");
+  for (const phrase of mustContain) {
+    if (!text.includes(phrase)) throw new Error(`[contract ${taskArm}] messages 缺少约定："${phrase}"`);
+  }
+  for (const phrase of mustNotContain) {
+    if (text.includes(phrase)) throw new Error(`[contract ${taskArm}] messages 不应包含："${phrase}"`);
+  }
+}
 
 // 称谓后处理：固定确定性规则——先剥称谓再映射名册。原始与后处理结果都入库。
 function stripTitles(name) {
@@ -218,6 +306,22 @@ function codeRuleCheck(narration, extractedNames) {
 const log = (...parts) => console.log(new Date().toISOString().slice(11, 19), ...parts);
 
 async function main() {
+  // 只验证消息契约，不加载模型（CI / 快速自检用）。
+  if (process.env.CONTRACT_CHECK_ONLY === "1") {
+    const probes = [
+      ["parse/compact", buildParseMessages("compact", PARSE_CASES_OLD[0])],
+      ["parse/no-state", buildParseMessages("no-state", PARSE_CASES_OLD[0])],
+      ["names/json", buildNamesMessages("json", NAMES_CASES_OLD[0])],
+      ["names/plain", buildNamesMessages("plain", NAMES_CASES_OLD[0])],
+    ];
+    for (const [taskArm, messages] of probes) {
+      checkMessageContract(taskArm, messages);
+      log(`contract pass: ${taskArm}`);
+    }
+    log("all message contracts pass");
+    return;
+  }
+
   const cpu = os.cpus()[0]?.model ?? "unknown";
   log(`host CPU: ${cpu}`);
   const browser = await (async () => {
@@ -279,36 +383,26 @@ async function main() {
     enable_thinking: false,
   };
 
-  // ── 解析臂：compact（含状态+示例）/ minimal（无状态、无示例） ──────
-  for (const parseArm of ["compact", "minimal"]) {
+  // ── 解析臂：状态消融对 compact / no-state（唯一变量：状态块） ──────
+  for (const parseArm of ["compact", "no-state"]) {
+    const cases = [...PARSE_CASES_OLD, ...PARSE_CASES_NEW].map((testCase) => ({
+      batch: PARSE_CASES_OLD.includes(testCase) ? "old" : "new",
+      action: testCase.action,
+      expect: testCase.expect,
+      messages: buildParseMessages(parseArm, testCase),
+    }));
+    for (const testCase of cases) checkMessageContract(`parse/${parseArm}`, testCase.messages);
+    log(`parse/${parseArm}: message contract pass on ${cases.length} cases`);
+
     const runs = await page.evaluate(
       async (trial) => {
         const wllama = window.__trialWllama;
         const runs = [];
-        for (const testCase of [...trial.parseCasesOld, ...trial.parseCasesNew]) {
-          const batch = trial.parseCasesOld.includes(testCase) ? "old" : "new";
-          const userText =
-            trial.arm === "minimal"
-              ? `玩家行动：${testCase.action}`
-              : `${trial.parseState}\n\n玩家行动：${testCase.action}\n\n${trial.parseInstruction}`;
-          const messages =
-            trial.arm === "minimal"
-              ? [
-                  { role: "system", content: `你是文字冒险游戏的输入解析器。\n\n${trial.parseInstruction}` },
-                  { role: "user", content: userText },
-                ]
-              : [
-                  { role: "system", content: "你是文字冒险游戏的输入解析器。" },
-                  ...trial.parseFewshot.flatMap((example) => [
-                    { role: "user", content: example.user },
-                    { role: "assistant", content: example.assistant },
-                  ]),
-                  { role: "user", content: userText },
-                ];
+        for (const testCase of trial.cases) {
           const started = performance.now();
           try {
             const response = await wllama.createChatCompletion({
-              messages,
+              messages: testCase.messages,
               max_tokens: 120,
               temperature: 0,
               seed: 4711,
@@ -316,7 +410,7 @@ async function main() {
               chat_template_kwargs: { enable_thinking: false },
               response_format: {
                 type: "json_schema",
-                json_schema: { name: "trial", schema: trial.parseSchema, strict: true },
+                json_schema: { name: "trial", schema: trial.schema, strict: true },
               },
             });
             const text = (response.choices?.[0]?.message?.content ?? "")
@@ -333,10 +427,11 @@ async function main() {
               }
             }
             runs.push({
-              batch,
+              batch: testCase.batch,
               action: testCase.action,
               expect: testCase.expect,
-              messages,
+              messages: testCase.messages,
+              contractPass: true,
               wallMs: Math.round(performance.now() - started),
               promptTokens: response.usage?.prompt_tokens,
               completionTokens: response.usage?.completion_tokens,
@@ -351,10 +446,11 @@ async function main() {
             });
           } catch (error) {
             runs.push({
-              batch,
+              batch: testCase.batch,
               action: testCase.action,
               expect: testCase.expect,
-              messages,
+              messages: testCase.messages,
+              contractPass: true,
               wallMs: Math.round(performance.now() - started),
               error: `${error instanceof Error ? error.name : ""} ${error instanceof Error ? error.message : error}`,
             });
@@ -362,25 +458,9 @@ async function main() {
         }
         return runs;
       },
-      {
-        parseCasesOld: PARSE_CASES_OLD,
-        parseCasesNew: PARSE_CASES_NEW,
-        parseState: PARSE_STATE,
-        parseSchema: PARSE_SCHEMA,
-        parseInstruction: PARSE_INSTRUCTION,
-        parseFewshot: PARSE_FEWSHOT,
-        arm: parseArm,
-      },
+      { cases, schema: PARSE_SCHEMA },
     );
 
-    const normalize = (value) =>
-      value == null ? null : String(value).replace(/\s+/g, "").trim() || null;
-    const valueMatch = (expected, actual) => {
-      const want = normalize(expected);
-      const got = normalize(actual);
-      if (want === null) return got === null;
-      return got !== null && (got.includes(want) || want.includes(got));
-    };
     const scored = runs.map((run) => {
       let fieldResults = null;
       let correct = false;
@@ -415,7 +495,7 @@ async function main() {
     });
     const summary = { old: summarize(old), new: summarize(fresh) };
     log(`parse/${parseArm}: ${JSON.stringify(summary)}`);
-    const outPath = path.join(outDir, `task-trial5-${Date.now()}-parse-${parseArm}.json`);
+    const outPath = path.join(outDir, `task-trial6-${Date.now()}-parse-${parseArm}.json`);
     await writeFile(
       outPath,
       JSON.stringify(
@@ -427,40 +507,37 @@ async function main() {
     log(`saved: ${outPath}`);
   }
 
-  // ── 抽名臂：json（schema 约束）/ plain（配套指令、示例与空约定） ────
+  // ── 抽名臂：json（schema 约束）/ plain（指令+示例+空约定，v5 起真正进消息） ──
   for (const namesArm of ["json", "plain"]) {
+    const plain = namesArm === "plain";
+    const cases = [...NAMES_CASES_OLD, ...NAMES_CASES_NEW].map((testCase) => ({
+      batch: NAMES_CASES_OLD.includes(testCase) ? "old" : "new",
+      narration: testCase.narration,
+      expect: testCase.expect,
+      messages: buildNamesMessages(namesArm, testCase),
+    }));
+    for (const testCase of cases) checkMessageContract(`names/${namesArm}`, testCase.messages);
+    log(`names/${namesArm}: message contract pass on ${cases.length} cases`);
+
     const runs = await page.evaluate(
       async (trial) => {
         const wllama = window.__trialWllama;
         const runs = [];
-        const plain = trial.arm === "plain";
-        const instruction = plain ? trial.namesInstructionPlain : trial.namesInstructionJson;
-        const fewshot = plain ? trial.namesFewshotPlain : trial.namesFewshotJson;
-        for (const testCase of [...trial.namesCasesOld, ...trial.namesCasesNew]) {
-          const batch = trial.namesCasesOld.includes(testCase) ? "old" : "new";
-          const userText = plain ? testCase.narration : `${testCase.narration}\n\n${instruction}`;
-          const messages = [
-            { role: "system", content: "你是文字冒险游戏的文本检查器。" },
-            ...fewshot.flatMap((example) => [
-              { role: "user", content: example.user },
-              { role: "assistant", content: example.assistant },
-            ]),
-            { role: "user", content: userText },
-          ];
+        for (const testCase of trial.cases) {
           const started = performance.now();
           try {
             const options = {
-              messages,
+              messages: testCase.messages,
               max_tokens: 80,
               temperature: 0,
               seed: 4711,
               cache_prompt: false,
               chat_template_kwargs: { enable_thinking: false },
             };
-            if (!plain) {
+            if (!trial.plain) {
               options.response_format = {
                 type: "json_schema",
-                json_schema: { name: "trial", schema: trial.namesSchema, strict: true },
+                json_schema: { name: "trial", schema: trial.schema, strict: true },
               };
             }
             const response = await wllama.createChatCompletion(options);
@@ -468,7 +545,7 @@ async function main() {
               .replace(/<think>[\s\S]*?<\/think>/g, "")
               .trim();
             let parsed = null;
-            if (plain) {
+            if (trial.plain) {
               const lines = text
                 .split("\n")
                 .map((line) => line.replace(/^[-•\d.、\s]+/, "").replace(/^["']|["']$/g, "").trim())
@@ -486,10 +563,11 @@ async function main() {
               }
             }
             runs.push({
-              batch,
+              batch: testCase.batch,
               narration: testCase.narration,
               expect: testCase.expect,
-              messages,
+              messages: testCase.messages,
+              contractPass: true,
               wallMs: Math.round(performance.now() - started),
               promptTokens: response.usage?.prompt_tokens,
               completionTokens: response.usage?.completion_tokens,
@@ -502,10 +580,11 @@ async function main() {
             });
           } catch (error) {
             runs.push({
-              batch,
+              batch: testCase.batch,
               narration: testCase.narration,
               expect: testCase.expect,
-              messages,
+              messages: testCase.messages,
+              contractPass: true,
               wallMs: Math.round(performance.now() - started),
               error: `${error instanceof Error ? error.name : ""} ${error instanceof Error ? error.message : error}`,
             });
@@ -513,16 +592,7 @@ async function main() {
         }
         return runs;
       },
-      {
-        namesCasesOld: NAMES_CASES_OLD,
-        namesCasesNew: NAMES_CASES_NEW,
-        namesSchema: NAMES_SCHEMA,
-        namesInstructionJson: NAMES_INSTRUCTION_JSON,
-        namesInstructionPlain: NAMES_INSTRUCTION_PLAIN,
-        namesFewshotJson: NAMES_FEWSHOT_JSON,
-        namesFewshotPlain: NAMES_FEWSHOT_PLAIN,
-        arm: namesArm,
-      },
+      { cases, schema: NAMES_SCHEMA, plain },
     );
 
     const scored = runs.map((run) => {
@@ -544,6 +614,7 @@ async function main() {
         withinTarget: run.error ? undefined : run.wallMs <= TARGET_MS,
         namesMatch,
         namesMatchPost,
+        postProcessed,
         ruleCheck,
         correct,
       };
@@ -560,7 +631,7 @@ async function main() {
     });
     const summary = { old: summarize(old), new: summarize(fresh) };
     log(`names/${namesArm}: ${JSON.stringify(summary)}`);
-    const outPath = path.join(outDir, `task-trial5-${Date.now()}-names-${namesArm}.json`);
+    const outPath = path.join(outDir, `task-trial6-${Date.now()}-names-${namesArm}.json`);
     await writeFile(
       outPath,
       JSON.stringify(
