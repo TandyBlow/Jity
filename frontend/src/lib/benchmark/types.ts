@@ -89,6 +89,9 @@ export type RunRecord = {
   /** Accept runs: did generation actually deliver the requested load? */
   completedLoad?: boolean;
   finishReason?: string | null;
+  /** Accept runs: the actual prompt sent and the full generated text. */
+  promptPreview?: string;
+  generatedText?: string;
   heap?: HeapSample;
   memory?: MemorySample;
   error?: string;

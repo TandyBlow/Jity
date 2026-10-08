@@ -427,12 +427,54 @@ export async function runAcceptMatrix(
     record.nominalMemoryTokens = memory;
     record.maxTokens = config.acceptOutputTokens;
     record.seed = seed;
-    await runCompletion(
-      wllama,
-      { prompt, max_tokens: config.acceptOutputTokens, seed },
-      hooks,
+    // Full prompt and generated text travel with the record: narrative
+    // quality claims need the actual inputs and outputs as evidence.
+    record.promptPreview = prompt;
+    const controller = new AbortController();
+    hooks.onController?.(controller);
+    let generatedText = "";
+    let lastUsage: CompletionTimings["usage"];
+    let lastFinish: string | null = null;
+    let lastTimings: CompletionTimings["timings"];
+    const started = performance.now();
+    try {
+      await wllama.createCompletion({
+        prompt,
+        max_tokens: config.acceptOutputTokens,
+        temperature: 0,
+        seed,
+        stream: true,
+        abortSignal: controller.signal,
+        onData: (chunk) => {
+          generatedText += chunk.choices?.[0]?.text ?? "";
+          if (chunk.usage) lastUsage = chunk.usage;
+          if (chunk.choices?.[0]?.finish_reason) {
+            lastFinish = chunk.choices[0].finish_reason;
+          }
+          if (chunk.timings) lastTimings = chunk.timings;
+        },
+      });
+    } catch (error) {
+      record.error = errorMessage(error);
+    }
+    record.wallMs = Math.round(performance.now() - started);
+    record.generatedText = generatedText;
+    // Streaming chunks carry usage/timings on their final frames; fall back
+    // to llama.cpp timings when the usage object never arrives.
+    Object.assign(
       record,
+      readTimings({
+        usage: lastUsage ?? {
+          prompt_tokens: lastTimings?.prompt_n,
+          completion_tokens: lastTimings?.predicted_n,
+        },
+        choices: lastFinish ? [{ finish_reason: lastFinish }] : [],
+        timings: lastTimings,
+      }),
     );
+    if ((record.cachedTokens ?? 0) > CACHE_HIT_WARNING_TOKENS && !record.error) {
+      record.error = `缓存污染警告：前缀命中 ${record.cachedTokens} tok，prefill 被低估`;
+    }
     // Count-only load check: finish_reason "length" also covers
     // context-exhaustion stops, so it cannot prove the requested tokens
     // were generated. See verdict.ts.
