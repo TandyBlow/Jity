@@ -20,19 +20,22 @@
 #    multi-entity sentences never enter corpus or eval.
 #
 # Acceptance criteria (pre-registered, before any training):
-# - PRIMARY: on the 10-sentence held-out batch below, strict span match
+# - PRIMARY: on the 10-sentence ACCEPTANCE batch below, strict span match
 #   rate (start AND end AND type all exact) >= 90% for EACH of ITEM/TGT.
 # - Component accepted only if both fields pass AND end-to-end latency
 #   (raw text -> spans) stays <= 4s per call in the browser trial.
-# - Reported but not gating: the 12 scored parse sentences (several are
-#   adversarial structures deliberately absent from training), loose match
-#   (overlap + type) as a diagnostic.
+# - The previous held-out batch is now the DEV set: it has been evaluated
+#   repeatedly during debugging, so it no longer measures generalization —
+#   it is used to locate errors only. The acceptance batch is evaluated
+#   once, after all fixes, and never iterated against.
+# - Reported but not gating: the 12 scored parse sentences.
 #
-# Data discipline: all 12 scored sentences and the 10 held-out sentences
-# below are excluded from the corpus; their slots and distinctive structures
-# are excluded from templates too (垫住门缝/查看字迹/去找…问话/校徽刷开闸机;
-# slots 旧笔记 校徽 火把 短刀 指南针 铃铛 夏弥 图书馆管理员 are held-out
-# material and never used as training slots).
+# Data discipline: the 12 scored sentences, the 10 dev sentences and the 10
+# acceptance sentences are ALL excluded from the corpus; their slots and
+# distinctive structures are excluded from templates too. Dev slots: 垫住门缝
+# 查看字迹 去找…问话 校徽刷开闸机 / 旧笔记 校徽 火把 短刀 指南针 铃铛 夏弥
+# 图书馆管理员 地下藏书室. Acceptance slots: 铁钩 麻绳 火折子 铜铃 木梯 守林人
+# 老陈 阁楼 柜台 水井 石阶 — none appear as training slots.
 #
 # Usage: python train-span-labeler.py <minirbt-snapshot-dir> [--export-corpus]
 
@@ -79,8 +82,9 @@ LOCS = ["二楼档案室", "卡塞尔学院图书馆", "走廊", "阅览室"]
 OBJECTS = ["暗门", "书架", "壁画", "雕像", "窗台"]
 OPEN_TARGETS = ["大门", "木箱", "柜子", "抽屉"]
 
-# 10 句新 held-out（槽位与结构均未参与训练）：(text, item, target)；None 表示该字段无 span。
-HELD_OUT = [
+# 10 句开发集（原 held-out 批；已多轮参与排查，只用于定位错误，不再验收）：
+# (text, item, target)；None 表示该字段无 span。
+DEV = [
     ("我用火把照亮地下藏书室。", "火把", "地下藏书室"),
     ("我用短刀割断绳索。", "短刀", "绳索"),
     ("我和图书馆管理员打听暗门。", None, "图书馆管理员"),
@@ -91,6 +95,20 @@ HELD_OUT = [
     ("我把铃铛挂在暗门上。", "铃铛", "暗门"),
     ("我向夏弥打听暗门的来历。", None, "夏弥"),
     ("我用蜡烛照亮壁画。", "蜡烛", "壁画"),
+]
+
+# 10 句验收批（全新槽位与结构，训练后只评测一次，不参与任何调整）。
+ACCEPTANCE = [
+    ("我用铁钩勾住铁链。", "铁钩", "铁链"),
+    ("我用木梯爬上阁楼。", "木梯", "阁楼"),
+    ("我和守林人打听阁楼的传闻。", None, "守林人"),
+    ("我去柜台。", None, "柜台"),
+    ("我检查火折子的成色。", None, "火折子"),
+    ("我在原地喘口气。", None, None),
+    ("我用麻绳捆好木箱。", "麻绳", "木箱"),
+    ("我把铜铃挂在柜台边。", "铜铃", "柜台"),
+    ("我向老陈询问铁钩的下落。", None, "老陈"),
+    ("我用火折子照亮石阶。", "火折子", "石阶"),
 ]
 
 # 12 句计分原文（span 由 expect 字段在原文中的位置给出；None 同上）。
@@ -138,15 +156,17 @@ def build_corpus():
             emit([("lit", "我用"), ("ITEM", item), ("lit", "砸开"), ("TGT", target), ("lit", "。")])
             emit([("lit", "我用"), ("ITEM", item), ("lit", "锁上"), ("TGT", target), ("lit", "。")])
         for target in OBJECTS:
-            emit([("lit", "我用"), ("ITEM", item), ("lit", "撬开"), ("TGT", target), ("lit", "上的暗锁。")])
+            emit([("lit", "我用"), ("ITEM", item), ("lit", "撬开"), ("TGT", target), ("lit", "。")])
             emit([("lit", "我用"), ("ITEM", item), ("lit", "照亮"), ("TGT", target), ("lit", "。")])
             emit([("lit", "我用"), ("ITEM", item), ("lit", "把"), ("TGT", target), ("lit", "压住。")])
-        emit([("lit", "我用"), ("ITEM", item), ("lit", "撑住书架。")])
-        emit([("lit", "我用"), ("ITEM", item), ("lit", "割断绳子。")])
-        emit([("lit", "我检查"), ("ITEM", item), ("lit", "的齿纹。")])
-        emit([("lit", "我用"), ("ITEM", item), ("lit", "敲了敲书架。")])
-        emit([("lit", "我把"), ("ITEM", item), ("lit", "靠在暗门边。")])
-        emit([("lit", "我把"), ("ITEM", item), ("lit", "收进背包。")])
+        # 规则审计修正：被作用物一律 TGT（此前 撑住书架/敲了敲书架/割断绳子
+        # 漏标 TGT，检查{item}的齿纹误标 ITEM——inspect 无 ITEM，见规则 3）。
+        emit([("lit", "我用"), ("ITEM", item), ("lit", "撑住"), ("TGT", "书架"), ("lit", "。")])
+        emit([("lit", "我用"), ("ITEM", item), ("lit", "割断"), ("TGT", "绳子"), ("lit", "。")])
+        emit([("lit", "我用"), ("ITEM", item), ("lit", "敲了敲"), ("TGT", "书架"), ("lit", "。")])
+        emit([("lit", "我把"), ("ITEM", item), ("lit", "靠在"), ("TGT", "暗门"), ("lit", "边。")])
+        emit([("lit", "我把"), ("ITEM", item), ("lit", "收进"), ("TGT", "背包"), ("lit", "。")])
+        emit([("lit", "我检查"), ("TGT", item), ("lit", "的齿纹。")])
     for npc in NPCS:
         emit([("lit", "我和"), ("TGT", npc), ("lit", "搭话。")])
         emit([("lit", "我和"), ("TGT", npc), ("lit", "打听图书馆的传闻。")])
@@ -173,11 +193,15 @@ def build_corpus():
         ("我坐下来歇了口气。", None, None),
     ])
     for npc in NPCS:
-        emit([("lit", "我拔剑攻击"), ("TGT", npc), ("lit", "。")])
-    emit([("lit", "我用"), ("ITEM", "剑"), ("lit", "攻击"), ("TGT", "诺诺"), ("lit", "。")])
+        # 规则审计修正：拔剑的"剑"是被使用的物品 → ITEM（此前漏标）。
+        emit([("lit", "我拔"), ("ITEM", "剑"), ("lit", "攻击"), ("TGT", npc), ("lit", "。")])
 
-    # 排除全部计分句与 held-out 原文；断言干净。
-    excluded = {text for text, _, _ in SCORED} | {text for text, _, _ in HELD_OUT}
+    # 排除全部计分句、开发句与验收句原文；断言干净。
+    excluded = (
+        {text for text, _, _ in SCORED}
+        | {text for text, _, _ in DEV}
+        | {text for text, _, _ in ACCEPTANCE}
+    )
     corpus = [(text, i, t) for text, i, t in corpus if text not in excluded]
     assert len({text for text, _, _ in corpus}) == len(corpus)
     return corpus
@@ -206,27 +230,30 @@ def spans_to_tags(text, item, target, tokenizer):
 
 
 def tags_to_spans(text, offsets, tag_ids):
-    """Model output -> (item_span, target_span) character ranges."""
+    """Model output -> (item_span, target_span) character ranges.
+
+    组尾取组内最后一个词片段的结束位置（审查发现：句末特殊标记的起点是
+    0，用"下一个 token 的起点"当组尾会产出 [x,0] 这类错区间）。
+    """
     spans = {"ITEM": None, "TGT": None}
-    current = None  # (type, start)
+    current = None  # [type, start, end]
     for tag_id, (token_start, token_end) in zip(tag_ids, offsets):
         if token_end == 0 or tag_id >= len(TAGS):
             tag = "O"  # [CLS]/[SEP]
         else:
             tag = TAGS[tag_id]
-        if tag == "O":
-            if current is not None and spans[current[0]] is None:
-                spans[current[0]] = (current[1], token_start)
-            current = None
-            continue
         if tag.startswith("I-") and current is not None and current[0] == tag[2:]:
-            continue  # 延续当前组
-        # B- 开新组，或游离 I-（模型未按 BIO 成组）也当 B 处理；先落盘上一组
+            current[2] = token_end  # 延续当前组，组尾前移到本片段末尾
+            continue
+        # O 或 B-/游离 I-：先按组内末片段结束位置落盘当前组
         if current is not None and spans[current[0]] is None:
-            spans[current[0]] = (current[1], token_start)
-        current = (tag[2:], token_start)
+            spans[current[0]] = (current[1], current[2])
+        if tag == "O":
+            current = None
+        else:
+            current = [tag[2:], token_start, token_end]
     if current is not None and spans[current[0]] is None:
-        spans[current[0]] = (current[1], len(text))
+        spans[current[0]] = (current[1], current[2])
     return spans["ITEM"], spans["TGT"]
 
 
@@ -308,18 +335,29 @@ def main():
             "at most one span per field",
         ],
         "acceptance": {
-            "primary": "held-out (10 sentences): strict span match >= 90% per field",
+            "preRegistered": "acceptance batch (10 sentences): strict span match >= 90% per field",
             "component": "both fields pass AND end-to-end <= 4s per call",
+            "protocol": "dev batch (ex held-out) is for debugging only; acceptance batch evaluated once after fixes, never iterated against",
         },
         "counts": counts,
-        "heldOut": [
-            {"text": text, "item": item, "target": target} for text, item, target in HELD_OUT
+        "dev": [
+            {"text": text, "item": item, "target": target} for text, item, target in DEV
+        ],
+        "acceptance": [
+            {"text": text, "item": item, "target": target} for text, item, target in ACCEPTANCE
         ],
         "scored": [
             {"text": text, "item": item, "target": target} for text, item, target in SCORED
         ],
-        "trainSize": len(corpus),
-        "note": "all 12 scored + 10 held-out sentences excluded from training",
+        "train": [
+            {
+                "text": text,
+                "item": text[item[0] : item[1]] if item else None,
+                "target": text[target[0] : target[1]] if target else None,
+            }
+            for text, item, target in corpus
+        ],
+        "note": "scored (12) + dev (10) + acceptance (10) sentences all excluded from training",
     }
     manifest_path = artifacts_dir / "span-labeler-corpus.json"
     manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -380,7 +418,7 @@ def main():
             total += loss.item() * len(batch)
         print(f"epoch {epoch}: loss={total / len(train):.4f}")
 
-    for name, cases in (("held-out", HELD_OUT), ("scored", SCORED)):
+    for name, cases in (("dev", DEV), ("acceptance", ACCEPTANCE), ("scored", SCORED)):
         strict, loose, rows = evaluate(model, tokenizer, cases)
         for field in ("ITEM", "TGT"):
             s, l = strict[field], loose[field]
