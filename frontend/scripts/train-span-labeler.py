@@ -15,9 +15,15 @@
 # 4. move / npc_talk: the location / the person -> TGT.
 # 5. Person titles stay inside the span ("古德里安教授" whole); title
 #    stripping is code-side post-processing, same as the names task.
-# 6. Spans are minimal: modifiers are excluded ("那扇书架后的暗门" -> 暗门).
+# 6. Spans are the HEAD NOUN only: modifiers are stripped and labeled O —
+#    "生锈的铁门钥匙" -> 铁门钥匙, "那扇书架后的暗门" -> 暗门, "那把断剑"
+#    -> 断剑. Training and span scoring both follow this rule (the parse
+#    task's own expect strings keep their original excerpts; earlier
+#    reports keep their original scores).
 # 7. At most one span per field per sentence (the task is single-entity);
 #    multi-entity sentences never enter corpus or eval.
+# 8. MENTIONED-but-not-used objects are O, not ITEM: "我想起了X" / "X还在
+#    背包里" label nothing — the tag follows the verb phrase, not the noun.
 #
 # Acceptance criteria (pre-registered, before any training):
 # - PRIMARY: on the 10-sentence ACCEPTANCE batch below, strict span match
@@ -97,26 +103,29 @@ DEV = [
     ("我用蜡烛照亮壁画。", "蜡烛", "壁画"),
 ]
 
-# 10 句验收批（全新槽位与结构，训练后只评测一次，不参与任何调整）。
+# 10 句验收批 v2（槽位 铜哨 断桨 火钳 麻袋 湿柴 马夫 守井人 后院 井台 货架
+# 门环 灰堆 灶膛 鞘 全不进训练；含 item-only、提及不标、修饰语、单字中心语
+# 结构）。第一批验收句已被评过一次，按协议不再作验收用。
 ACCEPTANCE = [
-    ("我用铁钩勾住铁链。", "铁钩", "铁链"),
-    ("我用木梯爬上阁楼。", "木梯", "阁楼"),
-    ("我和守林人打听阁楼的传闻。", None, "守林人"),
-    ("我去柜台。", None, "柜台"),
-    ("我检查火折子的成色。", None, "火折子"),
-    ("我在原地喘口气。", None, None),
-    ("我用麻绳捆好木箱。", "麻绳", "木箱"),
-    ("我把铜铃挂在柜台边。", "铜铃", "柜台"),
-    ("我向老陈询问铁钩的下落。", None, "老陈"),
-    ("我用火折子照亮石阶。", "火折子", "石阶"),
+    ("我把火钳握在手里。", "火钳", None),
+    ("我想起了断桨。", None, None),
+    ("我用铜哨示意马夫。", "铜哨", "马夫"),
+    ("我检查门环。", None, "门环"),
+    ("我在原地蹲了一会儿。", None, None),
+    ("我用湿柴塞进灶膛。", "湿柴", "灶膛"),
+    ("我用那把断剑撬开后院的门。", "断剑", "门"),
+    ("我向马夫打听水井的位置。", None, "马夫"),
+    ("断剑还在鞘里。", None, None),
+    ("我用蒙尘的火钳拨开灰堆。", "火钳", "灰堆"),
 ]
 
-# 12 句计分原文（span 由 expect 字段在原文中的位置给出；None 同上）。
+# 12 句计分原文。标注规则 v2 起按中心语评分（rule 6）：item 期望改
+# "铁门钥匙"；parse LLM 任务的 expect 摘录不变，历史报告保留原评分。
 SCORED = [
     ("我用铜钥匙打开大门。", "铜钥匙", "大门"),
     ("我和诺诺打听图书馆的传闻。", None, "诺诺"),
     ("我去二楼档案室查资料。", None, "二楼档案室"),
-    ("我使用生锈的铁门钥匙打开大门。", "生锈的铁门钥匙", "大门"),
+    ("我使用生锈的铁门钥匙打开大门。", "铁门钥匙", "大门"),
     ("我和执行部学生搭话。", None, "执行部学生"),
     ("我检查那扇书架后的暗门。", None, "暗门"),
     ("我拔剑攻击诺诺。", "剑", "诺诺"),
@@ -195,6 +204,37 @@ def build_corpus():
     for npc in NPCS:
         # 规则审计修正：拔剑的"剑"是被使用的物品 → ITEM（此前漏标）。
         emit([("lit", "我拔"), ("ITEM", "剑"), ("lit", "攻击"), ("TGT", npc), ("lit", "。")])
+
+    # ── 覆盖补充（用户指示）：item-only、提及不标、同物品跨角色、
+    #    修饰语句式、实体长度变化。─────────────────────────────────────
+    # item-only：处置物品但没有明确作用对象。
+    for item in ITEMS:
+        emit([("lit", "我把"), ("ITEM", item), ("lit", "握紧了。")])
+        emit([("lit", "我把"), ("ITEM", item), ("lit", "攥在手里。")])
+        emit([("lit", "我把"), ("ITEM", item), ("lit", "擦了又擦。")])
+        emit([("lit", "我把"), ("ITEM", item), ("lit", "举过头顶。")])
+        emit([("lit", "我把"), ("ITEM", item), ("lit", "收好。")])
+    # 提及不标（规则 8）：物品名词出现但无使用动作，双字段皆空。
+    for item in ITEMS:
+        emit([("lit", "我想起了"), ("lit", item), ("lit", "。")])
+        emit([("lit", item), ("lit", "还在背包里。")])
+        emit([("lit", "背包里只有"), ("lit", item), ("lit", "。")])
+    # 同物品跨角色：同一名词在 inspect 句作 TGT、在 use 句作 ITEM；
+    # 物品与物品互相作用（i1 为 ITEM、i2 为 TGT）。
+    for item in ITEMS:
+        emit([("lit", "我检查"), ("TGT", item), ("lit", "。")])
+    for item_a in ITEMS:
+        for item_b in ITEMS:
+            if item_a != item_b:
+                emit([("lit", "我用"), ("ITEM", item_a), ("lit", "撬开"), ("TGT", item_b), ("lit", "。")])
+    # 修饰语句式（规则 6）：修饰语标 O，只标中心语。
+    for item in ITEMS:
+        emit([("lit", "我用生锈的"), ("ITEM", item), ("lit", "打开"), ("TGT", "大门"), ("lit", "。")])
+        emit([("lit", "我用那把"), ("ITEM", item), ("lit", "撬开"), ("TGT", "木箱"), ("lit", "。")])
+    for obj in OBJECTS:
+        emit([("lit", "我检查上锁的"), ("TGT", obj), ("lit", "。")])
+    for loc in LOCS:
+        emit([("lit", "我走进昏暗的"), ("TGT", loc), ("lit", "。")])
 
     # 排除全部计分句、开发句与验收句原文；断言干净。
     excluded = (
@@ -331,13 +371,16 @@ def main():
             "inspect: inspected object=TGT (no ITEM); 检查X的Y -> X=TGT, Y=O",
             "move/npc_talk: location/person=TGT",
             "titles stay in person spans; stripping is code-side",
-            "spans minimal (modifiers excluded)",
+            "rule 6 (v2): spans are the HEAD NOUN; modifiers stripped and O — "
+            "生锈的铁门钥匙->铁门钥匙, 那扇书架后的暗门->暗门, 那把断剑->断剑; "
+            "training and span scoring both follow it",
             "at most one span per field",
+            "rule 8: mentioned-but-not-used objects are O (tag follows the verb phrase, not the noun)",
         ],
         "acceptance": {
-            "preRegistered": "acceptance batch (10 sentences): strict span match >= 90% per field",
+            "preRegistered": "acceptance batch v2 (10 fresh sentences): strict span match >= 90% per field",
             "component": "both fields pass AND end-to-end <= 4s per call",
-            "protocol": "dev batch (ex held-out) is for debugging only; acceptance batch evaluated once after fixes, never iterated against",
+            "protocol": "dev batch is for debugging/comparison only; acceptance v2 evaluated once after this coverage round; acceptance v1 was already evaluated once and is retired",
         },
         "counts": counts,
         "dev": [

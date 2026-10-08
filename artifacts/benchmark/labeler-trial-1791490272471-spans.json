@@ -1,0 +1,1330 @@
+{
+  "hostCpu": "13th Gen Intel(R) Core(TM) i7-13700H",
+  "task": "span-labeling",
+  "model": {
+    "dir": "/models/minirbt-h256-span",
+    "base": "hfl/minirbt-h256 (~10.4M params, token-classification head)",
+    "files": {
+      "onnx/model.onnx": 41256614,
+      "onnx/model_quantized.onnx": 10577889
+    }
+  },
+  "runtime": {
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.0.0 Safari/537.36 Edg/153.0.0.0",
+    "crossOriginIsolated": true,
+    "timingScope": "end-to-end per call: text -> tokenize -> feed -> run -> argmax -> span decode",
+    "threadNote": "single-thread only; >1-thread wasm session create hangs in this environment"
+  },
+  "targetMs": 4000,
+  "repeatsPerCase": 10,
+  "acceptance": {
+    "preRegistered": "acceptance batch strict span match >= 90% per field AND end-to-end <= 4s; dev batch (ex held-out) is diagnostics only",
+    "gate": {
+      "itemStrictRate": "8/10",
+      "targetStrictRate": "7/10",
+      "itemPass": false,
+      "targetPass": false,
+      "latencyAllWithinTarget": true,
+      "verdict": "rejected"
+    }
+  },
+  "arms": [
+    {
+      "name": "q8-t1",
+      "status": "ok",
+      "threads": 1,
+      "file": "onnx/model_quantized.onnx",
+      "loadMs": 3929,
+      "coldMs": 197,
+      "cases": [
+        {
+          "batch": "dev",
+          "text": "我用火把照亮地下藏书室。",
+          "expectItem": "火把",
+          "expectTarget": "地下藏书室",
+          "predItem": "火",
+          "predTarget": "地",
+          "itemSpan": [
+            2,
+            3
+          ],
+          "targetSpan": [
+            6,
+            7
+          ],
+          "itemStrict": false,
+          "itemLoose": true,
+          "targetStrict": false,
+          "targetLoose": true,
+          "wallMs": 14.65,
+          "withinTarget": true
+        },
+        {
+          "batch": "dev",
+          "text": "我用短刀割断绳索。",
+          "expectItem": "短刀",
+          "expectTarget": "绳索",
+          "predItem": "短刀",
+          "predTarget": "绳索",
+          "itemSpan": [
+            2,
+            4
+          ],
+          "targetSpan": [
+            6,
+            8
+          ],
+          "itemStrict": true,
+          "itemLoose": true,
+          "targetStrict": true,
+          "targetLoose": true,
+          "wallMs": 11.23,
+          "withinTarget": true
+        },
+        {
+          "batch": "dev",
+          "text": "我和图书馆管理员打听暗门。",
+          "expectItem": null,
+          "expectTarget": "图书馆管理员",
+          "predItem": null,
+          "predTarget": "图书馆",
+          "itemSpan": null,
+          "targetSpan": [
+            2,
+            5
+          ],
+          "itemStrict": true,
+          "itemLoose": true,
+          "targetStrict": false,
+          "targetLoose": true,
+          "wallMs": 11.805,
+          "withinTarget": true
+        },
+        {
+          "batch": "dev",
+          "text": "我去地下藏书室。",
+          "expectItem": null,
+          "expectTarget": "地下藏书室",
+          "predItem": null,
+          "predTarget": "书室",
+          "itemSpan": null,
+          "targetSpan": [
+            5,
+            7
+          ],
+          "itemStrict": true,
+          "itemLoose": true,
+          "targetStrict": false,
+          "targetLoose": true,
+          "wallMs": 9.49,
+          "withinTarget": true
+        },
+        {
+          "batch": "dev",
+          "text": "我检查雕像的底座。",
+          "expectItem": null,
+          "expectTarget": "雕像",
+          "predItem": null,
+          "predTarget": "雕像",
+          "itemSpan": null,
+          "targetSpan": [
+            3,
+            5
+          ],
+          "itemStrict": true,
+          "itemLoose": true,
+          "targetStrict": true,
+          "targetLoose": true,
+          "wallMs": 9.915,
+          "withinTarget": true
+        },
+        {
+          "batch": "dev",
+          "text": "我在原地休息。",
+          "expectItem": null,
+          "expectTarget": null,
+          "predItem": null,
+          "predTarget": null,
+          "itemSpan": null,
+          "targetSpan": null,
+          "itemStrict": true,
+          "itemLoose": true,
+          "targetStrict": true,
+          "targetLoose": true,
+          "wallMs": 6.065,
+          "withinTarget": true
+        },
+        {
+          "batch": "dev",
+          "text": "我用指南针校准方向。",
+          "expectItem": "指南针",
+          "expectTarget": null,
+          "predItem": null,
+          "predTarget": "校准",
+          "itemSpan": null,
+          "targetSpan": [
+            5,
+            7
+          ],
+          "itemStrict": false,
+          "itemLoose": false,
+          "targetStrict": false,
+          "targetLoose": false,
+          "wallMs": 9.97,
+          "withinTarget": true
+        },
+        {
+          "batch": "dev",
+          "text": "我把铃铛挂在暗门上。",
+          "expectItem": "铃铛",
+          "expectTarget": "暗门",
+          "predItem": "铃铛",
+          "predTarget": "暗门",
+          "itemSpan": [
+            2,
+            4
+          ],
+          "targetSpan": [
+            6,
+            8
+          ],
+          "itemStrict": true,
+          "itemLoose": true,
+          "targetStrict": true,
+          "targetLoose": true,
+          "wallMs": 11.33,
+          "withinTarget": true
+        },
+        {
+          "batch": "dev",
+          "text": "我向夏弥打听暗门的来历。",
+          "expectItem": null,
+          "expectTarget": "夏弥",
+          "predItem": null,
+          "predTarget": "夏",
+          "itemSpan": null,
+          "targetSpan": [
+            2,
+            3
+          ],
+          "itemStrict": true,
+          "itemLoose": true,
+          "targetStrict": false,
+          "targetLoose": true,
+          "wallMs": 12.42,
+          "withinTarget": true
+        },
+        {
+          "batch": "dev",
+          "text": "我用蜡烛照亮壁画。",
+          "expectItem": "蜡烛",
+          "expectTarget": "壁画",
+          "predItem": "蜡烛",
+          "predTarget": "壁画",
+          "itemSpan": [
+            2,
+            4
+          ],
+          "targetSpan": [
+            6,
+            8
+          ],
+          "itemStrict": true,
+          "itemLoose": true,
+          "targetStrict": true,
+          "targetLoose": true,
+          "wallMs": 10.895,
+          "withinTarget": true
+        },
+        {
+          "batch": "acceptance",
+          "text": "我用铁钩勾住铁链。",
+          "expectItem": "铁钩",
+          "expectTarget": "铁链",
+          "predItem": "铁钩",
+          "predTarget": "铁链",
+          "itemSpan": [
+            2,
+            4
+          ],
+          "targetSpan": [
+            6,
+            8
+          ],
+          "itemStrict": true,
+          "itemLoose": true,
+          "targetStrict": true,
+          "targetLoose": true,
+          "wallMs": 12.48,
+          "withinTarget": true
+        },
+        {
+          "batch": "acceptance",
+          "text": "我用木梯爬上阁楼。",
+          "expectItem": "木梯",
+          "expectTarget": "阁楼",
+          "predItem": "木",
+          "predTarget": "阁楼",
+          "itemSpan": [
+            2,
+            3
+          ],
+          "targetSpan": [
+            6,
+            8
+          ],
+          "itemStrict": false,
+          "itemLoose": true,
+          "targetStrict": true,
+          "targetLoose": true,
+          "wallMs": 11.11,
+          "withinTarget": true
+        },
+        {
+          "batch": "acceptance",
+          "text": "我和守林人打听阁楼的传闻。",
+          "expectItem": null,
+          "expectTarget": "守林人",
+          "predItem": null,
+          "predTarget": "林人",
+          "itemSpan": null,
+          "targetSpan": [
+            3,
+            5
+          ],
+          "itemStrict": true,
+          "itemLoose": true,
+          "targetStrict": false,
+          "targetLoose": true,
+          "wallMs": 12.06,
+          "withinTarget": true
+        },
+        {
+          "batch": "acceptance",
+          "text": "我去柜台。",
+          "expectItem": null,
+          "expectTarget": "柜台",
+          "predItem": null,
+          "predTarget": "柜台",
+          "itemSpan": null,
+          "targetSpan": [
+            2,
+            4
+          ],
+          "itemStrict": true,
+          "itemLoose": true,
+          "targetStrict": true,
+          "targetLoose": true,
+          "wallMs": 7.05,
+          "withinTarget": true
+        },
+        {
+          "batch": "acceptance",
+          "text": "我检查火折子的成色。",
+          "expectItem": null,
+          "expectTarget": "火折子",
+          "predItem": null,
+          "predTarget": "火",
+          "itemSpan": null,
+          "targetSpan": [
+            3,
+            4
+          ],
+          "itemStrict": true,
+          "itemLoose": true,
+          "targetStrict": false,
+          "targetLoose": true,
+          "wallMs": 9.805,
+          "withinTarget": true
+        },
+        {
+          "batch": "acceptance",
+          "text": "我在原地喘口气。",
+          "expectItem": null,
+          "expectTarget": null,
+          "predItem": null,
+          "predTarget": null,
+          "itemSpan": null,
+          "targetSpan": null,
+          "itemStrict": true,
+          "itemLoose": true,
+          "targetStrict": true,
+          "targetLoose": true,
+          "wallMs": 8.52,
+          "withinTarget": true
+        },
+        {
+          "batch": "acceptance",
+          "text": "我用麻绳捆好木箱。",
+          "expectItem": "麻绳",
+          "expectTarget": "木箱",
+          "predItem": "麻绳",
+          "predTarget": "木箱",
+          "itemSpan": [
+            2,
+            4
+          ],
+          "targetSpan": [
+            6,
+            8
+          ],
+          "itemStrict": true,
+          "itemLoose": true,
+          "targetStrict": true,
+          "targetLoose": true,
+          "wallMs": 9.795,
+          "withinTarget": true
+        },
+        {
+          "batch": "acceptance",
+          "text": "我把铜铃挂在柜台边。",
+          "expectItem": "铜铃",
+          "expectTarget": "柜台",
+          "predItem": "铜铃",
+          "predTarget": "柜台",
+          "itemSpan": [
+            2,
+            4
+          ],
+          "targetSpan": [
+            6,
+            8
+          ],
+          "itemStrict": true,
+          "itemLoose": true,
+          "targetStrict": true,
+          "targetLoose": true,
+          "wallMs": 9.815,
+          "withinTarget": true
+        },
+        {
+          "batch": "acceptance",
+          "text": "我向老陈询问铁钩的下落。",
+          "expectItem": null,
+          "expectTarget": "老陈",
+          "predItem": null,
+          "predTarget": null,
+          "itemSpan": null,
+          "targetSpan": null,
+          "itemStrict": true,
+          "itemLoose": true,
+          "targetStrict": false,
+          "targetLoose": false,
+          "wallMs": 11.125,
+          "withinTarget": true
+        },
+        {
+          "batch": "acceptance",
+          "text": "我用火折子照亮石阶。",
+          "expectItem": "火折子",
+          "expectTarget": "石阶",
+          "predItem": "火",
+          "predTarget": "石阶",
+          "itemSpan": [
+            2,
+            3
+          ],
+          "targetSpan": [
+            7,
+            9
+          ],
+          "itemStrict": false,
+          "itemLoose": true,
+          "targetStrict": true,
+          "targetLoose": true,
+          "wallMs": 10.505,
+          "withinTarget": true
+        },
+        {
+          "batch": "scored",
+          "text": "我用铜钥匙打开大门。",
+          "expectItem": "铜钥匙",
+          "expectTarget": "大门",
+          "predItem": "铜钥匙",
+          "predTarget": "大门",
+          "itemSpan": [
+            2,
+            5
+          ],
+          "targetSpan": [
+            7,
+            9
+          ],
+          "itemStrict": true,
+          "itemLoose": true,
+          "targetStrict": true,
+          "targetLoose": true,
+          "wallMs": 9.54,
+          "withinTarget": true
+        },
+        {
+          "batch": "scored",
+          "text": "我和诺诺打听图书馆的传闻。",
+          "expectItem": null,
+          "expectTarget": "诺诺",
+          "predItem": null,
+          "predTarget": "诺诺",
+          "itemSpan": null,
+          "targetSpan": [
+            2,
+            4
+          ],
+          "itemStrict": true,
+          "itemLoose": true,
+          "targetStrict": true,
+          "targetLoose": true,
+          "wallMs": 11.965,
+          "withinTarget": true
+        },
+        {
+          "batch": "scored",
+          "text": "我去二楼档案室查资料。",
+          "expectItem": null,
+          "expectTarget": "二楼档案室",
+          "predItem": null,
+          "predTarget": "二楼档案室",
+          "itemSpan": null,
+          "targetSpan": [
+            2,
+            7
+          ],
+          "itemStrict": true,
+          "itemLoose": true,
+          "targetStrict": true,
+          "targetLoose": true,
+          "wallMs": 11.17,
+          "withinTarget": true
+        },
+        {
+          "batch": "scored",
+          "text": "我使用生锈的铁门钥匙打开大门。",
+          "expectItem": "生锈的铁门钥匙",
+          "expectTarget": "大门",
+          "predItem": "铁门钥匙",
+          "predTarget": "大门",
+          "itemSpan": [
+            6,
+            10
+          ],
+          "targetSpan": [
+            12,
+            14
+          ],
+          "itemStrict": false,
+          "itemLoose": true,
+          "targetStrict": true,
+          "targetLoose": true,
+          "wallMs": 13.845,
+          "withinTarget": true
+        },
+        {
+          "batch": "scored",
+          "text": "我和执行部学生搭话。",
+          "expectItem": null,
+          "expectTarget": "执行部学生",
+          "predItem": null,
+          "predTarget": "执行部学生",
+          "itemSpan": null,
+          "targetSpan": [
+            2,
+            7
+          ],
+          "itemStrict": true,
+          "itemLoose": true,
+          "targetStrict": true,
+          "targetLoose": true,
+          "wallMs": 9.91,
+          "withinTarget": true
+        },
+        {
+          "batch": "scored",
+          "text": "我检查那扇书架后的暗门。",
+          "expectItem": null,
+          "expectTarget": "暗门",
+          "predItem": null,
+          "predTarget": "扇",
+          "itemSpan": null,
+          "targetSpan": [
+            4,
+            5
+          ],
+          "itemStrict": true,
+          "itemLoose": true,
+          "targetStrict": false,
+          "targetLoose": false,
+          "wallMs": 12.18,
+          "withinTarget": true
+        },
+        {
+          "batch": "scored",
+          "text": "我拔剑攻击诺诺。",
+          "expectItem": "剑",
+          "expectTarget": "诺诺",
+          "predItem": "剑",
+          "predTarget": "诺诺",
+          "itemSpan": [
+            2,
+            3
+          ],
+          "targetSpan": [
+            5,
+            7
+          ],
+          "itemStrict": true,
+          "itemLoose": true,
+          "targetStrict": true,
+          "targetLoose": true,
+          "wallMs": 11.595,
+          "withinTarget": true
+        },
+        {
+          "batch": "scored",
+          "text": "我在原地休息一会儿。",
+          "expectItem": null,
+          "expectTarget": null,
+          "predItem": null,
+          "predTarget": null,
+          "itemSpan": null,
+          "targetSpan": null,
+          "itemStrict": true,
+          "itemLoose": true,
+          "targetStrict": true,
+          "targetLoose": true,
+          "wallMs": 10.76,
+          "withinTarget": true
+        },
+        {
+          "batch": "scored",
+          "text": "我仔细查看旧笔记里的字迹。",
+          "expectItem": null,
+          "expectTarget": "旧笔记",
+          "predItem": null,
+          "predTarget": "旧笔",
+          "itemSpan": null,
+          "targetSpan": [
+            5,
+            7
+          ],
+          "itemStrict": true,
+          "itemLoose": true,
+          "targetStrict": false,
+          "targetLoose": true,
+          "wallMs": 14.385,
+          "withinTarget": true
+        },
+        {
+          "batch": "scored",
+          "text": "我用旧笔记垫住门缝。",
+          "expectItem": "旧笔记",
+          "expectTarget": "门缝",
+          "predItem": "旧笔",
+          "predTarget": "门缝",
+          "itemSpan": [
+            2,
+            4
+          ],
+          "targetSpan": [
+            7,
+            9
+          ],
+          "itemStrict": false,
+          "itemLoose": true,
+          "targetStrict": true,
+          "targetLoose": true,
+          "wallMs": 11.37,
+          "withinTarget": true
+        },
+        {
+          "batch": "scored",
+          "text": "我去找执行部学生问话。",
+          "expectItem": null,
+          "expectTarget": "执行部学生",
+          "predItem": null,
+          "predTarget": "执行部学生",
+          "itemSpan": null,
+          "targetSpan": [
+            3,
+            8
+          ],
+          "itemStrict": true,
+          "itemLoose": true,
+          "targetStrict": true,
+          "targetLoose": true,
+          "wallMs": 11.755,
+          "withinTarget": true
+        },
+        {
+          "batch": "scored",
+          "text": "我用路明非的校徽刷开闸机。",
+          "expectItem": "校徽",
+          "expectTarget": "闸机",
+          "predItem": "路明非",
+          "predTarget": "校徽",
+          "itemSpan": [
+            2,
+            5
+          ],
+          "targetSpan": [
+            6,
+            8
+          ],
+          "itemStrict": false,
+          "itemLoose": false,
+          "targetStrict": false,
+          "targetLoose": false,
+          "wallMs": 13.455,
+          "withinTarget": true
+        }
+      ]
+    },
+    {
+      "name": "fp32-t1",
+      "status": "ok",
+      "threads": 1,
+      "file": "onnx/model.onnx",
+      "loadMs": 4312,
+      "coldMs": 149,
+      "cases": [
+        {
+          "batch": "dev",
+          "text": "我用火把照亮地下藏书室。",
+          "expectItem": "火把",
+          "expectTarget": "地下藏书室",
+          "predItem": "火",
+          "predTarget": "地",
+          "itemSpan": [
+            2,
+            3
+          ],
+          "targetSpan": [
+            6,
+            7
+          ],
+          "itemStrict": false,
+          "itemLoose": true,
+          "targetStrict": false,
+          "targetLoose": true,
+          "wallMs": 15.485,
+          "withinTarget": true
+        },
+        {
+          "batch": "dev",
+          "text": "我用短刀割断绳索。",
+          "expectItem": "短刀",
+          "expectTarget": "绳索",
+          "predItem": "短刀",
+          "predTarget": "绳索",
+          "itemSpan": [
+            2,
+            4
+          ],
+          "targetSpan": [
+            6,
+            8
+          ],
+          "itemStrict": true,
+          "itemLoose": true,
+          "targetStrict": true,
+          "targetLoose": true,
+          "wallMs": 14.05,
+          "withinTarget": true
+        },
+        {
+          "batch": "dev",
+          "text": "我和图书馆管理员打听暗门。",
+          "expectItem": null,
+          "expectTarget": "图书馆管理员",
+          "predItem": null,
+          "predTarget": "图书馆",
+          "itemSpan": null,
+          "targetSpan": [
+            2,
+            5
+          ],
+          "itemStrict": true,
+          "itemLoose": true,
+          "targetStrict": false,
+          "targetLoose": true,
+          "wallMs": 16.035,
+          "withinTarget": true
+        },
+        {
+          "batch": "dev",
+          "text": "我去地下藏书室。",
+          "expectItem": null,
+          "expectTarget": "地下藏书室",
+          "predItem": null,
+          "predTarget": "书室",
+          "itemSpan": null,
+          "targetSpan": [
+            5,
+            7
+          ],
+          "itemStrict": true,
+          "itemLoose": true,
+          "targetStrict": false,
+          "targetLoose": true,
+          "wallMs": 10.575,
+          "withinTarget": true
+        },
+        {
+          "batch": "dev",
+          "text": "我检查雕像的底座。",
+          "expectItem": null,
+          "expectTarget": "雕像",
+          "predItem": null,
+          "predTarget": "雕像",
+          "itemSpan": null,
+          "targetSpan": [
+            3,
+            5
+          ],
+          "itemStrict": true,
+          "itemLoose": true,
+          "targetStrict": true,
+          "targetLoose": true,
+          "wallMs": 10.54,
+          "withinTarget": true
+        },
+        {
+          "batch": "dev",
+          "text": "我在原地休息。",
+          "expectItem": null,
+          "expectTarget": null,
+          "predItem": null,
+          "predTarget": null,
+          "itemSpan": null,
+          "targetSpan": null,
+          "itemStrict": true,
+          "itemLoose": true,
+          "targetStrict": true,
+          "targetLoose": true,
+          "wallMs": 9.69,
+          "withinTarget": true
+        },
+        {
+          "batch": "dev",
+          "text": "我用指南针校准方向。",
+          "expectItem": "指南针",
+          "expectTarget": null,
+          "predItem": null,
+          "predTarget": "校准",
+          "itemSpan": null,
+          "targetSpan": [
+            5,
+            7
+          ],
+          "itemStrict": false,
+          "itemLoose": false,
+          "targetStrict": false,
+          "targetLoose": false,
+          "wallMs": 12.7,
+          "withinTarget": true
+        },
+        {
+          "batch": "dev",
+          "text": "我把铃铛挂在暗门上。",
+          "expectItem": "铃铛",
+          "expectTarget": "暗门",
+          "predItem": "铃铛",
+          "predTarget": "暗门",
+          "itemSpan": [
+            2,
+            4
+          ],
+          "targetSpan": [
+            6,
+            8
+          ],
+          "itemStrict": true,
+          "itemLoose": true,
+          "targetStrict": true,
+          "targetLoose": true,
+          "wallMs": 12.49,
+          "withinTarget": true
+        },
+        {
+          "batch": "dev",
+          "text": "我向夏弥打听暗门的来历。",
+          "expectItem": null,
+          "expectTarget": "夏弥",
+          "predItem": null,
+          "predTarget": "夏",
+          "itemSpan": null,
+          "targetSpan": [
+            2,
+            3
+          ],
+          "itemStrict": true,
+          "itemLoose": true,
+          "targetStrict": false,
+          "targetLoose": true,
+          "wallMs": 11.05,
+          "withinTarget": true
+        },
+        {
+          "batch": "dev",
+          "text": "我用蜡烛照亮壁画。",
+          "expectItem": "蜡烛",
+          "expectTarget": "壁画",
+          "predItem": "蜡烛",
+          "predTarget": "壁画",
+          "itemSpan": [
+            2,
+            4
+          ],
+          "targetSpan": [
+            6,
+            8
+          ],
+          "itemStrict": true,
+          "itemLoose": true,
+          "targetStrict": true,
+          "targetLoose": true,
+          "wallMs": 10.78,
+          "withinTarget": true
+        },
+        {
+          "batch": "acceptance",
+          "text": "我用铁钩勾住铁链。",
+          "expectItem": "铁钩",
+          "expectTarget": "铁链",
+          "predItem": "铁钩",
+          "predTarget": "铁链",
+          "itemSpan": [
+            2,
+            4
+          ],
+          "targetSpan": [
+            6,
+            8
+          ],
+          "itemStrict": true,
+          "itemLoose": true,
+          "targetStrict": true,
+          "targetLoose": true,
+          "wallMs": 9.075,
+          "withinTarget": true
+        },
+        {
+          "batch": "acceptance",
+          "text": "我用木梯爬上阁楼。",
+          "expectItem": "木梯",
+          "expectTarget": "阁楼",
+          "predItem": "木",
+          "predTarget": "阁楼",
+          "itemSpan": [
+            2,
+            3
+          ],
+          "targetSpan": [
+            6,
+            8
+          ],
+          "itemStrict": false,
+          "itemLoose": true,
+          "targetStrict": true,
+          "targetLoose": true,
+          "wallMs": 7.995,
+          "withinTarget": true
+        },
+        {
+          "batch": "acceptance",
+          "text": "我和守林人打听阁楼的传闻。",
+          "expectItem": null,
+          "expectTarget": "守林人",
+          "predItem": null,
+          "predTarget": "林人",
+          "itemSpan": null,
+          "targetSpan": [
+            3,
+            5
+          ],
+          "itemStrict": true,
+          "itemLoose": true,
+          "targetStrict": false,
+          "targetLoose": true,
+          "wallMs": 10.275,
+          "withinTarget": true
+        },
+        {
+          "batch": "acceptance",
+          "text": "我去柜台。",
+          "expectItem": null,
+          "expectTarget": "柜台",
+          "predItem": null,
+          "predTarget": "柜台",
+          "itemSpan": null,
+          "targetSpan": [
+            2,
+            4
+          ],
+          "itemStrict": true,
+          "itemLoose": true,
+          "targetStrict": true,
+          "targetLoose": true,
+          "wallMs": 8.31,
+          "withinTarget": true
+        },
+        {
+          "batch": "acceptance",
+          "text": "我检查火折子的成色。",
+          "expectItem": null,
+          "expectTarget": "火折子",
+          "predItem": null,
+          "predTarget": "火",
+          "itemSpan": null,
+          "targetSpan": [
+            3,
+            4
+          ],
+          "itemStrict": true,
+          "itemLoose": true,
+          "targetStrict": false,
+          "targetLoose": true,
+          "wallMs": 7.94,
+          "withinTarget": true
+        },
+        {
+          "batch": "acceptance",
+          "text": "我在原地喘口气。",
+          "expectItem": null,
+          "expectTarget": null,
+          "predItem": null,
+          "predTarget": null,
+          "itemSpan": null,
+          "targetSpan": null,
+          "itemStrict": true,
+          "itemLoose": true,
+          "targetStrict": true,
+          "targetLoose": true,
+          "wallMs": 13.175,
+          "withinTarget": true
+        },
+        {
+          "batch": "acceptance",
+          "text": "我用麻绳捆好木箱。",
+          "expectItem": "麻绳",
+          "expectTarget": "木箱",
+          "predItem": "麻绳",
+          "predTarget": "木箱",
+          "itemSpan": [
+            2,
+            4
+          ],
+          "targetSpan": [
+            6,
+            8
+          ],
+          "itemStrict": true,
+          "itemLoose": true,
+          "targetStrict": true,
+          "targetLoose": true,
+          "wallMs": 14.295,
+          "withinTarget": true
+        },
+        {
+          "batch": "acceptance",
+          "text": "我把铜铃挂在柜台边。",
+          "expectItem": "铜铃",
+          "expectTarget": "柜台",
+          "predItem": "铜铃",
+          "predTarget": "柜台",
+          "itemSpan": [
+            2,
+            4
+          ],
+          "targetSpan": [
+            6,
+            8
+          ],
+          "itemStrict": true,
+          "itemLoose": true,
+          "targetStrict": true,
+          "targetLoose": true,
+          "wallMs": 14.755,
+          "withinTarget": true
+        },
+        {
+          "batch": "acceptance",
+          "text": "我向老陈询问铁钩的下落。",
+          "expectItem": null,
+          "expectTarget": "老陈",
+          "predItem": null,
+          "predTarget": null,
+          "itemSpan": null,
+          "targetSpan": null,
+          "itemStrict": true,
+          "itemLoose": true,
+          "targetStrict": false,
+          "targetLoose": false,
+          "wallMs": 13.315,
+          "withinTarget": true
+        },
+        {
+          "batch": "acceptance",
+          "text": "我用火折子照亮石阶。",
+          "expectItem": "火折子",
+          "expectTarget": "石阶",
+          "predItem": "火",
+          "predTarget": "石阶",
+          "itemSpan": [
+            2,
+            3
+          ],
+          "targetSpan": [
+            7,
+            9
+          ],
+          "itemStrict": false,
+          "itemLoose": true,
+          "targetStrict": true,
+          "targetLoose": true,
+          "wallMs": 17.36,
+          "withinTarget": true
+        },
+        {
+          "batch": "scored",
+          "text": "我用铜钥匙打开大门。",
+          "expectItem": "铜钥匙",
+          "expectTarget": "大门",
+          "predItem": "铜钥匙",
+          "predTarget": "大门",
+          "itemSpan": [
+            2,
+            5
+          ],
+          "targetSpan": [
+            7,
+            9
+          ],
+          "itemStrict": true,
+          "itemLoose": true,
+          "targetStrict": true,
+          "targetLoose": true,
+          "wallMs": 12.19,
+          "withinTarget": true
+        },
+        {
+          "batch": "scored",
+          "text": "我和诺诺打听图书馆的传闻。",
+          "expectItem": null,
+          "expectTarget": "诺诺",
+          "predItem": null,
+          "predTarget": "诺诺",
+          "itemSpan": null,
+          "targetSpan": [
+            2,
+            4
+          ],
+          "itemStrict": true,
+          "itemLoose": true,
+          "targetStrict": true,
+          "targetLoose": true,
+          "wallMs": 11.45,
+          "withinTarget": true
+        },
+        {
+          "batch": "scored",
+          "text": "我去二楼档案室查资料。",
+          "expectItem": null,
+          "expectTarget": "二楼档案室",
+          "predItem": null,
+          "predTarget": "二楼档案室",
+          "itemSpan": null,
+          "targetSpan": [
+            2,
+            7
+          ],
+          "itemStrict": true,
+          "itemLoose": true,
+          "targetStrict": true,
+          "targetLoose": true,
+          "wallMs": 12.775,
+          "withinTarget": true
+        },
+        {
+          "batch": "scored",
+          "text": "我使用生锈的铁门钥匙打开大门。",
+          "expectItem": "生锈的铁门钥匙",
+          "expectTarget": "大门",
+          "predItem": "铁门钥匙",
+          "predTarget": "大门",
+          "itemSpan": [
+            6,
+            10
+          ],
+          "targetSpan": [
+            12,
+            14
+          ],
+          "itemStrict": false,
+          "itemLoose": true,
+          "targetStrict": true,
+          "targetLoose": true,
+          "wallMs": 15.795,
+          "withinTarget": true
+        },
+        {
+          "batch": "scored",
+          "text": "我和执行部学生搭话。",
+          "expectItem": null,
+          "expectTarget": "执行部学生",
+          "predItem": null,
+          "predTarget": "执行部学生",
+          "itemSpan": null,
+          "targetSpan": [
+            2,
+            7
+          ],
+          "itemStrict": true,
+          "itemLoose": true,
+          "targetStrict": true,
+          "targetLoose": true,
+          "wallMs": 8.045,
+          "withinTarget": true
+        },
+        {
+          "batch": "scored",
+          "text": "我检查那扇书架后的暗门。",
+          "expectItem": null,
+          "expectTarget": "暗门",
+          "predItem": null,
+          "predTarget": "扇",
+          "itemSpan": null,
+          "targetSpan": [
+            4,
+            5
+          ],
+          "itemStrict": true,
+          "itemLoose": true,
+          "targetStrict": false,
+          "targetLoose": false,
+          "wallMs": 9.785,
+          "withinTarget": true
+        },
+        {
+          "batch": "scored",
+          "text": "我拔剑攻击诺诺。",
+          "expectItem": "剑",
+          "expectTarget": "诺诺",
+          "predItem": "剑",
+          "predTarget": "诺诺",
+          "itemSpan": [
+            2,
+            3
+          ],
+          "targetSpan": [
+            5,
+            7
+          ],
+          "itemStrict": true,
+          "itemLoose": true,
+          "targetStrict": true,
+          "targetLoose": true,
+          "wallMs": 9.745,
+          "withinTarget": true
+        },
+        {
+          "batch": "scored",
+          "text": "我在原地休息一会儿。",
+          "expectItem": null,
+          "expectTarget": null,
+          "predItem": null,
+          "predTarget": null,
+          "itemSpan": null,
+          "targetSpan": null,
+          "itemStrict": true,
+          "itemLoose": true,
+          "targetStrict": true,
+          "targetLoose": true,
+          "wallMs": 10.84,
+          "withinTarget": true
+        },
+        {
+          "batch": "scored",
+          "text": "我仔细查看旧笔记里的字迹。",
+          "expectItem": null,
+          "expectTarget": "旧笔记",
+          "predItem": null,
+          "predTarget": "旧笔",
+          "itemSpan": null,
+          "targetSpan": [
+            5,
+            7
+          ],
+          "itemStrict": true,
+          "itemLoose": true,
+          "targetStrict": false,
+          "targetLoose": true,
+          "wallMs": 13.845,
+          "withinTarget": true
+        },
+        {
+          "batch": "scored",
+          "text": "我用旧笔记垫住门缝。",
+          "expectItem": "旧笔记",
+          "expectTarget": "门缝",
+          "predItem": "旧笔",
+          "predTarget": "门缝",
+          "itemSpan": [
+            2,
+            4
+          ],
+          "targetSpan": [
+            7,
+            9
+          ],
+          "itemStrict": false,
+          "itemLoose": true,
+          "targetStrict": true,
+          "targetLoose": true,
+          "wallMs": 8.635,
+          "withinTarget": true
+        },
+        {
+          "batch": "scored",
+          "text": "我去找执行部学生问话。",
+          "expectItem": null,
+          "expectTarget": "执行部学生",
+          "predItem": null,
+          "predTarget": "执行部学生",
+          "itemSpan": null,
+          "targetSpan": [
+            3,
+            8
+          ],
+          "itemStrict": true,
+          "itemLoose": true,
+          "targetStrict": true,
+          "targetLoose": true,
+          "wallMs": 12.99,
+          "withinTarget": true
+        },
+        {
+          "batch": "scored",
+          "text": "我用路明非的校徽刷开闸机。",
+          "expectItem": "校徽",
+          "expectTarget": "闸机",
+          "predItem": "路明非",
+          "predTarget": "校徽",
+          "itemSpan": [
+            2,
+            5
+          ],
+          "targetSpan": [
+            6,
+            8
+          ],
+          "itemStrict": false,
+          "itemLoose": false,
+          "targetStrict": false,
+          "targetLoose": false,
+          "wallMs": 9.495,
+          "withinTarget": true
+        }
+      ]
+    }
+  ],
+  "exportedAt": "2026-10-08T20:11:12.471Z"
+}
