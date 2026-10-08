@@ -1,0 +1,558 @@
+{
+  "hostCpu": "13th Gen Intel(R) Core(TM) i7-13700H",
+  "task": "names",
+  "arm": "discovery",
+  "runParams": {
+    "model": {
+      "tag": "qwen3-0.6b",
+      "url": "/models/Qwen3-0.6B-Q4_K_M.gguf"
+    },
+    "n_ctx": 2048,
+    "n_batch": 512,
+    "n_ubatch": 128,
+    "n_gpu_layers": 0,
+    "n_threads": 4,
+    "temperature": 0,
+    "seed": 4711,
+    "cache_prompt": false,
+    "enable_thinking": false
+  },
+  "runtime": {
+    "multithread": true,
+    "numThreads": 4
+  },
+  "targetMs": 4000,
+  "summary": {
+    "old": {
+      "withinTargetRate": "0/4",
+      "correctRate": "2/4",
+      "minWallMs": 7910,
+      "maxWallMs": 8782,
+      "medianPromptMs": 7418,
+      "medianPredictedMs": 1058,
+      "knownMatchRate": "4/4",
+      "discoveryMatchRate": "1/4"
+    },
+    "new": {
+      "withinTargetRate": "0/4",
+      "correctRate": "3/4",
+      "minWallMs": 10097,
+      "maxWallMs": 10748,
+      "medianPromptMs": 8936,
+      "medianPredictedMs": 1325,
+      "knownMatchRate": "4/4",
+      "discoveryMatchRate": "3/4"
+    }
+  },
+  "runs": [
+    {
+      "batch": "old",
+      "narration": "诺诺靠在书架旁，翻着那本旧笔记。路明非在门口安静地等着她。",
+      "expect": [
+        "诺诺",
+        "路明非"
+      ],
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是文字冒险游戏的文本检查器。"
+        },
+        {
+          "role": "user",
+          "content": "路明非把地图交给夏弥。"
+        },
+        {
+          "role": "assistant",
+          "content": "{\"new_names\":[\"夏弥\"]}"
+        },
+        {
+          "role": "user",
+          "content": "诺诺靠在书架旁，翻着那本旧笔记。路明非在门口安静地等着她。\n\n已知角色名单：诺诺、路明非、古德里安、绘梨衣。\n从文本中出现的人名里找出不属于已知角色的新角色，放入 new_names 数组。\n- 人名不含称谓与职务，不含地名和物品名。\n- 名单中的角色不要输出；文本中没有新角色时输出空数组。\n只输出 JSON。"
+        }
+      ],
+      "contractPass": true,
+      "wallMs": 8691,
+      "promptTokens": 158,
+      "completionTokens": 14,
+      "promptMs": 7486,
+      "predictedMs": 1174,
+      "finishReason": "stop",
+      "text": "{\"new_names\":[\"古德里安\"]}",
+      "parsed": {
+        "new_names": [
+          "古德里安"
+        ]
+      },
+      "error": null,
+      "withinTarget": false,
+      "expectedKnown": [
+        "诺诺",
+        "路明非"
+      ],
+      "expectedNew": [],
+      "knownMatched": [
+        "诺诺",
+        "路明非"
+      ],
+      "codeKnownMs": 0.071,
+      "knownMatch": true,
+      "modelNew": [
+        "古德里安"
+      ],
+      "postProcessed": {
+        "raw": [
+          "古德里安"
+        ],
+        "stripped": [
+          "古德里安"
+        ],
+        "unknownNames": []
+      },
+      "discoveryMatch": false,
+      "combinedNames": [
+        "诺诺",
+        "路明非",
+        "古德里安"
+      ],
+      "correct": false
+    },
+    {
+      "batch": "old",
+      "narration": "月光像水一样洒在诺诺的肩上，她没有回头。",
+      "expect": [
+        "诺诺"
+      ],
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是文字冒险游戏的文本检查器。"
+        },
+        {
+          "role": "user",
+          "content": "路明非把地图交给夏弥。"
+        },
+        {
+          "role": "assistant",
+          "content": "{\"new_names\":[\"夏弥\"]}"
+        },
+        {
+          "role": "user",
+          "content": "月光像水一样洒在诺诺的肩上，她没有回头。\n\n已知角色名单：诺诺、路明非、古德里安、绘梨衣。\n从文本中出现的人名里找出不属于已知角色的新角色，放入 new_names 数组。\n- 人名不含称谓与职务，不含地名和物品名。\n- 名单中的角色不要输出；文本中没有新角色时输出空数组。\n只输出 JSON。"
+        }
+      ],
+      "contractPass": true,
+      "wallMs": 8318,
+      "promptTokens": 150,
+      "completionTokens": 11,
+      "promptMs": 7350,
+      "predictedMs": 941,
+      "finishReason": "stop",
+      "text": "{\"new_names\": []}",
+      "parsed": {
+        "new_names": []
+      },
+      "error": null,
+      "withinTarget": false,
+      "expectedKnown": [
+        "诺诺"
+      ],
+      "expectedNew": [],
+      "knownMatched": [
+        "诺诺"
+      ],
+      "codeKnownMs": 0.008,
+      "knownMatch": true,
+      "modelNew": [],
+      "postProcessed": {
+        "raw": [],
+        "stripped": [],
+        "unknownNames": []
+      },
+      "discoveryMatch": true,
+      "combinedNames": [
+        "诺诺"
+      ],
+      "correct": true
+    },
+    {
+      "batch": "old",
+      "narration": "诺诺说——这是个秘密。凯瑟琳在一旁快速记录。",
+      "expect": [
+        "诺诺",
+        "凯瑟琳"
+      ],
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是文字冒险游戏的文本检查器。"
+        },
+        {
+          "role": "user",
+          "content": "路明非把地图交给夏弥。"
+        },
+        {
+          "role": "assistant",
+          "content": "{\"new_names\":[\"夏弥\"]}"
+        },
+        {
+          "role": "user",
+          "content": "诺诺说——这是个秘密。凯瑟琳在一旁快速记录。\n\n已知角色名单：诺诺、路明非、古德里安、绘梨衣。\n从文本中出现的人名里找出不属于已知角色的新角色，放入 new_names 数组。\n- 人名不含称谓与职务，不含地名和物品名。\n- 名单中的角色不要输出；文本中没有新角色时输出空数组。\n只输出 JSON。"
+        }
+      ],
+      "contractPass": true,
+      "wallMs": 7910,
+      "promptTokens": 148,
+      "completionTokens": 11,
+      "promptMs": 6956,
+      "predictedMs": 926,
+      "finishReason": "stop",
+      "text": "{\"new_names\": []}",
+      "parsed": {
+        "new_names": []
+      },
+      "error": null,
+      "withinTarget": false,
+      "expectedKnown": [
+        "诺诺"
+      ],
+      "expectedNew": [
+        "凯瑟琳"
+      ],
+      "knownMatched": [
+        "诺诺"
+      ],
+      "codeKnownMs": 0.008,
+      "knownMatch": true,
+      "modelNew": [],
+      "postProcessed": {
+        "raw": [],
+        "stripped": [],
+        "unknownNames": []
+      },
+      "discoveryMatch": false,
+      "combinedNames": [
+        "诺诺"
+      ],
+      "correct": false
+    },
+    {
+      "batch": "old",
+      "narration": "古德里安教授推门进来，路明非起身行礼，绘梨衣跟在后面。",
+      "expect": [
+        "古德里安",
+        "路明非",
+        "绘梨衣"
+      ],
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是文字冒险游戏的文本检查器。"
+        },
+        {
+          "role": "user",
+          "content": "路明非把地图交给夏弥。"
+        },
+        {
+          "role": "assistant",
+          "content": "{\"new_names\":[\"夏弥\"]}"
+        },
+        {
+          "role": "user",
+          "content": "古德里安教授推门进来，路明非起身行礼，绘梨衣跟在后面。\n\n已知角色名单：诺诺、路明非、古德里安、绘梨衣。\n从文本中出现的人名里找出不属于已知角色的新角色，放入 new_names 数组。\n- 人名不含称谓与职务，不含地名和物品名。\n- 名单中的角色不要输出；文本中没有新角色时输出空数组。\n只输出 JSON。"
+        }
+      ],
+      "contractPass": true,
+      "wallMs": 8782,
+      "promptTokens": 156,
+      "completionTokens": 14,
+      "promptMs": 7505,
+      "predictedMs": 1247,
+      "finishReason": "stop",
+      "text": "{\"new_names\":[\"古德里安\"]}",
+      "parsed": {
+        "new_names": [
+          "古德里安"
+        ]
+      },
+      "error": null,
+      "withinTarget": false,
+      "expectedKnown": [
+        "古德里安",
+        "路明非",
+        "绘梨衣"
+      ],
+      "expectedNew": [],
+      "knownMatched": [
+        "路明非",
+        "古德里安",
+        "绘梨衣"
+      ],
+      "codeKnownMs": 0.002,
+      "knownMatch": true,
+      "modelNew": [
+        "古德里安"
+      ],
+      "postProcessed": {
+        "raw": [
+          "古德里安"
+        ],
+        "stripped": [
+          "古德里安"
+        ],
+        "unknownNames": []
+      },
+      "discoveryMatch": false,
+      "combinedNames": [
+        "路明非",
+        "古德里安",
+        "绘梨衣"
+      ],
+      "correct": true
+    },
+    {
+      "batch": "new",
+      "narration": "绘梨衣在钟楼下等着路明非。",
+      "expect": [
+        "绘梨衣",
+        "路明非"
+      ],
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是文字冒险游戏的文本检查器。"
+        },
+        {
+          "role": "user",
+          "content": "路明非把地图交给夏弥。"
+        },
+        {
+          "role": "assistant",
+          "content": "{\"new_names\":[\"夏弥\"]}"
+        },
+        {
+          "role": "user",
+          "content": "绘梨衣在钟楼下等着路明非。\n\n已知角色名单：诺诺、路明非、古德里安、绘梨衣。\n从文本中出现的人名里找出不属于已知角色的新角色，放入 new_names 数组。\n- 人名不含称谓与职务，不含地名和物品名。\n- 名单中的角色不要输出；文本中没有新角色时输出空数组。\n只输出 JSON。"
+        }
+      ],
+      "contractPass": true,
+      "wallMs": 10097,
+      "promptTokens": 144,
+      "completionTokens": 11,
+      "promptMs": 8873,
+      "predictedMs": 1198,
+      "finishReason": "stop",
+      "text": "{\"new_names\": []}",
+      "parsed": {
+        "new_names": []
+      },
+      "error": null,
+      "withinTarget": false,
+      "expectedKnown": [
+        "绘梨衣",
+        "路明非"
+      ],
+      "expectedNew": [],
+      "knownMatched": [
+        "路明非",
+        "绘梨衣"
+      ],
+      "codeKnownMs": 0.002,
+      "knownMatch": true,
+      "modelNew": [],
+      "postProcessed": {
+        "raw": [],
+        "stripped": [],
+        "unknownNames": []
+      },
+      "discoveryMatch": true,
+      "combinedNames": [
+        "路明非",
+        "绘梨衣"
+      ],
+      "correct": true
+    },
+    {
+      "batch": "new",
+      "narration": "诺诺把报告交给古德里安教授。",
+      "expect": [
+        "诺诺",
+        "古德里安"
+      ],
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是文字冒险游戏的文本检查器。"
+        },
+        {
+          "role": "user",
+          "content": "路明非把地图交给夏弥。"
+        },
+        {
+          "role": "assistant",
+          "content": "{\"new_names\":[\"夏弥\"]}"
+        },
+        {
+          "role": "user",
+          "content": "诺诺把报告交给古德里安教授。\n\n已知角色名单：诺诺、路明非、古德里安、绘梨衣。\n从文本中出现的人名里找出不属于已知角色的新角色，放入 new_names 数组。\n- 人名不含称谓与职务，不含地名和物品名。\n- 名单中的角色不要输出；文本中没有新角色时输出空数组。\n只输出 JSON。"
+        }
+      ],
+      "contractPass": true,
+      "wallMs": 10375,
+      "promptTokens": 144,
+      "completionTokens": 11,
+      "promptMs": 8998,
+      "predictedMs": 1323,
+      "finishReason": "stop",
+      "text": "{\"new_names\": []}",
+      "parsed": {
+        "new_names": []
+      },
+      "error": null,
+      "withinTarget": false,
+      "expectedKnown": [
+        "诺诺",
+        "古德里安"
+      ],
+      "expectedNew": [],
+      "knownMatched": [
+        "诺诺",
+        "古德里安"
+      ],
+      "codeKnownMs": 0.002,
+      "knownMatch": true,
+      "modelNew": [],
+      "postProcessed": {
+        "raw": [],
+        "stripped": [],
+        "unknownNames": []
+      },
+      "discoveryMatch": true,
+      "combinedNames": [
+        "诺诺",
+        "古德里安"
+      ],
+      "correct": true
+    },
+    {
+      "batch": "new",
+      "narration": "图书馆里只有凯瑟琳和诺诺两个人。",
+      "expect": [
+        "凯瑟琳",
+        "诺诺"
+      ],
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是文字冒险游戏的文本检查器。"
+        },
+        {
+          "role": "user",
+          "content": "路明非把地图交给夏弥。"
+        },
+        {
+          "role": "assistant",
+          "content": "{\"new_names\":[\"夏弥\"]}"
+        },
+        {
+          "role": "user",
+          "content": "图书馆里只有凯瑟琳和诺诺两个人。\n\n已知角色名单：诺诺、路明非、古德里安、绘梨衣。\n从文本中出现的人名里找出不属于已知角色的新角色，放入 new_names 数组。\n- 人名不含称谓与职务，不含地名和物品名。\n- 名单中的角色不要输出；文本中没有新角色时输出空数组。\n只输出 JSON。"
+        }
+      ],
+      "contractPass": true,
+      "wallMs": 10748,
+      "promptTokens": 144,
+      "completionTokens": 13,
+      "promptMs": 9161,
+      "predictedMs": 1555,
+      "finishReason": "stop",
+      "text": "{\"new_names\":[\"路明非\"]}",
+      "parsed": {
+        "new_names": [
+          "路明非"
+        ]
+      },
+      "error": null,
+      "withinTarget": false,
+      "expectedKnown": [
+        "诺诺"
+      ],
+      "expectedNew": [
+        "凯瑟琳"
+      ],
+      "knownMatched": [
+        "诺诺"
+      ],
+      "codeKnownMs": 0.001,
+      "knownMatch": true,
+      "modelNew": [
+        "路明非"
+      ],
+      "postProcessed": {
+        "raw": [
+          "路明非"
+        ],
+        "stripped": [
+          "路明非"
+        ],
+        "unknownNames": []
+      },
+      "discoveryMatch": false,
+      "combinedNames": [
+        "诺诺",
+        "路明非"
+      ],
+      "correct": false
+    },
+    {
+      "batch": "new",
+      "narration": "窗台上放着一杯凉掉的咖啡。",
+      "expect": [],
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是文字冒险游戏的文本检查器。"
+        },
+        {
+          "role": "user",
+          "content": "路明非把地图交给夏弥。"
+        },
+        {
+          "role": "assistant",
+          "content": "{\"new_names\":[\"夏弥\"]}"
+        },
+        {
+          "role": "user",
+          "content": "窗台上放着一杯凉掉的咖啡。\n\n已知角色名单：诺诺、路明非、古德里安、绘梨衣。\n从文本中出现的人名里找出不属于已知角色的新角色，放入 new_names 数组。\n- 人名不含称谓与职务，不含地名和物品名。\n- 名单中的角色不要输出；文本中没有新角色时输出空数组。\n只输出 JSON。"
+        }
+      ],
+      "contractPass": true,
+      "wallMs": 10200,
+      "promptTokens": 143,
+      "completionTokens": 11,
+      "promptMs": 8840,
+      "predictedMs": 1327,
+      "finishReason": "stop",
+      "text": "{\"new_names\": []}",
+      "parsed": {
+        "new_names": []
+      },
+      "error": null,
+      "withinTarget": false,
+      "expectedKnown": [],
+      "expectedNew": [],
+      "knownMatched": [],
+      "codeKnownMs": 0.002,
+      "knownMatch": true,
+      "modelNew": [],
+      "postProcessed": {
+        "raw": [],
+        "stripped": [],
+        "unknownNames": []
+      },
+      "discoveryMatch": true,
+      "combinedNames": [],
+      "correct": true
+    }
+  ],
+  "exportedAt": "2026-10-08T17:40:56.852Z"
+}

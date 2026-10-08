@@ -1,25 +1,28 @@
-// Task-level trial v5 (Qwen3 only). Changes from v4, per review of the
-// trial5 reports:
-// - BUGFIX: the plain arm's dedicated instruction never reached the model —
-//   v4 built userText as `plain ? narration : narration + instruction`, so
-//   plain ran unconstrained AND uninstructed, and its whole-sentence echoes
-//   proved nothing. The instruction is now appended for both arms.
-// - postProcessed (raw/stripped/unknownNames) is recorded per names run;
-//   v4 computed it for scoring but dropped it from the exported report.
-// - message contracts: before any request is sent, every run's actual
-//   messages are checked against the arm's instruction / output-convention
-//   phrases (ablation arms also against forbidden phrases); a violation
-//   aborts the run instead of exporting an uninterpretable report. Run with
-//   CONTRACT_CHECK_ONLY=1 to verify contracts without loading the model.
-// - parse arms are now the state-ablation pair compact vs no-state: same
-//   system prompt, same fewshot, same instruction position, same schema and
-//   constrained decoding — the ONLY variable is the scene-state block.
-//   minimal (no state, no fewshot, instruction moved into system) is not
-//   re-run: its trial5 speed result stands, but it changed three variables
-//   at once and cannot attribute anything to state alone.
+// Task-level trial v6 (Qwen3 only). Changes from v5, per review:
+// - parse is compared as monolithic (compact) vs split pipelines. The split
+//   runs three single-field calls (action_type / item_used / target) with
+//   narrow instructions and per-field fewshot; code merges the fields and
+//   computes feasibility. Split runs twice — with the state block
+//   (split-state) and without it (split-bare) — because "does a narrow
+//   single-field task still need the state block" is exactly the question
+//   the v4 minimal arm confounded. Per-component timing, per-field
+//   correctness and combined correctness are recorded (summary + calls[]).
+//   Each sub-call pays its own prefill, so total time is NOT the monolithic
+//   wall divided by three; that is what this round measures.
+// - names is compared as monolithic extraction (json) vs a responsibility
+//   split (discovery): code matches known roster names in the text, the
+//   model only discovers out-of-roster names (new characters). Out-of-roster
+//   names are kept, never filtered — 凯瑟琳 is the in-set example. The
+//   plain arm is retired after v5 (its format protocol works but extraction
+//   collapsed; see trial6 reports).
+// - every component still runs on the same qwen3-0.6b this round, so none
+//   of the results speak to specialized small models per component.
+// - v5's message contracts carry over: each arm's actual messages are
+//   checked against instruction/output-convention phrases before any
+//   request is sent; CONTRACT_CHECK_ONLY=1 verifies without the model.
 //
 // Usage: node scripts/run-task-trial.mjs [threads]
-// Output: artifacts/benchmark/task-trial6-<ts>-<task>-<arm>.json
+// Output: artifacts/benchmark/task-trial7-<ts>-<task>-<arm>.json
 
 import { mkdir, writeFile } from "node:fs/promises";
 import os from "node:os";
@@ -143,6 +146,50 @@ const PARSE_FEWSHOT = [
   },
 ];
 
+// 拆分臂：单字段子任务。示例取自与整块臂相同的两个演示行动；item_used
+// 额外补一个正向示例（整块臂的两个示例恰好都是 null，单看 null 示例学
+// 不会填字段）。演示行动均不在任何评分用例批里。
+const PARSE_SUBTASK_ORDER = ["action_type", "item_used", "target"];
+
+const PARSE_SUBTASKS = {
+  action_type: {
+    schema: {
+      type: "object",
+      properties: { action_type: { enum: ["item_use", "npc_talk", "move", "inspect", "other"] } },
+      required: ["action_type"],
+    },
+    instruction: `判断玩家行动属于哪一类，输出 JSON：{"action_type":"..."}。类别：item_use（使用物品做事）/ npc_talk（与人物交谈）/ move（前往地点）/ inspect（查看物件）/ other。注意区分"查看"与"使用"："检查/查看某物"是 inspect；只有"用某物品去达成别的目的"才是 item_use。只输出 JSON。`,
+    fewshot: [
+      { user: "玩家行动：我检查铜钥匙的齿纹。", assistant: '{"action_type":"inspect"}' },
+      { user: "玩家行动：我沿着楼梯走到二楼档案室。", assistant: '{"action_type":"move"}' },
+    ],
+  },
+  item_used: {
+    schema: {
+      type: "object",
+      properties: { item_used: { type: ["string", "null"] } },
+      required: ["item_used"],
+    },
+    instruction: `从玩家行动中摘录被使用的物品名，输出 JSON：{"item_used":"..."}。只有行动"用某物品去达成别的目的"时才摘录物品名；"检查/查看某物"时输出 null。摘录原文，不要改写；没有则为 null。只输出 JSON。`,
+    fewshot: [
+      { user: "玩家行动：我用扫帚把纸团扫出门口。", assistant: '{"item_used":"扫帚"}' },
+      { user: "玩家行动：我检查铜钥匙的齿纹。", assistant: '{"item_used":null}' },
+    ],
+  },
+  target: {
+    schema: {
+      type: "object",
+      properties: { target: { type: ["string", "null"] } },
+      required: ["target"],
+    },
+    instruction: `从玩家行动中摘录行动的作用对象（人物、地点或物件名），输出 JSON：{"target":"..."}。摘录原文，不要改写；没有则为 null。只输出 JSON。`,
+    fewshot: [
+      { user: "玩家行动：我检查铜钥匙的齿纹。", assistant: '{"target":"铜钥匙"}' },
+      { user: "玩家行动：我沿着楼梯走到二楼档案室。", assistant: '{"target":"二楼档案室"}' },
+    ],
+  },
+};
+
 // ── 任务二：人名抽取 ──────────────────────────────────────────────
 
 const NAMES_SCHEMA = {
@@ -158,14 +205,6 @@ const NAMES_INSTRUCTION_JSON = `抽出文本中出现的所有人名，放入 na
 - 人名不含称谓与职务："古德里安教授"应输出"古德里安"；"执行部学生"这类职务指代不是人名。
 - 不含地名和物品名。
 只输出 JSON。`;
-
-// plain 臂的配套指令/示例/空约定（v3 的教训：只关约束不改指令等于没改；
-// v4 的教训：改了指令但没接进 messages 等于白跑）。
-const NAMES_INSTRUCTION_PLAIN = `抽出文本中出现的所有人名，一行输出一个名字。
-- 人名不含称谓与职务："古德里安教授"应输出"古德里安"；"执行部学生"这类职务指代不是人名。
-- 不含地名和物品名。
-- 文本中没有人名时，只输出三个字：没有人
-不要输出 JSON、解释或任何其他内容。`;
 
 const NAMES_CASES_OLD = [
   { narration: "诺诺靠在书架旁，翻着那本旧笔记。路明非在门口安静地等着她。", expect: ["诺诺", "路明非"] },
@@ -185,19 +224,31 @@ const NAMES_FEWSHOT_JSON = [
   { user: "路明非把笔记本递给诺诺。", assistant: '{"names":["路明非","诺诺"]}' },
 ];
 
-const NAMES_FEWSHOT_PLAIN = [
-  { user: "路明非把笔记本递给诺诺。", assistant: "路明非\n诺诺" },
+// discovery 臂：职责拆分——代码匹配名册内姓名（含别名），模型只负责发现
+// 名单外的新角色。名单随指令进提示词；名单外姓名保留，不过滤。
+const NAMES_DISCOVERY_SCHEMA = {
+  type: "object",
+  properties: { new_names: { type: "array", items: { type: "string" } } },
+  required: ["new_names"],
+};
+
+const NAMES_INSTRUCTION_DISCOVERY = `已知角色名单：诺诺、路明非、古德里安、绘梨衣。
+从文本中出现的人名里找出不属于已知角色的新角色，放入 new_names 数组。
+- 人名不含称谓与职务，不含地名和物品名。
+- 名单中的角色不要输出；文本中没有新角色时输出空数组。
+只输出 JSON。`;
+
+const NAMES_FEWSHOT_DISCOVERY = [
+  // 演示名"夏弥"不在名册也不在任何用例批里，避免污染 held-out。
+  { user: "路明非把地图交给夏弥。", assistant: '{"new_names":["夏弥"]}' },
 ];
 
 // ── 消息构造与契约检查 ────────────────────────────────────────────
 // 消息只在 Node 侧构造；每个臂发送任何请求之前，实际 messages 逐条对
 // 契约检查，违反即中止（不再产出无法解释的报告）。
 
-function buildParseMessages(arm, testCase) {
-  // 状态消融对 compact / no-state：系统提示、示例、指令位置、schema 与
-  // 约束解码全部相同，唯一变量是状态块。
-  const stateBlock = arm === "compact" ? `${PARSE_STATE}\n\n` : "";
-  const userText = `${stateBlock}玩家行动：${testCase.action}\n\n${PARSE_INSTRUCTION}`;
+function buildParseMessages(testCase) {
+  const userText = `${PARSE_STATE}\n\n玩家行动：${testCase.action}\n\n${PARSE_INSTRUCTION}`;
   return [
     { role: "system", content: "你是文字冒险游戏的输入解析器。" },
     ...PARSE_FEWSHOT.flatMap((example) => [
@@ -208,9 +259,23 @@ function buildParseMessages(arm, testCase) {
   ];
 }
 
+function buildParseSubMessages(arm, subtask, testCase) {
+  const spec = PARSE_SUBTASKS[subtask];
+  const stateBlock = arm === "split-state" ? `${PARSE_STATE}\n\n` : "";
+  const userText = `${stateBlock}玩家行动：${testCase.action}\n\n${spec.instruction}`;
+  return [
+    { role: "system", content: "你是文字冒险游戏的输入解析器。" },
+    ...spec.fewshot.flatMap((example) => [
+      { role: "user", content: example.user },
+      { role: "assistant", content: example.assistant },
+    ]),
+    { role: "user", content: userText },
+  ];
+}
+
 function buildNamesMessages(arm, testCase) {
-  const instruction = arm === "plain" ? NAMES_INSTRUCTION_PLAIN : NAMES_INSTRUCTION_JSON;
-  const fewshot = arm === "plain" ? NAMES_FEWSHOT_PLAIN : NAMES_FEWSHOT_JSON;
+  const instruction = arm === "discovery" ? NAMES_INSTRUCTION_DISCOVERY : NAMES_INSTRUCTION_JSON;
+  const fewshot = arm === "discovery" ? NAMES_FEWSHOT_DISCOVERY : NAMES_FEWSHOT_JSON;
   const userText = `${testCase.narration}\n\n${instruction}`;
   return [
     { role: "system", content: "你是文字冒险游戏的文本检查器。" },
@@ -223,7 +288,7 @@ function buildNamesMessages(arm, testCase) {
 }
 
 // 每臂契约：mustContain 是该臂指令与输出约定的标识短语（含 fewshot 的
-// assistant 内容，防示例漏接）；no-state 额外断言状态块短语不出现。
+// assistant 内容，防示例漏接）；split-bare 额外断言状态块短语不出现。
 const MESSAGE_CONTRACTS = {
   "parse/compact": {
     mustContain: [
@@ -235,24 +300,53 @@ const MESSAGE_CONTRACTS = {
       "在场 NPC：诺诺",
     ],
   },
-  "parse/no-state": {
+  "parse/split-state/action_type": {
     mustContain: [
-      "把玩家行动解析为 JSON",
+      "判断玩家行动属于哪一类",
       "只输出 JSON",
-      '{"action_type":"inspect","item_used":null,"target":"铜钥匙"}',
+      '{"action_type":"inspect"}',
+      "当前地点：卡塞尔学院图书馆",
+      "持有物品：铜钥匙",
     ],
+  },
+  "parse/split-state/item_used": {
+    mustContain: [
+      "摘录被使用的物品名",
+      "只输出 JSON",
+      '{"item_used":"扫帚"}',
+      "当前地点：卡塞尔学院图书馆",
+    ],
+  },
+  "parse/split-state/target": {
+    mustContain: [
+      "摘录行动的作用对象",
+      "只输出 JSON",
+      '{"target":"铜钥匙"}',
+      "在场 NPC：诺诺",
+    ],
+  },
+  "parse/split-bare/action_type": {
+    mustContain: ["判断玩家行动属于哪一类", "只输出 JSON", '{"action_type":"inspect"}'],
+    mustNotContain: ["当前地点：", "已知地点：", "持有物品：", "在场 NPC：", "体力 88/100"],
+  },
+  "parse/split-bare/item_used": {
+    mustContain: ["摘录被使用的物品名", "只输出 JSON", '{"item_used":"扫帚"}'],
+    mustNotContain: ["当前地点：", "已知地点：", "持有物品：", "在场 NPC：", "体力 88/100"],
+  },
+  "parse/split-bare/target": {
+    mustContain: ["摘录行动的作用对象", "只输出 JSON", '{"target":"铜钥匙"}'],
     mustNotContain: ["当前地点：", "已知地点：", "持有物品：", "在场 NPC：", "体力 88/100"],
   },
   "names/json": {
     mustContain: ["抽出文本中出现的所有人名", "只输出 JSON", '{"names":["路明非","诺诺"]}'],
   },
-  "names/plain": {
+  "names/discovery": {
     mustContain: [
-      "抽出文本中出现的所有人名",
-      "一行输出一个名字",
-      "没有人",
-      "不要输出 JSON",
-      "路明非\n诺诺",
+      "已知角色名单：诺诺、路明非、古德里安、绘梨衣",
+      "不属于已知角色",
+      "new_names",
+      "只输出 JSON",
+      '{"new_names":["夏弥"]}',
     ],
   },
 };
@@ -291,6 +385,12 @@ function postProcessNames(rawNames) {
   return { raw, stripped, unknownNames };
 }
 
+// discovery 臂的代码侧职责：名册内姓名匹配（原文子串，称谓形式
+// "古德里安教授"自然命中"古德里安"）。
+function matchKnownNames(narration) {
+  return ROSTER.filter((name) => narration.includes(name));
+}
+
 function codeRuleCheck(narration, extractedNames) {
   const emDashCount = (narration.match(/—/g) ?? []).length;
   const simileCount = (narration.match(/像|仿佛|宛如|犹如|如同/g) ?? []).length;
@@ -309,11 +409,15 @@ async function main() {
   // 只验证消息契约，不加载模型（CI / 快速自检用）。
   if (process.env.CONTRACT_CHECK_ONLY === "1") {
     const probes = [
-      ["parse/compact", buildParseMessages("compact", PARSE_CASES_OLD[0])],
-      ["parse/no-state", buildParseMessages("no-state", PARSE_CASES_OLD[0])],
+      ["parse/compact", buildParseMessages(PARSE_CASES_OLD[0])],
       ["names/json", buildNamesMessages("json", NAMES_CASES_OLD[0])],
-      ["names/plain", buildNamesMessages("plain", NAMES_CASES_OLD[0])],
+      ["names/discovery", buildNamesMessages("discovery", NAMES_CASES_OLD[0])],
     ];
+    for (const arm of ["split-state", "split-bare"]) {
+      for (const subtask of PARSE_SUBTASK_ORDER) {
+        probes.push([`parse/${arm}/${subtask}`, buildParseSubMessages(arm, subtask, PARSE_CASES_OLD[0])]);
+      }
+    }
     for (const [taskArm, messages] of probes) {
       checkMessageContract(taskArm, messages);
       log(`contract pass: ${taskArm}`);
@@ -383,16 +487,196 @@ async function main() {
     enable_thinking: false,
   };
 
-  // ── 解析臂：状态消融对 compact / no-state（唯一变量：状态块） ──────
-  for (const parseArm of ["compact", "no-state"]) {
+  // ── 解析臂：整块 compact vs 拆分（split-state / split-bare） ───────
+  for (const parseArm of ["compact", "split-state", "split-bare"]) {
     const cases = [...PARSE_CASES_OLD, ...PARSE_CASES_NEW].map((testCase) => ({
       batch: PARSE_CASES_OLD.includes(testCase) ? "old" : "new",
       action: testCase.action,
       expect: testCase.expect,
-      messages: buildParseMessages(parseArm, testCase),
+      calls:
+        parseArm === "compact"
+          ? [{ subtask: "triple", messages: buildParseMessages(testCase) }]
+          : PARSE_SUBTASK_ORDER.map((subtask) => ({
+              subtask,
+              messages: buildParseSubMessages(parseArm, subtask, testCase),
+            })),
     }));
-    for (const testCase of cases) checkMessageContract(`parse/${parseArm}`, testCase.messages);
-    log(`parse/${parseArm}: message contract pass on ${cases.length} cases`);
+    for (const testCase of cases) {
+      for (const call of testCase.calls) {
+        const key = parseArm === "compact" ? "parse/compact" : `parse/${parseArm}/${call.subtask}`;
+        checkMessageContract(key, call.messages);
+      }
+    }
+    log(`parse/${parseArm}: message contract pass on ${cases.length} cases × ${cases[0].calls.length} calls`);
+
+    const schemaBySubtask = {
+      triple: PARSE_SCHEMA,
+      ...Object.fromEntries(PARSE_SUBTASK_ORDER.map((subtask) => [subtask, PARSE_SUBTASKS[subtask].schema])),
+    };
+    const runs = await page.evaluate(
+      async (trial) => {
+        const wllama = window.__trialWllama;
+        const runs = [];
+        for (const testCase of trial.cases) {
+          const calls = [];
+          const caseStarted = performance.now();
+          for (const call of testCase.calls) {
+            const started = performance.now();
+            try {
+              const response = await wllama.createChatCompletion({
+                messages: call.messages,
+                max_tokens: 120,
+                temperature: 0,
+                seed: 4711,
+                cache_prompt: false,
+                chat_template_kwargs: { enable_thinking: false },
+                response_format: {
+                  type: "json_schema",
+                  json_schema: { name: "trial", schema: trial.schemaBySubtask[call.subtask], strict: true },
+                },
+              });
+              const text = (response.choices?.[0]?.message?.content ?? "")
+                .replace(/<think>[\s\S]*?<\/think>/g, "")
+                .trim();
+              let parsed = null;
+              try {
+                parsed = JSON.parse(text);
+              } catch {
+                try {
+                  parsed = JSON.parse(text.replace(/^```(?:json)?|```$/g, "").trim());
+                } catch {
+                  parsed = null;
+                }
+              }
+              calls.push({
+                subtask: call.subtask,
+                messages: call.messages,
+                contractPass: true,
+                wallMs: Math.round(performance.now() - started),
+                promptTokens: response.usage?.prompt_tokens,
+                completionTokens: response.usage?.completion_tokens,
+                promptMs: response.timings?.prompt_ms != null ? Math.round(response.timings.prompt_ms) : null,
+                predictedMs: response.timings?.predicted_ms != null ? Math.round(response.timings.predicted_ms) : null,
+                promptPerSecond: response.timings?.prompt_per_second ?? null,
+                predictedPerSecond: response.timings?.predicted_per_second ?? null,
+                finishReason: response.choices?.[0]?.finish_reason ?? null,
+                text,
+                parsed,
+                error: null,
+              });
+            } catch (error) {
+              calls.push({
+                subtask: call.subtask,
+                messages: call.messages,
+                contractPass: true,
+                wallMs: Math.round(performance.now() - started),
+                error: `${error instanceof Error ? error.name : ""} ${error instanceof Error ? error.message : error}`,
+              });
+            }
+          }
+          const fieldOf = (field) => {
+            const call = testCase.calls.length === 1 ? calls[0] : calls.find((c) => c.subtask === field);
+            return call?.parsed ? (call.parsed[field] ?? null) : null;
+          };
+          runs.push({
+            batch: testCase.batch,
+            action: testCase.action,
+            expect: testCase.expect,
+            combined: {
+              action_type: fieldOf("action_type"),
+              item_used: fieldOf("item_used"),
+              target: fieldOf("target"),
+            },
+            wallMs: Math.round(performance.now() - caseStarted),
+            calls,
+            error: null,
+          });
+        }
+        return runs;
+      },
+      { cases, schemaBySubtask },
+    );
+
+    const scored = runs.map((run) => {
+      let fieldResults = null;
+      let correct = false;
+      let codeFeasible = null;
+      if (run.calls.some((call) => call.parsed)) {
+        fieldResults = {
+          action_type: run.combined.action_type === run.expect.action_type,
+          item_used: resolveEntity(run.combined.item_used) === resolveEntity(run.expect.item_used),
+          target: resolveEntity(run.combined.target) === resolveEntity(run.expect.target),
+        };
+        codeFeasible = computeFeasible(run.combined);
+        fieldResults.feasible = codeFeasible === run.expect.feasible;
+        correct = Object.values(fieldResults).every(Boolean);
+      }
+      const totalWallMs = run.calls.reduce((sum, call) => sum + call.wallMs, 0);
+      return {
+        ...run,
+        withinTarget: run.error ? undefined : run.wallMs <= TARGET_MS,
+        totalWallMs,
+        correct,
+        fieldResults,
+        codeFeasible,
+      };
+    });
+    const subtaskOrder = parseArm === "compact" ? ["triple"] : PARSE_SUBTASK_ORDER;
+    const old = scored.filter((run) => run.batch === "old");
+    const fresh = scored.filter((run) => run.batch === "new");
+    const rate = (runs, predicate) => `${runs.filter(predicate).length}/${runs.length}`;
+    const summarize = (runs) => ({
+      withinTargetRate: rate(runs, (run) => run.withinTarget),
+      correctRate: rate(runs, (run) => run.correct),
+      fieldCorrectRate: {
+        action_type: rate(runs, (run) => run.fieldResults?.action_type === true),
+        item_used: rate(runs, (run) => run.fieldResults?.item_used === true),
+        target: rate(runs, (run) => run.fieldResults?.target === true),
+        feasible: rate(runs, (run) => run.fieldResults?.feasible === true),
+      },
+      totalWallMs: {
+        min: Math.min(...runs.map((run) => run.wallMs)),
+        max: Math.max(...runs.map((run) => run.wallMs)),
+        median: median(runs.map((run) => run.wallMs)),
+      },
+      componentMedianMs: Object.fromEntries(
+        subtaskOrder.map((subtask) => [
+          subtask,
+          median(runs.flatMap((run) => run.calls.filter((call) => call.subtask === subtask).map((call) => call.wallMs))),
+        ]),
+      ),
+      componentMedianPromptMs: Object.fromEntries(
+        subtaskOrder.map((subtask) => [
+          subtask,
+          median(runs.flatMap((run) => run.calls.filter((call) => call.subtask === subtask).map((call) => call.promptMs))),
+        ]),
+      ),
+    });
+    const summary = { old: summarize(old), new: summarize(fresh) };
+    log(`parse/${parseArm}: ${JSON.stringify(summary)}`);
+    const outPath = path.join(outDir, `task-trial7-${Date.now()}-parse-${parseArm}.json`);
+    await writeFile(
+      outPath,
+      JSON.stringify(
+        { hostCpu: cpu, task: "parse", arm: parseArm, runParams, runtime: loaded, targetMs: TARGET_MS, summary, runs: scored, exportedAt: new Date().toISOString() },
+        null,
+        2,
+      ),
+    );
+    log(`saved: ${outPath}`);
+  }
+
+  // ── 抽名臂：整块 json vs 职责拆分 discovery（代码匹配名册+模型发现新角色） ──
+  const namesSetEq = (a, b) => JSON.stringify([...a].sort()) === JSON.stringify([...b].sort());
+  for (const namesArm of ["json", "discovery"]) {
+    const cases = [...NAMES_CASES_OLD, ...NAMES_CASES_NEW].map((testCase) => ({
+      batch: NAMES_CASES_OLD.includes(testCase) ? "old" : "new",
+      narration: testCase.narration,
+      expect: testCase.expect,
+      messages: buildNamesMessages(namesArm, testCase),
+    }));
+    for (const testCase of cases) checkMessageContract(`names/${namesArm}`, testCase.messages);
+    log(`names/${namesArm}: message contract pass on ${cases.length} cases`);
 
     const runs = await page.evaluate(
       async (trial) => {
@@ -403,7 +687,7 @@ async function main() {
           try {
             const response = await wllama.createChatCompletion({
               messages: testCase.messages,
-              max_tokens: 120,
+              max_tokens: 80,
               temperature: 0,
               seed: 4711,
               cache_prompt: false,
@@ -428,7 +712,7 @@ async function main() {
             }
             runs.push({
               batch: testCase.batch,
-              action: testCase.action,
+              narration: testCase.narration,
               expect: testCase.expect,
               messages: testCase.messages,
               contractPass: true,
@@ -437,8 +721,6 @@ async function main() {
               completionTokens: response.usage?.completion_tokens,
               promptMs: response.timings?.prompt_ms != null ? Math.round(response.timings.prompt_ms) : null,
               predictedMs: response.timings?.predicted_ms != null ? Math.round(response.timings.predicted_ms) : null,
-              promptPerSecond: response.timings?.prompt_per_second ?? null,
-              predictedPerSecond: response.timings?.predicted_per_second ?? null,
               finishReason: response.choices?.[0]?.finish_reason ?? null,
               text,
               parsed,
@@ -447,7 +729,7 @@ async function main() {
           } catch (error) {
             runs.push({
               batch: testCase.batch,
-              action: testCase.action,
+              narration: testCase.narration,
               expect: testCase.expect,
               messages: testCase.messages,
               contractPass: true,
@@ -458,180 +740,100 @@ async function main() {
         }
         return runs;
       },
-      { cases, schema: PARSE_SCHEMA },
+      { cases, schema: namesArm === "discovery" ? NAMES_DISCOVERY_SCHEMA : NAMES_SCHEMA },
     );
 
-    const scored = runs.map((run) => {
-      let fieldResults = null;
-      let correct = false;
-      let codeFeasible = null;
-      if (run.parsed) {
-        fieldResults = {
-          action_type: run.parsed.action_type === run.expect.action_type,
-          item_used: resolveEntity(run.parsed.item_used) === resolveEntity(run.expect.item_used),
-          target: resolveEntity(run.parsed.target) === resolveEntity(run.expect.target),
+    let scored;
+    if (namesArm === "json") {
+      scored = runs.map((run) => {
+        let namesMatch = false;
+        let namesMatchPost = false;
+        let correct = false;
+        let postProcessed = null;
+        let ruleCheck = null;
+        let respKnown = null;
+        let respFresh = null;
+        if (run.parsed && Array.isArray(run.parsed.names)) {
+          const { raw, stripped, unknownNames } = postProcessNames(run.parsed.names);
+          postProcessed = { raw, stripped, unknownNames };
+          namesMatch = namesSetEq(run.parsed.names, run.expect);
+          namesMatchPost = namesSetEq(stripped, run.expect);
+          ruleCheck = codeRuleCheck(run.narration, stripped);
+          // 按职责分解整块输出，便于与 discovery 臂对照。
+          respKnown = stripped.filter((name) => ROSTER.includes(name));
+          respFresh = stripped.filter((name) => !ROSTER.includes(name));
+          correct = namesMatchPost;
+        }
+        return {
+          ...run,
+          withinTarget: run.error ? undefined : run.wallMs <= TARGET_MS,
+          namesMatch,
+          namesMatchPost,
+          postProcessed,
+          respKnown,
+          respFresh,
+          ruleCheck,
+          correct,
         };
-        codeFeasible = computeFeasible(run.parsed);
-        fieldResults.feasible = codeFeasible === run.expect.feasible;
-        correct = Object.values(fieldResults).every(Boolean);
-      }
-      return {
-        ...run,
-        withinTarget: run.error ? undefined : run.wallMs <= TARGET_MS,
-        correct,
-        fieldResults,
-        codeFeasible,
-      };
-    });
-    const old = scored.filter((run) => run.batch === "old");
-    const fresh = scored.filter((run) => run.batch === "new");
-    const summarize = (runs) => ({
-      withinTargetRate: `${runs.filter((run) => run.withinTarget).length}/${runs.length}`,
-      correctRate: `${runs.filter((run) => run.correct).length}/${runs.length}`,
-      minWallMs: Math.min(...runs.map((run) => run.wallMs)),
-      maxWallMs: Math.max(...runs.map((run) => run.wallMs)),
-      medianPromptMs: median(runs.map((run) => run.promptMs)),
-      medianPredictedMs: median(runs.map((run) => run.predictedMs)),
-    });
-    const summary = { old: summarize(old), new: summarize(fresh) };
-    log(`parse/${parseArm}: ${JSON.stringify(summary)}`);
-    const outPath = path.join(outDir, `task-trial6-${Date.now()}-parse-${parseArm}.json`);
-    await writeFile(
-      outPath,
-      JSON.stringify(
-        { hostCpu: cpu, task: "parse", arm: parseArm, runParams, runtime: loaded, targetMs: TARGET_MS, summary, runs: scored, exportedAt: new Date().toISOString() },
-        null,
-        2,
-      ),
-    );
-    log(`saved: ${outPath}`);
-  }
-
-  // ── 抽名臂：json（schema 约束）/ plain（指令+示例+空约定，v5 起真正进消息） ──
-  for (const namesArm of ["json", "plain"]) {
-    const plain = namesArm === "plain";
-    const cases = [...NAMES_CASES_OLD, ...NAMES_CASES_NEW].map((testCase) => ({
-      batch: NAMES_CASES_OLD.includes(testCase) ? "old" : "new",
-      narration: testCase.narration,
-      expect: testCase.expect,
-      messages: buildNamesMessages(namesArm, testCase),
-    }));
-    for (const testCase of cases) checkMessageContract(`names/${namesArm}`, testCase.messages);
-    log(`names/${namesArm}: message contract pass on ${cases.length} cases`);
-
-    const runs = await page.evaluate(
-      async (trial) => {
-        const wllama = window.__trialWllama;
-        const runs = [];
-        for (const testCase of trial.cases) {
-          const started = performance.now();
-          try {
-            const options = {
-              messages: testCase.messages,
-              max_tokens: 80,
-              temperature: 0,
-              seed: 4711,
-              cache_prompt: false,
-              chat_template_kwargs: { enable_thinking: false },
-            };
-            if (!trial.plain) {
-              options.response_format = {
-                type: "json_schema",
-                json_schema: { name: "trial", schema: trial.schema, strict: true },
-              };
-            }
-            const response = await wllama.createChatCompletion(options);
-            const text = (response.choices?.[0]?.message?.content ?? "")
-              .replace(/<think>[\s\S]*?<\/think>/g, "")
-              .trim();
-            let parsed = null;
-            if (trial.plain) {
-              const lines = text
-                .split("\n")
-                .map((line) => line.replace(/^[-•\d.、\s]+/, "").replace(/^["']|["']$/g, "").trim())
-                .filter(Boolean);
-              parsed = { names: lines.includes("没有人") ? [] : lines };
-            } else {
-              try {
-                parsed = JSON.parse(text);
-              } catch {
-                try {
-                  parsed = JSON.parse(text.replace(/^```(?:json)?|```$/g, "").trim());
-                } catch {
-                  parsed = null;
-                }
-              }
-            }
-            runs.push({
-              batch: testCase.batch,
-              narration: testCase.narration,
-              expect: testCase.expect,
-              messages: testCase.messages,
-              contractPass: true,
-              wallMs: Math.round(performance.now() - started),
-              promptTokens: response.usage?.prompt_tokens,
-              completionTokens: response.usage?.completion_tokens,
-              promptMs: response.timings?.prompt_ms != null ? Math.round(response.timings.prompt_ms) : null,
-              predictedMs: response.timings?.predicted_ms != null ? Math.round(response.timings.predicted_ms) : null,
-              finishReason: response.choices?.[0]?.finish_reason ?? null,
-              text,
-              parsed,
-              error: null,
-            });
-          } catch (error) {
-            runs.push({
-              batch: testCase.batch,
-              narration: testCase.narration,
-              expect: testCase.expect,
-              messages: testCase.messages,
-              contractPass: true,
-              wallMs: Math.round(performance.now() - started),
-              error: `${error instanceof Error ? error.name : ""} ${error instanceof Error ? error.message : error}`,
-            });
-          }
+      });
+    } else {
+      scored = runs.map((run) => {
+        const expectedKnown = run.expect.filter((name) => ROSTER.includes(name));
+        const expectedNew = run.expect.filter((name) => !ROSTER.includes(name));
+        const codeStarted = performance.now();
+        const knownMatched = matchKnownNames(run.narration);
+        const codeKnownMs = Math.round((performance.now() - codeStarted) * 1000) / 1000;
+        const knownMatch = namesSetEq(knownMatched, expectedKnown);
+        let modelNew = null;
+        let postProcessed = null;
+        let discoveryMatch = false;
+        let combinedNames = null;
+        let correct = false;
+        if (run.parsed && Array.isArray(run.parsed.new_names)) {
+          const { raw, stripped, unknownNames } = postProcessNames(run.parsed.new_names);
+          postProcessed = { raw, stripped, unknownNames };
+          modelNew = stripped;
+          discoveryMatch = namesSetEq(modelNew, expectedNew);
+          combinedNames = [...new Set([...knownMatched, ...modelNew])];
+          correct = namesSetEq(combinedNames, run.expect);
         }
-        return runs;
-      },
-      { cases, schema: NAMES_SCHEMA, plain },
-    );
-
-    const scored = runs.map((run) => {
-      let namesMatch = false;
-      let namesMatchPost = false;
-      let correct = false;
-      let postProcessed = null;
-      let ruleCheck = null;
-      if (run.parsed && Array.isArray(run.parsed.names)) {
-        const { raw, stripped, unknownNames } = postProcessNames(run.parsed.names);
-        postProcessed = { raw, stripped, unknownNames };
-        namesMatch = JSON.stringify([...run.parsed.names].sort()) === JSON.stringify([...run.expect].sort());
-        namesMatchPost = JSON.stringify([...stripped].sort()) === JSON.stringify([...run.expect].sort());
-        ruleCheck = codeRuleCheck(run.narration, stripped);
-        correct = namesMatchPost;
-      }
-      return {
-        ...run,
-        withinTarget: run.error ? undefined : run.wallMs <= TARGET_MS,
-        namesMatch,
-        namesMatchPost,
-        postProcessed,
-        ruleCheck,
-        correct,
-      };
-    });
+        return {
+          ...run,
+          withinTarget: run.error ? undefined : run.wallMs <= TARGET_MS,
+          expectedKnown,
+          expectedNew,
+          knownMatched,
+          codeKnownMs,
+          knownMatch,
+          modelNew,
+          postProcessed,
+          discoveryMatch,
+          combinedNames,
+          correct,
+        };
+      });
+    }
     const old = scored.filter((run) => run.batch === "old");
     const fresh = scored.filter((run) => run.batch === "new");
-    const summarize = (runs) => ({
-      withinTargetRate: `${runs.filter((run) => run.withinTarget).length}/${runs.length}`,
-      correctRate: `${runs.filter((run) => run.correct).length}/${runs.length}`,
-      minWallMs: Math.min(...runs.map((run) => run.wallMs)),
-      maxWallMs: Math.max(...runs.map((run) => run.wallMs)),
-      medianPromptMs: median(runs.map((run) => run.promptMs)),
-      medianPredictedMs: median(runs.map((run) => run.predictedMs)),
-    });
+    const rate = (runs, predicate) => `${runs.filter(predicate).length}/${runs.length}`;
+    const summarize = (runs) => {
+      const base = {
+        withinTargetRate: rate(runs, (run) => run.withinTarget),
+        correctRate: rate(runs, (run) => run.correct),
+        minWallMs: Math.min(...runs.map((run) => run.wallMs)),
+        maxWallMs: Math.max(...runs.map((run) => run.wallMs)),
+        medianPromptMs: median(runs.map((run) => run.promptMs)),
+        medianPredictedMs: median(runs.map((run) => run.predictedMs)),
+      };
+      if (namesArm === "discovery") {
+        base.knownMatchRate = rate(runs, (run) => run.knownMatch);
+        base.discoveryMatchRate = rate(runs, (run) => run.discoveryMatch);
+      }
+      return base;
+    };
     const summary = { old: summarize(old), new: summarize(fresh) };
     log(`names/${namesArm}: ${JSON.stringify(summary)}`);
-    const outPath = path.join(outDir, `task-trial6-${Date.now()}-names-${namesArm}.json`);
+    const outPath = path.join(outDir, `task-trial7-${Date.now()}-names-${namesArm}.json`);
     await writeFile(
       outPath,
       JSON.stringify(
