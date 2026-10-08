@@ -4,17 +4,38 @@
  * decode are measured separately. Wall-clock times are recorded alongside,
  * because — unlike llama-bench — a browser call includes tokenization,
  * sampling and worker round-trips.
+ *
+ * The chars-per-token ratio is calibrated once (first prefill probe) and
+ * shared by every later stage: prefill repeats, decode, accept runs and abort
+ * tests all build prompts with the same ratio.
  */
 
 import type { Wllama } from "@wllama/wllama";
 
-import { sampleHeap } from "./environment";
+import { sampleHeap, sampleMemory } from "./environment";
 import { adjustCharRatio, buildPrompt } from "./prompts";
-import type { BenchmarkConfig, RunRecord, RuntimeInfo } from "./types";
+import type {
+  BenchmarkConfig,
+  RunRecord,
+  RuntimeInfo,
+} from "./types";
 import { validCombos } from "./types";
 import { getLibllamaVersion } from "./wllama-loader";
 
+/** The per-component target from the trial plan, in ms. */
+export const ACCEPT_TARGET_MS = 4000;
+
 let runCounter = 0;
+/**
+ * Per-suite salt mixed into every prompt nonce: a second suite measuring the
+ * same档位 must not replay the previous suite's KV cache (a full prefix hit
+ * reports prefill as single-digit milliseconds).
+ */
+let suiteEpoch = 0;
+
+function nonce(base: number): number {
+  return base + suiteEpoch * 7919;
+}
 
 function nextRunId(kind: string): string {
   runCounter += 1;
@@ -37,6 +58,11 @@ export type RunnerHooks = {
   onRun: (record: RunRecord) => void;
   /** Between-run escape hatch: the UI can cancel the remaining suite. */
   shouldStop?: () => boolean;
+  /**
+   * Registers the controller of the in-flight call so the UI's stop button
+   * can cancel actual inference, not only skip the next stage.
+   */
+  onController?: (controller: AbortController) => void;
 };
 
 function stopped(hooks: RunnerHooks): boolean {
@@ -59,6 +85,11 @@ function errorMessage(error: unknown): string {
   return error instanceof Error ? error.message : String(error);
 }
 
+function isAbortError(error: unknown): boolean {
+  const name = error instanceof Error ? error.name : "";
+  return /abort/i.test(`${name} ${errorMessage(error)}`);
+}
+
 export async function runLoadFromBlobs(
   wllama: Wllama,
   blobs: Blob[],
@@ -79,7 +110,7 @@ export async function runLoadFromBlobs(
   }
   record.wallMs = Math.round(performance.now() - started);
   hooks.onRun(record);
-  return collectRuntimeInfo(wllama, label, sourceBytes);
+  return collectRuntimeInfo(wllama, label, sourceBytes, config);
 }
 
 export async function runLoadFromUrl(
@@ -111,13 +142,14 @@ export async function runLoadFromUrl(
   }
   record.wallMs = Math.round(performance.now() - started);
   hooks.onRun(record);
-  return collectRuntimeInfo(wllama, url, sourceBytes);
+  return collectRuntimeInfo(wllama, url, sourceBytes, config);
 }
 
 function collectRuntimeInfo(
   wllama: Wllama,
   sourceLabel: string,
   sourceBytes: number | null,
+  config: BenchmarkConfig,
 ): RuntimeInfo {
   const metadata = wllama.getModelMetadata();
   const context = wllama.getLoadedContextInfo();
@@ -125,6 +157,7 @@ function collectRuntimeInfo(
   for (const [key, value] of Object.entries(metadata.meta ?? {})) {
     if (key.startsWith("general.")) generalMeta[key] = String(value);
   }
+  const params = loadParams(config);
   return {
     sourceLabel,
     sourceBytes,
@@ -137,6 +170,12 @@ function collectRuntimeInfo(
     nLayer: metadata.hparams.nLayer,
     libllamaVersion: getLibllamaVersion(),
     generalMeta,
+    loadParams: {
+      n_ctx: params.n_ctx,
+      n_batch: params.n_batch,
+      n_ubatch: params.n_ubatch,
+      n_threads: params.n_threads ?? null,
+    },
   };
 }
 
@@ -169,11 +208,53 @@ function readTimings(response: CompletionTimings) {
   };
 }
 
+type CompletionCall = {
+  prompt: string;
+  max_tokens: number;
+  seed: number;
+  temperature?: number;
+};
+
+/**
+ * One timed completion wired to the UI's stop button. Returns null when the
+ * call did not finish (user cancel or failure); the record carries why.
+ */
+async function runCompletion(
+  wllama: Wllama,
+  call: CompletionCall,
+  hooks: RunnerHooks,
+  record: RunRecord,
+): Promise<CompletionTimings | null> {
+  const controller = new AbortController();
+  hooks.onController?.(controller);
+  const started = performance.now();
+  try {
+    const response = (await wllama.createCompletion({
+      prompt: call.prompt,
+      max_tokens: call.max_tokens,
+      temperature: call.temperature ?? 0,
+      seed: call.seed,
+      abortSignal: controller.signal,
+    })) as CompletionTimings;
+    record.wallMs = Math.round(performance.now() - started);
+    Object.assign(record, readTimings(response));
+    return response as CompletionTimings;
+  } catch (error) {
+    record.wallMs = Math.round(performance.now() - started);
+    if (isAbortError(error)) {
+      record.cancelledByUser = true;
+      record.error = "用户停止";
+    } else {
+      record.error = errorMessage(error);
+    }
+    return null;
+  }
+}
+
 /**
  * Prefill + calibration for one档位 combo. The first repeat doubles as the
- * calibration probe: its measured prompt_tokens recalibrates the
- * chars-per-token ratio for every later repeat. Probe rows are real prefill
- * measurements and are reported as such.
+ * calibration probe; the runner returns the calibrated ratio so later stages
+ * (decode, accept, abort) build prompts with the same configuration.
  */
 async function runPrefillCombo(
   wllama: Wllama,
@@ -183,11 +264,11 @@ async function runPrefillCombo(
   charRatio: number,
   hooks: RunnerHooks,
 ): Promise<number> {
-  const nonce = total * 10007 + memory * 101 + repeat;
+  const runNonce = nonce(total * 10007 + memory * 101 + repeat);
   const prompt = buildPrompt({
     totalTokens: total,
     memoryTokens: memory,
-    nonce,
+    nonce: runNonce,
     charRatio,
   });
   const seed = 445 + repeat;
@@ -196,46 +277,35 @@ async function runPrefillCombo(
   record.nominalMemoryTokens = memory;
   record.seed = seed;
 
-  const started = performance.now();
-  try {
-    const response = (await wllama.createCompletion({
-      prompt,
-      max_tokens: 1,
-      temperature: 0,
-      seed,
-    })) as CompletionTimings;
-    record.wallMs = Math.round(performance.now() - started);
-    Object.assign(record, readTimings(response));
-  } catch (error) {
-    record.wallMs = Math.round(performance.now() - started);
-    record.error = errorMessage(error);
-    hooks.onRun(record);
-    return charRatio;
-  }
+  await runCompletion(wllama, { prompt, max_tokens: 1, seed }, hooks, record);
   hooks.onRun(record);
 
   const measured = record.promptTokens ?? 0;
   return measured > 0 ? adjustCharRatio(charRatio, measured, total) : charRatio;
 }
 
+/** Returns the calibrated chars-per-token ratio for the whole suite. */
 export async function runPrefillMatrix(
   wllama: Wllama,
   config: BenchmarkConfig,
   hooks: RunnerHooks,
-): Promise<void> {
+): Promise<number> {
+  suiteEpoch += 1;
   let charRatio = 1.0;
   for (const { total, memory } of validCombos(config)) {
     for (let repeat = 0; repeat < config.prefillRepeats; repeat += 1) {
-      if (stopped(hooks)) return;
+      if (stopped(hooks)) return charRatio;
       charRatio = await runPrefillCombo(wllama, total, memory, repeat, charRatio, hooks);
     }
   }
+  return charRatio;
 }
 
-/** Decode speed at the largest档位 — the binding constraint for narration. */
+/** Decode speed at the largest档位, using the suite's calibrated ratio. */
 export async function runDecodeMatrix(
   wllama: Wllama,
   config: BenchmarkConfig,
+  charRatio: number,
   hooks: RunnerHooks,
 ): Promise<void> {
   const combos = validCombos(config);
@@ -244,12 +314,12 @@ export async function runDecodeMatrix(
 
   for (let repeat = 0; repeat < config.decodeRepeats; repeat += 1) {
     if (stopped(hooks)) return;
-    const nonce = largest.total * 70001 + largest.memory * 13 + repeat;
+    const runNonce = nonce(largest.total * 70001 + largest.memory * 13 + repeat);
     const prompt = buildPrompt({
       totalTokens: largest.total,
       memoryTokens: largest.memory,
-      nonce,
-      charRatio: 1.0,
+      nonce: runNonce,
+      charRatio,
     });
     const seed = 9901 + repeat;
     const record = baseRecord(
@@ -260,37 +330,31 @@ export async function runDecodeMatrix(
     record.nominalMemoryTokens = largest.memory;
     record.maxTokens = config.decodeTokens;
     record.seed = seed;
-    const started = performance.now();
-    try {
-      const response = (await wllama.createCompletion({
-        prompt,
-        max_tokens: config.decodeTokens,
-        temperature: 0,
-        seed,
-      })) as CompletionTimings;
-      record.wallMs = Math.round(performance.now() - started);
-      Object.assign(record, readTimings(response));
-    } catch (error) {
-      record.wallMs = Math.round(performance.now() - started);
-      record.error = errorMessage(error);
-    }
+    await runCompletion(
+      wllama,
+      { prompt, max_tokens: config.decodeTokens, seed },
+      hooks,
+      record,
+    );
     hooks.onRun(record);
   }
 
   if (config.chatReference) {
     if (stopped(hooks)) return;
-    const nonce = largest.total * 70001 + 777;
+    const chatNonce = nonce(largest.total * 70001 + 777);
     const prompt = buildPrompt({
       totalTokens: largest.total,
       memoryTokens: largest.memory,
-      nonce,
-      charRatio: 1.0,
+      nonce: chatNonce,
+      charRatio,
     });
     const record = baseRecord("decode", `chat 模板对照 · ${largest.total} tok 输入`);
     record.nominalTotalTokens = largest.total;
     record.nominalMemoryTokens = largest.memory;
     record.maxTokens = Math.min(config.decodeTokens, 64);
     record.seed = 424242;
+    const controller = new AbortController();
+    hooks.onController?.(controller);
     const started = performance.now();
     try {
       const response = (await wllama.createChatCompletion({
@@ -302,49 +366,119 @@ export async function runDecodeMatrix(
         temperature: 0,
         seed: record.seed,
         cache_prompt: false,
+        abortSignal: controller.signal,
       })) as CompletionTimings;
       record.wallMs = Math.round(performance.now() - started);
       Object.assign(record, readTimings(response));
     } catch (error) {
       record.wallMs = Math.round(performance.now() - started);
-      record.error = errorMessage(error);
+      if (isAbortError(error)) {
+        record.cancelledByUser = true;
+        record.error = "用户停止";
+      } else {
+        record.error = errorMessage(error);
+      }
     }
     hooks.onRun(record);
   }
 }
 
 /**
- * Abort mid-generation: measures how quickly the runtime actually stops after
- * abort() and how many tokens were streamed before the cancel landed. This
- * is the "取消推理" acceptance condition from the runtime筛选.
- *
- * The prompt starts at the smallest configured档位 and shrinks on context
- * overflow, because the tokenizer's real token count is only known after the
- * model rejects the request.
+ * REAL 4-second acceptance: one full call per档位 combo (actual prefill +
+ * `acceptOutputTokens` generated), judged on measured wall time — not an
+ * extrapolation from rates.
  */
-export async function runAbortTest(
+export async function runAcceptMatrix(
   wllama: Wllama,
   config: BenchmarkConfig,
+  charRatio: number,
   hooks: RunnerHooks,
-  abortAfterMs: number,
+): Promise<void> {
+  for (const { total, memory } of validCombos(config)) {
+    if (stopped(hooks)) return;
+    const runNonce = nonce(total * 30011 + memory * 7 + config.acceptOutputTokens);
+    const prompt = buildPrompt({
+      totalTokens: total,
+      memoryTokens: memory,
+      nonce: runNonce,
+      charRatio,
+    });
+    const seed = 55501 + total;
+    const record = baseRecord(
+      "accept",
+      `4 秒实测 · ${total} tok（记忆 ${memory}）+ 生成 ${config.acceptOutputTokens}`,
+    );
+    record.nominalTotalTokens = total;
+    record.nominalMemoryTokens = memory;
+    record.maxTokens = config.acceptOutputTokens;
+    record.seed = seed;
+    await runCompletion(
+      wllama,
+      { prompt, max_tokens: config.acceptOutputTokens, seed },
+      hooks,
+      record,
+    );
+    record.withinTarget = record.error ? undefined : record.wallMs <= ACCEPT_TARGET_MS;
+    hooks.onRun(record);
+  }
+}
+
+export type AbortPlan = {
+  /** Short fuse — expected to land during input processing. */
+  shortMs: number;
+  /**
+   * Measured-prefill + margin — expected to land during generation. Null
+   * when no prefill reference exists (skipped).
+   */
+  decodeMs: number | null;
+};
+
+/**
+ * Cancel mid-call, once per phase. Each attempt records its outcome class,
+ * and a context-overflow failure writes the error text on the record (and
+ * retries smaller) instead of vanishing into an internal flag.
+ */
+export async function runAbortTests(
+  wllama: Wllama,
+  config: BenchmarkConfig,
+  charRatio: number,
+  hooks: RunnerHooks,
+  plan: AbortPlan,
 ): Promise<void> {
   if (stopped(hooks)) return;
+  await runAbortOnce(wllama, config, charRatio, hooks, plan.shortMs, "输入处理阶段取消");
+  if (plan.decodeMs != null && !stopped(hooks)) {
+    await runAbortOnce(wllama, config, charRatio, hooks, plan.decodeMs, "生成阶段取消");
+  }
+}
+
+async function runAbortOnce(
+  wllama: Wllama,
+  config: BenchmarkConfig,
+  charRatio: number,
+  hooks: RunnerHooks,
+  abortAfterMs: number,
+  phaseLabel: string,
+): Promise<void> {
   const combos = validCombos(config);
   const totals = combos.map((combo) => combo.total);
   const memories = combos.map((combo) => combo.memory);
   let nominalTotal = Math.min(...(totals.length ? totals : [512]));
   const nominalMemory = Math.min(64, ...(memories.length ? memories : [64]));
-  const maxTokens = 512;
+  const maxTokens = Math.max(config.decodeTokens, 256);
   const seed = 31337;
 
   for (let attempt = 1; attempt <= 3; attempt += 1) {
     const prompt = buildPrompt({
       totalTokens: nominalTotal,
       memoryTokens: nominalMemory,
-      nonce: 999983 + attempt,
-      charRatio: 0.5,
+      nonce: nonce(999983 + attempt),
+      charRatio,
     });
-    const record = baseRecord("abort", `中断测试 · ${abortAfterMs}ms 后取消${attempt > 1 ? `（缩小提示第 ${attempt - 1} 次）` : ""}`);
+    const record = baseRecord(
+      "abort",
+      `${phaseLabel} · ${abortAfterMs}ms${attempt > 1 ? `（缩小提示第 ${attempt - 1} 次）` : ""}`,
+    );
     record.nominalTotalTokens = nominalTotal;
     record.nominalMemoryTokens = nominalMemory;
     record.maxTokens = maxTokens;
@@ -352,10 +486,14 @@ export async function runAbortTest(
     record.seed = seed;
 
     const controller = new AbortController();
-    let tokensBeforeAbort = 0;
-    let abortStartedAt = 0;
+    hooks.onController?.(controller);
+    let timerFired = false;
+    let stopRequestedAt = 0;
+    let streamedChunks = 0;
+    let generatedChars = 0;
     const timer = window.setTimeout(() => {
-      abortStartedAt = performance.now();
+      timerFired = true;
+      stopRequestedAt = performance.now();
       controller.abort();
     }, abortAfterMs);
 
@@ -369,37 +507,64 @@ export async function runAbortTest(
         seed,
         stream: true,
         abortSignal: controller.signal,
-        onData: () => {
-          tokensBeforeAbort += 1;
+        onData: (chunk) => {
+          streamedChunks += 1;
+          generatedChars += [...(chunk.choices?.[0]?.text ?? "")].length;
         },
       });
       record.completedNormally = true;
+      record.abortOutcome = "completed_early";
     } catch (error) {
-      record.completedNormally = false;
       const message = errorMessage(error);
-      const name = error instanceof Error ? error.name : "";
       if (/exceeds the available context/i.test(message)) {
         contextOverflow = true;
-      } else if (!/abort/i.test(`${name} ${message}`)) {
+        record.abortOutcome = "context_overflow";
+        record.error = message;
+      } else if (isAbortError(error)) {
+        record.abortOutcome = timerFired ? "cancelled" : "error";
+        if (!timerFired) {
+          // Aborted before the benchmark fuse: that was the stop button.
+          record.cancelledByUser = true;
+          record.error = "用户停止";
+        }
+      } else {
+        record.abortOutcome = "error";
         record.error = message;
       }
     } finally {
       window.clearTimeout(timer);
     }
     record.wallMs = Math.round(performance.now() - started);
-    record.tokensBeforeAbort = tokensBeforeAbort;
-    record.stopLatencyMs = abortStartedAt > 0
-      ? Math.round(performance.now() - abortStartedAt)
+    record.streamedChunks = streamedChunks;
+    record.generatedChars = generatedChars;
+    record.abortPhase = generatedChars > 0
+      ? "decode"
+      : record.completedNormally
+        ? "decode"
+        : "prefill";
+    record.stopLatencyMs = stopRequestedAt > 0
+      ? Math.round(performance.now() - stopRequestedAt)
       : undefined;
     record.heap = sampleHeap();
     hooks.onRun(record);
 
+    if (record.cancelledByUser) return;
     if (!contextOverflow) return;
     if (attempt < 3) {
       nominalTotal = Math.max(64, Math.floor(nominalTotal / 4));
       hooks.onStatus(`中断测试提示超出上下文，缩小到 ${nominalTotal} tok 重试`);
     }
   }
+}
+
+/** Full-page memory sample (JS + WASM when the precise API is available). */
+export async function runMemoryCheckpoint(
+  label: string,
+  hooks: RunnerHooks,
+): Promise<void> {
+  const record = baseRecord("memory", label);
+  record.memory = await sampleMemory();
+  hooks.onRun(record);
 }
 
 /** Unload cost — informs the dynamic load/unload decision. */

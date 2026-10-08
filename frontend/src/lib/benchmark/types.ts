@@ -12,6 +12,13 @@ export type EnvironmentInfo = {
   collectedAt: string;
 };
 
+export type LoadParamsSnapshot = {
+  n_ctx: number;
+  n_batch: number;
+  n_ubatch: number;
+  n_threads: number | null;
+};
+
 /** Values readable only after a model is loaded (from wllama itself). */
 export type RuntimeInfo = {
   sourceLabel: string;
@@ -25,11 +32,26 @@ export type RuntimeInfo = {
   nLayer: number;
   libllamaVersion: string;
   generalMeta: Record<string, string>;
+  /** The parameters the context was actually created with. */
+  loadParams: LoadParamsSnapshot;
 };
 
 export type HeapSample = { usedMB: number | null; totalMB: number | null };
 
-export type RunKind = "load" | "prefill" | "decode" | "abort" | "exit";
+/**
+ * Full-page memory sample. `preciseMB` comes from
+ * performance.measureUserAgentSpecificMemory (crossOriginIsolated Chrome
+ * only) and covers JS + WebAssembly heaps; the JS-heap-only fields are the
+ * fallback.
+ */
+export type MemorySample = HeapSample & {
+  preciseMB?: number | null;
+  breakdownMB?: Record<string, number>;
+};
+
+export type RunKind = "load" | "prefill" | "decode" | "accept" | "abort" | "exit" | "memory";
+
+export type AbortOutcome = "cancelled" | "completed_early" | "context_overflow" | "error";
 
 export type RunRecord = {
   id: string;
@@ -37,6 +59,8 @@ export type RunRecord = {
   label: string;
   startedAt: string;
   wallMs: number;
+  /** The suite this run belongs to; load/exit/memory checkpoints have none. */
+  suiteId?: string;
   /** Requested档位; the measured token counts live on the fields below. */
   nominalTotalTokens?: number;
   nominalMemoryTokens?: number;
@@ -53,9 +77,17 @@ export type RunRecord = {
   /** Abort-test fields. */
   abortAfterMs?: number;
   stopLatencyMs?: number;
-  tokensBeforeAbort?: number;
+  /** Stream callbacks are not exactly tokens; chars are counted from text. */
+  streamedChunks?: number;
+  generatedChars?: number;
+  abortOutcome?: AbortOutcome;
+  abortPhase?: "prefill" | "decode" | "unknown";
+  cancelledByUser?: boolean;
   completedNormally?: boolean;
+  /** Accept-run verdict: the full call finished within the 4s target. */
+  withinTarget?: boolean;
   heap?: HeapSample;
+  memory?: MemorySample;
   error?: string;
 };
 
@@ -72,6 +104,9 @@ export type BenchmarkConfig = {
   nThreads: number | null;
   /** Extra chat-completion对照 row after the raw-completion matrix. */
   chatReference: boolean;
+  /** Real full-call 4s acceptance runs, one per档位 combo. */
+  acceptEnabled: boolean;
+  acceptOutputTokens: number;
 };
 
 export const DEFAULT_CONFIG: BenchmarkConfig = {
@@ -85,14 +120,27 @@ export const DEFAULT_CONFIG: BenchmarkConfig = {
   nUbatch: 512,
   nThreads: null,
   chatReference: true,
+  acceptEnabled: false,
+  acceptOutputTokens: 512,
 };
 
-export type Suite = {
-  environment: EnvironmentInfo;
-  runtime: RuntimeInfo | null;
-  config: BenchmarkConfig;
-  runs: RunRecord[];
+/** One executed suite. Config and model identity are snapshotted at start. */
+export type SuiteRecord = {
+  id: string;
+  label: string;
+  startedAt: string;
   finishedAt?: string;
+  config: BenchmarkConfig;
+  modelLabel: string | null;
+  runs: RunRecord[];
+};
+
+export type ExportPayload = {
+  environment: EnvironmentInfo;
+  /** Persists after unload; replaced only by the next successful load. */
+  model: RuntimeInfo | null;
+  suites: SuiteRecord[];
+  exportedAt: string;
 };
 
 /** Invalid档位 combos (memory injection must be smaller than the total). */

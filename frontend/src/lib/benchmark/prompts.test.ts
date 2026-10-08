@@ -21,30 +21,28 @@ describe("benchmark prompts", () => {
     ]);
   });
 
-  it("skips the filler rules section when the fixed sections already cover the budget", () => {
-    const sections = buildSections({ totalTokens: 256, memoryTokens: 64, nonce: 1 });
-    expect(sections.map((section) => section.name)).not.toContain("style_rules");
-    expect(sections.map((section) => section.name)).toEqual([
-      "campaign_context",
-      "system_state",
-      "memory_injection",
-      "messages",
-      "player_action",
-    ]);
+  it("grows the prompt monotonically across the whole budget range", () => {
+    const charsAt = (total: number) =>
+      promptChars(buildPrompt({ totalTokens: total, memoryTokens: Math.floor(total / 2), nonce: 1 }));
+    // The skeleton must shrink with the budget instead of holding at ~437 chars.
+    expect(charsAt(64)).toBeLessThan(charsAt(128));
+    expect(charsAt(128)).toBeLessThan(charsAt(512));
+    expect(charsAt(512)).toBeLessThan(charsAt(2048));
   });
 
-  it("grows the prompt monotonically with the token budget", () => {
-    const small = promptChars(buildPrompt({ totalTokens: 512, memoryTokens: 256, nonce: 1 }));
-    const large = promptChars(buildPrompt({ totalTokens: 2048, memoryTokens: 512, nonce: 1 }));
-    expect(large).toBeGreaterThan(small * 2);
+  it("keeps small budgets near their nominal size", () => {
+    // At ratio 1.0 a 64-token prompt must be a few dozen chars past the floor,
+    // not the old fixed ~437-char skeleton.
+    expect(promptChars(buildPrompt({ totalTokens: 64, memoryTokens: 32, nonce: 1 }))).toBeLessThan(140);
+    expect(promptChars(buildPrompt({ totalTokens: 128, memoryTokens: 64, nonce: 1 }))).toBeLessThan(200);
   });
 
   it("scales the memory section with the injection budget", () => {
-    const sections = (memoryTokens: number) =>
+    const memorySection = (memoryTokens: number) =>
       buildSections({ totalTokens: 2048, memoryTokens, nonce: 3 }).find(
         (section) => section.name === "memory_injection",
       )!;
-    expect(promptChars(sections(1024).text)).toBeGreaterThan(promptChars(sections(256).text) * 2);
+    expect(promptChars(memorySection(1024).text)).toBeGreaterThan(promptChars(memorySection(256).text) * 2);
   });
 
   it("produces distinct prompts per nonce so the KV cache cannot hit", () => {

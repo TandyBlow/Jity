@@ -9,6 +9,11 @@
  * ACTUAL prompt_tokens from the completion response; `charRatio` (chars per
  * token, calibrated per model by the runner) only brings the request close to
  * the nominal档位.
+ *
+ * The budget is a hard cap, not a minimum: when the nominal档位 is smaller
+ * than the fixed sections, every section is clipped proportionally down to a
+ * small floor, so a 64-token prompt measures like a 64-token prompt instead
+ * of silently staying at the skeleton size.
  */
 
 export type PromptSection = { name: string; text: string };
@@ -55,7 +60,14 @@ export type PromptParams = {
   charRatio?: number;
 };
 
-const sectionBytes = (text: string): number => [...text].length;
+export const sectionChars = (text: string): number => [...text].length;
+
+/** Clip to a character budget, marking the cut so clipped prompts are visible. */
+function clipChars(text: string, maxChars: number): string {
+  if (maxChars <= 0) return "";
+  if (sectionChars(text) <= maxChars) return text;
+  return `${[...text].slice(0, maxChars - 1).join("")}…`;
+}
 
 function fillerLines(charBudget: number, rand: () => number, tag: string): string {
   const lines: string[] = [];
@@ -65,10 +77,49 @@ function fillerLines(charBudget: number, rand: () => number, tag: string): strin
     const sentence = FILLER_SENTENCES[Math.floor(rand() * FILLER_SENTENCES.length)];
     const line = `- ${sentence}（${tag}${index}）`;
     lines.push(line);
-    used += sectionBytes(line) + 1;
+    used += sectionChars(line) + 1;
     index += 1;
   }
   return lines.join("\n");
+}
+
+/** Per-section character floors: what survives even at the smallest档位. */
+const SECTION_FLOORS: Record<string, number> = {
+  campaign_context: 24,
+  system_state: 20,
+  messages: 16,
+  player_action: 24,
+};
+
+/**
+ * Distribute `budget` chars across sections proportional to their full size,
+ * never below each floor. When floors bind, the largest allocations are
+ * shaved first.
+ */
+function allocate(fullLens: number[], floors: number[], budget: number): number[] {
+  const totalFull = fullLens.reduce((sum, len) => sum + len, 0);
+  if (budget >= totalFull) return fullLens.slice();
+
+  const alloc = fullLens.map((len, index) =>
+    Math.max(floors[index], Math.round(len * (budget / totalFull))),
+  );
+  const shavable = alloc
+    .map((value, index) => ({ index, slack: value - floors[index] }))
+    .filter((entry) => entry.slack > 0)
+    .sort((a, b) => b.slack - a.slack);
+
+  let sum = alloc.reduce((sum, value) => sum + value, 0);
+  let cursor = 0;
+  while (sum > budget && shavable.length > 0) {
+    const entry = shavable[cursor % shavable.length];
+    if (alloc[entry.index] > floors[entry.index]) {
+      alloc[entry.index] -= 1;
+      sum -= 1;
+    }
+    cursor += 1;
+    if (cursor > budget + totalFull) break; // safety valve, floors always fit
+  }
+  return alloc;
 }
 
 /**
@@ -77,56 +128,77 @@ function fillerLines(charBudget: number, rand: () => number, tag: string): strin
  */
 export function buildSections(params: PromptParams): PromptSection[] {
   const charRatio = params.charRatio ?? 1.0;
-  const totalChars = Math.round(params.totalTokens * charRatio);
-  const memoryChars = Math.round(params.memoryTokens * charRatio);
+  const totalChars = Math.max(24, Math.round(params.totalTokens * charRatio));
+  const memoryChars = Math.min(
+    Math.round(params.memoryTokens * charRatio),
+    Math.floor(totalChars * 0.9),
+  );
   const rand = mulberry32(params.nonce);
 
-  const campaignContext = [
-    "## 战役上下文",
-    `当前战役：黑月之潮（样本${params.nonce}）。当前章节：龙族Ⅲ — 高天原的阴影。章节目标：查明蛇岐八家的真正目的。`,
-    "锚点进度：2/9 已揭示。人物关系变化：绘梨衣 信任上升(+2)，源稚生 中性(+0)。",
-  ].join("\n");
-
-  const stateHeader = [
-    "## 当前状态",
-    `当前地点：卡塞尔学院图书馆。血统稳定：72/100。体力：88/100。回合：${17 + (params.nonce % 7)}。`,
-    "玩家状态：调查中 · danger_level=medium · 当前目标：找到那本被撕掉登记页的值班记录。",
-  ].join("\n");
-
-  const memoryInjection = [
-    "## 长期叙事记忆",
-    fillerLines(memoryChars, rand, "记忆"),
-  ].join("\n");
-
-  const messages = [
-    "## 最近对话历史",
-    "[玩家]: 我要查阅上周的值班登记簿。",
-    "[主持人]: 管理员说登记簿就在值班室，但当你翻开时，最后一页已经被撕掉了。",
-    "[玩家]: 询问管理员谁最后接触过登记簿。",
-    `[主持人]: 管理员想了想，说深夜只有巡夜的学生来过（样本${params.nonce}）。`,
-  ].join("\n");
-
-  const action = `## 玩家行动\n我去调查巡夜学生的名单，并核对当晚的出入记录（样本${params.nonce}）。`;
-
-  const sections: PromptSection[] = [
-    { name: "campaign_context", text: campaignContext },
-    { name: "system_state", text: stateHeader },
-    { name: "memory_injection", text: memoryInjection },
-    { name: "messages", text: messages },
-    { name: "player_action", text: action },
+  const fullSections: Array<{ name: string; text: string }> = [
+    {
+      name: "campaign_context",
+      // The nonce leads the VERY first token so llama.cpp's prefix cache
+      // cannot hit across runs — a hit would understate prefill. Any shared
+      // characters before the first divergence are reused as cached tokens.
+      text: `（样本${params.nonce}）## 战役上下文\n当前战役：黑月之潮。当前章节：龙族Ⅲ — 高天原的阴影。章节目标：查明蛇岐八家的真正目的。\n锚点进度：2/9 已揭示。人物关系变化：绘梨衣 信任上升(+2)，源稚生 中性(+0)。`,
+    },
+    {
+      name: "system_state",
+      text: `## 当前状态\n当前地点：卡塞尔学院图书馆。血统稳定：72/100。体力：88/100。回合：${17 + (params.nonce % 7)}。\n玩家状态：调查中 · danger_level=medium · 当前目标：找到那本被撕掉登记页的值班记录。`,
+    },
+    {
+      name: "messages",
+      text: `## 最近对话历史\n[玩家]: 我要查阅上周的值班登记簿。\n[主持人]: 管理员说登记簿就在值班室，但当你翻开时，最后一页已经被撕掉了。\n[玩家]: 询问管理员谁最后接触过登记簿。\n[主持人]: 管理员想了想，说深夜只有巡夜的学生来过（样本${params.nonce}）。`,
+    },
+    {
+      name: "player_action",
+      text: `## 玩家行动\n我去调查巡夜学生的名单，并核对当晚的出入记录（样本${params.nonce}）。`,
+    },
   ];
 
-  const usedChars = sections.reduce((sum, section) => sum + sectionBytes(section.text), 0);
-  const remaining = totalChars - usedChars;
-  if (remaining > 40) {
-    // Rules sit before the dialogue history, matching PromptBuilder's order.
-    const messagesIndex = sections.findIndex((section) => section.name === "messages");
-    sections.splice(messagesIndex, 0, {
-      name: "style_rules",
-      text: `## 生成规则（节选）\n${fillerLines(remaining, rand, "规则")}`,
-    });
-  }
-  return sections;
+  const memoryHeader = "## 长期叙事记忆";
+  const memoryBody = clipChars(fillerLines(memoryChars, rand, "记忆"), memoryChars);
+  const memoryText = clipChars(
+    memoryBody ? `${memoryHeader}\n${memoryBody}` : memoryHeader,
+    memoryChars,
+  );
+
+  const fullLens = fullSections.map((section) => sectionChars(section.text));
+  const floors = fullSections.map((section) => SECTION_FLOORS[section.name] ?? 12);
+  const remaining = Math.max(0, totalChars - sectionChars(memoryText));
+  const alloc = allocate(fullLens, floors, remaining);
+
+  const clipped = fullSections.map((section, index) => ({
+    name: section.name,
+    text: clipChars(section.text, alloc[index]),
+  }));
+
+  // Rules filler takes whatever the allocation did not spend.
+  const usedChars =
+    sectionChars(memoryText) + clipped.reduce((sum, section) => sum + sectionChars(section.text), 0);
+  const leftover = totalChars - usedChars;
+  const withRules: PromptSection[] =
+    leftover > 40
+      ? [
+          clipped[0],
+          clipped[1],
+          { name: "memory_injection", text: memoryText },
+          {
+            name: "style_rules",
+            text: `## 生成规则（节选）\n${fillerLines(leftover, rand, "规则")}`,
+          },
+          clipped[2],
+          clipped[3],
+        ]
+      : [
+          clipped[0],
+          clipped[1],
+          { name: "memory_injection", text: memoryText },
+          clipped[2],
+          clipped[3],
+        ];
+  return withRules;
 }
 
 export function sectionsToPrompt(sections: PromptSection[]): string {
