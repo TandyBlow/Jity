@@ -1,12 +1,17 @@
-// Task-level trial v2: short-input/short-output agent jobs with the
+// Task-level trial v2.1: short-input/short-output agent jobs with the
 // responsibility split proposed in review —
 //   model: extract action type / item used / target object, extract names
-//   code:  possession & presence checks, dash/simile counts, pass flag
-// Zero-shot vs few-shot arms share one held-out test set; few-shot examples
-// never appear in it. Scored on wall time AND deterministic correctness.
+//   code:  possession & presence checks (ANY non-empty item_used), dash and
+//          simile counts, pass flag
+// Entity matching uses an explicit alias table with exact comparison after
+// normalization - no bidirectional substring, so "钥匙" never passes for
+// "铜钥匙" and scoring agrees with how the possession check executes.
+// Arms: zero / few (examples duplicate the state block) / few-compact
+// (state and instruction live once in the system message; examples are
+// action-only) - the compression对照 requested for the input-size issue.
 //
 // Usage: node scripts/run-task-trial.mjs [threads]
-// Output: artifacts/benchmark/task-trial2-<ts>-<modeltag>-<arm>.json
+// Output: artifacts/benchmark/task-trial3-<ts>-<modeltag>-<arm>.json
 
 import { mkdir, writeFile } from "node:fs/promises";
 import os from "node:os";
@@ -25,7 +30,7 @@ const MODELS = [
   { tag: "qwen2.5-0.5b", url: "/models/qwen2.5-0.5b-instruct-q4_k_m.gguf" },
 ];
 
-// ── 场景状态（与期望答案一致；地点/物品/NPC 全部显式列出） ──────────
+// ── 场景状态与实体表 ──────────────────────────────────────────────
 
 const PARSE_STATE = `当前地点：卡塞尔学院图书馆。
 已知地点：卡塞尔学院图书馆、二楼档案室。
@@ -33,7 +38,67 @@ const PARSE_STATE = `当前地点：卡塞尔学院图书馆。
 在场 NPC：诺诺、执行部学生。
 体力 88/100，血统稳定 72/100。`;
 
-// ── 任务一：行动解析（模型只做抽取；feasible 由代码按规则计算） ────
+const PARSE_INSTRUCTION = `把玩家行动解析为 JSON，只有三个字段：
+- action_type：item_use（使用物品做事）/ npc_talk（与人物交谈）/ move（前往地点）/ inspect（查看物件）/ other。
+- item_used：行动中使用的物品名（原文摘录），没有则为 null。
+- target：行动的作用对象（人物、地点或物件名，原文摘录），没有则为 null。
+不要判断行动是否可行，那只由规则代码计算。只输出 JSON。`;
+
+// 实体别名表：模型输出归一化到规范名后做精确比较。
+const ENTITY_ALIASES = {
+  铜钥匙: ["铜钥匙"],
+  旧笔记: ["旧笔记"],
+  铁门钥匙: ["铁门钥匙", "生锈的铁门钥匙"],
+  剑: ["剑", "长剑"],
+  大门: ["大门", "图书馆大门"],
+  暗门: ["暗门"],
+  诺诺: ["诺诺"],
+  执行部学生: ["执行部学生", "学生"],
+  二楼档案室: ["二楼档案室", "档案室"],
+  卡塞尔学院图书馆: ["卡塞尔学院图书馆", "图书馆"],
+};
+
+const OWNED = ["铜钥匙", "旧笔记"];
+const PRESENT = ["诺诺", "执行部学生"];
+const KNOWN_LOCATIONS = ["卡塞尔学院图书馆", "二楼档案室"];
+
+/** raw 表面形式 → 规范名；无法归类的输出返回 "UNKNOWN:<raw>"，永不等于期望。 */
+function resolveEntity(raw) {
+  if (raw == null) return null;
+  const text = String(raw).replace(/^我[把把]?/, "").replace(/\s+/g, "").trim()
+    .replace(/[。，！？；、.!?;,]+$/, "");
+  if (!text) return null;
+  for (const [canonical, aliases] of Object.entries(ENTITY_ALIASES)) {
+    if (aliases.includes(text)) return canonical;
+  }
+  return `UNKNOWN:${text}`;
+}
+
+/**
+ * 可行性规则（沿用 Examiner 的适用条款）：
+ * 1. 任何非空 item_used 必须在持有表中，与行动类别无关；
+ * 2. npc_talk 的 target 必须在场；move 的 target 必须是已知地点；
+ * 3. item_use / inspect / other 的对象本身不加前置。
+ */
+function computeFeasible(extraction) {
+  if (!extraction) return null;
+  const item = resolveEntity(extraction.item_used);
+  if (item !== null && !OWNED.includes(item)) return false;
+  switch (extraction.action_type) {
+    case "npc_talk": {
+      const target = resolveEntity(extraction.target);
+      return target !== null && PRESENT.includes(target);
+    }
+    case "move": {
+      const target = resolveEntity(extraction.target);
+      return target !== null && KNOWN_LOCATIONS.includes(target);
+    }
+    default:
+      return true;
+  }
+}
+
+// ── 任务一：行动解析（expected.feasible 为独立期望，参与评分） ──────
 
 const PARSE_SCHEMA = {
   type: "object",
@@ -45,45 +110,18 @@ const PARSE_SCHEMA = {
   required: ["action_type", "item_used", "target"],
 };
 
-const PARSE_INSTRUCTION = `把玩家行动解析为 JSON，只有三个字段：
-- action_type：item_use（使用物品做事）/ npc_talk（与人物交谈）/ move（前往地点）/ inspect（查看物件）/ other。
-- item_used：行动中使用的物品名（原文摘录），没有则为 null。
-- target：行动的作用对象（人物、地点或物件名，原文摘录），没有则为 null。
-不要判断行动是否可行，那只由规则代码计算。只输出 JSON。`;
-
-// expected: 模型抽取期望；feasible 由 computeFeasible 按规则得出。
 const PARSE_CASES = [
-  { action: "我用铜钥匙打开大门。", expect: { action_type: "item_use", item_used: "铜钥匙", target: "大门" } },
-  { action: "我和诺诺打听图书馆的传闻。", expect: { action_type: "npc_talk", item_used: null, target: "诺诺" } },
-  { action: "我去二楼档案室查资料。", expect: { action_type: "move", item_used: null, target: "二楼档案室" } },
-  { action: "我使用生锈的铁门钥匙打开大门。", expect: { action_type: "item_use", item_used: "铁门钥匙", target: "大门" } },
-  { action: "我和执行部学生搭话。", expect: { action_type: "npc_talk", item_used: null, target: "执行部学生" } },
-  { action: "我检查那扇书架后的暗门。", expect: { action_type: "inspect", item_used: null, target: "暗门" } },
-  { action: "我拔剑攻击诺诺。", expect: { action_type: "other", item_used: "剑", target: "诺诺" } },
-  { action: "我在原地休息一会儿。", expect: { action_type: "other", item_used: null, target: null } },
+  { action: "我用铜钥匙打开大门。", expect: { action_type: "item_use", item_used: "铜钥匙", target: "大门", feasible: true } },
+  { action: "我和诺诺打听图书馆的传闻。", expect: { action_type: "npc_talk", item_used: null, target: "诺诺", feasible: true } },
+  { action: "我去二楼档案室查资料。", expect: { action_type: "move", item_used: null, target: "二楼档案室", feasible: true } },
+  { action: "我使用生锈的铁门钥匙打开大门。", expect: { action_type: "item_use", item_used: "铁门钥匙", target: "大门", feasible: false } },
+  { action: "我和执行部学生搭话。", expect: { action_type: "npc_talk", item_used: null, target: "执行部学生", feasible: true } },
+  { action: "我检查那扇书架后的暗门。", expect: { action_type: "inspect", item_used: null, target: "暗门", feasible: true } },
+  { action: "我拔剑攻击诺诺。", expect: { action_type: "other", item_used: "剑", target: "诺诺", feasible: false } },
+  { action: "我在原地休息一会儿。", expect: { action_type: "other", item_used: null, target: null, feasible: true } },
 ];
 
-// 沿用 Examiner 的适用规则：item_use 需物品持有；npc_talk 需 NPC 在场；
-// move 需地点已知；inspect/other 不加前置。
-function computeFeasible(extraction) {
-  if (!extraction) return null;
-  const owned = ["铜钥匙", "旧笔记"];
-  const present = ["诺诺", "执行部学生"];
-  const knownLocations = ["卡塞尔学院图书馆", "二楼档案室"];
-  switch (extraction.action_type) {
-    case "item_use":
-      return owned.includes(extraction.item_used ?? "");
-    case "npc_talk":
-      return present.includes(extraction.target ?? "");
-    case "move":
-      return knownLocations.includes(extraction.target ?? "");
-    default:
-      return true;
-  }
-}
-
-// few-shot 示例：held-out，不属于测试集。
-const PARSE_FEWSHOT = [
+const PARSE_FEWSHOT_FULL = [
   {
     user: `${PARSE_STATE}\n\n玩家行动：我检查铜钥匙的齿纹。\n\n${PARSE_INSTRUCTION}`,
     assistant: '{"action_type":"inspect","item_used":null,"target":"铜钥匙"}',
@@ -94,7 +132,20 @@ const PARSE_FEWSHOT = [
   },
 ];
 
-// ── 任务二：人名抽取（模型只抽人名；违规计数与 pass 由代码计算） ────
+// few-compact：状态与指令只在 system 出现一次，示例仅含行动与 JSON。
+const PARSE_SYSTEM_COMPACT = `你是文字冒险游戏的输入解析器。\n\n${PARSE_STATE}\n\n${PARSE_INSTRUCTION}`;
+const PARSE_FEWSHOT_COMPACT = [
+  {
+    user: "玩家行动：我检查铜钥匙的齿纹。",
+    assistant: '{"action_type":"inspect","item_used":null,"target":"铜钥匙"}',
+  },
+  {
+    user: "玩家行动：我沿着楼梯走到二楼档案室。",
+    assistant: '{"action_type":"move","item_used":null,"target":"二楼档案室"}',
+  },
+];
+
+// ── 任务二：人名抽取（模型只抽人名；计数与 pass 由代码计算） ────────
 
 const NAMES_SCHEMA = {
   type: "object",
@@ -124,14 +175,19 @@ const NAMES_CASES = [
   },
 ];
 
-const NAMES_FEWSHOT = [
+const NAMES_FEWSHOT_FULL = [
   {
     user: "路明非把笔记本递给诺诺。\n\n抽出文本中出现的所有人名，放入 names 数组。只输出 JSON。",
     assistant: '{"names":["路明非","诺诺"]}',
   },
 ];
 
-// ── 代码侧规则检查（用户职责划分：计数与 pass 归代码） ─────────────
+const NAMES_SYSTEM_COMPACT = `你是文字冒险游戏的文本检查器。\n\n${NAMES_INSTRUCTION}`;
+const NAMES_FEWSHOT_COMPACT = [
+  { user: "路明非把笔记本递给诺诺。", assistant: '{"names":["路明非","诺诺"]}' },
+];
+
+// ── 代码侧规则检查 ────────────────────────────────────────────────
 
 function codeRuleCheck(narration, extractedNames) {
   const emDashCount = (narration.match(/—/g) ?? []).length;
@@ -172,9 +228,11 @@ async function main() {
   const outDir = path.join(frontendRoot, "..", "artifacts", "benchmark");
   await mkdir(outDir, { recursive: true });
 
+  const ARMS = ["zero", "few", "few-compact"];
+
   for (const model of MODELS) {
-    for (const arm of ["zero", "few"]) {
-      log(`=== ${model.tag} / ${arm}-shot: loading ${model.url} ===`);
+    for (const arm of ARMS) {
+      log(`=== ${model.tag} / ${arm}: loading ${model.url} ===`);
       const loaded = await page.evaluate(
         async ({ modelUrl, threads: nThreads }) => {
           const { Wllama } = await import("/wllama/index.min.js");
@@ -246,49 +304,63 @@ async function main() {
             }
           };
 
-          const buildMessages = (fewshot, systemText, userText) => [
-            { role: "system", content: systemText },
-            ...fewshot.flatMap((example) => [
-              { role: "user", content: example.user },
-              { role: "assistant", content: example.assistant },
-            ]),
-            { role: "user", content: userText },
-          ];
+          //消息构造：zero 无示例；few 示例自带完整状态；few-compact 把状态
+          //与指令收进 system、示例只含行动与 JSON（输入压缩对照臂）。
+          const buildMessages = (spec, userText) => {
+            if (trial.arm === "zero") {
+              return [
+                { role: "system", content: spec.system },
+                { role: "user", content: userText },
+              ];
+            }
+            const fewshot = trial.arm === "few" ? spec.fewshotFull : spec.fewshotCompact;
+            const system = trial.arm === "few" ? spec.system : spec.compactSystem;
+            return [
+              { role: "system", content: system },
+              ...fewshot.flatMap((example) => [
+                { role: "user", content: example.user },
+                { role: "assistant", content: example.assistant },
+              ]),
+              { role: "user", content: userText },
+            ];
+          };
 
           const parseRuns = [];
           for (const testCase of trial.parseCases) {
-            const userText = `${trial.parseState}\n\n玩家行动：${testCase.action}\n\n${trial.parseInstruction}`;
+            const spec = {
+              system: "你是文字冒险游戏的输入解析器。",
+              compactSystem: trial.parseSystemCompact,
+              fewshotFull: trial.parseFewshotFull,
+              fewshotCompact: trial.parseFewshotCompact,
+            };
+            const userText =
+              trial.arm === "few-compact"
+                ? `玩家行动：${testCase.action}`
+                : `${trial.parseState}\n\n玩家行动：${testCase.action}\n\n${trial.parseInstruction}`;
             const run = {
               action: testCase.action,
               expect: testCase.expect,
-              ...(await runCase(
-                buildMessages(
-                  trial.arm === "few" ? trial.parseFewshot : [],
-                  "你是文字冒险游戏的输入解析器。",
-                  userText,
-                ),
-                trial.parseSchema,
-                120,
-              )),
+              ...(await runCase(buildMessages(spec, userText), trial.parseSchema, 120)),
             };
             parseRuns.push(run);
           }
 
           const namesRuns = [];
           for (const testCase of trial.namesCases) {
-            const userText = `${testCase.narration}\n\n${trial.namesInstruction}`;
+            const spec = {
+              system: "你是文字冒险游戏的文本检查器。",
+              compactSystem: trial.namesSystemCompact,
+              fewshotFull: trial.namesFewshotFull,
+              fewshotCompact: trial.namesFewshotCompact,
+            };
+            const userText =
+              trial.arm === "few-compact"
+                ? testCase.narration
+                : `${testCase.narration}\n\n${trial.namesInstruction}`;
             const run = {
               narration: testCase.narration,
               expect: testCase.expect,
-              ...(await runCase(
-                buildMessages(
-                  trial.arm === "few" ? trial.namesFewshot : [],
-                  "你是文字冒险游戏的文本检查器。",
-                  userText,
-                ),
-                trial.namesSchema,
-                80,
-              )),
+              ...(await runCase(buildMessages(spec, userText), trial.namesSchema, 80)),
             };
             namesRuns.push(run);
           }
@@ -299,26 +371,20 @@ async function main() {
           parseState: PARSE_STATE,
           parseSchema: PARSE_SCHEMA,
           parseInstruction: PARSE_INSTRUCTION,
-          parseFewshot: PARSE_FEWSHOT,
+          parseFewshotFull: PARSE_FEWSHOT_FULL,
+          parseSystemCompact: PARSE_SYSTEM_COMPACT,
+          parseFewshotCompact: PARSE_FEWSHOT_COMPACT,
           namesCases: NAMES_CASES,
           namesSchema: NAMES_SCHEMA,
           namesInstruction: NAMES_INSTRUCTION,
-          namesFewshot: NAMES_FEWSHOT,
+          namesFewshotFull: NAMES_FEWSHOT_FULL,
+          namesSystemCompact: NAMES_SYSTEM_COMPACT,
+          namesFewshotCompact: NAMES_FEWSHOT_COMPACT,
           arm,
         },
       );
 
-      // ── 判分 ──
-      // 双向包含匹配，但两侧都必须非空——空串不再是自动通过。
-      const normalize = (value) =>
-        value == null ? null : String(value).replace(/\s+/g, "").trim() || null;
-      const valueMatch = (expected, actual) => {
-        const want = normalize(expected);
-        const got = normalize(actual);
-        if (want === null) return got === null;
-        return got !== null && (got.includes(want) || want.includes(got));
-      };
-
+      // ── 判分：实体别名归一化后精确比较（与执行端一致） ──
       const parseScored = results.parseRuns.map((run) => {
         let fieldResults = null;
         let correct = false;
@@ -326,11 +392,13 @@ async function main() {
         if (run.parsed) {
           fieldResults = {
             action_type: run.parsed.action_type === run.expect.action_type,
-            item_used: valueMatch(run.expect.item_used, run.parsed.item_used),
-            target: valueMatch(run.expect.target, run.parsed.target),
+            item_used:
+              resolveEntity(run.parsed.item_used) === resolveEntity(run.expect.item_used),
+            target: resolveEntity(run.parsed.target) === resolveEntity(run.expect.target),
           };
-          correct = Object.values(fieldResults).every(Boolean);
           codeFeasible = computeFeasible(run.parsed);
+          fieldResults.feasible = codeFeasible === run.expect.feasible;
+          correct = Object.values(fieldResults).every(Boolean);
         }
         return {
           ...run,
@@ -365,12 +433,13 @@ async function main() {
       const summarize = (runs) => ({
         withinTargetRate: `${runs.filter((run) => run.withinTarget).length}/${runs.length}`,
         correctRate: `${runs.filter((run) => run.correct).length}/${runs.length}`,
+        minWallMs: Math.min(...runs.map((run) => run.wallMs)),
         maxWallMs: Math.max(...runs.map((run) => run.wallMs)),
       });
       const summary = { parse: summarize(parseScored), names: summarize(namesScored) };
       log(`${model.tag}/${arm}: ${JSON.stringify(summary)}`);
 
-      const outPath = path.join(outDir, `task-trial2-${Date.now()}-${model.tag}-${arm}.json`);
+      const outPath = path.join(outDir, `task-trial3-${Date.now()}-${model.tag}-${arm}.json`);
       await writeFile(
         outPath,
         JSON.stringify(
