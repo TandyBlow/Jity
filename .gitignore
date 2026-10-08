@@ -48,6 +48,12 @@ playwright-report/
 # that directory from scratch on every start.
 frontend/.visual-out/
 
+# Local inference benchmark assets: copied from node_modules by
+# frontend/scripts/copy-wllama-assets.mjs, and GGUF models are user-provided.
+frontend/public/wasm/
+frontend/public/wllama/
+frontend/public/models/
+
 # === Visual baseline screenshots ===
 # Regenerable from the code at any commit, so they stay local. The small,
 # diffable probe report next to them (layout-probe-*.json) IS tracked.

@@ -7,9 +7,12 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "vitest run"
+    "test": "vitest run",
+    "predev": "node scripts/copy-wllama-assets.mjs",
+    "prebuild": "node scripts/copy-wllama-assets.mjs"
   },
   "dependencies": {
+    "@wllama/wllama": "^3.8.1",
     "lucide-react": "^0.468.0",
     "next": "^15.5.19",
     "open-dice-dnd": "^1.3.1",
