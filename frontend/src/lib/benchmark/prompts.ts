@@ -138,10 +138,10 @@ export function buildSections(params: PromptParams): PromptSection[] {
   const fullSections: Array<{ name: string; text: string }> = [
     {
       name: "campaign_context",
-      // The nonce leads the VERY first token so llama.cpp's prefix cache
-      // cannot hit across runs — a hit would understate prefill. Any shared
-      // characters before the first divergence are reused as cached tokens.
-      text: `（样本${params.nonce}）## 战役上下文\n当前战役：黑月之潮。当前章节：龙族Ⅲ — 高天原的阴影。章节目标：查明蛇岐八家的真正目的。\n锚点进度：2/9 已揭示。人物关系变化：绘梨衣 信任上升(+2)，源稚生 中性(+0)。`,
+      // The nonce IS the first token: any shared characters before the first
+      // divergence are replayed from llama.cpp's prefix cache and would
+      // understate prefill.
+      text: `${params.nonce}。## 战役上下文\n当前战役：黑月之潮。当前章节：龙族Ⅲ — 高天原的阴影。章节目标：查明蛇岐八家的真正目的。\n锚点进度：2/9 已揭示。人物关系变化：绘梨衣 信任上升(+2)，源稚生 中性(+0)。`,
     },
     {
       name: "system_state",

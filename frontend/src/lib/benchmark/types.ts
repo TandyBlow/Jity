@@ -86,6 +86,9 @@ export type RunRecord = {
   completedNormally?: boolean;
   /** Accept-run verdict: the full call finished within the 4s target. */
   withinTarget?: boolean;
+  /** Accept runs: did generation actually deliver the requested load? */
+  completedLoad?: boolean;
+  finishReason?: string | null;
   heap?: HeapSample;
   memory?: MemorySample;
   error?: string;
@@ -124,13 +127,15 @@ export const DEFAULT_CONFIG: BenchmarkConfig = {
   acceptOutputTokens: 512,
 };
 
-/** One executed suite. Config and model identity are snapshotted at start. */
+/** One executed suite. Config and model info are snapshotted at start. */
 export type SuiteRecord = {
   id: string;
   label: string;
   startedAt: string;
   finishedAt?: string;
   config: BenchmarkConfig;
+  /** Full snapshot: quant metadata, runtime version, load params, threads. */
+  model: RuntimeInfo | null;
   modelLabel: string | null;
   runs: RunRecord[];
 };

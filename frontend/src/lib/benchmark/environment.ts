@@ -7,9 +7,11 @@ import type { EnvironmentInfo, HeapSample, MemorySample } from "./types";
  * environment.test.ts — both had off-by-one section sizes once, which makes
  * the probe silently return false everywhere.
  *
- * threads: type (i32)->i32, a SHARED memory, and i32.atomic.load. Atomics are
- * only valid on shared memory under the threads proposal, so the same module
- * with a plain memory fails to validate (used as the negative control).
+ * threads: type (i32)->i32, a SHARED memory, and i32.atomic.load. Note there
+ * is no usable negative control here: modern engines also validate atomics on
+ * plain memory, so a plain-memory variant does not distinguish anything. The
+ * SharedArrayBuffer requirement (multi-threaded wasm needs it) is checked
+ * separately in detectWasmThreads.
  */
 const SIMD_DETECT = new Uint8Array([
   0, 97, 115, 109, 1, 0, 0, 0, 1, 5, 1, 96, 0, 1, 123, 3, 2, 1, 0, 10, 10, 1,

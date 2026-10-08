@@ -16,16 +16,17 @@ describe("wasm feature detection", () => {
     expect(detectWasmThreads()).toBe(true);
   });
 
-  it("rejects the non-shared-memory negative control", () => {
-    // Atomics on a plain memory are invalid under the threads proposal; if
-    // this module ever validates, the probe is not actually testing threads.
-    const nonShared = new Uint8Array([
-      0, 97, 115, 109, 1, 0, 0, 0,
-      1, 6, 1, 0x60, 1, 0x7f, 1, 0x7f,
-      3, 2, 1, 0,
-      5, 4, 1, 1, 1, // plain memory (flags 0x01)
-      10, 10, 1, 8, 0, 0x20, 0, 0xfe, 0x10, 2, 0, 0x0b,
-    ]);
-    expect(WebAssembly.validate(nonShared)).toBe(false);
+  it("reports no threads when SharedArrayBuffer is unavailable", () => {
+    // Multi-threaded wasm needs SharedArrayBuffer regardless of what the
+    // module probe says. There is no usable byte-level negative control:
+    // modern engines validate atomics on plain memory too, so a plain-memory
+    // variant does not distinguish anything.
+    const original = globalThis.SharedArrayBuffer;
+    delete (globalThis as { SharedArrayBuffer?: unknown }).SharedArrayBuffer;
+    try {
+      expect(detectWasmThreads()).toBe(false);
+    } finally {
+      if (original) globalThis.SharedArrayBuffer = original;
+    }
   });
 });

@@ -82,6 +82,11 @@ export default function BenchmarkPage() {
       label: `套件 ${suiteCounterRef.current}`,
       startedAt: new Date().toISOString(),
       config: { ...config },
+      // Full snapshot: after a model switch, older suites must still carry
+      // their own quant metadata, runtime version and load params.
+      model: model
+        ? { ...model, generalMeta: { ...model.generalMeta }, loadParams: { ...model.loadParams } }
+        : null,
       modelLabel: model?.sourceLabel ?? null,
       runs: [],
     };
@@ -174,6 +179,7 @@ export default function BenchmarkPage() {
               label: "检查点",
               startedAt: record.startedAt,
               config: { ...config },
+              model: null,
               modelLabel: null,
               runs: [record],
             },
@@ -542,13 +548,15 @@ export default function BenchmarkPage() {
                   </td>
                   <td className={run.error ? "bench-error" : "bench-dim"}>
                     {run.error
-                      ?? (run.kind === "abort"
-                        ? abortNote(run)
-                        : run.kind === "memory"
-                          ? memoryNote(run)
-                          : run.cachedTokens
-                            ? `缓存命中 ${run.cachedTokens}`
-                            : "")}
+                      ?? (run.kind === "accept" && run.completedLoad === false
+                        ? `提前结束 ${run.predictedTokens ?? 0}/${run.maxTokens ?? "?"} tok（${run.finishReason ?? "未知原因"}），未完成目标负载，不判达标`
+                        : run.kind === "abort"
+                          ? abortNote(run)
+                          : run.kind === "memory"
+                            ? memoryNote(run)
+                            : run.cachedTokens
+                              ? `缓存命中 ${run.cachedTokens}`
+                              : "")}
                   </td>
                 </tr>
               ))}

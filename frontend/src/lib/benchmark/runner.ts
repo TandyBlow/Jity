@@ -181,6 +181,7 @@ function collectRuntimeInfo(
 
 type CompletionTimings = {
   usage?: { prompt_tokens?: number; completion_tokens?: number };
+  choices?: Array<{ finish_reason?: string | null }>;
   timings?: {
     cache_n?: number;
     prompt_n?: number;
@@ -192,10 +193,18 @@ type CompletionTimings = {
   };
 };
 
+/**
+ * Prefix-cache hits make prefill look faster than a cold call, so anything
+ * beyond a trivial hit is flagged on the record instead of passing silently.
+ * With nonce-first prompts a clean run sits at 0.
+ */
+const CACHE_HIT_WARNING_TOKENS = 16;
+
 function readTimings(response: CompletionTimings) {
   return {
     promptTokens: response.usage?.prompt_tokens,
     predictedTokens: response.usage?.completion_tokens,
+    finishReason: response.choices?.[0]?.finish_reason ?? null,
     cachedTokens: response.timings?.cache_n,
     promptMs: response.timings?.prompt_ms != null
       ? Math.round(response.timings.prompt_ms)
@@ -238,6 +247,9 @@ async function runCompletion(
     })) as CompletionTimings;
     record.wallMs = Math.round(performance.now() - started);
     Object.assign(record, readTimings(response));
+    if ((record.cachedTokens ?? 0) > CACHE_HIT_WARNING_TOKENS && !record.error) {
+      record.error = `缓存污染警告：前缀命中 ${record.cachedTokens} tok，prefill 被低估`;
+    }
     return response as CompletionTimings;
   } catch (error) {
     record.wallMs = Math.round(performance.now() - started);
@@ -370,6 +382,9 @@ export async function runDecodeMatrix(
       })) as CompletionTimings;
       record.wallMs = Math.round(performance.now() - started);
       Object.assign(record, readTimings(response));
+      if ((record.cachedTokens ?? 0) > CACHE_HIT_WARNING_TOKENS && !record.error) {
+        record.error = `缓存污染警告：前缀命中 ${record.cachedTokens} tok，prefill 被低估`;
+      }
     } catch (error) {
       record.wallMs = Math.round(performance.now() - started);
       if (isAbortError(error)) {
@@ -418,7 +433,15 @@ export async function runAcceptMatrix(
       hooks,
       record,
     );
-    record.withinTarget = record.error ? undefined : record.wallMs <= ACCEPT_TARGET_MS;
+    // A verdict requires the call to actually deliver the target load: a
+    // generation that stops early (EOS after 1 token) must not count as
+    // "within 4 seconds" for a 512-token workload.
+    record.completedLoad =
+      !record.error
+      && ((record.predictedTokens ?? 0) >= config.acceptOutputTokens
+        || record.finishReason === "length");
+    record.withinTarget =
+      record.error || !record.completedLoad ? undefined : record.wallMs <= ACCEPT_TARGET_MS;
     hooks.onRun(record);
   }
 }
@@ -446,9 +469,9 @@ export async function runAbortTests(
   plan: AbortPlan,
 ): Promise<void> {
   if (stopped(hooks)) return;
-  await runAbortOnce(wllama, config, charRatio, hooks, plan.shortMs, "输入处理阶段取消");
+  await runAbortOnce(wllama, config, charRatio, hooks, plan.shortMs, "输入处理阶段取消", 1);
   if (plan.decodeMs != null && !stopped(hooks)) {
-    await runAbortOnce(wllama, config, charRatio, hooks, plan.decodeMs, "生成阶段取消");
+    await runAbortOnce(wllama, config, charRatio, hooks, plan.decodeMs, "生成阶段取消", 2);
   }
 }
 
@@ -459,6 +482,7 @@ async function runAbortOnce(
   hooks: RunnerHooks,
   abortAfterMs: number,
   phaseLabel: string,
+  phaseSalt: number,
 ): Promise<void> {
   const combos = validCombos(config);
   const totals = combos.map((combo) => combo.total);
@@ -472,7 +496,9 @@ async function runAbortOnce(
     const prompt = buildPrompt({
       totalTokens: nominalTotal,
       memoryTokens: nominalMemory,
-      nonce: nonce(999983 + attempt),
+      // The phase salt keeps the second cancel test from replaying the
+      // first one's input computation through the prefix cache.
+      nonce: nonce(999983 + phaseSalt * 1009 + attempt),
       charRatio,
     });
     const record = baseRecord(
