@@ -1,0 +1,451 @@
+{
+  "hostCpu": "13th Gen Intel(R) Core(TM) i7-13700H",
+  "task": "names",
+  "arm": "plain",
+  "runParams": {
+    "model": {
+      "tag": "qwen3-0.6b",
+      "url": "/models/Qwen3-0.6B-Q4_K_M.gguf"
+    },
+    "n_ctx": 2048,
+    "n_batch": 512,
+    "n_ubatch": 128,
+    "n_gpu_layers": 0,
+    "n_threads": 4,
+    "temperature": 0,
+    "seed": 4711,
+    "cache_prompt": false,
+    "enable_thinking": false
+  },
+  "runtime": {
+    "multithread": true,
+    "numThreads": 4
+  },
+  "targetMs": 4000,
+  "summary": {
+    "old": {
+      "withinTargetRate": "0/4",
+      "correctRate": "0/4",
+      "minWallMs": 4178,
+      "maxWallMs": 5520,
+      "medianPromptMs": 3198,
+      "medianPredictedMs": 1529
+    },
+    "new": {
+      "withinTargetRate": "4/4",
+      "correctRate": "1/4",
+      "minWallMs": 3520,
+      "maxWallMs": 3962,
+      "medianPromptMs": 3035,
+      "medianPredictedMs": 715
+    }
+  },
+  "runs": [
+    {
+      "batch": "old",
+      "narration": "诺诺靠在书架旁，翻着那本旧笔记。路明非在门口安静地等着她。",
+      "expect": [
+        "诺诺",
+        "路明非"
+      ],
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是文字冒险游戏的文本检查器。"
+        },
+        {
+          "role": "user",
+          "content": "路明非把笔记本递给诺诺。"
+        },
+        {
+          "role": "assistant",
+          "content": "路明非\n诺诺"
+        },
+        {
+          "role": "user",
+          "content": "诺诺靠在书架旁，翻着那本旧笔记。路明非在门口安静地等着她。"
+        }
+      ],
+      "wallMs": 5520,
+      "promptTokens": 76,
+      "completionTokens": 26,
+      "promptMs": 3507,
+      "predictedMs": 1984,
+      "finishReason": "stop",
+      "text": "诺诺靠在书架旁，翻着那本旧笔记。路明非在门口安静地等着她。",
+      "parsed": {
+        "names": [
+          "诺诺靠在书架旁，翻着那本旧笔记。路明非在门口安静地等着她。"
+        ]
+      },
+      "error": null,
+      "withinTarget": false,
+      "namesMatch": false,
+      "namesMatchPost": false,
+      "ruleCheck": {
+        "em_dash_count": 0,
+        "simile_count": 0,
+        "unknown_names": [
+          "诺诺靠在书架旁，翻着那本旧笔记。路明非在门口安静地等着她。"
+        ],
+        "pass": false
+      },
+      "correct": false
+    },
+    {
+      "batch": "old",
+      "narration": "月光像水一样洒在诺诺的肩上，她没有回头。",
+      "expect": [
+        "诺诺"
+      ],
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是文字冒险游戏的文本检查器。"
+        },
+        {
+          "role": "user",
+          "content": "路明非把笔记本递给诺诺。"
+        },
+        {
+          "role": "assistant",
+          "content": "路明非\n诺诺"
+        },
+        {
+          "role": "user",
+          "content": "月光像水一样洒在诺诺的肩上，她没有回头。"
+        }
+      ],
+      "wallMs": 4282,
+      "promptTokens": 68,
+      "completionTokens": 16,
+      "promptMs": 3086,
+      "predictedMs": 1165,
+      "finishReason": "stop",
+      "text": "月光如水洒在诺诺肩上，她没有回头。",
+      "parsed": {
+        "names": [
+          "月光如水洒在诺诺肩上，她没有回头。"
+        ]
+      },
+      "error": null,
+      "withinTarget": false,
+      "namesMatch": false,
+      "namesMatchPost": false,
+      "ruleCheck": {
+        "em_dash_count": 0,
+        "simile_count": 1,
+        "unknown_names": [
+          "月光如水洒在诺诺肩上，她没有回头。"
+        ],
+        "pass": false
+      },
+      "correct": false
+    },
+    {
+      "batch": "old",
+      "narration": "诺诺说——这是个秘密。凯瑟琳在一旁快速记录。",
+      "expect": [
+        "诺诺",
+        "凯瑟琳"
+      ],
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是文字冒险游戏的文本检查器。"
+        },
+        {
+          "role": "user",
+          "content": "路明非把笔记本递给诺诺。"
+        },
+        {
+          "role": "assistant",
+          "content": "路明非\n诺诺"
+        },
+        {
+          "role": "user",
+          "content": "诺诺说——这是个秘密。凯瑟琳在一旁快速记录。"
+        }
+      ],
+      "wallMs": 4178,
+      "promptTokens": 66,
+      "completionTokens": 16,
+      "promptMs": 2984,
+      "predictedMs": 1173,
+      "finishReason": "stop",
+      "text": "诺诺说——这是个秘密。凯瑟琳在一旁快速记录。",
+      "parsed": {
+        "names": [
+          "诺诺说——这是个秘密。凯瑟琳在一旁快速记录。"
+        ]
+      },
+      "error": null,
+      "withinTarget": false,
+      "namesMatch": false,
+      "namesMatchPost": false,
+      "ruleCheck": {
+        "em_dash_count": 2,
+        "simile_count": 0,
+        "unknown_names": [
+          "诺诺说——这是个秘密。凯瑟琳在一旁快速记录。"
+        ],
+        "pass": false
+      },
+      "correct": false
+    },
+    {
+      "batch": "old",
+      "narration": "古德里安教授推门进来，路明非起身行礼，绘梨衣跟在后面。",
+      "expect": [
+        "古德里安",
+        "路明非",
+        "绘梨衣"
+      ],
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是文字冒险游戏的文本检查器。"
+        },
+        {
+          "role": "user",
+          "content": "路明非把笔记本递给诺诺。"
+        },
+        {
+          "role": "assistant",
+          "content": "路明非\n诺诺"
+        },
+        {
+          "role": "user",
+          "content": "古德里安教授推门进来，路明非起身行礼，绘梨衣跟在后面。"
+        }
+      ],
+      "wallMs": 5215,
+      "promptTokens": 74,
+      "completionTokens": 24,
+      "promptMs": 3310,
+      "predictedMs": 1884,
+      "finishReason": "stop",
+      "text": "古德里安教授推门进来，路明非起身行礼，绘梨衣跟在后面。",
+      "parsed": {
+        "names": [
+          "古德里安教授推门进来，路明非起身行礼，绘梨衣跟在后面。"
+        ]
+      },
+      "error": null,
+      "withinTarget": false,
+      "namesMatch": false,
+      "namesMatchPost": false,
+      "ruleCheck": {
+        "em_dash_count": 0,
+        "simile_count": 0,
+        "unknown_names": [
+          "古德里安教授推门进来，路明非起身行礼，绘梨衣跟在后面。"
+        ],
+        "pass": false
+      },
+      "correct": false
+    },
+    {
+      "batch": "new",
+      "narration": "绘梨衣在钟楼下等着路明非。",
+      "expect": [
+        "绘梨衣",
+        "路明非"
+      ],
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是文字冒险游戏的文本检查器。"
+        },
+        {
+          "role": "user",
+          "content": "路明非把笔记本递给诺诺。"
+        },
+        {
+          "role": "assistant",
+          "content": "路明非\n诺诺"
+        },
+        {
+          "role": "user",
+          "content": "绘梨衣在钟楼下等着路明非。"
+        }
+      ],
+      "wallMs": 3520,
+      "promptTokens": 62,
+      "completionTokens": 7,
+      "promptMs": 3007,
+      "predictedMs": 478,
+      "finishReason": "stop",
+      "text": "绘梨衣  \n钟楼下",
+      "parsed": {
+        "names": [
+          "绘梨衣",
+          "钟楼下"
+        ]
+      },
+      "error": null,
+      "withinTarget": true,
+      "namesMatch": false,
+      "namesMatchPost": false,
+      "ruleCheck": {
+        "em_dash_count": 0,
+        "simile_count": 0,
+        "unknown_names": [
+          "钟楼下"
+        ],
+        "pass": false
+      },
+      "correct": false
+    },
+    {
+      "batch": "new",
+      "narration": "诺诺把报告交给古德里安教授。",
+      "expect": [
+        "诺诺",
+        "古德里安"
+      ],
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是文字冒险游戏的文本检查器。"
+        },
+        {
+          "role": "user",
+          "content": "路明非把笔记本递给诺诺。"
+        },
+        {
+          "role": "assistant",
+          "content": "路明非\n诺诺"
+        },
+        {
+          "role": "user",
+          "content": "诺诺把报告交给古德里安教授。"
+        }
+      ],
+      "wallMs": 3723,
+      "promptTokens": 62,
+      "completionTokens": 9,
+      "promptMs": 3062,
+      "predictedMs": 641,
+      "finishReason": "stop",
+      "text": "诺诺  \n古德里安教授",
+      "parsed": {
+        "names": [
+          "诺诺",
+          "古德里安教授"
+        ]
+      },
+      "error": null,
+      "withinTarget": true,
+      "namesMatch": false,
+      "namesMatchPost": true,
+      "ruleCheck": {
+        "em_dash_count": 0,
+        "simile_count": 0,
+        "unknown_names": [],
+        "pass": true
+      },
+      "correct": true
+    },
+    {
+      "batch": "new",
+      "narration": "图书馆里只有凯瑟琳和诺诺两个人。",
+      "expect": [
+        "凯瑟琳",
+        "诺诺"
+      ],
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是文字冒险游戏的文本检查器。"
+        },
+        {
+          "role": "user",
+          "content": "路明非把笔记本递给诺诺。"
+        },
+        {
+          "role": "assistant",
+          "content": "路明非\n诺诺"
+        },
+        {
+          "role": "user",
+          "content": "图书馆里只有凯瑟琳和诺诺两个人。"
+        }
+      ],
+      "wallMs": 3962,
+      "promptTokens": 62,
+      "completionTokens": 11,
+      "promptMs": 3142,
+      "predictedMs": 798,
+      "finishReason": "stop",
+      "text": "诺诺和凯瑟琳在图书馆里。",
+      "parsed": {
+        "names": [
+          "诺诺和凯瑟琳在图书馆里。"
+        ]
+      },
+      "error": null,
+      "withinTarget": true,
+      "namesMatch": false,
+      "namesMatchPost": false,
+      "ruleCheck": {
+        "em_dash_count": 0,
+        "simile_count": 0,
+        "unknown_names": [
+          "诺诺和凯瑟琳在图书馆里。"
+        ],
+        "pass": false
+      },
+      "correct": false
+    },
+    {
+      "batch": "new",
+      "narration": "窗台上放着一杯凉掉的咖啡。",
+      "expect": [],
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是文字冒险游戏的文本检查器。"
+        },
+        {
+          "role": "user",
+          "content": "路明非把笔记本递给诺诺。"
+        },
+        {
+          "role": "assistant",
+          "content": "路明非\n诺诺"
+        },
+        {
+          "role": "user",
+          "content": "窗台上放着一杯凉掉的咖啡。"
+        }
+      ],
+      "wallMs": 3805,
+      "promptTokens": 61,
+      "completionTokens": 11,
+      "promptMs": 2997,
+      "predictedMs": 788,
+      "finishReason": "stop",
+      "text": "窗台上放着一杯凉掉的咖啡。",
+      "parsed": {
+        "names": [
+          "窗台上放着一杯凉掉的咖啡。"
+        ]
+      },
+      "error": null,
+      "withinTarget": true,
+      "namesMatch": false,
+      "namesMatchPost": false,
+      "ruleCheck": {
+        "em_dash_count": 0,
+        "simile_count": 0,
+        "unknown_names": [
+          "窗台上放着一杯凉掉的咖啡。"
+        ],
+        "pass": false
+      },
+      "correct": false
+    }
+  ],
+  "exportedAt": "2026-10-08T16:27:55.697Z"
+}

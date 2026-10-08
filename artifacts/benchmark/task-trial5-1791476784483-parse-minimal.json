@@ -1,0 +1,574 @@
+{
+  "hostCpu": "13th Gen Intel(R) Core(TM) i7-13700H",
+  "task": "parse",
+  "arm": "minimal",
+  "runParams": {
+    "model": {
+      "tag": "qwen3-0.6b",
+      "url": "/models/Qwen3-0.6B-Q4_K_M.gguf"
+    },
+    "n_ctx": 2048,
+    "n_batch": 512,
+    "n_ubatch": 128,
+    "n_gpu_layers": 0,
+    "n_threads": 4,
+    "temperature": 0,
+    "seed": 4711,
+    "cache_prompt": false,
+    "enable_thinking": false
+  },
+  "runtime": {
+    "multithread": true,
+    "numThreads": 4
+  },
+  "targetMs": 4000,
+  "summary": {
+    "old": {
+      "withinTargetRate": "0/8",
+      "correctRate": "4/8",
+      "minWallMs": 15910,
+      "maxWallMs": 17492,
+      "medianPromptMs": 13080,
+      "medianPredictedMs": 3886
+    },
+    "new": {
+      "withinTargetRate": "0/4",
+      "correctRate": "3/4",
+      "minWallMs": 12033,
+      "maxWallMs": 14501,
+      "medianPromptMs": 9532,
+      "medianPredictedMs": 2654
+    }
+  },
+  "runs": [
+    {
+      "batch": "old",
+      "action": "我用铜钥匙打开大门。",
+      "expect": {
+        "action_type": "item_use",
+        "item_used": "铜钥匙",
+        "target": "大门",
+        "feasible": true
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是文字冒险游戏的输入解析器。\n\n把玩家行动解析为 JSON，只有三个字段：\n- action_type：item_use（使用物品做事）/ npc_talk（与人物交谈）/ move（前往地点）/ inspect（查看物件）/ other。\n- item_used：行动中使用的物品名（原文摘录），没有则为 null。注意区分\"查看\"与\"使用\"：\n  \"检查/查看某物\"是 inspect，此时 item_used 为 null、target 为被查看的物件；\n  只有行动\"用某物品去达成别的目的\"时才填 item_used（如\"用铜钥匙打开大门\"）。\n- target：行动的作用对象（人物、地点或物件名，原文摘录），没有则为 null。\n不要判断行动是否可行，那只由规则代码计算。只输出 JSON。"
+        },
+        {
+          "role": "user",
+          "content": "玩家行动：我用铜钥匙打开大门。"
+        }
+      ],
+      "wallMs": 17249,
+      "promptTokens": 206,
+      "completionTokens": 28,
+      "promptMs": 13247,
+      "predictedMs": 3942,
+      "promptPerSecond": 15.550238782974903,
+      "predictedPerSecond": 6.8493150684931505,
+      "finishReason": "stop",
+      "text": "{\n  \"action_type\": \"item_use\",\n  \"item_used\": \"铜钥匙\",\n  \"target\": \"大门\"\n}",
+      "parsed": {
+        "action_type": "item_use",
+        "item_used": "铜钥匙",
+        "target": "大门"
+      },
+      "error": null,
+      "withinTarget": false,
+      "correct": true,
+      "fieldResults": {
+        "action_type": true,
+        "item_used": true,
+        "target": true,
+        "feasible": true
+      },
+      "codeFeasible": true
+    },
+    {
+      "batch": "old",
+      "action": "我和诺诺打听图书馆的传闻。",
+      "expect": {
+        "action_type": "npc_talk",
+        "item_used": null,
+        "target": "诺诺",
+        "feasible": true
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是文字冒险游戏的输入解析器。\n\n把玩家行动解析为 JSON，只有三个字段：\n- action_type：item_use（使用物品做事）/ npc_talk（与人物交谈）/ move（前往地点）/ inspect（查看物件）/ other。\n- item_used：行动中使用的物品名（原文摘录），没有则为 null。注意区分\"查看\"与\"使用\"：\n  \"检查/查看某物\"是 inspect，此时 item_used 为 null、target 为被查看的物件；\n  只有行动\"用某物品去达成别的目的\"时才填 item_used（如\"用铜钥匙打开大门\"）。\n- target：行动的作用对象（人物、地点或物件名，原文摘录），没有则为 null。\n不要判断行动是否可行，那只由规则代码计算。只输出 JSON。"
+        },
+        {
+          "role": "user",
+          "content": "玩家行动：我和诺诺打听图书馆的传闻。"
+        }
+      ],
+      "wallMs": 17072,
+      "promptTokens": 207,
+      "completionTokens": 25,
+      "promptMs": 13589,
+      "predictedMs": 3444,
+      "promptPerSecond": 15.232556992943133,
+      "predictedPerSecond": 6.969308905905617,
+      "finishReason": "stop",
+      "text": "{\n  \"action_type\": \"move\",\n  \"item_used\": null,\n  \"target\": \"图书馆\"\n}",
+      "parsed": {
+        "action_type": "move",
+        "item_used": null,
+        "target": "图书馆"
+      },
+      "error": null,
+      "withinTarget": false,
+      "correct": false,
+      "fieldResults": {
+        "action_type": false,
+        "item_used": true,
+        "target": false,
+        "feasible": true
+      },
+      "codeFeasible": true
+    },
+    {
+      "batch": "old",
+      "action": "我去二楼档案室查资料。",
+      "expect": {
+        "action_type": "move",
+        "item_used": null,
+        "target": "二楼档案室",
+        "feasible": true
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是文字冒险游戏的输入解析器。\n\n把玩家行动解析为 JSON，只有三个字段：\n- action_type：item_use（使用物品做事）/ npc_talk（与人物交谈）/ move（前往地点）/ inspect（查看物件）/ other。\n- item_used：行动中使用的物品名（原文摘录），没有则为 null。注意区分\"查看\"与\"使用\"：\n  \"检查/查看某物\"是 inspect，此时 item_used 为 null、target 为被查看的物件；\n  只有行动\"用某物品去达成别的目的\"时才填 item_used（如\"用铜钥匙打开大门\"）。\n- target：行动的作用对象（人物、地点或物件名，原文摘录），没有则为 null。\n不要判断行动是否可行，那只由规则代码计算。只输出 JSON。"
+        },
+        {
+          "role": "user",
+          "content": "玩家行动：我去二楼档案室查资料。"
+        }
+      ],
+      "wallMs": 16820,
+      "promptTokens": 206,
+      "completionTokens": 27,
+      "promptMs": 13143,
+      "predictedMs": 3643,
+      "promptPerSecond": 15.67351728716676,
+      "predictedPerSecond": 7.1363873411467615,
+      "finishReason": "stop",
+      "text": "{\n  \"action_type\": \"move\",\n  \"item_used\": null,\n  \"target\": \"二楼档案室\"\n}",
+      "parsed": {
+        "action_type": "move",
+        "item_used": null,
+        "target": "二楼档案室"
+      },
+      "error": null,
+      "withinTarget": false,
+      "correct": true,
+      "fieldResults": {
+        "action_type": true,
+        "item_used": true,
+        "target": true,
+        "feasible": true
+      },
+      "codeFeasible": true
+    },
+    {
+      "batch": "old",
+      "action": "我使用生锈的铁门钥匙打开大门。",
+      "expect": {
+        "action_type": "item_use",
+        "item_used": "铁门钥匙",
+        "target": "大门",
+        "feasible": false
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是文字冒险游戏的输入解析器。\n\n把玩家行动解析为 JSON，只有三个字段：\n- action_type：item_use（使用物品做事）/ npc_talk（与人物交谈）/ move（前往地点）/ inspect（查看物件）/ other。\n- item_used：行动中使用的物品名（原文摘录），没有则为 null。注意区分\"查看\"与\"使用\"：\n  \"检查/查看某物\"是 inspect，此时 item_used 为 null、target 为被查看的物件；\n  只有行动\"用某物品去达成别的目的\"时才填 item_used（如\"用铜钥匙打开大门\"）。\n- target：行动的作用对象（人物、地点或物件名，原文摘录），没有则为 null。\n不要判断行动是否可行，那只由规则代码计算。只输出 JSON。"
+        },
+        {
+          "role": "user",
+          "content": "玩家行动：我使用生锈的铁门钥匙打开大门。"
+        }
+      ],
+      "wallMs": 17492,
+      "promptTokens": 210,
+      "completionTokens": 32,
+      "promptMs": 13181,
+      "predictedMs": 4280,
+      "promptPerSecond": 15.932114020829342,
+      "predictedPerSecond": 7.242753741700037,
+      "finishReason": "stop",
+      "text": "{\n  \"action_type\": \"item_use\",\n  \"item_used\": \"生锈的铁门钥匙\",\n  \"target\": \"大门\"\n}",
+      "parsed": {
+        "action_type": "item_use",
+        "item_used": "生锈的铁门钥匙",
+        "target": "大门"
+      },
+      "error": null,
+      "withinTarget": false,
+      "correct": true,
+      "fieldResults": {
+        "action_type": true,
+        "item_used": true,
+        "target": true,
+        "feasible": true
+      },
+      "codeFeasible": false
+    },
+    {
+      "batch": "old",
+      "action": "我和执行部学生搭话。",
+      "expect": {
+        "action_type": "npc_talk",
+        "item_used": null,
+        "target": "执行部学生",
+        "feasible": true
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是文字冒险游戏的输入解析器。\n\n把玩家行动解析为 JSON，只有三个字段：\n- action_type：item_use（使用物品做事）/ npc_talk（与人物交谈）/ move（前往地点）/ inspect（查看物件）/ other。\n- item_used：行动中使用的物品名（原文摘录），没有则为 null。注意区分\"查看\"与\"使用\"：\n  \"检查/查看某物\"是 inspect，此时 item_used 为 null、target 为被查看的物件；\n  只有行动\"用某物品去达成别的目的\"时才填 item_used（如\"用铜钥匙打开大门\"）。\n- target：行动的作用对象（人物、地点或物件名，原文摘录），没有则为 null。\n不要判断行动是否可行，那只由规则代码计算。只输出 JSON。"
+        },
+        {
+          "role": "user",
+          "content": "玩家行动：我和执行部学生搭话。"
+        }
+      ],
+      "wallMs": 17122,
+      "promptTokens": 206,
+      "completionTokens": 29,
+      "promptMs": 13017,
+      "predictedMs": 4073,
+      "promptPerSecond": 15.824947199602748,
+      "predictedPerSecond": 6.874868794356716,
+      "finishReason": "stop",
+      "text": "{\n  \"action_type\": \"npc_talk\",\n  \"item_used\": null,\n  \"target\": \"执行部学生\"\n}",
+      "parsed": {
+        "action_type": "npc_talk",
+        "item_used": null,
+        "target": "执行部学生"
+      },
+      "error": null,
+      "withinTarget": false,
+      "correct": true,
+      "fieldResults": {
+        "action_type": true,
+        "item_used": true,
+        "target": true,
+        "feasible": true
+      },
+      "codeFeasible": true
+    },
+    {
+      "batch": "old",
+      "action": "我检查那扇书架后的暗门。",
+      "expect": {
+        "action_type": "inspect",
+        "item_used": null,
+        "target": "暗门",
+        "feasible": true
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是文字冒险游戏的输入解析器。\n\n把玩家行动解析为 JSON，只有三个字段：\n- action_type：item_use（使用物品做事）/ npc_talk（与人物交谈）/ move（前往地点）/ inspect（查看物件）/ other。\n- item_used：行动中使用的物品名（原文摘录），没有则为 null。注意区分\"查看\"与\"使用\"：\n  \"检查/查看某物\"是 inspect，此时 item_used 为 null、target 为被查看的物件；\n  只有行动\"用某物品去达成别的目的\"时才填 item_used（如\"用铜钥匙打开大门\"）。\n- target：行动的作用对象（人物、地点或物件名，原文摘录），没有则为 null。\n不要判断行动是否可行，那只由规则代码计算。只输出 JSON。"
+        },
+        {
+          "role": "user",
+          "content": "玩家行动：我检查那扇书架后的暗门。"
+        }
+      ],
+      "wallMs": 17220,
+      "promptTokens": 209,
+      "completionTokens": 31,
+      "promptMs": 12930,
+      "predictedMs": 4262,
+      "promptPerSecond": 16.163927280579326,
+      "predictedPerSecond": 7.038826636984718,
+      "finishReason": "stop",
+      "text": "{\n  \"action_type\": \"inspect\",\n  \"item_used\": null,\n  \"target\": \"那扇书架后的暗门\"\n}",
+      "parsed": {
+        "action_type": "inspect",
+        "item_used": null,
+        "target": "那扇书架后的暗门"
+      },
+      "error": null,
+      "withinTarget": false,
+      "correct": false,
+      "fieldResults": {
+        "action_type": true,
+        "item_used": true,
+        "target": false,
+        "feasible": true
+      },
+      "codeFeasible": true
+    },
+    {
+      "batch": "old",
+      "action": "我拔剑攻击诺诺。",
+      "expect": {
+        "action_type": "other",
+        "item_used": "剑",
+        "target": "诺诺",
+        "feasible": false
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是文字冒险游戏的输入解析器。\n\n把玩家行动解析为 JSON，只有三个字段：\n- action_type：item_use（使用物品做事）/ npc_talk（与人物交谈）/ move（前往地点）/ inspect（查看物件）/ other。\n- item_used：行动中使用的物品名（原文摘录），没有则为 null。注意区分\"查看\"与\"使用\"：\n  \"检查/查看某物\"是 inspect，此时 item_used 为 null、target 为被查看的物件；\n  只有行动\"用某物品去达成别的目的\"时才填 item_used（如\"用铜钥匙打开大门\"）。\n- target：行动的作用对象（人物、地点或物件名，原文摘录），没有则为 null。\n不要判断行动是否可行，那只由规则代码计算。只输出 JSON。"
+        },
+        {
+          "role": "user",
+          "content": "玩家行动：我拔剑攻击诺诺。"
+        }
+      ],
+      "wallMs": 16399,
+      "promptTokens": 206,
+      "completionTokens": 28,
+      "promptMs": 12535,
+      "predictedMs": 3829,
+      "promptPerSecond": 16.43334769788742,
+      "predictedPerSecond": 7.052158548195627,
+      "finishReason": "stop",
+      "text": "{\n  \"action_type\": \"item_use\",\n  \"item_used\": \"剑\",\n  \"target\": \"诺诺\"\n}",
+      "parsed": {
+        "action_type": "item_use",
+        "item_used": "剑",
+        "target": "诺诺"
+      },
+      "error": null,
+      "withinTarget": false,
+      "correct": false,
+      "fieldResults": {
+        "action_type": false,
+        "item_used": true,
+        "target": true,
+        "feasible": true
+      },
+      "codeFeasible": false
+    },
+    {
+      "batch": "old",
+      "action": "我在原地休息一会儿。",
+      "expect": {
+        "action_type": "other",
+        "item_used": null,
+        "target": null,
+        "feasible": true
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是文字冒险游戏的输入解析器。\n\n把玩家行动解析为 JSON，只有三个字段：\n- action_type：item_use（使用物品做事）/ npc_talk（与人物交谈）/ move（前往地点）/ inspect（查看物件）/ other。\n- item_used：行动中使用的物品名（原文摘录），没有则为 null。注意区分\"查看\"与\"使用\"：\n  \"检查/查看某物\"是 inspect，此时 item_used 为 null、target 为被查看的物件；\n  只有行动\"用某物品去达成别的目的\"时才填 item_used（如\"用铜钥匙打开大门\"）。\n- target：行动的作用对象（人物、地点或物件名，原文摘录），没有则为 null。\n不要判断行动是否可行，那只由规则代码计算。只输出 JSON。"
+        },
+        {
+          "role": "user",
+          "content": "玩家行动：我在原地休息一会儿。"
+        }
+      ],
+      "wallMs": 15910,
+      "promptTokens": 205,
+      "completionTokens": 24,
+      "promptMs": 12625,
+      "predictedMs": 3256,
+      "promptPerSecond": 16.237695787007056,
+      "predictedPerSecond": 7.063372268893369,
+      "finishReason": "stop",
+      "text": "{\n  \"action_type\": \"move\",\n  \"item_used\": null,\n  \"target\": null\n}",
+      "parsed": {
+        "action_type": "move",
+        "item_used": null,
+        "target": null
+      },
+      "error": null,
+      "withinTarget": false,
+      "correct": false,
+      "fieldResults": {
+        "action_type": false,
+        "item_used": true,
+        "target": true,
+        "feasible": false
+      },
+      "codeFeasible": false
+    },
+    {
+      "batch": "new",
+      "action": "我仔细查看旧笔记里的字迹。",
+      "expect": {
+        "action_type": "inspect",
+        "item_used": null,
+        "target": "旧笔记",
+        "feasible": true
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是文字冒险游戏的输入解析器。\n\n把玩家行动解析为 JSON，只有三个字段：\n- action_type：item_use（使用物品做事）/ npc_talk（与人物交谈）/ move（前往地点）/ inspect（查看物件）/ other。\n- item_used：行动中使用的物品名（原文摘录），没有则为 null。注意区分\"查看\"与\"使用\"：\n  \"检查/查看某物\"是 inspect，此时 item_used 为 null、target 为被查看的物件；\n  只有行动\"用某物品去达成别的目的\"时才填 item_used（如\"用铜钥匙打开大门\"）。\n- target：行动的作用对象（人物、地点或物件名，原文摘录），没有则为 null。\n不要判断行动是否可行，那只由规则代码计算。只输出 JSON。"
+        },
+        {
+          "role": "user",
+          "content": "玩家行动：我仔细查看旧笔记里的字迹。"
+        }
+      ],
+      "wallMs": 14501,
+      "promptTokens": 208,
+      "completionTokens": 26,
+      "promptMs": 11999,
+      "predictedMs": 2472,
+      "promptPerSecond": 17.33544825802081,
+      "predictedPerSecond": 10.115093580799773,
+      "finishReason": "stop",
+      "text": "{\n  \"action_type\": \"inspect\",\n  \"item_used\": null,\n  \"target\": \"旧笔记\"\n}",
+      "parsed": {
+        "action_type": "inspect",
+        "item_used": null,
+        "target": "旧笔记"
+      },
+      "error": null,
+      "withinTarget": false,
+      "correct": true,
+      "fieldResults": {
+        "action_type": true,
+        "item_used": true,
+        "target": true,
+        "feasible": true
+      },
+      "codeFeasible": true
+    },
+    {
+      "batch": "new",
+      "action": "我用旧笔记垫住门缝。",
+      "expect": {
+        "action_type": "item_use",
+        "item_used": "旧笔记",
+        "target": "门缝",
+        "feasible": true
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是文字冒险游戏的输入解析器。\n\n把玩家行动解析为 JSON，只有三个字段：\n- action_type：item_use（使用物品做事）/ npc_talk（与人物交谈）/ move（前往地点）/ inspect（查看物件）/ other。\n- item_used：行动中使用的物品名（原文摘录），没有则为 null。注意区分\"查看\"与\"使用\"：\n  \"检查/查看某物\"是 inspect，此时 item_used 为 null、target 为被查看的物件；\n  只有行动\"用某物品去达成别的目的\"时才填 item_used（如\"用铜钥匙打开大门\"）。\n- target：行动的作用对象（人物、地点或物件名，原文摘录），没有则为 null。\n不要判断行动是否可行，那只由规则代码计算。只输出 JSON。"
+        },
+        {
+          "role": "user",
+          "content": "玩家行动：我用旧笔记垫住门缝。"
+        }
+      ],
+      "wallMs": 12237,
+      "promptTokens": 208,
+      "completionTokens": 29,
+      "promptMs": 9485,
+      "predictedMs": 2732,
+      "promptPerSecond": 21.93043728553904,
+      "predictedPerSecond": 10.24764907950492,
+      "finishReason": "stop",
+      "text": "{\n  \"action_type\": \"item_use\",\n  \"item_used\": \"旧笔记\",\n  \"target\": \"门缝\"\n}",
+      "parsed": {
+        "action_type": "item_use",
+        "item_used": "旧笔记",
+        "target": "门缝"
+      },
+      "error": null,
+      "withinTarget": false,
+      "correct": true,
+      "fieldResults": {
+        "action_type": true,
+        "item_used": true,
+        "target": true,
+        "feasible": true
+      },
+      "codeFeasible": true
+    },
+    {
+      "batch": "new",
+      "action": "我去找执行部学生问话。",
+      "expect": {
+        "action_type": "npc_talk",
+        "item_used": null,
+        "target": "执行部学生",
+        "feasible": true
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是文字冒险游戏的输入解析器。\n\n把玩家行动解析为 JSON，只有三个字段：\n- action_type：item_use（使用物品做事）/ npc_talk（与人物交谈）/ move（前往地点）/ inspect（查看物件）/ other。\n- item_used：行动中使用的物品名（原文摘录），没有则为 null。注意区分\"查看\"与\"使用\"：\n  \"检查/查看某物\"是 inspect，此时 item_used 为 null、target 为被查看的物件；\n  只有行动\"用某物品去达成别的目的\"时才填 item_used（如\"用铜钥匙打开大门\"）。\n- target：行动的作用对象（人物、地点或物件名，原文摘录），没有则为 null。\n不要判断行动是否可行，那只由规则代码计算。只输出 JSON。"
+        },
+        {
+          "role": "user",
+          "content": "玩家行动：我去找执行部学生问话。"
+        }
+      ],
+      "wallMs": 12033,
+      "promptTokens": 207,
+      "completionTokens": 27,
+      "promptMs": 9438,
+      "predictedMs": 2576,
+      "promptPerSecond": 21.932763893796686,
+      "predictedPerSecond": 10.092732805379892,
+      "finishReason": "stop",
+      "text": "{\n  \"action_type\": \"move\",\n  \"item_used\": null,\n  \"target\": \"执行部学生\"\n}",
+      "parsed": {
+        "action_type": "move",
+        "item_used": null,
+        "target": "执行部学生"
+      },
+      "error": null,
+      "withinTarget": false,
+      "correct": false,
+      "fieldResults": {
+        "action_type": false,
+        "item_used": true,
+        "target": true,
+        "feasible": false
+      },
+      "codeFeasible": false
+    },
+    {
+      "batch": "new",
+      "action": "我用路明非的校徽刷开闸机。",
+      "expect": {
+        "action_type": "item_use",
+        "item_used": "校徽",
+        "target": "闸机",
+        "feasible": false
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "你是文字冒险游戏的输入解析器。\n\n把玩家行动解析为 JSON，只有三个字段：\n- action_type：item_use（使用物品做事）/ npc_talk（与人物交谈）/ move（前往地点）/ inspect（查看物件）/ other。\n- item_used：行动中使用的物品名（原文摘录），没有则为 null。注意区分\"查看\"与\"使用\"：\n  \"检查/查看某物\"是 inspect，此时 item_used 为 null、target 为被查看的物件；\n  只有行动\"用某物品去达成别的目的\"时才填 item_used（如\"用铜钥匙打开大门\"）。\n- target：行动的作用对象（人物、地点或物件名，原文摘录），没有则为 null。\n不要判断行动是否可行，那只由规则代码计算。只输出 JSON。"
+        },
+        {
+          "role": "user",
+          "content": "玩家行动：我用路明非的校徽刷开闸机。"
+        }
+      ],
+      "wallMs": 12712,
+      "promptTokens": 212,
+      "completionTokens": 33,
+      "promptMs": 9579,
+      "predictedMs": 3114,
+      "promptPerSecond": 22.130623709873365,
+      "predictedPerSecond": 10.277693647004261,
+      "finishReason": "stop",
+      "text": "{\n  \"action_type\": \"item_use\",\n  \"item_used\": \"路明非的校徽\",\n  \"target\": \"闸机\"\n}",
+      "parsed": {
+        "action_type": "item_use",
+        "item_used": "路明非的校徽",
+        "target": "闸机"
+      },
+      "error": null,
+      "withinTarget": false,
+      "correct": true,
+      "fieldResults": {
+        "action_type": true,
+        "item_used": true,
+        "target": true,
+        "feasible": true
+      },
+      "codeFeasible": false
+    }
+  ],
+  "exportedAt": "2026-10-08T16:26:24.483Z"
+}
