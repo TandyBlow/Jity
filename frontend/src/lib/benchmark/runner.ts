@@ -20,10 +20,10 @@ import type {
   RuntimeInfo,
 } from "./types";
 import { validCombos } from "./types";
+import { judgeAccept, ACCEPT_TARGET_MS } from "./verdict";
 import { getLibllamaVersion } from "./wllama-loader";
 
-/** The per-component target from the trial plan, in ms. */
-export const ACCEPT_TARGET_MS = 4000;
+export { ACCEPT_TARGET_MS };
 
 let runCounter = 0;
 /**
@@ -433,15 +433,12 @@ export async function runAcceptMatrix(
       hooks,
       record,
     );
-    // A verdict requires the call to actually deliver the target load: a
-    // generation that stops early (EOS after 1 token) must not count as
-    // "within 4 seconds" for a 512-token workload.
-    record.completedLoad =
-      !record.error
-      && ((record.predictedTokens ?? 0) >= config.acceptOutputTokens
-        || record.finishReason === "length");
-    record.withinTarget =
-      record.error || !record.completedLoad ? undefined : record.wallMs <= ACCEPT_TARGET_MS;
+    // Count-only load check: finish_reason "length" also covers
+    // context-exhaustion stops, so it cannot prove the requested tokens
+    // were generated. See verdict.ts.
+    const verdict = judgeAccept(record, config.acceptOutputTokens, ACCEPT_TARGET_MS);
+    record.completedLoad = verdict.completedLoad;
+    record.withinTarget = verdict.withinTarget;
     hooks.onRun(record);
   }
 }
