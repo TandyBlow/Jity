@@ -5,14 +5,18 @@
 # a 5-way classification head on a synthetic template corpus for the parse
 # task's action_type field (item_use / npc_talk / move / inspect / other).
 #
-# Data discipline (same as the LLM trials):
-# - the 4 held-out new-batch sentences are NEVER trained on, and their
-#   distinctive structures are excluded from the template vocabulary too
-#   (垫住门缝 / 查看字迹 / 去找…问话 / 校徽刷开闸机; 旧笔记 and 校徽 are
-#   not used as slots for this task);
-# - the 8 old-batch sentences ARE included — old batch is "previously
-#   observed" by the trial convention, so old-batch accuracy measures fit,
-#   new-batch accuracy measures generalization.
+# Data discipline:
+# - ALL 12 scored sentences (old batch AND held-out new batch) are excluded
+#   from the training corpus. An earlier revision claimed the old batch was
+#   included; that was wrong — the user's reproduction showed the
+#   `corpus[label] -= train_cases` step removed all 8 old sentences too.
+#   This revision makes the exclusion explicit and keeps the behavior:
+#   training saw none of the scored sentences, so old-batch 8/8 is a
+#   generalization result, not a fit result. The actual corpus is exported
+#   to artifacts/benchmark/classifier-action-corpus.json.
+# - The held-out new sentences' distinctive structures are excluded from the
+#   template vocabulary as well (垫住门缝 / 查看字迹 / 去找…问话 / 校徽刷开闸机;
+#   旧笔记 and 校徽 are not used as slots for this task).
 #
 # Exports ONNX (fp32 + int8 dynamic) plus tokenizer files to
 # frontend/public/models/minirbt-h256-action/ for Transformers.js.
@@ -137,32 +141,27 @@ def build_corpus():
         corpus["other"].add(f"我拔剑攻击{npc}。")
         corpus["other"].add(f"我挥手赶{npc}走。")
 
-    # 旧批 8 句入训练（已观察）；held-out 4 句断言不存在。
-    old_sentences = [text for text, _ in TEST_CASES[:8]]
-    for label, text in zip(
-        ["item_use", "npc_talk", "move", "item_use", "npc_talk", "inspect", "other", "other"],
-        old_sentences,
-    ):
-        corpus[label].add(text)
-
-    all_cases = {text for text, _ in TEST_CASES}
-    train_cases = set(old_sentences)
+    # 全部 12 句计分原文都排除在语料外（此前版本靠 add-后-subtract 间接达成，
+    # 现在显式排除；集合内容与旧版完全一致，训练可复现）。
+    all_scored = {text for text, _ in TEST_CASES}
     for label in LABELS:
-        corpus[label] -= train_cases  # 避免旧批句子重复计数
-        assert not (corpus[label] & (all_cases - train_cases)), f"held-out leak in {label}"
+        corpus[label] -= all_scored
+        assert not (corpus[label] & all_scored), f"scored sentence leaked into {label}"
 
     data = [(text, LABELS.index(label)) for label in LABELS for text in sorted(corpus[label])]
     return data
 
 
 def main():
-    snapshot = sys.argv[1] if len(sys.argv) > 1 else sys.exit("usage: train-action-classifier.py <snapshot-dir>")
-    out_dir = pathlib.Path(__file__).resolve().parent.parent / "public" / "models" / "minirbt-h256-action"
+    args = [a for a in sys.argv[1:]]
+    export_only = "--export-corpus" in args
+    positional = [a for a in args if not a.startswith("--")]
+    frontend_root = pathlib.Path(__file__).resolve().parent.parent
+    out_dir = frontend_root / "public" / "models" / "minirbt-h256-action"
+    artifacts_dir = frontend_root.parent / "artifacts" / "benchmark"
     (out_dir / "onnx").mkdir(parents=True, exist_ok=True)
 
     random.seed(SEED)
-    torch.manual_seed(SEED)
-
     data = build_corpus()
     counts = {}
     for _, label in data:
@@ -174,6 +173,26 @@ def main():
     val_n = max(1, len(data) // 10)
     val, train = data[:val_n], data[val_n:]
     print(f"train={len(train)} val={len(val)}")
+
+    # 实际语料清单入库：训练/验证/评测三部分原文全部落盘，供复核。
+    manifest = {
+        "seed": SEED,
+        "counts": counts,
+        "exclusionNote": "all 12 scored sentences (old + new batch) excluded from train/val; "
+        "held-out structures 垫住门缝/查看字迹/去找…问话/校徽刷开闸机 and slots 旧笔记/校徽 "
+        "excluded from templates",
+        "train": [{"text": text, "label": LABELS[label]} for text, label in train],
+        "val": [{"text": text, "label": LABELS[label]} for text, label in val],
+        "test": [{"text": text, "expect": expect} for text, expect in TEST_CASES],
+    }
+    manifest_path = artifacts_dir / "classifier-action-corpus.json"
+    manifest_path.parent.mkdir(parents=True, exist_ok=True)
+    manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(f"corpus manifest saved: {manifest_path}")
+    if export_only:
+        return
+
+    torch.manual_seed(SEED)
 
     tokenizer = BertTokenizerFast.from_pretrained(snapshot)
     model = BertForSequenceClassification.from_pretrained(

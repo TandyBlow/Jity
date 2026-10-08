@@ -1,0 +1,138 @@
+{
+  "seed": 4711,
+  "labelingRules": [
+    "span = contiguous char range of original text [start,end)",
+    "item_use: used object=ITEM, acted-on=TGT",
+    "inspect: inspected object=TGT (no ITEM); 检查X的Y -> X=TGT, Y=O",
+    "move/npc_talk: location/person=TGT",
+    "titles stay in person spans; stripping is code-side",
+    "spans minimal (modifiers excluded)",
+    "at most one span per field"
+  ],
+  "acceptance": {
+    "primary": "held-out (10 sentences): strict span match >= 90% per field",
+    "component": "both fields pass AND end-to-end <= 4s per call"
+  },
+  "counts": {
+    "item=True,target=True": 275,
+    "item=True,target=False": 60,
+    "item=False,target=True": 61,
+    "item=False,target=False": 5
+  },
+  "heldOut": [
+    {
+      "text": "我用火把照亮地下藏书室。",
+      "item": "火把",
+      "target": "地下藏书室"
+    },
+    {
+      "text": "我用短刀割断绳索。",
+      "item": "短刀",
+      "target": "绳索"
+    },
+    {
+      "text": "我和图书馆管理员打听暗门。",
+      "item": null,
+      "target": "图书馆管理员"
+    },
+    {
+      "text": "我去地下藏书室。",
+      "item": null,
+      "target": "地下藏书室"
+    },
+    {
+      "text": "我检查雕像的底座。",
+      "item": null,
+      "target": "雕像"
+    },
+    {
+      "text": "我在原地休息。",
+      "item": null,
+      "target": null
+    },
+    {
+      "text": "我用指南针校准方向。",
+      "item": "指南针",
+      "target": null
+    },
+    {
+      "text": "我把铃铛挂在暗门上。",
+      "item": "铃铛",
+      "target": "暗门"
+    },
+    {
+      "text": "我向夏弥打听暗门的来历。",
+      "item": null,
+      "target": "夏弥"
+    },
+    {
+      "text": "我用蜡烛照亮壁画。",
+      "item": "蜡烛",
+      "target": "壁画"
+    }
+  ],
+  "scored": [
+    {
+      "text": "我用铜钥匙打开大门。",
+      "item": "铜钥匙",
+      "target": "大门"
+    },
+    {
+      "text": "我和诺诺打听图书馆的传闻。",
+      "item": null,
+      "target": "诺诺"
+    },
+    {
+      "text": "我去二楼档案室查资料。",
+      "item": null,
+      "target": "二楼档案室"
+    },
+    {
+      "text": "我使用生锈的铁门钥匙打开大门。",
+      "item": "生锈的铁门钥匙",
+      "target": "大门"
+    },
+    {
+      "text": "我和执行部学生搭话。",
+      "item": null,
+      "target": "执行部学生"
+    },
+    {
+      "text": "我检查那扇书架后的暗门。",
+      "item": null,
+      "target": "暗门"
+    },
+    {
+      "text": "我拔剑攻击诺诺。",
+      "item": "剑",
+      "target": "诺诺"
+    },
+    {
+      "text": "我在原地休息一会儿。",
+      "item": null,
+      "target": null
+    },
+    {
+      "text": "我仔细查看旧笔记里的字迹。",
+      "item": null,
+      "target": "旧笔记"
+    },
+    {
+      "text": "我用旧笔记垫住门缝。",
+      "item": "旧笔记",
+      "target": "门缝"
+    },
+    {
+      "text": "我去找执行部学生问话。",
+      "item": null,
+      "target": "执行部学生"
+    },
+    {
+      "text": "我用路明非的校徽刷开闸机。",
+      "item": "校徽",
+      "target": "闸机"
+    }
+  ],
+  "trainSize": 401,
+  "note": "all 12 scored + 10 held-out sentences excluded from training"
+}

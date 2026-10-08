@@ -8,8 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "test": "vitest run",
-    "predev": "node scripts/copy-wllama-assets.mjs && node scripts/copy-transformers-assets.mjs",
-    "prebuild": "node scripts/copy-wllama-assets.mjs && node scripts/copy-transformers-assets.mjs"
+    "predev": "node scripts/copy-wllama-assets.mjs && node scripts/copy-ort-assets.mjs",
+    "prebuild": "node scripts/copy-wllama-assets.mjs && node scripts/copy-ort-assets.mjs"
   },
   "dependencies": {
     "@wllama/wllama": "^3.8.1",
@@ -21,7 +21,6 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.7",
-    "@huggingface/transformers": "^4.3.1",
     "@playwright/test": "^1.63.0",
     "@tailwindcss/postcss": "^4.3.0",
     "@types/node": "^22.10.2",
@@ -29,6 +28,7 @@
     "@types/react-dom": "^19.0.2",
     "eslint": "^9.39.4",
     "eslint-config-next": "^15.5.19",
+    "onnxruntime-web": "^1.30.0",
     "tailwindcss": "^4.3.0",
     "typescript": "^5.7.2",
     "vitest": "^5.0.1"

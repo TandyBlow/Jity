@@ -1,0 +1,709 @@
+{
+  "seed": 4711,
+  "counts": {
+    "item_use": 59,
+    "npc_talk": 28,
+    "move": 24,
+    "inspect": 34,
+    "other": 16
+  },
+  "exclusionNote": "all 12 scored sentences (old + new batch) excluded from train/val; held-out structures 垫住门缝/查看字迹/去找…问话/校徽刷开闸机 and slots 旧笔记/校徽 excluded from templates",
+  "train": [
+    {
+      "text": "我和诺诺打听暗门的来历。",
+      "label": "npc_talk"
+    },
+    {
+      "text": "我用剑把纸团扫出门口。",
+      "label": "item_use"
+    },
+    {
+      "text": "我向诺诺询问暗门的下落。",
+      "label": "npc_talk"
+    },
+    {
+      "text": "我用铜钥匙撑住书架。",
+      "label": "item_use"
+    },
+    {
+      "text": "我查看剑的表面。",
+      "label": "inspect"
+    },
+    {
+      "text": "我查看扫帚的表面。",
+      "label": "inspect"
+    },
+    {
+      "text": "我用蜡烛打开木箱。",
+      "label": "item_use"
+    },
+    {
+      "text": "我检查石棺。",
+      "label": "inspect"
+    },
+    {
+      "text": "我和路明非打听二楼档案室的传闻。",
+      "label": "npc_talk"
+    },
+    {
+      "text": "我和诺诺搭话。",
+      "label": "npc_talk"
+    },
+    {
+      "text": "我和凯瑟琳打听二楼档案室的传闻。",
+      "label": "npc_talk"
+    },
+    {
+      "text": "我用水壶打开大门。",
+      "label": "item_use"
+    },
+    {
+      "text": "我去地下藏书室躲一躲。",
+      "label": "move"
+    },
+    {
+      "text": "我前往走廊。",
+      "label": "move"
+    },
+    {
+      "text": "我去地下藏书室。",
+      "label": "move"
+    },
+    {
+      "text": "我查看铁门钥匙的表面。",
+      "label": "inspect"
+    },
+    {
+      "text": "我靠在门边等一等。",
+      "label": "other"
+    },
+    {
+      "text": "我和诺诺打听二楼档案室的传闻。",
+      "label": "npc_talk"
+    },
+    {
+      "text": "我用铜钥匙打开木箱。",
+      "label": "item_use"
+    },
+    {
+      "text": "我用铜钥匙把纸团扫出门口。",
+      "label": "item_use"
+    },
+    {
+      "text": "我和古德里安教授搭话。",
+      "label": "npc_talk"
+    },
+    {
+      "text": "我用扫帚割断绳子。",
+      "label": "item_use"
+    },
+    {
+      "text": "我和凯瑟琳打听图书馆的传闻。",
+      "label": "npc_talk"
+    },
+    {
+      "text": "我整理了一下背包。",
+      "label": "other"
+    },
+    {
+      "text": "我查看暗门。",
+      "label": "inspect"
+    },
+    {
+      "text": "我和夏弥打听暗门的来历。",
+      "label": "npc_talk"
+    },
+    {
+      "text": "我前往卡塞尔学院图书馆。",
+      "label": "move"
+    },
+    {
+      "text": "我向夏弥询问暗门的下落。",
+      "label": "npc_talk"
+    },
+    {
+      "text": "我用地图把纸团扫出门口。",
+      "label": "item_use"
+    },
+    {
+      "text": "我去阅览室躲一躲。",
+      "label": "move"
+    },
+    {
+      "text": "我用地图照亮走廊。",
+      "label": "item_use"
+    },
+    {
+      "text": "我和凯瑟琳搭话。",
+      "label": "npc_talk"
+    },
+    {
+      "text": "我拔剑攻击路明非。",
+      "label": "other"
+    },
+    {
+      "text": "我用扫帚撑住书架。",
+      "label": "item_use"
+    },
+    {
+      "text": "我去走廊。",
+      "label": "move"
+    },
+    {
+      "text": "我用铁门钥匙照亮走廊。",
+      "label": "item_use"
+    },
+    {
+      "text": "我用水壶割断绳子。",
+      "label": "item_use"
+    },
+    {
+      "text": "我前往地下藏书室。",
+      "label": "move"
+    },
+    {
+      "text": "我观察暗门上的痕迹。",
+      "label": "inspect"
+    },
+    {
+      "text": "我去卡塞尔学院图书馆躲一躲。",
+      "label": "move"
+    },
+    {
+      "text": "我检查蜡烛的齿纹。",
+      "label": "inspect"
+    },
+    {
+      "text": "我向凯瑟琳询问暗门的下落。",
+      "label": "npc_talk"
+    },
+    {
+      "text": "我用剑打开木箱。",
+      "label": "item_use"
+    },
+    {
+      "text": "我用扫帚把纸团扫出门口。",
+      "label": "item_use"
+    },
+    {
+      "text": "我用铁门钥匙撑住书架。",
+      "label": "item_use"
+    },
+    {
+      "text": "我用铁门钥匙打开大门。",
+      "label": "item_use"
+    },
+    {
+      "text": "我用蜡烛撑住书架。",
+      "label": "item_use"
+    },
+    {
+      "text": "我挥手赶路明非走。",
+      "label": "other"
+    },
+    {
+      "text": "我去阅览室。",
+      "label": "move"
+    },
+    {
+      "text": "我用扫帚照亮走廊。",
+      "label": "item_use"
+    },
+    {
+      "text": "我观察石棺上的痕迹。",
+      "label": "inspect"
+    },
+    {
+      "text": "我和执行部学生打听二楼档案室的传闻。",
+      "label": "npc_talk"
+    },
+    {
+      "text": "我用水壶照亮走廊。",
+      "label": "item_use"
+    },
+    {
+      "text": "我沿着楼梯走到卡塞尔学院图书馆。",
+      "label": "move"
+    },
+    {
+      "text": "我挥手赶凯瑟琳走。",
+      "label": "other"
+    },
+    {
+      "text": "我检查窗台。",
+      "label": "inspect"
+    },
+    {
+      "text": "我用剑照亮走廊。",
+      "label": "item_use"
+    },
+    {
+      "text": "我去走廊查资料。",
+      "label": "move"
+    },
+    {
+      "text": "我检查暗门。",
+      "label": "inspect"
+    },
+    {
+      "text": "我用铜钥匙割断绳子。",
+      "label": "item_use"
+    },
+    {
+      "text": "我拔剑攻击夏弥。",
+      "label": "other"
+    },
+    {
+      "text": "我挥手赶诺诺走。",
+      "label": "other"
+    },
+    {
+      "text": "我查看雕像。",
+      "label": "inspect"
+    },
+    {
+      "text": "我拔剑攻击古德里安教授。",
+      "label": "other"
+    },
+    {
+      "text": "我去卡塞尔学院图书馆。",
+      "label": "move"
+    },
+    {
+      "text": "我检查壁画。",
+      "label": "inspect"
+    },
+    {
+      "text": "我和路明非打听图书馆的传闻。",
+      "label": "npc_talk"
+    },
+    {
+      "text": "我用铁门钥匙撬开柜子。",
+      "label": "item_use"
+    },
+    {
+      "text": "我和执行部学生打听暗门的来历。",
+      "label": "npc_talk"
+    },
+    {
+      "text": "我观察雕像上的痕迹。",
+      "label": "inspect"
+    },
+    {
+      "text": "我用铜钥匙打开抽屉。",
+      "label": "item_use"
+    },
+    {
+      "text": "我用铁门钥匙割断绳子。",
+      "label": "item_use"
+    },
+    {
+      "text": "我和夏弥打听图书馆的传闻。",
+      "label": "npc_talk"
+    },
+    {
+      "text": "我检查地图的齿纹。",
+      "label": "inspect"
+    },
+    {
+      "text": "我拔剑攻击执行部学生。",
+      "label": "other"
+    },
+    {
+      "text": "我向路明非询问暗门的下落。",
+      "label": "npc_talk"
+    },
+    {
+      "text": "我沿着楼梯走到地下藏书室。",
+      "label": "move"
+    },
+    {
+      "text": "我去走廊躲一躲。",
+      "label": "move"
+    },
+    {
+      "text": "我查看窗台。",
+      "label": "inspect"
+    },
+    {
+      "text": "我用铁门钥匙打开抽屉。",
+      "label": "item_use"
+    },
+    {
+      "text": "我拔剑攻击凯瑟琳。",
+      "label": "other"
+    },
+    {
+      "text": "我和路明非搭话。",
+      "label": "npc_talk"
+    },
+    {
+      "text": "我和凯瑟琳打听暗门的来历。",
+      "label": "npc_talk"
+    },
+    {
+      "text": "我用水壶把纸团扫出门口。",
+      "label": "item_use"
+    },
+    {
+      "text": "我坐下来歇了口气。",
+      "label": "other"
+    },
+    {
+      "text": "我用绳索撬开柜子。",
+      "label": "item_use"
+    },
+    {
+      "text": "我观察窗台上的痕迹。",
+      "label": "inspect"
+    },
+    {
+      "text": "我用蜡烛照亮走廊。",
+      "label": "item_use"
+    },
+    {
+      "text": "我查看水壶的表面。",
+      "label": "inspect"
+    },
+    {
+      "text": "我和夏弥打听二楼档案室的传闻。",
+      "label": "npc_talk"
+    },
+    {
+      "text": "我用铁门钥匙打开木箱。",
+      "label": "item_use"
+    },
+    {
+      "text": "我查看地图的表面。",
+      "label": "inspect"
+    },
+    {
+      "text": "我在原地缓了缓。",
+      "label": "other"
+    },
+    {
+      "text": "我用绳索打开大门。",
+      "label": "item_use"
+    },
+    {
+      "text": "我用绳索割断绳子。",
+      "label": "item_use"
+    },
+    {
+      "text": "我查看石棺。",
+      "label": "inspect"
+    },
+    {
+      "text": "我去二楼档案室。",
+      "label": "move"
+    },
+    {
+      "text": "我挥手赶夏弥走。",
+      "label": "other"
+    },
+    {
+      "text": "我用绳索打开木箱。",
+      "label": "item_use"
+    },
+    {
+      "text": "我去阅览室查资料。",
+      "label": "move"
+    },
+    {
+      "text": "我深吸一口气。",
+      "label": "other"
+    },
+    {
+      "text": "我和古德里安教授打听二楼档案室的传闻。",
+      "label": "npc_talk"
+    },
+    {
+      "text": "我用扫帚打开木箱。",
+      "label": "item_use"
+    },
+    {
+      "text": "我检查铁门钥匙的齿纹。",
+      "label": "inspect"
+    },
+    {
+      "text": "我用铜钥匙打开柜子。",
+      "label": "item_use"
+    },
+    {
+      "text": "我沿着楼梯走到二楼档案室。",
+      "label": "move"
+    },
+    {
+      "text": "我检查剑的齿纹。",
+      "label": "inspect"
+    },
+    {
+      "text": "我查看铜钥匙的表面。",
+      "label": "inspect"
+    },
+    {
+      "text": "我检查绳索的齿纹。",
+      "label": "inspect"
+    },
+    {
+      "text": "我用扫帚打开大门。",
+      "label": "item_use"
+    },
+    {
+      "text": "我向古德里安教授询问暗门的下落。",
+      "label": "npc_talk"
+    },
+    {
+      "text": "我用蜡烛把纸团扫出门口。",
+      "label": "item_use"
+    },
+    {
+      "text": "我用绳索把纸团扫出门口。",
+      "label": "item_use"
+    },
+    {
+      "text": "我向执行部学生询问暗门的下落。",
+      "label": "npc_talk"
+    },
+    {
+      "text": "我检查水壶的齿纹。",
+      "label": "inspect"
+    },
+    {
+      "text": "我用剑打开大门。",
+      "label": "item_use"
+    },
+    {
+      "text": "我用水壶撑住书架。",
+      "label": "item_use"
+    },
+    {
+      "text": "我用绳索撑住书架。",
+      "label": "item_use"
+    },
+    {
+      "text": "我用蜡烛割断绳子。",
+      "label": "item_use"
+    },
+    {
+      "text": "我用剑撑住书架。",
+      "label": "item_use"
+    },
+    {
+      "text": "我和古德里安教授打听图书馆的传闻。",
+      "label": "npc_talk"
+    },
+    {
+      "text": "我用铜钥匙照亮走廊。",
+      "label": "item_use"
+    },
+    {
+      "text": "我用水壶撬开柜子。",
+      "label": "item_use"
+    },
+    {
+      "text": "我查看书架。",
+      "label": "inspect"
+    },
+    {
+      "text": "我用铁门钥匙把纸团扫出门口。",
+      "label": "item_use"
+    },
+    {
+      "text": "我去卡塞尔学院图书馆查资料。",
+      "label": "move"
+    },
+    {
+      "text": "我检查扫帚的齿纹。",
+      "label": "inspect"
+    },
+    {
+      "text": "我检查雕像。",
+      "label": "inspect"
+    },
+    {
+      "text": "我用地图打开木箱。",
+      "label": "item_use"
+    },
+    {
+      "text": "我用蜡烛撬开柜子。",
+      "label": "item_use"
+    },
+    {
+      "text": "我用铁门钥匙打开柜子。",
+      "label": "item_use"
+    },
+    {
+      "text": "我和执行部学生打听图书馆的传闻。",
+      "label": "npc_talk"
+    },
+    {
+      "text": "我检查铜钥匙的齿纹。",
+      "label": "inspect"
+    },
+    {
+      "text": "我和路明非打听暗门的来历。",
+      "label": "npc_talk"
+    },
+    {
+      "text": "我挥手赶古德里安教授走。",
+      "label": "other"
+    },
+    {
+      "text": "我沿着楼梯走到走廊。",
+      "label": "move"
+    },
+    {
+      "text": "我用剑撬开柜子。",
+      "label": "item_use"
+    },
+    {
+      "text": "我和夏弥搭话。",
+      "label": "npc_talk"
+    },
+    {
+      "text": "我用地图撬开柜子。",
+      "label": "item_use"
+    },
+    {
+      "text": "我前往二楼档案室。",
+      "label": "move"
+    },
+    {
+      "text": "我前往阅览室。",
+      "label": "move"
+    },
+    {
+      "text": "我用地图割断绳子。",
+      "label": "item_use"
+    },
+    {
+      "text": "我观察壁画上的痕迹。",
+      "label": "inspect"
+    },
+    {
+      "text": "我检查书架。",
+      "label": "inspect"
+    },
+    {
+      "text": "我用绳索照亮走廊。",
+      "label": "item_use"
+    }
+  ],
+  "val": [
+    {
+      "text": "我用水壶打开木箱。",
+      "label": "item_use"
+    },
+    {
+      "text": "我查看绳索的表面。",
+      "label": "inspect"
+    },
+    {
+      "text": "我观察书架上的痕迹。",
+      "label": "inspect"
+    },
+    {
+      "text": "我用铜钥匙撬开柜子。",
+      "label": "item_use"
+    },
+    {
+      "text": "我用蜡烛打开大门。",
+      "label": "item_use"
+    },
+    {
+      "text": "我去二楼档案室躲一躲。",
+      "label": "move"
+    },
+    {
+      "text": "我沿着楼梯走到阅览室。",
+      "label": "move"
+    },
+    {
+      "text": "我用扫帚撬开柜子。",
+      "label": "item_use"
+    },
+    {
+      "text": "我用地图撑住书架。",
+      "label": "item_use"
+    },
+    {
+      "text": "我挥手赶执行部学生走。",
+      "label": "other"
+    },
+    {
+      "text": "我用剑割断绳子。",
+      "label": "item_use"
+    },
+    {
+      "text": "我查看壁画。",
+      "label": "inspect"
+    },
+    {
+      "text": "我和古德里安教授打听暗门的来历。",
+      "label": "npc_talk"
+    },
+    {
+      "text": "我用地图打开大门。",
+      "label": "item_use"
+    },
+    {
+      "text": "我查看蜡烛的表面。",
+      "label": "inspect"
+    },
+    {
+      "text": "我去地下藏书室查资料。",
+      "label": "move"
+    }
+  ],
+  "test": [
+    {
+      "text": "我用铜钥匙打开大门。",
+      "expect": "item_use"
+    },
+    {
+      "text": "我和诺诺打听图书馆的传闻。",
+      "expect": "npc_talk"
+    },
+    {
+      "text": "我去二楼档案室查资料。",
+      "expect": "move"
+    },
+    {
+      "text": "我使用生锈的铁门钥匙打开大门。",
+      "expect": "item_use"
+    },
+    {
+      "text": "我和执行部学生搭话。",
+      "expect": "npc_talk"
+    },
+    {
+      "text": "我检查那扇书架后的暗门。",
+      "expect": "inspect"
+    },
+    {
+      "text": "我拔剑攻击诺诺。",
+      "expect": "other"
+    },
+    {
+      "text": "我在原地休息一会儿。",
+      "expect": "other"
+    },
+    {
+      "text": "我仔细查看旧笔记里的字迹。",
+      "expect": "inspect"
+    },
+    {
+      "text": "我用旧笔记垫住门缝。",
+      "expect": "item_use"
+    },
+    {
+      "text": "我去找执行部学生问话。",
+      "expect": "npc_talk"
+    },
+    {
+      "text": "我用路明非的校徽刷开闸机。",
+      "expect": "item_use"
+    }
+  ]
+}

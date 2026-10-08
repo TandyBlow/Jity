@@ -1,0 +1,835 @@
+{
+  "hostCpu": "13th Gen Intel(R) Core(TM) i7-13700H",
+  "task": "action-classify",
+  "model": {
+    "dir": "/models/minirbt-h256-action",
+    "base": "hfl/minirbt-h256 (~10.4M params, fine-tuned head)",
+    "files": {
+      "onnx/model.onnx": 41520380,
+      "onnx/model_quantized.onnx": 10646322
+    }
+  },
+  "runtime": {
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.0.0 Safari/537.36 Edg/153.0.0.0",
+    "crossOriginIsolated": true,
+    "ortVersion": null,
+    "timingScope": "end-to-end per call: tokenize -> feed -> session.run -> argmax/softmax",
+    "threadNote": "each arm runs in an independent fresh page with numThreads set before the first create; >1-thread wasm session create hangs in this environment (headed and headless), so all timings are single-threaded"
+  },
+  "targetMs": 4000,
+  "repeatsPerCase": 10,
+  "reference": {
+    "note": "same machine/cases, qwen3-0.6b chat arms from task-trial7",
+    "parse/compact": {
+      "actionType": "8/12",
+      "wholeCallWallMedianMs": 25814
+    },
+    "parse/split-state": {
+      "actionType": "11/12",
+      "subCallWallMedianMs": 15755
+    },
+    "pythonEval": {
+      "actionType": "11/12",
+      "old": "8/8",
+      "new": "3/4",
+      "corpusNote": "all 12 scored sentences excluded from training (see train-action-classifier.py)"
+    }
+  },
+  "arms": [
+    {
+      "name": "q8-t1",
+      "status": "ok",
+      "threads": 1,
+      "file": "onnx/model_quantized.onnx",
+      "numThreadsReadback": 1,
+      "loadMs": 2620,
+      "coldMs": 125,
+      "coldLabel": "item_use",
+      "tokenizerCheckPass": true,
+      "cases": [
+        {
+          "batch": "old",
+          "action": "我用铜钥匙打开大门。",
+          "expect": "item_use",
+          "label": "item_use",
+          "probs": [
+            0.987,
+            0.002,
+            0.004,
+            0.003,
+            0.003
+          ],
+          "wallMs": 10.025,
+          "minWallMs": 8.145,
+          "maxWallMs": 12.34,
+          "walls": [
+            9.71,
+            8.955,
+            10.705,
+            11.47,
+            10.265,
+            10.025,
+            8.145,
+            8.225,
+            9.905,
+            12.34
+          ],
+          "withinTarget": true,
+          "correct": true
+        },
+        {
+          "batch": "old",
+          "action": "我和诺诺打听图书馆的传闻。",
+          "expect": "npc_talk",
+          "label": "npc_talk",
+          "probs": [
+            0.006,
+            0.958,
+            0.005,
+            0.015,
+            0.017
+          ],
+          "wallMs": 10.05,
+          "minWallMs": 7.79,
+          "maxWallMs": 11.48,
+          "walls": [
+            11.48,
+            8.64,
+            7.79,
+            10.735,
+            10.05,
+            8.785,
+            8.885,
+            11.15,
+            9.36,
+            10.5
+          ],
+          "withinTarget": true,
+          "correct": true
+        },
+        {
+          "batch": "old",
+          "action": "我去二楼档案室查资料。",
+          "expect": "move",
+          "label": "move",
+          "probs": [
+            0.036,
+            0.007,
+            0.701,
+            0.144,
+            0.112
+          ],
+          "wallMs": 7.98,
+          "minWallMs": 6.865,
+          "maxWallMs": 10.48,
+          "walls": [
+            6.975,
+            10.48,
+            9.97,
+            7,
+            8.615,
+            7.98,
+            7.3,
+            7.51,
+            8.205,
+            6.865
+          ],
+          "withinTarget": true,
+          "correct": true
+        },
+        {
+          "batch": "old",
+          "action": "我使用生锈的铁门钥匙打开大门。",
+          "expect": "item_use",
+          "label": "item_use",
+          "probs": [
+            0.987,
+            0.002,
+            0.004,
+            0.004,
+            0.003
+          ],
+          "wallMs": 8.31,
+          "minWallMs": 7.93,
+          "maxWallMs": 10.555,
+          "walls": [
+            9.76,
+            8.28,
+            7.93,
+            8.09,
+            10.555,
+            9.065,
+            8.38,
+            8.11,
+            8.31,
+            8.065
+          ],
+          "withinTarget": true,
+          "correct": true
+        },
+        {
+          "batch": "old",
+          "action": "我和执行部学生搭话。",
+          "expect": "npc_talk",
+          "label": "npc_talk",
+          "probs": [
+            0.006,
+            0.958,
+            0.005,
+            0.014,
+            0.018
+          ],
+          "wallMs": 6.51,
+          "minWallMs": 6.085,
+          "maxWallMs": 12.65,
+          "walls": [
+            6.115,
+            7.56,
+            12.65,
+            8.695,
+            6.735,
+            6.51,
+            6.085,
+            6.255,
+            6.175,
+            6.115
+          ],
+          "withinTarget": true,
+          "correct": true
+        },
+        {
+          "batch": "old",
+          "action": "我检查那扇书架后的暗门。",
+          "expect": "inspect",
+          "label": "inspect",
+          "probs": [
+            0.007,
+            0.01,
+            0.007,
+            0.971,
+            0.004
+          ],
+          "wallMs": 7.765,
+          "minWallMs": 6.695,
+          "maxWallMs": 9.165,
+          "walls": [
+            8.425,
+            7.595,
+            9.165,
+            8.99,
+            7.89,
+            7.255,
+            6.865,
+            6.695,
+            7.765,
+            7.35
+          ],
+          "withinTarget": true,
+          "correct": true
+        },
+        {
+          "batch": "old",
+          "action": "我拔剑攻击诺诺。",
+          "expect": "other",
+          "label": "other",
+          "probs": [
+            0.017,
+            0.064,
+            0.3,
+            0.003,
+            0.616
+          ],
+          "wallMs": 6.65,
+          "minWallMs": 5.325,
+          "maxWallMs": 9.14,
+          "walls": [
+            6.65,
+            5.405,
+            5.56,
+            7.465,
+            5.495,
+            8.005,
+            9.14,
+            5.855,
+            6.975,
+            5.325
+          ],
+          "withinTarget": true,
+          "correct": true
+        },
+        {
+          "batch": "old",
+          "action": "我在原地休息一会儿。",
+          "expect": "other",
+          "label": "other",
+          "probs": [
+            0.01,
+            0.193,
+            0.194,
+            0.005,
+            0.598
+          ],
+          "wallMs": 6.5,
+          "minWallMs": 5.79,
+          "maxWallMs": 7.92,
+          "walls": [
+            6.5,
+            6.285,
+            6.685,
+            5.94,
+            6.13,
+            5.79,
+            7.92,
+            7.065,
+            7.76,
+            5.94
+          ],
+          "withinTarget": true,
+          "correct": true
+        },
+        {
+          "batch": "new",
+          "action": "我仔细查看旧笔记里的字迹。",
+          "expect": "inspect",
+          "label": "inspect",
+          "probs": [
+            0.008,
+            0.008,
+            0.008,
+            0.97,
+            0.005
+          ],
+          "wallMs": 7.73,
+          "minWallMs": 7.31,
+          "maxWallMs": 13.265,
+          "walls": [
+            7.31,
+            8.985,
+            7.72,
+            7.51,
+            7.62,
+            7.73,
+            7.56,
+            7.945,
+            8.375,
+            13.265
+          ],
+          "withinTarget": true,
+          "correct": true
+        },
+        {
+          "batch": "new",
+          "action": "我用旧笔记垫住门缝。",
+          "expect": "item_use",
+          "label": "item_use",
+          "probs": [
+            0.987,
+            0.002,
+            0.004,
+            0.003,
+            0.003
+          ],
+          "wallMs": 6.275,
+          "minWallMs": 5.79,
+          "maxWallMs": 8.65,
+          "walls": [
+            6.515,
+            6.255,
+            6.275,
+            7.795,
+            5.835,
+            5.99,
+            5.79,
+            8.65,
+            6.84,
+            6.005
+          ],
+          "withinTarget": true,
+          "correct": true
+        },
+        {
+          "batch": "new",
+          "action": "我去找执行部学生问话。",
+          "expect": "npc_talk",
+          "label": "other",
+          "probs": [
+            0.006,
+            0.246,
+            0.194,
+            0.007,
+            0.547
+          ],
+          "wallMs": 6.96,
+          "minWallMs": 6.1,
+          "maxWallMs": 9.075,
+          "walls": [
+            6.25,
+            9.075,
+            7.99,
+            7.15,
+            6.215,
+            6.21,
+            6.1,
+            6.96,
+            8.195,
+            6.52
+          ],
+          "withinTarget": true,
+          "correct": false
+        },
+        {
+          "batch": "new",
+          "action": "我用路明非的校徽刷开闸机。",
+          "expect": "item_use",
+          "label": "item_use",
+          "probs": [
+            0.987,
+            0.002,
+            0.004,
+            0.004,
+            0.003
+          ],
+          "wallMs": 7.32,
+          "minWallMs": 7.06,
+          "maxWallMs": 10.97,
+          "walls": [
+            10.97,
+            8.095,
+            7.32,
+            7.06,
+            7.31,
+            8.59,
+            7.22,
+            7.08,
+            8.305,
+            7.17
+          ],
+          "withinTarget": true,
+          "correct": true
+        }
+      ],
+      "summary": {
+        "old": {
+          "correctRate": "8/8",
+          "withinTargetRate": "8/8",
+          "medianWallMs": 7.98,
+          "maxWallMs": 10.05
+        },
+        "new": {
+          "correctRate": "3/4",
+          "withinTargetRate": "4/4",
+          "medianWallMs": 7.32,
+          "maxWallMs": 7.73
+        },
+        "all": {
+          "correctRate": "11/12",
+          "withinTargetRate": "12/12",
+          "medianWallMs": 7.73,
+          "maxWallMs": 10.05
+        }
+      }
+    },
+    {
+      "name": "q8-t4",
+      "status": "create-hung",
+      "threads": 4,
+      "file": "onnx/model_quantized.onnx",
+      "timeoutMs": 30000,
+      "numThreadsReadback": 4
+    },
+    {
+      "name": "fp32-t1",
+      "status": "ok",
+      "threads": 1,
+      "file": "onnx/model.onnx",
+      "numThreadsReadback": 1,
+      "loadMs": 2976,
+      "coldMs": 115,
+      "coldLabel": "item_use",
+      "tokenizerCheckPass": true,
+      "cases": [
+        {
+          "batch": "old",
+          "action": "我用铜钥匙打开大门。",
+          "expect": "item_use",
+          "label": "item_use",
+          "probs": [
+            0.987,
+            0.002,
+            0.004,
+            0.003,
+            0.003
+          ],
+          "wallMs": 12.27,
+          "minWallMs": 10.31,
+          "maxWallMs": 15.655,
+          "walls": [
+            10.55,
+            13.915,
+            10.86,
+            11.265,
+            14.17,
+            12.27,
+            11.355,
+            15.655,
+            10.31,
+            12.925
+          ],
+          "withinTarget": true,
+          "correct": true
+        },
+        {
+          "batch": "old",
+          "action": "我和诺诺打听图书馆的传闻。",
+          "expect": "npc_talk",
+          "label": "npc_talk",
+          "probs": [
+            0.006,
+            0.958,
+            0.005,
+            0.015,
+            0.017
+          ],
+          "wallMs": 15.305,
+          "minWallMs": 10.45,
+          "maxWallMs": 18.84,
+          "walls": [
+            14.74,
+            15.09,
+            15.545,
+            10.63,
+            15.305,
+            18.84,
+            18.455,
+            15.88,
+            10.995,
+            10.45
+          ],
+          "withinTarget": true,
+          "correct": true
+        },
+        {
+          "batch": "old",
+          "action": "我去二楼档案室查资料。",
+          "expect": "move",
+          "label": "move",
+          "probs": [
+            0.038,
+            0.007,
+            0.679,
+            0.168,
+            0.108
+          ],
+          "wallMs": 9.905,
+          "minWallMs": 8.755,
+          "maxWallMs": 12.78,
+          "walls": [
+            9.515,
+            11.09,
+            9.635,
+            12.78,
+            10.485,
+            9.905,
+            8.845,
+            8.755,
+            9.45,
+            10.18
+          ],
+          "withinTarget": true,
+          "correct": true
+        },
+        {
+          "batch": "old",
+          "action": "我使用生锈的铁门钥匙打开大门。",
+          "expect": "item_use",
+          "label": "item_use",
+          "probs": [
+            0.987,
+            0.002,
+            0.004,
+            0.004,
+            0.003
+          ],
+          "wallMs": 12.055,
+          "minWallMs": 10.94,
+          "maxWallMs": 15.435,
+          "walls": [
+            13.81,
+            12.555,
+            12.055,
+            12.445,
+            15.435,
+            11.72,
+            10.94,
+            11.035,
+            11.5,
+            11.17
+          ],
+          "withinTarget": true,
+          "correct": true
+        },
+        {
+          "batch": "old",
+          "action": "我和执行部学生搭话。",
+          "expect": "npc_talk",
+          "label": "npc_talk",
+          "probs": [
+            0.006,
+            0.958,
+            0.005,
+            0.014,
+            0.018
+          ],
+          "wallMs": 8.54,
+          "minWallMs": 8.175,
+          "maxWallMs": 10.265,
+          "walls": [
+            8.175,
+            9.035,
+            8.255,
+            8.48,
+            8.275,
+            8.72,
+            9.14,
+            8.5,
+            8.54,
+            10.265
+          ],
+          "withinTarget": true,
+          "correct": true
+        },
+        {
+          "batch": "old",
+          "action": "我检查那扇书架后的暗门。",
+          "expect": "inspect",
+          "label": "inspect",
+          "probs": [
+            0.007,
+            0.01,
+            0.007,
+            0.971,
+            0.004
+          ],
+          "wallMs": 9.695,
+          "minWallMs": 9.185,
+          "maxWallMs": 12.545,
+          "walls": [
+            9.69,
+            9.695,
+            9.195,
+            9.36,
+            12.545,
+            11.865,
+            9.185,
+            10.405,
+            10.16,
+            9.28
+          ],
+          "withinTarget": true,
+          "correct": true
+        },
+        {
+          "batch": "old",
+          "action": "我拔剑攻击诺诺。",
+          "expect": "other",
+          "label": "other",
+          "probs": [
+            0.017,
+            0.065,
+            0.297,
+            0.003,
+            0.618
+          ],
+          "wallMs": 7.94,
+          "minWallMs": 7.01,
+          "maxWallMs": 14.23,
+          "walls": [
+            7.01,
+            7.55,
+            8.05,
+            9.785,
+            14.23,
+            7.8,
+            7.655,
+            7.94,
+            8.385,
+            7.505
+          ],
+          "withinTarget": true,
+          "correct": true
+        },
+        {
+          "batch": "old",
+          "action": "我在原地休息一会儿。",
+          "expect": "other",
+          "label": "other",
+          "probs": [
+            0.01,
+            0.2,
+            0.19,
+            0.005,
+            0.595
+          ],
+          "wallMs": 8.915,
+          "minWallMs": 8.26,
+          "maxWallMs": 12.665,
+          "walls": [
+            8.915,
+            8.26,
+            12.645,
+            12.665,
+            8.84,
+            10.71,
+            8.545,
+            8.58,
+            10.41,
+            8.765
+          ],
+          "withinTarget": true,
+          "correct": true
+        },
+        {
+          "batch": "new",
+          "action": "我仔细查看旧笔记里的字迹。",
+          "expect": "inspect",
+          "label": "inspect",
+          "probs": [
+            0.008,
+            0.008,
+            0.008,
+            0.97,
+            0.005
+          ],
+          "wallMs": 11.01,
+          "minWallMs": 9.88,
+          "maxWallMs": 16.95,
+          "walls": [
+            11.775,
+            13.17,
+            11.235,
+            10.01,
+            9.88,
+            10.485,
+            10.395,
+            10.35,
+            16.95,
+            11.01
+          ],
+          "withinTarget": true,
+          "correct": true
+        },
+        {
+          "batch": "new",
+          "action": "我用旧笔记垫住门缝。",
+          "expect": "item_use",
+          "label": "item_use",
+          "probs": [
+            0.987,
+            0.002,
+            0.004,
+            0.003,
+            0.003
+          ],
+          "wallMs": 9.04,
+          "minWallMs": 8.165,
+          "maxWallMs": 11.135,
+          "walls": [
+            8.18,
+            8.58,
+            9.04,
+            8.42,
+            8.165,
+            9.125,
+            11.135,
+            9.24,
+            8.91,
+            9.51
+          ],
+          "withinTarget": true,
+          "correct": true
+        },
+        {
+          "batch": "new",
+          "action": "我去找执行部学生问话。",
+          "expect": "npc_talk",
+          "label": "other",
+          "probs": [
+            0.006,
+            0.266,
+            0.187,
+            0.007,
+            0.534
+          ],
+          "wallMs": 10.555,
+          "minWallMs": 9.1,
+          "maxWallMs": 12.975,
+          "walls": [
+            10.735,
+            10.305,
+            9.61,
+            9.1,
+            12.975,
+            11.195,
+            9.335,
+            12.18,
+            10.555,
+            9.215
+          ],
+          "withinTarget": true,
+          "correct": false
+        },
+        {
+          "batch": "new",
+          "action": "我用路明非的校徽刷开闸机。",
+          "expect": "item_use",
+          "label": "item_use",
+          "probs": [
+            0.987,
+            0.002,
+            0.004,
+            0.004,
+            0.003
+          ],
+          "wallMs": 10.345,
+          "minWallMs": 9.455,
+          "maxWallMs": 12.025,
+          "walls": [
+            12.025,
+            11.945,
+            10.47,
+            10.41,
+            10.34,
+            9.455,
+            9.53,
+            9.77,
+            10.345,
+            9.89
+          ],
+          "withinTarget": true,
+          "correct": true
+        }
+      ],
+      "summary": {
+        "old": {
+          "correctRate": "8/8",
+          "withinTargetRate": "8/8",
+          "medianWallMs": 9.905,
+          "maxWallMs": 15.305
+        },
+        "new": {
+          "correctRate": "3/4",
+          "withinTargetRate": "4/4",
+          "medianWallMs": 10.555,
+          "maxWallMs": 11.01
+        },
+        "all": {
+          "correctRate": "11/12",
+          "withinTargetRate": "12/12",
+          "medianWallMs": 10.345,
+          "maxWallMs": 15.305
+        }
+      }
+    }
+  ],
+  "exportedAt": "2026-10-08T19:13:46.233Z"
+}
