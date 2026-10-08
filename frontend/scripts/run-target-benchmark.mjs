@@ -91,24 +91,40 @@ async function main() {
   }
 
   // Configure the suite before loading: n_ctx/threads only apply at load time.
+  // Env overrides let focused experiments (ubatch control, single档位) reuse
+  // the same script; defaults reproduce the full target retest grid.
+  const grid = {
+    totals: process.env.GRID_TOTALS ?? "512,1024,2048",
+    memories: process.env.GRID_MEMS ?? "256,512,1024",
+    decode: process.env.DECODE ?? "128",
+    repeats: process.env.PREFILL_REPEATS ?? "1",
+    nCtx: process.env.N_CTX ?? "4096",
+    nBatch: process.env.N_BATCH ?? "2048",
+    ubatch: process.env.N_UBATCH ?? "512",
+    acceptTokens: process.env.ACCEPT_TOKENS ?? "512",
+    acceptOn: (process.env.ACCEPT ?? "1") === "1",
+    chatOn: (process.env.CHAT ?? "1") === "1",
+  };
   const configRow = page.locator(".bench-config-row");
   const inputs = configRow.locator("input:not([type=checkbox])");
-  // Order: 总输入 / 记忆注入 / 生成长度 / prefill 遍数 / n_ctx / 线程 / 4s 生成
-  await inputs.nth(0).fill("512,1024,2048");
-  await inputs.nth(1).fill("256,512,1024");
-  await inputs.nth(2).fill("128");
-  await inputs.nth(3).fill("1");
-  await inputs.nth(4).fill("4096");
+  // Order: 总输入 / 记忆注入 / 生成长度 / prefill 遍数 / n_ctx / 线程 / n_batch / n_ubatch / 4s 生成
+  await inputs.nth(0).fill(grid.totals);
+  await inputs.nth(1).fill(grid.memories);
+  await inputs.nth(2).fill(grid.decode);
+  await inputs.nth(3).fill(grid.repeats);
+  await inputs.nth(4).fill(grid.nCtx);
   await inputs.nth(5).fill(threads);
-  await inputs.nth(6).fill("512");
-  await page.locator("input[type=checkbox]").evaluateAll((boxes) => {
+  await inputs.nth(6).fill(grid.nBatch);
+  await inputs.nth(7).fill(grid.ubatch);
+  await inputs.nth(8).fill(grid.acceptTokens);
+  await page.locator("input[type=checkbox]").evaluateAll((boxes, flags) => {
     for (const box of boxes) {
       const label = box.parentElement?.textContent ?? "";
-      const want = label.includes("4 秒实测") || label.includes("chat 模板对照");
+      const want = label.includes("4 秒实测") ? flags.acceptOn : label.includes("chat 模板对照") ? flags.chatOn : box.checked;
       if (box.checked !== want) box.click();
     }
-  });
-  log("config set; loading model…");
+  }, { acceptOn: grid.acceptOn, chatOn: grid.chatOn });
+  log(`config set (ubatch ${grid.ubatch}, accept ${grid.acceptOn}, chat ${grid.chatOn}); loading model…`);
 
   await setPageValue(page, selectorForPlaceholder("模型 URL"), `${baseUrl}${MODEL_URL}`);
   await page.getByRole("button", { name: "从 URL 加载" }).click();

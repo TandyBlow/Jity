@@ -440,6 +440,24 @@ export default function BenchmarkPage() {
             />
           </label>
           <label>
+            n_batch：
+            <input
+              className="bench-input"
+              disabled={phase === "running"}
+              onChange={(event) => updateConfig({ nBatch: parseInt(event.target.value, 10) || 2048 })}
+              value={config.nBatch}
+            />
+          </label>
+          <label>
+            n_ubatch：
+            <input
+              className="bench-input"
+              disabled={phase === "running"}
+              onChange={(event) => updateConfig({ nUbatch: parseInt(event.target.value, 10) || 512 })}
+              value={config.nUbatch}
+            />
+          </label>
+          <label>
             4s 生成 token：
             <input
               className="bench-input"
