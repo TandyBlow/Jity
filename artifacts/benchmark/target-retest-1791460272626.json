@@ -1,0 +1,578 @@
+{
+  "environment": {
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.0.0 Safari/537.36 Edg/153.0.0.0",
+    "platform": "Win32",
+    "hardwareConcurrency": 20,
+    "deviceMemoryGB": 16,
+    "crossOriginIsolated": true,
+    "webgpuExposed": true,
+    "wasmSimd": true,
+    "wasmThreadsPossible": true,
+    "collectedAt": "2026-10-08T10:54:10.124Z"
+  },
+  "model": {
+    "sourceLabel": "http://localhost:3100/models/Qwen3-0.6B-Q4_K_M.gguf",
+    "sourceBytes": 396705472,
+    "multithread": true,
+    "numThreads": 4,
+    "nCtx": 4096,
+    "nCtxTrain": 40960,
+    "nVocab": 151936,
+    "nEmbd": 1024,
+    "nLayer": 28,
+    "libllamaVersion": "b11364-46ca246",
+    "generalMeta": {
+      "general.file_type": "15",
+      "general.quantization_version": "2",
+      "general.name": "Qwen3-0.6B",
+      "general.quantized_by": "Unsloth",
+      "general.repo_url": "https://huggingface.co/unsloth",
+      "general.architecture": "qwen3",
+      "general.basename": "Qwen3-0.6B",
+      "general.type": "model",
+      "general.size_label": "0.6B"
+    },
+    "loadParams": {
+      "n_ctx": 4096,
+      "n_batch": 2048,
+      "n_ubatch": 512,
+      "n_threads": 4
+    }
+  },
+  "suites": [
+    {
+      "id": "checkpoints",
+      "label": "检查点",
+      "startedAt": "2026-10-08T10:54:11.850Z",
+      "config": {
+        "totalTokens": [
+          512,
+          1024,
+          2048
+        ],
+        "memoryTokens": [
+          256,
+          512,
+          1024
+        ],
+        "decodeTokens": 128,
+        "prefillRepeats": 1,
+        "decodeRepeats": 1,
+        "nCtx": 4096,
+        "nBatch": 2048,
+        "nUbatch": 512,
+        "nThreads": 4,
+        "chatReference": true,
+        "acceptEnabled": true,
+        "acceptOutputTokens": 512
+      },
+      "model": null,
+      "modelLabel": null,
+      "runs": [
+        {
+          "id": "load-1-1791456851850",
+          "kind": "load",
+          "label": "URL: http://localhost:3100/models/Qwen3-0.6B-Q4_K_M.gguf",
+          "startedAt": "2026-10-08T10:54:11.850Z",
+          "wallMs": 12224,
+          "heap": {
+            "usedMB": 40.1,
+            "totalMB": 45.2
+          }
+        },
+        {
+          "id": "memory-2-1791456864075",
+          "kind": "memory",
+          "label": "加载后内存采样",
+          "startedAt": "2026-10-08T10:54:24.075Z",
+          "wallMs": 0,
+          "heap": {
+            "usedMB": 37.6,
+            "totalMB": 47.4
+          },
+          "memory": {
+            "usedMB": 37.9,
+            "totalMB": 38.7,
+            "preciseMB": 1624,
+            "breakdownMB": {
+              "Shared": 1,
+              "JavaScript": 1623,
+              "DOM": 0,
+              "other": 0
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "suite-1-1791456864215",
+      "label": "套件 1",
+      "startedAt": "2026-10-08T10:54:24.215Z",
+      "config": {
+        "totalTokens": [
+          512,
+          1024,
+          2048
+        ],
+        "memoryTokens": [
+          256,
+          512,
+          1024
+        ],
+        "decodeTokens": 128,
+        "prefillRepeats": 1,
+        "decodeRepeats": 1,
+        "nCtx": 4096,
+        "nBatch": 2048,
+        "nUbatch": 512,
+        "nThreads": 4,
+        "chatReference": true,
+        "acceptEnabled": true,
+        "acceptOutputTokens": 512
+      },
+      "model": {
+        "sourceLabel": "http://localhost:3100/models/Qwen3-0.6B-Q4_K_M.gguf",
+        "sourceBytes": 396705472,
+        "multithread": true,
+        "numThreads": 4,
+        "nCtx": 4096,
+        "nCtxTrain": 40960,
+        "nVocab": 151936,
+        "nEmbd": 1024,
+        "nLayer": 28,
+        "libllamaVersion": "b11364-46ca246",
+        "generalMeta": {
+          "general.file_type": "15",
+          "general.quantization_version": "2",
+          "general.name": "Qwen3-0.6B",
+          "general.quantized_by": "Unsloth",
+          "general.repo_url": "https://huggingface.co/unsloth",
+          "general.architecture": "qwen3",
+          "general.basename": "Qwen3-0.6B",
+          "general.type": "model",
+          "general.size_label": "0.6B"
+        },
+        "loadParams": {
+          "n_ctx": 4096,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 4
+        }
+      },
+      "modelLabel": "http://localhost:3100/models/Qwen3-0.6B-Q4_K_M.gguf",
+      "runs": [
+        {
+          "id": "prefill-3-1791456864216",
+          "kind": "prefill",
+          "label": "512 tok（记忆 256）· 第 1 遍",
+          "startedAt": "2026-10-08T10:54:24.216Z",
+          "wallMs": 36339,
+          "heap": {
+            "usedMB": 38.5,
+            "totalMB": 47.7
+          },
+          "nominalTotalTokens": 512,
+          "nominalMemoryTokens": 256,
+          "seed": 445,
+          "promptTokens": 366,
+          "predictedTokens": 1,
+          "finishReason": "length",
+          "cachedTokens": 0,
+          "promptMs": 36289,
+          "promptPerSecond": 10.08580901594718,
+          "predictedMs": 0,
+          "predictedPerSecond": 0,
+          "suiteId": "suite-1-1791456864215"
+        },
+        {
+          "id": "prefill-4-1791456900556",
+          "kind": "prefill",
+          "label": "1024 tok（记忆 256）· 第 1 遍",
+          "startedAt": "2026-10-08T10:55:00.556Z",
+          "wallMs": 81791,
+          "heap": {
+            "usedMB": 37.3,
+            "totalMB": 37.9
+          },
+          "nominalTotalTokens": 1024,
+          "nominalMemoryTokens": 256,
+          "seed": 445,
+          "promptTokens": 1068,
+          "predictedTokens": 1,
+          "finishReason": "length",
+          "cachedTokens": 0,
+          "promptMs": 81743,
+          "promptPerSecond": 13.065290178810363,
+          "predictedMs": 0,
+          "predictedPerSecond": 0,
+          "suiteId": "suite-1-1791456864215"
+        },
+        {
+          "id": "prefill-5-1791456982348",
+          "kind": "prefill",
+          "label": "1024 tok（记忆 512）· 第 1 遍",
+          "startedAt": "2026-10-08T10:56:22.348Z",
+          "wallMs": 68158,
+          "heap": {
+            "usedMB": 37.9,
+            "totalMB": 38.7
+          },
+          "nominalTotalTokens": 1024,
+          "nominalMemoryTokens": 512,
+          "seed": 445,
+          "promptTokens": 1017,
+          "predictedTokens": 1,
+          "finishReason": "length",
+          "cachedTokens": 0,
+          "promptMs": 68056,
+          "promptPerSecond": 14.943532182865518,
+          "predictedMs": 0,
+          "predictedPerSecond": 0,
+          "suiteId": "suite-1-1791456864215"
+        },
+        {
+          "id": "prefill-6-1791457050507",
+          "kind": "prefill",
+          "label": "2048 tok（记忆 256）· 第 1 遍",
+          "startedAt": "2026-10-08T10:57:30.507Z",
+          "wallMs": 160943,
+          "heap": {
+            "usedMB": 38.1,
+            "totalMB": 38.9
+          },
+          "nominalTotalTokens": 2048,
+          "nominalMemoryTokens": 256,
+          "seed": 445,
+          "promptTokens": 2067,
+          "predictedTokens": 1,
+          "finishReason": "length",
+          "cachedTokens": 0,
+          "promptMs": 160833,
+          "promptPerSecond": 12.851849296864879,
+          "predictedMs": 0,
+          "predictedPerSecond": 0,
+          "suiteId": "suite-1-1791456864215"
+        },
+        {
+          "id": "prefill-7-1791457211451",
+          "kind": "prefill",
+          "label": "2048 tok（记忆 512）· 第 1 遍",
+          "startedAt": "2026-10-08T11:00:11.451Z",
+          "wallMs": 148426,
+          "heap": {
+            "usedMB": 38.3,
+            "totalMB": 40.5
+          },
+          "nominalTotalTokens": 2048,
+          "nominalMemoryTokens": 512,
+          "seed": 445,
+          "promptTokens": 2045,
+          "predictedTokens": 1,
+          "finishReason": "length",
+          "cachedTokens": 0,
+          "promptMs": 148262,
+          "promptPerSecond": 13.79314335896468,
+          "predictedMs": 0,
+          "predictedPerSecond": 0,
+          "suiteId": "suite-1-1791456864215"
+        },
+        {
+          "id": "prefill-8-1791457359877",
+          "kind": "prefill",
+          "label": "2048 tok（记忆 1024）· 第 1 遍",
+          "startedAt": "2026-10-08T11:02:39.877Z",
+          "wallMs": 151854,
+          "heap": {
+            "usedMB": 38.2,
+            "totalMB": 39
+          },
+          "nominalTotalTokens": 2048,
+          "nominalMemoryTokens": 1024,
+          "seed": 445,
+          "promptTokens": 2047,
+          "predictedTokens": 1,
+          "finishReason": "length",
+          "cachedTokens": 0,
+          "promptMs": 151667,
+          "promptPerSecond": 13.496717327356695,
+          "predictedMs": 0,
+          "predictedPerSecond": 0,
+          "suiteId": "suite-1-1791456864215"
+        },
+        {
+          "id": "decode-9-1791457511733",
+          "kind": "decode",
+          "label": "2048 tok 输入 · 生成 128 token · 第 1 遍",
+          "startedAt": "2026-10-08T11:05:11.733Z",
+          "wallMs": 221510,
+          "heap": {
+            "usedMB": 38.7,
+            "totalMB": 39.7
+          },
+          "nominalTotalTokens": 2048,
+          "nominalMemoryTokens": 1024,
+          "maxTokens": 128,
+          "seed": 9901,
+          "promptTokens": 2013,
+          "predictedTokens": 128,
+          "finishReason": "length",
+          "cachedTokens": 0,
+          "promptMs": 145932,
+          "promptPerSecond": 13.794113934406171,
+          "predictedMs": 75365,
+          "predictedPerSecond": 1.6851291137302262,
+          "suiteId": "suite-1-1791456864215"
+        },
+        {
+          "id": "decode-10-1791457733248",
+          "kind": "decode",
+          "label": "chat 模板对照 · 2048 tok 输入",
+          "startedAt": "2026-10-08T11:08:53.248Z",
+          "wallMs": 210477,
+          "heap": {
+            "usedMB": 38.7,
+            "totalMB": 40
+          },
+          "nominalTotalTokens": 2048,
+          "nominalMemoryTokens": 1024,
+          "maxTokens": 64,
+          "seed": 424242,
+          "promptTokens": 2095,
+          "predictedTokens": 64,
+          "finishReason": "length",
+          "cachedTokens": 0,
+          "promptMs": 171650,
+          "promptPerSecond": 12.205095117452194,
+          "predictedMs": 38566,
+          "predictedPerSecond": 1.6335639199559904,
+          "suiteId": "suite-1-1791456864215"
+        },
+        {
+          "id": "accept-11-1791457943726",
+          "kind": "accept",
+          "label": "4 秒实测 · 512 tok（记忆 256）+ 生成 512",
+          "startedAt": "2026-10-08T11:12:23.726Z",
+          "wallMs": 184018,
+          "heap": {
+            "usedMB": 39.6,
+            "totalMB": 41.3
+          },
+          "nominalTotalTokens": 512,
+          "nominalMemoryTokens": 256,
+          "maxTokens": 512,
+          "seed": 56013,
+          "promptTokens": 485,
+          "predictedTokens": 512,
+          "finishReason": "length",
+          "cachedTokens": 0,
+          "promptMs": 31357,
+          "promptPerSecond": 15.466797187300745,
+          "predictedMs": 152452,
+          "predictedPerSecond": 3.3518829333567286,
+          "completedLoad": true,
+          "withinTarget": false,
+          "suiteId": "suite-1-1791456864215"
+        },
+        {
+          "id": "accept-12-1791458127747",
+          "kind": "accept",
+          "label": "4 秒实测 · 1024 tok（记忆 256）+ 生成 512",
+          "startedAt": "2026-10-08T11:15:27.747Z",
+          "wallMs": 275412,
+          "heap": {
+            "usedMB": 39.6,
+            "totalMB": 41
+          },
+          "nominalTotalTokens": 1024,
+          "nominalMemoryTokens": 256,
+          "maxTokens": 512,
+          "seed": 56525,
+          "promptTokens": 997,
+          "predictedTokens": 512,
+          "finishReason": "length",
+          "cachedTokens": 0,
+          "promptMs": 67516,
+          "promptPerSecond": 14.76681977059442,
+          "predictedMs": 207776,
+          "predictedPerSecond": 2.459375839770364,
+          "completedLoad": true,
+          "withinTarget": false,
+          "suiteId": "suite-1-1791456864215"
+        },
+        {
+          "id": "accept-13-1791458403159",
+          "kind": "accept",
+          "label": "4 秒实测 · 1024 tok（记忆 512）+ 生成 512",
+          "startedAt": "2026-10-08T11:20:03.159Z",
+          "wallMs": 284946,
+          "heap": {
+            "usedMB": 40.7,
+            "totalMB": 42.1
+          },
+          "nominalTotalTokens": 1024,
+          "nominalMemoryTokens": 512,
+          "maxTokens": 512,
+          "seed": 56525,
+          "promptTokens": 1019,
+          "predictedTokens": 512,
+          "finishReason": "length",
+          "cachedTokens": 0,
+          "promptMs": 69637,
+          "promptPerSecond": 14.632943805518039,
+          "predictedMs": 215122,
+          "predictedPerSecond": 2.375399201873306,
+          "completedLoad": true,
+          "withinTarget": false,
+          "suiteId": "suite-1-1791456864215"
+        },
+        {
+          "id": "accept-14-1791458688106",
+          "kind": "accept",
+          "label": "4 秒实测 · 2048 tok（记忆 256）+ 生成 512",
+          "startedAt": "2026-10-08T11:24:48.106Z",
+          "wallMs": 479346,
+          "heap": {
+            "usedMB": 41,
+            "totalMB": 42.6
+          },
+          "nominalTotalTokens": 2048,
+          "nominalMemoryTokens": 256,
+          "maxTokens": 512,
+          "seed": 57549,
+          "promptTokens": 2042,
+          "predictedTokens": 512,
+          "finishReason": "length",
+          "cachedTokens": 0,
+          "promptMs": 149804,
+          "promptPerSecond": 13.631162530425462,
+          "predictedMs": 329373,
+          "predictedPerSecond": 1.5514339080836312,
+          "completedLoad": true,
+          "withinTarget": false,
+          "suiteId": "suite-1-1791456864215"
+        },
+        {
+          "id": "accept-15-1791459167453",
+          "kind": "accept",
+          "label": "4 秒实测 · 2048 tok（记忆 512）+ 生成 512",
+          "startedAt": "2026-10-08T11:32:47.453Z",
+          "wallMs": 477953,
+          "heap": {
+            "usedMB": 35.5,
+            "totalMB": 39.2
+          },
+          "nominalTotalTokens": 2048,
+          "nominalMemoryTokens": 512,
+          "maxTokens": 512,
+          "seed": 57549,
+          "promptTokens": 2041,
+          "predictedTokens": 512,
+          "finishReason": "length",
+          "cachedTokens": 0,
+          "promptMs": 148622,
+          "promptPerSecond": 13.73278813514019,
+          "predictedMs": 329097,
+          "predictedPerSecond": 1.5527349899942031,
+          "completedLoad": true,
+          "withinTarget": false,
+          "suiteId": "suite-1-1791456864215"
+        },
+        {
+          "id": "accept-16-1791459645407",
+          "kind": "accept",
+          "label": "4 秒实测 · 2048 tok（记忆 1024）+ 生成 512",
+          "startedAt": "2026-10-08T11:40:45.407Z",
+          "wallMs": 495456,
+          "heap": {
+            "usedMB": 36.3,
+            "totalMB": 40.3
+          },
+          "nominalTotalTokens": 2048,
+          "nominalMemoryTokens": 1024,
+          "maxTokens": 512,
+          "seed": 57549,
+          "promptTokens": 2063,
+          "predictedTokens": 512,
+          "finishReason": "length",
+          "cachedTokens": 0,
+          "promptMs": 158097,
+          "promptPerSecond": 13.048912498066226,
+          "predictedMs": 337115,
+          "predictedPerSecond": 1.5158024032023714,
+          "completedLoad": true,
+          "withinTarget": false,
+          "suiteId": "suite-1-1791456864215"
+        },
+        {
+          "id": "abort-17-1791460140872",
+          "kind": "abort",
+          "label": "输入处理阶段取消 · 200ms",
+          "startedAt": "2026-10-08T11:49:00.872Z",
+          "wallMs": 32735,
+          "heap": {
+            "usedMB": 37.1,
+            "totalMB": 40.1
+          },
+          "nominalTotalTokens": 512,
+          "nominalMemoryTokens": 64,
+          "maxTokens": 256,
+          "abortAfterMs": 200,
+          "seed": 31337,
+          "abortOutcome": "cancelled",
+          "streamedChunks": 0,
+          "generatedChars": 0,
+          "abortPhase": "prefill",
+          "stopLatencyMs": 32532,
+          "suiteId": "suite-1-1791456864215"
+        },
+        {
+          "id": "abort-18-1791460173609",
+          "kind": "abort",
+          "label": "生成阶段取消 · 36689ms",
+          "startedAt": "2026-10-08T11:49:33.609Z",
+          "wallMs": 36845,
+          "heap": {
+            "usedMB": 37.3,
+            "totalMB": 40.3
+          },
+          "nominalTotalTokens": 512,
+          "nominalMemoryTokens": 64,
+          "maxTokens": 256,
+          "abortAfterMs": 36689,
+          "seed": 31337,
+          "abortOutcome": "cancelled",
+          "streamedChunks": 5,
+          "generatedChars": 8,
+          "abortPhase": "decode",
+          "stopLatencyMs": 153,
+          "suiteId": "suite-1-1791456864215"
+        },
+        {
+          "id": "memory-19-1791460210455",
+          "kind": "memory",
+          "label": "套件后内存采样",
+          "startedAt": "2026-10-08T11:50:10.455Z",
+          "wallMs": 0,
+          "heap": {
+            "usedMB": 37.3,
+            "totalMB": 40.3
+          },
+          "memory": {
+            "usedMB": 34.4,
+            "totalMB": 39.5,
+            "preciseMB": 4370.6,
+            "breakdownMB": {
+              "DOM": 0,
+              "JavaScript": 4370,
+              "Shared": 1,
+              "other": 0
+            }
+          },
+          "suiteId": "suite-1-1791456864215"
+        }
+      ],
+      "finishedAt": "2026-10-08T11:51:10.522Z"
+    }
+  ],
+  "exportedAt": "2026-10-08T11:51:12.431Z"
+}
