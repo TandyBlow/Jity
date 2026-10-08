@@ -1,0 +1,402 @@
+{
+  "hostCpu": "13th Gen Intel(R) Core(TM) i7-13700H",
+  "threads": 4,
+  "model": {
+    "tag": "qwen2.5-0.5b",
+    "url": "/models/qwen2.5-0.5b-instruct-q4_k_m.gguf"
+  },
+  "runtime": {
+    "multithread": true,
+    "numThreads": 4,
+    "meta": {
+      "general.quantization_version": "2",
+      "tokenizer.chat_template": "{%- if tools %}\n    {{- '<|im_start|>system\\n' }}\n    {%- if messages[0]['role'] == 'system' %}\n        {{- messages[0]['content'] }}\n    {%- else %}\n        {{- 'You are Qwen, created by Alibaba Cloud. You are a helpful assistant.' }}\n    {%- endif %}\n    {{- \"\\n\\n# Tools\\n\\nYou may call one or more functions to assist with the user query.\\n\\nYou are provided with function signatures within <tools></tools> XML tags:\\n<tools>\" }}\n    {%- for tool in tools %}\n        {{- \"\\n\" }}\n        {{- tool | tojson }}\n    {%- endfor %}\n    {{- \"\\n</tools>\\n\\nFor each function call, return a json object with function name and arguments within <tool_call></tool_call> XML tags:\\n<tool_call>\\n{{\\\"name\\\": <function-name>, \\\"arguments\\\": <args-json-object>}}\\n</tool_call><|im_end|>\\n\" }}\n{%- else %}\n    {%- if messages[0]['role'] == 'system' %}\n        {{- '<|im_start|>system\\n' + messages[0]['content'] + '<|im_end|>\\n' }}\n    {%- else %}\n        {{- '<|im_start|>system\\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\\n' }}\n    {%- endif %}\n{%- endif %}\n{%- for message in messages %}\n    {%- if (message.role == \"user\") or (message.role == \"system\" and not loop.first) or (message.role == \"assistant\" and not message.tool_calls) %}\n        {{- '<|im_start|>' + message.role + '\\n' + message.content + '<|im_end|>' + '\\n' }}\n    {%- elif message.role == \"assistant\" %}\n        {{- '<|im_start|>' + message.role }}\n        {%- if message.content %}\n            {{- '\\n' + message.content }}\n        {%- endif %}\n        {%- for tool_call in message.tool_calls %}\n            {%- if tool_call.function is defined %}\n                {%- set tool_call = tool_call.function %}\n            {%- endif %}\n            {{- '\\n<tool_call>\\n{\"name\": \"' }}\n            {{- tool_call.name }}\n            {{- '\", \"arguments\": ' }}\n            {{- tool_call.arguments | tojson }}\n            {{- '}\\n</tool_call>' }}\n        {%- endfor %}\n        {{- '<|im_end|>\\n' }}\n    {%- elif message.role == \"tool\" %}\n        {%- if (loop.index0 == 0) or (messages[loop.index0 - 1].role != \"tool\") %}\n            {{- '<|im_start|>user' }}\n        {%- endif %}\n        {{- '\\n<tool_response>\\n' }}\n        {{- message.content }}\n        {{- '\\n</tool_response>' }}\n        {%- if loop.last or (messages[loop.index0 + 1].role != \"tool\") %}\n            {{- '<|im_end|>\\n' }}\n        {%- endif %}\n    {%- endif %}\n{%- endfor %}\n{%- if add_generation_prompt %}\n    {{- '<|im_start|>assistant\\n' }}\n{%- endif %}\n",
+      "tokenizer.ggml.bos_token_id": "151643",
+      "tokenizer.ggml.padding_token_id": "151643",
+      "tokenizer.ggml.eos_token_id": "151645",
+      "tokenizer.ggml.pre": "qwen2",
+      "tokenizer.ggml.model": "gpt2",
+      "qwen2.attention.layer_norm_rms_epsilon": "0.000001",
+      "qwen2.rope.freq_base": "1000000.000000",
+      "qwen2.attention.head_count_kv": "2",
+      "qwen2.embedding_length": "896",
+      "qwen2.context_length": "32768",
+      "general.type": "model",
+      "qwen2.attention.head_count": "14",
+      "qwen2.feed_forward_length": "4864",
+      "general.architecture": "qwen2",
+      "qwen2.block_count": "24",
+      "general.file_type": "15",
+      "general.size_label": "630M",
+      "tokenizer.ggml.add_bos_token": "false",
+      "general.version": "v0.1",
+      "general.finetune": "qwen2.5-0.5b-instruct",
+      "general.name": "qwen2.5-0.5b-instruct"
+    }
+  },
+  "targetMs": 4000,
+  "summary": {
+    "parse": {
+      "withinTargetRate": "0/8",
+      "correctRate": "1/8",
+      "maxWallMs": 19924
+    },
+    "check": {
+      "withinTargetRate": "0/4",
+      "correctRate": "0/4",
+      "maxWallMs": 22454
+    }
+  },
+  "parseRuns": [
+    {
+      "action": "我用铜钥匙打开大门。",
+      "expect": {
+        "action_type": "item_use",
+        "target": "铜钥匙",
+        "feasible": true
+      },
+      "wallMs": 19000,
+      "promptTokens": 137,
+      "completionTokens": 41,
+      "finishReason": "stop",
+      "text": "{\n  \"action_type\": \"move\",\n  \"target\": \"卡塞尔学院图书馆\",\n  \"feasible\": true,\n  \"reason\": \"我用铜钥匙打开大门\"\n}",
+      "parsed": {
+        "action_type": "move",
+        "target": "卡塞尔学院图书馆",
+        "feasible": true,
+        "reason": "我用铜钥匙打开大门"
+      },
+      "error": null,
+      "withinTarget": false,
+      "correct": false,
+      "fieldResults": {
+        "action_type": false,
+        "feasible": true,
+        "target": false
+      }
+    },
+    {
+      "action": "我和诺诺打听图书馆的传闻。",
+      "expect": {
+        "action_type": "npc_talk",
+        "target": "诺诺",
+        "feasible": true
+      },
+      "wallMs": 19347,
+      "promptTokens": 138,
+      "completionTokens": 53,
+      "finishReason": "stop",
+      "text": "{\n  \"action_type\": \"inspect\",\n  \"target\": \"诺诺\",\n  \"feasible\": true,\n  \"reason\": \"诺诺是执行部学生，执行部学生是玩家行动中出现的原文；\"\n}",
+      "parsed": {
+        "action_type": "inspect",
+        "target": "诺诺",
+        "feasible": true,
+        "reason": "诺诺是执行部学生，执行部学生是玩家行动中出现的原文；"
+      },
+      "error": null,
+      "withinTarget": false,
+      "correct": false,
+      "fieldResults": {
+        "action_type": false,
+        "feasible": true,
+        "target": true
+      }
+    },
+    {
+      "action": "我去二楼档案室查资料。",
+      "expect": {
+        "action_type": "move",
+        "target": "二楼档案室",
+        "feasible": true
+      },
+      "wallMs": 18114,
+      "promptTokens": 137,
+      "completionTokens": 44,
+      "finishReason": "stop",
+      "text": "{\n  \"action_type\": \"move\",\n  \"target\": \"档案室\",\n  \"feasible\": true,\n  \"reason\": \"玩家行动去二楼档案室查资料，符合当前状态\"\n}",
+      "parsed": {
+        "action_type": "move",
+        "target": "档案室",
+        "feasible": true,
+        "reason": "玩家行动去二楼档案室查资料，符合当前状态"
+      },
+      "error": null,
+      "withinTarget": false,
+      "correct": true,
+      "fieldResults": {
+        "action_type": true,
+        "feasible": true,
+        "target": true
+      }
+    },
+    {
+      "action": "我使用生锈的铁门钥匙打开大门。",
+      "expect": {
+        "action_type": "item_use",
+        "target": "铁门钥匙",
+        "feasible": false
+      },
+      "wallMs": 18648,
+      "promptTokens": 141,
+      "completionTokens": 45,
+      "finishReason": "stop",
+      "text": "{\n  \"action_type\": \"move\",\n  \"target\": \"卡塞尔学院图书馆\",\n  \"feasible\": true,\n  \"reason\": \"我使用生锈的铁门钥匙打开大门\"\n}",
+      "parsed": {
+        "action_type": "move",
+        "target": "卡塞尔学院图书馆",
+        "feasible": true,
+        "reason": "我使用生锈的铁门钥匙打开大门"
+      },
+      "error": null,
+      "withinTarget": false,
+      "correct": false,
+      "fieldResults": {
+        "action_type": false,
+        "feasible": false,
+        "target": false
+      }
+    },
+    {
+      "action": "我和执行部学生搭话。",
+      "expect": {
+        "action_type": "npc_talk",
+        "target": "执行部学生",
+        "feasible": true
+      },
+      "wallMs": 19924,
+      "promptTokens": 137,
+      "completionTokens": 53,
+      "finishReason": "stop",
+      "text": "{\n  \"action_type\": \"inspect\",\n  \"target\": \"诺诺\",\n  \"feasible\": true,\n  \"reason\": \"诺诺是执行部学生，执行部学生是玩家的队友，可以搭话\"\n}",
+      "parsed": {
+        "action_type": "inspect",
+        "target": "诺诺",
+        "feasible": true,
+        "reason": "诺诺是执行部学生，执行部学生是玩家的队友，可以搭话"
+      },
+      "error": null,
+      "withinTarget": false,
+      "correct": false,
+      "fieldResults": {
+        "action_type": false,
+        "feasible": true,
+        "target": false
+      }
+    },
+    {
+      "action": "我绕着书架检查有没有暗门。",
+      "expect": {
+        "action_type": "inspect",
+        "target": null,
+        "feasible": true
+      },
+      "wallMs": 18053,
+      "promptTokens": 140,
+      "completionTokens": 42,
+      "finishReason": "stop",
+      "text": "{\n  \"action_type\": \"move\",\n  \"target\": \"bookshelf\",\n  \"feasible\": true,\n  \"reason\": \"我绕着书架检查有没有暗门。\"\n}",
+      "parsed": {
+        "action_type": "move",
+        "target": "bookshelf",
+        "feasible": true,
+        "reason": "我绕着书架检查有没有暗门。"
+      },
+      "error": null,
+      "withinTarget": false,
+      "correct": false,
+      "fieldResults": {
+        "action_type": false,
+        "feasible": true,
+        "target": true
+      }
+    },
+    {
+      "action": "我拔剑攻击诺诺。",
+      "expect": {
+        "action_type": "other",
+        "target": null,
+        "feasible": false
+      },
+      "wallMs": 19484,
+      "promptTokens": 137,
+      "completionTokens": 55,
+      "finishReason": "stop",
+      "text": "{\n  \"action_type\": \"inspect\",\n  \"target\": \"诺诺\",\n  \"feasible\": true,\n  \"reason\": \"诺诺是执行部学生，执行部学生是玩家的对手，玩家可以攻击诺诺\"\n}",
+      "parsed": {
+        "action_type": "inspect",
+        "target": "诺诺",
+        "feasible": true,
+        "reason": "诺诺是执行部学生，执行部学生是玩家的对手，玩家可以攻击诺诺"
+      },
+      "error": null,
+      "withinTarget": false,
+      "correct": false,
+      "fieldResults": {
+        "action_type": false,
+        "feasible": false,
+        "target": true
+      }
+    },
+    {
+      "action": "我在原地休息一会儿。",
+      "expect": {
+        "action_type": "other",
+        "target": null,
+        "feasible": true
+      },
+      "wallMs": 18148,
+      "promptTokens": 136,
+      "completionTokens": 44,
+      "finishReason": "stop",
+      "text": "{\n  \"action_type\": \"inspect\",\n  \"target\": \"卡塞尔学院图书馆\",\n  \"feasible\": true,\n  \"reason\": \"玩家在原地休息，不需要行动\"\n}",
+      "parsed": {
+        "action_type": "inspect",
+        "target": "卡塞尔学院图书馆",
+        "feasible": true,
+        "reason": "玩家在原地休息，不需要行动"
+      },
+      "error": null,
+      "withinTarget": false,
+      "correct": false,
+      "fieldResults": {
+        "action_type": false,
+        "feasible": true,
+        "target": true
+      }
+    }
+  ],
+  "checkRuns": [
+    {
+      "narration": "诺诺靠在书架旁，翻着那本旧笔记。路明非在门口安静地等着她。",
+      "expect": {
+        "em_dash_count": 0,
+        "simile_count": 0,
+        "unknown_names": [],
+        "pass": true
+      },
+      "wallMs": 21341,
+      "promptTokens": 151,
+      "completionTokens": 57,
+      "finishReason": "stop",
+      "text": "{\n  \"em_dash_count\": 0,\n  \"simile_count\": 0,\n  \"unknown_names\": [\"古德里安\", \"绘梨衣\"],\n  \"pass\": true\n}",
+      "parsed": {
+        "em_dash_count": 0,
+        "simile_count": 0,
+        "unknown_names": [
+          "古德里安",
+          "绘梨衣"
+        ],
+        "pass": true
+      },
+      "error": null,
+      "withinTarget": false,
+      "correct": false,
+      "fieldResults": {
+        "em_dash_count": true,
+        "simile_count": true,
+        "unknown_names": false,
+        "pass": true
+      }
+    },
+    {
+      "narration": "月光像水一样洒在诺诺的肩上，她没有回头。",
+      "expect": {
+        "em_dash_count": 0,
+        "simile_count": 1,
+        "unknown_names": [],
+        "pass": false
+      },
+      "wallMs": 20049,
+      "promptTokens": 143,
+      "completionTokens": 53,
+      "finishReason": "stop",
+      "text": "{\n  \"em_dash_count\": 0,\n  \"simile_count\": 0,\n  \"unknown_names\": [\"古德里安\", \"绘梨衣\"],\n  \"pass\": true\n}",
+      "parsed": {
+        "em_dash_count": 0,
+        "simile_count": 0,
+        "unknown_names": [
+          "古德里安",
+          "绘梨衣"
+        ],
+        "pass": true
+      },
+      "error": null,
+      "withinTarget": false,
+      "correct": false,
+      "fieldResults": {
+        "em_dash_count": true,
+        "simile_count": false,
+        "unknown_names": false,
+        "pass": false
+      }
+    },
+    {
+      "narration": "诺诺说——这是个秘密。凯瑟琳在一旁快速记录。",
+      "expect": {
+        "em_dash_count": 1,
+        "simile_count": 0,
+        "unknown_names": [
+          "凯瑟琳"
+        ],
+        "pass": false
+      },
+      "wallMs": 20216,
+      "promptTokens": 141,
+      "completionTokens": 55,
+      "finishReason": "stop",
+      "text": "{\n  \"em_dash_count\": 0,\n  \"simile_count\": 0,\n  \"unknown_names\": [\"古德里安\", \"绘梨衣\"],\n  \"pass\": true\n}",
+      "parsed": {
+        "em_dash_count": 0,
+        "simile_count": 0,
+        "unknown_names": [
+          "古德里安",
+          "绘梨衣"
+        ],
+        "pass": true
+      },
+      "error": null,
+      "withinTarget": false,
+      "correct": false,
+      "fieldResults": {
+        "em_dash_count": false,
+        "simile_count": true,
+        "unknown_names": false,
+        "pass": false
+      }
+    },
+    {
+      "narration": "古德里安教授推门进来，路明非起身行礼，绘梨衣跟在后面。",
+      "expect": {
+        "em_dash_count": 0,
+        "simile_count": 0,
+        "unknown_names": [],
+        "pass": true
+      },
+      "wallMs": 22454,
+      "promptTokens": 149,
+      "completionTokens": 64,
+      "finishReason": "stop",
+      "text": "{\n  \"em_dash_count\": 0,\n  \"simile_count\": 0,\n  \"unknown_names\": [\"古德里安教授\", \"路明非\", \"绘梨衣\"],\n  \"pass\": true\n}",
+      "parsed": {
+        "em_dash_count": 0,
+        "simile_count": 0,
+        "unknown_names": [
+          "古德里安教授",
+          "路明非",
+          "绘梨衣"
+        ],
+        "pass": true
+      },
+      "error": null,
+      "withinTarget": false,
+      "correct": false,
+      "fieldResults": {
+        "em_dash_count": true,
+        "simile_count": true,
+        "unknown_names": false,
+        "pass": true
+      }
+    }
+  ],
+  "exportedAt": "2026-10-08T12:59:35.667Z"
+}
