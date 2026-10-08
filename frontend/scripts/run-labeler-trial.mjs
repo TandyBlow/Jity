@@ -34,8 +34,9 @@ const MODEL_DIR = "/models/minirbt-h256-span";
 const TAGS = ["O", "B-ITEM", "I-ITEM", "B-TGT", "I-TGT"];
 
 // (text, item, target)；期望值为原文子串（与 train-span-labeler.py 一致）。
-// DEV：原 held-out 批，已多轮参与排查，只用于定位错误。ACCEPTANCE：全新
-// 批，全部修复完成后只评测一次，验收线只对它判。
+// DEV：原 held-out 批，只用于定位错误。ACCEPTANCE v2：全新槽位（与训练
+// 槽位不相交），含 item-only、提及不标、修饰语、单字中心语结构；v1 批
+// 已评过一次退役。SCORED 的 item 期望按规则 6 v2 记中心语。
 const DEV = [
   { text: "我用火把照亮地下藏书室。", item: "火把", target: "地下藏书室" },
   { text: "我用短刀割断绳索。", item: "短刀", target: "绳索" },
@@ -49,22 +50,22 @@ const DEV = [
   { text: "我用蜡烛照亮壁画。", item: "蜡烛", target: "壁画" },
 ];
 const ACCEPTANCE = [
-  { text: "我用铁钩勾住铁链。", item: "铁钩", target: "铁链" },
-  { text: "我用木梯爬上阁楼。", item: "木梯", target: "阁楼" },
-  { text: "我和守林人打听阁楼的传闻。", item: null, target: "守林人" },
-  { text: "我去柜台。", item: null, target: "柜台" },
-  { text: "我检查火折子的成色。", item: null, target: "火折子" },
-  { text: "我在原地喘口气。", item: null, target: null },
-  { text: "我用麻绳捆好木箱。", item: "麻绳", target: "木箱" },
-  { text: "我把铜铃挂在柜台边。", item: "铜铃", target: "柜台" },
-  { text: "我向老陈询问铁钩的下落。", item: null, target: "老陈" },
-  { text: "我用火折子照亮石阶。", item: "火折子", target: "石阶" },
+  { text: "我把火钳握在手里。", item: "火钳", target: null },
+  { text: "我想起了断桨。", item: null, target: null },
+  { text: "我用铜哨示意马夫。", item: "铜哨", target: "马夫" },
+  { text: "我检查门环。", item: null, target: "门环" },
+  { text: "我在原地蹲了一会儿。", item: null, target: null },
+  { text: "我用湿柴塞进灶膛。", item: "湿柴", target: "灶膛" },
+  { text: "我用那把断剑撬开后院的门。", item: "断剑", target: "门" },
+  { text: "我向马夫打听水井的位置。", item: null, target: "马夫" },
+  { text: "断剑还在鞘里。", item: null, target: null },
+  { text: "我用蒙尘的火钳拨开灰堆。", item: "火钳", target: "灰堆" },
 ];
 const SCORED = [
   { text: "我用铜钥匙打开大门。", item: "铜钥匙", target: "大门" },
   { text: "我和诺诺打听图书馆的传闻。", item: null, target: "诺诺" },
   { text: "我去二楼档案室查资料。", item: null, target: "二楼档案室" },
-  { text: "我使用生锈的铁门钥匙打开大门。", item: "生锈的铁门钥匙", target: "大门" },
+  { text: "我使用生锈的铁门钥匙打开大门。", item: "铁门钥匙", target: "大门" },
   { text: "我和执行部学生搭话。", item: null, target: "执行部学生" },
   { text: "我检查那扇书架后的暗门。", item: null, target: "暗门" },
   { text: "我拔剑攻击诺诺。", item: "剑", target: "诺诺" },
