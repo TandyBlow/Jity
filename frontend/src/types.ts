@@ -153,9 +153,7 @@ export type GenerateResponse = {
   declared: DeclaredMemory;
   caps: Record<MemoryCategory, number>;
   campaign_progress: CampaignProgressSummary | null;
-};
-
-/**
+};/**
  * The per-turn memory report the API attaches to a generated turn, or to a
  * node detail when one is restored. Absent for local placeholder outputs.
  */

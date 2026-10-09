@@ -6,6 +6,8 @@ retry, then run-to-end. The whole-campaign counter must follow every
 restore exactly once and the ending must land on the cap turn.
 """
 
+from types import SimpleNamespace
+
 import pytest
 
 from app.exceptions import ConcurrentModificationError
@@ -14,35 +16,74 @@ from app.services.campaign_endings import select_budget_ending
 from tests.test_turn_commit_consistency import Harness
 
 
-@pytest.mark.asyncio
-async def test_budget_ending_classification(tmp_path):
-    h = Harness(tmp_path)
-    cap = h.manager.resolve_max_turns_per_campaign()
-    assert cap == 50
+def _synthetic_campaign(routes: list) -> SimpleNamespace:
+    """A campaign whose ending routes have checkable requirements."""
+    return SimpleNamespace(
+        arcs=[SimpleNamespace(sessions=[SimpleNamespace(anchor_events=[])])],
+        ending_routes=routes,
+    )
 
-    state = {"health": 80, "sanity": 60, "quests": [{"name": "任务", "status": "已完成"}]}
-    route = select_budget_ending(h.manager.campaign, h.manager.progress, state, max_turns=50)
-    assert route is None, "预算未到 49 回合不得触发"
 
-    h.manager.progress.turns_total = 49
-    route = select_budget_ending(h.manager.campaign, h.manager.progress, state, max_turns=50)
-    assert route is not None and route.category in ("true", "good"), "有完成任务 → 成功档"
+def _fake_route(id: str, category: str, requirements: list[str], phrases: list[str] | None = None):
+    from app.schemas.campaign import EndingRoute
+    return EndingRoute(
+        id=id, name=id, category=category,
+        requirements=requirements, trigger_phrases=phrases or [],
+        resolution="收束。", epilogue="终。",
+    )
 
-    state = {"health": 80, "sanity": 60, "quests": []}
-    h.manager.progress.revealed_anchors = ["a-1"]
-    route = select_budget_ending(h.manager.campaign, h.manager.progress, state, max_turns=50)
-    assert route is not None and route.category in ("normal", "dark", "good"), "只有线索 → 未完成档"
 
-    state = {"health": 80, "sanity": 60, "quests": []}
-    h.manager.progress.revealed_anchors = []
-    route = select_budget_ending(h.manager.campaign, h.manager.progress, state, max_turns=50)
-    assert route is not None and route.category in ("bad", "dark"), "无任务无线索 → 失败档"
+def test_budget_ending_classification():
+    # 证据 = 完成任务的名称/目标 + 世界事实 + 已揭示锚点。
+    state = {
+        "health": 80, "sanity": 60,
+        "quests": [{"name": "查明钟摆声", "status": "已完成", "objective": "找到钟摆的来源"}],
+        "world_facts": [{"name": "低频来自塔顶", "description": "钟摆与塔顶共振"}],
+    }
+    progress = SimpleNamespace(turns_total=0, revealed_anchors=[])
 
-    empty = Harness(tmp_path / "no-routes").manager
-    empty.campaign.ending_routes = []
-    empty.progress.turns_total = 49
-    route = select_budget_ending(empty.campaign, empty.progress, state, max_turns=50)
-    assert route is not None and route.id == "budget-failure", "无配置路线时合成收束路线"
+    # 预算未到不触发
+    camp = _synthetic_campaign([_fake_route("r-true", "true", ["钟摆"])])
+    assert select_budget_ending(camp, progress, state, max_turns=50) is None
+
+    # 第 50 回合：要求在证据里 → 选中对应路线（requirements 参与判断）
+    progress.turns_total = 49
+    route = select_budget_ending(camp, progress, state, max_turns=50)
+    assert route is not None and route.id == "r-true"
+
+    # 完成了任务但证据对不上任何路线的要求 → 未完成收束，而不是按类别硬选
+    camp2 = _synthetic_campaign([_fake_route("r-true", "true", ["找到塔顶的火种"])])
+    route = select_budget_ending(camp2, progress, state, max_turns=50)
+    assert route is not None and route.id == "budget-incomplete"
+
+    # 玩家的收束行动包含路线 trigger_phrases → 即使要求对不上也选中（选择参与判断）
+    camp3 = _synthetic_campaign([
+        _fake_route("r-good", "good", ["不可能满足的要求"], phrases=["把怀表埋进盐里"]),
+    ])
+    route = select_budget_ending(
+        camp3, progress, state, max_turns=50, player_action="我把怀表埋进盐里",
+    )
+    assert route is not None and route.id == "r-good"
+    route = select_budget_ending(camp3, progress, state, max_turns=50, player_action="离开")
+    assert route is not None and route.id == "budget-incomplete"
+
+    # 只有线索没有完成任务 → 未完成档；空要求路线不再按类别裸选
+    camp4 = _synthetic_campaign([_fake_route("r-empty", "good", [])])
+    bare_state = {"health": 80, "sanity": 60, "quests": [], "world_facts": []}
+    progress.revealed_anchors = ["a-1"]
+    route = select_budget_ending(camp4, progress, bare_state, max_turns=50)
+    assert route is not None and route.id == "budget-incomplete"
+
+    # 死亡状态 → 失败档按存活统计走 bad/dark
+    camp5 = _synthetic_campaign([_fake_route("r-bad", "bad", [])])
+    dead = {"health": 0, "sanity": 0, "quests": [], "world_facts": []}
+    progress.revealed_anchors = []
+    route = select_budget_ending(camp5, progress, dead, max_turns=50)
+    assert route is not None and route.id == "r-bad"
+
+    # 无任何路线 → 合成收束
+    route = select_budget_ending(_synthetic_campaign([]), progress, dead, max_turns=50)
+    assert route is not None and route.id == "budget-failure"
 
 
 @pytest.mark.asyncio
@@ -50,6 +91,7 @@ async def test_full_campaign_runs_and_ends_within_budget(tmp_path):
     h = Harness(tmp_path)
     cap = h.manager.resolve_max_turns_per_campaign()
     totals: list[int] = []
+    chapters: list[tuple[int, int]] = []
     ended = None
 
     for step in range(cap + 5):
@@ -82,6 +124,10 @@ async def test_full_campaign_runs_and_ends_within_budget(tmp_path):
         total = response.campaign_progress["turns_total"]
         assert 1 <= total <= cap, f"整局计数越界：{total}"
         totals.append(total)
+        chapters.append((
+            response.campaign_progress["arc_index"],
+            response.campaign_progress["session_index"],
+        ))
         if response.output.game_over:
             ended = response
             break
@@ -96,6 +142,11 @@ async def test_full_campaign_runs_and_ends_within_budget(tmp_path):
     assert ended.campaign_progress["turns_total"] == cap, "结局必须落在第 50 回合"
     assert ended.output.options == []
     assert ended.output.game_over_reason
+
+    # 每节预算分配：50 回合内必须走完多个小节，不能停在第一节
+    distinct_chapters = sorted(set(chapters))
+    assert len(distinct_chapters) >= 3, f"章节推进不足：{distinct_chapters}"
+    assert distinct_chapters[-1][0] >= 1, f"必须进入后续叙事弧：{distinct_chapters[-5:]}"
 
     with pytest.raises(ConcurrentModificationError):
         await h.generate(), "结局之后后端必须拒绝继续推进"

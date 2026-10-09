@@ -150,7 +150,12 @@ export function StoryPanel({
       cancelled = true;
     };
   }, [sessionId, session.activeTurnId]);
-  const campaignProgress = session.campaignProgress ?? loadedProgress;
+  const campaignProgress =
+    session.campaignProgress && typeof session.campaignProgress.turns_total === "number"
+      ? session.campaignProgress
+      : loadedProgress && typeof loadedProgress.turns_total === "number"
+        ? loadedProgress
+        : null;
 
   /** The sweep's own animation decides when the next scene is generated. */
   function completeSweep(action: string) {

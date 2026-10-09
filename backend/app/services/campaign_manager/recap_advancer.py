@@ -45,10 +45,16 @@ class RecapAdvancerFacade:
         *,
         persist: bool = True,
     ) -> str:
-        return await self._advancer.advance_session(
+        recap = await self._advancer.advance_session(
             self.campaign, self.progress, self.fsm, self.slot_name, pending_messages,
             persist=persist,
         )
+        if not persist and self._advancer.relation_decay_pending:
+            # Decay lands on the overlay and travels with the node snapshot;
+            # a direct DB write here would diverge from the last node.
+            self._advancer.relation_decay_pending = False
+            self.apply_npc_relation_decay()
+        return recap
 
     async def advance_arc(
         self,

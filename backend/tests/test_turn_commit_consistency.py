@@ -68,13 +68,18 @@ class Harness:
         self.gen._build_prompt = AsyncMock(return_value=(
             "P", SimpleNamespace(sections=None, final_prompt="", temperature=0.7), [], [], 0,
         ))
-        self.gen._apply_post_generation = AsyncMock(
-            side_effect=lambda output, next_state, state, sid, sess, model, cm: next_state
-        )
+        # _apply_post_generation runs for real: the NPC relation overlay is
+        # part of the consistency surface under test.
         memory_ctrl = MagicMock()
         memory_ctrl.export_state.return_value = {}
         memory_ctrl.maintain = AsyncMock()
         self.gen._get_memory_controller = MagicMock(return_value=memory_ctrl)
+
+    def set_narration_delta(self, delta: list[dict]) -> None:
+        """Make the stubbed narrator report an NPC relation delta this turn."""
+        output = _story_output()
+        output.npc_relations_delta = delta
+        self.llm.generate = AsyncMock(return_value=(output, 5))
 
     async def generate(self):
         return await self.gen.generate(
@@ -194,10 +199,12 @@ async def test_branch_restore_to_root_resets_turn_session_and_anchors(tmp_path):
 
 @pytest.mark.asyncio
 async def test_boundary_recap_failure_keeps_turn_count_unchanged(tmp_path):
-    """Reproduction: at 29/30 a boundary turn's recap write must not leak
-    turn_in_session 30 to the row when the node commit fails."""
+    """At a budget-forced session boundary the recap must not write counters
+    ahead of the node — and the recap itself must not survive a failed
+    commit (it travels with the node, so a retry cannot append twice)."""
     h = Harness(tmp_path)
     h.manager.progress.turn_in_session = 29
+    h.manager.progress.turns_total = 45  # allocation is exhausted → boundary
     h.manager.save_progress()
     assert h.progress_row()["turn_in_session"] == 29
 
@@ -216,13 +223,22 @@ async def test_boundary_recap_failure_keeps_turn_count_unchanged(tmp_path):
     row = h.progress_row()
     assert row["turn_in_session"] == 29, "前情提要写入不得夹带回合数推进"
     assert row["session_index"] == 0, "前情提要写入不得夹带章节推进"
-    assert row["recap_compressed"], "前情提要本身应已存储（仅 recap 列）"
+    assert row["recap_compressed"] == "", "前情提要必须随节点提交，失败不得留在历史里"
 
     h.manager.reload_runtime_state()
     response = await h.generate()
     row = h.progress_row()
     assert row["session_index"] == 1 and row["turn_in_session"] == 0
+    assert row["recap_compressed"], "重试成功后前情提要随节点出现"
     assert h.head() == response.timeline_node_id
+    with h.db.connect() as db:
+        node = db.execute(
+            "SELECT campaign_progress_json FROM story_turns WHERE id = ?",
+            (response.timeline_node_id,),
+        ).fetchone()
+    import json as _json
+    node_progress = _json.loads(node["campaign_progress_json"])
+    assert node_progress["recap_compressed"] == row["recap_compressed"], "行与节点快照一致"
 
 
 @pytest.mark.asyncio
@@ -232,6 +248,7 @@ async def test_boundary_decay_deferred_until_commit(tmp_path):
         h.manager.progress.campaign_id, '[{"name": "诺诺", "affinity": 3}]'
     )
     h.manager.progress.turn_in_session = 29
+    h.manager.progress.turns_total = 45
     h.manager.save_progress()
 
     original = h.db.commit_story_turn
@@ -250,9 +267,77 @@ async def test_boundary_decay_deferred_until_commit(tmp_path):
     assert '"affinity": 3' in relations, "好感衰减不得先于节点提交落库"
 
     h.manager.reload_runtime_state()
+    response = await h.generate()
+    relations = h.progress_row()["npc_relations"]
+    assert '"affinity": 2' in relations, "节点提交后衰减落库"
+    with h.db.connect() as db:
+        node = db.execute(
+            "SELECT campaign_progress_json FROM story_turns WHERE id = ?",
+            (response.timeline_node_id,),
+        ).fetchone()
+    import json as _json
+    node_progress = _json.loads(node["campaign_progress_json"])
+    assert '"affinity": 2' in str(node_progress["npc_relations"]), "节点快照与行一致，恢复不再回跳"
+
+
+@pytest.mark.asyncio
+async def test_relation_increment_applies_exactly_once_across_retry(tmp_path):
+    """Relation increments ride the overlay: a failed commit must not leave
+    the +1 in the database, and the retry must not double-apply it."""
+    h = Harness(tmp_path)
+    h.db.update_npc_relations(
+        h.manager.progress.campaign_id, '[{"name": "诺诺", "affinity": 3}]'
+    )
+    h.set_narration_delta([{"name": "诺诺", "sentiment": "positive", "note": "帮忙"}])
+
+    original = h.db.commit_story_turn
+
+    def injected(*args, **kwargs):
+        raise ConcurrentModificationError("injected commit failure")
+
+    h.db.commit_story_turn = injected
+    try:
+        with pytest.raises(ConcurrentModificationError):
+            await h.generate()
+    finally:
+        h.db.commit_story_turn = original
+
+    relations = h.progress_row()["npc_relations"]
+    assert '"affinity": 3' in relations, "增量不得先于节点提交落库"
+
+    h.manager.reload_runtime_state()
     await h.generate()
     relations = h.progress_row()["npc_relations"]
-    assert '"affinity": 2' in relations, "节点提交成功后衰减随 flush 生效"
+    assert '"affinity": 4' in relations, "重试恰好应用一次增量"
+    assert '"affinity": 5' not in relations, "重试不得叠加第二次增量"
+
+
+@pytest.mark.asyncio
+async def test_reset_to_initial_from_later_chapter(tmp_path):
+    h = Harness(tmp_path)
+    h.manager.progress.arc_index = 2
+    h.manager.progress.session_index = 1
+    h.manager.progress.turn_in_session = 7
+    h.manager.progress.turns_total = 25
+    h.manager.progress.revealed_anchors = ["a-1", "a-2"]
+    h.manager.save_progress()
+    h.db.update_recap_fields(h.manager.progress.campaign_id, "旧提要", "旧提要全文")
+    h.db.update_npc_relations(h.manager.progress.campaign_id, '[{"name": "旧NPC", "affinity": -3}]')
+
+    h.manager.reset_to_initial()
+
+    row = h.progress_row()
+    assert row["arc_index"] == 0 and row["session_index"] == 0, "章节索引必须一起重置"
+    assert row["turn_in_session"] == 0 and row["turns_total"] == 0
+    assert row["revealed_anchors"] == "[]", "事件记录必须清空"
+    assert row["recap_compressed"] == "" and row["recap_full"] == "", "旧提要必须清空"
+    assert row["npc_relations"] == "[]", "旧好感必须清空"
+
+    h.manager.reload_runtime_state()
+    response = await h.generate()
+    row = h.progress_row()
+    assert row["turns_total"] == 1 and row["arc_index"] == 0
+    assert h.head() == response.timeline_node_id
 
 
 @pytest.mark.asyncio

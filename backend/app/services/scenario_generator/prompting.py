@@ -25,7 +25,7 @@ class PromptBuildMixin:
                 if isinstance(cap, int):
                     selected_ending = select_budget_ending(
                         campaign_manager.campaign, campaign_manager.progress, state,
-                        max_turns=cap,
+                        max_turns=cap, player_action=request.player_action,
                     )
             if selected_ending is not None:
                 campaign_context += "\n" + ending_instruction(selected_ending)

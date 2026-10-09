@@ -126,7 +126,7 @@ class ScenarioGenerator(
                 if isinstance(cap, int):
                     selected_ending = select_budget_ending(
                         campaign_manager.campaign, campaign_manager.progress, state,
-                        max_turns=cap,
+                        max_turns=cap, player_action=request.player_action,
                     )
         if selected_ending is not None:
             output.game_over = True
@@ -188,7 +188,7 @@ class ScenarioGenerator(
             memory=self.state_manager.memory_trace_entry(serialized, sanitized),
             declared=self.state_manager.declared_updates(serialized.get("memory_updates") or {}, serialized),
             caps=STATE_CAPS,
-            campaign_progress=campaign_view,
+            campaign_progress=campaign_view or None,
             session_id=session_id,
             state=sanitized,
             output=output,

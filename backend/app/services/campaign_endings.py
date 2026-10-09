@@ -53,15 +53,21 @@ def select_budget_ending(
     progress: Any,
     state: dict,
     max_turns: int,
+    player_action: str = "",
 ):
     """Ending forced by the whole-campaign turn budget.
 
     Fires on the budget's last turn (turns_total == max_turns - 1 before this
     turn commits), so the ending is presented within the allocation instead of
-    truncating the story mid-air. Route chosen from what the player actually
-    achieved — completed quests and revealed evidence put the outcome in the
-    success band, a dead state in the failure band, anything else counts as
-    incomplete.
+    truncating the story mid-air.
+
+    Route choice is evidence-checked, not category-blinded: a configured route
+    only qualifies when its requirements appear in what the player actually
+    reached (completed quest names/objectives, world facts, revealed anchors)
+    or one of its trigger phrases matches the closing action. A dead state
+    still takes the bad/dark route from survival stats alone. When nothing
+    qualifies, the run closes with the synthesized unfinished ending instead
+    of a route whose story conditions never happened.
     """
     if campaign is None or progress is None:
         return None
@@ -80,27 +86,70 @@ def select_budget_ending(
 
     routes = list(getattr(campaign, "ending_routes", []) or [])
     if state.get("health", 100) <= 0 or state.get("sanity", 80) <= 0:
-        outcome = "failure"
-    else:
-        quests = state.get("quests", []) or []
-        done_marks = {"completed", "done", "achieved", "finished", "完成", "已完成"}
-        completed = sum(
-            1 for quest in quests
-            if isinstance(quest, dict) and str(quest.get("status", "")).strip().lower() in done_marks
-        )
-        revealed = len(getattr(progress, "revealed_anchors", []) or [])
-        if completed >= 1:
-            outcome = "success"
-        elif revealed >= 1:
-            outcome = "incomplete"
-        else:
-            outcome = "failure"
+        for route in routes:
+            if route.category in ("bad", "dark"):
+                return route
+        return _synthesized_budget_route("failure")
+
+    evidence = _budget_evidence(campaign, progress, state)
+    quests = state.get("quests", []) or []
+    done_marks = {"completed", "done", "achieved", "finished", "完成", "已完成"}
+    completed = sum(
+        1 for quest in quests
+        if isinstance(quest, dict) and str(quest.get("status", "")).strip().lower() in done_marks
+    )
+    revealed = len(getattr(progress, "revealed_anchors", []) or [])
+    outcome = "success" if completed >= 1 else ("incomplete" if revealed >= 1 else "failure")
 
     for categories in _BUDGET_CATEGORIES[outcome]:
         for route in routes:
-            if route.category in categories:
+            if route.category in categories and _route_qualifies(route, evidence, player_action):
                 return route
+    return _synthesized_budget_route("incomplete" if outcome != "failure" else "failure")
 
+
+def _budget_evidence(campaign: Any, progress: Any, state: dict) -> str:
+    """Text a route's requirements are checked against: quests the player
+    completed, world facts learned, and the anchors actually revealed."""
+    parts: list[str] = []
+    for quest in state.get("quests", []) or []:
+        if isinstance(quest, dict) and str(quest.get("status", "")).strip().lower() in {
+            "completed", "done", "achieved", "finished", "完成", "已完成",
+        }:
+            parts.append(str(quest.get("name", "")))
+            parts.append(str(quest.get("objective", "")))
+    for fact in state.get("world_facts", []) or []:
+        if isinstance(fact, dict):
+            parts.append(str(fact.get("name", "")))
+            parts.append(str(fact.get("description", "")))
+    revealed = set(getattr(progress, "revealed_anchors", []) or [])
+    try:
+        for arc in campaign.arcs:
+            for session in arc.sessions:
+                for anchor in session.anchor_events or []:
+                    if anchor.id in revealed:
+                        parts.append(str(anchor.name))
+                        parts.append(str(getattr(anchor, "description", "") or ""))
+    except AttributeError:
+        pass
+    return "\n".join(part for part in parts if part)
+
+
+def _route_qualifies(route: Any, evidence: str, player_action: str) -> bool:
+    action = (player_action or "").casefold()
+    if action and any(
+        phrase.casefold() in action for phrase in (route.trigger_phrases or [])
+    ):
+        return True
+    requirements = [r for r in (route.requirements or []) if r.strip()]
+    if not requirements:
+        # No requirements and no trigger match: the route's story condition
+        # cannot be verified, so category alone must not select it.
+        return False
+    return any(requirement in evidence for requirement in requirements)
+
+
+def _synthesized_budget_route(outcome: str) -> EndingRoute:
     label = {"success": "预算内完成", "incomplete": "未完成的调查", "failure": "失败的调查"}[outcome]
     return EndingRoute(
         id=f"budget-{outcome}",
