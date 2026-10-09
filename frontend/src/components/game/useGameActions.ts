@@ -88,7 +88,7 @@ export function useGameActions(core: GameSessionCore) {
       setState(session.state);
       setActiveTurnId(session.active_turn_id ?? null);
       setTurnReport(null);
-    setCampaignProgress(null);
+      setCampaignProgress(null);
       setOutput(campaignOpts ? loadingOutput : initialOutput);
       setOutputSource("scripted");
       setChunks([]);
@@ -125,7 +125,7 @@ export function useGameActions(core: GameSessionCore) {
       setState(session.state);
       setActiveTurnId(session.active_turn_id ?? null);
       setTurnReport(null);
-    setCampaignProgress(null);
+      setCampaignProgress(null);
       setOutput(opts ? loadingOutput : initialOutput);
       setOutputSource("scripted");
       setChunks([]);

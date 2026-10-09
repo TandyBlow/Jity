@@ -63,8 +63,8 @@ def select_budget_ending(
 
     Route choice is evidence-checked, not category-blinded: a configured route
     only qualifies when its requirements appear in what the player actually
-    reached (completed quest names/objectives, world facts, revealed anchors)
-    or one of its trigger phrases matches the closing action. A dead state
+    reached (completed quest names/objectives, confirmed facts, revealed
+    anchors). Trigger phrases cannot waive unmet requirements. A dead state
     still takes the bad/dark route from survival stats alone. When nothing
     qualifies, the run closes with the synthesized unfinished ending instead
     of a route whose story conditions never happened.
@@ -119,7 +119,9 @@ def _budget_evidence(campaign: Any, progress: Any, state: dict) -> str:
             parts.append(str(quest.get("name", "")))
             parts.append(str(quest.get("objective", "")))
     for fact in state.get("world_facts", []) or []:
-        if isinstance(fact, dict):
+        if isinstance(fact, dict) and str(fact.get("status", "known")).strip().casefold() in {
+            "known", "confirmed", "verified", "已知", "已确认",
+        }:
             parts.append(str(fact.get("name", "")))
             parts.append(str(fact.get("description", "")))
     revealed = set(getattr(progress, "revealed_anchors", []) or [])
@@ -136,17 +138,16 @@ def _budget_evidence(campaign: Any, progress: Any, state: dict) -> str:
 
 
 def _route_qualifies(route: Any, evidence: str, player_action: str) -> bool:
+    requirements = [r.strip().casefold() for r in (route.requirements or []) if r.strip()]
+    if requirements:
+        return all(requirement in evidence.casefold() for requirement in requirements)
     action = (player_action or "").casefold()
-    if action and any(
-        phrase.casefold() in action for phrase in (route.trigger_phrases or [])
-    ):
-        return True
-    requirements = [r for r in (route.requirements or []) if r.strip()]
-    if not requirements:
-        # No requirements and no trigger match: the route's story condition
-        # cannot be verified, so category alone must not select it.
-        return False
-    return any(requirement in evidence for requirement in requirements)
+    # A route with no requirements needs an explicit action to qualify;
+    # its category alone is not evidence.
+    return bool(action) and any(
+        phrase.strip() and phrase.casefold() in action
+        for phrase in (route.trigger_phrases or [])
+    )
 
 
 def _synthesized_budget_route(outcome: str) -> EndingRoute:
@@ -169,7 +170,7 @@ def ending_instruction(route: Any) -> str:
     return (
         "## 后端已锁定本回合结局\n"
         f"结局：{route.name}（{route.id}）\n"
-        f"判定依据：玩家明确选择了该路线。参考条件：{requirements}\n"
+        f"判定依据：后端根据本回合行动与已保存的进度选定路线。参考条件：{requirements}\n"
         f"必须在本回合完整呈现结局收束：{route.resolution}\n"
         f"尾声：{route.epilogue}\n"
         "必须返回 game_over=true、options=[]，game_over_reason 以结局名称开头。"

@@ -138,7 +138,7 @@ class TestNarratorStageMemory:
         )
 
     @pytest.mark.asyncio
-    async def test_narrator_stage_feeds_memory_and_schedules_maintain(self):
+    async def test_narrator_stage_feeds_memory_and_defers_maintenance(self):
         gen = self._make_generator()
         output = StoryOutput(narration="你推开了档案室的门。")
         gen.llm_client.generate = AsyncMock(return_value=(output, 123))
@@ -157,8 +157,7 @@ class TestNarratorStageMemory:
         memory_ctrl.on_turn_generated.assert_called_once_with(
             "捡起通行卡", "你推开了档案室的门。", 5, memory_updates=output.memory_updates,
         )
-        await asyncio.gather(*gen._memory_tasks)
-        memory_ctrl.maintain.assert_awaited_once()
+        memory_ctrl.maintain.assert_not_called()
         assert gen._memory_tasks == set()
 
     @pytest.mark.asyncio

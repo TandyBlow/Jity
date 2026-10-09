@@ -142,6 +142,7 @@ class CampaignManager(AnchorFacade, RecapAdvancerFacade, MetricsFacade):
                 fsm_state=str(self.fsm.state),
                 revealed_anchors=self.progress.revealed_anchors,
                 completed_arcs=self.progress.completed_arcs,
+                turns_total=self.progress.turns_total,
             )
 
     def is_loaded(self) -> bool:
@@ -313,6 +314,7 @@ class CampaignManager(AnchorFacade, RecapAdvancerFacade, MetricsFacade):
         overlays from the failed attempt are dropped.
         """
         self.clear_runtime_overlays()
+        self._anchors.reset_runtime_state()
         if self.progress is None:
             return
         progress = self._loader.load_progress(self.progress.campaign_id)
@@ -342,6 +344,7 @@ class CampaignManager(AnchorFacade, RecapAdvancerFacade, MetricsFacade):
 
         self._loader.progress = CampaignProgress(campaign_id=self.progress.campaign_id)
         self.clear_runtime_overlays()
+        self._anchors.reset_runtime_state()
         self._loader._init_fsm()
         self.db.update_recap_fields(
             self.progress.campaign_id, "", "", slot_name=self.slot_name

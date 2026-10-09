@@ -96,12 +96,24 @@ export function getTimeline(sessionId: string): Promise<TimelineResponse> {
 }
 
 /** Whole-campaign progress for the console strip; null outside a campaign. */
+export function hasCampaignTurnBudget(
+  progress: Partial<CampaignProgressSummary> | null | undefined,
+): progress is CampaignProgressSummary {
+  return !!progress
+    && typeof progress.turns_total === "number"
+    && Number.isInteger(progress.turns_total)
+    && progress.turns_total >= 0
+    && typeof progress.max_turns_per_campaign === "number"
+    && Number.isInteger(progress.max_turns_per_campaign)
+    && progress.max_turns_per_campaign > 0
+    && progress.max_turns_per_campaign <= 50;
+}
+
 export async function fetchCampaignProgress(
   sessionId: string,
 ): Promise<CampaignProgressSummary | null> {
   const data = await request<Partial<CampaignProgressSummary>>(`/sessions/${sessionId}/progress`);
-  if (!data || typeof data.turns_total !== "number") return null;
-  return data as CampaignProgressSummary;
+  return hasCampaignTurnBudget(data) ? data : null;
 }
 
 export function getTimelineNode(sessionId: string, nodeId: number): Promise<TimelineNodeDetail> {

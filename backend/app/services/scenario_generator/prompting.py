@@ -3,10 +3,32 @@
 import inspect
 
 from app.services.prompt_builder import PromptInput
-from app.services.campaign_endings import ending_instruction, select_budget_ending, select_ending
+from app.services.campaign_endings import (
+    ending_instruction, is_final_session, select_budget_ending, select_ending,
+)
 
 
 class PromptBuildMixin:
+    @staticmethod
+    def _select_campaign_ending(campaign_manager, state, player_action):
+        """Use the same ending decision for opening, prompt and final output."""
+        if campaign_manager is None or not campaign_manager.is_loaded():
+            return None
+        campaign = campaign_manager.campaign
+        progress = campaign_manager.progress
+        cap = campaign_manager.resolve_max_turns_per_campaign()
+        if type(cap) is int:
+            if is_final_session(campaign, progress):
+                session_cap = campaign_manager.resolve_max_turns()
+                if type(session_cap) is int and progress.turn_in_session >= session_cap - 1:
+                    # A shorter configured final section also needs a
+                    # conclusion, rather than an out-of-range next arc.
+                    cap = min(cap, progress.turns_total + 1)
+            ending = select_budget_ending(campaign, progress, state, cap, player_action)
+            if ending is not None:
+                return ending
+        return select_ending(campaign, progress, state, player_action)
+
     async def _build_prompt(self, request, state, session_id, campaign_manager):
         """RAG retrieve → context injection → truncation → return prompt + metadata."""
         query = self._build_query(request.player_action, state)
@@ -17,16 +39,9 @@ class PromptBuildMixin:
         if campaign_manager is not None and campaign_manager.is_loaded():
             turn = getattr(campaign_manager.progress, "turn_in_session", int(state.get("turn", 0)))
             campaign_context = campaign_manager.inject_context(state, turn)
-            selected_ending = select_ending(
-                campaign_manager.campaign, campaign_manager.progress, state, request.player_action
+            selected_ending = self._select_campaign_ending(
+                campaign_manager, state, request.player_action
             )
-            if selected_ending is None:
-                cap = campaign_manager.resolve_max_turns_per_campaign()
-                if isinstance(cap, int):
-                    selected_ending = select_budget_ending(
-                        campaign_manager.campaign, campaign_manager.progress, state,
-                        max_turns=cap, player_action=request.player_action,
-                    )
             if selected_ending is not None:
                 campaign_context += "\n" + ending_instruction(selected_ending)
 

@@ -95,6 +95,7 @@ export function useGameSession() {
   }
 
   async function restoreLastOutput(nextSessionId: string, campaignFilename?: string | null, nextActiveTurnId?: number | null) {
+    setCampaignProgress(null);
     setSelectedCampaign(campaignFilename ?? "");
     setAction("");
     if (nextActiveTurnId) {

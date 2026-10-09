@@ -1,6 +1,5 @@
 """Hook 3 — execute the generation step (multi-agent pipeline or legacy call)."""
 
-import asyncio
 import logging
 
 from app.schemas.agent_io import DirectorInstruction
@@ -16,7 +15,7 @@ logger = logging.getLogger(__name__)
 class AgentPipelineMixin:
     async def _execute_llm_or_scripted(
         self, session_id, request, prompt, model, meta, retrieved_for_storage, _csi,
-        state=None, campaign_manager=None,
+        state=None, campaign_manager=None, closing_turn=False,
     ) -> tuple[StoryOutput, int, str]:
         """Execute the multi-agent pipeline: Examiner → Director → Narrator.
 
@@ -45,7 +44,7 @@ class AgentPipelineMixin:
             )
 
         # If Examiner says blocked → return diegetic rejection
-        if ruling.permissibility.value == "blocked" and ruling.rejection_reason:
+        if ruling.permissibility.value == "blocked" and ruling.rejection_reason and not closing_turn:
             rejection_output = StoryOutput(
                 narration=ruling.rejection_reason,
                 dialogue=[],
@@ -58,6 +57,11 @@ class AgentPipelineMixin:
                 game_over_reason="",
             ).replace_em_dashes()
             return rejection_output, 0, "examiner_blocked"
+
+        if closing_turn and ruling.permissibility.value == "blocked":
+            # Explain the failed action while still writing the backend's
+            # selected conclusion; do not claim the action succeeded.
+            prompt = f"[行动未能完成] {ruling.rejection_reason}\n\n" + prompt
 
         # Stage 2: Director — narrative direction, anchor triggers, redirection
         direction = await self._run_director_stage(
@@ -158,16 +162,13 @@ class AgentPipelineMixin:
             )
             raise ScenarioGenerationError(f"{exc} model_output_id={output_id}", output_id) from exc
 
-        # Persistent per-session memory: feed the turn, then maintain in background
+        # Feed the in-memory turn before its snapshot. Maintenance is started
+        # by the generator after the node commits, since it writes episodes.
         memory_ctrl = self._get_memory_controller(session_id, state, campaign_manager)
         memory_ctrl.on_turn_generated(
             request.player_action, output.narration, turn,
             memory_updates=output.memory_updates,
         )
-        task = asyncio.create_task(memory_ctrl.maintain(session_id, turn))
-        self._memory_tasks.add(task)
-        task.add_done_callback(self._log_memory_task_done)
-
         return output, latency_ms, source
 
     async def _execute_single_llm(

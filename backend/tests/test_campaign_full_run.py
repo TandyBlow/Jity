@@ -56,14 +56,14 @@ def test_budget_ending_classification():
     route = select_budget_ending(camp2, progress, state, max_turns=50)
     assert route is not None and route.id == "budget-incomplete"
 
-    # 玩家的收束行动包含路线 trigger_phrases → 即使要求对不上也选中（选择参与判断）
+    # A matching closing action cannot waive unmet route requirements.
     camp3 = _synthetic_campaign([
         _fake_route("r-good", "good", ["不可能满足的要求"], phrases=["把怀表埋进盐里"]),
     ])
     route = select_budget_ending(
         camp3, progress, state, max_turns=50, player_action="我把怀表埋进盐里",
     )
-    assert route is not None and route.id == "r-good"
+    assert route is not None and route.id == "budget-incomplete"
     route = select_budget_ending(camp3, progress, state, max_turns=50, player_action="离开")
     assert route is not None and route.id == "budget-incomplete"
 
@@ -143,10 +143,9 @@ async def test_full_campaign_runs_and_ends_within_budget(tmp_path):
     assert ended.output.options == []
     assert ended.output.game_over_reason
 
-    # 每节预算分配：50 回合内必须走完多个小节，不能停在第一节
     distinct_chapters = sorted(set(chapters))
-    assert len(distinct_chapters) >= 3, f"章节推进不足：{distinct_chapters}"
-    assert distinct_chapters[-1][0] >= 1, f"必须进入后续叙事弧：{distinct_chapters[-5:]}"
+    assert distinct_chapters == [(0, 0), (0, 1), (1, 0), (2, 0), (2, 1)]
+    assert (ended.campaign_progress["arc_index"], ended.campaign_progress["session_index"]) == (2, 1)
 
     with pytest.raises(ConcurrentModificationError):
         await h.generate(), "结局之后后端必须拒绝继续推进"

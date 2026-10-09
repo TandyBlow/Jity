@@ -62,7 +62,11 @@ class RecapAdvancerFacade:
         *,
         persist: bool = True,
     ) -> str:
-        return await self._advancer.advance_arc(
+        recap = await self._advancer.advance_arc(
             self.campaign, self.progress, self.fsm, self.slot_name, pending_messages,
             persist=persist,
         )
+        if not persist and self._advancer.relation_decay_pending:
+            self._advancer.relation_decay_pending = False
+            self.apply_npc_relation_decay()
+        return recap

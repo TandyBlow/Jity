@@ -21,6 +21,11 @@ class CampaignAnchorEvaluator:
 
     # ── Public API ───────────────────────────────────────────────────
 
+    def reset_runtime_state(self) -> None:
+        """Discard pending triggers and cooldowns after a rollback or restore."""
+        self._pending_anchor_triggers.clear()
+        self._anchor_cooldowns.clear()
+
     def evaluate_anchors(
         self,
         campaign: Any,

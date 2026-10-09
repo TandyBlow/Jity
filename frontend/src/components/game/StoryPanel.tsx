@@ -6,7 +6,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { MainCheckOverlay, type MainCheckCommit } from "@/components/game/MainCheckOverlay";
 import type { GameSession } from "@/components/game/useGameSession";
-import { fetchCampaignProgress } from "@/lib/api";
+import { fetchCampaignProgress, hasCampaignTurnBudget } from "@/lib/api";
 import type { CampaignProgressSummary } from "@/types";
 import type { CheckSpec, Outcome } from "@/lib/dice/rules";
 import { formatActionWithCheckResult, outcomeTone, toCheckSpec } from "@/lib/game/checks";
@@ -57,6 +57,8 @@ export function StoryPanel({
 }) {
   const {
     sessionId,
+    activeTurnId,
+    selectedSlot,
     state,
     output,
     outputSource,
@@ -134,7 +136,12 @@ export function StoryPanel({
 
   // Whole-campaign strip: live values ride each generate response; a page
   // (re)load or save restore fetches the persisted counter once instead.
-  const [loadedProgress, setLoadedProgress] = useState<CampaignProgressSummary | null>(null);
+  const [loadedProgress, setLoadedProgress] = useState<{
+    sessionId: string;
+    activeTurnId: number | null;
+    slotName: string;
+    progress: CampaignProgressSummary | null;
+  } | null>(null);
   useEffect(() => {
     let cancelled = false;
     if (!sessionId) {
@@ -143,18 +150,23 @@ export function StoryPanel({
     }
     fetchCampaignProgress(sessionId)
       .then((progress) => {
-        if (!cancelled) setLoadedProgress(progress);
+        if (!cancelled) setLoadedProgress({ sessionId, activeTurnId, slotName: selectedSlot, progress });
       })
       .catch(() => {});
     return () => {
       cancelled = true;
     };
-  }, [sessionId, session.activeTurnId]);
+  }, [sessionId, activeTurnId, selectedSlot]);
+  const cachedProgress = loadedProgress?.sessionId === sessionId
+    && loadedProgress.activeTurnId === activeTurnId
+    && loadedProgress.slotName === selectedSlot
+      ? loadedProgress.progress
+      : null;
   const campaignProgress =
-    session.campaignProgress && typeof session.campaignProgress.turns_total === "number"
+    hasCampaignTurnBudget(session.campaignProgress)
       ? session.campaignProgress
-      : loadedProgress && typeof loadedProgress.turns_total === "number"
-        ? loadedProgress
+      : hasCampaignTurnBudget(cachedProgress)
+        ? cachedProgress
         : null;
 
   /** The sweep's own animation decides when the next scene is generated. */

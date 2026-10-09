@@ -110,7 +110,12 @@ class CampaignSessionAdvancer:
             return resolved
 
         cap = self.resolve_max_turns_per_campaign(campaign)
-        remaining_budget = max(cap - getattr(progress, "turns_total", 0), 1)
+        # Allocate at the session's start, not again after each turn. The
+        # local counter lets snapshots reconstruct that allocation on reload.
+        session_start = max(
+            getattr(progress, "turns_total", 0) - progress.turn_in_session, 0
+        )
+        remaining_budget = max(cap - session_start, 1)
         allocation = max(remaining_budget // self._sessions_remaining(campaign, progress), 1)
         return max(1, min(resolved, allocation))
 
@@ -141,7 +146,7 @@ class CampaignSessionAdvancer:
             config_path = Path(__file__).resolve().parents[2] / "scripts" / "option_config.json"
             if config_path.exists():
                 config = json.loads(config_path.read_text(encoding="utf-8"))
-                return config.get("max_turns_per_session", self.DEFAULT_MAX_TURNS)
+                return max(1, int(config.get("max_turns_per_session", self.DEFAULT_MAX_TURNS)))
         except Exception:
             logger.debug("option_config.json load failed", exc_info=True)
 
@@ -168,31 +173,8 @@ class CampaignSessionAdvancer:
         if progress is None or campaign is None:
             return ""
 
-        recap = ""
-        try:
-            recap = await self.recap.generate_recap(progress.campaign_id, pending_messages)
-        except Exception:
-            logger.warning("Recap generation failed in advance_session", exc_info=True)
-        if not recap:
-            # generate_recap swallows LLM failures and returns None; the
-            # structural fallback is the documented behaviour, not dead code.
-            logger.warning("advance_session using structural fallback recap")
-            recap = self.recap.build_structural_recap(campaign, progress)
-
-        if persist:
-            if recap:
-                self.recap.store_recap(
-                    self.persistence,
-                    progress.campaign_id, slot_name, progress,
-                    str(fsm.state) if fsm.state else "idle",
-                    recap,
-                )
-            self.persistence.decay_npc_relations(progress.campaign_id, slot_name)
-        else:
-            self.pending_recap = recap
-            self.relation_decay_pending = True
-
-        # Check if this is the last session in the arc
+        # Dispatch before generating the recap: an arc boundary is also a
+        # session boundary and should produce one recap and one decay.
         try:
             arc = campaign.arcs[progress.arc_index]
             is_last_session = progress.session_index + 1 >= len(arc.sessions)
@@ -201,6 +183,10 @@ class CampaignSessionAdvancer:
 
         if is_last_session:
             return await self.advance_arc(campaign, progress, fsm, slot_name, pending_messages, persist=persist)
+
+        recap = await self._prepare_boundary_recap(
+            campaign, progress, fsm, slot_name, pending_messages, persist=persist
+        )
 
         # Normal session advance
         fsm.end_session()
@@ -239,25 +225,9 @@ class CampaignSessionAdvancer:
         if progress is None or campaign is None:
             return ""
 
-        recap = ""
-        try:
-            recap = await self.recap.generate_recap(progress.campaign_id, pending_messages)
-        except Exception:
-            logger.warning("Recap generation failed in advance_arc", exc_info=True)
-        if not recap:
-            logger.warning("advance_arc using structural fallback recap")
-            recap = self.recap.build_structural_recap(campaign, progress)
-
-        if persist:
-            if recap:
-                self.recap.store_recap(
-                    self.persistence,
-                    progress.campaign_id, slot_name, progress,
-                    str(fsm.state) if fsm.state else "idle",
-                    recap,
-                )
-        else:
-            self.pending_recap = recap
+        recap = await self._prepare_boundary_recap(
+            campaign, progress, fsm, slot_name, pending_messages, persist=persist
+        )
 
         # Arc boundary
         fsm.end_session()
@@ -280,4 +250,32 @@ class CampaignSessionAdvancer:
                 completed_arcs=progress.completed_arcs,
                 turns_total=progress.turns_total,
             )
+        return recap
+
+    async def _prepare_boundary_recap(
+        self, campaign: Any, progress: Any, fsm: Any, slot_name: str,
+        pending_messages: list[dict[str, str]] | None, *, persist: bool,
+    ) -> str:
+        """Prepare the shared session/arc effects before advancing position."""
+        recap = ""
+        try:
+            recap = await self.recap.generate_recap(progress.campaign_id, pending_messages)
+        except Exception:
+            logger.warning("Recap generation failed at campaign boundary", exc_info=True)
+        if not recap:
+            logger.warning("Using structural fallback recap at campaign boundary")
+            recap = self.recap.build_structural_recap(campaign, progress)
+
+        if persist:
+            if recap:
+                self.recap.store_recap(
+                    self.persistence,
+                    progress.campaign_id, slot_name, progress,
+                    str(fsm.state) if fsm.state else "idle",
+                    recap,
+                )
+            self.persistence.decay_npc_relations(progress.campaign_id, slot_name)
+        else:
+            self.pending_recap = recap
+            self.relation_decay_pending = True
         return recap

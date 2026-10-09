@@ -1,6 +1,7 @@
 """ScenarioGenerator — orchestrates one generation turn through five hooks."""
 
 import asyncio
+import logging
 from collections.abc import Callable
 
 from app.database import Database
@@ -13,7 +14,7 @@ from app.services.memory.memory_controller import MemoryController
 from app.services.prompt_builder import PromptBuilder
 from app.services.retriever import RAGRetriever
 from app.services.scripted_story import ScriptedStoryService
-from app.services.campaign_endings import select_budget_ending, select_ending
+from app.services.campaign_endings import is_final_session
 
 from app.services.scenario_generator.agent_pipeline import AgentPipelineMixin
 from app.services.scenario_generator.director_support import DirectorSupportMixin
@@ -22,6 +23,8 @@ from app.services.scenario_generator.opening_scene import OpeningSceneMixin
 from app.services.scenario_generator.post_generation import PostGenerationMixin
 from app.services.scenario_generator.prompting import PromptBuildMixin
 from app.exceptions import ConcurrentModificationError
+
+logger = logging.getLogger(__name__)
 
 
 class ScenarioGenerator(
@@ -64,7 +67,19 @@ class ScenarioGenerator(
         """Serialize each session so a stale branch cannot mutate shared progress."""
         lock = self._generation_locks.setdefault(session_id, asyncio.Lock())
         async with lock:
-            return await self._generate_locked(session_id, request)
+            try:
+                return await self._generate_locked(session_id, request)
+            except (Exception, asyncio.CancelledError):
+                # Every hook can mutate branch-local state before the node
+                # commit. Restore it on failure, including cancellation.
+                try:
+                    manager = self._campaign_manager_for(session_id, request.slot_name)
+                    if manager is not None and manager.is_loaded():
+                        manager.reload_runtime_state()
+                except Exception:
+                    logger.exception("Unable to reload campaign after failed generation")
+                self.invalidate_timeline_caches(session_id, request.slot_name)
+                raise
 
     async def _generate_locked(self, session_id: str, request: GenerateRequest) -> GenerateResponse | None:
         session = self.state_manager.get_session_payload(session_id)
@@ -97,13 +112,18 @@ class ScenarioGenerator(
                 # cap turn; anything past it is rejected outright.
                 raise ConcurrentModificationError("Campaign turn budget exhausted")
 
-        # Hook 1: Campaign opening scene (early return)
-        opening_result = await self._handle_opening_scene(
-            session_id, request, session, state, model, campaign_manager, _csi,
-            parent_turn_id,
+        selected_ending = self._select_campaign_ending(
+            campaign_manager, state, request.player_action
         )
-        if opening_result is not None:
-            return opening_result
+        # A forced closing turn takes the narrator path even if this section
+        # has not opened yet: a scripted opening cannot consume the ending.
+        if selected_ending is None:
+            opening_result = await self._handle_opening_scene(
+                session_id, request, session, state, model, campaign_manager, _csi,
+                parent_turn_id,
+            )
+            if opening_result is not None:
+                return opening_result
 
         # Hook 2: Build prompt (RAG + context injection + token truncation)
         prompt, meta, retrieved, retrieved_for_storage, token_count = await self._build_prompt(
@@ -114,20 +134,9 @@ class ScenarioGenerator(
         output, latency_ms, source = await self._execute_llm_or_scripted(
             session_id, request, prompt, model, meta, retrieved_for_storage, _csi,
             state=state, campaign_manager=campaign_manager,
+            closing_turn=selected_ending is not None,
         )
 
-        selected_ending = None
-        if campaign_manager is not None and campaign_manager.is_loaded():
-            selected_ending = select_ending(
-                campaign_manager.campaign, campaign_manager.progress, state, request.player_action
-            )
-            if selected_ending is None:
-                cap = campaign_manager.resolve_max_turns_per_campaign()
-                if isinstance(cap, int):
-                    selected_ending = select_budget_ending(
-                        campaign_manager.campaign, campaign_manager.progress, state,
-                        max_turns=cap, player_action=request.player_action,
-                    )
         if selected_ending is not None:
             output.game_over = True
             output.game_over_reason = (
@@ -156,27 +165,24 @@ class ScenarioGenerator(
         )
 
         progress_snapshot = self._campaign_progress_snapshot(session_id, campaign_manager)
-        try:
-            timeline_node_id = self.db.commit_story_turn(
-                session_id=session_id,
-                expected_parent_id=parent_turn_id,
-                player_action=request.player_action,
-                output=output.model_dump(),
-                state=next_state,
-                campaign_progress=progress_snapshot,
-                model=model,
-                source=source,
-                model_output_id=output_id,
-                campaign_session_index=_csi,
-            )
-        except Exception:
-            # Advancement was in-memory only; drop it so a retried request
-            # starts from persisted truth instead of double-advancing.
-            if campaign_manager is not None and campaign_manager.is_loaded():
-                campaign_manager.reload_runtime_state()
-            raise
+        timeline_node_id = self.db.commit_story_turn(
+            session_id=session_id,
+            expected_parent_id=parent_turn_id,
+            player_action=request.player_action,
+            output=output.model_dump(),
+            state=next_state,
+            campaign_progress=progress_snapshot,
+            model=model,
+            source=source,
+            model_output_id=output_id,
+            campaign_session_index=_csi,
+        )
         if campaign_manager is not None and campaign_manager.is_loaded():
             campaign_manager.flush_deferred_effects()
+            if source == "llm":
+                task = asyncio.create_task(memory_ctrl.maintain(session_id, int(state.get("turn", 0))))
+                self._memory_tasks.add(task)
+                task.add_done_callback(self._log_memory_task_done)
 
         sanitized = self.state_manager.sanitize_state(next_state)
         serialized = output.model_dump()
@@ -229,7 +235,9 @@ class ScenarioGenerator(
         campaign_manager.commit_pending_anchors(persist=False)
         turn_in_session = campaign_manager.advance_turn(persist=False)
         max_turns = campaign_manager.resolve_max_turns()
-        if turn_in_session >= max_turns:
+        if turn_in_session >= max_turns and not is_final_session(
+            campaign_manager.campaign, campaign_manager.progress
+        ):
             await campaign_manager.advance_session(pending_messages, persist=False)
 
     # ── Error storage helper ──────────────────────────────────────────

@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   activateTimelineNode,
   createSession,
+  fetchCampaignProgress,
   generateBackground,
   generateFromNovel,
   generateScene,
@@ -235,5 +236,26 @@ describe("getMemoryTrace", () => {
     stubFetch({ ok: false, status: 404, body: JSON.stringify({ detail: "Session not found" }) });
 
     await expect(getMemoryTrace("nope")).rejects.toThrow("Session not found");
+  });
+});
+
+describe("fetchCampaignProgress", () => {
+  it("accepts the persisted whole-campaign budget", async () => {
+    stubFetch({ body: JSON.stringify({ turns_total: 7, max_turns_per_campaign: 50 }) });
+    await expect(fetchCampaignProgress("s1")).resolves.toMatchObject({
+      turns_total: 7, max_turns_per_campaign: 50,
+    });
+  });
+
+  it.each([
+    {},
+    { turns_total: 7 },
+    { turns_total: 7, max_turns_per_campaign: 0 },
+    { turns_total: 7, max_turns_per_campaign: "50" },
+    { turns_total: -1, max_turns_per_campaign: 50 },
+    { turns_total: 1.5, max_turns_per_campaign: 50 },
+  ])("ignores incomplete or invalid progress: %j", async (payload) => {
+    stubFetch({ body: JSON.stringify(payload) });
+    await expect(fetchCampaignProgress("s1")).resolves.toBeNull();
   });
 });
