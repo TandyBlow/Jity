@@ -1,0 +1,56 @@
+{
+  "_readme": [
+    "Examiner held-out 评估集：与开发语料（examiner_corpus.json）完全分离——全新场景、全新实体名、全新措辞，",
+    "未参与任何一轮修复调试。用于毕业设计的正式评估数字，不进开发回归套件。",
+    "评测纪律：只跑一次并记录；若暴露新缺陷，记录后留待下一批次修复，本轮不得据此改代码。"
+  ],
+  "fixtures": {
+    "dock": {
+      "current_location": "旧码头仓库",
+      "health": 90,
+      "sanity": 70,
+      "items": [
+        { "name": "铜哨子", "status": "owned" },
+        { "name": "油布", "status": "持有" },
+        { "name": "鱼叉", "status": "已装备" },
+        { "name": "船票", "status": "初始" },
+        { "name": "松节油", "status": "owned" }
+      ],
+      "npcs": [
+        { "name": "老周", "status": "present", "current_location": "仓库内" },
+        { "name": "缉私队长的副官", "status": "present", "current_location": "码头" },
+        { "name": "巡夜人", "status": "away", "current_location": "灯塔" }
+      ]
+    }
+  },
+  "cases": [
+    { "id": "H01", "category": "passive", "fixture": "dock", "action": "继续", "expected": { "permissibility": "permissible", "rules": null } },
+    { "id": "H02", "category": "passive", "fixture": "dock", "action": "接着往下讲", "expected": { "permissibility": "permissible", "rules": null } },
+    { "id": "H03", "category": "item_use_ok", "fixture": "dock", "action": "用船票登上渡轮", "expected": { "permissibility": "permissible", "rules": ["item_use"] }, "note": "船票为初始状态（旧存档兼容）" },
+    { "id": "H04", "category": "item_use_ok", "fixture": "dock", "action": "掏出铜哨子吹响", "expected": { "permissibility": "permissible", "rules": ["item_use"] }, "note": "尾随动词前缀解析" },
+    { "id": "H05", "category": "item_use_ok", "fixture": "dock", "action": "用油布盖住货物", "expected": { "permissibility": "permissible", "rules": ["item_use"] } },
+    { "id": "H06", "category": "item_use_ok", "fixture": "dock", "action": "举起鱼叉对准水面", "expected": { "permissibility": "permissible", "rules": ["item_use"] } },
+    { "id": "H07", "category": "item_use_ok", "fixture": "dock", "action": "用松节油擦拭桅杆", "expected": { "permissibility": "permissible", "rules": ["item_use"] } },
+    { "id": "H08", "category": "item_use_ok", "fixture": "dock", "action": "用松节油点火照亮货舱", "expected": { "permissibility": "permissible", "rules": ["item_use"] } },
+    { "id": "H09", "category": "item_missing", "fixture": "dock", "action": "用水晶球窥探对面海船", "expected": { "permissibility": "blocked", "rules": null } },
+    { "id": "H10", "category": "npc", "fixture": "dock", "action": "和老周交谈", "expected": { "permissibility": "permissible", "rules": null }, "note": "仓库内与旧码头仓库同场景" },
+    { "id": "H11", "category": "npc", "fixture": "dock", "action": "询问老周关于夜航的危险", "expected": { "permissibility": "permissible", "rules": null } },
+    { "id": "H12", "category": "npc", "fixture": "dock", "action": "和巡夜人搭话", "expected": { "permissibility": "blocked", "rules": null }, "note": "巡夜人在灯塔，不在场" },
+    { "id": "H13", "category": "npc", "fixture": "dock", "action": "攻击缉私队长的副官", "expected": { "permissibility": "conditional", "rules": ["combat"] }, "note": "码头与旧码头仓库同场景，副官在场" },
+    { "id": "H14", "category": "location", "fixture": "dock", "action": "在灯塔里休息", "expected": { "permissibility": "blocked", "rules": null } },
+    { "id": "H15", "category": "location", "fixture": "dock", "action": "前往灯塔，在灯塔里观察海面", "expected": { "permissibility": "conditional", "rules": ["skill_check"] } },
+    { "id": "H16", "category": "location", "fixture": "dock", "action": "在仓库角落躲藏", "expected": { "permissibility": "permissible", "rules": null }, "note": "仓库角落是子区域" },
+    { "id": "H17", "category": "check_trigger", "fixture": "dock", "action": "潜行靠近缉私队长", "expected": { "permissibility": "conditional", "rules": ["skill_check"] } },
+    { "id": "H18", "category": "check_trigger", "fixture": "dock", "action": "直视海面上的古神幻影", "expected": { "permissibility": "conditional", "rules": ["sanity_check"] } },
+    { "id": "H19", "category": "negation", "fixture": "dock", "action": "我不攻击巡逻队", "expected": { "permissibility": "permissible", "rules": null } },
+    { "id": "H20", "category": "negation", "fixture": "dock", "action": "游泳是危险的选择", "expected": { "permissibility": "permissible", "rules": null }, "note": "元话语：谈论游泳不是游泳" },
+    { "id": "H21", "category": "check_trigger", "fixture": "dock", "action": "攀爬桅杆眺望海面", "expected": { "permissibility": "conditional", "rules": ["skill_check"] } },
+    { "id": "H22", "category": "robustness", "fixture": "dock", "action": "用尽最后的力气撬开货舱门", "expected": { "permissibility": "permissible", "rules": null }, "note": "撬开不是撬锁/开锁，不触发开锁技能" },
+    { "id": "H23", "category": "robustness", "fixture": "dock", "action": "拔出鱼叉威慑", "expected": { "permissibility": "permissible", "rules": null }, "note": "拔出是自由动作（B10 裁定）" },
+    { "id": "H24", "category": "npc", "fixture": "dock", "action": "和他们几个交谈", "expected": { "permissibility": "permissible", "rules": null }, "note": "复合泛指" },
+    { "id": "H25", "category": "check_trigger", "fixture": "dock", "action": "使用言灵照亮黑暗", "expected": { "permissibility": "conditional", "rules": ["sanity_check"] }, "note": "言灵不是物品，但触发 SAN" },
+    { "id": "H26", "category": "location", "fixture": "dock", "action": "在旧码头仓库打开货舱", "expected": { "permissibility": "permissible", "rules": null }, "note": "所在地点行动不拦" },
+    { "id": "H27", "category": "combo", "fixture": "dock", "action": "调查集装箱，然后用鱼叉撬开木箱", "expected": { "permissibility": "conditional", "rules": ["item_use", "skill_check"] } },
+    { "id": "H28", "category": "robustness", "fixture": "dock", "action": "。", "expected": { "permissibility": "permissible", "rules": null } }
+  ]
+}

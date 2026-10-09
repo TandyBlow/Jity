@@ -1,0 +1,1489 @@
+{
+  "generated_at": "2026-10-09T12:40:31",
+  "total": 91,
+  "passed": 91,
+  "permissibility": {
+    "total": 91,
+    "correct": 91,
+    "accuracy": 1.0
+  },
+  "rules": {
+    "cases_with_expectation": 43,
+    "true_positives": 46,
+    "predicted": 46,
+    "expected": 46,
+    "precision": 1.0,
+    "recall": 1.0
+  },
+  "false_reject": {
+    "count": 0,
+    "ids": []
+  },
+  "false_release": {
+    "count": 0,
+    "ids": []
+  },
+  "rule_mismatch": {
+    "count": 0,
+    "ids": []
+  },
+  "by_category": {
+    "passive": {
+      "total": 7,
+      "passed": 7,
+      "false_reject": 0,
+      "false_release": 0,
+      "rule_mismatch": 0
+    },
+    "item_use_ok": {
+      "total": 17,
+      "passed": 17,
+      "false_reject": 0,
+      "false_release": 0,
+      "rule_mismatch": 0
+    },
+    "item_missing": {
+      "total": 7,
+      "passed": 7,
+      "false_reject": 0,
+      "false_release": 0,
+      "rule_mismatch": 0
+    },
+    "entry_integration": {
+      "total": 4,
+      "passed": 4,
+      "false_reject": 0,
+      "false_release": 0,
+      "rule_mismatch": 0
+    },
+    "npc": {
+      "total": 11,
+      "passed": 11,
+      "false_reject": 0,
+      "false_release": 0,
+      "rule_mismatch": 0
+    },
+    "location": {
+      "total": 10,
+      "passed": 10,
+      "false_reject": 0,
+      "false_release": 0,
+      "rule_mismatch": 0
+    },
+    "check_trigger": {
+      "total": 13,
+      "passed": 13,
+      "false_reject": 0,
+      "false_release": 0,
+      "rule_mismatch": 0
+    },
+    "negation": {
+      "total": 7,
+      "passed": 7,
+      "false_reject": 0,
+      "false_release": 0,
+      "rule_mismatch": 0
+    },
+    "combo": {
+      "total": 4,
+      "passed": 4,
+      "false_reject": 0,
+      "false_release": 0,
+      "rule_mismatch": 0
+    },
+    "drained": {
+      "total": 4,
+      "passed": 4,
+      "false_reject": 0,
+      "false_release": 0,
+      "rule_mismatch": 0
+    },
+    "robustness": {
+      "total": 7,
+      "passed": 7,
+      "false_reject": 0,
+      "false_release": 0,
+      "rule_mismatch": 0
+    }
+  },
+  "known_bug": {
+    "failing": [],
+    "passing": []
+  },
+  "results": [
+    {
+      "id": "A01",
+      "category": "passive",
+      "action": "继续",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": null,
+      "got_rules": []
+    },
+    {
+      "id": "A02",
+      "category": "passive",
+      "action": "继续剧情",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": null,
+      "got_rules": []
+    },
+    {
+      "id": "A03",
+      "category": "passive",
+      "action": "接着讲",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": null,
+      "got_rules": []
+    },
+    {
+      "id": "A04",
+      "category": "passive",
+      "action": "接着说。",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": null,
+      "got_rules": []
+    },
+    {
+      "id": "A05",
+      "category": "passive",
+      "action": "继续故事",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": null,
+      "got_rules": []
+    },
+    {
+      "id": "A06",
+      "category": "passive",
+      "action": "好，继续",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": null,
+      "got_rules": []
+    },
+    {
+      "id": "A07",
+      "category": "passive",
+      "action": "接着讲下去吧",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": null,
+      "got_rules": []
+    },
+    {
+      "id": "B01",
+      "category": "item_use_ok",
+      "action": "我拿出通行卡，刷开门禁",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": [
+        "item_use"
+      ],
+      "got_rules": [
+        "item_use"
+      ]
+    },
+    {
+      "id": "B02",
+      "category": "item_use_ok",
+      "action": "我用银色徽章打开储物柜",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": [
+        "item_use"
+      ],
+      "got_rules": [
+        "item_use"
+      ]
+    },
+    {
+      "id": "B03",
+      "category": "item_use_ok",
+      "action": "拿出旧钥匙开门",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": [
+        "item_use"
+      ],
+      "got_rules": [
+        "item_use"
+      ]
+    },
+    {
+      "id": "B04",
+      "category": "item_use_ok",
+      "action": "举起提灯照亮走廊",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": [
+        "item_use"
+      ],
+      "got_rules": [
+        "item_use"
+      ]
+    },
+    {
+      "id": "B05",
+      "category": "item_use_ok",
+      "action": "用学生证开门",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": [
+        "item_use"
+      ],
+      "got_rules": [
+        "item_use"
+      ]
+    },
+    {
+      "id": "B06",
+      "category": "item_use_ok",
+      "action": "喝下治疗药水",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": [
+        "item_use"
+      ],
+      "got_rules": [
+        "item_use"
+      ]
+    },
+    {
+      "id": "B07",
+      "category": "item_use_ok",
+      "action": "用全力撞门",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": null,
+      "got_rules": []
+    },
+    {
+      "id": "B08",
+      "category": "item_use_ok",
+      "action": "使用言灵震慑对方",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "conditional",
+      "got_permissibility": "conditional",
+      "expected_rules": [
+        "sanity_check"
+      ],
+      "got_rules": [
+        "sanity_check"
+      ]
+    },
+    {
+      "id": "B09",
+      "category": "item_use_ok",
+      "action": "用短刀攻击傀儡",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "conditional",
+      "got_permissibility": "conditional",
+      "expected_rules": [
+        "item_use",
+        "combat"
+      ],
+      "got_rules": [
+        "combat",
+        "item_use"
+      ]
+    },
+    {
+      "id": "B10",
+      "category": "item_use_ok",
+      "action": "拔出短刀防卫",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": null,
+      "got_rules": []
+    },
+    {
+      "id": "B11",
+      "category": "item_use_ok",
+      "action": "拿出通行卡，打开闸机",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": [
+        "item_use"
+      ],
+      "got_rules": [
+        "item_use"
+      ]
+    },
+    {
+      "id": "B12",
+      "category": "item_use_ok",
+      "action": "用提灯照亮地窖入口",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": [
+        "item_use"
+      ],
+      "got_rules": [
+        "item_use"
+      ]
+    },
+    {
+      "id": "B13",
+      "category": "item_use_ok",
+      "action": "把学生证递给诺诺",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": null,
+      "got_rules": []
+    },
+    {
+      "id": "C01",
+      "category": "item_missing",
+      "action": "用黄铜钥匙打开侧门",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "blocked",
+      "got_permissibility": "blocked",
+      "expected_rules": null,
+      "got_rules": []
+    },
+    {
+      "id": "C02",
+      "category": "item_missing",
+      "action": "使用银色怀表查看时间",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "blocked",
+      "got_permissibility": "blocked",
+      "expected_rules": null,
+      "got_rules": []
+    },
+    {
+      "id": "C03",
+      "category": "item_missing",
+      "action": "用银色徽章打开储物柜",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "blocked",
+      "got_permissibility": "blocked",
+      "expected_rules": null,
+      "got_rules": []
+    },
+    {
+      "id": "C04",
+      "category": "item_missing",
+      "action": "用旧钥匙开门",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "blocked",
+      "got_permissibility": "blocked",
+      "expected_rules": null,
+      "got_rules": []
+    },
+    {
+      "id": "C05",
+      "category": "item_missing",
+      "action": "和门卫交谈",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "blocked",
+      "got_permissibility": "blocked",
+      "expected_rules": null,
+      "got_rules": []
+    },
+    {
+      "id": "C06",
+      "category": "item_missing",
+      "action": "询问图书管理员关于闭馆时间",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "blocked",
+      "got_permissibility": "blocked",
+      "expected_rules": null,
+      "got_rules": []
+    },
+    {
+      "id": "C07",
+      "category": "item_missing",
+      "action": "在图书馆里休息",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "blocked",
+      "got_permissibility": "blocked",
+      "expected_rules": null,
+      "got_rules": []
+    },
+    {
+      "id": "D01",
+      "category": "entry_integration",
+      "action": "我拿出通行卡，刷开门禁",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": [
+        "item_use"
+      ],
+      "got_rules": [
+        "item_use"
+      ]
+    },
+    {
+      "id": "D02",
+      "category": "entry_integration",
+      "action": "用房间钥匙打开宿舍门",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": [
+        "item_use"
+      ],
+      "got_rules": [
+        "item_use"
+      ]
+    },
+    {
+      "id": "D03",
+      "category": "entry_integration",
+      "action": "举起通行卡对照照片",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": [
+        "item_use"
+      ],
+      "got_rules": [
+        "item_use"
+      ]
+    },
+    {
+      "id": "D04",
+      "category": "entry_integration",
+      "action": "拿出房间钥匙开门",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": [
+        "item_use"
+      ],
+      "got_rules": [
+        "item_use"
+      ]
+    },
+    {
+      "id": "E01",
+      "category": "npc",
+      "action": "和诺诺交谈",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": null,
+      "got_rules": []
+    },
+    {
+      "id": "E02",
+      "category": "npc",
+      "action": "向古德里安教授询问档案",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": null,
+      "got_rules": []
+    },
+    {
+      "id": "E03",
+      "category": "npc",
+      "action": "询问古德里安教授是否见过可疑的人",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": null,
+      "got_rules": []
+    },
+    {
+      "id": "E04",
+      "category": "npc",
+      "action": "和图书管理员交谈",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "blocked",
+      "got_permissibility": "blocked",
+      "expected_rules": null,
+      "got_rules": []
+    },
+    {
+      "id": "E05",
+      "category": "npc",
+      "action": "攻击诺诺",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "conditional",
+      "got_permissibility": "conditional",
+      "expected_rules": [
+        "combat"
+      ],
+      "got_rules": [
+        "combat"
+      ]
+    },
+    {
+      "id": "E06",
+      "category": "npc",
+      "action": "说服门卫放我出去",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "blocked",
+      "got_permissibility": "blocked",
+      "expected_rules": null,
+      "got_rules": [
+        "skill_check"
+      ]
+    },
+    {
+      "id": "E07",
+      "category": "npc",
+      "action": "和他们交谈",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": null,
+      "got_rules": []
+    },
+    {
+      "id": "E08",
+      "category": "npc",
+      "action": "和他们所有人交谈",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": null,
+      "got_rules": []
+    },
+    {
+      "id": "E09",
+      "category": "npc",
+      "action": "和古德里安教授对话",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": null,
+      "got_rules": []
+    },
+    {
+      "id": "E10",
+      "category": "npc",
+      "action": "跟诺诺搭话",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": null,
+      "got_rules": []
+    },
+    {
+      "id": "F01",
+      "category": "location",
+      "action": "在图书馆里调查书架",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "blocked",
+      "got_permissibility": "blocked",
+      "expected_rules": null,
+      "got_rules": [
+        "skill_check"
+      ]
+    },
+    {
+      "id": "F02",
+      "category": "location",
+      "action": "前往图书馆，然后在图书馆里调查禁书区的书架",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "conditional",
+      "got_permissibility": "conditional",
+      "expected_rules": [
+        "skill_check"
+      ],
+      "got_rules": [
+        "skill_check"
+      ]
+    },
+    {
+      "id": "F03",
+      "category": "location",
+      "action": "在报到处大厅休息",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": null,
+      "got_rules": []
+    },
+    {
+      "id": "F04",
+      "category": "location",
+      "action": "在报到处大厅门口休息",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": null,
+      "got_rules": []
+    },
+    {
+      "id": "F05",
+      "category": "location",
+      "action": "前往地下室，用旧钥匙打开铁门",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": [
+        "item_use"
+      ],
+      "got_rules": [
+        "item_use"
+      ]
+    },
+    {
+      "id": "F06",
+      "category": "location",
+      "action": "在档案室里潜行，避开巡视的教授",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "blocked",
+      "got_permissibility": "blocked",
+      "expected_rules": null,
+      "got_rules": [
+        "skill_check"
+      ]
+    },
+    {
+      "id": "F07",
+      "category": "location",
+      "action": "去图书馆借书",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": null,
+      "got_rules": []
+    },
+    {
+      "id": "G01",
+      "category": "check_trigger",
+      "action": "直视古神的真身",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "conditional",
+      "got_permissibility": "conditional",
+      "expected_rules": [
+        "sanity_check"
+      ],
+      "got_rules": [
+        "sanity_check"
+      ]
+    },
+    {
+      "id": "G02",
+      "category": "check_trigger",
+      "action": "尝试进行一次理智检定",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "conditional",
+      "got_permissibility": "conditional",
+      "expected_rules": [
+        "sanity_check"
+      ],
+      "got_rules": [
+        "sanity_check"
+      ]
+    },
+    {
+      "id": "G03",
+      "category": "check_trigger",
+      "action": "我在走廊里奔跑",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "conditional",
+      "got_permissibility": "conditional",
+      "expected_rules": [
+        "skill_check"
+      ],
+      "got_rules": [
+        "skill_check"
+      ]
+    },
+    {
+      "id": "G04",
+      "category": "check_trigger",
+      "action": "撬锁溜进值班室",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "conditional",
+      "got_permissibility": "conditional",
+      "expected_rules": [
+        "skill_check"
+      ],
+      "got_rules": [
+        "skill_check"
+      ]
+    },
+    {
+      "id": "G05",
+      "category": "check_trigger",
+      "action": "我观察墙上的壁画",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "conditional",
+      "got_permissibility": "conditional",
+      "expected_rules": [
+        "skill_check"
+      ],
+      "got_rules": [
+        "skill_check"
+      ]
+    },
+    {
+      "id": "G06",
+      "category": "check_trigger",
+      "action": "潜行绕过巡逻",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "conditional",
+      "got_permissibility": "conditional",
+      "expected_rules": [
+        "skill_check"
+      ],
+      "got_rules": [
+        "skill_check"
+      ]
+    },
+    {
+      "id": "G07",
+      "category": "check_trigger",
+      "action": "释放言灵压制血脉躁动",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "conditional",
+      "got_permissibility": "conditional",
+      "expected_rules": [
+        "sanity_check"
+      ],
+      "got_rules": [
+        "sanity_check"
+      ]
+    },
+    {
+      "id": "G08",
+      "category": "check_trigger",
+      "action": "攻击傀儡",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "conditional",
+      "got_permissibility": "conditional",
+      "expected_rules": [
+        "combat"
+      ],
+      "got_rules": [
+        "combat"
+      ]
+    },
+    {
+      "id": "G09",
+      "category": "check_trigger",
+      "action": "包扎手臂的伤口",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "conditional",
+      "got_permissibility": "conditional",
+      "expected_rules": [
+        "skill_check"
+      ],
+      "got_rules": [
+        "skill_check"
+      ]
+    },
+    {
+      "id": "G10",
+      "category": "check_trigger",
+      "action": "辨认羊皮纸上的古文字",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "conditional",
+      "got_permissibility": "conditional",
+      "expected_rules": [
+        "skill_check"
+      ],
+      "got_rules": [
+        "skill_check"
+      ]
+    },
+    {
+      "id": "G11",
+      "category": "check_trigger",
+      "action": "攀爬围墙翻出去",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "conditional",
+      "got_permissibility": "conditional",
+      "expected_rules": [
+        "skill_check"
+      ],
+      "got_rules": [
+        "skill_check"
+      ]
+    },
+    {
+      "id": "G12",
+      "category": "check_trigger",
+      "action": "目睹神话生物低语",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "conditional",
+      "got_permissibility": "conditional",
+      "expected_rules": [
+        "sanity_check"
+      ],
+      "got_rules": [
+        "sanity_check"
+      ]
+    },
+    {
+      "id": "G13",
+      "category": "check_trigger",
+      "action": "SAN检定：强忍恐惧",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "conditional",
+      "got_permissibility": "conditional",
+      "expected_rules": [
+        "sanity_check"
+      ],
+      "got_rules": [
+        "sanity_check"
+      ]
+    },
+    {
+      "id": "H01",
+      "category": "negation",
+      "action": "我不攻击他",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": null,
+      "got_rules": []
+    },
+    {
+      "id": "H02",
+      "category": "negation",
+      "action": "不要打开箱子，先观察四周",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "conditional",
+      "got_permissibility": "conditional",
+      "expected_rules": [
+        "skill_check"
+      ],
+      "got_rules": [
+        "skill_check"
+      ]
+    },
+    {
+      "id": "H03",
+      "category": "negation",
+      "action": "如果我有钥匙就开门",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": null,
+      "got_rules": []
+    },
+    {
+      "id": "H04",
+      "category": "negation",
+      "action": "我不使用通行卡，太显眼了",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": null,
+      "got_rules": []
+    },
+    {
+      "id": "H05",
+      "category": "negation",
+      "action": "我不想和诺诺交谈",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": null,
+      "got_rules": []
+    },
+    {
+      "id": "H06",
+      "category": "negation",
+      "action": "攻击是下策，我先躲起来",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": null,
+      "got_rules": []
+    },
+    {
+      "id": "I01",
+      "category": "combo",
+      "action": "调查书架，然后用银色徽章打开暗格",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "conditional",
+      "got_permissibility": "conditional",
+      "expected_rules": [
+        "item_use",
+        "skill_check"
+      ],
+      "got_rules": [
+        "item_use",
+        "skill_check"
+      ]
+    },
+    {
+      "id": "I02",
+      "category": "combo",
+      "action": "调查教室，然后用提灯照亮桌上的字迹",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "conditional",
+      "got_permissibility": "conditional",
+      "expected_rules": [
+        "item_use",
+        "skill_check"
+      ],
+      "got_rules": [
+        "item_use",
+        "skill_check"
+      ]
+    },
+    {
+      "id": "I03",
+      "category": "combo",
+      "action": "前往图书馆，在图书馆里调查禁书区的书架",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "conditional",
+      "got_permissibility": "conditional",
+      "expected_rules": [
+        "skill_check"
+      ],
+      "got_rules": [
+        "skill_check"
+      ]
+    },
+    {
+      "id": "I04",
+      "category": "combo",
+      "action": "潜入档案室，拍下机密文件",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "conditional",
+      "got_permissibility": "conditional",
+      "expected_rules": [
+        "skill_check"
+      ],
+      "got_rules": [
+        "skill_check"
+      ]
+    },
+    {
+      "id": "J01",
+      "category": "drained",
+      "action": "阅读桌上的笔记",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": null,
+      "got_rules": []
+    },
+    {
+      "id": "J02",
+      "category": "drained",
+      "action": "攀爬围墙翻出去",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "blocked",
+      "got_permissibility": "blocked",
+      "expected_rules": null,
+      "got_rules": [
+        "skill_check"
+      ]
+    },
+    {
+      "id": "J03",
+      "category": "drained",
+      "action": "直视古神的真身",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "blocked",
+      "got_permissibility": "blocked",
+      "expected_rules": null,
+      "got_rules": [
+        "sanity_check"
+      ]
+    },
+    {
+      "id": "J04",
+      "category": "drained",
+      "action": "奔跑冲向校门",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "blocked",
+      "got_permissibility": "blocked",
+      "expected_rules": null,
+      "got_rules": [
+        "skill_check"
+      ]
+    },
+    {
+      "id": "K01",
+      "category": "robustness",
+      "action": "。",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": null,
+      "got_rules": []
+    },
+    {
+      "id": "K02",
+      "category": "robustness",
+      "action": "use the keycard to open the door",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": null,
+      "got_rules": []
+    },
+    {
+      "id": "K03",
+      "category": "robustness",
+      "action": "拿出银色徽章给门卫看",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": [
+        "item_use"
+      ],
+      "got_rules": [
+        "item_use"
+      ]
+    },
+    {
+      "id": "K04",
+      "category": "robustness",
+      "action": "用银色徽章交换情报",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": [
+        "item_use"
+      ],
+      "got_rules": [
+        "item_use"
+      ]
+    },
+    {
+      "id": "K05",
+      "category": "robustness",
+      "action": "我搜索教室的每个角落",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "conditional",
+      "got_permissibility": "conditional",
+      "expected_rules": [
+        "skill_check"
+      ],
+      "got_rules": [
+        "skill_check"
+      ]
+    },
+    {
+      "id": "K06",
+      "category": "robustness",
+      "action": "环顾四周",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": null,
+      "got_rules": []
+    },
+    {
+      "id": "B14",
+      "category": "item_use_ok",
+      "action": "拔出短刀反击",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "conditional",
+      "got_permissibility": "conditional",
+      "expected_rules": [
+        "combat"
+      ],
+      "got_rules": [
+        "combat"
+      ]
+    },
+    {
+      "id": "F08",
+      "category": "location",
+      "action": "用旧钥匙打开地下室的门",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": [
+        "item_use"
+      ],
+      "got_rules": [
+        "item_use"
+      ]
+    },
+    {
+      "id": "B15",
+      "category": "item_use_ok",
+      "action": "我举起通行卡，对准读卡器",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": [
+        "item_use"
+      ],
+      "got_rules": [
+        "item_use"
+      ]
+    },
+    {
+      "id": "B16",
+      "category": "item_use_ok",
+      "action": "用侦查眼镜观察墙上的裂缝",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": [
+        "item_use"
+      ],
+      "got_rules": [
+        "item_use"
+      ]
+    },
+    {
+      "id": "B17",
+      "category": "item_use_ok",
+      "action": "用尽全身力气推门",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": null,
+      "got_rules": []
+    },
+    {
+      "id": "E11",
+      "category": "npc",
+      "action": "向她们几个人问话",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": null,
+      "got_rules": []
+    },
+    {
+      "id": "F09",
+      "category": "location",
+      "action": "在报到处大厅的角落休息",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": null,
+      "got_rules": []
+    },
+    {
+      "id": "F10",
+      "category": "location",
+      "action": "在档案室里躲藏到天黑",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "blocked",
+      "got_permissibility": "blocked",
+      "expected_rules": null,
+      "got_rules": []
+    },
+    {
+      "id": "H07",
+      "category": "negation",
+      "action": "战斗并不是唯一的选择",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": null,
+      "got_rules": []
+    },
+    {
+      "id": "K07",
+      "category": "robustness",
+      "action": "掏出旧钥匙塞进门缝",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": [
+        "item_use"
+      ],
+      "got_rules": [
+        "item_use"
+      ]
+    }
+  ],
+  "label": "after-fix"
+}

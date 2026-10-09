@@ -13,7 +13,9 @@ from app.schemas.agent_io import ActionPermissibility, ActionRuling, TriggeredRu
 _PASSIVE_CONTINUATION_RE = re.compile(
     r"^\s*(?:继续|继续剧情|继续故事|接着|接着讲|接着说)[。.!！?？…]*\s*$"
 )
-_OWNED = {"owned", "active", "equipped", "持有", "获得", "已装备"}
+# ``初始`` is the legacy entry_state item status; saves written before the
+# writer switched to "owned" still carry it and must stay usable.
+_OWNED = {"owned", "active", "equipped", "持有", "获得", "已装备", "初始"}
 _PRESENT = {"present", "following", "在场", "同行"}
 _COMBAT = re.compile(r"攻击|射击|开枪|挥刀|刺向|格斗|战斗|反击")
 _SKILLS = {
@@ -29,8 +31,10 @@ _SKILLS = {
 _SAN = re.compile(r"SAN\s*检定|理智检定|血统稳定(?:值)?检定|(?:直视|遭遇|目睹|看见).*(?:神话生物|古神|龙王)|释放言灵|发动言灵|使用言灵", re.I)
 _PHYSICAL = re.compile(r"攻击|射击|开枪|格斗|战斗|反击|攀爬|攀登|游泳|跳跃|奔跑|冲刺")
 # A noun is bounded by the next action verb; searching for an item is not use.
+# ``用`` also excludes effort adverbials (用力/用心/用全力/用尽), which would
+# otherwise swallow the rest of the clause as an item name.
 _ITEM_USE = re.compile(
-    r"(?:使用|用(?!力|心)|拿出|掏出|举起|装备|喝下|服用)\s*[\"“「]?"
+    r"(?:使用|用(?!力|心|全力|全身|尽)|拿出|掏出|举起|装备|喝下|服用)\s*[\"“「]?"
     r"(?P<name>[^，。！？；、\s\"”」]{1,24}?)"
     r"[\"”」]?(?=来|进行|打开|开启|开门|解锁|撬|照|攻击|射击|检查|治疗|包扎|与|和|向|对|，|。|！|？|；|$)"
 )
@@ -39,8 +43,32 @@ _NPC_INTERACTION = re.compile(
     r"(?:交谈|对话|谈话|交流|询问|问话|搭话|求助|说话)"
 )
 _DIRECT_NPC = re.compile(r"(?:^|，)\s*(?:我)?(?:询问|问话|说服)\s*[\"“「]?(?P<name>[^，。！？；\s\"”」]{1,16}?)[\"”」]?(?=关于|有关|是否|，|。|！|？|；|$)")
-_LOCATION = re.compile(r"(?:^|，|；)\s*(?:我)?在(?P<name>[^，。！？；]{1,20}?)(?:里|内)?(?:调查|搜索|搜查|休息|使用|打开|与|和)")
+# Completing the verb list here is load-bearing: a missing verb means the
+# location prerequisite silently never fires (a false release, not a reject).
+_LOCATION = re.compile(
+    r"(?:^|，|；)\s*(?:我)?在(?P<name>[^，。！？；]{1,20}?)(?:里|内)?"
+    r"(?:调查|搜索|搜查|观察|聆听|潜行|潜入|躲藏|睡觉|等待|埋伏|休息|战斗|攻击|攀爬|游泳|使用|打开|与|和)"
+)
 _GENERIC_TARGETS = {"他", "她", "它", "他们", "她们", "对方", "敌人", "怪物", "NPC", "npc", "所有人"}
+# Talking about an action is not performing it: "攻击是下策" discusses.
+_TALK_CONTINUATIONS = ("是", "并不是", "不是", "并非", "与否", "之类")
+
+
+def _talk_not_action(text: str, end: int) -> bool:
+    return text[end:end + 3].startswith(_TALK_CONTINUATIONS)
+
+
+def _fires(pattern: re.Pattern, text: str, masked: list[tuple[int, int]] = ()) -> bool:
+    """Match as an action: outside item-name spans, and not meta-commentary.
+
+    Item names are spans, not verbs — "治疗药水" must not trigger 急救 even
+    though the capture may also have swallowed trailing verbs.
+    """
+    return any(
+        not _talk_not_action(text, m.end())
+        and not any(s <= m.start() < e for s, e in masked)
+        for m in pattern.finditer(text)
+    )
 
 
 def is_passive_continuation_action(player_action: str) -> bool:
@@ -79,6 +107,28 @@ def _same_scene(left: str, right: str) -> bool:
     return any(token in right for token in shared)
 
 
+def _resolve_item(name: str, items: dict[str, dict]) -> str | None:
+    # Exact match first; a trailing verb absorbed into the capture may still
+    # name a known item ("银色徽章给门卫看" → 银色徽章).
+    if name in items:
+        return name
+    for known in sorted(items, key=len, reverse=True):
+        if name.startswith(known):
+            return known
+    return None
+
+
+# Abilities and effort references are never inventory items ("使用言灵…",
+# "使用全力攻击") — they are skipped as items and their spans never mask
+# rule scanning, or the SAN trigger inside them would be hidden.
+_ABILITY_PREFIXES = ("言灵", "全力", "力气")
+_ABILITY_NOUNS = {"技能", "双手", "手", "拳头"}
+
+
+def _is_ability(name: str) -> bool:
+    return name.startswith(_ABILITY_PREFIXES) or name in _ABILITY_NOUNS
+
+
 class ExaminerAgent:
     """Python rules over the existing item/NPC/location/sanity/health state."""
 
@@ -97,16 +147,19 @@ class ExaminerAgent:
         failures: list[str] = []
         rules: list[TriggeredRule] = []
 
-        for match in _ITEM_USE.finditer(action):
+        item_matches = list(_ITEM_USE.finditer(action))
+        item_spans = [
+            m.span() for m in item_matches if not _is_ability(_resolve_name(m["name"]))
+        ]
+        for match in item_matches:
             name = _resolve_name(match["name"])
-            # Abilities and body parts are not inventory items.
-            if name.startswith("言灵") or name in {"技能", "双手", "手", "拳头", "力气", "全力"}:
+            if _is_ability(name):
                 continue
-            item = items.get(name)
-            if item is None or item.get("status", "owned") not in _OWNED:
+            key = _resolve_item(name, items)
+            if key is None or items[key].get("status", "owned") not in _OWNED:
                 failures.append(f"你目前没有可用的“{name}”，无法使用它。")
             else:
-                rules.append(TriggeredRule(rule_type="item_use", rule_name=f"使用物品：{name}"))
+                rules.append(TriggeredRule(rule_type="item_use", rule_name=f"使用物品：{key}"))
 
         targets = {m["name"] for pattern in (_NPC_INTERACTION, _DIRECT_NPC) for m in pattern.finditer(action)}
         # Known NPCs can also be the target of a longer sentence.
@@ -119,9 +172,10 @@ class ExaminerAgent:
             for name in targets
         }
         for name in sorted(targets):
-            if name in _GENERIC_TARGETS:
-                continue
             npc = npcs.get(name)
+            if npc is None and any(name.startswith(g) for g in _GENERIC_TARGETS):
+                # Compound generic references ("他们所有人") are not entities.
+                continue
             if npc is None:
                 failures.append(f"当前记录中没有“{name}”，无法确认与其直接互动。")
                 continue
@@ -137,12 +191,13 @@ class ExaminerAgent:
             approaching = re.search(
                 r"(?:前往|走到|去|到达)" + re.escape(required), action[:match.start()]
             )
-            if location and required != location and not approaching:
+            if (location and required != location and not approaching
+                    and not _same_scene(required, location)):
                 failures.append(f"你当前位于“{location}”，需要先到达“{required}”才能在那里行动。")
 
-        combat = bool(_COMBAT.search(action))
-        sanity = bool(_SAN.search(action))
-        if (combat or _PHYSICAL.search(action)) and game_state.get("health", 100) <= 0:
+        combat = _fires(_COMBAT, action, item_spans)
+        sanity = _fires(_SAN, action, item_spans)
+        if (combat or _fires(_PHYSICAL, action, item_spans)) and game_state.get("health", 100) <= 0:
             failures.append("你的体力已经耗尽，无法执行这项体力行动。")
         if sanity and game_state.get("sanity", 80) <= 0:
             failures.append("你的血统稳定值已经耗尽，无法主动进行这项高风险行动。")
@@ -152,7 +207,7 @@ class ExaminerAgent:
                 rule_details="需要进行血统稳定检定（1d100 ≤ 当前SAN值）；本地检查尚未掷骰，不得视为自动成功。",
             ))
         for skill, pattern in _SKILLS.items():
-            if re.search(pattern, action):
+            if _fires(re.compile(pattern), action, item_spans):
                 rules.append(TriggeredRule(
                     rule_type="skill_check", rule_name=f"技能检定：{skill}",
                     rule_details="需依据角色技能值进行检定；没有技能值或检定结果时，不得编造成功结果。",

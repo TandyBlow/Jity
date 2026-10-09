@@ -42,6 +42,10 @@
         {
           "name": "治疗药水",
           "status": "owned"
+        },
+        {
+          "name": "侦查眼镜",
+          "status": "owned"
         }
       ],
       "npcs": [
@@ -204,8 +208,7 @@
           "item_use"
         ]
       },
-      "known_bug": true,
-      "note": "通行卡 status=初始（entry_state 遗留格式，老存档仍会是该值）；读取侧 _OWNED 不认它 → 误拒"
+      "note": "曾因读取侧 _OWNED 不认 初始 而误拒；已并入 _OWNED（旧存档兼容）"
     },
     {
       "id": "B02",
@@ -266,8 +269,7 @@
           "item_use"
         ]
       },
-      "known_bug": true,
-      "note": "'治疗药水'中的'治疗'被急救技能正则误命中，多触发 skill_check"
+      "note": "曾因'治疗'命中急救正则误触 skill_check；已按物品 span 遮蔽技能扫描"
     },
     {
       "id": "B07",
@@ -278,8 +280,7 @@
         "permissibility": "permissible",
         "rules": null
       },
-      "note": "用(?!力|心) 只挡紧邻的'用力/用心'；'用全力撞门'整段被当成物品名查库存，误拒",
-      "known_bug": true
+      "note": "曾因 用(?!力) 漏挡'用全力'整段吞名；已扩展努力副词前瞻"
     },
     {
       "id": "B08",
@@ -329,8 +330,7 @@
           "item_use"
         ]
       },
-      "known_bug": true,
-      "note": "同 B01，初始状态读取侧缺口"
+      "note": "同 B01"
     },
     {
       "id": "B12",
@@ -598,8 +598,7 @@
         "permissibility": "permissible",
         "rules": null
       },
-      "known_bug": true,
-      "note": "泛指集合不认复合短语'他们所有人'，会误查 NPC 记录"
+      "note": "曾因泛指集合只认全等漏掉复合短语；未解析名已改为前缀匹配泛指集"
     },
     {
       "id": "E09",
@@ -662,8 +661,7 @@
         "permissibility": "permissible",
         "rules": null
       },
-      "known_bug": true,
-      "note": "玩家位置的子区域按字面不等被误拒（NPC 侧已有同场景容错，玩家侧没有）"
+      "note": "曾因玩家位置严格不等而误拒子区域；已复用 _same_scene"
     },
     {
       "id": "F05",
@@ -687,8 +685,7 @@
         "permissibility": "blocked",
         "rules": null
       },
-      "known_bug": true,
-      "note": "地点句式的动词表（调查/搜索/搜查/休息/使用/打开/与/和）不含潜行，位置校验未触发，异地点行动被放行"
+      "note": "曾因地点句式动词表缺潜行而误放；已补全动词表"
     },
     {
       "id": "F07",
@@ -920,8 +917,7 @@
         "permissibility": "permissible",
         "rules": null
       },
-      "known_bug": true,
-      "note": "谈论攻击不等于实施攻击；子句级否定过滤覆盖不了主语省略的元陈述"
+      "note": "曾因谈论攻击误触 combat；已加元话语过滤（谈论≠实施）"
     },
     {
       "id": "I01",
@@ -1050,8 +1046,7 @@
           "item_use"
         ]
       },
-      "known_bug": true,
-      "note": "动词后置宾语（给门卫看）被整段吞进物品名，误判为未持有"
+      "note": "曾因尾随动词吞名误判未持有；已加已知物品前缀解析"
     },
     {
       "id": "K04",
@@ -1064,8 +1059,7 @@
           "item_use"
         ]
       },
-      "known_bug": true,
-      "note": "同 K03，尾随动词未被前瞻集合覆盖"
+      "note": "同 K03"
     },
     {
       "id": "K05",
@@ -1115,6 +1109,100 @@
         ]
       },
       "note": "F05 裁定的边界钉子：无「在异地动作」句式即视为含移动节拍，不拦"
+    },
+    {
+      "id": "B15",
+      "category": "item_use_ok",
+      "fixture": "campus",
+      "action": "我举起通行卡，对准读卡器",
+      "expected": {
+        "permissibility": "permissible",
+        "rules": [
+          "item_use"
+        ]
+      },
+      "note": "B01/B11 修复类的不同措辞回归：初始状态 + 举起动词"
+    },
+    {
+      "id": "B16",
+      "category": "item_use_ok",
+      "fixture": "campus",
+      "action": "用侦查眼镜观察墙上的裂缝",
+      "expected": {
+        "permissibility": "permissible",
+        "rules": [
+          "item_use"
+        ]
+      },
+      "note": "B06 修复类的不同措辞回归：物品名内含技能词（侦查）"
+    },
+    {
+      "id": "B17",
+      "category": "item_use_ok",
+      "fixture": "campus",
+      "action": "用尽全身力气推门",
+      "expected": {
+        "permissibility": "permissible",
+        "rules": null
+      },
+      "note": "B07 修复类的不同措辞回归：用尽/全身努力副词"
+    },
+    {
+      "id": "E11",
+      "category": "npc",
+      "fixture": "campus",
+      "action": "向她们几个人问话",
+      "expected": {
+        "permissibility": "permissible",
+        "rules": null
+      },
+      "note": "E08 修复类的不同措辞回归：复合泛指'她们几个人'"
+    },
+    {
+      "id": "F09",
+      "category": "location",
+      "fixture": "campus",
+      "action": "在报到处大厅的角落休息",
+      "expected": {
+        "permissibility": "permissible",
+        "rules": null
+      },
+      "note": "F04 修复类的不同措辞回归：'的角落'子区域"
+    },
+    {
+      "id": "F10",
+      "category": "location",
+      "fixture": "campus",
+      "action": "在档案室里躲藏到天黑",
+      "expected": {
+        "permissibility": "blocked",
+        "rules": null
+      },
+      "note": "F06 修复类的不同措辞回归：新补动词'躲藏' + 异地点"
+    },
+    {
+      "id": "H07",
+      "category": "negation",
+      "fixture": "campus",
+      "action": "战斗并不是唯一的选择",
+      "expected": {
+        "permissibility": "permissible",
+        "rules": null
+      },
+      "note": "H06 修复类的不同措辞回归：'并不是'元话语"
+    },
+    {
+      "id": "K07",
+      "category": "robustness",
+      "fixture": "campus",
+      "action": "掏出旧钥匙塞进门缝",
+      "expected": {
+        "permissibility": "permissible",
+        "rules": [
+          "item_use"
+        ]
+      },
+      "note": "K03/K04 修复类的不同措辞回归：掏出+塞进尾随动词"
     }
   ]
 }

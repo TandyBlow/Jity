@@ -40,7 +40,6 @@ from app.services.agents.examiner import ExaminerAgent  # noqa: E402
 from app.services.game_state.entry_state import EntryStateMixin  # noqa: E402
 
 CORPUS_PATH = Path(__file__).resolve().parents[1] / "tests" / "examiner_corpus.json"
-
 # merge_entry_state expects a fully initialized base_state (as the session
 # payload carries one); D cases start from the same neutral shape.
 _BASE_STATE = {
@@ -66,8 +65,8 @@ class _EntryStateOnly(EntryStateMixin):
         raise AssertionError("entry cases must not include npcs")
 
 
-def load_corpus() -> dict:
-    return json.loads(CORPUS_PATH.read_text(encoding="utf-8"))
+def load_corpus(path: str | Path | None = None) -> dict:
+    return json.loads(Path(path or CORPUS_PATH).read_text(encoding="utf-8"))
 
 
 def merged_entry_state(entry: dict) -> dict:
@@ -195,9 +194,10 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--label", default="", help="version label recorded in the report")
     parser.add_argument("--out", default="", help="optional path for the JSON report")
+    parser.add_argument("--corpus", default="", help="corpus JSON path (default: the dev corpus)")
     args = parser.parse_args()
 
-    report = run_all()
+    report = run_all(load_corpus(args.corpus) if args.corpus else None)
     report["label"] = args.label
 
     perm, rules = report["permissibility"], report["rules"]
