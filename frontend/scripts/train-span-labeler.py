@@ -15,33 +15,48 @@
 # 4. move / npc_talk: the location / the person -> TGT.
 # 5. Person titles stay inside the span ("古德里安教授" whole); title
 #    stripping is code-side post-processing, same as the names task.
-# 6. Spans are the HEAD NOUN only: modifiers are stripped and labeled O —
-#    "生锈的铁门钥匙" -> 铁门钥匙, "那扇书架后的暗门" -> 暗门, "那把断剑"
-#    -> 断剑. Training and span scoring both follow this rule (the parse
-#    task's own expect strings keep their original excerpts; earlier
-#    reports keep their original scores).
+# 6. Spans are the HEAD NOUN only: 的-phrases and demonstrative/classifier
+#    prefixes (那把/半截) are stripped and labeled O — "生锈的铁门钥匙" ->
+#    铁门钥匙, "那扇书架后的暗门" -> 暗门, "后院的门" -> 门 (possessor is a
+#    modifier). Compounds WITHOUT 的 are whole nouns ("旧锁" is one noun).
+#    Training and span scoring both follow this rule.
 # 7. At most one span per field per sentence (the task is single-entity);
 #    multi-entity sentences never enter corpus or eval.
 # 8. MENTIONED-but-not-used objects are O, not ITEM: "我想起了X" / "X还在
 #    背包里" label nothing — the tag follows the verb phrase, not the noun.
+# 9. Authoring exclusions (hand-written corpus): no body-part instruments
+#    (肩膀/膝盖 are never ITEM), no 借/买 frames (ask-vs-take ambiguity),
+#    no sentences whose gold span is defensible two ways.
 #
-# Acceptance criteria (pre-registered, before any training):
-# - PRIMARY: on the 10-sentence ACCEPTANCE batch below, strict span match
-#   rate (start AND end AND type all exact) >= 90% for EACH of ITEM/TGT.
+# Acceptance protocol (pre-registered; unchanged gates):
+# - PRIMARY: on the SEALED acceptance batch (~100 hand-written sentences,
+#   slots disjoint from everything trained or evaluated), strict span match
+#   (start AND end AND type exact) >= 90% for EACH of ITEM/TGT.
 # - Component accepted only if both fields pass AND end-to-end latency
 #   (raw text -> spans) stays <= 4s per call in the browser trial.
-# - The previous held-out batch is now the DEV set: it has been evaluated
-#   repeatedly during debugging, so it no longer measures generalization —
-#   it is used to locate errors only. The acceptance batch is evaluated
-#   once, after all fixes, and never iterated against.
-# - Reported but not gating: the 12 scored parse sentences.
+# - Additionally REPORTED (not gating): both-fields-correct rate.
+# - Discipline: acceptance v1 (ec4aa02) and v2 (b5067d7, results in
+#   acceptanceRetired below) were each evaluated once and are retired. The
+#   sealed batch is evaluated EXACTLY ONCE via `run-labeler-trial.mjs
+#   --with-acceptance` after dev results justify it — never during
+#   development. dev batches (classic + grouped) are diagnostics only.
+# - 铁门钥匙 attribution (settled): the old model output 生锈, the new model
+#   outputs 铁门钥匙 — model AND scoring rule (rule 6 v2) changed together
+#   in ec4aa02/b5067d7, so that flip is joint attribution; it must not be
+#   recorded as "the head-noun rule fixed it".
 #
-# Data discipline: the 12 scored sentences, the 10 dev sentences and the 10
-# acceptance sentences are ALL excluded from the corpus; their slots and
-# distinctive structures are excluded from templates too. Dev slots: 垫住门缝
-# 查看字迹 去找…问话 校徽刷开闸机 / 旧笔记 校徽 火把 短刀 指南针 铃铛 夏弥
-# 图书馆管理员 地下藏书室. Acceptance slots: 铁钩 麻绳 火折子 铜铃 木梯 守林人
-# 老陈 阁楼 柜台 水井 石阶 — none appear as training slots.
+# Data contract (single source of truth): this script is the only place
+# that defines corpus/dev/scored/acceptance data. It writes everything to
+# artifacts/benchmark/span-labeler-corpus.json — the browser trial loads
+# THAT file (and records its sha256 in the report) instead of keeping a
+# hand-synced JS copy. After writing, this script READS THE FILE BACK for
+# its own evaluation, so Python and browser literally score the same bytes.
+#
+# Split discipline: the shuffled pool (templates + hand-written train
+# groups) is split 10% validation / 90% train BEFORE the manifest is
+# written; "train" and "validation" in the manifest are the actual sets.
+# devGroups are held out whole PATTERN GROUPS (no sentence of a group is
+# trained), so dev measures generalization across sentence patterns.
 #
 # Usage: python train-span-labeler.py <minirbt-snapshot-dir> [--export-corpus]
 
@@ -81,16 +96,17 @@ EPOCHS = 30
 BATCH = 16
 LR = 3e-4
 
-# 训练槽位（与 held-out 槽位不相交）。
+# ── 模板语料槽位（第一批训练数据；与 devClassic/scored 有历史交集
+#    雕像/壁画/暗门/剑，在 ec4aa02 记录在案，不回改）。────────────────
 ITEMS = ["铜钥匙", "铁门钥匙", "剑", "扫帚", "地图", "绳索", "水壶", "铁锹", "灯笼", "木桶"]
 NPCS = ["诺诺", "执行部学生", "路明非", "古德里安教授", "凯瑟琳"]
 LOCS = ["二楼档案室", "卡塞尔学院图书馆", "走廊", "阅览室"]
 OBJECTS = ["暗门", "书架", "壁画", "雕像", "窗台"]
 OPEN_TARGETS = ["大门", "木箱", "柜子", "抽屉"]
 
-# 10 句开发集（原 held-out 批；已多轮参与排查，只用于定位错误，不再验收）：
-# (text, item, target)；None 表示该字段无 span。
-DEV = [
+# 10 句开发集 classic（原 held-out 批；已多轮参与排查，只用于定位错误，
+# 不再验收）。保留原文以延续 dev ITEM 4→8 / TGT 4→5 的对照序列。
+DEV_CLASSIC = [
     ("我用火把照亮地下藏书室。", "火把", "地下藏书室"),
     ("我用短刀割断绳索。", "短刀", "绳索"),
     ("我和图书馆管理员打听暗门。", None, "图书馆管理员"),
@@ -101,22 +117,6 @@ DEV = [
     ("我把铃铛挂在暗门上。", "铃铛", "暗门"),
     ("我向夏弥打听暗门的来历。", None, "夏弥"),
     ("我用蜡烛照亮壁画。", "蜡烛", "壁画"),
-]
-
-# 10 句验收批 v2（槽位 铜哨 断桨 火钳 麻袋 湿柴 马夫 守井人 后院 井台 货架
-# 门环 灰堆 灶膛 鞘 全不进训练；含 item-only、提及不标、修饰语、单字中心语
-# 结构）。第一批验收句已被评过一次，按协议不再作验收用。
-ACCEPTANCE = [
-    ("我把火钳握在手里。", "火钳", None),
-    ("我想起了断桨。", None, None),
-    ("我用铜哨示意马夫。", "铜哨", "马夫"),
-    ("我检查门环。", None, "门环"),
-    ("我在原地蹲了一会儿。", None, None),
-    ("我用湿柴塞进灶膛。", "湿柴", "灶膛"),
-    ("我用那把断剑撬开后院的门。", "断剑", "门"),
-    ("我向马夫打听水井的位置。", None, "马夫"),
-    ("断剑还在鞘里。", None, None),
-    ("我用蒙尘的火钳拨开灰堆。", "火钳", "灰堆"),
 ]
 
 # 12 句计分原文。标注规则 v2 起按中心语评分（rule 6）：item 期望改
@@ -136,9 +136,367 @@ SCORED = [
     ("我用路明非的校徽刷开闸机。", "校徽", "闸机"),
 ]
 
+# 已退役验收批 v2（trial 1791490412586，提交 b5067d7/82d8d41）：评过一次
+# 即退役，结果 strict ITEM 6/10、TGT 7/10，loose TGT 8/10。原文保留在
+# manifest.acceptanceRetired 供审计；这些槽位不再进入任何新数据。
+ACCEPTANCE_RETIRED_V2 = [
+    ("我把火钳握在手里。", "火钳", None),
+    ("我想起了断桨。", None, None),
+    ("我用铜哨示意马夫。", "铜哨", "马夫"),
+    ("我检查门环。", None, "门环"),
+    ("我在原地蹲了一会儿。", None, None),
+    ("我用湿柴塞进灶膛。", "湿柴", "灶膛"),
+    ("我用那把断剑撬开后院的门。", "断剑", "门"),
+    ("我向马夫打听水井的位置。", None, "马夫"),
+    ("断剑还在鞘里。", None, None),
+    ("我用蒙尘的火钳拨开灰堆。", "火钳", "灰堆"),
+]
 
-def build_corpus():
-    """Templates with tracked spans -> (text, item_span, target_span)."""
+# ── 人工编写的训练句式组（本轮新增；每句手写，不做名词排列组合）。
+#    定向覆盖上轮四类错例：人名/物品同框架角色对照、领属结构、修饰语
+#    干扰、短中心语。跨度以原文子串给出，规则 6 只标中心语。──────────
+TRAIN_GROUPS = {
+    # 开启/破坏类动作的多种表达（同义动词，不排列名词）。
+    "open-varied": [
+        ("我用铁钎撬开了井盖。", "铁钎", "井盖"),
+        ("我用撬棍顶起了石板。", "撬棍", "石板"),
+        ("我用发卡捅开了旧锁。", "发卡", "旧锁"),
+        ("我抡起木槌砸开了门闩。", "木槌", "门闩"),
+        ("我用刀片划开了信封。", "刀片", "信封"),
+        ("我掀开了缸盖。", None, "缸盖"),
+    ],
+    # 切断/分离类动作的多种表达；末句无工具版对照。
+    "cut-varied": [
+        ("我用剪刀铰断了风筝线。", "剪刀", "风筝线"),
+        ("我用柴刀砍断了藤蔓。", "柴刀", "藤蔓"),
+        ("我用手锯锯断了横木。", "手锯", "横木"),
+        ("我把缠住的渔线扯断了。", "渔线", None),
+        ("我剪断了捆包裹的细绳。", None, "细绳"),
+    ],
+    # 照明类动作的多种表达；末句含 的-领属修饰。
+    "light-varied": [
+        ("我用煤油灯照亮了储藏室。", "煤油灯", "储藏室"),
+        ("我用火柴点亮了壁灯。", "火柴", "壁灯"),
+        ("我举着手电照向洞口。", "手电", "洞口"),
+        ("我把马灯挂上了车辕。", "马灯", "车辕"),
+        ("我用磷光瓶照出了墙上的记号。", "磷光瓶", "记号"),
+    ],
+    # 放置类：容器/支点作 TGT。
+    "place-varied": [
+        ("我把油纸包塞进了墙洞。", "油纸包", "墙洞"),
+        ("我把铜钱放回了供桌。", "铜钱", "供桌"),
+        ("我把梯子搭在了墙头。", "梯子", "墙头"),
+        ("我把蓑衣盖在水缸上。", "蓑衣", "水缸"),
+        ("我把竹席铺在了阁楼上。", "竹席", "阁楼"),
+    ],
+    # 人物问询的多种表达；打听/请教宾语均 O（规则 8）。
+    "talk-varied": [
+        ("我向更夫打听城门的规矩。", None, "更夫"),
+        ("我找账房先生问了个明白。", None, "账房先生"),
+        ("我和守闸的老倪攀谈起来。", None, "老倪"),
+        ("我向绣娘请教纹样的来历。", None, "绣娘"),
+        ("我向药铺伙计打听郎中的住处。", None, "药铺伙计"),
+    ],
+    # 移动类地点的多种表达。
+    "move-varied": [
+        ("我溜进了西跨院。", None, "西跨院"),
+        ("我从角门折回了前厅。", None, "前厅"),
+        ("我沿着回廊走到了内宅。", None, "内宅"),
+        ("我潜入了地窖。", None, "地窖"),
+        ("我一口气跑上了钟楼。", None, "钟楼"),
+    ],
+    # 领属结构 TGT 侧：领属者 O，中心语 TGT（后院的门→门 的训练面）。
+    "possessor-target": [
+        ("我撬开了柴房的挂锁。", None, "挂锁"),
+        ("我用马蹄铁砸开了马厩的门锁。", "马蹄铁", "门锁"),
+        ("我擦亮了灶王爷的牌位。", "牌位", None),
+        ("我推开了祠堂的角门。", None, "角门"),
+        ("我转动了石塔的兽首。", None, "兽首"),
+    ],
+    # 领属结构 ITEM 侧：人的领属者 O，中心语 ITEM（与 talk 组人物 TGT 对照）。
+    "possessor-item": [
+        ("我用陈师傅的凿子起出了锈钉。", "凿子", "锈钉"),
+        ("我用花匠的枝剪铰掉了枯枝。", "枝剪", "枯枝"),
+        ("我用庙祝的钥匙打开了偏殿的门。", "钥匙", "门"),
+        ("我用守墓人的风灯照了照碑文。", "风灯", "碑文"),
+    ],
+    # 同框架 人/物 角色对照：递给/交给 人→人 TGT；同物品再用作物。
+    "person-object-contrast": [
+        ("我把油布递给了艄公。", None, "艄公"),
+        ("我把油布铺在了筏底。", "油布", "筏底"),
+        ("我向船家打听渡口的远近。", None, "船家"),
+        ("我检查了船底的裂缝。", None, "船底"),
+        ("我把缆绳交给了纤夫。", None, "纤夫"),
+        ("我用缆绳捆紧了货箱。", "缆绳", "货箱"),
+    ],
+    # 提及不标（规则 8）：名词出现但无使用动作。
+    "mention-extended": [
+        ("我的行囊里还剩半卷麻绳。", None, None),
+        ("我忽然想起了当票上的日子。", None, None),
+        ("清单末尾添着火油。", None, None),
+        ("背包侧袋里插着那把伞兵刀。", None, None),
+        ("我对着账本出了半天神。", None, None),
+    ],
+    # 处置类 item-only（无作用对象）；末句 塞回封套→封套 TGT 对照。
+    "item-only-disposition": [
+        ("我把断刀擦干了收好。", "断刀", None),
+        ("我把怀表上了弦。", "怀表", None),
+        ("我把望远镜举起来又放下。", "望远镜", None),
+        ("我把符纸折好塞回了封套。", "符纸", "封套"),
+        ("我把断弦换了下来。", "断弦", None),
+    ],
+    # 检查类动词变体；含 X的Y→X 规则。
+    "inspect-varied": [
+        ("我打量着神龛。", None, "神龛"),
+        ("我翻看了地契。", None, "地契"),
+        ("我凑近端详铜镜的铭文。", None, "铜镜"),
+        ("我仔细检查了锚链的磨损。", None, "锚链"),
+        ("我查验了火漆的印痕。", None, "火漆"),
+    ],
+    # 单字中心语（上轮截断错例的高危形态）。
+    "single-char-heads": [
+        ("我抽出了刀。", "刀", None),
+        ("我点亮了灯。", None, "灯"),
+        ("我推开了虚掩的门。", None, "门"),
+        ("我用竹篙撑住了船。", "竹篙", "船"),
+        ("我把刀插回了鞘。", "刀", "鞘"),
+    ],
+    # 修饰语干扰：的-短语与指示/量词前缀均 O。
+    "modifier-expansion": [
+        ("我用那串钥匙打开了侧门。", "钥匙", "侧门"),
+        ("我用半截铅笔拓下了石刻。", "铅笔", "石刻"),
+        ("我用卷了边的海图找到了水道。", "海图", "水道"),
+        ("我检查了那扇雕花的屏风。", None, "屏风"),
+        ("我用烧焦的木棍拨了拨火堆。", "木棍", "火堆"),
+        ("我用湿透的抹布擦净了碑座。", "抹布", "碑座"),
+    ],
+    # 物品互作用与同物品跨角色。
+    "cross-role-objects": [
+        ("我用马蹄铁敲了敲拴马桩。", "马蹄铁", "拴马桩"),
+        ("我用簪子挑开了封蜡。", "簪子", "封蜡"),
+        ("我用铜盆接住了檐水。", "铜盆", "檐水"),
+        ("我用鼎腿压住了席角。", "鼎腿", "席角"),
+        ("我把鼎腿搬到了廊下。", "鼎腿", "廊下"),
+    ],
+}
+
+# ── 整组划入 dev 的句式组（组内任何句子都不进训练；dev 只作诊断，
+#    衡量跨句式泛化）。槽位与全部训练跨度不相交。────────────────────
+DEV_GROUPS = {
+    # 领属结构（当铺域）：领属者 O + 中心语，覆盖 use/inspect/处置。
+    "dev-possession-shop": [
+        ("我推开了当铺的栅门。", None, "栅门"),
+        ("我撬开了钱柜的铜锁。", None, "铜锁"),
+        ("我用朝奉的戥子称了称香料。", "戥子", "香料"),
+        ("我擦亮了掌柜的烟杆。", "烟杆", None),
+        ("我检查了账台的暗屉。", None, "账台"),
+        ("我把算盘摆正了。", "算盘", None),
+        ("我朝伙计问了问行情。", None, "伙计"),
+        ("我把当票折好收进了钱匣。", "当票", "钱匣"),
+    ],
+    # 人/物 同框架对照（码头域）。
+    "dev-person-object-dock": [
+        ("我把斗笠递给了船娘。", None, "船娘"),
+        ("我把斗笠扣在了米瓮上。", "斗笠", "米瓮"),
+        ("我向舵工打听水路。", None, "舵工"),
+        ("我检查了舵杆的裂纹。", None, "舵杆"),
+        ("我把麻缆盘在了缆桩上。", "麻缆", "缆桩"),
+        ("我用长篙撑开了渡船。", "长篙", "渡船"),
+        ("我把水瓢递给了守滩人。", None, "守滩人"),
+        ("我向守滩人打听潮汛。", None, "守滩人"),
+    ],
+    # 修饰语堆叠：双重 的-短语、指示+量词前缀。
+    "dev-modifier-stack": [
+        ("我用那把磨得发亮的剪子铰开了线头。", "剪子", "线头"),
+        ("我把缺了口的粗碗扣在了案板上。", "粗碗", "案板"),
+        ("我检查了那盏积灰的油盏。", None, "油盏"),
+        ("我用浸过油的火绒引燃了柴堆。", "火绒", "柴堆"),
+        ("我把卷了角的图纸铺平了。", "图纸", None),
+        ("我用那半截蜡笔涂黑了封皮。", "蜡笔", "封皮"),
+        ("我掀开了蒙着白布的笼屉。", None, "笼屉"),
+        ("我用斑驳的铜章在封泥上按了个印。", "铜章", "封泥"),
+    ],
+    # 单字/超短中心语（全新槽位）。
+    "dev-short-heads": [
+        ("我扳开了闸。", None, "闸"),
+        ("我捅了捅灶。", None, "灶"),
+        ("我擦了擦匾。", "匾", None),
+        ("我把小艇系在了桩上。", "小艇", "桩"),
+        ("我用竹钩勾住了檐。", "竹钩", "檐"),
+        ("我拔出了短刃。", "短刃", None),
+        ("我抵住了栅栏。", None, "栅栏"),
+    ],
+}
+
+# ── 封存验收批 v3（100 句手写；槽位与训练/dev/scored/devClassic/退役批
+#    全不相交，程序断言把关）。协议：dev 出现可信改善后，用
+#    run-labeler-trial.mjs --with-acceptance 恰好评一次；本轮不评。
+#    批内故意保留同名词跨角色对照（如 提灯/枣红马/麻绳）与提及-使用
+#    对照（篾刀/油纸伞/稻草），检验规则 2/6/8 的联合泛化。────────────
+ACCEPTANCE_SEALED = {
+    # 人名 vs 物品 同框架角色对照（上轮 马夫→ITEM 类错例）。
+    "ac-person-object": [
+        ("我把咸鱼干递给了货郎。", None, "货郎"),
+        ("我把咸鱼干挂上了房梁。", "咸鱼干", "房梁"),
+        ("我向皮匠打听硝皮的手艺。", None, "皮匠"),
+        ("我和皮匠聊起了鞣皮的方子。", None, "皮匠"),
+        ("我把角子塞给了门房。", None, "门房"),
+        ("我把角子丢进了功德箱。", "角子", "功德箱"),
+        ("我和酒保打听北仓的动静。", None, "酒保"),
+        ("我敲了敲酒保的案几。", None, "案几"),
+        ("我把缰绳抛给了马倌。", None, "马倌"),
+        ("我请说书人讲了一段旧事。", None, "说书人"),
+    ],
+    # 领属结构 TGT 侧（上轮 后院的门→门 错例）。
+    "ac-possessor-target": [
+        ("我推开了磨坊的板门。", None, "板门"),
+        ("我撬开了油坊的侧栅。", None, "侧栅"),
+        ("我用镐头刨开了染坊的门槛。", "镐头", "门槛"),
+        ("我擦亮了山神庙的香案。", "香案", None),
+        ("我用拨火棍捅了捅窑膛。", "拨火棍", "窑膛"),
+        ("我扫净了碾坊的碾盘。", "碾盘", None),
+        ("我用竹梯爬上了谷仓的顶棚。", "竹梯", "顶棚"),
+        ("我检查了驿站的拴马环。", None, "拴马环"),
+        ("我敲响了渡口的铜锣。", None, "铜锣"),
+        ("我压灭了窑口的余烬。", None, "余烬"),
+    ],
+    # 领属结构 ITEM 侧。
+    "ac-possessor-item": [
+        ("我用货郎的扁担挑起了箩筐。", "扁担", "箩筐"),
+        ("我用皮匠的锥子撬开了线结。", "锥子", "线结"),
+        ("我用樵夫的斧头劈开了桦木墩。", "斧头", "桦木墩"),
+        ("我用驿卒的火镰引着了枯草。", "火镰", "枯草"),
+        ("我用磨刀匠的磨石蹭快了镰刃。", "磨石", "镰刃"),
+        ("我用香客的蒲团垫住了龛脚。", "蒲团", "龛脚"),
+        ("我用篾匠的篾刀削尖了竹签。", "篾刀", "竹签"),
+        ("我用门房的提灯照见了照壁。", "提灯", "照壁"),
+        ("我用说书人的醒木拍了拍桌角。", "醒木", "桌角"),
+        ("我用酒保的银钎凿开了冰面。", "银钎", "冰面"),
+    ],
+    # 修饰语干扰（上轮 蒙尘的火钳→蒙 类错例）。
+    "ac-modifier-interference": [
+        ("我用锃亮的撬钩别开了铜闩。", "撬钩", "铜闩"),
+        ("我把缺了口的陶碗摞了起来。", "陶碗", None),
+        ("我用沾满油污的火叉拨旺了炉膛。", "火叉", "炉膛"),
+        ("我检查了那面描金的插屏。", None, "插屏"),
+        ("我用烧掉了半边的蒲扇扇旺了炭盆。", "蒲扇", "炭盆"),
+        ("我用豁了口的木瓢搅动了酒酿。", "木瓢", "酒酿"),
+        ("我把打了补丁的斗篷叠好了。", "斗篷", None),
+        ("我用缠着布条的木杠顶住了书案。", "木杠", "书案"),
+        ("我用褪了色的红线捆好了书匣。", "红线", "书匣"),
+        ("我检查了那盏罩着纱的宫灯。", None, "宫灯"),
+    ],
+    # 短中心语（上轮 铜/灰/断剑 截断类错例）。
+    "ac-short-heads": [
+        ("我用湿麻绳捆紧了苇席。", "麻绳", "苇席"),
+        ("我推倒了那堵矮墙。", None, "矮墙"),
+        ("我把谷糠拌进了槽。", "谷糠", "槽"),
+        ("我用铜钩勾起了井绳。", "铜钩", "井绳"),
+        ("我搬开了窖口的青石。", None, "青石"),
+        ("我卸下了门板。", None, "门板"),
+        ("我把稻草添进了圈。", "稻草", "圈"),
+        ("我扣上了窗板。", None, "窗板"),
+        ("我用木杵舂起了谷。", "木杵", "谷"),
+        ("我插上了闩。", None, "闩"),
+    ],
+    # 处置类 item-only。
+    "ac-item-only": [
+        ("我把马鞭甩得啪啪响。", "马鞭", None),
+        ("我把绑腿扎紧了。", "绑腿", None),
+        ("我把木哨吹响了。", "木哨", None),
+        ("我把褡裢挎好了。", "褡裢", None),
+        ("我把舆图摊开又卷起。", "舆图", None),
+        ("我把算筹摆弄了半天。", "算筹", None),
+        ("我磕了磕旱烟锅。", "旱烟锅", None),
+        ("我把油纸伞撑开又收拢。", "油纸伞", None),
+        ("我把墨条研开了。", "墨条", None),
+        ("我把护身符攥出了汗。", "护身符", None),
+    ],
+    # 提及不标（含与同批使用句的跨角色对照：褡裢/篾刀/油纸伞/稻草/铜锣）。
+    "ac-mention": [
+        ("我想起了槽头的那把铡刀。", None, None),
+        ("我的褡裢还挂在钉子上。", None, None),
+        ("篾刀就别在工具筐里。", None, None),
+        ("伞架上还插着那把油纸伞。", None, None),
+        ("谷仓里堆着陈年的稻草。", None, None),
+        ("我惦记着没买成的毡靴。", None, None),
+        ("铜锣声还在巷子里回响。", None, None),
+        ("我盘算着找谁借盘缠。", None, None),
+        ("药锄靠在篱笆边没人动。", None, None),
+        ("我盯着账目发了半天怔。", None, None),
+    ],
+    # 同一动作的多种表达（开启/切断/捆扎/撬移）。
+    "ac-action-paraphrase": [
+        ("我扛着原木撞开了柴门。", "原木", "柴门"),
+        ("我用短斧砸开了栅栏门。", "短斧", "栅栏门"),
+        ("我抡圆了锤子砸开了砖垛。", "锤子", "砖垛"),
+        ("我用镰刀削断了芦苇。", "镰刀", "芦苇"),
+        ("我用石头砸弯了插销。", "石头", "插销"),
+        ("我用麻绳绞紧了木筏。", "麻绳", "木筏"),
+        ("我用皮条箍紧了陶瓮。", "皮条", "陶瓮"),
+        ("我用撬杠挪开了堵路的顽石。", "撬杠", "顽石"),
+        ("我用扁担挑开了门帘。", "扁担", "门帘"),
+        ("我用竹竿探到了河床。", "竹竿", "河床"),
+    ],
+    # 检查类动词变体（查验/端详/翻检/清点/掂/试）。
+    "ac-inspect-varied": [
+        ("我查验了染缸的釉色。", None, "染缸"),
+        ("我端详了壶身的款识。", None, "壶身"),
+        ("我翻检了樟木箱的夹层。", None, "樟木箱"),
+        ("我打量了套着新缰的马。", None, "马"),
+        ("我清点了滞销的粗盐。", None, "粗盐"),
+        ("我嗅了嗅坛口。", None, "坛口"),
+        ("我掂了掂那锭官银。", None, "官银"),
+        ("我试了试弩机。", None, "弩机"),
+        ("我翻看了账册的末页。", None, "账册"),
+        ("我查验了橱门的合页。", None, "橱门"),
+    ],
+    # 批内跨角色对照（同名词在不同句里分属 ITEM/TGT/提及）。
+    "ac-cross-role": [
+        ("我用瓦盆接住了檐溜。", "瓦盆", "檐溜"),
+        ("我把瓦盆擦干扣在了案头。", "瓦盆", "案头"),
+        ("我把提灯挂上了门楼。", "提灯", "门楼"),
+        ("我从门楼底下取回了提灯。", "提灯", None),
+        ("我向货郎讨了碗凉茶。", None, "货郎"),
+        ("我把凉茶泼在了车辙里。", "凉茶", "车辙"),
+        ("我刷洗了马槽。", None, "马槽"),
+        ("我牵出了枣红马。", "枣红马", None),
+        ("我用鬃刷刷顺了枣红马。", "鬃刷", "枣红马"),
+        ("我用鬃刷扫了扫鞍子。", "鬃刷", "鞍子"),
+    ],
+}
+
+# 逐字诊断的错误类别（Python 与浏览器共用同一分类口径，见 diagnose()）。
+ERROR_CLASSES = [
+    "ok",                # 严格命中（或双方皆空）
+    "false-positive",    # 金标无跨度、模型给出跨度
+    "missed-o",          # 有金标、模型整段预测成 O
+    "missed-mixed",      # 有金标、模型未给出该字段跨度（非纯 O）
+    "wrong-field",       # 金标字符被预测为另一字段
+    "truncated-b",       # 实体内部又出现 B-，截断了跨度（首组胜出）
+    "truncated-o",       # 实体内部出现 O，截断了跨度
+    "partial",           # 与金标相交但互不包含
+    "extended",          # 完整覆盖金标但越界
+    "modifier-as-head",  # 模型跨度完全落在中心语前的修饰/领属区（的 分隔）
+    "displaced",         # 与金标不相交、也不落在修饰区
+]
+
+
+def rows_of(groups):
+    """{group: [(text, item, target)...]} -> flat [(group, text, item, target)]."""
+    return [(g, *row) for g, rows in groups.items() for row in rows]
+
+
+def locate(text, span):
+    """Substring -> unique char range; asserts the occurrence is unique."""
+    n = text.count(span)
+    assert n == 1, f"span {span!r} occurs {n}x in {text!r}; gold would be ambiguous"
+    start = text.index(span)
+    return (start, start + len(span))
+
+
+def build_template_corpus():
+    """Templates with tracked spans -> (text, item_range, target_range)."""
     corpus = []
 
     def emit(segments):
@@ -236,15 +594,78 @@ def build_corpus():
     for loc in LOCS:
         emit([("lit", "我走进昏暗的"), ("TGT", loc), ("lit", "。")])
 
-    # 排除全部计分句、开发句与验收句原文；断言干净。
+    # 排除全部计分句、开发句、验收句原文；断言干净。
     excluded = (
         {text for text, _, _ in SCORED}
-        | {text for text, _, _ in DEV}
-        | {text for text, _, _ in ACCEPTANCE}
+        | {text for text, _, _ in DEV_CLASSIC}
+        | {text for text, _, _ in ACCEPTANCE_RETIRED_V2}
+        | {text for _, text, _, _ in rows_of(DEV_GROUPS)}
+        | {text for _, text, _, _ in rows_of(ACCEPTANCE_SEALED)}
     )
     corpus = [(text, i, t) for text, i, t in corpus if text not in excluded]
     assert len({text for text, _, _ in corpus}) == len(corpus)
     return corpus
+
+
+def check_discipline(template_corpus):
+    """程序化把关：验收批/分组 dev 与训练数据的槽位、原文均不相交。
+
+    历史交集（devClassic/scored 的 雕像/壁画/暗门/剑）在 ec4aa02 记录在
+    案，属遗留问题，不在此约束范围内。
+    """
+    template_spans = set()
+    for text, item, target in template_corpus:
+        template_spans.add(text[item[0]: item[1]] if item else None)
+        template_spans.add(text[target[0]: target[1]] if target else None)
+    template_spans.discard(None)
+
+    handwritten_spans = {
+        span for _, text, item, target in rows_of(TRAIN_GROUPS)
+        for span in (item, target) if span
+    }
+    dev_classic_spans = {s for _, i, t in DEV_CLASSIC for s in (i, t) if s}
+    scored_spans = {s for _, i, t in SCORED for s in (i, t) if s}
+    retired_spans = {s for _, i, t in ACCEPTANCE_RETIRED_V2 for s in (i, t) if s}
+    dev_group_spans = {
+        span for _, text, item, target in rows_of(DEV_GROUPS)
+        for span in (item, target) if span
+    }
+    sealed_spans = {
+        span for _, text, item, target in rows_of(ACCEPTANCE_SEALED)
+        for span in (item, target) if span
+    }
+
+    def overlap(name, a, b):
+        inter = a & b
+        assert not inter, f"slot discipline violated ({name}): {sorted(inter)}"
+
+    overlap("handwritten-train vs templates", handwritten_spans, template_spans)
+    overlap("handwritten-train vs devClassic", handwritten_spans, dev_classic_spans)
+    overlap("handwritten-train vs scored", handwritten_spans, scored_spans)
+    overlap("devGroups vs train (templates+handwritten)", dev_group_spans, template_spans | handwritten_spans)
+    overlap("devGroups vs scored", dev_group_spans, scored_spans)
+    overlap("devGroups vs devClassic", dev_group_spans, dev_classic_spans)
+    overlap(
+        "sealed acceptance vs everything trainable/evaluated",
+        sealed_spans,
+        template_spans | handwritten_spans | dev_group_spans | dev_classic_spans | scored_spans | retired_spans,
+    )
+
+    trained_texts = (
+        {text for text, _, _ in template_corpus}
+        | {text for _, text, _, _ in rows_of(TRAIN_GROUPS)}
+    )
+    eval_texts = (
+        {text for text, _, _ in DEV_CLASSIC}
+        | {text for text, _, _ in SCORED}
+        | {text for _, text, _, _ in rows_of(DEV_GROUPS)}
+        | {text for _, text, _, _ in rows_of(ACCEPTANCE_SEALED)}
+        | {text for text, _, _ in ACCEPTANCE_RETIRED_V2}
+    )
+    assert not (trained_texts & eval_texts), "verbatim sentence leaked across splits"
+    assert len({t for _, t, _, _ in rows_of(ACCEPTANCE_SEALED)}) == sum(
+        len(rows) for rows in ACCEPTANCE_SEALED.values()
+    )
 
 
 def spans_to_tags(text, item, target, tokenizer):
@@ -297,13 +718,99 @@ def tags_to_spans(text, offsets, tag_ids):
     return spans["ITEM"], spans["TGT"]
 
 
-def evaluate(model, tokenizer, cases):
+def diagnose_field(text, gold, pred, other_gold, token_rows, field, other):
+    """单个字段的错误归类（与 run-labeler-trial.mjs 的 diagnoseField 同口径）。
+
+    token_rows: [{"start","end","gold","pred"}]，gold/pred 为 "O"/"B-ITEM"/...
+    """
+    if gold is None and pred is None:
+        return "ok"
+    gold_tokens = [
+        row for row in token_rows
+        if gold and row["start"] < gold[1] and gold[0] < row["end"]
+    ]
+    if gold is None:
+        return "false-positive"
+    if pred is None:
+        preds = {row["pred"] for row in gold_tokens}
+        if preds == {"O"}:
+            return "missed-o"
+        if any(p.endswith(other) for p in preds):
+            return "wrong-field"
+        return "missed-mixed"
+    if pred == gold:
+        return "ok"
+    if pred[0] < gold[1] and gold[0] < pred[1]:  # 相交
+        inside = gold[0] <= pred[0] and pred[1] <= gold[1]
+        if inside:
+            mid_b = any(
+                row["gold"] == f"I-{field}" and row["pred"] == f"B-{field}"
+                for row in gold_tokens
+            )
+            if mid_b:
+                return "truncated-b"
+            if any(row["pred"] == "O" for row in gold_tokens):
+                return "truncated-o"
+        return "partial"
+    if gold[0] <= pred[0] and pred[1] <= gold[1]:
+        return "partial"
+    if other_gold and pred[0] < other_gold[1] and other_gold[0] < pred[1]:
+        return "wrong-field"
+    if pred[1] <= gold[0]:
+        gap = text[pred[1]: gold[0]]
+        if "的" in gap or (text[pred[0]: pred[1]].endswith("的")):
+            return "modifier-as-head"
+        return "displaced"
+    return "displaced"
+
+
+def diagnose(text, item, target, offsets, tag_ids, probs):
+    """整句逐 token 诊断：逐字金标/预测/概率 + 分字段错误归类。"""
+    gold_spans = {}
+    for name, expected in (("ITEM", item), ("TGT", target)):
+        gold_spans[name] = (
+            (text.index(expected), text.index(expected) + len(expected)) if expected else None
+        )
+    token_rows = []
+    for (token_start, token_end), tag_id, prob_row in zip(offsets, tag_ids, probs):
+        if token_end == 0:
+            continue  # [CLS]/[SEP]
+        mid = (token_start + token_end) // 2
+        gold_tag = "O"
+        for name in ("ITEM", "TGT"):
+            span = gold_spans[name]
+            if span and span[0] <= mid < span[1]:
+                gold_tag = f"{'B' if mid == span[0] else 'I'}-{name}"
+                break
+        token_rows.append({
+            "start": token_start,
+            "end": token_end,
+            "ch": text[token_start:token_end],
+            "gold": gold_tag,
+            "pred": TAGS[tag_id],
+            "pPred": round(float(prob_row[tag_id]), 4),
+            "pGold": round(float(prob_row[TAGS.index(gold_tag)]), 4),
+        })
+    pred_item, pred_target = tags_to_spans(text, offsets, tag_ids)
+    return {
+        "tokens": token_rows,
+        "item": diagnose_field(text, gold_spans["ITEM"], pred_item, gold_spans["TGT"], token_rows, "ITEM", "TGT"),
+        "target": diagnose_field(text, gold_spans["TGT"], pred_target, gold_spans["ITEM"], token_rows, "TGT", "ITEM"),
+        "predItem": text[pred_item[0]: pred_item[1]] if pred_item else None,
+        "predTarget": text[pred_target[0]: pred_target[1]] if pred_target else None,
+    }
+
+
+def evaluate(model, tokenizer, cases, diagnose_rows=False):
+    """返回 (strict, loose, both_correct, rows)；rows 含可选逐字诊断。"""
     model.eval()
     strict = {"ITEM": [0, 0], "TGT": [0, 0]}
     loose = {"ITEM": [0, 0], "TGT": [0, 0]}
+    both = [0, 0]
     rows = []
     with torch.no_grad():
-        for text, item, target in cases:
+        for case in cases:
+            text, item, target = case["text"], case["item"], case["target"]
             expected_spans = {}
             for name, expected in (("ITEM", item), ("TGT", target)):
                 expected_spans[name] = (
@@ -316,9 +823,11 @@ def evaluate(model, tokenizer, cases):
                 attention_mask=torch.tensor([encoded["attention_mask"]]),
                 token_type_ids=torch.tensor([encoded["token_type_ids"]]),
             ).logits[0]
+            probs = torch.softmax(logits, dim=-1)
             tag_ids = logits.argmax(-1).tolist()[: len(offsets)]
             pred_item, pred_target = tags_to_spans(text, offsets, tag_ids)
             row = {"text": text, "predItem": None, "predTarget": None}
+            item_hit = target_hit = None
             for name, expected, predicted in (
                 ("ITEM", expected_spans["ITEM"], pred_item),
                 ("TGT", expected_spans["TGT"], pred_target),
@@ -328,18 +837,53 @@ def evaluate(model, tokenizer, cases):
                 if predicted is None and expected is None:
                     strict[name][0] += 1
                     loose[name][0] += 1
+                    hit = True
                 elif predicted is not None and expected is not None:
-                    pred_text = text[predicted[0] : predicted[1]]
+                    pred_text = text[predicted[0]: predicted[1]]
                     if name == "ITEM":
                         row["predItem"] = pred_text
                     else:
                         row["predTarget"] = pred_text
-                    if predicted == expected:
-                        strict[name][0] += 1
+                    hit = predicted == expected
+                    strict[name][0] += int(hit)
                     if predicted[0] < expected[1] and expected[0] < predicted[1]:
                         loose[name][0] += 1
+                else:
+                    hit = False
+                if name == "ITEM":
+                    item_hit = hit
+                else:
+                    target_hit = hit
+            both[1] += 1
+            both[0] += int(item_hit and target_hit)
+            row["itemStrict"] = item_hit
+            row["targetStrict"] = target_hit
+            if diagnose_rows:
+                detail = diagnose(
+                    text, item, target, offsets, tag_ids, probs[: len(offsets)].tolist()
+                )
+                row["diagnosis"] = {"item": detail["item"], "target": detail["target"]}
+                row["tokens"] = detail["tokens"]
             rows.append(row)
-    return strict, loose, rows
+    return strict, loose, both, rows
+
+
+def print_diagnostics(name, rows):
+    """把逐字诊断打印成可读记录：错位 token + 分字段归类。"""
+    print(f"  [{name}] per-token diagnostics (gold != pred only):")
+    for row in rows:
+        mismatches = [
+            f"{t['ch']}:{t['gold']}>{t['pred']}(p={t['pPred']:.2f},pGold={t['pGold']:.2f})"
+            for t in row.get("tokens", [])
+            if t["gold"] != t["pred"]
+        ]
+        diag = row.get("diagnosis", {})
+        print(
+            f"    {row['text']} item={row['predItem']} target={row['predTarget']} "
+            f"| {diag.get('item')}/{diag.get('target')}"
+        )
+        if mismatches:
+            print(f"      {'  '.join(mismatches)}")
 
 
 def main():
@@ -353,16 +897,37 @@ def main():
     artifacts_dir = frontend_root.parent / "artifacts" / "benchmark"
     (out_dir / "onnx").mkdir(parents=True, exist_ok=True)
 
-    random.seed(SEED)
-    corpus = build_corpus()
+    rng = random.Random(SEED)
+    template_corpus = build_template_corpus()
+    handwritten = rows_of(TRAIN_GROUPS)
+    corpus = [(text, locate(text, i) if i else None, locate(text, t) if t else None)
+              for _, text, i, t in handwritten]
+    corpus += template_corpus
     counts = {}
     for text, item, target in corpus:
         key = f"item={item is not None},target={target is not None}"
         counts[key] = counts.get(key, 0) + 1
-    print(f"corpus: {len(corpus)} sentences {counts}")
-    rng = random.Random(SEED)
-    rng.shuffle(corpus)
+    print(f"pool: {len(corpus)} sentences (templates {len(template_corpus)} + hand-written {len(corpus) - len(template_corpus)}) {counts}")
 
+    # 划分先于写盘：manifest 里的 train/validation 就是实际训练/留出集。
+    rng.shuffle(corpus)
+    val_n = max(1, len(corpus) // 10)
+    val_sentences, train_sentences = corpus[:val_n], corpus[val_n:]
+    print(f"split: train={len(train_sentences)} validation={len(val_sentences)}")
+
+    check_discipline(template_corpus)
+
+    def as_rows(rows):
+        return [
+            {
+                "text": text,
+                "item": text[item[0]: item[1]] if item else None,
+                "target": text[target[0]: target[1]] if target else None,
+            }
+            for text, item, target in rows
+        ]
+
+    sealed_rows = sum(len(rows) for rows in ACCEPTANCE_SEALED.values())
     manifest = {
         "seed": SEED,
         "labelingRules": [
@@ -371,42 +936,98 @@ def main():
             "inspect: inspected object=TGT (no ITEM); 检查X的Y -> X=TGT, Y=O",
             "move/npc_talk: location/person=TGT",
             "titles stay in person spans; stripping is code-side",
-            "rule 6 (v2): spans are the HEAD NOUN; modifiers stripped and O — "
-            "生锈的铁门钥匙->铁门钥匙, 那扇书架后的暗门->暗门, 那把断剑->断剑; "
+            "rule 6 (v2): spans are the HEAD NOUN; 的-phrases and 那/半截-style "
+            "prefixes are O — 生锈的铁门钥匙->铁门钥匙, 后院的门->门 (possessor is "
+            "a modifier); compounds without 的 are whole nouns (旧锁); "
             "training and span scoring both follow it",
             "at most one span per field",
             "rule 8: mentioned-but-not-used objects are O (tag follows the verb phrase, not the noun)",
+            "rule 9 (authoring): no body-part instruments, no 借/买 frames, "
+            "no two-way-defensible gold spans",
         ],
-        "acceptance": {
-            "preRegistered": "acceptance batch v2 (10 fresh sentences): strict span match >= 90% per field",
+        "acceptanceProtocol": {
+            "preRegistered": "sealed acceptance batch (100 hand-written sentences, fresh slots): "
+                             "strict span match >= 90% per field",
             "component": "both fields pass AND end-to-end <= 4s per call",
-            "protocol": "dev batch is for debugging/comparison only; acceptance v2 evaluated once after this coverage round; acceptance v1 was already evaluated once and is retired",
+            "alsoReported": "both-fields-correct rate (non-gating)",
+            "protocol": "dev batches (classic 10 + grouped) are diagnostics only; the sealed batch "
+                        "is evaluated exactly once via run-labeler-trial.mjs --with-acceptance after "
+                        "dev results justify it; v1 (ec4aa02) and v2 (b5067d7) were each evaluated "
+                        "once and retired",
         },
-        "counts": counts,
-        "dev": [
-            {"text": text, "item": item, "target": target} for text, item, target in DEV
+        "attributionNote": "铁门钥匙 case: the pre-coverage model output 生锈, the post-coverage model "
+                           "outputs 铁门钥匙 — model and scoring rule (rule 6 v2) changed together in "
+                           "ec4aa02/b5067d7, so the flip is joint attribution, not 'the rule fixed it'. "
+                           "Historical reports keep their original scores.",
+        "counts": {
+            "templates": len(template_corpus),
+            "handwrittenTrain": len(handwritten),
+            "train": len(train_sentences),
+            "validation": len(val_sentences),
+            "distribution": counts,
+            "devClassic": len(DEV_CLASSIC),
+            "devGroups": {name: len(rows) for name, rows in DEV_GROUPS.items()},
+            "scored": len(SCORED),
+            "acceptanceSealed": {name: len(rows) for name, rows in ACCEPTANCE_SEALED.items()},
+            "acceptanceRetiredV2": len(ACCEPTANCE_RETIRED_V2),
+        },
+        "devClassic": [{"text": text, "item": item, "target": target} for text, item, target in DEV_CLASSIC],
+        "devGroups": [
+            {"group": name, "sentences": [{"text": t, "item": i, "target": g} for t, i, g in rows]}
+            for name, rows in DEV_GROUPS.items()
         ],
+        "scored": [{"text": text, "item": item, "target": target} for text, item, target in SCORED],
+        "trainHandwrittenGroups": [
+            {"group": name, "sentences": [{"text": t, "item": i, "target": g} for t, i, g in rows]}
+            for name, rows in TRAIN_GROUPS.items()
+        ],
+        "train": as_rows(train_sentences),
+        "validation": as_rows(val_sentences),
         "acceptance": [
-            {"text": text, "item": item, "target": target} for text, item, target in ACCEPTANCE
+            {"group": name, "sentences": [{"text": t, "item": i, "target": g} for t, i, g in rows]}
+            for name, rows in ACCEPTANCE_SEALED.items()
         ],
-        "scored": [
-            {"text": text, "item": item, "target": target} for text, item, target in SCORED
-        ],
-        "train": [
-            {
-                "text": text,
-                "item": text[item[0] : item[1]] if item else None,
-                "target": text[target[0] : target[1]] if target else None,
-            }
-            for text, item, target in corpus
-        ],
-        "note": "scored (12) + dev (10) + acceptance (10) sentences all excluded from training",
+        "acceptanceRetired": {
+            "v2": {
+                "evaluatedAt": "trial 1791490412586 (commits b5067d7/82d8d41); strict ITEM 6/10, "
+                               "TGT 7/10, loose TGT 8/10, both-fields 6/10 -> rejected; retired",
+                "sentences": [{"text": text, "item": item, "target": target}
+                              for text, item, target in ACCEPTANCE_RETIRED_V2],
+            },
+            "v1": "evaluated once at ec4aa02-era trial; retired (see 82d8d41 for the v1/v2 mixup)",
+        },
+        "errorTaxonomy": {
+            "ok": "exact span match (or both empty)",
+            "false-positive": "gold empty, model emitted a span",
+            "missed-o": "gold present, all its tokens predicted O",
+            "missed-mixed": "gold present, no span decoded, not purely O",
+            "wrong-field": "gold characters captured by the OTHER field",
+            "truncated-b": "another B- fires inside the entity; first group wins -> span cut",
+            "truncated-o": "O predicted inside the entity -> span cut",
+            "partial": "overlaps gold but neither contains the other",
+            "extended": "covers gold but over-extends",
+            "modifier-as-head": "predicted span sits entirely in the pre-head modifier/possessor zone (的-separated)",
+            "displaced": "no overlap with gold and not in the modifier zone",
+        },
+        "note": "single data contract: run-labeler-trial.mjs loads THIS file (sha256 recorded in its "
+                "report); this script reads the file back for its own evaluation. train/validation are "
+                "the actual split; devClassic/devGroups/scored/acceptance are excluded from training.",
     }
     manifest_path = artifacts_dir / "span-labeler-corpus.json"
     manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"corpus manifest saved: {manifest_path}")
     if export_only:
         return
+
+    # 读回同一份数据文件做评估——Python 与浏览器逐字节同源。
+    disk = json.loads(manifest_path.read_text(encoding="utf-8"))
+    dev_classic = disk["devClassic"]
+    dev_group_cases = [
+        {**row, "group": grp["group"]} for grp in disk["devGroups"] for row in grp["sentences"]
+    ]
+    scored = disk["scored"]
+    # disk["acceptance"] 是封存批：评一次的协议归浏览器 trial --with-acceptance，
+    # 训练侧刻意不加载、不评估。
 
     snapshot = positional[0]
     torch.manual_seed(SEED)
@@ -421,12 +1042,9 @@ def main():
     model.config._attn_implementation = "eager"  # 稳定 ONNX 导出
 
     features = []
-    for text, item, target in corpus:
+    for text, item, target in train_sentences:
         input_ids, labels = spans_to_tags(text, item, target, tokenizer)
         features.append((text, input_ids, labels))
-    rng.shuffle(features)
-    val_n = max(1, len(features) // 10)
-    val, train = features[:val_n], features[val_n:]
 
     def pad_batch(batch):
         length = min(MAX_LEN, max(len(ids) for _, ids, _ in batch))
@@ -444,14 +1062,19 @@ def main():
             torch.tensor(label_ids),
         )
 
-    optimizer = torch.optim.AdamW(model.parameters(), lr=LR, weight_decay=0.01)
+    val_features = []
+    for text, item, target in val_sentences:
+        input_ids, labels = spans_to_tags(text, item, target, tokenizer)
+        val_features.append((text, input_ids, labels))
     ce = torch.nn.CrossEntropyLoss(ignore_index=-100)
+
+    optimizer = torch.optim.AdamW(model.parameters(), lr=LR, weight_decay=0.01)
     model.train()
     for epoch in range(1, EPOCHS + 1):
-        rng.shuffle(train)
+        rng.shuffle(features)
         total = 0.0
-        for start in range(0, len(train), BATCH):
-            batch = train[start : start + BATCH]
+        for start in range(0, len(features), BATCH):
+            batch = features[start: start + BATCH]
             input_ids, attention, token_types, label_ids = pad_batch(batch)
             logits = model(input_ids=input_ids, attention_mask=attention, token_type_ids=token_types).logits
             loss = ce(logits.reshape(-1, len(TAGS)), label_ids.reshape(-1))
@@ -459,15 +1082,30 @@ def main():
             loss.backward()
             optimizer.step()
             total += loss.item() * len(batch)
-        print(f"epoch {epoch}: loss={total / len(train):.4f}")
+        val_total = 0.0
+        for start in range(0, len(val_features), BATCH):
+            batch = val_features[start: start + BATCH]
+            input_ids, attention, token_types, label_ids = pad_batch(batch)
+            with torch.no_grad():
+                logits = model(input_ids=input_ids, attention_mask=attention, token_type_ids=token_types).logits
+                val_total += ce(logits.reshape(-1, len(TAGS)), label_ids.reshape(-1)).item() * len(batch)
+        print(f"epoch {epoch}: loss={total / len(features):.4f} val_loss={val_total / len(val_features):.4f}")
 
-    for name, cases in (("dev", DEV), ("acceptance", ACCEPTANCE), ("scored", SCORED)):
-        strict, loose, rows = evaluate(model, tokenizer, cases)
+    for name, cases, detail in (
+        ("devClassic", dev_classic, True),
+        ("devGroups", dev_group_cases, True),
+        ("scored", scored, False),
+    ):
+        strict, loose, both, rows = evaluate(model, tokenizer, cases, diagnose_rows=detail)
         for field in ("ITEM", "TGT"):
             s, l = strict[field], loose[field]
             print(f"{name} {field}: strict={s[0]}/{s[1]} loose={l[0]}/{l[1]}")
-        for row in rows:
-            print(f"  [{name}] {row['text']} item={row['predItem']} target={row['predTarget']}")
+        print(f"{name} both-fields strict: {both[0]}/{both[1]}")
+        if detail:
+            print_diagnostics(name, rows)
+        else:
+            for row in rows:
+                print(f"  [{name}] {row['text']} item={row['predItem']} target={row['predTarget']}")
 
     dummy = tokenizer("我用铜钥匙打开大门。", truncation=True, max_length=MAX_LEN, return_offsets_mapping=True)
     seq = len(dummy["input_ids"])

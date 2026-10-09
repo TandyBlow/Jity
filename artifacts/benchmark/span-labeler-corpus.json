@@ -6,69 +6,52 @@
     "inspect: inspected object=TGT (no ITEM); 检查X的Y -> X=TGT, Y=O",
     "move/npc_talk: location/person=TGT",
     "titles stay in person spans; stripping is code-side",
-    "rule 6 (v2): spans are the HEAD NOUN; modifiers stripped and O — 生锈的铁门钥匙->铁门钥匙, 那扇书架后的暗门->暗门, 那把断剑->断剑; training and span scoring both follow it",
+    "rule 6 (v2): spans are the HEAD NOUN; 的-phrases and 那/半截-style prefixes are O — 生锈的铁门钥匙->铁门钥匙, 后院的门->门 (possessor is a modifier); compounds without 的 are whole nouns (旧锁); training and span scoring both follow it",
     "at most one span per field",
-    "rule 8: mentioned-but-not-used objects are O (tag follows the verb phrase, not the noun)"
+    "rule 8: mentioned-but-not-used objects are O (tag follows the verb phrase, not the noun)",
+    "rule 9 (authoring): no body-part instruments, no 借/买 frames, no two-way-defensible gold spans"
   ],
-  "acceptance": [
-    {
-      "text": "我把火钳握在手里。",
-      "item": "火钳",
-      "target": null
-    },
-    {
-      "text": "我想起了断桨。",
-      "item": null,
-      "target": null
-    },
-    {
-      "text": "我用铜哨示意马夫。",
-      "item": "铜哨",
-      "target": "马夫"
-    },
-    {
-      "text": "我检查门环。",
-      "item": null,
-      "target": "门环"
-    },
-    {
-      "text": "我在原地蹲了一会儿。",
-      "item": null,
-      "target": null
-    },
-    {
-      "text": "我用湿柴塞进灶膛。",
-      "item": "湿柴",
-      "target": "灶膛"
-    },
-    {
-      "text": "我用那把断剑撬开后院的门。",
-      "item": "断剑",
-      "target": "门"
-    },
-    {
-      "text": "我向马夫打听水井的位置。",
-      "item": null,
-      "target": "马夫"
-    },
-    {
-      "text": "断剑还在鞘里。",
-      "item": null,
-      "target": null
-    },
-    {
-      "text": "我用蒙尘的火钳拨开灰堆。",
-      "item": "火钳",
-      "target": "灰堆"
-    }
-  ],
-  "counts": {
-    "item=True,target=True": 438,
-    "item=False,target=True": 86,
-    "item=False,target=False": 35,
-    "item=True,target=False": 50
+  "acceptanceProtocol": {
+    "preRegistered": "sealed acceptance batch (100 hand-written sentences, fresh slots): strict span match >= 90% per field",
+    "component": "both fields pass AND end-to-end <= 4s per call",
+    "alsoReported": "both-fields-correct rate (non-gating)",
+    "protocol": "dev batches (classic 10 + grouped) are diagnostics only; the sealed batch is evaluated exactly once via run-labeler-trial.mjs --with-acceptance after dev results justify it; v1 (ec4aa02) and v2 (b5067d7) were each evaluated once and retired"
   },
-  "dev": [
+  "attributionNote": "铁门钥匙 case: the pre-coverage model output 生锈, the post-coverage model outputs 铁门钥匙 — model and scoring rule (rule 6 v2) changed together in ec4aa02/b5067d7, so the flip is joint attribution, not 'the rule fixed it'. Historical reports keep their original scores.",
+  "counts": {
+    "templates": 609,
+    "handwrittenTrain": 77,
+    "train": 618,
+    "validation": 68,
+    "distribution": {
+      "item=True,target=True": 476,
+      "item=False,target=True": 113,
+      "item=True,target=False": 57,
+      "item=False,target=False": 40
+    },
+    "devClassic": 10,
+    "devGroups": {
+      "dev-possession-shop": 8,
+      "dev-person-object-dock": 8,
+      "dev-modifier-stack": 8,
+      "dev-short-heads": 7
+    },
+    "scored": 12,
+    "acceptanceSealed": {
+      "ac-person-object": 10,
+      "ac-possessor-target": 10,
+      "ac-possessor-item": 10,
+      "ac-modifier-interference": 10,
+      "ac-short-heads": 10,
+      "ac-item-only": 10,
+      "ac-mention": 10,
+      "ac-action-paraphrase": 10,
+      "ac-inspect-varied": 10,
+      "ac-cross-role": 10
+    },
+    "acceptanceRetiredV2": 10
+  },
+  "devClassic": [
     {
       "text": "我用火把照亮地下藏书室。",
       "item": "火把",
@@ -118,6 +101,183 @@
       "text": "我用蜡烛照亮壁画。",
       "item": "蜡烛",
       "target": "壁画"
+    }
+  ],
+  "devGroups": [
+    {
+      "group": "dev-possession-shop",
+      "sentences": [
+        {
+          "text": "我推开了当铺的栅门。",
+          "item": null,
+          "target": "栅门"
+        },
+        {
+          "text": "我撬开了钱柜的铜锁。",
+          "item": null,
+          "target": "铜锁"
+        },
+        {
+          "text": "我用朝奉的戥子称了称香料。",
+          "item": "戥子",
+          "target": "香料"
+        },
+        {
+          "text": "我擦亮了掌柜的烟杆。",
+          "item": "烟杆",
+          "target": null
+        },
+        {
+          "text": "我检查了账台的暗屉。",
+          "item": null,
+          "target": "账台"
+        },
+        {
+          "text": "我把算盘摆正了。",
+          "item": "算盘",
+          "target": null
+        },
+        {
+          "text": "我朝伙计问了问行情。",
+          "item": null,
+          "target": "伙计"
+        },
+        {
+          "text": "我把当票折好收进了钱匣。",
+          "item": "当票",
+          "target": "钱匣"
+        }
+      ]
+    },
+    {
+      "group": "dev-person-object-dock",
+      "sentences": [
+        {
+          "text": "我把斗笠递给了船娘。",
+          "item": null,
+          "target": "船娘"
+        },
+        {
+          "text": "我把斗笠扣在了米瓮上。",
+          "item": "斗笠",
+          "target": "米瓮"
+        },
+        {
+          "text": "我向舵工打听水路。",
+          "item": null,
+          "target": "舵工"
+        },
+        {
+          "text": "我检查了舵杆的裂纹。",
+          "item": null,
+          "target": "舵杆"
+        },
+        {
+          "text": "我把麻缆盘在了缆桩上。",
+          "item": "麻缆",
+          "target": "缆桩"
+        },
+        {
+          "text": "我用长篙撑开了渡船。",
+          "item": "长篙",
+          "target": "渡船"
+        },
+        {
+          "text": "我把水瓢递给了守滩人。",
+          "item": null,
+          "target": "守滩人"
+        },
+        {
+          "text": "我向守滩人打听潮汛。",
+          "item": null,
+          "target": "守滩人"
+        }
+      ]
+    },
+    {
+      "group": "dev-modifier-stack",
+      "sentences": [
+        {
+          "text": "我用那把磨得发亮的剪子铰开了线头。",
+          "item": "剪子",
+          "target": "线头"
+        },
+        {
+          "text": "我把缺了口的粗碗扣在了案板上。",
+          "item": "粗碗",
+          "target": "案板"
+        },
+        {
+          "text": "我检查了那盏积灰的油盏。",
+          "item": null,
+          "target": "油盏"
+        },
+        {
+          "text": "我用浸过油的火绒引燃了柴堆。",
+          "item": "火绒",
+          "target": "柴堆"
+        },
+        {
+          "text": "我把卷了角的图纸铺平了。",
+          "item": "图纸",
+          "target": null
+        },
+        {
+          "text": "我用那半截蜡笔涂黑了封皮。",
+          "item": "蜡笔",
+          "target": "封皮"
+        },
+        {
+          "text": "我掀开了蒙着白布的笼屉。",
+          "item": null,
+          "target": "笼屉"
+        },
+        {
+          "text": "我用斑驳的铜章在封泥上按了个印。",
+          "item": "铜章",
+          "target": "封泥"
+        }
+      ]
+    },
+    {
+      "group": "dev-short-heads",
+      "sentences": [
+        {
+          "text": "我扳开了闸。",
+          "item": null,
+          "target": "闸"
+        },
+        {
+          "text": "我捅了捅灶。",
+          "item": null,
+          "target": "灶"
+        },
+        {
+          "text": "我擦了擦匾。",
+          "item": "匾",
+          "target": null
+        },
+        {
+          "text": "我把小艇系在了桩上。",
+          "item": "小艇",
+          "target": "桩"
+        },
+        {
+          "text": "我用竹钩勾住了檐。",
+          "item": "竹钩",
+          "target": "檐"
+        },
+        {
+          "text": "我拔出了短刃。",
+          "item": "短刃",
+          "target": null
+        },
+        {
+          "text": "我抵住了栅栏。",
+          "item": null,
+          "target": "栅栏"
+        }
+      ]
     }
   ],
   "scored": [
@@ -182,2176 +342,473 @@
       "target": "闸机"
     }
   ],
+  "trainHandwrittenGroups": [
+    {
+      "group": "open-varied",
+      "sentences": [
+        {
+          "text": "我用铁钎撬开了井盖。",
+          "item": "铁钎",
+          "target": "井盖"
+        },
+        {
+          "text": "我用撬棍顶起了石板。",
+          "item": "撬棍",
+          "target": "石板"
+        },
+        {
+          "text": "我用发卡捅开了旧锁。",
+          "item": "发卡",
+          "target": "旧锁"
+        },
+        {
+          "text": "我抡起木槌砸开了门闩。",
+          "item": "木槌",
+          "target": "门闩"
+        },
+        {
+          "text": "我用刀片划开了信封。",
+          "item": "刀片",
+          "target": "信封"
+        },
+        {
+          "text": "我掀开了缸盖。",
+          "item": null,
+          "target": "缸盖"
+        }
+      ]
+    },
+    {
+      "group": "cut-varied",
+      "sentences": [
+        {
+          "text": "我用剪刀铰断了风筝线。",
+          "item": "剪刀",
+          "target": "风筝线"
+        },
+        {
+          "text": "我用柴刀砍断了藤蔓。",
+          "item": "柴刀",
+          "target": "藤蔓"
+        },
+        {
+          "text": "我用手锯锯断了横木。",
+          "item": "手锯",
+          "target": "横木"
+        },
+        {
+          "text": "我把缠住的渔线扯断了。",
+          "item": "渔线",
+          "target": null
+        },
+        {
+          "text": "我剪断了捆包裹的细绳。",
+          "item": null,
+          "target": "细绳"
+        }
+      ]
+    },
+    {
+      "group": "light-varied",
+      "sentences": [
+        {
+          "text": "我用煤油灯照亮了储藏室。",
+          "item": "煤油灯",
+          "target": "储藏室"
+        },
+        {
+          "text": "我用火柴点亮了壁灯。",
+          "item": "火柴",
+          "target": "壁灯"
+        },
+        {
+          "text": "我举着手电照向洞口。",
+          "item": "手电",
+          "target": "洞口"
+        },
+        {
+          "text": "我把马灯挂上了车辕。",
+          "item": "马灯",
+          "target": "车辕"
+        },
+        {
+          "text": "我用磷光瓶照出了墙上的记号。",
+          "item": "磷光瓶",
+          "target": "记号"
+        }
+      ]
+    },
+    {
+      "group": "place-varied",
+      "sentences": [
+        {
+          "text": "我把油纸包塞进了墙洞。",
+          "item": "油纸包",
+          "target": "墙洞"
+        },
+        {
+          "text": "我把铜钱放回了供桌。",
+          "item": "铜钱",
+          "target": "供桌"
+        },
+        {
+          "text": "我把梯子搭在了墙头。",
+          "item": "梯子",
+          "target": "墙头"
+        },
+        {
+          "text": "我把蓑衣盖在水缸上。",
+          "item": "蓑衣",
+          "target": "水缸"
+        },
+        {
+          "text": "我把竹席铺在了阁楼上。",
+          "item": "竹席",
+          "target": "阁楼"
+        }
+      ]
+    },
+    {
+      "group": "talk-varied",
+      "sentences": [
+        {
+          "text": "我向更夫打听城门的规矩。",
+          "item": null,
+          "target": "更夫"
+        },
+        {
+          "text": "我找账房先生问了个明白。",
+          "item": null,
+          "target": "账房先生"
+        },
+        {
+          "text": "我和守闸的老倪攀谈起来。",
+          "item": null,
+          "target": "老倪"
+        },
+        {
+          "text": "我向绣娘请教纹样的来历。",
+          "item": null,
+          "target": "绣娘"
+        },
+        {
+          "text": "我向药铺伙计打听郎中的住处。",
+          "item": null,
+          "target": "药铺伙计"
+        }
+      ]
+    },
+    {
+      "group": "move-varied",
+      "sentences": [
+        {
+          "text": "我溜进了西跨院。",
+          "item": null,
+          "target": "西跨院"
+        },
+        {
+          "text": "我从角门折回了前厅。",
+          "item": null,
+          "target": "前厅"
+        },
+        {
+          "text": "我沿着回廊走到了内宅。",
+          "item": null,
+          "target": "内宅"
+        },
+        {
+          "text": "我潜入了地窖。",
+          "item": null,
+          "target": "地窖"
+        },
+        {
+          "text": "我一口气跑上了钟楼。",
+          "item": null,
+          "target": "钟楼"
+        }
+      ]
+    },
+    {
+      "group": "possessor-target",
+      "sentences": [
+        {
+          "text": "我撬开了柴房的挂锁。",
+          "item": null,
+          "target": "挂锁"
+        },
+        {
+          "text": "我用马蹄铁砸开了马厩的门锁。",
+          "item": "马蹄铁",
+          "target": "门锁"
+        },
+        {
+          "text": "我擦亮了灶王爷的牌位。",
+          "item": "牌位",
+          "target": null
+        },
+        {
+          "text": "我推开了祠堂的角门。",
+          "item": null,
+          "target": "角门"
+        },
+        {
+          "text": "我转动了石塔的兽首。",
+          "item": null,
+          "target": "兽首"
+        }
+      ]
+    },
+    {
+      "group": "possessor-item",
+      "sentences": [
+        {
+          "text": "我用陈师傅的凿子起出了锈钉。",
+          "item": "凿子",
+          "target": "锈钉"
+        },
+        {
+          "text": "我用花匠的枝剪铰掉了枯枝。",
+          "item": "枝剪",
+          "target": "枯枝"
+        },
+        {
+          "text": "我用庙祝的钥匙打开了偏殿的门。",
+          "item": "钥匙",
+          "target": "门"
+        },
+        {
+          "text": "我用守墓人的风灯照了照碑文。",
+          "item": "风灯",
+          "target": "碑文"
+        }
+      ]
+    },
+    {
+      "group": "person-object-contrast",
+      "sentences": [
+        {
+          "text": "我把油布递给了艄公。",
+          "item": null,
+          "target": "艄公"
+        },
+        {
+          "text": "我把油布铺在了筏底。",
+          "item": "油布",
+          "target": "筏底"
+        },
+        {
+          "text": "我向船家打听渡口的远近。",
+          "item": null,
+          "target": "船家"
+        },
+        {
+          "text": "我检查了船底的裂缝。",
+          "item": null,
+          "target": "船底"
+        },
+        {
+          "text": "我把缆绳交给了纤夫。",
+          "item": null,
+          "target": "纤夫"
+        },
+        {
+          "text": "我用缆绳捆紧了货箱。",
+          "item": "缆绳",
+          "target": "货箱"
+        }
+      ]
+    },
+    {
+      "group": "mention-extended",
+      "sentences": [
+        {
+          "text": "我的行囊里还剩半卷麻绳。",
+          "item": null,
+          "target": null
+        },
+        {
+          "text": "我忽然想起了当票上的日子。",
+          "item": null,
+          "target": null
+        },
+        {
+          "text": "清单末尾添着火油。",
+          "item": null,
+          "target": null
+        },
+        {
+          "text": "背包侧袋里插着那把伞兵刀。",
+          "item": null,
+          "target": null
+        },
+        {
+          "text": "我对着账本出了半天神。",
+          "item": null,
+          "target": null
+        }
+      ]
+    },
+    {
+      "group": "item-only-disposition",
+      "sentences": [
+        {
+          "text": "我把断刀擦干了收好。",
+          "item": "断刀",
+          "target": null
+        },
+        {
+          "text": "我把怀表上了弦。",
+          "item": "怀表",
+          "target": null
+        },
+        {
+          "text": "我把望远镜举起来又放下。",
+          "item": "望远镜",
+          "target": null
+        },
+        {
+          "text": "我把符纸折好塞回了封套。",
+          "item": "符纸",
+          "target": "封套"
+        },
+        {
+          "text": "我把断弦换了下来。",
+          "item": "断弦",
+          "target": null
+        }
+      ]
+    },
+    {
+      "group": "inspect-varied",
+      "sentences": [
+        {
+          "text": "我打量着神龛。",
+          "item": null,
+          "target": "神龛"
+        },
+        {
+          "text": "我翻看了地契。",
+          "item": null,
+          "target": "地契"
+        },
+        {
+          "text": "我凑近端详铜镜的铭文。",
+          "item": null,
+          "target": "铜镜"
+        },
+        {
+          "text": "我仔细检查了锚链的磨损。",
+          "item": null,
+          "target": "锚链"
+        },
+        {
+          "text": "我查验了火漆的印痕。",
+          "item": null,
+          "target": "火漆"
+        }
+      ]
+    },
+    {
+      "group": "single-char-heads",
+      "sentences": [
+        {
+          "text": "我抽出了刀。",
+          "item": "刀",
+          "target": null
+        },
+        {
+          "text": "我点亮了灯。",
+          "item": null,
+          "target": "灯"
+        },
+        {
+          "text": "我推开了虚掩的门。",
+          "item": null,
+          "target": "门"
+        },
+        {
+          "text": "我用竹篙撑住了船。",
+          "item": "竹篙",
+          "target": "船"
+        },
+        {
+          "text": "我把刀插回了鞘。",
+          "item": "刀",
+          "target": "鞘"
+        }
+      ]
+    },
+    {
+      "group": "modifier-expansion",
+      "sentences": [
+        {
+          "text": "我用那串钥匙打开了侧门。",
+          "item": "钥匙",
+          "target": "侧门"
+        },
+        {
+          "text": "我用半截铅笔拓下了石刻。",
+          "item": "铅笔",
+          "target": "石刻"
+        },
+        {
+          "text": "我用卷了边的海图找到了水道。",
+          "item": "海图",
+          "target": "水道"
+        },
+        {
+          "text": "我检查了那扇雕花的屏风。",
+          "item": null,
+          "target": "屏风"
+        },
+        {
+          "text": "我用烧焦的木棍拨了拨火堆。",
+          "item": "木棍",
+          "target": "火堆"
+        },
+        {
+          "text": "我用湿透的抹布擦净了碑座。",
+          "item": "抹布",
+          "target": "碑座"
+        }
+      ]
+    },
+    {
+      "group": "cross-role-objects",
+      "sentences": [
+        {
+          "text": "我用马蹄铁敲了敲拴马桩。",
+          "item": "马蹄铁",
+          "target": "拴马桩"
+        },
+        {
+          "text": "我用簪子挑开了封蜡。",
+          "item": "簪子",
+          "target": "封蜡"
+        },
+        {
+          "text": "我用铜盆接住了檐水。",
+          "item": "铜盆",
+          "target": "檐水"
+        },
+        {
+          "text": "我用鼎腿压住了席角。",
+          "item": "鼎腿",
+          "target": "席角"
+        },
+        {
+          "text": "我把鼎腿搬到了廊下。",
+          "item": "鼎腿",
+          "target": "廊下"
+        }
+      ]
+    }
+  ],
   "train": [
     {
-      "text": "我用剑锁上大门。",
-      "item": "剑",
-      "target": "大门"
-    },
-    {
-      "text": "我用地图撬开雕像。",
-      "item": "地图",
-      "target": "雕像"
-    },
-    {
-      "text": "我坐下来歇了口气。",
-      "item": null,
-      "target": null
-    },
-    {
-      "text": "我把扫帚靠在暗门边。",
-      "item": "扫帚",
-      "target": "暗门"
-    },
-    {
-      "text": "我用铁门钥匙撬开木桶。",
-      "item": "铁门钥匙",
-      "target": "木桶"
-    },
-    {
-      "text": "我用铁锹打开大门。",
-      "item": "铁锹",
-      "target": "大门"
-    },
-    {
-      "text": "背包里只有铁门钥匙。",
-      "item": null,
-      "target": null
-    },
-    {
-      "text": "我用铁门钥匙锁上大门。",
-      "item": "铁门钥匙",
-      "target": "大门"
-    },
-    {
-      "text": "我搜索雕像。",
-      "item": null,
-      "target": "雕像"
-    },
-    {
-      "text": "灯笼还在背包里。",
-      "item": null,
-      "target": null
-    },
-    {
-      "text": "我把水壶攥在手里。",
-      "item": "水壶",
-      "target": null
-    },
-    {
-      "text": "我用铁门钥匙撬开绳索。",
-      "item": "铁门钥匙",
-      "target": "绳索"
-    },
-    {
-      "text": "我在原地缓了缓。",
-      "item": null,
-      "target": null
-    },
-    {
-      "text": "我用灯笼砸开抽屉。",
-      "item": "灯笼",
-      "target": "抽屉"
-    },
-    {
-      "text": "我用扫帚砸开柜子。",
-      "item": "扫帚",
-      "target": "柜子"
-    },
-    {
-      "text": "我用水壶撬开铁锹。",
-      "item": "水壶",
-      "target": "铁锹"
-    },
-    {
-      "text": "我把木桶收进背包。",
-      "item": "木桶",
-      "target": "背包"
-    },
-    {
-      "text": "我用木桶撬开灯笼。",
-      "item": "木桶",
-      "target": "灯笼"
-    },
-    {
-      "text": "我用铁锹锁上抽屉。",
-      "item": "铁锹",
-      "target": "抽屉"
-    },
-    {
-      "text": "我用扫帚撬开雕像。",
-      "item": "扫帚",
-      "target": "雕像"
-    },
-    {
-      "text": "我把水壶举过头顶。",
-      "item": "水壶",
-      "target": null
-    },
-    {
-      "text": "我观察窗台。",
-      "item": null,
-      "target": "窗台"
-    },
-    {
-      "text": "我仔细查看壁画上的痕迹。",
-      "item": null,
-      "target": "壁画"
-    },
-    {
-      "text": "我用水壶锁上木箱。",
-      "item": "水壶",
-      "target": "木箱"
-    },
-    {
-      "text": "我用铜钥匙撬开木桶。",
-      "item": "铜钥匙",
-      "target": "木桶"
-    },
-    {
-      "text": "我用地图打开柜子。",
-      "item": "地图",
-      "target": "柜子"
-    },
-    {
-      "text": "我把铁门钥匙收进背包。",
-      "item": "铁门钥匙",
-      "target": "背包"
-    },
-    {
-      "text": "我用地图砸开柜子。",
-      "item": "地图",
-      "target": "柜子"
-    },
-    {
-      "text": "我把地图收好。",
-      "item": "地图",
-      "target": null
-    },
-    {
-      "text": "我用木桶锁上大门。",
-      "item": "木桶",
-      "target": "大门"
-    },
-    {
-      "text": "我返回走廊。",
-      "item": null,
-      "target": "走廊"
-    },
-    {
-      "text": "铁门钥匙还在背包里。",
-      "item": null,
-      "target": null
-    },
-    {
-      "text": "我把水壶握紧了。",
-      "item": "水壶",
-      "target": null
-    },
-    {
-      "text": "我用木桶撬开剑。",
-      "item": "木桶",
-      "target": "剑"
-    },
-    {
-      "text": "我用那把铁锹撬开木箱。",
-      "item": "铁锹",
-      "target": "木箱"
-    },
-    {
-      "text": "我把铁锹举过头顶。",
-      "item": "铁锹",
-      "target": null
-    },
-    {
-      "text": "我用地图撬开壁画。",
-      "item": "地图",
-      "target": "壁画"
-    },
-    {
-      "text": "我用扫帚照亮书架。",
+      "text": "我用扫帚撑住书架。",
       "item": "扫帚",
       "target": "书架"
-    },
-    {
-      "text": "我用地图把暗门压住。",
-      "item": "地图",
-      "target": "暗门"
-    },
-    {
-      "text": "我把剑擦了又擦。",
-      "item": "剑",
-      "target": null
-    },
-    {
-      "text": "我用绳索撬开壁画。",
-      "item": "绳索",
-      "target": "壁画"
-    },
-    {
-      "text": "我用灯笼打开柜子。",
-      "item": "灯笼",
-      "target": "柜子"
-    },
-    {
-      "text": "我用木桶撬开暗门。",
-      "item": "木桶",
-      "target": "暗门"
-    },
-    {
-      "text": "我用灯笼撬开窗台。",
-      "item": "灯笼",
-      "target": "窗台"
-    },
-    {
-      "text": "我用地图砸开抽屉。",
-      "item": "地图",
-      "target": "抽屉"
-    },
-    {
-      "text": "我用灯笼敲了敲书架。",
-      "item": "灯笼",
-      "target": "书架"
-    },
-    {
-      "text": "我用灯笼照亮暗门。",
-      "item": "灯笼",
-      "target": "暗门"
-    },
-    {
-      "text": "我用铜钥匙砸开木箱。",
-      "item": "铜钥匙",
-      "target": "木箱"
-    },
-    {
-      "text": "我用铜钥匙锁上柜子。",
-      "item": "铜钥匙",
-      "target": "柜子"
-    },
-    {
-      "text": "我用铜钥匙照亮书架。",
-      "item": "铜钥匙",
-      "target": "书架"
-    },
-    {
-      "text": "我用绳索撬开铜钥匙。",
-      "item": "绳索",
-      "target": "铜钥匙"
-    },
-    {
-      "text": "我用扫帚割断绳子。",
-      "item": "扫帚",
-      "target": "绳子"
-    },
-    {
-      "text": "我把扫帚放在窗台旁边。",
-      "item": "扫帚",
-      "target": "窗台"
-    },
-    {
-      "text": "我把扫帚攥在手里。",
-      "item": "扫帚",
-      "target": null
-    },
-    {
-      "text": "我把剑攥在手里。",
-      "item": "剑",
-      "target": null
-    },
-    {
-      "text": "我和凯瑟琳打听暗门的来历。",
-      "item": null,
-      "target": "凯瑟琳"
-    },
-    {
-      "text": "我用那把绳索撬开木箱。",
-      "item": "绳索",
-      "target": "木箱"
-    },
-    {
-      "text": "我把剑靠在暗门边。",
-      "item": "剑",
-      "target": "暗门"
-    },
-    {
-      "text": "我用铜钥匙照亮雕像。",
-      "item": "铜钥匙",
-      "target": "雕像"
-    },
-    {
-      "text": "我检查铜钥匙。",
-      "item": null,
-      "target": "铜钥匙"
-    },
-    {
-      "text": "地图还在背包里。",
-      "item": null,
-      "target": null
-    },
-    {
-      "text": "我检查上锁的暗门。",
-      "item": null,
-      "target": "暗门"
-    },
-    {
-      "text": "背包里只有木桶。",
-      "item": null,
-      "target": null
-    },
-    {
-      "text": "我用扫帚砸开大门。",
-      "item": "扫帚",
-      "target": "大门"
-    },
-    {
-      "text": "我用生锈的扫帚打开大门。",
-      "item": "扫帚",
-      "target": "大门"
-    },
-    {
-      "text": "我用铁锹砸开抽屉。",
-      "item": "铁锹",
-      "target": "抽屉"
-    },
-    {
-      "text": "我用铜钥匙撬开窗台。",
-      "item": "铜钥匙",
-      "target": "窗台"
-    },
-    {
-      "text": "我用铁门钥匙把雕像压住。",
-      "item": "铁门钥匙",
-      "target": "雕像"
-    },
-    {
-      "text": "我用绳索锁上木箱。",
-      "item": "绳索",
-      "target": "木箱"
-    },
-    {
-      "text": "我用灯笼割断绳子。",
-      "item": "灯笼",
-      "target": "绳子"
-    },
-    {
-      "text": "我用剑把暗门压住。",
-      "item": "剑",
-      "target": "暗门"
-    },
-    {
-      "text": "我用水壶打开柜子。",
-      "item": "水壶",
-      "target": "柜子"
-    },
-    {
-      "text": "我用扫帚把窗台压住。",
-      "item": "扫帚",
-      "target": "窗台"
-    },
-    {
-      "text": "我用灯笼把窗台压住。",
-      "item": "灯笼",
-      "target": "窗台"
-    },
-    {
-      "text": "我用铜钥匙砸开抽屉。",
-      "item": "铜钥匙",
-      "target": "抽屉"
-    },
-    {
-      "text": "我用木桶照亮雕像。",
-      "item": "木桶",
-      "target": "雕像"
-    },
-    {
-      "text": "我用剑撬开绳索。",
-      "item": "剑",
-      "target": "绳索"
-    },
-    {
-      "text": "我和诺诺打听暗门的来历。",
-      "item": null,
-      "target": "诺诺"
-    },
-    {
-      "text": "我走进昏暗的二楼档案室。",
-      "item": null,
-      "target": "二楼档案室"
-    },
-    {
-      "text": "我用绳索撬开灯笼。",
-      "item": "绳索",
-      "target": "灯笼"
-    },
-    {
-      "text": "我想起了地图。",
-      "item": null,
-      "target": null
-    },
-    {
-      "text": "我用灯笼撬开绳索。",
-      "item": "灯笼",
-      "target": "绳索"
-    },
-    {
-      "text": "我用灯笼撬开地图。",
-      "item": "灯笼",
-      "target": "地图"
-    },
-    {
-      "text": "我用绳索砸开大门。",
-      "item": "绳索",
-      "target": "大门"
-    },
-    {
-      "text": "我用铜钥匙打开木箱。",
-      "item": "铜钥匙",
-      "target": "木箱"
-    },
-    {
-      "text": "我用地图锁上木箱。",
-      "item": "地图",
-      "target": "木箱"
-    },
-    {
-      "text": "我检查铁锹。",
-      "item": null,
-      "target": "铁锹"
-    },
-    {
-      "text": "我用木桶砸开柜子。",
-      "item": "木桶",
-      "target": "柜子"
-    },
-    {
-      "text": "我用水壶撬开铁门钥匙。",
-      "item": "水壶",
-      "target": "铁门钥匙"
-    },
-    {
-      "text": "我用灯笼撬开剑。",
-      "item": "灯笼",
-      "target": "剑"
-    },
-    {
-      "text": "我用铁锹敲了敲书架。",
-      "item": "铁锹",
-      "target": "书架"
-    },
-    {
-      "text": "我用绳索照亮暗门。",
-      "item": "绳索",
-      "target": "暗门"
-    },
-    {
-      "text": "我把灯笼攥在手里。",
-      "item": "灯笼",
-      "target": null
-    },
-    {
-      "text": "我用铁锹照亮壁画。",
-      "item": "铁锹",
-      "target": "壁画"
-    },
-    {
-      "text": "我沿着楼梯走到走廊。",
-      "item": null,
-      "target": "走廊"
-    },
-    {
-      "text": "我用扫帚照亮雕像。",
-      "item": "扫帚",
-      "target": "雕像"
-    },
-    {
-      "text": "我用地图把雕像压住。",
-      "item": "地图",
-      "target": "雕像"
-    },
-    {
-      "text": "我把木桶举过头顶。",
-      "item": "木桶",
-      "target": null
-    },
-    {
-      "text": "我用扫帚把壁画压住。",
-      "item": "扫帚",
-      "target": "壁画"
-    },
-    {
-      "text": "我用生锈的铜钥匙打开大门。",
-      "item": "铜钥匙",
-      "target": "大门"
-    },
-    {
-      "text": "我走进昏暗的卡塞尔学院图书馆。",
-      "item": null,
-      "target": "卡塞尔学院图书馆"
-    },
-    {
-      "text": "我用灯笼照亮窗台。",
-      "item": "灯笼",
-      "target": "窗台"
-    },
-    {
-      "text": "我去卡塞尔学院图书馆查资料。",
-      "item": null,
-      "target": "卡塞尔学院图书馆"
-    },
-    {
-      "text": "我用木桶打开木箱。",
-      "item": "木桶",
-      "target": "木箱"
-    },
-    {
-      "text": "我用水壶锁上柜子。",
-      "item": "水壶",
-      "target": "柜子"
-    },
-    {
-      "text": "我用灯笼撬开水壶。",
-      "item": "灯笼",
-      "target": "水壶"
-    },
-    {
-      "text": "我用剑撬开地图。",
-      "item": "剑",
-      "target": "地图"
-    },
-    {
-      "text": "我把灯笼擦了又擦。",
-      "item": "灯笼",
-      "target": null
-    },
-    {
-      "text": "我用绳索撬开窗台。",
-      "item": "绳索",
-      "target": "窗台"
-    },
-    {
-      "text": "我用铜钥匙撬开雕像。",
-      "item": "铜钥匙",
-      "target": "雕像"
-    },
-    {
-      "text": "我用扫帚照亮暗门。",
-      "item": "扫帚",
-      "target": "暗门"
-    },
-    {
-      "text": "我用木桶撬开壁画。",
-      "item": "木桶",
-      "target": "壁画"
-    },
-    {
-      "text": "我用铁门钥匙砸开大门。",
-      "item": "铁门钥匙",
-      "target": "大门"
-    },
-    {
-      "text": "我用那把水壶撬开木箱。",
-      "item": "水壶",
-      "target": "木箱"
-    },
-    {
-      "text": "我用铜钥匙砸开大门。",
-      "item": "铜钥匙",
-      "target": "大门"
-    },
-    {
-      "text": "我检查扫帚。",
-      "item": null,
-      "target": "扫帚"
-    },
-    {
-      "text": "我用绳索把壁画压住。",
-      "item": "绳索",
-      "target": "壁画"
-    },
-    {
-      "text": "我和执行部学生打听暗门的来历。",
-      "item": null,
-      "target": "执行部学生"
-    },
-    {
-      "text": "我检查木桶的齿纹。",
-      "item": null,
-      "target": "木桶"
-    },
-    {
-      "text": "我去阅览室查资料。",
-      "item": null,
-      "target": "阅览室"
-    },
-    {
-      "text": "我用铜钥匙撬开铁门钥匙。",
-      "item": "铜钥匙",
-      "target": "铁门钥匙"
-    },
-    {
-      "text": "我用剑把窗台压住。",
-      "item": "剑",
-      "target": "窗台"
-    },
-    {
-      "text": "我用木桶撬开水壶。",
-      "item": "木桶",
-      "target": "水壶"
-    },
-    {
-      "text": "背包里只有灯笼。",
-      "item": null,
-      "target": null
-    },
-    {
-      "text": "我用生锈的地图打开大门。",
-      "item": "地图",
-      "target": "大门"
-    },
-    {
-      "text": "我用那把扫帚撬开木箱。",
-      "item": "扫帚",
-      "target": "木箱"
-    },
-    {
-      "text": "我用生锈的水壶打开大门。",
-      "item": "水壶",
-      "target": "大门"
-    },
-    {
-      "text": "我用生锈的灯笼打开大门。",
-      "item": "灯笼",
-      "target": "大门"
-    },
-    {
-      "text": "我用灯笼锁上大门。",
-      "item": "灯笼",
-      "target": "大门"
-    },
-    {
-      "text": "我检查铁门钥匙。",
-      "item": null,
-      "target": "铁门钥匙"
-    },
-    {
-      "text": "我用剑撬开铁锹。",
-      "item": "剑",
-      "target": "铁锹"
-    },
-    {
-      "text": "我用铁锹撬开书架。",
-      "item": "铁锹",
-      "target": "书架"
-    },
-    {
-      "text": "我用灯笼撬开雕像。",
-      "item": "灯笼",
-      "target": "雕像"
-    },
-    {
-      "text": "我检查壁画。",
-      "item": null,
-      "target": "壁画"
-    },
-    {
-      "text": "我把绳索握紧了。",
-      "item": "绳索",
-      "target": null
-    },
-    {
-      "text": "我把绳索收进背包。",
-      "item": "绳索",
-      "target": "背包"
-    },
-    {
-      "text": "我用铜钥匙打开抽屉。",
-      "item": "铜钥匙",
-      "target": "抽屉"
-    },
-    {
-      "text": "我用灯笼照亮壁画。",
-      "item": "灯笼",
-      "target": "壁画"
-    },
-    {
-      "text": "我用铁门钥匙撬开灯笼。",
-      "item": "铁门钥匙",
-      "target": "灯笼"
-    },
-    {
-      "text": "我把剑举过头顶。",
-      "item": "剑",
-      "target": null
-    },
-    {
-      "text": "我用铜钥匙把壁画压住。",
-      "item": "铜钥匙",
-      "target": "壁画"
-    },
-    {
-      "text": "我用木桶照亮暗门。",
-      "item": "木桶",
-      "target": "暗门"
-    },
-    {
-      "text": "我检查上锁的壁画。",
-      "item": null,
-      "target": "壁画"
-    },
-    {
-      "text": "我搜索壁画。",
-      "item": null,
-      "target": "壁画"
-    },
-    {
-      "text": "我去走廊。",
-      "item": null,
-      "target": "走廊"
-    },
-    {
-      "text": "我去走廊查资料。",
-      "item": null,
-      "target": "走廊"
-    },
-    {
-      "text": "我把扫帚收好。",
-      "item": "扫帚",
-      "target": null
-    },
-    {
-      "text": "我用水壶把暗门压住。",
-      "item": "水壶",
-      "target": "暗门"
-    },
-    {
-      "text": "我用灯笼照亮书架。",
-      "item": "灯笼",
-      "target": "书架"
-    },
-    {
-      "text": "我把地图收进背包。",
-      "item": "地图",
-      "target": "背包"
-    },
-    {
-      "text": "我把木桶靠在暗门边。",
-      "item": "木桶",
-      "target": "暗门"
-    },
-    {
-      "text": "我用剑砸开大门。",
-      "item": "剑",
-      "target": "大门"
-    },
-    {
-      "text": "我用剑撑住书架。",
-      "item": "剑",
-      "target": "书架"
-    },
-    {
-      "text": "背包里只有扫帚。",
-      "item": null,
-      "target": null
-    },
-    {
-      "text": "我用铁锹砸开木箱。",
-      "item": "铁锹",
-      "target": "木箱"
-    },
-    {
-      "text": "我用木桶照亮书架。",
-      "item": "木桶",
-      "target": "书架"
-    },
-    {
-      "text": "我用铁锹把书架压住。",
-      "item": "铁锹",
-      "target": "书架"
-    },
-    {
-      "text": "我用铁锹照亮窗台。",
-      "item": "铁锹",
-      "target": "窗台"
-    },
-    {
-      "text": "我用地图撬开剑。",
-      "item": "地图",
-      "target": "剑"
-    },
-    {
-      "text": "我用铜钥匙照亮暗门。",
-      "item": "铜钥匙",
-      "target": "暗门"
-    },
-    {
-      "text": "我用灯笼锁上抽屉。",
-      "item": "灯笼",
-      "target": "抽屉"
-    },
-    {
-      "text": "我用铜钥匙撬开壁画。",
-      "item": "铜钥匙",
-      "target": "壁画"
-    },
-    {
-      "text": "我检查窗台。",
-      "item": null,
-      "target": "窗台"
-    },
-    {
-      "text": "我走进昏暗的阅览室。",
-      "item": null,
-      "target": "阅览室"
-    },
-    {
-      "text": "我向古德里安教授询问暗门的下落。",
-      "item": null,
-      "target": "古德里安教授"
-    },
-    {
-      "text": "我用扫帚砸开抽屉。",
-      "item": "扫帚",
-      "target": "抽屉"
-    },
-    {
-      "text": "我用剑撬开雕像。",
-      "item": "剑",
-      "target": "雕像"
-    },
-    {
-      "text": "我用绳索撬开铁门钥匙。",
-      "item": "绳索",
-      "target": "铁门钥匙"
-    },
-    {
-      "text": "我用扫帚锁上柜子。",
-      "item": "扫帚",
-      "target": "柜子"
-    },
-    {
-      "text": "我用地图撑住书架。",
-      "item": "地图",
-      "target": "书架"
-    },
-    {
-      "text": "我用铁门钥匙撬开扫帚。",
-      "item": "铁门钥匙",
-      "target": "扫帚"
-    },
-    {
-      "text": "我用木桶打开大门。",
-      "item": "木桶",
-      "target": "大门"
-    },
-    {
-      "text": "我用绳索打开大门。",
-      "item": "绳索",
-      "target": "大门"
-    },
-    {
-      "text": "我把扫帚放在暗门旁边。",
-      "item": "扫帚",
-      "target": "暗门"
-    },
-    {
-      "text": "我用灯笼砸开木箱。",
-      "item": "灯笼",
-      "target": "木箱"
-    },
-    {
-      "text": "我用剑打开柜子。",
-      "item": "剑",
-      "target": "柜子"
-    },
-    {
-      "text": "我用灯笼撬开木桶。",
-      "item": "灯笼",
-      "target": "木桶"
-    },
-    {
-      "text": "我用灯笼砸开大门。",
-      "item": "灯笼",
-      "target": "大门"
-    },
-    {
-      "text": "我用水壶撬开地图。",
-      "item": "水壶",
-      "target": "地图"
-    },
-    {
-      "text": "我用铜钥匙撬开水壶。",
-      "item": "铜钥匙",
-      "target": "水壶"
-    },
-    {
-      "text": "我用生锈的绳索打开大门。",
-      "item": "绳索",
-      "target": "大门"
-    },
-    {
-      "text": "我把地图握紧了。",
-      "item": "地图",
-      "target": null
-    },
-    {
-      "text": "我用水壶把壁画压住。",
-      "item": "水壶",
-      "target": "壁画"
-    },
-    {
-      "text": "我用地图锁上抽屉。",
-      "item": "地图",
-      "target": "抽屉"
-    },
-    {
-      "text": "我和凯瑟琳搭话。",
-      "item": null,
-      "target": "凯瑟琳"
-    },
-    {
-      "text": "我用绳索敲了敲书架。",
-      "item": "绳索",
-      "target": "书架"
-    },
-    {
-      "text": "我用铁门钥匙撬开窗台。",
-      "item": "铁门钥匙",
-      "target": "窗台"
-    },
-    {
-      "text": "我用铜钥匙把窗台压住。",
-      "item": "铜钥匙",
-      "target": "窗台"
-    },
-    {
-      "text": "我用铜钥匙照亮壁画。",
-      "item": "铜钥匙",
-      "target": "壁画"
-    },
-    {
-      "text": "我用剑把书架压住。",
-      "item": "剑",
-      "target": "书架"
-    },
-    {
-      "text": "我想起了剑。",
-      "item": null,
-      "target": null
-    },
-    {
-      "text": "我用绳索撬开地图。",
-      "item": "绳索",
-      "target": "地图"
-    },
-    {
-      "text": "我用铁锹撬开木桶。",
-      "item": "铁锹",
-      "target": "木桶"
-    },
-    {
-      "text": "我用绳索把暗门压住。",
-      "item": "绳索",
-      "target": "暗门"
-    },
-    {
-      "text": "我返回阅览室。",
-      "item": null,
-      "target": "阅览室"
-    },
-    {
-      "text": "我用生锈的铁门钥匙打开大门。",
-      "item": "铁门钥匙",
-      "target": "大门"
-    },
-    {
-      "text": "我用扫帚撬开暗门。",
-      "item": "扫帚",
-      "target": "暗门"
-    },
-    {
-      "text": "我用扫帚敲了敲书架。",
-      "item": "扫帚",
-      "target": "书架"
-    },
-    {
-      "text": "我用扫帚撬开窗台。",
-      "item": "扫帚",
-      "target": "窗台"
-    },
-    {
-      "text": "我用铁锹撬开绳索。",
-      "item": "铁锹",
-      "target": "绳索"
-    },
-    {
-      "text": "剑还在背包里。",
-      "item": null,
-      "target": null
-    },
-    {
-      "text": "我用木桶照亮窗台。",
-      "item": "木桶",
-      "target": "窗台"
-    },
-    {
-      "text": "我用剑锁上木箱。",
-      "item": "剑",
-      "target": "木箱"
-    },
-    {
-      "text": "我用木桶撬开书架。",
-      "item": "木桶",
-      "target": "书架"
-    },
-    {
-      "text": "我拔剑攻击凯瑟琳。",
-      "item": "剑",
-      "target": "凯瑟琳"
-    },
-    {
-      "text": "我用铁门钥匙照亮壁画。",
-      "item": "铁门钥匙",
-      "target": "壁画"
-    },
-    {
-      "text": "我用扫帚锁上抽屉。",
-      "item": "扫帚",
-      "target": "抽屉"
-    },
-    {
-      "text": "我用铁锹砸开大门。",
-      "item": "铁锹",
-      "target": "大门"
-    },
-    {
-      "text": "我用铜钥匙撬开剑。",
-      "item": "铜钥匙",
-      "target": "剑"
-    },
-    {
-      "text": "我检查上锁的窗台。",
-      "item": null,
-      "target": "窗台"
-    },
-    {
-      "text": "我用扫帚撬开木桶。",
-      "item": "扫帚",
-      "target": "木桶"
-    },
-    {
-      "text": "我用铜钥匙打开柜子。",
-      "item": "铜钥匙",
-      "target": "柜子"
-    },
-    {
-      "text": "我用铁锹撬开铜钥匙。",
-      "item": "铁锹",
-      "target": "铜钥匙"
-    },
-    {
-      "text": "我用水壶打开抽屉。",
-      "item": "水壶",
-      "target": "抽屉"
-    },
-    {
-      "text": "我用绳索照亮雕像。",
-      "item": "绳索",
-      "target": "雕像"
-    },
-    {
-      "text": "扫帚还在背包里。",
-      "item": null,
-      "target": null
-    },
-    {
-      "text": "我观察暗门。",
-      "item": null,
-      "target": "暗门"
-    },
-    {
-      "text": "我用扫帚把雕像压住。",
-      "item": "扫帚",
-      "target": "雕像"
-    },
-    {
-      "text": "我用那把灯笼撬开木箱。",
-      "item": "灯笼",
-      "target": "木箱"
-    },
-    {
-      "text": "我把地图擦了又擦。",
-      "item": "地图",
-      "target": null
-    },
-    {
-      "text": "我向路明非询问暗门的下落。",
-      "item": null,
-      "target": "路明非"
-    },
-    {
-      "text": "我用铁锹照亮书架。",
-      "item": "铁锹",
-      "target": "书架"
-    },
-    {
-      "text": "我把铁锹擦了又擦。",
-      "item": "铁锹",
-      "target": null
-    },
-    {
-      "text": "我用铁锹撬开雕像。",
-      "item": "铁锹",
-      "target": "雕像"
-    },
-    {
-      "text": "我用灯笼撬开书架。",
-      "item": "灯笼",
-      "target": "书架"
-    },
-    {
-      "text": "我把扫帚放在书架旁边。",
-      "item": "扫帚",
-      "target": "书架"
-    },
-    {
-      "text": "我用木桶打开抽屉。",
-      "item": "木桶",
-      "target": "抽屉"
-    },
-    {
-      "text": "水壶还在背包里。",
-      "item": null,
-      "target": null
-    },
-    {
-      "text": "我用木桶割断绳子。",
-      "item": "木桶",
-      "target": "绳子"
-    },
-    {
-      "text": "我用铁锹锁上大门。",
-      "item": "铁锹",
-      "target": "大门"
-    },
-    {
-      "text": "我把铜钥匙擦了又擦。",
-      "item": "铜钥匙",
-      "target": null
-    },
-    {
-      "text": "我用绳索砸开柜子。",
-      "item": "绳索",
-      "target": "柜子"
-    },
-    {
-      "text": "我用铁门钥匙打开大门。",
-      "item": "铁门钥匙",
-      "target": "大门"
-    },
-    {
-      "text": "我用扫帚撬开铁门钥匙。",
-      "item": "扫帚",
-      "target": "铁门钥匙"
-    },
-    {
-      "text": "我用水壶把书架压住。",
-      "item": "水壶",
-      "target": "书架"
-    },
-    {
-      "text": "绳索还在背包里。",
-      "item": null,
-      "target": null
-    },
-    {
-      "text": "我用绳索照亮书架。",
-      "item": "绳索",
-      "target": "书架"
-    },
-    {
-      "text": "我用绳索锁上大门。",
-      "item": "绳索",
-      "target": "大门"
-    },
-    {
-      "text": "我用那把木桶撬开木箱。",
-      "item": "木桶",
-      "target": "木箱"
-    },
-    {
-      "text": "我想起了水壶。",
-      "item": null,
-      "target": null
-    },
-    {
-      "text": "我用扫帚把暗门压住。",
-      "item": "扫帚",
-      "target": "暗门"
-    },
-    {
-      "text": "我把灯笼收进背包。",
-      "item": "灯笼",
-      "target": "背包"
-    },
-    {
-      "text": "我观察雕像。",
-      "item": null,
-      "target": "雕像"
-    },
-    {
-      "text": "背包里只有水壶。",
-      "item": null,
-      "target": null
-    },
-    {
-      "text": "我用地图撬开灯笼。",
-      "item": "地图",
-      "target": "灯笼"
-    },
-    {
-      "text": "我用剑撬开铜钥匙。",
-      "item": "剑",
-      "target": "铜钥匙"
-    },
-    {
-      "text": "我用水壶照亮雕像。",
-      "item": "水壶",
-      "target": "雕像"
-    },
-    {
-      "text": "我用水壶撬开书架。",
-      "item": "水壶",
-      "target": "书架"
-    },
-    {
-      "text": "我和古德里安教授打听暗门的来历。",
-      "item": null,
-      "target": "古德里安教授"
-    },
-    {
-      "text": "我把铜钥匙握紧了。",
-      "item": "铜钥匙",
-      "target": null
-    },
-    {
-      "text": "我把铜钥匙靠在暗门边。",
-      "item": "铜钥匙",
-      "target": "暗门"
-    },
-    {
-      "text": "我用绳索撬开暗门。",
-      "item": "绳索",
-      "target": "暗门"
-    },
-    {
-      "text": "我用地图砸开木箱。",
-      "item": "地图",
-      "target": "木箱"
-    },
-    {
-      "text": "我用剑撬开暗门。",
-      "item": "剑",
-      "target": "暗门"
-    },
-    {
-      "text": "我用剑照亮窗台。",
-      "item": "剑",
-      "target": "窗台"
-    },
-    {
-      "text": "我用扫帚撬开地图。",
-      "item": "扫帚",
-      "target": "地图"
-    },
-    {
-      "text": "我想起了扫帚。",
-      "item": null,
-      "target": null
-    },
-    {
-      "text": "我用地图撬开书架。",
-      "item": "地图",
-      "target": "书架"
-    },
-    {
-      "text": "我用铁锹撬开铁门钥匙。",
-      "item": "铁锹",
-      "target": "铁门钥匙"
-    },
-    {
-      "text": "我观察壁画。",
-      "item": null,
-      "target": "壁画"
-    },
-    {
-      "text": "我用地图把窗台压住。",
-      "item": "地图",
-      "target": "窗台"
-    },
-    {
-      "text": "我用水壶砸开大门。",
-      "item": "水壶",
-      "target": "大门"
-    },
-    {
-      "text": "背包里只有绳索。",
-      "item": null,
-      "target": null
-    },
-    {
-      "text": "我用剑砸开木箱。",
-      "item": "剑",
-      "target": "木箱"
-    },
-    {
-      "text": "我用铁门钥匙把暗门压住。",
-      "item": "铁门钥匙",
-      "target": "暗门"
-    },
-    {
-      "text": "我用灯笼撬开铜钥匙。",
-      "item": "灯笼",
-      "target": "铜钥匙"
-    },
-    {
-      "text": "我用绳索撬开剑。",
-      "item": "绳索",
-      "target": "剑"
-    },
-    {
-      "text": "我用铁门钥匙照亮雕像。",
-      "item": "铁门钥匙",
-      "target": "雕像"
-    },
-    {
-      "text": "我用绳索把窗台压住。",
-      "item": "绳索",
-      "target": "窗台"
-    },
-    {
-      "text": "我想起了铁门钥匙。",
-      "item": null,
-      "target": null
-    },
-    {
-      "text": "我用绳索锁上抽屉。",
-      "item": "绳索",
-      "target": "抽屉"
-    },
-    {
-      "text": "我拔剑攻击古德里安教授。",
-      "item": "剑",
-      "target": "古德里安教授"
-    },
-    {
-      "text": "我用木桶把壁画压住。",
-      "item": "木桶",
-      "target": "壁画"
-    },
-    {
-      "text": "我把灯笼握紧了。",
-      "item": "灯笼",
-      "target": null
-    },
-    {
-      "text": "我用地图撬开绳索。",
-      "item": "地图",
-      "target": "绳索"
-    },
-    {
-      "text": "我想起了木桶。",
-      "item": null,
-      "target": null
-    },
-    {
-      "text": "我用铁门钥匙撬开雕像。",
-      "item": "铁门钥匙",
-      "target": "雕像"
-    },
-    {
-      "text": "我用水壶照亮暗门。",
-      "item": "水壶",
-      "target": "暗门"
-    },
-    {
-      "text": "我把铁锹握紧了。",
-      "item": "铁锹",
-      "target": null
-    },
-    {
-      "text": "我用铁锹撑住书架。",
-      "item": "铁锹",
-      "target": "书架"
-    },
-    {
-      "text": "我用铁锹打开柜子。",
-      "item": "铁锹",
-      "target": "柜子"
-    },
-    {
-      "text": "我把绳索收好。",
-      "item": "绳索",
-      "target": null
-    },
-    {
-      "text": "我用地图撬开水壶。",
-      "item": "地图",
-      "target": "水壶"
-    },
-    {
-      "text": "我用灯笼打开抽屉。",
-      "item": "灯笼",
-      "target": "抽屉"
-    },
-    {
-      "text": "我把扫帚收进背包。",
-      "item": "扫帚",
-      "target": "背包"
-    },
-    {
-      "text": "我用铁锹撬开剑。",
-      "item": "铁锹",
-      "target": "剑"
-    },
-    {
-      "text": "我用铁锹撬开水壶。",
-      "item": "铁锹",
-      "target": "水壶"
-    },
-    {
-      "text": "我检查水壶。",
-      "item": null,
-      "target": "水壶"
-    },
-    {
-      "text": "我用扫帚撬开绳索。",
-      "item": "扫帚",
-      "target": "绳索"
-    },
-    {
-      "text": "我用水壶撬开铜钥匙。",
-      "item": "水壶",
-      "target": "铜钥匙"
-    },
-    {
-      "text": "我用剑照亮雕像。",
-      "item": "剑",
-      "target": "雕像"
-    },
-    {
-      "text": "我用铁锹把雕像压住。",
-      "item": "铁锹",
-      "target": "雕像"
-    },
-    {
-      "text": "我把铁锹收进背包。",
-      "item": "铁锹",
-      "target": "背包"
-    },
-    {
-      "text": "我把地图举过头顶。",
-      "item": "地图",
-      "target": null
-    },
-    {
-      "text": "我拔剑攻击执行部学生。",
-      "item": "剑",
-      "target": "执行部学生"
-    },
-    {
-      "text": "我把木桶收好。",
-      "item": "木桶",
-      "target": null
-    },
-    {
-      "text": "我用铜钥匙撑住书架。",
-      "item": "铜钥匙",
-      "target": "书架"
-    },
-    {
-      "text": "我用铁门钥匙打开木箱。",
-      "item": "铁门钥匙",
-      "target": "木箱"
-    },
-    {
-      "text": "我检查雕像。",
-      "item": null,
-      "target": "雕像"
-    },
-    {
-      "text": "我用地图撬开铜钥匙。",
-      "item": "地图",
-      "target": "铜钥匙"
-    },
-    {
-      "text": "我和路明非打听暗门的来历。",
-      "item": null,
-      "target": "路明非"
-    },
-    {
-      "text": "我用扫帚把书架压住。",
-      "item": "扫帚",
-      "target": "书架"
-    },
-    {
-      "text": "我用铜钥匙撬开书架。",
-      "item": "铜钥匙",
-      "target": "书架"
-    },
-    {
-      "text": "我把铁门钥匙擦了又擦。",
-      "item": "铁门钥匙",
-      "target": null
-    },
-    {
-      "text": "我把铁门钥匙攥在手里。",
-      "item": "铁门钥匙",
-      "target": null
-    },
-    {
-      "text": "我和执行部学生打听图书馆的传闻。",
-      "item": null,
-      "target": "执行部学生"
-    },
-    {
-      "text": "我检查扫帚的齿纹。",
-      "item": null,
-      "target": "扫帚"
-    },
-    {
-      "text": "我想起了铜钥匙。",
-      "item": null,
-      "target": null
-    },
-    {
-      "text": "我检查上锁的书架。",
-      "item": null,
-      "target": "书架"
-    },
-    {
-      "text": "我去二楼档案室。",
-      "item": null,
-      "target": "二楼档案室"
-    },
-    {
-      "text": "我用木桶砸开抽屉。",
-      "item": "木桶",
-      "target": "抽屉"
-    },
-    {
-      "text": "我把铁门钥匙收好。",
-      "item": "铁门钥匙",
-      "target": null
-    },
-    {
-      "text": "我用地图撬开扫帚。",
-      "item": "地图",
-      "target": "扫帚"
-    },
-    {
-      "text": "我检查绳索的齿纹。",
-      "item": null,
-      "target": "绳索"
-    },
-    {
-      "text": "我用剑撬开书架。",
-      "item": "剑",
-      "target": "书架"
-    },
-    {
-      "text": "我用水壶砸开木箱。",
-      "item": "水壶",
-      "target": "木箱"
-    },
-    {
-      "text": "我用绳索打开木箱。",
-      "item": "绳索",
-      "target": "木箱"
-    },
-    {
-      "text": "我用绳索照亮壁画。",
-      "item": "绳索",
-      "target": "壁画"
-    },
-    {
-      "text": "我用木桶把窗台压住。",
-      "item": "木桶",
-      "target": "窗台"
-    },
-    {
-      "text": "我仔细查看书架上的痕迹。",
-      "item": null,
-      "target": "书架"
-    },
-    {
-      "text": "我用那把铜钥匙撬开木箱。",
-      "item": "铜钥匙",
-      "target": "木箱"
-    },
-    {
-      "text": "我用绳索打开柜子。",
-      "item": "绳索",
-      "target": "柜子"
-    },
-    {
-      "text": "我用扫帚撬开壁画。",
-      "item": "扫帚",
-      "target": "壁画"
-    },
-    {
-      "text": "我和路明非搭话。",
-      "item": null,
-      "target": "路明非"
-    },
-    {
-      "text": "我用剑把壁画压住。",
-      "item": "剑",
-      "target": "壁画"
-    },
-    {
-      "text": "我把绳索攥在手里。",
-      "item": "绳索",
-      "target": null
-    },
-    {
-      "text": "我用铜钥匙锁上抽屉。",
-      "item": "铜钥匙",
-      "target": "抽屉"
-    },
-    {
-      "text": "我用水壶割断绳子。",
-      "item": "水壶",
-      "target": "绳子"
-    },
-    {
-      "text": "我用地图把壁画压住。",
-      "item": "地图",
-      "target": "壁画"
-    },
-    {
-      "text": "背包里只有剑。",
-      "item": null,
-      "target": null
-    },
-    {
-      "text": "我把扫帚放在雕像旁边。",
-      "item": "扫帚",
-      "target": "雕像"
-    },
-    {
-      "text": "我把剑收进背包。",
-      "item": "剑",
-      "target": "背包"
-    },
-    {
-      "text": "我用绳索撬开木桶。",
-      "item": "绳索",
-      "target": "木桶"
-    },
-    {
-      "text": "我用铁门钥匙撬开水壶。",
-      "item": "铁门钥匙",
-      "target": "水壶"
-    },
-    {
-      "text": "我用铜钥匙撬开灯笼。",
-      "item": "铜钥匙",
-      "target": "灯笼"
-    },
-    {
-      "text": "我用水壶把雕像压住。",
-      "item": "水壶",
-      "target": "雕像"
-    },
-    {
-      "text": "我用灯笼撬开暗门。",
-      "item": "灯笼",
-      "target": "暗门"
-    },
-    {
-      "text": "我用木桶撬开铁锹。",
-      "item": "木桶",
-      "target": "铁锹"
-    },
-    {
-      "text": "我用剑打开抽屉。",
-      "item": "剑",
-      "target": "抽屉"
-    },
-    {
-      "text": "我用铜钥匙照亮窗台。",
-      "item": "铜钥匙",
-      "target": "窗台"
-    },
-    {
-      "text": "我检查灯笼。",
-      "item": null,
-      "target": "灯笼"
-    },
-    {
-      "text": "我用地图撬开铁门钥匙。",
-      "item": "地图",
-      "target": "铁门钥匙"
-    },
-    {
-      "text": "我用铁门钥匙砸开抽屉。",
-      "item": "铁门钥匙",
-      "target": "抽屉"
-    },
-    {
-      "text": "我搜索暗门。",
-      "item": null,
-      "target": "暗门"
-    },
-    {
-      "text": "我用地图打开木箱。",
-      "item": "地图",
-      "target": "木箱"
-    },
-    {
-      "text": "我把地图攥在手里。",
-      "item": "地图",
-      "target": null
-    },
-    {
-      "text": "我把扫帚握紧了。",
-      "item": "扫帚",
-      "target": null
-    },
-    {
-      "text": "我用绳索割断绳子。",
-      "item": "绳索",
-      "target": "绳子"
-    },
-    {
-      "text": "我检查剑的齿纹。",
-      "item": null,
-      "target": "剑"
-    },
-    {
-      "text": "我仔细查看窗台上的痕迹。",
-      "item": null,
-      "target": "窗台"
-    },
-    {
-      "text": "我把灯笼举过头顶。",
-      "item": "灯笼",
-      "target": null
-    },
-    {
-      "text": "我用剑照亮壁画。",
-      "item": "剑",
-      "target": "壁画"
-    },
-    {
-      "text": "我检查剑。",
-      "item": null,
-      "target": "剑"
-    },
-    {
-      "text": "我用铁门钥匙锁上柜子。",
-      "item": "铁门钥匙",
-      "target": "柜子"
-    },
-    {
-      "text": "我用绳索撬开书架。",
-      "item": "绳索",
-      "target": "书架"
-    },
-    {
-      "text": "我用铜钥匙撬开绳索。",
-      "item": "铜钥匙",
-      "target": "绳索"
-    },
-    {
-      "text": "我用铁锹把壁画压住。",
-      "item": "铁锹",
-      "target": "壁画"
-    },
-    {
-      "text": "我想起了灯笼。",
-      "item": null,
-      "target": null
-    },
-    {
-      "text": "我用铁门钥匙把窗台压住。",
-      "item": "铁门钥匙",
-      "target": "窗台"
-    },
-    {
-      "text": "我用地图把书架压住。",
-      "item": "地图",
-      "target": "书架"
-    },
-    {
-      "text": "我用水壶敲了敲书架。",
-      "item": "水壶",
-      "target": "书架"
-    },
-    {
-      "text": "我用铜钥匙撬开铁锹。",
-      "item": "铜钥匙",
-      "target": "铁锹"
-    },
-    {
-      "text": "我返回卡塞尔学院图书馆。",
-      "item": null,
-      "target": "卡塞尔学院图书馆"
-    },
-    {
-      "text": "我前往卡塞尔学院图书馆。",
-      "item": null,
-      "target": "卡塞尔学院图书馆"
-    },
-    {
-      "text": "我用生锈的剑打开大门。",
-      "item": "剑",
-      "target": "大门"
-    },
-    {
-      "text": "我把铁门钥匙握紧了。",
-      "item": "铁门钥匙",
-      "target": null
-    },
-    {
-      "text": "我用地图照亮暗门。",
-      "item": "地图",
-      "target": "暗门"
-    },
-    {
-      "text": "木桶还在背包里。",
-      "item": null,
-      "target": null
-    },
-    {
-      "text": "我用剑照亮书架。",
-      "item": "剑",
-      "target": "书架"
-    },
-    {
-      "text": "我用绳索把雕像压住。",
-      "item": "绳索",
-      "target": "雕像"
-    },
-    {
-      "text": "我用木桶撬开铁门钥匙。",
-      "item": "木桶",
-      "target": "铁门钥匙"
-    },
-    {
-      "text": "我把灯笼收好。",
-      "item": "灯笼",
-      "target": null
-    },
-    {
-      "text": "我用木桶撬开地图。",
-      "item": "木桶",
-      "target": "地图"
-    },
-    {
-      "text": "我用剑敲了敲书架。",
-      "item": "剑",
-      "target": "书架"
-    },
-    {
-      "text": "我用扫帚撬开剑。",
-      "item": "扫帚",
-      "target": "剑"
-    },
-    {
-      "text": "我用剑割断绳子。",
-      "item": "剑",
-      "target": "绳子"
-    },
-    {
-      "text": "我用灯笼撬开扫帚。",
-      "item": "灯笼",
-      "target": "扫帚"
-    },
-    {
-      "text": "我把绳索靠在暗门边。",
-      "item": "绳索",
-      "target": "暗门"
-    },
-    {
-      "text": "我用水壶撑住书架。",
-      "item": "水壶",
-      "target": "书架"
-    },
-    {
-      "text": "我用绳索撬开铁锹。",
-      "item": "绳索",
-      "target": "铁锹"
-    },
-    {
-      "text": "我用铁门钥匙割断绳子。",
-      "item": "铁门钥匙",
-      "target": "绳子"
-    },
-    {
-      "text": "我用剑打开木箱。",
-      "item": "剑",
-      "target": "木箱"
-    },
-    {
-      "text": "我去阅览室。",
-      "item": null,
-      "target": "阅览室"
-    },
-    {
-      "text": "我把灯笼靠在暗门边。",
-      "item": "灯笼",
-      "target": "暗门"
-    },
-    {
-      "text": "我用灯笼锁上柜子。",
-      "item": "灯笼",
-      "target": "柜子"
-    },
-    {
-      "text": "我用水壶照亮窗台。",
-      "item": "水壶",
-      "target": "窗台"
-    },
-    {
-      "text": "我把水壶收进背包。",
-      "item": "水壶",
-      "target": "背包"
-    },
-    {
-      "text": "我检查木桶。",
-      "item": null,
-      "target": "木桶"
-    },
-    {
-      "text": "我用铁门钥匙敲了敲书架。",
-      "item": "铁门钥匙",
-      "target": "书架"
-    },
-    {
-      "text": "我用木桶砸开木箱。",
-      "item": "木桶",
-      "target": "木箱"
-    },
-    {
-      "text": "我用地图照亮窗台。",
-      "item": "地图",
-      "target": "窗台"
-    },
-    {
-      "text": "我检查铁锹的齿纹。",
-      "item": null,
-      "target": "铁锹"
-    },
-    {
-      "text": "我用铁锹把窗台压住。",
-      "item": "铁锹",
-      "target": "窗台"
-    },
-    {
-      "text": "我把扫帚擦了又擦。",
-      "item": "扫帚",
-      "target": null
-    },
-    {
-      "text": "我用铜钥匙撬开扫帚。",
-      "item": "铜钥匙",
-      "target": "扫帚"
-    },
-    {
-      "text": "我前往阅览室。",
-      "item": null,
-      "target": "阅览室"
-    },
-    {
-      "text": "我用地图照亮壁画。",
-      "item": "地图",
-      "target": "壁画"
-    },
-    {
-      "text": "我用扫帚撬开水壶。",
-      "item": "扫帚",
-      "target": "水壶"
-    },
-    {
-      "text": "我用剑撬开铁门钥匙。",
-      "item": "剑",
-      "target": "铁门钥匙"
-    },
-    {
-      "text": "我用水壶锁上大门。",
-      "item": "水壶",
-      "target": "大门"
-    },
-    {
-      "text": "我用铁门钥匙撬开铜钥匙。",
-      "item": "铁门钥匙",
-      "target": "铜钥匙"
-    },
-    {
-      "text": "我用扫帚打开抽屉。",
-      "item": "扫帚",
-      "target": "抽屉"
-    },
-    {
-      "text": "我用铁锹锁上木箱。",
-      "item": "铁锹",
-      "target": "木箱"
-    },
-    {
-      "text": "我用剑把雕像压住。",
-      "item": "剑",
-      "target": "雕像"
-    },
-    {
-      "text": "我用扫帚撬开灯笼。",
-      "item": "扫帚",
-      "target": "灯笼"
-    },
-    {
-      "text": "我检查书架。",
-      "item": null,
-      "target": "书架"
-    },
-    {
-      "text": "我用剑撬开窗台。",
-      "item": "剑",
-      "target": "窗台"
-    },
-    {
-      "text": "我整理了一下背包。",
-      "item": null,
-      "target": null
-    },
-    {
-      "text": "我把木桶擦了又擦。",
-      "item": "木桶",
-      "target": null
-    },
-    {
-      "text": "我把扫帚放在壁画旁边。",
-      "item": "扫帚",
-      "target": "壁画"
-    },
-    {
-      "text": "我用地图撬开铁锹。",
-      "item": "地图",
-      "target": "铁锹"
-    },
-    {
-      "text": "我用绳索把书架压住。",
-      "item": "绳索",
-      "target": "书架"
-    },
-    {
-      "text": "我用水壶打开木箱。",
-      "item": "水壶",
-      "target": "木箱"
-    },
-    {
-      "text": "我把铁门钥匙举过头顶。",
-      "item": "铁门钥匙",
-      "target": null
-    },
-    {
-      "text": "我用生锈的木桶打开大门。",
-      "item": "木桶",
-      "target": "大门"
-    },
-    {
-      "text": "我用木桶把书架压住。",
-      "item": "木桶",
-      "target": "书架"
-    },
-    {
-      "text": "我走进昏暗的走廊。",
-      "item": null,
-      "target": "走廊"
-    },
-    {
-      "text": "我把剑握紧了。",
-      "item": "剑",
-      "target": null
-    },
-    {
-      "text": "我把铜钥匙攥在手里。",
-      "item": "铜钥匙",
-      "target": null
-    },
-    {
-      "text": "我向凯瑟琳询问暗门的下落。",
-      "item": null,
-      "target": "凯瑟琳"
-    },
-    {
-      "text": "我用铁门钥匙打开柜子。",
-      "item": "铁门钥匙",
-      "target": "柜子"
-    },
-    {
-      "text": "我用灯笼打开大门。",
-      "item": "灯笼",
-      "target": "大门"
-    },
-    {
-      "text": "我和古德里安教授搭话。",
-      "item": null,
-      "target": "古德里安教授"
-    },
-    {
-      "text": "我用扫帚打开大门。",
-      "item": "扫帚",
-      "target": "大门"
-    },
-    {
-      "text": "我用剑锁上抽屉。",
-      "item": "剑",
-      "target": "抽屉"
-    },
-    {
-      "text": "我用铁锹把暗门压住。",
-      "item": "铁锹",
-      "target": "暗门"
-    },
-    {
-      "text": "我把铜钥匙收好。",
-      "item": "铜钥匙",
-      "target": null
-    },
-    {
-      "text": "我用铜钥匙撬开暗门。",
-      "item": "铜钥匙",
-      "target": "暗门"
-    },
-    {
-      "text": "我用铁门钥匙撬开铁锹。",
-      "item": "铁门钥匙",
-      "target": "铁锹"
-    },
-    {
-      "text": "我用木桶撬开铜钥匙。",
-      "item": "木桶",
-      "target": "铜钥匙"
-    },
-    {
-      "text": "我用铁门钥匙砸开木箱。",
-      "item": "铁门钥匙",
-      "target": "木箱"
-    },
-    {
-      "text": "我用那把铁门钥匙撬开木箱。",
-      "item": "铁门钥匙",
-      "target": "木箱"
-    },
-    {
-      "text": "我用木桶把雕像压住。",
-      "item": "木桶",
-      "target": "雕像"
-    },
-    {
-      "text": "我用铜钥匙锁上大门。",
-      "item": "铜钥匙",
-      "target": "大门"
     },
     {
       "text": "我观察书架。",
@@ -2359,39 +816,19 @@
       "target": "书架"
     },
     {
-      "text": "我用灯笼打开木箱。",
+      "text": "我用灯笼照亮书架。",
       "item": "灯笼",
-      "target": "木箱"
+      "target": "书架"
     },
     {
-      "text": "我用地图割断绳子。",
-      "item": "地图",
-      "target": "绳子"
+      "text": "我向更夫打听城门的规矩。",
+      "item": null,
+      "target": "更夫"
     },
     {
-      "text": "我用木桶锁上木箱。",
-      "item": "木桶",
-      "target": "木箱"
-    },
-    {
-      "text": "我用绳索锁上柜子。",
-      "item": "绳索",
-      "target": "柜子"
-    },
-    {
-      "text": "我把水壶收好。",
-      "item": "水壶",
-      "target": null
-    },
-    {
-      "text": "我用铁门钥匙照亮窗台。",
-      "item": "铁门钥匙",
-      "target": "窗台"
-    },
-    {
-      "text": "我用水壶砸开抽屉。",
-      "item": "水壶",
-      "target": "抽屉"
+      "text": "我把扫帚收进背包。",
+      "item": "扫帚",
+      "target": "背包"
     },
     {
       "text": "我用剑撬开水壶。",
@@ -2399,419 +836,54 @@
       "target": "水壶"
     },
     {
-      "text": "我把铁锹攥在手里。",
-      "item": "铁锹",
-      "target": null
-    },
-    {
-      "text": "我用铜钥匙撬开地图。",
-      "item": "铜钥匙",
-      "target": "地图"
-    },
-    {
-      "text": "我拔剑攻击路明非。",
-      "item": "剑",
-      "target": "路明非"
-    },
-    {
-      "text": "我用剑锁上柜子。",
-      "item": "剑",
-      "target": "柜子"
-    },
-    {
-      "text": "我用剑撬开壁画。",
-      "item": "剑",
-      "target": "壁画"
-    },
-    {
-      "text": "我用水壶撬开剑。",
-      "item": "水壶",
-      "target": "剑"
-    },
-    {
-      "text": "我用地图撬开木桶。",
-      "item": "地图",
-      "target": "木桶"
-    },
-    {
-      "text": "我用铁锹锁上柜子。",
-      "item": "铁锹",
-      "target": "柜子"
-    },
-    {
-      "text": "我用铁门钥匙砸开柜子。",
-      "item": "铁门钥匙",
-      "target": "柜子"
-    },
-    {
-      "text": "我检查铁门钥匙的齿纹。",
-      "item": null,
-      "target": "铁门钥匙"
-    },
-    {
-      "text": "我用水壶锁上抽屉。",
-      "item": "水壶",
-      "target": "抽屉"
-    },
-    {
-      "text": "我用木桶撑住书架。",
-      "item": "木桶",
-      "target": "书架"
-    },
-    {
-      "text": "我检查铜钥匙的齿纹。",
-      "item": null,
-      "target": "铜钥匙"
-    },
-    {
-      "text": "我用绳索砸开木箱。",
-      "item": "绳索",
-      "target": "木箱"
-    },
-    {
-      "text": "我用那把剑撬开木箱。",
-      "item": "剑",
-      "target": "木箱"
-    },
-    {
-      "text": "我检查灯笼的齿纹。",
-      "item": null,
-      "target": "灯笼"
-    },
-    {
-      "text": "我检查上锁的雕像。",
-      "item": null,
-      "target": "雕像"
-    },
-    {
-      "text": "我用木桶打开柜子。",
-      "item": "木桶",
-      "target": "柜子"
-    },
-    {
-      "text": "我用地图撬开暗门。",
-      "item": "地图",
-      "target": "暗门"
-    },
-    {
-      "text": "我用绳索打开抽屉。",
-      "item": "绳索",
-      "target": "抽屉"
-    },
-    {
-      "text": "我沿着楼梯走到二楼档案室。",
-      "item": null,
-      "target": "二楼档案室"
-    },
-    {
-      "text": "我前往走廊。",
-      "item": null,
-      "target": "走廊"
-    },
-    {
-      "text": "我用铁门钥匙撑住书架。",
-      "item": "铁门钥匙",
-      "target": "书架"
-    },
-    {
-      "text": "我向诺诺询问暗门的下落。",
-      "item": null,
-      "target": "诺诺"
-    },
-    {
-      "text": "铜钥匙还在背包里。",
-      "item": null,
-      "target": null
-    },
-    {
-      "text": "我把铜钥匙收进背包。",
-      "item": "铜钥匙",
-      "target": "背包"
-    },
-    {
-      "text": "我把地图靠在暗门边。",
-      "item": "地图",
-      "target": "暗门"
-    },
-    {
-      "text": "我用绳索撑住书架。",
-      "item": "绳索",
-      "target": "书架"
-    },
-    {
-      "text": "我用扫帚撬开铁锹。",
-      "item": "扫帚",
-      "target": "铁锹"
-    },
-    {
-      "text": "我用生锈的铁锹打开大门。",
-      "item": "铁锹",
-      "target": "大门"
-    },
-    {
-      "text": "我用水壶照亮书架。",
-      "item": "水壶",
-      "target": "书架"
-    },
-    {
-      "text": "我把铜钥匙举过头顶。",
-      "item": "铜钥匙",
-      "target": null
-    },
-    {
-      "text": "我用木桶撬开扫帚。",
-      "item": "木桶",
-      "target": "扫帚"
-    },
-    {
-      "text": "我用那把地图撬开木箱。",
-      "item": "地图",
-      "target": "木箱"
-    },
-    {
-      "text": "我用地图照亮雕像。",
-      "item": "地图",
-      "target": "雕像"
-    },
-    {
-      "text": "我用铁门钥匙照亮书架。",
-      "item": "铁门钥匙",
-      "target": "书架"
-    },
-    {
-      "text": "我把绳索擦了又擦。",
-      "item": "绳索",
-      "target": null
-    },
-    {
-      "text": "我用扫帚撬开书架。",
-      "item": "扫帚",
-      "target": "书架"
-    },
-    {
-      "text": "我用剑砸开柜子。",
-      "item": "剑",
-      "target": "柜子"
-    },
-    {
-      "text": "铁锹还在背包里。",
-      "item": null,
-      "target": null
-    },
-    {
-      "text": "我用铁锹照亮暗门。",
-      "item": "铁锹",
-      "target": "暗门"
-    },
-    {
-      "text": "背包里只有铁锹。",
-      "item": null,
-      "target": null
-    },
-    {
-      "text": "我用水壶砸开柜子。",
-      "item": "水壶",
-      "target": "柜子"
-    },
-    {
-      "text": "我检查水壶的齿纹。",
-      "item": null,
-      "target": "水壶"
-    },
-    {
-      "text": "我用铁门钥匙撬开书架。",
-      "item": "铁门钥匙",
-      "target": "书架"
-    },
-    {
-      "text": "我搜索窗台。",
-      "item": null,
-      "target": "窗台"
-    },
-    {
-      "text": "我用灯笼撑住书架。",
+      "text": "我用灯笼敲了敲书架。",
       "item": "灯笼",
       "target": "书架"
     },
     {
-      "text": "我用铁门钥匙打开抽屉。",
-      "item": "铁门钥匙",
-      "target": "抽屉"
-    },
-    {
-      "text": "我用灯笼撬开铁锹。",
-      "item": "灯笼",
-      "target": "铁锹"
-    },
-    {
-      "text": "我沿着楼梯走到阅览室。",
-      "item": null,
-      "target": "阅览室"
-    },
-    {
-      "text": "我深吸一口气。",
-      "item": null,
-      "target": null
-    },
-    {
-      "text": "我用地图照亮书架。",
-      "item": "地图",
-      "target": "书架"
-    },
-    {
-      "text": "我返回二楼档案室。",
-      "item": null,
-      "target": "二楼档案室"
-    },
-    {
-      "text": "我用铁锹打开抽屉。",
-      "item": "铁锹",
-      "target": "抽屉"
-    },
-    {
-      "text": "我把铁锹靠在暗门边。",
-      "item": "铁锹",
-      "target": "暗门"
-    },
-    {
-      "text": "我用剑撬开扫帚。",
-      "item": "剑",
-      "target": "扫帚"
-    },
-    {
-      "text": "背包里只有铜钥匙。",
-      "item": null,
-      "target": null
-    },
-    {
-      "text": "我用铁门钥匙撬开暗门。",
-      "item": "铁门钥匙",
-      "target": "暗门"
-    },
-    {
-      "text": "我用水壶撬开窗台。",
-      "item": "水壶",
-      "target": "窗台"
-    },
-    {
-      "text": "我用灯笼照亮雕像。",
-      "item": "灯笼",
-      "target": "雕像"
-    },
-    {
-      "text": "我用铁门钥匙把壁画压住。",
-      "item": "铁门钥匙",
-      "target": "壁画"
-    },
-    {
-      "text": "我想起了铁锹。",
-      "item": null,
-      "target": null
-    },
-    {
-      "text": "我用木桶撬开雕像。",
+      "text": "我用木桶把暗门压住。",
       "item": "木桶",
-      "target": "雕像"
+      "target": "暗门"
     },
     {
-      "text": "我用扫帚照亮壁画。",
-      "item": "扫帚",
-      "target": "壁画"
-    },
-    {
-      "text": "我前往二楼档案室。",
-      "item": null,
-      "target": "二楼档案室"
-    },
-    {
-      "text": "我把绳索举过头顶。",
-      "item": "绳索",
-      "target": null
-    },
-    {
-      "text": "我用水壶撬开雕像。",
-      "item": "水壶",
-      "target": "雕像"
-    },
-    {
-      "text": "我用剑撬开灯笼。",
-      "item": "剑",
-      "target": "灯笼"
-    },
-    {
-      "text": "我用铁锹照亮雕像。",
-      "item": "铁锹",
-      "target": "雕像"
-    },
-    {
-      "text": "我用水壶撬开绳索。",
-      "item": "水壶",
+      "text": "我用铜钥匙撬开绳索。",
+      "item": "铜钥匙",
       "target": "绳索"
     },
     {
-      "text": "我用铜钥匙割断绳子。",
-      "item": "铜钥匙",
-      "target": "绳子"
-    },
-    {
-      "text": "我用绳索砸开抽屉。",
-      "item": "绳索",
-      "target": "抽屉"
-    },
-    {
-      "text": "我用水壶把窗台压住。",
-      "item": "水壶",
-      "target": "窗台"
-    },
-    {
-      "text": "我把木桶握紧了。",
-      "item": "木桶",
-      "target": null
-    },
-    {
-      "text": "我想起了绳索。",
+      "text": "我检查绳索的齿纹。",
       "item": null,
-      "target": null
+      "target": "绳索"
     },
     {
-      "text": "我用木桶砸开大门。",
-      "item": "木桶",
-      "target": "大门"
-    },
-    {
-      "text": "我和凯瑟琳打听图书馆的传闻。",
-      "item": null,
-      "target": "凯瑟琳"
-    },
-    {
-      "text": "我用剑打开大门。",
-      "item": "剑",
-      "target": "大门"
-    },
-    {
-      "text": "我用灯笼把暗门压住。",
-      "item": "灯笼",
-      "target": "暗门"
-    },
-    {
-      "text": "我用铁门钥匙照亮暗门。",
+      "text": "我用铁门钥匙撬开壁画。",
       "item": "铁门钥匙",
-      "target": "暗门"
+      "target": "壁画"
     },
     {
-      "text": "我用灯笼把书架压住。",
-      "item": "灯笼",
+      "text": "我用铁门钥匙锁上大门。",
+      "item": "铁门钥匙",
+      "target": "大门"
+    },
+    {
+      "text": "我把扫帚放在雕像旁边。",
+      "item": "扫帚",
+      "target": "雕像"
+    },
+    {
+      "text": "我用地图撬开扫帚。",
+      "item": "地图",
+      "target": "扫帚"
+    },
+    {
+      "text": "我用铁锹撬开雕像。",
+      "item": "铁锹",
+      "target": "雕像"
+    },
+    {
+      "text": "我用铁门钥匙把书架压住。",
+      "item": "铁门钥匙",
       "target": "书架"
-    },
-    {
-      "text": "我把铁门钥匙靠在暗门边。",
-      "item": "铁门钥匙",
-      "target": "暗门"
-    },
-    {
-      "text": "我和诺诺搭话。",
-      "item": null,
-      "target": "诺诺"
     },
     {
       "text": "我检查地图的齿纹。",
@@ -2824,67 +896,82 @@
       "target": "剑"
     },
     {
-      "text": "我用绳索撬开扫帚。",
-      "item": "绳索",
-      "target": "扫帚"
+      "text": "我检查灯笼的齿纹。",
+      "item": null,
+      "target": "灯笼"
     },
     {
-      "text": "我用水壶照亮壁画。",
-      "item": "水壶",
-      "target": "壁画"
-    },
-    {
-      "text": "我用扫帚锁上木箱。",
-      "item": "扫帚",
-      "target": "木箱"
-    },
-    {
-      "text": "我用铁门钥匙锁上抽屉。",
-      "item": "铁门钥匙",
-      "target": "抽屉"
-    },
-    {
-      "text": "我用铁锹割断绳子。",
-      "item": "铁锹",
-      "target": "绳子"
-    },
-    {
-      "text": "我用铁门钥匙撬开壁画。",
-      "item": "铁门钥匙",
-      "target": "壁画"
-    },
-    {
-      "text": "我用灯笼锁上木箱。",
-      "item": "灯笼",
-      "target": "木箱"
-    },
-    {
-      "text": "我用铜钥匙把暗门压住。",
-      "item": "铜钥匙",
-      "target": "暗门"
-    },
-    {
-      "text": "我把剑收好。",
-      "item": "剑",
+      "text": "我坐下来歇了口气。",
+      "item": null,
       "target": null
     },
     {
-      "text": "我用剑照亮暗门。",
-      "item": "剑",
+      "text": "我用灯笼撬开铜钥匙。",
+      "item": "灯笼",
+      "target": "铜钥匙"
+    },
+    {
+      "text": "我用那把铁锹撬开木箱。",
+      "item": "铁锹",
+      "target": "木箱"
+    },
+    {
+      "text": "我沿着楼梯走到卡塞尔学院图书馆。",
+      "item": null,
+      "target": "卡塞尔学院图书馆"
+    },
+    {
+      "text": "我把灯笼擦了又擦。",
+      "item": "灯笼",
+      "target": null
+    },
+    {
+      "text": "我把油布铺在了筏底。",
+      "item": "油布",
+      "target": "筏底"
+    },
+    {
+      "text": "我向药铺伙计打听郎中的住处。",
+      "item": null,
+      "target": "药铺伙计"
+    },
+    {
+      "text": "我用铁门钥匙把窗台压住。",
+      "item": "铁门钥匙",
+      "target": "窗台"
+    },
+    {
+      "text": "我用铁门钥匙照亮暗门。",
+      "item": "铁门钥匙",
       "target": "暗门"
     },
     {
-      "text": "我用水壶撬开扫帚。",
-      "item": "水壶",
-      "target": "扫帚"
+      "text": "我用地图锁上抽屉。",
+      "item": "地图",
+      "target": "抽屉"
     },
     {
-      "text": "我用灯笼把雕像压住。",
-      "item": "灯笼",
-      "target": "雕像"
+      "text": "我用铁门钥匙撬开地图。",
+      "item": "铁门钥匙",
+      "target": "地图"
     },
     {
-      "text": "背包里只有地图。",
+      "text": "我用铁门钥匙敲了敲书架。",
+      "item": "铁门钥匙",
+      "target": "书架"
+    },
+    {
+      "text": "我用生锈的扫帚打开大门。",
+      "item": "扫帚",
+      "target": "大门"
+    },
+    {
+      "text": "我用木桶撬开暗门。",
+      "item": "木桶",
+      "target": "暗门"
+    },
+    {
+      "text": "我靠在门边等一等。",
       "item": null,
       "target": null
     },
@@ -2894,59 +981,174 @@
       "target": "窗台"
     },
     {
-      "text": "我靠在门边等一等。",
+      "text": "我观察雕像。",
       "item": null,
-      "target": null
+      "target": "雕像"
     },
     {
-      "text": "我用剑砸开抽屉。",
-      "item": "剑",
-      "target": "抽屉"
-    },
-    {
-      "text": "我把扫帚举过头顶。",
-      "item": "扫帚",
-      "target": null
-    },
-    {
-      "text": "我和路明非打听图书馆的传闻。",
-      "item": null,
-      "target": "路明非"
-    },
-    {
-      "text": "我用木桶把暗门压住。",
-      "item": "木桶",
-      "target": "暗门"
-    },
-    {
-      "text": "我用剑撬开木桶。",
-      "item": "剑",
-      "target": "木桶"
-    },
-    {
-      "text": "我用木桶撬开窗台。",
-      "item": "木桶",
+      "text": "我用绳索撬开窗台。",
+      "item": "绳索",
       "target": "窗台"
     },
     {
-      "text": "我用水壶撬开壁画。",
-      "item": "水壶",
+      "text": "我用剑撬开窗台。",
+      "item": "剑",
+      "target": "窗台"
+    },
+    {
+      "text": "我用扫帚打开柜子。",
+      "item": "扫帚",
+      "target": "柜子"
+    },
+    {
+      "text": "我把扫帚放在书架旁边。",
+      "item": "扫帚",
+      "target": "书架"
+    },
+    {
+      "text": "我把梯子搭在了墙头。",
+      "item": "梯子",
+      "target": "墙头"
+    },
+    {
+      "text": "我和古德里安教授搭话。",
+      "item": null,
+      "target": "古德里安教授"
+    },
+    {
+      "text": "我用那把剑撬开木箱。",
+      "item": "剑",
+      "target": "木箱"
+    },
+    {
+      "text": "我仔细查看书架上的痕迹。",
+      "item": null,
+      "target": "书架"
+    },
+    {
+      "text": "我用绳索撬开壁画。",
+      "item": "绳索",
       "target": "壁画"
     },
     {
-      "text": "我沿着楼梯走到卡塞尔学院图书馆。",
+      "text": "我把铁门钥匙握紧了。",
+      "item": "铁门钥匙",
+      "target": null
+    },
+    {
+      "text": "我去走廊。",
       "item": null,
-      "target": "卡塞尔学院图书馆"
+      "target": "走廊"
     },
     {
-      "text": "我用绳索撬开水壶。",
-      "item": "绳索",
-      "target": "水壶"
+      "text": "我用灯笼撬开地图。",
+      "item": "灯笼",
+      "target": "地图"
     },
     {
-      "text": "我用水壶打开大门。",
-      "item": "水壶",
+      "text": "我用铁锹砸开大门。",
+      "item": "铁锹",
       "target": "大门"
+    },
+    {
+      "text": "我把缠住的渔线扯断了。",
+      "item": "渔线",
+      "target": null
+    },
+    {
+      "text": "我去二楼档案室。",
+      "item": null,
+      "target": "二楼档案室"
+    },
+    {
+      "text": "我用那把灯笼撬开木箱。",
+      "item": "灯笼",
+      "target": "木箱"
+    },
+    {
+      "text": "我用木桶锁上抽屉。",
+      "item": "木桶",
+      "target": "抽屉"
+    },
+    {
+      "text": "我用马蹄铁砸开了马厩的门锁。",
+      "item": "马蹄铁",
+      "target": "门锁"
+    },
+    {
+      "text": "我用木桶把书架压住。",
+      "item": "木桶",
+      "target": "书架"
+    },
+    {
+      "text": "我用铁门钥匙撑住书架。",
+      "item": "铁门钥匙",
+      "target": "书架"
+    },
+    {
+      "text": "背包里只有绳索。",
+      "item": null,
+      "target": null
+    },
+    {
+      "text": "我检查铁门钥匙的齿纹。",
+      "item": null,
+      "target": "铁门钥匙"
+    },
+    {
+      "text": "我用铜钥匙撬开木桶。",
+      "item": "铜钥匙",
+      "target": "木桶"
+    },
+    {
+      "text": "我向凯瑟琳询问暗门的下落。",
+      "item": null,
+      "target": "凯瑟琳"
+    },
+    {
+      "text": "我把木桶攥在手里。",
+      "item": "木桶",
+      "target": null
+    },
+    {
+      "text": "剑还在背包里。",
+      "item": null,
+      "target": null
+    },
+    {
+      "text": "我用木桶撬开铁门钥匙。",
+      "item": "木桶",
+      "target": "铁门钥匙"
+    },
+    {
+      "text": "我用木桶锁上大门。",
+      "item": "木桶",
+      "target": "大门"
+    },
+    {
+      "text": "我用水壶撬开木桶。",
+      "item": "水壶",
+      "target": "木桶"
+    },
+    {
+      "text": "我用木桶砸开木箱。",
+      "item": "木桶",
+      "target": "木箱"
+    },
+    {
+      "text": "我用绳索把窗台压住。",
+      "item": "绳索",
+      "target": "窗台"
+    },
+    {
+      "text": "我把木桶举过头顶。",
+      "item": "木桶",
+      "target": null
+    },
+    {
+      "text": "我想起了木桶。",
+      "item": null,
+      "target": null
     },
     {
       "text": "我搜索书架。",
@@ -2954,14 +1156,729 @@
       "target": "书架"
     },
     {
-      "text": "我用灯笼砸开柜子。",
+      "text": "我去卡塞尔学院图书馆查资料。",
+      "item": null,
+      "target": "卡塞尔学院图书馆"
+    },
+    {
+      "text": "我沿着楼梯走到二楼档案室。",
+      "item": null,
+      "target": "二楼档案室"
+    },
+    {
+      "text": "我检查铁锹的齿纹。",
+      "item": null,
+      "target": "铁锹"
+    },
+    {
+      "text": "我把扫帚举过头顶。",
+      "item": "扫帚",
+      "target": null
+    },
+    {
+      "text": "我用木桶敲了敲书架。",
+      "item": "木桶",
+      "target": "书架"
+    },
+    {
+      "text": "我撬开了柴房的挂锁。",
+      "item": null,
+      "target": "挂锁"
+    },
+    {
+      "text": "我把剑举过头顶。",
+      "item": "剑",
+      "target": null
+    },
+    {
+      "text": "我把灯笼靠在暗门边。",
+      "item": "灯笼",
+      "target": "暗门"
+    },
+    {
+      "text": "我检查上锁的窗台。",
+      "item": null,
+      "target": "窗台"
+    },
+    {
+      "text": "我用灯笼砸开抽屉。",
+      "item": "灯笼",
+      "target": "抽屉"
+    },
+    {
+      "text": "我用绳索锁上柜子。",
+      "item": "绳索",
+      "target": "柜子"
+    },
+    {
+      "text": "我用剑撬开铁门钥匙。",
+      "item": "剑",
+      "target": "铁门钥匙"
+    },
+    {
+      "text": "我用剑照亮书架。",
+      "item": "剑",
+      "target": "书架"
+    },
+    {
+      "text": "我用扫帚砸开柜子。",
+      "item": "扫帚",
+      "target": "柜子"
+    },
+    {
+      "text": "我用灯笼撬开暗门。",
+      "item": "灯笼",
+      "target": "暗门"
+    },
+    {
+      "text": "我用灯笼割断绳子。",
+      "item": "灯笼",
+      "target": "绳子"
+    },
+    {
+      "text": "我用半截铅笔拓下了石刻。",
+      "item": "铅笔",
+      "target": "石刻"
+    },
+    {
+      "text": "我用水壶砸开木箱。",
+      "item": "水壶",
+      "target": "木箱"
+    },
+    {
+      "text": "我拔剑攻击古德里安教授。",
+      "item": "剑",
+      "target": "古德里安教授"
+    },
+    {
+      "text": "我用绳索撬开书架。",
+      "item": "绳索",
+      "target": "书架"
+    },
+    {
+      "text": "我用铁门钥匙撬开绳索。",
+      "item": "铁门钥匙",
+      "target": "绳索"
+    },
+    {
+      "text": "我用水壶照亮雕像。",
+      "item": "水壶",
+      "target": "雕像"
+    },
+    {
+      "text": "我走进昏暗的卡塞尔学院图书馆。",
+      "item": null,
+      "target": "卡塞尔学院图书馆"
+    },
+    {
+      "text": "我用剑撑住书架。",
+      "item": "剑",
+      "target": "书架"
+    },
+    {
+      "text": "我把剑靠在暗门边。",
+      "item": "剑",
+      "target": "暗门"
+    },
+    {
+      "text": "我用剑撬开地图。",
+      "item": "剑",
+      "target": "地图"
+    },
+    {
+      "text": "我用绳索打开木箱。",
+      "item": "绳索",
+      "target": "木箱"
+    },
+    {
+      "text": "我把断弦换了下来。",
+      "item": "断弦",
+      "target": null
+    },
+    {
+      "text": "我用水壶撬开灯笼。",
+      "item": "水壶",
+      "target": "灯笼"
+    },
+    {
+      "text": "我用木桶砸开柜子。",
+      "item": "木桶",
+      "target": "柜子"
+    },
+    {
+      "text": "我走进昏暗的二楼档案室。",
+      "item": null,
+      "target": "二楼档案室"
+    },
+    {
+      "text": "我向路明非询问暗门的下落。",
+      "item": null,
+      "target": "路明非"
+    },
+    {
+      "text": "我用剑把窗台压住。",
+      "item": "剑",
+      "target": "窗台"
+    },
+    {
+      "text": "我打量着神龛。",
+      "item": null,
+      "target": "神龛"
+    },
+    {
+      "text": "我用绳索把暗门压住。",
+      "item": "绳索",
+      "target": "暗门"
+    },
+    {
+      "text": "我用扫帚把壁画压住。",
+      "item": "扫帚",
+      "target": "壁画"
+    },
+    {
+      "text": "我用绳索把雕像压住。",
+      "item": "绳索",
+      "target": "雕像"
+    },
+    {
+      "text": "我用木桶锁上柜子。",
+      "item": "木桶",
+      "target": "柜子"
+    },
+    {
+      "text": "我用那把绳索撬开木箱。",
+      "item": "绳索",
+      "target": "木箱"
+    },
+    {
+      "text": "我用木桶撬开铁锹。",
+      "item": "木桶",
+      "target": "铁锹"
+    },
+    {
+      "text": "我用生锈的铁门钥匙打开大门。",
+      "item": "铁门钥匙",
+      "target": "大门"
+    },
+    {
+      "text": "我把剑握紧了。",
+      "item": "剑",
+      "target": null
+    },
+    {
+      "text": "我用绳索撬开灯笼。",
+      "item": "绳索",
+      "target": "灯笼"
+    },
+    {
+      "text": "我用剑打开大门。",
+      "item": "剑",
+      "target": "大门"
+    },
+    {
+      "text": "我用地图把窗台压住。",
+      "item": "地图",
+      "target": "窗台"
+    },
+    {
+      "text": "我用灯笼锁上大门。",
+      "item": "灯笼",
+      "target": "大门"
+    },
+    {
+      "text": "我用铁锹砸开木箱。",
+      "item": "铁锹",
+      "target": "木箱"
+    },
+    {
+      "text": "我用铜钥匙照亮书架。",
+      "item": "铜钥匙",
+      "target": "书架"
+    },
+    {
+      "text": "我用灯笼打开柜子。",
       "item": "灯笼",
       "target": "柜子"
     },
     {
-      "text": "我用水壶撬开暗门。",
+      "text": "我拔剑攻击执行部学生。",
+      "item": "剑",
+      "target": "执行部学生"
+    },
+    {
+      "text": "我和凯瑟琳打听图书馆的传闻。",
+      "item": null,
+      "target": "凯瑟琳"
+    },
+    {
+      "text": "我用水壶打开大门。",
       "item": "水壶",
+      "target": "大门"
+    },
+    {
+      "text": "我用铁门钥匙砸开木箱。",
+      "item": "铁门钥匙",
+      "target": "木箱"
+    },
+    {
+      "text": "我检查铜钥匙的齿纹。",
+      "item": null,
+      "target": "铜钥匙"
+    },
+    {
+      "text": "我用地图打开木箱。",
+      "item": "地图",
+      "target": "木箱"
+    },
+    {
+      "text": "我把剑收好。",
+      "item": "剑",
+      "target": null
+    },
+    {
+      "text": "我把扫帚擦了又擦。",
+      "item": "扫帚",
+      "target": null
+    },
+    {
+      "text": "我用扫帚照亮窗台。",
+      "item": "扫帚",
+      "target": "窗台"
+    },
+    {
+      "text": "我把绳索擦了又擦。",
+      "item": "绳索",
+      "target": null
+    },
+    {
+      "text": "我用绳索打开大门。",
+      "item": "绳索",
+      "target": "大门"
+    },
+    {
+      "text": "我用水壶撬开窗台。",
+      "item": "水壶",
+      "target": "窗台"
+    },
+    {
+      "text": "我和路明非打听图书馆的传闻。",
+      "item": null,
+      "target": "路明非"
+    },
+    {
+      "text": "我用庙祝的钥匙打开了偏殿的门。",
+      "item": "钥匙",
+      "target": "门"
+    },
+    {
+      "text": "我用剑撬开铜钥匙。",
+      "item": "剑",
+      "target": "铜钥匙"
+    },
+    {
+      "text": "我用陈师傅的凿子起出了锈钉。",
+      "item": "凿子",
+      "target": "锈钉"
+    },
+    {
+      "text": "我用剑撬开扫帚。",
+      "item": "剑",
+      "target": "扫帚"
+    },
+    {
+      "text": "我用剑照亮壁画。",
+      "item": "剑",
+      "target": "壁画"
+    },
+    {
+      "text": "我用地图把雕像压住。",
+      "item": "地图",
+      "target": "雕像"
+    },
+    {
+      "text": "我用那串钥匙打开了侧门。",
+      "item": "钥匙",
+      "target": "侧门"
+    },
+    {
+      "text": "我用铁钎撬开了井盖。",
+      "item": "铁钎",
+      "target": "井盖"
+    },
+    {
+      "text": "我用水壶撬开书架。",
+      "item": "水壶",
+      "target": "书架"
+    },
+    {
+      "text": "我用水壶砸开抽屉。",
+      "item": "水壶",
+      "target": "抽屉"
+    },
+    {
+      "text": "我搜索雕像。",
+      "item": null,
+      "target": "雕像"
+    },
+    {
+      "text": "我前往阅览室。",
+      "item": null,
+      "target": "阅览室"
+    },
+    {
+      "text": "我检查上锁的雕像。",
+      "item": null,
+      "target": "雕像"
+    },
+    {
+      "text": "我把地图收好。",
+      "item": "地图",
+      "target": null
+    },
+    {
+      "text": "我和凯瑟琳搭话。",
+      "item": null,
+      "target": "凯瑟琳"
+    },
+    {
+      "text": "我用灯笼照亮壁画。",
+      "item": "灯笼",
+      "target": "壁画"
+    },
+    {
+      "text": "我用铁锹把暗门压住。",
+      "item": "铁锹",
       "target": "暗门"
+    },
+    {
+      "text": "我用剑把雕像压住。",
+      "item": "剑",
+      "target": "雕像"
+    },
+    {
+      "text": "我用木桶撬开绳索。",
+      "item": "木桶",
+      "target": "绳索"
+    },
+    {
+      "text": "我检查木桶的齿纹。",
+      "item": null,
+      "target": "木桶"
+    },
+    {
+      "text": "我用铁门钥匙砸开大门。",
+      "item": "铁门钥匙",
+      "target": "大门"
+    },
+    {
+      "text": "我把铜钱放回了供桌。",
+      "item": "铜钱",
+      "target": "供桌"
+    },
+    {
+      "text": "我用马蹄铁敲了敲拴马桩。",
+      "item": "马蹄铁",
+      "target": "拴马桩"
+    },
+    {
+      "text": "我用水壶撬开地图。",
+      "item": "水壶",
+      "target": "地图"
+    },
+    {
+      "text": "我用绳索砸开抽屉。",
+      "item": "绳索",
+      "target": "抽屉"
+    },
+    {
+      "text": "我检查壁画。",
+      "item": null,
+      "target": "壁画"
+    },
+    {
+      "text": "我把扫帚握紧了。",
+      "item": "扫帚",
+      "target": null
+    },
+    {
+      "text": "我用水壶撬开绳索。",
+      "item": "水壶",
+      "target": "绳索"
+    },
+    {
+      "text": "我仔细查看壁画上的痕迹。",
+      "item": null,
+      "target": "壁画"
+    },
+    {
+      "text": "我用木桶撑住书架。",
+      "item": "木桶",
+      "target": "书架"
+    },
+    {
+      "text": "我用铁门钥匙撬开灯笼。",
+      "item": "铁门钥匙",
+      "target": "灯笼"
+    },
+    {
+      "text": "我用那把水壶撬开木箱。",
+      "item": "水壶",
+      "target": "木箱"
+    },
+    {
+      "text": "我和凯瑟琳打听暗门的来历。",
+      "item": null,
+      "target": "凯瑟琳"
+    },
+    {
+      "text": "我用地图撬开灯笼。",
+      "item": "地图",
+      "target": "灯笼"
+    },
+    {
+      "text": "我用扫帚打开抽屉。",
+      "item": "扫帚",
+      "target": "抽屉"
+    },
+    {
+      "text": "我用铁门钥匙割断绳子。",
+      "item": "铁门钥匙",
+      "target": "绳子"
+    },
+    {
+      "text": "我用绳索打开柜子。",
+      "item": "绳索",
+      "target": "柜子"
+    },
+    {
+      "text": "我用手锯锯断了横木。",
+      "item": "手锯",
+      "target": "横木"
+    },
+    {
+      "text": "我用扫帚割断绳子。",
+      "item": "扫帚",
+      "target": "绳子"
+    },
+    {
+      "text": "我用木桶打开木箱。",
+      "item": "木桶",
+      "target": "木箱"
+    },
+    {
+      "text": "我检查雕像。",
+      "item": null,
+      "target": "雕像"
+    },
+    {
+      "text": "我用灯笼撬开窗台。",
+      "item": "灯笼",
+      "target": "窗台"
+    },
+    {
+      "text": "背包里只有灯笼。",
+      "item": null,
+      "target": null
+    },
+    {
+      "text": "我用铁门钥匙锁上柜子。",
+      "item": "铁门钥匙",
+      "target": "柜子"
+    },
+    {
+      "text": "我用扫帚撬开剑。",
+      "item": "扫帚",
+      "target": "剑"
+    },
+    {
+      "text": "我用铜钥匙撬开剑。",
+      "item": "铜钥匙",
+      "target": "剑"
+    },
+    {
+      "text": "我想起了铁锹。",
+      "item": null,
+      "target": null
+    },
+    {
+      "text": "我把蓑衣盖在水缸上。",
+      "item": "蓑衣",
+      "target": "水缸"
+    },
+    {
+      "text": "我把扫帚放在窗台旁边。",
+      "item": "扫帚",
+      "target": "窗台"
+    },
+    {
+      "text": "我用铜钥匙砸开抽屉。",
+      "item": "铜钥匙",
+      "target": "抽屉"
+    },
+    {
+      "text": "我用木桶照亮暗门。",
+      "item": "木桶",
+      "target": "暗门"
+    },
+    {
+      "text": "我检查暗门。",
+      "item": null,
+      "target": "暗门"
+    },
+    {
+      "text": "我把铁锹攥在手里。",
+      "item": "铁锹",
+      "target": null
+    },
+    {
+      "text": "我把铁锹擦了又擦。",
+      "item": "铁锹",
+      "target": null
+    },
+    {
+      "text": "我用生锈的木桶打开大门。",
+      "item": "木桶",
+      "target": "大门"
+    },
+    {
+      "text": "我用扫帚锁上大门。",
+      "item": "扫帚",
+      "target": "大门"
+    },
+    {
+      "text": "我去卡塞尔学院图书馆。",
+      "item": null,
+      "target": "卡塞尔学院图书馆"
+    },
+    {
+      "text": "我搜索壁画。",
+      "item": null,
+      "target": "壁画"
+    },
+    {
+      "text": "我检查剑。",
+      "item": null,
+      "target": "剑"
+    },
+    {
+      "text": "我把竹席铺在了阁楼上。",
+      "item": "竹席",
+      "target": "阁楼"
+    },
+    {
+      "text": "我用灯笼撬开绳索。",
+      "item": "灯笼",
+      "target": "绳索"
+    },
+    {
+      "text": "我用地图撬开木桶。",
+      "item": "地图",
+      "target": "木桶"
+    },
+    {
+      "text": "我用水壶锁上抽屉。",
+      "item": "水壶",
+      "target": "抽屉"
+    },
+    {
+      "text": "我把水壶收进背包。",
+      "item": "水壶",
+      "target": "背包"
+    },
+    {
+      "text": "我把扫帚放在壁画旁边。",
+      "item": "扫帚",
+      "target": "壁画"
+    },
+    {
+      "text": "我用铜钥匙撬开书架。",
+      "item": "铜钥匙",
+      "target": "书架"
+    },
+    {
+      "text": "我用铜钥匙撬开水壶。",
+      "item": "铜钥匙",
+      "target": "水壶"
+    },
+    {
+      "text": "我检查扫帚的齿纹。",
+      "item": null,
+      "target": "扫帚"
+    },
+    {
+      "text": "我用木桶把雕像压住。",
+      "item": "木桶",
+      "target": "雕像"
+    },
+    {
+      "text": "我用铁锹砸开柜子。",
+      "item": "铁锹",
+      "target": "柜子"
+    },
+    {
+      "text": "我用铁锹把窗台压住。",
+      "item": "铁锹",
+      "target": "窗台"
+    },
+    {
+      "text": "我用地图打开抽屉。",
+      "item": "地图",
+      "target": "抽屉"
+    },
+    {
+      "text": "我把剑收进背包。",
+      "item": "剑",
+      "target": "背包"
+    },
+    {
+      "text": "我用生锈的灯笼打开大门。",
+      "item": "灯笼",
+      "target": "大门"
+    },
+    {
+      "text": "我用地图锁上木箱。",
+      "item": "地图",
+      "target": "木箱"
+    },
+    {
+      "text": "我检查上锁的壁画。",
+      "item": null,
+      "target": "壁画"
+    },
+    {
+      "text": "我把怀表上了弦。",
+      "item": "怀表",
+      "target": null
+    },
+    {
+      "text": "我用铁门钥匙打开大门。",
+      "item": "铁门钥匙",
+      "target": "大门"
+    },
+    {
+      "text": "我用剑砸开大门。",
+      "item": "剑",
+      "target": "大门"
+    },
+    {
+      "text": "我把剑擦了又擦。",
+      "item": "剑",
+      "target": null
+    },
+    {
+      "text": "我用绳索撬开雕像。",
+      "item": "绳索",
+      "target": "雕像"
+    },
+    {
+      "text": "我用铁门钥匙打开抽屉。",
+      "item": "铁门钥匙",
+      "target": "抽屉"
+    },
+    {
+      "text": "我把木桶收好。",
+      "item": "木桶",
+      "target": null
     },
     {
       "text": "我向执行部学生询问暗门的下落。",
@@ -2969,8 +1886,578 @@
       "target": "执行部学生"
     },
     {
-      "text": "我用铁锹撬开地图。",
+      "text": "我把断刀擦干了收好。",
+      "item": "断刀",
+      "target": null
+    },
+    {
+      "text": "我用铁门钥匙打开木箱。",
+      "item": "铁门钥匙",
+      "target": "木箱"
+    },
+    {
+      "text": "我用地图撬开铁门钥匙。",
+      "item": "地图",
+      "target": "铁门钥匙"
+    },
+    {
+      "text": "我用生锈的水壶打开大门。",
+      "item": "水壶",
+      "target": "大门"
+    },
+    {
+      "text": "我用剑照亮雕像。",
+      "item": "剑",
+      "target": "雕像"
+    },
+    {
+      "text": "我把扫帚靠在暗门边。",
+      "item": "扫帚",
+      "target": "暗门"
+    },
+    {
+      "text": "我想起了水壶。",
+      "item": null,
+      "target": null
+    },
+    {
+      "text": "我用地图照亮暗门。",
+      "item": "地图",
+      "target": "暗门"
+    },
+    {
+      "text": "我把水壶擦了又擦。",
+      "item": "水壶",
+      "target": null
+    },
+    {
+      "text": "我用绳索砸开木箱。",
+      "item": "绳索",
+      "target": "木箱"
+    },
+    {
+      "text": "我把水壶握紧了。",
+      "item": "水壶",
+      "target": null
+    },
+    {
+      "text": "我用烧焦的木棍拨了拨火堆。",
+      "item": "木棍",
+      "target": "火堆"
+    },
+    {
+      "text": "我用那把铜钥匙撬开木箱。",
+      "item": "铜钥匙",
+      "target": "木箱"
+    },
+    {
+      "text": "我用铁门钥匙撬开暗门。",
+      "item": "铁门钥匙",
+      "target": "暗门"
+    },
+    {
+      "text": "我用铁锹撬开剑。",
       "item": "铁锹",
+      "target": "剑"
+    },
+    {
+      "text": "我把铜钥匙擦了又擦。",
+      "item": "铜钥匙",
+      "target": null
+    },
+    {
+      "text": "我把灯笼举过头顶。",
+      "item": "灯笼",
+      "target": null
+    },
+    {
+      "text": "我用水壶把暗门压住。",
+      "item": "水壶",
+      "target": "暗门"
+    },
+    {
+      "text": "我用煤油灯照亮了储藏室。",
+      "item": "煤油灯",
+      "target": "储藏室"
+    },
+    {
+      "text": "我用木桶撬开雕像。",
+      "item": "木桶",
+      "target": "雕像"
+    },
+    {
+      "text": "我潜入了地窖。",
+      "item": null,
+      "target": "地窖"
+    },
+    {
+      "text": "我用剑把壁画压住。",
+      "item": "剑",
+      "target": "壁画"
+    },
+    {
+      "text": "我用绳索锁上大门。",
+      "item": "绳索",
+      "target": "大门"
+    },
+    {
+      "text": "我用火柴点亮了壁灯。",
+      "item": "火柴",
+      "target": "壁灯"
+    },
+    {
+      "text": "我把铜钥匙收好。",
+      "item": "铜钥匙",
+      "target": null
+    },
+    {
+      "text": "我用剑砸开柜子。",
+      "item": "剑",
+      "target": "柜子"
+    },
+    {
+      "text": "我用地图照亮雕像。",
+      "item": "地图",
+      "target": "雕像"
+    },
+    {
+      "text": "我用剑把暗门压住。",
+      "item": "剑",
+      "target": "暗门"
+    },
+    {
+      "text": "我用扫帚锁上抽屉。",
+      "item": "扫帚",
+      "target": "抽屉"
+    },
+    {
+      "text": "我用木桶把壁画压住。",
+      "item": "木桶",
+      "target": "壁画"
+    },
+    {
+      "text": "我用剑敲了敲书架。",
+      "item": "剑",
+      "target": "书架"
+    },
+    {
+      "text": "我用铁锹照亮窗台。",
+      "item": "铁锹",
+      "target": "窗台"
+    },
+    {
+      "text": "我用铁锹撬开暗门。",
+      "item": "铁锹",
+      "target": "暗门"
+    },
+    {
+      "text": "我用竹篙撑住了船。",
+      "item": "竹篙",
+      "target": "船"
+    },
+    {
+      "text": "我用湿透的抹布擦净了碑座。",
+      "item": "抹布",
+      "target": "碑座"
+    },
+    {
+      "text": "我用扫帚撬开壁画。",
+      "item": "扫帚",
+      "target": "壁画"
+    },
+    {
+      "text": "我用扫帚照亮暗门。",
+      "item": "扫帚",
+      "target": "暗门"
+    },
+    {
+      "text": "我和路明非搭话。",
+      "item": null,
+      "target": "路明非"
+    },
+    {
+      "text": "我用灯笼撬开壁画。",
+      "item": "灯笼",
+      "target": "壁画"
+    },
+    {
+      "text": "我把铁锹握紧了。",
+      "item": "铁锹",
+      "target": null
+    },
+    {
+      "text": "我用水壶撬开铁锹。",
+      "item": "水壶",
+      "target": "铁锹"
+    },
+    {
+      "text": "我用木桶撬开灯笼。",
+      "item": "木桶",
+      "target": "灯笼"
+    },
+    {
+      "text": "我把灯笼攥在手里。",
+      "item": "灯笼",
+      "target": null
+    },
+    {
+      "text": "我用铁门钥匙照亮壁画。",
+      "item": "铁门钥匙",
+      "target": "壁画"
+    },
+    {
+      "text": "我深吸一口气。",
+      "item": null,
+      "target": null
+    },
+    {
+      "text": "我走进昏暗的走廊。",
+      "item": null,
+      "target": "走廊"
+    },
+    {
+      "text": "我用剑撬开暗门。",
+      "item": "剑",
+      "target": "暗门"
+    },
+    {
+      "text": "我用扫帚锁上木箱。",
+      "item": "扫帚",
+      "target": "木箱"
+    },
+    {
+      "text": "我用铁锹撬开扫帚。",
+      "item": "铁锹",
+      "target": "扫帚"
+    },
+    {
+      "text": "我在原地缓了缓。",
+      "item": null,
+      "target": null
+    },
+    {
+      "text": "我用木桶锁上木箱。",
+      "item": "木桶",
+      "target": "木箱"
+    },
+    {
+      "text": "我用铁门钥匙撬开木桶。",
+      "item": "铁门钥匙",
+      "target": "木桶"
+    },
+    {
+      "text": "我用扫帚撬开绳索。",
+      "item": "扫帚",
+      "target": "绳索"
+    },
+    {
+      "text": "我用铁锹把壁画压住。",
+      "item": "铁锹",
+      "target": "壁画"
+    },
+    {
+      "text": "我把扫帚收好。",
+      "item": "扫帚",
+      "target": null
+    },
+    {
+      "text": "我把水壶举过头顶。",
+      "item": "水壶",
+      "target": null
+    },
+    {
+      "text": "我用剑撬开书架。",
+      "item": "剑",
+      "target": "书架"
+    },
+    {
+      "text": "我用扫帚把雕像压住。",
+      "item": "扫帚",
+      "target": "雕像"
+    },
+    {
+      "text": "我用守墓人的风灯照了照碑文。",
+      "item": "风灯",
+      "target": "碑文"
+    },
+    {
+      "text": "我检查了那扇雕花的屏风。",
+      "item": null,
+      "target": "屏风"
+    },
+    {
+      "text": "我用铁锹撬开铁门钥匙。",
+      "item": "铁锹",
+      "target": "铁门钥匙"
+    },
+    {
+      "text": "我的行囊里还剩半卷麻绳。",
+      "item": null,
+      "target": null
+    },
+    {
+      "text": "我用水壶锁上大门。",
+      "item": "水壶",
+      "target": "大门"
+    },
+    {
+      "text": "我用铁锹撬开木桶。",
+      "item": "铁锹",
+      "target": "木桶"
+    },
+    {
+      "text": "我用水壶撬开壁画。",
+      "item": "水壶",
+      "target": "壁画"
+    },
+    {
+      "text": "我用地图撬开水壶。",
+      "item": "地图",
+      "target": "水壶"
+    },
+    {
+      "text": "我用水壶锁上柜子。",
+      "item": "水壶",
+      "target": "柜子"
+    },
+    {
+      "text": "我用水壶割断绳子。",
+      "item": "水壶",
+      "target": "绳子"
+    },
+    {
+      "text": "我用铁锹照亮书架。",
+      "item": "铁锹",
+      "target": "书架"
+    },
+    {
+      "text": "背包里只有地图。",
+      "item": null,
+      "target": null
+    },
+    {
+      "text": "我用铁锹打开抽屉。",
+      "item": "铁锹",
+      "target": "抽屉"
+    },
+    {
+      "text": "我检查灯笼。",
+      "item": null,
+      "target": "灯笼"
+    },
+    {
+      "text": "我用扫帚撬开书架。",
+      "item": "扫帚",
+      "target": "书架"
+    },
+    {
+      "text": "我用地图打开大门。",
+      "item": "地图",
+      "target": "大门"
+    },
+    {
+      "text": "我把铁锹收进背包。",
+      "item": "铁锹",
+      "target": "背包"
+    },
+    {
+      "text": "我用铁锹照亮壁画。",
+      "item": "铁锹",
+      "target": "壁画"
+    },
+    {
+      "text": "我用灯笼把书架压住。",
+      "item": "灯笼",
+      "target": "书架"
+    },
+    {
+      "text": "我用扫帚打开大门。",
+      "item": "扫帚",
+      "target": "大门"
+    },
+    {
+      "text": "我用灯笼锁上柜子。",
+      "item": "灯笼",
+      "target": "柜子"
+    },
+    {
+      "text": "我用地图砸开抽屉。",
+      "item": "地图",
+      "target": "抽屉"
+    },
+    {
+      "text": "我向古德里安教授询问暗门的下落。",
+      "item": null,
+      "target": "古德里安教授"
+    },
+    {
+      "text": "我拔剑攻击凯瑟琳。",
+      "item": "剑",
+      "target": "凯瑟琳"
+    },
+    {
+      "text": "我用木桶撬开剑。",
+      "item": "木桶",
+      "target": "剑"
+    },
+    {
+      "text": "我翻看了地契。",
+      "item": null,
+      "target": "地契"
+    },
+    {
+      "text": "我用扫帚撬开灯笼。",
+      "item": "扫帚",
+      "target": "灯笼"
+    },
+    {
+      "text": "我用剑锁上抽屉。",
+      "item": "剑",
+      "target": "抽屉"
+    },
+    {
+      "text": "我把望远镜举起来又放下。",
+      "item": "望远镜",
+      "target": null
+    },
+    {
+      "text": "我用地图锁上大门。",
+      "item": "地图",
+      "target": "大门"
+    },
+    {
+      "text": "我用绳索照亮窗台。",
+      "item": "绳索",
+      "target": "窗台"
+    },
+    {
+      "text": "我用绳索照亮书架。",
+      "item": "绳索",
+      "target": "书架"
+    },
+    {
+      "text": "我用地图割断绳子。",
+      "item": "地图",
+      "target": "绳子"
+    },
+    {
+      "text": "我用扫帚敲了敲书架。",
+      "item": "扫帚",
+      "target": "书架"
+    },
+    {
+      "text": "我用扫帚撬开木桶。",
+      "item": "扫帚",
+      "target": "木桶"
+    },
+    {
+      "text": "我用水壶敲了敲书架。",
+      "item": "水壶",
+      "target": "书架"
+    },
+    {
+      "text": "我把绳索收进背包。",
+      "item": "绳索",
+      "target": "背包"
+    },
+    {
+      "text": "我用扫帚撬开水壶。",
+      "item": "扫帚",
+      "target": "水壶"
+    },
+    {
+      "text": "我用铁锹撬开铜钥匙。",
+      "item": "铁锹",
+      "target": "铜钥匙"
+    },
+    {
+      "text": "我用水壶照亮窗台。",
+      "item": "水壶",
+      "target": "窗台"
+    },
+    {
+      "text": "我用铁锹撬开绳索。",
+      "item": "铁锹",
+      "target": "绳索"
+    },
+    {
+      "text": "我用地图撬开雕像。",
+      "item": "地图",
+      "target": "雕像"
+    },
+    {
+      "text": "我用剑撬开灯笼。",
+      "item": "剑",
+      "target": "灯笼"
+    },
+    {
+      "text": "我把铜钥匙收进背包。",
+      "item": "铜钥匙",
+      "target": "背包"
+    },
+    {
+      "text": "我用灯笼砸开大门。",
+      "item": "灯笼",
+      "target": "大门"
+    },
+    {
+      "text": "我用铜钥匙锁上抽屉。",
+      "item": "铜钥匙",
+      "target": "抽屉"
+    },
+    {
+      "text": "我用木桶撬开书架。",
+      "item": "木桶",
+      "target": "书架"
+    },
+    {
+      "text": "我用水壶撬开铁门钥匙。",
+      "item": "水壶",
+      "target": "铁门钥匙"
+    },
+    {
+      "text": "我用绳索撬开暗门。",
+      "item": "绳索",
+      "target": "暗门"
+    },
+    {
+      "text": "我用绳索把壁画压住。",
+      "item": "绳索",
+      "target": "壁画"
+    },
+    {
+      "text": "我用铜钥匙照亮雕像。",
+      "item": "铜钥匙",
+      "target": "雕像"
+    },
+    {
+      "text": "我用剑锁上柜子。",
+      "item": "剑",
+      "target": "柜子"
+    },
+    {
+      "text": "我用地图撬开剑。",
+      "item": "地图",
+      "target": "剑"
+    },
+    {
+      "text": "我溜进了西跨院。",
+      "item": null,
+      "target": "西跨院"
+    },
+    {
+      "text": "我转动了石塔的兽首。",
+      "item": null,
+      "target": "兽首"
+    },
+    {
+      "text": "我把地图擦了又擦。",
+      "item": "地图",
+      "target": null
+    },
+    {
+      "text": "我用扫帚撬开地图。",
+      "item": "扫帚",
       "target": "地图"
     },
     {
@@ -2979,79 +2466,304 @@
       "target": "暗门"
     },
     {
-      "text": "我用扫帚砸开木箱。",
+      "text": "我把扫帚攥在手里。",
       "item": "扫帚",
-      "target": "木箱"
+      "target": null
     },
     {
-      "text": "我用木桶敲了敲书架。",
-      "item": "木桶",
-      "target": "书架"
-    },
-    {
-      "text": "我用铁锹砸开柜子。",
-      "item": "铁锹",
+      "text": "我用铁门钥匙打开柜子。",
+      "item": "铁门钥匙",
       "target": "柜子"
     },
     {
-      "text": "我把水壶靠在暗门边。",
-      "item": "水壶",
-      "target": "暗门"
+      "text": "我把马灯挂上了车辕。",
+      "item": "马灯",
+      "target": "车辕"
     },
     {
-      "text": "我用地图砸开大门。",
+      "text": "我用地图撬开铜钥匙。",
       "item": "地图",
-      "target": "大门"
+      "target": "铜钥匙"
     },
     {
-      "text": "我用扫帚打开木箱。",
-      "item": "扫帚",
+      "text": "我用铜钥匙撬开铁锹。",
+      "item": "铜钥匙",
+      "target": "铁锹"
+    },
+    {
+      "text": "我用那把木桶撬开木箱。",
+      "item": "木桶",
       "target": "木箱"
     },
     {
-      "text": "我用铁锹撬开暗门。",
-      "item": "铁锹",
+      "text": "我用铁门钥匙撬开雕像。",
+      "item": "铁门钥匙",
+      "target": "雕像"
+    },
+    {
+      "text": "我把地图靠在暗门边。",
+      "item": "地图",
       "target": "暗门"
     },
     {
-      "text": "我用木桶撬开绳索。",
-      "item": "木桶",
-      "target": "绳索"
+      "text": "背包里只有扫帚。",
+      "item": null,
+      "target": null
     },
     {
-      "text": "我用铁锹撬开扫帚。",
-      "item": "铁锹",
+      "text": "我用绳索撬开木桶。",
+      "item": "绳索",
+      "target": "木桶"
+    },
+    {
+      "text": "我用水壶撬开扫帚。",
+      "item": "水壶",
       "target": "扫帚"
     },
     {
-      "text": "我用地图锁上大门。",
+      "text": "我检查水壶的齿纹。",
+      "item": null,
+      "target": "水壶"
+    },
+    {
+      "text": "我把地图攥在手里。",
       "item": "地图",
+      "target": null
+    },
+    {
+      "text": "我用铁锹把书架压住。",
+      "item": "铁锹",
+      "target": "书架"
+    },
+    {
+      "text": "我用扫帚撬开铁锹。",
+      "item": "扫帚",
+      "target": "铁锹"
+    },
+    {
+      "text": "铜钥匙还在背包里。",
+      "item": null,
+      "target": null
+    },
+    {
+      "text": "我用铜钥匙砸开木箱。",
+      "item": "铜钥匙",
+      "target": "木箱"
+    },
+    {
+      "text": "我用扫帚把窗台压住。",
+      "item": "扫帚",
+      "target": "窗台"
+    },
+    {
+      "text": "扫帚还在背包里。",
+      "item": null,
+      "target": null
+    },
+    {
+      "text": "我把木桶握紧了。",
+      "item": "木桶",
+      "target": null
+    },
+    {
+      "text": "我用扫帚锁上柜子。",
+      "item": "扫帚",
+      "target": "柜子"
+    },
+    {
+      "text": "我返回二楼档案室。",
+      "item": null,
+      "target": "二楼档案室"
+    },
+    {
+      "text": "我去阅览室。",
+      "item": null,
+      "target": "阅览室"
+    },
+    {
+      "text": "我检查铁锹。",
+      "item": null,
+      "target": "铁锹"
+    },
+    {
+      "text": "我和执行部学生打听暗门的来历。",
+      "item": null,
+      "target": "执行部学生"
+    },
+    {
+      "text": "我用生锈的铜钥匙打开大门。",
+      "item": "铜钥匙",
       "target": "大门"
     },
     {
-      "text": "我用铁锹撬开灯笼。",
-      "item": "铁锹",
+      "text": "我用剑割断绳子。",
+      "item": "剑",
+      "target": "绳子"
+    },
+    {
+      "text": "我用铁门钥匙砸开柜子。",
+      "item": "铁门钥匙",
+      "target": "柜子"
+    },
+    {
+      "text": "我用铜钥匙撬开灯笼。",
+      "item": "铜钥匙",
       "target": "灯笼"
     },
     {
-      "text": "我把水壶擦了又擦。",
+      "text": "我用铜钥匙打开抽屉。",
+      "item": "铜钥匙",
+      "target": "抽屉"
+    },
+    {
+      "text": "我用扫帚撬开铁门钥匙。",
+      "item": "扫帚",
+      "target": "铁门钥匙"
+    },
+    {
+      "text": "我前往卡塞尔学院图书馆。",
+      "item": null,
+      "target": "卡塞尔学院图书馆"
+    },
+    {
+      "text": "我剪断了捆包裹的细绳。",
+      "item": null,
+      "target": "细绳"
+    },
+    {
+      "text": "我用地图把书架压住。",
+      "item": "地图",
+      "target": "书架"
+    },
+    {
+      "text": "我用剑打开抽屉。",
+      "item": "剑",
+      "target": "抽屉"
+    },
+    {
+      "text": "我用铜钥匙撬开扫帚。",
+      "item": "铜钥匙",
+      "target": "扫帚"
+    },
+    {
+      "text": "我把绳索攥在手里。",
+      "item": "绳索",
+      "target": null
+    },
+    {
+      "text": "我用铜钥匙把壁画压住。",
+      "item": "铜钥匙",
+      "target": "壁画"
+    },
+    {
+      "text": "我检查铁门钥匙。",
+      "item": null,
+      "target": "铁门钥匙"
+    },
+    {
+      "text": "我用绳索撬开扫帚。",
+      "item": "绳索",
+      "target": "扫帚"
+    },
+    {
+      "text": "我用绳索撬开铁锹。",
+      "item": "绳索",
+      "target": "铁锹"
+    },
+    {
+      "text": "我用绳索照亮壁画。",
+      "item": "绳索",
+      "target": "壁画"
+    },
+    {
+      "text": "我用地图撬开暗门。",
+      "item": "地图",
+      "target": "暗门"
+    },
+    {
+      "text": "我用水壶砸开大门。",
+      "item": "水壶",
+      "target": "大门"
+    },
+    {
+      "text": "我用木桶撬开水壶。",
+      "item": "木桶",
+      "target": "水壶"
+    },
+    {
+      "text": "我用铜盆接住了檐水。",
+      "item": "铜盆",
+      "target": "檐水"
+    },
+    {
+      "text": "我向绣娘请教纹样的来历。",
+      "item": null,
+      "target": "绣娘"
+    },
+    {
+      "text": "我把水壶攥在手里。",
       "item": "水壶",
       "target": null
     },
     {
-      "text": "我检查绳索。",
+      "text": "我把缆绳交给了纤夫。",
       "item": null,
-      "target": "绳索"
+      "target": "纤夫"
     },
     {
-      "text": "我用灯笼把壁画压住。",
-      "item": "灯笼",
-      "target": "壁画"
+      "text": "我向船家打听渡口的远近。",
+      "item": null,
+      "target": "船家"
     },
     {
-      "text": "我用扫帚照亮窗台。",
-      "item": "扫帚",
+      "text": "我把铁门钥匙攥在手里。",
+      "item": "铁门钥匙",
+      "target": null
+    },
+    {
+      "text": "我检查书架。",
+      "item": null,
+      "target": "书架"
+    },
+    {
+      "text": "我用铁门钥匙照亮窗台。",
+      "item": "铁门钥匙",
       "target": "窗台"
+    },
+    {
+      "text": "我用绳索照亮雕像。",
+      "item": "绳索",
+      "target": "雕像"
+    },
+    {
+      "text": "我用绳索撬开剑。",
+      "item": "绳索",
+      "target": "剑"
+    },
+    {
+      "text": "我用铁锹打开柜子。",
+      "item": "铁锹",
+      "target": "柜子"
+    },
+    {
+      "text": "我用灯笼撬开铁锹。",
+      "item": "灯笼",
+      "target": "铁锹"
+    },
+    {
+      "text": "我和诺诺搭话。",
+      "item": null,
+      "target": "诺诺"
+    },
+    {
+      "text": "我把木桶靠在暗门边。",
+      "item": "木桶",
+      "target": "暗门"
+    },
+    {
+      "text": "我用扫帚把书架压住。",
+      "item": "扫帚",
+      "target": "书架"
     },
     {
       "text": "我检查地图。",
@@ -3059,18 +2771,538 @@
       "target": "地图"
     },
     {
-      "text": "我用地图撬开窗台。",
-      "item": "地图",
-      "target": "窗台"
+      "text": "我把绳索举过头顶。",
+      "item": "绳索",
+      "target": null
     },
     {
-      "text": "我用扫帚撑住书架。",
-      "item": "扫帚",
+      "text": "我用剑把书架压住。",
+      "item": "剑",
       "target": "书架"
     },
     {
-      "text": "我用铁锹撬开壁画。",
+      "text": "我用铜钥匙锁上柜子。",
+      "item": "铜钥匙",
+      "target": "柜子"
+    },
+    {
+      "text": "我用生锈的铁锹打开大门。",
       "item": "铁锹",
+      "target": "大门"
+    },
+    {
+      "text": "我把油布递给了艄公。",
+      "item": null,
+      "target": "艄公"
+    },
+    {
+      "text": "我用扫帚砸开木箱。",
+      "item": "扫帚",
+      "target": "木箱"
+    },
+    {
+      "text": "我用剑锁上木箱。",
+      "item": "剑",
+      "target": "木箱"
+    },
+    {
+      "text": "我检查窗台。",
+      "item": null,
+      "target": "窗台"
+    },
+    {
+      "text": "我用绳索打开抽屉。",
+      "item": "绳索",
+      "target": "抽屉"
+    },
+    {
+      "text": "我用铜钥匙撬开暗门。",
+      "item": "铜钥匙",
+      "target": "暗门"
+    },
+    {
+      "text": "我凑近端详铜镜的铭文。",
+      "item": null,
+      "target": "铜镜"
+    },
+    {
+      "text": "我用剑打开柜子。",
+      "item": "剑",
+      "target": "柜子"
+    },
+    {
+      "text": "我检查绳索。",
+      "item": null,
+      "target": "绳索"
+    },
+    {
+      "text": "我把地图收进背包。",
+      "item": "地图",
+      "target": "背包"
+    },
+    {
+      "text": "我用灯笼撬开书架。",
+      "item": "灯笼",
+      "target": "书架"
+    },
+    {
+      "text": "我用灯笼把暗门压住。",
+      "item": "灯笼",
+      "target": "暗门"
+    },
+    {
+      "text": "我用那把铁门钥匙撬开木箱。",
+      "item": "铁门钥匙",
+      "target": "木箱"
+    },
+    {
+      "text": "我用铁锹撬开地图。",
+      "item": "铁锹",
+      "target": "地图"
+    },
+    {
+      "text": "我用灯笼撬开木桶。",
+      "item": "灯笼",
+      "target": "木桶"
+    },
+    {
+      "text": "我用剑锁上大门。",
+      "item": "剑",
+      "target": "大门"
+    },
+    {
+      "text": "清单末尾添着火油。",
+      "item": null,
+      "target": null
+    },
+    {
+      "text": "我用铜钥匙锁上木箱。",
+      "item": "铜钥匙",
+      "target": "木箱"
+    },
+    {
+      "text": "我用扫帚撬开暗门。",
+      "item": "扫帚",
+      "target": "暗门"
+    },
+    {
+      "text": "我用木桶撬开铜钥匙。",
+      "item": "木桶",
+      "target": "铜钥匙"
+    },
+    {
+      "text": "我把木桶擦了又擦。",
+      "item": "木桶",
+      "target": null
+    },
+    {
+      "text": "我用木桶撬开扫帚。",
+      "item": "木桶",
+      "target": "扫帚"
+    },
+    {
+      "text": "我用铜钥匙撬开壁画。",
+      "item": "铜钥匙",
+      "target": "壁画"
+    },
+    {
+      "text": "我用剑撬开绳索。",
+      "item": "剑",
+      "target": "绳索"
+    },
+    {
+      "text": "我用铜钥匙把书架压住。",
+      "item": "铜钥匙",
+      "target": "书架"
+    },
+    {
+      "text": "我用灯笼撬开剑。",
+      "item": "灯笼",
+      "target": "剑"
+    },
+    {
+      "text": "我用扫帚照亮壁画。",
+      "item": "扫帚",
+      "target": "壁画"
+    },
+    {
+      "text": "我用木桶打开柜子。",
+      "item": "木桶",
+      "target": "柜子"
+    },
+    {
+      "text": "我用木桶撬开壁画。",
+      "item": "木桶",
+      "target": "壁画"
+    },
+    {
+      "text": "我把铜钥匙举过头顶。",
+      "item": "铜钥匙",
+      "target": null
+    },
+    {
+      "text": "我用木桶照亮书架。",
+      "item": "木桶",
+      "target": "书架"
+    },
+    {
+      "text": "我用地图照亮书架。",
+      "item": "地图",
+      "target": "书架"
+    },
+    {
+      "text": "我用绳索撬开铁门钥匙。",
+      "item": "绳索",
+      "target": "铁门钥匙"
+    },
+    {
+      "text": "我查验了火漆的印痕。",
+      "item": null,
+      "target": "火漆"
+    },
+    {
+      "text": "我用卷了边的海图找到了水道。",
+      "item": "海图",
+      "target": "水道"
+    },
+    {
+      "text": "我用灯笼撬开雕像。",
+      "item": "灯笼",
+      "target": "雕像"
+    },
+    {
+      "text": "我用水壶照亮壁画。",
+      "item": "水壶",
+      "target": "壁画"
+    },
+    {
+      "text": "我把绳索靠在暗门边。",
+      "item": "绳索",
+      "target": "暗门"
+    },
+    {
+      "text": "我用地图把暗门压住。",
+      "item": "地图",
+      "target": "暗门"
+    },
+    {
+      "text": "我用地图把壁画压住。",
+      "item": "地图",
+      "target": "壁画"
+    },
+    {
+      "text": "我用水壶照亮书架。",
+      "item": "水壶",
+      "target": "书架"
+    },
+    {
+      "text": "木桶还在背包里。",
+      "item": null,
+      "target": null
+    },
+    {
+      "text": "我用铁门钥匙撬开扫帚。",
+      "item": "铁门钥匙",
+      "target": "扫帚"
+    },
+    {
+      "text": "我用水壶把窗台压住。",
+      "item": "水壶",
+      "target": "窗台"
+    },
+    {
+      "text": "我把地图握紧了。",
+      "item": "地图",
+      "target": null
+    },
+    {
+      "text": "背包里只有铁门钥匙。",
+      "item": null,
+      "target": null
+    },
+    {
+      "text": "我用铁锹锁上木箱。",
+      "item": "铁锹",
+      "target": "木箱"
+    },
+    {
+      "text": "我用水壶撑住书架。",
+      "item": "水壶",
+      "target": "书架"
+    },
+    {
+      "text": "我用铜钥匙把暗门压住。",
+      "item": "铜钥匙",
+      "target": "暗门"
+    },
+    {
+      "text": "我前往走廊。",
+      "item": null,
+      "target": "走廊"
+    },
+    {
+      "text": "我用木桶把窗台压住。",
+      "item": "木桶",
+      "target": "窗台"
+    },
+    {
+      "text": "背包里只有水壶。",
+      "item": null,
+      "target": null
+    },
+    {
+      "text": "我用地图打开柜子。",
+      "item": "地图",
+      "target": "柜子"
+    },
+    {
+      "text": "我整理了一下背包。",
+      "item": null,
+      "target": null
+    },
+    {
+      "text": "我用扫帚砸开大门。",
+      "item": "扫帚",
+      "target": "大门"
+    },
+    {
+      "text": "我用灯笼撬开扫帚。",
+      "item": "灯笼",
+      "target": "扫帚"
+    },
+    {
+      "text": "我用扫帚打开木箱。",
+      "item": "扫帚",
+      "target": "木箱"
+    },
+    {
+      "text": "绳索还在背包里。",
+      "item": null,
+      "target": null
+    },
+    {
+      "text": "我用生锈的绳索打开大门。",
+      "item": "绳索",
+      "target": "大门"
+    },
+    {
+      "text": "我用灯笼把雕像压住。",
+      "item": "灯笼",
+      "target": "雕像"
+    },
+    {
+      "text": "我用木桶割断绳子。",
+      "item": "木桶",
+      "target": "绳子"
+    },
+    {
+      "text": "我用铜钥匙砸开大门。",
+      "item": "铜钥匙",
+      "target": "大门"
+    },
+    {
+      "text": "我想起了铜钥匙。",
+      "item": null,
+      "target": null
+    },
+    {
+      "text": "我用扫帚撬开雕像。",
+      "item": "扫帚",
+      "target": "雕像"
+    },
+    {
+      "text": "我用剑砸开抽屉。",
+      "item": "剑",
+      "target": "抽屉"
+    },
+    {
+      "text": "我把剑攥在手里。",
+      "item": "剑",
+      "target": null
+    },
+    {
+      "text": "我检查上锁的暗门。",
+      "item": null,
+      "target": "暗门"
+    },
+    {
+      "text": "我和执行部学生打听图书馆的传闻。",
+      "item": null,
+      "target": "执行部学生"
+    },
+    {
+      "text": "我用簪子挑开了封蜡。",
+      "item": "簪子",
+      "target": "封蜡"
+    },
+    {
+      "text": "我擦亮了灶王爷的牌位。",
+      "item": "牌位",
+      "target": null
+    },
+    {
+      "text": "我抡起木槌砸开了门闩。",
+      "item": "木槌",
+      "target": "门闩"
+    },
+    {
+      "text": "我想起了剑。",
+      "item": null,
+      "target": null
+    },
+    {
+      "text": "我用铁锹锁上抽屉。",
+      "item": "铁锹",
+      "target": "抽屉"
+    },
+    {
+      "text": "我用灯笼锁上木箱。",
+      "item": "灯笼",
+      "target": "木箱"
+    },
+    {
+      "text": "我用铁门钥匙锁上木箱。",
+      "item": "铁门钥匙",
+      "target": "木箱"
+    },
+    {
+      "text": "我用地图撬开绳索。",
+      "item": "地图",
+      "target": "绳索"
+    },
+    {
+      "text": "我把符纸折好塞回了封套。",
+      "item": "符纸",
+      "target": "封套"
+    },
+    {
+      "text": "我用剑砸开木箱。",
+      "item": "剑",
+      "target": "木箱"
+    },
+    {
+      "text": "我用剑照亮窗台。",
+      "item": "剑",
+      "target": "窗台"
+    },
+    {
+      "text": "我想起了扫帚。",
+      "item": null,
+      "target": null
+    },
+    {
+      "text": "我把铜钥匙握紧了。",
+      "item": "铜钥匙",
+      "target": null
+    },
+    {
+      "text": "我用铜钥匙打开木箱。",
+      "item": "铜钥匙",
+      "target": "木箱"
+    },
+    {
+      "text": "我用铁门钥匙把壁画压住。",
+      "item": "铁门钥匙",
+      "target": "壁画"
+    },
+    {
+      "text": "我和古德里安教授打听图书馆的传闻。",
+      "item": null,
+      "target": "古德里安教授"
+    },
+    {
+      "text": "我推开了虚掩的门。",
+      "item": null,
+      "target": "门"
+    },
+    {
+      "text": "我用绳索撬开水壶。",
+      "item": "绳索",
+      "target": "水壶"
+    },
+    {
+      "text": "我搜索窗台。",
+      "item": null,
+      "target": "窗台"
+    },
+    {
+      "text": "我用水壶照亮暗门。",
+      "item": "水壶",
+      "target": "暗门"
+    },
+    {
+      "text": "我用灯笼砸开柜子。",
+      "item": "灯笼",
+      "target": "柜子"
+    },
+    {
+      "text": "我用铁门钥匙砸开抽屉。",
+      "item": "铁门钥匙",
+      "target": "抽屉"
+    },
+    {
+      "text": "我抽出了刀。",
+      "item": "刀",
+      "target": null
+    },
+    {
+      "text": "我用铁锹撬开书架。",
+      "item": "铁锹",
+      "target": "书架"
+    },
+    {
+      "text": "我用那把地图撬开木箱。",
+      "item": "地图",
+      "target": "木箱"
+    },
+    {
+      "text": "我把灯笼收进背包。",
+      "item": "灯笼",
+      "target": "背包"
+    },
+    {
+      "text": "我前往二楼档案室。",
+      "item": null,
+      "target": "二楼档案室"
+    },
+    {
+      "text": "我检查上锁的书架。",
+      "item": null,
+      "target": "书架"
+    },
+    {
+      "text": "我用铜钥匙撬开雕像。",
+      "item": "铜钥匙",
+      "target": "雕像"
+    },
+    {
+      "text": "我用地图撬开壁画。",
+      "item": "地图",
+      "target": "壁画"
+    },
+    {
+      "text": "我用剑打开木箱。",
+      "item": "剑",
+      "target": "木箱"
+    },
+    {
+      "text": "我把铁门钥匙收好。",
+      "item": "铁门钥匙",
+      "target": null
+    },
+    {
+      "text": "我向诺诺询问暗门的下落。",
+      "item": null,
+      "target": "诺诺"
+    },
+    {
+      "text": "我仔细查看雕像上的痕迹。",
+      "item": null,
+      "target": "雕像"
+    },
+    {
+      "text": "我用铜钥匙照亮壁画。",
+      "item": "铜钥匙",
       "target": "壁画"
     },
     {
@@ -3079,134 +3311,39 @@
       "target": "柜子"
     },
     {
-      "text": "我用铜钥匙锁上木箱。",
+      "text": "我用水壶撬开雕像。",
+      "item": "水壶",
+      "target": "雕像"
+    },
+    {
+      "text": "我把铜钥匙攥在手里。",
       "item": "铜钥匙",
-      "target": "木箱"
+      "target": null
     },
     {
-      "text": "我用扫帚锁上大门。",
-      "item": "扫帚",
-      "target": "大门"
-    },
-    {
-      "text": "我用地图打开大门。",
-      "item": "地图",
-      "target": "大门"
-    },
-    {
-      "text": "我用地图打开抽屉。",
-      "item": "地图",
-      "target": "抽屉"
-    },
-    {
-      "text": "我用铜钥匙把书架压住。",
-      "item": "铜钥匙",
-      "target": "书架"
-    },
-    {
-      "text": "我用灯笼撬开壁画。",
+      "text": "我把灯笼收好。",
       "item": "灯笼",
-      "target": "壁画"
-    },
-    {
-      "text": "我用铁锹打开木箱。",
-      "item": "铁锹",
-      "target": "木箱"
-    },
-    {
-      "text": "我用扫帚打开柜子。",
-      "item": "扫帚",
-      "target": "柜子"
-    },
-    {
-      "text": "我把木桶攥在手里。",
-      "item": "木桶",
       "target": null
     },
     {
-      "text": "我用绳索照亮窗台。",
-      "item": "绳索",
-      "target": "窗台"
-    },
-    {
-      "text": "我仔细查看雕像上的痕迹。",
-      "item": null,
-      "target": "雕像"
-    },
-    {
-      "text": "我用扫帚撬开铜钥匙。",
+      "text": "我用那把扫帚撬开木箱。",
       "item": "扫帚",
-      "target": "铜钥匙"
-    },
-    {
-      "text": "我用水壶撬开木桶。",
-      "item": "水壶",
-      "target": "木桶"
-    },
-    {
-      "text": "我用铁门钥匙锁上木箱。",
-      "item": "铁门钥匙",
       "target": "木箱"
     },
     {
-      "text": "我用地图敲了敲书架。",
-      "item": "地图",
-      "target": "书架"
-    },
-    {
-      "text": "我用绳索撬开雕像。",
-      "item": "绳索",
-      "target": "雕像"
-    },
-    {
-      "text": "我用木桶照亮壁画。",
-      "item": "木桶",
-      "target": "壁画"
-    },
-    {
-      "text": "我用水壶撬开灯笼。",
-      "item": "水壶",
-      "target": "灯笼"
-    },
-    {
-      "text": "我和古德里安教授打听图书馆的传闻。",
-      "item": null,
-      "target": "古德里安教授"
-    },
-    {
-      "text": "我用木桶锁上柜子。",
-      "item": "木桶",
-      "target": "柜子"
-    },
-    {
-      "text": "我把铁锹收好。",
-      "item": "铁锹",
-      "target": null
-    },
-    {
-      "text": "我用铜钥匙把雕像压住。",
+      "text": "我用铜钥匙照亮暗门。",
       "item": "铜钥匙",
-      "target": "雕像"
-    },
-    {
-      "text": "我用木桶锁上抽屉。",
-      "item": "木桶",
-      "target": "抽屉"
-    },
-    {
-      "text": "我用铁门钥匙把书架压住。",
-      "item": "铁门钥匙",
-      "target": "书架"
-    },
-    {
-      "text": "我去卡塞尔学院图书馆。",
-      "item": null,
-      "target": "卡塞尔学院图书馆"
-    },
-    {
-      "text": "我检查暗门。",
-      "item": null,
       "target": "暗门"
+    },
+    {
+      "text": "我返回阅览室。",
+      "item": null,
+      "target": "阅览室"
+    },
+    {
+      "text": "我用铜钥匙撬开地图。",
+      "item": "铜钥匙",
+      "target": "地图"
     },
     {
       "text": "我用铜钥匙敲了敲书架。",
@@ -3214,20 +3351,1515 @@
       "target": "书架"
     },
     {
-      "text": "我用灯笼撬开铁门钥匙。",
+      "text": "我用地图撑住书架。",
+      "item": "地图",
+      "target": "书架"
+    },
+    {
+      "text": "我返回走廊。",
+      "item": null,
+      "target": "走廊"
+    },
+    {
+      "text": "我把扫帚放在暗门旁边。",
+      "item": "扫帚",
+      "target": "暗门"
+    },
+    {
+      "text": "我用绳索锁上抽屉。",
+      "item": "绳索",
+      "target": "抽屉"
+    },
+    {
+      "text": "我用水壶撬开剑。",
+      "item": "水壶",
+      "target": "剑"
+    },
+    {
+      "text": "我从角门折回了前厅。",
+      "item": null,
+      "target": "前厅"
+    },
+    {
+      "text": "我检查剑的齿纹。",
+      "item": null,
+      "target": "剑"
+    },
+    {
+      "text": "我想起了绳索。",
+      "item": null,
+      "target": null
+    },
+    {
+      "text": "我用地图撬开书架。",
+      "item": "地图",
+      "target": "书架"
+    },
+    {
+      "text": "我观察暗门。",
+      "item": null,
+      "target": "暗门"
+    },
+    {
+      "text": "我观察窗台。",
+      "item": null,
+      "target": "窗台"
+    },
+    {
+      "text": "我用水壶把雕像压住。",
+      "item": "水壶",
+      "target": "雕像"
+    },
+    {
+      "text": "我用灯笼砸开木箱。",
       "item": "灯笼",
+      "target": "木箱"
+    },
+    {
+      "text": "我用铜钥匙撬开铁门钥匙。",
+      "item": "铜钥匙",
       "target": "铁门钥匙"
     },
     {
-      "text": "我用铁门钥匙撬开地图。",
-      "item": "铁门钥匙",
-      "target": "地图"
+      "text": "我把刀插回了鞘。",
+      "item": "刀",
+      "target": "鞘"
+    },
+    {
+      "text": "我用水壶打开木箱。",
+      "item": "水壶",
+      "target": "木箱"
+    },
+    {
+      "text": "我用缆绳捆紧了货箱。",
+      "item": "缆绳",
+      "target": "货箱"
+    },
+    {
+      "text": "我用水壶打开柜子。",
+      "item": "水壶",
+      "target": "柜子"
+    },
+    {
+      "text": "我点亮了灯。",
+      "item": null,
+      "target": "灯"
+    },
+    {
+      "text": "我用铁锹照亮雕像。",
+      "item": "铁锹",
+      "target": "雕像"
+    },
+    {
+      "text": "我用剑撬开雕像。",
+      "item": "剑",
+      "target": "雕像"
+    },
+    {
+      "text": "我把地图举过头顶。",
+      "item": "地图",
+      "target": null
+    },
+    {
+      "text": "我用地图撬开铁锹。",
+      "item": "地图",
+      "target": "铁锹"
     },
     {
       "text": "我用地图锁上柜子。",
       "item": "地图",
       "target": "柜子"
+    },
+    {
+      "text": "我用铜钥匙撑住书架。",
+      "item": "铜钥匙",
+      "target": "书架"
+    },
+    {
+      "text": "我检查了船底的裂缝。",
+      "item": null,
+      "target": "船底"
+    },
+    {
+      "text": "我用绳索把书架压住。",
+      "item": "绳索",
+      "target": "书架"
+    },
+    {
+      "text": "我对着账本出了半天神。",
+      "item": null,
+      "target": null
+    },
+    {
+      "text": "我用绳索撑住书架。",
+      "item": "绳索",
+      "target": "书架"
+    },
+    {
+      "text": "我举着手电照向洞口。",
+      "item": "手电",
+      "target": "洞口"
+    },
+    {
+      "text": "我和路明非打听暗门的来历。",
+      "item": null,
+      "target": "路明非"
+    },
+    {
+      "text": "我用铜钥匙锁上大门。",
+      "item": "铜钥匙",
+      "target": "大门"
+    },
+    {
+      "text": "我用水壶撬开铜钥匙。",
+      "item": "水壶",
+      "target": "铜钥匙"
+    },
+    {
+      "text": "我用水壶撬开暗门。",
+      "item": "水壶",
+      "target": "暗门"
+    },
+    {
+      "text": "我仔细查看窗台上的痕迹。",
+      "item": null,
+      "target": "窗台"
+    },
+    {
+      "text": "我用灯笼撬开水壶。",
+      "item": "灯笼",
+      "target": "水壶"
+    },
+    {
+      "text": "我用绳索照亮暗门。",
+      "item": "绳索",
+      "target": "暗门"
+    },
+    {
+      "text": "我用木桶照亮壁画。",
+      "item": "木桶",
+      "target": "壁画"
+    },
+    {
+      "text": "我用鼎腿压住了席角。",
+      "item": "鼎腿",
+      "target": "席角"
+    },
+    {
+      "text": "我和古德里安教授打听暗门的来历。",
+      "item": null,
+      "target": "古德里安教授"
+    },
+    {
+      "text": "我用铁锹敲了敲书架。",
+      "item": "铁锹",
+      "target": "书架"
+    },
+    {
+      "text": "我用扫帚撬开铜钥匙。",
+      "item": "扫帚",
+      "target": "铜钥匙"
+    },
+    {
+      "text": "我用铁锹打开木箱。",
+      "item": "铁锹",
+      "target": "木箱"
+    },
+    {
+      "text": "我用绳索撬开铜钥匙。",
+      "item": "绳索",
+      "target": "铜钥匙"
+    },
+    {
+      "text": "我把铁锹收好。",
+      "item": "铁锹",
+      "target": null
+    },
+    {
+      "text": "我用铁锹照亮暗门。",
+      "item": "铁锹",
+      "target": "暗门"
+    },
+    {
+      "text": "我用地图砸开柜子。",
+      "item": "地图",
+      "target": "柜子"
+    },
+    {
+      "text": "我检查木桶。",
+      "item": null,
+      "target": "木桶"
+    },
+    {
+      "text": "我用灯笼照亮暗门。",
+      "item": "灯笼",
+      "target": "暗门"
+    },
+    {
+      "text": "地图还在背包里。",
+      "item": null,
+      "target": null
+    },
+    {
+      "text": "我用扫帚照亮雕像。",
+      "item": "扫帚",
+      "target": "雕像"
+    },
+    {
+      "text": "我用木桶砸开大门。",
+      "item": "木桶",
+      "target": "大门"
+    },
+    {
+      "text": "我用绳索敲了敲书架。",
+      "item": "绳索",
+      "target": "书架"
+    },
+    {
+      "text": "我用地图砸开大门。",
+      "item": "地图",
+      "target": "大门"
+    },
+    {
+      "text": "我用铁锹撑住书架。",
+      "item": "铁锹",
+      "target": "书架"
+    },
+    {
+      "text": "我检查铜钥匙。",
+      "item": null,
+      "target": "铜钥匙"
+    },
+    {
+      "text": "我用剑撬开铁锹。",
+      "item": "剑",
+      "target": "铁锹"
+    },
+    {
+      "text": "我用灯笼撑住书架。",
+      "item": "灯笼",
+      "target": "书架"
+    },
+    {
+      "text": "我用铜钥匙把窗台压住。",
+      "item": "铜钥匙",
+      "target": "窗台"
+    },
+    {
+      "text": "我用铁锹撬开壁画。",
+      "item": "铁锹",
+      "target": "壁画"
+    },
+    {
+      "text": "我用地图敲了敲书架。",
+      "item": "地图",
+      "target": "书架"
+    },
+    {
+      "text": "我用地图照亮壁画。",
+      "item": "地图",
+      "target": "壁画"
+    },
+    {
+      "text": "我用铁门钥匙把雕像压住。",
+      "item": "铁门钥匙",
+      "target": "雕像"
+    },
+    {
+      "text": "我用铜钥匙照亮窗台。",
+      "item": "铜钥匙",
+      "target": "窗台"
+    },
+    {
+      "text": "我用绳索砸开大门。",
+      "item": "绳索",
+      "target": "大门"
+    },
+    {
+      "text": "我用木桶撬开地图。",
+      "item": "木桶",
+      "target": "地图"
+    },
+    {
+      "text": "背包里只有木桶。",
+      "item": null,
+      "target": null
+    },
+    {
+      "text": "我用铁门钥匙撬开窗台。",
+      "item": "铁门钥匙",
+      "target": "窗台"
+    },
+    {
+      "text": "我检查扫帚。",
+      "item": null,
+      "target": "扫帚"
+    },
+    {
+      "text": "我返回卡塞尔学院图书馆。",
+      "item": null,
+      "target": "卡塞尔学院图书馆"
+    },
+    {
+      "text": "我把铁门钥匙举过头顶。",
+      "item": "铁门钥匙",
+      "target": null
+    },
+    {
+      "text": "我用水壶打开抽屉。",
+      "item": "水壶",
+      "target": "抽屉"
+    },
+    {
+      "text": "我用铁门钥匙把暗门压住。",
+      "item": "铁门钥匙",
+      "target": "暗门"
+    },
+    {
+      "text": "我把铁门钥匙擦了又擦。",
+      "item": "铁门钥匙",
+      "target": null
+    },
+    {
+      "text": "我用剑照亮暗门。",
+      "item": "剑",
+      "target": "暗门"
+    },
+    {
+      "text": "我用铁门钥匙照亮书架。",
+      "item": "铁门钥匙",
+      "target": "书架"
+    },
+    {
+      "text": "我用绳索砸开柜子。",
+      "item": "绳索",
+      "target": "柜子"
+    },
+    {
+      "text": "我用剪刀铰断了风筝线。",
+      "item": "剪刀",
+      "target": "风筝线"
+    },
+    {
+      "text": "我用刀片划开了信封。",
+      "item": "刀片",
+      "target": "信封"
+    },
+    {
+      "text": "我用铜钥匙撬开窗台。",
+      "item": "铜钥匙",
+      "target": "窗台"
+    },
+    {
+      "text": "我用铁门钥匙照亮雕像。",
+      "item": "铁门钥匙",
+      "target": "雕像"
+    },
+    {
+      "text": "我把铁门钥匙收进背包。",
+      "item": "铁门钥匙",
+      "target": "背包"
+    },
+    {
+      "text": "我把油纸包塞进了墙洞。",
+      "item": "油纸包",
+      "target": "墙洞"
+    },
+    {
+      "text": "我用水壶砸开柜子。",
+      "item": "水壶",
+      "target": "柜子"
+    },
+    {
+      "text": "我用地图照亮窗台。",
+      "item": "地图",
+      "target": "窗台"
+    },
+    {
+      "text": "我用铜钥匙割断绳子。",
+      "item": "铜钥匙",
+      "target": "绳子"
+    },
+    {
+      "text": "我用铁锹撬开灯笼。",
+      "item": "铁锹",
+      "target": "灯笼"
+    },
+    {
+      "text": "我搜索暗门。",
+      "item": null,
+      "target": "暗门"
+    },
+    {
+      "text": "我用扫帚把暗门压住。",
+      "item": "扫帚",
+      "target": "暗门"
+    },
+    {
+      "text": "我用木桶打开抽屉。",
+      "item": "木桶",
+      "target": "抽屉"
+    },
+    {
+      "text": "我把灯笼握紧了。",
+      "item": "灯笼",
+      "target": null
+    },
+    {
+      "text": "灯笼还在背包里。",
+      "item": null,
+      "target": null
+    },
+    {
+      "text": "我用花匠的枝剪铰掉了枯枝。",
+      "item": "枝剪",
+      "target": "枯枝"
+    },
+    {
+      "text": "我用剑撬开壁画。",
+      "item": "剑",
+      "target": "壁画"
+    },
+    {
+      "text": "我用扫帚砸开抽屉。",
+      "item": "扫帚",
+      "target": "抽屉"
+    },
+    {
+      "text": "我用铁锹锁上柜子。",
+      "item": "铁锹",
+      "target": "柜子"
+    },
+    {
+      "text": "我想起了灯笼。",
+      "item": null,
+      "target": null
+    },
+    {
+      "text": "我用灯笼打开大门。",
+      "item": "灯笼",
+      "target": "大门"
+    },
+    {
+      "text": "我把水壶靠在暗门边。",
+      "item": "水壶",
+      "target": "暗门"
+    },
+    {
+      "text": "我去阅览室查资料。",
+      "item": null,
+      "target": "阅览室"
+    },
+    {
+      "text": "我找账房先生问了个明白。",
+      "item": null,
+      "target": "账房先生"
+    },
+    {
+      "text": "我用铁锹打开大门。",
+      "item": "铁锹",
+      "target": "大门"
+    },
+    {
+      "text": "背包侧袋里插着那把伞兵刀。",
+      "item": null,
+      "target": null
+    },
+    {
+      "text": "我用灯笼锁上抽屉。",
+      "item": "灯笼",
+      "target": "抽屉"
+    },
+    {
+      "text": "我用灯笼把窗台压住。",
+      "item": "灯笼",
+      "target": "窗台"
+    },
+    {
+      "text": "我沿着回廊走到了内宅。",
+      "item": null,
+      "target": "内宅"
+    },
+    {
+      "text": "我检查水壶。",
+      "item": null,
+      "target": "水壶"
+    },
+    {
+      "text": "我把绳索握紧了。",
+      "item": "绳索",
+      "target": null
+    },
+    {
+      "text": "我把铁门钥匙靠在暗门边。",
+      "item": "铁门钥匙",
+      "target": "暗门"
     }
   ],
-  "note": "scored (12) + dev (10) + acceptance (10) sentences all excluded from training"
+  "validation": [
+    {
+      "text": "我忽然想起了当票上的日子。",
+      "item": null,
+      "target": null
+    },
+    {
+      "text": "水壶还在背包里。",
+      "item": null,
+      "target": null
+    },
+    {
+      "text": "我沿着楼梯走到阅览室。",
+      "item": null,
+      "target": "阅览室"
+    },
+    {
+      "text": "我用生锈的地图打开大门。",
+      "item": "地图",
+      "target": "大门"
+    },
+    {
+      "text": "我用柴刀砍断了藤蔓。",
+      "item": "柴刀",
+      "target": "藤蔓"
+    },
+    {
+      "text": "我用生锈的剑打开大门。",
+      "item": "剑",
+      "target": "大门"
+    },
+    {
+      "text": "我用发卡捅开了旧锁。",
+      "item": "发卡",
+      "target": "旧锁"
+    },
+    {
+      "text": "我用水壶把书架压住。",
+      "item": "水壶",
+      "target": "书架"
+    },
+    {
+      "text": "我用铜钥匙把雕像压住。",
+      "item": "铜钥匙",
+      "target": "雕像"
+    },
+    {
+      "text": "我用木桶砸开抽屉。",
+      "item": "木桶",
+      "target": "抽屉"
+    },
+    {
+      "text": "我走进昏暗的阅览室。",
+      "item": null,
+      "target": "阅览室"
+    },
+    {
+      "text": "我用磷光瓶照出了墙上的记号。",
+      "item": "磷光瓶",
+      "target": "记号"
+    },
+    {
+      "text": "我沿着楼梯走到走廊。",
+      "item": null,
+      "target": "走廊"
+    },
+    {
+      "text": "我用铁锹撬开水壶。",
+      "item": "铁锹",
+      "target": "水壶"
+    },
+    {
+      "text": "我和守闸的老倪攀谈起来。",
+      "item": null,
+      "target": "老倪"
+    },
+    {
+      "text": "我仔细检查了锚链的磨损。",
+      "item": null,
+      "target": "锚链"
+    },
+    {
+      "text": "我用灯笼照亮雕像。",
+      "item": "灯笼",
+      "target": "雕像"
+    },
+    {
+      "text": "我把铁锹靠在暗门边。",
+      "item": "铁锹",
+      "target": "暗门"
+    },
+    {
+      "text": "我用灯笼撬开铁门钥匙。",
+      "item": "灯笼",
+      "target": "铁门钥匙"
+    },
+    {
+      "text": "我用水壶把壁画压住。",
+      "item": "水壶",
+      "target": "壁画"
+    },
+    {
+      "text": "我用铁门钥匙撬开书架。",
+      "item": "铁门钥匙",
+      "target": "书架"
+    },
+    {
+      "text": "我用撬棍顶起了石板。",
+      "item": "撬棍",
+      "target": "石板"
+    },
+    {
+      "text": "我用水壶锁上木箱。",
+      "item": "水壶",
+      "target": "木箱"
+    },
+    {
+      "text": "我用绳索割断绳子。",
+      "item": "绳索",
+      "target": "绳子"
+    },
+    {
+      "text": "我用铁锹割断绳子。",
+      "item": "铁锹",
+      "target": "绳子"
+    },
+    {
+      "text": "我用铁门钥匙锁上抽屉。",
+      "item": "铁门钥匙",
+      "target": "抽屉"
+    },
+    {
+      "text": "我用铜钥匙打开柜子。",
+      "item": "铜钥匙",
+      "target": "柜子"
+    },
+    {
+      "text": "我用绳索撬开地图。",
+      "item": "绳索",
+      "target": "地图"
+    },
+    {
+      "text": "我用铁门钥匙撬开铁锹。",
+      "item": "铁门钥匙",
+      "target": "铁锹"
+    },
+    {
+      "text": "我用扫帚撬开窗台。",
+      "item": "扫帚",
+      "target": "窗台"
+    },
+    {
+      "text": "我把木桶收进背包。",
+      "item": "木桶",
+      "target": "背包"
+    },
+    {
+      "text": "我把铜钥匙靠在暗门边。",
+      "item": "铜钥匙",
+      "target": "暗门"
+    },
+    {
+      "text": "铁锹还在背包里。",
+      "item": null,
+      "target": null
+    },
+    {
+      "text": "我把鼎腿搬到了廊下。",
+      "item": "鼎腿",
+      "target": "廊下"
+    },
+    {
+      "text": "我去走廊查资料。",
+      "item": null,
+      "target": "走廊"
+    },
+    {
+      "text": "我拔剑攻击路明非。",
+      "item": "剑",
+      "target": "路明非"
+    },
+    {
+      "text": "我用木桶打开大门。",
+      "item": "木桶",
+      "target": "大门"
+    },
+    {
+      "text": "我用木桶照亮雕像。",
+      "item": "木桶",
+      "target": "雕像"
+    },
+    {
+      "text": "我用灯笼打开木箱。",
+      "item": "灯笼",
+      "target": "木箱"
+    },
+    {
+      "text": "我用灯笼打开抽屉。",
+      "item": "灯笼",
+      "target": "抽屉"
+    },
+    {
+      "text": "我用剑撬开木桶。",
+      "item": "剑",
+      "target": "木桶"
+    },
+    {
+      "text": "我用木桶照亮窗台。",
+      "item": "木桶",
+      "target": "窗台"
+    },
+    {
+      "text": "我想起了地图。",
+      "item": null,
+      "target": null
+    },
+    {
+      "text": "背包里只有铜钥匙。",
+      "item": null,
+      "target": null
+    },
+    {
+      "text": "我用铁锹砸开抽屉。",
+      "item": "铁锹",
+      "target": "抽屉"
+    },
+    {
+      "text": "我用灯笼把壁画压住。",
+      "item": "灯笼",
+      "target": "壁画"
+    },
+    {
+      "text": "我用铁门钥匙撬开水壶。",
+      "item": "铁门钥匙",
+      "target": "水壶"
+    },
+    {
+      "text": "我把铁锹举过头顶。",
+      "item": "铁锹",
+      "target": null
+    },
+    {
+      "text": "我把水壶收好。",
+      "item": "水壶",
+      "target": null
+    },
+    {
+      "text": "背包里只有剑。",
+      "item": null,
+      "target": null
+    },
+    {
+      "text": "我一口气跑上了钟楼。",
+      "item": null,
+      "target": "钟楼"
+    },
+    {
+      "text": "我观察壁画。",
+      "item": null,
+      "target": "壁画"
+    },
+    {
+      "text": "我用铁锹锁上大门。",
+      "item": "铁锹",
+      "target": "大门"
+    },
+    {
+      "text": "背包里只有铁锹。",
+      "item": null,
+      "target": null
+    },
+    {
+      "text": "我用扫帚照亮书架。",
+      "item": "扫帚",
+      "target": "书架"
+    },
+    {
+      "text": "我把绳索收好。",
+      "item": "绳索",
+      "target": null
+    },
+    {
+      "text": "我用地图砸开木箱。",
+      "item": "地图",
+      "target": "木箱"
+    },
+    {
+      "text": "我想起了铁门钥匙。",
+      "item": null,
+      "target": null
+    },
+    {
+      "text": "我和诺诺打听暗门的来历。",
+      "item": null,
+      "target": "诺诺"
+    },
+    {
+      "text": "我用地图撬开窗台。",
+      "item": "地图",
+      "target": "窗台"
+    },
+    {
+      "text": "铁门钥匙还在背包里。",
+      "item": null,
+      "target": null
+    },
+    {
+      "text": "我用绳索锁上木箱。",
+      "item": "绳索",
+      "target": "木箱"
+    },
+    {
+      "text": "我用灯笼照亮窗台。",
+      "item": "灯笼",
+      "target": "窗台"
+    },
+    {
+      "text": "我推开了祠堂的角门。",
+      "item": null,
+      "target": "角门"
+    },
+    {
+      "text": "我用木桶撬开窗台。",
+      "item": "木桶",
+      "target": "窗台"
+    },
+    {
+      "text": "我掀开了缸盖。",
+      "item": null,
+      "target": "缸盖"
+    },
+    {
+      "text": "我用铁门钥匙撬开铜钥匙。",
+      "item": "铁门钥匙",
+      "target": "铜钥匙"
+    },
+    {
+      "text": "我用铁锹把雕像压住。",
+      "item": "铁锹",
+      "target": "雕像"
+    }
+  ],
+  "acceptance": [
+    {
+      "group": "ac-person-object",
+      "sentences": [
+        {
+          "text": "我把咸鱼干递给了货郎。",
+          "item": null,
+          "target": "货郎"
+        },
+        {
+          "text": "我把咸鱼干挂上了房梁。",
+          "item": "咸鱼干",
+          "target": "房梁"
+        },
+        {
+          "text": "我向皮匠打听硝皮的手艺。",
+          "item": null,
+          "target": "皮匠"
+        },
+        {
+          "text": "我和皮匠聊起了鞣皮的方子。",
+          "item": null,
+          "target": "皮匠"
+        },
+        {
+          "text": "我把角子塞给了门房。",
+          "item": null,
+          "target": "门房"
+        },
+        {
+          "text": "我把角子丢进了功德箱。",
+          "item": "角子",
+          "target": "功德箱"
+        },
+        {
+          "text": "我和酒保打听北仓的动静。",
+          "item": null,
+          "target": "酒保"
+        },
+        {
+          "text": "我敲了敲酒保的案几。",
+          "item": null,
+          "target": "案几"
+        },
+        {
+          "text": "我把缰绳抛给了马倌。",
+          "item": null,
+          "target": "马倌"
+        },
+        {
+          "text": "我请说书人讲了一段旧事。",
+          "item": null,
+          "target": "说书人"
+        }
+      ]
+    },
+    {
+      "group": "ac-possessor-target",
+      "sentences": [
+        {
+          "text": "我推开了磨坊的板门。",
+          "item": null,
+          "target": "板门"
+        },
+        {
+          "text": "我撬开了油坊的侧栅。",
+          "item": null,
+          "target": "侧栅"
+        },
+        {
+          "text": "我用镐头刨开了染坊的门槛。",
+          "item": "镐头",
+          "target": "门槛"
+        },
+        {
+          "text": "我擦亮了山神庙的香案。",
+          "item": "香案",
+          "target": null
+        },
+        {
+          "text": "我用拨火棍捅了捅窑膛。",
+          "item": "拨火棍",
+          "target": "窑膛"
+        },
+        {
+          "text": "我扫净了碾坊的碾盘。",
+          "item": "碾盘",
+          "target": null
+        },
+        {
+          "text": "我用竹梯爬上了谷仓的顶棚。",
+          "item": "竹梯",
+          "target": "顶棚"
+        },
+        {
+          "text": "我检查了驿站的拴马环。",
+          "item": null,
+          "target": "拴马环"
+        },
+        {
+          "text": "我敲响了渡口的铜锣。",
+          "item": null,
+          "target": "铜锣"
+        },
+        {
+          "text": "我压灭了窑口的余烬。",
+          "item": null,
+          "target": "余烬"
+        }
+      ]
+    },
+    {
+      "group": "ac-possessor-item",
+      "sentences": [
+        {
+          "text": "我用货郎的扁担挑起了箩筐。",
+          "item": "扁担",
+          "target": "箩筐"
+        },
+        {
+          "text": "我用皮匠的锥子撬开了线结。",
+          "item": "锥子",
+          "target": "线结"
+        },
+        {
+          "text": "我用樵夫的斧头劈开了桦木墩。",
+          "item": "斧头",
+          "target": "桦木墩"
+        },
+        {
+          "text": "我用驿卒的火镰引着了枯草。",
+          "item": "火镰",
+          "target": "枯草"
+        },
+        {
+          "text": "我用磨刀匠的磨石蹭快了镰刃。",
+          "item": "磨石",
+          "target": "镰刃"
+        },
+        {
+          "text": "我用香客的蒲团垫住了龛脚。",
+          "item": "蒲团",
+          "target": "龛脚"
+        },
+        {
+          "text": "我用篾匠的篾刀削尖了竹签。",
+          "item": "篾刀",
+          "target": "竹签"
+        },
+        {
+          "text": "我用门房的提灯照见了照壁。",
+          "item": "提灯",
+          "target": "照壁"
+        },
+        {
+          "text": "我用说书人的醒木拍了拍桌角。",
+          "item": "醒木",
+          "target": "桌角"
+        },
+        {
+          "text": "我用酒保的银钎凿开了冰面。",
+          "item": "银钎",
+          "target": "冰面"
+        }
+      ]
+    },
+    {
+      "group": "ac-modifier-interference",
+      "sentences": [
+        {
+          "text": "我用锃亮的撬钩别开了铜闩。",
+          "item": "撬钩",
+          "target": "铜闩"
+        },
+        {
+          "text": "我把缺了口的陶碗摞了起来。",
+          "item": "陶碗",
+          "target": null
+        },
+        {
+          "text": "我用沾满油污的火叉拨旺了炉膛。",
+          "item": "火叉",
+          "target": "炉膛"
+        },
+        {
+          "text": "我检查了那面描金的插屏。",
+          "item": null,
+          "target": "插屏"
+        },
+        {
+          "text": "我用烧掉了半边的蒲扇扇旺了炭盆。",
+          "item": "蒲扇",
+          "target": "炭盆"
+        },
+        {
+          "text": "我用豁了口的木瓢搅动了酒酿。",
+          "item": "木瓢",
+          "target": "酒酿"
+        },
+        {
+          "text": "我把打了补丁的斗篷叠好了。",
+          "item": "斗篷",
+          "target": null
+        },
+        {
+          "text": "我用缠着布条的木杠顶住了书案。",
+          "item": "木杠",
+          "target": "书案"
+        },
+        {
+          "text": "我用褪了色的红线捆好了书匣。",
+          "item": "红线",
+          "target": "书匣"
+        },
+        {
+          "text": "我检查了那盏罩着纱的宫灯。",
+          "item": null,
+          "target": "宫灯"
+        }
+      ]
+    },
+    {
+      "group": "ac-short-heads",
+      "sentences": [
+        {
+          "text": "我用湿麻绳捆紧了苇席。",
+          "item": "麻绳",
+          "target": "苇席"
+        },
+        {
+          "text": "我推倒了那堵矮墙。",
+          "item": null,
+          "target": "矮墙"
+        },
+        {
+          "text": "我把谷糠拌进了槽。",
+          "item": "谷糠",
+          "target": "槽"
+        },
+        {
+          "text": "我用铜钩勾起了井绳。",
+          "item": "铜钩",
+          "target": "井绳"
+        },
+        {
+          "text": "我搬开了窖口的青石。",
+          "item": null,
+          "target": "青石"
+        },
+        {
+          "text": "我卸下了门板。",
+          "item": null,
+          "target": "门板"
+        },
+        {
+          "text": "我把稻草添进了圈。",
+          "item": "稻草",
+          "target": "圈"
+        },
+        {
+          "text": "我扣上了窗板。",
+          "item": null,
+          "target": "窗板"
+        },
+        {
+          "text": "我用木杵舂起了谷。",
+          "item": "木杵",
+          "target": "谷"
+        },
+        {
+          "text": "我插上了闩。",
+          "item": null,
+          "target": "闩"
+        }
+      ]
+    },
+    {
+      "group": "ac-item-only",
+      "sentences": [
+        {
+          "text": "我把马鞭甩得啪啪响。",
+          "item": "马鞭",
+          "target": null
+        },
+        {
+          "text": "我把绑腿扎紧了。",
+          "item": "绑腿",
+          "target": null
+        },
+        {
+          "text": "我把木哨吹响了。",
+          "item": "木哨",
+          "target": null
+        },
+        {
+          "text": "我把褡裢挎好了。",
+          "item": "褡裢",
+          "target": null
+        },
+        {
+          "text": "我把舆图摊开又卷起。",
+          "item": "舆图",
+          "target": null
+        },
+        {
+          "text": "我把算筹摆弄了半天。",
+          "item": "算筹",
+          "target": null
+        },
+        {
+          "text": "我磕了磕旱烟锅。",
+          "item": "旱烟锅",
+          "target": null
+        },
+        {
+          "text": "我把油纸伞撑开又收拢。",
+          "item": "油纸伞",
+          "target": null
+        },
+        {
+          "text": "我把墨条研开了。",
+          "item": "墨条",
+          "target": null
+        },
+        {
+          "text": "我把护身符攥出了汗。",
+          "item": "护身符",
+          "target": null
+        }
+      ]
+    },
+    {
+      "group": "ac-mention",
+      "sentences": [
+        {
+          "text": "我想起了槽头的那把铡刀。",
+          "item": null,
+          "target": null
+        },
+        {
+          "text": "我的褡裢还挂在钉子上。",
+          "item": null,
+          "target": null
+        },
+        {
+          "text": "篾刀就别在工具筐里。",
+          "item": null,
+          "target": null
+        },
+        {
+          "text": "伞架上还插着那把油纸伞。",
+          "item": null,
+          "target": null
+        },
+        {
+          "text": "谷仓里堆着陈年的稻草。",
+          "item": null,
+          "target": null
+        },
+        {
+          "text": "我惦记着没买成的毡靴。",
+          "item": null,
+          "target": null
+        },
+        {
+          "text": "铜锣声还在巷子里回响。",
+          "item": null,
+          "target": null
+        },
+        {
+          "text": "我盘算着找谁借盘缠。",
+          "item": null,
+          "target": null
+        },
+        {
+          "text": "药锄靠在篱笆边没人动。",
+          "item": null,
+          "target": null
+        },
+        {
+          "text": "我盯着账目发了半天怔。",
+          "item": null,
+          "target": null
+        }
+      ]
+    },
+    {
+      "group": "ac-action-paraphrase",
+      "sentences": [
+        {
+          "text": "我扛着原木撞开了柴门。",
+          "item": "原木",
+          "target": "柴门"
+        },
+        {
+          "text": "我用短斧砸开了栅栏门。",
+          "item": "短斧",
+          "target": "栅栏门"
+        },
+        {
+          "text": "我抡圆了锤子砸开了砖垛。",
+          "item": "锤子",
+          "target": "砖垛"
+        },
+        {
+          "text": "我用镰刀削断了芦苇。",
+          "item": "镰刀",
+          "target": "芦苇"
+        },
+        {
+          "text": "我用石头砸弯了插销。",
+          "item": "石头",
+          "target": "插销"
+        },
+        {
+          "text": "我用麻绳绞紧了木筏。",
+          "item": "麻绳",
+          "target": "木筏"
+        },
+        {
+          "text": "我用皮条箍紧了陶瓮。",
+          "item": "皮条",
+          "target": "陶瓮"
+        },
+        {
+          "text": "我用撬杠挪开了堵路的顽石。",
+          "item": "撬杠",
+          "target": "顽石"
+        },
+        {
+          "text": "我用扁担挑开了门帘。",
+          "item": "扁担",
+          "target": "门帘"
+        },
+        {
+          "text": "我用竹竿探到了河床。",
+          "item": "竹竿",
+          "target": "河床"
+        }
+      ]
+    },
+    {
+      "group": "ac-inspect-varied",
+      "sentences": [
+        {
+          "text": "我查验了染缸的釉色。",
+          "item": null,
+          "target": "染缸"
+        },
+        {
+          "text": "我端详了壶身的款识。",
+          "item": null,
+          "target": "壶身"
+        },
+        {
+          "text": "我翻检了樟木箱的夹层。",
+          "item": null,
+          "target": "樟木箱"
+        },
+        {
+          "text": "我打量了套着新缰的马。",
+          "item": null,
+          "target": "马"
+        },
+        {
+          "text": "我清点了滞销的粗盐。",
+          "item": null,
+          "target": "粗盐"
+        },
+        {
+          "text": "我嗅了嗅坛口。",
+          "item": null,
+          "target": "坛口"
+        },
+        {
+          "text": "我掂了掂那锭官银。",
+          "item": null,
+          "target": "官银"
+        },
+        {
+          "text": "我试了试弩机。",
+          "item": null,
+          "target": "弩机"
+        },
+        {
+          "text": "我翻看了账册的末页。",
+          "item": null,
+          "target": "账册"
+        },
+        {
+          "text": "我查验了橱门的合页。",
+          "item": null,
+          "target": "橱门"
+        }
+      ]
+    },
+    {
+      "group": "ac-cross-role",
+      "sentences": [
+        {
+          "text": "我用瓦盆接住了檐溜。",
+          "item": "瓦盆",
+          "target": "檐溜"
+        },
+        {
+          "text": "我把瓦盆擦干扣在了案头。",
+          "item": "瓦盆",
+          "target": "案头"
+        },
+        {
+          "text": "我把提灯挂上了门楼。",
+          "item": "提灯",
+          "target": "门楼"
+        },
+        {
+          "text": "我从门楼底下取回了提灯。",
+          "item": "提灯",
+          "target": null
+        },
+        {
+          "text": "我向货郎讨了碗凉茶。",
+          "item": null,
+          "target": "货郎"
+        },
+        {
+          "text": "我把凉茶泼在了车辙里。",
+          "item": "凉茶",
+          "target": "车辙"
+        },
+        {
+          "text": "我刷洗了马槽。",
+          "item": null,
+          "target": "马槽"
+        },
+        {
+          "text": "我牵出了枣红马。",
+          "item": "枣红马",
+          "target": null
+        },
+        {
+          "text": "我用鬃刷刷顺了枣红马。",
+          "item": "鬃刷",
+          "target": "枣红马"
+        },
+        {
+          "text": "我用鬃刷扫了扫鞍子。",
+          "item": "鬃刷",
+          "target": "鞍子"
+        }
+      ]
+    }
+  ],
+  "acceptanceRetired": {
+    "v2": {
+      "evaluatedAt": "trial 1791490412586 (commits b5067d7/82d8d41); strict ITEM 6/10, TGT 7/10, loose TGT 8/10, both-fields 6/10 -> rejected; retired",
+      "sentences": [
+        {
+          "text": "我把火钳握在手里。",
+          "item": "火钳",
+          "target": null
+        },
+        {
+          "text": "我想起了断桨。",
+          "item": null,
+          "target": null
+        },
+        {
+          "text": "我用铜哨示意马夫。",
+          "item": "铜哨",
+          "target": "马夫"
+        },
+        {
+          "text": "我检查门环。",
+          "item": null,
+          "target": "门环"
+        },
+        {
+          "text": "我在原地蹲了一会儿。",
+          "item": null,
+          "target": null
+        },
+        {
+          "text": "我用湿柴塞进灶膛。",
+          "item": "湿柴",
+          "target": "灶膛"
+        },
+        {
+          "text": "我用那把断剑撬开后院的门。",
+          "item": "断剑",
+          "target": "门"
+        },
+        {
+          "text": "我向马夫打听水井的位置。",
+          "item": null,
+          "target": "马夫"
+        },
+        {
+          "text": "断剑还在鞘里。",
+          "item": null,
+          "target": null
+        },
+        {
+          "text": "我用蒙尘的火钳拨开灰堆。",
+          "item": "火钳",
+          "target": "灰堆"
+        }
+      ]
+    },
+    "v1": "evaluated once at ec4aa02-era trial; retired (see 82d8d41 for the v1/v2 mixup)"
+  },
+  "errorTaxonomy": {
+    "ok": "exact span match (or both empty)",
+    "false-positive": "gold empty, model emitted a span",
+    "missed-o": "gold present, all its tokens predicted O",
+    "missed-mixed": "gold present, no span decoded, not purely O",
+    "wrong-field": "gold characters captured by the OTHER field",
+    "truncated-b": "another B- fires inside the entity; first group wins -> span cut",
+    "truncated-o": "O predicted inside the entity -> span cut",
+    "partial": "overlaps gold but neither contains the other",
+    "extended": "covers gold but over-extends",
+    "modifier-as-head": "predicted span sits entirely in the pre-head modifier/possessor zone (的-separated)",
+    "displaced": "no overlap with gold and not in the modifier zone"
+  },
+  "note": "single data contract: run-labeler-trial.mjs loads THIS file (sha256 recorded in its report); this script reads the file back for its own evaluation. train/validation are the actual split; devClassic/devGroups/scored/acceptance are excluded from training."
 }
