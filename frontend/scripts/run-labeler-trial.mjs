@@ -27,9 +27,13 @@
 // identical batch scores can hide different predictions when both arms are
 // wrong differently (指南针句: q8 TGT=针 vs fp32=校准方).
 //
-// Timing scope: end-to-end per call — raw text -> tokenize -> feed -> run ->
-// argmax -> span decode -> substrings (greedy path; constrained decoding is
-// pure post-processing on the same logits and is not on the timed path).
+// Timing scope: BOTH decode paths are timed end-to-end per call — raw text
+// -> tokenize -> feed -> run -> post-process -> substrings, each mode with
+// its own REPEATS+1 loop and median (row.wallMs = {greedy, constrained};
+// row 0 of each loop is warm-up). Greedy post-process is argmax + span
+// decode; constrained post-process is softmax + whole-sentence enumeration.
+// The acceptance gate scores AND times only ACCEPTED_DECODE (recorded in
+// the report as decodingMode) — no hardcoded row.greedy in gate code.
 // Threads: single-thread only; >1-thread session create hangs in this
 // environment (documented in run-classifier-trial.mjs).
 //
@@ -59,6 +63,12 @@ const CLASS_ORDER = [
   "ok", "span-false", "span-missing", "all-o", "truncated-o", "truncated-b",
   "wrong-field", "over-extended", "boundary-mismatch", "modifier-as-head", "displaced",
 ];
+
+// 被验收的解码方式：验收门控的 strict 评分与端到端计时只读这一模式
+// （row[ACCEPTED_DECODE] / row.wallMs[ACCEPTED_DECODE]），并作为
+// decodingMode 显式写进报告。约束解码本轮保留为候选（对照轮收益成立但
+// 引入空字段误报），未被设为默认；晋升时只改这一处并按协议重跑验收批。
+const ACCEPTED_DECODE = "greedy";
 
 const sha256 = (buffer) => createHash("sha256").update(buffer).digest("hex");
 
@@ -316,41 +326,74 @@ async function main() {
           return tags.indexOf(tag) >= 0 ? tags.indexOf(tag) : 0;
         };
 
-        const extract = (session, text) => {
+        // 推理共用前缀（两种解码的计时都从这里开始）：分词 -> feed -> run，
+        // 返回同一 logits，之后各走各的后处理——两条计时路径的共享部分
+        // 一致，差异只在各自的解码方式上。
+        const infer = (session, text) => {
           const { ids, offsets } = tokenizeWithOffsets(text);
           const feed = {
             input_ids: new ort.Tensor("int64", BigInt64Array.from(ids.map(BigInt)), [1, ids.length]),
             attention_mask: new ort.Tensor("int64", BigInt64Array.from({ length: ids.length }, () => 1n), [1, ids.length]),
             token_type_ids: new ort.Tensor("int64", BigInt64Array.from({ length: ids.length }, () => 0n), [1, ids.length]),
           };
-          return session.run(feed).then((output) => {
-            const logits = output.logits.data; // [seq, tags] Float32Array
-            const seq = output.logits.dims[1];
-            const tagCount = output.logits.dims[2];
-            const tagIds = [];
-            const probs = [];
-            for (let index = 0; index < seq; index += 1) {
-              let best = 0;
-              let bestValue = -Infinity;
-              let sum = 0;
-              for (let tagIndex = 0; tagIndex < tagCount; tagIndex += 1) {
-                const value = logits[index * tagCount + tagIndex];
-                sum += Math.exp(value);
-                if (value > bestValue) {
-                  bestValue = value;
-                  best = tagIndex;
-                }
+          return session.run(feed).then((output) => ({
+            offsets,
+            logits: output.logits.data, // [seq, tags] Float32Array
+            seq: output.logits.dims[1],
+            tagCount: output.logits.dims[2],
+          }));
+        };
+
+        // 贪心全路径：argmax -> 首组胜出 span decode -> substrings。
+        const greedyFromLogits = (text, { offsets, logits, seq, tagCount }) => {
+          const tagIds = [];
+          for (let index = 0; index < seq; index += 1) {
+            let best = 0;
+            let bestValue = -Infinity;
+            for (let tagIndex = 0; tagIndex < tagCount; tagIndex += 1) {
+              const value = logits[index * tagCount + tagIndex];
+              if (value > bestValue) {
+                bestValue = value;
+                best = tagIndex;
               }
-              tagIds.push(id2tag ? tagIndexLookup(id2tag, best) : best);
-              const row = [];
-              for (let tagIndex = 0; tagIndex < tagCount; tagIndex += 1) {
-                row.push(Math.exp(logits[index * tagCount + tagIndex]) / sum);
-              }
-              probs.push(row);
             }
-            const spans = decodeSpans(offsets, tagIds);
-            return { offsets, tagIds, probs, greedySpans: spans };
-          });
+            tagIds.push(id2tag ? tagIndexLookup(id2tag, best) : best);
+          }
+          const spans = decodeSpans(offsets, tagIds);
+          return {
+            offsets,
+            tagIds,
+            itemSpan: spans.ITEM,
+            targetSpan: spans.TGT,
+            predItem: spans.ITEM !== null ? text.slice(spans.ITEM[0], spans.ITEM[1]) : null,
+            predTarget: spans.TGT !== null ? text.slice(spans.TGT[0], spans.TGT[1]) : null,
+          };
+        };
+
+        // 约束全路径：softmax -> 整句枚举 span decode -> substrings。
+        const constrainedFromLogits = (text, { offsets, logits, seq, tagCount }) => {
+          const probs = [];
+          for (let index = 0; index < seq; index += 1) {
+            let sum = 0;
+            for (let tagIndex = 0; tagIndex < tagCount; tagIndex += 1) {
+              sum += Math.exp(logits[index * tagCount + tagIndex]);
+            }
+            const row = [];
+            for (let tagIndex = 0; tagIndex < tagCount; tagIndex += 1) {
+              row.push(Math.exp(logits[index * tagCount + tagIndex]) / sum);
+            }
+            probs.push(row);
+          }
+          const decoded = constrainedDecode(offsets, probs);
+          return {
+            offsets,
+            ids: decoded.ids,
+            probs,
+            itemSpan: decoded.itemSpan,
+            targetSpan: decoded.targetSpan,
+            predItem: decoded.itemSpan !== null ? text.slice(decoded.itemSpan[0], decoded.itemSpan[1]) : null,
+            predTarget: decoded.targetSpan !== null ? text.slice(decoded.targetSpan[0], decoded.targetSpan[1]) : null,
+          };
         };
 
         const createStarted = performance.now();
@@ -370,18 +413,27 @@ async function main() {
         }
         const loadMs = Math.round(performance.now() - createStarted);
 
-        const runCase = async (batch, entry, withTokens) => {
+        const medianOf = (walls) => [...walls].sort((a, b) => a - b)[Math.floor(walls.length / 2)];
+        // 单解码路径计时：REPEATS+1 次（首趟暖机不计入样本），从原文到该
+        // 模式的最终输出全程入钟；两种模式各测各的，互不扣除。
+        const timePath = async (path) => {
           const walls = [];
-          let raw = null;
+          let last = null;
           for (let run = 0; run < repeats + 1; run += 1) {
             const started = performance.now();
-            raw = await extract(session, entry.text);
+            last = await path();
             const wall = performance.now() - started;
             if (run > 0) walls.push(Math.round(wall * 1000) / 1000);
           }
-          const sorted = [...walls].sort((a, b) => a - b);
-          const median = sorted[Math.floor(sorted.length / 2)];
+          return { median: medianOf(walls), last };
+        };
+
+        const runCase = async (batch, entry, withTokens) => {
           const text = entry.text;
+          const paths = {
+            greedy: await timePath(() => infer(session, text).then((r) => greedyFromLogits(text, r))),
+            constrained: await timePath(() => infer(session, text).then((r) => constrainedFromLogits(text, r))),
+          };
           const goldSpans = {
             ITEM: entry.item !== null ? [text.indexOf(entry.item), text.indexOf(entry.item) + entry.item.length] : null,
             TGT: entry.target !== null ? [text.indexOf(entry.target), text.indexOf(entry.target) + entry.target.length] : null,
@@ -407,10 +459,12 @@ async function main() {
             }
             return "O";
           };
+          // 概率取自约束路径的落盘运行（同一文本同一 logits，确定性推理
+          // 下与贪心路径逐位一致）。
           const buildTokenRows = (ids) => {
             const rows = [];
-            for (let index = 1; index < raw.offsets.length; index += 1) {
-              const [tokenStart, tokenEnd] = raw.offsets[index];
+            for (let index = 1; index < paths.greedy.last.offsets.length; index += 1) {
+              const [tokenStart, tokenEnd] = paths.greedy.last.offsets[index];
               if (tokenEnd === 0) continue; // [SEP]
               const goldTag = goldTokenTag(tokenStart, tokenEnd);
               rows.push({
@@ -419,28 +473,23 @@ async function main() {
                 ch: text.slice(tokenStart, tokenEnd),
                 gold: goldTag,
                 pred: tags[ids[index]] ?? "O",
-                pPred: Math.round(raw.probs[index][ids[index]] * 10000) / 10000,
-                pGold: Math.round(raw.probs[index][tags.indexOf(goldTag)] * 10000) / 10000,
+                pPred: Math.round(paths.constrained.last.probs[index][ids[index]] * 10000) / 10000,
+                pGold: Math.round(paths.constrained.last.probs[index][tags.indexOf(goldTag)] * 10000) / 10000,
               });
             }
             return rows;
           };
 
-          const constrained = constrainedDecode(raw.offsets, raw.probs);
-          const decodes = {
-            greedy: { itemSpan: raw.greedySpans.ITEM, targetSpan: raw.greedySpans.TGT, ids: raw.tagIds },
-            constrained: { itemSpan: constrained.itemSpan, targetSpan: constrained.targetSpan, ids: constrained.ids },
-          };
-
           const row = { batch, group: entry.group ?? null, text, expectItem: entry.item, expectTarget: entry.target };
-          const greedyTokenRows = buildTokenRows(decodes.greedy.ids);
-          for (const [mode, d] of Object.entries(decodes)) {
+          const greedyTokenRows = buildTokenRows(paths.greedy.last.tagIds);
+          for (const mode of Object.keys(paths)) {
+            const d = paths[mode].last;
             const itemScore = fieldScore(entry.item, d.itemSpan);
             const targetScore = fieldScore(entry.target, d.targetSpan);
             const tokenRows = mode === "greedy" ? greedyTokenRows : buildTokenRows(d.ids);
             const sub = {
-              predItem: d.itemSpan !== null ? text.slice(d.itemSpan[0], d.itemSpan[1]) : null,
-              predTarget: d.targetSpan !== null ? text.slice(d.targetSpan[0], d.targetSpan[1]) : null,
+              predItem: d.predItem,
+              predTarget: d.predTarget,
               itemSpan: d.itemSpan,
               targetSpan: d.targetSpan,
               itemStrict: itemScore.strict,
@@ -456,19 +505,23 @@ async function main() {
           }
           // 逐字记录（dev 批）：五类概率全存（顺序即 tags 数组）。
           if (withTokens) {
-            row.tokens = greedyTokenRows.map((t, i) => ({
+            row.tokens = greedyTokenRows.map((t) => ({
               ...t,
-              probs: raw.probs[raw.offsets.findIndex((o) => o[0] === t.start && o[1] === t.end)]
+              probs: paths.constrained.last.probs[paths.constrained.last.offsets.findIndex((o) => o[0] === t.start && o[1] === t.end)]
                 .map((p) => Math.round(p * 10000) / 10000),
             }));
           }
-          row.wallMs = Math.round(median * 1000) / 1000;
-          row.withinTarget = median <= targetMs;
+          row.wallMs = { greedy: paths.greedy.median, constrained: paths.constrained.median };
+          row.withinTarget = {
+            greedy: paths.greedy.median <= targetMs,
+            constrained: paths.constrained.median <= targetMs,
+          };
           return row;
         };
 
         const coldStarted = performance.now();
-        await extract(session, batches.find((b) => b.name === "scored").rows[0].text);
+        const coldText = batches.find((b) => b.name === "scored").rows[0].text;
+        await infer(session, coldText).then((r) => greedyFromLogits(coldText, r));
         const coldMs = Math.round(performance.now() - coldStarted);
 
         const cases = [];
@@ -521,8 +574,8 @@ async function main() {
       const parts = batchNames.map((batch) => `${batch} ITEM ${rate(arm, batch, mode, "item")} TGT ${rate(arm, batch, mode, "target")} both ${bothRate(arm, batch, mode)}`);
       log(`${arm.name} ${mode}: ${parts.join(" | ")}`);
     }
-    const medianWall = arm.cases.map((row) => row.wallMs).sort((a, b) => a - b)[Math.floor(arm.cases.length / 2)];
-    log(`${arm.name} timing: medianWall=${medianWall}ms (greedy timed path; constrained is post-processing)`);
+    const medianWall = (mode) => arm.cases.map((row) => row.wallMs[mode]).sort((a, b) => a - b)[Math.floor(arm.cases.length / 2)];
+    log(`${arm.name} timing: ${MODES.map((mode) => `${mode} medianWall=${medianWall(mode)}ms`).join(", ")} (each end-to-end text->output)`);
   }
   const primary = scoredArms[0] ?? { cases: [] };
 
@@ -594,19 +647,78 @@ async function main() {
     }
   }
 
+  // 解码逐例得失（贪心->约束，两字段 strict 整句翻转，按臂×批分列）+
+  // 空字段误报（期望为空、预测非空，含预测文本）：合并率会掩盖此消彼长，
+  // 收益与代价都要逐句可核对。
+  const decodeFlips = {};
+  for (const arm of scoredArms) {
+    decodeFlips[arm.name] = {};
+    for (const batch of batchNames) {
+      const rows = arm.cases.filter((row) => row.batch === batch);
+      const gains = [];
+      const losses = [];
+      for (const row of rows) {
+        const wasRight = row.greedy.itemStrict && row.greedy.targetStrict;
+        const nowRight = row.constrained.itemStrict && row.constrained.targetStrict;
+        if (wasRight === nowRight) continue;
+        (nowRight ? gains : losses).push({
+          text: row.text,
+          group: row.group,
+          expectItem: row.expectItem,
+          expectTarget: row.expectTarget,
+          greedy: { predItem: row.greedy.predItem, predTarget: row.greedy.predTarget },
+          constrained: { predItem: row.constrained.predItem, predTarget: row.constrained.predTarget },
+        });
+      }
+      const emptyFieldFalsePositives = Object.fromEntries(MODES.map((mode) => [mode, rows.flatMap((row) => {
+        const fps = [];
+        for (const [field, expect, pred] of [
+          ["ITEM", row.expectItem, row[mode].predItem],
+          ["TGT", row.expectTarget, row[mode].predTarget],
+        ]) {
+          if (expect === null && pred !== null) fps.push({ text: row.text, group: row.group, field, pred });
+        }
+        return fps;
+      })]));
+      decodeFlips[arm.name][batch] = { gains, losses, emptyFieldFalsePositives };
+    }
+  }
+  for (const arm of scoredArms) {
+    for (const batch of batchNames) {
+      const f = decodeFlips[arm.name][batch];
+      const gFps = f.emptyFieldFalsePositives.greedy;
+      const cFps = f.emptyFieldFalsePositives.constrained;
+      log(`${arm.name} ${batch} flips: greedy->constrained +${f.gains.length}/-${f.losses.length}, empty-field FP ${gFps.length}->${cFps.length}`);
+      const fmt = (p) => `${p.predItem ?? "∅"}/${p.predTarget ?? "∅"}`;
+      for (const [label, list] of [["gain", f.gains], ["loss", f.losses]]) {
+        for (const item of list) {
+          log(`  ${label}: ${item.text} gold=${item.expectItem ?? "∅"}/${item.expectTarget ?? "∅"} greedy=${fmt(item.greedy)} -> constrained=${fmt(item.constrained)}`);
+        }
+      }
+      for (const fp of cFps) {
+        if (!gFps.some((g) => g.text === fp.text && g.field === fp.field)) {
+          log(`  new empty-field FP: ${fp.field}=${fp.pred} in ${fp.text}`);
+        }
+      }
+    }
+  }
+
   // 预注册验收判定：封存批每字段 strict >= 90% 且端到端 <= 4s；dev 批只
   // 作诊断。未传 --with-acceptance 时判定记 not-evaluated（批未加载）。
   let gate;
   if (evalAcceptance) {
     const acceptanceRows = primary.cases.filter((row) => row.batch === "acceptance");
+    // 评分与计时读同一被验收模式（ACCEPTED_DECODE），不硬编码具体解码名。
+    const m = ACCEPTED_DECODE;
     gate = {
       evaluated: true,
-      itemStrictRate: `${acceptanceRows.filter((row) => row.greedy.itemStrict).length}/${acceptanceRows.length}`,
-      targetStrictRate: `${acceptanceRows.filter((row) => row.greedy.targetStrict).length}/${acceptanceRows.length}`,
-      itemPass: acceptanceRows.filter((row) => row.greedy.itemStrict).length / acceptanceRows.length >= 0.9,
-      targetPass: acceptanceRows.filter((row) => row.greedy.targetStrict).length / acceptanceRows.length >= 0.9,
-      bothFieldsCorrectRate: `${acceptanceRows.filter((row) => row.greedy.itemStrict && row.greedy.targetStrict).length}/${acceptanceRows.length}`,
-      latencyAllWithinTarget: primary.cases.every((row) => row.withinTarget),
+      decodeMode: m,
+      itemStrictRate: `${acceptanceRows.filter((row) => row[m].itemStrict).length}/${acceptanceRows.length}`,
+      targetStrictRate: `${acceptanceRows.filter((row) => row[m].targetStrict).length}/${acceptanceRows.length}`,
+      itemPass: acceptanceRows.filter((row) => row[m].itemStrict).length / acceptanceRows.length >= 0.9,
+      targetPass: acceptanceRows.filter((row) => row[m].targetStrict).length / acceptanceRows.length >= 0.9,
+      bothFieldsCorrectRate: `${acceptanceRows.filter((row) => row[m].itemStrict && row[m].targetStrict).length}/${acceptanceRows.length}`,
+      latencyAllWithinTarget: primary.cases.every((row) => row.withinTarget[m]),
       verdict: null,
     };
     gate.verdict = gate.itemPass && gate.targetPass && gate.latencyAllWithinTarget ? "accepted" : "rejected";
@@ -614,11 +726,12 @@ async function main() {
   } else {
     gate = {
       evaluated: false,
-      note: "sealed acceptance batch was NOT loaded or evaluated (protocol: single-shot via --with-acceptance after dev justifies it); gates: per-field strict >= 90% AND e2e <= 4s on that batch",
-      perBatchBothFieldsCorrect: Object.fromEntries(batchNames.map((batch) => [batch, scoredArms[0] ? bothRate(scoredArms[0], batch, "greedy") : "0/0"])),
+      decodeMode: ACCEPTED_DECODE,
+      note: "sealed acceptance batch was NOT loaded or evaluated (protocol: single-shot via --with-acceptance after dev justifies it); gates: per-field strict >= 90% AND e2e <= 4s on that batch, scored AND timed on decodeMode",
+      perBatchBothFieldsCorrect: Object.fromEntries(batchNames.map((batch) => [batch, scoredArms[0] ? bothRate(scoredArms[0], batch, ACCEPTED_DECODE) : "0/0"])),
       verdict: "not-evaluated",
     };
-    log(`gate: not-evaluated (sealed); dev/scored greedy both-fields: ${JSON.stringify(gate.perBatchBothFieldsCorrect)}`);
+    log(`gate: not-evaluated (sealed); dev/scored ${ACCEPTED_DECODE} both-fields: ${JSON.stringify(gate.perBatchBothFieldsCorrect)}`);
   }
 
   const outDir = path.join(frontendRoot, "..", "artifacts", "benchmark");
@@ -646,13 +759,15 @@ async function main() {
         runtime: {
           userAgent,
           crossOriginIsolated: isolated,
-          timingScope: "end-to-end per call (greedy): text -> tokenize -> feed -> run -> argmax -> span decode; constrained decoding is post-processing on the same logits",
+          timingScope: "end-to-end per decode mode: raw text -> tokenize -> feed -> run -> post-process -> substrings; greedy (argmax+span decode) and constrained (softmax+enumeration) each timed over REPEATS+1 runs with median per case",
           threadNote: "single-thread only; >1-thread wasm session create hangs in this environment",
         },
+        decodingMode: ACCEPTED_DECODE,
         targetMs: TARGET_MS,
         repeatsPerCase: REPEATS,
         errorTaxonomy: manifest.errorTaxonomy,
         decodingComparison,
+        decodeFlips,
         devDiagnostics,
         armDiffs,
         acceptance: {

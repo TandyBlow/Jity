@@ -961,6 +961,11 @@ def print_diagnostics(name, rows):
 
 
 def make_forward_torch(model, tokenizer):
+    # Torch 评测入口必须先切 eval()：训练循环验证完恢复的是 train()，不关
+    # Dropout 的话评测 logits 混入随机丢弃，重训后的 Torch 成绩被系统性压低
+    # （--eval-onnx 走 ONNX 会话，无此问题）。
+    model.eval()
+
     def forward(text):
         encoded = tokenizer(text, truncation=True, max_length=MAX_LEN, return_offsets_mapping=True)
         offsets = encoded["offset_mapping"]
