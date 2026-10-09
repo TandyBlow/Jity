@@ -1,0 +1,1094 @@
+{
+  "_readme": [
+    "Examiner 行动判定人工标注集：ground truth 按'公平 GM 语义'标注，不代表任何当前实现的实际行为。",
+    "known_bug=true 表示标注时已确认当前实现判错（写明于 note）；用例从 bug 修复起应转为普通用例并删标志。",
+    "rules 字段为期望触发的 rule_type 集合（精确匹配）；null 表示不关心。blocked 用例不比对 rules。",
+    "D 组是集成用例：先经 merge_entry_state 合成状态，再判定——专门量化 entry 物品 status 的版本差异。"
+  ],
+  "fixtures": {
+    "campus": {
+      "current_location": "报到处大厅",
+      "health": 80,
+      "sanity": 60,
+      "items": [
+        {
+          "name": "通行卡",
+          "status": "初始"
+        },
+        {
+          "name": "银色徽章",
+          "status": "owned"
+        },
+        {
+          "name": "旧钥匙",
+          "status": "持有"
+        },
+        {
+          "name": "短刀",
+          "status": "已装备"
+        },
+        {
+          "name": "提灯",
+          "status": "equipped"
+        },
+        {
+          "name": "学生证",
+          "status": "active"
+        },
+        {
+          "name": "旧行李箱",
+          "status": "owned"
+        },
+        {
+          "name": "治疗药水",
+          "status": "owned"
+        }
+      ],
+      "npcs": [
+        {
+          "name": "诺诺",
+          "status": "present",
+          "current_location": "报到处大厅门口"
+        },
+        {
+          "name": "古德里安教授",
+          "status": "present",
+          "current_location": "报到处大厅"
+        },
+        {
+          "name": "门卫",
+          "status": "away",
+          "current_location": "校门口"
+        },
+        {
+          "name": "图书管理员",
+          "status": "present",
+          "current_location": "图书馆"
+        }
+      ]
+    },
+    "campus_drained": {
+      "current_location": "报到处大厅",
+      "health": 0,
+      "sanity": 0,
+      "items": [
+        {
+          "name": "通行卡",
+          "status": "初始"
+        },
+        {
+          "name": "银色徽章",
+          "status": "owned"
+        }
+      ],
+      "npcs": [
+        {
+          "name": "诺诺",
+          "status": "present",
+          "current_location": "报到处大厅"
+        }
+      ]
+    },
+    "campus_low_san": {
+      "current_location": "报到处大厅",
+      "health": 80,
+      "sanity": 5,
+      "items": [],
+      "npcs": []
+    },
+    "campus_lost": {
+      "current_location": "报到处大厅",
+      "health": 80,
+      "sanity": 60,
+      "items": [
+        {
+          "name": "银色徽章",
+          "status": "已丢失"
+        },
+        {
+          "name": "旧钥匙",
+          "status": "已丢失"
+        }
+      ],
+      "npcs": []
+    },
+    "bare": {
+      "current_location": "未知",
+      "health": 100,
+      "sanity": 80,
+      "items": [],
+      "npcs": []
+    }
+  },
+  "cases": [
+    {
+      "id": "A01",
+      "category": "passive",
+      "fixture": "campus",
+      "action": "继续",
+      "expected": {
+        "permissibility": "permissible",
+        "rules": null
+      }
+    },
+    {
+      "id": "A02",
+      "category": "passive",
+      "fixture": "campus",
+      "action": "继续剧情",
+      "expected": {
+        "permissibility": "permissible",
+        "rules": null
+      }
+    },
+    {
+      "id": "A03",
+      "category": "passive",
+      "fixture": "campus",
+      "action": "接着讲",
+      "expected": {
+        "permissibility": "permissible",
+        "rules": null
+      }
+    },
+    {
+      "id": "A04",
+      "category": "passive",
+      "fixture": "campus",
+      "action": "接着说。",
+      "expected": {
+        "permissibility": "permissible",
+        "rules": null
+      }
+    },
+    {
+      "id": "A05",
+      "category": "passive",
+      "fixture": "campus",
+      "action": "继续故事",
+      "expected": {
+        "permissibility": "permissible",
+        "rules": null
+      }
+    },
+    {
+      "id": "A06",
+      "category": "passive",
+      "fixture": "campus",
+      "action": "好，继续",
+      "expected": {
+        "permissibility": "permissible",
+        "rules": null
+      },
+      "note": "非严格被动句，但不含任何前置条件触发词，应放行"
+    },
+    {
+      "id": "A07",
+      "category": "passive",
+      "fixture": "campus",
+      "action": "接着讲下去吧",
+      "expected": {
+        "permissibility": "permissible",
+        "rules": null
+      },
+      "note": "非严格被动句，但不含任何前置条件触发词，应放行"
+    },
+    {
+      "id": "B01",
+      "category": "item_use_ok",
+      "fixture": "campus",
+      "action": "我拿出通行卡，刷开门禁",
+      "expected": {
+        "permissibility": "permissible",
+        "rules": [
+          "item_use"
+        ]
+      },
+      "known_bug": true,
+      "note": "通行卡 status=初始（entry_state 遗留格式，老存档仍会是该值）；读取侧 _OWNED 不认它 → 误拒"
+    },
+    {
+      "id": "B02",
+      "category": "item_use_ok",
+      "fixture": "campus",
+      "action": "我用银色徽章打开储物柜",
+      "expected": {
+        "permissibility": "permissible",
+        "rules": [
+          "item_use"
+        ]
+      }
+    },
+    {
+      "id": "B03",
+      "category": "item_use_ok",
+      "fixture": "campus",
+      "action": "拿出旧钥匙开门",
+      "expected": {
+        "permissibility": "permissible",
+        "rules": [
+          "item_use"
+        ]
+      }
+    },
+    {
+      "id": "B04",
+      "category": "item_use_ok",
+      "fixture": "campus",
+      "action": "举起提灯照亮走廊",
+      "expected": {
+        "permissibility": "permissible",
+        "rules": [
+          "item_use"
+        ]
+      }
+    },
+    {
+      "id": "B05",
+      "category": "item_use_ok",
+      "fixture": "campus",
+      "action": "用学生证开门",
+      "expected": {
+        "permissibility": "permissible",
+        "rules": [
+          "item_use"
+        ]
+      }
+    },
+    {
+      "id": "B06",
+      "category": "item_use_ok",
+      "fixture": "campus",
+      "action": "喝下治疗药水",
+      "expected": {
+        "permissibility": "permissible",
+        "rules": [
+          "item_use"
+        ]
+      },
+      "known_bug": true,
+      "note": "'治疗药水'中的'治疗'被急救技能正则误命中，多触发 skill_check"
+    },
+    {
+      "id": "B07",
+      "category": "item_use_ok",
+      "fixture": "campus",
+      "action": "用全力撞门",
+      "expected": {
+        "permissibility": "permissible",
+        "rules": null
+      },
+      "note": "用(?!力|心) 只挡紧邻的'用力/用心'；'用全力撞门'整段被当成物品名查库存，误拒",
+      "known_bug": true
+    },
+    {
+      "id": "B08",
+      "category": "item_use_ok",
+      "fixture": "campus",
+      "action": "使用言灵震慑对方",
+      "expected": {
+        "permissibility": "conditional",
+        "rules": [
+          "sanity_check"
+        ]
+      },
+      "note": "言灵不是物品，但使用言灵触发血统稳定检定"
+    },
+    {
+      "id": "B09",
+      "category": "item_use_ok",
+      "fixture": "campus",
+      "action": "用短刀攻击傀儡",
+      "expected": {
+        "permissibility": "conditional",
+        "rules": [
+          "item_use",
+          "combat"
+        ]
+      }
+    },
+    {
+      "id": "B10",
+      "category": "item_use_ok",
+      "fixture": "campus",
+      "action": "拔出短刀防卫",
+      "expected": {
+        "permissibility": "permissible",
+        "rules": null
+      },
+      "note": "拔出不在使用动词表内，宽放行（不判物品）"
+    },
+    {
+      "id": "B11",
+      "category": "item_use_ok",
+      "fixture": "campus",
+      "action": "拿出通行卡，打开闸机",
+      "expected": {
+        "permissibility": "permissible",
+        "rules": [
+          "item_use"
+        ]
+      },
+      "known_bug": true,
+      "note": "同 B01，初始状态读取侧缺口"
+    },
+    {
+      "id": "B12",
+      "category": "item_use_ok",
+      "fixture": "campus",
+      "action": "用提灯照亮地窖入口",
+      "expected": {
+        "permissibility": "permissible",
+        "rules": [
+          "item_use"
+        ]
+      }
+    },
+    {
+      "id": "B13",
+      "category": "item_use_ok",
+      "fixture": "campus",
+      "action": "把学生证递给诺诺",
+      "expected": {
+        "permissibility": "permissible",
+        "rules": null
+      },
+      "note": "递交不是使用动词，宽放行"
+    },
+    {
+      "id": "C01",
+      "category": "item_missing",
+      "fixture": "campus",
+      "action": "用黄铜钥匙打开侧门",
+      "expected": {
+        "permissibility": "blocked",
+        "rules": null
+      }
+    },
+    {
+      "id": "C02",
+      "category": "item_missing",
+      "fixture": "campus",
+      "action": "使用银色怀表查看时间",
+      "expected": {
+        "permissibility": "blocked",
+        "rules": null
+      }
+    },
+    {
+      "id": "C03",
+      "category": "item_missing",
+      "fixture": "campus_lost",
+      "action": "用银色徽章打开储物柜",
+      "expected": {
+        "permissibility": "blocked",
+        "rules": null
+      },
+      "note": "已丢失"
+    },
+    {
+      "id": "C04",
+      "category": "item_missing",
+      "fixture": "campus_lost",
+      "action": "用旧钥匙开门",
+      "expected": {
+        "permissibility": "blocked",
+        "rules": null
+      },
+      "note": "已丢失"
+    },
+    {
+      "id": "C05",
+      "category": "item_missing",
+      "fixture": "campus",
+      "action": "和门卫交谈",
+      "expected": {
+        "permissibility": "blocked",
+        "rules": null
+      },
+      "note": "门卫不在场"
+    },
+    {
+      "id": "C06",
+      "category": "item_missing",
+      "fixture": "campus",
+      "action": "询问图书管理员关于闭馆时间",
+      "expected": {
+        "permissibility": "blocked",
+        "rules": null
+      },
+      "note": "图书管理员在图书馆，玩家在报到处大厅"
+    },
+    {
+      "id": "C07",
+      "category": "item_missing",
+      "fixture": "campus",
+      "action": "在图书馆里休息",
+      "expected": {
+        "permissibility": "blocked",
+        "rules": null
+      },
+      "note": "玩家不在图书馆"
+    },
+    {
+      "id": "D01",
+      "category": "entry_integration",
+      "entry": {
+        "location": "报到处大厅",
+        "items": [
+          "通行卡",
+          "房间钥匙"
+        ],
+        "quests": [
+          "完成入学报到"
+        ],
+        "world_facts_summary": [
+          "学院的新生报到流程异常严格"
+        ]
+      },
+      "action": "我拿出通行卡，刷开门禁",
+      "expected": {
+        "permissibility": "permissible",
+        "rules": [
+          "item_use"
+        ]
+      },
+      "note": "merge_entry_state 产出的初始物品必须可直接使用"
+    },
+    {
+      "id": "D02",
+      "category": "entry_integration",
+      "entry": {
+        "location": "报到处大厅",
+        "items": [
+          "通行卡",
+          "房间钥匙"
+        ],
+        "quests": [],
+        "world_facts_summary": []
+      },
+      "action": "用房间钥匙打开宿舍门",
+      "expected": {
+        "permissibility": "permissible",
+        "rules": [
+          "item_use"
+        ]
+      }
+    },
+    {
+      "id": "D03",
+      "category": "entry_integration",
+      "entry": {
+        "location": "报到处大厅",
+        "items": [
+          "通行卡"
+        ],
+        "quests": [],
+        "world_facts_summary": []
+      },
+      "action": "举起通行卡对照照片",
+      "expected": {
+        "permissibility": "permissible",
+        "rules": [
+          "item_use"
+        ]
+      }
+    },
+    {
+      "id": "D04",
+      "category": "entry_integration",
+      "entry": {
+        "location": "报到处大厅",
+        "items": [
+          "房间钥匙"
+        ],
+        "quests": [],
+        "world_facts_summary": []
+      },
+      "action": "拿出房间钥匙开门",
+      "expected": {
+        "permissibility": "permissible",
+        "rules": [
+          "item_use"
+        ]
+      }
+    },
+    {
+      "id": "E01",
+      "category": "npc",
+      "fixture": "campus",
+      "action": "和诺诺交谈",
+      "expected": {
+        "permissibility": "permissible",
+        "rules": null
+      },
+      "note": "诺诺在大厅门口，与大厅同场景"
+    },
+    {
+      "id": "E02",
+      "category": "npc",
+      "fixture": "campus",
+      "action": "向古德里安教授询问档案",
+      "expected": {
+        "permissibility": "permissible",
+        "rules": null
+      }
+    },
+    {
+      "id": "E03",
+      "category": "npc",
+      "fixture": "campus",
+      "action": "询问古德里安教授是否见过可疑的人",
+      "expected": {
+        "permissibility": "permissible",
+        "rules": null
+      }
+    },
+    {
+      "id": "E04",
+      "category": "npc",
+      "fixture": "campus",
+      "action": "和图书管理员交谈",
+      "expected": {
+        "permissibility": "blocked",
+        "rules": null
+      },
+      "note": "图书馆与大厅是不同场景"
+    },
+    {
+      "id": "E05",
+      "category": "npc",
+      "fixture": "campus",
+      "action": "攻击诺诺",
+      "expected": {
+        "permissibility": "conditional",
+        "rules": [
+          "combat"
+        ]
+      }
+    },
+    {
+      "id": "E06",
+      "category": "npc",
+      "fixture": "campus",
+      "action": "说服门卫放我出去",
+      "expected": {
+        "permissibility": "blocked",
+        "rules": null
+      },
+      "note": "门卫在校门口，不在场"
+    },
+    {
+      "id": "E07",
+      "category": "npc",
+      "fixture": "campus",
+      "action": "和他们交谈",
+      "expected": {
+        "permissibility": "permissible",
+        "rules": null
+      },
+      "note": "泛指对象不做在场校验"
+    },
+    {
+      "id": "E08",
+      "category": "npc",
+      "fixture": "campus",
+      "action": "和他们所有人交谈",
+      "expected": {
+        "permissibility": "permissible",
+        "rules": null
+      },
+      "known_bug": true,
+      "note": "泛指集合不认复合短语'他们所有人'，会误查 NPC 记录"
+    },
+    {
+      "id": "E09",
+      "category": "npc",
+      "fixture": "campus",
+      "action": "和古德里安教授对话",
+      "expected": {
+        "permissibility": "permissible",
+        "rules": null
+      }
+    },
+    {
+      "id": "E10",
+      "category": "npc",
+      "fixture": "campus",
+      "action": "跟诺诺搭话",
+      "expected": {
+        "permissibility": "permissible",
+        "rules": null
+      }
+    },
+    {
+      "id": "F01",
+      "category": "location",
+      "fixture": "campus",
+      "action": "在图书馆里调查书架",
+      "expected": {
+        "permissibility": "blocked",
+        "rules": null
+      }
+    },
+    {
+      "id": "F02",
+      "category": "location",
+      "fixture": "campus",
+      "action": "前往图书馆，然后在图书馆里调查禁书区的书架",
+      "expected": {
+        "permissibility": "conditional",
+        "rules": [
+          "skill_check"
+        ]
+      }
+    },
+    {
+      "id": "F03",
+      "category": "location",
+      "fixture": "campus",
+      "action": "在报到处大厅休息",
+      "expected": {
+        "permissibility": "permissible",
+        "rules": null
+      }
+    },
+    {
+      "id": "F04",
+      "category": "location",
+      "fixture": "campus",
+      "action": "在报到处大厅门口休息",
+      "expected": {
+        "permissibility": "permissible",
+        "rules": null
+      },
+      "known_bug": true,
+      "note": "玩家位置的子区域按字面不等被误拒（NPC 侧已有同场景容错，玩家侧没有）"
+    },
+    {
+      "id": "F05",
+      "category": "location",
+      "fixture": "campus",
+      "action": "前往地下室，用旧钥匙打开铁门",
+      "expected": {
+        "permissibility": "permissible",
+        "rules": [
+          "item_use"
+        ]
+      },
+      "note": "无'在X动作'句式，不触发位置校验"
+    },
+    {
+      "id": "F06",
+      "category": "location",
+      "fixture": "campus",
+      "action": "在档案室里潜行，避开巡视的教授",
+      "expected": {
+        "permissibility": "blocked",
+        "rules": null
+      },
+      "known_bug": true,
+      "note": "地点句式的动词表（调查/搜索/搜查/休息/使用/打开/与/和）不含潜行，位置校验未触发，异地点行动被放行"
+    },
+    {
+      "id": "F07",
+      "category": "location",
+      "fixture": "campus",
+      "action": "去图书馆借书",
+      "expected": {
+        "permissibility": "permissible",
+        "rules": null
+      },
+      "note": "无'在X动作'句式，移动意图不拦"
+    },
+    {
+      "id": "G01",
+      "category": "check_trigger",
+      "fixture": "campus",
+      "action": "直视古神的真身",
+      "expected": {
+        "permissibility": "conditional",
+        "rules": [
+          "sanity_check"
+        ]
+      }
+    },
+    {
+      "id": "G02",
+      "category": "check_trigger",
+      "fixture": "campus",
+      "action": "尝试进行一次理智检定",
+      "expected": {
+        "permissibility": "conditional",
+        "rules": [
+          "sanity_check"
+        ]
+      }
+    },
+    {
+      "id": "G03",
+      "category": "check_trigger",
+      "fixture": "campus",
+      "action": "我在走廊里奔跑",
+      "expected": {
+        "permissibility": "conditional",
+        "rules": [
+          "skill_check"
+        ]
+      }
+    },
+    {
+      "id": "G04",
+      "category": "check_trigger",
+      "fixture": "campus",
+      "action": "撬锁溜进值班室",
+      "expected": {
+        "permissibility": "conditional",
+        "rules": [
+          "skill_check"
+        ]
+      }
+    },
+    {
+      "id": "G05",
+      "category": "check_trigger",
+      "fixture": "campus",
+      "action": "我观察墙上的壁画",
+      "expected": {
+        "permissibility": "conditional",
+        "rules": [
+          "skill_check"
+        ]
+      }
+    },
+    {
+      "id": "G06",
+      "category": "check_trigger",
+      "fixture": "campus",
+      "action": "潜行绕过巡逻",
+      "expected": {
+        "permissibility": "conditional",
+        "rules": [
+          "skill_check"
+        ]
+      }
+    },
+    {
+      "id": "G07",
+      "category": "check_trigger",
+      "fixture": "campus",
+      "action": "释放言灵压制血脉躁动",
+      "expected": {
+        "permissibility": "conditional",
+        "rules": [
+          "sanity_check"
+        ]
+      }
+    },
+    {
+      "id": "G08",
+      "category": "check_trigger",
+      "fixture": "campus",
+      "action": "攻击傀儡",
+      "expected": {
+        "permissibility": "conditional",
+        "rules": [
+          "combat"
+        ]
+      }
+    },
+    {
+      "id": "G09",
+      "category": "check_trigger",
+      "fixture": "campus",
+      "action": "包扎手臂的伤口",
+      "expected": {
+        "permissibility": "conditional",
+        "rules": [
+          "skill_check"
+        ]
+      }
+    },
+    {
+      "id": "G10",
+      "category": "check_trigger",
+      "fixture": "campus",
+      "action": "辨认羊皮纸上的古文字",
+      "expected": {
+        "permissibility": "conditional",
+        "rules": [
+          "skill_check"
+        ]
+      }
+    },
+    {
+      "id": "G11",
+      "category": "check_trigger",
+      "fixture": "campus",
+      "action": "攀爬围墙翻出去",
+      "expected": {
+        "permissibility": "conditional",
+        "rules": [
+          "skill_check"
+        ]
+      }
+    },
+    {
+      "id": "G12",
+      "category": "check_trigger",
+      "fixture": "campus_low_san",
+      "action": "目睹神话生物低语",
+      "expected": {
+        "permissibility": "conditional",
+        "rules": [
+          "sanity_check"
+        ]
+      }
+    },
+    {
+      "id": "G13",
+      "category": "check_trigger",
+      "fixture": "campus",
+      "action": "SAN检定：强忍恐惧",
+      "expected": {
+        "permissibility": "conditional",
+        "rules": [
+          "sanity_check"
+        ]
+      }
+    },
+    {
+      "id": "H01",
+      "category": "negation",
+      "fixture": "campus",
+      "action": "我不攻击他",
+      "expected": {
+        "permissibility": "permissible",
+        "rules": null
+      }
+    },
+    {
+      "id": "H02",
+      "category": "negation",
+      "fixture": "campus",
+      "action": "不要打开箱子，先观察四周",
+      "expected": {
+        "permissibility": "conditional",
+        "rules": [
+          "skill_check"
+        ]
+      },
+      "note": "后半句的观察仍是真实行动"
+    },
+    {
+      "id": "H03",
+      "category": "negation",
+      "fixture": "campus",
+      "action": "如果我有钥匙就开门",
+      "expected": {
+        "permissibility": "permissible",
+        "rules": null
+      },
+      "note": "假设句不触发"
+    },
+    {
+      "id": "H04",
+      "category": "negation",
+      "fixture": "campus",
+      "action": "我不使用通行卡，太显眼了",
+      "expected": {
+        "permissibility": "permissible",
+        "rules": null
+      }
+    },
+    {
+      "id": "H05",
+      "category": "negation",
+      "fixture": "campus",
+      "action": "我不想和诺诺交谈",
+      "expected": {
+        "permissibility": "permissible",
+        "rules": null
+      }
+    },
+    {
+      "id": "H06",
+      "category": "negation",
+      "fixture": "campus",
+      "action": "攻击是下策，我先躲起来",
+      "expected": {
+        "permissibility": "permissible",
+        "rules": null
+      },
+      "known_bug": true,
+      "note": "谈论攻击不等于实施攻击；子句级否定过滤覆盖不了主语省略的元陈述"
+    },
+    {
+      "id": "I01",
+      "category": "combo",
+      "fixture": "campus",
+      "action": "调查书架，然后用银色徽章打开暗格",
+      "expected": {
+        "permissibility": "conditional",
+        "rules": [
+          "item_use",
+          "skill_check"
+        ]
+      }
+    },
+    {
+      "id": "I02",
+      "category": "combo",
+      "fixture": "campus",
+      "action": "调查教室，然后用提灯照亮桌上的字迹",
+      "expected": {
+        "permissibility": "conditional",
+        "rules": [
+          "item_use",
+          "skill_check"
+        ]
+      }
+    },
+    {
+      "id": "I03",
+      "category": "combo",
+      "fixture": "campus",
+      "action": "前往图书馆，在图书馆里调查禁书区的书架",
+      "expected": {
+        "permissibility": "conditional",
+        "rules": [
+          "skill_check"
+        ]
+      }
+    },
+    {
+      "id": "I04",
+      "category": "combo",
+      "fixture": "campus",
+      "action": "潜入档案室，拍下机密文件",
+      "expected": {
+        "permissibility": "conditional",
+        "rules": [
+          "skill_check"
+        ]
+      },
+      "note": "潜入=潜行；无'在X动作'句式不触发位置校验"
+    },
+    {
+      "id": "J01",
+      "category": "drained",
+      "fixture": "campus_drained",
+      "action": "阅读桌上的笔记",
+      "expected": {
+        "permissibility": "permissible",
+        "rules": null
+      },
+      "note": "非体力行动不受体力耗尽限制"
+    },
+    {
+      "id": "J02",
+      "category": "drained",
+      "fixture": "campus_drained",
+      "action": "攀爬围墙翻出去",
+      "expected": {
+        "permissibility": "blocked",
+        "rules": null
+      },
+      "note": "体力已耗尽"
+    },
+    {
+      "id": "J03",
+      "category": "drained",
+      "fixture": "campus_drained",
+      "action": "直视古神的真身",
+      "expected": {
+        "permissibility": "blocked",
+        "rules": null
+      },
+      "note": "血统稳定值已耗尽"
+    },
+    {
+      "id": "J04",
+      "category": "drained",
+      "fixture": "campus_drained",
+      "action": "奔跑冲向校门",
+      "expected": {
+        "permissibility": "blocked",
+        "rules": null
+      },
+      "note": "体力已耗尽"
+    },
+    {
+      "id": "K01",
+      "category": "robustness",
+      "fixture": "campus",
+      "action": "。",
+      "expected": {
+        "permissibility": "permissible",
+        "rules": null
+      }
+    },
+    {
+      "id": "K02",
+      "category": "robustness",
+      "fixture": "campus",
+      "action": "use the keycard to open the door",
+      "expected": {
+        "permissibility": "permissible",
+        "rules": null
+      },
+      "note": "英文输入超出识别范围，宽放行交叙事层"
+    },
+    {
+      "id": "K03",
+      "category": "robustness",
+      "fixture": "campus",
+      "action": "拿出银色徽章给门卫看",
+      "expected": {
+        "permissibility": "permissible",
+        "rules": [
+          "item_use"
+        ]
+      },
+      "known_bug": true,
+      "note": "动词后置宾语（给门卫看）被整段吞进物品名，误判为未持有"
+    },
+    {
+      "id": "K04",
+      "category": "robustness",
+      "fixture": "campus",
+      "action": "用银色徽章交换情报",
+      "expected": {
+        "permissibility": "permissible",
+        "rules": [
+          "item_use"
+        ]
+      },
+      "known_bug": true,
+      "note": "同 K03，尾随动词未被前瞻集合覆盖"
+    },
+    {
+      "id": "K05",
+      "category": "robustness",
+      "fixture": "campus",
+      "action": "我搜索教室的每个角落",
+      "expected": {
+        "permissibility": "conditional",
+        "rules": [
+          "skill_check"
+        ]
+      }
+    },
+    {
+      "id": "K06",
+      "category": "robustness",
+      "fixture": "campus",
+      "action": "环顾四周",
+      "expected": {
+        "permissibility": "permissible",
+        "rules": null
+      },
+      "note": "环顾不在侦查动词表，按现状宽放行；改进时再议"
+    }
+  ]
+}
