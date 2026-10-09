@@ -59,10 +59,25 @@
 # trained), so dev measures generalization across sentence patterns.
 #
 # Usage: python train-span-labeler.py <minirbt-snapshot-dir> [--export-corpus]
+#        python train-span-labeler.py --eval-onnx
+#        (--eval-onnx scores the FROZEN exported artifacts in
+#        frontend/public/models/minirbt-h256-span without retraining; used
+#        for decoding-comparison rounds where weights stay fixed)
+#
+# Decoding comparison (this round, weights+data frozen): greedy per-token
+# argmax vs CONSTRAINED sentence decoding — each field picks at most one
+# contiguous token range (B- head, I- continuation, empty allowed), spans
+# may not overlap, chosen to maximize whole-sentence log-prob (exact
+# enumeration). Both decoders are recorded per case in evaluate() and in
+# the browser trial, so the decode lever is measured without touching
+# data or weights. Diagnosis is MULTI-LABEL: a field can carry several
+# defect classes at once (e.g. truncated-o AND truncated-b in one gold
+# span) — a single primary class mispointed the cut location before.
 
 import importlib.machinery
 import importlib.util
 import json
+import math
 import pathlib
 import random
 import sys
@@ -466,20 +481,24 @@ ACCEPTANCE_SEALED = {
     ],
 }
 
-# 逐字诊断的错误类别（Python 与浏览器共用同一分类口径，见 diagnose()）。
+# 逐字诊断的错误类别（Python 与浏览器共用同一分类口径，见 diagnose_field）。
+# 多标签：一个字段可同时命中多类（如 O 截断与实体内重复 B 共存，各自独立
+# 成立、都如实记录——单一"主类"会误指截断位置）；无缺陷时返回 ["ok"]。
+# 列表顺序 = 下面的规范顺序。
 ERROR_CLASSES = [
-    "ok",                # 严格命中（或双方皆空）
-    "false-positive",    # 金标无跨度、模型给出跨度
-    "missed-o",          # 有金标、模型整段预测成 O
-    "missed-mixed",      # 有金标、模型未给出该字段跨度（非纯 O）
-    "wrong-field",       # 金标字符被预测为另一字段
-    "truncated-b",       # 实体内部又出现 B-，截断了跨度（首组胜出）
+    "ok",                # 无缺陷（金标与预测均为空，或严格命中）
+    "span-false",        # 金标无跨度、模型给出跨度
+    "span-missing",      # 金标有跨度、模型未给出该字段跨度
+    "all-o",             # 金标字符全部被预测成 O（span-missing 的成因）
     "truncated-o",       # 实体内部出现 O，截断了跨度
-    "partial",           # 与金标相交但互不包含
-    "extended",          # 完整覆盖金标但越界
-    "modifier-as-head",  # 模型跨度完全落在中心语前的修饰/领属区（的 分隔）
-    "displaced",         # 与金标不相交、也不落在修饰区
+    "truncated-b",       # 实体内部又出现 B-（解码首组胜出，同样截断）
+    "wrong-field",       # 金标字符或预测跨度落在另一字段
+    "over-extended",     # 预测跨度完整覆盖金标但越界
+    "boundary-mismatch", # 与金标相交但互不包含
+    "modifier-as-head",  # 预测跨度完全落在中心语前的修饰/领属区（的 分隔）
+    "displaced",         # 与金标不相交、不落在修饰区、也不压另一字段金标
 ]
+_CLASS_RANK = {name: i for i, name in enumerate(ERROR_CLASSES)}
 
 
 def rows_of(groups):
@@ -719,60 +738,114 @@ def tags_to_spans(text, offsets, tag_ids):
 
 
 def diagnose_field(text, gold, pred, other_gold, token_rows, field, other):
-    """单个字段的错误归类（与 run-labeler-trial.mjs 的 diagnoseField 同口径）。
+    """单字段错误归类：多标签列表（规范序见 ERROR_CLASSES），无缺陷返回 ["ok"]。
 
     token_rows: [{"start","end","gold","pred"}]，gold/pred 为 "O"/"B-ITEM"/...
+    与 run-labeler-trial.mjs 的 diagnoseField 同口径。
     """
-    if gold is None and pred is None:
-        return "ok"
-    gold_tokens = [
-        row for row in token_rows
-        if gold and row["start"] < gold[1] and gold[0] < row["end"]
-    ]
     if gold is None:
-        return "false-positive"
+        if pred is None:
+            return ["ok"]
+        classes = ["span-false"]
+        if other_gold and pred[0] < other_gold[1] and other_gold[0] < pred[1]:
+            classes.append("wrong-field")
+        return _order(classes)
+    gold_tokens = [row for row in token_rows if row["start"] < gold[1] and gold[0] < row["end"]]
+    preds = [row["pred"] for row in gold_tokens]
+    mine = (f"B-{field}", f"I-{field}")
+    theirs = (f"B-{other}", f"I-{other}")
+    classes = []
+    if all(p == "O" for p in preds):
+        classes.append("all-o")
+    elif any(p == "O" for p in preds) and any(p in mine for p in preds):
+        classes.append("truncated-o")
+    if any(row["gold"] == f"I-{field}" and row["pred"] == f"B-{field}" for row in gold_tokens):
+        classes.append("truncated-b")
+    if any(p in theirs for p in preds):
+        classes.append("wrong-field")
     if pred is None:
-        preds = {row["pred"] for row in gold_tokens}
-        if preds == {"O"}:
-            return "missed-o"
-        if any(p.endswith(other) for p in preds):
-            return "wrong-field"
-        return "missed-mixed"
+        classes.append("span-missing")
+        return _order(classes)
     if pred == gold:
-        return "ok"
+        return ["ok"]
     if pred[0] < gold[1] and gold[0] < pred[1]:  # 相交
-        inside = gold[0] <= pred[0] and pred[1] <= gold[1]
-        if inside:
-            mid_b = any(
-                row["gold"] == f"I-{field}" and row["pred"] == f"B-{field}"
-                for row in gold_tokens
-            )
-            if mid_b:
-                return "truncated-b"
-            if any(row["pred"] == "O" for row in gold_tokens):
-                return "truncated-o"
-        return "partial"
-    if gold[0] <= pred[0] and pred[1] <= gold[1]:
-        return "partial"
+        classes.append("over-extended" if gold[0] <= pred[0] and pred[1] <= gold[1] else "boundary-mismatch")
+        return _order(classes)
+    # 不相交
     if other_gold and pred[0] < other_gold[1] and other_gold[0] < pred[1]:
-        return "wrong-field"
-    if pred[1] <= gold[0]:
-        gap = text[pred[1]: gold[0]]
-        if "的" in gap or (text[pred[0]: pred[1]].endswith("的")):
-            return "modifier-as-head"
-        return "displaced"
-    return "displaced"
+        classes.append("wrong-field")
+    if pred[1] <= gold[0] and ("的" in text[pred[1]: gold[0]] or text[pred[0]: pred[1]].endswith("的")):
+        classes.append("modifier-as-head")
+    else:
+        classes.append("displaced")
+    return _order(classes)
 
 
-def diagnose(text, item, target, offsets, tag_ids, probs):
-    """整句逐 token 诊断：逐字金标/预测/概率 + 分字段错误归类。"""
+def _order(classes):
+    return sorted(set(classes), key=_CLASS_RANK.get)
+
+
+def constrained_decode(offsets, probs):
+    """整句约束解码：每字段至多一段连续词片段（首词 B-、段内 I-，允许空），
+    两段不得重叠，在全部片段的五类概率上最大化整句对数概率（精确枚举）。
+
+    枚举顺序固定（空、i 升、j 升；平局取先枚举者），Python 与 JS 同序，
+    保证同 logits 产出一致结果。返回 (item_span, target_span, assigned_ids)。
+    """
+    idx = [i for i, (_, end) in enumerate(offsets) if end != 0]
+    n = len(idx)
+    if n == 0:
+        return None, None, [0] * len(offsets)
+    log_p = [[math.log(max(p, 1e-12)) for p in row] for row in probs]
+
+    def options(field):
+        b, cont, o = (TAGS.index(f"B-{field}"), TAGS.index(f"I-{field}"), TAGS.index("O"))
+        opts = [(0.0, None, None)]
+        for a in range(n):
+            gain = log_p[idx[a]][b] - log_p[idx[a]][o]
+            for j in range(a, n):
+                if j > a:
+                    gain += log_p[idx[j]][cont] - log_p[idx[j]][o]
+                opts.append((gain, a, j))
+        return opts
+
+    item_opts = options("ITEM")
+    tgt_opts = options("TGT")
+    best = None
+    for gi, ai, aj in item_opts:
+        for gt, bi, bj in tgt_opts:
+            if ai is not None and bi is not None and ai <= bj and bi <= aj:
+                continue  # 词片段重叠
+            if best is None or gi + gt > best[0]:
+                best = (gi + gt, ai, aj, bi, bj)
+    _, ai, aj, bi, bj = best
+    assignment = ["O"] * n
+    for (x, y), field in (((ai, aj), "ITEM"), ((bi, bj), "TGT")):
+        if x is None:
+            continue
+        assignment[x] = f"B-{field}"
+        for t in range(x + 1, y + 1):
+            assignment[t] = f"I-{field}"
+    ids = [0] * len(offsets)
+    for k, t in enumerate(idx):
+        ids[t] = TAGS.index(assignment[k])
+    item = None if ai is None else (offsets[idx[ai]][0], offsets[idx[aj]][1])
+    target = None if bi is None else (offsets[idx[bi]][0], offsets[idx[bj]][1])
+    return item, target, ids
+
+
+def diagnose(text, item, target, offsets, assigned_ids, probs):
+    """整句逐 token 诊断：逐字金标/预测/概率 + 分字段多标签错误归类。
+
+    assigned_ids 是某一解码方式（贪心或约束）落盘的逐 token 标签。
+    """
     gold_spans = {}
     for name, expected in (("ITEM", item), ("TGT", target)):
         gold_spans[name] = (
             (text.index(expected), text.index(expected) + len(expected)) if expected else None
         )
     token_rows = []
-    for (token_start, token_end), tag_id, prob_row in zip(offsets, tag_ids, probs):
+    for (token_start, token_end), tag_id, prob_row in zip(offsets, assigned_ids, probs):
         if token_end == 0:
             continue  # [CLS]/[SEP]
         mid = (token_start + token_end) // 2
@@ -791,7 +864,7 @@ def diagnose(text, item, target, offsets, tag_ids, probs):
             "pPred": round(float(prob_row[tag_id]), 4),
             "pGold": round(float(prob_row[TAGS.index(gold_tag)]), 4),
         })
-    pred_item, pred_target = tags_to_spans(text, offsets, tag_ids)
+    pred_item, pred_target = tags_to_spans(text, offsets, assigned_ids)
     return {
         "tokens": token_rows,
         "item": diagnose_field(text, gold_spans["ITEM"], pred_item, gold_spans["TGT"], token_rows, "ITEM", "TGT"),
@@ -801,97 +874,138 @@ def diagnose(text, item, target, offsets, tag_ids, probs):
     }
 
 
-def evaluate(model, tokenizer, cases, diagnose_rows=False):
-    """返回 (strict, loose, both_correct, rows)；rows 含可选逐字诊断。"""
-    model.eval()
-    strict = {"ITEM": [0, 0], "TGT": [0, 0]}
-    loose = {"ITEM": [0, 0], "TGT": [0, 0]}
-    both = [0, 0]
+def evaluate(forward, cases, detail="tokens"):
+    """detail: "tokens"（dev 批，含逐字记录）| "diagnosis"（仅归类）| None。
+
+    记录先行：两种解码的全部预测先写进 row，再评分——期望为空、预测非空时
+    预测文本也必须落盘（此前 Python 只在双非空分支写预测，false-positive
+    行 predItem=None 却 strict=False，无法核对两端逐例一致）。
+    """
+    modes = ("greedy", "constrained")
+    strict = {m: {"ITEM": [0, 0], "TGT": [0, 0]} for m in modes}
+    loose = {m: {"ITEM": [0, 0], "TGT": [0, 0]} for m in modes}
+    both = {m: [0, 0] for m in modes}
     rows = []
-    with torch.no_grad():
-        for case in cases:
-            text, item, target = case["text"], case["item"], case["target"]
-            expected_spans = {}
-            for name, expected in (("ITEM", item), ("TGT", target)):
-                expected_spans[name] = (
-                    (text.index(expected), text.index(expected) + len(expected)) if expected else None
-                )
-            encoded = tokenizer(text, truncation=True, max_length=MAX_LEN, return_offsets_mapping=True)
-            offsets = encoded["offset_mapping"]
+    for case in cases:
+        text, item, target = case["text"], case["item"], case["target"]
+        offsets, greedy_ids, probs = forward(text)
+        decodes = {
+            "greedy": tags_to_spans(text, offsets, greedy_ids) + (greedy_ids,),
+            "constrained": constrained_decode(offsets, probs),
+        }
+        expected_spans = {}
+        for name, expected in (("ITEM", item), ("TGT", target)):
+            expected_spans[name] = (
+                (text.index(expected), text.index(expected) + len(expected)) if expected else None
+            )
+        row = {"text": text}
+        for mode in modes:
+            pred_item, pred_target, assigned = decodes[mode]
+            hits = {}
+            for name, expected, predicted in (
+                ("ITEM", expected_spans["ITEM"], pred_item),
+                ("TGT", expected_spans["TGT"], pred_target),
+            ):
+                strict[mode][name][1] += 1
+                loose[mode][name][1] += 1
+                if predicted is None and expected is None:
+                    strict[mode][name][0] += 1
+                    loose[mode][name][0] += 1
+                    hit = True
+                elif predicted is not None and expected is not None:
+                    hit = predicted == expected
+                    strict[mode][name][0] += int(hit)
+                    if predicted[0] < expected[1] and expected[0] < predicted[1]:
+                        loose[mode][name][0] += 1
+                else:
+                    hit = False
+                hits[name] = hit
+            both[mode][1] += 1
+            both[mode][0] += int(hits["ITEM"] and hits["TGT"])
+            sub = {
+                "predItem": text[pred_item[0]: pred_item[1]] if pred_item else None,
+                "predTarget": text[pred_target[0]: pred_target[1]] if pred_target else None,
+                "itemStrict": hits["ITEM"],
+                "targetStrict": hits["TGT"],
+            }
+            if detail is not None:
+                diag = diagnose(text, item, target, offsets, assigned, probs)
+                sub["diagnosis"] = {"item": diag["item"], "target": diag["target"]}
+                if detail == "tokens" and mode == "greedy":
+                    row["tokens"] = diag["tokens"]
+            row[mode] = sub
+        rows.append(row)
+    return strict, loose, both, rows
+
+
+def print_diagnostics(name, rows):
+    """把逐字诊断打印成可读记录：错位 token + 两种解码的多标签归类。"""
+    print(f"  [{name}] per-token diagnostics (gold != pred only, greedy):")
+    for row in rows:
+        mismatches = [
+            f"{t['ch']}:{t['gold']}>{t['pred']}(p={t['pPred']:.2f})"
+            for t in row.get("tokens", [])
+            if t["gold"] != t["pred"]
+        ]
+        g, c = row["greedy"], row["constrained"]
+
+        def fmt(sub):
+            return (
+                f"{sub['predItem']}/{sub['predTarget']} "
+                f"[{'+'.join(sub['diagnosis']['item'])} | {'+'.join(sub['diagnosis']['target'])}]"
+            )
+
+        print(f"    {row['text']}\n      greedy      = {fmt(g)}\n      constrained = {fmt(c)}")
+        if mismatches:
+            print(f"      {'  '.join(mismatches)}")
+
+
+def make_forward_torch(model, tokenizer):
+    def forward(text):
+        encoded = tokenizer(text, truncation=True, max_length=MAX_LEN, return_offsets_mapping=True)
+        offsets = encoded["offset_mapping"]
+        with torch.no_grad():
             logits = model(
                 input_ids=torch.tensor([encoded["input_ids"]]),
                 attention_mask=torch.tensor([encoded["attention_mask"]]),
                 token_type_ids=torch.tensor([encoded["token_type_ids"]]),
             ).logits[0]
-            probs = torch.softmax(logits, dim=-1)
-            tag_ids = logits.argmax(-1).tolist()[: len(offsets)]
-            pred_item, pred_target = tags_to_spans(text, offsets, tag_ids)
-            row = {"text": text, "predItem": None, "predTarget": None}
-            item_hit = target_hit = None
-            for name, expected, predicted in (
-                ("ITEM", expected_spans["ITEM"], pred_item),
-                ("TGT", expected_spans["TGT"], pred_target),
-            ):
-                strict[name][1] += 1
-                loose[name][1] += 1
-                if predicted is None and expected is None:
-                    strict[name][0] += 1
-                    loose[name][0] += 1
-                    hit = True
-                elif predicted is not None and expected is not None:
-                    pred_text = text[predicted[0]: predicted[1]]
-                    if name == "ITEM":
-                        row["predItem"] = pred_text
-                    else:
-                        row["predTarget"] = pred_text
-                    hit = predicted == expected
-                    strict[name][0] += int(hit)
-                    if predicted[0] < expected[1] and expected[0] < predicted[1]:
-                        loose[name][0] += 1
-                else:
-                    hit = False
-                if name == "ITEM":
-                    item_hit = hit
-                else:
-                    target_hit = hit
-            both[1] += 1
-            both[0] += int(item_hit and target_hit)
-            row["itemStrict"] = item_hit
-            row["targetStrict"] = target_hit
-            if diagnose_rows:
-                detail = diagnose(
-                    text, item, target, offsets, tag_ids, probs[: len(offsets)].tolist()
-                )
-                row["diagnosis"] = {"item": detail["item"], "target": detail["target"]}
-                row["tokens"] = detail["tokens"]
-            rows.append(row)
-    return strict, loose, both, rows
+        probs = torch.softmax(logits, dim=-1)[: len(offsets)].tolist()
+        tag_ids = logits.argmax(-1).tolist()[: len(offsets)]
+        return offsets, tag_ids, probs
+
+    return forward
 
 
-def print_diagnostics(name, rows):
-    """把逐字诊断打印成可读记录：错位 token + 分字段归类。"""
-    print(f"  [{name}] per-token diagnostics (gold != pred only):")
-    for row in rows:
-        mismatches = [
-            f"{t['ch']}:{t['gold']}>{t['pred']}(p={t['pPred']:.2f},pGold={t['pGold']:.2f})"
-            for t in row.get("tokens", [])
-            if t["gold"] != t["pred"]
-        ]
-        diag = row.get("diagnosis", {})
-        print(
-            f"    {row['text']} item={row['predItem']} target={row['predTarget']} "
-            f"| {diag.get('item')}/{diag.get('target')}"
-        )
-        if mismatches:
-            print(f"      {'  '.join(mismatches)}")
+def make_forward_onnx(session, tokenizer):
+    import numpy as np
+
+    def forward(text):
+        encoded = tokenizer(text, truncation=True, max_length=MAX_LEN, return_offsets_mapping=True)
+        offsets = encoded["offset_mapping"]
+        seq = len(encoded["input_ids"])
+        feed = {
+            "input_ids": np.array([encoded["input_ids"]], dtype=np.int64),
+            "attention_mask": np.ones((1, seq), dtype=np.int64),
+            "token_type_ids": np.zeros((1, seq), dtype=np.int64),
+        }
+        logits = session.run(None, feed)[0][0]  # [seq, tags]
+        shifted = logits - logits.max(axis=-1, keepdims=True)
+        exp = np.exp(shifted)
+        probs = (exp / exp.sum(axis=-1, keepdims=True))[: len(offsets)].tolist()
+        tag_ids = logits.argmax(axis=-1).tolist()[: len(offsets)]
+        return offsets, tag_ids, probs
+
+    return forward
 
 
 def main():
     args = sys.argv[1:]
     export_only = "--export-corpus" in args
+    eval_onnx = "--eval-onnx" in args
     positional = [a for a in args if not a.startswith("--")]
-    if not export_only and not positional:
-        sys.exit("usage: train-span-labeler.py <snapshot-dir> [--export-corpus]")
+    if not export_only and not eval_onnx and not positional:
+        sys.exit("usage: train-span-labeler.py <snapshot-dir> [--export-corpus] | --eval-onnx")
     frontend_root = pathlib.Path(__file__).resolve().parent.parent
     out_dir = frontend_root / "public" / "models" / "minirbt-h256-span"
     artifacts_dir = frontend_root.parent / "artifacts" / "benchmark"
@@ -997,17 +1111,29 @@ def main():
             "v1": "evaluated once at ec4aa02-era trial; retired (see 82d8d41 for the v1/v2 mixup)",
         },
         "errorTaxonomy": {
-            "ok": "exact span match (or both empty)",
-            "false-positive": "gold empty, model emitted a span",
-            "missed-o": "gold present, all its tokens predicted O",
-            "missed-mixed": "gold present, no span decoded, not purely O",
-            "wrong-field": "gold characters captured by the OTHER field",
-            "truncated-b": "another B- fires inside the entity; first group wins -> span cut",
-            "truncated-o": "O predicted inside the entity -> span cut",
-            "partial": "overlaps gold but neither contains the other",
-            "extended": "covers gold but over-extends",
-            "modifier-as-head": "predicted span sits entirely in the pre-head modifier/possessor zone (的-separated)",
-            "displaced": "no overlap with gold and not in the modifier zone",
+            "multiLabel": True,
+            "note": "diagnosis per field is a LIST of defect classes in the order below; a gold span "
+                    "can carry several at once (e.g. truncated-o AND truncated-b in 地下藏书室) — "
+                    "single-primary-class reporting mispointed the cut location. Positions live in "
+                    "the per-token records. No defects -> [\"ok\"].",
+            "ok": "no defects (both empty, or exact span match)",
+            "span-false": "gold empty, model emitted a span",
+            "span-missing": "gold present, no span decoded for this field",
+            "all-o": "every gold character predicted O (cause of span-missing)",
+            "truncated-o": "O predicted inside the entity; the decoded span was cut there",
+            "truncated-b": "another B- fires inside the entity (first group wins, also cuts)",
+            "wrong-field": "gold characters or the predicted span land on the OTHER field",
+            "over-extended": "prediction covers gold entirely but over-extends",
+            "boundary-mismatch": "prediction overlaps gold but neither contains the other",
+            "modifier-as-head": "prediction sits entirely in the pre-head modifier/possessor zone (的-separated)",
+            "displaced": "prediction disjoint from gold, not in the modifier zone, not on the other field's gold",
+        },
+        "batchSemantics": {
+            "devGroups": "whole GROUPS held out of training; entities/scenarios are disjoint, but "
+                         "sentence patterns recur across splits by design (e.g. 擦亮了灶王爷的牌位 "
+                         "train vs 擦亮了掌柜的烟杆 dev) — evidence supports new-entity/new-scenario "
+                         "evaluation only, NOT unseen-pattern claims",
+            "acceptance": "sealed; evaluated exactly once via run-labeler-trial.mjs --with-acceptance",
         },
         "note": "single data contract: run-labeler-trial.mjs loads THIS file (sha256 recorded in its "
                 "report); this script reads the file back for its own evaluation. train/validation are "
@@ -1021,13 +1147,43 @@ def main():
 
     # 读回同一份数据文件做评估——Python 与浏览器逐字节同源。
     disk = json.loads(manifest_path.read_text(encoding="utf-8"))
-    dev_classic = disk["devClassic"]
     dev_group_cases = [
         {**row, "group": grp["group"]} for grp in disk["devGroups"] for row in grp["sentences"]
     ]
-    scored = disk["scored"]
     # disk["acceptance"] 是封存批：评一次的协议归浏览器 trial --with-acceptance，
     # 训练侧刻意不加载、不评估。
+    eval_batches = (
+        ("devClassic", disk["devClassic"], "tokens"),
+        ("devGroups", dev_group_cases, "tokens"),
+        ("scored", disk["scored"], "diagnosis"),
+    )
+
+    def run_eval(title, forward):
+        print(f"== {title} ==")
+        for name, cases, detail in eval_batches:
+            strict, loose, both, rows = evaluate(forward, cases, detail=detail)
+            for mode in ("greedy", "constrained"):
+                for field in ("ITEM", "TGT"):
+                    s, l = strict[mode][field], loose[mode][field]
+                    print(f"{name} {mode} {field}: strict={s[0]}/{s[1]} loose={l[0]}/{l[1]}")
+                print(f"{name} {mode} both-fields strict: {both[mode][0]}/{both[mode][1]}")
+            if detail == "tokens":
+                print_diagnostics(name, rows)
+            else:
+                for row in rows:
+                    g = row["greedy"]
+                    print(f"  [{name}] {row['text']} item={g['predItem']} target={g['predTarget']}")
+
+    if eval_onnx:
+        # 冻结权重评估：直接打分已导出的 ONNX 工件（与浏览器同字节），
+        # 不重训——用于解码方式对照轮。
+        import onnxruntime as ort
+
+        tokenizer = BertTokenizerFast.from_pretrained(out_dir)
+        for tag, fname in (("q8", "onnx/model_quantized.onnx"), ("fp32", "onnx/model.onnx")):
+            session = ort.InferenceSession(str(out_dir / fname))
+            run_eval(f"onnx {tag} (frozen artifacts)", make_forward_onnx(session, tokenizer))
+        return
 
     snapshot = positional[0]
     torch.manual_seed(SEED)
@@ -1083,29 +1239,20 @@ def main():
             optimizer.step()
             total += loss.item() * len(batch)
         val_total = 0.0
+        # 验证前必须切 eval()（关 Dropout）：上一轮的 val_loss 在 train() 态
+        # 下测得，混入随机丢弃，那批数字作废——本轮权重冻结不重训，下次
+        # 训练起生效。测完切回 train()。
+        model.eval()
         for start in range(0, len(val_features), BATCH):
             batch = val_features[start: start + BATCH]
             input_ids, attention, token_types, label_ids = pad_batch(batch)
             with torch.no_grad():
                 logits = model(input_ids=input_ids, attention_mask=attention, token_type_ids=token_types).logits
                 val_total += ce(logits.reshape(-1, len(TAGS)), label_ids.reshape(-1)).item() * len(batch)
+        model.train()
         print(f"epoch {epoch}: loss={total / len(features):.4f} val_loss={val_total / len(val_features):.4f}")
 
-    for name, cases, detail in (
-        ("devClassic", dev_classic, True),
-        ("devGroups", dev_group_cases, True),
-        ("scored", scored, False),
-    ):
-        strict, loose, both, rows = evaluate(model, tokenizer, cases, diagnose_rows=detail)
-        for field in ("ITEM", "TGT"):
-            s, l = strict[field], loose[field]
-            print(f"{name} {field}: strict={s[0]}/{s[1]} loose={l[0]}/{l[1]}")
-        print(f"{name} both-fields strict: {both[0]}/{both[1]}")
-        if detail:
-            print_diagnostics(name, rows)
-        else:
-            for row in rows:
-                print(f"  [{name}] {row['text']} item={row['predItem']} target={row['predTarget']}")
+    run_eval("torch (freshly trained)", make_forward_torch(model, tokenizer))
 
     dummy = tokenizer("我用铜钥匙打开大门。", truncation=True, max_length=MAX_LEN, return_offsets_mapping=True)
     seq = len(dummy["input_ids"])

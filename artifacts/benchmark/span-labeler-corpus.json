@@ -4849,17 +4849,23 @@
     "v1": "evaluated once at ec4aa02-era trial; retired (see 82d8d41 for the v1/v2 mixup)"
   },
   "errorTaxonomy": {
-    "ok": "exact span match (or both empty)",
-    "false-positive": "gold empty, model emitted a span",
-    "missed-o": "gold present, all its tokens predicted O",
-    "missed-mixed": "gold present, no span decoded, not purely O",
-    "wrong-field": "gold characters captured by the OTHER field",
-    "truncated-b": "another B- fires inside the entity; first group wins -> span cut",
-    "truncated-o": "O predicted inside the entity -> span cut",
-    "partial": "overlaps gold but neither contains the other",
-    "extended": "covers gold but over-extends",
-    "modifier-as-head": "predicted span sits entirely in the pre-head modifier/possessor zone (的-separated)",
-    "displaced": "no overlap with gold and not in the modifier zone"
+    "multiLabel": true,
+    "note": "diagnosis per field is a LIST of defect classes in the order below; a gold span can carry several at once (e.g. truncated-o AND truncated-b in 地下藏书室) — single-primary-class reporting mispointed the cut location. Positions live in the per-token records. No defects -> [\"ok\"].",
+    "ok": "no defects (both empty, or exact span match)",
+    "span-false": "gold empty, model emitted a span",
+    "span-missing": "gold present, no span decoded for this field",
+    "all-o": "every gold character predicted O (cause of span-missing)",
+    "truncated-o": "O predicted inside the entity; the decoded span was cut there",
+    "truncated-b": "another B- fires inside the entity (first group wins, also cuts)",
+    "wrong-field": "gold characters or the predicted span land on the OTHER field",
+    "over-extended": "prediction covers gold entirely but over-extends",
+    "boundary-mismatch": "prediction overlaps gold but neither contains the other",
+    "modifier-as-head": "prediction sits entirely in the pre-head modifier/possessor zone (的-separated)",
+    "displaced": "prediction disjoint from gold, not in the modifier zone, not on the other field's gold"
+  },
+  "batchSemantics": {
+    "devGroups": "whole GROUPS held out of training; entities/scenarios are disjoint, but sentence patterns recur across splits by design (e.g. 擦亮了灶王爷的牌位 train vs 擦亮了掌柜的烟杆 dev) — evidence supports new-entity/new-scenario evaluation only, NOT unseen-pattern claims",
+    "acceptance": "sealed; evaluated exactly once via run-labeler-trial.mjs --with-acceptance"
   },
   "note": "single data contract: run-labeler-trial.mjs loads THIS file (sha256 recorded in its report); this script reads the file back for its own evaluation. train/validation are the actual split; devClassic/devGroups/scored/acceptance are excluded from training."
 }
