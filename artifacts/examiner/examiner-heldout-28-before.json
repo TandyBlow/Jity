@@ -1,0 +1,522 @@
+{
+  "generated_at": "2026-10-09T12:56:27",
+  "total": 28,
+  "passed": 20,
+  "permissibility": {
+    "total": 28,
+    "correct": 20,
+    "accuracy": 0.7143
+  },
+  "rules": {
+    "cases_with_expectation": 13,
+    "true_positives": 9,
+    "predicted": 9,
+    "expected": 14,
+    "precision": 1.0,
+    "recall": 0.6429
+  },
+  "false_reject": {
+    "count": 7,
+    "ids": [
+      "H03",
+      "H04",
+      "H05",
+      "H07",
+      "H08",
+      "H22",
+      "H24"
+    ]
+  },
+  "false_release": {
+    "count": 0,
+    "ids": []
+  },
+  "rule_mismatch": {
+    "count": 1,
+    "ids": [
+      "H20"
+    ]
+  },
+  "by_category": {
+    "passive": {
+      "total": 2,
+      "passed": 2,
+      "false_reject": 0,
+      "false_release": 0,
+      "rule_mismatch": 0
+    },
+    "item_use_ok": {
+      "total": 6,
+      "passed": 1,
+      "false_reject": 5,
+      "false_release": 0,
+      "rule_mismatch": 0
+    },
+    "item_missing": {
+      "total": 1,
+      "passed": 1,
+      "false_reject": 0,
+      "false_release": 0,
+      "rule_mismatch": 0
+    },
+    "npc": {
+      "total": 5,
+      "passed": 4,
+      "false_reject": 1,
+      "false_release": 0,
+      "rule_mismatch": 0
+    },
+    "location": {
+      "total": 4,
+      "passed": 4,
+      "false_reject": 0,
+      "false_release": 0,
+      "rule_mismatch": 0
+    },
+    "check_trigger": {
+      "total": 4,
+      "passed": 4,
+      "false_reject": 0,
+      "false_release": 0,
+      "rule_mismatch": 0
+    },
+    "negation": {
+      "total": 2,
+      "passed": 1,
+      "false_reject": 0,
+      "false_release": 0,
+      "rule_mismatch": 1
+    },
+    "robustness": {
+      "total": 3,
+      "passed": 2,
+      "false_reject": 1,
+      "false_release": 0,
+      "rule_mismatch": 0
+    },
+    "combo": {
+      "total": 1,
+      "passed": 1,
+      "false_reject": 0,
+      "false_release": 0,
+      "rule_mismatch": 0
+    }
+  },
+  "known_bug": {
+    "failing": [],
+    "passing": []
+  },
+  "results": [
+    {
+      "id": "H01",
+      "category": "passive",
+      "action": "继续",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": null,
+      "got_rules": []
+    },
+    {
+      "id": "H02",
+      "category": "passive",
+      "action": "接着往下讲",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": null,
+      "got_rules": []
+    },
+    {
+      "id": "H03",
+      "category": "item_use_ok",
+      "action": "用船票登上渡轮",
+      "ok": false,
+      "kind": "false_reject",
+      "detail": "期望 permissible，实际 blocked",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "blocked",
+      "expected_rules": [
+        "item_use"
+      ],
+      "got_rules": []
+    },
+    {
+      "id": "H04",
+      "category": "item_use_ok",
+      "action": "掏出铜哨子吹响",
+      "ok": false,
+      "kind": "false_reject",
+      "detail": "期望 permissible，实际 blocked",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "blocked",
+      "expected_rules": [
+        "item_use"
+      ],
+      "got_rules": []
+    },
+    {
+      "id": "H05",
+      "category": "item_use_ok",
+      "action": "用油布盖住货物",
+      "ok": false,
+      "kind": "false_reject",
+      "detail": "期望 permissible，实际 blocked",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "blocked",
+      "expected_rules": [
+        "item_use"
+      ],
+      "got_rules": []
+    },
+    {
+      "id": "H06",
+      "category": "item_use_ok",
+      "action": "举起鱼叉对准水面",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": [
+        "item_use"
+      ],
+      "got_rules": [
+        "item_use"
+      ]
+    },
+    {
+      "id": "H07",
+      "category": "item_use_ok",
+      "action": "用松节油擦拭桅杆",
+      "ok": false,
+      "kind": "false_reject",
+      "detail": "期望 permissible，实际 blocked",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "blocked",
+      "expected_rules": [
+        "item_use"
+      ],
+      "got_rules": []
+    },
+    {
+      "id": "H08",
+      "category": "item_use_ok",
+      "action": "用松节油点火照亮货舱",
+      "ok": false,
+      "kind": "false_reject",
+      "detail": "期望 permissible，实际 blocked",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "blocked",
+      "expected_rules": [
+        "item_use"
+      ],
+      "got_rules": []
+    },
+    {
+      "id": "H09",
+      "category": "item_missing",
+      "action": "用水晶球窥探对面海船",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "blocked",
+      "got_permissibility": "blocked",
+      "expected_rules": null,
+      "got_rules": []
+    },
+    {
+      "id": "H10",
+      "category": "npc",
+      "action": "和老周交谈",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": null,
+      "got_rules": []
+    },
+    {
+      "id": "H11",
+      "category": "npc",
+      "action": "询问老周关于夜航的危险",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": null,
+      "got_rules": []
+    },
+    {
+      "id": "H12",
+      "category": "npc",
+      "action": "和巡夜人搭话",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "blocked",
+      "got_permissibility": "blocked",
+      "expected_rules": null,
+      "got_rules": []
+    },
+    {
+      "id": "H13",
+      "category": "npc",
+      "action": "攻击缉私队长的副官",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "conditional",
+      "got_permissibility": "conditional",
+      "expected_rules": [
+        "combat"
+      ],
+      "got_rules": [
+        "combat"
+      ]
+    },
+    {
+      "id": "H14",
+      "category": "location",
+      "action": "在灯塔里休息",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "blocked",
+      "got_permissibility": "blocked",
+      "expected_rules": null,
+      "got_rules": []
+    },
+    {
+      "id": "H15",
+      "category": "location",
+      "action": "前往灯塔，在灯塔里观察海面",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "conditional",
+      "got_permissibility": "conditional",
+      "expected_rules": [
+        "skill_check"
+      ],
+      "got_rules": [
+        "skill_check"
+      ]
+    },
+    {
+      "id": "H16",
+      "category": "location",
+      "action": "在仓库角落躲藏",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": null,
+      "got_rules": []
+    },
+    {
+      "id": "H17",
+      "category": "check_trigger",
+      "action": "潜行靠近缉私队长",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "conditional",
+      "got_permissibility": "conditional",
+      "expected_rules": [
+        "skill_check"
+      ],
+      "got_rules": [
+        "skill_check"
+      ]
+    },
+    {
+      "id": "H18",
+      "category": "check_trigger",
+      "action": "直视海面上的古神幻影",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "conditional",
+      "got_permissibility": "conditional",
+      "expected_rules": [
+        "sanity_check"
+      ],
+      "got_rules": [
+        "sanity_check"
+      ]
+    },
+    {
+      "id": "H19",
+      "category": "negation",
+      "action": "我不攻击巡逻队",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": null,
+      "got_rules": []
+    },
+    {
+      "id": "H20",
+      "category": "negation",
+      "action": "游泳是危险的选择",
+      "ok": false,
+      "kind": "rule_mismatch",
+      "detail": "判定应为 permissible，实际 conditional；规则实际 ['skill_check']",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "conditional",
+      "expected_rules": null,
+      "got_rules": [
+        "skill_check"
+      ]
+    },
+    {
+      "id": "H21",
+      "category": "check_trigger",
+      "action": "攀爬桅杆眺望海面",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "conditional",
+      "got_permissibility": "conditional",
+      "expected_rules": [
+        "skill_check"
+      ],
+      "got_rules": [
+        "skill_check"
+      ]
+    },
+    {
+      "id": "H22",
+      "category": "robustness",
+      "action": "用尽最后的力气撬开货舱门",
+      "ok": false,
+      "kind": "false_reject",
+      "detail": "期望 permissible，实际 blocked",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "blocked",
+      "expected_rules": null,
+      "got_rules": []
+    },
+    {
+      "id": "H23",
+      "category": "robustness",
+      "action": "拔出鱼叉威慑",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": null,
+      "got_rules": []
+    },
+    {
+      "id": "H24",
+      "category": "npc",
+      "action": "和他们几个交谈",
+      "ok": false,
+      "kind": "false_reject",
+      "detail": "期望 permissible，实际 blocked",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "blocked",
+      "expected_rules": null,
+      "got_rules": []
+    },
+    {
+      "id": "H25",
+      "category": "check_trigger",
+      "action": "使用言灵照亮黑暗",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "conditional",
+      "got_permissibility": "conditional",
+      "expected_rules": [
+        "sanity_check"
+      ],
+      "got_rules": [
+        "sanity_check"
+      ]
+    },
+    {
+      "id": "H26",
+      "category": "location",
+      "action": "在旧码头仓库打开货舱",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": null,
+      "got_rules": []
+    },
+    {
+      "id": "H27",
+      "category": "combo",
+      "action": "调查集装箱，然后用鱼叉撬开木箱",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "conditional",
+      "got_permissibility": "conditional",
+      "expected_rules": [
+        "item_use",
+        "skill_check"
+      ],
+      "got_rules": [
+        "item_use",
+        "skill_check"
+      ]
+    },
+    {
+      "id": "H28",
+      "category": "robustness",
+      "action": "。",
+      "ok": true,
+      "kind": "pass",
+      "detail": "",
+      "known_bug": false,
+      "expected_permissibility": "permissible",
+      "got_permissibility": "permissible",
+      "expected_rules": null,
+      "got_rules": []
+    }
+  ],
+  "label": "heldout-before-fix"
+}

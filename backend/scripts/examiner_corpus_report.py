@@ -206,7 +206,8 @@ def main() -> None:
           f"不可引用为玩家行动判定准确率）")
     print(f"可行性判定：{perm['correct']}/{perm['total']}（{perm['accuracy']}）")
     if rules["cases_with_expectation"]:
-        print(f"规则触发（{rules['cases_with_expectation']} 条有标注）："
+        print(f"规则类型触发（类型级、已标注 {rules['cases_with_expectation']} 条；"
+              f"同一 rule_type 不分具体技能，标注为 null 的用例不参与）："
               f"Precision {rules['true_positives']}/{rules['predicted']}"
               f"（{rules['precision']}），"
               f"Recall {rules['true_positives']}/{rules['expected']}"

@@ -148,9 +148,22 @@ class ExaminerAgent:
         rules: list[TriggeredRule] = []
 
         item_matches = list(_ITEM_USE.finditer(action))
-        item_spans = [
-            m.span() for m in item_matches if not _is_ability(_resolve_name(m["name"]))
-        ]
+        item_spans = []
+        for match in item_matches:
+            raw = match["name"]
+            name = _resolve_name(raw)
+            if _is_ability(name):
+                continue
+            key = _resolve_item(name, items)
+            if key is None:
+                # Unknown item: it fails below, and a blocked verdict never
+                # consults rules, so no mask is needed.
+                continue
+            # Mask only the resolved item's own text. Masking the whole
+            # capture would hide trailing actions swallowed into the name
+            # ("用鱼叉反击敌人" must still trigger combat).
+            base = match.start("name") + (len(raw) - len(name))
+            item_spans.append((base, base + len(key)))
         for match in item_matches:
             name = _resolve_name(match["name"])
             if _is_ability(name):

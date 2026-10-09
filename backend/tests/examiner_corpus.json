@@ -1129,12 +1129,13 @@
       "fixture": "campus",
       "action": "用侦查眼镜观察墙上的裂缝",
       "expected": {
-        "permissibility": "permissible",
+        "permissibility": "conditional",
         "rules": [
-          "item_use"
+          "item_use",
+          "skill_check"
         ]
       },
-      "note": "B06 修复类的不同措辞回归：物品名内含技能词（侦查）"
+      "note": "B06 修复类的措辞回归：物品名含技能词；遮蔽收窄后尾随的'观察'恢复为动作（2026-10-09 二轮裁定）"
     },
     {
       "id": "B17",
@@ -1203,6 +1204,59 @@
         ]
       },
       "note": "K03/K04 修复类的不同措辞回归：掏出+塞进尾随动词"
+    },
+    {
+      "id": "B18",
+      "category": "item_use_ok",
+      "fixture": "campus",
+      "action": "用短刀反击偷袭者",
+      "expected": {
+        "permissibility": "conditional",
+        "rules": [
+          "item_use",
+          "combat"
+        ]
+      },
+      "note": "遮蔽收窄守卫：反击被吞进物品名也必须触发战斗"
+    },
+    {
+      "id": "B19",
+      "category": "drained",
+      "fixture": "campus_drained",
+      "action": "用短刀反击偷袭者",
+      "expected": {
+        "permissibility": "blocked",
+        "rules": null
+      },
+      "note": "同 B18 + 体力耗尽：尾随反击属体力行动，须拦截"
+    },
+    {
+      "id": "B20",
+      "category": "item_use_ok",
+      "fixture": "campus",
+      "action": "用旧行李箱调查窗外的动静",
+      "expected": {
+        "permissibility": "conditional",
+        "rules": [
+          "item_use",
+          "skill_check"
+        ]
+      },
+      "note": "遮蔽收窄守卫：尾随技能动作不被物品名吞掉"
+    },
+    {
+      "id": "B21",
+      "category": "item_use_ok",
+      "fixture": "campus",
+      "action": "用短刀指向敌人并攻击",
+      "expected": {
+        "permissibility": "conditional",
+        "rules": [
+          "item_use",
+          "combat"
+        ]
+      },
+      "note": "遮蔽收窄守卫：长捕获段尾部的'攻击'仍触发战斗"
     }
   ]
 }

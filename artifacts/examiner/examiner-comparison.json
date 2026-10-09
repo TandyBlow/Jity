@@ -1,0 +1,102 @@
+{
+  "note": "同一批输入跨版本对照。r0=修复前(ad29b2d), r1=十类修复(7abfecd), r2=遮蔽收窄(本提交)。guards-8 的 B16 在 r1 按旧标注通过、r2 起新标注（尾随动词恢复动作语义），见语料 note。",
+  "dev_corpus_original_83": {
+    "r0": {
+      "total": 83,
+      "pass": 73,
+      "false_reject": 7,
+      "false_release": 1,
+      "rule_mismatch": 2,
+      "permissibility_correct": 73,
+      "rule_type_precision": "39/40",
+      "rule_type_recall": "39/43"
+    },
+    "r1": {
+      "total": 83,
+      "pass": 83,
+      "false_reject": 0,
+      "false_release": 0,
+      "rule_mismatch": 0,
+      "permissibility_correct": 83,
+      "rule_type_precision": "43/43",
+      "rule_type_recall": "43/43"
+    },
+    "r2": {
+      "total": 83,
+      "pass": 83,
+      "false_reject": 0,
+      "false_release": 0,
+      "rule_mismatch": 0,
+      "permissibility_correct": 83,
+      "rule_type_precision": "43/43",
+      "rule_type_recall": "43/43"
+    }
+  },
+  "dev_corpus_guards_round1_8": {
+    "r1": {
+      "total": 8,
+      "pass": 8,
+      "false_reject": 0,
+      "false_release": 0,
+      "rule_mismatch": 0,
+      "permissibility_correct": 8,
+      "rule_type_precision": "3/3",
+      "rule_type_recall": "3/3"
+    },
+    "r2": {
+      "total": 8,
+      "pass": 8,
+      "false_reject": 0,
+      "false_release": 0,
+      "rule_mismatch": 0,
+      "permissibility_correct": 8,
+      "rule_type_precision": "4/4",
+      "rule_type_recall": "4/4"
+    }
+  },
+  "dev_corpus_guards_round2_4": {
+    "r2": {
+      "total": 4,
+      "pass": 4,
+      "false_reject": 0,
+      "false_release": 0,
+      "rule_mismatch": 0,
+      "permissibility_correct": 4,
+      "rule_type_precision": "6/6",
+      "rule_type_recall": "6/6"
+    }
+  },
+  "heldout_28": {
+    "r0": {
+      "total": 28,
+      "pass": 20,
+      "false_reject": 7,
+      "false_release": 0,
+      "rule_mismatch": 1,
+      "permissibility_correct": 20,
+      "rule_type_precision": "9/9",
+      "rule_type_recall": "9/14"
+    },
+    "r1": {
+      "total": 28,
+      "pass": 27,
+      "false_reject": 1,
+      "false_release": 0,
+      "rule_mismatch": 0,
+      "permissibility_correct": 27,
+      "rule_type_precision": "14/14",
+      "rule_type_recall": "14/14"
+    },
+    "r2": {
+      "total": 28,
+      "pass": 27,
+      "false_reject": 1,
+      "false_release": 0,
+      "rule_mismatch": 0,
+      "permissibility_correct": 27,
+      "rule_type_precision": "14/14",
+      "rule_type_recall": "14/14"
+    }
+  },
+  "heldout_known_issue": "H16 误拒（_same_scene 分词集缺'角落'类边界），r1 起记录，未修，留待下一批"
+}
