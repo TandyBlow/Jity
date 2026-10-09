@@ -1,6 +1,7 @@
 import type {
   CampaignDetailResponse,
   CampaignListResponse,
+  CampaignProgressSummary,
   CampaignSchema,
   GameState,
   GenerateResponse,
@@ -92,6 +93,15 @@ export function generateScene(params: {
 
 export function getTimeline(sessionId: string): Promise<TimelineResponse> {
   return request<TimelineResponse>(`/sessions/${sessionId}/timeline`);
+}
+
+/** Whole-campaign progress for the console strip; null outside a campaign. */
+export async function fetchCampaignProgress(
+  sessionId: string,
+): Promise<CampaignProgressSummary | null> {
+  const data = await request<Partial<CampaignProgressSummary>>(`/sessions/${sessionId}/progress`);
+  if (!data || typeof data.turns_total !== "number") return null;
+  return data as CampaignProgressSummary;
 }
 
 export function getTimelineNode(sessionId: string, nodeId: number): Promise<TimelineNodeDetail> {

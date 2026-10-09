@@ -129,6 +129,12 @@ def get_session_progress(session_id: str) -> dict[str, object]:
         )
         progress_data["arc_index"] = row.get("arc_index", 0)
         progress_data["session_index"] = row.get("session_index", 0)
+        progress_data["turns_total"] = row.get("turns_total", 0)
+
+    # Whole-campaign cap and chapter/goal labels for the console strip.
+    manager = campaign_manager_cache.get_or_load(session_id, slot_name or "default", session_row)
+    if manager is not None and manager.is_loaded():
+        progress_data.update(manager.campaign_view(state))
 
     return progress_data
 

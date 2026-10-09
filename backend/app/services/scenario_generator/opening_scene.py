@@ -98,6 +98,7 @@ class OpeningSceneMixin:
             memory=self.state_manager.memory_trace_entry(serialized, state),
             declared=self.state_manager.declared_updates(serialized.get("memory_updates") or {}, serialized),
             caps=STATE_CAPS,
+            campaign_progress=campaign_manager.campaign_view(state),
             session_id=session_id, state=state, output=output,
             retrieved_chunks=[], model_output_id=output_id,
             used_model=model, source="scripted",

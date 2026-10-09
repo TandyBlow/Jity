@@ -25,6 +25,21 @@
   font-size: var(--fs-sm);
 }
 
+/* Whole-campaign strip: chapter, session and goal beside the turn counter. */
+.campaign-strip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+  overflow: hidden;
+}
+
+.campaign-strip span {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
 .source-pill {
   margin-left: auto;
   border: 1px solid var(--color-border);

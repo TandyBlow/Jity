@@ -125,6 +125,19 @@ export type SessionResponse = {
   active_turn_id?: number | null;
 };
 
+/** Whole-campaign progress the backend reports per turn (turns_total / cap / chapter / goal). */
+export type CampaignProgressSummary = {
+  turns_total: number;
+  max_turns_per_campaign: number;
+  arc_index: number;
+  arc_name: string;
+  arc_goal: string;
+  session_index: number;
+  session_name: string;
+  current_goal: string;
+  campaign_title: string;
+};
+
 export type GenerateResponse = {
   session_id: string;
   state: GameState;
@@ -139,6 +152,7 @@ export type GenerateResponse = {
   memory: MemoryTraceEntry;
   declared: DeclaredMemory;
   caps: Record<MemoryCategory, number>;
+  campaign_progress: CampaignProgressSummary | null;
 };
 
 /**

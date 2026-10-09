@@ -93,6 +93,7 @@ class CampaignRecapGenerator:
             completed_arcs=progress.completed_arcs,
             recap_compressed=recap_text,
             recap_full=recap_full,
+            turns_total=getattr(progress, "turns_total", 0),
         )
 
     # ── Helpers ──────────────────────────────────────────────────────

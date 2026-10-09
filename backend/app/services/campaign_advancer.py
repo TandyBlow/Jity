@@ -13,6 +13,8 @@ class CampaignSessionAdvancer:
     """Orchestrates campaign-local turn increments and session/arc boundaries."""
 
     DEFAULT_MAX_TURNS = 30
+    # Whole-campaign execution budget: the ending must be presented within it.
+    DEFAULT_MAX_TURNS_PER_CAMPAIGN = 50
 
     def __init__(
         self,
@@ -43,6 +45,9 @@ class CampaignSessionAdvancer:
         if progress is None:
             return 0
         progress.turn_in_session += 1
+        # Whole-campaign counter: incremented here, never reset by
+        # session/arc advancement, restored with the progress snapshot.
+        progress.turns_total = getattr(progress, "turns_total", 0) + 1
         if persist:
             self.persistence.save(
                 campaign_id=progress.campaign_id,
@@ -53,8 +58,28 @@ class CampaignSessionAdvancer:
                 fsm_state=str(fsm.state) if fsm.state else "idle",
                 revealed_anchors=progress.revealed_anchors,
                 completed_arcs=progress.completed_arcs,
+                turns_total=progress.turns_total,
             )
         return progress.turn_in_session
+
+    def resolve_max_turns_per_campaign(self, campaign: Any) -> int:
+        """Whole-campaign budget with precedence chain (default 50)."""
+        if campaign is not None:
+            campaign_cap = getattr(campaign, "max_turns_per_campaign", None)
+            if campaign_cap is not None:
+                return int(campaign_cap)
+
+        import json
+        from pathlib import Path
+
+        try:
+            config_path = Path(__file__).resolve().parents[2] / "scripts" / "option_config.json"
+            if config_path.exists():
+                config = json.loads(config_path.read_text(encoding="utf-8"))
+                return int(config.get("max_turns_per_campaign", self.DEFAULT_MAX_TURNS_PER_CAMPAIGN))
+        except Exception:
+            logger.debug("option_config.json load failed", exc_info=True)
+        return self.DEFAULT_MAX_TURNS_PER_CAMPAIGN
 
     def resolve_max_turns(self, campaign: Any, progress: Any) -> int:
         """Resolve max_turns_per_session with precedence chain."""
@@ -158,6 +183,7 @@ class CampaignSessionAdvancer:
                 fsm_state=str(fsm.state) if fsm.state else "idle",
                 revealed_anchors=progress.revealed_anchors,
                 completed_arcs=progress.completed_arcs,
+                turns_total=progress.turns_total,
             )
         return recap
 
@@ -210,5 +236,6 @@ class CampaignSessionAdvancer:
                 fsm_state=str(fsm.state) if fsm.state else "idle",
                 revealed_anchors=progress.revealed_anchors,
                 completed_arcs=progress.completed_arcs,
+                turns_total=progress.turns_total,
             )
         return recap

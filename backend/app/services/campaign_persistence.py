@@ -31,6 +31,7 @@ class CampaignPersistence:
         fsm_state: str,
         revealed_anchors: list[str],
         completed_arcs: list[int],
+        turns_total: int = 0,
     ) -> None:
         """Persist progress row preserving existing recap fields."""
         recap_compressed, recap_full = self._current_recap_fields(campaign_id, slot_name)
@@ -45,6 +46,7 @@ class CampaignPersistence:
             recap_compressed=recap_compressed,
             recap_full=recap_full,
             slot_name=slot_name,
+            turns_total=turns_total,
         )
 
     def save_with_recap(
@@ -59,6 +61,7 @@ class CampaignPersistence:
         completed_arcs: list[int],
         recap_compressed: str,
         recap_full: str,
+        turns_total: int = 0,
     ) -> None:
         """Persist progress row with explicit recap field values."""
         self.db.write_campaign_progress(
@@ -72,6 +75,7 @@ class CampaignPersistence:
             recap_compressed=recap_compressed,
             recap_full=recap_full,
             slot_name=slot_name,
+            turns_total=turns_total,
         )
 
     def save_recap_only(self, campaign_id: str, slot_name: str, recap_compressed: str, recap_full: str) -> None:

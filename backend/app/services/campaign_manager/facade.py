@@ -160,7 +160,11 @@ class CampaignManager(AnchorFacade, RecapAdvancerFacade, MetricsFacade):
             fsm_state=str(self.fsm.state) if self.fsm.state else "idle",
             revealed_anchors=self.progress.revealed_anchors,
             completed_arcs=self.progress.completed_arcs,
+            turns_total=getattr(self.progress, "turns_total", 0),
         )
+
+    def resolve_max_turns_per_campaign(self) -> int:
+        return self._advancer.resolve_max_turns_per_campaign(self.campaign)
 
     def _persist_progress(self) -> None:
         self.save_progress()
@@ -201,6 +205,32 @@ class CampaignManager(AnchorFacade, RecapAdvancerFacade, MetricsFacade):
             "recap_compressed": recap_compressed,
             "recap_full": recap_full,
             "npc_relations": row.get("npc_relations", "[]") or "[]",
+            "turns_total": getattr(self.progress, "turns_total", 0),
+        }
+
+    def campaign_view(self, state: dict | None = None) -> dict:
+        """Frontend-facing progress summary for the current campaign state."""
+        if self.progress is None or self.campaign is None:
+            return {}
+        arc_name = arc_goal = session_name = ""
+        try:
+            arc = self.campaign.arcs[self.progress.arc_index]
+            arc_name = arc.name
+            arc_goal = arc.goal or ""
+            session_name = arc.sessions[self.progress.session_index].name
+        except (IndexError, AttributeError):
+            pass
+        player_status = (state or {}).get("player_status") or {}
+        return {
+            "turns_total": getattr(self.progress, "turns_total", 0),
+            "max_turns_per_campaign": self.resolve_max_turns_per_campaign(),
+            "arc_index": self.progress.arc_index,
+            "arc_name": arc_name,
+            "arc_goal": arc_goal,
+            "session_index": self.progress.session_index,
+            "session_name": session_name,
+            "current_goal": player_status.get("current_goal", ""),
+            "campaign_title": self.campaign.title,
         }
 
     def reload_runtime_state(self) -> None:

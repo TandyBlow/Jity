@@ -13,7 +13,7 @@ from app.services.memory.memory_controller import MemoryController
 from app.services.prompt_builder import PromptBuilder
 from app.services.retriever import RAGRetriever
 from app.services.scripted_story import ScriptedStoryService
-from app.services.campaign_endings import select_ending
+from app.services.campaign_endings import select_budget_ending, select_ending
 
 from app.services.scenario_generator.agent_pipeline import AgentPipelineMixin
 from app.services.scenario_generator.director_support import DirectorSupportMixin
@@ -90,6 +90,13 @@ class ScenarioGenerator(
             if previous_output.get("game_over"):
                 raise ConcurrentModificationError("Campaign already ended")
 
+        if campaign_manager is not None and campaign_manager.is_loaded():
+            cap = campaign_manager.resolve_max_turns_per_campaign()
+            if getattr(campaign_manager.progress, "turns_total", 0) >= cap:
+                # The budget ending must already have been presented on the
+                # cap turn; anything past it is rejected outright.
+                raise ConcurrentModificationError("Campaign turn budget exhausted")
+
         # Hook 1: Campaign opening scene (early return)
         opening_result = await self._handle_opening_scene(
             session_id, request, session, state, model, campaign_manager, _csi,
@@ -114,6 +121,13 @@ class ScenarioGenerator(
             selected_ending = select_ending(
                 campaign_manager.campaign, campaign_manager.progress, state, request.player_action
             )
+            if selected_ending is None:
+                cap = campaign_manager.resolve_max_turns_per_campaign()
+                if isinstance(cap, int):
+                    selected_ending = select_budget_ending(
+                        campaign_manager.campaign, campaign_manager.progress, state,
+                        max_turns=cap,
+                    )
         if selected_ending is not None:
             output.game_over = True
             output.game_over_reason = (
@@ -166,10 +180,15 @@ class ScenarioGenerator(
 
         sanitized = self.state_manager.sanitize_state(next_state)
         serialized = output.model_dump()
+        campaign_view = (
+            campaign_manager.campaign_view(sanitized)
+            if campaign_manager is not None and campaign_manager.is_loaded() else {}
+        )
         return GenerateResponse(
             memory=self.state_manager.memory_trace_entry(serialized, sanitized),
             declared=self.state_manager.declared_updates(serialized.get("memory_updates") or {}, serialized),
             caps=STATE_CAPS,
+            campaign_progress=campaign_view,
             session_id=session_id,
             state=sanitized,
             output=output,

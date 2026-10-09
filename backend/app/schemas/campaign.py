@@ -61,6 +61,8 @@ class CampaignSchema(BaseModel):
     constraints: str = ""
     starting_state: dict[str, Any] = Field(default_factory=dict)
     max_turns_per_session: int | None = None
+    # Whole-campaign execution budget; the ending must be presented within it.
+    max_turns_per_campaign: int | None = None
     # v4 additions
     difficulty: Literal["easy", "normal", "hard", "insane"] = "normal"
     difficulty_settings: dict[str, Any] | None = None
@@ -76,6 +78,8 @@ class CampaignProgress(BaseModel):
     arc_index: int = 0
     session_index: int = 0
     turn_in_session: int = 0
+    # Whole-campaign counter; session/arc advancement does not reset it.
+    turns_total: int = 0
     revealed_anchors: list[str] = Field(default_factory=list)
     completed_arcs: list[int] = Field(default_factory=list)
 

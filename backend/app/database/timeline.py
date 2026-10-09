@@ -149,8 +149,8 @@ class TimelineStoreMixin:
                     INSERT INTO campaign_progress
                       (campaign_id, slot_name, arc_index, session_index, turn_in_session,
                        fsm_state, revealed_anchors, completed_arcs, recap_compressed,
-                       recap_full, npc_relations, head_turn_id)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                       recap_full, npc_relations, head_turn_id, turns_total)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     ON CONFLICT(campaign_id, slot_name) DO UPDATE SET
                       arc_index = excluded.arc_index,
                       session_index = excluded.session_index,
@@ -162,6 +162,7 @@ class TimelineStoreMixin:
                       recap_full = excluded.recap_full,
                       npc_relations = excluded.npc_relations,
                       head_turn_id = excluded.head_turn_id,
+                      turns_total = excluded.turns_total,
                       updated_at = CURRENT_TIMESTAMP
                     """,
                     (
@@ -177,6 +178,7 @@ class TimelineStoreMixin:
                         str(progress.get("recap_full", "")),
                         progress.get("npc_relations", "[]"),
                         turn_id,
+                        int(progress.get("turns_total", 0)),
                     ),
                 )
             db.execute(
@@ -246,8 +248,8 @@ class TimelineStoreMixin:
                     INSERT INTO campaign_progress
                       (campaign_id, slot_name, arc_index, session_index, turn_in_session,
                        fsm_state, revealed_anchors, completed_arcs, recap_compressed,
-                       recap_full, npc_relations, head_turn_id)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                       recap_full, npc_relations, head_turn_id, turns_total)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     ON CONFLICT(campaign_id, slot_name) DO UPDATE SET
                       arc_index = excluded.arc_index,
                       session_index = excluded.session_index,
@@ -259,6 +261,7 @@ class TimelineStoreMixin:
                       recap_full = excluded.recap_full,
                       npc_relations = excluded.npc_relations,
                       head_turn_id = excluded.head_turn_id,
+                      turns_total = excluded.turns_total,
                       updated_at = CURRENT_TIMESTAMP
                     """,
                     (
@@ -274,6 +277,7 @@ class TimelineStoreMixin:
                         str(progress.get("recap_full", "")),
                         progress.get("npc_relations", "[]"),
                         turn_id,
+                        int(progress.get("turns_total", 0)),
                     ),
                 )
         snapshot["state"] = state

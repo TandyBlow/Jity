@@ -125,6 +125,7 @@ class CampaignLoader:
             arc_index=row["arc_index"],
             session_index=row["session_index"],
             turn_in_session=row.get("turn_in_session", 0),
+            turns_total=row.get("turns_total", 0),
             revealed_anchors=json.loads(row.get("revealed_anchors", "[]")),
             completed_arcs=json.loads(row.get("completed_arcs", "[]")),
         )

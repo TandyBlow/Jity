@@ -29,7 +29,8 @@ export function useGameActions(core: GameSessionCore) {
   const generating = useRef(false);
   const {
     sessionId, setSessionId, setState, activeTurnId, setActiveTurnId, model, setModel,
-    action, setAction, setOutput, setTurnReport, setOutputSource, setChunks, setError,
+    action, setAction, setOutput, setTurnReport, setCampaignProgress, setOutputSource,
+    setChunks, setError,
     selectedSlot, setSelectedSlot, setSelectedSlotId,
     selectedCampaign, setSelectedCampaign, gameOver,
     refreshSlots, restoreLastOutput,
@@ -54,6 +55,7 @@ export function useGameActions(core: GameSessionCore) {
       });
       setOutput(response.output);
       setTurnReport({ memory: response.memory, declared: response.declared, caps: response.caps });
+      setCampaignProgress(response.campaign_progress ?? null);
       setOutputSource(response.source);
       setState(response.state);
       setActiveTurnId(response.timeline_node_id);
@@ -66,13 +68,14 @@ export function useGameActions(core: GameSessionCore) {
       generating.current = false;
       setIsLoading(false);
     }
-  }, [sessionId, action, model, selectedSlot, selectedCampaign, activeTurnId, gameOver, setIsLoading, setError, setOutput, setTurnReport, setOutputSource, setState, setActiveTurnId, setChunks, setModel, setAction]);
+  }, [sessionId, action, model, selectedSlot, selectedCampaign, activeTurnId, gameOver, setIsLoading, setError, setOutput, setTurnReport, setCampaignProgress, setOutputSource, setState, setActiveTurnId, setChunks, setModel, setAction]);
 
   const handleNewSession = useCallback(async () => {
     setIsLoading(true);
     setError("");
     setOutput(loadingOutput);
     setTurnReport(null);
+    setCampaignProgress(null);
     setAction("");
     setPendingGenerate(null);
     try {
@@ -85,6 +88,7 @@ export function useGameActions(core: GameSessionCore) {
       setState(session.state);
       setActiveTurnId(session.active_turn_id ?? null);
       setTurnReport(null);
+    setCampaignProgress(null);
       setOutput(campaignOpts ? loadingOutput : initialOutput);
       setOutputSource("scripted");
       setChunks([]);
@@ -100,13 +104,14 @@ export function useGameActions(core: GameSessionCore) {
     } finally {
       setIsLoading(false);
     }
-  }, [model, selectedCampaign, setIsLoading, setError, setSessionId, setState, setActiveTurnId, setOutput, setOutputSource, setChunks, setAction, setSelectedSlot, setSelectedSlotId, refreshSlots, setPendingGenerate, setTurnReport]);
+  }, [model, selectedCampaign, setIsLoading, setError, setSessionId, setState, setActiveTurnId, setOutput, setOutputSource, setChunks, setAction, setSelectedSlot, setSelectedSlotId, refreshSlots, setPendingGenerate, setTurnReport, setCampaignProgress]);
 
   const handleCampaignChange = useCallback(async (value: string) => {
     setIsLoading(true);
     setError("");
     setOutput(loadingOutput);
     setTurnReport(null);
+    setCampaignProgress(null);
     setAction("");
     setPendingGenerate(null);
     const opts = value
@@ -120,6 +125,7 @@ export function useGameActions(core: GameSessionCore) {
       setState(session.state);
       setActiveTurnId(session.active_turn_id ?? null);
       setTurnReport(null);
+    setCampaignProgress(null);
       setOutput(opts ? loadingOutput : initialOutput);
       setOutputSource("scripted");
       setChunks([]);
@@ -133,7 +139,7 @@ export function useGameActions(core: GameSessionCore) {
     } finally {
       setIsLoading(false);
     }
-  }, [model, setIsLoading, setSelectedCampaign, setError, setSessionId, setState, setActiveTurnId, setOutput, setOutputSource, setChunks, setAction, setSelectedSlot, setSelectedSlotId, refreshSlots, setPendingGenerate, setTurnReport]);
+  }, [model, setIsLoading, setSelectedCampaign, setError, setSessionId, setState, setActiveTurnId, setOutput, setOutputSource, setChunks, setAction, setSelectedSlot, setSelectedSlotId, refreshSlots, setPendingGenerate, setTurnReport, setCampaignProgress]);
 
   const handleSlotChange = useCallback(async (slotId: number) => {
     if (!slotId) return;
@@ -141,6 +147,7 @@ export function useGameActions(core: GameSessionCore) {
     setError("");
     setOutput(loadingOutput);
     setTurnReport(null);
+    setCampaignProgress(null);
     setAction("");
     setPendingGenerate(null);
     try {
@@ -160,7 +167,7 @@ export function useGameActions(core: GameSessionCore) {
     } finally {
       setIsLoading(false);
     }
-  }, [setIsLoading, setError, setOutput, setAction, setPendingGenerate, setSelectedSlotId, setSelectedSlot, setSessionId, setState, setActiveTurnId, setModel, setChunks, restoreLastOutput, refreshSlots, setTurnReport]);
+  }, [setIsLoading, setError, setOutput, setAction, setPendingGenerate, setSelectedSlotId, setSelectedSlot, setSessionId, setState, setActiveTurnId, setModel, setChunks, restoreLastOutput, refreshSlots, setTurnReport, setCampaignProgress]);
 
   /** Error message on failure, null when the slot was created. */
   const handleCreateSlot = useCallback(async (name: string): Promise<string | null> => {

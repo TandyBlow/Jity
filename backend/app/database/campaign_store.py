@@ -43,13 +43,13 @@ class CampaignStoreMixin:
             ).fetchone()
             return dict(row) if row else None
 
-    def write_campaign_progress(self, campaign_id: str, arc_index: int, session_index: int, turn_in_session: int, fsm_state: str, revealed_anchors: list[str] | None = None, completed_arcs: list[int] | None = None, recap_compressed: str = "", recap_full: str = "", slot_name: str = "default", head_turn_id: int | None = None) -> None:
+    def write_campaign_progress(self, campaign_id: str, arc_index: int, session_index: int, turn_in_session: int, fsm_state: str, revealed_anchors: list[str] | None = None, completed_arcs: list[int] | None = None, recap_compressed: str = "", recap_full: str = "", slot_name: str = "default", head_turn_id: int | None = None, turns_total: int = 0) -> None:
         with self.connect() as db:
             db.execute(
                 """
                 INSERT INTO campaign_progress
-                  (campaign_id, slot_name, arc_index, session_index, turn_in_session, fsm_state, revealed_anchors, completed_arcs, recap_compressed, recap_full, head_turn_id)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                  (campaign_id, slot_name, arc_index, session_index, turn_in_session, fsm_state, revealed_anchors, completed_arcs, recap_compressed, recap_full, head_turn_id, turns_total)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ON CONFLICT(campaign_id, slot_name) DO UPDATE SET
                   arc_index = excluded.arc_index,
                   session_index = excluded.session_index,
@@ -60,6 +60,7 @@ class CampaignStoreMixin:
                   recap_compressed = excluded.recap_compressed,
                   recap_full = excluded.recap_full,
                   head_turn_id = COALESCE(excluded.head_turn_id, campaign_progress.head_turn_id),
+                  turns_total = excluded.turns_total,
                   updated_at = CURRENT_TIMESTAMP
                 """,
                 (
@@ -74,5 +75,6 @@ class CampaignStoreMixin:
                     recap_compressed,
                     recap_full,
                     head_turn_id,
+                    turns_total,
                 ),
             )

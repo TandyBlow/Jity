@@ -6,6 +6,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { MainCheckOverlay, type MainCheckCommit } from "@/components/game/MainCheckOverlay";
 import type { GameSession } from "@/components/game/useGameSession";
+import { fetchCampaignProgress } from "@/lib/api";
+import type { CampaignProgressSummary } from "@/types";
 import type { CheckSpec, Outcome } from "@/lib/dice/rules";
 import { formatActionWithCheckResult, outcomeTone, toCheckSpec } from "@/lib/game/checks";
 import { formatDelta, quoteDialogue } from "@/lib/game/format";
@@ -130,6 +132,26 @@ export function StoryPanel({
     if (error) setSweep(null);
   }, [error]);
 
+  // Whole-campaign strip: live values ride each generate response; a page
+  // (re)load or save restore fetches the persisted counter once instead.
+  const [loadedProgress, setLoadedProgress] = useState<CampaignProgressSummary | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    if (!sessionId) {
+      setLoadedProgress(null);
+      return;
+    }
+    fetchCampaignProgress(sessionId)
+      .then((progress) => {
+        if (!cancelled) setLoadedProgress(progress);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [sessionId, session.activeTurnId]);
+  const campaignProgress = session.campaignProgress ?? loadedProgress;
+
   /** The sweep's own animation decides when the next scene is generated. */
   function completeSweep(action: string) {
     void handleGenerate(action);
@@ -139,7 +161,22 @@ export function StoryPanel({
     <section className="story-panel">
       <div className="toolbar-row">
         <div className="meta">Session {sessionId ? sessionId.slice(0, 8) : "initializing"}</div>
-        <div className="meta">Turn {state?.turn ?? 0}</div>
+        <div className="meta">
+          {campaignProgress
+            ? `第 ${campaignProgress.turns_total} / ${campaignProgress.max_turns_per_campaign} 回合`
+            : `Turn ${state?.turn ?? 0}`}
+        </div>
+        {campaignProgress ? (
+          <div className="meta campaign-strip">
+            {campaignProgress.arc_name ? (
+              <span>
+                {campaignProgress.arc_name}
+                {campaignProgress.session_name ? `·${campaignProgress.session_name}` : ""}
+              </span>
+            ) : null}
+            {campaignProgress.current_goal ? <span>目标：{campaignProgress.current_goal}</span> : null}
+          </div>
+        ) : null}
         {sessionId && session.activeTurnId ? (
           <Link className="story-rewind-link" href={`/timeline?session=${sessionId}&back=1`}>
             <GitBranch size={13} />

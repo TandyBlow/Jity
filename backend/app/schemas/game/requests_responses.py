@@ -75,3 +75,6 @@ class GenerateResponse(BaseModel):
     memory: dict[str, Any] = Field(default_factory=dict)
     declared: dict[str, Any] = Field(default_factory=dict)
     caps: dict[str, int] = Field(default_factory=dict)
+    # Whole-campaign progress summary (turns_total / cap / arc / goal) for the
+    # console's progress strip.
+    campaign_progress: dict[str, Any] = Field(default_factory=dict)

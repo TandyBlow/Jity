@@ -3,7 +3,7 @@
 import inspect
 
 from app.services.prompt_builder import PromptInput
-from app.services.campaign_endings import ending_instruction, select_ending
+from app.services.campaign_endings import ending_instruction, select_budget_ending, select_ending
 
 
 class PromptBuildMixin:
@@ -20,6 +20,13 @@ class PromptBuildMixin:
             selected_ending = select_ending(
                 campaign_manager.campaign, campaign_manager.progress, state, request.player_action
             )
+            if selected_ending is None:
+                cap = campaign_manager.resolve_max_turns_per_campaign()
+                if isinstance(cap, int):
+                    selected_ending = select_budget_ending(
+                        campaign_manager.campaign, campaign_manager.progress, state,
+                        max_turns=cap,
+                    )
             if selected_ending is not None:
                 campaign_context += "\n" + ending_instruction(selected_ending)
 
