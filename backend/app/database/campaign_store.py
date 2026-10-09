@@ -13,6 +13,18 @@ class CampaignStoreMixin:
                 (relations_json, campaign_id, slot_name),
             )
 
+    def update_recap_fields(self, campaign_id: str, recap_compressed: str, recap_full: str, slot_name: str = "default") -> None:
+        """Update only the recap columns, leaving progress counters untouched.
+
+        Used on the deferred turn path, where recap storage must not advance
+        turn_in_session or revealed_anchors ahead of the node commit.
+        """
+        with self.connect() as db:
+            db.execute(
+                "UPDATE campaign_progress SET recap_compressed = ?, recap_full = ?, updated_at = CURRENT_TIMESTAMP WHERE campaign_id = ? AND slot_name = ?",
+                (recap_compressed, recap_full, campaign_id, slot_name),
+            )
+
     def read_campaign_progress(self, campaign_id: str, slot_name: str = "default") -> dict[str, Any] | None:
         with self.connect() as db:
             row = db.execute(

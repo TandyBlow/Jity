@@ -72,18 +72,26 @@ class OpeningSceneMixin:
             {"role": "assistant", "content": output.model_dump_json()},
         ])
         progress_snapshot = self._campaign_progress_snapshot(session_id, campaign_manager)
-        timeline_node_id = self.db.commit_story_turn(
-            session_id=session_id,
-            expected_parent_id=parent_turn_id,
-            player_action=request.player_action,
-            output=output.model_dump(),
-            state=state,
-            campaign_progress=progress_snapshot,
-            model=model,
-            source="scripted",
-            model_output_id=output_id,
-            campaign_session_index=_csi,
-        )
+        try:
+            timeline_node_id = self.db.commit_story_turn(
+                session_id=session_id,
+                expected_parent_id=parent_turn_id,
+                player_action=request.player_action,
+                output=output.model_dump(),
+                state=state,
+                campaign_progress=progress_snapshot,
+                model=model,
+                source="scripted",
+                model_output_id=output_id,
+                campaign_session_index=_csi,
+            )
+        except Exception:
+            # Same contract as the main path: advancement was in-memory
+            # only, so a failed opening commit must not leak it into the
+            # retry.
+            campaign_manager.reload_runtime_state()
+            raise
+        campaign_manager.flush_deferred_effects()
 
         serialized = output.model_dump()
         return GenerateResponse(

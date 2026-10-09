@@ -160,25 +160,99 @@ async def test_retry_after_commit_failure_advances_exactly_once(tmp_path):
 
 
 @pytest.mark.asyncio
-async def test_branch_restore_then_generate_keeps_progress_consistent(tmp_path):
+async def test_branch_restore_to_root_resets_turn_session_and_anchors(tmp_path):
     h = Harness(tmp_path)
-    await h.generate()  # turn 1 on the active path
+    h.stage_pending_anchor()
+    await h.generate()  # turn 1 on the active path, anchor marked
+    assert "dynamic-test-anchor" in str(h.progress_row()["revealed_anchors"])
 
-    root = h.db.ensure_timeline_root(h.session_id, {}, "test-model")
+    with h.db.connect() as db:
+        root = int(db.execute(
+            "SELECT id FROM story_turns WHERE session_id = ? AND parent_turn_id IS NULL",
+            (h.session_id,),
+        ).fetchone()["id"])
     snapshot = h.db.activate_story_turn(h.session_id, root)
     assert snapshot is not None
-    # The root node carries no campaign_progress snapshot, so activation
-    # leaves the progress row untouched (timeline.py: `if progress:` guard).
-    # The activate endpoint invalidates the manager cache; the rebuilt
-    # manager reloads progress from the persisted row.
-    h.manager.reload_runtime_state()
-    assert h.progress_row()["turn_in_session"] == 1
+    # The root predates the campaign and carries no progress snapshot; the
+    # activate endpoint resets to the campaign's initial state instead of
+    # letting the previous branch's progress leak into the new branch.
+    assert not snapshot.get("campaign_progress")
+    h.manager.reset_to_initial()
 
+    row = h.progress_row()
+    assert row["turn_in_session"] == 0, "回合必须随开局快照一起恢复"
+    assert row["session_index"] == 0, "章节必须随开局快照一起恢复"
+    assert "dynamic-test-anchor" not in str(row["revealed_anchors"]), "事件记录必须随开局快照一起恢复"
+
+    h.manager.reload_runtime_state()
     response = await h.generate()
     row = h.progress_row()
-    assert row["turn_in_session"] == 2
+    assert row["turn_in_session"] == 1
     assert h.node_count() == 3, "根、原分支一节点、新分支一节点"
     assert h.head() == response.timeline_node_id
+
+
+@pytest.mark.asyncio
+async def test_boundary_recap_failure_keeps_turn_count_unchanged(tmp_path):
+    """Reproduction: at 29/30 a boundary turn's recap write must not leak
+    turn_in_session 30 to the row when the node commit fails."""
+    h = Harness(tmp_path)
+    h.manager.progress.turn_in_session = 29
+    h.manager.save_progress()
+    assert h.progress_row()["turn_in_session"] == 29
+
+    original = h.db.commit_story_turn
+
+    def injected(*args, **kwargs):
+        raise ConcurrentModificationError("injected commit failure")
+
+    h.db.commit_story_turn = injected
+    try:
+        with pytest.raises(ConcurrentModificationError):
+            await h.generate()
+    finally:
+        h.db.commit_story_turn = original
+
+    row = h.progress_row()
+    assert row["turn_in_session"] == 29, "前情提要写入不得夹带回合数推进"
+    assert row["session_index"] == 0, "前情提要写入不得夹带章节推进"
+    assert row["recap_compressed"], "前情提要本身应已存储（仅 recap 列）"
+
+    h.manager.reload_runtime_state()
+    response = await h.generate()
+    row = h.progress_row()
+    assert row["session_index"] == 1 and row["turn_in_session"] == 0
+    assert h.head() == response.timeline_node_id
+
+
+@pytest.mark.asyncio
+async def test_boundary_decay_deferred_until_commit(tmp_path):
+    h = Harness(tmp_path)
+    h.db.update_npc_relations(
+        h.manager.progress.campaign_id, '[{"name": "诺诺", "affinity": 3}]'
+    )
+    h.manager.progress.turn_in_session = 29
+    h.manager.save_progress()
+
+    original = h.db.commit_story_turn
+
+    def injected(*args, **kwargs):
+        raise ConcurrentModificationError("injected commit failure")
+
+    h.db.commit_story_turn = injected
+    try:
+        with pytest.raises(ConcurrentModificationError):
+            await h.generate()
+    finally:
+        h.db.commit_story_turn = original
+
+    relations = h.progress_row()["npc_relations"]
+    assert '"affinity": 3' in relations, "好感衰减不得先于节点提交落库"
+
+    h.manager.reload_runtime_state()
+    await h.generate()
+    relations = h.progress_row()["npc_relations"]
+    assert '"affinity": 2' in relations, "节点提交成功后衰减随 flush 生效"
 
 
 @pytest.mark.asyncio

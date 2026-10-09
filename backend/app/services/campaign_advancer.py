@@ -21,6 +21,10 @@ class CampaignSessionAdvancer:
     ) -> None:
         self.persistence = persistence
         self.recap = recap_generator
+        # Set when a deferred boundary skipped NPC relation decay; the turn
+        # path flushes it after the node commit so a failed commit cannot
+        # decay relations without a committed turn.
+        self.relation_decay_pending = False
 
     def advance_turn(
         self,
@@ -109,7 +113,11 @@ class CampaignSessionAdvancer:
         try:
             recap = await self.recap.generate_recap(progress.campaign_id, pending_messages)
         except Exception:
-            logger.warning("Recap generation failed in advance_session, using structural fallback", exc_info=True)
+            logger.warning("Recap generation failed in advance_session", exc_info=True)
+        if not recap:
+            # generate_recap swallows LLM failures and returns None; the
+            # structural fallback is the documented behaviour, not dead code.
+            logger.warning("advance_session using structural fallback recap")
             recap = self.recap.build_structural_recap(campaign, progress)
         if recap:
             self.recap.store_recap(
@@ -117,9 +125,13 @@ class CampaignSessionAdvancer:
                 progress.campaign_id, slot_name, progress,
                 str(fsm.state) if fsm.state else "idle",
                 recap,
+                persist_progress=persist,
             )
 
-        self.persistence.decay_npc_relations(progress.campaign_id, slot_name)
+        if persist:
+            self.persistence.decay_npc_relations(progress.campaign_id, slot_name)
+        else:
+            self.relation_decay_pending = True
 
         # Check if this is the last session in the arc
         try:
@@ -167,7 +179,9 @@ class CampaignSessionAdvancer:
         try:
             recap = await self.recap.generate_recap(progress.campaign_id, pending_messages)
         except Exception:
-            logger.warning("Recap generation failed in advance_arc, using structural fallback", exc_info=True)
+            logger.warning("Recap generation failed in advance_arc", exc_info=True)
+        if not recap:
+            logger.warning("advance_arc using structural fallback recap")
             recap = self.recap.build_structural_recap(campaign, progress)
         if recap:
             self.recap.store_recap(

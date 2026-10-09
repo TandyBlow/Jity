@@ -74,6 +74,19 @@ class CampaignPersistence:
             slot_name=slot_name,
         )
 
+    def save_recap_only(self, campaign_id: str, slot_name: str, recap_compressed: str, recap_full: str) -> None:
+        """Persist recap columns without touching progress counters.
+
+        The deferred turn path stores recap before the node commit; the
+        progress counters travel with the node transaction instead.
+        """
+        self.db.update_recap_fields(
+            campaign_id=campaign_id,
+            recap_compressed=recap_compressed,
+            recap_full=recap_full,
+            slot_name=slot_name,
+        )
+
     # ── Read ─────────────────────────────────────────────────────────
 
     def load(self, campaign_id: str, slot_name: str) -> dict | None:

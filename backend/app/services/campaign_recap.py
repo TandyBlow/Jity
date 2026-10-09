@@ -58,14 +58,30 @@ class CampaignRecapGenerator:
         progress: Any,
         fsm_state: str,
         recap_text: str,
+        *,
+        persist_progress: bool = True,
     ) -> None:
         """Store both compressed (latest) and full (cumulative) recap.
 
         Full recap appends to existing full recap (cumulative history).
         Compressed recap is the latest single-session summary.
+
+        ``persist_progress=False`` writes only the recap columns: on the
+        deferred turn path the progress counters (turn count, revealed
+        anchors) travel with the node commit, and leaking them here would
+        advance state without a committed turn.
         """
         row = persistence.load(campaign_id, slot_name)
         existing_full = row.get("recap_full", "") if row else ""
+        recap_full = (existing_full + "\n\n" + recap_text).strip() if existing_full else recap_text
+        if not persist_progress:
+            persistence.save_recap_only(
+                campaign_id=campaign_id,
+                slot_name=slot_name,
+                recap_compressed=recap_text,
+                recap_full=recap_full,
+            )
+            return
         persistence.save_with_recap(
             campaign_id=campaign_id,
             slot_name=slot_name,
@@ -76,7 +92,7 @@ class CampaignRecapGenerator:
             revealed_anchors=progress.revealed_anchors,
             completed_arcs=progress.completed_arcs,
             recap_compressed=recap_text,
-            recap_full=(existing_full + "\n\n" + recap_text).strip() if existing_full else recap_text,
+            recap_full=recap_full,
         )
 
     # ── Helpers ──────────────────────────────────────────────────────

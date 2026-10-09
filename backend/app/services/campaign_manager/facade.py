@@ -215,3 +215,31 @@ class CampaignManager(AnchorFacade, RecapAdvancerFacade, MetricsFacade):
         if progress is not None:
             self._loader.progress = progress
         self._loader._sync_fsm_from_progress()
+
+    def flush_deferred_effects(self) -> None:
+        """Apply side effects deferred by the turn's in-memory advancement.
+
+        Currently only the session-boundary NPC relation decay. Called after
+        the node commit succeeded; a failed commit drops the pending effect
+        and the retried boundary re-defers it.
+        """
+        if self._advancer.relation_decay_pending:
+            self._advancer.relation_decay_pending = False
+            if self.progress is not None:
+                self._persistence.decay_npc_relations(
+                    self.progress.campaign_id, self.slot_name
+                )
+
+    def reset_to_initial(self) -> None:
+        """Reset progress and FSM to the campaign's initial state.
+
+        Used when a node without a progress snapshot (e.g. the pre-campaign
+        root) is activated: the initial snapshot that node lacks is applied
+        here instead of keeping whichever progress the previous branch had.
+        """
+        if self.progress is None:
+            return
+        self._loader._init_fsm()
+        progress = self._loader.load_progress(self.progress.campaign_id)
+        if progress is not None:
+            self._loader.progress = progress

@@ -161,6 +161,8 @@ class ScenarioGenerator(
             if campaign_manager is not None and campaign_manager.is_loaded():
                 campaign_manager.reload_runtime_state()
             raise
+        if campaign_manager is not None and campaign_manager.is_loaded():
+            campaign_manager.flush_deferred_effects()
 
         sanitized = self.state_manager.sanitize_state(next_state)
         serialized = output.model_dump()

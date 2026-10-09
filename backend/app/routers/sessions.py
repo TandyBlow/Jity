@@ -300,6 +300,16 @@ def activate_timeline_node(session_id: str, node_id: int) -> dict[str, object]:
     campaign_manager_cache.invalidate(session_id, slot_name)
     knowledge_service.scenario_generator.invalidate_timeline_caches(session_id, slot_name)
 
+    if not progress:
+        # The node predates its campaign (e.g. the root created before a
+        # campaign was attached). Without an initial snapshot the previous
+        # branch's progress would leak into the new branch, so reset to the
+        # campaign's initial state instead.
+        session_row = db.get_session(session_id)
+        manager = campaign_manager_cache.get_or_load(session_id, slot_name, session_row)
+        if manager is not None and manager.is_loaded():
+            manager.reset_to_initial()
+
     state = dict(snapshot["state"])
     state_manager.sanitize_state(state)
     session = state_manager.get_session_payload(session_id)
