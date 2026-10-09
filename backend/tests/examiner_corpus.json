@@ -316,7 +316,7 @@
         "permissibility": "permissible",
         "rules": null
       },
-      "note": "拔出不在使用动词表内，宽放行（不判物品）"
+      "note": "拔出/准备类是自由动作不检定（2026-10-09 裁定）；攻击动词才触发 combat"
     },
     {
       "id": "B11",
@@ -576,7 +576,7 @@
         "permissibility": "blocked",
         "rules": null
       },
-      "note": "门卫在校门口，不在场"
+      "note": "门卫不在交互范围（away 且异地），blocked 的前提即在场校验语义"
     },
     {
       "id": "E07",
@@ -676,7 +676,7 @@
           "item_use"
         ]
       },
-      "note": "无'在X动作'句式，不触发位置校验"
+      "note": "一回合允许移动+动作（2026-10-09 裁定）：移动是节拍不单独结算，approaching 豁免即此语义"
     },
     {
       "id": "F06",
@@ -1088,7 +1088,33 @@
         "permissibility": "permissible",
         "rules": null
       },
-      "note": "环顾不在侦查动词表，按现状宽放行；改进时再议"
+      "note": "普通观察不必然掷骰（2026-10-09 复核确认）；环顾不在侦查动词表，保持宽放行"
+    },
+    {
+      "id": "B14",
+      "category": "item_use_ok",
+      "fixture": "campus",
+      "action": "拔出短刀反击",
+      "expected": {
+        "permissibility": "conditional",
+        "rules": [
+          "combat"
+        ]
+      },
+      "note": "B10 裁定的边界钉子：拔刀不检定，反击动词触发战斗"
+    },
+    {
+      "id": "F08",
+      "category": "location",
+      "fixture": "campus",
+      "action": "用旧钥匙打开地下室的门",
+      "expected": {
+        "permissibility": "permissible",
+        "rules": [
+          "item_use"
+        ]
+      },
+      "note": "F05 裁定的边界钉子：无「在异地动作」句式即视为含移动节拍，不拦"
     }
   ]
 }
