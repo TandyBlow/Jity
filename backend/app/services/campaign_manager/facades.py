@@ -19,18 +19,19 @@ class AnchorFacade:
             revealed_anchors=self.progress.revealed_anchors,
         )
 
-    def commit_pending_anchors(self) -> list[str]:
+    def commit_pending_anchors(self, *, persist: bool = True) -> list[str]:
         def _mark(anchor_id: str, turn: int) -> None:
-            self.mark_anchor_triggered(anchor_id, turn)
+            self.mark_anchor_triggered(anchor_id, turn, persist=persist)
 
         return self._anchors.commit_pending_anchors(self.progress, mark_fn=_mark)
 
-    def mark_anchor_triggered(self, anchor_id: str, turn: int) -> None:
+    def mark_anchor_triggered(self, anchor_id: str, turn: int, *, persist: bool = True) -> None:
         if self.progress is not None:
             if anchor_id not in self.progress.revealed_anchors:
                 self.progress.revealed_anchors.append(anchor_id)
         self._anchors.record_cooldown(anchor_id, turn)
-        self._persist_progress()
+        if persist:
+            self._persist_progress()
 
     def detect_deviation(self, state: dict[str, Any], turn: int) -> bool:
         if self.campaign is None or self.progress is None:

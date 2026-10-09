@@ -13,6 +13,7 @@ All public method signatures are preserved so callers (ScenarioGenerator,
 routes, tests) remain unchanged.
 """
 
+import json
 import logging
 from pathlib import Path
 
@@ -118,21 +119,26 @@ class CampaignManager(AnchorFacade, RecapAdvancerFacade, MetricsFacade):
             campaign_path, campaign_id, start_arc_index, start_session_index, slot_name
         )
 
-    def end_campaign(self) -> None:
-        """Move the active campaign to its terminal FSM state and persist it."""
+    def end_campaign(self, *, persist: bool = True) -> None:
+        """Move the active campaign to its terminal FSM state and persist it.
+
+        ``persist=False`` defers the write to the turn's commit_story_turn
+        transaction, same as the other advancement paths.
+        """
         if self.progress is None:
             return
         self.fsm.end_campaign()
-        self._persistence.save(
-            campaign_id=self.progress.campaign_id,
-            slot_name=self.slot_name,
-            arc_index=self.progress.arc_index,
-            session_index=self.progress.session_index,
-            turn_in_session=self.progress.turn_in_session,
-            fsm_state=str(self.fsm.state),
-            revealed_anchors=self.progress.revealed_anchors,
-            completed_arcs=self.progress.completed_arcs,
-        )
+        if persist:
+            self._persistence.save(
+                campaign_id=self.progress.campaign_id,
+                slot_name=self.slot_name,
+                arc_index=self.progress.arc_index,
+                session_index=self.progress.session_index,
+                turn_in_session=self.progress.turn_in_session,
+                fsm_state=str(self.fsm.state),
+                revealed_anchors=self.progress.revealed_anchors,
+                completed_arcs=self.progress.completed_arcs,
+            )
 
     def is_loaded(self) -> bool:
         return self._loader.is_loaded()
@@ -161,3 +167,51 @@ class CampaignManager(AnchorFacade, RecapAdvancerFacade, MetricsFacade):
 
     def load_progress(self, campaign_id: str) -> CampaignProgress | None:
         return self._loader.load_progress(campaign_id)
+
+    def progress_snapshot(self) -> dict:
+        """Full campaign_progress row dict for the current in-memory progress.
+
+        The advancing fields (arc/session/turn/anchors/arcs-done/fsm) come
+        from memory, which on the deferred path is ahead of the database
+        until commit_story_turn writes them. Recap and npc_relations are
+        memory-less: preserve whatever storage holds so the snapshot upsert
+        cannot wipe them.
+        """
+        if self.progress is None:
+            return {}
+        row = self.db.read_campaign_progress(
+            self.progress.campaign_id, self.slot_name
+        ) or {}
+        recap_compressed, recap_full = self._persistence._current_recap_fields(
+            self.progress.campaign_id, self.slot_name
+        )
+        return {
+            "campaign_id": self.progress.campaign_id,
+            "slot_name": self.slot_name,
+            "arc_index": self.progress.arc_index,
+            "session_index": self.progress.session_index,
+            "turn_in_session": self.progress.turn_in_session,
+            "fsm_state": str(self.fsm.state) if self.fsm.state else "idle",
+            "revealed_anchors": json.dumps(
+                self.progress.revealed_anchors, ensure_ascii=False
+            ),
+            "completed_arcs": json.dumps(
+                self.progress.completed_arcs, ensure_ascii=False
+            ),
+            "recap_compressed": recap_compressed,
+            "recap_full": recap_full,
+            "npc_relations": row.get("npc_relations", "[]") or "[]",
+        }
+
+    def reload_runtime_state(self) -> None:
+        """Discard in-memory advancement and re-derive progress + FSM from storage.
+
+        Called after a failed turn commit so a retried request cannot double-
+        advance on stale in-memory counters.
+        """
+        if self.progress is None:
+            return
+        progress = self._loader.load_progress(self.progress.campaign_id)
+        if progress is not None:
+            self._loader.progress = progress
+        self._loader._sync_fsm_from_progress()

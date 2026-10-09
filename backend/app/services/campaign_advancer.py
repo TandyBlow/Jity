@@ -27,21 +27,29 @@ class CampaignSessionAdvancer:
         progress: Any,
         fsm: Any,
         slot_name: str,
+        *,
+        persist: bool = True,
     ) -> int:
-        """Increment turn_in_session and persist. Returns new turn count."""
+        """Increment turn_in_session and persist. Returns new turn count.
+
+        ``persist=False`` defers the write: the turn path persists progress
+        inside the commit_story_turn transaction instead, so a failed node
+        commit cannot leave progress advanced without a node.
+        """
         if progress is None:
             return 0
         progress.turn_in_session += 1
-        self.persistence.save(
-            campaign_id=progress.campaign_id,
-            slot_name=slot_name,
-            arc_index=progress.arc_index,
-            session_index=progress.session_index,
-            turn_in_session=progress.turn_in_session,
-            fsm_state=str(fsm.state) if fsm.state else "idle",
-            revealed_anchors=progress.revealed_anchors,
-            completed_arcs=progress.completed_arcs,
-        )
+        if persist:
+            self.persistence.save(
+                campaign_id=progress.campaign_id,
+                slot_name=slot_name,
+                arc_index=progress.arc_index,
+                session_index=progress.session_index,
+                turn_in_session=progress.turn_in_session,
+                fsm_state=str(fsm.state) if fsm.state else "idle",
+                revealed_anchors=progress.revealed_anchors,
+                completed_arcs=progress.completed_arcs,
+            )
         return progress.turn_in_session
 
     def resolve_max_turns(self, campaign: Any, progress: Any) -> int:
@@ -85,8 +93,15 @@ class CampaignSessionAdvancer:
         fsm: Any,
         slot_name: str,
         pending_messages: list[dict[str, str]] | None = None,
+        *,
+        persist: bool = True,
     ) -> str:
-        """Advance to next campaign session. Returns recap text."""
+        """Advance to next campaign session. Returns recap text.
+
+        Recap generation and storage stay eager in both modes: a recap is
+        regenerable content, and its failure already falls back structurally.
+        Only the progress write is deferrable.
+        """
         if progress is None or campaign is None:
             return ""
 
@@ -114,23 +129,24 @@ class CampaignSessionAdvancer:
             is_last_session = True
 
         if is_last_session:
-            return await self.advance_arc(campaign, progress, fsm, slot_name, pending_messages)
+            return await self.advance_arc(campaign, progress, fsm, slot_name, pending_messages, persist=persist)
 
         # Normal session advance
         fsm.end_session()
         fsm.resume_session()
         progress.session_index += 1
         progress.turn_in_session = 0
-        self.persistence.save(
-            campaign_id=progress.campaign_id,
-            slot_name=slot_name,
-            arc_index=progress.arc_index,
-            session_index=progress.session_index,
-            turn_in_session=0,
-            fsm_state=str(fsm.state) if fsm.state else "idle",
-            revealed_anchors=progress.revealed_anchors,
-            completed_arcs=progress.completed_arcs,
-        )
+        if persist:
+            self.persistence.save(
+                campaign_id=progress.campaign_id,
+                slot_name=slot_name,
+                arc_index=progress.arc_index,
+                session_index=progress.session_index,
+                turn_in_session=0,
+                fsm_state=str(fsm.state) if fsm.state else "idle",
+                revealed_anchors=progress.revealed_anchors,
+                completed_arcs=progress.completed_arcs,
+            )
         return recap
 
     async def advance_arc(
@@ -140,6 +156,8 @@ class CampaignSessionAdvancer:
         fsm: Any,
         slot_name: str,
         pending_messages: list[dict[str, str]] | None = None,
+        *,
+        persist: bool = True,
     ) -> str:
         """Advance to next arc. Returns recap text."""
         if progress is None or campaign is None:
@@ -168,14 +186,15 @@ class CampaignSessionAdvancer:
         progress.session_index = 0
         progress.turn_in_session = 0
         progress.completed_arcs.append(progress.arc_index - 1)
-        self.persistence.save(
-            campaign_id=progress.campaign_id,
-            slot_name=slot_name,
-            arc_index=progress.arc_index,
-            session_index=0,
-            turn_in_session=0,
-            fsm_state=str(fsm.state) if fsm.state else "idle",
-            revealed_anchors=progress.revealed_anchors,
-            completed_arcs=progress.completed_arcs,
-        )
+        if persist:
+            self.persistence.save(
+                campaign_id=progress.campaign_id,
+                slot_name=slot_name,
+                arc_index=progress.arc_index,
+                session_index=0,
+                turn_in_session=0,
+                fsm_state=str(fsm.state) if fsm.state else "idle",
+                revealed_anchors=progress.revealed_anchors,
+                completed_arcs=progress.completed_arcs,
+            )
         return recap

@@ -75,9 +75,9 @@ class PostGenerationMixin:
             **metrics,
         )
 
-        # Unified advance — no duplication
+        # Unified advance — no duplication; all deferred to the node commit
         if output.game_over and campaign_manager is not None and campaign_manager.is_loaded():
-            campaign_manager.end_campaign()
+            campaign_manager.end_campaign(persist=False)
         else:
             await self._advance_campaign(campaign_manager, [
                 {"role": "user", "content": request.player_action},

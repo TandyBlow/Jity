@@ -36,15 +36,27 @@ class RecapAdvancerFacade:
 
     # ── Session advancement ──────────────────────────────────────────
 
-    def advance_turn(self) -> int:
-        return self._advancer.advance_turn(self.progress, self.fsm, self.slot_name)
+    def advance_turn(self, *, persist: bool = True) -> int:
+        return self._advancer.advance_turn(self.progress, self.fsm, self.slot_name, persist=persist)
 
-    async def advance_session(self, pending_messages: list[dict[str, str]] | None = None) -> str:
+    async def advance_session(
+        self,
+        pending_messages: list[dict[str, str]] | None = None,
+        *,
+        persist: bool = True,
+    ) -> str:
         return await self._advancer.advance_session(
-            self.campaign, self.progress, self.fsm, self.slot_name, pending_messages
+            self.campaign, self.progress, self.fsm, self.slot_name, pending_messages,
+            persist=persist,
         )
 
-    async def advance_arc(self, pending_messages: list[dict[str, str]] | None = None) -> str:
+    async def advance_arc(
+        self,
+        pending_messages: list[dict[str, str]] | None = None,
+        *,
+        persist: bool = True,
+    ) -> str:
         return await self._advancer.advance_arc(
-            self.campaign, self.progress, self.fsm, self.slot_name, pending_messages
+            self.campaign, self.progress, self.fsm, self.slot_name, pending_messages,
+            persist=persist,
         )

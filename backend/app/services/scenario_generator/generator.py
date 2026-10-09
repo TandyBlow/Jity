@@ -142,18 +142,25 @@ class ScenarioGenerator(
         )
 
         progress_snapshot = self._campaign_progress_snapshot(session_id, campaign_manager)
-        timeline_node_id = self.db.commit_story_turn(
-            session_id=session_id,
-            expected_parent_id=parent_turn_id,
-            player_action=request.player_action,
-            output=output.model_dump(),
-            state=next_state,
-            campaign_progress=progress_snapshot,
-            model=model,
-            source=source,
-            model_output_id=output_id,
-            campaign_session_index=_csi,
-        )
+        try:
+            timeline_node_id = self.db.commit_story_turn(
+                session_id=session_id,
+                expected_parent_id=parent_turn_id,
+                player_action=request.player_action,
+                output=output.model_dump(),
+                state=next_state,
+                campaign_progress=progress_snapshot,
+                model=model,
+                source=source,
+                model_output_id=output_id,
+                campaign_session_index=_csi,
+            )
+        except Exception:
+            # Advancement was in-memory only; drop it so a retried request
+            # starts from persisted truth instead of double-advancing.
+            if campaign_manager is not None and campaign_manager.is_loaded():
+                campaign_manager.reload_runtime_state()
+            raise
 
         sanitized = self.state_manager.sanitize_state(next_state)
         serialized = output.model_dump()
@@ -190,14 +197,19 @@ class ScenarioGenerator(
         campaign_manager: CampaignManager | None,
         pending_messages: list[dict[str, str]] | None = None,
     ) -> None:
-        """Commit anchors, advance turn, maybe advance session — exactly once."""
+        """Commit anchors, advance turn, maybe advance session — exactly once.
+
+        All advancement is in-memory only: the turn path persists progress
+        inside the commit_story_turn transaction, so a failed node commit
+        leaves nothing advanced on disk.
+        """
         if campaign_manager is None or not campaign_manager.is_loaded():
             return
-        campaign_manager.commit_pending_anchors()
-        turn_in_session = campaign_manager.advance_turn()
+        campaign_manager.commit_pending_anchors(persist=False)
+        turn_in_session = campaign_manager.advance_turn(persist=False)
         max_turns = campaign_manager.resolve_max_turns()
         if turn_in_session >= max_turns:
-            await campaign_manager.advance_session(pending_messages)
+            await campaign_manager.advance_session(pending_messages, persist=False)
 
     # ── Error storage helper ──────────────────────────────────────────
 
@@ -234,10 +246,9 @@ class ScenarioGenerator(
     ) -> dict:
         if campaign_manager is None or not campaign_manager.is_loaded() or campaign_manager.progress is None:
             return {}
-        row = self.db.read_campaign_progress(
-            campaign_manager.progress.campaign_id, campaign_manager.slot_name
-        ) or {}
-        return dict(row)
+        # In-memory values: on the deferred path they are ahead of the row
+        # until commit_story_turn writes them.
+        return campaign_manager.progress_snapshot()
 
     def invalidate_timeline_caches(self, session_id: str, slot_name: str = "default") -> None:
         """Discard branch-local in-memory state after activating a snapshot."""
