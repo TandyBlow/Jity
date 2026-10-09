@@ -1,0 +1,39 @@
+{
+  "version": 3,
+  "title": "预算五回合测试",
+  "core_conflict": "在五回合内查明旧灯塔的灯为何重新亮起",
+  "constraints": "节奏紧凑；每回合推进一步；结局必须收束灯塔之谜",
+  "max_turns_per_campaign": 5,
+  "starting_state": {"health": 80, "sanity": 60},
+  "arcs": [
+    {
+      "name": "亮起的灯塔",
+      "goal": "查明灯塔亮起的原因",
+      "sessions": [
+        {
+          "name": "抵达",
+          "opening_scene": "黄昏，你踩着碎石路走到旧灯塔下。门虚掩着，里面传来缓慢的钟摆声。海风把咸味压进衣领，你握紧了口袋里那把黄铜钥匙。",
+          "entry_state": {"location": "灯塔门廊", "items": ["黄铜钥匙"], "quests": ["查明灯塔亮起的原因"], "world_facts_summary": ["这座灯塔废弃了十年"]},
+          "anchor_events": []
+        },
+        {
+          "name": "灯塔内部",
+          "opening_scene": "你推开灯塔的门。旋转楼梯盘旋向上，油灯的火苗在无风的房间里晃了一下，像是有人刚刚走过。",
+          "entry_state": {"location": "灯塔一层", "items": ["黄铜钥匙"]},
+          "anchor_events": []
+        }
+      ]
+    }
+  ],
+  "ending_routes": [
+    {
+      "id": "lighthouse-truth",
+      "name": "灯塔的真相",
+      "category": "true",
+      "requirements": ["查明灯塔亮起的原因"],
+      "trigger_phrases": [],
+      "resolution": "你揭开了灯塔重新亮起的秘密：守塔人的遗嘱委托灯焰代守到船队归港。",
+      "epilogue": "灯还亮着，但你已经知道为什么。"
+    }
+  ]
+}
