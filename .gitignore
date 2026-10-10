@@ -107,6 +107,7 @@ WorkAssignment.*
 frontend/scripts/_hpc_*
 frontend/scripts/_crf_slurm.sh
 artifacts/benchmark/_torch_wheels/
+artifacts/benchmark/_torch_wheels*.tar.gz
 artifacts/benchmark/_crf_run*.tar.gz
 
 # === OS / editor ===
