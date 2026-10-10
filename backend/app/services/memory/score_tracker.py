@@ -39,35 +39,56 @@ class ScoreTracker:
 
     def canonical_name(self, name: str) -> str:
         key = self.normalize_name(name)
+        if key in self._items:
+            return key
         return self._aliases.get(key, key)
+
+    def _register_alias(self, alias: str, name: str) -> None:
+        key = self.normalize_name(alias)
+        if not key or key in self._items:
+            return
+        previous = self._aliases.get(key)
+        self._aliases[key] = name if previous is None or previous == name else ""
 
     def resolve_item(self, item: dict[str, Any]) -> str:
         name = self.canonical_name(item.get("name", ""))
+        if not name:
+            return ""
         known = {self.canonical_name(alias) for alias in item.get("aliases", [])}
         known.intersection_update(self._items)
+        if name not in self._items and len(known) > 1:
+            return ""
         if name not in self._items and len(known) == 1:
             name = known.pop()
         for alias in [item.get("name", ""), *item.get("aliases", [])]:
-            key = self.normalize_name(alias)
-            if key and key not in self._items:
-                self._aliases.setdefault(key, name)
+            self._register_alias(alias, name)
         return name
 
     def seed(self, items: list[dict[str, Any]], turn: int) -> None:
+        # Inventory entries define identities. Register aliases only after all
+        # names are known so a shared alias never merges distinct items.
         for item in items:
-            name = self.resolve_item(item)
+            name = self.normalize_name(item.get("name", ""))
+            if not name:
+                continue
+            if name not in self._items:
+                self._items[name] = ItemStateRecord(
+                    item_name=name, state=self._status_to_state(item.get("status", "owned")),
+                    last_seen_turn=turn,
+                )
+        for item in items:
+            name = self.normalize_name(item.get("name", ""))
             if not name:
                 continue
             for alias in item.get("aliases", []):
-                self._aliases.setdefault(self.normalize_name(alias), name)
-            self.get_or_create(name, turn, self._status_to_state(item.get("status", "owned")))
+                self._register_alias(alias, name)
 
     def reconcile_inventory(self, items: list[dict[str, Any]]) -> list[dict[str, Any]]:
         inventory = {}
         for item in items:
             name = self.canonical_name(item.get("name", ""))
             record = self.get_record(name)
-            if name and (record is None or record.state not in (ItemState.LOST, ItemState.DESTROYED)):
+            if name and (record is None or record.state not in (ItemState.LOST, ItemState.DESTROYED, ItemState.CONSUMED)):
                 inventory[name] = {**item, "name": name}
         return list(inventory.values())
 
@@ -103,7 +124,7 @@ class ScoreTracker:
                 violations.append({"item_name": name, "accepted_state": accepted.value, "turn": turn})
                 return None
             item["status"] = "owned" if accepted == ItemState.ACTIVE else accepted.value
-            if accepted in (ItemState.LOST, ItemState.DESTROYED):
+            if accepted in (ItemState.LOST, ItemState.DESTROYED, ItemState.CONSUMED):
                 removals.append(item)
                 return None
             return item
@@ -144,6 +165,14 @@ class ScoreTracker:
         item_name = self.canonical_name(item_name)
         record = self.get_or_create(item_name, turn)
         prev = record.state
+        # Consumption is irreversible for this identity, even with repaired.
+        if prev == ItemState.CONSUMED:
+            return prev, proposed_state == ItemState.ACTIVE
+        if proposed_state == ItemState.CONSUMED:
+            self._items[item_name] = record.model_copy(
+                update={"state": proposed_state, "last_seen_turn": turn}
+            )
+            return proposed_state, False
         if prev == ItemState.DESTROYED and proposed_state != ItemState.ACTIVE:
             return prev, False
         if prev == ItemState.LOST and proposed_state == ItemState.UNKNOWN:
@@ -250,13 +279,15 @@ class ScoreTracker:
             "missing": ItemState.LOST,
             "destroyed": ItemState.DESTROYED,
             "broken": ItemState.DESTROYED,
-            "used": ItemState.DESTROYED,
+            "used": ItemState.CONSUMED,
+            "consumed": ItemState.CONSUMED,
+            "discarded": ItemState.LOST,
             "unknown": ItemState.UNKNOWN,
             "observed": ItemState.ACTIVE,
             "遗失": ItemState.LOST,
             "丢失": ItemState.LOST,
             "损毁": ItemState.DESTROYED,
             "销毁": ItemState.DESTROYED,
-            "消耗": ItemState.DESTROYED,
+            "消耗": ItemState.CONSUMED,
         }
         return mapping.get(status.strip().casefold(), ItemState.ACTIVE)

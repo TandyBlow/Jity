@@ -9,6 +9,7 @@ import re
 from typing import Any
 
 from app.schemas.agent_io import ActionPermissibility, ActionRuling, TriggeredRule
+from app.services.memory.score_tracker import ScoreTracker
 
 _PASSIVE_CONTINUATION_RE = re.compile(
     r"^\s*(?:继续|继续剧情|继续故事|接着|接着讲|接着说)[。.!！?？…]*\s*$"
@@ -69,6 +70,19 @@ def _resolve_name(name: str) -> str:
     return name
 
 
+def _resolve_item(name: str, entries: list[dict]) -> tuple[dict | None, bool]:
+    """Resolve explicit identities before aliases; never choose a shared alias."""
+    key = ScoreTracker.normalize_name(name)
+    valid = [entry for entry in entries if isinstance(entry, dict) and entry.get("name")]
+    exact = [entry for entry in valid if ScoreTracker.normalize_name(entry["name"]) == key]
+    matches = exact or [entry for entry in valid if any(
+        ScoreTracker.normalize_name(alias) == key for alias in entry.get("aliases", [])
+    )]
+    if len(matches) != 1:
+        return None, len(matches) > 1
+    return matches[0], False
+
+
 _SHARED_SCENE_ROOTS = ("红井", "钟楼", "青铜城", "尼伯龙根", "高架桥")
 
 
@@ -93,7 +107,7 @@ class ExaminerAgent:
         if is_passive_continuation_action(player_action):
             return ActionRuling()
         action = _active_clauses(player_action)
-        items = _entities(game_state, "items")
+        items = game_state.get("items", [])
         npcs = _entities(game_state, "npcs")
         location = game_state.get("current_location", "")
         failures: list[str] = []
@@ -104,8 +118,10 @@ class ExaminerAgent:
             # Abilities and body parts are not inventory items.
             if name.startswith("言灵") or name in {"技能", "双手", "手", "拳头", "力气", "全力"}:
                 continue
-            item = items.get(name)
-            if item is None or item.get("status", "owned") not in _OWNED:
+            item, ambiguous = _resolve_item(name, items)
+            if ambiguous:
+                failures.append(f"“{name}”对应多个物品，请使用明确的物品名称。")
+            elif item is None or item.get("status", "owned") not in _OWNED:
                 failures.append(f"你目前没有可用的“{name}”，无法使用它。")
             else:
                 rules.append(TriggeredRule(rule_type="item_use", rule_name=f"使用物品：{name}"))

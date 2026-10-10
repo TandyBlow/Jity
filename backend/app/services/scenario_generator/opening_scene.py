@@ -33,9 +33,8 @@ class OpeningSceneMixin:
             reset_scene_context=is_session_transition,
         )
         if is_session_transition:
-            # The controller contains raw turns, summaries and persona sketches
-            # from the previous scene.  The campaign recap is the deliberate
-            # cross-session continuity channel; start a fresh short-term cache.
+            # Reload the preserved branch snapshot after resetting scene lists.
+            # Past evidence remains available alongside the campaign recap.
             self.invalidate_timeline_caches(session_id, campaign_manager.slot_name)
 
         # Asked for before anything is written, so a failure below leaves the turn

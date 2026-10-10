@@ -14,6 +14,7 @@ class ItemState(str, Enum):
     ACTIVE = "active"
     LOST = "lost"
     DESTROYED = "destroyed"
+    CONSUMED = "consumed"
     UNKNOWN = "unknown"
 
 

@@ -193,7 +193,7 @@ def _style_and_rules(input: PromptInput) -> str:
         '  "quests_updated": [{"name": "任务名", "status": "active", "description": "任务说明"}],\n'
         '  "memory_updates": {\n'
         '    "current_location": "只在地点变化或需要确认当前位置时填写",\n'
-        '    "items_upserted": [{"name": "物品名", "status": "owned|lost|observed|used", "description": "稳定说明", "location": "所在位置", "notes": "当前备注"}],\n'
+        '    "items_upserted": [{"name": "物品名", "status": "owned|lost|observed|consumed|destroyed|discarded", "description": "稳定说明", "location": "所在位置", "notes": "当前备注"}],\n'
         '    "items_removed": [{"name": "物品名", "status": "lost", "description": "移除原因"}],\n'
         '    "npcs_upserted": [{"name": "NPC名", "status": "present|following|away|unknown", "relationship": "与玩家关系或态度", "current_location": "当前位置", "description": "稳定身份", "notes": "本回合变化"}],\n'
         '    "quests_upserted": [{"name": "任务名", "status": "active|completed|failed|paused", "description": "稳定说明", "objective": "当前目标", "notes": "本回合变化"}],\n'
