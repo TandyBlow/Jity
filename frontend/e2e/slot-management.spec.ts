@@ -1,6 +1,29 @@
 import { expect, test } from "@playwright/test";
 import { SESSION_ID, installApiMocks, saveSlots, seedSession, timelineNodeDetail } from "./fixtures";
 
+test("timeline comparison, recorded prompt and restoration remain usable", async ({ page }) => {
+  await seedSession(page);
+  await installApiMocks(page);
+  await page.route(`**/sessions/${SESSION_ID}/timeline/3`, route => route.fulfill({ json: {
+    ...timelineNodeDetail, id: 3, state: { ...timelineNodeDetail.state, items: [] },
+  } }));
+  let activated = false;
+  await page.route(`**/sessions/${SESSION_ID}/timeline/3/activate`, route => {
+    activated = true;
+    return route.fulfill({ json: { status: "activated", active_turn_id: 3 } });
+  });
+  await page.goto(`/timeline?session=${SESSION_ID}`);
+  await expect(page.getByRole("button", { name: "设为对比基准" })).toBeVisible();
+  await page.getByRole("button", { name: "设为对比基准" }).click();
+  await page.locator('[data-node-id="3"]').click();
+  await expect(page.locator(".node-compare")).toContainText("物品");
+  await page.getByText("实际发出的 prompt 全文", { exact: true }).click();
+  await expect(page.locator(".turn-context-prompt pre")).toContainText("导演指令");
+  await page.getByRole("button", { name: "从此处继续" }).click();
+  await expect(page).toHaveURL(/\/$/);
+  expect(activated).toBe(true);
+});
+
 for (const viewport of [{ width: 1536, height: 730 }, { width: 390, height: 844 }]) {
   test(`slot deletion is explicit and isolated at ${viewport.width}px`, async ({ page }) => {
     await page.setViewportSize(viewport);

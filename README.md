@@ -2,7 +2,7 @@
 
 Jity 是一个 AI 驱动的中文文字跑团项目。FastAPI 后端负责会话状态、知识库检索、提示词组装、LLM 调用和战役数据管理；Next.js 前端提供游戏控制台、战役编辑器和剧情时间线。
 
-Campaign Narrative Engine 使用结构化的 Arc、Session 和 Anchor Event 约束长篇剧情走向；剧情时间线会为每个回合保存不可变快照，允许恢复任意历史节点并从该节点建立新分支。
+Campaign Narrative Engine 使用结构化的 Arc、Session 和 Anchor Event 约束长篇剧情走向；剧情时间线为每个回合保存分支快照，允许恢复历史节点并建立新分支。后台摘要只在活动节点和版本仍匹配时补齐该快照的记忆字段，不改写剧情正文。
 
 ## 主要功能
 
@@ -152,7 +152,7 @@ PROMPT_LOG_DIR=data/prompt_logs
 如需为论文分析归档所有生成式 API 的完整 Prompt，将
 `PROMPT_LOGGING_ENABLED` 改为 `true` 并重启后端。每次文本或图片生成请求会在
 `PROMPT_LOG_DIR/YYYY-MM-DD/` 下保存一个 JSON 文件；终端只显示文件路径。
-归档失败只会记录 warning，不会中断游戏。Embedding 输入、固定开场和图片缓存命中不会生成记录。
+归档失败只会记录 warning，不会中断游戏。Embedding 输入、固定开场正文和图片缓存命中不会生成记录；固定开场选项的模型调用仍会记录。
 
 启动服务：
 
@@ -213,10 +213,11 @@ Campaign
 - `POST /campaigns/save`：保存编辑后的 Campaign。
 - `POST /campaigns/generate`：根据提示词生成 Campaign。
 - `POST /campaigns/generate-from-novel`：从 TXT 小说生成 Campaign。
-- `POST /sessions`：创建自由模式或 Campaign 会话。
+- `POST /sessions`：创建 Campaign 会话，省略文件名时使用默认战役；旧自由会话仍可读取但不能生成。
 - `POST /sessions/{session_id}/generate`：生成下一幕。
 - `GET /campaigns/slots`：列出存档，可通过 `session_id` 筛选。
 - `POST /campaigns/slots/{slot_id}/load`：加载存档及其时间线节点。
+- `DELETE /campaigns/slots/{slot_id}`：仅删除指定存档槽；不存在返回 404，活动槽返回 409，不删除会话或共享节点。
 - `GET /sessions/{session_id}/progress`：读取 Campaign 进度。
 - `GET /sessions/{session_id}/timeline`：读取完整剧情分支树和当前路径。
 - `GET /sessions/{session_id}/timeline/{node_id}`：读取节点的剧情、状态和 Campaign 快照。

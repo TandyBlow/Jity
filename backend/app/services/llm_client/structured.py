@@ -35,6 +35,8 @@ class StructuredGenerationMixin:
                 purpose=purpose,
                 context=context,
             )
+        except LLMOutputParseError:
+            raise
         except Exception as exc:
             latency_ms = int((time.perf_counter() - started) * 1000)
             raise LLMRequestError(
@@ -74,6 +76,8 @@ class StructuredGenerationMixin:
                 purpose=purpose,
                 context=context,
             )
+        except LLMOutputParseError:
+            raise
         except Exception as exc:
             latency_ms = int((time.perf_counter() - started) * 1000)
             raise LLMRequestError(

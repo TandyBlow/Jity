@@ -2,11 +2,14 @@
 
 import json
 from types import SimpleNamespace
+from unittest.mock import AsyncMock
 
 import pytest
 
 from app.schemas import StoryOutput
 from app.schemas.campaign import EndingRoute
+from app.schemas.agent_io import ItemState, OpeningOptions
+from app.services.memory.memory_controller import MemoryController
 from app.services.agents.examiner import ExaminerAgent
 from app.services.campaign_endings import select_budget_ending
 from app.repositories.campaign_progress import CampaignProgressRepository
@@ -96,3 +99,42 @@ async def test_slot_copy_keeps_budget_and_delete_keeps_shared_history(tmp_path):
     assert repo.delete_slot_by_id(original["id"]) is None
     with pytest.raises(ValueError, match="当前存档不可删除"):
         repo.delete_slot_by_id(copied["id"])
+
+
+@pytest.mark.asyncio
+async def test_chapter_opening_does_not_revive_consumed_entry_item(tmp_path):
+    h = Harness(tmp_path)
+    h.manager.progress.session_index = 1
+    h.manager.campaign.arcs[0].sessions[1].entry_state = {"location": "新的场景", "items": ["药剂"]}
+    h.manager.save_progress()
+    state = h.state_manager.get_session_payload(h.session_id)["state"]
+    state["turn"] = 2
+    memory = MemoryController(h.llm, h.db, h.session_id)
+    memory.score_tracker.seed([{"name": "药剂"}], 1)
+    memory.score_tracker.propose_transition("药剂", ItemState.CONSUMED, 2)
+    state["_memory_controller"] = memory.export_state()
+    h.state_manager.save_state(h.session_id, "test", "test", state)
+    h.db.update_active_turn_snapshot(h.session_id, state)
+    del h.gen._handle_opening_scene
+    h.gen._generate_opening_options = AsyncMock(return_value=OpeningOptions(
+        options=["观察", "继续", "等待"], option_checks=[None, None, None],
+    ))
+    response = await h.generate()
+    await h.gen._wait_memory(h.session_id)
+    assert response.source == "scripted"
+    assert all(item["name"] != "药剂" for item in response.state["items"])
+    saved = json.loads(h.db.get_story_turn(h.session_id, response.timeline_node_id)["state_json"])
+    assert saved["_memory_controller"]["score_tracker"][0]["state"] == "consumed"
+
+
+@pytest.mark.asyncio
+async def test_examiner_rejection_is_saved_once_in_memory(tmp_path):
+    from app.schemas import GenerateRequest
+    h = Harness(tmp_path)
+    response = await h.gen.generate(h.session_id, GenerateRequest(player_action="使用不存在的水晶球"))
+    await h.gen._wait_memory(h.session_id)
+    assert response.source == "examiner_blocked"
+    saved = json.loads(h.db.get_story_turn(h.session_id, response.timeline_node_id)["state_json"])
+    buffer = saved["_memory_controller"]["nsb"]["turn_buffer"]
+    assert len(buffer) == 1 and response.output.narration in buffer[0]
+    assert h.progress_row()["turns_total"] == 1

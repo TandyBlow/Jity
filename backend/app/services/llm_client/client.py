@@ -66,6 +66,8 @@ class LLMClient(JSONRepairMixin, StoryOutputNormalizer, StructuredGenerationMixi
                 purpose=purpose,
                 context=context,
             )
+        except LLMOutputParseError:
+            raise
         except Exception as exc:
             latency_ms = int((time.perf_counter() - started) * 1000)
             raise LLMRequestError(
@@ -148,6 +150,11 @@ class LLMClient(JSONRepairMixin, StoryOutputNormalizer, StructuredGenerationMixi
         }
         if _json_object:
             kwargs["response_format"] = {"type": "json_object"}
+        # Small auxiliary budgets are for the JSON/text answer, not hidden
+        # reasoning. New DeepSeek Flash/Pro defaults may spend that entire
+        # budget thinking and leave an empty or truncated answer.
+        if max_tokens <= 2000 and model in {"deepseek-v4-flash", "deepseek-flash", "deepseek-v4-pro"}:
+            kwargs["extra_body"] = {"thinking": {"type": "disabled"}}
         await self.prompt_recorder.record(
             purpose=purpose,
             api_type="chat.completions",
@@ -157,4 +164,13 @@ class LLMClient(JSONRepairMixin, StoryOutputNormalizer, StructuredGenerationMixi
             context=context,
         )
         response = await self.client.chat.completions.create(**kwargs)
-        return response.choices[0].message.content or ""
+        choice = response.choices[0]
+        content = choice.message.content or ""
+        if getattr(choice, "finish_reason", None) == "length":
+            # json_repair can turn a cut-off object into valid JSON. Never let
+            # that consume the complete source buffer or commit partial state.
+            raise LLMOutputParseError(
+                "模型输出达到 token 上限而被截断，请重试；未接受不完整结果。",
+                raw_output=content, cleaned_output=content, latency_ms=0,
+            )
+        return content
