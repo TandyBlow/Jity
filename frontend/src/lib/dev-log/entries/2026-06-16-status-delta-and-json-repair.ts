@@ -4,11 +4,11 @@ export const entry: DevLogEntry = {
     id: "2026-06-16-status-delta-and-json-repair",
     date: "2026-06-16",
     title: "状态变化提示、血统稳定恢复和 JSON 修复",
-    summary: "增强游戏回合反馈和 AI 输出可靠性：前端直接提示本回合血统稳定/体力变化，后端统一处理血统稳定的自动恢复，并为模型 JSON 输出增加强制格式和二次修复。",
+    summary: "增强游戏回合反馈和 AI 输出可靠性：前端直接提示本回合血统稳定/血条变化，后端统一处理血统稳定的自动恢复，并为模型 JSON 输出增加强制格式和二次修复。",
     developer: "Codex",
     areas: ["backend", "frontend", "llm", "game-state"],
     changes: [
-      "在主控制台剧情选项前新增状态变化提示，显示血统稳定和体力的本回合增减及对应原因说明。",
+      "在主控制台剧情选项前新增状态变化提示，显示血统稳定和血条的本回合增减及对应原因说明。",
       "新增状态提示样式，区分损耗和恢复，让玩家更容易理解行动代价。",
       "后端状态合并时加入每回合 2 点血统稳定自动恢复，并在提示词中说明模型不要把自动恢复写入 sanity_delta。",
       "LLM 请求改用 response_format=json_object，并把最大输出 token 提升到 5000，减少剧情 JSON 被截断的概率。",

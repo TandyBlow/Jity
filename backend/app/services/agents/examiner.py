@@ -9,6 +9,7 @@ import re
 from typing import Any
 
 from app.schemas.agent_io import ActionPermissibility, ActionRuling, TriggeredRule
+from app.services.memory.score_tracker import ScoreTracker
 
 _PASSIVE_CONTINUATION_RE = re.compile(
     r"^\s*(?:继续|继续剧情|继续故事|接着|接着讲|接着说)[。.!！?？…]*\s*$"
@@ -97,6 +98,35 @@ def _resolve_name(name: str) -> str:
     return name
 
 
+def _resolve_item(name: str, entries: list[dict]) -> tuple[dict | None, bool, int]:
+    """Resolve identities/aliases and return the source-text span to mask.
+
+    Exact identities win. Only then consider explicit aliases or the longest
+    known prefix (the action regex may have captured a trailing verb).
+    Shared aliases never choose an arbitrary inventory entry.
+    """
+    normalize = ScoreTracker.normalize_name
+    key = normalize(name)
+    valid = [entry for entry in entries if isinstance(entry, dict) and entry.get("name")]
+    candidates = [(entry, normalize(entry["name"])) for entry in valid]
+    exact = [(entry, token) for entry, token in candidates if token == key]
+    aliases = [(entry, normalize(alias)) for entry in valid for alias in entry.get("aliases", []) if normalize(alias)]
+    matches = exact or [(entry, token) for entry, token in aliases if token == key]
+    if not matches:
+        prefixes = [(entry, token) for entry, token in candidates + aliases if token and key.startswith(token)]
+        longest = max((len(token) for _, token in prefixes), default=0)
+        prefixes = [(entry, token) for entry, token in prefixes if len(token) == longest]
+        identities = [(entry, token) for entry, token in prefixes if normalize(entry["name"]) == token]
+        matches = identities or prefixes
+    unique = {normalize(entry["name"]): (entry, token) for entry, token in matches}
+    if len(unique) != 1:
+        return None, len(unique) > 1, 0
+    entry, token = next(iter(unique.values()))
+    # Normalization can change width/spacing; mask only the matched source span.
+    length = next((i for i in range(1, len(name) + 1) if normalize(name[:i]) == token), len(name))
+    return entry, False, length
+
+
 def _same_scene(left: str, right: str) -> bool:
     """Treat named subareas of the same encounter as mutually reachable."""
     if not left or not right:
@@ -105,17 +135,6 @@ def _same_scene(left: str, right: str) -> bool:
         return True
     shared = {token for token in re.split(r"[的中内外上下前后入口核心王座仪式场]+", left) if len(token) >= 2}
     return any(token in right for token in shared)
-
-
-def _resolve_item(name: str, items: dict[str, dict]) -> str | None:
-    # Exact match first; a trailing verb absorbed into the capture may still
-    # name a known item ("银色徽章给门卫看" → 银色徽章).
-    if name in items:
-        return name
-    for known in sorted(items, key=len, reverse=True):
-        if name.startswith(known):
-            return known
-    return None
 
 
 # Abilities and effort references are never inventory items ("使用言灵…",
@@ -141,38 +160,27 @@ class ExaminerAgent:
         if is_passive_continuation_action(player_action):
             return ActionRuling()
         action = _active_clauses(player_action)
-        items = _entities(game_state, "items")
+        items = game_state.get("items", [])
         npcs = _entities(game_state, "npcs")
         location = game_state.get("current_location", "")
         failures: list[str] = []
         rules: list[TriggeredRule] = []
 
-        item_matches = list(_ITEM_USE.finditer(action))
         item_spans = []
-        for match in item_matches:
+        for match in _ITEM_USE.finditer(action):
             raw = match["name"]
             name = _resolve_name(raw)
             if _is_ability(name):
                 continue
-            key = _resolve_item(name, items)
-            if key is None:
-                # Unknown item: it fails below, and a blocked verdict never
-                # consults rules, so no mask is needed.
-                continue
-            # Mask only the resolved item's own text. Masking the whole
-            # capture would hide trailing actions swallowed into the name
-            # ("用鱼叉反击敌人" must still trigger combat).
-            base = match.start("name") + (len(raw) - len(name))
-            item_spans.append((base, base + len(key)))
-        for match in item_matches:
-            name = _resolve_name(match["name"])
-            if _is_ability(name):
-                continue
-            key = _resolve_item(name, items)
-            if key is None or items[key].get("status", "owned") not in _OWNED:
+            item, ambiguous, length = _resolve_item(name, items)
+            if ambiguous:
+                failures.append(f"“{name}”对应多个物品，请使用明确的物品名称。")
+            elif item is None or item.get("status", "owned") not in _OWNED:
                 failures.append(f"你目前没有可用的“{name}”，无法使用它。")
             else:
-                rules.append(TriggeredRule(rule_type="item_use", rule_name=f"使用物品：{key}"))
+                rules.append(TriggeredRule(rule_type="item_use", rule_name=f"使用物品：{item['name']}"))
+                base = match.start("name") + (len(raw) - len(name))
+                item_spans.append((base, base + length))
 
         targets = {m["name"] for pattern in (_NPC_INTERACTION, _DIRECT_NPC) for m in pattern.finditer(action)}
         # Known NPCs can also be the target of a longer sentence.

@@ -99,12 +99,18 @@ async def test_failure_before_node_commit_discards_all_runtime_changes(tmp_path,
 @pytest.mark.asyncio
 async def test_memory_maintenance_starts_after_a_successful_node_commit(tmp_path, monkeypatch):
     h = Harness(tmp_path)
-    memory = h.gen._get_memory_controller.return_value
+    from app.services.memory.memory_controller import MemoryController
+    live_memory = h.gen._get_memory_controller(h.session_id)
 
-    async def maintain(*args):
+    async def maintain(worker, *args, **kwargs):
+        assert worker is not live_memory
         assert h.progress_row()["turns_total"] == 1
         assert h.node_count() == 2
-    memory.maintain = AsyncMock(side_effect=maintain)
+    calls = []
+    async def checked_maintain(worker, *args, **kwargs):
+        calls.append(worker)
+        await maintain(worker, *args, **kwargs)
+    monkeypatch.setattr(MemoryController, "maintain", checked_maintain)
 
     original = h.gen._record_and_finalize
     with monkeypatch.context() as patch:
@@ -116,12 +122,12 @@ async def test_memory_maintenance_starts_after_a_successful_node_commit(tmp_path
         with pytest.raises(RuntimeError):
             await h.generate()
     await asyncio.sleep(0)
-    memory.maintain.assert_not_awaited()
+    assert calls == []
 
     await h.generate()
     if h.gen._memory_tasks:
         await asyncio.gather(*h.gen._memory_tasks)
-    memory.maintain.assert_awaited_once()
+    assert len(calls) == 1
 
 
 @pytest.mark.asyncio

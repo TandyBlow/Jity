@@ -17,14 +17,17 @@ const json = (route: Route, body: unknown) => route.fulfill({
   contentType: "application/json", body: JSON.stringify(body),
 });
 
-test("switching to free play hides the previous campaign while progress loads", async ({ page }) => {
+test("switching campaigns hides the previous campaign while progress loads", async ({ page }) => {
   await seedSession(page);
   await installApiMocks(page);
   await page.route(`**/sessions/${SESSION_ID}/progress`, route => json(route, progress));
-  const nextSession = "free-play-test-session";
+  const nextSession = "next-campaign-test-session";
   await page.route("**/sessions", route => json(route, {
-    ...sessionResponse, session_id: nextSession, campaign_filename: null,
+    ...sessionResponse, session_id: nextSession, campaign_filename: "black_moon_tide.json",
     active_turn_id: 99, state: { ...gameState, turn: 0 },
+  }));
+  await page.route(`**/sessions/${nextSession}/timeline/99`, route => json(route, {
+    ...timelineNodeDetail, id: 99,
   }));
   let release!: () => void;
   const delayed = new Promise<void>(resolve => { release = resolve; });
@@ -38,9 +41,9 @@ test("switching to free play hides the previous campaign while progress loads", 
   await expect(toolbar).toContainText("第 7 / 50 回合");
   await page.getByRole("button", { name: "设置" }).click();
   await expect(page.locator("#settings-campaign")).toBeEnabled();
-  await page.locator("#settings-campaign").selectOption("");
+  await page.locator("#settings-campaign").selectOption("black_moon_tide.json");
   try {
-    await expect(toolbar).toContainText("Session free-pla");
+    await expect(toolbar).toContainText("Session next-cam");
     await expect(toolbar).toContainText("Turn 0");
     await expect(toolbar).not.toContainText("第 7 / 50 回合");
   } finally {

@@ -9,7 +9,6 @@ from app.database import Database
 from app.schemas import StoryOutput
 
 from app.services.game_state.defaults import (
-    MAX_ITEMS,
     MAX_NPCS,
     MAX_QUESTS,
     MAX_WORLD_FACTS,
@@ -223,16 +222,17 @@ class GameStateManager(MemoryNormalizationMixin, StateInferenceMixin, EntryState
     def sanitize_state(state: dict[str, Any]) -> dict[str, Any]:
         """Remove server-only state before returning a response to the client."""
         state.pop("_memory_controller", None)
+        state.pop("_campaign_session_index", None)
         return state
 
     @staticmethod
     def enforce_state_caps(state: dict[str, Any]) -> dict[str, Any]:
         """Apply defensive caps to prevent 270-turn state bloat.
 
-        Caps: 20 items, 15 NPCs, 10 quests, 15 world_facts.
+        Caps: 15 NPCs, 10 quests, 15 world_facts.
+        Inventory is authoritative and must not silently drop acquired items.
         Excess entries are trimmed from the end (FIFO — oldest first kept).
         """
-        state["items"] = state.get("items", [])[:MAX_ITEMS]
         state["npcs"] = state.get("npcs", [])[:MAX_NPCS]
         state["quests"] = state.get("quests", [])[:MAX_QUESTS]
         state["world_facts"] = state.get("world_facts", [])[:MAX_WORLD_FACTS]

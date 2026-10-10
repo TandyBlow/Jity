@@ -9,6 +9,8 @@ export type ItemMemory = {
   description?: string;
   location?: string;
   notes?: string;
+  aliases?: string[];
+  transition?: "" | "recovered" | "repaired";
 };
 
 export type NPCMemory = {
@@ -151,7 +153,7 @@ export type GenerateResponse = {
   /** This turn's declaration folded and checked against the state it produced. */
   memory: MemoryTraceEntry;
   declared: DeclaredMemory;
-  caps: Record<MemoryCategory, number>;
+  caps: Record<MemoryCategory, number | null>;
   campaign_progress: CampaignProgressSummary | null;
 };
 
@@ -221,7 +223,7 @@ export type TimelineNodeDetail = {
   campaign_progress: Record<string, unknown>;
   context: TurnContext;
   /** Category limits, so a full category can be told apart from a quiet one. */
-  caps: Record<MemoryCategory, number>;
+  caps: Record<MemoryCategory, number | null>;
   /**
    * The turn's declaration in merge order, exactly as the server folds it.
    * Server-derived for the same reason `memory` is.
@@ -255,7 +257,7 @@ export type MemoryTraceNode = MemoryTraceEntry & {
 
 export type MemoryTraceResponse = {
   session_id: string;
-  caps: Record<MemoryCategory, number>;
+  caps: Record<MemoryCategory, number | null>;
   nodes: MemoryTraceNode[];
 };
 

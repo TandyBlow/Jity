@@ -14,6 +14,7 @@ class ItemState(str, Enum):
     ACTIVE = "active"
     LOST = "lost"
     DESTROYED = "destroyed"
+    CONSUMED = "consumed"
     UNKNOWN = "unknown"
 
 
@@ -42,6 +43,22 @@ class EpisodeSummary(BaseModel):
     state_changes: dict[str, str] = Field(default_factory=dict, description="e.g. {'线索.神秘信件': 'found'}")
     importance: float = Field(default=0.5, ge=0.0, le=1.0)
     level: int = Field(default=1, ge=1, le=3, description="1=raw对话, 2=一级摘要, 3=二级摘要")
+    source_ids: list[str] = Field(default_factory=list)
+    protected: bool = False
+
+
+class MemoryHit(BaseModel):
+    memory_id: str
+    summary: str
+    level: int
+    score: float
+    semantic_score: float = 0.0
+    entity_match: float = 0.0
+    importance: float = 0.0
+    recency: float = 0.0
+    reasons: list[str] = Field(default_factory=list)
+    turn_start: int
+    turn_end: int
 
 
 # ── MOOM Persona Construction Branch (PCB) ──────────────────────
@@ -95,6 +112,8 @@ class MemoryRecord(BaseModel):
     retrieved_rounds: list[int] = Field(default_factory=list)
     score: float = 0.0
     memory_type: str = Field(default="narrative", description="'narrative' or 'persona'")
+    inhibition: float = Field(default=1.0, ge=0.0, le=1.0)
+    protected: bool = False
 
 
 # ── HaluMem Evaluation ──────────────────────────────────────────

@@ -97,9 +97,13 @@ def load_slot(slot_id: int) -> dict[str, object]:
     }
 
 
-@router.delete("/{slot_name}")
-def delete_slot(slot_name: str) -> dict[str, object]:
-    """Delete a save slot by name."""
-    if not _repo.delete_slot(slot_name):
-        raise HTTPException(status_code=404, detail=f"Slot '{slot_name}' not found")
-    return {"status": "deleted", "slot_name": slot_name}
+@router.delete("/{slot_id}")
+def delete_slot(slot_id: int) -> dict[str, object]:
+    """Delete a save slot by id. The active slot of its session cannot be deleted."""
+    try:
+        progress = _repo.delete_slot_by_id(slot_id)
+    except ValueError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+    if not progress:
+        raise HTTPException(status_code=404, detail=f"Slot '{slot_id}' not found")
+    return {"status": "deleted", "slot_id": slot_id, "slot_name": progress["slot_name"]}

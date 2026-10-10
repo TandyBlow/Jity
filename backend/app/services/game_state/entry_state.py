@@ -31,7 +31,8 @@ class EntryStateMixin:
             # campaign recap.
             result["npcs"] = []
             result["recent_events"] = []
-            result.pop("_memory_controller", None)
+            # Keep branch-owned long-term evidence and unfinished summary input.
+            # Scene-local lists above reset; a chapter change is not forgetting.
             result["_scene_prompt"] = ""
         if initialize:
             # The free-play defaults describe a specific academy scene. A new

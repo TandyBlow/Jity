@@ -22,6 +22,7 @@ from app.schemas import StoryOutput
 from app.schemas.game.requests_responses import GenerateRequest
 from app.services.campaign_manager.facade import CampaignManager
 from app.services.game_state import GameStateManager
+from app.services.memory.memory_controller import MemoryController
 from app.services.scenario_generator.generator import ScenarioGenerator
 
 CAMPAIGN = Path(__file__).resolve().parents[1] / "data" / "campaigns" / "default_campaign.json"
@@ -50,6 +51,7 @@ class Harness:
         self.state_manager = GameStateManager(self.db)
         self.llm = MagicMock()
         self.llm.generate = AsyncMock(return_value=(_story_output(), 5))
+        self.llm.generate_json = AsyncMock(return_value={})
         self.manager = CampaignManager(
             db=self.db, campaigns_dir=tmp_path, scripted_story=None,
             prompt_builder=MagicMock(), llm_client=self.llm,
@@ -70,10 +72,11 @@ class Harness:
         ))
         # _apply_post_generation runs for real: the NPC relation overlay is
         # part of the consistency surface under test.
-        memory_ctrl = MagicMock()
-        memory_ctrl.export_state.return_value = {}
-        memory_ctrl.maintain = AsyncMock()
-        self.gen._get_memory_controller = MagicMock(return_value=memory_ctrl)
+        # Exercise the actual versioned snapshot lifecycle, including fresh
+        # controllers after failures/restores and independent maintenance workers.
+        self.gen._memory_controllers[self.session_id] = MemoryController(
+            self.llm, self.db, self.session_id,
+        )
 
     def set_narration_delta(self, delta: list[dict]) -> None:
         """Make the stubbed narrator report an NPC relation delta this turn."""

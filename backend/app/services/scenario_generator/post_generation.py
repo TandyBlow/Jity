@@ -60,6 +60,7 @@ class PostGenerationMixin:
         # (turn_in_session + turns_total); only the session/arc advance is
         # skipped, since end_campaign closes the campaign instead.
         if output.game_over and campaign_manager is not None and campaign_manager.is_loaded():
+            campaign_manager.commit_pending_anchors(persist=False)
             campaign_manager.advance_turn(persist=False)
             campaign_manager.end_campaign(persist=False)
         else:

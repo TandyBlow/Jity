@@ -14,6 +14,8 @@ class ItemMemory(BaseModel):
     description: str = ""
     location: str = ""
     notes: str = ""
+    aliases: list[str] = Field(default_factory=list)
+    transition: str = Field(default="", description="Use recovered or repaired only for an explicit restoration in this turn")
 
 
 class NPCMemory(BaseModel):

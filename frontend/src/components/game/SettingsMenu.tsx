@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ChevronDown, History, MapPin, PenTool, Plus, RefreshCw, Settings, X } from "lucide-react";
+import { ChevronDown, History, MapPin, PenTool, Plus, RefreshCw, Settings, Trash2, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 import type { GameSession } from "@/components/game/useGameSession";
@@ -10,13 +10,19 @@ import { formatSlotTime } from "@/lib/game/format";
 export function SettingsMenu({ session }: { session: GameSession }) {
   const {
     sessionId, model, setModel, campaigns, selectedCampaign, handleCampaignChange,
-    slots, selectedSlotId, handleSlotChange, handleCreateSlot, handleNewSession,
+    slots, selectedSlotId, handleSlotChange, handleCreateSlot, handleDeleteSlot, handleNewSession,
   } = session;
   const [isOpen, setIsOpen] = useState(false);
   const [addingSlot, setAddingSlot] = useState(false);
   const [slotName, setSlotName] = useState("");
   const [slotError, setSlotError] = useState("");
   const menuRef = useRef<HTMLDivElement>(null);
+  const deleting = useRef(false);
+  const [managingSlots, setManagingSlots] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState<number | null>(null);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [deleteError, setDeleteError] = useState("");
+  const busy = session.isLoading || !!session.pendingGenerate || deletingId !== null;
 
   // Reopening the menu must not resurrect a half-typed name.
   useEffect(() => {
@@ -24,6 +30,9 @@ export function SettingsMenu({ session }: { session: GameSession }) {
     setAddingSlot(false);
     setSlotName("");
     setSlotError("");
+    setConfirmDelete(null);
+    setManagingSlots(false);
+    if (!deleting.current) setDeleteError("");
   }, [isOpen]);
 
   useEffect(() => {
@@ -62,9 +71,24 @@ export function SettingsMenu({ session }: { session: GameSession }) {
   };
 
   const campaignTitle = (filename?: string | null) => {
-    if (!filename) return "自由模式";
+    if (!filename) return "未关联战役";
     const found = campaigns.find((campaign) => campaign.filename === filename);
     return found?.title ?? filename;
+  };
+
+  const removeSlot = async (id: number) => {
+    if (busy || deleting.current || slots.find((slot) => slot.id === id)?.is_active) return;
+    deleting.current = true;
+    setDeletingId(id);
+    setDeleteError("");
+    try {
+      const error = await handleDeleteSlot(id);
+      if (error) setDeleteError(error);
+      else setConfirmDelete(null);
+    } finally {
+      deleting.current = false;
+      setDeletingId(null);
+    }
   };
 
   return (
@@ -85,7 +109,7 @@ export function SettingsMenu({ session }: { session: GameSession }) {
         <div aria-label="游戏设置" className="settings-dropdown" role="menu">
           <div className="settings-field-row">
             <label htmlFor="settings-model">模型</label>
-            <select disabled={session.isLoading || !!session.pendingGenerate} id="settings-model" value={model} onChange={(event) => setModel(event.target.value)}>
+            <select disabled={busy} id="settings-model" value={model} onChange={(event) => setModel(event.target.value)}>
               <option value="deepseek-v4-flash">deepseek-v4-flash</option>
               <option value="deepseek-reasoner">deepseek-reasoner</option>
             </select>
@@ -95,11 +119,10 @@ export function SettingsMenu({ session }: { session: GameSession }) {
             <label htmlFor="settings-campaign">战役</label>
             <select
               id="settings-campaign"
-              disabled={session.isLoading || !!session.pendingGenerate}
+              disabled={busy}
               value={selectedCampaign}
               onChange={(event) => handleCampaignChange(event.target.value)}
             >
-              <option value="">自由模式（无预设战役）</option>
               {campaigns.map((campaign) => (
                 <option key={campaign.filename} value={campaign.filename}>
                   {campaign.title}（{campaign.arc_count}弧）
@@ -138,7 +161,7 @@ export function SettingsMenu({ session }: { session: GameSession }) {
                 <div className="settings-slot-control">
                   <select
                     id="settings-slot"
-                    disabled={session.isLoading || !!session.pendingGenerate}
+                    disabled={busy}
                     value={selectedSlotId}
                     onChange={(event) => handleSlotChange(Number(event.target.value))}
                   >
@@ -150,12 +173,43 @@ export function SettingsMenu({ session }: { session: GameSession }) {
                       </option>
                     ))}
                   </select>
-                  <button aria-label="新增存档" className="settings-add-button" onClick={() => setAddingSlot(true)} type="button">
+                  <button aria-label="新增存档" className="settings-add-button" disabled={busy} onClick={() => setAddingSlot(true)} type="button">
                     <Plus size={16} />
                   </button>
                 </div>
               )}
             </div>
+          ) : null}
+
+          {sessionId ? (
+            <section className="settings-slot-manager" aria-label="存档管理">
+              <button className="settings-link-row" aria-expanded={managingSlots} onClick={() => setManagingSlots((value) => !value)} type="button">
+                <Trash2 size={17} /><span>管理存档</span>
+              </button>
+              {managingSlots ? (
+                <div className="settings-slot-list">
+                  <p className="settings-slot-hint">删除只移除该存档槽，不会删除会话或共享剧情节点。各会话的活动存档不可删除。</p>
+                  {slots.map((slot) => (
+                    <div className="settings-slot-entry" data-testid={`slot-${slot.id}`} key={slot.id}>
+                      <div><strong>{slot.slot_name}</strong>{slot.is_active ? <span> · 活动中</span> : null}</div>
+                      <p>{campaignTitle(slot.campaign_filename)} · A{slot.arc_index + 1}S{slot.session_index + 1}</p>
+                      <p>#{slot.id} · {formatSlotTime(slot.last_played)}</p>
+                      {confirmDelete === slot.id ? (
+                        <div className="settings-delete-confirm">
+                          <p>确定删除“{slot.slot_name}”（#{slot.id}）？此存档槽不可恢复。</p>
+                          <button disabled={busy || slot.is_active} onClick={() => void removeSlot(slot.id)} type="button">{deletingId === slot.id ? "删除中…" : "确认删除"}</button>
+                          <button disabled={deletingId !== null} onClick={() => { setConfirmDelete(null); setDeleteError(""); }} type="button">取消</button>
+                        </div>
+                      ) : (
+                        <button disabled={busy || slot.is_active} onClick={() => { setConfirmDelete(slot.id); setDeleteError(""); }} type="button">删除</button>
+                      )}
+                    </div>
+                  ))}
+                  {slots.length === 0 ? <p>无存档</p> : null}
+                </div>
+              ) : null}
+              {deleteError ? <p className="settings-slot-error" role="alert">{deleteError}</p> : null}
+            </section>
           ) : null}
 
           <div className="settings-divider" />
@@ -181,7 +235,7 @@ export function SettingsMenu({ session }: { session: GameSession }) {
 
           <button
             className="settings-link-row settings-new-session"
-            disabled={session.isLoading || !!session.pendingGenerate}
+            disabled={busy}
             onClick={() => {
               setIsOpen(false);
               handleNewSession();

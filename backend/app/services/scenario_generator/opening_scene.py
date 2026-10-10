@@ -34,9 +34,8 @@ class OpeningSceneMixin:
             reset_scene_context=is_session_transition,
         )
         if is_session_transition:
-            # The controller contains raw turns, summaries and persona sketches
-            # from the previous scene.  The campaign recap is the deliberate
-            # cross-session continuity channel; start a fresh short-term cache.
+            # Reload the preserved branch snapshot after resetting scene lists.
+            # Past evidence remains available alongside the campaign recap.
             self.invalidate_timeline_caches(session_id, campaign_manager.slot_name)
 
         # Asked for before anything is written, so a failure below leaves the turn
@@ -55,7 +54,11 @@ class OpeningSceneMixin:
             option_checks=opening_options.option_checks,
             current_location=state.get("current_location", ""),
         ).replace_em_dashes()
+        controller = self._get_memory_controller(session_id, state, campaign_manager)
+        controller.score_tracker.validate_output(output, int(state.get("turn", 0)) + 1)
         state = self.state_manager.apply_output(state, request.player_action, output)
+        state["items"] = controller.score_tracker.reconcile_inventory(state.get("items", []))
+        self._feed_memory(session_id, state, output, request.player_action, campaign_manager)
 
         metrics = campaign_manager.record_turn(output, session["state"], latency_ms=0)
         output_id = self.db.add_model_output(
@@ -92,6 +95,7 @@ class OpeningSceneMixin:
             campaign_manager.reload_runtime_state()
             raise
         campaign_manager.flush_deferred_effects()
+        self._schedule_memory(session_id, timeline_node_id, state, campaign_manager)
 
         serialized = output.model_dump()
         return GenerateResponse(
@@ -99,7 +103,7 @@ class OpeningSceneMixin:
             declared=self.state_manager.declared_updates(serialized.get("memory_updates") or {}, serialized),
             caps=STATE_CAPS,
             campaign_progress=campaign_manager.campaign_view(state) or None,
-            session_id=session_id, state=state, output=output,
+            session_id=session_id, state=self.state_manager.sanitize_state(dict(state)), output=output,
             retrieved_chunks=[], model_output_id=output_id,
             used_model=model, source="scripted",
             timeline_node_id=timeline_node_id,

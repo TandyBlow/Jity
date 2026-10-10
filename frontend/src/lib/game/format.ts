@@ -35,7 +35,7 @@ export function buildStatusDeltaHints(output: StoryOutput) {
       message: output.sanity_delta < 0 ? "龙文、异常信息或精神压力造成了影响。" : "你暂时稳住了精神压力。",
     },
     {
-      label: "体力",
+      label: "血条",
       delta: output.health_delta,
       kind: output.health_delta < 0 ? "loss" : "gain",
       message: output.health_delta < 0 ? "这次行动带来了身体损耗。" : "身体状态有所恢复。",

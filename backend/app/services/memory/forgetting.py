@@ -31,7 +31,7 @@ logger = logging.getLogger(__name__)
 
 ALPHA = 0.1  # temporal decay weight
 BETA = 0.9  # retrieval reinforcement weight
-GAMMA = 1.0  # decay rate in exponential
+GAMMA = 0.03  # turn-based decay leaves time for multi-level summarization
 EPSILON = 1e-9  # avoids division by zero
 K = 9  # top-k for reinforcement / suppression (2k retrieved total)
 SCORE_THRESHOLD_BASE = 0.01  # minimum score when pool is far from cap
@@ -58,14 +58,17 @@ def compute_score(
     b = record.created_round
 
     # Temporal decay term
-    decay = 1.0 / (math.exp(gamma * (rc - b)) + 1.0 - epsilon)
+    age = max(0, rc - b)
+    exp_negative = math.exp(-gamma * age)
+    decay = exp_negative / (1.0 + exp_negative)
 
     # Retrieval reinforcement term
     reinforcement = 0.0
-    for r in record.retrieved_rounds:
-        reinforcement += 1.0 / (rc - r + epsilon)
+    for r in set(record.retrieved_rounds):
+        if r <= rc:
+            reinforcement += 1.0 / (1.0 + rc - r)
 
-    return alpha * decay + beta * reinforcement
+    return (alpha * decay + beta * reinforcement) * record.inhibition
 
 
 def score_all(records: list[MemoryRecord], current_round: int) -> list[tuple[MemoryRecord, float]]:
@@ -93,11 +96,11 @@ def apply_retrieval_reinforcement(
     for i, (rec, score) in enumerate(scored):
         if i < k:
             # Reinforcement: add current round to retrieved_rounds
-            new_rounds = list(rec.retrieved_rounds) + [current_round]
-            updated.append(rec.model_copy(update={"retrieved_rounds": new_rounds, "score": score}))
+            new_rounds = sorted(set(rec.retrieved_rounds + [current_round]))[-64:]
+            updated.append(rec.model_copy(update={"retrieved_rounds": new_rounds, "score": score, "inhibition": 1.0}))
         elif i < 2 * k:
             # Suppression: halve score
-            updated.append(rec.model_copy(update={"score": score / 2.0}))
+            updated.append(rec.model_copy(update={"score": score / 2.0, "inhibition": rec.inhibition / 2.0}))
         else:
             # Unactivated
             updated.append(rec)
@@ -138,13 +141,14 @@ def prune_pool(
 
     Records are assumed scored already (score field populated).
     """
-    above = [r for r in records if r.score >= threshold]
+    protected = [r for r in records if r.protected]
+    above = [r for r in records if not r.protected and r.score >= threshold]
 
-    if len(above) > max_size:
+    if len(above) > max(0, max_size - len(protected)):
         above.sort(key=lambda r: r.score, reverse=True)
-        above = above[:max_size]
+        above = above[:max(0, max_size - len(protected))]
 
-    return above
+    return protected + above
 
 
 def forget_step(
@@ -152,6 +156,8 @@ def forget_step(
     current_round: int,
     similarity_scores: list[float] | None = None,
     k: int = K,
+    retrieved_ids: Sequence[str] = (),
+    suppressed_ids: Sequence[str] = (),
 ) -> list[MemoryRecord]:
     """Full forgetting step: score → reinforce/suppress → prune.
 
@@ -167,22 +173,18 @@ def forget_step(
     max_pool_size = compute_dynamic_pool_size(current_round)
     threshold = compute_adaptive_threshold(len(records), max_pool_size)
 
-    # Step 1: Compute scores for all records
-    scored = score_all(records, current_round)
-
-    # Step 2: If similarity scores provided, re-rank top-2k by similarity
-    if similarity_scores is not None and len(similarity_scores) > 0:
-        top_2k = scored[:2 * k]
-        rest = scored[2 * k:]
-        sim_ranked: list[tuple[MemoryRecord, float, float]] = []
-        for i, (rec, base_score) in enumerate(top_2k):
-            sim = similarity_scores[i] if i < len(similarity_scores) else 0.0
-            sim_ranked.append((rec, base_score, sim))
-        sim_ranked.sort(key=lambda x: x[2], reverse=True)
-        scored = [(rec, base) for rec, base, _ in sim_ranked] + rest
-
-    # Step 3: Apply reinforcement and suppression
-    reinforced = apply_retrieval_reinforcement(scored, current_round, k=k)
+    # Only the final prompt's actual hits are reinforced. Maintenance alone
+    # must never invent retrievals from a memory's previous score.
+    reinforced = []
+    for record in records:
+        rec = record.model_copy(deep=True)
+        if rec.memory_id in retrieved_ids:
+            rec.retrieved_rounds = sorted(set(rec.retrieved_rounds + [current_round]))[-64:]
+            rec.inhibition = 1.0
+        elif rec.memory_id in suppressed_ids and not rec.protected:
+            rec.inhibition *= 0.5
+        rec.score = compute_score(rec, current_round)
+        reinforced.append(rec)
 
     # Step 4: Prune pool with adaptive parameters
     pruned = prune_pool(reinforced, threshold=threshold, max_size=max_pool_size)

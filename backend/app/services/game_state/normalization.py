@@ -52,6 +52,9 @@ class MemoryNormalizationMixin:
             return {}
 
         name = self._clean_text(str(raw.get("name", "")))
+        if kind == "item":
+            from app.services.memory.score_tracker import ScoreTracker
+            name = ScoreTracker.normalize_name(name)
         if not name:
             return {}
 
@@ -62,6 +65,7 @@ class MemoryNormalizationMixin:
                 "description": self._clean_text(str(raw.get("description") or "")),
                 "location": self._clean_text(str(raw.get("location") or "")),
                 "notes": self._clean_text(str(raw.get("notes") or "")),
+                "aliases": raw.get("aliases", []),
             }
         if kind == "npc":
             return {

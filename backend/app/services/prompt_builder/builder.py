@@ -90,7 +90,7 @@ class PromptBuilder(SectionHelpers):
             "当前状态：\n"
             f"- 当前地点：{input.game_state.get('current_location', '未知')}\n"
             f"- 血统稳定：{input.game_state.get('sanity', 80)}/100\n"
-            f"- 体力：{input.game_state.get('health', 100)}/100\n"
+            f"- 血条：{input.game_state.get('health', 100)}/100\n"
             f"- 回合：{input.game_state.get('turn', 0)}\n"
             f"- 玩家状态：{self._compact_player_status(player_status)}\n"
             "\n"
@@ -157,6 +157,8 @@ def _style_and_rules(input: PromptInput) -> str:
         "- 不要复述原文长段落，不要突然跳到无关任务。\n"
         "- 普通失败也应推动故事继续，而不是直接结束。\n"
         "- 状态变化要能从剧情中解释。\n"
+        "- 物品沿用已有名称；同物异名用 aliases 明确关联，不得将不同物品合并。\n"
+        "- 遗失或毁坏的物品不能直接再次持有；本回合确实找回或修复时，在 items_upserted 对应物品中提供 transition=recovered 或 repaired，并在叙事中说明。\n"
         "- 不要写与已知信息无关的空洞细节描写。narration 里出现的每个人名、地名、物品、"
         "专有名词都必须能在下方 RAG 检索内容、当前状态或最近对话里找到出处，不要凭空发明新设定。\n"
         "- 不要使用明喻。禁止“像……一样”“像……似的”“仿佛……”这类句式；"
@@ -171,7 +173,7 @@ def _style_and_rules(input: PromptInput) -> str:
         "- 同时维护 memory_updates：只写本回合新增或变化的记忆，不要整段复述已有记忆。\n"
         "- memory_updates.key_event 必须是一句不超过 80 字的关键事件摘要，"
         "用于最近事件，不要复制 narration。\n"
-        "- 系统会负责回合数、血统稳定、体力裁剪、每回合自动恢复 1 点血统稳定"
+        "- 系统会负责回合数、血统稳定、血条裁剪、每回合自动恢复 1 点血统稳定"
         "和记忆合并；你只提供剧情上能解释的记忆变化，不要把自动恢复写进 sanity_delta。\n"
         "\n"
         "严格返回纯 JSON，不要包含 Markdown、解释或额外文本：\n"
@@ -192,7 +194,7 @@ def _style_and_rules(input: PromptInput) -> str:
         '  "quests_updated": [{"name": "任务名", "status": "active", "description": "任务说明"}],\n'
         '  "memory_updates": {\n'
         '    "current_location": "只在地点变化或需要确认当前位置时填写",\n'
-        '    "items_upserted": [{"name": "物品名", "status": "owned|lost|observed|used", "description": "稳定说明", "location": "所在位置", "notes": "当前备注"}],\n'
+        '    "items_upserted": [{"name": "物品名", "status": "owned|lost|observed|consumed|destroyed|discarded", "description": "稳定说明", "location": "所在位置", "notes": "当前备注"}],\n'
         '    "items_removed": [{"name": "物品名", "status": "lost", "description": "移除原因"}],\n'
         '    "npcs_upserted": [{"name": "NPC名", "status": "present|following|away|unknown", "relationship": "与玩家关系或态度", "current_location": "当前位置", "description": "稳定身份", "notes": "本回合变化"}],\n'
         '    "quests_upserted": [{"name": "任务名", "status": "active|completed|failed|paused", "description": "稳定说明", "objective": "当前目标", "notes": "本回合变化"}],\n'

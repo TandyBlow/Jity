@@ -51,6 +51,7 @@ function useFolds() {
 function occupancy(state: GameState | null, report: TurnReport | null, key: MemoryCategory) {
   const used = state?.[key]?.length ?? 0;
   const cap = report?.caps?.[key];
+  if (cap === null) return `${used} · 无固定上限`;
   if (!cap) return String(used);
   return `${used}/${cap}${used >= cap ? " · 已满" : ""}`;
 }
@@ -97,7 +98,7 @@ export function MemoryPanelBody({ session }: { session: GameSession }) {
       </div>
       <div className="stat-block">
         <div className="stat-row">
-          <span>体力</span>
+          <span>血条</span>
           <strong>{state?.health ?? 100}</strong>
         </div>
         <div className="bar">
@@ -186,8 +187,8 @@ function TurnMemory({ report, state }: { report: TurnReport | null; state: GameS
             <div className="turn-memory-group" key={key}>
               <div className="turn-memory-head">
                 <span>{label}</span>
-                <span className={used >= cap ? "turn-memory-cap full" : "turn-memory-cap"}>
-                  落库 {used}/{cap}
+                <span className={cap !== null && used >= cap ? "turn-memory-cap full" : "turn-memory-cap"}>
+                  落库 {used}{cap === null ? " · 无固定上限" : `/${cap}`}
                 </span>
               </div>
               <div className="memory-list">

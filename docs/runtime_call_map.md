@@ -53,7 +53,7 @@ ScenarioGenerator.generate (generator.py:60)
   │        JSON坏了: 本地修 → 模型temperature=0重修 → 才报错
   │
   ├─5▶ 状态推进(纯本地代码)                      manager.py:50
-  │        SAN/体力/回合、物品NPC任务按名合并、事件追加、超限裁剪
+  │        SAN/血条/回合、物品NPC任务按名合并、事件追加、超限裁剪
   │
   ├─6▶ [Hook4] NPC好感写库（世界事实随主叙事输出合并）  post_generation.py:10
   │

@@ -22,12 +22,14 @@ from app.services.scenario_generator.errors import ScenarioGenerationError
 from app.services.scenario_generator.opening_scene import OpeningSceneMixin
 from app.services.scenario_generator.post_generation import PostGenerationMixin
 from app.services.scenario_generator.prompting import PromptBuildMixin
-from app.exceptions import ConcurrentModificationError
+from app.services.scenario_generator.memory_lifecycle import MemoryLifecycleMixin
+from app.exceptions import CampaignRequiredError, ConcurrentModificationError
 
 logger = logging.getLogger(__name__)
 
 
 class ScenarioGenerator(
+    MemoryLifecycleMixin,
     OpeningSceneMixin,
     PromptBuildMixin,
     AgentPipelineMixin,
@@ -59,6 +61,7 @@ class ScenarioGenerator(
         self._memory_controllers: dict[str, MemoryController] = {}
         # Strong refs to background maintenance tasks (prevent GC mid-flight)
         self._memory_tasks: set[asyncio.Task] = set()
+        self._memory_jobs: dict[str, asyncio.Task] = {}
         self._generation_locks: dict[str, asyncio.Lock] = {}
 
     # ── Main orchestration ────────────────────────────────────────────
@@ -67,6 +70,7 @@ class ScenarioGenerator(
         """Serialize each session so a stale branch cannot mutate shared progress."""
         lock = self._generation_locks.setdefault(session_id, asyncio.Lock())
         async with lock:
+            await self._wait_memory(session_id)
             try:
                 return await self._generate_locked(session_id, request)
             except (Exception, asyncio.CancelledError):
@@ -96,7 +100,21 @@ class ScenarioGenerator(
                 f"Expected timeline node {request.timeline_node_id}, active node is {parent_turn_id}"
             )
         campaign_manager = self._campaign_manager_for(session_id, request.slot_name)
+        if campaign_manager is None or not campaign_manager.is_loaded():
+            raise CampaignRequiredError("该会话未关联战役，请新建战役；历史记录仍可查看。")
         _csi = self._campaign_session_index(campaign_manager)
+        if "_memory_controller" not in state:
+            self._memory_controllers.pop(session_id, None)
+        memory_ctrl = self._get_memory_controller(session_id, state, campaign_manager)
+        if memory_ctrl.pending:
+            # A restart may leave a durable pending buffer without a running job.
+            self._schedule_memory(session_id, parent_turn_id, state, campaign_manager)
+            await self._wait_memory(session_id)
+            refreshed = self.state_manager.get_session_payload(session_id)
+            if refreshed.get("active_turn_id") != parent_turn_id:
+                raise ConcurrentModificationError("Timeline head changed during memory recovery")
+            state = refreshed["state"]
+            memory_ctrl = self._get_memory_controller(session_id, state, campaign_manager)
 
         active_turn = self.db.get_story_turn(session_id, parent_turn_id) if parent_turn_id else None
         if active_turn:
@@ -126,18 +144,41 @@ class ScenarioGenerator(
                 return opening_result
 
         # Hook 2: Build prompt (RAG + context injection + token truncation)
+        state["items"] = memory_ctrl.score_tracker.reconcile_inventory(state.get("items", []))
         prompt, meta, retrieved, retrieved_for_storage, token_count = await self._build_prompt(
             request, state, session_id, campaign_manager
         )
 
-        # Hook 3: Execute generation (multi-agent pipeline or legacy single call)
+        # Hook 3: Execute the campaign agent pipeline.
         output, latency_ms, source = await self._execute_llm_or_scripted(
             session_id, request, prompt, model, meta, retrieved_for_storage, _csi,
             state=state, campaign_manager=campaign_manager,
             closing_turn=selected_ending is not None,
         )
 
+        tracker_snapshot = memory_ctrl.score_tracker.export_state()
+        tracker_aliases = dict(memory_ctrl.score_tracker._aliases)
+        memory_ctrl.score_tracker.validate_output(output, int(state.get("turn", 0)) + 1)
+        prompted_ending = selected_ending
+        preview_state = self.state_manager.apply_output(state, request.player_action, output)
+        preview_state["items"] = memory_ctrl.score_tracker.reconcile_inventory(preview_state.get("items", []))
+        selected_ending = self._select_campaign_ending(
+            campaign_manager, preview_state, request.player_action
+        )
         if selected_ending is not None:
+            if prompted_ending is None or selected_ending.id != prompted_ending.id:
+                output.narration = selected_ending.resolution
+                if selected_ending.epilogue:
+                    output.narration += "\n\n" + selected_ending.epilogue
+                output.dialogue = []
+                output.scene_prompt = ""
+                output.current_location = state.get("current_location", "")
+                output.items_gained = []
+                output.items_lost = []
+                output.npcs_encountered = []
+                output.quests_updated = []
+                output.memory_updates = type(output.memory_updates)()
+                output.npc_relations_delta = None
             output.game_over = True
             output.game_over_reason = (
                 f"{selected_ending.name}：{selected_ending.epilogue or selected_ending.resolution}"
@@ -148,15 +189,18 @@ class ScenarioGenerator(
             output.game_over = False
             output.game_over_reason = ""
 
+        memory_ctrl.score_tracker._aliases = tracker_aliases
+        memory_ctrl.score_tracker.load_from_state(tracker_snapshot)
+        memory_ctrl.score_tracker.validate_output(output, int(state.get("turn", 0)) + 1)
         next_state = self.state_manager.apply_output(state, request.player_action, output)
+        next_state["items"] = memory_ctrl.score_tracker.reconcile_inventory(next_state.get("items", []))
 
         # Hook 4: Post-generation processing (NPC relations)
         next_state = await self._apply_post_generation(
             output, next_state, state, session_id, session, model, campaign_manager
         )
 
-        memory_ctrl = self._get_memory_controller(session_id, next_state, campaign_manager)
-        next_state["_memory_controller"] = memory_ctrl.export_state()
+        self._feed_memory(session_id, next_state, output, request.player_action, campaign_manager)
 
         # Hook 5: Record + finalize (commit anchors, advance turn advance session — once)
         output_id, metrics = await self._record_and_finalize(
@@ -177,14 +221,10 @@ class ScenarioGenerator(
             model_output_id=output_id,
             campaign_session_index=_csi,
         )
-        if campaign_manager is not None and campaign_manager.is_loaded():
-            campaign_manager.flush_deferred_effects()
-            if source == "llm":
-                task = asyncio.create_task(memory_ctrl.maintain(session_id, int(state.get("turn", 0))))
-                self._memory_tasks.add(task)
-                task.add_done_callback(self._log_memory_task_done)
+        campaign_manager.flush_deferred_effects()
+        self._schedule_memory(session_id, timeline_node_id, next_state, campaign_manager)
 
-        sanitized = self.state_manager.sanitize_state(next_state)
+        sanitized = self.state_manager.sanitize_state(dict(next_state))
         serialized = output.model_dump()
         campaign_view = (
             campaign_manager.campaign_view(sanitized)
@@ -283,6 +323,9 @@ class ScenarioGenerator(
         """Discard branch-local in-memory state after activating a snapshot."""
         self._memory_controllers.pop(session_id, None)
         self._memory_controllers.pop(f"campaign:{session_id}:{slot_name}", None)
+        job = self._memory_jobs.pop(session_id, None)
+        if job is not None and not job.done():
+            job.cancel()
 
     @staticmethod
     def _build_query(player_action: str, state: dict) -> str:

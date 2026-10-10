@@ -1,5 +1,10 @@
 import type { DevLogEntry } from "@/lib/dev-log/types";
 
+import { entry as entry_2026_10_11_master_zjrrrr_integration } from "@/lib/dev-log/entries/2026-10-11-master-zjrrrr-integration";
+
+import { entry as entry_2026_10_11_memory_review_and_local_startup } from "@/lib/dev-log/entries/2026-10-11-memory-review-and-local-startup";
+import { entry as entry_2026_10_01_campaign_memory_consistency } from "@/lib/dev-log/entries/2026-10-01-campaign-memory-consistency";
+import { entry as entry_2026_09_18_slot_delete } from "@/lib/dev-log/entries/2026-09-18-slot-delete";
 import { entry as entry_2026_09_17_campaign_endings } from "@/lib/dev-log/entries/2026-09-17-campaign-endings";
 import { entry as entry_2026_09_16_auto_save_slots_and_data_reset } from "@/lib/dev-log/entries/2026-09-16-auto-save-slots-and-data-reset";
 import { entry as entry_2026_09_15_branching_timeline_and_real_llm_smoke } from "@/lib/dev-log/entries/2026-09-15-branching-timeline-and-real-llm-smoke";
@@ -16,6 +21,10 @@ import { entry as entry_2026_06_15_knowledge_base_and_rag } from "@/lib/dev-log/
 import { entry as entry_2026_06_13_scripted_opening_and_dev_log } from "@/lib/dev-log/entries/2026-06-13-scripted-opening-and-dev-log";
 
 export const devLogEntries: DevLogEntry[] = [
+  entry_2026_10_11_master_zjrrrr_integration,
+  entry_2026_10_11_memory_review_and_local_startup,
+  entry_2026_10_01_campaign_memory_consistency,
+  entry_2026_09_18_slot_delete,
   entry_2026_09_17_campaign_endings,
   entry_2026_09_16_auto_save_slots_and_data_reset,
   entry_2026_09_15_branching_timeline_and_real_llm_smoke,

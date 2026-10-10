@@ -28,6 +28,7 @@ from app.schemas.agent_io.memory_branches import (
     ItemState,
     ItemStateRecord,
     MemoryRecord,
+    MemoryHit,
     PersonaKey,
     PersonaSketch,
     PersonaSnapshot,
@@ -50,6 +51,7 @@ __all__ = [
     "PersonaSnapshot",
     "PersonaSketch",
     "MemoryRecord",
+    "MemoryHit",
     "HallucinationType",
     "HallucinationFinding",
 ]

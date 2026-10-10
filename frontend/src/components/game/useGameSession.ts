@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 
 import { getTimelineNode, listSlots } from "@/lib/api";
-import { ENTRY_ACTION, SLOT_DEFAULT, initialOutput, loadingOutput } from "@/lib/game/initialOutput";
+import { ENTRY_ACTION, SLOT_DEFAULT, loadingOutput } from "@/lib/game/initialOutput";
 import { buildStatusDeltaHints } from "@/lib/game/format";
 import { useGameActions } from "@/components/game/useGameActions";
 import { useGameEffects } from "@/components/game/useGameEffects";
@@ -67,7 +67,7 @@ export function useGameSession() {
   const [selectedSlot, setSelectedSlot] = useState<string>(SLOT_DEFAULT);
   const [selectedSlotId, setSelectedSlotId] = useState<number | "">("");
   const [campaigns, setCampaigns] = useState<CampaignListItem[]>([]);
-  const [selectedCampaign, setSelectedCampaign] = useState("");
+  const [selectedCampaign, setSelectedCampaign] = useState("default_campaign.json");
   const [pendingGenerate, setPendingGenerate] = useState<string | null>(null);
 
   const statusDeltaHints = useMemo(() => buildStatusDeltaHints(output), [output]);
@@ -113,9 +113,8 @@ export function useGameSession() {
       setOutput(loadingOutput);
       setPendingGenerate(ENTRY_ACTION);
     } else {
-      setOutput(initialOutput);
-      setOutputSource("scripted");
-      setAction(initialOutput.options[0] ?? "");
+      setOutput(loadingOutput);
+      setError("该历史会话未关联战役，请新建战役。");
     }
   }
 

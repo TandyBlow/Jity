@@ -88,6 +88,7 @@ class CampaignProgressRepository:
             arc_index=int(source.get("arc_index", 0)),
             session_index=int(source.get("session_index", 0)),
             turn_in_session=int(source.get("turn_in_session", 0)),
+            turns_total=int(source.get("turns_total", 0)),
             fsm_state=str(source.get("fsm_state", "active/session_active")),
             revealed_anchors=json.loads(source.get("revealed_anchors", "[]")) if source else [],
             completed_arcs=json.loads(source.get("completed_arcs", "[]")) if source else [],
@@ -105,11 +106,21 @@ class CampaignProgressRepository:
     # Delete
     # ------------------------------------------------------------------
 
-    def delete_slot(self, slot_name: str) -> bool:
-        """Delete a slot by name. Returns True if a row was deleted."""
+    def delete_slot_by_id(self, slot_id: int) -> dict | None:
+        """Check active status and delete only this slot under one write lock."""
         with self.db.connect() as conn:
-            result = conn.execute(
-                "DELETE FROM campaign_progress WHERE slot_name = ?",
-                (slot_name,),
+            conn.execute("BEGIN IMMEDIATE")
+            row = conn.execute(
+                """SELECT p.*, s.active_slot_name FROM campaign_progress p
+                   JOIN game_sessions s ON s.id = p.campaign_id WHERE p.id = ?""",
+                (slot_id,),
+            ).fetchone()
+            if row is None:
+                return None
+            if row["slot_name"] == row["active_slot_name"]:
+                raise ValueError("当前存档不可删除，请先切换到其他存档")
+            conn.execute(
+                "DELETE FROM campaign_progress WHERE id = ?",
+                (slot_id,),
             )
-        return result.rowcount > 0
+            return dict(row)

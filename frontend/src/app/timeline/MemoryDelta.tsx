@@ -52,8 +52,8 @@ export function MemoryDelta({ detail }: { detail: TimelineNodeDetail }) {
           <div className="memory-delta-category" key={key}>
             <div className="memory-delta-head">
               <span>{label}</span>
-              <span className={used >= cap ? "memory-delta-cap full" : "memory-delta-cap"}>
-                落库 {used}/{cap}{used >= cap ? " · 已满" : ""}
+              <span className={cap !== null && used >= cap ? "memory-delta-cap full" : "memory-delta-cap"}>
+                落库 {used}{cap === null ? " · 无固定上限" : `/${cap}${used >= cap ? " · 已满" : ""}`}
               </span>
             </div>
             <ul className="memory-delta-list">
@@ -65,7 +65,7 @@ export function MemoryDelta({ detail }: { detail: TimelineNodeDetail }) {
               ))}
             </ul>
             <details className="memory-delta-raw">
-              <summary>模型声明的原文（{raw.length} 条）</summary>
+              <summary>最终提交的声明（{raw.length} 条）</summary>
               <ul>
                 {raw.map((entry: StoryDeltaEntry, index) => (
                   <li key={index}>

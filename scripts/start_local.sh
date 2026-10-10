@@ -3,7 +3,17 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 LOG_DIR="$ROOT_DIR/.local/logs"
-mkdir -p "$LOG_DIR"
+BACKEND_PORT="${JITY_BACKEND_PORT:-8000}"
+FRONTEND_PORT="${JITY_FRONTEND_PORT:-3000}"
+
+if ! command -v lsof >/dev/null 2>&1; then
+  echo "ERROR: lsof is required to check listening ports." >&2
+  exit 1
+fi
+
+port_in_use() {
+  lsof -nP -iTCP:"$1" -sTCP:LISTEN -t >/dev/null 2>&1
+}
 
 BACKEND_LOG="$LOG_DIR/backend.log"
 FRONTEND_LOG="$LOG_DIR/frontend.log"
@@ -19,28 +29,45 @@ cleanup() {
     kill "$backend_pid" >/dev/null 2>&1 || true
   fi
 }
-trap cleanup EXIT INT TERM
+trap cleanup EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
 
-echo "==> Starting backend on http://localhost:${JITY_BACKEND_PORT:-8000}"
-"$ROOT_DIR/scripts/start_backend.sh" >"$BACKEND_LOG" 2>&1 &
-backend_pid="$!"
+if port_in_use "$BACKEND_PORT"; then
+  echo "==> Port $BACKEND_PORT already has a listener; skipping backend startup (service identity not verified)."
+else
+  mkdir -p "$LOG_DIR"
+  echo "==> Starting backend on http://localhost:$BACKEND_PORT"
+  "$ROOT_DIR/scripts/start_backend.sh" >"$BACKEND_LOG" 2>&1 &
+  backend_pid="$!"
+  echo "Backend log:  $BACKEND_LOG"
+fi
 
-echo "==> Starting frontend on http://localhost:${JITY_FRONTEND_PORT:-3000}"
-"$ROOT_DIR/scripts/start_frontend.sh" >"$FRONTEND_LOG" 2>&1 &
-frontend_pid="$!"
+if port_in_use "$FRONTEND_PORT"; then
+  echo "==> Port $FRONTEND_PORT already has a listener; skipping frontend startup (service identity not verified)."
+else
+  mkdir -p "$LOG_DIR"
+  echo "==> Starting frontend on http://localhost:$FRONTEND_PORT"
+  "$ROOT_DIR/scripts/start_frontend.sh" >"$FRONTEND_LOG" 2>&1 &
+  frontend_pid="$!"
+  echo "Frontend log: $FRONTEND_LOG"
+fi
 
-echo "Backend log:  $BACKEND_LOG"
-echo "Frontend log: $FRONTEND_LOG"
-echo "Press Ctrl+C to stop both processes."
+if [[ -z "$backend_pid" && -z "$frontend_pid" ]]; then
+  echo "Both ports are occupied; nothing started. Existing processes were left untouched."
+  exit 0
+fi
+
+echo "Press Ctrl+C to stop only the processes started by this script."
 
 while true; do
-  if ! kill -0 "$backend_pid" >/dev/null 2>&1; then
-    echo "Backend process exited; stopping frontend."
-    break
+  if [[ -n "$backend_pid" ]] && ! kill -0 "$backend_pid" >/dev/null 2>&1; then
+    echo "Backend process exited; cleaning up processes started by this script. See $BACKEND_LOG"
+    exit 1
   fi
-  if ! kill -0 "$frontend_pid" >/dev/null 2>&1; then
-    echo "Frontend process exited; stopping backend."
-    break
+  if [[ -n "$frontend_pid" ]] && ! kill -0 "$frontend_pid" >/dev/null 2>&1; then
+    echo "Frontend process exited; cleaning up processes started by this script. See $FRONTEND_LOG"
+    exit 1
   fi
   sleep 1
 done

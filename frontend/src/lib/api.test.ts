@@ -65,14 +65,14 @@ describe("error handling", () => {
 });
 
 describe("createSession", () => {
-  it("sends only the model for a free-play session", async () => {
+  it("defaults to the campaign entry point when no campaign is supplied", async () => {
     const calls = stubFetch({ body: JSON.stringify({ session_id: "s" }) });
 
     await createSession("deepseek-v4-flash");
 
     expect(calls[0].url).toBe(`${BASE}/sessions`);
     expect(calls[0].init.method).toBe("POST");
-    expect(jsonBody(calls[0].init)).toEqual({ model: "deepseek-v4-flash" });
+    expect(jsonBody(calls[0].init)).toEqual({ model: "deepseek-v4-flash", campaign_filename: "default_campaign.json" });
   });
 
   it("defaults arc and session index to 0 when a campaign is given", async () => {
