@@ -1,0 +1,10 @@
+{
+  "wallMs": 64846,
+  "text": "玩家决定去调查巡夜学生的名单，并核对当晚的出入记录。",
+  "finishReason": "stop",
+  "promptTokens": 670,
+  "completionTokens": 17,
+  "model": "qwen2.5-0.5b",
+  "threads": 4,
+  "promptChars": 838
+}
