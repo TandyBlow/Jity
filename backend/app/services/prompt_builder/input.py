@@ -7,7 +7,9 @@ from typing import Any
 @dataclass
 class PromptMeta:
     """Metadata returned alongside the prompt string for downstream consumers."""
-    temperature: float = 0.7
+    # 2026-10-11 用户裁决：回合默认温度定为 0.35（保留温度参数修复前的
+    # 生产行为）；显式传入其他值仍然生效（LLMClient.generate 传值即用）。
+    temperature: float = 0.35
     sanity_multiplier: float = 1.0
     clue_style: str = ""
     # Named sections the prompt was assembled from, kept for replay.

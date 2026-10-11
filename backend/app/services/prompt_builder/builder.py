@@ -76,7 +76,9 @@ class PromptBuilder(SectionHelpers):
         if input.campaign_context:
             ctx = input.campaign_context
             if "difficulty" in ctx.lower() or "难度" in ctx:
-                meta.temperature = 0.7  # default, overridden by difficulty settings
+                # 不再在这里覆盖温度：2026-10-11 用户裁决回合默认 0.35，
+                # 旧的 difficulty→0.7 钩子会把战役会话悄悄抬回 0.7。
+                # 难度现在的唯一职责是选项检定的四档语义（DIFFICULTY_TARGETS）。
                 meta.clue_style = "通过环境细节和NPC对话间接暗示线索方向"
 
         return ordered_sections, meta
