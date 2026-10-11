@@ -58,7 +58,9 @@ class LLMClient(JSONRepairMixin, StoryOutputNormalizer, StructuredGenerationMixi
             raw_text = await self._request_completion(
                 messages=[{"role": "user", "content": prompt}],
                 model=model_name,
-                temperature=0.35,
+                # 0.35 只有在调用方未传值时兜底；传值必须生效（2026-10-11
+                # 修复前形参是死参数，meta.temperature 一律被 0.35 覆盖）。
+                temperature=0.35 if temperature is None else temperature,
             )
         except Exception as exc:
             latency_ms = int((time.perf_counter() - started) * 1000)
