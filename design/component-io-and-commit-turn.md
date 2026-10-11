@@ -1,11 +1,13 @@
-# 组件 I/O 字段说明与 commit-turn 设计稿（v2）
+# 组件 I/O 字段说明与 commit-turn 设计稿（v3）
 
-状态：v2 草案（2026-10-11 二轮评审修订，待评审）。v1 的七处修订：
-重复提交引入 requestId 幂等；过期检查加 expectedVersion 双绑定；补提交
-范围与事务边界；roll 移出候选、改绑父节点已存 option_checks；纠正
-ITEM/TGT 试验范围的误用；统一 sanity/health_delta 职责；四个开放问题
-裁决落定（含删除一项无证据的归因）。Needle 3 暂缓接入——先按 §9 用固定
-候选实现并验证 commit-turn。
+状态：v3 草案（2026-10-11 三轮评审修订，待评审）。v2 → v3 变更：
+幂等摘要补 playerAction 与存档、turn_submissions 表定案且幂等查询/写入入
+事务；记忆改为"独立副本同步喂正文→快照随回合保存→提交后替换共享缓存"、
+待处理任务落库可续跑；roll 补顶层 selectedOptionIndex、修正前后者倒置、
+结果沿用四类；§6 更名"名称出处检查"并明确能力边界、删除无数值规则支撑
+的限幅；事务实现明确共用同一连接；改正 record_turn 与 replace_em_dashes
+两处记录；测试计划加四场景。Needle 3 继续暂缓——先按 §9 用固定候选
+实现并验证 commit-turn。
 
 方案 b 回顾：组件循环跑在前端；后端不参与推理，只负责 ① 校验 ② 确定性
 状态合并（`apply_output`）③ 事务提交（`commit_story_turn`）。本稿把这条
@@ -145,12 +147,14 @@ interface ExtractionCandidates {
 }
 ```
 
-- `sanityDelta/healthDelta` **统一归本组件提议**（v2 修正：v1 在 2.4 与
+- `sanityDelta/healthDelta` **统一归本组件提议**（v2 统一：v1 在 2.4 与
   2.7 两处矛盾）：只有正文明确描写了血统/体力冲击才给非零值；系统负责
   clamp 与每回合自动恢复，组件不得把自动恢复写进增量（生产提示词既有
   约定）。
+- **每项变更候选附正文依据**（v3，§6）：支持该变更的原句/偏移或名册来源，
+  供提交前名称出处检查核对。
 - **不做**：⛔ 不合并、不查重（同名合并与覆盖次序是后端 `merge_by_name`
-  的职责）；⛔ 不自行认定变更合法（出处校验归提交前校验器，§6）。
+  的职责）；⛔ 不自行认定变更合法（出处检查只验名字与依据可定位，§6）。
 - 能力现状：本组件（正文抽取）无实测成绩——span 标注试验测的是玩家
   行动，成绩不可迁移引用（§2 试验范围声明）。接口先定，模型与训练开放。
 
@@ -184,11 +188,13 @@ interface CheckVerdict {
 - **读**：过检的 `NarrationCandidate` + `ExtractionCandidates` +
   `TurnContext`。
 - **返回**：key_event 措辞候选、"值得长期记住"的信号。
-- **权属与时序（v2 收紧）**：建议不落状态；记忆合并沿用后端
+- **权属与时序（v3 对齐 §4）**：建议不落状态；记忆合并沿用后端
   `_memory_controller` 快照机制（随分支回滚），上下文注入（NSB/PCB/
-  SCORE）走后端端点。**记忆控制器收到本回合正文与更新的时点在提交成功
-  之后**（§4）——现产管线在提交前就喂正文（`on_turn_generated`），新入口
-  不得照搬：提交失败的回合不能污染记忆。
+  SCORE）走后端端点。喂入时序：提交事务内在**独立副本**上同步执行
+  `on_turn_generated`，副本快照随回合落库（快照因此包含本回合）；提交
+  成功后副本才替换共享内存缓存；摘要与 recap 仍在提交后，待处理任务
+  记录随回合落库（绑定存档与节点，可重启续跑）。现产管线在提交前就喂
+  共享控制器的做法不得照搬——提交失败的回合不能污染记忆。
 
 ### 2.7 汇编成提交载荷
 
@@ -208,22 +214,29 @@ interface CheckVerdict {
 统一提交入口：`POST /sessions/{session_id}/commit-turn`。生成在前端循环
 完成后，一次性提交完整回合候选。
 
-### 3.1 幂等键 requestId（v2 新增）
+### 3.1 幂等键 requestId（v3 修订）
 
-客户端为**每次提交尝试**生成唯一 `requestId`（UUID）。后端持久保存
-`(session_id, request_id) → {内容摘要, 结果}`：
+客户端为**一次完整提交尝试**生成唯一 `requestId`（UUID）；同一尝试的
+网络重发沿用原 ID，改了任何内容再提交则是新尝试、换新 ID。
+
+后端持久保存 `turn_submissions` 表（定案）：`UNIQUE(session_id,
+request_id)`，列含**内容摘要**与**提交结果**。摘要覆盖五个维度——
+`playerAction`、`slotName`、`candidate`、`roll`（含
+`selectedOptionIndex`）、快照绑定（`expectedParentId + expectedVersion`）。
+v2 漏了 `playerAction`：同一 requestId 改动作文本会被误判成重放而返回
+旧结果，v3 修复。
 
 | 情形 | 行为 |
 |---|---|
 | 同 requestId + 同内容摘要 | **返回原提交结果**（200），不重复合并、不再次移动会话头、不重复扣减任何数值 |
-| 同 requestId + 不同内容摘要 | **拒绝**（409/422），报"requestId 已被不同内容使用"——防止重试包装了改过的载荷被误当成幂等重放 |
+| 同 requestId + 不同内容摘要 | **拒绝**（409/422），报"requestId 已被不同内容使用" |
 | 新 requestId | 正常提交流程 |
 
-内容摘要 = 对 candidate + roll + expectedParentId + expectedVersion 的
-规范化序列化哈希。存储位置设计为 `turn_submissions` 表（或 story_turns
-冗余列，实现期定），**与 §4 的事务边界一致**：只有提交成功的 requestId
-才产生持久记录；失败尝试的 requestId 记审计、不记结果（客户端换新
-requestId 重试）。
+**时序（v3 定案）**：幂等查询与结果写入都发生在 §3.4 的提交事务**内**
+（与绑定校验、状态读取、全部写入共用同一连接，§4）——放在事务外会有
+并发窗口：两个同 ID 请求同时通过查询、双双走完提交流程。并发重发进
+§9 测试计划。只有提交成功的 requestId 才产生持久结果记录；失败尝试的
+requestId 记审计、不记结果（客户端换新 ID 重试）。
 
 ### 3.2 请求体与绑定校验
 
@@ -231,10 +244,11 @@ requestId 重试）。
 {
   "requestId": "uuid",                // §3.1
   "expectedParentId": 123,            // 绑定一：父节点
-  "expectedVersion": 57,              // 绑定二：会话版本（v2 新增）
+  "expectedVersion": 57,              // 绑定二：会话版本
   "playerAction": "我去调查巡夜学生的名单……",
   "candidate": { /* StoryOutput 同构；scenePrompt 恒空串；无 roll 字段 */ },
-  "roll": { "optionIndex": 1, "result": 14 },   // §3.3，本回合有骰点时必填
+  "selectedOptionIndex": 1,           // §3.3：玩家本回合选的父节点选项下标；自由输入为 null
+  "roll": { "result": 14 },           // §3.3：所选选项 requires_check 时必填
   "audit": { "componentCalls": [], "retries": {}, "pausedAt": null, "runtime": {} }
 }
 ```
@@ -249,46 +263,64 @@ expectedVersion`。只查父节点挡不住"推进后又回到旧节点"的迟�
 `{expectedParentId, expectedVersion, slotName, state, campaignContext,
 recentMessages}`——前端快照与提交绑定用同一组值，杜绝两读不一致。
 
-### 3.3 roll：绑定父节点已存选项（v2 修订）
+### 3.3 selectedOptionIndex + roll：使用父节点已保存的选项（v3 修订）
 
-**时序事实**：当前提交流程生成的 options 是**下一回合**的选项；玩家刚
-执行的行动属于**父节点**存档的选项。骰点校验必须用前者不是后者。
+**时序事实**：当前提交流程生成的 options 是**下一回合**的选项；玩家本
+回合执行的行动属于**父节点**存档的选项。骰点校验一律使用**父节点已保存
+的选项**（`expectedParentId` 指向的 `story_turns.output_json` 里的
+`option_checks`），不使用候选里的任何选项数据。
 
-`roll = {optionIndex, result}` 是提交请求的**顶层字段**（`StoryOutput`
-没有也不加这个字段）。后端校验链（确定性代码）：
+v2 把选项下标藏在 `roll` 里，导致**省略 roll 时后端无法判断玩家是否跳过
+了所选选项的检定**。v3 把两者拆开，都是请求顶层字段：
 
-1. 父节点（`expectedParentId` 指向的 `story_turns.output_json`）已存的
-   `option_checks[optionIndex]` 存在；
-2. 该项 `requires_check == true`（无需检定的选项掷骰 = 拒绝）；
+- `selectedOptionIndex`：玩家本回合选择的父节点选项下标；**自由输入时为
+  null**（此时不得携带 roll）。
+- `roll`：`{ result }`，仅当所选选项要求检定时存在。
+
+后端校验链（确定性代码，按序）：
+
+1. `selectedOptionIndex` 非 null 时，父节点 `option_checks` 中该下标存在，
+   且提交的 `playerAction` 与该选项文本对应（前端把选项文本与判定结果
+   拼进行动——`checks.ts` 的 `formatActionWithCheckResult` 已产出该格式；
+   校验接受裸选项文本与其带 `[行动判定]` 后缀的形态）；
+2. 该项 `requires_check == true` → `roll` 必须存在（**漏交骰点 = 422**，
+   没有"后端替玩家免检"）；`requires_check == false` → `roll` 必须不存在
+   （对无需检定的选项掷骰 = 拒绝）；
 3. 从该项 `difficulty` 重推导 target（`DIFFICULTY_TARGETS`）与表达式，
-   不信任候选里的任何数值；
-4. `result ∈ [1,20]` 整数；
-5. 结果与推导的 target 比较得出成败，随合并一并生效并写审计。
+   不信任任何上报数值；
+4. `result ∈ [1,20]` 整数；结果沿用现有四类规则（`rules.ts getOutcome`）：
+   20 = 大成功（critical）、1 = 大失败（fumble）、其余按 target 分成功/
+   失败——后端以同一规则重算结果并随合并生效、写审计；
+5. `selectedOptionIndex` 为 null 而携带 roll → 拒绝。
 
-前端掷骰沿用现有 `checks.ts` 的语义（`resolveOptionCheck` 读的正是**正在
-游玩的那个 output** 的 `option_checks`）；父节点选项无需检定时不得携带
-`roll` 字段。
+前端掷骰沿用现有 `checks.ts` 语义；本字段链路对"跳过检定"是显式的：
+要么选了不检定的选项，要么自由输入——不存在"选了检定项却静默无骰点"
+的提交。
 
 ### 3.4 后端处理顺序
 
 每一步失败即整体失败，无半个回合：
 
 1. **schema 校验**：候选转 `StoryOutput`，现有 validator 生效（等长对齐、
-   难度派生、破折号净化）。前端不得预做推导。
-2. **幂等查询**：按 §3.1 三分支处理。
-3. **绑定校验**：`expectedParentId + expectedVersion` 双查（§3.2），
-   失败 → 409（在 `apply_output` 之前，过期候选永不与新鲜状态合并）。
-4. **提交前候选校验**：§6 出处校验，失败 → 422（带逐条详情）。
-5. **单事务提交**：§4 的事务边界——`apply_output` 合并 + `story_turns`
-   插入 + `model_outputs` 记录 + `campaign_progress`（含 npc_relations、
-   锚点、回合/幕推进）在同一 SQLite 事务内成功或整体回退。
-6. **提交后步骤**（事务外，允许失败与重试）：记忆控制器喂正文
-   （`on_turn_generated`）与后台 maintain；跨幕 recap 生成（§4 的豁免
-   条目）；审计导出。
-7. **响应**：与现产 `GenerateResponse` 同构 + `requestId` 回显。前端据此
+   难度派生）；随后**显式调用 `replace_em_dashes()`**——它是普通方法，
+   转换与 pydantic 校验都不会自动净化（v3 记录改正），调用位置固定在此步、
+   合并与出处校验之前。前端不得预做推导。
+2. **绑定校验**：`expectedParentId + expectedVersion` 双查（§3.2），
+   失败 → 409（在合并之前，过期候选永不与新鲜状态合并）。
+3. **提交前候选校验**：§6 名称出处检查，失败 → 422（带逐条详情）。
+4. **单事务提交**（§4）：开启**一个** SQLite 连接上的事务，依序完成
+   幂等查询（§3.1 三分支，事务内防并发重发）→ `apply_output` 合并 →
+   记忆副本快照随回合保存（§4）→ `story_turns` 插入 →
+   `model_outputs` 记录 → `campaign_progress`（含 npc_relations、锚点、
+   回合/幕计数）→ `turn_submissions` 结果落库 → 会话头与 version 原子
+   移动。任何一步失败整体回退，同时丢弃战役与记忆的工作副本（§4）。
+5. **提交后步骤**（事务外，允许失败与重试）：用已提交的记忆副本替换
+   共享缓存；执行/派发待处理维护任务（§4，绑定存档与节点，可重启续跑）；
+   跨幕 recap 生成；审计导出。
+6. **响应**：与现产 `GenerateResponse` 同构 + `requestId` 回显。前端据此
    刷新 Task State Store。
 
-## 4. 提交范围与事务边界（v2 新增）
+## 4. 提交范围与事务边界（v2 新增，v3 修订）
 
 现产管线在 `commit_story_turn` **之前**就修改了多个共享对象，新入口不能
 照搬这条顺序。逐项枚举（`ScenarioGenerator` / `post_generation.py` /
@@ -297,17 +329,37 @@ recentMessages}`——前端快照与提交绑定用同一组值，杜绝两读�
 | 现产行为 | 时点 | 问题 | 新入口 |
 |---|---|---|---|
 | `_process_npc_relations_delta` → `update_npc_relations` | 合并后、提交前 | 异常被吞（logger.warning 后继续）；提交失败时关系已变 | **入事务** |
-| `campaign_manager.record_turn`（指标/待定锚点） | 提交前 | 同上 | **入事务** |
+| `campaign_manager.record_turn` | 提交前 | （v3 记录改正：它只**返回**统计值，不修改待定锚点）统计随 model_outputs 落库 | **入事务**（作为 model_outputs 行的列） |
 | `db.add_model_output`（模型输出记录） | 提交前 | 提交失败留下孤儿 model_output | **入事务** |
 | `_advance_campaign`（锚点提交、回合/幕推进） | 提交前 | 推进与回合节点可脱节 | **入事务**（计数与进度部分） |
 | `advance_session`（跨幕：可能调 LLM 生成 recap） | 提交前 | LLM 调用不能进 DB 事务 | **拆两半**：幕/会话计数与边界状态入事务；recap 生成移到提交后，幂等可重试，recap 未生成前会话以"无 recap"可玩 |
-| `memory_ctrl.on_turn_generated` + 后台 `maintain` | 生成阶段就喂正文 | 提交失败的回合污染记忆池 | **移到提交后**（§2.6） |
-| `_memory_controller` 快照写入 state | 合并时 | 随 state_json 落库，本身事务安全 | 维持（入事务） |
+| `memory_ctrl.on_turn_generated` + 后台 `maintain` | 生成阶段就喂正文 | 提交失败的回合污染记忆池 | 见下（v3 重排） |
+| `_memory_controller` 快照写入 state | 合并时 | 快照在喂入之前导出 → **随回合保存的快照漏掉本回合**（v2 方案的缺陷） | **独立副本同步喂入**（见下） |
+
+**记忆时序（v3 重排）**：
+
+1. 提交事务内，在共享控制器的**独立副本**上同步执行
+   `on_turn_generated`（喂入本回合正文与更新）；
+2. 导出**副本**的快照随本回合 state_json 落库——快照因此包含本回合；
+3. 提交成功后，用副本**替换共享内存缓存**；
+4. 摘要类工作与 recap 仍在提交后执行，但**待处理任务记录随回合落库**
+   （进 state_json 或独立列），每条任务**绑定存档（slot）与节点 id**，
+   支持进程重启后从落库快照恢复控制器并续跑，任务执行幂等（重复执行
+   无副作用）。
+
+**同一连接（v3 定案）**：`update_npc_relations`、`write_campaign_progress`
+等 store 方法**各自打开新连接**（`campaign_store.py` 每个 `with
+self.connect()` 一个连接）——在外面套 `with db:` 无法让这些写入一起回退。
+事务实现必须让**绑定校验、状态读取、全部写入、幂等结果保存共用同一个
+SQLite 连接**（store 方法增加接受既有连接的变体，或提交流程内全部改走
+该连接）。**事务失败时同时丢弃战役与记忆的工作副本**——内存里只留提交
+前已确认的共享状态，防止半程副本污染后续请求。
 
 **事务边界定义**：`story_turns` + `model_outputs` + `campaign_progress`
-（含 npc_relations/锚点/幕进度）+ 会话头与 version —— 一个 SQLite 事务，
-全成或全不成。**事务外**只允许两类东西：审计/诊断记录（它们的存在意义
-就是记录失败，不携带游戏状态）与提交后派生步骤（记忆喂入、recap）。
+（含 npc_relations/锚点/幕进度）+ `turn_submissions` + 记忆快照（随
+state_json）+ 会话头与 version —— 一个连接上的一个事务，全成或全不成。
+**事务外**只允许两类东西：审计/诊断记录（它们的存在意义就是记录失败，
+不携带游戏状态）与提交后派生步骤（缓存替换、待处理任务执行、recap）。
 
 ## 5. 三场景验证（v2 更新）
 
@@ -338,7 +390,9 @@ Store 并标注暂停原因，可导出审计或丢弃重开。
 **验证点**：(a) 连续两次同载荷提交，第二次 200 且返回首次的
 `timeline_node_id`，库中只有一个新节点；(b) 同文本两个 requestId →
 一成一败（409），不产生双胞胎回合；(c) 改动候选后重放旧 requestId →
-409/422。
+409/422；(d) **并发同 ID**：两个同 requestId 请求竞态 → 恰一个完成提交，
+另一个返回原结果或 409，库中一个节点、`turn_submissions` 一行（唯一
+约束兜底，幂等查询在事务内）。
 
 ### 场景三：读取过期状态（v2 加版本绑定）
 
@@ -356,20 +410,30 @@ Store 并标注暂停原因，可导出审计或丢弃重开。
 仍 409（version 不匹配）；(c) 409 响应带足以重跑的线索（新
 `expectedParentId + expectedVersion`）。
 
-## 6. 提交前候选校验（v2 新增）
+## 6. 名称出处检查（v3 更名并收窄声明）
 
 `merge_by_name` 只负责**写入顺序**（后到者胜），不核实变更是否有正文
-依据。提交事务前增加一个确定性校验器（无模型）：
+依据。提交事务前增加一个确定性校验器（无模型）。**能力边界必须诚实**：
+名字出现在正文或库存里，**不能证明**获得、消耗或任务完成发生了——本
+检查只验证"名字有出处"这一件事，**名称匹配通过 ≠ 变更合法**。
 
-- **范围**：`itemsUpserted/itemsRemoved/npcsUpserted/questsUpserted/
-  worldFactsUpserted/playerStatusPatch` 中的实体名，必须能在**过检正文
-  （含 dialogue）或 `TurnContext` 名册（state/RAG/最近对话）**中找到出处
-  （与输入解析同一套别名归一化精确比较，"钥匙"≠"铜钥匙"）；
-- **失败行为**：422，逐条返回无出处的候选（字段、名称、建议），回合
-  不提交——与"失败尝试不落半个回合"一致；前端可选择重跑输出解析或
-  叙事组件。不做静默剥离（会掩盖模型缺陷；如需降级模式另议）；
-- **数值范围**：`sanityDelta/healthDelta` 限幅检查（如 |delta| ≤ 30），
-  超限 422。
+- **候选带依据（v3 新增）**：每项变更候选附**正文依据**字段——支持该
+  变更的正文片段（narration/dialogue 的原句或偏移），或名册来源（state/
+  RAG/最近对话）。输出解析组件产出依据，校验器只核对依据存在且真实
+  可定位（依据文本确实出现在正文/名册中）；
+- **当前能验证的**：① 实体名与依据可定位（与输入解析同一套别名归一化
+  精确比较，"钥匙"≠"铜钥匙"）；② 变更方向与依据的动词搭配（标签跟动词
+  走：upserted 的依据应是获得/观察到类表述，removed 的依据应是失去/
+  消耗类表述——沿用标注规则的动词-字段搭配口径）；
+- **当前不能验证的**（明确声明，不作为通过条件）：事件是否真的按正文
+  发生、数量/状态语义是否正确、任务完成条件是否满足——这些归文本检查
+  组件的一致性判定与后续人工/软规则；
+- **失败行为**：422，逐条返回无出处或依据不可定位的候选（字段、名称、
+  依据、建议），回合不提交——与"失败尝试不落半个回合"一致；前端可选择
+  重跑输出解析或叙事组件。不做静默剥离（会掩盖模型缺陷；如需降级模式
+  另议）；
+- **数值限制**：不新增（v2 的 `|delta| ≤ 30` 无已定规则支撑，v3 删除；
+  `sanity/health` 的 clamp 由 `apply_output` 既有逻辑负责）。
 
 ## 7. 已裁决记录（2026-10-11 二轮评审）
 
@@ -378,8 +442,9 @@ Store 并标注暂停原因，可导出审计或丢弃重开。
    改变多变量，不足以支撑该归因。
 2. `scene_prompt` 运行时留空，背景沿用游玩前预生成资产（§2.7）。
 3. `dialogue` 保留结构化数组，与 narration 一起检查、一起解析（§2.3/2.5）。
-4. roll 由前端掷、后端确定性校验，绑定父节点已存 `option_checks`，作为
-   提交请求顶层字段（§3.3）。
+4. roll 由前端掷、后端确定性校验，使用**父节点已保存的选项**；`selectedOptionIndex`
+   （顶层，自由输入为 null）与 `roll` 分离，漏骰显式 422；结果沿用四类
+   规则（20 大成功 / 1 大失败 / 其余按 target 分成功失败）（§3.3）。
 5. 回合默认温度 0.35（已实现 0ae65b3：`PromptMeta` 默认值 + 移除
    builder 的 difficulty→0.7 旧钩子；显式传值仍生效）。
 6. CRF 不晋升、抽取训练暂停；端侧叙事配置暂不接入正式回合（2026-10-11
@@ -394,15 +459,25 @@ Store 并标注暂停原因，可导出审计或丢弃重开。
   场景一的暂停路径。
 - 前置检查（既有开放项）：Needle 3 浏览器工件确认、中文路由测试。
 
-## 9. 下一轮：先实现并验证 commit-turn，再接模型调度（v2 新增）
+## 9. 下一轮：先实现并验证 commit-turn，再接模型调度（v2 新增，v3 扩充）
 
 实现顺序（用户裁定）：**用固定候选**（手写/夹具候选，不经任何模型）
-实现 §3 的 commit-turn 端点与 §4 的事务边界，并验证四个场景：
+实现 §3 的 commit-turn 端点与 §4 的事务边界，并验证八个场景：
 
 1. **响应丢失后的重发**：同 requestId 重放 → 返回原结果，头只动一次；
 2. **同文本不同请求**：两个 requestId、相同行动文本 → 一成一败；
 3. **推进后回滚的迟到请求**：父节点 id 相同但 version 已递增 → 409；
 4. **提交途中抛错后的完整回退**：在事务内任一步注入异常 → `story_turns`
-   /`model_outputs`/`campaign_progress`/会话头全部回到提交前，无孤儿行。
+   /`model_outputs`/`campaign_progress`/会话头全部回到提交前，无孤儿行，
+   战役与记忆工作副本同时丢弃；
+5. **并发重发**（v3）：两个同 requestId 请求竞态 → 恰一个提交成功，
+   库中一个节点、`turn_submissions` 一行（唯一约束兜底）；
+6. **改动作后重用 ID**（v3）：同 requestId、`playerAction` 不同 →
+   409/422（摘要覆盖动作文本）；
+7. **漏交骰点**（v3）：`selectedOptionIndex` 指向 requires_check 选项但
+   无 roll → 422；requires_check=false 或自由输入带 roll → 拒绝；
+8. **提交成功后重启的记忆恢复**（v3）：提交后重启进程 → 从落库快照恢复
+   控制器，快照包含本回合，待处理任务绑定存档与节点可续跑且重复执行
+   无副作用。
 
 提交行为验收通过后，才把模型调度（组件循环、Needle 3）接到这个入口上。
