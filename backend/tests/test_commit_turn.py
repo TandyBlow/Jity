@@ -233,17 +233,33 @@ def test_late_arrival_after_advance_then_rollback(runtime, session_binding):
     assert committed.timelineNodeId
 
 
-# ── 4. 提交途中抛错 → 完整回退（提交记录/待处理任务/共享缓存）──
+# ── 4. 提交途中抛错 → 完整回退（提交记录/待办/共享缓存，含战役夹具）──
 
 def test_mid_commit_exception_rolls_back_everything(runtime, session_binding):
     sid = session_binding["sessionId"]
+    # Campaign fixture: the rollback must also restore the progress row.
+    runtime.db.set_session_campaign_id(sid, sid, None, "default")
+    runtime.db.write_campaign_progress(
+        campaign_id=sid, arc_index=0, session_index=0, turn_in_session=3,
+        fsm_state="active/session_active", slot_name="default",
+        revealed_anchors=[], completed_arcs=[],
+    )
+
+    cache_calls: list[str] = []
+    ran_tasks: list[dict] = []
 
     def boom(step: str) -> None:
-        if step == "after_story_turn":
+        # Fault AFTER the pending-task write and the submission row — the
+        # deepest injection point — so the rollback covers all of them.
+        if step == "after_submission_row":
             raise RuntimeError("injected failure")
 
     with pytest.raises(RuntimeError, match="injected"):
-        _commit(runtime, sid, _request(session_binding, "req-1"), fault_injector=boom)
+        _commit(
+            runtime, sid, _request(session_binding, "req-1"),
+            fault_injector=boom,
+            post_commit=lambda response: cache_calls.append(response.requestId),
+        )
 
     counts = _counts(runtime.db, sid)
     assert counts["turns"] == 1  # only the root
@@ -251,10 +267,13 @@ def test_mid_commit_exception_rolls_back_everything(runtime, session_binding):
     assert counts["submissions"] == 0  # submission record rolled back
     assert counts["head"]["h"] == session_binding["expectedParentId"]
     assert counts["head"]["v"] == 0
+    # 战役进度行回退：回合数仍在夹具值
+    assert runtime.db.read_campaign_progress(sid, "default")["turn_in_session"] == 3
     # 待处理任务：root 状态里没有任何 _memory_pending_tasks / _memory_controller
     assert "_memory_pending_tasks" not in counts["root_state"]
     assert "_memory_controller" not in counts["root_state"]
-    # 共享缓存：post-commit 通知从未发生，工作副本被丢弃
+    # 共享缓存通知从未发生，工作副本被丢弃
+    assert cache_calls == []
     assert runtime.cache_invalidations == []
     assert len(runtime.memory_copies) == 1  # the discarded copy
 
@@ -414,7 +433,10 @@ def test_same_id_with_changed_selection_is_rejected(runtime, session_binding):
     original = _request(binding, "req-2", playerAction=action, selectedOptionIndex=1, roll={"result": 14})
     _commit(runtime, binding["sessionId"], original)
 
-    changed = _request(binding, "req-2", playerAction=action, selectedOptionIndex=1, roll={"result": 5})
+    # The selection dimension changes for real: option 0 (null check, no roll)
+    # instead of option 1 — action and roll change WITH it (action↔option
+    # binding), and the digest must reject the reuse on its own.
+    changed = _request(binding, "req-2", playerAction="查看值班登记簿", selectedOptionIndex=0, roll=None)
     with pytest.raises(CommitTurnError) as excinfo:
         _commit(runtime, binding["sessionId"], changed)
     assert excinfo.value.status == 409
@@ -459,3 +481,319 @@ def test_campaign_progress_row_advances_in_the_same_transaction(runtime, session
     relations = json.loads(row["npc_relations"])
     admin = next(r for r in relations if r["name"] == "管理员")
     assert admin["affinity"] == 1
+
+
+# ════ 评审四轮补充：缺口用例 ════
+
+from pathlib import Path
+
+from app.schemas import StoryOutput
+from app.services.campaign_manager import CampaignManager
+from app.services.commit_turn import (
+    check_grounding,
+    recover_pending_tasks,
+    run_pending_tasks,
+)
+
+CAMPAIGNS = Path(__file__).resolve().parents[1] / "data" / "campaigns"
+CAMPAIGN = "龙族Ⅰ_火之晨曦_campaign.json"
+
+EMPTY_ROSTER = {"items": [], "npcs": [], "quests": [], "world_facts": []}
+
+
+def _plain_output(narration: str = NARRATION) -> StoryOutput:
+    return StoryOutput.model_validate({"narration": narration})
+
+
+# ── 名称出处检查：名称与依据独立核对，绕过关闭 ──
+
+def test_grounding_rejects_fabricated_name_even_with_real_basis():
+    # 激光枪在正文与名册都不存在；引用真实正文作依据不再能把它带进来。
+    candidate = {
+        "items_gained": [{"name": "激光枪"}],
+        "changeBases": [{"path": "items_gained.0", "basis": "你翻开值班登记簿"}],
+    }
+    issues = check_grounding(candidate, _plain_output(), EMPTY_ROSTER)
+    assert any("激光枪" in issue and "实体名" in issue for issue in issues)
+    # 依据本身可定位，因此不因依据再记一条——两条检查相互独立。
+    assert not any("items_gained.0" in issue and "正文依据" in issue for issue in issues)
+
+
+def test_grounding_rejects_roster_name_with_nonexistent_basis():
+    # 铜钥匙在名册里；搭配完全不存在的一句话作为依据也过不去。
+    candidate = {
+        "items_gained": [{"name": "铜钥匙"}],
+        "changeBases": [{"path": "items_gained.0", "basis": "完全不存在的一句话"}],
+    }
+    roster = {"items": [{"name": "铜钥匙", "description": "锈迹斑斑的铜钥匙"}], "npcs": [], "quests": [], "world_facts": []}
+    issues = check_grounding(candidate, _plain_output(), roster)
+    assert any("铜钥匙" in issue and "正文依据" in issue for issue in issues)
+    assert not any("实体名" in issue for issue in issues)  # 名称出处是成立的
+
+
+def test_grounding_covers_npcs_encountered_and_quests_updated():
+    candidate = {
+        "npcs_encountered": [{"name": "幽灵", "disposition": "unknown"}],
+        "quests_updated": [{"name": "登记簿之谜", "status": "active"}],
+        "changeBases": [{"path": "npcs_encountered.0", "basis": "完全不存在"}],
+    }
+    roster = {"items": [], "npcs": [], "quests": [{"name": "登记簿之谜", "objective": "查明撕页者"}], "world_facts": []}
+    issues = check_grounding(candidate, _plain_output(), roster)
+    assert any("npcs_encountered.0" in issue and "幽灵" in issue for issue in issues)
+    assert any("quests_updated.0" in issue and "正文依据" in issue for issue in issues)
+
+
+def test_grounding_direction_pairing_covers_nested_items():
+    # memory_updates.items_removed 的依据用了获得类动词 → 方向不符。
+    candidate = {
+        "memory_updates": {"items_removed": [{"name": "备用钥匙", "status": "lost"}]},
+        "changeBases": [
+            {"path": "memory_updates.items_removed.0", "basis": "管理员递给你一把备用钥匙，你收进兜里"}
+        ],
+    }
+    issues = check_grounding(candidate, _plain_output(), EMPTY_ROSTER)
+    assert any("移除类变更的依据是获得类表述" in issue for issue in issues)
+
+
+def test_grounding_failure_rejects_the_submission(runtime, session_binding):
+    from app.services.commit_turn import CommitTurnError
+
+    bad = dict(FIXED_CANDIDATE)
+    bad["items_gained"] = [{"name": "激光枪", "description": "凭空出现"}]
+    bad["changeBases"] = [{"path": "items_gained.0", "basis": "你翻开值班登记簿"}]
+    with pytest.raises(CommitTurnError) as excinfo:
+        _commit(runtime, session_binding["sessionId"], _request(session_binding, "req-1", candidate=bad))
+    assert excinfo.value.status == 422
+
+
+# ── 行动对应与骰点：裸选项或完整规范后缀，严格整数 ──
+
+def test_option_plus_arbitrary_trailing_text_is_rejected(runtime, session_binding):
+    from app.services.commit_turn import CommitTurnError
+
+    binding = _roll_binding(runtime, session_binding)
+    with pytest.raises(CommitTurnError) as excinfo:
+        _commit(runtime, binding["sessionId"], _request(
+            binding, "req-2",
+            playerAction="查看值班登记簿然后顺便翻窗逃跑",
+            selectedOptionIndex=0,
+        ))
+    assert excinfo.value.status == 422
+    assert "裸选项" in excinfo.value.detail
+
+
+def test_malformed_judgment_suffix_is_rejected(runtime, session_binding):
+    from app.services.commit_turn import CommitTurnError
+
+    binding = _roll_binding(runtime, session_binding)
+    with pytest.raises(CommitTurnError) as excinfo:
+        _commit(runtime, binding["sessionId"], _request(
+            binding, "req-2",
+            playerAction="询问管理员夜班名单\n\n[行动判定] 我随便写的",
+            selectedOptionIndex=1,
+            roll={"result": 14},
+        ))
+    assert excinfo.value.status == 422
+    assert "格式不符" in excinfo.value.detail
+
+
+def test_roll_two_with_critical_suffix_is_rejected(runtime, session_binding):
+    # 评审四轮的原始反例：骰点 2（失败档）配上大成功后缀。
+    from app.services.commit_turn import CommitTurnError
+
+    binding = _roll_binding(runtime, session_binding)
+    with pytest.raises(CommitTurnError) as excinfo:
+        _commit(runtime, binding["sessionId"], _request(
+            binding, "req-2",
+            playerAction="询问管理员夜班名单\n\n[行动判定] 调查检定 1d20 ≥ 12，骰面 2/20，大成功。",
+            selectedOptionIndex=1,
+            roll={"result": 2},
+        ))
+    assert excinfo.value.status == 422
+    assert "不符" in excinfo.value.detail
+
+
+def test_boolean_roll_result_is_not_coerced():
+    from pydantic import ValidationError
+
+    with pytest.raises(ValidationError):
+        CommitTurnRequest.model_validate({
+            "requestId": "r", "expectedParentId": 1, "expectedVersion": 0,
+            "playerAction": "自由输入", "candidate": dict(FIXED_CANDIDATE),
+            "selectedOptionIndex": None, "roll": {"result": True},
+        })
+
+
+def test_audit_and_roll_record_are_persisted(runtime, session_binding):
+    binding = _roll_binding(runtime, session_binding)
+    action = "询问管理员夜班名单\n\n[行动判定] 调查检定 1d20 ≥ 12，骰面 14/20，成功。"
+    audit = {"componentCalls": [{"component": "narrator", "wallMs": 100}]}
+    committed = _commit(runtime, binding["sessionId"], _request(
+        binding, "req-2", playerAction=action,
+        selectedOptionIndex=1, roll={"result": 14}, audit=audit,
+    ))
+    with runtime.db.connect() as conn:
+        row = conn.execute(
+            "SELECT audit_json FROM model_outputs WHERE id = "
+            "(SELECT model_output_id FROM story_turns WHERE id = ?)",
+            (committed.timelineNodeId,),
+        ).fetchone()
+    saved = json.loads(row["audit_json"])
+    assert saved["audit"] == audit
+    assert saved["roll"]["result"] == 14
+    assert saved["roll"]["target"] == 12
+    assert saved["roll"]["outcome"] == "success"
+
+
+# ── 待办续跑：续带、执行、完成标记、幂等、恢复 ──
+
+def test_consecutive_commits_carry_over_pending_tasks(runtime, session_binding):
+    sid = session_binding["sessionId"]
+    first = _commit(runtime, sid, _request(session_binding, "req-1"))
+    second = _commit(runtime, sid, _request(
+        {"sessionId": sid, "expectedParentId": first.timelineNodeId, "expectedVersion": 1},
+        "req-2",
+    ))
+    with runtime.db.connect() as conn:
+        state = json.loads(conn.execute("SELECT state_json s FROM game_sessions WHERE id = ?", (sid,)).fetchone()["s"])
+    tasks = state["_memory_pending_tasks"]
+    assert [t["nodeId"] for t in tasks] == [first.timelineNodeId, second.timelineNodeId]
+
+
+def test_pending_task_execution_marks_completion_keeps_failures_and_is_idempotent(runtime, session_binding):
+    sid = session_binding["sessionId"]
+    committed = _commit(runtime, sid, _request(session_binding, "req-1"))
+
+    executed: list[dict] = []
+
+    def runner(task: dict) -> None:
+        if task["nodeId"] == committed.timelineNodeId:
+            executed.append(task)
+            return
+        raise RuntimeError("fail this task")
+
+    done = run_pending_tasks(runtime.db, runtime.states, sid, runner)
+    assert [t["nodeId"] for t in done] == [committed.timelineNodeId]
+    with runtime.db.connect() as conn:
+        state = json.loads(conn.execute("SELECT state_json s FROM game_sessions WHERE id = ?", (sid,)).fetchone()["s"])
+    assert state["_memory_pending_tasks"] == []
+
+    # Idempotent rerun: nothing pending, runner not called again.
+    before = len(executed)
+    assert run_pending_tasks(runtime.db, runtime.states, sid, runner) == []
+    assert len(executed) == before
+
+
+def test_recover_pending_tasks_scans_and_completes(runtime, session_binding):
+    sid = session_binding["sessionId"]
+    committed = _commit(runtime, sid, _request(session_binding, "req-1"))
+    seen: list[dict] = []
+
+    def runner(task: dict) -> None:
+        seen.append(task)
+
+    completed = recover_pending_tasks(runtime.db, runtime.states, runner)
+    assert completed[sid][0]["nodeId"] == committed.timelineNodeId
+    assert recover_pending_tasks(runtime.db, runtime.states, runner) == {}
+
+
+def test_rollback_does_not_leak_branch_tasks(runtime, session_binding):
+    # Commit on branch A, roll back to the root, commit on branch B: the head
+    # snapshot restored by activation predates A's tasks — none may leak.
+    sid = session_binding["sessionId"]
+    root_id = session_binding["expectedParentId"]
+    _commit(runtime, sid, _request(session_binding, "req-1"))
+    runtime.db.activate_story_turn(sid, root_id)
+    _commit(runtime, sid, _request(
+        {"sessionId": sid, "expectedParentId": root_id, "expectedVersion": 2},
+        "req-2", playerAction="换个方法继续调查",
+    ))
+    with runtime.db.connect() as conn:
+        head = conn.execute("SELECT active_turn_id h, state_json s FROM game_sessions WHERE id = ?", (sid,)).fetchone()
+        abandoned = conn.execute(
+            "SELECT state_json s FROM story_turns WHERE parent_turn_id = ? AND id != ?", (root_id, head["h"])
+        ).fetchone()
+    head_tasks = json.loads(head["s"]).get("_memory_pending_tasks", [])
+    assert [t["nodeId"] for t in head_tasks] == [head["h"]]
+    assert "_memory_pending_tasks" in json.loads(abandoned["s"])  # A's tasks stay on A
+
+
+# ── 战役维度：锚点、场次推进、recap 边界、消息场次标记 ──
+
+def _campaign_manager(runtime, sid: str) -> CampaignManager:
+    manager = CampaignManager(db=runtime.db, campaigns_dir=CAMPAIGNS, scripted_story=MagicMock())
+    manager.load(CAMPAIGNS / CAMPAIGN, campaign_id=sid, slot_name="default")
+    return manager
+
+
+def test_campaign_commit_advances_anchors_and_counts(runtime, session_binding):
+    sid = session_binding["sessionId"]
+    runtime.db.set_session_campaign_id(sid, sid, None, "default")
+    runtime.db.write_campaign_progress(
+        campaign_id=sid, arc_index=0, session_index=0, turn_in_session=0,
+        fsm_state="active/session_active", slot_name="default",
+        revealed_anchors=[], completed_arcs=[],
+    )
+    manager = _campaign_manager(runtime, sid)
+    manager._anchors._pending_anchor_triggers.append(("anchor-1", 1))  # fixture: this turn's pending trigger
+
+    _commit(runtime, sid, _request(session_binding, "req-1"), campaign_manager=manager)
+
+    row = runtime.db.read_campaign_progress(sid, "default")
+    assert row["turn_in_session"] == 1
+    assert "anchor-1" in json.loads(row["revealed_anchors"])
+    assert row["fsm_state"] == "active/session_active"
+    with runtime.db.connect() as conn:
+        messages = conn.execute(
+            "SELECT campaign_session_index FROM session_messages WHERE session_id = ?", (sid,)
+        ).fetchall()
+    assert all(m["campaign_session_index"] == 0 for m in messages)
+
+
+def test_campaign_rollover_sets_recap_boundary_and_task(runtime, session_binding):
+    sid = session_binding["sessionId"]
+    runtime.db.set_session_campaign_id(sid, sid, None, "default")
+    manager = _campaign_manager(runtime, sid)
+    max_turns = manager.resolve_max_turns()
+    runtime.db.write_campaign_progress(
+        campaign_id=sid, arc_index=0, session_index=0, turn_in_session=max_turns - 1,
+        fsm_state="active/session_active", slot_name="default",
+        revealed_anchors=[], completed_arcs=[],
+    )
+
+    committed = _commit(runtime, sid, _request(session_binding, "req-1"), campaign_manager=manager)
+
+    row = runtime.db.read_campaign_progress(sid, "default")
+    assert row["turn_in_session"] == max_turns
+    assert row["fsm_state"] == "active/session_recap"
+    with runtime.db.connect() as conn:
+        state = json.loads(conn.execute("SELECT state_json s FROM story_turns WHERE id = ?", (committed.timelineNodeId,)).fetchone()["s"])
+    recap_tasks = [t for t in state["_memory_pending_tasks"] if t["type"] == "campaign_recap"]
+    assert recap_tasks and recap_tasks[0]["nodeId"] == committed.timelineNodeId
+
+
+# ── turn-context：祖先过滤、净化、campaignContext ──
+
+@pytest.mark.asyncio
+async def test_turn_context_filters_abandoned_branch_and_sanitizes(runtime, session_binding):
+    sid = session_binding["sessionId"]
+    root_id = session_binding["expectedParentId"]
+    _commit(runtime, sid, _request(session_binding, "req-1"))  # branch A
+    runtime.db.activate_story_turn(sid, root_id)
+    _commit(runtime, sid, _request(
+        {"sessionId": sid, "expectedParentId": root_id, "expectedVersion": 2},
+        "req-2", playerAction="换个方法继续调查",
+    ))  # branch B, sibling of A
+
+    async with AsyncClient(transport=ASGITransport(app=runtime.app), base_url="http://test") as client:
+        response = await client.get(f"/sessions/{sid}/turn-context")
+
+    assert response.status_code == 200
+    body = response.json()
+    contents = [m["content"] for m in body["recentMessages"]]
+    assert any("换个方法继续调查" in c for c in contents)
+    assert not any(PLAYER_ACTION in c for c in contents)  # abandoned branch A excluded
+    assert "_memory_controller" not in body["state"]
+    assert isinstance(body["campaignContext"], str)
+
+

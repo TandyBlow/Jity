@@ -12,6 +12,7 @@ from app.dependencies import (
     campaign_manager_cache,
     db,
     embedding_client,
+    get_campaign_manager_for_session,
     knowledge_service,
     llm_client,
     settings,
@@ -29,6 +30,7 @@ from app.services.commit_turn import (
     CommitTurnResponse,
     commit_turn,
     read_turn_context,
+    run_pending_tasks,
 )
 from app.services.game_state.defaults import STATE_CAPS
 
@@ -49,6 +51,11 @@ def _default_memory_controller_factory(session_id: str):
 
 
 memory_controller_factory = _default_memory_controller_factory
+
+# Pending-task execution entry (§4): the fixed-candidate round ships the
+# machinery but no automatic runner — the real maintainer (LLM memory
+# maintenance) lands with the scheduling integration. Tests monkeypatch this.
+pending_task_runner = None
 
 router = APIRouter(prefix="/sessions", tags=["sessions"])
 
@@ -347,14 +354,36 @@ def commit_turn_endpoint(session_id: str, request: CommitTurnRequest) -> CommitT
     merge → every write. A successful replay returns the original result
     without moving the head again.
     """
-    def _swap_shared_caches(response: CommitTurnResponse) -> None:
-        # Post-commit, outside the transaction: drop the session's cached
-        # memory controller so the next turn rebuilds from the committed
-        # snapshot (§4 提交后替换共享缓存 — conservative form: rebuild).
+    slot_name = request.slotName or "default"
+
+    def _post_commit(response: CommitTurnResponse) -> None:
+        # Post-commit, outside the transaction (§4):
+        # 1. drop the cached campaign manager for the ACTUAL slot, then the
+        #    session's cached memory controller, so the next turn rebuilds
+        #    from the committed snapshots (conservative form: rebuild);
+        # 2. clear the manager's in-memory pending-anchor triggers — the row
+        #    already carries the merged revealed_anchors;
+        # 3. run pending maintenance tasks when a runner is wired.
         try:
-            knowledge_service.scenario_generator.invalidate_timeline_caches(session_id)
+            campaign_manager_cache.invalidate(session_id, slot_name)
         except Exception:
-            logger.warning("commit-turn cache invalidation failed for %s", session_id, exc_info=True)
+            logger.warning("commit-turn campaign cache invalidation failed for %s", session_id, exc_info=True)
+        try:
+            knowledge_service.scenario_generator.invalidate_timeline_caches(session_id, slot_name)
+        except Exception:
+            logger.warning("commit-turn timeline cache invalidation failed for %s", session_id, exc_info=True)
+        try:
+            manager = get_campaign_manager_for_session(session_id, slot_name)
+            if manager is not None:
+                manager.commit_pending_anchors()
+        except Exception:
+            logger.warning("commit-turn pending-anchor clear failed for %s", session_id, exc_info=True)
+        runner = pending_task_runner
+        if runner is not None:
+            try:
+                run_pending_tasks(db, state_manager, session_id, runner)
+            except Exception:
+                logger.warning("commit-turn pending-task run failed for %s", session_id, exc_info=True)
 
     try:
         return commit_turn(
@@ -365,7 +394,8 @@ def commit_turn_endpoint(session_id: str, request: CommitTurnRequest) -> CommitT
             model=settings.llm_model,
             source="commit_turn",
             memory_controller_factory=lambda: memory_controller_factory(session_id),
-            post_commit=_swap_shared_caches,
+            campaign_manager=get_campaign_manager_for_session(session_id, slot_name),
+            post_commit=_post_commit,
         )
     except CommitTurnError as exc:
         raise HTTPException(status_code=exc.status, detail=exc.detail) from exc
@@ -377,6 +407,11 @@ def commit_turn_endpoint(session_id: str, request: CommitTurnRequest) -> CommitT
 def turn_context_endpoint(session_id: str) -> dict[str, object]:
     """One consistent read of the snapshot the component loop binds to (§3.2)."""
     try:
-        return read_turn_context(db, session_id)
+        return read_turn_context(
+            db,
+            state_manager,
+            session_id,
+            lambda: memory_controller_factory(session_id),
+        )
     except CommitTurnError as exc:
         raise HTTPException(status_code=exc.status, detail=exc.detail) from exc

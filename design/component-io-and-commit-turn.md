@@ -1,11 +1,13 @@
 # 组件 I/O 字段说明与 commit-turn 设计稿（v3.1）
 
-状态：**固定候选实现轮已完成**（2026-10-11，实现 + 14 例测试全过，见 §9；
-Needle 3 继续暂缓）。四点评审更正已并入代码与本文：§3.4 顺序改为
-"开事务 → 幂等查询 → 重放短路 / 绑定校验"，并发同 ID 同内容返回同一成功
-结果；请求体补 `slotName` 且 `selectedOptionIndex` 独立纳入摘要；选项校验
-按父节点 options 检查下标、null 选项按无需检定处理、判定后缀与重算结果
-核对；记忆与战役工作副本从事务内快照构造。
+状态：**固定候选实现轮完成并修复评审四轮缺口**（2026-10-11，v3.2，31 例
+测试全过，见 §9；Needle 3 继续暂缓）。v3.1 修复：§3.4 顺序（开事务 →
+幂等查询 → 重放短路 / 绑定校验，并发同 ID 同内容返回同一成功结果）、
+`slotName` 与独立的选择摘要维度、选项校验（null 选项按无需检定）、
+快照构造副本。v3.2 修复评审四轮反例：turn-context 祖先过滤/读事务/净化/
+campaignContext、名称与依据独立核对（含嵌套物品与 npcs/quests 覆盖）、
+行动只认裸选项或规范后缀 + StrictInt + 后缀核对 + audit/roll 落库、
+战役锚点与场次推进 + 消息场次标记 + 缓存失效覆盖、待办续带与续跑入口。
 
 方案 b 回顾：组件循环跑在前端；后端不参与推理，只负责 ① 校验 ② 确定性
 状态合并（`apply_output`）③ 事务提交（`commit_story_turn`）。本稿把这条
@@ -472,41 +474,48 @@ Store 并标注暂停原因，可导出审计或丢弃重开。
   场景一的暂停路径。
 - 前置检查（既有开放项）：Needle 3 浏览器工件确认、中文路由测试。
 
-## 9. 实现轮：固定候选 commit-turn（v3.1 已实现并验证）
+## 9. 实现轮：固定候选 commit-turn（v3.2：评审四轮缺口修复完毕）
 
 实现顺序（用户裁定）：**用固定候选**（手写/夹具候选，不经任何模型）实现
 §3 的 commit-turn 端点与 §4 的事务边界，验收通过后才接模型调度。
 
-**实现状态（v3.1）**：已实现——`backend/app/services/commit_turn.py`
+**实现状态（v3.2，评审四轮修复后）**：`backend/app/services/commit_turn.py`
 （单连接事务流）+ `POST /sessions/{id}/commit-turn` 与
 `GET /sessions/{id}/turn-context`（routers/sessions.py）+ `turn_submissions`
 表（UNIQUE(session_id, request_id)）+ `commit_story_turn`/`add_model_output`/
-`read_campaign_progress` 的连接参数变体（`maybe_owned_connection`）。
-实现要点：事务内 `BEGIN IMMEDIATE` 先开、幂等查询先于绑定校验；记忆副本
-从事务内快照构造、同步喂正文后随回合落库（含 `_memory_pending_tasks`）；
-`replace_em_dashes()` 显式调用钉在合并前；待处理任务节点 id 在
-story_turns 插入后事务内回填。**测试 14 例全过**（backend/tests/
-test_commit_turn.py），覆盖以下 10 个评审场景 + turn-context 绑定 +
-战役进度行同事务推进：
+`read_campaign_progress` 连接参数变体（`maybe_owned_connection`）。
 
-1. **响应丢失后的重发**：同 requestId 重放 → 返回原结果（replayed=true），
-   头只动一次；
-2. **同文本不同请求**：两个 requestId、相同行动文本 → 一成一败；
-3. **推进后回滚的迟到请求**：父节点 id 相同但 version 已递增 → 409；
-4. **提交途中抛错后的完整回退**：事务内注入异常 → story_turns /
-   model_outputs / campaign_progress / 会话头全部回退，**提交记录、
-   待处理任务、共享缓存通知**三项同时检查（v3.1 扩充）；
-5. **并发重发**：两个同 requestId 请求竞态 → 都返回同一成功结果（一个
-   提交、一个重放，**不是 409**），库中一个节点、`turn_submissions` 一行；
-6. **改动作后重用 ID**：同 requestId、`playerAction` 不同 → 409（摘要
-   覆盖动作文本）；
-7. **漏交骰点**：`selectedOptionIndex` 指向 requires_check 选项但无 roll
-   → 422；自由输入或非检定项带 roll → 422；
-8. **提交成功后重启的记忆恢复**：落库快照包含本回合（NSB turn_buffer
-   可证）、待处理任务绑定存档与节点、新控制器从快照恢复；
-9. **无需检定的 null 选项**（v3.1 补）：`option_checks[i] == null` 按
-   无需检定处理，携带 roll → 422；
-10. **修改 selectedOptionIndex 后重用 ID**（v3.1 补）：同 requestId 改
-    选择 → 409（摘要含独立的选择维度）。
+**评审四轮修复（用户以反例复现的行为缺口，v3.2 全部落码）**：
 
-提交行为验收通过后，才把模型调度（组件循环、Needle 3）接到这个入口上。
+1. **turn-context 重写**：显式读事务（一个快照）内按当前头节点的**祖先链**
+   过滤消息（递归 CTE），并按头节点的战役场次过滤——已放弃分支的消息不再
+   混入；状态经 sanitize 返回（不再泄漏 `_memory_controller`）；补
+   `campaignContext`（快照离线组装，无 LLM）。
+2. **名称出处检查独立化**：名称出处与正文依据**分别核对**——真实依据不再
+   能把正文与名册均无的实体名带进来，名册内实体也不再能搭配不存在的依据；
+   方向校验覆盖**嵌套的 memory_updates.items_***；补 `npcs_encountered` 与
+   `quests_updated` 的覆盖。
+3. **行动与骰点收紧**：playerAction 只接受**裸选项或完整规范判定后缀**
+   （fullmatch；选项后追加任意行动 → 422）；后缀出现但格式不符 → 422
+   （不再静默跳过核对）；后缀里的阈值/骰面/档位全部与重算结果核对（骰点
+   2 + 大成功后缀被拒）；`RollReport.result` 改 **StrictInt**（JSON true
+   不再被 pydantic 拉成 1）；重算的 roll record 与请求 audit 持久化到
+   `model_outputs.audit_json`。
+4. **战役维度补齐**：待定锚点并入 revealed_anchors（manager 内存只读、
+   行内合并；提交后清理 manager 待定）；回合数推进 + **场次推进判定**
+   （resolve_max_turns；触界 fsm → session_recap，recap 生成入待办）；
+   消息的 `campaign_session_index` 用**实际场次**；提交后缓存失效带实际
+   slotName 并覆盖战役管理缓存。
+5. **待办续跑**：任务**续带**（不再每回合覆盖——未完成任务跨回合保留，
+   回滚不串分支：任务随各自节点快照落库）；`run_pending_tasks`（执行 +
+   完成标记 = 从头部快照移除，失败保留待重试，game_sessions 与头部
+   story_turns 同步写，幂等）+ `recover_pending_tasks`（启动恢复入口）；
+   路由挂 `pending_task_runner` 注入点（真实维护器随调度接入）。
+
+**测试（v3.2）：31 例全过**（backend/tests/test_commit_turn.py），覆盖
+10 个评审场景 + turn-context 祖先过滤/净化/campaignContext + 战役锚点与
+场次推进 + 上述全部缺口反例；回退测试带战役进度夹具、缓存回调监听、
+故障点在待办回填与提交记录写入**之后**（after_submission_row）。全量
+后端 463 过（2 例既有失败与本轮无关）。两处声明修正：改选择用例现真正
+改变下标（0↔1，动作与骰点随选项联动，摘要的选择维度生效）；回退用例的
+故障点不再是回填之前。

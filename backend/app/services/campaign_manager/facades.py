@@ -25,6 +25,11 @@ class AnchorFacade:
 
         return self._anchors.commit_pending_anchors(self.progress, mark_fn=_mark)
 
+    @property
+    def pending_anchor_triggers(self) -> list[tuple[str, int]]:
+        """Read-only view of this turn's pending triggers (commit-turn §4)."""
+        return self._anchors.pending_anchor_triggers
+
     def mark_anchor_triggered(self, anchor_id: str, turn: int) -> None:
         if self.progress is not None:
             if anchor_id not in self.progress.revealed_anchors:

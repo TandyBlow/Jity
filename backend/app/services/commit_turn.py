@@ -19,7 +19,7 @@ import json
 import re
 from typing import Any, Callable
 
-from pydantic import BaseModel, Field, ValidationError
+from pydantic import BaseModel, Field, StrictInt, ValidationError
 
 from app.database import Database
 from app.exceptions import ConcurrentModificationError
@@ -36,7 +36,9 @@ class CommitTurnError(Exception):
 
 
 class RollReport(BaseModel):
-    result: int
+    # StrictInt: lax pydantic coerces bool->int (True becomes 1), which would
+    # let a JSON `true` masquerade as a natural 1 (review round 4).
+    result: StrictInt
 
 
 class CommitTurnRequest(BaseModel):
@@ -86,6 +88,12 @@ def submission_digest(request: CommitTurnRequest) -> str:
 _ACTION_JUDGMENT_RE = re.compile(
     r"\[行动判定\].*?骰面 (\d+)/20，(大成功|成功|失败|大失败)。", re.DOTALL
 )
+# The canonical suffix the frontend appends (checks.ts formatActionWithCheckResult):
+# exactly "\n\n[行动判定] {system} {expression}，骰面 {roll}/20，{degree}。" —
+# matched in FULL against the text after the option; anything else is rejected.
+_ACTION_JUDGMENT_SUFFIX_RE = re.compile(
+    r"\n\n\[行动判定\] .+ 1d20 ≥ (\d+)，骰面 (\d+)/20，(大成功|成功|失败|大失败)。\Z"
+)
 
 
 def _outcome_for(roll: int, target: int) -> tuple[str, str]:
@@ -104,7 +112,10 @@ def validate_selection(parent_output: dict[str, Any], request: CommitTurnRequest
 
     The candidate's options are NEXT turn's — never used here. option_checks
     entries may be None (the schema allows it): None means no check required.
-    Returns the re-derived roll record for the audit, or None when no check.
+    The action must be EXACTLY the bare option text or the option text plus the
+    canonical judgment suffix — startswith-style acceptance let arbitrary
+    trailing text ride along (review round 4). Returns the re-derived roll
+    record for the audit, or None when no check.
     """
     from app.schemas.game.story_output import DIFFICULTY_TARGETS
 
@@ -121,42 +132,57 @@ def validate_selection(parent_output: dict[str, Any], request: CommitTurnRequest
         raise CommitTurnError(422, f"selectedOptionIndex {idx} 不在父节点 options 范围内")
 
     option_text = str(options[idx])
-    if request.playerAction != option_text and not request.playerAction.startswith(option_text):
-        raise CommitTurnError(422, "playerAction 与所选父节点选项不对应")
-
     # option_checks[i] is OptionCheck | None: null = 确定性行动，无需检定。
     check = checks[idx] if idx < len(checks) else None
-    if check is None or not check.get("requires_check", True):
-        if request.roll is not None:
-            reason = "option_checks 为 null" if check is None else "requires_check=false"
-            raise CommitTurnError(422, f"该选项无需检定（{reason}），禁止携带 roll")
-        return None
+    requires_check = bool(check and check.get("requires_check", True))
 
-    if request.roll is None:
-        raise CommitTurnError(422, "所选选项要求检定（requires_check=true），但未提交 roll")
-    result = request.roll.result
-    if isinstance(result, bool) or not isinstance(result, int) or not 1 <= result <= 20:
-        raise CommitTurnError(422, "roll.result 必须是 1 到 20 的整数")
+    roll_record: dict[str, Any] | None = None
+    if requires_check:
+        difficulty = check.get("difficulty", "普通")
+        target = DIFFICULTY_TARGETS.get(difficulty, DIFFICULTY_TARGETS["普通"])
+        if request.roll is None:
+            raise CommitTurnError(422, "所选选项要求检定（requires_check=true），但未提交 roll")
+        result = request.roll.result
+        if not 1 <= result <= 20:
+            raise CommitTurnError(422, "roll.result 必须是 1 到 20 的整数")
+        outcome, degree = _outcome_for(result, target)
+        roll_record = {
+            "optionIndex": idx,
+            "target": target,
+            "result": result,
+            "outcome": outcome,
+            "degree": degree,
+        }
+    elif request.roll is not None:
+        reason = "option_checks 为 null" if check is None else "requires_check=false"
+        raise CommitTurnError(422, f"该选项无需检定（{reason}），禁止携带 roll")
 
-    difficulty = check.get("difficulty", "普通")
-    target = DIFFICULTY_TARGETS.get(difficulty, DIFFICULTY_TARGETS["普通"])
-    outcome, degree = _outcome_for(result, target)
-
-    # The frontend appends "[行动判定] …，骰面 N/20，<档位>。" to the action
-    # (checks.ts formatActionWithCheckResult). If present, it must agree with
-    # the dice and the server-recomputed outcome — descriptions that disagree
-    # with the roll are rejected.
-    match = _ACTION_JUDGMENT_RE.search(request.playerAction)
-    if match:
-        stated_roll, stated_degree = int(match.group(1)), match.group(2)
-        if stated_roll != result or stated_degree != degree:
+    # Action correspondence: bare option, or option + canonical judgment suffix.
+    if request.playerAction == option_text:
+        stated: tuple[int, str] | None = None
+    elif request.playerAction.startswith(option_text + "\n\n[行动判定] "):
+        remainder = request.playerAction[len(option_text):]
+        match = _ACTION_JUDGMENT_SUFFIX_RE.fullmatch(remainder)
+        if match is None:
+            raise CommitTurnError(422, "行动判定后缀格式不符：必须是「\\n\\n[行动判定] {system} 1d20 ≥ {target}，骰面 {roll}/20，{档位}。」")
+        stated_target, stated_roll, stated_degree = int(match.group(1)), int(match.group(2)), match.group(3)
+        if roll_record is None:
+            raise CommitTurnError(422, "行动判定后缀出现在无需检定的选项上")
+        if stated_target != roll_record["target"]:
+            raise CommitTurnError(422, f"行动判定阈值与重算结果不符：后缀 {stated_target}，重算 {roll_record['target']}")
+        if stated_roll != roll_record["result"] or stated_degree != roll_record["degree"]:
             raise CommitTurnError(
                 422,
-                f"行动判定描述与骰点不符：骰面 {stated_roll}/{stated_degree}，"
-                f"提交 roll {result}/{degree}（target {target}）",
+                f"行动判定描述与骰点不符：后缀 {stated_roll}/{stated_degree}，"
+                f"提交 roll {roll_record['result']}/{roll_record['degree']}（target {roll_record['target']}）",
             )
+    else:
+        raise CommitTurnError(
+            422,
+            "playerAction 与所选父节点选项不对应：只接受裸选项文本，或选项文本加上完整规范的行动判定后缀",
+        )
 
-    return {"optionIndex": idx, "target": target, "result": result, "outcome": outcome, "degree": degree}
+    return roll_record
 
 
 # ── Name-grounding check (§6): evidence presence and locatability only ──
@@ -174,6 +200,10 @@ def _iter_candidate_changes(candidate: dict[str, Any]):
         yield f"items_gained.{i}", (item or {}).get("name", ""), "upsert"
     for i, item in enumerate(candidate.get("items_lost") or []):
         yield f"items_lost.{i}", (item or {}).get("name", ""), "remove"
+    for i, item in enumerate(candidate.get("npcs_encountered") or []):
+        yield f"npcs_encountered.{i}", (item or {}).get("name", ""), "upsert"
+    for i, item in enumerate(candidate.get("quests_updated") or []):
+        yield f"quests_updated.{i}", (item or {}).get("name", ""), "upsert"
     updates = candidate.get("memory_updates") or {}
     for i, item in enumerate(updates.get("items_upserted") or []):
         yield f"memory_updates.items_upserted.{i}", (item or {}).get("name", ""), "upsert"
@@ -187,19 +217,33 @@ def _iter_candidate_changes(candidate: dict[str, Any]):
         yield f"memory_updates.world_facts_upserted.{i}", (item or {}).get("name", ""), "upsert"
 
 
+def _is_item_path(path: str) -> bool:
+    # Covers top-level items_gained/lost AND the nested memory_updates items.
+    return ".items_" in f"{path}." or path.startswith("items_")
+
+
 def check_grounding(candidate: dict[str, Any], output: StoryOutput, state: dict[str, Any]) -> list[str]:
-    """Return a list of grounding issues; empty means the check passed."""
+    """Return a list of grounding issues; empty means the check passed.
+
+    Name grounding and basis grounding are checked INDEPENDENTLY (review
+    round 4): a real basis no longer rescues a fabricated name, and a roster
+    name no longer rescues a nonexistent basis.
+    """
     def _dialogue_text(line: Any) -> str:
         return line.get("text", "") if isinstance(line, dict) else line.text
 
     prose = output.narration + "\n" + "\n".join(
         _dialogue_text(line) for line in (output.dialogue or [])
     )
-    roster: set[str] = set()
+    roster_names: set[str] = set()
+    roster_texts: list[str] = []
     for key in ("items", "npcs", "quests", "world_facts"):
         for entry in state.get(key) or []:
-            if isinstance(entry, dict) and entry.get("name"):
-                roster.add(str(entry["name"]))
+            if not isinstance(entry, dict) or not entry.get("name"):
+                continue
+            roster_names.add(str(entry["name"]))
+            roster_texts.append(" ".join(str(v) for v in entry.values() if isinstance(v, str)))
+    roster_text = "\n".join(roster_texts)
 
     bases = {
         entry.get("path"): str(entry.get("basis", ""))
@@ -212,17 +256,23 @@ def check_grounding(candidate: dict[str, Any], output: StoryOutput, state: dict[
         if not name:
             issues.append(f"{path}: 变更缺少实体名")
             continue
+        # Check 1 — name grounding: the entity must appear in the passed prose
+        # or the roster. Independent of the basis.
+        name_ok = name in prose or name in roster_names
+        if not name_ok:
+            issues.append(f"{path} ({name}): 实体名在过检正文与名册中均无出处")
+        # Check 2 — basis grounding: the cited textual basis must itself be
+        # locatable in the prose or the roster. Independent of the name.
         basis = bases.get(path, "")
-        if not basis:
-            issues.append(f"{path} ({name}): 缺少正文依据")
-            continue
-        if basis not in prose and name not in roster:
-            issues.append(f"{path} ({name}): 正文依据在过检正文与名册中均不可定位")
+        basis_ok = bool(basis) and (basis in prose or basis in roster_text)
+        if not basis_ok:
+            issues.append(f"{path} ({name}): 正文依据缺失或不可定位")
+        if not (name_ok and basis_ok):
             continue
         # Direction pairing applies to item changes only (§6 minimal port of
-        # the labeler's verb-field pairing); npc/quest/fact entries are
-        # presence+base checks only.
-        if not path.startswith("items_"):
+        # the labeler's verb-field pairing) — including nested memory_updates
+        # items; npc/quest/fact entries are presence+base checks only.
+        if not _is_item_path(path):
             continue
         has_upsert_verb = any(verb in basis for verb in _UPSERT_VERBS)
         has_remove_verb = any(verb in basis for verb in _REMOVE_VERBS)
@@ -285,15 +335,22 @@ def commit_turn(
     model: str,
     source: str,
     memory_controller_factory: Callable[[], Any],
+    campaign_manager: Any | None = None,
     post_commit: Callable[[CommitTurnResponse], None] | None = None,
     fault_injector: Callable[[str], None] | None = None,
 ) -> CommitTurnResponse:
     """Validate, merge and commit one fixed-candidate submission.
 
+    ``campaign_manager`` (optional) supplies the campaign-definition side of
+    the deterministic advancement: pending anchor triggers and
+    resolve_max_turns. Counters and boundary states are still written ONLY
+    through the in-transaction progress row — the manager's in-memory
+    progress is never trusted (§4).
+
     ``fault_injector`` is a test-only hook: named steps ("before_merge",
-    "after_model_output", "after_story_turn") raise RuntimeError when the
-    injector fires, so rollback tests can cut the flow mid-transaction.
-    Production callers never pass it.
+    "after_model_output", "after_story_turn", "after_submission_row") raise
+    RuntimeError when the injector fires, so rollback tests can cut the flow
+    mid-transaction. Production callers never pass it.
     """
     def fault(step: str) -> None:
         if fault_injector is not None:
@@ -381,21 +438,45 @@ def commit_turn(
         next_state["_memory_controller"] = controller.export_state()
 
         # 6. Campaign working row: read in-transaction, mutate the copy only.
+        #    Deterministic advancement per §4: turn counter, pending anchors,
+        #    session-boundary rollover (fsm + recap task), npc relations.
         campaign_id = session["campaign_id"]
         progress_payload = None
+        messages_session_index = 0
         if campaign_id:
             progress_row = db.read_campaign_progress(campaign_id, request.slotName, conn=conn)
             if progress_row:
                 relations = json.loads(progress_row.get("npc_relations") or "[]")
                 relations = merge_npc_relations(relations, output.npc_relations_delta, int(next_state.get("turn", 0)))
+                turn_in_session = int(progress_row["turn_in_session"]) + 1
+                revealed = progress_row["revealed_anchors"] or "[]"
+                fsm_state = str(progress_row["fsm_state"] or "active/session_active")
+                if campaign_manager is not None:
+                    # Pending anchors from THIS turn's direction stage — the
+                    # manager's in-memory list is read-only here; merging into
+                    # the row keeps the single-connection discipline.
+                    for anchor_id, _turn in campaign_manager.pending_anchor_triggers:
+                        current = json.loads(revealed)
+                        if anchor_id not in current:
+                            current.append(anchor_id)
+                        revealed = json.dumps(current, ensure_ascii=False)
+                messages_session_index = int(progress_row["session_index"])
+                if campaign_manager is not None:
+                    max_turns = campaign_manager.resolve_max_turns()
+                    if max_turns and turn_in_session >= max_turns:
+                        # Session boundary, deterministic half only (§4): fsm
+                        # moves to recap; the recap GENERATION is a post-commit
+                        # task bound to slot + node. session_index advances when
+                        # the recap completes.
+                        fsm_state = "active/session_recap"
                 progress_payload = {
                     "campaign_id": campaign_id,
                     "slot_name": request.slotName,
                     "arc_index": int(progress_row["arc_index"]),
                     "session_index": int(progress_row["session_index"]),
-                    "turn_in_session": int(progress_row["turn_in_session"]) + 1,
-                    "fsm_state": progress_row["fsm_state"],
-                    "revealed_anchors": progress_row["revealed_anchors"],
+                    "turn_in_session": turn_in_session,
+                    "fsm_state": fsm_state,
+                    "revealed_anchors": revealed,
                     "completed_arcs": progress_row["completed_arcs"],
                     "recap_compressed": progress_row["recap_compressed"] or "",
                     "recap_full": progress_row["recap_full"] or "",
@@ -409,7 +490,8 @@ def commit_turn(
                     "npc_relations": json.dumps([], ensure_ascii=False),
                 }
 
-        # 7. Writes — every one on the SAME connection (§4).
+        # 7. Writes — every one on the SAME connection (§4). The audit entry
+        #    and the server-recomputed roll record persist with the turn.
         metrics = _turn_metrics(output, state)
         output_id = db.add_model_output(
             session_id=session_id,
@@ -423,6 +505,10 @@ def commit_turn(
             prompt_sections=None,
             prompt_text="",
             conn=conn,
+            audit_json=json.dumps(
+                {"audit": request.audit, "roll": roll_record},
+                ensure_ascii=False,
+            ),
             **metrics,
         )
         fault("after_model_output")
@@ -438,16 +524,25 @@ def commit_turn(
             model=model,
             source=source,
             model_output_id=output_id,
-            campaign_session_index=0,
+            # Messages belong to the session the turn was played IN — the
+            # pre-rollover session index, not the head's default (review 4).
+            campaign_session_index=messages_session_index,
         )
         fault("after_story_turn")
 
-        # 8. Pending maintenance tasks, bound to slot + node, persisted with
-        #    the turn so a restart can resume them (§4). The node id only
-        #    exists after the insert, hence the in-transaction update.
-        next_state["_memory_pending_tasks"] = [
+        # 8. Pending maintenance tasks: carry over the head's unfinished tasks
+        #    (overwrite here was losing them every turn — review round 4) and
+        #    append this turn's, bound to slot + node. The node id only exists
+        #    after the insert, hence the in-transaction backfill.
+        carried = list(state.get("_memory_pending_tasks") or [])
+        new_tasks = [
             {"type": "memory_maintain", "slot": request.slotName, "nodeId": turn_id, "turn": int(next_state.get("turn", 0))}
         ]
+        if progress_payload is not None and progress_payload.get("fsm_state") == "active/session_recap":
+            new_tasks.append(
+                {"type": "campaign_recap", "slot": request.slotName, "nodeId": turn_id, "turn": int(next_state.get("turn", 0))}
+            )
+        next_state["_memory_pending_tasks"] = carried + new_tasks
         state_json = json.dumps(next_state, ensure_ascii=False)
         conn.execute("UPDATE story_turns SET state_json = ? WHERE id = ?", (state_json, turn_id))
         conn.execute("UPDATE game_sessions SET state_json = ? WHERE id = ?", (state_json, session_id))
@@ -469,6 +564,7 @@ def commit_turn(
             "INSERT INTO turn_submissions (session_id, request_id, content_digest, result_json) VALUES (?, ?, ?, ?)",
             (session_id, request.requestId, digest, response.model_dump_json()),
         )
+        fault("after_submission_row")
 
     # Post-commit (outside the transaction): shared-cache swap / pending-task
     # dispatch would hook here; fixed-candidate round only notifies the caller.
@@ -477,26 +573,140 @@ def commit_turn(
     return response
 
 
-def read_turn_context(db: Database, session_id: str) -> dict[str, Any]:
-    """One consistent read of everything the component loop binds to (§3.2)."""
+def read_turn_context(
+    db: Database,
+    state_manager: Any,
+    session_id: str,
+    memory_controller_factory: Callable[[], Any],
+) -> dict[str, Any]:
+    """One consistent read of everything the component loop binds to (§3.2).
+
+    An explicit read transaction keeps the session row, the ancestor walk and
+    the message query on one snapshot. Messages are filtered to the CURRENT
+    head's ancestor chain AND its campaign session index — sibling branches
+    that were abandoned must not leak into the loop's dialogue history
+    (review round 4). The state is sanitized before return.
+    """
     with db.connect() as conn:
+        conn.execute("BEGIN")  # explicit read transaction: one snapshot
         session = conn.execute(
             "SELECT * FROM game_sessions WHERE id = ?", (session_id,)
         ).fetchone()
         if session is None:
             raise CommitTurnError(404, "Session not found")
+        head_id = session["active_turn_id"]
+        ancestors: list[int] = []
+        campaign_session_index = 0
+        node_id = head_id
+        while node_id is not None:
+            node = conn.execute(
+                "SELECT id, parent_turn_id, campaign_progress_json FROM story_turns WHERE id = ? AND session_id = ?",
+                (node_id, session_id),
+            ).fetchone()
+            if node is None:
+                break
+            ancestors.append(int(node["id"]))
+            progress = json.loads(node["campaign_progress_json"] or "{}")
+            if "session_index" in progress:
+                campaign_session_index = int(progress["session_index"])
+            node_id = node["parent_turn_id"]
+        placeholders = ",".join("?" * len(ancestors)) or "NULL"
         messages = conn.execute(
-            "SELECT role, content FROM session_messages WHERE session_id = ? ORDER BY id DESC LIMIT 10",
-            (session_id,),
+            f"""
+            SELECT role, content FROM session_messages
+            WHERE session_id = ? AND campaign_session_index = ?
+              AND turn_node_id IN ({placeholders})
+            ORDER BY id
+            """,
+            (session_id, campaign_session_index, *ancestors),
         ).fetchall()
+        conn.commit()
+
+    state = json.loads(session["state_json"])
+    # campaignContext: assemble offline from the in-snapshot memory controller
+    # (no LLM — assemble_context is synchronous retrieval + rendering).
+    try:
+        controller = memory_controller_factory()
+        controller.load_state(state.get("_memory_controller") or {})
+        campaign_context = controller.assemble_context(state, int(state.get("turn", 0)))
+    except Exception:
+        campaign_context = ""
 
     return {
         "sessionId": session_id,
         "slotName": session["active_slot_name"] or "default",
         "expectedParentId": session["active_turn_id"],
         "expectedVersion": int(session["version"]),
-        "state": json.loads(session["state_json"]),
-        "recentMessages": [
-            {"role": m["role"], "content": m["content"]} for m in reversed(messages)
-        ],
+        "state": state_manager.sanitize_state(state),
+        "campaignContext": campaign_context,
+        "recentMessages": [{"role": m["role"], "content": m["content"]} for m in messages],
     }
+
+
+def run_pending_tasks(
+    db: Database,
+    state_manager: Any,
+    session_id: str,
+    runner: Callable[[dict[str, Any]], None],
+) -> list[dict[str, Any]]:
+    """Execute the head's pending maintenance tasks and mark completions (§4).
+
+    Tasks run POST-commit; a failing task stays pending for the next run.
+    Completion = removal from the head snapshot, written back on the same
+    transaction (game_sessions + the head story_turns row stay in sync).
+    Idempotent: a completed task is gone, rerunning finds nothing to do.
+    """
+    with db.write_transaction() as conn:
+        session = conn.execute(
+            "SELECT active_turn_id, state_json FROM game_sessions WHERE id = ?", (session_id,)
+        ).fetchone()
+        if session is None:
+            raise CommitTurnError(404, "Session not found")
+        state = json.loads(session["state_json"])
+        pending = list(state.get("_memory_pending_tasks") or [])
+        if not pending:
+            return []
+        done: list[dict[str, Any]] = []
+        kept: list[dict[str, Any]] = []
+        for task in pending:
+            try:
+                runner(task)
+                done.append(task)
+            except Exception:
+                kept.append(task)  # stays pending; retried by the next run
+        if not done:
+            return []
+        state["_memory_pending_tasks"] = kept
+        state_json = json.dumps(state, ensure_ascii=False)
+        conn.execute(
+            "UPDATE game_sessions SET state_json = ? WHERE id = ?", (state_json, session_id)
+        )
+        conn.execute(
+            "UPDATE story_turns SET state_json = ? WHERE id = ? AND session_id = ?",
+            (state_json, session["active_turn_id"], session_id),
+        )
+        return done
+
+
+def recover_pending_tasks(
+    db: Database,
+    state_manager: Any,
+    runner: Callable[[dict[str, Any]], None],
+) -> dict[str, list[dict[str, Any]]]:
+    """Startup recovery entry: execute every session's pending tasks (§4).
+
+    Scans game_sessions for persisted task lists, runs each through the same
+    runner, and returns the completions per session. Restart-safe: tasks
+    already executed are gone from their snapshot; failed ones stay pending.
+    """
+    with db.connect() as conn:
+        rows = conn.execute(
+            "SELECT id FROM game_sessions WHERE state_json LIKE '%\"_memory_pending_tasks\"%'"
+        ).fetchall()
+    completed: dict[str, list[dict[str, Any]]] = {}
+    for row in rows:
+        session_id = row["id"]
+        done = run_pending_tasks(db, state_manager, session_id, runner)
+        if done:
+            completed[session_id] = done
+    return completed

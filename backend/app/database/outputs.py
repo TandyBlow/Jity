@@ -33,6 +33,7 @@ class ModelOutputStoreMixin:
         token_count: int = 0,
         prompt_sections: dict[str, Any] | None = None,
         prompt_text: str = "",
+        audit_json: str = "{}",
         conn: Any = None,
     ) -> int:
         # conn: run on a caller-owned connection (commit-turn single-connection
@@ -59,9 +60,10 @@ class ModelOutputStoreMixin:
                   location_changed,
                   token_count,
                   prompt_sections_json,
-                  prompt_text
+                  prompt_text,
+                  audit_json
                 )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     session_id,
@@ -83,6 +85,7 @@ class ModelOutputStoreMixin:
                     token_count,
                     json.dumps(prompt_sections or {}, ensure_ascii=False),
                     prompt_text,
+                    audit_json,
                 ),
             )
             return int(cursor.lastrowid)
