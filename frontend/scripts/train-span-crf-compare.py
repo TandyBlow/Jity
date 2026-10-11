@@ -243,10 +243,17 @@ def evaluate_head(model, crf, cases, device):
                 "attention_mask": torch.tensor([encoded["attention_mask"]]).to(device),
                 "token_type_ids": torch.tensor([encoded["token_type_ids"]]).to(device),
             }
-            emissions = model(**feed).logits[0].cpu()
+            logits = model(**feed).logits[0]
+            emissions = logits.cpu()
             decodes = {}
             if crf is not None:
-                ids = crf.viterbi(emissions.unsqueeze(0), torch.ones(1, emissions.shape[0], dtype=torch.bool))[0]
+                # CRF 参数随模型留在训练设备上（train_one 的 to(device)），
+                # 发射分必须以同一设备进 viterbi；emissions 是 CPU 副本，
+                # 仅供 plain 臂解码与 tags_to_spans。
+                ids = crf.viterbi(
+                    logits.unsqueeze(0),
+                    torch.ones(1, logits.shape[0], dtype=torch.bool, device=logits.device),
+                )[0]
                 item_span, target_span = tsl.tags_to_spans(text, offsets, ids)
                 decodes["viterbi"] = (item_span, target_span)
             else:
