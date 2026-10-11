@@ -1,6 +1,7 @@
 """Branching story timeline persistence."""
 
 import json
+import sqlite3
 from typing import Any
 
 
@@ -104,11 +105,18 @@ class TimelineStoreMixin:
         source: str,
         model_output_id: int | None,
         campaign_session_index: int = 0,
+        conn: sqlite3.Connection | None = None,
     ) -> int:
-        """Append a child and atomically move the session head to it."""
+        """Append a child and atomically move the session head to it.
+
+        Pass ``conn`` to run on a caller-owned connection — the commit-turn
+        flow keeps every write of one submission on a single connection so a
+        mid-flow failure rolls back together. Without it, the call opens and
+        commits its own transaction as before.
+        """
         from app.exceptions import ConcurrentModificationError
 
-        with self.connect() as db:
+        with self.maybe_owned_connection(conn) as db:
             parent = db.execute(
                 "SELECT depth FROM story_turns WHERE id = ? AND session_id = ?",
                 (expected_parent_id, session_id),

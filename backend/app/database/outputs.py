@@ -33,8 +33,11 @@ class ModelOutputStoreMixin:
         token_count: int = 0,
         prompt_sections: dict[str, Any] | None = None,
         prompt_text: str = "",
+        conn: Any = None,
     ) -> int:
-        with self.connect() as db:
+        # conn: run on a caller-owned connection (commit-turn single-connection
+        # flow); None keeps opening and committing the caller's own.
+        with self.maybe_owned_connection(conn) as db:
             cursor = db.execute(
                 """
                 INSERT INTO model_outputs (

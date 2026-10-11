@@ -13,8 +13,10 @@ class CampaignStoreMixin:
                 (relations_json, campaign_id, slot_name),
             )
 
-    def read_campaign_progress(self, campaign_id: str, slot_name: str = "default") -> dict[str, Any] | None:
-        with self.connect() as db:
+    def read_campaign_progress(self, campaign_id: str, slot_name: str = "default", conn: Any = None) -> dict[str, Any] | None:
+        # conn: read on a caller-owned connection (commit-turn single-connection
+        # flow keeps even reads inside its transaction for a consistent snapshot).
+        with self.maybe_owned_connection(conn) as db:
             row = db.execute(
                 "SELECT * FROM campaign_progress WHERE campaign_id = ? AND slot_name = ?",
                 (campaign_id, slot_name),

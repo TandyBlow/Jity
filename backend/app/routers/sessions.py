@@ -11,20 +11,44 @@ from app.dependencies import (
     build_campaign_manager,
     campaign_manager_cache,
     db,
+    embedding_client,
     knowledge_service,
+    llm_client,
     settings,
     state_manager,
 )
+from app.exceptions import ConcurrentModificationError
 from app.schemas import (
     CreateSessionRequest,
     SessionHistoryResponse,
     SessionResponse,
+)
+from app.services.commit_turn import (
+    CommitTurnError,
+    CommitTurnRequest,
+    CommitTurnResponse,
+    commit_turn,
+    read_turn_context,
 )
 from app.services.game_state.defaults import STATE_CAPS
 
 CAPS = STATE_CAPS
 
 logger = logging.getLogger(__name__)
+
+
+def _default_memory_controller_factory(session_id: str):
+    """Build a fresh controller for the commit flow's working copy (§4).
+
+    The copy loads from the in-transaction snapshot, never from a possibly
+    stale shared cache. Tests monkeypatch ``memory_controller_factory``.
+    """
+    from app.services.memory.memory_controller import MemoryController
+
+    return MemoryController(llm_client, db, session_id, embedding_client=embedding_client)
+
+
+memory_controller_factory = _default_memory_controller_factory
 
 router = APIRouter(prefix="/sessions", tags=["sessions"])
 
@@ -313,3 +337,46 @@ def activate_timeline_node(session_id: str, node_id: int) -> dict[str, object]:
         "campaign_filename": session.get("campaign_filename") if session else None,
         "slot_name": slot_name,
     }
+
+
+@router.post("/{session_id}/commit-turn", response_model=CommitTurnResponse)
+def commit_turn_endpoint(session_id: str, request: CommitTurnRequest) -> CommitTurnResponse:
+    """Plan-b submission entry (design/component-io-and-commit-turn.md §3).
+
+    One transaction per submission: idempotency lookup → binding checks →
+    merge → every write. A successful replay returns the original result
+    without moving the head again.
+    """
+    def _swap_shared_caches(response: CommitTurnResponse) -> None:
+        # Post-commit, outside the transaction: drop the session's cached
+        # memory controller so the next turn rebuilds from the committed
+        # snapshot (§4 提交后替换共享缓存 — conservative form: rebuild).
+        try:
+            knowledge_service.scenario_generator.invalidate_timeline_caches(session_id)
+        except Exception:
+            logger.warning("commit-turn cache invalidation failed for %s", session_id, exc_info=True)
+
+    try:
+        return commit_turn(
+            db,
+            state_manager,
+            session_id,
+            request,
+            model=settings.llm_model,
+            source="commit_turn",
+            memory_controller_factory=lambda: memory_controller_factory(session_id),
+            post_commit=_swap_shared_caches,
+        )
+    except CommitTurnError as exc:
+        raise HTTPException(status_code=exc.status, detail=exc.detail) from exc
+    except ConcurrentModificationError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+
+
+@router.get("/{session_id}/turn-context")
+def turn_context_endpoint(session_id: str) -> dict[str, object]:
+    """One consistent read of the snapshot the component loop binds to (§3.2)."""
+    try:
+        return read_turn_context(db, session_id)
+    except CommitTurnError as exc:
+        raise HTTPException(status_code=exc.status, detail=exc.detail) from exc

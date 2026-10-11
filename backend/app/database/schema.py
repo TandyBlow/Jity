@@ -87,6 +87,21 @@ CREATE TABLE IF NOT EXISTS model_outputs (
   FOREIGN KEY (session_id) REFERENCES game_sessions(id)
 );
 
+-- commit-turn idempotency (design/component-io-and-commit-turn.md §3.1).
+-- One row per accepted submission attempt: replaying the same requestId
+-- with the same content digest returns result_json verbatim and never
+-- moves the session head again.
+CREATE TABLE IF NOT EXISTS turn_submissions (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  session_id TEXT NOT NULL,
+  request_id TEXT NOT NULL,
+  content_digest TEXT NOT NULL,
+  result_json TEXT NOT NULL,
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE(session_id, request_id),
+  FOREIGN KEY (session_id) REFERENCES game_sessions(id)
+);
+
 CREATE TABLE IF NOT EXISTS evaluations (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   model_output_id INTEGER NOT NULL,
