@@ -2,6 +2,11 @@
   "model": "qwen3-0.6b",
   "purpose": "narration feasibility with the real production prompt (v2 left narrative quality suspended)",
   "promptAssembly": "builder.py section texts verbatim, joined with '\\n\\n' per ScenarioGenerator._build_prompt; single user message; temperature 0.35 (LLMClient hardcode)",
+  "corrections": [
+    "2026-10-11 user review, added post-hoc (not produced at run time): the hand-transcribed prompt differs from the real builder output by newline placement (builder 4678 chars vs trial 4684 on the same fixture). Token/time numbers are this trial prompt, not the builder byte-exact prompt. Future rounds must export the prompt from PromptBuilder directly.",
+    "2026-10-11 user review, attribution tightened: the two arms differ in more than output format (options/option_checks/memory_updates duties exist only in production-monolithic) and neither arm carried production response_format json_object. Results show the two prompt CONFIGS differ; they do not isolate the JSON contract as the cause of the quality gap.",
+    "2026-10-11 user verdict: the narration-only Chinese outputs regress to the old missing-register-page plot, confirm the entry records match without explaining how the night-shift list access was obtained, use first person instead of second, and fall far short of the ~20-sentence target. Independent prose output improved linguistic form but FAILED the plot-quality check; prefill alone (~115s) already exceeds the 4s line. The Qwen3-0.6B narration config is NOT integrated into production turns."
+  ],
   "arms": [
     "production-monolithic",
     "narration-only"

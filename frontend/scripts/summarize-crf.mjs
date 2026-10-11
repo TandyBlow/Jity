@@ -41,12 +41,14 @@ async function main() {
   // 语义。
   const byKey = new Map();
   let legacyRaw = null;
+  const devices = new Set();
   for (const p of rawPaths) {
     const raw = JSON.parse((await readFile(path.resolve(p))).toString("utf-8"));
     if (p.includes("legacyval")) {
       legacyRaw = raw;
       continue;
     }
+    if (raw.device) devices.add(raw.device);
     for (const r of raw.results) byKey.set(`${r.seed}|${r.head}`, r);
   }
   const results = [...byKey.values()];
@@ -158,12 +160,16 @@ async function main() {
   log(`stability: ${JSON.stringify(stability)}`);
 
   const outPath = path.join(artifactsDir, `crf-compare-${Date.now()}.json`);
+  const deviceStr = [...devices].sort().join("/") || "unspecified";
   await writeFile(outPath, JSON.stringify({
     trainSeeds: seeds,
+    device: deviceStr,
     protocol: {
       corpusSplitRules: "frozen (span-labeler-corpus.json, sha unchanged); split asserted identical in train-span-crf-compare.py before training",
       pretrainingStart: "artifacts/benchmark/minirbt-h256-snapshot",
-      budget: "EPOCHS=30, BATCH=16, AdamW lr 3e-4 wd 0.01, CPU, identical to the shipped model's training",
+      // device 來自 raw 的 device 字段（CPU 轮=cpu、显卡轮=cuda），不得硬编码：
+      // 2026-10-11 用户审查抓到 GPU 汇总被写成 CPU。
+      budget: `EPOCHS=30, BATCH=16, AdamW lr 3e-4 wd 0.01, device ${deviceStr}, budget identical to the shipped model's training`,
       pairing: "same seed -> same head-init stream + same per-epoch batch order for plain and CRF arms; seed 4711 plain anchors the pipeline against the frozen model (fp32 arm)",
       decodes: "plain -> greedy + whole-sentence constrained (as shipped); CRF -> Viterbi",
       crf: "linear-chain CRF over the 5 tags, emissions from the BERT encoder, transitions/start/end learned, NLL loss, Viterbi decode",

@@ -4,23 +4,37 @@
 // an excerpted rule block and no prose-output instruction, so the model
 // continued the prompt itself and narrative quality conclusions were
 // suspended pending a trial with the real rules. This script feeds the model
-// the production prompt exactly as
-// backend/app/services/prompt_builder/builder.py assembles it: section texts
-// transcribed verbatim (_system_header fixture values, _style_and_rules with
-// the full JSON contract and OPTION_CHECKS_CONTRACT), joined with "\n\n" per
-// ScenarioGenerator._build_prompt, sent as ONE user message with temperature
-// 0.35 (LLMClient.generate hardcodes 0.35 and ignores its parameter).
+// the production prompt as backend/app/services/prompt_builder/builder.py
+// assembles it: section texts hand-transcribed from builder.py, joined with
+// "\n\n" per ScenarioGenerator._build_prompt, sent as ONE user message with
+// temperature 0.35 (LLMClient.generate hardcodes 0.35 and ignores its
+// parameter).
+//
+// KNOWN DRIFT (user review, 2026-10-11): hand transcription differs from the
+// builder's actual output by newline placement (same fixture: builder 4678
+// chars, this script 4684). Numbers in the committed report are this trial's
+// prompt, not the builder's byte-exact one. DIRECTIVE for future rounds: do
+// not hand-transcribe — export the prompt from PromptBuilder directly (run
+// the Python builder on the fixture and emit JSON) so the trial prompt is
+// byte-identical to production.
+//
+// ARMS (attribution caveat, user review): the arms differ in MORE than the
+// output format — options/option_checks/memory_updates duties exist only in
+// the monolithic arm, and neither arm carried production's response_format
+// json_object. Results therefore show these two prompt CONFIGS behave
+// differently; they do NOT isolate the JSON contract as the cause of the
+// quality gap.
 //
 // Arms:
-//   production-monolithic: the exact production prompt, free decode. This is
+//   production-monolithic: the full production prompt, free decode. This is
 //     "run today's pipeline on-device". max_tokens capped at 1280 to bound
 //     runtime (production max_tokens is 50000); finish_reason is recorded so
 //     truncation cannot masquerade as completion.
 //   narration-only: same sections, but the rule block keeps only the
-//     prose-relevant bullets (verbatim) and ends with a prose output
-//     contract - the shape of the refactored narration component, whose JSON
-//     duties (options/option_checks/memory_updates/scene_prompt) move to
-//     other components under plan b.
+//     prose-relevant bullets and ends with a prose output contract - the
+//     shape of the refactored narration component, whose JSON duties
+//     (options/option_checks/memory_updates/scene_prompt) move to other
+//     components under plan b.
 //
 // Mechanical checks are pre-registered here and are evidence only: the
 // narrative quality verdict belongs to human review of the captured full
