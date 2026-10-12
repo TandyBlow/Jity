@@ -102,6 +102,19 @@ CREATE TABLE IF NOT EXISTS turn_submissions (
   FOREIGN KEY (session_id) REFERENCES game_sessions(id)
 );
 
+-- commit-turn pending-task ledger (design §4): a task key is claimed BEFORE
+-- its maintainer runs, so a confirm-write failure cannot cause a re-run —
+-- the retry re-confirms without re-executing. Claims of failed runs are
+-- deleted (the effect never happened; retry is safe).
+CREATE TABLE IF NOT EXISTS memory_task_claims (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  session_id TEXT NOT NULL,
+  task_key TEXT NOT NULL,
+  claimed_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE(session_id, task_key),
+  FOREIGN KEY (session_id) REFERENCES game_sessions(id)
+);
+
 CREATE TABLE IF NOT EXISTS evaluations (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   model_output_id INTEGER NOT NULL,

@@ -16,7 +16,6 @@ must never run ahead of the replay short-circuit or resends would 409.
 
 import hashlib
 import json
-import re
 from typing import Any, Callable
 
 from pydantic import BaseModel, Field, StrictInt, ValidationError
@@ -85,15 +84,19 @@ def submission_digest(request: CommitTurnRequest) -> str:
 
 # ── Selection + roll validation (§3.3): parent's SAVED options only ──
 
-_ACTION_JUDGMENT_RE = re.compile(
-    r"\[行动判定\].*?骰面 (\d+)/20，(大成功|成功|失败|大失败)。", re.DOTALL
-)
 # The canonical suffix the frontend appends (checks.ts formatActionWithCheckResult):
-# exactly "\n\n[行动判定] {system} {expression}，骰面 {roll}/20，{degree}。" —
-# matched in FULL against the text after the option; anything else is rejected.
-_ACTION_JUDGMENT_SUFFIX_RE = re.compile(
-    r"\n\n\[行动判定\] .+ 1d20 ≥ (\d+)，骰面 (\d+)/20，(大成功|成功|失败|大失败)。\Z"
-)
+# exactly "\n\n[行动判定] {system} 1d20 ≥ {target}，骰面 {roll}/20，{degree}。"
+# — rebuilt from the parent's check metadata and compared as a WHOLE string.
+def _expected_judgment_suffix(check: dict[str, Any], target: int, result: int, degree: str) -> str:
+    """The EXACT suffix the frontend appends (checks.ts formatActionWithCheckResult).
+
+    Rebuilt from the PARENT's saved check metadata + the server-derived
+    target so the comparison is over the whole literal string — review
+    round 5: the previous regex accepted any system text (`.{+}`) and let
+    extra actions ride inside it.
+    """
+    system = check.get("system", "通用 d20")
+    return f"\n\n[行动判定] {system} 1d20 ≥ {target}，骰面 {result}/20，{degree}。"
 
 
 def _outcome_for(roll: int, target: int) -> tuple[str, str]:
@@ -157,25 +160,21 @@ def validate_selection(parent_output: dict[str, Any], request: CommitTurnRequest
         reason = "option_checks 为 null" if check is None else "requires_check=false"
         raise CommitTurnError(422, f"该选项无需检定（{reason}），禁止携带 roll")
 
-    # Action correspondence: bare option, or option + canonical judgment suffix.
+    # Action correspondence: bare option, or option + EXACT canonical suffix
+    # rebuilt from the parent's saved check metadata (system/target included).
     if request.playerAction == option_text:
-        stated: tuple[int, str] | None = None
-    elif request.playerAction.startswith(option_text + "\n\n[行动判定] "):
-        remainder = request.playerAction[len(option_text):]
-        match = _ACTION_JUDGMENT_SUFFIX_RE.fullmatch(remainder)
-        if match is None:
-            raise CommitTurnError(422, "行动判定后缀格式不符：必须是「\\n\\n[行动判定] {system} 1d20 ≥ {target}，骰面 {roll}/20，{档位}。」")
-        stated_target, stated_roll, stated_degree = int(match.group(1)), int(match.group(2)), match.group(3)
-        if roll_record is None:
-            raise CommitTurnError(422, "行动判定后缀出现在无需检定的选项上")
-        if stated_target != roll_record["target"]:
-            raise CommitTurnError(422, f"行动判定阈值与重算结果不符：后缀 {stated_target}，重算 {roll_record['target']}")
-        if stated_roll != roll_record["result"] or stated_degree != roll_record["degree"]:
+        pass
+    elif request.playerAction.startswith(option_text + "\n\n[行动判定] ") and roll_record is not None:
+        expected_suffix = _expected_judgment_suffix(
+            check, roll_record["target"], roll_record["result"], roll_record["degree"]
+        )
+        if request.playerAction != option_text + expected_suffix:
             raise CommitTurnError(
                 422,
-                f"行动判定描述与骰点不符：后缀 {stated_roll}/{stated_degree}，"
-                f"提交 roll {roll_record['result']}/{roll_record['degree']}（target {roll_record['target']}）",
+                "行动判定后缀不符：必须是「\\n\\n[行动判定] {检定系统} 1d20 ≥ {重算阈值}，骰面 {提交骰点}/20，{重算档位}。」的逐字符匹配，不得夹带其他文本",
             )
+    elif request.playerAction.startswith(option_text + "\n\n[行动判定] ") and roll_record is None:
+        raise CommitTurnError(422, "行动判定后缀出现在无需检定的选项上")
     else:
         raise CommitTurnError(
             422,
@@ -284,6 +283,102 @@ def check_grounding(candidate: dict[str, Any], output: StoryOutput, state: dict[
 
 
 # ── Working-copy helpers (§4) ──
+
+def _resolve_max_turns(campaign_def: Any, arc_index: int, session_index: int) -> int:
+    """Threshold precedence chain, evaluated on STATIC campaign definition.
+
+    The cached manager's progress row may point at an older session (review
+    round 5: current-session threshold 2, cached progress returned 30) — the
+    threshold must always come from the IN-TRANSACTION row's arc/session
+    indexes against the campaign definition: per-session override, then
+    campaign-level default, then option_config.json, then 30.
+    """
+    import logging
+    from pathlib import Path
+
+    logger = logging.getLogger(__name__)
+    if campaign_def is not None:
+        try:
+            session = campaign_def.arcs[arc_index].sessions[session_index]
+            session_max = getattr(session, "max_turns_per_session", None)
+            if session_max is not None:
+                return int(session_max)
+        except (IndexError, AttributeError):
+            pass
+        campaign_max = getattr(campaign_def, "max_turns_per_session", None)
+        if campaign_max is not None:
+            return int(campaign_max)
+    try:
+        config_path = Path(__file__).resolve().parents[2] / "scripts" / "option_config.json"
+        if config_path.exists():
+            import json as _json
+
+            config = _json.loads(config_path.read_text(encoding="utf-8"))
+            return int(config.get("max_turns_per_session", 30))
+    except Exception:
+        logger.debug("option_config.json load failed", exc_info=True)
+    return 30
+
+
+def _advance_progress_row(
+    progress_row: dict[str, Any],
+    campaign_def: Any,
+    relations_json: str,
+    turn: int,
+) -> tuple[dict[str, Any], bool]:
+    """Deterministic §4 advancement on the IN-TRANSACTION progress row.
+
+    Mirrors campaign_advancer.advance_turn/advance_session/advance_arc
+    (counters and boundary state only; recap GENERATION stays post-commit):
+    turn counter +1; at the session threshold the session (or arc) rolls —
+    session_index +1 or arc_index +1 with session reset — turn_in_session
+    resets to 0 so later commits cannot re-trigger the boundary. Returns
+    (row payload, session_rolled).
+    """
+    arc_index = int(progress_row["arc_index"])
+    session_index = int(progress_row["session_index"])
+    turn_in_session = int(progress_row["turn_in_session"]) + 1
+    completed_arcs = json.loads(progress_row["completed_arcs"] or "[]")
+    revealed = progress_row["revealed_anchors"] or "[]"
+
+    max_turns = _resolve_max_turns(campaign_def, arc_index, session_index)
+    session_rolled = False
+    if max_turns and turn_in_session >= max_turns:
+        session_rolled = True
+        try:
+            arc_sessions = len(campaign_def.arcs[arc_index].sessions) if campaign_def is not None else 0
+        except (IndexError, AttributeError):
+            arc_sessions = 0
+        if campaign_def is None or session_index + 1 >= arc_sessions:
+            # Arc boundary: production end_session→arc_transition→begin_arc→
+            # session_active; deterministic half = counters + completed list.
+            completed_arcs = sorted({*completed_arcs, arc_index})
+            arc_index += 1
+            session_index = 0
+            fsm_state = "active/session_active"
+        else:
+            # Normal session boundary: end_session→resume_session.
+            session_index += 1
+            fsm_state = "active/session_active"
+        turn_in_session = 0
+    else:
+        fsm_state = str(progress_row["fsm_state"] or "active/session_active")
+
+    payload = {
+        "campaign_id": progress_row["campaign_id"],
+        "slot_name": progress_row["slot_name"],
+        "arc_index": arc_index,
+        "session_index": session_index,
+        "turn_in_session": turn_in_session,
+        "fsm_state": fsm_state,
+        "revealed_anchors": revealed,
+        "completed_arcs": json.dumps(completed_arcs, ensure_ascii=False),
+        "recap_compressed": progress_row["recap_compressed"] or "",
+        "recap_full": progress_row["recap_full"] or "",
+        "npc_relations": relations_json,
+    }
+    return payload, session_rolled
+
 
 def merge_npc_relations(
     relations: list[dict[str, Any]], deltas: list[dict[str, Any]] | None, turn: int
@@ -438,50 +533,39 @@ def commit_turn(
         next_state["_memory_controller"] = controller.export_state()
 
         # 6. Campaign working row: read in-transaction, mutate the copy only.
-        #    Deterministic advancement per §4: turn counter, pending anchors,
-        #    session-boundary rollover (fsm + recap task), npc relations.
+        #    Deterministic advancement per §4 — turn counter, pending anchors,
+        #    and the session/arc boundary roll all computed from the
+        #    IN-TRANSACTION row (the cached manager's progress is stale the
+        #    moment another window commits); recap generation stays post-commit.
         campaign_id = session["campaign_id"]
         progress_payload = None
+        session_rolled = False
         messages_session_index = 0
+        campaign_def = campaign_manager.campaign if campaign_manager is not None else None
         if campaign_id:
             progress_row = db.read_campaign_progress(campaign_id, request.slotName, conn=conn)
             if progress_row:
                 relations = json.loads(progress_row.get("npc_relations") or "[]")
                 relations = merge_npc_relations(relations, output.npc_relations_delta, int(next_state.get("turn", 0)))
-                turn_in_session = int(progress_row["turn_in_session"]) + 1
-                revealed = progress_row["revealed_anchors"] or "[]"
-                fsm_state = str(progress_row["fsm_state"] or "active/session_active")
                 if campaign_manager is not None:
                     # Pending anchors from THIS turn's direction stage — the
                     # manager's in-memory list is read-only here; merging into
                     # the row keeps the single-connection discipline.
+                    current = json.loads(progress_row["revealed_anchors"] or "[]")
+                    changed = False
                     for anchor_id, _turn in campaign_manager.pending_anchor_triggers:
-                        current = json.loads(revealed)
                         if anchor_id not in current:
                             current.append(anchor_id)
-                        revealed = json.dumps(current, ensure_ascii=False)
+                            changed = True
+                    if changed:
+                        progress_row = {
+                            **progress_row,
+                            "revealed_anchors": json.dumps(current, ensure_ascii=False),
+                        }
                 messages_session_index = int(progress_row["session_index"])
-                if campaign_manager is not None:
-                    max_turns = campaign_manager.resolve_max_turns()
-                    if max_turns and turn_in_session >= max_turns:
-                        # Session boundary, deterministic half only (§4): fsm
-                        # moves to recap; the recap GENERATION is a post-commit
-                        # task bound to slot + node. session_index advances when
-                        # the recap completes.
-                        fsm_state = "active/session_recap"
-                progress_payload = {
-                    "campaign_id": campaign_id,
-                    "slot_name": request.slotName,
-                    "arc_index": int(progress_row["arc_index"]),
-                    "session_index": int(progress_row["session_index"]),
-                    "turn_in_session": turn_in_session,
-                    "fsm_state": fsm_state,
-                    "revealed_anchors": revealed,
-                    "completed_arcs": progress_row["completed_arcs"],
-                    "recap_compressed": progress_row["recap_compressed"] or "",
-                    "recap_full": progress_row["recap_full"] or "",
-                    "npc_relations": json.dumps(relations, ensure_ascii=False),
-                }
+                progress_payload, session_rolled = _advance_progress_row(
+                    progress_row, campaign_def, json.dumps(relations, ensure_ascii=False), int(next_state.get("turn", 0))
+                )
             else:
                 progress_payload = {
                     "campaign_id": campaign_id,
@@ -538,7 +622,7 @@ def commit_turn(
         new_tasks = [
             {"type": "memory_maintain", "slot": request.slotName, "nodeId": turn_id, "turn": int(next_state.get("turn", 0))}
         ]
-        if progress_payload is not None and progress_payload.get("fsm_state") == "active/session_recap":
+        if progress_payload is not None and session_rolled:
             new_tasks.append(
                 {"type": "campaign_recap", "slot": request.slotName, "nodeId": turn_id, "turn": int(next_state.get("turn", 0))}
             )
@@ -578,14 +662,17 @@ def read_turn_context(
     state_manager: Any,
     session_id: str,
     memory_controller_factory: Callable[[], Any],
+    campaign_context_provider: Callable[[dict[str, Any], int], str] | None = None,
 ) -> dict[str, Any]:
     """One consistent read of everything the component loop binds to (§3.2).
 
     An explicit read transaction keeps the session row, the ancestor walk and
     the message query on one snapshot. Messages are filtered to the CURRENT
-    head's ancestor chain AND its campaign session index — sibling branches
-    that were abandoned must not leak into the loop's dialogue history
-    (review round 4). The state is sanitized before return.
+    head's ancestor chain AND the HEAD node's campaign session index — the
+    index is taken from the head only (review round 5: walking ancestors and
+    overwriting the index each step returned the OLDEST session's messages);
+    the ancestor set exists solely to select which message rows belong to
+    this playthrough. The state is sanitized before return.
     """
     with db.connect() as conn:
         conn.execute("BEGIN")  # explicit read transaction: one snapshot
@@ -594,21 +681,24 @@ def read_turn_context(
         ).fetchone()
         if session is None:
             raise CommitTurnError(404, "Session not found")
-        head_id = session["active_turn_id"]
+        head = conn.execute(
+            "SELECT id, parent_turn_id, campaign_progress_json FROM story_turns WHERE id = ? AND session_id = ?",
+            (session["active_turn_id"], session_id),
+        ).fetchone()
+        if head is None:
+            raise CommitTurnError(404, "Timeline node not found")
+        head_progress = json.loads(head["campaign_progress_json"] or "{}")
+        campaign_session_index = int(head_progress.get("session_index", 0))
         ancestors: list[int] = []
-        campaign_session_index = 0
-        node_id = head_id
+        node_id: int | None = int(head["id"])
         while node_id is not None:
+            ancestors.append(node_id)
             node = conn.execute(
-                "SELECT id, parent_turn_id, campaign_progress_json FROM story_turns WHERE id = ? AND session_id = ?",
+                "SELECT parent_turn_id FROM story_turns WHERE id = ? AND session_id = ?",
                 (node_id, session_id),
             ).fetchone()
             if node is None:
                 break
-            ancestors.append(int(node["id"]))
-            progress = json.loads(node["campaign_progress_json"] or "{}")
-            if "session_index" in progress:
-                campaign_session_index = int(progress["session_index"])
             node_id = node["parent_turn_id"]
         placeholders = ",".join("?" * len(ancestors)) or "NULL"
         messages = conn.execute(
@@ -623,14 +713,23 @@ def read_turn_context(
         conn.commit()
 
     state = json.loads(session["state_json"])
-    # campaignContext: assemble offline from the in-snapshot memory controller
-    # (no LLM — assemble_context is synchronous retrieval + rendering).
+    # campaignContext: memory part assembled offline from the in-snapshot
+    # controller (no LLM); the campaign part (scene/goal/anchors) comes from
+    # the provider — production's campaign_manager.inject_context (review 5:
+    # the memory-only render left 当前场景/目标/锚点 out of the context).
     try:
         controller = memory_controller_factory()
         controller.load_state(state.get("_memory_controller") or {})
         campaign_context = controller.assemble_context(state, int(state.get("turn", 0)))
     except Exception:
         campaign_context = ""
+    if campaign_context_provider is not None:
+        try:
+            injected = campaign_context_provider(state, int(state.get("turn", 0)))
+            if injected:
+                campaign_context = f"{injected}\n\n{campaign_context}" if campaign_context else injected
+        except Exception:
+            pass
 
     return {
         "sessionId": session_id,
@@ -649,43 +748,104 @@ def run_pending_tasks(
     session_id: str,
     runner: Callable[[dict[str, Any]], None],
 ) -> list[dict[str, Any]]:
-    """Execute the head's pending maintenance tasks and mark completions (§4).
+    """Execute the head's pending maintenance tasks; at-most-once per key (§4).
 
-    Tasks run POST-commit; a failing task stays pending for the next run.
-    Completion = removal from the head snapshot, written back on the same
-    transaction (game_sessions + the head story_turns row stay in sync).
-    Idempotent: a completed task is gone, rerunning finds nothing to do.
+    Review round 5: the maintainer runs OUTSIDE any transaction (a runner
+    that writes through its own connection used to deadlock on the write
+    lock), and task identity — not queue removal — prevents re-execution:
+    each task key is CLAIMED in a short transaction BEFORE the runner fires.
+    If the post-run confirmation fails (review round 5's injected fault),
+    the claim survives, so a retry re-confirms without re-running. A runner
+    that itself failed has its claim cleared and may retry.
+
+    Flow per batch: read head snapshot → claim (short txn) → run (no txn) →
+    confirm (short txn: re-check head node/slot/version, remove completed
+    tasks from the head snapshot, game_sessions and the head row together).
     """
-    with db.write_transaction() as conn:
+    with db.connect() as conn:
         session = conn.execute(
-            "SELECT active_turn_id, state_json FROM game_sessions WHERE id = ?", (session_id,)
+            "SELECT active_turn_id, active_slot_name, version, state_json FROM game_sessions WHERE id = ?",
+            (session_id,),
         ).fetchone()
         if session is None:
             raise CommitTurnError(404, "Session not found")
         state = json.loads(session["state_json"])
         pending = list(state.get("_memory_pending_tasks") or [])
-        if not pending:
-            return []
-        done: list[dict[str, Any]] = []
-        kept: list[dict[str, Any]] = []
+    if not pending:
+        return []
+
+    slot = session["active_slot_name"] or "default"
+    binding = (session["active_turn_id"], slot, int(session["version"]))
+
+    def task_key(task: dict[str, Any]) -> str:
+        return f"{task.get('slot', slot)}:{task.get('type', 'unknown')}:{task.get('nodeId')}"
+
+    # 1. Claim: INSERT OR IGNORE the keys in a short write transaction. Only
+    #    FRESHLY inserted rows authorize execution — a leftover claim from a
+    #    previous batch whose confirm failed must NOT re-run the maintainer;
+    #    it goes straight to confirmation (review round 5's injected fault).
+    fresh_keys: set[str] = set()
+    with db.write_transaction() as conn:
         for task in pending:
-            try:
-                runner(task)
-                done.append(task)
-            except Exception:
-                kept.append(task)  # stays pending; retried by the next run
-        if not done:
-            return []
-        state["_memory_pending_tasks"] = kept
-        state_json = json.dumps(state, ensure_ascii=False)
-        conn.execute(
-            "UPDATE game_sessions SET state_json = ? WHERE id = ?", (state_json, session_id)
-        )
-        conn.execute(
-            "UPDATE story_turns SET state_json = ? WHERE id = ? AND session_id = ?",
-            (state_json, session["active_turn_id"], session_id),
-        )
-        return done
+            cursor = conn.execute(
+                "INSERT OR IGNORE INTO memory_task_claims (session_id, task_key) VALUES (?, ?)",
+                (session_id, task_key(task)),
+            )
+            if cursor.rowcount == 1:
+                fresh_keys.add(task_key(task))
+
+    # 2. Run OUTSIDE any transaction; only freshly claimed tasks execute —
+    #    previously claimed leftovers (confirm failed last round) go straight
+    #    to confirmation without re-running the maintainer.
+    executed: list[dict[str, Any]] = []
+    failed: list[dict[str, Any]] = []
+    for task in pending:
+        if task_key(task) not in fresh_keys:
+            continue
+        try:
+            runner(task)
+            executed.append(task)
+        except Exception:
+            failed.append(task)
+
+    # 3. Runner failed → clear its claim so a later retry may run it again
+    #    (its effect never happened).
+    if failed:
+        with db.write_transaction() as conn:
+            for task in failed:
+                conn.execute(
+                    "DELETE FROM memory_task_claims WHERE session_id = ? AND task_key = ?",
+                    (session_id, task_key(task)),
+                )
+
+    # 4. Confirm: short transaction re-checking the binding read in step 0.
+    #    Removes from the queue: freshly executed tasks AND leftover-claim
+    #    tasks (their effect was applied in an earlier batch — the surviving
+    #    claim is the proof; the earlier confirm just failed).
+    leftovers = [t for t in pending if task_key(t) not in fresh_keys and t not in failed]
+    completed = executed
+    if executed or leftovers:
+        with db.write_transaction() as conn:
+            current = conn.execute(
+                "SELECT active_turn_id, active_slot_name, version, state_json FROM game_sessions WHERE id = ?",
+                (session_id,),
+            ).fetchone()
+            current_binding = (current["active_turn_id"], current["active_slot_name"] or "default", int(current["version"]))
+            if current_binding != binding:
+                # Head moved between read and confirm: leave everything as is;
+                # the next batch re-reads the (new) head's queue.
+                return []
+            state = json.loads(current["state_json"])
+            done_keys = {task_key(t) for t in executed} | {task_key(t) for t in leftovers}
+            kept = [t for t in (state.get("_memory_pending_tasks") or []) if task_key(t) not in done_keys]
+            state["_memory_pending_tasks"] = kept
+            state_json = json.dumps(state, ensure_ascii=False)
+            conn.execute("UPDATE game_sessions SET state_json = ? WHERE id = ?", (state_json, session_id))
+            conn.execute(
+                "UPDATE story_turns SET state_json = ? WHERE id = ? AND session_id = ?",
+                (state_json, current["active_turn_id"], session_id),
+            )
+    return completed
 
 
 def recover_pending_tasks(

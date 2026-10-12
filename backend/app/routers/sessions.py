@@ -412,6 +412,22 @@ def turn_context_endpoint(session_id: str) -> dict[str, object]:
             state_manager,
             session_id,
             lambda: memory_controller_factory(session_id),
+            campaign_context_provider=_campaign_context_provider(session_id),
         )
     except CommitTurnError as exc:
         raise HTTPException(status_code=exc.status, detail=exc.detail) from exc
+
+
+def _campaign_context_provider(session_id: str):
+    """Production campaign-context assembly for turn-context (read-only).
+
+    Same call the generation path uses (campaign_manager.inject_context), so
+    the loop sees 当前场景/目标/锚点 exactly as the old pipeline produced them.
+    """
+    def _provide(state: dict, turn: int) -> str:
+        manager = get_campaign_manager_for_session(session_id)
+        if manager is None or not manager.is_loaded():
+            return ""
+        return manager.inject_context(state, turn)
+
+    return _provide
