@@ -105,6 +105,7 @@ class TimelineStoreMixin:
         source: str,
         model_output_id: int | None,
         campaign_session_index: int = 0,
+        campaign_arc_index: int = 0,
         conn: sqlite3.Connection | None = None,
     ) -> int:
         """Append a child and atomically move the session head to it.
@@ -190,17 +191,19 @@ class TimelineStoreMixin:
             db.execute(
                 """
                 INSERT INTO session_messages
-                  (session_id, role, content, campaign_session_index, turn_node_id)
-                VALUES (?, 'user', ?, ?, ?), (?, 'assistant', ?, ?, ?)
+                  (session_id, role, content, campaign_session_index, campaign_arc_index, turn_node_id)
+                VALUES (?, 'user', ?, ?, ?, ?), (?, 'assistant', ?, ?, ?, ?)
                 """,
                 (
                     session_id,
                     player_action,
                     campaign_session_index,
+                    campaign_arc_index,
                     turn_id,
                     session_id,
                     json.dumps(output, ensure_ascii=False),
                     campaign_session_index,
+                    campaign_arc_index,
                     turn_id,
                 ),
             )

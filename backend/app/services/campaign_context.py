@@ -49,7 +49,37 @@ class CampaignContextBuilder:
         """
         if campaign is None or progress is None:
             return ""
+        row = persistence.load(progress.campaign_id, slot_name)
+        try:
+            relations = json.loads(row.get("npc_relations", "[]")) if row else []
+        except (json.JSONDecodeError, KeyError):
+            relations = []
+        text, candidate = self.render_context(
+            campaign, progress, state, turn, slot_name, relations, persistence
+        )
+        # The ONLY shared-state mutation of context injection: registering the
+        # candidate anchor for the commit flow to merge (review round 6: the
+        # turn-context path renders on a snapshot copy and must NOT touch it).
+        self.anchors.pending_anchor_triggers = [(candidate, turn)] if candidate else []
+        return text
 
+    def render_context(
+        self,
+        campaign: Any,
+        progress: Any,
+        state: dict[str, Any],
+        turn: int,
+        slot_name: str,
+        relations: list[dict[str, Any]],
+        persistence: Any,
+    ) -> tuple[str, str | None]:
+        """PURE campaign-context render on the passed progress (a copy).
+
+        Returns (context text, candidate anchor id or None). Shared state is
+        never mutated: pending-anchor registration is the caller's job, so a
+        read-only snapshot render (commit-turn turn-context) can reuse this
+        without leaking anchors into the shared manager.
+        """
         parts: list[str] = []
         parts.append(f"当前战役：{campaign.title}")
         if campaign.constraints:
@@ -86,40 +116,35 @@ class CampaignContextBuilder:
                 parts.insert(0, "## 前情提要\n" + recap)
 
         # NPC relations block (top-3 by absolute affinity)
-        row = persistence.load(progress.campaign_id, slot_name)
-        if row:
-            try:
-                relations = json.loads(row.get("npc_relations", "[]"))
-                if relations:
-                    sorted_rels = sorted(
-                        relations, key=lambda r: abs(r.get("affinity", 0)), reverse=True
-                    )
-                    top3 = sorted_rels[:3]
-                    rel_lines = ["## 人物关系变化"]
-                    for r in top3:
-                        name = r.get("name", "未知")
-                        affinity = r.get("affinity", 0)
-                        if affinity > 0:
-                            change_desc = "信任上升"
-                        elif affinity < 0:
-                            change_desc = "敌意加深"
-                        else:
-                            change_desc = "中性"
-                        rel_lines.append(f"- {name}: {change_desc} (当前好感: {affinity:+d})")
-                    parts.append("\n".join(rel_lines))
-            except (json.JSONDecodeError, KeyError):
-                pass
+        if relations:
+            sorted_rels = sorted(
+                relations, key=lambda r: abs(r.get("affinity", 0)), reverse=True
+            )
+            top3 = sorted_rels[:3]
+            rel_lines = ["## 人物关系变化"]
+            for r in top3:
+                name = r.get("name", "未知")
+                affinity = r.get("affinity", 0)
+                if affinity > 0:
+                    change_desc = "信任上升"
+                elif affinity < 0:
+                    change_desc = "敌意加深"
+                else:
+                    change_desc = "中性"
+                rel_lines.append(f"- {name}: {change_desc} (当前好感: {affinity:+d})")
+            parts.append("\n".join(rel_lines))
 
-        # Candidate triggers this turn
+        # Candidate triggers this turn — evaluated on the PASSED progress
+        # (a copy for snapshot renders); pending-anchor registration is the
+        # caller's job, keeping this function side-effect free.
         turn_in_session = getattr(progress, "turn_in_session", turn) if progress else turn
-        self.anchors.pending_anchor_triggers = []
         candidates = self.anchors.evaluate_anchors(
             campaign, progress, state, turn_in_session,
             revealed_anchors=progress.revealed_anchors,
         )
+        candidate_id: str | None = candidates[0].id if candidates else None
         if candidates:
             anchor = candidates[0]
-            self.anchors.pending_anchor_triggers = [(anchor.id, turn_in_session)]
             parts.append(self._describe_trigger(anchor))
 
         # Health guidance layer
@@ -127,7 +152,7 @@ class CampaignContextBuilder:
         if health_context:
             parts.append(health_context)
 
-        return "\n".join(parts)
+        return "\n".join(parts), candidate_id
 
     def inject_health(self, progress: Any) -> str | None:
         """Return health guidance context string, or None."""

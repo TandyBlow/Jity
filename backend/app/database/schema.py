@@ -102,14 +102,20 @@ CREATE TABLE IF NOT EXISTS turn_submissions (
   FOREIGN KEY (session_id) REFERENCES game_sessions(id)
 );
 
--- commit-turn pending-task ledger (design §4): a task key is claimed BEFORE
--- its maintainer runs, so a confirm-write failure cannot cause a re-run —
--- the retry re-confirms without re-executing. Claims of failed runs are
--- deleted (the effect never happened; retry is safe).
+-- commit-turn pending-task ledger (design §4). Stateful claims (review
+-- round 6): 'running' proves WORK IN FLIGHT, not success — recovery may
+-- re-claim a stale running claim (timeout or dead executor) but must not
+-- confirm it away; 'done' + result_json prove the effect was applied and
+-- saved in a confirm transaction. The maintainer is a PURE function that
+-- RETURNS a candidate result; the confirm transaction applies binding
+-- checks, the result, the done record and the queue change atomically.
 CREATE TABLE IF NOT EXISTS memory_task_claims (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   session_id TEXT NOT NULL,
   task_key TEXT NOT NULL,
+  state TEXT NOT NULL DEFAULT 'running',
+  executor TEXT,
+  result_json TEXT NOT NULL DEFAULT '{}',
   claimed_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
   UNIQUE(session_id, task_key),
   FOREIGN KEY (session_id) REFERENCES game_sessions(id)
@@ -159,11 +165,19 @@ _COLUMN_MIGRATIONS = [
     ("game_sessions", "campaign_filename", "TEXT"),
     ("game_sessions", "active_slot_name", "TEXT NOT NULL DEFAULT 'default'"),
     ("session_messages", "campaign_session_index", "INTEGER NOT NULL DEFAULT 0"),
+    # Messages remember the ARC the action happened in: session_index resets
+    # to 0 at every arc boundary, so arc1/session0 would collide with
+    # arc0/session0 in message filtering (review round 6).
+    ("session_messages", "campaign_arc_index", "INTEGER NOT NULL DEFAULT 0"),
     ("session_messages", "turn_node_id", "INTEGER"),
     ("campaign_progress", "npc_relations", "TEXT NOT NULL DEFAULT '[]'"),
     ("campaign_progress", "head_turn_id", "INTEGER"),
     # commit-turn: audit entry + server-recomputed roll record per submission.
     ("model_outputs", "audit_json", "TEXT NOT NULL DEFAULT '{}'"),
+    # commit-turn pending-task ledger: stateful claims (v3.4).
+    ("memory_task_claims", "state", "TEXT NOT NULL DEFAULT 'running'"),
+    ("memory_task_claims", "executor", "TEXT"),
+    ("memory_task_claims", "result_json", "TEXT NOT NULL DEFAULT '{}'"),
 ]
 
 

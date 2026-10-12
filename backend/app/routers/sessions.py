@@ -419,15 +419,44 @@ def turn_context_endpoint(session_id: str) -> dict[str, object]:
 
 
 def _campaign_context_provider(session_id: str):
-    """Production campaign-context assembly for turn-context (read-only).
+    """Campaign-context rendering for turn-context, on the CAPTURED snapshot.
 
-    Same call the generation path uses (campaign_manager.inject_context), so
-    the loop sees 当前场景/目标/锚点 exactly as the old pipeline produced them.
+    Renders the snapshot's progress-row COPY through the pure render path
+    (CampaignContextBuilder.render_context) — never the shared manager's
+    progress, never a slot other than the captured one, and pending-anchor
+    state is not touched (review round 6). The campaign DEFINITION is static,
+    so loading it via the (slot-matched) manager is safe.
     """
-    def _provide(state: dict, turn: int) -> str:
-        manager = get_campaign_manager_for_session(session_id)
+    def _provide(state: dict, turn: int, snapshot: dict) -> str:
+        row = snapshot.get("progressRow")
+        if row is None:
+            return ""
+        manager = get_campaign_manager_for_session(session_id, snapshot["slotName"])
         if manager is None or not manager.is_loaded():
             return ""
-        return manager.inject_context(state, turn)
+        from app.schemas.campaign import CampaignProgress
+
+        progress_copy = CampaignProgress(
+            campaign_id=row["campaign_id"],
+            arc_index=int(row["arc_index"]),
+            session_index=int(row["session_index"]),
+            turn_in_session=int(row["turn_in_session"]),
+            revealed_anchors=json.loads(row.get("revealed_anchors") or "[]"),
+            completed_arcs=json.loads(row.get("completed_arcs") or "[]"),
+        )
+        try:
+            relations = json.loads(row.get("npc_relations") or "[]")
+        except (TypeError, json.JSONDecodeError):
+            relations = []
+        text, _candidate = manager._context.render_context(
+            manager.campaign,
+            progress_copy,
+            state,
+            turn,
+            snapshot["slotName"],
+            relations,
+            manager._persistence,
+        )
+        return text
 
     return _provide

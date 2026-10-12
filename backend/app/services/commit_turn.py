@@ -14,6 +14,7 @@ carries the OLD expectedVersion (the head already moved), so binding checks
 must never run ahead of the replay short-circuit or resends would 409.
 """
 
+import datetime as _dt
 import hashlib
 import json
 from typing import Any, Callable
@@ -541,6 +542,7 @@ def commit_turn(
         progress_payload = None
         session_rolled = False
         messages_session_index = 0
+        messages_arc_index = 0
         campaign_def = campaign_manager.campaign if campaign_manager is not None else None
         if campaign_id:
             progress_row = db.read_campaign_progress(campaign_id, request.slotName, conn=conn)
@@ -563,6 +565,7 @@ def commit_turn(
                             "revealed_anchors": json.dumps(current, ensure_ascii=False),
                         }
                 messages_session_index = int(progress_row["session_index"])
+                messages_arc_index = int(progress_row["arc_index"])
                 progress_payload, session_rolled = _advance_progress_row(
                     progress_row, campaign_def, json.dumps(relations, ensure_ascii=False), int(next_state.get("turn", 0))
                 )
@@ -611,6 +614,7 @@ def commit_turn(
             # Messages belong to the session the turn was played IN — the
             # pre-rollover session index, not the head's default (review 4).
             campaign_session_index=messages_session_index,
+            campaign_arc_index=messages_arc_index,
         )
         fault("after_story_turn")
 
@@ -662,17 +666,18 @@ def read_turn_context(
     state_manager: Any,
     session_id: str,
     memory_controller_factory: Callable[[], Any],
-    campaign_context_provider: Callable[[dict[str, Any], int], str] | None = None,
+    campaign_context_provider: Callable[[dict[str, Any], int, dict[str, Any]], str] | None = None,
 ) -> dict[str, Any]:
     """One consistent read of everything the component loop binds to (§3.2).
 
     An explicit read transaction keeps the session row, the ancestor walk and
     the message query on one snapshot. Messages are filtered to the CURRENT
-    head's ancestor chain AND the HEAD node's campaign session index — the
-    index is taken from the head only (review round 5: walking ancestors and
-    overwriting the index each step returned the OLDEST session's messages);
-    the ancestor set exists solely to select which message rows belong to
-    this playthrough. The state is sanitized before return.
+    head's ancestor chain AND the HEAD node's campaign arc+session indexes —
+    taken from the head only (review round 5); the ancestor set exists solely
+    to select which message rows belong to this playthrough. The campaign
+    snapshot the provider renders (slot, progress row) is captured INSIDE the
+    same read transaction, and the provider must render on that copy — the
+    shared manager is neither trusted nor mutated (review round 6).
     """
     with db.connect() as conn:
         conn.execute("BEGIN")  # explicit read transaction: one snapshot
@@ -689,6 +694,12 @@ def read_turn_context(
             raise CommitTurnError(404, "Timeline node not found")
         head_progress = json.loads(head["campaign_progress_json"] or "{}")
         campaign_session_index = int(head_progress.get("session_index", 0))
+        head_arc_index = int(head_progress.get("arc_index", 0))
+        slot_snapshot = session["active_slot_name"] or "default"
+        slot_campaign_id = session["campaign_id"]
+        progress_row_snapshot = None
+        if slot_campaign_id:
+            progress_row_snapshot = db.read_campaign_progress(slot_campaign_id, slot_snapshot, conn=conn)
         ancestors: list[int] = []
         node_id: int | None = int(head["id"])
         while node_id is not None:
@@ -704,19 +715,18 @@ def read_turn_context(
         messages = conn.execute(
             f"""
             SELECT role, content FROM session_messages
-            WHERE session_id = ? AND campaign_session_index = ?
+            WHERE session_id = ? AND campaign_session_index = ? AND campaign_arc_index = ?
               AND turn_node_id IN ({placeholders})
             ORDER BY id
             """,
-            (session_id, campaign_session_index, *ancestors),
+            (session_id, campaign_session_index, head_arc_index, *ancestors),
         ).fetchall()
         conn.commit()
 
     state = json.loads(session["state_json"])
     # campaignContext: memory part assembled offline from the in-snapshot
     # controller (no LLM); the campaign part (scene/goal/anchors) comes from
-    # the provider — production's campaign_manager.inject_context (review 5:
-    # the memory-only render left 当前场景/目标/锚点 out of the context).
+    # the provider rendering the CAPTURED snapshot (slot + progress row copy).
     try:
         controller = memory_controller_factory()
         controller.load_state(state.get("_memory_controller") or {})
@@ -725,7 +735,16 @@ def read_turn_context(
         campaign_context = ""
     if campaign_context_provider is not None:
         try:
-            injected = campaign_context_provider(state, int(state.get("turn", 0)))
+            snapshot = {
+                "slotName": slot_snapshot,
+                "campaignId": slot_campaign_id,
+                "arcIndex": head_arc_index,
+                "sessionIndex": campaign_session_index,
+                "expectedParentId": session["active_turn_id"],
+                "expectedVersion": int(session["version"]),
+                "progressRow": progress_row_snapshot,
+            }
+            injected = campaign_context_provider(state, int(state.get("turn", 0)), snapshot)
             if injected:
                 campaign_context = f"{injected}\n\n{campaign_context}" if campaign_context else injected
         except Exception:
@@ -742,26 +761,42 @@ def read_turn_context(
     }
 
 
+CLAIM_TIMEOUT_SECONDS = 600
+_TASK_EXECUTOR = "commit-turn"
+
+
 def run_pending_tasks(
     db: Database,
     state_manager: Any,
     session_id: str,
-    runner: Callable[[dict[str, Any]], None],
+    runner: Callable[[dict[str, Any]], Any],
+    executor: str = _TASK_EXECUTOR,
+    fault_injector: Callable[[str], None] | None = None,
 ) -> list[dict[str, Any]]:
     """Execute the head's pending maintenance tasks; at-most-once per key (§4).
 
-    Review round 5: the maintainer runs OUTSIDE any transaction (a runner
-    that writes through its own connection used to deadlock on the write
-    lock), and task identity — not queue removal — prevents re-execution:
-    each task key is CLAIMED in a short transaction BEFORE the runner fires.
-    If the post-run confirmation fails (review round 5's injected fault),
-    the claim survives, so a retry re-confirms without re-running. A runner
-    that itself failed has its claim cleared and may retry.
+    Review round 6 contract: the maintainer is a PURE function that RETURNS a
+    candidate result — it never writes shared state itself, so a write before
+    a failed confirm cannot leak into another branch and a retry cannot apply
+    the effect twice. The confirm transaction applies binding checks, the
+    result, the done record and the queue change ATOMICALLY.
 
-    Flow per batch: read head snapshot → claim (short txn) → run (no txn) →
-    confirm (short txn: re-check head node/slot/version, remove completed
-    tasks from the head snapshot, game_sessions and the head row together).
+    Claims are STATEFUL (memory_task_claims.state):
+      - 'running' + fresh (executor, claimed_at)  → work in flight; other
+        executors leave the task alone this round.
+      - 'running' + stale (timeout or dead executor's leftover) → re-claimable.
+      - 'done' + result_json → effect applied and saved; never re-executed,
+        the queue entry is just confirmed away.
+
+    Flow: read head snapshot → claim (short txn) → run (no txn; pure) →
+    confirm (short txn: re-check head node/slot/version, save result +
+    done record + queue change atomically).
     """
+
+    def task_key(task: dict[str, Any]) -> str:
+        slot = task.get("slot", "default")
+        return f"{slot}:{task.get('type', 'unknown')}:{task.get('nodeId')}"
+
     with db.connect() as conn:
         session = conn.execute(
             "SELECT active_turn_id, active_slot_name, version, state_json FROM game_sessions WHERE id = ?",
@@ -777,54 +812,78 @@ def run_pending_tasks(
     slot = session["active_slot_name"] or "default"
     binding = (session["active_turn_id"], slot, int(session["version"]))
 
-    def task_key(task: dict[str, Any]) -> str:
-        return f"{task.get('slot', slot)}:{task.get('type', 'unknown')}:{task.get('nodeId')}"
-
-    # 1. Claim: INSERT OR IGNORE the keys in a short write transaction. Only
-    #    FRESHLY inserted rows authorize execution — a leftover claim from a
-    #    previous batch whose confirm failed must NOT re-run the maintainer;
-    #    it goes straight to confirmation (review round 5's injected fault).
-    fresh_keys: set[str] = set()
+    # 1. Claim: stateful, short transaction. Fresh 'running' claims of OTHER
+    #    executors are left untouched (their holder is mid-flight); 'done'
+    #    claims mean the effect already happened (confirm-away only); stale
+    #    'running' claims are re-claimed.
+    if fault_injector is not None:
+        fault_injector("before_claim")
+    now = _dt.datetime.now(_dt.timezone.utc)
+    fresh: set[str] = set()
+    confirm_away: set[str] = set()
     with db.write_transaction() as conn:
         for task in pending:
-            cursor = conn.execute(
-                "INSERT OR IGNORE INTO memory_task_claims (session_id, task_key) VALUES (?, ?)",
-                (session_id, task_key(task)),
-            )
-            if cursor.rowcount == 1:
-                fresh_keys.add(task_key(task))
+            key = task_key(task)
+            row = conn.execute(
+                "SELECT state, executor, claimed_at FROM memory_task_claims WHERE session_id = ? AND task_key = ?",
+                (session_id, key),
+            ).fetchone()
+            if row is None:
+                conn.execute(
+                    "INSERT INTO memory_task_claims (session_id, task_key, state, executor) VALUES (?, ?, 'running', ?)",
+                    (session_id, key, executor),
+                )
+                fresh.add(key)
+                continue
+            if row["state"] == "done":
+                confirm_away.add(key)
+                continue
+            stale = _claim_is_stale(row["claimed_at"], now)
+            if stale or row["executor"] == executor:
+                conn.execute(
+                    "UPDATE memory_task_claims SET state = 'running', executor = ?, claimed_at = CURRENT_TIMESTAMP WHERE session_id = ? AND task_key = ?",
+                    (executor, session_id, key),
+                )
+                fresh.add(key)
+            # else: another executor holds a fresh running claim — skip.
 
-    # 2. Run OUTSIDE any transaction; only freshly claimed tasks execute —
-    #    previously claimed leftovers (confirm failed last round) go straight
-    #    to confirmation without re-running the maintainer.
-    executed: list[dict[str, Any]] = []
+    if fault_injector is not None:
+        fault_injector("after_claim")
+
+    # 2. Run OUTSIDE any transaction; only this batch's claimed tasks run, and
+    #    the runner must be PURE (return the result, mutate nothing shared).
+    executed: list[tuple[dict[str, Any], Any]] = []
     failed: list[dict[str, Any]] = []
     for task in pending:
-        if task_key(task) not in fresh_keys:
+        key = task_key(task)
+        if key in confirm_away:
+            continue
+        if key not in fresh:
             continue
         try:
-            runner(task)
-            executed.append(task)
+            result = runner(task)
+            executed.append((task, result))
         except Exception:
+            # Effect never applied (nothing was written) — release the claim
+            # so a later attempt may run it again.
             failed.append(task)
-
-    # 3. Runner failed → clear its claim so a later retry may run it again
-    #    (its effect never happened).
     if failed:
         with db.write_transaction() as conn:
             for task in failed:
                 conn.execute(
-                    "DELETE FROM memory_task_claims WHERE session_id = ? AND task_key = ?",
-                    (session_id, task_key(task)),
+                    "DELETE FROM memory_task_claims WHERE session_id = ? AND task_key = ? AND state = 'running' AND executor = ?",
+                    (session_id, task_key(task), executor),
                 )
 
-    # 4. Confirm: short transaction re-checking the binding read in step 0.
-    #    Removes from the queue: freshly executed tasks AND leftover-claim
-    #    tasks (their effect was applied in an earlier batch — the surviving
-    #    claim is the proof; the earlier confirm just failed).
-    leftovers = [t for t in pending if task_key(t) not in fresh_keys and t not in failed]
-    completed = executed
-    if executed or leftovers:
+    # 3. Confirm: ONE short transaction — binding re-check, queue change,
+    #    done records and results all commit together or not at all (review
+    #    round 6: a crash between queue and result writes must not lose or
+    #    double-apply an effect).
+    completed_keys = {task_key(t) for t, _ in executed} | confirm_away
+    confirmed = False
+    if completed_keys:
+        if fault_injector is not None:
+            fault_injector("in_confirm")
         with db.write_transaction() as conn:
             current = conn.execute(
                 "SELECT active_turn_id, active_slot_name, version, state_json FROM game_sessions WHERE id = ?",
@@ -832,20 +891,37 @@ def run_pending_tasks(
             ).fetchone()
             current_binding = (current["active_turn_id"], current["active_slot_name"] or "default", int(current["version"]))
             if current_binding != binding:
-                # Head moved between read and confirm: leave everything as is;
-                # the next batch re-reads the (new) head's queue.
-                return []
-            state = json.loads(current["state_json"])
-            done_keys = {task_key(t) for t in executed} | {task_key(t) for t in leftovers}
-            kept = [t for t in (state.get("_memory_pending_tasks") or []) if task_key(t) not in done_keys]
-            state["_memory_pending_tasks"] = kept
-            state_json = json.dumps(state, ensure_ascii=False)
-            conn.execute("UPDATE game_sessions SET state_json = ? WHERE id = ?", (state_json, session_id))
-            conn.execute(
-                "UPDATE story_turns SET state_json = ? WHERE id = ? AND session_id = ?",
-                (state_json, current["active_turn_id"], session_id),
-            )
-    return completed
+                # Head moved between read and confirm: leave queue and claims
+                # as they are — the next batch re-reads the new head's queue;
+                # fresh running claims go stale and get re-claimed there.
+                confirmed = False
+            else:
+                state = json.loads(current["state_json"])
+                kept = [t for t in (state.get("_memory_pending_tasks") or []) if task_key(t) not in completed_keys]
+                state["_memory_pending_tasks"] = kept
+                state_json = json.dumps(state, ensure_ascii=False)
+                conn.execute("UPDATE game_sessions SET state_json = ? WHERE id = ?", (state_json, session_id))
+                conn.execute(
+                    "UPDATE story_turns SET state_json = ? WHERE id = ? AND session_id = ?",
+                    (state_json, current["active_turn_id"], session_id),
+                )
+                for task, result in executed:
+                    conn.execute(
+                        "UPDATE memory_task_claims SET state = 'done', result_json = ? WHERE session_id = ? AND task_key = ?",
+                        (json.dumps({"result": result}, ensure_ascii=False, default=str), session_id, task_key(task)),
+                    )
+                confirmed = True
+    return [t for t, _ in executed] if confirmed else []
+
+
+def _claim_is_stale(claimed_at: str, now: Any) -> bool:
+    try:
+        stamp = _dt.datetime.fromisoformat(claimed_at)
+        if stamp.tzinfo is None:
+            stamp = stamp.replace(tzinfo=_dt.timezone.utc)
+        return (now - stamp).total_seconds() > CLAIM_TIMEOUT_SECONDS
+    except (TypeError, ValueError):
+        return True
 
 
 def recover_pending_tasks(
