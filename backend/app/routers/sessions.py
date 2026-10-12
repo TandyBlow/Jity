@@ -361,9 +361,7 @@ def commit_turn_endpoint(session_id: str, request: CommitTurnRequest) -> CommitT
         # 1. drop the cached campaign manager for the ACTUAL slot, then the
         #    session's cached memory controller, so the next turn rebuilds
         #    from the committed snapshots (conservative form: rebuild);
-        # 2. clear the manager's in-memory pending-anchor triggers — the row
-        #    already carries the merged revealed_anchors;
-        # 3. run pending maintenance tasks when a runner is wired.
+        # 2. run pending maintenance tasks when a runner is wired.
         try:
             campaign_manager_cache.invalidate(session_id, slot_name)
         except Exception:
@@ -372,12 +370,6 @@ def commit_turn_endpoint(session_id: str, request: CommitTurnRequest) -> CommitT
             knowledge_service.scenario_generator.invalidate_timeline_caches(session_id, slot_name)
         except Exception:
             logger.warning("commit-turn timeline cache invalidation failed for %s", session_id, exc_info=True)
-        try:
-            manager = get_campaign_manager_for_session(session_id, slot_name)
-            if manager is not None:
-                manager.commit_pending_anchors()
-        except Exception:
-            logger.warning("commit-turn pending-anchor clear failed for %s", session_id, exc_info=True)
         runner = pending_task_runner
         if runner is not None:
             try:
@@ -448,6 +440,8 @@ def _campaign_context_provider(session_id: str):
             relations = json.loads(row.get("npc_relations") or "[]")
         except (TypeError, json.JSONDecodeError):
             relations = []
+        # Rendering proposes an anchor without shared writes. commit_turn
+        # re-evaluates it inside the bound write transaction before saving it.
         text, _candidate = manager._context.render_context(
             manager.campaign,
             progress_copy,
@@ -455,7 +449,7 @@ def _campaign_context_provider(session_id: str):
             turn,
             snapshot["slotName"],
             relations,
-            manager._persistence,
+            row.get("recap_compressed") or "",
         )
         return text
 

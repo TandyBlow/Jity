@@ -55,7 +55,9 @@ class CampaignContextBuilder:
         except (json.JSONDecodeError, KeyError):
             relations = []
         text, candidate = self.render_context(
-            campaign, progress, state, turn, slot_name, relations, persistence
+            campaign, progress, state, turn, slot_name, relations,
+            (row or {}).get("recap_compressed", ""),
+            anchor_evaluator=self.anchors,
         )
         # The ONLY shared-state mutation of context injection: registering the
         # candidate anchor for the commit flow to merge (review round 6: the
@@ -71,7 +73,9 @@ class CampaignContextBuilder:
         turn: int,
         slot_name: str,
         relations: list[dict[str, Any]],
-        persistence: Any,
+        recap_compressed: str,
+        *,
+        anchor_evaluator: CampaignAnchorEvaluator | None = None,
     ) -> tuple[str, str | None]:
         """PURE campaign-context render on the passed progress (a copy).
 
@@ -111,9 +115,8 @@ class CampaignContextBuilder:
         # Recap layer at session start
         turn_in_session = getattr(progress, "turn_in_session", 0)
         if self.recap.is_first_turn_of_session(turn_in_session):
-            recap = self.recap.load_recap_compressed(persistence, progress.campaign_id, slot_name)
-            if recap:
-                parts.insert(0, "## 前情提要\n" + recap)
+            if recap_compressed:
+                parts.insert(0, "## 前情提要\n" + recap_compressed)
 
         # NPC relations block (top-3 by absolute affinity)
         if relations:
@@ -138,7 +141,8 @@ class CampaignContextBuilder:
         # (a copy for snapshot renders); pending-anchor registration is the
         # caller's job, keeping this function side-effect free.
         turn_in_session = getattr(progress, "turn_in_session", turn) if progress else turn
-        candidates = self.anchors.evaluate_anchors(
+        evaluator = anchor_evaluator if anchor_evaluator is not None else CampaignAnchorEvaluator()
+        candidates = evaluator.evaluate_anchors(
             campaign, progress, state, turn_in_session,
             revealed_anchors=progress.revealed_anchors,
         )

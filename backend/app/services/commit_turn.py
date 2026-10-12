@@ -17,7 +17,9 @@ must never run ahead of the replay short-circuit or resends would 409.
 import datetime as _dt
 import hashlib
 import json
+from copy import deepcopy
 from typing import Any, Callable
+from uuid import uuid4
 
 from pydantic import BaseModel, Field, StrictInt, ValidationError
 
@@ -438,8 +440,8 @@ def commit_turn(
     """Validate, merge and commit one fixed-candidate submission.
 
     ``campaign_manager`` (optional) supplies the campaign-definition side of
-    the deterministic advancement: pending anchor triggers and
-    resolve_max_turns. Counters and boundary states are still written ONLY
+    the deterministic advancement: anchor definitions and turn thresholds.
+    Counters and boundary states are still written ONLY
     through the in-transaction progress row — the manager's in-memory
     progress is never trusted (§4).
 
@@ -549,17 +551,25 @@ def commit_turn(
             if progress_row:
                 relations = json.loads(progress_row.get("npc_relations") or "[]")
                 relations = merge_npc_relations(relations, output.npc_relations_delta, int(next_state.get("turn", 0)))
-                if campaign_manager is not None:
-                    # Pending anchors from THIS turn's direction stage — the
-                    # manager's in-memory list is read-only here; merging into
-                    # the row keeps the single-connection discipline.
+                if campaign_def is not None:
+                    from app.schemas.campaign import CampaignProgress
+                    from app.services.campaign_anchors import CampaignAnchorEvaluator
+
                     current = json.loads(progress_row["revealed_anchors"] or "[]")
-                    changed = False
-                    for anchor_id, _turn in campaign_manager.pending_anchor_triggers:
-                        if anchor_id not in current:
-                            current.append(anchor_id)
-                            changed = True
-                    if changed:
+                    progress_copy = CampaignProgress(
+                        campaign_id=campaign_id,
+                        arc_index=int(progress_row["arc_index"]),
+                        session_index=int(progress_row["session_index"]),
+                        turn_in_session=int(progress_row["turn_in_session"]),
+                        revealed_anchors=current,
+                        completed_arcs=json.loads(progress_row["completed_arcs"] or "[]"),
+                    )
+                    anchors = CampaignAnchorEvaluator().evaluate_anchors(
+                        campaign_def, progress_copy, state, progress_copy.turn_in_session,
+                        revealed_anchors=current,
+                    )
+                    if anchors:
+                        current.append(anchors[0].id)
                         progress_row = {
                             **progress_row,
                             "revealed_anchors": json.dumps(current, ensure_ascii=False),
@@ -773,24 +783,18 @@ def run_pending_tasks(
     executor: str = _TASK_EXECUTOR,
     fault_injector: Callable[[str], None] | None = None,
 ) -> list[dict[str, Any]]:
-    """Execute the head's pending maintenance tasks; at-most-once per key (§4).
+    """Claim, compute and apply each task against the head's bound snapshot.
 
-    Review round 6 contract: the maintainer is a PURE function that RETURNS a
-    candidate result — it never writes shared state itself, so a write before
-    a failed confirm cannot leak into another branch and a retry cannot apply
-    the effect twice. The confirm transaction applies binding checks, the
-    result, the done record and the queue change ATOMICALLY.
+    ``executor`` is an audit label, never ownership. Every acquisition gets
+    a fresh token; release and confirmation require that token AND running
+    state. A timed-out worker cannot touch its successor's claim or result.
 
-    Claims are STATEFUL (memory_task_claims.state):
-      - 'running' + fresh (executor, claimed_at)  → work in flight; other
-        executors leave the task alone this round.
-      - 'running' + stale (timeout or dead executor's leftover) → re-claimable.
-      - 'done' + result_json → effect applied and saved; never re-executed,
-        the queue entry is just confirmed away.
-
-    Flow: read head snapshot → claim (short txn) → run (no txn; pure) →
-    confirm (short txn: re-check head node/slot/version, save result +
-    done record + queue change atomically).
+    The pure runner receives copied ``memory_state`` and ``campaign_progress``.
+    memory_maintain returns {"memory_state": <controller export>}; campaign_recap
+    returns {"recap_compressed": str, "recap_full": str (optional)}. Invalid
+    results remain pending. Tasks run in queue order, reading the result of
+    the preceding confirmation, so whole snapshots cannot overwrite one
+    another. Fresh claims block later tasks in concurrent callers as well.
     """
 
     def task_key(task: dict[str, Any]) -> str:
@@ -806,112 +810,147 @@ def run_pending_tasks(
             raise CommitTurnError(404, "Session not found")
         state = json.loads(session["state_json"])
         pending = list(state.get("_memory_pending_tasks") or [])
-    if not pending:
-        return []
-
     slot = session["active_slot_name"] or "default"
     binding = (session["active_turn_id"], slot, int(session["version"]))
-
-    # 1. Claim: stateful, short transaction. Fresh 'running' claims of OTHER
-    #    executors are left untouched (their holder is mid-flight); 'done'
-    #    claims mean the effect already happened (confirm-away only); stale
-    #    'running' claims are re-claimed.
-    if fault_injector is not None:
-        fault_injector("before_claim")
-    now = _dt.datetime.now(_dt.timezone.utc)
-    fresh: set[str] = set()
-    confirm_away: set[str] = set()
-    with db.write_transaction() as conn:
-        for task in pending:
-            key = task_key(task)
-            row = conn.execute(
-                "SELECT state, executor, claimed_at FROM memory_task_claims WHERE session_id = ? AND task_key = ?",
-                (session_id, key),
-            ).fetchone()
-            if row is None:
-                conn.execute(
-                    "INSERT INTO memory_task_claims (session_id, task_key, state, executor) VALUES (?, ?, 'running', ?)",
-                    (session_id, key, executor),
-                )
-                fresh.add(key)
-                continue
-            if row["state"] == "done":
-                confirm_away.add(key)
-                continue
-            stale = _claim_is_stale(row["claimed_at"], now)
-            if stale or row["executor"] == executor:
-                conn.execute(
-                    "UPDATE memory_task_claims SET state = 'running', executor = ?, claimed_at = CURRENT_TIMESTAMP WHERE session_id = ? AND task_key = ?",
-                    (executor, session_id, key),
-                )
-                fresh.add(key)
-            # else: another executor holds a fresh running claim — skip.
-
-    if fault_injector is not None:
-        fault_injector("after_claim")
-
-    # 2. Run OUTSIDE any transaction; only this batch's claimed tasks run, and
-    #    the runner must be PURE (return the result, mutate nothing shared).
-    executed: list[tuple[dict[str, Any], Any]] = []
-    failed: list[dict[str, Any]] = []
+    completed: list[dict[str, Any]] = []
     for task in pending:
         key = task_key(task)
-        if key in confirm_away:
-            continue
-        if key not in fresh:
-            continue
-        try:
-            result = runner(task)
-            executed.append((task, result))
-        except Exception:
-            # Effect never applied (nothing was written) — release the claim
-            # so a later attempt may run it again.
-            failed.append(task)
-    if failed:
-        with db.write_transaction() as conn:
-            for task in failed:
-                conn.execute(
-                    "DELETE FROM memory_task_claims WHERE session_id = ? AND task_key = ? AND state = 'running' AND executor = ?",
-                    (session_id, task_key(task), executor),
-                )
-
-    # 3. Confirm: ONE short transaction — binding re-check, queue change,
-    #    done records and results all commit together or not at all (review
-    #    round 6: a crash between queue and result writes must not lose or
-    #    double-apply an effect).
-    completed_keys = {task_key(t) for t, _ in executed} | confirm_away
-    confirmed = False
-    if completed_keys:
+        token = uuid4().hex
         if fault_injector is not None:
-            fault_injector("in_confirm")
+            fault_injector("before_claim")
+        # Capture the runner's inputs and claim in the same short transaction.
         with db.write_transaction() as conn:
-            current = conn.execute(
-                "SELECT active_turn_id, active_slot_name, version, state_json FROM game_sessions WHERE id = ?",
-                (session_id,),
-            ).fetchone()
-            current_binding = (current["active_turn_id"], current["active_slot_name"] or "default", int(current["version"]))
-            if current_binding != binding:
-                # Head moved between read and confirm: leave queue and claims
-                # as they are — the next batch re-reads the new head's queue;
-                # fresh running claims go stale and get re-claimed there.
-                confirmed = False
-            else:
-                state = json.loads(current["state_json"])
-                kept = [t for t in (state.get("_memory_pending_tasks") or []) if task_key(t) not in completed_keys]
-                state["_memory_pending_tasks"] = kept
-                state_json = json.dumps(state, ensure_ascii=False)
-                conn.execute("UPDATE game_sessions SET state_json = ? WHERE id = ?", (state_json, session_id))
+            current = conn.execute("SELECT * FROM game_sessions WHERE id = ?", (session_id,)).fetchone()
+            if current is None or _task_binding(current) != binding:
+                break
+            state = json.loads(current["state_json"])
+            if not any(task_key(t) == key for t in state.get("_memory_pending_tasks") or []):
+                continue
+            if task.get("slot", "default") != slot:
+                continue
+            queued_keys = [task_key(t) for t in state.get("_memory_pending_tasks") or []]
+            placeholders = ",".join("?" for _ in queued_keys)
+            running = conn.execute(
+                f"SELECT task_key, claimed_at FROM memory_task_claims WHERE session_id = ? AND state = 'running' AND task_key IN ({placeholders})",
+                (session_id, *queued_keys),
+            ).fetchall()
+            now = _dt.datetime.now(_dt.timezone.utc)
+            if any(not _claim_is_stale(row["claimed_at"], now) for row in running):
+                break
+            # Whole-memory candidates share one head, so even DIFFERENT tasks
+            # must not compute concurrently. Fence any expired queued worker
+            # before acquiring this task, including earlier failed work.
+            for row in running:
+                conn.execute("DELETE FROM memory_task_claims WHERE session_id = ? AND task_key = ?", (session_id, row["task_key"]))
+            # A queued task with an old done record can occur after restoring
+            # an earlier snapshot. Recompute on that branch; a sibling's
+            # completion must not clear work whose effect this snapshot lacks.
+            conn.execute(
+                """INSERT INTO memory_task_claims
+                   (session_id, task_key, state, executor, claim_token)
+                   VALUES (?, ?, 'running', ?, ?)
+                   ON CONFLICT(session_id, task_key) DO UPDATE SET
+                     state = 'running', executor = excluded.executor,
+                     claim_token = excluded.claim_token, result_json = '{}',
+                     claimed_at = CURRENT_TIMESTAMP""",
+                (session_id, key, executor, token),
+            )
+            progress = db.read_campaign_progress(current["campaign_id"], slot, conn=conn) if current["campaign_id"] else None
+            runner_input = deepcopy(task)
+            runner_input["memory_state"] = deepcopy(state.get("_memory_controller") or {})
+            runner_input["campaign_progress"] = deepcopy(progress)
+        if fault_injector is not None:
+            fault_injector("after_claim")
+        try:
+            result = _validate_task_result(db, session_id, task, runner(runner_input))
+        except Exception:
+            with db.write_transaction() as conn:
                 conn.execute(
-                    "UPDATE story_turns SET state_json = ? WHERE id = ? AND session_id = ?",
-                    (state_json, current["active_turn_id"], session_id),
+                    "DELETE FROM memory_task_claims WHERE session_id = ? AND task_key = ? AND state = 'running' AND claim_token = ?",
+                    (session_id, key, token),
                 )
-                for task, result in executed:
-                    conn.execute(
-                        "UPDATE memory_task_claims SET state = 'done', result_json = ? WHERE session_id = ? AND task_key = ?",
-                        (json.dumps({"result": result}, ensure_ascii=False, default=str), session_id, task_key(task)),
-                    )
-                confirmed = True
-    return [t for t, _ in executed] if confirmed else []
+            continue
+        if fault_injector is not None:
+            fault_injector("before_confirm")
+        with db.write_transaction() as conn:
+            current = conn.execute("SELECT * FROM game_sessions WHERE id = ?", (session_id,)).fetchone()
+            claim = conn.execute(
+                "SELECT state, claim_token FROM memory_task_claims WHERE session_id = ? AND task_key = ?",
+                (session_id, key),
+            ).fetchone()
+            if current is None or _task_binding(current) != binding:
+                break
+            if claim is None or claim["state"] != "running" or claim["claim_token"] != token:
+                break
+            state = json.loads(current["state_json"])
+            if not any(task_key(t) == key for t in state.get("_memory_pending_tasks") or []):
+                break
+            if task["type"] == "memory_maintain":
+                state["_memory_controller"] = result["memory_state"]
+            else:
+                progress = db.read_campaign_progress(current["campaign_id"], slot, conn=conn)
+                if progress is None or progress["head_turn_id"] != current["active_turn_id"]:
+                    raise CommitTurnError(409, "recap 的战役进度不属于当前回合")
+                full = result.get("recap_full")
+                if full is None:
+                    full = "\n\n".join(filter(None, [progress["recap_full"], result["recap_compressed"]]))
+                conn.execute(
+                    "UPDATE campaign_progress SET recap_compressed = ?, recap_full = ? WHERE campaign_id = ? AND slot_name = ?",
+                    (result["recap_compressed"], full, current["campaign_id"], slot),
+                )
+                head = conn.execute("SELECT campaign_progress_json FROM story_turns WHERE id = ?", (current["active_turn_id"],)).fetchone()
+                head_progress = json.loads(head["campaign_progress_json"] or "{}")
+                head_progress.update(recap_compressed=result["recap_compressed"], recap_full=full)
+                conn.execute(
+                    "UPDATE story_turns SET campaign_progress_json = ? WHERE id = ? AND session_id = ?",
+                    (json.dumps(head_progress, ensure_ascii=False), current["active_turn_id"], session_id),
+                )
+            state["_memory_pending_tasks"] = [t for t in state["_memory_pending_tasks"] if task_key(t) != key]
+            state_json = json.dumps(state, ensure_ascii=False)
+            conn.execute(
+                "UPDATE game_sessions SET state_json = ? WHERE id = ?", (state_json, session_id)
+            )
+            # This hook is INSIDE the transaction, after business writes.
+            if fault_injector is not None:
+                fault_injector("in_confirm")
+            conn.execute(
+                "UPDATE story_turns SET state_json = ? WHERE id = ? AND session_id = ?",
+                (state_json, current["active_turn_id"], session_id),
+            )
+            conn.execute(
+                """UPDATE memory_task_claims SET state = 'done', result_json = ?
+                   WHERE session_id = ? AND task_key = ? AND state = 'running' AND claim_token = ?""",
+                (json.dumps({"result": result}, ensure_ascii=False), session_id, key, token),
+            )
+        completed.append(task)
+    return completed
+
+
+def _task_binding(session: Any) -> tuple[int, str, int]:
+    return (session["active_turn_id"], session["active_slot_name"] or "default", int(session["version"]))
+
+
+def _validate_task_result(db: Database, session_id: str, task: dict[str, Any], result: Any) -> dict[str, Any]:
+    if not isinstance(result, dict):
+        raise ValueError("维护器必须返回结果对象")
+    result = deepcopy(result)
+    if task["type"] == "memory_maintain":
+        if not isinstance(result.get("memory_state"), dict):
+            raise ValueError("memory_maintain 缺少 memory_state")
+        from app.services.memory.memory_controller import MemoryController
+
+        controller = MemoryController(None, db, session_id)
+        controller.load_state(result["memory_state"])
+        result["memory_state"] = controller.export_state()
+    elif task["type"] == "campaign_recap":
+        if not isinstance(result.get("recap_compressed"), str):
+            raise ValueError("campaign_recap 缺少 recap_compressed")
+        if "recap_full" in result and not isinstance(result["recap_full"], str):
+            raise ValueError("recap_full 必须是字符串")
+    else:
+        raise ValueError(f"未知维护任务：{task['type']}")
+    json.dumps(result, ensure_ascii=False)  # reject unserializable results before confirming
+    return result
 
 
 def _claim_is_stale(claimed_at: str, now: Any) -> bool:
@@ -927,7 +966,7 @@ def _claim_is_stale(claimed_at: str, now: Any) -> bool:
 def recover_pending_tasks(
     db: Database,
     state_manager: Any,
-    runner: Callable[[dict[str, Any]], None],
+    runner: Callable[[dict[str, Any]], Any],
 ) -> dict[str, list[dict[str, Any]]]:
     """Startup recovery entry: execute every session's pending tasks (§4).
 

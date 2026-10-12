@@ -115,6 +115,7 @@ CREATE TABLE IF NOT EXISTS memory_task_claims (
   task_key TEXT NOT NULL,
   state TEXT NOT NULL DEFAULT 'running',
   executor TEXT,
+  claim_token TEXT,
   result_json TEXT NOT NULL DEFAULT '{}',
   claimed_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
   UNIQUE(session_id, task_key),
@@ -177,6 +178,7 @@ _COLUMN_MIGRATIONS = [
     # commit-turn pending-task ledger: stateful claims (v3.4).
     ("memory_task_claims", "state", "TEXT NOT NULL DEFAULT 'running'"),
     ("memory_task_claims", "executor", "TEXT"),
+    ("memory_task_claims", "claim_token", "TEXT"),
     ("memory_task_claims", "result_json", "TEXT NOT NULL DEFAULT '{}'"),
 ]
 
@@ -193,9 +195,48 @@ def init_schema(db) -> None:
     for table, column, definition in _COLUMN_MIGRATIONS:
         ensure_column(db, table, column, definition)
     _migrate_campaign_progress_pk(db)
+    _backfill_message_arcs(db)
     db.execute(
         "CREATE INDEX IF NOT EXISTS idx_session_messages_turn ON session_messages(turn_node_id)"
     )
+
+
+def _backfill_message_arcs(db) -> None:
+    """Repair pre-arc-column messages, including databases already on v3.4.
+
+    A turn stores progress AFTER advancement. At an arc boundary use the
+    completed pre-advancement arc, otherwise the node's arc; a parent can
+    predate an explicitly selected chapter. Never use the live campaign row.
+    """
+    db.execute("CREATE TABLE IF NOT EXISTS schema_migrations (name TEXT PRIMARY KEY)")
+    migration = "session_messages_action_arc_backfill"
+    if db.execute("SELECT 1 FROM schema_migrations WHERE name = ?", (migration,)).fetchone():
+        return
+    db.execute("""
+        UPDATE session_messages SET campaign_arc_index = (
+            SELECT COALESCE(
+                CASE WHEN json_extract(node.campaign_progress_json, '$.turn_in_session') = 0
+                     AND (json_extract(parent.campaign_progress_json, '$.arc_index') IS NULL
+                          OR json_extract(node.campaign_progress_json, '$.arc_index') >
+                             json_extract(parent.campaign_progress_json, '$.arc_index'))
+                     AND EXISTS (
+                         SELECT 1 FROM json_each(json_extract(node.campaign_progress_json, '$.completed_arcs'))
+                         WHERE value = json_extract(node.campaign_progress_json, '$.arc_index') - 1
+                     )
+                     THEN json_extract(node.campaign_progress_json, '$.arc_index') - 1
+                     ELSE json_extract(node.campaign_progress_json, '$.arc_index') END,
+                json_extract(parent.campaign_progress_json, '$.arc_index'),
+                0)
+            FROM story_turns node LEFT JOIN story_turns parent
+              ON parent.id = node.parent_turn_id AND parent.session_id = node.session_id
+            WHERE node.id = session_messages.turn_node_id
+              AND node.session_id = session_messages.session_id
+        ) WHERE EXISTS (
+            SELECT 1 FROM story_turns node WHERE node.id = session_messages.turn_node_id
+              AND node.session_id = session_messages.session_id
+        )
+    """)
+    db.execute("INSERT INTO schema_migrations (name) VALUES (?)", (migration,))
 
 
 def _migrate_campaign_progress_pk(db) -> None:

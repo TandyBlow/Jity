@@ -20,6 +20,7 @@ class OpeningSceneMixin:
 
         opening = campaign_manager.get_opening_scene()
         turn = campaign_manager.progress.turn_in_session
+        action_arc_index = int(campaign_manager.progress.arc_index)
         if turn != 0 or not opening:
             return None
         if parent_turn_id is None:
@@ -83,6 +84,7 @@ class OpeningSceneMixin:
             source="scripted",
             model_output_id=output_id,
             campaign_session_index=_csi,
+            campaign_arc_index=action_arc_index,
         )
 
         serialized = output.model_dump()

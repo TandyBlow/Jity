@@ -81,6 +81,11 @@ class ScenarioGenerator(
             )
         campaign_manager = self._campaign_manager_for(session_id, request.slot_name)
         _csi = self._campaign_session_index(campaign_manager)
+        action_arc_index = (
+            int(campaign_manager.progress.arc_index)
+            if campaign_manager is not None and campaign_manager.is_loaded() and campaign_manager.progress is not None
+            else 0
+        )
 
         # Hook 1: Campaign opening scene (early return)
         opening_result = await self._handle_opening_scene(
@@ -129,6 +134,7 @@ class ScenarioGenerator(
             source=source,
             model_output_id=output_id,
             campaign_session_index=_csi,
+            campaign_arc_index=action_arc_index,
         )
 
         sanitized = self.state_manager.sanitize_state(next_state)

@@ -10,8 +10,12 @@ the FastAPI app is exercised for the endpoint mapping and turn-context.
 """
 
 import datetime as _dt
+import ast
 import json
+import sqlite3
 import threading
+from copy import deepcopy
+from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import MagicMock
 
@@ -169,6 +173,18 @@ def _commit(runtime, session_id: str, request: CommitTurnRequest, **kwargs):
         memory_controller_factory=lambda: sessions_router.memory_controller_factory(session_id),
         **kwargs,
     )
+
+
+def _maintenance_result(task, summary=None):
+    memory = deepcopy(task["memory_state"])
+    if summary:
+        from app.schemas.agent_io import EpisodeSummary
+
+        memory.setdefault("nsb", {}).setdefault("level1", []).append(EpisodeSummary(
+            episode_id=f"episode-{task['nodeId']}", turn_start=0,
+            turn_end=task["turn"], summary=summary,
+        ).model_dump())
+    return {"memory_state": memory}
 
 
 # ── 1. 响应丢失后的重发 ──
@@ -487,8 +503,6 @@ def test_campaign_progress_row_advances_in_the_same_transaction(runtime, session
 
 # ════ 评审四轮补充：缺口用例 ════
 
-from pathlib import Path
-
 from app.schemas import StoryOutput
 from app.services.campaign_manager import CampaignManager
 from app.services.commit_turn import (
@@ -668,10 +682,10 @@ def test_pending_task_execution_marks_completion_keeps_failures_and_is_idempoten
 
     executed: list[dict] = []
 
-    def runner(task: dict) -> None:
+    def runner(task: dict) -> dict:
         if task["nodeId"] == committed.timelineNodeId:
             executed.append(task)
-            return
+            return _maintenance_result(task)
         raise RuntimeError("fail this task")
 
     done = run_pending_tasks(runtime.db, runtime.states, sid, runner)
@@ -691,8 +705,9 @@ def test_recover_pending_tasks_scans_and_completes(runtime, session_binding):
     committed = _commit(runtime, sid, _request(session_binding, "req-1"))
     seen: list[dict] = []
 
-    def runner(task: dict) -> None:
+    def runner(task: dict) -> dict:
         seen.append(task)
+        return _maintenance_result(task)
 
     completed = recover_pending_tasks(runtime.db, runtime.states, runner)
     assert completed[sid][0]["nodeId"] == committed.timelineNodeId
@@ -737,13 +752,19 @@ def test_campaign_commit_advances_anchors_and_counts(runtime, session_binding):
         revealed_anchors=[], completed_arcs=[],
     )
     manager = _campaign_manager(runtime, sid)
-    manager._anchors._pending_anchor_triggers.append(("anchor-1", 1))  # fixture: this turn's pending trigger
+    from app.schemas.campaign import AnchorEvent
+
+    manager.campaign.arcs[0].sessions[0].anchor_events = [AnchorEvent(
+        id="anchor-1", name="登记簿线索", description="发现线索", priority=1,
+    )]
+    manager._anchors._pending_anchor_triggers.append(("wrong-shared-anchor", 1))
 
     _commit(runtime, sid, _request(session_binding, "req-1"), campaign_manager=manager)
 
     row = runtime.db.read_campaign_progress(sid, "default")
     assert row["turn_in_session"] == 1
     assert "anchor-1" in json.loads(row["revealed_anchors"])
+    assert "wrong-shared-anchor" not in json.loads(row["revealed_anchors"])
     assert row["fsm_state"] == "active/session_active"
     with runtime.db.connect() as conn:
         messages = conn.execute(
@@ -903,11 +924,12 @@ def test_pending_tasks_run_outside_transaction_and_concurrently_writable(runtime
     sid = session_binding["sessionId"]
     _commit(runtime, sid, _request(session_binding, "req-1"))
 
-    def runner(task: dict) -> None:
+    def runner(task: dict) -> dict:
         with runtime.db.connect() as conn:  # own connection: would block under a held write lock
             conn.execute(
                 "UPDATE game_sessions SET model = model WHERE id = ?", (sid,)
             )
+        return _maintenance_result(task)
 
     done = run_pending_tasks(runtime.db, runtime.states, sid, runner)
     assert len(done) == 1
@@ -919,20 +941,20 @@ def test_confirm_sql_failure_applies_effect_exactly_once(runtime, session_bindin
     sid = session_binding["sessionId"]
     committed = _commit(runtime, sid, _request(session_binding, "req-1"))
     calls: list[dict] = []
-    fail_confirm = {"on": True}
 
     def runner(task: dict) -> dict:
         calls.append(task)
-        return {"summaries": 1}
+        return _maintenance_result(task, "确认事务实际保存的摘要")
 
-    def fault(step: str) -> None:
-        if step == "in_confirm" and fail_confirm["on"]:
-            raise RuntimeError("injected sqlite failure")
+    with runtime.db.connect() as conn:
+        old_state = json.loads(conn.execute("SELECT state_json FROM game_sessions WHERE id = ?", (sid,)).fetchone()[0])
+        conn.execute("""CREATE TRIGGER fail_confirm BEFORE UPDATE OF state ON memory_task_claims
+            WHEN NEW.state = 'done' BEGIN SELECT RAISE(ABORT, 'injected sqlite failure'); END""")
 
     # The injected DB failure propagates out of the confirm transaction
     # (transaction rolled back) — nothing was applied.
-    with pytest.raises(RuntimeError, match="injected sqlite"):
-        run_pending_tasks(runtime.db, runtime.states, sid, runner, fault_injector=fault)
+    with pytest.raises(sqlite3.IntegrityError, match="injected sqlite"):
+        run_pending_tasks(runtime.db, runtime.states, sid, runner)
     assert len(calls) == 1
     with runtime.db.connect() as conn:
         state = json.loads(conn.execute("SELECT state_json s FROM game_sessions WHERE id = ?", (sid,)).fetchone()["s"])
@@ -941,9 +963,17 @@ def test_confirm_sql_failure_applies_effect_exactly_once(runtime, session_bindin
             (sid, f"default:memory_maintain:{committed.timelineNodeId}"),
         ).fetchone()
     assert state["_memory_pending_tasks"], "queue intact after a failed confirm"
+    assert state == old_state, "business writes preceding the SQL failure must roll back"
+    with runtime.db.connect() as conn:
+        node_state = json.loads(conn.execute("SELECT state_json FROM story_turns WHERE id = ?", (committed.timelineNodeId,)).fetchone()[0])
+    assert node_state == old_state
     assert claim["state"] == "running"
 
-    # Retry (fault off): recomputes (pure runner), applies exactly once.
+    # Fresh claims block even the same/default executor. Retry after expiry.
+    assert run_pending_tasks(runtime.db, runtime.states, sid, runner) == []
+    with runtime.db.connect() as conn:
+        conn.execute("DROP TRIGGER fail_confirm")
+        conn.execute("UPDATE memory_task_claims SET claimed_at = '2020-01-01' WHERE session_id = ?", (sid,))
     again = run_pending_tasks(runtime.db, runtime.states, sid, runner)
     assert len(again) == 1
     assert len(calls) == 2  # recomputed, but…
@@ -955,13 +985,16 @@ def test_confirm_sql_failure_applies_effect_exactly_once(runtime, session_bindin
         ).fetchone()
     assert state["_memory_pending_tasks"] == []  # …the effect landed ONCE
     assert claim["state"] == "done"
-    assert json.loads(claim["result_json"])["result"] == {"summaries": 1}
+    assert len(state["_memory_controller"]["nsb"]["level1"]) == 1
+    assert state["_memory_controller"]["nsb"]["level1"][0]["summary"] == "确认事务实际保存的摘要"
+    assert json.loads(claim["result_json"])["result"]["memory_state"] == state["_memory_controller"]
     # A third run is a full no-op.
     assert run_pending_tasks(runtime.db, runtime.states, sid, runner) == []
     assert len(calls) == 2
 
 
-def test_running_claim_blocks_another_executor(runtime, session_binding):
+@pytest.mark.parametrize("executors", [None, ("same", "same"), ("A", "B")])
+def test_running_claim_blocks_another_executor(runtime, session_binding, executors):
     # 并发反例：B 不得确认 A 正在执行的任务；A 完成后正常落账。
     sid = session_binding["sessionId"]
     committed = _commit(runtime, sid, _request(session_binding, "req-1"))
@@ -972,24 +1005,26 @@ def test_running_claim_blocks_another_executor(runtime, session_binding):
         calls.append("A")
         a_started.set()
         a_release.wait(timeout=5)
-        return {"who": "A"}
+        return _maintenance_result(task, "A 的摘要")
 
     def runner_b(task: dict) -> dict:
         calls.append("B")
-        return {"who": "B"}
+        return _maintenance_result(task, "B 的摘要")
 
     results: list = []
 
     def run_a() -> None:
-        results.append(run_pending_tasks(runtime.db, runtime.states, sid, runner_a, executor="A"))
+        results.append(run_pending_tasks(runtime.db, runtime.states, sid, runner_a, **({"executor": executors[0]} if executors else {})))
 
     thread = threading.Thread(target=run_a)
     thread.start()
     assert a_started.wait(timeout=5)
 
-    b_done = run_pending_tasks(runtime.db, runtime.states, sid, runner_b, executor="B")
-    a_release.set()
-    thread.join()
+    try:
+        b_done = run_pending_tasks(runtime.db, runtime.states, sid, runner_b, **({"executor": executors[1]} if executors else {}))
+    finally:
+        a_release.set()
+        thread.join(timeout=5)
 
     assert b_done == []  # B executed nothing — the fresh running claim held
     assert results[0] and results[0][0]["nodeId"] == committed.timelineNodeId
@@ -1013,7 +1048,7 @@ def test_recovery_of_abandoned_claim_never_confirms_unapplied_work(runtime, sess
 
     def runner(task: dict) -> dict:
         calls.append(task)
-        return {"ok": True}
+        return _maintenance_result(task)
 
     # Executor "A" claims, the process dies mid-run (claim fresh, no effect).
     run_pending_tasks(
@@ -1059,12 +1094,12 @@ def test_pure_runner_cannot_leak_into_a_rolled_back_branch(runtime, session_bind
     calls: list[dict] = []
 
     def rollback_between_read_and_confirm(step: str) -> None:
-        if step == "in_confirm":
+        if step == "before_confirm":
             runtime.db.activate_story_turn(sid, root_id)
 
     def runner(task: dict) -> dict:
         calls.append(task)
-        return {"ok": True}
+        return _maintenance_result(task, "不得进入回滚分支的摘要")
 
     done = run_pending_tasks(
         runtime.db, runtime.states, sid,
@@ -1097,11 +1132,12 @@ def test_pending_tasks_one_success_one_failure(runtime, session_binding):
     fail_node = first.timelineNodeId
     failures_left = 1
 
-    def runner(task: dict) -> None:
+    def runner(task: dict) -> dict:
         nonlocal failures_left
         if task["nodeId"] == fail_node and failures_left > 0:
             failures_left -= 1
             raise RuntimeError("fail this task once")
+        return _maintenance_result(task)
 
     done = run_pending_tasks(runtime.db, runtime.states, sid, runner)
     assert [t["nodeId"] for t in done] == [ok_node]
@@ -1179,77 +1215,359 @@ def test_campaign_boundary_resolves_threshold_from_the_current_session(runtime, 
         {"sessionId": sid, "expectedParentId": committed.timelineNodeId, "expectedVersion": 1}, "req-2"))
     with runtime.db.connect() as conn:
         state = json.loads(conn.execute("SELECT state_json s FROM story_turns WHERE id = ?", (followup.timelineNodeId,)).fetchone()["s"])
-    assert [t for t in state["_memory_pending_tasks"] if t["type"] == "campaign_recap"] == []
+    assert not any(t["type"] == "campaign_recap" and t["nodeId"] == followup.timelineNodeId
+                   for t in state["_memory_pending_tasks"])
+    assert recap_tasks[0] in state["_memory_pending_tasks"], "old recap work must carry forward"
 
 
-def test_suffix_with_wrong_system_text_is_rejected(runtime, session_binding):
-    # 评审五轮反例：检定系统文本随便填（父节点存的是 通用 d20）。
-    from app.services.commit_turn import CommitTurnError
+# Review 7: independent behavioral checks, including actual business effects.
 
-    binding = _roll_binding(runtime, session_binding)
-    with pytest.raises(CommitTurnError) as excinfo:
-        _commit(runtime, binding["sessionId"], _request(
-            binding, "req-2",
-            playerAction="询问管理员夜班名单\n\n[行动判定] 随便什么系统 1d20 ≥ 12，骰面 14/20，成功。",
-            selectedOptionIndex=1,
-            roll={"result": 14},
-        ))
-    assert excinfo.value.status == 422
-    assert "后缀不符" in excinfo.value.detail
+def test_test_names_are_unique():
+    tree = ast.parse(Path(__file__).read_text(encoding="utf-8"))
+    names = [node.name for node in tree.body if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+             and node.name.startswith("test_")]
+    assert len(names) == len(set(names)), "a later definition silently hides an earlier test"
 
 
-def test_suffix_cannot_smuggle_extra_actions(runtime, session_binding):
-    # 评审五轮反例：后缀里夹带"；顺便扔掉铜钥匙"。
-    from app.services.commit_turn import CommitTurnError
+@pytest.mark.parametrize("late_action", ["return", "raise"])
+@pytest.mark.parametrize("successor_done", [False, True])
+def test_expired_worker_cannot_confirm_or_release_successors_claim(runtime, session_binding, late_action, successor_done):
+    sid = session_binding["sessionId"]
+    committed = _commit(runtime, sid, _request(session_binding))
+    a_started, a_release = threading.Event(), threading.Event()
+    b_started, b_release = threading.Event(), threading.Event()
+    results, errors = {}, []
 
-    binding = _roll_binding(runtime, session_binding)
-    with pytest.raises(CommitTurnError) as excinfo:
-        _commit(runtime, binding["sessionId"], _request(
-            binding, "req-2",
-            playerAction="询问管理员夜班名单\n\n[行动判定] 通用 d20 1d20 ≥ 12，骰面 14/20，成功。顺便扔掉铜钥匙",
-            selectedOptionIndex=1,
-            roll={"result": 14},
-        ))
-    assert excinfo.value.status == 422
+    def runner_a(task):
+        a_started.set()
+        assert a_release.wait(10)
+        if late_action == "raise":
+            raise RuntimeError("late A failed")
+        return _maintenance_result(task, "迟到 A 的摘要")
+
+    def runner_b(task):
+        b_started.set()
+        assert b_release.wait(10)
+        return _maintenance_result(task, "交接后 B 的摘要")
+
+    def call(label, runner):
+        try:
+            # Both calls intentionally use the SAME production default label.
+            results[label] = run_pending_tasks(runtime.db, runtime.states, sid, runner)
+        except BaseException as exc:
+            errors.append(exc)
+
+    a = threading.Thread(target=call, args=("A", runner_a))
+    b = threading.Thread(target=call, args=("B", runner_b))
+    a.start()
+    try:
+        assert a_started.wait(5)
+        with runtime.db.connect() as conn:
+            token_a = conn.execute("SELECT claim_token FROM memory_task_claims WHERE session_id = ?", (sid,)).fetchone()[0]
+            conn.execute("UPDATE memory_task_claims SET claimed_at = '2020-01-01' WHERE session_id = ?", (sid,))
+        b.start()
+        assert b_started.wait(5)
+        with runtime.db.connect() as conn:
+            token_b = conn.execute("SELECT claim_token FROM memory_task_claims WHERE session_id = ?", (sid,)).fetchone()[0]
+        assert token_a and token_b and token_a != token_b
+        if successor_done:
+            b_release.set()
+            b.join(5)
+            assert not b.is_alive()
+        a_release.set()
+        a.join(5)
+        assert not a.is_alive()
+        with runtime.db.connect() as conn:
+            claim = conn.execute("SELECT * FROM memory_task_claims WHERE session_id = ?", (sid,)).fetchone()
+        assert claim is not None and claim["claim_token"] == token_b
+        assert claim["state"] == ("done" if successor_done else "running")
+    finally:
+        a_release.set()
+        b_release.set()
+        a.join(5)
+        if b.ident is not None:
+            b.join(5)
+    assert errors == []
+    assert results["A"] == []
+    assert [t["nodeId"] for t in results["B"]] == [committed.timelineNodeId]
+    with runtime.db.connect() as conn:
+        state = json.loads(conn.execute("SELECT state_json FROM game_sessions WHERE id = ?", (sid,)).fetchone()[0])
+        result = json.loads(conn.execute("SELECT result_json FROM memory_task_claims WHERE session_id = ?", (sid,)).fetchone()[0])
+    summaries = state["_memory_controller"]["nsb"]["level1"]
+    assert [s["summary"] for s in summaries] == ["交接后 B 的摘要"]
+    assert result["result"]["memory_state"] == state["_memory_controller"]
+    assert state["_memory_pending_tasks"] == []
 
 
-def test_campaign_boundary_resolves_threshold_from_the_current_session(runtime, session_binding):
-    # 缓存 manager 的 progress 指向旧场次（阈值 30）而当前场次阈值更低时，
-    # 阈值必须按事务内行的 arc/session 下标对战役定义解析。
+def _recap_boundary(runtime, session_binding):
     sid = session_binding["sessionId"]
     runtime.db.set_session_campaign_id(sid, sid, None, "default")
     manager = _campaign_manager(runtime, sid)
-    # 当前场次（arc0/session0）的定义阈值：
-    arc0_sessions = len(manager.campaign.arcs[0].sessions)
-    assert arc0_sessions >= 1
+    manager.campaign.arcs[0].sessions[0].max_turns_per_session = 2
     runtime.db.write_campaign_progress(
-        campaign_id=sid, arc_index=0, session_index=0,
-        turn_in_session=29,  # 任何低于缓存阈值 30 的当前场次阈值都会被旧逻辑漏掉
+        campaign_id=sid, arc_index=0, session_index=0, turn_in_session=1,
         fsm_state="active/session_active", slot_name="default",
-        revealed_anchors=[], completed_arcs=[],
+        recap_compressed="旧回顾", recap_full="既有完整回顾",
     )
+    committed = _commit(runtime, sid, _request(session_binding), campaign_manager=manager)
+    return sid, committed
 
-    committed = _commit(runtime, sid, _request(session_binding, "req-1"), campaign_manager=manager)
 
-    row = runtime.db.read_campaign_progress(sid, "default")
-    if arc0_sessions == 1:
-        # 该战役第一弧只有一场：触界即弧推进。
-        assert row["arc_index"] == 1
-        assert row["session_index"] == 0
-    else:
-        assert row["session_index"] == 1
-    assert row["turn_in_session"] == 0  # reset — later commits cannot re-trigger
+@pytest.mark.parametrize("explicit_full", [False, True])
+def test_memory_and_recap_results_survive_restart_and_timeline_restore(runtime, session_binding, explicit_full):
+    from app.services.campaign_persistence import CampaignPersistence
+    from app.services.campaign_recap import CampaignRecapGenerator
+
+    sid, committed = _recap_boundary(runtime, session_binding)
+    calls = []
+
+    def runner(task):
+        calls.append(task["type"])
+        if task["type"] == "memory_maintain":
+            return _maintenance_result(task, "重启后可检索的新摘要")
+        assert task["campaign_progress"]["recap_compressed"] == "旧回顾"
+        result = {"recap_compressed": "新战役回顾"}
+        if explicit_full:
+            result["recap_full"] = "指定完整回顾"
+        return result
+
+    assert len(run_pending_tasks(runtime.db, runtime.states, sid, runner)) == 2
+    restarted_db = Database(runtime.db.path)
+    restarted_states = GameStateManager(restarted_db)
+    restored_state = restarted_states.get_session_payload(sid)["state"]
+    controller = MemoryController(MagicMock(), restarted_db, sid)
+    controller.load_state(restored_state["_memory_controller"])
+    assert "重启后可检索的新摘要" in controller.assemble_context(restored_state, 1)
+    persistence = CampaignPersistence(restarted_db)
+    assert CampaignRecapGenerator(restarted_db, None, None).load_recap_compressed(persistence, sid, "default") == "新战役回顾"
+    expected_full = "指定完整回顾" if explicit_full else "既有完整回顾\n\n新战役回顾"
+    assert restarted_db.read_campaign_progress(sid, "default")["recap_full"] == expected_full
+    assert restored_state["_memory_pending_tasks"] == []
+    assert recover_pending_tasks(restarted_db, restarted_states, runner) == {}
+    assert calls == ["memory_maintain", "campaign_recap"]
+    restarted_db.activate_story_turn(sid, session_binding["expectedParentId"])
+    restarted_db.activate_story_turn(sid, committed.timelineNodeId)
+    assert persistence.read_recap_compressed(sid, "default") == "新战役回顾"
+    assert restarted_states.get_session_payload(sid)["state"]["_memory_controller"] == restored_state["_memory_controller"]
+
+
+def test_recap_sql_failure_rolls_back_business_result_and_completion(runtime, session_binding):
+    sid, committed = _recap_boundary(runtime, session_binding)
+
+    def runner(task):
+        if task["type"] == "memory_maintain":
+            return _maintenance_result(task, "已成功确认的记忆")
+        return {"recap_compressed": "不得部分落库的新回顾"}
+
     with runtime.db.connect() as conn:
-        state = json.loads(conn.execute("SELECT state_json s FROM story_turns WHERE id = ?", (committed.timelineNodeId,)).fetchone()["s"])
-    assert [t for t in state["_memory_pending_tasks"] if t["type"] == "campaign_recap"], "recap task exactly once"
-    # 后续提交不再生成 recap 待办：
-    followup = _commit(runtime, sid, _request(
-        {"sessionId": sid, "expectedParentId": committed.timelineNodeId, "expectedVersion": 1},
-        "req-2", campaign_manager=manager,
-    ) if False else _request({"sessionId": sid, "expectedParentId": committed.timelineNodeId, "expectedVersion": 1}, "req-2"))
+        conn.execute("""CREATE TRIGGER fail_recap_confirm BEFORE UPDATE OF state ON memory_task_claims
+            WHEN NEW.state = 'done' AND NEW.task_key LIKE '%:campaign_recap:%'
+            BEGIN SELECT RAISE(ABORT, 'recap confirm failed'); END""")
+    with pytest.raises(sqlite3.IntegrityError, match="recap confirm failed"):
+        run_pending_tasks(runtime.db, runtime.states, sid, runner)
+    assert runtime.db.read_campaign_progress(sid, "default")["recap_compressed"] == "旧回顾"
     with runtime.db.connect() as conn:
-        state = json.loads(conn.execute("SELECT state_json s FROM story_turns WHERE id = ?", (followup.timelineNodeId,)).fetchone()["s"])
-    recap_tasks = [t for t in state["_memory_pending_tasks"] if t["type"] == "campaign_recap"]
-    assert recap_tasks == [] or recap_tasks[0]["nodeId"] != followup.timelineNodeId
+        node = conn.execute("SELECT state_json, campaign_progress_json FROM story_turns WHERE id = ?", (committed.timelineNodeId,)).fetchone()
+        session = conn.execute("SELECT state_json FROM game_sessions WHERE id = ?", (sid,)).fetchone()
+        claim = conn.execute("SELECT state FROM memory_task_claims WHERE task_key LIKE '%:campaign_recap:%'").fetchone()
+        assert json.loads(node["campaign_progress_json"])["recap_compressed"] == "旧回顾"
+        assert node["state_json"] == session["state_json"]
+        assert [t["type"] for t in json.loads(node["state_json"])["_memory_pending_tasks"]] == ["campaign_recap"]
+        assert claim["state"] == "running"
+        conn.execute("DROP TRIGGER fail_recap_confirm")
+        conn.execute("UPDATE memory_task_claims SET claimed_at = '2020-01-01' WHERE state = 'running'")
+    assert [t["type"] for t in run_pending_tasks(runtime.db, runtime.states, sid, runner)] == ["campaign_recap"]
+    assert runtime.db.read_campaign_progress(sid, "default")["recap_compressed"] == "不得部分落库的新回顾"
+
+
+def test_confirm_hook_fires_after_uncommitted_business_writes(runtime, session_binding):
+    sid = session_binding["sessionId"]
+    committed = _commit(runtime, sid, _request(session_binding))
+    with runtime.db.connect() as conn:
+        original = conn.execute("SELECT state_json FROM game_sessions WHERE id = ?", (sid,)).fetchone()[0]
+    connections = []
+    original_transaction = runtime.db.write_transaction
+    from contextlib import contextmanager
+
+    @contextmanager
+    def tracked_transaction():
+        with original_transaction() as conn:
+            connections.append(conn)
+            yield conn
+
+    runtime.db.write_transaction = tracked_transaction
+
+    def fault(step):
+        if step == "in_confirm":
+            conn = connections[-1]
+            assert conn.in_transaction
+            uncommitted = conn.execute("SELECT state_json FROM game_sessions WHERE id = ?", (sid,)).fetchone()[0]
+            assert "仅事务内可见的摘要" in uncommitted
+            assert uncommitted != original
+            conn.execute("INSERT INTO table_that_does_not_exist VALUES (1)")
+
+    with pytest.raises(sqlite3.OperationalError):
+        run_pending_tasks(runtime.db, runtime.states, sid, lambda t: _maintenance_result(t, "仅事务内可见的摘要"), fault_injector=fault)
+    with runtime.db.connect() as conn:
+        assert conn.execute("SELECT state_json FROM game_sessions WHERE id = ?", (sid,)).fetchone()[0] == original
+        assert conn.execute("SELECT state_json FROM story_turns WHERE id = ?", (committed.timelineNodeId,)).fetchone()[0] == original
+
+
+@pytest.mark.asyncio
+async def test_turn_context_uses_captured_recap_even_when_database_changes(runtime, session_binding, monkeypatch):
+    sid = session_binding["sessionId"]
+    runtime.db.set_session_campaign_id(sid, sid, None, "default")
+    manager = _campaign_manager(runtime, sid)
+    runtime.db.write_campaign_progress(sid, 0, 0, 0, "active/session_active", recap_compressed="捕获时的旧回顾")
+    manager._anchors.pending_anchor_triggers = [("untouched", 7)]
+
+    def get_manager(session_id, slot):
+        # Called after the consistent read transaction captured the old row.
+        with runtime.db.connect() as conn:
+            conn.execute("UPDATE campaign_progress SET recap_compressed = '渲染时的新回顾' WHERE campaign_id = ?", (sid,))
+        return manager
+
+    monkeypatch.setattr(sessions_router, "get_campaign_manager_for_session", get_manager)
+    async with AsyncClient(transport=ASGITransport(app=runtime.app), base_url="http://test") as client:
+        body = (await client.get(f"/sessions/{sid}/turn-context")).json()
+    assert "捕获时的旧回顾" in body["campaignContext"]
+    assert "渲染时的新回顾" not in body["campaignContext"]
+    assert manager.pending_anchor_triggers == [("untouched", 7)]
+
+
+@pytest.mark.asyncio
+async def test_context_anchor_is_committed_without_shared_pending_list(runtime, session_binding, monkeypatch):
+    from app.schemas.campaign import AnchorEvent
+
+    sid = session_binding["sessionId"]
+    runtime.db.set_session_campaign_id(sid, sid, None, "default")
+    manager = _campaign_manager(runtime, sid)
+    manager.campaign.arcs[0].sessions[0].anchor_events = [AnchorEvent(
+        id="snapshot-anchor", name="快照锚点", description="发现登记簿线索", priority=1,
+    )]
+    monkeypatch.setattr(sessions_router, "get_campaign_manager_for_session", lambda *args: manager)
+    async with AsyncClient(transport=ASGITransport(app=runtime.app), base_url="http://test") as client:
+        snapshot = (await client.get(f"/sessions/{sid}/turn-context")).json()
+        assert "快照锚点" in snapshot["campaignContext"]
+        assert manager.pending_anchor_triggers == []
+        response = await client.post(f"/sessions/{sid}/commit-turn", json=_request(snapshot).model_dump())
+        assert response.status_code == 200, response.text
+        after = (await client.get(f"/sessions/{sid}/turn-context")).json()
+    assert json.loads(runtime.db.read_campaign_progress(sid, "default")["revealed_anchors"]) == ["snapshot-anchor"]
+    assert "玩家即将触发锚点事件「快照锚点」" not in after["campaignContext"]
+    assert manager.pending_anchor_triggers == []
+
+
+@pytest.mark.parametrize("column_exists", [False, True])
+def test_arc_migration_backfills_history_and_preserves_boundary_action(runtime, session_binding, column_exists):
+    sid = session_binding["sessionId"]
+    root = session_binding["expectedParentId"]
+    state = runtime.states.get_session_payload(sid)["state"]
+    with runtime.db.connect() as conn:
+        conn.execute("UPDATE story_turns SET campaign_progress_json = ? WHERE id = ?",
+                     (json.dumps({"arc_index": 0, "session_index": 0, "turn_in_session": 1}), root))
+
+    def append(parent, arc, local_turn, completed_arcs):
+        return runtime.db.commit_story_turn(
+            session_id=sid, expected_parent_id=parent, player_action=f"历史行动-{arc}-{local_turn}",
+            output=FIXED_CANDIDATE, state=state, model="test", source="llm", model_output_id=None,
+            campaign_progress={"campaign_id": sid, "slot_name": "default", "arc_index": arc,
+                "session_index": 0, "turn_in_session": local_turn, "completed_arcs": json.dumps(completed_arcs)},
+        )
+
+    # A chapter explicitly selected beyond the parent's arc, then a boundary
+    # node storing the NEXT arc, followed by an action in that new arc.
+    first = append(root, 1, 1, [0])
+    boundary = append(first, 2, 0, [0, 1])
+    last = append(boundary, 2, 1, [0, 1])
+    with runtime.db.connect() as conn:
+        conn.execute("DELETE FROM schema_migrations WHERE name = 'session_messages_action_arc_backfill'")
+        if not column_exists:
+            conn.execute("ALTER TABLE session_messages DROP COLUMN campaign_arc_index")
+    migrated = Database(runtime.db.path)
+    with migrated.connect() as conn:
+        rows = conn.execute("SELECT turn_node_id, campaign_arc_index FROM session_messages WHERE session_id = ?", (sid,)).fetchall()
+    assert [(r[0], r[1]) for r in rows] == [(first, 1), (first, 1), (boundary, 1), (boundary, 1), (last, 2), (last, 2)]
+    from app.services.commit_turn import read_turn_context
+    context = read_turn_context(migrated, runtime.states, sid, lambda: MemoryController(MagicMock(), migrated, sid))
+    assert [m["content"] for m in context["recentMessages"] if m["role"] == "user"] == ["历史行动-2-1"]
+    migrated._init_schema()
+    with migrated.connect() as conn:
+        assert [(r[0], r[1]) for r in conn.execute("SELECT turn_node_id, campaign_arc_index FROM session_messages WHERE session_id = ?", (sid,))] == [(r[0], r[1]) for r in rows]
+
+
+def test_pending_memory_tasks_fold_previous_confirmed_results(runtime, session_binding):
+    sid = session_binding["sessionId"]
+    first = _commit(runtime, sid, _request(session_binding))
+    _commit(runtime, sid, _request({"expectedParentId": first.timelineNodeId, "expectedVersion": 1}, "req-2"))
+    assert len(run_pending_tasks(runtime.db, runtime.states, sid, lambda t: _maintenance_result(t, f"摘要-{t['nodeId']}"))) == 2
+    state = runtime.states.get_session_payload(sid)["state"]
+    assert len(state["_memory_controller"]["nsb"]["level1"]) == 2
+
+
+def test_invalid_maintenance_result_does_not_complete_task(runtime, session_binding):
+    sid = session_binding["sessionId"]
+    _commit(runtime, sid, _request(session_binding))
+    assert run_pending_tasks(runtime.db, runtime.states, sid, lambda t: {"summaries": 1}) == []
+    state = runtime.states.get_session_payload(sid)["state"]
+    assert state["_memory_pending_tasks"]
+    assert len(run_pending_tasks(runtime.db, runtime.states, sid, _maintenance_result)) == 1
+
+
+def test_different_pending_tasks_cannot_overwrite_each_others_memory(runtime, session_binding):
+    sid = session_binding["sessionId"]
+    first = _commit(runtime, sid, _request(session_binding))
+    second = _commit(runtime, sid, _request({"expectedParentId": first.timelineNodeId, "expectedVersion": 1}, "req-2"))
+    started, release = threading.Event(), threading.Event()
+    results, errors = [], []
+
+    def first_batch(task):
+        if task["nodeId"] == first.timelineNodeId:
+            raise RuntimeError("first task failed; allow later work")
+        started.set()
+        assert release.wait(10)
+        return _maintenance_result(task, "第二个任务的摘要")
+
+    def run():
+        try:
+            results.extend(run_pending_tasks(runtime.db, runtime.states, sid, first_batch))
+        except BaseException as exc:
+            errors.append(exc)
+
+    worker = threading.Thread(target=run)
+    worker.start()
+    attempted = []
+    try:
+        assert started.wait(5)
+
+        def retry(task):
+            attempted.append(task)
+            return _maintenance_result(task, "第一个任务重试的摘要")
+
+        # First task is unclaimed, but the SECOND task owns the current head's
+        # memory candidate. A second batch must wait instead of racing it.
+        assert run_pending_tasks(runtime.db, runtime.states, sid, retry) == []
+        assert attempted == []
+    finally:
+        release.set()
+        worker.join(5)
+    assert errors == [] and not worker.is_alive()
+    assert [t["nodeId"] for t in results] == [second.timelineNodeId]
+    assert len(run_pending_tasks(runtime.db, runtime.states, sid, retry)) == 1
+    memory = runtime.states.get_session_payload(sid)["state"]["_memory_controller"]
+    assert [s["summary"] for s in memory["nsb"]["level1"]] == ["第二个任务的摘要", "第一个任务重试的摘要"]
+
+
+def test_done_claim_from_descendant_does_not_discard_restored_branch_work(runtime, session_binding):
+    sid = session_binding["sessionId"]
+    first = _commit(runtime, sid, _request(session_binding))
+    _commit(runtime, sid, _request({"expectedParentId": first.timelineNodeId, "expectedVersion": 1}, "req-2"))
+    assert len(run_pending_tasks(runtime.db, runtime.states, sid, lambda t: _maintenance_result(t, "旧分支的摘要"))) == 2
+    runtime.db.activate_story_turn(sid, first.timelineNodeId)
+    restored = runtime.states.get_session_payload(sid)["state"]
+    assert restored["_memory_pending_tasks"] and restored["_memory_controller"]["nsb"]["level1"] == []
+    assert len(run_pending_tasks(runtime.db, runtime.states, sid, lambda t: _maintenance_result(t, "恢复节点上的新摘要"))) == 1
+    memory = runtime.states.get_session_payload(sid)["state"]["_memory_controller"]
+    assert [s["summary"] for s in memory["nsb"]["level1"]] == ["恢复节点上的新摘要"]
 
 

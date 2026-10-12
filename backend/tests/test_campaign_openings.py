@@ -164,6 +164,39 @@ async def test_every_timeline_entry_starts_in_its_own_scene(runtime, filename, a
     assert "诺诺前来接应" not in str(result.state)
     runtime.llm.generate.assert_not_awaited()
 
+    with runtime.db.connect() as conn:
+        action_arcs = conn.execute("SELECT campaign_arc_index FROM session_messages WHERE session_id = ?", (session["session_id"],)).fetchall()
+    assert action_arcs and all(row[0] == ai for row in action_arcs)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("opening_boundary", [False, True])
+async def test_legacy_generation_records_action_arc_before_rollover(runtime, opening_boundary):
+    async with AsyncClient(transport=ASGITransport(app=runtime.app), base_url="http://test") as client:
+        session = (await client.post("/sessions", json={
+            "campaign_filename": FILES[0], "arc_index": 1, "session_index": 0,
+        })).json()
+    sid = session["session_id"]
+    manager = runtime.managers[sid]
+    # End the arc at the opening or its first continuation, covering BOTH
+    # legacy commit call sites and the pre-advancement timestamp.
+    manager.campaign.arcs[1].sessions = manager.campaign.arcs[1].sessions[:1]
+    manager.campaign.arcs[1].sessions[0].max_turns_per_session = 1 if opening_boundary else 2
+    opened = await runtime.generator.generate(sid, GenerateRequest(player_action="进入第二弧"))
+    if not opening_boundary:
+        runtime.llm.generate.return_value = (StoryOutput(
+            narration="你继续调查眼前的线索。", current_location=opened.state["current_location"], options=["继续"],
+        ), 1)
+        continued = await runtime.generator.generate(sid, GenerateRequest(player_action="继续"))
+        assert continued.source == "llm"
+    assert manager.progress.arc_index == 2
+    with runtime.db.connect() as conn:
+        arcs = conn.execute("SELECT campaign_arc_index FROM session_messages WHERE session_id = ?", (sid,)).fetchall()
+    assert len(arcs) == (2 if opening_boundary else 4)
+    assert all(row[0] == 1 for row in arcs)
+    if runtime.generator._memory_tasks:
+        await asyncio.gather(*runtime.generator._memory_tasks)
+
 
 @pytest.mark.asyncio
 async def test_next_chapter_uses_local_turn_and_survives_reload(runtime):
