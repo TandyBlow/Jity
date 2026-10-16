@@ -70,6 +70,25 @@ export type StoryOptionCheck = {
   stakes?: string;
 };
 
+/** The server owns the check rule and computes the outcome from this die face. */
+export type ActionCheckSubmission = {
+  roll: number;
+  option_index?: number;
+};
+
+export type ActionCheckPreview = {
+  check: StoryOptionCheck | null;
+  option_index: number | null;
+};
+
+export type ActionCheckResult = {
+  check: StoryOptionCheck;
+  roll: number;
+  option_index: number | null;
+  outcome: "critical" | "success" | "failure" | "fumble";
+  degree: string;
+};
+
 /**
  * Shape of one entry in the legacy delta lists. The server merges these into
  * state before `memory_updates` does, so a name may appear in both.
@@ -84,6 +103,7 @@ export type StoryOutput = {
   health_delta: number;
   options: string[];
   option_checks?: Array<StoryOptionCheck | null>;
+  action_check?: ActionCheckResult | null;
   game_over: boolean;
   game_over_reason: string;
   current_location: string;

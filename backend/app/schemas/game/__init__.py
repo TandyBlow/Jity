@@ -10,6 +10,12 @@ Modules:
 """
 
 from app.schemas.game.em_dash import replace_em_dash
+from app.schemas.game.action_checks import (
+    ActionCheckRequest,
+    ActionCheckResponse,
+    ActionCheckResult,
+    ActionCheckSubmission,
+)
 from app.schemas.game.memory import (
     DialogueLine,
     ItemMemory,
@@ -41,6 +47,10 @@ __all__ = [
     "WorldFactMemory",
     "StoryOutput",
     "OptionCheck",
+    "ActionCheckRequest",
+    "ActionCheckResponse",
+    "ActionCheckResult",
+    "ActionCheckSubmission",
     "CreateSessionRequest",
     "GenerateRequest",
     "SessionResponse",

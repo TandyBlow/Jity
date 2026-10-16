@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { formatActionWithCheckResult, outcomeTone, resolveOptionCheck, rollCheck, seededRoll, toCheckSpec } from "./checks";
+import { outcomeTone, resolveOptionCheck, rollCheck, seededRoll, toActionCheckSubmission, toCheckSpec } from "./checks";
 import type { StoryOutput } from "@/types";
 
 describe("toCheckSpec", () => {
@@ -71,13 +71,14 @@ describe("seededRoll", () => {
   });
 });
 
-describe("formatActionWithCheckResult", () => {
-  it("appends the roll so the narrator sees the outcome", () => {
-    const spec = toCheckSpec({})!;
-    const text = formatActionWithCheckResult("查看抽屉", spec, rollCheck(spec, 11));
+describe("toActionCheckSubmission", () => {
+  it("preserves the zero-based index, including the first option", () => {
+    expect(toActionCheckSubmission(11, 0)).toEqual({ roll: 11, option_index: 0 });
+    expect(toActionCheckSubmission(20, 2)).toEqual({ roll: 20, option_index: 2 });
+  });
 
-    expect(text).toContain("查看抽屉");
-    expect(text).toContain("[行动判定]");
-    expect(text).toContain("骰面 11/20");
+  it("omits the option index for a custom action", () => {
+    expect(toActionCheckSubmission(1, null)).toEqual({ roll: 1 });
+    expect(toActionCheckSubmission(12)).toEqual({ roll: 12 });
   });
 });

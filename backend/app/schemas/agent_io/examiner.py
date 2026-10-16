@@ -18,7 +18,7 @@ class TriggeredRule(BaseModel):
 
     rule_type: str = Field(description="e.g. 'sanity_check', 'skill_check', 'combat', 'item_use'")
     rule_name: str = Field(description="Human-readable rule name, e.g. 'SAN检定：遭遇神话生物'")
-    rule_details: str = Field(default="", description="Brief rule mechanics, e.g. '1d100 ≤ SAN值，失败扣除1d6'")
+    rule_details: str = Field(default="", description="Brief rule mechanics, e.g. '通用 d20，目标由难度决定'")
 
 
 class ActionRuling(BaseModel):
