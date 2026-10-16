@@ -1,7 +1,7 @@
 "use client";
 
 import { Check, CircleAlert, Dices } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import { DiceCanvas } from "@/components/dice/DiceCanvas";
 import { useModalFocus } from "@/components/game/useModalFocus";
@@ -18,17 +18,36 @@ export type MainCheckCommit = {
 type MainCheckOverlayProps = {
   action: string;
   check: CheckSpec;
+  busy?: boolean;
+  submitError?: string;
   onCancel: () => void;
   onCommit: (result: MainCheckCommit) => Promise<void> | void;
 };
 
-export function MainCheckOverlay({ action, check, onCancel, onCommit }: MainCheckOverlayProps) {
+export function MainCheckOverlay({ action, check, busy = false, submitError = "", onCancel, onCommit }: MainCheckOverlayProps) {
   const [phase, setPhase] = useState<CheckPhase>("prepared");
   const [roll, setRoll] = useState<number | null>(null);
   const [result, setResult] = useState<MainCheckCommit | null>(null);
   const [error, setError] = useState("");
+  const committing = useRef(false);
+  const [isCommitting, setIsCommitting] = useState(false);
+  const isBusy = busy || isCommitting;
   // A full-screen overlay that only a mouse can leave is a keyboard trap.
-  const overlayRef = useModalFocus<HTMLElement>(true, onCancel);
+  const overlayRef = useModalFocus<HTMLElement>(true, () => {
+    if (!busy && !committing.current) onCancel();
+  });
+
+  async function commitResult() {
+    if (!result || busy || committing.current) return;
+    committing.current = true;
+    setIsCommitting(true);
+    try {
+      await onCommit(result);
+    } finally {
+      committing.current = false;
+      setIsCommitting(false);
+    }
+  }
 
   function startRoll() {
     if (phase !== "prepared") return;
@@ -65,6 +84,7 @@ export function MainCheckOverlay({ action, check, onCancel, onCommit }: MainChec
     <section
       aria-label={`${check.name}：${action}`}
       aria-modal="true"
+      aria-busy={isBusy}
       className="main-check-overlay"
       ref={overlayRef}
       role="dialog"
@@ -113,12 +133,14 @@ export function MainCheckOverlay({ action, check, onCancel, onCommit }: MainChec
               <Check size={17} />
               <strong>{result.degree}</strong>
             </div>
+            {submitError ? <p className="main-check-error" role="alert"><CircleAlert size={15} />{submitError}</p> : null}
             <button
               className="primary-button main-check-primary"
-              onClick={() => onCommit(result)}
+              disabled={isBusy}
+              onClick={() => void commitResult()}
               type="button"
             >
-              继续
+              {isBusy ? "生成中" : submitError ? "重试此次判定" : "继续"}
             </button>
           </div>
         ) : null}

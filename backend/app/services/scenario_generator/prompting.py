@@ -2,6 +2,8 @@
 
 import inspect
 
+from app.services.scenario_generator.check_guidance import ending_player_action
+
 from app.services.prompt_builder import PromptInput
 from app.services.prompt_builder.prompts import (
     FINAL_TURNS_OPTION_CONTRACT,
@@ -9,7 +11,8 @@ from app.services.prompt_builder.prompts import (
     SOFT_TURNS_OPTION_CONTRACT,
 )
 from app.services.campaign_endings import (
-    ending_instruction, is_final_session, select_budget_ending, select_ending,
+    ending_instruction, is_final_session, select_bloodline_collapse_ending,
+    select_budget_ending, select_ending,
 )
 
 
@@ -21,6 +24,9 @@ class PromptBuildMixin:
             return None
         campaign = campaign_manager.campaign
         progress = campaign_manager.progress
+        collapse = select_bloodline_collapse_ending(state)
+        if collapse is not None:
+            return collapse
         cap = campaign_manager.resolve_max_turns_per_campaign()
         if type(cap) is int:
             ending = select_budget_ending(campaign, progress, state, cap, player_action)
@@ -97,7 +103,7 @@ class PromptBuildMixin:
                         f"本幕未完成的收束目标：\n{focus}"
                     )
             selected_ending = self._select_campaign_ending(
-                campaign_manager, state, request.player_action
+                campaign_manager, state, ending_player_action(request)
             )
             if selected_ending is not None:
                 campaign_context += "\n" + ending_instruction(selected_ending)

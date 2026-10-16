@@ -1,5 +1,5 @@
 import { defineCheck, getOutcome, type CheckSpec, type Outcome } from "@/lib/dice/rules";
-import type { StoryOptionCheck, StoryOutput } from "@/types";
+import type { ActionCheckSubmission, StoryOptionCheck, StoryOutput } from "@/types";
 
 export type CheckRoll = { roll: number; outcome: Outcome; degree: string };
 
@@ -41,6 +41,6 @@ export function seededRoll(seed: number): number {
   return Math.floor((value - Math.floor(value)) * 20) + 1;
 }
 
-export function formatActionWithCheckResult(action: string, check: CheckSpec, result: CheckRoll): string {
-  return `${action}\n\n[行动判定] ${check.system} ${check.expression}，骰面 ${result.roll}/20，${result.degree}。`;
+export function toActionCheckSubmission(roll: number, optionIndex?: number | null): ActionCheckSubmission {
+  return optionIndex == null ? { roll } : { roll, option_index: optionIndex };
 }

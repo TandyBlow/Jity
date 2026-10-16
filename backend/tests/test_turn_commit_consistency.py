@@ -10,6 +10,7 @@ T1/T2 are red on the pre-fix ordering (advance persists before the node
 commit); T3/T4 are regression guards for restore and boundary recap.
 """
 
+import json
 from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, MagicMock
@@ -18,14 +19,32 @@ import pytest
 
 from app.database import Database
 from app.exceptions import ConcurrentModificationError
-from app.schemas import StoryOutput
+from app.schemas import ActionCheckSubmission, StoryOutput
 from app.schemas.game.requests_responses import GenerateRequest
 from app.services.campaign_manager.facade import CampaignManager
+from app.services.action_checks import resolve_action_check
 from app.services.game_state import GameStateManager
 from app.services.memory.memory_controller import MemoryController
 from app.services.scenario_generator.generator import ScenarioGenerator
 
 CAMPAIGN = Path(__file__).resolve().parents[1] / "data" / "campaigns" / "default_campaign.json"
+
+# A complete 199-character story for tests whose campaign reaches an ending.
+# Other auxiliary calls retain their own response so recaps cannot accidentally
+# become ending prose merely because the fixture supports ending narration.
+ENDING_STORY = (
+    "你把湿透的笔记收进衣袋，门外的脚步声已经远去。桌上的灯仍亮着，"
+    "照出那些来不及核实的姓名，也照出你指节上干涸的血迹。你没有再去敲"
+    "那扇紧闭的门，只将找到的信封压在笔记下面，记住纸角留下的那道折痕。"
+    "夜风穿过空荡的走廊，带走最后一点说话的回声。天亮以后，人们仍会"
+    "走过这里，谈论日常的课程与天气，而你知道，有些问题将跟随自己很久。"
+    "离开时，你回头望了一眼；灯光静静停在那张空椅子上，像一个迟迟没有"
+    "说出口的回答。"
+)
+
+
+def auxiliary_text_response(*args, purpose="text_generation", **kwargs):
+    return ENDING_STORY if purpose == "ending_narrative" else "调查仍在继续，众人带着线索前往下一处地点。"
 
 
 def _story_output(text: str = "第一回合的旁白。") -> StoryOutput:
@@ -52,6 +71,7 @@ class Harness:
         self.llm = MagicMock()
         self.llm.generate = AsyncMock(return_value=(_story_output(), 5))
         self.llm.generate_json = AsyncMock(return_value={})
+        self.llm.generate_text = AsyncMock(side_effect=auxiliary_text_response)
         self.manager = CampaignManager(
             db=self.db, campaigns_dir=tmp_path, scripted_story=None,
             prompt_builder=MagicMock(), llm_client=self.llm,
@@ -93,8 +113,20 @@ class Harness:
         self.llm.generate = AsyncMock(return_value=(output, 5))
 
     async def generate(self):
+        action = "继续调查四周"
+        session = self.state_manager.get_session_payload(self.session_id)
+        head = session["active_turn_id"]
+        active_turn = self.db.get_story_turn(self.session_id, head)
+        previous_output = json.loads(active_turn["output_json"] or "{}")
+        resolution = await resolve_action_check(action, session["state"], previous_output)
+        submission = (
+            ActionCheckSubmission(roll=12, option_index=resolution.option_index)
+            if resolution.check is not None else None
+        )
         return await self.gen.generate(
-            self.session_id, GenerateRequest(player_action="继续调查四周")
+            self.session_id, GenerateRequest(
+                player_action=action, timeline_node_id=head, action_check=submission,
+            )
         )
 
     def stage_pending_anchor(self) -> None:

@@ -2,7 +2,7 @@
 
 import { useCallback, useRef } from "react";
 
-import { APIError, createSession, createSlot, deleteSlot, generateScene, getSession, loadSlot } from "@/lib/api";
+import { APIError, createSession, createSlot, deleteSlot, generateScene, getSession, loadSlot, previewActionCheck } from "@/lib/api";
 import {
   CAMPAIGN_CONSTRAINTS,
   CAMPAIGN_STORY_STYLE,
@@ -10,7 +10,7 @@ import {
   SLOT_DEFAULT,
   loadingOutput,
 } from "@/lib/game/initialOutput";
-import type { GenerateResponse } from "@/types";
+import type { ActionCheckPreview, ActionCheckSubmission, GenerateResponse } from "@/types";
 
 const ACTIVE_SESSION_STORAGE_KEY = "jity_active_session_id";
 
@@ -33,7 +33,42 @@ export function useGameActions(core: GameSessionCore) {
     setIsLoading, setPendingGenerate,
   } = core;
 
-  const handleGenerate = useCallback(async (nextAction = action, overrideSessionId?: string) => {
+  const refreshAfterConflict = useCallback(async (sid: string) => {
+    try {
+      const latest = await getSession(sid);
+      setState(latest.state);
+      setActiveTurnId(latest.active_turn_id ?? null);
+      setModel(latest.model);
+      setChunks([]);
+      await refreshSlots(sid, "");
+      await restoreLastOutput(sid, latest.campaign_filename, latest.active_turn_id);
+      setError("");
+    } catch (refreshError) {
+      setError(`状态已变化，但刷新失败：${refreshError instanceof Error ? refreshError.message : String(refreshError)}。请重试或重新加载存档。`);
+    }
+  }, [refreshSlots, restoreLastOutput, setState, setActiveTurnId, setModel, setChunks, setError]);
+
+  const handlePrepareCheck = useCallback(async (nextAction: string, optionIndex?: number): Promise<ActionCheckPreview | null> => {
+    if (!sessionId || !nextAction.trim() || generating.current || gameOver) return null;
+    generating.current = true;
+    setIsLoading(true);
+    setError("");
+    try {
+      return await previewActionCheck({ sessionId, playerAction: nextAction, timelineNodeId: activeTurnId, optionIndex });
+    } catch (err) {
+      if (err instanceof APIError && err.status === 409) {
+        await refreshAfterConflict(sessionId);
+      } else {
+        setError(err instanceof Error ? err.message : "行动判定检查失败");
+      }
+      return null;
+    } finally {
+      generating.current = false;
+      setIsLoading(false);
+    }
+  }, [sessionId, activeTurnId, gameOver, setIsLoading, setError, refreshAfterConflict]);
+
+  const handleGenerate = useCallback(async (nextAction = action, overrideSessionId?: string, actionCheck?: ActionCheckSubmission, optionIndex?: number) => {
     const sid = overrideSessionId ?? sessionId;
     if (!sid || !nextAction.trim() || generating.current || gameOver) return;
     generating.current = true;
@@ -48,6 +83,8 @@ export function useGameActions(core: GameSessionCore) {
         constraints: CAMPAIGN_CONSTRAINTS,
         slotName: selectedSlot,
         timelineNodeId: activeTurnId,
+        actionCheck,
+        optionIndex,
       });
       setOutput(response.output);
       setTurnReport({ memory: response.memory, declared: response.declared, caps: response.caps });
@@ -60,18 +97,7 @@ export function useGameActions(core: GameSessionCore) {
       setAction("");
     } catch (err) {
       if (err instanceof APIError && err.status === 409) {
-        try {
-          const latest = await getSession(sid);
-          setState(latest.state);
-          setActiveTurnId(latest.active_turn_id ?? null);
-          setModel(latest.model);
-          setChunks([]);
-          await refreshSlots(sid, "");
-          await restoreLastOutput(sid, latest.campaign_filename, latest.active_turn_id);
-          setError("");
-        } catch (refreshError) {
-          setError(`状态已变化，但刷新失败：${refreshError instanceof Error ? refreshError.message : String(refreshError)}。请重试或重新加载存档。`);
-        }
+        await refreshAfterConflict(sid);
         return;
       }
       setError(err instanceof Error ? err.message : "生成失败");
@@ -79,7 +105,7 @@ export function useGameActions(core: GameSessionCore) {
       generating.current = false;
       setIsLoading(false);
     }
-  }, [sessionId, action, model, selectedSlot, activeTurnId, gameOver, setIsLoading, setError, setOutput, setTurnReport, setCampaignProgress, setOutputSource, setState, setActiveTurnId, setChunks, setModel, setAction, restoreLastOutput, refreshSlots]);
+  }, [sessionId, action, model, selectedSlot, activeTurnId, gameOver, setIsLoading, setError, setOutput, setTurnReport, setCampaignProgress, setOutputSource, setState, setActiveTurnId, setChunks, setModel, setAction, refreshAfterConflict]);
 
   const handleNewSession = useCallback(async () => {
     setIsLoading(true);
@@ -199,6 +225,6 @@ export function useGameActions(core: GameSessionCore) {
   }, [sessionId, selectedSlot, refreshSlots]);
 
   return {
-    handleGenerate, handleNewSession, handleCampaignChange, handleSlotChange, handleCreateSlot, handleDeleteSlot,
+    handleGenerate, handlePrepareCheck, handleNewSession, handleCampaignChange, handleSlotChange, handleCreateSlot, handleDeleteSlot,
   };
 }

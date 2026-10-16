@@ -9,19 +9,18 @@ import type { GameSession } from "@/components/game/useGameSession";
 import { fetchCampaignProgress, hasCampaignTurnBudget } from "@/lib/api";
 import type { CampaignProgressSummary } from "@/types";
 import type { CheckSpec, Outcome } from "@/lib/dice/rules";
-import { formatActionWithCheckResult, outcomeTone, toCheckSpec } from "@/lib/game/checks";
-import { formatDelta, quoteDialogue } from "@/lib/game/format";
+import { outcomeTone, toActionCheckSubmission, toCheckSpec } from "@/lib/game/checks";
+import { formatDelta, formatEndingTitle, quoteDialogue } from "@/lib/game/format";
 
 type PendingCheck = {
   action: string;
-  index: number;
+  index: number | null;
   check: CheckSpec;
 };
 
 type PendingSweep = {
   index: number;
   outcome: Outcome;
-  action: string;
 };
 
 function narrationParagraphs(narration: string): string[] {
@@ -66,6 +65,7 @@ export function StoryPanel({
     action,
     setAction,
     handleGenerate,
+    handlePrepareCheck,
     isLoading,
     error,
     isBackgroundLoading,
@@ -74,9 +74,13 @@ export function StoryPanel({
   } = session;
   const [checkingAction, setCheckingAction] = useState<PendingCheck | null>(null);
   const [sweep, setSweep] = useState<PendingSweep | null>(null);
+  const preparingAction = useRef(false);
+  const checkTrigger = useRef<HTMLElement | null>(null);
+  const [isPreparingCheck, setIsPreparingCheck] = useState(false);
   const sceneRef = useRef<HTMLElement>(null);
   const [hasMoreBelow, setHasMoreBelow] = useState(false);
   const hasAction = action.trim().length > 0;
+  const busy = isLoading || isPreparingCheck || !!session.pendingGenerate;
 
   // The scene clips silently: scrollbars are hidden app-wide and a single turn
   // can run past the viewport, so the options at the end are off-screen with
@@ -96,34 +100,46 @@ export function StoryPanel({
     return () => cancelAnimationFrame(frame);
   }, [output, updateOverflow]);
 
-  function handleOption(option: string, index: number) {
-    if (!sessionId || isLoading || session.pendingGenerate || sweep) return;
-
-    const metadata = output.option_checks?.[index];
-    const check = metadata ? toCheckSpec(metadata) : null;
-    if (check) {
-      setCheckingAction({ action: option, index, check });
-      return;
+  async function prepareAction(nextAction: string, optionIndex?: number) {
+    if (!sessionId || busy || checkingAction || preparingAction.current || !nextAction.trim() || output.game_over) return;
+    checkTrigger.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    preparingAction.current = true;
+    setIsPreparingCheck(true);
+    try {
+      const preview = await handlePrepareCheck(nextAction, optionIndex);
+      if (!preview) return;
+      const check = preview.check ? toCheckSpec(preview.check) : null;
+      if (check) {
+        setCheckingAction({ action: nextAction, index: preview.option_index, check });
+      } else {
+        await handleGenerate(nextAction, undefined, undefined, preview.option_index ?? undefined);
+      }
+    } finally {
+      preparingAction.current = false;
+      setIsPreparingCheck(false);
     }
-
-    void handleGenerate(option);
   }
 
-  function commitCheck(result: MainCheckCommit) {
-    if (!checkingAction) return;
-    const { action, check, index } = checkingAction;
+  function cancelCheck() {
     setCheckingAction(null);
-    setSweep({
-      index,
-      outcome: result.outcome,
-      action: formatActionWithCheckResult(action, check, result),
-    });
+    // The preflight temporarily disables its trigger. Restore focus after it
+    // is enabled again, including when the trigger was the custom-action box.
+    requestAnimationFrame(() => checkTrigger.current?.focus());
   }
 
-  // The fill stays on the chosen option until the next scene replaces the list.
+  async function commitCheck(result: MainCheckCommit) {
+    if (!checkingAction) return;
+    const { action, index } = checkingAction;
+    if (index !== null) setSweep({ index, outcome: result.outcome });
+    await handleGenerate(action, undefined, toActionCheckSubmission(result.roll, index), index ?? undefined);
+  }
+
+  // Keep the rolled result while a failed request is retried. Replacing the
+  // scene (including a stale-turn refresh or save load) invalidates the check.
   useEffect(() => {
     setSweep(null);
-  }, [output]);
+    setCheckingAction(null);
+  }, [output, sessionId, activeTurnId]);
 
   // An ended campaign must not leave the dice overlay on top of the ending card.
   useEffect(() => {
@@ -168,11 +184,6 @@ export function StoryPanel({
       : hasCampaignTurnBudget(cachedProgress)
         ? cachedProgress
         : null;
-
-  /** The sweep's own animation decides when the next scene is generated. */
-  function completeSweep(action: string) {
-    void handleGenerate(action);
-  }
 
   return (
     <section className="story-panel">
@@ -254,8 +265,8 @@ export function StoryPanel({
         </div>
         {output.game_over ? (
           <div className="ending-card" role="status">
-            <strong>战役结束</strong>
-            <span>{output.game_over_reason}</span>
+            <strong>终章</strong>
+            <span>{formatEndingTitle(output.game_over_reason)}</span>
           </div>
         ) : null}
         <div className="dialogue-list">
@@ -286,9 +297,9 @@ export function StoryPanel({
             return (
               <button
                 className="option-button"
-                disabled={output.game_over || isLoading || !!session.pendingGenerate || !sessionId}
+                disabled={output.game_over || busy || !!checkingAction || !sessionId}
                 key={`${option}-${index}`}
-                onClick={() => handleOption(option, index)}
+                onClick={() => void prepareAction(option, index)}
                 type="button"
               >
                 <span className="option-button-label">{option}</span>
@@ -301,7 +312,6 @@ export function StoryPanel({
                   <span
                     className={`option-sweep ${outcomeTone(sweeping.outcome)}`}
                     aria-hidden="true"
-                    onAnimationEnd={() => completeSweep(sweeping.action)}
                   />
                 ) : null}
               </button>
@@ -315,19 +325,20 @@ export function StoryPanel({
         <div className="player-controls-row">
           <textarea
             id="action"
-            disabled={output.game_over}
+            disabled={output.game_over || busy || !!checkingAction}
             value={action}
             onChange={(event) => setAction(event.target.value)}
             onKeyDown={(event) => {
-              if ((event.metaKey || event.ctrlKey) && event.key === "Enter" && !isLoading && sessionId && hasAction) {
-                handleGenerate();
+              if ((event.metaKey || event.ctrlKey) && event.key === "Enter") {
+                event.preventDefault();
+                void prepareAction(action);
               }
             }}
             placeholder={output.game_over ? "该战役已经结束" : "输入玩家行动、当前场景或 GM 限制"}
           />
-          <button disabled={output.game_over || isLoading || !!session.pendingGenerate || !sessionId || !hasAction} onClick={() => handleGenerate()} type="button">
-            {isLoading ? <Loader2 className="spin-icon" size={18} /> : <Send size={18} />}
-            <span>{output.game_over ? "战役已结束" : isLoading ? "生成中" : "生成下一幕"}</span>
+          <button disabled={output.game_over || busy || !!checkingAction || !sessionId || !hasAction} onClick={() => void prepareAction(action)} type="button">
+            {busy ? <Loader2 className="spin-icon" size={18} /> : <Send size={18} />}
+            <span>{output.game_over ? "战役已结束" : isPreparingCheck ? "检查行动中" : isLoading ? "生成中" : "生成下一幕"}</span>
           </button>
         </div>
         {error ? <div className="error">{error}</div> : null}
@@ -339,7 +350,9 @@ export function StoryPanel({
         <MainCheckOverlay
           action={checkingAction.action}
           check={checkingAction.check}
-          onCancel={() => setCheckingAction(null)}
+          busy={isLoading}
+          submitError={error}
+          onCancel={cancelCheck}
           onCommit={commitCheck}
         />
       ) : null}

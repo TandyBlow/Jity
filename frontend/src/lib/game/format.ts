@@ -47,6 +47,17 @@ export function formatDelta(delta: number) {
   return `${delta > 0 ? "+" : ""}${delta}`;
 }
 
+export function formatEndingTitle(reason: string) {
+  // Older saves stored "name: epilogue" and exposed the internal budget label.
+  // The narration now contains the complete ending; the card only needs its name.
+  const title = reason.split(/[：:]/, 1)[0].replace(/^回合预算耗尽[·・]\s*/, "").trim();
+  const legacyTitles: Record<string, string> = {
+    未完成的调查: "未竟的追寻",
+    失败的调查: "无声的终章",
+  };
+  return legacyTitles[title] ?? (title || "故事落幕");
+}
+
 export function formatSlotTime(lastPlayed: string) {
   const match = lastPlayed.match(/^(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2})/);
   return match ? `${match[2]}-${match[3]} ${match[4]}:${match[5]}` : lastPlayed;

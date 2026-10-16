@@ -273,7 +273,7 @@ async def test_budget_turn_does_not_bypass_conditions_via_regular_ending(tmp_pat
         h.session_id, GenerateRequest(player_action="选择继承封印"),
     )
     assert response.output.game_over
-    assert response.output.game_over_reason.startswith("回合预算耗尽")
+    assert response.output.game_over_reason == "无声的终章"
 
 
 @pytest.mark.asyncio

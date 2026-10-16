@@ -182,7 +182,7 @@ def test_overflowed_finale_progress_can_still_select_ending():
     route = select_ending(
         campaign,
         progress,
-        {"health": 0, "sanity": 0, "items": []},
+        {"health": 0, "sanity": 50, "items": []},
         "继续，面对最后的结局。",
     )
 

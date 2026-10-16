@@ -242,13 +242,13 @@ class ExaminerAgent:
         if sanity:
             rules.append(TriggeredRule(
                 rule_type="sanity_check", rule_name="SAN／血统稳定检定",
-                rule_details="需要进行血统稳定检定（1d100 ≤ 当前SAN值）；本地检查尚未掷骰，不得视为自动成功。",
+                rule_details="需要进行通用 d20 血统稳定检定；目标由行动难度决定，未收到已校验结果前不得视为成功。",
             ))
         for skill, pattern in _SKILLS.items():
             if _fires(re.compile(pattern), action, item_spans):
                 rules.append(TriggeredRule(
                     rule_type="skill_check", rule_name=f"技能检定：{skill}",
-                    rule_details="需依据角色技能值进行检定；没有技能值或检定结果时，不得编造成功结果。",
+                    rule_details="需要进行通用 d20 技能检定；目标由行动难度决定，未收到已校验结果前不得编造成功。",
                 ))
         if combat:
             rules.append(TriggeredRule(

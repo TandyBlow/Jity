@@ -5,10 +5,13 @@ import logging
 from app.schemas.agent_io import DirectorInstruction
 from app.services.agents.director import DirectorAgent
 from app.services.agents.examiner import ExaminerAgent, is_passive_continuation_action
+from app.services.action_checks import is_check_transition
 from app.services.llm_client import LLMOutputParseError, LLMRequestError
 from app.services.scenario_generator.errors import ScenarioGenerationError
+from app.services.campaign_endings import ending_instruction
 from app.schemas import StoryOutput
 from app.exceptions import CampaignRequiredError
+from app.services.scenario_generator.check_guidance import apply_check_to_ruling, check_instruction, ending_player_action
 
 logger = logging.getLogger(__name__)
 
@@ -29,20 +32,21 @@ class AgentPipelineMixin:
 
         # Stage 1: Examiner — action feasibility + rule identification
         from app.schemas.agent_io import ActionRuling
-        progress = getattr(campaign_manager, "progress", None)
-        is_transition_turn = bool(
-            campaign_manager is not None
-            and campaign_manager.is_loaded()
-            and getattr(progress, "turn_in_session", -1) == 0
-            and getattr(progress, "turns_total", 0) > 0
-        )
+        is_transition_turn = is_check_transition(campaign_manager)
         if is_passive_continuation_action(request.player_action) or is_transition_turn:
             ruling = ActionRuling()
+        elif getattr(request, "_action_ruling", None) is not None:
+            ruling = request._action_ruling
         else:
             ruling = await ExaminerAgent().examine(
                 player_action=request.player_action,
                 game_state=state,
             )
+
+        result = getattr(request, "_resolved_action_check", None)
+        ruling = apply_check_to_ruling(
+            ruling, result, resolved=getattr(request, "_action_ruling", None) is not None,
+        )
 
         # If Examiner says blocked → return diegetic rejection
         if ruling.permissibility.value == "blocked" and ruling.rejection_reason and not closing_turn:
@@ -71,6 +75,13 @@ class AgentPipelineMixin:
 
         # Inject director instruction into prompt meta / campaign_context
         augmented_prompt = self._inject_direction(prompt, direction, ruling)
+        if result is not None:
+            # Keep the result after all story instructions, even if a Director
+            # response accidentally repeats a pending-roll instruction.
+            instruction = check_instruction(result)
+            augmented_prompt += "\n\n" + instruction
+            if isinstance(getattr(meta, "sections", None), dict):
+                meta.sections["action_check"] = instruction
 
         # Stage 3: Narrator — the actual story generation (single LLM call)
         return await self._run_narrator_stage(
@@ -100,10 +111,7 @@ class AgentPipelineMixin:
             f"{msg.get('role', 'unknown')}: {msg.get('content', '')[:800]}"
             for msg in current_messages
         )
-        is_transition_turn = bool(
-            getattr(campaign_manager.progress, "turn_in_session", -1) == 0
-            and getattr(campaign_manager.progress, "turns_total", 0) > 0
-        )
+        is_transition_turn = is_check_transition(campaign_manager)
         opening_label = (
             "本幕开场前提（必须与玩家刚才的转场行动融合，不能覆盖或忽略该行动）：\n"
             if is_transition_turn else
@@ -145,6 +153,11 @@ class AgentPipelineMixin:
         retrieved_for_storage, _csi, state, turn, campaign_manager=None,
     ) -> tuple[StoryOutput, int, str]:
         """Stage 3: Narrator — the actual story generation (single LLM call)."""
+        ending = self._select_campaign_ending(campaign_manager, state, ending_player_action(request))
+        if ending is not None:
+            # Keep the final-story contract after the Director block and the
+            # normal-turn JSON example, even when campaign context was trimmed.
+            augmented_prompt += "\n\n" + ending_instruction(ending)
         meta.final_prompt = augmented_prompt
         try:
             output, latency_ms = await self.llm_client.generate(

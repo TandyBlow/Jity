@@ -5,20 +5,25 @@ import logging
 from collections.abc import Callable
 
 from app.database import Database
+from app.services.action_checks import (
+    ActionCheckError, is_check_transition, resolve_action_check, validate_action_check,
+)
+from app.services.scenario_generator.check_guidance import ending_player_action
 from app.schemas import GenerateRequest, GenerateResponse, RetrievedChunk, StoryOutput
 from app.services.campaign_manager import CampaignManager
 from app.services.game_state import GameStateManager
 from app.services.game_state.defaults import STATE_CAPS
 from app.services.llm_client import LLMClient
 from app.services.memory.memory_controller import MemoryController
-from app.services.prompt_builder import PromptBuilder
+from app.services.prompt_builder import PromptBuilder, PromptMeta
 from app.services.retriever import RAGRetriever
 from app.services.scripted_story import ScriptedStoryService
-from app.services.campaign_endings import is_final_session
+from app.services.campaign_endings import BLOODLINE_COLLAPSE_ENDING_ID, is_final_session
 
 from app.services.scenario_generator.agent_pipeline import AgentPipelineMixin
 from app.services.scenario_generator.director_support import DirectorSupportMixin
 from app.services.scenario_generator.errors import ScenarioGenerationError
+from app.services.scenario_generator.ending_narrative import EndingNarrativeMixin
 from app.services.scenario_generator.opening_scene import OpeningSceneMixin
 from app.services.scenario_generator.post_generation import PostGenerationMixin
 from app.services.scenario_generator.prompting import PromptBuildMixin
@@ -29,6 +34,7 @@ logger = logging.getLogger(__name__)
 
 
 class ScenarioGenerator(
+    EndingNarrativeMixin,
     MemoryLifecycleMixin,
     OpeningSceneMixin,
     PromptBuildMixin,
@@ -86,6 +92,10 @@ class ScenarioGenerator(
                 raise
 
     async def _generate_locked(self, session_id: str, request: GenerateRequest) -> GenerateResponse | None:
+        # Keep validated internal fields request-local, including when a caller retries.
+        request = request.model_copy(deep=True)
+        request._resolved_action_check = None
+        request._action_ruling = None
         session = self.state_manager.get_session_payload(session_id)
         if not session:
             return None
@@ -116,6 +126,7 @@ class ScenarioGenerator(
             state = refreshed["state"]
             memory_ctrl = self._get_memory_controller(session_id, state, campaign_manager)
 
+        previous_output = {}
         active_turn = self.db.get_story_turn(session_id, parent_turn_id) if parent_turn_id else None
         if active_turn:
             import json
@@ -123,16 +134,35 @@ class ScenarioGenerator(
             if previous_output.get("game_over"):
                 raise ConcurrentModificationError("Campaign already ended")
 
+        if state.get("sanity", 80) > 0:
+            if request.action_check is not None and request.timeline_node_id is None:
+                raise ActionCheckError("请刷新当前剧情后重新提交判定结果。")
+            resolution = await resolve_action_check(
+                request.player_action, state, previous_output,
+                option_index=(
+                    request.option_index if request.option_index is not None
+                    else request.action_check.option_index if request.action_check else None
+                ),
+                defer_feasibility=is_check_transition(campaign_manager),
+            )
+            request._resolved_action_check = validate_action_check(resolution, request.action_check)
+            request._action_ruling = resolution.ruling if previous_output else None
+        # A collapsed character is already ending; an old option/check cannot
+        # postpone that ending or let a successful roll restore their identity.
+
+        selected_ending = self._select_campaign_ending(
+            campaign_manager, state, ending_player_action(request)
+        )
+        already_collapsed = (
+            selected_ending is not None and selected_ending.id == BLOODLINE_COLLAPSE_ENDING_ID
+        )
         if campaign_manager is not None and campaign_manager.is_loaded():
             cap = campaign_manager.resolve_max_turns_per_campaign()
-            if getattr(campaign_manager.progress, "turns_total", 0) >= cap:
+            if getattr(campaign_manager.progress, "turns_total", 0) >= cap and not already_collapsed:
                 # The budget ending must already have been presented on the
                 # cap turn; anything past it is rejected outright.
                 raise ConcurrentModificationError("Campaign turn budget exhausted")
 
-        selected_ending = self._select_campaign_ending(
-            campaign_manager, state, request.player_action
-        )
         # A forced closing turn takes the narrator path even if this section
         # has not opened yet: a scripted opening cannot consume the ending.
         if selected_ending is None:
@@ -143,18 +173,30 @@ class ScenarioGenerator(
             if opening_result is not None:
                 return opening_result
 
-        # Hook 2: Build prompt (RAG + context injection + token truncation)
         state["items"] = memory_ctrl.score_tracker.reconcile_inventory(state.get("items", []))
-        prompt, meta, retrieved, retrieved_for_storage, token_count = await self._build_prompt(
-            request, state, session_id, campaign_manager
-        )
+        if already_collapsed:
+            # A legacy zero-state or zero-valued opening goes straight to its
+            # ending. Do not execute another action, grant entry items or stage
+            # new Director anchors before writing the final story.
+            output = StoryOutput(narration="", current_location=state.get("current_location", ""))
+            meta = PromptMeta()
+            retrieved, retrieved_for_storage = [], []
+            latency_ms, token_count, source = 0, 0, "llm"
+        else:
+            # Hook 2: Build prompt (RAG + context injection + token truncation)
+            prompt, meta, retrieved, retrieved_for_storage, token_count = await self._build_prompt(
+                request, state, session_id, campaign_manager
+            )
 
-        # Hook 3: Execute the campaign agent pipeline.
-        output, latency_ms, source = await self._execute_llm_or_scripted(
-            session_id, request, prompt, model, meta, retrieved_for_storage, _csi,
-            state=state, campaign_manager=campaign_manager,
-            closing_turn=selected_ending is not None,
-        )
+            # Hook 3: Execute the campaign agent pipeline.
+            output, latency_ms, source = await self._execute_llm_or_scripted(
+                session_id, request, prompt, model, meta, retrieved_for_storage, _csi,
+                state=state, campaign_manager=campaign_manager,
+                closing_turn=selected_ending is not None,
+            )
+
+        # The model cannot invent or overwrite the executed die result.
+        output.action_check = request._resolved_action_check
 
         tracker_snapshot = memory_ctrl.score_tracker.export_state()
         tracker_aliases = dict(memory_ctrl.score_tracker._aliases)
@@ -163,27 +205,51 @@ class ScenarioGenerator(
         preview_state = self.state_manager.apply_output(state, request.player_action, output)
         preview_state["items"] = memory_ctrl.score_tracker.reconcile_inventory(preview_state.get("items", []))
         selected_ending = self._select_campaign_ending(
-            campaign_manager, preview_state, request.player_action
+            campaign_manager, preview_state, ending_player_action(request)
         )
         if selected_ending is not None:
-            if prompted_ending is None or selected_ending.id != prompted_ending.id:
-                output.narration = selected_ending.resolution
-                if selected_ending.epilogue:
-                    output.narration += "\n\n" + selected_ending.epilogue
+            bloodline_collapse = selected_ending.id == BLOODLINE_COLLAPSE_ENDING_ID
+            collapse_trigger = None
+            if bloodline_collapse and not already_collapsed:
+                collapse_trigger = {
+                    "本回合原叙事草稿": output.narration,
+                    "血统稳定损失": output.sanity_delta,
+                    "血条变化": output.health_delta,
+                }
+            changed_ending = prompted_ending is None or selected_ending.id != prompted_ending.id
+            if changed_ending:
+                output.narration = ""
                 output.dialogue = []
                 output.scene_prompt = ""
-                output.current_location = state.get("current_location", "")
-                output.items_gained = []
-                output.items_lost = []
-                output.npcs_encountered = []
-                output.quests_updated = []
-                output.memory_updates = type(output.memory_updates)()
-                output.npc_relations_delta = None
-            output.game_over = True
-            output.game_over_reason = (
-                f"{selected_ending.name}：{selected_ending.epilogue or selected_ending.resolution}"
+                if not bloodline_collapse:
+                    output.current_location = state.get("current_location", "")
+                    output.items_gained = []
+                    output.items_lost = []
+                    output.npcs_encountered = []
+                    output.quests_updated = []
+                    output.memory_updates = type(output.memory_updates)()
+                    output.npc_relations_delta = None
+                # Bloodline loss is a consequence of this action. Retain its
+                # scene and item changes, so the final story starts where the
+                # collapse actually happened rather than teleporting backwards.
+            if bloodline_collapse:
+                status = output.memory_updates.player_status_patch
+                status.condition = "死侍化，失去人类自我"
+                status.danger_level = "critical"
+                status.current_goal = "未竟的追寻随自我意识一同消逝"
+                output.memory_updates.key_event = "血统失控，玩家丧失人类自我并堕为死侍。"
+            ending_state = self.state_manager.apply_output(state, request.player_action, output)
+            latency_ms += await self._ensure_ending_narrative(
+                output, selected_ending, force_rewrite=changed_ending,
+                session_id=session_id, request=request, model=model, state=ending_state,
+                campaign_manager=campaign_manager, meta=meta,
+                retrieved_for_storage=retrieved_for_storage, campaign_session_index=_csi,
+                collapse_trigger=collapse_trigger,
             )
+            output.game_over = True
+            output.game_over_reason = selected_ending.name
             output.options = []
+            output.option_checks = []
         elif campaign_manager is not None and campaign_manager.is_loaded():
             # Campaign endings are server-selected; the narrator cannot end one early.
             output.game_over = False

@@ -65,7 +65,14 @@ class GameStateManager(MemoryNormalizationMixin, StateInferenceMixin, EntryState
 
     def apply_output(self, state: dict[str, Any], action: str, output: StoryOutput) -> dict[str, Any]:
         next_state = self._ensure_state_shape(state)
-        next_state["sanity"] = self._clamp(next_state.get("sanity", 80) + output.sanity_delta + SANITY_RECOVERY_PER_TURN)
+        sanity_before = next_state.get("sanity", 80)
+        sanity_after_action = sanity_before + output.sanity_delta
+        # Crossing zero is irreversible within this timeline. Passive recovery
+        # and a later model-proposed heal cannot erase a bloodline collapse.
+        next_state["sanity"] = (
+            0 if sanity_before <= 0 or sanity_after_action <= 0
+            else self._clamp(sanity_after_action + SANITY_RECOVERY_PER_TURN)
+        )
         next_state["health"] = self._clamp(next_state.get("health", 100) + output.health_delta)
         next_state["turn"] = int(next_state.get("turn", 0)) + 1
 

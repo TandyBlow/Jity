@@ -10,6 +10,7 @@ import {
   getCampaign,
   getMemoryTrace,
   listSlots,
+  previewActionCheck,
 } from "./api";
 
 /**
@@ -128,6 +129,50 @@ describe("generateScene", () => {
       slot_name: "slot",
       timeline_node_id: 7,
     });
+  });
+
+  it("sends only the die face and option identity separately from the raw action", async () => {
+    const calls = stubFetch({ body: JSON.stringify({ output: {} }) });
+    const action = "尝试推开铁门。";
+
+    await generateScene({
+      sessionId: "s1",
+      playerAction: action,
+      timelineNodeId: 7,
+      actionCheck: { roll: 20, option_index: 0 },
+      optionIndex: 0,
+    });
+
+    expect(jsonBody(calls[0].init)).toEqual({
+      player_action: action,
+      timeline_node_id: 7,
+      action_check: { roll: 20, option_index: 0 },
+      option_index: 0,
+    });
+  });
+
+  it("preserves an unchecked option identity even when two options have the same text", async () => {
+    const calls = stubFetch({ body: JSON.stringify({ output: {} }) });
+    await generateScene({ sessionId: "s1", playerAction: "继续观察", timelineNodeId: 7, optionIndex: 0 });
+    expect(jsonBody(calls[0].init)).toEqual({ player_action: "继续观察", timeline_node_id: 7, option_index: 0 });
+  });
+});
+
+describe("previewActionCheck", () => {
+  it("previews a custom action against the current turn before rolling", async () => {
+    const preview = { check: { requires_check: true, target: 16 }, option_index: null };
+    const calls = stubFetch({ body: JSON.stringify(preview) });
+
+    await expect(previewActionCheck({ sessionId: "s1", playerAction: "潜入办公室", timelineNodeId: 7 })).resolves.toEqual(preview);
+    expect(calls[0].url).toBe(`${BASE}/sessions/s1/check`);
+    expect(calls[0].init.method).toBe("POST");
+    expect(jsonBody(calls[0].init)).toEqual({ player_action: "潜入办公室", timeline_node_id: 7 });
+  });
+
+  it("preserves a conflict status so callers refresh instead of using a stale rule", async () => {
+    stubFetch({ ok: false, status: 409, body: JSON.stringify({ detail: "当前回合已变化" }) });
+    await expect(previewActionCheck({ sessionId: "s1", playerAction: "推门", timelineNodeId: 7 }))
+      .rejects.toMatchObject({ status: 409, message: "当前回合已变化" });
   });
 });
 

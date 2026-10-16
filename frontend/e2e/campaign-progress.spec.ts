@@ -126,11 +126,13 @@ test("the closing response updates the budget and disables further actions", asy
   await expect(page.locator(".option-button").first()).toBeEnabled();
   await page.locator(".option-button").first().click();
   await expect(page.locator(".toolbar-row")).toContainText("第 50 / 50 回合");
-  await expect(page.locator(".ending-card")).toContainText("回合预算耗尽");
+  await expect(page.locator(".ending-card")).toContainText("未竟的追寻");
+  await expect(page.locator(".ending-card")).not.toContainText("回合预算耗尽");
   await expect(page.locator("#action")).toBeDisabled();
   await expect(page.locator(".player-controls-row > button")).toBeDisabled();
   await page.reload();
-  await expect(page.locator(".ending-card")).toContainText("回合预算耗尽");
+  await expect(page.locator(".ending-card")).toContainText("未竟的追寻");
+  await expect(page.locator(".ending-card")).not.toContainText("回合预算耗尽");
   await expect(page.locator("#action")).toBeDisabled();
   await expect(page.locator(".toolbar-row")).toContainText("第 50 / 50 回合");
 });

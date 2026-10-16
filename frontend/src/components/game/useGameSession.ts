@@ -151,8 +151,9 @@ export function useGameSession() {
 
   useGameEffects(core, { setSlots, setCampaigns, handleGenerate: actions.handleGenerate });
   const autoPlay = useBrowserAutoPlay({
-    sessionId, selectedCampaign, state, output, isLoading, pendingGenerate, error,
+    sessionId, activeTurnId, selectedCampaign, state, output, isLoading, pendingGenerate, error,
     handleGenerate: actions.handleGenerate,
+    handlePrepareCheck: actions.handlePrepareCheck,
   });
   const sceneBackground = useSceneBackground(output, state);
 

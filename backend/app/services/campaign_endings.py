@@ -11,6 +11,35 @@ from typing import Any
 
 from app.schemas.campaign import EndingRoute
 
+BLOODLINE_COLLAPSE_ENDING_ID = "bloodline-collapse"
+
+
+def select_bloodline_collapse_ending(state: dict) -> EndingRoute | None:
+    """Loss of human identity is terminal in every chapter, including openings."""
+    if state.get("sanity", 80) > 0:
+        return None
+    return EndingRoute(
+        id=BLOODLINE_COLLAPSE_ENDING_ID,
+        name="龙血失控",
+        category="bad",
+        resolution=(
+            "玩家血统稳定彻底崩溃，龙血侵蚀人类意识，最终失去自我、堕为死侍。"
+            "参照《龙族》中越过临界血限后丧失人类自我、受龙血本能驱使的设定，"
+            "围绕当前地点、刚发生的冲击、正在追寻的目标与已经在场的人物，原创这一刻的结局。"
+            "用感官或身体异变、熟悉的人与事逐渐失去意义、最后一点清醒消散来呈现过程，"
+            "身体异变发生在玩家身上，不把地面或建筑写成突然长出玩家的骨骼。"
+            "正文必须明确玩家成为死侍，不把失控写成力量觉醒、暂时昏迷或可被唤醒的状态。"
+            "不指定固定地点、同伴、凶手或处决方式；没有同伴在场就写孤身失去自我，"
+            "不得凭空安排诺诺、镜像人格、钟楼或龙王登场。"
+            "若血条同时耗尽，承接濒死状态落幕，不写死后复活。"
+        ),
+        epilogue=(
+            "从当前剧情选取一个已经出现的人、一件物品或未完成的约定留下最后画面；"
+            "具体后果随这一局的经历变化，不照抄原文，不用固定模板，不恢复人格或继续冒险。"
+        ),
+    )
+
+
 # Ending-category preference per budget outcome, best first. Campaign files
 # use "true/good/normal/dark/bad"; the search falls through until a route
 # matches, and a synthesized route covers campaigns with no routes at all.
@@ -47,11 +76,14 @@ def is_final_session(campaign: Any, progress: Any) -> bool:
 
 def select_ending(campaign: Any, progress: Any, state: dict, player_action: str):
     """Return exactly one configured ending route, or None when play continues."""
+    collapse = select_bloodline_collapse_ending(state)
+    if campaign is not None and progress is not None and collapse is not None:
+        return collapse
     routes = getattr(campaign, "ending_routes", []) if campaign else []
     if not routes or not is_final_session(campaign, progress):
         return None
 
-    if state.get("health", 100) <= 0 or state.get("sanity", 80) <= 0:
+    if state.get("health", 100) <= 0:
         return next((route for route in routes if route.category == "bad"), None)
 
     action = player_action.casefold()
@@ -124,6 +156,9 @@ def select_budget_ending(
     """
     if campaign is None or progress is None:
         return None
+    collapse = select_bloodline_collapse_ending(state)
+    if collapse is not None:
+        return collapse
     try:
         budget = int(max_turns)
     except (TypeError, ValueError):
@@ -138,7 +173,7 @@ def select_budget_ending(
         return None
 
     routes = list(getattr(campaign, "ending_routes", []) or [])
-    if state.get("health", 100) <= 0 or state.get("sanity", 80) <= 0:
+    if state.get("health", 100) <= 0:
         for route in routes:
             if route.category in ("bad", "dark"):
                 return route
@@ -206,18 +241,41 @@ def _route_qualifies(route: Any, evidence: str, player_action: str) -> bool:
 
 
 def _synthesized_budget_route(outcome: str) -> EndingRoute:
-    label = {"success": "预算内完成", "incomplete": "未完成的调查", "failure": "失败的调查"}[outcome]
+    label = {"success": "尘埃落定", "incomplete": "未竟的追寻", "failure": "无声的终章"}[outcome]
     return EndingRoute(
         id=f"budget-{outcome}",
-        name=f"回合预算耗尽·{label}",
+        name=label,
         category={"success": "good", "incomplete": "normal", "failure": "bad"}[outcome],
-        requirements=["整局回合预算耗尽"],
+        requirements=[],
         resolution=(
-            "回合预算已用尽。依据玩家已完成的任务与已掌握的证据收束故事："
-            "说明当前进展停在何处、哪些线索仍然悬而未决，给出这一局的最终画面。"
+            ("调查未能完成，已知的线索仍不足以解开谜团。" if outcome == "incomplete" else
+             "这次追寻以失败告终，玩家没能实现当前目标。" if outcome == "failure" else
+             "玩家已取得的成果留下了真实的改变。")
+            + "从玩家当前所在的场景和最后一次行动继续写，依据已经发生的阻碍、伤势或人物决定，"
+            "写出这段追寻为何落幕、留下了什么代价，以及人物此后的处境。"
+            "未揭示的真相保持未知，未完成的任务不能突然成功，不得跳到尚未到达的最终场景。"
+            "失败不等于死亡；只有已确认的生命状态与剧情支持时才能写死亡。"
         ),
-        epilogue="这一局到此结束。",
+        epilogue="以当前故事中已经出现的人物、物件或场景留下一个具体的最后画面，不再邀请玩家行动。",
     )
+
+
+ENDING_NARRATIVE_RULES = (
+    "结局正文规则（覆盖普通回合的篇幅、选项和继续推进要求）：\n"
+    "- 用第二人称‘你’承接玩家视角，不擅自替换为‘他’或‘她’。\n"
+    "- narration 必须是一段约 200 字的完整中文结局故事，180–260 个非空白字符（含标点），"
+    "可分成两段；不要用一两句概要、标题或结局说明代替故事。\n"
+    "- 承接当前地点、玩家最后的行动、已知线索、人物关系与伤势，写出行动后果、人物反应、"
+    "代价或遗憾，再以具体画面收尾；不能把尚未发生的成功或未知真相补成既成事实。\n"
+    "- 只使用当前状态、最近剧情或所选路线明确支持的人物和物件，不让离场或死亡的人物无故回归。\n"
+    "- 失败和未完成也必须有完整故事收束，允许真相悬而未决；不能只告诉玩家调查失败。\n"
+    "- 不得出现‘回合预算耗尽’‘达到回合上限’‘这一局到此结束’‘游戏结束’等系统提示，"
+    "不得向读者解释后端判定、预算、字段或生成规则。\n"
+    "- 不得把血条、生命值、稳定度等面板数值写进正文；用伤势、疲惫、意识变化呈现后果，"
+    "不报告扣除数值或换算过程。\n"
+    "- 全部结局故事（包括必要对话与尾声）写入 narration；dialogue=[]、options=[]、option_checks=[]，"
+    "game_over=true，game_over_reason 只填结局名称，不重复尾声。\n"
+)
 
 
 def ending_instruction(route: Any) -> str:
@@ -228,5 +286,5 @@ def ending_instruction(route: Any) -> str:
         f"判定依据：后端根据本回合行动与已保存的进度选定路线。参考条件：{requirements}\n"
         f"必须在本回合完整呈现结局收束：{route.resolution}\n"
         f"尾声：{route.epilogue}\n"
-        "必须返回 game_over=true、options=[]，game_over_reason 以结局名称开头。"
+        + ENDING_NARRATIVE_RULES
     )

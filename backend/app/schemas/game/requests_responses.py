@@ -2,8 +2,10 @@
 
 from typing import Any, Literal, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, PrivateAttr, model_validator
 
+from app.schemas.agent_io.examiner import ActionRuling
+from app.schemas.game.action_checks import ActionCheckResult, ActionCheckSubmission
 from app.schemas.game.story_output import StoryOutput
 
 
@@ -25,6 +27,18 @@ class GenerateRequest(BaseModel):
     constraints: str = ""
     slot_name: str = ""
     timeline_node_id: Optional[int] = None
+    option_index: int | None = Field(default=None, strict=True, ge=0)
+    action_check: ActionCheckSubmission | None = None
+    _resolved_action_check: ActionCheckResult | None = PrivateAttr(default=None)
+    _action_ruling: ActionRuling | None = PrivateAttr(default=None)
+
+    @model_validator(mode="after")
+    def _check_option_identity(self) -> "GenerateRequest":
+        if (self.option_index is not None and self.action_check is not None
+                and self.action_check.option_index is not None
+                and self.option_index != self.action_check.option_index):
+            raise ValueError("行动选项与判定选项不一致，请重新选择。")
+        return self
 
 
 # ── Response models ──

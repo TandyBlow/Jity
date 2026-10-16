@@ -4,6 +4,10 @@ Re-exports all models from game.py, campaign.py, and agent_io.py for
 backward compatibility.
 """
 from app.schemas.game import (
+    ActionCheckRequest,
+    ActionCheckResponse,
+    ActionCheckResult,
+    ActionCheckSubmission,
     CreateSessionRequest,
     DialogueLine,
     GenerateRequest,
@@ -71,6 +75,10 @@ __all__ = [
     "SessionResponse",
     "StoryOutput",
     "OptionCheck",
+    "ActionCheckRequest",
+    "ActionCheckResponse",
+    "ActionCheckResult",
+    "ActionCheckSubmission",
     "WorldFactMemory",
     "replace_em_dash",
     # campaign

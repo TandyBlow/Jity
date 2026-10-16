@@ -19,6 +19,7 @@ from app.services.campaign_manager import CampaignManager
 from app.services.game_state import GameStateManager
 from app.services.prompt_builder import PromptBuilder
 from app.services.scenario_generator import ScenarioGenerator
+from tests.test_turn_commit_consistency import ENDING_STORY, auxiliary_text_response
 
 
 CAMPAIGNS = Path(__file__).resolve().parents[1] / "data" / "campaigns"
@@ -64,6 +65,7 @@ def runtime(tmp_path, monkeypatch):
 
     llm = MagicMock()
     llm.generate = AsyncMock()
+    llm.generate_text = AsyncMock(side_effect=auxiliary_text_response)
     llm.settings = SimpleNamespace(deepseek_api_key="test")
     llm.generate_json = AsyncMock(return_value={
         "options": list(OPENING_OPTIONS),
@@ -284,8 +286,9 @@ async def test_lethal_finale_turn_selects_bad_ending_and_commits_anchor(runtime)
 
     assert result.state["health"] == 0
     assert result.output.game_over is True
-    assert result.output.game_over_reason.startswith("空座位：")
-    assert "镜像人格夺取玩家身份" in result.output.narration
+    assert result.output.game_over_reason == "空座位"
+    assert result.output.narration == ENDING_STORY
+    assert "镜像人格夺取玩家身份" in runtime.llm.generate_text.call_args.args[0]
     assert result.output.options == []
     assert not any(item["name"] == "错误路线奖励" for item in result.state["items"])
     assert not any(fact["name"] == "错误好结局事实" for fact in result.state["world_facts"])
@@ -324,7 +327,7 @@ async def test_labelled_final_choice_ends_campaign(runtime):
     )
 
     assert result.output.game_over is True
-    assert result.output.game_over_reason.startswith("破晓共犯：")
+    assert result.output.game_over_reason == "破晓共犯"
     assert result.output.options == []
     row = runtime.db.read_campaign_progress(manager.progress.campaign_id, manager.slot_name)
     assert row["fsm_state"] == "campaign_end"

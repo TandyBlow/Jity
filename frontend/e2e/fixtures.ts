@@ -419,6 +419,11 @@ export async function installApiMocks(page: Page): Promise<void> {
     if (path === "/backgrounds/generate") return json({ image_url: SCENE_BACKGROUND_DATA_URI, cached: true });
     if (path === `/sessions/${SESSION_ID}`) return json(sessionResponse);
     if (path === `/sessions/${SESSION_ID}/progress`) return json(sessionProgress);
+    if (path === `/sessions/${SESSION_ID}/check`) {
+      const request = route.request().postDataJSON() as { player_action: string; option_index?: number };
+      const index = request.option_index ?? storyOutput.options.indexOf(request.player_action);
+      return json({ check: index < 0 ? null : storyOutput.option_checks?.[index] ?? null, option_index: index < 0 ? null : index });
+    }
     if (path === `/sessions/${SESSION_ID}/timeline`) {
       return json({ session_id: SESSION_ID, active_node_id: ACTIVE_TURN_ID, campaign_filename: CAMPAIGN_FILENAME, nodes: timelineNodes });
     }

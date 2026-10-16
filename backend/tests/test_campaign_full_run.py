@@ -76,7 +76,7 @@ def test_budget_ending_classification():
 
     # 死亡状态 → 失败档按存活统计走 bad/dark
     camp5 = _synthetic_campaign([_fake_route("r-bad", "bad", [])])
-    dead = {"health": 0, "sanity": 0, "quests": [], "world_facts": []}
+    dead = {"health": 0, "sanity": 50, "quests": [], "world_facts": []}
     progress.revealed_anchors = []
     route = select_budget_ending(camp5, progress, dead, max_turns=50)
     assert route is not None and route.id == "r-bad"

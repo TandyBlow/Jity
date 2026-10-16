@@ -1,4 +1,6 @@
 import type {
+  ActionCheckPreview,
+  ActionCheckSubmission,
   CampaignDetailResponse,
   CampaignListResponse,
   CampaignProgressSummary,
@@ -76,6 +78,22 @@ export function getSession(sessionId: string): Promise<SessionResponse> {
   return request<SessionResponse>(`/sessions/${sessionId}`);
 }
 
+export function previewActionCheck(params: {
+  sessionId: string;
+  playerAction: string;
+  timelineNodeId: number | null;
+  optionIndex?: number;
+}): Promise<ActionCheckPreview> {
+  return request<ActionCheckPreview>(`/sessions/${params.sessionId}/check`, {
+    method: "POST",
+    body: JSON.stringify({
+      player_action: params.playerAction,
+      timeline_node_id: params.timelineNodeId,
+      option_index: params.optionIndex,
+    }),
+  });
+}
+
 export function generateScene(params: {
   sessionId: string;
   playerAction: string;
@@ -84,6 +102,8 @@ export function generateScene(params: {
   constraints?: string;
   slotName?: string;
   timelineNodeId?: number | null;
+  actionCheck?: ActionCheckSubmission;
+  optionIndex?: number;
 }): Promise<GenerateResponse> {
   return request<GenerateResponse>(`/sessions/${params.sessionId}/generate`, {
     method: "POST",
@@ -94,6 +114,8 @@ export function generateScene(params: {
       constraints: params.constraints,
       slot_name: params.slotName,
       timeline_node_id: params.timelineNodeId,
+      action_check: params.actionCheck,
+      option_index: params.optionIndex,
     }),
   });
 }
