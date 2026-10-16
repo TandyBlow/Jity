@@ -32,10 +32,15 @@ _SKILLS = {
 _SAN = re.compile(r"SAN\s*检定|理智检定|血统稳定(?:值)?检定|(?:直视|遭遇|目睹|看见).*(?:神话生物|古神|龙王)|释放言灵|发动言灵|使用言灵", re.I)
 _PHYSICAL = re.compile(r"攻击|射击|开枪|格斗|战斗|反击|攀爬|攀登|游泳|跳跃|奔跑|冲刺")
 # A noun is bounded by the next action verb; searching for an item is not use.
-# ``用`` also excludes effort adverbials (用力/用心/用全力/用尽), which would
-# otherwise swallow the rest of the clause as an item name.
+# Bare ``用`` must also be a standalone verb.  Matching every occurrence used
+# to read the last character of 利用/备用/采用 as an inventory action (for
+# example, ``寻找备用通道`` became ``使用物品：通道``).  Chinese has no word
+# boundary token in ``re``, so accept the sentence/phrase positions in which a
+# player can actually start a bare-use action.  ``使用`` remains an explicit,
+# unambiguous verb of its own.
+_BARE_USE = r"(?:^|(?<=[，。！？；、\s我先再并便就要想改可会能后着接刻上出]))用(?!力|心|全力|全身|尽)"
 _ITEM_USE = re.compile(
-    r"(?:使用|用(?!力|心|全力|全身|尽)|拿出|掏出|举起|装备|喝下|服用)\s*[\"“「]?"
+    rf"(?P<verb>使用|{_BARE_USE}|拿出|掏出|举起|装备|喝下|服用)\s*[\"“「]?"
     r"(?P<name>[^，。！？；、\s\"”」]{1,24}?)"
     r"[\"”」]?(?=来|进行|打开|开启|开门|解锁|撬|照|攻击|射击|检查|治疗|包扎|与|和|向|对|，|。|！|？|；|$)"
 )
@@ -142,10 +147,22 @@ def _same_scene(left: str, right: str) -> bool:
 # rule scanning, or the SAN trigger inside them would be hidden.
 _ABILITY_PREFIXES = ("言灵", "全力", "力气")
 _ABILITY_NOUNS = {"技能", "双手", "手", "拳头"}
+# Body parts and their transient conditions are available through the scene,
+# not through the inventory ledger.  Let the narrator decide whether they can
+# achieve the requested effect instead of rejecting them as missing objects.
+_EMBODIED_PREFIXES = (
+    "掌心", "手掌", "手指", "指间", "指尖", "左手", "右手", "双手",
+    "拳头", "眼睛", "目光", "肩膀", "身体", "血液", "伤口", "擦伤",
+)
 
 
 def _is_ability(name: str) -> bool:
     return name.startswith(_ABILITY_PREFIXES) or name in _ABILITY_NOUNS
+
+
+def _is_non_inventory_reference(name: str) -> bool:
+    """Return references that ``用`` can govern without claiming an item."""
+    return name.startswith(_EMBODIED_PREFIXES) or name.startswith(("的是", "什么", "哪一种", "哪一类"))
 
 
 class ExaminerAgent:
@@ -170,7 +187,7 @@ class ExaminerAgent:
         for match in _ITEM_USE.finditer(action):
             raw = match["name"]
             name = _resolve_name(raw)
-            if _is_ability(name):
+            if _is_ability(name) or _is_non_inventory_reference(name):
                 continue
             item, ambiguous, length = _resolve_item(name, items)
             if ambiguous:

@@ -137,4 +137,4 @@ async def test_examiner_rejection_is_saved_once_in_memory(tmp_path):
     saved = json.loads(h.db.get_story_turn(h.session_id, response.timeline_node_id)["state_json"])
     buffer = saved["_memory_controller"]["nsb"]["turn_buffer"]
     assert len(buffer) == 1 and response.output.narration in buffer[0]
-    assert h.progress_row()["turns_total"] == 1
+    assert h.progress_row()["turns_total"] == 0

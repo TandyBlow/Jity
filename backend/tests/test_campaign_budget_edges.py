@@ -8,7 +8,7 @@ from unittest.mock import AsyncMock
 import pytest
 
 from app.exceptions import ConcurrentModificationError
-from app.schemas import GenerateRequest
+from app.schemas import GenerateRequest, StoryOutput
 from app.schemas.agent_io import OpeningOptions
 from app.schemas.campaign import EndingRoute
 from app.services.campaign_endings import select_budget_ending
@@ -21,6 +21,27 @@ def test_session_allocation_stays_fixed_until_its_boundary(tmp_path):
         h.manager.progress.turn_in_session = turn
         h.manager.progress.turns_total = turn
         assert h.manager.resolve_max_turns() == 10
+
+
+@pytest.mark.asyncio
+async def test_examiner_blocked_feedback_does_not_consume_campaign_pacing(tmp_path):
+    h = Harness(tmp_path)
+    h.manager.progress.turn_in_session = 9
+    h.manager.progress.turns_total = 9
+    h.manager.save_progress()
+    h.gen._execute_llm_or_scripted = AsyncMock(return_value=(
+        StoryOutput(narration="该行动当前无法完成。", options=["换一种做法"]),
+        0,
+        "examiner_blocked",
+    ))
+
+    response = await h.generate()
+
+    assert response.source == "examiner_blocked"
+    progress = h.progress_row()
+    assert progress["turn_in_session"] == 9
+    assert progress["turns_total"] == 9
+    assert not h.manager.is_closing_pending()
 
 
 @pytest.mark.asyncio
@@ -46,7 +67,10 @@ async def test_real_openings_do_not_consume_the_ending_turn(tmp_path, cap):
     assert response.output.options == []
     assert response.campaign_progress["turns_total"] == cap
     if cap == 50:
-        assert openings == [(0, 0), (0, 1), (1, 0), (2, 0), (2, 1)]
+        # Only the campaign's first scene is a scripted turn. Later openings
+        # run through the narrator so the selected transition action is not
+        # discarded at a chapter boundary.
+        assert openings == [(0, 0)]
         assert (h.manager.progress.arc_index, h.manager.progress.session_index) == (2, 1)
     with pytest.raises(ConcurrentModificationError):
         await h.generate()
@@ -63,8 +87,8 @@ async def test_short_final_session_closes_without_advancing_past_campaign(tmp_pa
         if response.output.game_over:
             break
     assert response.output.game_over
-    assert response.campaign_progress["turns_total"] == 5
-    assert (h.manager.progress.arc_index, h.manager.progress.session_index) == (2, 1)
+    assert response.campaign_progress["turns_total"] == 7
+    assert (h.manager.progress.arc_index, h.manager.progress.session_index) == (2, 0)
 
 
 @pytest.mark.asyncio
@@ -176,6 +200,9 @@ async def test_arc_boundary_generates_and_stores_one_recap(tmp_path):
     )
     h.manager._recap.generate_recap = AsyncMock(return_value="章节提要。")
 
+    closing = await h.generate()
+    assert closing.campaign_progress["session_index"] == 1
+    assert h.manager.is_closing_pending()
     response = await h.generate()
 
     h.manager._recap.generate_recap.assert_awaited_once()
@@ -246,3 +273,22 @@ async def test_budget_turn_does_not_bypass_conditions_via_regular_ending(tmp_pat
     )
     assert response.output.game_over
     assert response.output.game_over_reason.startswith("回合预算耗尽")
+
+
+@pytest.mark.asyncio
+async def test_final_session_hard_cap_is_not_whole_campaign_exhaustion(tmp_path):
+    h = Harness(tmp_path)
+    h.manager.progress.arc_index = 2
+    h.manager.progress.session_index = 1
+    h.manager.progress.turn_in_session = 9
+    h.manager.progress.turns_total = 42
+    h.manager.save_progress()
+
+    response = await h.gen.generate(
+        h.session_id, GenerateRequest(player_action="先压住松动的封印，再逼主持者说出真相"),
+    )
+
+    assert not response.output.game_over
+    assert response.output.game_over_reason == ""
+    assert response.campaign_progress["turns_total"] == 43
+    assert str(h.manager.fsm.state) != "campaign_end"

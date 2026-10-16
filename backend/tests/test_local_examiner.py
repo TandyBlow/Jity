@@ -44,6 +44,12 @@ def state():
     ("不攻击诺诺", "permissible", None),
     ("不用钥匙开门", "permissible", None),
     ("用力推门", "permissible", None),
+    ("不再移动，等巡逻者走远后沿夹缝侧壁摸索，寻找通往祭坛的备用通道", "permissible", None),
+    ("利用井盖裂缝进入钟楼地下", "permissible", None),
+    ("采用备用路线撤离", "permissible", None),
+    ("用掌心擦伤处按上感应区", "permissible", None),
+    ("用指间鳞片的渗液完整涂抹感应区", "permissible", None),
+    ("判断调档者用的是哪一类工具", "permissible", None),
     ("不攻击诺诺，而是观察四周", "conditional", "skill_check"),
     ("继续", "permissible", None),
 ])

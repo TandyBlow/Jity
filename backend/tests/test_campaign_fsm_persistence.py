@@ -138,6 +138,14 @@ class TestProgressPersistence:
         fsm.resume_session()
         assert _leaf(str(fsm.state)) == "session_active"
 
+    def test_closing_waits_for_transition_before_session_recap(self):
+        fsm = CampaignStateMachine()
+        fsm.start_campaign()
+        fsm.begin_closing()
+        assert _leaf(str(fsm.state)) == "session_closing"
+        fsm.end_session()
+        assert _leaf(str(fsm.state)) == "session_recap"
+
     def test_advance_arc_from_session_recap(self):
         """advance_arc: session_recap → arc_transition → arc_intro → session_active."""
         fsm = CampaignStateMachine()

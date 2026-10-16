@@ -4,7 +4,11 @@ from typing import Any
 
 from app.services.prompt_builder.helpers import SectionHelpers
 from app.services.prompt_builder.input import PromptInput, PromptMeta
-from app.services.prompt_builder.prompts import OPTION_CHECKS_CONTRACT, RECAP_SYSTEM_PROMPT
+from app.services.prompt_builder.prompts import (
+    OPTION_CHECKS_CONTRACT,
+    OPTION_IMPACT_CONTRACT,
+    RECAP_SYSTEM_PROMPT,
+)
 
 
 class PromptBuilder(SectionHelpers):
@@ -164,6 +168,7 @@ def _style_and_rules(input: PromptInput) -> str:
         "- 不要使用明喻。禁止“像……一样”“像……似的”“仿佛……”这类句式；"
         "全文最多出现一次由“像”构成的比喻，最好一次都不要有。\n"
         + OPTION_CHECKS_CONTRACT
+        + OPTION_IMPACT_CONTRACT
         + "- scene_prompt 必须是英文，少于 30 个词，用于生成背景图。\n"
         "- items_gained、items_lost、npcs_encountered、quests_updated "
         "必须是对象数组，不要返回字符串数组。\n"

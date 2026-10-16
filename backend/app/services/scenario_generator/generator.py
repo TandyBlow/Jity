@@ -272,13 +272,18 @@ class ScenarioGenerator(
         """
         if campaign_manager is None or not campaign_manager.is_loaded():
             return
+        closing_pending = campaign_manager.is_closing_pending()
+        should_begin_closing = campaign_manager.should_begin_closing_after_next_turn()
         campaign_manager.commit_pending_anchors(persist=False)
-        turn_in_session = campaign_manager.advance_turn(persist=False)
-        max_turns = campaign_manager.resolve_max_turns()
-        if turn_in_session >= max_turns and not is_final_session(
+        campaign_manager.advance_turn(persist=False)
+        if closing_pending and not is_final_session(
             campaign_manager.campaign, campaign_manager.progress
         ):
             await campaign_manager.advance_session(pending_messages, persist=False)
+        elif should_begin_closing and not is_final_session(
+            campaign_manager.campaign, campaign_manager.progress
+        ):
+            campaign_manager.begin_closing()
 
     # ── Error storage helper ──────────────────────────────────────────
 

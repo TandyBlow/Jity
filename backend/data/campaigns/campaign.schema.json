@@ -115,6 +115,26 @@
           "title": "Opening Scene",
           "type": "string"
         },
+        "min_turns_per_session": {
+          "anyOf": [{"type": "integer"}, {"type": "null"}],
+          "default": null,
+          "title": "Minimum Turns Per Session"
+        },
+        "soft_turns_per_session": {
+          "anyOf": [{"type": "integer"}, {"type": "null"}],
+          "default": null,
+          "title": "Soft Turns Per Session"
+        },
+        "max_turns_per_session": {
+          "anyOf": [{"type": "integer"}, {"type": "null"}],
+          "default": null,
+          "title": "Maximum Turns Per Session"
+        },
+        "completion_anchors": {
+          "items": {"type": "string"},
+          "title": "Completion Anchors",
+          "type": "array"
+        },
         "anchor_events": {
           "items": {
             "$ref": "#/$defs/AnchorEvent"

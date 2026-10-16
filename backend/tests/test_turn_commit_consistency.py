@@ -229,6 +229,9 @@ async def test_boundary_recap_failure_keeps_turn_count_unchanged(tmp_path):
     assert row["recap_compressed"] == "", "前情提要必须随节点提交，失败不得留在历史里"
 
     h.manager.reload_runtime_state()
+    closing = await h.generate()
+    assert closing.campaign_progress["session_index"] == 0
+    assert h.manager.is_closing_pending()
     response = await h.generate()
     row = h.progress_row()
     assert row["session_index"] == 1 and row["turn_in_session"] == 0
@@ -270,6 +273,8 @@ async def test_boundary_decay_deferred_until_commit(tmp_path):
     assert '"affinity": 3' in relations, "好感衰减不得先于节点提交落库"
 
     h.manager.reload_runtime_state()
+    closing = await h.generate()
+    assert h.manager.is_closing_pending()
     response = await h.generate()
     relations = h.progress_row()["npc_relations"]
     assert '"affinity": 2' in relations, "节点提交后衰减落库"
@@ -349,9 +354,11 @@ async def test_session_boundary_recap_failure_still_commits(tmp_path):
     h.manager.progress.turn_in_session = 29  # next advance crosses max_turns=30
     h.manager._recap.generate_recap = AsyncMock(side_effect=RuntimeError("recap down"))
 
+    closing = await h.generate()
+    assert h.manager.is_closing_pending()
     response = await h.generate()
     row = h.progress_row()
     assert row["session_index"] == 1, "边界跨越必须发生"
     assert row["turn_in_session"] == 0
     assert h.head() == response.timeline_node_id
-    assert h.node_count() == 2, "recap 失败走结构化回退，节点照常提交"
+    assert h.node_count() == 3, "收束与转场各自提交，recap 失败仍走结构化回退"

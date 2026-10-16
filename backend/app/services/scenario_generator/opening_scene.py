@@ -27,16 +27,27 @@ class OpeningSceneMixin:
 
         # A chapter starts on the campaign-local clock, even when the global
         # game turn is already positive. Apply its scene without resetting stats.
-        is_session_transition = int(state.get("turn", 0)) > 0
-        state = self.state_manager.merge_entry_state(
+        # ``turns_total`` distinguishes a real boundary from starting a new
+        # timeline directly at a later chapter.
+        is_session_transition = int(
+            getattr(campaign_manager.progress, "turns_total", 0)
+        ) > 0
+        merged_state = self.state_manager.merge_entry_state(
             state, campaign_manager.campaign,
             campaign_manager.progress.arc_index, campaign_manager.progress.session_index,
             reset_scene_context=is_session_transition,
         )
+        state.clear()
+        state.update(merged_state)
         if is_session_transition:
             # Reload the preserved branch snapshot after resetting scene lists.
             # Past evidence remains available alongside the campaign recap.
             self.invalidate_timeline_caches(session_id, campaign_manager.slot_name)
+            # Do not replace the player's transition choice with a scripted
+            # opening.  The normal Director/Narrator path receives both the
+            # authored opening premise and the chosen action, so it can bridge
+            # the two chapters causally in one turn.
+            return None
 
         # Asked for before anything is written, so a failure below leaves the turn
         # uncommitted and the retry lands back on the turn-0 guard.

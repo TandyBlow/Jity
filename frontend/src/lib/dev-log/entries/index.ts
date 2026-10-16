@@ -1,5 +1,7 @@
 import type { DevLogEntry } from "@/lib/dev-log/types";
 
+import { entry as entry_2026_10_16_examiner_legal_action_false_positives } from "@/lib/dev-log/entries/2026-10-16-examiner-legal-action-false-positives";
+import { entry as entry_2026_10_15_narrative_pacing_and_meaningful_options } from "@/lib/dev-log/entries/2026-10-15-narrative-pacing-and-meaningful-options";
 import { entry as entry_2026_10_11_master_zjrrrr_integration } from "@/lib/dev-log/entries/2026-10-11-master-zjrrrr-integration";
 
 import { entry as entry_2026_10_11_memory_review_and_local_startup } from "@/lib/dev-log/entries/2026-10-11-memory-review-and-local-startup";
@@ -21,6 +23,8 @@ import { entry as entry_2026_06_15_knowledge_base_and_rag } from "@/lib/dev-log/
 import { entry as entry_2026_06_13_scripted_opening_and_dev_log } from "@/lib/dev-log/entries/2026-06-13-scripted-opening-and-dev-log";
 
 export const devLogEntries: DevLogEntry[] = [
+  entry_2026_10_16_examiner_legal_action_false_positives,
+  entry_2026_10_15_narrative_pacing_and_meaningful_options,
   entry_2026_10_11_master_zjrrrr_integration,
   entry_2026_10_11_memory_review_and_local_startup,
   entry_2026_10_01_campaign_memory_consistency,

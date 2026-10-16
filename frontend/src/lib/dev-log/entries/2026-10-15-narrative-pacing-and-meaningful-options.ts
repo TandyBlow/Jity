@@ -1,0 +1,40 @@
+import type { DevLogEntry } from "@/lib/dev-log/types";
+
+export const entry: DevLogEntry = {
+  id: "2026-10-15-narrative-pacing-and-meaningful-options",
+  date: "2026-10-15",
+  title: "重构叙事节奏与剧情推进选项",
+  summary: "用软、硬回合阈值控制每幕的收束节奏，让选项承担明确的剧情推进职责，并把幕间转场拆成可感知、可行动的连续过程。",
+  developer: "tobi",
+  areas: ["backend", "campaign", "narrative", "prompt", "tests"],
+  changes: [
+    "重新定义每幕的回合预算：min_turns 保障必要铺垫，soft_turns 开始主动收束，hard_turns 只负责触发不可继续拖延的危机或强制事件，不再把阈值本身当作瞬间切幕指令。",
+    "到达 soft_turns 后启用严格选项收束：只保留 2–4 个能推进当前主线的行动，去掉等待、闲逛、重复观察和无结果追问；每个选项必须落到尚未完成的收束锚点，并以不同方法或风险推进。",
+    "把当前幕尚未揭示的完成锚点名称与说明注入生成约束，避免模型只收到抽象的“请推进剧情”，却不知道必须推动哪一项事实、决定或任务。",
+    "强化选项影响契约：玩家选择必须在当回合产生新信息、状态变化、关系变化、代价或不可逆决定；失败也要以代价换进展，不能原地重置为同一组选项。",
+    "hard_turns 触发后先进入 session_closing 收束态，由文本完成危机、决定或离场动作；系统不会在同一回合直接跳到下一幕。下一次成功的转场行动完成空间与因果桥接后，才提交幕索引推进。",
+    "拆分最终幕的局部 hard_turns 与整局 50 回合预算：最终幕达到局部阈值时只把冲突推向最终抉择，不再把当前总回合数临时改写为全局上限，也不会误报‘回合预算耗尽·未完成的调查’。只有明确结局行动或真正耗尽整局预算才会结束战役。",
+    "最终幕进入强制抉择阶段后，会向叙事模型提供当前满足条件的结局路线及其确定性触发短语，要求输出代表不同立场和代价的结局选项，避免继续等待、重复调查或由系统替玩家作决定。",
+    "下一幕开场会承接玩家刚刚执行的转场行动，并与预设开场融合，减少上一幕结尾、幕间移动和下一幕开头互相脱节的问题。",
+    "被 Examiner 拦截的无效行动不再消耗战役叙事回合，避免解析误判或非法操作挤占每幕的有效节奏预算。",
+    "按同一套连贯性、推进性、选项有效性、节奏与结尾完整度标准复测 seed 73；综合评分由 78 提升至 91，并完成 634 项后端回归测试。快速实跑确认最终幕第 10 回合不会再被误判为全局预算耗尽；该结果不代表所有随机种子与长局剧情均已通过。",
+  ],
+  relatedFiles: [
+    "backend/app/services/prompt_builder/prompts.py",
+    "backend/app/services/scenario_generator/prompting.py",
+    "backend/app/services/scenario_generator/post_generation.py",
+    "backend/app/services/scenario_generator/opening_scene.py",
+    "backend/app/services/campaign_advancer.py",
+    "backend/app/services/campaign_manager/metrics.py",
+    "backend/tests/test_session_completion_gates.py",
+    "backend/tests/test_campaign_budget_edges.py",
+    "backend/tests/test_prompt_contract.py",
+    "playtest_logs/narrative_change_retest_20261015.md",
+  ],
+  nextSteps: [
+    "继续扩充 Examiner 的真实行动语料，覆盖路径、方式、身体状态与场景临时物等非背包名词，降低规则解析对自由叙事的误伤。",
+    "统一自动跑剧情计数与战役有效回合的展示口径，避免被拦截行动造成 47/44 与 42/50 同时出现。",
+    "为最终幕结局选项增加服务端校验或自动重试；当前提示词已经要求使用确定性触发短语，但实跑中模型仍可能返回‘继续观察’一类非结局选项。",
+    "扩大不同随机种子与完整战役的结局流畅度测试，继续观察 soft_turns 之后选项是否既聚焦主线又保留真实选择差异。",
+  ],
+};

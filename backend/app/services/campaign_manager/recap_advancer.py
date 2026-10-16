@@ -39,6 +39,13 @@ class RecapAdvancerFacade:
     def advance_turn(self, *, persist: bool = True) -> int:
         return self._advancer.advance_turn(self.progress, self.fsm, self.slot_name, persist=persist)
 
+    def begin_closing(self) -> None:
+        """Wait durably for a successful player-selected transition action."""
+        self.fsm.begin_closing()
+
+    def is_closing_pending(self) -> bool:
+        return str(getattr(self.fsm, "state", "")) == "active/session_closing"
+
     async def advance_session(
         self,
         pending_messages: list[dict[str, str]] | None = None,

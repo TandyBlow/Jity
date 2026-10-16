@@ -28,6 +28,12 @@ class MetricsFacade:
     def resolve_max_turns(self) -> int:
         return self._advancer.resolve_max_turns(self.campaign, self.progress)
 
+    def should_begin_closing_after_next_turn(self) -> bool:
+        return self._advancer.should_begin_closing_after_next_turn(self.campaign, self.progress)
+
+    def is_soft_limit_reached(self) -> bool:
+        return self._advancer.is_soft_limit_reached(self.campaign, self.progress)
+
     def truncate_prompt_sections(self, sections: dict[str, str]) -> tuple[str, int, bool]:
         prompt = "\n\n".join(sections.values())
         token_count = self._strategy.count_tokens(prompt)

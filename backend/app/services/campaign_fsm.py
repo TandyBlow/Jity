@@ -24,6 +24,7 @@ class CampaignStateMachine:
       - idle               — no campaign active
       - active/arc_intro    — new arc intro sequence
       - active/session_active — mid-session gameplay
+      - active/session_closing — closure shown; awaiting the player's transition action
       - active/session_recap  — end-of-session recap
       - active/arc_transition — between-arc transition
       - campaign_end         — campaign complete
@@ -46,6 +47,7 @@ class CampaignStateMachine:
             "children": [
                 "arc_intro",
                 "session_active",
+                "session_closing",
                 "session_recap",
                 "arc_transition",
             ],
@@ -58,7 +60,8 @@ class CampaignStateMachine:
         {"trigger": "start_campaign", "source": "idle", "dest": "active/session_active"},
         {"trigger": "arc_intro", "source": "active/session_active", "dest": "active/arc_intro"},
         {"trigger": "session_active", "source": "active/arc_intro", "dest": "active/session_active"},
-        {"trigger": "end_session", "source": "active/session_active", "dest": "active/session_recap"},
+        {"trigger": "begin_closing", "source": "active/session_active", "dest": "active/session_closing"},
+        {"trigger": "end_session", "source": ["active/session_active", "active/session_closing"], "dest": "active/session_recap"},
         {"trigger": "resume_session", "source": "active/session_recap", "dest": "active/session_active"},
         {"trigger": "arc_transition", "source": "active/session_recap", "dest": "active/arc_transition"},
         {"trigger": "begin_arc", "source": "active/arc_transition", "dest": "active/arc_intro"},

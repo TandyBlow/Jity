@@ -29,7 +29,14 @@ class AgentPipelineMixin:
 
         # Stage 1: Examiner — action feasibility + rule identification
         from app.schemas.agent_io import ActionRuling
-        if is_passive_continuation_action(request.player_action):
+        progress = getattr(campaign_manager, "progress", None)
+        is_transition_turn = bool(
+            campaign_manager is not None
+            and campaign_manager.is_loaded()
+            and getattr(progress, "turn_in_session", -1) == 0
+            and getattr(progress, "turns_total", 0) > 0
+        )
+        if is_passive_continuation_action(request.player_action) or is_transition_turn:
             ruling = ActionRuling()
         else:
             ruling = await ExaminerAgent().examine(
@@ -93,10 +100,18 @@ class AgentPipelineMixin:
             f"{msg.get('role', 'unknown')}: {msg.get('content', '')[:800]}"
             for msg in current_messages
         )
+        is_transition_turn = bool(
+            getattr(campaign_manager.progress, "turn_in_session", -1) == 0
+            and getattr(campaign_manager.progress, "turns_total", 0) > 0
+        )
+        opening_label = (
+            "本幕开场前提（必须与玩家刚才的转场行动融合，不能覆盖或忽略该行动）：\n"
+            if is_transition_turn else
+            "当前幕固定开场（最高优先级，必须从这里继续，不能回到上一幕）：\n"
+        )
         narrative_parts = [
             f"当前地点：{state.get('current_location', '未知')}",
-            "当前幕固定开场（最高优先级，必须从这里继续，不能回到上一幕）：\n"
-            + current_opening,
+            opening_label + current_opening,
         ]
         if current_history:
             narrative_parts.append("当前幕最近记录：\n" + current_history)

@@ -119,6 +119,47 @@ class CampaignSessionAdvancer:
         allocation = max(remaining_budget // self._sessions_remaining(campaign, progress), 1)
         return max(1, min(resolved, allocation))
 
+    def should_begin_closing_after_next_turn(self, campaign: Any, progress: Any) -> bool:
+        """Whether the next committed turn should present session closure.
+
+        A hard turn cap forces a crisis/closure beat, never a session-index
+        change. Before that, authored completion anchors plus minimum length
+        can request the same closure beat. The player's following successful
+        transition action is what actually advances the session.
+        """
+        if campaign is None or progress is None:
+            return False
+        next_turn = progress.turn_in_session + 1
+        hard_turns = self.resolve_max_turns(campaign, progress)
+        if next_turn >= hard_turns:
+            return True
+        try:
+            session = campaign.arcs[progress.arc_index].sessions[progress.session_index]
+        except (AttributeError, IndexError, TypeError):
+            return False
+        required = list(getattr(session, "completion_anchors", []) or [])
+        if not required:
+            return False
+        minimum = getattr(session, "min_turns_per_session", None)
+        minimum = max(1, int(minimum)) if minimum is not None else hard_turns
+        if next_turn < min(minimum, hard_turns):
+            return False
+        revealed = set(getattr(progress, "revealed_anchors", []) or [])
+        return all(anchor_id in revealed for anchor_id in required)
+
+    def is_soft_limit_reached(self, campaign: Any, progress: Any) -> bool:
+        """Return true when a session needs decisive forward pressure."""
+        if campaign is None or progress is None:
+            return False
+        try:
+            session = campaign.arcs[progress.arc_index].sessions[progress.session_index]
+        except (AttributeError, IndexError, TypeError):
+            return False
+        soft = getattr(session, "soft_turns_per_session", None)
+        if soft is None:
+            return False
+        return progress.turn_in_session + 1 >= max(1, int(soft))
+
     def _resolve_configured_session_max(self, campaign: Any, progress: Any) -> int:
         """Configured per-session cap before the allocation clamp."""
         # 1. Per-session override in campaign.json
