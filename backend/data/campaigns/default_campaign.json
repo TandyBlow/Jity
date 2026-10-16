@@ -12,7 +12,8 @@
           "opening_scene": "你站在卡塞尔学院的大门前。雨夜中，哥特式建筑的轮廓像一头蹲伏的巨兽。手里的临时通行卡正在发烫。一个红发女生靠在门柱旁，似乎已经等了你很久。",
           "min_turns_per_session": 7,
           "soft_turns_per_session": 5,
-          "completion_anchors": ["anchor-discover-mark"],
+          "hard_turns_per_session": 7,
+          "completion_anchors": ["anchor-discover-mark", "anchor-receive-tasks"],
           "entry_state": {
             "location": "卡塞尔学院大门前",
             "items": [
@@ -63,6 +64,7 @@
           "opening_scene": "旧档案室的门在你面前缓缓打开。通风管道里低低的风声像有人在远处翻书。系统显示你的档案三分钟前被你自己取走了——但你现在才到。",
           "min_turns_per_session": 7,
           "soft_turns_per_session": 5,
+          "hard_turns_per_session": 7,
           "completion_anchors": ["anchor-archive-intruder"],
           "entry_state": {
             "location": "主楼地下二层旧档案室"
@@ -92,6 +94,7 @@
           "opening_scene": "钟楼的听证室里只有一张长桌、三把空椅子。桌面的台灯照着一份名单——你的名字被打印了一次，又被人用钢笔手写了一次。第二遍墨迹还没干。",
           "min_turns_per_session": 7,
           "soft_turns_per_session": 5,
+          "hard_turns_per_session": 7,
           "completion_anchors": ["anchor-hearing-reveal"],
           "entry_state": {
             "location": "钟楼一层临时听证室",
@@ -131,7 +134,8 @@
           "name": "便利店之夜",
           "opening_scene": "便利店暖黄色的灯光在雨夜中像一座孤岛。取件柜里放着一个三年前寄出的箱子，收件人备注写着：别让他一个人去钟楼。",
           "min_turns_per_session": 7,
-          "soft_turns_per_session": 5,
+          "soft_turns_per_session": 4,
+          "hard_turns_per_session": 6,
           "completion_anchors": ["anchor-package-reveal"],
           "entry_state": {
             "location": "校内24小时便利店",
@@ -166,7 +170,10 @@
         {
           "name": "钟楼零点",
           "opening_scene": "午夜前五分钟，你用包裹里的黄铜钥匙打开了钟楼地下从未出现在地图上的门。门后不是机械室，而是一座被无数新生档案围绕的黑色祭坛。每一份档案都连着一根细如血管的红线，汇入中央沉睡的人影。那个与你长着同一张脸的人睁开眼睛，说三年前把包裹寄出去的不是过去的你，而是第一次从这里逃出去的他。",
-          "soft_turns_per_session": 6,
+          "soft_turns_per_session": 3,
+          "hard_turns_per_session": 5,
+          "max_turns_per_session": 10,
+          "completion_anchors": ["anchor-seal-truth", "anchor-impostor-truth"],
           "entry_state": {
             "location": "钟楼地下封印室",
             "items": ["黄铜钥匙", "三年前的警告信", "旧档案室异常记录", "听证会决议书"],
@@ -217,6 +224,7 @@
     }
   ],
   "max_turns_per_session": 10,
+  "max_turns_per_campaign": 50,
   "constraints": "不要在进入钟楼地下封印室前揭示最终实验体的身份；保持渐进式的悬疑感和紧张氛围；NPC不能无故消失；最终选择必须来自玩家行动，不能替玩家决定；结局应回收红色标记、冒充者、三年前的包裹和黄铜钥匙",
   "ending_routes": [
     {

@@ -67,9 +67,17 @@ class Harness:
         )
         self.gen.campaign_manager_provider = lambda sid, slot: self.manager
         self.gen._handle_opening_scene = AsyncMock(return_value=None)
-        self.gen._build_prompt = AsyncMock(return_value=(
-            "P", SimpleNamespace(sections=None, final_prompt="", temperature=0.7), [], [], 0,
-        ))
+        async def build_prompt_stub(*args, **kwargs):
+            # Preserve the production hard-convergence side effect while
+            # avoiding retrieval/prompt construction in transaction tests.
+            if self.manager.is_hard_limit_reached():
+                self.manager.stage_forced_completion_anchor()
+            return (
+                "P", SimpleNamespace(sections=None, final_prompt="", temperature=0.7),
+                [], [], 0,
+            )
+
+        self.gen._build_prompt = AsyncMock(side_effect=build_prompt_stub)
         # _apply_post_generation runs for real: the NPC relation overlay is
         # part of the consistency surface under test.
         # Exercise the actual versioned snapshot lifecycle, including fresh
@@ -208,6 +216,9 @@ async def test_boundary_recap_failure_keeps_turn_count_unchanged(tmp_path):
     h = Harness(tmp_path)
     h.manager.progress.turn_in_session = 29
     h.manager.progress.turns_total = 45  # allocation is exhausted → boundary
+    h.manager.progress.revealed_anchors.extend([
+        "anchor-discover-mark", "anchor-receive-tasks",
+    ])
     h.manager.save_progress()
     assert h.progress_row()["turn_in_session"] == 29
 
@@ -255,6 +266,9 @@ async def test_boundary_decay_deferred_until_commit(tmp_path):
     )
     h.manager.progress.turn_in_session = 29
     h.manager.progress.turns_total = 45
+    h.manager.progress.revealed_anchors.extend([
+        "anchor-discover-mark", "anchor-receive-tasks",
+    ])
     h.manager.save_progress()
 
     original = h.db.commit_story_turn
@@ -352,6 +366,9 @@ async def test_reset_to_initial_from_later_chapter(tmp_path):
 async def test_session_boundary_recap_failure_still_commits(tmp_path):
     h = Harness(tmp_path)
     h.manager.progress.turn_in_session = 29  # next advance crosses max_turns=30
+    h.manager.progress.revealed_anchors.extend([
+        "anchor-discover-mark", "anchor-receive-tasks",
+    ])
     h.manager._recap.generate_recap = AsyncMock(side_effect=RuntimeError("recap down"))
 
     closing = await h.generate()

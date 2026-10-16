@@ -29,7 +29,7 @@ def main():
     assert args.campaigns.resolve() != (root / "backend/data/campaigns").resolve()
     args.campaigns.mkdir(parents=True, exist_ok=True)
     args.out.mkdir(parents=True, exist_ok=True)
-    base = json.loads((root / "backend/data/campaigns/budget_five_test_campaign.json").read_text())
+    base = json.loads((root / "scripts/fixtures/budget_five_test_campaign.json").read_text())
     for filename, budget in [("integration-five.json", 5), ("integration-transition.json", 12)]:
         target = args.campaigns / filename
         campaign = json.loads(json.dumps(base))

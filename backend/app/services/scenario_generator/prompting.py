@@ -5,6 +5,7 @@ import inspect
 from app.services.prompt_builder import PromptInput
 from app.services.prompt_builder.prompts import (
     FINAL_TURNS_OPTION_CONTRACT,
+    HARD_TURNS_OPTION_CONTRACT,
     SOFT_TURNS_OPTION_CONTRACT,
 )
 from app.services.campaign_endings import (
@@ -40,6 +41,10 @@ class PromptBuildMixin:
             progress = campaign_manager.progress
             closing_pending = campaign_manager.is_closing_pending()
             should_close = campaign_manager.should_begin_closing_after_next_turn()
+            hard_limit = campaign_manager.is_hard_limit_reached()
+            forced_anchor = None
+            if type(hard_limit) is bool and hard_limit:
+                forced_anchor = campaign_manager.stage_forced_completion_anchor()
             if type(closing_pending) is bool and closing_pending and not is_final_session(
                 campaign_manager.campaign, progress
             ):
@@ -52,6 +57,13 @@ class PromptBuildMixin:
                     f"目标下一幕：{next_name}。目标场景事实：{next_opening}\n"
                     "本回合结尾应自然抵达该场景的行动入口。输出选项必须是在新场景中立刻可执行的不同推进方式。"
                 )
+            elif forced_anchor is not None:
+                campaign_context += (
+                    "\n## 核心剧情强制补完指令\n"
+                    f"{HARD_TURNS_OPTION_CONTRACT}"
+                    "本回合必须完成的核心事件：\n"
+                    f"- {forced_anchor.name}：{forced_anchor.description}"
+                )
             elif type(should_close) is bool and should_close and not is_final_session(
                 campaign_manager.campaign, progress
             ):
@@ -63,13 +75,13 @@ class PromptBuildMixin:
                     f"下一幕：{next_name}。结尾选项必须是进入下一幕的不同方式，"
                     "每项都要带来不同的线索、风险、关系或资源变化；不要提供继续观察、等待等空转选项。"
                 )
-            elif type(should_close) is bool and should_close and is_final_session(
+            elif type(hard_limit) is bool and hard_limit and is_final_session(
                 campaign_manager.campaign, progress
             ):
                 choices = self._final_choice_focus(campaign_manager, state)
                 campaign_context += (
                     "\n## 最终幕强制抉择指令\n"
-                    "最终幕已到达 hard_turns。先完整兑现玩家当前行动，让危机升级到必须立即选择的状态；"
+                    "最终幕核心真相已经补齐。先完整兑现玩家当前行动，让危机升级到必须立即选择的状态；"
                     "本回合不能因为局部上限而结束战役。\n"
                     f"{FINAL_TURNS_OPTION_CONTRACT}"
                     f"当前可用的确定性结局触发短语：\n{choices}"

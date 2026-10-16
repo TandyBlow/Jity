@@ -9,6 +9,10 @@
       "sessions": [
         {
           "name": "同学少年都不贱",
+          "min_turns_per_session": 3,
+          "soft_turns_per_session": 2,
+          "hard_turns_per_session": 2,
+          "completion_anchors": ["anchor-001"],
           "opening_scene": "暑假的午后，路明非提着刚买的马桶座圈，应婶婶使唤前往苏菲拉德披萨馆。他一身卡塞尔学院的挺拔姿态，却被侍者误认为上门推销。推开包间门，昔日的文学社同学徐岩岩、徐淼淼惊愕地看着他，空气里弥漫着错愕与疏离。",
           "entry_state": {
             "location": "苏菲拉德披萨馆包间",
@@ -53,6 +57,10 @@
         },
         {
           "name": "悬赏与烛光",
+          "min_turns_per_session": 3,
+          "soft_turns_per_session": 2,
+          "hard_turns_per_session": 2,
+          "completion_anchors": ["anchor-003"],
           "opening_scene": "楚子航驾车驶过城市的夜色，淡淡地问路明非生日想吃什么。随后一个电话，他在守夜人讨论区用ID“村雨”发布惊天悬赏：用一次承诺交换Aspasia订座。而路明非孤身走进湖园一号，发现整个餐厅只为他一人点亮烛光，陈雯雯一袭白裙，静静等待。",
           "entry_state": {
             "location": "湖园一号餐厅"
@@ -84,6 +92,10 @@
         },
         {
           "name": "暴雨行动",
+          "min_turns_per_session": 3,
+          "soft_turns_per_session": 2,
+          "hard_turns_per_session": 2,
+          "completion_anchors": ["anchor-004"],
           "opening_scene": "雷雨交加，楚子航与伪装成快递员的校工团队汇合。中央控制室里，曼施坦因教授紧盯着屏幕，计划在五分钟内突入润德大厦取回关键资料。与此同时，路明非的晚餐温馨宁静，两个世界在暴雨中短暂交错。",
           "entry_state": {
             "location": "润德大厦行动现场"
@@ -110,6 +122,10 @@
       "sessions": [
         {
           "name": "龙骨与调查团",
+          "min_turns_per_session": 3,
+          "soft_turns_per_session": 2,
+          "hard_turns_per_session": 2,
+          "completion_anchors": ["anchor-006"],
           "opening_scene": "楚子航从任务中负伤，被送到医院。狮心会成员用鲜花堆满病房。当鲜花撤去，他沉睡的身躯呈现古铜色，双翼骨骼微展，宛如被钉十字架的耶稣。校董会调查团同时抵达学院，安德鲁·加图索准备弹劾校长。",
           "entry_state": {
             "location": "卡塞尔学院医院病房"
@@ -141,6 +157,10 @@
         },
         {
           "name": "罪与罚的密令",
+          "min_turns_per_session": 3,
+          "soft_turns_per_session": 2,
+          "hard_turns_per_session": 2,
+          "completion_anchors": ["anchor-007"],
           "opening_scene": "校长昂热在晚间茶会上，捆住试图逃跑的芬格尔，宣布一项秘密任务：派遣路明非、楚子航和芬格尔前往中国调查龙王苏醒。他打开冰窖，展示炼金刀剑七宗罪，刀刃上的古老铭文在灯光下闪烁。",
           "entry_state": {
             "location": "卡塞尔学院冰窖"
@@ -167,6 +187,10 @@
       "sessions": [
         {
           "name": "群龙之宴",
+          "min_turns_per_session": 3,
+          "soft_turns_per_session": 2,
+          "hard_turns_per_session": 2,
+          "completion_anchors": ["anchor-008"],
           "opening_scene": "一架包机降临北京，乘客全是混血种，有人为屠龙，有人为旅游。路明非与芬格尔在机场遇见唐森，得知大量同行已涌入城市。而酒德麻衣走下私人飞机，钻进悍马，薯片妞传达了老板的死命令：必须路明非亲手杀死龙王。",
           "entry_state": {
             "location": "北京机场"
@@ -198,6 +222,10 @@
         },
         {
           "name": "王恭厂的秘密",
+          "min_turns_per_session": 3,
+          "soft_turns_per_session": 2,
+          "hard_turns_per_session": 2,
+          "completion_anchors": ["anchor-010"],
           "opening_scene": "琉璃厂深处，恺撒找到凤隆堂的老猎人林凤隆。一袋二十万美元现金换来一个惊人线索：王恭厂大爆炸是龙族言灵“莱茵”所致，通古斯和印度死丘亦是如此。龙族掌握着远超核武的精神爆裂技术，而下一场灾难即将重演。",
           "entry_state": {
             "location": "琉璃厂凤隆堂"
@@ -218,6 +246,10 @@
         },
         {
           "name": "地铁迷踪",
+          "min_turns_per_session": 3,
+          "soft_turns_per_session": 2,
+          "hard_turns_per_session": 2,
+          "completion_anchors": ["anchor-011"],
           "opening_scene": "楚子航的计算有了结果：北京地铁深夜出现异常震动，路线与地铁路网完全重合。他携带装备潜入东方广场地下，靠近王府井站，听到清洁工诡异的低语。尼伯龙根的大门似乎就在前方，夏弥的短信却突然中断。",
           "entry_state": {
             "location": "东方广场地下王府井站"
@@ -244,6 +276,10 @@
       "sessions": [
         {
           "name": "死人之国",
+          "min_turns_per_session": 3,
+          "soft_turns_per_session": 1,
+          "hard_turns_per_session": 2,
+          "completion_anchors": ["anchor-012", "anchor-013"],
           "opening_scene": "路明非在黑暗中跌入尼伯龙根，仿若坠入幽冥。楚子航随后赶到，昔日的地铁站化为龙类的国度。酒德麻衣向楚子航发送“芝麻开门”数据，但明言只有一人能活。龙王耶梦加得的身影在废墟中浮现，大地与山之王苏醒。",
           "entry_state": {
             "location": "尼伯龙根地铁站废墟"
@@ -275,6 +311,10 @@
         },
         {
       "name": "悼亡者之瞳",
+      "soft_turns_per_session": 2,
+      "hard_turns_per_session": 4,
+      "max_turns_per_session": 10,
+      "completion_anchors": ["anchor-xiami-memory", "anchor-third-party"],
       "opening_scene": "北京地下的尼伯龙根正在与现实重叠，扭曲的地铁轨道穿过城市地基。芬里厄被困在断裂高架桥下的王座上，像等待姐姐回来的孩子。耶梦加得站在他与楚子航之间，夏弥的笑容和龙王的黄金瞳在同一张脸上交替出现。湿婆业舞即将完成，学院要求立刻杀死双王，暗处的第三方却正等待夺取龙骨十字。楚子航握刀的手第一次迟疑，而你必须在城市被吞没前决定谁应当被拯救、谁必须被牺牲。",
       "entry_state": {
         "location": "尼伯龙根断裂高架桥",
@@ -355,6 +395,8 @@
       ]
     }
   ],
+  "max_turns_per_session": 5,
+  "max_turns_per_campaign": 50,
   "constraints": "1. 遵循龙族世界观，混血种和龙类能力设定；2. 角色性格需忠诚于原著，不可OOC；3. 关键剧情节点（龙骨十字、双王关系、尼伯龙根之战与湿婆业舞）必须得到回收；4. 夏弥与耶梦加得不能被简单拆成善恶两个人格，芬里厄也不能只写成怪物；5. 最终选择必须由玩家行动产生，不能替玩家决定；6. 结局必须交代楚子航、夏弥、芬里厄、现实城市、龙骨十字与第三方的结果。",
   "ending_routes": [
     {

@@ -29,11 +29,12 @@ class SessionSchema(BaseModel):
     """A single session within an arc."""
     name: str
     opening_scene: str = ""
-    # Story completion gates.  The hard limit remains
-    # ``max_turns_per_session``; these fields allow a chapter to close early
-    # only after its authored milestone has actually happened.
+    # Story completion gates.  ``soft`` focuses the available choices,
+    # ``hard`` starts deterministic convergence on missing core anchors, and
+    # ``max`` is the reserved end of the session's local budget.
     min_turns_per_session: int | None = None
     soft_turns_per_session: int | None = None
+    hard_turns_per_session: int | None = None
     max_turns_per_session: int | None = None
     completion_anchors: list[str] = Field(default_factory=list)
     anchor_events: list[AnchorEvent] = Field(default_factory=list)

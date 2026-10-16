@@ -122,30 +122,63 @@ class CampaignSessionAdvancer:
     def should_begin_closing_after_next_turn(self, campaign: Any, progress: Any) -> bool:
         """Whether the next committed turn should present session closure.
 
-        A hard turn cap forces a crisis/closure beat, never a session-index
-        change. Before that, authored completion anchors plus minimum length
-        can request the same closure beat. The player's following successful
-        transition action is what actually advances the session.
+        A session may close only after its authored completion anchors have
+        happened and its minimum length has elapsed.  Reaching ``hard_turns``
+        starts forced convergence elsewhere; it never bypasses this gate.
+        The player's following successful transition action is what actually
+        advances the session.
         """
         if campaign is None or progress is None:
             return False
         next_turn = progress.turn_in_session + 1
-        hard_turns = self.resolve_max_turns(campaign, progress)
-        if next_turn >= hard_turns:
-            return True
         try:
             session = campaign.arcs[progress.arc_index].sessions[progress.session_index]
         except (AttributeError, IndexError, TypeError):
             return False
         required = list(getattr(session, "completion_anchors", []) or [])
         if not required:
-            return False
+            # Backward-compatible fallback for campaigns that have not
+            # authored completion anchors yet.
+            return next_turn >= self.resolve_max_turns(campaign, progress)
         minimum = getattr(session, "min_turns_per_session", None)
+        hard_turns = self.resolve_hard_turns(campaign, progress)
         minimum = max(1, int(minimum)) if minimum is not None else hard_turns
-        if next_turn < min(minimum, hard_turns):
+        minimum = min(minimum, self.resolve_max_turns(campaign, progress))
+        if next_turn < minimum:
             return False
         revealed = set(getattr(progress, "revealed_anchors", []) or [])
         return all(anchor_id in revealed for anchor_id in required)
+
+    def resolve_hard_turns(self, campaign: Any, progress: Any) -> int:
+        """Turn that starts forced story convergence for the current session.
+
+        The configured threshold may be earlier, but never later than the
+        point that still leaves one turn per core anchor plus closure and
+        transition/final-choice turns inside the local allocation.
+        """
+        maximum = self.resolve_max_turns(campaign, progress)
+        try:
+            arc = campaign.arcs[progress.arc_index]
+            session = arc.sessions[progress.session_index]
+            required_count = len(getattr(session, "completion_anchors", []) or [])
+            configured = getattr(session, "hard_turns_per_session", None)
+        except (AttributeError, IndexError, TypeError):
+            required_count = 0
+            configured = None
+
+        # One turn per missing core anchor, then one closure/choice turn and
+        # one transition/ending turn.  ``+1`` because the hard turn itself is
+        # the first convergence turn.
+        latest_safe = max(1, maximum - (required_count + 2) + 1)
+        if configured is None:
+            return latest_safe
+        return max(1, min(int(configured), latest_safe, maximum))
+
+    def is_hard_limit_reached(self, campaign: Any, progress: Any) -> bool:
+        """Return true when only deterministic main-story progress is valid."""
+        if campaign is None or progress is None:
+            return False
+        return progress.turn_in_session + 1 >= self.resolve_hard_turns(campaign, progress)
 
     def is_soft_limit_reached(self, campaign: Any, progress: Any) -> bool:
         """Return true when a session needs decisive forward pressure."""

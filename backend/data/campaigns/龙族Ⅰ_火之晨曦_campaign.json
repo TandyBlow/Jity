@@ -9,6 +9,10 @@
       "sessions": [
         {
           "name": "Session 1: 平凡世界的裂痕",
+          "min_turns_per_session": 3,
+          "soft_turns_per_session": 2,
+          "hard_turns_per_session": 2,
+          "completion_anchors": ["anchor-gen-0-0-1"],
           "opening_scene": "你，路明非，一个寄人篱下的普通高中生，在堂弟的嘲笑和婶婶的唠叨中度过每一天。然而，萦绕不去的梦境——白帝城的火海，高高悬挂的男孩，以及那个白衣哥哥的悲鸣——却是你无法向人倾诉的秘密。此刻，你刚刚从噩梦中惊醒，窗外是现实世界庸常的黄昏。",
           "entry_state": {
             "location": "婶婶家中的卧室",
@@ -46,6 +50,10 @@
         },
         {
           "name": "Session 2: 卡塞尔之门",
+          "min_turns_per_session": 3,
+          "soft_turns_per_session": 2,
+          "hard_turns_per_session": 2,
+          "completion_anchors": ["anchor-gen-0-1-1"],
           "opening_scene": "芝加哥火车站，冰冷的雨夜。你独自拖着行李箱，寻找一趟传说中的CC1000次快车。时刻表上没有它的踪迹，只有一个嬉皮笑脸的白人青年和你一样在等待。他说他叫芬格尔，是卡塞尔学院的万年留级生。当你们在候车大厅昏昏欲睡时，一幅毁天灭地的画卷猛地闯入你的脑海——巨树、白骨、黑色的龙……",
           "entry_state": {
             "location": "芝加哥火车站候车大厅"
@@ -83,6 +91,10 @@
       "sessions": [
         {
           "name": "Session 3: 自由一日",
+          "min_turns_per_session": 3,
+          "soft_turns_per_session": 2,
+          "hard_turns_per_session": 2,
+          "completion_anchors": ["anchor-gen-1-0-0"],
           "opening_scene": "诺顿馆内，学生会的最后会议气氛凝重。自由一日的败北意味着他们必须交出这座标志性建筑，而击败他们的，竟是一个毫不起眼的新生。你，路明非，糊里糊涂地在狙击战中“击杀”了恺撒·加图索和楚子航，成为新生联谊会的老大。然而，胜利的喜悦还没尝够，奇兰就带着一群新生跪求你来领导他们。",
           "entry_state": {
             "location": "诺顿馆"
@@ -103,6 +115,10 @@
         },
         {
           "name": "Session 4: 3E考试与S级评定",
+          "min_turns_per_session": 3,
+          "soft_turns_per_session": 2,
+          "hard_turns_per_session": 2,
+          "completion_anchors": ["anchor-gen-1-1-0"],
           "opening_scene": "教室里一片死寂，曼施坦因教授宣布3E考试开始：一张空白的试卷，一段诡异的音乐。别人在苦思冥想，而你却从低音区的龙文咒文中听到了答案。你偷偷在胳膊上画满小抄，却不知这一切都被诺诺看在眼里。考试结束，你即将被评定为S级，那个叫奇兰的印度新生再次恳求你领导新生联谊会，甚至流下了眼泪。",
           "entry_state": {
             "location": "卡塞尔学院3E考试教室"
@@ -140,6 +156,10 @@
       "sessions": [
         {
           "name": "Session 5: 龙渊之暗",
+          "min_turns_per_session": 3,
+          "soft_turns_per_session": 2,
+          "hard_turns_per_session": 2,
+          "completion_anchors": ["anchor-gen-2-0-0"],
           "opening_scene": "卡塞尔学院地下，迷宫般的甬道深不见底。代号“13号”的职业探险家受雇潜入，沿着命运三女神的地图，前往没有出口的“诗蔻迪”区域。他的任务只是观察并报告一个黄铜罐，却不知罐中封印着龙王诺顿的心脏。与此同时，英灵殿中学生会B组全副武装，恺撒坐镇中央，防备着未来的风暴。",
           "entry_state": {
             "location": "卡塞尔学院地下甬道"
@@ -160,6 +180,10 @@
         },
         {
           "name": "Session 6: 龙穴开启",
+          "min_turns_per_session": 3,
+          "soft_turns_per_session": 2,
+          "hard_turns_per_session": 2,
+          "completion_anchors": ["anchor-gen-2-1-0"],
           "opening_scene": "13号在石英玻璃腔外窥视黄铜罐，罐中传来的低语让他头晕目眩。仓皇逃离中，他遗落了一个灰锡瓶。一名神秘人捡起瓶子，用黑卡打开封闭的龙穴，切断了诺玛的通讯，将瓶中的液体倾倒入真空室。沉睡的龙王之心，开始重新擂动！",
           "entry_state": {
             "location": "龙穴石英玻璃腔外"
@@ -180,6 +204,10 @@
         },
         {
           "name": "Session 7: 青铜城绝地",
+          "min_turns_per_session": 3,
+          "soft_turns_per_session": 2,
+          "hard_turns_per_session": 2,
+          "completion_anchors": ["anchor-gen-2-2-0", "anchor-gen-2-2-1"],
           "opening_scene": "青铜城的机械通道在你和诺诺身后轰然关闭，顶部青铜巨壁正一寸寸压下。你割开手腕，将鲜血涂满活灵门，祈祷它能再次开启。诺诺紧紧抱住你，氧气泄漏的咝咝声如同死神的低语。你们背负着从叶胜遗骸上取下的金属匣——那可能是唯一能杀死龙王的武器。",
           "entry_state": {
             "location": "青铜城机械通道"
@@ -217,6 +245,10 @@
       "sessions": [
         {
           "name": "Session 8: 七宗罪的裁决",
+          "min_turns_per_session": 3,
+          "soft_turns_per_session": 1,
+          "hard_turns_per_session": 2,
+          "completion_anchors": ["anchor-gen-3-0-0"],
           "opening_scene": "青铜城废墟之上，龙王诺顿以老唐的面貌冷冷注视着你。他身后，康斯坦丁的虚影在火光中若隐若现。你手中的金属匣展开为七把形态各异的刀剑——七宗罪。你必须做出选择：用这禁忌的武器斩杀昔日的朋友，抑或寻找另一条生路。但龙王不会给你时间，龙炎已经铺天盖地而来。",
           "entry_state": {
             "location": "青铜城废墟"
@@ -237,6 +269,10 @@
         },
         {
           "name": "Session 9: 青铜与火的葬礼",
+          "soft_turns_per_session": 2,
+          "hard_turns_per_session": 4,
+          "max_turns_per_session": 10,
+          "completion_anchors": ["anchor-norton-memory", "anchor-constantine-truth"],
           "opening_scene": "青铜城正在江面下缓缓上升，熔红的宫殿照亮漆黑水域。学院的最终攻击已经进入倒计时，城内却仍有尚未撤出的同伴。康斯坦丁残留的龙骨与意识被固定在炼金阵中央，成为诺顿彻底失控的原因。诺顿披着老唐的面容站在火海前，短暂认出了你。他身后的七宗罪同时鸣响，而你只有几分钟决定，是执行屠龙命令、唤回老唐、让兄弟共同长眠，还是伸手夺取青铜与火的权柄。",
           "entry_state": {
             "location": "上升中的青铜城王殿",
@@ -309,6 +345,8 @@
       ]
     }
   ],
+  "max_turns_per_session": 5,
+  "max_turns_per_campaign": 50,
   "constraints": "保持青铜城最终战的压迫感与倒计时；诺顿必须同时呈现龙王的威严和老唐残存的人性；不能把诺顿、康斯坦丁或学院简单写成纯粹善恶；最终选择必须由玩家行动产生；结局应回收老唐的记忆、康斯坦丁的遗骸、七宗罪、学院最终攻击和同伴撤离情况；结局后的校长办公室、成绩单或神秘信件只能作为尾声出现",
   "ending_routes": [
     {

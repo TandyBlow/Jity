@@ -31,6 +31,12 @@ class MetricsFacade:
     def should_begin_closing_after_next_turn(self) -> bool:
         return self._advancer.should_begin_closing_after_next_turn(self.campaign, self.progress)
 
+    def resolve_hard_turns(self) -> int:
+        return self._advancer.resolve_hard_turns(self.campaign, self.progress)
+
+    def is_hard_limit_reached(self) -> bool:
+        return self._advancer.is_hard_limit_reached(self.campaign, self.progress)
+
     def is_soft_limit_reached(self) -> bool:
         return self._advancer.is_soft_limit_reached(self.campaign, self.progress)
 

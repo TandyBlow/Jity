@@ -4,6 +4,7 @@ from app.services.prompt_builder.builder import _style_and_rules
 from app.services.prompt_builder.input import PromptInput
 from app.services.prompt_builder.prompts import (
     FINAL_TURNS_OPTION_CONTRACT,
+    HARD_TURNS_OPTION_CONTRACT,
     OPTION_CHECKS_CONTRACT,
     OPTION_IMPACT_CONTRACT,
     SOFT_TURNS_OPTION_CONTRACT,
@@ -42,6 +43,12 @@ def test_soft_turns_contract_forbids_every_idle_option_class():
     assert "重复观察、重复询问" in SOFT_TURNS_OPTION_CONTRACT
     assert "2 到 4 个推进选项" in SOFT_TURNS_OPTION_CONTRACT
     assert "不能提前宣告本幕结束" in SOFT_TURNS_OPTION_CONTRACT
+
+
+def test_hard_turns_contract_requires_core_story_before_transition():
+    assert "强制补齐核心剧情的起点" in HARD_TURNS_OPTION_CONTRACT
+    assert "核心锚点没有完成前不得转场" in HARD_TURNS_OPTION_CONTRACT
+    assert "必须在本回合正文中完整发生" in HARD_TURNS_OPTION_CONTRACT
 
 
 def test_final_turns_contract_separates_local_hard_cap_from_global_budget():
