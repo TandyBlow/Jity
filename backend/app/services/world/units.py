@@ -1,9 +1,9 @@
 """Unit-level candidate validation and unit content hashes.
 
-Coverage rules, pinned against every staged group in the traces: task
+Coverage rules (2026-10-22 ruling per the workflow design §6.3): task
 coverage always lists the world's full character set; personality coverage
-stays empty unless the unit achieves tasks, and then lists the whole cast
-for the time-scan unit or exactly the group's actors for a named group.
+stays empty unless the unit achieves tasks, and then lists the whole cast —
+named groups exactly like the time-scan unit, never only the members.
 Cross-unit actor uniqueness is the A-side ruling of 2026-10-22: one actor
 acts in at most one unit per point, which makes cross-unit position
 conflicts unreachable.
@@ -41,7 +41,7 @@ def validate_unit(unit: SettlementGroup, world_roster: frozenset[Id]) -> tuple[V
     if set(unit.personalityCoverageIds) != expected:
         violations.append(Violation(
             'coverage', 'personality coverage must stay empty without achieved tasks, '
-                        'else list the whole cast for a time-scan unit or the actors of a group'))
+                        'else list the world\'s full character set'))
     if not set(unit.personalities) <= set(unit.personalityCoverageIds):
         violations.append(Violation(
             'coverage', f'personality changes {sorted(set(unit.personalities) - set(unit.personalityCoverageIds))} '

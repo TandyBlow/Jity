@@ -1,0 +1,12 @@
+{
+  "comment": "Calendar-addition cases for advance_time. Month/year additions clamp to the month end (ruling of 2026-10-22); other units add wall-clock seconds. ordinal is the instantOrdinal after the advance.",
+  "cases": [
+    {"from": "2026-01-31T00:00:00", "advance": {"boundary": "elapsed", "duration": {"amount": 1, "unit": "month"}}, "dateTime": "2026-02-28T00:00:00", "ordinal": 0},
+    {"from": "2024-01-31T12:00:00", "advance": {"boundary": "elapsed", "duration": {"amount": 1, "unit": "month"}}, "dateTime": "2024-02-29T12:00:00", "ordinal": 0},
+    {"from": "2024-02-29T00:00:00", "advance": {"boundary": "elapsed", "duration": {"amount": 1, "unit": "year"}}, "dateTime": "2025-02-28T00:00:00", "ordinal": 0},
+    {"from": "2026-01-01T00:00:00", "advance": {"boundary": "elapsed", "duration": {"amount": 14, "unit": "month"}}, "dateTime": "2027-03-01T00:00:00", "ordinal": 0},
+    {"from": "2026-01-01T23:00:00", "advance": {"boundary": "elapsed", "duration": {"amount": 90, "unit": "minute"}}, "dateTime": "2026-01-02T00:30:00", "ordinal": 0},
+    {"from": "2026-12-31T23:59:59", "advance": {"boundary": "elapsed", "duration": {"amount": 1, "unit": "second"}}, "dateTime": "2027-01-01T00:00:00", "ordinal": 0},
+    {"from": "2026-03-15T08:00:00", "advance": {"boundary": "instant", "duration": {"amount": 0, "unit": "second"}}, "dateTime": "2026-03-15T08:00:00", "ordinal": 6}
+  ]
+}

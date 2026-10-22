@@ -48,15 +48,22 @@
 | 1 | 单元级候选校验、单元外层顺序、覆盖清单 | 正反例全绿；给 A2 的纯谓词签名冻结。覆盖规则已按裁决钉死（server.md 已钉结论 #8）：taskCoverage=世界全体；personalityCoverage 无达成=空、有达成=世界全员（组与扫描同规则，§6.3 为准）；T03-collapse 组为已知偏差夹具，validate 断言其违规 |
 | 2 | 自建负例夹具（`backend/tests/fixtures/world/`，约 15 条，现有夹具零覆盖）：固定实体违规、同点 supersedes、跨房间 relative、任务环、个性无达成、理智/个性配对、slot 归属、pure-removal（`text: null + supersedes`）等 | 每条挂映射表出口并断言违规分类；违规分类法与 A2 映射表随本项成文进 server.md，作为 A2 验收输入（初稿见下表） |
 
-映射表初稿（A2 交付时复核；已按决策「不新增码」锁定方向）：
+映射表初稿（A2 交付时复核；已按决策「不新增码」锁定方向；2026-10-22 A1b-2 补全阶梯 kind 与内核违规分类）：
 
-| 违规类 | A2 出口码 | 依据 |
+| 违规类 / 阶梯 kind / 内核分类 | A2 出口码 | 依据 |
 |---|---|---|
-| ID 引用不可解析 | `version_mismatch` | 注释含 "unknown identities"；该码 409＋`refresh_context`，ID 不可解析时可能刷新后重试到同一错误，H1 真实负分支复核是否误导（与下行一并） |
-| 提交点与封存前缀不符（kind/时长/绑定） | `version_mismatch`（`details.reason=prefix_binding_mismatch`） | T08 s9 实测 409；`point_time_locked` 只属 `set_point_time` |
-| 内容语义非法（任务环、跨房间 relative、个性无达成、跨单元同 actor、同点跨组 supersedes 等） | `request_malformed` | 400 `fix_request`；跨单元同 actor 沿用 v1 唯一性意图（2026-10-22 拍板）；H1 用真实负分支复核是否误导客户端 |
-| 位置/阶梯非法 | `phase_invalid` | 注释 "current phase or work position"（A2 判定） |
-| 点时间已锁仍改 | `point_time_locked` | 既有码 |
+| 阶梯 kind `phase` | `phase_invalid` | 注释 "current phase or work position" |
+| 阶梯 kind `pointWork`（矩阵行与 open-work 局部不变量） | `phase_invalid` | 操作在当前点状态下不允许，客户端刷新上下文即可恢复 |
+| 阶梯 kind `activePendingGroup`/`settledUnits` | `phase_invalid` | 同上 |
+| 阶梯 kind `timeLocked`≡`confirmedWork` | `point_time_locked` | 既有码；`point_time_locked` 只属 `set_point_time` 语义 |
+| 阶梯 kind `paused` | `paused` | 既有码 |
+| 阶梯 kind `gate` | `narration_blocked` | gate pending＝head 叙事未就绪 |
+| 内核 `ID_UNRESOLVED`；阶梯 kind `roster`（角色键不在册） | `version_mismatch` | 注释含 "unknown identities"；409＋`refresh_context` 有刷新循环风险，H1 负分支复核（与 request_malformed 行一并） |
+| 内核 `SEMANTIC_INVALID`；阶梯 kind `coverage`/`identity`；同点跨组 supersedes、月/年规则外行为 | `request_malformed` | 400 `fix_request`；跨单元同 actor 沿用 v1 唯一性意图（拍板）；H1 用真实负分支复核是否误导客户端 |
+| 内核 `POSITION_INVALID` | `request_malformed` | 跨单元同 actor 违规使其不可达，仅防御性存在 |
+| 内核 `TIME_LOCKED` | `point_time_locked` | 既有码 |
+| 内核 `PREFIX_BINDING` | `version_mismatch`（`details.reason=prefix_binding_mismatch`） | T08 s9 实测 409 |
+| schema 层拒绝（任务环、个性无达成、理智/个性不配对、同批 supersedes、无 supersedes 的纯删除） | `request_malformed` | pydantic 校验失败即 schema 级畸形 |
 | 其余 | 按 `ERROR_CODES` 注释逐一对号 | 不新增码 |
 
 ## 五、验收与收尾
