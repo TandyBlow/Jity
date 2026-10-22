@@ -53,7 +53,8 @@
 | 违规类 | A2 出口码 | 依据 |
 |---|---|---|
 | ID 引用不可解析 | `version_mismatch` | 注释含 "unknown identities"；该码 409＋`refresh_context`，ID 不可解析时可能刷新后重试到同一错误，H1 真实负分支复核是否误导（与下行一并） |
-| 内容语义非法（任务环、跨房间 relative、个性无达成等） | `request_malformed` | 400 `fix_request`；H1 用真实负分支复核是否误导客户端 |
+| 提交点与封存前缀不符（kind/时长/绑定） | `version_mismatch`（`details.reason=prefix_binding_mismatch`） | T08 s9 实测 409；`point_time_locked` 只属 `set_point_time` |
+| 内容语义非法（任务环、跨房间 relative、个性无达成、跨单元同 actor、同点跨组 supersedes 等） | `request_malformed` | 400 `fix_request`；跨单元同 actor 沿用 v1 唯一性意图（2026-10-22 拍板）；H1 用真实负分支复核是否误导客户端 |
 | 位置/阶梯非法 | `phase_invalid` | 注释 "current phase or work position"（A2 判定） |
 | 点时间已锁仍改 | `point_time_locked` | 既有码 |
 | 其余 | 按 `ERROR_CODES` 注释逐一对号 | 不新增码 |

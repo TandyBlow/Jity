@@ -38,6 +38,7 @@ Python 预期工具只对手写 expectedProjection 绑定身份，按既有 worl
 | `units.py` | `next_working_progress(...) -> WorkingProgress` | stage_unit/skip 后的工作进度推进纯函数，A2 决定何时调用 |
 | `merge.py` | `point_entity_deltas(groups, time_scan) -> dict[Id, EntityDelta]` | **入参即含 `time_scan: SettlementGroup | None`**（该点已存 `stage_time_scan` 候选）；外序显著；不变量 `entityDeltas == collapse(merge(groups ∪ timeScan))` |
 | `merge.py` | `collapse_tasks(added, achieved) -> (added, achieved)` | 塌缩两步缺一不可：本点新增且已达成的 ID 从 `tasksAchieved` 摘除＋该新增记录置 `status:"achieved"`（T03-collapse 夹具；只做一半任一步都假失败） |
+| `commit.py` | `verify_point_binding(point: TimelinePoint, sealed_prefix) -> tuple[Violation, ...]` | 提交点与封存前缀比对（kind/timeAdvance/绑定）；T08 s9 证实必需，出口 `version_mismatch`（`details.reason=prefix_binding_mismatch`），非 `point_time_locked`（后者只属 `set_point_time`） |
 | `commit.py` | `apply_point(state, *, time_advance, deltas, point) -> WorldState` | 时间推进＋逐实体应用：positionSet 覆盖、描述变更入 `StoredDescriptionChange`（sourcePointId/sourceSequence/active＋supersedes 失活链）、sanity 覆盖、任务提升与挂树 |
 | `preview.py` | `preview_working_state(state, time_advance, deltas) -> WorldState`；`preview_projection(...) -> PreviewData` 形 | 与 commit 同一条合并路，不落存储；`mergedEntityDeltas == pointProjection.entityDeltas` 由模型校验 |
 | `preview.py` | `preview_over_budget(request_bytes, response_bytes) -> Violation \| None` | 请求 512 KiB / 响应 2 MiB 判定侧（`preview_budget_exceeded`） |
@@ -47,14 +48,15 @@ Python 预期工具只对手写 expectedProjection 绑定身份，按既有 worl
 
 内核覆盖：`create_world`、`commit_point`、`preview_point`、`get_state`/`list_points` 的读出、`checkpoint_stage_unit`/`checkpoint_stage_time_scan` 的候选校验与 contentHash。不进 A1：lease/narration/rolls（A3）、pause/resume/conclude/cancel/prepare_successor/restore_group_work（A2/A3）；控制阶梯谓词（begin/discover/extend/close/stage/seal 的合法性）由 A1b 以纯函数交付、A2 消费，A1a 不实现。
 
-## 待钉点（实现时以轨迹钉死，逐条落断言）
+## 已钉结论（B 实跑＋A 拍板，2026-10-22；原待钉点清零）
 
-1. `unit_content_hash` 公式：T01 候选请求 ↔ 响应 `settledUnits[].contentHash` 离线复算。
-2. 跨组同点 `supersedes` 与 `positionSet` 冲突语义（schema 只禁同批内同点 supersedes）。
-3. 月/年 `Duration` 的日历加法规则（`WorldTime.dateTime` 字符串运算）。
-4. preview 叠加边界：请求 `settlementGroups` 与已存 settledUnits/timeScan 的关系（notes：from the authoritative baseline 重算）。
-5. T03-collapse 的前置点链与回放起点（seq=4，非 T03 直接延续）。
-6. supersedes 失活链的跨点行为（`StoredDescriptionChange.active` 翻转时机；v1 夹具 `pureRemoval` 在 v2 零覆盖，A1b 自建）。
+1. **unit contentHash**：`canonical_digest(SettlementGroup.model_validate(cand).model_dump(mode='json'))`——B 对 18 个 `stage_unit` 步骤 ×2 样本全命中（T01 `c7ff254c…` 等）；A1a-2 测试已固化（断言所有成功响应 `work.settledUnits[]`；T07/T09 恢复场景的组在前置场景 stage、本轨迹不带候选字节，副本语义归 A3）。职责出处：该「A1/A3 responsibility」原文在 `v2/projections.py` 的 `prefix_projection` docstring；registry/api-contract 只有 `get_state` 的 "Rebuilds ... from the canonical projection"，两者不混引。
+2. **世界线与回放起点**（B 实测，摘要逐位）：`root_0 9301b799 (11:59:00/0)` → T01 p1 → `4f5a33e7`（=normal）；T02/T08 从 4f5a33e7 后分叉 `32256da8` → p2 instant `9dd127b0 (11:59:02/1)` → p3 linked 3s `85848d51`（=segmented，11:59:05/0）→ T04 p4 `e189aed7 (11:59:07/0)`、T03-collapse p4 `4bbc7728`；T02-empty-linked 从 32256da8 起 p2 同 `9dd127b0`、p3 linked 0s `312f65d3 (11:59:02/2)`；T03 纯时间 +60s `61569325`（=time）。回放与不变量**必须过滤 `responseKind == 'success'`**：T08 s9 是 `commit_point` 409 `version_mismatch`/`prefix_binding_mismatch`（时间 3s 与已封存前缀 2s 不符），不是成功 commit。
+3. **时间语义**（B 五锚点全部吻合）：零时长 instant 点在同一 `dateTime` 上递增 `instantOrdinal`，有推进的点重置为 0；`32256da8`=11:59:02/0、`9dd127b0`=/1、`312f65d3`=/2、`85848d51`=11:59:05/0、`e189aed7`=11:59:07/0。A1a-4 照此实现。
+4. **preview 边界**：只吃请求里的 `settlementGroups`，绝不叠加已存 settledUnits（追加型变化会重复计）；A1b 补「同点外貌变化被 preview 两次只出现一次」断言。
+5. **supersedes 失活链**：同点新增链跨组＝同点 supersedes，schema 已禁，merge 阶段判违规；跨点只允许引用旧点 id，旧记录 `active=false`，新记录 `sourcePointId/sourceSequence` 取提交点。
+6. **跨组 positionSet（拍板）**：沿用 v1 意图——跨单元同 actor 判违规（内容语义非法→`request_malformed`），位置冲突随之不可达；不取 last-wins（把「谁生效」绑到外序语义且无夹具支撑）。
+7. **月/年时长**：v2 全夹具零覆盖；定为公历夹月末（clamp to month end），A1b 自建夹具，H1 记一笔待确认。
 
 ## 固定预期绑定（A1a-2 直接采用）
 
