@@ -11,6 +11,17 @@ from app.schemas.world.contracts import TimeAdvance, WorldTime
 
 _SECONDS = {'second': 1, 'minute': 60, 'hour': 3600, 'day': 86400}
 
+# The first confirmed action/target/skip/time-scan locks time in the same
+# transaction (set_point_time notes); A2 folds this predicate into each
+# checkpoint transaction to flip PointWorkView.timeLocked.
+TIME_LOCK_EVENTS = frozenset({
+    'target_confirmed', 'member_admitted', 'skip_recorded', 'time_scan_staged',
+})
+
+
+def time_lock_trigger(event: str) -> bool:
+    return event in TIME_LOCK_EVENTS
+
 
 def advance_time(at: WorldTime, advance: TimeAdvance) -> WorldTime:
     if advance.duration.amount == 0:
