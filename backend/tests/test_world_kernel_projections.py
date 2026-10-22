@@ -38,7 +38,8 @@ def staged_candidates(trace_doc, values):
     for step in trace_doc['steps']:
         if step.get('operation') in STAGE_OPS and step.get('responseKind') == 'success':
             candidates = instantiate(step['request']['candidates'], values)
-            staged.setdefault(candidates.get('groupId'), candidates)
+            first = staged.setdefault(candidates.get('groupId'), candidates)
+            assert first == candidates, 'group restaged with different candidates'
     return staged
 
 

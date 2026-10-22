@@ -22,7 +22,7 @@ Python 预期工具只对手写 expectedProjection 绑定身份，按既有 worl
 
 # A1a-1：内核函数面与模块划分
 
-日期：2026-10-22。基线 `79f8120`，计划见 [a1-kernel-plan](../world-protocol/v2/a1-kernel-plan.md)。内核是对既有 `WorldState`（`backend/app/schemas/world/contracts.py`，权威不变）与 `canonical_digest`/`prefix_projection` 的纯函数；模块新建于 `backend/app/services/world/`。语义权威为 v2 registry notes、v2 请求模型与 11 份轨迹；只消费 v2 类型（`v2.work.SettlementGroup`、`v2.requests.CommitPointRequest` 等），不 import v1 形态（`PointCommitRequest`/`RoundCheckpoint`/`SettlementCandidates`/`PreviewRequest`/`RollRequest`），以 import 边界断言固化。
+日期：2026-10-22。基线 `79f8120`，计划见 [a1-kernel-plan](../world-protocol/v2/a1-kernel-plan.md)。内核是对既有 `WorldState`（`backend/app/schemas/world/contracts.py`，权威不变）与 `canonical_digest`/`prefix_projection` 的纯函数；模块新建于 `backend/app/services/world/`，共 **15 个函数**（violations 为类型模块）。语义权威为 v2 registry notes、v2 请求模型与 11 份轨迹；只消费 v2 类型（`v2.work.SettlementGroup`、`v2.requests.CommitPointRequest` 等），不 import v1 形态（`PointCommitRequest`/`RoundCheckpoint`/`SettlementCandidates`/`PreviewRequest`/`RollRequest`），以 import 边界断言固化。
 
 ## 模块与签名
 
@@ -51,7 +51,20 @@ Python 预期工具只对手写 expectedProjection 绑定身份，按既有 worl
 ## 已钉结论（B 实跑＋A 拍板，2026-10-22；原待钉点清零）
 
 1. **unit contentHash**：`canonical_digest(SettlementGroup.model_validate(cand).model_dump(mode='json'))`——B 对 18 个 `stage_unit` 步骤 ×2 样本全命中（T01 `c7ff254c…` 等）；A1a-2 测试已固化（断言所有成功响应 `work.settledUnits[]`；T07/T09 恢复场景的组在前置场景 stage、本轨迹不带候选字节，副本语义归 A3）。职责出处：该「A1/A3 responsibility」原文在 `v2/projections.py` 的 `prefix_projection` docstring；registry/api-contract 只有 `get_state` 的 "Rebuilds ... from the canonical projection"，两者不混引。
-2. **世界线与回放起点**（B 实测，摘要逐位）：`root_0 9301b799 (11:59:00/0)` → T01 p1 → `4f5a33e7`（=normal）；T02/T08 从 4f5a33e7 后分叉 `32256da8` → p2 instant `9dd127b0 (11:59:02/1)` → p3 linked 3s `85848d51`（=segmented，11:59:05/0）→ T04 p4 `e189aed7 (11:59:07/0)`、T03-collapse p4 `4bbc7728`；T02-empty-linked 从 32256da8 起 p2 同 `9dd127b0`、p3 linked 0s `312f65d3 (11:59:02/2)`；T03 纯时间 +60s `61569325`（=time）。回放与不变量**必须过滤 `responseKind == 'success'`**：T08 s9 是 `commit_point` 409 `version_mismatch`/`prefix_binding_mismatch`（时间 3s 与已封存前缀 2s 不符），不是成功 commit。
+2. **世界线与回放起点**（B 实测，摘要逐位；三条分支并排，回放各自独立挂起点）：
+
+```
+9301b799 (root_0, 11:59:00/0)
+├ 32256da8 (11:59:02/0, 无 Δ；= root 只换时间，T02 s12 / T08 s10 实测)
+│   ├ T02 p1 → p2 instant 9dd127b0 (11:59:02/1) → p3 linked 3s 85848d51 (=segmented, 11:59:05/0)
+│   │      └ T04 p4 +2s e189aed7 (11:59:07/0)；T03-collapse p4 +2s 4bbc7728
+│   ├ T08 p1（s9 error 跳过）
+│   └ T02-empty-linked p2 同 9dd127b0 → p3 linked 0s 312f65d3 (11:59:02/2)
+├ 4f5a33e7 (11:59:02/0 ＋ person_a→corridor)   ← T01 p1（= normal 快照）
+└ 61569325 (12:00:00/0, +60s)                  ← T03 time_only（= time 快照）
+```
+
+`4f5a33e7` 与 `32256da8` 是**兄弟节点**（同一时刻 11:59:02/0，前者多 person_a 位移）：T02 系回放绝不能挂在 T01 终态之后。回放与不变量**必须过滤 `responseKind == 'success'`**：T08 s9 是 `commit_point` 409 `version_mismatch`/`prefix_binding_mismatch`（时间 3s 与已封存前缀 2s 不符），不是成功 commit。
 3. **时间语义**（B 五锚点全部吻合）：零时长 instant 点在同一 `dateTime` 上递增 `instantOrdinal`，有推进的点重置为 0；`32256da8`=11:59:02/0、`9dd127b0`=/1、`312f65d3`=/2、`85848d51`=11:59:05/0、`e189aed7`=11:59:07/0。A1a-4 照此实现。
 4. **preview 边界**：只吃请求里的 `settlementGroups`，绝不叠加已存 settledUnits（追加型变化会重复计）；A1b 补「同点外貌变化被 preview 两次只出现一次」断言。
 5. **supersedes 失活链**：同点新增链跨组＝同点 supersedes，schema 已禁，merge 阶段判违规；跨点只允许引用旧点 id，旧记录 `active=false`，新记录 `sourcePointId/sourceSequence` 取提交点。
@@ -60,6 +73,6 @@ Python 预期工具只对手写 expectedProjection 绑定身份，按既有 worl
 
 ## 固定预期绑定（A1a-2 直接采用）
 
-- `fixtures/projections/{normal,segmented,time}.expected.json` 为 **WorldState 终态快照**（同一学校世界，时间 11:59:02/11:59:05/12:00:00 对应 T01/T02/T03 终态），`canonical_digest(WorldState.model_validate(doc).model_dump(mode='json'))` 与轨迹 `samples[].expectedDigests` 的 `/data/stateDigest` 相等（B 以三条独立路径复现）。
+- `fixtures/projections/{normal,segmented,time}.expected.json` 为 **WorldState 终态快照**（同一学校世界，时间 11:59:02/11:59:05/12:00:00 对应 T01/T02/T03 终态），`canonical_digest(WorldState.model_validate(doc).model_dump(mode='json'))` 与轨迹 **sample_1** 的 `expectedDigests` 相等（`4f5a33e7`/`85848d51`/`61569325`；B 以三条独立路径复现）。**sample_2 是不同身份/业务变量的另一条世界**（`952edfa2`/`f59d6d3b`/`908c8ef8`），不与快照等值；回放逐样本独立跑，快照不充当 sample_2 预期。
 - `description-collapse.expected.json` 是 DescriptionChange 形态片段、`task-normalization.expected.json` 是 EntityDelta 形态片段——塌缩/归一化行为断言比对对应片段，不是整状态。
 - 回放配方：以轨迹 `samples[i].values` 实例化各步请求 → 依次 apply → 终态摘要对 `expectedDigests`；T02/T03 与 T01 共享世界线（链式回放）。
