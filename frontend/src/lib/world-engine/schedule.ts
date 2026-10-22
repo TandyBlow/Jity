@@ -66,6 +66,10 @@ export interface ControllerMemory {
   groupActors: Id[];
   lastModel: ModelResolution | null;
   lastResults: Record<Id, string> | null;
+  /** Scenario-declared updates split; empty = one merged call. */
+  updatesStages: UpdatesStage[];
+  /** Driver accumulates one UpdatesCall per split stage here. */
+  updatesCalls: UpdatesCall[];
   continuation: Conclusion | null;
   successorTime: TimeAdvance | null;
   commitPayload: { point: TimelinePoint; settlementGroups: SettlementGroup[] } | null;
@@ -85,9 +89,11 @@ const STATE_COMPUTATION_TASKS: ModelTask[] = ['action', 'targets', 'reaction', '
 
 /** Semantic working-state cache key: only inputs of the working state may
  * invalidate it. checkpointRevision is deliberately not part of the key —
- * record_skip and pause/resume bump the revision without touching state. */
+ * record_skip and pause/resume bump the revision without touching state.
+ * timeScanComplete IS part of it: stage_time_scan rewrites tasks/personality/
+ * sanity without touching settledUnitIds (T03 s3). */
 export function workingStateKey(work: PointWork): string {
-  return JSON.stringify([work.pointId, work.baseline.version, work.timeAdvance, work.working.settledUnitIds]);
+  return JSON.stringify([work.pointId, work.baseline.version, work.timeAdvance, work.working.settledUnitIds, work.timeScanComplete]);
 }
 
 function freshState(memory: ControllerMemory, work: PointWork): WorldState | null {
@@ -167,14 +173,16 @@ function producedChanges(stages: UpdatesCall[]): Set<Id> {
  * neither the input state nor ANY stage output. Cross-stage overlap the
  * server accepts stays legal — T03-collapse puts v13 into tasksAchieved and
  * subtasksAdded (pending) and the final delta collapses to subtasksAdded. */
+/** Strict canonical stage order; out-of-order or duplicate splits rejected. */
 export function checkUpdatesStages(input: { taskIds: ReadonlySet<Id>; changeIds: ReadonlySet<Id> }, stages: UpdatesCall[]): { ok: true; merged: Record<Id, EntityDelta> } | { ok: false; dangling: { stage: UpdatesStage; entity: Id; kind: 'task' | 'change'; id: Id }[] } {
   const tasks = producedTasks(stages);
   const changes = producedChanges(stages);
-  const seen = new Set<UpdatesStage>();
+  let lastIndex = -1;
   const dangling: { stage: UpdatesStage; entity: Id; kind: 'task' | 'change'; id: Id }[] = [];
   for (const call of stages) {
-    if (seen.has(call.stage)) throw new Error(`Duplicate updates stage: ${call.stage}`);
-    seen.add(call.stage);
+    const index = updateStages.indexOf(call.stage);
+    if (index < 0 || index <= lastIndex) throw new Error(`Out-of-order/duplicate updates stage: ${call.stage}`);
+    lastIndex = index;
     for (const [entity, delta] of Object.entries(call.changes)) {
       for (const id of taskRefs(delta)) if (!input.taskIds.has(id) && !tasks.has(id)) dangling.push({ stage: call.stage, entity, kind: 'task', id });
       for (const id of changeRefs(delta)) if (!input.changeIds.has(id) && !changes.has(id)) dangling.push({ stage: call.stage, entity, kind: 'change', id });
@@ -207,8 +215,12 @@ function writeBind(view: ScheduleView): WriteBind {
   };
 }
 
-function scopeOf(view: ScheduleView): Scope {
-  return { worldId: view.world?.worldId, pointId: view.work?.pointId };
+function worldScope(view: ScheduleView): Scope {
+  return { worldId: view.world?.worldId };
+}
+
+function narrationScope(view: ScheduleView): Scope {
+  return { worldId: view.world!.worldId, pointId: view.world!.head.pointId };
 }
 
 function roundIdOf(world: WorldContext): Id {
@@ -216,14 +228,18 @@ function roundIdOf(world: WorldContext): Id {
 }
 
 function modelBlocked(view: ScheduleView, task: ModelTask): Decision | null {
-  if (STATE_COMPUTATION_TASKS.includes(task) && !view.control.canCompute) return { kind: 'await_command', reason: 'phase_not_computable' };
+  // Narration, pointPlan and time are never budget- or compute-blocked: the
+  // narration pipeline must run through pause (T05) and a budget pause must
+  // not deadlock a pending narration.
+  if (!STATE_COMPUTATION_TASKS.includes(task)) return null;
+  if (!view.control.canCompute) return { kind: 'await_command', reason: 'phase_not_computable' };
   const { max, used } = view.memory.budget;
   if (max != null && used >= max) {
     const bind = writeBind(view);
     return {
       kind: 'transport', operation: 'checkpoint_pause',
       request: { protocolVersion: 2, requestId: view.memory.requestId, ...bind, operation: 'pause' } as RequestMap['checkpoint_pause'],
-      scope: scopeOf(view),
+      scope: worldScope(view),
     };
   }
   return null;
@@ -234,24 +250,29 @@ function modelBlocked(view: ScheduleView, task: ModelTask): Decision | null {
 export function scheduleNext(view: ScheduleView): Decision {
   const { world, control, work, memory } = view;
   const command = view.command;
-  if (command && command.kind !== 'player_input') return commandDecision(view, command);  if (!world) {
+  if (command && command.kind !== 'player_input') return commandDecision(view, command);
+  if (!world) {
     if (memory.initialTemplate) {
       return { kind: 'transport', operation: 'create_world', request: { protocolVersion: 2, requestId: memory.requestId, initial: memory.initialTemplate }, scope: {} };
     }
     return { kind: 'model', task: 'initial', key: 'initial', input: null };
   }
-  if (control.phase === 'complete') return { kind: 'stop', reason: 'world_complete' };
-
-  // Narration first: it runs through pause (T05 s7/s8) and pending gates.
+  // Narration first: it runs through pause (T05 s7/s8), pending gates and the
+  // complete phase (T01 s1–s3: phase=complete, gate=pending, narration pending).
   const narration = narrationDecision(view);
   if (narration) return narration;
 
+  if (!world.lease || !memory.leaseToken) {
+    return { kind: 'transport', operation: 'lease_acquire', request: { protocolVersion: 2, requestId: memory.requestId, worldId: world.worldId, holderId: memory.holderId }, scope: worldScope(view) };
+  }
   if (control.gate.status !== 'none') return { kind: 'await_command', reason: `gate_${control.gate.status}` };
   if (control.paused) return { kind: 'await_command', reason: memory.localPause ? 'local_budget_pause' : 'paused_externally' };
-  if (!world.lease || !memory.leaseToken) {
-    return { kind: 'transport', operation: 'lease_acquire', request: { protocolVersion: 2, requestId: memory.requestId, worldId: world.worldId, holderId: memory.holderId }, scope: scopeOf(view) };
+  // complete = no settlement work; starting a pending advance stays legal
+  // (T01 s4–s5 allocate/start under phase=complete).
+  if (control.phase === 'complete') {
+    if (world.advance.advanceId === null && memory.playerInput) return advanceDecision(view);
+    return { kind: 'stop', reason: 'world_complete' };
   }
-
   if (world.advance.advanceId === null) return advanceDecision(view);
   if (control.phase === 'assess_continuation') return continuationDecision(view);
   if (work) return pointDecision(view);
@@ -259,18 +280,21 @@ export function scheduleNext(view: ScheduleView): Decision {
 }
 
 function commandDecision(view: ScheduleView, command: Exclude<HarnessCommand, { kind: 'player_input' }>): Decision {
+  if (!view.world?.lease || !view.memory.leaseToken) {
+    return { kind: 'transport', operation: 'lease_acquire', request: { protocolVersion: 2, requestId: view.memory.requestId, worldId: view.world?.worldId ?? '', holderId: view.memory.holderId }, scope: worldScope(view) };
+  }
   const bind = writeBind(view);
   const base = { protocolVersion: 2 as const, requestId: view.memory.requestId, ...bind };
   if (command.kind === 'pause' || command.kind === 'budget_exhausted') {
-    return { kind: 'transport', operation: 'checkpoint_pause', request: { ...base, operation: 'pause' } as RequestMap['checkpoint_pause'], scope: scopeOf(view) };
+    return { kind: 'transport', operation: 'checkpoint_pause', request: { ...base, operation: 'pause' } as RequestMap['checkpoint_pause'], scope: worldScope(view) };
   }
   if (command.kind === 'resume') {
-    return { kind: 'transport', operation: 'checkpoint_resume', request: { ...base, operation: 'resume' } as RequestMap['checkpoint_resume'], scope: scopeOf(view) };
+    return { kind: 'transport', operation: 'checkpoint_resume', request: { ...base, operation: 'resume' } as RequestMap['checkpoint_resume'], scope: worldScope(view) };
   }
   return {
     kind: 'transport', operation: 'round_conclusion_cancel',
     request: { ...base, operation: 'cancel', advanceId: view.world!.advance.advanceId!, roundId: roundIdOf(view.world!), cancelReason: command.reason } as RequestMap['round_conclusion_cancel'],
-    scope: scopeOf(view),
+    scope: worldScope(view),
   };
 }
 
@@ -299,7 +323,7 @@ function narrationDecision(view: ScheduleView): Decision | null {
         claimToken: claim.claimToken, generation: claim.generation, issuedAtEpochMilli: claim.issuedAtEpochMilli,
         ...outcome,
       } as RequestMap['narration_submit'],
-      scope: scopeOf(view),
+      scope: narrationScope(view),
     };
   }
   if (!narration?.claim) {
@@ -307,7 +331,7 @@ function narrationDecision(view: ScheduleView): Decision | null {
     return {
       kind: 'transport', operation: 'narration_claim',
       request: { protocolVersion: 2, requestId: memory.requestId, worldId: world.worldId, mode: 'head' as const, leaseToken: bind.leaseToken, fenceEpoch: bind.fenceEpoch, pointId, currentClaim: null },
-      scope: scopeOf(view),
+      scope: narrationScope(view),
     };
   }
   const blocked = modelBlocked(view, 'narration');
@@ -326,7 +350,7 @@ function advanceDecision(view: ScheduleView): Decision {
     return {
       kind: 'transport', operation: 'allocate_ids',
       request: { protocolVersion: 2, requestId: memory.requestId, worldId: world!.worldId, leaseToken: bind.leaseToken, fenceEpoch: bind.fenceEpoch, allocationKey: memory.allocPlan.allocationKey, slots: memory.allocPlan.slots },
-      scope: scopeOf(view),
+      scope: worldScope(view),
     };
   }
   const bind = writeBind(view);
@@ -337,7 +361,7 @@ function advanceDecision(view: ScheduleView): Decision {
       operation: 'start_advance', advanceId: memory.ids.advance, inputId: memory.ids.input, roundId: memory.ids.round,
       inputText: memory.playerInput.text, order: memory.playerInput.order,
     } as RequestMap['checkpoint_start_advance'],
-    scope: scopeOf(view),
+    scope: worldScope(view),
   };
 }
 
@@ -351,7 +375,7 @@ function continuationDecision(view: ScheduleView): Decision {
         protocolVersion: 2, requestId: memory.requestId, ...bind,
         operation: 'conclude', advanceId: world!.advance.advanceId!, roundId: roundIdOf(world!), conclusion: memory.continuation,
       } as RequestMap['round_conclusion_conclude'],
-      scope: scopeOf(view),
+      scope: worldScope(view),
     };
   }
   const blocked = modelBlocked(view, 'continuation');
@@ -376,7 +400,7 @@ function idlePointDecision(view: ScheduleView): Decision {
       protocolVersion: 2, requestId: memory.requestId, ...bind,
       operation: 'begin_point', pointId: planned.pointId, kind: planned.kind, timeAdvance: planned.timeAdvance,
     } as RequestMap['checkpoint_begin_point'],
-    scope: scopeOf(view),
+    scope: worldScope(view),
   };
 }
 
@@ -395,7 +419,7 @@ function pointDecision(view: ScheduleView): Decision {
         advanceId: world!.advance.advanceId!, roundId: roundIdOf(world!), pointId: work!.pointId,
         point: memory.commitPayload.point, settlementGroups: memory.commitPayload.settlementGroups,
       } as RequestMap['commit_point'],
-      scope: scopeOf(view),
+      scope: worldScope(view),
     };
   }
   if (work!.phase === 'settle_group' && pending?.closed) return settleDecision(view);
@@ -418,14 +442,26 @@ function selectActorDecision(view: ScheduleView): Decision {
   if (!actorsComplete(view)) {
     const actor = planned!.actorIds.find((a) => !memory.groupActors.includes(a))!;
     if (memory.lastModel?.task === 'action' && memory.lastModel.key === actor) {
+      const output = memory.lastModel.output as { kind: 'act'; text: string } | { kind: 'skip' };
+      if (output.kind === 'skip') {
+        return {
+          kind: 'transport', operation: 'checkpoint_record_skip',
+          request: {
+            protocolVersion: 2, requestId: memory.requestId, ...bind,
+            operation: 'record_skip', pointId: work!.pointId, slotActorId: actor,
+          } as RequestMap['checkpoint_record_skip'],
+          scope: worldScope(view),
+        };
+      }
+      if (output.kind !== 'act' || typeof output.text !== 'string') throw new Error('Action output must be {kind:"act",text} or {kind:"skip"}');
       return {
         kind: 'transport', operation: 'checkpoint_discover_group',
         request: {
           protocolVersion: 2, requestId: memory.requestId, ...bind,
           operation: 'discover_group', pointId: work!.pointId, groupId: memory.ids[`group:${actor}`],
-          initiatorId: actor, actionText: memory.lastModel.output as string, targetIds: null,
+          initiatorId: actor, actionText: output.text, targetIds: null,
         } as RequestMap['checkpoint_discover_group'],
-        scope: scopeOf(view),
+        scope: worldScope(view),
       };
     }
     const blocked = modelBlocked(view, 'action');
@@ -435,8 +471,12 @@ function selectActorDecision(view: ScheduleView): Decision {
   }
   // Empty/actionless point: the time scan is the whole unit (T03, T02-el linked).
   if (planned && planned.actorIds.length === 0 && !work!.timeScanComplete && memory.staged.length === 0) {
-    if (memory.lastModel?.task === 'updates') {
-      const guard = checkUpdatesStages(inputIds(memory), memory.lastModel.output as unknown as UpdatesCall[]);
+    const single = memory.updatesStages.length === 0;
+    const calls: UpdatesCall[] | null = single
+      ? (memory.lastModel?.task === 'updates' ? memory.lastModel.output as unknown as UpdatesCall[] : null)
+      : (memory.updatesCalls.length >= memory.updatesStages.length ? memory.updatesCalls : null);
+    if (calls) {
+      const guard = checkUpdatesStages(inputIds(memory), calls);
       if (!guard.ok) return { kind: 'stop', reason: `dangling_updates_refs:${JSON.stringify(guard.dangling)}` };
       return {
         kind: 'transport', operation: 'checkpoint_stage_time_scan',
@@ -445,13 +485,13 @@ function selectActorDecision(view: ScheduleView): Decision {
           operation: 'stage_time_scan', pointId: work!.pointId,
           candidates: timeScanCandidates(guard.merged, world!.round?.order ?? []),
         } as RequestMap['checkpoint_stage_time_scan'],
-        scope: scopeOf(view),
+        scope: worldScope(view),
       };
     }
     const blocked = modelBlocked(view, 'updates');
     if (blocked) return blocked;
     if (!freshState(memory, work!)) return { kind: 'read_working_state' };
-    return { kind: 'model', task: 'updates', key: `time_scan:${work!.pointId}`, input: { mode: 'time_scan', workingState: asJson(memory.workingState!.state) } };
+    return updatesModelCall(view, `time_scan:${work!.pointId}`, { mode: 'time_scan', workingState: asJson(memory.workingState!.state) });
   }
   // Actor points: record explicit skips for round members this point leaves
   // behind AND no later planned point covers (T01 skips b–f; T02 P1 seals at
@@ -468,7 +508,7 @@ function selectActorDecision(view: ScheduleView): Decision {
           protocolVersion: 2, requestId: memory.requestId, ...bind,
           operation: 'record_skip', pointId: work!.pointId, slotActorId: pendingSkip,
         } as RequestMap['checkpoint_record_skip'],
-        scope: scopeOf(view),
+        scope: worldScope(view),
       };
     }
   }
@@ -481,7 +521,7 @@ function selectActorDecision(view: ScheduleView): Decision {
           protocolVersion: 2, requestId: memory.requestId, ...bind,
           operation: 'prepare_successor', pointId: work!.pointId, successorPointId: memory.ids.successor, timeAdvance: memory.successorTime,
         } as RequestMap['checkpoint_prepare_successor'],
-        scope: scopeOf(view),
+        scope: worldScope(view),
       };
     }
     const blocked = modelBlocked(view, 'time');
@@ -492,7 +532,7 @@ function selectActorDecision(view: ScheduleView): Decision {
   return {
     kind: 'transport', operation: 'checkpoint_seal_point',
     request: { protocolVersion: 2, requestId: memory.requestId, ...bind, operation: 'seal_point', pointId: work!.pointId } as RequestMap['checkpoint_seal_point'],
-    scope: scopeOf(view),
+    scope: worldScope(view),
   };
 }
 
@@ -508,7 +548,7 @@ function buildDecision(view: ScheduleView): Decision {
         protocolVersion: 2, requestId: memory.requestId, ...bind,
         operation: 'close_group', pointId: work!.pointId, groupId: pending.groupId,
       } as RequestMap['checkpoint_close_group'],
-      scope: scopeOf(view),
+      scope: worldScope(view),
     };
   }
   if (memory.lastModel?.task === 'targets' && memory.lastModel.key === current.sourceId && !current.targetsExtended) {
@@ -521,7 +561,7 @@ function buildDecision(view: ScheduleView): Decision {
         operation: 'extend_group', pointId: work!.pointId, groupId: pending.groupId, sourceId: current.sourceId,
         targets: declared.targets.map((t) => ({ targetId: t.targetId, triggerKey: t.triggerKey })), admittedMember: null,
       } as RequestMap['checkpoint_extend_group'],
-      scope: scopeOf(view),
+      scope: worldScope(view),
     };
   }
   if (memory.lastModel?.task === 'reaction' && memory.lastModel.key === current.sourceId) {
@@ -537,7 +577,7 @@ function buildDecision(view: ScheduleView): Decision {
         operation: 'extend_group', pointId: work!.pointId, groupId: pending.groupId, sourceId: current.sourceId,
         admittedMember: { memberId: entry.targetId, actionText: text, rollRefs },
       } as RequestMap['checkpoint_extend_group'],
-      scope: scopeOf(view),
+      scope: worldScope(view),
     };
   }
   if (!current.targetsExtended) {
@@ -545,6 +585,16 @@ function buildDecision(view: ScheduleView): Decision {
     if (blocked) return blocked;
     if (!freshState(memory, work!)) return { kind: 'read_working_state' };
     return { kind: 'model', task: 'targets', key: current.sourceId, input: { sourceId: current.sourceId, actionText: current.actionText, workingState: asJson(memory.workingState!.state) } };
+  }
+  // DFS (T02-el s5–s8): a rolled-and-admitted target finishes its whole
+  // subtree — reaction, admitted extend, its own analysis — before the next
+  // sibling target is rolled.
+  const waiting = current.rolled.find((r) => r.admitted === true && !r.reacted);
+  if (waiting) {
+    const blocked = modelBlocked(view, 'reaction');
+    if (blocked) return blocked;
+    if (!freshState(memory, work!)) return { kind: 'read_working_state' };
+    return { kind: 'model', task: 'reaction', key: current.sourceId, input: { sourceId: current.sourceId, memberId: waiting.targetId, rollId: waiting.rollId, workingState: asJson(memory.workingState!.state) } };
   }
   const next = current.pendingTargets[0];
   if (next) {
@@ -554,33 +604,37 @@ function buildDecision(view: ScheduleView): Decision {
         protocolVersion: 2, requestId: memory.requestId, ...bind,
         rolls: [{ advanceId: world!.advance.advanceId!, roundId: roundIdOf(world!), groupId: pending.groupId, sourceId: current.sourceId, targetId: next.targetId, triggerKey: next.triggerKey, ruleVersion: next.rule.ruleVersion, target: next.rule.target }],
       } as RequestMap['create_rolls'],
-      scope: scopeOf(view),
+      scope: worldScope(view),
     };
-  }
-  const waiting = current.rolled.find((r) => r.admitted === true && !r.reacted);
-  if (waiting) {
-    const blocked = modelBlocked(view, 'reaction');
-    if (blocked) return blocked;
-    if (!freshState(memory, work!)) return { kind: 'read_working_state' };
-    return { kind: 'model', task: 'reaction', key: current.sourceId, input: { sourceId: current.sourceId, memberId: waiting.targetId, rollId: waiting.rollId, workingState: asJson(memory.workingState!.state) } };
   }
   throw new Error(`Source ${current.sourceId} finished but was not retired by the driver`);
 }
 
+/** Split updates run 1–6 per-stage calls keyed by stage (scenario-declared
+ * sequence); empty updatesStages = one merged call. */
+function updatesModelCall(view: ScheduleView, keyBase: string, input: Record<string, Json>): Decision {
+  const stage = view.memory.updatesStages[view.memory.updatesCalls.length];
+  if (stage) return { kind: 'model', task: 'updates', key: `${keyBase}#${stage}`, input: { ...input, stage } };
+  return { kind: 'model', task: 'updates', key: keyBase, input };
+}
+
 function settleDecision(view: ScheduleView): Decision {
-  const { world, control, work, memory } = view;
+  const { world, work, memory } = view;
   const bind = writeBind(view);
   const pending = work!.pendingGroup!;
-  if (memory.lastModel?.task === 'updates') {
-    const guard = checkUpdatesStages(inputIds(memory), memory.lastModel.output as unknown as UpdatesCall[]);
+  const single = memory.updatesStages.length === 0;
+  const calls: UpdatesCall[] | null = single
+    ? (memory.lastModel?.task === 'updates' ? memory.lastModel.output as unknown as UpdatesCall[] : null)
+    : (memory.updatesCalls.length >= memory.updatesStages.length ? memory.updatesCalls : null);
+  if (calls) {
+    const guard = checkUpdatesStages(inputIds(memory), calls);
     if (!guard.ok) return { kind: 'stop', reason: `dangling_updates_refs:${JSON.stringify(guard.dangling)}` };
     if (!memory.lastResults) throw new Error('Updates output without stored results');
     if (!memory.workingState) throw new Error('Candidates assembly without working state');
     const actorIds = pending.memberIds.length ? pending.memberIds : [pending.sourceId];
     const candidates = assembleCandidates({
-      groupId: pending.groupId, actorIds, state: memory.workingState.state, deltas: guard.merged,
+      groupId: pending.groupId, actorIds, deltas: guard.merged,
       taskCoverageIds: world!.round?.order ?? actorIds,
-      personalityCoverageIds: Object.keys(guard.merged).filter((id) => guard.merged[id].personalityChanges?.length),
     });
     return {
       kind: 'transport', operation: 'checkpoint_stage_unit',
@@ -588,19 +642,18 @@ function settleDecision(view: ScheduleView): Decision {
         protocolVersion: 2, requestId: memory.requestId, ...bind,
         operation: 'stage_unit', pointId: work!.pointId, groupId: pending.groupId, candidates, results: memory.lastResults,
       } as RequestMap['checkpoint_stage_unit'],
-      scope: scopeOf(view),
+      scope: worldScope(view),
     };
   }
-  if (memory.lastModel?.task === 'results') {
-    if (typeof memory.lastModel.output !== 'object' || memory.lastModel.output == null) throw new Error('Results output must be an object');
-    const blocked = modelBlocked(view, 'updates');
+  if (!memory.lastResults) {
+    const blocked = modelBlocked(view, 'results');
     if (blocked) return blocked;
-    return { kind: 'model', task: 'updates', key: pending.groupId, input: { groupId: pending.groupId, mode: 'group', workingState: memory.workingState ? asJson(memory.workingState.state) : null } };
+    if (!freshState(memory, work!)) return { kind: 'read_working_state' };
+    return { kind: 'model', task: 'results', key: pending.groupId, input: { groupId: pending.groupId, workingState: asJson(memory.workingState!.state) } };
   }
-  const blocked = modelBlocked(view, 'results');
+  const blocked = modelBlocked(view, 'updates');
   if (blocked) return blocked;
-  if (!freshState(memory, work!)) return { kind: 'read_working_state' };
-  return { kind: 'model', task: 'results', key: pending.groupId, input: { groupId: pending.groupId, workingState: asJson(memory.workingState!.state) } };
+  return updatesModelCall(view, pending.groupId, { groupId: pending.groupId, mode: 'group', workingState: memory.workingState ? asJson(memory.workingState.state) : null });
 }
 
 // ---------- memory readers ----------
@@ -622,13 +675,13 @@ function inputIds(memory: ControllerMemory): { taskIds: Set<Id>; changeIds: Set<
   return { taskIds, changeIds };
 }
 
-function groupFromDeltas(base: { groupId: Id | null; actorIds: Id[]; positions?: SettlementGroup['positions']; taskCoverageIds: Id[]; personalityCoverageIds: Id[] }, deltas: Record<Id, EntityDelta>): SettlementGroup {
+function groupFromDeltas(base: { groupId: Id | null; actorIds: Id[]; taskCoverageIds: Id[]; personalityCoverageIds: Id[] }, deltas: Record<Id, EntityDelta>): SettlementGroup {
   const appearances: SettlementGroup['appearances'] = {};
   const tasksAchieved: SettlementGroup['tasksAchieved'] = {};
   const subtasksAdded: SettlementGroup['subtasksAdded'] = {};
   const personalities: SettlementGroup['personalities'] = {};
   const sanities: SettlementGroup['sanities'] = {};
-  const positions: SettlementGroup['positions'] = base.positions ? { ...base.positions } : {};
+  const positions: SettlementGroup['positions'] = {};
   for (const [entity, delta] of Object.entries(deltas)) {
     if (delta.appearanceChanges?.length) appearances[entity] = delta.appearanceChanges;
     if (delta.tasksAchieved?.length) tasksAchieved[entity] = delta.tasksAchieved;
@@ -640,15 +693,18 @@ function groupFromDeltas(base: { groupId: Id | null; actorIds: Id[]; positions?:
   return { groupId: base.groupId, actorIds: base.actorIds, positions, appearances, tasksAchieved, subtasksAdded, personalities, sanities, taskCoverageIds: base.taskCoverageIds, personalityCoverageIds: base.personalityCoverageIds };
 }
 
-function timeScanCandidates(deltas: Record<Id, EntityDelta>, coverageIds: Id[]): SettlementGroup {
-  return groupFromDeltas({ groupId: null, actorIds: [], taskCoverageIds: coverageIds, personalityCoverageIds: Object.keys(deltas).filter((id) => deltas[id].personalityChanges?.length) }, deltas);
+/** personalityCoverage declares who was considered for personality change:
+ * with tasks achieved, a scan covers the whole round order and a group covers
+ * its actors; without tasks nobody is declared (T03 a–f, T03-collapse [c],
+ * T01/T02 []). Positions come only from positionSet deltas (T02 positions {}). */
+function hasTasksAchieved(deltas: Record<Id, EntityDelta>): boolean {
+  return Object.values(deltas).some((d) => d.tasksAchieved?.length);
 }
 
-export function assembleCandidates(args: { groupId: Id; actorIds: Id[]; state: WorldState; deltas: Record<Id, EntityDelta>; taskCoverageIds: Id[]; personalityCoverageIds: Id[] }): SettlementGroup {
-  const positions: SettlementGroup['positions'] = {};
-  for (const actor of args.actorIds) {
-    const position = args.state.characters[actor]?.position ?? args.state.items[actor]?.position;
-    if (position) positions[actor] = position;
-  }
-  return groupFromDeltas({ groupId: args.groupId, actorIds: args.actorIds, positions, taskCoverageIds: args.taskCoverageIds, personalityCoverageIds: args.personalityCoverageIds }, args.deltas);
+function timeScanCandidates(deltas: Record<Id, EntityDelta>, coverageIds: Id[]): SettlementGroup {
+  return groupFromDeltas({ groupId: null, actorIds: [], taskCoverageIds: coverageIds, personalityCoverageIds: hasTasksAchieved(deltas) ? coverageIds : [] }, deltas);
+}
+
+export function assembleCandidates(args: { groupId: Id; actorIds: Id[]; deltas: Record<Id, EntityDelta>; taskCoverageIds: Id[] }): SettlementGroup {
+  return groupFromDeltas({ groupId: args.groupId, actorIds: args.actorIds, taskCoverageIds: args.taskCoverageIds, personalityCoverageIds: hasTasksAchieved(args.deltas) ? args.actorIds : [] }, args.deltas);
 }
