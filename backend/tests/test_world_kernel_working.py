@@ -82,45 +82,56 @@ def test_working_evolution_matches_every_trace(trace_id):
         values = sample['values']
         order = order_of(trace_doc, values)
         prev = None
+        # Operation-before state, observed from any response's world
+        # projections — never from the response being asserted.
         head_before = None
+        advance_intent = None
         for step in trace_doc['steps']:
             operation = step.get('operation') or ''
             if step.get('responseKind') != 'success':
                 continue
             response = instantiate(step['response'], values)
+            world = response.get('world') or {}
             work = response.get('work')
             request = instantiate(step.get('request') or {}, values)
+            observed_round = world.get('round')
+            observed_advance = world.get('advance')
+
             if operation == 'checkpoint_begin_point':
-                round_view = (response.get('world') or {}).get('round') or {}
-                committed = (round_view.get('cursor', 0),
-                             round_view.get('actedIds', []),
-                             round_view.get('visitedIds', []))
-                expected = begin_working(committed, work['working']['intentStatus'])
+                assert head_before is not None and advance_intent is not None, \
+                    f'{trace_id} {step["id"]} begin without an observed head/advance'
+                expected = begin_working(head_before, advance_intent)
                 assert expected.model_dump(mode='json') == work['working']
-                if round_view:
-                    head_before = committed
                 prev = expected
-                continue
-            if not (operation.startswith('checkpoint') or operation == 'commit_point'):
-                continue
-            round_view = (response.get('world') or {}).get('round')
-            if round_view is not None:
-                committed = (round_view['cursor'], round_view['actedIds'], round_view['visitedIds'])
-                if operation == 'commit_point':
+            elif operation.startswith('checkpoint') or operation == 'commit_point':
+                is_commit = operation == 'commit_point'
+                if observed_round is not None:
+                    committed = (observed_round['cursor'],
+                                 observed_round['actedIds'],
+                                 observed_round['visitedIds'])
+                    if is_commit:
+                        head_before = committed
+                    elif head_before is not None:
+                        assert committed == head_before, \
+                            f'{trace_id} {step["id"]} moved committed progress'
+                if is_commit:
                     # commit promotes the head; its response work view is the
-                    # consumed point and carries no working semantics to pin.
-                    head_before = committed
-                    continue
-                elif head_before is not None:
-                    assert committed == head_before, \
-                        f'{trace_id} {step["id"]} moved committed progress'
-            if work is None or work.get('working') is None:
-                continue
-            if prev is not None and operation in STAGE_OPS | {'checkpoint_record_skip'}:
-                prev = expected_working(prev, operation, request, response, order)
-            assert WorkingProgress.model_validate(work['working']).model_dump(mode='json') \
-                == (prev.model_dump(mode='json') if prev is not None else work['working']), \
-                f'{trace_id} {step["id"]} {operation} diverges'
+                    # consumed point and pins no working semantics.
+                    pass
+                elif work is not None and work.get('working') is not None:
+                    if prev is not None and operation in STAGE_OPS | {'checkpoint_record_skip'}:
+                        prev = expected_working(prev, operation, request, response, order)
+                    if prev is not None:
+                        assert WorkingProgress.model_validate(work['working']).model_dump(mode='json') \
+                            == prev.model_dump(mode='json'), \
+                            f'{trace_id} {step["id"]} {operation} diverges'
+
+            if observed_round is not None and observed_round.get('cursor') is not None:
+                head_before = (observed_round['cursor'],
+                               observed_round['actedIds'],
+                               observed_round['visitedIds'])
+            if observed_advance is not None and observed_advance.get('intentStatus') is not None:
+                advance_intent = observed_advance['intentStatus']
 
 
 def test_synthetic_edges_the_traces_do_not_cover():

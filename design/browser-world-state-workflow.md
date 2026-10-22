@@ -1,6 +1,6 @@
 # 浏览器端侧小模型游戏工作流开发方案
 
-版本：v0.4.1（协议 v2 共同接口基线已交付）。日期：2026-10-22。IF-01～IF-08 / A0/B0 共同前置验收通过：v1 `26011c8`、S1 `cabb04c`、共同实现 `e3b197a79f95adfbe215dddf5dfd3f9ed5b12823`。完整证据见 [最终验收](world-protocol/v2/change-list.md#共同前置最终验收2026-10-22if-03if-08-通过)。SQL 约束、规范向量、动态轨迹、TS 类型/运行校验/transport 与共同 CI 已交付；共同收尾后拆开 A1/A2 与 B1，运行服务与事务恢复仍按 A2/A3、H1/H2 验收。
+版本：v0.4.2（协议 v2 共同接口基线已交付；v0.4.2 修订输入消费规则，见 change-list 设计变更登记）。日期：2026-10-23。IF-01～IF-08 / A0/B0 共同前置验收通过：v1 `26011c8`、S1 `cabb04c`、共同实现 `e3b197a79f95adfbe215dddf5dfd3f9ed5b12823`。完整证据见 [最终验收](world-protocol/v2/change-list.md#共同前置最终验收2026-10-22if-03if-08-通过)。SQL 约束、规范向量、动态轨迹、TS 类型/运行校验/transport 与共同 CI 已交付；A1 纯内核已并入 `world-server`，共同收尾后拆开 A2 与 B1，运行服务与事务恢复仍按 A2/A3、H1/H2 验收。
 
 依据：本次对话中用户提供的十一部分新设计及最后关于模型分工的补充。
 本文区分已验收的共同接口基线与后续运行实现。文中“建议”“暂定”表示实施建议，不代表用户已经确定了对应规则。
@@ -366,7 +366,7 @@ conclusion 仅在 complete 时非空；assess_continuation 表示人物槽位已
 
 closedBy/cancelReason 是 conclusion 本体的必填字段，不另建来源列。模型结论必须 closedBy=model、cancelReason=null；手动取消只能为 handback、closedBy=cancel，cancelReason 必须含非空白字符。取消不得伪装 continue；历史视图按 closedBy 区分模型交还和玩家取消。持久化 CHECK 与 JSON Schema 均约束这三种组合。
 
-advance 是跨 round 的控制元数据，不是世界实体；删除旧的 round 级 playerIntentConsumed。一次玩家输入分配一个 advanceId/inputId，后续 automatic round 继承同一上下文，不再初始化 pending。主角在本链第一个 round 中处理该输入的行动机会时（包括 skip 或被迫反应占用该机会）将 intentStatus 置为 consumed，表示输入机会已处理，不表示行动成功；这一变化与对应时间点一起提交。未处理输入被取消或直接交还时可置 expired。自动 round 必须继承 consumed；不满足时拒绝创建，不能靠提示词防重放。
+advance 是跨 round 的控制元数据，不是世界实体；删除旧的 round 级 playerIntentConsumed。一次玩家输入分配一个 advanceId/inputId，后续 automatic round 继承同一上下文，不再初始化 pending。本链首次结算动作（v0.4.2 修订：任意行动者的 stage_unit，或 record_skip；含主角 skip 或被迫反应占用该机会）将 intentStatus 置为 consumed，表示输入机会已处理，不表示行动成功；这一变化与对应时间点一起提交，后续结算与 skip 保持 consumed。未处理输入被取消或直接交还时可置 expired。自动 round 必须继承 consumed；不满足时拒绝创建，不能靠提示词防重放。
 
 新的非关联时间点开始时读取所有人物的当前理智值，升序排列。理智相同时建议按稳定 ID 排序，保证可复现。关联点中即使个性和理智改变，仍然继续原顺序。
 
