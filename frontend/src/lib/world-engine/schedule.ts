@@ -502,7 +502,7 @@ function selectActorDecision(view: ScheduleView): Decision {
         request: {
           protocolVersion: 2, requestId: memory.requestId, ...bind,
           operation: 'stage_time_scan', pointId: work!.pointId,
-          candidates: timeScanCandidates(guard.merged, world!.round?.order ?? []),
+          candidates: timeScanCandidates(guard.merged, worldRoster(memory)),
         } as RequestMap['checkpoint_stage_time_scan'],
         scope: worldScope(view),
       };
@@ -658,8 +658,7 @@ function settleDecision(view: ScheduleView): Decision {
     if (!memory.workingState) throw new Error('Candidates assembly without working state');
     const actorIds = pending.memberIds.length ? pending.memberIds : [pending.sourceId];
     const candidates = assembleCandidates({
-      groupId: pending.groupId, actorIds, deltas: guard.merged,
-      taskCoverageIds: world!.round?.order ?? actorIds,
+      groupId: pending.groupId, actorIds, deltas: guard.merged, roster: worldRoster(memory),
     });
     return {
       kind: 'transport', operation: 'checkpoint_stage_unit',
@@ -718,18 +717,26 @@ function groupFromDeltas(base: { groupId: Id | null; actorIds: Id[]; taskCoverag
   return { groupId: base.groupId, actorIds: base.actorIds, positions, appearances, tasksAchieved, subtasksAdded, personalities, sanities, taskCoverageIds: base.taskCoverageIds, personalityCoverageIds: base.personalityCoverageIds };
 }
 
-/** personalityCoverage declares who was considered for personality change:
- * with tasks achieved, a scan covers the whole round order and a group covers
- * its actors; without tasks nobody is declared (T03 a–f, T03-collapse [c],
- * T01/T02 []). Positions come only from positionSet deltas (T02 positions {}). */
+/** Coverage (2026-10-22 ruling, aligned with A's validate_unit): task
+ * coverage always equals the world's full character roster; personality
+ * coverage stays empty without achieved tasks and otherwise lists the same
+ * roster — named groups and the time-scan unit share the rule. The roster
+ * comes from the served working state, never round.order. Positions come
+ * only from positionSet deltas (T02 positions {}). */
 function hasTasksAchieved(deltas: Record<Id, EntityDelta>): boolean {
   return Object.values(deltas).some((d) => d.tasksAchieved?.length);
 }
 
-function timeScanCandidates(deltas: Record<Id, EntityDelta>, coverageIds: Id[]): SettlementGroup {
-  return groupFromDeltas({ groupId: null, actorIds: [], taskCoverageIds: coverageIds, personalityCoverageIds: hasTasksAchieved(deltas) ? coverageIds : [] }, deltas);
+function worldRoster(memory: ControllerMemory): Id[] {
+  const state = memory.workingState?.state;
+  if (!state) throw new Error('World roster without working state');
+  return Object.keys(state.characters).sort();
 }
 
-export function assembleCandidates(args: { groupId: Id; actorIds: Id[]; deltas: Record<Id, EntityDelta>; taskCoverageIds: Id[] }): SettlementGroup {
-  return groupFromDeltas({ groupId: args.groupId, actorIds: args.actorIds, taskCoverageIds: args.taskCoverageIds, personalityCoverageIds: hasTasksAchieved(args.deltas) ? args.actorIds : [] }, args.deltas);
+function timeScanCandidates(deltas: Record<Id, EntityDelta>, roster: Id[]): SettlementGroup {
+  return groupFromDeltas({ groupId: null, actorIds: [], taskCoverageIds: roster, personalityCoverageIds: hasTasksAchieved(deltas) ? roster : [] }, deltas);
+}
+
+export function assembleCandidates(args: { groupId: Id; actorIds: Id[]; deltas: Record<Id, EntityDelta>; roster: Id[] }): SettlementGroup {
+  return groupFromDeltas({ groupId: args.groupId, actorIds: args.actorIds, taskCoverageIds: args.roster, personalityCoverageIds: hasTasksAchieved(args.deltas) ? args.roster : [] }, args.deltas);
 }

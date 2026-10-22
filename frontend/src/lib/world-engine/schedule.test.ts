@@ -255,24 +255,24 @@ describe('normal point: group cycle (T01/T02 shapes)', () => {
     expect(request.candidates).toMatchObject({
       groupId: 'g1', actorIds: ['person_a'], positions: { person_a: position },
       appearances: { person_a: [{ id: 'ch1', text: '指尖结霜。', supersedes: [] }] },
-      taskCoverageIds: ORDER, personalityCoverageIds: [],
+      taskCoverageIds: ['person_a'], personalityCoverageIds: [],
     });
     expect(request.results).toEqual({ person_a: 'person_a的行动结果已确认。' });
   });
-  test('T03-collapse shape: tasks achieved without personality changes cover the actors', () => {
+  test('T03-collapse shape: tasks achieved declare world-roster coverage (2026-10-22 ruling)', () => {
     const { w, c, wk, m } = spine({
-      work: { phase: 'settle_group', pendingGroup: { groupId: 'g1', sourceId: 'person_c', memberIds: ['person_c'], targetIds: [], frontierIds: [], closed: true } },
-      memory: { workingState: { key: workingStateKey(pointWork()), state: workingState() }, lastResults: { person_c: 'x' } },
+      work: { phase: 'settle_group', pendingGroup: { groupId: 'g1', sourceId: 'person_a', memberIds: ['person_a'], targetIds: [], frontierIds: [], closed: true } },
+      memory: { workingState: { key: workingStateKey(pointWork()), state: workingState() }, lastResults: { person_a: 'x' } },
     });
     m.lastModel = {
       task: 'updates', key: 'g1', output: [
-        { stage: 'tasks', changes: { person_c: { tasksAchieved: ['t1'] } } },
-        { stage: 'subtasks', changes: { person_c: { subtasksAdded: [{ id: 'v12', ownerId: 'person_c', parentTaskId: null, goal: '检查安全', status: 'pending' }] } } },
+        { stage: 'tasks', changes: { person_a: { tasksAchieved: ['t1'] } } },
+        { stage: 'subtasks', changes: { person_a: { subtasksAdded: [{ id: 'v12', ownerId: 'person_a', parentTaskId: null, goal: '检查安全', status: 'pending' }] } } },
       ] as unknown as Json,
     };
     const stage = expectTransport(next(w, c, wk, m), 'checkpoint_stage_unit') as Extract<Decision, { kind: 'transport' }>;
     const candidates = (stage.request as unknown as { candidates: Record<string, unknown> }).candidates;
-    expect(candidates).toMatchObject({ actorIds: ['person_c'], tasksAchieved: { person_c: ['t1'] }, positions: {}, personalityCoverageIds: ['person_c'] });
+    expect(candidates).toMatchObject({ actorIds: ['person_a'], tasksAchieved: { person_a: ['t1'] }, positions: {}, taskCoverageIds: ['person_a'], personalityCoverageIds: ['person_a'] });
   });
   test('skips only members no later planned point covers (T01 five skips; T02 P1 none)', () => {
     const { w, c, wk, m } = spine({ work: { working: { cursor: 1, actedIds: ['person_a'], visitedIds: [], settledUnitIds: ['u1'], intentStatus: 'consumed' } }, memory: { groupActors: ['person_a'], staged: [stagedUnit()] } });
@@ -366,7 +366,7 @@ describe('updates split (1–6 per-stage calls)', () => {
     m.updatesCalls.push({ stage: 'subtasks', changes: { person_c: { subtasksAdded: [{ id: 'v13', ownerId: 'person_c', parentTaskId: null, goal: '确认门边', status: 'pending' }] } } });
     const stage = expectTransport(next(w, c, wk, m), 'checkpoint_stage_unit') as Extract<Decision, { kind: 'transport' }>;
     const candidates = (stage.request as unknown as { candidates: Record<string, unknown> }).candidates;
-    // Coverage follows the group's actorIds (T03-collapse rule), not the delta entities.
+    // Coverage follows the world roster (2026-10-22 ruling), not the delta entities.
     expect(candidates).toMatchObject({ tasksAchieved: { person_c: ['v13'] }, subtasksAdded: { person_c: [{ id: 'v13', ownerId: 'person_c', parentTaskId: null, goal: '确认门边', status: 'pending' }] }, personalityCoverageIds: ['person_a'] });
   });
   test('rejects out-of-order stage sequences', () => {
@@ -438,7 +438,7 @@ describe('empty point time scan (T03)', () => {
     m.workingState = { key: workingStateKey(wk), state: workingState() };
     expect(next(w, c, wk, m)).toMatchObject({ kind: 'model', task: 'updates', key: 'time_scan:p0' });
   });
-  test('stages scan candidates with a null group and full-round personality coverage', () => {
+  test('stages scan candidates with a null group and world-roster coverage', () => {
     const { w, c, wk, m } = setup({ workingState: { key: workingStateKey(emptyPoint()), state: workingState() } });
     m.lastModel = {
       task: 'updates', key: 'time_scan:p0', output: [
@@ -449,7 +449,7 @@ describe('empty point time scan (T03)', () => {
     };
     const scan = expectTransport(next(w, c, wk, m), 'checkpoint_stage_time_scan') as Extract<Decision, { kind: 'transport' }>;
     const candidates = (scan.request as unknown as { candidates: Record<string, unknown> }).candidates;
-    expect(candidates).toMatchObject({ groupId: null, actorIds: [], tasksAchieved: { person_a: ['t1'] }, sanities: { person_a: 45 }, taskCoverageIds: ORDER, personalityCoverageIds: ORDER });
+    expect(candidates).toMatchObject({ groupId: null, actorIds: [], tasksAchieved: { person_a: ['t1'] }, sanities: { person_a: 45 }, taskCoverageIds: ['person_a'], personalityCoverageIds: ['person_a'] });
   });
   test('requires a fresh preview after the scan: timeScanComplete is part of the state key', () => {
     const { w, c, wk, m } = setup({ workingState: { key: workingStateKey(emptyPoint()), state: workingState() } });
