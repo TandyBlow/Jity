@@ -22,7 +22,7 @@ Python 预期工具只对手写 expectedProjection 绑定身份，按既有 worl
 
 # A1a-1：内核函数面与模块划分
 
-日期：2026-10-22。基线 `79f8120`，计划见 [a1-kernel-plan](../world-protocol/v2/a1-kernel-plan.md)。内核是对既有 `WorldState`（`backend/app/schemas/world/contracts.py`，权威不变）与 `canonical_digest`/`prefix_projection` 的纯函数；模块新建于 `backend/app/services/world/`，共 **15 个函数**（violations 为类型模块）。语义权威为 v2 registry notes、v2 请求模型与 11 份轨迹；只消费 v2 类型（`v2.work.SettlementGroup`、`v2.requests.CommitPointRequest` 等），不 import v1 形态（`PointCommitRequest`/`RoundCheckpoint`/`SettlementCandidates`/`PreviewRequest`/`RollRequest`），以 import 边界断言固化。
+日期：2026-10-22。基线 `79f8120`，计划见 [a1-kernel-plan](../world-protocol/v2/a1-kernel-plan.md)。内核是对既有 `WorldState`（`backend/app/schemas/world/contracts.py`，权威不变）与 `canonical_digest`/`prefix_projection` 的纯函数；模块新建于 `backend/app/services/world/`，已实现 **17 个函数**（函数面 18 个，`next_working_progress` 待其 working 演进语义从轨迹钉死后实现）。语义权威为 v2 registry notes、v2 请求模型与 11 份轨迹；只消费 v2 类型（`v2.work.SettlementGroup`、`v2.requests.CommitPointRequest` 等），不 import v1 形态（`PointCommitRequest`/`RoundCheckpoint`/`SettlementCandidates`/`PreviewRequest`/`RollRequest`），以 import 边界断言固化。
 
 ## 模块与签名
 
@@ -33,9 +33,8 @@ Python 预期工具只对手写 expectedProjection 绑定身份，按既有 worl
 | `state.py` | `state_digest(state: WorldState) -> Hex64` | `canonical_digest(state.model_dump(mode='json'))`；规范化恒等已验证 |
 | `timing.py` | `advance_time(at: WorldTime, ta: TimeAdvance) -> WorldTime` | elapsed 按日历加 duration，instant 零时长；月/年加法规则待钉（见下） |
 | `timing.py` | `time_lock_trigger(...) -> bool` | 首个 confirmed action/target/skip/time-scan 锁时间（`set_point_time` notes），A1a-4 定形 |
-| `units.py` | `validate_unit(unit: SettlementGroup, roster: frozenset[Id]) -> tuple[Violation, ...]` | schema 之外的状态级单元校验：actor 在册、六阶段交叉、覆盖清单 |
-| `units.py` | `unit_content_hash(unit: SettlementGroup) -> Hex64` | 绑定完整有序候选集（`SettledUnitView.contentHash`）；公式 A1a-3 用 T01 响应复算钉死 |
-| `units.py` | `next_working_progress(...) -> WorkingProgress` | stage_unit/skip 后的工作进度推进纯函数，A2 决定何时调用 |
+| `units.py` | `validate_unit(unit, world_roster)`；`validate_commit_groups(groups, world_roster)`；`unit_content_hash(unit)` | 覆盖规则按全部已 stage 组钉死：taskCoverage=世界全体角色（T03-collapse 单人组仍覆盖 6 人）；personalityCoverage 无达成则空、有达成则 time-scan 单元=全体/命名组=actors；跨单元同 actor 违规（拍板）。contentHash=候选集规范摘要 |
+| `ladder.py` | `check_checkpoint(operation, work, control)` | 数据驱动解释 registry precondition 矩阵的结构可判部分（phase/pointWork/pendingGroup/settledUnits/timeLocked≡confirmedWork/paused/gate）；lease/narration/gate 时效与 activeAdvance/frozenSource 归 A2/A3 事务 |
 | `merge.py` | `point_entity_deltas(groups, time_scan) -> dict[Id, EntityDelta]` | **入参即含 `time_scan: SettlementGroup | None`**（该点已存 `stage_time_scan` 候选）；外序显著；不变量 `entityDeltas == collapse(merge(groups ∪ timeScan))` |
 | `merge.py` | `collapse_tasks(added, achieved) -> (added, achieved)` | 塌缩两步缺一不可：本点新增且已达成的 ID 从 `tasksAchieved` 摘除＋该新增记录置 `status:"achieved"`（T03-collapse 夹具；只做一半任一步都假失败） |
 | `commit.py` | `verify_point_binding(point: TimelinePoint, sealed_prefix) -> tuple[Violation, ...]` | 提交点与封存前缀比对（kind/timeAdvance/绑定）；T08 s9 证实必需，出口 `version_mismatch`（`details.reason=prefix_binding_mismatch`），非 `point_time_locked`（后者只属 `set_point_time`） |

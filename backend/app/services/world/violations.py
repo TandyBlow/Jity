@@ -1,4 +1,5 @@
 """Internal kernel violation taxonomy; A2 maps these onto wire error codes."""
+from dataclasses import dataclass
 from enum import Enum
 
 
@@ -9,6 +10,18 @@ class ViolationKind(Enum):
     COVERAGE_INCOMPLETE = "coverage_incomplete"
     TIME_LOCKED = "time_locked"
     PREFIX_BINDING = "prefix_binding"
+
+
+@dataclass(frozen=True)
+class Violation:
+    """Structured refusal from a pure predicate; ``kind`` names the registry
+    precondition or taxonomy entry, the A2 mapping table owns the wire code."""
+
+    kind: str
+    detail: str
+
+    def __repr__(self):
+        return f'Violation({self.kind}: {self.detail})'
 
 
 class KernelViolation(Exception):
