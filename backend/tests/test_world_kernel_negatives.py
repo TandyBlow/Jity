@@ -18,7 +18,7 @@ from app.schemas.world.v2.work import SettlementGroup
 from app.services.world.apply import apply_point
 from app.services.world.merge import point_entity_deltas
 from app.services.world.replay import replay_world
-from app.services.world.state import build_initial_state
+from app.services.world.state import build_initial_state, state_digest
 from app.services.world.timing import advance_time
 from app.services.world.units import validate_commit_groups
 from app.services.world.violations import KernelViolation, ViolationKind
@@ -174,3 +174,73 @@ def test_same_room_relative_reference_is_accepted():
                        'relativeTo': {'entityId': 'item_a', 'relation': 'beside'}}}})
     final = apply_point(state, point)
     assert final.characters['person_a'].position.relativeTo.entityId == 'item_a'
+
+
+def _multi_room_state():
+    fixture = json.loads((FIXTURES / 'pure-removal.json').read_text(encoding='utf-8'))
+    initial = dict(fixture['initial'])
+    initial['locations']['room_b'] = {
+        'id': 'room_b', 'name': 'B 房间', 'parentLocationId': None,
+        'initialAppearance': '另一间', 'slots': []}
+    initial['items']['item_b'] = {
+        'id': 'item_b', 'name': '石凳',
+        'initialPosition': {'containerId': 'room_b', 'slotId': None, 'relativeTo': None},
+        'initialAppearance': '冰冷', 'slots': []}
+    return initial, build_initial_state(WorldInitialState.model_validate(initial))
+
+
+def test_joint_final_graph_is_order_independent():
+    initial, state = _multi_room_state()
+    world_id = initial['worldId']
+    person_move = {'entityId': 'person_a', 'positionSet': {
+        'containerId': 'room_b', 'slotId': None,
+        'relativeTo': {'entityId': 'item_b', 'relation': 'beside'}}}
+    item_move = {'entityId': 'item_a', 'positionSet': {
+        'containerId': 'room_b', 'slotId': None, 'relativeTo': None}}
+    digests = []
+    for deltas in ({'person_a': person_move, 'item_a': item_move},
+                   {'item_a': item_move, 'person_a': person_move}):
+        digests.append(state_digest(apply_point(
+            state, _point(state, world_id, 'p1', 1, 1, deltas))))
+    assert digests[0] == digests[1]
+
+
+def test_dangling_relative_after_reference_move_is_refused():
+    initial, state = _multi_room_state()
+    world_id = initial['worldId']
+    settle = _point(state, world_id, 'p1', 1, 1,
+                    {'person_a': {'entityId': 'person_a', 'positionSet': {
+                        'containerId': 'room_a', 'slotId': None,
+                        'relativeTo': {'entityId': 'item_a', 'relation': 'beside'}}}})
+    settled = apply_point(state, settle)
+    move = _point(settled, world_id, 'p2', 2, 1,
+                  {'item_a': {'entityId': 'item_a', 'positionSet': {
+                      'containerId': 'room_b', 'slotId': None, 'relativeTo': None}}})
+    with pytest.raises(KernelViolation) as excinfo:
+        apply_point(settled, move)
+    assert excinfo.value.kind is ViolationKind.SEMANTIC_INVALID
+
+
+def test_self_container_cycle_is_refused():
+    fixture, state = _world_and_state()
+    world_id = fixture['initial']['worldId']
+    point = _point(state, world_id, 'p1', 1, 1,
+                   {'person_a': {'entityId': 'person_a', 'positionSet': {
+                       'containerId': 'person_a', 'slotId': None, 'relativeTo': None}}})
+    with pytest.raises(KernelViolation) as excinfo:
+        apply_point(state, point)
+    assert excinfo.value.kind is ViolationKind.SEMANTIC_INVALID
+
+
+def test_mixed_relative_container_cycle_is_refused():
+    initial, state = _multi_room_state()
+    world_id = initial['worldId']
+    point = _point(state, world_id, 'p1', 1, 1, {
+        'person_a': {'entityId': 'person_a', 'positionSet': {
+            'containerId': 'room_a', 'slotId': None,
+            'relativeTo': {'entityId': 'item_a', 'relation': 'beside'}}},
+        'item_a': {'entityId': 'item_a', 'positionSet': {
+            'containerId': 'person_a', 'slotId': None, 'relativeTo': None}}})
+    with pytest.raises(KernelViolation) as excinfo:
+        apply_point(state, point)
+    assert excinfo.value.kind is ViolationKind.SEMANTIC_INVALID
