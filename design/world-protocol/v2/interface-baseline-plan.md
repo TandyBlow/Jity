@@ -1,6 +1,6 @@
 # v2 共同接口基线实施计划（A0＋B0）
 
-日期：2026-10-22。状态：**IF-01～IF-08 已完成，S1/S2 及 A0/B0 共同前置验收通过**。v1 `26011c8`、S1 `cabb04c`、共同接口实现 `e3b197a79f95adfbe215dddf5dfd3f9ed5b12823`；冻结依据见 [最终验收](change-list.md#共同前置最终验收2026-10-22if-03if-08-通过)。Python 426 项、TS 契约 38、轨迹 65、前端全套 165 及类型/lint/build 通过，干净检出重跑通过。CI 接线完成；远端 CI 曾于 `07924f3` 首次触发（frontend 失败于 npm ci），`05c213e` 三个作业全部 success；全量 backend 923 passed、0 failed，此前单列的两个 campaign_wiring 失败已不存在。按用户安排共同收尾后再拆 A1/A2 与 B1，实际服务及事务保留 A2/A3、H1/H2。
+日期：2026-10-22。状态：**IF-01～IF-08 已完成，S1/S2 及 A0/B0 共同前置验收通过**。v1 `26011c8`、S1 `cabb04c`、共同接口实现 `e3b197a79f95adfbe215dddf5dfd3f9ed5b12823`；冻结依据见 [最终验收](change-list.md#共同前置最终验收2026-10-22if-03if-08-通过)。Python 426 项、TS 契约 38、轨迹 65、前端全套 165 及类型/lint/build 通过，干净检出重跑通过。CI 接线完成；frontend 在 `07924f3` 的远端运行中失败于 npm ci，`05c213e` 是首次带 world-interface 作业的运行、三个作业全部 success；全量 backend 923 passed、0 failed，此前单列的两个 campaign_wiring 失败已不存在。按用户安排共同收尾后再拆 A1/A2 与 B1，实际服务及事务保留 A2/A3、H1/H2。
 
 ## 一、本批目标与完成边界
 
@@ -276,7 +276,7 @@ python -X utf8 backend/scripts/check_world_interface_baseline.py
 - [x] v1 基线以 LF 提交、`--version v1 --check` 字节一致；v2 的数据、schema、SQL 和轨迹独立闭合。
 - [x] S1/S2 候选与最终冻结状态明确，B 无需等待运行 API 才能开始 B1。
 - [x] 两组动态身份样本及错误匹配反例通过，业务预期和摘要不从实际结果抄取。
-- [x] Python、TS、导出和轨迹检查覆盖同一份契约，统一入口本地通过、CI 接线完成（远端运行随推送首次触发）。
+- [x] Python、TS、导出和轨迹检查覆盖同一份契约，统一入口本地通过、CI 接线完成（`05c213e` 起远端运行 world-interface 作业且三作业全部 success）。
 - [x] 根点、roll、时间锁、暂停、工作消费与复制等服务层行为均有 A2/A3 验收落点。
 - [x] H1 普通点 HTTP 与 H2 刷新/接管的输入轨迹已具备，实际联调仍按后续检查点执行。
 - [x] 正式基线已记录可独立检出的 Git 提交及契约摘要，双方交付记录一致。

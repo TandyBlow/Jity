@@ -339,7 +339,7 @@ npm --prefix frontend test
 | IF-04b / S2 | T01～T09 共 11 文件、185 步，包含空 linked 和同点任务/外貌折叠分支；每份两组 ID/token/epoch/clock 样本，独立完整投影与摘要通过 | T01 是 H1 输入，T07 是 H2 输入；完整运行验收仍在 A2/A3 |
 | IF-05 | 手写 TS 类型、共享 Draft 2020-12 schema 校验、32 操作 HTTP request/success/error 全消费；18 错误码均有消费动作，resume 不越过 canCompute；固定模型输出端口不分配 ID/roll | B1 实现调度；真实浏览器 HTTP 在 H1 |
 | IF-06 | 固定响应与受控 HTTP 均消费两组样本；65 项通过；错令牌、次序、身份、捕获、业务答案和摘要均明确失败 | 固定响应端口只返回预设值，运行服务在 A2/A3 |
-| IF-07 | 默认 v1 保持兼容；v1 12 个、v2 5 个生成物字节核对；147 项 manifest、LF/no-BOM、生成 pin、统一入口及四类破坏性探针通过；CI 接线完成 | Linux 远端 CI 于推送后首次运行，结果未纳入验收 |
+| IF-07 | 默认 v1 保持兼容；v1 12 个、v2 5 个生成物字节核对；147 项 manifest、LF/no-BOM、生成 pin、统一入口及四类破坏性探针通过；CI 接线完成 | 远端 CI 已随推送运行：`05c213e` 首次带 world-interface 作业、三个作业全部 success；frontend 曾在 `07924f3` 的运行中失败于 npm ci，后续契约变更随推送持续验证 |
 | IF-08 | 候选提交经干净 worktree 检出、全新 npm ci 和同一统一入口复跑通过；双方报告使用相同实现提交与摘要；正式验收共同接口基线 | 完成记录后从同一冻结提交建立 world-server/world-browser，进入 A1/A2 与 B1 |
 
 本次补核发现并关闭一个 SQL 预约边界：后继的基线可以是尚未提交的封存前驱工作，不能直接外键到已提交点表。现由封存/活动前驱引用与独立约束测试验证；真实 P1 提交匹配和原子提升保留 A3/FC25。
@@ -356,6 +356,6 @@ npm --prefix frontend run build
 
 结果：统一入口 **Python 426 项（v1 109 + v2 317）、TS 契约 38 项、TS 轨迹 65 项及类型检查全部通过**；四类临时破坏（CRLF、缺失响应字段、反转 canCompute、动态摘要过期）全部被拒绝。JS S1 复核 **60/0**；前端全套 **165 项**，lint/build 通过。既有 useBrowserAutoPlay 的 hook 依赖 warning 保留。
 
-额外全量 backend 检查（`python -X utf8 -m pytest -q`；Windows 缺 `-X utf8` 时 `test_campaign_openings` 按 GBK 读文件，收集期即报 UnicodeDecodeError）为 **923 passed、0 failed**：此前记录的 `test_campaign_wiring.py::test_create_session_with_campaign` 与 `::test_list_slots_filters_by_session_id` 两例 404 已不存在。共同接口检查与远端 CI 均为全绿：`05c213e` 推送的 backend、frontend、world-interface 三个作业全部 success（CI 首次触发在 `07924f3`，当时 frontend 失败于 npm ci）。CI 保留原后端 pytest 和前端 lint/build，新增 npm test 和 world-interface；完整 npm test 与聚焦检查在两个作业中有意重叠。Node 升至 22，匹配锁定的 Vitest 5 对 Node >=22.12 的要求。
+额外全量 backend 检查（`python -X utf8 -m pytest -q`；Windows 缺 `-X utf8` 时 `test_campaign_openings` 按 GBK 读文件，收集期即报 UnicodeDecodeError）为 **923 passed、0 failed**：此前记录的 `test_campaign_wiring.py::test_create_session_with_campaign` 与 `::test_list_slots_filters_by_session_id` 两例 404 已不存在。共同接口检查与远端 CI 均为全绿：`05c213e` 是首次带 world-interface 作业的运行，backend、frontend、world-interface 三个作业全部 success；frontend 在 `07924f3` 的运行中失败于 npm ci。CI 保留原后端 pytest 和前端 lint/build，新增 npm test 和 world-interface；完整 npm test 与聚焦检查在两个作业中有意重叠。Node 升至 22，匹配锁定的 Vitest 5 对 Node >=22.12 的要求。
 
 **结论：共同接口基线验收通过，A0/B0 的前置工作关闭，可以分别推进 A1/A2 与 B1。** 冻结记录随验收文档提交推送，`world-server` / `world-browser` 分支自该提交建立。实际分配/去重、崩溃恢复、真实 HTTP H1/H2、真实模型与页面继续按原后续阶段验收。环境、具体文件及复跑入口见 [server](../../world-engine-reports/server.md) 和 [browser](../../world-engine-reports/browser.md)。
