@@ -1,0 +1,429 @@
+/** Handwritten state/memory snapshots for the B1 pure scheduler; responses
+ * and trace-corpus shapes follow the shared contract specimens (T01–T09). */
+import { describe, expect, test } from 'vitest';
+import { checkUpdatesStages, errorCatalog, errorReaction, scheduleNext, workingStateKey } from './schedule';
+import type { ControllerMemory, Decision, PlannedPoint, ScheduleView, SourceAnalysis, UpdatesCall } from './schedule';
+import { validateRequest } from './protocol';
+import type { ClientAction, ControlState, ErrorCode, ErrorResponse, Json, PointWork, TimeAdvance, WorldContext, WorldState } from './types';
+
+const ORDER = ['person_a', 'person_b', 'person_c', 'person_d', 'person_e', 'person_f'];
+const ta = (amount: number, boundary: 'elapsed' | 'instant' = 'elapsed'): TimeAdvance => ({ boundary, duration: { amount, unit: 'second' } });
+const wt = { calendar: 'gregorian' as const, dateTime: '2026-01-01T00:00:00', instantOrdinal: 0 };
+const position = { containerId: 'corridor', slotId: null, relativeTo: null };
+
+const initialTemplate = () => ({
+  engineVersion: 'world-engine-v1' as const, schemaVersion: 1 as const, protagonistId: 'person_a', initialTime: wt,
+  locations: { corridor: { id: 'corridor', name: '走廊', parentLocationId: null, initialAppearance: '空旷' } },
+  items: {},
+  characters: { person_a: { id: 'person_a', name: '甲', initialPosition: position, initialAppearance: '正常', initialPersonality: '冷静', initialSanity: 50, tasks: {} } },
+});
+
+const workingState = (): WorldState => ({
+  engineVersion: 'world-engine-v1' as const, schemaVersion: 1 as const, worldId: 'w1', protagonistId: 'person_a', time: wt,
+  initial: { ...initialTemplate(), worldId: 'w1' },
+  locations: { corridor: { id: 'corridor', appearanceChanges: [] } },
+  items: {},
+  characters: { person_a: { id: 'person_a', appearanceChanges: [], position, personalityChanges: [], sanity: 50, tasks: { t1: { id: 't1', ownerId: 'person_a', parentTaskId: null, goal: '检查走廊', status: 'pending' } } } },
+});
+
+const world = (over: Partial<WorldContext> = {}): WorldContext => ({
+  worldId: 'w1', time: wt,
+  head: { pointId: 'root', version: 0, stateDigest: 'd0', narrationStatus: 'ready' },
+  advance: { advanceId: null, inputId: null, intentStatus: 'pending', inputAvailable: true },
+  round: null, lease: { fenceEpoch: 1, expiresAtEpochMilli: 999999 },
+  successor: null, activePointId: null, activeRoundId: null, ...over,
+});
+
+const control = (over: Partial<ControlState> = {}): ControlState => ({
+  phase: 'select_actor', paused: false, revision: 0,
+  gate: { status: 'none', generation: null, issuedAtEpochMilli: null, expiresAtEpochMilli: null },
+  blockedReasons: [], canCompute: true, ...over,
+});
+
+const pointWork = (over: Partial<PointWork> = {}): PointWork => ({
+  pointId: 'p1', kind: 'normal', timeAdvance: ta(2), timeLocked: false, sealed: false, prefixDigest: null, predecessorWorkDigest: null,
+  timeScanComplete: false, baseline: { headPointId: 'root', version: 0, stateDigest: 'd0' }, phase: 'select_actor',
+  working: { cursor: 0, actedIds: [], visitedIds: [], settledUnitIds: [], intentStatus: 'pending' },
+  settledUnits: [], pendingGroup: null, successor: null, ...over,
+});
+
+const memory = (over: Partial<ControllerMemory> = {}): ControllerMemory => ({
+  requestId: 'rq1', leaseToken: 'lease1', holderId: 'browser', ids: {}, allocPlan: null, playerInput: null,
+  plan: null, planIndex: 0, prepareSuccessor: false, localPause: false, budget: { used: 0, max: null },
+  narration: null, workingState: null, sources: [], staged: [], groupActors: [], lastModel: null, lastResults: null,
+  continuation: null, successorTime: null, commitPayload: null, initialTemplate: null, ...over,
+});
+
+const view = (world_: WorldContext | null, control_: ControlState, work_: PointWork | null, memory_: ControllerMemory, command?: ScheduleView['command']): ScheduleView =>
+  ({ world: world_, control: control_, work: work_, memory: memory_, command });
+
+const next = (w: WorldContext | null, c: ControlState, wk: PointWork | null, m: ControllerMemory, command?: ScheduleView['command']): Decision =>
+  scheduleNext(view(w, c, wk, m, command));
+
+const groupOf = (sourceId: string, actionText = '行动。'): SourceAnalysis =>
+  ({ sourceId, actionText, targetsExtended: false, pendingTargets: [], rolled: [] });
+
+const expectTransport = (decision: Decision, operation: string) => {
+  expect(decision.kind).toBe('transport');
+  if (decision.kind !== 'transport') return decision;
+  expect(decision.operation).toBe(operation);
+  validateRequest(decision.operation, decision.request);
+  return decision;
+};
+
+describe('advance pipeline (T01 spine)', () => {
+  test('awaits player input', () => {
+    const decision = next(world(), control(), null, memory({ allocPlan: { allocationKey: 'chain_slots', slots: [] } }));
+    expect(decision).toEqual({ kind: 'await_command', reason: 'player_input' });
+  });
+  test('allocates ids before start_advance', () => {
+    const m = memory({ playerInput: { text: '探索走廊', order: ORDER }, allocPlan: { allocationKey: 'chain_slots', slots: [{ slotKey: 'advance', kind: 'advance', scope: null }] } });
+    const decision = expectTransport(next(world(), control(), null, m), 'allocate_ids') as Extract<Decision, { kind: 'transport' }>;
+    const request = decision.request as unknown as { allocationKey: string; slots: unknown[] };
+    expect(request.allocationKey).toBe('chain_slots');
+    expect(request.slots.length).toBe(1);
+  });
+  test('starts the advance with allocated ids and player order', () => {
+    const m = memory({ playerInput: { text: '探索走廊', order: ORDER }, ids: { advance: 'adv1', input: 'in1', round: 'r1' }, allocPlan: { allocationKey: 'chain_slots', slots: [] } });
+    const decision = expectTransport(next(world(), control(), null, m), 'checkpoint_start_advance') as Extract<Decision, { kind: 'transport' }>;
+    const request = decision.request as unknown as Record<string, unknown>;
+    expect(request.operation).toBe('start_advance');
+    expect(request).toMatchObject({ advanceId: 'adv1', inputId: 'in1', roundId: 'r1', inputText: '探索走廊', order: ORDER, expectedCheckpointRevision: 0 });
+  });
+  test('begins the planned point', () => {
+    const w = world({ advance: { advanceId: 'adv1', inputId: 'in1', intentStatus: 'consumed', inputAvailable: false }, activeRoundId: 'r1', round: { roundId: 'r1', trigger: 'player', order: ORDER, cursor: 0, actedIds: [], visitedIds: [], conclusion: null } });
+    const plan: PlannedPoint[] = [{ pointId: 'p1', kind: 'normal', timeAdvance: ta(2), actorIds: ['person_a'] }];
+    const decision = expectTransport(next(w, control({ revision: 1 }), null, memory({ plan, planIndex: 0 })), 'checkpoint_begin_point') as Extract<Decision, { kind: 'transport' }>;
+    expect(decision.request as unknown as Record<string, unknown>).toMatchObject({ operation: 'begin_point', pointId: 'p1', kind: 'normal', timeAdvance: ta(2), expectedCheckpointRevision: 1 });
+  });
+  test('resolves the plan through the model port first', () => {
+    const w = world({ advance: { advanceId: 'adv1', inputId: 'in1', intentStatus: 'consumed', inputAvailable: false }, activeRoundId: 'r1', round: { roundId: 'r1', trigger: 'player', order: ORDER, cursor: 0, actedIds: [], visitedIds: [], conclusion: null } });
+    const decision = next(w, control(), null, memory());
+    expect(decision).toMatchObject({ kind: 'model', task: 'pointPlan', key: 'r1' });
+  });
+});
+
+describe('normal point: group cycle (T01/T02 shapes)', () => {
+  const activeWorld = () => world({
+    head: { pointId: 'root', version: 0, stateDigest: 'd0', narrationStatus: 'ready' },
+    advance: { advanceId: 'adv1', inputId: 'in1', intentStatus: 'consumed', inputAvailable: false },
+    activeRoundId: 'r1', activePointId: 'p1',
+    round: { roundId: 'r1', trigger: 'player', order: ORDER, cursor: 0, actedIds: [], visitedIds: [], conclusion: null },
+  });
+  const spine = (over: { work?: Partial<PointWork>; memory?: Partial<ControllerMemory>; revision?: number } = {}) => ({
+    w: activeWorld(), c: control({ revision: over.revision ?? 2 }),
+    wk: pointWork(over.work), m: memory({ plan: [{ pointId: 'p1', kind: 'normal' as const, timeAdvance: ta(2), actorIds: ['person_a'] }], ids: { 'group:person_a': 'g1' }, ...over.memory }),
+  });
+
+  test('previews before the first action, then asks the action model', () => {
+    const { w, c, wk, m } = spine();
+    expect(next(w, c, wk, m)).toEqual({ kind: 'read_working_state' });
+    m.workingState = { key: workingStateKey(wk), state: workingState() };
+    expect(next(w, c, wk, m)).toMatchObject({ kind: 'model', task: 'action', key: 'person_a' });
+  });
+  test('discovers the group with the fixed action text and null targets', () => {
+    const { w, c, wk, m } = spine({ memory: { workingState: { key: workingStateKey(pointWork()), state: workingState() }, lastModel: { task: 'action', key: 'person_a', output: 'person_a采取冻结行动。' } } });
+    const decision = expectTransport(next(w, c, wk, m), 'checkpoint_discover_group') as Extract<Decision, { kind: 'transport' }>;
+    expect(decision.request as unknown as Record<string, unknown>).toMatchObject({ operation: 'discover_group', pointId: 'p1', groupId: 'g1', initiatorId: 'person_a', actionText: 'person_a采取冻结行动。', targetIds: null });
+  });
+  test('extends the declared target set in model order, rolls in ASCII order', () => {
+    const targets = [
+      { targetId: 'person_d', triggerKey: 'tk_d', ruleVersion: 'reaction-fixture-v1' as const, target: 11 },
+      { targetId: 'person_a', triggerKey: 'tk_a', ruleVersion: 'reaction-fixture-v1' as const, target: 11 },
+    ];
+    const pending: SourceAnalysis = { sourceId: 'person_a', actionText: '行动。', targetsExtended: false, pendingTargets: [], rolled: [] };
+    const { w, c, wk, m } = spine({
+      work: { phase: 'build_group', pendingGroup: { groupId: 'g1', sourceId: 'person_a', memberIds: ['person_a'], targetIds: [], frontierIds: [], closed: false } },
+      memory: { workingState: { key: workingStateKey(pointWork()), state: workingState() }, sources: [pending], lastModel: { task: 'targets', key: 'person_a', output: { targets } } },
+    });
+    const extend = expectTransport(next(w, c, wk, m), 'checkpoint_extend_group') as Extract<Decision, { kind: 'transport' }>;
+    expect((extend.request as unknown as { targets: unknown[] }).targets).toEqual([{ targetId: 'person_d', triggerKey: 'tk_d' }, { targetId: 'person_a', triggerKey: 'tk_a' }]);
+    pending.targetsExtended = true;
+    pending.pendingTargets = [...targets].sort((a, b) => (a.targetId < b.targetId ? -1 : 1)).map((t) => ({ targetId: t.targetId, triggerKey: t.triggerKey, rule: { ruleVersion: t.ruleVersion, target: t.target } }));
+    const roll = expectTransport(next(w, c, wk, m), 'create_rolls') as Extract<Decision, { kind: 'transport' }>;
+    expect((roll.request as unknown as { rolls: { targetId: string; ruleVersion: string; target: number }[] }).rolls).toEqual([{ advanceId: 'adv1', roundId: 'r1', groupId: 'g1', sourceId: 'person_a', targetId: 'person_a', triggerKey: 'tk_a', ruleVersion: 'reaction-fixture-v1', target: 11 }]);
+  });
+  test('reaction runs before the admitted extend and carries roll refs (T02-el s5–s6)', () => {
+    const pending: SourceAnalysis = {
+      sourceId: 'person_c', actionText: '行动。', targetsExtended: true,
+      pendingTargets: [{ targetId: 'person_d', triggerKey: 'tk_d', rule: { ruleVersion: 'reaction-fixture-v1', target: 11 } }],
+      rolled: [],
+    };
+    const { w, c, wk, m } = spine({
+      work: { phase: 'build_group', pendingGroup: { groupId: 'g9', sourceId: 'person_c', memberIds: ['person_c'], targetIds: [], frontierIds: [], closed: false } },
+      memory: { workingState: { key: workingStateKey(pointWork()), state: workingState() }, sources: [pending] },
+    });
+    expect(expectTransport(next(w, c, wk, m), 'create_rolls')).toBeTruthy();
+    pending.rolled.push({ targetId: 'person_d', triggerKey: 'tk_d', rule: { ruleVersion: 'reaction-fixture-v1', target: 11 }, rollId: 'roll_d', admitted: true, reacted: false });
+    pending.pendingTargets = [];
+    expect(next(w, c, wk, m)).toMatchObject({ kind: 'model', task: 'reaction', key: 'person_c', input: { memberId: 'person_d', rollId: 'roll_d' } });
+    m.lastModel = { task: 'reaction', key: 'person_c', output: 'person_d被迫反应。' };
+    const extend = expectTransport(next(w, c, wk, m), 'checkpoint_extend_group') as Extract<Decision, { kind: 'transport' }>;
+    expect((extend.request as unknown as { admittedMember: unknown }).admittedMember).toEqual({
+      memberId: 'person_d', actionText: 'person_d被迫反应。',
+      rollRefs: [{ sourceId: 'person_c', targetId: 'person_d', triggerKey: 'tk_d', rollId: 'roll_d' }],
+    });
+  });
+  test('analyses an admitted member immediately (DFS), closes when the frontier empties', () => {
+    const pending: SourceAnalysis = { sourceId: 'person_c', actionText: '行动。', targetsExtended: true, pendingTargets: [], rolled: [] };
+    const member: SourceAnalysis = { sourceId: 'person_d', actionText: 'person_d被迫反应。', targetsExtended: false, pendingTargets: [], rolled: [] };
+    const { w, c, wk, m } = spine({
+      work: { phase: 'build_group', pendingGroup: { groupId: 'g9', sourceId: 'person_c', memberIds: ['person_c', 'person_d'], targetIds: [], frontierIds: [], closed: false } },
+      memory: { workingState: { key: workingStateKey(pointWork()), state: workingState() }, sources: [member, pending] },
+    });
+    expect(next(w, c, wk, m)).toMatchObject({ kind: 'model', task: 'targets', key: 'person_d' });
+    m.sources = [];
+    expectTransport(next(w, c, wk, m), 'checkpoint_close_group');
+  });
+  test('results then updates then stage, with candidates assembled from state', () => {
+    const { w, c, wk, m } = spine({
+      work: { phase: 'settle_group', pendingGroup: { groupId: 'g1', sourceId: 'person_a', memberIds: ['person_a'], targetIds: [], frontierIds: [], closed: true } },
+      memory: { workingState: { key: workingStateKey(pointWork()), state: workingState() } },
+    });
+    expect(next(w, c, wk, m)).toMatchObject({ kind: 'model', task: 'results', key: 'g1' });
+    m.lastModel = { task: 'results', key: 'g1', output: { person_a: 'person_a的行动结果已确认。' } };
+    m.lastResults = { person_a: 'person_a的行动结果已确认。' };
+    expect(next(w, c, wk, m)).toMatchObject({ kind: 'model', task: 'updates', key: 'g1' });
+    m.lastModel = { task: 'updates', key: 'g1', output: [{ stage: 'appearance', changes: { person_a: { appearanceChanges: [{ id: 'ch1', text: '指尖结霜。', supersedes: [] }] } } }] as unknown as Json };
+    const stage = expectTransport(next(w, c, wk, m), 'checkpoint_stage_unit') as Extract<Decision, { kind: 'transport' }>;
+    const request = stage.request as unknown as { candidates: Record<string, unknown>; results: Record<string, string> };
+    expect(request.candidates).toMatchObject({ groupId: 'g1', actorIds: ['person_a'], positions: { person_a: position }, appearances: { person_a: [{ id: 'ch1', text: '指尖结霜。', supersedes: [] }] }, taskCoverageIds: ORDER, personalityCoverageIds: [] });
+    expect(request.results).toEqual({ person_a: 'person_a的行动结果已确认。' });
+  });
+  test('skips only members no later planned point covers (T01 five skips; T02 P1 none)', () => {
+    const { w, c, wk, m } = spine({ work: { working: { cursor: 1, actedIds: ['person_a'], visitedIds: [], settledUnitIds: ['u1'], intentStatus: 'consumed' } }, memory: { groupActors: ['person_a'] } });
+    const skip = expectTransport(next(w, c, wk, m), 'checkpoint_record_skip') as Extract<Decision, { kind: 'transport' }>;
+    expect((skip.request as unknown as { slotActorId: string }).slotActorId).toBe('person_b');
+    const plan2: PlannedPoint[] = [
+      { pointId: 'p1', kind: 'normal', timeAdvance: ta(2), actorIds: ['person_a', 'person_b'] },
+      { pointId: 'p2', kind: 'instant', timeAdvance: ta(0, 'instant'), actorIds: ['person_c', 'person_d'] },
+      { pointId: 'p3', kind: 'linked', timeAdvance: ta(3, 'instant'), actorIds: ['person_e', 'person_f'] },
+    ];
+    const m2 = memory({ plan: plan2, planIndex: 0, groupActors: ['person_a', 'person_b'] });
+    const wk2 = pointWork({ working: { cursor: 2, actedIds: ['person_a', 'person_b'], visitedIds: [], settledUnitIds: ['u1', 'u2'], intentStatus: 'consumed' } });
+    expect(next(w, c, wk2, m2)).toEqual({ kind: 'read_working_state' });
+    m2.workingState = { key: workingStateKey(wk2), state: workingState() };
+    expectTransport(next(w, c, wk2, m2), 'checkpoint_seal_point');
+  });
+  test('previews before sealing, then seals', () => {
+    const { w, c, wk, m } = spine({ work: { working: { cursor: 6, actedIds: ORDER, visitedIds: ORDER, settledUnitIds: ['u1'], intentStatus: 'consumed' } }, memory: { groupActors: ['person_a'] } });
+    expect(next(w, c, wk, m)).toEqual({ kind: 'read_working_state' });
+    m.workingState = { key: workingStateKey(wk), state: workingState() };
+    expectTransport(next(w, c, wk, m), 'checkpoint_seal_point');
+  });
+  test('commits the staged payload once sealed', () => {
+    const { w, c, wk, m } = spine({
+      work: { sealed: true, prefixDigest: 'pd1' },
+      memory: { commitPayload: { point: { worldId: 'w1', id: 'p1', sequence: 1, kind: 'normal', previousPointId: 'root', roundId: 'r1', advanceId: 'adv1', trigger: 'player', linkedFromPointId: null, timeAdvance: ta(2), entityDeltas: {} }, settlementGroups: [] } },
+    });
+    const decision = expectTransport(next(w, c, wk, m), 'commit_point') as Extract<Decision, { kind: 'transport' }>;
+    expect(decision.request as unknown as Record<string, unknown>).toMatchObject({ advanceId: 'adv1', roundId: 'r1', pointId: 'p1' });
+  });
+});
+
+describe('narration pipeline', () => {
+  const narrating = (over: { paused?: boolean; status?: 'pending' | 'missing' | 'failed' } = {}) => ({
+    w: world({ head: { pointId: 'p1', version: 1, stateDigest: 'd1', narrationStatus: over.status ?? 'pending' } }),
+    c: control({ revision: 13, paused: over.paused ?? false }),
+  });
+  test('claims head narration, generates, then submits ready', () => {
+    const { w, c } = narrating();
+    const m = memory({ narration: { pointId: 'p1', claim: null, input: { point: 'p1' } } });
+    expectTransport(next(w, c, null, m), 'narration_claim');
+    m.narration!.claim = { claimToken: 'ct1', generation: 1, issuedAtEpochMilli: 123 };
+    expect(next(w, c, null, m)).toMatchObject({ kind: 'model', task: 'narration', key: 'p1' });
+    m.lastModel = { task: 'narration', key: 'p1', output: '走廊的霜气未散。' };
+    const submit = expectTransport(next(w, c, null, m), 'narration_submit') as Extract<Decision, { kind: 'transport' }>;
+    expect(submit.request as unknown as Record<string, unknown>).toMatchObject({ outcome: 'ready', text: '走廊的霜气未散。', claimToken: 'ct1', generation: 1, mode: 'head' });
+  });
+  test('narration runs through an external pause (T05 s7/s8)', () => {
+    const { w, c } = narrating({ paused: true });
+    const m = memory({ narration: { pointId: 'p1', claim: { claimToken: 'ct1', generation: 1, issuedAtEpochMilli: 123 }, input: { point: 'p1' } } });
+    expect(next(w, c, null, m)).toMatchObject({ kind: 'model', task: 'narration', key: 'p1' });
+    m.lastModel = { task: 'narration', key: 'p1', output: '暂停中的叙事照常提交。' };
+    const submit = expectTransport(next(w, c, null, m), 'narration_submit') as Extract<Decision, { kind: 'transport' }>;
+    expect((submit.request as unknown as { outcome: string }).outcome).toBe('ready');
+  });
+  test('paused without narration awaits a command', () => {
+    const w = world({ head: { pointId: 'p1', version: 1, stateDigest: 'd1', narrationStatus: 'ready' } });
+    const c = control({ paused: true });
+    expect(next(w, c, null, memory())).toEqual({ kind: 'await_command', reason: 'paused_externally' });
+    expect(next(w, c, null, memory({ localPause: true }))).toEqual({ kind: 'await_command', reason: 'local_budget_pause' });
+  });
+});
+
+describe('empty point time scan (T03)', () => {
+  const emptyPoint = (over: Partial<PointWork> = {}) => pointWork({ pointId: 'p0', timeScanComplete: false, ...over });
+  const setup = (over: Partial<ControllerMemory> = {}) => ({
+    w: world({ advance: { advanceId: 'adv1', inputId: 'in1', intentStatus: 'consumed' as const, inputAvailable: false }, activeRoundId: 'r1', activePointId: 'p0', round: { roundId: 'r1', trigger: 'automatic' as const, order: ORDER, cursor: 0, actedIds: [], visitedIds: [], conclusion: null } }),
+    c: control({ revision: 2 }),
+    wk: emptyPoint(),
+    m: memory({ plan: [{ pointId: 'p0', kind: 'normal' as const, timeAdvance: ta(60), actorIds: [] }], ...over }),
+  });
+  test('previews, then asks the updates model for the scan', () => {
+    const { w, c, wk, m } = setup();
+    expect(next(w, c, wk, m)).toEqual({ kind: 'read_working_state' });
+    m.workingState = { key: workingStateKey(wk), state: workingState() };
+    expect(next(w, c, wk, m)).toMatchObject({ kind: 'model', task: 'updates', key: 'time_scan:p0' });
+  });
+  test('stages scan candidates with a null group and no skips afterwards', () => {
+    const { w, c, wk, m } = setup({ workingState: { key: workingStateKey(emptyPoint()), state: workingState() } });
+    const stages: UpdatesCall[] = [
+      { stage: 'tasks', changes: { person_a: { tasksAchieved: ['t1'] } } },
+      { stage: 'personality', changes: { person_a: { personalityChanges: [{ id: 'pc1', text: '放松警惕。', supersedes: [] }] } } },
+      { stage: 'sanity', changes: { person_a: { sanitySet: 45 } } },
+    ];
+    m.lastModel = { task: 'updates', key: 'time_scan:p0', output: stages as unknown as Json };
+    const scan = expectTransport(next(w, c, wk, m), 'checkpoint_stage_time_scan') as Extract<Decision, { kind: 'transport' }>;
+    const candidates = (scan.request as unknown as { candidates: Record<string, unknown> }).candidates;
+    expect(candidates).toMatchObject({ groupId: null, actorIds: [], tasksAchieved: { person_a: ['t1'] }, sanities: { person_a: 45 }, personalityCoverageIds: ['person_a'] });
+    wk.timeScanComplete = true;
+    m.lastModel = null;
+    expectTransport(next(w, c, wk, m), 'checkpoint_seal_point');
+  });
+});
+
+describe('round conclusion', () => {
+  const assessing = () => ({
+    w: world({ advance: { advanceId: 'adv1', inputId: 'in1', intentStatus: 'consumed' as const, inputAvailable: false }, activeRoundId: 'r1', round: { roundId: 'r1', trigger: 'automatic' as const, order: ORDER, cursor: 6, actedIds: ORDER, visitedIds: ORDER, conclusion: null } }),
+    c: control({ phase: 'assess_continuation' as const, revision: 9 }),
+  });
+  test('asks the continuation model, then concludes handback', () => {
+    const { w, c } = assessing();
+    expect(next(w, c, null, memory())).toMatchObject({ kind: 'model', task: 'continuation', key: 'r1' });
+    const m = memory({ continuation: { kind: 'handback', closedBy: 'model', cancelReason: null } });
+    const conclude = expectTransport(next(w, c, null, m), 'round_conclusion_conclude') as Extract<Decision, { kind: 'transport' }>;
+    expect((conclude.request as unknown as { conclusion: unknown }).conclusion).toEqual({ kind: 'handback', closedBy: 'model', cancelReason: null });
+  });
+  test('concludes continue with a seeded next round id', () => {
+    const { w, c } = assessing();
+    const m = memory({ continuation: { kind: 'continue', closedBy: 'model', cancelReason: null, candidateCharacterIds: ['person_c'], nextRoundId: 'r2' } });
+    expectTransport(next(w, c, null, m), 'round_conclusion_conclude');
+  });
+});
+
+describe('commands, budget, gate and lease', () => {
+  const active = () => ({
+    w: world({ advance: { advanceId: 'adv1', inputId: 'in1', intentStatus: 'consumed' as const, inputAvailable: false }, activeRoundId: 'r1', round: { roundId: 'r1', trigger: 'player' as const, order: ORDER, cursor: 0, actedIds: [], visitedIds: [], conclusion: null } }),
+    c: control({ revision: 3 }),
+  });
+  test('pause/resume/cancel commands emit the matching control operations', () => {
+    const { w, c } = active();
+    const m = memory();
+    expectTransport(next(w, c, null, m, { kind: 'pause' }), 'checkpoint_pause');
+    expectTransport(next(w, c, null, m, { kind: 'budget_exhausted' }), 'checkpoint_pause');
+    expectTransport(next(w, c, null, m, { kind: 'resume' }), 'checkpoint_resume');
+    const cancel = expectTransport(next(w, c, null, m, { kind: 'cancel', reason: '玩家放弃' }), 'round_conclusion_cancel') as Extract<Decision, { kind: 'transport' }>;
+    expect((cancel.request as unknown as { cancelReason: string }).cancelReason).toBe('玩家放弃');
+  });
+  test('budget exhaustion turns the next due model call into a pause', () => {
+    const { w, c } = active();
+    const wk = pointWork();
+    const m = memory({ plan: [{ pointId: 'p1', kind: 'normal', timeAdvance: ta(2), actorIds: ['person_a'] }], workingState: { key: workingStateKey(wk), state: workingState() }, budget: { used: 4, max: 4 } });
+    expectTransport(next(w, c, wk, m), 'checkpoint_pause');
+  });
+  test('pending gate awaits a command', () => {
+    const { w, c } = active();
+    c.gate = { status: 'pending', generation: 1, issuedAtEpochMilli: 1, expiresAtEpochMilli: 2 };
+    expect(next(w, c, null, memory())).toEqual({ kind: 'await_command', reason: 'gate_pending' });
+  });
+  test('missing lease acquires one before anything else', () => {
+    const { c } = active();
+    const w = world({ lease: null });
+    const decision = expectTransport(next(w, c, null, memory({ leaseToken: null })), 'lease_acquire') as Extract<Decision, { kind: 'transport' }>;
+    expect((decision.request as unknown as { holderId: string }).holderId).toBe('browser');
+  });
+  test('canCompute=false blocks state computation but not the control plane', () => {
+    const c = control({ revision: 0, canCompute: false, blockedReasons: ['phase_not_computable'] });
+    const m = memory({ playerInput: { text: 'x', order: ORDER }, ids: { advance: 'adv1', input: 'in1', round: 'r1' }, allocPlan: { allocationKey: 'chain_slots', slots: [] } });
+    expectTransport(next(world(), c, null, m), 'checkpoint_start_advance');
+  });
+});
+
+describe('error routing pins the frozen 18-code catalog', () => {
+  const expected: Record<ErrorCode, [number, boolean, ClientAction]> = {
+    narration_blocked: [409, true, 'wait_narration'],
+    cache_missing: [409, false, 'regenerate_narration'],
+    claim_expired: [409, false, 'regenerate_narration'],
+    claim_fenced: [409, false, 'refresh_context'],
+    paused: [409, false, 'resolve_gate'],
+    stale_epoch: [409, false, 'reacquire_lease'],
+    lease_invalid: [409, false, 'reacquire_lease'],
+    revision_mismatch: [409, false, 'refresh_context'],
+    phase_invalid: [409, false, 'refresh_context'],
+    version_mismatch: [409, false, 'refresh_context'],
+    protocol_version_unsupported: [400, false, 'none'],
+    request_id_reused: [409, false, 'fix_request'],
+    request_in_progress: [409, true, 'retry_same_request'],
+    point_time_locked: [409, false, 'fix_request'],
+    frozen_work_missing: [409, false, 'pause'],
+    frozen_work_corrupt: [409, false, 'pause'],
+    preview_budget_exceeded: [413, false, 'fix_request'],
+    request_malformed: [400, false, 'fix_request'],
+  };
+  const followup: Partial<Record<ErrorCode, string>> = {
+    request_in_progress: 'retry_same_request',
+    stale_epoch: 'lease_acquire', lease_invalid: 'lease_acquire',
+    revision_mismatch: 'refresh_context', phase_invalid: 'refresh_context', version_mismatch: 'refresh_context', claim_fenced: 'refresh_context',
+    narration_blocked: 'finish_own_narration', cache_missing: 'finish_own_narration', claim_expired: 'finish_own_narration',
+    paused: 'await_control',
+    frozen_work_missing: 'pause_and_stop', frozen_work_corrupt: 'pause_and_stop',
+    request_id_reused: 'stop', point_time_locked: 'stop', request_malformed: 'stop', preview_budget_exceeded: 'stop', protocol_version_unsupported: 'stop',
+  };
+  const mkError = (code: ErrorCode): ErrorResponse => ({
+    protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1,
+    replayed: false, operation: null, requestId: null, worldId: null,
+    error: { code, httpStatus: expected[code][0], retryable: expected[code][1], clientAction: expected[code][2], details: {} },
+  });
+  test.each(Object.entries(expected) as [ErrorCode, [number, boolean, ClientAction]][])('%s', (code, [httpStatus, retryable, clientAction]) => {
+    expect(Object.keys(errorCatalog).sort()).toEqual(Object.keys(expected).sort());
+    expect(errorCatalog[code]).toMatchObject({ httpStatus, retryable, clientAction });
+    const reaction = errorReaction(mkError(code));
+    expect(reaction.clientAction).toBe(clientAction);
+    expect(reaction.reuseRequestId).toBe(code === 'request_in_progress');
+    expect(reaction.followup).toBe(followup[code]);
+  });
+});
+
+describe('updates guard: dangling references only', () => {
+  const input = { taskIds: new Set(['t_root']), changeIds: new Set(['ch_old']) };
+  test('rejects a task reference produced nowhere', () => {
+    const result = checkUpdatesStages(input, [{ stage: 'tasks', changes: { person_a: { tasksAchieved: ['t_ghost'] } } }]);
+    expect(result).toMatchObject({ ok: false, dangling: [{ kind: 'task', id: 't_ghost' }] });
+  });
+  test('rejects a supersedes reference produced nowhere', () => {
+    const result = checkUpdatesStages(input, [{ stage: 'appearance', changes: { person_a: { appearanceChanges: [{ id: 'ch1', text: 'x', supersedes: ['ch_ghost'] }] } } }]);
+    expect(result).toMatchObject({ ok: false, dangling: [{ kind: 'change', id: 'ch_ghost' }] });
+  });
+  test('accepts the T03-collapse overlap: v13 achieved in one stage, added as pending in a later one', () => {
+    const result = checkUpdatesStages({ taskIds: new Set(), changeIds: new Set() }, [
+      { stage: 'tasks', changes: { person_c: { tasksAchieved: ['v13'] } } },
+      { stage: 'subtasks', changes: { person_c: { subtasksAdded: [
+        { id: 'v12', ownerId: 'person_c', parentTaskId: null, goal: '检查安全', status: 'pending' },
+        { id: 'v13', ownerId: 'person_c', parentTaskId: 'v12', goal: '确认门边', status: 'pending' },
+      ] } } },
+    ]);
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.merged.person_c).toMatchObject({ entityId: 'person_c', tasksAchieved: ['v13'] });
+      expect(result.merged.person_c.subtasksAdded?.map((t) => t.id)).toEqual(['v12', 'v13']);
+    }
+  });
+  test('merges split per-stage calls in order (updates granularity 1–6 calls)', () => {
+    const result = checkUpdatesStages(input, [
+      { stage: 'position', changes: { person_a: { positionSet: { containerId: 'room', slotId: null, relativeTo: null } } } },
+      { stage: 'appearance', changes: { person_a: { appearanceChanges: [{ id: 'ch2', text: 'y', supersedes: ['ch_old'] }] } } },
+    ]);
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.merged.person_a.positionSet).toEqual({ containerId: 'room', slotId: null, relativeTo: null });
+      expect(result.merged.person_a.appearanceChanges?.length).toBe(1);
+    }
+  });
+  test('rejects duplicate stages', () => {
+    expect(() => checkUpdatesStages(input, [
+      { stage: 'tasks', changes: {} },
+      { stage: 'tasks', changes: {} },
+    ])).toThrow('Duplicate updates stage');
+  });
+});
