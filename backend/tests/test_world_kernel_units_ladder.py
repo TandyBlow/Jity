@@ -43,7 +43,16 @@ def test_staged_groups_pass_unit_and_coverage_validation(trace_id):
                   for step in trace_doc['steps']
                   if step.get('operation') in STAGE_OPS
                   and step.get('responseKind') == 'success']
-        assert validate_commit_groups(staged, WORLD_ROSTER) == ()
+        violations = validate_commit_groups(staged, WORLD_ROSTER)
+        if trace_id == 'T03-collapse':
+            # Known-deviant fixture (2026-10-22 ruling): its group achieved a
+            # task but declares personalityCoverage=actors; the workflow design
+            # §6.3 requires the whole cast. The trace stays untouched, replay
+            # does not validate, and refixturing goes through the A0 change
+            # process before real traffic can stage such a unit.
+            assert {violation.kind for violation in violations} == {'coverage'}
+        else:
+            assert violations == ()
 
 
 def make_work(**overrides):
@@ -67,12 +76,44 @@ def make_control(**overrides):
     return ControlState.model_validate({**base, **overrides})
 
 
+def test_unit_validation_catches_out_of_roster_character_keys():
+    ghost = SettlementGroup.model_validate({
+        'groupId': 'group_a', 'actorIds': ['person_a'],
+        'positions': {}, 'appearances': {},
+        'tasksAchieved': {'ghost': ['task_ghost']},
+        'subtasksAdded': {}, 'personalities': {'person_b': [
+            {'id': 'change_b', 'text': '变了。', 'supersedes': []}]},
+        'sanities': {'person_b': 40},
+        'taskCoverageIds': sorted(WORLD_ROSTER),
+        'personalityCoverageIds': ['person_a'],
+    })
+    kinds = {violation.kind for violation in
+             validate_commit_groups([ghost], WORLD_ROSTER)}
+    assert kinds == {'roster', 'coverage'}
+    full_cast = SettlementGroup.model_validate({
+        'groupId': 'group_a', 'actorIds': ['person_a'],
+        'positions': {}, 'appearances': {},
+        'tasksAchieved': {'person_a': ['task_a']},
+        'subtasksAdded': {}, 'personalities': {'person_b': [
+            {'id': 'change_b', 'text': '变了。', 'supersedes': []}]},
+        'sanities': {'person_b': 40},
+        'taskCoverageIds': sorted(WORLD_ROSTER),
+        'personalityCoverageIds': sorted(WORLD_ROSTER),
+    })
+    assert validate_commit_groups([full_cast], WORLD_ROSTER) == ()
+
+
 def test_ladder_happy_path_and_refusals():
     work, control = make_work(), make_control()
     assert check_checkpoint('checkpoint_discover_group', work, control) == ()
     kinds = {violation.kind for violation in check_checkpoint(
         'checkpoint_extend_group', work, control)}
     assert kinds == {'phase', 'activePendingGroup'}
+    for operation in ('checkpoint_set_point_time', 'checkpoint_record_skip'):
+        for broken in (None, make_work(sealed=True, prefixDigest='a' * 64)):
+            assert {violation.kind for violation in check_checkpoint(
+                operation, broken, control)} >= {'pointWork'}, operation
+    assert check_checkpoint('checkpoint_record_skip', work, control) == ()
     paused = make_control(paused=True, canCompute=False, blockedReasons=['paused'])
     assert {violation.kind for violation in check_checkpoint(
         'checkpoint_discover_group', work, paused)} == {'paused'}

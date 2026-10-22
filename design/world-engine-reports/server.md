@@ -69,6 +69,7 @@ Python 预期工具只对手写 expectedProjection 绑定身份，按既有 worl
 5. **supersedes 失活链**：同点新增链跨组＝同点 supersedes，schema 已禁，merge 阶段判违规；跨点只允许引用旧点 id，旧记录 `active=false`，新记录 `sourcePointId/sourceSequence` 取提交点。
 6. **跨组 positionSet（拍板）**：沿用 v1 意图——跨单元同 actor 判违规（内容语义非法→`request_malformed`），位置冲突随之不可达；不取 last-wins（把「谁生效」绑到外序语义且无夹具支撑）。
 7. **月/年时长**：v2 全夹具零覆盖；定为公历夹月末（clamp to month end），A1b 自建夹具，H1 记一笔待确认。
+8. **覆盖规则（B 审出、2026-10-22 裁决）**：`taskCoverageIds`＝**世界全体角色**（T03-collapse 单人组仍覆盖 6 人，非 round roster——v1「roster 覆盖」意图有误）；`personalityCoverageIds` 无达成＝空，**有达成＝世界全体**（workflow 设计 §6.3「扫描所有人物/不得只检查共同结算成员」为准；组与 time-scan 同规则）。T03-collapse 组（coverage=actors）为**已知偏差夹具**：轨迹/manifest 不动，validate 断言其 coverage 违规，回放不走 validate 不受影响；是否重录夹具按 §2.2 在真实流量出现该场景前决定。角色专属字段键（tasksAchieved/personalities/sanities/subtasksAdded）必须在册，个性变化必须落在声明的 coverage 内。`set_point_time`/`record_skip` 另有矩阵未载的局部不变量：要求 open work。B 的 schedule.ts coverage 生成（round.order）需同步为世界全体。
 
 ## 固定预期绑定（A1a-2 直接采用）
 

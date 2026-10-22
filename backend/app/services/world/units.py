@@ -20,17 +20,32 @@ def validate_unit(unit: SettlementGroup, world_roster: frozenset[Id]) -> tuple[V
     if not set(unit.actorIds) <= world_roster:
         violations.append(Violation(
             'roster', f'actors {sorted(set(unit.actorIds) - world_roster)} are not world characters'))
+    character_only = (set(unit.tasksAchieved) | set(unit.personalities)
+                      | set(unit.sanities) | set(unit.subtasksAdded))
+    if not character_only <= world_roster:
+        violations.append(Violation(
+            'roster', f'character keys {sorted(character_only - world_roster)} are not world characters'))
     if set(unit.taskCoverageIds) != world_roster:
         violations.append(Violation(
             'coverage', 'task coverage must list the world\'s full character set'))
     if unit.tasksAchieved:
-        expected = (world_roster if unit.groupId is None else set(unit.actorIds))
+        # Ruling of 2026-10-22, per the workflow design §6.3: an achieved task
+        # may affect any character, so the personality/sanity scan covers the
+        # whole cast for named groups exactly as it does for the time-scan
+        # unit. The T03-collapse fixture (coverage=actors) is a known-deviant
+        # artifact; validation refuses it and the replay tests do not run
+        # validation, so only real traffic sees the refusal.
+        expected = world_roster
     else:
         expected = set()
     if set(unit.personalityCoverageIds) != expected:
         violations.append(Violation(
             'coverage', 'personality coverage must stay empty without achieved tasks, '
                         'else list the whole cast for a time-scan unit or the actors of a group'))
+    if not set(unit.personalities) <= set(unit.personalityCoverageIds):
+        violations.append(Violation(
+            'coverage', f'personality changes {sorted(set(unit.personalities) - set(unit.personalityCoverageIds))} '
+                        'fall outside the declared scan coverage'))
     return tuple(violations)
 
 

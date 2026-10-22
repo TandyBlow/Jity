@@ -15,6 +15,11 @@ from .violations import Violation
 
 _OPAQUE_KINDS = frozenset({'lease', 'headNarration', 'frozenSource', 'activeAdvance'})
 
+# Local invariants the matrix rows omit: both operations mutate one point's
+# time or slot record, which presumes an open work view even though their
+# precondition rows carry no pointWork entry.
+_OPEN_WORK_REQUIRED = frozenset({'checkpoint_set_point_time', 'checkpoint_record_skip'})
+
 
 def check_checkpoint(operation: str, work: PointWorkView | None,
                      control: ControlState) -> tuple[Violation, ...]:
@@ -27,6 +32,9 @@ def check_checkpoint(operation: str, work: PointWorkView | None,
         if not _decide(pre.kind, pre.value, work, control):
             violations.append(Violation(
                 pre.kind, f'{operation} requires {pre.kind}={pre.value!r}'))
+    if operation in _OPEN_WORK_REQUIRED and (work is None or work.sealed):
+        violations.append(Violation(
+            'pointWork', f'{operation} requires an open work view'))
     return tuple(violations)
 
 
