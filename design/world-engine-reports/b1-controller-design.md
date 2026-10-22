@@ -34,7 +34,7 @@
 
 - **IdentityStore**：
   - seed 优先——T02/T02-el/T03/T04/T05/T08 用输入种子的 group/trigger/point/nextRoundId；无 seed 才 `allocate_ids`（T01 s4、T03-collapse s2 均在点工作开始前）。
-  - 分配范围按实证补全：T01 s4 `allocationKey: "chain_slots"` 一次分配 advance/input/round/point/group；T03-collapse s2 `allocationKey: "task_collapse_slots"` 分配 task×2/change/point。`allocationKey`、slotKey/kind/scope 的 slot plan 是场景声明，经模型端口供给；模型输出中的 local refs 按 slotKey 绑定到预分配 ID（controller 不得自行造 ID）。
+  - 分配范围按实证补全：T01 s4 `allocationKey: "chain_slots"` 一次分配 advance/input/round/point/group；T03-collapse s2 `allocationKey: "task_collapse_slots"` 分配 task×2/change/point。`allocationKey` 与 slot plan 是**场景声明（harness 配置，进控制器 memory）**，不属模型输出；模型输出中的 local refs 按 slotKey 绑定到预分配 ID（controller 不得自行造 ID）。
   - requestId 生命周期：**timeout/`request_in_progress` → 同内容沿用原 requestId 重发**；**definitive 拒绝（`fix_request`/`refresh_context`/`reacquire_lease` 等终态 clientAction）→ 旧操作退休，新操作新 requestId**。刷新后重建的请求不得沿用旧 requestId，防止撞 `request_id_reused`。
   - triggerKey 与 roll 规则（`create_rolls` 请求的 `ruleVersion`、`target`，T02 s18–s19 实证）是场景决策值，经模型端口 `targets` 任务输出供给，控制器与 harness 都不硬编码。
 - **Harness** 职责：初始 world/lease 建立、玩家输入注入、`command`/`probe`/`inspect` 段执行（含心跳 lease_renew/narration_claim_renew、T06 式 replay）、停止边界判定、预算事件注入。
