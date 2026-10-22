@@ -14,7 +14,7 @@ import {
   type ControllerMemory, type Decision, type HarnessCommand, type ModelTask, type PlannedPoint, type RollRule, type SourceAnalysis, type UpdatesCall,
 } from './schedule';
 import type {
-  Conclusion, ControlState, CurrentClaim, Id, InitialTemplate, Json, PointWork, RequestMap,
+  Conclusion, ControlState, CurrentClaim, ErrorResponse, Id, InitialTemplate, Json, PointWork, RequestMap,
   TimeAdvance, WorldContext, WorldOperation,
 } from './types';
 
@@ -98,32 +98,34 @@ export class ControllerDriver {
     return { kind: 'error', detail: 'driver step limit exceeded' };
   }
 
-  /** Executes exactly one decision. Returns a terminal status, or undefined. */
+  /** Executes exactly one decision. Returns a terminal status, or undefined.
+   * Commands are consumed only when this.command still IS the captured
+   * command — one delivered while a request is in flight survives. */
   async step(): Promise<DriverStatus | undefined> {
     const command = this.command;
-    if (command?.kind === 'player_input') this.command = null; // consumed via memory.playerInput
+    if (command?.kind === 'player_input' && this.command === command) this.command = null; // consumed via memory.playerInput
     const decision = scheduleNext({ world: this.state.world, control: this.state.control, work: this.state.work, memory: this.memory, command: command && command.kind !== 'player_input' ? command : undefined });
     switch (decision.kind) {
       case 'await_command':
-        this.command = null;
+        if (this.command === command) this.command = null;
         return { kind: 'await', reason: decision.reason };
       case 'stop':
-        this.command = null;
+        if (this.command === command) this.command = null;
         return { kind: 'stop', reason: decision.reason };
       case 'model': {
-        this.command = null;
         const output = await this.io.model.generate(decision.task, decision.key, decision.input);
+        if (this.command === command) this.command = null;
         this.consumeModelOutput(decision, output);
         return undefined;
       }
       case 'read_working_state':
-        this.command = null;
+        if (this.command === command) this.command = null;
         return this.preview();
       case 'transport': {
         const executesCommand = command != null && this.commandOperation(command) === decision.operation;
         const outcome = await this.call(decision.operation, decision.request, decision.scope);
         if (outcome.ok) {
-          if (!command || executesCommand) this.command = null; // a diverted command (e.g. pause after lease_acquire) survives
+          if ((!command || executesCommand) && this.command === command) this.command = null; // a diverted command survives; a newer delivered command always survives
           this.adoptSuccess(decision.operation, decision.request, outcome.response);
           this.memory.lastModel = null;
           this.nextRequestId();
@@ -134,30 +136,37 @@ export class ControllerDriver {
     }
   }
 
-  /** Single funnel for every transport call. Retries timeouts and
-   * request_in_progress with the original payload up to retryLimit;
-   * definitive rejections retire the requestId, run the clientAction
-   * follow-up, and make the caller re-schedule. */
-  private async call(operation: WorldOperation, request: unknown, scope: { worldId?: Id; pointId?: Id }): Promise<CallOutcome> {
-    let retries = 0;
+  /** Single funnel for every transport call. Timeout/request_in_progress
+   * retries, recovery hops and follow-up invocations all draw from ONE
+   * shared budget, so no recovery chain can outlive retryLimit. A lease
+   * held by another owner is a wait, not a reacquire loop. */
+  private async call(operation: WorldOperation, request: unknown, scope: { worldId?: Id; pointId?: Id }, budget?: { left: number }): Promise<CallOutcome> {
+    const retries = budget ?? { left: this.retryLimit };
     for (;;) {
       try {
         const response = await this.io.transport.execute(operation, request as never, scope);
         return { ok: true, response };
       } catch (error) {
         if (error instanceof WorldTimeoutError) {
-          if (++retries > this.retryLimit) return { ok: false, terminal: { kind: 'error', detail: `retry limit exceeded on ${operation} (timeout)` } };
+          if (retries.left <= 0) return { ok: false, terminal: { kind: 'error', detail: `retry limit exceeded on ${operation} (timeout)` } };
+          retries.left--;
           continue;
         }
         if (!(error instanceof WorldApiError)) throw error;
         const reaction = errorReaction(error.response);
         this.adoptState(error.response);
         if (reaction.followup === 'retry_same_request') {
-          if (++retries > this.retryLimit) return { ok: false, terminal: { kind: 'error', detail: `retry limit exceeded on ${operation} (${error.response.error.code})` } };
+          if (retries.left <= 0) return { ok: false, terminal: { kind: 'error', detail: `retry limit exceeded on ${operation} (${error.response.error.code})` } };
+          retries.left--;
           continue;
         }
+        if (error.response.error.code === 'lease_invalid' && error.response.error.details?.reason === 'lease_held') {
+          return { ok: false, terminal: { kind: 'await', reason: 'lease_held_by_other' } };
+        }
+        if (retries.left <= 0) return { ok: false, terminal: { kind: 'error', detail: `recovery limit exceeded on ${operation} (${error.response.error.code})` } };
+        retries.left--;
         this.nextRequestId();
-        const terminal = await this.applyErrorFollowup(reaction.followup, error.response.error.code);
+        const terminal = await this.applyErrorFollowup(reaction.followup, error.response, retries);
         return { ok: false, terminal };
       }
     }
@@ -215,22 +224,26 @@ export class ControllerDriver {
     return undefined;
   }
 
-  private async applyErrorFollowup(followup: ReturnType<typeof errorReaction>['followup'], code: string): Promise<DriverStatus | undefined> {
+  private async applyErrorFollowup(followup: ReturnType<typeof errorReaction>['followup'], error: ErrorResponse, budget: { left: number }): Promise<DriverStatus | undefined> {
+    const code = error.error.code;
     const world = this.state.world;
     switch (followup) {
       case 'retry_same_request':
         return undefined;
       case 'refresh_context': {
-        const outcome = await this.call('get_context', {}, { worldId: world?.worldId });
+        const outcome = await this.call('get_context', {}, { worldId: world?.worldId }, budget);
         if (!outcome.ok) return outcome.terminal;
         this.adoptState(outcome.response);
         this.memory.lastModel = null;
+        // A refreshed context may carry a new fence: a held narration claim is
+        // no longer trustworthy (claim_fenced) — drop it and re-claim.
+        if (this.memory.narration) this.memory.narration.claim = null;
         this.nextRequestId();
         return undefined;
       }
       case 'lease_acquire': {
         const request = { protocolVersion: 2 as const, requestId: this.memory.requestId, worldId: world?.worldId ?? '', holderId: this.memory.holderId };
-        const outcome = await this.call('lease_acquire', request, { worldId: world?.worldId });
+        const outcome = await this.call('lease_acquire', request, { worldId: world?.worldId }, budget);
         if (!outcome.ok) return outcome.terminal;
         this.adoptSuccess('lease_acquire', request, outcome.response);
         this.memory.lastModel = null;
@@ -255,7 +268,7 @@ export class ControllerDriver {
           expectedPointId: world?.head.pointId ?? '', expectedVersion: world?.head.version ?? 0,
           expectedCheckpointRevision: this.state.control.revision, operation: 'pause' as const,
         };
-        const outcome = await this.call('checkpoint_pause', request, { worldId: world?.worldId });
+        const outcome = await this.call('checkpoint_pause', request, { worldId: world?.worldId }, budget);
         if (!outcome.ok) return outcome.terminal;
         return { kind: 'stop', reason: `pause_and_stop:${code}` };
       }
@@ -272,7 +285,15 @@ export class ControllerDriver {
 
   private adoptState(response: unknown): void {
     const envelope = response as { world?: WorldContext | null; control?: ControlState; work?: PointWork | null };
-    if (envelope.world !== undefined) this.state.world = envelope.world;
+    if (envelope.world !== undefined) {
+      const previousEpoch = this.state.world?.lease?.fenceEpoch ?? null;
+      const nextEpoch = envelope.world?.lease?.fenceEpoch ?? null;
+      this.state.world = envelope.world;
+      // A lease-generation change fences every held narration claim.
+      if (previousEpoch != null && nextEpoch != null && previousEpoch !== nextEpoch && this.memory.narration) {
+        this.memory.narration.claim = null;
+      }
+    }
     if (envelope.control !== undefined) this.state.control = envelope.control;
     if (envelope.work !== undefined) this.state.work = envelope.work;
   }

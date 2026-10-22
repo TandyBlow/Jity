@@ -521,3 +521,91 @@ describe('review regressions (553e341 findings)', () => {
     expect(status2.kind).toBe('error');
   });
 });
+
+describe('review regressions round 2 (18714a3 findings)', () => {
+  test('recovery chains share the retry budget; a held lease waits instead of looping', async () => {
+    let staleCalls = 0;
+    const staleTransport: WorldTransport = { async execute(operation, request) { staleCalls++; void operation; throw apiError('stale_epoch', (request as { requestId?: Id })?.requestId ?? 'req'); } };
+    const driver1 = new ControllerDriver({ transport: staleTransport, model: new ScriptedModel([]) }, memoryWithAdvanceStart(), { world: mkWorld(), control: mkControl() }, { retryLimit: 1 });
+    const status1 = await driver1.run(1);
+    expect(staleCalls).toBe(2);
+    expect(status1).toEqual({ kind: 'error', detail: expect.stringContaining('recovery limit') });
+
+    let heldCalls = 0;
+    const heldError = new WorldApiError({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation: null, requestId: 'req', worldId: 'w1', error: { code: 'lease_invalid', httpStatus: 409, retryable: false, clientAction: 'reacquire_lease', details: { reason: 'lease_held' } } });
+    const heldTransport: WorldTransport = { async execute(operation, request) {
+      heldCalls++;
+      if (operation === 'lease_acquire') throw heldError;
+      throw apiError('stale_epoch', (request as { requestId?: Id })?.requestId ?? 'req');
+    } };
+    const driver2 = new ControllerDriver({ transport: heldTransport, model: new ScriptedModel([]) }, memoryWithAdvanceStart(), { world: mkWorld(), control: mkControl() });
+    const status2 = await driver2.run(1);
+    expect(heldCalls).toBe(2);
+    expect(status2).toEqual({ kind: 'await', reason: 'lease_held_by_other' });
+  });
+
+  test('a command delivered while a request is in flight is not lost', async () => {
+    const ops: WorldOperation[] = [];
+    let release: ((value: unknown) => void) | null = null;
+    const world = mkWorld();
+    const control = mkControl();
+    const transport: WorldTransport = { async execute(operation) {
+      ops.push(operation);
+      if (operation === 'checkpoint_start_advance') return new Promise((resolve) => { release = resolve as (value: unknown) => void; });
+      return { protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation, requestId: 'x', requestHash: 'hash', world: mkWorld({ advance: { advanceId: 'adv1', inputId: 'in1', intentStatus: 'consumed', inputAvailable: false }, activeRoundId: 'r1', round: { roundId: 'r1', trigger: 'player', order: ORDER, cursor: 0, actedIds: [], visitedIds: [], conclusion: null } }), control: mkControl({ paused: true, revision: 2 }), work: null, data: { paused: true } } as never;
+    } };
+    const driver = new ControllerDriver({ transport, model: new ScriptedModel([]) }, memoryWithAdvanceStart(), { world, control });
+    const inFlight = driver.step();
+    driver.deliver({ kind: 'pause' });
+    release!({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation: 'checkpoint_start_advance', requestId: 'x', requestHash: 'hash', world: mkWorld({ advance: { advanceId: 'adv1', inputId: 'in1', intentStatus: 'consumed', inputAvailable: false }, activeRoundId: 'r1', round: { roundId: 'r1', trigger: 'player', order: ORDER, cursor: 0, actedIds: [], visitedIds: [], conclusion: null } }), control: mkControl({ revision: 1 }), work: null, data: { advanceId: 'adv1', inputId: 'in1', roundId: 'r1' } });
+    await inFlight;
+    await driver.step();
+    expect(ops).toEqual(['checkpoint_start_advance', 'checkpoint_pause']);
+    expect(await driver.step()).toEqual({ kind: 'await', reason: 'paused_externally' });
+  });
+
+  test('claim_fenced refreshes context, drops the stale claim, and re-claims', async () => {
+    const world = mkWorld({ head: { pointId: 'p1', version: 1, stateDigest: 'd1', narrationStatus: 'pending' } });
+    const control = mkControl({ revision: 13 });
+    const transport = new ScriptedTransport([
+      { op: 'narration_submit', respond: (r) => apiError('claim_fenced', (r as { requestId?: Id })?.requestId ?? 'req') },
+      { op: 'get_context', respond: () => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, world, control: mkControl({ revision: 14 }), work: null, activeInput: null, recovery: null }) },
+      { op: 'narration_claim', respond: (r) => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation: 'narration_claim', requestId: (r as { requestId: Id }).requestId, requestHash: 'hash', world, control, work: null, data: { pointId: 'p1', mode: 'head', generation: 2, fenceEpoch: 1, issuedAtEpochMilli: 9, expiresAtEpochMilli: 10, claimToken: 'ct_new' } }) },
+      { op: 'narration_submit', respond: (r) => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation: 'narration_submit', requestId: (r as { requestId: Id }).requestId, requestHash: 'hash', world: { ...world, head: { ...world.head, narrationStatus: 'ready' } }, control, work: null, data: { pointId: 'p1', narrationStatus: 'ready', generation: 2 } }) },
+    ]);
+    const model = new ScriptedModel([{ task: 'narration', output: '新叙事。' }]);
+    const memory = memoryWithAdvanceStart({
+      narration: { pointId: 'p1', claim: { claimToken: 'ct_old', generation: 1, issuedAtEpochMilli: 1 }, input: { pointId: 'p1' } },
+      lastModel: { task: 'narration', key: 'p1', output: '旧文本。' },
+    });
+    const driver = new ControllerDriver({ transport, model }, memory, { world, control });
+    await driver.step(); // submit fenced → refresh_context drops the stale claim
+    expect(driver.getMemory().narration).toMatchObject({ pointId: 'p1', claim: null });
+    await driver.step(); // claim ct_new
+    await driver.step(); // model narration
+    await driver.step(); // submit with ct_new
+    expect(transport.ops).toEqual(['narration_submit', 'get_context', 'narration_claim', 'narration_submit']);
+    expect((transport.requests[3] as { claimToken: Id }).claimToken).toBe('ct_new');
+    expect(model.calls.length).toBe(1);
+    expect(driver.getMemory().narration).toBeNull();
+  });
+
+  test('a lease epoch change invalidates a held narration claim', async () => {
+    const world = mkWorld({ head: { pointId: 'p1', version: 1, stateDigest: 'd1', narrationStatus: 'pending' }, advance: { advanceId: 'adv1', inputId: 'in1', intentStatus: 'consumed', inputAvailable: false }, activeRoundId: 'r1', activePointId: 'p1', round: { roundId: 'r1', trigger: 'player', order: ORDER, cursor: 0, actedIds: [], visitedIds: [], conclusion: null } });
+    const control = mkControl({ revision: 4 });
+    const work = mkWork();
+    const transport = new ScriptedTransport([
+      { op: 'checkpoint_pause', respond: (r) => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation: 'checkpoint_pause', requestId: (r as { requestId: Id }).requestId, requestHash: 'hash', world: { ...world, lease: { fenceEpoch: 2, expiresAtEpochMilli: 9 } }, control: mkControl({ paused: true, revision: 5 }), work, data: { paused: true } }) },
+      { op: 'narration_claim', respond: (r) => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation: 'narration_claim', requestId: (r as { requestId: Id }).requestId, requestHash: 'hash', world, control: mkControl({ paused: true, revision: 6 }), work, data: { pointId: 'p1', mode: 'head', generation: 2, fenceEpoch: 2, issuedAtEpochMilli: 20, expiresAtEpochMilli: 30, claimToken: 'ct_fresh' } }) },
+    ]);
+    const memory = memoryWithAdvanceStart({
+      narration: { pointId: 'p1', claim: { claimToken: 'ct_old', generation: 1, issuedAtEpochMilli: 1 }, input: { pointId: 'p1' } },
+    });
+    const driver = new ControllerDriver({ transport, model: new ScriptedModel([]) }, memory, { world, control, work });
+    driver.deliver({ kind: 'pause' });
+    await driver.step(); // pause response carries a new lease generation
+    expect(driver.getMemory().narration).toMatchObject({ pointId: 'p1', claim: null });
+    await driver.step(); // pending narration re-claims even while paused
+    expect(transport.ops).toEqual(['checkpoint_pause', 'narration_claim']);
+  });
+});
