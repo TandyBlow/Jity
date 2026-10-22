@@ -10,6 +10,7 @@ conflicts unreachable.
 """
 from app.schemas.world.canonical import canonical_digest
 from app.schemas.world.contracts import Id
+from app.schemas.world.v2.contexts import WorkingProgress
 from app.schemas.world.v2.work import SettlementGroup
 
 from .violations import Violation
@@ -72,3 +73,47 @@ def unit_content_hash(unit: SettlementGroup) -> str:
     """Pinned by 18 staged groups across the traces: the wire contentHash of a
     settled unit is exactly the canonical digest of its candidate set."""
     return canonical_digest(unit.model_dump(mode='json'))
+
+
+def begin_working(committed: tuple[int, list[Id], list[Id]],
+                  intent_status: str) -> WorkingProgress:
+    """A new point starts from the round's committed progress (cursor,
+    actedIds, visitedIds live in the head): only settledUnitIds are
+    point-scoped and start empty. intentStatus projects the advance's
+    current value."""
+    cursor, acted, visited = committed
+    return WorkingProgress(cursor=cursor, actedIds=acted, visitedIds=visited,
+                           settledUnitIds=[], intentStatus=intent_status)
+
+
+def stage_working(working: WorkingProgress, unit_id: Id,
+                  actors: list[Id]) -> WorkingProgress:
+    """One staged settlement: every actor fills its slot, the unit id joins
+    the staged set and the input intent is consumed."""
+    return WorkingProgress(
+        cursor=working.cursor + len(actors),
+        actedIds=working.actedIds + list(actors),
+        visitedIds=working.visitedIds + list(actors),
+        settledUnitIds=working.settledUnitIds + [unit_id],
+        intentStatus='consumed')
+
+
+def skip_working(working: WorkingProgress, slot_actor: Id) -> WorkingProgress:
+    """A recorded skip advances the cursor and the visited set, never actedIds."""
+    return WorkingProgress(
+        cursor=working.cursor + 1,
+        actedIds=working.actedIds,
+        visitedIds=working.visitedIds + [slot_actor],
+        settledUnitIds=working.settledUnitIds,
+        intentStatus=working.intentStatus)
+
+
+def scan_working(working: WorkingProgress, order: list[Id]) -> WorkingProgress:
+    """The time-scan unit settles without actors: it closes every remaining
+    slot at once and never consumes the input intent (T03 keeps pending)."""
+    return WorkingProgress(
+        cursor=len(order),
+        actedIds=working.actedIds,
+        visitedIds=list(order),
+        settledUnitIds=working.settledUnitIds,
+        intentStatus=working.intentStatus)
