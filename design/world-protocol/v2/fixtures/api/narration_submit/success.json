@@ -1,0 +1,58 @@
+{
+  "protocolVersion": 2,
+  "engineVersion": "world-engine-v1",
+  "schemaVersion": 1,
+  "canonicalVersion": "world-canonical-v1",
+  "serverTimeEpochMilli": 1792617600000,
+  "replayed": false,
+  "operation": "narration_submit",
+  "requestId": "request_submit_narration",
+  "requestHash": "9b171ba68f6178386bde84d1ff044e36299897d6569de97e03ae868c2483d911",
+  "world": {
+    "worldId": "world_school",
+    "head": {
+      "pointId": "root_0",
+      "version": 0,
+      "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+      "narrationStatus": "ready"
+    },
+    "advance": {
+      "advanceId": null,
+      "inputId": null,
+      "intentStatus": "pending",
+      "inputAvailable": false
+    },
+    "round": null,
+    "time": {
+      "calendar": "gregorian",
+      "dateTime": "2026-01-01T11:59:00",
+      "instantOrdinal": 0
+    },
+    "lease": {
+      "fenceEpoch": 7,
+      "expiresAtEpochMilli": 1792617720000
+    },
+    "successor": null,
+    "activePointId": null,
+    "activeRoundId": null
+  },
+  "control": {
+    "phase": "select_actor",
+    "paused": false,
+    "revision": 0,
+    "gate": {
+      "status": "none",
+      "generation": null,
+      "issuedAtEpochMilli": null,
+      "expiresAtEpochMilli": null
+    },
+    "blockedReasons": [],
+    "canCompute": true
+  },
+  "work": null,
+  "data": {
+    "pointId": "root_0",
+    "narrationStatus": "ready",
+    "generation": 1
+  }
+}

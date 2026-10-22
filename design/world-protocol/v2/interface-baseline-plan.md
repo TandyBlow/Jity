@@ -1,6 +1,6 @@
 # v2 共同接口基线实施计划（A0＋B0）
 
-日期：2026-10-22。状态：IF-01 进行中；v1 基线可提交，但决策表与跨文档口径尚未闭合，S1 字段未交付。依据：[主开发计划](../../browser-world-state-workflow.md)、[两人开发分工](../../browser-world-state-work-split.md) 和 [v2 冻结决定](README.md)。本文是本批任务清单；文中的新文件、脚本和命令均为待交付项，不表示已经实现或通过测试。
+日期：2026-10-22。状态：v1 基线已提交（26011c8）；IF-02 的 S1 候选快照已交付（`backend/app/schemas/world/v2/`、v2 `world-protocol.schema.json`、`api-contract.json`、all-ops 夹具与 `test_world_protocol_v2_contract.py`），S1 未验收；IF-01 的决策表与跨文档口径仍未闭合。依据：[主开发计划](../../browser-world-state-workflow.md)、[两人开发分工](../../browser-world-state-work-split.md) 和 [v2 冻结决定](README.md)。本文是本批任务清单；除 S1 已交付项外，文中的新文件、脚本和命令均为待交付项，不表示已经实现或通过测试。
 
 ## 一、本批目标与完成边界
 

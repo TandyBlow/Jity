@@ -1,0 +1,20 @@
+{
+  "protocolVersion": 2,
+  "requestId": "request_extend_cd",
+  "worldId": "world_school",
+  "leaseToken": "lease_a",
+  "fenceEpoch": 7,
+  "expectedPointId": "root_0",
+  "expectedVersion": 0,
+  "expectedCheckpointRevision": 3,
+  "pointId": "p1",
+  "groupId": "group_cd",
+  "sourceId": "person_c",
+  "targets": [
+    {
+      "targetId": "person_d",
+      "triggerKey": "trigger_cd"
+    }
+  ],
+  "admittedMember": null
+}

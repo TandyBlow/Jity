@@ -1,0 +1,23 @@
+{
+  "protocolVersion": 2,
+  "engineVersion": "world-engine-v1",
+  "schemaVersion": 1,
+  "canonicalVersion": "world-canonical-v1",
+  "serverTimeEpochMilli": 1792617600000,
+  "replayed": false,
+  "operation": "get_context",
+  "requestId": null,
+  "worldId": "world_missing",
+  "error": {
+    "code": "version_mismatch",
+    "httpStatus": 409,
+    "retryable": false,
+    "clientAction": "refresh_context",
+    "details": {
+      "worldId": "world_missing"
+    }
+  },
+  "world": null,
+  "control": null,
+  "work": null
+}

@@ -1,0 +1,12 @@
+{
+  "protocolVersion": 2,
+  "requestId": "request_close_cd",
+  "worldId": "world_school",
+  "leaseToken": "lease_a",
+  "fenceEpoch": 7,
+  "expectedPointId": "root_0",
+  "expectedVersion": 0,
+  "expectedCheckpointRevision": 4,
+  "pointId": "p1",
+  "groupId": "group_cd"
+}

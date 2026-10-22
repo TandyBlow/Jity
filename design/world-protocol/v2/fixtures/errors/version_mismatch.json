@@ -1,0 +1,56 @@
+{
+  "protocolVersion": 2,
+  "engineVersion": "world-engine-v1",
+  "schemaVersion": 1,
+  "canonicalVersion": "world-canonical-v1",
+  "serverTimeEpochMilli": 1792617600000,
+  "replayed": false,
+  "operation": "commit_point",
+  "requestId": "request_commit_p1",
+  "worldId": "world_school",
+  "error": {
+    "code": "version_mismatch",
+    "httpStatus": 409,
+    "retryable": false,
+    "clientAction": "refresh_context",
+    "details": {
+      "field": "expectedVersion",
+      "expected": 0,
+      "actual": 1
+    }
+  },
+  "world": {
+    "worldId": "world_school",
+    "head": {
+      "pointId": "p1",
+      "version": 1,
+      "stateDigest": "1fb3188d7e64157167dd16504d70dd12d49da98160234f1c799c403893dbae73",
+      "narrationStatus": "pending"
+    },
+    "advance": {
+      "advanceId": "advance_1",
+      "inputId": "input_1",
+      "intentStatus": "pending",
+      "inputAvailable": true
+    },
+    "round": {
+      "roundId": "round_1",
+      "trigger": "player",
+      "conclusion": null
+    },
+    "time": {
+      "calendar": "gregorian",
+      "dateTime": "2026-01-01T11:59:00",
+      "instantOrdinal": 0
+    },
+    "lease": {
+      "fenceEpoch": 7,
+      "expiresAtEpochMilli": 1792617720000
+    },
+    "successor": null,
+    "activePointId": null,
+    "activeRoundId": "round_1"
+  },
+  "control": null,
+  "work": null
+}

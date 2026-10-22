@@ -1,0 +1,53 @@
+{
+  "protocolVersion": 2,
+  "engineVersion": "world-engine-v1",
+  "schemaVersion": 1,
+  "canonicalVersion": "world-canonical-v1",
+  "serverTimeEpochMilli": 1792617600000,
+  "replayed": false,
+  "operation": "lease_release",
+  "requestId": "request_release",
+  "requestHash": "a09390949980fdfd48903ec644481ac3854ba78f5f676d06a212f6251441bd93",
+  "world": {
+    "worldId": "world_school",
+    "head": {
+      "pointId": "root_0",
+      "version": 0,
+      "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+      "narrationStatus": "pending"
+    },
+    "advance": {
+      "advanceId": null,
+      "inputId": null,
+      "intentStatus": "pending",
+      "inputAvailable": false
+    },
+    "round": null,
+    "time": {
+      "calendar": "gregorian",
+      "dateTime": "2026-01-01T11:59:00",
+      "instantOrdinal": 0
+    },
+    "lease": null,
+    "successor": null,
+    "activePointId": null,
+    "activeRoundId": null
+  },
+  "control": {
+    "phase": "select_actor",
+    "paused": false,
+    "revision": 1,
+    "gate": {
+      "status": "none",
+      "generation": null,
+      "issuedAtEpochMilli": null,
+      "expiresAtEpochMilli": null
+    },
+    "blockedReasons": [],
+    "canCompute": true
+  },
+  "work": null,
+  "data": {
+    "released": true
+  }
+}

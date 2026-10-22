@@ -1,0 +1,10 @@
+{
+  "protocolVersion": 2,
+  "requestId": "request_renew_claim",
+  "worldId": "world_school",
+  "pointId": "root_0",
+  "mode": "head",
+  "claimToken": "claim_root",
+  "generation": 1,
+  "issuedAtEpochMilli": 1792617599000
+}

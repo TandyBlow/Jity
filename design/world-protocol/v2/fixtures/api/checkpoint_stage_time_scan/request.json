@@ -1,0 +1,51 @@
+{
+  "protocolVersion": 2,
+  "requestId": "request_scan_p2",
+  "worldId": "world_school",
+  "leaseToken": "lease_a",
+  "fenceEpoch": 7,
+  "expectedPointId": "p1",
+  "expectedVersion": 1,
+  "expectedCheckpointRevision": 8,
+  "pointId": "p2",
+  "candidates": {
+    "groupId": null,
+    "actorIds": [],
+    "positions": {},
+    "appearances": {},
+    "tasksAchieved": {
+      "person_c": [
+        "task_wait_noon"
+      ]
+    },
+    "subtasksAdded": {},
+    "personalities": {
+      "person_c": [
+        {
+          "id": "change_relief",
+          "text": "暂时放松了对周围的警戒。",
+          "supersedes": []
+        }
+      ]
+    },
+    "sanities": {
+      "person_c": 35
+    },
+    "taskCoverageIds": [
+      "person_a",
+      "person_b",
+      "person_c",
+      "person_d",
+      "person_e",
+      "person_f"
+    ],
+    "personalityCoverageIds": [
+      "person_a",
+      "person_b",
+      "person_c",
+      "person_d",
+      "person_e",
+      "person_f"
+    ]
+  }
+}

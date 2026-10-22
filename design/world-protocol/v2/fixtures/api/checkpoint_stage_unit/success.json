@@ -1,0 +1,119 @@
+{
+  "protocolVersion": 2,
+  "engineVersion": "world-engine-v1",
+  "schemaVersion": 1,
+  "canonicalVersion": "world-canonical-v1",
+  "serverTimeEpochMilli": 1792617600000,
+  "replayed": false,
+  "operation": "checkpoint_stage_unit",
+  "requestId": "request_stage_cd",
+  "requestHash": "e73b63faa846ac24134f6aa60d7172ea9bcba560826d3b50000bcbdc8863ac58",
+  "world": {
+    "worldId": "world_school",
+    "head": {
+      "pointId": "root_0",
+      "version": 0,
+      "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+      "narrationStatus": "ready"
+    },
+    "advance": {
+      "advanceId": "advance_1",
+      "inputId": "input_1",
+      "intentStatus": "pending",
+      "inputAvailable": true
+    },
+    "round": {
+      "roundId": "round_1",
+      "trigger": "player",
+      "conclusion": null
+    },
+    "time": {
+      "calendar": "gregorian",
+      "dateTime": "2026-01-01T11:59:00",
+      "instantOrdinal": 0
+    },
+    "lease": {
+      "fenceEpoch": 7,
+      "expiresAtEpochMilli": 1792617720000
+    },
+    "successor": null,
+    "activePointId": "p1",
+    "activeRoundId": "round_1"
+  },
+  "control": {
+    "phase": "select_actor",
+    "paused": false,
+    "revision": 6,
+    "gate": {
+      "status": "none",
+      "generation": null,
+      "issuedAtEpochMilli": null,
+      "expiresAtEpochMilli": null
+    },
+    "blockedReasons": [],
+    "canCompute": true
+  },
+  "work": {
+    "pointId": "p1",
+    "kind": "normal",
+    "timeAdvance": {
+      "boundary": "elapsed",
+      "duration": {
+        "amount": 2,
+        "unit": "second"
+      }
+    },
+    "timeLocked": true,
+    "baseline": {
+      "headPointId": "root_0",
+      "version": 0,
+      "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5"
+    },
+    "phase": "select_actor",
+    "working": {
+      "cursor": 2,
+      "actedIds": [
+        "person_c",
+        "person_d"
+      ],
+      "visitedIds": [
+        "person_c",
+        "person_d"
+      ],
+      "settledUnitIds": [
+        "unit_1"
+      ]
+    },
+    "settledUnits": [
+      {
+        "unitId": "unit_1",
+        "groupId": "group_cd",
+        "memberIds": [
+          "person_c",
+          "person_d"
+        ],
+        "contentHash": "12b9771f7e83b9e8cb56d13c81efaf733483d9707beda5ad1013f8fbce753fc3"
+      }
+    ],
+    "pendingGroup": null,
+    "successor": null
+  },
+  "data": {
+    "groupId": "group_cd",
+    "unitId": "unit_1",
+    "working": {
+      "cursor": 2,
+      "actedIds": [
+        "person_c",
+        "person_d"
+      ],
+      "visitedIds": [
+        "person_c",
+        "person_d"
+      ],
+      "settledUnitIds": [
+        "unit_1"
+      ]
+    }
+  }
+}

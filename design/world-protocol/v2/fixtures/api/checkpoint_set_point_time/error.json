@@ -1,0 +1,24 @@
+{
+  "protocolVersion": 2,
+  "engineVersion": "world-engine-v1",
+  "schemaVersion": 1,
+  "canonicalVersion": "world-canonical-v1",
+  "serverTimeEpochMilli": 1792617600000,
+  "replayed": false,
+  "operation": "checkpoint_set_point_time",
+  "requestId": "request_time_p1",
+  "worldId": "world_school",
+  "error": {
+    "code": "point_time_locked",
+    "httpStatus": 409,
+    "retryable": false,
+    "clientAction": "fix_request",
+    "details": {
+      "pointId": "p1",
+      "lockedBy": "first confirmed work"
+    }
+  },
+  "world": null,
+  "control": null,
+  "work": null
+}

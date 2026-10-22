@@ -1,0 +1,26 @@
+{
+  "protocolVersion": 2,
+  "engineVersion": "world-engine-v1",
+  "schemaVersion": 1,
+  "canonicalVersion": "world-canonical-v1",
+  "serverTimeEpochMilli": 1792617600000,
+  "replayed": false,
+  "operation": "checkpoint_restore_group_work",
+  "requestId": "request_restore_cd",
+  "worldId": "world_school",
+  "error": {
+    "code": "frozen_work_corrupt",
+    "httpStatus": 409,
+    "retryable": false,
+    "clientAction": "pause",
+    "details": {
+      "memberId": "person_d",
+      "sourceEpoch": 6,
+      "sourceAttempt": 2,
+      "expectedContentHash": "9d5c167a6431837a2da371f9fa09186437f274db52563136ae709ac781cf1e3f"
+    }
+  },
+  "world": null,
+  "control": null,
+  "work": null
+}

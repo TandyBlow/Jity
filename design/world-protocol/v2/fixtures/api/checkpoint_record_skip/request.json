@@ -1,0 +1,12 @@
+{
+  "protocolVersion": 2,
+  "requestId": "request_skip_e",
+  "worldId": "world_school",
+  "leaseToken": "lease_a",
+  "fenceEpoch": 7,
+  "expectedPointId": "root_0",
+  "expectedVersion": 0,
+  "expectedCheckpointRevision": 6,
+  "pointId": "p1",
+  "slotActorId": "person_e"
+}

@@ -1,0 +1,23 @@
+{
+  "protocolVersion": 2,
+  "engineVersion": "world-engine-v1",
+  "schemaVersion": 1,
+  "canonicalVersion": "world-canonical-v1",
+  "serverTimeEpochMilli": 1792617600000,
+  "replayed": false,
+  "operation": "commit_point",
+  "requestId": "request_commit_p1",
+  "worldId": "world_school",
+  "error": {
+    "code": "request_in_progress",
+    "httpStatus": 409,
+    "retryable": true,
+    "clientAction": "retry_same_request",
+    "details": {
+      "retryAfterEpochMilli": 1792617600200
+    }
+  },
+  "world": null,
+  "control": null,
+  "work": null
+}

@@ -1,0 +1,8 @@
+{
+  "protocolVersion": 2,
+  "requestId": "request_delete_narration",
+  "mode": "head",
+  "claimToken": "claim_root",
+  "generation": 1,
+  "issuedAtEpochMilli": 1792617599000
+}

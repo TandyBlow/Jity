@@ -1,9 +1,12 @@
 """Export frozen schemas and authored examples; never called by the game runtime.
 
-Run from the repository root: python -X utf8 backend/scripts/export_world_protocol.py
+Run from the repository root:
+  python -X utf8 backend/scripts/export_world_protocol.py                # v1 (default)
+  python -X utf8 backend/scripts/export_world_protocol.py --version v2   # S1 candidate
 Expected canonical strings below are authored independently of the encoder.
 """
 
+import argparse
 import copy
 import hashlib
 import json
@@ -16,7 +19,9 @@ sys.path.insert(0, str(ROOT / "backend"))
 from pydantic.json_schema import models_json_schema
 from app.schemas.world.contracts import CONTRACT_MODELS
 
-OUT = ROOT / "design" / "world-protocol" / "v1"
+PROTOCOL = ROOT / "design" / "world-protocol"
+OUT = PROTOCOL / "v1"
+OUT_V2 = PROTOCOL / "v2"
 
 
 def write(name, value):
@@ -26,6 +31,49 @@ def write(name, value):
     # which makes exported hashes differ between Windows and CI.
     payload = json.dumps(value, ensure_ascii=False, indent=2) + "\n"
     target.write_bytes(payload.encode("utf-8"))
+
+
+def write_v2(name, value):
+    target = OUT_V2 / name
+    target.parent.mkdir(parents=True, exist_ok=True)
+    payload = json.dumps(value, ensure_ascii=False, indent=2) + "\n"
+    target.write_bytes(payload.encode("utf-8"))
+
+
+def build_v2():
+    """Export the S1 candidate: schema, api-contract and the operations list.
+
+    Only generated artifacts are (re)written here; fixtures under
+    v2/fixtures/ are hand-written and never touched by this script.
+    The schema model set is v2.SCHEMA_MODELS, shared with the contract test.
+    """
+    from pydantic.json_schema import models_json_schema as mjs
+
+    import app.schemas.world.v2 as v2
+
+    _, schema = mjs([(model, "validation") for model in v2.SCHEMA_MODELS])
+    schema.update({"$schema": "https://json-schema.org/draft/2020-12/schema",
+                   "$id": "urn:jity:world-protocol:v2",
+                   "title": "Jity world protocol v2 (S1 candidate; wire only)"})
+    write_v2("world-protocol.schema.json", schema)
+
+    contract = {
+        "protocolVersion": v2.PROTOCOL_VERSION,
+        "canonicalVersion": v2.CANONICAL_VERSION,
+        "protocolHeader": "X-World-Protocol-Version",
+        "clientActions": list(v2.ClientAction.__args__),
+        "blockedReasons": list(v2.BlockedReason.__args__),
+        "preconditionKinds": list(v2.PRECONDITION_KINDS),
+        "bindingFields": list(v2.BINDING_FIELDS),
+        "sideEffects": list(v2.SIDE_EFFECTS),
+        "errorCodes": {code: spec for code, spec in v2.ERROR_CODES.items()},
+        "operations": [spec.model_dump(mode="json", exclude_none=True) for spec in v2.OPERATIONS],
+    }
+    write_v2("api-contract.json", contract)
+    write_v2("fixtures/api/operations.json", {
+        "protocolVersion": v2.PROTOCOL_VERSION,
+        "operations": [spec.operation for spec in v2.OPERATIONS],
+    })
 
 
 def task(identity, owner, goal, parent=None, status="pending"):
@@ -251,5 +299,13 @@ def build():
 
 
 if __name__ == "__main__":
-    build()
-    print(f"Exported world protocol contracts to {OUT}")
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--version", choices=("v1", "v2"), default="v1",
+                        help="protocol version to export (default: v1)")
+    args = parser.parse_args()
+    if args.version == "v1":
+        build()
+        print(f"Exported world protocol v1 contracts to {OUT}")
+    else:
+        build_v2()
+        print(f"Exported world protocol v2 (S1 candidate) contracts to {OUT_V2}")

@@ -1,0 +1,25 @@
+{
+  "protocolVersion": 2,
+  "engineVersion": "world-engine-v1",
+  "schemaVersion": 1,
+  "canonicalVersion": "world-canonical-v1",
+  "serverTimeEpochMilli": 1792617600000,
+  "replayed": false,
+  "operation": "lease_acquire",
+  "requestId": "request_acquire",
+  "worldId": "world_school",
+  "error": {
+    "code": "lease_invalid",
+    "httpStatus": 409,
+    "retryable": false,
+    "clientAction": "reacquire_lease",
+    "details": {
+      "reason": "lease_held",
+      "holderId": "tab_a",
+      "expiresAtEpochMilli": 1792617690000
+    }
+  },
+  "world": null,
+  "control": null,
+  "work": null
+}

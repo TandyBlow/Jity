@@ -1,0 +1,26 @@
+{
+  "protocolVersion": 2,
+  "engineVersion": "world-engine-v1",
+  "schemaVersion": 1,
+  "canonicalVersion": "world-canonical-v1",
+  "serverTimeEpochMilli": 1792617600000,
+  "replayed": false,
+  "operation": "create_world",
+  "requestId": "request_create",
+  "worldId": null,
+  "error": {
+    "code": "protocol_version_unsupported",
+    "httpStatus": 400,
+    "retryable": false,
+    "clientAction": "none",
+    "details": {
+      "supported": [
+        2
+      ],
+      "received": 3
+    }
+  },
+  "world": null,
+  "control": null,
+  "work": null
+}

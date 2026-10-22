@@ -1,0 +1,10 @@
+{
+  "protocolVersion": 2,
+  "requestId": "request_resume",
+  "worldId": "world_school",
+  "leaseToken": "lease_a",
+  "fenceEpoch": 7,
+  "expectedPointId": "root_0",
+  "expectedVersion": 0,
+  "expectedCheckpointRevision": 2
+}

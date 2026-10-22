@@ -1,0 +1,27 @@
+{
+  "protocolVersion": 2,
+  "requestId": "request_restore_cd",
+  "worldId": "world_school",
+  "leaseToken": "lease_a",
+  "fenceEpoch": 7,
+  "expectedPointId": "root_0",
+  "expectedVersion": 0,
+  "expectedCheckpointRevision": 6,
+  "pointId": "p1",
+  "groupId": "group_cd",
+  "attempt": 1,
+  "sourceEpoch": 6,
+  "sourceAttempt": 2,
+  "manifest": [
+    {
+      "memberId": "person_c",
+      "actionContentHash": "642befc7c48664d442ad0f72537d26f93f8be73d9d159b0c2e2e5c3fc414f66f",
+      "resultContentHash": "99d76145b59df000fd2e1ed61b6144a22edd8fa9c79b93bafa3b615202d17e16"
+    },
+    {
+      "memberId": "person_d",
+      "actionContentHash": "9d5c167a6431837a2da371f9fa09186437f274db52563136ae709ac781cf1e3f",
+      "resultContentHash": "3cd5a6d4d6ee4e0c63e02a578b05c0c54afd32adceae7c5447ff604fefcd0d78"
+    }
+  ]
+}

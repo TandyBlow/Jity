@@ -1,0 +1,21 @@
+{
+  "protocolVersion": 2,
+  "requestId": "request_conclude",
+  "worldId": "world_school",
+  "advanceId": "advance_1",
+  "roundId": "round_1",
+  "expectedPointId": "p3",
+  "expectedVersion": 3,
+  "expectedCheckpointRevision": 6,
+  "leaseToken": "lease_a",
+  "fenceEpoch": 7,
+  "conclusion": {
+    "kind": "continue",
+    "closedBy": "model",
+    "cancelReason": null,
+    "candidateCharacterIds": [
+      "person_c"
+    ],
+    "nextRoundId": "round_2"
+  }
+}

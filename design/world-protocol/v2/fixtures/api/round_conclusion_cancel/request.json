@@ -1,0 +1,13 @@
+{
+  "protocolVersion": 2,
+  "requestId": "request_cancel",
+  "worldId": "world_school",
+  "advanceId": "advance_1",
+  "roundId": "round_1",
+  "expectedPointId": "p3",
+  "expectedVersion": 3,
+  "expectedCheckpointRevision": 6,
+  "leaseToken": "lease_a",
+  "fenceEpoch": 7,
+  "cancelReason": "玩家结束本次推进。"
+}

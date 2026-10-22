@@ -1,0 +1,25 @@
+{
+  "protocolVersion": 2,
+  "engineVersion": "world-engine-v1",
+  "schemaVersion": 1,
+  "canonicalVersion": "world-canonical-v1",
+  "serverTimeEpochMilli": 1792617600000,
+  "replayed": false,
+  "operation": "narration_delete",
+  "requestId": "request_delete_narration",
+  "worldId": "world_school",
+  "error": {
+    "code": "claim_fenced",
+    "httpStatus": 409,
+    "retryable": false,
+    "clientAction": "refresh_context",
+    "details": {
+      "pointId": "root_0",
+      "currentGeneration": 2,
+      "requestGeneration": 1
+    }
+  },
+  "world": null,
+  "control": null,
+  "work": null
+}

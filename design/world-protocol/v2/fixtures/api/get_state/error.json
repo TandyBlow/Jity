@@ -1,0 +1,23 @@
+{
+  "protocolVersion": 2,
+  "engineVersion": "world-engine-v1",
+  "schemaVersion": 1,
+  "canonicalVersion": "world-canonical-v1",
+  "serverTimeEpochMilli": 1792617600000,
+  "replayed": false,
+  "operation": "get_state",
+  "requestId": null,
+  "worldId": "world_school",
+  "error": {
+    "code": "version_mismatch",
+    "httpStatus": 409,
+    "retryable": false,
+    "clientAction": "refresh_context",
+    "details": {
+      "pointId": "p_unknown"
+    }
+  },
+  "world": null,
+  "control": null,
+  "work": null
+}

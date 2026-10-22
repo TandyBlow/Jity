@@ -1,0 +1,25 @@
+{
+  "protocolVersion": 2,
+  "engineVersion": "world-engine-v1",
+  "schemaVersion": 1,
+  "canonicalVersion": "world-canonical-v1",
+  "serverTimeEpochMilli": 1792617600000,
+  "replayed": false,
+  "operation": "preview_point",
+  "requestId": null,
+  "worldId": "world_school",
+  "error": {
+    "code": "preview_budget_exceeded",
+    "httpStatus": 413,
+    "retryable": false,
+    "clientAction": "fix_request",
+    "details": {
+      "limit": "request",
+      "budgetBytes": 524288,
+      "actualBytes": 688130
+    }
+  },
+  "world": null,
+  "control": null,
+  "work": null
+}

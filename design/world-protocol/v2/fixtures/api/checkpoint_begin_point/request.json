@@ -1,0 +1,19 @@
+{
+  "protocolVersion": 2,
+  "requestId": "request_begin_p1",
+  "worldId": "world_school",
+  "leaseToken": "lease_a",
+  "fenceEpoch": 7,
+  "expectedPointId": "root_0",
+  "expectedVersion": 0,
+  "expectedCheckpointRevision": 0,
+  "pointId": "p1",
+  "kind": "normal",
+  "timeAdvance": {
+    "boundary": "elapsed",
+    "duration": {
+      "amount": 2,
+      "unit": "second"
+    }
+  }
+}

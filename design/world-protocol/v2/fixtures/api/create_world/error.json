@@ -1,0 +1,24 @@
+{
+  "protocolVersion": 2,
+  "engineVersion": "world-engine-v1",
+  "schemaVersion": 1,
+  "canonicalVersion": "world-canonical-v1",
+  "serverTimeEpochMilli": 1792617600000,
+  "replayed": false,
+  "operation": "create_world",
+  "requestId": "request_create",
+  "worldId": null,
+  "error": {
+    "code": "request_id_reused",
+    "httpStatus": 409,
+    "retryable": false,
+    "clientAction": "fix_request",
+    "details": {
+      "firstOperation": "create_world",
+      "requestHashMatches": false
+    }
+  },
+  "world": null,
+  "control": null,
+  "work": null
+}
