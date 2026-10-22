@@ -2,7 +2,7 @@
  * and trace-corpus shapes follow the shared contract specimens (T01–T09). */
 import { describe, expect, test } from 'vitest';
 import { checkUpdatesStages, errorCatalog, errorReaction, scheduleNext, workingStateKey } from './schedule';
-import type { ControllerMemory, Decision, PlannedPoint, ScheduleView, SourceAnalysis, StagedUnit, UpdatesCall } from './schedule';
+import type { ControllerMemory, Decision, PlannedPoint, ScheduleView, SourceAnalysis, StagedUnit, UpdatesCall, UpdatesStage } from './schedule';
 import { validateRequest } from './protocol';
 import type { ClientAction, ControlState, ErrorCode, ErrorResponse, Json, PointWork, TimeAdvance, WorldContext, WorldState } from './types';
 
@@ -318,7 +318,7 @@ describe('normal point: group cycle (T01/T02 shapes)', () => {
 });
 
 describe('updates split (1–6 per-stage calls)', () => {
-  const settling = () => ({
+  const settling = (stages: UpdatesStage[] = ['tasks', 'sanity']) => ({
     w: world({
       advance: { advanceId: 'adv1', inputId: 'in1', intentStatus: 'consumed', inputAvailable: false },
       activeRoundId: 'r1', activePointId: 'p1',
@@ -330,7 +330,7 @@ describe('updates split (1–6 per-stage calls)', () => {
       plan: [{ pointId: 'p1', kind: 'normal', timeAdvance: ta(2), actorIds: ['person_a'] }],
       workingState: { key: workingStateKey(pointWork()), state: workingState() },
       lastResults: { person_a: '结果。' },
-      updatesStages: ['tasks', 'sanity'] as const,
+      updatesStages: stages,
     }),
   });
   test('emits keyed per-stage calls that carry prior stages and their applied merge', () => {
@@ -353,6 +353,21 @@ describe('updates split (1–6 per-stage calls)', () => {
     const stage = expectTransport(next(w, c, wk, m), 'checkpoint_stage_unit') as Extract<Decision, { kind: 'transport' }>;
     const candidates = (stage.request as unknown as { candidates: Record<string, unknown> }).candidates;
     expect(candidates).toMatchObject({ tasksAchieved: { person_a: ['t1'] }, sanities: { person_a: 42 }, personalityCoverageIds: ['person_a'] });
+  });
+  test('T03-collapse split: a mid-sequence reference may await later production', () => {
+    const { w, c, wk, m } = settling(['tasks', 'subtasks']);
+    expect(next(w, c, wk, m)).toMatchObject({ kind: 'model', task: 'updates', key: 'g1#tasks', input: { stage: 'tasks', appliedDelta: {} } });
+    m.updatesCalls.push({ stage: 'tasks', changes: { person_c: { tasksAchieved: ['v13'] } } });
+    // v13 is produced only by the later subtasks stage — no early dangling stop.
+    expect(next(w, c, wk, m)).toMatchObject({
+      kind: 'model', task: 'updates', key: 'g1#subtasks',
+      input: { appliedDelta: { person_c: { entityId: 'person_c', tasksAchieved: ['v13'] } } },
+    });
+    m.updatesCalls.push({ stage: 'subtasks', changes: { person_c: { subtasksAdded: [{ id: 'v13', ownerId: 'person_c', parentTaskId: null, goal: '确认门边', status: 'pending' }] } } });
+    const stage = expectTransport(next(w, c, wk, m), 'checkpoint_stage_unit') as Extract<Decision, { kind: 'transport' }>;
+    const candidates = (stage.request as unknown as { candidates: Record<string, unknown> }).candidates;
+    // Coverage follows the group's actorIds (T03-collapse rule), not the delta entities.
+    expect(candidates).toMatchObject({ tasksAchieved: { person_c: ['v13'] }, subtasksAdded: { person_c: [{ id: 'v13', ownerId: 'person_c', parentTaskId: null, goal: '确认门边', status: 'pending' }] }, personalityCoverageIds: ['person_a'] });
   });
   test('rejects out-of-order stage sequences', () => {
     const input = { taskIds: new Set<string>(), changeIds: new Set<string>() };

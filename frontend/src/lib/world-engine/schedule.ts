@@ -169,26 +169,17 @@ function producedChanges(stages: UpdatesCall[]): Set<Id> {
   return ids;
 }
 
-/** Rejects only dangling references: a referenced task/change that appears in
- * neither the input state nor ANY stage output. Cross-stage overlap the
- * server accepts stays legal — T03-collapse puts v13 into tasksAchieved and
- * subtasksAdded (pending) and the final delta collapses to subtasksAdded. */
-/** Strict canonical stage order; out-of-order or duplicate splits rejected. */
-export function checkUpdatesStages(input: { taskIds: ReadonlySet<Id>; changeIds: ReadonlySet<Id> }, stages: UpdatesCall[]): { ok: true; merged: Record<Id, EntityDelta> } | { ok: false; dangling: { stage: UpdatesStage; entity: Id; kind: 'task' | 'change'; id: Id }[] } {
-  const tasks = producedTasks(stages);
-  const changes = producedChanges(stages);
+/** Merge stages in canonical order; throws on out-of-order/duplicate splits.
+ * Performs NO reference validation: a mid-sequence merge legally contains
+ * references that later stages will produce (T03-collapse puts v13 into
+ * tasksAchieved before the subtasks stage declares it). */
+export function mergeUpdatesStages(stages: UpdatesCall[]): Record<Id, EntityDelta> {
   let lastIndex = -1;
-  const dangling: { stage: UpdatesStage; entity: Id; kind: 'task' | 'change'; id: Id }[] = [];
   for (const call of stages) {
     const index = updateStages.indexOf(call.stage);
     if (index < 0 || index <= lastIndex) throw new Error(`Out-of-order/duplicate updates stage: ${call.stage}`);
     lastIndex = index;
-    for (const [entity, delta] of Object.entries(call.changes)) {
-      for (const id of taskRefs(delta)) if (!input.taskIds.has(id) && !tasks.has(id)) dangling.push({ stage: call.stage, entity, kind: 'task', id });
-      for (const id of changeRefs(delta)) if (!input.changeIds.has(id) && !changes.has(id)) dangling.push({ stage: call.stage, entity, kind: 'change', id });
-    }
   }
-  if (dangling.length) return { ok: false, dangling };
   const merged: Record<Id, EntityDelta> = {};
   for (const call of stages) for (const [entity, delta] of Object.entries(call.changes)) {
     const target = merged[entity] ?? (merged[entity] = { entityId: entity });
@@ -199,6 +190,26 @@ export function checkUpdatesStages(input: { taskIds: ReadonlySet<Id>; changeIds:
     if (delta.tasksAchieved !== undefined) target.tasksAchieved = [...(target.tasksAchieved ?? []), ...delta.tasksAchieved];
     if (delta.subtasksAdded !== undefined) target.subtasksAdded = [...(target.subtasksAdded ?? []), ...delta.subtasksAdded];
   }
+  return merged;
+}
+
+/** Full validation for a COMPLETE stage sequence: canonical order, then the
+ * dangling-reference guard (every referenced task/change must appear in the
+ * input state or in some stage output; cross-stage overlap the server
+ * accepts stays legal — v13 ends up both achieved and re-added pending).
+ * Never run mid-sequence — use mergeUpdatesStages there. */
+export function checkUpdatesStages(input: { taskIds: ReadonlySet<Id>; changeIds: ReadonlySet<Id> }, stages: UpdatesCall[]): { ok: true; merged: Record<Id, EntityDelta> } | { ok: false; dangling: { stage: UpdatesStage; entity: Id; kind: 'task' | 'change'; id: Id }[] } {
+  const merged = mergeUpdatesStages(stages);
+  const tasks = producedTasks(stages);
+  const changes = producedChanges(stages);
+  const dangling: { stage: UpdatesStage; entity: Id; kind: 'task' | 'change'; id: Id }[] = [];
+  for (const call of stages) {
+    for (const [entity, delta] of Object.entries(call.changes)) {
+      for (const id of taskRefs(delta)) if (!input.taskIds.has(id) && !tasks.has(id)) dangling.push({ stage: call.stage, entity, kind: 'task', id });
+      for (const id of changeRefs(delta)) if (!input.changeIds.has(id) && !changes.has(id)) dangling.push({ stage: call.stage, entity, kind: 'change', id });
+    }
+  }
+  if (dangling.length) return { ok: false, dangling };
   return { ok: true, merged };
 }
 
@@ -620,17 +631,13 @@ function buildDecision(view: ScheduleView): Decision {
 
 /** Split updates run 1–6 per-stage calls keyed by stage (scenario-declared
  * sequence); empty updatesStages = one merged call. Later stages see the
- * accumulated calls and their applied merge, not just the raw state. */
+ * accumulated calls and their applied merge — merged WITHOUT the dangling
+ * check, since pending references may be produced by later stages. */
 function updatesModelCall(view: ScheduleView, keyBase: string, base: Record<string, Json>): Decision {
   const { memory } = view;
   const stage = memory.updatesStages[memory.updatesCalls.length];
   const priorStages = asJson(memory.updatesCalls);
-  let appliedDelta: Json = {};
-  if (memory.updatesCalls.length) {
-    const merged = checkUpdatesStages(inputIds(memory), memory.updatesCalls);
-    if (!merged.ok) return { kind: 'stop', reason: `dangling_updates_refs:${JSON.stringify(merged.dangling)}` };
-    appliedDelta = asJson(merged.merged);
-  }
+  const appliedDelta: Json = memory.updatesCalls.length ? asJson(mergeUpdatesStages(memory.updatesCalls)) : {};
   const fields: Record<string, Json> = { ...base, priorStages, appliedDelta };
   if (stage) return { kind: 'model', task: 'updates', key: `${keyBase}#${stage}`, input: { ...fields, stage } };
   return { kind: 'model', task: 'updates', key: keyBase, input: fields };
