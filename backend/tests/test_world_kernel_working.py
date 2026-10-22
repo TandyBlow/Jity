@@ -19,6 +19,7 @@ from app.schemas.world.v2.contexts import WorkingProgress
 from app.services.world.units import (
     begin_working, scan_working, skip_working, stage_working,
 )
+from app.services.world.violations import KernelViolation, ViolationKind
 
 ROOT = Path(__file__).resolve().parents[2] / 'design/world-protocol/v2'
 TRACE_IDS = ('T01', 'T02', 'T02-empty-linked', 'T03', 'T03-collapse', 'T04', 'T05', 'T06', 'T07', 'T08', 'T09')
@@ -40,24 +41,35 @@ def instantiate(node, values):
 
 
 def order_of(trace_doc, values):
-    for step in trace_doc['steps']:
+    """The order shown by the last get_context before the first begin_point
+    is the fresh round's frozen order (an earlier get_context may still show
+    the previous scenario's completed round); a start_advance request carries
+    it directly."""
+    first_begin = next((index for index, step in enumerate(trace_doc['steps'])
+                        if step.get('operation') == 'checkpoint_begin_point'), None)
+    latest = None
+    for index, step in enumerate(trace_doc['steps']):
+        if first_begin is not None and index >= first_begin:
+            break
         if step.get('responseKind') != 'success':
             continue
+        if step.get('operation') == 'checkpoint_start_advance':
+            return instantiate(step['request']['order'], values)
         if step.get('operation') == 'get_context':
             round_view = (step['response'].get('world') or {}).get('round')
             if round_view and round_view.get('order'):
-                return instantiate(round_view['order'], values)
-        if step.get('operation') == 'checkpoint_start_advance':
-            return instantiate(step['request']['order'], values)
+                latest = instantiate(round_view['order'], values)
+    if latest is not None:
+        return latest
     raise AssertionError('trace exposes no frozen order')
 
 
 def expected_working(prev, operation, request, response, order):
     if operation == 'checkpoint_stage_unit':
         unit_id = response['data']['unitId']
-        return stage_working(prev, unit_id, request['candidates']['actorIds'])
+        return stage_working(prev, unit_id, request['candidates']['actorIds'], order)
     if operation == 'checkpoint_record_skip':
-        return skip_working(prev, request['slotActorId'])
+        return skip_working(prev, request['slotActorId'], order)
     if operation == 'checkpoint_stage_time_scan':
         return scan_working(prev, order)
     return prev
@@ -112,25 +124,37 @@ def test_working_evolution_matches_every_trace(trace_id):
 
 
 def test_synthetic_edges_the_traces_do_not_cover():
+    order = ['person_a', 'person_b', 'person_c', 'person_d', 'person_e', 'person_f']
     start = begin_working((0, [], []), 'pending')
     # out-of-order actors are normalised by the IdSet validator, not preserved
-    staged = stage_working(start, 'unit_x', ['person_d', 'person_c'])
-    assert staged.cursor == 2
+    staged = stage_working(skip_working(skip_working(start, 'person_a', order),
+                                        'person_b', order),
+                           'unit_x', ['person_d', 'person_c'], order)
+    assert staged.cursor == 4
     assert staged.actedIds == ['person_c', 'person_d']
-    assert staged.visitedIds == ['person_c', 'person_d']
+    assert staged.visitedIds == ['person_a', 'person_b', 'person_c', 'person_d']
     assert staged.settledUnitIds == ['unit_x']
+    # the first handled action (here the skip) consumes the pending intent
     assert staged.intentStatus == 'consumed'
     # skip/stage interleave without disturbing each other's sets
-    skipped = skip_working(staged, 'person_b')
-    assert skipped.cursor == 3
+    skipped = skip_working(staged, 'person_e', order)
+    assert skipped.cursor == 5
     assert skipped.actedIds == ['person_c', 'person_d']
-    assert skipped.visitedIds == ['person_b', 'person_c', 'person_d']
-    again = stage_working(skipped, 'unit_y', ['person_e'])
-    assert again.cursor == 4
-    assert again.actedIds == ['person_c', 'person_d', 'person_e']
+    again = stage_working(skipped, 'unit_y', ['person_f'], order)
+    assert again.cursor == 6
+    assert again.actedIds == ['person_c', 'person_d', 'person_f']
+    assert again.visitedIds == order
     assert again.settledUnitIds == ['unit_x', 'unit_y']
+    # pulling a later member never skips the slots in between (order A,B,C,D)
+    pulled = stage_working(begin_working((0, [], []), 'pending'), 'unit_p',
+                           ['person_a', 'person_d'], order[:4])
+    assert pulled.cursor == 1
+    assert pulled.visitedIds == ['person_a', 'person_d']
+    # re-acting an actor that already acted is refused
+    with pytest.raises(KernelViolation) as excinfo:
+        stage_working(again, 'unit_z', ['person_c'], order)
+    assert excinfo.value.kind is ViolationKind.SEMANTIC_INVALID
     # a time-scan closes the whole remaining order and keeps the intent open
-    order = ['person_a', 'person_b', 'person_c', 'person_d', 'person_e', 'person_f']
     scanned = scan_working(start, order)
     assert scanned.cursor == 6
     assert scanned.visitedIds == order

@@ -13,7 +13,7 @@ from app.schemas.world.contracts import Id
 from app.schemas.world.v2.contexts import WorkingProgress
 from app.schemas.world.v2.work import SettlementGroup
 
-from .violations import Violation
+from .violations import KernelViolation, Violation, ViolationKind
 
 
 def validate_unit(unit: SettlementGroup, world_roster: frozenset[Id]) -> tuple[Violation, ...]:
@@ -86,26 +86,42 @@ def begin_working(committed: tuple[int, list[Id], list[Id]],
                            settledUnitIds=[], intentStatus=intent_status)
 
 
-def stage_working(working: WorkingProgress, unit_id: Id,
-                  actors: list[Id]) -> WorkingProgress:
-    """One staged settlement: every actor fills its slot, the unit id joins
-    the staged set and the input intent is consumed."""
+def stage_working(working: WorkingProgress, unit_id: Id, actors: list[Id],
+                  order: list[Id]) -> WorkingProgress:
+    """One staged settlement: actors union into the sets, the unit id joins
+    the staged set and the cursor stays on the first unhandled slot of the
+    frozen order — pulling a later member never skips the slots between.
+    Re-acting an actor that already acted is refused. The first settlement
+    of the chain consumes the input intent (2026-10-22 ruling: any actor,
+    matching the traces; the workflow design's protagonist wording is
+    deferred)."""
+    overlap = set(actors) & set(working.actedIds)
+    if overlap:
+        raise KernelViolation(
+            ViolationKind.SEMANTIC_INVALID,
+            f'actors {sorted(overlap)} already acted in this round')
+    visited = sorted(set(working.visitedIds) | set(actors))
+    acted = sorted(set(working.actedIds) | set(actors))
     return WorkingProgress(
-        cursor=working.cursor + len(actors),
-        actedIds=working.actedIds + list(actors),
-        visitedIds=working.visitedIds + list(actors),
+        cursor=_handled_prefix(visited, order),
+        actedIds=acted,
+        visitedIds=visited,
         settledUnitIds=working.settledUnitIds + [unit_id],
-        intentStatus='consumed')
+        intentStatus=_consume(working.intentStatus))
 
 
-def skip_working(working: WorkingProgress, slot_actor: Id) -> WorkingProgress:
-    """A recorded skip advances the cursor and the visited set, never actedIds."""
+def skip_working(working: WorkingProgress, slot_actor: Id,
+                 order: list[Id]) -> WorkingProgress:
+    """A recorded skip advances the cursor and the visited set, never actedIds;
+    it also consumes a pending input intent (skipping is handling the input's
+    opportunity)."""
+    visited = sorted(set(working.visitedIds) | {slot_actor})
     return WorkingProgress(
-        cursor=working.cursor + 1,
+        cursor=_handled_prefix(visited, order),
         actedIds=working.actedIds,
-        visitedIds=working.visitedIds + [slot_actor],
+        visitedIds=visited,
         settledUnitIds=working.settledUnitIds,
-        intentStatus=working.intentStatus)
+        intentStatus=_consume(working.intentStatus))
 
 
 def scan_working(working: WorkingProgress, order: list[Id]) -> WorkingProgress:
@@ -117,3 +133,17 @@ def scan_working(working: WorkingProgress, order: list[Id]) -> WorkingProgress:
         visitedIds=list(order),
         settledUnitIds=working.settledUnitIds,
         intentStatus=working.intentStatus)
+
+
+def _handled_prefix(visited: list[Id], order: list[Id]) -> int:
+    prefix = 0
+    for slot in order:
+        if slot in set(visited):
+            prefix += 1
+        else:
+            break
+    return prefix
+
+
+def _consume(status: str) -> str:
+    return 'consumed' if status == 'pending' else status
