@@ -15,9 +15,9 @@
 
 ## 二、开工前固定的共同接口
 
-先交付一份最小可用的 v2 接口基线，然后以该提交为共同起点建立两条开发分支。A 维护契约源和导出产物，B 从浏览器调用需求核对字段与示例。接口基线固定不等于阶段 0 已完成；SQL 约束、故障规格及其检查仍按原计划交付。
+A0/B0 共同接口前置已完成，SQL 约束、故障规格、动态轨迹、TS 消费与自动检查均已交付；从同一冻结提交建立两条开发分支。运行内核、服务与真实事务仍分别按 A1～A3 验收。
 
-本批执行入口为 [A0＋B0 共同接口基线实施计划](world-protocol/v2/interface-baseline-plan.md)。v1 基线为 26011c8，原候选为 07924f3；**修订后的 S1 已经 B 正式验收，IF-05 已放行**。11 决定、32 操作及接管流程核对通过，B01 关闭，JS 60/0、Python 300 项、前端 62 项与字节检查均通过，见 [最终验收记录](world-protocol/v2/change-list.md#b-最终复核与-s1-正式验收2026-10-22通过)。验收记录与修订纳入 `feat(world): accept S1 v2 contracts after B review` 提交，本轮不推送；随后 A 推进 IF-03/04a，B 推进 IF-05。S1 验收不代表 IF-05 已交付、完整基线已冻结或 A3 事务已验证。
+本批 [A0＋B0 计划](world-protocol/v2/interface-baseline-plan.md) 的 **IF-01～IF-08 已共同验收**。v1 `26011c8`、S1 `cabb04c`、共同实现 `e3b197a79f95adfbe215dddf5dfd3f9ed5b12823`；完整证据见 [change-list](world-protocol/v2/change-list.md#共同前置最终验收2026-10-22if-03if-08-通过) 与双方报告。共同前置已完成，再分开推进 A1/A2 与 B1；实际服务/事务验证仍在 A2/A3。冻结记录随本轮文档提交推送。
 
 | 必须固定的内容 | A 交付 | B 核对 |
 |---|---|---|
@@ -58,7 +58,7 @@ A 维护共同 CI（`.github/workflows/ci.yml` 及根级检查编排），B 提�
 | TS 消费 | B：合法响应完整读取/往返、不合法响应拒绝、枚举/错误码及 blockedReasons/canCompute 的实际处理；类型编译通过不能替代行为断言 |
 | 共同轨迹 | A/B：分别通过 Python 侧协议检查和 TS 侧请求/响应消费检查，包含动态字段规则、摘要实例化及错误/重试分支；A2 起还运行可用真实 HTTP 场景，A3 起加入恢复/接管场景 |
 
-当前仓库前端已有 `npm test`（Vitest），现有 CI 的前端步骤仅有 lint/build，尚不满足上述门槛。A0/B0 须把测试命令与共同 CI 接线作为接口基线交付：CI 运行 `npm test`（Vitest 已匹配 `src/**/*.test.ts`，覆盖 world 测试）与 `typecheck:world`；`test:world-*` 只用于本地聚焦，不重复接入 CI。具体脚本、测试选择和运行目录写入双方交付记录。尚未实现的 v2 检查不得用旧 v1 测试、空测试集或静默跳过冒充通过；本节规定的是待实现的门槛。
+共同 CI 已接入：frontend 作业运行 npm test、lint/build；world-interface 作业以 Python 3.12 / Node 22 运行统一入口，包含 typecheck:world、test:world-contract、test:world-traces 及故意破坏探针。聚焦检查与前端全套在不同作业中的重叠是有意的。Windows 本地及干净检出已通过，Linux 远端 CI 随本轮推送首次运行，结果未纳入本轮验收依据；全量 backend 两个既有 campaign_wiring 失败保留原检查并单独登记。
 
 B 的消费层提交由 A 脚本生成的 `frontend/src/lib/world-engine/contract-digest.json`，CI 在单树内比对摘要与 pin，契约漂移即失败。若契约变更同时依赖两条分支的新代码，由 A 在临时集成 checkout 中组合双方指定提交运行检查，无需提前合并开发分支。记录契约摘要、A/B 提交身份、执行命令和检查结果；只有经过验证的同一组合可同步为新基线。B 的消费代码需要修改时，由 B 提供对应提交并一起验证，不能仅凭口头核对放行。
 

@@ -1,10 +1,10 @@
-# 世界引擎协议 v2：修订与冻结清单
+# 世界引擎协议 v2：共同接口基线
 
-日期：2026-10-22。依据：[开发方案 v0.4.1](../../browser-world-state-workflow.md)。S1 经 B 消费核对已正式验收：v2 schema、32 操作 API registry、124 个 JSON 夹具及消费/修订检查均随验收提交交付；原候选为 `07924f3`。可执行 v2 SQL、共同轨迹和运行接口仍未交付。[v1](../v1/README.md) 保留评审基线。
+日期：2026-10-22。**IF-01～IF-08 已完成，A0/B0 共同前置正式验收。** v1 为 `26011c8`，S1 验收为 `cabb04c`；共同接口实现提交为 **`e3b197a79f95adfbe215dddf5dfd3f9ed5b12823`**。共同前置先在同一棵树完成，再从冻结记录提交拆成 `world-server` / `world-browser`；冻结记录随本轮文档提交推送，两条开发分支自该提交建立并同步远端。
 
-两人实施边界见 [开发分工](../../browser-world-state-work-split.md)：A 维护本目录共享契约、SQL、动态字段轨迹格式及共同 CI，B 维护轨迹读取、浏览器消费检查命令、固定响应及模型任务。契约变更通过导出一致性、Python 正反例、TS 消费和共同轨迹检查后同步；A2＋B1、A3 后分别提前验证普通点 HTTP 与刷新/接管，最终保留完整整链验收。上述 v2 检查仍属待实现交付，不代表当前 CI 已接入。
+契约摘要：`480d950c0f8062f8fdd75cb0620eb4ac97a6a247ca3f45f2057f6fe9e2ce7062`。双方核对依据见 [共同前置最终验收](change-list.md#共同前置最终验收2026-10-22if-03if-08-通过)、[server 报告](../../world-engine-reports/server.md)、[browser 报告](../../world-engine-reports/browser.md)。运行环境为 Windows、Python 3.12.3 / SQLite 3.50.4 / Pydantic 2.13.4 / jsonschema 4.26.0、Node 22.20.0 / npm 10.9.3 / TypeScript 5.9.3 / Ajv 8.20.0 / Vitest 5.0.1；CI 配置使用 Python 3.12、Node 22。
 
-当前实施任务见 [A0＋B0 共同接口基线计划](interface-baseline-plan.md)。B 对 11 项决定、32 个操作及接管请求构造的最终复核通过，F01–F10/R01–R03/B01 的 S1 修订已关闭；**S1 正式验收，IF-05 已放行**。B 独立复跑 JS 60/0、Python 300 项、前端 62 项，15 个生成物字节核对一致，依据见 [最终验收记录](change-list.md#b-最终复核与-s1-正式验收2026-10-22通过)。包含该记录的 `feat(world): accept S1 v2 contracts after B review` 提交是可检出的 S1 快照，本轮不推送。A 下一步 IF-03/04a，B 下一步 IF-05；v1 基线保留 `26011c8`，完整接口基线仍待 IF-08 冻结，实际事务仍待 A3。
+Python 仍是规范编码与状态计算权威。当前交付可执行 SQL 约束、固定预期、契约轨迹、TS 消费/HTTP 实现与共同检查；内核、真实控制状态机、SQLite 事务及 H1/H2 分别留在 A1～A3。Linux 远端 CI 于本轮推送后首次运行，结果未纳入本轮验收依据；全量 backend 的两个既有 campaign_wiring 失败单独登记，不作为接口验收通过。
 
 ## 本轮冻结决定
 
@@ -82,11 +82,26 @@ begin_point 保存 pointId、kind、基线头/版本/摘要和 timeAdvance。首
 
 持久化模型目标解决的是模型采样不可重现；admission 是纯函数，不在 pendingGroup/目标集复制。roll 行保留最终 eligibility/admission 便于校验，恢复重算必须使用该行绑定的资格基线，不能使用刷新时的任意最新状态。
 
-## 阶段 0 尚需完成的产物
+## 已交付的共同前置
 
-- 修订已交付的 S1 Python 契约、v2 JSON Schema、API registry 和夹具，关闭 [字段缺口](change-list.md#s1-字段闸门修订项)；memberIds 集合规范及前缀内容摘要进入 IF-03 固定向量。v1 导出和导入保持兼容，v2 不再使用旧 phase/resumePhase 组合。
-- 编写 v2 SQL 契约：根点创建与认领、工作表围栏/可见性、roll 定稿、gate 组合；重新处理 v1 storage-contract.sql 的 round_requires_ready_head 触发器，不能照搬旧入口阻塞规则，也不能失去根点 ready 检查。
-- 交付 §11.1 事务故障的输入、预期与测试落点（`failure-cases.json`），含 A/B 逐单元暂存与中断恢复、接管原文字节相等及非法来源拒绝、时间锁后改时长拒绝、显式取消不复活原工作、跨 P1 前缀验证、pending 时暂停/恢复成功但计算仍阻塞；实际事务中断验证在 A3 执行，阶段 0 不声称已通过；保留已有根点、roll、清理粒度和 revision 测试。
-- 阶段 4 样本必须包含位置变化影响外貌判断的反例；分别记录强制拆分数、实际调用数和完整六步结果。26–35 仅是该七单元用例的估算，不含额外分批、重试或校验。
+| 产物 | 入口 |
+|---|---|
+| 174 个 schema 定义、32 操作与 18 错误码 | `world-protocol.schema.json`、`api-contract.json`、`fixtures/api/` |
+| SQL 约束、21 个规范向量及 32 条事务故障规格 | `storage-contract.sql`、`canonical-vectors.json`、`failure-cases.json` |
+| 动态轨迹格式与 11 份双样本轨迹 | `trace.schema.json`、`traces/`；全部操作覆盖，无夹具豁免 |
+| 独立完整预期及 Python 摘要工具 | `fixtures/projections/`、`backend/scripts/world_trace_expected.py` |
+| TS 类型、运行校验、HTTP、固定响应及模型端口 | `frontend/src/lib/world-engine/` |
+| 五个 v2 生成物、147 项 artifact 哈希与前端 pin | `manifest.json`、`versions.json`、`contract-digest.json` |
 
-在这些产物通过前，状态为“v2 决定已记录、可执行契约未冻结”，不宣称阶段 0 已重新验收。
+从仓库根目录安装后端 requirements 与前端锁文件依赖后，运行：
+
+```powershell
+python -X utf8 backend/scripts/check_world_interface_baseline.py
+npm --prefix frontend test
+```
+
+统一入口执行 v1/v2 的只读导出核对、Python 正反例、TS 类型与消费/轨迹检查、四类临时破坏性探针。结果为 Python 426 项、TS 契约 38 项、轨迹 65 项通过；前端全套 165 项、lint/build 通过。空测试集、缺文件、字节/哈希/pin 漂移均失败。生成物按 LF、无 BOM 的 UTF-8 字节写入；普通导出仅重写 `generated:true`，手写夹具只重算/校验哈希。`--check` 不更新 manifest、夹具或 pin。
+
+`contractDigest` 对四个固定接口文件按路径排序，逐文件连接 `路径 UTF-8 + NUL + 字节长度十进制 ASCII + NUL + 原字节` 后做 SHA-256。manifest 自身、pin、SQL、向量、轨迹和环境不参与；手写产物单独列 SHA-256。前端 pin 只能由 `export_world_protocol.py --version v2 --write-pin` 生成。
+
+下一步 A 实现 A1/A2，B 实现 B1。T01 已备作 H1 普通点输入，T07 已备作 H2 接管输入；A3 按 FC01～FC32 实现真实故障验证。阶段 4 的条件合并与强制拆分样本、实际调用统计仍按 B3 交付。

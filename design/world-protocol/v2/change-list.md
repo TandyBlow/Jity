@@ -1,6 +1,6 @@
 # v1 → v2 差异、决定落点与 S1 核对
 
-日期：2026-10-22。v1 基线 `26011c8`，原 S1 候选 `07924f3`（agent）。本表保留决定登记、各轮发现与修订历史；**最新 B 消费复核通过，B01 关闭，S1 正式验收，IF-05 已放行**，最终依据见文末“B 最终复核与 S1 正式验收”。可检出快照为包含该验收记录及全部修订的提交。字段在 S1 固定，实际行为仍由 A2/A3 验收；完整接口基线须经 IF-03～IF-08 后冻结。
+日期：2026-10-22。v1 基线 `26011c8`，S1 验收 `cabb04c`。本表保留各轮发现与修订历史；**IF-01～IF-08 共同前置已完成，S2 消费核对通过，完整接口基线正式冻结**。最新依据见文末“共同前置最终验收”；历史的未验收/未放行状态仅适用于对应轮次。实际内核、运行服务与事务恢复分别由 A1～A3、H1/H2 验收。
 
 依据：[正文 v0.4.1](../../browser-world-state-workflow.md)、[11 项冻结决定](README.md#本轮冻结决定)、[实施计划](interface-baseline-plan.md)、[分工](../../browser-world-state-work-split.md)。下文类型相对 `backend/app/schemas/world/v2/`，夹具相对本目录；提及未交付文件或测试时均明确标为目标。
 
@@ -325,3 +325,37 @@ npm --prefix frontend test
 验收快照随本节同提交纳入 Python 源、v2 导出物、124 个 JSON 夹具、两份 v2 契约/修订测试、JS 消费入口、Ajv 固定依赖及锁文件、决定表与同步设计文档。原 v1 导入/产物不变；`CLAUDE.md` 与 `.planning/STATE.md` 只本地同步。检出该提交并安装既有依赖后可用上述命令复核，验收提交主题为 `feat(world): accept S1 v2 contracts after B review`。
 
 下一步：**A 推进 IF-03/IF-04a，B 可正式开始 IF-05**。正式 TS 类型/运行时校验/transport、DDL/规范向量、动态 trace schema/轨迹、统一检查/manifest/pin/CI 仍按各自任务交付。当前验收只关闭 S1 字段闸门，不等同于 IF-08 完整接口基线冻结，也不等同于 A3 事务验收；本轮只创建本地验收提交，不推送。
+
+## 共同前置最终验收（2026-10-22：IF-03～IF-08 通过）
+
+按用户“共同前置一起收尾，再分开做”的安排，将 A/B 的剩余接口工作在同一棵树交付。S1 保留 `cabb04c`；S2/共同接口实现提交为 **`e3b197a79f95adfbe215dddf5dfd3f9ed5b12823`**，本节及双方报告登记其正式验收。本节、双方报告与冻结记录随验收文档提交推送；尚未执行后续内核、控制器或事务服务开发。
+
+契约摘要：`480d950c0f8062f8fdd75cb0620eb4ac97a6a247ca3f45f2057f6fe9e2ce7062`。只对四个接口文件按排序后的 `路径 UTF-8 + NUL + 字节数十进制 ASCII + NUL + 原文件字节` 连续做 SHA-256；路径是 `api-contract.json`、`trace.schema.json`、`versions.json`、`world-protocol.schema.json`。manifest、前端 pin、夹具、向量、SQL 及环境信息不进入此摘要。
+
+| 任务 | 交付及核对结论 | 后续验收位置 |
+|---|---|---|
+| IF-03 | SQL 装载及 50 项正反例通过；当前 epoch 先过滤再 max attempt；纯规范编码与完整前缀/独立状态的 21 个向量通过 | TTL、跨表原子性与真实复制见 A3/FC01～FC32 |
+| IF-04a | trace schema、结构化 `$var`/`$map`、单次捕获与 Python 预期工具通过；先验证响应 schema 再捕获/断言 | A2 从同一格式运行服务轨迹 |
+| IF-04b / S2 | T01～T09 共 11 文件、185 步，包含空 linked 和同点任务/外貌折叠分支；每份两组 ID/token/epoch/clock 样本，独立完整投影与摘要通过 | T01 是 H1 输入，T07 是 H2 输入；完整运行验收仍在 A2/A3 |
+| IF-05 | 手写 TS 类型、共享 Draft 2020-12 schema 校验、32 操作 HTTP request/success/error 全消费；18 错误码均有消费动作，resume 不越过 canCompute；固定模型输出端口不分配 ID/roll | B1 实现调度；真实浏览器 HTTP 在 H1 |
+| IF-06 | 固定响应与受控 HTTP 均消费两组样本；65 项通过；错令牌、次序、身份、捕获、业务答案和摘要均明确失败 | 固定响应端口只返回预设值，运行服务在 A2/A3 |
+| IF-07 | 默认 v1 保持兼容；v1 12 个、v2 5 个生成物字节核对；147 项 manifest、LF/no-BOM、生成 pin、统一入口及四类破坏性探针通过；CI 接线完成 | Linux 远端 CI 于推送后首次运行，结果未纳入验收 |
+| IF-08 | 候选提交经干净 worktree 检出、全新 npm ci 和同一统一入口复跑通过；双方报告使用相同实现提交与摘要；正式验收共同接口基线 | 完成记录后从同一冻结提交建立 world-server/world-browser，进入 A1/A2 与 B1 |
+
+本次补核发现并关闭一个 SQL 预约边界：后继的基线可以是尚未提交的封存前驱工作，不能直接外键到已提交点表。现由封存/活动前驱引用与独立约束测试验证；真实 P1 提交匹配和原子提升保留 A3/FC25。
+
+S2 没有 fixture-only 操作豁免：32 个操作全部出现在轨迹中。业务预期来自手写投影/规范字节，Python 工具只实例化身份并计算预期摘要，不调用 apply、不接受 actualState/actualDigest；TS 只读取预期摘要。完整请求哈希随实例化请求重算并在 Python 侧核对。故障规格逐条给出具体 arrange、请求夹具、场景、故障位置、预期与命名 A3 测试位置，未把规格当作真实事务通过。
+
+```powershell
+python -X utf8 backend/scripts/check_world_interface_baseline.py
+npm --prefix frontend run review:world-s1
+npm --prefix frontend test
+npm --prefix frontend run lint
+npm --prefix frontend run build
+```
+
+结果：统一入口 **Python 426 项（v1 109 + v2 317）、TS 契约 38 项、TS 轨迹 65 项及类型检查全部通过**；四类临时破坏（CRLF、缺失响应字段、反转 canCompute、动态摘要过期）全部被拒绝。JS S1 复核 **60/0**；前端全套 **165 项**，lint/build 通过。既有 useBrowserAutoPlay 的 hook 依赖 warning 保留。
+
+额外全量 backend 检查为 **921 passed、2 failed**，仍是已记录的 `test_campaign_wiring.py::test_create_session_with_campaign` 与 `::test_list_slots_filters_by_session_id`（创建会话返回 404）。共同接口检查全部通过；不把整个仓库 CI 报成全绿。CI 保留原后端 pytest 和前端 lint/build，新增 npm test 和 world-interface；完整 npm test 与聚焦检查在两个作业中有意重叠。Node 升至 22，匹配锁定的 Vitest 5 对 Node >=22.12 的要求。
+
+**结论：共同接口基线验收通过，A0/B0 的前置工作关闭，可以分别推进 A1/A2 与 B1。** 冻结记录随验收文档提交推送，`world-server` / `world-browser` 分支自该提交建立。实际分配/去重、崩溃恢复、真实 HTTP H1/H2、真实模型与页面继续按原后续阶段验收。环境、具体文件及复跑入口见 [server](../../world-engine-reports/server.md) 和 [browser](../../world-engine-reports/browser.md)。
