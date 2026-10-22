@@ -13,9 +13,13 @@ _SECONDS = {'second': 1, 'minute': 60, 'hour': 3600, 'day': 86400}
 
 # The first confirmed action/target/skip/time-scan locks time in the same
 # transaction (set_point_time notes); A2 folds this predicate into each
-# checkpoint transaction to flip PointWorkView.timeLocked.
+# checkpoint transaction to flip PointWorkView.timeLocked. discover_group
+# fires action_confirmed on the saved actionText alone — targetIds may still
+# be null at that moment (T01 s7), so waiting for target confirmation would
+# lock too late.
 TIME_LOCK_EVENTS = frozenset({
-    'target_confirmed', 'member_admitted', 'skip_recorded', 'time_scan_staged',
+    'action_confirmed', 'target_confirmed', 'member_admitted',
+    'skip_recorded', 'time_scan_staged',
 })
 
 

@@ -94,6 +94,8 @@ def test_replay_from_branch_start_matches_expected_digest(trace_id):
 
 
 def test_t01_preview_matches_trace_anchor():
+    from app.schemas.world.v2.requests import PreviewData
+
     trace_doc = load_trace('T01')
     values = trace_doc['samples'][0]['values']
     starts = sample_start_states(world_id_of(trace_doc, values))
@@ -105,13 +107,39 @@ def test_t01_preview_matches_trace_anchor():
     point = TimelinePoint.model_validate(response['data']['pointProjection'])
     preview = preview_point(starts[root_key], point,
                             [SettlementGroup.model_validate(group)
-                             for group in request['settlementGroups']], None)
+                             for group in request['settlementGroups']])
+    PreviewData.model_validate(preview)
     assert preview['workingStateDigest'] == response['data']['workingStateDigest']
     assert preview['pointProjectionDigest'] == response['data']['pointProjectionDigest']
     assert preview['mergedEntityDeltas'] == response['data']['mergedEntityDeltas']
 
 
+def test_t03_time_only_preview_matches_commit_outcome():
+    trace_doc = load_trace('T03')
+    values = trace_doc['samples'][0]['values']
+    starts = sample_start_states(world_id_of(trace_doc, values))
+    root_key = state_digest(build_initial_state(WorldInitialState.model_validate(
+        {'worldId': world_id_of(trace_doc, values), **CREATION})))
+    scan_step = next(step for step in trace_doc['steps']
+                     if step.get('operation') == 'checkpoint_stage_time_scan'
+                     and step.get('responseKind') == 'success')
+    scan = SettlementGroup.model_validate(
+        instantiate(scan_step['request']['candidates'], values))
+    commit_step = next(step for step in trace_doc['steps']
+                       if step.get('operation') == 'commit_point'
+                       and step.get('responseKind') == 'success')
+    point_wire = instantiate(commit_step['request'], values)['point']
+    point_wire['entityDeltas'] = {}
+    projection = TimelinePoint.model_validate(point_wire)
+    preview = preview_point(starts[root_key], projection, [scan])
+    assert preview['workingStateDigest'] == next(
+        iter(trace_doc['samples'][0]['expectedDigests'].values()))
+
+
 def test_time_lock_predicate_covers_the_four_confirmed_events():
+    # discover_group fires action_confirmed on the saved actionText alone:
+    # T01 s7 carries actionText with targetIds=null and time is locked there.
+    assert time_lock_trigger('action_confirmed')
     for event in ('target_confirmed', 'member_admitted', 'skip_recorded', 'time_scan_staged'):
         assert time_lock_trigger(event)
     for event in ('begin_point', 'seal_point', 'unit_staged', 'discover_unconfirmed', ''):
