@@ -7975,6 +7975,79 @@
       "title": "Position",
       "type": "object"
     },
+    "PrefixProjection": {
+      "additionalProperties": false,
+      "properties": {
+        "worldId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Worldid",
+          "type": "string"
+        },
+        "pointId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Pointid",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "normal",
+            "instant",
+            "linked"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "baseline": {
+          "$ref": "#/$defs/BaselineView"
+        },
+        "timeAdvance": {
+          "$ref": "#/$defs/TimeAdvance"
+        },
+        "timeLocked": {
+          "const": true,
+          "title": "Timelocked",
+          "type": "boolean"
+        },
+        "working": {
+          "$ref": "#/$defs/WorkingProgress"
+        },
+        "settledUnits": {
+          "items": {
+            "$ref": "#/$defs/SettledUnitView"
+          },
+          "title": "Settledunits",
+          "type": "array"
+        },
+        "timeScanComplete": {
+          "title": "Timescancomplete",
+          "type": "boolean"
+        },
+        "timeScanCandidates": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SettlementGroup"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "worldId",
+        "pointId",
+        "kind",
+        "baseline",
+        "timeAdvance",
+        "timeLocked",
+        "working",
+        "settledUnits",
+        "timeScanComplete",
+        "timeScanCandidates"
+      ],
+      "title": "PrefixProjection",
+      "type": "object"
+    },
     "PrepareSuccessorData": {
       "additionalProperties": false,
       "properties": {
@@ -12639,5 +12712,5 @@
   },
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "urn:jity:world-protocol:v2",
-  "title": "Jity world protocol v2 (S1 candidate; wire only)"
+  "title": "Jity world protocol v2 (wire contract)"
 }

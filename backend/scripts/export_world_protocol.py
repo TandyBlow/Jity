@@ -2,7 +2,7 @@
 
 Run from the repository root:
   python -X utf8 backend/scripts/export_world_protocol.py                # v1 (default)
-  python -X utf8 backend/scripts/export_world_protocol.py --version v2   # S1 candidate
+  python -X utf8 backend/scripts/export_world_protocol.py --version v2 --check
 Expected canonical strings below are authored independently of the encoder.
 """
 
@@ -12,6 +12,7 @@ import hashlib
 import json
 from pathlib import Path
 import sys
+import tempfile
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "backend"))
@@ -41,7 +42,7 @@ def write_v2(name, value):
 
 
 def build_v2():
-    """Export the S1 candidate: schema, api-contract and the operations list.
+    """Export schemas, registry, versions and the generated operations list.
 
     Only generated artifacts are (re)written here; fixtures under
     v2/fixtures/ are hand-written and never touched by this script.
@@ -56,7 +57,7 @@ def build_v2():
     _, schema = mjs([(model, "validation") for model in v2.SCHEMA_MODELS], schema_generator=WireSchema)
     schema.update({"$schema": "https://json-schema.org/draft/2020-12/schema",
                    "$id": "urn:jity:world-protocol:v2",
-                   "title": "Jity world protocol v2 (S1 candidate; wire only)"})
+                   "title": "Jity world protocol v2 (wire contract)"})
     write_v2("world-protocol.schema.json", schema)
 
     contract = {
@@ -76,6 +77,118 @@ def build_v2():
         "protocolVersion": v2.PROTOCOL_VERSION,
         "operations": [spec.operation for spec in v2.OPERATIONS],
     })
+    from app.schemas.world.v2.trace import TraceDocument
+    trace_schema = TraceDocument.model_json_schema(schema_generator=WireSchema)
+    trace_schema.update({"$schema": "https://json-schema.org/draft/2020-12/schema",
+                         "$id": "urn:jity:world-trace:v1", "title": "Jity shared contract traces"})
+    write_v2("trace.schema.json", trace_schema)
+    write_v2("versions.json", {"protocolVersion": v2.PROTOCOL_VERSION, "engineVersion": v2.ENGINE_VERSION,
+        "schemaVersion": v2.SCHEMA_VERSION, "canonicalVersion": v2.CANONICAL_VERSION,
+        "traceFormatVersion": 1, "contractDigestAlgorithm": "sha256-path-nul-length-nul-bytes-v1"})
+
+
+CONTRACT_FILES = ("api-contract.json", "trace.schema.json", "versions.json", "world-protocol.schema.json")
+V2_GENERATED = (*CONTRACT_FILES, "fixtures/api/operations.json")
+
+
+def contract_digest(directory):
+    digest = hashlib.sha256()
+    for name in sorted(CONTRACT_FILES):
+        payload = (Path(directory) / name).read_bytes()
+        digest.update(name.encode("utf-8") + b"\0" + str(len(payload)).encode("ascii") + b"\0" + payload)
+    return digest.hexdigest()
+
+
+def artifact_paths(directory):
+    directory = Path(directory)
+    result = set(V2_GENERATED)
+    for pattern in ("fixtures/**/*.json", "traces/**/*.json", "*.sql", "canonical-vectors.json", "failure-cases.json"):
+        result.update(path.relative_to(directory).as_posix() for path in directory.glob(pattern) if path.is_file())
+    return sorted(result)
+
+
+def manifest_value(generated_root, authored_root):
+    artifacts=[]
+    for name in artifact_paths(authored_root):
+        generated = name in V2_GENERATED
+        data = (Path(generated_root if generated else authored_root) / name).read_bytes()
+        if b"\r\n" in data or data.startswith(b"\xef\xbb\xbf"):
+            raise ValueError(f"non-LF or BOM artifact: {name}")
+        artifacts.append({"path":name, "sha256":hashlib.sha256(data).hexdigest(), "generated":generated})
+    return {"protocolVersion":2, "contractDigest":contract_digest(generated_root), "artifacts":artifacts}
+
+
+def json_bytes(value):
+    return (json.dumps(value,ensure_ascii=False,indent=2)+"\n").encode("utf-8")
+
+
+def validate_artifacts(directory):
+    from jsonschema import Draft202012Validator
+    directory=Path(directory)
+    for name in ("world-protocol.schema.json","trace.schema.json"):
+        schema=json.loads((directory/name).read_text(encoding="utf-8"))
+        Draft202012Validator.check_schema(schema)
+        def refs(node):
+            if isinstance(node,dict):
+                if "$ref" in node:
+                    ref=node["$ref"]
+                    if not ref.startswith("#/$defs/") or ref[8:] not in schema.get("$defs",{}):
+                        raise ValueError(f"unresolved reference in {name}: {ref}")
+                for value in node.values():refs(value)
+            elif isinstance(node,list):
+                for value in node:refs(value)
+        refs(schema)
+    defs=json.loads((directory/'world-protocol.schema.json').read_text(encoding='utf-8'))['$defs']
+    api=json.loads((directory/'api-contract.json').read_text(encoding='utf-8'))
+    for op in api['operations']:
+        for key in ('requestSchema','successSchema'):
+            if op.get(key) is not None and op[key] not in defs:raise ValueError(f'unresolved {key}: {op["operation"]}')
+
+
+def run_export(version, target, check=False, write_pin=False):
+    """Generate in isolation; checking never rewrites source artifacts or pins."""
+    global OUT, OUT_V2
+    target=Path(target)
+    with tempfile.TemporaryDirectory(prefix="jity-world-export-") as temp:
+        generated=Path(temp)
+        old=OUT if version=='v1' else OUT_V2
+        try:
+            if version=='v1':OUT=generated;build()
+            else:OUT_V2=generated;build_v2()
+        finally:
+            if version=='v1':OUT=old
+            else:OUT_V2=old
+        if version=='v2':
+            validate_artifacts(generated)
+            (generated/'manifest.json').write_bytes(json_bytes(manifest_value(generated,target)))
+        generated_files=sorted(path for path in generated.rglob('*') if path.is_file())
+        if check:
+            for path in generated_files:
+                relative=path.relative_to(generated)
+                if not (target/relative).is_file() or path.read_bytes()!=(target/relative).read_bytes():
+                    raise ValueError(f'generated artifact drift: {relative.as_posix()}')
+            if version=='v2':
+                manifest=json.loads((target/'manifest.json').read_text(encoding='utf-8'))
+                if manifest['contractDigest']!=contract_digest(target):raise ValueError('contract digest mismatch')
+                for entry in manifest['artifacts']:
+                    relative=Path(entry['path'])
+                    if relative.is_absolute() or '..' in relative.parts:raise ValueError('unsafe manifest path')
+                    data=(target/relative).read_bytes()
+                    if hashlib.sha256(data).hexdigest()!=entry['sha256']:raise ValueError(f'artifact hash drift: {relative}')
+                pin=ROOT/'frontend/src/lib/world-engine/contract-digest.json'
+                if pin.read_bytes()!=json_bytes({'protocolVersion':2,'contractDigest':manifest['contractDigest']}):
+                    raise ValueError('contract pin mismatch')
+        else:
+            for path in generated_files:
+                destination=target/path.relative_to(generated)
+                destination.parent.mkdir(parents=True,exist_ok=True)
+                destination.write_bytes(path.read_bytes())
+            if write_pin:
+                if version!='v2':raise ValueError('pin is only defined for v2')
+                pin=ROOT/'frontend/src/lib/world-engine/contract-digest.json'
+                pin.parent.mkdir(parents=True,exist_ok=True)
+                pin.write_bytes(json_bytes({'protocolVersion':2,'contractDigest':contract_digest(target)}))
+    return target
 
 
 def task(identity, owner, goal, parent=None, status="pending"):
@@ -304,10 +417,13 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--version", choices=("v1", "v2"), default="v1",
                         help="protocol version to export (default: v1)")
+    parser.add_argument('--check',action='store_true',help='read-only byte/hash/pin check')
+    parser.add_argument('--output-dir',type=Path,help='protocol output directory (or comparison directory with --check)')
+    parser.add_argument('--write-pin',action='store_true',help='generate the v2 frontend pin; never used by --check')
     args = parser.parse_args()
-    if args.version == "v1":
-        build()
-        print(f"Exported world protocol v1 contracts to {OUT}")
-    else:
-        build_v2()
-        print(f"Exported world protocol v2 (S1 candidate) contracts to {OUT_V2}")
+    try:
+        if args.check and args.write_pin:raise ValueError('--check never writes a pin')
+        destination=run_export(args.version,args.output_dir or (OUT if args.version=='v1' else OUT_V2),args.check,args.write_pin)
+        print(f'{"Checked" if args.check else "Exported"} world protocol {args.version}: {destination}')
+    except (ValueError,OSError) as error:
+        parser.exit(1,f'{error}\n')

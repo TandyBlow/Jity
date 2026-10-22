@@ -1,0 +1,8 @@
+{
+  "protocolVersion": 2,
+  "engineVersion": "world-engine-v1",
+  "schemaVersion": 1,
+  "canonicalVersion": "world-canonical-v1",
+  "traceFormatVersion": 1,
+  "contractDigestAlgorithm": "sha256-path-nul-length-nul-bytes-v1"
+}

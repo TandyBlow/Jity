@@ -9,6 +9,9 @@
     "lint": "next lint",
     "test": "vitest run",
     "review:world-s1": "node scripts/review-world-s1.mjs",
+    "typecheck:world": "tsc -p tsconfig.world-contract.json",
+    "test:world-contract": "vitest run src/lib/world-engine/contract.test.ts",
+    "test:world-traces": "vitest run src/lib/world-engine/traces.test.ts",
     "predev": "node scripts/copy-wllama-assets.mjs && node scripts/copy-ort-assets.mjs",
     "prebuild": "node scripts/copy-wllama-assets.mjs && node scripts/copy-ort-assets.mjs"
   },

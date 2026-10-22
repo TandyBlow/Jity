@@ -1,0 +1,718 @@
+{
+  "protocolVersion": 2,
+  "acceptance": "specification_only_runtime_A3_pending",
+  "cases": [
+    {
+      "id": "FC01",
+      "name": "root_creation_atomic",
+      "operation": "create_world",
+      "preState": {
+        "scenario": "T01",
+        "source": "handwritten contract trace and active world/work references",
+        "arrange": [
+          "No world or creation result exists for requestId; initial school template is valid."
+        ]
+      },
+      "faultAt": "after_root_before_lease",
+      "expected": "root/world/lease/claim/gate all roll back",
+      "validationLayer": "service_transaction",
+      "runtimeTest": {
+        "stage": "A3",
+        "module": "backend/tests/test_world_transactions.py",
+        "case": "test_root_creation_atomic"
+      },
+      "requestFixture": "fixtures/api/create_world/request.json",
+      "trace": "traces/T01.json"
+    },
+    {
+      "id": "FC02",
+      "name": "root_response_lost",
+      "operation": "create_world",
+      "preState": {
+        "scenario": "T06",
+        "source": "handwritten contract trace and active world/work references",
+        "arrange": [
+          "The root creation transaction committed; its first HTTP response was lost."
+        ]
+      },
+      "faultAt": "after_commit_before_response",
+      "expected": "same requestId returns the same world; claim tokens are never replayed",
+      "validationLayer": "service_transaction",
+      "runtimeTest": {
+        "stage": "A3",
+        "module": "backend/tests/test_world_transactions.py",
+        "case": "test_root_response_lost"
+      },
+      "requestFixture": "fixtures/api/create_world/request.json",
+      "trace": "traces/T06.json"
+    },
+    {
+      "id": "FC03",
+      "name": "root_ready_guard",
+      "operation": "checkpoint_start_advance",
+      "preState": {
+        "scenario": "T01",
+        "source": "handwritten contract trace and active world/work references",
+        "arrange": [
+          "The current head is a root with pending narration, generation 1 and a live head claim."
+        ]
+      },
+      "faultAt": "before_round_insert",
+      "expected": "pending root rejects; no advance/round is committed",
+      "validationLayer": "service_transaction",
+      "runtimeTest": {
+        "stage": "A3",
+        "module": "backend/tests/test_world_transactions.py",
+        "case": "test_root_ready_guard"
+      },
+      "requestFixture": "fixtures/api/checkpoint_start_advance/request.json",
+      "trace": "traces/T01.json"
+    },
+    {
+      "id": "FC04",
+      "name": "successful_replay_first",
+      "operation": "commit_point",
+      "preState": {
+        "scenario": "T06",
+        "source": "handwritten contract trace and active world/work references",
+        "arrange": [
+          "The exact commit request already succeeded; head, revision and lease have since advanced; input text was cleared."
+        ]
+      },
+      "faultAt": "before_binding_validation",
+      "expected": "successful requestId replays original data with fresh control and no inputText",
+      "validationLayer": "service_transaction",
+      "runtimeTest": {
+        "stage": "A3",
+        "module": "backend/tests/test_world_transactions.py",
+        "case": "test_successful_replay_first"
+      },
+      "requestFixture": "fixtures/api/commit_point/request.json",
+      "trace": "traces/T06.json"
+    },
+    {
+      "id": "FC05",
+      "name": "request_reuse_conflict",
+      "operation": "checkpoint_pause",
+      "preState": {
+        "scenario": "T06",
+        "source": "handwritten contract trace and active world/work references",
+        "arrange": [
+          "A successful world submission exists with the same requestId and a different normalized payload or operation."
+        ]
+      },
+      "faultAt": "before_idempotency_insert",
+      "expected": "different operation or normalized content rejects request_id_reused",
+      "validationLayer": "service_transaction",
+      "runtimeTest": {
+        "stage": "A3",
+        "module": "backend/tests/test_world_transactions.py",
+        "case": "test_request_reuse_conflict"
+      },
+      "requestFixture": "fixtures/api/checkpoint_pause/request.json",
+      "trace": "traces/T06.json"
+    },
+    {
+      "id": "FC06",
+      "name": "request_in_progress",
+      "operation": "commit_point",
+      "preState": {
+        "scenario": "T06",
+        "source": "handwritten contract trace and active world/work references",
+        "arrange": [
+          "A first transaction owns the same world/requestId and has not committed."
+        ]
+      },
+      "faultAt": "concurrent_first_transaction",
+      "expected": "request_in_progress retains original requestId",
+      "validationLayer": "service_transaction",
+      "runtimeTest": {
+        "stage": "A3",
+        "module": "backend/tests/test_world_transactions.py",
+        "case": "test_request_in_progress"
+      },
+      "requestFixture": "fixtures/api/commit_point/request.json",
+      "trace": "traces/T06.json"
+    },
+    {
+      "id": "FC07",
+      "name": "lease_clock_and_fence",
+      "operation": "checkpoint_stage_unit",
+      "preState": {
+        "scenario": "T07",
+        "source": "handwritten contract trace and active world/work references",
+        "arrange": [
+          "An open/staged PointWork is active; the supplied lease is expired or belongs to the previous epoch."
+        ]
+      },
+      "faultAt": "before_any_work_write",
+      "expected": "expired/old epoch lease rejects; no write or failure cleanup",
+      "validationLayer": "service_transaction",
+      "runtimeTest": {
+        "stage": "A3",
+        "module": "backend/tests/test_world_transactions.py",
+        "case": "test_lease_clock_and_fence"
+      },
+      "requestFixture": "fixtures/api/checkpoint_stage_unit/request.json",
+      "trace": "traces/T07.json"
+    },
+    {
+      "id": "FC08",
+      "name": "gate_cleanup_no_revision",
+      "operation": "commit_point",
+      "preState": {
+        "scenario": "T05",
+        "source": "handwritten contract trace and active world/work references",
+        "arrange": [
+          "The request bindings and lease are valid; the pending head claim is expired; revision is recorded before resolve_gate."
+        ]
+      },
+      "faultAt": "after_gate_resolution",
+      "expected": "legal stale gate cleanup commits; business advancement rejected; revision unchanged",
+      "validationLayer": "service_transaction",
+      "runtimeTest": {
+        "stage": "A3",
+        "module": "backend/tests/test_world_transactions.py",
+        "case": "test_gate_cleanup_no_revision"
+      },
+      "requestFixture": "fixtures/api/commit_point/request.json",
+      "trace": "traces/T05.json"
+    },
+    {
+      "id": "FC09",
+      "name": "binding_error_keeps_gate",
+      "operation": "checkpoint_pause",
+      "preState": {
+        "scenario": "T05",
+        "source": "handwritten contract trace and active world/work references",
+        "arrange": [
+          "A pending gate exists; expectedCheckpointRevision or lease token is invalid."
+        ]
+      },
+      "faultAt": "before_gate_resolution",
+      "expected": "invalid binding/lease does not clear gate",
+      "validationLayer": "service_transaction",
+      "runtimeTest": {
+        "stage": "A3",
+        "module": "backend/tests/test_world_transactions.py",
+        "case": "test_binding_error_keeps_gate"
+      },
+      "requestFixture": "fixtures/api/checkpoint_pause/request.json",
+      "trace": "traces/T05.json"
+    },
+    {
+      "id": "FC10",
+      "name": "pause_while_pending",
+      "operation": "checkpoint_pause",
+      "preState": {
+        "scenario": "T05",
+        "source": "handwritten contract trace and active world/work references",
+        "arrange": [
+          "A live narration gate is pending and paused=false; record its issued/expiry timestamps."
+        ]
+      },
+      "faultAt": "after_pause_before_response",
+      "expected": "pause persists without extending claim TTL; repeat changes no revision",
+      "validationLayer": "service_transaction",
+      "runtimeTest": {
+        "stage": "A3",
+        "module": "backend/tests/test_world_transactions.py",
+        "case": "test_pause_while_pending"
+      },
+      "requestFixture": "fixtures/api/checkpoint_pause/request.json",
+      "trace": "traces/T05.json"
+    },
+    {
+      "id": "FC11",
+      "name": "resume_expired_claim",
+      "operation": "checkpoint_resume",
+      "preState": {
+        "scenario": "T05",
+        "source": "handwritten contract trace and active world/work references",
+        "arrange": [
+          "paused=true; the head narration claim is expired and has not become ready."
+        ]
+      },
+      "faultAt": "after_gate_resolution",
+      "expected": "paused=false persists; blockedReasons reports expired claim and canCompute=false",
+      "validationLayer": "service_transaction",
+      "runtimeTest": {
+        "stage": "A3",
+        "module": "backend/tests/test_world_transactions.py",
+        "case": "test_resume_expired_claim"
+      },
+      "requestFixture": "fixtures/api/checkpoint_resume/request.json",
+      "trace": "traces/T05.json"
+    },
+    {
+      "id": "FC12",
+      "name": "ready_does_not_resume",
+      "operation": "narration_submit",
+      "preState": {
+        "scenario": "T05",
+        "source": "handwritten contract trace and active world/work references",
+        "arrange": [
+          "paused=true; matching current generation/token/epoch narration is ready to submit."
+        ]
+      },
+      "faultAt": "before_cache_commit",
+      "expected": "cache/ready/gate clear atomically; paused/phase/revision preserved",
+      "validationLayer": "service_transaction",
+      "runtimeTest": {
+        "stage": "A3",
+        "module": "backend/tests/test_world_transactions.py",
+        "case": "test_ready_does_not_resume"
+      },
+      "requestFixture": "fixtures/api/narration_submit/request.json",
+      "trace": "traces/T05.json"
+    },
+    {
+      "id": "FC13",
+      "name": "freeze_action_before_targets",
+      "operation": "checkpoint_discover_group",
+      "preState": {
+        "scenario": "T02",
+        "source": "handwritten contract trace and active world/work references",
+        "arrange": [
+          "A source action is accepted by discover_group; target analysis has not completed."
+        ]
+      },
+      "faultAt": "after_accept_before_response",
+      "expected": "accepted action retained byte-for-byte; target analysis not restarted from a new action",
+      "validationLayer": "service_transaction",
+      "runtimeTest": {
+        "stage": "A3",
+        "module": "backend/tests/test_world_transactions.py",
+        "case": "test_freeze_action_before_targets"
+      },
+      "requestFixture": "fixtures/api/checkpoint_discover_group/request.json",
+      "trace": "traces/T02.json"
+    },
+    {
+      "id": "FC14",
+      "name": "roll_before_expansion",
+      "operation": "create_rolls",
+      "preState": {
+        "scenario": "T02",
+        "source": "handwritten contract trace and active world/work references",
+        "arrange": [
+          "A complete target set is accepted; a final roll row exists; admitted member expansion has not been saved."
+        ]
+      },
+      "faultAt": "after_roll_before_extend",
+      "expected": "same judgment row/eligibility/admission reused; no NULL intermediate or re-roll",
+      "validationLayer": "service_transaction",
+      "runtimeTest": {
+        "stage": "A3",
+        "module": "backend/tests/test_world_transactions.py",
+        "case": "test_roll_before_expansion"
+      },
+      "requestFixture": "fixtures/api/create_rolls/request.json",
+      "trace": "traces/T02.json"
+    },
+    {
+      "id": "FC15",
+      "name": "stage_before_next_actor",
+      "operation": "checkpoint_stage_unit",
+      "preState": {
+        "scenario": "T02",
+        "source": "handwritten contract trace and active world/work references",
+        "arrange": [
+          "A staged A unit and full candidates exist at cursor 1; B has not been analyzed; committed cursor remains 0."
+        ]
+      },
+      "faultAt": "after_stage_before_next_actor",
+      "expected": "saved A and candidates retained; B reads replayed working prefix; committed cursor unchanged",
+      "validationLayer": "service_transaction",
+      "runtimeTest": {
+        "stage": "A3",
+        "module": "backend/tests/test_world_transactions.py",
+        "case": "test_stage_before_next_actor"
+      },
+      "requestFixture": "fixtures/api/checkpoint_stage_unit/request.json",
+      "trace": "traces/T02.json"
+    },
+    {
+      "id": "FC16",
+      "name": "stage_response_lost",
+      "operation": "checkpoint_stage_unit",
+      "preState": {
+        "scenario": "T06",
+        "source": "handwritten contract trace and active world/work references",
+        "arrange": [
+          "The first stage_unit committed and its response was lost; preserve the exact requestId and candidates."
+        ]
+      },
+      "faultAt": "after_commit_before_response",
+      "expected": "same requestId never appends a second unit",
+      "validationLayer": "service_transaction",
+      "runtimeTest": {
+        "stage": "A3",
+        "module": "backend/tests/test_world_transactions.py",
+        "case": "test_stage_response_lost"
+      },
+      "requestFixture": "fixtures/api/checkpoint_stage_unit/request.json",
+      "trace": "traces/T06.json"
+    },
+    {
+      "id": "FC17",
+      "name": "consume_only_point_groups",
+      "operation": "commit_point",
+      "preState": {
+        "scenario": "T02",
+        "source": "handwritten contract trace and active world/work references",
+        "arrange": [
+          "P1 consumes A/B; a sealed successor reservation holds unconsumed C/D accepted work."
+        ]
+      },
+      "faultAt": "after_state_before_cleanup",
+      "expected": "state/progress/group consumption/cleanup roll back together; C/D preserved",
+      "validationLayer": "service_transaction",
+      "runtimeTest": {
+        "stage": "A3",
+        "module": "backend/tests/test_world_transactions.py",
+        "case": "test_consume_only_point_groups"
+      },
+      "requestFixture": "fixtures/api/commit_point/request.json",
+      "trace": "traces/T02.json"
+    },
+    {
+      "id": "FC18",
+      "name": "current_epoch_max",
+      "operation": "get_context",
+      "preState": {
+        "scenario": "T07",
+        "source": "handwritten contract trace and active world/work references",
+        "arrange": [
+          "Lease epoch is 8; member attempts are old epoch7/attempt99 and current epoch8/attempt1,2; all are accepted."
+        ]
+      },
+      "faultAt": "before_visible_work_select",
+      "expected": "filter current epoch before max accepted attempt; validate TTL in service clock",
+      "validationLayer": "service_transaction",
+      "runtimeTest": {
+        "stage": "A3",
+        "module": "backend/tests/test_world_transactions.py",
+        "case": "test_current_epoch_max"
+      },
+      "requestFixture": "fixtures/api/get_context/request.json",
+      "trace": "traces/T07.json"
+    },
+    {
+      "id": "FC19",
+      "name": "restore_original_bytes",
+      "operation": "checkpoint_restore_group_work",
+      "preState": {
+        "scenario": "T07",
+        "source": "handwritten contract trace and active world/work references",
+        "arrange": [
+          "A new holder has epoch8; a still-active source manifest references epoch7 accepted immutable UTF-8 action/results/candidates."
+        ]
+      },
+      "faultAt": "after_copy_before_source_record",
+      "expected": "raw bytes/results/candidates and copy identity commit together; failure rolls back",
+      "validationLayer": "service_transaction",
+      "runtimeTest": {
+        "stage": "A3",
+        "module": "backend/tests/test_world_transactions.py",
+        "case": "test_restore_original_bytes"
+      },
+      "requestFixture": "fixtures/api/checkpoint_restore_group_work/request.json",
+      "trace": "traces/T07.json"
+    },
+    {
+      "id": "FC20",
+      "name": "restore_bad_source",
+      "operation": "checkpoint_restore_group_work",
+      "preState": {
+        "scenario": "T09",
+        "source": "handwritten contract trace and active world/work references",
+        "arrange": [
+          "The supplied manifest is unaccepted, belongs to another point/group, or references consumed/abandoned PointWork."
+        ]
+      },
+      "faultAt": "before_copy",
+      "expected": "unconfirmed/cross-scope/consumed/abandoned source rejects without resampling",
+      "validationLayer": "service_transaction",
+      "runtimeTest": {
+        "stage": "A3",
+        "module": "backend/tests/test_world_transactions.py",
+        "case": "test_restore_bad_source"
+      },
+      "requestFixture": "fixtures/api/checkpoint_restore_group_work/request.json",
+      "trace": "traces/T09.json"
+    },
+    {
+      "id": "FC21",
+      "name": "restore_missing_or_corrupt",
+      "operation": "checkpoint_restore_group_work",
+      "preState": {
+        "scenario": "T09",
+        "source": "handwritten contract trace and active world/work references",
+        "arrange": [
+          "An active authoritative accepted-source reference exists; one referenced payload row is missing or its bytes fail the stored hash."
+        ]
+      },
+      "faultAt": "before_hash_verification",
+      "expected": "frozen_work_missing/corrupt blocks; active reference prevents GC",
+      "validationLayer": "service_transaction",
+      "runtimeTest": {
+        "stage": "A3",
+        "module": "backend/tests/test_world_transactions.py",
+        "case": "test_restore_missing_or_corrupt"
+      },
+      "requestFixture": "fixtures/api/checkpoint_restore_group_work/request.json",
+      "trace": "traces/T09.json"
+    },
+    {
+      "id": "FC22",
+      "name": "restore_attempt_allocation",
+      "operation": "checkpoint_restore_group_work",
+      "preState": {
+        "scenario": "T07",
+        "source": "handwritten contract trace and active world/work references",
+        "arrange": [
+          "Several confirmed attempts exist across epochs; new holder supplies a valid source manifest without a destination attempt."
+        ]
+      },
+      "faultAt": "before_allocating_target_attempt",
+      "expected": "service allocates monotonically across epochs; request cannot choose attempt",
+      "validationLayer": "service_transaction",
+      "runtimeTest": {
+        "stage": "A3",
+        "module": "backend/tests/test_world_transactions.py",
+        "case": "test_restore_attempt_allocation"
+      },
+      "requestFixture": "fixtures/api/checkpoint_restore_group_work/request.json",
+      "trace": "traces/T07.json"
+    },
+    {
+      "id": "FC23",
+      "name": "restore_business_dedup",
+      "operation": "checkpoint_restore_group_work",
+      "preState": {
+        "scenario": "T07",
+        "source": "handwritten contract trace and active world/work references",
+        "arrange": [
+          "Two different requestIds concurrently restore the identical source manifest into the same destination epoch."
+        ]
+      },
+      "faultAt": "concurrent_new_request_id",
+      "expected": "same source manifest and target epoch reuses copy identity/attempt; no second allocation",
+      "validationLayer": "service_transaction",
+      "runtimeTest": {
+        "stage": "A3",
+        "module": "backend/tests/test_world_transactions.py",
+        "case": "test_restore_business_dedup"
+      },
+      "requestFixture": "fixtures/api/checkpoint_restore_group_work/request.json",
+      "trace": "traces/T07.json"
+    },
+    {
+      "id": "FC24",
+      "name": "time_lock",
+      "operation": "checkpoint_set_point_time",
+      "preState": {
+        "scenario": "T08",
+        "source": "handwritten contract trace and active world/work references",
+        "arrange": [
+          "A begin_point time/baseline is persisted and at least one action/target/skip/scan dependency has been confirmed."
+        ]
+      },
+      "faultAt": "first_confirmed_dependency",
+      "expected": "time and baseline cannot change after action/target/skip/scan/roll confirmation",
+      "validationLayer": "service_transaction",
+      "runtimeTest": {
+        "stage": "A3",
+        "module": "backend/tests/test_world_transactions.py",
+        "case": "test_time_lock"
+      },
+      "requestFixture": "fixtures/api/checkpoint_set_point_time/request.json",
+      "trace": "traces/T08.json"
+    },
+    {
+      "id": "FC25",
+      "name": "successor_prefix",
+      "operation": "commit_point",
+      "preState": {
+        "scenario": "T08",
+        "source": "handwritten contract trace and active world/work references",
+        "arrange": [
+          "P1 is sealed and a P2 reservation exists; mutate one predecessor identity/version/state/prefix/time binding."
+        ]
+      },
+      "faultAt": "before_promoting_successor",
+      "expected": "all predecessor IDs/version/state/prefix/time bindings match or whole business commit rejects",
+      "validationLayer": "service_transaction",
+      "runtimeTest": {
+        "stage": "A3",
+        "module": "backend/tests/test_world_transactions.py",
+        "case": "test_successor_prefix"
+      },
+      "requestFixture": "fixtures/api/commit_point/request.json",
+      "trace": "traces/T08.json"
+    },
+    {
+      "id": "FC26",
+      "name": "cancel_terminal",
+      "operation": "round_conclusion_cancel",
+      "preState": {
+        "scenario": "T04",
+        "source": "handwritten contract trace and active world/work references",
+        "arrange": [
+          "An advance has active current and reserved work plus frozen ID/roll records; input text is still present."
+        ]
+      },
+      "faultAt": "after_abandon_before_pointer_clear",
+      "expected": "work abandoned, identity/roll tombstones retained, input cleared atomically; replay cannot revive",
+      "validationLayer": "service_transaction",
+      "runtimeTest": {
+        "stage": "A3",
+        "module": "backend/tests/test_world_transactions.py",
+        "case": "test_cancel_terminal"
+      },
+      "requestFixture": "fixtures/api/round_conclusion_cancel/request.json",
+      "trace": "traces/T04.json"
+    },
+    {
+      "id": "FC27",
+      "name": "conclusion_atomic",
+      "operation": "round_conclusion_conclude",
+      "preState": {
+        "scenario": "T04",
+        "source": "handwritten contract trace and active world/work references",
+        "arrange": [
+          "A ready head has phase assess_continuation; a model continue or handback decision is uncommitted."
+        ]
+      },
+      "faultAt": "after_old_round_before_next_round",
+      "expected": "continue creates exactly one automatic successor; handback clears input; no fake point",
+      "validationLayer": "service_transaction",
+      "runtimeTest": {
+        "stage": "A3",
+        "module": "backend/tests/test_world_transactions.py",
+        "case": "test_conclusion_atomic"
+      },
+      "requestFixture": "fixtures/api/round_conclusion_conclude/request.json",
+      "trace": "traces/T04.json"
+    },
+    {
+      "id": "FC28",
+      "name": "claim_renew_takeover",
+      "operation": "narration_claim_renew",
+      "preState": {
+        "scenario": "T09",
+        "source": "handwritten contract trace and active world/work references",
+        "arrange": [
+          "A long model task holds a live claim; renew it, then let a new lease epoch acquire and reclaim."
+        ]
+      },
+      "faultAt": "during_long_model_generation",
+      "expected": "renew preserves token/generation; new epoch can re-claim, old epoch late submit rejects",
+      "validationLayer": "service_transaction",
+      "runtimeTest": {
+        "stage": "A3",
+        "module": "backend/tests/test_world_transactions.py",
+        "case": "test_claim_renew_takeover"
+      },
+      "requestFixture": "fixtures/api/narration_claim_renew/request.json",
+      "trace": "traces/T09.json"
+    },
+    {
+      "id": "FC29",
+      "name": "cache_missing_old_generation",
+      "operation": "narration_submit",
+      "preState": {
+        "scenario": "T09",
+        "source": "handwritten contract trace and active world/work references",
+        "arrange": [
+          "A ready current-head narration cache was deleted at a stable boundary; an old generation submit arrives after a new claim."
+        ]
+      },
+      "faultAt": "after_cache_delete",
+      "expected": "only new valid generation can mark ready; world state/time not re-applied",
+      "validationLayer": "service_transaction",
+      "runtimeTest": {
+        "stage": "A3",
+        "module": "backend/tests/test_world_transactions.py",
+        "case": "test_cache_missing_old_generation"
+      },
+      "requestFixture": "fixtures/api/narration_submit/request.json",
+      "trace": "traces/T09.json"
+    },
+    {
+      "id": "FC30",
+      "name": "pure_time_full_scan",
+      "operation": "checkpoint_stage_time_scan",
+      "preState": {
+        "scenario": "T03",
+        "source": "handwritten contract trace and active world/work references",
+        "arrange": [
+          "The round has zero acting members; the clock crosses task_wait_noon and triggers personality/sanity updates."
+        ]
+      },
+      "faultAt": "before_commit",
+      "expected": "complete task/personality/sanity scan retained even without actors; input consumption preserved",
+      "validationLayer": "service_transaction",
+      "runtimeTest": {
+        "stage": "A3",
+        "module": "backend/tests/test_world_transactions.py",
+        "case": "test_pure_time_full_scan"
+      },
+      "requestFixture": "fixtures/api/checkpoint_stage_time_scan/request.json",
+      "trace": "traces/T03.json"
+    },
+    {
+      "id": "FC31",
+      "name": "preview_budget",
+      "operation": "preview_point",
+      "preState": {
+        "scenario": "T03",
+        "source": "handwritten contract trace and active world/work references",
+        "arrange": [
+          "A valid preview is available; individually exceed request bytes, unit count, compute deadline and response bytes."
+        ]
+      },
+      "faultAt": "request_bytes_units_compute_or_response_budget",
+      "expected": "512KiB/32 units/2s/2MiB reject without partial mutation; request/response limit details",
+      "validationLayer": "service_transaction",
+      "runtimeTest": {
+        "stage": "A3",
+        "module": "backend/tests/test_world_transactions.py",
+        "case": "test_preview_budget"
+      },
+      "requestFixture": "fixtures/api/preview_point/request.json",
+      "trace": "traces/T03.json"
+    },
+    {
+      "id": "FC32",
+      "name": "reference_retention_gc",
+      "operation": "checkpoint_restore_group_work",
+      "preState": {
+        "scenario": "T09",
+        "source": "handwritten contract trace and active world/work references",
+        "arrange": [
+          "An active current or sealed successor PointWork still references accepted old-epoch source rows; another group may already be consumed."
+        ]
+      },
+      "faultAt": "background_gc",
+      "expected": "referenced old source rows remain until consumption or explicit abandonment",
+      "validationLayer": "service_transaction",
+      "runtimeTest": {
+        "stage": "A3",
+        "module": "backend/tests/test_world_transactions.py",
+        "case": "test_reference_retention_gc"
+      },
+      "requestFixture": "fixtures/api/checkpoint_restore_group_work/request.json",
+      "trace": "traces/T09.json"
+    }
+  ],
+  "responsibility": {
+    "rootReady": "SQL trigger + A2/A3 service",
+    "leaseTTL": "A3 service clock",
+    "gateResolution": "A2/A3 transaction; never a blanket SQL control trigger",
+    "visibleWork": "SQL epoch-first view + A3 TTL/active-reference validation",
+    "copyAndHash": "A3 service verifies source/bytes then atomically inserts immutable rows",
+    "commitOrder": "A3 transaction; static FK constraints alone do not prove atomic behavior"
+  }
+}

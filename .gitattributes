@@ -1,6 +1,7 @@
 # Protocol artifacts are hashed byte-for-byte; checkout and commit must not
 # rewrite line endings on any platform. See design/world-protocol/v2/.
 design/world-protocol/** text eol=lf
+frontend/src/lib/world-engine/contract-digest.json text eol=lf
 
 # Windows reserved device names written by shell redirects (e.g. `>nul`).
 # They cannot be checked out on Windows, so they must never be tracked.

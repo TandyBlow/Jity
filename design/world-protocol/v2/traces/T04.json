@@ -1,0 +1,4849 @@
+{
+  "traceFormatVersion": 1,
+  "protocolVersion": 2,
+  "contractDigest": "480d950c0f8062f8fdd75cb0620eb4ac97a6a247ca3f45f2057f6fe9e2ce7062",
+  "scenario": "T04",
+  "acceptanceLayer": "contract",
+  "runtimeTarget": "runtime-A2",
+  "description": "Automatic round inherits consumed input; handback/cancel clear text, replay does not revive it.",
+  "preconditions": [
+    "School world and sealed fixture baseline; model outputs and business answers authored independently.",
+    "Input identity variables denote known preallocated identities/authority from the scenario setup; no arbitrary state upload.",
+    "Contract response specimens are not executed service transactions; runtimeTarget remains a later acceptance."
+  ],
+  "variables": [
+    {
+      "name": "v1",
+      "kind": "identity",
+      "valueType": "string",
+      "origin": "input",
+      "captureStep": null
+    },
+    {
+      "name": "v2",
+      "kind": "clock",
+      "valueType": "integer",
+      "origin": "capture",
+      "captureStep": "s1"
+    },
+    {
+      "name": "v3",
+      "kind": "identity",
+      "valueType": "string",
+      "origin": "capture",
+      "captureStep": "s1"
+    },
+    {
+      "name": "v4",
+      "kind": "identity",
+      "valueType": "string",
+      "origin": "capture",
+      "captureStep": "s1"
+    },
+    {
+      "name": "v5",
+      "kind": "identity",
+      "valueType": "string",
+      "origin": "capture",
+      "captureStep": "s1"
+    },
+    {
+      "name": "v6",
+      "kind": "identity",
+      "valueType": "string",
+      "origin": "capture",
+      "captureStep": "s1"
+    },
+    {
+      "name": "v7",
+      "kind": "identity",
+      "valueType": "string",
+      "origin": "capture",
+      "captureStep": "s1"
+    },
+    {
+      "name": "v8",
+      "kind": "ownership",
+      "valueType": "integer",
+      "origin": "capture",
+      "captureStep": "s1"
+    },
+    {
+      "name": "v9",
+      "kind": "clock",
+      "valueType": "integer",
+      "origin": "capture",
+      "captureStep": "s1"
+    },
+    {
+      "name": "v10",
+      "kind": "ownership",
+      "valueType": "string",
+      "origin": "input",
+      "captureStep": null
+    },
+    {
+      "name": "v11",
+      "kind": "identity",
+      "valueType": "string",
+      "origin": "input",
+      "captureStep": null
+    },
+    {
+      "name": "v12",
+      "kind": "clock",
+      "valueType": "integer",
+      "origin": "capture",
+      "captureStep": "s2"
+    },
+    {
+      "name": "v13",
+      "kind": "clock",
+      "valueType": "integer",
+      "origin": "capture",
+      "captureStep": "s3"
+    },
+    {
+      "name": "v14",
+      "kind": "identity",
+      "valueType": "string",
+      "origin": "input",
+      "captureStep": null
+    },
+    {
+      "name": "v15",
+      "kind": "clock",
+      "valueType": "integer",
+      "origin": "capture",
+      "captureStep": "s4"
+    },
+    {
+      "name": "v16",
+      "kind": "identity",
+      "valueType": "string",
+      "origin": "input",
+      "captureStep": null
+    },
+    {
+      "name": "v17",
+      "kind": "clock",
+      "valueType": "integer",
+      "origin": "capture",
+      "captureStep": "s5"
+    },
+    {
+      "name": "v18",
+      "kind": "clock",
+      "valueType": "integer",
+      "origin": "capture",
+      "captureStep": "s6"
+    },
+    {
+      "name": "v19",
+      "kind": "clock",
+      "valueType": "integer",
+      "origin": "capture",
+      "captureStep": "s7"
+    },
+    {
+      "name": "v20",
+      "kind": "clock",
+      "valueType": "integer",
+      "origin": "capture",
+      "captureStep": "s8"
+    },
+    {
+      "name": "v21",
+      "kind": "identity",
+      "valueType": "string",
+      "origin": "capture",
+      "captureStep": "s8"
+    },
+    {
+      "name": "v22",
+      "kind": "identity",
+      "valueType": "string",
+      "origin": "capture",
+      "captureStep": "s8"
+    },
+    {
+      "name": "v23",
+      "kind": "clock",
+      "valueType": "integer",
+      "origin": "capture",
+      "captureStep": "s9"
+    },
+    {
+      "name": "v24",
+      "kind": "identity",
+      "valueType": "string",
+      "origin": "capture",
+      "captureStep": "s9"
+    },
+    {
+      "name": "v25",
+      "kind": "clock",
+      "valueType": "integer",
+      "origin": "capture",
+      "captureStep": "s10"
+    },
+    {
+      "name": "v26",
+      "kind": "identity",
+      "valueType": "string",
+      "origin": "capture",
+      "captureStep": "s10"
+    },
+    {
+      "name": "v27",
+      "kind": "clock",
+      "valueType": "integer",
+      "origin": "capture",
+      "captureStep": "s10"
+    },
+    {
+      "name": "v28",
+      "kind": "clock",
+      "valueType": "integer",
+      "origin": "capture",
+      "captureStep": "s11"
+    },
+    {
+      "name": "v29",
+      "kind": "clock",
+      "valueType": "integer",
+      "origin": "capture",
+      "captureStep": "s12"
+    },
+    {
+      "name": "v30",
+      "kind": "clock",
+      "valueType": "integer",
+      "origin": "capture",
+      "captureStep": "s13"
+    },
+    {
+      "name": "v31",
+      "kind": "clock",
+      "valueType": "integer",
+      "origin": "capture",
+      "captureStep": "s14"
+    },
+    {
+      "name": "v32",
+      "kind": "clock",
+      "valueType": "integer",
+      "origin": "capture",
+      "captureStep": "s16"
+    },
+    {
+      "name": "v33",
+      "kind": "clock",
+      "valueType": "integer",
+      "origin": "capture",
+      "captureStep": "s17"
+    },
+    {
+      "name": "state_hash_s16",
+      "kind": "identity",
+      "valueType": "string",
+      "origin": "capture",
+      "captureStep": "s16"
+    },
+    {
+      "name": "request_hash_s2",
+      "kind": "identity",
+      "valueType": "string",
+      "origin": "capture",
+      "captureStep": "s2"
+    },
+    {
+      "name": "request_hash_s4",
+      "kind": "identity",
+      "valueType": "string",
+      "origin": "capture",
+      "captureStep": "s4"
+    },
+    {
+      "name": "request_hash_s5",
+      "kind": "identity",
+      "valueType": "string",
+      "origin": "capture",
+      "captureStep": "s5"
+    },
+    {
+      "name": "request_hash_s6",
+      "kind": "identity",
+      "valueType": "string",
+      "origin": "capture",
+      "captureStep": "s6"
+    },
+    {
+      "name": "request_hash_s7",
+      "kind": "identity",
+      "valueType": "string",
+      "origin": "capture",
+      "captureStep": "s7"
+    },
+    {
+      "name": "request_hash_s8",
+      "kind": "identity",
+      "valueType": "string",
+      "origin": "capture",
+      "captureStep": "s8"
+    },
+    {
+      "name": "request_hash_s9",
+      "kind": "identity",
+      "valueType": "string",
+      "origin": "capture",
+      "captureStep": "s9"
+    },
+    {
+      "name": "request_hash_s10",
+      "kind": "identity",
+      "valueType": "string",
+      "origin": "capture",
+      "captureStep": "s10"
+    },
+    {
+      "name": "request_hash_s11",
+      "kind": "identity",
+      "valueType": "string",
+      "origin": "capture",
+      "captureStep": "s11"
+    },
+    {
+      "name": "request_hash_s12",
+      "kind": "identity",
+      "valueType": "string",
+      "origin": "capture",
+      "captureStep": "s12"
+    },
+    {
+      "name": "request_hash_s13",
+      "kind": "identity",
+      "valueType": "string",
+      "origin": "capture",
+      "captureStep": "s13"
+    },
+    {
+      "name": "request_hash_s15",
+      "kind": "identity",
+      "valueType": "string",
+      "origin": "capture",
+      "captureStep": "s15"
+    },
+    {
+      "name": "request_hash_s17",
+      "kind": "identity",
+      "valueType": "string",
+      "origin": "capture",
+      "captureStep": "s17"
+    }
+  ],
+  "steps": [
+    {
+      "id": "s1",
+      "operation": "get_context",
+      "scope": {
+        "worldId": {
+          "$var": "v1"
+        }
+      },
+      "request": {},
+      "response": {
+        "protocolVersion": 2,
+        "engineVersion": "world-engine-v1",
+        "schemaVersion": 1,
+        "canonicalVersion": "world-canonical-v1",
+        "serverTimeEpochMilli": {
+          "$var": "v2"
+        },
+        "world": {
+          "worldId": {
+            "$var": "v1"
+          },
+          "head": {
+            "pointId": {
+              "$var": "v3"
+            },
+            "version": 3,
+            "stateDigest": {
+              "$var": "v4"
+            },
+            "narrationStatus": "ready"
+          },
+          "advance": {
+            "advanceId": {
+              "$var": "v5"
+            },
+            "inputId": {
+              "$var": "v6"
+            },
+            "intentStatus": "consumed",
+            "inputAvailable": true
+          },
+          "round": {
+            "roundId": {
+              "$var": "v7"
+            },
+            "trigger": "player",
+            "conclusion": null,
+            "order": [
+              "person_a",
+              "person_b",
+              "person_c",
+              "person_d",
+              "person_e",
+              "person_f"
+            ],
+            "cursor": 6,
+            "actedIds": [
+              "person_a"
+            ],
+            "visitedIds": [
+              "person_a",
+              "person_b",
+              "person_c",
+              "person_d",
+              "person_e",
+              "person_f"
+            ]
+          },
+          "time": {
+            "calendar": "gregorian",
+            "dateTime": "2026-01-01T11:59:05",
+            "instantOrdinal": 0
+          },
+          "lease": {
+            "fenceEpoch": {
+              "$var": "v8"
+            },
+            "expiresAtEpochMilli": {
+              "$var": "v9"
+            }
+          },
+          "successor": null,
+          "activePointId": null,
+          "activeRoundId": {
+            "$var": "v7"
+          }
+        },
+        "control": {
+          "phase": "assess_continuation",
+          "paused": false,
+          "revision": 1,
+          "gate": {
+            "status": "none",
+            "generation": null,
+            "issuedAtEpochMilli": null,
+            "expiresAtEpochMilli": null
+          },
+          "blockedReasons": [],
+          "canCompute": true
+        },
+        "work": null,
+        "activeInput": {
+          "advanceId": {
+            "$var": "v5"
+          },
+          "inputId": {
+            "$var": "v6"
+          },
+          "text": "我推开重门。"
+        },
+        "recovery": null
+      },
+      "responseKind": "success",
+      "httpStatus": 200,
+      "captures": [
+        {
+          "variable": "v2",
+          "path": "/serverTimeEpochMilli"
+        },
+        {
+          "variable": "v3",
+          "path": "/world/head/pointId"
+        },
+        {
+          "variable": "v4",
+          "path": "/world/head/stateDigest"
+        },
+        {
+          "variable": "v5",
+          "path": "/world/advance/advanceId"
+        },
+        {
+          "variable": "v6",
+          "path": "/world/advance/inputId"
+        },
+        {
+          "variable": "v7",
+          "path": "/world/round/roundId"
+        },
+        {
+          "variable": "v8",
+          "path": "/world/lease/fenceEpoch"
+        },
+        {
+          "variable": "v9",
+          "path": "/world/lease/expiresAtEpochMilli"
+        }
+      ],
+      "assertions": [
+        {
+          "op": "eq",
+          "path": "/control/phase",
+          "expected": "assess_continuation",
+          "baseline": null
+        },
+        {
+          "op": "eq",
+          "path": "/control/paused",
+          "expected": false,
+          "baseline": null
+        },
+        {
+          "op": "eq",
+          "path": "/control/canCompute",
+          "expected": true,
+          "baseline": null
+        }
+      ],
+      "projectionPath": null,
+      "digestPath": null,
+      "expectedProjection": null,
+      "nextAction": "continue"
+    },
+    {
+      "id": "s2",
+      "operation": "round_conclusion_conclude",
+      "scope": {
+        "worldId": {
+          "$var": "v1"
+        }
+      },
+      "request": {
+        "protocolVersion": 2,
+        "requestId": "req_T04_2",
+        "worldId": {
+          "$var": "v1"
+        },
+        "advanceId": {
+          "$var": "v5"
+        },
+        "roundId": {
+          "$var": "v7"
+        },
+        "expectedPointId": {
+          "$var": "v3"
+        },
+        "expectedVersion": 3,
+        "expectedCheckpointRevision": 1,
+        "leaseToken": {
+          "$var": "v10"
+        },
+        "fenceEpoch": {
+          "$var": "v8"
+        },
+        "conclusion": {
+          "kind": "continue",
+          "closedBy": "model",
+          "cancelReason": null,
+          "candidateCharacterIds": [
+            "person_c"
+          ],
+          "nextRoundId": {
+            "$var": "v11"
+          }
+        },
+        "operation": "conclude"
+      },
+      "response": {
+        "protocolVersion": 2,
+        "engineVersion": "world-engine-v1",
+        "schemaVersion": 1,
+        "canonicalVersion": "world-canonical-v1",
+        "serverTimeEpochMilli": {
+          "$var": "v12"
+        },
+        "replayed": false,
+        "operation": "round_conclusion_conclude",
+        "requestId": "req_T04_2",
+        "requestHash": {
+          "$var": "request_hash_s2"
+        },
+        "world": {
+          "worldId": {
+            "$var": "v1"
+          },
+          "head": {
+            "pointId": {
+              "$var": "v3"
+            },
+            "version": 3,
+            "stateDigest": {
+              "$var": "v4"
+            },
+            "narrationStatus": "ready"
+          },
+          "advance": {
+            "advanceId": {
+              "$var": "v5"
+            },
+            "inputId": {
+              "$var": "v6"
+            },
+            "intentStatus": "consumed",
+            "inputAvailable": true
+          },
+          "round": {
+            "roundId": {
+              "$var": "v11"
+            },
+            "trigger": "automatic",
+            "conclusion": null,
+            "order": [
+              "person_c"
+            ],
+            "cursor": 0,
+            "actedIds": [],
+            "visitedIds": []
+          },
+          "time": {
+            "calendar": "gregorian",
+            "dateTime": "2026-01-01T11:59:05",
+            "instantOrdinal": 0
+          },
+          "lease": {
+            "fenceEpoch": {
+              "$var": "v8"
+            },
+            "expiresAtEpochMilli": {
+              "$var": "v9"
+            }
+          },
+          "successor": null,
+          "activePointId": null,
+          "activeRoundId": {
+            "$var": "v11"
+          }
+        },
+        "control": {
+          "phase": "select_actor",
+          "paused": false,
+          "revision": 2,
+          "gate": {
+            "status": "none",
+            "generation": null,
+            "issuedAtEpochMilli": null,
+            "expiresAtEpochMilli": null
+          },
+          "blockedReasons": [],
+          "canCompute": true
+        },
+        "work": null,
+        "data": {
+          "kind": "continue",
+          "roundId": {
+            "$var": "v7"
+          },
+          "nextRoundId": {
+            "$var": "v11"
+          }
+        }
+      },
+      "responseKind": "success",
+      "httpStatus": 200,
+      "captures": [
+        {
+          "variable": "v12",
+          "path": "/serverTimeEpochMilli"
+        },
+        {
+          "variable": "request_hash_s2",
+          "path": "/requestHash"
+        }
+      ],
+      "assertions": [
+        {
+          "op": "eq",
+          "path": "/control/phase",
+          "expected": "select_actor",
+          "baseline": null
+        },
+        {
+          "op": "eq",
+          "path": "/control/paused",
+          "expected": false,
+          "baseline": null
+        },
+        {
+          "op": "eq",
+          "path": "/control/canCompute",
+          "expected": true,
+          "baseline": null
+        }
+      ],
+      "projectionPath": null,
+      "digestPath": null,
+      "expectedProjection": null,
+      "nextAction": "continue"
+    },
+    {
+      "id": "s3",
+      "operation": "get_context",
+      "scope": {
+        "worldId": {
+          "$var": "v1"
+        }
+      },
+      "request": {},
+      "response": {
+        "protocolVersion": 2,
+        "engineVersion": "world-engine-v1",
+        "schemaVersion": 1,
+        "canonicalVersion": "world-canonical-v1",
+        "serverTimeEpochMilli": {
+          "$var": "v13"
+        },
+        "world": {
+          "worldId": {
+            "$var": "v1"
+          },
+          "head": {
+            "pointId": {
+              "$var": "v3"
+            },
+            "version": 3,
+            "stateDigest": {
+              "$var": "v4"
+            },
+            "narrationStatus": "ready"
+          },
+          "advance": {
+            "advanceId": {
+              "$var": "v5"
+            },
+            "inputId": {
+              "$var": "v6"
+            },
+            "intentStatus": "consumed",
+            "inputAvailable": true
+          },
+          "round": {
+            "roundId": {
+              "$var": "v11"
+            },
+            "trigger": "automatic",
+            "conclusion": null,
+            "order": [
+              "person_c"
+            ],
+            "cursor": 0,
+            "actedIds": [],
+            "visitedIds": []
+          },
+          "time": {
+            "calendar": "gregorian",
+            "dateTime": "2026-01-01T11:59:05",
+            "instantOrdinal": 0
+          },
+          "lease": {
+            "fenceEpoch": {
+              "$var": "v8"
+            },
+            "expiresAtEpochMilli": {
+              "$var": "v9"
+            }
+          },
+          "successor": null,
+          "activePointId": null,
+          "activeRoundId": {
+            "$var": "v11"
+          }
+        },
+        "control": {
+          "phase": "select_actor",
+          "paused": false,
+          "revision": 2,
+          "gate": {
+            "status": "none",
+            "generation": null,
+            "issuedAtEpochMilli": null,
+            "expiresAtEpochMilli": null
+          },
+          "blockedReasons": [],
+          "canCompute": true
+        },
+        "work": null,
+        "activeInput": {
+          "advanceId": {
+            "$var": "v5"
+          },
+          "inputId": {
+            "$var": "v6"
+          },
+          "text": "我推开重门。"
+        },
+        "recovery": null
+      },
+      "responseKind": "success",
+      "httpStatus": 200,
+      "captures": [
+        {
+          "variable": "v13",
+          "path": "/serverTimeEpochMilli"
+        }
+      ],
+      "assertions": [
+        {
+          "op": "eq",
+          "path": "/control/phase",
+          "expected": "select_actor",
+          "baseline": null
+        },
+        {
+          "op": "eq",
+          "path": "/control/paused",
+          "expected": false,
+          "baseline": null
+        },
+        {
+          "op": "eq",
+          "path": "/control/canCompute",
+          "expected": true,
+          "baseline": null
+        }
+      ],
+      "projectionPath": null,
+      "digestPath": null,
+      "expectedProjection": null,
+      "nextAction": "continue"
+    },
+    {
+      "id": "s4",
+      "operation": "checkpoint_begin_point",
+      "scope": {
+        "worldId": {
+          "$var": "v1"
+        }
+      },
+      "request": {
+        "protocolVersion": 2,
+        "requestId": "req_T04_4",
+        "worldId": {
+          "$var": "v1"
+        },
+        "leaseToken": {
+          "$var": "v10"
+        },
+        "fenceEpoch": {
+          "$var": "v8"
+        },
+        "expectedPointId": {
+          "$var": "v3"
+        },
+        "expectedVersion": 3,
+        "expectedCheckpointRevision": 2,
+        "pointId": {
+          "$var": "v14"
+        },
+        "kind": "normal",
+        "timeAdvance": {
+          "boundary": "elapsed",
+          "duration": {
+            "amount": 2,
+            "unit": "second"
+          }
+        },
+        "operation": "begin_point"
+      },
+      "response": {
+        "protocolVersion": 2,
+        "engineVersion": "world-engine-v1",
+        "schemaVersion": 1,
+        "canonicalVersion": "world-canonical-v1",
+        "serverTimeEpochMilli": {
+          "$var": "v15"
+        },
+        "replayed": false,
+        "operation": "checkpoint_begin_point",
+        "requestId": "req_T04_4",
+        "requestHash": {
+          "$var": "request_hash_s4"
+        },
+        "world": {
+          "worldId": {
+            "$var": "v1"
+          },
+          "head": {
+            "pointId": {
+              "$var": "v3"
+            },
+            "version": 3,
+            "stateDigest": {
+              "$var": "v4"
+            },
+            "narrationStatus": "ready"
+          },
+          "advance": {
+            "advanceId": {
+              "$var": "v5"
+            },
+            "inputId": {
+              "$var": "v6"
+            },
+            "intentStatus": "consumed",
+            "inputAvailable": true
+          },
+          "round": {
+            "roundId": {
+              "$var": "v11"
+            },
+            "trigger": "automatic",
+            "conclusion": null,
+            "order": [
+              "person_c"
+            ],
+            "cursor": 0,
+            "actedIds": [],
+            "visitedIds": []
+          },
+          "time": {
+            "calendar": "gregorian",
+            "dateTime": "2026-01-01T11:59:05",
+            "instantOrdinal": 0
+          },
+          "lease": {
+            "fenceEpoch": {
+              "$var": "v8"
+            },
+            "expiresAtEpochMilli": {
+              "$var": "v9"
+            }
+          },
+          "successor": null,
+          "activePointId": {
+            "$var": "v14"
+          },
+          "activeRoundId": {
+            "$var": "v11"
+          }
+        },
+        "control": {
+          "phase": "select_actor",
+          "paused": false,
+          "revision": 3,
+          "gate": {
+            "status": "none",
+            "generation": null,
+            "issuedAtEpochMilli": null,
+            "expiresAtEpochMilli": null
+          },
+          "blockedReasons": [],
+          "canCompute": true
+        },
+        "work": {
+          "pointId": {
+            "$var": "v14"
+          },
+          "kind": "normal",
+          "timeAdvance": {
+            "boundary": "elapsed",
+            "duration": {
+              "amount": 2,
+              "unit": "second"
+            }
+          },
+          "timeLocked": false,
+          "baseline": {
+            "headPointId": {
+              "$var": "v3"
+            },
+            "version": 3,
+            "stateDigest": {
+              "$var": "v4"
+            }
+          },
+          "phase": "select_actor",
+          "working": {
+            "cursor": 0,
+            "actedIds": [],
+            "visitedIds": [],
+            "settledUnitIds": [],
+            "intentStatus": "consumed"
+          },
+          "settledUnits": [],
+          "pendingGroup": null,
+          "successor": null,
+          "sealed": false,
+          "prefixDigest": null,
+          "predecessorWorkDigest": null,
+          "timeScanComplete": false
+        },
+        "data": {
+          "pointId": {
+            "$var": "v14"
+          }
+        }
+      },
+      "responseKind": "success",
+      "httpStatus": 200,
+      "captures": [
+        {
+          "variable": "v15",
+          "path": "/serverTimeEpochMilli"
+        },
+        {
+          "variable": "request_hash_s4",
+          "path": "/requestHash"
+        }
+      ],
+      "assertions": [
+        {
+          "op": "eq",
+          "path": "/control/phase",
+          "expected": "select_actor",
+          "baseline": null
+        },
+        {
+          "op": "eq",
+          "path": "/control/paused",
+          "expected": false,
+          "baseline": null
+        },
+        {
+          "op": "eq",
+          "path": "/control/canCompute",
+          "expected": true,
+          "baseline": null
+        }
+      ],
+      "projectionPath": null,
+      "digestPath": null,
+      "expectedProjection": null,
+      "nextAction": "continue"
+    },
+    {
+      "id": "s5",
+      "operation": "checkpoint_discover_group",
+      "scope": {
+        "worldId": {
+          "$var": "v1"
+        }
+      },
+      "request": {
+        "protocolVersion": 2,
+        "requestId": "req_T04_5",
+        "worldId": {
+          "$var": "v1"
+        },
+        "leaseToken": {
+          "$var": "v10"
+        },
+        "fenceEpoch": {
+          "$var": "v8"
+        },
+        "expectedPointId": {
+          "$var": "v3"
+        },
+        "expectedVersion": 3,
+        "expectedCheckpointRevision": 3,
+        "pointId": {
+          "$var": "v14"
+        },
+        "groupId": {
+          "$var": "v16"
+        },
+        "initiatorId": "person_c",
+        "actionText": "person_c采取冻结行动。",
+        "targetIds": null,
+        "operation": "discover_group"
+      },
+      "response": {
+        "protocolVersion": 2,
+        "engineVersion": "world-engine-v1",
+        "schemaVersion": 1,
+        "canonicalVersion": "world-canonical-v1",
+        "serverTimeEpochMilli": {
+          "$var": "v17"
+        },
+        "replayed": false,
+        "operation": "checkpoint_discover_group",
+        "requestId": "req_T04_5",
+        "requestHash": {
+          "$var": "request_hash_s5"
+        },
+        "world": {
+          "worldId": {
+            "$var": "v1"
+          },
+          "head": {
+            "pointId": {
+              "$var": "v3"
+            },
+            "version": 3,
+            "stateDigest": {
+              "$var": "v4"
+            },
+            "narrationStatus": "ready"
+          },
+          "advance": {
+            "advanceId": {
+              "$var": "v5"
+            },
+            "inputId": {
+              "$var": "v6"
+            },
+            "intentStatus": "consumed",
+            "inputAvailable": true
+          },
+          "round": {
+            "roundId": {
+              "$var": "v11"
+            },
+            "trigger": "automatic",
+            "conclusion": null,
+            "order": [
+              "person_c"
+            ],
+            "cursor": 0,
+            "actedIds": [],
+            "visitedIds": []
+          },
+          "time": {
+            "calendar": "gregorian",
+            "dateTime": "2026-01-01T11:59:05",
+            "instantOrdinal": 0
+          },
+          "lease": {
+            "fenceEpoch": {
+              "$var": "v8"
+            },
+            "expiresAtEpochMilli": {
+              "$var": "v9"
+            }
+          },
+          "successor": null,
+          "activePointId": {
+            "$var": "v14"
+          },
+          "activeRoundId": {
+            "$var": "v11"
+          }
+        },
+        "control": {
+          "phase": "build_group",
+          "paused": false,
+          "revision": 4,
+          "gate": {
+            "status": "none",
+            "generation": null,
+            "issuedAtEpochMilli": null,
+            "expiresAtEpochMilli": null
+          },
+          "blockedReasons": [],
+          "canCompute": true
+        },
+        "work": {
+          "pointId": {
+            "$var": "v14"
+          },
+          "kind": "normal",
+          "timeAdvance": {
+            "boundary": "elapsed",
+            "duration": {
+              "amount": 2,
+              "unit": "second"
+            }
+          },
+          "timeLocked": true,
+          "baseline": {
+            "headPointId": {
+              "$var": "v3"
+            },
+            "version": 3,
+            "stateDigest": {
+              "$var": "v4"
+            }
+          },
+          "phase": "build_group",
+          "working": {
+            "cursor": 0,
+            "actedIds": [],
+            "visitedIds": [],
+            "settledUnitIds": [],
+            "intentStatus": "consumed"
+          },
+          "settledUnits": [],
+          "pendingGroup": {
+            "groupId": {
+              "$var": "v16"
+            },
+            "sourceId": "person_c",
+            "memberIds": [
+              "person_c"
+            ],
+            "targetIds": [],
+            "frontierIds": [
+              "person_c"
+            ],
+            "closed": false
+          },
+          "successor": null,
+          "sealed": false,
+          "prefixDigest": null,
+          "predecessorWorkDigest": null,
+          "timeScanComplete": false
+        },
+        "data": {
+          "groupId": {
+            "$var": "v16"
+          },
+          "targetIds": null
+        }
+      },
+      "responseKind": "success",
+      "httpStatus": 200,
+      "captures": [
+        {
+          "variable": "v17",
+          "path": "/serverTimeEpochMilli"
+        },
+        {
+          "variable": "request_hash_s5",
+          "path": "/requestHash"
+        }
+      ],
+      "assertions": [
+        {
+          "op": "eq",
+          "path": "/control/phase",
+          "expected": "build_group",
+          "baseline": null
+        },
+        {
+          "op": "eq",
+          "path": "/control/paused",
+          "expected": false,
+          "baseline": null
+        },
+        {
+          "op": "eq",
+          "path": "/control/canCompute",
+          "expected": true,
+          "baseline": null
+        }
+      ],
+      "projectionPath": null,
+      "digestPath": null,
+      "expectedProjection": null,
+      "nextAction": "continue"
+    },
+    {
+      "id": "s6",
+      "operation": "checkpoint_extend_group",
+      "scope": {
+        "worldId": {
+          "$var": "v1"
+        }
+      },
+      "request": {
+        "protocolVersion": 2,
+        "requestId": "req_T04_6",
+        "worldId": {
+          "$var": "v1"
+        },
+        "leaseToken": {
+          "$var": "v10"
+        },
+        "fenceEpoch": {
+          "$var": "v8"
+        },
+        "expectedPointId": {
+          "$var": "v3"
+        },
+        "expectedVersion": 3,
+        "expectedCheckpointRevision": 4,
+        "pointId": {
+          "$var": "v14"
+        },
+        "groupId": {
+          "$var": "v16"
+        },
+        "sourceId": "person_c",
+        "targets": [],
+        "admittedMember": null,
+        "operation": "extend_group"
+      },
+      "response": {
+        "protocolVersion": 2,
+        "engineVersion": "world-engine-v1",
+        "schemaVersion": 1,
+        "canonicalVersion": "world-canonical-v1",
+        "serverTimeEpochMilli": {
+          "$var": "v18"
+        },
+        "replayed": false,
+        "operation": "checkpoint_extend_group",
+        "requestId": "req_T04_6",
+        "requestHash": {
+          "$var": "request_hash_s6"
+        },
+        "world": {
+          "worldId": {
+            "$var": "v1"
+          },
+          "head": {
+            "pointId": {
+              "$var": "v3"
+            },
+            "version": 3,
+            "stateDigest": {
+              "$var": "v4"
+            },
+            "narrationStatus": "ready"
+          },
+          "advance": {
+            "advanceId": {
+              "$var": "v5"
+            },
+            "inputId": {
+              "$var": "v6"
+            },
+            "intentStatus": "consumed",
+            "inputAvailable": true
+          },
+          "round": {
+            "roundId": {
+              "$var": "v11"
+            },
+            "trigger": "automatic",
+            "conclusion": null,
+            "order": [
+              "person_c"
+            ],
+            "cursor": 0,
+            "actedIds": [],
+            "visitedIds": []
+          },
+          "time": {
+            "calendar": "gregorian",
+            "dateTime": "2026-01-01T11:59:05",
+            "instantOrdinal": 0
+          },
+          "lease": {
+            "fenceEpoch": {
+              "$var": "v8"
+            },
+            "expiresAtEpochMilli": {
+              "$var": "v9"
+            }
+          },
+          "successor": null,
+          "activePointId": {
+            "$var": "v14"
+          },
+          "activeRoundId": {
+            "$var": "v11"
+          }
+        },
+        "control": {
+          "phase": "build_group",
+          "paused": false,
+          "revision": 5,
+          "gate": {
+            "status": "none",
+            "generation": null,
+            "issuedAtEpochMilli": null,
+            "expiresAtEpochMilli": null
+          },
+          "blockedReasons": [],
+          "canCompute": true
+        },
+        "work": {
+          "pointId": {
+            "$var": "v14"
+          },
+          "kind": "normal",
+          "timeAdvance": {
+            "boundary": "elapsed",
+            "duration": {
+              "amount": 2,
+              "unit": "second"
+            }
+          },
+          "timeLocked": true,
+          "baseline": {
+            "headPointId": {
+              "$var": "v3"
+            },
+            "version": 3,
+            "stateDigest": {
+              "$var": "v4"
+            }
+          },
+          "phase": "build_group",
+          "working": {
+            "cursor": 0,
+            "actedIds": [],
+            "visitedIds": [],
+            "settledUnitIds": [],
+            "intentStatus": "consumed"
+          },
+          "settledUnits": [],
+          "pendingGroup": {
+            "groupId": {
+              "$var": "v16"
+            },
+            "sourceId": "person_c",
+            "memberIds": [
+              "person_c"
+            ],
+            "targetIds": [],
+            "frontierIds": [],
+            "closed": false
+          },
+          "successor": null,
+          "sealed": false,
+          "prefixDigest": null,
+          "predecessorWorkDigest": null,
+          "timeScanComplete": false
+        },
+        "data": {
+          "groupId": {
+            "$var": "v16"
+          },
+          "memberIds": [
+            "person_c"
+          ],
+          "frontierIds": []
+        }
+      },
+      "responseKind": "success",
+      "httpStatus": 200,
+      "captures": [
+        {
+          "variable": "v18",
+          "path": "/serverTimeEpochMilli"
+        },
+        {
+          "variable": "request_hash_s6",
+          "path": "/requestHash"
+        }
+      ],
+      "assertions": [
+        {
+          "op": "eq",
+          "path": "/control/phase",
+          "expected": "build_group",
+          "baseline": null
+        },
+        {
+          "op": "eq",
+          "path": "/control/paused",
+          "expected": false,
+          "baseline": null
+        },
+        {
+          "op": "eq",
+          "path": "/control/canCompute",
+          "expected": true,
+          "baseline": null
+        }
+      ],
+      "projectionPath": null,
+      "digestPath": null,
+      "expectedProjection": null,
+      "nextAction": "continue"
+    },
+    {
+      "id": "s7",
+      "operation": "checkpoint_close_group",
+      "scope": {
+        "worldId": {
+          "$var": "v1"
+        }
+      },
+      "request": {
+        "protocolVersion": 2,
+        "requestId": "req_T04_7",
+        "worldId": {
+          "$var": "v1"
+        },
+        "leaseToken": {
+          "$var": "v10"
+        },
+        "fenceEpoch": {
+          "$var": "v8"
+        },
+        "expectedPointId": {
+          "$var": "v3"
+        },
+        "expectedVersion": 3,
+        "expectedCheckpointRevision": 5,
+        "pointId": {
+          "$var": "v14"
+        },
+        "groupId": {
+          "$var": "v16"
+        },
+        "operation": "close_group"
+      },
+      "response": {
+        "protocolVersion": 2,
+        "engineVersion": "world-engine-v1",
+        "schemaVersion": 1,
+        "canonicalVersion": "world-canonical-v1",
+        "serverTimeEpochMilli": {
+          "$var": "v19"
+        },
+        "replayed": false,
+        "operation": "checkpoint_close_group",
+        "requestId": "req_T04_7",
+        "requestHash": {
+          "$var": "request_hash_s7"
+        },
+        "world": {
+          "worldId": {
+            "$var": "v1"
+          },
+          "head": {
+            "pointId": {
+              "$var": "v3"
+            },
+            "version": 3,
+            "stateDigest": {
+              "$var": "v4"
+            },
+            "narrationStatus": "ready"
+          },
+          "advance": {
+            "advanceId": {
+              "$var": "v5"
+            },
+            "inputId": {
+              "$var": "v6"
+            },
+            "intentStatus": "consumed",
+            "inputAvailable": true
+          },
+          "round": {
+            "roundId": {
+              "$var": "v11"
+            },
+            "trigger": "automatic",
+            "conclusion": null,
+            "order": [
+              "person_c"
+            ],
+            "cursor": 0,
+            "actedIds": [],
+            "visitedIds": []
+          },
+          "time": {
+            "calendar": "gregorian",
+            "dateTime": "2026-01-01T11:59:05",
+            "instantOrdinal": 0
+          },
+          "lease": {
+            "fenceEpoch": {
+              "$var": "v8"
+            },
+            "expiresAtEpochMilli": {
+              "$var": "v9"
+            }
+          },
+          "successor": null,
+          "activePointId": {
+            "$var": "v14"
+          },
+          "activeRoundId": {
+            "$var": "v11"
+          }
+        },
+        "control": {
+          "phase": "settle_group",
+          "paused": false,
+          "revision": 6,
+          "gate": {
+            "status": "none",
+            "generation": null,
+            "issuedAtEpochMilli": null,
+            "expiresAtEpochMilli": null
+          },
+          "blockedReasons": [],
+          "canCompute": true
+        },
+        "work": {
+          "pointId": {
+            "$var": "v14"
+          },
+          "kind": "normal",
+          "timeAdvance": {
+            "boundary": "elapsed",
+            "duration": {
+              "amount": 2,
+              "unit": "second"
+            }
+          },
+          "timeLocked": true,
+          "baseline": {
+            "headPointId": {
+              "$var": "v3"
+            },
+            "version": 3,
+            "stateDigest": {
+              "$var": "v4"
+            }
+          },
+          "phase": "settle_group",
+          "working": {
+            "cursor": 0,
+            "actedIds": [],
+            "visitedIds": [],
+            "settledUnitIds": [],
+            "intentStatus": "consumed"
+          },
+          "settledUnits": [],
+          "pendingGroup": {
+            "groupId": {
+              "$var": "v16"
+            },
+            "sourceId": "person_c",
+            "memberIds": [
+              "person_c"
+            ],
+            "targetIds": [],
+            "frontierIds": [],
+            "closed": true
+          },
+          "successor": null,
+          "sealed": false,
+          "prefixDigest": null,
+          "predecessorWorkDigest": null,
+          "timeScanComplete": false
+        },
+        "data": {
+          "groupId": {
+            "$var": "v16"
+          },
+          "closed": true
+        }
+      },
+      "responseKind": "success",
+      "httpStatus": 200,
+      "captures": [
+        {
+          "variable": "v19",
+          "path": "/serverTimeEpochMilli"
+        },
+        {
+          "variable": "request_hash_s7",
+          "path": "/requestHash"
+        }
+      ],
+      "assertions": [
+        {
+          "op": "eq",
+          "path": "/control/phase",
+          "expected": "settle_group",
+          "baseline": null
+        },
+        {
+          "op": "eq",
+          "path": "/control/paused",
+          "expected": false,
+          "baseline": null
+        },
+        {
+          "op": "eq",
+          "path": "/control/canCompute",
+          "expected": true,
+          "baseline": null
+        }
+      ],
+      "projectionPath": null,
+      "digestPath": null,
+      "expectedProjection": null,
+      "nextAction": "continue"
+    },
+    {
+      "id": "s8",
+      "operation": "checkpoint_stage_unit",
+      "scope": {
+        "worldId": {
+          "$var": "v1"
+        }
+      },
+      "request": {
+        "protocolVersion": 2,
+        "requestId": "req_T04_8",
+        "worldId": {
+          "$var": "v1"
+        },
+        "leaseToken": {
+          "$var": "v10"
+        },
+        "fenceEpoch": {
+          "$var": "v8"
+        },
+        "expectedPointId": {
+          "$var": "v3"
+        },
+        "expectedVersion": 3,
+        "expectedCheckpointRevision": 6,
+        "pointId": {
+          "$var": "v14"
+        },
+        "groupId": {
+          "$var": "v16"
+        },
+        "candidates": {
+          "groupId": {
+            "$var": "v16"
+          },
+          "actorIds": [
+            "person_c"
+          ],
+          "positions": {},
+          "appearances": {},
+          "tasksAchieved": {},
+          "subtasksAdded": {},
+          "personalities": {},
+          "sanities": {},
+          "taskCoverageIds": [
+            "person_a",
+            "person_b",
+            "person_c",
+            "person_d",
+            "person_e",
+            "person_f"
+          ],
+          "personalityCoverageIds": []
+        },
+        "operation": "stage_unit",
+        "results": {
+          "person_c": "person_c的行动结果已确认。"
+        }
+      },
+      "response": {
+        "protocolVersion": 2,
+        "engineVersion": "world-engine-v1",
+        "schemaVersion": 1,
+        "canonicalVersion": "world-canonical-v1",
+        "serverTimeEpochMilli": {
+          "$var": "v20"
+        },
+        "replayed": false,
+        "operation": "checkpoint_stage_unit",
+        "requestId": "req_T04_8",
+        "requestHash": {
+          "$var": "request_hash_s8"
+        },
+        "world": {
+          "worldId": {
+            "$var": "v1"
+          },
+          "head": {
+            "pointId": {
+              "$var": "v3"
+            },
+            "version": 3,
+            "stateDigest": {
+              "$var": "v4"
+            },
+            "narrationStatus": "ready"
+          },
+          "advance": {
+            "advanceId": {
+              "$var": "v5"
+            },
+            "inputId": {
+              "$var": "v6"
+            },
+            "intentStatus": "consumed",
+            "inputAvailable": true
+          },
+          "round": {
+            "roundId": {
+              "$var": "v11"
+            },
+            "trigger": "automatic",
+            "conclusion": null,
+            "order": [
+              "person_c"
+            ],
+            "cursor": 0,
+            "actedIds": [],
+            "visitedIds": []
+          },
+          "time": {
+            "calendar": "gregorian",
+            "dateTime": "2026-01-01T11:59:05",
+            "instantOrdinal": 0
+          },
+          "lease": {
+            "fenceEpoch": {
+              "$var": "v8"
+            },
+            "expiresAtEpochMilli": {
+              "$var": "v9"
+            }
+          },
+          "successor": null,
+          "activePointId": {
+            "$var": "v14"
+          },
+          "activeRoundId": {
+            "$var": "v11"
+          }
+        },
+        "control": {
+          "phase": "select_actor",
+          "paused": false,
+          "revision": 7,
+          "gate": {
+            "status": "none",
+            "generation": null,
+            "issuedAtEpochMilli": null,
+            "expiresAtEpochMilli": null
+          },
+          "blockedReasons": [],
+          "canCompute": true
+        },
+        "work": {
+          "pointId": {
+            "$var": "v14"
+          },
+          "kind": "normal",
+          "timeAdvance": {
+            "boundary": "elapsed",
+            "duration": {
+              "amount": 2,
+              "unit": "second"
+            }
+          },
+          "timeLocked": true,
+          "baseline": {
+            "headPointId": {
+              "$var": "v3"
+            },
+            "version": 3,
+            "stateDigest": {
+              "$var": "v4"
+            }
+          },
+          "phase": "select_actor",
+          "working": {
+            "cursor": 1,
+            "actedIds": [
+              "person_c"
+            ],
+            "visitedIds": [
+              "person_c"
+            ],
+            "settledUnitIds": [
+              {
+                "$var": "v21"
+              }
+            ],
+            "intentStatus": "consumed"
+          },
+          "settledUnits": [
+            {
+              "unitId": {
+                "$var": "v21"
+              },
+              "groupId": {
+                "$var": "v16"
+              },
+              "memberIds": [
+                "person_c"
+              ],
+              "contentHash": {
+                "$var": "v22"
+              }
+            }
+          ],
+          "pendingGroup": null,
+          "successor": null,
+          "sealed": false,
+          "prefixDigest": null,
+          "predecessorWorkDigest": null,
+          "timeScanComplete": false
+        },
+        "data": {
+          "groupId": {
+            "$var": "v16"
+          },
+          "unitId": {
+            "$var": "v21"
+          },
+          "working": {
+            "cursor": 1,
+            "actedIds": [
+              "person_c"
+            ],
+            "visitedIds": [
+              "person_c"
+            ],
+            "settledUnitIds": [
+              {
+                "$var": "v21"
+              }
+            ],
+            "intentStatus": "consumed"
+          }
+        }
+      },
+      "responseKind": "success",
+      "httpStatus": 200,
+      "captures": [
+        {
+          "variable": "v20",
+          "path": "/serverTimeEpochMilli"
+        },
+        {
+          "variable": "v21",
+          "path": "/work/working/settledUnitIds/0"
+        },
+        {
+          "variable": "v22",
+          "path": "/work/settledUnits/0/contentHash"
+        },
+        {
+          "variable": "request_hash_s8",
+          "path": "/requestHash"
+        }
+      ],
+      "assertions": [
+        {
+          "op": "eq",
+          "path": "/control/phase",
+          "expected": "select_actor",
+          "baseline": null
+        },
+        {
+          "op": "eq",
+          "path": "/control/paused",
+          "expected": false,
+          "baseline": null
+        },
+        {
+          "op": "eq",
+          "path": "/control/canCompute",
+          "expected": true,
+          "baseline": null
+        }
+      ],
+      "projectionPath": null,
+      "digestPath": null,
+      "expectedProjection": null,
+      "nextAction": "continue"
+    },
+    {
+      "id": "s9",
+      "operation": "checkpoint_seal_point",
+      "scope": {
+        "worldId": {
+          "$var": "v1"
+        }
+      },
+      "request": {
+        "protocolVersion": 2,
+        "requestId": "req_T04_9",
+        "worldId": {
+          "$var": "v1"
+        },
+        "leaseToken": {
+          "$var": "v10"
+        },
+        "fenceEpoch": {
+          "$var": "v8"
+        },
+        "expectedPointId": {
+          "$var": "v3"
+        },
+        "expectedVersion": 3,
+        "expectedCheckpointRevision": 7,
+        "pointId": {
+          "$var": "v14"
+        },
+        "operation": "seal_point"
+      },
+      "response": {
+        "protocolVersion": 2,
+        "engineVersion": "world-engine-v1",
+        "schemaVersion": 1,
+        "canonicalVersion": "world-canonical-v1",
+        "serverTimeEpochMilli": {
+          "$var": "v23"
+        },
+        "replayed": false,
+        "operation": "checkpoint_seal_point",
+        "requestId": "req_T04_9",
+        "requestHash": {
+          "$var": "request_hash_s9"
+        },
+        "world": {
+          "worldId": {
+            "$var": "v1"
+          },
+          "head": {
+            "pointId": {
+              "$var": "v3"
+            },
+            "version": 3,
+            "stateDigest": {
+              "$var": "v4"
+            },
+            "narrationStatus": "ready"
+          },
+          "advance": {
+            "advanceId": {
+              "$var": "v5"
+            },
+            "inputId": {
+              "$var": "v6"
+            },
+            "intentStatus": "consumed",
+            "inputAvailable": true
+          },
+          "round": {
+            "roundId": {
+              "$var": "v11"
+            },
+            "trigger": "automatic",
+            "conclusion": null,
+            "order": [
+              "person_c"
+            ],
+            "cursor": 0,
+            "actedIds": [],
+            "visitedIds": []
+          },
+          "time": {
+            "calendar": "gregorian",
+            "dateTime": "2026-01-01T11:59:05",
+            "instantOrdinal": 0
+          },
+          "lease": {
+            "fenceEpoch": {
+              "$var": "v8"
+            },
+            "expiresAtEpochMilli": {
+              "$var": "v9"
+            }
+          },
+          "successor": null,
+          "activePointId": {
+            "$var": "v14"
+          },
+          "activeRoundId": {
+            "$var": "v11"
+          }
+        },
+        "control": {
+          "phase": "select_actor",
+          "paused": false,
+          "revision": 8,
+          "gate": {
+            "status": "none",
+            "generation": null,
+            "issuedAtEpochMilli": null,
+            "expiresAtEpochMilli": null
+          },
+          "blockedReasons": [],
+          "canCompute": true
+        },
+        "work": {
+          "pointId": {
+            "$var": "v14"
+          },
+          "kind": "normal",
+          "timeAdvance": {
+            "boundary": "elapsed",
+            "duration": {
+              "amount": 2,
+              "unit": "second"
+            }
+          },
+          "timeLocked": true,
+          "baseline": {
+            "headPointId": {
+              "$var": "v3"
+            },
+            "version": 3,
+            "stateDigest": {
+              "$var": "v4"
+            }
+          },
+          "phase": "select_actor",
+          "working": {
+            "cursor": 1,
+            "actedIds": [
+              "person_c"
+            ],
+            "visitedIds": [
+              "person_c"
+            ],
+            "settledUnitIds": [
+              {
+                "$var": "v21"
+              }
+            ],
+            "intentStatus": "consumed"
+          },
+          "settledUnits": [
+            {
+              "unitId": {
+                "$var": "v21"
+              },
+              "groupId": {
+                "$var": "v16"
+              },
+              "memberIds": [
+                "person_c"
+              ],
+              "contentHash": {
+                "$var": "v22"
+              }
+            }
+          ],
+          "pendingGroup": null,
+          "successor": null,
+          "sealed": true,
+          "prefixDigest": {
+            "$var": "v24"
+          },
+          "predecessorWorkDigest": null,
+          "timeScanComplete": false
+        },
+        "data": {
+          "pointId": {
+            "$var": "v14"
+          },
+          "prefixDigest": {
+            "$var": "v24"
+          }
+        }
+      },
+      "responseKind": "success",
+      "httpStatus": 200,
+      "captures": [
+        {
+          "variable": "v23",
+          "path": "/serverTimeEpochMilli"
+        },
+        {
+          "variable": "v24",
+          "path": "/work/prefixDigest"
+        },
+        {
+          "variable": "request_hash_s9",
+          "path": "/requestHash"
+        }
+      ],
+      "assertions": [
+        {
+          "op": "eq",
+          "path": "/control/phase",
+          "expected": "select_actor",
+          "baseline": null
+        },
+        {
+          "op": "eq",
+          "path": "/control/paused",
+          "expected": false,
+          "baseline": null
+        },
+        {
+          "op": "eq",
+          "path": "/control/canCompute",
+          "expected": true,
+          "baseline": null
+        }
+      ],
+      "projectionPath": null,
+      "digestPath": null,
+      "expectedProjection": null,
+      "nextAction": "continue"
+    },
+    {
+      "id": "s10",
+      "operation": "commit_point",
+      "scope": {
+        "worldId": {
+          "$var": "v1"
+        }
+      },
+      "request": {
+        "protocolVersion": 2,
+        "requestId": "req_T04_10",
+        "worldId": {
+          "$var": "v1"
+        },
+        "advanceId": {
+          "$var": "v5"
+        },
+        "roundId": {
+          "$var": "v11"
+        },
+        "expectedPointId": {
+          "$var": "v3"
+        },
+        "expectedVersion": 3,
+        "expectedCheckpointRevision": 8,
+        "leaseToken": {
+          "$var": "v10"
+        },
+        "fenceEpoch": {
+          "$var": "v8"
+        },
+        "pointId": {
+          "$var": "v14"
+        },
+        "point": {
+          "worldId": {
+            "$var": "v1"
+          },
+          "id": {
+            "$var": "v14"
+          },
+          "sequence": 4,
+          "kind": "normal",
+          "previousPointId": {
+            "$var": "v3"
+          },
+          "roundId": {
+            "$var": "v11"
+          },
+          "advanceId": {
+            "$var": "v5"
+          },
+          "trigger": "automatic",
+          "linkedFromPointId": null,
+          "timeAdvance": {
+            "boundary": "elapsed",
+            "duration": {
+              "amount": 2,
+              "unit": "second"
+            }
+          },
+          "entityDeltas": {}
+        },
+        "settlementGroups": [
+          {
+            "groupId": {
+              "$var": "v16"
+            },
+            "actorIds": [
+              "person_c"
+            ],
+            "positions": {},
+            "appearances": {},
+            "tasksAchieved": {},
+            "subtasksAdded": {},
+            "personalities": {},
+            "sanities": {},
+            "taskCoverageIds": [
+              "person_a",
+              "person_b",
+              "person_c",
+              "person_d",
+              "person_e",
+              "person_f"
+            ],
+            "personalityCoverageIds": []
+          }
+        ]
+      },
+      "response": {
+        "protocolVersion": 2,
+        "engineVersion": "world-engine-v1",
+        "schemaVersion": 1,
+        "canonicalVersion": "world-canonical-v1",
+        "serverTimeEpochMilli": {
+          "$var": "v25"
+        },
+        "replayed": false,
+        "operation": "commit_point",
+        "requestId": "req_T04_10",
+        "requestHash": {
+          "$var": "request_hash_s10"
+        },
+        "world": {
+          "worldId": {
+            "$var": "v1"
+          },
+          "head": {
+            "pointId": {
+              "$var": "v14"
+            },
+            "version": 4,
+            "stateDigest": {
+              "$var": "v26"
+            },
+            "narrationStatus": "pending"
+          },
+          "advance": {
+            "advanceId": {
+              "$var": "v5"
+            },
+            "inputId": {
+              "$var": "v6"
+            },
+            "intentStatus": "consumed",
+            "inputAvailable": true
+          },
+          "round": {
+            "roundId": {
+              "$var": "v11"
+            },
+            "trigger": "automatic",
+            "conclusion": null,
+            "order": [
+              "person_c"
+            ],
+            "cursor": 1,
+            "actedIds": [
+              "person_c"
+            ],
+            "visitedIds": [
+              "person_c"
+            ]
+          },
+          "time": {
+            "calendar": "gregorian",
+            "dateTime": "2026-01-01T11:59:07",
+            "instantOrdinal": 0
+          },
+          "lease": {
+            "fenceEpoch": {
+              "$var": "v8"
+            },
+            "expiresAtEpochMilli": {
+              "$var": "v9"
+            }
+          },
+          "successor": null,
+          "activePointId": null,
+          "activeRoundId": {
+            "$var": "v11"
+          }
+        },
+        "control": {
+          "phase": "assess_continuation",
+          "paused": false,
+          "revision": 9,
+          "gate": {
+            "status": "pending",
+            "generation": 1,
+            "issuedAtEpochMilli": {
+              "$var": "v2"
+            },
+            "expiresAtEpochMilli": {
+              "$var": "v27"
+            }
+          },
+          "blockedReasons": [
+            "narration_pending"
+          ],
+          "canCompute": false
+        },
+        "work": null,
+        "data": {
+          "pointId": {
+            "$var": "v14"
+          },
+          "version": 4,
+          "stateDigest": {
+            "$var": "v26"
+          }
+        }
+      },
+      "responseKind": "success",
+      "httpStatus": 200,
+      "captures": [
+        {
+          "variable": "v25",
+          "path": "/serverTimeEpochMilli"
+        },
+        {
+          "variable": "v26",
+          "path": "/world/head/stateDigest"
+        },
+        {
+          "variable": "v27",
+          "path": "/control/gate/expiresAtEpochMilli"
+        },
+        {
+          "variable": "request_hash_s10",
+          "path": "/requestHash"
+        }
+      ],
+      "assertions": [
+        {
+          "op": "eq",
+          "path": "/control/phase",
+          "expected": "assess_continuation",
+          "baseline": null
+        },
+        {
+          "op": "eq",
+          "path": "/control/paused",
+          "expected": false,
+          "baseline": null
+        },
+        {
+          "op": "eq",
+          "path": "/control/canCompute",
+          "expected": false,
+          "baseline": null
+        }
+      ],
+      "projectionPath": null,
+      "digestPath": null,
+      "expectedProjection": null,
+      "nextAction": "continue"
+    },
+    {
+      "id": "s11",
+      "operation": "narration_claim",
+      "scope": {
+        "worldId": {
+          "$var": "v1"
+        },
+        "pointId": {
+          "$var": "v14"
+        }
+      },
+      "request": {
+        "protocolVersion": 2,
+        "requestId": "req_T04_11",
+        "worldId": {
+          "$var": "v1"
+        },
+        "pointId": {
+          "$var": "v14"
+        },
+        "mode": "head",
+        "currentClaim": null,
+        "leaseToken": {
+          "$var": "v10"
+        },
+        "fenceEpoch": {
+          "$var": "v8"
+        }
+      },
+      "response": {
+        "protocolVersion": 2,
+        "engineVersion": "world-engine-v1",
+        "schemaVersion": 1,
+        "canonicalVersion": "world-canonical-v1",
+        "serverTimeEpochMilli": {
+          "$var": "v28"
+        },
+        "replayed": false,
+        "operation": "narration_claim",
+        "requestId": "req_T04_11",
+        "requestHash": {
+          "$var": "request_hash_s11"
+        },
+        "world": {
+          "worldId": {
+            "$var": "v1"
+          },
+          "head": {
+            "pointId": {
+              "$var": "v14"
+            },
+            "version": 4,
+            "stateDigest": {
+              "$var": "v26"
+            },
+            "narrationStatus": "pending"
+          },
+          "advance": {
+            "advanceId": {
+              "$var": "v5"
+            },
+            "inputId": {
+              "$var": "v6"
+            },
+            "intentStatus": "consumed",
+            "inputAvailable": true
+          },
+          "round": {
+            "roundId": {
+              "$var": "v11"
+            },
+            "trigger": "automatic",
+            "conclusion": null,
+            "order": [
+              "person_c"
+            ],
+            "cursor": 1,
+            "actedIds": [
+              "person_c"
+            ],
+            "visitedIds": [
+              "person_c"
+            ]
+          },
+          "time": {
+            "calendar": "gregorian",
+            "dateTime": "2026-01-01T11:59:07",
+            "instantOrdinal": 0
+          },
+          "lease": {
+            "fenceEpoch": {
+              "$var": "v8"
+            },
+            "expiresAtEpochMilli": {
+              "$var": "v9"
+            }
+          },
+          "successor": null,
+          "activePointId": null,
+          "activeRoundId": {
+            "$var": "v11"
+          }
+        },
+        "control": {
+          "phase": "assess_continuation",
+          "paused": false,
+          "revision": 9,
+          "gate": {
+            "status": "pending",
+            "generation": 1,
+            "issuedAtEpochMilli": {
+              "$var": "v2"
+            },
+            "expiresAtEpochMilli": {
+              "$var": "v27"
+            }
+          },
+          "blockedReasons": [
+            "narration_pending"
+          ],
+          "canCompute": false
+        },
+        "work": null,
+        "data": {
+          "pointId": {
+            "$var": "v14"
+          },
+          "mode": "head",
+          "generation": 1,
+          "claimToken": "claim_p4",
+          "fenceEpoch": {
+            "$var": "v8"
+          },
+          "issuedAtEpochMilli": {
+            "$var": "v2"
+          },
+          "expiresAtEpochMilli": {
+            "$var": "v27"
+          }
+        }
+      },
+      "responseKind": "success",
+      "httpStatus": 200,
+      "captures": [
+        {
+          "variable": "v28",
+          "path": "/serverTimeEpochMilli"
+        },
+        {
+          "variable": "request_hash_s11",
+          "path": "/requestHash"
+        }
+      ],
+      "assertions": [
+        {
+          "op": "eq",
+          "path": "/control/phase",
+          "expected": "assess_continuation",
+          "baseline": null
+        },
+        {
+          "op": "eq",
+          "path": "/control/paused",
+          "expected": false,
+          "baseline": null
+        },
+        {
+          "op": "eq",
+          "path": "/control/canCompute",
+          "expected": false,
+          "baseline": null
+        }
+      ],
+      "projectionPath": null,
+      "digestPath": null,
+      "expectedProjection": null,
+      "nextAction": "continue"
+    },
+    {
+      "id": "s12",
+      "operation": "narration_submit",
+      "scope": {
+        "worldId": {
+          "$var": "v1"
+        },
+        "pointId": {
+          "$var": "v14"
+        }
+      },
+      "request": {
+        "protocolVersion": 2,
+        "requestId": "req_T04_12",
+        "worldId": {
+          "$var": "v1"
+        },
+        "pointId": {
+          "$var": "v14"
+        },
+        "mode": "head",
+        "claimToken": "claim_p4",
+        "generation": 1,
+        "issuedAtEpochMilli": {
+          "$var": "v2"
+        },
+        "outcome": "ready",
+        "text": "该段叙事已确认。",
+        "failureReason": null,
+        "leaseToken": {
+          "$var": "v10"
+        },
+        "fenceEpoch": {
+          "$var": "v8"
+        }
+      },
+      "response": {
+        "protocolVersion": 2,
+        "engineVersion": "world-engine-v1",
+        "schemaVersion": 1,
+        "canonicalVersion": "world-canonical-v1",
+        "serverTimeEpochMilli": {
+          "$var": "v29"
+        },
+        "replayed": false,
+        "operation": "narration_submit",
+        "requestId": "req_T04_12",
+        "requestHash": {
+          "$var": "request_hash_s12"
+        },
+        "world": {
+          "worldId": {
+            "$var": "v1"
+          },
+          "head": {
+            "pointId": {
+              "$var": "v14"
+            },
+            "version": 4,
+            "stateDigest": {
+              "$var": "v26"
+            },
+            "narrationStatus": "ready"
+          },
+          "advance": {
+            "advanceId": {
+              "$var": "v5"
+            },
+            "inputId": {
+              "$var": "v6"
+            },
+            "intentStatus": "consumed",
+            "inputAvailable": true
+          },
+          "round": {
+            "roundId": {
+              "$var": "v11"
+            },
+            "trigger": "automatic",
+            "conclusion": null,
+            "order": [
+              "person_c"
+            ],
+            "cursor": 1,
+            "actedIds": [
+              "person_c"
+            ],
+            "visitedIds": [
+              "person_c"
+            ]
+          },
+          "time": {
+            "calendar": "gregorian",
+            "dateTime": "2026-01-01T11:59:07",
+            "instantOrdinal": 0
+          },
+          "lease": {
+            "fenceEpoch": {
+              "$var": "v8"
+            },
+            "expiresAtEpochMilli": {
+              "$var": "v9"
+            }
+          },
+          "successor": null,
+          "activePointId": null,
+          "activeRoundId": {
+            "$var": "v11"
+          }
+        },
+        "control": {
+          "phase": "assess_continuation",
+          "paused": false,
+          "revision": 9,
+          "gate": {
+            "status": "none",
+            "generation": null,
+            "issuedAtEpochMilli": null,
+            "expiresAtEpochMilli": null
+          },
+          "blockedReasons": [],
+          "canCompute": true
+        },
+        "work": null,
+        "data": {
+          "pointId": {
+            "$var": "v14"
+          },
+          "narrationStatus": "ready",
+          "generation": 1
+        }
+      },
+      "responseKind": "success",
+      "httpStatus": 200,
+      "captures": [
+        {
+          "variable": "v29",
+          "path": "/serverTimeEpochMilli"
+        },
+        {
+          "variable": "request_hash_s12",
+          "path": "/requestHash"
+        }
+      ],
+      "assertions": [
+        {
+          "op": "eq",
+          "path": "/control/phase",
+          "expected": "assess_continuation",
+          "baseline": null
+        },
+        {
+          "op": "eq",
+          "path": "/control/paused",
+          "expected": false,
+          "baseline": null
+        },
+        {
+          "op": "eq",
+          "path": "/control/canCompute",
+          "expected": true,
+          "baseline": null
+        }
+      ],
+      "projectionPath": null,
+      "digestPath": null,
+      "expectedProjection": null,
+      "nextAction": "continue"
+    },
+    {
+      "id": "s13",
+      "operation": "round_conclusion_conclude",
+      "scope": {
+        "worldId": {
+          "$var": "v1"
+        }
+      },
+      "request": {
+        "protocolVersion": 2,
+        "requestId": "req_T04_13",
+        "worldId": {
+          "$var": "v1"
+        },
+        "advanceId": {
+          "$var": "v5"
+        },
+        "roundId": {
+          "$var": "v11"
+        },
+        "expectedPointId": {
+          "$var": "v14"
+        },
+        "expectedVersion": 4,
+        "expectedCheckpointRevision": 9,
+        "leaseToken": {
+          "$var": "v10"
+        },
+        "fenceEpoch": {
+          "$var": "v8"
+        },
+        "conclusion": {
+          "kind": "handback",
+          "closedBy": "model",
+          "cancelReason": null
+        },
+        "operation": "conclude"
+      },
+      "response": {
+        "protocolVersion": 2,
+        "engineVersion": "world-engine-v1",
+        "schemaVersion": 1,
+        "canonicalVersion": "world-canonical-v1",
+        "serverTimeEpochMilli": {
+          "$var": "v30"
+        },
+        "replayed": false,
+        "operation": "round_conclusion_conclude",
+        "requestId": "req_T04_13",
+        "requestHash": {
+          "$var": "request_hash_s13"
+        },
+        "world": {
+          "worldId": {
+            "$var": "v1"
+          },
+          "head": {
+            "pointId": {
+              "$var": "v14"
+            },
+            "version": 4,
+            "stateDigest": {
+              "$var": "v26"
+            },
+            "narrationStatus": "ready"
+          },
+          "advance": {
+            "advanceId": {
+              "$var": "v5"
+            },
+            "inputId": {
+              "$var": "v6"
+            },
+            "intentStatus": "consumed",
+            "inputAvailable": false
+          },
+          "round": {
+            "roundId": {
+              "$var": "v11"
+            },
+            "trigger": "automatic",
+            "conclusion": {
+              "kind": "handback",
+              "closedBy": "model",
+              "cancelReason": null
+            },
+            "order": [
+              "person_c"
+            ],
+            "cursor": 1,
+            "actedIds": [
+              "person_c"
+            ],
+            "visitedIds": [
+              "person_c"
+            ]
+          },
+          "time": {
+            "calendar": "gregorian",
+            "dateTime": "2026-01-01T11:59:07",
+            "instantOrdinal": 0
+          },
+          "lease": {
+            "fenceEpoch": {
+              "$var": "v8"
+            },
+            "expiresAtEpochMilli": {
+              "$var": "v9"
+            }
+          },
+          "successor": null,
+          "activePointId": null,
+          "activeRoundId": null
+        },
+        "control": {
+          "phase": "complete",
+          "paused": false,
+          "revision": 10,
+          "gate": {
+            "status": "none",
+            "generation": null,
+            "issuedAtEpochMilli": null,
+            "expiresAtEpochMilli": null
+          },
+          "blockedReasons": [
+            "phase_not_computable"
+          ],
+          "canCompute": false
+        },
+        "work": null,
+        "data": {
+          "kind": "handback",
+          "roundId": {
+            "$var": "v11"
+          },
+          "nextRoundId": null
+        }
+      },
+      "responseKind": "success",
+      "httpStatus": 200,
+      "captures": [
+        {
+          "variable": "v30",
+          "path": "/serverTimeEpochMilli"
+        },
+        {
+          "variable": "request_hash_s13",
+          "path": "/requestHash"
+        }
+      ],
+      "assertions": [
+        {
+          "op": "eq",
+          "path": "/control/phase",
+          "expected": "complete",
+          "baseline": null
+        },
+        {
+          "op": "eq",
+          "path": "/control/paused",
+          "expected": false,
+          "baseline": null
+        },
+        {
+          "op": "eq",
+          "path": "/control/canCompute",
+          "expected": false,
+          "baseline": null
+        }
+      ],
+      "projectionPath": null,
+      "digestPath": null,
+      "expectedProjection": null,
+      "nextAction": "continue"
+    },
+    {
+      "id": "s14",
+      "operation": "get_context",
+      "scope": {
+        "worldId": {
+          "$var": "v1"
+        }
+      },
+      "request": {},
+      "response": {
+        "protocolVersion": 2,
+        "engineVersion": "world-engine-v1",
+        "schemaVersion": 1,
+        "canonicalVersion": "world-canonical-v1",
+        "serverTimeEpochMilli": {
+          "$var": "v31"
+        },
+        "world": {
+          "worldId": {
+            "$var": "v1"
+          },
+          "head": {
+            "pointId": {
+              "$var": "v14"
+            },
+            "version": 4,
+            "stateDigest": {
+              "$var": "v26"
+            },
+            "narrationStatus": "ready"
+          },
+          "advance": {
+            "advanceId": {
+              "$var": "v5"
+            },
+            "inputId": {
+              "$var": "v6"
+            },
+            "intentStatus": "consumed",
+            "inputAvailable": false
+          },
+          "round": {
+            "roundId": {
+              "$var": "v11"
+            },
+            "trigger": "automatic",
+            "conclusion": {
+              "kind": "handback",
+              "closedBy": "model",
+              "cancelReason": null
+            },
+            "order": [
+              "person_c"
+            ],
+            "cursor": 1,
+            "actedIds": [
+              "person_c"
+            ],
+            "visitedIds": [
+              "person_c"
+            ]
+          },
+          "time": {
+            "calendar": "gregorian",
+            "dateTime": "2026-01-01T11:59:07",
+            "instantOrdinal": 0
+          },
+          "lease": {
+            "fenceEpoch": {
+              "$var": "v8"
+            },
+            "expiresAtEpochMilli": {
+              "$var": "v9"
+            }
+          },
+          "successor": null,
+          "activePointId": null,
+          "activeRoundId": null
+        },
+        "control": {
+          "phase": "complete",
+          "paused": false,
+          "revision": 10,
+          "gate": {
+            "status": "none",
+            "generation": null,
+            "issuedAtEpochMilli": null,
+            "expiresAtEpochMilli": null
+          },
+          "blockedReasons": [
+            "phase_not_computable"
+          ],
+          "canCompute": false
+        },
+        "work": null,
+        "activeInput": null,
+        "recovery": null
+      },
+      "responseKind": "success",
+      "httpStatus": 200,
+      "captures": [
+        {
+          "variable": "v31",
+          "path": "/serverTimeEpochMilli"
+        }
+      ],
+      "assertions": [
+        {
+          "op": "eq",
+          "path": "/control/phase",
+          "expected": "complete",
+          "baseline": null
+        },
+        {
+          "op": "eq",
+          "path": "/control/paused",
+          "expected": false,
+          "baseline": null
+        },
+        {
+          "op": "eq",
+          "path": "/control/canCompute",
+          "expected": false,
+          "baseline": null
+        }
+      ],
+      "projectionPath": null,
+      "digestPath": null,
+      "expectedProjection": null,
+      "nextAction": "continue"
+    },
+    {
+      "id": "s15",
+      "operation": "round_conclusion_conclude",
+      "scope": {
+        "worldId": {
+          "$var": "v1"
+        }
+      },
+      "request": {
+        "protocolVersion": 2,
+        "requestId": "req_T04_13",
+        "worldId": {
+          "$var": "v1"
+        },
+        "advanceId": {
+          "$var": "v5"
+        },
+        "roundId": {
+          "$var": "v11"
+        },
+        "expectedPointId": {
+          "$var": "v14"
+        },
+        "expectedVersion": 4,
+        "expectedCheckpointRevision": 9,
+        "leaseToken": {
+          "$var": "v10"
+        },
+        "fenceEpoch": {
+          "$var": "v8"
+        },
+        "conclusion": {
+          "kind": "handback",
+          "closedBy": "model",
+          "cancelReason": null
+        },
+        "operation": "conclude"
+      },
+      "response": {
+        "protocolVersion": 2,
+        "engineVersion": "world-engine-v1",
+        "schemaVersion": 1,
+        "canonicalVersion": "world-canonical-v1",
+        "serverTimeEpochMilli": {
+          "$var": "v30"
+        },
+        "replayed": true,
+        "operation": "round_conclusion_conclude",
+        "requestId": "req_T04_13",
+        "requestHash": {
+          "$var": "request_hash_s15"
+        },
+        "world": {
+          "worldId": {
+            "$var": "v1"
+          },
+          "head": {
+            "pointId": {
+              "$var": "v14"
+            },
+            "version": 4,
+            "stateDigest": {
+              "$var": "v26"
+            },
+            "narrationStatus": "ready"
+          },
+          "advance": {
+            "advanceId": {
+              "$var": "v5"
+            },
+            "inputId": {
+              "$var": "v6"
+            },
+            "intentStatus": "consumed",
+            "inputAvailable": false
+          },
+          "round": {
+            "roundId": {
+              "$var": "v11"
+            },
+            "trigger": "automatic",
+            "conclusion": {
+              "kind": "handback",
+              "closedBy": "model",
+              "cancelReason": null
+            },
+            "order": [
+              "person_c"
+            ],
+            "cursor": 1,
+            "actedIds": [
+              "person_c"
+            ],
+            "visitedIds": [
+              "person_c"
+            ]
+          },
+          "time": {
+            "calendar": "gregorian",
+            "dateTime": "2026-01-01T11:59:07",
+            "instantOrdinal": 0
+          },
+          "lease": {
+            "fenceEpoch": {
+              "$var": "v8"
+            },
+            "expiresAtEpochMilli": {
+              "$var": "v9"
+            }
+          },
+          "successor": null,
+          "activePointId": null,
+          "activeRoundId": null
+        },
+        "control": {
+          "phase": "complete",
+          "paused": false,
+          "revision": 10,
+          "gate": {
+            "status": "none",
+            "generation": null,
+            "issuedAtEpochMilli": null,
+            "expiresAtEpochMilli": null
+          },
+          "blockedReasons": [
+            "phase_not_computable"
+          ],
+          "canCompute": false
+        },
+        "work": null,
+        "data": {
+          "kind": "handback",
+          "roundId": {
+            "$var": "v11"
+          },
+          "nextRoundId": null
+        }
+      },
+      "responseKind": "success",
+      "httpStatus": 200,
+      "captures": [
+        {
+          "variable": "request_hash_s15",
+          "path": "/requestHash"
+        }
+      ],
+      "assertions": [
+        {
+          "op": "eq",
+          "path": "/control/phase",
+          "expected": "complete",
+          "baseline": null
+        },
+        {
+          "op": "eq",
+          "path": "/control/paused",
+          "expected": false,
+          "baseline": null
+        },
+        {
+          "op": "eq",
+          "path": "/control/canCompute",
+          "expected": false,
+          "baseline": null
+        },
+        {
+          "op": "absent",
+          "path": "/data/inputText",
+          "expected": null,
+          "baseline": null
+        }
+      ],
+      "projectionPath": null,
+      "digestPath": null,
+      "expectedProjection": null,
+      "nextAction": "continue"
+    },
+    {
+      "id": "s16",
+      "operation": "get_state",
+      "scope": {
+        "worldId": {
+          "$var": "v1"
+        }
+      },
+      "request": {
+        "point": {
+          "$var": "v14"
+        }
+      },
+      "response": {
+        "protocolVersion": 2,
+        "engineVersion": "world-engine-v1",
+        "schemaVersion": 1,
+        "canonicalVersion": "world-canonical-v1",
+        "serverTimeEpochMilli": {
+          "$var": "v32"
+        },
+        "world": {
+          "worldId": {
+            "$var": "v1"
+          },
+          "head": {
+            "pointId": {
+              "$var": "v14"
+            },
+            "version": 4,
+            "stateDigest": {
+              "$var": "v26"
+            },
+            "narrationStatus": "ready"
+          },
+          "advance": {
+            "advanceId": {
+              "$var": "v5"
+            },
+            "inputId": {
+              "$var": "v6"
+            },
+            "intentStatus": "consumed",
+            "inputAvailable": false
+          },
+          "round": {
+            "roundId": {
+              "$var": "v11"
+            },
+            "trigger": "automatic",
+            "conclusion": {
+              "kind": "handback",
+              "closedBy": "model",
+              "cancelReason": null
+            },
+            "order": [
+              "person_c"
+            ],
+            "cursor": 1,
+            "actedIds": [
+              "person_c"
+            ],
+            "visitedIds": [
+              "person_c"
+            ]
+          },
+          "time": {
+            "calendar": "gregorian",
+            "dateTime": "2026-01-01T11:59:07",
+            "instantOrdinal": 0
+          },
+          "lease": {
+            "fenceEpoch": {
+              "$var": "v8"
+            },
+            "expiresAtEpochMilli": {
+              "$var": "v9"
+            }
+          },
+          "successor": null,
+          "activePointId": null,
+          "activeRoundId": null
+        },
+        "data": {
+          "pointId": {
+            "$var": "v14"
+          },
+          "version": 4,
+          "state": {
+            "engineVersion": "world-engine-v1",
+            "schemaVersion": 1,
+            "worldId": {
+              "$var": "v1"
+            },
+            "protagonistId": "person_c",
+            "time": {
+              "calendar": "gregorian",
+              "dateTime": "2026-01-01T11:59:07",
+              "instantOrdinal": 0
+            },
+            "initial": {
+              "engineVersion": "world-engine-v1",
+              "schemaVersion": 1,
+              "worldId": {
+                "$var": "v1"
+              },
+              "protagonistId": "person_c",
+              "initialTime": {
+                "calendar": "gregorian",
+                "dateTime": "2026-01-01T11:59:00",
+                "instantOrdinal": 0
+              },
+              "locations": {
+                "school": {
+                  "id": "school",
+                  "name": "学校",
+                  "parentLocationId": null,
+                  "initialAppearance": "学校里光线昏暗，墙面保留着陈旧的擦痕。",
+                  "slots": []
+                },
+                "floor1": {
+                  "id": "floor1",
+                  "name": "一楼",
+                  "parentLocationId": "school",
+                  "initialAppearance": "一楼里光线昏暗，墙面保留着陈旧的擦痕。",
+                  "slots": []
+                },
+                "lobby": {
+                  "id": "lobby",
+                  "name": "大堂",
+                  "parentLocationId": "floor1",
+                  "initialAppearance": "大堂里光线昏暗，墙面保留着陈旧的擦痕。",
+                  "slots": []
+                },
+                "corridor": {
+                  "id": "corridor",
+                  "name": "走廊",
+                  "parentLocationId": "floor1",
+                  "initialAppearance": "走廊里光线昏暗，墙面保留着陈旧的擦痕。",
+                  "slots": []
+                },
+                "floor2": {
+                  "id": "floor2",
+                  "name": "二楼",
+                  "parentLocationId": "school",
+                  "initialAppearance": "二楼里光线昏暗，墙面保留着陈旧的擦痕。",
+                  "slots": []
+                },
+                "classroom1": {
+                  "id": "classroom1",
+                  "name": "一号教室",
+                  "parentLocationId": "floor2",
+                  "initialAppearance": "一号教室里光线昏暗，墙面保留着陈旧的擦痕。",
+                  "slots": []
+                },
+                "classroom2": {
+                  "id": "classroom2",
+                  "name": "二号教室",
+                  "parentLocationId": "floor2",
+                  "initialAppearance": "二号教室里光线昏暗，墙面保留着陈旧的擦痕。",
+                  "slots": []
+                }
+              },
+              "items": {
+                "coat": {
+                  "id": "coat",
+                  "name": "外套",
+                  "initialPosition": {
+                    "containerId": "person_c",
+                    "slotId": "body",
+                    "relativeTo": null
+                  },
+                  "initialAppearance": "一件表面有使用痕迹的外套。",
+                  "slots": [
+                    {
+                      "id": "left_pocket",
+                      "label": "左侧口袋"
+                    }
+                  ]
+                },
+                "key": {
+                  "id": "key",
+                  "name": "铜钥匙",
+                  "initialPosition": {
+                    "containerId": "coat",
+                    "slotId": "left_pocket",
+                    "relativeTo": null
+                  },
+                  "initialAppearance": "一件表面有使用痕迹的铜钥匙。",
+                  "slots": []
+                },
+                "blackboard": {
+                  "id": "blackboard",
+                  "name": "黑板",
+                  "initialPosition": {
+                    "containerId": "classroom1",
+                    "slotId": null,
+                    "relativeTo": null
+                  },
+                  "initialAppearance": "一件表面有使用痕迹的黑板。",
+                  "slots": []
+                },
+                "door": {
+                  "id": "door",
+                  "name": "重门",
+                  "initialPosition": {
+                    "containerId": "classroom1",
+                    "slotId": null,
+                    "relativeTo": null
+                  },
+                  "initialAppearance": "一件表面有使用痕迹的重门。",
+                  "slots": []
+                },
+                "book": {
+                  "id": "book",
+                  "name": "书",
+                  "initialPosition": {
+                    "containerId": "classroom1",
+                    "slotId": null,
+                    "relativeTo": null
+                  },
+                  "initialAppearance": "一件表面有使用痕迹的书。",
+                  "slots": []
+                },
+                "bag": {
+                  "id": "bag",
+                  "name": "背包",
+                  "initialPosition": {
+                    "containerId": "classroom1",
+                    "slotId": null,
+                    "relativeTo": null
+                  },
+                  "initialAppearance": "一件表面有使用痕迹的背包。",
+                  "slots": []
+                },
+                "badge": {
+                  "id": "badge",
+                  "name": "校徽",
+                  "initialPosition": {
+                    "containerId": "classroom1",
+                    "slotId": null,
+                    "relativeTo": null
+                  },
+                  "initialAppearance": "一件表面有使用痕迹的校徽。",
+                  "slots": []
+                },
+                "phone": {
+                  "id": "phone",
+                  "name": "手机",
+                  "initialPosition": {
+                    "containerId": "classroom1",
+                    "slotId": null,
+                    "relativeTo": null
+                  },
+                  "initialAppearance": "一件表面有使用痕迹的手机。",
+                  "slots": []
+                },
+                "bottle": {
+                  "id": "bottle",
+                  "name": "水瓶",
+                  "initialPosition": {
+                    "containerId": "classroom1",
+                    "slotId": null,
+                    "relativeTo": null
+                  },
+                  "initialAppearance": "一件表面有使用痕迹的水瓶。",
+                  "slots": []
+                },
+                "coin": {
+                  "id": "coin",
+                  "name": "硬币",
+                  "initialPosition": {
+                    "containerId": "classroom1",
+                    "slotId": null,
+                    "relativeTo": null
+                  },
+                  "initialAppearance": "一件表面有使用痕迹的硬币。",
+                  "slots": []
+                }
+              },
+              "characters": {
+                "person_a": {
+                  "id": "person_a",
+                  "name": "A",
+                  "initialPosition": {
+                    "containerId": "lobby",
+                    "slotId": null,
+                    "relativeTo": null
+                  },
+                  "initialAppearance": "穿着旧运动服，神情警惕，身体没有明显伤口。",
+                  "initialPersonality": "不喜欢交流，倾向于先观察周围再采取行动。",
+                  "initialSanity": 10,
+                  "tasks": {
+                    "task_a_root": {
+                      "id": "task_a_root",
+                      "ownerId": "person_a",
+                      "parentTaskId": null,
+                      "goal": "安全度过校园中的这段时间。",
+                      "status": "pending"
+                    }
+                  },
+                  "slots": [
+                    {
+                      "id": "body",
+                      "label": "身上"
+                    }
+                  ]
+                },
+                "person_b": {
+                  "id": "person_b",
+                  "name": "B",
+                  "initialPosition": {
+                    "containerId": "lobby",
+                    "slotId": null,
+                    "relativeTo": null
+                  },
+                  "initialAppearance": "穿着旧运动服，神情警惕，身体没有明显伤口。",
+                  "initialPersonality": "不喜欢交流，倾向于先观察周围再采取行动。",
+                  "initialSanity": 20,
+                  "tasks": {
+                    "task_b_root": {
+                      "id": "task_b_root",
+                      "ownerId": "person_b",
+                      "parentTaskId": null,
+                      "goal": "安全度过校园中的这段时间。",
+                      "status": "pending"
+                    }
+                  },
+                  "slots": [
+                    {
+                      "id": "body",
+                      "label": "身上"
+                    }
+                  ]
+                },
+                "person_c": {
+                  "id": "person_c",
+                  "name": "C",
+                  "initialPosition": {
+                    "containerId": "classroom1",
+                    "slotId": null,
+                    "relativeTo": null
+                  },
+                  "initialAppearance": "穿着旧运动服，神情警惕，身体没有明显伤口。",
+                  "initialPersonality": "不喜欢交流，倾向于先观察周围再采取行动。",
+                  "initialSanity": 30,
+                  "tasks": {
+                    "task_c_root": {
+                      "id": "task_c_root",
+                      "ownerId": "person_c",
+                      "parentTaskId": null,
+                      "goal": "安全度过校园中的这段时间。",
+                      "status": "pending"
+                    },
+                    "task_wait_noon": {
+                      "id": "task_wait_noon",
+                      "ownerId": "person_c",
+                      "parentTaskId": "task_c_root",
+                      "goal": "坚持到中午十二点。",
+                      "status": "pending"
+                    }
+                  },
+                  "slots": [
+                    {
+                      "id": "body",
+                      "label": "身上"
+                    }
+                  ]
+                },
+                "person_d": {
+                  "id": "person_d",
+                  "name": "D",
+                  "initialPosition": {
+                    "containerId": "classroom1",
+                    "slotId": null,
+                    "relativeTo": null
+                  },
+                  "initialAppearance": "穿着旧运动服，神情警惕，身体没有明显伤口。",
+                  "initialPersonality": "不喜欢交流，倾向于先观察周围再采取行动。",
+                  "initialSanity": 40,
+                  "tasks": {
+                    "task_d_root": {
+                      "id": "task_d_root",
+                      "ownerId": "person_d",
+                      "parentTaskId": null,
+                      "goal": "安全度过校园中的这段时间。",
+                      "status": "pending"
+                    }
+                  },
+                  "slots": [
+                    {
+                      "id": "body",
+                      "label": "身上"
+                    }
+                  ]
+                },
+                "person_e": {
+                  "id": "person_e",
+                  "name": "E",
+                  "initialPosition": {
+                    "containerId": "classroom1",
+                    "slotId": null,
+                    "relativeTo": null
+                  },
+                  "initialAppearance": "穿着旧运动服，神情警惕，身体没有明显伤口。",
+                  "initialPersonality": "不喜欢交流，倾向于先观察周围再采取行动。",
+                  "initialSanity": 50,
+                  "tasks": {
+                    "task_e_root": {
+                      "id": "task_e_root",
+                      "ownerId": "person_e",
+                      "parentTaskId": null,
+                      "goal": "安全度过校园中的这段时间。",
+                      "status": "pending"
+                    }
+                  },
+                  "slots": [
+                    {
+                      "id": "body",
+                      "label": "身上"
+                    }
+                  ]
+                },
+                "person_f": {
+                  "id": "person_f",
+                  "name": "F",
+                  "initialPosition": {
+                    "containerId": "classroom1",
+                    "slotId": null,
+                    "relativeTo": null
+                  },
+                  "initialAppearance": "穿着旧运动服，神情警惕，身体没有明显伤口。",
+                  "initialPersonality": "不喜欢交流，倾向于先观察周围再采取行动。",
+                  "initialSanity": 60,
+                  "tasks": {
+                    "task_f_root": {
+                      "id": "task_f_root",
+                      "ownerId": "person_f",
+                      "parentTaskId": null,
+                      "goal": "安全度过校园中的这段时间。",
+                      "status": "pending"
+                    }
+                  },
+                  "slots": [
+                    {
+                      "id": "body",
+                      "label": "身上"
+                    }
+                  ]
+                }
+              }
+            },
+            "locations": {
+              "school": {
+                "id": "school",
+                "appearanceChanges": []
+              },
+              "floor1": {
+                "id": "floor1",
+                "appearanceChanges": []
+              },
+              "lobby": {
+                "id": "lobby",
+                "appearanceChanges": []
+              },
+              "corridor": {
+                "id": "corridor",
+                "appearanceChanges": []
+              },
+              "floor2": {
+                "id": "floor2",
+                "appearanceChanges": []
+              },
+              "classroom1": {
+                "id": "classroom1",
+                "appearanceChanges": []
+              },
+              "classroom2": {
+                "id": "classroom2",
+                "appearanceChanges": []
+              }
+            },
+            "items": {
+              "coat": {
+                "id": "coat",
+                "appearanceChanges": [],
+                "position": {
+                  "containerId": "person_c",
+                  "slotId": "body",
+                  "relativeTo": null
+                }
+              },
+              "key": {
+                "id": "key",
+                "appearanceChanges": [],
+                "position": {
+                  "containerId": "coat",
+                  "slotId": "left_pocket",
+                  "relativeTo": null
+                }
+              },
+              "blackboard": {
+                "id": "blackboard",
+                "appearanceChanges": [],
+                "position": {
+                  "containerId": "classroom1",
+                  "slotId": null,
+                  "relativeTo": null
+                }
+              },
+              "door": {
+                "id": "door",
+                "appearanceChanges": [],
+                "position": {
+                  "containerId": "classroom1",
+                  "slotId": null,
+                  "relativeTo": null
+                }
+              },
+              "book": {
+                "id": "book",
+                "appearanceChanges": [],
+                "position": {
+                  "containerId": "classroom1",
+                  "slotId": null,
+                  "relativeTo": null
+                }
+              },
+              "bag": {
+                "id": "bag",
+                "appearanceChanges": [],
+                "position": {
+                  "containerId": "classroom1",
+                  "slotId": null,
+                  "relativeTo": null
+                }
+              },
+              "badge": {
+                "id": "badge",
+                "appearanceChanges": [],
+                "position": {
+                  "containerId": "classroom1",
+                  "slotId": null,
+                  "relativeTo": null
+                }
+              },
+              "phone": {
+                "id": "phone",
+                "appearanceChanges": [],
+                "position": {
+                  "containerId": "classroom1",
+                  "slotId": null,
+                  "relativeTo": null
+                }
+              },
+              "bottle": {
+                "id": "bottle",
+                "appearanceChanges": [],
+                "position": {
+                  "containerId": "classroom1",
+                  "slotId": null,
+                  "relativeTo": null
+                }
+              },
+              "coin": {
+                "id": "coin",
+                "appearanceChanges": [],
+                "position": {
+                  "containerId": "classroom1",
+                  "slotId": null,
+                  "relativeTo": null
+                }
+              }
+            },
+            "characters": {
+              "person_a": {
+                "id": "person_a",
+                "appearanceChanges": [],
+                "position": {
+                  "containerId": "lobby",
+                  "slotId": null,
+                  "relativeTo": null
+                },
+                "personalityChanges": [],
+                "sanity": 10,
+                "tasks": {
+                  "task_a_root": {
+                    "id": "task_a_root",
+                    "ownerId": "person_a",
+                    "parentTaskId": null,
+                    "goal": "安全度过校园中的这段时间。",
+                    "status": "pending"
+                  }
+                }
+              },
+              "person_b": {
+                "id": "person_b",
+                "appearanceChanges": [],
+                "position": {
+                  "containerId": "lobby",
+                  "slotId": null,
+                  "relativeTo": null
+                },
+                "personalityChanges": [],
+                "sanity": 20,
+                "tasks": {
+                  "task_b_root": {
+                    "id": "task_b_root",
+                    "ownerId": "person_b",
+                    "parentTaskId": null,
+                    "goal": "安全度过校园中的这段时间。",
+                    "status": "pending"
+                  }
+                }
+              },
+              "person_c": {
+                "id": "person_c",
+                "appearanceChanges": [],
+                "position": {
+                  "containerId": "classroom1",
+                  "slotId": null,
+                  "relativeTo": null
+                },
+                "personalityChanges": [],
+                "sanity": 30,
+                "tasks": {
+                  "task_c_root": {
+                    "id": "task_c_root",
+                    "ownerId": "person_c",
+                    "parentTaskId": null,
+                    "goal": "安全度过校园中的这段时间。",
+                    "status": "pending"
+                  },
+                  "task_wait_noon": {
+                    "id": "task_wait_noon",
+                    "ownerId": "person_c",
+                    "parentTaskId": "task_c_root",
+                    "goal": "坚持到中午十二点。",
+                    "status": "pending"
+                  }
+                }
+              },
+              "person_d": {
+                "id": "person_d",
+                "appearanceChanges": [],
+                "position": {
+                  "containerId": "classroom1",
+                  "slotId": null,
+                  "relativeTo": null
+                },
+                "personalityChanges": [],
+                "sanity": 40,
+                "tasks": {
+                  "task_d_root": {
+                    "id": "task_d_root",
+                    "ownerId": "person_d",
+                    "parentTaskId": null,
+                    "goal": "安全度过校园中的这段时间。",
+                    "status": "pending"
+                  }
+                }
+              },
+              "person_e": {
+                "id": "person_e",
+                "appearanceChanges": [],
+                "position": {
+                  "containerId": "classroom1",
+                  "slotId": null,
+                  "relativeTo": null
+                },
+                "personalityChanges": [],
+                "sanity": 50,
+                "tasks": {
+                  "task_e_root": {
+                    "id": "task_e_root",
+                    "ownerId": "person_e",
+                    "parentTaskId": null,
+                    "goal": "安全度过校园中的这段时间。",
+                    "status": "pending"
+                  }
+                }
+              },
+              "person_f": {
+                "id": "person_f",
+                "appearanceChanges": [],
+                "position": {
+                  "containerId": "classroom1",
+                  "slotId": null,
+                  "relativeTo": null
+                },
+                "personalityChanges": [],
+                "sanity": 60,
+                "tasks": {
+                  "task_f_root": {
+                    "id": "task_f_root",
+                    "ownerId": "person_f",
+                    "parentTaskId": null,
+                    "goal": "安全度过校园中的这段时间。",
+                    "status": "pending"
+                  }
+                }
+              }
+            }
+          },
+          "stateDigest": {
+            "$var": "state_hash_s16"
+          }
+        }
+      },
+      "responseKind": "success",
+      "httpStatus": 200,
+      "captures": [
+        {
+          "variable": "v32",
+          "path": "/serverTimeEpochMilli"
+        },
+        {
+          "variable": "state_hash_s16",
+          "path": "/data/stateDigest"
+        }
+      ],
+      "assertions": [
+        {
+          "op": "type",
+          "path": "/data",
+          "expected": "object",
+          "baseline": null
+        }
+      ],
+      "projectionPath": "/data/state",
+      "digestPath": "/data/stateDigest",
+      "expectedProjection": {
+        "engineVersion": "world-engine-v1",
+        "schemaVersion": 1,
+        "worldId": {
+          "$var": "v1"
+        },
+        "protagonistId": "person_c",
+        "time": {
+          "calendar": "gregorian",
+          "dateTime": "2026-01-01T11:59:07",
+          "instantOrdinal": 0
+        },
+        "initial": {
+          "engineVersion": "world-engine-v1",
+          "schemaVersion": 1,
+          "worldId": {
+            "$var": "v1"
+          },
+          "protagonistId": "person_c",
+          "initialTime": {
+            "calendar": "gregorian",
+            "dateTime": "2026-01-01T11:59:00",
+            "instantOrdinal": 0
+          },
+          "locations": {
+            "school": {
+              "id": "school",
+              "name": "学校",
+              "parentLocationId": null,
+              "initialAppearance": "学校里光线昏暗，墙面保留着陈旧的擦痕。",
+              "slots": []
+            },
+            "floor1": {
+              "id": "floor1",
+              "name": "一楼",
+              "parentLocationId": "school",
+              "initialAppearance": "一楼里光线昏暗，墙面保留着陈旧的擦痕。",
+              "slots": []
+            },
+            "lobby": {
+              "id": "lobby",
+              "name": "大堂",
+              "parentLocationId": "floor1",
+              "initialAppearance": "大堂里光线昏暗，墙面保留着陈旧的擦痕。",
+              "slots": []
+            },
+            "corridor": {
+              "id": "corridor",
+              "name": "走廊",
+              "parentLocationId": "floor1",
+              "initialAppearance": "走廊里光线昏暗，墙面保留着陈旧的擦痕。",
+              "slots": []
+            },
+            "floor2": {
+              "id": "floor2",
+              "name": "二楼",
+              "parentLocationId": "school",
+              "initialAppearance": "二楼里光线昏暗，墙面保留着陈旧的擦痕。",
+              "slots": []
+            },
+            "classroom1": {
+              "id": "classroom1",
+              "name": "一号教室",
+              "parentLocationId": "floor2",
+              "initialAppearance": "一号教室里光线昏暗，墙面保留着陈旧的擦痕。",
+              "slots": []
+            },
+            "classroom2": {
+              "id": "classroom2",
+              "name": "二号教室",
+              "parentLocationId": "floor2",
+              "initialAppearance": "二号教室里光线昏暗，墙面保留着陈旧的擦痕。",
+              "slots": []
+            }
+          },
+          "items": {
+            "coat": {
+              "id": "coat",
+              "name": "外套",
+              "initialPosition": {
+                "containerId": "person_c",
+                "slotId": "body",
+                "relativeTo": null
+              },
+              "initialAppearance": "一件表面有使用痕迹的外套。",
+              "slots": [
+                {
+                  "id": "left_pocket",
+                  "label": "左侧口袋"
+                }
+              ]
+            },
+            "key": {
+              "id": "key",
+              "name": "铜钥匙",
+              "initialPosition": {
+                "containerId": "coat",
+                "slotId": "left_pocket",
+                "relativeTo": null
+              },
+              "initialAppearance": "一件表面有使用痕迹的铜钥匙。",
+              "slots": []
+            },
+            "blackboard": {
+              "id": "blackboard",
+              "name": "黑板",
+              "initialPosition": {
+                "containerId": "classroom1",
+                "slotId": null,
+                "relativeTo": null
+              },
+              "initialAppearance": "一件表面有使用痕迹的黑板。",
+              "slots": []
+            },
+            "door": {
+              "id": "door",
+              "name": "重门",
+              "initialPosition": {
+                "containerId": "classroom1",
+                "slotId": null,
+                "relativeTo": null
+              },
+              "initialAppearance": "一件表面有使用痕迹的重门。",
+              "slots": []
+            },
+            "book": {
+              "id": "book",
+              "name": "书",
+              "initialPosition": {
+                "containerId": "classroom1",
+                "slotId": null,
+                "relativeTo": null
+              },
+              "initialAppearance": "一件表面有使用痕迹的书。",
+              "slots": []
+            },
+            "bag": {
+              "id": "bag",
+              "name": "背包",
+              "initialPosition": {
+                "containerId": "classroom1",
+                "slotId": null,
+                "relativeTo": null
+              },
+              "initialAppearance": "一件表面有使用痕迹的背包。",
+              "slots": []
+            },
+            "badge": {
+              "id": "badge",
+              "name": "校徽",
+              "initialPosition": {
+                "containerId": "classroom1",
+                "slotId": null,
+                "relativeTo": null
+              },
+              "initialAppearance": "一件表面有使用痕迹的校徽。",
+              "slots": []
+            },
+            "phone": {
+              "id": "phone",
+              "name": "手机",
+              "initialPosition": {
+                "containerId": "classroom1",
+                "slotId": null,
+                "relativeTo": null
+              },
+              "initialAppearance": "一件表面有使用痕迹的手机。",
+              "slots": []
+            },
+            "bottle": {
+              "id": "bottle",
+              "name": "水瓶",
+              "initialPosition": {
+                "containerId": "classroom1",
+                "slotId": null,
+                "relativeTo": null
+              },
+              "initialAppearance": "一件表面有使用痕迹的水瓶。",
+              "slots": []
+            },
+            "coin": {
+              "id": "coin",
+              "name": "硬币",
+              "initialPosition": {
+                "containerId": "classroom1",
+                "slotId": null,
+                "relativeTo": null
+              },
+              "initialAppearance": "一件表面有使用痕迹的硬币。",
+              "slots": []
+            }
+          },
+          "characters": {
+            "person_a": {
+              "id": "person_a",
+              "name": "A",
+              "initialPosition": {
+                "containerId": "lobby",
+                "slotId": null,
+                "relativeTo": null
+              },
+              "initialAppearance": "穿着旧运动服，神情警惕，身体没有明显伤口。",
+              "initialPersonality": "不喜欢交流，倾向于先观察周围再采取行动。",
+              "initialSanity": 10,
+              "tasks": {
+                "task_a_root": {
+                  "id": "task_a_root",
+                  "ownerId": "person_a",
+                  "parentTaskId": null,
+                  "goal": "安全度过校园中的这段时间。",
+                  "status": "pending"
+                }
+              },
+              "slots": [
+                {
+                  "id": "body",
+                  "label": "身上"
+                }
+              ]
+            },
+            "person_b": {
+              "id": "person_b",
+              "name": "B",
+              "initialPosition": {
+                "containerId": "lobby",
+                "slotId": null,
+                "relativeTo": null
+              },
+              "initialAppearance": "穿着旧运动服，神情警惕，身体没有明显伤口。",
+              "initialPersonality": "不喜欢交流，倾向于先观察周围再采取行动。",
+              "initialSanity": 20,
+              "tasks": {
+                "task_b_root": {
+                  "id": "task_b_root",
+                  "ownerId": "person_b",
+                  "parentTaskId": null,
+                  "goal": "安全度过校园中的这段时间。",
+                  "status": "pending"
+                }
+              },
+              "slots": [
+                {
+                  "id": "body",
+                  "label": "身上"
+                }
+              ]
+            },
+            "person_c": {
+              "id": "person_c",
+              "name": "C",
+              "initialPosition": {
+                "containerId": "classroom1",
+                "slotId": null,
+                "relativeTo": null
+              },
+              "initialAppearance": "穿着旧运动服，神情警惕，身体没有明显伤口。",
+              "initialPersonality": "不喜欢交流，倾向于先观察周围再采取行动。",
+              "initialSanity": 30,
+              "tasks": {
+                "task_c_root": {
+                  "id": "task_c_root",
+                  "ownerId": "person_c",
+                  "parentTaskId": null,
+                  "goal": "安全度过校园中的这段时间。",
+                  "status": "pending"
+                },
+                "task_wait_noon": {
+                  "id": "task_wait_noon",
+                  "ownerId": "person_c",
+                  "parentTaskId": "task_c_root",
+                  "goal": "坚持到中午十二点。",
+                  "status": "pending"
+                }
+              },
+              "slots": [
+                {
+                  "id": "body",
+                  "label": "身上"
+                }
+              ]
+            },
+            "person_d": {
+              "id": "person_d",
+              "name": "D",
+              "initialPosition": {
+                "containerId": "classroom1",
+                "slotId": null,
+                "relativeTo": null
+              },
+              "initialAppearance": "穿着旧运动服，神情警惕，身体没有明显伤口。",
+              "initialPersonality": "不喜欢交流，倾向于先观察周围再采取行动。",
+              "initialSanity": 40,
+              "tasks": {
+                "task_d_root": {
+                  "id": "task_d_root",
+                  "ownerId": "person_d",
+                  "parentTaskId": null,
+                  "goal": "安全度过校园中的这段时间。",
+                  "status": "pending"
+                }
+              },
+              "slots": [
+                {
+                  "id": "body",
+                  "label": "身上"
+                }
+              ]
+            },
+            "person_e": {
+              "id": "person_e",
+              "name": "E",
+              "initialPosition": {
+                "containerId": "classroom1",
+                "slotId": null,
+                "relativeTo": null
+              },
+              "initialAppearance": "穿着旧运动服，神情警惕，身体没有明显伤口。",
+              "initialPersonality": "不喜欢交流，倾向于先观察周围再采取行动。",
+              "initialSanity": 50,
+              "tasks": {
+                "task_e_root": {
+                  "id": "task_e_root",
+                  "ownerId": "person_e",
+                  "parentTaskId": null,
+                  "goal": "安全度过校园中的这段时间。",
+                  "status": "pending"
+                }
+              },
+              "slots": [
+                {
+                  "id": "body",
+                  "label": "身上"
+                }
+              ]
+            },
+            "person_f": {
+              "id": "person_f",
+              "name": "F",
+              "initialPosition": {
+                "containerId": "classroom1",
+                "slotId": null,
+                "relativeTo": null
+              },
+              "initialAppearance": "穿着旧运动服，神情警惕，身体没有明显伤口。",
+              "initialPersonality": "不喜欢交流，倾向于先观察周围再采取行动。",
+              "initialSanity": 60,
+              "tasks": {
+                "task_f_root": {
+                  "id": "task_f_root",
+                  "ownerId": "person_f",
+                  "parentTaskId": null,
+                  "goal": "安全度过校园中的这段时间。",
+                  "status": "pending"
+                }
+              },
+              "slots": [
+                {
+                  "id": "body",
+                  "label": "身上"
+                }
+              ]
+            }
+          }
+        },
+        "locations": {
+          "school": {
+            "id": "school",
+            "appearanceChanges": []
+          },
+          "floor1": {
+            "id": "floor1",
+            "appearanceChanges": []
+          },
+          "lobby": {
+            "id": "lobby",
+            "appearanceChanges": []
+          },
+          "corridor": {
+            "id": "corridor",
+            "appearanceChanges": []
+          },
+          "floor2": {
+            "id": "floor2",
+            "appearanceChanges": []
+          },
+          "classroom1": {
+            "id": "classroom1",
+            "appearanceChanges": []
+          },
+          "classroom2": {
+            "id": "classroom2",
+            "appearanceChanges": []
+          }
+        },
+        "items": {
+          "coat": {
+            "id": "coat",
+            "appearanceChanges": [],
+            "position": {
+              "containerId": "person_c",
+              "slotId": "body",
+              "relativeTo": null
+            }
+          },
+          "key": {
+            "id": "key",
+            "appearanceChanges": [],
+            "position": {
+              "containerId": "coat",
+              "slotId": "left_pocket",
+              "relativeTo": null
+            }
+          },
+          "blackboard": {
+            "id": "blackboard",
+            "appearanceChanges": [],
+            "position": {
+              "containerId": "classroom1",
+              "slotId": null,
+              "relativeTo": null
+            }
+          },
+          "door": {
+            "id": "door",
+            "appearanceChanges": [],
+            "position": {
+              "containerId": "classroom1",
+              "slotId": null,
+              "relativeTo": null
+            }
+          },
+          "book": {
+            "id": "book",
+            "appearanceChanges": [],
+            "position": {
+              "containerId": "classroom1",
+              "slotId": null,
+              "relativeTo": null
+            }
+          },
+          "bag": {
+            "id": "bag",
+            "appearanceChanges": [],
+            "position": {
+              "containerId": "classroom1",
+              "slotId": null,
+              "relativeTo": null
+            }
+          },
+          "badge": {
+            "id": "badge",
+            "appearanceChanges": [],
+            "position": {
+              "containerId": "classroom1",
+              "slotId": null,
+              "relativeTo": null
+            }
+          },
+          "phone": {
+            "id": "phone",
+            "appearanceChanges": [],
+            "position": {
+              "containerId": "classroom1",
+              "slotId": null,
+              "relativeTo": null
+            }
+          },
+          "bottle": {
+            "id": "bottle",
+            "appearanceChanges": [],
+            "position": {
+              "containerId": "classroom1",
+              "slotId": null,
+              "relativeTo": null
+            }
+          },
+          "coin": {
+            "id": "coin",
+            "appearanceChanges": [],
+            "position": {
+              "containerId": "classroom1",
+              "slotId": null,
+              "relativeTo": null
+            }
+          }
+        },
+        "characters": {
+          "person_a": {
+            "id": "person_a",
+            "appearanceChanges": [],
+            "position": {
+              "containerId": "lobby",
+              "slotId": null,
+              "relativeTo": null
+            },
+            "personalityChanges": [],
+            "sanity": 10,
+            "tasks": {
+              "task_a_root": {
+                "id": "task_a_root",
+                "ownerId": "person_a",
+                "parentTaskId": null,
+                "goal": "安全度过校园中的这段时间。",
+                "status": "pending"
+              }
+            }
+          },
+          "person_b": {
+            "id": "person_b",
+            "appearanceChanges": [],
+            "position": {
+              "containerId": "lobby",
+              "slotId": null,
+              "relativeTo": null
+            },
+            "personalityChanges": [],
+            "sanity": 20,
+            "tasks": {
+              "task_b_root": {
+                "id": "task_b_root",
+                "ownerId": "person_b",
+                "parentTaskId": null,
+                "goal": "安全度过校园中的这段时间。",
+                "status": "pending"
+              }
+            }
+          },
+          "person_c": {
+            "id": "person_c",
+            "appearanceChanges": [],
+            "position": {
+              "containerId": "classroom1",
+              "slotId": null,
+              "relativeTo": null
+            },
+            "personalityChanges": [],
+            "sanity": 30,
+            "tasks": {
+              "task_c_root": {
+                "id": "task_c_root",
+                "ownerId": "person_c",
+                "parentTaskId": null,
+                "goal": "安全度过校园中的这段时间。",
+                "status": "pending"
+              },
+              "task_wait_noon": {
+                "id": "task_wait_noon",
+                "ownerId": "person_c",
+                "parentTaskId": "task_c_root",
+                "goal": "坚持到中午十二点。",
+                "status": "pending"
+              }
+            }
+          },
+          "person_d": {
+            "id": "person_d",
+            "appearanceChanges": [],
+            "position": {
+              "containerId": "classroom1",
+              "slotId": null,
+              "relativeTo": null
+            },
+            "personalityChanges": [],
+            "sanity": 40,
+            "tasks": {
+              "task_d_root": {
+                "id": "task_d_root",
+                "ownerId": "person_d",
+                "parentTaskId": null,
+                "goal": "安全度过校园中的这段时间。",
+                "status": "pending"
+              }
+            }
+          },
+          "person_e": {
+            "id": "person_e",
+            "appearanceChanges": [],
+            "position": {
+              "containerId": "classroom1",
+              "slotId": null,
+              "relativeTo": null
+            },
+            "personalityChanges": [],
+            "sanity": 50,
+            "tasks": {
+              "task_e_root": {
+                "id": "task_e_root",
+                "ownerId": "person_e",
+                "parentTaskId": null,
+                "goal": "安全度过校园中的这段时间。",
+                "status": "pending"
+              }
+            }
+          },
+          "person_f": {
+            "id": "person_f",
+            "appearanceChanges": [],
+            "position": {
+              "containerId": "classroom1",
+              "slotId": null,
+              "relativeTo": null
+            },
+            "personalityChanges": [],
+            "sanity": 60,
+            "tasks": {
+              "task_f_root": {
+                "id": "task_f_root",
+                "ownerId": "person_f",
+                "parentTaskId": null,
+                "goal": "安全度过校园中的这段时间。",
+                "status": "pending"
+              }
+            }
+          }
+        }
+      },
+      "nextAction": "continue"
+    },
+    {
+      "id": "s17",
+      "operation": "lease_release",
+      "scope": {
+        "worldId": {
+          "$var": "v1"
+        }
+      },
+      "request": {
+        "protocolVersion": 2,
+        "requestId": "req_T04_17",
+        "leaseToken": {
+          "$var": "v10"
+        },
+        "fenceEpoch": {
+          "$var": "v8"
+        }
+      },
+      "response": {
+        "protocolVersion": 2,
+        "engineVersion": "world-engine-v1",
+        "schemaVersion": 1,
+        "canonicalVersion": "world-canonical-v1",
+        "serverTimeEpochMilli": {
+          "$var": "v33"
+        },
+        "replayed": false,
+        "operation": "lease_release",
+        "requestId": "req_T04_17",
+        "requestHash": {
+          "$var": "request_hash_s17"
+        },
+        "world": {
+          "worldId": {
+            "$var": "v1"
+          },
+          "head": {
+            "pointId": {
+              "$var": "v14"
+            },
+            "version": 4,
+            "stateDigest": {
+              "$var": "v26"
+            },
+            "narrationStatus": "ready"
+          },
+          "advance": {
+            "advanceId": {
+              "$var": "v5"
+            },
+            "inputId": {
+              "$var": "v6"
+            },
+            "intentStatus": "consumed",
+            "inputAvailable": false
+          },
+          "round": {
+            "roundId": {
+              "$var": "v11"
+            },
+            "trigger": "automatic",
+            "conclusion": {
+              "kind": "handback",
+              "closedBy": "model",
+              "cancelReason": null
+            },
+            "order": [
+              "person_c"
+            ],
+            "cursor": 1,
+            "actedIds": [
+              "person_c"
+            ],
+            "visitedIds": [
+              "person_c"
+            ]
+          },
+          "time": {
+            "calendar": "gregorian",
+            "dateTime": "2026-01-01T11:59:07",
+            "instantOrdinal": 0
+          },
+          "lease": null,
+          "successor": null,
+          "activePointId": null,
+          "activeRoundId": null
+        },
+        "control": {
+          "phase": "complete",
+          "paused": false,
+          "revision": 10,
+          "gate": {
+            "status": "none",
+            "generation": null,
+            "issuedAtEpochMilli": null,
+            "expiresAtEpochMilli": null
+          },
+          "blockedReasons": [
+            "phase_not_computable"
+          ],
+          "canCompute": false
+        },
+        "work": null,
+        "data": {
+          "released": true
+        }
+      },
+      "responseKind": "success",
+      "httpStatus": 200,
+      "captures": [
+        {
+          "variable": "v33",
+          "path": "/serverTimeEpochMilli"
+        },
+        {
+          "variable": "request_hash_s17",
+          "path": "/requestHash"
+        }
+      ],
+      "assertions": [
+        {
+          "op": "eq",
+          "path": "/control/phase",
+          "expected": "complete",
+          "baseline": null
+        },
+        {
+          "op": "eq",
+          "path": "/control/paused",
+          "expected": false,
+          "baseline": null
+        },
+        {
+          "op": "eq",
+          "path": "/control/canCompute",
+          "expected": false,
+          "baseline": null
+        }
+      ],
+      "projectionPath": null,
+      "digestPath": null,
+      "expectedProjection": null,
+      "nextAction": "continue"
+    }
+  ],
+  "samples": [
+    {
+      "id": "sample_1",
+      "values": {
+        "v1": "world_school",
+        "v2": 1792617600000,
+        "v3": "p3",
+        "v4": "85848d51cb4be7de58fa948b945c4696c5b14aa308e6a73fb194f16a6aae691b",
+        "v5": "advance_1",
+        "v6": "input_1",
+        "v7": "round_1",
+        "v8": 7,
+        "v9": 1792617720000,
+        "v10": "lease_a",
+        "v11": "round_2",
+        "v12": 1792617601000,
+        "v13": 1792617602000,
+        "v14": "p4",
+        "v15": 1792617603000,
+        "v16": "group_cd",
+        "v17": 1792617604000,
+        "v18": 1792617605000,
+        "v19": 1792617606000,
+        "v20": 1792617607000,
+        "v21": "unit_group_cd",
+        "v22": "87febe10153af244e2c649cd5577ba7800b56057bb5ca9decd08a026a042cfe1",
+        "v23": 1792617608000,
+        "v24": "e0976ebfd8d169e8369984659a7dc271ac6fa8bf3c57972361a7d764f97639af",
+        "v25": 1792617609000,
+        "v26": "e189aed7402cc4a486b1362186e9552e53b83126096b3c892b0e031012611875",
+        "v27": 1792617780000,
+        "v28": 1792617610000,
+        "v29": 1792617611000,
+        "v30": 1792617612000,
+        "v31": 1792617613000,
+        "v32": 1792617615000,
+        "v33": 1792617616000,
+        "state_hash_s16": "e189aed7402cc4a486b1362186e9552e53b83126096b3c892b0e031012611875",
+        "request_hash_s2": "fe2475ff1cebe23b139c3af24b2a12cf80321fbb172e0fc2b5279592d34bd202",
+        "request_hash_s4": "2cb887e5416c18aab5c739573ed39b7e3f0d0374c3960d0c8ba99af4a82d2c6e",
+        "request_hash_s5": "9ef8f9924d22c89892dfaa09a2bb2bbf5ac7d95e0e3ce6d9589f3338fceb5f1d",
+        "request_hash_s6": "09860a73b96065ae11b11bdf641b7c4522d7e0332f2b9945a316cfdd5f0ccbe8",
+        "request_hash_s7": "39cac819aef92e299b65f8d27da451f58972a6d99966fc6e9e7cd6bec4639209",
+        "request_hash_s8": "c491d63038023400f625173ed4b918131e43ea6ac1ecfe9bafbfea364e88b21d",
+        "request_hash_s9": "50c297d4a1e3e9a9350392ab728ffa80d02725948fcb0c1897715e1529eb45ac",
+        "request_hash_s10": "4858532a5eb846ec7192f31d4b6c508f440c2ad9669428aac6c40e1290b3d250",
+        "request_hash_s11": "e1cd94a53456ab0e0c105aabfa72902ea81820e5aa74db0edf0371e26bcf35ff",
+        "request_hash_s12": "a3f451b73416f7e3f85a32e63c64739871039d31e28a7d83fd80d3f2de8a46f5",
+        "request_hash_s13": "7e357741fb218e1491c80853c95e2c2bc09adf1020ec4144cbe64bbecd089fee",
+        "request_hash_s15": "7e357741fb218e1491c80853c95e2c2bc09adf1020ec4144cbe64bbecd089fee",
+        "request_hash_s17": "d8c9892beef916bd800a74feddf5f949be68adb33ff60fabf2fccd8300199a7c"
+      },
+      "expectedDigests": {
+        "s16": "e189aed7402cc4a486b1362186e9552e53b83126096b3c892b0e031012611875"
+      }
+    },
+    {
+      "id": "sample_2",
+      "values": {
+        "v1": "world_school_sampleB",
+        "v2": 1792618200000,
+        "v3": "p3_sampleB",
+        "v4": "f59d6d3b569e9ce2c2b052d746fa8e96dabf95fab53323e0eeac0f2af0d8f630",
+        "v5": "advance_1_sampleB",
+        "v6": "input_1_sampleB",
+        "v7": "round_1_sampleB",
+        "v8": 107,
+        "v9": 1792618320000,
+        "v10": "lease_a_sampleB",
+        "v11": "round_2_sampleB",
+        "v12": 1792618201000,
+        "v13": 1792618202000,
+        "v14": "p4_sampleB",
+        "v15": 1792618203000,
+        "v16": "group_cd_sampleB",
+        "v17": 1792618204000,
+        "v18": 1792618205000,
+        "v19": 1792618206000,
+        "v20": 1792618207000,
+        "v21": "unit_group_cd_sampleB",
+        "v22": "f3fb149f16f2a23b0152ccd6889d28298cd3ab773330d09260cb7f986932c572",
+        "v23": 1792618208000,
+        "v24": "10e88c0f9333d1743810c5b3a85ed3ff1f01e10d6ff3b42f442ad6f6bd723908",
+        "v25": 1792618209000,
+        "v26": "6a3d37e2d8c4d9ad043780f3ec979f648758a12706cc3e9c7a66ef352c31aeca",
+        "v27": 1792618380000,
+        "v28": 1792618210000,
+        "v29": 1792618211000,
+        "v30": 1792618212000,
+        "v31": 1792618213000,
+        "v32": 1792618215000,
+        "v33": 1792618216000,
+        "state_hash_s16": "6a3d37e2d8c4d9ad043780f3ec979f648758a12706cc3e9c7a66ef352c31aeca",
+        "request_hash_s2": "ee72ffa145f66a8f1ae4f1aa7387da2f2ec096722c1676ca7043921603cca207",
+        "request_hash_s4": "7e3e7de9c4a2f828711e22e0e0f9934b489ee5ed2d9e19c7779211ae0a2aed2a",
+        "request_hash_s5": "4972069ebfd3e7558accbdb8e6a8e54d3562cb061c9977439550983d687c0ac2",
+        "request_hash_s6": "70131ee4d9bbddb01c4bb9467f0dcda11c941775507bf9ce9b3652be39f24167",
+        "request_hash_s7": "5b74da83186cf706c5f22f61c6c42ba36e24e7461cf8b52192c2dd8e1863ad69",
+        "request_hash_s8": "2144463d7597dc2176d502fe9c4405d0516cd9c12f91ecd179e0cc3ef9877d61",
+        "request_hash_s9": "a493649250e9a7cafb8134847006229321dd27aee572eb33339b64ef621b6d28",
+        "request_hash_s10": "3007a354a5b9326ff540720cb189fb9e55fb3689c3abe8c956eef52ba6160de2",
+        "request_hash_s11": "511b7f4ed6e563df215cf88edd2c267bd139fd95a2cc4b9e98f9ed3a6fec459e",
+        "request_hash_s12": "f3a68c17528125bbc06a599c593f90c879755c57e31c50182570657c7f524842",
+        "request_hash_s13": "6c8e9f717f7f7de5a84b6dda969f2340128f38f7a09db1bb1ddf1512eb7bc552",
+        "request_hash_s15": "6c8e9f717f7f7de5a84b6dda969f2340128f38f7a09db1bb1ddf1512eb7bc552",
+        "request_hash_s17": "ce6b07987559cf45b9c3454f1685275621f0ce70251c29f39e186d4be84c2bec"
+      },
+      "expectedDigests": {
+        "s16": "6a3d37e2d8c4d9ad043780f3ec979f648758a12706cc3e9c7a66ef352c31aeca"
+      }
+    }
+  ]
+}

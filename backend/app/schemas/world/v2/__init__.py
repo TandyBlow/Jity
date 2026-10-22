@@ -225,4 +225,6 @@ SCHEMA_MODELS += (
     ListPointsRequest, GetStateRequest, GetContextRequest,
     PointRecoveryView, RecoveryView, AcceptedWorkSource, FrozenMemberView, FrozenGroupView, GroupWorkSource,
 )
+from .projections import PrefixProjection
+SCHEMA_MODELS += (PrefixProjection,)
 __all__ = [name for name in globals() if not name.startswith("_")]
