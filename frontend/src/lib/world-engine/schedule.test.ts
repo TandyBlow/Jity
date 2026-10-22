@@ -357,17 +357,17 @@ describe('updates split (1–6 per-stage calls)', () => {
   test('T03-collapse split: a mid-sequence reference may await later production', () => {
     const { w, c, wk, m } = settling(['tasks', 'subtasks']);
     expect(next(w, c, wk, m)).toMatchObject({ kind: 'model', task: 'updates', key: 'g1#tasks', input: { stage: 'tasks', appliedDelta: {} } });
-    m.updatesCalls.push({ stage: 'tasks', changes: { person_c: { tasksAchieved: ['v13'] } } });
+    m.updatesCalls.push({ stage: 'tasks', changes: { person_a: { tasksAchieved: ['v13'] } } });
     // v13 is produced only by the later subtasks stage — no early dangling stop.
     expect(next(w, c, wk, m)).toMatchObject({
       kind: 'model', task: 'updates', key: 'g1#subtasks',
-      input: { appliedDelta: { person_c: { entityId: 'person_c', tasksAchieved: ['v13'] } } },
+      input: { appliedDelta: { person_a: { entityId: 'person_a', tasksAchieved: ['v13'] } } },
     });
-    m.updatesCalls.push({ stage: 'subtasks', changes: { person_c: { subtasksAdded: [{ id: 'v13', ownerId: 'person_c', parentTaskId: null, goal: '确认门边', status: 'pending' }] } } });
+    m.updatesCalls.push({ stage: 'subtasks', changes: { person_a: { subtasksAdded: [{ id: 'v13', ownerId: 'person_a', parentTaskId: null, goal: '确认门边', status: 'pending' }] } } });
     const stage = expectTransport(next(w, c, wk, m), 'checkpoint_stage_unit') as Extract<Decision, { kind: 'transport' }>;
     const candidates = (stage.request as unknown as { candidates: Record<string, unknown> }).candidates;
-    // Coverage follows the world roster (2026-10-22 ruling), not the delta entities.
-    expect(candidates).toMatchObject({ tasksAchieved: { person_c: ['v13'] }, subtasksAdded: { person_c: [{ id: 'v13', ownerId: 'person_c', parentTaskId: null, goal: '确认门边', status: 'pending' }] }, personalityCoverageIds: ['person_a'] });
+    // The delta entity is roster-consistent; coverage follows the world roster.
+    expect(candidates).toMatchObject({ tasksAchieved: { person_a: ['v13'] }, subtasksAdded: { person_a: [{ id: 'v13', ownerId: 'person_a', parentTaskId: null, goal: '确认门边', status: 'pending' }] }, personalityCoverageIds: ['person_a'] });
   });
   test('rejects out-of-order stage sequences', () => {
     const input = { taskIds: new Set<string>(), changeIds: new Set<string>() };
