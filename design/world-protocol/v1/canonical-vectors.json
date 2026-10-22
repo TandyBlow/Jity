@@ -1,0 +1,77 @@
+{
+  "canonicalVersion": "world-canonical-v1",
+  "vectors": [
+    {
+      "id": "keys_unicode_integers",
+      "schema": null,
+      "inputJson": "{\"z\":1.0,\"a\":\"学校😀\",\"n\":-0.0}",
+      "expectedCanonical": "{\"a\":\"学校😀\",\"n\":0,\"z\":1}",
+      "expectedUtf8Hex": "7b2261223a22e5ada6e6a0a1f09f9880222c226e223a302c227a223a317d",
+      "expectedSha256": "3376d7a87461723e113591b95f6cfdf7d635f23b27a91973ebaafe4904521d27"
+    },
+    {
+      "id": "control_characters",
+      "schema": null,
+      "inputJson": "{\"a\":\"\\n\\t\\u0000\\u001f\",\"slash\":\"/\",\"u\":\"  \"}",
+      "expectedCanonical": "{\"a\":\"\\u000a\\u0009\\u0000\\u001f\",\"slash\":\"/\",\"u\":\"  \"}",
+      "expectedUtf8Hex": "7b2261223a225c75303030615c75303030395c75303030305c7530303166222c22736c617368223a222f222c2275223a22e280a8e280a9227d",
+      "expectedSha256": "3229dfe43288e18c730d1d4c1ca43d0d95b63b033a2c212c4751cf4ce3beed41"
+    },
+    {
+      "id": "position_defaults",
+      "schema": "Position",
+      "inputJson": "{\"containerId\":\"coat\"}",
+      "expectedCanonical": "{\"containerId\":\"coat\",\"relativeTo\":null,\"slotId\":null}",
+      "expectedUtf8Hex": "7b22636f6e7461696e65724964223a22636f6174222c2272656c6174697665546f223a6e756c6c2c22736c6f744964223a6e756c6c7d",
+      "expectedSha256": "7c6c3aeea3b1598e88a814bb3719c63c6e2d0808d4f89abe541876910a539e1b"
+    },
+    {
+      "id": "set_and_noop_fields",
+      "schema": "EntityDelta",
+      "inputJson": "{\"entityId\":\"person_c\",\"tasksAchieved\":[\"task_z\",\"task_a\"],\"appearanceChanges\":[]}",
+      "expectedCanonical": "{\"entityId\":\"person_c\",\"tasksAchieved\":[\"task_a\",\"task_z\"]}",
+      "expectedUtf8Hex": "7b22656e746974794964223a22706572736f6e5f63222c227461736b734163686965766564223a5b227461736b5f61222c227461736b5f7a225d7d",
+      "expectedSha256": "dc33b391295073ce68a86075350e8b6f8c165558a1dc99ad06b031df4984b3cf"
+    },
+    {
+      "id": "pure_removal_null",
+      "schema": "DescriptionChange",
+      "inputJson": "{\"id\":\"change_remove\",\"text\":null,\"supersedes\":[\"change_old\"]}",
+      "expectedCanonical": "{\"id\":\"change_remove\",\"supersedes\":[\"change_old\"],\"text\":null}",
+      "expectedUtf8Hex": "7b226964223a226368616e67655f72656d6f7665222c2273757065727365646573223a5b226368616e67655f6f6c64225d2c2274657874223a6e756c6c7d",
+      "expectedSha256": "04c798be123fbd73bfa6edf43ba30858127f573f604763f1ff516edc81f16913"
+    },
+    {
+      "id": "ordered_array_ab",
+      "schema": null,
+      "inputJson": "{\"order\":[\"a\",\"b\"]}",
+      "expectedCanonical": "{\"order\":[\"a\",\"b\"]}",
+      "expectedUtf8Hex": "7b226f72646572223a5b2261222c2262225d7d",
+      "expectedSha256": "0b792297a4b01c1cae5d4d40b75a96758f8f90a02b7852760129b692f5695920"
+    },
+    {
+      "id": "ordered_array_ba",
+      "schema": null,
+      "inputJson": "{\"order\":[\"b\",\"a\"]}",
+      "expectedCanonical": "{\"order\":[\"b\",\"a\"]}",
+      "expectedUtf8Hex": "7b226f72646572223a5b2262222c2261225d7d",
+      "expectedSha256": "29d50d86a077c59e612ee5014ec88dc6f2b109228b8a4393d4964c7ee887f6f1"
+    },
+    {
+      "id": "no_unicode_normalization",
+      "schema": null,
+      "inputJson": "{\"a\":\"e\\u0301\",\"b\":\"é\"}",
+      "expectedCanonical": "{\"a\":\"é\",\"b\":\"é\"}",
+      "expectedUtf8Hex": "7b2261223a2265cc81222c2262223a22c3a9227d",
+      "expectedSha256": "bf691ed1b655fba67dbd0f711a09c1da8325f683e1c1f418b9cf770aa87926d0"
+    }
+  ],
+  "rejectedJson": [
+    "{\"a\":1,\"a\":2}",
+    "{\"a\":NaN}",
+    "{\"a\":1.5}",
+    "{\"a\":9007199254740992}",
+    "{\"a\":\"\\ud800\"}",
+    "{\"键\":1}"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "groupId": "group_cd",
+  "actorId": "person_c",
+  "action": "C 推开重门，示意 D 避开门边。",
+  "admittedIds": [
+    "person_d"
+  ],
+  "laterThreat": "E 从另一侧拉动重门。",
+  "expectedAction": "C 推开重门，示意 D 避开门边。",
+  "expectedAdmittedIds": [
+    "person_d"
+  ],
+  "expectedEffect": "later_threat_only_changes_settlement",
+  "actionRevisions": 0
+}

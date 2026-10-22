@@ -1,0 +1,64 @@
+{
+  "stageCandidates": [
+    {
+      "stage": "subtasks",
+      "added": [
+        {
+          "id": "task_new_parent",
+          "ownerId": "person_c",
+          "parentTaskId": "task_c_root",
+          "goal": "检查教室内的安全状况。",
+          "status": "pending"
+        },
+        {
+          "id": "task_new_child",
+          "ownerId": "person_c",
+          "parentTaskId": "task_new_parent",
+          "goal": "确认门边没有障碍。",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "stage": "tasks",
+      "achieved": [
+        "task_new_child"
+      ]
+    }
+  ],
+  "finalDelta": {
+    "entityId": "person_c",
+    "subtasksAdded": [
+      {
+        "id": "task_new_parent",
+        "ownerId": "person_c",
+        "parentTaskId": "task_c_root",
+        "goal": "检查教室内的安全状况。",
+        "status": "pending"
+      },
+      {
+        "id": "task_new_child",
+        "ownerId": "person_c",
+        "parentTaskId": "task_new_parent",
+        "goal": "确认门边没有障碍。",
+        "status": "achieved"
+      }
+    ]
+  },
+  "expectedNewTasks": {
+    "task_new_parent": {
+      "id": "task_new_parent",
+      "ownerId": "person_c",
+      "parentTaskId": "task_c_root",
+      "goal": "检查教室内的安全状况。",
+      "status": "pending"
+    },
+    "task_new_child": {
+      "id": "task_new_child",
+      "ownerId": "person_c",
+      "parentTaskId": "task_new_parent",
+      "goal": "确认门边没有障碍。",
+      "status": "achieved"
+    }
+  }
+}

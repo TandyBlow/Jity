@@ -1,0 +1,327 @@
+{
+  "normalCommit": {
+    "worldId": "world_school",
+    "advanceId": "advance_1",
+    "expectedPointId": "root_0",
+    "expectedVersion": 0,
+    "requestId": "request_p1",
+    "roundId": "round_1",
+    "expectedCheckpointRevision": 1,
+    "leaseToken": "lease_a",
+    "fenceEpoch": 7,
+    "point": {
+      "worldId": "world_school",
+      "id": "p1",
+      "sequence": 1,
+      "kind": "normal",
+      "previousPointId": "root_0",
+      "roundId": "round_1",
+      "advanceId": "advance_1",
+      "trigger": "player",
+      "linkedFromPointId": null,
+      "timeAdvance": {
+        "boundary": "elapsed",
+        "duration": {
+          "amount": 2,
+          "unit": "second"
+        }
+      },
+      "entityDeltas": {}
+    },
+    "checkpoint": {
+      "roundId": "round_1",
+      "advance": {
+        "advanceId": "advance_1",
+        "inputId": "input_1",
+        "inputText": "我推开重门。",
+        "intentStatus": "pending"
+      },
+      "trigger": "player",
+      "order": [
+        "person_a",
+        "person_b",
+        "person_c",
+        "person_d",
+        "person_e",
+        "person_f"
+      ],
+      "cursor": 2,
+      "actedIds": [
+        "person_a",
+        "person_b"
+      ],
+      "visitedIds": [
+        "person_a",
+        "person_b"
+      ],
+      "phase": "await_narration",
+      "resumePhase": "settle_group",
+      "pendingGroup": {
+        "groupId": "group_cd",
+        "initiatorId": "person_c",
+        "memberIds": [
+          "person_c",
+          "person_d"
+        ],
+        "frontierIds": [],
+        "closed": true,
+        "reactions": [
+          {
+            "sourceId": "person_c",
+            "targetId": "person_d",
+            "triggerKey": "trigger_cd",
+            "rollId": "roll_cd",
+            "admitted": true
+          }
+        ]
+      },
+      "conclusion": null
+    },
+    "stageCandidates": [
+      {
+        "scopeId": "slot_a",
+        "actorIds": [
+          "person_a"
+        ],
+        "pureTime": false,
+        "positions": {},
+        "appearances": {},
+        "tasksAchieved": {},
+        "subtasksAdded": {},
+        "personalities": {},
+        "sanities": {},
+        "taskCoverageIds": [
+          "person_a",
+          "person_b",
+          "person_c",
+          "person_d",
+          "person_e",
+          "person_f"
+        ],
+        "personalityCoverageIds": []
+      },
+      {
+        "scopeId": "slot_b",
+        "actorIds": [
+          "person_b"
+        ],
+        "pureTime": false,
+        "positions": {},
+        "appearances": {},
+        "tasksAchieved": {},
+        "subtasksAdded": {},
+        "personalities": {},
+        "sanities": {},
+        "taskCoverageIds": [
+          "person_a",
+          "person_b",
+          "person_c",
+          "person_d",
+          "person_e",
+          "person_f"
+        ],
+        "personalityCoverageIds": []
+      }
+    ]
+  },
+  "timeCommit": {
+    "worldId": "world_school",
+    "advanceId": "advance_1",
+    "expectedPointId": "p3",
+    "expectedVersion": 3,
+    "requestId": "request_p4",
+    "roundId": "round_2",
+    "expectedCheckpointRevision": 7,
+    "leaseToken": "lease_a",
+    "fenceEpoch": 7,
+    "point": {
+      "worldId": "world_school",
+      "id": "p4",
+      "sequence": 4,
+      "kind": "normal",
+      "previousPointId": "p3",
+      "roundId": "round_2",
+      "advanceId": "advance_1",
+      "trigger": "automatic",
+      "linkedFromPointId": null,
+      "timeAdvance": {
+        "boundary": "elapsed",
+        "duration": {
+          "amount": 60,
+          "unit": "second"
+        }
+      },
+      "entityDeltas": {
+        "person_c": {
+          "entityId": "person_c",
+          "tasksAchieved": [
+            "task_wait_noon"
+          ],
+          "personalityChanges": [
+            {
+              "id": "change_relief",
+              "text": "暂时放松了对周围的警戒。",
+              "supersedes": []
+            }
+          ],
+          "sanitySet": 35
+        }
+      }
+    },
+    "checkpoint": {
+      "roundId": "round_2",
+      "advance": {
+        "advanceId": "advance_1",
+        "inputId": "input_1",
+        "inputText": "我推开重门。",
+        "intentStatus": "consumed"
+      },
+      "trigger": "automatic",
+      "order": [
+        "person_a",
+        "person_b",
+        "person_c",
+        "person_d",
+        "person_e",
+        "person_f"
+      ],
+      "cursor": 6,
+      "actedIds": [],
+      "visitedIds": [
+        "person_a",
+        "person_b",
+        "person_c",
+        "person_d",
+        "person_e",
+        "person_f"
+      ],
+      "phase": "await_narration",
+      "resumePhase": "assess_continuation",
+      "pendingGroup": null,
+      "conclusion": null
+    },
+    "stageCandidates": [
+      {
+        "scopeId": "time_scan",
+        "actorIds": [],
+        "pureTime": true,
+        "positions": {},
+        "appearances": {},
+        "tasksAchieved": {
+          "person_c": [
+            "task_wait_noon"
+          ]
+        },
+        "subtasksAdded": {},
+        "personalities": {
+          "person_c": [
+            {
+              "id": "change_relief",
+              "text": "暂时放松了对周围的警戒。",
+              "supersedes": []
+            }
+          ]
+        },
+        "sanities": {
+          "person_c": 35
+        },
+        "taskCoverageIds": [
+          "person_a",
+          "person_b",
+          "person_c",
+          "person_d",
+          "person_e",
+          "person_f"
+        ],
+        "personalityCoverageIds": [
+          "person_a",
+          "person_b",
+          "person_c",
+          "person_d",
+          "person_e",
+          "person_f"
+        ]
+      }
+    ]
+  },
+  "conclusion": {
+    "worldId": "world_school",
+    "advanceId": "advance_1",
+    "expectedPointId": "p3",
+    "expectedVersion": 3,
+    "requestId": "request_conclusion",
+    "roundId": "round_1",
+    "expectedCheckpointRevision": 6,
+    "leaseToken": "lease_a",
+    "fenceEpoch": 7,
+    "operation": "conclude",
+    "conclusion": {
+      "kind": "continue",
+      "closedBy": "model",
+      "cancelReason": null,
+      "candidateCharacterIds": [
+        "person_c"
+      ],
+      "nextRoundId": "round_2"
+    }
+  },
+  "preview": {
+    "worldId": "world_school",
+    "advanceId": "advance_1",
+    "roundId": "round_2",
+    "pointId": "p4",
+    "expectedPointId": "p3",
+    "expectedVersion": 3,
+    "expectedCheckpointRevision": 7,
+    "timeAdvance": {
+      "boundary": "elapsed",
+      "duration": {
+        "amount": 60,
+        "unit": "second"
+      }
+    },
+    "stageCandidates": [
+      {
+        "scopeId": "time_scan",
+        "actorIds": [],
+        "pureTime": true,
+        "positions": {},
+        "appearances": {},
+        "tasksAchieved": {
+          "person_c": [
+            "task_wait_noon"
+          ]
+        },
+        "subtasksAdded": {},
+        "personalities": {
+          "person_c": [
+            {
+              "id": "change_relief",
+              "text": "暂时放松了对周围的警戒。",
+              "supersedes": []
+            }
+          ]
+        },
+        "sanities": {
+          "person_c": 35
+        },
+        "taskCoverageIds": [
+          "person_a",
+          "person_b",
+          "person_c",
+          "person_d",
+          "person_e",
+          "person_f"
+        ],
+        "personalityCoverageIds": [
+          "person_a",
+          "person_b",
+          "person_c",
+          "person_d",
+          "person_e",
+          "person_f"
+        ]
+      }
+    ]
+  }
+}

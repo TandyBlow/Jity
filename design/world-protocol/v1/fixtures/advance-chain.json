@@ -1,0 +1,148 @@
+{
+  "afterConclusion": {
+    "roundId": "round_1",
+    "advance": {
+      "advanceId": "advance_1",
+      "inputId": "input_1",
+      "inputText": "我推开重门。",
+      "intentStatus": "consumed"
+    },
+    "trigger": "player",
+    "order": [
+      "person_a",
+      "person_b",
+      "person_c",
+      "person_d",
+      "person_e",
+      "person_f"
+    ],
+    "cursor": 6,
+    "actedIds": [
+      "person_a",
+      "person_b",
+      "person_c",
+      "person_d"
+    ],
+    "visitedIds": [
+      "person_a",
+      "person_b",
+      "person_c",
+      "person_d",
+      "person_e",
+      "person_f"
+    ],
+    "phase": "complete",
+    "resumePhase": null,
+    "pendingGroup": null,
+    "conclusion": {
+      "kind": "continue",
+      "closedBy": "model",
+      "cancelReason": null,
+      "candidateCharacterIds": [
+        "person_c"
+      ],
+      "nextRoundId": "round_2"
+    }
+  },
+  "automatic": {
+    "roundId": "round_2",
+    "advance": {
+      "advanceId": "advance_1",
+      "inputId": "input_1",
+      "inputText": "我推开重门。",
+      "intentStatus": "consumed"
+    },
+    "trigger": "automatic",
+    "order": [
+      "person_a",
+      "person_b",
+      "person_c",
+      "person_d",
+      "person_e",
+      "person_f"
+    ],
+    "cursor": 0,
+    "actedIds": [],
+    "visitedIds": [],
+    "phase": "select_actor",
+    "resumePhase": null,
+    "pendingGroup": null,
+    "conclusion": null
+  },
+  "handback": {
+    "roundId": "round_2",
+    "advance": {
+      "advanceId": "advance_1",
+      "inputId": "input_1",
+      "inputText": null,
+      "intentStatus": "consumed"
+    },
+    "trigger": "automatic",
+    "order": [
+      "person_a",
+      "person_b",
+      "person_c",
+      "person_d",
+      "person_e",
+      "person_f"
+    ],
+    "cursor": 6,
+    "actedIds": [
+      "person_a",
+      "person_b",
+      "person_c",
+      "person_d"
+    ],
+    "visitedIds": [
+      "person_a",
+      "person_b",
+      "person_c",
+      "person_d",
+      "person_e",
+      "person_f"
+    ],
+    "phase": "complete",
+    "resumePhase": null,
+    "pendingGroup": null,
+    "conclusion": {
+      "kind": "handback",
+      "closedBy": "model",
+      "cancelReason": null
+    }
+  },
+  "cancel": {
+    "roundId": "round_1",
+    "advance": {
+      "advanceId": "advance_1",
+      "inputId": "input_1",
+      "inputText": null,
+      "intentStatus": "expired"
+    },
+    "trigger": "player",
+    "order": [
+      "person_a",
+      "person_b",
+      "person_c",
+      "person_d",
+      "person_e",
+      "person_f"
+    ],
+    "cursor": 2,
+    "actedIds": [
+      "person_a",
+      "person_b"
+    ],
+    "visitedIds": [
+      "person_a",
+      "person_b"
+    ],
+    "phase": "complete",
+    "resumePhase": null,
+    "pendingGroup": null,
+    "conclusion": {
+      "kind": "handback",
+      "closedBy": "cancel",
+      "cancelReason": "玩家结束本次推进。"
+    }
+  }
+}

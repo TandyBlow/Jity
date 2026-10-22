@@ -1,0 +1,44 @@
+{
+  "entityId": "person_c",
+  "field": "appearance",
+  "history": [
+    {
+      "id": "change_bleeding",
+      "text": "嘴角开始流血。",
+      "supersedes": [],
+      "sourcePointId": "p1",
+      "sourceSequence": 1,
+      "active": true
+    }
+  ],
+  "replacement": {
+    "id": "change_stopped",
+    "text": "嘴角已止血。",
+    "supersedes": [
+      "change_bleeding"
+    ]
+  },
+  "pureRemoval": {
+    "id": "change_remove",
+    "text": null,
+    "supersedes": [
+      "change_bleeding"
+    ]
+  },
+  "samePointWorking": [
+    {
+      "localRef": "local_bleed",
+      "text": "嘴角开始流血。"
+    },
+    {
+      "localRef": "local_stop",
+      "text": "嘴角已止血。",
+      "replacesLocal": "local_bleed"
+    }
+  ],
+  "expectedCollapsed": {
+    "id": "change_final",
+    "text": "嘴角已止血。",
+    "supersedes": []
+  }
+}

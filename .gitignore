@@ -137,3 +137,6 @@ artifacts/benchmark/crf-compare-1791522475600.json
 
 # === Model weight snapshots stay local (never shipped, round notes say so) ===
 artifacts/benchmark/minirbt-h256-snapshot/
+
+# === Local tooling ignore list (ZCode); duplicates .gitignore ===
+.zcodeignore
