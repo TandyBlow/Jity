@@ -4,9 +4,9 @@
  * cycle (T02-el shape) and seal/commit/narration. */
 import { describe, expect, test } from 'vitest';
 import { ControllerDriver, initialMemory, type WorldModelPort } from './controller';
-import { errorCatalog } from './schedule';
+import { errorCatalog, workingStateKey } from './schedule';
 import type { ControllerMemory, ModelTask, PlannedPoint } from './schedule';
-import { WorldApiError, type WorldTransport } from './transport';
+import { WorldApiError, WorldTimeoutError, type WorldTransport } from './transport';
 import type { ClientAction, ControlState, ErrorCode, ErrorResponse, Id, Json, PointWork, TimeAdvance, WorldContext, WorldOperation } from './types';
 
 const ORDER = ['person_a', 'person_b', 'person_c', 'person_d', 'person_e', 'person_f'];
@@ -64,7 +64,7 @@ class ScriptedTransport implements WorldTransport {
 class ScriptedModel implements WorldModelPort {
   readonly calls: { task: ModelTask; key: string; input: Json }[] = [];
   private index = 0;
-  constructor(private script: { task: ModelTask; output: Json }[]) {}
+  constructor(public script: { task: ModelTask; output: Json }[]) {}
   async generate(task: ModelTask, key: string, input: Json): Promise<Json> {
     this.calls.push({ task, key, input: structuredClone(input) });
     const entry = this.script[this.index++];
@@ -128,7 +128,7 @@ describe('driver end-to-end: entry, group cycle, seal/commit, narration', () => 
       ...ORDER.slice(1).map((slotActorId, i) => ({
         op: 'checkpoint_record_skip' as WorldOperation,
         respond: (r: unknown) => {
-          work = mkWork({ working: { cursor: i + 2, actedIds: ORDER.slice(0, i + 2), visitedIds: [], settledUnitIds: ['u1'], intentStatus: 'pending' } });
+          work = mkWork({ working: { cursor: i + 2, actedIds: ['person_a'], visitedIds: [], settledUnitIds: ['u1'], intentStatus: 'pending' } });
           control = mkControl({ revision: 11 + i });
           return writeOk('checkpoint_record_skip', (r as { requestId: Id }).requestId, { pointId: 'p1', working: work.working });
         },
@@ -154,6 +154,7 @@ describe('driver end-to-end: entry, group cycle, seal/commit, narration', () => 
     const memory = initialMemory('req', 'browser');
     memory.playerInput = { text: '探索走廊', order: ORDER };
     memory.allocPlan = { allocationKey: 'chain_slots', slots: [{ slotKey: 'advance', kind: 'advance', scope: null }, { slotKey: 'input', kind: 'input', scope: null }, { slotKey: 'round', kind: 'round', scope: null }] };
+    memory.ids = { 'group:person_a': 'g1' };
     const driver = new ControllerDriver({ transport, model }, memory);
 
     const status = await driver.run();
@@ -174,6 +175,7 @@ describe('driver end-to-end: entry, group cycle, seal/commit, narration', () => 
     const requestIds = (transport.requests as { requestId?: Id }[]).map((r) => r.requestId).filter((id): id is Id => id != null);
     expect(new Set(requestIds).size).toBe(requestIds.length);
     const extendTargets = transport.requests[8] as { targets: { targetId: string }[]; admittedMember: unknown };
+    expect((transport.requests[7] as { groupId: Id }).groupId).toBe('g1');
     expect(extendTargets.targets.map((t) => t.targetId)).toEqual(['person_d', 'person_a']);
     const rolls = (transport.requests[9] as { rolls: { targetId: string }[] }).rolls;
     expect(rolls[0].targetId).toBe('person_a');
@@ -271,5 +273,251 @@ describe('driver error routing and controls', () => {
     expect(await driver.step()).toBeUndefined();
     expect(await driver.step()).toEqual({ kind: 'await', reason: 'paused_externally' });
     expect(driver.getMemory().localPause).toBe(false);
+  });
+});
+
+describe('review regressions (553e341 findings)', () => {
+  const midPoint = (workOver: Partial<PointWork>, memoryOver: Partial<ControllerMemory> = {}) => {
+    const world = mkWorld({
+      advance: { advanceId: 'adv1', inputId: 'in1', intentStatus: 'consumed', inputAvailable: false },
+      activeRoundId: 'r1', activePointId: 'p1',
+      round: { roundId: 'r1', trigger: 'player', order: ORDER, cursor: 0, actedIds: [], visitedIds: [], conclusion: null },
+    });
+    const control = mkControl({ revision: 6 });
+    const work = mkWork(workOver);
+    const transport = new ScriptedTransport([]);
+    const model = new ScriptedModel([]);
+    const memory = memoryWithAdvanceStart({
+      plan: [{ pointId: 'p1', kind: 'normal', timeAdvance: ta(2), actorIds: ['person_a'] }],
+      ids: { 'group:person_a': 'g1' },
+      workingState: { key: workingStateKey(work), state: workingState() as never },
+      ...memoryOver,
+    });
+    const driver = new ControllerDriver({ transport, model }, memory, { world, control, work });
+    const writeOk = (operation: WorldOperation, request: unknown, data: unknown) => ({
+      protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1,
+      replayed: false, operation, requestId: (request as { requestId?: Id })?.requestId ?? 'req', requestHash: 'hash', world, control, work, data,
+    });
+    return { world, control, work, transport, model, driver, writeOk };
+  };
+
+  test('a final not-admitted roll retires the source and closes the group', async () => {
+    const { transport, driver, writeOk } = midPoint(
+      { phase: 'build_group', pendingGroup: { groupId: 'g1', sourceId: 'person_a', memberIds: ['person_a'], targetIds: [], frontierIds: [], closed: false } },
+      { sources: [{ sourceId: 'person_a', actionText: '行动。', targetsExtended: true, pendingTargets: [{ targetId: 'person_d', triggerKey: 'tk_d', rule: { ruleVersion: 'reaction-fixture-v1', target: 11 } }], rolled: [] }] },
+    );
+    transport.script = [
+      { op: 'create_rolls', respond: (r) => writeOk('create_rolls', r, { rolls: [{ sourceId: 'person_a', targetId: 'person_d', triggerKey: 'tk_d', rollId: 'roll_d', result: 3, eligibilityBaselineDigest: 'ebd', eligible: false, admitted: false }] }) },
+      { op: 'checkpoint_close_group', respond: (r) => writeOk('checkpoint_close_group', r, { groupId: 'g1', closed: true }) },
+    ];
+    await driver.step();
+    expect(driver.getMemory().sources).toEqual([]);
+    await driver.step();
+    expect(transport.ops).toEqual(['create_rolls', 'checkpoint_close_group']);
+  });
+
+  test('an admitted member counts as acted and never gets a second action call', async () => {
+    const { transport, model, driver, work, writeOk } = midPoint(
+      { phase: 'build_group', pendingGroup: { groupId: 'g1', sourceId: 'person_a', memberIds: ['person_a', 'person_d'], targetIds: [], frontierIds: [], closed: false } },
+      {
+        groupActors: ['person_a'],
+        lastModel: { task: 'reaction', key: 'person_a', output: 'person_d被迫反应。' },
+        sources: [{ sourceId: 'person_a', actionText: '行动。', targetsExtended: true, pendingTargets: [], rolled: [{ targetId: 'person_d', triggerKey: 'tk_d', rule: { ruleVersion: 'reaction-fixture-v1', target: 11 }, rollId: 'roll_d', admitted: true, reacted: false }] }],
+      },
+    );
+    transport.script = [
+      { op: 'checkpoint_extend_group', respond: (r) => writeOk('checkpoint_extend_group', r, { groupId: 'g1', memberIds: ['person_a', 'person_d'], frontierIds: [] }) },
+      { op: 'checkpoint_extend_group', respond: (r) => writeOk('checkpoint_extend_group', r, { groupId: 'g1', memberIds: ['person_a', 'person_d'], frontierIds: [] }) },
+      { op: 'checkpoint_close_group', respond: (r) => { Object.assign(work!, { phase: 'settle_group', pendingGroup: { groupId: 'g1', sourceId: 'person_a', memberIds: ['person_a', 'person_d'], targetIds: [], frontierIds: [], closed: true } }); return writeOk('checkpoint_close_group', r, { groupId: 'g1', closed: true }); } },
+      { op: 'checkpoint_stage_unit', respond: (r) => { Object.assign(work!, { phase: 'select_actor', pendingGroup: null, working: { cursor: 2, actedIds: ['person_a', 'person_d'], visitedIds: [], settledUnitIds: ['u1'], intentStatus: 'pending' } }); return writeOk('checkpoint_stage_unit', r, { groupId: 'g1', unitId: 'u1', working: work.working }); } },
+      { op: 'checkpoint_record_skip', respond: (r) => writeOk('checkpoint_record_skip', r, { pointId: 'p1', working: work.working }) },
+    ];
+    model.script = [
+      { task: 'targets', output: { targets: [] } },
+      { task: 'results', output: { person_a: 'a。', person_d: 'd。' } },
+      { task: 'updates', output: [] as unknown as Json },
+    ];
+    await driver.step(); // extend admittedMember (consumes the reaction output)
+    await driver.step(); // model targets for person_d (DFS)
+    await driver.step(); // extend person_d targets
+    await driver.step(); // close (both sources retired)
+    await driver.step(); // model results
+    await driver.step(); // model updates
+    await driver.step(); // stage
+    await driver.step(); // leave-behind skip
+    expect(model.calls.map((c) => `${c.task}:${c.key}`)).toEqual(['targets:person_d', 'results:g1', 'updates:g1']);
+    expect(transport.ops).toEqual(['checkpoint_extend_group', 'checkpoint_extend_group', 'checkpoint_close_group', 'checkpoint_stage_unit', 'checkpoint_record_skip']);
+    expect((transport.requests[4] as { slotActorId: string }).slotActorId).toBe('person_c');
+    expect(driver.getMemory().groupActors).toEqual(['person_a', 'person_d']);
+  });
+
+  test('split updates restart per point (no candidate leakage through commit)', async () => {
+    let world = mkWorld({ advance: { advanceId: 'adv1', inputId: 'in1', intentStatus: 'consumed', inputAvailable: false }, activeRoundId: 'r1', activePointId: 'p0', round: { roundId: 'r1', trigger: 'player', order: ORDER, cursor: 0, actedIds: [], visitedIds: [], conclusion: null } });
+    let control = mkControl({ revision: 2 });
+    let work: PointWork | null = mkWork({ pointId: 'p0', timeAdvance: ta(60) });
+    const writeOk = (operation: WorldOperation, request: unknown, data: unknown) => ({
+      protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1,
+      replayed: false, operation, requestId: (request as { requestId?: Id })?.requestId ?? 'req', requestHash: 'hash', world, control, work, data,
+    });
+    const previewOk = (r: unknown) => ({
+      protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1,
+      operation: 'preview_point', world, control, work, requestId: (r as { requestId?: Id })?.requestId,
+      data: { pointId: work!.pointId, pointProjection: { worldId: 'w1', id: work!.pointId, sequence: 1, kind: 'normal', previousPointId: 'root', roundId: 'r1', advanceId: 'adv1', trigger: 'automatic', linkedFromPointId: null, timeAdvance: work!.timeAdvance, entityDeltas: {} }, mergedEntityDeltas: {}, workingStateDigest: 'wsd', pointProjectionDigest: 'ppd', workingState: workingState() },
+    });
+    const scanCalls: number[] = [];
+    const scanEntry = (): { op: WorldOperation; respond: (r: unknown) => unknown } => ({
+      op: 'checkpoint_stage_time_scan',
+      respond: (r) => {
+        scanCalls.push(((JSON.parse(JSON.stringify(r)) as { candidates: { sanities: Record<string, number> } }).candidates.sanities.person_a));
+        Object.assign(work!, { timeScanComplete: true });
+        control = mkControl({ revision: control.revision + 1 });
+        return writeOk('checkpoint_stage_time_scan', r, { pointId: work!.pointId, working: work!.working });
+      },
+    });
+    const previewEntry = () => ({ op: 'preview_point' as WorldOperation, respond: (r: unknown) => previewOk(r) });
+    const sealEntry = () => ({
+      op: 'checkpoint_seal_point' as WorldOperation,
+      respond: (r: unknown) => {
+        Object.assign(work!, { sealed: true, prefixDigest: 'pd' });
+        control = mkControl({ revision: control.revision + 1 });
+        return writeOk('checkpoint_seal_point', r, { pointId: work!.pointId, prefixDigest: 'pd' });
+      },
+    });
+    const commitEntry = (digest: string) => ({
+      op: 'commit_point' as WorldOperation,
+      respond: (r: unknown) => {
+        const finished = work;
+        world = { ...world, head: { pointId: finished!.pointId, version: 1, stateDigest: digest, narrationStatus: 'pending' } };
+        work = null;
+        control = mkControl({ revision: control.revision + 1 });
+        return writeOk('commit_point', r, { pointId: finished!.pointId, version: 1, stateDigest: digest });
+      },
+    });
+    const claimEntry = () => ({
+      op: 'narration_claim' as WorldOperation,
+      respond: (r: unknown) => writeOk('narration_claim', r, { pointId: world.head.pointId, mode: 'head', generation: 1, fenceEpoch: 1, issuedAtEpochMilli: 1, expiresAtEpochMilli: 2, claimToken: `ct_${world.head.pointId}` }),
+    });
+    const submitEntry = () => ({
+      op: 'narration_submit' as WorldOperation,
+      respond: (r: unknown) => {
+        world = { ...world, head: { ...world.head, narrationStatus: 'ready' } };
+        return writeOk('narration_submit', r, { pointId: world.head.pointId, narrationStatus: 'ready', generation: 1 });
+      },
+    });
+    const transport = new ScriptedTransport([
+      previewEntry(), scanEntry(), previewEntry(), sealEntry(), commitEntry('dp0'),
+      claimEntry(), submitEntry(),
+      {
+        op: 'checkpoint_begin_point',
+        respond: (r) => {
+          work = mkWork({ pointId: 'p1', timeAdvance: ta(60) });
+          world = { ...world, activePointId: 'p1' };
+          control = mkControl({ revision: control.revision + 1 });
+          return writeOk('checkpoint_begin_point', r, { pointId: 'p1' });
+        },
+      },
+      previewEntry(), scanEntry(), previewEntry(), sealEntry(), commitEntry('dp1'),
+      claimEntry(), submitEntry(),
+    ]);
+    const model = new ScriptedModel([
+      { task: 'updates', output: { stage: 'sanity', changes: { person_a: { sanitySet: 40 } } } as unknown as Json },
+      { task: 'narration', output: 'p0叙事。' },
+      { task: 'updates', output: { stage: 'sanity', changes: { person_a: { sanitySet: 41 } } } as unknown as Json },
+      { task: 'narration', output: 'p1叙事。' },
+    ]);
+    const memory = memoryWithAdvanceStart({
+      plan: [
+        { pointId: 'p0', kind: 'normal', timeAdvance: ta(60), actorIds: [] },
+        { pointId: 'p1', kind: 'normal', timeAdvance: ta(60), actorIds: [] },
+      ],
+      updatesStages: ['sanity'],
+    });
+    const driver = new ControllerDriver({ transport, model }, memory, { world, control, work });
+    const status = await driver.run();
+    expect(status).toEqual({ kind: 'await', reason: 'round_points_exhausted' });
+    expect(scanCalls).toEqual([40, 41]);
+    expect(model.calls.map((c) => c.key)).toEqual(['time_scan:p0#sanity', 'p0', 'time_scan:p1#sanity', 'p1']);
+    expect(driver.getMemory().updatesCalls).toEqual([]);
+  });
+
+  test('claim_expired drops the claim and regenerates with a fresh token', async () => {
+    const world = mkWorld({ head: { pointId: 'p1', version: 1, stateDigest: 'd1', narrationStatus: 'pending' } });
+    const control = mkControl({ revision: 13 });
+    const transport = new ScriptedTransport([
+      { op: 'narration_submit', respond: (r) => apiError('claim_expired', (r as { requestId?: Id })?.requestId ?? 'req') },
+      { op: 'narration_claim', respond: (r) => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation: 'narration_claim', requestId: (r as { requestId: Id }).requestId, requestHash: 'hash', world, control, work: null, data: { pointId: 'p1', mode: 'head', generation: 2, fenceEpoch: 1, issuedAtEpochMilli: 9, expiresAtEpochMilli: 10, claimToken: 'ct_new' } }) },
+      { op: 'narration_submit', respond: (r) => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation: 'narration_submit', requestId: (r as { requestId: Id }).requestId, requestHash: 'hash', world: { ...world, head: { ...world.head, narrationStatus: 'ready' } }, control, work: null, data: { pointId: 'p1', narrationStatus: 'ready', generation: 2 } }) },
+    ]);
+    const model = new ScriptedModel([{ task: 'narration', output: '重生成叙事。' }]);
+    const memory = memoryWithAdvanceStart({
+      narration: { pointId: 'p1', claim: { claimToken: 'ct_old', generation: 1, issuedAtEpochMilli: 1 }, input: { pointId: 'p1' } },
+      lastModel: { task: 'narration', key: 'p1', output: '旧文本。' },
+    });
+    const driver = new ControllerDriver({ transport, model }, memory, { world, control });
+    await driver.step();
+    expect(driver.getMemory().narration).toMatchObject({ pointId: 'p1', claim: null });
+    expect(driver.getMemory().lastModel).toBeNull();
+    await driver.step();
+    await driver.step();
+    await driver.step();
+    expect(transport.ops).toEqual(['narration_submit', 'narration_claim', 'narration_submit']);
+    expect((transport.requests[2] as { claimToken: Id }).claimToken).toBe('ct_new');
+    expect(model.calls.length).toBe(1);
+    expect(driver.getMemory().narration).toBeNull();
+  });
+
+  test('an external pause survives a lease detour', async () => {
+    const world = mkWorld({ lease: null });
+    const control = mkControl();
+    const transport = new ScriptedTransport([
+      { op: 'lease_acquire', respond: (r) => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation: 'lease_acquire', requestId: (r as { requestId: Id }).requestId, requestHash: 'hash', world: { ...world, lease: { fenceEpoch: 2, expiresAtEpochMilli: 9 } }, control, work: null, data: { leaseToken: 'lease2', fenceEpoch: 2, expiresAtEpochMilli: 9, holderId: 'browser' } }) },
+      { op: 'checkpoint_pause', respond: (r) => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation: 'checkpoint_pause', requestId: (r as { requestId: Id }).requestId, requestHash: 'hash', world: { ...world, lease: { fenceEpoch: 2, expiresAtEpochMilli: 9 } }, control: mkControl({ paused: true, revision: 1 }), work: null, data: { paused: true } }) },
+    ]);
+    const driver = new ControllerDriver({ transport, model: new ScriptedModel([]) }, memoryWithAdvanceStart({ leaseToken: null }), { world, control });
+    driver.deliver({ kind: 'pause' });
+    await driver.step();
+    expect(transport.ops).toEqual(['lease_acquire']);
+    expect(driver.getMemory().leaseToken).toBe('lease2');
+    await driver.step();
+    expect(transport.ops).toEqual(['lease_acquire', 'checkpoint_pause']);
+    expect(await driver.step()).toEqual({ kind: 'await', reason: 'paused_externally' });
+  });
+
+  test('preview errors route through refresh_context and re-preview', async () => {
+    const world = mkWorld({ advance: { advanceId: 'adv1', inputId: 'in1', intentStatus: 'consumed', inputAvailable: false }, activeRoundId: 'r1', activePointId: 'p1', round: { roundId: 'r1', trigger: 'player', order: ORDER, cursor: 0, actedIds: [], visitedIds: [], conclusion: null } });
+    let control = mkControl({ revision: 3 });
+    const work = mkWork();
+    const previewOk = (r: unknown) => ({
+      protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1,
+      operation: 'preview_point', world, control, work, requestId: (r as { requestId?: Id })?.requestId,
+      data: { pointId: 'p1', pointProjection: { worldId: 'w1', id: 'p1', sequence: 1, kind: 'normal', previousPointId: 'root', roundId: 'r1', advanceId: 'adv1', trigger: 'player', linkedFromPointId: null, timeAdvance: ta(2), entityDeltas: {} }, mergedEntityDeltas: {}, workingStateDigest: 'wsd', pointProjectionDigest: 'ppd', workingState: workingState() },
+    });
+    const transport = new ScriptedTransport([
+      { op: 'preview_point', respond: (r) => apiError('revision_mismatch', (r as { requestId?: Id })?.requestId ?? 'req') },
+      { op: 'get_context', respond: () => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, world, control: mkControl({ revision: 9 }), work, activeInput: null, recovery: null }) },
+      { op: 'preview_point', respond: (r) => previewOk(r) },
+    ]);
+    const driver = new ControllerDriver({ transport, model: new ScriptedModel([]) }, memoryWithAdvanceStart({ plan: [{ pointId: 'p1', kind: 'normal', timeAdvance: ta(2), actorIds: ['person_a'] }] }), { world, control, work });
+    await driver.step();
+    await driver.step();
+    expect(transport.ops).toEqual(['preview_point', 'get_context', 'preview_point']);
+    expect((transport.requests[2] as { expectedCheckpointRevision: number }).expectedCheckpointRevision).toBe(9);
+    expect(driver.getMemory().workingState).not.toBeNull();
+  });
+
+  test('retry limit bounds timeout and request_in_progress loops', async () => {
+    let timeoutCalls = 0;
+    const timeoutTransport: WorldTransport = { async execute() { timeoutCalls++; throw new WorldTimeoutError(); } };
+    const driver1 = new ControllerDriver({ transport: timeoutTransport, model: new ScriptedModel([]) }, memoryWithAdvanceStart(), { world: mkWorld(), control: mkControl() }, { retryLimit: 2 });
+    const status = await driver1.run(1);
+    expect(timeoutCalls).toBe(3);
+    expect(status).toEqual({ kind: 'error', detail: expect.stringContaining('retry limit') });
+
+    let busyCalls = 0;
+    const busyTransport: WorldTransport = { async execute(operation, request) { busyCalls++; throw apiError('request_in_progress', (request as { requestId?: Id })?.requestId ?? 'req'); } };
+    const driver2 = new ControllerDriver({ transport: busyTransport, model: new ScriptedModel([]) }, memoryWithAdvanceStart(), { world: mkWorld(), control: mkControl() }, { retryLimit: 2 });
+    const status2 = await driver2.run(1);
+    expect(busyCalls).toBe(3);
+    expect(status2.kind).toBe('error');
   });
 });
