@@ -307,6 +307,12 @@ function narrationDecision(view: ScheduleView): Decision | null {
   if (status === 'ready') return null;
   const pointId = world.head.pointId;
   const narration = memory.narration && memory.narration.pointId === pointId ? memory.narration : null;
+  if (!world.lease || !memory.leaseToken) {
+    // Pending narration must not throw before the entry order reaches
+    // lease_acquire; a held claim without a lease is a driver invariant break.
+    if (narration?.claim) throw new Error('Narration claim survived lease loss');
+    return null;
+  }
   if (narration?.claim && memory.lastModel?.task === 'narration') {
     const bind = writeBind(view);
     const claim = narration.claim;
@@ -469,8 +475,10 @@ function selectActorDecision(view: ScheduleView): Decision {
     if (!freshState(memory, work!)) return { kind: 'read_working_state' };
     return { kind: 'model', task: 'action', key: actor, input: { actor, workingState: asJson(memory.workingState!.state) } };
   }
-  // Empty/actionless point: the time scan is the whole unit (T03, T02-el linked).
-  if (planned && planned.actorIds.length === 0 && !work!.timeScanComplete && memory.staged.length === 0) {
+  // Time scan: required for empty/actionless points (T03) AND for actor
+  // points whose every planned actor skipped — nothing settled means the
+  // point still owes its time-scan candidates before sealing.
+  if (planned && !work!.timeScanComplete && memory.staged.length === 0) {
     const single = memory.updatesStages.length === 0;
     const calls: UpdatesCall[] | null = single
       ? (memory.lastModel?.task === 'updates' ? memory.lastModel.output as unknown as UpdatesCall[] : null)
@@ -611,11 +619,21 @@ function buildDecision(view: ScheduleView): Decision {
 }
 
 /** Split updates run 1–6 per-stage calls keyed by stage (scenario-declared
- * sequence); empty updatesStages = one merged call. */
-function updatesModelCall(view: ScheduleView, keyBase: string, input: Record<string, Json>): Decision {
-  const stage = view.memory.updatesStages[view.memory.updatesCalls.length];
-  if (stage) return { kind: 'model', task: 'updates', key: `${keyBase}#${stage}`, input: { ...input, stage } };
-  return { kind: 'model', task: 'updates', key: keyBase, input };
+ * sequence); empty updatesStages = one merged call. Later stages see the
+ * accumulated calls and their applied merge, not just the raw state. */
+function updatesModelCall(view: ScheduleView, keyBase: string, base: Record<string, Json>): Decision {
+  const { memory } = view;
+  const stage = memory.updatesStages[memory.updatesCalls.length];
+  const priorStages = asJson(memory.updatesCalls);
+  let appliedDelta: Json = {};
+  if (memory.updatesCalls.length) {
+    const merged = checkUpdatesStages(inputIds(memory), memory.updatesCalls);
+    if (!merged.ok) return { kind: 'stop', reason: `dangling_updates_refs:${JSON.stringify(merged.dangling)}` };
+    appliedDelta = asJson(merged.merged);
+  }
+  const fields: Record<string, Json> = { ...base, priorStages, appliedDelta };
+  if (stage) return { kind: 'model', task: 'updates', key: `${keyBase}#${stage}`, input: { ...fields, stage } };
+  return { kind: 'model', task: 'updates', key: keyBase, input: fields };
 }
 
 function settleDecision(view: ScheduleView): Decision {

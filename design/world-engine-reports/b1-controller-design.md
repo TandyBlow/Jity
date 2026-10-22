@@ -1,6 +1,6 @@
 # B1 控制器设计补充（B 侧）
 
-状态：2026-10-22，基于分支 `world-browser`（`79f8120`，契约摘要 `480d950c…`）；同日二轮修订：组扩张顺序/DFS、`updates` 调用粒度、`pointPlan` 边界、T03-collapse guard、错误路由、requestId 生命周期、preview 标本与 digest 策略。§7 两项待 A 确认后定稿；确认前步骤 1–5 可先行，H1 不开跑。本文是 [分工文档](../browser-world-state-work-split.md) §四 B1 行的实现层补充，替代原计划中与共享轨迹逐字消费相关的表述。
+状态：2026-10-22，基于分支 `world-browser`（`79f8120`，契约摘要 `480d950c…`）；同日二轮修订：组扩张顺序/DFS、`updates` 调用粒度、`pointPlan` 边界、T03-collapse guard、错误路由、requestId 生命周期、preview 标本与 digest 策略；同日三轮：调度纯函数实现并经两轮评审修复闭环（complete 入口、scope 规律、stateKey、DFS 兄弟顺序、候选装配、act/skip 输出、updates split 与 canonical 序、全 actor skip 补时间扫描、缺 lease 叙事不再抛错）。§7 两项待 A 确认后开 harness 语料与 H1。本文是 [分工文档](../browser-world-state-work-split.md) §四 B1 行的实现层补充，替代原计划中与共享轨迹逐字消费相关的表述。
 
 ## 0. 验收口径：共享轨迹是契约标本，不是控制器金标
 
@@ -64,10 +64,9 @@ pure 指对服务端状态 pure，允许携带控制器记忆：
 - **action 输出形状（已定，含 skip 分支）**：`{kind:'act', text}` 或 `{kind:'skip'}`——计划内 actor 返回 skip 时控制器发 `record_skip(slotActorId=actor)` 并推进槽位，不发 discover；这与"计划点不覆盖的 round 成员 leave-behind skip"（§4 select_actor 收尾路径）是两条不同路径。
 - **updates split 落地形状**：场景在 memory 声明 `updatesStages`（空 = 单次合并调用）；split 时每次调用 key 带 stage（`<groupId>#<stage>` / `time_scan:<pointId>#<stage>`），driver 按 stage 累积输出；`checkUpdatesStages` 强制 canonical stage 序，乱序/重复直接拒绝。
 - **scope 规律（fixture 逐字比对依赖）**：`checkpoint_*`/`create_rolls`/`commit_point`/`preview_point` 等 world 操作 scope 仅 `{worldId}`；`narration_claim`/`narration_submit` 为 `{worldId, pointId=head.pointId}`；`create_world` 为 `{}`。
-- **stateKey 组成**：`(pointId, baseline.version, timeAdvance, settledUnitIds, timeScanComplete)`——`timeScanComplete` 必须入键，时间扫描改写任务/个性/理智而不动 settledUnitIds，漏掉会跳过 scan 后的强制 preview。
 - **guard（修正，T03-collapse 是正例不是反例）**：只拒绝**悬空引用**——后序 stage 需要的对象既不在输入状态、也不在本序列更早/同 stage 的输出中。跨 stage 的 ID 重叠若服务器接受则放行：T03-collapse 的 stage 候选把 v13 同时放进 `tasksAchieved` 与 `subtasksAdded`（pending，parentTaskId v12），最终 Δ 塌缩为 `subtasksAdded: v13 achieved`，这是合法路径，controller.test 用它锁行为。不得实现成"所有引用必须指向已有状态或更早 stage"的严格前向引用检查。
 - **workingState 读取策略**：`begin_point` 后、每次 `stage_unit` 后、**`stage_time_scan` 后**（T03/T02-el 的时间扫描改变任务/个性/理智，必须重读）调用 `preview_point`，以返回的 `data.workingState` 作模型输入；提交前用 `data.pointProjection` + `data.mergedEntityDeltas` 核对 stage payload。
-  - **缓存键（stateKey，语义失效）**：`(pointId, work.baseline.version, work.timeAdvance, working.settledUnitIds)`。按 `checkpointRevision` 失效在语义上过宽——T01 五次 `record_skip` 各升 revision，会多出五次无意义 preview；skip/pause 不改变工作态，不应失效。fixture 按本键写。
+  - **缓存键（stateKey，语义失效）**：`(pointId, work.baseline.version, work.timeAdvance, working.settledUnitIds, timeScanComplete)`。按 `checkpointRevision` 失效在语义上过宽——T01 五次 `record_skip` 各升 revision，会多出五次无意义 preview；skip/pause 不改变工作态，不应失效。`timeScanComplete` 必须入键：时间扫描改写任务/个性/理智而不动 settledUnitIds，漏掉会跳过 scan 后的强制 preview。fixture 按本键写。
   - **preview 标本与 digest 策略**：中间 preview 响应（workingState/pointProjection/mergedEntityDeltas）不在共享轨迹里，由 B 手写标本；两个 digest 字段（`workingStateDigest`/`pointProjectionDigest`）为 schema 必填，B1 夹具用固定占位值并声明**digest 断言只覆盖最终 preview（T01 s16 语料，来自共享轨迹）与 commit 路径**，不对中间 preview 的占位 digest 做语义断言；B 不自行实现 canonical 摘要。若后续要对中间态做严格 digest 校验，另请 A 用测试侧工具生成（§7.2）。
   - preview 前置（契约已固定）：paused=false、headNarration=ready、gate=cleared、pointWork open|sealed。控制器发 `read_working_state` 前自查。
 
@@ -119,7 +118,7 @@ pure 指对服务端状态 pure，允许携带控制器记忆：
 
 代码落点（均 B 属地）：`frontend/src/lib/world-engine/` 增 `schedule.ts`（纯决策）、`projection.ts`（模型输入投影——B1 最大工作量，独立文件与测试，不塞进 schedule）、`controller.ts`（驱动循环）、`harness.ts` 与 `controller.test.ts`（夹具与验收）。
 
-## 7. 待与 A 确认（阻塞 H1 与步骤 2 harness，不阻塞步骤 1）
+## 7. 待与 A 确认（阻塞 harness 场景语料与 H1；调度纯函数步骤已闭环）
 
 1. **验收口径**：B1 控制器验收用 B 自有场景夹具（§0 分层），共享轨迹保持契约层逐字消费；A 侧无需改 trace.schema 与任何导出物，仅需认叮该分层作为 B1 验收标准。
 2. **H1/A2 最小 API**：`begin_point`/`stage_unit`/`stage_time_scan` 后的多次 `preview_point` 必须可用（§3 读取策略依赖此）。preview 不入幂等表已明确，多次调用仅耗响应预算；若 A2 的 FixtureBaselineStore 对 preview 有次数/状态限制，请在 A2 交付说明中写明。**另请认叮 digest 策略**：中间 preview 的 B 夹具标本用手写状态 + 占位 digest（§3），B1 的 digest 断言只覆盖最终 preview 与 commit 路径；如 A 认为中间态也必须严格 digest，请用测试侧工具为 B 生成标本。
