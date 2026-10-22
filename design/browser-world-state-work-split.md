@@ -58,7 +58,7 @@ A 维护共同 CI（`.github/workflows/ci.yml` 及根级检查编排），B 提�
 | TS 消费 | B：合法响应完整读取/往返、不合法响应拒绝、枚举/错误码及 blockedReasons/canCompute 的实际处理；类型编译通过不能替代行为断言 |
 | 共同轨迹 | A/B：分别通过 Python 侧协议检查和 TS 侧请求/响应消费检查，包含动态字段规则、摘要实例化及错误/重试分支；A2 起还运行可用真实 HTTP 场景，A3 起加入恢复/接管场景 |
 
-共同 CI 已接入：frontend 作业运行 npm test、lint/build；world-interface 作业以 Python 3.12 / Node 22 运行统一入口，包含 typecheck:world、test:world-contract、test:world-traces 及故意破坏探针。聚焦检查与前端全套在不同作业中的重叠是有意的。Windows 本地及干净检出已通过，Linux 远端 CI 随本轮推送首次运行，结果未纳入本轮验收依据；全量 backend 两个既有 campaign_wiring 失败保留原检查并单独登记。
+共同 CI 已接入：frontend 作业运行 npm test、lint/build；world-interface 作业以 Python 3.12 / Node 22 运行统一入口，包含 typecheck:world、test:world-contract、test:world-traces 及故意破坏探针。聚焦检查与前端全套在不同作业中的重叠是有意的。Windows 本地及干净检出已通过；远端 CI 曾于 `07924f3` 首次触发（frontend 失败于 npm ci），`05c213e` 推送的 backend/frontend/world-interface 三个作业全部 success。本机全量 backend 923 passed、0 failed，此前登记的两个 campaign_wiring 失败已不存在。
 
 B 的消费层提交由 A 脚本生成的 `frontend/src/lib/world-engine/contract-digest.json`，CI 在单树内比对摘要与 pin，契约漂移即失败。若契约变更同时依赖两条分支的新代码，由 A 在临时集成 checkout 中组合双方指定提交运行检查，无需提前合并开发分支。记录契约摘要、A/B 提交身份、执行命令和检查结果；只有经过验证的同一组合可同步为新基线。B 的消费代码需要修改时，由 B 提供对应提交并一起验证，不能仅凭口头核对放行。
 
