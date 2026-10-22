@@ -12,6 +12,7 @@
 | 控制阶梯 | begin/discover/extend/close/stage/seal 属 A2「合法 phase 边」；A1 只做单元级候选校验、单元外层顺序与覆盖清单，给 A2 留纯谓词 |
 | 共享资产只读 | 不改 traces（`acceptanceLayer: Literal['contract']`）、不改契约四文件与 manifest；回放用新增测试模块；A1 负例夹具放 `backend/tests/fixtures/world/`（不入 `design/`） |
 | v1 隔离 | 内核只消费 v2（`v2.work.SettlementGroup`、`v2.requests.CommitPointRequest` 等）；`contracts.py` 的 `PointCommitRequest`/`RoundCheckpoint`/`SettlementCandidates` 是 v1 遗留，以架构断言防误 import |
+| 文档漂移 | 往 `design/world-protocol/v2/` 新增 `*.md` 不触任何漂移：contractDigest 只覆盖四个接口生成文件，manifest 147 项不含 `*.md`（`export_world_protocol.py --version v2 --check` 已验证通过） |
 
 ## 二、固定预期资产（现有、未接线）
 
@@ -23,7 +24,9 @@
 | 其余 8 份轨迹 | 纯时间/结构点 | 回放覆盖，不新增状态预期 |
 | 合并不变量 | B 已对全部 11 个 commit 验证 `point.entityDeltas == collapse(merge(groups ∪ timeScan))` | 落为内核不变量断言（无新增夹具） |
 
-注：评审提到的 `pureRemoval`/`expectedCollapsed`/`expectedStandaloneState`/`chainExpectedTime`/`finalDelta` 位于 v1 `fixtures/`，v2 对应物即上表投影夹具。
+摘要配方（B 以 raw / 校验后模型 / 轨迹实例化三条独立路径复现，三者一致；`4f5a33e7…`/`85848d51…`/`61569325…`）：`canonical_digest(WorldState.model_validate(doc).model_dump(mode='json'))`。规范化对 v2 全量文档是恒等变换，A1a-2 直接对 `model_dump(mode='json')` 断言，勿用 `json.dumps(sort_keys=True)` 的字节（`canonical_bytes` 无空格、不转义、数组不排序）。
+
+注：`pureRemoval`/`expectedCollapsed`/`expectedStandaloneState`/`chainExpectedTime`/`finalDelta` 位于 v1 `fixtures/`。v2 **没有 pure-removal 行为夹具**——`description-collapse.expected.json` 只覆盖「替换后塌缩成单条」，`text: null + supersedes` 纯删除在 v2 零覆盖，归 A1b 自建负例。
 
 ## 三、A1a 任务分解（apply/merge/collapse/time/replay/preview）
 
@@ -31,9 +34,9 @@
 |---|---|---|
 | 1 | 通读 `WorldState`、v2 `requests`/`work`/`projections` 与 §二夹具，定函数面与模块划分（`backend/app/services/world/` 新建） | 函数面清单记入 server.md |
 | 2 | 投影夹具绑定测试 | §二前两行等值/行为断言全部通过 |
-| 3 | apply 正路径三条合并路：action 组；time-scan 候选（纯时间点 `settlementGroups` 为空、Δ 取 `stage_time_scan` 已存候选）；塌缩（`subtasksAdded` 带 `status:"achieved"`，不得进 `tasksAchieved`；T03-collapse 是唯一塌缩夹具） | 三路正例＋11-commit 不变量断言通过 |
+| 3 | apply/merge 正路径三条合并路：action 组；time-scan 候选（纯时间点 `settlementGroups` 为空、Δ 取 `stage_time_scan` 已存候选）；塌缩（`subtasksAdded` 带 `status:"achieved"`，不得进 `tasksAchieved`；T03-collapse 是唯一塌缩夹具） | 三路正例＋11-commit 不变量断言通过 |
 | 4 | 时间推进与点时间锁判定谓词（出口映射留给 A2） | 时间先行轨迹（T03 等）回放通过 |
-| 5 | preview 与 merge | 覆盖清单与 preview 字节预算判定谓词（`preview_budget_exceeded` 判定侧） |
+| 5 | preview：覆盖清单投影与字节预算判定谓词（merge 并入 §三#3） | preview 输出断言＋`preview_budget_exceeded` 判定侧 |
 | 6 | replay 与回放摘要一致（工作投影、最终提交、回放摘要三者一致） | 11 份轨迹 ×2 样本回放全绿 |
 
 ## 四、A1b 任务分解（六阶段校验与负例）
@@ -43,14 +46,13 @@
 | # | 任务 | 验收 |
 |---|---|---|
 | 1 | 单元级候选校验、单元外层顺序、覆盖清单 | 正反例全绿；给 A2 的纯谓词签名冻结 |
-| 2 | 自建负例夹具（`backend/tests/fixtures/world/`，约 15 条，现有夹具零覆盖）：固定实体违规、同点 supersedes、跨房间 relative、任务环、个性无达成、理智/个性配对、slot 归属等 | 每条挂映射表出口并断言违规分类 |
-| 3 | 违规分类法与 A2 映射表成文（server.md，作为 A2 验收输入） | 见下表初稿 |
+| 2 | 自建负例夹具（`backend/tests/fixtures/world/`，约 15 条，现有夹具零覆盖）：固定实体违规、同点 supersedes、跨房间 relative、任务环、个性无达成、理智/个性配对、slot 归属、pure-removal（`text: null + supersedes`）等 | 每条挂映射表出口并断言违规分类；违规分类法与 A2 映射表随本项成文进 server.md，作为 A2 验收输入（初稿见下表） |
 
 映射表初稿（A2 交付时复核；已按决策「不新增码」锁定方向）：
 
 | 违规类 | A2 出口码 | 依据 |
 |---|---|---|
-| ID 引用不可解析 | `version_mismatch` | errors.py 该码注释含 "unknown identities" |
+| ID 引用不可解析 | `version_mismatch` | 注释含 "unknown identities"；该码 409＋`refresh_context`，ID 不可解析时可能刷新后重试到同一错误，H1 真实负分支复核是否误导（与下行一并） |
 | 内容语义非法（任务环、跨房间 relative、个性无达成等） | `request_malformed` | 400 `fix_request`；H1 用真实负分支复核是否误导客户端 |
 | 位置/阶梯非法 | `phase_invalid` | 注释 "current phase or work position"（A2 判定） |
 | 点时间已锁仍改 | `point_time_locked` | 既有码 |
@@ -58,7 +60,8 @@
 
 ## 五、验收与收尾
 
-- 门：全量 backend pytest（`-X utf8`）889＋新增全过（HEAD 实测 889 collected；CLAUDE.md 与 v2 README 的 923 已旧，随本线更正）；统一验收入口显式注册内核测试（backend/scripts 归 A，脚本不在 manifest 哈希清单内，改动无漂移）。
+- 门：全量 backend pytest（`-X utf8`）889＋新增全过（HEAD 实测 889 collected；CLAUDE.md 与 v2 README 的 923 已旧，随本线更正）；内核测试闸门在 CI backend 作业（全量跑 `backend/tests`）。
+- 共同脚本 `check_world_interface_baseline.py` **不动**：它在两条开发分支逐字节相同（对 `origin/world-browser` diff 为空），按 required 名单强校验（缺模块直接 `SystemExit`）并按 `test_world_protocol_*` glob 全量执行——B 分支没有内核实现，任何注册或名单扩展都会打断 B 的共同检查与 CI world-interface 作业。内核测试命名避开该 glob 即天然隔离；本地一键门用新增的 `backend/scripts/check_world_kernel.py`（A 自有，不入 manifest，不进共同入口）。
 - CI 三作业绿；每 commit 同轮 push；提交信息与内容不含环境信息。
 - 不碰清单：`frontend/` 全部、`design/world-protocol/v2/` 既有文件、契约四文件、manifest、traces。
 - 后续：A2 消费 §四纯谓词与映射表；H1（T01）需 A2＋B1 另行预约；A3 真实事务（FC01–FC32）不在本计划。
