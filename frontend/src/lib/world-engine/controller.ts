@@ -59,6 +59,7 @@ export class ControllerDriver {
   private state: ServedState;
   private memory: ControllerMemory;
   private command: HarnessCommand | null = null;
+  private stepCommand: HarnessCommand | null = null;
   private requestCounter = 0;
   private readonly retryLimit: number;
 
@@ -103,6 +104,7 @@ export class ControllerDriver {
    * command — one delivered while a request is in flight survives. */
   async step(): Promise<DriverStatus | undefined> {
     const command = this.command;
+    this.stepCommand = command;
     if (command?.kind === 'player_input' && this.command === command) this.command = null; // consumed via memory.playerInput
     const decision = scheduleNext({ world: this.state.world, control: this.state.control, work: this.state.work, memory: this.memory, command: command && command.kind !== 'player_input' ? command : undefined });
     switch (decision.kind) {
@@ -273,10 +275,10 @@ export class ControllerDriver {
         return { kind: 'stop', reason: `pause_and_stop:${code}` };
       }
       case 'await_control':
-        this.command = null;
+        if (this.command === this.stepCommand) this.command = null; // keep commands delivered while the request was in flight
         return { kind: 'await', reason: 'resolve_gate' };
       case 'stop':
-        this.command = null;
+        if (this.command === this.stepCommand) this.command = null;
         return { kind: 'stop', reason: `fix_request:${code}` };
     }
   }
@@ -289,8 +291,9 @@ export class ControllerDriver {
       const previousEpoch = this.state.world?.lease?.fenceEpoch ?? null;
       const nextEpoch = envelope.world?.lease?.fenceEpoch ?? null;
       this.state.world = envelope.world;
-      // A lease-generation change fences every held narration claim.
-      if (previousEpoch != null && nextEpoch != null && previousEpoch !== nextEpoch && this.memory.narration) {
+      // A lease-generation change — including losing the lease entirely —
+      // fences every held narration claim.
+      if (previousEpoch != null && previousEpoch !== nextEpoch && this.memory.narration) {
         this.memory.narration.claim = null;
       }
     }

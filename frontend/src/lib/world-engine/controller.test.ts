@@ -609,3 +609,45 @@ describe('review regressions round 2 (18714a3 findings)', () => {
     expect(transport.ops).toEqual(['checkpoint_pause', 'narration_claim']);
   });
 });
+
+describe('review regressions round 3 (bb5abd3 findings)', () => {
+  test('a command delivered during a request survives a resolve_gate followup', async () => {
+    const ops: WorldOperation[] = [];
+    let rejectStart: ((error: unknown) => void) | null = null;
+    const world = mkWorld();
+    const control = mkControl();
+    const pausedError = new WorldApiError({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation: null, requestId: 'req', worldId: 'w1', control: mkControl({ paused: true, revision: 1 }), error: { code: 'paused', httpStatus: 409, retryable: false, clientAction: 'resolve_gate', details: {} } });
+    const transport: WorldTransport = { async execute(operation) {
+      ops.push(operation);
+      if (operation === 'checkpoint_start_advance') return new Promise((_, reject) => { rejectStart = reject; });
+      return { protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation, requestId: 'x', requestHash: 'hash', world, control: mkControl({ paused: false, revision: 2 }), work: null, data: { paused: false } } as never;
+    } };
+    const driver = new ControllerDriver({ transport, model: new ScriptedModel([]) }, memoryWithAdvanceStart(), { world, control });
+    const inFlight = driver.step();
+    driver.deliver({ kind: 'resume' });
+    rejectStart!(pausedError);
+    await inFlight;
+    expect(await driver.step()).toBeUndefined(); // checkpoint_resume fires — the command survived the gate followup
+    expect(ops).toEqual(['checkpoint_start_advance', 'checkpoint_resume']);
+  });
+
+  test('losing the lease invalidates a held narration claim', async () => {
+    const world = mkWorld({ head: { pointId: 'p1', version: 1, stateDigest: 'd1', narrationStatus: 'pending' }, lease: { fenceEpoch: 1, expiresAtEpochMilli: 9 }, advance: { advanceId: 'adv1', inputId: 'in1', intentStatus: 'consumed', inputAvailable: false }, activeRoundId: 'r1', activePointId: 'p1', round: { roundId: 'r1', trigger: 'player', order: ORDER, cursor: 0, actedIds: [], visitedIds: [], conclusion: null } });
+    const control = mkControl({ revision: 4 });
+    const work = mkWork();
+    const leaseLost = new WorldApiError({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation: null, requestId: 'req', worldId: 'w1', world: { ...world, lease: null }, error: { code: 'lease_invalid', httpStatus: 409, retryable: false, clientAction: 'reacquire_lease', details: {} } });
+    const heldError = new WorldApiError({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation: null, requestId: 'req', worldId: 'w1', error: { code: 'lease_invalid', httpStatus: 409, retryable: false, clientAction: 'reacquire_lease', details: { reason: 'lease_held' } } });
+    const transport = new ScriptedTransport([
+      { op: 'narration_submit', respond: () => { throw leaseLost; } },
+      { op: 'lease_acquire', respond: () => { throw heldError; } },
+    ]);
+    const memory = memoryWithAdvanceStart({
+      narration: { pointId: 'p1', claim: { claimToken: 'ct_old', generation: 1, issuedAtEpochMilli: 1 }, input: { pointId: 'p1' } },
+      lastModel: { task: 'narration', key: 'p1', output: '旧文本。' },
+    });
+    const driver = new ControllerDriver({ transport, model: new ScriptedModel([]) }, memory, { world, control, work });
+    const status = await driver.step();
+    expect(status).toEqual({ kind: 'await', reason: 'lease_held_by_other' });
+    expect(driver.getMemory().narration).toMatchObject({ pointId: 'p1', claim: null });
+  });
+});
