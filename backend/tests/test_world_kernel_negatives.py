@@ -192,9 +192,12 @@ def _multi_room_state():
 def test_joint_final_graph_is_order_independent():
     initial, state = _multi_room_state()
     world_id = initial['worldId']
+    # The reference is item_a — the entity that actually moves. Under the
+    # per-entity implementation the person processed first saw item_a still
+    # in room_a and was refused, so this exact scenario locks the fix.
     person_move = {'entityId': 'person_a', 'positionSet': {
         'containerId': 'room_b', 'slotId': None,
-        'relativeTo': {'entityId': 'item_b', 'relation': 'beside'}}}
+        'relativeTo': {'entityId': 'item_a', 'relation': 'beside'}}}
     item_move = {'entityId': 'item_a', 'positionSet': {
         'containerId': 'room_b', 'slotId': None, 'relativeTo': None}}
     digests = []

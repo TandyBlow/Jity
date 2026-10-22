@@ -80,22 +80,30 @@ def _check_positions(state, new_positions):
                 out.append(position.relativeTo.entityId)
         return out
 
-    def cyclic(start):
-        on_path = {start}
+    def cyclic_checks():
+        """Three-colour DFS over the joint graph; finished nodes are cached
+        across starts, so the whole check stays O(V+E) even on deep DAGs."""
+        on_path: set = set()
+        finished: set = set()
 
         def walk(node):
-            for nxt in edges(node):
-                if nxt in on_path:
-                    return True
-                if nxt not in known:
-                    continue
-                on_path.add(nxt)
-                if walk(nxt):
-                    return True
-                on_path.discard(nxt)
+            on_path.add(node)
+            try:
+                for nxt in edges(node):
+                    if nxt in on_path:
+                        return True
+                    if nxt in finished or nxt not in known:
+                        continue
+                    if walk(nxt):
+                        return True
+            finally:
+                on_path.discard(node)
+                finished.add(node)
             return False
 
-        return walk(start)
+        for start in new_positions:
+            if start not in finished and walk(start):
+                yield start
 
     def room(node):
         seen = set()
@@ -111,10 +119,9 @@ def _check_positions(state, new_positions):
             node = position.containerId
         return node
 
-    for start in new_positions:
-        if cyclic(start):
-            raise KernelViolation(
-                ViolationKind.SEMANTIC_INVALID, f'position cycle at {start}')
+    for start in cyclic_checks():
+        raise KernelViolation(
+            ViolationKind.SEMANTIC_INVALID, f'position cycle at {start}')
     for node in known:
         position = final_pos(node)
         if position is not None and position.relativeTo is not None:
