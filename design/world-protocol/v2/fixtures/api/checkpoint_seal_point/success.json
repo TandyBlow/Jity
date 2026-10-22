@@ -25,7 +25,16 @@
     "round": {
       "roundId": "round_1",
       "trigger": "player",
-      "conclusion": null
+      "conclusion": null,
+      "order": [
+        "person_c",
+        "person_d",
+        "person_e",
+        "person_f"
+      ],
+      "cursor": 0,
+      "actedIds": [],
+      "visitedIds": []
     },
     "time": {
       "calendar": "gregorian",
@@ -82,7 +91,8 @@
       ],
       "settledUnitIds": [
         "unit_1"
-      ]
+      ],
+      "intentStatus": "consumed"
     },
     "settledUnits": [
       {
@@ -96,7 +106,11 @@
       }
     ],
     "pendingGroup": null,
-    "successor": null
+    "successor": null,
+    "sealed": true,
+    "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195",
+    "predecessorWorkDigest": null,
+    "timeScanComplete": false
   },
   "data": {
     "pointId": "p1",

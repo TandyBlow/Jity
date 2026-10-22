@@ -13,5 +13,6 @@
   "actionText": "C 推开重门，示意 D 避开门边。",
   "targetIds": [
     "person_d"
-  ]
+  ],
+  "operation": "discover_group"
 }

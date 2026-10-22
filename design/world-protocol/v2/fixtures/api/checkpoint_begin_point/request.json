@@ -15,5 +15,6 @@
       "amount": 2,
       "unit": "second"
     }
-  }
+  },
+  "operation": "begin_point"
 }

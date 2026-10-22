@@ -8,5 +8,6 @@
   "expectedVersion": 0,
   "expectedCheckpointRevision": 6,
   "pointId": "p1",
-  "slotActorId": "person_e"
+  "slotActorId": "person_e",
+  "operation": "record_skip"
 }

@@ -17,5 +17,6 @@
       "person_c"
     ],
     "nextRoundId": "round_2"
-  }
+  },
+  "operation": "conclude"
 }

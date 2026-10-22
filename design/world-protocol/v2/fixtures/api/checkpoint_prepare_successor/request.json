@@ -15,5 +15,6 @@
       "amount": 0,
       "unit": "second"
     }
-  }
+  },
+  "operation": "prepare_successor"
 }

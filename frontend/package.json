@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "test": "vitest run",
+    "review:world-s1": "node scripts/review-world-s1.mjs",
     "predev": "node scripts/copy-wllama-assets.mjs && node scripts/copy-ort-assets.mjs",
     "prebuild": "node scripts/copy-wllama-assets.mjs && node scripts/copy-ort-assets.mjs"
   },
@@ -26,6 +27,7 @@
     "@types/node": "^22.10.2",
     "@types/react": "^19.0.2",
     "@types/react-dom": "^19.0.2",
+    "ajv": "8.20.0",
     "eslint": "^9.39.4",
     "eslint-config-next": "^15.5.19",
     "onnxruntime-web": "^1.30.0",

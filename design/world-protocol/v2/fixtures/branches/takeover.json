@@ -1,0 +1,3420 @@
+{
+  "protocolVersion": 2,
+  "steps": [
+    {
+      "name": "acquire_epoch_8",
+      "requestSchema": "AcquireLeaseRequest",
+      "request": {
+        "protocolVersion": 2,
+        "requestId": "request_takeover",
+        "worldId": "world_school",
+        "holderId": "tab_b"
+      },
+      "successSchema": "AcquireLeaseSuccess",
+      "success": {
+        "protocolVersion": 2,
+        "engineVersion": "world-engine-v1",
+        "schemaVersion": 1,
+        "canonicalVersion": "world-canonical-v1",
+        "serverTimeEpochMilli": 1792617780000,
+        "replayed": false,
+        "operation": "lease_acquire",
+        "requestId": "request_takeover",
+        "requestHash": "d2bb4dd71f47c035194fe7aa758ec2a0a27178e9ac8adabab1d437dae9f9e2c6",
+        "world": {
+          "worldId": "world_school",
+          "head": {
+            "pointId": "root_0",
+            "version": 0,
+            "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+            "narrationStatus": "ready"
+          },
+          "advance": {
+            "advanceId": "advance_1",
+            "inputId": "input_1",
+            "intentStatus": "pending",
+            "inputAvailable": true
+          },
+          "round": {
+            "roundId": "round_1",
+            "trigger": "player",
+            "conclusion": null,
+            "order": [
+              "person_c",
+              "person_d",
+              "person_e",
+              "person_f"
+            ],
+            "cursor": 0,
+            "actedIds": [],
+            "visitedIds": []
+          },
+          "time": {
+            "calendar": "gregorian",
+            "dateTime": "2026-01-01T11:59:00",
+            "instantOrdinal": 0
+          },
+          "lease": {
+            "fenceEpoch": 8,
+            "expiresAtEpochMilli": 1792617900000
+          },
+          "successor": {
+            "pointId": "p2",
+            "predecessorPointId": "p1",
+            "timeAdvance": {
+              "boundary": "instant",
+              "duration": {
+                "amount": 0,
+                "unit": "second"
+              }
+            },
+            "expectedPredecessorVersion": 1,
+            "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195",
+            "expectedPredecessorStateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+            "baseline": {
+              "headPointId": "p1",
+              "version": 1,
+              "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5"
+            }
+          },
+          "activePointId": "p1",
+          "activeRoundId": "round_1"
+        },
+        "control": {
+          "phase": "select_actor",
+          "paused": true,
+          "revision": 9,
+          "gate": {
+            "status": "none",
+            "generation": null,
+            "issuedAtEpochMilli": null,
+            "expiresAtEpochMilli": null
+          },
+          "blockedReasons": [
+            "paused"
+          ],
+          "canCompute": false
+        },
+        "work": {
+          "pointId": "p1",
+          "kind": "normal",
+          "timeAdvance": {
+            "boundary": "elapsed",
+            "duration": {
+              "amount": 2,
+              "unit": "second"
+            }
+          },
+          "timeLocked": true,
+          "baseline": {
+            "headPointId": "root_0",
+            "version": 0,
+            "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5"
+          },
+          "phase": "select_actor",
+          "working": {
+            "cursor": 2,
+            "actedIds": [
+              "person_c",
+              "person_d"
+            ],
+            "visitedIds": [
+              "person_c",
+              "person_d"
+            ],
+            "settledUnitIds": [
+              "unit_1"
+            ],
+            "intentStatus": "consumed"
+          },
+          "settledUnits": [
+            {
+              "unitId": "unit_1",
+              "groupId": "group_cd",
+              "memberIds": [
+                "person_c",
+                "person_d"
+              ],
+              "contentHash": "12b9771f7e83b9e8cb56d13c81efaf733483d9707beda5ad1013f8fbce753fc3"
+            }
+          ],
+          "pendingGroup": null,
+          "successor": {
+            "pointId": "p2",
+            "predecessorPointId": "p1",
+            "timeAdvance": {
+              "boundary": "instant",
+              "duration": {
+                "amount": 0,
+                "unit": "second"
+              }
+            },
+            "expectedPredecessorVersion": 1,
+            "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195",
+            "expectedPredecessorStateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+            "baseline": {
+              "headPointId": "p1",
+              "version": 1,
+              "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5"
+            }
+          },
+          "sealed": true,
+          "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195",
+          "predecessorWorkDigest": null,
+          "timeScanComplete": false
+        },
+        "data": {
+          "holderId": "tab_b",
+          "leaseToken": "lease_b",
+          "fenceEpoch": 8,
+          "expiresAtEpochMilli": 1792617900000
+        }
+      }
+    },
+    {
+      "name": "read_sources_before_copy",
+      "requestSchema": "GetContextRequest",
+      "request": {
+        "includeRecovery": true,
+        "leaseToken": "lease_b",
+        "fenceEpoch": 8
+      },
+      "successSchema": "ContextResponse",
+      "success": {
+        "protocolVersion": 2,
+        "engineVersion": "world-engine-v1",
+        "schemaVersion": 1,
+        "canonicalVersion": "world-canonical-v1",
+        "serverTimeEpochMilli": 1792617780000,
+        "world": {
+          "worldId": "world_school",
+          "head": {
+            "pointId": "root_0",
+            "version": 0,
+            "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+            "narrationStatus": "ready"
+          },
+          "advance": {
+            "advanceId": "advance_1",
+            "inputId": "input_1",
+            "intentStatus": "pending",
+            "inputAvailable": true
+          },
+          "round": {
+            "roundId": "round_1",
+            "trigger": "player",
+            "conclusion": null,
+            "order": [
+              "person_c",
+              "person_d",
+              "person_e",
+              "person_f"
+            ],
+            "cursor": 0,
+            "actedIds": [],
+            "visitedIds": []
+          },
+          "time": {
+            "calendar": "gregorian",
+            "dateTime": "2026-01-01T11:59:00",
+            "instantOrdinal": 0
+          },
+          "lease": {
+            "fenceEpoch": 8,
+            "expiresAtEpochMilli": 1792617900000
+          },
+          "successor": {
+            "pointId": "p2",
+            "predecessorPointId": "p1",
+            "timeAdvance": {
+              "boundary": "instant",
+              "duration": {
+                "amount": 0,
+                "unit": "second"
+              }
+            },
+            "expectedPredecessorVersion": 1,
+            "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195",
+            "expectedPredecessorStateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+            "baseline": {
+              "headPointId": "p1",
+              "version": 1,
+              "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5"
+            }
+          },
+          "activePointId": "p1",
+          "activeRoundId": "round_1"
+        },
+        "control": {
+          "phase": "select_actor",
+          "paused": true,
+          "revision": 9,
+          "gate": {
+            "status": "none",
+            "generation": null,
+            "issuedAtEpochMilli": null,
+            "expiresAtEpochMilli": null
+          },
+          "blockedReasons": [
+            "paused"
+          ],
+          "canCompute": false
+        },
+        "work": {
+          "pointId": "p1",
+          "kind": "normal",
+          "timeAdvance": {
+            "boundary": "elapsed",
+            "duration": {
+              "amount": 2,
+              "unit": "second"
+            }
+          },
+          "timeLocked": true,
+          "baseline": {
+            "headPointId": "root_0",
+            "version": 0,
+            "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5"
+          },
+          "phase": "select_actor",
+          "working": {
+            "cursor": 2,
+            "actedIds": [
+              "person_c",
+              "person_d"
+            ],
+            "visitedIds": [
+              "person_c",
+              "person_d"
+            ],
+            "settledUnitIds": [
+              "unit_1"
+            ],
+            "intentStatus": "consumed"
+          },
+          "settledUnits": [
+            {
+              "unitId": "unit_1",
+              "groupId": "group_cd",
+              "memberIds": [
+                "person_c",
+                "person_d"
+              ],
+              "contentHash": "12b9771f7e83b9e8cb56d13c81efaf733483d9707beda5ad1013f8fbce753fc3"
+            }
+          ],
+          "pendingGroup": null,
+          "successor": {
+            "pointId": "p2",
+            "predecessorPointId": "p1",
+            "timeAdvance": {
+              "boundary": "instant",
+              "duration": {
+                "amount": 0,
+                "unit": "second"
+              }
+            },
+            "expectedPredecessorVersion": 1,
+            "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195",
+            "expectedPredecessorStateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+            "baseline": {
+              "headPointId": "p1",
+              "version": 1,
+              "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5"
+            }
+          },
+          "sealed": true,
+          "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195",
+          "predecessorWorkDigest": null,
+          "timeScanComplete": false
+        },
+        "activeInput": {
+          "advanceId": "advance_1",
+          "inputId": "input_1",
+          "text": "检查门边。"
+        },
+        "recovery": {
+          "fenceEpoch": 8,
+          "current": {
+            "work": {
+              "pointId": "p1",
+              "kind": "normal",
+              "timeAdvance": {
+                "boundary": "elapsed",
+                "duration": {
+                  "amount": 2,
+                  "unit": "second"
+                }
+              },
+              "timeLocked": true,
+              "baseline": {
+                "headPointId": "root_0",
+                "version": 0,
+                "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5"
+              },
+              "phase": "select_actor",
+              "working": {
+                "cursor": 2,
+                "actedIds": [
+                  "person_c",
+                  "person_d"
+                ],
+                "visitedIds": [
+                  "person_c",
+                  "person_d"
+                ],
+                "settledUnitIds": [
+                  "unit_1"
+                ],
+                "intentStatus": "consumed"
+              },
+              "settledUnits": [
+                {
+                  "unitId": "unit_1",
+                  "groupId": "group_cd",
+                  "memberIds": [
+                    "person_c",
+                    "person_d"
+                  ],
+                  "contentHash": "12b9771f7e83b9e8cb56d13c81efaf733483d9707beda5ad1013f8fbce753fc3"
+                }
+              ],
+              "pendingGroup": null,
+              "successor": {
+                "pointId": "p2",
+                "predecessorPointId": "p1",
+                "timeAdvance": {
+                  "boundary": "instant",
+                  "duration": {
+                    "amount": 0,
+                    "unit": "second"
+                  }
+                },
+                "expectedPredecessorVersion": 1,
+                "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195",
+                "expectedPredecessorStateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+                "baseline": {
+                  "headPointId": "p1",
+                  "version": 1,
+                  "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5"
+                }
+              },
+              "sealed": true,
+              "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195",
+              "predecessorWorkDigest": null,
+              "timeScanComplete": false
+            },
+            "groups": [],
+            "timeScanCandidates": null,
+            "payloadStatus": "restore_required",
+            "restoreSources": [
+              {
+                "pointId": "p1",
+                "groupId": "group_cd",
+                "sourceEpoch": 7,
+                "sourceAttempt": 1,
+                "manifest": [
+                  {
+                    "memberId": "person_c",
+                    "actionContentHash": "642befc7c48664d442ad0f72537d26f93f8be73d9d159b0c2e2e5c3fc414f66f",
+                    "resultContentHash": "ac2331a622e2b66992434a31b1144c3513098002646c6b2e476b44e5c57ea29e",
+                    "targetsContentHash": "f7c2667b4c07a057ab79f040b0b36f64e982a20e2ce2de208b7d0fd12a32e970",
+                    "candidatesContentHash": "053938a7488b1a470cc0e53ec0ee61fc07e92927d40184f43ca3d9bd80174d0d"
+                  },
+                  {
+                    "memberId": "person_d",
+                    "actionContentHash": "b280fc80635f95e654e1845dda02f3fc814557dda94672d724d9bbfd2401ddbc",
+                    "resultContentHash": "831ad19b36a53807d0ce8630de496db0201657a094a4b5781413e5d9543c2d5c",
+                    "targetsContentHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+                    "candidatesContentHash": "053938a7488b1a470cc0e53ec0ee61fc07e92927d40184f43ca3d9bd80174d0d"
+                  }
+                ]
+              }
+            ]
+          },
+          "successor": {
+            "work": {
+              "pointId": "p2",
+              "kind": "instant",
+              "timeAdvance": {
+                "boundary": "instant",
+                "duration": {
+                  "amount": 0,
+                  "unit": "second"
+                }
+              },
+              "timeLocked": true,
+              "baseline": {
+                "headPointId": "p1",
+                "version": 1,
+                "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5"
+              },
+              "phase": "build_group",
+              "working": {
+                "cursor": 2,
+                "actedIds": [
+                  "person_c",
+                  "person_d"
+                ],
+                "visitedIds": [
+                  "person_c",
+                  "person_d"
+                ],
+                "settledUnitIds": [],
+                "intentStatus": "consumed"
+              },
+              "settledUnits": [],
+              "pendingGroup": {
+                "groupId": "group_ef",
+                "sourceId": "person_e",
+                "memberIds": [
+                  "person_e",
+                  "person_f"
+                ],
+                "targetIds": [
+                  "person_f"
+                ],
+                "frontierIds": [
+                  "person_f"
+                ],
+                "closed": false
+              },
+              "successor": null,
+              "sealed": false,
+              "prefixDigest": null,
+              "predecessorWorkDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195",
+              "timeScanComplete": false
+            },
+            "groups": [],
+            "timeScanCandidates": null,
+            "payloadStatus": "restore_required",
+            "restoreSources": [
+              {
+                "pointId": "p2",
+                "groupId": "group_ef",
+                "sourceEpoch": 7,
+                "sourceAttempt": 1,
+                "manifest": [
+                  {
+                    "memberId": "person_e",
+                    "actionContentHash": "243dfd72f2b94451ea6a28db66e9824652f0db5516c8ea56a29389659303937b",
+                    "resultContentHash": null,
+                    "targetsContentHash": "0a51b60c6352306fed9193db8dba7c62201d326a6644e81af41d7704964003da",
+                    "candidatesContentHash": null
+                  },
+                  {
+                    "memberId": "person_f",
+                    "actionContentHash": "84764244db0bb0fa954a11f044cc11427692c44ffc4d3e0e313c3114df00dbc0",
+                    "resultContentHash": null,
+                    "targetsContentHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+                    "candidatesContentHash": null
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "restore_current",
+      "requestSchema": "RestoreGroupWorkRequest",
+      "request": {
+        "protocolVersion": 2,
+        "requestId": "request_restore_current",
+        "worldId": "world_school",
+        "leaseToken": "lease_b",
+        "fenceEpoch": 8,
+        "expectedPointId": "root_0",
+        "expectedVersion": 0,
+        "expectedCheckpointRevision": 9,
+        "pointId": "p1",
+        "groupId": "group_cd",
+        "sourceEpoch": 7,
+        "sourceAttempt": 1,
+        "manifest": [
+          {
+            "memberId": "person_c",
+            "actionContentHash": "642befc7c48664d442ad0f72537d26f93f8be73d9d159b0c2e2e5c3fc414f66f",
+            "resultContentHash": "ac2331a622e2b66992434a31b1144c3513098002646c6b2e476b44e5c57ea29e",
+            "targetsContentHash": "f7c2667b4c07a057ab79f040b0b36f64e982a20e2ce2de208b7d0fd12a32e970",
+            "candidatesContentHash": "053938a7488b1a470cc0e53ec0ee61fc07e92927d40184f43ca3d9bd80174d0d"
+          },
+          {
+            "memberId": "person_d",
+            "actionContentHash": "b280fc80635f95e654e1845dda02f3fc814557dda94672d724d9bbfd2401ddbc",
+            "resultContentHash": "831ad19b36a53807d0ce8630de496db0201657a094a4b5781413e5d9543c2d5c",
+            "targetsContentHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+            "candidatesContentHash": "053938a7488b1a470cc0e53ec0ee61fc07e92927d40184f43ca3d9bd80174d0d"
+          }
+        ],
+        "operation": "restore_group_work"
+      },
+      "successSchema": "RestoreGroupWorkSuccess",
+      "success": {
+        "protocolVersion": 2,
+        "engineVersion": "world-engine-v1",
+        "schemaVersion": 1,
+        "canonicalVersion": "world-canonical-v1",
+        "serverTimeEpochMilli": 1792617780000,
+        "replayed": false,
+        "operation": "checkpoint_restore_group_work",
+        "requestId": "request_restore_current",
+        "requestHash": "694b2fc618b25a851b76da30c36c2bb2033df2224e330884a7c13ef9d94cc911",
+        "world": {
+          "worldId": "world_school",
+          "head": {
+            "pointId": "root_0",
+            "version": 0,
+            "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+            "narrationStatus": "ready"
+          },
+          "advance": {
+            "advanceId": "advance_1",
+            "inputId": "input_1",
+            "intentStatus": "pending",
+            "inputAvailable": true
+          },
+          "round": {
+            "roundId": "round_1",
+            "trigger": "player",
+            "conclusion": null,
+            "order": [
+              "person_c",
+              "person_d",
+              "person_e",
+              "person_f"
+            ],
+            "cursor": 0,
+            "actedIds": [],
+            "visitedIds": []
+          },
+          "time": {
+            "calendar": "gregorian",
+            "dateTime": "2026-01-01T11:59:00",
+            "instantOrdinal": 0
+          },
+          "lease": {
+            "fenceEpoch": 8,
+            "expiresAtEpochMilli": 1792617900000
+          },
+          "successor": {
+            "pointId": "p2",
+            "predecessorPointId": "p1",
+            "timeAdvance": {
+              "boundary": "instant",
+              "duration": {
+                "amount": 0,
+                "unit": "second"
+              }
+            },
+            "expectedPredecessorVersion": 1,
+            "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195",
+            "expectedPredecessorStateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+            "baseline": {
+              "headPointId": "p1",
+              "version": 1,
+              "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5"
+            }
+          },
+          "activePointId": "p1",
+          "activeRoundId": "round_1"
+        },
+        "control": {
+          "phase": "select_actor",
+          "paused": true,
+          "revision": 9,
+          "gate": {
+            "status": "none",
+            "generation": null,
+            "issuedAtEpochMilli": null,
+            "expiresAtEpochMilli": null
+          },
+          "blockedReasons": [
+            "paused"
+          ],
+          "canCompute": false
+        },
+        "work": {
+          "pointId": "p1",
+          "kind": "normal",
+          "timeAdvance": {
+            "boundary": "elapsed",
+            "duration": {
+              "amount": 2,
+              "unit": "second"
+            }
+          },
+          "timeLocked": true,
+          "baseline": {
+            "headPointId": "root_0",
+            "version": 0,
+            "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5"
+          },
+          "phase": "select_actor",
+          "working": {
+            "cursor": 2,
+            "actedIds": [
+              "person_c",
+              "person_d"
+            ],
+            "visitedIds": [
+              "person_c",
+              "person_d"
+            ],
+            "settledUnitIds": [
+              "unit_1"
+            ],
+            "intentStatus": "consumed"
+          },
+          "settledUnits": [
+            {
+              "unitId": "unit_1",
+              "groupId": "group_cd",
+              "memberIds": [
+                "person_c",
+                "person_d"
+              ],
+              "contentHash": "12b9771f7e83b9e8cb56d13c81efaf733483d9707beda5ad1013f8fbce753fc3"
+            }
+          ],
+          "pendingGroup": null,
+          "successor": {
+            "pointId": "p2",
+            "predecessorPointId": "p1",
+            "timeAdvance": {
+              "boundary": "instant",
+              "duration": {
+                "amount": 0,
+                "unit": "second"
+              }
+            },
+            "expectedPredecessorVersion": 1,
+            "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195",
+            "expectedPredecessorStateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+            "baseline": {
+              "headPointId": "p1",
+              "version": 1,
+              "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5"
+            }
+          },
+          "sealed": true,
+          "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195",
+          "predecessorWorkDigest": null,
+          "timeScanComplete": false
+        },
+        "data": {
+          "groupId": "group_cd",
+          "sourceEpoch": 7,
+          "sourceAttempt": 1,
+          "restoredMemberIds": [
+            "person_c",
+            "person_d"
+          ],
+          "pointId": "p1",
+          "fenceEpoch": 8,
+          "attempt": 17
+        }
+      }
+    },
+    {
+      "name": "restore_successor",
+      "requestSchema": "RestoreGroupWorkRequest",
+      "request": {
+        "protocolVersion": 2,
+        "requestId": "request_restore_successor",
+        "worldId": "world_school",
+        "leaseToken": "lease_b",
+        "fenceEpoch": 8,
+        "expectedPointId": "root_0",
+        "expectedVersion": 0,
+        "expectedCheckpointRevision": 9,
+        "pointId": "p2",
+        "groupId": "group_ef",
+        "sourceEpoch": 7,
+        "sourceAttempt": 1,
+        "manifest": [
+          {
+            "memberId": "person_e",
+            "actionContentHash": "243dfd72f2b94451ea6a28db66e9824652f0db5516c8ea56a29389659303937b",
+            "resultContentHash": null,
+            "targetsContentHash": "0a51b60c6352306fed9193db8dba7c62201d326a6644e81af41d7704964003da",
+            "candidatesContentHash": null
+          },
+          {
+            "memberId": "person_f",
+            "actionContentHash": "84764244db0bb0fa954a11f044cc11427692c44ffc4d3e0e313c3114df00dbc0",
+            "resultContentHash": null,
+            "targetsContentHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+            "candidatesContentHash": null
+          }
+        ],
+        "operation": "restore_group_work"
+      },
+      "successSchema": "RestoreGroupWorkSuccess",
+      "success": {
+        "protocolVersion": 2,
+        "engineVersion": "world-engine-v1",
+        "schemaVersion": 1,
+        "canonicalVersion": "world-canonical-v1",
+        "serverTimeEpochMilli": 1792617780000,
+        "replayed": false,
+        "operation": "checkpoint_restore_group_work",
+        "requestId": "request_restore_successor",
+        "requestHash": "694b2fc618b25a851b76da30c36c2bb2033df2224e330884a7c13ef9d94cc911",
+        "world": {
+          "worldId": "world_school",
+          "head": {
+            "pointId": "root_0",
+            "version": 0,
+            "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+            "narrationStatus": "ready"
+          },
+          "advance": {
+            "advanceId": "advance_1",
+            "inputId": "input_1",
+            "intentStatus": "pending",
+            "inputAvailable": true
+          },
+          "round": {
+            "roundId": "round_1",
+            "trigger": "player",
+            "conclusion": null,
+            "order": [
+              "person_c",
+              "person_d",
+              "person_e",
+              "person_f"
+            ],
+            "cursor": 0,
+            "actedIds": [],
+            "visitedIds": []
+          },
+          "time": {
+            "calendar": "gregorian",
+            "dateTime": "2026-01-01T11:59:00",
+            "instantOrdinal": 0
+          },
+          "lease": {
+            "fenceEpoch": 8,
+            "expiresAtEpochMilli": 1792617900000
+          },
+          "successor": {
+            "pointId": "p2",
+            "predecessorPointId": "p1",
+            "timeAdvance": {
+              "boundary": "instant",
+              "duration": {
+                "amount": 0,
+                "unit": "second"
+              }
+            },
+            "expectedPredecessorVersion": 1,
+            "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195",
+            "expectedPredecessorStateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+            "baseline": {
+              "headPointId": "p1",
+              "version": 1,
+              "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5"
+            }
+          },
+          "activePointId": "p1",
+          "activeRoundId": "round_1"
+        },
+        "control": {
+          "phase": "select_actor",
+          "paused": true,
+          "revision": 9,
+          "gate": {
+            "status": "none",
+            "generation": null,
+            "issuedAtEpochMilli": null,
+            "expiresAtEpochMilli": null
+          },
+          "blockedReasons": [
+            "paused"
+          ],
+          "canCompute": false
+        },
+        "work": {
+          "pointId": "p1",
+          "kind": "normal",
+          "timeAdvance": {
+            "boundary": "elapsed",
+            "duration": {
+              "amount": 2,
+              "unit": "second"
+            }
+          },
+          "timeLocked": true,
+          "baseline": {
+            "headPointId": "root_0",
+            "version": 0,
+            "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5"
+          },
+          "phase": "select_actor",
+          "working": {
+            "cursor": 2,
+            "actedIds": [
+              "person_c",
+              "person_d"
+            ],
+            "visitedIds": [
+              "person_c",
+              "person_d"
+            ],
+            "settledUnitIds": [
+              "unit_1"
+            ],
+            "intentStatus": "consumed"
+          },
+          "settledUnits": [
+            {
+              "unitId": "unit_1",
+              "groupId": "group_cd",
+              "memberIds": [
+                "person_c",
+                "person_d"
+              ],
+              "contentHash": "12b9771f7e83b9e8cb56d13c81efaf733483d9707beda5ad1013f8fbce753fc3"
+            }
+          ],
+          "pendingGroup": null,
+          "successor": {
+            "pointId": "p2",
+            "predecessorPointId": "p1",
+            "timeAdvance": {
+              "boundary": "instant",
+              "duration": {
+                "amount": 0,
+                "unit": "second"
+              }
+            },
+            "expectedPredecessorVersion": 1,
+            "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195",
+            "expectedPredecessorStateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+            "baseline": {
+              "headPointId": "p1",
+              "version": 1,
+              "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5"
+            }
+          },
+          "sealed": true,
+          "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195",
+          "predecessorWorkDigest": null,
+          "timeScanComplete": false
+        },
+        "data": {
+          "groupId": "group_ef",
+          "sourceEpoch": 7,
+          "sourceAttempt": 1,
+          "restoredMemberIds": [
+            "person_e",
+            "person_f"
+          ],
+          "pointId": "p2",
+          "fenceEpoch": 8,
+          "attempt": 23
+        }
+      }
+    },
+    {
+      "name": "read_copied_epoch_8_payload",
+      "requestSchema": "GetContextRequest",
+      "request": {
+        "includeRecovery": true,
+        "leaseToken": "lease_b",
+        "fenceEpoch": 8
+      },
+      "successSchema": "ContextResponse",
+      "success": {
+        "protocolVersion": 2,
+        "engineVersion": "world-engine-v1",
+        "schemaVersion": 1,
+        "canonicalVersion": "world-canonical-v1",
+        "serverTimeEpochMilli": 1792617780000,
+        "world": {
+          "worldId": "world_school",
+          "head": {
+            "pointId": "root_0",
+            "version": 0,
+            "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+            "narrationStatus": "ready"
+          },
+          "advance": {
+            "advanceId": "advance_1",
+            "inputId": "input_1",
+            "intentStatus": "pending",
+            "inputAvailable": true
+          },
+          "round": {
+            "roundId": "round_1",
+            "trigger": "player",
+            "conclusion": null,
+            "order": [
+              "person_c",
+              "person_d",
+              "person_e",
+              "person_f"
+            ],
+            "cursor": 0,
+            "actedIds": [],
+            "visitedIds": []
+          },
+          "time": {
+            "calendar": "gregorian",
+            "dateTime": "2026-01-01T11:59:00",
+            "instantOrdinal": 0
+          },
+          "lease": {
+            "fenceEpoch": 8,
+            "expiresAtEpochMilli": 1792617900000
+          },
+          "successor": {
+            "pointId": "p2",
+            "predecessorPointId": "p1",
+            "timeAdvance": {
+              "boundary": "instant",
+              "duration": {
+                "amount": 0,
+                "unit": "second"
+              }
+            },
+            "expectedPredecessorVersion": 1,
+            "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195",
+            "expectedPredecessorStateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+            "baseline": {
+              "headPointId": "p1",
+              "version": 1,
+              "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5"
+            }
+          },
+          "activePointId": "p1",
+          "activeRoundId": "round_1"
+        },
+        "control": {
+          "phase": "select_actor",
+          "paused": true,
+          "revision": 9,
+          "gate": {
+            "status": "none",
+            "generation": null,
+            "issuedAtEpochMilli": null,
+            "expiresAtEpochMilli": null
+          },
+          "blockedReasons": [
+            "paused"
+          ],
+          "canCompute": false
+        },
+        "work": {
+          "pointId": "p1",
+          "kind": "normal",
+          "timeAdvance": {
+            "boundary": "elapsed",
+            "duration": {
+              "amount": 2,
+              "unit": "second"
+            }
+          },
+          "timeLocked": true,
+          "baseline": {
+            "headPointId": "root_0",
+            "version": 0,
+            "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5"
+          },
+          "phase": "select_actor",
+          "working": {
+            "cursor": 2,
+            "actedIds": [
+              "person_c",
+              "person_d"
+            ],
+            "visitedIds": [
+              "person_c",
+              "person_d"
+            ],
+            "settledUnitIds": [
+              "unit_1"
+            ],
+            "intentStatus": "consumed"
+          },
+          "settledUnits": [
+            {
+              "unitId": "unit_1",
+              "groupId": "group_cd",
+              "memberIds": [
+                "person_c",
+                "person_d"
+              ],
+              "contentHash": "12b9771f7e83b9e8cb56d13c81efaf733483d9707beda5ad1013f8fbce753fc3"
+            }
+          ],
+          "pendingGroup": null,
+          "successor": {
+            "pointId": "p2",
+            "predecessorPointId": "p1",
+            "timeAdvance": {
+              "boundary": "instant",
+              "duration": {
+                "amount": 0,
+                "unit": "second"
+              }
+            },
+            "expectedPredecessorVersion": 1,
+            "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195",
+            "expectedPredecessorStateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+            "baseline": {
+              "headPointId": "p1",
+              "version": 1,
+              "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5"
+            }
+          },
+          "sealed": true,
+          "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195",
+          "predecessorWorkDigest": null,
+          "timeScanComplete": false
+        },
+        "activeInput": {
+          "advanceId": "advance_1",
+          "inputId": "input_1",
+          "text": "检查门边。"
+        },
+        "recovery": {
+          "fenceEpoch": 8,
+          "current": {
+            "work": {
+              "pointId": "p1",
+              "kind": "normal",
+              "timeAdvance": {
+                "boundary": "elapsed",
+                "duration": {
+                  "amount": 2,
+                  "unit": "second"
+                }
+              },
+              "timeLocked": true,
+              "baseline": {
+                "headPointId": "root_0",
+                "version": 0,
+                "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5"
+              },
+              "phase": "select_actor",
+              "working": {
+                "cursor": 2,
+                "actedIds": [
+                  "person_c",
+                  "person_d"
+                ],
+                "visitedIds": [
+                  "person_c",
+                  "person_d"
+                ],
+                "settledUnitIds": [
+                  "unit_1"
+                ],
+                "intentStatus": "consumed"
+              },
+              "settledUnits": [
+                {
+                  "unitId": "unit_1",
+                  "groupId": "group_cd",
+                  "memberIds": [
+                    "person_c",
+                    "person_d"
+                  ],
+                  "contentHash": "12b9771f7e83b9e8cb56d13c81efaf733483d9707beda5ad1013f8fbce753fc3"
+                }
+              ],
+              "pendingGroup": null,
+              "successor": {
+                "pointId": "p2",
+                "predecessorPointId": "p1",
+                "timeAdvance": {
+                  "boundary": "instant",
+                  "duration": {
+                    "amount": 0,
+                    "unit": "second"
+                  }
+                },
+                "expectedPredecessorVersion": 1,
+                "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195",
+                "expectedPredecessorStateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+                "baseline": {
+                  "headPointId": "p1",
+                  "version": 1,
+                  "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5"
+                }
+              },
+              "sealed": true,
+              "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195",
+              "predecessorWorkDigest": null,
+              "timeScanComplete": false
+            },
+            "groups": [
+              {
+                "groupId": "group_cd",
+                "pointId": "p1",
+                "inputProjectionHash": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+                "members": [
+                  {
+                    "memberId": "person_c",
+                    "actionText": "C 推开重门，示意 D 避开门边。",
+                    "targets": [
+                      {
+                        "targetId": "person_d",
+                        "triggerKey": "trigger_cd"
+                      }
+                    ],
+                    "resultText": "重门打开。",
+                    "rollRefs": [
+                      {
+                        "sourceId": "person_c",
+                        "targetId": "person_d",
+                        "triggerKey": "trigger_cd",
+                        "rollId": "roll_cd"
+                      }
+                    ]
+                  },
+                  {
+                    "memberId": "person_d",
+                    "actionText": "D 避开门边。",
+                    "targets": [],
+                    "resultText": "D 退到一旁。",
+                    "rollRefs": []
+                  }
+                ],
+                "acceptedSources": [
+                  {
+                    "memberId": "person_c",
+                    "sourceEpoch": 7,
+                    "sourceAttempt": 1,
+                    "actionContentHash": "642befc7c48664d442ad0f72537d26f93f8be73d9d159b0c2e2e5c3fc414f66f",
+                    "resultContentHash": "ac2331a622e2b66992434a31b1144c3513098002646c6b2e476b44e5c57ea29e",
+                    "targetsContentHash": "f7c2667b4c07a057ab79f040b0b36f64e982a20e2ce2de208b7d0fd12a32e970",
+                    "candidatesContentHash": "053938a7488b1a470cc0e53ec0ee61fc07e92927d40184f43ca3d9bd80174d0d"
+                  },
+                  {
+                    "memberId": "person_d",
+                    "sourceEpoch": 7,
+                    "sourceAttempt": 1,
+                    "actionContentHash": "b280fc80635f95e654e1845dda02f3fc814557dda94672d724d9bbfd2401ddbc",
+                    "resultContentHash": "831ad19b36a53807d0ce8630de496db0201657a094a4b5781413e5d9543c2d5c",
+                    "targetsContentHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+                    "candidatesContentHash": "053938a7488b1a470cc0e53ec0ee61fc07e92927d40184f43ca3d9bd80174d0d"
+                  }
+                ],
+                "candidates": {
+                  "groupId": "group_cd",
+                  "actorIds": [
+                    "person_c",
+                    "person_d"
+                  ],
+                  "positions": {
+                    "person_d": {
+                      "containerId": "corridor",
+                      "slotId": null,
+                      "relativeTo": null
+                    }
+                  },
+                  "appearances": {
+                    "person_c": [
+                      {
+                        "id": "change_c_door",
+                        "text": "C 站在门边，一手扶着重门。",
+                        "supersedes": []
+                      }
+                    ]
+                  },
+                  "tasksAchieved": {},
+                  "subtasksAdded": {},
+                  "personalities": {},
+                  "sanities": {},
+                  "taskCoverageIds": [
+                    "person_a",
+                    "person_b",
+                    "person_c",
+                    "person_d",
+                    "person_e",
+                    "person_f"
+                  ],
+                  "personalityCoverageIds": []
+                }
+              }
+            ],
+            "timeScanCandidates": null,
+            "payloadStatus": "available",
+            "restoreSources": [
+              {
+                "pointId": "p1",
+                "groupId": "group_cd",
+                "sourceEpoch": 7,
+                "sourceAttempt": 1,
+                "manifest": [
+                  {
+                    "memberId": "person_c",
+                    "actionContentHash": "642befc7c48664d442ad0f72537d26f93f8be73d9d159b0c2e2e5c3fc414f66f",
+                    "resultContentHash": "ac2331a622e2b66992434a31b1144c3513098002646c6b2e476b44e5c57ea29e",
+                    "targetsContentHash": "f7c2667b4c07a057ab79f040b0b36f64e982a20e2ce2de208b7d0fd12a32e970",
+                    "candidatesContentHash": "053938a7488b1a470cc0e53ec0ee61fc07e92927d40184f43ca3d9bd80174d0d"
+                  },
+                  {
+                    "memberId": "person_d",
+                    "actionContentHash": "b280fc80635f95e654e1845dda02f3fc814557dda94672d724d9bbfd2401ddbc",
+                    "resultContentHash": "831ad19b36a53807d0ce8630de496db0201657a094a4b5781413e5d9543c2d5c",
+                    "targetsContentHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+                    "candidatesContentHash": "053938a7488b1a470cc0e53ec0ee61fc07e92927d40184f43ca3d9bd80174d0d"
+                  }
+                ]
+              }
+            ]
+          },
+          "successor": {
+            "work": {
+              "pointId": "p2",
+              "kind": "instant",
+              "timeAdvance": {
+                "boundary": "instant",
+                "duration": {
+                  "amount": 0,
+                  "unit": "second"
+                }
+              },
+              "timeLocked": true,
+              "baseline": {
+                "headPointId": "p1",
+                "version": 1,
+                "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5"
+              },
+              "phase": "build_group",
+              "working": {
+                "cursor": 2,
+                "actedIds": [
+                  "person_c",
+                  "person_d"
+                ],
+                "visitedIds": [
+                  "person_c",
+                  "person_d"
+                ],
+                "settledUnitIds": [],
+                "intentStatus": "consumed"
+              },
+              "settledUnits": [],
+              "pendingGroup": {
+                "groupId": "group_ef",
+                "sourceId": "person_e",
+                "memberIds": [
+                  "person_e",
+                  "person_f"
+                ],
+                "targetIds": [
+                  "person_f"
+                ],
+                "frontierIds": [
+                  "person_f"
+                ],
+                "closed": false
+              },
+              "successor": null,
+              "sealed": false,
+              "prefixDigest": null,
+              "predecessorWorkDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195",
+              "timeScanComplete": false
+            },
+            "groups": [
+              {
+                "groupId": "group_ef",
+                "pointId": "p2",
+                "inputProjectionHash": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+                "members": [
+                  {
+                    "memberId": "person_e",
+                    "actionText": "E 推开重门，示意 F 避开门边。",
+                    "targets": [
+                      {
+                        "targetId": "person_f",
+                        "triggerKey": "trigger_ef"
+                      }
+                    ],
+                    "resultText": null,
+                    "rollRefs": [
+                      {
+                        "sourceId": "person_e",
+                        "targetId": "person_f",
+                        "triggerKey": "trigger_ef",
+                        "rollId": "roll_ef"
+                      }
+                    ]
+                  },
+                  {
+                    "memberId": "person_f",
+                    "actionText": "F 避开门边。",
+                    "targets": [],
+                    "resultText": null,
+                    "rollRefs": []
+                  }
+                ],
+                "acceptedSources": [
+                  {
+                    "memberId": "person_e",
+                    "sourceEpoch": 7,
+                    "sourceAttempt": 1,
+                    "actionContentHash": "243dfd72f2b94451ea6a28db66e9824652f0db5516c8ea56a29389659303937b",
+                    "resultContentHash": null,
+                    "targetsContentHash": "0a51b60c6352306fed9193db8dba7c62201d326a6644e81af41d7704964003da",
+                    "candidatesContentHash": null
+                  },
+                  {
+                    "memberId": "person_f",
+                    "sourceEpoch": 7,
+                    "sourceAttempt": 1,
+                    "actionContentHash": "84764244db0bb0fa954a11f044cc11427692c44ffc4d3e0e313c3114df00dbc0",
+                    "resultContentHash": null,
+                    "targetsContentHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+                    "candidatesContentHash": null
+                  }
+                ],
+                "candidates": null
+              }
+            ],
+            "timeScanCandidates": null,
+            "payloadStatus": "available",
+            "restoreSources": [
+              {
+                "pointId": "p2",
+                "groupId": "group_ef",
+                "sourceEpoch": 7,
+                "sourceAttempt": 1,
+                "manifest": [
+                  {
+                    "memberId": "person_e",
+                    "actionContentHash": "243dfd72f2b94451ea6a28db66e9824652f0db5516c8ea56a29389659303937b",
+                    "resultContentHash": null,
+                    "targetsContentHash": "0a51b60c6352306fed9193db8dba7c62201d326a6644e81af41d7704964003da",
+                    "candidatesContentHash": null
+                  },
+                  {
+                    "memberId": "person_f",
+                    "actionContentHash": "84764244db0bb0fa954a11f044cc11427692c44ffc4d3e0e313c3114df00dbc0",
+                    "resultContentHash": null,
+                    "targetsContentHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+                    "candidatesContentHash": null
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "failures": [
+    {
+      "name": "current_missing",
+      "case": "missing",
+      "scope": "current",
+      "requestSchema": "RestoreGroupWorkRequest",
+      "request": {
+        "protocolVersion": 2,
+        "requestId": "request_restore_current",
+        "worldId": "world_school",
+        "leaseToken": "lease_b",
+        "fenceEpoch": 8,
+        "expectedPointId": "root_0",
+        "expectedVersion": 0,
+        "expectedCheckpointRevision": 9,
+        "pointId": "p1",
+        "groupId": "group_cd",
+        "sourceEpoch": 7,
+        "sourceAttempt": 1,
+        "manifest": [
+          {
+            "memberId": "person_c",
+            "actionContentHash": "642befc7c48664d442ad0f72537d26f93f8be73d9d159b0c2e2e5c3fc414f66f",
+            "resultContentHash": "ac2331a622e2b66992434a31b1144c3513098002646c6b2e476b44e5c57ea29e",
+            "targetsContentHash": "f7c2667b4c07a057ab79f040b0b36f64e982a20e2ce2de208b7d0fd12a32e970",
+            "candidatesContentHash": "053938a7488b1a470cc0e53ec0ee61fc07e92927d40184f43ca3d9bd80174d0d"
+          },
+          {
+            "memberId": "person_d",
+            "actionContentHash": "b280fc80635f95e654e1845dda02f3fc814557dda94672d724d9bbfd2401ddbc",
+            "resultContentHash": "831ad19b36a53807d0ce8630de496db0201657a094a4b5781413e5d9543c2d5c",
+            "targetsContentHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+            "candidatesContentHash": "053938a7488b1a470cc0e53ec0ee61fc07e92927d40184f43ca3d9bd80174d0d"
+          }
+        ],
+        "operation": "restore_group_work"
+      },
+      "errorSchema": "ErrorResponse",
+      "error": {
+        "protocolVersion": 2,
+        "engineVersion": "world-engine-v1",
+        "schemaVersion": 1,
+        "canonicalVersion": "world-canonical-v1",
+        "serverTimeEpochMilli": 1792617780000,
+        "replayed": false,
+        "operation": "checkpoint_restore_group_work",
+        "requestId": "request_restore_current",
+        "worldId": "world_school",
+        "error": {
+          "code": "frozen_work_missing",
+          "httpStatus": 409,
+          "retryable": false,
+          "clientAction": "pause",
+          "details": {
+            "reason": "source_row_missing"
+          }
+        },
+        "world": {
+          "worldId": "world_school",
+          "head": {
+            "pointId": "root_0",
+            "version": 0,
+            "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+            "narrationStatus": "ready"
+          },
+          "advance": {
+            "advanceId": "advance_1",
+            "inputId": "input_1",
+            "intentStatus": "pending",
+            "inputAvailable": true
+          },
+          "round": {
+            "roundId": "round_1",
+            "trigger": "player",
+            "conclusion": null,
+            "order": [
+              "person_c",
+              "person_d",
+              "person_e",
+              "person_f"
+            ],
+            "cursor": 0,
+            "actedIds": [],
+            "visitedIds": []
+          },
+          "time": {
+            "calendar": "gregorian",
+            "dateTime": "2026-01-01T11:59:00",
+            "instantOrdinal": 0
+          },
+          "lease": {
+            "fenceEpoch": 8,
+            "expiresAtEpochMilli": 1792617900000
+          },
+          "successor": {
+            "pointId": "p2",
+            "predecessorPointId": "p1",
+            "timeAdvance": {
+              "boundary": "instant",
+              "duration": {
+                "amount": 0,
+                "unit": "second"
+              }
+            },
+            "expectedPredecessorVersion": 1,
+            "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195",
+            "expectedPredecessorStateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+            "baseline": {
+              "headPointId": "p1",
+              "version": 1,
+              "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5"
+            }
+          },
+          "activePointId": "p1",
+          "activeRoundId": "round_1"
+        },
+        "control": {
+          "phase": "select_actor",
+          "paused": true,
+          "revision": 9,
+          "gate": {
+            "status": "none",
+            "generation": null,
+            "issuedAtEpochMilli": null,
+            "expiresAtEpochMilli": null
+          },
+          "blockedReasons": [
+            "paused"
+          ],
+          "canCompute": false
+        },
+        "work": {
+          "pointId": "p1",
+          "kind": "normal",
+          "timeAdvance": {
+            "boundary": "elapsed",
+            "duration": {
+              "amount": 2,
+              "unit": "second"
+            }
+          },
+          "timeLocked": true,
+          "baseline": {
+            "headPointId": "root_0",
+            "version": 0,
+            "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5"
+          },
+          "phase": "select_actor",
+          "working": {
+            "cursor": 2,
+            "actedIds": [
+              "person_c",
+              "person_d"
+            ],
+            "visitedIds": [
+              "person_c",
+              "person_d"
+            ],
+            "settledUnitIds": [
+              "unit_1"
+            ],
+            "intentStatus": "consumed"
+          },
+          "settledUnits": [
+            {
+              "unitId": "unit_1",
+              "groupId": "group_cd",
+              "memberIds": [
+                "person_c",
+                "person_d"
+              ],
+              "contentHash": "12b9771f7e83b9e8cb56d13c81efaf733483d9707beda5ad1013f8fbce753fc3"
+            }
+          ],
+          "pendingGroup": null,
+          "successor": {
+            "pointId": "p2",
+            "predecessorPointId": "p1",
+            "timeAdvance": {
+              "boundary": "instant",
+              "duration": {
+                "amount": 0,
+                "unit": "second"
+              }
+            },
+            "expectedPredecessorVersion": 1,
+            "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195",
+            "expectedPredecessorStateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+            "baseline": {
+              "headPointId": "p1",
+              "version": 1,
+              "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5"
+            }
+          },
+          "sealed": true,
+          "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195",
+          "predecessorWorkDigest": null,
+          "timeScanComplete": false
+        }
+      }
+    },
+    {
+      "name": "current_corrupt",
+      "case": "corrupt",
+      "scope": "current",
+      "requestSchema": "RestoreGroupWorkRequest",
+      "request": {
+        "protocolVersion": 2,
+        "requestId": "request_restore_current",
+        "worldId": "world_school",
+        "leaseToken": "lease_b",
+        "fenceEpoch": 8,
+        "expectedPointId": "root_0",
+        "expectedVersion": 0,
+        "expectedCheckpointRevision": 9,
+        "pointId": "p1",
+        "groupId": "group_cd",
+        "sourceEpoch": 7,
+        "sourceAttempt": 1,
+        "manifest": [
+          {
+            "memberId": "person_c",
+            "actionContentHash": "642befc7c48664d442ad0f72537d26f93f8be73d9d159b0c2e2e5c3fc414f66f",
+            "resultContentHash": "ac2331a622e2b66992434a31b1144c3513098002646c6b2e476b44e5c57ea29e",
+            "targetsContentHash": "f7c2667b4c07a057ab79f040b0b36f64e982a20e2ce2de208b7d0fd12a32e970",
+            "candidatesContentHash": "053938a7488b1a470cc0e53ec0ee61fc07e92927d40184f43ca3d9bd80174d0d"
+          },
+          {
+            "memberId": "person_d",
+            "actionContentHash": "b280fc80635f95e654e1845dda02f3fc814557dda94672d724d9bbfd2401ddbc",
+            "resultContentHash": "831ad19b36a53807d0ce8630de496db0201657a094a4b5781413e5d9543c2d5c",
+            "targetsContentHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+            "candidatesContentHash": "053938a7488b1a470cc0e53ec0ee61fc07e92927d40184f43ca3d9bd80174d0d"
+          }
+        ],
+        "operation": "restore_group_work"
+      },
+      "errorSchema": "ErrorResponse",
+      "error": {
+        "protocolVersion": 2,
+        "engineVersion": "world-engine-v1",
+        "schemaVersion": 1,
+        "canonicalVersion": "world-canonical-v1",
+        "serverTimeEpochMilli": 1792617780000,
+        "replayed": false,
+        "operation": "checkpoint_restore_group_work",
+        "requestId": "request_restore_current",
+        "worldId": "world_school",
+        "error": {
+          "code": "frozen_work_corrupt",
+          "httpStatus": 409,
+          "retryable": false,
+          "clientAction": "pause",
+          "details": {
+            "reason": "content_hash_mismatch"
+          }
+        },
+        "world": {
+          "worldId": "world_school",
+          "head": {
+            "pointId": "root_0",
+            "version": 0,
+            "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+            "narrationStatus": "ready"
+          },
+          "advance": {
+            "advanceId": "advance_1",
+            "inputId": "input_1",
+            "intentStatus": "pending",
+            "inputAvailable": true
+          },
+          "round": {
+            "roundId": "round_1",
+            "trigger": "player",
+            "conclusion": null,
+            "order": [
+              "person_c",
+              "person_d",
+              "person_e",
+              "person_f"
+            ],
+            "cursor": 0,
+            "actedIds": [],
+            "visitedIds": []
+          },
+          "time": {
+            "calendar": "gregorian",
+            "dateTime": "2026-01-01T11:59:00",
+            "instantOrdinal": 0
+          },
+          "lease": {
+            "fenceEpoch": 8,
+            "expiresAtEpochMilli": 1792617900000
+          },
+          "successor": {
+            "pointId": "p2",
+            "predecessorPointId": "p1",
+            "timeAdvance": {
+              "boundary": "instant",
+              "duration": {
+                "amount": 0,
+                "unit": "second"
+              }
+            },
+            "expectedPredecessorVersion": 1,
+            "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195",
+            "expectedPredecessorStateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+            "baseline": {
+              "headPointId": "p1",
+              "version": 1,
+              "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5"
+            }
+          },
+          "activePointId": "p1",
+          "activeRoundId": "round_1"
+        },
+        "control": {
+          "phase": "select_actor",
+          "paused": true,
+          "revision": 9,
+          "gate": {
+            "status": "none",
+            "generation": null,
+            "issuedAtEpochMilli": null,
+            "expiresAtEpochMilli": null
+          },
+          "blockedReasons": [
+            "paused"
+          ],
+          "canCompute": false
+        },
+        "work": {
+          "pointId": "p1",
+          "kind": "normal",
+          "timeAdvance": {
+            "boundary": "elapsed",
+            "duration": {
+              "amount": 2,
+              "unit": "second"
+            }
+          },
+          "timeLocked": true,
+          "baseline": {
+            "headPointId": "root_0",
+            "version": 0,
+            "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5"
+          },
+          "phase": "select_actor",
+          "working": {
+            "cursor": 2,
+            "actedIds": [
+              "person_c",
+              "person_d"
+            ],
+            "visitedIds": [
+              "person_c",
+              "person_d"
+            ],
+            "settledUnitIds": [
+              "unit_1"
+            ],
+            "intentStatus": "consumed"
+          },
+          "settledUnits": [
+            {
+              "unitId": "unit_1",
+              "groupId": "group_cd",
+              "memberIds": [
+                "person_c",
+                "person_d"
+              ],
+              "contentHash": "12b9771f7e83b9e8cb56d13c81efaf733483d9707beda5ad1013f8fbce753fc3"
+            }
+          ],
+          "pendingGroup": null,
+          "successor": {
+            "pointId": "p2",
+            "predecessorPointId": "p1",
+            "timeAdvance": {
+              "boundary": "instant",
+              "duration": {
+                "amount": 0,
+                "unit": "second"
+              }
+            },
+            "expectedPredecessorVersion": 1,
+            "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195",
+            "expectedPredecessorStateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+            "baseline": {
+              "headPointId": "p1",
+              "version": 1,
+              "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5"
+            }
+          },
+          "sealed": true,
+          "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195",
+          "predecessorWorkDigest": null,
+          "timeScanComplete": false
+        }
+      }
+    },
+    {
+      "name": "current_consumed",
+      "case": "consumed",
+      "scope": "current",
+      "requestSchema": "RestoreGroupWorkRequest",
+      "request": {
+        "protocolVersion": 2,
+        "requestId": "request_restore_current",
+        "worldId": "world_school",
+        "leaseToken": "lease_b",
+        "fenceEpoch": 8,
+        "expectedPointId": "root_0",
+        "expectedVersion": 0,
+        "expectedCheckpointRevision": 9,
+        "pointId": "p1",
+        "groupId": "group_cd",
+        "sourceEpoch": 7,
+        "sourceAttempt": 1,
+        "manifest": [
+          {
+            "memberId": "person_c",
+            "actionContentHash": "642befc7c48664d442ad0f72537d26f93f8be73d9d159b0c2e2e5c3fc414f66f",
+            "resultContentHash": "ac2331a622e2b66992434a31b1144c3513098002646c6b2e476b44e5c57ea29e",
+            "targetsContentHash": "f7c2667b4c07a057ab79f040b0b36f64e982a20e2ce2de208b7d0fd12a32e970",
+            "candidatesContentHash": "053938a7488b1a470cc0e53ec0ee61fc07e92927d40184f43ca3d9bd80174d0d"
+          },
+          {
+            "memberId": "person_d",
+            "actionContentHash": "b280fc80635f95e654e1845dda02f3fc814557dda94672d724d9bbfd2401ddbc",
+            "resultContentHash": "831ad19b36a53807d0ce8630de496db0201657a094a4b5781413e5d9543c2d5c",
+            "targetsContentHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+            "candidatesContentHash": "053938a7488b1a470cc0e53ec0ee61fc07e92927d40184f43ca3d9bd80174d0d"
+          }
+        ],
+        "operation": "restore_group_work"
+      },
+      "errorSchema": "ErrorResponse",
+      "error": {
+        "protocolVersion": 2,
+        "engineVersion": "world-engine-v1",
+        "schemaVersion": 1,
+        "canonicalVersion": "world-canonical-v1",
+        "serverTimeEpochMilli": 1792617780000,
+        "replayed": false,
+        "operation": "checkpoint_restore_group_work",
+        "requestId": "request_restore_current",
+        "worldId": "world_school",
+        "error": {
+          "code": "frozen_work_missing",
+          "httpStatus": 409,
+          "retryable": false,
+          "clientAction": "pause",
+          "details": {
+            "reason": "source_not_active",
+            "sourceState": "consumed"
+          }
+        },
+        "world": {
+          "worldId": "world_school",
+          "head": {
+            "pointId": "root_0",
+            "version": 0,
+            "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+            "narrationStatus": "ready"
+          },
+          "advance": {
+            "advanceId": "advance_1",
+            "inputId": "input_1",
+            "intentStatus": "pending",
+            "inputAvailable": true
+          },
+          "round": {
+            "roundId": "round_1",
+            "trigger": "player",
+            "conclusion": null,
+            "order": [
+              "person_c",
+              "person_d",
+              "person_e",
+              "person_f"
+            ],
+            "cursor": 0,
+            "actedIds": [],
+            "visitedIds": []
+          },
+          "time": {
+            "calendar": "gregorian",
+            "dateTime": "2026-01-01T11:59:00",
+            "instantOrdinal": 0
+          },
+          "lease": {
+            "fenceEpoch": 8,
+            "expiresAtEpochMilli": 1792617900000
+          },
+          "successor": {
+            "pointId": "p2",
+            "predecessorPointId": "p1",
+            "timeAdvance": {
+              "boundary": "instant",
+              "duration": {
+                "amount": 0,
+                "unit": "second"
+              }
+            },
+            "expectedPredecessorVersion": 1,
+            "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195",
+            "expectedPredecessorStateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+            "baseline": {
+              "headPointId": "p1",
+              "version": 1,
+              "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5"
+            }
+          },
+          "activePointId": "p1",
+          "activeRoundId": "round_1"
+        },
+        "control": {
+          "phase": "select_actor",
+          "paused": true,
+          "revision": 9,
+          "gate": {
+            "status": "none",
+            "generation": null,
+            "issuedAtEpochMilli": null,
+            "expiresAtEpochMilli": null
+          },
+          "blockedReasons": [
+            "paused"
+          ],
+          "canCompute": false
+        },
+        "work": {
+          "pointId": "p1",
+          "kind": "normal",
+          "timeAdvance": {
+            "boundary": "elapsed",
+            "duration": {
+              "amount": 2,
+              "unit": "second"
+            }
+          },
+          "timeLocked": true,
+          "baseline": {
+            "headPointId": "root_0",
+            "version": 0,
+            "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5"
+          },
+          "phase": "select_actor",
+          "working": {
+            "cursor": 2,
+            "actedIds": [
+              "person_c",
+              "person_d"
+            ],
+            "visitedIds": [
+              "person_c",
+              "person_d"
+            ],
+            "settledUnitIds": [
+              "unit_1"
+            ],
+            "intentStatus": "consumed"
+          },
+          "settledUnits": [
+            {
+              "unitId": "unit_1",
+              "groupId": "group_cd",
+              "memberIds": [
+                "person_c",
+                "person_d"
+              ],
+              "contentHash": "12b9771f7e83b9e8cb56d13c81efaf733483d9707beda5ad1013f8fbce753fc3"
+            }
+          ],
+          "pendingGroup": null,
+          "successor": {
+            "pointId": "p2",
+            "predecessorPointId": "p1",
+            "timeAdvance": {
+              "boundary": "instant",
+              "duration": {
+                "amount": 0,
+                "unit": "second"
+              }
+            },
+            "expectedPredecessorVersion": 1,
+            "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195",
+            "expectedPredecessorStateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+            "baseline": {
+              "headPointId": "p1",
+              "version": 1,
+              "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5"
+            }
+          },
+          "sealed": true,
+          "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195",
+          "predecessorWorkDigest": null,
+          "timeScanComplete": false
+        }
+      }
+    },
+    {
+      "name": "current_abandoned",
+      "case": "abandoned",
+      "scope": "current",
+      "requestSchema": "RestoreGroupWorkRequest",
+      "request": {
+        "protocolVersion": 2,
+        "requestId": "request_restore_current",
+        "worldId": "world_school",
+        "leaseToken": "lease_b",
+        "fenceEpoch": 8,
+        "expectedPointId": "root_0",
+        "expectedVersion": 0,
+        "expectedCheckpointRevision": 9,
+        "pointId": "p1",
+        "groupId": "group_cd",
+        "sourceEpoch": 7,
+        "sourceAttempt": 1,
+        "manifest": [
+          {
+            "memberId": "person_c",
+            "actionContentHash": "642befc7c48664d442ad0f72537d26f93f8be73d9d159b0c2e2e5c3fc414f66f",
+            "resultContentHash": "ac2331a622e2b66992434a31b1144c3513098002646c6b2e476b44e5c57ea29e",
+            "targetsContentHash": "f7c2667b4c07a057ab79f040b0b36f64e982a20e2ce2de208b7d0fd12a32e970",
+            "candidatesContentHash": "053938a7488b1a470cc0e53ec0ee61fc07e92927d40184f43ca3d9bd80174d0d"
+          },
+          {
+            "memberId": "person_d",
+            "actionContentHash": "b280fc80635f95e654e1845dda02f3fc814557dda94672d724d9bbfd2401ddbc",
+            "resultContentHash": "831ad19b36a53807d0ce8630de496db0201657a094a4b5781413e5d9543c2d5c",
+            "targetsContentHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+            "candidatesContentHash": "053938a7488b1a470cc0e53ec0ee61fc07e92927d40184f43ca3d9bd80174d0d"
+          }
+        ],
+        "operation": "restore_group_work"
+      },
+      "errorSchema": "ErrorResponse",
+      "error": {
+        "protocolVersion": 2,
+        "engineVersion": "world-engine-v1",
+        "schemaVersion": 1,
+        "canonicalVersion": "world-canonical-v1",
+        "serverTimeEpochMilli": 1792617780000,
+        "replayed": false,
+        "operation": "checkpoint_restore_group_work",
+        "requestId": "request_restore_current",
+        "worldId": "world_school",
+        "error": {
+          "code": "frozen_work_missing",
+          "httpStatus": 409,
+          "retryable": false,
+          "clientAction": "pause",
+          "details": {
+            "reason": "source_not_active",
+            "sourceState": "abandoned"
+          }
+        },
+        "world": {
+          "worldId": "world_school",
+          "head": {
+            "pointId": "root_0",
+            "version": 0,
+            "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+            "narrationStatus": "ready"
+          },
+          "advance": {
+            "advanceId": "advance_1",
+            "inputId": "input_1",
+            "intentStatus": "pending",
+            "inputAvailable": true
+          },
+          "round": {
+            "roundId": "round_1",
+            "trigger": "player",
+            "conclusion": null,
+            "order": [
+              "person_c",
+              "person_d",
+              "person_e",
+              "person_f"
+            ],
+            "cursor": 0,
+            "actedIds": [],
+            "visitedIds": []
+          },
+          "time": {
+            "calendar": "gregorian",
+            "dateTime": "2026-01-01T11:59:00",
+            "instantOrdinal": 0
+          },
+          "lease": {
+            "fenceEpoch": 8,
+            "expiresAtEpochMilli": 1792617900000
+          },
+          "successor": {
+            "pointId": "p2",
+            "predecessorPointId": "p1",
+            "timeAdvance": {
+              "boundary": "instant",
+              "duration": {
+                "amount": 0,
+                "unit": "second"
+              }
+            },
+            "expectedPredecessorVersion": 1,
+            "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195",
+            "expectedPredecessorStateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+            "baseline": {
+              "headPointId": "p1",
+              "version": 1,
+              "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5"
+            }
+          },
+          "activePointId": "p1",
+          "activeRoundId": "round_1"
+        },
+        "control": {
+          "phase": "select_actor",
+          "paused": true,
+          "revision": 9,
+          "gate": {
+            "status": "none",
+            "generation": null,
+            "issuedAtEpochMilli": null,
+            "expiresAtEpochMilli": null
+          },
+          "blockedReasons": [
+            "paused"
+          ],
+          "canCompute": false
+        },
+        "work": {
+          "pointId": "p1",
+          "kind": "normal",
+          "timeAdvance": {
+            "boundary": "elapsed",
+            "duration": {
+              "amount": 2,
+              "unit": "second"
+            }
+          },
+          "timeLocked": true,
+          "baseline": {
+            "headPointId": "root_0",
+            "version": 0,
+            "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5"
+          },
+          "phase": "select_actor",
+          "working": {
+            "cursor": 2,
+            "actedIds": [
+              "person_c",
+              "person_d"
+            ],
+            "visitedIds": [
+              "person_c",
+              "person_d"
+            ],
+            "settledUnitIds": [
+              "unit_1"
+            ],
+            "intentStatus": "consumed"
+          },
+          "settledUnits": [
+            {
+              "unitId": "unit_1",
+              "groupId": "group_cd",
+              "memberIds": [
+                "person_c",
+                "person_d"
+              ],
+              "contentHash": "12b9771f7e83b9e8cb56d13c81efaf733483d9707beda5ad1013f8fbce753fc3"
+            }
+          ],
+          "pendingGroup": null,
+          "successor": {
+            "pointId": "p2",
+            "predecessorPointId": "p1",
+            "timeAdvance": {
+              "boundary": "instant",
+              "duration": {
+                "amount": 0,
+                "unit": "second"
+              }
+            },
+            "expectedPredecessorVersion": 1,
+            "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195",
+            "expectedPredecessorStateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+            "baseline": {
+              "headPointId": "p1",
+              "version": 1,
+              "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5"
+            }
+          },
+          "sealed": true,
+          "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195",
+          "predecessorWorkDigest": null,
+          "timeScanComplete": false
+        }
+      }
+    },
+    {
+      "name": "current_old_lease",
+      "case": "old_lease",
+      "scope": "current",
+      "requestSchema": "RestoreGroupWorkRequest",
+      "request": {
+        "protocolVersion": 2,
+        "requestId": "request_restore_current",
+        "worldId": "world_school",
+        "leaseToken": "lease_a",
+        "fenceEpoch": 7,
+        "expectedPointId": "root_0",
+        "expectedVersion": 0,
+        "expectedCheckpointRevision": 9,
+        "pointId": "p1",
+        "groupId": "group_cd",
+        "sourceEpoch": 7,
+        "sourceAttempt": 1,
+        "manifest": [
+          {
+            "memberId": "person_c",
+            "actionContentHash": "642befc7c48664d442ad0f72537d26f93f8be73d9d159b0c2e2e5c3fc414f66f",
+            "resultContentHash": "ac2331a622e2b66992434a31b1144c3513098002646c6b2e476b44e5c57ea29e",
+            "targetsContentHash": "f7c2667b4c07a057ab79f040b0b36f64e982a20e2ce2de208b7d0fd12a32e970",
+            "candidatesContentHash": "053938a7488b1a470cc0e53ec0ee61fc07e92927d40184f43ca3d9bd80174d0d"
+          },
+          {
+            "memberId": "person_d",
+            "actionContentHash": "b280fc80635f95e654e1845dda02f3fc814557dda94672d724d9bbfd2401ddbc",
+            "resultContentHash": "831ad19b36a53807d0ce8630de496db0201657a094a4b5781413e5d9543c2d5c",
+            "targetsContentHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+            "candidatesContentHash": "053938a7488b1a470cc0e53ec0ee61fc07e92927d40184f43ca3d9bd80174d0d"
+          }
+        ],
+        "operation": "restore_group_work"
+      },
+      "errorSchema": "ErrorResponse",
+      "error": {
+        "protocolVersion": 2,
+        "engineVersion": "world-engine-v1",
+        "schemaVersion": 1,
+        "canonicalVersion": "world-canonical-v1",
+        "serverTimeEpochMilli": 1792617780000,
+        "replayed": false,
+        "operation": "checkpoint_restore_group_work",
+        "requestId": "request_restore_current",
+        "worldId": "world_school",
+        "error": {
+          "code": "stale_epoch",
+          "httpStatus": 409,
+          "retryable": false,
+          "clientAction": "reacquire_lease",
+          "details": {
+            "expected": 8,
+            "actual": 7
+          }
+        },
+        "world": {
+          "worldId": "world_school",
+          "head": {
+            "pointId": "root_0",
+            "version": 0,
+            "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+            "narrationStatus": "ready"
+          },
+          "advance": {
+            "advanceId": "advance_1",
+            "inputId": "input_1",
+            "intentStatus": "pending",
+            "inputAvailable": true
+          },
+          "round": {
+            "roundId": "round_1",
+            "trigger": "player",
+            "conclusion": null,
+            "order": [
+              "person_c",
+              "person_d",
+              "person_e",
+              "person_f"
+            ],
+            "cursor": 0,
+            "actedIds": [],
+            "visitedIds": []
+          },
+          "time": {
+            "calendar": "gregorian",
+            "dateTime": "2026-01-01T11:59:00",
+            "instantOrdinal": 0
+          },
+          "lease": {
+            "fenceEpoch": 8,
+            "expiresAtEpochMilli": 1792617900000
+          },
+          "successor": {
+            "pointId": "p2",
+            "predecessorPointId": "p1",
+            "timeAdvance": {
+              "boundary": "instant",
+              "duration": {
+                "amount": 0,
+                "unit": "second"
+              }
+            },
+            "expectedPredecessorVersion": 1,
+            "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195",
+            "expectedPredecessorStateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+            "baseline": {
+              "headPointId": "p1",
+              "version": 1,
+              "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5"
+            }
+          },
+          "activePointId": "p1",
+          "activeRoundId": "round_1"
+        },
+        "control": {
+          "phase": "select_actor",
+          "paused": true,
+          "revision": 9,
+          "gate": {
+            "status": "none",
+            "generation": null,
+            "issuedAtEpochMilli": null,
+            "expiresAtEpochMilli": null
+          },
+          "blockedReasons": [
+            "paused"
+          ],
+          "canCompute": false
+        },
+        "work": {
+          "pointId": "p1",
+          "kind": "normal",
+          "timeAdvance": {
+            "boundary": "elapsed",
+            "duration": {
+              "amount": 2,
+              "unit": "second"
+            }
+          },
+          "timeLocked": true,
+          "baseline": {
+            "headPointId": "root_0",
+            "version": 0,
+            "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5"
+          },
+          "phase": "select_actor",
+          "working": {
+            "cursor": 2,
+            "actedIds": [
+              "person_c",
+              "person_d"
+            ],
+            "visitedIds": [
+              "person_c",
+              "person_d"
+            ],
+            "settledUnitIds": [
+              "unit_1"
+            ],
+            "intentStatus": "consumed"
+          },
+          "settledUnits": [
+            {
+              "unitId": "unit_1",
+              "groupId": "group_cd",
+              "memberIds": [
+                "person_c",
+                "person_d"
+              ],
+              "contentHash": "12b9771f7e83b9e8cb56d13c81efaf733483d9707beda5ad1013f8fbce753fc3"
+            }
+          ],
+          "pendingGroup": null,
+          "successor": {
+            "pointId": "p2",
+            "predecessorPointId": "p1",
+            "timeAdvance": {
+              "boundary": "instant",
+              "duration": {
+                "amount": 0,
+                "unit": "second"
+              }
+            },
+            "expectedPredecessorVersion": 1,
+            "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195",
+            "expectedPredecessorStateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+            "baseline": {
+              "headPointId": "p1",
+              "version": 1,
+              "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5"
+            }
+          },
+          "sealed": true,
+          "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195",
+          "predecessorWorkDigest": null,
+          "timeScanComplete": false
+        }
+      }
+    },
+    {
+      "name": "successor_missing",
+      "case": "missing",
+      "scope": "successor",
+      "requestSchema": "RestoreGroupWorkRequest",
+      "request": {
+        "protocolVersion": 2,
+        "requestId": "request_restore_successor",
+        "worldId": "world_school",
+        "leaseToken": "lease_b",
+        "fenceEpoch": 8,
+        "expectedPointId": "root_0",
+        "expectedVersion": 0,
+        "expectedCheckpointRevision": 9,
+        "pointId": "p2",
+        "groupId": "group_ef",
+        "sourceEpoch": 7,
+        "sourceAttempt": 1,
+        "manifest": [
+          {
+            "memberId": "person_e",
+            "actionContentHash": "243dfd72f2b94451ea6a28db66e9824652f0db5516c8ea56a29389659303937b",
+            "resultContentHash": null,
+            "targetsContentHash": "0a51b60c6352306fed9193db8dba7c62201d326a6644e81af41d7704964003da",
+            "candidatesContentHash": null
+          },
+          {
+            "memberId": "person_f",
+            "actionContentHash": "84764244db0bb0fa954a11f044cc11427692c44ffc4d3e0e313c3114df00dbc0",
+            "resultContentHash": null,
+            "targetsContentHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+            "candidatesContentHash": null
+          }
+        ],
+        "operation": "restore_group_work"
+      },
+      "errorSchema": "ErrorResponse",
+      "error": {
+        "protocolVersion": 2,
+        "engineVersion": "world-engine-v1",
+        "schemaVersion": 1,
+        "canonicalVersion": "world-canonical-v1",
+        "serverTimeEpochMilli": 1792617780000,
+        "replayed": false,
+        "operation": "checkpoint_restore_group_work",
+        "requestId": "request_restore_successor",
+        "worldId": "world_school",
+        "error": {
+          "code": "frozen_work_missing",
+          "httpStatus": 409,
+          "retryable": false,
+          "clientAction": "pause",
+          "details": {
+            "reason": "source_row_missing"
+          }
+        },
+        "world": {
+          "worldId": "world_school",
+          "head": {
+            "pointId": "root_0",
+            "version": 0,
+            "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+            "narrationStatus": "ready"
+          },
+          "advance": {
+            "advanceId": "advance_1",
+            "inputId": "input_1",
+            "intentStatus": "pending",
+            "inputAvailable": true
+          },
+          "round": {
+            "roundId": "round_1",
+            "trigger": "player",
+            "conclusion": null,
+            "order": [
+              "person_c",
+              "person_d",
+              "person_e",
+              "person_f"
+            ],
+            "cursor": 0,
+            "actedIds": [],
+            "visitedIds": []
+          },
+          "time": {
+            "calendar": "gregorian",
+            "dateTime": "2026-01-01T11:59:00",
+            "instantOrdinal": 0
+          },
+          "lease": {
+            "fenceEpoch": 8,
+            "expiresAtEpochMilli": 1792617900000
+          },
+          "successor": {
+            "pointId": "p2",
+            "predecessorPointId": "p1",
+            "timeAdvance": {
+              "boundary": "instant",
+              "duration": {
+                "amount": 0,
+                "unit": "second"
+              }
+            },
+            "expectedPredecessorVersion": 1,
+            "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195",
+            "expectedPredecessorStateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+            "baseline": {
+              "headPointId": "p1",
+              "version": 1,
+              "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5"
+            }
+          },
+          "activePointId": "p1",
+          "activeRoundId": "round_1"
+        },
+        "control": {
+          "phase": "select_actor",
+          "paused": true,
+          "revision": 9,
+          "gate": {
+            "status": "none",
+            "generation": null,
+            "issuedAtEpochMilli": null,
+            "expiresAtEpochMilli": null
+          },
+          "blockedReasons": [
+            "paused"
+          ],
+          "canCompute": false
+        },
+        "work": {
+          "pointId": "p1",
+          "kind": "normal",
+          "timeAdvance": {
+            "boundary": "elapsed",
+            "duration": {
+              "amount": 2,
+              "unit": "second"
+            }
+          },
+          "timeLocked": true,
+          "baseline": {
+            "headPointId": "root_0",
+            "version": 0,
+            "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5"
+          },
+          "phase": "select_actor",
+          "working": {
+            "cursor": 2,
+            "actedIds": [
+              "person_c",
+              "person_d"
+            ],
+            "visitedIds": [
+              "person_c",
+              "person_d"
+            ],
+            "settledUnitIds": [
+              "unit_1"
+            ],
+            "intentStatus": "consumed"
+          },
+          "settledUnits": [
+            {
+              "unitId": "unit_1",
+              "groupId": "group_cd",
+              "memberIds": [
+                "person_c",
+                "person_d"
+              ],
+              "contentHash": "12b9771f7e83b9e8cb56d13c81efaf733483d9707beda5ad1013f8fbce753fc3"
+            }
+          ],
+          "pendingGroup": null,
+          "successor": {
+            "pointId": "p2",
+            "predecessorPointId": "p1",
+            "timeAdvance": {
+              "boundary": "instant",
+              "duration": {
+                "amount": 0,
+                "unit": "second"
+              }
+            },
+            "expectedPredecessorVersion": 1,
+            "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195",
+            "expectedPredecessorStateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+            "baseline": {
+              "headPointId": "p1",
+              "version": 1,
+              "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5"
+            }
+          },
+          "sealed": true,
+          "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195",
+          "predecessorWorkDigest": null,
+          "timeScanComplete": false
+        }
+      }
+    },
+    {
+      "name": "successor_corrupt",
+      "case": "corrupt",
+      "scope": "successor",
+      "requestSchema": "RestoreGroupWorkRequest",
+      "request": {
+        "protocolVersion": 2,
+        "requestId": "request_restore_successor",
+        "worldId": "world_school",
+        "leaseToken": "lease_b",
+        "fenceEpoch": 8,
+        "expectedPointId": "root_0",
+        "expectedVersion": 0,
+        "expectedCheckpointRevision": 9,
+        "pointId": "p2",
+        "groupId": "group_ef",
+        "sourceEpoch": 7,
+        "sourceAttempt": 1,
+        "manifest": [
+          {
+            "memberId": "person_e",
+            "actionContentHash": "243dfd72f2b94451ea6a28db66e9824652f0db5516c8ea56a29389659303937b",
+            "resultContentHash": null,
+            "targetsContentHash": "0a51b60c6352306fed9193db8dba7c62201d326a6644e81af41d7704964003da",
+            "candidatesContentHash": null
+          },
+          {
+            "memberId": "person_f",
+            "actionContentHash": "84764244db0bb0fa954a11f044cc11427692c44ffc4d3e0e313c3114df00dbc0",
+            "resultContentHash": null,
+            "targetsContentHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+            "candidatesContentHash": null
+          }
+        ],
+        "operation": "restore_group_work"
+      },
+      "errorSchema": "ErrorResponse",
+      "error": {
+        "protocolVersion": 2,
+        "engineVersion": "world-engine-v1",
+        "schemaVersion": 1,
+        "canonicalVersion": "world-canonical-v1",
+        "serverTimeEpochMilli": 1792617780000,
+        "replayed": false,
+        "operation": "checkpoint_restore_group_work",
+        "requestId": "request_restore_successor",
+        "worldId": "world_school",
+        "error": {
+          "code": "frozen_work_corrupt",
+          "httpStatus": 409,
+          "retryable": false,
+          "clientAction": "pause",
+          "details": {
+            "reason": "content_hash_mismatch"
+          }
+        },
+        "world": {
+          "worldId": "world_school",
+          "head": {
+            "pointId": "root_0",
+            "version": 0,
+            "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+            "narrationStatus": "ready"
+          },
+          "advance": {
+            "advanceId": "advance_1",
+            "inputId": "input_1",
+            "intentStatus": "pending",
+            "inputAvailable": true
+          },
+          "round": {
+            "roundId": "round_1",
+            "trigger": "player",
+            "conclusion": null,
+            "order": [
+              "person_c",
+              "person_d",
+              "person_e",
+              "person_f"
+            ],
+            "cursor": 0,
+            "actedIds": [],
+            "visitedIds": []
+          },
+          "time": {
+            "calendar": "gregorian",
+            "dateTime": "2026-01-01T11:59:00",
+            "instantOrdinal": 0
+          },
+          "lease": {
+            "fenceEpoch": 8,
+            "expiresAtEpochMilli": 1792617900000
+          },
+          "successor": {
+            "pointId": "p2",
+            "predecessorPointId": "p1",
+            "timeAdvance": {
+              "boundary": "instant",
+              "duration": {
+                "amount": 0,
+                "unit": "second"
+              }
+            },
+            "expectedPredecessorVersion": 1,
+            "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195",
+            "expectedPredecessorStateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+            "baseline": {
+              "headPointId": "p1",
+              "version": 1,
+              "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5"
+            }
+          },
+          "activePointId": "p1",
+          "activeRoundId": "round_1"
+        },
+        "control": {
+          "phase": "select_actor",
+          "paused": true,
+          "revision": 9,
+          "gate": {
+            "status": "none",
+            "generation": null,
+            "issuedAtEpochMilli": null,
+            "expiresAtEpochMilli": null
+          },
+          "blockedReasons": [
+            "paused"
+          ],
+          "canCompute": false
+        },
+        "work": {
+          "pointId": "p1",
+          "kind": "normal",
+          "timeAdvance": {
+            "boundary": "elapsed",
+            "duration": {
+              "amount": 2,
+              "unit": "second"
+            }
+          },
+          "timeLocked": true,
+          "baseline": {
+            "headPointId": "root_0",
+            "version": 0,
+            "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5"
+          },
+          "phase": "select_actor",
+          "working": {
+            "cursor": 2,
+            "actedIds": [
+              "person_c",
+              "person_d"
+            ],
+            "visitedIds": [
+              "person_c",
+              "person_d"
+            ],
+            "settledUnitIds": [
+              "unit_1"
+            ],
+            "intentStatus": "consumed"
+          },
+          "settledUnits": [
+            {
+              "unitId": "unit_1",
+              "groupId": "group_cd",
+              "memberIds": [
+                "person_c",
+                "person_d"
+              ],
+              "contentHash": "12b9771f7e83b9e8cb56d13c81efaf733483d9707beda5ad1013f8fbce753fc3"
+            }
+          ],
+          "pendingGroup": null,
+          "successor": {
+            "pointId": "p2",
+            "predecessorPointId": "p1",
+            "timeAdvance": {
+              "boundary": "instant",
+              "duration": {
+                "amount": 0,
+                "unit": "second"
+              }
+            },
+            "expectedPredecessorVersion": 1,
+            "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195",
+            "expectedPredecessorStateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+            "baseline": {
+              "headPointId": "p1",
+              "version": 1,
+              "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5"
+            }
+          },
+          "sealed": true,
+          "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195",
+          "predecessorWorkDigest": null,
+          "timeScanComplete": false
+        }
+      }
+    },
+    {
+      "name": "successor_consumed",
+      "case": "consumed",
+      "scope": "successor",
+      "requestSchema": "RestoreGroupWorkRequest",
+      "request": {
+        "protocolVersion": 2,
+        "requestId": "request_restore_successor",
+        "worldId": "world_school",
+        "leaseToken": "lease_b",
+        "fenceEpoch": 8,
+        "expectedPointId": "root_0",
+        "expectedVersion": 0,
+        "expectedCheckpointRevision": 9,
+        "pointId": "p2",
+        "groupId": "group_ef",
+        "sourceEpoch": 7,
+        "sourceAttempt": 1,
+        "manifest": [
+          {
+            "memberId": "person_e",
+            "actionContentHash": "243dfd72f2b94451ea6a28db66e9824652f0db5516c8ea56a29389659303937b",
+            "resultContentHash": null,
+            "targetsContentHash": "0a51b60c6352306fed9193db8dba7c62201d326a6644e81af41d7704964003da",
+            "candidatesContentHash": null
+          },
+          {
+            "memberId": "person_f",
+            "actionContentHash": "84764244db0bb0fa954a11f044cc11427692c44ffc4d3e0e313c3114df00dbc0",
+            "resultContentHash": null,
+            "targetsContentHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+            "candidatesContentHash": null
+          }
+        ],
+        "operation": "restore_group_work"
+      },
+      "errorSchema": "ErrorResponse",
+      "error": {
+        "protocolVersion": 2,
+        "engineVersion": "world-engine-v1",
+        "schemaVersion": 1,
+        "canonicalVersion": "world-canonical-v1",
+        "serverTimeEpochMilli": 1792617780000,
+        "replayed": false,
+        "operation": "checkpoint_restore_group_work",
+        "requestId": "request_restore_successor",
+        "worldId": "world_school",
+        "error": {
+          "code": "frozen_work_missing",
+          "httpStatus": 409,
+          "retryable": false,
+          "clientAction": "pause",
+          "details": {
+            "reason": "source_not_active",
+            "sourceState": "consumed"
+          }
+        },
+        "world": {
+          "worldId": "world_school",
+          "head": {
+            "pointId": "root_0",
+            "version": 0,
+            "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+            "narrationStatus": "ready"
+          },
+          "advance": {
+            "advanceId": "advance_1",
+            "inputId": "input_1",
+            "intentStatus": "pending",
+            "inputAvailable": true
+          },
+          "round": {
+            "roundId": "round_1",
+            "trigger": "player",
+            "conclusion": null,
+            "order": [
+              "person_c",
+              "person_d",
+              "person_e",
+              "person_f"
+            ],
+            "cursor": 0,
+            "actedIds": [],
+            "visitedIds": []
+          },
+          "time": {
+            "calendar": "gregorian",
+            "dateTime": "2026-01-01T11:59:00",
+            "instantOrdinal": 0
+          },
+          "lease": {
+            "fenceEpoch": 8,
+            "expiresAtEpochMilli": 1792617900000
+          },
+          "successor": {
+            "pointId": "p2",
+            "predecessorPointId": "p1",
+            "timeAdvance": {
+              "boundary": "instant",
+              "duration": {
+                "amount": 0,
+                "unit": "second"
+              }
+            },
+            "expectedPredecessorVersion": 1,
+            "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195",
+            "expectedPredecessorStateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+            "baseline": {
+              "headPointId": "p1",
+              "version": 1,
+              "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5"
+            }
+          },
+          "activePointId": "p1",
+          "activeRoundId": "round_1"
+        },
+        "control": {
+          "phase": "select_actor",
+          "paused": true,
+          "revision": 9,
+          "gate": {
+            "status": "none",
+            "generation": null,
+            "issuedAtEpochMilli": null,
+            "expiresAtEpochMilli": null
+          },
+          "blockedReasons": [
+            "paused"
+          ],
+          "canCompute": false
+        },
+        "work": {
+          "pointId": "p1",
+          "kind": "normal",
+          "timeAdvance": {
+            "boundary": "elapsed",
+            "duration": {
+              "amount": 2,
+              "unit": "second"
+            }
+          },
+          "timeLocked": true,
+          "baseline": {
+            "headPointId": "root_0",
+            "version": 0,
+            "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5"
+          },
+          "phase": "select_actor",
+          "working": {
+            "cursor": 2,
+            "actedIds": [
+              "person_c",
+              "person_d"
+            ],
+            "visitedIds": [
+              "person_c",
+              "person_d"
+            ],
+            "settledUnitIds": [
+              "unit_1"
+            ],
+            "intentStatus": "consumed"
+          },
+          "settledUnits": [
+            {
+              "unitId": "unit_1",
+              "groupId": "group_cd",
+              "memberIds": [
+                "person_c",
+                "person_d"
+              ],
+              "contentHash": "12b9771f7e83b9e8cb56d13c81efaf733483d9707beda5ad1013f8fbce753fc3"
+            }
+          ],
+          "pendingGroup": null,
+          "successor": {
+            "pointId": "p2",
+            "predecessorPointId": "p1",
+            "timeAdvance": {
+              "boundary": "instant",
+              "duration": {
+                "amount": 0,
+                "unit": "second"
+              }
+            },
+            "expectedPredecessorVersion": 1,
+            "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195",
+            "expectedPredecessorStateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+            "baseline": {
+              "headPointId": "p1",
+              "version": 1,
+              "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5"
+            }
+          },
+          "sealed": true,
+          "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195",
+          "predecessorWorkDigest": null,
+          "timeScanComplete": false
+        }
+      }
+    },
+    {
+      "name": "successor_abandoned",
+      "case": "abandoned",
+      "scope": "successor",
+      "requestSchema": "RestoreGroupWorkRequest",
+      "request": {
+        "protocolVersion": 2,
+        "requestId": "request_restore_successor",
+        "worldId": "world_school",
+        "leaseToken": "lease_b",
+        "fenceEpoch": 8,
+        "expectedPointId": "root_0",
+        "expectedVersion": 0,
+        "expectedCheckpointRevision": 9,
+        "pointId": "p2",
+        "groupId": "group_ef",
+        "sourceEpoch": 7,
+        "sourceAttempt": 1,
+        "manifest": [
+          {
+            "memberId": "person_e",
+            "actionContentHash": "243dfd72f2b94451ea6a28db66e9824652f0db5516c8ea56a29389659303937b",
+            "resultContentHash": null,
+            "targetsContentHash": "0a51b60c6352306fed9193db8dba7c62201d326a6644e81af41d7704964003da",
+            "candidatesContentHash": null
+          },
+          {
+            "memberId": "person_f",
+            "actionContentHash": "84764244db0bb0fa954a11f044cc11427692c44ffc4d3e0e313c3114df00dbc0",
+            "resultContentHash": null,
+            "targetsContentHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+            "candidatesContentHash": null
+          }
+        ],
+        "operation": "restore_group_work"
+      },
+      "errorSchema": "ErrorResponse",
+      "error": {
+        "protocolVersion": 2,
+        "engineVersion": "world-engine-v1",
+        "schemaVersion": 1,
+        "canonicalVersion": "world-canonical-v1",
+        "serverTimeEpochMilli": 1792617780000,
+        "replayed": false,
+        "operation": "checkpoint_restore_group_work",
+        "requestId": "request_restore_successor",
+        "worldId": "world_school",
+        "error": {
+          "code": "frozen_work_missing",
+          "httpStatus": 409,
+          "retryable": false,
+          "clientAction": "pause",
+          "details": {
+            "reason": "source_not_active",
+            "sourceState": "abandoned"
+          }
+        },
+        "world": {
+          "worldId": "world_school",
+          "head": {
+            "pointId": "root_0",
+            "version": 0,
+            "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+            "narrationStatus": "ready"
+          },
+          "advance": {
+            "advanceId": "advance_1",
+            "inputId": "input_1",
+            "intentStatus": "pending",
+            "inputAvailable": true
+          },
+          "round": {
+            "roundId": "round_1",
+            "trigger": "player",
+            "conclusion": null,
+            "order": [
+              "person_c",
+              "person_d",
+              "person_e",
+              "person_f"
+            ],
+            "cursor": 0,
+            "actedIds": [],
+            "visitedIds": []
+          },
+          "time": {
+            "calendar": "gregorian",
+            "dateTime": "2026-01-01T11:59:00",
+            "instantOrdinal": 0
+          },
+          "lease": {
+            "fenceEpoch": 8,
+            "expiresAtEpochMilli": 1792617900000
+          },
+          "successor": {
+            "pointId": "p2",
+            "predecessorPointId": "p1",
+            "timeAdvance": {
+              "boundary": "instant",
+              "duration": {
+                "amount": 0,
+                "unit": "second"
+              }
+            },
+            "expectedPredecessorVersion": 1,
+            "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195",
+            "expectedPredecessorStateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+            "baseline": {
+              "headPointId": "p1",
+              "version": 1,
+              "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5"
+            }
+          },
+          "activePointId": "p1",
+          "activeRoundId": "round_1"
+        },
+        "control": {
+          "phase": "select_actor",
+          "paused": true,
+          "revision": 9,
+          "gate": {
+            "status": "none",
+            "generation": null,
+            "issuedAtEpochMilli": null,
+            "expiresAtEpochMilli": null
+          },
+          "blockedReasons": [
+            "paused"
+          ],
+          "canCompute": false
+        },
+        "work": {
+          "pointId": "p1",
+          "kind": "normal",
+          "timeAdvance": {
+            "boundary": "elapsed",
+            "duration": {
+              "amount": 2,
+              "unit": "second"
+            }
+          },
+          "timeLocked": true,
+          "baseline": {
+            "headPointId": "root_0",
+            "version": 0,
+            "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5"
+          },
+          "phase": "select_actor",
+          "working": {
+            "cursor": 2,
+            "actedIds": [
+              "person_c",
+              "person_d"
+            ],
+            "visitedIds": [
+              "person_c",
+              "person_d"
+            ],
+            "settledUnitIds": [
+              "unit_1"
+            ],
+            "intentStatus": "consumed"
+          },
+          "settledUnits": [
+            {
+              "unitId": "unit_1",
+              "groupId": "group_cd",
+              "memberIds": [
+                "person_c",
+                "person_d"
+              ],
+              "contentHash": "12b9771f7e83b9e8cb56d13c81efaf733483d9707beda5ad1013f8fbce753fc3"
+            }
+          ],
+          "pendingGroup": null,
+          "successor": {
+            "pointId": "p2",
+            "predecessorPointId": "p1",
+            "timeAdvance": {
+              "boundary": "instant",
+              "duration": {
+                "amount": 0,
+                "unit": "second"
+              }
+            },
+            "expectedPredecessorVersion": 1,
+            "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195",
+            "expectedPredecessorStateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+            "baseline": {
+              "headPointId": "p1",
+              "version": 1,
+              "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5"
+            }
+          },
+          "sealed": true,
+          "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195",
+          "predecessorWorkDigest": null,
+          "timeScanComplete": false
+        }
+      }
+    },
+    {
+      "name": "successor_old_lease",
+      "case": "old_lease",
+      "scope": "successor",
+      "requestSchema": "RestoreGroupWorkRequest",
+      "request": {
+        "protocolVersion": 2,
+        "requestId": "request_restore_successor",
+        "worldId": "world_school",
+        "leaseToken": "lease_a",
+        "fenceEpoch": 7,
+        "expectedPointId": "root_0",
+        "expectedVersion": 0,
+        "expectedCheckpointRevision": 9,
+        "pointId": "p2",
+        "groupId": "group_ef",
+        "sourceEpoch": 7,
+        "sourceAttempt": 1,
+        "manifest": [
+          {
+            "memberId": "person_e",
+            "actionContentHash": "243dfd72f2b94451ea6a28db66e9824652f0db5516c8ea56a29389659303937b",
+            "resultContentHash": null,
+            "targetsContentHash": "0a51b60c6352306fed9193db8dba7c62201d326a6644e81af41d7704964003da",
+            "candidatesContentHash": null
+          },
+          {
+            "memberId": "person_f",
+            "actionContentHash": "84764244db0bb0fa954a11f044cc11427692c44ffc4d3e0e313c3114df00dbc0",
+            "resultContentHash": null,
+            "targetsContentHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+            "candidatesContentHash": null
+          }
+        ],
+        "operation": "restore_group_work"
+      },
+      "errorSchema": "ErrorResponse",
+      "error": {
+        "protocolVersion": 2,
+        "engineVersion": "world-engine-v1",
+        "schemaVersion": 1,
+        "canonicalVersion": "world-canonical-v1",
+        "serverTimeEpochMilli": 1792617780000,
+        "replayed": false,
+        "operation": "checkpoint_restore_group_work",
+        "requestId": "request_restore_successor",
+        "worldId": "world_school",
+        "error": {
+          "code": "stale_epoch",
+          "httpStatus": 409,
+          "retryable": false,
+          "clientAction": "reacquire_lease",
+          "details": {
+            "expected": 8,
+            "actual": 7
+          }
+        },
+        "world": {
+          "worldId": "world_school",
+          "head": {
+            "pointId": "root_0",
+            "version": 0,
+            "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+            "narrationStatus": "ready"
+          },
+          "advance": {
+            "advanceId": "advance_1",
+            "inputId": "input_1",
+            "intentStatus": "pending",
+            "inputAvailable": true
+          },
+          "round": {
+            "roundId": "round_1",
+            "trigger": "player",
+            "conclusion": null,
+            "order": [
+              "person_c",
+              "person_d",
+              "person_e",
+              "person_f"
+            ],
+            "cursor": 0,
+            "actedIds": [],
+            "visitedIds": []
+          },
+          "time": {
+            "calendar": "gregorian",
+            "dateTime": "2026-01-01T11:59:00",
+            "instantOrdinal": 0
+          },
+          "lease": {
+            "fenceEpoch": 8,
+            "expiresAtEpochMilli": 1792617900000
+          },
+          "successor": {
+            "pointId": "p2",
+            "predecessorPointId": "p1",
+            "timeAdvance": {
+              "boundary": "instant",
+              "duration": {
+                "amount": 0,
+                "unit": "second"
+              }
+            },
+            "expectedPredecessorVersion": 1,
+            "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195",
+            "expectedPredecessorStateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+            "baseline": {
+              "headPointId": "p1",
+              "version": 1,
+              "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5"
+            }
+          },
+          "activePointId": "p1",
+          "activeRoundId": "round_1"
+        },
+        "control": {
+          "phase": "select_actor",
+          "paused": true,
+          "revision": 9,
+          "gate": {
+            "status": "none",
+            "generation": null,
+            "issuedAtEpochMilli": null,
+            "expiresAtEpochMilli": null
+          },
+          "blockedReasons": [
+            "paused"
+          ],
+          "canCompute": false
+        },
+        "work": {
+          "pointId": "p1",
+          "kind": "normal",
+          "timeAdvance": {
+            "boundary": "elapsed",
+            "duration": {
+              "amount": 2,
+              "unit": "second"
+            }
+          },
+          "timeLocked": true,
+          "baseline": {
+            "headPointId": "root_0",
+            "version": 0,
+            "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5"
+          },
+          "phase": "select_actor",
+          "working": {
+            "cursor": 2,
+            "actedIds": [
+              "person_c",
+              "person_d"
+            ],
+            "visitedIds": [
+              "person_c",
+              "person_d"
+            ],
+            "settledUnitIds": [
+              "unit_1"
+            ],
+            "intentStatus": "consumed"
+          },
+          "settledUnits": [
+            {
+              "unitId": "unit_1",
+              "groupId": "group_cd",
+              "memberIds": [
+                "person_c",
+                "person_d"
+              ],
+              "contentHash": "12b9771f7e83b9e8cb56d13c81efaf733483d9707beda5ad1013f8fbce753fc3"
+            }
+          ],
+          "pendingGroup": null,
+          "successor": {
+            "pointId": "p2",
+            "predecessorPointId": "p1",
+            "timeAdvance": {
+              "boundary": "instant",
+              "duration": {
+                "amount": 0,
+                "unit": "second"
+              }
+            },
+            "expectedPredecessorVersion": 1,
+            "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195",
+            "expectedPredecessorStateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+            "baseline": {
+              "headPointId": "p1",
+              "version": 1,
+              "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5"
+            }
+          },
+          "sealed": true,
+          "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195",
+          "predecessorWorkDigest": null,
+          "timeScanComplete": false
+        }
+      }
+    }
+  ]
+}

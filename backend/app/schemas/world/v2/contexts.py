@@ -15,6 +15,7 @@ from app.schemas.world.contracts import (
 )
 
 from .base import EpochMilli, Hex64
+from .work import FrozenGroupView, GroupWorkSource, SettlementGroup
 
 NarrationStatus = Literal["pending", "ready", "failed", "missing"]
 IntentStatus = Literal["pending", "consumed", "expired"]
@@ -51,7 +52,17 @@ class RoundSummary(Contract):
 
     roundId: Id
     trigger: Literal["player", "automatic"]
+    order: Ids
+    cursor: Count
+    actedIds: IdSet
+    visitedIds: IdSet
     conclusion: ContinueConclusion | ModelHandback | CancelHandback | None
+
+    @model_validator(mode="after")
+    def committed_progress(self):
+        if len(self.order) != len(set(self.order)) or self.cursor > len(self.order):
+            raise ValueError("invalid frozen round order or cursor")
+        return self
 
 
 class LeaseSummary(Contract):
@@ -69,6 +80,8 @@ class SuccessorSummary(Contract):
     timeAdvance: TimeAdvance
     expectedPredecessorVersion: Count
     prefixDigest: Hex64
+    expectedPredecessorStateDigest: Hex64
+    baseline: "BaselineView"
 
 
 class WorldContext(Contract):
@@ -109,6 +122,7 @@ class WorkingProgress(Contract):
     actedIds: IdSet
     visitedIds: IdSet
     settledUnitIds: IdSet
+    intentStatus: IntentStatus
 
 
 class SettledUnitView(Contract):
@@ -130,6 +144,11 @@ class PendingGroupView(Contract):
     frontierIds: IdSet
     closed: bool
 
+    model_config = ConfigDict(extra="forbid", strict=True, json_schema_extra={"allOf": [
+        {"if": {"properties": {"closed": {"const": True}}},
+         "then": {"properties": {"frontierIds": {"maxItems": 0}}}},
+    ]})
+
     @model_validator(mode="after")
     def membership(self):
         if self.sourceId not in self.memberIds:
@@ -150,6 +169,9 @@ class PointWorkView(Contract):
     """
 
     model_config = ConfigDict(extra="forbid", strict=True, json_schema_extra={"allOf": [
+        {"if": {"properties": {"sealed": {"const": True}}},
+         "then": {"properties": {"prefixDigest": {"type": "string"}}},
+         "else": {"properties": {"prefixDigest": {"type": "null"}}}},
         {"if": {"properties": {"phase": {"const": "select_actor"}}},
          "then": {"properties": {"pendingGroup": {"type": "null"}}}},
         {"if": {"properties": {"phase": {"enum": ["build_group", "settle_group"]}}},
@@ -166,6 +188,10 @@ class PointWorkView(Contract):
     kind: Literal["normal", "instant", "linked"]
     timeAdvance: TimeAdvance
     timeLocked: bool
+    sealed: bool
+    prefixDigest: Hex64 | None
+    predecessorWorkDigest: Hex64 | None
+    timeScanComplete: bool
     baseline: BaselineView
     phase: Literal["select_actor", "build_group", "settle_group"]
     working: WorkingProgress
@@ -175,6 +201,8 @@ class PointWorkView(Contract):
 
     @model_validator(mode="after")
     def combinations(self):
+        if self.sealed != (self.prefixDigest is not None):
+            raise ValueError("sealed work must carry its prefix digest")
         if (self.phase == "select_actor") != (self.pendingGroup is None):
             raise ValueError("pending group must match the work phase")
         if self.phase == "settle_group" and not self.pendingGroup.closed:
@@ -184,6 +212,66 @@ class PointWorkView(Contract):
         if set(self.working.settledUnitIds) != {unit.unitId for unit in self.settledUnits}:
             raise ValueError("settled unit ids must match the staged units")
         return self
+
+
+class PointRecoveryView(Contract):
+    """Lease-protected source metadata and current-epoch payload.
+
+    targets=None means not confirmed; [] means a confirmed empty target set.
+    A null action/result similarly denotes work that has not been accepted yet.
+    restore_required instead withholds the entire payload while independently
+    exposing active source references, including their old epoch and hashes.
+    Sealed/time-scan completion markers remain unchanged while bytes are hidden.
+    """
+
+    model_config = ConfigDict(extra="forbid", strict=True, json_schema_extra={"allOf": [
+        {"if": {"properties": {"payloadStatus": {"const": "restore_required"}}},
+         "then": {"properties": {"restoreSources": {"minItems": 1}, "groups": {"maxItems": 0},
+                                  "timeScanCandidates": {"type": "null"}}}},
+        {"if": {"properties": {"payloadStatus": {"const": "available"},
+                                 "work": {"properties": {"timeScanComplete": {"const": True}}}}},
+         "then": {"properties": {"timeScanCandidates": {"type": "object", "properties": {"groupId": {"type": "null"}}}}},
+         "else": {"properties": {"timeScanCandidates": {"type": "null"}}}},
+    ]})
+
+    work: PointWorkView
+    payloadStatus: Literal["available", "restore_required"]
+    restoreSources: list[GroupWorkSource]
+    groups: list[FrozenGroupView]
+    timeScanCandidates: SettlementGroup | None
+
+    @model_validator(mode="after")
+    def point_scope(self):
+        if any(source.pointId != self.work.pointId for source in self.restoreSources):
+            raise ValueError("restore source belongs to another point")
+        active_groups = {unit.groupId: set(unit.memberIds) for unit in self.work.settledUnits}
+        if self.work.pendingGroup is not None:
+            group = self.work.pendingGroup
+            active_groups[group.groupId] = set(group.memberIds)
+        for source in self.restoreSources:
+            if source.groupId not in active_groups:
+                raise ValueError("restore source has no active work reference")
+            if not {item.memberId for item in source.manifest} <= active_groups[source.groupId]:
+                raise ValueError("restore source member is outside the active group")
+        if any(group.pointId != self.work.pointId for group in self.groups):
+            raise ValueError("recovery group belongs to another point")
+        if self.payloadStatus == "restore_required":
+            if not self.restoreSources:
+                raise ValueError("restore-required work needs readable source references")
+            if self.groups or self.timeScanCandidates is not None:
+                raise ValueError("old-epoch payload must stay hidden until restored")
+            return self
+        if self.work.timeScanComplete != (self.timeScanCandidates is not None):
+            raise ValueError("time scan marker differs from saved candidates")
+        if self.timeScanCandidates is not None and self.timeScanCandidates.groupId is not None:
+            raise ValueError("time scan cannot name an action group")
+        return self
+
+
+class RecoveryView(Contract):
+    fenceEpoch: Positive
+    current: PointRecoveryView | None
+    successor: PointRecoveryView | None
 
 
 BlockedReason = Literal[
@@ -213,7 +301,8 @@ class GateView(Contract):
 
     model_config = ConfigDict(extra="forbid", strict=True, json_schema_extra={"allOf": [
         {"if": {"properties": {"status": {"const": "pending"}}},
-         "then": {"properties": {"generation": {"type": "integer"},
+         "then": {"required": ["generation", "issuedAtEpochMilli", "expiresAtEpochMilli"],
+                  "properties": {"generation": {"type": "integer"},
                                  "issuedAtEpochMilli": {"type": "integer"},
                                  "expiresAtEpochMilli": {"type": "integer"}}}},
         {"if": {"properties": {"status": {"const": "none"}}},
@@ -230,7 +319,8 @@ class GateView(Contract):
     @model_validator(mode="after")
     def pending_is_fully_issued(self):
         fields = (self.generation, self.issuedAtEpochMilli, self.expiresAtEpochMilli)
-        if (self.status == "pending") != all(value is not None for value in fields):
+        if ((self.status == "pending" and any(value is None for value in fields))
+                or (self.status == "none" and any(value is not None for value in fields))):
             raise ValueError("pending gate needs generation and instants; cleared gate has none")
         return self
 

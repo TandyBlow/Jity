@@ -29,7 +29,16 @@
         "kind": "handback",
         "closedBy": "cancel",
         "cancelReason": "玩家结束本次推进。"
-      }
+      },
+      "order": [
+        "person_c",
+        "person_d",
+        "person_e",
+        "person_f"
+      ],
+      "cursor": 0,
+      "actedIds": [],
+      "visitedIds": []
     },
     "time": {
       "calendar": "gregorian",

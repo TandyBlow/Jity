@@ -56,7 +56,6 @@
     "pointId": "root_0",
     "mode": "head",
     "generation": 1,
-    "claimToken": "claim_root",
     "fenceEpoch": 7,
     "issuedAtEpochMilli": 1792617599000,
     "expiresAtEpochMilli": 1792617900000

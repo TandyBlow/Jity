@@ -4,10 +4,7 @@
   "schemaVersion": 1,
   "canonicalVersion": "world-canonical-v1",
   "serverTimeEpochMilli": 1792617600000,
-  "replayed": false,
   "operation": "preview_point",
-  "requestId": "request_missing",
-  "requestHash": "3fe67e50cf1016eca06643799f9eff6ea73ddf16fe94d9b11ff629480b37b262",
   "world": {
     "worldId": "world_school",
     "head": {
@@ -25,7 +22,16 @@
     "round": {
       "roundId": "round_1",
       "trigger": "player",
-      "conclusion": null
+      "conclusion": null,
+      "order": [
+        "person_c",
+        "person_d",
+        "person_e",
+        "person_f"
+      ],
+      "cursor": 0,
+      "actedIds": [],
+      "visitedIds": []
     },
     "time": {
       "calendar": "gregorian",
@@ -74,11 +80,16 @@
       "cursor": 0,
       "actedIds": [],
       "visitedIds": [],
-      "settledUnitIds": []
+      "settledUnitIds": [],
+      "intentStatus": "pending"
     },
     "settledUnits": [],
     "pendingGroup": null,
-    "successor": null
+    "successor": null,
+    "sealed": false,
+    "prefixDigest": null,
+    "predecessorWorkDigest": null,
+    "timeScanComplete": false
   },
   "data": {
     "pointId": "p1",
@@ -695,6 +706,26 @@
           }
         }
       }
-    }
+    },
+    "pointProjection": {
+      "worldId": "world_school",
+      "id": "p1",
+      "sequence": 1,
+      "kind": "normal",
+      "previousPointId": "root_0",
+      "roundId": "round_1",
+      "advanceId": "advance_1",
+      "trigger": "player",
+      "linkedFromPointId": null,
+      "timeAdvance": {
+        "boundary": "elapsed",
+        "duration": {
+          "amount": 2,
+          "unit": "second"
+        }
+      },
+      "entityDeltas": {}
+    },
+    "mergedEntityDeltas": {}
   }
 }

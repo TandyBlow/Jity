@@ -25,7 +25,16 @@
     "round": {
       "roundId": "round_1",
       "trigger": "player",
-      "conclusion": null
+      "conclusion": null,
+      "order": [
+        "person_c",
+        "person_d",
+        "person_e",
+        "person_f"
+      ],
+      "cursor": 0,
+      "actedIds": [],
+      "visitedIds": []
     },
     "time": {
       "calendar": "gregorian",
@@ -47,7 +56,13 @@
         }
       },
       "expectedPredecessorVersion": 1,
-      "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195"
+      "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195",
+      "expectedPredecessorStateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+      "baseline": {
+        "headPointId": "p1",
+        "version": 1,
+        "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5"
+      }
     },
     "activePointId": "p1",
     "activeRoundId": "round_1"
@@ -94,7 +109,8 @@
       ],
       "settledUnitIds": [
         "unit_1"
-      ]
+      ],
+      "intentStatus": "consumed"
     },
     "settledUnits": [
       {
@@ -119,8 +135,18 @@
         }
       },
       "expectedPredecessorVersion": 1,
-      "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195"
-    }
+      "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195",
+      "expectedPredecessorStateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+      "baseline": {
+        "headPointId": "p1",
+        "version": 1,
+        "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5"
+      }
+    },
+    "sealed": true,
+    "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195",
+    "predecessorWorkDigest": null,
+    "timeScanComplete": false
   },
   "data": {
     "pointId": "p1",
@@ -137,7 +163,13 @@
         }
       },
       "expectedPredecessorVersion": 1,
-      "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195"
+      "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195",
+      "expectedPredecessorStateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+      "baseline": {
+        "headPointId": "p1",
+        "version": 1,
+        "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5"
+      }
     }
   }
 }

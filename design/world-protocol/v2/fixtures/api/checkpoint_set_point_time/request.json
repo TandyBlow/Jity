@@ -14,5 +14,6 @@
       "amount": 5,
       "unit": "second"
     }
-  }
+  },
+  "operation": "set_point_time"
 }

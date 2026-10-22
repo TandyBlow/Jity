@@ -9,19 +9,23 @@
   "expectedCheckpointRevision": 6,
   "pointId": "p1",
   "groupId": "group_cd",
-  "attempt": 1,
   "sourceEpoch": 6,
   "sourceAttempt": 2,
   "manifest": [
     {
       "memberId": "person_c",
       "actionContentHash": "642befc7c48664d442ad0f72537d26f93f8be73d9d159b0c2e2e5c3fc414f66f",
-      "resultContentHash": "99d76145b59df000fd2e1ed61b6144a22edd8fa9c79b93bafa3b615202d17e16"
+      "resultContentHash": "99d76145b59df000fd2e1ed61b6144a22edd8fa9c79b93bafa3b615202d17e16",
+      "targetsContentHash": "f7c2667b4c07a057ab79f040b0b36f64e982a20e2ce2de208b7d0fd12a32e970",
+      "candidatesContentHash": "053938a7488b1a470cc0e53ec0ee61fc07e92927d40184f43ca3d9bd80174d0d"
     },
     {
       "memberId": "person_d",
       "actionContentHash": "9d5c167a6431837a2da371f9fa09186437f274db52563136ae709ac781cf1e3f",
-      "resultContentHash": "3cd5a6d4d6ee4e0c63e02a578b05c0c54afd32adceae7c5447ff604fefcd0d78"
+      "resultContentHash": "3cd5a6d4d6ee4e0c63e02a578b05c0c54afd32adceae7c5447ff604fefcd0d78",
+      "targetsContentHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "candidatesContentHash": "053938a7488b1a470cc0e53ec0ee61fc07e92927d40184f43ca3d9bd80174d0d"
     }
-  ]
+  ],
+  "operation": "restore_group_work"
 }

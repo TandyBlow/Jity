@@ -9,5 +9,7 @@
   "issuedAtEpochMilli": 1792617599000,
   "outcome": "ready",
   "text": "走廊的灯闪了两下，你推开重门，门轴发出干涩的声音。",
-  "failureReason": null
+  "failureReason": null,
+  "leaseToken": "lease_a",
+  "fenceEpoch": 7
 }

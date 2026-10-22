@@ -1,0 +1,21 @@
+{
+  "protocolVersion": 2,
+  "requestId": "request_start",
+  "worldId": "world_school",
+  "leaseToken": "lease_a",
+  "fenceEpoch": 7,
+  "expectedPointId": "root_0",
+  "expectedVersion": 0,
+  "expectedCheckpointRevision": 1,
+  "operation": "start_advance",
+  "advanceId": "advance_1",
+  "inputId": "input_1",
+  "roundId": "round_1",
+  "inputText": "检查门边。",
+  "order": [
+    "person_c",
+    "person_d",
+    "person_e",
+    "person_f"
+  ]
+}

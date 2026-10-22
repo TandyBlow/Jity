@@ -10,19 +10,20 @@ binding digests only — input text never re-enters any response.
 
 from typing import Annotated, Literal
 
-from pydantic import ConfigDict, Field, model_validator
+from pydantic import ConfigDict, Field, RootModel, model_validator
 
 from app.schemas.world.contracts import (
-    Contract, Count, Id, IdSet, Ids, Positive, SafeInt, Sanity, Text, TimeAdvance,
-    ContinueConclusion, DescriptionChange, PendingTask, Position, TimelinePoint,
-    WorldInitialState, WorldState,
+    Contract, Count, Id, IdSet, Ids, Positive, SafeInt, Text, TimeAdvance,
+    ContinueConclusion, ModelHandback, TimelinePoint, WorldInitialState, WorldState,
+    EntityDelta, WorldTime, InitialLocation, InitialItem, InitialCharacter,
 )
 
-from .base import EpochMilli, Hex64, ProtocolVersion
+from .base import EpochMilli, Hex64, ProtocolVersion, SchemaVersion
+from .work import SettlementGroup, TargetSpec, RollRef, WorkManifestItem, GroupWorkSource
 from .contexts import (
     SuccessorSummary, WorkingProgress, NarrationStatus,
 )
-from .envelopes import OperationResult, ReadResult
+from .envelopes import OperationResult, ReadResult, ComputeResult
 
 # ---------------------------------------------------------------------------
 # Shared request bases
@@ -68,63 +69,53 @@ class CurrentClaim(Contract):
 
 
 # ---------------------------------------------------------------------------
-# Settlement groups (v2 replacement for v1 stageCandidates scope)
-# ---------------------------------------------------------------------------
-
-
-class SettlementGroup(Contract):
-    """One ordered settlement unit.
-
-    groupId=None marks the pure time-scan unit of an action-less point: it may
-    not invent movement, appearance or actors. A named group is an action unit
-    and requires actors. Outer order in commit requests is significant; member
-    ordering inside sets is not.
-    """
-
-    model_config = ConfigDict(extra="forbid", strict=True, json_schema_extra={"allOf": [
-        {"if": {"properties": {"groupId": {"type": "null"}}},
-         "then": {"properties": {"actorIds": {"maxItems": 0},
-                                 "positions": {"maxProperties": 0},
-                                 "appearances": {"maxProperties": 0}}}},
-        {"if": {"properties": {"groupId": {"type": "string"}}},
-         "then": {"properties": {"actorIds": {"minItems": 1}}}},
-    ]})
-
-    groupId: Id | None
-    actorIds: Ids
-    positions: dict[Id, Position]
-    appearances: dict[Id, Annotated[list[DescriptionChange], Field(min_length=1)]]
-    tasksAchieved: dict[Id, Annotated[IdSet, Field(min_length=1)]]
-    subtasksAdded: dict[Id, Annotated[list[PendingTask], Field(min_length=1)]]
-    personalities: dict[Id, Annotated[list[DescriptionChange], Field(min_length=1)]]
-    sanities: dict[Id, Sanity]
-    taskCoverageIds: IdSet
-    personalityCoverageIds: IdSet
-
-    @model_validator(mode="after")
-    def stages(self):
-        if self.groupId is None:
-            if self.actorIds or self.positions or self.appearances:
-                raise ValueError("time-scan unit cannot invent actors, movement or appearance")
-        elif not self.actorIds:
-            raise ValueError("action group requires actors")
-        if set(self.sanities) != set(self.personalities):
-            raise ValueError("personality changes and sanity recalculation must pair")
-        if self.personalities and not any(self.tasksAchieved.values()):
-            raise ValueError("personality stage requires newly achieved tasks")
-        for owner, tasks in self.subtasksAdded.items():
-            if any(task.ownerId != owner or task.parentTaskId is None for task in tasks):
-                raise ValueError("subtasks require matching owner and parent")
-        return self
-
-
-# ---------------------------------------------------------------------------
 # World creation and context
 # ---------------------------------------------------------------------------
 
 
+class WorldInitialTemplate(Contract):
+    """Creation template has no worldId; the server binds it once assigned.
+
+    Domain reference validation is identical to the frozen initial-world type.
+    """
+
+    engineVersion: Literal["world-engine-v1"]
+    schemaVersion: SchemaVersion
+    protagonistId: Id
+    initialTime: WorldTime
+    locations: dict[Id, InitialLocation]
+    items: dict[Id, InitialItem]
+    characters: dict[Id, InitialCharacter]
+
+    @model_validator(mode="after")
+    def references(self):
+        WorldInitialState.model_validate({"worldId": "creation_template", **self.model_dump()})
+        return self
+
+
 class CreateWorldRequest(CreationRequest):
-    initial: WorldInitialState
+    initial: WorldInitialTemplate
+
+
+class StartAdvanceRequest(CheckpointRequest):
+    operation: Literal["start_advance"]
+    advanceId: Id
+    inputId: Id
+    roundId: Id
+    inputText: Text
+    order: Ids = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def unique_order(self):
+        if len(self.order) != len(set(self.order)):
+            raise ValueError("round order contains duplicate characters")
+        return self
+
+
+class StartAdvanceData(Contract):
+    advanceId: Id
+    inputId: Id
+    roundId: Id
 
 
 # ---------------------------------------------------------------------------
@@ -133,42 +124,33 @@ class CreateWorldRequest(CreationRequest):
 
 
 class BeginPointRequest(PointCheckpointRequest):
+    operation: Literal["begin_point"]
     kind: Literal["normal", "instant", "linked"]
     timeAdvance: TimeAdvance
 
 
 class SetPointTimeRequest(PointCheckpointRequest):
+    operation: Literal["set_point_time"]
     timeAdvance: TimeAdvance
 
 
 class DiscoverGroupRequest(PointCheckpointRequest):
+    operation: Literal["discover_group"]
     groupId: Id
     initiatorId: Id
     actionText: Text
-    # Complete target set when the same model call returned it; an empty set is
-    # a complete, confirmed "no targets" result.
-    targetIds: IdSet
-
-
-class TargetSpec(Contract):
-    targetId: Id
-    triggerKey: Id
-
-
-class RollRef(Contract):
-    sourceId: Id
-    targetId: Id
-    triggerKey: Id
-    rollId: Id
+    # Null is unconfirmed; [] is a complete, confirmed "no targets" result.
+    targetIds: IdSet | None = None
 
 
 class MemberAdmission(Contract):
     memberId: Id
-    actionText: Text
+    actionText: Text | None = None
     rollRefs: list[RollRef] = Field(min_length=1)
 
 
 class ExtendGroupRequest(PointCheckpointRequest):
+    operation: Literal["extend_group"]
     groupId: Id
     sourceId: Id
     # Exactly one per call: the source's complete target set, or one admitted
@@ -188,25 +170,32 @@ class ExtendGroupRequest(PointCheckpointRequest):
 
 
 class CloseGroupRequest(PointCheckpointRequest):
+    operation: Literal["close_group"]
     groupId: Id
 
 
 class StageUnitRequest(PointCheckpointRequest):
+    operation: Literal["stage_unit"]
     groupId: Id
     candidates: SettlementGroup
+    results: dict[Id, Text]
 
     @model_validator(mode="after")
     def named_group(self):
         if self.candidates.groupId != self.groupId:
             raise ValueError("staged candidates must name the closed group")
+        if set(self.results) != set(self.candidates.actorIds):
+            raise ValueError("staging requires each member's confirmed result")
         return self
 
 
 class RecordSkipRequest(PointCheckpointRequest):
+    operation: Literal["record_skip"]
     slotActorId: Id
 
 
 class StageTimeScanRequest(PointCheckpointRequest):
+    operation: Literal["stage_time_scan"]
     candidates: SettlementGroup
 
     @model_validator(mode="after")
@@ -217,34 +206,27 @@ class StageTimeScanRequest(PointCheckpointRequest):
 
 
 class SealPointRequest(PointCheckpointRequest):
-    pass
+    operation: Literal["seal_point"]
 
 
 class PrepareSuccessorRequest(PointCheckpointRequest):
+    operation: Literal["prepare_successor"]
     successorPointId: Id
     timeAdvance: TimeAdvance
 
 
-class WorkManifestItem(Contract):
-    memberId: Id
-    actionContentHash: Hex64
-    resultContentHash: Hex64
+class RestoreGroupWorkRequest(PointCheckpointRequest, GroupWorkSource):
+    """The service allocates the destination attempt, never the caller."""
 
-
-class RestoreGroupWorkRequest(PointCheckpointRequest):
-    groupId: Id
-    attempt: Positive
-    sourceEpoch: Positive
-    sourceAttempt: Positive
-    manifest: list[WorkManifestItem] = Field(min_length=1)
+    operation: Literal["restore_group_work"]
 
 
 class PauseRequest(CheckpointRequest):
-    pass
+    operation: Literal["pause"]
 
 
 class ResumeRequest(CheckpointRequest):
-    pass
+    operation: Literal["resume"]
 
 
 # ---------------------------------------------------------------------------
@@ -253,6 +235,7 @@ class ResumeRequest(CheckpointRequest):
 
 
 class ConcludeRoundRequest(WriteRequest):
+    operation: Literal["conclude"]
     advanceId: Id
     roundId: Id
     expectedPointId: Id
@@ -260,10 +243,11 @@ class ConcludeRoundRequest(WriteRequest):
     expectedCheckpointRevision: Count
     leaseToken: Id
     fenceEpoch: Positive
-    conclusion: ContinueConclusion
+    conclusion: Annotated[ContinueConclusion | ModelHandback, Field(discriminator="kind")]
 
 
 class CancelRoundRequest(WriteRequest):
+    operation: Literal["cancel"]
     advanceId: Id
     roundId: Id
     expectedPointId: Id
@@ -371,6 +355,8 @@ class CommitPointRequest(WriteRequest):
 
     @model_validator(mode="after")
     def bindings(self):
+        if self.pointId != self.point.id:
+            raise ValueError("pointId differs from point.id")
         if (self.point.worldId, self.point.roundId, self.point.advanceId, self.point.previousPointId) != (
             self.worldId, self.roundId, self.advanceId, self.expectedPointId
         ):
@@ -388,7 +374,30 @@ class CommitPointRequest(WriteRequest):
 # ---------------------------------------------------------------------------
 
 
-class NarrationClaimRequest(WriteRequest):
+class NarrationLeaseBinding(Contract):
+    mode: Literal["head", "history"]
+    leaseToken: Id | None = None
+    fenceEpoch: Positive | None = None
+
+    model_config = ConfigDict(extra="forbid", strict=True, json_schema_extra={"allOf": [
+        {"if": {"properties": {"mode": {"const": "head"}}},
+         "then": {"required": ["leaseToken", "fenceEpoch"], "properties": {
+             "leaseToken": {"type": "string"}, "fenceEpoch": {"type": "integer", "minimum": 1}}}},
+        {"if": {"properties": {"mode": {"const": "history"}}},
+         "then": {"properties": {"leaseToken": {"type": "null"}, "fenceEpoch": {"type": "null"}}}},
+    ]})
+
+    @model_validator(mode="after")
+    def lease_matches_mode(self):
+        if self.mode == "head":
+            if self.leaseToken is None or self.fenceEpoch is None:
+                raise ValueError("head narration requires lease token and epoch")
+        elif self.leaseToken is not None or self.fenceEpoch is not None:
+            raise ValueError("history narration cannot borrow the advance lease")
+        return self
+
+
+class _NarrationClaimRequestFields(NarrationLeaseBinding, WriteRequest):
     pointId: Id
     mode: Literal["head", "history"]
     # The claim currently held by the caller, when any; the server decides
@@ -396,7 +405,7 @@ class NarrationClaimRequest(WriteRequest):
     currentClaim: CurrentClaim | None = None
 
 
-class NarrationClaimRenewRequest(WriteRequest):
+class _NarrationClaimRenewRequestFields(NarrationLeaseBinding, WriteRequest):
     pointId: Id
     mode: Literal["head", "history"]
     claimToken: Id
@@ -404,7 +413,7 @@ class NarrationClaimRenewRequest(WriteRequest):
     issuedAtEpochMilli: EpochMilli
 
 
-class NarrationSubmitRequest(WriteRequest):
+class _NarrationSubmitRequestFields(NarrationLeaseBinding, WriteRequest):
     pointId: Id
     mode: Literal["head", "history"]
     claimToken: Id
@@ -415,6 +424,7 @@ class NarrationSubmitRequest(WriteRequest):
     failureReason: Text | None
 
     model_config = ConfigDict(extra="forbid", strict=True, json_schema_extra={"allOf": [
+        *NarrationLeaseBinding.model_config["json_schema_extra"]["allOf"],
         {"if": {"properties": {"outcome": {"const": "ready"}}},
          "then": {"properties": {"text": {"type": "string"}, "failureReason": {"type": "null"}}}},
         {"if": {"properties": {"outcome": {"const": "failed"}}},
@@ -431,7 +441,7 @@ class NarrationSubmitRequest(WriteRequest):
         return self
 
 
-class NarrationDeleteRequest(Contract):
+class _NarrationDeleteRequestFields(NarrationLeaseBinding):
     """Query-string model for DELETE .../narration."""
 
     protocolVersion: ProtocolVersion
@@ -470,7 +480,7 @@ class SetPointTimeData(Contract):
 
 class DiscoverGroupData(Contract):
     groupId: Id
-    targetIds: IdSet
+    targetIds: IdSet | None
 
 
 class ExtendGroupData(Contract):
@@ -508,7 +518,10 @@ class PrepareSuccessorData(Contract):
 
 
 class RestoreGroupWorkData(Contract):
+    pointId: Id
     groupId: Id
+    fenceEpoch: Positive
+    attempt: Positive
     sourceEpoch: Positive
     sourceAttempt: Positive
     restoredMemberIds: IdSet
@@ -523,8 +536,22 @@ class ResumeData(Contract):
 
 
 class ConcludeRoundData(Contract):
+    kind: Literal["continue", "handback"]
     roundId: Id
     nextRoundId: Id | None
+
+    model_config = ConfigDict(extra="forbid", strict=True, json_schema_extra={"allOf": [
+        {"if": {"properties": {"kind": {"const": "continue"}}},
+         "then": {"properties": {"nextRoundId": {"type": "string"}}}},
+        {"if": {"properties": {"kind": {"const": "handback"}}},
+         "then": {"properties": {"nextRoundId": {"type": "null"}}}},
+    ]})
+
+    @model_validator(mode="after")
+    def successor_matches_conclusion(self):
+        if (self.kind == "continue") != (self.nextRoundId is not None):
+            raise ValueError("only continue creates a successor round")
+        return self
 
 
 class CancelRoundData(Contract):
@@ -557,10 +584,20 @@ class AllocateIdsData(Contract):
 
 
 class PreviewData(Contract):
+    pointProjection: TimelinePoint
+    mergedEntityDeltas: dict[Id, EntityDelta]
     pointId: Id
     workingStateDigest: Hex64
     pointProjectionDigest: Hex64
     workingState: WorldState
+
+    @model_validator(mode="after")
+    def projection_binding(self):
+        if self.pointId != self.pointProjection.id:
+            raise ValueError("preview projection names another point")
+        if self.mergedEntityDeltas != (self.pointProjection.entityDeltas or {}):
+            raise ValueError("merged deltas differ from point projection")
+        return self
 
 
 class RollOutcome(Contract):
@@ -571,7 +608,16 @@ class RollOutcome(Contract):
     triggerKey: Id
     ruleVersion: Literal["reaction-fixture-v1", "reaction-d20-v1"]
     target: Annotated[SafeInt, Field(ge=1, le=20)]
-    result: SafeInt
+    result: Annotated[SafeInt, Field(ge=1, le=20)]
+    eligibilityBaselineDigest: Hex64
+    eligible: bool
+    admitted: bool
+
+    @model_validator(mode="after")
+    def final_admission(self):
+        if self.admitted != (self.eligible and self.result >= self.target):
+            raise ValueError("admission differs from fixed roll and eligibility")
+        return self
 
 
 class CreateRollsData(Contract):
@@ -604,11 +650,10 @@ class GetStateData(Contract):
     stateDigest: Hex64
 
 
-class NarrationClaimData(Contract):
+class NarrationClaimSummary(Contract):
     pointId: Id
     mode: Literal["head", "history"]
     generation: Positive
-    claimToken: Id
     # head claims fence through the advance lease epoch; history claims carry
     # null and must never borrow it.
     fenceEpoch: Positive | None
@@ -629,6 +674,10 @@ class NarrationClaimData(Contract):
         return self
 
 
+class NarrationClaimData(NarrationClaimSummary):
+    claimToken: Id
+
+
 class NarrationSubmitData(Contract):
     pointId: Id
     narrationStatus: NarrationStatus
@@ -636,6 +685,11 @@ class NarrationSubmitData(Contract):
 
 
 class NarrationGetData(Contract):
+    model_config = ConfigDict(extra="forbid", strict=True, json_schema_extra={"allOf": [
+        {"if": {"properties": {"narrationStatus": {"const": "ready"}}},
+         "then": {"properties": {"text": {"type": "string"}}},
+         "else": {"properties": {"text": {"type": "null"}}}},
+    ]})
     pointId: Id
     narrationStatus: NarrationStatus
     generation: Positive | None
@@ -739,7 +793,7 @@ class AllocateIdsSuccess(OperationResult[AllocateIdsData]):
     pass
 
 
-class PreviewPointSuccess(OperationResult[PreviewData]):
+class PreviewPointSuccess(ComputeResult[PreviewData]):
     pass
 
 
@@ -759,11 +813,22 @@ class GetStateSuccess(ReadResult[GetStateData]):
     pass
 
 
-class NarrationClaimSuccess(OperationResult[NarrationClaimData]):
-    pass
+class NarrationClaimSuccess(OperationResult[NarrationClaimData | NarrationClaimSummary]):
+    model_config = ConfigDict(extra="forbid", strict=True, json_schema_extra={"allOf": [
+        {"if": {"properties": {"replayed": {"const": True}}},
+         "then": {"properties": {"data": {"not": {"required": ["claimToken"]}}}}},
+        {"if": {"properties": {"replayed": {"const": False}}},
+         "then": {"properties": {"data": {"required": ["claimToken"]}}}},
+    ]})
+
+    @model_validator(mode="after")
+    def token_only_on_authorized_claim(self):
+        if isinstance(self.data, NarrationClaimData) == self.replayed:
+            raise ValueError("only a fresh authorized claim may return a token")
+        return self
 
 
-class NarrationClaimRenewSuccess(OperationResult[NarrationClaimData]):
+class NarrationClaimRenewSuccess(OperationResult[NarrationClaimSummary]):
     pass
 
 
@@ -777,3 +842,125 @@ class NarrationGetSuccess(ReadResult[NarrationGetData]):
 
 class NarrationDeleteSuccess(OperationResult[NarrationDeleteData]):
     pass
+
+
+class StartAdvanceSuccess(OperationResult[StartAdvanceData]):
+    pass
+
+
+class ListPointsRequest(Contract):
+    after: Count | None = None
+    limit: Annotated[Positive, Field(le=100)] = 50
+
+
+class GetStateRequest(Contract):
+    point: Id | None = None
+
+
+class GetContextRequest(Contract):
+    includeRecovery: bool = False
+    leaseToken: Id | None = None
+    fenceEpoch: Positive | None = None
+
+    model_config = ConfigDict(extra="forbid", strict=True, json_schema_extra={"allOf": [
+        {"if": {"properties": {"includeRecovery": {"const": True}}, "required": ["includeRecovery"]},
+         "then": {"required": ["leaseToken", "fenceEpoch"], "properties": {
+             "leaseToken": {"type": "string"}, "fenceEpoch": {"type": "integer", "minimum": 1}}}},
+    ]})
+
+    @model_validator(mode="after")
+    def recovery_requires_lease(self):
+        if self.includeRecovery and (self.leaseToken is None or self.fenceEpoch is None):
+            raise ValueError("recovery reads require the current advance lease")
+        return self
+
+
+CheckpointBody = Annotated[
+    StartAdvanceRequest | BeginPointRequest | SetPointTimeRequest | DiscoverGroupRequest
+    | ExtendGroupRequest | CloseGroupRequest | StageUnitRequest | RecordSkipRequest
+    | StageTimeScanRequest | SealPointRequest | PrepareSuccessorRequest
+    | RestoreGroupWorkRequest | PauseRequest | ResumeRequest,
+    Field(discriminator="operation"),
+]
+
+
+class CheckpointDispatch(RootModel[CheckpointBody]):
+    """The HTTP request body itself, selected by operation."""
+
+
+class RoundConclusionDispatch(RootModel[Annotated[
+    ConcludeRoundRequest | CancelRoundRequest, Field(discriminator="operation")
+]]):
+    """The round-conclusion HTTP body itself."""
+
+
+class HeadNarrationClaimRequest(_NarrationClaimRequestFields):
+    mode: Literal["head"]
+    leaseToken: Id
+    fenceEpoch: Positive
+
+
+class HistoryNarrationClaimRequest(_NarrationClaimRequestFields):
+    mode: Literal["history"]
+    leaseToken: None = None
+    fenceEpoch: None = None
+
+
+class NarrationClaimRequest(RootModel[Annotated[
+    HeadNarrationClaimRequest | HistoryNarrationClaimRequest, Field(discriminator="mode")
+]]):
+    """Wire body/query union, selected by head/history mode."""
+
+
+class HeadNarrationClaimRenewRequest(_NarrationClaimRenewRequestFields):
+    mode: Literal["head"]
+    leaseToken: Id
+    fenceEpoch: Positive
+
+
+class HistoryNarrationClaimRenewRequest(_NarrationClaimRenewRequestFields):
+    mode: Literal["history"]
+    leaseToken: None = None
+    fenceEpoch: None = None
+
+
+class NarrationClaimRenewRequest(RootModel[Annotated[
+    HeadNarrationClaimRenewRequest | HistoryNarrationClaimRenewRequest, Field(discriminator="mode")
+]]):
+    """Wire body/query union, selected by head/history mode."""
+
+
+class HeadNarrationSubmitRequest(_NarrationSubmitRequestFields):
+    mode: Literal["head"]
+    leaseToken: Id
+    fenceEpoch: Positive
+
+
+class HistoryNarrationSubmitRequest(_NarrationSubmitRequestFields):
+    mode: Literal["history"]
+    leaseToken: None = None
+    fenceEpoch: None = None
+
+
+class NarrationSubmitRequest(RootModel[Annotated[
+    HeadNarrationSubmitRequest | HistoryNarrationSubmitRequest, Field(discriminator="mode")
+]]):
+    """Wire body/query union, selected by head/history mode."""
+
+
+class HeadNarrationDeleteRequest(_NarrationDeleteRequestFields):
+    mode: Literal["head"]
+    leaseToken: Id
+    fenceEpoch: Positive
+
+
+class HistoryNarrationDeleteRequest(_NarrationDeleteRequestFields):
+    mode: Literal["history"]
+    leaseToken: None = None
+    fenceEpoch: None = None
+
+
+class NarrationDeleteRequest(RootModel[Annotated[
+    HeadNarrationDeleteRequest | HistoryNarrationDeleteRequest, Field(discriminator="mode")
+]]):
+    """Wire body/query union, selected by head/history mode."""

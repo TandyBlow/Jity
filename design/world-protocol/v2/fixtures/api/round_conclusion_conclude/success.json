@@ -25,7 +25,16 @@
     "round": {
       "roundId": "round_2",
       "trigger": "automatic",
-      "conclusion": null
+      "conclusion": null,
+      "order": [
+        "person_c",
+        "person_d",
+        "person_e",
+        "person_f"
+      ],
+      "cursor": 0,
+      "actedIds": [],
+      "visitedIds": []
     },
     "time": {
       "calendar": "gregorian",
@@ -58,6 +67,7 @@
   "work": null,
   "data": {
     "roundId": "round_1",
-    "nextRoundId": "round_2"
+    "nextRoundId": "round_2",
+    "kind": "continue"
   }
 }

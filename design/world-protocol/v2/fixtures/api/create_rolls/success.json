@@ -25,7 +25,16 @@
     "round": {
       "roundId": "round_1",
       "trigger": "player",
-      "conclusion": null
+      "conclusion": null,
+      "order": [
+        "person_c",
+        "person_d",
+        "person_e",
+        "person_f"
+      ],
+      "cursor": 0,
+      "actedIds": [],
+      "visitedIds": []
     },
     "time": {
       "calendar": "gregorian",
@@ -74,7 +83,8 @@
       "cursor": 0,
       "actedIds": [],
       "visitedIds": [],
-      "settledUnitIds": []
+      "settledUnitIds": [],
+      "intentStatus": "pending"
     },
     "settledUnits": [],
     "pendingGroup": {
@@ -92,7 +102,11 @@
       ],
       "closed": false
     },
-    "successor": null
+    "successor": null,
+    "sealed": false,
+    "prefixDigest": null,
+    "predecessorWorkDigest": null,
+    "timeScanComplete": false
   },
   "data": {
     "rolls": [
@@ -104,7 +118,10 @@
         "triggerKey": "trigger_cd",
         "ruleVersion": "reaction-d20-v1",
         "target": 11,
-        "result": 15
+        "result": 15,
+        "eligibilityBaselineDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+        "eligible": true,
+        "admitted": true
       }
     ]
   }

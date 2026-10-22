@@ -6,5 +6,7 @@
   "mode": "head",
   "claimToken": "claim_root",
   "generation": 1,
-  "issuedAtEpochMilli": 1792617599000
+  "issuedAtEpochMilli": 1792617599000,
+  "leaseToken": "lease_a",
+  "fenceEpoch": 7
 }

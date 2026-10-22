@@ -1,6 +1,6 @@
 # 浏览器端侧小模型游戏工作流开发方案
 
-版本：v0.4.1（协议 v2 修订计划）。日期：2026-10-22。补齐点内多单元工作游标、冻结原文接续、时间候选锁定与逐操作 gate 门槛。具体冻结决定见 [v2 修订清单](world-protocol/v2/README.md)；v1 目录保留原契约，v2 可执行 schema、SQL 和夹具尚待阶段 0 落实，不能将本文修订视为已实现。
+版本：v0.4.1（协议 v2 修订计划）。日期：2026-10-22。补齐点内多单元工作游标、冻结原文接续、时间候选锁定与逐操作 gate 门槛。具体决定见 [v2 修订清单](world-protocol/v2/README.md)；v1 基线为 26011c8，原 S1 候选为 07924f3。修订后的 S1 已经 B 对 11 决定/32 操作消费复核并正式验收，IF-05 已放行，证据及验收快照见 [change-list](world-protocol/v2/change-list.md#b-最终复核与-s1-正式验收2026-10-22通过)。A 下一步 IF-03/04a，B 下一步 IF-05；v2 SQL、轨迹、正式 transport 与运行服务仍待后续任务落实，完整接口基线尚未冻结。
 
 依据：本次对话中用户提供的十一部分新设计及最后关于模型分工的补充。
 本文是开发方案，尚未实施。文中“建议”“暂定”表示实施建议，不代表用户已经确定了对应规则。
@@ -662,7 +662,7 @@ checkpoint 写入绑定世界头/版本、expectedCheckpointRevision、有效 le
 - `record_skip`：仅在 select_actor 记录当前合法槽位的 skip，锁定时间并推进工作访问集合、游标及必要的工作输入消费状态；不会给跳过人物增加 workingActedIds，已在该集合的人物槽位由程序直接跳过。
 - `stage_time_scan`：仅在本点无活动组、settledUnits 为空且已到合法点边界时，验证并保存无行动点的完整时间扫描阶段候选，锁定时间，不增加 workingActedIds；不能以空点为由跳过任务/个性/理智检查。
 - `seal_point`：仅在 select_actor 且无本点活动组时封存当前工作前缀，之后不能再追加/改候选；空点必须先保存完整时间扫描候选。`prepare_successor` 同时执行封存并创建 §5.3 的一个直接后继预约，不能覆盖已有预约；它不推进已提交游标。预约前驱提交前，不允许 stage_unit、record_skip 或成员反应模型推进后继。
-- `restore_group_work`：接管者以有效租约和完整绑定请求服务端按已确认清单接续冻结工作，覆盖 pendingGroup 及已 stage 单元的引用；服务端验证来源行后，将行动原文、目标与已保存结果/候选逐字节复制到当前 epoch，记录 sourceEpoch/sourceAttempt/contentHash。浏览器不能提供替代原文或指定未确认旧行；只改变所有权副本，不改组、时间、游标、phase 或控制器 revision，用 requestId/attempt 幂等。缺失或哈希不符返回 frozen_work_missing/frozen_work_corrupt，不能调用模型补写。
+- `restore_group_work`：接管者以有效租约和完整绑定请求服务端按已确认清单接续冻结工作，覆盖 pendingGroup 及已 stage 单元的引用；服务端验证来源行后，将行动原文、目标与已保存结果/候选逐字节复制到当前 epoch，记录 sourceEpoch/sourceAttempt/contentHash。浏览器不能提供替代原文或指定未确认旧行；只改变所有权副本，不改组、时间、游标、phase 或控制器 revision，请求不接受目标 attempt，由服务事务在 `(worldId,pointId,groupId)` 范围内跨 epoch 单调分配，并在成功 data 返回 pointId/groupId/fenceEpoch/attempt。请求主键为 `(worldId,requestId)`；业务去重绑定目标 epoch 与已接受来源清单（pointId/groupId/sourceEpoch/sourceAttempt/按 memberId 排序的 manifest），换 requestId 仍复用首次副本及 attempt。缺失或哈希不符返回 frozen_work_missing/frozen_work_corrupt，不能调用模型补写。
 
 这些操作都不更新世界头/状态，不允许推进已提交集合、标记 complete 或跳过计算门槛。stage_unit/record_skip 只推进显式 working 字段；发现组或冻结文本本身不记人物已行动。每个工作写入、封存和时间绑定的变化都与控制器 revision 同事务递增，原文副本接续例外。第一次人物/模型调用前仍须记录 advance 身份、输入及冻结顺序；人物调用前还须保存其 PointWork 时间与基线。创建玩家链要求没有活动链、此前 round 已结束且当前头叙事 ready；automatic round 只能由结论事务创建。
 

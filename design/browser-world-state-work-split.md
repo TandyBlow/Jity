@@ -17,7 +17,7 @@
 
 先交付一份最小可用的 v2 接口基线，然后以该提交为共同起点建立两条开发分支。A 维护契约源和导出产物，B 从浏览器调用需求核对字段与示例。接口基线固定不等于阶段 0 已完成；SQL 约束、故障规格及其检查仍按原计划交付。
 
-本批执行入口为 [A0＋B0 共同接口基线实施计划](world-protocol/v2/interface-baseline-plan.md)，包含 IF-01～IF-08 的依赖、候选快照、交付路径、检查命令和冻结条件；当前状态为待实施。
+本批执行入口为 [A0＋B0 共同接口基线实施计划](world-protocol/v2/interface-baseline-plan.md)。v1 基线为 26011c8，原候选为 07924f3；**修订后的 S1 已经 B 正式验收，IF-05 已放行**。11 决定、32 操作及接管流程核对通过，B01 关闭，JS 60/0、Python 300 项、前端 62 项与字节检查均通过，见 [最终验收记录](world-protocol/v2/change-list.md#b-最终复核与-s1-正式验收2026-10-22通过)。验收记录与修订纳入 `feat(world): accept S1 v2 contracts after B review` 提交，本轮不推送；随后 A 推进 IF-03/04a，B 推进 IF-05。S1 验收不代表 IF-05 已交付、完整基线已冻结或 A3 事务已验证。
 
 | 必须固定的内容 | A 交付 | B 核对 |
 |---|---|---|
@@ -101,7 +101,7 @@ B 的模型任务输出转换为已固定的候选类型；提示词、任务批
 | 路径 | 唯一主维护人 | 约定 |
 |---|---|---|
 | `backend/app/schemas/world/` | A | Python 契约及规范化源定义 |
-| `backend/scripts/export_world_protocol.py` | A | v2 schema/夹具导出，保留 v1 可追溯基线 |
+| `backend/scripts/export_world_protocol.py` | A | v2 schema/API/操作清单导出，手写夹具只校验不重写，保留 v1 可追溯基线 |
 | `design/world-protocol/v2/` | A | 共享契约及共同轨迹，B 只消费，不另建一套权威版本 |
 | `.github/workflows/ci.yml` 及根级检查编排/测试侧摘要工具 | A | 接入双方检查；B 提供自己目录内的前端消费/轨迹测试与命令 |
 | `backend/app/services/world/` | A | 纯内核、控制状态校验、BaselineStore、事务服务 |
@@ -112,7 +112,6 @@ B 的模型任务输出转换为已固定的候选类型；提示词、任务批
 | `frontend/src/app/world-lab/` | B | 独立页面与页面专用组件 |
 | `frontend/scripts/` 下新增 world 任务实验脚本及样本 | B | 模型质量与性能实验，保留既有 benchmark 入口 |
 | `frontend/` 内的测试、接入及依赖文件 | B | 包含 Next 配置、页面隔离响应头和浏览器整链测试 |
-| `frontend/src/lib/world-engine/generated/`（如采用类型生成） | A 生成，B 消费 | 由契约导出，双方不手改；A 的唯一前端写入例外 |
 | `design/world-engine-reports/server.md` | A | 后端交付、运行方式和验收证据 |
 | `design/world-engine-reports/browser.md` | B | 浏览器/模型交付、设备条件和验收证据 |
 | 主开发计划、本分工、`CLAUDE.md`、`.planning/STATE.md`、根级接入文件 | A 汇总 | B 将变更需求列入自己的交付记录，避免两人同时维护总进度 |

@@ -1,5 +1,79 @@
 {
   "$defs": {
+    "AcceptedWorkSource": {
+      "additionalProperties": false,
+      "properties": {
+        "memberId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Memberid",
+          "type": "string"
+        },
+        "sourceEpoch": {
+          "title": "Sourceepoch",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "sourceAttempt": {
+          "title": "Sourceattempt",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "actionContentHash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Actioncontenthash",
+          "type": "string"
+        },
+        "targetsContentHash": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Targetscontenthash"
+        },
+        "resultContentHash": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Resultcontenthash"
+        },
+        "candidatesContentHash": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Candidatescontenthash"
+        }
+      },
+      "required": [
+        "memberId",
+        "sourceEpoch",
+        "sourceAttempt",
+        "actionContentHash",
+        "targetsContentHash",
+        "resultContentHash",
+        "candidatesContentHash"
+      ],
+      "title": "AcceptedWorkSource",
+      "type": "object"
+    },
     "AcquireLeaseData": {
       "additionalProperties": false,
       "properties": {
@@ -14,16 +88,16 @@
           "type": "string"
         },
         "fenceEpoch": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Fenceepoch",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "expiresAtEpochMilli": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Expiresatepochmilli",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         }
       },
       "required": [
@@ -95,10 +169,10 @@
           "type": "string"
         },
         "serverTimeEpochMilli": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Servertimeepochmilli",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "replayed": {
           "title": "Replayed",
@@ -108,6 +182,7 @@
           "enum": [
             "create_world",
             "get_context",
+            "checkpoint_start_advance",
             "checkpoint_begin_point",
             "checkpoint_set_point_time",
             "checkpoint_discover_group",
@@ -353,10 +428,10 @@
           "type": "string"
         },
         "fenceEpoch": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Fenceepoch",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "allocationKey": {
           "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
@@ -411,10 +486,10 @@
           "type": "string"
         },
         "serverTimeEpochMilli": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Servertimeepochmilli",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "replayed": {
           "title": "Replayed",
@@ -424,6 +499,7 @@
           "enum": [
             "create_world",
             "get_context",
+            "checkpoint_start_advance",
             "checkpoint_begin_point",
             "checkpoint_set_point_time",
             "checkpoint_discover_group",
@@ -576,10 +652,10 @@
           "type": "string"
         },
         "version": {
-          "ge": 0,
-          "le": 9007199254740991,
           "title": "Version",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
         },
         "stateDigest": {
           "pattern": "^[0-9a-f]{64}$",
@@ -634,10 +710,10 @@
           "type": "string"
         },
         "fenceEpoch": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Fenceepoch",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "expectedPointId": {
           "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
@@ -645,20 +721,25 @@
           "type": "string"
         },
         "expectedVersion": {
-          "ge": 0,
-          "le": 9007199254740991,
           "title": "Expectedversion",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
         },
         "expectedCheckpointRevision": {
-          "ge": 0,
-          "le": 9007199254740991,
           "title": "Expectedcheckpointrevision",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
         },
         "pointId": {
           "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
           "title": "Pointid",
+          "type": "string"
+        },
+        "operation": {
+          "const": "begin_point",
+          "title": "Operation",
           "type": "string"
         },
         "kind": {
@@ -684,6 +765,7 @@
         "expectedVersion",
         "expectedCheckpointRevision",
         "pointId",
+        "operation",
         "kind",
         "timeAdvance"
       ],
@@ -717,10 +799,10 @@
           "type": "string"
         },
         "serverTimeEpochMilli": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Servertimeepochmilli",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "replayed": {
           "title": "Replayed",
@@ -730,6 +812,7 @@
           "enum": [
             "create_world",
             "get_context",
+            "checkpoint_start_advance",
             "checkpoint_begin_point",
             "checkpoint_set_point_time",
             "checkpoint_discover_group",
@@ -879,6 +962,11 @@
           "title": "Worldid",
           "type": "string"
         },
+        "operation": {
+          "const": "cancel",
+          "title": "Operation",
+          "type": "string"
+        },
         "advanceId": {
           "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
           "title": "Advanceid",
@@ -895,16 +983,16 @@
           "type": "string"
         },
         "expectedVersion": {
-          "ge": 0,
-          "le": 9007199254740991,
           "title": "Expectedversion",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
         },
         "expectedCheckpointRevision": {
-          "ge": 0,
-          "le": 9007199254740991,
           "title": "Expectedcheckpointrevision",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
         },
         "leaseToken": {
           "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
@@ -912,10 +1000,10 @@
           "type": "string"
         },
         "fenceEpoch": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Fenceepoch",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "cancelReason": {
           "minLength": 1,
@@ -928,6 +1016,7 @@
         "protocolVersion",
         "requestId",
         "worldId",
+        "operation",
         "advanceId",
         "roundId",
         "expectedPointId",
@@ -967,10 +1056,10 @@
           "type": "string"
         },
         "serverTimeEpochMilli": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Servertimeepochmilli",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "replayed": {
           "title": "Replayed",
@@ -980,6 +1069,7 @@
           "enum": [
             "create_world",
             "get_context",
+            "checkpoint_start_advance",
             "checkpoint_begin_point",
             "checkpoint_set_point_time",
             "checkpoint_discover_group",
@@ -1084,10 +1174,10 @@
           "type": "array"
         },
         "sanity": {
-          "ge": 0,
-          "le": 100,
           "title": "Sanity",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
         },
         "tasks": {
           "patternProperties": {
@@ -1107,6 +1197,73 @@
       ],
       "title": "CharacterState",
       "type": "object"
+    },
+    "CheckpointDispatch": {
+      "description": "The HTTP request body itself, selected by operation.",
+      "discriminator": {
+        "mapping": {
+          "begin_point": "#/$defs/BeginPointRequest",
+          "close_group": "#/$defs/CloseGroupRequest",
+          "discover_group": "#/$defs/DiscoverGroupRequest",
+          "extend_group": "#/$defs/ExtendGroupRequest",
+          "pause": "#/$defs/PauseRequest",
+          "prepare_successor": "#/$defs/PrepareSuccessorRequest",
+          "record_skip": "#/$defs/RecordSkipRequest",
+          "restore_group_work": "#/$defs/RestoreGroupWorkRequest",
+          "resume": "#/$defs/ResumeRequest",
+          "seal_point": "#/$defs/SealPointRequest",
+          "set_point_time": "#/$defs/SetPointTimeRequest",
+          "stage_time_scan": "#/$defs/StageTimeScanRequest",
+          "stage_unit": "#/$defs/StageUnitRequest",
+          "start_advance": "#/$defs/StartAdvanceRequest"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/StartAdvanceRequest"
+        },
+        {
+          "$ref": "#/$defs/BeginPointRequest"
+        },
+        {
+          "$ref": "#/$defs/SetPointTimeRequest"
+        },
+        {
+          "$ref": "#/$defs/DiscoverGroupRequest"
+        },
+        {
+          "$ref": "#/$defs/ExtendGroupRequest"
+        },
+        {
+          "$ref": "#/$defs/CloseGroupRequest"
+        },
+        {
+          "$ref": "#/$defs/StageUnitRequest"
+        },
+        {
+          "$ref": "#/$defs/RecordSkipRequest"
+        },
+        {
+          "$ref": "#/$defs/StageTimeScanRequest"
+        },
+        {
+          "$ref": "#/$defs/SealPointRequest"
+        },
+        {
+          "$ref": "#/$defs/PrepareSuccessorRequest"
+        },
+        {
+          "$ref": "#/$defs/RestoreGroupWorkRequest"
+        },
+        {
+          "$ref": "#/$defs/PauseRequest"
+        },
+        {
+          "$ref": "#/$defs/ResumeRequest"
+        }
+      ],
+      "title": "CheckpointDispatch"
     },
     "CloseGroupData": {
       "additionalProperties": false,
@@ -1153,10 +1310,10 @@
           "type": "string"
         },
         "fenceEpoch": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Fenceepoch",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "expectedPointId": {
           "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
@@ -1164,20 +1321,25 @@
           "type": "string"
         },
         "expectedVersion": {
-          "ge": 0,
-          "le": 9007199254740991,
           "title": "Expectedversion",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
         },
         "expectedCheckpointRevision": {
-          "ge": 0,
-          "le": 9007199254740991,
           "title": "Expectedcheckpointrevision",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
         },
         "pointId": {
           "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
           "title": "Pointid",
+          "type": "string"
+        },
+        "operation": {
+          "const": "close_group",
+          "title": "Operation",
           "type": "string"
         },
         "groupId": {
@@ -1196,6 +1358,7 @@
         "expectedVersion",
         "expectedCheckpointRevision",
         "pointId",
+        "operation",
         "groupId"
       ],
       "title": "CloseGroupRequest",
@@ -1228,10 +1391,10 @@
           "type": "string"
         },
         "serverTimeEpochMilli": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Servertimeepochmilli",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "replayed": {
           "title": "Replayed",
@@ -1241,6 +1404,7 @@
           "enum": [
             "create_world",
             "get_context",
+            "checkpoint_start_advance",
             "checkpoint_begin_point",
             "checkpoint_set_point_time",
             "checkpoint_discover_group",
@@ -1328,10 +1492,10 @@
           "type": "string"
         },
         "version": {
-          "ge": 0,
-          "le": 9007199254740991,
           "title": "Version",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
         },
         "stateDigest": {
           "pattern": "^[0-9a-f]{64}$",
@@ -1396,16 +1560,16 @@
           "type": "string"
         },
         "expectedVersion": {
-          "ge": 0,
-          "le": 9007199254740991,
           "title": "Expectedversion",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
         },
         "expectedCheckpointRevision": {
-          "ge": 0,
-          "le": 9007199254740991,
           "title": "Expectedcheckpointrevision",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
         },
         "leaseToken": {
           "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
@@ -1413,10 +1577,10 @@
           "type": "string"
         },
         "fenceEpoch": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Fenceepoch",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "pointId": {
           "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
@@ -1480,10 +1644,10 @@
           "type": "string"
         },
         "serverTimeEpochMilli": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Servertimeepochmilli",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "replayed": {
           "title": "Replayed",
@@ -1493,6 +1657,7 @@
           "enum": [
             "create_world",
             "get_context",
+            "checkpoint_start_advance",
             "checkpoint_begin_point",
             "checkpoint_set_point_time",
             "checkpoint_discover_group",
@@ -1573,7 +1738,49 @@
     },
     "ConcludeRoundData": {
       "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "continue"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "nextRoundId": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "handback"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "nextRoundId": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      ],
       "properties": {
+        "kind": {
+          "enum": [
+            "continue",
+            "handback"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
         "roundId": {
           "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
           "title": "Roundid",
@@ -1593,6 +1800,7 @@
         }
       },
       "required": [
+        "kind",
         "roundId",
         "nextRoundId"
       ],
@@ -1617,6 +1825,11 @@
           "title": "Worldid",
           "type": "string"
         },
+        "operation": {
+          "const": "conclude",
+          "title": "Operation",
+          "type": "string"
+        },
         "advanceId": {
           "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
           "title": "Advanceid",
@@ -1633,16 +1846,16 @@
           "type": "string"
         },
         "expectedVersion": {
-          "ge": 0,
-          "le": 9007199254740991,
           "title": "Expectedversion",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
         },
         "expectedCheckpointRevision": {
-          "ge": 0,
-          "le": 9007199254740991,
           "title": "Expectedcheckpointrevision",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
         },
         "leaseToken": {
           "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
@@ -1650,19 +1863,35 @@
           "type": "string"
         },
         "fenceEpoch": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Fenceepoch",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "conclusion": {
-          "$ref": "#/$defs/ContinueConclusion"
+          "discriminator": {
+            "mapping": {
+              "continue": "#/$defs/ContinueConclusion",
+              "handback": "#/$defs/ModelHandback"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/ContinueConclusion"
+            },
+            {
+              "$ref": "#/$defs/ModelHandback"
+            }
+          ],
+          "title": "Conclusion"
         }
       },
       "required": [
         "protocolVersion",
         "requestId",
         "worldId",
+        "operation",
         "advanceId",
         "roundId",
         "expectedPointId",
@@ -1702,10 +1931,10 @@
           "type": "string"
         },
         "serverTimeEpochMilli": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Servertimeepochmilli",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "replayed": {
           "title": "Replayed",
@@ -1715,6 +1944,7 @@
           "enum": [
             "create_world",
             "get_context",
+            "checkpoint_start_advance",
             "checkpoint_begin_point",
             "checkpoint_set_point_time",
             "checkpoint_discover_group",
@@ -1821,10 +2051,10 @@
           "type": "string"
         },
         "serverTimeEpochMilli": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Servertimeepochmilli",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "world": {
           "$ref": "#/$defs/WorldContext"
@@ -1851,6 +2081,16 @@
               "type": "null"
             }
           ]
+        },
+        "recovery": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RecoveryView"
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       },
       "required": [
@@ -1859,7 +2099,8 @@
         "world",
         "control",
         "work",
-        "activeInput"
+        "activeInput",
+        "recovery"
       ],
       "title": "ContextResponse",
       "type": "object"
@@ -1949,10 +2190,10 @@
           "type": "boolean"
         },
         "revision": {
-          "ge": 0,
-          "le": 9007199254740991,
           "title": "Revision",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
         },
         "gate": {
           "$ref": "#/$defs/GateView"
@@ -2033,10 +2274,10 @@
           "type": "string"
         },
         "fenceEpoch": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Fenceepoch",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "expectedPointId": {
           "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
@@ -2044,16 +2285,16 @@
           "type": "string"
         },
         "expectedVersion": {
-          "ge": 0,
-          "le": 9007199254740991,
           "title": "Expectedversion",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
         },
         "expectedCheckpointRevision": {
-          "ge": 0,
-          "le": 9007199254740991,
           "title": "Expectedcheckpointrevision",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
         },
         "rolls": {
           "items": {
@@ -2105,10 +2346,10 @@
           "type": "string"
         },
         "serverTimeEpochMilli": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Servertimeepochmilli",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "replayed": {
           "title": "Replayed",
@@ -2118,6 +2359,7 @@
           "enum": [
             "create_world",
             "get_context",
+            "checkpoint_start_advance",
             "checkpoint_begin_point",
             "checkpoint_set_point_time",
             "checkpoint_discover_group",
@@ -2235,7 +2477,7 @@
           "type": "string"
         },
         "initial": {
-          "$ref": "#/$defs/WorldInitialState"
+          "$ref": "#/$defs/WorldInitialTemplate"
         }
       },
       "required": [
@@ -2273,10 +2515,10 @@
           "type": "string"
         },
         "serverTimeEpochMilli": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Servertimeepochmilli",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "replayed": {
           "title": "Replayed",
@@ -2286,6 +2528,7 @@
           "enum": [
             "create_world",
             "get_context",
+            "checkpoint_start_advance",
             "checkpoint_begin_point",
             "checkpoint_set_point_time",
             "checkpoint_discover_group",
@@ -2373,16 +2616,16 @@
           "type": "string"
         },
         "generation": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Generation",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "issuedAtEpochMilli": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Issuedatepochmilli",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         }
       },
       "required": [
@@ -2455,13 +2698,20 @@
           "type": "string"
         },
         "targetIds": {
-          "items": {
-            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
-            "type": "string"
-          },
-          "title": "Targetids",
-          "type": "array",
-          "uniqueItems": true
+          "anyOf": [
+            {
+              "items": {
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+                "type": "string"
+              },
+              "type": "array",
+              "uniqueItems": true
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Targetids"
         }
       },
       "required": [
@@ -2495,10 +2745,10 @@
           "type": "string"
         },
         "fenceEpoch": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Fenceepoch",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "expectedPointId": {
           "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
@@ -2506,20 +2756,25 @@
           "type": "string"
         },
         "expectedVersion": {
-          "ge": 0,
-          "le": 9007199254740991,
           "title": "Expectedversion",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
         },
         "expectedCheckpointRevision": {
-          "ge": 0,
-          "le": 9007199254740991,
           "title": "Expectedcheckpointrevision",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
         },
         "pointId": {
           "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
           "title": "Pointid",
+          "type": "string"
+        },
+        "operation": {
+          "const": "discover_group",
+          "title": "Operation",
           "type": "string"
         },
         "groupId": {
@@ -2539,13 +2794,21 @@
           "type": "string"
         },
         "targetIds": {
-          "items": {
-            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
-            "type": "string"
-          },
-          "title": "Targetids",
-          "type": "array",
-          "uniqueItems": true
+          "anyOf": [
+            {
+              "items": {
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+                "type": "string"
+              },
+              "type": "array",
+              "uniqueItems": true
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Targetids"
         }
       },
       "required": [
@@ -2558,10 +2821,10 @@
         "expectedVersion",
         "expectedCheckpointRevision",
         "pointId",
+        "operation",
         "groupId",
         "initiatorId",
-        "actionText",
-        "targetIds"
+        "actionText"
       ],
       "title": "DiscoverGroupRequest",
       "type": "object"
@@ -2593,10 +2856,10 @@
           "type": "string"
         },
         "serverTimeEpochMilli": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Servertimeepochmilli",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "replayed": {
           "title": "Replayed",
@@ -2606,6 +2869,7 @@
           "enum": [
             "create_world",
             "get_context",
+            "checkpoint_start_advance",
             "checkpoint_begin_point",
             "checkpoint_set_point_time",
             "checkpoint_discover_group",
@@ -2688,10 +2952,10 @@
       "additionalProperties": false,
       "properties": {
         "amount": {
-          "ge": 0,
-          "le": 9007199254740991,
           "title": "Amount",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
         },
         "unit": {
           "enum": [
@@ -2749,9 +3013,9 @@
         "sanitySet": {
           "anyOf": [
             {
-              "ge": 0,
-              "le": 100,
-              "type": "integer"
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 100
             },
             {
               "type": "null"
@@ -2786,6 +3050,402 @@
     "ErrorBody": {
       "additionalProperties": false,
       "allOf": [
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "narration_blocked"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "httpStatus": {
+                "const": 409
+              },
+              "retryable": {
+                "const": true
+              },
+              "clientAction": {
+                "const": "wait_narration"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "cache_missing"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "httpStatus": {
+                "const": 409
+              },
+              "retryable": {
+                "const": false
+              },
+              "clientAction": {
+                "const": "regenerate_narration"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "claim_expired"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "httpStatus": {
+                "const": 409
+              },
+              "retryable": {
+                "const": false
+              },
+              "clientAction": {
+                "const": "regenerate_narration"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "claim_fenced"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "httpStatus": {
+                "const": 409
+              },
+              "retryable": {
+                "const": false
+              },
+              "clientAction": {
+                "const": "refresh_context"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "paused"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "httpStatus": {
+                "const": 409
+              },
+              "retryable": {
+                "const": false
+              },
+              "clientAction": {
+                "const": "resolve_gate"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "stale_epoch"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "httpStatus": {
+                "const": 409
+              },
+              "retryable": {
+                "const": false
+              },
+              "clientAction": {
+                "const": "reacquire_lease"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "lease_invalid"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "httpStatus": {
+                "const": 409
+              },
+              "retryable": {
+                "const": false
+              },
+              "clientAction": {
+                "const": "reacquire_lease"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "revision_mismatch"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "httpStatus": {
+                "const": 409
+              },
+              "retryable": {
+                "const": false
+              },
+              "clientAction": {
+                "const": "refresh_context"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "phase_invalid"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "httpStatus": {
+                "const": 409
+              },
+              "retryable": {
+                "const": false
+              },
+              "clientAction": {
+                "const": "refresh_context"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "version_mismatch"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "httpStatus": {
+                "const": 409
+              },
+              "retryable": {
+                "const": false
+              },
+              "clientAction": {
+                "const": "refresh_context"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "protocol_version_unsupported"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "httpStatus": {
+                "const": 400
+              },
+              "retryable": {
+                "const": false
+              },
+              "clientAction": {
+                "const": "none"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "request_id_reused"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "httpStatus": {
+                "const": 409
+              },
+              "retryable": {
+                "const": false
+              },
+              "clientAction": {
+                "const": "fix_request"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "request_in_progress"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "httpStatus": {
+                "const": 409
+              },
+              "retryable": {
+                "const": true
+              },
+              "clientAction": {
+                "const": "retry_same_request"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "point_time_locked"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "httpStatus": {
+                "const": 409
+              },
+              "retryable": {
+                "const": false
+              },
+              "clientAction": {
+                "const": "fix_request"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "frozen_work_missing"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "httpStatus": {
+                "const": 409
+              },
+              "retryable": {
+                "const": false
+              },
+              "clientAction": {
+                "const": "pause"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "frozen_work_corrupt"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "httpStatus": {
+                "const": 409
+              },
+              "retryable": {
+                "const": false
+              },
+              "clientAction": {
+                "const": "pause"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "preview_budget_exceeded"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "httpStatus": {
+                "const": 413
+              },
+              "retryable": {
+                "const": false
+              },
+              "clientAction": {
+                "const": "fix_request"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "const": "request_malformed"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "httpStatus": {
+                "const": 400
+              },
+              "retryable": {
+                "const": false
+              },
+              "clientAction": {
+                "const": "fix_request"
+              }
+            }
+          }
+        },
         {
           "if": {
             "properties": {
@@ -2900,6 +3560,11 @@
             }
           },
           "then": {
+            "properties": {
+              "control": {
+                "type": "object"
+              }
+            },
             "required": [
               "control"
             ]
@@ -2921,6 +3586,14 @@
             }
           },
           "then": {
+            "properties": {
+              "operation": {
+                "type": "string"
+              },
+              "requestId": {
+                "type": "string"
+              }
+            },
             "required": [
               "operation",
               "requestId"
@@ -2954,10 +3627,10 @@
           "type": "string"
         },
         "serverTimeEpochMilli": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Servertimeepochmilli",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "replayed": {
           "title": "Replayed",
@@ -2969,6 +3642,7 @@
               "enum": [
                 "create_world",
                 "get_context",
+                "checkpoint_start_advance",
                 "checkpoint_begin_point",
                 "checkpoint_set_point_time",
                 "checkpoint_discover_group",
@@ -3161,10 +3835,10 @@
           "type": "string"
         },
         "fenceEpoch": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Fenceepoch",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "expectedPointId": {
           "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
@@ -3172,20 +3846,25 @@
           "type": "string"
         },
         "expectedVersion": {
-          "ge": 0,
-          "le": 9007199254740991,
           "title": "Expectedversion",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
         },
         "expectedCheckpointRevision": {
-          "ge": 0,
-          "le": 9007199254740991,
           "title": "Expectedcheckpointrevision",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
         },
         "pointId": {
           "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
           "title": "Pointid",
+          "type": "string"
+        },
+        "operation": {
+          "const": "extend_group",
+          "title": "Operation",
           "type": "string"
         },
         "groupId": {
@@ -3235,6 +3914,7 @@
         "expectedVersion",
         "expectedCheckpointRevision",
         "pointId",
+        "operation",
         "groupId",
         "sourceId"
       ],
@@ -3268,10 +3948,10 @@
           "type": "string"
         },
         "serverTimeEpochMilli": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Servertimeepochmilli",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "replayed": {
           "title": "Replayed",
@@ -3281,6 +3961,7 @@
           "enum": [
             "create_world",
             "get_context",
+            "checkpoint_start_advance",
             "checkpoint_begin_point",
             "checkpoint_set_point_time",
             "checkpoint_discover_group",
@@ -3359,6 +4040,127 @@
       "title": "ExtendGroupSuccess",
       "type": "object"
     },
+    "FrozenGroupView": {
+      "additionalProperties": false,
+      "properties": {
+        "groupId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Groupid",
+          "type": "string"
+        },
+        "pointId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Pointid",
+          "type": "string"
+        },
+        "inputProjectionHash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Inputprojectionhash",
+          "type": "string"
+        },
+        "members": {
+          "items": {
+            "$ref": "#/$defs/FrozenMemberView"
+          },
+          "minItems": 1,
+          "title": "Members",
+          "type": "array"
+        },
+        "acceptedSources": {
+          "items": {
+            "$ref": "#/$defs/AcceptedWorkSource"
+          },
+          "title": "Acceptedsources",
+          "type": "array"
+        },
+        "candidates": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SettlementGroup"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "groupId",
+        "pointId",
+        "inputProjectionHash",
+        "members",
+        "acceptedSources",
+        "candidates"
+      ],
+      "title": "FrozenGroupView",
+      "type": "object"
+    },
+    "FrozenMemberView": {
+      "additionalProperties": false,
+      "properties": {
+        "memberId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Memberid",
+          "type": "string"
+        },
+        "actionText": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Actiontext"
+        },
+        "targets": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/TargetSpec"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Targets"
+        },
+        "resultText": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Resulttext"
+        },
+        "rollRefs": {
+          "items": {
+            "$ref": "#/$defs/RollRef"
+          },
+          "title": "Rollrefs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "memberId",
+        "actionText",
+        "targets",
+        "resultText",
+        "rollRefs"
+      ],
+      "title": "FrozenMemberView",
+      "type": "object"
+    },
     "GateView": {
       "additionalProperties": false,
       "allOf": [
@@ -3381,7 +4183,12 @@
               "expiresAtEpochMilli": {
                 "type": "integer"
               }
-            }
+            },
+            "required": [
+              "generation",
+              "issuedAtEpochMilli",
+              "expiresAtEpochMilli"
+            ]
           }
         },
         {
@@ -3420,9 +4227,9 @@
         "generation": {
           "anyOf": [
             {
-              "ge": 1,
-              "le": 9007199254740991,
-              "type": "integer"
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
             },
             {
               "type": "null"
@@ -3434,9 +4241,9 @@
         "issuedAtEpochMilli": {
           "anyOf": [
             {
-              "ge": 1,
-              "le": 9007199254740991,
-              "type": "integer"
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
             },
             {
               "type": "null"
@@ -3448,9 +4255,9 @@
         "expiresAtEpochMilli": {
           "anyOf": [
             {
-              "ge": 1,
-              "le": 9007199254740991,
-              "type": "integer"
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
             },
             {
               "type": "null"
@@ -3466,6 +4273,74 @@
       "title": "GateView",
       "type": "object"
     },
+    "GetContextRequest": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "includeRecovery": {
+                "const": true
+              }
+            },
+            "required": [
+              "includeRecovery"
+            ]
+          },
+          "then": {
+            "properties": {
+              "leaseToken": {
+                "type": "string"
+              },
+              "fenceEpoch": {
+                "minimum": 1,
+                "type": "integer"
+              }
+            },
+            "required": [
+              "leaseToken",
+              "fenceEpoch"
+            ]
+          }
+        }
+      ],
+      "properties": {
+        "includeRecovery": {
+          "default": false,
+          "title": "Includerecovery",
+          "type": "boolean"
+        },
+        "leaseToken": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Leasetoken"
+        },
+        "fenceEpoch": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fenceepoch"
+        }
+      },
+      "title": "GetContextRequest",
+      "type": "object"
+    },
     "GetStateData": {
       "additionalProperties": false,
       "properties": {
@@ -3475,10 +4350,10 @@
           "type": "string"
         },
         "version": {
-          "ge": 0,
-          "le": 9007199254740991,
           "title": "Version",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
         },
         "state": {
           "$ref": "#/$defs/WorldState"
@@ -3496,6 +4371,26 @@
         "stateDigest"
       ],
       "title": "GetStateData",
+      "type": "object"
+    },
+    "GetStateRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "point": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Point"
+        }
+      },
+      "title": "GetStateRequest",
       "type": "object"
     },
     "GetStateSuccess": {
@@ -3525,10 +4420,10 @@
           "type": "string"
         },
         "serverTimeEpochMilli": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Servertimeepochmilli",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "world": {
           "$ref": "#/$defs/WorldContext"
@@ -3544,6 +4439,51 @@
         "data"
       ],
       "title": "GetStateSuccess",
+      "type": "object"
+    },
+    "GroupWorkSource": {
+      "additionalProperties": false,
+      "description": "Active accepted reference readable before copying any old-epoch payload.\n\nThis is authority metadata, not a visibility grant for the referenced bytes.\nMissing/corrupt rows retain their reference and must fail restore explicitly.",
+      "properties": {
+        "pointId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Pointid",
+          "type": "string"
+        },
+        "groupId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Groupid",
+          "type": "string"
+        },
+        "sourceEpoch": {
+          "title": "Sourceepoch",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "sourceAttempt": {
+          "title": "Sourceattempt",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "manifest": {
+          "items": {
+            "$ref": "#/$defs/WorkManifestItem"
+          },
+          "minItems": 1,
+          "title": "Manifest",
+          "type": "array"
+        }
+      },
+      "required": [
+        "pointId",
+        "groupId",
+        "sourceEpoch",
+        "sourceAttempt",
+        "manifest"
+      ],
+      "title": "GroupWorkSource",
       "type": "object"
     },
     "HeadNarrationClaim": {
@@ -3572,10 +4512,10 @@
           "title": "Advanceid"
         },
         "generation": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Generation",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "claimToken": {
           "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
@@ -3583,10 +4523,10 @@
           "type": "string"
         },
         "expiresAt": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Expiresat",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "mode": {
           "const": "head",
@@ -3594,10 +4534,10 @@
           "type": "string"
         },
         "fenceEpoch": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Fenceepoch",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         }
       },
       "required": [
@@ -3613,6 +4553,528 @@
       "title": "HeadNarrationClaim",
       "type": "object"
     },
+    "HeadNarrationClaimRenewRequest": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "mode": {
+                "const": "head"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "leaseToken": {
+                "type": "string"
+              },
+              "fenceEpoch": {
+                "minimum": 1,
+                "type": "integer"
+              }
+            },
+            "required": [
+              "leaseToken",
+              "fenceEpoch"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "mode": {
+                "const": "history"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "leaseToken": {
+                "type": "null"
+              },
+              "fenceEpoch": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      ],
+      "properties": {
+        "protocolVersion": {
+          "const": 2,
+          "title": "Protocolversion",
+          "type": "integer"
+        },
+        "requestId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Requestid",
+          "type": "string"
+        },
+        "worldId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Worldid",
+          "type": "string"
+        },
+        "mode": {
+          "const": "head",
+          "title": "Mode",
+          "type": "string"
+        },
+        "leaseToken": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Leasetoken",
+          "type": "string"
+        },
+        "fenceEpoch": {
+          "title": "Fenceepoch",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "pointId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Pointid",
+          "type": "string"
+        },
+        "claimToken": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Claimtoken",
+          "type": "string"
+        },
+        "generation": {
+          "title": "Generation",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "issuedAtEpochMilli": {
+          "title": "Issuedatepochmilli",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "protocolVersion",
+        "requestId",
+        "worldId",
+        "mode",
+        "leaseToken",
+        "fenceEpoch",
+        "pointId",
+        "claimToken",
+        "generation",
+        "issuedAtEpochMilli"
+      ],
+      "title": "HeadNarrationClaimRenewRequest",
+      "type": "object"
+    },
+    "HeadNarrationClaimRequest": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "mode": {
+                "const": "head"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "leaseToken": {
+                "type": "string"
+              },
+              "fenceEpoch": {
+                "minimum": 1,
+                "type": "integer"
+              }
+            },
+            "required": [
+              "leaseToken",
+              "fenceEpoch"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "mode": {
+                "const": "history"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "leaseToken": {
+                "type": "null"
+              },
+              "fenceEpoch": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      ],
+      "properties": {
+        "protocolVersion": {
+          "const": 2,
+          "title": "Protocolversion",
+          "type": "integer"
+        },
+        "requestId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Requestid",
+          "type": "string"
+        },
+        "worldId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Worldid",
+          "type": "string"
+        },
+        "mode": {
+          "const": "head",
+          "title": "Mode",
+          "type": "string"
+        },
+        "leaseToken": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Leasetoken",
+          "type": "string"
+        },
+        "fenceEpoch": {
+          "title": "Fenceepoch",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "pointId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Pointid",
+          "type": "string"
+        },
+        "currentClaim": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CurrentClaim"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "protocolVersion",
+        "requestId",
+        "worldId",
+        "mode",
+        "leaseToken",
+        "fenceEpoch",
+        "pointId"
+      ],
+      "title": "HeadNarrationClaimRequest",
+      "type": "object"
+    },
+    "HeadNarrationDeleteRequest": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "mode": {
+                "const": "head"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "leaseToken": {
+                "type": "string"
+              },
+              "fenceEpoch": {
+                "minimum": 1,
+                "type": "integer"
+              }
+            },
+            "required": [
+              "leaseToken",
+              "fenceEpoch"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "mode": {
+                "const": "history"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "leaseToken": {
+                "type": "null"
+              },
+              "fenceEpoch": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      ],
+      "properties": {
+        "mode": {
+          "const": "head",
+          "title": "Mode",
+          "type": "string"
+        },
+        "leaseToken": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Leasetoken",
+          "type": "string"
+        },
+        "fenceEpoch": {
+          "title": "Fenceepoch",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "protocolVersion": {
+          "const": 2,
+          "title": "Protocolversion",
+          "type": "integer"
+        },
+        "requestId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Requestid",
+          "type": "string"
+        },
+        "claimToken": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Claimtoken",
+          "type": "string"
+        },
+        "generation": {
+          "title": "Generation",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "issuedAtEpochMilli": {
+          "title": "Issuedatepochmilli",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "mode",
+        "leaseToken",
+        "fenceEpoch",
+        "protocolVersion",
+        "requestId",
+        "claimToken",
+        "generation",
+        "issuedAtEpochMilli"
+      ],
+      "title": "HeadNarrationDeleteRequest",
+      "type": "object"
+    },
+    "HeadNarrationSubmitRequest": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "mode": {
+                "const": "head"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "leaseToken": {
+                "type": "string"
+              },
+              "fenceEpoch": {
+                "minimum": 1,
+                "type": "integer"
+              }
+            },
+            "required": [
+              "leaseToken",
+              "fenceEpoch"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "mode": {
+                "const": "history"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "leaseToken": {
+                "type": "null"
+              },
+              "fenceEpoch": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "const": "ready"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "text": {
+                "type": "string"
+              },
+              "failureReason": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "const": "failed"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "text": {
+                "type": "null"
+              },
+              "failureReason": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      ],
+      "properties": {
+        "protocolVersion": {
+          "const": 2,
+          "title": "Protocolversion",
+          "type": "integer"
+        },
+        "requestId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Requestid",
+          "type": "string"
+        },
+        "worldId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Worldid",
+          "type": "string"
+        },
+        "mode": {
+          "const": "head",
+          "title": "Mode",
+          "type": "string"
+        },
+        "leaseToken": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Leasetoken",
+          "type": "string"
+        },
+        "fenceEpoch": {
+          "title": "Fenceepoch",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "pointId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Pointid",
+          "type": "string"
+        },
+        "claimToken": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Claimtoken",
+          "type": "string"
+        },
+        "generation": {
+          "title": "Generation",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "issuedAtEpochMilli": {
+          "title": "Issuedatepochmilli",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "outcome": {
+          "enum": [
+            "ready",
+            "failed"
+          ],
+          "title": "Outcome",
+          "type": "string"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Text"
+        },
+        "failureReason": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Failurereason"
+        }
+      },
+      "required": [
+        "protocolVersion",
+        "requestId",
+        "worldId",
+        "mode",
+        "leaseToken",
+        "fenceEpoch",
+        "pointId",
+        "claimToken",
+        "generation",
+        "issuedAtEpochMilli",
+        "outcome",
+        "text",
+        "failureReason"
+      ],
+      "title": "HeadNarrationSubmitRequest",
+      "type": "object"
+    },
     "HeadSummary": {
       "additionalProperties": false,
       "description": "Latest committed point; the state its digest projects.",
@@ -3623,10 +5085,10 @@
           "type": "string"
         },
         "version": {
-          "ge": 0,
-          "le": 9007199254740991,
           "title": "Version",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
         },
         "stateDigest": {
           "pattern": "^[0-9a-f]{64}$",
@@ -3679,10 +5141,10 @@
           "title": "Advanceid"
         },
         "generation": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Generation",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "claimToken": {
           "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
@@ -3690,10 +5152,10 @@
           "type": "string"
         },
         "expiresAt": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Expiresat",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "mode": {
           "const": "history",
@@ -3716,6 +5178,516 @@
         "fenceEpoch"
       ],
       "title": "HistoryNarrationClaim",
+      "type": "object"
+    },
+    "HistoryNarrationClaimRenewRequest": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "mode": {
+                "const": "head"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "leaseToken": {
+                "type": "string"
+              },
+              "fenceEpoch": {
+                "minimum": 1,
+                "type": "integer"
+              }
+            },
+            "required": [
+              "leaseToken",
+              "fenceEpoch"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "mode": {
+                "const": "history"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "leaseToken": {
+                "type": "null"
+              },
+              "fenceEpoch": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      ],
+      "properties": {
+        "protocolVersion": {
+          "const": 2,
+          "title": "Protocolversion",
+          "type": "integer"
+        },
+        "requestId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Requestid",
+          "type": "string"
+        },
+        "worldId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Worldid",
+          "type": "string"
+        },
+        "mode": {
+          "const": "history",
+          "title": "Mode",
+          "type": "string"
+        },
+        "leaseToken": {
+          "default": null,
+          "title": "Leasetoken",
+          "type": "null"
+        },
+        "fenceEpoch": {
+          "default": null,
+          "title": "Fenceepoch",
+          "type": "null"
+        },
+        "pointId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Pointid",
+          "type": "string"
+        },
+        "claimToken": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Claimtoken",
+          "type": "string"
+        },
+        "generation": {
+          "title": "Generation",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "issuedAtEpochMilli": {
+          "title": "Issuedatepochmilli",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "protocolVersion",
+        "requestId",
+        "worldId",
+        "mode",
+        "pointId",
+        "claimToken",
+        "generation",
+        "issuedAtEpochMilli"
+      ],
+      "title": "HistoryNarrationClaimRenewRequest",
+      "type": "object"
+    },
+    "HistoryNarrationClaimRequest": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "mode": {
+                "const": "head"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "leaseToken": {
+                "type": "string"
+              },
+              "fenceEpoch": {
+                "minimum": 1,
+                "type": "integer"
+              }
+            },
+            "required": [
+              "leaseToken",
+              "fenceEpoch"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "mode": {
+                "const": "history"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "leaseToken": {
+                "type": "null"
+              },
+              "fenceEpoch": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      ],
+      "properties": {
+        "protocolVersion": {
+          "const": 2,
+          "title": "Protocolversion",
+          "type": "integer"
+        },
+        "requestId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Requestid",
+          "type": "string"
+        },
+        "worldId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Worldid",
+          "type": "string"
+        },
+        "mode": {
+          "const": "history",
+          "title": "Mode",
+          "type": "string"
+        },
+        "leaseToken": {
+          "default": null,
+          "title": "Leasetoken",
+          "type": "null"
+        },
+        "fenceEpoch": {
+          "default": null,
+          "title": "Fenceepoch",
+          "type": "null"
+        },
+        "pointId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Pointid",
+          "type": "string"
+        },
+        "currentClaim": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CurrentClaim"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "protocolVersion",
+        "requestId",
+        "worldId",
+        "mode",
+        "pointId"
+      ],
+      "title": "HistoryNarrationClaimRequest",
+      "type": "object"
+    },
+    "HistoryNarrationDeleteRequest": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "mode": {
+                "const": "head"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "leaseToken": {
+                "type": "string"
+              },
+              "fenceEpoch": {
+                "minimum": 1,
+                "type": "integer"
+              }
+            },
+            "required": [
+              "leaseToken",
+              "fenceEpoch"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "mode": {
+                "const": "history"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "leaseToken": {
+                "type": "null"
+              },
+              "fenceEpoch": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      ],
+      "properties": {
+        "mode": {
+          "const": "history",
+          "title": "Mode",
+          "type": "string"
+        },
+        "leaseToken": {
+          "default": null,
+          "title": "Leasetoken",
+          "type": "null"
+        },
+        "fenceEpoch": {
+          "default": null,
+          "title": "Fenceepoch",
+          "type": "null"
+        },
+        "protocolVersion": {
+          "const": 2,
+          "title": "Protocolversion",
+          "type": "integer"
+        },
+        "requestId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Requestid",
+          "type": "string"
+        },
+        "claimToken": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Claimtoken",
+          "type": "string"
+        },
+        "generation": {
+          "title": "Generation",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "issuedAtEpochMilli": {
+          "title": "Issuedatepochmilli",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "mode",
+        "protocolVersion",
+        "requestId",
+        "claimToken",
+        "generation",
+        "issuedAtEpochMilli"
+      ],
+      "title": "HistoryNarrationDeleteRequest",
+      "type": "object"
+    },
+    "HistoryNarrationSubmitRequest": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "mode": {
+                "const": "head"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "leaseToken": {
+                "type": "string"
+              },
+              "fenceEpoch": {
+                "minimum": 1,
+                "type": "integer"
+              }
+            },
+            "required": [
+              "leaseToken",
+              "fenceEpoch"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "mode": {
+                "const": "history"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "leaseToken": {
+                "type": "null"
+              },
+              "fenceEpoch": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "const": "ready"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "text": {
+                "type": "string"
+              },
+              "failureReason": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "const": "failed"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "text": {
+                "type": "null"
+              },
+              "failureReason": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      ],
+      "properties": {
+        "protocolVersion": {
+          "const": 2,
+          "title": "Protocolversion",
+          "type": "integer"
+        },
+        "requestId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Requestid",
+          "type": "string"
+        },
+        "worldId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Worldid",
+          "type": "string"
+        },
+        "mode": {
+          "const": "history",
+          "title": "Mode",
+          "type": "string"
+        },
+        "leaseToken": {
+          "default": null,
+          "title": "Leasetoken",
+          "type": "null"
+        },
+        "fenceEpoch": {
+          "default": null,
+          "title": "Fenceepoch",
+          "type": "null"
+        },
+        "pointId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Pointid",
+          "type": "string"
+        },
+        "claimToken": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Claimtoken",
+          "type": "string"
+        },
+        "generation": {
+          "title": "Generation",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "issuedAtEpochMilli": {
+          "title": "Issuedatepochmilli",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "outcome": {
+          "enum": [
+            "ready",
+            "failed"
+          ],
+          "title": "Outcome",
+          "type": "string"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Text"
+        },
+        "failureReason": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Failurereason"
+        }
+      },
+      "required": [
+        "protocolVersion",
+        "requestId",
+        "worldId",
+        "mode",
+        "pointId",
+        "claimToken",
+        "generation",
+        "issuedAtEpochMilli",
+        "outcome",
+        "text",
+        "failureReason"
+      ],
+      "title": "HistoryNarrationSubmitRequest",
       "type": "object"
     },
     "InitialCharacter": {
@@ -3755,10 +5727,10 @@
           "type": "string"
         },
         "initialSanity": {
-          "ge": 0,
-          "le": 100,
           "title": "Initialsanity",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
         },
         "tasks": {
           "patternProperties": {
@@ -3906,16 +5878,16 @@
           "type": "string"
         },
         "fenceEpoch": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Fenceepoch",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "expiresAtEpochMilli": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Expiresatepochmilli",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         }
       },
       "required": [
@@ -3931,16 +5903,16 @@
       "description": "Active advance lease without its token; fenceEpoch is always positive.",
       "properties": {
         "fenceEpoch": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Fenceepoch",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "expiresAtEpochMilli": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Expiresatepochmilli",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         }
       },
       "required": [
@@ -3965,6 +5937,34 @@
         "points"
       ],
       "title": "ListPointsData",
+      "type": "object"
+    },
+    "ListPointsRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "after": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "After"
+        },
+        "limit": {
+          "default": 50,
+          "title": "Limit",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        }
+      },
+      "title": "ListPointsRequest",
       "type": "object"
     },
     "ListPointsSuccess": {
@@ -3994,10 +5994,10 @@
           "type": "string"
         },
         "serverTimeEpochMilli": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Servertimeepochmilli",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "world": {
           "$ref": "#/$defs/WorldContext"
@@ -4046,10 +6046,18 @@
           "type": "string"
         },
         "actionText": {
-          "minLength": 1,
-          "pattern": "\\S",
-          "title": "Actiontext",
-          "type": "string"
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Actiontext"
         },
         "rollRefs": {
           "items": {
@@ -4062,7 +6070,6 @@
       },
       "required": [
         "memberId",
-        "actionText",
         "rollRefs"
       ],
       "title": "MemberAdmission",
@@ -4145,22 +6152,17 @@
           "type": "string"
         },
         "generation": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Generation",
-          "type": "integer"
-        },
-        "claimToken": {
-          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
-          "title": "Claimtoken",
-          "type": "string"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "fenceEpoch": {
           "anyOf": [
             {
-              "ge": 1,
-              "le": 9007199254740991,
-              "type": "integer"
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
             },
             {
               "type": "null"
@@ -4169,91 +6171,53 @@
           "title": "Fenceepoch"
         },
         "issuedAtEpochMilli": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Issuedatepochmilli",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "expiresAtEpochMilli": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Expiresatepochmilli",
-          "type": "integer"
-        }
-      },
-      "required": [
-        "pointId",
-        "mode",
-        "generation",
-        "claimToken",
-        "fenceEpoch",
-        "issuedAtEpochMilli",
-        "expiresAtEpochMilli"
-      ],
-      "title": "NarrationClaimData",
-      "type": "object"
-    },
-    "NarrationClaimRenewRequest": {
-      "additionalProperties": false,
-      "properties": {
-        "protocolVersion": {
-          "const": 2,
-          "title": "Protocolversion",
-          "type": "integer"
-        },
-        "requestId": {
-          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
-          "title": "Requestid",
-          "type": "string"
-        },
-        "worldId": {
-          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
-          "title": "Worldid",
-          "type": "string"
-        },
-        "pointId": {
-          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
-          "title": "Pointid",
-          "type": "string"
-        },
-        "mode": {
-          "enum": [
-            "head",
-            "history"
-          ],
-          "title": "Mode",
-          "type": "string"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "claimToken": {
           "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
           "title": "Claimtoken",
           "type": "string"
-        },
-        "generation": {
-          "ge": 1,
-          "le": 9007199254740991,
-          "title": "Generation",
-          "type": "integer"
-        },
-        "issuedAtEpochMilli": {
-          "ge": 1,
-          "le": 9007199254740991,
-          "title": "Issuedatepochmilli",
-          "type": "integer"
         }
       },
       "required": [
-        "protocolVersion",
-        "requestId",
-        "worldId",
         "pointId",
         "mode",
-        "claimToken",
         "generation",
-        "issuedAtEpochMilli"
+        "fenceEpoch",
+        "issuedAtEpochMilli",
+        "expiresAtEpochMilli",
+        "claimToken"
       ],
-      "title": "NarrationClaimRenewRequest",
+      "title": "NarrationClaimData",
       "type": "object"
+    },
+    "NarrationClaimRenewRequest": {
+      "description": "Wire body/query union, selected by head/history mode.",
+      "discriminator": {
+        "mapping": {
+          "head": "#/$defs/HeadNarrationClaimRenewRequest",
+          "history": "#/$defs/HistoryNarrationClaimRenewRequest"
+        },
+        "propertyName": "mode"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/HeadNarrationClaimRenewRequest"
+        },
+        {
+          "$ref": "#/$defs/HistoryNarrationClaimRenewRequest"
+        }
+      ],
+      "title": "NarrationClaimRenewRequest"
     },
     "NarrationClaimRenewSuccess": {
       "additionalProperties": false,
@@ -4282,10 +6246,10 @@
           "type": "string"
         },
         "serverTimeEpochMilli": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Servertimeepochmilli",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "replayed": {
           "title": "Replayed",
@@ -4295,6 +6259,7 @@
           "enum": [
             "create_world",
             "get_context",
+            "checkpoint_start_advance",
             "checkpoint_begin_point",
             "checkpoint_set_point_time",
             "checkpoint_discover_group",
@@ -4355,7 +6320,7 @@
           ]
         },
         "data": {
-          "$ref": "#/$defs/NarrationClaimData"
+          "$ref": "#/$defs/NarrationClaimSummary"
         }
       },
       "required": [
@@ -4374,60 +6339,66 @@
       "type": "object"
     },
     "NarrationClaimRequest": {
-      "additionalProperties": false,
-      "properties": {
-        "protocolVersion": {
-          "const": 2,
-          "title": "Protocolversion",
-          "type": "integer"
+      "description": "Wire body/query union, selected by head/history mode.",
+      "discriminator": {
+        "mapping": {
+          "head": "#/$defs/HeadNarrationClaimRequest",
+          "history": "#/$defs/HistoryNarrationClaimRequest"
         },
-        "requestId": {
-          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
-          "title": "Requestid",
-          "type": "string"
-        },
-        "worldId": {
-          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
-          "title": "Worldid",
-          "type": "string"
-        },
-        "pointId": {
-          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
-          "title": "Pointid",
-          "type": "string"
-        },
-        "mode": {
-          "enum": [
-            "head",
-            "history"
-          ],
-          "title": "Mode",
-          "type": "string"
-        },
-        "currentClaim": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/CurrentClaim"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null
-        }
+        "propertyName": "mode"
       },
-      "required": [
-        "protocolVersion",
-        "requestId",
-        "worldId",
-        "pointId",
-        "mode"
+      "oneOf": [
+        {
+          "$ref": "#/$defs/HeadNarrationClaimRequest"
+        },
+        {
+          "$ref": "#/$defs/HistoryNarrationClaimRequest"
+        }
       ],
-      "title": "NarrationClaimRequest",
-      "type": "object"
+      "title": "NarrationClaimRequest"
     },
     "NarrationClaimSuccess": {
       "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "replayed": {
+                "const": true
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "data": {
+                "not": {
+                  "required": [
+                    "claimToken"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "replayed": {
+                "const": false
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "data": {
+                "required": [
+                  "claimToken"
+                ]
+              }
+            }
+          }
+        }
+      ],
       "properties": {
         "protocolVersion": {
           "const": 2,
@@ -4453,10 +6424,10 @@
           "type": "string"
         },
         "serverTimeEpochMilli": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Servertimeepochmilli",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "replayed": {
           "title": "Replayed",
@@ -4466,6 +6437,7 @@
           "enum": [
             "create_world",
             "get_context",
+            "checkpoint_start_advance",
             "checkpoint_begin_point",
             "checkpoint_set_point_time",
             "checkpoint_discover_group",
@@ -4526,7 +6498,15 @@
           ]
         },
         "data": {
-          "$ref": "#/$defs/NarrationClaimData"
+          "anyOf": [
+            {
+              "$ref": "#/$defs/NarrationClaimData"
+            },
+            {
+              "$ref": "#/$defs/NarrationClaimSummary"
+            }
+          ],
+          "title": "Data"
         }
       },
       "required": [
@@ -4544,6 +6524,99 @@
       "title": "NarrationClaimSuccess",
       "type": "object"
     },
+    "NarrationClaimSummary": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "mode": {
+                "const": "head"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "fenceEpoch": {
+                "type": "integer"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "mode": {
+                "const": "history"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "fenceEpoch": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      ],
+      "properties": {
+        "pointId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Pointid",
+          "type": "string"
+        },
+        "mode": {
+          "enum": [
+            "head",
+            "history"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "generation": {
+          "title": "Generation",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "fenceEpoch": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Fenceepoch"
+        },
+        "issuedAtEpochMilli": {
+          "title": "Issuedatepochmilli",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "expiresAtEpochMilli": {
+          "title": "Expiresatepochmilli",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "pointId",
+        "mode",
+        "generation",
+        "fenceEpoch",
+        "issuedAtEpochMilli",
+        "expiresAtEpochMilli"
+      ],
+      "title": "NarrationClaimSummary",
+      "type": "object"
+    },
     "NarrationDeleteData": {
       "additionalProperties": false,
       "properties": {
@@ -4558,10 +6631,10 @@
           "type": "string"
         },
         "invalidatedGeneration": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Invalidatedgeneration",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         }
       },
       "required": [
@@ -4573,55 +6646,23 @@
       "type": "object"
     },
     "NarrationDeleteRequest": {
-      "additionalProperties": false,
-      "description": "Query-string model for DELETE .../narration.",
-      "properties": {
-        "protocolVersion": {
-          "const": 2,
-          "title": "Protocolversion",
-          "type": "integer"
+      "description": "Wire body/query union, selected by head/history mode.",
+      "discriminator": {
+        "mapping": {
+          "head": "#/$defs/HeadNarrationDeleteRequest",
+          "history": "#/$defs/HistoryNarrationDeleteRequest"
         },
-        "requestId": {
-          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
-          "title": "Requestid",
-          "type": "string"
-        },
-        "mode": {
-          "enum": [
-            "head",
-            "history"
-          ],
-          "title": "Mode",
-          "type": "string"
-        },
-        "claimToken": {
-          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
-          "title": "Claimtoken",
-          "type": "string"
-        },
-        "generation": {
-          "ge": 1,
-          "le": 9007199254740991,
-          "title": "Generation",
-          "type": "integer"
-        },
-        "issuedAtEpochMilli": {
-          "ge": 1,
-          "le": 9007199254740991,
-          "title": "Issuedatepochmilli",
-          "type": "integer"
-        }
+        "propertyName": "mode"
       },
-      "required": [
-        "protocolVersion",
-        "requestId",
-        "mode",
-        "claimToken",
-        "generation",
-        "issuedAtEpochMilli"
+      "oneOf": [
+        {
+          "$ref": "#/$defs/HeadNarrationDeleteRequest"
+        },
+        {
+          "$ref": "#/$defs/HistoryNarrationDeleteRequest"
+        }
       ],
-      "title": "NarrationDeleteRequest",
-      "type": "object"
+      "title": "NarrationDeleteRequest"
     },
     "NarrationDeleteSuccess": {
       "additionalProperties": false,
@@ -4650,10 +6691,10 @@
           "type": "string"
         },
         "serverTimeEpochMilli": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Servertimeepochmilli",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "replayed": {
           "title": "Replayed",
@@ -4663,6 +6704,7 @@
           "enum": [
             "create_world",
             "get_context",
+            "checkpoint_start_advance",
             "checkpoint_begin_point",
             "checkpoint_set_point_time",
             "checkpoint_discover_group",
@@ -4743,6 +6785,31 @@
     },
     "NarrationGetData": {
       "additionalProperties": false,
+      "allOf": [
+        {
+          "else": {
+            "properties": {
+              "text": {
+                "type": "null"
+              }
+            }
+          },
+          "if": {
+            "properties": {
+              "narrationStatus": {
+                "const": "ready"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "text": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      ],
       "properties": {
         "pointId": {
           "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
@@ -4762,9 +6829,9 @@
         "generation": {
           "anyOf": [
             {
-              "ge": 1,
-              "le": 9007199254740991,
-              "type": "integer"
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
             },
             {
               "type": "null"
@@ -4822,10 +6889,10 @@
           "type": "string"
         },
         "serverTimeEpochMilli": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Servertimeepochmilli",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "world": {
           "$ref": "#/$defs/WorldContext"
@@ -4862,10 +6929,10 @@
           "type": "string"
         },
         "generation": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Generation",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         }
       },
       "required": [
@@ -4877,143 +6944,23 @@
       "type": "object"
     },
     "NarrationSubmitRequest": {
-      "additionalProperties": false,
-      "allOf": [
-        {
-          "if": {
-            "properties": {
-              "outcome": {
-                "const": "ready"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "text": {
-                "type": "string"
-              },
-              "failureReason": {
-                "type": "null"
-              }
-            }
-          }
+      "description": "Wire body/query union, selected by head/history mode.",
+      "discriminator": {
+        "mapping": {
+          "head": "#/$defs/HeadNarrationSubmitRequest",
+          "history": "#/$defs/HistoryNarrationSubmitRequest"
         },
-        {
-          "if": {
-            "properties": {
-              "outcome": {
-                "const": "failed"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "text": {
-                "type": "null"
-              },
-              "failureReason": {
-                "type": "string"
-              }
-            }
-          }
-        }
-      ],
-      "properties": {
-        "protocolVersion": {
-          "const": 2,
-          "title": "Protocolversion",
-          "type": "integer"
-        },
-        "requestId": {
-          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
-          "title": "Requestid",
-          "type": "string"
-        },
-        "worldId": {
-          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
-          "title": "Worldid",
-          "type": "string"
-        },
-        "pointId": {
-          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
-          "title": "Pointid",
-          "type": "string"
-        },
-        "mode": {
-          "enum": [
-            "head",
-            "history"
-          ],
-          "title": "Mode",
-          "type": "string"
-        },
-        "claimToken": {
-          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
-          "title": "Claimtoken",
-          "type": "string"
-        },
-        "generation": {
-          "ge": 1,
-          "le": 9007199254740991,
-          "title": "Generation",
-          "type": "integer"
-        },
-        "issuedAtEpochMilli": {
-          "ge": 1,
-          "le": 9007199254740991,
-          "title": "Issuedatepochmilli",
-          "type": "integer"
-        },
-        "outcome": {
-          "enum": [
-            "ready",
-            "failed"
-          ],
-          "title": "Outcome",
-          "type": "string"
-        },
-        "text": {
-          "anyOf": [
-            {
-              "minLength": 1,
-              "pattern": "\\S",
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "title": "Text"
-        },
-        "failureReason": {
-          "anyOf": [
-            {
-              "minLength": 1,
-              "pattern": "\\S",
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "title": "Failurereason"
-        }
+        "propertyName": "mode"
       },
-      "required": [
-        "protocolVersion",
-        "requestId",
-        "worldId",
-        "pointId",
-        "mode",
-        "claimToken",
-        "generation",
-        "issuedAtEpochMilli",
-        "outcome",
-        "text",
-        "failureReason"
+      "oneOf": [
+        {
+          "$ref": "#/$defs/HeadNarrationSubmitRequest"
+        },
+        {
+          "$ref": "#/$defs/HistoryNarrationSubmitRequest"
+        }
       ],
-      "title": "NarrationSubmitRequest",
-      "type": "object"
+      "title": "NarrationSubmitRequest"
     },
     "NarrationSubmitSuccess": {
       "additionalProperties": false,
@@ -5042,10 +6989,10 @@
           "type": "string"
         },
         "serverTimeEpochMilli": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Servertimeepochmilli",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "replayed": {
           "title": "Replayed",
@@ -5055,6 +7002,7 @@
           "enum": [
             "create_world",
             "get_context",
+            "checkpoint_start_advance",
             "checkpoint_begin_point",
             "checkpoint_set_point_time",
             "checkpoint_discover_group",
@@ -5172,10 +7120,10 @@
           "type": "string"
         },
         "fenceEpoch": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Fenceepoch",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "expectedPointId": {
           "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
@@ -5183,16 +7131,21 @@
           "type": "string"
         },
         "expectedVersion": {
-          "ge": 0,
-          "le": 9007199254740991,
           "title": "Expectedversion",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
         },
         "expectedCheckpointRevision": {
-          "ge": 0,
-          "le": 9007199254740991,
           "title": "Expectedcheckpointrevision",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "operation": {
+          "const": "pause",
+          "title": "Operation",
+          "type": "string"
         }
       },
       "required": [
@@ -5203,7 +7156,8 @@
         "fenceEpoch",
         "expectedPointId",
         "expectedVersion",
-        "expectedCheckpointRevision"
+        "expectedCheckpointRevision",
+        "operation"
       ],
       "title": "PauseRequest",
       "type": "object"
@@ -5235,10 +7189,10 @@
           "type": "string"
         },
         "serverTimeEpochMilli": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Servertimeepochmilli",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "replayed": {
           "title": "Replayed",
@@ -5248,6 +7202,7 @@
           "enum": [
             "create_world",
             "get_context",
+            "checkpoint_start_advance",
             "checkpoint_begin_point",
             "checkpoint_set_point_time",
             "checkpoint_discover_group",
@@ -5382,6 +7337,24 @@
     },
     "PendingGroupView": {
       "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "closed": {
+                "const": true
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "frontierIds": {
+                "maxItems": 0
+              }
+            }
+          }
+        }
+      ],
       "description": "Model goals only; admission is recomputed from rolls and eligibility.",
       "properties": {
         "groupId": {
@@ -5503,10 +7476,10 @@
           "type": "string"
         },
         "expectedVersion": {
-          "ge": 0,
-          "le": 9007199254740991,
           "title": "Expectedversion",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
         },
         "requestId": {
           "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
@@ -5519,10 +7492,10 @@
           "type": "string"
         },
         "expectedCheckpointRevision": {
-          "ge": 0,
-          "le": 9007199254740991,
           "title": "Expectedcheckpointrevision",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
         },
         "leaseToken": {
           "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
@@ -5530,10 +7503,10 @@
           "type": "string"
         },
         "fenceEpoch": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Fenceepoch",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "point": {
           "$ref": "#/$defs/TimelinePoint"
@@ -5568,6 +7541,115 @@
       "title": "PointCommitRequest",
       "type": "object"
     },
+    "PointRecoveryView": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "payloadStatus": {
+                "const": "restore_required"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "restoreSources": {
+                "minItems": 1
+              },
+              "groups": {
+                "maxItems": 0
+              },
+              "timeScanCandidates": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "else": {
+            "properties": {
+              "timeScanCandidates": {
+                "type": "null"
+              }
+            }
+          },
+          "if": {
+            "properties": {
+              "payloadStatus": {
+                "const": "available"
+              },
+              "work": {
+                "properties": {
+                  "timeScanComplete": {
+                    "const": true
+                  }
+                }
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "timeScanCandidates": {
+                "properties": {
+                  "groupId": {
+                    "type": "null"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        }
+      ],
+      "description": "Lease-protected source metadata and current-epoch payload.\n\ntargets=None means not confirmed; [] means a confirmed empty target set.\nA null action/result similarly denotes work that has not been accepted yet.\nrestore_required instead withholds the entire payload while independently\nexposing active source references, including their old epoch and hashes.\nSealed/time-scan completion markers remain unchanged while bytes are hidden.",
+      "properties": {
+        "work": {
+          "$ref": "#/$defs/PointWorkView"
+        },
+        "payloadStatus": {
+          "enum": [
+            "available",
+            "restore_required"
+          ],
+          "title": "Payloadstatus",
+          "type": "string"
+        },
+        "restoreSources": {
+          "items": {
+            "$ref": "#/$defs/GroupWorkSource"
+          },
+          "title": "Restoresources",
+          "type": "array"
+        },
+        "groups": {
+          "items": {
+            "$ref": "#/$defs/FrozenGroupView"
+          },
+          "title": "Groups",
+          "type": "array"
+        },
+        "timeScanCandidates": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SettlementGroup"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "work",
+        "payloadStatus",
+        "restoreSources",
+        "groups",
+        "timeScanCandidates"
+      ],
+      "title": "PointRecoveryView",
+      "type": "object"
+    },
     "PointSummary": {
       "additionalProperties": false,
       "properties": {
@@ -5577,10 +7659,10 @@
           "type": "string"
         },
         "sequence": {
-          "ge": 0,
-          "le": 9007199254740991,
           "title": "Sequence",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
         },
         "kind": {
           "enum": [
@@ -5636,6 +7718,29 @@
     "PointWorkView": {
       "additionalProperties": false,
       "allOf": [
+        {
+          "else": {
+            "properties": {
+              "prefixDigest": {
+                "type": "null"
+              }
+            }
+          },
+          "if": {
+            "properties": {
+              "sealed": {
+                "const": true
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "prefixDigest": {
+                "type": "string"
+              }
+            }
+          }
+        },
         {
           "if": {
             "properties": {
@@ -5737,6 +7842,38 @@
           "title": "Timelocked",
           "type": "boolean"
         },
+        "sealed": {
+          "title": "Sealed",
+          "type": "boolean"
+        },
+        "prefixDigest": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Prefixdigest"
+        },
+        "predecessorWorkDigest": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Predecessorworkdigest"
+        },
+        "timeScanComplete": {
+          "title": "Timescancomplete",
+          "type": "boolean"
+        },
         "baseline": {
           "$ref": "#/$defs/BaselineView"
         },
@@ -5785,6 +7922,10 @@
         "kind",
         "timeAdvance",
         "timeLocked",
+        "sealed",
+        "prefixDigest",
+        "predecessorWorkDigest",
+        "timeScanComplete",
         "baseline",
         "phase",
         "working",
@@ -5889,10 +8030,10 @@
           "type": "string"
         },
         "fenceEpoch": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Fenceepoch",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "expectedPointId": {
           "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
@@ -5900,20 +8041,25 @@
           "type": "string"
         },
         "expectedVersion": {
-          "ge": 0,
-          "le": 9007199254740991,
           "title": "Expectedversion",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
         },
         "expectedCheckpointRevision": {
-          "ge": 0,
-          "le": 9007199254740991,
           "title": "Expectedcheckpointrevision",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
         },
         "pointId": {
           "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
           "title": "Pointid",
+          "type": "string"
+        },
+        "operation": {
+          "const": "prepare_successor",
+          "title": "Operation",
           "type": "string"
         },
         "successorPointId": {
@@ -5935,6 +8081,7 @@
         "expectedVersion",
         "expectedCheckpointRevision",
         "pointId",
+        "operation",
         "successorPointId",
         "timeAdvance"
       ],
@@ -5968,10 +8115,10 @@
           "type": "string"
         },
         "serverTimeEpochMilli": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Servertimeepochmilli",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "replayed": {
           "title": "Replayed",
@@ -5981,6 +8128,7 @@
           "enum": [
             "create_world",
             "get_context",
+            "checkpoint_start_advance",
             "checkpoint_begin_point",
             "checkpoint_set_point_time",
             "checkpoint_discover_group",
@@ -6062,6 +8210,18 @@
     "PreviewData": {
       "additionalProperties": false,
       "properties": {
+        "pointProjection": {
+          "$ref": "#/$defs/TimelinePoint"
+        },
+        "mergedEntityDeltas": {
+          "patternProperties": {
+            "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$": {
+              "$ref": "#/$defs/EntityDelta"
+            }
+          },
+          "title": "Mergedentitydeltas",
+          "type": "object"
+        },
         "pointId": {
           "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
           "title": "Pointid",
@@ -6082,6 +8242,8 @@
         }
       },
       "required": [
+        "pointProjection",
+        "mergedEntityDeltas",
         "pointId",
         "workingStateDigest",
         "pointProjectionDigest",
@@ -6125,16 +8287,16 @@
           "type": "string"
         },
         "expectedVersion": {
-          "ge": 0,
-          "le": 9007199254740991,
           "title": "Expectedversion",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
         },
         "expectedCheckpointRevision": {
-          "ge": 0,
-          "le": 9007199254740991,
           "title": "Expectedcheckpointrevision",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
         },
         "timeAdvance": {
           "$ref": "#/$defs/TimeAdvance"
@@ -6190,60 +8352,14 @@
           "type": "string"
         },
         "serverTimeEpochMilli": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Servertimeepochmilli",
-          "type": "integer"
-        },
-        "replayed": {
-          "title": "Replayed",
-          "type": "boolean"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "operation": {
-          "enum": [
-            "create_world",
-            "get_context",
-            "checkpoint_begin_point",
-            "checkpoint_set_point_time",
-            "checkpoint_discover_group",
-            "checkpoint_extend_group",
-            "checkpoint_close_group",
-            "checkpoint_stage_unit",
-            "checkpoint_record_skip",
-            "checkpoint_stage_time_scan",
-            "checkpoint_seal_point",
-            "checkpoint_prepare_successor",
-            "checkpoint_restore_group_work",
-            "checkpoint_pause",
-            "checkpoint_resume",
-            "round_conclusion_conclude",
-            "round_conclusion_cancel",
-            "lease_acquire",
-            "lease_renew",
-            "lease_release",
-            "allocate_ids",
-            "preview_point",
-            "create_rolls",
-            "commit_point",
-            "list_points",
-            "get_state",
-            "narration_claim",
-            "narration_claim_renew",
-            "narration_submit",
-            "narration_get",
-            "narration_delete"
-          ],
+          "const": "preview_point",
           "title": "Operation",
-          "type": "string"
-        },
-        "requestId": {
-          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
-          "title": "Requestid",
-          "type": "string"
-        },
-        "requestHash": {
-          "pattern": "^[0-9a-f]{64}$",
-          "title": "Requesthash",
           "type": "string"
         },
         "world": {
@@ -6269,10 +8385,7 @@
       "required": [
         "protocolVersion",
         "serverTimeEpochMilli",
-        "replayed",
         "operation",
-        "requestId",
-        "requestHash",
         "world",
         "control",
         "work",
@@ -6310,16 +8423,16 @@
           "type": "string"
         },
         "expectedVersion": {
-          "ge": 0,
-          "le": 9007199254740991,
           "title": "Expectedversion",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
         },
         "expectedCheckpointRevision": {
-          "ge": 0,
-          "le": 9007199254740991,
           "title": "Expectedcheckpointrevision",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
         },
         "timeAdvance": {
           "$ref": "#/$defs/TimeAdvance"
@@ -6410,10 +8523,10 @@
           "type": "string"
         },
         "fenceEpoch": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Fenceepoch",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "expectedPointId": {
           "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
@@ -6421,20 +8534,25 @@
           "type": "string"
         },
         "expectedVersion": {
-          "ge": 0,
-          "le": 9007199254740991,
           "title": "Expectedversion",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
         },
         "expectedCheckpointRevision": {
-          "ge": 0,
-          "le": 9007199254740991,
           "title": "Expectedcheckpointrevision",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
         },
         "pointId": {
           "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
           "title": "Pointid",
+          "type": "string"
+        },
+        "operation": {
+          "const": "record_skip",
+          "title": "Operation",
           "type": "string"
         },
         "slotActorId": {
@@ -6453,6 +8571,7 @@
         "expectedVersion",
         "expectedCheckpointRevision",
         "pointId",
+        "operation",
         "slotActorId"
       ],
       "title": "RecordSkipRequest",
@@ -6485,10 +8604,10 @@
           "type": "string"
         },
         "serverTimeEpochMilli": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Servertimeepochmilli",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "replayed": {
           "title": "Replayed",
@@ -6498,6 +8617,7 @@
           "enum": [
             "create_world",
             "get_context",
+            "checkpoint_start_advance",
             "checkpoint_begin_point",
             "checkpoint_set_point_time",
             "checkpoint_discover_group",
@@ -6576,6 +8696,44 @@
       "title": "RecordSkipSuccess",
       "type": "object"
     },
+    "RecoveryView": {
+      "additionalProperties": false,
+      "properties": {
+        "fenceEpoch": {
+          "title": "Fenceepoch",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "current": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PointRecoveryView"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "successor": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PointRecoveryView"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "fenceEpoch",
+        "current",
+        "successor"
+      ],
+      "title": "RecoveryView",
+      "type": "object"
+    },
     "RelativePosition": {
       "additionalProperties": false,
       "properties": {
@@ -6638,10 +8796,10 @@
           "type": "string"
         },
         "fenceEpoch": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Fenceepoch",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         }
       },
       "required": [
@@ -6680,10 +8838,10 @@
           "type": "string"
         },
         "serverTimeEpochMilli": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Servertimeepochmilli",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "replayed": {
           "title": "Replayed",
@@ -6693,6 +8851,7 @@
           "enum": [
             "create_world",
             "get_context",
+            "checkpoint_start_advance",
             "checkpoint_begin_point",
             "checkpoint_set_point_time",
             "checkpoint_discover_group",
@@ -6780,16 +8939,16 @@
           "type": "string"
         },
         "fenceEpoch": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Fenceepoch",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "expiresAtEpochMilli": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Expiresatepochmilli",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         }
       },
       "required": [
@@ -6824,10 +8983,10 @@
           "type": "string"
         },
         "fenceEpoch": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Fenceepoch",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         }
       },
       "required": [
@@ -6867,10 +9026,10 @@
           "type": "string"
         },
         "serverTimeEpochMilli": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Servertimeepochmilli",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "replayed": {
           "title": "Replayed",
@@ -6880,6 +9039,7 @@
           "enum": [
             "create_world",
             "get_context",
+            "checkpoint_start_advance",
             "checkpoint_begin_point",
             "checkpoint_set_point_time",
             "checkpoint_discover_group",
@@ -6961,22 +9121,39 @@
     "RestoreGroupWorkData": {
       "additionalProperties": false,
       "properties": {
+        "pointId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Pointid",
+          "type": "string"
+        },
         "groupId": {
           "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
           "title": "Groupid",
           "type": "string"
         },
+        "fenceEpoch": {
+          "title": "Fenceepoch",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "attempt": {
+          "title": "Attempt",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
         "sourceEpoch": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Sourceepoch",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "sourceAttempt": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Sourceattempt",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "restoredMemberIds": {
           "items": {
@@ -6989,7 +9166,10 @@
         }
       },
       "required": [
+        "pointId",
         "groupId",
+        "fenceEpoch",
+        "attempt",
         "sourceEpoch",
         "sourceAttempt",
         "restoredMemberIds"
@@ -6999,7 +9179,38 @@
     },
     "RestoreGroupWorkRequest": {
       "additionalProperties": false,
+      "description": "The service allocates the destination attempt, never the caller.",
       "properties": {
+        "pointId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Pointid",
+          "type": "string"
+        },
+        "groupId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Groupid",
+          "type": "string"
+        },
+        "sourceEpoch": {
+          "title": "Sourceepoch",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "sourceAttempt": {
+          "title": "Sourceattempt",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "manifest": {
+          "items": {
+            "$ref": "#/$defs/WorkManifestItem"
+          },
+          "minItems": 1,
+          "title": "Manifest",
+          "type": "array"
+        },
         "protocolVersion": {
           "const": 2,
           "title": "Protocolversion",
@@ -7021,10 +9232,10 @@
           "type": "string"
         },
         "fenceEpoch": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Fenceepoch",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "expectedPointId": {
           "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
@@ -7032,55 +9243,29 @@
           "type": "string"
         },
         "expectedVersion": {
-          "ge": 0,
-          "le": 9007199254740991,
           "title": "Expectedversion",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
         },
         "expectedCheckpointRevision": {
-          "ge": 0,
-          "le": 9007199254740991,
           "title": "Expectedcheckpointrevision",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
         },
-        "pointId": {
-          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
-          "title": "Pointid",
+        "operation": {
+          "const": "restore_group_work",
+          "title": "Operation",
           "type": "string"
-        },
-        "groupId": {
-          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
-          "title": "Groupid",
-          "type": "string"
-        },
-        "attempt": {
-          "ge": 1,
-          "le": 9007199254740991,
-          "title": "Attempt",
-          "type": "integer"
-        },
-        "sourceEpoch": {
-          "ge": 1,
-          "le": 9007199254740991,
-          "title": "Sourceepoch",
-          "type": "integer"
-        },
-        "sourceAttempt": {
-          "ge": 1,
-          "le": 9007199254740991,
-          "title": "Sourceattempt",
-          "type": "integer"
-        },
-        "manifest": {
-          "items": {
-            "$ref": "#/$defs/WorkManifestItem"
-          },
-          "minItems": 1,
-          "title": "Manifest",
-          "type": "array"
         }
       },
       "required": [
+        "pointId",
+        "groupId",
+        "sourceEpoch",
+        "sourceAttempt",
+        "manifest",
         "protocolVersion",
         "requestId",
         "worldId",
@@ -7089,12 +9274,7 @@
         "expectedPointId",
         "expectedVersion",
         "expectedCheckpointRevision",
-        "pointId",
-        "groupId",
-        "attempt",
-        "sourceEpoch",
-        "sourceAttempt",
-        "manifest"
+        "operation"
       ],
       "title": "RestoreGroupWorkRequest",
       "type": "object"
@@ -7126,10 +9306,10 @@
           "type": "string"
         },
         "serverTimeEpochMilli": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Servertimeepochmilli",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "replayed": {
           "title": "Replayed",
@@ -7139,6 +9319,7 @@
           "enum": [
             "create_world",
             "get_context",
+            "checkpoint_start_advance",
             "checkpoint_begin_point",
             "checkpoint_set_point_time",
             "checkpoint_discover_group",
@@ -7256,10 +9437,10 @@
           "type": "string"
         },
         "fenceEpoch": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Fenceepoch",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "expectedPointId": {
           "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
@@ -7267,16 +9448,21 @@
           "type": "string"
         },
         "expectedVersion": {
-          "ge": 0,
-          "le": 9007199254740991,
           "title": "Expectedversion",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
         },
         "expectedCheckpointRevision": {
-          "ge": 0,
-          "le": 9007199254740991,
           "title": "Expectedcheckpointrevision",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "operation": {
+          "const": "resume",
+          "title": "Operation",
+          "type": "string"
         }
       },
       "required": [
@@ -7287,7 +9473,8 @@
         "fenceEpoch",
         "expectedPointId",
         "expectedVersion",
-        "expectedCheckpointRevision"
+        "expectedCheckpointRevision",
+        "operation"
       ],
       "title": "ResumeRequest",
       "type": "object"
@@ -7319,10 +9506,10 @@
           "type": "string"
         },
         "serverTimeEpochMilli": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Servertimeepochmilli",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "replayed": {
           "title": "Replayed",
@@ -7332,6 +9519,7 @@
           "enum": [
             "create_world",
             "get_context",
+            "checkpoint_start_advance",
             "checkpoint_begin_point",
             "checkpoint_set_point_time",
             "checkpoint_discover_group",
@@ -7447,16 +9635,29 @@
           "type": "string"
         },
         "target": {
-          "ge": 1,
-          "le": 20,
           "title": "Target",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20
         },
         "result": {
-          "ge": -9007199254740991,
-          "le": 9007199254740991,
           "title": "Result",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20
+        },
+        "eligibilityBaselineDigest": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Eligibilitybaselinedigest",
+          "type": "string"
+        },
+        "eligible": {
+          "title": "Eligible",
+          "type": "boolean"
+        },
+        "admitted": {
+          "title": "Admitted",
+          "type": "boolean"
         }
       },
       "required": [
@@ -7467,7 +9668,10 @@
         "triggerKey",
         "ruleVersion",
         "target",
-        "result"
+        "result",
+        "eligibilityBaselineDigest",
+        "eligible",
+        "admitted"
       ],
       "title": "RollOutcome",
       "type": "object"
@@ -7552,10 +9756,10 @@
           "type": "string"
         },
         "target": {
-          "ge": 1,
-          "le": 20,
           "title": "Target",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20
         }
       },
       "required": [
@@ -7614,10 +9818,10 @@
           "type": "string"
         },
         "target": {
-          "ge": 1,
-          "le": 20,
           "title": "Target",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20
         }
       },
       "required": [
@@ -7823,10 +10027,10 @@
           "uniqueItems": true
         },
         "cursor": {
-          "ge": 0,
-          "le": 9007199254740991,
           "title": "Cursor",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
         },
         "actedIds": {
           "items": {
@@ -7923,6 +10127,25 @@
       "title": "RoundCheckpoint",
       "type": "object"
     },
+    "RoundConclusionDispatch": {
+      "description": "The round-conclusion HTTP body itself.",
+      "discriminator": {
+        "mapping": {
+          "cancel": "#/$defs/CancelRoundRequest",
+          "conclude": "#/$defs/ConcludeRoundRequest"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ConcludeRoundRequest"
+        },
+        {
+          "$ref": "#/$defs/CancelRoundRequest"
+        }
+      ],
+      "title": "RoundConclusionDispatch"
+    },
     "RoundConclusionRequest": {
       "additionalProperties": false,
       "else": {
@@ -7965,10 +10188,10 @@
           "type": "string"
         },
         "expectedVersion": {
-          "ge": 0,
-          "le": 9007199254740991,
           "title": "Expectedversion",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
         },
         "requestId": {
           "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
@@ -7976,10 +10199,10 @@
           "type": "string"
         },
         "expectedCheckpointRevision": {
-          "ge": 0,
-          "le": 9007199254740991,
           "title": "Expectedcheckpointrevision",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
         },
         "leaseToken": {
           "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
@@ -7987,10 +10210,10 @@
           "type": "string"
         },
         "fenceEpoch": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Fenceepoch",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "operation": {
           "enum": [
@@ -8059,6 +10282,39 @@
           "title": "Trigger",
           "type": "string"
         },
+        "order": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+            "type": "string"
+          },
+          "title": "Order",
+          "type": "array",
+          "uniqueItems": true
+        },
+        "cursor": {
+          "title": "Cursor",
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "actedIds": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+            "type": "string"
+          },
+          "title": "Actedids",
+          "type": "array",
+          "uniqueItems": true
+        },
+        "visitedIds": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+            "type": "string"
+          },
+          "title": "Visitedids",
+          "type": "array",
+          "uniqueItems": true
+        },
         "conclusion": {
           "anyOf": [
             {
@@ -8080,6 +10336,10 @@
       "required": [
         "roundId",
         "trigger",
+        "order",
+        "cursor",
+        "actedIds",
+        "visitedIds",
         "conclusion"
       ],
       "title": "RoundSummary",
@@ -8130,10 +10390,10 @@
           "type": "string"
         },
         "fenceEpoch": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Fenceepoch",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "expectedPointId": {
           "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
@@ -8141,20 +10401,25 @@
           "type": "string"
         },
         "expectedVersion": {
-          "ge": 0,
-          "le": 9007199254740991,
           "title": "Expectedversion",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
         },
         "expectedCheckpointRevision": {
-          "ge": 0,
-          "le": 9007199254740991,
           "title": "Expectedcheckpointrevision",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
         },
         "pointId": {
           "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
           "title": "Pointid",
+          "type": "string"
+        },
+        "operation": {
+          "const": "seal_point",
+          "title": "Operation",
           "type": "string"
         }
       },
@@ -8167,7 +10432,8 @@
         "expectedPointId",
         "expectedVersion",
         "expectedCheckpointRevision",
-        "pointId"
+        "pointId",
+        "operation"
       ],
       "title": "SealPointRequest",
       "type": "object"
@@ -8199,10 +10465,10 @@
           "type": "string"
         },
         "serverTimeEpochMilli": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Servertimeepochmilli",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "replayed": {
           "title": "Replayed",
@@ -8212,6 +10478,7 @@
           "enum": [
             "create_world",
             "get_context",
+            "checkpoint_start_advance",
             "checkpoint_begin_point",
             "checkpoint_set_point_time",
             "checkpoint_discover_group",
@@ -8333,10 +10600,10 @@
           "type": "string"
         },
         "fenceEpoch": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Fenceepoch",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "expectedPointId": {
           "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
@@ -8344,20 +10611,25 @@
           "type": "string"
         },
         "expectedVersion": {
-          "ge": 0,
-          "le": 9007199254740991,
           "title": "Expectedversion",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
         },
         "expectedCheckpointRevision": {
-          "ge": 0,
-          "le": 9007199254740991,
           "title": "Expectedcheckpointrevision",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
         },
         "pointId": {
           "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
           "title": "Pointid",
+          "type": "string"
+        },
+        "operation": {
+          "const": "set_point_time",
+          "title": "Operation",
           "type": "string"
         },
         "timeAdvance": {
@@ -8374,6 +10646,7 @@
         "expectedVersion",
         "expectedCheckpointRevision",
         "pointId",
+        "operation",
         "timeAdvance"
       ],
       "title": "SetPointTimeRequest",
@@ -8406,10 +10679,10 @@
           "type": "string"
         },
         "serverTimeEpochMilli": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Servertimeepochmilli",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "replayed": {
           "title": "Replayed",
@@ -8419,6 +10692,7 @@
           "enum": [
             "create_world",
             "get_context",
+            "checkpoint_start_advance",
             "checkpoint_begin_point",
             "checkpoint_set_point_time",
             "checkpoint_discover_group",
@@ -8623,9 +10897,9 @@
         "sanities": {
           "patternProperties": {
             "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$": {
-              "ge": 0,
-              "le": 100,
-              "type": "integer"
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 100
             }
           },
           "title": "Sanities",
@@ -8797,9 +11071,9 @@
         "sanities": {
           "patternProperties": {
             "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$": {
-              "ge": 0,
-              "le": 100,
-              "type": "integer"
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 100
             }
           },
           "title": "Sanities",
@@ -8885,10 +11159,10 @@
           "type": "string"
         },
         "fenceEpoch": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Fenceepoch",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "expectedPointId": {
           "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
@@ -8896,20 +11170,25 @@
           "type": "string"
         },
         "expectedVersion": {
-          "ge": 0,
-          "le": 9007199254740991,
           "title": "Expectedversion",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
         },
         "expectedCheckpointRevision": {
-          "ge": 0,
-          "le": 9007199254740991,
           "title": "Expectedcheckpointrevision",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
         },
         "pointId": {
           "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
           "title": "Pointid",
+          "type": "string"
+        },
+        "operation": {
+          "const": "stage_time_scan",
+          "title": "Operation",
           "type": "string"
         },
         "candidates": {
@@ -8926,6 +11205,7 @@
         "expectedVersion",
         "expectedCheckpointRevision",
         "pointId",
+        "operation",
         "candidates"
       ],
       "title": "StageTimeScanRequest",
@@ -8958,10 +11238,10 @@
           "type": "string"
         },
         "serverTimeEpochMilli": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Servertimeepochmilli",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "replayed": {
           "title": "Replayed",
@@ -8971,6 +11251,7 @@
           "enum": [
             "create_world",
             "get_context",
+            "checkpoint_start_advance",
             "checkpoint_begin_point",
             "checkpoint_set_point_time",
             "checkpoint_discover_group",
@@ -9098,10 +11379,10 @@
           "type": "string"
         },
         "fenceEpoch": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Fenceepoch",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "expectedPointId": {
           "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
@@ -9109,20 +11390,25 @@
           "type": "string"
         },
         "expectedVersion": {
-          "ge": 0,
-          "le": 9007199254740991,
           "title": "Expectedversion",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
         },
         "expectedCheckpointRevision": {
-          "ge": 0,
-          "le": 9007199254740991,
           "title": "Expectedcheckpointrevision",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
         },
         "pointId": {
           "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
           "title": "Pointid",
+          "type": "string"
+        },
+        "operation": {
+          "const": "stage_unit",
+          "title": "Operation",
           "type": "string"
         },
         "groupId": {
@@ -9132,6 +11418,17 @@
         },
         "candidates": {
           "$ref": "#/$defs/SettlementGroup"
+        },
+        "results": {
+          "patternProperties": {
+            "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$": {
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            }
+          },
+          "title": "Results",
+          "type": "object"
         }
       },
       "required": [
@@ -9144,8 +11441,10 @@
         "expectedVersion",
         "expectedCheckpointRevision",
         "pointId",
+        "operation",
         "groupId",
-        "candidates"
+        "candidates",
+        "results"
       ],
       "title": "StageUnitRequest",
       "type": "object"
@@ -9177,10 +11476,10 @@
           "type": "string"
         },
         "serverTimeEpochMilli": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Servertimeepochmilli",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "replayed": {
           "title": "Replayed",
@@ -9190,6 +11489,7 @@
           "enum": [
             "create_world",
             "get_context",
+            "checkpoint_start_advance",
             "checkpoint_begin_point",
             "checkpoint_set_point_time",
             "checkpoint_discover_group",
@@ -9268,6 +11568,254 @@
       "title": "StageUnitSuccess",
       "type": "object"
     },
+    "StartAdvanceData": {
+      "additionalProperties": false,
+      "properties": {
+        "advanceId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Advanceid",
+          "type": "string"
+        },
+        "inputId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Inputid",
+          "type": "string"
+        },
+        "roundId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Roundid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "advanceId",
+        "inputId",
+        "roundId"
+      ],
+      "title": "StartAdvanceData",
+      "type": "object"
+    },
+    "StartAdvanceRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "protocolVersion": {
+          "const": 2,
+          "title": "Protocolversion",
+          "type": "integer"
+        },
+        "requestId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Requestid",
+          "type": "string"
+        },
+        "worldId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Worldid",
+          "type": "string"
+        },
+        "leaseToken": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Leasetoken",
+          "type": "string"
+        },
+        "fenceEpoch": {
+          "title": "Fenceepoch",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "expectedPointId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Expectedpointid",
+          "type": "string"
+        },
+        "expectedVersion": {
+          "title": "Expectedversion",
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "expectedCheckpointRevision": {
+          "title": "Expectedcheckpointrevision",
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "operation": {
+          "const": "start_advance",
+          "title": "Operation",
+          "type": "string"
+        },
+        "advanceId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Advanceid",
+          "type": "string"
+        },
+        "inputId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Inputid",
+          "type": "string"
+        },
+        "roundId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Roundid",
+          "type": "string"
+        },
+        "inputText": {
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Inputtext",
+          "type": "string"
+        },
+        "order": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Order",
+          "type": "array",
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "protocolVersion",
+        "requestId",
+        "worldId",
+        "leaseToken",
+        "fenceEpoch",
+        "expectedPointId",
+        "expectedVersion",
+        "expectedCheckpointRevision",
+        "operation",
+        "advanceId",
+        "inputId",
+        "roundId",
+        "inputText",
+        "order"
+      ],
+      "title": "StartAdvanceRequest",
+      "type": "object"
+    },
+    "StartAdvanceSuccess": {
+      "additionalProperties": false,
+      "properties": {
+        "protocolVersion": {
+          "const": 2,
+          "title": "Protocolversion",
+          "type": "integer"
+        },
+        "engineVersion": {
+          "const": "world-engine-v1",
+          "default": "world-engine-v1",
+          "title": "Engineversion",
+          "type": "string"
+        },
+        "schemaVersion": {
+          "const": 1,
+          "default": 1,
+          "title": "Schemaversion",
+          "type": "integer"
+        },
+        "canonicalVersion": {
+          "const": "world-canonical-v1",
+          "default": "world-canonical-v1",
+          "title": "Canonicalversion",
+          "type": "string"
+        },
+        "serverTimeEpochMilli": {
+          "title": "Servertimeepochmilli",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "replayed": {
+          "title": "Replayed",
+          "type": "boolean"
+        },
+        "operation": {
+          "enum": [
+            "create_world",
+            "get_context",
+            "checkpoint_start_advance",
+            "checkpoint_begin_point",
+            "checkpoint_set_point_time",
+            "checkpoint_discover_group",
+            "checkpoint_extend_group",
+            "checkpoint_close_group",
+            "checkpoint_stage_unit",
+            "checkpoint_record_skip",
+            "checkpoint_stage_time_scan",
+            "checkpoint_seal_point",
+            "checkpoint_prepare_successor",
+            "checkpoint_restore_group_work",
+            "checkpoint_pause",
+            "checkpoint_resume",
+            "round_conclusion_conclude",
+            "round_conclusion_cancel",
+            "lease_acquire",
+            "lease_renew",
+            "lease_release",
+            "allocate_ids",
+            "preview_point",
+            "create_rolls",
+            "commit_point",
+            "list_points",
+            "get_state",
+            "narration_claim",
+            "narration_claim_renew",
+            "narration_submit",
+            "narration_get",
+            "narration_delete"
+          ],
+          "title": "Operation",
+          "type": "string"
+        },
+        "requestId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Requestid",
+          "type": "string"
+        },
+        "requestHash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Requesthash",
+          "type": "string"
+        },
+        "world": {
+          "$ref": "#/$defs/WorldContext"
+        },
+        "control": {
+          "$ref": "#/$defs/ControlState"
+        },
+        "work": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PointWorkView"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "data": {
+          "$ref": "#/$defs/StartAdvanceData"
+        }
+      },
+      "required": [
+        "protocolVersion",
+        "serverTimeEpochMilli",
+        "replayed",
+        "operation",
+        "requestId",
+        "requestHash",
+        "world",
+        "control",
+        "work",
+        "data"
+      ],
+      "title": "StartAdvanceSuccess",
+      "type": "object"
+    },
     "StoredDescriptionChange": {
       "additionalProperties": false,
       "if": {
@@ -9311,10 +11859,10 @@
           "type": "string"
         },
         "sourceSequence": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Sourcesequence",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "active": {
           "title": "Active",
@@ -9357,15 +11905,23 @@
           "$ref": "#/$defs/TimeAdvance"
         },
         "expectedPredecessorVersion": {
-          "ge": 0,
-          "le": 9007199254740991,
           "title": "Expectedpredecessorversion",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
         },
         "prefixDigest": {
           "pattern": "^[0-9a-f]{64}$",
           "title": "Prefixdigest",
           "type": "string"
+        },
+        "expectedPredecessorStateDigest": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Expectedpredecessorstatedigest",
+          "type": "string"
+        },
+        "baseline": {
+          "$ref": "#/$defs/BaselineView"
         }
       },
       "required": [
@@ -9373,7 +11929,9 @@
         "predecessorPointId",
         "timeAdvance",
         "expectedPredecessorVersion",
-        "prefixDigest"
+        "prefixDigest",
+        "expectedPredecessorStateDigest",
+        "baseline"
       ],
       "title": "SuccessorSummary",
       "type": "object"
@@ -9548,10 +12106,10 @@
           "type": "string"
         },
         "sequence": {
-          "ge": 1,
-          "le": 9007199254740991,
           "title": "Sequence",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
         },
         "kind": {
           "enum": [
@@ -9639,16 +12197,49 @@
           "title": "Actioncontenthash",
           "type": "string"
         },
+        "targetsContentHash": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Targetscontenthash"
+        },
         "resultContentHash": {
-          "pattern": "^[0-9a-f]{64}$",
-          "title": "Resultcontenthash",
-          "type": "string"
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Resultcontenthash"
+        },
+        "candidatesContentHash": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Candidatescontenthash"
         }
       },
       "required": [
         "memberId",
         "actionContentHash",
-        "resultContentHash"
+        "targetsContentHash",
+        "resultContentHash",
+        "candidatesContentHash"
       ],
       "title": "WorkManifestItem",
       "type": "object"
@@ -9677,10 +12268,10 @@
       "description": "Uncommitted working cursor and sets; committed progress lives in the head.",
       "properties": {
         "cursor": {
-          "ge": 0,
-          "le": 9007199254740991,
           "title": "Cursor",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
         },
         "actedIds": {
           "items": {
@@ -9708,13 +12299,23 @@
           "title": "Settledunitids",
           "type": "array",
           "uniqueItems": true
+        },
+        "intentStatus": {
+          "enum": [
+            "pending",
+            "consumed",
+            "expired"
+          ],
+          "title": "Intentstatus",
+          "type": "string"
         }
       },
       "required": [
         "cursor",
         "actedIds",
         "visitedIds",
-        "settledUnitIds"
+        "settledUnitIds",
+        "intentStatus"
       ],
       "title": "WorkingProgress",
       "type": "object"
@@ -9873,6 +12474,68 @@
       "title": "WorldInitialState",
       "type": "object"
     },
+    "WorldInitialTemplate": {
+      "additionalProperties": false,
+      "description": "Creation template has no worldId; the server binds it once assigned.\n\nDomain reference validation is identical to the frozen initial-world type.",
+      "properties": {
+        "engineVersion": {
+          "const": "world-engine-v1",
+          "title": "Engineversion",
+          "type": "string"
+        },
+        "schemaVersion": {
+          "const": 1,
+          "title": "Schemaversion",
+          "type": "integer"
+        },
+        "protagonistId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Protagonistid",
+          "type": "string"
+        },
+        "initialTime": {
+          "$ref": "#/$defs/WorldTime"
+        },
+        "locations": {
+          "patternProperties": {
+            "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$": {
+              "$ref": "#/$defs/InitialLocation"
+            }
+          },
+          "title": "Locations",
+          "type": "object"
+        },
+        "items": {
+          "patternProperties": {
+            "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$": {
+              "$ref": "#/$defs/InitialItem"
+            }
+          },
+          "title": "Items",
+          "type": "object"
+        },
+        "characters": {
+          "patternProperties": {
+            "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$": {
+              "$ref": "#/$defs/InitialCharacter"
+            }
+          },
+          "title": "Characters",
+          "type": "object"
+        }
+      },
+      "required": [
+        "engineVersion",
+        "schemaVersion",
+        "protagonistId",
+        "initialTime",
+        "locations",
+        "items",
+        "characters"
+      ],
+      "title": "WorldInitialTemplate",
+      "type": "object"
+    },
     "WorldState": {
       "additionalProperties": false,
       "description": "The exact hash projection; contains no execution or narration metadata.",
@@ -9959,10 +12622,10 @@
           "type": "string"
         },
         "instantOrdinal": {
-          "ge": 0,
-          "le": 9007199254740991,
           "title": "Instantordinal",
-          "type": "integer"
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
         }
       },
       "required": [

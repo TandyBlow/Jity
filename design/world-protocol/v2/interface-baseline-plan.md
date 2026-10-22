@@ -1,6 +1,6 @@
 # v2 共同接口基线实施计划（A0＋B0）
 
-日期：2026-10-22。状态：v1 基线已提交（26011c8）；IF-02 的 S1 候选快照已交付（`backend/app/schemas/world/v2/`、v2 `world-protocol.schema.json`、`api-contract.json`、all-ops 夹具与 `test_world_protocol_v2_contract.py`），S1 未验收；IF-01 的决策表与跨文档口径仍未闭合。依据：[主开发计划](../../browser-world-state-workflow.md)、[两人开发分工](../../browser-world-state-work-split.md) 和 [v2 冻结决定](README.md)。本文是本批任务清单；除 S1 已交付项外，文中的新文件、脚本和命令均为待交付项，不表示已经实现或通过测试。
+日期：2026-10-22。状态：v1 基线为 26011c8，原候选为 07924f3；修订后的 **S1 已经 B 复核正式验收，IF-05 已放行**。11 决定/32 操作核对通过，F01–F10/R01–R03/B01 的 S1 层修订关闭，124 个 JSON 夹具与全部源定义随验收提交交付；B 独立复跑 JS 60/0、Python 300、既有前端 62，15 个生成物字节一致。[最终验收记录](change-list.md#b-最终复核与-s1-正式验收2026-10-22通过) 与本次 `feat(world): accept S1 v2 contracts after B review` 提交对应，本轮不推送。IF-01 决定/消费核对与 IF-02 字段闸门关闭；A 进入 IF-03/04a，B 可开始 IF-05。依据：[主开发计划](../../browser-world-state-workflow.md)、[两人开发分工](../../browser-world-state-work-split.md) 和 [v2 冻结决定](README.md)。后续任务除已交付项外仍待实现；完整接口基线尚未按 IF-08 冻结，实际服务/事务仍待 A2/A3。
 
 ## 一、本批目标与完成边界
 
@@ -18,13 +18,13 @@
 |---|---|
 | `backend/app/schemas/world/contracts.py`、包级导出及现有两份协议测试 | 当前为 v1；保留原导入和验收入口，v2 源定义新增至 `backend/app/schemas/world/v2/` |
 | `backend/app/schemas/world/canonical.py` | 沿用已冻结的 `world-canonical-v1` 编码规则；v2 新增自己的投影和向量，不擅自改编码版本 |
-| `backend/scripts/export_world_protocol.py` | 当前固定导出 v1；增加显式版本选择、检查模式和临时输出目录，默认行为保留 v1 |
+| `backend/scripts/export_world_protocol.py` | 已支持显式 v1/v2 选择，默认仍为 v1；检查模式和临时输出目录仍待 IF-07 交付 |
 | `design/world-protocol/v1/` | 保留评审基线；v2 的导出与测试显式指向 v2，不能借用 v1 通过记录 |
 | `frontend/package.json`、`frontend/vitest.config.mts` | 已有 Vitest 和 `npm test`；B 新增聚焦本批的脚本及类型检查配置 |
 | `.github/workflows/ci.yml` | 后端运行 pytest；前端当前只有 lint/build；A 补入前端测试和本批共同检查 |
-| `.gitattributes`、根目录 `nul`、`.zcodeignore`、`backend/requirements-dev.txt` | 首次提交前固定 LF 规则、删除 shell 重定向残留、`.zcodeignore` 保持本地并加入 `.gitignore`、`jsonschema` 测试依赖随 v1 一并提交 |
-| v1 已导出产物 | 当前 `world-protocol.schema.json` 与 `canonical-vectors.json` 含 CRLF；首次提交前按 LF 重新导出并提交，此后 `--version v1 --check` 必须字节一致 |
-| 当前未提交输入 | 契约源、导出脚本、测试及设计文件存在未跟踪项；IF-01 确认需纳入的文件清单，最终基线必须能从 Git 提交独立检出 |
+| `.gitattributes`、根目录 `nul`、`.zcodeignore`、`backend/requirements-dev.txt` | 首次卫生工作已随 26011c8 完成；保留 LF 规则、本地工具忽略和 jsonschema 测试依赖 |
+| v1 已导出产物 | LF 基线已随 26011c8 提交；IF-07 仍须交付 `--version v1 --check` 字节检查入口 |
+| 已提交输入 | v1 基线与 S1 已分别提交 26011c8 / 07924f3；IF-01 差异表记录现有产物及待交付文件，最终基线必须能从 Git 提交独立检出 |
 
 本批采用手写 `types.ts` 配合导出的 v2 schema 做运行时校验及消费测试。B 负责 TS 文件，Python/schema 为契约权威；本批不引入第二份生成 TS 类型产物。B 固定支持 Draft 2020-12 的校验依赖及锁文件，验证其能够处理本项目导出的引用和组合约束。
 
@@ -81,6 +81,8 @@ S1/S2 是明确标记“未验收”的候选提交：B 可以基于它们编写
 
 A 新增 `change-list.md`，逐条对应 v2 README 的冻结决定和正文规则，列出旧类型/字段、v2 变化、请求/响应落点、校验层及对应夹具。B 核对调用信息是否足够，补出需要返回的工作进度、错误与恢复动作。
 
+当前 A 侧登记与 B 消费核对已完成，11 项决定均有字段/夹具/服务验收落点；B01 修订经再次消费检查通过，S1 字段闸门已正式关闭。历史问题与最终结论见 [change-list.md](change-list.md)。放行依据包含独立 JS 消费，不仅是 registry 自覆盖或 Python 测试。
+
 必须逐条登记 README 的 11 项决定，不能只覆盖正文摘要：
 
 | 决定 | 本批落点 |
@@ -117,11 +119,11 @@ A 在 `backend/app/schemas/world/v2/` 新增数据、请求/响应及轨迹需�
 
 先定义三个公共类型，所有操作复用，不再逐组设计不同响应形状：
 
-- `WorldContext`：worldId、head（pointId、version、stateDigest、narrationStatus）、advance（advanceId、inputId、intentStatus、inputAvailable）、round（roundId、trigger、conclusion）、time、lease（expiresAtEpochMilli、fenceEpoch）、successor 预约摘要、activePointId/activeRoundId。不返回租约令牌；context 读取不要求 requestId。
-- `PointWorkView`：pointId、kind、timeAdvance、timeLocked、baseline（headPointId、version、stateDigest）、phase、working（cursor、actedIds、visitedIds、settledUnitIds）、settledUnits（unitId、groupId、memberIds、contentHash）、pendingGroup（groupId、sourceId、memberIds、targetIds、frontierIds、closed）、successor。只读投影，浏览器不能回传为权威状态。
+- `WorldContext`：worldId、head（pointId、version、stateDigest、narrationStatus）、advance（advanceId、inputId、intentStatus、inputAvailable）、round（roundId、trigger、order、cursor、actedIds、visitedIds、conclusion）、time、lease（expiresAtEpochMilli、fenceEpoch）、successor 预约摘要、activePointId/activeRoundId。不返回租约令牌；context 读取不要求 requestId。
+- `PointWorkView`：pointId、kind、timeAdvance、timeLocked、sealed、prefixDigest、predecessorWorkDigest、timeScanComplete、baseline（headPointId、version、stateDigest）、phase、working（cursor、actedIds、visitedIds、settledUnitIds、intentStatus）、settledUnits（unitId、groupId、memberIds、contentHash）、pendingGroup（groupId、sourceId、memberIds、targetIds、frontierIds、closed）、successor。只读投影，浏览器不能回传为权威状态。
 - `ControlState`：`phase`、`paused`、`revision`、`gate`（status、generation、issuedAtEpochMilli、expiresAtEpochMilli；不含 claimToken）、`blockedReasons`（`narration_pending`、`narration_failed`、`cache_missing`、`claim_expired`、`claim_fenced`、`paused`、`phase_not_computable`、`lease_invalid`）、`canCompute`。`canCompute` 由服务端在事务内计算，客户端不得自行推导，也不得缓存为不变量；它只是响应时刻的快照，下一次写入仍须处理租约失效。
 - `OperationResult<T>`：版本字段、`serverTimeEpochMilli`、`replayed`、operation/requestId/requestHash、`world: WorldContext`、`control: ControlState`、`work: PointWorkView | null`、`data`。`data` 只含结果身份、状态和绑定摘要，不得含 inputText。
-- `ContextResponse`：版本字段、`serverTimeEpochMilli`、`world`、`control`、`work`、`activeInput`（仅 GET 返回；链未结束且未清理时为 `{advanceId, inputId, text}`，否则为 `null`）；GET 读取无 requestId。
+- `ContextResponse`：版本字段、`serverTimeEpochMilli`、`world`、`control`、`work`、`activeInput`（仅 GET 返回；链未结束且未清理时为 `{advanceId, inputId, text}`，否则为 `null`）；GET 读取无 requestId。新增 recovery，默认 null；includeRecovery=true 的查询必须带有效 leaseToken/fenceEpoch，才读取当前与预约后继工作。restoreSources 独立返回仍活动引用的来源 epoch/attempt/manifest；复制前 payloadStatus=restore_required 且载荷隐藏，复制后 available 才返回当前 epoch 原文/完整目标/结果/候选。受控复制允许活动 open/sealed 工作，排除 consumed/abandoned；不进入写响应或幂等 data。
 - `ErrorResponse`：版本字段、`serverTimeEpochMilli`、`replayed`、operation/requestId/worldId（已知时）、`error`（错误码枚举、HTTP 状态、`retryable`、`clientAction`、`details`）、可选 `world`/`control`/`work`。`controlRequiredOnError` 按操作与错误码登记；`clientAction` 枚举为 `retry_same_request|reacquire_lease|refresh_context|wait_narration|regenerate_narration|resolve_gate|pause|fix_request|none`。
 
 `claimToken` 只在 narration-jobs/claim 的响应 `data` 中返回给有效租约持有者；只读 context、错误响应和成功重放都不带令牌。输入正文只经 GET context 的 `activeInput` 返回；所有写操作的响应与幂等记录都不带正文，清理后重放不能复活它。
@@ -139,9 +141,11 @@ A 在 `backend/app/schemas/world/v2/` 新增数据、请求/响应及轨迹需�
 
 每个操作登记 method/path、操作名、请求/响应 schema 引用、成功 HTTP 状态、错误码、适用绑定、前置条件、成功副作用、幂等行为及错误后的客户端动作。权限矩阵不写在散文里：`api-contract.json` 的每个操作至少包含 `preconditions`（机器可读枚举及参数，如 `phase=select_actor`、`timeLocked=false`、`head.narration=ready`、`noActivePendingGroup`、`leaseValid`）、`errorCodes`（含 `controlRequired`）、`bindings`、`mutatesRevision`、`sideEffects`、`idempotency`。散文只做解释，契约摘要只覆盖机器可读部分。所有引用必须可解析。模型原始输出、控制器填入的预分配 ID 与最终可提交候选之间的边界单独列出。
 
+restore 请求只携带可读取的来源清单与当前绑定，不含目标 attempt。服务事务单调分配目标 attempt，并在成功 data 返回 pointId/groupId/fenceEpoch/attempt；请求幂等仍为 worldId/requestId，业务去重绑定 pointId/groupId/目标 epoch/sourceEpoch/sourceAttempt/manifest。同来源与目标 epoch 换 requestId 复用原副本，不分配第二个 attempt。分配原子性与并发去重留在 A3。
+
 权限矩阵必须区分：resume 成功且 `canCompute=false`；计算请求被门槛拒绝；可以提交失效 gate 清理但不能推进；成功幂等重放读取原结果；普通状态写入与原文复制对 revision 的不同影响。JSON Schema 无法表达的历史/租约条件登记为服务校验项，不能在 schema 测试中声称已验证。
 
-幂等键固定为：世界内操作 `(worldId, requestId)`，创建世界 `(requestId)`。每行保存 operation、规范化请求哈希、首次结果引用与提交事务；同键不同操作或不同哈希返回 `request_id_reused`（终态，不可重试）；首事务未提交时返回 `request_in_progress`（可重试，沿用同一 requestId）。成功记录与业务写入同事务提交，不能先写结果后补。重放返回首次 `data` 原值、重新计算的 `control` 和 `serverTimeEpochMilli`，`replayed=true`；不承诺响应字节相同，测试断言 `data` 相等、`control` 重新推导、`replayed=true`。`data` 不得包含 inputText，幂等表也不缓存正文；清理链输入后，旧响应不能把正文复活，需要上下文时重新 GET context。T04/T06 必须断言这一点。`POST /worlds` 的 `requestId` 由客户端生成、`worldId` 由服务端分配，同一 requestId 重发取回同一世界，不能再走 `/ids`。preview 不进入幂等表：可重算、不改变世界、`requestId` 不参与；请求体上限 512 KiB、响应体上限 2 MiB，超限返回 `preview_budget_exceeded` 并在 `details.limit` 标明是 `request` 还是 `response`，不存全文。
+幂等键固定为：世界内操作 `(worldId, requestId)`，创建世界 `(requestId)`。每行保存 operation、规范化请求哈希、首次结果引用与提交事务；同键不同操作或不同哈希返回 `request_id_reused`（终态，不可重试）；首事务未提交时返回 `request_in_progress`（可重试，沿用同一 requestId）。成功记录与业务写入同事务提交，不能先写结果后补。除 claim 仅返回去 token 摘要外，重放返回首次 `data` 原值、重新计算的 `control` 和 `serverTimeEpochMilli`，`replayed=true`；不承诺响应字节相同，测试断言 `data` 相等、`control` 重新推导、`replayed=true`。`data` 不得包含 inputText，幂等表也不缓存正文；清理链输入后，旧响应不能把正文复活，需要上下文时重新 GET context。T04/T06 必须断言这一点。`POST /worlds` 的 `requestId` 由客户端生成、`worldId` 由服务端分配，同一 requestId 重发取回同一世界，不能再走 `/ids`。preview 不进入幂等表：可重算、不改变世界、`requestId` 不参与；请求体上限 512 KiB、响应体上限 2 MiB，超限返回 `preview_budget_exceeded` 并在 `details.limit` 标明是 `request` 还是 `response`，不存全文。
 
 A 交付 `fixtures/api/<operation>/{request,success,error}.json`：每个操作交 request、success 与至少一个代表性 error，操作级 error 按 `clientAction` 去重；每个错误码另交 `fixtures/errors/<code>.json`，逐码覆盖。`fixtures/api/operations.json` 枚举 registry 中的全部操作。契约测试遍历 registry，缺夹具即失败；B 的 TS 侧用 `Record<WorldOperation, ...>` 做类型穷尽。all-ops 覆盖属于 S1，不推迟到 IF-04。
 
@@ -277,4 +281,4 @@ python -X utf8 backend/scripts/check_world_interface_baseline.py
 - [ ] H1 普通点 HTTP 与 H2 刷新/接管的输入轨迹已具备，实际联调仍按后续检查点执行。
 - [ ] 正式基线已记录可独立检出的 Git 提交及契约摘要，双方交付记录一致。
 
-当前执行入口为 IF-01。首先确认现有未提交输入及差异表，随后由 A 交付 S1；B 同时准备消费测试和 transport 骨架。完成本计划的检查清单后，再将当前状态推进到接口基线已冻结。
+当前执行入口为 A 的 IF-03/IF-04a 与 B 的 IF-05：S1 已通过 B 的 11 决定/32 操作消费核对并正式验收，字段修订与证据随可检出提交交付。完成后续任务和本计划全部检查清单后，再按 IF-08 冻结完整接口基线。

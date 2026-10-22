@@ -25,6 +25,7 @@ from app.schemas.world.v2 import (
 )
 from app.schemas.world.v2.errors import ERROR_CODES
 from app.schemas.world.v2.registry import OPERATION_BY_NAME, OPERATIONS
+from app.schemas.world.v2.schema import WireSchema
 
 ARTIFACTS = Path(__file__).resolve().parents[2] / "design" / "world-protocol" / "v2"
 MODELS = {model.__name__: model for model in SCHEMA_MODELS}
@@ -52,7 +53,7 @@ def validate_both(name, value):
 def test_exported_schema_is_current_and_valid():
     schema = load("world-protocol.schema.json")
     Draft202012Validator.check_schema(schema)
-    _, expected = models_json_schema([(model, "validation") for model in SCHEMA_MODELS])
+    _, expected = models_json_schema([(model, "validation") for model in SCHEMA_MODELS], schema_generator=WireSchema)
     assert schema["$defs"] == expected["$defs"]
     assert schema["$id"] == "urn:jity:world-protocol:v2"
     assert all(model.__name__ in schema["$defs"] for model in SCHEMA_MODELS)
@@ -132,7 +133,7 @@ def test_get_context_has_no_request_id():
     assert all("requestId" not in json.dumps(defs[name]) for name in read_defs)
     assert "requestId" not in load("fixtures/api/get_context/success.json")
     spec = OPERATION_BY_NAME["get_context"]
-    assert spec.requestSchema is None and spec.method == "GET"
+    assert spec.requestSchema == "GetContextRequest" and spec.method == "GET"
 
 
 # ---------------------------------------------------------------------------
@@ -207,9 +208,12 @@ def test_resume_and_pause_pass_through_gate_and_pause():
 def test_restore_group_work_passes_gate_but_never_moves_revision():
     spec = _spec("checkpoint_restore_group_work")
     kinds = {pre.kind for pre in spec.preconditions}
-    assert kinds == {"lease", "pointWork"}
+    assert kinds == {"lease", "pointWork", "frozenSource"}
+    assert next(pre.value for pre in spec.preconditions if pre.kind == "pointWork") == ["open", "sealed"]
     assert spec.mutatesRevision is False
-    assert spec.idempotency.key == "requestId+attempt"
+    assert spec.idempotency.key == "requestId"
+    assert spec.idempotency.businessKey == [
+        "pointId", "groupId", "fenceEpoch", "sourceEpoch", "sourceAttempt", "manifest"]
 
 
 def test_compute_operations_require_ready_gate_and_unpaused():
@@ -273,9 +277,10 @@ def test_preview_is_stateless_and_budget_bound():
 def test_idempotency_keys_follow_the_plan():
     assert _spec("create_world").idempotency.scope == "global"
     assert _spec("commit_point").idempotency.model_dump() == {
-        "scope": "world", "key": "requestId", "replay": "original_data"}
-    assert _spec("allocate_ids").idempotency.key == "allocationKey"
-    assert _spec("create_rolls").idempotency.key == "judgmentKey"
+        "scope": "world", "key": "requestId", "replay": "original_data",
+        "businessKey": [], "businessReplay": None}
+    assert _spec("allocate_ids").idempotency.businessKey == ["allocationKey", "slots.slotKey"]
+    assert _spec("create_rolls").idempotency.businessReplay == "original_roll"
 
 
 # ---------------------------------------------------------------------------

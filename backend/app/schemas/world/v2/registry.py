@@ -23,6 +23,7 @@ from .errors import ErrorCode, ERROR_CODES
 OperationName = Literal[
     "create_world",
     "get_context",
+    "checkpoint_start_advance",
     "checkpoint_begin_point",
     "checkpoint_set_point_time",
     "checkpoint_discover_group",
@@ -61,7 +62,7 @@ BINDING_FIELDS = (
     "protocolVersion", "worldId", "requestId", "leaseToken", "fenceEpoch",
     "expectedVersion", "expectedCheckpointRevision", "expectedPointId",
     "advanceId", "roundId", "pointId", "groupId", "claimToken", "generation",
-    "issuedAtEpochMilli", "inputProjection", "allocationKey", "judgmentKey",
+    "issuedAtEpochMilli", "inputProjection", "allocationKey", "judgmentKey", "inputId",
 )
 
 CONTROL_PHASES = ("select_actor", "build_group", "settle_group", "continue_round", "assess_continuation", "complete")
@@ -72,14 +73,14 @@ PENDING_GROUP_STATES = ("absent", "present")
 PRECONDITION_KINDS = (
     "phase", "paused", "gate", "headNarration", "lease", "timeLocked",
     "activePendingGroup", "pointWork", "confirmedWork", "settledUnits",
-    "claimMode", "point",
+    "claimMode", "point", "activeAdvance", "frozenSource",
 )
 
 class PreconditionWhen(Contract):
     """Conditional precondition: applies only when the request field matches."""
 
     field: str
-    value: str
+    value: str | bool
 
 
 class Precondition(Contract):
@@ -105,6 +106,8 @@ class Precondition(Contract):
             "settledUnits": lambda v: v == "empty",
             "claimMode": lambda v: v in CLAIM_MODES,
             "point": lambda v: v == "committed",
+            "activeAdvance": lambda v: v == "absent",
+            "frozenSource": lambda v: v == "active_reference",
         }
         if not all(checks[self.kind](value) for value in values):
             raise ValueError(f"invalid value for precondition {self.kind}: {self.value}")
@@ -127,8 +130,10 @@ class ErrorCodeSpec(Contract):
 
 class IdempotencySpec(Contract):
     scope: Literal["global", "world", "none"]
-    key: Literal["requestId", "requestId+attempt", "allocationKey", "judgmentKey"] | None
-    replay: Literal["original_data", "current_state", "same_ids", "original_roll", "recomputable"]
+    key: Literal["requestId"] | None
+    businessKey: list[str] = Field(default_factory=list)
+    businessReplay: Literal["same_ids", "original_roll", "accepted_copy"] | None = None
+    replay: Literal["original_data", "current_state", "same_ids", "original_roll", "recomputable", "claim_summary"]
 
     @model_validator(mode="after")
     def key_follows_scope(self):
@@ -155,6 +160,7 @@ class OperationSpec(Contract):
     errorCodes: list[ErrorCodeSpec]
     mutatesRevision: bool
     sideEffects: list[str]
+    conditionalSideEffects: dict[str, list[str]] = Field(default_factory=dict)
     idempotency: IdempotencySpec
     # Bodyless requests carry protocolVersion via the X-World-Protocol-Version
     # header and their parameters via the query string; this lists the query
@@ -190,6 +196,7 @@ SIDE_EFFECTS = (
     "clears_consumed_group_work", "issues_narration_claim",
     "rotates_narration_generation", "extends_claim_expiry",
     "writes_narration_cache", "marks_point_ready", "clears_gate",
+    "starts_advance", "creates_player_round", "saves_input_text",
     "invalidates_narration_cache", "allocates_ids", "creates_roll_rows",
 )
 
@@ -232,14 +239,40 @@ OPERATIONS: tuple[OperationSpec, ...] = tuple(OperationSpec.model_validate(spec)
     },
     {
         "operation": "get_context", "method": "GET", "path": "/worlds/{worldId}/context",
-        "requestSchema": None, "successSchema": "ContextResponse",
-        "successHttpStatus": 200, "bindings": ["worldId"], "preconditions": [],
-        "errorCodes": _errors("protocol_version_unsupported", "version_mismatch"),
+        "requestSchema": "GetContextRequest", "successSchema": "ContextResponse",
+        "successHttpStatus": 200, "bindings": ["worldId", "leaseToken", "fenceEpoch"],
+        "preconditions": [_pre("lease", "valid", _when("includeRecovery", True))],
+        "errorCodes": _errors("protocol_version_unsupported", "request_malformed", "version_mismatch", "lease_invalid", "stale_epoch"),
         "mutatesRevision": False, "sideEffects": [],
         "idempotency": {"scope": "none", "key": None, "replay": "recomputable"},
-        "queryBindings": [],
-        "notes": "No requestId; the only response carrying activeInput. Context never returns "
+        "queryBindings": ["includeRecovery", "leaseToken", "fenceEpoch"],
+        "notes": "includeRecovery=true validates the live lease/epoch, then returns active accepted "
+                 "restoreSources independently of payload visibility for current and reserved successor work. "
+                 "Sources include the old epoch/attempt and hashes needed to build restore requests, "
+                 "but no raw text or candidates. If copying is needed, payloadStatus=restore_required "
+                 "with groups=[] and timeScanCandidates=null; after copying, payloadStatus=available "
+                 "returns only current-epoch bytes. Missing/corrupt payload rows do not erase "
+                 "accepted references or authorize resampling. Consumed/abandoned sources are excluded; ordinary reads "
+                 "return recovery=null. Invalid/old lease cannot read frozen text. No requestId; the only response carrying activeInput. Context never returns "
                  "lease or claim tokens.",
+    },
+    {
+        "operation": "checkpoint_start_advance", "method": "PUT", "path": "/worlds/{worldId}/checkpoint",
+        "requestSchema": "StartAdvanceRequest", "successSchema": "StartAdvanceSuccess",
+        "successHttpStatus": 200,
+        "bindings": ["protocolVersion", "worldId", "requestId", "leaseToken", "fenceEpoch",
+                     "expectedPointId", "expectedVersion", "expectedCheckpointRevision", "advanceId", "roundId"],
+        "preconditions": [_pre("activeAdvance", "absent"), _pre("pointWork", "absent"),
+                          _pre("lease", "valid"), _pre("paused", False),
+                          _pre("headNarration", "ready"), _pre("gate", "cleared")],
+        "errorCodes": _COMPUTE_ERRORS, "mutatesRevision": True,
+        "sideEffects": ["starts_advance", "creates_player_round", "saves_input_text"],
+        "idempotency": {"scope": "world", "key": "requestId", "replay": "original_data"},
+        "queryBindings": [],
+        "notes": "Starts the player chain only after the ready root/last handback. IDs must be "
+                 "allocated, unused and world-bound. Validate the frozen character order against "
+                 "the authoritative world. Persist text only in active input storage; data and "
+                 "idempotency records contain identities only. Initialize select_actor/cursor=0.",
     },
     {
         "operation": "checkpoint_begin_point", "method": "PUT", "path": "/worlds/{worldId}/checkpoint",
@@ -435,17 +468,32 @@ OPERATIONS: tuple[OperationSpec, ...] = tuple(OperationSpec.model_validate(spec)
         "successHttpStatus": 200,
         "bindings": ["protocolVersion", "worldId", "requestId", "leaseToken", "fenceEpoch",
                      "expectedPointId", "expectedVersion", "expectedCheckpointRevision", "pointId", "groupId"],
-        "preconditions": [_pre("lease", "valid"), _pre("pointWork", "open")],
+        "preconditions": [_pre("lease", "valid"), _pre("pointWork", ["open", "sealed"]),
+                          _pre("frozenSource", "active_reference")],
         "errorCodes": _WIRE_ERRORS + _LEASE_ERRORS + _errors(
             "revision_mismatch", "version_mismatch", "frozen_work_missing", "frozen_work_corrupt"),
         "mutatesRevision": False,
         "sideEffects": ["copies_frozen_work"],
-        "idempotency": {"scope": "world", "key": "requestId+attempt", "replay": "original_data"},
+        "idempotency": {"scope": "world", "key": "requestId", "replay": "original_data",
+                        "businessKey": ["pointId", "groupId", "fenceEpoch", "sourceEpoch", "sourceAttempt", "manifest"],
+                        "businessReplay": "accepted_copy"},
         "queryBindings": [],
         "notes": "Takeover continuation: the server byte-copies server-accepted frozen work "
                  "(action text, targets, results, stage candidates) into the current epoch after "
-                 "verifying accepted-source records, scope and every hash. Passes through gate "
-                 "and pause; group, time, cursor, phase and revision stay unchanged.",
+                 "verifying accepted-source records, scope and every hash against active references. "
+                 "The input source metadata is available from context.recovery.*.restoreSources before "
+                 "copying. The request has no destination attempt. After validating authority and "
+                 "sources, the transaction allocates a positive, monotonically increasing attempt "
+                 "within (worldId, pointId, groupId), across epochs, and returns pointId/groupId/"
+                 "fenceEpoch/attempt as the accepted copy identity. RequestId replay returns the "
+                 "original data; a new requestId with the same business key reuses the accepted copy "
+                 "and attempt without allocating again. The business manifest projection sorts by "
+                 "memberId and includes all source content hashes. Both open and sealed "
+                 "current/reserved work can be copied; consumed or "
+                 "abandoned sources fail frozen_work_missing with details.reason=source_not_active. "
+                 "Missing/corrupt bytes fail explicitly and never authorize model resampling. "
+                 "Passes through gate and pause; group, time, cursor, sealed flag, prefix digest, "
+                 "candidates, phase and revision stay unchanged.",
     },
     {
         "operation": "checkpoint_pause", "method": "PUT", "path": "/worlds/{worldId}/checkpoint",
@@ -492,8 +540,9 @@ OPERATIONS: tuple[OperationSpec, ...] = tuple(OperationSpec.model_validate(spec)
             _pre("activePendingGroup", "absent"),
         ],
         "errorCodes": _COMPUTE_ERRORS, "mutatesRevision": True,
-        "sideEffects": ["concludes_round", "completes_round", "creates_successor_round",
-                        "expires_input_intent"],
+        "sideEffects": ["concludes_round", "completes_round"],
+        "conditionalSideEffects": {"conclusion.kind=continue": ["creates_successor_round"],
+                                   "conclusion.kind=handback": ["expires_input_intent", "clears_input_text"]},
         "idempotency": {"scope": "world", "key": "requestId", "replay": "original_data"},
         "queryBindings": [],
         "notes": "continue requires a non-empty legal candidate set and an unallocated "
@@ -569,7 +618,8 @@ OPERATIONS: tuple[OperationSpec, ...] = tuple(OperationSpec.model_validate(spec)
         "errorCodes": _WIRE_ERRORS + _LEASE_ERRORS + _errors("version_mismatch"),
         "mutatesRevision": False,
         "sideEffects": ["allocates_ids"],
-        "idempotency": {"scope": "world", "key": "allocationKey", "replay": "same_ids"},
+        "idempotency": {"scope": "world", "key": "requestId", "replay": "original_data",
+                        "businessKey": ["allocationKey", "slots.slotKey"], "businessReplay": "same_ids"},
         "queryBindings": [],
         "notes": "Preallocates advance/input/round/group/task/change/point/trigger identities "
                  "per stable slot keys; the same slot key always returns the same ID. Committed "
@@ -610,7 +660,9 @@ OPERATIONS: tuple[OperationSpec, ...] = tuple(OperationSpec.model_validate(spec)
         ],
         "errorCodes": _COMPUTE_ERRORS, "mutatesRevision": False,
         "sideEffects": ["creates_roll_rows"],
-        "idempotency": {"scope": "world", "key": "judgmentKey", "replay": "original_roll"},
+        "idempotency": {"scope": "world", "key": "requestId", "replay": "original_data",
+                        "businessKey": ["rolls.roundId", "rolls.groupId", "rolls.sourceId", "rolls.targetId", "rolls.triggerKey"],
+                        "businessReplay": "original_roll"},
         "queryBindings": [],
         "notes": "Server-side dice keyed by (worldId, roundId, groupId, sourceId, targetId, "
                  "triggerKey); the same key returns the original row. One INSERT with the final "
@@ -642,7 +694,7 @@ OPERATIONS: tuple[OperationSpec, ...] = tuple(OperationSpec.model_validate(spec)
     },
     {
         "operation": "list_points", "method": "GET", "path": "/worlds/{worldId}/points",
-        "requestSchema": None, "successSchema": "ListPointsSuccess",
+        "requestSchema": "ListPointsRequest", "successSchema": "ListPointsSuccess",
         "successHttpStatus": 200, "bindings": ["worldId"], "preconditions": [],
         "errorCodes": _errors("protocol_version_unsupported", "version_mismatch"),
         "mutatesRevision": False, "sideEffects": [],
@@ -652,7 +704,7 @@ OPERATIONS: tuple[OperationSpec, ...] = tuple(OperationSpec.model_validate(spec)
     },
     {
         "operation": "get_state", "method": "GET", "path": "/worlds/{worldId}/state",
-        "requestSchema": None, "successSchema": "GetStateSuccess",
+        "requestSchema": "GetStateRequest", "successSchema": "GetStateSuccess",
         "successHttpStatus": 200, "bindings": ["worldId"], "preconditions": [],
         "errorCodes": _errors("protocol_version_unsupported", "version_mismatch"),
         "mutatesRevision": False, "sideEffects": [],
@@ -666,15 +718,17 @@ OPERATIONS: tuple[OperationSpec, ...] = tuple(OperationSpec.model_validate(spec)
         "requestSchema": "NarrationClaimRequest", "successSchema": "NarrationClaimSuccess",
         "successHttpStatus": 200,
         "bindings": ["protocolVersion", "worldId", "requestId", "pointId", "claimToken",
-                     "generation"],
+                     "generation", "leaseToken", "fenceEpoch"],
         "preconditions": [_pre("point", "committed"), _HEAD_LEASE],
-        "errorCodes": _WIRE_ERRORS + _errors("lease_invalid", "version_mismatch",
+        "errorCodes": _WIRE_ERRORS + _errors("lease_invalid", "stale_epoch", "version_mismatch",
                                              "cache_missing", "claim_expired", "claim_fenced"),
         "mutatesRevision": False,
         "sideEffects": ["issues_narration_claim", "rotates_narration_generation"],
-        "idempotency": {"scope": "world", "key": "requestId", "replay": "original_data"},
+        "idempotency": {"scope": "world", "key": "requestId", "replay": "claim_summary"},
         "queryBindings": [],
-        "notes": "Returns the issued claim for a valid claim; only invalidation, retry or "
+        "notes": "A fresh requestId with the valid head lease (or a valid currentClaim for history) "
+                 "retrieves the still-valid claim. Successful requestId replay returns summary "
+                 "without token; expired or fenced authority cannot retrieve it. Returns the issued claim for a valid claim; only invalidation, retry or "
                  "regeneration rotates the generation and token. This is the only response that "
                  "may carry claimToken. Head mode requires the valid advance lease; history mode "
                  "operates on the point claim only and borrows no lease.",
@@ -685,9 +739,9 @@ OPERATIONS: tuple[OperationSpec, ...] = tuple(OperationSpec.model_validate(spec)
         "requestSchema": "NarrationClaimRenewRequest", "successSchema": "NarrationClaimRenewSuccess",
         "successHttpStatus": 200,
         "bindings": ["protocolVersion", "worldId", "requestId", "pointId", "claimToken",
-                     "generation", "issuedAtEpochMilli"],
+                     "generation", "issuedAtEpochMilli", "leaseToken", "fenceEpoch"],
         "preconditions": [_pre("point", "committed"), _HEAD_LEASE],
-        "errorCodes": _WIRE_ERRORS + _errors("lease_invalid", "version_mismatch",
+        "errorCodes": _WIRE_ERRORS + _errors("lease_invalid", "stale_epoch", "version_mismatch",
                                              "claim_expired", "claim_fenced"),
         "mutatesRevision": False,
         "sideEffects": ["extends_claim_expiry"],
@@ -702,9 +756,9 @@ OPERATIONS: tuple[OperationSpec, ...] = tuple(OperationSpec.model_validate(spec)
         "requestSchema": "NarrationSubmitRequest", "successSchema": "NarrationSubmitSuccess",
         "successHttpStatus": 200,
         "bindings": ["protocolVersion", "worldId", "requestId", "pointId", "claimToken",
-                     "generation", "issuedAtEpochMilli"],
+                     "generation", "issuedAtEpochMilli", "leaseToken", "fenceEpoch"],
         "preconditions": [_pre("point", "committed"), _HEAD_LEASE],
-        "errorCodes": _WIRE_ERRORS + _errors("lease_invalid", "version_mismatch",
+        "errorCodes": _WIRE_ERRORS + _errors("lease_invalid", "stale_epoch", "version_mismatch",
                                              "claim_expired", "claim_fenced", "cache_missing"),
         "mutatesRevision": False,
         "sideEffects": ["writes_narration_cache", "marks_point_ready", "clears_gate"],
@@ -732,14 +786,14 @@ OPERATIONS: tuple[OperationSpec, ...] = tuple(OperationSpec.model_validate(spec)
         "requestSchema": "NarrationDeleteRequest", "successSchema": "NarrationDeleteSuccess",
         "successHttpStatus": 200,
         "bindings": ["protocolVersion", "worldId", "requestId", "pointId", "claimToken",
-                     "generation", "issuedAtEpochMilli"],
+                     "generation", "issuedAtEpochMilli", "leaseToken", "fenceEpoch"],
         "preconditions": [_pre("point", "committed"), _HEAD_LEASE],
-        "errorCodes": _WIRE_ERRORS + _errors("lease_invalid", "version_mismatch",
+        "errorCodes": _WIRE_ERRORS + _errors("lease_invalid", "stale_epoch", "version_mismatch",
                                              "claim_expired", "claim_fenced"),
         "mutatesRevision": False,
         "sideEffects": ["invalidates_narration_cache"],
         "idempotency": {"scope": "world", "key": "requestId", "replay": "original_data"},
-        "queryBindings": ["requestId", "mode", "claimToken", "generation", "issuedAtEpochMilli"],
+        "queryBindings": ["requestId", "mode", "claimToken", "generation", "issuedAtEpochMilli", "leaseToken", "fenceEpoch"],
         "notes": "Deletes the cache and invalidates the matching generation; world facts are "
                  "never deleted.",
     },

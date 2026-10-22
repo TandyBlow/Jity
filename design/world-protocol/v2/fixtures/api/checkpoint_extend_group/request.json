@@ -16,5 +16,6 @@
       "triggerKey": "trigger_cd"
     }
   ],
-  "admittedMember": null
+  "admittedMember": null,
+  "operation": "extend_group"
 }

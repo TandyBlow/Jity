@@ -6,5 +6,6 @@
   "fenceEpoch": 7,
   "expectedPointId": "root_0",
   "expectedVersion": 0,
-  "expectedCheckpointRevision": 2
+  "expectedCheckpointRevision": 2,
+  "operation": "resume"
 }

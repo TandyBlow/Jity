@@ -1,0 +1,289 @@
+{
+  "protocolVersion": 2,
+  "engineVersion": "world-engine-v1",
+  "schemaVersion": 1,
+  "canonicalVersion": "world-canonical-v1",
+  "serverTimeEpochMilli": 1792617600000,
+  "world": {
+    "worldId": "world_school",
+    "head": {
+      "pointId": "root_0",
+      "version": 0,
+      "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+      "narrationStatus": "ready"
+    },
+    "advance": {
+      "advanceId": "advance_1",
+      "inputId": "input_1",
+      "intentStatus": "pending",
+      "inputAvailable": true
+    },
+    "round": {
+      "roundId": "round_1",
+      "trigger": "player",
+      "conclusion": null,
+      "order": [
+        "person_c",
+        "person_d",
+        "person_e",
+        "person_f"
+      ],
+      "cursor": 0,
+      "actedIds": [],
+      "visitedIds": []
+    },
+    "time": {
+      "calendar": "gregorian",
+      "dateTime": "2026-01-01T11:59:00",
+      "instantOrdinal": 0
+    },
+    "lease": {
+      "fenceEpoch": 7,
+      "expiresAtEpochMilli": 1792617720000
+    },
+    "successor": null,
+    "activePointId": "p1",
+    "activeRoundId": "round_1"
+  },
+  "control": {
+    "phase": "select_actor",
+    "paused": false,
+    "revision": 2,
+    "gate": {
+      "status": "none",
+      "generation": null,
+      "issuedAtEpochMilli": null,
+      "expiresAtEpochMilli": null
+    },
+    "blockedReasons": [],
+    "canCompute": true
+  },
+  "work": {
+    "pointId": "p1",
+    "kind": "normal",
+    "timeAdvance": {
+      "boundary": "elapsed",
+      "duration": {
+        "amount": 2,
+        "unit": "second"
+      }
+    },
+    "timeLocked": true,
+    "baseline": {
+      "headPointId": "root_0",
+      "version": 0,
+      "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5"
+    },
+    "phase": "select_actor",
+    "working": {
+      "cursor": 2,
+      "actedIds": [
+        "person_c",
+        "person_d"
+      ],
+      "visitedIds": [
+        "person_c",
+        "person_d"
+      ],
+      "settledUnitIds": [
+        "unit_1"
+      ],
+      "intentStatus": "consumed"
+    },
+    "settledUnits": [
+      {
+        "unitId": "unit_1",
+        "groupId": "group_cd",
+        "memberIds": [
+          "person_c",
+          "person_d"
+        ],
+        "contentHash": "12b9771f7e83b9e8cb56d13c81efaf733483d9707beda5ad1013f8fbce753fc3"
+      }
+    ],
+    "pendingGroup": null,
+    "successor": null,
+    "sealed": false,
+    "prefixDigest": null,
+    "predecessorWorkDigest": null,
+    "timeScanComplete": false
+  },
+  "activeInput": {
+    "advanceId": "advance_1",
+    "inputId": "input_1",
+    "text": "检查门边。"
+  },
+  "recovery": {
+    "fenceEpoch": 7,
+    "current": {
+      "work": {
+        "pointId": "p1",
+        "kind": "normal",
+        "timeAdvance": {
+          "boundary": "elapsed",
+          "duration": {
+            "amount": 2,
+            "unit": "second"
+          }
+        },
+        "timeLocked": true,
+        "baseline": {
+          "headPointId": "root_0",
+          "version": 0,
+          "stateDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5"
+        },
+        "phase": "select_actor",
+        "working": {
+          "cursor": 2,
+          "actedIds": [
+            "person_c",
+            "person_d"
+          ],
+          "visitedIds": [
+            "person_c",
+            "person_d"
+          ],
+          "settledUnitIds": [
+            "unit_1"
+          ],
+          "intentStatus": "consumed"
+        },
+        "settledUnits": [
+          {
+            "unitId": "unit_1",
+            "groupId": "group_cd",
+            "memberIds": [
+              "person_c",
+              "person_d"
+            ],
+            "contentHash": "12b9771f7e83b9e8cb56d13c81efaf733483d9707beda5ad1013f8fbce753fc3"
+          }
+        ],
+        "pendingGroup": null,
+        "successor": null,
+        "sealed": false,
+        "prefixDigest": null,
+        "predecessorWorkDigest": null,
+        "timeScanComplete": false
+      },
+      "groups": [
+        {
+          "groupId": "group_cd",
+          "pointId": "p1",
+          "inputProjectionHash": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+          "members": [
+            {
+              "memberId": "person_c",
+              "actionText": "C 推开重门，示意 D 避开门边。",
+              "targets": [
+                {
+                  "targetId": "person_d",
+                  "triggerKey": "trigger_cd"
+                }
+              ],
+              "resultText": "重门打开。",
+              "rollRefs": [
+                {
+                  "sourceId": "person_c",
+                  "targetId": "person_d",
+                  "triggerKey": "trigger_cd",
+                  "rollId": "roll_cd"
+                }
+              ]
+            },
+            {
+              "memberId": "person_d",
+              "actionText": "D 避开门边。",
+              "targets": [],
+              "resultText": "D 退到一旁。",
+              "rollRefs": []
+            }
+          ],
+          "acceptedSources": [
+            {
+              "memberId": "person_c",
+              "sourceEpoch": 7,
+              "sourceAttempt": 1,
+              "actionContentHash": "642befc7c48664d442ad0f72537d26f93f8be73d9d159b0c2e2e5c3fc414f66f",
+              "resultContentHash": "ac2331a622e2b66992434a31b1144c3513098002646c6b2e476b44e5c57ea29e",
+              "targetsContentHash": "f7c2667b4c07a057ab79f040b0b36f64e982a20e2ce2de208b7d0fd12a32e970",
+              "candidatesContentHash": "053938a7488b1a470cc0e53ec0ee61fc07e92927d40184f43ca3d9bd80174d0d"
+            },
+            {
+              "memberId": "person_d",
+              "sourceEpoch": 7,
+              "sourceAttempt": 1,
+              "actionContentHash": "b280fc80635f95e654e1845dda02f3fc814557dda94672d724d9bbfd2401ddbc",
+              "resultContentHash": "831ad19b36a53807d0ce8630de496db0201657a094a4b5781413e5d9543c2d5c",
+              "targetsContentHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+              "candidatesContentHash": "053938a7488b1a470cc0e53ec0ee61fc07e92927d40184f43ca3d9bd80174d0d"
+            }
+          ],
+          "candidates": {
+            "groupId": "group_cd",
+            "actorIds": [
+              "person_c",
+              "person_d"
+            ],
+            "positions": {
+              "person_d": {
+                "containerId": "corridor",
+                "slotId": null,
+                "relativeTo": null
+              }
+            },
+            "appearances": {
+              "person_c": [
+                {
+                  "id": "change_c_door",
+                  "text": "C 站在门边，一手扶着重门。",
+                  "supersedes": []
+                }
+              ]
+            },
+            "tasksAchieved": {},
+            "subtasksAdded": {},
+            "personalities": {},
+            "sanities": {},
+            "taskCoverageIds": [
+              "person_a",
+              "person_b",
+              "person_c",
+              "person_d",
+              "person_e",
+              "person_f"
+            ],
+            "personalityCoverageIds": []
+          }
+        }
+      ],
+      "timeScanCandidates": null,
+      "payloadStatus": "available",
+      "restoreSources": [
+        {
+          "pointId": "p1",
+          "groupId": "group_cd",
+          "sourceEpoch": 7,
+          "sourceAttempt": 1,
+          "manifest": [
+            {
+              "memberId": "person_c",
+              "actionContentHash": "642befc7c48664d442ad0f72537d26f93f8be73d9d159b0c2e2e5c3fc414f66f",
+              "resultContentHash": "ac2331a622e2b66992434a31b1144c3513098002646c6b2e476b44e5c57ea29e",
+              "targetsContentHash": "f7c2667b4c07a057ab79f040b0b36f64e982a20e2ce2de208b7d0fd12a32e970",
+              "candidatesContentHash": "053938a7488b1a470cc0e53ec0ee61fc07e92927d40184f43ca3d9bd80174d0d"
+            },
+            {
+              "memberId": "person_d",
+              "actionContentHash": "b280fc80635f95e654e1845dda02f3fc814557dda94672d724d9bbfd2401ddbc",
+              "resultContentHash": "831ad19b36a53807d0ce8630de496db0201657a094a4b5781413e5d9543c2d5c",
+              "targetsContentHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+              "candidatesContentHash": "053938a7488b1a470cc0e53ec0ee61fc07e92927d40184f43ca3d9bd80174d0d"
+            }
+          ]
+        }
+      ]
+    },
+    "successor": null
+  }
+}

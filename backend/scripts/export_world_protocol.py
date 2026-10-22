@@ -51,7 +51,9 @@ def build_v2():
 
     import app.schemas.world.v2 as v2
 
-    _, schema = mjs([(model, "validation") for model in v2.SCHEMA_MODELS])
+    from app.schemas.world.v2.schema import WireSchema
+
+    _, schema = mjs([(model, "validation") for model in v2.SCHEMA_MODELS], schema_generator=WireSchema)
     schema.update({"$schema": "https://json-schema.org/draft/2020-12/schema",
                    "$id": "urn:jity:world-protocol:v2",
                    "title": "Jity world protocol v2 (S1 candidate; wire only)"})

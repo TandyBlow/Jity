@@ -155,6 +155,16 @@ from .requests import (
     ReleaseLeaseSuccess,
 )
 
+# S1 revision additions are explicitly part of the exported field snapshot.
+from .contexts import PointRecoveryView, RecoveryView
+from .work import AcceptedWorkSource, FrozenMemberView, FrozenGroupView, GroupWorkSource
+from .requests import (
+    StartAdvanceRequest, StartAdvanceData, StartAdvanceSuccess,
+    WorldInitialTemplate, CheckpointDispatch, RoundConclusionDispatch,
+    NarrationClaimSummary, ListPointsRequest, GetStateRequest, GetContextRequest,
+)
+
+
 # The exact model set behind the exported v2 schema, shared by the export
 # script and the contract test so neither can drift from the other.
 SCHEMA_MODELS: tuple = tuple(
@@ -209,4 +219,10 @@ SCHEMA_MODELS: tuple = tuple(
     + list(_v1_models)
 )
 
+SCHEMA_MODELS += (
+    StartAdvanceRequest, StartAdvanceData, StartAdvanceSuccess, WorldInitialTemplate,
+    CheckpointDispatch, RoundConclusionDispatch, NarrationClaimSummary,
+    ListPointsRequest, GetStateRequest, GetContextRequest,
+    PointRecoveryView, RecoveryView, AcceptedWorkSource, FrozenMemberView, FrozenGroupView, GroupWorkSource,
+)
 __all__ = [name for name in globals() if not name.startswith("_")]

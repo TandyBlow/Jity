@@ -35,7 +35,9 @@
     "confirmedWork",
     "settledUnits",
     "claimMode",
-    "point"
+    "point",
+    "activeAdvance",
+    "frozenSource"
   ],
   "bindingFields": [
     "protocolVersion",
@@ -55,7 +57,8 @@
     "issuedAtEpochMilli",
     "inputProjection",
     "allocationKey",
-    "judgmentKey"
+    "judgmentKey",
+    "inputId"
   ],
   "sideEffects": [
     "creates_world",
@@ -100,6 +103,9 @@
     "writes_narration_cache",
     "marks_point_ready",
     "clears_gate",
+    "starts_advance",
+    "creates_player_round",
+    "saves_input_text",
     "invalidates_narration_cache",
     "allocates_ids",
     "creates_roll_rows"
@@ -253,9 +259,11 @@
         "issues_head_claim",
         "issues_gate"
       ],
+      "conditionalSideEffects": {},
       "idempotency": {
         "scope": "global",
         "key": "requestId",
+        "businessKey": [],
         "replay": "original_data"
       },
       "queryBindings": [],
@@ -265,30 +273,167 @@
       "operation": "get_context",
       "method": "GET",
       "path": "/worlds/{worldId}/context",
+      "requestSchema": "GetContextRequest",
       "successSchema": "ContextResponse",
       "successHttpStatus": 200,
       "bindings": [
-        "worldId"
+        "worldId",
+        "leaseToken",
+        "fenceEpoch"
       ],
-      "preconditions": [],
+      "preconditions": [
+        {
+          "kind": "lease",
+          "value": "valid",
+          "when": {
+            "field": "includeRecovery",
+            "value": true
+          }
+        }
+      ],
       "errorCodes": [
         {
           "code": "protocol_version_unsupported",
           "controlRequired": false
         },
         {
+          "code": "request_malformed",
+          "controlRequired": false
+        },
+        {
           "code": "version_mismatch",
           "controlRequired": false
+        },
+        {
+          "code": "lease_invalid",
+          "controlRequired": false
+        },
+        {
+          "code": "stale_epoch",
+          "controlRequired": true
         }
       ],
       "mutatesRevision": false,
       "sideEffects": [],
+      "conditionalSideEffects": {},
       "idempotency": {
         "scope": "none",
+        "businessKey": [],
         "replay": "recomputable"
       },
+      "queryBindings": [
+        "includeRecovery",
+        "leaseToken",
+        "fenceEpoch"
+      ],
+      "notes": "includeRecovery=true validates the live lease/epoch, then returns active accepted restoreSources independently of payload visibility for current and reserved successor work. Sources include the old epoch/attempt and hashes needed to build restore requests, but no raw text or candidates. If copying is needed, payloadStatus=restore_required with groups=[] and timeScanCandidates=null; after copying, payloadStatus=available returns only current-epoch bytes. Missing/corrupt payload rows do not erase accepted references or authorize resampling. Consumed/abandoned sources are excluded; ordinary reads return recovery=null. Invalid/old lease cannot read frozen text. No requestId; the only response carrying activeInput. Context never returns lease or claim tokens."
+    },
+    {
+      "operation": "checkpoint_start_advance",
+      "method": "PUT",
+      "path": "/worlds/{worldId}/checkpoint",
+      "requestSchema": "StartAdvanceRequest",
+      "successSchema": "StartAdvanceSuccess",
+      "successHttpStatus": 200,
+      "bindings": [
+        "protocolVersion",
+        "worldId",
+        "requestId",
+        "leaseToken",
+        "fenceEpoch",
+        "expectedPointId",
+        "expectedVersion",
+        "expectedCheckpointRevision",
+        "advanceId",
+        "roundId"
+      ],
+      "preconditions": [
+        {
+          "kind": "activeAdvance",
+          "value": "absent"
+        },
+        {
+          "kind": "pointWork",
+          "value": "absent"
+        },
+        {
+          "kind": "lease",
+          "value": "valid"
+        },
+        {
+          "kind": "paused",
+          "value": false
+        },
+        {
+          "kind": "headNarration",
+          "value": "ready"
+        },
+        {
+          "kind": "gate",
+          "value": "cleared"
+        }
+      ],
+      "errorCodes": [
+        {
+          "code": "protocol_version_unsupported",
+          "controlRequired": false
+        },
+        {
+          "code": "request_malformed",
+          "controlRequired": false
+        },
+        {
+          "code": "request_id_reused",
+          "controlRequired": false
+        },
+        {
+          "code": "request_in_progress",
+          "controlRequired": false
+        },
+        {
+          "code": "lease_invalid",
+          "controlRequired": false
+        },
+        {
+          "code": "stale_epoch",
+          "controlRequired": true
+        },
+        {
+          "code": "narration_blocked",
+          "controlRequired": true
+        },
+        {
+          "code": "paused",
+          "controlRequired": true
+        },
+        {
+          "code": "revision_mismatch",
+          "controlRequired": true
+        },
+        {
+          "code": "version_mismatch",
+          "controlRequired": false
+        },
+        {
+          "code": "phase_invalid",
+          "controlRequired": true
+        }
+      ],
+      "mutatesRevision": true,
+      "sideEffects": [
+        "starts_advance",
+        "creates_player_round",
+        "saves_input_text"
+      ],
+      "conditionalSideEffects": {},
+      "idempotency": {
+        "scope": "world",
+        "key": "requestId",
+        "businessKey": [],
+        "replay": "original_data"
+      },
       "queryBindings": [],
-      "notes": "No requestId; the only response carrying activeInput. Context never returns lease or claim tokens."
+      "notes": "Starts the player chain only after the ready root/last handback. IDs must be allocated, unused and world-bound. Validate the frozen character order against the authoritative world. Persist text only in active input storage; data and idempotency records contain identities only. Initialize select_actor/cursor=0."
     },
     {
       "operation": "checkpoint_begin_point",
@@ -389,9 +534,11 @@
       "sideEffects": [
         "begins_point_work"
       ],
+      "conditionalSideEffects": {},
       "idempotency": {
         "scope": "world",
         "key": "requestId",
+        "businessKey": [],
         "replay": "original_data"
       },
       "queryBindings": [],
@@ -503,9 +650,11 @@
       "sideEffects": [
         "sets_time_advance"
       ],
+      "conditionalSideEffects": {},
       "idempotency": {
         "scope": "world",
         "key": "requestId",
+        "businessKey": [],
         "replay": "original_data"
       },
       "queryBindings": [],
@@ -612,9 +761,11 @@
         "creates_pending_group",
         "locks_time"
       ],
+      "conditionalSideEffects": {},
       "idempotency": {
         "scope": "world",
         "key": "requestId",
+        "businessKey": [],
         "replay": "original_data"
       },
       "queryBindings": [],
@@ -715,9 +866,11 @@
       "sideEffects": [
         "extends_group"
       ],
+      "conditionalSideEffects": {},
       "idempotency": {
         "scope": "world",
         "key": "requestId",
+        "businessKey": [],
         "replay": "original_data"
       },
       "queryBindings": [],
@@ -818,9 +971,11 @@
       "sideEffects": [
         "closes_group"
       ],
+      "conditionalSideEffects": {},
       "idempotency": {
         "scope": "world",
         "key": "requestId",
+        "businessKey": [],
         "replay": "original_data"
       },
       "queryBindings": [],
@@ -924,9 +1079,11 @@
         "advances_working_progress",
         "clears_active_group"
       ],
+      "conditionalSideEffects": {},
       "idempotency": {
         "scope": "world",
         "key": "requestId",
+        "businessKey": [],
         "replay": "original_data"
       },
       "queryBindings": [],
@@ -1024,9 +1181,11 @@
         "advances_working_cursor",
         "locks_time"
       ],
+      "conditionalSideEffects": {},
       "idempotency": {
         "scope": "world",
         "key": "requestId",
+        "businessKey": [],
         "replay": "original_data"
       },
       "queryBindings": [],
@@ -1136,9 +1295,11 @@
         "stages_time_scan",
         "locks_time"
       ],
+      "conditionalSideEffects": {},
       "idempotency": {
         "scope": "world",
         "key": "requestId",
+        "businessKey": [],
         "replay": "original_data"
       },
       "queryBindings": [],
@@ -1242,9 +1403,11 @@
       "sideEffects": [
         "seals_point_prefix"
       ],
+      "conditionalSideEffects": {},
       "idempotency": {
         "scope": "world",
         "key": "requestId",
+        "businessKey": [],
         "replay": "original_data"
       },
       "queryBindings": [],
@@ -1350,9 +1513,11 @@
         "creates_successor_reservation",
         "locks_time"
       ],
+      "conditionalSideEffects": {},
       "idempotency": {
         "scope": "world",
         "key": "requestId",
+        "businessKey": [],
         "replay": "original_data"
       },
       "queryBindings": [],
@@ -1384,7 +1549,14 @@
         },
         {
           "kind": "pointWork",
-          "value": "open"
+          "value": [
+            "open",
+            "sealed"
+          ]
+        },
+        {
+          "kind": "frozenSource",
+          "value": "active_reference"
         }
       ],
       "errorCodes": [
@@ -1433,13 +1605,23 @@
       "sideEffects": [
         "copies_frozen_work"
       ],
+      "conditionalSideEffects": {},
       "idempotency": {
         "scope": "world",
-        "key": "requestId+attempt",
+        "key": "requestId",
+        "businessKey": [
+          "pointId",
+          "groupId",
+          "fenceEpoch",
+          "sourceEpoch",
+          "sourceAttempt",
+          "manifest"
+        ],
+        "businessReplay": "accepted_copy",
         "replay": "original_data"
       },
       "queryBindings": [],
-      "notes": "Takeover continuation: the server byte-copies server-accepted frozen work (action text, targets, results, stage candidates) into the current epoch after verifying accepted-source records, scope and every hash. Passes through gate and pause; group, time, cursor, phase and revision stay unchanged."
+      "notes": "Takeover continuation: the server byte-copies server-accepted frozen work (action text, targets, results, stage candidates) into the current epoch after verifying accepted-source records, scope and every hash against active references. The input source metadata is available from context.recovery.*.restoreSources before copying. The request has no destination attempt. After validating authority and sources, the transaction allocates a positive, monotonically increasing attempt within (worldId, pointId, groupId), across epochs, and returns pointId/groupId/fenceEpoch/attempt as the accepted copy identity. RequestId replay returns the original data; a new requestId with the same business key reuses the accepted copy and attempt without allocating again. The business manifest projection sorts by memberId and includes all source content hashes. Both open and sealed current/reserved work can be copied; consumed or abandoned sources fail frozen_work_missing with details.reason=source_not_active. Missing/corrupt bytes fail explicitly and never authorize model resampling. Passes through gate and pause; group, time, cursor, sealed flag, prefix digest, candidates, phase and revision stay unchanged."
     },
     {
       "operation": "checkpoint_pause",
@@ -1501,9 +1683,11 @@
         "sets_paused",
         "bumps_revision_on_change"
       ],
+      "conditionalSideEffects": {},
       "idempotency": {
         "scope": "world",
         "key": "requestId",
+        "businessKey": [],
         "replay": "original_data"
       },
       "queryBindings": [],
@@ -1570,9 +1754,11 @@
         "clears_gate",
         "bumps_revision_on_change"
       ],
+      "conditionalSideEffects": {},
       "idempotency": {
         "scope": "world",
         "key": "requestId",
+        "businessKey": [],
         "replay": "original_data"
       },
       "queryBindings": [],
@@ -1672,13 +1858,21 @@
       "mutatesRevision": true,
       "sideEffects": [
         "concludes_round",
-        "completes_round",
-        "creates_successor_round",
-        "expires_input_intent"
+        "completes_round"
       ],
+      "conditionalSideEffects": {
+        "conclusion.kind=continue": [
+          "creates_successor_round"
+        ],
+        "conclusion.kind=handback": [
+          "expires_input_intent",
+          "clears_input_text"
+        ]
+      },
       "idempotency": {
         "scope": "world",
         "key": "requestId",
+        "businessKey": [],
         "replay": "original_data"
       },
       "queryBindings": [],
@@ -1766,9 +1960,11 @@
         "expires_input_intent",
         "clears_input_text"
       ],
+      "conditionalSideEffects": {},
       "idempotency": {
         "scope": "world",
         "key": "requestId",
+        "businessKey": [],
         "replay": "original_data"
       },
       "queryBindings": [],
@@ -1817,9 +2013,11 @@
       "sideEffects": [
         "issues_lease"
       ],
+      "conditionalSideEffects": {},
       "idempotency": {
         "scope": "world",
         "key": "requestId",
+        "businessKey": [],
         "replay": "original_data"
       },
       "queryBindings": [],
@@ -1875,9 +2073,11 @@
       "sideEffects": [
         "extends_lease_expiry"
       ],
+      "conditionalSideEffects": {},
       "idempotency": {
         "scope": "world",
         "key": "requestId",
+        "businessKey": [],
         "replay": "original_data"
       },
       "queryBindings": [],
@@ -1933,9 +2133,11 @@
       "sideEffects": [
         "releases_lease"
       ],
+      "conditionalSideEffects": {},
       "idempotency": {
         "scope": "world",
         "key": "requestId",
+        "businessKey": [],
         "replay": "original_data"
       },
       "queryBindings": [
@@ -2000,10 +2202,16 @@
       "sideEffects": [
         "allocates_ids"
       ],
+      "conditionalSideEffects": {},
       "idempotency": {
         "scope": "world",
-        "key": "allocationKey",
-        "replay": "same_ids"
+        "key": "requestId",
+        "businessKey": [
+          "allocationKey",
+          "slots.slotKey"
+        ],
+        "businessReplay": "same_ids",
+        "replay": "original_data"
       },
       "queryBindings": [],
       "notes": "Preallocates advance/input/round/group/task/change/point/trigger identities per stable slot keys; the same slot key always returns the same ID. Committed IDs are never reallocated. rollId is deliberately absent: rolls allocates it."
@@ -2082,8 +2290,10 @@
       ],
       "mutatesRevision": false,
       "sideEffects": [],
+      "conditionalSideEffects": {},
       "idempotency": {
         "scope": "none",
+        "businessKey": [],
         "replay": "recomputable"
       },
       "queryBindings": [],
@@ -2183,10 +2393,19 @@
       "sideEffects": [
         "creates_roll_rows"
       ],
+      "conditionalSideEffects": {},
       "idempotency": {
         "scope": "world",
-        "key": "judgmentKey",
-        "replay": "original_roll"
+        "key": "requestId",
+        "businessKey": [
+          "rolls.roundId",
+          "rolls.groupId",
+          "rolls.sourceId",
+          "rolls.targetId",
+          "rolls.triggerKey"
+        ],
+        "businessReplay": "original_roll",
+        "replay": "original_data"
       },
       "queryBindings": [],
       "notes": "Server-side dice keyed by (worldId, roundId, groupId, sourceId, targetId, triggerKey); the same key returns the original row. One INSERT with the final eligibility/admission result; no NULL-admission intermediate rows."
@@ -2294,9 +2513,11 @@
         "issues_head_claim",
         "issues_gate"
       ],
+      "conditionalSideEffects": {},
       "idempotency": {
         "scope": "world",
         "key": "requestId",
+        "businessKey": [],
         "replay": "original_data"
       },
       "queryBindings": [],
@@ -2306,6 +2527,7 @@
       "operation": "list_points",
       "method": "GET",
       "path": "/worlds/{worldId}/points",
+      "requestSchema": "ListPointsRequest",
       "successSchema": "ListPointsSuccess",
       "successHttpStatus": 200,
       "bindings": [
@@ -2324,8 +2546,10 @@
       ],
       "mutatesRevision": false,
       "sideEffects": [],
+      "conditionalSideEffects": {},
       "idempotency": {
         "scope": "none",
+        "businessKey": [],
         "replay": "recomputable"
       },
       "queryBindings": [
@@ -2338,6 +2562,7 @@
       "operation": "get_state",
       "method": "GET",
       "path": "/worlds/{worldId}/state",
+      "requestSchema": "GetStateRequest",
       "successSchema": "GetStateSuccess",
       "successHttpStatus": 200,
       "bindings": [
@@ -2356,8 +2581,10 @@
       ],
       "mutatesRevision": false,
       "sideEffects": [],
+      "conditionalSideEffects": {},
       "idempotency": {
         "scope": "none",
+        "businessKey": [],
         "replay": "recomputable"
       },
       "queryBindings": [
@@ -2378,7 +2605,9 @@
         "requestId",
         "pointId",
         "claimToken",
-        "generation"
+        "generation",
+        "leaseToken",
+        "fenceEpoch"
       ],
       "preconditions": [
         {
@@ -2414,6 +2643,10 @@
         {
           "code": "lease_invalid",
           "controlRequired": false
+        },
+        {
+          "code": "stale_epoch",
+          "controlRequired": true
         },
         {
           "code": "version_mismatch",
@@ -2437,13 +2670,15 @@
         "issues_narration_claim",
         "rotates_narration_generation"
       ],
+      "conditionalSideEffects": {},
       "idempotency": {
         "scope": "world",
         "key": "requestId",
-        "replay": "original_data"
+        "businessKey": [],
+        "replay": "claim_summary"
       },
       "queryBindings": [],
-      "notes": "Returns the issued claim for a valid claim; only invalidation, retry or regeneration rotates the generation and token. This is the only response that may carry claimToken. Head mode requires the valid advance lease; history mode operates on the point claim only and borrows no lease."
+      "notes": "A fresh requestId with the valid head lease (or a valid currentClaim for history) retrieves the still-valid claim. Successful requestId replay returns summary without token; expired or fenced authority cannot retrieve it. Returns the issued claim for a valid claim; only invalidation, retry or regeneration rotates the generation and token. This is the only response that may carry claimToken. Head mode requires the valid advance lease; history mode operates on the point claim only and borrows no lease."
     },
     {
       "operation": "narration_claim_renew",
@@ -2459,7 +2694,9 @@
         "pointId",
         "claimToken",
         "generation",
-        "issuedAtEpochMilli"
+        "issuedAtEpochMilli",
+        "leaseToken",
+        "fenceEpoch"
       ],
       "preconditions": [
         {
@@ -2497,6 +2734,10 @@
           "controlRequired": false
         },
         {
+          "code": "stale_epoch",
+          "controlRequired": true
+        },
+        {
           "code": "version_mismatch",
           "controlRequired": false
         },
@@ -2513,9 +2754,11 @@
       "sideEffects": [
         "extends_claim_expiry"
       ],
+      "conditionalSideEffects": {},
       "idempotency": {
         "scope": "world",
         "key": "requestId",
+        "businessKey": [],
         "replay": "original_data"
       },
       "queryBindings": [],
@@ -2535,7 +2778,9 @@
         "pointId",
         "claimToken",
         "generation",
-        "issuedAtEpochMilli"
+        "issuedAtEpochMilli",
+        "leaseToken",
+        "fenceEpoch"
       ],
       "preconditions": [
         {
@@ -2571,6 +2816,10 @@
         {
           "code": "lease_invalid",
           "controlRequired": false
+        },
+        {
+          "code": "stale_epoch",
+          "controlRequired": true
         },
         {
           "code": "version_mismatch",
@@ -2595,9 +2844,11 @@
         "marks_point_ready",
         "clears_gate"
       ],
+      "conditionalSideEffects": {},
       "idempotency": {
         "scope": "world",
         "key": "requestId",
+        "businessKey": [],
         "replay": "original_data"
       },
       "queryBindings": [],
@@ -2626,8 +2877,10 @@
       ],
       "mutatesRevision": false,
       "sideEffects": [],
+      "conditionalSideEffects": {},
       "idempotency": {
         "scope": "none",
+        "businessKey": [],
         "replay": "recomputable"
       },
       "queryBindings": [],
@@ -2647,7 +2900,9 @@
         "pointId",
         "claimToken",
         "generation",
-        "issuedAtEpochMilli"
+        "issuedAtEpochMilli",
+        "leaseToken",
+        "fenceEpoch"
       ],
       "preconditions": [
         {
@@ -2685,6 +2940,10 @@
           "controlRequired": false
         },
         {
+          "code": "stale_epoch",
+          "controlRequired": true
+        },
+        {
           "code": "version_mismatch",
           "controlRequired": false
         },
@@ -2701,9 +2960,11 @@
       "sideEffects": [
         "invalidates_narration_cache"
       ],
+      "conditionalSideEffects": {},
       "idempotency": {
         "scope": "world",
         "key": "requestId",
+        "businessKey": [],
         "replay": "original_data"
       },
       "queryBindings": [
@@ -2711,7 +2972,9 @@
         "mode",
         "claimToken",
         "generation",
-        "issuedAtEpochMilli"
+        "issuedAtEpochMilli",
+        "leaseToken",
+        "fenceEpoch"
       ],
       "notes": "Deletes the cache and invalidates the matching generation; world facts are never deleted."
     }

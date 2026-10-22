@@ -8,5 +8,6 @@
   "expectedVersion": 0,
   "expectedCheckpointRevision": 4,
   "pointId": "p1",
-  "groupId": "group_cd"
+  "groupId": "group_cd",
+  "operation": "close_group"
 }

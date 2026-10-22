@@ -9,5 +9,6 @@
   "expectedCheckpointRevision": 6,
   "leaseToken": "lease_a",
   "fenceEpoch": 7,
-  "cancelReason": "玩家结束本次推进。"
+  "cancelReason": "玩家结束本次推进。",
+  "operation": "cancel"
 }

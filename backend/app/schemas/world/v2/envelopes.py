@@ -7,14 +7,14 @@ input. Claim tokens appear only in narration-jobs/claim data; lease tokens only
 in lease-granting operation data.
 """
 
-from typing import Any, Generic, TypeVar
+from typing import Any, Generic, TypeVar, Literal
 
 from pydantic import ConfigDict, Field, model_validator
 
 from app.schemas.world.contracts import Contract, Id, Text
 
 from .base import Envelope
-from .contexts import ControlState, PointWorkView, WorldContext
+from .contexts import ControlState, PointWorkView, WorldContext, RecoveryView
 from .errors import ClientAction, ErrorCode, ERROR_CODES
 from .registry import OperationName
 
@@ -49,6 +49,24 @@ class ContextResponse(Envelope):
     control: ControlState
     work: PointWorkView | None
     activeInput: ActiveInput | None
+    recovery: RecoveryView | None
+
+    @model_validator(mode="after")
+    def recovery_scope(self):
+        if self.recovery is None:
+            return self
+        if self.world.lease is None or self.recovery.fenceEpoch != self.world.lease.fenceEpoch:
+            raise ValueError("recovery does not belong to the current epoch")
+        current = self.recovery.current
+        if current is not None and current.work != self.work:
+            raise ValueError("recovery differs from the current work snapshot")
+        successor = self.recovery.successor
+        if successor is not None:
+            if self.world.successor is None or successor.work.pointId != self.world.successor.pointId:
+                raise ValueError("recovery does not belong to the reserved successor")
+            if successor.work.baseline != self.world.successor.baseline:
+                raise ValueError("successor baseline differs from its reservation")
+        return self
 
 
 class ReadResult(Envelope, Generic[T]):
@@ -59,8 +77,22 @@ class ReadResult(Envelope, Generic[T]):
     data: T
 
 
+class ComputeResult(Envelope, Generic[T]):
+    """Stateless preview: no request key, replay flag or idempotency digest."""
+
+    operation: Literal["preview_point"]
+    world: WorldContext
+    control: ControlState
+    work: PointWorkView | None
+    data: T
+
+
 class ErrorBody(Contract):
     model_config = ConfigDict(extra="forbid", strict=True, json_schema_extra={"allOf": [
+        *[{"if": {"properties": {"code": {"const": code}}},
+           "then": {"properties": {
+               key: {"const": spec[key]} for key in ("httpStatus", "retryable", "clientAction")}}}
+          for code, spec in ERROR_CODES.items()],
         {"if": {"properties": {"code": {"const": "preview_budget_exceeded"}}},
          "then": {"properties": {"details": {"required": ["limit"],
                                              "properties": {"limit": {"enum": ["request", "response"]}}}}}},
@@ -92,10 +124,11 @@ class ErrorResponse(Envelope):
     model_config = ConfigDict(extra="forbid", strict=True, json_schema_extra={"allOf": [
         {"if": {"properties": {"error": {"properties": {"code": {"enum": sorted(
             code for code, spec in ERROR_CODES.items() if spec["controlRequired"])}}}}},
-         "then": {"required": ["control"]}},
+         "then": {"required": ["control"], "properties": {"control": {"type": "object"}}}},
         {"if": {"properties": {"error": {"properties": {"code": {"enum": [
             "request_id_reused", "request_in_progress"]}}}}},
-         "then": {"required": ["operation", "requestId"]}},
+         "then": {"required": ["operation", "requestId"], "properties": {
+             "operation": {"type": "string"}, "requestId": {"type": "string"}}}},
     ]})
 
     replayed: bool

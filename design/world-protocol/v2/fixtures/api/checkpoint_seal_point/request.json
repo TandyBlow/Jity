@@ -7,5 +7,6 @@
   "expectedPointId": "root_0",
   "expectedVersion": 0,
   "expectedCheckpointRevision": 7,
-  "pointId": "p1"
+  "pointId": "p1",
+  "operation": "seal_point"
 }

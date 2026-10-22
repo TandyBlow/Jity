@@ -44,5 +44,10 @@
       "person_f"
     ],
     "personalityCoverageIds": []
+  },
+  "operation": "stage_unit",
+  "results": {
+    "person_c": "重门打开。",
+    "person_d": "D 退到一旁。"
   }
 }

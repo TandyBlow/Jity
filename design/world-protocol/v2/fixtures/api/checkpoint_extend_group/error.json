@@ -35,7 +35,16 @@
     "round": {
       "roundId": "round_1",
       "trigger": "player",
-      "conclusion": null
+      "conclusion": null,
+      "order": [
+        "person_c",
+        "person_d",
+        "person_e",
+        "person_f"
+      ],
+      "cursor": 0,
+      "actedIds": [],
+      "visitedIds": []
     },
     "time": {
       "calendar": "gregorian",
@@ -84,7 +93,8 @@
       "cursor": 0,
       "actedIds": [],
       "visitedIds": [],
-      "settledUnitIds": []
+      "settledUnitIds": [],
+      "intentStatus": "pending"
     },
     "settledUnits": [],
     "pendingGroup": {
@@ -100,6 +110,10 @@
       "frontierIds": [],
       "closed": true
     },
-    "successor": null
+    "successor": null,
+    "sealed": false,
+    "prefixDigest": null,
+    "predecessorWorkDigest": null,
+    "timeScanComplete": false
   }
 }

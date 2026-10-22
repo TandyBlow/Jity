@@ -47,5 +47,6 @@
       "person_e",
       "person_f"
     ]
-  }
+  },
+  "operation": "stage_time_scan"
 }

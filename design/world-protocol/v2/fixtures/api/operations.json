@@ -3,6 +3,7 @@
   "operations": [
     "create_world",
     "get_context",
+    "checkpoint_start_advance",
     "checkpoint_begin_point",
     "checkpoint_set_point_time",
     "checkpoint_discover_group",

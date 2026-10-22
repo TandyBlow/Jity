@@ -4,5 +4,7 @@
   "worldId": "world_school",
   "pointId": "root_0",
   "mode": "head",
-  "currentClaim": null
+  "currentClaim": null,
+  "leaseToken": "lease_a",
+  "fenceEpoch": 7
 }

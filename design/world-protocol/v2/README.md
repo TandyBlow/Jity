@@ -1,10 +1,10 @@
 # 世界引擎协议 v2：修订与冻结清单
 
-日期：2026-10-22。依据：[开发方案 v0.4.1](../../browser-world-state-workflow.md)。本目录记录待实现的协议决定，不包含已导出的 v2 schema、可执行 SQL 或运行接口；[v1](../v1/README.md) 保留评审基线。v1 的现有测试结果不能作为 v2 验收结果。
+日期：2026-10-22。依据：[开发方案 v0.4.1](../../browser-world-state-workflow.md)。S1 经 B 消费核对已正式验收：v2 schema、32 操作 API registry、124 个 JSON 夹具及消费/修订检查均随验收提交交付；原候选为 `07924f3`。可执行 v2 SQL、共同轨迹和运行接口仍未交付。[v1](../v1/README.md) 保留评审基线。
 
 两人实施边界见 [开发分工](../../browser-world-state-work-split.md)：A 维护本目录共享契约、SQL、动态字段轨迹格式及共同 CI，B 维护轨迹读取、浏览器消费检查命令、固定响应及模型任务。契约变更通过导出一致性、Python 正反例、TS 消费和共同轨迹检查后同步；A2＋B1、A3 后分别提前验证普通点 HTTP 与刷新/接管，最终保留完整整链验收。上述 v2 检查仍属待实现交付，不代表当前 CI 已接入。
 
-当前实施任务见 [A0＋B0 共同接口基线计划](interface-baseline-plan.md)：按 IF-01～IF-08 完成差异登记、v2 类型/API、SQL/向量、动态轨迹、TS 消费、共同 CI 和正式冻结。计划已编写，任务尚未执行，当前没有已验收的 v2 接口基线。首次提交前先完成 v1 的 LF 重导出、`.gitattributes` 与仓库卫生，见计划 IF-01。
+当前实施任务见 [A0＋B0 共同接口基线计划](interface-baseline-plan.md)。B 对 11 项决定、32 个操作及接管请求构造的最终复核通过，F01–F10/R01–R03/B01 的 S1 修订已关闭；**S1 正式验收，IF-05 已放行**。B 独立复跑 JS 60/0、Python 300 项、前端 62 项，15 个生成物字节核对一致，依据见 [最终验收记录](change-list.md#b-最终复核与-s1-正式验收2026-10-22通过)。包含该记录的 `feat(world): accept S1 v2 contracts after B review` 提交是可检出的 S1 快照，本轮不推送。A 下一步 IF-03/04a，B 下一步 IF-05；v1 基线保留 `26011c8`，完整接口基线仍待 IF-08 冻结，实际事务仍待 A3。
 
 ## 本轮冻结决定
 
@@ -35,7 +35,7 @@
 | 单元结果及完整六步候选暂存 | checkpoint.stage_unit：settle_group→select_actor | 只追加 settledUnits、推进 working 字段并清活动 pendingGroup；原文保留，不更新世界或已提交进度 |
 | skip 与空点扫描 | checkpoint.record_skip/stage_time_scan | 只推进工作访问游标/保存时间扫描候选，不能伪造已行动人物；都锁定时间 |
 | 点前缀封存及后继预约 | checkpoint.seal_point/prepare_successor | 无本点活动组才能封存；封存后不再改前缀，预约只有一个且有固定后继时间/基线 |
-| 接管后的工作副本 | checkpoint.restore_group_work，服务端按已确认清单原样复制 | 校验有效租约/revision、来源接受记录、作用域及哈希；不接收替代原文，不改组/时间/phase/revision，以 requestId/attempt 幂等 |
+| 接管后的工作副本 | checkpoint.restore_group_work，服务端按已确认清单原样复制 | 校验有效租约/revision、来源接受记录、作用域及哈希；不接收替代原文，不改组/时间/phase/revision，以 requestId 幂等及来源清单/目标 epoch 业务去重；目标 attempt 由服务分配并在成功 data 返回 |
 | 组消费、actedIds/游标推进及清理 | points，携带 settlementGroups | 不能清整个 round；未消费组原样保留 |
 | 叙事 ready/failed | narration 确认，匹配代次、claimToken、签发 epoch | 不改 phase、paused、checkpoint_revision |
 | gate 懒失效 | checkpoint/points/round-conclusion/narration-jobs 事务内 resolve_gate | 不递增 revision，不把 failed/cache_missing 当成 ready |
@@ -84,7 +84,7 @@ begin_point 保存 pointId、kind、基线头/版本/摘要和 timeAdvance。首
 
 ## 阶段 0 尚需完成的产物
 
-- 更新 Python 契约及 v2 JSON Schema：删除旧 phase/resumePhase 组合，增加 paused、gate、PointWork/settledUnits、已提交/working 进度、时间锁、冻结清单、后继预约、窄操作与门槛响应；memberIds 集合规范及前缀内容摘要进入固定向量。
+- 修订已交付的 S1 Python 契约、v2 JSON Schema、API registry 和夹具，关闭 [字段缺口](change-list.md#s1-字段闸门修订项)；memberIds 集合规范及前缀内容摘要进入 IF-03 固定向量。v1 导出和导入保持兼容，v2 不再使用旧 phase/resumePhase 组合。
 - 编写 v2 SQL 契约：根点创建与认领、工作表围栏/可见性、roll 定稿、gate 组合；重新处理 v1 storage-contract.sql 的 round_requires_ready_head 触发器，不能照搬旧入口阻塞规则，也不能失去根点 ready 检查。
 - 交付 §11.1 事务故障的输入、预期与测试落点（`failure-cases.json`），含 A/B 逐单元暂存与中断恢复、接管原文字节相等及非法来源拒绝、时间锁后改时长拒绝、显式取消不复活原工作、跨 P1 前缀验证、pending 时暂停/恢复成功但计算仍阻塞；实际事务中断验证在 A3 执行，阶段 0 不声称已通过；保留已有根点、roll、清理粒度和 revision 测试。
 - 阶段 4 样本必须包含位置变化影响外貌判断的反例；分别记录强制拆分数、实际调用数和完整六步结果。26–35 仅是该七单元用例的估算，不含额外分批、重试或校验。
