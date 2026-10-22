@@ -17,3 +17,47 @@ SQL 区分实际基线点与预约的封存前驱：后者可在前驱尚未提�
 Python 预期工具只对手写 expectedProjection 绑定身份，按既有 world-canonical-v1 计算摘要；拒绝业务响应变量、未声明/未捕获/覆盖变量与旧摘要。`--bindings` 供未来 HTTP 测试编排传入捕获身份，不接收实际状态或实际摘要作为答案。TS 读取这些预期值，不实现第二套编码/状态计算。
 
 验收结论：IF-03/04a/04b/07/08 及 A0 共同前置通过。下一步 A1 纯内核，A2 控制状态/FixtureBaselineStore/最小 API，与 B1 用 T01 完成 H1；A3 按 FC01～FC32 实现 SQLite 中断、租约/claim、原文复制/去重/清理并用 T07 完成 H2。当前未运行生产服务或实际事务。
+
+---
+
+# A1a-1：内核函数面与模块划分
+
+日期：2026-10-22。基线 `79f8120`，计划见 [a1-kernel-plan](../world-protocol/v2/a1-kernel-plan.md)。内核是对既有 `WorldState`（`backend/app/schemas/world/contracts.py`，权威不变）与 `canonical_digest`/`prefix_projection` 的纯函数；模块新建于 `backend/app/services/world/`。语义权威为 v2 registry notes、v2 请求模型与 11 份轨迹；只消费 v2 类型（`v2.work.SettlementGroup`、`v2.requests.CommitPointRequest` 等），不 import v1 形态（`PointCommitRequest`/`RoundCheckpoint`/`SettlementCandidates`/`PreviewRequest`/`RollRequest`），以 import 边界断言固化。
+
+## 模块与签名
+
+| 模块 | 函数 | 说明 |
+|---|---|---|
+| `violations.py` | `Violation(kind, detail, path)`；`ViolationKind` 枚举 | 内部违规分类：ID 不可解析 / 内容语义非法 / 位置非法 / 覆盖不完整 / 时间锁；不进契约，A2 按 a1-kernel-plan §四映射 |
+| `state.py` | `build_initial_state(initial: WorldInitialState) -> WorldState` | create_world 初始态：位置/外观取 initial，描述变更集为空，任务原样 |
+| `state.py` | `state_digest(state: WorldState) -> Hex64` | `canonical_digest(state.model_dump(mode='json'))`；规范化恒等已验证 |
+| `timing.py` | `advance_time(at: WorldTime, ta: TimeAdvance) -> WorldTime` | elapsed 按日历加 duration，instant 零时长；月/年加法规则待钉（见下） |
+| `timing.py` | `time_lock_trigger(...) -> bool` | 首个 confirmed action/target/skip/time-scan 锁时间（`set_point_time` notes），A1a-4 定形 |
+| `units.py` | `validate_unit(unit: SettlementGroup, roster: frozenset[Id]) -> tuple[Violation, ...]` | schema 之外的状态级单元校验：actor 在册、六阶段交叉、覆盖清单 |
+| `units.py` | `unit_content_hash(unit: SettlementGroup) -> Hex64` | 绑定完整有序候选集（`SettledUnitView.contentHash`）；公式 A1a-3 用 T01 响应复算钉死 |
+| `units.py` | `next_working_progress(...) -> WorkingProgress` | stage_unit/skip 后的工作进度推进纯函数，A2 决定何时调用 |
+| `merge.py` | `point_entity_deltas(groups, time_scan) -> dict[Id, EntityDelta]` | **入参即含 `time_scan: SettlementGroup | None`**（该点已存 `stage_time_scan` 候选）；外序显著；不变量 `entityDeltas == collapse(merge(groups ∪ timeScan))` |
+| `merge.py` | `collapse_tasks(added, achieved) -> (added, achieved)` | 塌缩两步缺一不可：本点新增且已达成的 ID 从 `tasksAchieved` 摘除＋该新增记录置 `status:"achieved"`（T03-collapse 夹具；只做一半任一步都假失败） |
+| `commit.py` | `apply_point(state, *, time_advance, deltas, point) -> WorldState` | 时间推进＋逐实体应用：positionSet 覆盖、描述变更入 `StoredDescriptionChange`（sourcePointId/sourceSequence/active＋supersedes 失活链）、sanity 覆盖、任务提升与挂树 |
+| `preview.py` | `preview_working_state(state, time_advance, deltas) -> WorldState`；`preview_projection(...) -> PreviewData` 形 | 与 commit 同一条合并路，不落存储；`mergedEntityDeltas == pointProjection.entityDeltas` 由模型校验 |
+| `preview.py` | `preview_over_budget(request_bytes, response_bytes) -> Violation \| None` | 请求 512 KiB / 响应 2 MiB 判定侧（`preview_budget_exceeded`） |
+| `replay.py` | `replay_world(initial, applied_points) -> WorldState` | 从 canonical projection 重建（`get_state` notes）；终态摘要与轨迹 `expectedDigests`、投影夹具三方一致 |
+
+## A1 覆盖的操作与留界
+
+内核覆盖：`create_world`、`commit_point`、`preview_point`、`get_state`/`list_points` 的读出、`checkpoint_stage_unit`/`checkpoint_stage_time_scan` 的候选校验与 contentHash。不进 A1：lease/narration/rolls（A3）、pause/resume/conclude/cancel/prepare_successor/restore_group_work（A2/A3）；控制阶梯谓词（begin/discover/extend/close/stage/seal 的合法性）由 A1b 以纯函数交付、A2 消费，A1a 不实现。
+
+## 待钉点（实现时以轨迹钉死，逐条落断言）
+
+1. `unit_content_hash` 公式：T01 候选请求 ↔ 响应 `settledUnits[].contentHash` 离线复算。
+2. 跨组同点 `supersedes` 与 `positionSet` 冲突语义（schema 只禁同批内同点 supersedes）。
+3. 月/年 `Duration` 的日历加法规则（`WorldTime.dateTime` 字符串运算）。
+4. preview 叠加边界：请求 `settlementGroups` 与已存 settledUnits/timeScan 的关系（notes：from the authoritative baseline 重算）。
+5. T03-collapse 的前置点链与回放起点（seq=4，非 T03 直接延续）。
+6. supersedes 失活链的跨点行为（`StoredDescriptionChange.active` 翻转时机；v1 夹具 `pureRemoval` 在 v2 零覆盖，A1b 自建）。
+
+## 固定预期绑定（A1a-2 直接采用）
+
+- `fixtures/projections/{normal,segmented,time}.expected.json` 为 **WorldState 终态快照**（同一学校世界，时间 11:59:02/11:59:05/12:00:00 对应 T01/T02/T03 终态），`canonical_digest(WorldState.model_validate(doc).model_dump(mode='json'))` 与轨迹 `samples[].expectedDigests` 的 `/data/stateDigest` 相等（B 以三条独立路径复现）。
+- `description-collapse.expected.json` 是 DescriptionChange 形态片段、`task-normalization.expected.json` 是 EntityDelta 形态片段——塌缩/归一化行为断言比对对应片段，不是整状态。
+- 回放配方：以轨迹 `samples[i].values` 实例化各步请求 → 依次 apply → 终态摘要对 `expectedDigests`；T02/T03 与 T01 共享世界线（链式回放）。

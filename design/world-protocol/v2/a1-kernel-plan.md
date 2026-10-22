@@ -22,7 +22,7 @@
 | `fixtures/projections/description-collapse`、`task-normalization.expected.json` | 同上未消费 | 塌缩与任务归一化行为断言 |
 | traces T01、T03、T03-collapse | 11 个 commit 中仅此 3 个改状态：位置；时间＋任务达成＋个性＋理智；同点新增又达成塌缩＋外貌替换 | Python 侧回放与投影/摘要断言 |
 | 其余 8 份轨迹 | 纯时间/结构点 | 回放覆盖，不新增状态预期 |
-| 合并不变量 | B 已对全部 11 个 commit 验证 `point.entityDeltas == collapse(merge(groups ∪ timeScan))` | 落为内核不变量断言（无新增夹具） |
+| 合并不变量 | B 已对全部 11 个 commit ×2 样本验证 `point.entityDeltas == collapse(merge(groups ∪ timeScan))`，0 mismatch；两个实跑前提：①必须把该点已存 `stage_time_scan` 候选并入（只拿 `settlementGroups` 跑，T03 假失败——groups 为空、Δ 来自 time-scan）；②collapse 必须同时把「本点新增且已达成」的 ID 从 `tasksAchieved` 摘掉并只改新增记录 `status:"achieved"`（只做一半，T03-collapse 假失败） | 落为内核不变量断言（无新增夹具）；`merge` 入参即含 `timeScanCandidates | None`（函数面见 server.md） |
 
 摘要配方（B 以 raw / 校验后模型 / 轨迹实例化三条独立路径复现，三者一致；`4f5a33e7…`/`85848d51…`/`61569325…`）：`canonical_digest(WorldState.model_validate(doc).model_dump(mode='json'))`。规范化对 v2 全量文档是恒等变换，A1a-2 直接对 `model_dump(mode='json')` 断言，勿用 `json.dumps(sort_keys=True)` 的字节（`canonical_bytes` 无空格、不转义、数组不排序）。
 
@@ -34,7 +34,7 @@
 |---|---|---|
 | 1 | 通读 `WorldState`、v2 `requests`/`work`/`projections` 与 §二夹具，定函数面与模块划分（`backend/app/services/world/` 新建） | 函数面清单记入 server.md |
 | 2 | 投影夹具绑定测试 | §二前两行等值/行为断言全部通过 |
-| 3 | apply/merge 正路径三条合并路：action 组；time-scan 候选（纯时间点 `settlementGroups` 为空、Δ 取 `stage_time_scan` 已存候选）；塌缩（`subtasksAdded` 带 `status:"achieved"`，不得进 `tasksAchieved`；T03-collapse 是唯一塌缩夹具） | 三路正例＋11-commit 不变量断言通过 |
+| 3 | apply/merge 正路径三条合并路：action 组；time-scan 候选（纯时间点 `settlementGroups` 为空、Δ 取 `stage_time_scan` 已存候选）；塌缩（两步：摘 `tasksAchieved`＋新增记录置 `status:"achieved"`；T03-collapse 是唯一塌缩夹具） | 三路正例＋11-commit 不变量断言通过（timeScan 必须并入） |
 | 4 | 时间推进与点时间锁判定谓词（出口映射留给 A2） | 时间先行轨迹（T03 等）回放通过 |
 | 5 | preview：覆盖清单投影与字节预算判定谓词（merge 并入 §三#3） | preview 输出断言＋`preview_budget_exceeded` 判定侧 |
 | 6 | replay 与回放摘要一致（工作投影、最终提交、回放摘要三者一致） | 11 份轨迹 ×2 样本回放全绿 |
