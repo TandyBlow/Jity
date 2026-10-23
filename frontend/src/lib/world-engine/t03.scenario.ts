@@ -22,11 +22,9 @@
  * so this scenario normalizes recorded coverage fields to the ruling at
  * derivation and on the corpus requests; the trace file itself is untouched.
  *
- * T03-collapse additionally opens with an allocate_ids (task/change/point/
- * group slots for the automatic round) that the scheduler has no pre-begin
- * path to emit; it is harness-issued like the get_context bootstrap —
- * flagged in browser.md as the automatic-round entry design the driver
- * still owes. */
+ * T03-collapse's task/change/point/group allocation is controller-issued
+ * before pointPlan. Identities are adopted from its actual response; only
+ * the initial get_context is a harness bootstrap. */
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { ControllerDriver, initialMemory } from './controller';
@@ -213,10 +211,8 @@ export function buildT03Scenario(traceName: T03TraceName, sampleId: string): T03
     return specimenBody(chosen).workingState;
   };
 
-  // T03-collapse's allocate_ids is session-open material (the scheduler has
-  // no pre-begin allocation path) — harness-issued like the context read.
   const allocateStep = steps.find((s) => s.operation === 'allocate_ids');
-  const bootstrapStepIds = allocateStep ? ['s1', allocateStep.id] : ['s1'];
+  const bootstrapStepIds = ['s1'];
 
   const corpus = buildCorpus(raw, sampleId, specimens, [...bootstrapStepIds, finalStep.id], [
     { previewStepId: specimenSpecs[specimenSpecs.length - 1].label, expectationStepId: finalStep.id, workingStatePath: '/data/workingState', workingStateDigestPath: '/data/workingStateDigest' },
@@ -271,8 +267,12 @@ export function buildT03Scenario(traceName: T03TraceName, sampleId: string): T03
   if (!ownership) throw new ProtocolError(`[${traceName}] no input ownership variable to seed the lease`);
   const memory = initialMemory(`req_${traceName}`, 'browser');
   memory.leaseToken = sample.values[ownership.name] as Id;
+  if (allocateStep) {
+    const allocation = requestOf.get(allocateStep.id)!;
+    memory.roundAllocations[roundId] = { allocationKey: allocation.allocationKey as Id, slots: allocation.slots as NonNullable<typeof memory.allocPlan>['slots'] };
+  }
   for (const s of steps) {
-    if (s.operation === 'checkpoint_discover_group') {
+    if (!allocateStep && s.operation === 'checkpoint_discover_group') {
       const req = requestOf.get(s.id)! as { initiatorId: Id; groupId: Id };
       memory.ids[`group:${req.initiatorId}`] = req.groupId;
     }
@@ -280,7 +280,7 @@ export function buildT03Scenario(traceName: T03TraceName, sampleId: string): T03
 
   const transport = new ScenarioTransport(corpus.steps, traceName);
   const model = new ScenarioModelPort(declared, traceName);
-  const driver = new ControllerDriver({ transport, model }, memory, { world: context.world, control: context.control }, { retryLimit: 3 });
+  const driver = new ControllerDriver({ transport, model }, memory, { world: context.world, control: context.control }, { retryLimit: 3, identityAliases: { 'group:person_c': 'group' } });
   return { driver, transport, model, memory, corpus, roundId, bootstrapStepIds, finalStepId: finalStep.id };
 }
 

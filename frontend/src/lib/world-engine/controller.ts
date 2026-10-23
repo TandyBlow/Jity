@@ -43,7 +43,7 @@ const INITIAL_CONTROL: ControlState = {
 
 export function initialMemory(prefix: string, holderId: string): ControllerMemory {
   return {
-    requestId: `${prefix}_0`, leaseToken: null, holderId, ids: {}, allocPlan: null, playerInput: null,
+    requestId: `${prefix}_0`, leaseToken: null, holderId, ids: {}, allocPlan: null, roundAllocations: {}, allocatedKeys: [], playerInput: null,
     plan: null, planIndex: 0, prepareSuccessor: false, localPause: false, budget: { used: 0, max: null },
     narration: null, workingState: null, sources: [], staged: [], stagedTimeScan: null, groupActors: [], lastModel: null, lastResults: null,
     updatesStages: [], updatesCalls: [],
@@ -332,12 +332,18 @@ export class ControllerDriver {
       case 'create_world':
         this.memory.leaseToken = (data as unknown as { lease: { leaseToken: Id } }).lease.leaseToken;
         break;
-      case 'allocate_ids':
-        for (const allocation of (data as { allocations: { slotKey: Id; id: Id }[] }).allocations ?? []) {
+      case 'allocate_ids': {
+        const allocations = (data as { allocations: { slotKey: Id; id: Id }[] }).allocations ?? [];
+        const slots = req.slots as { slotKey: Id }[];
+        const keys = new Set(allocations.map((allocation) => allocation.slotKey));
+        if (allocations.length !== slots.length || keys.size !== slots.length || slots.some((slot) => !keys.has(slot.slotKey))) throw new Error('Allocation response does not match requested slots');
+        for (const allocation of allocations) {
           this.memory.ids[allocation.slotKey] = allocation.id;
           for (const [alias, slot] of Object.entries(this.identityAliases)) if (slot === allocation.slotKey) this.memory.ids[alias] = allocation.id;
         }
+        if (!this.memory.allocatedKeys.includes(req.allocationKey as Id)) this.memory.allocatedKeys.push(req.allocationKey as Id);
         break;
+      }
       case 'checkpoint_start_advance':
         this.memory.playerInput = null;
         break;
@@ -399,6 +405,10 @@ export class ControllerDriver {
         if (plannedActor && !this.memory.groupActors.includes(slotActorId)) this.memory.groupActors.push(slotActorId);
         break;
       }
+      case 'checkpoint_prepare_successor':
+        this.memory.prepareSuccessor = false;
+        this.memory.successorTime = null;
+        break;
       case 'commit_point': {
         this.memory.planIndex++;
         this.memory.staged = [];
@@ -431,9 +441,14 @@ export class ControllerDriver {
         if (kind === 'continue') {
           this.memory.plan = null;
           this.memory.planIndex = 0;
+        } else if (kind === 'handback') {
+          this.clearRoundWork();
         }
         break;
       }
+      case 'round_conclusion_cancel':
+        this.clearRoundWork();
+        break;
       case 'checkpoint_pause':
         if (this.memory.budget.max != null && this.memory.budget.used >= this.memory.budget.max) this.memory.localPause = true;
         break;
@@ -447,5 +462,14 @@ export class ControllerDriver {
       default:
         break;
     }
+  }
+
+  private clearRoundWork(): void {
+    Object.assign(this.memory, {
+      playerInput: null, plan: null, planIndex: 0, prepareSuccessor: false,
+      workingState: null, sources: [], staged: [], stagedTimeScan: null,
+      groupActors: [], lastModel: null, lastResults: null, updatesCalls: [],
+      continuation: null, successorTime: null, commitPayload: null, narration: null,
+    });
   }
 }

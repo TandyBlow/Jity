@@ -48,7 +48,7 @@ const pointWork = (over: Partial<PointWork> = {}): PointWork => ({
 });
 
 const memory = (over: Partial<ControllerMemory> = {}): ControllerMemory => ({
-  requestId: 'rq1', leaseToken: 'lease1', holderId: 'browser', ids: {}, allocPlan: null, playerInput: null,
+  requestId: 'rq1', leaseToken: 'lease1', holderId: 'browser', ids: {}, allocPlan: null, roundAllocations: {}, allocatedKeys: [], playerInput: null,
   plan: null, planIndex: 0, prepareSuccessor: false, localPause: false, budget: { used: 0, max: null },
   narration: null, workingState: null, sources: [], staged: [], stagedTimeScan: null, groupActors: [], lastModel: null, lastResults: null,
   updatesStages: [], updatesCalls: [],
@@ -458,6 +458,23 @@ describe('empty point time scan (T03)', () => {
     expect(next(w, c, wk, m)).toEqual({ kind: 'read_working_state' });
     m.workingState = { key: workingStateKey(wk), state: workingState() };
     expectTransport(next(w, c, wk, m), 'checkpoint_seal_point');
+  });
+});
+
+describe('successor time reads staged work', () => {
+  test('refreshes the preview before generating time after a staged unit', () => {
+    const w = world({ advance: { advanceId: 'adv1', inputId: 'in1', intentStatus: 'consumed', inputAvailable: true }, activeRoundId: 'r1', round: { roundId: 'r1', trigger: 'player', order: ['person_a'], cursor: 0, actedIds: [], visitedIds: [], conclusion: null } });
+    const wk = pointWork({ timeLocked: true, working: { cursor: 1, actedIds: ['person_a'], visitedIds: ['person_a'], settledUnitIds: ['unit1'], intentStatus: 'consumed' } });
+    const m = memory({
+      plan: [{ pointId: 'p1', kind: 'normal', timeAdvance: ta(2), actorIds: ['person_a'] }],
+      groupActors: ['person_a'], staged: [stagedUnit()], prepareSuccessor: true,
+      ids: { successor: 'p2' }, workingState: { key: workingStateKey(pointWork()), state: workingState() },
+    });
+    expect(next(w, control(), wk, m)).toEqual({ kind: 'read_working_state' });
+    const stagedState = workingState();
+    stagedState.characters.person_a.sanity = 35;
+    m.workingState = { key: workingStateKey(wk), state: stagedState };
+    expect(next(w, control(), wk, m)).toMatchObject({ kind: 'model', task: 'time', key: 'successor:p1', input: { workingState: { characters: { person_a: { sanity: 35 } } } } });
   });
 });
 

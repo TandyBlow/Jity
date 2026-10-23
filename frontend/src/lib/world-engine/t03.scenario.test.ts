@@ -49,8 +49,7 @@ describe.each([
   test('opens the session, drives the scan point, ends at the continuation boundary', async () => {
     const scenario = await runT03Acceptance(traceName, sampleId);
 
-    // Session-open bootstrap (context, plus the automatic round's allocation
-    // for T03-collapse), then the controller segment; no create_world.
+    // Context bootstrap, then controller-issued allocation for collapse.
     expect(scenario.transport.ops[0]).toBe('get_context');
     expect(scenario.transport.ops).not.toContain('create_world');
     expect(scenario.transport.ops).toContain(traceName === 'T03' ? 'checkpoint_stage_time_scan' : 'checkpoint_stage_unit');
@@ -142,7 +141,9 @@ describe.each([
     expect(scenario.transport.ops).toHaveLength(traceName === 'T03' ? 10 : 14);
     if (traceName === 'T03-collapse') {
       expect(scenario.transport.ops[1]).toBe('allocate_ids');
-      expect((scenario.transport.requests[1] as { requestId: string }).requestId).toMatch(/^T03-collapse_harness_\d+$/);
+      expect((scenario.transport.requests[1] as { requestId: string }).requestId).toMatch(/^req_T03-collapse_\d+$/);
+      expect(scenario.driver.getMemory().ids['group:person_c']).toBe(groupId);
+      expect(scenario.driver.getMemory().ids.point).toBe(pointId);
     }
   });
 
@@ -164,6 +165,26 @@ describe.each([
 });
 
 describe('T03 harness directed negatives', () => {
+  test('round entry allocates even when old slot values remain in memory', async () => {
+    const scenario = buildT03Scenario('T03-collapse', 'sample_1');
+    scenario.memory.ids['group:person_c'] = 'old_round_group';
+    scenario.memory.ids.point = 'old_round_point';
+    await openT03Session(scenario);
+    await driveControllerSegment(scenario);
+    expect(scenario.transport.ops.filter((operation) => operation === 'allocate_ids')).toHaveLength(1);
+    expect(scenario.driver.getMemory().ids['group:person_c']).toBe('group_task');
+    expect(scenario.driver.getMemory().ids.point).toBe('p4');
+  });
+
+  test('a mismatched round allocation stops before pointPlan or action generation', async () => {
+    const scenario = buildT03Scenario('T03-collapse', 'sample_1');
+    const allocate = scenario.corpus.steps.find((step) => step.operation === 'allocate_ids')!;
+    (allocate.response as { data: { allocations: { slotKey: string }[] } }).data.allocations.at(-1)!.slotKey = 'unexpected_slot';
+    await openT03Session(scenario);
+    await expect(driveControllerSegment(scenario)).rejects.toThrow(/Allocation response does not match requested slots/);
+    expect(scenario.model.calls).toEqual([]);
+  });
+
   test('rejects a tampered final digest at the inspect read', async () => {
     const scenario = buildT03Scenario('T03', 'sample_1');
     const finalStep = scenario.corpus.steps.find((s) => s.sharedStepId === scenario.finalStepId)!;

@@ -1,6 +1,6 @@
 # B1 控制器设计补充（B 侧）
 
-状态：2026-10-22，基于分支 `world-browser`（`79f8120`，契约摘要 `480d950c…`）；同日二轮修订：组扩张顺序/DFS、`updates` 调用粒度、`pointPlan` 边界、T03-collapse guard、错误路由、requestId 生命周期、preview 标本与 digest 策略；同日三轮：调度纯函数实现并经两轮评审修复闭环（complete 入口、scope 规律、stateKey、DFS 兄弟顺序、候选装配、act/skip 输出、updates split 与 canonical 序、全 actor skip 补时间扫描、缺 lease 叙事不再抛错）。§7 两项待 A 确认后开 harness 语料与 H1。本文是 [分工文档](../browser-world-state-work-split.md) §四 B1 行的实现层补充，替代原计划中与共享轨迹逐字消费相关的表述。
+状态：2026-10-23，分支 `world-browser`，契约摘要 `480d950c…`。`1f50cdb` 的 T03/T03-collapse 已通过复审；当前未提交的 T04、自动轮入口分配、T08 正常/冲突恢复/取消场景也已通过复审，P2 输入生命周期验收缺口关闭，验收记录见 [browser.md](browser.md)。T05、其余故障语义及 H1 继续待办。本文是 [分工文档](../browser-world-state-work-split.md) §四 B1 行的实现层补充，保留已确认的分层、模型调用及 preview/digest 策略。
 
 ## 0. 验收口径：共享轨迹是契约标本，不是控制器金标
 
@@ -23,18 +23,19 @@
 | 段 | 执行者 | 核对方式 |
 |---|---|---|
 | `controller` | 控制器推导请求 | harness 逐字核对 operation/request/scope，额外 preview 允许出现在声明位置 |
-| `command` | harness 直发 | pause/resume/cancel/预算事件/心跳，响应交控制器重新调度 |
+| `command` | harness 注入命令，控制器发请求 | pause/resume/cancel/预算事件；心跳预留 B2 的运行时事件 |
 | `probe` | harness 直发 | 故意非法请求/重放，断言错误码与 clientAction |
 | `inspect` | harness 直发 | `get_state`/`list_points`/`narration_get` 验收读取 |
 | `stop` | 场景边界 | 控制器必须在此停住，后续请求视为缺陷 |
 
-覆盖清单（11 份全列）：T01 单点全流程（含根点叙事）；T02 三点 normal/instant/linked + 组扩张 + 冻结文本反应；T02-empty-linked 空 linked + 时间扫描；T03 空点 60s 时间扫描（actionless 六步）；T03-collapse 预分配 task/change ID + 非空候选塌缩；T04 自动轮 continue + handback（两次 conclude，s15 replay 归 harness `probe`；**cancel 不在 T04，在 T08 s13**）；T05 命令驱动暂停/恢复 + 心跳；T06 错误/幂等语义改用 B 自有 fault transport 覆盖（s4 replay 与 s5–s9 探针不进控制器段）；T08 取 s1–s7 与 s10–s15 正常段（s8/s9 负探针归 harness；s13 `round_conclusion_cancel` 是 cancel 语义的覆盖落点）；T07/T09 留 B2/H2（刷新/接管/损坏恢复）。
+覆盖清单（11 份全列）：T01 单点全流程（含根点叙事）；T02 三点 normal/instant/linked + 组扩张 + 冻结文本反应；T02-empty-linked 空 linked + 时间扫描；T03 空点 60s 时间扫描（actionless 六步）；T03-collapse 控制器预分配 task/change/point/group ID + 非空候选塌缩；T04 自动轮 continue + handback（两次 conclude，s15 replay 属 harness 的 inspect，声明为同请求重放；**cancel 不在 T04，在 T08 s13**）；T05 命令驱动暂停/恢复 + 心跳；T06 错误/幂等语义改用 B 自有 fault transport 覆盖（s4 replay 与 s5–s9 探针不进控制器段）；T08 取 s1–s7 与 s10–s15 正常段（s8 锁时负探针归 harness，原 s9 错误时间提交留共享契约套件，B 合法请求冲突标本及 context 桥另见 browser.md；s13 为 cancel 命令）；T07/T09 留 B2/H2（刷新/接管/损坏恢复）。
 
 ## 1. ScenarioHarness 与 IdentityStore
 
 - **IdentityStore**：
   - seed 优先——T02/T02-el/T03/T04/T05/T08 用输入种子的 group/trigger/point/nextRoundId；无 seed 才 `allocate_ids`（T01 s4、T03-collapse s2 均在点工作开始前）。
-  - 分配范围按实证补全：T01 s4 `allocationKey: "chain_slots"` 一次分配 advance/input/round/point/group；T03-collapse s2 `allocationKey: "task_collapse_slots"` 分配 task×2/change/point。`allocationKey` 与 slot plan 是**场景声明（harness 配置，进控制器 memory）**，不属模型输出；模型输出中的 local refs 按 slotKey 绑定到预分配 ID（controller 不得自行造 ID）。
+  - 分配范围按实证补全：T01 s4 `allocationKey: "chain_slots"` 一次分配 advance/input/round/point/group；T03-collapse s2 `allocationKey: "task_collapse_slots"` 分配 task×2/change/point/group。`allocationKey` 与 slot plan 是**场景声明（harness 配置，进控制器 memory）**，不属模型输出；模型输出中的 local refs 按 slotKey 绑定到预分配 ID（controller 不得自行造 ID）。
+  - 轮入口落地：`roundAllocations[roundId]` 保存预声明 plan，pointPlan 前由控制器执行 allocate_ids；`allocatedKeys` 仅在合法完整响应后记录成功，按 slotKey/identityAliases 覆盖旧槽位。T03-collapse s2 已移入 controller 段。动态需求发现仍留后续模型/生产装配。
   - requestId 生命周期：**timeout/`request_in_progress` → 同内容沿用原 requestId 重发**；**definitive 拒绝（`fix_request`/`refresh_context`/`reacquire_lease` 等终态 clientAction）→ 旧操作退休，新操作新 requestId**。刷新后重建的请求不得沿用旧 requestId，防止撞 `request_id_reused`。
   - triggerKey 与 roll 规则（`create_rolls` 请求的 `ruleVersion`、`target`，T02 s18–s19 实证）是场景决策值，经模型端口 `targets` 任务输出供给，控制器与 harness 都不硬编码。
 - **Harness** 职责：初始 world/lease 建立、玩家输入注入、`command`/`probe`/`inspect` 段执行（含心跳 lease_renew/narration_claim_renew、T06 式 replay）、停止边界判定、预算事件注入。
@@ -119,7 +120,9 @@ pure 指对服务端状态 pure，允许携带控制器记忆：
 
 代码落点（均 B 属地）：`frontend/src/lib/world-engine/` 增 `schedule.ts`（纯决策）、`projection.ts`（模型输入投影——B1 最大工作量，独立文件与测试，不塞进 schedule）、`controller.ts`（驱动循环）、`harness.ts` 与 `controller.test.ts`（夹具与验收）。
 
-## 7. 待与 A 确认（阻塞 harness 场景语料与 H1；调度纯函数步骤已闭环）
+## 7. 已确认的验收口径与 H1 前提（保留原问题）
+
+分层及 preview/digest 策略已按 browser.md 的 T01～T03 验收记录确认，T03 在 `1f50cdb` 获复审通过。以下保留原确认问题作为约定依据；harness 场景已据此推进，H1 仍须运行中的 A2 API 与专用配置。
 
 1. **验收口径**：B1 控制器验收用 B 自有场景夹具（§0 分层），共享轨迹保持契约层逐字消费；A 侧无需改 trace.schema 与任何导出物，仅需认叮该分层作为 B1 验收标准。
 2. **H1/A2 最小 API**：`begin_point`/`stage_unit`/`stage_time_scan` 后的多次 `preview_point` 必须可用（§3 读取策略依赖此）。preview 不入幂等表已明确，多次调用仅耗响应预算；若 A2 的 FixtureBaselineStore 对 preview 有次数/状态限制，请在 A2 交付说明中写明。**另请认叮 digest 策略**：中间 preview 的 B 夹具标本用手写状态 + 占位 digest（§3），B1 的 digest 断言只覆盖最终 preview 与 commit 路径；如 A 认为中间态也必须严格 digest，请用测试侧工具为 B 生成标本。

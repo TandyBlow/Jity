@@ -34,6 +34,8 @@ export interface StagedUnit { groupId: Id; actorIds: Id[]; candidates: Settlemen
 
 export interface ModelResolution { task: ModelTask; key: string; output: Json }
 
+export type AllocationPlan = Pick<RequestMap['allocate_ids'], 'allocationKey' | 'slots'>;
+
 export type HarnessCommand =
   | { kind: 'player_input' }
   | { kind: 'pause' }
@@ -51,7 +53,12 @@ export interface ControllerMemory {
   /** Scenario seed/slot map filled from allocate_ids responses and input
    * seeds ('advance', 'input', 'round', 'group:<actor>', 'successor', …). */
   ids: Record<string, Id>;
-  allocPlan: { allocationKey: Id; slots: { slotKey: Id; kind: 'advance' | 'input' | 'round' | 'group' | 'task' | 'change' | 'point' | 'trigger'; scope?: Id | null }[] } | null;
+  allocPlan: AllocationPlan | null;
+  /** Explicit per-round identity requirements, fulfilled before pointPlan.
+   * Allocations are confirmed by allocationKey, not inferred from stale slot
+   * values left by an earlier round. */
+  roundAllocations: Record<Id, AllocationPlan>;
+  allocatedKeys: Id[];
   playerInput: { text: string; order: Id[] } | null;
   plan: PlannedPoint[] | null;
   planIndex: number;
@@ -407,6 +414,15 @@ function continuationDecision(view: ScheduleView): Decision {
 
 function idlePointDecision(view: ScheduleView): Decision {
   const { world, control, memory } = view;
+  const allocation = memory.roundAllocations[roundIdOf(world!)];
+  if (allocation && !memory.allocatedKeys.includes(allocation.allocationKey)) {
+    const bind = writeBind(view);
+    return {
+      kind: 'transport', operation: 'allocate_ids',
+      request: { protocolVersion: 2, requestId: memory.requestId, worldId: world!.worldId, leaseToken: bind.leaseToken, fenceEpoch: bind.fenceEpoch, ...allocation },
+      scope: worldScope(view),
+    };
+  }
   if (!memory.plan) {
     const blocked = modelBlocked(view, 'pointPlan');
     if (blocked) return blocked;
@@ -535,6 +551,8 @@ function selectActorDecision(view: ScheduleView): Decision {
       };
     }
   }
+  // Successor time generation and sealing both need the latest staged state.
+  if (!freshState(memory, work!)) return { kind: 'read_working_state' };
   // Successor pre-binding (T08 path) then seal, both behind a fresh preview.
   if (memory.prepareSuccessor && !work!.successor) {
     if (memory.successorTime) {
@@ -551,7 +569,6 @@ function selectActorDecision(view: ScheduleView): Decision {
     if (blocked) return blocked;
     return { kind: 'model', task: 'time', key: `successor:${work!.pointId}`, input: { head: asJson(world!.head), workingState: memory.workingState ? asJson(memory.workingState.state) : null } };
   }
-  if (!freshState(memory, work!)) return { kind: 'read_working_state' };
   return {
     kind: 'transport', operation: 'checkpoint_seal_point',
     request: { protocolVersion: 2, requestId: memory.requestId, ...bind, operation: 'seal_point', pointId: work!.pointId } as RequestMap['checkpoint_seal_point'],

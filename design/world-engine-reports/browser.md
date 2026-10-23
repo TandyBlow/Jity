@@ -79,4 +79,24 @@ preview 每条轨迹两处，均标注占位 digest。begin 标本取匹配 T02 
 
 结果：四条正路径、四条丢失已 stage 候选反例、四条提前泄漏 post-stage 状态的模型输入反例、终态摘要篡改与末位 preview 体篡改反例，共 14 项通过。前端全套 15 文件 **283 项通过**；`typecheck:world` 与共同接口统一入口 PASS（Python 109+317、契约 38、轨迹 65、四类破坏探针全部拒绝）。修正既有 controller.test.ts 一处 prefer-const 错误，生产 build（含 lint 与全前端类型检查）通过，保留已有 hook 依赖及未使用变量 warnings。
 
-**结论：T03/T03-collapse 固定响应场景已完成，待复审。** 步骤 4 尚余 T04 continue/automatic/handback、自动轮预分配入口与 T08 successor/time-lock/cancel；后续步骤仍含 T05、B 自有 fault transport 及 H1，完整 B1 尚未验收。
+**复审结论：`1f50cdb` 的 T03/T03-collapse 段已获通过。** 复审方复跑 283 项、类型检查、共同接口验收和生产构建，并用 Python 复核四组摘要及补跑 8 个 commit 摘要/最终状态篡改探针，全部通过。该结论限于该提交，以下继续推进步骤 4 剩余内容。
+
+## B1 步骤 4 第二段：T04、自动轮入口与 T08
+
+日期：2026-10-23。在通过复审的 `1f50cdb` 上推进，新增 `t04.scenario.ts/test.ts`、`t08.scenario.ts/test.ts`，扩展轮入口分配及 harness 分段/重放。共享轨迹、schema、manifest、digest pin 保持原字节；preview 仍为 B 自有标本与占位摘要，终态仍由共享独立预期和运行时摘要链校验。
+
+**自动轮预分配**：memory 的 `roundAllocations[roundId]` 声明该轮的 allocationKey/slots，调度器在 pointPlan 前自行调用 allocate_ids；成功后按 slotKey 保存 ID/identityAliases，并记录已确认的 allocationKey。已有旧槽位值不代表本轮分配完成；返回槽位缺失、重复或不匹配时，停止在模型调用前。T03-collapse 的 s2 从 bootstrap inspect 移到 controller 段，只有 s1 get_context 仍由 harness 发出；取消 group ID 预播种，组身份实际来自 allocate 响应。原有 coverage 适配保持原边界。补回归验证单次分配、旧槽位覆盖和非法槽位拒绝，并以独立 driver 测试覆盖 player conclude → automatic round → 分配 → pointPlan，轮间没有 harness 修改 memory。allocationKey/slot plan 仍为场景配置，动态需求发现与真实服务 ID 分配属于后续生产装配/H1。
+
+**T04**：双样本完整执行 continuation 模型 → continue → automatic round 的 pointPlan/action/targets/results/updates → begin/stage 两次 preview → seal/commit/narration → continuation 模型 handback。continue 退休上一轮 plan/planIndex，handback 清空本地轮工作缓存。s1/s3 是 harness context 读取，s14 是清理后读取，s15 是显式幂等重放、s16 独立终态读取、s17 lease_release 是会话收尾；它们不计作调度推导。s15 显式声明 continue 重试，沿用驱动器实际发出的 s13 requestId 和完整载荷，额外读请求不改变上次写请求身份，篡改载荷会被拒绝。s1/s3 的 activeInput 全等，handback 后 s14.activeInput=null、重放响应 inputAvailable=false，data 保持原值且不带输入正文。T04 本身没有 allocation 录制，point/group/nextRoundId 仍按输入种子装配；不把这条种子会话宣称为运行时 ID 分配验收。
+
+**T08**：两个样本各跑 normal 与 commit_conflict 两种场景。pointPlan 把其余角色放入预约 successor，控制器不伪造 skip；前驱 stage 后先刷新 preview，再由 time 模型决定后继时间。prepare_successor 返回 sealed 前驱与预约绑定，调度器直接提交前驱，不重复 seal；成功后清除本次 prepareSuccessor/successorTime。前驱叙事 ready 后，在 successor 首次计算前注入真实 cancel 命令；context 与本地 transient memory 均清理，最终时间保留 11:59:02，未提交的 instant successor 不推进 ordinal。
+
+T08 语料适配逐项登记：①s8 是把已锁定时间从 2s 改成 3s 的故意非法请求，标为 probe，由 harness 直接发出并断言 point_time_locked/fix_request，控制器 memory 在探针前后完全相同；②normal 场景不执行错误时间的 s9，直接由控制器发合法 s10；原 s9 仍由共享契约套件逐字消费；③commit_conflict 场景用 B 标本 `b-t08-legal-commit-conflict` 替代 s9——请求复制合法 s10 的 2s 载荷，响应使用录制 version_mismatch（不把原非法 3s 请求计作 driver 行为），随后插入 `b-t08-refresh-after-conflict` get_context 桥；桥从拒绝时的 world/control/work 与已有 activeInput 声明派生，不执行 apply；驱动器真实走 refresh_context，再以新 requestId 重发完整相同的合法载荷。模型调用仍恰为 pointPlan/action/targets/results/updates/time/narration，无重复 action/results/updates，也不计算 successor。
+
+**harness 加强**：`driveControllerSlice` 只运行到显式 inspect/probe/command 边界，并限制最多 500 步；既有 `driveControllerSegment` 仍要求该段模型声明全部消费。preview 构建结果深拷贝，避免复用标本对象同时改写模型输入预期；有定向反例证明篡改 begin preview 会在 action 的 input 核对处被拒绝。T04/T08 的合法响应仍在 serve 期执行 schema、捕获/摘要链、独立预期与最终 preview 体对齐；commit 摘要与终态状态篡改均有反例。
+
+验证：前端全套 **17 文件 309 项通过**，`typecheck:world` 与生产 build（含 lint/全前端类型检查）通过，保留既有 hook 依赖及未使用变量 warnings；共同接口统一入口通过（Python 109+317、契约 38、轨迹 65、四类破坏探针全部拒绝）。另以 A 的 Python WorldState/canonical 工具复核 T04/T08 四组 baseline/独立终态摘要及 commit head，一致；TS 不实现另一套摘要算法。
+
+**本段复审 P2 修复：conclude 响应的输入生命周期。** 复审方证实原检查只覆盖后续 context/重放；单改 s2.inputAvailable=false 或 s13.inputAvailable=true 仍能通过，属于验收缺口，尚未证明控制器业务错误。harness 现支持独立的逐响应 businessAssertions，先经 schema 校验，再断言业务字段，全部通过才交驱动器消费。T04 用显式常量约束 s2 `/world/advance/inputAvailable=true`、s13 同路径为 false，两者 `/world/advance/intentStatus=consumed`；预期不从被测 conclude 响应读取。双样本各补两条 inputAvailable 篡改反例，断言拒绝发生在对应 s2/s13，后续 context、重放与终态读取尚未发生，错误响应也未计入已消费 conclude。全套 17 文件 **313 项通过**，类型检查与共同接口统一入口复跑通过；本修复只增强验收，未因该发现修改控制器业务逻辑。
+
+**复审结论：T04、自动轮入口与 T08 本段通过，原 P2 验收缺口已关闭，未发现新增阻塞问题。** 复审方实际复跑 313 项、类型检查与共同接口验收全部通过，并确认双样本四条篡改反例在对应 s2/s13、响应交给驱动器前拒绝，不依赖后续响应。该结论对应当前未提交的本段改动。完整 B1 仍待 T05、B 自有 fault transport 的其余 T06 语义，以及 H1 真实 HTTP；T07/T09 恢复接管仍归 B2/H2。本段不宣称真实服务事务、动态模型需求发现或中间 preview 摘要已经验收。

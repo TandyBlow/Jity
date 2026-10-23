@@ -66,6 +66,9 @@ export interface CorpusStep {
   captures: { variable: string; path: string }[];
   digestChain: { variable: string; captureStepId: string; path: string }[];
   digestPin?: { path: string; digest: string };
+  /** Independent scenario rules checked on this response before the
+   * driver can consume it; later fixed responses cannot repair a violation. */
+  businessAssertions?: { path: string; expected: Json }[];
   expectation?: {
     projectionPath: string; digestPath: string; expectedProjection: Json; expectedDigest: string;
     alignsWith?: { previewStepId: string; workingStatePath: string; workingStateDigestPath: string };
@@ -195,7 +198,9 @@ export function buildCorpus(rawTrace: unknown, sampleId: string, specimens: Prev
       const work = served.work;
       const control = served.control;
       if (!world || !work || !control) throw new ProtocolError(`[${specimen.label}] preview specimen needs served world/control/work after ${step.id}`);
-      const built = specimen.build(served);
+      // Each served specimen owns its body, even if an author reuses an
+      // object also used to declare model expectations or another preview.
+      const built = structuredClone(specimen.build(served));
       steps.push({
         id: specimen.label, segment: 'preview', sharedStepId: null, operation: 'preview_point',
         request: {
@@ -249,8 +254,8 @@ export class ScenarioTransport implements WorldTransport {
   readonly requests: Json[] = [];
   constructor(private readonly steps: CorpusStep[], private readonly label: string) {}
   get exhausted(): boolean { return this.index >= this.steps.length; }
-  /** True once every controller/preview step is consumed and only inspect
-   * (harness-issued) steps remain. */
+  get nextStepId(): string | null { return this.steps[this.index]?.id ?? null; }
+  /** True at an explicit inspect/probe/command boundary, or at the end. */
   get controllerDrained(): boolean {
     const next = this.steps[this.index];
     return next == null || (next.segment !== 'controller' && next.segment !== 'preview');
@@ -304,6 +309,7 @@ export class ScenarioTransport implements WorldTransport {
       // step. A retry_same_request therefore re-sends its payload as the
       // NEXT declared step — the one carrying the 'continue' expectation.
       const validatedError = validateError(response);
+      this.assertBusiness(step, validatedError);
       this.servedResponses.set(step.id, validatedError as unknown as Json);
       for (const capture of step.captures) this.captured.set(capture.variable, at(validatedError, capture.path));
       for (const link of step.digestChain) {
@@ -324,6 +330,7 @@ export class ScenarioTransport implements WorldTransport {
     // independent expectation, and pins hold fields no reference consumes to
     // externally precomputed digests.
     const validated = validateSuccess(operation, response) as unknown as Json;
+    this.assertBusiness(step, validated);
     this.servedResponses.set(step.id, validated);
     for (const capture of step.captures) this.captured.set(capture.variable, at(validated, capture.path));
     for (const link of step.digestChain) {
@@ -349,20 +356,37 @@ export class ScenarioTransport implements WorldTransport {
     this.requests.push(structuredClone(sent) as Json);
     return validated as never;
   }
-  /** Harness-issued exchange (session-open reads and pre-point allocations
-   * the scheduler cannot emit): the request IS the declared template, with a
-   * fresh harness-minted id where the operation bears one; the call passes
-   * through the same identity/order/scope/schema verification. */
+  private assertBusiness(step: CorpusStep, response: unknown): void {
+    for (const assertion of step.businessAssertions ?? []) {
+      const actual = at(response, assertion.path);
+      if (!equal(actual, assertion.expected)) throw new ProtocolError(`[${this.label}] step ${step.id}: business assertion failed at ${assertion.path}: expected ${JSON.stringify(assertion.expected)}, got ${JSON.stringify(actual)}`);
+    }
+  }
+  /** Explicit harness reads/replays. A declared retry reuses the prior
+   * served write's identity and is held to its original complete payload. */
   async runInspect(stepId: string): Promise<{ step: CorpusStep; response: Json }> {
+    return this.runDeclared(stepId, 'inspect');
+  }
+  /** Deliberately invalid exchanges are marked probes, never attributed to
+   * scheduler decisions. Expected WorldApiError still consumes the step. */
+  async runProbe(stepId: string): Promise<{ step: CorpusStep; response: Json }> {
+    return this.runDeclared(stepId, 'probe');
+  }
+  private async runDeclared(stepId: string, segment: 'inspect' | 'probe'): Promise<{ step: CorpusStep; response: Json }> {
     const step = this.steps[this.index];
-    if (!step || step.id !== stepId || step.segment !== 'inspect') throw new ProtocolError(`[${this.label}] inspect ${stepId} is not at the execution front (next: ${step?.id ?? 'none'})`);
+    if (!step || step.id !== stepId || step.segment !== segment) throw new ProtocolError(`[${this.label}] ${segment} ${stepId} is not at the execution front (next: ${step?.id ?? 'none'})`);
     const request: Record<string, unknown> = { ...(step.request as Record<string, unknown>) };
     if (step.requestIdRequired && request.requestId === undefined) {
-      let harnessId: Id;
-      do {
-        harnessId = `${this.label}_harness_${++this.harnessRequestCounter}`;
-      } while (this.seenRequestIds.has(harnessId));
-      request.requestId = harnessId;
+      if (step.requestIdExpectation === 'continue') {
+        if (!this.lastServedRequestId) throw new ProtocolError(`[${this.label}] no served request to replay at ${stepId}`);
+        request.requestId = this.lastServedRequestId;
+      } else {
+        let harnessId: Id;
+        do {
+          harnessId = `${this.label}_harness_${++this.harnessRequestCounter}`;
+        } while (this.seenRequestIds.has(harnessId));
+        request.requestId = harnessId;
+      }
     }
     const response = (await this.execute(step.operation, request as never, step.scope as never)) as unknown as Json;
     return { step, response };
@@ -410,9 +434,17 @@ export function assertSharedExpectation(step: CorpusStep, response: Json): void 
  * model call is consumed; any early terminal status fails the run. Inspect
  * steps stay for the harness to issue afterwards. */
 export async function driveControllerSegment<H extends { driver: { step(): Promise<{ kind: string; reason?: string; detail?: string } | undefined> }; transport: { controllerDrained: boolean }; model: { exhausted: boolean } }>(scenario: H, label = 'segment'): Promise<void> {
-  for (;;) {
+  await driveControllerSlice(scenario, label);
+  if (!scenario.model.exhausted) throw new ProtocolError(`[${label}] model calls remain at the declared boundary`);
+}
+
+/** Runs to the next explicit harness boundary. Later slices may still own
+ * model calls; no fixture request or memory is fed into the driver here. */
+export async function driveControllerSlice<H extends { driver: { step(): Promise<{ kind: string; reason?: string; detail?: string } | undefined> }; transport: { controllerDrained: boolean } }>(scenario: H, label = 'slice'): Promise<void> {
+  for (let i = 0; i < 500; i++) {
+    if (scenario.transport.controllerDrained) return;
     const terminal = await scenario.driver.step();
     if (terminal) throw new ProtocolError(`[${label}] controller segment ended early: ${terminal.kind}/${terminal.reason ?? terminal.detail}`);
-    if (scenario.transport.controllerDrained && scenario.model.exhausted) return;
   }
+  throw new ProtocolError(`[${label}] controller step limit exceeded`);
 }

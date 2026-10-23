@@ -610,6 +610,34 @@ describe('review regressions round 2 (18714a3 findings)', () => {
   });
 });
 
+describe('automatic round entry', () => {
+  test('continue retires the old plan and allocates the new round slots before pointPlan', async () => {
+    const player = mkWorld({ advance: { advanceId: 'adv1', inputId: 'in1', intentStatus: 'consumed', inputAvailable: true }, activeRoundId: 'r1', round: { roundId: 'r1', trigger: 'player', order: ORDER, cursor: 6, actedIds: ['person_a'], visitedIds: ORDER, conclusion: null } });
+    const automatic = { ...player, activeRoundId: 'r2', round: { roundId: 'r2', trigger: 'automatic' as const, order: ['person_c'], cursor: 0, actedIds: [], visitedIds: [], conclusion: null } };
+    const transport = new ScriptedTransport([
+      { op: 'round_conclusion_conclude', respond: () => ({ world: automatic, control: mkControl({ revision: 1 }), work: null, data: { kind: 'continue', roundId: 'r1', nextRoundId: 'r2' } }) },
+      { op: 'allocate_ids', respond: () => ({ world: automatic, control: mkControl({ revision: 1 }), work: null, data: { allocations: [{ slotKey: 'point', id: 'p2' }, { slotKey: 'group', id: 'g2' }] } }) },
+    ]);
+    const model = new ScriptedModel([{ task: 'pointPlan', output: [{ pointId: 'p2', kind: 'normal', timeAdvance: ta(2), actorIds: ['person_c'] }] as unknown as Json }]);
+    const memory = memoryWithAdvanceStart({
+      playerInput: null, ids: { point: 'old_point', 'group:person_c': 'old_group' },
+      plan: [{ pointId: 'old_point', kind: 'normal', timeAdvance: ta(1), actorIds: ['person_a'] }], planIndex: 1,
+      continuation: { kind: 'continue', closedBy: 'model', cancelReason: null, candidateCharacterIds: ['person_c'], nextRoundId: 'r2' },
+      roundAllocations: { r2: { allocationKey: 'r2_slots', slots: [{ slotKey: 'point', kind: 'point', scope: 'r2' }, { slotKey: 'group', kind: 'group', scope: 'r2' }] } },
+    });
+    const driver = new ControllerDriver({ transport, model }, memory, { world: player, control: mkControl({ phase: 'assess_continuation' }) }, { identityAliases: { 'group:person_c': 'group' } });
+    await driver.step();
+    expect(driver.getMemory()).toMatchObject({ plan: null, planIndex: 0, continuation: null });
+    await driver.step();
+    expect(transport.ops).toEqual(['round_conclusion_conclude', 'allocate_ids']);
+    expect(model.calls).toEqual([]);
+    expect(driver.getMemory()).toMatchObject({ ids: { point: 'p2', 'group:person_c': 'g2' }, allocatedKeys: ['r2_slots'] });
+    await driver.step();
+    expect(model.calls).toMatchObject([{ task: 'pointPlan', key: 'r2' }]);
+    expect(driver.pendingDecision()).toMatchObject({ kind: 'transport', operation: 'checkpoint_begin_point', request: { pointId: 'p2' } });
+  });
+});
+
 describe('review regressions round 3 (bb5abd3 findings)', () => {
   test('a command delivered during a request survives a resolve_gate followup', async () => {
     const ops: WorldOperation[] = [];
