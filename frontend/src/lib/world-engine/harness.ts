@@ -4,13 +4,15 @@
  * exactly like the shared interpreter), B-authored preview specimens are
  * inserted at declared positions and marked as such. Every served response
  * is held to the corpus' runtime identity: the declared digest chain between
- * capture and reference positions, and the shared independent expectations —
- * at serve time, not only on harness-issued inspects. The transport never
- * hands expected requests to the driver and reads nothing from driver
- * memory: requestId lifecycle is enforced independently (a fresh id per
- * id-bearing operation, none where the operation declares no id, served
- * envelopes echo the id actually sent). Nothing steers driver memory
- * mid-flight. */
+ * capture and reference positions, the shared independent expectations —
+ * at serve time, not only on harness-issued inspects — scenario-declared
+ * alignments that bind a final preview's served body and digest to a later
+ * independent expectation, and scenario-declared independent digest pins for
+ * fields no later reference consumes. The transport never hands expected
+ * requests to the driver and reads nothing from driver memory: requestId
+ * lifecycle is enforced independently (a fresh id per id-bearing operation,
+ * none where the operation declares no id, served envelopes echo the id
+ * actually sent). Nothing steers driver memory mid-flight. */
 import { at, equal, instantiate, readTrace } from './trace-runner';
 import { ProtocolError, validateError, validateRequest, validateSuccess } from './protocol';
 import { WorldApiError, type WorldTransport } from './transport';
@@ -18,6 +20,19 @@ import type { ModelTask } from './schedule';
 import type { ControlState, Id, Json, PointWork, Scope, WorldContext, WorldOperation } from './types';
 
 export const PLACEHOLDER_DIGEST = '0'.repeat(64); // schema-valid; never evidence of a real digest
+
+export interface PreviewAlignment {
+  previewStepId: string;
+  expectationStepId: string;
+  workingStatePath: string;
+  workingStateDigestPath: string;
+}
+
+export interface IndependentDigestPin {
+  stepId: string;
+  path: string;
+  digest: string;
+}
 
 export interface CorpusStep {
   id: string; // shared step id or B-specimen label
@@ -32,7 +47,11 @@ export interface CorpusStep {
   placeholderDigests?: boolean;
   captures: { variable: string; path: string }[];
   digestChain: { variable: string; captureStepId: string; path: string }[];
-  expectation?: { projectionPath: string; digestPath: string; expectedProjection: Json; expectedDigest: string };
+  digestPin?: { path: string; digest: string };
+  expectation?: {
+    projectionPath: string; digestPath: string; expectedProjection: Json; expectedDigest: string;
+    alignsWith?: { previewStepId: string; workingStatePath: string; workingStateDigestPath: string };
+  };
 }
 
 export interface ServedSnapshot { world: WorldContext | null; control: ControlState | null; work: PointWork | null }
@@ -79,8 +98,12 @@ function collectVariablePositions(template: unknown, value: unknown, pointer: st
 
 /** Instantiates every shared step for one sample (request/scope/response via
  * the trace's own capture discipline), tracks the served state, and inserts
- * B-authored preview specimens at their declared positions. */
-export function buildCorpus(rawTrace: unknown, sampleId: string, specimens: PreviewSpecimenSpec[], inspectStepIds: string[]): Corpus {
+ * B-authored preview specimens at their declared positions. Preview
+ * alignments and independent digest pins are scenario-declared expectations
+ * the trace itself does not carry: an alignment binds a final preview's
+ * served body and digest to a later step's independent expectation, a pin
+ * holds a served field to an externally precomputed digest. */
+export function buildCorpus(rawTrace: unknown, sampleId: string, specimens: PreviewSpecimenSpec[], inspectStepIds: string[], previewAlignments: PreviewAlignment[] = [], digestPins: IndependentDigestPin[] = []): Corpus {
   const trace = readTrace(rawTrace);
   const sample = trace.samples.find((s) => s.id === sampleId);
   if (!sample) throw new ProtocolError(`Unknown sample ${sampleId}`);
@@ -153,6 +176,18 @@ export function buildCorpus(rawTrace: unknown, sampleId: string, specimens: Prev
       });
     }
   }
+  for (const alignment of previewAlignments) {
+    const step = steps.find((s) => s.id === alignment.expectationStepId);
+    if (!step?.expectation) throw new ProtocolError(`[${alignment.expectationStepId}] preview alignment needs an expectation-bearing step`);
+    if (!steps.some((s) => s.id === alignment.previewStepId)) throw new ProtocolError(`[${alignment.previewStepId}] preview alignment references an unknown preview step`);
+    step.expectation.alignsWith = { previewStepId: alignment.previewStepId, workingStatePath: alignment.workingStatePath, workingStateDigestPath: alignment.workingStateDigestPath };
+  }
+  for (const pin of digestPins) {
+    const step = steps.find((s) => s.id === pin.stepId);
+    if (!step) throw new ProtocolError(`[${pin.stepId}] digest pin references an unknown step`);
+    if (step.digestPin) throw new ProtocolError(`[${pin.stepId}] duplicate digest pin for ${step.digestPin.path}`);
+    step.digestPin = { path: pin.path, digest: pin.digest };
+  }
   return { steps, servedAfter, requests, sampleId };
 }
 
@@ -166,6 +201,7 @@ export class ScenarioTransport implements WorldTransport {
   private readonly seenRequestIds = new Set<Id>();
   private frontRequestId: Id | null = null; // id accepted at the current front: a retry_same_request re-sends it
   private readonly captured = new Map<string, unknown>();
+  private readonly servedResponses = new Map<string, Json>();
   readonly ops: WorldOperation[] = [];
   readonly requests: Json[] = [];
   constructor(private readonly steps: CorpusStep[], private readonly label: string) {}
@@ -209,14 +245,28 @@ export class ScenarioTransport implements WorldTransport {
     if (step.responseKind === 'error') throw new WorldApiError(validateError(response));
     // Runtime corpus identity: captures feed the declared digest chain — a
     // served response may not diverge from the earlier-served capture it
-    // references — and every declared independent expectation holds at
-    // serve time, not only on harness-issued inspects.
+    // references — every declared independent expectation holds at serve
+    // time, not only on harness-issued inspects, scenario-declared
+    // alignments bind a final preview's served body and digest to a later
+    // independent expectation, and pins hold fields no reference consumes to
+    // externally precomputed digests.
     const validated = validateSuccess(operation, response) as unknown as Json;
+    this.servedResponses.set(step.id, validated);
     for (const capture of step.captures) this.captured.set(capture.variable, at(validated, capture.path));
     for (const link of step.digestChain) {
       if (!equal(at(validated, link.path), this.captured.get(link.variable))) throw new ProtocolError(`[${this.label}] step ${step.id}: digest chain broken at ${link.path} (${link.variable}, captured at ${link.captureStepId}): served value diverges from the recorded capture`);
     }
-    if (step.expectation) assertSharedExpectation(step, validated);
+    if (step.digestPin && at(validated, step.digestPin.path) !== step.digestPin.digest) throw new ProtocolError(`[${this.label}] step ${step.id}: independent digest pin broken at ${step.digestPin.path}: served ${String(at(validated, step.digestPin.path))}, pinned ${step.digestPin.digest}`);
+    if (step.expectation) {
+      assertSharedExpectation(step, validated);
+      const alignment = step.expectation.alignsWith;
+      if (alignment) {
+        const preview = this.servedResponses.get(alignment.previewStepId);
+        if (!preview) throw new ProtocolError(`[${this.label}] step ${step.id}: alignment preview ${alignment.previewStepId} has not been served`);
+        if (!equal(at(preview, alignment.workingStatePath), step.expectation.expectedProjection)) throw new ProtocolError(`[${this.label}] step ${step.id}: preview alignment broken — ${alignment.previewStepId}${alignment.workingStatePath} diverges from the independent projection of ${step.id}`);
+        if (at(preview, alignment.workingStateDigestPath) !== step.expectation.expectedDigest) throw new ProtocolError(`[${this.label}] step ${step.id}: preview alignment broken — ${alignment.previewStepId}${alignment.workingStateDigestPath} diverges from the independent digest of ${step.id}`);
+      }
+    }
     this.index++;
     this.frontRequestId = null;
     this.ops.push(operation);

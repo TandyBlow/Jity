@@ -31,6 +31,17 @@ function buildSpecimen(realWorkingState: Json, realPointProjection: Json): { wor
   };
 }
 
+/** Independent digest pins for the final preview's pointProjectionDigest —
+ * the one digest no later response references, so the runtime digest chain
+ * cannot hold it. Precomputed OUTSIDE the corpus by the server's own recipe
+ * (canonical sha256 over the recorded s16 pointProjection body,
+ * app.schemas.world.canonical.canonical_digest) and re-verified against both
+ * samples; the served corpus instance never feeds these values. */
+const POINT_PROJECTION_DIGEST_PINS: Record<string, string> = {
+  sample_1: '02b75b795d24430c01a1944fe42e720b574084cd12dd544474e2315814a3495a',
+  sample_2: 'e6e2280db6d16f8b514e8af60348bf7114beae7a8ddcfb7d065636c33ebc9657',
+};
+
 export interface T01Scenario {
   driver: ControllerDriver;
   transport: ScenarioTransport;
@@ -50,7 +61,14 @@ export function buildT01Scenario(sampleId: string, rawOverride?: object, driverO
   const recorded = instantiate(recordedPreview.response, sample.values) as { data: { workingState: Json; pointProjection: Json } };
   const specimen = buildSpecimen(recorded.data.workingState, recorded.data.pointProjection);
   const specimens: PreviewSpecimenSpec[] = [{ afterStepId: 's6', label: 'b-preview-after-begin-s6', build: () => structuredClone(specimen) }];
-  const corpus = buildCorpus(raw, sampleId, specimens, ['s21', 's22', 's23']);
+  const projectionPin = POINT_PROJECTION_DIGEST_PINS[sampleId];
+  if (!projectionPin) throw new ProtocolError(`[T01] no independent pointProjectionDigest pin for ${sampleId}`);
+  // The final preview (s16) is bound to s21's independent expectation: its
+  // served working state must BE the expected committed projection and its
+  // workingStateDigest the independently pinned state digest.
+  const corpus = buildCorpus(raw, sampleId, specimens, ['s21', 's22', 's23'],
+    [{ previewStepId: 's16', expectationStepId: 's21', workingStatePath: '/data/workingState', workingStateDigestPath: '/data/workingStateDigest' }],
+    [{ stepId: 's16', path: '/data/pointProjectionDigest', digest: projectionPin }]);
   const roundId = (corpus.servedAfter.s5.world!.activeRoundId ?? corpus.servedAfter.s5.world!.round!.roundId) as Id;
 
   const reqS1 = corpus.requests.s1 as unknown as { initial: Json };

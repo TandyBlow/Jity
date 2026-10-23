@@ -1,9 +1,10 @@
 /** T01 fixed-response controller acceptance: the real ControllerDriver runs
  * the declared corpus for both shared samples; serve-time identity (runtime
- * digest chain, shared independent expectations) and harness-issued inspect
- * reads are verified; directed negatives prove the harness rejects
+ * digest chain, independent digest pins, preview↔expectation alignment,
+ * shared independent expectations) and harness-issued inspect reads are
+ * verified; directed negatives prove the harness rejects
  * request/scope/model mismatches, undeclared previews, request-id reuse,
- * recorded echo corruption and tampered shared digests. */
+ * recorded echo corruption and tampered shared digests or preview bodies. */
 import { describe, expect, test } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
@@ -142,6 +143,22 @@ describe('T01 harness directed negatives', () => {
     const scenario = buildT01Scenario('sample_1');
     (scenario.corpus.steps.find((s) => s.sharedStepId === 's18')!.response as { data: { stateDigest: string } }).data.stateDigest = 'f'.repeat(64);
     await expect(driveControllerSegment(scenario)).rejects.toThrow(/digest chain broken/);
+  });
+
+  test('rejects a tampered point projection digest via the independent pin', async () => {
+    const scenario = buildT01Scenario('sample_1');
+    (scenario.corpus.steps.find((s) => s.sharedStepId === 's16')!.response as { data: { pointProjectionDigest: string } }).data.pointProjectionDigest = 'f'.repeat(64);
+    await expect(driveControllerSegment(scenario)).rejects.toThrow(/independent digest pin broken/);
+  });
+
+  test('rejects a tampered final preview working state via the s21 alignment', async () => {
+    const scenario = buildT01Scenario('sample_1');
+    const working = (scenario.corpus.steps.find((s) => s.sharedStepId === 's16')!.response as { data: { workingState: { characters: Record<string, { sanity: number }> } } }).data.workingState;
+    working.characters.person_a.sanity = 11; // the s21 independent expectation pins 10
+    await driveControllerSegment(scenario);
+    // The alignment binds s16's served body to s21's independent projection,
+    // so the divergence surfaces when s21 is served.
+    await expect(scenario.transport.runInspect('s21')).rejects.toThrow(/preview alignment broken/);
   });
 
   test('rejects a driver that reuses one requestId across operations', async () => {
