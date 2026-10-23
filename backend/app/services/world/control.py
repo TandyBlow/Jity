@@ -3,20 +3,26 @@ baseline store.
 
 Refusal surface: `ServiceRefusal` carries the wire code decided by the
 a1-kernel-plan §四 mapping; schema-level payload failures map to
-`request_malformed`. Every body write answers with the full OperationResult
-envelope (world/control/work snapshots), reads with the ReadResult /
-ContextResponse shapes, preview with the ComputeResult shape. Storage keeps
-authoritative state only — blockedReasons/canCompute are derived per
-response. Roll rows, TTL expiry, restore/takeover copying and crash recovery
-stay with A3.
+`request_malformed`. HTTP status, client action and the control-snapshot
+requirement always derive from the shared `ERROR_CODES` table. Kernel
+exceptions (`KernelViolation`) are mapped at the service boundary inside the
+transaction, so callers see the documented refusal and no mutation. Every
+body write answers with the full OperationResult envelope
+(world/control/work snapshots built and validated inside the transaction —
+a shape bug refuses and discards the copy instead of committing it), reads
+with the ReadResult / ContextResponse shapes, preview with the ComputeResult
+shape. Storage keeps authoritative state only — blockedReasons/canCompute
+are derived per response. Roll rows, TTL expiry, restore/takeover copying
+and crash recovery stay with A3.
 
 Per-operation order (a1-kernel-plan §四): schema validation → requestId
 idempotency (checked authoritatively inside the store transaction, so a
 concurrent duplicate replays instead of double-running) → lease fence →
-expected head/version/revision binding → ladder preconditions → business
-writes → revision increment → response projection. ``CheckpointRequest``
-writes bind the committed head; work-in-progress moves only working pointers
-and the working intent projection — commit_point promotes them.
+expected head/version/revision binding → active-chain binding → ladder
+preconditions → business writes → revision increment → response projection.
+``CheckpointRequest`` writes bind the committed head; work-in-progress moves
+only working pointers and the working intent projection — commit_point
+promotes them.
 """
 import typing
 
@@ -27,6 +33,8 @@ from app.schemas.world.contracts import TimelinePoint, WorldInitialState
 from app.schemas.world.v2.contexts import (
     ControlState, GateView, PointWorkView, WorkingProgress, WorldContext,
 )
+from app.schemas.world.v2.errors import ERROR_CODES
+from app.schemas.world.v2.envelopes import ErrorResponse
 from app.schemas.world.v2.projections import prefix_projection, request_projection
 from app.schemas.world.v2.registry import OPERATION_BY_NAME
 from app.schemas.world.v2 import SCHEMA_MODELS as _SCHEMA_MODELS
@@ -43,6 +51,7 @@ from .units import (
     begin_working, scan_working, skip_working, stage_working, unit_content_hash,
     validate_commit_groups,
 )
+from .violations import KernelViolation, ViolationKind
 
 ENGINE = 'world-engine-v1'
 CANONICAL = 'world-canonical-v1'
@@ -52,15 +61,19 @@ DEFAULT_TTL_MILLI = 3_600_000
 
 
 class ServiceRefusal(Exception):
-    def __init__(self, code, detail, http_status=409, client_action='fix_request',
-                 details=None, control_required=False):
+    """Wire refusal; status, client action and the control-snapshot flag come
+    from the shared error table so the response can never drift from the
+    ErrorResponse contract."""
+
+    def __init__(self, code, detail, details=None):
+        spec = ERROR_CODES[code]
         super().__init__(f'{code}: {detail}')
         self.code = code
         self.detail = detail
-        self.http_status = http_status
-        self.client_action = client_action
-        self.details = details
-        self.control_required = control_required
+        self.http_status = spec['httpStatus']
+        self.client_action = spec['clientAction']
+        self.details = details if details is not None else {}
+        self.control_required = spec['controlRequired']
 
 
 def _request_body_fields(model_cls):
@@ -119,8 +132,8 @@ def control_view(record):
         canCompute=not blocked)
 
 
-def _refuse(code, detail, **kwargs):
-    raise ServiceRefusal(code, detail, **kwargs)
+def _refuse(code, detail, details=None):
+    raise ServiceRefusal(code, detail, details=details)
 
 
 _VIOLATION_CODES = {
@@ -136,10 +149,26 @@ _VIOLATION_CODES = {
 def _refuse_violations(operation, violations):
     for violation in violations:
         code = _VIOLATION_CODES.get(violation.kind, 'phase_invalid')
-        kwargs = {}
-        if code in ('paused', 'phase_invalid', 'narration_blocked'):
-            kwargs['control_required'] = True
-        _refuse(code, f'{operation}: {violation.detail}', **kwargs)
+        _refuse(code, f'{operation}: {violation.detail}')
+
+
+_KERNEL_CODE_MAP = {
+    ViolationKind.PREFIX_BINDING: ('version_mismatch',
+                                   {'reason': 'prefix_binding_mismatch'}),
+    ViolationKind.TIME_LOCKED: ('point_time_locked', None),
+    ViolationKind.POSITION_INVALID: ('request_malformed', None),
+    ViolationKind.SEMANTIC_INVALID: ('request_malformed', None),
+    ViolationKind.COVERAGE_INCOMPLETE: ('request_malformed', None),
+    ViolationKind.ID_UNRESOLVED: ('version_mismatch', None),
+}
+
+
+def _map_kernel(operation, error):
+    """Kernel refusals never escape as raw exceptions: the taxonomy maps onto
+    the wire codes inside the transaction (T08 s9 pins version_mismatch /
+    prefix_binding_mismatch for a sealed-time forgery)."""
+    code, details = _KERNEL_CODE_MAP.get(error.kind, ('phase_invalid', None))
+    _refuse(code, f'{operation}: {error.detail}', details=details)
 
 
 def _ladder(record, operation, work=None):
@@ -155,10 +184,9 @@ def _lease(record):
 def _check_lease(record, request):
     lease = _lease(record)
     if lease is None or request.leaseToken != lease['leaseToken']:
-        _refuse('lease_invalid', 'unknown lease token', client_action='reacquire_lease')
+        _refuse('lease_invalid', 'unknown lease token')
     if request.fenceEpoch != lease['fenceEpoch']:
-        _refuse('stale_epoch', 'lease epoch has moved on',
-                client_action='reacquire_lease')
+        _refuse('stale_epoch', 'lease epoch has moved on')
 
 
 def _bind_expected(record, request):
@@ -169,16 +197,25 @@ def _bind_expected(record, request):
             or request.expectedVersion != record['version']
             or request.expectedCheckpointRevision != record['control']['revision']):
         _refuse('version_mismatch',
-                'head, version or checkpoint revision binding differs',
-                client_action='refresh_context')
+                'head, version or checkpoint revision binding differs')
 
 
 def _bind_work_point(record, request):
     work = record.get('work')
     if work is not None and request.pointId != work['pointId']:
         # With no active work the ladder's phase/pointWork rows refuse first.
-        _refuse('version_mismatch', 'point binding differs from the active work',
-                client_action='refresh_context')
+        _refuse('version_mismatch', 'point binding differs from the active work')
+
+
+def _bind_chain(record, request):
+    """Commit/preview/conclusion writes bind the request's advance and round
+    identities to the stored active chain — not merely to each other
+    (forged outer+inner metadata must not satisfy this)."""
+    advance = record.get('advance')
+    round_view = record.get('round')
+    if (advance is None or request.advanceId != advance['advanceId']
+            or round_view is None or request.roundId != round_view['roundId']):
+        _refuse('version_mismatch', 'advance or round binding differs from the active chain')
 
 
 def _work_or_none(record):
@@ -188,8 +225,7 @@ def _work_or_none(record):
 def _sealed_prefix(record):
     work = _work_or_none(record)
     if work is None or not work['sealed']:
-        _refuse('phase_invalid', 'commit requires a sealed point work',
-                control_required=True)
+        _refuse('phase_invalid', 'commit requires a sealed point work')
     return work
 
 
@@ -207,6 +243,14 @@ def _new_narration(record, point_id, generation=1):
 
 
 # --- response projections ---------------------------------------------------
+
+
+def _views(record):
+    """Response snapshots, built and validated while the transaction copy is
+    still discardable (a shape bug here must never reach the store)."""
+    return {'world': _world_view(record),
+            'control': control_view(record).model_dump(mode='json'),
+            'work': _work_view(record)}
 
 
 def _world_view(record):
@@ -248,6 +292,17 @@ def _world_view(record):
     }).model_dump(mode='json')
 
 
+def _pending_group_view(group):
+    """Wire projection of the pending group: internal bookkeeping (per-source
+    action texts, raw target specs) stays in the store; unconfirmed targets
+    project as an empty goal set (PendingGroupView.targetIds is not nullable)."""
+    view = {key: value for key, value in group.items()
+            if key not in ('actionTexts', 'targetIdsBySource', 'targetSpecsBySource')}
+    if view['targetIds'] is None:
+        view['targetIds'] = []
+    return view
+
+
 def _work_view(record):
     work = record.get('work')
     if work is None:
@@ -265,8 +320,7 @@ def _work_view(record):
             {'unitId': unit['unitId'], 'groupId': unit['groupId'],
              'memberIds': unit['memberIds'], 'contentHash': unit['contentHash']}
             for unit in work['units']],
-        'pendingGroup': ({key: value for key, value in work['pendingGroup'].items()
-                          if key != 'actionTexts'}
+        'pendingGroup': (_pending_group_view(work['pendingGroup'])
                          if work['pendingGroup'] else None),
         'successor': work['successor'],
     }
@@ -279,13 +333,18 @@ def _envelope_base(store):
             'serverTimeEpochMilli': _now(store)}
 
 
-def _operation_envelope(store, operation, request, record, data, digest):
+def _operation_envelope(store, operation, request, views, data, digest,
+                        replayed=False):
     """OperationResult: request key, replay flag and the full snapshots."""
     return {**_envelope_base(store), 'operation': operation,
             'requestId': request.requestId, 'requestHash': digest,
-            'replayed': False, 'world': _world_view(record),
-            'control': control_view(record).model_dump(mode='json'),
-            'work': _work_view(record), 'data': data}
+            'replayed': replayed, **views, 'data': data}
+
+
+def _validate_success(operation, envelope):
+    model = next(model for model in _SCHEMA_MODELS
+                 if model.__name__ == OPERATION_BY_NAME[operation].successSchema)
+    model.model_validate(envelope)
 
 
 def _read_envelope(store, record, data):
@@ -293,15 +352,12 @@ def _read_envelope(store, record, data):
     return {**_envelope_base(store), 'world': _world_view(record), 'data': data}
 
 
-def _compute_envelope(store, operation, record, data):
+def _compute_envelope(store, operation, views, data):
     """ComputeResult (preview): no request key, replay flag or digest."""
-    return {**_envelope_base(store), 'operation': operation,
-            'world': _world_view(record),
-            'control': control_view(record).model_dump(mode='json'),
-            'work': _work_view(record), 'data': data}
+    return {**_envelope_base(store), 'operation': operation, **views, 'data': data}
 
 
-def _context_envelope(store, record, data):
+def _context_envelope(store, data):
     """ContextResponse: snapshots plus the active input chain and recovery."""
     return {**_envelope_base(store), 'world': data['world'],
             'control': data['control'], 'work': data['work'],
@@ -336,8 +392,7 @@ def handle_create_world(store, request):
     _new_narration(record, root_id)
     record['pointStates'][root_id] = {
         'version': 0, 'state': state, 'stateDigest': state_digest(state)}
-    store.create_world(world_id, record)
-    return {'worldId': world_id, 'rootPointId': root_id, 'lease': lease}
+    return record, {'worldId': world_id, 'rootPointId': root_id, 'lease': lease}
 
 
 def handle_allocate_ids(store, record, request):
@@ -360,20 +415,32 @@ def handle_allocate_ids(store, record, request):
 def _narration_entry(record, point_id):
     entry = record['narrations'].get(point_id)
     if entry is None:
-        _refuse('version_mismatch', f'no committed narration for point {point_id}',
-                client_action='refresh_context')
+        _refuse('version_mismatch', f'no committed narration for point {point_id}')
     return entry
 
 
 def _bind_head_mode(record, request):
     """Head narration writes fence through the advance lease and only target
-    the committed head; history narration carries no lease by schema."""
-    if request.mode != 'head':
+    the committed head; history narration carries no lease and only targets
+    historical points, including a former head regenerated in a new mode."""
+    if request.mode == 'history':
+        if request.pointId == record['headPointId']:
+            _refuse('claim_fenced', 'history narration cannot target the current head')
         return
     _check_lease(record, request)
     if request.pointId != record['headPointId']:
-        _refuse('version_mismatch', 'head narration targets another point',
-                client_action='refresh_context')
+        _refuse('version_mismatch', 'head narration targets another point')
+
+
+def _fence_claim(entry, request, action):
+    """A claim is fixed identity: token, generation and the mode it was
+    issued in. A head-mode token is not history authorization."""
+    claim = entry.get('claim')
+    if (claim is None or request.claimToken != claim['claimToken']
+            or request.generation != claim['generation']
+            or claim.get('mode') != request.mode):
+        _refuse('claim_fenced', f'{action} with a superseded or mismatched claim')
+    return claim
 
 
 def handle_narration_claim(store, record, request):
@@ -383,54 +450,68 @@ def handle_narration_claim(store, record, request):
         claim = entry.get('claim')
         if (claim is None or request.currentClaim.claimToken != claim['claimToken']
                 or request.currentClaim.generation != claim['generation']):
-            _refuse('claim_fenced', 'caller holds a superseded claim',
-                    client_action='refresh_context')
-    gate = _gate(record)
+            _refuse('claim_fenced', 'caller holds a superseded claim')
     fence = record['lease']['fenceEpoch'] if request.mode == 'head' else None
-    # Every fresh claim answers with a token (NarrationClaimSuccess: data
-    # carries claimToken unless replayed); claiming an already-settled
-    # narration re-issues the entry's current claim.
     claim = entry.get('claim')
+    if claim is not None and claim['mode'] != request.mode:
+        # A former head can be regenerated as history, but its issued head
+        # token never changes mode. Retire it and issue a new generation.
+        # The symmetric head path also repairs a legacy history claim that
+        # occupied the current head before the history-mode guard existed.
+        generation = entry['generation'] + 1
+        _new_narration(record, request.pointId, generation)
+        entry = _narration_entry(record, request.pointId)
+        if request.mode == 'head':
+            _issue_gate(store, record, generation)
+        claim = None
+    elif (claim is not None and request.mode == 'history'
+          and request.currentClaim is None):
+        _refuse('claim_fenced', 'retrieving a history claim requires its current authority')
+    # Every fresh claim answers with a token (NarrationClaimSuccess: data
+    # carries claimToken unless replayed); the claim keeps the mode it was
+    # issued in; regenerating in another mode above creates a new identity.
     if claim is None:
         token = f"claim_{entry['generation']}_{request.pointId}"
-        claim = {'claimToken': token, 'generation': entry['generation']}
+        now = _now(store)
+        claim = {'claimToken': token, 'generation': entry['generation'],
+                 'mode': request.mode, 'fenceEpoch': fence,
+                 'issuedAtEpochMilli': now,
+                 'expiresAtEpochMilli': now + DEFAULT_TTL_MILLI}
         entry['claim'] = claim
     return {'pointId': request.pointId, 'mode': request.mode,
             'claimToken': claim['claimToken'],
             'generation': entry['generation'], 'fenceEpoch': fence,
-            'issuedAtEpochMilli': gate['issuedAtEpochMilli'],
-            'expiresAtEpochMilli': gate['expiresAtEpochMilli']}
+            'issuedAtEpochMilli': claim['issuedAtEpochMilli'],
+            'expiresAtEpochMilli': claim['expiresAtEpochMilli']}
 
 
 def handle_narration_renew(store, record, request):
     _bind_head_mode(record, request)
     entry = _narration_entry(record, request.pointId)
-    claim = entry.get('claim')
-    if (claim is None or request.claimToken != claim['claimToken']
-            or request.generation != claim['generation']):
-        _refuse('claim_expired', 'unknown or superseded claim',
-                client_action='regenerate_narration')
-    gate = _gate(record)
+    claim = _fence_claim(entry, request, 'renewing')
+    claim['expiresAtEpochMilli'] = _now(store) + DEFAULT_TTL_MILLI
     return {'pointId': request.pointId, 'mode': request.mode,
             'generation': request.generation,
             'fenceEpoch': record['lease']['fenceEpoch'] if request.mode == 'head' else None,
-            'issuedAtEpochMilli': gate['issuedAtEpochMilli'],
-            'expiresAtEpochMilli': gate['expiresAtEpochMilli']}
+            'issuedAtEpochMilli': claim['issuedAtEpochMilli'],
+            'expiresAtEpochMilli': claim['expiresAtEpochMilli']}
 
 
 def handle_narration_submit(store, record, request):
     _bind_head_mode(record, request)
     entry = _narration_entry(record, request.pointId)
-    claim = entry.get('claim')
-    if (claim is None or request.claimToken != claim['claimToken']
-            or request.generation != claim['generation']):
-        _refuse('claim_fenced', 'submitting with a superseded claim',
-                client_action='refresh_context')
+    _fence_claim(entry, request, 'submitting')
+    if (entry['status'] == 'ready'
+            and (request.outcome != 'ready' or request.text != entry['text'])):
+        # Same generation, same claim: only the identical text replays; a
+        # changed text needs narration_delete and a new generation.
+        _refuse('request_malformed', 'narration text is immutable within a generation')
     entry['text'] = request.text
     entry['status'] = request.outcome
-    # Only the matching head operation clears the gate; a resubmitted history
-    # narration never touches the current head's narration flow.
-    if request.outcome == 'ready' and request.pointId == record['headPointId']:
+    # Only the matching head-mode operation on the committed head clears the
+    # gate; history-mode writes never touch the current narration flow.
+    if (request.outcome == 'ready' and request.mode == 'head'
+            and request.pointId == record['headPointId']):
         record['control']['gate'] = {
             'status': 'none', 'generation': None,
             'issuedAtEpochMilli': None, 'expiresAtEpochMilli': None,
@@ -455,22 +536,19 @@ def handle_narration_delete(store, record, request):
         _check_lease(record, request)
         point_id = record['headPointId']
         entry = _narration_entry(record, point_id)
+        _fence_claim(entry, request, 'deleting')
     else:
         point_id, entry = None, None
         for candidate_id, candidate in record['narrations'].items():
             claim = candidate.get('claim')
             if (claim and request.claimToken == claim['claimToken']
-                    and request.generation == claim['generation']):
+                    and request.generation == claim['generation']
+                    and claim.get('mode') == request.mode):
                 point_id, entry = candidate_id, candidate
                 break
         if entry is None:
-            _refuse('claim_fenced', 'delete with a superseded claim',
-                    client_action='refresh_context')
-    claim = entry.get('claim')
-    if (claim is None or request.claimToken != claim['claimToken']
-            or request.generation != claim['generation']):
-        _refuse('claim_fenced', 'delete with a superseded claim',
-                client_action='refresh_context')
+            _refuse('claim_fenced', 'delete with a superseded or mismatched claim')
+        _bind_head_mode(record, _BareRequest({'mode': 'history', 'pointId': point_id}))
     generation = entry['generation']
     _new_narration(record, point_id, generation + 1)
     record['narrations'][point_id]['status'] = 'missing'
@@ -483,8 +561,7 @@ def handle_narration_delete(store, record, request):
 def handle_lease_acquire(store, record, request):
     lease = _lease(record)
     if lease is not None:
-        _refuse('lease_invalid', 'lease_held', details={'reason': 'lease_held'},
-                client_action='none')
+        _refuse('lease_invalid', 'lease_held', details={'reason': 'lease_held'})
     fence = 1
     record['lease'] = {'holderId': request.holderId,
                        'leaseToken': f'lease_{fence}_{request.holderId}',
@@ -499,8 +576,7 @@ def handle_lease_renew(store, record, request):
     lease = _lease(record)
     if lease is None or request.leaseToken != lease['leaseToken'] \
             or request.fenceEpoch != lease['fenceEpoch']:
-        _refuse('lease_invalid', 'unknown lease token or epoch',
-                client_action='reacquire_lease')
+        _refuse('lease_invalid', 'unknown lease token or epoch')
     lease['expiresAtEpochMilli'] = _now(store) + DEFAULT_TTL_MILLI
     return {'leaseToken': lease['leaseToken'], 'fenceEpoch': lease['fenceEpoch'],
             'expiresAtEpochMilli': lease['expiresAtEpochMilli']}
@@ -510,8 +586,7 @@ def handle_lease_release(store, record, request):
     lease = _lease(record)
     if lease is None or request.leaseToken != lease['leaseToken'] \
             or request.fenceEpoch != lease['fenceEpoch']:
-        _refuse('lease_invalid', 'unknown lease token or epoch',
-                client_action='reacquire_lease')
+        _refuse('lease_invalid', 'unknown lease token or epoch')
     record['lease'] = None
     return {'released': True}
 
@@ -521,13 +596,11 @@ def handle_start_advance(store, record, request):
     _bind_expected(record, request)
     _ladder(record, 'checkpoint_start_advance', None)
     if record.get('advance') is not None:
-        _refuse('phase_invalid', 'an active advance already exists',
-                control_required=True)
+        _refuse('phase_invalid', 'an active advance already exists')
     if record['work'] is not None:
-        _refuse('phase_invalid', 'a point work is still active', control_required=True)
+        _refuse('phase_invalid', 'a point work is still active')
     if _head_entry(record)['status'] != 'ready':
-        _refuse('narration_blocked', 'the head narration is not ready',
-                control_required=True)
+        _refuse('narration_blocked', 'the head narration is not ready')
     record['advance'] = {'advanceId': request.advanceId, 'inputId': request.inputId,
                          'inputText': request.inputText, 'intentStatus': 'pending'}
     record['round'] = {'roundId': request.roundId, 'trigger': 'player',
@@ -539,15 +612,27 @@ def handle_start_advance(store, record, request):
             'roundId': request.roundId}
 
 
+def _point_time_guard(kind, time):
+    """Mirror the TimelinePoint kind/time rules at begin so a poisoned work
+    cannot surface first as a preview/commit failure."""
+    if kind == 'normal':
+        if time.boundary != 'elapsed':
+            _refuse('request_malformed', 'normal points start rounds with elapsed time')
+    elif (time.boundary != 'instant'
+            or (kind == 'instant' and time.duration.amount != 0)):
+        _refuse('request_malformed',
+                'associated points need instant time (zero duration for instant kind)')
+
+
 def handle_begin_point(store, record, request):
     _check_lease(record, request)
     _bind_expected(record, request)
     _ladder(record, 'checkpoint_begin_point', None)
     if record['work'] is not None:
-        _refuse('phase_invalid', 'a point work is still active', control_required=True)
+        _refuse('phase_invalid', 'a point work is still active')
     if request.pointId == record['rootPointId'] or request.pointId in record['points']:
-        _refuse('version_mismatch', 'point id is already committed',
-                client_action='refresh_context')
+        _refuse('version_mismatch', 'point id is already committed')
+    _point_time_guard(request.kind, request.timeAdvance)
     state = record['state']
     committed = (record['round']['cursor'], record['round']['actedIds'],
                  record['round']['visitedIds'])
@@ -572,8 +657,7 @@ def _bind_group(record, request):
     work = _work_or_none(record)
     group = work['pendingGroup']
     if group is None or request.groupId != group['groupId']:
-        _refuse('version_mismatch', 'group binding differs from the pending group',
-                client_action='refresh_context')
+        _refuse('version_mismatch', 'group binding differs from the pending group')
 
 
 def handle_discover_group(store, record, request):
@@ -582,9 +666,15 @@ def handle_discover_group(store, record, request):
     _bind_work_point(record, request)
     work = _work_or_none(record)
     _ladder(record, 'checkpoint_discover_group', work)
+    # Discover carries identities; extend carries TargetSpec objects. Keep
+    # None (unconfirmed) distinct from the confirmed empty target set.
+    targets = request.targetIds
     work['pendingGroup'] = {
         'groupId': request.groupId, 'sourceId': request.initiatorId,
-        'memberIds': [request.initiatorId], 'targetIds': request.targetIds or [],
+        'memberIds': [request.initiatorId],
+        'targetIds': targets,
+        'targetIdsBySource': {request.initiatorId: targets},
+        'targetSpecsBySource': {request.initiatorId: None},
         'frontierIds': [], 'closed': False,
         'actionTexts': {request.initiatorId: request.actionText},
     }
@@ -592,7 +682,7 @@ def handle_discover_group(store, record, request):
     work['phase'] = 'build_group'
     record['control']['phase'] = 'build_group'
     record['control']['revision'] += 1
-    return {'groupId': request.groupId, 'targetIds': request.targetIds}
+    return {'groupId': request.groupId, 'targetIds': targets}
 
 
 def handle_extend_group(store, record, request):
@@ -603,13 +693,29 @@ def handle_extend_group(store, record, request):
     _ladder(record, 'checkpoint_extend_group', work)
     _bind_group(record, request)
     group = work['pendingGroup']
+    if request.sourceId not in group['memberIds']:
+        _refuse('request_malformed', 'target source is not a group member')
     if request.targets is not None:
-        group['targetIds'] = list(request.targets)
+        if group['targetIdsBySource'][request.sourceId] is not None:
+            # A confirmed target set — even the confirmed empty one — is
+            # closed evidence; only admission can follow it.
+            _refuse('request_malformed', 'targets are already confirmed for this member')
+        group['targetIdsBySource'][request.sourceId] = [
+            spec.targetId for spec in request.targets]
+        group['targetSpecsBySource'][request.sourceId] = [
+            {'targetId': spec.targetId, 'triggerKey': spec.triggerKey}
+            for spec in request.targets]
+        group['targetIds'] = sorted({
+            target for targets in group['targetIdsBySource'].values()
+            for target in (targets or [])})
     else:
         member = request.admittedMember
-        if member.memberId not in group['memberIds']:
-            group['memberIds'].append(member.memberId)
+        if member.memberId in group['memberIds']:
+            _refuse('request_malformed', f'{member.memberId} is already a group member')
+        group['memberIds'].append(member.memberId)
         group['actionTexts'][member.memberId] = member.actionText
+        group['targetIdsBySource'][member.memberId] = None
+        group['targetSpecsBySource'][member.memberId] = None
     record['control']['revision'] += 1
     return {'groupId': request.groupId,
             'memberIds': sorted(set(group['memberIds'])),
@@ -623,7 +729,15 @@ def handle_close_group(store, record, request):
     work = _work_or_none(record)
     _ladder(record, 'checkpoint_close_group', work)
     _bind_group(record, request)
-    work['pendingGroup']['closed'] = True
+    group = work['pendingGroup']
+    if any(group['targetIdsBySource'][member] is None
+           for member in group['memberIds']):
+        # Closure readiness: the target question must have been answered
+        # (extend_group confirms it, empty sets included) before closing.
+        _refuse('request_malformed', 'close needs every member target set confirmed first')
+    if group['frontierIds']:
+        _refuse('request_malformed', 'close requires an empty reaction frontier')
+    group['closed'] = True
     work['phase'] = 'settle_group'
     record['control']['phase'] = 'settle_group'
     record['control']['revision'] += 1
@@ -640,6 +754,12 @@ def handle_stage_unit(store, record, request):
     candidates = request.candidates
     if candidates.groupId != request.groupId:
         _refuse('request_malformed', 'candidates name another group')
+    # The closed group's admitted membership is authoritative: staging freezes
+    # exactly those actors, nobody else (round-3 probe: same groupId, member
+    # swapped A→B without admission).
+    if sorted(candidates.actorIds) != sorted(set(work['pendingGroup']['memberIds'])):
+        _refuse('request_malformed',
+                'staged actors differ from the admitted closed-group members')
     _refuse_violations('checkpoint_stage_unit',
                        validate_commit_groups([candidates], _world_roster(record)))
     unit_id = f"unit_{len(work['units']) + 1}_{request.groupId}"
@@ -666,10 +786,14 @@ def handle_record_skip(store, record, request):
     _bind_work_point(record, request)
     work = _work_or_none(record)
     _ladder(record, 'checkpoint_record_skip', work)
-    if request.slotActorId not in record['round']['order']:
-        _refuse('request_malformed', 'slot actor is not in the round order')
-    work['working'] = skip_working(work['working'], request.slotActorId,
-                                   record['round']['order'])
+    order = record['round']['order']
+    cursor = work['working'].cursor
+    if cursor >= len(order) or request.slotActorId != order[cursor]:
+        _refuse('request_malformed', 'skip must record the current order slot')
+    # A confirmed skip is confirmed work: the point time locks in the same
+    # transaction (registry note; round-3 probe skipped then retimed).
+    work['timeLocked'] = True
+    work['working'] = skip_working(work['working'], request.slotActorId, order)
     record['control']['revision'] += 1
     return {'pointId': work['pointId'],
             'working': work['working'].model_dump(mode='json')}
@@ -702,8 +826,7 @@ def handle_seal_point(store, record, request):
     work = _work_or_none(record)
     _ladder(record, 'checkpoint_seal_point', work)
     if not work['units'] and not work['timeScanComplete']:
-        _refuse('phase_invalid', 'an empty point needs its time-scan candidates first',
-                control_required=True)
+        _refuse('phase_invalid', 'an empty point needs its time-scan candidates first')
     work['sealed'] = True
     projection = prefix_projection(record['worldId'], _prefix_fields(record), work['timeScan'])
     work['prefixDigest'] = canonical_digest(projection)
@@ -731,6 +854,7 @@ def handle_set_point_time(store, record, request):
     _bind_work_point(record, request)
     work = _work_or_none(record)
     _ladder(record, 'checkpoint_set_point_time', work)
+    _point_time_guard(work['kind'], request.timeAdvance)
     work['timeAdvance'] = request.timeAdvance.model_dump(mode='json')
     record['control']['revision'] += 1
     return {'pointId': work['pointId'],
@@ -760,6 +884,19 @@ def handle_prepare_successor(store, record, request):
             'prefixDigest': work['prefixDigest'], 'successor': successor}
 
 
+def handle_restore_group_work(store, record, request):
+    """The fixture store has no accepted cross-epoch restore references.
+
+    Refuse within restore's frozen error vocabulary after binding authority;
+    SQLite's byte-copy and accepted-reference handling remain with A3.
+    """
+    _check_lease(record, request)
+    _bind_expected(record, request)
+    _bind_work_point(record, request)
+    _refuse('frozen_work_missing', 'no active accepted restore source in the fixture store',
+            details={'reason': 'source_not_active'})
+
+
 def handle_pause(store, record, request):
     _check_lease(record, request)
     _bind_expected(record, request)
@@ -783,16 +920,22 @@ def handle_resume(store, record, request):
 def handle_preview_point(store, record, request):
     _bind_expected(record, request)
     _bind_work_point(record, request)
+    _bind_chain(record, request)
     work = _work_or_none(record)
     _ladder(record, 'preview_point', work)
-    round_view = record.get('round')
+    if request.timeAdvance.model_dump(mode='json') != work['timeAdvance']:
+        _refuse('version_mismatch', 'preview time differs from the begin reservation')
+    round_view = record['round']
+    kind = work['kind']
     projection = TimelinePoint.model_validate({
         'worldId': record['worldId'], 'id': request.pointId,
         'sequence': len(record['points']) + 1,
-        'kind': work['kind'], 'previousPointId': record['headPointId'],
+        'kind': kind, 'previousPointId': record['headPointId'],
         'roundId': request.roundId, 'advanceId': request.advanceId,
         'trigger': round_view['trigger'] if round_view else 'player',
-        'linkedFromPointId': None,
+        # Associated points (instant/linked) carry their predecessor on the
+        # projection; only normal points start a fresh chain.
+        'linkedFromPointId': None if kind == 'normal' else record['headPointId'],
         'timeAdvance': request.timeAdvance.model_dump(mode='json'),
         'entityDeltas': {}})
     return compute_preview(record['state'], projection,
@@ -803,6 +946,7 @@ def handle_commit_point(store, record, request):
     work = _sealed_prefix(record)
     _check_lease(record, request)
     _bind_expected(record, request)
+    _bind_chain(record, request)
     _ladder(record, 'commit_point', work)
     sealed_time_advance = work['timeAdvance']
     if hasattr(sealed_time_advance, 'model_dump'):
@@ -811,11 +955,17 @@ def handle_commit_point(store, record, request):
         request.point, work['kind'],
         type(request.point.timeAdvance).model_validate(sealed_time_advance))
     if request.pointId != work['pointId']:
-        _refuse('version_mismatch', 'commit targets another point than the sealed work',
-                client_action='refresh_context')
+        _refuse('version_mismatch', 'commit targets another point than the sealed work')
     if request.point.previousPointId != record['headPointId']:
-        _refuse('version_mismatch', 'point chains from another head',
-                client_action='refresh_context')
+        _refuse('version_mismatch', 'point chains from another head')
+    round_view = record['round']
+    # Metadata binds to the stored chain: identities, the round's own trigger
+    # and the next sequence number are server facts, not request opinions.
+    if (request.point.advanceId != request.advanceId
+            or request.point.roundId != request.roundId
+            or request.point.sequence != record['version'] + 1
+            or request.point.trigger != round_view['trigger']):
+        _refuse('version_mismatch', 'commit point metadata differs from the active chain')
     given = list(request.settlementGroups)
     staged = work['units']
     if len(given) != len(staged):
@@ -844,7 +994,6 @@ def handle_commit_point(store, record, request):
     record['pointStates'][request.pointId] = {
         'version': record['version'], 'state': new_state,
         'stateDigest': state_digest(new_state)}
-    round_view = record['round']
     round_view['cursor'] = work['working'].cursor
     round_view['actedIds'] = work['working'].actedIds
     round_view['visitedIds'] = work['working'].visitedIds
@@ -866,25 +1015,34 @@ def handle_commit_point(store, record, request):
 def handle_round_conclusion_cancel(store, record, request):
     _check_lease(record, request)
     _bind_expected(record, request)
-    _ladder(record, 'round_conclusion_cancel',
-            _work_or_none(record))
-    if record['control']['phase'] != 'assess_continuation':
-        _refuse('phase_invalid', 'cancel runs from assess_continuation',
-                control_required=True)
+    _bind_chain(record, request)
+    # The registry names only lease and head narration for cancel — the ladder
+    # skips both as opaque, so readiness is explicit here: any phase may
+    # cancel (open uncommitted work included, paused included), but the head
+    # narration must be ready first.
+    if _head_entry(record)['status'] != 'ready':
+        _refuse('narration_blocked', 'cancel needs a ready head narration')
+    _ladder(record, 'round_conclusion_cancel', _work_or_none(record))
+    abandoned = []
+    work = _work_or_none(record)
+    if work is not None:
+        if work['pendingGroup'] is not None:
+            abandoned = [work['pendingGroup']['groupId']]
+        record['work'] = None
     round_view = record['round']
     round_view['conclusion'] = {
         'kind': 'handback', 'closedBy': 'cancel', 'cancelReason': request.cancelReason}
     record['control']['phase'] = 'complete'
     record['advance'] = None
     record['control']['revision'] += 1
-    return {'roundId': request.roundId, 'abandonedGroupIds': []}
+    return {'roundId': request.roundId, 'abandonedGroupIds': abandoned}
 
 
 def handle_round_conclusion_conclude(store, record, request):
     _check_lease(record, request)
     _bind_expected(record, request)
-    _ladder(record, 'round_conclusion_conclude',
-            _work_or_none(record))
+    _bind_chain(record, request)
+    _ladder(record, 'round_conclusion_conclude', _work_or_none(record))
     conclusion = request.conclusion
     if conclusion.kind == 'continue':
         record['round']['conclusion'] = {
@@ -912,7 +1070,7 @@ def handle_get_state(store, record, request):
     point_id = request.point or record['headPointId']
     cached = record['pointStates'].get(point_id)
     if cached is None:
-        _refuse('version_mismatch', 'unknown point', client_action='refresh_context')
+        _refuse('version_mismatch', 'unknown point')
     return {'pointId': point_id, 'version': cached['version'],
             'state': cached['state'].model_dump(mode='json'),
             'stateDigest': cached['stateDigest']}
@@ -931,19 +1089,22 @@ def handle_list_points(store, record, request):
                            'kind': point.kind, 'roundId': point.roundId,
                            'advanceId': point.advanceId,
                            'stateDigest': cached['stateDigest']})
-    return {'points': points}
+    points.sort(key=lambda point: point['sequence'])
+    if request.after is not None:
+        points = [point for point in points if point['sequence'] > request.after]
+    return {'points': points[:request.limit]}
 
 
 def handle_get_context(store, record, request):
+    if request.includeRecovery:
+        _check_lease(record, request)
     advance = record.get('advance')
     active_input = None
     if advance is not None and advance['intentStatus'] == 'pending':
         active_input = {'advanceId': advance['advanceId'],
                         'inputId': advance['inputId'],
                         'text': advance['inputText']}
-    return {'world': _world_view(record),
-            'control': control_view(record).model_dump(mode='json'),
-            'work': _work_view(record), 'activeInput': active_input}
+    return {**_views(record), 'activeInput': active_input}
 
 
 CHECKPOINT_HANDLERS = {
@@ -957,6 +1118,7 @@ CHECKPOINT_HANDLERS = {
     'checkpoint_seal_point': handle_seal_point,
     'checkpoint_set_point_time': handle_set_point_time,
     'checkpoint_prepare_successor': handle_prepare_successor,
+    'checkpoint_restore_group_work': handle_restore_group_work,
     'checkpoint_pause': handle_pause,
     'checkpoint_resume': handle_resume,
 }
@@ -1019,6 +1181,17 @@ class WorldService:
     def __init__(self, store):
         self.store = store
 
+    def error_response(self, error, operation=None, request_id=None, world_id=None):
+        record = self.store.world(world_id) if world_id else None
+        return ErrorResponse.model_validate({
+            **_envelope_base(self.store), 'replayed': False,
+            'operation': operation, 'requestId': request_id, 'worldId': world_id,
+            'error': {'code': error.code, **{key: ERROR_CODES[error.code][key]
+                       for key in ('httpStatus', 'retryable', 'clientAction')},
+                      'details': error.details},
+            **(_views(record) if record is not None else {}),
+        }).model_dump(mode='json')
+
     def execute(self, operation, request_dict):
         spec = OPERATION_BY_NAME[operation]
         if spec.idempotency.scope == 'none':
@@ -1030,8 +1203,7 @@ class WorldService:
         try:
             request = model_cls.model_validate(body)
         except ValidationError as error:
-            raise ServiceRefusal(
-                'request_malformed', str(error)[:400], http_status=400) from error
+            raise ServiceRefusal('request_malformed', str(error)[:400]) from error
         if isinstance(request, RootModel):
             request = request.root
         digest = canonical_digest(
@@ -1041,7 +1213,8 @@ class WorldService:
         # worldId may arrive as a path parameter the body schema forbids
         # (lease_release); the raw dict remains the routing authority.
         return self._execute_write(operation, request, digest,
-                                   request_dict.get('worldId'))
+                                   request_dict.get('worldId'),
+                                   request_dict.get('pointId') if operation == 'narration_delete' else None)
 
     # -- scope-none operations: reads plus the stateless preview ------------
 
@@ -1050,11 +1223,13 @@ class WorldService:
             try:
                 request = PreviewPointRequest.model_validate(request_dict)
             except ValidationError as error:
-                raise ServiceRefusal(
-                    'request_malformed', str(error)[:400], http_status=400) from error
+                raise ServiceRefusal('request_malformed', str(error)[:400]) from error
             record = self._record(request.worldId)
-            data = handle_preview_point(self.store, record, request)
-            return _compute_envelope(self.store, operation, record, data)
+            try:
+                data = handle_preview_point(self.store, record, request)
+            except KernelViolation as error:
+                _map_kernel(operation, error)
+            return _compute_envelope(self.store, operation, _views(record), data)
         request = None
         if spec.requestSchema is not None:
             model_cls = next(model for model in _ALL_REQUEST_MODELS
@@ -1064,8 +1239,7 @@ class WorldService:
                          if key in model_cls.model_fields}
                 request = model_cls.model_validate(query)
             except ValidationError as error:
-                raise ServiceRefusal(
-                    'request_malformed', str(error)[:400], http_status=400) from error
+                raise ServiceRefusal('request_malformed', str(error)[:400]) from error
         else:
             # requestSchema=None reads (narration_get) bind only their path
             # fields; a bare attribute view is enough.
@@ -1073,7 +1247,7 @@ class WorldService:
         record = self._record(request_dict.get('worldId'))
         data = READ_HANDLERS[operation](self.store, record, request)
         if operation == 'get_context':
-            return _context_envelope(self.store, record, data)
+            return _context_envelope(self.store, data)
         return _read_envelope(self.store, record, data)
 
     # -- body writes ---------------------------------------------------------
@@ -1081,34 +1255,38 @@ class WorldService:
     def _record(self, world_id):
         record = self.store.world(world_id) if world_id else None
         if record is None:
-            _refuse('version_mismatch', 'unknown world',
-                    client_action='refresh_context')
+            _refuse('version_mismatch', 'unknown world')
         return record
 
     def _execute_create(self, operation, request, digest):
-        # Creation idempotency lives in the store-global table; check and
-        # insert under one lock acquisition so a concurrent duplicate cannot
-        # create a second world.
+        # Creation idempotency lives in the store-global table; check, build
+        # and insert under one lock acquisition so a concurrent duplicate
+        # cannot create a second world.
         with self.store.locked():
             entry = self.store.global_idempotency().get(request.requestId)
             if entry is not None:
                 if entry['operation'] != operation or entry['digest'] != digest:
                     _refuse('request_id_reused',
-                            'same requestId with a different operation or payload',
-                            client_action='fix_request')
-                record = self.store.world(entry['data']['worldId'])
-                envelope = _operation_envelope(
-                    self.store, operation, request, record, entry['data'], digest)
-                envelope['replayed'] = True
-                return envelope
-            data = handle_create_world(self.store, request)
+                            'same requestId with a different operation or payload')
+                return _operation_envelope(self.store, operation, request,
+                                           entry['views'], entry['data'], digest,
+                                           replayed=True)
+            record, data = handle_create_world(self.store, request)
+            views = _views(record)
+            _validate_success(operation, _operation_envelope(
+                self.store, operation, request, views, data, digest))
+            self.store.create_world(data['worldId'], record)
             self.store.note_global(request.requestId, {
-                'operation': operation, 'digest': digest, 'data': data})
-        record = self.store.world(data['worldId'])
-        return _operation_envelope(self.store, operation, request, record, data, digest)
+                'operation': operation, 'digest': digest, 'data': data,
+                'views': views})
+        return _operation_envelope(self.store, operation, request, views,
+                                   data, digest)
 
-    def _execute_write(self, operation, request, digest, world_id):
+    def _execute_write(self, operation, request, digest, world_id, path_point_id=None):
         self._record(world_id)
+        if operation not in WRITE_HANDLERS:
+            _refuse('phase_invalid', 'operation requires the A3 store',
+                    details={'reason': 'fixture_store_unsupported'})
 
         def handler(snapshot):
             # The idempotency decision runs inside the transaction: a request
@@ -1116,21 +1294,34 @@ class WorldService:
             # double-running the handler.
             entry = snapshot['idempotency'].get(request.requestId)
             if entry is not None:
-                if entry['operation'] != operation or entry['digest'] != digest:
+                if (entry['operation'] != operation or entry['digest'] != digest
+                        or entry.get('pathPointId') != path_point_id):
                     _refuse('request_id_reused',
-                            'same requestId with a different operation or payload',
-                            client_action='fix_request')
-                return entry['data'], True
-            data = WRITE_HANDLERS[operation](self.store, snapshot, request)
+                            'same requestId with a different operation or payload')
+                return entry['data'], entry['views'], True
+            try:
+                if operation == 'narration_delete' and path_point_id is not None:
+                    bound = _BareRequest({**request.model_dump(mode='json'),
+                                          'pointId': path_point_id})
+                    _bind_head_mode(snapshot, bound)
+                    _fence_claim(_narration_entry(snapshot, path_point_id), request,
+                                 'deleting narration at this path')
+                data = WRITE_HANDLERS[operation](self.store, snapshot, request)
+            except KernelViolation as error:
+                _map_kernel(operation, error)
+            # Snapshots are built and validated while the copy is still
+            # discardable; the response then reflects exactly this
+            # transaction, never a later interleaved one.
+            views = _views(snapshot)
+            _validate_success(operation, _operation_envelope(
+                self.store, operation, request, views, data, digest))
             stored = ({key: value for key, value in data.items() if key != 'claimToken'}
                       if operation == 'narration_claim' else data)
             snapshot['idempotency'][request.requestId] = {
-                'operation': operation, 'digest': digest, 'data': stored}
-            return data, False
+                'operation': operation, 'digest': digest, 'data': stored,
+                'views': views, 'pathPointId': path_point_id}
+            return data, views, False
 
-        data, replayed = self.store.transact(world_id, handler)
-        record = self.store.world(world_id)
-        envelope = _operation_envelope(self.store, operation, request, record,
-                                       data, digest)
-        envelope['replayed'] = replayed
-        return envelope
+        data, views, replayed = self.store.transact(world_id, handler)
+        return _operation_envelope(self.store, operation, request, views,
+                                   data, digest, replayed=replayed)

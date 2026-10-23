@@ -145,3 +145,124 @@ H1 结果须记录实际 A/B 提交、共同契约摘要、启动配置、执行
 ## 测试
 
 `test_world_control_service.py` 重写：T01 全序（含 s16 位双 preview）每步按导出 Success 类验证信封；八项探针各成回归测试（绑定四连拒、租约栅栏、conclude 被 gate 阻断、stage coverage/roster 拒、封存候选篡改三连拒、create/begin 幂等与线程级并发重放、preview 中程执行与租约续期、历史叙事不清 gate、分配唯一性、历史/未知点 get_state）。HTTP 路由（A2-2）仍按计划押后。
+
+---
+
+# A2-1 三轮：控制服务修复续作与验收
+
+日期：2026-10-23。基于 `da22a1b` 及中断时留下的 `control.py` / 服务测试改动续作。本轮全量 backend **1018 passed、0 failed**；控制服务 **37 passed**；共同验收入口 PASS。共同契约摘要仍为 `480d950c0f8062f8fdd75cb0620eb4ac97a6a247ca3f45f2057f6fe9e2ce7062`，未修改契约、共享轨迹或生成物。
+
+## 本轮行为
+
+1. **拒绝与回滚。** `ServiceRefusal` 的 HTTP 状态、客户端动作及 control 必需标记统一取 `ERROR_CODES`。服务在事务内将 `KernelViolation` 映射为既有码；封存时间伪造返回 `version_mismatch/prefix_binding_mismatch`，位置违规按 A1 计划映射为 `request_malformed`，拒绝不保存修改。
+2. **响应与事务对应。** world/control/work 在写事务内构造并保存为该操作的快照，避免提交后另一个操作插入导致首个响应携带后一个操作的 revision 或工作态。完整成功信封在提交前按 registry 指定的 Success 模型校验；创建世界也先构造、校验再写入 world 和全局幂等记录。故意损坏成功 data 的回归证明不会留下世界、业务改动或幂等记录，同 requestId 修正后可正常执行。
+3. **目标与成员冻结。** discover 的 `targetIds` 按契约读取为字符串 ID 列表；extend 的 `targets` 才是 `TargetSpec`，其身份投影与内部规格分开保存。None 与已确认的空集分开；未确认目标不能 close，已确认目标不能改写，重复成员不能覆盖行动；stage 的 actor 集必须与关闭组成员完全一致。None、空列表和非空 discover 目标均经 Success 模型验证。
+4. **时间与跳过。** skip 只能记录当前 order 槽位，并在同一事务锁定点时间。begin 和尚未锁定时的 set_point_time 均校验 kind/time 组合，避免保存无法 preview/commit 的工作态；非法组合与后续改时拒绝均有回归。
+5. **活动链与关联点。** preview/commit/conclude/cancel 核对存储中的 advanceId/roundId；commit 另核对 sequence 和 round trigger，不能靠同时伪造内外字段绕过。preview 对 instant/linked 填入当前已提交前驱。schema 内部绑定不一致仍为 `request_malformed`，合法形状但与存储不符为 `version_mismatch`。
+6. **取消与叙事。** cancel 按 registry 从未提交工作状态也可执行，但要求 head narration ready。叙事 claim 固定签发模式，head token 不能作为 history 授权；history 提交不清 head gate。每点仍只有一份叙事权威，head 摘要读取该点真实状态，gate 独立阻止计算。ready 同代叙事允许同文本重复提交，改文本或迟到 failed 均拒绝，避免先降级再覆盖原文。
+7. **claim 元数据。** claim 自身保存签发和到期时间；gate 清除后仍能按契约重新取回、续期该 claim，不再从已清空或其他点的 gate 读取时间。此项只保证 fixture 服务的字段与身份稳定；真实 TTL、epoch 接管、失败重试换代及恢复仍按 A3 验收。
+
+中断时四个失败测试已修正：取消探针使用其实际创建世界的服务实例；instant/linked 分别使用独立工作态；内部字段不一致断言 schema 拒绝码；历史写入断言单一叙事状态与独立 gate，不再要求同一点同时为 ready 和 pending。
+
+## 本地验证与后续
+
+- `cd backend; python -X utf8 -m pytest -q tests/test_world_control_service.py`：37 passed。
+- `cd backend; python -X utf8 -m pytest -q`：1018 passed（包含内核测试）。
+- `python -X utf8 backend/scripts/check_world_interface_baseline.py`：v1/v2 导出一致；Python 109＋317；TS 类型、契约 38、轨迹 65；四类破坏探针全部拒绝。
+
+本轮本地测试通过后，独立审查仍复现目标冻结粒度及 history 抢占当前头两处 P1，A2-1 暂不关闭；续修与验证见下节。后续 A2-2 为最小 HTTP 路由、错误信封、实际序列化预算及启动/CORS 配置，再与 B1 按 T01 完成 H1。当前结果仅为本地服务层与共同接口检查，不宣称 HTTP、H1/H2、SQLite 或远端 CI 已验收。
+
+---
+
+# A2-1 四轮：按成员冻结目标与头/历史 claim 流程修复
+
+日期：2026-10-23。审查确认两处 P1 均为服务缺陷，前三轮的 37 项控制服务测试没有覆盖。**本节两处 P1 已获独立复审通过，可以关闭；允许进入 A2-2。** 复审独立探针确认多人目标分别冻结、未分析完关组回滚、当前头拒绝 history、旧头换代和遗留状态恢复；复跑 42/1023 及共同入口 PASS。A2-2 与 H1 另行验收。
+
+## P1：目标冻结粒度
+
+组内新增内部 `targetIdsBySource`、`targetSpecsBySource`，按 sourceId 保存每名成员的目标及 trigger 规格。discover 的目标只确认发起者；准入新成员时，该成员目标初始化为 None，显式空列表表示已确认无目标。extend 先核对 sourceId 为组内成员，再单独检查该成员是否已确认，不能用 A 的目标状态阻断 B 的首次确认，也不能覆盖任一已确认集合。对外 `pendingGroup.targetIds` 仍为所有已确认目标的去重并集，不改变共享 schema，也不下发内部字段。
+
+close 要求每名成员都已确认目标且 frontier 为空。参数化回归覆盖 A 确认→B 加入→提前 close 拒绝且无写入→B 确认空/非空目标→A/B 改写拒绝→合法 close/stage；另检查非成员 source 拒绝、目标并集去重、stage 后已提交 actedIds 不提前变化。该场景在原组级冻结实现中会错误允许提前 close，并拒绝 B 的目标确认。
+
+## P1：当前头与历史点的认领边界
+
+history claim/renew/submit 只能指向历史点，当前 head 一律拒绝；history delete 同样不能借旧实现留下的 history token 操作当前头。根点刚创建与 head delete 后尚未重新认领两个窗口均有回归，拒绝不保存 claim 或幂等记录，随后有效租约可完成 head claim、submit、delete 和再次生成，最终 gate=none、canCompute=true。
+
+旧头首次进入历史叙事再生成时，原 head claim 保留原签发模式，由新 generation/token 签发 history claim，fenceEpoch=null；不在同一代次上切换模式。历史流程覆盖 claim、携 currentClaim 取回、续期、ready、删除、再次再生成及旧 token 迟到拒绝；相同 requestId 的重放仍只返回不含 token 的摘要。无 currentClaim 的新请求不能取回已存在的 history token。历史再生成不改当前 head narration/gate、phase/revision、世界状态、已提交进度或工作态。
+
+另外，对原实现已产生的当前头 history claim，持有效租约执行 head claim 会换代并恢复 head gate，可继续正常提交；回归以旧可达的 head=ready/gate=pending 状态验证该恢复路径。上一轮“history 写入当前头后只需保持 gate pending”的测试预期被撤回，改为当前头拒绝 history、真正历史点完整再生成及当前头继续推进的场景。
+
+## 验证
+
+- 控制服务：`cd backend; python -X utf8 -m pytest -q tests/test_world_control_service.py`，**42 passed**。
+- 全量后端：`cd backend; python -X utf8 -m pytest -q`，**1023 passed、0 failed**。
+- 共同入口：`python -X utf8 backend/scripts/check_world_interface_baseline.py`，**PASS**；v1/v2 导出一致，Python 109＋317、TS 类型/契约 38/轨迹 65、四类破坏探针均通过。
+
+共同契约摘要及共享轨迹未变。本轮未运行 HTTP/H1/H2 或远端 CI；TTL、SQLite、租约接管与 roll 准入仍按各自阶段另行验收。
+
+---
+
+# A2-2：HTTP 接入与 H1 本地联调
+
+日期：2026-10-23。基于 A2-1 复审通过后的工作树继续开发。交付 `backend/app/routers/worlds.py`，按既有 v2 registry 装配路径/方法、checkpoint/round-conclusion 分派、查询绑定和成功状态码；`app.main` 接入相同路由。独立 fixture 工厂为 `backend/app/world_app.py`，不初始化旧战役数据库或模型客户端。
+
+## 服务与 HTTP 行为
+
+- 所有操作检查 `X-World-Protocol-Version: 2`，JSON 写另检查 body 版本；JSON 的整数拼写 2.0 与共享 Python/JSON Schema 语义一致，布尔值不作为版本接受。
+- 错误返回共享 `ErrorResponse`，包括表定的 HTTP 状态、retryable/clientAction 和适用的 control 快照；非法 JSON、未知字段、分派错误不会落到 FastAPI 默认 422。只在世界路由处理错误，不替换既有战役 API 的异常处理。只读查询错误沿用其既有错误码表，不扩展契约。
+- URL 的 worldId/pointId 不能被 JSON 覆盖。DELETE narration 的点身份此前不在请求模型中；现单独核对 URL 点与 claim，幂等记录同时比较该路径身份，同 requestId 改指另一点拒绝。
+- GET/DELETE 字符串查询转换为严格的整数/布尔参数，查询重复、未知字段或非法值拒绝；list_points 支持 after/limit。includeRecovery=true 即使使用 fixture store 也校验租约，fixture 不提供 A3 恢复载荷。
+- preview 在解析前按实际接收字节检查 512 KiB 请求预算；完整响应经 UTF-8 JSON 序列化后检查 2 MiB，超限返回 413 与 details.limit=request/response。测试覆盖恰好限制和多一字节、实际 512 KiB 请求及含大量中文的超 2 MiB 响应；preview 不产生写入。
+- FixtureBaselineStore 的 create_rolls 返回声明内的 phase_invalid，details.reason=fixture_store_unsupported。restore_group_work 经下节 P2 修复后单独校验租约和绑定，因 fixture 没有服务端接受的恢复来源而返回 frozen_work_missing/source_not_active；不伪造 A3 骰点或恢复成功。独立进程使用真实服务器时钟，但不据此宣称真实 TTL/接管已实现。
+
+## 启动
+
+在 A 工作树使用独立端口、单进程内存 store。以下示例 origin 应替换为浏览器实际 origin；`WORLD_ALLOWED_ORIGINS` 接受逗号分隔列表。
+
+```powershell
+$env:WORLD_ALLOWED_ORIGINS = 'http://127.0.0.1:3100'
+Set-Location backend
+python -X utf8 -m uvicorn app.world_app:create_world_app --factory --host 127.0.0.1 --port 8100 --workers 1
+```
+
+重启会清空 fixture 世界；多 worker 不共享 store。现有 `app.main:app` 也提供世界路由，沿用主应用已有 CORS 配置。H1 可重复入口（仓库根目录）：
+
+```powershell
+python -X utf8 backend/scripts/check_world_http_h1.py --browser-worktree D:/others/Jity/.local/world-browser-worktree --browser-channel msedge
+```
+
+入口在本地临时端口启动独立 fixture API 与 Vite 页面，真实 Edge headless 执行 B checkout 的 `ControllerDriver`、调度器和 `HttpWorldTransport`。不启动模型服务、不改 B 源码；退出时关闭其创建的 API、页面服务和浏览器。需要 B checkout 已安装的 Vite/Playwright 与指定浏览器。
+
+## H1 证据与当前边界
+
+可分享记录为 `artifacts/world-http-h1.json`，完整交换保留在忽略的 `.local/world-http-h1/`。记录实际 A/B HEAD、未提交状态、参测源文件哈希、浏览器版本、API 地址和 CORS origin，且检查所列源文件在执行前后未变化。本次 A HEAD 为 `da22a1b`，B HEAD 为 `1f50cdb`，两边均带未提交工作；源哈希标识本次实际参测内容，不把 HEAD 单独当作该工作树实现。
+
+T01 两个样本均由真实 B 控制器执行创建世界、根点叙事、动态分配、start/begin/discover/extend/close/stage、五次 skip、seal/commit 与提交点叙事，再读取状态/点列表/叙事。pointPlan 使用分配响应中的 point ID；浏览器没有另写 apply 或摘要算法。begin 后和 stage/skip 后 preview 均重复一次，data 完全一致，revision 不变；每样本 26 次已记录 HTTP 交换、8 次固定模型任务，停在 continuation 之前，最终 revision=13、cursor=6、gate=none、canCompute=true。
+
+Python 使用共享手写 expectedProjection 与实际捕获身份独立计算最终 WorldState 和摘要；final preview、commit、get_state 三方对拍，并以独立 commit 请求模板计算 pointProjectionDigest。额外 T03 两个样本通过真实浏览器 HTTP transport 的直接固定候选 harness 执行非空 stage_time_scan、同列表 preview（含重复）、commit/叙事/读取，验证任务达成、个性来源点、理智与时间；该辅例不冒称由 B 的 T03 控制器调度。
+
+**B 侧待处理：默认 fetch 的浏览器接收者。** 直接使用 `new HttpWorldTransport(apiUrl)` 在真实 Edge 报 Illegal invocation：transport 以 `this.fetcher(...)` 调用未绑定的 window.fetch。本次使用该类已有的注入配置 `new HttpWorldTransport(apiUrl, window.fetch.bind(window))`，仍为真实原生 Fetch 和真实 CORS，没有 mock 响应。B 应修正默认实现（如通过箭头函数转发原生 fetch）并补浏览器覆盖。当前仅该显式配置下的本地链路通过；**A2-2 待复审，H1 尚未宣布共同验收关闭**。HTTP/ASGI 测试与浏览器联调分别记录；不宣称 SQLite、H2、远端 CI 或真实模型已验收。
+
+## 本地验证
+
+- `test_world_http.py`：24 项，控制服务原 42 项均由全量后端覆盖。
+- `cd backend; python -X utf8 -m pytest -q`：**1047 passed、0 failed**。
+- `python -X utf8 backend/scripts/check_world_interface_baseline.py`：**PASS**（v1/v2 导出、Python 109＋317、TS 类型/契约 38/轨迹 65、四类破坏探针）。共同契约摘要未变。
+- H1 入口：**T01 两样本真实 B 控制器＋HTTP，T03 两样本浏览器直接固定候选 HTTP，独立状态与摘要对拍全部 PASS**。参测 Edge 155.0.4283.62；默认 fetch 问题与显式配置边界如上。
+- `git diff --check`：通过。本批工作树改动尚未提交或推送。
+
+---
+
+# A2-2 二轮：三处 P2 复审修复
+
+日期：2026-10-23。上轮 24/1047 与共同检查通过后，独立复审仍发现 HTTP 数值解析、fixture 恢复错误码、无请求模型读取的路径 ID 三处 P2；A2-2 保持未关闭。新增回归在修复前实跑为 **12 failed、3 passed**，确认不是仅调整测试预期。
+
+1. **精确 JSON 解析。** HTTP 请求直接复用 `world.canonical.parse_json`，Decimal 保留数值原文精度，再按共享安全整数规则校验；统一拒绝重复键、非有限数及不合法 canonical 字符串，不另建解析规则。回归拒绝 `10.0000000000000001`、`9.999999999999999999999999` 和会被 float 下溢为 0 的 `1e-1000`；拒绝相同/不同重复 requestId 及嵌套重复 initialSanity，均不建世界、不消费幂等 ID。合法 `10.0`、`1e1`、`10.0000000000000000` 保持同一规范摘要，可重放整数版本的同 requestId。
+2. **恢复拒绝属于该操作的错误表。** restore 增独立 fixture handler，在事务内按顺序核对租约、已提交绑定和工作点。没有 accepted restore reference 时返回已声明的 `frozen_work_missing`、`details.reason=source_not_active`；错误租约/错点分别返回 lease_invalid/version_mismatch。所有拒绝不修改状态、revision 或幂等记录。HTTP 测试适配器对每个错误统一核对 status 及该 operation 的 errorCodes，防止“合法 ErrorResponse 但不属于该操作”的错误再次漏过。
+3. **所有路径身份都校验。** URL 的 worldId/pointId 在进入服务前统一按共享 Id 类型校验，包含没有 requestSchema 的 narration_get。空格、非 ASCII 字符、超长点 ID 返回表内 version_mismatch，不再返回无法通过 NarrationGetSuccess 的 200。合法但不存在的点仍可读取 schema 有效的 missing 响应。
+
+浏览器联调入口另补真实 B HttpWorldTransport 错误消费探针：每个 T01 样本 begin 后发送合法形状的 fixture restore，确认收到 WorldApiError/frozen_work_missing（不是 ProtocolError/HTTP-error mismatch），并读取上下文核对无写入；最终另用非法 narration 路径验证 WorldApiError/version_mismatch。这些探针独立记录在分享报告的 browserErrorChecks，不计作控制器调度步骤。
+
+本轮不修改共享 schema、registry、manifest 或轨迹；B 默认 fetch 的接收者问题仍未修复，浏览器继续使用显式绑定的原生 fetch。**三处 P2 本地修复待复审，A2-2 与 H1 保持未关闭。**
+
+复验：`test_world_http.py` **39 项**、控制服务 **42 项**，聚焦联合运行 **81 passed**；全量后端 `python -X utf8 -m pytest -q` **1062 passed、0 failed**。共同接口入口 **PASS**（Python 109＋317、TS 类型/契约 38/轨迹 65、四类破坏探针）。绑定原生 fetch 的 Edge T01 两样本＋T03 两样本全部通过，T01 两样本各追加的 restore/非法路径错误消费探针也通过；分享记录已重新生成，包含本轮源哈希和 browserErrorChecks。`git diff --check` 通过，本轮结果与 A2-2 二轮改动一并提交推送；提交后 A2-2 与 H1 仍待复审，状态不变。

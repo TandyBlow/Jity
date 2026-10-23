@@ -1,0 +1,130 @@
+{
+  "status": "PASS",
+  "layer": "local browser/controller/HTTP; review pending",
+  "contractDigest": "480d950c0f8062f8fdd75cb0620eb4ac97a6a247ca3f45f2057f6fe9e2ce7062",
+  "browser": "155.0.4283.62",
+  "apiUrl": "http://127.0.0.1:53458",
+  "browserOrigin": "http://127.0.0.1:53459",
+  "store": "FixtureBaselineStore; one worker; no SQLite",
+  "fetchConfiguration": "native window.fetch.bind(window); B default receiver bug remains",
+  "A": {
+    "head": "da22a1b1d5fc314303851c84a1ecc8a183aa91e4",
+    "status": "M backend/app/main.py\n M backend/app/schemas/world/canonical.py\n M backend/app/services/world/control.py\n M backend/tests/test_world_control_service.py\n M design/world-engine-reports/server.md\n?? artifacts/world-http-h1.json\n?? backend/_proj_create.json\n?? backend/app/routers/worlds.py\n?? backend/app/world_app.py\n?? backend/scripts/check_world_http_h1.py\n?? backend/scripts/world_http_h1_browser.mjs\n?? backend/tests/test_world_http.py",
+    "sourceSha256": {
+      "backend/app/routers/worlds.py": "4b4db60cd4bdb17ed615b16787bf509d394b0c0244b8a02726e4ec4389c12bf6",
+      "backend/app/world_app.py": "7a717dbeb052f60c9a1b554ee5dd31d9ab86521ba6aee0dad5ee89f9bb808576",
+      "backend/app/services/world/control.py": "143c9178e478bfa96f915d8d07aa7ee6a08df8b67bc1ebf8a1079ada6f556ec5",
+      "backend/scripts/check_world_http_h1.py": "aefdc9e0b270b246e1f43727872fc64dbae1a8321b300bf242fe6b51cc87ce22",
+      "backend/scripts/world_http_h1_browser.mjs": "3c13e110419f7b35366c7b982064830a2592a7cdc2e2d78647b1601c8b41afe5"
+    }
+  },
+  "B": {
+    "head": "9dc52f3ab9b82f97ab0eeb2e5c498add13e0a395",
+    "status": "",
+    "sourceSha256": {
+      "frontend/src/lib/world-engine/controller.ts": "eb951e1af6bdd8ec0efcff67f506d0ea653e40261da6b4629a73f3cae2b3758a",
+      "frontend/src/lib/world-engine/schedule.ts": "bf146a9667aa1f44c1d1d20317e3f1718a3053057963c5851a68d9503e52fef7",
+      "frontend/src/lib/world-engine/http-transport.ts": "8f8183a9120f9cf5595c482b5f404ab158f87444ad59438df3a3ee139ccd274a",
+      "frontend/src/lib/world-engine/protocol.ts": "4cbbf85e16e0b603f1718f2437f545afeeef9dde1124e2996aef9b1b60e8891a"
+    }
+  },
+  "sourceUnchangedDuringRun": true,
+  "checks": [
+    {
+      "sample": "sample_1",
+      "worldId": "world_1",
+      "rootPointId": "root_3",
+      "pointId": "point_4",
+      "version": 1,
+      "checkpointRevision": 13,
+      "stateDigest": "0dbc65a69515265ef1a4c904eb71271a906111a6b7923aa4aebe6ee378c62c9b",
+      "pointProjectionDigest": "32c69a564c608f249e5f9a7162ebed47ab69f95477258ef5ebefa8d07d7fa621",
+      "httpExchanges": 26,
+      "modelCalls": [
+        "initial",
+        "narration",
+        "pointPlan",
+        "action",
+        "targets",
+        "results",
+        "updates",
+        "narration"
+      ],
+      "browserErrorChecks": [
+        {
+          "operation": "checkpoint_restore_group_work",
+          "code": "frozen_work_missing",
+          "clientAction": "pause"
+        },
+        {
+          "operation": "narration_get",
+          "code": "version_mismatch",
+          "clientAction": "refresh_context"
+        }
+      ],
+      "repeatedPreviewCount": 2
+    },
+    {
+      "sample": "sample_2",
+      "worldId": "world_4",
+      "rootPointId": "root_6",
+      "pointId": "point_4",
+      "version": 1,
+      "checkpointRevision": 13,
+      "stateDigest": "5e92c2391b6e905d6f19901f2102d9920f974f777e8d0e11b22ec0f96d964e13",
+      "pointProjectionDigest": "f689e5b84dabe3e8424d4e854b70be4d36a78b44285f83ad5c74cb9545334d1a",
+      "httpExchanges": 26,
+      "modelCalls": [
+        "initial",
+        "narration",
+        "pointPlan",
+        "action",
+        "targets",
+        "results",
+        "updates",
+        "narration"
+      ],
+      "browserErrorChecks": [
+        {
+          "operation": "checkpoint_restore_group_work",
+          "code": "frozen_work_missing",
+          "clientAction": "pause"
+        },
+        {
+          "operation": "narration_get",
+          "code": "version_mismatch",
+          "clientAction": "refresh_context"
+        }
+      ],
+      "repeatedPreviewCount": 2
+    }
+  ],
+  "timeScanChecks": [
+    {
+      "sample": "sample_1",
+      "worldId": "world_7",
+      "pointId": "point_4",
+      "stateDigest": "696b3e28d2040744e51add05789c790f0d35cdfaaec2adbbd0bbf5f65718a502",
+      "validatedFields": [
+        "task status",
+        "personality sourcePointId",
+        "sanity",
+        "time"
+      ],
+      "layer": "browser HTTP transport; direct fixed-candidate harness"
+    },
+    {
+      "sample": "sample_2",
+      "worldId": "world_10",
+      "pointId": "point_4",
+      "stateDigest": "2132568c7f65297cf4dc33d49dc5c2141d2aee5f2cd02fe14f5d9a9f5f7f98e2",
+      "validatedFields": [
+        "task status",
+        "personality sourcePointId",
+        "sanity",
+        "time"
+      ],
+      "layer": "browser HTTP transport; direct fixed-candidate harness"
+    }
+  ]
+}
