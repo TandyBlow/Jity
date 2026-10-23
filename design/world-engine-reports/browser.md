@@ -133,7 +133,7 @@ T08 语料适配逐项登记：①s8 是把已锁定时间从 2s 改成 3s 的�
 
 **复审结论：T06 语义通过，无代码阻塞。** 复审方复跑 26/26、全套 361 项（世界引擎 11 文件 299 项 + T06 26 项在 `--sequence.shuffle` 下同样通过，无顺序耦合）、`typecheck:world`、`review:world-s1`（60 项）、统一验收入口（Python 426、契约 38、轨迹 65、四类破坏探针全拒）与生产 build 全部通过；新三文件零 lint 告警、无 `as any`/`@ts-ignore`；根因独立复现（把 error 体白名单改回 `...entry` 展开即 12 failed/14 passed）；确认 `controller.ts`/`harness.ts` 零改动、s20 的 2 次 narration_submit 属 T01 流程固有（s3/s20）。交付提交为 `3e14200`。accept 提交按复审意见修正三处记录（两处「保持未提交」措辞与 T05 段同款措辞、统一入口数字误引 B 侧 review 数）并补强：
 
-- **加强断言（复审第 5 条）**：桥快照把 `control.revision` 抬高后，断言重试 commit 的 `expectedCheckpointRevision` 随之前移（绑定确实取自刷新后 control.revision），修复「忽略刷新上下文也能过」的盲区；桥快照缺 `world.advance` 时以 ProtocolError 拒绝，不再 TypeError。
+- **加强断言（复审第 5 条，二轮修正）**：首轮实现把抬高的 revision 同时放进了错误信封与桥（同一 snapshot 双通道），驱动器在 catch 时即采纳错误信封，「跳过或无视 refresh hop」的控制器照样过——复审方复现该盲区，结论成立。修正为 error 动作新增独立 `bridge` 字段：错误信封走 latest（revision 保持 recorded），仅桥带抬高值；断言重试 commit 的 `expectedCheckpointRevision` 必须为 recorded+1，绑 recorded 即失败。篡改实验钉死区分力：临时注释 refresh 分支的 `adoptState(outcome.response)`，恰好且仅有该测试双样本转红，其余 35 项不受扰。桥快照缺 `world.advance` 时以 ProtocolError 拒绝，不再 TypeError。
 - **负例补齐（复审第 6 条）**：同 ID 换操作的 `request_id_reused` 服务器形状、退役 ID 同载荷复用的 ProtocolError、narration_claim 重放剥离 claimToken（acceptance 原件带 token 对照）、桥 scope 失配守卫、`assertFaultsConsumed` 未耗尽脚本负例——文档已声明的行为全部有测试钉住。
 - **类型根治（复审第 4 条）**：`ErrorCatalogEntry` 补 `controlRequired` 必填字段，新增 `errorBodyFor(code, details)` 作为错误体唯一构造器——内部目录字段在类型与构造两层都无法进入响应信封；顺带清除 `t06.scenario.ts` 死参数（复审第 7 条）。
 

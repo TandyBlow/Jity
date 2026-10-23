@@ -12,7 +12,7 @@ import type { ErrorCode, Json, RequestMap, Scope, Success, WorldOperation } from
 export type FaultAction =
   | { kind: 'timeout_before_send' }
   | { kind: 'lose_response' }
-  | { kind: 'error'; code: ErrorCode; details?: Record<string, Json>; snapshot?: Partial<ServedSnapshot> };
+  | { kind: 'error'; code: ErrorCode; details?: Record<string, Json>; snapshot?: Partial<ServedSnapshot>; /** Bridge for the refresh_context hop, decoupled from the error envelope: a driver that skips or ignores the hop binds the envelope's (stale) state, so only a bridge-only delta pins adoption. */ bridge?: Partial<ServedSnapshot> };
 
 export interface FaultRule {
   stepId: string;
@@ -98,7 +98,7 @@ export class FaultTransport implements WorldTransport {
     }
     if (action?.kind === 'error') {
       attempt.outcome = 'error'; attempt.code = action.code;
-      if (errorCatalog[action.code].clientAction === 'refresh_context') this.contextBridge = action.snapshot ?? {};
+      if (errorCatalog[action.code].clientAction === 'refresh_context') this.contextBridge = action.bridge ?? action.snapshot ?? {};
       if (observed && action.code !== 'request_in_progress') observed.retired = true;
       throw this.error(operation, fields, scope, action.code, action.details, action.snapshot);
     }

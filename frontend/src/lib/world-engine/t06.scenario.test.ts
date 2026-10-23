@@ -120,13 +120,16 @@ describe.each(['sample_1', 'sample_2'])('T06 %s loss and idempotency', (sampleId
     scenario.fault.assertFaultsConsumed();
   });
 
-  test('the refreshed bridge revision moves the retried commit binding forward', async () => {
+  test('only the bridge refresh moves the retried commit binding forward', async () => {
     const probe = buildT06Scenario(sampleId, []);
     const recorded = (probe.corpus.requests.s18 as Record<string, Json>).expectedCheckpointRevision as number;
     const sealed = structuredClone(probe.corpus.servedAfter.s17);
-    const bumped = { ...sealed, control: { ...sealed.control!, revision: recorded + 1 } };
+    const bridgeOnly = { ...sealed, control: { ...sealed.control!, revision: recorded + 1 } };
+    // The error envelope stays at the recorded revision; ONLY the bridge
+    // carries the bump — a driver that skips or ignores the refresh hop
+    // binds the envelope's revision and fails this assertion.
     const scenario = buildT06Scenario(sampleId, [{ stepId: 's18', operation: 'commit_point', actions: [
-      { kind: 'error', code: 'version_mismatch', snapshot: bumped },
+      { kind: 'error', code: 'version_mismatch', bridge: bridgeOnly },
       { kind: 'timeout_before_send' }, { kind: 'timeout_before_send' }, { kind: 'timeout_before_send' }, { kind: 'timeout_before_send' },
     ] }]);
     await beforeStep(scenario, 's18');
