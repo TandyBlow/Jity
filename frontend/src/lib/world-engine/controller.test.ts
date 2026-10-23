@@ -485,7 +485,7 @@ describe('review regressions (553e341 findings)', () => {
 
   test('preview errors route through refresh_context and re-preview', async () => {
     const world = mkWorld({ advance: { advanceId: 'adv1', inputId: 'in1', intentStatus: 'consumed', inputAvailable: false }, activeRoundId: 'r1', activePointId: 'p1', round: { roundId: 'r1', trigger: 'player', order: ORDER, cursor: 0, actedIds: [], visitedIds: [], conclusion: null } });
-    let control = mkControl({ revision: 3 });
+    const control = mkControl({ revision: 3 });
     const work = mkWork();
     const previewOk = (r: unknown) => ({
       protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1,

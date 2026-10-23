@@ -31,6 +31,8 @@ import type { ControlState, Id, Json, WorldContext } from './types';
 
 export type T02TraceName = 'T02' | 'T02-empty-linked';
 
+export interface WallTime { calendar: string; dateTime: string; instantOrdinal: number }
+
 export interface T02Scenario {
   driver: ControllerDriver;
   transport: ScenarioTransport;
@@ -42,12 +44,10 @@ export interface T02Scenario {
   finalStepId: string;
 }
 
-interface WallTime { calendar: string; dateTime: string; instantOrdinal: number }
-
 /** Staged successor time: any advance moves the clock and resets the
  * ordinal; only a zero-length instant keeps the dateTime and bumps it.
  * Verified against every recorded commit head digest for both traces. */
-function advanceTime(time: WallTime, timeAdvance: { duration: { amount: number } }): WallTime {
+export function advanceTime(time: WallTime, timeAdvance: { duration: { amount: number } }): WallTime {
   const next = { ...time };
   const amount = timeAdvance.duration.amount;
   if (amount > 0) {
@@ -178,8 +178,11 @@ export function buildT02Scenario(traceName: T02TraceName, sampleId: string): T02
     build: () => specimenBody(spec),
   }));
   const previewStateAt = (index: number): Json => {
+    // STRICTLY before: a model call declared at a step runs before that step
+    // is consumed, so the anchor AT the index has not served yet. (T02's
+    // empty deltas masked this — the bodies coincided.)
     let chosen: (typeof specimenSpecs)[number] | null = null;
-    for (const spec of specimenSpecs) if (spec.anchorIndex <= index) chosen = spec;
+    for (const spec of specimenSpecs) if (spec.anchorIndex < index) chosen = spec;
     if (!chosen) throw new ProtocolError(`[${traceName}] no preview anchor before step index ${index}`);
     return specimenBody(chosen).workingState;
   };

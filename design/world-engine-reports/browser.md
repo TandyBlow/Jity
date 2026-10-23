@@ -64,3 +64,19 @@ preview 标本：两条轨迹的契约层录制都不含 preview，但 driver �
 **步骤 3 评审（对 0c85106）两项缺口及修复**：①时间扫描候选未进入后续 preview——driver 的 `checkpoint_stage_time_scan` 不落 memory、场景 `stagedAt` 漏收 `stage_time_scan`，empty-linked 扫描提交 `groupId=null` 候选后紧随的 preview 却发 `settlementGroups=[]`，违反 A §7（同一列表、无独立通道）；修复为 driver 增 `memory.stagedTimeScan`（preview 同列表携带、commit 保持普通命名组语义、commit 后清空）+ 场景 `stagedAt` 纳入扫描候选。本轮扫描无状态差量所以预设响应未暴露；T03 的非空扫描（task_wait_noon 达成等）会受影响，T03 场景装配时按同一机制走。②`continue` 只约束同 ID 不约束同载荷——同 ID 换 `holderId` 被认证为合法重试；修复为重试显式声明（构建期对照录制校验、未声明的录制 ID 复用直接拒绝、probe 另行声明）+ 运行期 operation/scope/完整请求体逐一相等校验，并以 T06 语料补三回归（构建期拒绝推断、probe/retry 声明互斥校验、载荷漂移拒绝+错误步骤线性消费证明）。文档责任边界同步修正：T06 归 B 自有 fault transport 覆盖；T07 仍属 B2/H2，B 的恢复验证责任不取消。前端 14 文件 **269** 项通过；`typecheck:world` 与统一验收入口 PASS。
 
 **结论：T02 组扩张与空 linked 时间扫描验收按步骤 3 评审意见修复完毕，待复审。** 后续：T03/T03-collapse（时间扫描与 collapse 合法重叠）按同一装配器扩展；T08/T09 启用错误步骤机制时补 B 桥接步骤。
+
+## B1 步骤 4 第一段：T03 非空时间扫描与 T03-collapse
+
+日期：2026-10-23。接续 `0e49299` 后未完成的 `t03.scenario.ts` / `t03.scenario.test.ts`，完成两条轨迹各两个样本的固定响应控制器验收。本段保留 T01/T02 的严格请求、scope、模型输入、运行时摘要链、独立终态预期与 continuation 停止边界；不改变共享轨迹、schema、manifest 或 digest pin。
+
+会话从 s1 `get_context` 打开，预置录制租约与组身份。T03 控制器执行纯时间点：begin → preview → 非空 stage_time_scan → preview → seal → commit → narration；扫描候选以 `groupId=null` 进入后续 preview 的 settlementGroups，commit 的命名组列表仍为空。T03-collapse 执行 automatic round 内的单人组：begin → preview → discover/extend/close/stage_unit → preview → seal → commit → narration。它的 s2 `allocate_ids` 是 harness 发出的 bootstrap 交换，使用独立新 requestId、经过相同 schema/请求/回显校验；本段不据此宣称驱动器已实现自动轮入口的预分配。最终 get_state 同样由 harness 发出；每样本分别 10 / 14 次传输调用，模型分别 3 / 6 次，结束时待决调用为 continuation。
+
+preview 每条轨迹两处，均标注占位 digest。begin 标本取匹配 T02 样本的共享基线体，应用本点后继时间，entityDeltas 与 mergedEntityDeltas 为空；stage 后取本轨迹录制终态，投影与 mergedEntityDeltas 使用录制 commit 的折叠结果。模型输入只能读取严格早于当前步骤、已经送达的 preview，修正 T02 装配器原先使用 `<=` 的锚点边界。末位 preview 体在 serve 期对齐最终独立 expectedProjection。另用 A 的 Python canonical 工具复核四组起始体摘要与 s1 head 一致、四组最终独立预期摘要与 commit head/expectedDigests 一致；浏览器未新增摘要实现。
+
+业务断言覆盖：T03 从 11:59:00 推进到 12:00:00，task_wait_noon pending→achieved、个性变化来源为本点、理智 30→35；T03-collapse 到 11:59:07，同点新增 parent/child，候选中的 child 为 pending 且被 tasksAchieved 引用，最终投影只保留 achieved 的 child 新增，不重复输出 tasksAchieved，外貌变化保留实际 change/point 身份。两个样本的动态 point/group/task/change 身份分别验证，stage 前模型输入保留未结算基线，commit 后 staged 与 stagedTimeScan 清空。
+
+已登记的 coverage 偏差仅在 B 自有场景适配：T03-collapse 原录制 personalityCoverageIds=['person_c'] 改为任务达成时的世界全员，stage/preview/commit 请求一致；适配器只接受该已知形状或已合规字段，拒绝其他未登记偏差。原共享轨迹保持原字节；真实成功联调前仍须按分工文档 §2.2 更新共享夹具，不能把本段视为 H1 或 A 侧内核运行验收。
+
+结果：四条正路径、四条丢失已 stage 候选反例、四条提前泄漏 post-stage 状态的模型输入反例、终态摘要篡改与末位 preview 体篡改反例，共 14 项通过。前端全套 15 文件 **283 项通过**；`typecheck:world` 与共同接口统一入口 PASS（Python 109+317、契约 38、轨迹 65、四类破坏探针全部拒绝）。修正既有 controller.test.ts 一处 prefer-const 错误，生产 build（含 lint 与全前端类型检查）通过，保留已有 hook 依赖及未使用变量 warnings。
+
+**结论：T03/T03-collapse 固定响应场景已完成，待复审。** 步骤 4 尚余 T04 continue/automatic/handback、自动轮预分配入口与 T08 successor/time-lock/cancel；后续步骤仍含 T05、B 自有 fault transport 及 H1，完整 B1 尚未验收。

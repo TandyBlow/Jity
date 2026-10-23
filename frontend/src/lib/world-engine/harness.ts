@@ -242,6 +242,7 @@ export class ScenarioTransport implements WorldTransport {
   private frontRequestId: Id | null = null; // id accepted at the current front: a retry_same_request re-sends it
   private lastServedRequestId: Id | null = null; // previous served id-bearing call: 'continue' expectations hold against it
   private lastServedRequest: { operation: WorldOperation; scope: Scope; body: Record<string, unknown> } | null = null;
+  private harnessRequestCounter = 0;
   private readonly captured = new Map<string, unknown>();
   private readonly servedResponses = new Map<string, Json>();
   readonly ops: WorldOperation[] = [];
@@ -348,13 +349,22 @@ export class ScenarioTransport implements WorldTransport {
     this.requests.push(structuredClone(sent) as Json);
     return validated as never;
   }
-  /** Harness-issued inspect read: the request IS the declared template; the
-   * call still passes through the same identity/order/scope/schema
-   * verification. */
+  /** Harness-issued exchange (session-open reads and pre-point allocations
+   * the scheduler cannot emit): the request IS the declared template, with a
+   * fresh harness-minted id where the operation bears one; the call passes
+   * through the same identity/order/scope/schema verification. */
   async runInspect(stepId: string): Promise<{ step: CorpusStep; response: Json }> {
     const step = this.steps[this.index];
     if (!step || step.id !== stepId || step.segment !== 'inspect') throw new ProtocolError(`[${this.label}] inspect ${stepId} is not at the execution front (next: ${step?.id ?? 'none'})`);
-    const response = (await this.execute(step.operation, step.request as never, step.scope as never)) as unknown as Json;
+    const request: Record<string, unknown> = { ...(step.request as Record<string, unknown>) };
+    if (step.requestIdRequired && request.requestId === undefined) {
+      let harnessId: Id;
+      do {
+        harnessId = `${this.label}_harness_${++this.harnessRequestCounter}`;
+      } while (this.seenRequestIds.has(harnessId));
+      request.requestId = harnessId;
+    }
+    const response = (await this.execute(step.operation, request as never, step.scope as never)) as unknown as Json;
     return { step, response };
   }
   assertConsumed(): void {
