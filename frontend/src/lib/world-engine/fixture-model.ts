@@ -2,7 +2,7 @@ import { equal } from './trace-runner';
 import { ProtocolError } from './protocol';
 import type { Json } from './types';
 
-export type FixtureModelTask = 'action' | 'targets' | 'reaction' | 'results' | 'updates' | 'continuation' | 'narration' | 'initial';
+export type FixtureModelTask = 'action' | 'targets' | 'reaction' | 'results' | 'updates' | 'continuation' | 'narration' | 'initial' | 'time' | 'pointPlan';
 export interface FixedModelCall { task: FixtureModelTask; key: string; input: Json; output: Json }
 
 /** Fixed model port for B1 tests. Values are authored by the scenario, including

@@ -20,7 +20,13 @@ import type {
 
 export interface WorldModelPort { generate(task: ModelTask, key: string, input: Json): Promise<Json> }
 export interface ControllerIo { transport: WorldTransport; model: WorldModelPort }
-export interface DriverOptions { retryLimit?: number }
+export interface DriverOptions {
+  retryLimit?: number;
+  /** Scenario identity binding: scheduler key → allocate slotKey (e.g.
+   * 'group:person_a' → 'group'). Applied when allocation responses land, so
+   * scenario keying stays config, never mid-flight memory steering. */
+  identityAliases?: Record<string, string>;
+}
 
 export type DriverStatus =
   | { kind: 'await'; reason: string }
@@ -62,15 +68,22 @@ export class ControllerDriver {
   private stepCommand: HarnessCommand | null = null;
   private requestCounter = 0;
   private readonly retryLimit: number;
+  private readonly identityAliases: Record<string, string>;
 
   constructor(private io: ControllerIo, memory: ControllerMemory, state?: Partial<ServedState>, options?: DriverOptions) {
     this.memory = memory;
     this.state = { world: null, control: INITIAL_CONTROL, work: null, ...state };
     this.retryLimit = options?.retryLimit ?? 3;
+    this.identityAliases = options?.identityAliases ?? {};
   }
 
   getMemory(): ControllerMemory { return structuredClone(this.memory); }
   getRequestCounter(): number { return this.requestCounter; }
+
+  /** Read-only scheduler introspection for declared scenario boundaries. */
+  pendingDecision(): Decision {
+    return scheduleNext({ world: this.state.world, control: this.state.control, work: this.state.work, memory: this.memory });
+  }
 
   /** Queues an external command; consumed when its operation executes, so it survives detours (lease loss). */
   deliver(command: HarnessCommand): void { this.command = command; }
@@ -315,7 +328,10 @@ export class ControllerDriver {
         this.memory.leaseToken = (data as unknown as { lease: { leaseToken: Id } }).lease.leaseToken;
         break;
       case 'allocate_ids':
-        for (const allocation of (data as { allocations: { slotKey: Id; id: Id }[] }).allocations ?? []) this.memory.ids[allocation.slotKey] = allocation.id;
+        for (const allocation of (data as { allocations: { slotKey: Id; id: Id }[] }).allocations ?? []) {
+          this.memory.ids[allocation.slotKey] = allocation.id;
+          for (const [alias, slot] of Object.entries(this.identityAliases)) if (slot === allocation.slotKey) this.memory.ids[alias] = allocation.id;
+        }
         break;
       case 'checkpoint_start_advance':
         this.memory.playerInput = null;
