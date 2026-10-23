@@ -103,7 +103,7 @@ T08 语料适配逐项登记：①s8 是把已锁定时间从 2s 改成 3s 的�
 
 ## B1 步骤 5 第一段：T05 暂停与叙事
 
-日期：2026-10-23。按本轮范围，先将已复审通过的步骤 4 单独提交为 `159ad03`（313 项基线），再新增 `t05.scenario.ts/test.ts`，仅交付 T05 固定响应双样本及定向反例。本轮 T05 改动保持未提交、待复审；未推进 T06/H1。共享轨迹、schema、manifest 与 digest pin 均未修改。
+日期：2026-10-23。按本轮范围，先将已复审通过的步骤 4 单独提交为 `159ad03`（313 项基线），再新增 `t05.scenario.ts/test.ts`，仅交付 T05 固定响应双样本及定向反例。本轮 T05 改动复审通过后提交为 `9dc52f3`；未推进 T06/H1。共享轨迹、schema、manifest 与 digest pin 均未修改。
 
 **分段与实际执行者**：s1 get_context、s9 get_state 属 inspect；s2 pause、s5 resume、s6 pause 属 command，由 harness 注入 pause/budget_exhausted/resume 事件、真实驱动器构造请求；s3 lease_renew 与 s4 narration_claim_renew 明确标为 heartbeat，由 `runHeartbeat` 直发声明交换并通过同一严格 transport 的顺序、作用域、requestId/回显、schema、捕获链与业务断言。它们使用 harness 独立请求 ID，不触发 driver 请求工厂、模型调用或 memory 修改；随后 s5 的实际响应带回续租后的服务快照。真实心跳定时、并发取消及运行时 TTL 管理仍属 B2，不把这两次受控交换算作调度器自动发出的心跳。s7 narration_claim 与 s8 narration_submit 由 driver 推导，之间恰有一次 narration 模型调用。
 
@@ -119,7 +119,7 @@ T08 语料适配逐项登记：①s8 是把已锁定时间从 2s 改成 3s 的�
 
 ## B1 步骤 5 第二段：T06 故障语义
 
-日期：2026-10-23。接续上轮：T05 已通过复审并提交为 `9dc52f3`（335 项基线），本轮新增 `fault-transport.ts`、`t06.scenario.ts/test.ts` 三文件，交付 B 自有 fault transport 的 T06 故障语义；控制器与 harness 零改动，重试与恢复行为沿用 T04/T05 已验收实现。共享轨迹、schema、manifest 与 digest pin 均未修改。本轮改动保持未提交、待复审；未推进 H1。
+日期：2026-10-23。接续上轮：T05 已通过复审并提交为 `9dc52f3`（335 项基线），本轮新增 `fault-transport.ts`、`t06.scenario.ts/test.ts` 三文件，交付 B 自有 fault transport 的 T06 故障语义；控制器与 harness 零改动，重试与恢复行为沿用 T04/T05 已验收实现。共享轨迹、schema、manifest 与 digest pin 均未修改。本轮改动已提交为 `3e14200`；未推进 H1。
 
 **故障面与账本分离**：FaultTransport 包装 T01 的严格 ScenarioTransport——被接受的响应永远来自语料本体，故障层自身不 apply、不掷骰、不推哈希、不发明成功；T01 oracle 保留全部业务断言、模型脚本与独立终态投影/摘要。三次观察互相独立：attempts 记录每次 execute 的操作/请求/作用域/结局，acceptances 只记 oracle 实际接受的交换，丢失响应只能重放真实接受过的原 `data`（附重新推导的 world/control/work 快照、`replayed=true` 与回显 requestId），narration_claim 重放剥离 claimToken（摘要不能复活令牌）。故障脚本按 stepId（可选限定 operation）有限显式、按序消费，`assertFaultsConsumed` 强制全部耗尽，防止静默放过未触发注入。
 
@@ -129,4 +129,12 @@ T08 语料适配逐项登记：①s8 是把已锁定时间从 2s 改成 3s 的�
 
 **重试上限与共享恢复预算**：默认 retryLimit=3 与 T01 相同。同一条调用链共享一份预算——重试、恢复跳转、后续调用同账本，恢复链不能活得比 retryLimit 更久。三类故障（timeout_before_send/request_in_progress/lose_response）三连注入触限时终态 error 并明示操作名，memory 与模型调用逐字节冻结；终态后驱动器仍可调度：下一步从保留 memory 重新推导同一写入（无模型重采样），脚本耗尽后以原 ID 原载荷成功，会话照常完成且该 stepId 恰一次 acceptance。恢复跳转同预算：commit version_mismatch 后 get_context 连续两次超时以 `retry limit exceeded on get_context` 终止，planIndex 与 nextStepId 停在 s18，故障脚本全部耗尽。
 
-结果：共 26 项 T06 测试（双样本 × 13）：s4 allocate_ids、s5 start_advance、s10 stage_unit、s18 commit_point、s20 narration_submit 五个写入步骤的丢失重放；s10 超时+in_progress 原样重发；3 类确定性拒绝换 ID 重试；3 类故障触限后恢复；1 条恢复跳转预算。丢失重放断言结局序列恰为 lost_response→replayed、多次尝试同 ID 同操作同作用域同载荷、该 stepId 恰一次 acceptance、oracle 对该操作种类的调用数等于 T01 流程固有次数（narration_submit 计 2 属 s3/s20 两个固有提交，非重放重复推进）。前端全套 **19 文件 361 项通过**，`typecheck:world`、共同接口统一入口（60 项通过）与生产 build（含 lint/全前端类型检查）通过；保留既有 hook 依赖及未使用变量 warnings。
+结果：共 26 项 T06 测试（双样本 × 13）：s4 allocate_ids、s5 start_advance、s10 stage_unit、s18 commit_point、s20 narration_submit 五个写入步骤的丢失重放；s10 超时+in_progress 原样重发；3 类确定性拒绝换 ID 重试；3 类故障触限后恢复；1 条恢复跳转预算。丢失重放断言结局序列恰为 lost_response→replayed、多次尝试同 ID 同操作同作用域同载荷、该 stepId 恰一次 acceptance、oracle 对该操作种类的调用数等于 T01 流程固有次数（narration_submit 计 2 属 s3/s20 两个固有提交，非重放重复推进）。前端全套 **19 文件 361 项通过**，`typecheck:world`、B 侧 `review:world-s1`（60 项）、共同接口统一入口（Python 109+317、契约 38、轨迹 65、四类破坏探针全拒，PASS）与生产 build（含 lint/全前端类型检查）通过；保留既有 hook 依赖及未使用变量 warnings。
+
+**复审结论：T06 语义通过，无代码阻塞。** 复审方复跑 26/26、全套 361 项（世界引擎 11 文件 299 项 + T06 26 项在 `--sequence.shuffle` 下同样通过，无顺序耦合）、`typecheck:world`、`review:world-s1`（60 项）、统一验收入口（Python 426、契约 38、轨迹 65、四类破坏探针全拒）与生产 build 全部通过；新三文件零 lint 告警、无 `as any`/`@ts-ignore`；根因独立复现（把 error 体白名单改回 `...entry` 展开即 12 failed/14 passed）；确认 `controller.ts`/`harness.ts` 零改动、s20 的 2 次 narration_submit 属 T01 流程固有（s3/s20）。交付提交为 `3e14200`。accept 提交按复审意见修正三处记录（两处「保持未提交」措辞与 T05 段同款措辞、统一入口数字误引 B 侧 review 数）并补强：
+
+- **加强断言（复审第 5 条）**：桥快照把 `control.revision` 抬高后，断言重试 commit 的 `expectedCheckpointRevision` 随之前移（绑定确实取自刷新后 control.revision），修复「忽略刷新上下文也能过」的盲区；桥快照缺 `world.advance` 时以 ProtocolError 拒绝，不再 TypeError。
+- **负例补齐（复审第 6 条）**：同 ID 换操作的 `request_id_reused` 服务器形状、退役 ID 同载荷复用的 ProtocolError、narration_claim 重放剥离 claimToken（acceptance 原件带 token 对照）、桥 scope 失配守卫、`assertFaultsConsumed` 未耗尽脚本负例——文档已声明的行为全部有测试钉住。
+- **类型根治（复审第 4 条）**：`ErrorCatalogEntry` 补 `controlRequired` 必填字段，新增 `errorBodyFor(code, details)` 作为错误体唯一构造器——内部目录字段在类型与构造两层都无法进入响应信封；顺带清除 `t06.scenario.ts` 死参数（复审第 7 条）。
+
+结果（accept 后）：T06 37 项（双样本 × 18 + 1 条传输守卫独立测试），前端全套 **19 文件 372 项通过**，`typecheck:world`、`review:world-s1`（60 项）、统一验收入口（Python 109+317、契约 38、轨迹 65、四类破坏探针全拒，PASS）与生产 build 重新全部通过。完整 B1 仍待 A2 就绪后以 T01 运行 H1；T07/T09 继续留 B2/H2。

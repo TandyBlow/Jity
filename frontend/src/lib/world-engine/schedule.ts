@@ -118,8 +118,16 @@ function asJson(value: unknown): Json {
 
 // ---------- error routing: the 18-code catalog comes from the frozen contract ----------
 
-export interface ErrorCatalogEntry { httpStatus: number; retryable: boolean; clientAction: ClientAction }
+export interface ErrorCatalogEntry { httpStatus: number; retryable: boolean; clientAction: ClientAction; controlRequired: boolean }
 export const errorCatalog = contract.errorCodes as unknown as Record<ErrorCode, ErrorCatalogEntry>;
+
+/** The wire-safe error body — exactly the fields ErrorBody's schema allows.
+ * Built here so internal catalog bookkeeping (controlRequired) cannot leak
+ * into a response envelope by construction, not by caller discipline. */
+export function errorBodyFor(code: ErrorCode, details: Record<string, Json> = {}): { code: ErrorCode; httpStatus: number; retryable: boolean; clientAction: ClientAction; details: Record<string, Json> } {
+  const { controlRequired: _ledgerOnly, ...entry } = errorCatalog[code];
+  return { code, ...entry, details };
+}
 
 export type ErrorFollowup =
   | 'retry_same_request'

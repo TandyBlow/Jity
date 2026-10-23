@@ -4,7 +4,7 @@
  * accepted exchange. Attempts, acceptances and replays remain separate. */
 import { type ScenarioTransport, type ServedSnapshot } from './harness';
 import { ProtocolError, validateError, validateRequest, validateSuccess } from './protocol';
-import { errorCatalog } from './schedule';
+import { errorBodyFor, errorCatalog } from './schedule';
 import { equal } from './trace-runner';
 import { WorldApiError, WorldTimeoutError, type WorldTransport } from './transport';
 import type { ErrorCode, Json, RequestMap, Scope, Success, WorldOperation } from './types';
@@ -62,12 +62,11 @@ export class FaultTransport implements WorldTransport {
   }
 
   private error(operation: WorldOperation, request: Record<string, unknown>, scope: Scope, code: ErrorCode, details: Record<string, Json> = {}, overrides?: Partial<ServedSnapshot>): WorldApiError {
-    const entry = errorCatalog[code];
     const response = validateError({
       protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1',
       serverTimeEpochMilli: this.latest.serverTimeEpochMilli ?? 1,
       replayed: false, operation, requestId: request.requestId ?? null, worldId: scope.worldId ?? request.worldId ?? null,
-      error: { code, httpStatus: entry.httpStatus, retryable: entry.retryable, clientAction: entry.clientAction, details }, ...this.snapshot(overrides),
+      error: errorBodyFor(code, details), ...this.snapshot(overrides),
     });
     return new WorldApiError(response);
   }
@@ -107,8 +106,9 @@ export class FaultTransport implements WorldTransport {
     // Only a refresh_context recovery may consume this B-authored bridge.
     // Its snapshot is the declared post-rejection state, never an apply.
     if (operation === 'get_context' && this.contextBridge !== null) {
-      if (!equal(request, {}) || !equal(scope, { worldId: (this.snapshot(this.contextBridge).world as { worldId: string }).worldId })) throw new ProtocolError('[fault] refresh context request/scope mismatch');
-      const world = this.snapshot(this.contextBridge).world as unknown as { advance: { inputAvailable: boolean; advanceId: string; inputId: string } };
+      const world = this.snapshot(this.contextBridge).world as unknown as { worldId: string; advance?: { inputAvailable: boolean; advanceId: string; inputId: string } } | null;
+      if (!world?.advance) throw new ProtocolError('[fault] bridge snapshot lacks world.advance');
+      if (!equal(request, {}) || !equal(scope, { worldId: world.worldId })) throw new ProtocolError('[fault] refresh context request/scope mismatch');
       const response = validateSuccess('get_context', {
         protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1',
         serverTimeEpochMilli: this.latest.serverTimeEpochMilli ?? 1,

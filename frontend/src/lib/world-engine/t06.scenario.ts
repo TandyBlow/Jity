@@ -9,7 +9,7 @@ import { buildT01Scenario } from './t01.scenario';
 export function buildT06Scenario(sampleId: string, rules: FaultRule[], retryLimit = 3) {
   const base = buildT01Scenario(sampleId);
   const advance = base.corpus.servedAfter.s5.world!.advance;
-  const fault = new FaultTransport(base.transport, rules, undefined, {
+  const fault = new FaultTransport(base.transport, rules, {
     advanceId: advance.advanceId!, inputId: advance.inputId!, text: base.memory.playerInput!.text,
   });
   const driver = new ControllerDriver({ transport: fault, model: base.model }, base.memory, { world: null }, {

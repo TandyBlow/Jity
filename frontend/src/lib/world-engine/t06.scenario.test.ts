@@ -1,8 +1,9 @@
 import { describe, expect, test } from 'vitest';
 import { driveControllerSegment } from './harness';
 import { buildT06Scenario } from './t06.scenario';
+import { WorldTimeoutError } from './transport';
 import type { FaultAction, FaultAttempt } from './fault-transport';
-import type { ErrorCode, Json } from './types';
+import type { ErrorCode, Json, Scope } from './types';
 
 type Scenario = ReturnType<typeof buildT06Scenario>;
 
@@ -13,6 +14,25 @@ async function beforeStep(scenario: Scenario, stepId: string) {
     if (terminal) throw new Error(`Ended before ${stepId}: ${JSON.stringify(terminal)}`);
   }
   throw new Error(`Never reached ${stepId}`);
+}
+
+async function runToTerminal(scenario: Scenario): Promise<{ kind: string; reason?: string; detail?: string }> {
+  for (let i = 0; i < 50; i++) {
+    const terminal = await scenario.driver.step();
+    if (terminal) return terminal;
+  }
+  throw new Error('T06 probe never reached a terminal status');
+}
+
+/** The recorded exchange of a step, re-identified for a direct transport
+ * probe: recorded requestId stays stripped, the probe mints its own. */
+function recordedScope(scenario: Scenario, stepId: string): Scope {
+  const step = scenario.corpus.steps.find((candidate) => candidate.id === stepId);
+  if (!step) throw new Error(`T06 corpus has no step ${stepId}`);
+  return structuredClone(step.scope);
+}
+function probeRequest(scenario: Scenario, stepId: string, requestId: string): Json {
+  return { ...(scenario.corpus.requests[stepId] as Record<string, Json>), requestId };
 }
 
 async function finish(scenario: Scenario) {
@@ -99,4 +119,70 @@ describe.each(['sample_1', 'sample_2'])('T06 %s loss and idempotency', (sampleId
     expect(scenario.transport.nextStepId).toBe('s18');
     scenario.fault.assertFaultsConsumed();
   });
+
+  test('the refreshed bridge revision moves the retried commit binding forward', async () => {
+    const probe = buildT06Scenario(sampleId, []);
+    const recorded = (probe.corpus.requests.s18 as Record<string, Json>).expectedCheckpointRevision as number;
+    const sealed = structuredClone(probe.corpus.servedAfter.s17);
+    const bumped = { ...sealed, control: { ...sealed.control!, revision: recorded + 1 } };
+    const scenario = buildT06Scenario(sampleId, [{ stepId: 's18', operation: 'commit_point', actions: [
+      { kind: 'error', code: 'version_mismatch', snapshot: bumped },
+      { kind: 'timeout_before_send' }, { kind: 'timeout_before_send' }, { kind: 'timeout_before_send' }, { kind: 'timeout_before_send' },
+    ] }]);
+    await beforeStep(scenario, 's18');
+    expect(await runToTerminal(scenario)).toMatchObject({ kind: 'error', detail: expect.stringContaining('retry limit exceeded on commit_point') });
+    const attempts = scenario.fault.attempts.filter((attempt) => attempt.stepId === 's18');
+    expect(attempts.map((attempt) => attempt.operation)).toEqual(['commit_point', 'get_context', 'commit_point', 'commit_point', 'commit_point', 'commit_point']);
+    expect(attempts.map((attempt) => attempt.outcome)).toEqual(['error', 'context_bridge', 'timeout_before_send', 'timeout_before_send', 'timeout_before_send', 'timeout_before_send']);
+    const revisions = attempts.filter((attempt) => attempt.operation === 'commit_point').map((attempt) => (attempt.request as Record<string, Json>).expectedCheckpointRevision);
+    expect(revisions[0]).toBe(recorded);
+    for (const revision of revisions.slice(1)) expect(revision).toBe(recorded + 1);
+    scenario.fault.assertFaultsConsumed();
+  });
+
+  test('a requestId reused for a different operation gets the server-shaped request_id_reused', async () => {
+    const scenario = buildT06Scenario(sampleId, []);
+    await beforeStep(scenario, 's2');
+    const scope = recordedScope(scenario, 's2');
+    await scenario.fault.execute('narration_claim', probeRequest(scenario, 's2', 't06_probe_reused') as never, scope as never);
+    await expect(scenario.fault.execute('narration_submit', probeRequest(scenario, 's20', 't06_probe_reused') as never, scope as never))
+      .rejects.toMatchObject({ response: { error: { code: 'request_id_reused' } } });
+    const attempt = scenario.fault.attempts.filter((candidate) => candidate.operation === 'narration_submit').at(-1);
+    expect(attempt).toMatchObject({ outcome: 'error', code: 'request_id_reused' });
+  });
+
+  test('a definitively retired requestId refuses same-payload reuse with a ProtocolError', async () => {
+    const scenario = buildT06Scenario(sampleId, [{ stepId: 's2', actions: [{ kind: 'error', code: 'claim_fenced' }] }]);
+    await beforeStep(scenario, 's2');
+    const request = probeRequest(scenario, 's2', 't06_probe_retired') as never;
+    const scope = recordedScope(scenario, 's2') as never;
+    await expect(scenario.fault.execute('narration_claim', request, scope)).rejects.toMatchObject({ response: { error: { code: 'claim_fenced' } } });
+    await expect(scenario.fault.execute('narration_claim', request, scope)).rejects.toThrow(/\[fault\] retired requestId/);
+  });
+
+  test('a replayed narration claim is a summary without the claim token', async () => {
+    const scenario = buildT06Scenario(sampleId, [{ stepId: 's2', actions: [{ kind: 'lose_response' }] }]);
+    await beforeStep(scenario, 's2');
+    const request = probeRequest(scenario, 's2', 't06_probe_claim') as never;
+    const scope = recordedScope(scenario, 's2') as never;
+    await expect(scenario.fault.execute('narration_claim', request, scope)).rejects.toBeInstanceOf(WorldTimeoutError);
+    const replay = await scenario.fault.execute('narration_claim', request, scope) as unknown as { replayed: boolean; data: Record<string, Json> };
+    expect(replay.replayed).toBe(true);
+    expect(replay.data.claimToken).toBeUndefined();
+    const acceptance = scenario.fault.acceptances.find((candidate) => candidate.operation === 'narration_claim');
+    expect((acceptance?.response as { data: { claimToken?: string } }).data.claimToken).toEqual(expect.any(String));
+  });
+
+  test('the context bridge refuses a mismatched refresh scope', async () => {
+    const scenario = buildT06Scenario(sampleId, [{ stepId: 's18', operation: 'commit_point', actions: [{ kind: 'error', code: 'version_mismatch' }] }]);
+    await beforeStep(scenario, 's18');
+    await expect(scenario.fault.execute('commit_point', probeRequest(scenario, 's18', 't06_probe_bridge') as never, recordedScope(scenario, 's18') as never))
+      .rejects.toMatchObject({ response: { error: { code: 'version_mismatch' } } });
+    await expect(scenario.fault.execute('get_context', {}, { worldId: 't06-other-world' } as never)).rejects.toThrow(/\[fault\] refresh context request\/scope mismatch/);
+  });
+});
+
+test('T06 fault transport rejects unconsumed scripts', () => {
+  const scenario = buildT06Scenario('sample_1', [{ stepId: 's3', actions: [{ kind: 'lose_response' }] }]);
+  expect(() => scenario.fault.assertFaultsConsumed()).toThrow(/s3/);
 });
