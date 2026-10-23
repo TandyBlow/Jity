@@ -1,6 +1,6 @@
 # B1 控制器设计补充（B 侧）
 
-状态：2026-10-23，分支 `world-browser`，契约摘要 `480d950c…`。步骤 4 已通过复审并单独提交为 `159ad03`（T04、自动轮入口、T08，P2 已关闭）；T05 双样本固定响应及反例已通过复审（335 项），详见 [browser.md](browser.md)。下一段补 T06 故障语义，A2 就绪后运行 H1；T07/T09 保留 B2/H2。本文是 [分工文档](../browser-world-state-work-split.md) §四 B1 行的实现层补充，保留已确认的分层、模型调用及 preview/digest 策略。
+状态：2026-10-23，分支 `world-browser`，契约摘要 `480d950c…`。步骤 4 已通过复审并单独提交为 `159ad03`（T04、自动轮入口、T08，P2 已关闭）；T05 已通过复审并提交为 `9dc52f3`；T06 故障语义已按 B 自有 fault transport 交付（19 文件 361 项，保持未提交、待复审），详见 [browser.md](browser.md)。之后 A2 就绪后运行 H1；T07/T09 保留 B2/H2。本文是 [分工文档](../browser-world-state-work-split.md) §四 B1 行的实现层补充，保留已确认的分层、模型调用及 preview/digest 策略。
 
 ## 0. 验收口径：共享轨迹是契约标本，不是控制器金标
 

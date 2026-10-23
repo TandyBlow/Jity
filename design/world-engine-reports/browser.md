@@ -116,3 +116,17 @@ T08 语料适配逐项登记：①s8 是把已锁定时间从 2s 改成 3s 的�
 结果：共 22 项 T05 测试，包含双样本 × 两种暂停来源的 4 条完整正路径、2 条无数值上限的预算事件路径，以及 16 条定向反例。每条完整正路径 9 次传输调用（driver 写请求 5 次、harness 心跳 2 次、inspect 2 次），模型恰为 narration 1 次，所有声明消费完毕。反例覆盖 s2 错误 paused、s5 coherent 的 canCompute=true 且清空 blockedReasons（由独立业务断言拒绝）、s8 ready 后错误解除暂停、s8 paused/compute-enabled 的 schema 矛盾、心跳 fence 篡改、新 claim 使用旧 generation、终态 digest 与状态体篡改；均在对应消费步骤拒绝。前端全套 **18 文件 335 项通过**，`typecheck:world`、共同接口统一入口（Python 109+317、契约 38、轨迹 65、四类破坏探针）与生产 build（含 lint/全前端类型检查）通过；保留既有 hook 依赖及未使用变量 warnings。
 
 **复审结论：T05 通过，未发现阻塞问题。** 复审方实际复跑 335 项、类型检查、共同接口验收及生产构建全部通过，双样本独立终态摘要一致；确认旧 claim 退休、暂停来源判定两处修复有效，resume 后仍受阻、暂停中完成叙事、ready 不解除暂停均有独立断言和反例，心跳限于 harness。下一段先补 B 自有 fault transport 的 T06 语义：响应丢失后的同 ID/同载荷重发、成功重放不重复推进、确定性拒绝后新 ID、重试上限与恢复状态；A2 就绪后再以 T01 运行 H1，核对真实 HTTP 动态身份、preview、commit 与独立摘要。T07/T09 继续留 B2/H2，完整 B1 尚未验收。
+
+## B1 步骤 5 第二段：T06 故障语义
+
+日期：2026-10-23。接续上轮：T05 已通过复审并提交为 `9dc52f3`（335 项基线），本轮新增 `fault-transport.ts`、`t06.scenario.ts/test.ts` 三文件，交付 B 自有 fault transport 的 T06 故障语义；控制器与 harness 零改动，重试与恢复行为沿用 T04/T05 已验收实现。共享轨迹、schema、manifest 与 digest pin 均未修改。本轮改动保持未提交、待复审；未推进 H1。
+
+**故障面与账本分离**：FaultTransport 包装 T01 的严格 ScenarioTransport——被接受的响应永远来自语料本体，故障层自身不 apply、不掷骰、不推哈希、不发明成功；T01 oracle 保留全部业务断言、模型脚本与独立终态投影/摘要。三次观察互相独立：attempts 记录每次 execute 的操作/请求/作用域/结局，acceptances 只记 oracle 实际接受的交换，丢失响应只能重放真实接受过的原 `data`（附重新推导的 world/control/work 快照、`replayed=true` 与回显 requestId），narration_claim 重放剥离 claimToken（摘要不能复活令牌）。故障脚本按 stepId（可选限定 operation）有限显式、按序消费，`assertFaultsConsumed` 强制全部耗尽，防止静默放过未触发注入。
+
+**requestId 台账与退役**：首次出现的写请求按 `(worldId, requestId)` 登记绑定 stepId——超时前注入同样先登记，重试不漂移绑定；同键换操作/作用域/载荷以服务器形状返回 `request_id_reused`；确定性拒绝（`request_in_progress` 除外）退役登记项，退役后复用属驱动器缺陷，直接 ProtocolError。共享 T06 轨迹的 request_id_reused/request_in_progress/stale_epoch 台账示教仍归契约套件，B 侧只保证控制器永不走到这些形状。
+
+**context 桥**：`refresh_context` 类拒绝（revision_mismatch/version_mismatch/phase_invalid）注入在 s18 commit_point。桥响应由 B 显式声明的拒绝后状态构造（world/control/work 快照，activeInput 随 `advance.inputAvailable` 给出），仅允许跟随 refresh_context 的空请求 get_context 消费一次，且作用域必须与桥世界一致——它是声明的拒绝后状态，不是 apply，不产生业务差量。断言重试 commit 换新 requestId 且载荷其余字段逐一相等、get_context 恰一次、action/results/updates 模型调用各恰一次（已确认工作不重采样）。
+
+**重试上限与共享恢复预算**：默认 retryLimit=3 与 T01 相同。同一条调用链共享一份预算——重试、恢复跳转、后续调用同账本，恢复链不能活得比 retryLimit 更久。三类故障（timeout_before_send/request_in_progress/lose_response）三连注入触限时终态 error 并明示操作名，memory 与模型调用逐字节冻结；终态后驱动器仍可调度：下一步从保留 memory 重新推导同一写入（无模型重采样），脚本耗尽后以原 ID 原载荷成功，会话照常完成且该 stepId 恰一次 acceptance。恢复跳转同预算：commit version_mismatch 后 get_context 连续两次超时以 `retry limit exceeded on get_context` 终止，planIndex 与 nextStepId 停在 s18，故障脚本全部耗尽。
+
+结果：共 26 项 T06 测试（双样本 × 13）：s4 allocate_ids、s5 start_advance、s10 stage_unit、s18 commit_point、s20 narration_submit 五个写入步骤的丢失重放；s10 超时+in_progress 原样重发；3 类确定性拒绝换 ID 重试；3 类故障触限后恢复；1 条恢复跳转预算。丢失重放断言结局序列恰为 lost_response→replayed、多次尝试同 ID 同操作同作用域同载荷、该 stepId 恰一次 acceptance、oracle 对该操作种类的调用数等于 T01 流程固有次数（narration_submit 计 2 属 s3/s20 两个固有提交，非重放重复推进）。前端全套 **19 文件 361 项通过**，`typecheck:world`、共同接口统一入口（60 项通过）与生产 build（含 lint/全前端类型检查）通过；保留既有 hook 依赖及未使用变量 warnings。
