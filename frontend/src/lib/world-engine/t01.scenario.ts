@@ -6,40 +6,27 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { ControllerDriver, initialMemory, type DriverOptions } from './controller';
-import { buildCorpus, ScenarioModelPort, ScenarioTransport, type Corpus, type PreviewSpecimenSpec, type ServedSnapshot } from './harness';
-import { readTrace } from './trace-runner';
+import { buildCorpus, ScenarioModelPort, ScenarioTransport, type Corpus, type PreviewSpecimenSpec } from './harness';
+import { ProtocolError } from './protocol';
+import { instantiate, readTrace } from './trace-runner';
 import type { WorldTransport } from './transport';
 import type { Id, Json } from './types';
 
-const ROSTER = ['person_a', 'person_b', 'person_c', 'person_d', 'person_e', 'person_f'];
-
-/** B-authored working state for the extra preview after begin: the full
- * world roster (candidate coverage derives from it) with person_a in the
- * corridor. The specimen's digests are placeholders, never digest evidence. */
-function specimenWorkingState(worldId: Id, position: { containerId: string; slotId: null; relativeTo: null }): Json {
-  const time = { calendar: 'gregorian', dateTime: '2026-01-01T00:00:00', instantOrdinal: 0 };
-  const characters = Object.fromEntries(ROSTER.map((id) => [id, { id, appearanceChanges: [], position, personalityChanges: [], sanity: 50, tasks: {} }]));
+/** B-authored preview specimen after begin: the recorded working state of
+ * the SAME point (the trace's own final preview, s16) with the point's
+ * staged entity deltas reverted to the recorded initial positions — begin
+ * has staged nothing yet. Entities, time and identity bindings are the real
+ * T01 ones; only the specimen's digests are placeholders, never evidence. */
+function buildSpecimen(realWorkingState: Json, realPointProjection: Json): { workingState: Json; pointProjection: Json; mergedEntityDeltas: Json } {
+  const workingState = structuredClone(realWorkingState) as { characters: Record<string, { position: Json }>; initial: { characters: Record<string, { initialPosition: Json }> } };
+  const deltas = (realPointProjection as { entityDeltas?: Record<string, { positionSet?: Json }> }).entityDeltas ?? {};
+  for (const [entityId, delta] of Object.entries(deltas)) {
+    const initialPosition = workingState.initial.characters[entityId]?.initialPosition;
+    if (delta.positionSet && workingState.characters[entityId] && initialPosition) workingState.characters[entityId].position = structuredClone(initialPosition);
+  }
   return {
-    engineVersion: 'world-engine-v1', schemaVersion: 1, worldId, protagonistId: 'person_a', time,
-    initial: { engineVersion: 'world-engine-v1', schemaVersion: 1, protagonistId: 'person_a', worldId, initialTime: time, locations: { corridor: { id: 'corridor', name: '走廊', parentLocationId: null, initialAppearance: '空旷' } }, items: {}, characters: Object.fromEntries(ROSTER.map((id) => [id, { id, name: id, initialPosition: position, initialAppearance: '正常', initialPersonality: '冷静', initialSanity: 50, tasks: {} }])) },
-    locations: { corridor: { id: 'corridor', appearanceChanges: [] } },
-    items: {},
-    characters,
-  } as Json;
-}
-
-function specimenBuild(served: ServedSnapshot): { workingState: Json; pointProjection: Json; mergedEntityDeltas: Json } {
-  const world = served.world!;
-  const work = served.work!;
-  const position = { containerId: 'corridor', slotId: null, relativeTo: null };
-  return {
-    workingState: specimenWorkingState(world.worldId, position),
-    pointProjection: {
-      worldId: world.worldId, id: work.pointId, sequence: 1, kind: 'normal',
-      previousPointId: world.head.pointId, roundId: work.baseline.headPointId,
-      advanceId: world.advance.advanceId, trigger: 'player', linkedFromPointId: null,
-      timeAdvance: work.timeAdvance, entityDeltas: {},
-    } as unknown as Json,
+    workingState: workingState as Json,
+    pointProjection: { ...(structuredClone(realPointProjection) as Record<string, unknown>), entityDeltas: {} } as Json,
     mergedEntityDeltas: {},
   };
 }
@@ -55,8 +42,14 @@ export interface T01Scenario {
 
 export function buildT01Scenario(sampleId: string, rawOverride?: object, driverOptions?: Partial<DriverOptions>): T01Scenario {
   const raw = rawOverride ?? JSON.parse(readFileSync(resolve(process.cwd(), '../design/world-protocol/v2/traces/T01.json'), 'utf8'));
-  readTrace(raw); // pin + schema gate before anything derives from it
-  const specimens: PreviewSpecimenSpec[] = [{ afterStepId: 's6', label: 'b-preview-after-begin-s6', build: specimenBuild }];
+  const trace = readTrace(raw); // pin + schema gate before anything derives from it
+  const sample = trace.samples.find((s) => s.id === sampleId);
+  if (!sample) throw new ProtocolError(`Unknown sample ${sampleId}`);
+  const recordedPreview = trace.steps.find((s) => s.id === 's16');
+  if (!recordedPreview) throw new ProtocolError('[T01] trace has no s16 preview to derive the preview specimen from');
+  const recorded = instantiate(recordedPreview.response, sample.values) as { data: { workingState: Json; pointProjection: Json } };
+  const specimen = buildSpecimen(recorded.data.workingState, recorded.data.pointProjection);
+  const specimens: PreviewSpecimenSpec[] = [{ afterStepId: 's6', label: 'b-preview-after-begin-s6', build: () => structuredClone(specimen) }];
   const corpus = buildCorpus(raw, sampleId, specimens, ['s21', 's22', 's23']);
   const roundId = (corpus.servedAfter.s5.world!.activeRoundId ?? corpus.servedAfter.s5.world!.round!.roundId) as Id;
 
@@ -73,7 +66,7 @@ export function buildT01Scenario(sampleId: string, rawOverride?: object, driverO
   const head18 = corpus.servedAfter.s18.world!.head;
   const groupId = reqS10.candidates.groupId;
   const position = reqS10.candidates.positions.person_a;
-  const specimenState = specimenBuild(corpus.servedAfter.s6).workingState;
+  const specimenState = specimen.workingState;
 
   const model = new ScenarioModelPort([
     { task: 'initial', key: 'initial', input: null, output: reqS1.initial },
@@ -89,7 +82,7 @@ export function buildT01Scenario(sampleId: string, rawOverride?: object, driverO
   const memory = initialMemory('req_T01', 'browser');
   memory.playerInput = { text: reqS5.inputText, order: [...reqS5.order] };
   memory.allocPlan = { allocationKey: reqS4.allocationKey, slots: structuredClone(reqS4.slots) };
-  const transport = new ScenarioTransport(corpus.steps, () => memory.requestId, 'T01');
+  const transport = new ScenarioTransport(corpus.steps, 'T01');
   const options: DriverOptions = {
     retryLimit: 3,
     identityAliases: { 'group:person_a': 'group', ...(driverOptions?.identityAliases ?? {}) },

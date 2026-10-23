@@ -1,13 +1,15 @@
 /** T01 fixed-response controller acceptance: the real ControllerDriver runs
- * the declared corpus for both shared samples; inspect reads verify the
- * shared independent expectations; directed negatives prove the harness
- * rejects request/scope/model mismatches, undeclared previews and tampered
- * shared digests. */
+ * the declared corpus for both shared samples; serve-time identity (runtime
+ * digest chain, shared independent expectations) and harness-issued inspect
+ * reads are verified; directed negatives prove the harness rejects
+ * request/scope/model mismatches, undeclared previews, request-id reuse,
+ * recorded echo corruption and tampered shared digests. */
 import { describe, expect, test } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { assertSharedExpectation } from './harness';
+import { assertSharedExpectation, buildCorpus } from './harness';
 import { buildT01Scenario, driveControllerSegment } from './t01.scenario';
+import type { Id, Json } from './types';
 
 const rawT01 = () => JSON.parse(readFileSync(resolve(process.cwd(), '../design/world-protocol/v2/traces/T01.json'), 'utf8'));
 
@@ -54,6 +56,25 @@ describe('T01 fixed-response controller acceptance', () => {
     expect(s16.placeholderDigests).toBeUndefined();
     expect(String((s16.response as { data: { workingStateDigest: string } }).data.workingStateDigest)).not.toBe('0'.repeat(64));
 
+    // The specimen stays inside T01's actual world: real protagonist, time,
+    // roster, items and tasks — only the digests are placeholders. It is the
+    // recorded s16 working state of the SAME point with the point's staged
+    // entity deltas reverted to the recorded initial positions, and its
+    // projection carries the recorded round (not the root point id).
+    const specimen = scenario.corpus.steps.find((s) => s.id === 'b-preview-after-begin-s6')!;
+    const specimenData = (specimen.response as { data: { workingState: Json; pointProjection: Json } }).data;
+    const working = specimenData.workingState as { characters: Record<string, { position: Json; tasks: Record<string, unknown> }>; items: Record<string, unknown> };
+    expect(specimenData.workingState).toMatchObject({ protagonistId: 'person_c', time: { calendar: 'gregorian', dateTime: '2026-01-01T11:59:02' } });
+    expect(working.characters.person_a.position).toEqual({ containerId: 'lobby', slotId: null, relativeTo: null });
+    expect(Object.keys(working.items).length).toBeGreaterThan(0);
+    expect(Object.keys(working.characters.person_a.tasks)).toContain('task_a_root');
+    const recorded16 = (s16.response as { data: { workingState: Json; pointProjection: Json } }).data;
+    const reverted = structuredClone(recorded16.workingState);
+    ((reverted as { characters: Record<string, { position: Json }> }).characters).person_a.position = { containerId: 'lobby', slotId: null, relativeTo: null };
+    expect(specimenData.workingState).toEqual(reverted);
+    expect(specimenData.pointProjection).toEqual({ ...(structuredClone(recorded16.pointProjection) as Record<string, unknown>), entityDeltas: {} });
+    expect((specimenData.pointProjection as { roundId: Id }).roundId).toBe(scenario.roundId);
+
     // Model call order: task/key sequence, inputs already strictly verified.
     const rootId = scenario.corpus.servedAfter.s1.world!.head.pointId;
     const pointId = (scenario.corpus.requests.s6 as { pointId: string }).pointId;
@@ -68,16 +89,6 @@ describe('T01 fixed-response controller acceptance', () => {
   });
 });
 
-test('DBG corpus s21 instantiation', () => {
-  const scenario = buildT01Scenario('sample_1');
-  const s21 = scenario.corpus.steps.find((s) => s.id === 's21')!;
-  console.log('DBG s21 response:', JSON.stringify(s21.response).slice(0, 200));
-  console.log('DBG s21 expectation:', JSON.stringify(s21.expectation)?.slice(0, 200));
-  const s1 = scenario.corpus.steps.find((s) => s.id === 's1')!;
-  console.log('DBG s1 response len:', JSON.stringify(s1.response).length);
-  const s5 = scenario.corpus.steps.find((s) => s.id === 's5')!;
-  console.log('DBG s5 response world.head:', JSON.stringify((s5.response as { world: { head: unknown } }).world.head).slice(0, 150));
-});
 describe('T01 harness directed negatives', () => {
   test('rejects a driver request that breaks the identity binding', async () => {
     const scenario = buildT01Scenario('sample_1', undefined, { identityAliases: { 'group:person_a': 'no_such_slot' } });
@@ -116,7 +127,37 @@ describe('T01 harness directed negatives', () => {
     sample.expectedDigests.s21 = 'f'.repeat(64);
     const scenario = buildT01Scenario('sample_1', raw);
     await driveControllerSegment(scenario);
-    const { step, response } = await scenario.transport.runInspect('s21');
-    expect(() => assertSharedExpectation(step, response)).toThrow(/shared digest mismatch/);
+    // The independent expectation is enforced at serve time — the inspect
+    // read itself refuses the tampered pin.
+    await expect(scenario.transport.runInspect('s21')).rejects.toThrow(/shared digest mismatch/);
+  });
+
+  test('rejects a tampered final preview digest via the runtime digest chain', async () => {
+    const scenario = buildT01Scenario('sample_1');
+    (scenario.corpus.steps.find((s) => s.sharedStepId === 's16')!.response as { data: { workingStateDigest: string } }).data.workingStateDigest = 'f'.repeat(64);
+    await expect(driveControllerSegment(scenario)).rejects.toThrow(/digest chain broken/);
+  });
+
+  test('rejects a tampered commit state digest via the runtime digest chain', async () => {
+    const scenario = buildT01Scenario('sample_1');
+    (scenario.corpus.steps.find((s) => s.sharedStepId === 's18')!.response as { data: { stateDigest: string } }).data.stateDigest = 'f'.repeat(64);
+    await expect(driveControllerSegment(scenario)).rejects.toThrow(/digest chain broken/);
+  });
+
+  test('rejects a driver that reuses one requestId across operations', async () => {
+    const scenario = buildT01Scenario('sample_1');
+    (scenario.driver as unknown as { nextRequestId(): void }).nextRequestId = () => undefined;
+    await expect(driveControllerSegment(scenario)).rejects.toThrow(/requestId req_T01_0 already used/);
+  });
+
+  test('rejects a corpus whose recorded response does not echo the request id', () => {
+    const raw = rawT01();
+    (raw.steps as { id: string; response: { requestId?: string } }[]).find((s) => s.id === 's1')!.response.requestId = 'req_other';
+    expect(() => buildT01Scenario('sample_1', raw)).toThrow(/does not echo the request/);
+  });
+
+  test('builds corpora for traces with input-origin variables (T02)', () => {
+    const raw = JSON.parse(readFileSync(resolve(process.cwd(), '../design/world-protocol/v2/traces/T02.json'), 'utf8'));
+    expect(() => buildCorpus(raw, 'sample_1', [], [])).not.toThrow();
   });
 });
