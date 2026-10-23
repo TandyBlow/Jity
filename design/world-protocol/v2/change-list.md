@@ -363,5 +363,5 @@ npm --prefix frontend run build
 
 ## 设计变更登记（2026-10-23）：输入消费规则
 
-workflow 设计 v0.4.1 §5.1 的「主角在本链第一个 round 中处理该输入的行动机会时（包括 skip 或被迫反应占用该机会）将 intentStatus 置为 consumed」与共同轨迹 T01/T02/T08 不一致：三者的首个 stage_unit 均由非主角行动（T01/T02 的 protagonist person_c 在本点首结算时未行动），intentStatus 却都为 consumed。经裁决按轨迹冻结为**本链首次结算动作消费**：任意行动者的 stage_unit 或 record_skip 把 pending 置为 consumed，后续结算与 skip 保持；stage_time_scan 不消费（T03 保持 pending）；automatic round 继承 consumed 的既有要求不变。v0.4.2 已同步修订 §5.1 原文；A 侧 working 演进函数与断言按新规则实现（`b29d898` 及本变更提交）。主角条款针对的「automatic round 中 NPC 先行不消费」场景在现有轨迹中不存在，留待真实样本出现时再议。B 的轨迹断言按轨迹预期，无需调整。
+workflow 设计 v0.4.1 §5.1 的「主角在本链第一个 round 中处理该输入的行动机会时（包括 skip 或被迫反应占用该机会）将 intentStatus 置为 consumed」与共同轨迹 T01/T02/T08 不一致：三者的首个 stage_unit 均由非主角行动（T01/T02 的 protagonist person_c 在本点首结算时未行动），intentStatus 却都为 consumed。经裁决按轨迹冻结为**本链首次结算动作消费**：任意行动者的 stage_unit 或 record_skip 把 pending 置为 consumed，后续结算与 skip 保持；stage_time_scan 不消费（T03 保持 pending）；automatic round 继承 consumed 的既有要求不变。v0.4.2 已同步修订 §5.1 原文；A 侧 working 演进函数与断言按新规则实现（`b29d898` 及本变更提交）。主角条款针对的「automatic round 中 NPC 先行不消费」场景在现有轨迹中不存在，未来若调整另行修订；automatic round 继承 consumed 的既有规则不变。B 的轨迹断言按轨迹预期，无需调整。
 

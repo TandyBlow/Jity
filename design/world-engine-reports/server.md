@@ -71,8 +71,50 @@ Python 预期工具只对手写 expectedProjection 绑定身份，按既有 worl
 7. **月/年时长**：v2 全夹具零覆盖；定为公历夹月末（clamp to month end），A1b 自建夹具，H1 记一笔待确认。
 8. **覆盖规则（B 审出、2026-10-22 裁决）**：`taskCoverageIds`＝**世界全体角色**（T03-collapse 单人组仍覆盖 6 人，非 round roster——v1「roster 覆盖」意图有误）；`personalityCoverageIds` 无达成＝空，**有达成＝世界全体**（workflow 设计 §6.3「扫描所有人物/不得只检查共同结算成员」为准；组与 time-scan 同规则）。T03-collapse 组（coverage=actors）为**已知偏差夹具**：轨迹/manifest 不动，validate 断言其 coverage 违规，回放不走 validate 不受影响；**处理期限＝首次把该场景用于成功联调之前**——届时按 §2.2 更新共享夹具（双样本已验证：改为全员 coverage 后校验通过、合并 Δ 不变，仅 contentHash 随候选集字节改变；A1b-2 先以本地正例覆盖新规则）。角色专属字段键（tasksAchieved/personalities/sanities/subtasksAdded）必须在册，个性变化必须落在声明的 coverage 内。`set_point_time`/`record_skip` 另有矩阵未载的局部不变量：要求 open work。B 的 schedule.ts coverage 生成（round.order）需同步为世界全体。
 
+## B1 §7 确认
+
+日期：2026-10-23。对应 B 侧 [b1-controller-design §7](https://github.com/TandyBlow/Jity/blob/38c464dce59bb80d39f4a49845d1c42abe0e863c/design/world-engine-reports/b1-controller-design.md#7-待与-a-确认阻塞-harness-场景语料与-h1调度纯函数步骤已闭环)。本记录确认设计要求和 B1 验收口径；A2 实际服务能力另经 H1 验证。
+
+确认时的代码身份：A 为 `world-server` 的 `b29d898a1c2e12a40bc4fccea4558a22f86a3fad`；B 为 `world-browser` 的 `38c464dce59bb80d39f4a49845d1c42abe0e863c`。共同接口实现基线为 `e3b197a79f95adfbe215dddf5dfd3f9ed5b12823`，协议版本为 2，契约摘要为 `480d950c0f8062f8fdd75cb0620eb4ac97a6a247ca3f45f2057f6fe9e2ce7062`。这些身份用于本次确认，H1 将另记实际参测的 A/B 提交组合。
+
+### 1. B1 控制器验收分层：认可
+
+认可 B 使用自有场景夹具，响应语料取自共享轨迹，按以下分段验收：
+
+| 分段 | 执行与验收要求 |
+|---|---|
+| `controller` | 由真实 driver 推导请求，严格核对 operation、request、scope 及模型调用顺序 |
+| `command` | 注入暂停、恢复、取消、预算事件及心跳；作为外部命令处理 |
+| `probe` | 执行故意非法请求、重放和故障探针，断言相应错误及恢复行为 |
+| `inspect` | 执行验收读取 |
+| `stop` | 明确场景停止边界，边界后的额外执行视为失败 |
+
+控制器所需额外 preview 仅允许出现在夹具声明的位置。共享轨迹继续用于契约层逐字消费，既有 65 项轨迹检查保留；本确认不修改共享轨迹格式、轨迹内容或契约导出物。B1 控制器夹具通过与真实 HTTP 联调分别记录结果。无阻塞 harness/T01 语料开发的修订要求。
+
+### 2. preview 使用要求及 digest 策略：认可
+
+在契约前置条件与绑定成立时，A2 须支持 `begin_point`、`stage_unit`、`stage_time_scan` 后调用 `preview_point`，并允许同一点多次 preview，不增设只能调用一次的限制。前置条件沿用 registry：`paused=false`、head narration ready、gate cleared、point work 为 open 或 sealed；身份、版本和 checkpoint revision 按现有请求字段核对。沿用最多 32 个单元、请求 JSON 512 KiB、响应 2 MiB 的限制；实际响应字节由 A2 服务层序列化后测量。
+
+每次 preview 从同一权威基线及请求的完整 `settlementGroups` 重算，不将上次工作态当作新基线，不再叠加已保存单元；时间只应用一次。纯时间扫描候选以 `groupId=null` 单元放在同一个列表内，扫描后的 preview 必须反映该候选的状态变化。preview 不带 requestId、不进入幂等表、不推进 revision 或已提交状态。
+
+认可 B1 夹具采用以下摘要策略：
+
+- 共享轨迹未提供的中间 preview，由 B 编写工作态标本，digest 使用符合 schema 的占位值，并在 B 自有夹具或验收说明中明确标注其占位性质。
+- 中间占位 digest 不作为状态计算、规范编码或摘要一致性的语义证据，也不替代真实服务返回的摘要。
+- 最终 preview（T01 s16）及 commit 路径使用共享独立预期和对应身份绑定进行摘要断言，不能将实际响应摘要同时作为预期。
+- B 不另写 canonical 摘要算法。本轮不要求 B1 的中间 preview 校验真实 digest，A 提供额外中间态标本或工具不构成 harness 开工前置。
+
+### 当前实现与 H1 安排
+
+当前 A 已有纯内核 `backend/app/services/world/preview.py`：`preview_point(state, point, groups)` 复用 merge/apply 生成完整 wire data 及真实摘要，`preview_over_budget` 提供字节预算判定；已有 T01 s16 契约/摘要锚点和 T03 纯时间 preview 对拍测试。该实现状态不代表 FixtureBaselineStore、HTTP 路由、请求绑定校验和实际序列化预算已交付，也不代表 H1 已通过。
+
+A2 最小服务与 B1 harness 就绪后，A 提供 FixtureBaselineStore、服务启动方式及地址/CORS 配置，B 以真实 driver、HTTP transport 和相应 harness 配置完成 T01 普通点 H1，覆盖创建世界/根点叙事、启动 round、begin/discover/extend/close/stage/seal/commit 及提交点叙事。H1 检查 begin/stage 后 preview、同点重复 preview 的状态与摘要稳定性、动态身份绑定、实际请求/响应序列化，以及最终 preview/commit/读取状态的摘要一致性；配套纯时间场景检查 stage_time_scan 后 preview，另检查真实字节预算边界。真实 HTTP 下使用 A 返回的真实 digest，中间占位值仅保留在 B1 的固定响应夹具中。
+
+H1 结果须记录实际 A/B 提交、共同契约摘要、启动配置、执行步骤、身份绑定及检查结果。覆盖规则的 T03-collapse 已知偏差仍按已钉结论 #8，在首次将该场景用于成功联调前处理；本确认不宣称 SQLite 崩溃恢复或 H2 已验收。
+
 ## 固定预期绑定（A1a-2 直接采用）
 
 - `fixtures/projections/{normal,segmented,time}.expected.json` 为 **WorldState 终态快照**（同一学校世界，时间 11:59:02/11:59:05/12:00:00 对应 T01/T02/T03 终态），`canonical_digest(WorldState.model_validate(doc).model_dump(mode='json'))` 与轨迹 **sample_1** 的 `expectedDigests` 相等（`4f5a33e7`/`85848d51`/`61569325`；B 以三条独立路径复现）。**sample_2 是不同身份/业务变量的另一条世界**（`952edfa2`/`f59d6d3b`/`908c8ef8`），不与快照等值；回放逐样本独立跑，快照不充当 sample_2 预期。
 - `description-collapse.expected.json` 是 DescriptionChange 形态片段、`task-normalization.expected.json` 是 EntityDelta 形态片段——塌缩/归一化行为断言比对对应片段，不是整状态。
 - 回放配方：以轨迹 `samples[i].values` 实例化各步请求 → 依次 apply 轨迹内全部成功 commit → 终态摘要对 `expectedDigests`。起点按 s1 `get_context` 的 head 摘要映射（B 实测）：`9301b799`＝root 初始态（T01/T02/T05/T06/T08 等直接从 root 起步，T02 的无 Δ 时间点在轨迹内 commit）、`32256da8`＝root＋无 Δ elapsed 2s（T02-empty-linked）、`85848d51`＝segmented 快照（T03-collapse/T04）；三条分支互相独立，不存在跨轨迹链式回放。
+
