@@ -8,11 +8,16 @@
  * at serve time, not only on harness-issued inspects — scenario-declared
  * alignments that bind a final preview's served body and digest to a later
  * independent expectation, and scenario-declared independent digest pins for
- * fields no later reference consumes. The transport never hands expected
- * requests to the driver and reads nothing from driver memory: requestId
- * lifecycle is enforced independently (a fresh id per id-bearing operation,
- * none where the operation declares no id, served envelopes echo the id
- * actually sent). Nothing steers driver memory mid-flight. */
+ * fields no later reference consumes. Error steps are consumed linearly like
+ * any recorded HTTP exchange: served once, captures and chain applied from
+ * the error body, then the segment continues at the next declared step —
+ * the driver's reaction must match that step. The transport never hands
+ * expected requests to the driver and reads nothing from driver memory:
+ * requestId lifecycle is enforced independently (a fresh id per id-bearing
+ * operation, a recorded reuse declared as 'continue' and held to the
+ * previous served id, none where the operation declares no id, served
+ * envelopes echo the id actually sent). Nothing steers driver memory
+ * mid-flight. */
 import { at, equal, instantiate, readTrace } from './trace-runner';
 import { ProtocolError, validateError, validateRequest, validateSuccess } from './protocol';
 import { WorldApiError, type WorldTransport } from './transport';
@@ -41,6 +46,9 @@ export interface CorpusStep {
   operation: WorldOperation;
   request: Json; // recorded requestId stripped where the operation bears one
   requestIdRequired: boolean;
+  /** 'continue' = the recording reused the previous call's requestId (a
+   * retry_same_request resend); default 'fresh' = a never-seen id. */
+  requestIdExpectation: 'fresh' | 'continue';
   scope: Scope;
   response: Json; // recorded echo, rewritten to the served request id at serve time
   responseKind: 'success' | 'error';
@@ -66,7 +74,7 @@ export interface Corpus {
 export interface PreviewSpecimenSpec {
   afterStepId: string;
   label: string;
-  build: (served: ServedSnapshot) => { workingState: Json; pointProjection: Json; mergedEntityDeltas: Json };
+  build: (served: ServedSnapshot) => { workingState: Json; pointProjection: Json; mergedEntityDeltas: Json; settlementGroups?: Json[] };
 }
 
 /** Collects the JSON pointers where a response template references trace
@@ -113,18 +121,24 @@ export function buildCorpus(rawTrace: unknown, sampleId: string, specimens: Prev
   const servedAfter: Record<string, ServedSnapshot> = {};
   const requests: Record<string, Json> = {};
   const capturedAt = new Map<string, { stepId: string; path: string }>();
+  let lastRecordedRequestId: string | null = null;
   for (const step of trace.steps) {
     const request = instantiate(step.request, bindings) as Json;
     const scope = instantiate(step.scope, bindings) as Scope;
     const own = Object.fromEntries(step.captures.map((c) => [c.variable, sample.values[c.variable]]));
     const response = instantiate(step.response, { ...bindings, ...own }) as Json;
     // Recorded request identity: the echo must match, then the lifecycle
-    // leaves the corpus — the transport enforces it against the driver.
+    // leaves the corpus — the transport enforces it against the driver. A
+    // recorded id reuse is kept as a 'continue' expectation (the retry
+    // resend); everything else expects a fresh id.
     const requestIdRequired = Object.hasOwn(request as Record<string, unknown>, 'requestId');
+    let requestIdExpectation: 'fresh' | 'continue' = 'fresh';
     if (requestIdRequired) {
       const declared = (request as Record<string, unknown>).requestId;
       const echo = (response as Record<string, unknown>).requestId;
       if (typeof declared !== 'string' || echo !== declared) throw new ProtocolError(`[${step.id}] recorded response requestId ${String(echo)} does not echo the request ${String(declared)}`);
+      if (declared === lastRecordedRequestId) requestIdExpectation = 'continue';
+      lastRecordedRequestId = declared;
       delete (request as Record<string, unknown>).requestId;
     }
     for (const capture of step.captures) capturedAt.set(capture.variable, { stepId: step.id, path: capture.path });
@@ -137,7 +151,7 @@ export function buildCorpus(rawTrace: unknown, sampleId: string, specimens: Prev
     const segment = inspectStepIds.includes(step.id) ? 'inspect' as const : 'controller' as const;
     const digest = sample.expectedDigests[step.id];
     steps.push({
-      id: step.id, segment, sharedStepId: step.id, operation: step.operation, request, requestIdRequired, scope, response,
+      id: step.id, segment, sharedStepId: step.id, operation: step.operation, request, requestIdRequired, requestIdExpectation, scope, response,
       responseKind: step.responseKind,
       captures: step.captures.map((c) => ({ ...c })), digestChain,
       expectation: digest == null || step.projectionPath == null || step.digestPath == null ? undefined : {
@@ -163,9 +177,9 @@ export function buildCorpus(rawTrace: unknown, sampleId: string, specimens: Prev
           advanceId: world.advance.advanceId!, roundId: world.activeRoundId ?? world.round?.roundId ?? '',
           pointId: work.pointId, expectedPointId: world.head.pointId, expectedVersion: world.head.version,
           expectedCheckpointRevision: control.revision, timeAdvance: work.timeAdvance,
-          settlementGroups: [],
+          settlementGroups: built.settlementGroups ?? [],
         } as unknown as Json,
-        requestIdRequired: false,
+        requestIdRequired: false, requestIdExpectation: 'fresh',
         scope: { worldId: world.worldId },
         response: {
           protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1,
@@ -200,6 +214,7 @@ export class ScenarioTransport implements WorldTransport {
   private index = 0;
   private readonly seenRequestIds = new Set<Id>();
   private frontRequestId: Id | null = null; // id accepted at the current front: a retry_same_request re-sends it
+  private lastServedRequestId: Id | null = null; // previous served id-bearing call: 'continue' expectations hold against it
   private readonly captured = new Map<string, unknown>();
   private readonly servedResponses = new Map<string, Json>();
   readonly ops: WorldOperation[] = [];
@@ -226,9 +241,14 @@ export class ScenarioTransport implements WorldTransport {
     if (step.requestIdRequired) {
       requestId = sent.requestId as Id;
       if (typeof requestId !== 'string' || requestId === '') throw new ProtocolError(`[${this.label}] step ${step.id}: requestId must be a non-empty string, got ${String(sent.requestId)}`);
-      if (this.seenRequestIds.has(requestId) && requestId !== this.frontRequestId) throw new ProtocolError(`[${this.label}] step ${step.id}: requestId ${requestId} already used — the factory must mint a fresh id per id-bearing operation`);
+      if (step.requestIdExpectation === 'continue') {
+        if (requestId !== this.lastServedRequestId) throw new ProtocolError(`[${this.label}] step ${step.id}: requestId ${requestId} must reuse the previous operation's id ${String(this.lastServedRequestId)} (recorded retry_same_request resend)`);
+      } else if (this.seenRequestIds.has(requestId) && requestId !== this.frontRequestId) {
+        throw new ProtocolError(`[${this.label}] step ${step.id}: requestId ${requestId} already used — the factory must mint a fresh id per id-bearing operation`);
+      }
       this.seenRequestIds.add(requestId);
       this.frontRequestId = requestId;
+      this.lastServedRequestId = requestId;
     } else if (sent.requestId !== undefined) {
       throw new ProtocolError(`[${this.label}] step ${step.id}: declared request carries no requestId but controller sent ${String(sent.requestId)}`);
     }
@@ -242,7 +262,25 @@ export class ScenarioTransport implements WorldTransport {
     validateRequest(operation, request);
     const response = structuredClone(step.response) as Json;
     if (requestId !== null) (response as Record<string, unknown>).requestId = requestId;
-    if (step.responseKind === 'error') throw new WorldApiError(validateError(response));
+    if (step.responseKind === 'error') {
+      // Error steps are recorded HTTP exchanges: serve once with the same
+      // runtime identity checks (captures and chain from the error body),
+      // advance, and let the driver's reaction land on the next declared
+      // step. A retry_same_request therefore re-sends its payload as the
+      // NEXT declared step — the one carrying the 'continue' expectation.
+      const validatedError = validateError(response);
+      this.servedResponses.set(step.id, validatedError as unknown as Json);
+      for (const capture of step.captures) this.captured.set(capture.variable, at(validatedError, capture.path));
+      for (const link of step.digestChain) {
+        if (!equal(at(validatedError, link.path), this.captured.get(link.variable))) throw new ProtocolError(`[${this.label}] step ${step.id}: digest chain broken at ${link.path} (${link.variable}, captured at ${link.captureStepId}): served value diverges from the recorded capture`);
+      }
+      if (step.digestPin && at(validatedError, step.digestPin.path) !== step.digestPin.digest) throw new ProtocolError(`[${this.label}] step ${step.id}: independent digest pin broken at ${step.digestPin.path}`);
+      this.index++;
+      this.frontRequestId = null;
+      this.ops.push(operation);
+      this.requests.push(structuredClone(sent) as Json);
+      throw new WorldApiError(validatedError);
+    }
     // Runtime corpus identity: captures feed the declared digest chain — a
     // served response may not diverge from the earlier-served capture it
     // references — every declared independent expectation holds at serve
@@ -261,10 +299,13 @@ export class ScenarioTransport implements WorldTransport {
       assertSharedExpectation(step, validated);
       const alignment = step.expectation.alignsWith;
       if (alignment) {
+        const previewStep = this.steps.find((s) => s.id === alignment.previewStepId);
         const preview = this.servedResponses.get(alignment.previewStepId);
-        if (!preview) throw new ProtocolError(`[${this.label}] step ${step.id}: alignment preview ${alignment.previewStepId} has not been served`);
+        if (!previewStep || !preview) throw new ProtocolError(`[${this.label}] step ${step.id}: alignment preview ${alignment.previewStepId} has not been served`);
         if (!equal(at(preview, alignment.workingStatePath), step.expectation.expectedProjection)) throw new ProtocolError(`[${this.label}] step ${step.id}: preview alignment broken — ${alignment.previewStepId}${alignment.workingStatePath} diverges from the independent projection of ${step.id}`);
-        if (at(preview, alignment.workingStateDigestPath) !== step.expectation.expectedDigest) throw new ProtocolError(`[${this.label}] step ${step.id}: preview alignment broken — ${alignment.previewStepId}${alignment.workingStateDigestPath} diverges from the independent digest of ${step.id}`);
+        // A placeholder-bearing B specimen never claims digests, so only its
+        // body leg is bindable; recorded previews bind both legs.
+        if (!previewStep.placeholderDigests && at(preview, alignment.workingStateDigestPath) !== step.expectation.expectedDigest) throw new ProtocolError(`[${this.label}] step ${step.id}: preview alignment broken — ${alignment.previewStepId}${alignment.workingStateDigestPath} diverges from the independent digest of ${step.id}`);
       }
     }
     this.index++;
@@ -319,4 +360,15 @@ export function assertSharedExpectation(step: CorpusStep, response: Json): void 
   if (digest !== step.expectation.expectedDigest) throw new ProtocolError(`[${step.id}] shared digest mismatch at ${step.expectation.digestPath}: expected ${step.expectation.expectedDigest}, got ${String(digest)}`);
   const projection = at(response, step.expectation.projectionPath);
   if (!equal(projection, step.expectation.expectedProjection)) throw new ProtocolError(`[${step.id}] shared projection mismatch at ${step.expectation.projectionPath}`);
+}
+
+/** Drives the controller segment until every controller/preview step and
+ * model call is consumed; any early terminal status fails the run. Inspect
+ * steps stay for the harness to issue afterwards. */
+export async function driveControllerSegment<H extends { driver: { step(): Promise<{ kind: string; reason?: string; detail?: string } | undefined> }; transport: { controllerDrained: boolean }; model: { exhausted: boolean } }>(scenario: H, label = 'segment'): Promise<void> {
+  for (;;) {
+    const terminal = await scenario.driver.step();
+    if (terminal) throw new ProtocolError(`[${label}] controller segment ended early: ${terminal.kind}/${terminal.reason ?? terminal.detail}`);
+    if (scenario.transport.controllerDrained && scenario.model.exhausted) return;
+  }
 }
