@@ -3,43 +3,46 @@ baseline store.
 
 Refusal surface: `ServiceRefusal` carries the wire code decided by the
 a1-kernel-plan §四 mapping; schema-level payload failures map to
-`request_malformed`. Storage keeps authoritative state only —
-blockedReasons/canCompute are derived per response. Roll rows, TTL expiry,
-restore/takeover copying and crash recovery stay with A3.
+`request_malformed`. Every body write answers with the full OperationResult
+envelope (world/control/work snapshots), reads with the ReadResult /
+ContextResponse shapes, preview with the ComputeResult shape. Storage keeps
+authoritative state only — blockedReasons/canCompute are derived per
+response. Roll rows, TTL expiry, restore/takeover copying and crash recovery
+stay with A3.
+
+Per-operation order (a1-kernel-plan §四): schema validation → requestId
+idempotency (checked authoritatively inside the store transaction, so a
+concurrent duplicate replays instead of double-running) → lease fence →
+expected head/version/revision binding → ladder preconditions → business
+writes → revision increment → response projection. ``CheckpointRequest``
+writes bind the committed head; work-in-progress moves only working pointers
+and the working intent projection — commit_point promotes them.
 """
-import threading
+import typing
 
 from pydantic import RootModel, ValidationError
 
-from app.schemas.world.canonical import canonical_bytes, canonical_digest
-from app.schemas.world.contracts import (
-    EntityDelta, RootPoint, TimelinePoint, WorldInitialState, WorldState,
-)
+from app.schemas.world.canonical import canonical_digest
+from app.schemas.world.contracts import TimelinePoint, WorldInitialState
 from app.schemas.world.v2.contexts import (
-    ControlState, GateView, WorkingProgress,
+    ControlState, GateView, PointWorkView, WorkingProgress, WorldContext,
 )
 from app.schemas.world.v2.projections import prefix_projection, request_projection
 from app.schemas.world.v2.registry import OPERATION_BY_NAME
 from app.schemas.world.v2 import SCHEMA_MODELS as _SCHEMA_MODELS
 _ALL_REQUEST_MODELS = [m for m in _SCHEMA_MODELS if m.__name__.endswith('Request')]
-from app.schemas.world.v2.requests import (
-    BeginPointRequest, CloseGroupRequest, CommitPointRequest, CreateWorldRequest,
-    DiscoverGroupRequest, ExtendGroupRequest, PauseRequest, PreviewPointRequest,
-    RecordSkipRequest, ResumeRequest, SealPointRequest, SetPointTimeRequest,
-    StageTimeScanRequest, StageUnitRequest, StartAdvanceRequest,
-)
-from app.schemas.world.v2.work import SettlementGroup
+from app.schemas.world.v2.requests import PreviewPointRequest
 
 from .apply import apply_point
 from .commit import verify_point_binding
 from .ladder import check_checkpoint
 from .merge import point_entity_deltas
+from .preview import preview_point as compute_preview
 from .state import build_initial_state, state_digest
 from .units import (
     begin_working, scan_working, skip_working, stage_working, unit_content_hash,
     validate_commit_groups,
 )
-from .violations import KernelViolation
 
 ENGINE = 'world-engine-v1'
 CANONICAL = 'world-canonical-v1'
@@ -60,6 +63,20 @@ class ServiceRefusal(Exception):
         self.control_required = control_required
 
 
+def _request_body_fields(model_cls):
+    """Body field names: the model's own, or the union of the RootModel
+    members' fields (narration requests discriminate on ``mode``)."""
+    annotation = (model_cls.model_fields['root'].annotation
+                  if issubclass(model_cls, RootModel) else None)
+    members = typing.get_args(annotation) if annotation is not None else ()
+    if not members:
+        return frozenset(model_cls.model_fields)
+    keys = set()
+    for member in members:
+        keys |= set(member.model_fields)
+    return frozenset(keys)
+
+
 def _now(store):
     return store.clock_milli()
 
@@ -72,8 +89,10 @@ def _gate(record):
     return record['control']['gate']
 
 
-def _head_narration(record):
-    return record['control']['headNarration']
+def _head_entry(record):
+    """The head point's narration entry — the single authoritative narration
+    state per point; gate and head summaries derive from it."""
+    return record['narrations'][record['headPointId']]
 
 
 def _blocked(record):
@@ -82,7 +101,7 @@ def _blocked(record):
         blocked.append('paused')
     if _gate(record)['status'] == 'pending':
         blocked.append('narration_pending')
-    head = _head_narration(record)['status']
+    head = _head_entry(record)['status']
     if head == 'failed':
         blocked.append('narration_failed')
     elif head == 'missing':
@@ -104,23 +123,29 @@ def _refuse(code, detail, **kwargs):
     raise ServiceRefusal(code, detail, **kwargs)
 
 
-def _ladder(record, operation, work=None):
-    control = control_view(record)
-    refusals = check_checkpoint(operation, work, control)
-    for violation in refusals:
-        mapping = {
-            'phase': 'phase_invalid', 'pointWork': 'phase_invalid',
-            'activePendingGroup': 'phase_invalid', 'settledUnits': 'phase_invalid',
-            'timeLocked': 'point_time_locked', 'confirmedWork': 'point_time_locked',
-            'paused': 'paused', 'gate': 'narration_blocked',
-            'roster': 'version_mismatch', 'coverage': 'request_malformed',
-            'identity': 'request_malformed', 'semantic_invalid': 'request_malformed',
-        }
-        code = mapping.get(violation.kind, 'phase_invalid')
+_VIOLATION_CODES = {
+    'phase': 'phase_invalid', 'pointWork': 'phase_invalid',
+    'activePendingGroup': 'phase_invalid', 'settledUnits': 'phase_invalid',
+    'timeLocked': 'point_time_locked', 'confirmedWork': 'point_time_locked',
+    'paused': 'paused', 'gate': 'narration_blocked',
+    'roster': 'version_mismatch', 'coverage': 'request_malformed',
+    'identity': 'request_malformed', 'semantic_invalid': 'request_malformed',
+}
+
+
+def _refuse_violations(operation, violations):
+    for violation in violations:
+        code = _VIOLATION_CODES.get(violation.kind, 'phase_invalid')
         kwargs = {}
         if code in ('paused', 'phase_invalid', 'narration_blocked'):
             kwargs['control_required'] = True
         _refuse(code, f'{operation}: {violation.detail}', **kwargs)
+
+
+def _ladder(record, operation, work=None):
+    proxy = PointWorkProxy(work) if work is not None else None
+    control = control_view(record)
+    _refuse_violations(operation, check_checkpoint(operation, proxy, control))
 
 
 def _lease(record):
@@ -136,6 +161,26 @@ def _check_lease(record, request):
                 client_action='reacquire_lease')
 
 
+def _bind_expected(record, request):
+    """CheckpointRequest writes bind the committed head, version and the
+    pre-operation checkpoint revision (CheckpointRequest contract docstring;
+    T01 pins expectedPointId to the captured head for every checkpoint step)."""
+    if (request.expectedPointId != record['headPointId']
+            or request.expectedVersion != record['version']
+            or request.expectedCheckpointRevision != record['control']['revision']):
+        _refuse('version_mismatch',
+                'head, version or checkpoint revision binding differs',
+                client_action='refresh_context')
+
+
+def _bind_work_point(record, request):
+    work = record.get('work')
+    if work is not None and request.pointId != work['pointId']:
+        # With no active work the ladder's phase/pointWork rows refuse first.
+        _refuse('version_mismatch', 'point binding differs from the active work',
+                client_action='refresh_context')
+
+
 def _work_or_none(record):
     return record.get('work')
 
@@ -148,118 +193,219 @@ def _sealed_prefix(record):
     return work
 
 
-def _issue_gate(record, generation):
-    now = record['_now']
+def _issue_gate(store, record, generation):
+    now = _now(store)
     record['control']['gate'] = {
         'status': 'pending', 'generation': generation,
         'issuedAtEpochMilli': now, 'expiresAtEpochMilli': now + DEFAULT_TTL_MILLI,
     }
-    record['control']['headNarration'] = {
-        'status': 'pending', 'text': None, 'generation': generation,
-        'claim': None,
+
+
+def _new_narration(record, point_id, generation=1):
+    record['narrations'][point_id] = {
+        'status': 'pending', 'text': None, 'generation': generation, 'claim': None}
+
+
+# --- response projections ---------------------------------------------------
+
+
+def _world_view(record):
+    state = record['state']
+    advance = record.get('advance')
+    if advance is not None:
+        advance_view = {'advanceId': advance['advanceId'],
+                        'inputId': advance['inputId'],
+                        'intentStatus': advance['intentStatus'],
+                        'inputAvailable': True}
+    else:
+        advance_view = {'advanceId': None, 'inputId': None,
+                        'intentStatus': 'expired', 'inputAvailable': False}
+    round_view = record.get('round')
+    round_summary = None
+    active_round_id = None
+    if round_view is not None:
+        round_summary = {
+            'roundId': round_view['roundId'], 'trigger': round_view['trigger'],
+            'order': round_view['order'], 'cursor': round_view['cursor'],
+            'actedIds': round_view['actedIds'], 'visitedIds': round_view['visitedIds'],
+            'conclusion': round_view['conclusion']}
+        active_round_id = round_view['roundId']
+    work = record.get('work')
+    lease = record.get('lease')
+    return WorldContext.model_validate({
+        'worldId': record['worldId'],
+        'head': {'pointId': record['headPointId'], 'version': record['version'],
+                 'stateDigest': state_digest(state),
+                 'narrationStatus': _head_entry(record)['status']},
+        'advance': advance_view, 'round': round_summary,
+        'time': state.time.model_dump(mode='json'),
+        'lease': ({'fenceEpoch': lease['fenceEpoch'],
+                   'expiresAtEpochMilli': lease['expiresAtEpochMilli']}
+                  if lease else None),
+        'successor': (work or {}).get('successor'),
+        'activePointId': (work or {}).get('pointId'),
+        'activeRoundId': active_round_id,
+    }).model_dump(mode='json')
+
+
+def _work_view(record):
+    work = record.get('work')
+    if work is None:
+        return None
+    view = {
+        'pointId': work['pointId'], 'kind': work['kind'],
+        'timeAdvance': work['timeAdvance'], 'timeLocked': work['timeLocked'],
+        'sealed': work['sealed'], 'prefixDigest': work['prefixDigest'],
+        'predecessorWorkDigest': None,
+        'timeScanComplete': work['timeScanComplete'], 'baseline': work['baseline'],
+        'phase': work['phase'],
+        'working': (work['working'].model_dump(mode='json')
+                    if isinstance(work['working'], WorkingProgress) else work['working']),
+        'settledUnits': [
+            {'unitId': unit['unitId'], 'groupId': unit['groupId'],
+             'memberIds': unit['memberIds'], 'contentHash': unit['contentHash']}
+            for unit in work['units']],
+        'pendingGroup': ({key: value for key, value in work['pendingGroup'].items()
+                          if key != 'actionTexts'}
+                         if work['pendingGroup'] else None),
+        'successor': work['successor'],
     }
+    return PointWorkView.model_validate(view).model_dump(mode='json')
 
 
-def _envelope(store, operation, request, record, data, digest=None):
-    control = control_view(record) if record else None
-    envelope = {
-        'protocolVersion': PROTOCOL, 'engineVersion': ENGINE,
-        'schemaVersion': SCHEMA, 'canonicalVersion': CANONICAL,
-        'serverTimeEpochMilli': _now(store),
-        'operation': operation,
-        'requestId': getattr(request, 'requestId', None),
-        'replayed': False, 'data': data,
-    }
-    if digest is not None:
-        envelope['requestHash'] = digest
-    if control is not None:
-        envelope['control'] = control.model_dump(mode='json')
-    return envelope
+def _envelope_base(store):
+    return {'protocolVersion': PROTOCOL, 'engineVersion': ENGINE,
+            'schemaVersion': SCHEMA, 'canonicalVersion': CANONICAL,
+            'serverTimeEpochMilli': _now(store)}
 
 
-def _reject_replay(entry, fresh_data):
-    """Replays return the stored sanitised payload, never a fresh token."""
-    replayed = dict(entry['data'])
-    replayed['replayed'] = True
-    return replayed
+def _operation_envelope(store, operation, request, record, data, digest):
+    """OperationResult: request key, replay flag and the full snapshots."""
+    return {**_envelope_base(store), 'operation': operation,
+            'requestId': request.requestId, 'requestHash': digest,
+            'replayed': False, 'world': _world_view(record),
+            'control': control_view(record).model_dump(mode='json'),
+            'work': _work_view(record), 'data': data}
+
+
+def _read_envelope(store, record, data):
+    """ReadResult: no request key, no replay flag, no control/work."""
+    return {**_envelope_base(store), 'world': _world_view(record), 'data': data}
+
+
+def _compute_envelope(store, operation, record, data):
+    """ComputeResult (preview): no request key, replay flag or digest."""
+    return {**_envelope_base(store), 'operation': operation,
+            'world': _world_view(record),
+            'control': control_view(record).model_dump(mode='json'),
+            'work': _work_view(record), 'data': data}
+
+
+def _context_envelope(store, record, data):
+    """ContextResponse: snapshots plus the active input chain and recovery."""
+    return {**_envelope_base(store), 'world': data['world'],
+            'control': data['control'], 'work': data['work'],
+            'activeInput': data['activeInput'], 'recovery': None}
 
 
 # --- per-operation handlers (record is the mutable transaction copy) --------
 
 
-def handle_create_world(store, record, request):
+def handle_create_world(store, request):
     world_id = store.next_id('world')
     initial = WorldInitialState.model_validate(
         {'worldId': world_id, **request.initial.model_dump(mode='json', exclude={'worldId'})})
     state = build_initial_state(initial)
     now = _now(store)
-    lease = {'holderId': store.next_id('holder'), 'leaseToken': store.next_id('lease'),
-             'fenceEpoch': 1, 'expiresAtEpochMilli': now + DEFAULT_TTL_MILLI}
+    lease = {'leaseToken': store.next_id('lease'), 'fenceEpoch': 1,
+             'expiresAtEpochMilli': now + DEFAULT_TTL_MILLI}
+    root_id = store.next_id('root')
     record = {
         'worldId': world_id, 'state': state, 'version': 0,
-        'rootPointId': store.next_id('root'),
-        'headPointId': None,
-        'points': {}, 'advance': None, 'round': None, 'work': None,
+        'rootPointId': root_id, 'headPointId': root_id,
+        'points': {}, 'pointStates': {},
+        'advance': None, 'round': None, 'work': None,
         'control': {'phase': 'select_actor', 'paused': False, 'revision': 0,
                     'gate': {'status': 'pending', 'generation': 1,
                              'issuedAtEpochMilli': now,
-                             'expiresAtEpochMilli': now + DEFAULT_TTL_MILLI},
-                    'headNarration': {'status': 'pending', 'text': None,
-                                      'generation': 1, 'claim': None}},
+                             'expiresAtEpochMilli': now + DEFAULT_TTL_MILLI}},
         'lease': lease, 'idempotency': {}, 'allocations': {},
-        'narrations': {}, '_now': now,
+        'allocationSequence': 0,
+        'narrations': {},
     }
-    record['headPointId'] = record['rootPointId']
+    _new_narration(record, root_id)
+    record['pointStates'][root_id] = {
+        'version': 0, 'state': state, 'stateDigest': state_digest(state)}
     store.create_world(world_id, record)
-    return {'worldId': world_id, 'rootPointId': record['rootPointId'], 'lease': lease}
+    return {'worldId': world_id, 'rootPointId': root_id, 'lease': lease}
 
 
-def handle_allocate_ids(record, request):
-    known = request.model_dump(mode='json')['slots']
+def handle_allocate_ids(store, record, request):
+    _check_lease(record, request)
     allocated = []
     bucket = record['allocations'].setdefault(request.allocationKey, {})
-    for slot in known:
-        if slot['slotKey'] in bucket:
-            allocated.append({'slotKey': slot['slotKey'], 'id': bucket[slot['slotKey']]})
-        else:
-            new_id = f"{slot['kind']}_{len(bucket) + 1}_{request.allocationKey[-4:]}"
-            bucket[slot['slotKey']] = new_id
-            allocated.append({'slotKey': slot['slotKey'], 'id': new_id})
+    for slot in request.slots:
+        slot_view = slot.model_dump(mode='json')
+        key = (slot_view.get('scope'), slot_view['slotKey'])
+        if key in bucket:
+            allocated.append({'slotKey': slot_view['slotKey'], 'id': bucket[key]})
+            continue
+        record['allocationSequence'] += 1
+        new_id = f"{slot_view['kind']}_{record['allocationSequence']}"
+        bucket[key] = new_id
+        allocated.append({'slotKey': slot_view['slotKey'], 'id': new_id})
     return {'allocations': allocated}
 
 
-def handle_narration_claim(record, request):
-    point_id = request.pointId
-    narration = record['narrations'].get(point_id) or _head_narration(record)
-    is_head = request.mode == 'head'
+def _narration_entry(record, point_id):
+    entry = record['narrations'].get(point_id)
+    if entry is None:
+        _refuse('version_mismatch', f'no committed narration for point {point_id}',
+                client_action='refresh_context')
+    return entry
+
+
+def _bind_head_mode(record, request):
+    """Head narration writes fence through the advance lease and only target
+    the committed head; history narration carries no lease by schema."""
+    if request.mode != 'head':
+        return
+    _check_lease(record, request)
+    if request.pointId != record['headPointId']:
+        _refuse('version_mismatch', 'head narration targets another point',
+                client_action='refresh_context')
+
+
+def handle_narration_claim(store, record, request):
+    _bind_head_mode(record, request)
+    entry = _narration_entry(record, request.pointId)
     if request.currentClaim is not None:
-        claim = narration.get('claim')
+        claim = entry.get('claim')
         if (claim is None or request.currentClaim.claimToken != claim['claimToken']
                 or request.currentClaim.generation != claim['generation']):
             _refuse('claim_fenced', 'caller holds a superseded claim',
                     client_action='refresh_context')
     gate = _gate(record)
-    status = narration['status']
-    if status != 'pending':
-        return {'pointId': point_id, 'mode': request.mode, 'generation': narration['generation'],
-                'fenceEpoch': record['lease']['fenceEpoch'] if is_head else None,
-                'issuedAtEpochMilli': gate['issuedAtEpochMilli'],
-                'expiresAtEpochMilli': gate['expiresAtEpochMilli']}
-    token = f'claim_{record["control"]["headNarration"]["generation"]}_{point_id}'
-    narration['claim'] = {'claimToken': token, 'generation': narration['generation']}
-    data = {'pointId': point_id, 'mode': request.mode, 'claimToken': token,
-            'generation': narration['generation'], 'fenceEpoch': None,
+    fence = record['lease']['fenceEpoch'] if request.mode == 'head' else None
+    # Every fresh claim answers with a token (NarrationClaimSuccess: data
+    # carries claimToken unless replayed); claiming an already-settled
+    # narration re-issues the entry's current claim.
+    claim = entry.get('claim')
+    if claim is None:
+        token = f"claim_{entry['generation']}_{request.pointId}"
+        claim = {'claimToken': token, 'generation': entry['generation']}
+        entry['claim'] = claim
+    return {'pointId': request.pointId, 'mode': request.mode,
+            'claimToken': claim['claimToken'],
+            'generation': entry['generation'], 'fenceEpoch': fence,
             'issuedAtEpochMilli': gate['issuedAtEpochMilli'],
             'expiresAtEpochMilli': gate['expiresAtEpochMilli']}
-    if is_head:
-        _check_lease(record, request)
-        data['fenceEpoch'] = record['lease']['fenceEpoch']
-    return data
 
 
-def handle_narration_renew(record, request):
-    narration = record['narrations'].get(request.pointId) or _head_narration(record)
-    claim = narration.get('claim')
+def handle_narration_renew(store, record, request):
+    _bind_head_mode(record, request)
+    entry = _narration_entry(record, request.pointId)
+    claim = entry.get('claim')
     if (claim is None or request.claimToken != claim['claimToken']
             or request.generation != claim['generation']):
         _refuse('claim_expired', 'unknown or superseded claim',
@@ -272,16 +418,19 @@ def handle_narration_renew(record, request):
             'expiresAtEpochMilli': gate['expiresAtEpochMilli']}
 
 
-def handle_narration_submit(record, request):
-    narration = record['narrations'].get(request.pointId) or _head_narration(record)
-    claim = narration.get('claim')
+def handle_narration_submit(store, record, request):
+    _bind_head_mode(record, request)
+    entry = _narration_entry(record, request.pointId)
+    claim = entry.get('claim')
     if (claim is None or request.claimToken != claim['claimToken']
             or request.generation != claim['generation']):
         _refuse('claim_fenced', 'submitting with a superseded claim',
                 client_action='refresh_context')
-    narration['text'] = request.text
-    narration['status'] = request.outcome
-    if request.outcome == 'ready':
+    entry['text'] = request.text
+    entry['status'] = request.outcome
+    # Only the matching head operation clears the gate; a resubmitted history
+    # narration never touches the current head's narration flow.
+    if request.outcome == 'ready' and request.pointId == record['headPointId']:
         record['control']['gate'] = {
             'status': 'none', 'generation': None,
             'issuedAtEpochMilli': None, 'expiresAtEpochMilli': None,
@@ -290,51 +439,74 @@ def handle_narration_submit(record, request):
             'generation': request.generation}
 
 
-def handle_narration_get(record, request):
-    narration = record['narrations'].get(request.pointId) or _head_narration(record)
-    status = narration['status']
+def handle_narration_get(store, record, request):
+    entry = record['narrations'].get(request.pointId)
+    if entry is None:
+        return {'pointId': request.pointId, 'narrationStatus': 'missing',
+                'generation': None, 'text': None}
+    status = entry['status']
     return {'pointId': request.pointId, 'narrationStatus': status,
-            'generation': narration['generation'],
-            'text': narration['text'] if status == 'ready' else None}
+            'generation': entry['generation'],
+            'text': entry['text'] if status == 'ready' else None}
 
 
-def handle_narration_delete(record, request):
-    narration = record['narrations'].get(request.pointId) or _head_narration(record)
-    claim = narration.get('claim')
-    if claim is None or request.claimToken != claim['claimToken']:
+def handle_narration_delete(store, record, request):
+    if request.mode == 'head':
+        _check_lease(record, request)
+        point_id = record['headPointId']
+        entry = _narration_entry(record, point_id)
+    else:
+        point_id, entry = None, None
+        for candidate_id, candidate in record['narrations'].items():
+            claim = candidate.get('claim')
+            if (claim and request.claimToken == claim['claimToken']
+                    and request.generation == claim['generation']):
+                point_id, entry = candidate_id, candidate
+                break
+        if entry is None:
+            _refuse('claim_fenced', 'delete with a superseded claim',
+                    client_action='refresh_context')
+    claim = entry.get('claim')
+    if (claim is None or request.claimToken != claim['claimToken']
+            or request.generation != claim['generation']):
         _refuse('claim_fenced', 'delete with a superseded claim',
                 client_action='refresh_context')
-    generation = narration['generation']
-    record['narrations'][request.pointId] = {
-        'status': 'missing', 'text': None, 'generation': generation + 1, 'claim': None}
-    if request.pointId == record.get('headPointId'):
-        _issue_gate(record, generation + 1)
-    return {'pointId': request.pointId, 'narrationStatus': 'missing',
+    generation = entry['generation']
+    _new_narration(record, point_id, generation + 1)
+    record['narrations'][point_id]['status'] = 'missing'
+    if point_id == record['headPointId']:
+        _issue_gate(store, record, generation + 1)
+    return {'pointId': point_id, 'narrationStatus': 'missing',
             'invalidatedGeneration': generation}
 
 
-def handle_lease_acquire(record, request):
+def handle_lease_acquire(store, record, request):
     lease = _lease(record)
     if lease is not None:
         _refuse('lease_invalid', 'lease_held', details={'reason': 'lease_held'},
                 client_action='none')
     fence = 1
-    record['lease'] = {'holderId': request.holderId, 'leaseToken': f'lease_{fence}_{request.holderId}',
-                       'fenceEpoch': fence, 'expiresAtEpochMilli': _now(record) + DEFAULT_TTL_MILLI}
-    return dict(record['lease'], holderId=request.holderId)
+    record['lease'] = {'holderId': request.holderId,
+                       'leaseToken': f'lease_{fence}_{request.holderId}',
+                       'fenceEpoch': fence,
+                       'expiresAtEpochMilli': _now(store) + DEFAULT_TTL_MILLI}
+    return {'holderId': request.holderId, 'leaseToken': record['lease']['leaseToken'],
+            'fenceEpoch': fence,
+            'expiresAtEpochMilli': record['lease']['expiresAtEpochMilli']}
 
 
-def handle_lease_renew(record, request):
+def handle_lease_renew(store, record, request):
     lease = _lease(record)
     if lease is None or request.leaseToken != lease['leaseToken'] \
             or request.fenceEpoch != lease['fenceEpoch']:
         _refuse('lease_invalid', 'unknown lease token or epoch',
                 client_action='reacquire_lease')
-    lease['expiresAtEpochMilli'] = _now(record) + DEFAULT_TTL_MILLI
-    return dict(lease)
+    lease['expiresAtEpochMilli'] = _now(store) + DEFAULT_TTL_MILLI
+    return {'leaseToken': lease['leaseToken'], 'fenceEpoch': lease['fenceEpoch'],
+            'expiresAtEpochMilli': lease['expiresAtEpochMilli']}
 
 
-def handle_lease_release(record, request):
+def handle_lease_release(store, record, request):
     lease = _lease(record)
     if lease is None or request.leaseToken != lease['leaseToken'] \
             or request.fenceEpoch != lease['fenceEpoch']:
@@ -344,15 +516,16 @@ def handle_lease_release(record, request):
     return {'released': True}
 
 
-def handle_start_advance(record, request):
+def handle_start_advance(store, record, request):
     _check_lease(record, request)
+    _bind_expected(record, request)
+    _ladder(record, 'checkpoint_start_advance', None)
     if record.get('advance') is not None:
         _refuse('phase_invalid', 'an active advance already exists',
                 control_required=True)
     if record['work'] is not None:
         _refuse('phase_invalid', 'a point work is still active', control_required=True)
-    head = _head_narration(record)
-    if head['status'] != 'ready':
+    if _head_entry(record)['status'] != 'ready':
         _refuse('narration_blocked', 'the head narration is not ready',
                 control_required=True)
     record['advance'] = {'advanceId': request.advanceId, 'inputId': request.inputId,
@@ -366,19 +539,16 @@ def handle_start_advance(record, request):
             'roundId': request.roundId}
 
 
-def handle_begin_point(record, request):
+def handle_begin_point(store, record, request):
     _check_lease(record, request)
-    if record['control']['phase'] not in ('select_actor', 'continue_round'):
-        _refuse('phase_invalid', 'begin needs select_actor or continue_round',
-                control_required=True)
+    _bind_expected(record, request)
+    _ladder(record, 'checkpoint_begin_point', None)
     if record['work'] is not None:
         _refuse('phase_invalid', 'a point work is still active', control_required=True)
-    state = record['state']
-    if request.expectedPointId != record.get('headPointId') \
-            or request.expectedVersion != record['version'] \
-            or request.expectedCheckpointRevision != record['control']['revision']:
-        _refuse('version_mismatch', 'point or revision binding differs',
+    if request.pointId == record['rootPointId'] or request.pointId in record['points']:
+        _refuse('version_mismatch', 'point id is already committed',
                 client_action='refresh_context')
+    state = record['state']
     committed = (record['round']['cursor'], record['round']['actedIds'],
                  record['round']['visitedIds'])
     working = begin_working(committed, record['advance']['intentStatus'])
@@ -393,38 +563,25 @@ def handle_begin_point(record, request):
         'phase': 'select_actor', 'working': working, 'units': [],
         'pendingGroup': None, 'successor': None,
     }
-    record['headPointId'] = request.pointId
+    # The committed head only moves at commit; begin opens the working view.
     record['control']['revision'] += 1
     return {'pointId': request.pointId}
 
 
-def _work_view(record):
-    work = record['work']
-    if work is None:
-        return None
-    return {
-        'pointId': work['pointId'], 'kind': work['kind'],
-        'timeAdvance': work['timeAdvance'], 'timeLocked': work['timeLocked'],
-        'sealed': work['sealed'],
-        'prefixDigest': work['prefixDigest'],
-        'predecessorWorkDigest': None,
-        'timeScanComplete': work['timeScanComplete'],
-        'baseline': work['baseline'], 'phase': work['phase'],
-        'working': (work['working'].model_dump(mode='json')
-                    if isinstance(work['working'], WorkingProgress) else work['working']),
-        'settledUnits': [
-            {'unitId': unit['unitId'], 'groupId': unit['groupId'],
-             'memberIds': unit['memberIds'], 'contentHash': unit['contentHash']}
-            for unit in work['units']],
-        'pendingGroup': work['pendingGroup'], 'successor': work['successor'],
-    }
-
-
-def handle_discover_group(record, request):
-    _check_lease(record, request)
+def _bind_group(record, request):
     work = _work_or_none(record)
-    _ladder(record, 'checkpoint_discover_group',
-            PointWorkProxy(work) if work else None)
+    group = work['pendingGroup']
+    if group is None or request.groupId != group['groupId']:
+        _refuse('version_mismatch', 'group binding differs from the pending group',
+                client_action='refresh_context')
+
+
+def handle_discover_group(store, record, request):
+    _check_lease(record, request)
+    _bind_expected(record, request)
+    _bind_work_point(record, request)
+    work = _work_or_none(record)
+    _ladder(record, 'checkpoint_discover_group', work)
     work['pendingGroup'] = {
         'groupId': request.groupId, 'sourceId': request.initiatorId,
         'memberIds': [request.initiatorId], 'targetIds': request.targetIds or [],
@@ -438,10 +595,13 @@ def handle_discover_group(record, request):
     return {'groupId': request.groupId, 'targetIds': request.targetIds}
 
 
-def handle_extend_group(record, request):
+def handle_extend_group(store, record, request):
     _check_lease(record, request)
+    _bind_expected(record, request)
+    _bind_work_point(record, request)
     work = _work_or_none(record)
-    _ladder(record, 'checkpoint_extend_group', PointWorkProxy(work) if work else None)
+    _ladder(record, 'checkpoint_extend_group', work)
+    _bind_group(record, request)
     group = work['pendingGroup']
     if request.targets is not None:
         group['targetIds'] = list(request.targets)
@@ -456,35 +616,42 @@ def handle_extend_group(record, request):
             'frontierIds': group['frontierIds']}
 
 
-def handle_close_group(record, request):
+def handle_close_group(store, record, request):
     _check_lease(record, request)
+    _bind_expected(record, request)
+    _bind_work_point(record, request)
     work = _work_or_none(record)
-    _ladder(record, 'checkpoint_close_group', PointWorkProxy(work) if work else None)
-    group = work['pendingGroup']
-    group['closed'] = True
+    _ladder(record, 'checkpoint_close_group', work)
+    _bind_group(record, request)
+    work['pendingGroup']['closed'] = True
     work['phase'] = 'settle_group'
     record['control']['phase'] = 'settle_group'
     record['control']['revision'] += 1
     return {'groupId': request.groupId, 'closed': True}
 
 
-def handle_stage_unit(record, request):
+def handle_stage_unit(store, record, request):
     _check_lease(record, request)
+    _bind_expected(record, request)
+    _bind_work_point(record, request)
     work = _work_or_none(record)
-    _ladder(record, 'checkpoint_stage_unit', PointWorkProxy(work) if work else None)
-    unit_id = f'unit_{request.groupId}'
-    content_hash = unit_content_hash(request.candidates)
+    _ladder(record, 'checkpoint_stage_unit', work)
+    _bind_group(record, request)
+    candidates = request.candidates
+    if candidates.groupId != request.groupId:
+        _refuse('request_malformed', 'candidates name another group')
+    _refuse_violations('checkpoint_stage_unit',
+                       validate_commit_groups([candidates], _world_roster(record)))
+    unit_id = f"unit_{len(work['units']) + 1}_{request.groupId}"
     work['units'].append({
         'unitId': unit_id, 'groupId': request.groupId,
-        'memberIds': sorted(request.candidates.actorIds),
-        'contentHash': content_hash, 'candidates': request.candidates,
+        'memberIds': sorted(candidates.actorIds),
+        'contentHash': unit_content_hash(candidates), 'candidates': candidates,
         'results': request.results,
     })
     work['working'] = stage_working(work['working'], unit_id,
-                                    request.candidates.actorIds,
+                                    candidates.actorIds,
                                     record['round']['order'])
-    if record['advance'] is not None and record['advance']['intentStatus'] == 'pending':
-        record['advance']['intentStatus'] = 'consumed'
     work['pendingGroup'] = None
     work['phase'] = 'select_actor'
     record['control']['phase'] = 'select_actor'
@@ -493,23 +660,32 @@ def handle_stage_unit(record, request):
             'working': work['working'].model_dump(mode='json')}
 
 
-def handle_record_skip(record, request):
+def handle_record_skip(store, record, request):
     _check_lease(record, request)
+    _bind_expected(record, request)
+    _bind_work_point(record, request)
     work = _work_or_none(record)
-    _ladder(record, 'checkpoint_record_skip', PointWorkProxy(work) if work else None)
+    _ladder(record, 'checkpoint_record_skip', work)
+    if request.slotActorId not in record['round']['order']:
+        _refuse('request_malformed', 'slot actor is not in the round order')
     work['working'] = skip_working(work['working'], request.slotActorId,
                                    record['round']['order'])
-    if record['advance'] is not None and record['advance']['intentStatus'] == 'pending':
-        record['advance']['intentStatus'] = 'consumed'
     record['control']['revision'] += 1
     return {'pointId': work['pointId'],
             'working': work['working'].model_dump(mode='json')}
 
 
-def handle_stage_time_scan(record, request):
+def handle_stage_time_scan(store, record, request):
     _check_lease(record, request)
+    _bind_expected(record, request)
+    _bind_work_point(record, request)
     work = _work_or_none(record)
-    _ladder(record, 'checkpoint_stage_time_scan', PointWorkProxy(work) if work else None)
+    _ladder(record, 'checkpoint_stage_time_scan', work)
+    if request.candidates.groupId is not None:
+        _refuse('request_malformed', 'time-scan candidates cannot name a group')
+    _refuse_violations('checkpoint_stage_time_scan',
+                       validate_commit_groups([request.candidates],
+                                              _world_roster(record)))
     work['timeScan'] = request.candidates
     work['timeScanComplete'] = True
     work['timeLocked'] = True
@@ -519,10 +695,12 @@ def handle_stage_time_scan(record, request):
             'working': work['working'].model_dump(mode='json')}
 
 
-def handle_seal_point(record, request):
+def handle_seal_point(store, record, request):
     _check_lease(record, request)
+    _bind_expected(record, request)
+    _bind_work_point(record, request)
     work = _work_or_none(record)
-    _ladder(record, 'checkpoint_seal_point', PointWorkProxy(work) if work else None)
+    _ladder(record, 'checkpoint_seal_point', work)
     if not work['units'] and not work['timeScanComplete']:
         _refuse('phase_invalid', 'an empty point needs its time-scan candidates first',
                 control_required=True)
@@ -547,20 +725,24 @@ def _prefix_fields(record):
     }
 
 
-def handle_set_point_time(record, request):
+def handle_set_point_time(store, record, request):
     _check_lease(record, request)
+    _bind_expected(record, request)
+    _bind_work_point(record, request)
     work = _work_or_none(record)
-    _ladder(record, 'checkpoint_set_point_time', PointWorkProxy(work) if work else None)
+    _ladder(record, 'checkpoint_set_point_time', work)
     work['timeAdvance'] = request.timeAdvance.model_dump(mode='json')
     record['control']['revision'] += 1
     return {'pointId': work['pointId'],
             'timeAdvance': request.timeAdvance.model_dump(mode='json')}
 
 
-def handle_prepare_successor(record, request):
+def handle_prepare_successor(store, record, request):
     _check_lease(record, request)
+    _bind_expected(record, request)
+    _bind_work_point(record, request)
     work = _work_or_none(record)
-    _ladder(record, 'checkpoint_prepare_successor', PointWorkProxy(work) if work else None)
+    _ladder(record, 'checkpoint_prepare_successor', work)
     work['sealed'] = True
     projection = prefix_projection(record['worldId'], _prefix_fields(record), work['timeScan'])
     work['prefixDigest'] = canonical_digest(projection)
@@ -578,16 +760,20 @@ def handle_prepare_successor(record, request):
             'prefixDigest': work['prefixDigest'], 'successor': successor}
 
 
-def handle_pause(record, request):
+def handle_pause(store, record, request):
     _check_lease(record, request)
+    _bind_expected(record, request)
+    _ladder(record, 'checkpoint_pause', None)
     if not record['control']['paused']:
         record['control']['paused'] = True
         record['control']['revision'] += 1
     return {'paused': True}
 
 
-def handle_resume(record, request):
+def handle_resume(store, record, request):
     _check_lease(record, request)
+    _bind_expected(record, request)
+    _ladder(record, 'checkpoint_resume', None)
     if record['control']['paused']:
         record['control']['paused'] = False
         record['control']['revision'] += 1
@@ -595,67 +781,81 @@ def handle_resume(record, request):
 
 
 def handle_preview_point(store, record, request):
+    _bind_expected(record, request)
+    _bind_work_point(record, request)
     work = _work_or_none(record)
-    _ladder(record, 'preview_point', PointWorkProxy(work) if work else None)
+    _ladder(record, 'preview_point', work)
+    round_view = record.get('round')
     projection = TimelinePoint.model_validate({
-        'worldId': record['worldId'], 'id': request.pointId, 'sequence': 0,
-        'kind': 'normal', 'previousPointId': record['headPointId'],
+        'worldId': record['worldId'], 'id': request.pointId,
+        'sequence': len(record['points']) + 1,
+        'kind': work['kind'], 'previousPointId': record['headPointId'],
         'roundId': request.roundId, 'advanceId': request.advanceId,
-        'trigger': 'player', 'linkedFromPointId': None,
+        'trigger': round_view['trigger'] if round_view else 'player',
+        'linkedFromPointId': None,
         'timeAdvance': request.timeAdvance.model_dump(mode='json'),
         'entityDeltas': {}})
-    merged = point_entity_deltas(request.settlementGroups, None)
-    projection = projection.model_copy(update={
-        'entityDeltas': {key: delta for key, delta in merged.items()}})
-    working = apply_point(record['state'], projection)
-    return {'pointId': request.pointId,
-            'pointProjection': projection.model_dump(mode='json'),
-            'mergedEntityDeltas': {key: delta.model_dump(mode='json')
-                                   for key, delta in merged.items()},
-            'workingState': working.model_dump(mode='json'),
-            'workingStateDigest': state_digest(working),
-            'pointProjectionDigest': canonical_digest(
-                canonical_bytes(projection.model_dump(mode='json')))}
+    return compute_preview(record['state'], projection,
+                           list(request.settlementGroups))
 
 
-def handle_commit_point(record, request):
+def handle_commit_point(store, record, request):
     work = _sealed_prefix(record)
     _check_lease(record, request)
-    _ladder(record, 'commit_point', PointWorkProxy(work) if work else None)
+    _bind_expected(record, request)
+    _ladder(record, 'commit_point', work)
     sealed_time_advance = work['timeAdvance']
     if hasattr(sealed_time_advance, 'model_dump'):
         sealed_time_advance = sealed_time_advance.model_dump(mode='json')
     verify_point_binding(
         request.point, work['kind'],
         type(request.point.timeAdvance).model_validate(sealed_time_advance))
-    staged = [(unit['groupId'], unit['memberIds']) for unit in work['units']]
-    given = [(group.groupId, sorted(group.actorIds)) for group in request.settlementGroups]
-    if staged != given:
+    if request.pointId != work['pointId']:
+        _refuse('version_mismatch', 'commit targets another point than the sealed work',
+                client_action='refresh_context')
+    if request.point.previousPointId != record['headPointId']:
+        _refuse('version_mismatch', 'point chains from another head',
+                client_action='refresh_context')
+    given = list(request.settlementGroups)
+    staged = work['units']
+    if len(given) != len(staged):
         _refuse('version_mismatch',
-                'settlementGroups differ from the sealed settledUnits '
-                '(identity, members or order)',
+                'settlementGroups differ from the sealed settledUnits',
                 details={'reason': 'prefix_binding_mismatch'})
-    merged = point_entity_deltas(request.settlementGroups, work['timeScan'])
+    for unit, group in zip(staged, given):
+        if (unit['groupId'] != group.groupId
+                or unit['memberIds'] != sorted(group.actorIds)
+                or unit['contentHash'] != unit_content_hash(group)):
+            _refuse('version_mismatch',
+                    'settlementGroups differ from the sealed settledUnits '
+                    '(identity, members or content)',
+                    details={'reason': 'prefix_binding_mismatch'})
+    _refuse_violations('commit_point',
+                       validate_commit_groups(given, _world_roster(record)))
+    merged = point_entity_deltas(given, work['timeScan'])
     expected_deltas = {key: delta.model_dump(mode='json') for key, delta in merged.items()}
-    if expected_deltas != request.point.entityDeltas and \
-            {key: delta.model_dump(mode='json')
-             for key, delta in request.point.entityDeltas.items()} != expected_deltas:
+    if {key: delta.model_dump(mode='json')
+            for key, delta in request.point.entityDeltas.items()} != expected_deltas:
         _refuse('request_malformed', 'point deltas differ from the merged settlement')
     new_state = apply_point(record['state'], request.point)
     record['state'] = new_state
     record['version'] += 1
     record['points'][request.pointId] = request.point
-    digests = record.setdefault('pointDigests', {})
-    digests[request.pointId] = state_digest(new_state)
+    record['pointStates'][request.pointId] = {
+        'version': record['version'], 'state': new_state,
+        'stateDigest': state_digest(new_state)}
     round_view = record['round']
     round_view['cursor'] = work['working'].cursor
     round_view['actedIds'] = work['working'].actedIds
     round_view['visitedIds'] = work['working'].visitedIds
+    if record['advance'] is not None:
+        # The committed intent is the one the sealed work projected; stage and
+        # skip only ever moved the working copy.
+        record['advance']['intentStatus'] = work['working'].intentStatus
     record['work'] = None
     record['headPointId'] = request.pointId
-    _issue_gate(record, 1)
-    record['narrations'][request.pointId] = {
-        'status': 'pending', 'text': None, 'generation': 1, 'claim': None}
+    _new_narration(record, request.pointId)
+    _issue_gate(store, record, 1)
     if round_view['cursor'] == len(round_view['order']) and round_view['conclusion'] is None:
         record['control']['phase'] = 'assess_continuation'
     record['control']['revision'] += 1
@@ -663,8 +863,11 @@ def handle_commit_point(record, request):
             'stateDigest': state_digest(new_state)}
 
 
-def handle_round_conclusion_cancel(record, request):
+def handle_round_conclusion_cancel(store, record, request):
     _check_lease(record, request)
+    _bind_expected(record, request)
+    _ladder(record, 'round_conclusion_cancel',
+            _work_or_none(record))
     if record['control']['phase'] != 'assess_continuation':
         _refuse('phase_invalid', 'cancel runs from assess_continuation',
                 control_required=True)
@@ -674,14 +877,14 @@ def handle_round_conclusion_cancel(record, request):
     record['control']['phase'] = 'complete'
     record['advance'] = None
     record['control']['revision'] += 1
-    return {'kind': 'handback', 'roundId': request.roundId, 'nextRoundId': None}
+    return {'roundId': request.roundId, 'abandonedGroupIds': []}
 
 
-def handle_round_conclusion_conclude(record, request):
+def handle_round_conclusion_conclude(store, record, request):
     _check_lease(record, request)
-    if record['control']['phase'] != 'assess_continuation':
-        _refuse('phase_invalid', 'conclude runs from assess_continuation',
-                control_required=True)
+    _bind_expected(record, request)
+    _ladder(record, 'round_conclusion_conclude',
+            _work_or_none(record))
     conclusion = request.conclusion
     if conclusion.kind == 'continue':
         record['round']['conclusion'] = {
@@ -705,26 +908,42 @@ def handle_round_conclusion_conclude(record, request):
     return data
 
 
-def handle_get_state(record, request):
+def handle_get_state(store, record, request):
     point_id = request.point or record['headPointId']
-    point = record['points'].get(point_id)
-    state = record['state']
-    return {'pointId': point_id, 'version': record['version'],
-            'state': state.model_dump(mode='json'),
-            'stateDigest': state_digest(state)}
+    cached = record['pointStates'].get(point_id)
+    if cached is None:
+        _refuse('version_mismatch', 'unknown point', client_action='refresh_context')
+    return {'pointId': point_id, 'version': cached['version'],
+            'state': cached['state'].model_dump(mode='json'),
+            'stateDigest': cached['stateDigest']}
 
 
-def handle_list_points(record, request):
-    points = [{'pointId': root_id, 'sequence': 0, 'kind': 'root',
-               'roundId': None, 'advanceId': None,
-               'stateDigest': state_digest(build_initial_state(record['state'].initial))}
-              for root_id in [record['rootPointId']]]
-    points += [
-        {'pointId': point.id, 'sequence': point.sequence, 'kind': point.kind,
-         'roundId': point.roundId, 'advanceId': point.advanceId,
-         'stateDigest': record['pointDigests'].get(point.id, '')}
-        for point in record['points'].values()]
+def handle_list_points(store, record, request):
+    points = []
+    for point_id, cached in record['pointStates'].items():
+        if point_id == record['rootPointId']:
+            points.append({'pointId': point_id, 'sequence': 0, 'kind': 'root',
+                           'roundId': None, 'advanceId': None,
+                           'stateDigest': cached['stateDigest']})
+        else:
+            point = record['points'][point_id]
+            points.append({'pointId': point_id, 'sequence': point.sequence,
+                           'kind': point.kind, 'roundId': point.roundId,
+                           'advanceId': point.advanceId,
+                           'stateDigest': cached['stateDigest']})
     return {'points': points}
+
+
+def handle_get_context(store, record, request):
+    advance = record.get('advance')
+    active_input = None
+    if advance is not None and advance['intentStatus'] == 'pending':
+        active_input = {'advanceId': advance['advanceId'],
+                        'inputId': advance['inputId'],
+                        'text': advance['inputText']}
+    return {'world': _world_view(record),
+            'control': control_view(record).model_dump(mode='json'),
+            'work': _work_view(record), 'activeInput': active_input}
 
 
 CHECKPOINT_HANDLERS = {
@@ -743,39 +962,6 @@ CHECKPOINT_HANDLERS = {
 }
 
 
-
-
-def handle_get_context(record, request):
-    world = {
-        'worldId': record['worldId'],
-        'head': {'pointId': record['headPointId'], 'version': record['version'],
-                 'stateDigest': state_digest(record['state']),
-                 'narrationStatus': _head_narration(record)['status']},
-        'advance': None, 'round': None, 'time': record['state'].time.model_dump(mode='json'),
-        'lease': ({k: v for k, v in record['lease'].items()
-                   if k in ('fenceEpoch', 'expiresAtEpochMilli')}
-                  if record['lease'] else None),
-        'successor': None,
-        'activePointId': (record['work'] or {}).get('pointId'),
-        'activeRoundId': (record['round'] or {}).get('roundId'),
-    }
-    advance = record.get('advance')
-    if advance is not None:
-        world['advance'] = {'advanceId': advance['advanceId'],
-                            'inputId': advance['inputId'],
-                            'intentStatus': advance['intentStatus'],
-                            'inputAvailable': advance['intentStatus'] == 'pending'}
-    round_view = record.get('round')
-    if round_view is not None:
-        world['round'] = {
-            'roundId': round_view['roundId'], 'trigger': round_view['trigger'],
-            'order': round_view['order'], 'cursor': round_view['cursor'],
-            'actedIds': round_view['actedIds'], 'visitedIds': round_view['visitedIds'],
-            'conclusion': round_view['conclusion']}
-    return {'world': world, 'control': control_view(record).model_dump(mode='json'),
-            'work': _work_view(record)}
-
-
 READ_HANDLERS = {
     'get_state': handle_get_state,
     'list_points': handle_list_points,
@@ -785,10 +971,8 @@ READ_HANDLERS = {
 
 WRITE_HANDLERS = dict(CHECKPOINT_HANDLERS)
 WRITE_HANDLERS.update({
-    'create_world': lambda record, request: handle_create_world(_CREATING_STORE[0], record, request),
     'allocate_ids': handle_allocate_ids,
     'checkpoint_start_advance': handle_start_advance,
-    'preview_point': lambda record, request: handle_preview_point(record, request),
     'commit_point': handle_commit_point,
     'lease_acquire': handle_lease_acquire,
     'lease_renew': handle_lease_renew,
@@ -800,8 +984,6 @@ WRITE_HANDLERS.update({
     'round_conclusion_conclude': handle_round_conclusion_conclude,
     'round_conclusion_cancel': handle_round_conclusion_cancel,
 })
-
-_CREATING_STORE = [None]
 
 
 class _BareRequest:
@@ -830,49 +1012,23 @@ class PointWorkProxy:
         self.working = work['working']
 
 
-
 class WorldService:
     """Entry point: validate, check idempotency before bindings, run the
     handler in one store transaction, and shape the response envelope."""
 
     def __init__(self, store):
         self.store = store
-        _CREATING_STORE[0] = store
 
     def execute(self, operation, request_dict):
         spec = OPERATION_BY_NAME[operation]
         if spec.idempotency.scope == 'none':
-            # GET reads: query models bind only their query fields (path
-            # fields are not part of the query model) and carry no request
-            # hash; several reads have requestSchema=None.
-            query = {}
-            if spec.requestSchema is not None:
-                model_cls = next(model for model in _ALL_REQUEST_MODELS
-                                 if model.__name__ == spec.requestSchema)
-                query = {key: value for key, value in request_dict.items()
-                         if key in model_cls.model_fields}
-                request = model_cls.model_validate(query)
-            else:
-                request = model_cls.model_validate({}) if False else None
-                request = _BareRequest(request_dict)
-            record = self.store.world(request_dict.get('worldId'))
-            if record is None:
-                _refuse('version_mismatch', 'unknown world',
-                        client_action='refresh_context')
-            data = READ_HANDLERS[operation](record, request)
-            envelope = _envelope(self.store, operation, request, record, data)
-            envelope.pop('requestId', None)
-            envelope.pop('requestHash', None)
-            if operation == 'get_context':
-                for key in ('world', 'control', 'work'):
-                    if key in data:
-                        envelope[key] = data[key]
-                envelope.pop('data', None)
-            return envelope
+            return self._execute_scopeless(operation, request_dict, spec)
         model_cls = next(model for model in _ALL_REQUEST_MODELS
                          if model.__name__ == spec.requestSchema)
+        body = {key: value for key, value in request_dict.items()
+                if key in _request_body_fields(model_cls)}
         try:
-            request = model_cls.model_validate(request_dict)
+            request = model_cls.model_validate(body)
         except ValidationError as error:
             raise ServiceRefusal(
                 'request_malformed', str(error)[:400], http_status=400) from error
@@ -881,39 +1037,100 @@ class WorldService:
         digest = canonical_digest(
             request_projection(operation, request.model_dump(mode='json')))
         if operation == 'create_world':
-            data = handle_create_world(self.store, None, request)
+            return self._execute_create(operation, request, digest)
+        # worldId may arrive as a path parameter the body schema forbids
+        # (lease_release); the raw dict remains the routing authority.
+        return self._execute_write(operation, request, digest,
+                                   request_dict.get('worldId'))
+
+    # -- scope-none operations: reads plus the stateless preview ------------
+
+    def _execute_scopeless(self, operation, request_dict, spec):
+        if operation == 'preview_point':
+            try:
+                request = PreviewPointRequest.model_validate(request_dict)
+            except ValidationError as error:
+                raise ServiceRefusal(
+                    'request_malformed', str(error)[:400], http_status=400) from error
+            record = self._record(request.worldId)
+            data = handle_preview_point(self.store, record, request)
+            return _compute_envelope(self.store, operation, record, data)
+        request = None
+        if spec.requestSchema is not None:
+            model_cls = next(model for model in _ALL_REQUEST_MODELS
+                             if model.__name__ == spec.requestSchema)
+            try:
+                query = {key: value for key, value in request_dict.items()
+                         if key in model_cls.model_fields}
+                request = model_cls.model_validate(query)
+            except ValidationError as error:
+                raise ServiceRefusal(
+                    'request_malformed', str(error)[:400], http_status=400) from error
+        else:
+            # requestSchema=None reads (narration_get) bind only their path
+            # fields; a bare attribute view is enough.
+            request = _BareRequest(request_dict)
+        record = self._record(request_dict.get('worldId'))
+        data = READ_HANDLERS[operation](self.store, record, request)
+        if operation == 'get_context':
+            return _context_envelope(self.store, record, data)
+        return _read_envelope(self.store, record, data)
+
+    # -- body writes ---------------------------------------------------------
+
+    def _record(self, world_id):
+        record = self.store.world(world_id) if world_id else None
+        if record is None:
+            _refuse('version_mismatch', 'unknown world',
+                    client_action='refresh_context')
+        return record
+
+    def _execute_create(self, operation, request, digest):
+        # Creation idempotency lives in the store-global table; check and
+        # insert under one lock acquisition so a concurrent duplicate cannot
+        # create a second world.
+        with self.store.locked():
+            entry = self.store.global_idempotency().get(request.requestId)
+            if entry is not None:
+                if entry['operation'] != operation or entry['digest'] != digest:
+                    _refuse('request_id_reused',
+                            'same requestId with a different operation or payload',
+                            client_action='fix_request')
+                record = self.store.world(entry['data']['worldId'])
+                envelope = _operation_envelope(
+                    self.store, operation, request, record, entry['data'], digest)
+                envelope['replayed'] = True
+                return envelope
+            data = handle_create_world(self.store, request)
             self.store.note_global(request.requestId, {
                 'operation': operation, 'digest': digest, 'data': data})
-            return _envelope(self.store, operation, request, None, data, digest)
-        world_id = request.worldId
-        record = self.store.world(world_id)
-        digest = canonical_digest(
-            request_projection(operation, request.model_dump(mode='json')))
-        entry = record['idempotency'].get(request.requestId)
-        if entry is not None:
-            if entry['operation'] != operation or entry['digest'] != digest:
-                _refuse('request_id_reused',
-                        'same requestId with a different operation or payload',
-                        client_action='fix_request')
-            data = dict(entry['data'])
-            data['replayed'] = True
-            envelope = _envelope(self.store, operation, request, self.store.world(world_id),
-                                 data, digest)
-            envelope['replayed'] = True
-            return envelope
+        record = self.store.world(data['worldId'])
+        return _operation_envelope(self.store, operation, request, record, data, digest)
 
-        def handler(record):
-            data = WRITE_HANDLERS[operation](record, request)
+    def _execute_write(self, operation, request, digest, world_id):
+        self._record(world_id)
+
+        def handler(snapshot):
+            # The idempotency decision runs inside the transaction: a request
+            # that races a duplicate replays the stored payload instead of
+            # double-running the handler.
+            entry = snapshot['idempotency'].get(request.requestId)
+            if entry is not None:
+                if entry['operation'] != operation or entry['digest'] != digest:
+                    _refuse('request_id_reused',
+                            'same requestId with a different operation or payload',
+                            client_action='fix_request')
+                return entry['data'], True
+            data = WRITE_HANDLERS[operation](self.store, snapshot, request)
             stored = ({key: value for key, value in data.items() if key != 'claimToken'}
                       if operation == 'narration_claim' else data)
-            record['idempotency'][request.requestId] = {
+            snapshot['idempotency'][request.requestId] = {
                 'operation': operation, 'digest': digest, 'data': stored}
-            return data
+            return data, False
 
-        data = self.store.transact(world_id, handler)
-        envelope = _envelope(self.store, operation, request,
-                             self.store.world(world_id), data, digest)
-        if spec.mutatesRevision:
-            envelope['control'] = control_view(
-                self.store.world(world_id)).model_dump(mode='json')
+        data, replayed = self.store.transact(world_id, handler)
+        record = self.store.world(world_id)
+        envelope = _operation_envelope(self.store, operation, request, record,
+                                       data, digest)
+        envelope['replayed'] = replayed
         return envelope

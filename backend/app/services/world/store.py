@@ -9,6 +9,7 @@ copying and crash recovery stay with A3 (SQLiteBaselineStore).
 """
 import copy
 import threading
+from contextlib import contextmanager
 
 _LOCK = threading.RLock()
 
@@ -24,6 +25,13 @@ class FixtureBaselineStore:
 
     def clock_milli(self):
         return int(self._clock())
+
+    @contextmanager
+    def locked(self):
+        """One lock acquisition spanning several store calls; RLock makes the
+        nested next_id/create_world calls re-entrant."""
+        with _LOCK:
+            yield
 
     def next_id(self, kind):
         with _LOCK:

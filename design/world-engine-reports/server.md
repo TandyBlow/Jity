@@ -118,3 +118,30 @@ H1 结果须记录实际 A/B 提交、共同契约摘要、启动配置、执行
 - `description-collapse.expected.json` 是 DescriptionChange 形态片段、`task-normalization.expected.json` 是 EntityDelta 形态片段——塌缩/归一化行为断言比对对应片段，不是整状态。
 - 回放配方：以轨迹 `samples[i].values` 实例化各步请求 → 依次 apply 轨迹内全部成功 commit → 终态摘要对 `expectedDigests`。起点按 s1 `get_context` 的 head 摘要映射（B 实测）：`9301b799`＝root 初始态（T01/T02/T05/T06/T08 等直接从 root 起步，T02 的无 Δ 时间点在轨迹内 commit）、`32256da8`＝root＋无 Δ elapsed 2s（T02-empty-linked）、`85848d51`＝segmented 快照（T03-collapse/T04）；三条分支互相独立，不存在跨轨迹链式回放。
 
+
+---
+
+# A2-1 二轮：独立评审八项修复与轨迹对齐
+
+日期：2026-10-23。A2-1 首轮交付（`fb46520`）经独立探针复现 7×P1 + 1×P2 后暂不关闭；本轮在 `world-server` 上全部修复并固化探针。全量 backend **999 passed、0 failed**（基线 986：-5 简化测试 +18 新测试），本地门 6 模块 92 项 PASS，共同验收入口 PASS（v1/v2 导出、Python 契约、TS 契约与 65 轨迹、四类破坏探针）。
+
+## 八项修复
+
+1. **写操作统一绑定与门槛**（control.py `_bind_expected`/`_bind_work_point`/`_ladder`）：所有 `CheckpointRequest` 写（含 start_advance/begin/conclude/cancel/preview）统一核对 expectedPointId=已提交 head、expectedVersion、expectedCheckpointRevision=操作前 revision；带 pointId 的检查点写核对 pointId=活动工作点；narration head 模式经 `_bind_head_mode` 强制租约/epoch 且只允许指向当前 head；conclude/cancel 补跑 ladder（phase=assess_continuation、gate cleared）。
+2. **提交前不改已提交状态**：begin 不再移动 headPointId（轨迹 s7-s17 的 expectedPointId 恒为捕获的 root，正是该语义）；stage/skip 不再直接改 `advance.intentStatus`——消费只发生在 `work.working.intentStatus` 投影里，commit_point 才提升 head、round 游标与 intent（T01 s18 响应 intentStatus=consumed 与该提升一致）。
+3. **冻结核验全量化**：stage 补 `validate_commit_groups`（coverage 全员/roster，违反分别映射 request_malformed/version_mismatch）与 groupId 三方一致性；commit 逐单元比对 groupId、memberIds、`unit_content_hash`（封存后改候选内容即使同步改 Δ 也被 `prefix_binding_mismatch` 拒绝），并复核 `point.previousPointId == head`。
+4. **幂等纳入同一事务**：普通写在 transact 内部先查幂等表再执行（并发重发同一 begin：一个成功一个重放，不再 phase_invalid）；create_world 在 store 锁内查全局表后建世界（同 requestId 不再建出第二个世界；不同载荷同 ID → request_id_reused）。
+5. **preview 与 lease_renew 跑通**：preview 走 ComputeResult 信封（无 requestId/requestHash/replayed），handler 复用 `preview.py` 配方（sequence=len(points)+1、kind/previousPointId/trigger 取自 work 与 round，digest 单层编码），同点重复 preview 摘要稳定、不推进 revision；lease_renew 修 `_now(store)` 签名。
+6. **叙事按 point 单一权威**：`narrations[pointId]` 为唯一存储（root 建于创建、新点建于 commit），head 摘要与 gate 全部派生；gate 只在「ready 且 pointId==headPointId」的 submit 清除——补写历史叙事不再动当前 head 的 gate；未提交/未知点 claim 拒 version_mismatch。轨迹钉死的新规则：**fresh claim（replayed=false）必须带 claimToken**（NarrationClaimSuccess 校验器），无 token summary 只出现在 replay。
+7. **ID 分配去碰撞**：桶键改为 (scope, slotKey)，新 ID 用 world 内单调计数器 `f"{kind}_{n}"`——`first_same`/`other_same` 后四位碰撞复现不再成立，同 slotKey 不同 scope 不再串号。
+8. **get_state 按 point**：`pointStates[pointId]` 缓存 {version, state, stateDigest}（root 建于创建、commit 写入），请求 root 返回 initial 态 version=0，未指点返回 head，未知点拒 version_mismatch。
+
+## 轨迹/契约对齐中钉死的新语义
+
+- **revision 算术**：T01 s5-s18 逐期望核对——每个检查点操作（含 begin_point）消费一个 revision：start_advance→1、begin→2、discover→3、extend→4、close→5、stage→6、skip×5→11、seal→12、commit→13。首轮测试流程在 begin 后少加 1，被缺失的校验掩盖；本轮修正。
+- **信封形状**：写操作按 `OperationResult` 全量携带 world/control/work；get_context 按 `ContextResponse`（补 activeInput：仅 pending 输入链携带文本；recovery 恒 null 留 A3）；get_state/list_points/narration_get 按 `ReadResult`（无 operation/requestId/requestHash/replayed）；preview 按 `ComputeResult`。无 advance 的 world.advance 固定 `{advanceId:null, inputId:null, intentStatus:"expired", inputAvailable:false}`；`inputAvailable`=advance 链存在（T01 s18 consumed 时仍 true）。create data 的 lease 为 LeaseGrant 三字段（holderId 不上 wire）。
+- **wire 字面量**：conclude/cancel 的 operation 字面量为 `conclude`/`cancel`；lease_release 请求体无 worldId（路径参数），服务按原始 dict 路由、按模型字段过滤验证；PendingGroupView 不含 actionTexts（内部存储不下发）。
+
+## 测试
+
+`test_world_control_service.py` 重写：T01 全序（含 s16 位双 preview）每步按导出 Success 类验证信封；八项探针各成回归测试（绑定四连拒、租约栅栏、conclude 被 gate 阻断、stage coverage/roster 拒、封存候选篡改三连拒、create/begin 幂等与线程级并发重放、preview 中程执行与租约续期、历史叙事不清 gate、分配唯一性、历史/未知点 get_state）。HTTP 路由（A2-2）仍按计划押后。
