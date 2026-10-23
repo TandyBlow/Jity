@@ -99,4 +99,20 @@ T08 语料适配逐项登记：①s8 是把已锁定时间从 2s 改成 3s 的�
 
 **本段复审 P2 修复：conclude 响应的输入生命周期。** 复审方证实原检查只覆盖后续 context/重放；单改 s2.inputAvailable=false 或 s13.inputAvailable=true 仍能通过，属于验收缺口，尚未证明控制器业务错误。harness 现支持独立的逐响应 businessAssertions，先经 schema 校验，再断言业务字段，全部通过才交驱动器消费。T04 用显式常量约束 s2 `/world/advance/inputAvailable=true`、s13 同路径为 false，两者 `/world/advance/intentStatus=consumed`；预期不从被测 conclude 响应读取。双样本各补两条 inputAvailable 篡改反例，断言拒绝发生在对应 s2/s13，后续 context、重放与终态读取尚未发生，错误响应也未计入已消费 conclude。全套 17 文件 **313 项通过**，类型检查与共同接口统一入口复跑通过；本修复只增强验收，未因该发现修改控制器业务逻辑。
 
-**复审结论：T04、自动轮入口与 T08 本段通过，原 P2 验收缺口已关闭，未发现新增阻塞问题。** 复审方实际复跑 313 项、类型检查与共同接口验收全部通过，并确认双样本四条篡改反例在对应 s2/s13、响应交给驱动器前拒绝，不依赖后续响应。该结论对应当前未提交的本段改动。完整 B1 仍待 T05、B 自有 fault transport 的其余 T06 语义，以及 H1 真实 HTTP；T07/T09 恢复接管仍归 B2/H2。本段不宣称真实服务事务、动态模型需求发现或中间 preview 摘要已经验收。
+**复审结论：T04、自动轮入口与 T08 本段通过，原 P2 验收缺口已关闭，未发现新增阻塞问题。** 复审方实际复跑 313 项、类型检查与共同接口验收全部通过，并确认双样本四条篡改反例在对应 s2/s13、响应交给驱动器前拒绝，不依赖后续响应。该批随后单独提交为 `159ad03`，固定步骤 4 基线。完整 B1 仍待 T05、B 自有 fault transport 的其余 T06 语义，以及 H1 真实 HTTP；T07/T09 恢复接管仍归 B2/H2。本段不宣称真实服务事务、动态模型需求发现或中间 preview 摘要已经验收。
+
+## B1 步骤 5 第一段：T05 暂停与叙事
+
+日期：2026-10-23。按本轮范围，先将已复审通过的步骤 4 单独提交为 `159ad03`（313 项基线），再新增 `t05.scenario.ts/test.ts`，仅交付 T05 固定响应双样本及定向反例。本轮 T05 改动保持未提交、待复审；未推进 T06/H1。共享轨迹、schema、manifest 与 digest pin 均未修改。
+
+**分段与实际执行者**：s1 get_context、s9 get_state 属 inspect；s2 pause、s5 resume、s6 pause 属 command，由 harness 注入 pause/budget_exhausted/resume 事件、真实驱动器构造请求；s3 lease_renew 与 s4 narration_claim_renew 明确标为 heartbeat，由 `runHeartbeat` 直发声明交换并通过同一严格 transport 的顺序、作用域、requestId/回显、schema、捕获链与业务断言。它们使用 harness 独立请求 ID，不触发 driver 请求工厂、模型调用或 memory 修改；随后 s5 的实际响应带回续租后的服务快照。真实心跳定时、并发取消及运行时 TTL 管理仍属 B2，不把这两次受控交换算作调度器自动发出的心跳。s7 narration_claim 与 s8 narration_submit 由 driver 推导，之间恰有一次 narration 模型调用。
+
+**旧 claim 的恢复与暂停边界**：会话以录制的客户端自持 lease token、旧 claim token/generation=1/issuedAt 打开，不从下一步成功响应偷播新 claim。s5 resume 虽成功、paused=false，但 canCompute=false、blockedReasons=['claim_expired']；驱动器此前未退休旧 claim，会直接继续生成，现改为采用该控制状态时退休旧 claim 与旧模型输出，下一决策是 narration_claim，不能启动 action/targets/results/updates/continuation。随后注入 s6 再暂停，driver 仍须重新领取 generation=2、使用新的 issuedAt 完成 narration。s8 ready 时 paused=true、canCompute=false、gate=none；结束边界是等待暂停命令，连续再调两次 driver.step 都返回 await、不额外 resume、不调用状态模型或 preview、不推进世界。
+
+**本地预算与外部暂停**：两个样本各跑 external 与 budget 两种命令来源，均预置 used=0/max=0，证明耗尽预算不能阻塞 narration。首次实跑复现外部 pause 因数值预算已耗尽而被误标本地的缺陷；现优先以发起操作时捕获的命令判定来源：显式 pause 为外部，budget_exhausted 为本地，无命令时由预算检查发起的 pause 仍为本地。resume 成功清除 localPause；s6 按本轮来源重新建立标记。ready 后分别等待 paused_externally/local_budget_pause。另各跑一条 budget_exhausted 且 max=null 的路径，验证预算事件不依赖数值上限也能标记本地暂停。
+
+**独立验收规则**：s1～s8 均在 serve 期校验显式生命周期常量，包括 phase、paused、canCompute、gate.status、blockedReasons、head narrationStatus/version、输入 pending/可用及 round cursor/acted/visited 不推进；pause/resume 同时校验 data.paused，新的 claim/submit 校验 generation=2，submit data.narrationStatus=ready。规则不从被测响应反推；后续固定快照不能掩盖错误的中间响应。s9 对共享独立 expectedProjection/expectedDigests 校验实际终态。本段不需要 preview 标本，不生成状态或摘要；另用 A 的 Python WorldState/canonical 工具确认双样本独立终态摘要等于 s1 root head，证明暂停/叙事未改变世界状态。
+
+结果：共 22 项 T05 测试，包含双样本 × 两种暂停来源的 4 条完整正路径、2 条无数值上限的预算事件路径，以及 16 条定向反例。每条完整正路径 9 次传输调用（driver 写请求 5 次、harness 心跳 2 次、inspect 2 次），模型恰为 narration 1 次，所有声明消费完毕。反例覆盖 s2 错误 paused、s5 coherent 的 canCompute=true 且清空 blockedReasons（由独立业务断言拒绝）、s8 ready 后错误解除暂停、s8 paused/compute-enabled 的 schema 矛盾、心跳 fence 篡改、新 claim 使用旧 generation、终态 digest 与状态体篡改；均在对应消费步骤拒绝。前端全套 **18 文件 335 项通过**，`typecheck:world`、共同接口统一入口（Python 109+317、契约 38、轨迹 65、四类破坏探针）与生产 build（含 lint/全前端类型检查）通过；保留既有 hook 依赖及未使用变量 warnings。
+
+**复审结论：T05 通过，未发现阻塞问题。** 复审方实际复跑 335 项、类型检查、共同接口验收及生产构建全部通过，双样本独立终态摘要一致；确认旧 claim 退休、暂停来源判定两处修复有效，resume 后仍受阻、暂停中完成叙事、ready 不解除暂停均有独立断言和反例，心跳限于 harness。下一段先补 B 自有 fault transport 的 T06 语义：响应丢失后的同 ID/同载荷重发、成功重放不重复推进、确定性拒绝后新 ID、重试上限与恢复状态；A2 就绪后再以 T01 运行 H1，核对真实 HTTP 动态身份、preview、commit 与独立摘要。T07/T09 继续留 B2/H2，完整 B1 尚未验收。

@@ -1,6 +1,6 @@
 # B1 控制器设计补充（B 侧）
 
-状态：2026-10-23，分支 `world-browser`，契约摘要 `480d950c…`。`1f50cdb` 的 T03/T03-collapse 已通过复审；当前未提交的 T04、自动轮入口分配、T08 正常/冲突恢复/取消场景也已通过复审，P2 输入生命周期验收缺口关闭，验收记录见 [browser.md](browser.md)。T05、其余故障语义及 H1 继续待办。本文是 [分工文档](../browser-world-state-work-split.md) §四 B1 行的实现层补充，保留已确认的分层、模型调用及 preview/digest 策略。
+状态：2026-10-23，分支 `world-browser`，契约摘要 `480d950c…`。步骤 4 已通过复审并单独提交为 `159ad03`（T04、自动轮入口、T08，P2 已关闭）；T05 双样本固定响应及反例已通过复审（335 项），详见 [browser.md](browser.md)。下一段补 T06 故障语义，A2 就绪后运行 H1；T07/T09 保留 B2/H2。本文是 [分工文档](../browser-world-state-work-split.md) §四 B1 行的实现层补充，保留已确认的分层、模型调用及 preview/digest 策略。
 
 ## 0. 验收口径：共享轨迹是契约标本，不是控制器金标
 
@@ -11,7 +11,7 @@
 | `preview_point` 全部 11 份轨迹仅 T01 s16 一次 | T02/T03/T03-collapse/T04/T08 零 preview | 控制器拿 `workingState` 必须多次 preview，逐字消费必然对不上 |
 | T01 s21–s23 | `get_state`/`list_points`/`narration_get` | 验收读取，控制器不停在这里 |
 | T04 s15 | conclude 重复请求（`requestId` 同 s13，成功 replay） | 幂等重放验证，归 harness |
-| T05 s2/s5/s6 | `checkpoint_pause`/`resume` | 外部命令；s3/s4 是 `lease_renew`/`narration_claim_renew` 心跳，B1 同样归 command 注入而非调度推导；且 paused 下 s7/s8 仍 `narration_claim/submit` |
+| T05 s2/s5/s6 | `checkpoint_pause`/`resume` | 由 harness 注入命令、driver 构造请求；s3/s4 是 harness-owned heartbeat，运行时定时留 B2；paused 下 s7/s8 仍 `narration_claim/submit` |
 | T06 s4 | 成功 replay（同 `requestId` 重发） | 与 s5–s9 错误探针一样归 harness |
 | T06 s5–s9、T08 s8–s9、T07、T09 | `request_id_reused`/`stale_epoch`/`revision_mismatch`/`version_mismatch`/`point_time_locked`/`frozen_work_*`/`cache_missing`/`claim_fenced` | 故意非法请求或故障注入，控制器永远不该发出 |
 
@@ -24,6 +24,7 @@
 |---|---|---|
 | `controller` | 控制器推导请求 | harness 逐字核对 operation/request/scope，额外 preview 允许出现在声明位置 |
 | `command` | harness 注入命令，控制器发请求 | pause/resume/cancel/预算事件；心跳预留 B2 的运行时事件 |
+| `heartbeat` | harness 直发声明交换 | T05 lease_renew/narration_claim_renew 的严格消费；不代表 B2 心跳定时器 |
 | `probe` | harness 直发 | 故意非法请求/重放，断言错误码与 clientAction |
 | `inspect` | harness 直发 | `get_state`/`list_points`/`narration_get` 验收读取 |
 | `stop` | 场景边界 | 控制器必须在此停住，后续请求视为缺陷 |
@@ -107,6 +108,7 @@ pure 指对服务端状态 pure，允许携带控制器记忆：
 | none | protocol_version_unsupported | stop |
 
 - **主动预算暂停 ≠ `preview_budget_exceeded`**：后者是 preview 的 413 体积错误。主动预算暂停是 B 的调用数/耗时/点数策略，经 `checkpoint_pause` 落库，由 harness 事件注入。
+- **暂停来源落地**：显式 pause 命令保持外部来源，不能因预算数值已耗尽而误标本地；budget_exhausted 事件即便未设数值上限也标本地，无命令的数值预算检查同样标本地。resume 成功只清除本地暂停标记，不代表 canCompute=true；如控制状态仍含 claim_expired，先退休旧 claim，再完成叙事。ready 不解除服务 paused，结束于对应来源的 await。
 - 18 码的 httpStatus/retryable/clientAction 逐一 pin 进 schedule 单测，契约漂移时调度不得静默错位。注意三个反直觉映射：`paused → resolve_gate`（非 pause）、`claim_fenced → refresh_context`（非重领）、`narration_blocked → wait_narration` 的控制器侧实现是"先完成本方叙事"。
 
 ## 6. 实施顺序（替代原步骤 1–7）

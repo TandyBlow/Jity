@@ -50,7 +50,7 @@ export interface RetryDeclaration {
 
 export interface CorpusStep {
   id: string; // shared step id or B-specimen label
-  segment: 'controller' | 'preview' | 'command' | 'probe' | 'inspect';
+  segment: 'controller' | 'preview' | 'command' | 'probe' | 'inspect' | 'heartbeat';
   sharedStepId: string | null;
   operation: WorldOperation;
   request: Json; // recorded requestId stripped where the operation bears one
@@ -255,7 +255,7 @@ export class ScenarioTransport implements WorldTransport {
   constructor(private readonly steps: CorpusStep[], private readonly label: string) {}
   get exhausted(): boolean { return this.index >= this.steps.length; }
   get nextStepId(): string | null { return this.steps[this.index]?.id ?? null; }
-  /** True at an explicit inspect/probe/command boundary, or at the end. */
+  /** True at a harness boundary (inspect/probe/command/heartbeat), or the end. */
   get controllerDrained(): boolean {
     const next = this.steps[this.index];
     return next == null || (next.segment !== 'controller' && next.segment !== 'preview');
@@ -372,7 +372,14 @@ export class ScenarioTransport implements WorldTransport {
   async runProbe(stepId: string): Promise<{ step: CorpusStep; response: Json }> {
     return this.runDeclared(stepId, 'probe');
   }
-  private async runDeclared(stepId: string, segment: 'inspect' | 'probe'): Promise<{ step: CorpusStep; response: Json }> {
+  /** B1 explicitly injects heartbeat exchanges. Scheduling timers and
+   * maintaining live runtime TTLs remain B2 responsibilities. */
+  async runHeartbeat(stepId: string): Promise<{ step: CorpusStep; response: Json }> {
+    const step = this.steps[this.index];
+    if (!step || !['lease_renew', 'narration_claim_renew'].includes(step.operation)) throw new ProtocolError(`[${this.label}] ${stepId} is not a heartbeat operation`);
+    return this.runDeclared(stepId, 'heartbeat');
+  }
+  private async runDeclared(stepId: string, segment: 'inspect' | 'probe' | 'heartbeat'): Promise<{ step: CorpusStep; response: Json }> {
     const step = this.steps[this.index];
     if (!step || step.id !== stepId || step.segment !== segment) throw new ProtocolError(`[${this.label}] ${segment} ${stepId} is not at the execution front (next: ${step?.id ?? 'none'})`);
     const request: Record<string, unknown> = { ...(step.request as Record<string, unknown>) };

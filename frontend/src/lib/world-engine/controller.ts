@@ -315,7 +315,15 @@ export class ControllerDriver {
         this.memory.narration.claim = null;
       }
     }
-    if (envelope.control !== undefined) this.state.control = envelope.control;
+    if (envelope.control !== undefined) {
+      this.state.control = envelope.control;
+      // A successful resume may still report claim_expired. Retire that
+      // held generation before generating or submitting narration again.
+      if (envelope.control.blockedReasons.includes('claim_expired') && this.memory.narration) {
+        this.memory.narration.claim = null;
+        this.memory.lastModel = null;
+      }
+    }
     if (envelope.work !== undefined) this.state.work = envelope.work;
   }
 
@@ -450,7 +458,10 @@ export class ControllerDriver {
         this.clearRoundWork();
         break;
       case 'checkpoint_pause':
-        if (this.memory.budget.max != null && this.memory.budget.used >= this.memory.budget.max) this.memory.localPause = true;
+        // The triggering command owns the origin. An external pause is
+        // still external when the local numeric budget happens to be spent.
+        this.memory.localPause = this.stepCommand?.kind === 'budget_exhausted'
+          || (this.stepCommand?.kind !== 'pause' && this.memory.budget.max != null && this.memory.budget.used >= this.memory.budget.max);
         break;
       case 'checkpoint_resume':
         this.memory.localPause = false;
