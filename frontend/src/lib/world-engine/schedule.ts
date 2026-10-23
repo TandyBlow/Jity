@@ -63,6 +63,10 @@ export interface ControllerMemory {
   workingState: { key: string; state: WorldState } | null;
   sources: SourceAnalysis[];
   staged: StagedUnit[];
+  /** Time-scan unit staged for the open point: it rides into every later
+   * preview's settlementGroups (A §7: one list, no separate channel) but is
+   * NOT a named group — commit_point keeps its plain settlementGroups. */
+  stagedTimeScan: SettlementGroup | null;
   groupActors: Id[];
   lastModel: ModelResolution | null;
   lastResults: Record<Id, string> | null;

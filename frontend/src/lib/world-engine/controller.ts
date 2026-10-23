@@ -15,7 +15,7 @@ import {
 } from './schedule';
 import type {
   Conclusion, ControlState, CurrentClaim, ErrorResponse, Id, InitialTemplate, Json, PointWork, RequestMap,
-  TimeAdvance, WorldContext, WorldOperation,
+  SettlementGroup, TimeAdvance, WorldContext, WorldOperation,
 } from './types';
 
 export interface WorldModelPort { generate(task: ModelTask, key: string, input: Json): Promise<Json> }
@@ -45,7 +45,7 @@ export function initialMemory(prefix: string, holderId: string): ControllerMemor
   return {
     requestId: `${prefix}_0`, leaseToken: null, holderId, ids: {}, allocPlan: null, playerInput: null,
     plan: null, planIndex: 0, prepareSuccessor: false, localPause: false, budget: { used: 0, max: null },
-    narration: null, workingState: null, sources: [], staged: [], groupActors: [], lastModel: null, lastResults: null,
+    narration: null, workingState: null, sources: [], staged: [], stagedTimeScan: null, groupActors: [], lastModel: null, lastResults: null,
     updatesStages: [], updatesCalls: [],
     continuation: null, successorTime: null, commitPayload: null, initialTemplate: null,
   };
@@ -226,7 +226,12 @@ export class ControllerDriver {
       advanceId: world.advance.advanceId!, roundId: world.activeRoundId ?? world.round?.roundId ?? '',
       pointId: work.pointId, expectedPointId: world.head.pointId, expectedVersion: world.head.version,
       expectedCheckpointRevision: control.revision, timeAdvance: work.timeAdvance,
-      settlementGroups: this.memory.staged.map((s) => s.candidates),
+      // One settlement list, no separate channel: named staged units plus the
+      // point's time-scan candidate once it has been staged (A §7).
+      settlementGroups: [
+        ...this.memory.staged.map((s) => s.candidates),
+        ...(this.memory.stagedTimeScan ? [this.memory.stagedTimeScan] : []),
+      ],
     };
     const outcome = await this.call('preview_point', request, { worldId: world.worldId });
     if (!outcome.ok) return outcome.terminal;
@@ -381,6 +386,9 @@ export class ControllerDriver {
         this.memory.commitPayload = null;
         break;
       case 'checkpoint_stage_time_scan':
+        // The scan candidate joins later previews' settlement lists, but a
+        // named-group member it is not: commit keeps its plain groups.
+        this.memory.stagedTimeScan = structuredClone((req.candidates ?? null) as SettlementGroup | null);
         this.memory.lastResults = null;
         this.memory.updatesCalls = [];
         this.memory.commitPayload = null;
@@ -394,6 +402,7 @@ export class ControllerDriver {
       case 'commit_point': {
         this.memory.planIndex++;
         this.memory.staged = [];
+        this.memory.stagedTimeScan = null;
         this.memory.groupActors = [];
         this.memory.updatesCalls = [];
         this.memory.commitPayload = null;

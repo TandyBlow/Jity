@@ -8,7 +8,7 @@
 import { describe, expect, test } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { assertSharedExpectation, buildCorpus } from './harness';
+import { assertSharedExpectation, buildCorpus, ScenarioTransport } from './harness';
 import { buildT01Scenario, driveControllerSegment } from './t01.scenario';
 import type { Id, Json } from './types';
 
@@ -176,5 +176,42 @@ describe('T01 harness directed negatives', () => {
   test('builds corpora for traces with input-origin variables (T02)', () => {
     const raw = JSON.parse(readFileSync(resolve(process.cwd(), '../design/world-protocol/v2/traces/T02.json'), 'utf8'));
     expect(() => buildCorpus(raw, 'sample_1', [], [])).not.toThrow();
+  });
+});
+
+describe('T06 retry/probe declarations and error-step consumption', () => {
+  const rawT06 = () => JSON.parse(readFileSync(resolve(process.cwd(), '../design/world-protocol/v2/traces/T06.json'), 'utf8'));
+
+  test('refuses to infer a recorded requestId reuse at build time', () => {
+    // T06 s5 deliberately replays s4's id with a different payload — that
+    // reuse is a declaration, never an inference.
+    expect(() => buildCorpus(rawT06(), 'sample_1', [], [])).toThrow(/must be declared explicitly/);
+  });
+
+  test('accepts a declared probe and rejects declaring it a retry', () => {
+    expect(() => buildCorpus(rawT06(), 'sample_1', [], [], [], [], [{ stepId: 's5', kind: 'probe' }])).not.toThrow();
+    expect(() => buildCorpus(rawT06(), 'sample_1', [], [], [], [], [{ stepId: 's5', kind: 'continue' }])).toThrow(/declared retry diverges/);
+  });
+
+  test('a declared retry must repeat the original operation, scope and body', async () => {
+    const corpus = buildCorpus(rawT06(), 'sample_1', [], [], [], [], [{ stepId: 's5', kind: 'probe' }]);
+    const s4 = corpus.steps.find((s) => s.sharedStepId === 's4')!;
+    const s5 = corpus.steps.find((s) => s.sharedStepId === 's5')!;
+    const recordedId = (rawT06().steps as { id: string; request: { requestId: string } }[]).find((s) => s.id === 's4')!.request.requestId;
+    // Reshape s5 into what a true retry looks like: the predecessor's body.
+    s5.requestIdExpectation = 'continue';
+    s5.request = structuredClone(s4.request);
+    const tail = corpus.steps.findIndex((s) => s.sharedStepId === 's4');
+    const tailSteps = corpus.steps.slice(tail);
+    for (const step of tailSteps) step.digestChain = []; // chain integrity needs the unserved prefix; covered corpus-level
+    const transport = new ScenarioTransport(tailSteps, 'T06');
+    const serve = (step: typeof s4) => transport.execute(step.operation, { ...(step.request as Record<string, unknown>), requestId: recordedId } as never, step.scope as never);
+    await serve(s4); // original call under a fresh id
+    (s5.request as Record<string, unknown>).expectedCheckpointRevision = 99; // drifted resend
+    await expect(serve(s5)).rejects.toThrow(/retry payload drift/);
+    (s5.request as Record<string, unknown>).expectedCheckpointRevision = (s4.request as Record<string, unknown>).expectedCheckpointRevision;
+    await expect(serve(s5)).rejects.toThrow(); // identity accepted: the recorded error is served
+    expect(transport.consumed).toBe(2); // the error step was consumed linearly
+    expect(transport.ops).toEqual(['checkpoint_pause', 'checkpoint_pause']);
   });
 });

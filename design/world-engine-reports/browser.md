@@ -38,14 +38,16 @@ CI 保留既有 backend pytest 与 frontend lint/build，新增 npm test 与 wor
 
 日期：2026-10-23。应步骤 2 放行条件而作；机制已落地于 `harness.ts`（线性消费 + `requestIdExpectation`），T08/T09 场景启用。
 
-**错误步骤线性消费**：每个录制步骤 = 一次 HTTP 交换。错误步骤 serve 一次（validateError → WorldApiError 抛给 driver）后 index 前进，错误响应体同样跑 captures/摘要链/独立钉——T06 的错误响应携带 capture 变量供后续引用，运行时链对它们一视同仁。driver 的反应必须落在下一个声明步骤上：`request_in_progress`（与 driver 观测的超时）按 `retry_same_request` 原样重发（同 ID 同载荷），落在下一个声明步骤——即构建期标记 `requestIdExpectation: 'continue'` 的那一步（推导规则：录制中相邻带 ID 步骤复用同一 ID 即为 continue，否则 fresh）；其余确定性拒绝按 clientAction 走 followup；`fix_request`/`none`/`pause` 到达 driver 终止（声明停止边界）。
+**错误步骤线性消费**：每个录制步骤 = 一次 HTTP 交换。错误步骤 serve 一次（validateError → WorldApiError 抛给 driver）后 index 前进，错误响应体同样跑 captures/摘要链/独立钉——T06 的错误响应携带 capture 变量供后续引用，运行时链对它们一视同仁。driver 的反应必须落在下一个声明步骤上：`request_in_progress`（与 driver 观测的超时）按 `retry_same_request` 原样重发（同 ID 同载荷），落在下一个声明步骤——即场景显式声明为 `continue` 的那一步；其余确定性拒绝按 clientAction 走 followup；`fix_request`/`none`/`pause` 到达 driver 终止（声明停止边界）。
 
 **requestId 生命周期**（driver 契约，transport 独立校验、不读 driver memory）：
-- `retry_same_request`：同 ID 同载荷。transport 容忍同前端重放（frontRequestId），并对 continue 步骤强制复用上一次带 ID 调用的 ID——driver 若另铸新 ID 即拒。
+- `retry_same_request`：同 ID 同载荷。**重试是显式声明**（`buildCorpus` 的 `retries: {stepId, kind}`）——录制中相邻 ID 复用绝不推断为重试。`continue` 声明在构建期对照录制校验（复用前一录制调用的 ID 且 operation/scope/载荷逐字相等，否则要求改声明为 probe），运行期强制同 ID 且 **operation、scope、完整请求体与上一次带 ID 调用逐一相等**（同 ID 换 holderId 之类的载荷漂移即拒，见步骤 3 评审缺口 2 的复现）。`probe` 声明（蓄意重放已 serve 的 ID 触发 request_id_reused 之类示教，载荷允许不同）构建期要求载荷确有差异（逐字重发应声明 retry）、运行期要求该 ID 确曾 serve 过。未声明的录制 ID 复用构建期直接拒绝。transport 仍容忍同前端重放（frontRequestId）。
 - 其余确定性拒绝：driver 先铸一个新 ID 再发 followup（`get_context` 不携带 ID 但消耗一个；`lease_acquire`/`checkpoint_pause` 携带）；`refresh_context` 与 `lease_acquire` 在 followup 成功后再铸一个——因此 ID 允许被跳号消费，freshness 规则（每带 ID 操作一个从未用过的 ID、无 ID 操作不得泄漏）不受影响；被拒 ID 永久退役。
 - 无 ID 操作（preview/reads）禁止携带 requestId，双向强制。
 
-**轨迹分层**：T06/T07 是契约层错误动物园（`req_inflight`/`request_restore_current` 等非 driver 形状 ID 的示教序列），不是 driver 会话材料，归 A2 回放层；driver-harness 只消费 driver 会话形状的轨迹。已知缺口：T08 s9（commit version_mismatch→refresh_context）与 s10（新 ID 重试成功）之间录制省略了 `get_context` 交换——届时用 B 桥接步骤补齐（从录制捕获态派生、显式标注为桥），同步登记为语料适配。
+**时间扫描候选与 preview（A §7：同一列表、无独立通道）**：driver 在 `checkpoint_stage_time_scan` 后把扫描候选保存为 `memory.stagedTimeScan`，其后本点每次 preview 将其并入 settlementGroups（普通 staged 组之后）；`commit_point` 的 settlementGroups 保持普通命名组语义（T02-empty s23 录制 `[]` 证实扫描候选不进 commit），commit 后随 staged 一并清空。
+
+**轨迹分层**：T06 是契约层示教序列（`req_inflight` 等非 driver 形状 ID 的 request_id_reused/in_progress/stale_epoch 演示），不是 driver 会话材料——其恢复语义由 **B 自有 fault transport**（受控注入 request_in_progress、驱动器观测超时等故障）覆盖，属 B 责任。T07（checkpoint_restore_group_work 恢复/接管）仍属 **B2/H2**，不因轨迹分层划归他方，B 的恢复验证责任不取消。已知缺口：T08 s9（commit version_mismatch→refresh_context）与 s10（新 ID 重试成功）之间录制省略了 `get_context` 交换——届时用 B 桥接步骤补齐（从录制捕获态派生、显式标注为桥），同步登记为语料适配。
 
 ## B1 步骤 3：T02 组扩张与空 linked 时间扫描验收
 
@@ -57,6 +59,8 @@ preview 标本：两条轨迹的契约层录制都不含 preview，但 driver �
 
 模型期望由遍历录制生成，不做手工清单：discover→action、targets 形 extend→targets（规则取自 create_rolls）、admit 形 extend→reaction、stage_unit→results+updates（T02 组差量全空，updates 输出空数组）、stage_time_scan→`time_scan:<pointId>` updates、narration_submit→narration。覆盖面：T02 每样本 24 次模型调用（action×4、targets×6、reaction×2、results/updates×4、narration×3、pointPlan×1），p2/p3 各含拒绝卷（person_a/person_e/person_c 三次 admitted=false）与准入深链；empty-linked 每样本 14 次，c→d→e→f 全准入 DFS 深链（c 的三次 reaction）+ f 空 targets 收组 + 空 linked 点时间扫描。序列化适配仅一处：admit 形 extend 的录制 `targets: null` 归一为省略键（driver 形状），业务字段保持录制值。
 
-结果：四条正路径全过（T02 每样本 42 次传输调用 = bootstrap 1 + controller 40 + 收尾 inspect 1，empty-linked 26 次；模型调用全序列 task/key/全 input 相等；schema 先于消费；标本时间/体/投影断言全过）。反例：终态摘要篡改在收尾 inspect 的 serve 期拒绝；末位 preview 体篡改经 s42/s26 对齐拒绝。前端全套 14 文件 266 项通过（含 T01 全部 15 项与既有 65 项共享轨迹逐字消费，共享轨迹/schema/manifest/digest pin 零改动）；`typecheck:world` 与统一验收入口 PASS。
+结果：四条正路径全过（T02 每样本 42 次传输调用 = bootstrap 1 + controller 40 + 收尾 inspect 1，empty-linked 26 次；模型调用全序列 task/key/全 input 相等；schema 先于消费；标本时间/体/投影断言全过）。反例：终态摘要篡改在收尾 inspect 的 serve 期拒绝；末位 preview 体篡改经 s42/s26 对齐拒绝。
 
-**结论：T02 组扩张与空 linked 时间扫描验收交付，待步骤 3 评审。** 后续：T03/T03-collapse（时间扫描与 collapse 合法重叠）按同一装配器扩展；T08/T09 启用错误步骤机制时补 B 桥接步骤。
+**步骤 3 评审（对 0c85106）两项缺口及修复**：①时间扫描候选未进入后续 preview——driver 的 `checkpoint_stage_time_scan` 不落 memory、场景 `stagedAt` 漏收 `stage_time_scan`，empty-linked 扫描提交 `groupId=null` 候选后紧随的 preview 却发 `settlementGroups=[]`，违反 A §7（同一列表、无独立通道）；修复为 driver 增 `memory.stagedTimeScan`（preview 同列表携带、commit 保持普通命名组语义、commit 后清空）+ 场景 `stagedAt` 纳入扫描候选。本轮扫描无状态差量所以预设响应未暴露；T03 的非空扫描（task_wait_noon 达成等）会受影响，T03 场景装配时按同一机制走。②`continue` 只约束同 ID 不约束同载荷——同 ID 换 `holderId` 被认证为合法重试；修复为重试显式声明（构建期对照录制校验、未声明的录制 ID 复用直接拒绝、probe 另行声明）+ 运行期 operation/scope/完整请求体逐一相等校验，并以 T06 语料补三回归（构建期拒绝推断、probe/retry 声明互斥校验、载荷漂移拒绝+错误步骤线性消费证明）。文档责任边界同步修正：T06 归 B 自有 fault transport 覆盖；T07 仍属 B2/H2，B 的恢复验证责任不取消。前端 14 文件 **269** 项通过；`typecheck:world` 与统一验收入口 PASS。
+
+**结论：T02 组扩张与空 linked 时间扫描验收按步骤 3 评审意见修复完毕，待复审。** 后续：T03/T03-collapse（时间扫描与 collapse 合法重叠）按同一装配器扩展；T08/T09 启用错误步骤机制时补 B 桥接步骤。

@@ -50,7 +50,7 @@ const pointWork = (over: Partial<PointWork> = {}): PointWork => ({
 const memory = (over: Partial<ControllerMemory> = {}): ControllerMemory => ({
   requestId: 'rq1', leaseToken: 'lease1', holderId: 'browser', ids: {}, allocPlan: null, playerInput: null,
   plan: null, planIndex: 0, prepareSuccessor: false, localPause: false, budget: { used: 0, max: null },
-  narration: null, workingState: null, sources: [], staged: [], groupActors: [], lastModel: null, lastResults: null,
+  narration: null, workingState: null, sources: [], staged: [], stagedTimeScan: null, groupActors: [], lastModel: null, lastResults: null,
   updatesStages: [], updatesCalls: [],
   continuation: null, successorTime: null, commitPayload: null, initialTemplate: null, ...over,
 });

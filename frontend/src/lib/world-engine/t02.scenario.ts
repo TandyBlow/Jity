@@ -148,7 +148,11 @@ export function buildT02Scenario(traceName: T02TraceName, sampleId: string): T02
   const stagedAt = (anchorIndex: number, pointIndex: number): Json[] => {
     const groups: Json[] = [];
     for (const s of steps.slice(beginIndex[pointIndex], anchorIndex + 1)) { // inclusive: the anchor's own stage counts
-      if (s.operation === 'checkpoint_stage_unit') groups.push(structuredClone((requestOf.get(s.id)! as { candidates: Json }).candidates));
+      // The time-scan unit rides in the same settlement list (A §7) — its
+      // candidate enters every later preview of the point.
+      if (s.operation === 'checkpoint_stage_unit' || s.operation === 'checkpoint_stage_time_scan') {
+        groups.push(structuredClone((requestOf.get(s.id)! as { candidates: Json }).candidates));
+      }
     }
     return groups;
   };

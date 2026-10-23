@@ -39,6 +39,15 @@ export interface IndependentDigestPin {
   digest: string;
 }
 
+/** Explicit retry semantics: a 'continue' step re-sends the previous call's
+ * operation, scope and full request under the same requestId; a 'probe'
+ * deliberately replays a previously served id with a different payload (the
+ * request_id_reused demonstration). Neither is inferred from the recording. */
+export interface RetryDeclaration {
+  stepId: string;
+  kind: 'continue' | 'probe';
+}
+
 export interface CorpusStep {
   id: string; // shared step id or B-specimen label
   segment: 'controller' | 'preview' | 'command' | 'probe' | 'inspect';
@@ -46,9 +55,10 @@ export interface CorpusStep {
   operation: WorldOperation;
   request: Json; // recorded requestId stripped where the operation bears one
   requestIdRequired: boolean;
-  /** 'continue' = the recording reused the previous call's requestId (a
-   * retry_same_request resend); default 'fresh' = a never-seen id. */
-  requestIdExpectation: 'fresh' | 'continue';
+  /** 'continue' = declared retry: same operation/scope/body as the previous
+   * served call under its id. 'probe' = declared deliberate replay of a
+   * served id. Default 'fresh' = a never-seen id. */
+  requestIdExpectation: 'fresh' | 'continue' | 'probe';
   scope: Scope;
   response: Json; // recorded echo, rewritten to the served request id at serve time
   responseKind: 'success' | 'error';
@@ -110,8 +120,10 @@ function collectVariablePositions(template: unknown, value: unknown, pointer: st
  * alignments and independent digest pins are scenario-declared expectations
  * the trace itself does not carry: an alignment binds a final preview's
  * served body and digest to a later step's independent expectation, a pin
- * holds a served field to an externally precomputed digest. */
-export function buildCorpus(rawTrace: unknown, sampleId: string, specimens: PreviewSpecimenSpec[], inspectStepIds: string[], previewAlignments: PreviewAlignment[] = [], digestPins: IndependentDigestPin[] = []): Corpus {
+ * holds a served field to an externally precomputed digest. Retry
+ * declarations are equally explicit — a recorded requestId reuse is never
+ * inferred to be a retry. */
+export function buildCorpus(rawTrace: unknown, sampleId: string, specimens: PreviewSpecimenSpec[], inspectStepIds: string[], previewAlignments: PreviewAlignment[] = [], digestPins: IndependentDigestPin[] = [], retries: RetryDeclaration[] = []): Corpus {
   const trace = readTrace(rawTrace);
   const sample = trace.samples.find((s) => s.id === sampleId);
   if (!sample) throw new ProtocolError(`Unknown sample ${sampleId}`);
@@ -121,7 +133,7 @@ export function buildCorpus(rawTrace: unknown, sampleId: string, specimens: Prev
   const servedAfter: Record<string, ServedSnapshot> = {};
   const requests: Record<string, Json> = {};
   const capturedAt = new Map<string, { stepId: string; path: string }>();
-  let lastRecordedRequestId: string | null = null;
+  let lastRecorded: { requestId: string; operation: WorldOperation; scope: Scope; body: Record<string, unknown> } | null = null;
   for (const step of trace.steps) {
     const request = instantiate(step.request, bindings) as Json;
     const scope = instantiate(step.scope, bindings) as Scope;
@@ -129,16 +141,30 @@ export function buildCorpus(rawTrace: unknown, sampleId: string, specimens: Prev
     const response = instantiate(step.response, { ...bindings, ...own }) as Json;
     // Recorded request identity: the echo must match, then the lifecycle
     // leaves the corpus — the transport enforces it against the driver. A
-    // recorded id reuse is kept as a 'continue' expectation (the retry
-    // resend); everything else expects a fresh id.
+    // recorded requestId reuse is NEVER inferred: it must be declared as a
+    // retry (same payload resent) or a probe (deliberate replay), and the
+    // declaration is validated against the recording.
     const requestIdRequired = Object.hasOwn(request as Record<string, unknown>, 'requestId');
-    let requestIdExpectation: 'fresh' | 'continue' = 'fresh';
+    let requestIdExpectation: 'fresh' | 'continue' | 'probe' = 'fresh';
     if (requestIdRequired) {
       const declared = (request as Record<string, unknown>).requestId;
       const echo = (response as Record<string, unknown>).requestId;
       if (typeof declared !== 'string' || echo !== declared) throw new ProtocolError(`[${step.id}] recorded response requestId ${String(echo)} does not echo the request ${String(declared)}`);
-      if (declared === lastRecordedRequestId) requestIdExpectation = 'continue';
-      lastRecordedRequestId = declared;
+      const { requestId: _recordedId, ...recordedBody } = request as Record<string, unknown>;
+      const declaration = retries.find((r) => r.stepId === step.id);
+      if (declaration) {
+        if (!lastRecorded || declared !== lastRecorded.requestId) throw new ProtocolError(`[${step.id}] declared ${declaration.kind} does not replay the recorded predecessor's requestId`);
+        if (declaration.kind === 'continue') {
+          if (step.operation !== lastRecorded.operation || !equal(scope, lastRecorded.scope) || !equal(recordedBody, lastRecorded.body)) throw new ProtocolError(`[${step.id}] declared retry diverges from the recorded predecessor's payload — declare a probe instead if the replay is deliberate`);
+          requestIdExpectation = 'continue';
+        } else {
+          if (step.operation === lastRecorded.operation && equal(scope, lastRecorded.scope) && equal(recordedBody, lastRecorded.body)) throw new ProtocolError(`[${step.id}] declared probe re-sends the recorded payload verbatim — declare a retry instead`);
+          requestIdExpectation = 'probe';
+        }
+      } else if (lastRecorded && declared === lastRecorded.requestId) {
+        throw new ProtocolError(`[${step.id}] recorded requestId reuse must be declared explicitly as a retry ('continue') or a probe ('probe')`);
+      }
+      lastRecorded = { requestId: declared, operation: step.operation, scope: structuredClone(scope), body: recordedBody };
       delete (request as Record<string, unknown>).requestId;
     }
     for (const capture of step.captures) capturedAt.set(capture.variable, { stepId: step.id, path: capture.path });
@@ -215,6 +241,7 @@ export class ScenarioTransport implements WorldTransport {
   private readonly seenRequestIds = new Set<Id>();
   private frontRequestId: Id | null = null; // id accepted at the current front: a retry_same_request re-sends it
   private lastServedRequestId: Id | null = null; // previous served id-bearing call: 'continue' expectations hold against it
+  private lastServedRequest: { operation: WorldOperation; scope: Scope; body: Record<string, unknown> } | null = null;
   private readonly captured = new Map<string, unknown>();
   private readonly servedResponses = new Map<string, Json>();
   readonly ops: WorldOperation[] = [];
@@ -242,13 +269,20 @@ export class ScenarioTransport implements WorldTransport {
       requestId = sent.requestId as Id;
       if (typeof requestId !== 'string' || requestId === '') throw new ProtocolError(`[${this.label}] step ${step.id}: requestId must be a non-empty string, got ${String(sent.requestId)}`);
       if (step.requestIdExpectation === 'continue') {
-        if (requestId !== this.lastServedRequestId) throw new ProtocolError(`[${this.label}] step ${step.id}: requestId ${requestId} must reuse the previous operation's id ${String(this.lastServedRequestId)} (recorded retry_same_request resend)`);
+        const last = this.lastServedRequest;
+        if (requestId !== this.lastServedRequestId || !last) throw new ProtocolError(`[${this.label}] step ${step.id}: requestId ${requestId} must reuse the previous operation's id ${String(this.lastServedRequestId)} (declared retry)`);
+        const { requestId: _sentId, ...retryBody } = sent;
+        if (operation !== last.operation || !equal(scope as unknown as Scope, last.scope) || !equal(retryBody, last.body)) throw new ProtocolError(`[${this.label}] step ${step.id}: retry payload drift — a declared retry must repeat the original operation, scope and request body`);
+      } else if (step.requestIdExpectation === 'probe') {
+        if (!this.seenRequestIds.has(requestId)) throw new ProtocolError(`[${this.label}] step ${step.id}: declared probe replays ${requestId} which was never served`);
       } else if (this.seenRequestIds.has(requestId) && requestId !== this.frontRequestId) {
         throw new ProtocolError(`[${this.label}] step ${step.id}: requestId ${requestId} already used — the factory must mint a fresh id per id-bearing operation`);
       }
       this.seenRequestIds.add(requestId);
       this.frontRequestId = requestId;
       this.lastServedRequestId = requestId;
+      const { requestId: _servedId, ...servedBody } = sent;
+      this.lastServedRequest = { operation, scope: structuredClone(scope as unknown as Scope), body: servedBody };
     } else if (sent.requestId !== undefined) {
       throw new ProtocolError(`[${this.label}] step ${step.id}: declared request carries no requestId but controller sent ${String(sent.requestId)}`);
     }
