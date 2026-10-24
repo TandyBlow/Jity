@@ -266,3 +266,27 @@ Python 使用共享手写 expectedProjection 与实际捕获身份独立计算�
 本轮不修改共享 schema、registry、manifest 或轨迹；B 默认 fetch 的接收者问题仍未修复，浏览器继续使用显式绑定的原生 fetch。**三处 P2 本地修复待复审，A2-2 与 H1 保持未关闭。**
 
 复验：`test_world_http.py` **39 项**、控制服务 **42 项**，聚焦联合运行 **81 passed**；全量后端 `python -X utf8 -m pytest -q` **1062 passed、0 failed**。共同接口入口 **PASS**（Python 109＋317、TS 类型/契约 38/轨迹 65、四类破坏探针）。绑定原生 fetch 的 Edge T01 两样本＋T03 两样本全部通过，T01 两样本各追加的 restore/非法路径错误消费探针也通过；分享记录已重新生成，包含本轮源哈希和 browserErrorChecks。`git diff --check` 通过，本轮结果与 A2-2 二轮改动一并提交推送；提交后 A2-2 与 H1 仍待复审，状态不变。
+
+# A2-2/H1 B 侧复核与默认 fetch 路径联调（2026-10-24）
+
+B 按「A=`d59353b`、B=`adfd506`」组合执行 A2-2 三处 P2 复核与 H1 真实浏览器联调。结论：**B 侧裁定 A2-2 与 H1 关闭**，证据如下。
+
+## 三处 P2 复核（代码 + 回归）
+
+1. **精确 JSON 解析**：路由在 `_json_body` 直接复用共享 `parse_json`（`json.loads(parse_float=Decimal)` 保数值原文精度、`object_pairs_hook` 拒重复键、`parse_constant` 拒非有限数，随后 `canonical_bytes` 全量校验），发生在任何 float 转换之前。
+2. **恢复错误码**：`handle_restore_group_work` 独立 fixture handler，事务内按租约→已提交绑定→工作点顺序核验后以 restore 自己的错误表拒绝（`frozen_work_missing`、`details.reason=source_not_active`），不伪造 A3 恢复。
+3. **读路径 ID 校验**：`_safe_id` 对全部请求的 URL worldId/pointId 统一校验（含无 requestSchema 的 narration_get），非法身份按该操作的错误表返回 version_mismatch。
+
+复跑：`test_world_http.py` **39 passed**；全量后端（`cd backend` 按规程）**1062 passed、0 failed**（从仓库根直跑会有 campaign_wiring 两例 cwd 伪失败，非本批回归）；统一验收入口 **PASS**。
+
+## H1：默认 fetch 路径（兑现 B `83dbe3b`）
+
+H1 harness 原以 `window.fetch.bind(window)` 显式注入绕过 B 默认实现的接收者缺陷；本批改为**默认 fetcher 路径**（`new HttpWorldTransport(apiUrl)`，构造器自 `fetch.bind(globalThis)` 绑定，83dbe3b），A 侧脚本随 `b496da7` 提交。参测组合：A=`b496da7`（=d59353b+harness 默认路径改造，工作树仅遗留既有 `backend/_proj_create.json` 未跟踪文件）、B=`adfd506`（干净）。真实 Edge headless 155.0.4283.62，跨源真实 CORS，独立 fixture API 单进程。
+
+结果 **PASS**（`artifacts/world-http-h1.json`，sourceUnchangedDuringRun=true）：
+
+- **T01 双样本**（真实 B ControllerDriver + 调度器 + HttpWorldTransport 默认 fetch，服务端动态分配 worldId/pointId 等全部身份）：每样本 26 次已记录 HTTP 交换、8 次固定模型任务，最终 revision=13、cursor=6、gate=none；Python 以共享手写 expectedProjection + 实际捕获身份独立计算 WorldState/摘要，final preview、commit、get_state 三方对拍一致——sample_1 `0dbc65a69515265e…`、sample_2 `5e92c2391b6e905d…`；独立 pointProjectionDigest `32c69a56…`/`f689e5b8…`；begin/preview 重复与模型输入的 begin 期望态校验全过。
+- **错误消费探针**（浏览器侧）：restore 合法形状收 `frozen_work_missing`（WorldApiError，非 ProtocolError）、拒绝后 world/control/work 三段无变化；非法 narration 路径收 `version_mismatch`。
+- **T03 双样本**（浏览器 transport 直接固定候选 harness）：非空 stage_time_scan、同列表 preview 重复一致、commit/叙事/读取，任务达成/个性来源点/理智/时间四字段验证，摘要 `696b3e28…`/`2132568c…`。
+
+两次运行（harness 改造前提交态与 b496da7 干净态）摘要逐位一致。**边界不变**：SQLite、H2 刷新/接管、真实模型与远端 CI 未验收；A3 另行。

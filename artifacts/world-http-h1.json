@@ -3,13 +3,13 @@
   "layer": "local browser/controller/HTTP; review pending",
   "contractDigest": "480d950c0f8062f8fdd75cb0620eb4ac97a6a247ca3f45f2057f6fe9e2ce7062",
   "browser": "155.0.4283.62",
-  "apiUrl": "http://127.0.0.1:54128",
-  "browserOrigin": "http://127.0.0.1:54129",
+  "apiUrl": "http://127.0.0.1:56723",
+  "browserOrigin": "http://127.0.0.1:56724",
   "store": "FixtureBaselineStore; one worker; no SQLite",
   "fetchConfiguration": "B default fetcher (bound by the constructor, 83dbe3b); no injection",
   "A": {
-    "head": "d59353b1a974438dfcceca112c2119e49747624d",
-    "status": "M backend/scripts/check_world_http_h1.py\n M backend/scripts/world_http_h1_browser.mjs\n?? backend/_proj_create.json",
+    "head": "b496da7512ce7a14ee1bf216d1b5747f48eebd51",
+    "status": "?? backend/_proj_create.json",
     "sourceSha256": {
       "backend/app/routers/worlds.py": "4b4db60cd4bdb17ed615b16787bf509d394b0c0244b8a02726e4ec4389c12bf6",
       "backend/app/world_app.py": "7a717dbeb052f60c9a1b554ee5dd31d9ab86521ba6aee0dad5ee89f9bb808576",
