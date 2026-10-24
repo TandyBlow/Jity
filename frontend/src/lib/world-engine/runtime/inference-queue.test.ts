@@ -149,6 +149,20 @@ describe('SerialInferenceQueue', () => {
     await expect(first).rejects.toSatisfy(isAbortError);
   });
 
+  test('a synchronously throwing start releases the slot and rejects the caller', async () => {
+    const queue = new SerialInferenceQueue();
+    const log: string[] = [];
+    const b = step(log, 'b');
+    const boom = queue.run({ label: 'a', start: () => { throw new Error('sync start failure'); } });
+    const second = queue.run({ label: 'b', start: b.start });
+    await expect(boom).rejects.toThrow('sync start failure');
+    await b.started; // the slot was released, not stranded
+    expect(log).toEqual(['b']);
+    b.gate.resolve('vb');
+    expect((await second).value).toBe('vb');
+    expect(queue.depth).toBe(0);
+  });
+
   test('timings separate queue wait from engine run', async () => {
     const queue = new SerialInferenceQueue();
     const hold = deferred();

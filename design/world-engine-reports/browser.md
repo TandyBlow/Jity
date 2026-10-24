@@ -154,3 +154,16 @@ T08 语料适配逐项登记：①s8 是把已锁定时间从 2s 改成 3s 的�
 **引擎与端口（runtime/engine.ts + wllama-engine.ts + model-port.ts）**：`InferenceEngine` 接口（load/complete/dispose/info，取消是契约一部分）；wllama 适配器映射 `createCompletion` 的 max_tokens/temperature/seed/stop/abortSignal，工厂可注入——Node 测试只验参数映射不触 wasm；`RuntimeWorldModelPort implements WorldModelPort`（三参接口 + 可选第四参 signal，结构类型兼容，controller 零改动），encode 为标注 B3 替换的确定性占位，decode 即本批真交付；模型加载本身走队列（load 与推理共享设备槽，引擎侧幂等）。端口测试 5 项：九类任务往返（loads 幂等一次）、形状违规即 StructuredOutputError、并发调用严格串行、abort 到达引擎（linked signal）且迟到 settle 不外泄、encodePrompt 确定性。
 
 结果：前端全套 **24 文件 403 项通过**（372 + fetch 2 + 运行层 29），`typecheck:world` 干净、`review:world-s1` 60 项、统一验收入口 PASS、生产 build 通过。运行层无真实模型浏览器实测——计时埋点就位，实测 harness 随长推理/心跳批交付；真实 HTTP 链路仍属 H1/H2。
+
+### B2 批次一修复轮（对 977c82a 复审六项）
+
+日期：2026-10-24。复审对 `83dbe3b` 通过；对 `977c82a` 列 6 处可复现问题（2×P1、4×P2），全部确认成立并已修，修复提交随本条：
+
+1. **updates 双形态（P1）**：校验器只收数组，挡掉了拆分模式的合法单调用输出。现在批量数组与拆分单调用均合法且不归一化穿透（controller consumeModelOutput 按 mode push 是消费端事实），既有逐调用校验不变。
+2. **空 actor 点（P1）**：pointPlan 的 actorIds 非空约束撤回——T03 无行动时间扫描点与空 linked 点计划零 actor 是已验收形状，仍校验元素类型。
+3. **delta 内层形状（P2）**：EntityDelta 闭集逐字段校验（positionSet/Position、appearance/personalityChanges/Change、sanitySet、tasksAchieved、subtasksAdded/Task 含 status 闭集），未知字段拒绝——`subtasksAdded:7` 这类让 mergeUpdatesStages 抛 TypeError 的形状在 codec 层即拒。
+4. **加载取消转发（P2）**：load 的调用方 signal 经引擎自有 AbortController 传入 `loadModelFromUrl` 原生支持的 signal；下载中取消即通知底层，fake 侧断言转发信号随调用方中止。
+5. **加载中 dispose 复活（P2）**：dispose 改为终态且中途安全——在途下载先 abort，落地实例（哪怕在 dispose 之后才完成）走 disposed 检查立即 exit、不登记；探针形状（modelId 残留、exit 0 次）不可能再出现。两分支各有测试：download 遵约中止 → exit 0；无视中止落地 → exit 1 且 modelId 为 null。
+6. **同步抛错滞留（P2）**：`start()` 同步 throw 进入统一失败清理——释放槽位并定局调用方，后继照常泵入，专项测试钉住。
+
+结果：前端全套 **24 文件 407 项通过**（403 + 4 净增：队列同步抛错、加载取消转发、中途 dispose 两分支），`typecheck:world`、`review:world-s1`（60 项）、统一验收入口与生产 build 通过。b2-runtime-design.md 已同步三处语义（加载转发与 dispose 终态、同步抛错清理、updates 双形态/空 actor/delta 校验）。

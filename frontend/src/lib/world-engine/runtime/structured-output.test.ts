@@ -53,12 +53,32 @@ describe('decodeTaskOutput — JSON tasks', () => {
     rejects('results', '{"person_a":42}', /non-empty strings/);
   });
 
-  test('updates is a staged call list over the closed stage set', () => {
-    const call = [{ stage: 'position', changes: { person_a: { positionSet: { containerId: 'corridor', slotId: null, relativeTo: null } } } }];
-    expect(decodeTaskOutput('updates', JSON.stringify(call))).toEqual(call);
+  test('updates accepts batch arrays and split-mode single calls, with typed deltas', () => {
+    const batch = [{ stage: 'position', changes: { person_a: { positionSet: { containerId: 'corridor', slotId: null, relativeTo: null } } } }];
+    expect(decodeTaskOutput('updates', JSON.stringify(batch))).toEqual(batch);
+    const split = { stage: 'sanity', changes: { person_b: { sanitySet: 7 } } };
+    expect(decodeTaskOutput('updates', JSON.stringify(split))).toEqual(split); // single call, not an array
     expect(decodeTaskOutput('updates', '[]')).toEqual([]);
     rejects('updates', '[{"stage":"weather","changes":{}}]', /stage/);
-    rejects('updates', '[{"stage":"position","changes":{"person_a":7}}]', /objects/);
+    // Deltas are validated to their declared fields: mergeUpdatesStages must
+    // never meet a shape it cannot consume.
+    rejects('updates', '[{"stage":"subtasks","changes":{"person_a":{"subtasksAdded":7}}}]', /subtasksAdded must be an array/);
+    rejects('updates', '[{"stage":"position","changes":{"person_a":{"weather":"sunny"}}}]', /unknown entity delta field/);
+    rejects('updates', '[{"stage":"sanity","changes":{"person_a":{"sanitySet":"high"}}}]', /number or null/);
+    const full = [{
+      stage: 'tasks',
+      changes: {
+        person_a: {
+          positionSet: { containerId: 'hall', slotId: 'shelf', relativeTo: { entityId: 'item_lamp', relation: 'above' } },
+          appearanceChanges: [{ id: 'c1', text: null, supersedes: ['c0'] }],
+          tasksAchieved: ['task_a'],
+          subtasksAdded: [{ id: 't9', ownerId: 'person_a', parentTaskId: null, goal: '找灯', status: 'pending' }],
+        },
+      },
+    }];
+    expect(decodeTaskOutput('updates', JSON.stringify(full))).toEqual(full);
+    rejects('updates', '[{"stage":"tasks","changes":{"person_a":{"positionSet":{"containerId":"hall","relativeTo":{"entityId":"x","relation":"underneath"}}}}}]', /relation/);
+    rejects('updates', '[{"stage":"tasks","changes":{"person_a":{"subtasksAdded":[{"id":"t","ownerId":"p","parentTaskId":null,"goal":"g","status":"done"}]}}}]', /status/);
   });
 
   test('continuation accepts only model-closed variants', () => {
@@ -91,12 +111,14 @@ describe('decodeTaskOutput — JSON tasks', () => {
     rejects('time', '{"boundary":"elapsed","duration":{"amount":1.5,"unit":"second"}}', /amount/);
   });
 
-  test('pointPlan is a non-empty list of fully shaped points', () => {
+  test('pointPlan allows actionless points and validates the point shape', () => {
     const plan = [{ pointId: 'p1', kind: 'normal', timeAdvance: { boundary: 'elapsed', duration: { amount: 2, unit: 'second' } }, actorIds: ['person_a'] }];
     expect(decodeTaskOutput('pointPlan', JSON.stringify(plan))).toEqual(plan);
+    const scan = [{ pointId: 'p2', kind: 'linked', timeAdvance: { boundary: 'elapsed', duration: { amount: 60, unit: 'second' } }, actorIds: [] }];
+    expect(decodeTaskOutput('pointPlan', JSON.stringify(scan))).toEqual(scan); // T03 actionless time-scan point
     rejects('pointPlan', '[]', /not be empty/);
     rejects('pointPlan', JSON.stringify([{ pointId: 'p1', kind: 'weird', timeAdvance: { boundary: 'instant', duration: { amount: 0, unit: 'second' } }, actorIds: ['person_a'] }]), /point kind/);
-    rejects('pointPlan', JSON.stringify([{ pointId: 'p1', kind: 'normal', timeAdvance: { boundary: 'instant', duration: { amount: 0, unit: 'second' } }, actorIds: [] }]), /actor/);
+    rejects('pointPlan', JSON.stringify([{ pointId: 'p1', kind: 'normal', timeAdvance: { boundary: 'instant', duration: { amount: 0, unit: 'second' } }, actorIds: [42] }]), /actor ids/);
   });
 
   test('json fences are stripped; broken json and emptiness carry the raw payload', () => {

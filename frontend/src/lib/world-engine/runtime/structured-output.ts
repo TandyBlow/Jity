@@ -60,6 +60,65 @@ function validateTimeAdvance(value: unknown, reason: string): void {
 }
 
 const RULE_VERSIONS = ['reaction-fixture-v1', 'reaction-d20-v1'] as const;
+const RELATIONS = ['under', 'above', 'beside', 'in_front_of', 'behind'] as const;
+
+/** EntityDelta field validation, pinned to types.ts: unknown fields reject,
+ * present fields must match their declared types — mergeUpdatesStages must
+ * never meet a shape it cannot consume. */
+function validateEntityDelta(value: unknown): void {
+  const delta = asObject(value, 'entity deltas must be objects');
+  for (const [key, field] of Object.entries(delta)) {
+    switch (key) {
+      case 'entityId':
+        asString(field, 'entityId must be a non-empty string');
+        break;
+      case 'positionSet': {
+        if (field === null) break;
+        const position = asObject(field, 'positionSet must be an object or null');
+        asString(position.containerId, 'positionSet containerId must be a non-empty string');
+        if (position.slotId !== undefined && position.slotId !== null) asString(position.slotId, 'slotId must be a string or null');
+        if (position.relativeTo !== undefined && position.relativeTo !== null) {
+          const relative = asObject(position.relativeTo, 'relativeTo must be an object or null');
+          exactKeys(relative, ['entityId', 'relation'], 'relativeTo keys');
+          asString(relative.entityId, 'relativeTo entityId must be a non-empty string');
+          if (!RELATIONS.includes(relative.relation as typeof RELATIONS[number])) throw new Error('unknown relativeTo relation');
+        }
+        break;
+      }
+      case 'appearanceChanges':
+      case 'personalityChanges': {
+        for (const entry of asArray(field, `${key} must be an array`)) {
+          const change = asObject(entry, `${key} entries must be objects`);
+          exactKeys(change, ['id', 'text', 'supersedes'], 'change keys');
+          asString(change.id, 'change id must be a non-empty string');
+          if (change.text !== null) asString(change.text, 'change text must be a string or null');
+          for (const id of asArray(change.supersedes, 'supersedes must be an array')) asString(id, 'superseded ids must be non-empty strings');
+        }
+        break;
+      }
+      case 'sanitySet':
+        if (field !== null) asFiniteNumber(field, 'sanitySet must be a number or null');
+        break;
+      case 'tasksAchieved':
+        for (const id of asArray(field, 'tasksAchieved must be an array')) asString(id, 'achieved task ids must be non-empty strings');
+        break;
+      case 'subtasksAdded': {
+        for (const entry of asArray(field, 'subtasksAdded must be an array')) {
+          const task = asObject(entry, 'subtasksAdded entries must be objects');
+          exactKeys(task, ['id', 'ownerId', 'parentTaskId', 'goal', 'status'], 'subtask keys');
+          asString(task.id, 'subtask id must be a non-empty string');
+          asString(task.ownerId, 'subtask ownerId must be a non-empty string');
+          if (task.parentTaskId !== null) asString(task.parentTaskId, 'subtask parentTaskId must be a string or null');
+          asString(task.goal, 'subtask goal must be a non-empty string');
+          if (task.status !== 'pending' && task.status !== 'achieved') throw new Error('unknown subtask status');
+        }
+        break;
+      }
+      default:
+        throw new Error(`unknown entity delta field: ${key}`);
+    }
+  }
+}
 
 const jsonValidators: Record<Exclude<ModelTask, 'narration' | 'reaction'>, (value: unknown) => void> = {
   action: (value) => {
@@ -91,14 +150,16 @@ const jsonValidators: Record<Exclude<ModelTask, 'narration' | 'reaction'>, (valu
     }
   },
   updates: (value) => {
-    for (const entry of asArray(value, 'updates must be an array')) {
+    // Batch mode consumes an array of calls; split mode (updatesStages)
+    // consumes a single call per stage — both shapes are legal and pass
+    // through unnormalized, exactly as the controller consumes them.
+    const calls = Array.isArray(value) ? value : [value];
+    for (const entry of calls) {
       const call = asObject(entry, 'update call must be an object');
       exactKeys(call, ['stage', 'changes'], 'update call keys');
       if (!updateStages.includes(call.stage as typeof updateStages[number])) throw new Error('unknown update stage');
       const changes = asObject(call.changes, 'update changes must be an object');
-      for (const delta of Object.values(changes)) {
-        if (!delta || typeof delta !== 'object' || Array.isArray(delta)) throw new Error('entity deltas must be objects');
-      }
+      for (const delta of Object.values(changes)) validateEntityDelta(delta);
     }
   },
   continuation: (value) => {
@@ -140,7 +201,8 @@ const jsonValidators: Record<Exclude<ModelTask, 'narration' | 'reaction'>, (valu
       if (point.kind !== 'normal' && point.kind !== 'instant' && point.kind !== 'linked') throw new Error('unknown point kind');
       validateTimeAdvance(point.timeAdvance, 'planned timeAdvance must be a TimeAdvance');
       const actorIds = asArray(point.actorIds, 'actorIds must be an array');
-      if (!actorIds.length) throw new Error('planned point needs at least one actor');
+      // An empty list is legal: T03's actionless time-scan and empty linked
+      // points plan no actors.
       for (const id of actorIds) asString(id, 'actor ids must be non-empty strings');
     }
   },

@@ -115,7 +115,19 @@ export class SerialInferenceQueue {
     this.running = { item, abortEngine, releaseSlot };
     const queuedMs = performance.now() - item.enqueuedAt;
     const runStarted = performance.now();
-    const enginePromise: Promise<unknown> = item.start(abortController.signal);
+    let enginePromise: Promise<unknown>;
+    try {
+      enginePromise = item.start(abortController.signal);
+    } catch (error) {
+      // A synchronously throwing start takes the unified failure path —
+      // release the slot and settle the caller — or the queue would strand.
+      releaseSlot();
+      if (!item.settled) {
+        item.settled = true;
+        item.reject(isAbortError(error) ? (item.signal?.reason ?? abortError()) : error);
+      }
+      return;
+    }
     // Attached up front: a late engine rejection after a caller abort stays
     // handled and can never surface as unhandledrejection.
     void enginePromise.then(
