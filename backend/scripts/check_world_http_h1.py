@@ -196,7 +196,7 @@ def main():
               'apiUrl': f'http://127.0.0.1:{api_port}',
               'browserOrigin': f'http://127.0.0.1:{browser_port}',
               'store': 'FixtureBaselineStore; one worker; no SQLite',
-              'fetchConfiguration': 'native window.fetch.bind(window); B default receiver bug remains',
+              'fetchConfiguration': 'B default fetcher (bound by the constructor, 83dbe3b); no injection',
               'A': a_source, 'B': b_source, 'sourceUnchangedDuringRun': True,
               'checks': checks, 'timeScanChecks': time_checks}
     args.output.parent.mkdir(parents=True, exist_ok=True)

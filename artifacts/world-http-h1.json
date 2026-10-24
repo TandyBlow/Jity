@@ -3,29 +3,29 @@
   "layer": "local browser/controller/HTTP; review pending",
   "contractDigest": "480d950c0f8062f8fdd75cb0620eb4ac97a6a247ca3f45f2057f6fe9e2ce7062",
   "browser": "155.0.4283.62",
-  "apiUrl": "http://127.0.0.1:53458",
-  "browserOrigin": "http://127.0.0.1:53459",
+  "apiUrl": "http://127.0.0.1:54128",
+  "browserOrigin": "http://127.0.0.1:54129",
   "store": "FixtureBaselineStore; one worker; no SQLite",
-  "fetchConfiguration": "native window.fetch.bind(window); B default receiver bug remains",
+  "fetchConfiguration": "B default fetcher (bound by the constructor, 83dbe3b); no injection",
   "A": {
-    "head": "da22a1b1d5fc314303851c84a1ecc8a183aa91e4",
-    "status": "M backend/app/main.py\n M backend/app/schemas/world/canonical.py\n M backend/app/services/world/control.py\n M backend/tests/test_world_control_service.py\n M design/world-engine-reports/server.md\n?? artifacts/world-http-h1.json\n?? backend/_proj_create.json\n?? backend/app/routers/worlds.py\n?? backend/app/world_app.py\n?? backend/scripts/check_world_http_h1.py\n?? backend/scripts/world_http_h1_browser.mjs\n?? backend/tests/test_world_http.py",
+    "head": "d59353b1a974438dfcceca112c2119e49747624d",
+    "status": "M backend/scripts/check_world_http_h1.py\n M backend/scripts/world_http_h1_browser.mjs\n?? backend/_proj_create.json",
     "sourceSha256": {
       "backend/app/routers/worlds.py": "4b4db60cd4bdb17ed615b16787bf509d394b0c0244b8a02726e4ec4389c12bf6",
       "backend/app/world_app.py": "7a717dbeb052f60c9a1b554ee5dd31d9ab86521ba6aee0dad5ee89f9bb808576",
       "backend/app/services/world/control.py": "143c9178e478bfa96f915d8d07aa7ee6a08df8b67bc1ebf8a1079ada6f556ec5",
-      "backend/scripts/check_world_http_h1.py": "aefdc9e0b270b246e1f43727872fc64dbae1a8321b300bf242fe6b51cc87ce22",
-      "backend/scripts/world_http_h1_browser.mjs": "3c13e110419f7b35366c7b982064830a2592a7cdc2e2d78647b1601c8b41afe5"
+      "backend/scripts/check_world_http_h1.py": "b599f52f6bb4922bf76282e5ba97fb89739eb4bf7d3e53bb709de229fe917f27",
+      "backend/scripts/world_http_h1_browser.mjs": "fe4566188053ff77f2e566bf6547307f50dbe979e864e714599ec37eb9561ad9"
     }
   },
   "B": {
-    "head": "9dc52f3ab9b82f97ab0eeb2e5c498add13e0a395",
+    "head": "adfd50663384e9c90b3a0e32ebf9235aac329974",
     "status": "",
     "sourceSha256": {
-      "frontend/src/lib/world-engine/controller.ts": "eb951e1af6bdd8ec0efcff67f506d0ea653e40261da6b4629a73f3cae2b3758a",
-      "frontend/src/lib/world-engine/schedule.ts": "bf146a9667aa1f44c1d1d20317e3f1718a3053057963c5851a68d9503e52fef7",
-      "frontend/src/lib/world-engine/http-transport.ts": "8f8183a9120f9cf5595c482b5f404ab158f87444ad59438df3a3ee139ccd274a",
-      "frontend/src/lib/world-engine/protocol.ts": "4cbbf85e16e0b603f1718f2437f545afeeef9dde1124e2996aef9b1b60e8891a"
+      "frontend/src/lib/world-engine/controller.ts": "0a3f2b0ef438ded3b2d933a01270b9fbec9898cc40af14e8b08617301ea13eb3",
+      "frontend/src/lib/world-engine/schedule.ts": "352eec7c1b4876254800503db18bf1434a05ee19435200235946774b443a169d",
+      "frontend/src/lib/world-engine/http-transport.ts": "60b1ee3158e6d8d41c491a7234e140dfe95f5d786fd110d1806444eb3f9dcd58",
+      "frontend/src/lib/world-engine/protocol.ts": "1a27ecb1a631e0320f2b16c9adec4719e442382910f521fcff73ae85630bca2e"
     }
   },
   "sourceUnchangedDuringRun": true,

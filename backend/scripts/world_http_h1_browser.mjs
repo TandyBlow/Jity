@@ -39,9 +39,10 @@ try {
       const exchanges = [];
       const modelCalls = [];
       const errorChecks = [];
-      // Native window.fetch requires Window as its receiver. B's constructor
-      // supports fetch injection; use the bound native function (no mock).
-      const http = new HttpWorldTransport(apiUrl, window.fetch.bind(window));
+      // Default fetcher path: B's constructor now binds the platform fetch
+      // to the global object, so the default receiver is legal in Chromium
+      // (83dbe3b). No injection, no mock — the page's own window.fetch.
+      const http = new HttpWorldTransport(apiUrl);
       const expectApiError = async (operation, payload, scope, code) => {
         try {
           await http.execute(operation, payload, scope);
@@ -133,7 +134,7 @@ try {
     }
     const times = [];
     for (const sample of timeSamples) {
-      const http = new HttpWorldTransport(apiUrl, window.fetch.bind(window));
+      const http = new HttpWorldTransport(apiUrl);
       let counter = 0;
       const requestId = () => `req_H1_time_${sample.id}_${counter++}`;
       const create = await http.execute('create_world', {
