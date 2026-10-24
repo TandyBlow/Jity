@@ -26,11 +26,14 @@
 - **claim 生命周期**：`narration_claim` fresh（replayed=false 且带 claimToken、head 模式）→ 同点 `updateClaim`、**换点 stop+start**（换代重领是不同 scope，不做代次比较）；`narration_submit`/`narration_delete` 成功 → 停 claim 心跳（令牌已消费）。
 - **错误信封**：`stale_epoch`/`lease_invalid` → 停双心跳（租约已死，driver 自行走 reacquire followup）；`claim_fenced`/`claim_expired`/`cache_missing` → 停 claim 心跳（controller 的 finish_own_narration 路径自然重领，新 claim 经观察层重启心跳）。
 
-## 3. 失效、停止与销毁
+## 3. 失效、停止与销毁（修复轮语义）
 
-- **心跳失效（onLost）**：lease 失效是会话级事件——`onLeaseLost` 立即 abort 在途推理（sessionSignal），推理调用以 AbortError 定局、`consumeModelOutput` 不执行（迟到引擎 settle 由队列丢弃），驱动循环以 error 终态 settle；claim 失效只停该心跳并上报 hook，不打断会话（controller 会重领）。
-- **epoch 守卫**：`stop()`/`dispose()` 递增会话 epoch；观察层与心跳 hook 在 epoch 变化后不再改状态；stop 后到达的 transport 响应直接以会话已关闭拒绝——旧会话的迟到回执既不喂心跳也不被 driver 采纳。
-- **stop()**：停心跳 → abort 在途推理 → 循环以 `{kind:'stop', reason:'session_stopped'}` settle；`dispose()` = stop + `port.dispose()`（引擎释放）。stop 后 `run()` 拒绝。
+- **会话唯一命名空间**：模块级计数器 + 时间戳生成默认命名空间（`requestIdNamespace` 可注入）；driver requestId 前缀与心跳 ID 同源，两个默认会话在共享服务端上无幂等键碰撞。
+- **心跳失效（onLost）**：lease 失效进入**显式失联态**——停双心跳、epoch+1 隔离在途、abort 推理与调用信号，循环以 `lease lost: <code>` error 终态 settle；claim 续期冻结。会话保持可 run（controller 重取租约的恢复路径），下一次 LeaseGrant 观察清除失联态。claim 失效只停该心跳并上报，不打断会话。
+- **隔离是双极性定局替换**：在途调用的 settle（成功或错误）在 epoch 变化后一律替换为隔离错误——迟到错误信封不以 WorldApiError 抛回，errorReaction/adoptState/followup 写入无从触发；观察层入口在关闭后拒绝新调用。两层守卫独立拦截同一可观察结果。
+- **调用信号竞速**：每个 raw 交换与调用 signal 竞速（signal 传给 transport），stop/失租即刻定局调用方；raw 迟到 settle 前挂 catch 吞掉。
+- **信封 epoch 核对**：`world.lease` 只在 `fenceEpoch === 自持 epoch` 时绑定更新；更高 epoch = 自持 token 已死（失联处理），更低 epoch 忽略——旧 token 永不升级绑到新 epoch。
+- **stop()**：终态关闭（epoch+1、pendingTerminal、心跳停、信号 abort）；`dispose()` = stop + 引擎释放。
 
 ## 4. 验收场景（session.test.ts）
 

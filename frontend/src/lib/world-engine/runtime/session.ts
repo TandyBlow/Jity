@@ -5,19 +5,28 @@
  * awaiting player input). Every exchange the driver makes — success or
  * error envelope — passes an observation layer that feeds heartbeat
  * credentials and server-receipted expiries automatically: lease grants
- * start the lease heartbeat, envelope lease views update it, fresh head
- * claims start/update the claim heartbeat (a different point restarts it),
+ * start the lease heartbeat, envelope lease views update it (only at the
+ * epoch the held token belongs to — a foreign epoch means the token is
+ * dead, never an upgrade of the old binding), fresh head claims
+ * start/update the claim heartbeat (a different point restarts it),
  * submit/delete and the fenced/expired/stale error families stop them.
- * A heartbeat lease loss is session-fatal for in-flight work: the inference
- * signal aborts immediately, so a model output can never be consumed from a
- * dead lease (the queue discards the engine's late settle). stop()/dispose()
- * raise the session epoch: late transport responses are refused, observers
- * go silent, and nothing from the old session writes back. */
+ *
+ * Isolation is uniform: stop() closes the session for good; a heartbeat
+ * lease loss enters an explicit lost-lease state (recovered by the next
+ * lease grant). Both raise the session epoch — in-flight settles of EITHER
+ * polarity are replaced by the isolation error, so the driver can neither
+ * adopt a stale success nor react to a late error envelope (no followup
+ * writes from a dead session), and new calls are refused at the wrapper
+ * entry. The call signal races every raw exchange, so a stop or a loss ends
+ * transport waits promptly; the raw late settle stays discarded. A lost
+ * lease also aborts in-flight inference — a model output can never be
+ * committed against a fence the client no longer holds (the queue discards
+ * the engine's late settle). */
 import { ControllerDriver, initialMemory, type ControllerIo, type DriverStatus, type WorldModelPort } from '../controller';
 import type { WorldTransport } from '../transport';
 import { WorldApiError } from '../transport';
 import type { ControllerMemory, HarnessCommand } from '../schedule';
-import type { ClaimHeartbeatState, HeartbeatClock, HeartbeatLoss, LeaseHeartbeatState } from './heartbeat';
+import type { ClaimHeartbeatState, HeartbeatClock, HeartbeatLoss } from './heartbeat';
 import { HeartbeatScheduler, SystemHeartbeatClock } from './heartbeat';
 import type { RuntimeWorldModelPort } from './model-port';
 import type { Id, RequestMap, Scope, Success, WorldOperation } from '../types';
@@ -34,7 +43,7 @@ export type DriverFactory = (io: ControllerIo) => DriverLike;
 
 export interface WorldSessionHooks {
   onStatus?(status: DriverStatus): void;
-  onLeaseLost?(loss: HeartbeatLoss): void;
+  onLeaseLost?(code: string): void;
   onClaimLost?(loss: HeartbeatLoss): void;
 }
 
@@ -43,6 +52,10 @@ export interface WorldSessionOptions {
   heartbeatLeadMs?: number;
   retryBackoffMs?: number;
   createDriver?: DriverFactory;
+  /** Identity namespace for every id this session mints (driver requestIds,
+   * heartbeat ids). Defaults to a session-unique value: two default
+   * sessions must never collide on a shared server's idempotency keys. */
+  requestIdNamespace?: string;
   hooks?: WorldSessionHooks;
 }
 
@@ -56,6 +69,10 @@ type AnyEnvelope = {
 const CLAIM_DEAD_CODES = new Set(['claim_fenced', 'claim_expired', 'cache_missing']);
 const LEASE_DEAD_CODES = new Set(['stale_epoch', 'lease_invalid']);
 
+/** Module-wide session counter: the default namespace is unique per session
+ * instance even before any randomness (timestamp suffix breaks restarts). */
+let sessionCounter = 0;
+
 export type SessionStatus = 'idle' | 'running' | 'stopped';
 
 export class WorldSession {
@@ -64,10 +81,16 @@ export class WorldSession {
   private readonly scheduler: HeartbeatScheduler;
   private readonly hooks: WorldSessionHooks;
   private readonly driver: DriverLike;
+  private readonly namespace: string;
+  private calls = new AbortController();
   private inference = new AbortController();
   private epoch = 0;
+  /** Set by stop()/lease-loss while a loop is in flight; the loop converts
+   * it into the terminal status when its isolation check trips. */
+  private pendingTerminal: DriverStatus | null = null;
+  private closed = false;
+  private lostLeaseCode: string | null = null;
   private loopPromise: Promise<DriverStatus> | null = null;
-  private stopping = false;
   private status: SessionStatus = 'idle';
   private lease: { token: Id; fenceEpoch: number } | null = null;
   private claimPointId: Id | null = null;
@@ -76,8 +99,10 @@ export class WorldSession {
     this.rawTransport = transport;
     this.port = port;
     this.hooks = options.hooks ?? {};
+    sessionCounter += 1;
+    this.namespace = options.requestIdNamespace ?? `s${sessionCounter}_${Date.now().toString(36)}`;
     const clock = options.clock ?? new SystemHeartbeatClock();
-    let requestId = 0;
+    let heartbeatId = 0;
     this.scheduler = new HeartbeatScheduler({
       renewLease: (request, scope) => this.rawTransport.execute('lease_renew', request, scope) as Promise<Success<'lease_renew'>>,
       renewClaim: (request, scope) => this.rawTransport.execute('narration_claim_renew', request, scope) as Promise<Success<'narration_claim_renew'>>,
@@ -85,7 +110,7 @@ export class WorldSession {
       leadMs: options.heartbeatLeadMs ?? 30_000,
       retryBackoffMs: options.retryBackoffMs ?? 5_000,
       clock,
-      nextRequestId: () => `hb_session_${++requestId}`,
+      nextRequestId: () => `hb_${this.namespace}_${++heartbeatId}`,
     }, {
       onLeaseRenewed: () => {},
       onClaimRenewed: () => {},
@@ -93,24 +118,34 @@ export class WorldSession {
     });
     const observed: WorldTransport = {
       execute: async <K extends WorldOperation>(operation: K, request: RequestMap[K], scope: Scope) => {
+        if (this.closed) throw new Error('WorldSession closed');
         const epochAtCall = this.epoch;
-        try {
-          const response = await this.rawTransport.execute(operation, request, scope);
-          if (epochAtCall !== this.epoch) throw new Error('WorldSession closed: late response refused');
-          this.observe(operation, request, scope, response as unknown as AnyEnvelope, false);
-          return response;
-        } catch (error) {
-          if (epochAtCall === this.epoch && error instanceof WorldApiError) {
-            this.observe(operation, request, scope, error.response as unknown as AnyEnvelope, true);
+        // The raw exchange races the session call signal: a stop or a lease
+        // loss ends the wait promptly; the raw late settle stays discarded.
+        const guarded = (async () => {
+          try {
+            const response = await this.raceIsolation(
+              this.rawTransport.execute(operation, request, scope, this.calls.signal) as Promise<unknown>);
+            if (epochAtCall !== this.epoch) throw new Error(this.isolationReason());
+            this.observe(operation, request, scope, response as AnyEnvelope, false);
+            return response;
+          } catch (error) {
+            // Neither a stale success nor a late error envelope may steer
+            // the driver: an isolated settle becomes the isolation error, so
+            // no errorReaction followup (e.g. lease_acquire) can fire.
+            if (epochAtCall !== this.epoch) throw new Error(this.isolationReason());
+            if (error instanceof WorldApiError) this.observe(operation, request, scope, error.response as unknown as AnyEnvelope, true);
+            throw error;
           }
-          throw error;
-        }
+        })();
+        void guarded.catch(() => {}); // if the race is lost, the late settle stays handled
+        return guarded as never;
       },
     };
     const boundModel: WorldModelPort = {
       generate: (task, key, input) => port.generate(task, key, input, this.inference.signal),
     };
-    const createDriver = options.createDriver ?? ((io: ControllerIo) => new ControllerDriver(io, initialMemory('req_session', 'browser'), { world: null }, {}));
+    const createDriver = options.createDriver ?? ((io: ControllerIo) => new ControllerDriver(io, initialMemory(`req_${this.namespace}`, 'browser'), { world: null }, {}));
     this.driver = createDriver({ transport: observed, model: boundModel });
   }
 
@@ -118,11 +153,14 @@ export class WorldSession {
 
   /** Single-flight driver loop. Repeat calls while running share the same
    * promise; after a terminal status the session can run again (await
-   * boundary). Rejected once stopped or disposed. */
+   * boundary, or recovery after a lost lease reacquired its authority).
+   * Rejected once stopped or disposed. */
   run(): Promise<DriverStatus> {
-    if (this.status === 'stopped') return Promise.reject(new Error('WorldSession is stopped'));
+    if (this.closed) return Promise.reject(new Error('WorldSession is stopped'));
     if (this.loopPromise) return this.loopPromise;
+    if (this.calls.signal.aborted) this.calls = new AbortController();
     if (this.inference.signal.aborted) this.inference = new AbortController();
+    this.pendingTerminal = null;
     this.status = 'running';
     const epochAtStart = this.epoch;
     this.loopPromise = this.loop(epochAtStart);
@@ -132,7 +170,7 @@ export class WorldSession {
   private async loop(epochAtStart: number): Promise<DriverStatus> {
     try {
       for (let step = 0; step < 500; step++) {
-        if (epochAtStart !== this.epoch) return this.stopping ? { kind: 'stop', reason: 'session_stopped' } : { kind: 'error', detail: 'session superseded' };
+        if (epochAtStart !== this.epoch) return this.pendingTerminal ?? { kind: 'error', detail: 'session superseded' };
         const terminal = await this.driver.step();
         if (terminal) {
           this.hooks.onStatus?.(terminal);
@@ -141,7 +179,7 @@ export class WorldSession {
       }
       return { kind: 'error', detail: 'session step limit exceeded' };
     } catch (error) {
-      if (this.stopping && epochAtStart !== this.epoch) return { kind: 'stop', reason: 'session_stopped' };
+      if (epochAtStart !== this.epoch) return this.pendingTerminal ?? { kind: 'error', detail: 'session superseded' };
       const detail = error instanceof Error ? `${error.name}: ${error.message}` : String(error);
       const status: DriverStatus = { kind: 'error', detail };
       this.hooks.onStatus?.(status);
@@ -160,24 +198,53 @@ export class WorldSession {
     return this.driver.getMemory();
   }
 
-  /** Stops heartbeats, aborts in-flight inference and settles the loop. The
-   * raised epoch refuses late transport responses and silences observers —
-   * nothing from the old session writes back. Terminal. */
+  /** Terminal: stops heartbeats, isolates every in-flight exchange (either
+   * polarity), aborts inference and settles the loop. The raised epoch
+   * refuses late responses and new calls; observers go silent. */
   stop(): void {
-    if (this.status === 'stopped') return;
+    if (this.closed) return;
+    this.closed = true;
     this.epoch += 1;
-    this.stopping = true;
+    this.pendingTerminal ??= { kind: 'stop', reason: 'session_stopped' };
     this.status = 'stopped';
-    this.scheduler.stop();
-    this.inference.abort();
-    this.lease = null;
-    this.claimPointId = null;
+    this.isolateInFlight();
   }
 
   /** stop() plus engine disposal. */
   async dispose(): Promise<void> {
     this.stop();
     await this.port.dispose();
+  }
+
+  private isolationReason(): string {
+    if (this.closed) return 'WorldSession closed';
+    if (this.lostLeaseCode) return `lease lost: ${this.lostLeaseCode}`;
+    return 'session superseded';
+  }
+
+  private isolateInFlight(): void {
+    this.scheduler.stop();
+    this.calls.abort();
+    this.inference.abort();
+    this.lease = null;
+    this.claimPointId = null;
+  }
+
+  /** Races the raw exchange against the call signal so a stop or a loss
+   * settles the caller promptly; the raw settle afterwards is discarded by
+   * the caller's guard (its own catch is attached up front). */
+  private raceIsolation<T>(promise: Promise<T>): Promise<T> {
+    let onAbort: (() => void) | null = null;
+    const aborted = new Promise<never>((_, reject) => {
+      onAbort = () => reject(new Error(this.isolationReason()));
+      if (this.calls.signal.aborted) onAbort();
+      else this.calls.signal.addEventListener('abort', onAbort, { once: true });
+    });
+    const detach = () => {
+      if (onAbort) this.calls.signal.removeEventListener('abort', onAbort);
+    };
+    void promise.then(detach, detach);
+    return Promise.race([promise.then((value) => { detach(); return value; }, (error) => { detach(); throw error; }), aborted]) as Promise<T>;
   }
 
   private onHeartbeatLoss(loss: HeartbeatLoss): void {
@@ -187,9 +254,17 @@ export class WorldSession {
       return; // the controller re-claims on its own path; the session continues
     }
     // A lost lease is fatal for in-flight work: the generation result could
-    // only be committed against a fence the client no longer holds.
-    this.hooks.onLeaseLost?.(loss);
-    this.inference.abort();
+    // only be committed against a fence the client no longer holds. Enter
+    // the explicit lost-lease state: both heartbeats stop, in-flight
+    // exchanges are isolated (either polarity), inference aborts. The
+    // session stays runnable — the controller reacquires on its recovery
+    // path and the next observed lease grant clears the state.
+    if (this.lostLeaseCode) return;
+    this.lostLeaseCode = loss.code;
+    this.epoch += 1;
+    this.pendingTerminal ??= { kind: 'error', detail: `lease lost: ${loss.code}` };
+    this.isolateInFlight();
+    this.hooks.onLeaseLost?.(loss.code);
   }
 
   /** The observation layer: heartbeat state follows envelope content alone. */
@@ -214,6 +289,7 @@ export class WorldSession {
       const worldId = (scope.worldId ?? (request as { worldId?: Id }).worldId ?? data.worldId) as Id | undefined;
       if (lease?.leaseToken && worldId) {
         this.lease = { token: lease.leaseToken, fenceEpoch: lease.fenceEpoch };
+        this.lostLeaseCode = null; // fresh authority: the lost-lease state is recovered
         this.scheduler.startLease({ worldId, leaseToken: lease.leaseToken, fenceEpoch: lease.fenceEpoch, expiresAtEpochMilli: lease.expiresAtEpochMilli });
       }
     }
@@ -243,7 +319,21 @@ export class WorldSession {
     const world = envelope.world;
     if (!isError && world && this.lease) {
       if (world.lease) {
-        this.scheduler.updateLease({ worldId: world.worldId, leaseToken: this.lease.token, fenceEpoch: world.lease.fenceEpoch, expiresAtEpochMilli: world.lease.expiresAtEpochMilli });
+        // Bind only at the epoch the held token belongs to. A HIGHER epoch
+        // means the server moved on and our token is dead — that is a lost
+        // lease, never an upgrade of the old binding; a lower epoch is a
+        // stale envelope and is ignored (the update guard would drop it
+        // anyway).
+        if (world.lease.fenceEpoch === this.lease.fenceEpoch) {
+          this.scheduler.updateLease({ worldId: world.worldId, leaseToken: this.lease.token, fenceEpoch: world.lease.fenceEpoch, expiresAtEpochMilli: world.lease.expiresAtEpochMilli });
+        } else if (world.lease.fenceEpoch > this.lease.fenceEpoch && !this.lostLeaseCode) {
+          this.lostLeaseCode = 'stale_epoch'; // a foreign epoch fences every held credential
+          this.scheduler.stopLease();
+          this.scheduler.stopClaim();
+          this.lease = null;
+          this.claimPointId = null;
+          this.hooks.onLeaseLost?.('stale_epoch');
+        }
       } else {
         // The lease is gone from the served world: every held claim is fenced.
         this.scheduler.stopLease();

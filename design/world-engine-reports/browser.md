@@ -221,3 +221,17 @@ T08 语料适配逐项登记：①s8 是把已锁定时间从 2s 改成 3s 的�
 **测试 6 项**：①信封自动起/续双心跳（create→model→claim 后仅靠时钟推进触发两类续租，请求带正确 token）；②submit 停 claim 而 lease 继续跳；③lease 丢失（续租收 stale_epoch）→ hook 触发、持锁生成被 abort、迟到引擎结果丢弃、心跳死透不再重试；④claim 换代 update（续租带新代 token）与换点 stop+start（续租 scope 带新 pointId），分两段 run() 让换代续租先落地；⑤并发 run() 同一 promise、stop 后引擎/续租迟到 settle 均无害、再 run 拒绝；⑥stop 后到达的 transport 响应被拒收、循环以 stop 终态 settle。
 
 结果：前端全套 **26 文件 427 项通过**，`typecheck:world`、`review:world-s1`（60 项）、统一验收入口与生产 build 通过。页面接线（React/UI）、真实 TTL/接管不在本批；B3 提示词评测是下一批；H2 单独验收。
+
+### B4 批次一修复轮（对 d949a45 复审 3×P1+2×P2）
+
+日期：2026-10-25。五处全部确认成立并已修，另按复审建议补入真实 ControllerDriver 组合回归：
+
+1. **会话唯一 ID 命名空间（P1）**：默认 `req_session` 前缀与逐实例心跳计数全部废弃——模块级会话计数器 + 时间戳生成会话唯一命名空间（`requestIdNamespace` 可注入），driver requestId 前缀与心跳 ID（`hb_<namespace>_<n>`）同源；两个默认真实 driver 会话的 create requestId 断言不同，两个会话的心跳 ID 断言不同。
+2. **迟到错误不再驱动控制器（P1）**：隔离路径改为**定局替换**——在途调用 settle 时若 epoch 已变，成功与错误一律替换为隔离错误（错误信封不再以 WorldApiError 抛回，errorReaction/adoptState/lease_acquire followup 全部无从触发）；观察层入口在关闭后直接拒绝新调用。真实 driver 组合探针钉住可观察结果：stop 后迟到 stale_epoch → 无任何 reacquire 写入。
+3. **失租隔离整个执行链（P1）**：心跳 lease 失效进入显式失联态——停双心跳、epoch+1 隔离在途（双极性替换）、abort 推理与调用信号，循环以 `{kind:'error', detail:'lease lost: <code>'}` settle；claim 续期随之冻结（回归断言不再增长）。会话保持可 run——controller 重取租约、下一次 LeaseGrant 观察清除失联态并重启心跳。
+4. **信封 epoch 与自持 token 核对（P2）**：`world.lease` 更新只在 `fenceEpoch === 自持 epoch` 时绑定；更高 epoch = 外邦租约 = 自持 token 已死——按失联处理（停双心跳、上报），绝不把旧 token 升级绑到新 epoch；更低 epoch 忽略。
+5. **stop 竞速结束 transport 等待（P2）**：每个 raw 交换与调用 signal 竞速（signal 同时传给 transport——HttpWorldTransport 原生支持 abort），stop/失租即刻定局调用方，raw 迟到 settle 由前挂 catch 吞掉。测试断言 stop 后**不等 raw 响应**循环即 settle。
+
+**真实 driver 组合回归（复审建议）**：fixtures 驱动（create_world/narration_claim/narration_submit 服务端标本 + 模型输出 initial/叙事文本），默认工厂构造真实 ControllerDriver 过完整会话接线——到达 await 边界、交换序恰为三操作、夹具 lease 到期触发续租（token/epoch 正确）；迟到 stale_epoch 探针如上；双会话 requestId 唯一性。**篡改实验如实记录**：对 P1-2 的 settle 替换层单独还原不足以使探针转红——入口拒绝层独立拦截同一可观察结果（followup 到不了 raw transport），该行为由两层守卫过定；探针钉住的是复审要求的可观察结果（无写入、无心跳复活）。
+
+结果：前端全套 **26 文件 433 项通过**（427 + 6 净增：迟到错误双探针/失租隔离/外邦 epoch/命名空间唯一/真实 driver 三项），`typecheck:world`、`review:world-s1`（60 项）、统一验收入口与生产 build 通过。b4-session-design.md §3 已同步隔离与命名空间语义。
