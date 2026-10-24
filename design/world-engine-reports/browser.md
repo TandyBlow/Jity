@@ -140,3 +140,17 @@ T08 语料适配逐项登记：①s8 是把已锁定时间从 2s 改成 3s 的�
 结果（accept 后）：T06 37 项（双样本 × 18 + 1 条传输守卫独立测试），前端全套 **19 文件 372 项通过**，`typecheck:world`、`review:world-s1`（60 项）、统一验收入口（Python 109+317、契约 38、轨迹 65、四类破坏探针全拒，PASS）与生产 build 重新全部通过。完整 B1 仍待 A2 就绪后以 T01 运行 H1；T07/T09 继续留 B2/H2。
 
 **盲区复核关闭（同日，对 `591d818`）**：复审方独立实跑确认——正常 37/37；注释 refresh 分支 `adoptState` 后恰好双样本专用测试失败（2 failed / 35 passed，实际 revision=12、预期 13）；还原后 37/37、工作树干净。针对 a569261 双通道泄漏的 P2（revision 断言盲区）撤回关闭。保留三条原有 refresh 测试的决定经复核认可：专用区分性测试已钉住 refresh 共用分支的采纳语义，无需逐条重复补强。T06 至此关闭：交付 `3e14200` → accept 补强 `a569261` → 盲区修正 `591d818`。
+
+## B2 批次一：fetch 绑定修复 + 串行推理队列、取消与结构化输出
+
+日期：2026-10-24。T06 关闭（`477e878`）后按用户指令推进 B2 运行层，不等 A。批次范围：HTTP transport 默认 fetch 绑定修复（`83dbe3b` 已单独提交，A 联调的浏览器 `Illegal invocation` 即此）、串行推理队列、取消语义、结构化输出校验、引擎接口 + wllama 适配器、模型端口（占位编码器）。双心跳与失效处理、设备探测接线、真实提示词与质量评测、真实模型浏览器计时 harness 均不在本批（计时埋点已就位，实测随长推理/心跳批）。设计层补充见 [b2-runtime-design.md](b2-runtime-design.md)。
+
+**fetch 绑定**：默认 fetcher 原为未绑定的 `fetch`——Chromium 原生 fetch 拒绝非全局接收者，`this.fetcher(...)` 把 transport 实例当 `this` 即抛 `Illegal invocation`；undici 不挑接收者、既有测试全部显式注入 fetcher，故 Node 侧从未暴露。修复为 `fetch.bind(globalThis)`，注入语义不变。测试用严格接收者桩在 Node 复现 Chromium 契约（接收者非 undefined/globalThis 即抛），篡改实验（还原未绑定默认）确认恰好转红。
+
+**串行队列（runtime/inference-queue.ts）**：单一约束是同一时刻至多一个推理在跑（端侧内存不允许并发解码），FIFO。取消三层：排队中取消立即 AbortError 定局且从未触达引擎；调用方取消（或 dispose）**即刻**定局调用方 promise，引擎只收到 linked signal——调用方永远不被要求等引擎响应中止（镜像 http-transport「超时必须定局即使实现忽略 abort」规则）；引擎 promise 的迟到 settle 由前挂 handler 吞掉，既不产生 unhandledrejection 也不覆盖 AbortError。**运行槽位只随引擎 settle 释放，不随调用方取消释放**——下一个推理必须等设备真的停下来。计时 `{queuedMs, runMs, totalMs}` 与加载/推理测量共用同一埋点。手控 deferred 确定性测试 8 项覆盖 FIFO、排队取消不触引擎、运行取消先定局后让槽、迟到 resolve/reject 丢弃、dispose、预中止 signal、引擎自发 AbortError 归一、计时分离。
+
+**结构化输出（runtime/structured-output.ts）**：十类 ModelTask 各一 codec。JSON 任务（action/targets/results/updates/continuation/initial/time/pointPlan）容忍 ```json 围栏与首尾空白后严格校验，形状全部钉自 schedule/controller 既有消费点（action `{kind:act,text}|{kind:skip}`、targets 闭集 ruleVersion、updates 六阶段闭集、continuation 强制 closedBy=model、initial 顶层契约+版本常量——深层由 create_world 的 wire schema 复检，与内存驻留型输出区分）；narration/reaction 是文本任务：非空原样，绝不 JSON 解析（叙事 JSON 契约对 0.6B 是毒药的结论不因校验层回潮）。失败抛 `StructuredOutputError{task,reason,raw}`，本批不做修复重试——质量与重试策略归 B3。正反例 11 项。
+
+**引擎与端口（runtime/engine.ts + wllama-engine.ts + model-port.ts）**：`InferenceEngine` 接口（load/complete/dispose/info，取消是契约一部分）；wllama 适配器映射 `createCompletion` 的 max_tokens/temperature/seed/stop/abortSignal，工厂可注入——Node 测试只验参数映射不触 wasm；`RuntimeWorldModelPort implements WorldModelPort`（三参接口 + 可选第四参 signal，结构类型兼容，controller 零改动），encode 为标注 B3 替换的确定性占位，decode 即本批真交付；模型加载本身走队列（load 与推理共享设备槽，引擎侧幂等）。端口测试 5 项：九类任务往返（loads 幂等一次）、形状违规即 StructuredOutputError、并发调用严格串行、abort 到达引擎（linked signal）且迟到 settle 不外泄、encodePrompt 确定性。
+
+结果：前端全套 **24 文件 403 项通过**（372 + fetch 2 + 运行层 29），`typecheck:world` 干净、`review:world-s1` 60 项、统一验收入口 PASS、生产 build 通过。运行层无真实模型浏览器实测——计时埋点就位，实测 harness 随长推理/心跳批交付；真实 HTTP 链路仍属 H1/H2。
