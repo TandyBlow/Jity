@@ -43,3 +43,12 @@
 ## 6. 验收
 
 Node 侧确定性测试：queue 的 FIFO/排队取消/运行取消/迟到丢弃/dispose/计时；校验器十任务正反例（含围栏剥离、形状破坏、闭集外值、空文本）；端口十任务 fake 引擎往返与 abort 透传；wllama 适配器参数映射。真实模型计时：埋点（QueuedResult.timing + 引擎 info）已就位，浏览器实测随长推理/心跳批交付。
+
+## 7. 批次二：双心跳与失效处理（runtime/heartbeat.ts）
+
+两条独立心跳：lease 续租（`PUT /worlds/{worldId}/lease`）与 head claim 续期（`PUT /worlds/{worldId}/points/{pointId}/narration-claim`）。调度依据是**服务端回执**的过期时间——lease 取 `world.lease.expiresAtEpochMilli`（renew 成功取 `data.expiresAtEpochMilli`），claim 取领取/续期响应 `data.expiresAtEpochMilli`（`CurrentClaim` 不带过期，不能从控制器 memory 推）。续租在 `expiry − leadMs` 触发；状态更新（任何响应观察到新 token/epoch/expiry）重排定时器并作废为旧 token 排下的续租。
+
+心跳是 **transport 调用，不走推理队列**——与引擎调用并发运行，这正是长推理期间保活的实现方式。超时/可重试拒绝以同一 requestId 退避重试（renew 幂等 replay original_data，同 ID 重发安全）；不可重试的确定性拒绝（lease_invalid/stale_epoch/claim_expired/claim_fenced/version_mismatch 等）即失效：`onLost({kind, code, response})` 上报并停该条心跳——会话层用它 abort 在跑的生成（迟到结果由队列丢弃，已是批次一保证）。真实接管正确性（刷新后接管对端状态）留 H2。
+
+时钟注入（`HeartbeatClock { now, set }`）使全部时序确定性可测；requestId 由注入的铸造器按每次续租周期发新、超时重试沿用同 ID（与控制器约定一致）。
+

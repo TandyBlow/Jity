@@ -178,3 +178,13 @@ T08 语料适配逐项登记：①s8 是把已锁定时间从 2s 改成 3s 的�
 结果：前端全套 **24 文件 409 项通过**（407 + 2 净增），`typecheck:world`、`review:world-s1`（60 项）、统一验收入口与生产 build 通过。
 
 **复核闭环（同日，对 `d76ef58`）**：两处 P2 关闭、未发现新增阻塞问题。复审独立实跑确认：两种模式错配均在端口拒绝且合法输出保留原形态；并发加载共享取消结果、失败后能重新加载并完成生成；dispose 终态、迟到实例清理不复活；409/409、typecheck、review 60/60 与 5 条独立探针全过。**B2 批次一关闭**：提交链 `83dbe3b → 977c82a → 56e42d9 → d76ef58`。下一批按计划推进双心跳与失效处理；真实浏览器模型实测与 H1/H2 单独验收。
+
+## B2 批次二：双心跳与失效处理
+
+日期：2026-10-24。批次一复核闭环（`e5aac89`）后按计划推进。交付 `runtime/heartbeat.ts`：lease 续租与 head claim 续期两条独立心跳（`HeartbeatScheduler`），时钟注入（`HeartbeatClock`，系统实现 `SystemHeartbeatClock`，测试用 `ManualClock` 确定性推进）。设计层补充见 [b2-runtime-design.md](b2-runtime-design.md) §7。
+
+**调度依据是服务端回执的过期时间**：lease 取响应信封 `world.lease.expiresAtEpochMilli`（续租成功取 `data`），claim 取领取/续期响应 `data.expiresAtEpochMilli`——`CurrentClaim` 不带过期字段，控制器 memory 单独推不出调度基准，这是会话层必须保留领取回执的原因。续租在 `expiry − leadMs` 触发；`updateLease/updateClaim`（任何响应观察到更新鲜的 token/epoch/expiry）重排定时器并以 cycle 计数作废为被替换状态在途的续租——迟到回执的采纳被丢弃，不会用旧 token 续出脏结果。
+
+**心跳是 transport 调用，不走推理队列**——与引擎调用并发，即长推理期间保活的实现方式（测试钉住：生成持锁期间续租完成）。超时与可重试拒绝（目录 `retryable=true`，如 request_in_progress）以同一 requestId 退避重试（renew 幂等 replay original_data，同 ID 重发安全）；不可重试的确定性拒绝（stale_epoch/lease_invalid/claim_expired/claim_fenced/version_mismatch 等）即失效——`onLost({kind, code, response})` 上报并停该条心跳；意外非 API 错误按瞬态退避重试。requestId 每续租周期铸新、超时重试沿用同 ID，与控制器约定一致。**失效取消**：会话层把 onLost 接到生成的 AbortController——批次一队列的迟到丢弃保证失效后的引擎结果不可达（集成测试钉住全链路：stale_epoch → abort → 调用方 AbortError → 迟到 resolve 仍被丢弃）。真实接管正确性留 H2。
+
+结果：共 9 项心跳测试（触发时机±lead/请求形状与 scope 全字段/同 ID 超时重试/确定性失效即停且只报一次/claim 失效不影响 lease/状态更新作废在途续租/stop 永久取消/持锁期间保活/失效取消+迟到丢弃集成）。前端全套 **25 文件 418 项通过**，`typecheck:world`、`review:world-s1`（60 项）、统一验收入口与生产 build 通过。B4 会话装配（把 HeartbeatScheduler 接进 driver 循环、从响应信封喂 updateLease/updateClaim）与真实定时/TTL 属后续批次；H1/H2 单独验收。
