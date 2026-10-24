@@ -4,7 +4,10 @@ import type { RequestMap, Scope, Success, WorldOperation } from './types';
 
 export class HttpWorldTransport implements WorldTransport {
   private readonly base: URL;
-  constructor(baseUrl: string, private readonly fetcher: typeof fetch = fetch, private readonly timeoutMs = 15000) {
+  // Native fetch rejects a non-window receiver in browsers ("Illegal
+  // invocation"), so the default must be bound — method-call invocation
+  // through this.fetcher would otherwise hand it the transport as `this`.
+  constructor(baseUrl: string, private readonly fetcher: typeof fetch = fetch.bind(globalThis), private readonly timeoutMs = 15000) {
     this.base = new URL(baseUrl.endsWith('/') ? baseUrl : baseUrl + '/');
     if (!['https:', 'http:'].includes(this.base.protocol) || !Number.isFinite(timeoutMs) || timeoutMs <= 0) throw new ProtocolError('Invalid transport configuration');
   }
