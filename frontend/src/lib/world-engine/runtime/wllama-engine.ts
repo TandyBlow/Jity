@@ -37,7 +37,17 @@ export class WllamaInferenceEngine implements InferenceEngine {
   async load(options?: { signal?: AbortSignal; modelUrl?: string }): Promise<void> {
     if (this.disposed) throw abortError();
     if (this.instance) return;
-    this.loading ??= this.doLoad(options);
+    if (!this.loading) {
+      const inFlight = this.doLoad(options);
+      this.loading = inFlight;
+      // A failed load (e.g. a cancelled download) must be retryable: clear
+      // the memo so the next call starts fresh, while concurrent callers of
+      // the SAME load still share its fate. The side-channel catch keeps the
+      // rejection handled; callers awaiting this.loading still see it reject.
+      void inFlight.catch(() => {
+        if (this.loading === inFlight) this.loading = null;
+      });
+    }
     return this.loading;
   }
 

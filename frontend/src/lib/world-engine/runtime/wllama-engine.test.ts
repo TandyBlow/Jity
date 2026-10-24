@@ -104,6 +104,30 @@ describe('WllamaInferenceEngine option mapping', () => {
     await expect(loading).rejects.toSatisfy((error: unknown) => error instanceof Error && error.name === 'AbortError');
   });
 
+  test('a cancelled load is retryable: the next call starts a fresh download', async () => {
+    let factories = 0;
+    const { instance, calls, holdLoads, releaseLoads } = fakeWllama();
+    const engine = new WllamaInferenceEngine({ modelUrl: '/models/m.gguf' }, async () => {
+      factories += 1;
+      return instance;
+    });
+    const firstController = new AbortController();
+    holdLoads(true);
+    const first = engine.load({ signal: firstController.signal });
+    await new Promise((resolve) => setTimeout(resolve, 5));
+    firstController.abort();
+    releaseLoads();
+    await expect(first).rejects.toSatisfy((error: unknown) => error instanceof Error && error.name === 'AbortError');
+
+    holdLoads(false);
+    const secondController = new AbortController(); // fresh, never cancelled
+    await engine.load({ signal: secondController.signal }); // must actually retry, not replay the old AbortError
+    expect(calls.loads).toHaveLength(2);
+    expect(engine.info.modelId).toBe('m.gguf');
+    expect(await engine.complete('P')).toBe('ok');
+    expect(factories).toBe(2); // the failed load released its memo; a new engine instance was created
+  });
+
   test('complete maps prompt, sampling options and the abort signal; extracts the text', async () => {
     const { instance, calls } = fakeWllama();
     const engine = new WllamaInferenceEngine({ modelUrl: '/models/m.gguf' }, async () => instance);

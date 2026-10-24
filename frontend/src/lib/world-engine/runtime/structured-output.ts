@@ -120,7 +120,18 @@ function validateEntityDelta(value: unknown): void {
   }
 }
 
-const jsonValidators: Record<Exclude<ModelTask, 'narration' | 'reaction'>, (value: unknown) => void> = {
+/** Per-call constraints: the port derives them from the declared call input
+ * so a mode mismatch is a codec rejection, not a downstream controller
+ * TypeError. Absent constraints accept both legal updates shapes. */
+export interface DecodeConstraints {
+  /** updates split mode consumes ONE call per stage (input carries stage);
+   * batch mode consumes an array of calls. */
+  updatesSplitMode?: boolean;
+}
+
+type JsonValidator = (value: unknown, constraints: DecodeConstraints | undefined) => void;
+
+const jsonValidators: Record<Exclude<ModelTask, 'narration' | 'reaction'>, JsonValidator> = {
   action: (value) => {
     const output = asObject(value, 'action must be an object');
     if (output.kind === 'skip') {
@@ -149,10 +160,15 @@ const jsonValidators: Record<Exclude<ModelTask, 'narration' | 'reaction'>, (valu
       asString(entry, 'result values must be non-empty strings');
     }
   },
-  updates: (value) => {
+  updates: (value, constraints) => {
     // Batch mode consumes an array of calls; split mode (updatesStages)
     // consumes a single call per stage — both shapes are legal and pass
-    // through unnormalized, exactly as the controller consumes them.
+    // through unnormalized, exactly as the controller consumes them. When
+    // the port declares the call's mode, the wrong shape rejects here
+    // instead of failing downstream ("Out-of-order/duplicate updates
+    // stage" / merge TypeError).
+    if (constraints?.updatesSplitMode === true && Array.isArray(value)) throw new Error('split-mode updates must be a single call, not an array');
+    if (constraints?.updatesSplitMode === false && !Array.isArray(value)) throw new Error('batch-mode updates must be an array of calls');
     const calls = Array.isArray(value) ? value : [value];
     for (const entry of calls) {
       const call = asObject(entry, 'update call must be an object');
@@ -221,7 +237,7 @@ function parseJsonTask(raw: string, task: ModelTask): unknown {
   }
 }
 
-export function decodeTaskOutput(task: ModelTask, raw: string): Json {
+export function decodeTaskOutput(task: ModelTask, raw: string, constraints?: DecodeConstraints): Json {
   if (task === 'narration' || task === 'reaction') {
     const text = raw.trim();
     if (!text.length) throw new StructuredOutputError(task, 'empty output', raw);
@@ -229,7 +245,7 @@ export function decodeTaskOutput(task: ModelTask, raw: string): Json {
   }
   const parsed = parseJsonTask(raw, task);
   try {
-    jsonValidators[task](parsed);
+    jsonValidators[task](parsed, constraints);
   } catch (error) {
     throw new StructuredOutputError(task, error instanceof Error ? error.message : String(error), raw);
   }

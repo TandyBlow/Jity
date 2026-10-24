@@ -167,3 +167,12 @@ T08 语料适配逐项登记：①s8 是把已锁定时间从 2s 改成 3s 的�
 6. **同步抛错滞留（P2）**：`start()` 同步 throw 进入统一失败清理——释放槽位并定局调用方，后继照常泵入，专项测试钉住。
 
 结果：前端全套 **24 文件 407 项通过**（403 + 4 净增：队列同步抛错、加载取消转发、中途 dispose 两分支），`typecheck:world`、`review:world-s1`（60 项）、统一验收入口与生产 build 通过。b2-runtime-design.md 已同步三处语义（加载转发与 dispose 终态、同步抛错清理、updates 双形态/空 actor/delta 校验）。
+
+### B2 批次一修复轮二（对 56e42d9 复审两处 P2）
+
+日期：2026-10-24。前六项经复审独立确认修复；两处新增 P2 确认成立并已修：
+
+1. **updates 模式失配（P2）**：codec 校验双形态但不区分当前调用模式——拆分调用返回数组放行后控制器报 "Out-of-order/duplicate updates stage"，批量调用返回单对象放行后 merge 抛 TypeError。现在 `decodeTaskOutput` 接受逐调用约束 `{updatesSplitMode}`，端口从声明输入推导（`input.stage` 存在即拆分，schedule.ts:671/672 是判别字段），错误形态在 codec 层拒绝，合法输出原样穿透；无约束的独立校验仍接受双形态。
+2. **取消的加载永久阻断（P2）**：`loading` memo 永久缓存失败 promise——首次加载遵约响应取消后，后续全新调用立即复放旧 AbortError 且底层不重试。现在失败（memo 原样拒绝被侧信道 catch 标记为已处理）后清除 memo，下一次调用真正重启下载；同一次加载的并发调用方仍共享同一命运，dispose 终态不变。篡改实验钉死：还原永久 memo，恰"取消后可重试"一条转红。
+
+结果：前端全套 **24 文件 409 项通过**（407 + 2 净增），`typecheck:world`、`review:world-s1`（60 项）、统一验收入口与生产 build 通过。

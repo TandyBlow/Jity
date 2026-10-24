@@ -62,7 +62,11 @@ export class RuntimeWorldModelPort implements WorldModelPort {
         seed: this.options.seed,
       }),
     });
-    return { value: decodeTaskOutput(task, completion.value), timing: completion.timing };
+    // The declared call input decides the updates shape: a split call
+    // (input carries stage) must yield ONE call, a batch call an array —
+    // the wrong shape rejects here instead of in the controller.
+    const constraints = task === 'updates' ? { updatesSplitMode: (input as { stage?: unknown }).stage !== undefined } : undefined;
+    return { value: decodeTaskOutput(task, completion.value, constraints), timing: completion.timing };
   }
 
   /** Aborts the in-flight generation, rejects the queued ones and disposes

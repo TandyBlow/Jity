@@ -16,7 +16,7 @@
 
 `runtime/engine.ts` 定义引擎无关接口：`load()`、`complete(prompt, {signal, maxTokens, temperature, seed, stop})`、`dispose()`、`info {backend, modelId}`。取消是引擎契约的一部分——适配器必须把 signal 传给底层机制。
 
-`runtime/wllama-engine.ts` 适配 `benchmark/wllama-loader.ts` 的 `createWllama()`（浏览器专用：运行时从 `/wllama/index.min.js` 动态导入，Node 不触 wasm）。`complete` 映射为 `createCompletion({prompt, max_tokens, temperature, seed, abortSignal})`；`load` 把调用方 signal 经引擎自有 AbortController 转发给 `loadModelFromUrl` 原生支持的 signal——下载中取消即通知底层。`dispose()` 是**终态**且中途安全：在途下载先被 abort（快速失败），加载完成后才落地的实例被立即 exit 而非登记——无复活路径，`exit` 恰一次或零次（下载失败则无事可清）。参数映射与中途 dispose 均有 Node 单测（注入 fake wllama 断言选项），不加载真实模型。
+`runtime/wllama-engine.ts` 适配 `benchmark/wllama-loader.ts` 的 `createWllama()`（浏览器专用：运行时从 `/wllama/index.min.js` 动态导入，Node 不触 wasm）。`complete` 映射为 `createCompletion({prompt, max_tokens, temperature, seed, abortSignal})`；`load` 把调用方 signal 经引擎自有 AbortController 转发给 `loadModelFromUrl` 原生支持的 signal——下载中取消即通知底层，且失败的加载（含被取消的）清除 memo 可重试，同一次加载的并发调用方共享命运。`dispose()` 是**终态**且中途安全：在途下载先被 abort（快速失败），加载完成后才落地的实例被立即 exit 而非登记——无复活路径，`exit` 恰一次或零次（下载失败则无事可清）。参数映射与中途 dispose 均有 Node 单测（注入 fake wllama 断言选项），不加载真实模型。
 
 ## 3. 串行推理队列（`runtime/inference-queue.ts`）
 
@@ -32,7 +32,7 @@
 
 ## 4. 结构化输出校验（`runtime/structured-output.ts`）
 
-每个 `ModelTask` 一个 codec。**JSON 任务**（action/targets/results/updates/continuation/initial/time/pointPlan）：先剥 ```json 围栏与首尾空白（0.6B 常见输出形态），再 `JSON.parse`，再按消费端钉死的形状校验——形状全部来自 schedule/controller 的既有消费点，不是新发明：action `{kind:'act',text} | {kind:'skip'}`（schedule.ts:490）、targets `{targets:[{targetId,triggerKey,ruleVersion,target}]}`（:603）、results `Record<Id,string>`、updates **双形态**——批量模式消费调用数组、拆分模式（updatesStages）消费单个调用，均合法且不归一化穿透（controller.ts consumeModelOutput 按 mode push）、逐字段校验 EntityDelta 闭集（positionSet/appearanceChanges/sanitySet/tasksAchieved/subtasksAdded 及嵌套 Change/Position/Task，未知字段拒绝——mergeUpdatesStages 不会再遇到吞不下而 TypeError 的形状）、continuation 判别联合（types.ts:37）、initial `InitialTemplate`（含 engineVersion/schemaVersion 常量）、time `TimeAdvance`、pointPlan `PlannedPoint[]`（actorIds 允许为空——T03 无行动时间扫描点与空 linked 点）。**文本任务**（narration/reaction）：非空字符串原样，不做任何 JSON 解析——叙事质量结论（JSON 契约对 0.6B 叙事是毒药）不因校验层回潮。
+每个 `ModelTask` 一个 codec。**JSON 任务**（action/targets/results/updates/continuation/initial/time/pointPlan）：先剥 ```json 围栏与首尾空白（0.6B 常见输出形态），再 `JSON.parse`，再按消费端钉死的形状校验；updates 另受逐调用模式约束（`DecodeConstraints.updatesSplitMode`，端口从 `input.stage` 推导）——声明模式下错误形态在 codec 层拒绝，不落入下游控制器/merge 错误——形状全部来自 schedule/controller 的既有消费点，不是新发明：action `{kind:'act',text} | {kind:'skip'}`（schedule.ts:490）、targets `{targets:[{targetId,triggerKey,ruleVersion,target}]}`（:603）、results `Record<Id,string>`、updates **双形态**——批量模式消费调用数组、拆分模式（updatesStages）消费单个调用，均合法且不归一化穿透（controller.ts consumeModelOutput 按 mode push）、逐字段校验 EntityDelta 闭集（positionSet/appearanceChanges/sanitySet/tasksAchieved/subtasksAdded 及嵌套 Change/Position/Task，未知字段拒绝——mergeUpdatesStages 不会再遇到吞不下而 TypeError 的形状）、continuation 判别联合（types.ts:37）、initial `InitialTemplate`（含 engineVersion/schemaVersion 常量）、time `TimeAdvance`、pointPlan `PlannedPoint[]`（actorIds 允许为空——T03 无行动时间扫描点与空 linked 点）。**文本任务**（narration/reaction）：非空字符串原样，不做任何 JSON 解析——叙事质量结论（JSON 契约对 0.6B 叙事是毒药）不因校验层回潮。
 
 失败抛 `StructuredOutputError {task, reason, raw}`，端口如实上抛。**本批不做修复重试**：输出质量与重试策略属 B3 提示词层，校验层只负责"形状不对绝不让它进入 controller memory"。
 

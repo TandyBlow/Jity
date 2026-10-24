@@ -115,6 +115,20 @@ describe('RuntimeWorldModelPort', () => {
     expect(fake.disposed).toBe(1);
   });
 
+  test('updates mode mismatches reject at the port, keyed off the declared input', async () => {
+    // Split call (input carries stage) must yield ONE call:
+    const mismatchPort = new RuntimeWorldModelPort(fakeEngine(['[{"stage":"sanity","changes":{}}]']).engine);
+    const mismatch = await mismatchPort.generateDetailed('updates', 'g#sanity', { stage: 'sanity', groupId: 'g' }).catch((e: unknown) => e);
+    expect(mismatch).toBeInstanceOf(StructuredOutputError);
+    expect((mismatch as StructuredOutputError).reason).toMatch(/split-mode updates must be a single call/);
+    const splitOk = new RuntimeWorldModelPort(fakeEngine(['{"stage":"sanity","changes":{"person_b":{"sanitySet":7}}}']).engine);
+    expect(await splitOk.generate('updates', 'g#sanity', { stage: 'sanity', groupId: 'g' })).toEqual({ stage: 'sanity', changes: { person_b: { sanitySet: 7 } } });
+    // Batch call (no stage) must yield an array:
+    const batchMismatch = new RuntimeWorldModelPort(fakeEngine(['{"stage":"sanity","changes":{}}']).engine);
+    const batchError = await batchMismatch.generateDetailed('updates', 'g', { groupId: 'g', mode: 'group' }).catch((e: unknown) => e);
+    expect((batchError as StructuredOutputError).reason).toMatch(/batch-mode updates must be an array/);
+  });
+
   test('encodePrompt is deterministic in the declared call', () => {
     expect(encodePrompt('action', 'person_a', { actor: 'person_a' })).toBe(encodePrompt('action', 'person_a', { actor: 'person_a' }));
     expect(encodePrompt('action', 'person_a', {})).not.toBe(encodePrompt('results', 'person_a', {}));

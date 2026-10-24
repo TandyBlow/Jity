@@ -1,8 +1,12 @@
 import { describe, expect, test } from 'vitest';
 import { StructuredOutputError, decodeTaskOutput } from './structured-output';
 
-const rejects = (task: Parameters<typeof decodeTaskOutput>[0], raw: string, reason = /structured output rejected/) =>
-  expect(() => decodeTaskOutput(task, raw)).toThrow(reason);
+const rejects = (
+  task: Parameters<typeof decodeTaskOutput>[0],
+  raw: string,
+  reason: RegExp = /structured output rejected/,
+  constraints?: Parameters<typeof decodeTaskOutput>[2],
+) => expect(() => decodeTaskOutput(task, raw, constraints)).toThrow(reason);
 
 const asError = (task: Parameters<typeof decodeTaskOutput>[0], raw: string) => {
   try {
@@ -59,7 +63,11 @@ describe('decodeTaskOutput — JSON tasks', () => {
     const split = { stage: 'sanity', changes: { person_b: { sanitySet: 7 } } };
     expect(decodeTaskOutput('updates', JSON.stringify(split))).toEqual(split); // single call, not an array
     expect(decodeTaskOutput('updates', '[]')).toEqual([]);
-    rejects('updates', '[{"stage":"weather","changes":{}}]', /stage/);
+    // With the call's mode declared, the wrong shape rejects at the codec.
+    expect(decodeTaskOutput('updates', JSON.stringify(split), { updatesSplitMode: true })).toEqual(split);
+    rejects('updates', JSON.stringify(batch), /split-mode updates must be a single call/, { updatesSplitMode: true });
+    expect(decodeTaskOutput('updates', JSON.stringify(batch), { updatesSplitMode: false })).toEqual(batch);
+    rejects('updates', JSON.stringify(split), /batch-mode updates must be an array/, { updatesSplitMode: false });
     // Deltas are validated to their declared fields: mergeUpdatesStages must
     // never meet a shape it cannot consume.
     rejects('updates', '[{"stage":"subtasks","changes":{"person_a":{"subtasksAdded":7}}}]', /subtasksAdded must be an array/);
