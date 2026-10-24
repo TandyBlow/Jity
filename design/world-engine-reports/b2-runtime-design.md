@@ -46,7 +46,7 @@ Node 侧确定性测试：queue 的 FIFO/排队取消/运行取消/迟到丢弃/
 
 ## 7. 批次二：双心跳与失效处理（runtime/heartbeat.ts）
 
-两条独立心跳：lease 续租（`PUT /worlds/{worldId}/lease`）与 head claim 续期（`PUT /worlds/{worldId}/points/{pointId}/narration-claim`）。调度依据是**服务端回执**的过期时间——lease 取 `world.lease.expiresAtEpochMilli`（renew 成功取 `data.expiresAtEpochMilli`），claim 取领取/续期响应 `data.expiresAtEpochMilli`（`CurrentClaim` 不带过期，不能从控制器 memory 推）。续租在 `expiry − leadMs` 触发；状态更新（任何响应观察到新 token/epoch/expiry）重排定时器并作废为旧 token 排下的续租。
+两条独立心跳：lease 续租（`PUT /worlds/{worldId}/lease`）与 head claim 续期（`PUT /worlds/{worldId}/points/{pointId}/narration-claim`）。调度依据是**服务端回执**的过期时间——lease 取 `world.lease.expiresAtEpochMilli`（renew 成功取 `data.expiresAtEpochMilli`），claim 取领取/续期响应 `data.expiresAtEpochMilli`（`CurrentClaim` 不带过期，不能从控制器 memory 推）。续租在 `expiry − leadMs` 触发；状态更新（`updateLease`/`updateClaim`）受**单调比较器**守卫——lease 按 `(fenceEpoch, expiresAtEpochMilli)`、claim 按 `(generation, issuedAtEpochMilli, expiresAtEpochMilli)` 字典序，只接受严格更新的观察；迟到信封携带的旧凭证（低 epoch/旧 token/旧过期）被丢弃，不会把调度推回死 token 或撤销更新鲜的过期回执（cycle 只保护内部在途回执，比较器保护外部入口；`start()` 保持无条件——会话显式重启）。接受的更新重排定时器并作废为旧状态排下的续租。
 
 心跳是 **transport 调用，不走推理队列**——与引擎调用并发运行，这正是长推理期间保活的实现方式。超时/可重试拒绝以同一 requestId 退避重试（renew 幂等 replay original_data，同 ID 重发安全）；不可重试的确定性拒绝（lease_invalid/stale_epoch/claim_expired/claim_fenced/version_mismatch 等）即失效：`onLost({kind, code, response})` 上报并停该条心跳——会话层用它 abort 在跑的生成（迟到结果由队列丢弃，已是批次一保证）。真实接管正确性（刷新后接管对端状态）留 H2。
 

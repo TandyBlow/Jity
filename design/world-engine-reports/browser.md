@@ -188,3 +188,14 @@ T08 语料适配逐项登记：①s8 是把已锁定时间从 2s 改成 3s 的�
 **心跳是 transport 调用，不走推理队列**——与引擎调用并发，即长推理期间保活的实现方式（测试钉住：生成持锁期间续租完成）。超时与可重试拒绝（目录 `retryable=true`，如 request_in_progress）以同一 requestId 退避重试（renew 幂等 replay original_data，同 ID 重发安全）；不可重试的确定性拒绝（stale_epoch/lease_invalid/claim_expired/claim_fenced/version_mismatch 等）即失效——`onLost({kind, code, response})` 上报并停该条心跳；意外非 API 错误按瞬态退避重试。requestId 每续租周期铸新、超时重试沿用同 ID，与控制器约定一致。**失效取消**：会话层把 onLost 接到生成的 AbortController——批次一队列的迟到丢弃保证失效后的引擎结果不可达（集成测试钉住全链路：stale_epoch → abort → 调用方 AbortError → 迟到 resolve 仍被丢弃）。真实接管正确性留 H2。
 
 结果：共 9 项心跳测试（触发时机±lead/请求形状与 scope 全字段/同 ID 超时重试/确定性失效即停且只报一次/claim 失效不影响 lease/状态更新作废在途续租/stop 永久取消/持锁期间保活/失效取消+迟到丢弃集成）。前端全套 **25 文件 418 项通过**，`typecheck:world`、`review:world-s1`（60 项）、统一验收入口与生产 build 通过。B4 会话装配（把 HeartbeatScheduler 接进 driver 循环、从响应信封喂 updateLease/updateClaim）与真实定时/TTL 属后续批次；H1/H2 单独验收。
+
+### B2 批次二修复轮（对 9323d46 复审两处 P2）
+
+日期：2026-10-24。两处确认成立并已修：
+
+1. **回退观察覆盖新凭证（P2）**：`update()` 无条件替换状态——迟到信封（旧 epoch/旧 token/旧过期）能把调度推回死凭证。现在两条心跳各注入单调比较器：lease `(fenceEpoch, expiresAtEpochMilli)`、claim `(generation, issuedAtEpochMilli, expiresAtEpochMilli)` 字典序，`update()` 只接受严格更新的观察；`start()` 保持无条件（会话显式重启用，重取租约的新 epoch 天然更新）。篡改实验（还原无条件替换）恰两条守卫测试转红——其中 claim 守卫的首版测试对回退不敏感（回退观察恰同值），已换 stale-token discriminator 补强。
+2. **补齐 `updateClaim`（P2）**：文档承诺的对称入口已交付，含同代新过期接受、同代旧过期/stale token 丢弃、跨代（generation 抬升）替换的回归测试。
+
+另按复审建议把失效取消测试改为因果接线——`onLost` 回调内直接 `session.abort()`（丢失报告即取消原因），并断言槽位随引擎 settle 释放。
+
+结果：前端全套 **25 文件 421 项通过**（418 + 3：回退 lease 观察丢弃/同代新过期重排/updateClaim 对称守卫），`typecheck:world`、`review:world-s1`（60 项）、统一验收入口与生产 build 通过。b2-runtime-design.md §7 已同步守卫语义。

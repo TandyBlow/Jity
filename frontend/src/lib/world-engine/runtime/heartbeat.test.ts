@@ -74,7 +74,7 @@ function harness() {
     onClaimRenewed: (expiresAt) => renewals.claim.push(expiresAt),
     onLost: (loss) => losses.push(loss),
   });
-  return { clock, calls, handlers, losses, renewals, scheduler };
+  return { clock, calls, handlers, losses, renewals, scheduler, io };
 }
 
 const LEASE: LeaseHeartbeatState = { worldId: 'world_school', leaseToken: 'lease_a', fenceEpoch: 7, expiresAtEpochMilli: 120_000 };
@@ -187,6 +187,54 @@ describe('HeartbeatScheduler', () => {
     expect(h.calls.lease[1]!.request.leaseToken).toBe('lease_b'); // the CURRENT token, not the superseded one
   });
 
+  test('a regressed lease observation is dropped; only strictly newer state replaces', () => {
+    const h = harness();
+    h.handlers.lease = () => Promise.resolve({ data: leaseData(600_000) });
+    h.scheduler.startLease(LEASE); // epoch 7, exp 120k
+    h.scheduler.updateLease({ worldId: 'world_school', leaseToken: 'lease_b', fenceEpoch: 8, expiresAtEpochMilli: 300_000 }); // fresher
+    // A late envelope with the OLD credentials arrives afterwards:
+    h.scheduler.updateLease({ ...LEASE }); // epoch 7 < 8 — must be dropped
+    h.clock.advance(90_000); // the original schedule (120k − 30k) is gone
+    expect(h.calls.lease).toHaveLength(0);
+    h.clock.advance(180_000); // fire at 300k − 30k
+    expect(h.calls.lease).toHaveLength(1);
+    expect(h.calls.lease[0]!.request.leaseToken).toBe('lease_b'); // the CURRENT token
+    expect(h.calls.lease[0]!.request.fenceEpoch).toBe(8);
+  });
+
+  test('a same-epoch lease receipt with a newer expiry replaces the schedule', () => {
+    const h = harness();
+    h.handlers.lease = () => Promise.resolve({ data: leaseData(600_000) });
+    h.scheduler.startLease(LEASE); // epoch 7, exp 120k → fire at 90k
+    h.scheduler.updateLease({ ...LEASE, expiresAtEpochMilli: 240_000 }); // renew receipt, same epoch
+    h.clock.advance(90_000);
+    expect(h.calls.lease).toHaveLength(0); // rescheduled to 210k
+    h.clock.advance(120_000);
+    expect(h.calls.lease).toHaveLength(1);
+  });
+
+  test('updateClaim is symmetric and guarded by claim freshness', () => {
+    const h = harness();
+    h.handlers.claim = () => Promise.resolve({ data: claimData(900_000) });
+    h.scheduler.startClaim(CLAIM); // gen 1, exp 60k → fire at 30k
+    h.scheduler.updateClaim({ ...CLAIM, expiresAtEpochMilli: 120_000 }); // renew receipt: same gen, newer expiry → accepted
+    h.clock.advance(30_000);
+    expect(h.calls.claim).toHaveLength(0); // rescheduled to 90k
+    // A regressed observation is dropped — even one carrying a stale token,
+    // which under an unconditional replace would renew with dead credentials:
+    h.scheduler.updateClaim({ ...CLAIM, claimToken: 'claim_stale', expiresAtEpochMilli: 60_000 });
+    h.clock.advance(60_000); // fire at 90k with the CURRENT claim
+    expect(h.calls.claim).toHaveLength(1);
+    expect(h.calls.claim[0]!.request.claimToken).toBe('claim_root'); // never claim_stale
+    expect(h.calls.claim[0]!.request.generation).toBe(1);
+    // A fresh claim (generation bump) replaces the state:
+    h.scheduler.updateClaim({ ...CLAIM, claimToken: 'claim_new', generation: 2, issuedAtEpochMilli: CLAIM.issuedAtEpochMilli + 1, expiresAtEpochMilli: 300_000 });
+    h.clock.advance(180_000); // fire at 300k − 30k = 270k (we are at 90k)
+    expect(h.calls.claim).toHaveLength(2);
+    expect(h.calls.claim[1]!.request.claimToken).toBe('claim_new');
+    expect(h.calls.claim[1]!.request.generation).toBe(2);
+  });
+
   test('stop cancels both timers permanently', () => {
     const h = harness();
     h.scheduler.startLease(LEASE);
@@ -211,20 +259,28 @@ describe('HeartbeatScheduler', () => {
     expect((await generation).value).toBe('late text');
   });
 
-  test('a definitive loss aborts the in-flight generation and late results are discarded', async () => {
+  test('a definitive loss aborts the in-flight generation through causal onLost wiring', async () => {
+    // The session pattern under test: onLost itself cancels work — the
+    // heartbeat's loss report IS the abort cause, not a follow-up call.
     const h = harness();
     h.handlers.lease = () => Promise.reject(apiError('stale_epoch'));
     const queue = new SerialInferenceQueue();
     let releaseGeneration: (() => void) | null = null;
     const session = new AbortController();
     const generation = queue.run({ label: 'action', signal: session.signal, start: () => new Promise<string>((resolve) => { releaseGeneration = () => resolve('late work for a dead lease'); }) });
-    h.scheduler.startLease(LEASE);
+    const wired = new HeartbeatScheduler(h.io, {
+      leadMs: 30_000, retryBackoffMs: 5_000, clock: h.clock, nextRequestId: () => 'hb_wired',
+    }, {
+      onLeaseRenewed: () => {},
+      onClaimRenewed: () => {},
+      onLost: () => session.abort(), // causal wiring: the loss report IS the abort cause
+    });
+    wired.startLease(LEASE);
     h.clock.advance(90_000);
     await settle();
-    expect(h.losses).toHaveLength(1);
-    session.abort(); // what the session does on loss
     await expect(generation).rejects.toSatisfy(isAbortError);
     releaseGeneration!(); // late settle must stay discarded
     await expect(generation).rejects.toSatisfy(isAbortError);
+    expect(queue.depth).toBe(0); // slot freed once the engine settles
   });
 });

@@ -74,6 +74,11 @@ export interface HeartbeatOptions {
 
 interface LoopDeps<S extends { expiresAtEpochMilli: number }> {
   kind: 'lease' | 'claim';
+  /** Strict freshness: true only when `candidate` is strictly newer than
+   * `current` on the protocol's monotonic measure. Observations that would
+   * move the known state backward (a late envelope with old credentials)
+   * must not disturb the schedule. */
+  outranks: (candidate: S, current: S) => boolean;
   build: (state: S, requestId: Id) => RequestMap['lease_renew'] | RequestMap['narration_claim_renew'];
   scope: (state: S) => Scope;
   execute: (request: RequestMap['lease_renew'] | RequestMap['narration_claim_renew'], scope: Scope) => Promise<Success<'lease_renew'> | Success<'narration_claim_renew'>>;
@@ -96,10 +101,15 @@ class HeartbeatLoop<S extends { expiresAtEpochMilli: number }> {
     this.schedule();
   }
 
-  /** A newer observation replaces the schedule; renewals still in flight for
-   * the superseded state settle into the void (cycle guard). */
+  /** A strictly newer observation replaces the schedule; renewals still in
+   * flight for the superseded state settle into the void (cycle guard). A
+   * regressed observation (late envelope carrying old credentials) is
+   * dropped — it must neither push the schedule back onto a dead token nor
+   * undo a fresher expiry. start() stays unconditional: an explicit session
+   * restart (e.g. after reacquiring a lease at a new epoch) is intent. */
   update(state: S): void {
-    if (!this.state) return;
+    const current = this.state;
+    if (!current || !this.deps.outranks(state, current)) return;
     this.cycle += 1;
     this.state = state;
     this.schedule();
@@ -174,6 +184,8 @@ export class HeartbeatScheduler {
     const onLost = hooks.onLost.bind(hooks);
     this.lease = new HeartbeatLoop<LeaseHeartbeatState>(options, {
       kind: 'lease',
+      outranks: (candidate, current) => candidate.fenceEpoch > current.fenceEpoch
+        || (candidate.fenceEpoch === current.fenceEpoch && candidate.expiresAtEpochMilli > current.expiresAtEpochMilli),
       build: (state, requestId) => ({ protocolVersion: 2, requestId, worldId: state.worldId, leaseToken: state.leaseToken, fenceEpoch: state.fenceEpoch }),
       scope: (state) => ({ worldId: state.worldId }),
       execute: (request, scope) => io.renewLease(request as RequestMap['lease_renew'], scope),
@@ -185,6 +197,9 @@ export class HeartbeatScheduler {
     }, onLost);
     this.claim = new HeartbeatLoop<ClaimHeartbeatState>(options, {
       kind: 'claim',
+      outranks: (candidate, current) => candidate.generation > current.generation
+        || (candidate.generation === current.generation && (candidate.issuedAtEpochMilli > current.issuedAtEpochMilli
+          || (candidate.issuedAtEpochMilli === current.issuedAtEpochMilli && candidate.expiresAtEpochMilli > current.expiresAtEpochMilli))),
       build: (state, requestId) => ({
         protocolVersion: 2, requestId, worldId: state.worldId, pointId: state.pointId, mode: 'head' as const,
         claimToken: state.claimToken, generation: state.generation, issuedAtEpochMilli: state.issuedAtEpochMilli,
@@ -206,6 +221,9 @@ export class HeartbeatScheduler {
   stopLease(): void { this.lease.stop(); }
 
   startClaim(state: ClaimHeartbeatState): void { this.claim.start(state); }
+  /** A newer claim observation (fresh claim bumps generation; a renew
+   * receipt extends expiry at the same generation). */
+  updateClaim(state: ClaimHeartbeatState): void { this.claim.update(state); }
   stopClaim(): void { this.claim.stop(); }
 
   stop(): void {
