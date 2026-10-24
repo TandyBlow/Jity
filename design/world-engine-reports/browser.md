@@ -207,3 +207,17 @@ T08 语料适配逐项登记：①s8 是把已锁定时间从 2s 改成 3s 的�
 按用户指令执行 A2-2 三处 P2 复核与 H1。A 侧已推进至 `d59353b`（A2-1 四轮复审通过后进入 A2-2，本地记忆中「da22a1b 待复核、阻塞 A2-2」为过时状态）。三处 P2（精确 JSON 解析/恢复错误码/读路径 ID 校验）经 B 代码复核与回归复跑确认（HTTP 39、全量 1062、统一入口 PASS；从仓库根直跑 campaign_wiring 两例失败为 cwd 伪失败，按 `cd backend` 规程干净）。
 
 **H1 以默认 fetch 路径通过**：B 的 `83dbe3b`（构造器 `fetch.bind(globalThis)`）兑现——A 的 H1 harness 去掉 `window.fetch.bind(window)` 显式注入（`b496da7`），真实 Edge headless 155.0.4283.62、跨源真实 CORS、A=`b496da7`、B=`adfd506`（本仓主工作树，干净）。T01 双样本由真实 B 控制器经默认 fetch 完成（26 交换/8 模型调用/revision 13，服务端动态分配全部身份，Python 独立摘要三方对拍）；T03 双样本经浏览器 transport 直接固定候选 harness 验证。两次运行摘要逐位一致。**B 侧裁定 A2-2 与 H1 关闭**；完整证据在 [server.md](../.local/world-server-worktree/design/world-engine-reports/server.md) 与 `artifacts/world-http-h1.json`（A 仓）。边界不变：SQLite/H2/真实模型/远端 CI 未验收。下一步按序 B4 会话装配 → B3 提示词评测。
+
+## B4 批次一：会话装配
+
+日期：2026-10-25。A2-2/H1 闭环后按用户指令推进。交付 `runtime/session.ts`（`WorldSession` 组合根）+ 6 项接线测试；设计层补充见 [b4-session-design.md](b4-session-design.md)。真实 controller/schedule 业务行为不在本批重验（T01–T08/H1 已覆盖）——测试用脚本化 fake driver 驱动**真实的**观察包装、HeartbeatScheduler、SerialInferenceQueue 与 RuntimeWorldModelPort，验收点全部是"会话层自动触发，测试只注入事件"。
+
+**组装与单循环**：会话构造时装配观察 transport（包调用方 transport，每次交换过 observe）、信号绑定 model port（`generate(task,key,input)` 转发到 `port.generate(…, sessionSignal)`——取消权在会话、driver 接口不变）、默认真实 ControllerDriver（工厂可注入）、HeartbeatScheduler（时钟可注入，renew 走原始 transport 不经观察层避免双写）。`run()` 单飞：在跑时重复调用返回同一 in-flight promise；终态后可再 run（await 边界），心跳跨 run 存续——等玩家输入期间租约仍续。
+
+**信封观察（全部由信封内容自动触发）**：create_world/lease_acquire 的 LeaseGrant → 记录自持 token/epoch 并 startLease（worldId 三级兜底 scope→request→data）；任何带 world.lease 的信封 → updateLease（freshness 守卫）、world.lease=null → 停双心跳（租约消失即栅栏全部 claim）；narration_claim fresh（replayed=false+claimToken+head）→ 同点 updateClaim、**换点 stop+start**；narration_submit/delete 成功 → 停 claim 心跳；错误信封 stale_epoch/lease_invalid → 停双心跳、claim_fenced/claim_expired/cache_missing → 停 claim 心跳。
+
+**失效/停止/销毁**：心跳 lease 失效是会话级事件——`onLeaseLost` 立即 abort 在途推理（consumeModelOutput 不执行，迟到引擎 settle 由队列丢弃），循环以 error 终态 settle；claim 失效只停该心跳上报 hook，不打断会话（controller 自然重领）。`stop()` 递增 epoch：停心跳、abort 推理、循环 settle 为 `{kind:'stop', reason:'session_stopped'}`；**epoch 守卫拒绝 stop 后到达的 transport 响应**（driver 不得采纳旧会话迟到回执）并使观察层静默；`dispose()`=stop+port.dispose。
+
+**测试 6 项**：①信封自动起/续双心跳（create→model→claim 后仅靠时钟推进触发两类续租，请求带正确 token）；②submit 停 claim 而 lease 继续跳；③lease 丢失（续租收 stale_epoch）→ hook 触发、持锁生成被 abort、迟到引擎结果丢弃、心跳死透不再重试；④claim 换代 update（续租带新代 token）与换点 stop+start（续租 scope 带新 pointId），分两段 run() 让换代续租先落地；⑤并发 run() 同一 promise、stop 后引擎/续租迟到 settle 均无害、再 run 拒绝；⑥stop 后到达的 transport 响应被拒收、循环以 stop 终态 settle。
+
+结果：前端全套 **26 文件 427 项通过**，`typecheck:world`、`review:world-s1`（60 项）、统一验收入口与生产 build 通过。页面接线（React/UI）、真实 TTL/接管不在本批；B3 提示词评测是下一批；H2 单独验收。

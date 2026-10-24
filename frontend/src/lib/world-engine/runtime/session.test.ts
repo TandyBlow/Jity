@@ -1,0 +1,289 @@
+import { describe, expect, test } from 'vitest';
+import { WorldSession, type DriverLike } from './session';
+import type { ControllerIo, DriverStatus } from '../controller';
+import { initialMemory } from '../controller';
+import type { CompleteOptions, InferenceEngine } from './engine';
+import { RuntimeWorldModelPort } from './model-port';
+import { WorldApiError } from '../transport';
+import type { HeartbeatClock } from './heartbeat';
+import type { ModelTask } from '../schedule';
+import type { Id, Json, Scope, WorldOperation } from '../types';
+
+/** Deterministic clock (same semantics as the heartbeat tests). */
+class ManualClock implements HeartbeatClock {
+  private nowMs = 0;
+  private seq = 0;
+  private readonly timers: { at: number; fn: () => void; cancelled: boolean; seq: number }[] = [];
+  now(): number { return this.nowMs; }
+  set(delayMs: number, fn: () => void): () => void {
+    const entry = { at: this.nowMs + Math.max(0, delayMs), fn, cancelled: false, seq: this.seq++ };
+    this.timers.push(entry);
+    return () => { entry.cancelled = true; };
+  }
+  advance(ms: number): void {
+    const target = this.nowMs + ms;
+    for (;;) {
+      const due = this.timers.filter((t) => !t.cancelled && t.at <= target).sort((a, b) => a.at - b.at || a.seq - b.seq)[0];
+      if (!due) break;
+      this.nowMs = due.at;
+      due.cancelled = true;
+      due.fn();
+    }
+    this.nowMs = target;
+  }
+}
+
+async function settle(): Promise<void> {
+  for (let i = 0; i < 6; i++) await Promise.resolve();
+}
+
+/** Scripted engine: pops one raw output per completion; hold keeps every
+ * completion pending until flush. */
+function fakeEngine(outputs: string[]) {
+  const calls: Array<{ prompt: string; options?: CompleteOptions }> = [];
+  const pending: Array<() => void> = [];
+  let loads = 0;
+  let loadPromise: Promise<void> | null = null;
+  let hold = false;
+  const engine: InferenceEngine = {
+    info: { backend: 'fake', modelId: 'fake.gguf' },
+    load: () => {
+      loadPromise ??= (async () => { loads += 1; })();
+      return loadPromise;
+    },
+    complete: (prompt, options) => {
+      calls.push({ prompt, options });
+      const text = outputs.shift() ?? '';
+      if (!hold) return Promise.resolve(text);
+      return new Promise<string>((resolve) => pending.push(() => resolve(text)));
+    },
+    dispose: async () => {},
+  };
+  return {
+    engine, calls,
+    get loads() { return loads; },
+    hold(value: boolean) { hold = value; },
+    flush() { for (const release of pending.splice(0)) release(); },
+    get pendingCount() { return pending.length; },
+  };
+}
+
+type ScriptStep =
+  | { kind: 'transport'; op: WorldOperation; request: Record<string, unknown>; scope: Scope; respond: () => unknown | Promise<unknown>; done?: boolean }
+  | { kind: 'model'; task: ModelTask; key: string; input: Json }
+  | { kind: 'terminal'; status: DriverStatus };
+
+/** Scripted driver double: exercises the session's REAL observed transport
+ * and signal-bound model port — the wiring under test. */
+class ScriptedDriver implements DriverLike {
+  private index = 0;
+  readonly memory = initialMemory('req_session_test', 'test');
+  constructor(private readonly script: ScriptStep[], private readonly io: ControllerIo) {}
+  deliver(): void {}
+  getMemory() { return this.memory; }
+  async step(): Promise<DriverStatus | undefined> {
+    const entry = this.script[this.index++];
+    if (!entry) return { kind: 'await', reason: 'script exhausted' };
+    if (entry.kind === 'terminal') return entry.status;
+    if (entry.kind === 'model') {
+      await this.io.model.generate(entry.task, entry.key, entry.input);
+      return undefined;
+    }
+    await this.io.transport.execute(entry.op, entry.request as never, entry.scope as never);
+    return undefined;
+  }
+}
+
+function envelope(worldId: Id, lease: { fenceEpoch: number; expiresAtEpochMilli: number } | null) {
+  return { world: { worldId, lease } };
+}
+
+function createWorldResponse(worldId: Id, expiresAtEpochMilli: number) {
+  return {
+    ...envelope(worldId, { fenceEpoch: 1, expiresAtEpochMilli }),
+    data: { worldId, rootPointId: 'root_0', lease: { leaseToken: 'lease_1', fenceEpoch: 1, expiresAtEpochMilli } },
+  };
+}
+
+function claimResponse(pointId: Id, generation: number, claimToken: Id, expiresAtEpochMilli: number, replayed = false) {
+  return {
+    replayed,
+    data: { pointId, mode: 'head', generation, fenceEpoch: 1, issuedAtEpochMilli: 1_000, expiresAtEpochMilli, claimToken },
+  };
+}
+
+function apiError(code: string): WorldApiError {
+  return new WorldApiError({
+    protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1',
+    serverTimeEpochMilli: 1, replayed: false, operation: null, requestId: null, worldId: 'w1',
+    world: null, control: null, work: null,
+    error: { code, httpStatus: 409, retryable: false, clientAction: 'none', details: {} },
+  } as never);
+}
+
+function harness(script: ScriptStep[], engineOutputs: string[], renew: { lease?: (request: unknown) => unknown | Promise<unknown>; claim?: (request: unknown) => unknown | Promise<unknown> } = {}) {
+  const clock = new ManualClock();
+  const engine = fakeEngine(engineOutputs);
+  const port = new RuntimeWorldModelPort(engine.engine);
+  const transportLog: Array<{ op: WorldOperation; request: Record<string, unknown>; scope: Scope }> = [];
+  const leaseRenew = renew.lease ?? (() => ({ data: { leaseToken: 'lease_1', fenceEpoch: 1, expiresAtEpochMilli: 1_000_000 } }));
+  const claimRenew = renew.claim ?? (() => ({ data: { pointId: 'root_0', mode: 'head', generation: 1, fenceEpoch: 1, issuedAtEpochMilli: 1_000, expiresAtEpochMilli: 1_000_000 } }));
+  const raw = {
+    async execute(op: WorldOperation, request: Record<string, unknown>, scope: Scope): Promise<unknown> {
+      transportLog.push({ op, request, scope });
+      if (op === 'lease_renew') return leaseRenew(request) as never;
+      if (op === 'narration_claim_renew') return claimRenew(request) as never;
+      const entry = script.find((step) => step.kind === 'transport' && step.op === op && !step.done);
+      if (!entry || entry.kind !== 'transport') throw new Error(`unexpected transport call ${op}`);
+      entry.done = true;
+      return entry.respond() as never;
+    },
+  };
+  const hooks = { statuses: [] as DriverStatus[], leaseLost: [] as unknown[], claimLost: [] as unknown[] };
+  const session = new WorldSession(raw as never, port, {
+    clock,
+    createDriver: (io) => new ScriptedDriver(script, io),
+    hooks: {
+      onStatus: (status) => hooks.statuses.push(status),
+      onLeaseLost: (loss) => hooks.leaseLost.push(loss),
+      onClaimLost: (loss) => hooks.claimLost.push(loss),
+    },
+  });
+  return { clock, engine, port, transportLog, hooks, session, script };
+}
+
+const MODEL_NARRATION: ScriptStep[] = [];
+void MODEL_NARRATION;
+
+describe('WorldSession assembly', () => {
+  test('envelopes alone start, update and stop both heartbeats', async () => {
+    const h = harness([
+      { kind: 'transport', op: 'create_world', request: {}, scope: {}, respond: () => createWorldResponse('w1', 120_000) },
+      { kind: 'model', task: 'narration', key: 'root_0', input: { pointId: 'root_0', stateDigest: 'd' } },
+      { kind: 'transport', op: 'narration_claim', request: { pointId: 'root_0' }, scope: { worldId: 'w1', pointId: 'root_0' }, respond: () => claimResponse('root_0', 1, 'claim_1', 60_000) },
+      { kind: 'terminal', status: { kind: 'await', reason: 'awaiting player input' } },
+    ], ['叙事正文']);
+    expect(await h.session.run()).toEqual({ kind: 'await', reason: 'awaiting player input' });
+    h.clock.advance(30_000); // claim expiry 60k − lead 30k
+    await settle();
+    const claimRenews = h.transportLog.filter((entry) => entry.op === 'narration_claim_renew');
+    expect(claimRenews).toHaveLength(1);
+    expect(claimRenews[0]!.request.claimToken).toBe('claim_1');
+    h.clock.advance(60_000); // lease expiry 120k − 30k
+    await settle();
+    const leaseRenews = h.transportLog.filter((entry) => entry.op === 'lease_renew');
+    expect(leaseRenews).toHaveLength(1);
+    expect(leaseRenews[0]!.request.leaseToken).toBe('lease_1');
+  });
+
+  test('submitting the narration stops the claim heartbeat; the lease keeps beating', async () => {
+    const h = harness([
+      { kind: 'transport', op: 'create_world', request: {}, scope: {}, respond: () => createWorldResponse('w1', 120_000) },
+      { kind: 'transport', op: 'narration_claim', request: { pointId: 'root_0' }, scope: { worldId: 'w1', pointId: 'root_0' }, respond: () => claimResponse('root_0', 1, 'claim_1', 60_000) },
+      { kind: 'transport', op: 'narration_submit', request: { pointId: 'root_0' }, scope: { worldId: 'w1', pointId: 'root_0' }, respond: () => ({ data: { pointId: 'root_0', narrationStatus: 'ready', generation: 1 } }) },
+      { kind: 'terminal', status: { kind: 'stop', reason: 'done' } },
+    ], []);
+    expect(await h.session.run()).toEqual({ kind: 'stop', reason: 'done' });
+    h.clock.advance(150_000);
+    await settle();
+    expect(h.transportLog.filter((entry) => entry.op === 'narration_claim_renew')).toHaveLength(0); // claim consumed
+    expect(h.transportLog.filter((entry) => entry.op === 'lease_renew').length).toBeGreaterThanOrEqual(1); // lease alive
+  });
+
+  test('a lease loss during a held generation aborts it and discards the late result', async () => {
+    const h = harness([
+      { kind: 'transport', op: 'create_world', request: {}, scope: {}, respond: () => createWorldResponse('w1', 120_000) },
+      { kind: 'model', task: 'action', key: 'person_a', input: { actor: 'person_a' } },
+      { kind: 'terminal', status: { kind: 'stop', reason: 'unreached' } },
+    ], ['{"kind":"act","text":"推门"}'], { lease: () => Promise.reject(apiError('stale_epoch')) });
+    h.engine.hold(true);
+    const running = h.session.run();
+    await settle();
+    expect(h.engine.pendingCount).toBe(1); // generation in flight
+    h.clock.advance(90_000); // lease renew fires and is lost
+    await settle();
+    expect(h.hooks.leaseLost).toHaveLength(1);
+    const status = await running;
+    expect(status.kind).toBe('error'); // the session aborted the dead-lease generation
+    h.engine.flush(); // the engine's late settle must stay discarded
+    await settle();
+    expect(h.transportLog.filter((entry) => entry.op === 'lease_renew')).toHaveLength(1); // heartbeat stopped after the loss
+    h.clock.advance(500_000);
+    await settle();
+    expect(h.transportLog.filter((entry) => entry.op === 'lease_renew')).toHaveLength(1);
+  });
+
+  test('a claim renewal update and a point switch restart the claim heartbeat correctly', async () => {
+    const claimLog: Array<Record<string, unknown>> = [];
+    const h = harness([
+      { kind: 'transport', op: 'create_world', request: {}, scope: {}, respond: () => createWorldResponse('w1', 1_000_000) },
+      { kind: 'transport', op: 'narration_claim', request: { pointId: 'root_0' }, scope: { worldId: 'w1', pointId: 'root_0' }, respond: () => claimResponse('root_0', 1, 'claim_gen1', 60_000) },
+      { kind: 'transport', op: 'narration_claim', request: { pointId: 'root_0' }, scope: { worldId: 'w1', pointId: 'root_0' }, respond: () => claimResponse('root_0', 2, 'claim_gen2', 60_000) },
+      { kind: 'terminal', status: { kind: 'await', reason: 'first boundary' } },
+      { kind: 'transport', op: 'narration_claim', request: { pointId: 'point_1' }, scope: { worldId: 'w1', pointId: 'point_1' }, respond: () => claimResponse('point_1', 1, 'claim_p1', 90_000) },
+      { kind: 'terminal', status: { kind: 'await', reason: 'second boundary' } },
+    ], [], {
+      claim: (request) => {
+        claimLog.push(request as Record<string, unknown>);
+        const pointId = (request as { pointId: Id }).pointId;
+        return { data: { pointId, mode: 'head', generation: (request as { generation: number }).generation, fenceEpoch: 1, issuedAtEpochMilli: 1_000, expiresAtEpochMilli: 1_000_000 } };
+      },
+    });
+    expect(await h.session.run()).toEqual({ kind: 'await', reason: 'first boundary' });
+    h.clock.advance(30_000); // gen2 claim (fresh after update) renews first
+    await settle();
+    expect(claimLog).toHaveLength(1);
+    expect(claimLog[0]!.claimToken).toBe('claim_gen2'); // the update replaced the state, not a restart from gen1
+    expect(claimLog[0]!.pointId).toBe('root_0');
+    expect(await h.session.run()).toEqual({ kind: 'await', reason: 'second boundary' }); // script continues: the point switch
+    h.clock.advance(30_000); // point_1 claim (exp 90k) renews at 60k after the stop+start
+    await settle();
+    expect(claimLog).toHaveLength(2);
+    expect(claimLog[1]!.claimToken).toBe('claim_p1');
+    expect(claimLog[1]!.pointId).toBe('point_1');
+  });
+
+  test('repeat run() calls share one loop; stop settles everything and refuses late receipts', async () => {
+    const h = harness([
+      { kind: 'transport', op: 'create_world', request: {}, scope: {}, respond: () => createWorldResponse('w1', 120_000) },
+      { kind: 'model', task: 'narration', key: 'root_0', input: { pointId: 'root_0', stateDigest: 'd' } },
+      { kind: 'terminal', status: { kind: 'stop', reason: 'unreached' } },
+    ], ['迟到的叙事']);
+    h.engine.hold(true);
+    const first = h.session.run();
+    const second = h.session.run();
+    expect(second).toBe(first); // single loop
+    await settle();
+    expect(h.session.sessionStatus).toBe('running');
+    h.clock.advance(90_000); // renew fires while the generation is held
+    await settle();
+    h.session.stop();
+    const status = await first;
+    expect(status).toEqual({ kind: 'stop', reason: 'session_stopped' });
+    h.engine.flush(); // late inference settle
+    await settle();
+    h.clock.advance(1_000_000); // nothing may schedule again
+    await settle();
+    expect(h.transportLog.filter((entry) => entry.op === 'lease_renew')).toHaveLength(1);
+    await expect(h.session.run()).rejects.toThrow(/stopped/);
+    expect(h.session.sessionStatus).toBe('stopped');
+  });
+
+  test('a transport response arriving after stop is refused, not adopted', async () => {
+    let releaseResponse: ((value: unknown) => void) | null = null;
+    const h = harness([
+      { kind: 'transport', op: 'create_world', request: {}, scope: {}, respond: () => createWorldResponse('w1', 1_000_000) },
+      {
+        kind: 'transport', op: 'get_context', request: {}, scope: { worldId: 'w1' },
+        respond: () => new Promise((resolve) => { releaseResponse = resolve; }),
+      },
+      { kind: 'terminal', status: { kind: 'stop', reason: 'unreached' } },
+    ], []);
+    const running = h.session.run();
+    await settle(); // the held get_context is in flight
+    h.session.stop();
+    releaseResponse!(envelope('w1', null)); // late response lands after the epoch raised (held above)
+    const status = await running;
+    expect(status).toEqual({ kind: 'stop', reason: 'session_stopped' }); // refused → loop settled as a stop, no adoption
+  });
+});
