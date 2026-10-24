@@ -199,3 +199,5 @@ T08 语料适配逐项登记：①s8 是把已锁定时间从 2s 改成 3s 的�
 另按复审建议把失效取消测试改为因果接线——`onLost` 回调内直接 `session.abort()`（丢失报告即取消原因），并断言槽位随引擎 settle 释放。
 
 结果：前端全套 **25 文件 421 项通过**（418 + 3：回退 lease 观察丢弃/同代新过期重排/updateClaim 对称守卫），`typecheck:world`、`review:world-s1`（60 项）、统一验收入口与生产 build 通过。b2-runtime-design.md §7 已同步守卫语义。
+
+**复核闭环（同日，对 `d95f2d7`）**：两处 P2 关闭、未发现新增阻塞问题。复审独立验证：旧 epoch/旧 expiry 丢弃、updateClaim 正确替换新代并作废旧代在途回执、同值观察不误丢失效报告、onLost 取消接线通过；撤回比较器恰 2 failed/10 passed、还原后 12/12；421/421、typecheck、review 60/60 与三条独立探针全过。**B2 批次二关闭**：提交链 `9323d46 → d95f2d7`。B4 会话装配、真实定时/TTL 与 H1/H2 按原边界单独验收。
