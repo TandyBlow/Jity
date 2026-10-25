@@ -26,11 +26,13 @@ describe('buildTaskPrompt', () => {
   });
 
   test('updates prompts distinguish batch and split modes', () => {
-    const batch = buildTaskPrompt('updates', 'group_a', { groupId: 'group_a', mode: 'group', workingState: T01_WORKING_STATE });
-    const split = buildTaskPrompt('updates', 'group_a#sanity', { groupId: 'group_a', mode: 'group', workingState: T01_WORKING_STATE, stage: 'sanity' });
+    const batch = buildTaskPrompt('updates', 'group_a', { groupId: 'group_a', mode: 'group', workingState: T01_WORKING_STATE, priorStages: [], appliedDelta: {} });
+    const split = buildTaskPrompt('updates', 'group_a#sanity', { groupId: 'group_a', mode: 'group', workingState: T01_WORKING_STATE, priorStages: [], appliedDelta: {}, stage: 'sanity' });
     expect(batch).toContain('只输出 JSON 数组');
-    expect(batch).not.toContain('单阶段模式');
-    expect(split).toContain('单阶段模式');
+    expect(batch).not.toContain('不要数组'); // the batch contract never mentions the single-object shape
+    expect(split).toContain('不要数组');
+    expect(split).toContain('只输出一个 JSON 对象');
+    expect(split).not.toContain('只输出 JSON 数组'); // mutually exclusive contracts
     expect(split).toContain('本调用阶段: sanity');
   });
 
@@ -62,11 +64,48 @@ describe('B3 frozen samples', () => {
 });
 
 /** Scripted engine keyed by sample order: outputs.pop() per completion. */
-function scriptedEngine(outputs: string[]): InferenceEngine {
+function scriptedEngine(outputs: string[]): InferenceEngine & { callsMade(): number } {
+  let started = 0;
   return {
     info: { backend: 'fake', modelId: 'fake.gguf' },
     load: async () => {},
-    complete: async () => outputs.shift() ?? '',
+    callsMade: () => started,
+    complete: async () => {
+      started += 1;
+      return outputs.shift() ?? '';
+    },
+    dispose: async () => {},
+  };
+}
+
+/** An engine whose load always fails: real device work = zero completions. */
+function brokenLoadEngine(): InferenceEngine & { callsMade(): number } {
+  let started = 0;
+  return {
+    info: { backend: 'fake', modelId: 'fake.gguf' },
+    load: () => Promise.reject(new Error('model asset missing')),
+    callsMade: () => started,
+    complete: async () => {
+      started += 1;
+      return '';
+    },
+    dispose: async () => {},
+  };
+}
+
+/** A controllable engine so a test can slow individual completions. */
+function timedEngine(outputs: string[], delays: number[]): InferenceEngine & { callsMade(): number } {
+  let started = 0;
+  return {
+    info: { backend: 'fake', modelId: 'fake.gguf' },
+    load: async () => {},
+    callsMade: () => started,
+    complete: async () => {
+      const index = started++;
+      const delay = delays[index] ?? 0;
+      if (delay > 0) await new Promise((resolve) => setTimeout(resolve, delay));
+      return outputs.shift() ?? '';
+    },
     dispose: async () => {},
   };
 }
@@ -105,27 +144,40 @@ describe('runB3Evaluation', () => {
       expect(row.calls).toBeGreaterThanOrEqual(2);
       expect(row.avgRunMs).toBeGreaterThanOrEqual(0);
     }
-    expect(report.results.every((row) => row.timing !== null)).toBe(true);
+    expect(report.results.every((row) => row.failure === null && row.timing !== null)).toBe(true);
     expect(formatB3Summary(report)).toContain('结构 20/20');
   });
 
-  test('structure failures are recorded per sample, never thrown; per-task rates reflect them', async () => {
+  test('failure stages are separated; structural rejections keep their generation cost in the timing average', async () => {
     const outputs = validOutputsFor(B3_SAMPLES);
-    outputs[0] = 'not json at all'; // action-1
+    outputs[0] = 'not json at all'; // action-1 → structure failure (engine ran)
     outputs[17] = '   '; // narration-2: empty after trim → structure failure
-    outputs[4] = '{"person_a":42}'; // results-1: wrong value type
-    const report = await runB3Evaluation(scriptedEngine(outputs), B3_SAMPLES);
-    const failed = report.results.filter((row) => !row.structured);
-    expect(failed.map((row) => row.id).sort()).toEqual(['action-1', 'narration-2', 'results-1']);
-    for (const row of failed) {
+    outputs[4] = '{"person_a":42}'; // results-1: wrong value type → structure failure
+    const delays = B3_SAMPLES.map((_s, index) => (index === 0 ? 90 : 10)); // the malformed output is the EXPENSIVE one
+    const report = await runB3Evaluation(timedEngine(outputs, delays), B3_SAMPLES);
+    const structural = report.results.filter((row) => row.failure === 'structure');
+    expect(structural.map((row) => row.id).sort()).toEqual(['action-1', 'narration-2', 'results-1']);
+    for (const row of structural) {
       expect(row.structureError).toBeTruthy();
-      expect(row.timing).toBeNull();
-      expect(row.semanticFloor).toBe(false);
+      expect(row.timing).not.toBeNull(); // the generation happened
     }
     const actionRow = report.perTask.find((row) => row.task === 'action')!;
     expect(actionRow.structureOk).toBe(1);
     expect(actionRow.samples).toBe(2);
+    expect(actionRow.calls).toBe(2); // both completions actually ran
+    // The 90ms structural rejection IS in the average: (90 + 10) / 2.
+    expect(actionRow.avgRunMs).toBeGreaterThanOrEqual(45);
     expect(report.totals.structureOk).toBe(B3_SAMPLES.length - 3);
+    expect(report.totals.calls).toBe(B3_SAMPLES.length); // every sample made its engine call
+  });
+
+  test('an engine whose load fails records the engine stage with zero calls', async () => {
+    const report = await runB3Evaluation(brokenLoadEngine(), B3_SAMPLES.slice(0, 3));
+    expect(report.results.map((row) => row.failure)).toEqual(['engine', 'engine', 'engine']);
+    expect(report.totals.calls).toBe(0); // no completion was ever started
+    expect(report.totals.structureOk).toBe(0);
+    const row = report.perTask[0]!;
+    expect(row.avgRunMs).toBe(0); // no generation cost to average
   });
 
   test('a structural pass can still fail the semantic floor; judges are pluggable', async () => {
@@ -133,20 +185,20 @@ describe('runB3Evaluation', () => {
     outputs[2] = '{"targets":[{"targetId":"person_z","triggerKey":"group:person_z","ruleVersion":"reaction-d20-v1","target":11}]}'; // targets-1: unknown target id
     const report = await runB3Evaluation(scriptedEngine(outputs), B3_SAMPLES);
     const row = report.results.find((result) => result.id === 'targets-1')!;
-    expect(row.structured).toBe(true); // the codec accepts the shape
-    expect(row.semanticFloor).toBe(false);
+    expect(row.failure).toBe('semantic'); // the codec accepts the shape
+    expect(row.timing).not.toBeNull();
     expect(row.semanticNote).toMatch(/不在场: person_z/);
 
     const custom: Record<string, B3Judge> = { action: () => 'custom judge says no' };
     const outputs2 = validOutputsFor(B3_SAMPLES);
     const overridden = await runB3Evaluation(scriptedEngine(outputs2), B3_SAMPLES, { judges: custom });
-    expect(overridden.results.filter((result) => result.task === 'action').every((result) => result.semanticFloor === false)).toBe(true);
+    expect(overridden.results.filter((result) => result.task === 'action').every((result) => result.failure === 'semantic')).toBe(true);
   });
 
   test('fenced JSON from the engine passes through the real decode path', async () => {
     const outputs = validOutputsFor(B3_SAMPLES);
     outputs[0] = '```json\n{"kind":"skip"}\n```'; // action-1 fenced
     const report = await runB3Evaluation(scriptedEngine(outputs), B3_SAMPLES);
-    expect(report.results.find((result) => result.id === 'action-1')!.structured).toBe(true);
+    expect(report.results.find((result) => result.id === 'action-1')!.failure).toBeNull();
   });
 });

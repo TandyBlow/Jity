@@ -277,3 +277,15 @@ T08 语料适配逐项登记：①s8 是把已锁定时间从 2s 改成 3s 的�
 **harness**：样本过真实端口（encode→串行队列→引擎→结构化解码），逐样本记结构通过（错误捕获不抛出）/语义底线/队列计时，按任务聚合结构率、底线率、调用数、平均排队与推理毫秒，附控制台摘要。引擎注入式——脚本引擎确定性验收（10 项测试：全绿率/部分失败不抛出且分任务正确计数/结构通过但底线失败的区分/可插拔 judge/围栏 JSON 过真实解码），真机引擎同代码出数字。默认底线 judge 为确定性检查（名册约束、长度下限、非空），内容级语义质量留真机评测；开发中自家 judge 抓住过一次夹具错误（pointPlan 输出 actor 不在样本名册），是底线机制有效的直接证据。
 
 结果：前端全套 **27 文件 447 项通过**（437 + 10），`typecheck:world`、`review:world-s1`（60 项）、统一验收入口与生产 build 通过。真机数字、提示词迭代、内容级语义评分不在本批。
+
+### B3 批次一修复轮（对 5ff91de 复审五类 P2）
+
+日期：2026-10-25。五类全部确认成立并已修，探针语义全部进回归：
+
+1. **updates 指令互斥（P2）**：契约表不再含 updates——按调用模式动态选择互斥契约（批量教数组、拆分教单对象并明说「不要数组」），提示词中不再出现互相矛盾的形状指令。测试断言 batch 不含「不要数组」、split 不含「只输出 JSON 数组」。
+2. **样本对齐真实决策输入（P2）**：逐条对照 schedule 钉正——time 改 `{head, workingState}`（key=`successor:<pointId>`，与 :578 一致）；continuation 补 workingState（:420 形状）；拆分 updates 补 `priorStages/appliedDelta`（:670 形状，且两模式都带）；reaction key 改 sourceId（:645 按 current.sourceId 键控）。
+3. **实体名册三元构造（P2）**：`entityRoster` 从输入 workingState 的 characters/items/locations（live+initial 双区）构造——不再硬编码 item_key；在册地点的合法增量通过、已删物品的正确拒绝由测试钉住。
+4. **失败阶段分档 + 实际调用计数（P2）**：`B3FailureStage = engine | structure | semantic`——加载失败/引擎异常不再混入结构失败；`InferenceEngine` 增可选 `callsMade()`（wllama 适配器实现=启动的 completion 计数），报表按**实际引擎调用**计数——加载失败时 calls=0 而非 1，专项测试钉住。
+5. **结构失败耗时纳入统计（P2）**：端口 decode 失败时把已完成 completion 的 timing 附在异常上（生成成本已付），eval 据此把结构拒绝纳入均值；探针复刻复审场景（合法 10ms/格式错误 90ms）断言均值 ≥45ms 而非 10ms。
+
+结果：前端全套 **27 文件 448 项通过**（447 + 1 净增：加载失败阶段测试），`typecheck:world`、`review:world-s1`（60 项）、统一验收入口与生产 build 通过。修复过程被自家名册 judge 抓过两次夹具/代码错误（characterIds 残留引用、addAll 误用），均由测试先行暴露——判分器先行验证的价值再次成立。b3-prompt-eval-design.md 已同步五处语义。

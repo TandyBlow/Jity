@@ -20,6 +20,10 @@ export interface CompleteOptions {
 
 export interface InferenceEngine {
   readonly info: EngineInfo;
+  /** Monotonic count of started completions, for harnesses that must
+   * report ACTUAL call counts (a failed load completes zero times).
+   * Optional: harnesses fall back to one call per sample. */
+  callsMade?(): number;
   /** Idempotent: repeated calls await the same load. */
   load(options?: { signal?: AbortSignal; modelUrl?: string }): Promise<void>;
   complete(prompt: string, options?: CompleteOptions): Promise<string>;
