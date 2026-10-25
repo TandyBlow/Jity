@@ -23,12 +23,10 @@ export interface ModelPortOptions {
   seed?: number;
   temperature?: number;
 }
-
-/** B3 replaces this with the real prompt layer; until then the prompt is a
- * deterministic function of the declared call so test replays stay stable. */
-export function encodePrompt(task: ModelTask, key: string, input: Json): string {
-  return `TASK: ${task}\nKEY: ${key}\nINPUT: ${JSON.stringify(input)}\nOUTPUT: `;
-}
+/** The real B3 prompt layer (prompts.ts); also re-exported so existing
+ * imports and determinism tests stay stable. */
+import { buildTaskPrompt as encodePrompt } from './prompts';
+export { buildTaskPrompt as encodePrompt } from './prompts';
 
 export class RuntimeWorldModelPort implements WorldModelPort {
   private readonly queue: SerialInferenceQueue;

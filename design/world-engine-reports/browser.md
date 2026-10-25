@@ -265,3 +265,15 @@ T08 语料适配逐项登记：①s8 是把已锁定时间从 2s 改成 3s 的�
 3. 测试同步改写：失租终态四断言（状态 lost_lease/run 拒绝/无任何恢复交换/失租后零交换+stale token 原样保留）、外邦 epoch 同终态、stop/dispose 于失租会话、真实 driver 组合（失租后 run 拒绝且 transportLog 完全静止）。恢复先行/重放/ID 退役三条探针随入口删除。
 
 结果：前端全套 **26 文件 437 项通过**，`typecheck:world`、`review:world-s1`（60 项）、统一验收入口与生产 build 通过。b4-session-design.md §3 改写为终态语义+恢复遗留边界。**B4 批次一以此收窄形态提请按普通会话装配范围复审关闭**；下一批 B3 提示词评测。
+
+## B3 批次一：提示词层 + 冻结样本 + 评测 harness
+
+日期：2026-10-25。B4 批次一收窄关闭后按用户指令推进。交付 `runtime/prompts.ts`（真实编码器）、`runtime/b3-samples.ts`（20 份冻结样本）、`runtime/b3-eval.ts`（评测 harness），model-port 默认编码器由占位切换为真实实现（`encodePrompt` 别名再导出，既有确定性测试不变）。设计见 [b3-prompt-eval-design.md](b3-prompt-eval-design.md)。
+
+**编码器**：三段式（任务标签/输出契约/序列化输入），契约与 codec 逐字对齐（codec 是权威）；narration/reaction 显式禁 JSON；updates 批量/拆分动态指令（拆分只教单对象并明说不要数组）；纯函数确定性。
+
+**冻结样本**：每任务 ≥2 共 20 份，输入形状逐一取自 schedule 真实决策输入；workingState 为 T01 school 紧凑真实片段，逐样本溯源标注；提交内夹具不随轨迹漂移。
+
+**harness**：样本过真实端口（encode→串行队列→引擎→结构化解码），逐样本记结构通过（错误捕获不抛出）/语义底线/队列计时，按任务聚合结构率、底线率、调用数、平均排队与推理毫秒，附控制台摘要。引擎注入式——脚本引擎确定性验收（10 项测试：全绿率/部分失败不抛出且分任务正确计数/结构通过但底线失败的区分/可插拔 judge/围栏 JSON 过真实解码），真机引擎同代码出数字。默认底线 judge 为确定性检查（名册约束、长度下限、非空），内容级语义质量留真机评测；开发中自家 judge 抓住过一次夹具错误（pointPlan 输出 actor 不在样本名册），是底线机制有效的直接证据。
+
+结果：前端全套 **27 文件 447 项通过**（437 + 10），`typecheck:world`、`review:world-s1`（60 项）、统一验收入口与生产 build 通过。真机数字、提示词迭代、内容级语义评分不在本批。
