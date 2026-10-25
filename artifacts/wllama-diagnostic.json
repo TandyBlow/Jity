@@ -1,0 +1,140 @@
+{
+  "status": "COMPLETED",
+  "layer": "short wllama diagnostic; localizes time and structure failures of THIS configuration, no capability conclusions",
+  "recordedAt": "2026-10-25T14:24:53.572Z",
+  "config": {
+    "channel": "msedge",
+    "model": "/models/Qwen3-0.6B-Q4_K_M.gguf",
+    "maxTokens": 48,
+    "seed": 42
+  },
+  "browser": "155.0.4283.62",
+  "origin": "http://127.0.0.1:52294",
+  "topology": {
+    "multithread": false,
+    "numThreads": 1
+  },
+  "promptLengthChars": 2402,
+  "probes": [
+    {
+      "name": "P0-tiny-raw",
+      "path": "raw",
+      "maxTokens": 16,
+      "wallMs": 5165.800000190735,
+      "firstTokenMs": 1209.5,
+      "tokens": 17,
+      "lastChunkMeta": {
+        "choices": [
+          {
+            "text": "",
+            "index": 0,
+            "logprobs": null,
+            "finish_reason": "length"
+          }
+        ],
+        "created": 1792937983,
+        "model": "",
+        "system_fingerprint": "wllama",
+        "object": "text_completion",
+        "usage": {
+          "completion_tokens": 16,
+          "prompt_tokens": 4,
+          "total_tokens": 20,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 4,
+          "prompt_ms": 895.7,
+          "prompt_per_token_ms": 223.925,
+          "prompt_per_second": 4.465780953444233,
+          "predicted_n": 16,
+          "predicted_ms": 4244.3,
+          "predicted_per_token_ms": 282.9533333333333,
+          "predicted_per_second": 3.534151685790354
+        }
+      },
+      "textHead": "  12345678901234",
+      "hasThinkOpen": false
+    },
+    {
+      "name": "P1-action-raw",
+      "path": "raw",
+      "maxTokens": 48,
+      "wallMs": 165794.30000019073,
+      "firstTokenMs": 137921.89999961853,
+      "tokens": 49,
+      "lastChunkMeta": {
+        "choices": [
+          {
+            "text": "",
+            "index": 0,
+            "logprobs": null,
+            "finish_reason": "length"
+          }
+        ],
+        "created": 1792938149,
+        "model": "",
+        "system_fingerprint": "wllama",
+        "object": "text_completion",
+        "usage": {
+          "completion_tokens": 48,
+          "prompt_tokens": 696,
+          "total_tokens": 744,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "id": "",
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 696,
+          "prompt_ms": 137363.401,
+          "prompt_per_token_ms": 197.36120833333334,
+          "prompt_per_second": 5.066851831951947,
+          "predicted_n": 48,
+          "predicted_ms": 28421.8,
+          "predicted_per_token_ms": 604.7191489361702,
+          "predicted_per_second": 1.653660218564623
+        }
+      },
+      "textHead": " {\"kind\":\"act\",\"text\":\"主角需要完成的任务是取回柜子里的东西。\"}\n注意: 任务的描述需要包含\"取回\"这个关键词。\n任务描述必须包含\"取回\"这个关键词。\n注意: ",
+      "hasThinkOpen": false
+    },
+    {
+      "name": "P2-action-chat",
+      "path": "chat",
+      "maxTokens": 48,
+      "wallMs": 133497.29999923706,
+      "usageOrTimings": {
+        "completion_tokens": 18,
+        "prompt_tokens": 708,
+        "total_tokens": 726,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        }
+      },
+      "textHead": "{\"kind\":\"act\",\"text\":\"主角正在寻找钥匙并准备进入教室。\"}",
+      "jsonParseOk": null
+    },
+    {
+      "name": "P3-action-chat-schema",
+      "path": "chat+json_schema",
+      "maxTokens": 48,
+      "wallMs": 10904.10000038147,
+      "usageOrTimings": {
+        "completion_tokens": 18,
+        "prompt_tokens": 708,
+        "total_tokens": 726,
+        "prompt_tokens_details": {
+          "cached_tokens": 707
+        }
+      },
+      "textHead": "{\"kind\":\"act\",\"text\":\"主角正在寻找钥匙并准备进入教室。\"}",
+      "jsonParseOk": true
+    }
+  ]
+}

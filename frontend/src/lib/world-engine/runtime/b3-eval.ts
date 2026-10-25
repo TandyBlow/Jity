@@ -10,7 +10,7 @@
 import type { ModelTask } from '../schedule';
 import type { Json } from '../types';
 import type { InferenceEngine } from './engine';
-import { RuntimeWorldModelPort } from './model-port';
+import { RuntimeWorldModelPort, type ModelPortOptions } from './model-port';
 import { SerialInferenceQueue, type QueueTiming } from './inference-queue';
 import { StructuredOutputError } from './structured-output';
 import type { B3Sample } from './b3-samples';
@@ -111,6 +111,10 @@ export interface B3SampleResult {
   /** Queue timing whenever the engine call completed (success or structural
    * rejection) — the generation cost happened either way. */
   timing: QueueTiming | null;
+  /** The engine's RAW completion text, exactly as generated — the baseline
+   * evidence prompt iteration is judged against. Absent when the engine
+   * call itself failed. */
+  raw?: string;
 }
 
 export interface B3TaskReport {
@@ -137,6 +141,12 @@ export interface B3Report {
 
 export interface B3EvalOptions {
   judges?: Partial<Record<ModelTask, B3Judge>>;
+  /** Fixed baseline sampling (maxTokens/temperature/seed) applied to the
+   * port the harness constructs — prompt iterations must run against the
+   * same sampling as the baseline. */
+  portOptions?: ModelPortOptions;
+  /** Progress hook for long on-device runs: fires after each sample. */
+  onSample?: (result: B3SampleResult, index: number, total: number) => void;
 }
 
 export async function runB3Evaluation(engine: InferenceEngine, samples: readonly B3Sample[] = [], options: B3EvalOptions = {}): Promise<B3Report> {
@@ -145,6 +155,7 @@ export async function runB3Evaluation(engine: InferenceEngine, samples: readonly
   // engine cooperation needed, no receiver lost, and a failed load wraps
   // to zero calls.
   let completions = 0;
+  const raws: string[] = [];
   // Explicit method forwarding on the ORIGINAL receiver: object spread
   // only copies own enumerable properties, so a class instance's
   // prototype methods (load/dispose) would be silently dropped.
@@ -153,11 +164,14 @@ export async function runB3Evaluation(engine: InferenceEngine, samples: readonly
     load: (options) => engine.load(options),
     complete: (prompt, options) => {
       completions += 1;
-      return engine.complete(prompt, options);
+      return engine.complete(prompt, options).then((text) => {
+        raws.push(text); // every completion's raw text is baseline evidence
+        return text;
+      });
     },
     dispose: () => engine.dispose(),
   };
-  const port = new RuntimeWorldModelPort(countingEngine, new SerialInferenceQueue());
+  const port = new RuntimeWorldModelPort(countingEngine, new SerialInferenceQueue(), options.portOptions);
   const engineCalls = new Map<string, number>(); // per sample: actual engine completions
   const results: B3SampleResult[] = [];
   for (const sample of samples) {
@@ -174,17 +188,22 @@ export async function runB3Evaluation(engine: InferenceEngine, samples: readonly
       } catch (error) {
         judgeError = `${(error as Error).name}: ${(error as Error).message}`;
       }
-      results.push({
+      const row: B3SampleResult = {
         id: sample.id, task: sample.task,
         failure: judgeError !== undefined ? 'judge' : note === null ? null : 'semantic',
         semanticNote: note ?? undefined, judgeError, timing: generation.timing,
-      });
+        raw: raws[raws.length - 1],
+      };
+      results.push(row);
+      options.onSample?.(row, results.length - 1, samples.length);
     } catch (error) {
       engineCalls.set(sample.id, completions - callsAtStart);
       if (error instanceof StructuredOutputError) {
         // The decode rejection carries the completed generation's timing:
         // the cost was paid even though the output was rejected.
-        results.push({ id: sample.id, task: sample.task, failure: 'structure', structureError: error.reason, timing: (error as { timing?: QueueTiming }).timing ?? null });
+        const row: B3SampleResult = { id: sample.id, task: sample.task, failure: 'structure', structureError: error.reason, timing: (error as { timing?: QueueTiming }).timing ?? null, raw: raws[raws.length - 1] };
+        results.push(row);
+        options.onSample?.(row, results.length - 1, samples.length);
       } else {
         results.push({ id: sample.id, task: sample.task, failure: 'engine', structureError: `${(error as Error).name}: ${(error as Error).message}`, timing: null });
       }

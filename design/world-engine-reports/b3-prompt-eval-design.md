@@ -24,3 +24,15 @@
 ## 4. 边界与下一步
 
 本批不宣称：真机结构率/质量数字（引擎注入 wllama 后同 harness 出数）、内容级语义评分、提示词迭代结论（编码器可换，harness 不动）。恢复子批次/H2 仍持有授权恢复与未决对账。
+
+## 5. 批次二：浏览器真机基线（scripts/run-b3-baseline.mjs）
+
+真机基线评测入口（B 侧自有，编排模式对齐 A 侧 H1）：临时 Vite（frontend root，hmr 关闭、随机端口）+ Playwright 真实 Edge headless + 页面内动态 import runtime 模块，**同一 harness** 跑 B3_SAMPLES 全量，报告落盘 `artifacts/b3-baseline.json`。
+
+**固定基线配置**（写入报告，提示词迭代必须同配置对跑）：模型 `/models/Qwen3-0.6B-Q4_K_M.gguf`（本地资产，同源加载——benchmark 页已验证的路径）、contextSize 4096、maxTokens 1024、temperature 0、seed 42、真实 Edge headless（`--channel` 可换）。harness 新增：`B3EvalOptions.portOptions`（采样参数透传给 harness 自建的端口）、`B3SampleResult.raw`（每次 completion 的原始生成文本——基线证据，prompt 迭代据此判断改什么）。
+
+单线程运行（无 COOP/COEP，与 benchmark 页现状一致）——首基线先取真实数字，多线程吞吐是后续优化。运行时长 20 样本预计 10–40 分钟，脚本后台执行、child server 在 finally 关闭。
+
+**评审修正（2026-10-25）**：页面控制台日志改**全类型转发**（原只转 error——`onSample` 的进度走 console.log 不可见，慢与停滞无法区分，用户评审指出）；报告 `status` 由 'PASS' 改 **'COMPLETED'**——只表「评测执行完成」，质量判定看报告内各率，不在此字段混入。首轮运行因进度不可见被中止、未出报告；修正后重跑。另：本基线只回答**旧路径**（单模型自回归）每次调用成本，仅作参考；叙事表达拆分流水线各段的延迟须同输入/同输出要求/同设备实测，且拆段后的重复输入处理开销必须计入（见 narration-split-experiment-design.md §3）。
+
+**短诊断与归因边界（2026-10-25，用户复核后收窄）**：全量长跑中止（5/20 样本，全部 structure 失败、单次 1027–1378s；raw 输出随进程丢失，stdout 日志保留阶段与耗时；runner 已加逐样本断点保存）。短诊断（scripts/diagnose-wllama-short.mjs，报告 artifacts/wllama-diagnostic.json）：原始路径（现适配器）prefill 696 tok 约 138s、`finish_reason="length"`、合法 JSON 后续写至长度上限；聊天模板＋关思考后 EOS 干净（18 tok）；加 json_schema＋前缀缓存 10.9s 且解析通过。**归因边界**：P3 同时开启 schema 与缓存（cached 707/708），提速不能分别归功，也不代表真实变化输入稳定命中同比例；长跑耗时组成为推测非逐次证实；P2/P3 对 person_a 提示词输出主角行动——格式改善≠语义正确。结论仅到「该配置下失败且极慢、失败模式可定位」，不据此承诺全量时长；**暂不重跑全量 B3**。适配器修复（模板/关思考/约束解码/maxTokens/cache_prompt/计时元数据）列为独立修复项，不挤占调用链对齐主线（见 model-task-alignment-fix-list.md §4）。
