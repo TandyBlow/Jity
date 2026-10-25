@@ -13,7 +13,8 @@ from contextlib import contextmanager
 
 _LOCK = threading.RLock()
 
-NARRATION_STATUSES = ('pending', 'ready', 'failed', 'missing')
+class WorldNotFound(LookupError):
+    """No world exists at the transaction's read snapshot."""
 
 
 class FixtureBaselineStore:
@@ -54,6 +55,8 @@ class FixtureBaselineStore:
         commit by swap; any exception discards the copy."""
         with _LOCK:
             record = self._worlds.get(world_id)
+            if record is None:
+                raise WorldNotFound(world_id)
             snapshot = copy.deepcopy(record)
             response = handler(snapshot)
             self._worlds[world_id] = snapshot
@@ -62,6 +65,10 @@ class FixtureBaselineStore:
     def global_idempotency(self):
         with _LOCK:
             return self._idempotency_global
+
+    def get_creation(self, request_id):
+        with _LOCK:
+            return self._idempotency_global.get(request_id)
 
     def note_global(self, request_id, entry):
         with _LOCK:

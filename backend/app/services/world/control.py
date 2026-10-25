@@ -47,6 +47,7 @@ from .ladder import check_checkpoint
 from .merge import point_entity_deltas
 from .preview import preview_point as compute_preview
 from .state import build_initial_state, state_digest
+from .store import WorldNotFound
 from .units import (
     begin_working, scan_working, skip_working, stage_working, unit_content_hash,
     validate_commit_groups,
@@ -805,6 +806,8 @@ def handle_stage_time_scan(store, record, request):
     _bind_work_point(record, request)
     work = _work_or_none(record)
     _ladder(record, 'checkpoint_stage_time_scan', work)
+    if work['timeScanComplete']:
+        _refuse('request_malformed', 'time-scan candidates are already confirmed')
     if request.candidates.groupId is not None:
         _refuse('request_malformed', 'time-scan candidates cannot name a group')
     _refuse_violations('checkpoint_stage_time_scan',
@@ -1263,7 +1266,7 @@ class WorldService:
         # and insert under one lock acquisition so a concurrent duplicate
         # cannot create a second world.
         with self.store.locked():
-            entry = self.store.global_idempotency().get(request.requestId)
+            entry = self.store.get_creation(request.requestId)
             if entry is not None:
                 if entry['operation'] != operation or entry['digest'] != digest:
                     _refuse('request_id_reused',
@@ -1283,8 +1286,8 @@ class WorldService:
                                    data, digest)
 
     def _execute_write(self, operation, request, digest, world_id, path_point_id=None):
-        self._record(world_id)
         if operation not in WRITE_HANDLERS:
+            self._record(world_id)
             _refuse('phase_invalid', 'operation requires the A3 store',
                     details={'reason': 'fixture_store_unsupported'})
 
@@ -1322,6 +1325,9 @@ class WorldService:
                 'views': views, 'pathPointId': path_point_id}
             return data, views, False
 
-        data, views, replayed = self.store.transact(world_id, handler)
+        try:
+            data, views, replayed = self.store.transact(world_id, handler)
+        except WorldNotFound:
+            _refuse('version_mismatch', 'unknown world')
         return _operation_envelope(self.store, operation, request, views,
                                    data, digest, replayed=replayed)

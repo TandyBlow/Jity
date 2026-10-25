@@ -33,3 +33,19 @@ def create_world_app(*, store=None, allowed_origins=None):
                        allow_credentials=True, allow_methods=['*'], allow_headers=['*'])
     install_world_routes(app, store)
     return app
+
+
+def create_persistent_world_app():
+    """Opt-in A3 development adapter; not the finished TTL/takeover service.
+
+    WORLD_SQLITE_PATH is required so startup cannot silently use memory or
+    create a database in an unexpected working directory.
+    """
+    from app.database.world_store import SQLiteBaselineStore
+
+    path = os.environ.get('WORLD_SQLITE_PATH')
+    if not path:
+        raise RuntimeError('WORLD_SQLITE_PATH is required for the persistent world app')
+    app = create_world_app(store=SQLiteBaselineStore(path))
+    app.title = 'Jity World Persistent Development API'
+    return app
