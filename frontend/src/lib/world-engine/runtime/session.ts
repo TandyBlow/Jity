@@ -98,7 +98,11 @@ export class WorldSession {
   private claimPointId: Id | null = null;
   private worldId: Id | null = null;
   private readonly observed: WorldTransport;
-  private recoveryId = 0;
+  /** The current lost-lease episode's acquire request: an attempt of
+   * UNKNOWN fate (accepted server-side, response lost) must retry the SAME
+   * id and body — the idempotent replay returns the original grant. Cleared
+   * when the episode ends (grant adopted or session stopped). */
+  private recoveryRequest: { requestId: Id; worldId: Id; holderId: Id } | null = null;
 
   constructor(transport: WorldTransport, port: RuntimeWorldModelPort, options: WorldSessionOptions = {}) {
     this.rawTransport = transport;
@@ -186,8 +190,11 @@ export class WorldSession {
         // step — the stale token must never drive another write.
         const recovery = await this.recoverAuthority();
         if (!recovery.ok) {
-          this.status = 'idle';
+          // A stop during the recovery phase owns the terminal: never
+          // overwrite the stopped status with idle or the failure error.
           this.loopPromise = null;
+          if (this.status === 'stopped') return this.pendingTerminal ?? recovery.status;
+          this.status = 'idle';
           return recovery.status;
         }
       }
@@ -200,13 +207,18 @@ export class WorldSession {
     const worldId = this.worldId;
     if (!worldId) return { ok: false, status: { kind: 'error', detail: 'lease recovery requires a known world' } };
     const holderId = this.driver.getMemory().holderId;
-    const request = { protocolVersion: 2 as const, requestId: `req_${this.namespace}_recovery_${++this.recoveryId}`, worldId, holderId };
+    // One request per lost-lease episode: an unknown-fate attempt replays
+    // the identical acquire (the idempotent record returns the original
+    // grant instead of a second acquisition / lease_held).
+    this.recoveryRequest ??= { requestId: `req_${this.namespace}_recovery`, worldId, holderId };
+    const request = { protocolVersion: 2 as const, ...this.recoveryRequest };
     try {
       const response = await this.observed.execute('lease_acquire', request as never, { worldId }) as unknown as {
         data: { leaseToken: Id; fenceEpoch: number; expiresAtEpochMilli: number };
       };
       this.driver.adoptLeaseGrant?.(response.data);
       if (this.lostLeaseCode) return { ok: false, status: { kind: 'error', detail: `lease recovery did not clear the lost-lease state` } };
+      this.recoveryRequest = null; // episode closed by the adopted grant
       return { ok: true };
     } catch (error) {
       const detail = error instanceof Error ? error.message : String(error);
@@ -314,6 +326,7 @@ export class WorldSession {
   private enterLeaseLost(code: string): void {
     if (this.lostLeaseCode) return;
     this.lostLeaseCode = code;
+    this.recoveryRequest = null; // a new episode mints a fresh acquire
     this.epoch += 1;
     this.pendingTerminal ??= { kind: 'error', detail: `lease lost: ${code}` };
     this.isolateInFlight();

@@ -245,3 +245,13 @@ T08 语料适配逐项登记：①s8 是把已锁定时间从 2s 改成 3s 的�
 3. **跨模块实例的命名空间熵（P2）**：默认命名空间加随机熵（`crypto.randomUUID` 前 8 位优先，`Math.random` 兜底）——不同标签页各自从零计数、同毫秒启动也不再碰撞；`requestIdNamespace` 注入不变。测试用两次 `vi.resetModules()` 构造两个全新模块实例（构造器不等证明独立、双侧前缀 s1_ 证明计数器同起点）+ 冻结 Date.now：无熵必碰撞、有熵必相异；篡改（去熵）恰该测试红。另暴露 `idNamespace` 诊断 getter。
 
 结果：前端全套 **26 文件 435 项通过**（433 + 2 净增），`typecheck:world`、`review:world-s1`（60 项）、统一验收入口与生产 build 通过。b4-session-design.md §3 同步恢复阶段与熵语义。
+
+### B4 批次一修复轮三（对 3e21e1e 复审 P1+2×P2，恢复路径收口）
+
+日期：2026-10-25。三处全部确认成立并已修，三探针篡改实验均恰各自转红：
+
+1. **未决业务 ID 退役（P1）**：`adoptLeaseGrant` 现在推进请求工厂——隔离中命运未明（可能已被服务端接受）的交换所持 requestId 被退役，恢复后的下一个业务操作铸新 ID（跳号合法），同一 ID 换操作触发的 `request_id_reused` 不再可能。真实 driver 组合探针：submit 在途失租（响应迟到丢弃）、恢复后 driver 重新推导叙事，五笔业务交换的 requestId 全体唯一。
+2. **恢复申请同 ID 同体重放（P2）**：恢复申请按**失联回合**稳定——同一 `recoveryRequest`（ID+请求体）在该回合内跨尝试复用：未知结果的申请（超时/响应丢失）重放幂等记录取回原 grant，而非换新 ID 撞上 `lease_held`；确定性拒绝下同 ID 重发无害（被拒请求不入幂等表）。回合结束（grant 采纳或新失联）清除。探针：第一次恢复超时、第二次重放成功，两次请求逐字相等。
+3. **恢复中的 stop 终态保持（P2）**：恢复失败分支先守卫 stopped——恢复请求 pending 时 stop，终态与状态保持 `{kind:'stop'}`/`stopped`，不再被覆盖成 `lease recovery failed` error/idle；迟到 grant settle 照旧丢弃。
+
+结果：前端全套 **26 文件 438 项通过**（435 + 3 探针），`typecheck:world`、`review:world-s1`（60 项）、统一验收入口与生产 build 通过。b4-session-design.md §3 同步三条语义。

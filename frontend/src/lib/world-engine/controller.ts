@@ -96,6 +96,11 @@ export class ControllerDriver {
     this.memory.leaseToken = grant.leaseToken;
     if (this.state.world) this.state.world.lease = { fenceEpoch: grant.fenceEpoch, expiresAtEpochMilli: grant.expiresAtEpochMilli };
     if (this.memory.narration) this.memory.narration.claim = null;
+    // Retire the requestId held by any exchange whose fate the isolation
+    // left unresolved (it may be ACCEPTED server-side): the next business
+    // operation mints a fresh id — a reused id under a different operation
+    // is request_id_reused. Skipping ids is legal.
+    this.nextRequestId();
   }
 
   private nextRequestId(): Id {

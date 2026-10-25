@@ -6,7 +6,7 @@ import type { ControllerIo, DriverStatus } from '../controller';
 import { initialMemory } from '../controller';
 import type { CompleteOptions, InferenceEngine } from './engine';
 import { RuntimeWorldModelPort } from './model-port';
-import { WorldApiError } from '../transport';
+import { WorldApiError, WorldTimeoutError } from '../transport';
 import type { HeartbeatClock } from './heartbeat';
 import type { ModelTask } from '../schedule';
 import type { Id, Json, Scope, WorldOperation } from '../types';
@@ -123,7 +123,7 @@ function apiError(code: string): WorldApiError {
   } as never);
 }
 
-function harness(script: ScriptStep[], engineOutputs: string[], renew: { lease?: (request: unknown) => unknown | Promise<unknown>; claim?: (request: unknown) => unknown | Promise<unknown> } = {}) {
+function harness(script: ScriptStep[], engineOutputs: string[], renew: { lease?: (request: unknown) => unknown | Promise<unknown>; claim?: (request: unknown) => unknown | Promise<unknown>; acquire?: (request: unknown) => unknown | Promise<unknown> } = {}) {
   const clock = new ManualClock();
   const engine = fakeEngine(engineOutputs);
   const port = new RuntimeWorldModelPort(engine.engine);
@@ -135,6 +135,10 @@ function harness(script: ScriptStep[], engineOutputs: string[], renew: { lease?:
       transportLog.push({ op, request, scope });
       if (op === 'lease_renew') return leaseRenew(request) as never;
       if (op === 'narration_claim_renew') return claimRenew(request) as never;
+      if (op === 'lease_acquire') {
+        if (!renew.acquire) throw new Error(`unexpected transport call ${op}`);
+        return renew.acquire(request) as never;
+      }
       const entry = script.find((step) => step.kind === 'transport' && step.op === op && !step.done);
       if (!entry || entry.kind !== 'transport') throw new Error(`unexpected transport call ${op}`);
       entry.done = true;
@@ -324,6 +328,59 @@ describe('WorldSession assembly', () => {
     expect(h.transportLog.filter((entry) => entry.op === 'lease_renew')).toHaveLength(0);
   });
 
+  test('an unknown-fate recovery acquire replays the SAME id and body', async () => {
+    const h = harness([
+      { kind: 'transport', op: 'create_world', request: {}, scope: {}, respond: () => createWorldResponse('w1', 60_000) },
+      { kind: 'terminal', status: { kind: 'stop', reason: 'done' } },
+    ], [], {
+      lease: () => Promise.reject(apiError('stale_epoch')),
+      acquire: (() => {
+        let attempts = 0;
+        return () => {
+          attempts += 1;
+          // Attempt 1: the server issues the grant but the response is lost
+          // (timeout — the exchange's fate is unknown).
+          if (attempts === 1) return Promise.reject(new WorldTimeoutError('response lost'));
+          return Promise.resolve({ world: { worldId: 'w1', lease: { fenceEpoch: 2, expiresAtEpochMilli: 1_000_000 } }, data: { holderId: 'test', leaseToken: 'lease_2', fenceEpoch: 2, expiresAtEpochMilli: 1_000_000 } });
+        };
+      })(),
+    });
+    await h.session.run();
+    h.clock.advance(30_000); // the lease renew is lost
+    await settle();
+    const second = await h.session.run(); // recovery attempt 1: unknown fate
+    expect(second.kind).toBe('error');
+    if (second.kind === 'error') expect(second.detail).toMatch(/lease recovery failed/);
+    const third = await h.session.run(); // recovery attempt 2: the replay
+    expect(third).toEqual({ kind: 'await', reason: 'script exhausted' });
+    const acquires = h.transportLog.filter((entry) => entry.op === 'lease_acquire');
+    expect(acquires).toHaveLength(2);
+    expect(acquires[1]!.request).toEqual(acquires[0]!.request); // same id AND same body — idempotent replay
+  });
+
+  test('a stop during a pending recovery keeps the stop terminal and status', async () => {
+    let releaseAcquire: ((value: unknown) => void) | null = null;
+    const h = harness([
+      { kind: 'transport', op: 'create_world', request: {}, scope: {}, respond: () => createWorldResponse('w1', 60_000) },
+      { kind: 'terminal', status: { kind: 'stop', reason: 'done' } },
+    ], [], {
+      lease: () => Promise.reject(apiError('stale_epoch')),
+      acquire: () => new Promise((resolve) => { releaseAcquire = resolve; }),
+    });
+    await h.session.run();
+    h.clock.advance(30_000); // the lease renew is lost
+    await settle();
+    const second = h.session.run(); // recovery in flight, response held
+    await settle();
+    expect(h.session.sessionStatus).toBe('running');
+    h.session.stop();
+    expect(await second).toEqual({ kind: 'stop', reason: 'session_stopped' }); // NOT a recovery error
+    expect(h.session.sessionStatus).toBe('stopped'); // NOT idle
+    releaseAcquire!({ data: { holderId: 'test', leaseToken: 'late', fenceEpoch: 2, expiresAtEpochMilli: 1 } }); // late settle discarded (held above)
+    await settle();
+    expect(h.session.sessionStatus).toBe('stopped');
+  });
+
   test('default namespaces are session-unique: heartbeat ids never collide', async () => {
     const leaseOk = () => ({ data: { leaseToken: 'lease_1', fenceEpoch: 1, expiresAtEpochMilli: 1_000_000 } });
     const h1 = harness([
@@ -348,7 +405,7 @@ describe('WorldSession composition with the real ControllerDriver', () => {
   const load = (name: string): Record<string, unknown> =>
     JSON.parse(readFileSync(new URL(`../../../../../design/world-protocol/v2/fixtures/api/${name}.json`, import.meta.url), 'utf8'));
 
-  function fixtureSession(submitRespond?: () => unknown | Promise<unknown>, inject: { renewLease?: () => unknown | Promise<unknown>; acquire?: () => unknown | Promise<unknown> } = {}) {
+  function fixtureSession(submitRespond?: () => unknown | Promise<unknown>, inject: { renewLease?: () => unknown | Promise<unknown>; acquire?: () => unknown | Promise<unknown> } = {}, engineOutputs?: string[]) {
     const create = structuredClone(load('create_world/success')) as Record<string, never>;
     (create.world as never as { lease: { expiresAtEpochMilli: number } }).lease.expiresAtEpochMilli = 120_000;
     (create.data as never as { lease: { expiresAtEpochMilli: number } }).lease.expiresAtEpochMilli = 120_000;
@@ -361,7 +418,7 @@ describe('WorldSession composition with the real ControllerDriver', () => {
     }
     const initial = (load('create_world/request') as { initial: unknown }).initial;
     const clock = new ManualClock();
-    const engine = fakeEngine([JSON.stringify(initial), '教室后门的锁咔哒一声弹开。']);
+    const engine = fakeEngine(engineOutputs ?? [JSON.stringify(initial), '教室后门的锁咔哒一声弹开。']);
     const port = new RuntimeWorldModelPort(engine.engine);
     const transportLog: Array<{ op: WorldOperation; request: Record<string, unknown> }> = [];
     const raw = {
@@ -398,6 +455,33 @@ describe('WorldSession composition with the real ControllerDriver', () => {
   });
 
 
+
+  test('composition: recovery retires the pending business id — sent ids are never reused', async () => {
+    let releaseSubmit: ((value: unknown) => void) | null = null;
+    let submitGateOpen = false;
+    const initial = (load('create_world/request') as { initial: unknown }).initial;
+    const h = fixtureSession(() => (submitGateOpen
+      ? Promise.resolve(structuredClone(load('narration_submit/success')))
+      : new Promise((resolve) => { releaseSubmit = resolve; })), {
+      renewLease: () => Promise.reject(apiError('stale_epoch')),
+      acquire: () => ({ world: { worldId: 'world_school', lease: { fenceEpoch: 8, expiresAtEpochMilli: 1_000_000 } }, data: { holderId: 'browser', leaseToken: 'lease_new', fenceEpoch: 8, expiresAtEpochMilli: 1_000_000 } }),
+    }, [JSON.stringify(initial), '第一次根点叙事。', '第二次根点叙事。']);
+    const first = h.session.run();
+    for (let i = 0; i < 200 && !h.transportLog.some((entry) => entry.op === 'narration_submit'); i++) await settle();
+    h.clock.advance(90_000); // the lease renew is lost while the submit's fate is unresolved
+    await settle();
+    expect(await first).toEqual({ kind: 'error', detail: 'lease lost: stale_epoch' });
+    submitGateOpen = true; // later submits pass through directly
+    releaseSubmit!(structuredClone(load('narration_submit/success'))); // the submit WAS accepted server-side (the wait loop proved it in flight)
+    await settle();
+    const second = await h.session.run(); // recovery, then the driver re-derives narration
+    expect(second.kind).toBe('await');
+    const businessIds = h.transportLog
+      .filter((entry) => entry.op !== 'lease_renew' && entry.op !== 'lease_acquire')
+      .map((entry) => String(entry.request.requestId));
+    expect(businessIds).toHaveLength(5); // create, claim, submit, then the re-derived claim and submit
+    expect(new Set(businessIds).size).toBe(5); // NO sent id is ever re-minted under another operation
+  });
 
   test('composition: after a lost lease, the next run recovers authority BEFORE any business step', async () => {
     const h = fixtureSession(undefined, {
