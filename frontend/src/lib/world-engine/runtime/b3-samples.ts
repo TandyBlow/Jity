@@ -16,12 +16,17 @@ export interface B3Sample {
   note: string;
 }
 
-/** A compact, shape-true working-state fragment of the T01 world. */
+/** A compact, shape-true working-state fragment of the T01 world.
+ * 2026-10-25 schema 合规修正：initial 补齐 engineVersion/schemaVersion/
+ * protagonistId（此前未落盘的报告对应修正前夹具）。 */
 export const T01_WORKING_STATE: Json = {
   engineVersion: 'world-engine-v1', schemaVersion: 1, worldId: 'world_school', protagonistId: 'person_c',
   time: { calendar: 'gregorian', dateTime: '2026-09-01T11:59:02', instantOrdinal: 0 },
   initial: {
     worldId: 'world_school',
+    engineVersion: 'world-engine-v1',
+    schemaVersion: 1,
+    protagonistId: 'person_c',
     initialTime: { calendar: 'gregorian', dateTime: '2026-09-01T08:00:00', instantOrdinal: 0 },
     locations: { corridor: { id: 'corridor', name: '走廊', parentLocationId: null, initialAppearance: '两侧是储物柜。' } },
     items: { item_key: { id: 'item_key', name: '钥匙', initialPosition: { containerId: 'corridor', slotId: null, relativeTo: null }, initialAppearance: '一把黄铜钥匙。' } },
@@ -50,8 +55,8 @@ export const B3_SAMPLES: B3Sample[] = [
   { id: 'targets-2', task: 'targets', key: 'person_c', input: { sourceId: 'person_c', actionText: '从储物柜里取出钥匙', workingState: T01_WORKING_STATE }, note: T01_NOTE_2 },
   { id: 'results-1', task: 'results', key: 'group_a', input: { groupId: 'group_a', workingState: T01_WORKING_STATE }, note: T01_NOTE },
   { id: 'results-2', task: 'results', key: 'group_b', input: { groupId: 'group_b', workingState: T01_WORKING_STATE }, note: T01_NOTE_2 },
-  { id: 'updates-batch-1', task: 'updates', key: 'group_a', input: { groupId: 'group_a', mode: 'group', workingState: T01_WORKING_STATE, priorStages: [], appliedDelta: {} }, note: `${T01_NOTE}；批量模式（无 stage，priorStages/appliedDelta 为空）` },
-  { id: 'updates-split-1', task: 'updates', key: 'group_a#sanity', input: { groupId: 'group_a', mode: 'group', workingState: T01_WORKING_STATE, priorStages: [{ stage: 'position', changes: { person_a: { positionSet: { containerId: 'corridor', slotId: null, relativeTo: null } } } }], appliedDelta: { person_a: { positionSet: { containerId: 'corridor', slotId: null, relativeTo: null } } }, stage: 'sanity' }, note: `${T01_NOTE}；拆分模式第二阶段（带 priorStages/appliedDelta）` },
+  { id: 'updates-batch-1', task: 'updates', key: 'group_a', input: { groupId: 'group_a', mode: 'group', workingState: T01_WORKING_STATE }, note: `${T01_NOTE}；批量模式（无 stage）` },
+  { id: 'updates-split-1', task: 'updates', key: 'group_a#sanity', input: { groupId: 'group_a', mode: 'group', workingState: T01_WORKING_STATE, stage: 'sanity' }, note: `${T01_NOTE}；拆分模式第二阶段——§6.3 阶梯：workingState 已是 Python preview 应用前序候选后的状态（2026-10-26 随 #5 更新，输入不再携带 priorStages/appliedDelta）` },
   { id: 'continuation-1', task: 'continuation', key: 'round_1', input: { round: { roundId: 'round_1', trigger: 'player', order: ['person_a', 'person_c'], cursor: 2, actedIds: ['person_a', 'person_c'], visitedIds: ['person_a', 'person_c'], conclusion: null }, head: { pointId: 'p1', version: 1, stateDigest: 'd1', narrationStatus: 'pending' }, workingState: T01_WORKING_STATE }, note: T01_NOTE },
   { id: 'continuation-2', task: 'continuation', key: 'round_2', input: { round: { roundId: 'round_2', trigger: 'automatic', order: ['person_b'], cursor: 0, actedIds: [], visitedIds: [], conclusion: null }, head: { pointId: 'p2', version: 1, stateDigest: 'd2', narrationStatus: 'ready' }, workingState: T01_WORKING_STATE }, note: `${T01_NOTE}；automatic 轮变体` },
   { id: 'initial-1', task: 'initial', key: 'initial', input: null, note: T01_NOTE },
@@ -60,8 +65,8 @@ export const B3_SAMPLES: B3Sample[] = [
   { id: 'time-2', task: 'time', key: 'successor:p2', input: { head: { pointId: 'p2', version: 1, stateDigest: 'd2', narrationStatus: 'ready' }, workingState: T01_WORKING_STATE }, note: `${T01_NOTE}；零时长 instant 变体` },
   { id: 'pointPlan-1', task: 'pointPlan', key: 'round_1', input: { round: { roundId: 'round_1', trigger: 'player', order: ['person_a', 'person_c'], cursor: 0, actedIds: [], visitedIds: [], conclusion: null }, head: { pointId: 'root_0', version: 0, stateDigest: 'd0', narrationStatus: 'ready' } }, note: T01_NOTE },
   { id: 'pointPlan-2', task: 'pointPlan', key: 'round_2', input: { round: { roundId: 'round_2', trigger: 'automatic', order: ['person_b'], cursor: 0, actedIds: [], visitedIds: [], conclusion: null }, head: { pointId: 'p2', version: 1, stateDigest: 'd2', narrationStatus: 'ready' } }, note: `${T01_NOTE}；automatic 轮变体` },
-  { id: 'narration-1', task: 'narration', key: 'root_0', input: { pointId: 'root_0', stateDigest: '9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5' }, note: T01_NOTE },
-  { id: 'narration-2', task: 'narration', key: 'p1', input: { pointId: 'p1', stateDigest: '4f5a33e7a1b2c3d4e5f60718293a4b5c6d7e8f90a1b2c3d4e5f60718293a4b5' }, note: T01_NOTE_2 },
+  { id: 'narration-1', task: 'narration', key: 'root_0', input: { pointId: 'root_0', before: null, delta: { timeAdvance: null, entityDeltas: {} }, after: T01_WORKING_STATE, perspective: '主角视角（person_c「C」）；只表达已结算的世界事实' }, note: `${T01_NOTE}；§7.1 四件套输入（根点：before=null、空 Δ）——2026-10-26 随 #6 接线更新，声明形状=调度器组装输出` },
+  { id: 'narration-2', task: 'narration', key: 'p1', input: { pointId: 'p1', before: T01_WORKING_STATE, delta: { timeAdvance: { boundary: 'elapsed', duration: { amount: 2, unit: 'minute' } }, entityDeltas: { person_a: { entityId: 'person_a', positionSet: { containerId: 'hall', slotId: null, relativeTo: null } } } }, after: T01_WORKING_STATE, perspective: '主角视角（person_c「C」）；只表达已结算的世界事实' }, note: `${T01_NOTE_2}；§7.1 四件套输入（p1：before/Δ/after 全量）——2026-10-26 随 #6 接线更新` },
   { id: 'reaction-1', task: 'reaction', key: 'person_a', input: { sourceId: 'person_a', memberId: 'person_b', rollId: 'roll_1', workingState: T01_WORKING_STATE }, note: T01_NOTE },
   { id: 'reaction-2', task: 'reaction', key: 'person_a', input: { sourceId: 'person_a', memberId: 'person_c', rollId: 'roll_2', workingState: T01_WORKING_STATE }, note: T01_NOTE_2 },
 ];

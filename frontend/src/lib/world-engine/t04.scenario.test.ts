@@ -63,7 +63,12 @@ describe.each(['sample_1', 'sample_2'])('T04 %s', (sampleId) => {
     }
     await expect(driveControllerSlice(scenario)).rejects.toThrow(`[T04] step ${stepId}: business assertion failed at /world/advance/inputAvailable`);
     expect(scenario.transport.nextStepId).toBe(stepId);
-    expect(scenario.transport.ops).not.toContain('get_state');
+    // s13 前的组装阶梯恰好一次目标读＋一次前驱读；s2 之前无叙事读取。
+    if (stepId === 's13') {
+      expect(scenario.transport.ops.filter((op) => op === 'get_state')).toHaveLength(2);
+    } else {
+      expect(scenario.transport.ops).not.toContain('get_state');
+    }
     // Only the preceding continue can have been consumed. Neither the
     // following context nor replay is issued to mask the bad response.
     expect(scenario.transport.ops.filter((operation) => operation === 'round_conclusion_conclude')).toHaveLength(stepId === 's2' ? 0 : 1);

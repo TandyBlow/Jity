@@ -5,7 +5,7 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { ControllerDriver, initialMemory } from './controller';
-import { buildCorpus, ScenarioModelPort, ScenarioTransport, type DeclaredModelCall, type PreviewSpecimenSpec } from './harness';
+import { buildCorpus, ScenarioModelPort, ScenarioTransport, type DeclaredModelCall, type PreviewSpecimenSpec, type ReadStateSpecimenSpec } from './harness';
 import { instantiate, readTrace } from './trace-runner';
 import { advanceTime, type WallTime } from './t02.scenario';
 import type { ControlState, Id, Json, WorldContext } from './types';
@@ -30,9 +30,18 @@ export function buildT04Scenario(sampleId: string) {
     { afterStepId: 's4', label: 'b-t04-after-begin', build: () => ({ workingState, pointProjection: point, mergedEntityDeltas: {}, settlementGroups: [] }) },
     { afterStepId: 's8', label: 'b-t04-after-stage', build: () => ({ workingState, pointProjection: point, mergedEntityDeltas: {}, settlementGroups: [stage.candidates as Json] }) },
   ];
+  // 叙事组装（§7.1）：claim s11 后目标读＋前驱读。目标态=录制的 s16 提交态；
+  // 点记录逐字取 s10 commit 请求；前驱态=既定近似（final 态＋引导时间）。
+  const commitPoint = point as { previousPointId: Id | null; timeAdvance: Json; entityDeltas: Json };
+  const beforeId = commitPoint.previousPointId as Id;
+  const beforeState = { ...(structuredClone(state) as Record<string, unknown>), time: structuredClone((context.world as unknown as { time: Json }).time) } as unknown as Json;
+  const readSpecimens: ReadStateSpecimenSpec[] = [
+    { label: 'b-read-target-after-s11', afterStepId: 's11', data: { pointId: committed.world.head.pointId, version: 1, stateDigest: committed.world.head.stateDigest, previousPointId: commitPoint.previousPointId, timeAdvance: commitPoint.timeAdvance, entityDeltas: commitPoint.entityDeltas, state } as unknown as Json },
+    { label: 'b-read-before-after-target', afterStepId: 'b-read-target-after-s11', data: { pointId: beforeId, version: 0, stateDigest: context.world.head.stateDigest, previousPointId: null, timeAdvance: null, entityDeltas: {}, state: beforeState } as unknown as Json },
+  ];
   const corpus = buildCorpus(raw, sampleId, previews, ['s1', 's3', 's14', 's15', 's16', 's17'], [
     { previewStepId: 'b-t04-after-stage', expectationStepId: 's16', workingStatePath: '/data/workingState', workingStateDigestPath: '/data/workingStateDigest' },
-  ], [], [{ stepId: 's15', kind: 'continue' }]);
+  ], [], [{ stepId: 's15', kind: 'continue' }], readSpecimens);
   // Independent lifecycle rules, not read back from either recorded
   // conclude response. Enforce at serve time before the driver adopts it.
   for (const [stepId, inputAvailable] of [['s2', true], ['s13', false]] as const) {
@@ -49,8 +58,8 @@ export function buildT04Scenario(sampleId: string) {
     { task: 'action', key: 'person_c', input: { actor: 'person_c', workingState }, output: { kind: 'act', text: requests.get('s5')!.actionText } as Json },
     { task: 'targets', key: 'person_c', input: { sourceId: 'person_c', actionText: requests.get('s5')!.actionText, workingState } as Json, output: { targets: [] } },
     { task: 'results', key: groupId, input: { groupId, workingState }, output: stage.results as Json },
-    { task: 'updates', key: groupId, input: { groupId, mode: 'group', workingState, priorStages: [], appliedDelta: {} }, output: [] },
-    { task: 'narration', key: committed.world.head.pointId, input: { pointId: committed.world.head.pointId, stateDigest: committed.world.head.stateDigest }, output: requests.get('s12')!.text as Json },
+    { task: 'updates', key: groupId, input: { groupId, mode: 'group', workingState }, output: [] },
+    { task: 'narration', key: committed.world.head.pointId, input: { pointId: committed.world.head.pointId, before: beforeState, delta: { timeAdvance: commitPoint.timeAdvance, entityDeltas: commitPoint.entityDeltas }, after: state, perspective: `主角视角（${(state as { protagonistId: Id }).protagonistId}「${(state as { initial: { characters: Record<string, { name: string }> } }).initial.characters[(state as { protagonistId: Id }).protagonistId].name}」）；只表达已结算的世界事实` }, output: requests.get('s12')!.text as Json },
     { task: 'continuation', key: roundId, input: { round: committed.world.round, head: { ...committed.world.head, narrationStatus: 'ready' }, workingState }, output: requests.get('s13')!.conclusion as Json },
   ];
   const memory = initialMemory('req_T04', 'browser');

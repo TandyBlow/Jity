@@ -138,7 +138,8 @@ describe.each([
     expect((updates.input as { workingState: Json }).workingState).toEqual(begin.workingState);
     expect(scenario.driver.getMemory().stagedTimeScan).toBeNull();
     expect(scenario.driver.getMemory().staged).toEqual([]);
-    expect(scenario.transport.ops).toHaveLength(traceName === 'T03' ? 10 : 14);
+    // 组装阶梯：每条叙事链 +2 次读取（目标＋前驱）。
+    expect(scenario.transport.ops).toHaveLength(traceName === 'T03' ? 12 : 16);
     if (traceName === 'T03-collapse') {
       expect(scenario.transport.ops[1]).toBe('allocate_ids');
       expect((scenario.transport.requests[1] as { requestId: string }).requestId).toMatch(/^req_T03-collapse_\d+$/);

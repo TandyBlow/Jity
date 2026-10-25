@@ -135,6 +135,12 @@ function harness(script: ScriptStep[], engineOutputs: string[], renew: { lease?:
       transportLog.push({ op, request, scope });
       if (op === 'lease_renew') return leaseRenew(request) as never;
       if (op === 'narration_claim_renew') return claimRenew(request) as never;
+      if (op === 'get_state') {
+        // 组装阶梯的读取：返回请求点自身记录（夹具世界=单根点，前驱恒 null）。
+        const pointId = (request.point as string) ?? 'root_0';
+        const state = { engineVersion: 'world-engine-v1', schemaVersion: 1, worldId: 'w1', protagonistId: 'person_c', time: { calendar: 'gregorian', dateTime: '2026-01-01T11:59:00', instantOrdinal: 0 }, initial: { worldId: 'w1', engineVersion: 'world-engine-v1', schemaVersion: 1, protagonistId: 'person_c', initialTime: { calendar: 'gregorian', dateTime: '2026-01-01T11:59:00', instantOrdinal: 0 }, locations: {}, items: {}, characters: { person_c: { id: 'person_c', name: 'C', initialPosition: { containerId: 'w1', slotId: null, relativeTo: null }, initialAppearance: '刚到', initialPersonality: '好奇', initialSanity: 10, tasks: {} } } }, locations: {}, items: {}, characters: {} };
+        return { data: { pointId, version: 0, state, stateDigest: 'd0', previousPointId: null, timeAdvance: null, entityDeltas: {} } };
+      }
       if (op === 'lease_acquire') {
         if (!renew.acquire) throw new Error(`unexpected transport call ${op}`);
         return renew.acquire(request) as never;
@@ -410,6 +416,12 @@ describe('WorldSession composition with the real ControllerDriver', () => {
         if (op === 'create_world') return create as never;
         if (op === 'narration_claim') return claim as never;
         if (op === 'narration_submit') return submitRespond ? submitRespond() as never : submit as never;
+        if (op === 'get_state') {
+        // 组装阶梯读取：单根点夹具，前驱恒 null。
+        const pointId = (request.point as string) ?? 'root_0';
+        const st = { engineVersion: 'world-engine-v1', schemaVersion: 1, worldId: 'w1', protagonistId: 'person_c', time: { calendar: 'gregorian', dateTime: '2026-01-01T11:59:00', instantOrdinal: 0 }, initial: { worldId: 'w1', engineVersion: 'world-engine-v1', schemaVersion: 1, protagonistId: 'person_c', initialTime: { calendar: 'gregorian', dateTime: '2026-01-01T11:59:00', instantOrdinal: 0 }, locations: {}, items: {}, characters: { person_c: { id: 'person_c', name: 'C', initialPosition: { containerId: 'w1', slotId: null, relativeTo: null }, initialAppearance: '刚到', initialPersonality: '好奇', initialSanity: 10, tasks: {} } } }, locations: {}, items: {}, characters: {} };
+        return { data: { pointId, version: 0, state: st, stateDigest: 'd0', previousPointId: null, timeAdvance: null, entityDeltas: {} } };
+        }
         if (op === 'lease_renew') return (inject.renewLease ? inject.renewLease() : { data: { leaseToken: 'lease_a', fenceEpoch: 7, expiresAtEpochMilli: 1_000_000 } }) as never;
         if (op === 'lease_acquire') return (inject.acquire ? inject.acquire() : { data: { holderId: 'browser', leaseToken: 'lease_new', fenceEpoch: 8, expiresAtEpochMilli: 1_000_000 } }) as never;
         throw new Error(`unexpected transport call ${op}`);
@@ -428,7 +440,7 @@ describe('WorldSession composition with the real ControllerDriver', () => {
     const h = fixtureSession();
     const status = await h.session.run();
     expect(status.kind).toBe('await'); // root narration ready, waiting for player input
-    expect(h.transportLog.map((entry) => entry.op)).toEqual(['create_world', 'narration_claim', 'narration_submit']);
+    expect(h.transportLog.map((entry) => entry.op)).toEqual(['create_world', 'narration_claim', 'get_state', 'narration_submit']);
     h.clock.advance(90_000); // fixture lease (120k) minus the 30k lead
     await settle();
     const renews = h.transportLog.filter((entry) => entry.op === 'lease_renew');

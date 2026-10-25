@@ -1,0 +1,83 @@
+# 原方案对照修复清单（模型任务输入与职责）
+
+状态：2026-10-25。背景：用户指令——叙事拆分实验推进前，先按原方案（browser-world-state-workflow.md）§7.1/§6.x 修正现有模型任务的输入与职责偏差；验证重点是「**模型收到的信息和程序执行的行为符合原方案**」，不是输出格式。核查对象：`schedule.ts`（任务输入构造）、`controller.ts`（输出消费与 preview）、`runtime/structured-output.ts`（输出 codec）、`runtime/prompts.ts`（提示词契约）。
+
+## 1. 逐任务对照
+
+| # | 任务 | 原方案要求 | 现状（证据） | 偏差 | 修复方向 | 验证方式 |
+|---|---|---|---|---|---|---|
+| 1 | action | §6.1：读最新工作状态、人物任务与个性、**链级 advance 上下文**；主角行动受玩家输入约束；intentStatus 决定输入能否作为待处理命令 | `schedule.ts:515` `input={actor, workingState}`——无输入文本、无 intentStatus | 缺玩家输入与消费状态 | input 补 `advance: {inputText\|null, intentStatus}`（context 已携带） | 输入形状断言（prompt 序列化含输入文本与消费状态）；场景：consumed 后主角不得重新消费输入 |
+| 2 | targets | §6.2 步骤 2：分析已确认行动可能迫使谁反应 | `schedule.ts:635` `input={sourceId, actionText, workingState}` | 符合 | — | — |
+| 3 | reaction | §6.2 步骤 4：目标读取**具体威胁**生成反应行动 | `schedule.ts:645` `input={sourceId, memberId, rollId, workingState}`——缺 source 的冻结行动文本 | 缺威胁文本 | input 补 `sourceActionText`（pendingGroup 冻结工作已有） | 输入形状断言；反应文本应针对威胁 |
+| 4 | results | §7.1：结算前状态、**全组行动、骰点** | `schedule.ts:705` `input={groupId, workingState}`——缺成员行动文本与骰点引用 | 缺全组行动与骰点 | input 补 `members:[{memberId, actionText, rollRefs}]`（闭组冻结工作已有） | 输入形状断言；结果候选应引用全组行动 |
+| 5 | updates | §6.3 依赖表：阶段 n 读**已更新**后的状态；§7.1 更新读取已确认结果；拆分阶段经 preview 应用前序候选后再生成后序候选 | `schedule.ts:709` input 不含 `lastResults`（已确认结果）；`updatesModelCall`（`schedule.ts:665-673`）拆分阶段把 priorStages/appliedDelta 作为数据附带、workingState 保持阶段前原样——前序候选由模型心算应用 | 缺已确认结果；拆分阶段不重算状态 | 每阶段前经 preview 应用前序候选（`controller.ts:221` preview 已有；阶段内未 stage 的候选可并入 preview 请求的 settlementGroups 投影，无需改 schema）；后序阶段输入=更新后 workingState＋已确认结果 | §11.2 强制拆分反例（位置影响外貌）：阶段 2 的输入必须已含新位置 |
+| 6 | narration | §7.1：Sₜ₋₁、Δₜ、Sₜ、主角视角约束 | `controller.ts:276`、`controller.ts:428` `input={pointId, stateDigest}`——模型拿不到任何状态数据 | 缺全部状态输入 | input 补 before/delta/after/perspective（提交响应与 points 数据已有） | 输入形状断言；对 narration-split 冻结样本出忠实度数字 |
+| 7 | pointPlan | §5.1/§6.1：冻结顺序**逐人物**判断（模型逐人返回 act/skip）；点位切分与时间跨度可由模型提议（§5.2） | `schedule.ts:437`＋`prompts.ts:33`：模型预选每点 actorIds；`schedule.ts:483-516` 只处理被预选者；`schedule.ts:543` 起：未被任何点覆盖的人物由**程序直接 record_skip**，从不调用其行动判断 | 逐人跳过判断从模型职责移到了 pointPlan 预选＋程序补录 | 保留点位切分/时间提议；撤人物预选——每点按冻结顺序逐人调用 action 判断（act 或 skip） | 场景：未被预选人物也有 action 调用与 skip/visited 记录 |
+| 8 | targets 输出契约 | §6.2/§9.3：triggerKey 由程序分配；**模型不掷骰、不决定阈值**；骰点规则版本锁定（reaction-fixture-v1；真实基线 reaction-d20-v1 = d20≥11） | `structured-output.ts:144-155` 要求模型输出 `triggerKey`/`ruleVersion`/`target`；`controller.ts:370-372` 直接采纳模型规则建 rules（`controller.ts:55` 有 fixture 兜底） | 模型决定触发键与骰点阈值 | codec 收窄为 `{targetId}`；triggerKey 走 allocate_ids（kind:'trigger'）；rules 用程序锁定版本 | codec 负例：携带 triggerKey 的输出拒绝；controller 不再读模型规则 |
+| 9 | time / continuation | §5.2 / §7.1 | `schedule.ts:578` `input={head, workingState}`；`schedule.ts:420` `input={round, head, workingState}` | 待核：continuation 是否需补主角与状态变化上下文（§7.1：「主角、当前世界和本轮状态变化」） | 随修复批次一并核对 | — |
+| 10 | 预算门槛 | — | `schedule.ts:261`：narration/pointPlan/time 永不被预算或算力阻塞 | 合规 | — | — |
+
+## 2. 修复顺序与边界
+
+- 建议顺序：**8**（codec 收窄，独立可测）→ **6**（narration 输入，叙事实验直接依赖）→ **5**（updates 阶段间 preview 应用）→ **1/3/4**（输入补充）→ **7**（pointPlan 行为，动控制器面最大）。
+- 边界：不改协议表结构与 wire schema；输入补充只使用 context/preview/提交响应已携带的数据；#5 的 preview 阶段投影语义需与 A 侧对齐后动。
+- 明确区分（用户裁定）：**叙事流水线通过 ≠ 行动与结算链通过**；完整游戏链验收等本清单修复完成后再做。
+
+## 3. 数据来源逐字段核对（2026-10-25，落实前置）
+
+按用户要求对「context 已携带输入文本」「提交响应已有全部叙事数据」类表述逐字段核对真实响应形状（`types.ts` 的 RequestMap/DataMap 与 controller 实际持有）。结论：多数可用，**两处缺口**。
+
+| 任务需要 | 真实来源（核对结果） | 结论 |
+|---|---|---|
+| action：玩家输入文本 | `ContextResponse.activeInput: {advanceId, inputId, text} \| null`（`types.ts:56`）——仅活动链携带 | ✓ 现有读取即可 |
+| action：intentStatus | `world.advance.intentStatus`（`types.ts:41`） | ✓ |
+| action/reaction/results：最新工作状态 | `preview_point` 返回 `data.workingState`（`types.ts:126`），controller 已持有 | ✓ |
+| reaction：威胁文本 | 发起者冻结行动（控制器 `current.actionText`，与 targets 同源 `schedule.ts:635`） | ✓ |
+| results：发起者行动 | 同上 | ✓ |
+| results：**成员行动文本** | 控制器侧 `current.rolled` 只存 id/roll 引用（`schedule.ts:620`）**不留 actionText**；服务端 `world_group_work` 与恢复载荷 `FrozenGroup.members[].actionText`（`types.ts:52`）已存 | ⚠ 需从恢复/组工作读取，或控制器留存——实现时定，可能新增读取 |
+| results：骰点 | `create_rolls` 响应 `data.rolls` 含 result/eligible/admitted（`RollOutcome`，`types.ts:66`） | ✓（控制器留存待实现时核对） |
+| updates 阶段间重算 | `preview_point` 的 `settlementGroups` 接受任意候选投影（`types.ts:68`）——阶段内前序候选可并入，无需改 schema | ✓ 机制现成 |
+| narration：Sₜ | `get_state?point=head` 或提交后 workingState | ✓ |
+| narration：Sₜ₋₁ | `get_state?point=previousPointId`（get_state 支持任意点，`types.ts:96`） | ✓ 现有读取即可 |
+| narration：**Δₜ** | **无现有读取**：`list_points` 只返回摘要不含 entityDeltas（`types.ts:129`）；按状态差分重建 Δ 有损（supersedes 语义不可恢复）。控制器在 claim 时可从 `memory.commitPayload.point.entityDeltas` 组装，但刷新恢复路径仍需读取 | ⚠ **需要新增读取**（扩展 list_points 或 narration-jobs 附带 point 明细）——与 A 侧对齐后定 |
+| narration：视角约束 | `protagonistId` 在状态中 ✓；约束语义归提示词层 | ✓ |
+
+落实纪律：修复只允许「补读取/补传递」，**不能只给提示词增加字段名**；每项修复必须带「输入形状断言」（prompt 序列化后的实际内容含所需数据）与行为级场景测试（§1 验证方式列）。
+
+## 4. 批次启动（2026-10-25 用户裁决）
+
+决定：启动本清单的调用链对齐修复；**暂不重跑全量 B3**；产品主线继续「无 LLM、无 WebGPU」，Qwen 诊断仅作旧路径参考。
+
+诊断归因边界（按用户复核收窄）：P3 同时开启 schema 与缓存（cached 707/708 token），133s→10.9s **不能分别归功于两者**，也不代表真实游戏变化输入能稳定命中同比例缓存；五次长跑原文已丢失，其耗时组成是短诊断基础上的**推测**而非逐次证实；P2/P3 对 person_a 的提示词输出主角行动——**格式改善 ≠ 语义正确**。不作任何全量时长承诺。
+
+适配器修复（聊天模板、关思考、json_schema、maxTokens 按任务收、cache_prompt、计时元数据保留）列为**独立修复项**，不挤占本清单主线。
+
+实施方法：
+
+- 每项先按 §3 核对真实数据来源，再改接口与行为；禁止只给提示词加字段名。
+- **固定模型输出验证**：沿用 T01–T08 场景机制——协议、世界状态、恢复断言**保留**；与原方案冲突的**模型输入、调用顺序、输出声明**同步修正，逐处记录修改依据。现有测试声明不构成保留偏差的理由。
+- 前两项改动面：
+  - **#8 codec 收窄**：`structured-output.ts:144-155` targets 输出收窄为 `{targetId}`；`schedule.ts:603/610` 不再读模型的 triggerKey/规则；`controller.ts:54-55,370-372` 删除「采纳模型规则」路径——triggerKey 改运行时 `allocate_ids`（kind:'trigger'，按 (sourceId,targetId) 槽位），骰点规则用程序锁定版本（reaction-fixture-v1；真实基线 d20≥11）。注意：分配计划目前是场景预声明的，而目标集由模型现场决定——需要新增**运行时分配流**（每源一次 allocate_ids）。
+  - **#6 narration 输入**：`controller.ts:276/428` 组装 `{before, delta, after, perspective}`——after=提交后 workingState、Δ=commitPayload.point.entityDeltas（非刷新路径）、Sₜ₋₁=`get_state?point=previousPointId`（新增只读调用）；刷新路径的 Δ 读取缺口（list_points 扩展或等价只读查询）与 A 侧对齐后补。`prompts.ts` 叙事契约改序列化四件套；B3 narration 样本与场景声明同步修正并记录依据。
+
+## 5. #8 完成记录与 #6 实施方案（2026-10-25）
+
+**#8 已完成（390/390 world-engine 测试绿、tsc 干净）**，按用户三条守卫落实：
+
+- **目标集保全**：模型输出在 `consumeModelOutput` 捕获进新记忆字段 `lastTargets`（`controller.ts`），不走 `lastModel`——allocate_ids 这一跳成功后 lastModel 被清空（`step()` 的统一行为），目标集不丢、不重采样。
+- **分配与重试稳定绑定**：槽位键 **`trigger:{groupId}:{sourceId}:{targetId}`**（按用户复核修正：触发是 per-threat 身份、判定键含 sourceId——不同来源指向同一目标各占各槽，互不复用不覆盖；首版 `trigger:{groupId}:{targetId}` 会让 C 的分配请求重发并覆盖 A 已确认的 D 键，已由回归测试钉死）；allocationKey `trigger:{groupId}:{sourceId}`——超时重试同请求幂等返回同键；**只请求本来源确实缺失的槽位**（混合键集：已有 c:d 时不重发、他人 a:d 不进请求）；已确认的键留在 `memory.ids`，extend_group 成功才清 `lastTargets`；空目标集零分配直接 extend。数据库约束更正：服务端主键是 **`(world_id, allocation_key, slot_key)`**，不是此前误写的 `(world_id, allocation_key, kind)`。
+- **程序掌握规则**：codec 收窄为 `{targets:[{targetId}]}`（多带 triggerKey/ruleVersion/target 即拒，负例入测）；骰点规则=程序常量 `PROGRAM_ROLL_RULE`（fixture-v1/11，与录制值一致，d20 基线换常量即可）；场景侧 T02/T03 不再从录制 rolls 反推进模型输出，改用 `memory.ids` 种子（含来源段）绑定录制键值。
+- **组合键编码（用户复核碰撞与超长后重做）**：拼接式槽位键有两个硬伤——`来源 a:b+目标 c` 与 `来源 a+目标 b:c` 折叠出同一个键（均为合法 ID）、三个 50 字符合法 ID 拼接 160 字符超 wire 上限 128。改为 `foldIdentity`：各段**长度前缀折叠**（消除边界歧义的前像）＋ SHA-256 截断 128 位，`triggerAllocationKey`/`triggerSlotKey` 键文本 ≤40 字符；ASCII 限定（world-canonical-v1 的 ID 纪律），非 ASCII 抛错。边界回归：标准向量（空串/abc）、折叠单射性（a:b|c ≠ a|b:c）、128 字符上限（50 字符 ID×3）、跨调用稳定（重试幂等绑同键）。T02/T03 种子与控制器夹具全部改经同一构造器，录制键值不变、语料零改动。
+- 关键实施发现：`writeBind` 返回 CheckpointRequest 级绑定（含 expected* 三字段），`AllocateIdsRequest` 不接受——运行时分配请求必须显式取 worldId/leaseToken/fenceEpoch 三项，不能展开 bind。
+- 验证：调度器单测（分配决策＋混合过滤＋空集零分配＋组合键四项边界）＋codec 负例＋**真实控制器回归**（`allocate_ids → extend_group`：超时后同字节重试、per-source 槽位、他人历史键无覆盖、extend 用程序键）＋T02/T03 全链（种子键=构造器绑定录制值，语料零改动）＋B3 harness 输出形状更新。
+
+**#6 实施方案（2026-10-25 二次修订，按用户四点复核；待执行）**：
+
+- **原始 Δ 读取，撤回重建兜底**：叙事的 Δ 一律来自**该点已保存的原始 Δ 的只读读取**（`list_points` 扩展或专用的点明细读取——§9.5 本就要求回放时「读取 Δₜ」，补读取能力即可，不加行动记录层）。正常提交路径可把 commit 时捕获的原始 Δ 当**缓存优化**先用；**恢复/冷启动路径必须走读取**，两条路径数据源相同（同一份已保存 Δ）。语义等价重建方案撤回——等价性未证明，且会让两条路径使用不同来源。
+- **刷新就是内存丢失路径**：必须有一条从**全新控制器**开始的验证——不携带旧 commitPayload/capturedDelta/叙事输入，仅凭服务端读取取齐同一点的前状态、原始 Δ、后状态。
+- **后状态读取显式用目标 pointId**：`get_state?point=<待叙事点>`，不得把「当前头」当作待生成叙事的点（历史重生成/后继点场景下两者不同）。
+- **测试期望独立于组装实现**：`assembleNarrationInput` 可复用于生产与场景声明，但**测试期望不得由同一函数产出**——期望用独立手写的字面量对象，防止生产与测试共同遗漏字段时全绿。
+- **标本保真度分级**：「finalState＋替换时间」近似标本只用于验证**读取路由**；至少补一条使用独立确定的真实前状态、原始 Δ、后状态的对照（正常提交＋冷启动各一），验证输入忠实性。
+- 其余不变：记忆形状 `narration={pointId, previousPointId, capturedDelta(缓存), claim, input}`；组装阶梯改为 after 读（按目标 pointId）→ before 读（previousPointId，经 list_points 兜底推导）→ **原始 Δ 读** → `assembleNarrationInput` 补 perspective；harness `ReadStateSpecimen`；同步面=B3 两样本+T01 两叙事+T02–T08 各一（T06 无）。
+- **原始 Δ 读取的落地形状（2026-10-25 用户确认三字段扩展，契约同步已完成）**：`GetStateData` 增加必填 `previousPointId: Id|null`、`timeAdvance: TimeAdvance|null`、`entityDeltas: dict[Id,EntityDelta]`（该点自身已保存记录，与 data.pointId 对应；根点=null/null/{}；**无默认值——缺字段=读取能力不完整，客户端必须停止叙事生成，不得当空增量**）。同步面全部落地：Pydantic 定义（requests.py）→ 重导出 schema/manifest → **11 条轨迹 get_state 步骤回填三字段**（提交点读=逐字复制最近前置 commit 的 point 记录含模板变量；根读=null/null/{}；sync_get_state_traces.mjs 一次性工具留档）→ 轨迹 contractDigest 重钉（新摘要 abda4555…）→ 契约夹具 get_state/success.json（历史读：p1≠头 root_0，三字段与 p1 对应）→ TS 类型（types.ts 必填三字段）→ 前端契约钉 contract-digest.json。验证：后端 923/923（含 export 16、traces 16）、前端 396/396＋tsc 净。
+- **待做：控制器与场景接线**（下一批次）：①调度器组装阶梯——after 读（get_state 按目标 pointId）→ 补 previousPointId/timeAdvance/entityDeltas（缺任一→stop 原因 `narration_read_incomplete`）→ before 读（get_state 按 previousPointId；根点 before=null 不读）→ 发模型调用；commit 捕获 Δ 仅作缓存优化，恢复路径一律走读取。②adoptSuccess 路由 get_state.data 进 narration.input。③harness ReadStateSpecimen（锚点后插 get_state：served 取锚点后快照、data 由场景供给）。④六场景叙事声明改全量输入（**独立手写字面量，不经 assembleNarrationInput**）＋B3 两叙事样本＋prompts.ts 叙事契约。⑤验证：正常提交与全新控制器冷启动两条路径、独立期望；忠诚性对照（真实前后状态＋原始 Δ）。

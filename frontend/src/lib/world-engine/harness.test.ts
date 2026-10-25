@@ -40,11 +40,11 @@ describe('T01 fixed-response controller acceptance', () => {
     // Controller segment order: shared steps s1–s20 with one declared B
     // preview after begin; no command/probe claims for T01.
     expect(scenario.transport.ops).toEqual([
-      'create_world', 'narration_claim', 'narration_submit', 'allocate_ids', 'checkpoint_start_advance',
+      'create_world', 'narration_claim', 'get_state', 'narration_submit', 'allocate_ids', 'checkpoint_start_advance',
       'checkpoint_begin_point', 'preview_point', 'checkpoint_discover_group', 'checkpoint_extend_group',
       'checkpoint_close_group', 'checkpoint_stage_unit',
       ...Array.from({ length: 5 }, () => 'checkpoint_record_skip' as const),
-      'preview_point', 'checkpoint_seal_point', 'commit_point', 'narration_claim', 'narration_submit',
+      'preview_point', 'checkpoint_seal_point', 'commit_point', 'narration_claim', 'get_state', 'get_state', 'narration_submit',
       'get_state', 'list_points', 'narration_get',
     ]);
 

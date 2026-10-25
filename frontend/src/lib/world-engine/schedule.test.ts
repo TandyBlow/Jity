@@ -1,7 +1,7 @@
 /** Handwritten state/memory snapshots for the B1 pure scheduler; responses
  * and trace-corpus shapes follow the shared contract specimens (T01–T09). */
 import { describe, expect, test } from 'vitest';
-import { checkUpdatesStages, errorCatalog, errorReaction, scheduleNext, workingStateKey } from './schedule';
+import { assembleNarrationInput, checkUpdatesStages, errorCatalog, errorReaction, foldIdentity, initialNarrationAssembly, scheduleNext, sha256Hex, triggerAllocationKey, triggerSlotKey, workingStateKey } from './schedule';
 import type { ControllerMemory, Decision, PlannedPoint, ScheduleView, SourceAnalysis, StagedUnit, UpdatesCall, UpdatesStage } from './schedule';
 import { validateRequest } from './protocol';
 import type { ClientAction, ControlState, ErrorCode, ErrorResponse, Json, PointWork, TimeAdvance, WorldContext, WorldState } from './types';
@@ -50,8 +50,8 @@ const pointWork = (over: Partial<PointWork> = {}): PointWork => ({
 const memory = (over: Partial<ControllerMemory> = {}): ControllerMemory => ({
   requestId: 'rq1', leaseToken: 'lease1', holderId: 'browser', ids: {}, allocPlan: null, roundAllocations: {}, allocatedKeys: [], playerInput: null,
   plan: null, planIndex: 0, prepareSuccessor: false, localPause: false, budget: { used: 0, max: null },
-  narration: null, workingState: null, sources: [], staged: [], stagedTimeScan: null, groupActors: [], lastModel: null, lastResults: null,
-  updatesStages: [], updatesCalls: [],
+  narration: null, workingState: null, sources: [], staged: [], stagedTimeScan: null, groupActors: [], lastModel: null, lastTargets: null, lastResults: null,
+  updatesStages: [], updatesCalls: [], updatesApplied: 0, updatesPreviewSkipped: 0, updatesPendingRefs: [],
   continuation: null, successorTime: null, commitPayload: null, initialTemplate: null, ...over,
 });
 
@@ -127,7 +127,11 @@ describe('advance pipeline (T01 spine)', () => {
     const w0 = world({ head: { pointId: 'root', version: 0, stateDigest: 'd0', narrationStatus: 'pending' } });
     const m = memory({ playerInput: { text: '探索走廊', order: ORDER }, allocPlan: { allocationKey: 'chain_slots', slots: [{ slotKey: 'advance', kind: 'advance', scope: null }, { slotKey: 'input', kind: 'input', scope: null }, { slotKey: 'round', kind: 'round', scope: null }] } });
     expectTransport(next(w0, c0, null, m), 'narration_claim', 'root');
-    m.narration = { pointId: 'root', claim: { claimToken: 'ct0', generation: 1, issuedAtEpochMilli: 5 }, input: { point: 'root' } };
+    m.narration = { pointId: 'root', claim: { claimToken: 'ct0', generation: 1, issuedAtEpochMilli: 5 }, input: initialNarrationAssembly('root') };
+    // 组装阶梯：目标读（root 即目标，previousPointId=null 免 before 读）
+    expectTransport(next(w0, c0, null, m), 'get_state', 'root');
+    m.narration!.input.after = workingState() as never;
+    m.narration!.input.delta = { timeAdvance: null, entityDeltas: {} };
     expect(next(w0, c0, null, m)).toMatchObject({ kind: 'model', task: 'narration', key: 'root' });
     m.lastModel = { task: 'narration', key: 'root', output: '走廊的霜气未散。' };
     expectTransport(next(w0, c0, null, m), 'narration_submit', 'root');
@@ -172,22 +176,61 @@ describe('normal point: group cycle (T01/T02 shapes)', () => {
     const decision = expectTransport(next(w, c, wk, m), 'checkpoint_record_skip') as Extract<Decision, { kind: 'transport' }>;
     expect((decision.request as unknown as { slotActorId: string }).slotActorId).toBe('person_a');
   });
-  test('extends the declared target set in model order, rolls in ASCII order', () => {
-    const targets = [
-      { targetId: 'person_d', triggerKey: 'tk_d', ruleVersion: 'reaction-fixture-v1' as const, target: 11 },
-      { targetId: 'person_a', triggerKey: 'tk_a', ruleVersion: 'reaction-fixture-v1' as const, target: 11 },
-    ];
+  test('missing trigger keys allocate at runtime before extending (program-owned keys)', () => {
     const pending: SourceAnalysis = { sourceId: 'person_a', actionText: '行动。', targetsExtended: false, pendingTargets: [], rolled: [] };
     const { w, c, wk, m } = spine({
       work: { phase: 'build_group', pendingGroup: { groupId: 'g1', sourceId: 'person_a', memberIds: ['person_a'], targetIds: [], frontierIds: [], closed: false } },
-      memory: { workingState: { key: workingStateKey(pointWork()), state: workingState() }, sources: [pending], lastModel: { task: 'targets', key: 'person_a', output: { targets } } },
+      memory: { workingState: { key: workingStateKey(pointWork()), state: workingState() }, sources: [pending], lastTargets: { sourceId: 'person_a', targets: ['person_d', 'person_a', 'person_d'] } },
     });
+    // 键未分配：先走运行时 allocate_ids（模型输出不携带键，目标集不重采样；
+    // allocationKey 稳定 → 重试幂等；重复目标去重）。
+    const allocate = expectTransport(next(w, c, wk, m), 'allocate_ids') as Extract<Decision, { kind: 'transport' }>;
+    expect(allocate.request as unknown as Record<string, unknown>).toMatchObject({
+      allocationKey: triggerAllocationKey('g1', 'person_a'),
+      slots: [
+        { slotKey: triggerSlotKey('g1', 'person_a', 'person_d'), kind: 'trigger' },
+        { slotKey: triggerSlotKey('g1', 'person_a', 'person_a'), kind: 'trigger' },
+      ],
+    });
+    m.ids[triggerSlotKey('g1', 'person_a', 'person_d')] = 'tk_d';
+    m.ids[triggerSlotKey('g1', 'person_a', 'person_a')] = 'tk_a';
+    // 键齐：extend_group 用程序解析的键；create_rolls 带程序锁定规则。
     const extend = expectTransport(next(w, c, wk, m), 'checkpoint_extend_group') as Extract<Decision, { kind: 'transport' }>;
     expect((extend.request as unknown as { targets: unknown[] }).targets).toEqual([{ targetId: 'person_d', triggerKey: 'tk_d' }, { targetId: 'person_a', triggerKey: 'tk_a' }]);
     pending.targetsExtended = true;
-    pending.pendingTargets = [...targets].sort((a, b) => (a.targetId < b.targetId ? -1 : 1)).map((t) => ({ targetId: t.targetId, triggerKey: t.triggerKey, rule: { ruleVersion: t.ruleVersion, target: t.target } }));
+    pending.pendingTargets = [{ targetId: 'person_d', triggerKey: 'tk_d' }, { targetId: 'person_a', triggerKey: 'tk_a' }]
+      .sort((a, b) => (a.targetId < b.targetId ? -1 : 1))
+      .map((t) => ({ targetId: t.targetId, triggerKey: t.triggerKey, rule: { ruleVersion: 'reaction-fixture-v1' as const, target: 11 } }));
     const roll = expectTransport(next(w, c, wk, m), 'create_rolls') as Extract<Decision, { kind: 'transport' }>;
     expect((roll.request as unknown as { rolls: { targetId: string; ruleVersion: string; target: number }[] }).rolls).toEqual([{ advanceId: 'adv1', roundId: 'r1', groupId: 'g1', sourceId: 'person_a', targetId: 'person_a', triggerKey: 'tk_a', ruleVersion: 'reaction-fixture-v1', target: 11 }]);
+  });
+  test('a mixed key set requests only this source\u2019s missing slots (no reuse, no clobber)', () => {
+    const pending: SourceAnalysis = { sourceId: 'person_c', actionText: '行动。', targetsExtended: false, pendingTargets: [], rolled: [] };
+    const { w, c, wk, m } = spine({
+      work: { phase: 'build_group', pendingGroup: { groupId: 'g1', sourceId: 'person_c', memberIds: ['person_c'], targetIds: [], frontierIds: [], closed: false } },
+      // 他人来源 person_a 早已为 person_d 分配过键（方向：person_a→person_d）：
+      // 不得复用、不得覆盖、不得随本次请求重发——只缺本来源自己的 person_e 槽位。
+      memory: {
+        workingState: { key: workingStateKey(pointWork()), state: workingState() }, sources: [pending],
+        lastTargets: { sourceId: 'person_c', targets: ['person_d', 'person_e'] },
+        ids: { [triggerSlotKey('g1', 'person_c', 'person_d')]: 'tk_c_d', [triggerSlotKey('g1', 'person_a', 'person_d')]: 'tk_a_d' },
+      },
+    });
+    const allocate = expectTransport(next(w, c, wk, m), 'allocate_ids') as Extract<Decision, { kind: 'transport' }>;
+    expect(allocate.request as unknown as Record<string, unknown>).toMatchObject({
+      allocationKey: triggerAllocationKey('g1', 'person_c'),
+      slots: [{ slotKey: triggerSlotKey('g1', 'person_c', 'person_e'), kind: 'trigger' }],
+    });
+    expect(m.ids[triggerSlotKey('g1', 'person_a', 'person_d')]).toBe('tk_a_d');
+  });
+  test('an empty target set extends without allocating', () => {
+    const pending: SourceAnalysis = { sourceId: 'person_a', actionText: '行动。', targetsExtended: false, pendingTargets: [], rolled: [] };
+    const { w, c, wk, m } = spine({
+      work: { phase: 'build_group', pendingGroup: { groupId: 'g1', sourceId: 'person_a', memberIds: ['person_a'], targetIds: [], frontierIds: [], closed: false } },
+      memory: { workingState: { key: workingStateKey(pointWork()), state: workingState() }, sources: [pending], lastTargets: { sourceId: 'person_a', targets: [] } },
+    });
+    const extend = expectTransport(next(w, c, wk, m), 'checkpoint_extend_group') as Extract<Decision, { kind: 'transport' }>;
+    expect((extend.request as unknown as { targets: unknown[] }).targets).toEqual([]);
   });
   test('reaction runs before the admitted extend and carries roll refs (T02-el s5–s6)', () => {
     const pending: SourceAnalysis = {
@@ -317,6 +360,30 @@ describe('normal point: group cycle (T01/T02 shapes)', () => {
   });
 });
 
+describe('composite trigger identity keys (#8: unambiguous + wire-bounded)', () => {
+  test('sha256Hex matches the standard vectors', () => {
+    expect(sha256Hex('')).toBe('e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855');
+    expect(sha256Hex('abc')).toBe('ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad');
+  });
+  test('folding is injective across segment boundaries (a:b|c vs a|b:c)', () => {
+    expect(triggerSlotKey('g', 'a:b', 'c')).not.toBe(triggerSlotKey('g', 'a', 'b:c'));
+    expect(triggerAllocationKey('g', 'a:b')).not.toBe(triggerAllocationKey('g', 'a'));
+    expect(foldIdentity('a:b', 'c')).not.toBe(foldIdentity('a', 'b:c'));
+  });
+  test('keys stay within the 128-char wire bound for 50-char legal IDs', () => {
+    const long = 'k'.repeat(50);
+    const slotKey = triggerSlotKey(long, long, long);
+    const allocationKey = triggerAllocationKey(long, long);
+    expect(slotKey.length).toBeLessThanOrEqual(128);
+    expect(allocationKey.length).toBeLessThanOrEqual(128);
+    expect(slotKey).toMatch(/^trigger:[0-9a-f]{32}$/);
+  });
+  test('folding is stable across calls (idempotent retries bind to the same key)', () => {
+    expect(triggerSlotKey('g1', 'person_c', 'person_d')).toBe(triggerSlotKey('g1', 'person_c', 'person_d'));
+    expect(triggerAllocationKey('g1', 'person_c')).toBe(triggerAllocationKey('g1', 'person_c'));
+  });
+});
+
 describe('updates split (1–6 per-stage calls)', () => {
   const settling = (stages: UpdatesStage[] = ['tasks', 'sanity']) => ({
     w: world({
@@ -333,21 +400,22 @@ describe('updates split (1–6 per-stage calls)', () => {
       updatesStages: stages,
     }),
   });
-  test('emits keyed per-stage calls that carry prior stages and their applied merge', () => {
+  test('emits keyed per-stage calls; later stages read only after the between-stage preview', () => {
     const { w, c, wk, m } = settling();
     expect(next(w, c, wk, m)).toMatchObject({
       kind: 'model', task: 'updates', key: 'g1#tasks',
-      input: { stage: 'tasks', appliedDelta: {}, priorStages: [] },
+      input: { stage: 'tasks' },
     });
     const tasksCall: UpdatesCall = { stage: 'tasks', changes: { person_a: { tasksAchieved: ['t1'] } } };
     m.updatesCalls.push(tasksCall);
+    // §6.3 阶梯：前序候选未应用 → 先经 preview 应用，再发后序阶段调用；
+    // 输入不再携带 priorStages/appliedDelta。
+    expect(next(w, c, wk, m)).toEqual({ kind: 'read_working_state' });
+    m.updatesApplied = 1;
+    m.workingState = { key: workingStateKey(wk), state: workingState() };
     expect(next(w, c, wk, m)).toMatchObject({
       kind: 'model', task: 'updates', key: 'g1#sanity',
-      input: {
-        stage: 'sanity',
-        priorStages: [tasksCall],
-        appliedDelta: { person_a: { entityId: 'person_a', tasksAchieved: ['t1'] } },
-      },
+      input: { stage: 'sanity' },
     });
     m.updatesCalls.push({ stage: 'sanity', changes: { person_a: { sanitySet: 42 } } });
     const stage = expectTransport(next(w, c, wk, m), 'checkpoint_stage_unit') as Extract<Decision, { kind: 'transport' }>;
@@ -356,12 +424,15 @@ describe('updates split (1–6 per-stage calls)', () => {
   });
   test('T03-collapse split: a mid-sequence reference may await later production', () => {
     const { w, c, wk, m } = settling(['tasks', 'subtasks']);
-    expect(next(w, c, wk, m)).toMatchObject({ kind: 'model', task: 'updates', key: 'g1#tasks', input: { stage: 'tasks', appliedDelta: {} } });
+    expect(next(w, c, wk, m)).toMatchObject({ kind: 'model', task: 'updates', key: 'g1#tasks', input: { stage: 'tasks' } });
     m.updatesCalls.push({ stage: 'tasks', changes: { person_a: { tasksAchieved: ['v13'] } } });
     // v13 is produced only by the later subtasks stage — no early dangling stop.
+    expect(next(w, c, wk, m)).toEqual({ kind: 'read_working_state' });
+    m.updatesApplied = 1;
+    m.workingState = { key: workingStateKey(wk), state: workingState() };
     expect(next(w, c, wk, m)).toMatchObject({
       kind: 'model', task: 'updates', key: 'g1#subtasks',
-      input: { appliedDelta: { person_a: { entityId: 'person_a', tasksAchieved: ['v13'] } } },
+      input: { stage: 'subtasks' },
     });
     m.updatesCalls.push({ stage: 'subtasks', changes: { person_a: { subtasksAdded: [{ id: 'v13', ownerId: 'person_a', parentTaskId: null, goal: '确认门边', status: 'pending' }] } } });
     const stage = expectTransport(next(w, c, wk, m), 'checkpoint_stage_unit') as Extract<Decision, { kind: 'transport' }>;
@@ -389,9 +460,16 @@ describe('narration pipeline', () => {
   });
   test('claims head narration, generates, then submits ready', () => {
     const { w, c } = narrating();
-    const m = memory({ narration: { pointId: 'p1', claim: null, input: { point: 'p1' } } });
+    const m = memory({ narration: { pointId: 'p1', claim: null, input: initialNarrationAssembly('p1') } });
     expectTransport(next(w, c, null, m), 'narration_claim', 'p1');
     m.narration!.claim = { claimToken: 'ct1', generation: 1, issuedAtEpochMilli: 123 };
+    // 阶梯：目标读 → previousPointId 非空 → 前驱读 → 模型
+    expectTransport(next(w, c, null, m), 'get_state', 'p1');
+    m.narration!.input.after = workingState() as never;
+    m.narration!.input.delta = { timeAdvance: ta(2), entityDeltas: {} };
+    m.narration!.input.previousPointId = 'root';
+    expectTransport(next(w, c, null, m), 'get_state', 'root');
+    m.narration!.input.before = workingState() as never;
     expect(next(w, c, null, m)).toMatchObject({ kind: 'model', task: 'narration', key: 'p1' });
     m.lastModel = { task: 'narration', key: 'p1', output: '走廊的霜气未散。' };
     const submit = expectTransport(next(w, c, null, m), 'narration_submit', 'p1') as Extract<Decision, { kind: 'transport' }>;
@@ -399,7 +477,7 @@ describe('narration pipeline', () => {
   });
   test('narration runs through an external pause (T05 s7/s8)', () => {
     const { w, c } = narrating({ paused: true });
-    const m = memory({ narration: { pointId: 'p1', claim: { claimToken: 'ct1', generation: 1, issuedAtEpochMilli: 123 }, input: { point: 'p1' } } });
+    const m = memory({ narration: { pointId: 'p1', claim: { claimToken: 'ct1', generation: 1, issuedAtEpochMilli: 123 }, input: { pointId: 'p1', after: workingState() as never, delta: { timeAdvance: null, entityDeltas: {} }, previousPointId: null, before: null } } });
     expect(next(w, c, null, m)).toMatchObject({ kind: 'model', task: 'narration', key: 'p1' });
     m.lastModel = { task: 'narration', key: 'p1', output: '暂停中的叙事照常提交。' };
     const submit = expectTransport(next(w, c, null, m), 'narration_submit', 'p1') as Extract<Decision, { kind: 'transport' }>;
@@ -407,8 +485,21 @@ describe('narration pipeline', () => {
   });
   test('exhausted budget does not deadlock narration', () => {
     const { w, c } = narrating();
-    const m = memory({ narration: { pointId: 'p1', claim: { claimToken: 'ct1', generation: 1, issuedAtEpochMilli: 123 }, input: { point: 'p1' } }, budget: { used: 9, max: 9 } });
+    const m = memory({ narration: { pointId: 'p1', claim: { claimToken: 'ct1', generation: 1, issuedAtEpochMilli: 123 }, input: { pointId: 'p1', after: workingState() as never, delta: { timeAdvance: null, entityDeltas: {} }, previousPointId: null, before: null } }, budget: { used: 9, max: 9 } });
     expect(next(w, c, null, m)).toMatchObject({ kind: 'model', task: 'narration' });
+  });
+  test('narration assembly ladder: incomplete flag and point mismatch both stop', () => {
+    const w = world({ head: { pointId: 'p1', version: 1, stateDigest: 'd1', narrationStatus: 'pending' } });
+    const c = control({ revision: 13 });
+    // readIncomplete：缺字段/点不匹配 → 停止，不默认空增量、不反复读取。
+    const m = memory({ narration: { pointId: 'p1', claim: { claimToken: 'ct1', generation: 1, issuedAtEpochMilli: 1 }, input: { pointId: 'p1', after: null, delta: null, previousPointId: null, before: null, readIncomplete: true } } });
+    expect(next(w, c, null, m)).toEqual({ kind: 'stop', reason: 'narration_read_incomplete' });
+    // 组装完整 + previousPointId=null（root 前驱）→ 直接发模型。
+    m.narration!.input = { pointId: 'p1', after: workingState() as never, delta: { timeAdvance: ta(2), entityDeltas: {} }, previousPointId: null, before: null };
+    const decision = next(w, c, null, m);
+    expect(decision).toMatchObject({ kind: 'model', task: 'narration', key: 'p1' });
+    // 组装函数输出形状（独立于场景字面量的实现侧自检）。
+    expect(assembleNarrationInput(m.narration!.input)).toMatchObject({ pointId: 'p1', before: null });
   });
   test('pending narration without a lease acquires the lease instead of throwing', () => {
     const w = world({ head: { pointId: 'p1', version: 1, stateDigest: 'd1', narrationStatus: 'pending' }, lease: null });

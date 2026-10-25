@@ -25,7 +25,7 @@ function workingCharacters(input: Json): string[] {
  * must never read a shape-teaching it may obey against the codec. */
 const JSON_CONTRACTS: Record<Exclude<ModelTask, 'narration' | 'reaction' | 'updates'>, string> = {
   action: '决定主角是否行动。只输出 JSON：{"kind":"act","text":"一句话行动描述"} 或 {"kind":"skip"}',
-  targets: '列出这一行动会牵连的其他在场角色。只输出 JSON：{"targets":[{"targetId":"角色id","triggerKey":"触发键","ruleVersion":"reaction-d20-v1","target":11}]}；没有目标则 {"targets":[]}',
+  targets: '列出这一行动会牵连的其他在场角色。只输出 JSON：{"targets":[{"targetId":"角色id"}]}；没有目标则 {"targets":[]}。不要输出触发键或骰点参数',
   results: '结算本组每个成员行动的结果。只输出 JSON 对象：{"角色id":"结果描述",...}，至少一条',
   continuation: '判断回合是否结束。只输出 JSON：继续 {"kind":"continue","closedBy":"model","cancelReason":null,"candidateCharacterIds":["角色id"],"nextRoundId":"新回合id"} 或交还 {"kind":"handback","closedBy":"model","cancelReason":null}',
   initial: '根据设定构建世界初始状态。只输出 JSON，字段恰为 engineVersion/schemaVersion/protagonistId/initialTime/locations/items/characters',

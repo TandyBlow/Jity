@@ -43,12 +43,12 @@ describe('decodeTaskOutput — JSON tasks', () => {
     rejects('action', '{"kind":"skip","text":"多余"}', /only kind/);
   });
 
-  test('targets accepts an empty or well-formed list and rejects drift', () => {
+  test('targets accepts an empty or id-only list and rejects drift', () => {
     expect(decodeTaskOutput('targets', '{"targets":[]}')).toEqual({ targets: [] });
-    const declared = { targets: [{ targetId: 'person_b', triggerKey: 'group:person_b', ruleVersion: 'reaction-d20-v1', target: 11 }] };
-    expect(decodeTaskOutput('targets', JSON.stringify(declared))).toEqual(declared);
-    rejects('targets', '{"targets":[{"targetId":"x","triggerKey":"y","ruleVersion":"homebrew","target":11}]}', /ruleVersion/);
-    rejects('targets', '{"targets":[{"targetId":"x","triggerKey":"y","ruleVersion":"reaction-d20-v1","target":11.5}]}', /integer/);
+    expect(decodeTaskOutput('targets', '{"targets":[{"targetId":"person_b"}]}')).toEqual({ targets: [{ targetId: 'person_b' }] });
+    // 模型只声明目标：触发键与骰点规则是程序身份，出现在输出里即拒绝。
+    rejects('targets', '{"targets":[{"targetId":"x","triggerKey":"y"}]}', /target keys/);
+    rejects('targets', '{"targets":[{"targetId":"x","ruleVersion":"reaction-d20-v1"}]}', /target keys/);
   });
 
   test('results is a non-empty-string record', () => {

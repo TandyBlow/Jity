@@ -126,7 +126,13 @@ function collectVariablePositions(template: unknown, value: unknown, pointer: st
  * holds a served field to an externally precomputed digest. Retry
  * declarations are equally explicit — a recorded requestId reuse is never
  * inferred to be a retry. */
-export function buildCorpus(rawTrace: unknown, sampleId: string, specimens: PreviewSpecimenSpec[], inspectStepIds: string[], previewAlignments: PreviewAlignment[] = [], digestPins: IndependentDigestPin[] = [], retries: RetryDeclaration[] = []): Corpus {
+/** B-authored get_state read inserted into the controller flow at a declared
+ * position (after a trace step OR another read specimen). `data` is the FULL
+ * GetStateData the specimen serves — recorded material or a marked B
+ * construction; the envelope mirrors the served fixture shape exactly. */
+export interface ReadStateSpecimenSpec { label: string; afterStepId: string; data: Json }
+
+export function buildCorpus(rawTrace: unknown, sampleId: string, specimens: PreviewSpecimenSpec[], inspectStepIds: string[], previewAlignments: PreviewAlignment[] = [], digestPins: IndependentDigestPin[] = [], retries: RetryDeclaration[] = [], readSpecimens: ReadStateSpecimenSpec[] = []): Corpus {
   const trace = readTrace(rawTrace);
   const sample = trace.samples.find((s) => s.id === sampleId);
   if (!sample) throw new ProtocolError(`Unknown sample ${sampleId}`);
@@ -219,6 +225,36 @@ export function buildCorpus(rawTrace: unknown, sampleId: string, specimens: Prev
         } as unknown as Json,
         responseKind: 'success', placeholderDigests: true, captures: [], digestChain: [],
       });
+    }
+    // Read specimens chain on trace steps or on previously inserted reads:
+    // drain every spec whose anchor is the step just pushed, in declaration
+    // order, so a target read can be followed by its predecessor read.
+    let lastPushedId: string = step.id;
+    for (let drain = true; drain;) {
+      drain = false;
+      for (let k = 0; k < readSpecimens.length; k++) {
+        if (readSpecimens[k].afterStepId !== lastPushedId) continue;
+        const spec = readSpecimens.splice(k, 1)[0];
+        const served = servedAfter[step.id];
+        const world = served.world;
+        if (!world) throw new ProtocolError(`[${spec.label}] read specimen needs a served world after ${step.id}`);
+        const data = structuredClone(spec.data) as Record<string, unknown>;
+        steps.push({
+          id: spec.label, segment: 'controller', sharedStepId: null, operation: 'get_state',
+          request: { point: data.pointId ?? null } as unknown as Json,
+          requestIdRequired: false, requestIdExpectation: 'fresh',
+          scope: { worldId: world.worldId },
+          response: {
+            protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1,
+            world,
+            data,
+          } as unknown as Json,
+          responseKind: 'success', captures: [], digestChain: [],
+        });
+        lastPushedId = spec.label;
+        drain = true;
+        break;
+      }
     }
   }
   for (const alignment of previewAlignments) {

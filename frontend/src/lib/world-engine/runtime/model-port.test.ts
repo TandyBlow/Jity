@@ -45,7 +45,7 @@ function fakeEngine(outputs: string[]) {
 
 const VALID: Partial<Record<ModelTask, { input: Json; output: string }>> = {
   action: { input: { actor: 'person_a', workingState: {} }, output: '{"kind":"act","text":"推门"}' },
-  targets: { input: { sourceId: 'person_a', actionText: '推门' }, output: '{"targets":[{"targetId":"person_b","triggerKey":"group:person_b","ruleVersion":"reaction-d20-v1","target":11}]}' },
+  targets: { input: { sourceId: 'person_a', actionText: '推门' }, output: '{"targets":[{"targetId":"person_b"}]}' },
   results: { input: { groupId: 'group_a', workingState: {} }, output: '{"person_b":"门开了"}' },
   updates: { input: { groupId: 'group_a', mode: 'group', workingState: {} }, output: '[{"stage":"position","changes":{"person_a":{"positionSet":{"containerId":"corridor","slotId":null,"relativeTo":null}}}}]' },
   continuation: { input: { round: {} }, output: '{"kind":"handback","closedBy":"model","cancelReason":null}' },

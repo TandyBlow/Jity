@@ -660,6 +660,24 @@
         }
       }
     },
-    "stateDigest": "1fb3188d7e64157167dd16504d70dd12d49da98160234f1c799c403893dbae73"
+    "stateDigest": "1fb3188d7e64157167dd16504d70dd12d49da98160234f1c799c403893dbae73",
+    "previousPointId": "root_0",
+    "timeAdvance": {
+      "boundary": "elapsed",
+      "duration": {
+        "amount": 3,
+        "unit": "minute"
+      }
+    },
+    "entityDeltas": {
+      "person_c": {
+        "entityId": "person_c",
+        "positionSet": {
+          "containerId": "classroom1",
+          "slotId": null,
+          "relativeTo": null
+        }
+      }
+    }
   }
 }

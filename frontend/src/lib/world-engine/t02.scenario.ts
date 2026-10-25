@@ -24,8 +24,9 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { ControllerDriver, initialMemory } from './controller';
-import { buildCorpus, ScenarioModelPort, ScenarioTransport, type Corpus, type DeclaredModelCall, type PreviewSpecimenSpec } from './harness';
+import { buildCorpus, ScenarioModelPort, ScenarioTransport, type Corpus, type DeclaredModelCall, type PreviewSpecimenSpec, type ReadStateSpecimenSpec } from './harness';
 import { ProtocolError } from './protocol';
+import { triggerSlotKey } from './schedule';
 import { instantiate, readTrace } from './trace-runner';
 import type { ControlState, Id, Json, WorldContext } from './types';
 
@@ -130,15 +131,8 @@ export function buildT02Scenario(traceName: T02TraceName, sampleId: string): T02
     }
   }
 
-  // Roll rules travel with the targets declarations.
-  const ruleByTrigger: Record<string, { ruleVersion: string; target: number }> = {};
-  for (const s of steps) {
-    if (s.operation === 'create_rolls') {
-      for (const roll of (requestOf.get(s.id)! as { rolls: { triggerKey: Id; ruleVersion: string; target: number }[] }).rolls) {
-        ruleByTrigger[roll.triggerKey] = { ruleVersion: roll.ruleVersion, target: roll.target };
-      }
-    }
-  }
+  // 触发键与骰点规则自 #8 起由程序提供（fixture-v1/11 与录制一致），
+  // 不再从录制的 create_rolls 反推进模型输出。
 
   // Preview specimens after every begin/stage anchor: recorded final-state
   // body under the point's staged time, recorded commit point as projection,
@@ -187,9 +181,41 @@ export function buildT02Scenario(traceName: T02TraceName, sampleId: string): T02
     return specimenBody(chosen).workingState;
   };
 
+  // 叙事组装（§7.1）：每个 claim 后插入目标读＋前驱读标本。目标态=既定近似
+  // 保真度（finalState+点位时间）；点记录逐字取自该点 commit 请求。
+  const readSpecimens: ReadStateSpecimenSpec[] = [];
+  {
+    const bootstrapTime = structuredClone((context.world as unknown as { time: Json }).time);
+    const bootstrapHead = (context.world as { head: { pointId: Id; stateDigest: string } }).head;
+    const atTime = (time: Json): Json => ({ ...(structuredClone(finalState) as Record<string, unknown>), time: structuredClone(time) }) as unknown as Json;
+    for (let i = 0; i < steps.length; i++) {
+      if (steps[i].operation !== 'narration_submit') continue;
+      const claimStep = steps[i - 1];
+      if (!claimStep || claimStep.operation !== 'narration_claim') throw new ProtocolError(`[${traceName}] narration_submit at ${steps[i].id} has no preceding claim`);
+      const k = pointAt(stepIndex.get(steps[i].id)!);
+      const commitReq = requestOf.get(commitByPoint[k].id)! as { point: { previousPointId: Id | null; timeAdvance: Json; entityDeltas: Json } };
+      const head = (responseOf.get(commitByPoint[k].id) as unknown as { world: { head: { pointId: Id; stateDigest: string } } }).world.head;
+      const targetState = atTime(pointTimes[k] as unknown as Json);
+      const beforeState = k > 0 ? atTime(pointTimes[k - 1] as unknown as Json) : atTime(bootstrapTime);
+      const beforeId = commitReq.point.previousPointId as Id;
+      const beforeDigest = k > 0
+        ? (responseOf.get(commitByPoint[k - 1].id) as unknown as { world: { head: { stateDigest: string } } }).world.head.stateDigest
+        : bootstrapHead.stateDigest;
+      readSpecimens.push({
+        label: `b-read-target-after-${claimStep.id}`,
+        afterStepId: claimStep.id,
+        data: { pointId: head.pointId, version: 1, stateDigest: head.stateDigest, previousPointId: commitReq.point.previousPointId, timeAdvance: commitReq.point.timeAdvance, entityDeltas: commitReq.point.entityDeltas, state: targetState } as unknown as Json,
+      });
+      readSpecimens.push({
+        label: `b-read-before-after-${claimStep.id}`,
+        afterStepId: `b-read-target-after-${claimStep.id}`,
+        data: { pointId: beforeId, version: 0, stateDigest: beforeDigest, previousPointId: null, timeAdvance: null, entityDeltas: {}, state: beforeState } as unknown as Json,
+      });
+    }
+  }
   const corpus = buildCorpus(raw, sampleId, specimens, ['s1', finalStep.id], [
     { previewStepId: specimenSpecs[specimenSpecs.length - 1].label, expectationStepId: finalStep.id, workingStatePath: '/data/workingState', workingStateDigestPath: '/data/workingStateDigest' },
-  ], []);
+  ], [], [], readSpecimens);
   // Serialization adaptation only: the recording writes `targets: null` on
   // admit-shaped extend requests, the driver omits the key. Business fields
   // keep their recorded values.
@@ -212,9 +238,9 @@ export function buildT02Scenario(traceName: T02TraceName, sampleId: string): T02
       declared.push({ task: 'action', key: req.initiatorId as Id, input: { actor: req.initiatorId as Id, workingState: previewStateAt(index) }, output: { kind: 'act', text: req.actionText } as unknown as Json });
     } else if (s.operation === 'checkpoint_extend_group') {
       if (req.targets != null) {
-        const targets = (req.targets as { targetId: Id; triggerKey: Id }[]).map((t) => ({ targetId: t.targetId, triggerKey: t.triggerKey, ...ruleByTrigger[t.triggerKey] }));
+        const targetIds = (req.targets as { targetId: Id }[]).map((t) => ({ targetId: t.targetId }));
         const actionText = actorsByPoint[pointAt(index)].actionText.get(req.sourceId as Id) ?? '';
-        declared.push({ task: 'targets', key: req.sourceId as Id, input: { sourceId: req.sourceId as Id, actionText, workingState: previewStateAt(index) }, output: { targets } as unknown as Json });
+        declared.push({ task: 'targets', key: req.sourceId as Id, input: { sourceId: req.sourceId as Id, actionText, workingState: previewStateAt(index) }, output: { targets: targetIds } as unknown as Json });
       } else {
         const admit = req.admittedMember as { memberId: Id; actionText: string; rollRefs: { rollId: Id }[] };
         declared.push({ task: 'reaction', key: req.sourceId as Id, input: { sourceId: req.sourceId as Id, memberId: admit.memberId, rollId: admit.rollRefs[0].rollId, workingState: previewStateAt(index) }, output: admit.actionText as unknown as Json });
@@ -222,12 +248,29 @@ export function buildT02Scenario(traceName: T02TraceName, sampleId: string): T02
     } else if (s.operation === 'checkpoint_stage_unit') {
       const groupId = (req.candidates as { groupId: Id }).groupId;
       declared.push({ task: 'results', key: groupId, input: { groupId, workingState: previewStateAt(index) }, output: structuredClone(req.results) as Json });
-      declared.push({ task: 'updates', key: groupId, input: { groupId, mode: 'group', workingState: previewStateAt(index), priorStages: [], appliedDelta: {} }, output: [] as unknown as Json });
+      declared.push({ task: 'updates', key: groupId, input: { groupId, mode: 'group', workingState: previewStateAt(index) }, output: [] as unknown as Json });
     } else if (s.operation === 'checkpoint_stage_time_scan') {
-      declared.push({ task: 'updates', key: `time_scan:${req.pointId as Id}`, input: { mode: 'time_scan', workingState: previewStateAt(index), priorStages: [], appliedDelta: {} }, output: [] as unknown as Json });
+      declared.push({ task: 'updates', key: `time_scan:${req.pointId as Id}`, input: { mode: 'time_scan', workingState: previewStateAt(index) }, output: [] as unknown as Json });
     } else if (s.operation === 'narration_submit') {
-      const head = (responseOf.get(commitByPoint[pointAt(index)].id) as unknown as { world: { head: { pointId: Id; stateDigest: string } } }).world.head;
-      declared.push({ task: 'narration', key: head.pointId, input: { pointId: head.pointId, stateDigest: head.stateDigest }, output: req.text as unknown as Json });
+      const k = pointAt(index);
+      const head = (responseOf.get(commitByPoint[k].id) as unknown as { world: { head: { pointId: Id; stateDigest: string } } }).world.head;
+      const commitReq = requestOf.get(commitByPoint[k].id)! as { point: { previousPointId: Id | null; timeAdvance: Json; entityDeltas: Json } };
+      const atTimeLit = (time: Json): Json => ({ ...(structuredClone(finalState) as Record<string, unknown>), time: structuredClone(time) }) as unknown as Json;
+      const targetState = atTimeLit(pointTimes[k] as unknown as Json);
+      const beforeState = k > 0 ? atTimeLit(pointTimes[k - 1] as unknown as Json) : atTimeLit(structuredClone((context.world as unknown as { time: Json }).time));
+      const protagonistId = (finalState as { protagonistId: Id }).protagonistId;
+      const protagonistName = ((finalState as { initial: { characters: Record<string, { name: string }> } }).initial.characters[protagonistId]).name;
+      // 独立字面量（不经 assembleNarrationInput）。
+      declared.push({
+        task: 'narration', key: head.pointId,
+        input: {
+          pointId: head.pointId, before: beforeState,
+          delta: { timeAdvance: commitReq.point.timeAdvance, entityDeltas: commitReq.point.entityDeltas },
+          after: targetState,
+          perspective: `主角视角（${protagonistId}「${protagonistName}」）；只表达已结算的世界事实`,
+        },
+        output: req.text as unknown as Json,
+      });
     }
   }
 
@@ -235,10 +278,17 @@ export function buildT02Scenario(traceName: T02TraceName, sampleId: string): T02
   if (!ownership) throw new ProtocolError(`[${traceName}] no input ownership variable to seed the lease`);
   const memory = initialMemory(`req_${traceName}`, 'browser');
   memory.leaseToken = sample.values[ownership.name] as Id;
+  // 程序掌握触发身份（§9.3）：录制值按调度器的槽位键绑定进 id 表——模型
+  // 输出不再携带 triggerKey，控制器从已分配映射解析；create_rolls 的规则
+  // 值由程序常量（fixture-v1/11）发出，与录制一致。
   for (const s of steps) {
     if (s.operation === 'checkpoint_discover_group') {
       const req = requestOf.get(s.id)! as { initiatorId: Id; groupId: Id };
       memory.ids[`group:${req.initiatorId}`] = req.groupId;
+    }
+    if (s.operation === 'checkpoint_extend_group') {
+      const req = requestOf.get(s.id)! as { groupId: Id; sourceId: Id; targets?: { targetId: Id; triggerKey: Id }[] | null };
+      if (Array.isArray(req.targets)) for (const t of req.targets) memory.ids[triggerSlotKey(req.groupId as Id, req.sourceId as Id, t.targetId)] = t.triggerKey;
     }
   }
 

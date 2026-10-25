@@ -19,6 +19,79 @@ export type UpdatesStage = typeof updateStages[number];
  * round members are skipped, or the empty point ran its time scan). */
 export interface PlannedPoint { pointId: Id; kind: 'normal' | 'instant' | 'linked'; timeAdvance: TimeAdvance; actorIds: Id[] }
 export interface RollRule { ruleVersion: RollSpec['ruleVersion']; target: number }
+/** Program-owned dice rule (§6.2): the model never declares versions or
+ * thresholds. Stage 0–3 fixture rule; the d20 baseline swaps this constant. */
+export const PROGRAM_ROLL_RULE: RollRule = { ruleVersion: 'reaction-fixture-v1', target: 11 };
+
+// ---------- 稳定组合身份键（§9.3） ----------
+
+const SHA256_K = new Uint32Array([
+  0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
+  0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,
+  0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,
+  0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967,
+  0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85,
+  0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070,
+  0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
+  0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2,
+]);
+const rotr32 = (x: number, n: number): number => ((x >>> n) | (x << (32 - n))) >>> 0;
+
+/** Compact sync SHA-256 over ASCII (IDs are ASCII per world-canonical-v1;
+ * non-ASCII throws instead of silently corrupting bytes). Hex output. Used
+ * ONLY for bounded composite identity keys — state digests stay server-side. */
+export function sha256Hex(message: string): string {
+  const bytes: number[] = [];
+  for (const ch of message) {
+    const code = ch.charCodeAt(0);
+    if (code > 127) throw new Error('sha256Hex: non-ASCII input (IDs must be ASCII)');
+    bytes.push(code);
+  }
+  const bitLen = bytes.length * 8;
+  bytes.push(0x80);
+  while (bytes.length % 64 !== 56) bytes.push(0);
+  for (let shift = 56; shift >= 0; shift -= 8) bytes.push(Math.floor(bitLen / 2 ** shift) & 0xff);
+  const H = [0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19];
+  const w = new Uint32Array(64);
+  for (let off = 0; off < bytes.length; off += 64) {
+    for (let i = 0; i < 16; i++) w[i] = ((bytes[off + i * 4] << 24) | (bytes[off + i * 4 + 1] << 16) | (bytes[off + i * 4 + 2] << 8) | bytes[off + i * 4 + 3]) >>> 0;
+    for (let i = 16; i < 64; i++) {
+      const s0 = rotr32(w[i - 15], 7) ^ rotr32(w[i - 15], 18) ^ (w[i - 15] >>> 3);
+      const s1 = rotr32(w[i - 2], 17) ^ rotr32(w[i - 2], 19) ^ (w[i - 2] >>> 10);
+      w[i] = (w[i - 16] + s0 + w[i - 7] + s1) >>> 0;
+    }
+    let a = H[0], b = H[1], c = H[2], d = H[3], e = H[4], f = H[5], g = H[6], h = H[7];
+    for (let i = 0; i < 64; i++) {
+      const S1 = rotr32(e, 6) ^ rotr32(e, 11) ^ rotr32(e, 25);
+      const ch = (e & f) ^ (~e & g);
+      const t1 = (h + S1 + ch + SHA256_K[i] + w[i]) >>> 0;
+      const S0 = rotr32(a, 2) ^ rotr32(a, 13) ^ rotr32(a, 22);
+      const maj = (a & b) ^ (a & c) ^ (b & c);
+      const t2 = (S0 + maj) >>> 0;
+      h = g; g = f; f = e; e = (d + t1) >>> 0; d = c; c = b; b = a; a = (t1 + t2) >>> 0;
+    }
+    H[0] = (H[0] + a) >>> 0; H[1] = (H[1] + b) >>> 0; H[2] = (H[2] + c) >>> 0; H[3] = (H[3] + d) >>> 0;
+    H[4] = (H[4] + e) >>> 0; H[5] = (H[5] + f) >>> 0; H[6] = (H[6] + g) >>> 0; H[7] = (H[7] + h) >>> 0;
+  }
+  return H.map((x) => x.toString(16).padStart(8, '0')).join('');
+}
+
+/** 无歧义且有界的稳定组合身份：各段做长度前缀折叠（「来源 a:b+目标 c」与
+ * 「来源 a+目标 b:c」的前像必然不同），SHA-256 截断 128 位——拼接直接入键
+ * 会碰撞且超长（三个 50 字符合法 ID 拼接 160 字符，wire 上限 128）。 */
+export function foldIdentity(...parts: Id[]): string {
+  const preimage = parts.map((p) => `${p.length}:${p}`).join('');
+  return sha256Hex(preimage).slice(0, 32);
+}
+
+/** 触发分配的组合身份键（程序所有，模型不见）：allocationKey 绑定组与来源，
+ * slotKey 再绑目标；键文本 ≤ 40 字符（wire 上限 128）。 */
+export function triggerAllocationKey(groupId: Id, sourceId: Id): Id {
+  return `trigger:${foldIdentity(groupId, sourceId)}`;
+}
+export function triggerSlotKey(groupId: Id, sourceId: Id, targetId: Id): Id {
+  return `trigger:${foldIdentity(groupId, sourceId, targetId)}`;
+}
 export interface PendingTarget { targetId: Id; triggerKey: Id; rule: RollRule }
 
 /** DFS entry per analysed source of the open group (index 0 = current). */
@@ -33,6 +106,42 @@ export interface SourceAnalysis {
 export interface StagedUnit { groupId: Id; actorIds: Id[]; candidates: SettlementGroup; results: Record<Id, string> }
 
 export interface ModelResolution { task: ModelTask; key: string; output: Json }
+
+/** Narration assembly (§7.1: Sₜ₋₁、Δₜ、Sₜ、视角). `delta` is the target
+ * point's ORIGINAL saved record — commit-time capture is only ever a cache;
+ * recovery paths read it from the server. */
+export interface NarrationAssembly {
+  pointId: Id;
+  after: WorldState | null;
+  delta: { timeAdvance: TimeAdvance | null; entityDeltas: Record<Id, EntityDelta> } | null;
+  previousPointId: Id | null;
+  /** Root points never read a before-state; it stays null. */
+  before: WorldState | null;
+  /** Set when a served get_state lacked the required record fields: the
+   * read capability is incomplete and generation must stop — never assume
+   * an empty delta. */
+  readIncomplete?: boolean;
+}
+
+export function initialNarrationAssembly(pointId: Id): NarrationAssembly {
+  return { pointId, after: null, delta: null, previousPointId: null, before: null };
+}
+
+/** The narration model input. Scenario declared expectations must NOT call
+ * this — they hand-write literals so a shared omission fails loudly. */
+export function assembleNarrationInput(input: NarrationAssembly): Json | null {
+  if (!input.after || !input.delta) return null;
+  if (input.previousPointId != null && !input.before) return null;
+  const protagonist = input.after.initial.characters[input.after.protagonistId];
+  const name = protagonist?.name ?? input.after.protagonistId;
+  return {
+    pointId: input.pointId,
+    before: input.before ? JSON.parse(JSON.stringify(input.before)) : null,
+    delta: JSON.parse(JSON.stringify(input.delta)),
+    after: JSON.parse(JSON.stringify(input.after)),
+    perspective: `主角视角（${input.after.protagonistId}「${name}」）；只表达已结算的世界事实`,
+  };
+}
 
 export type AllocationPlan = Pick<RequestMap['allocate_ids'], 'allocationKey' | 'slots'>;
 
@@ -66,7 +175,12 @@ export interface ControllerMemory {
   prepareSuccessor: boolean;
   localPause: boolean;
   budget: { used: number; max: number | null };
-  narration: { pointId: Id; claim: CurrentClaim | null; input: Json } | null;
+  /** Narration assembly state (§7.1): the pipeline reads the target point's
+   * state plus its own saved record (get_state.data: previousPointId /
+   * timeAdvance / entityDeltas — the ORIGINAL Δ), then the predecessor's
+   * state. Fields fill progressively through adoptSuccess; a root point
+   * never reads a before-state. */
+  narration: { pointId: Id; claim: CurrentClaim | null; input: NarrationAssembly } | null;
   workingState: { key: string; state: WorldState } | null;
   sources: SourceAnalysis[];
   staged: StagedUnit[];
@@ -76,11 +190,35 @@ export interface ControllerMemory {
   stagedTimeScan: SettlementGroup | null;
   groupActors: Id[];
   lastModel: ModelResolution | null;
+  /** Targets the model just declared for the current source, kept OUT of
+   * lastModel on purpose: every successful transport clears lastModel, and
+   * the runtime allocate_ids hop between the targets call and extend_group
+   * must not lose the declared set (no re-sampling of targets). */
+  lastTargets: { sourceId: Id; targets: Id[] } | null;
   lastResults: Record<Id, string> | null;
   /** Scenario-declared updates split; empty = one merged call. */
   updatesStages: UpdatesStage[];
   /** Driver accumulates one UpdatesCall per split stage here. */
   updatesCalls: UpdatesCall[];
+  /** How many split stages the between-stage ladder has consumed (the
+   * scheduler gates each stage call on this catching up to
+   * updatesCalls.length). With a deferred forward reference this advances
+   * WITHOUT the deferred part being reflected in workingState —
+   * updatesPendingRefs records exactly what the served state does not yet
+   * contain (§6.3: later stages read applied state, never re-declare). */
+  updatesApplied: number;
+  /** Boundaries skipped with ZERO applicable content — the whole in-progress
+   * batch was forward references a later subtasks stage produces. The next
+   * stage reads the last-good state; counted for evaluation visibility,
+   * never retried. A split boundary (valid part applied, refs deferred) is
+   * NOT a skip: it ran a real preview. */
+  updatesPreviewSkipped: number;
+  /** Forward task references currently deferred at a between-stage boundary
+   * (entity:task) — not yet state facts; a later subtasks stage produces
+   * them and the settle batch carries them in (checkUpdatesStages produced
+   * ruling). Reset once the group's ladder is consumed (stage/commit) —
+   * the dangling stop keeps its refs in the terminal reason. */
+  updatesPendingRefs: string[];
   continuation: Conclusion | null;
   successorTime: TimeAdvance | null;
   commitPayload: { point: TimelinePoint; settlementGroups: SettlementGroup[] } | null;
@@ -370,9 +508,28 @@ function narrationDecision(view: ScheduleView): Decision | null {
       scope: narrationScope(view),
     };
   }
+  if (narration.input.readIncomplete) return { kind: 'stop', reason: 'narration_read_incomplete' };
+  // Assembly ladder (§7.1): reads are plain GETs — no lease binding, no
+  // requestId. The target read carries the point's own saved record back.
+  if (!narration.input.after || !narration.input.delta) {
+    return {
+      kind: 'transport', operation: 'get_state',
+      request: { point: pointId } as RequestMap['get_state'],
+      scope: worldScope(view),
+    };
+  }
+  if (narration.input.previousPointId != null && !narration.input.before) {
+    return {
+      kind: 'transport', operation: 'get_state',
+      request: { point: narration.input.previousPointId } as RequestMap['get_state'],
+      scope: worldScope(view),
+    };
+  }
+  const assembled = assembleNarrationInput(narration.input);
+  if (!assembled) return { kind: 'stop', reason: 'narration_read_incomplete' };
   const blocked = modelBlocked(view, 'narration');
   if (blocked) return blocked;
-  return { kind: 'model', task: 'narration', key: pointId, input: narration.input };
+  return { kind: 'model', task: 'narration', key: pointId, input: assembled };
 }
 
 // ---------- advance / continuation / between points ----------
@@ -599,15 +756,37 @@ function buildDecision(view: ScheduleView): Decision {
       scope: worldScope(view),
     };
   }
-  if (memory.lastModel?.task === 'targets' && memory.lastModel.key === current.sourceId && !current.targetsExtended) {
-    const declared = memory.lastModel.output as { targets: { targetId: Id; triggerKey: Id; ruleVersion: RollSpec['ruleVersion']; target: number }[] };
-    if (!Array.isArray(declared.targets)) throw new Error('Targets output must carry a targets array');
+  if (memory.lastTargets?.sourceId === current.sourceId && !current.targetsExtended) {
+    // Program-owned trigger identity (§9.3): the model names targets only —
+    // keys resolve from the allocated-id map, and missing keys go through a
+    // runtime allocate_ids first (stable allocationKey → server-idempotent on
+    // retry; confirmed keys are never re-allocated; empty sets allocate
+    // nothing). Slots bind group+SOURCE+target — the trigger is per-threat
+    // identity (判定键含 sourceId), so two sources threatening the same
+    // target hold distinct keys and neither reuses nor overwrites the
+    // other's. Only THIS source's missing slots are requested.
+    const targetIds = [...new Set(memory.lastTargets.targets)];
+    const missing = targetIds.filter((targetId) => memory.ids[triggerSlotKey(pending.groupId, current.sourceId, targetId)] == null);
+    if (missing.length > 0) {
+      return {
+        kind: 'transport', operation: 'allocate_ids',
+        // LeaseBound only — AllocateIdsRequest has no expected* bindings, so
+        // this request must not spread writeBind's CheckpointRequest fields.
+        request: {
+          protocolVersion: 2, requestId: memory.requestId,
+          worldId: bind.worldId, leaseToken: bind.leaseToken, fenceEpoch: bind.fenceEpoch,
+          allocationKey: triggerAllocationKey(pending.groupId, current.sourceId),
+          slots: missing.map((targetId) => ({ slotKey: triggerSlotKey(pending.groupId, current.sourceId, targetId), kind: 'trigger' as const })),
+        } as RequestMap['allocate_ids'],
+        scope: worldScope(view),
+      };
+    }
     return {
       kind: 'transport', operation: 'checkpoint_extend_group',
       request: {
         protocolVersion: 2, requestId: memory.requestId, ...bind,
         operation: 'extend_group', pointId: work!.pointId, groupId: pending.groupId, sourceId: current.sourceId,
-        targets: declared.targets.map((t) => ({ targetId: t.targetId, triggerKey: t.triggerKey })), admittedMember: null,
+        targets: targetIds.map((targetId) => ({ targetId, triggerKey: memory.ids[triggerSlotKey(pending.groupId, current.sourceId, targetId)]! })), admittedMember: null,
       } as RequestMap['checkpoint_extend_group'],
       scope: worldScope(view),
     };
@@ -659,17 +838,21 @@ function buildDecision(view: ScheduleView): Decision {
 }
 
 /** Split updates run 1–6 per-stage calls keyed by stage (scenario-declared
- * sequence); empty updatesStages = one merged call. Later stages see the
- * accumulated calls and their applied merge — merged WITHOUT the dangling
- * check, since pending references may be produced by later stages. */
+ * sequence); empty updatesStages = one merged call. Later stages READ the
+ * post-preview working state (the controller applies accumulated prior
+ * candidates through preview_point before the next stage call) — the input
+ * carries no priorStages/appliedDelta data for the model to apply itself
+ * (§6.3: stage n reads the state after stage n−1 applied). */
 function updatesModelCall(view: ScheduleView, keyBase: string, base: Record<string, Json>): Decision {
   const { memory } = view;
+  if (memory.updatesCalls.length > memory.updatesApplied) {
+    // Prior stage candidates are not yet applied: preview first (the
+    // controller folds the synthetic in-progress group into the request).
+    return { kind: 'read_working_state' };
+  }
   const stage = memory.updatesStages[memory.updatesCalls.length];
-  const priorStages = asJson(memory.updatesCalls);
-  const appliedDelta: Json = memory.updatesCalls.length ? asJson(mergeUpdatesStages(memory.updatesCalls)) : {};
-  const fields: Record<string, Json> = { ...base, priorStages, appliedDelta };
-  if (stage) return { kind: 'model', task: 'updates', key: `${keyBase}#${stage}`, input: { ...fields, stage } };
-  return { kind: 'model', task: 'updates', key: keyBase, input: fields };
+  if (stage) return { kind: 'model', task: 'updates', key: `${keyBase}#${stage}`, input: { ...base, stage } };
+  return { kind: 'model', task: 'updates', key: keyBase, input: base };
 }
 
 function settleDecision(view: ScheduleView): Decision {
@@ -762,7 +945,7 @@ function worldRoster(memory: ControllerMemory): Id[] {
   return Object.keys(state.characters).sort();
 }
 
-function timeScanCandidates(deltas: Record<Id, EntityDelta>, roster: Id[]): SettlementGroup {
+export function timeScanCandidates(deltas: Record<Id, EntityDelta>, roster: Id[]): SettlementGroup {
   return groupFromDeltas({ groupId: null, actorIds: [], taskCoverageIds: roster, personalityCoverageIds: hasTasksAchieved(deltas) ? roster : [] }, deltas);
 }
 

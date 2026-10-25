@@ -4362,13 +4362,47 @@
           "pattern": "^[0-9a-f]{64}$",
           "title": "Statedigest",
           "type": "string"
+        },
+        "previousPointId": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Previouspointid"
+        },
+        "timeAdvance": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TimeAdvance"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "entityDeltas": {
+          "patternProperties": {
+            "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$": {
+              "$ref": "#/$defs/EntityDelta"
+            }
+          },
+          "title": "Entitydeltas",
+          "type": "object"
         }
       },
       "required": [
         "pointId",
         "version",
         "state",
-        "stateDigest"
+        "stateDigest",
+        "previousPointId",
+        "timeAdvance",
+        "entityDeltas"
       ],
       "title": "GetStateData",
       "type": "object"

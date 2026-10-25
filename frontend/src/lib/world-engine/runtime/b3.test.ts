@@ -106,7 +106,7 @@ function validOutputsFor(samples: typeof B3_SAMPLES): string[] {
   return samples.map((sample) => {
     switch (sample.task) {
       case 'action': return '{"kind":"act","text":"用力推门"}';
-      case 'targets': return '{"targets":[{"targetId":"person_b","triggerKey":"group:person_b","ruleVersion":"reaction-d20-v1","target":11}]}';
+      case 'targets': return '{"targets":[{"targetId":"person_b"}]}';
       case 'results': return '{"person_a":"门开了"}';
       case 'updates': return (sample.input as { stage?: unknown }).stage !== undefined
         ? '{"stage":"sanity","changes":{"person_a":{"sanitySet":8}}}'
@@ -173,7 +173,7 @@ describe('runB3Evaluation', () => {
 
   test('a structural pass can still fail the semantic floor; judges are pluggable', async () => {
     const outputs = validOutputsFor(B3_SAMPLES);
-    outputs[2] = '{"targets":[{"targetId":"person_z","triggerKey":"group:person_z","ruleVersion":"reaction-d20-v1","target":11}]}'; // targets-1: unknown target id
+    outputs[2] = '{"targets":[{"targetId":"person_z"}]}'; // targets-1: unknown target id
     const report = await runB3Evaluation(scriptedEngine(outputs), B3_SAMPLES);
     const row = report.results.find((result) => result.id === 'targets-1')!;
     expect(row.failure).toBe('semantic'); // the codec accepts the shape
@@ -201,7 +201,7 @@ describe('runB3Evaluation', () => {
 
   test('targets are judged against the CHARACTER roster: a location target fails the floor', async () => {
     const outputs = validOutputsFor(B3_SAMPLES);
-    outputs[2] = '{"targets":[{"targetId":"corridor","triggerKey":"group:corridor","ruleVersion":"reaction-d20-v1","target":11}]}'; // targets-1: a LOCATION
+    outputs[2] = '{"targets":[{"targetId":"corridor"}]}'; // targets-1: a LOCATION
     const report = await runB3Evaluation(scriptedEngine(outputs), B3_SAMPLES);
     const row = report.results.find((result) => result.id === 'targets-1')!;
     expect(row.failure).toBe('semantic'); // the codec accepts the shape…

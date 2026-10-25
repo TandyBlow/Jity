@@ -5,9 +5,9 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { ControllerDriver, initialMemory } from './controller';
-import { buildCorpus, ScenarioModelPort, ScenarioTransport } from './harness';
+import { buildCorpus, ScenarioModelPort, ScenarioTransport, type ReadStateSpecimenSpec } from './harness';
 import { instantiate, readTrace } from './trace-runner';
-import type { HarnessCommand } from './schedule';
+import { initialNarrationAssembly, type HarnessCommand } from './schedule';
 import type { ControlState, CurrentClaim, Id, Json, WorldContext } from './types';
 
 export type T05PauseOrigin = 'external' | 'budget';
@@ -19,7 +19,26 @@ export function buildT05Scenario(sampleId: string, pauseOrigin: T05PauseOrigin =
   if (!sample) throw new Error(`Unknown T05 sample ${sampleId}`);
   const requests = new Map(trace.steps.map((step) => [step.id, instantiate(step.request, sample.values) as Record<string, unknown>]));
   const context = instantiate(trace.steps[0].response, sample.values) as unknown as { world: WorldContext; control: ControlState };
-  const corpus = buildCorpus(raw, sampleId, [], ['s1', 's9']);
+  // Narration assembly (§7.1): T05 narrates the ROOT point. The root read
+  // copies the recorded s9 get_state response data verbatim (the sync added
+  // the point's own record: null/null/{} for a root); the declared model
+  // input is an INDEPENDENT literal built from that recorded state — never
+  // via assembleNarrationInput.
+  const s9data = (instantiate(trace.steps.find((step) => step.id === 's9')!.response, sample.values) as unknown as { data: Json }).data;
+  const s9payload = s9data as { pointId: Id; state: Json; previousPointId: Id | null; timeAdvance: Json; entityDeltas: Json };
+  const protagonist = (s9payload.state as { protagonistId: Id; initial: { characters: Record<string, { name: string }> } });
+  const protagonistName = protagonist.initial.characters[protagonist.protagonistId]?.name ?? protagonist.protagonistId;
+  const declaredRootNarrationInput: Json = {
+    pointId: s9payload.pointId,
+    before: null,
+    delta: { timeAdvance: s9payload.timeAdvance, entityDeltas: s9payload.entityDeltas },
+    after: s9payload.state,
+    perspective: `主角视角（${protagonist.protagonistId}「${protagonistName}」）；只表达已结算的世界事实`,
+  };
+  const readSpecimens: ReadStateSpecimenSpec[] = [
+    { label: 'b-read-root-after-s7', afterStepId: 's7', data: s9data },
+  ];
+  const corpus = buildCorpus(raw, sampleId, [], ['s1', 's9'], [], [], [], readSpecimens);
   for (const step of corpus.steps) {
     if (['s2', 's5', 's6'].includes(step.id)) step.segment = 'command';
     if (['s3', 's4'].includes(step.id)) step.segment = 'heartbeat';
@@ -70,10 +89,10 @@ export function buildT05Scenario(sampleId: string, pauseOrigin: T05PauseOrigin =
   memory.narration = {
     pointId: context.world.head.pointId,
     claim: { claimToken: renewal.claimToken, generation: renewal.generation, issuedAtEpochMilli: renewal.issuedAtEpochMilli } as CurrentClaim,
-    input: { pointId: context.world.head.pointId, stateDigest: context.world.head.stateDigest },
+    input: initialNarrationAssembly(context.world.head.pointId),
   };
   const model = new ScenarioModelPort([
-    { task: 'narration', key: context.world.head.pointId, input: structuredClone(memory.narration.input), output: requests.get('s8')!.text as Json },
+    { task: 'narration', key: context.world.head.pointId, input: declaredRootNarrationInput, output: requests.get('s8')!.text as Json },
   ], 'T05');
   const transport = new ScenarioTransport(corpus.steps, 'T05');
   const driver = new ControllerDriver({ transport, model }, memory, { world: context.world, control: context.control });

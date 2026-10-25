@@ -127,7 +127,7 @@ export interface DataMap {
   create_rolls: { rolls: RollOutcome[] };
   commit_point: { pointId: Id; version: number; stateDigest: Digest };
   list_points: { points: { pointId: Id; sequence: number; kind: 'root' | 'normal' | 'instant' | 'linked'; roundId: Id | null; advanceId: Id | null; stateDigest: Digest }[] };
-  get_state: { pointId: Id; version: number; state: WorldState; stateDigest: Digest };
+  get_state: { pointId: Id; version: number; state: WorldState; stateDigest: Digest; /** 该点自身已保存的记录（§7.1/§8.2 叙事组装）：根点为 null/null/{}；缺任一字段=读取能力不完整，客户端必须停止叙事生成，不得默认为空增量。 */ previousPointId: Id | null; timeAdvance: TimeAdvance | null; entityDeltas: Record<Id, EntityDelta> };
   narration_claim: ClaimSummary & { claimToken?: Id };
   narration_claim_renew: ClaimSummary;
   narration_submit: { pointId: Id; narrationStatus: NarrationStatus; generation: number };

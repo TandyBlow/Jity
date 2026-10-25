@@ -59,7 +59,6 @@ function validateTimeAdvance(value: unknown, reason: string): void {
   if (!TIME_UNITS.includes(duration.unit as typeof TIME_UNITS[number])) throw new Error(`${reason} (unit)`);
 }
 
-const RULE_VERSIONS = ['reaction-fixture-v1', 'reaction-d20-v1'] as const;
 const RELATIONS = ['under', 'above', 'beside', 'in_front_of', 'behind'] as const;
 
 /** EntityDelta field validation, pinned to types.ts: unknown fields reject,
@@ -146,11 +145,9 @@ const jsonValidators: Record<Exclude<ModelTask, 'narration' | 'reaction'>, JsonV
     exactKeys(output, ['targets'], 'targets must carry only targets');
     for (const entry of asArray(output.targets, 'targets must be an array')) {
       const target = asObject(entry, 'target must be an object');
-      exactKeys(target, ['targetId', 'triggerKey', 'ruleVersion', 'target'], 'target keys');
+      // 模型只声明目标：触发键与骰点规则是程序身份（§9.3/§6.2），多带即拒。
+      exactKeys(target, ['targetId'], 'target keys');
       asString(target.targetId, 'targetId must be a non-empty string');
-      asString(target.triggerKey, 'triggerKey must be a non-empty string');
-      if (!RULE_VERSIONS.includes(target.ruleVersion as typeof RULE_VERSIONS[number])) throw new Error('unknown ruleVersion');
-      if (!Number.isInteger(asFiniteNumber(target.target, 'target must be a number'))) throw new Error('target must be an integer');
     }
   },
   results: (value) => {

@@ -55,9 +55,9 @@ describe.each([
     expect(final.response).toMatchObject({ world: { head: { narrationStatus: 'ready', version: 0 }, advance: { intentStatus: 'pending', inputAvailable: true } } });
     scenario.transport.assertConsumed();
     scenario.model.assertConsumed();
-    expect(scenario.transport.ops).toEqual(['get_context', 'checkpoint_pause', 'lease_renew', 'narration_claim_renew', 'checkpoint_resume', 'checkpoint_pause', 'narration_claim', 'narration_submit', 'get_state']);
+    expect(scenario.transport.ops).toEqual(['get_context', 'checkpoint_pause', 'lease_renew', 'narration_claim_renew', 'checkpoint_resume', 'checkpoint_pause', 'narration_claim', 'get_state', 'narration_submit', 'get_state']);
     expect(scenario.model.calls.map((call) => call.task)).toEqual(['narration']);
-    const submit = scenario.transport.requests[7] as { pointId: string; generation: number; issuedAtEpochMilli: number };
+    const submit = scenario.transport.requests[8] as { pointId: string; generation: number; issuedAtEpochMilli: number };
     const renewed = scenario.transport.requests[3] as { issuedAtEpochMilli: number };
     expect(submit.generation).toBe(2);
     expect(submit.issuedAtEpochMilli).toBeGreaterThan(renewed.issuedAtEpochMilli);
@@ -90,7 +90,12 @@ describe.each(['sample_1', 'sample_2'])('T05 %s directed negatives', (sampleId) 
       await expect(advance()).rejects.toThrow(`[T05] step ${stepId}: business assertion failed at /control/${field}`);
     }
     expect(scenario.transport.nextStepId).toBe(stepId);
-    expect(scenario.transport.ops).not.toContain('get_state');
+    if (stepId === 's8') {
+      // 组装阶梯：submit 前恰有一次根点读取（§7.1）；故障点仍在 s8。
+      expect(scenario.transport.ops.filter((op) => op === 'get_state')).toHaveLength(1);
+    } else {
+      expect(scenario.transport.ops).not.toContain('get_state');
+    }
   });
 
   test('rejects a heartbeat response with a different fence', async () => {
