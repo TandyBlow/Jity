@@ -289,3 +289,13 @@ T08 语料适配逐项登记：①s8 是把已锁定时间从 2s 改成 3s 的�
 5. **结构失败耗时纳入统计（P2）**：端口 decode 失败时把已完成 completion 的 timing 附在异常上（生成成本已付），eval 据此把结构拒绝纳入均值；探针复刻复审场景（合法 10ms/格式错误 90ms）断言均值 ≥45ms 而非 10ms。
 
 结果：前端全套 **27 文件 448 项通过**（447 + 1 净增：加载失败阶段测试），`typecheck:world`、`review:world-s1`（60 项）、统一验收入口与生产 build 通过。修复过程被自家名册 judge 抓过两次夹具/代码错误（characterIds 残留引用、addAll 误用），均由测试先行暴露——判分器先行验证的价值再次成立。b3-prompt-eval-design.md 已同步五处语义。
+
+### B3 批次一修复轮二（对 d296b97 复审 P1+2×P2）
+
+日期：2026-10-25。三处全部确认成立并已修，三探针篡改实验均恰红（P1 篡改红两条）：
+
+1. **计数改 harness 包装（P1）**：`callsMade` 接口字段整体移除（wllama 实现同步删除）——harness 在入口用包装引擎计数实际 `complete` 调用：不依赖引擎配合、无接收者丢失（原实现解构 `engine.callsMade` 后直调，真 WllamaInferenceEngine 即 `this` 丢失崩溃），加载失败自然计 0。三个 fake 引擎同步删除 `callsMade`，计数完全由包装层证明。
+2. **judge 异常独立捕获（P2）**：judge 在生成 try 之外单独捕获——崩溃记为新失败档 `judge`（评测基建故障，非样本裁决），结构裁决与已付耗时保留（`structureOk` 不被推翻、`timing` 不丢），仅缺底线裁决（`semanticFloorOk` 不计）。探针：judge 崩溃样本 `failure='judge'`、structureOk=2、semanticFloorOk=0、timing 非空。
+3. **targets 回角色名册（P2）**：targets judge 改用 `characterRoster`（workingState characters 双区）——触发目标是其他**角色**，不是物品或地点；updates 保持实体三元名册。探针：`corridor` 作为 targetId 结构通过但底线拒绝（`不在场: corridor`）。
+
+结果：前端全套 **27 文件 450 项通过**（448 + 2 净增：judge 分档、角色名册探针），`typecheck:world`、`review:world-s1`（60 项）、统一验收入口与生产 build 通过。b3-prompt-eval-design.md 同步三处语义。

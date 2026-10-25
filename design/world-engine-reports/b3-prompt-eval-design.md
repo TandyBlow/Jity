@@ -17,9 +17,9 @@
 
 ## 3. 评测 harness（runtime/b3-eval.ts）
 
-`runB3Evaluation(engine, samples, options)` 把样本逐一过**真实**模型端口（encode → 串行队列 → 引擎 → 结构化解码），逐样本记录**失败阶段**（`engine | structure | semantic`——加载失败/引擎异常与结构拒绝分档）、错误留档、语义底线（可插拔 judge）、队列计时——**结构拒绝保留已付的生成耗时**（端口在 decode 失败时把完成 timing 附于异常）。按任务聚合：结构率、底线率、实际引擎调用数（`InferenceEngine.callsMade?`，加载失败=0 次）、平均排队/推理毫秒（含结构拒绝的生成）；`formatB3Summary` 出单行控制台摘要。
+`runB3Evaluation(engine, samples, options)` 把样本逐一过**真实**模型端口（encode → 串行队列 → 引擎 → 结构化解码）；harness 以**包装引擎**计数实际 `complete` 调用（不依赖引擎配合，加载失败=0 次）。逐样本记录**失败阶段**（`engine | structure | semantic | judge`——judge 崩溃是评测基建故障：结构与耗时保留、仅缺底线裁决）、错误留档、语义底线（可插拔 judge）、队列计时——**结构拒绝保留已付的生成耗时**（端口在 decode 失败时把完成 timing 附于异常）。按任务聚合：结构率、底线率、实际引擎调用数（`InferenceEngine.callsMade?`，加载失败=0 次）、平均排队/推理毫秒（含结构拒绝的生成）；`formatB3Summary` 出单行控制台摘要。
 
-**默认语义底线**（确定性，内容级语义质量随真机评测+更强 judge）：叙事 ≥10 字/反应 ≥4 字；action 文本 ≥2 字；targets 的 targetId、pointPlan 的 actorIds、continuation 的候选都必须在**该输入的名册**里——名册=workingState 的 characters/items/locations（live+initial）三元构造或 plan/continuation 的 round.order；results 至少一条；updates 增量实体必须在册；time/initial 顶层契约即可。judge 按 task 可覆盖注入。
+**默认语义底线**（确定性，内容级语义质量随真机评测+更强 judge）：叙事 ≥10 字/反应 ≥4 字；action 文本 ≥2 字；targets 的 targetId 必须在**角色名册**（workingState characters 双区——触发目标不是物品或地点）、pointPlan 的 actorIds、continuation 的候选都必须在**该输入的名册**里（updates 用 characters/items/locations 三元实体名册，plan/continuation 用 round.order）；results 至少一条；updates 增量实体必须在册；time/initial 顶层契约即可。judge 按 task 可覆盖注入。
 
 ## 4. 边界与下一步
 

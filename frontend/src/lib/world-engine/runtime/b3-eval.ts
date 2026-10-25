@@ -18,8 +18,21 @@ import type { B3Sample } from './b3-samples';
 /** Returns a failure note, or null when the output passes the floor. */
 export type B3Judge = (input: Json, output: Json) => string | null;
 
+/** The CHARACTER roster of an input's workingState (live and initial
+ * sections): the pool trigger targets may draw from. */
+function characterRoster(input: Json): Set<string> {
+  const state = (input as { workingState?: Json }).workingState ?? {};
+  const known = new Set<string>();
+  for (const key of ['initial', undefined] as const) {
+    const source = key ? (state as Record<string, Record<string, unknown>>)[key]?.characters : (state as Record<string, unknown>).characters;
+    if (source && typeof source === 'object') for (const id of Object.keys(source as Record<string, unknown>)) known.add(id);
+  }
+  return known;
+}
+
 /** The entity roster an input's workingState actually presents: characters,
- * items AND locations, live and initial sections. */
+ * items AND locations, live and initial sections — the pool entity deltas
+ * may address. */
 function entityRoster(input: Json): Set<string> {
   const state = (input as { workingState?: Json }).workingState ?? {};
   const known = new Set<string>();
@@ -48,7 +61,7 @@ const DEFAULT_JUDGES: Partial<Record<ModelTask, B3Judge>> = {
     return typeof (output as { text?: unknown }).text === 'string' && [...(output as { text: string }).text].length >= 2 ? null : '行动描述过短';
   },
   targets: (input, output) => {
-    const known = entityRoster(input);
+    const known = characterRoster(input); // a trigger target is another CHARACTER, not a location or item
     const targets = (output as { targets: { targetId: string }[] }).targets;
     const unknown = targets.filter((target) => !known.has(target.targetId));
     return unknown.length === 0 ? null : `目标不在场: ${unknown.map((target) => target.targetId).join(', ')}`;
@@ -82,9 +95,11 @@ const DEFAULT_JUDGES: Partial<Record<ModelTask, B3Judge>> = {
 };
 
 /** Which phase failed: the engine call itself, the codec's structural
- * validation, or the semantic floor. A fully successful sample fails
- * nowhere. */
-export type B3FailureStage = 'engine' | 'structure' | 'semantic';
+ * validation, the semantic floor — or the JUDGE crashing, which is an
+ * evaluation-infrastructure failure: the structure verdict and the paid
+ * generation cost stand, only the floor verdict is missing. A fully
+ * successful sample fails nowhere. */
+export type B3FailureStage = 'engine' | 'structure' | 'semantic' | 'judge';
 
 export interface B3SampleResult {
   id: string;
@@ -92,6 +107,7 @@ export interface B3SampleResult {
   failure: B3FailureStage | null;
   structureError?: string;
   semanticNote?: string;
+  judgeError?: string;
   /** Queue timing whenever the engine call completed (success or structural
    * rejection) — the generation cost happened either way. */
   timing: QueueTiming | null;
@@ -125,19 +141,41 @@ export interface B3EvalOptions {
 
 export async function runB3Evaluation(engine: InferenceEngine, samples: readonly B3Sample[] = [], options: B3EvalOptions = {}): Promise<B3Report> {
   const judges: Partial<Record<ModelTask, B3Judge>> = { ...DEFAULT_JUDGES, ...options.judges };
-  const port = new RuntimeWorldModelPort(engine, new SerialInferenceQueue());
+  // The harness counts ACTUAL completions by wrapping complete — no
+  // engine cooperation needed, no receiver lost, and a failed load wraps
+  // to zero calls.
+  let completions = 0;
+  const countingEngine: InferenceEngine = {
+    ...engine,
+    complete: (prompt, options) => {
+      completions += 1;
+      return engine.complete(prompt, options);
+    },
+  };
+  const port = new RuntimeWorldModelPort(countingEngine, new SerialInferenceQueue());
   const engineCalls = new Map<string, number>(); // per sample: actual engine completions
-  const before = engine.callsMade ?? (() => 0);
   const results: B3SampleResult[] = [];
   for (const sample of samples) {
-    const callsAtStart = before();
+    const callsAtStart = completions;
     try {
       const generation = await port.generateDetailed(sample.task, sample.key, sample.input);
-      engineCalls.set(sample.id, before() - callsAtStart);
-      const note = judges[sample.task]?.(sample.input, generation.value) ?? null;
-      results.push({ id: sample.id, task: sample.task, failure: note === null ? null : 'semantic', semanticNote: note ?? undefined, timing: generation.timing });
+      engineCalls.set(sample.id, completions - callsAtStart);
+      // The judge runs OUTSIDE the generation try: its crash must not
+      // overturn the structure verdict or drop the paid timing.
+      let note: string | null = null;
+      let judgeError: string | undefined;
+      try {
+        note = judges[sample.task]?.(sample.input, generation.value) ?? null;
+      } catch (error) {
+        judgeError = `${(error as Error).name}: ${(error as Error).message}`;
+      }
+      results.push({
+        id: sample.id, task: sample.task,
+        failure: judgeError !== undefined ? 'judge' : note === null ? null : 'semantic',
+        semanticNote: note ?? undefined, judgeError, timing: generation.timing,
+      });
     } catch (error) {
-      engineCalls.set(sample.id, before() - callsAtStart);
+      engineCalls.set(sample.id, completions - callsAtStart);
       if (error instanceof StructuredOutputError) {
         // The decode rejection carries the completed generation's timing:
         // the cost was paid even though the output was rejected.
@@ -154,8 +192,8 @@ export async function runB3Evaluation(engine: InferenceEngine, samples: readonly
     const avg = (pick: (timing: QueueTiming) => number) => (timed.length ? timed.reduce((sum, row) => sum + pick(row.timing!), 0) / timed.length : 0);
     return {
       task, samples: rows.length,
-      structureOk: rows.filter((row) => row.failure === null || row.failure === 'semantic').length,
-      structureRate: rows.length ? rows.filter((row) => row.failure === null || row.failure === 'semantic').length / rows.length : 0,
+      structureOk: rows.filter((row) => row.failure !== 'engine' && row.failure !== 'structure').length,
+      structureRate: rows.length ? rows.filter((row) => row.failure !== 'engine' && row.failure !== 'structure').length / rows.length : 0,
       semanticFloorOk: rows.filter((row) => row.failure === null).length,
       semanticFloorRate: rows.length ? rows.filter((row) => row.failure === null).length / rows.length : 0,
       calls: rows.reduce((sum, row) => sum + (engineCalls.get(row.id) ?? 0), 0),
@@ -167,7 +205,7 @@ export async function runB3Evaluation(engine: InferenceEngine, samples: readonly
     engine: { ...engine.info },
     totals: {
       samples: results.length,
-      structureOk: results.filter((row) => row.failure === null || row.failure === 'semantic').length,
+      structureOk: results.filter((row) => row.failure !== 'engine' && row.failure !== 'structure').length,
       semanticFloorOk: results.filter((row) => row.failure === null).length,
       calls: results.reduce((sum, row) => sum + (engineCalls.get(row.id) ?? 0), 0),
     },

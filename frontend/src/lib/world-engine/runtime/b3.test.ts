@@ -64,42 +64,31 @@ describe('B3 frozen samples', () => {
 });
 
 /** Scripted engine keyed by sample order: outputs.pop() per completion. */
-function scriptedEngine(outputs: string[]): InferenceEngine & { callsMade(): number } {
-  let started = 0;
+function scriptedEngine(outputs: string[]): InferenceEngine {
   return {
     info: { backend: 'fake', modelId: 'fake.gguf' },
     load: async () => {},
-    callsMade: () => started,
-    complete: async () => {
-      started += 1;
-      return outputs.shift() ?? '';
-    },
+    complete: async () => outputs.shift() ?? '',
     dispose: async () => {},
   };
 }
 
 /** An engine whose load always fails: real device work = zero completions. */
-function brokenLoadEngine(): InferenceEngine & { callsMade(): number } {
-  let started = 0;
+function brokenLoadEngine(): InferenceEngine {
   return {
     info: { backend: 'fake', modelId: 'fake.gguf' },
     load: () => Promise.reject(new Error('model asset missing')),
-    callsMade: () => started,
-    complete: async () => {
-      started += 1;
-      return '';
-    },
+    complete: async () => '',
     dispose: async () => {},
   };
 }
 
 /** A controllable engine so a test can slow individual completions. */
-function timedEngine(outputs: string[], delays: number[]): InferenceEngine & { callsMade(): number } {
+function timedEngine(outputs: string[], delays: number[]): InferenceEngine {
   let started = 0;
   return {
     info: { backend: 'fake', modelId: 'fake.gguf' },
     load: async () => {},
-    callsMade: () => started,
     complete: async () => {
       const index = started++;
       const delay = delays[index] ?? 0;
@@ -193,6 +182,28 @@ describe('runB3Evaluation', () => {
     const outputs2 = validOutputsFor(B3_SAMPLES);
     const overridden = await runB3Evaluation(scriptedEngine(outputs2), B3_SAMPLES, { judges: custom });
     expect(overridden.results.filter((result) => result.task === 'action').every((result) => result.failure === 'semantic')).toBe(true);
+  });
+
+  test('a crashing judge is its own stage: structure and timing stand, only the verdict is missing', async () => {
+    const outputs = validOutputsFor(B3_SAMPLES); // both target samples are structurally valid
+    const custom: Record<string, B3Judge> = { targets: () => { throw new Error('judge bug'); } };
+    const report = await runB3Evaluation(scriptedEngine(outputs), B3_SAMPLES, { judges: custom });
+    const row = report.results.find((result) => result.id === 'targets-1')!;
+    expect(row.failure).toBe('judge');
+    expect(row.judgeError).toMatch(/judge bug/);
+    expect(row.timing).not.toBeNull(); // the generation cost stands
+    const targetsRow = report.perTask.find((entry) => entry.task === 'targets')!;
+    expect(targetsRow.structureOk).toBe(2); // the codec verdict is NOT overturned
+    expect(targetsRow.semanticFloorOk).toBe(0); // both verdicts are missing — judge crashed, not failed
+  });
+
+  test('targets are judged against the CHARACTER roster: a location target fails the floor', async () => {
+    const outputs = validOutputsFor(B3_SAMPLES);
+    outputs[2] = '{"targets":[{"targetId":"corridor","triggerKey":"group:corridor","ruleVersion":"reaction-d20-v1","target":11}]}'; // targets-1: a LOCATION
+    const report = await runB3Evaluation(scriptedEngine(outputs), B3_SAMPLES);
+    const row = report.results.find((result) => result.id === 'targets-1')!;
+    expect(row.failure).toBe('semantic'); // the codec accepts the shape…
+    expect(row.semanticNote).toMatch(/不在场: corridor/); // …but corridor is not a character
   });
 
   test('fenced JSON from the engine passes through the real decode path', async () => {

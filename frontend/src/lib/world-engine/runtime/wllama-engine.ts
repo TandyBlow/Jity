@@ -24,7 +24,6 @@ export interface WllamaEngineOptions {
 
 export class WllamaInferenceEngine implements InferenceEngine {
   readonly info: EngineInfo = { backend: 'wllama', modelId: null };
-  private completions = 0;
   private instance: Wllama | null = null;
   private loading: Promise<void> | null = null;
   private loadAbort: AbortController | null = null;
@@ -81,14 +80,9 @@ export class WllamaInferenceEngine implements InferenceEngine {
     }
   }
 
-  /** Monotonic count of STARTED completions (the eval harness counts real
-   * device work, not attempts). */
-  callsMade(): number { return this.completions; }
-
   async complete(prompt: string, options?: CompleteOptions): Promise<string> {
     const instance = this.instance;
     if (!instance) throw new Error('wllama engine is not loaded');
-    this.completions += 1;
     const response = (await instance.createCompletion({
       prompt,
       max_tokens: options?.maxTokens ?? 256,
