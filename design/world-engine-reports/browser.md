@@ -307,3 +307,5 @@ T08 语料适配逐项登记：①s8 是把已锁定时间从 2s 改成 3s 的�
 组合回归按复审要求补入：真实 `WllamaInferenceEngine`（factory 注入 fake 底层 Wllama——loadModelFromUrl/createCompletion/exit 记录，不触 wasm）过 runB3Evaluation 全链——wasm completions 实际发生且与包装计数一致、timing 全保留、prose 样本干净解码、prompt 含叙事正文指令、harness 不 dispose 引擎。篡改实验（还原对象展开）恰该组合回归红，还原后 77/77。调试中组合探针首版用了上轮已删除的 `row.structured` 字段，被自家断言抓住后改 `failure`。
 
 结果：前端全套 **27 文件 451 项通过**（450 + 1 组合回归），`typecheck:world`、`review:world-s1`（60 项）、统一验收入口与生产 build 通过。b3-prompt-eval-design.md 补充包装转发语义。
+
+**复核闭环（同日，对 `121c0cd`）**：剩余 P1 关闭、B3 批次一按既定范围关闭。复审独立组合探针：真实适配器加载 1 次、生成 3 次、报告计数一致；合法输出与结构失败都保留计时；harness 不释放调用方引擎、显式 dispose 后仅释放一次；451/451、typecheck、review 60/60。**B3 批次一关闭**：交付链 `5ff91de → d296b97 → 793644f → 121c0cd`（修复轮一二三全部关闭）。下一批按用户指令进入**浏览器真机基线评测**：固定模型、参数和样本，保存原始输出，先取得真实结构率、底线率及耗时，再据此迭代提示词。
