@@ -28,11 +28,12 @@
 
 ## 3. 失效、停止与销毁（修复轮语义）
 
-- **会话唯一命名空间**：模块级计数器 + 时间戳生成默认命名空间（`requestIdNamespace` 可注入）；driver requestId 前缀与心跳 ID 同源，两个默认会话在共享服务端上无幂等键碰撞。
+- **会话唯一命名空间**：模块级计数器 + 时间戳 + **随机熵**（crypto.randomUUID 优先）生成默认命名空间（`requestIdNamespace` 可注入，`idNamespace` 诊断 getter）；跨模块实例（多标签页同毫秒各自从零计数）也不碰撞；driver requestId 前缀、恢复 ID 与心跳 ID 同源。
+- **授权恢复阶段**：失联态下的 `run()` 先经观察层 `lease_acquire` 取得新 LeaseGrant（观察自动清失联态、重启心跳），再以 `ControllerDriver.adoptLeaseGrant` 把 grant 交给 driver（换代栅栏 claim，与自发采纳同规则），然后才恢复业务循环；恢复失败以 error 终态返回。
 - **心跳失效（onLost）**：lease 失效进入**显式失联态**——停双心跳、epoch+1 隔离在途、abort 推理与调用信号，循环以 `lease lost: <code>` error 终态 settle；claim 续期冻结。会话保持可 run（controller 重取租约的恢复路径），下一次 LeaseGrant 观察清除失联态。claim 失效只停该心跳并上报，不打断会话。
 - **隔离是双极性定局替换**：在途调用的 settle（成功或错误）在 epoch 变化后一律替换为隔离错误——迟到错误信封不以 WorldApiError 抛回，errorReaction/adoptState/followup 写入无从触发；观察层入口在关闭后拒绝新调用。两层守卫独立拦截同一可观察结果。
 - **调用信号竞速**：每个 raw 交换与调用 signal 竞速（signal 传给 transport），stop/失租即刻定局调用方；raw 迟到 settle 前挂 catch 吞掉。
-- **信封 epoch 核对**：`world.lease` 只在 `fenceEpoch === 自持 epoch` 时绑定更新；更高 epoch = 自持 token 已死（失联处理），更低 epoch 忽略——旧 token 永不升级绑到新 epoch。
+- **信封 epoch 核对**：`world.lease` 只在 `fenceEpoch === 自持 epoch` 时绑定更新；更高 epoch = 自持 token 已死——走**统一失租路径**（完整隔离），且观察层在 observe 后复查 epoch：外邦 epoch 的本次回执不返回给 driver；更低 epoch 忽略——旧 token 永不升级绑到新 epoch。
 - **stop()**：终态关闭（epoch+1、pendingTerminal、心跳停、信号 abort）；`dispose()` = stop + 引擎释放。
 
 ## 4. 验收场景（session.test.ts）

@@ -235,3 +235,13 @@ T08 语料适配逐项登记：①s8 是把已锁定时间从 2s 改成 3s 的�
 **真实 driver 组合回归（复审建议）**：fixtures 驱动（create_world/narration_claim/narration_submit 服务端标本 + 模型输出 initial/叙事文本），默认工厂构造真实 ControllerDriver 过完整会话接线——到达 await 边界、交换序恰为三操作、夹具 lease 到期触发续租（token/epoch 正确）；迟到 stale_epoch 探针如上；双会话 requestId 唯一性。**篡改实验如实记录**：对 P1-2 的 settle 替换层单独还原不足以使探针转红——入口拒绝层独立拦截同一可观察结果（followup 到不了 raw transport），该行为由两层守卫过定；探针钉住的是复审要求的可观察结果（无写入、无心跳复活）。
 
 结果：前端全套 **26 文件 433 项通过**（427 + 6 净增：迟到错误双探针/失租隔离/外邦 epoch/命名空间唯一/真实 driver 三项），`typecheck:world`、`review:world-s1`（60 项）、统一验收入口与生产 build 通过。b4-session-design.md §3 已同步隔离与命名空间语义。
+
+### B4 批次一修复轮二（对 0a65eca 复审 2×P1+1×P2）
+
+日期：2026-10-25。三处全部确认成立并已修，三探针均经篡改实验钉住区分力：
+
+1. **失租后先恢复授权再恢复业务（P1）**：`run()` 在失联态下先走**显式授权恢复**——会话经观察层发 `lease_acquire`（新 LeaseGrant 的观察自动清失联态、重启心跳），并把 grant 交给 driver 采纳（新增 `ControllerDriver.adoptLeaseGrant`：替换 token、更新 world.lease 视图、按租约换代规则栅栏所持 claim——与 driver 自发 lease_acquire 的采纳同规则）；恢复失败以 error 终态返回，不进业务循环。真实 driver 组合回归钉住：失租后第二次 run 的首个交换是 recovery acquire（被拒续租之后紧随），恢复完成前**零模型调用**，driver memory 持新 token，重启的心跳以新 grant 续租。篡改（跳过恢复阶段）恰该测试红。
+2. **外邦 epoch 走统一失租路径（P1）**：分支复用 `enterLeaseLost('stale_epoch')`——提 epoch、pendingTerminal、完整隔离；并且观察层在 `observe()` 之后**复查 epoch**：观察动作触发的隔离使**本次回执不返回给 driver**（外邦 epoch 的响应不再被采纳、不再继续业务）。回归断言 run 以 `lease lost: stale_epoch` error 终态结束而非普通 stop/await。篡改（还原软分支）恰该测试红。
+3. **跨模块实例的命名空间熵（P2）**：默认命名空间加随机熵（`crypto.randomUUID` 前 8 位优先，`Math.random` 兜底）——不同标签页各自从零计数、同毫秒启动也不再碰撞；`requestIdNamespace` 注入不变。测试用两次 `vi.resetModules()` 构造两个全新模块实例（构造器不等证明独立、双侧前缀 s1_ 证明计数器同起点）+ 冻结 Date.now：无熵必碰撞、有熵必相异；篡改（去熵）恰该测试红。另暴露 `idNamespace` 诊断 getter。
+
+结果：前端全套 **26 文件 435 项通过**（433 + 2 净增），`typecheck:world`、`review:world-s1`（60 项）、统一验收入口与生产 build 通过。b4-session-design.md §3 同步恢复阶段与熵语义。

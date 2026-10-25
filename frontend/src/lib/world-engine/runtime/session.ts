@@ -37,6 +37,8 @@ export interface DriverLike {
   step(): Promise<DriverStatus | undefined>;
   deliver(command: HarnessCommand): void;
   getMemory(): ControllerMemory;
+  /** Adopts a session-recovered lease grant (lost-lease recovery). */
+  adoptLeaseGrant?(grant: { leaseToken: Id; fenceEpoch: number; expiresAtEpochMilli: number }): void;
 }
 
 export type DriverFactory = (io: ControllerIo) => DriverLike;
@@ -94,13 +96,21 @@ export class WorldSession {
   private status: SessionStatus = 'idle';
   private lease: { token: Id; fenceEpoch: number } | null = null;
   private claimPointId: Id | null = null;
+  private worldId: Id | null = null;
+  private readonly observed: WorldTransport;
+  private recoveryId = 0;
 
   constructor(transport: WorldTransport, port: RuntimeWorldModelPort, options: WorldSessionOptions = {}) {
     this.rawTransport = transport;
     this.port = port;
     this.hooks = options.hooks ?? {};
     sessionCounter += 1;
-    this.namespace = options.requestIdNamespace ?? `s${sessionCounter}_${Date.now().toString(36)}`;
+    // Entropy makes the default namespace unique across module instances
+    // (two tabs start their own counter at zero in the same millisecond).
+    const entropy = typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+      ? crypto.randomUUID().slice(0, 8)
+      : Math.random().toString(36).slice(2, 8);
+    this.namespace = options.requestIdNamespace ?? `s${sessionCounter}_${Date.now().toString(36)}_${entropy}`;
     const clock = options.clock ?? new SystemHeartbeatClock();
     let heartbeatId = 0;
     this.scheduler = new HeartbeatScheduler({
@@ -116,7 +126,7 @@ export class WorldSession {
       onClaimRenewed: () => {},
       onLost: (loss) => this.onHeartbeatLoss(loss),
     });
-    const observed: WorldTransport = {
+    const observed: WorldTransport = this.observed = {
       execute: async <K extends WorldOperation>(operation: K, request: RequestMap[K], scope: Scope) => {
         if (this.closed) throw new Error('WorldSession closed');
         const epochAtCall = this.epoch;
@@ -128,6 +138,9 @@ export class WorldSession {
               this.rawTransport.execute(operation, request, scope, this.calls.signal) as Promise<unknown>);
             if (epochAtCall !== this.epoch) throw new Error(this.isolationReason());
             this.observe(operation, request, scope, response as AnyEnvelope, false);
+            // observe() itself may raise the epoch (a foreign lease epoch is
+            // a session-level loss): this receipt must NOT reach the driver.
+            if (epochAtCall !== this.epoch) throw new Error(this.isolationReason());
             return response;
           } catch (error) {
             // Neither a stale success nor a late error envelope may steer
@@ -151,6 +164,9 @@ export class WorldSession {
 
   get sessionStatus(): SessionStatus { return this.status; }
 
+  /** Diagnostic: the identity namespace this session mints ids under. */
+  get idNamespace(): string { return this.namespace; }
+
   /** Single-flight driver loop. Repeat calls while running share the same
    * promise; after a terminal status the session can run again (await
    * boundary, or recovery after a lost lease reacquired its authority).
@@ -162,9 +178,40 @@ export class WorldSession {
     if (this.inference.signal.aborted) this.inference = new AbortController();
     this.pendingTerminal = null;
     this.status = 'running';
-    const epochAtStart = this.epoch;
-    this.loopPromise = this.loop(epochAtStart);
+    this.loopPromise = (async () => {
+      if (this.lostLeaseCode) {
+        // Explicit authority recovery: obtain a fresh LeaseGrant (through the
+        // observation layer, which restarts the heartbeats and clears the
+        // lost-lease state) and hand it to the driver BEFORE any business
+        // step — the stale token must never drive another write.
+        const recovery = await this.recoverAuthority();
+        if (!recovery.ok) {
+          this.status = 'idle';
+          this.loopPromise = null;
+          return recovery.status;
+        }
+      }
+      return this.loop(this.epoch);
+    })();
     return this.loopPromise;
+  }
+
+  private async recoverAuthority(): Promise<{ ok: true } | { ok: false; status: DriverStatus }> {
+    const worldId = this.worldId;
+    if (!worldId) return { ok: false, status: { kind: 'error', detail: 'lease recovery requires a known world' } };
+    const holderId = this.driver.getMemory().holderId;
+    const request = { protocolVersion: 2 as const, requestId: `req_${this.namespace}_recovery_${++this.recoveryId}`, worldId, holderId };
+    try {
+      const response = await this.observed.execute('lease_acquire', request as never, { worldId }) as unknown as {
+        data: { leaseToken: Id; fenceEpoch: number; expiresAtEpochMilli: number };
+      };
+      this.driver.adoptLeaseGrant?.(response.data);
+      if (this.lostLeaseCode) return { ok: false, status: { kind: 'error', detail: `lease recovery did not clear the lost-lease state` } };
+      return { ok: true };
+    } catch (error) {
+      const detail = error instanceof Error ? error.message : String(error);
+      return { ok: false, status: { kind: 'error', detail: `lease recovery failed: ${detail}` } };
+    }
   }
 
   private async loop(epochAtStart: number): Promise<DriverStatus> {
@@ -259,12 +306,18 @@ export class WorldSession {
     // exchanges are isolated (either polarity), inference aborts. The
     // session stays runnable — the controller reacquires on its recovery
     // path and the next observed lease grant clears the state.
+    this.enterLeaseLost(loss.code);
+  }
+
+  /** The unified lost-lease entry: marks the state, isolates the in-flight
+   * chain (both settle polarities) and settles the running loop. */
+  private enterLeaseLost(code: string): void {
     if (this.lostLeaseCode) return;
-    this.lostLeaseCode = loss.code;
+    this.lostLeaseCode = code;
     this.epoch += 1;
-    this.pendingTerminal ??= { kind: 'error', detail: `lease lost: ${loss.code}` };
+    this.pendingTerminal ??= { kind: 'error', detail: `lease lost: ${code}` };
     this.isolateInFlight();
-    this.hooks.onLeaseLost?.(loss.code);
+    this.hooks.onLeaseLost?.(code);
   }
 
   /** The observation layer: heartbeat state follows envelope content alone. */
@@ -288,6 +341,7 @@ export class WorldSession {
       const lease = grant as { leaseToken: Id; fenceEpoch: number; expiresAtEpochMilli: number } | undefined;
       const worldId = (scope.worldId ?? (request as { worldId?: Id }).worldId ?? data.worldId) as Id | undefined;
       if (lease?.leaseToken && worldId) {
+        this.worldId = worldId;
         this.lease = { token: lease.leaseToken, fenceEpoch: lease.fenceEpoch };
         this.lostLeaseCode = null; // fresh authority: the lost-lease state is recovered
         this.scheduler.startLease({ worldId, leaseToken: lease.leaseToken, fenceEpoch: lease.fenceEpoch, expiresAtEpochMilli: lease.expiresAtEpochMilli });
@@ -317,6 +371,9 @@ export class WorldSession {
       this.claimPointId = null;
     }
     const world = envelope.world;
+    if (!isError && world) {
+      this.worldId = world.worldId;
+    }
     if (!isError && world && this.lease) {
       if (world.lease) {
         // Bind only at the epoch the held token belongs to. A HIGHER epoch
@@ -326,13 +383,11 @@ export class WorldSession {
         // anyway).
         if (world.lease.fenceEpoch === this.lease.fenceEpoch) {
           this.scheduler.updateLease({ worldId: world.worldId, leaseToken: this.lease.token, fenceEpoch: world.lease.fenceEpoch, expiresAtEpochMilli: world.lease.expiresAtEpochMilli });
-        } else if (world.lease.fenceEpoch > this.lease.fenceEpoch && !this.lostLeaseCode) {
-          this.lostLeaseCode = 'stale_epoch'; // a foreign epoch fences every held credential
-          this.scheduler.stopLease();
-          this.scheduler.stopClaim();
-          this.lease = null;
-          this.claimPointId = null;
-          this.hooks.onLeaseLost?.('stale_epoch');
+        } else if (world.lease.fenceEpoch > this.lease.fenceEpoch) {
+          // A foreign epoch fences every held credential: the unified
+          // lost-lease path — full isolation, and the epoch re-check in the
+          // wrapper keeps this very receipt from reaching the driver.
+          this.enterLeaseLost('stale_epoch');
         }
       } else {
         // The lease is gone from the served world: every held claim is fenced.

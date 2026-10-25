@@ -88,6 +88,16 @@ export class ControllerDriver {
   /** Queues an external command; consumed when its operation executes, so it survives detours (lease loss). */
   deliver(command: HarnessCommand): void { this.command = command; }
 
+  /** Adopts a lease grant the SESSION recovered outside the driver loop
+   * (the lost-lease recovery path): the fresh token replaces the stale one
+   * and a lease-generation change fences every held narration claim — the
+   * same rules adoptSuccess applies to a driver-issued lease_acquire. */
+  adoptLeaseGrant(grant: { leaseToken: Id; fenceEpoch: number; expiresAtEpochMilli: number }): void {
+    this.memory.leaseToken = grant.leaseToken;
+    if (this.state.world) this.state.world.lease = { fenceEpoch: grant.fenceEpoch, expiresAtEpochMilli: grant.expiresAtEpochMilli };
+    if (this.memory.narration) this.memory.narration.claim = null;
+  }
+
   private nextRequestId(): Id {
     const prefix = this.memory.requestId.replace(/_\d+$/, '');
     this.memory.requestId = `${prefix}_${++this.requestCounter}`;

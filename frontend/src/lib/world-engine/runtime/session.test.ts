@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest';
+import { describe, expect, test, vi } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { WorldSession, type DriverLike } from './session';
@@ -317,7 +317,7 @@ describe('WorldSession assembly', () => {
         respond: () => envelope('w1', { fenceEpoch: 8, expiresAtEpochMilli: 240_000 }) },
       { kind: 'terminal', status: { kind: 'stop', reason: 'done' } },
     ], []);
-    expect(await h.session.run()).toEqual({ kind: 'stop', reason: 'done' });
+    expect(await h.session.run()).toEqual({ kind: 'error', detail: 'lease lost: stale_epoch' }); // the loop is isolated, not resumed
     expect(h.hooks.leaseLost).toEqual(['stale_epoch']); // the epoch-7 token is dead, not re-bound at epoch 8
     h.clock.advance(500_000);
     await settle();
@@ -348,7 +348,7 @@ describe('WorldSession composition with the real ControllerDriver', () => {
   const load = (name: string): Record<string, unknown> =>
     JSON.parse(readFileSync(new URL(`../../../../../design/world-protocol/v2/fixtures/api/${name}.json`, import.meta.url), 'utf8'));
 
-  function fixtureSession(submitRespond?: () => unknown | Promise<unknown>) {
+  function fixtureSession(submitRespond?: () => unknown | Promise<unknown>, inject: { renewLease?: () => unknown | Promise<unknown>; acquire?: () => unknown | Promise<unknown> } = {}) {
     const create = structuredClone(load('create_world/success')) as Record<string, never>;
     (create.world as never as { lease: { expiresAtEpochMilli: number } }).lease.expiresAtEpochMilli = 120_000;
     (create.data as never as { lease: { expiresAtEpochMilli: number } }).lease.expiresAtEpochMilli = 120_000;
@@ -370,12 +370,18 @@ describe('WorldSession composition with the real ControllerDriver', () => {
         if (op === 'create_world') return create as never;
         if (op === 'narration_claim') return claim as never;
         if (op === 'narration_submit') return submitRespond ? submitRespond() as never : submit as never;
-        if (op === 'lease_renew') return { data: { leaseToken: 'lease_a', fenceEpoch: 7, expiresAtEpochMilli: 1_000_000 } } as never;
+        if (op === 'lease_renew') return (inject.renewLease ? inject.renewLease() : { data: { leaseToken: 'lease_a', fenceEpoch: 7, expiresAtEpochMilli: 1_000_000 } }) as never;
+        if (op === 'lease_acquire') return (inject.acquire ? inject.acquire() : { data: { holderId: 'browser', leaseToken: 'lease_new', fenceEpoch: 8, expiresAtEpochMilli: 1_000_000 } }) as never;
         throw new Error(`unexpected transport call ${op}`);
       },
     };
-    const session = new WorldSession(raw as never, port, { clock }); // default factory: the REAL ControllerDriver
-    return { session, clock, transportLog };
+    const hooks = { statuses: [] as DriverStatus[], leaseLost: [] as string[], claimLost: [] as unknown[] };
+    const session = new WorldSession(raw as never, port, { clock, hooks: {
+      onStatus: (status) => hooks.statuses.push(status),
+      onLeaseLost: (code) => hooks.leaseLost.push(code),
+      onClaimLost: (loss) => hooks.claimLost.push(loss),
+    } }); // default factory: the REAL ControllerDriver
+    return { session, clock, transportLog, engine, hooks };
   }
 
   test('the real driver reaches the await boundary and the lease heartbeat follows the fixtures', async () => {
@@ -391,6 +397,34 @@ describe('WorldSession composition with the real ControllerDriver', () => {
     expect(renews[0]!.request.fenceEpoch).toBe(7);
   });
 
+
+
+  test('composition: after a lost lease, the next run recovers authority BEFORE any business step', async () => {
+    const h = fixtureSession(undefined, {
+      renewLease: () => Promise.reject(apiError('stale_epoch')),
+      acquire: () => ({ world: { worldId: 'world_school', lease: { fenceEpoch: 8, expiresAtEpochMilli: 1_000_000 } }, data: { holderId: 'browser', leaseToken: 'lease_new', fenceEpoch: 8, expiresAtEpochMilli: 1_000_000 } }),
+    });
+    const first = await h.session.run();
+    expect(first.kind).toBe('await');
+    expect(h.transportLog.map((entry) => entry.op)).toEqual(['create_world', 'narration_claim', 'narration_submit']);
+    const modelCallsAfterFirstRun = h.engine.calls.length;
+    h.clock.advance(90_000); // the lease renew is lost
+    await settle();
+    expect(h.hooks.leaseLost).toEqual(['stale_epoch']);
+    const second = await h.session.run(); // recovery, then the driver resumes (immediately awaiting again)
+    expect(second.kind).toBe('await');
+    expect(h.engine.calls.length).toBe(modelCallsAfterFirstRun); // NO model call before the fresh grant
+    const ops = h.transportLog.map((entry) => entry.op);
+    expect(ops.slice(0, 3)).toEqual(['create_world', 'narration_claim', 'narration_submit']);
+    expect(ops.slice(3)).toEqual(['lease_renew', 'lease_acquire']); // the lost renew, then the recovery acquire as the very next exchange
+    expect(h.session.getMemory().leaseToken).toBe('lease_new'); // the driver holds fresh authority
+    h.clock.advance(970_000); // the restarted heartbeat renews with the NEW grant
+    await settle();
+    const renews = h.transportLog.filter((entry) => entry.op === 'lease_renew');
+    expect(renews).toHaveLength(2); // the lost one, then the restarted heartbeat's
+    expect(renews[1]!.request.leaseToken).toBe('lease_new');
+    expect(renews[1]!.request.fenceEpoch).toBe(8);
+  });
 
   test('composition: a late stale_epoch after stop drives no reacquire followup', async () => {
     let rejectSubmit: ((error: unknown) => void) | null = null;
@@ -415,5 +449,36 @@ describe('WorldSession composition with the real ControllerDriver', () => {
     await second.session.run();
     const ids = [first, second].map((h) => h.transportLog.find((entry) => entry.op === 'create_world')!.request.requestId);
     expect(ids[0]).not.toBe(ids[1]); // no idempotency collision on a shared server
+  });
+});
+
+describe('WorldSession namespace uniqueness across module instances', () => {
+  test('two fresh module copies in the same millisecond still mint distinct namespaces', async () => {
+    const frozen = 1_234_567_890;
+    const realNow = Date.now;
+    Date.now = () => frozen; // the per-instance counter AND the clock collide
+    const makeSession = (Session: typeof import('./session').WorldSession) => {
+      const engine = fakeEngine([]);
+      const port = new RuntimeWorldModelPort(engine.engine);
+      const raw = { async execute(): Promise<unknown> { throw new Error('no exchanges needed'); } };
+      return new Session(raw as never, port, { clock: new ManualClock() });
+    };
+    try {
+      // Two FRESH module instances: each counter restarts at 1 under the
+      // frozen clock, so without entropy both namespaces would be identical.
+      vi.resetModules();
+      const moduleA = await import('./session');
+      const first = makeSession(moduleA.WorldSession);
+      vi.resetModules();
+      const moduleB = await import('./session');
+      const second = makeSession(moduleB.WorldSession);
+      expect(moduleB.WorldSession).not.toBe(moduleA.WorldSession); // genuinely separate instances
+      expect(first.idNamespace.startsWith('s1_')).toBe(true); // counter restarted in both
+      expect(second.idNamespace.startsWith('s1_')).toBe(true);
+      // Entropy — not the counter, not the clock — keeps the namespaces apart.
+      expect(first.idNamespace).not.toBe(second.idNamespace);
+    } finally {
+      Date.now = realNow;
+    }
   });
 });
