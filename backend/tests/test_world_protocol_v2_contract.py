@@ -448,8 +448,15 @@ def test_settlement_group_stage_rules(mutation, schema_level):
         value["sanities"] = {}
     if schema_level:
         assert list(json_validator("SettlementGroup").iter_errors(value))
-    with pytest.raises(ValidationError):
-        SettlementGroup.model_validate(value)
+        with pytest.raises(ValidationError):
+            SettlementGroup.model_validate(value)
+    else:
+        # 2026-10-26 adoption-rule migration: the personality/sanity pairing
+        # is an ADOPTION rule, not a wire shape — between-stage previews
+        # project partial stage states through this wire model, and the
+        # complete candidate is held to the rule by validate_unit (the
+        # kernel units-ladder suite owns that refusal).
+        assert SettlementGroup.model_validate(value)
 
 
 def test_action_group_requires_actors():

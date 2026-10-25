@@ -648,6 +648,14 @@ class GetStateData(Contract):
     version: Count
     state: WorldState
     stateDigest: Hex64
+    # The point's own saved record, echoed for narration assembly:
+    # previousPointId/timeAdvance/entityDeltas are the point's ORIGINAL
+    # delta - root points carry null/null/{}. Required with no defaults: a
+    # reader missing them must report incomplete read capability, never
+    # assume an empty delta.
+    previousPointId: Id | None
+    timeAdvance: TimeAdvance | None
+    entityDeltas: dict[Id, EntityDelta]
 
 
 class NarrationClaimSummary(Contract):

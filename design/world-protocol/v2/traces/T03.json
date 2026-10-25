@@ -1,7 +1,7 @@
 {
   "traceFormatVersion": 1,
   "protocolVersion": 2,
-  "contractDigest": "480d950c0f8062f8fdd75cb0620eb4ac97a6a247ca3f45f2057f6fe9e2ce7062",
+  "contractDigest": "abda455597e743f63da1c205ca7bc68044728c5f92a3cb7ae920440ef324eedd",
   "scenario": "T03",
   "acceptanceLayer": "contract",
   "runtimeTarget": "runtime-A2",
@@ -2413,6 +2413,34 @@
           },
           "stateDigest": {
             "$var": "state_hash_s8"
+          },
+          "previousPointId": {
+            "$var": "v3"
+          },
+          "timeAdvance": {
+            "boundary": "elapsed",
+            "duration": {
+              "amount": 60,
+              "unit": "second"
+            }
+          },
+          "entityDeltas": {
+            "person_c": {
+              "entityId": "person_c",
+              "tasksAchieved": [
+                "task_wait_noon"
+              ],
+              "personalityChanges": [
+                {
+                  "id": {
+                    "$var": "v13"
+                  },
+                  "text": "暂时放松了对周围的警戒。",
+                  "supersedes": []
+                }
+              ],
+              "sanitySet": 35
+            }
           }
         }
       },

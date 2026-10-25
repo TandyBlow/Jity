@@ -44,10 +44,6 @@ class SettlementGroup(Contract):
                 raise ValueError("time-scan unit cannot invent actors, movement or appearance")
         elif not self.actorIds:
             raise ValueError("action group requires actors")
-        if set(self.sanities) != set(self.personalities):
-            raise ValueError("personality changes and sanity recalculation must pair")
-        if self.personalities and not any(self.tasksAchieved.values()):
-            raise ValueError("personality stage requires newly achieved tasks")
         for owner, tasks in self.subtasksAdded.items():
             if any(task.ownerId != owner or task.parentTaskId is None for task in tasks):
                 raise ValueError("subtasks require matching owner and parent")

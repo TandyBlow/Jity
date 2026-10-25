@@ -1074,9 +1074,24 @@ def handle_get_state(store, record, request):
     cached = record['pointStates'].get(point_id)
     if cached is None:
         _refuse('version_mismatch', 'unknown point')
+    # The point's own saved record rides along for narration assembly:
+    # historical reads answer per requested point, never the head.
+    if point_id == record['rootPointId']:
+        previous_point_id = None
+        time_advance = None
+        entity_deltas = {}
+    else:
+        point = record['points'][point_id]
+        previous_point_id = point.previousPointId
+        time_advance = point.timeAdvance.model_dump(mode='json')
+        entity_deltas = {entity_id: delta.model_dump(mode='json')
+                         for entity_id, delta in point.entityDeltas.items()}
     return {'pointId': point_id, 'version': cached['version'],
             'state': cached['state'].model_dump(mode='json'),
-            'stateDigest': cached['stateDigest']}
+            'stateDigest': cached['stateDigest'],
+            'previousPointId': previous_point_id,
+            'timeAdvance': time_advance,
+            'entityDeltas': entity_deltas}
 
 
 def handle_list_points(store, record, request):

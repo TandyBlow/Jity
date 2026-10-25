@@ -103,6 +103,25 @@ def test_unit_validation_catches_out_of_roster_character_keys():
     assert validate_commit_groups([full_cast], WORLD_ROSTER) == ()
 
 
+def test_unit_validation_holds_the_pairing_adoption_rule():
+    # 2026-10-26 migration: the personality/sanity pairing left the wire
+    # model (between-stage previews project partial stage states through
+    # it) and lives here — the complete candidate is held to the rule at
+    # stage_unit and commit, exactly like the wire used to.
+    unpaired = SettlementGroup.model_validate({
+        'groupId': 'group_a', 'actorIds': ['person_a'],
+        'positions': {}, 'appearances': {},
+        'tasksAchieved': {'person_a': ['task_a']},
+        'subtasksAdded': {}, 'personalities': {},
+        'sanities': {'person_b': 40},
+        'taskCoverageIds': sorted(WORLD_ROSTER),
+        'personalityCoverageIds': sorted(WORLD_ROSTER),
+    })
+    kinds = {violation.kind for violation in
+             validate_commit_groups([unpaired], WORLD_ROSTER)}
+    assert kinds == {'semantic_invalid'}
+
+
 def test_ladder_happy_path_and_refusals():
     work, control = make_work(), make_control()
     assert check_checkpoint('checkpoint_discover_group', work, control) == ()

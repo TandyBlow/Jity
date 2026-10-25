@@ -254,6 +254,29 @@ def test_t01_flow_matches_pinned_service_behaviour(service):
     assert [point['kind'] for point in listing['data']['points']] == ['root', 'normal']
 
 
+def test_get_state_returns_point_record_for_narration(service):
+    state = run_t01_flow(service)
+    world_id, point_id, root_id = state['world_id'], state['point_id'], state['root_id']
+    merged = point_entity_deltas([single_group(['person_a'], frozenset(ORDER), state['group_id'])], None)
+    expected_deltas = {key: delta.model_dump(mode='json') for key, delta in merged.items()}
+    # head read = the committed point: it carries its own ORIGINAL delta
+    head_state = _run(service, 'get_state', {'protocolVersion': 2,
+                                             'worldId': world_id}, GetStateSuccess)
+    data = head_state['data']
+    assert data['pointId'] == point_id
+    assert data['previousPointId'] == root_id
+    assert data['timeAdvance'] == TIME_ADVANCE
+    assert data['entityDeltas'] == expected_deltas
+    # historical root read: null/null/{} even though the head differs
+    root_state = _run(service, 'get_state', {'protocolVersion': 2,
+                                             'worldId': world_id,
+                                             'point': root_id}, GetStateSuccess)
+    rdata = root_state['data']
+    assert rdata['pointId'] == root_id
+    assert rdata['previousPointId'] is None
+    assert rdata['timeAdvance'] is None
+    assert rdata['entityDeltas'] == {}
+
 def test_t01_head_narration_after_commit(service):
     state = run_t01_flow(service)
     world_id, point_id = state['world_id'], state['point_id']

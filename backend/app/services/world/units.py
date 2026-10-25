@@ -43,6 +43,18 @@ def validate_unit(unit: SettlementGroup, world_roster: frozenset[Id]) -> tuple[V
         violations.append(Violation(
             'coverage', 'personality coverage must stay empty without achieved tasks, '
                         'else list the world\'s full character set'))
+    # Adoption rules moved here from the SettlementGroup wire validator
+    # (2026-10-26): between-stage previews project PARTIAL stage states
+    # (personality applied, sanity not yet; tasks without personalities),
+    # so the wire stays structural. The complete candidate is held to the
+    # exact same rules at adoption — stage_unit and commit both run this.
+    if set(unit.sanities) != set(unit.personalities):
+        violations.append(Violation('semantic_invalid',
+            'personality changes and sanity recalculation must pair'))
+    if unit.personalities and not any(unit.tasksAchieved.values()):
+        violations.append(Violation('semantic_invalid',
+            'personality stage requires newly achieved tasks'))
+
     if not set(unit.personalities) <= set(unit.personalityCoverageIds):
         violations.append(Violation(
             'coverage', f'personality changes {sorted(set(unit.personalities) - set(unit.personalityCoverageIds))} '
