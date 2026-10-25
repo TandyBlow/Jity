@@ -1,9 +1,9 @@
 """Relational current/terminal PointWork and group payload persistence.
 
 These rows own the active work view, not a duplicate inside world_snapshots.
-Per-epoch accepted/frozen manifests, controlled copying and reservation
-promotion are separate A3 work; the payload table is not a replacement for
-those authority records.
+Accepted/frozen authority lives in world_frozen_repository; the payload table
+here is the structural working ledger. A current point may own one sealed
+direct successor reservation, which is persisted independently of snapshots.
 """
 import json
 
@@ -28,7 +28,7 @@ class _StoredGroup(Contract):
     targetSpecsBySource: dict[Id, list[TargetSpec] | None]
     frontierIds: Ids
     closed: bool
-    actionTexts: dict[Id, Text]
+    actionTexts: dict[Id, Text | None]
 
     @model_validator(mode='after')
     def confirmed_originals(self):
@@ -49,6 +49,11 @@ class _StoredGroup(Contract):
                 raise ValueError('Member target specifications differ from confirmed targets')
         if self.closed and len(confirmed) != len(members):
             raise ValueError('Closed group still has unconfirmed member targets')
+        if self.closed and any(text is None for text in self.actionTexts.values()):
+            raise ValueError('Closed group still has an unconfirmed member action')
+        if any(self.actionTexts[member] is None and targets is not None
+               for member, targets in self.targetIdsBySource.items()):
+            raise ValueError('Targets cannot be confirmed before the member action')
         return self
 
 
@@ -91,6 +96,16 @@ def initialize_work_schema(connection):
 
 def install_work_guards(connection):
     """Idempotent additive guards, including on existing work-schema v1 DBs."""
+    connection.execute('''CREATE TABLE IF NOT EXISTS world_work_reservations (
+        world_id TEXT NOT NULL, point_id TEXT NOT NULL, predecessor_point_id TEXT NOT NULL,
+        predecessor_digest TEXT NOT NULL CHECK(length(predecessor_digest)=64),
+        PRIMARY KEY(world_id,point_id),
+        FOREIGN KEY(world_id,point_id) REFERENCES world_point_work(world_id,point_id),
+        FOREIGN KEY(world_id,predecessor_point_id) REFERENCES world_point_work(world_id,point_id)
+    ) STRICT''')
+    connection.execute('''CREATE TRIGGER IF NOT EXISTS work_reservation_final
+        BEFORE UPDATE ON world_work_reservations
+        BEGIN SELECT RAISE(ABORT,'work_reservation_is_final'); END''')
     immutable = ('world_id', 'point_id', 'round_id', 'advance_id', 'kind',
                  'baseline_point_id', 'baseline_version', 'baseline_digest',
                  'time_json', 'time_locked', 'sealed', 'prefix_digest', 'phase',
@@ -122,7 +137,8 @@ def _save_group(connection, world_id, point_id, group, status, results=None):
         raise LedgerMismatch('Original group payload is missing')
     old = json.loads(old_row[0])
     if (old['sourceId'] != group['sourceId'] or not set(old['memberIds']) <= set(group['memberIds']) or
-            any(group['actionTexts'].get(member) != text for member, text in old['actionTexts'].items()) or
+            any(text is not None and group['actionTexts'].get(member) != text
+                for member, text in old['actionTexts'].items()) or
             any(targets is not None and group['targetIdsBySource'].get(member) != targets
                 for member, targets in old['targetIdsBySource'].items()) or
             any(targets is not None and group['targetSpecsBySource'].get(member) != targets
@@ -137,21 +153,34 @@ def _save_group(connection, world_id, point_id, group, status, results=None):
         members_json=wire(sorted(group['memberIds'])), status=status))
 
 
+def _work_set(record):
+    return {work['pointId']:work for key in ('work','_successorWork')
+            if (work := (record or {}).get(key)) is not None}
+
+
 def save_work(connection, before, record):
     world_id = record['worldId']
-    work = record.get('work')
-    old = (before or {}).get('work')
-    if work == old:
+    old, new = _work_set(before), _work_set(record)
+    if old == new:
         return
-    if old and (work is None or work['pointId'] != old['pointId']):
-        status = 'consumed' if old['pointId'] in record['points'] else 'abandoned'
+    for point_id in old.keys() - new.keys():
+        status = 'consumed' if point_id in record['points'] else 'abandoned'
         connection.execute('UPDATE world_point_work SET status=? WHERE world_id=? AND point_id=?',
-                           (status, world_id, old['pointId']))
+                           (status, world_id, point_id))
         connection.execute('UPDATE world_groups SET status=? WHERE world_id=? AND point_id=?',
-                           (status, world_id, old['pointId']))
+                           (status, world_id, point_id))
+    for work in new.values():
+        if old.get(work['pointId']) != work:
+            _save_active_work(connection, record, work)
+    current = record.get('work')
+    if current is None:
         connection.execute('DELETE FROM world_work_heads WHERE world_id=?', (world_id,))
-    if work is None:
-        return
+    else:
+        _upsert(connection, 'world_work_heads', ('world_id',), dict(world_id=world_id, point_id=current['pointId']))
+
+
+def _save_active_work(connection, record, work):
+    world_id = record['worldId']
     round_view, advance = record['round'], record['advance']
     baseline = work['baseline']
     _upsert(connection, 'world_point_work', ('world_id', 'point_id'), dict(
@@ -161,7 +190,17 @@ def save_work(connection, before, record):
         time_locked=int(work['timeLocked']), sealed=int(work['sealed']), prefix_digest=work['prefixDigest'],
         phase=work['phase'], progress_json=wire(work['working']),
         time_scan_json=wire(work['timeScan']) if work['timeScan'] is not None else None,
-        successor_point_id=None, predecessor_point_id=None, status='active'))
+        successor_point_id=work['successor']['pointId'] if work['successor'] else None,
+        predecessor_point_id=work.get('_predecessorPointId'), status='active'))
+    if work.get('predecessorWorkDigest') is not None:
+        predecessor = work.get('_predecessorPointId') or work['baseline']['headPointId']
+        values = (world_id,work['pointId'],predecessor,work['predecessorWorkDigest'])
+        existing = connection.execute('SELECT * FROM world_work_reservations WHERE world_id=? AND point_id=?',
+                                      (world_id,work['pointId'])).fetchone()
+        if existing is None:
+            connection.execute('INSERT INTO world_work_reservations VALUES(?,?,?,?)',values)
+        elif existing != values:
+            raise LedgerMismatch('Successor reservation prefix cannot change')
     pending = work['pendingGroup']
     if pending:
         _save_group(connection, world_id, work['pointId'], pending, 'closed' if pending['closed'] else 'open')
@@ -189,7 +228,6 @@ def save_work(connection, before, record):
         world_id=world_id, point_id=work['pointId'],
         pending_group_id=pending['groupId'] if pending else None,
         successor_json=wire(work['successor']) if work['successor'] else None))
-    _upsert(connection, 'world_work_heads', ('world_id',), dict(world_id=world_id, point_id=work['pointId']))
 
 
 def load_work(connection, world_id):
@@ -210,8 +248,29 @@ def _load_work(connection, world_id):
             raise LedgerMismatch('Active work has no current-work pointer')
         return None
     point_id = pointer[0]
-    if active != [(point_id,)]:
-        raise LedgerMismatch('Current-work pointer differs from active work')
+    links = connection.execute('SELECT successor_point_id,predecessor_point_id FROM world_point_work '
+                               'WHERE world_id=? AND point_id=?',(world_id,point_id)).fetchone()
+    if links is None or links[1] is not None:
+        raise LedgerMismatch('Current-work pointer names a missing or reserved point')
+    expected = {point_id} | ({links[0]} if links[0] is not None else set())
+    if {point[0] for point in active} != expected:
+        raise LedgerMismatch('Current-work pointer differs from current and reserved work')
+    return _load_point_work(connection, world_id, point_id)
+
+
+def load_reserved_work(connection, world_id):
+    pointer = connection.execute('''SELECT p.point_id,p.successor_point_id FROM world_work_heads h
+        JOIN world_point_work p ON p.world_id=h.world_id AND p.point_id=h.point_id
+        WHERE h.world_id=?''',(world_id,)).fetchone()
+    if pointer is None or pointer[1] is None:
+        return None
+    work = _load_point_work(connection,world_id,pointer[1])
+    if work.get('_predecessorPointId') != pointer[0]:
+        raise LedgerMismatch('Reserved successor lost its predecessor binding')
+    return work
+
+
+def _load_point_work(connection, world_id, point_id):
     row = connection.execute('SELECT kind,baseline_point_id,baseline_version,baseline_digest,time_json,time_locked,'
                              'sealed,prefix_digest,phase,progress_json,time_scan_json '
                              'FROM world_point_work WHERE world_id=? AND point_id=?', (world_id, point_id)).fetchone()
@@ -265,26 +324,49 @@ def _load_work(connection, world_id):
         raise LedgerMismatch('Working progress disagrees with settled units')
     time = TimeAdvance.model_validate(parse_json(time_json)).model_dump(mode='json')
     successor = SuccessorSummary.model_validate(parse_json(details[1])).model_dump(mode='json') if details[1] is not None else None
-    return dict(pointId=point_id, kind=kind, timeAdvance=time, timeLocked=bool(locked),
+    work = dict(pointId=point_id, kind=kind, timeAdvance=time, timeLocked=bool(locked),
                 sealed=bool(sealed), prefixDigest=prefix, timeScanComplete=scan is not None,
                 timeScan=SettlementGroup.model_validate_json(scan) if scan is not None else None,
                 baseline=dict(headPointId=head, version=version, stateDigest=digest),
                 phase=phase, working=working, units=units, pendingGroup=pending,
                 successor=successor)
+    links = connection.execute('SELECT successor_point_id,predecessor_point_id FROM world_point_work '
+                               'WHERE world_id=? AND point_id=?',(world_id,point_id)).fetchone()
+    if (successor or {}).get('pointId') != links[0]:
+        raise LedgerMismatch('Successor SQL pointer differs from its summary')
+    reservation = connection.execute('SELECT predecessor_point_id,predecessor_digest FROM world_work_reservations '
+                                    'WHERE world_id=? AND point_id=?',(world_id,point_id)).fetchone()
+    if reservation is not None:
+        work['predecessorWorkDigest'] = reservation[1]
+    if links[1] is not None:
+        if reservation is None or reservation[0] != links[1]:
+            raise LedgerMismatch('Reserved work has no immutable predecessor prefix')
+        work['_predecessorPointId'] = links[1]
+    return work
 
 
 def check_work(connection, record):
-    work = record['work']
+    _check_point_work(connection,record,record.get('work'))
+    reserved = record.get('_successorWork')
+    if reserved is not None:
+        from app.services.world.successor import validate_reservation
+        validate_reservation(record)
+        _check_point_work(connection,record,reserved,record['work'])
+
+
+def _check_point_work(connection, record, work, predecessor=None):
     if work is None:
         return
     binding = connection.execute('SELECT round_id,advance_id FROM world_point_work '
                                  'WHERE world_id=? AND point_id=?', (record['worldId'], work['pointId'])).fetchone()
     if binding != (record['round']['roundId'], record['advance']['advanceId']):
         raise LedgerMismatch('Work belongs to another round or input chain')
-    if work['phase'] != record['control']['phase']:
+    if predecessor is None and work['phase'] != record['control']['phase']:
         raise LedgerMismatch('Work phase differs from controller phase')
-    if work['baseline'] != dict(headPointId=record['headPointId'], version=record['version'],
-                               stateDigest=record['pointStates'][record['headPointId']]['stateDigest']):
+    expected_baseline = (predecessor['successor']['baseline'] if predecessor else
+        dict(headPointId=record['headPointId'], version=record['version'],
+             stateDigest=record['pointStates'][record['headPointId']]['stateDigest']))
+    if work['baseline'] != expected_baseline:
         raise LedgerMismatch('Work baseline differs from the committed head')
     order = record['round']['order']
     progress = work['working']
@@ -298,10 +380,11 @@ def check_work(connection, record):
     if validate_commit_groups(candidates, roster):
         raise LedgerMismatch('Saved candidates violate roster, coverage or actor uniqueness')
     unit_actors = {actor for unit in work['units'] for actor in unit['candidates'].actorIds}
-    committed_actors = set(record['round']['actedIds'])
+    inherited = predecessor['working'] if predecessor else None
+    committed_actors = set(inherited.actedIds if inherited else record['round']['actedIds'])
     if acted != committed_actors | unit_actors or committed_actors & unit_actors:
         raise LedgerMismatch('Working actors have no matching committed or staged settlement')
-    expected_intent = record['advance']['intentStatus']
+    expected_intent = inherited.intentStatus if inherited else record['advance']['intentStatus']
     # A pure time scan visits all remaining slots without consuming input.
     # Confirmed skips have their own persisted success records; use those
     # rather than mistaking the scan's visited set for a skip.
@@ -314,8 +397,8 @@ def check_work(connection, record):
         raise LedgerMismatch('Working input status differs from confirmed settlements or skips')
     cursor = next((index for index, actor in enumerate(order) if actor not in visited), len(order))
     if (not acted <= visited or not visited <= set(order) or progress.cursor != cursor or
-            not set(record['round']['actedIds']) <= acted or
-            not set(record['round']['visitedIds']) <= visited):
+            not set(inherited.actedIds if inherited else record['round']['actedIds']) <= acted or
+            not set(inherited.visitedIds if inherited else record['round']['visitedIds']) <= visited):
         raise LedgerMismatch('Working progress disagrees with the frozen order or committed progress')
     group = work['pendingGroup']
     if ((work['phase'] == 'select_actor' and group is not None) or

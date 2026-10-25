@@ -13,8 +13,8 @@ from tests.test_world_control_service import (
 from tests.test_world_sqlite_store import reopen
 
 
-def discover(path):
-    service = reopen(path)
+def discover(path,*,clock=None):
+    service = reopen(path,clock=clock)
     flow = begin_work(service)
     request = _payload('discover', flow['world_id'], flow['lease'], operation='discover_group',
                        expectedPointId=flow['root_id'], expectedVersion=0,
@@ -26,8 +26,8 @@ def discover(path):
     return service, flow
 
 
-def staged(path):
-    service, flow = discover(path)
+def staged(path,*,clock=None):
+    service, flow = discover(path,clock=clock)
     def checkpoint(name, **fields):
         request = _payload(name, flow['world_id'], flow['lease'], operation=name,
                            expectedPointId=flow['root_id'], expectedVersion=0,
@@ -81,7 +81,7 @@ def test_cancel_keeps_abandoned_originals_and_candidates(tmp_path):
     service, flow, stage = staged(path)
     before = service.store.world(flow['world_id'])
     request = _payload('cancel', flow['world_id'], flow['lease'], operation='cancel',
-                       advanceId='advance_1', roundId='round_1', expectedPointId=flow['root_id'],
+                       advanceId=flow['advance_id'], roundId=flow['round_id'], expectedPointId=flow['root_id'],
                        expectedVersion=0, expectedCheckpointRevision=flow['revision'],
                        cancelReason='验收取消')
     service.execute('round_conclusion_cancel', request)
@@ -243,7 +243,7 @@ def test_cancel_sql_failure_preserves_active_work_input_and_originals(tmp_path):
     service, flow, _ = staged(path)
     before = service.store.world(flow['world_id'])
     request = _payload('cancel', flow['world_id'], flow['lease'], operation='cancel',
-        advanceId='advance_1', roundId='round_1', expectedPointId=flow['root_id'],
+        advanceId=flow['advance_id'], roundId=flow['round_id'], expectedPointId=flow['root_id'],
         expectedVersion=0, expectedCheckpointRevision=flow['revision'], cancelReason='验收取消')
     with sqlite3.connect(path) as db:
         db.execute("CREATE TRIGGER fail BEFORE DELETE ON world_work_heads BEGIN SELECT RAISE(ABORT,'cancel fault'); END")

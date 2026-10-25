@@ -24,6 +24,8 @@ from tests.test_world_sqlite_store import reopen
 
 
 class RestartingService:
+    persistent = True
+
     def __init__(self, path):
         self.path = path
 
@@ -35,10 +37,10 @@ def test_ten_ordered_units_reopen_with_set_semantics_and_commit(tmp_path):
     path = tmp_path / 'ten-units.sqlite'
     service = RestartingService(path)
     initial = initial_template()
-    for suffix in 'ghij':
+    for index, suffix in enumerate('ghij', start=7):
         actor_id, task_id = f'person_{suffix}', f'task_{suffix}_root'
         actor = copy.deepcopy(initial['characters']['person_a'])
-        actor.update(id=actor_id, name=suffix.upper(), tasks={task_id: {
+        actor.update(id=actor_id, name=suffix.upper(), initialSanity=index * 10, tasks={task_id: {
             'id': task_id, 'ownerId': actor_id, 'parentTaskId': None,
             'goal': '完成本轮测试。', 'status': 'pending',
         }})
@@ -52,15 +54,16 @@ def test_ten_ordered_units_reopen_with_set_semantics_and_commit(tmp_path):
     allocations = service.execute('allocate_ids', _payload(
         'allocate_ten', world, lease, allocationKey='ten_units', slots=[
             {'slotKey': 'point', 'kind': 'point', 'scope': None},
-            *[{'slotKey': f'group_{index}', 'kind': 'group', 'scope': 'round_ten'}
+            *[{'slotKey': kind, 'kind': kind, 'scope': None} for kind in ('advance', 'input', 'round')],
+            *[{'slotKey': f'group_{index}', 'kind': 'group', 'scope': None}
               for index in range(1, 11)],
         ]))
     identities = {item['slotKey']: item['id'] for item in allocations['data']['allocations']}
     point_id = identities['point']
     service.execute('checkpoint_start_advance', _payload(
         'start_ten', world, lease, operation='start_advance', expectedPointId=head,
-        expectedVersion=0, expectedCheckpointRevision=0, advanceId='advance_ten',
-        inputId='input_ten', roundId='round_ten', inputText='一起行动。', order=order))
+        expectedVersion=0, expectedCheckpointRevision=0, advanceId=identities['advance'],
+        inputId=identities['input'], roundId=identities['round'], inputText='一起行动。', order=order))
     revision = 1
 
     def checkpoint(operation, request_id, **fields):
@@ -94,14 +97,14 @@ def test_ten_ordered_units_reopen_with_set_semantics_and_commit(tmp_path):
     # their actual settlement order independently of that representation.
     assert ordinal_ids != sorted(ordinal_ids)
     preview = service.execute('preview_point', {
-        'protocolVersion': 2, 'worldId': world, 'advanceId': 'advance_ten',
-        'roundId': 'round_ten', 'pointId': point_id, 'expectedPointId': head,
+        'protocolVersion': 2, 'worldId': world, 'advanceId': identities['advance'],
+        'roundId': identities['round'], 'pointId': point_id, 'expectedPointId': head,
         'expectedVersion': 0, 'expectedCheckpointRevision': revision,
         'timeAdvance': TIME_ADVANCE, 'settlementGroups': candidates,
     })
     checkpoint('seal_point', 'seal_ten')
     commit = _payload(
-        'commit_ten', world, lease, advanceId='advance_ten', roundId='round_ten',
+        'commit_ten', world, lease, advanceId=identities['advance'], roundId=identities['round'],
         pointId=point_id, expectedPointId=head, expectedVersion=0,
         expectedCheckpointRevision=revision, point=preview['data']['pointProjection'],
         settlementGroups=candidates)
@@ -122,6 +125,8 @@ def test_t01_http_restarts_sqlite_app_before_every_operation(tmp_path, monkeypat
     monkeypatch.setenv('WORLD_SQLITE_PATH', str(path))
 
     class RestartingHttpService:
+        persistent = True
+
         def execute(self, operation, request):
             with TestClient(create_persistent_world_app()) as client:
                 return HttpService(client).execute(operation, request)
@@ -166,8 +171,8 @@ def test_time_scan_only_work_reopens_seals_and_commits(tmp_path):
     assert stored['work']['working'].intentStatus == 'pending'
     assert stored['round']['cursor'] == 0
     preview = service.execute('preview_point', {
-        'protocolVersion': 2, 'worldId': world, 'advanceId': 'advance_1',
-        'roundId': 'round_1', 'pointId': point, 'expectedPointId': head,
+        'protocolVersion': 2, 'worldId': world, 'advanceId': flow['advance_id'],
+        'roundId': flow['round_id'], 'pointId': point, 'expectedPointId': head,
         'expectedVersion': 0, 'expectedCheckpointRevision': revision,
         'timeAdvance': TIME_ADVANCE, 'settlementGroups': [],
     })
@@ -177,7 +182,7 @@ def test_time_scan_only_work_reopens_seals_and_commits(tmp_path):
     revision += 1
     assert reopen(path).store.world(world)['work']['sealed']
     commit = _payload(
-        'commit_scan', world, lease, advanceId='advance_1', roundId='round_1',
+        'commit_scan', world, lease, advanceId=flow['advance_id'], roundId=flow['round_id'],
         pointId=point, expectedPointId=head, expectedVersion=0,
         expectedCheckpointRevision=revision, point=preview['data']['pointProjection'],
         settlementGroups=[])
@@ -192,12 +197,24 @@ def test_time_scan_only_work_reopens_seals_and_commits(tmp_path):
 
 def test_reaction_group_preserves_each_members_confirmed_work_across_reopens(tmp_path):
     path = tmp_path / 'reaction-group.sqlite'
-    service = RestartingService(path)
+
+    class RestartingReactionService(RestartingService):
+        def execute(self, operation, request):
+            reopened = reopen(self.path)
+            # Test-only server RNG, never a request/browser supplied result.
+            reopened.store._roll_rng = lambda: 20
+            return reopened.execute(operation, request)
+
+    service = RestartingReactionService(path)
     flow = begin_work(service)
     world, point, head, lease, group_id = (
         flow['world_id'], flow['point_id'], flow['root_id'], flow['lease'], flow['group_id'])
     revision = flow['revision']
     source_text, reaction_text = '原始行动\r\n向 B 招手。', '原始反应\r\n回应 A。'
+    allocation = service.execute('allocate_ids', _payload(
+        'react_trigger_allocate', world, lease, allocationKey='reaction_trigger',
+        slots=[{'slotKey': 'a_to_b', 'kind': 'trigger', 'scope': group_id}]))
+    trigger = allocation['data']['allocations'][0]['id']
 
     def checkpoint(operation, request_id, **fields):
         nonlocal revision
@@ -211,12 +228,21 @@ def test_reaction_group_preserves_each_members_confirmed_work_across_reopens(tmp
     checkpoint('discover_group', 'react_discover', initiatorId='person_a',
                actionText=source_text, targetIds=None)
     checkpoint('extend_group', 'react_targets_a', sourceId='person_a',
-               targets=[{'targetId': 'person_b', 'triggerKey': 'trigger_ab'}], admittedMember=None)
+               targets=[{'targetId': 'person_b', 'triggerKey': trigger}], admittedMember=None)
+    current = reopen(path).store.world(world)
+    judgment = service.execute('create_rolls', _payload(
+        'react_server_roll', world, lease, expectedPointId=head, expectedVersion=0,
+        expectedCheckpointRevision=revision, rolls=[{
+            'advanceId': current['advance']['advanceId'], 'roundId': current['round']['roundId'],
+            'groupId': group_id, 'sourceId': 'person_a', 'targetId': 'person_b',
+            'triggerKey': trigger, 'ruleVersion': 'reaction-d20-v1', 'target': 11,
+        }]))['data']['rolls'][0]
+    assert judgment['result'] == 20 and judgment['eligible'] and judgment['admitted']
     checkpoint('extend_group', 'react_admit_b', sourceId='person_a', targets=None,
                admittedMember={
                    'memberId': 'person_b', 'actionText': reaction_text,
                    'rollRefs': [{'sourceId': 'person_a', 'targetId': 'person_b',
-                                 'triggerKey': 'trigger_ab', 'rollId': 'roll_ab'}],
+                                 'triggerKey': trigger, 'rollId': judgment['rollId']}],
                })
     pending = reopen(path).store.world(world)['work']['pendingGroup']
     assert pending['targetIdsBySource'] == {'person_a': ['person_b'], 'person_b': None}
@@ -300,8 +326,8 @@ def test_skip_then_time_scan_keeps_input_consumed_across_restart_and_commit(tmp_
     assert work['working'].cursor == len(ORDER) and work['working'].actedIds == []
     assert reopen(path).store.world(world)['advance']['intentStatus'] == 'pending'
     preview = service.execute('preview_point', {
-        'protocolVersion': 2, 'worldId': world, 'advanceId': 'advance_1',
-        'roundId': 'round_1', 'pointId': point, 'expectedPointId': head,
+        'protocolVersion': 2, 'worldId': world, 'advanceId': flow['advance_id'],
+        'roundId': flow['round_id'], 'pointId': point, 'expectedPointId': head,
         'expectedVersion': 0, 'expectedCheckpointRevision': revision,
         'timeAdvance': TIME_ADVANCE, 'settlementGroups': [],
     })
@@ -309,7 +335,7 @@ def test_skip_then_time_scan_keeps_input_consumed_across_restart_and_commit(tmp_
         'seal_after_skip_scan', world, lease, operation='seal_point', expectedPointId=head,
         expectedVersion=0, expectedCheckpointRevision=revision, pointId=point))
     commit = _payload(
-        'commit_after_skip_scan', world, lease, advanceId='advance_1', roundId='round_1',
+        'commit_after_skip_scan', world, lease, advanceId=flow['advance_id'], roundId=flow['round_id'],
         pointId=point, expectedPointId=head, expectedVersion=0,
         expectedCheckpointRevision=revision + 1, point=preview['data']['pointProjection'],
         settlementGroups=[])

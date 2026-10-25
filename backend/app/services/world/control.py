@@ -24,6 +24,8 @@ preconditions → business writes → revision increment → response projection
 only working pointers and the working intent projection — commit_point
 promotes them.
 """
+import copy
+import time
 import typing
 
 from pydantic import RootModel, ValidationError
@@ -42,6 +44,7 @@ _ALL_REQUEST_MODELS = [m for m in _SCHEMA_MODELS if m.__name__.endswith('Request
 from app.schemas.world.v2.requests import PreviewPointRequest
 
 from .apply import apply_point
+from . import authority
 from .commit import verify_point_binding
 from .ladder import check_checkpoint
 from .merge import point_entity_deltas
@@ -106,7 +109,10 @@ def _gate(record):
 def _head_entry(record):
     """The head point's narration entry — the single authoritative narration
     state per point; gate and head summaries derive from it."""
-    return record['narrations'][record['headPointId']]
+    entry = record['narrations'][record['headPointId']]
+    if record['headPointId'] in getattr(record, 'missing_narrations', ()):
+        return {**entry, 'status': 'missing', 'text': None}
+    return entry
 
 
 def _blocked(record):
@@ -120,7 +126,9 @@ def _blocked(record):
         blocked.append('narration_failed')
     elif head == 'missing':
         blocked.append('cache_missing')
-    return sorted(blocked)
+    if hasattr(record, 'clock_milli'):
+        blocked.extend(authority.blocked_reasons(record, record))
+    return sorted(set(blocked))
 
 
 def control_view(record):
@@ -183,6 +191,8 @@ def _lease(record):
 
 
 def _check_lease(record, request):
+    if hasattr(record, 'clock_milli'):
+        return authority.check_lease(record, record, request)
     lease = _lease(record)
     if lease is None or request.leaseToken != lease['leaseToken']:
         _refuse('lease_invalid', 'unknown lease token')
@@ -312,7 +322,7 @@ def _work_view(record):
         'pointId': work['pointId'], 'kind': work['kind'],
         'timeAdvance': work['timeAdvance'], 'timeLocked': work['timeLocked'],
         'sealed': work['sealed'], 'prefixDigest': work['prefixDigest'],
-        'predecessorWorkDigest': None,
+        'predecessorWorkDigest': work.get('predecessorWorkDigest'),
         'timeScanComplete': work['timeScanComplete'], 'baseline': work['baseline'],
         'phase': work['phase'],
         'working': (work['working'].model_dump(mode='json')
@@ -362,7 +372,7 @@ def _context_envelope(store, data):
     """ContextResponse: snapshots plus the active input chain and recovery."""
     return {**_envelope_base(store), 'world': data['world'],
             'control': data['control'], 'work': data['work'],
-            'activeInput': data['activeInput'], 'recovery': None}
+            'activeInput': data['activeInput'], 'recovery': data.get('recovery')}
 
 
 # --- per-operation handlers (record is the mutable transaction copy) --------
@@ -393,6 +403,11 @@ def handle_create_world(store, request):
     _new_narration(record, root_id)
     record['pointStates'][root_id] = {
         'version': 0, 'state': state, 'stateDigest': state_digest(state)}
+    if getattr(store, 'persistent', False):
+        record = store.prepare_record(record)
+        authority.initialize_world(store, record)
+        lease = {key: record['lease'][key] for key in (
+            'leaseToken', 'fenceEpoch', 'expiresAtEpochMilli')}
     return record, {'worldId': world_id, 'rootPointId': root_id, 'lease': lease}
 
 
@@ -526,7 +541,8 @@ def handle_narration_get(store, record, request):
     if entry is None:
         return {'pointId': request.pointId, 'narrationStatus': 'missing',
                 'generation': None, 'text': None}
-    status = entry['status']
+    status = ('missing' if request.pointId in getattr(record, 'missing_narrations', ())
+              else entry['status'])
     return {'pointId': request.pointId, 'narrationStatus': status,
             'generation': entry['generation'],
             'text': entry['text'] if status == 'ready' else None}
@@ -697,6 +713,8 @@ def handle_extend_group(store, record, request):
     if request.sourceId not in group['memberIds']:
         _refuse('request_malformed', 'target source is not a group member')
     if request.targets is not None:
+        if getattr(store, 'persistent', False) and group['actionTexts'][request.sourceId] is None:
+            _refuse('request_malformed', 'confirm the member action before its targets')
         if group['targetIdsBySource'][request.sourceId] is not None:
             # A confirmed target set — even the confirmed empty one — is
             # closed evidence; only admission can follow it.
@@ -712,11 +730,18 @@ def handle_extend_group(store, record, request):
     else:
         member = request.admittedMember
         if member.memberId in group['memberIds']:
-            _refuse('request_malformed', f'{member.memberId} is already a group member')
-        group['memberIds'].append(member.memberId)
+            if (not getattr(store, 'persistent', False)
+                    or group['actionTexts'][member.memberId] is not None or member.actionText is None):
+                _refuse('request_malformed', f'{member.memberId} is already a group member')
+        else:
+            group['memberIds'].append(member.memberId)
+            group['targetIdsBySource'][member.memberId] = None
+            group['targetSpecsBySource'][member.memberId] = None
         group['actionTexts'][member.memberId] = member.actionText
-        group['targetIdsBySource'][member.memberId] = None
-        group['targetSpecsBySource'][member.memberId] = None
+    if getattr(store, 'persistent', False):
+        group['frontierIds'] = sorted(member for member in group['memberIds']
+                                     if group['actionTexts'][member] is None
+                                     or group['targetIdsBySource'][member] is None)
     record['control']['revision'] += 1
     return {'groupId': request.groupId,
             'memberIds': sorted(set(group['memberIds'])),
@@ -932,13 +957,13 @@ def handle_preview_point(store, record, request):
     kind = work['kind']
     projection = TimelinePoint.model_validate({
         'worldId': record['worldId'], 'id': request.pointId,
-        'sequence': len(record['points']) + 1,
-        'kind': kind, 'previousPointId': record['headPointId'],
+        'sequence': work['baseline']['version'] + 1,
+        'kind': kind, 'previousPointId': work['baseline']['headPointId'],
         'roundId': request.roundId, 'advanceId': request.advanceId,
         'trigger': round_view['trigger'] if round_view else 'player',
         # Associated points (instant/linked) carry their predecessor on the
         # projection; only normal points start a fresh chain.
-        'linkedFromPointId': None if kind == 'normal' else record['headPointId'],
+        'linkedFromPointId': None if kind == 'normal' else work['baseline']['headPointId'],
         'timeAdvance': request.timeAdvance.model_dump(mode='json'),
         'entityDeltas': {}})
     return compute_preview(record['state'], projection,
@@ -1008,6 +1033,8 @@ def handle_commit_point(store, record, request):
     record['headPointId'] = request.pointId
     _new_narration(record, request.pointId)
     _issue_gate(store, record, 1)
+    if getattr(store, 'persistent', False):
+        authority.issue_head_claim(store, record)
     if round_view['cursor'] == len(round_view['order']) and round_view['conclusion'] is None:
         record['control']['phase'] = 'assess_continuation'
     record['control']['revision'] += 1
@@ -1074,6 +1101,13 @@ def handle_get_state(store, record, request):
     cached = record['pointStates'].get(point_id)
     if cached is None:
         _refuse('version_mismatch', 'unknown point')
+    state = cached['state']
+    digest = cached['stateDigest']
+    if getattr(store, 'persistent', False):
+        from app.database.world_repository import LedgerMismatch
+        state = store.replay_state(record['worldId'], point_id)
+        if state_digest(state) != digest:
+            raise LedgerMismatch('Canonical replay differs from the saved state checkpoint')
     # The point's own saved record rides along for narration assembly:
     # historical reads answer per requested point, never the head.
     if point_id == record['rootPointId']:
@@ -1087,8 +1121,8 @@ def handle_get_state(store, record, request):
         entity_deltas = {entity_id: delta.model_dump(mode='json')
                          for entity_id, delta in point.entityDeltas.items()}
     return {'pointId': point_id, 'version': cached['version'],
-            'state': cached['state'].model_dump(mode='json'),
-            'stateDigest': cached['stateDigest'],
+            'state': state.model_dump(mode='json'),
+            'stateDigest': digest,
             'previousPointId': previous_point_id,
             'timeAdvance': time_advance,
             'entityDeltas': entity_deltas}
@@ -1122,7 +1156,9 @@ def handle_get_context(store, record, request):
         active_input = {'advanceId': advance['advanceId'],
                         'inputId': advance['inputId'],
                         'text': advance['inputText']}
-    return {**_views(record), 'activeInput': active_input}
+    recovery = (store.recovery_view(record, _work_view)
+                if request.includeRecovery and getattr(store, 'persistent', False) else None)
+    return {**_views(record), 'activeInput': active_input, 'recovery': recovery}
 
 
 CHECKPOINT_HANDLERS = {
@@ -1164,6 +1200,68 @@ WRITE_HANDLERS.update({
     'round_conclusion_conclude': handle_round_conclusion_conclude,
     'round_conclusion_cancel': handle_round_conclusion_cancel,
 })
+
+_AUTHORITY_HANDLERS = {
+    'lease_acquire': authority.handle_lease_acquire,
+    'lease_renew': authority.handle_lease_renew,
+    'lease_release': authority.handle_lease_release,
+    'narration_claim': authority.handle_narration_claim,
+    'narration_claim_renew': authority.handle_narration_renew,
+    'narration_submit': authority.handle_narration_submit,
+    'narration_delete': authority.handle_narration_delete,
+}
+
+
+class _DeferredRefusal:
+    """A gate-only cleanup committed before returning the business refusal."""
+
+    def __init__(self, error):
+        self.error = error
+
+
+def _persistent_gate_entry(store, record, operation, request, custom_handler):
+    """Successful replay precedes this step; invalid binding cannot clean a gate."""
+    gate_entry = (operation.startswith('checkpoint_') or operation.startswith('round_conclusion_')
+                  or operation in ('commit_point', 'create_rolls'))
+    if not gate_entry:
+        prepare = getattr(store, 'prepare_operation', None)
+        if prepare is not None:
+            prepare(operation, record, request)
+        return
+    _check_lease(record, request)
+    _bind_expected(record, request)
+    if operation in ('commit_point', 'round_conclusion_conclude', 'round_conclusion_cancel'):
+        _bind_chain(record, request)
+    if hasattr(request, 'pointId') and not custom_handler:
+        _bind_work_point(record, request)
+    prepare = getattr(store, 'prepare_operation', None)
+    if prepare is not None:
+        prepare(operation, record, request)
+    authority.resolve_gate(store, record)
+    if operation not in ('checkpoint_pause', 'checkpoint_resume', 'checkpoint_restore_group_work'):
+        if _head_entry(record)['status'] != 'ready':
+            _refuse('narration_blocked', 'the head narration is not ready')
+        if record['control']['paused'] and operation != 'round_conclusion_cancel':
+            _refuse('paused', 'the controller is paused')
+    validate = getattr(store, 'validate_operation', None)
+    if validate is not None:
+        validate(operation, record, request)
+
+
+def _retain_gate_cleanup(record, before):
+    """Keep only the legal lazy cleanup when a computation is gate-blocked."""
+    gate = copy.deepcopy(record['control']['gate'])
+    reason = record.get('_gateBlockedReason')
+    changed = (gate != before['control']['gate'] or reason != before.get('_gateBlockedReason'))
+    if changed:
+        record.clear()
+        record.update(before)
+        record['control']['gate'] = gate
+        if reason is None:
+            record.pop('_gateBlockedReason', None)
+        else:
+            record['_gateBlockedReason'] = reason
+    return changed
 
 
 class _BareRequest:
@@ -1216,8 +1314,12 @@ class WorldService:
             return self._execute_scopeless(operation, request_dict, spec)
         model_cls = next(model for model in _ALL_REQUEST_MODELS
                          if model.__name__ == spec.requestSchema)
+        allowed_fields = _request_body_fields(model_cls)
+        path_fields = {'worldId'} | ({'pointId'} if operation == 'narration_delete' else set())
+        if set(request_dict) - allowed_fields - path_fields:
+            _refuse('request_malformed', 'unknown request fields')
         body = {key: value for key, value in request_dict.items()
-                if key in _request_body_fields(model_cls)}
+                if key in allowed_fields}
         try:
             request = model_cls.model_validate(body)
         except ValidationError as error:
@@ -1238,16 +1340,41 @@ class WorldService:
 
     def _execute_scopeless(self, operation, request_dict, spec):
         if operation == 'preview_point':
+            if (isinstance(request_dict.get('settlementGroups'), list)
+                    and len(request_dict['settlementGroups']) > 32):
+                _refuse('preview_budget_exceeded', 'settlement-unit budget exceeded',
+                        details={'limit': 'request'})
+            compute_clock = getattr(self.store, '_preview_clock', time.perf_counter)
+            compute_start = compute_clock()
             try:
                 request = PreviewPointRequest.model_validate(request_dict)
             except ValidationError as error:
                 raise ServiceRefusal('request_malformed', str(error)[:400]) from error
             record = self._record(request.worldId)
+            selection = None
             try:
+                if getattr(self.store, 'persistent', False):
+                    from .successor import select_operation
+                    _bind_expected(record, request)
+                    _bind_chain(record, request)
+                    selection = select_operation(self.store, record, operation, request)
+                if getattr(self.store, 'persistent', False) and _head_entry(record)['status'] != 'ready':
+                    _bind_expected(record, request)
+                    _bind_work_point(record, request)
+                    _bind_chain(record, request)
+                    _refuse('narration_blocked', 'the head narration is not ready')
                 data = handle_preview_point(self.store, record, request)
             except KernelViolation as error:
                 _map_kernel(operation, error)
-            return _compute_envelope(self.store, operation, _views(record), data)
+            finally:
+                if selection is not None:
+                    from .successor import finish_operation
+                    finish_operation(self.store, record, operation, request, None, selection)
+            envelope = _compute_envelope(self.store, operation, _views(record), data)
+            if compute_clock() - compute_start > getattr(self.store, '_preview_budget_seconds', 2.0):
+                _refuse('preview_budget_exceeded', 'preview computation exceeded its time budget',
+                        details={'limit': 'compute'})
+            return envelope
         request = None
         if spec.requestSchema is not None:
             model_cls = next(model for model in _ALL_REQUEST_MODELS
@@ -1262,6 +1389,13 @@ class WorldService:
             # requestSchema=None reads (narration_get) bind only their path
             # fields; a bare attribute view is enough.
             request = _BareRequest(request_dict)
+        if operation == 'get_context' and getattr(self.store, 'persistent', False):
+            # Recovery authority, active pointers and original payload must all
+            # belong to one database snapshot, including concurrent takeovers.
+            with self.store.locked():
+                record = self._record(request_dict.get('worldId'))
+                data = READ_HANDLERS[operation](self.store, record, request)
+                return _context_envelope(self.store, data)
         record = self._record(request_dict.get('worldId'))
         data = READ_HANDLERS[operation](self.store, record, request)
         if operation == 'get_context':
@@ -1286,8 +1420,10 @@ class WorldService:
                 if entry['operation'] != operation or entry['digest'] != digest:
                     _refuse('request_id_reused',
                             'same requestId with a different operation or payload')
+                views = (_views(self._record(entry['data']['worldId']))
+                         if getattr(self.store, 'persistent', False) else entry['views'])
                 return _operation_envelope(self.store, operation, request,
-                                           entry['views'], entry['data'], digest,
+                                           views, entry['data'], digest,
                                            replayed=True)
             record, data = handle_create_world(self.store, request)
             views = _views(record)
@@ -1301,7 +1437,11 @@ class WorldService:
                                    data, digest)
 
     def _execute_write(self, operation, request, digest, world_id, path_point_id=None):
-        if operation not in WRITE_HANDLERS:
+        persistent = getattr(self.store, 'persistent', False)
+        custom_handler = (self.store.operation_handler(operation) if persistent else None)
+        operation_handler = (custom_handler or (_AUTHORITY_HANDLERS.get(operation) if persistent else None)
+                             or WRITE_HANDLERS.get(operation))
+        if operation_handler is None:
             self._record(world_id)
             _refuse('phase_invalid', 'operation requires the A3 store',
                     details={'reason': 'fixture_store_unsupported'})
@@ -1316,17 +1456,42 @@ class WorldService:
                         or entry.get('pathPointId') != path_point_id):
                     _refuse('request_id_reused',
                             'same requestId with a different operation or payload')
-                return entry['data'], entry['views'], True
+                views = _views(snapshot) if persistent else entry['views']
+                return entry['data'], views, True
+            before = copy.deepcopy(snapshot) if persistent else None
             try:
+                if persistent:
+                    _persistent_gate_entry(self.store, snapshot, operation, request, custom_handler)
                 if operation == 'narration_delete' and path_point_id is not None:
                     bound = _BareRequest({**request.model_dump(mode='json'),
                                           'pointId': path_point_id})
-                    _bind_head_mode(snapshot, bound)
-                    _fence_claim(_narration_entry(snapshot, path_point_id), request,
-                                 'deleting narration at this path')
-                data = WRITE_HANDLERS[operation](self.store, snapshot, request)
+                    if persistent:
+                        authority.validate_claim(self.store, snapshot, bound, path_point_id)
+                        request_for_handler = bound
+                    else:
+                        _bind_head_mode(snapshot, bound)
+                        _fence_claim(_narration_entry(snapshot, path_point_id), request,
+                                     'deleting narration at this path')
+                        request_for_handler = request
+                else:
+                    request_for_handler = request
+                data = operation_handler(self.store, snapshot, request_for_handler)
+                finish = getattr(self.store, 'finish_operation', None) if persistent else None
+                if finish is not None:
+                    finish(operation, snapshot, request, data)
             except KernelViolation as error:
+                abort = getattr(self.store, 'abort_operation', None) if persistent else None
+                if abort is not None:
+                    abort(operation, snapshot, request)
                 _map_kernel(operation, error)
+            except ServiceRefusal as error:
+                abort = getattr(self.store, 'abort_operation', None) if persistent else None
+                if abort is not None:
+                    abort(operation, snapshot, request)
+                if (persistent and error.code == 'narration_blocked'
+                        and _retain_gate_cleanup(snapshot, before)):
+                    return _DeferredRefusal(error)
+                raise
             # Snapshots are built and validated while the copy is still
             # discardable; the response then reflects exactly this
             # transaction, never a later interleaved one.
@@ -1341,8 +1506,11 @@ class WorldService:
             return data, views, False
 
         try:
-            data, views, replayed = self.store.transact(world_id, handler)
+            result = self.store.transact(world_id, handler)
         except WorldNotFound:
             _refuse('version_mismatch', 'unknown world')
+        if isinstance(result, _DeferredRefusal):
+            raise result.error
+        data, views, replayed = result
         return _operation_envelope(self.store, operation, request, views,
                                    data, digest, replayed=replayed)

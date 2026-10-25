@@ -1,8 +1,8 @@
 """A3 core relational ledger, written in the caller's SQLite transaction.
 
 The packaged DDL is pinned to the shared v2 specification. Work/group rows
-are maintained by world_work_repository; rolls and takeover copies remain
-pending. Core rows are checked on reads so a divergent A2-compatible adapter
+are maintained by world_work_repository, judgments and takeover copies by
+their dedicated repositories. Core rows are checked on reads so a divergent A2-compatible adapter
 cache cannot silently mask ledger corruption.
 """
 import json
@@ -173,7 +173,27 @@ def save_core(connection, before, record):
             token=lease['leaseToken'], epoch=lease['fenceEpoch'],
             expires_at=lease['expiresAtEpochMilli']))
     elif lease is None and old_lease is not None:
-        connection.execute('DELETE FROM world_leases WHERE world_id=?', (world_id,))
+        if '_leaseEpoch' in record:
+            connection.execute("UPDATE world_leases SET holder_id='',token='',expires_at=1 WHERE world_id=?",
+                               (world_id,))
+        else:
+            connection.execute('DELETE FROM world_leases WHERE world_id=?', (world_id,))
+    if '_leaseEpoch' in record:
+        if (before and record['_leaseEpoch'] < before.get('_leaseEpoch', 0)) or (
+                lease and lease['fenceEpoch'] != record['_leaseEpoch']):
+            raise LedgerMismatch('Lease epoch cannot decrease or diverge from its authority')
+        _upsert(connection, 'world_authority_meta', ('world_id',), dict(
+            world_id=world_id, highest_epoch=record['_leaseEpoch'],
+            blocked_reason=record.get('_gateBlockedReason')))
+        gate = control['gate']
+        if gate['status'] == 'pending':
+            claim = record['narrations'][record['headPointId']]['claim']
+            _upsert(connection, 'world_gates', ('world_id',), dict(
+                world_id=world_id, point_id=record['headPointId'], generation=gate['generation'],
+                token=claim['claimToken'], epoch=claim['fenceEpoch'],
+                issued_at=gate['issuedAtEpochMilli'], expires_at=gate['expiresAtEpochMilli']))
+        else:
+            connection.execute('DELETE FROM world_gates WHERE world_id=?', (world_id,))
     previous = (before or {}).get('idempotency', {})
     if not previous.keys() <= record['idempotency'].keys():
         raise LedgerMismatch('Successful submission records cannot be removed')
@@ -237,8 +257,27 @@ def check_core(connection, record):
     lease_row = connection.execute('SELECT token,epoch,expires_at FROM world_leases WHERE world_id=?',
                                    (world_id,)).fetchone()
     expected_lease = (lease['leaseToken'], lease['fenceEpoch'], lease['expiresAtEpochMilli']) if lease else None
+    if lease is None and '_leaseEpoch' in record:
+        expected_lease = ('', record['_leaseEpoch'], 1)
     if lease_row != expected_lease:
         raise LedgerMismatch('Lease disagrees with relational ledger')
+    if '_leaseEpoch' in record:
+        meta = connection.execute('SELECT highest_epoch,blocked_reason FROM world_authority_meta WHERE world_id=?',
+                                  (world_id,)).fetchone()
+        if meta != (record['_leaseEpoch'], record.get('_gateBlockedReason')):
+            raise LedgerMismatch('Lease epoch or gate failure differs from authority ledger')
+        gate = record['control']['gate']
+        expected_gate = None
+        if gate['status'] == 'pending':
+            claim = record['narrations'][record['headPointId']]['claim']
+            if claim is None:
+                raise LedgerMismatch('Pending gate has no issued claim')
+            expected_gate = (record['headPointId'], gate['generation'], claim['claimToken'],
+                             claim['fenceEpoch'], gate['issuedAtEpochMilli'], gate['expiresAtEpochMilli'])
+        stored_gate = connection.execute('SELECT point_id,generation,token,epoch,issued_at,expires_at '
+                                         'FROM world_gates WHERE world_id=?', (world_id,)).fetchone()
+        if stored_gate != expected_gate:
+            raise LedgerMismatch('Narration gate differs from authority ledger')
     # Batch read all retained facts in this same transaction. Full validation
     # stays intact, but SQL round trips no longer grow with history length.
     cursor = connection.execute('SELECT * FROM world_points WHERE world_id=?', (world_id,))
@@ -256,6 +295,8 @@ def check_core(connection, record):
             raise LedgerMismatch('Submission replay disagrees with relational ledger')
     narrations = {(point_id, generation): text for point_id, generation, text in connection.execute(
         'SELECT point_id,generation,text FROM world_narrations WHERE world_id=?', (world_id,))}
+    if hasattr(record, 'clock_milli'):
+        record.missing_narrations = set()
     checkpoints = {row[0]: row[1:] for row in connection.execute(
         'SELECT point_id,state_json,state_digest,canonical_version FROM world_state_checkpoints WHERE world_id=?',
         (world_id,))}
@@ -266,7 +307,10 @@ def check_core(connection, record):
         if points[point_id] != _point_values(record, point_id):
             raise LedgerMismatch('Committed point disagrees with relational ledger')
         if narration['status'] == 'ready':
-            if narrations.get((point_id, narration['generation'])) != narration['text']:
+            key = (point_id, narration['generation'])
+            if key not in narrations and hasattr(record, 'clock_milli'):
+                record.missing_narrations.add(point_id)
+            elif narrations.get(key) != narration['text']:
                 raise LedgerMismatch('Narration cache disagrees with relational ledger')
         row = checkpoints[point_id]
         if (row[1] != checkpoint['stateDigest'] or row[2] != 'world-canonical-v1' or

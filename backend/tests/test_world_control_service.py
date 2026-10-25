@@ -105,10 +105,19 @@ def open_round(service):
     assert set(lease) == {'leaseToken', 'fenceEpoch', 'expiresAtEpochMilli'}
     _claim_and_submit(service, world_id, lease, root_id, 'req_root', '开学第一天。')
 
+    chain = {'advance_id': 'advance_1', 'input_id': 'input_1', 'round_id': 'round_1'}
+    if getattr(getattr(service, 'store', service), 'persistent', False):
+        allocated_chain = service.execute('allocate_ids', _payload(
+            'req_chain_alloc', world_id, lease, allocationKey='chain', slots=[
+                {'slotKey': kind, 'kind': kind, 'scope': None}
+                for kind in ('advance', 'input', 'round')]))
+        chain = {item['slotKey'] + '_id': item['id']
+                 for item in allocated_chain['data']['allocations']}
+
     allocations = _run(service, 'allocate_ids', _payload(
         'req_alloc', world_id, lease, allocationKey='alloc_round_1',
         slots=[{'slotKey': 'point_1', 'kind': 'point', 'scope': None},
-               {'slotKey': 'group_a', 'kind': 'group', 'scope': 'round_1'}]),
+               {'slotKey': 'group_a', 'kind': 'group', 'scope': chain['round_id']}]),
         AllocateIdsSuccess)
     ids = {item['slotKey']: item['id'] for item in allocations['data']['allocations']}
     point_id, group_id = ids['point_1'], ids['group_a']
@@ -116,11 +125,11 @@ def open_round(service):
     _run(service, 'checkpoint_start_advance', _payload(
         'req_advance', world_id, lease, operation='start_advance',
         expectedPointId=root_id, expectedVersion=0, expectedCheckpointRevision=0,
-        advanceId='advance_1', inputId='input_1', roundId='round_1',
+        advanceId=chain['advance_id'], inputId=chain['input_id'], roundId=chain['round_id'],
         inputText='走进教室。', order=ORDER), StartAdvanceSuccess)
     return {'world_id': world_id, 'root_id': root_id, 'point_id': point_id,
             'group_id': group_id, 'lease': lease, 'revision': 1,
-            'head_digest': created['world']['head']['stateDigest']}
+            'head_digest': created['world']['head']['stateDigest'], **chain}
 
 
 def begin_work(service):
@@ -176,8 +185,8 @@ def run_t01_flow(service, commit=True):
 
     # s16: preview runs before the seal, twice, and never moves the revision.
     preview_request = {
-        'protocolVersion': 2, 'worldId': world_id, 'advanceId': 'advance_1',
-        'roundId': 'round_1', 'pointId': point_id, 'expectedPointId': root_id,
+        'protocolVersion': 2, 'worldId': world_id, 'advanceId': state['advance_id'],
+        'roundId': state['round_id'], 'pointId': point_id, 'expectedPointId': root_id,
         'expectedVersion': 0, 'expectedCheckpointRevision': revision,
         'timeAdvance': TIME_ADVANCE,
         'settlementGroups': [single_group(['person_a'], roster, group_id)]}
@@ -199,14 +208,14 @@ def run_t01_flow(service, commit=True):
     merged = point_entity_deltas([single_group(['person_a'], roster, group_id)], None)
     commit_request = {
         'protocolVersion': 2, 'requestId': 'req_commit', 'worldId': world_id,
-        'advanceId': 'advance_1', 'roundId': 'round_1',
+        'advanceId': state['advance_id'], 'roundId': state['round_id'],
         'expectedPointId': root_id, 'expectedVersion': 0,
         'expectedCheckpointRevision': revision,
         'leaseToken': lease['leaseToken'], 'fenceEpoch': lease['fenceEpoch'],
         'pointId': point_id,
         'point': {'worldId': world_id, 'id': point_id, 'sequence': 1,
                   'kind': 'normal', 'previousPointId': root_id,
-                  'roundId': 'round_1', 'advanceId': 'advance_1',
+                  'roundId': state['round_id'], 'advanceId': state['advance_id'],
                   'trigger': 'player', 'linkedFromPointId': None,
                   'timeAdvance': TIME_ADVANCE,
                   'entityDeltas': {key: delta.model_dump(mode='json')

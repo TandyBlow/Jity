@@ -63,7 +63,7 @@ def test_completed_round_and_ended_input_survive_handback(tmp_path):
     flow = run_t01_flow(service)
     _claim_and_submit(service, flow['world_id'], flow['lease'], flow['point_id'], 'ready', '已经抵达。')
     request = _payload('handback', flow['world_id'], flow['lease'], operation='conclude',
-                       advanceId='advance_1', roundId='round_1',
+                       advanceId=flow['advance_id'], roundId=flow['round_id'],
                        expectedPointId=flow['point_id'], expectedVersion=1,
                        expectedCheckpointRevision=flow['revision'],
                        conclusion={'kind': 'handback', 'closedBy': 'model', 'cancelReason': None})
@@ -82,19 +82,23 @@ def test_automatic_round_preserves_completed_predecessor(tmp_path):
     service = reopen(path)
     flow = run_t01_flow(service)
     _claim_and_submit(service, flow['world_id'], flow['lease'], flow['point_id'], 'ready', '准备继续。')
+    allocated = service.execute('allocate_ids', _payload('allocate_next_round', flow['world_id'], flow['lease'],
+        allocationKey='next_round', slots=[{'slotKey': 'round', 'kind': 'round', 'scope': None}]))
+    next_round = allocated['data']['allocations'][0]['id']
     request = _payload('continue', flow['world_id'], flow['lease'], operation='conclude',
-                       advanceId='advance_1', roundId='round_1',
+                       advanceId=flow['advance_id'], roundId=flow['round_id'],
                        expectedPointId=flow['point_id'], expectedVersion=1,
                        expectedCheckpointRevision=flow['revision'], conclusion={
                            'kind': 'continue', 'closedBy': 'model', 'cancelReason': None,
-                           'candidateCharacterIds': ['person_b'], 'nextRoundId': 'round_2'})
+                           'candidateCharacterIds': ['person_b'], 'nextRoundId': next_round})
     service.execute('round_conclusion_conclude', request)
     assert reopen(path).execute('round_conclusion_conclude', request)['replayed']
     with sqlite3.connect(path) as db:
         rows = db.execute('SELECT id,phase,trigger,conclusion_json FROM world_rounds ORDER BY id').fetchall()
-        assert rows[0][:3] == ('round_1', 'complete', 'player')
-        assert json.loads(rows[0][3])['nextRoundId'] == 'round_2'
-        assert rows[1] == ('round_2', 'select_actor', 'automatic', None)
+        by_id = {row[0]: row for row in rows}
+        assert by_id[flow['round_id']][:3] == (flow['round_id'], 'complete', 'player')
+        assert json.loads(by_id[flow['round_id']][3])['nextRoundId'] == next_round
+        assert by_id[next_round] == (next_round, 'select_actor', 'automatic', None)
 
 
 def test_replay_reads_initial_and_deltas_without_any_snapshot_or_cache(tmp_path):

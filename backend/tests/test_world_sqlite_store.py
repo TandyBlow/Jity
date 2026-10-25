@@ -23,8 +23,8 @@ def create_request():
     return {'protocolVersion': 2, 'requestId': 'create', 'initial': initial_template()}
 
 
-def reopen(path):
-    return WorldService(SQLiteBaselineStore(path))
+def reopen(path,*,clock=None):
+    return WorldService(SQLiteBaselineStore(path,clock=clock))
 
 
 def test_creation_replay_and_id_sequence_survive_restart(tmp_path):
@@ -63,6 +63,18 @@ def test_sealed_work_restart_commit_and_replay(tmp_path):
     assert len(record['points']) == 1
     assert record['work'] is None
     assert record['state'] == record['pointStates'][flow['point_id']]['state']
+    point = record['points'][flow['point_id']]
+    state = restarted.execute('get_state', {'worldId': flow['world_id']})['data']
+    assert state['previousPointId'] == flow['root_id']
+    assert state['timeAdvance'] == point.timeAdvance.model_dump(mode='json')
+    assert state['entityDeltas'] == {key: delta.model_dump(mode='json')
+                                   for key, delta in point.entityDeltas.items()}
+    assert state['state'] == record['state'].model_dump(mode='json')
+    root = restarted.execute('get_state', {'worldId': flow['world_id'], 'point': flow['root_id']})['data']
+    assert root['previousPointId'] is None and root['timeAdvance'] is None
+    assert root['entityDeltas'] == {}
+    restarted.store.collect_garbage(flow['world_id'])
+    assert reopen(path).execute('get_state', {'worldId': flow['world_id']})['data'] == state
     # Tuple-key allocations remain usable, not stringified by JSON encoding.
     bucket = next(iter(before['allocations'].values()))
     assert all(isinstance(key, tuple) for key in bucket)
@@ -72,6 +84,8 @@ def test_entire_flow_reopens_storage_before_every_operation(tmp_path):
     path = tmp_path / 'world.sqlite'
 
     class RestartingService:
+        persistent = True
+
         def execute(self, operation, request):
             return reopen(path).execute(operation, request)
 

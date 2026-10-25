@@ -127,6 +127,10 @@ def _endpoint(specs):
                 # Read/query models take the wire version from the header.
                 if not body_method and 'protocolVersion' not in fields:
                     validated.pop('protocolVersion', None)
+                if (operation == 'preview_point' and isinstance(validated.get('settlementGroups'), list)
+                        and len(validated['settlementGroups']) > 32):
+                    raise ServiceRefusal('preview_budget_exceeded', 'settlement unit budget',
+                                         details={'limit': 'request'})
                 try:
                     model.model_validate(validated)
                 except ValidationError as error:
