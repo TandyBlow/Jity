@@ -3,6 +3,8 @@ import { buildTaskPrompt } from './prompts';
 import { B3_SAMPLES, T01_WORKING_STATE } from './b3-samples';
 import { runB3Evaluation, formatB3Summary, type B3Judge } from './b3-eval';
 import type { InferenceEngine } from './engine';
+import { WllamaInferenceEngine } from './wllama-engine';
+import type { Wllama } from '@wllama/wllama';
 import type { ModelTask } from '../schedule';
 import type { Json } from '../types';
 
@@ -204,6 +206,36 @@ describe('runB3Evaluation', () => {
     const row = report.results.find((result) => result.id === 'targets-1')!;
     expect(row.failure).toBe('semantic'); // the codec accepts the shape…
     expect(row.semanticNote).toMatch(/不在场: corridor/); // …but corridor is not a character
+  });
+
+
+  test('composition: the REAL wllama adapter works through the counting wrapper (fake wasm)', async () => {
+    const createCalls: Array<Record<string, unknown>> = [];
+    let exits = 0;
+    let wasmCompletions = 0;
+    const fakeWllama = {
+      loadModelFromUrl: async () => {},
+      createCompletion: async (options: Record<string, unknown>) => {
+        wasmCompletions += 1;
+        createCalls.push(options);
+        // Sample order: answer each task with something structurally valid
+        // enough to pass or fail the codec — the harness must count it.
+        return { choices: [{ text: '走廊尽头的门吱呀一声开了。' }] };
+      },
+      exit: async () => {
+        exits += 1;
+      },
+    } as unknown as Wllama;
+    const engine = new WllamaInferenceEngine({ modelUrl: '/models/m.gguf' }, async () => fakeWllama);
+    // Three text-task samples: prose decodes without any JSON contract.
+    const samples = B3_SAMPLES.filter((sample) => sample.task === 'narration');
+    const report = await runB3Evaluation(engine, samples);
+    expect(wasmCompletions).toBe(samples.length); // the REAL adapter's completions happened
+    expect(report.totals.calls).toBe(samples.length); // the wrapper counted them through prototype methods intact
+    expect(report.results.every((row) => row.timing !== null)).toBe(true);
+    expect(report.results.every((row) => row.failure === null)).toBe(true); // prose decodes cleanly
+    expect(createCalls.every((call) => typeof call.prompt === 'string' && (call.prompt as string).includes('正文:'))).toBe(true);
+    expect(exits).toBe(0); // the harness never disposes the engine
   });
 
   test('fenced JSON from the engine passes through the real decode path', async () => {

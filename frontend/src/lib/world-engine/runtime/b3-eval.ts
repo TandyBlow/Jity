@@ -145,12 +145,17 @@ export async function runB3Evaluation(engine: InferenceEngine, samples: readonly
   // engine cooperation needed, no receiver lost, and a failed load wraps
   // to zero calls.
   let completions = 0;
+  // Explicit method forwarding on the ORIGINAL receiver: object spread
+  // only copies own enumerable properties, so a class instance's
+  // prototype methods (load/dispose) would be silently dropped.
   const countingEngine: InferenceEngine = {
-    ...engine,
+    info: engine.info,
+    load: (options) => engine.load(options),
     complete: (prompt, options) => {
       completions += 1;
       return engine.complete(prompt, options);
     },
+    dispose: () => engine.dispose(),
   };
   const port = new RuntimeWorldModelPort(countingEngine, new SerialInferenceQueue());
   const engineCalls = new Map<string, number>(); // per sample: actual engine completions

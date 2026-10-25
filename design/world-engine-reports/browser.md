@@ -299,3 +299,11 @@ T08 语料适配逐项登记：①s8 是把已锁定时间从 2s 改成 3s 的�
 3. **targets 回角色名册（P2）**：targets judge 改用 `characterRoster`（workingState characters 双区）——触发目标是其他**角色**，不是物品或地点；updates 保持实体三元名册。探针：`corridor` 作为 targetId 结构通过但底线拒绝（`不在场: corridor`）。
 
 结果：前端全套 **27 文件 450 项通过**（448 + 2 净增：judge 分档、角色名册探针），`typecheck:world`、`review:world-s1`（60 项）、统一验收入口与生产 build 通过。b3-prompt-eval-design.md 同步三处语义。
+
+### B3 批次一修复轮三（对 793644f 复审 P1：包装丢失原型方法）
+
+日期：2026-10-25。确认成立并已修：`{ ...engine }` 只复制自有可枚举属性，类实例的原型方法（load/dispose）被静默丢弃——真实 WllamaInferenceEngine 经包装后 `this.engine.load is not a function`，加载与生成都为 0。修复为**显式四方法转发**（info/load/complete/dispose，均保持原 engine 接收者），注释写明展开的陷阱。
+
+组合回归按复审要求补入：真实 `WllamaInferenceEngine`（factory 注入 fake 底层 Wllama——loadModelFromUrl/createCompletion/exit 记录，不触 wasm）过 runB3Evaluation 全链——wasm completions 实际发生且与包装计数一致、timing 全保留、prose 样本干净解码、prompt 含叙事正文指令、harness 不 dispose 引擎。篡改实验（还原对象展开）恰该组合回归红，还原后 77/77。调试中组合探针首版用了上轮已删除的 `row.structured` 字段，被自家断言抓住后改 `failure`。
+
+结果：前端全套 **27 文件 451 项通过**（450 + 1 组合回归），`typecheck:world`、`review:world-s1`（60 项）、统一验收入口与生产 build 通过。b3-prompt-eval-design.md 补充包装转发语义。
