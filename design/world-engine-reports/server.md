@@ -290,3 +290,97 @@ H1 harness 原以 `window.fetch.bind(window)` 显式注入绕过 B 默认实现�
 - **T03 双样本**（浏览器 transport 直接固定候选 harness）：非空 stage_time_scan、同列表 preview 重复一致、commit/叙事/读取，任务达成/个性来源点/理智/时间四字段验证，摘要 `696b3e28…`/`2132568c…`。
 
 两次运行（harness 改造前提交态与 b496da7 干净态）摘要逐位一致。**边界不变**：SQLite、H2 刷新/接管、真实模型与远端 CI 未验收；A3 另行。
+
+---
+
+# A3 本批交付：SQLite 持久化与当前工作态恢复
+
+日期：2026-10-26。分支 `world-server`，基线 `aacb572`，实现提交
+`ce446c85dff0310bb9adf47ebcd3fbcc20930b07`，含 7 个实现/接入文件和 6 个测试模块。
+**本批已实现部分经本地验证与独立复审通过；整个 A3 保持进行中。**
+共同契约、共享轨迹、生成物与前端源码未改，A1/A2 继续由全量回归覆盖。
+
+## 本轮行为
+
+1. **存储与事务。** 新增 `backend/app/database/world_store.py` 的
+   `SQLiteBaselineStore`，复用 A2 WorldService 和纯内核。写操作使用 BEGIN IMMEDIATE，
+   创建、序列及成功幂等结果同事务提交，跨连接重发不重复生效；SQL 中断和进程退出回滚。
+2. **核心账本与回放。** `world_repository.py` 写入并核对世界、输入、轮次、点、
+   租约、叙事、快照及成功请求，保留关闭轮次与结束输入；`world_storage_v2.sql`
+   与共同 SQL 逐字节一致。`replay_state` 从初始世界和关系历史重算并逐点核验摘要。
+3. **工作态恢复。** `world_work_repository.py` 从关系表恢复当前组、原始行动、
+   按成员确认的目标、结果、候选和工作游标；核心快照仅保留工作点绑定。已确认内容、
+   时间锁和封存前缀不可改写，正式提交/取消保留 consumed/abandoned 行，损坏时阻断读取。
+4. **校验修复与精简。** 修复第十单元排序、工作进度和输入消费校验、重复时间扫描等问题；
+   完整性检查批量读取，只写变化数据，创建重放按 requestId 查询。正常写只在事务内
+   读取世界，旧成功记录不可删除或改写，未变化工作态不重复保存。
+
+非空旧库缺少 core/work schema 标记时拒绝自动迁移并保留数据，要求显式迁移或
+新的开发库路径。核心适配快照仍有过渡依赖，当前未移除。
+
+## 启动
+
+从 backend 运行，数据库父目录须存在；未配置路径则启动报错。CORS 沿用
+`WORLD_ALLOWED_ORIGINS`，A2 的默认内存入口保留。
+
+```sh
+WORLD_SQLITE_PATH=/absolute/path/world-dev.sqlite \
+  python -m uvicorn app.world_app:create_persistent_world_app --factory \
+  --host 127.0.0.1 --port 8100
+```
+
+## 测试
+
+| 模块（backend/tests） | 项数 | 主要验证 |
+|---|---:|---|
+| test_world_sqlite_store.py | 13 | 创建/提交跨重开、并发幂等、原文字节、进程退出及无效响应回滚 |
+| test_world_relational_store.py | 25 | 核心多表故障回滚、历史保留、无缓存回放、关系损坏与旧库拒绝 |
+| test_world_work_store.py | 24 | 工作态关系恢复、None/空目标、原文不可改、终态保留、stage/取消中断 |
+| test_world_work_acceptance_faults.py | 11 | 原文及时间载荷损坏、虚构行动进度、封存降级拒绝 |
+| test_world_work_acceptance_paths.py | 11 | 十单元逐步重开、ASGI 完整 T01、多成员确认、时间扫描与输入消费 |
+| test_world_store_efficiency.py | 9 | 历史增长不增加读取 SQL 次数、不重复写历史、定向重放及事务读取 |
+
+本批聚焦 **93 passed，14.32 秒**；后端全量 **1155 passed，29.73 秒**，3 条已有
+SWIG 弃用警告。共同入口 **PASS**：v1/v2 导出一致、Python 109＋317、TS 类型、
+契约 38/轨迹 65、四类破坏探针通过；`git diff --check` 通过。
+
+可重复命令（前两条从 backend 运行，共同入口从仓库根运行）：
+
+```sh
+python -m pytest -q tests/test_world_sqlite_store.py tests/test_world_relational_store.py \
+  tests/test_world_work_store.py tests/test_world_work_acceptance_faults.py \
+  tests/test_world_work_acceptance_paths.py tests/test_world_store_efficiency.py
+python -m pytest -q
+python backend/scripts/check_world_interface_baseline.py
+```
+
+本机复跑使用 Python 3.11.7、SQLite 3.41.2，后端命令的解释器为
+`/opt/anaconda3/bin/python`，依赖路径为 `PYTHONPATH=.deps:/private/tmp/jity-a3-test-deps:.`。
+共同入口使用同一解释器，并将以上 backend 依赖路径展开为绝对路径。
+
+## 独立复审与交付结论
+
+另一名 Codex 代理只读复查 3 个存储模块、服务/入口改动和 6 个测试模块，独立复跑
+93 项，并在临时库执行额外探针：双进程并发提交恰好一次实际提交、一次重放，version
+只增加一次且响应 data 相同；无缓存回放与提交态相同；尝试修改旧根节点摘要被
+LedgerMismatch 拒绝，重开后记录不变。**本批范围未发现遗留阻断，可交付。**
+该结论是代理独立复审，不代表 B 或人类复核。
+
+实现提交 `ce446c8` 已推送至 `origin/world-server`；对应
+[CI 40217640179](https://github.com/TandyBlow/Jity/actions/runs/40217640179)
+的 backend、frontend、world-interface 三个作业全部 success。本节交付记录另作
+文档提交，不改变上述已参测实现。
+
+本批 HTTP 证据是每次请求重新创建应用/存储的本进程 ASGI 测试，未完成真实浏览器
+刷新/接管。H1 的既有结论不外推为持久化入口或 H2 通过。
+
+## 未完成边界
+
+普通读取仍依赖过渡核心快照。租约 TTL、单调 epoch、claim/gate 生命周期、roll、
+规范化分配记录、accepted/frozen 清单及原文复制、完整后继预约和引用清理继续待办。
+此前临时库复核确认过期租约仍可新写、过期接管被拒、交接 epoch 不递增、根点未立即
+签发 claim、create_rolls 未支持；它们是后续 A3 工作，未包含在本批通过结论中。
+
+FC01–FC32 已有部分同类故障覆盖，但指定运行测试矩阵尚未逐项接入；共同轨迹的
+契约/消费检查也不等于所有 runtime-A3 路径通过。后续须完成上述实现、真实 SQLite
+故障矩阵，并与 B 记录指定 A/B 提交组合的 H2，之后才能关闭整个 A3。
