@@ -255,3 +255,13 @@ T08 语料适配逐项登记：①s8 是把已锁定时间从 2s 改成 3s 的�
 3. **恢复中的 stop 终态保持（P2）**：恢复失败分支先守卫 stopped——恢复请求 pending 时 stop，终态与状态保持 `{kind:'stop'}`/`stopped`，不再被覆盖成 `lease recovery failed` error/idle；迟到 grant settle 照旧丢弃。
 
 结果：前端全套 **26 文件 438 项通过**（435 + 3 探针），`typecheck:world`、`review:world-s1`（60 项）、统一验收入口与生产 build 通过。b4-session-design.md §3 同步三条语义。
+
+### B4 批次一收窄收口（按复审方案，移除自动恢复）
+
+日期：2026-10-25。复审确认 1336906 三项修复关闭，但恢复路径暴露跨失联回合复用同一恢复 ID 的 P1（固定 `req_<ns>_recovery`，第二回合被幂等重放、采纳旧 epoch）。按复审裁定**不做修补、整体收窄**：
+
+1. **失租改为终态关闭**：`enterLeaseLost` 使会话进入 `lost_lease` 终态——停双心跳、取消并隔离在途（双极性）、迟到结果丢弃，与 stop 同级的隔离；后续 `run()` 明确拒绝（`lost its lease; recovery is a later batch (H2)`），观察层入口同样拒绝新调用。`stop()`/`dispose()` 在失租会话上仍可用作清理。
+2. **自动恢复入口整体移除**：`recoverAuthority`/`recoveryRequest`/worldId 跟踪与 `ControllerDriver.adoptLeaseGrant` 一并删除——授权恢复、未决业务结果对账（submit 可能已被服务端接受、ID 退役规则）留给后续恢复子批次/H2。跨回合 ID 复用的 P1 随入口不可达而消亡。会话层不再有任何自发 `lease_acquire`。
+3. 测试同步改写：失租终态四断言（状态 lost_lease/run 拒绝/无任何恢复交换/失租后零交换+stale token 原样保留）、外邦 epoch 同终态、stop/dispose 于失租会话、真实 driver 组合（失租后 run 拒绝且 transportLog 完全静止）。恢复先行/重放/ID 退役三条探针随入口删除。
+
+结果：前端全套 **26 文件 437 项通过**，`typecheck:world`、`review:world-s1`（60 项）、统一验收入口与生产 build 通过。b4-session-design.md §3 改写为终态语义+恢复遗留边界。**B4 批次一以此收窄形态提请按普通会话装配范围复审关闭**；下一批 B3 提示词评测。

@@ -29,9 +29,8 @@
 ## 3. 失效、停止与销毁（修复轮语义）
 
 - **会话唯一命名空间**：模块级计数器 + 时间戳 + **随机熵**（crypto.randomUUID 优先）生成默认命名空间（`requestIdNamespace` 可注入，`idNamespace` 诊断 getter）；跨模块实例（多标签页同毫秒各自从零计数）也不碰撞；driver requestId 前缀、恢复 ID 与心跳 ID 同源。
-- **授权恢复阶段**：失联态下的 `run()` 先经观察层 `lease_acquire` 取得新 LeaseGrant（观察自动清失联态、重启心跳），再以 `ControllerDriver.adoptLeaseGrant` 把 grant 交给 driver（换代栅栏 claim、**退役未决交换所持 requestId**——可能已被服务端接受的 ID 不再被换操作复用），然后才恢复业务循环；恢复失败以 error 终态返回，但 stop 的终态与状态优先。
-- **恢复申请的重放语义**：同一失联回合内恢复申请**同 ID 同体**跨尝试复用——未知结果（超时/响应丢失）重放幂等记录取回原 grant；确定性拒绝下同 ID 重发无害。回合结束清除申请。
-- **心跳失效（onLost）**：lease 失效进入**显式失联态**——停双心跳、epoch+1 隔离在途、abort 推理与调用信号，循环以 `lease lost: <code>` error 终态 settle；claim 续期冻结。会话保持可 run（controller 重取租约的恢复路径），下一次 LeaseGrant 观察清除失联态。claim 失效只停该心跳并上报，不打断会话。
+- **失租是终态（收窄裁定）**：心跳 lease 失效或观察到外邦 epoch → 会话进入 `lost_lease` 终态：停双心跳、取消并隔离在途（双极性）、迟到结果丢弃；后续 `run()` 明确拒绝，观察层拒绝新调用；`stop()`/`dispose()` 仍可清理。**会话不做自动授权恢复**——重取租约、未决业务结果对账（submit 可能已被服务端接受、跨回合恢复 ID 规则、ID 退役）整体留给后续恢复子批次/H2。
+- **心跳失效（onLost）**：lease 失效进入 `lost_lease` **终态**——停双心跳、epoch+1 隔离在途、abort 推理与调用信号，循环以 `lease lost: <code>` error 终态 settle；后续 run 拒绝（恢复归后续批次/H2）。claim 失效只停该心跳并上报，不打断会话。
 - **隔离是双极性定局替换**：在途调用的 settle（成功或错误）在 epoch 变化后一律替换为隔离错误——迟到错误信封不以 WorldApiError 抛回，errorReaction/adoptState/followup 写入无从触发；观察层入口在关闭后拒绝新调用。两层守卫独立拦截同一可观察结果。
 - **调用信号竞速**：每个 raw 交换与调用 signal 竞速（signal 传给 transport），stop/失租即刻定局调用方；raw 迟到 settle 前挂 catch 吞掉。
 - **信封 epoch 核对**：`world.lease` 只在 `fenceEpoch === 自持 epoch` 时绑定更新；更高 epoch = 自持 token 已死——走**统一失租路径**（完整隔离），且观察层在 observe 后复查 epoch：外邦 epoch 的本次回执不返回给 driver；更低 epoch 忽略——旧 token 永不升级绑到新 epoch。

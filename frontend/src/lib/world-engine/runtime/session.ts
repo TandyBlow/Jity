@@ -11,13 +11,17 @@
  * start/update the claim heartbeat (a different point restarts it),
  * submit/delete and the fenced/expired/stale error families stop them.
  *
- * Isolation is uniform: stop() closes the session for good; a heartbeat
- * lease loss enters an explicit lost-lease state (recovered by the next
- * lease grant). Both raise the session epoch — in-flight settles of EITHER
+ * Isolation is uniform: stop() and a lease loss are both TERMINAL — the
+ * heartbeats stop, in-flight exchanges are cancelled and isolated, late
+ * settles are discarded, and later run() calls are explicitly refused.
+ * Authority recovery and the reconciliation of exchanges whose fate the
+ * isolation left unresolved (a submit the server may have accepted) are a
+ * later recovery batch / H2 — this session never resumes on a dead lease.
+ * Both raise the session epoch — in-flight settles of EITHER
  * polarity are replaced by the isolation error, so the driver can neither
  * adopt a stale success nor react to a late error envelope (no followup
  * writes from a dead session), and new calls are refused at the wrapper
- * entry. The call signal races every raw exchange, so a stop or a loss ends
+ * entry — also once the lease is lost. The call signal races every raw exchange, so a stop or a loss ends
  * transport waits promptly; the raw late settle stays discarded. A lost
  * lease also aborts in-flight inference — a model output can never be
  * committed against a fence the client no longer holds (the queue discards
@@ -37,8 +41,6 @@ export interface DriverLike {
   step(): Promise<DriverStatus | undefined>;
   deliver(command: HarnessCommand): void;
   getMemory(): ControllerMemory;
-  /** Adopts a session-recovered lease grant (lost-lease recovery). */
-  adoptLeaseGrant?(grant: { leaseToken: Id; fenceEpoch: number; expiresAtEpochMilli: number }): void;
 }
 
 export type DriverFactory = (io: ControllerIo) => DriverLike;
@@ -75,7 +77,7 @@ const LEASE_DEAD_CODES = new Set(['stale_epoch', 'lease_invalid']);
  * instance even before any randomness (timestamp suffix breaks restarts). */
 let sessionCounter = 0;
 
-export type SessionStatus = 'idle' | 'running' | 'stopped';
+export type SessionStatus = 'idle' | 'running' | 'stopped' | 'lost_lease';
 
 export class WorldSession {
   private readonly rawTransport: WorldTransport;
@@ -96,13 +98,7 @@ export class WorldSession {
   private status: SessionStatus = 'idle';
   private lease: { token: Id; fenceEpoch: number } | null = null;
   private claimPointId: Id | null = null;
-  private worldId: Id | null = null;
-  private readonly observed: WorldTransport;
-  /** The current lost-lease episode's acquire request: an attempt of
-   * UNKNOWN fate (accepted server-side, response lost) must retry the SAME
-   * id and body — the idempotent replay returns the original grant. Cleared
-   * when the episode ends (grant adopted or session stopped). */
-  private recoveryRequest: { requestId: Id; worldId: Id; holderId: Id } | null = null;
+
 
   constructor(transport: WorldTransport, port: RuntimeWorldModelPort, options: WorldSessionOptions = {}) {
     this.rawTransport = transport;
@@ -130,9 +126,9 @@ export class WorldSession {
       onClaimRenewed: () => {},
       onLost: (loss) => this.onHeartbeatLoss(loss),
     });
-    const observed: WorldTransport = this.observed = {
+    const observed: WorldTransport = {
       execute: async <K extends WorldOperation>(operation: K, request: RequestMap[K], scope: Scope) => {
-        if (this.closed) throw new Error('WorldSession closed');
+        if (this.closed || this.lostLeaseCode) throw new Error(this.isolationReason());
         const epochAtCall = this.epoch;
         // The raw exchange races the session call signal: a stop or a lease
         // loss ends the wait promptly; the raw late settle stays discarded.
@@ -172,58 +168,18 @@ export class WorldSession {
   get idNamespace(): string { return this.namespace; }
 
   /** Single-flight driver loop. Repeat calls while running share the same
-   * promise; after a terminal status the session can run again (await
-   * boundary, or recovery after a lost lease reacquired its authority).
-   * Rejected once stopped or disposed. */
+   * promise; after an await boundary the session can run again. Rejected
+   * once stopped, disposed, or after a lost lease (terminal). */
   run(): Promise<DriverStatus> {
     if (this.closed) return Promise.reject(new Error('WorldSession is stopped'));
+    if (this.lostLeaseCode) return Promise.reject(new Error('WorldSession lost its lease; recovery is a later batch (H2)'));
     if (this.loopPromise) return this.loopPromise;
     if (this.calls.signal.aborted) this.calls = new AbortController();
     if (this.inference.signal.aborted) this.inference = new AbortController();
     this.pendingTerminal = null;
     this.status = 'running';
-    this.loopPromise = (async () => {
-      if (this.lostLeaseCode) {
-        // Explicit authority recovery: obtain a fresh LeaseGrant (through the
-        // observation layer, which restarts the heartbeats and clears the
-        // lost-lease state) and hand it to the driver BEFORE any business
-        // step — the stale token must never drive another write.
-        const recovery = await this.recoverAuthority();
-        if (!recovery.ok) {
-          // A stop during the recovery phase owns the terminal: never
-          // overwrite the stopped status with idle or the failure error.
-          this.loopPromise = null;
-          if (this.status === 'stopped') return this.pendingTerminal ?? recovery.status;
-          this.status = 'idle';
-          return recovery.status;
-        }
-      }
-      return this.loop(this.epoch);
-    })();
+    this.loopPromise = this.loop(this.epoch);
     return this.loopPromise;
-  }
-
-  private async recoverAuthority(): Promise<{ ok: true } | { ok: false; status: DriverStatus }> {
-    const worldId = this.worldId;
-    if (!worldId) return { ok: false, status: { kind: 'error', detail: 'lease recovery requires a known world' } };
-    const holderId = this.driver.getMemory().holderId;
-    // One request per lost-lease episode: an unknown-fate attempt replays
-    // the identical acquire (the idempotent record returns the original
-    // grant instead of a second acquisition / lease_held).
-    this.recoveryRequest ??= { requestId: `req_${this.namespace}_recovery`, worldId, holderId };
-    const request = { protocolVersion: 2 as const, ...this.recoveryRequest };
-    try {
-      const response = await this.observed.execute('lease_acquire', request as never, { worldId }) as unknown as {
-        data: { leaseToken: Id; fenceEpoch: number; expiresAtEpochMilli: number };
-      };
-      this.driver.adoptLeaseGrant?.(response.data);
-      if (this.lostLeaseCode) return { ok: false, status: { kind: 'error', detail: `lease recovery did not clear the lost-lease state` } };
-      this.recoveryRequest = null; // episode closed by the adopted grant
-      return { ok: true };
-    } catch (error) {
-      const detail = error instanceof Error ? error.message : String(error);
-      return { ok: false, status: { kind: 'error', detail: `lease recovery failed: ${detail}` } };
-    }
   }
 
   private async loop(epochAtStart: number): Promise<DriverStatus> {
@@ -313,11 +269,11 @@ export class WorldSession {
       return; // the controller re-claims on its own path; the session continues
     }
     // A lost lease is fatal for in-flight work: the generation result could
-    // only be committed against a fence the client no longer holds. Enter
-    // the explicit lost-lease state: both heartbeats stop, in-flight
-    // exchanges are isolated (either polarity), inference aborts. The
-    // session stays runnable — the controller reacquires on its recovery
-    // path and the next observed lease grant clears the state.
+    // only be committed against a fence the client no longer holds. The
+    // lost-lease state is TERMINAL: both heartbeats stop, in-flight
+    // exchanges are isolated (either polarity), inference aborts, and later
+    // run() calls are refused. Authority recovery and reconciling exchanges
+    // of unknown fate belong to a later recovery batch / H2.
     this.enterLeaseLost(loss.code);
   }
 
@@ -326,7 +282,7 @@ export class WorldSession {
   private enterLeaseLost(code: string): void {
     if (this.lostLeaseCode) return;
     this.lostLeaseCode = code;
-    this.recoveryRequest = null; // a new episode mints a fresh acquire
+    if (this.status !== 'stopped') this.status = 'lost_lease'; // terminal
     this.epoch += 1;
     this.pendingTerminal ??= { kind: 'error', detail: `lease lost: ${code}` };
     this.isolateInFlight();
@@ -354,9 +310,7 @@ export class WorldSession {
       const lease = grant as { leaseToken: Id; fenceEpoch: number; expiresAtEpochMilli: number } | undefined;
       const worldId = (scope.worldId ?? (request as { worldId?: Id }).worldId ?? data.worldId) as Id | undefined;
       if (lease?.leaseToken && worldId) {
-        this.worldId = worldId;
         this.lease = { token: lease.leaseToken, fenceEpoch: lease.fenceEpoch };
-        this.lostLeaseCode = null; // fresh authority: the lost-lease state is recovered
         this.scheduler.startLease({ worldId, leaseToken: lease.leaseToken, fenceEpoch: lease.fenceEpoch, expiresAtEpochMilli: lease.expiresAtEpochMilli });
       }
     }
@@ -384,9 +338,6 @@ export class WorldSession {
       this.claimPointId = null;
     }
     const world = envelope.world;
-    if (!isError && world) {
-      this.worldId = world.worldId;
-    }
     if (!isError && world && this.lease) {
       if (world.lease) {
         // Bind only at the epoch the held token belongs to. A HIGHER epoch
