@@ -2,9 +2,11 @@
 
 状态：2026-10-26。`d6dce8c` 用户复核通过，#7/#9 正常路径关闭。当前交付为 **H2 客户端首批及历史读取子检查**，不宣称完整 H2 刷新/接管 HTTP 验收通过。B3 全量继续暂缓，不新增长期行动历史。
 
-用户已独立复核本客户端首批：前端 519/519、两套类型检查通过；隔离 A 服务上的真实 HTTP 三点历史子检查通过，全新控制器收到三份原始 Δ，仅调用一次 continuation，没有提交结论。独立报告见 [history.json](../../artifacts/h2-history-http-review-independent.json)（B 自跑记录另见 [h2-history-http-review.json](../../artifacts/h2-history-http-review.json)）。冻结工作恢复的现有证据仍是合同标本，不计作真实复制、接管或围栏验收。下一步先与 A 确定[骰点事实与组处理进度读取契约](h2-recovery-read-contract.md)，再推进 A3 与最终 SQLite 联调。
+用户在 `.local/` 下独立复跑的记录已落库为 [h2-history-http-review-independent.json](../../artifacts/h2-history-http-review-independent.json)（`world_1`，06:37:45）。B 自跑记录 [h2-history-http-review.json](../../artifacts/h2-history-http-review.json) 已在提交后用干净工作树重新生成：browser head `56e6774`、`status` 为空、`PASS_HISTORY_SUBCHECK`、原始 Δ 与独立期望一致、仅一次 `continuation`；它取代了此前挂在工作区 `d6dce8c` 上的脏树重跑。两者都只覆盖历史读取子检查。冻结工作恢复的现有证据仍是合同标本，不计作真实复制、接管或围栏验收。下一步先与 A 确定[骰点事实与组处理进度读取契约](h2-recovery-read-contract.md)，再推进 A3 与最终 SQLite 联调。下一步先与 A 确定[骰点事实与组处理进度读取契约](h2-recovery-read-contract.md)，再推进 A3 与最终 SQLite 联调。
 
-提交：`cc70105` 是本批唯一代码提交，在干净树上重跑确认前端 519/519（recovery 35/35）、`tsc -p tsconfig.world-contract.json` 与 `tsc --noEmit` 均净；本轮未改任何运行时逻辑。
+提交：`cc70105` 是本批唯一代码提交，在干净树上重跑确认前端 519/519（recovery 35/35）、`tsc -p tsconfig.world-contract.json` 与 `tsc --noEmit` 均净；本轮未改任何运行时逻辑。历史子检查与上一句的 519/519 都是用户已完成过的复核，B 在提交后重跑只是把证据绑到提交上，不构成新的验收。
+
+冻结前置的 B 侧唯一可自助核对项已通过：`python -X utf8 backend/scripts/export_world_protocol.py --version v2 --check` 在 `world-browser` 干净树上退出 0、无导出漂移，`design/world-protocol/v2/manifest.json` 的 `contractDigest` 与 A 工作树同为 `abda4555…`。因此 A 候选提交落地后若摘要变化，差值可归到 A 侧，而不是 B 侧残留旧导出。
 
 ## 恢复入口
 

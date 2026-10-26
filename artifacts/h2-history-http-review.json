@@ -1,11 +1,11 @@
 {
   "status": "PASS_HISTORY_SUBCHECK",
-  "recordedAt": "2026-10-26T06:32:39.546Z",
+  "recordedAt": "2026-10-26T10:50:32.558Z",
   "scope": "real HTTP + A state service + fresh B controller; not full H2 takeover acceptance",
   "command": "node scripts/review-world-h2-history.mjs API_URL [REPORT_PATH] [A_CHECKOUT]",
   "browser": {
-    "head": "d6dce8c664acaf71e9a6b1ea572769cbac00f591",
-    "status": "M design/world-engine-reports/model-task-alignment-fix-list.md\n M frontend/src/lib/world-engine/controller.ts\n M frontend/src/lib/world-engine/runtime/session.ts\n M frontend/src/lib/world-engine/schedule.ts\n?? artifacts/h2-history-http-review.json\n?? design/world-engine-reports/h2-recovery.md\n?? frontend/scripts/review-world-h2-history.mjs\n?? frontend/src/lib/world-engine/recovery.test.ts\n?? frontend/src/lib/world-engine/recovery.ts",
+    "head": "56e67746fa6590678d642893673487e782185ad8",
+    "status": "",
     "sourceSha256": {
       "frontend/src/lib/world-engine/recovery.ts": "d5113ef87efd9bb15e982701f572ef59f80a277aa1e520d81bb4e56118f5eaa7",
       "frontend/src/lib/world-engine/controller.ts": "d5dc16e80864d7822f087a91810ae0a7a18ff835b508c007ba440037b20d3ed7",
@@ -22,7 +22,7 @@
       "backend/app/world_app.py": "73e4f19a5a788b05ae276bb7b32e4eddb2107d34bec06e4a2a9a5e139eeb3c32"
     }
   },
-  "worldId": "world_13",
+  "worldId": "world_1",
   "roundId": "round_3",
   "committedPointIds": [
     "point_4",
