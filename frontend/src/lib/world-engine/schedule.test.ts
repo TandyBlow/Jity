@@ -200,9 +200,9 @@ describe('normal point: group cycle (T01/T02 shapes)', () => {
     pending.targetsExtended = true;
     pending.pendingTargets = [{ targetId: 'person_d', triggerKey: 'tk_d' }, { targetId: 'person_a', triggerKey: 'tk_a' }]
       .sort((a, b) => (a.targetId < b.targetId ? -1 : 1))
-      .map((t) => ({ targetId: t.targetId, triggerKey: t.triggerKey, rule: { ruleVersion: 'reaction-fixture-v1' as const, target: 11 } }));
+      .map((t) => ({ targetId: t.targetId, triggerKey: t.triggerKey, rule: { ruleVersion: 'reaction-d20-v1' as const, target: 11 } }));
     const roll = expectTransport(next(w, c, wk, m), 'create_rolls') as Extract<Decision, { kind: 'transport' }>;
-    expect((roll.request as unknown as { rolls: { targetId: string; ruleVersion: string; target: number }[] }).rolls).toEqual([{ advanceId: 'adv1', roundId: 'r1', groupId: 'g1', sourceId: 'person_a', targetId: 'person_a', triggerKey: 'tk_a', ruleVersion: 'reaction-fixture-v1', target: 11 }]);
+    expect((roll.request as unknown as { rolls: { targetId: string; ruleVersion: string; target: number }[] }).rolls).toEqual([{ advanceId: 'adv1', roundId: 'r1', groupId: 'g1', sourceId: 'person_a', targetId: 'person_a', triggerKey: 'tk_a', ruleVersion: 'reaction-d20-v1', target: 11 }]);
   });
   test('a mixed key set requests only this source\u2019s missing slots (no reuse, no clobber)', () => {
     const pending: SourceAnalysis = { sourceId: 'person_c', actionText: '行动。', targetsExtended: false, pendingTargets: [], rolled: [] };
@@ -235,7 +235,7 @@ describe('normal point: group cycle (T01/T02 shapes)', () => {
   test('reaction runs before the admitted extend and carries roll refs (T02-el s5–s6)', () => {
     const pending: SourceAnalysis = {
       sourceId: 'person_c', actionText: '行动。', targetsExtended: true,
-      pendingTargets: [{ targetId: 'person_d', triggerKey: 'tk_d', rule: { ruleVersion: 'reaction-fixture-v1', target: 11 } }],
+      pendingTargets: [{ targetId: 'person_d', triggerKey: 'tk_d', rule: { ruleVersion: 'reaction-d20-v1', target: 11 } }],
       rolled: [],
     };
     const { w, c, wk, m } = spine({
@@ -243,7 +243,7 @@ describe('normal point: group cycle (T01/T02 shapes)', () => {
       memory: { workingState: { key: workingStateKey(pointWork()), state: workingState() }, sources: [pending] },
     });
     expect(expectTransport(next(w, c, wk, m), 'create_rolls')).toBeTruthy();
-    pending.rolled.push({ targetId: 'person_d', triggerKey: 'tk_d', rule: { ruleVersion: 'reaction-fixture-v1', target: 11 }, rollId: 'roll_d', admitted: true, reacted: false });
+    pending.rolled.push({ targetId: 'person_d', triggerKey: 'tk_d', rule: { ruleVersion: 'reaction-d20-v1', target: 11 }, rollId: 'roll_d', admitted: true, reacted: false });
     pending.pendingTargets = [];
     // 反应读发起者的冻结威胁文本（§6.2 步骤 4）——与 targets 同源。
     expect(next(w, c, wk, m)).toMatchObject({ kind: 'model', task: 'reaction', key: 'person_c', input: { sourceActionText: '行动。', memberId: 'person_d', rollId: 'roll_d' } });
@@ -315,8 +315,8 @@ describe('normal point: group cycle (T01/T02 shapes)', () => {
   test('DFS: the reaction of an admitted sibling precedes rolling the next one (T02-el s5–s8)', () => {
     const pending: SourceAnalysis = {
       sourceId: 'person_c', actionText: '行动。', targetsExtended: true,
-      pendingTargets: [{ targetId: 'person_e', triggerKey: 'tk_e', rule: { ruleVersion: 'reaction-fixture-v1', target: 11 } }],
-      rolled: [{ targetId: 'person_d', triggerKey: 'tk_d', rule: { ruleVersion: 'reaction-fixture-v1', target: 11 }, rollId: 'roll_d', admitted: true, reacted: false }],
+      pendingTargets: [{ targetId: 'person_e', triggerKey: 'tk_e', rule: { ruleVersion: 'reaction-d20-v1', target: 11 } }],
+      rolled: [{ targetId: 'person_d', triggerKey: 'tk_d', rule: { ruleVersion: 'reaction-d20-v1', target: 11 }, rollId: 'roll_d', admitted: true, reacted: false }],
     };
     const { w, c, wk, m } = spine({
       work: { phase: 'build_group', pendingGroup: { groupId: 'g9', sourceId: 'person_c', memberIds: ['person_c'], targetIds: [], frontierIds: [], closed: false } },

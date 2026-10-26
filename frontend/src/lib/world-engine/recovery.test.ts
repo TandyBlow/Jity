@@ -427,6 +427,45 @@ describe('H2 frozen work', () => {
     expect(m.calls[0]).toMatchObject({ task: 'targets', key: 'person_f', input: { sourceId: 'person_f', actionText: 'F 护住门边。' } });
   });
 
+  test('a rule switch never rewrites history: saved fixture rolls stand, the pending threat re-rolls under d20', async () => {
+    const c = openContext();
+    const p = c.recovery!.current!;
+    const group = p.groups[0];
+    group.members[0].targets = [{ targetId: 'person_d', triggerKey: 'trigger_cd' }, { targetId: 'person_e', triggerKey: 'trigger_ce' }];
+    group.members[0].rollRefs = [{ sourceId: 'person_c', targetId: 'person_d', triggerKey: 'trigger_cd', rollId: 'roll_cd' }];
+    group.members.push({ memberId: 'person_d', actionText: 'D 稳住门轴。', targets: null, resultText: null, rollRefs: [] });
+    p.work.pendingGroup!.memberIds = ['person_c', 'person_d'];
+    p.work.pendingGroup!.targetIds = ['person_d', 'person_e'];
+    group.acceptedSources = [
+      { memberId: 'person_c', sourceEpoch: 7, sourceAttempt: 1, actionContentHash: 'a'.repeat(64), resultContentHash: null, targetsContentHash: 'b'.repeat(64), candidatesContentHash: null },
+      { memberId: 'person_d', sourceEpoch: 7, sourceAttempt: 1, actionContentHash: 'c'.repeat(64), resultContentHash: null, targetsContentHash: null, candidatesContentHash: null },
+    ];
+    // roll_cd was saved under the stage fixture rule BEFORE the switch;
+    // (c,e) was never rolled, so its final row does not exist yet.
+    group.rolls = [{ rollId: 'roll_cd', groupId: 'group_cd', sourceId: 'person_c', targetId: 'person_d', triggerKey: 'trigger_cd', ruleVersion: 'reaction-fixture-v1', target: 11, result: 15, eligibilityBaselineDigest: 'f'.repeat(64), eligible: true, admitted: true }];
+    group.progress = { sourceStack: ['person_c'], threats: [
+      { sourceId: 'person_c', targetId: 'person_d', triggerKey: 'trigger_cd', status: 'handled', rollId: 'roll_cd', actionDisposition: 'created', reactionMemberId: 'person_d' },
+      { sourceId: 'person_c', targetId: 'person_e', triggerKey: 'trigger_ce', status: 'pending_roll', rollId: null, reactionMemberId: null }] };
+    c.work = copy(p.work);
+    const t = new RecoveryTransport(c);
+    t.extra = (op) => {
+      expect(op).toBe('create_rolls');
+      return { world: c.world, control: c.control, work: c.work, data: { rolls: [{ rollId: 'roll_ce', result: 12, eligible: true, admitted: true, ruleVersion: 'reaction-d20-v1', target: 11 }] } };
+    };
+    const m = model();
+    const driver = new ControllerDriver({ transport: t, model: m.port }, initialMemory('fresh', 'new_holder'));
+    expect(await driver.recover('world_school')).toBeUndefined();
+    const source = driver.getMemory().sources[0];
+    // The saved roll keeps its recorded identity end to end.
+    expect(source.rolled).toEqual([{ targetId: 'person_d', triggerKey: 'trigger_cd', rule: { ruleVersion: 'reaction-fixture-v1', target: 11 }, rollId: 'roll_cd', admitted: true, reacted: true }]);
+    expect(driver.getMemory().groupActions[0].rolls).toEqual([{ targetId: 'person_d', rollId: 'roll_cd', result: 15, eligible: true, admitted: true }]);
+    await driver.step(); // create_rolls for the NEVER-ROLLED threat — under the live rule
+    const call = t.calls.find((c) => c.operation === 'create_rolls');
+    expect((call!.request as RequestMap['create_rolls']).rolls[0]).toMatchObject({
+      sourceId: 'person_c', targetId: 'person_e', triggerKey: 'trigger_ce', ruleVersion: 'reaction-d20-v1', target: 11 });
+    expect(m.calls).toEqual([]);
+  });
+
   test('a saved pending_roll threat re-rolls the SAME key, never a new trigger identity', async () => {
     const c = openContext();
     const p = c.recovery!.current!;
@@ -448,7 +487,7 @@ describe('H2 frozen work', () => {
     const call = t.calls.find((c) => c.operation === 'create_rolls');
     expect(call).toBeDefined();
     expect((call!.request as RequestMap['create_rolls']).rolls[0]).toMatchObject({
-      groupId: 'group_cd', sourceId: 'person_c', targetId: 'person_d', triggerKey: 'trigger_cd', ruleVersion: 'reaction-fixture-v1', target: 11 });
+      groupId: 'group_cd', sourceId: 'person_c', targetId: 'person_d', triggerKey: 'trigger_cd', ruleVersion: 'reaction-d20-v1', target: 11 });
     expect(m.calls).toEqual([]);
   });
 

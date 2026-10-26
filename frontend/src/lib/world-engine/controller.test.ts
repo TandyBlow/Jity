@@ -828,7 +828,7 @@ describe('review regressions (553e341 findings)', () => {
   test('a final not-admitted roll retires the source and closes the group', async () => {
     const { transport, driver, writeOk } = midPoint(
       { phase: 'build_group', pendingGroup: { groupId: 'g1', sourceId: 'person_a', memberIds: ['person_a'], targetIds: [], frontierIds: [], closed: false } },
-      { sources: [{ sourceId: 'person_a', actionText: '行动。', targetsExtended: true, pendingTargets: [{ targetId: 'person_d', triggerKey: 'tk_d', rule: { ruleVersion: 'reaction-fixture-v1', target: 11 } }], rolled: [] }] },
+      { sources: [{ sourceId: 'person_a', actionText: '行动。', targetsExtended: true, pendingTargets: [{ targetId: 'person_d', triggerKey: 'tk_d', rule: { ruleVersion: 'reaction-d20-v1', target: 11 } }], rolled: [] }] },
     );
     transport.script = [
       { op: 'create_rolls', respond: (r) => writeOk('create_rolls', r, { rolls: [{ sourceId: 'person_a', targetId: 'person_d', triggerKey: 'tk_d', rollId: 'roll_d', result: 3, eligibilityBaselineDigest: 'ebd', eligible: false, admitted: false }] }) },
@@ -846,7 +846,7 @@ describe('review regressions (553e341 findings)', () => {
       {
         groupActors: ['person_a'],
         lastModel: { task: 'reaction', key: 'person_a', output: 'person_d被迫反应。' },
-        sources: [{ sourceId: 'person_a', actionText: '行动。', targetsExtended: true, pendingTargets: [], rolled: [{ targetId: 'person_d', triggerKey: 'tk_d', rule: { ruleVersion: 'reaction-fixture-v1', target: 11 }, rollId: 'roll_d', admitted: true, reacted: false }] }],
+        sources: [{ sourceId: 'person_a', actionText: '行动。', targetsExtended: true, pendingTargets: [], rolled: [{ targetId: 'person_d', triggerKey: 'tk_d', rule: { ruleVersion: 'reaction-d20-v1', target: 11 }, rollId: 'roll_d', admitted: true, reacted: false }] }],
         // 冻结行动留存（§7.1 results 输入）：被准入者前插、发起者带判定。
         groupActions: [
           { memberId: 'person_d', actionText: 'person_d被迫反应。', rolls: [] },

@@ -21,8 +21,9 @@ export type UpdatesStage = typeof updateStages[number];
 export interface PlannedPoint { pointId: Id; kind: 'normal' | 'instant' | 'linked'; timeAdvance: TimeAdvance; actorIds: Id[] }
 export interface RollRule { ruleVersion: RollSpec['ruleVersion']; target: number }
 /** Program-owned dice rule (§6.2): the model never declares versions or
- * thresholds. Stage 0–3 fixture rule; the d20 baseline swaps this constant. */
-export const PROGRAM_ROLL_RULE: RollRule = { ruleVersion: 'reaction-fixture-v1', target: 11 };
+ * thresholds. The d20 baseline is the live rule; rolls already saved under
+ * the stage 0–3 fixture rule keep their recorded identity on recovery. */
+export const PROGRAM_ROLL_RULE: RollRule = { ruleVersion: 'reaction-d20-v1', target: 11 };
 
 // ---------- 稳定组合身份键（§9.3） ----------
 

@@ -26,7 +26,7 @@ import { resolve } from 'node:path';
 import { ControllerDriver, initialMemory } from './controller';
 import { buildCorpus, frozenGroupActionsAtStage, ScenarioModelPort, ScenarioTransport, servedBeforeSteps, type Corpus, type DeclaredModelCall, type PreviewSpecimenSpec, type ReadStateSpecimenSpec } from './harness';
 import { ProtocolError } from './protocol';
-import { triggerSlotKey } from './schedule';
+import { PROGRAM_ROLL_RULE, triggerSlotKey } from './schedule';
 import { instantiate, readTrace } from './trace-runner';
 import type { ControlState, Id, Json, WorldContext } from './types';
 
@@ -71,7 +71,19 @@ export function buildT02Scenario(traceName: T02TraceName, sampleId: string): T02
   const requestOf = new Map<string, Record<string, unknown>>();
   const responseOf = new Map<string, Record<string, unknown>>();
   for (const step of trace.steps) {
-    requestOf.set(step.id, instantiate(step.request, sample.values) as Record<string, unknown>);
+    // The dice rule is program-owned (§6.2): the recorded request pinned the
+    // constant value at recording time. Rewrite it to the CURRENT constant
+    // on the raw trace step, before any instantiation, so the fixture→d20
+    // switch does not masquerade as a request drift. Saved roll rows in
+    // responses are history and stay exactly as recorded.
+    if (step.operation === 'create_rolls') {
+      for (const roll of ((step.request as { rolls?: { ruleVersion: string; target: number }[] }).rolls ?? [])) {
+        roll.ruleVersion = PROGRAM_ROLL_RULE.ruleVersion;
+        roll.target = PROGRAM_ROLL_RULE.target;
+      }
+    }
+    const request = instantiate(step.request, sample.values) as Record<string, unknown>;
+    requestOf.set(step.id, request);
     responseOf.set(step.id, instantiate(step.response, sample.values) as Record<string, unknown>);
   }
   const steps = trace.steps;
