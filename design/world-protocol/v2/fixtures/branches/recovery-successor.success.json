@@ -1,7 +1,7 @@
 {
   "protocolVersion": 2,
   "engineVersion": "world-engine-v1",
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "canonicalVersion": "world-canonical-v1",
   "serverTimeEpochMilli": 1792617600000,
   "world": {
@@ -308,6 +308,35 @@
               "person_f"
             ],
             "personalityCoverageIds": []
+          },
+          "rolls": [
+            {
+              "sourceId": "person_c",
+              "targetId": "person_d",
+              "triggerKey": "trigger_cd",
+              "rollId": "roll_cd",
+              "groupId": "group_cd",
+              "ruleVersion": "reaction-d20-v1",
+              "target": 11,
+              "result": 15,
+              "eligibilityBaselineDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+              "eligible": true,
+              "admitted": true
+            }
+          ],
+          "progress": {
+            "sourceStack": [],
+            "threats": [
+              {
+                "sourceId": "person_c",
+                "targetId": "person_d",
+                "triggerKey": "trigger_cd",
+                "rollId": "roll_cd",
+                "status": "handled",
+                "actionDisposition": "created",
+                "reactionMemberId": "person_d"
+              }
+            ]
           }
         }
       ],

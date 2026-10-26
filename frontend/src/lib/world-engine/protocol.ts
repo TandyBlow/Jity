@@ -32,7 +32,7 @@ export function validateRequest<K extends WorldOperation>(operation: K, request:
 function validateVersions(value: unknown): asserts value is Record<string, unknown> {
   if (!value || typeof value !== 'object') throw new ProtocolError('Response is not an object');
   const v = value as Record<string, unknown>;
-  if (v.protocolVersion !== 2 || v.engineVersion !== 'world-engine-v1' || v.schemaVersion !== 1 || v.canonicalVersion !== 'world-canonical-v1') throw new ProtocolError('Unsupported response version');
+  if (v.protocolVersion !== 2 || v.engineVersion !== 'world-engine-v1' || v.schemaVersion !== 2 || v.canonicalVersion !== 'world-canonical-v1') throw new ProtocolError('Unsupported response version');
 }
 export function validateSuccess<K extends WorldOperation>(operation: K, value: unknown): Success<K> {
   validateVersions(value);

@@ -1,7 +1,7 @@
 {
   "traceFormatVersion": 1,
   "protocolVersion": 2,
-  "contractDigest": "abda455597e743f63da1c205ca7bc68044728c5f92a3cb7ae920440ef324eedd",
+  "contractDigest": "902918016f2bf7eff4cd1afd52da4ca96defdb5ee4082f171fda987de86680c2",
   "scenario": "T02",
   "acceptanceLayer": "contract",
   "runtimeTarget": "runtime-A3",
@@ -915,7 +915,7 @@
       "response": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": {
           "$var": "v2"
@@ -1108,7 +1108,7 @@
       "response": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": {
           "$var": "v12"
@@ -1315,7 +1315,7 @@
       "response": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": {
           "$var": "v14"
@@ -1536,7 +1536,7 @@
       "response": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": {
           "$var": "v15"
@@ -1755,7 +1755,7 @@
       "response": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": {
           "$var": "v16"
@@ -1997,7 +1997,7 @@
       "response": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": {
           "$var": "v17"
@@ -2253,7 +2253,7 @@
       "response": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": {
           "$var": "v21"
@@ -2497,7 +2497,7 @@
       "response": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": {
           "$var": "v22"
@@ -2739,7 +2739,7 @@
       "response": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": {
           "$var": "v23"
@@ -3004,7 +3004,7 @@
       "response": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": {
           "$var": "v24"
@@ -3278,7 +3278,7 @@
       "response": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": {
           "$var": "v27"
@@ -3612,7 +3612,7 @@
       "response": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": {
           "$var": "v29"
@@ -3797,7 +3797,7 @@
       "response": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": {
           "$var": "v32"
@@ -3997,7 +3997,7 @@
       "response": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": {
           "$var": "v34"
@@ -4175,7 +4175,7 @@
       "response": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": {
           "$var": "v36"
@@ -4394,7 +4394,7 @@
       "response": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": {
           "$var": "v38"
@@ -4640,7 +4640,7 @@
       "response": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": {
           "$var": "v41"
@@ -4887,7 +4887,7 @@
       "response": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": {
           "$var": "v42"
@@ -5148,7 +5148,7 @@
       "response": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": {
           "$var": "v44"
@@ -5420,7 +5420,7 @@
       "response": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": {
           "$var": "v46"
@@ -5670,7 +5670,7 @@
       "response": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": {
           "$var": "v48"
@@ -5920,7 +5920,7 @@
       "response": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": {
           "$var": "v49"
@@ -6170,7 +6170,7 @@
       "response": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": {
           "$var": "v51"
@@ -6431,7 +6431,7 @@
       "response": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": {
           "$var": "v52"
@@ -6700,7 +6700,7 @@
       "response": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": {
           "$var": "v55"
@@ -7008,7 +7008,7 @@
       "response": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": {
           "$var": "v57"
@@ -7193,7 +7193,7 @@
       "response": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": {
           "$var": "v59"
@@ -7397,7 +7397,7 @@
       "response": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": {
           "$var": "v61"
@@ -7579,7 +7579,7 @@
       "response": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": {
           "$var": "v63"
@@ -7806,7 +7806,7 @@
       "response": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": {
           "$var": "v65"
@@ -8060,7 +8060,7 @@
       "response": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": {
           "$var": "v68"
@@ -8315,7 +8315,7 @@
       "response": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": {
           "$var": "v69"
@@ -8584,7 +8584,7 @@
       "response": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": {
           "$var": "v71"
@@ -8864,7 +8864,7 @@
       "response": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": {
           "$var": "v73"
@@ -9115,7 +9115,7 @@
       "response": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": {
           "$var": "v74"
@@ -9359,7 +9359,7 @@
       "response": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": {
           "$var": "v75"
@@ -9627,7 +9627,7 @@
       "response": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": {
           "$var": "v76"
@@ -9908,7 +9908,7 @@
       "response": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": {
           "$var": "v79"
@@ -10224,7 +10224,7 @@
       "response": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": {
           "$var": "v81"
@@ -10413,7 +10413,7 @@
       "response": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": {
           "$var": "v83"
@@ -10621,7 +10621,7 @@
       "response": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": {
           "$var": "v85"
@@ -10782,7 +10782,7 @@
       "response": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": {
           "$var": "v86"

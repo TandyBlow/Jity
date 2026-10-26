@@ -756,7 +756,7 @@ describe('error routing pins the frozen 18-code catalog', () => {
     request_id_reused: 'stop', point_time_locked: 'stop', request_malformed: 'stop', preview_budget_exceeded: 'stop', protocol_version_unsupported: 'stop',
   };
   const mkError = (code: ErrorCode): ErrorResponse => ({
-    protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1,
+    protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1,
     replayed: false, operation: null, requestId: null, worldId: null,
     error: { code, httpStatus: expected[code][0], retryable: expected[code][1], clientAction: expected[code][2], details: {} },
   });

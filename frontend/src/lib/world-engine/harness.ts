@@ -286,7 +286,7 @@ export function buildCorpus(rawTrace: unknown, sampleId: string, specimens: Prev
         requestIdRequired: false, requestIdExpectation: 'fresh',
         scope: { worldId: world.worldId },
         response: {
-          protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1,
+          protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1,
           operation: 'preview_point', world, control, work,
           data: { pointId: work.pointId, pointProjection: built.pointProjection, mergedEntityDeltas: built.mergedEntityDeltas, workingStateDigest: PLACEHOLDER_DIGEST, pointProjectionDigest: PLACEHOLDER_DIGEST, workingState: built.workingState },
         } as unknown as Json,
@@ -312,7 +312,7 @@ export function buildCorpus(rawTrace: unknown, sampleId: string, specimens: Prev
           requestIdRequired: false, requestIdExpectation: 'fresh',
           scope: { worldId: world.worldId },
           response: {
-            protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1,
+            protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1,
             world,
             data,
           } as unknown as Json,

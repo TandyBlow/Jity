@@ -359,3 +359,9 @@ npm --prefix frontend run build
 额外全量 backend 检查（`python -X utf8 -m pytest -q`；Windows 缺 `-X utf8` 时 `test_campaign_openings` 按 GBK 读文件，收集期即报 UnicodeDecodeError）为 **923 passed、0 failed**：此前记录的 `test_campaign_wiring.py::test_create_session_with_campaign` 与 `::test_list_slots_filters_by_session_id` 两例 404 已不存在。共同接口检查与远端 CI 均为全绿：`05c213e` 是首次带 world-interface 作业的运行，backend、frontend、world-interface 三个作业全部 success；frontend 在 `07924f3` 的运行中失败于 npm ci。CI 保留原后端 pytest 和前端 lint/build，新增 npm test 和 world-interface；完整 npm test 与聚焦检查在两个作业中有意重叠。Node 升至 22，匹配锁定的 Vitest 5 对 Node >=22.12 的要求。
 
 **结论：共同接口基线验收通过，A0/B0 的前置工作关闭，可以分别推进 A1/A2 与 B1。** 冻结记录随验收文档提交推送，`world-server` / `world-browser` 分支自该提交建立。实际分配/去重、崩溃恢复、真实 HTTP H1/H2、真实模型与页面继续按原后续阶段验收。环境、具体文件及复跑入口见 [server](../../world-engine-reports/server.md) 和 [browser](../../world-engine-reports/browser.md)。
+
+
+## 设计变更登记（2026-10-23）：输入消费规则
+
+workflow 设计 v0.4.1 §5.1 的「主角在本链第一个 round 中处理该输入的行动机会时（包括 skip 或被迫反应占用该机会）将 intentStatus 置为 consumed」与共同轨迹 T01/T02/T08 不一致：三者的首个 stage_unit 均由非主角行动（T01/T02 的 protagonist person_c 在本点首结算时未行动），intentStatus 却都为 consumed。经裁决按轨迹冻结为**本链首次结算动作消费**：任意行动者的 stage_unit 或 record_skip 把 pending 置为 consumed，后续结算与 skip 保持；stage_time_scan 不消费（T03 保持 pending）；automatic round 继承 consumed 的既有要求不变。v0.4.2 已同步修订 §5.1 原文；A 侧 working 演进函数与断言按新规则实现（`b29d898` 及本变更提交）。主角条款针对的「automatic round 中 NPC 先行不消费」场景在现有轨迹中不存在，未来若调整另行修订；automatic round 继承 consumed 的既有规则不变。B 的轨迹断言按轨迹预期，无需调整。
+

@@ -38,7 +38,7 @@ function claimData(expiresAtEpochMilli: number) {
 
 function apiError(code: string): WorldApiError {
   return new WorldApiError({
-    protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1',
+    protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1',
     serverTimeEpochMilli: 1, replayed: false, operation: null, requestId: null, worldId: 'w',
     world: null, control: null, work: null,
     error: { code, httpStatus: 409, retryable: false, clientAction: 'none', details: {} },

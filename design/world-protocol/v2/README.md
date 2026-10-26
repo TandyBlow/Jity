@@ -4,7 +4,7 @@
 
 契约摘要：`480d950c0f8062f8fdd75cb0620eb4ac97a6a247ca3f45f2057f6fe9e2ce7062`。双方核对依据见 [共同前置最终验收](change-list.md#共同前置最终验收2026-10-22if-03if-08-通过)、[server 报告](../../world-engine-reports/server.md)、[browser 报告](../../world-engine-reports/browser.md)。运行环境为 Windows、Python 3.12.3 / SQLite 3.50.4 / Pydantic 2.13.4 / jsonschema 4.26.0、Node 22.20.0 / npm 10.9.3 / TypeScript 5.9.3 / Ajv 8.20.0 / Vitest 5.0.1；CI 配置使用 Python 3.12、Node 22。
 
-Python 仍是规范编码与状态计算权威。当前交付可执行 SQL 约束、固定预期、契约轨迹、TS 消费/HTTP 实现与共同检查；内核、真实控制状态机、SQLite 事务及 H1/H2 分别留在 A1～A3。frontend 在 `07924f3` 的远端运行中失败于 npm ci；`05c213e` 是首次带 world-interface 作业的运行，backend/frontend/world-interface 三个作业全部 success。全量 backend（Windows 须 `python -X utf8 -m pytest -q`）923 passed、0 failed，此前登记的两个 campaign_wiring 失败已不存在。
+Python 仍是规范编码与状态计算权威。当前交付可执行 SQL 约束、固定预期、契约轨迹、TS 消费/HTTP 实现与共同检查；A1 纯内核已并入 `world-server`（apply/merge/preview/replay、单元与阶梯校验，本地门 `backend/scripts/check_world_kernel.py`），真实控制状态机、SQLite 事务及 H1/H2 留在 A2/A3。frontend 在 `07924f3` 的远端运行中失败于 npm ci；`05c213e` 是首次带 world-interface 作业的运行，backend/frontend/world-interface 三个作业全部 success。全量 backend（Windows 须 `python -X utf8 -m pytest -q`）969 passed、0 failed（2026-10-22 A1 内核并入后；S1 时为 923），此前登记的两个 campaign_wiring 失败已不存在。
 
 ## 本轮冻结决定
 

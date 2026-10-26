@@ -63,7 +63,7 @@ export class FaultTransport implements WorldTransport {
 
   private error(operation: WorldOperation, request: Record<string, unknown>, scope: Scope, code: ErrorCode, details: Record<string, Json> = {}, overrides?: Partial<ServedSnapshot>): WorldApiError {
     const response = validateError({
-      protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1',
+      protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1',
       serverTimeEpochMilli: this.latest.serverTimeEpochMilli ?? 1,
       replayed: false, operation, requestId: request.requestId ?? null, worldId: scope.worldId ?? request.worldId ?? null,
       error: errorBodyFor(code, details), ...this.snapshot(overrides),
@@ -110,7 +110,7 @@ export class FaultTransport implements WorldTransport {
       if (!world?.advance) throw new ProtocolError('[fault] bridge snapshot lacks world.advance');
       if (!equal(request, {}) || !equal(scope, { worldId: world.worldId })) throw new ProtocolError('[fault] refresh context request/scope mismatch');
       const response = validateSuccess('get_context', {
-        protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1',
+        protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1',
         serverTimeEpochMilli: this.latest.serverTimeEpochMilli ?? 1,
         ...this.snapshot(this.contextBridge),
         activeInput: world.advance.inputAvailable ? structuredClone(this.activeInput) : null,

@@ -1,0 +1,26 @@
+{
+  "protocolVersion": 2,
+  "engineVersion": "world-engine-v1",
+  "schemaVersion": 2,
+  "canonicalVersion": "world-canonical-v1",
+  "serverTimeEpochMilli": 1792617600000,
+  "replayed": false,
+  "operation": "get_context",
+  "requestId": null,
+  "worldId": "world_school",
+  "error": {
+    "code": "frozen_work_corrupt",
+    "httpStatus": 409,
+    "retryable": false,
+    "clientAction": "pause",
+    "details": {
+      "pointId": "p1",
+      "groupId": "group_cd",
+      "component": "progress",
+      "reason": "stack_binding_mismatch"
+    }
+  },
+  "world": null,
+  "control": null,
+  "work": null
+}

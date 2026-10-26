@@ -1,7 +1,7 @@
 {
   "traceFormatVersion": 1,
   "protocolVersion": 2,
-  "contractDigest": "abda455597e743f63da1c205ca7bc68044728c5f92a3cb7ae920440ef324eedd",
+  "contractDigest": "902918016f2bf7eff4cd1afd52da4ca96defdb5ee4082f171fda987de86680c2",
   "scenario": "T03",
   "acceptanceLayer": "contract",
   "runtimeTarget": "runtime-A2",
@@ -236,7 +236,7 @@
       "response": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": {
           "$var": "v2"
@@ -429,7 +429,7 @@
       "response": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": {
           "$var": "v12"
@@ -672,7 +672,7 @@
       "response": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": {
           "$var": "v14"
@@ -894,7 +894,7 @@
       "response": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": {
           "$var": "v15"
@@ -1163,7 +1163,7 @@
       "response": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": {
           "$var": "v17"
@@ -1349,7 +1349,7 @@
       "response": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": {
           "$var": "v20"
@@ -1550,7 +1550,7 @@
       "response": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": {
           "$var": "v22"
@@ -1704,7 +1704,7 @@
       "response": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": {
           "$var": "v23"

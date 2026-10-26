@@ -59,7 +59,7 @@ class RecoveryTransport implements WorldTransport {
   }
   async execute<K extends WorldOperation>(operation: K, request: RequestMap[K]): Promise<Success<K>> {
     this.calls.push({ operation, request: copy(request) });
-    const base = { protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1,
+    const base = { protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2,
       canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, world: copy(this.c.world) };
     let response: unknown;
     switch (operation) {

@@ -76,7 +76,7 @@ class ScriptedModel implements WorldModelPort {
 const apiError = (code: ErrorCode, requestId: Id): WorldApiError => {
   const entry = errorCatalog[code];
   const response: ErrorResponse = {
-    protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1,
+    protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1,
     replayed: false, operation: null, requestId, worldId: 'w1',
     error: { code, httpStatus: entry.httpStatus, retryable: entry.retryable, clientAction: entry.clientAction, details: {} },
   };
@@ -102,16 +102,16 @@ describe('driver end-to-end: entry, group cycle, seal/commit, narration', () => 
     });
     let work: PointWork | null = null;
     const writeOk = (operation: WorldOperation, requestId: Id, data: unknown) =>
-      ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation, requestId, requestHash: 'hash', world, control, work, data });
+      ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation, requestId, requestHash: 'hash', world, control, work, data });
     const previewOk = (requestId: Id) => ({
-      protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1,
+      protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1,
       operation: 'preview_point', world, control, work,
       data: { pointId: 'p1', pointProjection: { worldId: 'w1', id: 'p1', sequence: 1, kind: 'normal', previousPointId: 'root', roundId: 'r1', advanceId: 'adv1', trigger: 'player', linkedFromPointId: null, timeAdvance: ta(2), entityDeltas: {} }, mergedEntityDeltas: {}, workingStateDigest: 'wsd1', pointProjectionDigest: 'ppd1', workingState: workingState() },
       requestId,
     });
     // get_state 读取回包：world/control 沿用闭包当前值；data 携带该点自身记录（根点 null/null/{}）。
     const stateOk = (pointId: Id, previousPointId: Id | null, timeAdvance: TimeAdvance | null, entityDeltas: Record<string, unknown>) => ({
-      protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1,
+      protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1,
       world, control,
       data: { pointId, version: pointId === 'root' ? 0 : 1, state: workingState(), stateDigest: pointId === 'root' ? 'd0' : 'd1', previousPointId, timeAdvance, entityDeltas },
     });
@@ -242,7 +242,7 @@ describe('driver error routing and controls', () => {
     const { transport, driver } = advancing();
     transport.script = [
       { op: 'checkpoint_start_advance', respond: () => apiError('request_in_progress', 'retry') },
-      { op: 'checkpoint_start_advance', respond: (r) => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation: 'checkpoint_start_advance', requestId: (r as { requestId: Id }).requestId, requestHash: 'h', world: mkWorld(), control: mkControl({ revision: 1 }), work: null, data: { advanceId: 'adv1', inputId: 'in1', roundId: 'r1' } }) },
+      { op: 'checkpoint_start_advance', respond: (r) => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation: 'checkpoint_start_advance', requestId: (r as { requestId: Id }).requestId, requestHash: 'h', world: mkWorld(), control: mkControl({ revision: 1 }), work: null, data: { advanceId: 'adv1', inputId: 'in1', roundId: 'r1' } }) },
     ];
     await driver.step();
     await driver.step();
@@ -254,8 +254,8 @@ describe('driver error routing and controls', () => {
     const { transport, driver } = advancing();
     transport.script = [
       { op: 'checkpoint_start_advance', respond: (r) => apiError('revision_mismatch', (r as { requestId: Id }).requestId) },
-      { op: 'get_context', respond: () => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, world: mkWorld(), control: mkControl({ revision: 7 }), work: null, activeInput: null, recovery: null }) },
-      { op: 'checkpoint_start_advance', respond: (r) => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation: 'checkpoint_start_advance', requestId: (r as { requestId: Id }).requestId, requestHash: 'h', world: mkWorld(), control: mkControl({ revision: 8 }), work: null, data: { advanceId: 'adv1', inputId: 'in1', roundId: 'r1' } }) },
+      { op: 'get_context', respond: () => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, world: mkWorld(), control: mkControl({ revision: 7 }), work: null, activeInput: null, recovery: null }) },
+      { op: 'checkpoint_start_advance', respond: (r) => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation: 'checkpoint_start_advance', requestId: (r as { requestId: Id }).requestId, requestHash: 'h', world: mkWorld(), control: mkControl({ revision: 8 }), work: null, data: { advanceId: 'adv1', inputId: 'in1', roundId: 'r1' } }) },
     ];
     await driver.step();
     await driver.step();
@@ -268,8 +268,8 @@ describe('driver error routing and controls', () => {
     const { transport, driver } = advancing();
     transport.script = [
       { op: 'checkpoint_start_advance', respond: (r) => apiError('stale_epoch', (r as { requestId: Id }).requestId) },
-      { op: 'lease_acquire', respond: () => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation: 'lease_acquire', requestId: 'x', requestHash: 'h', world: mkWorld({ lease: { fenceEpoch: 2, expiresAtEpochMilli: 999999 } }), control: mkControl(), work: null, data: { leaseToken: 'lease2', fenceEpoch: 2, expiresAtEpochMilli: 999999, holderId: 'browser' } }) },
-      { op: 'checkpoint_start_advance', respond: (r) => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation: 'checkpoint_start_advance', requestId: (r as { requestId: Id }).requestId, requestHash: 'h', world: mkWorld({ lease: { fenceEpoch: 2, expiresAtEpochMilli: 999999 } }), control: mkControl({ revision: 1 }), work: null, data: { advanceId: 'adv1', inputId: 'in1', roundId: 'r1' } }) },
+      { op: 'lease_acquire', respond: () => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation: 'lease_acquire', requestId: 'x', requestHash: 'h', world: mkWorld({ lease: { fenceEpoch: 2, expiresAtEpochMilli: 999999 } }), control: mkControl(), work: null, data: { leaseToken: 'lease2', fenceEpoch: 2, expiresAtEpochMilli: 999999, holderId: 'browser' } }) },
+      { op: 'checkpoint_start_advance', respond: (r) => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation: 'checkpoint_start_advance', requestId: (r as { requestId: Id }).requestId, requestHash: 'h', world: mkWorld({ lease: { fenceEpoch: 2, expiresAtEpochMilli: 999999 } }), control: mkControl({ revision: 1 }), work: null, data: { advanceId: 'adv1', inputId: 'in1', roundId: 'r1' } }) },
     ];
     await driver.step();
     await driver.step();
@@ -283,7 +283,7 @@ describe('driver error routing and controls', () => {
     const control = mkControl({ revision: 4 });
     const work = mkWork();
     const transport = new ScriptedTransport([
-      { op: 'checkpoint_pause', respond: () => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation: 'checkpoint_pause', requestId: 'x', requestHash: 'h', world, control: mkControl({ revision: 5, paused: true }), work, data: { paused: true } }) },
+      { op: 'checkpoint_pause', respond: () => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation: 'checkpoint_pause', requestId: 'x', requestHash: 'h', world, control: mkControl({ revision: 5, paused: true }), work, data: { paused: true } }) },
     ]);
     const driver = new ControllerDriver(
       { transport, model: new ScriptedModel([]) },
@@ -303,7 +303,7 @@ describe('driver error routing and controls', () => {
     const control = mkControl({ revision: 4 });
     const work = mkWork();
     const transport = new ScriptedTransport([
-      { op: 'checkpoint_pause', respond: () => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation: 'checkpoint_pause', requestId: 'x', requestHash: 'h', world, control: mkControl({ revision: 5, paused: true }), work, data: { paused: true } }) },
+      { op: 'checkpoint_pause', respond: () => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation: 'checkpoint_pause', requestId: 'x', requestHash: 'h', world, control: mkControl({ revision: 5, paused: true }), work, data: { paused: true } }) },
     ]);
     const driver = new ControllerDriver(
       { transport, model: new ScriptedModel([]) },
@@ -336,7 +336,7 @@ describe('review regressions (553e341 findings)', () => {
     });
     const driver = new ControllerDriver({ transport, model }, memory, { world, control, work });
     const writeOk = (operation: WorldOperation, request: unknown, data: unknown) => ({
-      protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1,
+      protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1,
       replayed: false, operation, requestId: (request as { requestId?: Id })?.requestId ?? 'req', requestHash: 'hash', world, control, work, data,
     });
     return { world, control, work, transport, model, driver, writeOk };
@@ -353,18 +353,18 @@ describe('review regressions (553e341 findings)', () => {
     memory.workingState = { key: workingStateKey(work), state: workingState() };
     memory.lastResults = { person_a: '结果。' };
     memory.updatesStages = ['position', 'appearance'];
-    const previewRefused = () => { throw new WorldApiError(({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation: null, requestId: 'req', worldId: 'w1', error: { code: 'version_mismatch', httpStatus: 409, retryable: false, clientAction: 'refresh_context' as const, details: {} } }) as never); };
+    const previewRefused = () => { throw new WorldApiError(({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation: null, requestId: 'req', worldId: 'w1', error: { code: 'version_mismatch', httpStatus: 409, retryable: false, clientAction: 'refresh_context' as const, details: {} } }) as never); };
     const transport = new ScriptedTransport([
       { op: 'preview_point', respond: previewRefused },
-      { op: 'get_context', respond: () => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, world, control, work, activeInput: null, recovery: null }) },
+      { op: 'get_context', respond: () => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, world, control, work, activeInput: null, recovery: null }) },
       { op: 'preview_point', respond: previewRefused },
-      { op: 'get_context', respond: () => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, world, control, work, activeInput: null, recovery: null }) },
+      { op: 'get_context', respond: () => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, world, control, work, activeInput: null, recovery: null }) },
       { op: 'preview_point', respond: previewRefused },
-      { op: 'get_context', respond: () => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, world, control, work, activeInput: null, recovery: null }) },
+      { op: 'get_context', respond: () => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, world, control, work, activeInput: null, recovery: null }) },
       { op: 'preview_point', respond: previewRefused },
-      { op: 'get_context', respond: () => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, world, control, work, activeInput: null, recovery: null }) },
+      { op: 'get_context', respond: () => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, world, control, work, activeInput: null, recovery: null }) },
       { op: 'preview_point', respond: previewRefused },
-      { op: 'get_context', respond: () => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, world, control, work, activeInput: null, recovery: null }) },
+      { op: 'get_context', respond: () => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, world, control, work, activeInput: null, recovery: null }) },
       { op: 'preview_point', respond: previewRefused },
     ]);
     const model = new ScriptedModel([
@@ -420,7 +420,7 @@ describe('review regressions (553e341 findings)', () => {
     // t1 登记在状态任务表中——引用存活，preview 应携带在途组。
     memory.workingState = { key: workingStateKey(work), state: { ...workingState(), characters: { ...workingState().characters, person_a: { ...workingState().characters.person_a, tasks: { t1: { id: 't1', ownerId: 'person_a', parentTaskId: null, goal: '存活的任务', status: 'pending' } } } } } as never };
     const previewEnvelope = (state: unknown) => ({
-      protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1,
+      protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1,
       operation: 'preview_point', world, control, work,
       data: { pointId: 'p1', pointProjection: { worldId: 'w1', id: 'p1', sequence: 1, kind: 'normal', previousPointId: 'root', roundId: 'r1', advanceId: 'adv1', trigger: 'player', linkedFromPointId: null, timeAdvance: ta(2), entityDeltas: {} }, mergedEntityDeltas: {}, workingStateDigest: 'wsd', pointProjectionDigest: 'ppd', workingState: state },
     });
@@ -489,7 +489,7 @@ describe('review regressions (553e341 findings)', () => {
     const taskOf = (id: string, status: 'pending' | 'achieved', parentTaskId: string | null) => ({ id, ownerId: 'person_a', parentTaskId, goal: `任务${id}`, status });
     const stateWithTasks = (tasks: Record<string, ReturnType<typeof taskOf>>) => ({ ...workingState(), characters: { ...workingState().characters, person_a: { ...workingState().characters.person_a, tasks } } });
     const previewEnvelope = (state: unknown) => ({
-      protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1,
+      protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1,
       operation: 'preview_point', world, control, work,
       data: { pointId: 'p1', pointProjection: { worldId: 'w1', id: 'p1', sequence: 1, kind: 'normal', previousPointId: 'root', roundId: 'r1', advanceId: 'adv1', trigger: 'player', linkedFromPointId: null, timeAdvance: ta(2), entityDeltas: {} }, mergedEntityDeltas: {}, workingStateDigest: 'wsd', pointProjectionDigest: 'ppd', workingState: state },
     });
@@ -500,7 +500,7 @@ describe('review regressions (553e341 findings)', () => {
         return previewEnvelope(stateWithTasks({ t1: taskOf('t1', 'achieved', null) }));
       } },
       { op: 'checkpoint_stage_time_scan', respond: (r) => ({
-        protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1,
+        protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1,
         replayed: false, operation: 'checkpoint_stage_time_scan', requestId: (r as { requestId: Id }).requestId, requestHash: 'hash', world, control, work, data: {},
       }) },
     ]);
@@ -544,7 +544,7 @@ describe('review regressions (553e341 findings)', () => {
     const taskOf = (id: string, status: 'pending' | 'achieved') => ({ id, ownerId: 'person_a', parentTaskId: id === 'v13' ? 't1' : null, goal: `任务${id}`, status });
     const stateWithTasks = (tasks: Record<string, ReturnType<typeof taskOf>>) => ({ ...workingState(), characters: { ...workingState().characters, person_a: { ...workingState().characters.person_a, tasks } } });
     const previewEnvelope = (state: unknown) => ({
-      protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1,
+      protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1,
       operation: 'preview_point', world, control, work,
       data: { pointId: 'p1', pointProjection: { worldId: 'w1', id: 'p1', sequence: 1, kind: 'normal', previousPointId: 'root', roundId: 'r1', advanceId: 'adv1', trigger: 'player', linkedFromPointId: null, timeAdvance: ta(2), entityDeltas: {} }, mergedEntityDeltas: {}, workingStateDigest: 'wsd', pointProjectionDigest: 'ppd', workingState: state },
     });
@@ -629,13 +629,13 @@ describe('review regressions (553e341 findings)', () => {
     memory.lastResults = { person_a: '结果。' };
     memory.updatesStages = ['position', 'appearance'];
     const previewEnvelope = () => ({
-      protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1,
+      protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1,
       operation: 'preview_point', world, control: refreshedControl, work,
       data: { pointId: 'p1', pointProjection: { worldId: 'w1', id: 'p1', sequence: 1, kind: 'normal', previousPointId: 'root', roundId: 'r1', advanceId: 'adv1', trigger: 'player', linkedFromPointId: null, timeAdvance: ta(2), entityDeltas: {} }, mergedEntityDeltas: {}, workingStateDigest: 'wsd', pointProjectionDigest: 'ppd', workingState: workingState() },
     });
     const transport = new ScriptedTransport([
       { op: 'preview_point', respond: () => { throw apiError('version_mismatch', 'req'); } },
-      { op: 'get_context', respond: () => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, world, control: refreshedControl, work, activeInput: null, recovery: null }) },
+      { op: 'get_context', respond: () => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, world, control: refreshedControl, work, activeInput: null, recovery: null }) },
       { op: 'preview_point', respond: (r) => {
         if ((r as { expectedCheckpointRevision: number }).expectedCheckpointRevision !== 7) throw new Error('retry must bind the refreshed checkpoint revision');
         return previewEnvelope();
@@ -667,7 +667,7 @@ describe('review regressions (553e341 findings)', () => {
     memory.updatesStages = ['position', 'appearance'];
     const transport = new ScriptedTransport([
       { op: 'preview_point', respond: () => { throw apiError('version_mismatch', 'req'); } },
-      { op: 'get_context', respond: () => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, world: movedWorld, control: mkControl({ revision: 8 }), work: movedWork, activeInput: null, recovery: null }) },
+      { op: 'get_context', respond: () => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, world: movedWorld, control: mkControl({ revision: 8 }), work: movedWork, activeInput: null, recovery: null }) },
     ]);
     const model = new ScriptedModel([
       { task: 'updates', output: { stage: 'position', changes: { person_a: { positionSet: { containerId: 'hall', slotId: null, relativeTo: null } } } } as unknown as Json },
@@ -694,7 +694,7 @@ describe('review regressions (553e341 findings)', () => {
     memory.updatesStages = ['position', 'appearance'];
     const movedState = () => ({ ...workingState(), characters: { ...workingState().characters, person_a: { ...workingState().characters.person_a, position: { containerId: 'hall', slotId: null, relativeTo: null } } } });
     const previewEnvelope = (state: unknown) => ({
-      protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1,
+      protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1,
       operation: 'preview_point', world, control, work,
       data: { pointId: 'p1', pointProjection: { worldId: 'w1', id: 'p1', sequence: 1, kind: 'normal', previousPointId: 'root', roundId: 'r1', advanceId: 'adv1', trigger: 'player', linkedFromPointId: null, timeAdvance: ta(2), entityDeltas: {} }, mergedEntityDeltas: {}, workingStateDigest: 'wsd', pointProjectionDigest: 'ppd', workingState: state },
     });
@@ -712,7 +712,7 @@ describe('review regressions (553e341 findings)', () => {
       { task: 'updates', output: { stage: 'appearance', changes: {} } as unknown as Json },
     ]);
     const writeOkLocal2 = (operation: WorldOperation, request: unknown, data: unknown) => ({
-      protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1,
+      protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1,
       replayed: false, operation, requestId: (request as { requestId?: Id }).requestId ?? 'req', requestHash: 'hash', world, control, work, data,
     });
     const driver = new ControllerDriver({ transport, model }, memory, { world, control, work });
@@ -739,12 +739,12 @@ describe('review regressions (553e341 findings)', () => {
     const afterState = { ...workingState(), time: { calendar: 'gregorian' as const, dateTime: '2026-01-01T12:01:00', instantOrdinal: 0 }, characters: { ...workingState().characters, person_a: { ...workingState().characters.person_a, position: { containerId: 'hall', slotId: null, relativeTo: null } } } };
     const delta = { timeAdvance: ta(2), entityDeltas: { person_a: { entityId: 'person_a', positionSet: { containerId: 'hall', slotId: null, relativeTo: null } } } };
     const stateOk = (pointId: Id, previousPointId: Id | null, timeAdvance: TimeAdvance | null, entityDeltas: Record<string, unknown>, state: unknown) => ({
-      protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1,
+      protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1,
       world, control,
       data: { pointId, version: pointId === 'root' ? 0 : 1, state, stateDigest: pointId === 'root' ? 'd0' : 'd1', previousPointId, timeAdvance, entityDeltas },
     });
     const writeOkLocal = (operation: WorldOperation, request: unknown, data: unknown) => ({
-      protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1,
+      protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1,
       replayed: false, operation, requestId: (request as { requestId?: Id }).requestId ?? 'req', requestHash: 'hash', world, control, work: null, data,
     });
     const transport = new ScriptedTransport([
@@ -782,7 +782,7 @@ describe('review regressions (553e341 findings)', () => {
     memory.ids = { [triggerSlotKey('g1', 'person_a', 'person_d')]: 'tk_a_d' };
     memory.lastTargets = { sourceId: 'person_c', targets: ['person_d', 'person_e'] };
     const writeOk = (operation: WorldOperation, request: unknown, data: unknown) => ({
-      protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1,
+      protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1,
       replayed: false, operation, requestId: (request as { requestId: Id }).requestId, requestHash: 'hash', world, control, work, data,
     });
     let timeouts = 0;
@@ -894,11 +894,11 @@ describe('review regressions (553e341 findings)', () => {
     let control = mkControl({ revision: 2 });
     let work: PointWork | null = mkWork({ pointId: 'p0', timeAdvance: ta(60), working: emptyPointWork });
     const writeOk = (operation: WorldOperation, request: unknown, data: unknown) => ({
-      protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1,
+      protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1,
       replayed: false, operation, requestId: (request as { requestId?: Id })?.requestId ?? 'req', requestHash: 'hash', world, control, work, data,
     });
     const previewOk = (r: unknown) => ({
-      protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1,
+      protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1,
       operation: 'preview_point', world, control, work, requestId: (r as { requestId?: Id })?.requestId,
       data: { pointId: work!.pointId, pointProjection: { worldId: 'w1', id: work!.pointId, sequence: 1, kind: 'normal', previousPointId: 'root', roundId: 'r1', advanceId: 'adv1', trigger: 'automatic', linkedFromPointId: null, timeAdvance: work!.timeAdvance, entityDeltas: {} }, mergedEntityDeltas: {}, workingStateDigest: 'wsd', pointProjectionDigest: 'ppd', workingState: workingState() },
     });
@@ -946,7 +946,7 @@ describe('review regressions (553e341 findings)', () => {
     const readEntry = (pointId: Id, previousPointId: Id | null = 'root', timeAdvance: TimeAdvance | null = ta(60)) => ({
       op: 'get_state' as WorldOperation,
       respond: () => ({
-      protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1,
+      protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1,
       world, control,
       data: { pointId, version: 0, state: workingState(), stateDigest: 'd0', previousPointId, timeAdvance, entityDeltas: {} },
       }),
@@ -992,9 +992,9 @@ describe('review regressions (553e341 findings)', () => {
     const control = mkControl({ revision: 13 });
     const transport = new ScriptedTransport([
       { op: 'narration_submit', respond: (r) => apiError('claim_expired', (r as { requestId?: Id })?.requestId ?? 'req') },
-      { op: 'narration_claim', respond: (r) => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation: 'narration_claim', requestId: (r as { requestId: Id }).requestId, requestHash: 'hash', world, control, work: null, data: { pointId: 'p1', mode: 'head', generation: 2, fenceEpoch: 1, issuedAtEpochMilli: 9, expiresAtEpochMilli: 10, claimToken: 'ct_new' } }) },
-      { op: 'get_state', respond: () => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, world, control, data: { pointId: 'p1', version: 1, state: workingState(), stateDigest: 'd1', previousPointId: null, timeAdvance: null, entityDeltas: {} } }) },
-      { op: 'narration_submit', respond: (r) => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation: 'narration_submit', requestId: (r as { requestId: Id }).requestId, requestHash: 'hash', world: { ...world, head: { ...world.head, narrationStatus: 'ready' } }, control, work: null, data: { pointId: 'p1', narrationStatus: 'ready', generation: 2 } }) },
+      { op: 'narration_claim', respond: (r) => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation: 'narration_claim', requestId: (r as { requestId: Id }).requestId, requestHash: 'hash', world, control, work: null, data: { pointId: 'p1', mode: 'head', generation: 2, fenceEpoch: 1, issuedAtEpochMilli: 9, expiresAtEpochMilli: 10, claimToken: 'ct_new' } }) },
+      { op: 'get_state', respond: () => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, world, control, data: { pointId: 'p1', version: 1, state: workingState(), stateDigest: 'd1', previousPointId: null, timeAdvance: null, entityDeltas: {} } }) },
+      { op: 'narration_submit', respond: (r) => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation: 'narration_submit', requestId: (r as { requestId: Id }).requestId, requestHash: 'hash', world: { ...world, head: { ...world.head, narrationStatus: 'ready' } }, control, work: null, data: { pointId: 'p1', narrationStatus: 'ready', generation: 2 } }) },
     ]);
     const model = new ScriptedModel([{ task: 'narration', output: '重生成叙事。' }]);
     const memory = memoryWithAdvanceStart({
@@ -1019,8 +1019,8 @@ describe('review regressions (553e341 findings)', () => {
     const world = mkWorld({ lease: null });
     const control = mkControl();
     const transport = new ScriptedTransport([
-      { op: 'lease_acquire', respond: (r) => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation: 'lease_acquire', requestId: (r as { requestId: Id }).requestId, requestHash: 'hash', world: { ...world, lease: { fenceEpoch: 2, expiresAtEpochMilli: 9 } }, control, work: null, data: { leaseToken: 'lease2', fenceEpoch: 2, expiresAtEpochMilli: 9, holderId: 'browser' } }) },
-      { op: 'checkpoint_pause', respond: (r) => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation: 'checkpoint_pause', requestId: (r as { requestId: Id }).requestId, requestHash: 'hash', world: { ...world, lease: { fenceEpoch: 2, expiresAtEpochMilli: 9 } }, control: mkControl({ paused: true, revision: 1 }), work: null, data: { paused: true } }) },
+      { op: 'lease_acquire', respond: (r) => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation: 'lease_acquire', requestId: (r as { requestId: Id }).requestId, requestHash: 'hash', world: { ...world, lease: { fenceEpoch: 2, expiresAtEpochMilli: 9 } }, control, work: null, data: { leaseToken: 'lease2', fenceEpoch: 2, expiresAtEpochMilli: 9, holderId: 'browser' } }) },
+      { op: 'checkpoint_pause', respond: (r) => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation: 'checkpoint_pause', requestId: (r as { requestId: Id }).requestId, requestHash: 'hash', world: { ...world, lease: { fenceEpoch: 2, expiresAtEpochMilli: 9 } }, control: mkControl({ paused: true, revision: 1 }), work: null, data: { paused: true } }) },
     ]);
     const driver = new ControllerDriver({ transport, model: new ScriptedModel([]) }, memoryWithAdvanceStart({ leaseToken: null }), { world, control });
     driver.deliver({ kind: 'pause' });
@@ -1037,13 +1037,13 @@ describe('review regressions (553e341 findings)', () => {
     const control = mkControl({ revision: 3 });
     const work = mkWork();
     const previewOk = (r: unknown) => ({
-      protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1,
+      protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1,
       operation: 'preview_point', world, control, work, requestId: (r as { requestId?: Id })?.requestId,
       data: { pointId: 'p1', pointProjection: { worldId: 'w1', id: 'p1', sequence: 1, kind: 'normal', previousPointId: 'root', roundId: 'r1', advanceId: 'adv1', trigger: 'player', linkedFromPointId: null, timeAdvance: ta(2), entityDeltas: {} }, mergedEntityDeltas: {}, workingStateDigest: 'wsd', pointProjectionDigest: 'ppd', workingState: workingState() },
     });
     const transport = new ScriptedTransport([
       { op: 'preview_point', respond: (r) => apiError('revision_mismatch', (r as { requestId?: Id })?.requestId ?? 'req') },
-      { op: 'get_context', respond: () => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, world, control: mkControl({ revision: 9 }), work, activeInput: null, recovery: null }) },
+      { op: 'get_context', respond: () => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, world, control: mkControl({ revision: 9 }), work, activeInput: null, recovery: null }) },
       { op: 'preview_point', respond: (r) => previewOk(r) },
     ]);
     const driver = new ControllerDriver({ transport, model: new ScriptedModel([]) }, memoryWithAdvanceStart({ plan: [{ pointId: 'p1', kind: 'normal', timeAdvance: ta(2), actorIds: ['person_a'] }] }), { world, control, work });
@@ -1081,7 +1081,7 @@ describe('review regressions round 2 (18714a3 findings)', () => {
     expect(status1).toEqual({ kind: 'error', detail: expect.stringContaining('recovery limit') });
 
     let heldCalls = 0;
-    const heldError = new WorldApiError({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation: null, requestId: 'req', worldId: 'w1', error: { code: 'lease_invalid', httpStatus: 409, retryable: false, clientAction: 'reacquire_lease', details: { reason: 'lease_held' } } });
+    const heldError = new WorldApiError({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation: null, requestId: 'req', worldId: 'w1', error: { code: 'lease_invalid', httpStatus: 409, retryable: false, clientAction: 'reacquire_lease', details: { reason: 'lease_held' } } });
     const heldTransport: WorldTransport = { async execute(operation, request) {
       heldCalls++;
       if (operation === 'lease_acquire') throw heldError;
@@ -1101,12 +1101,12 @@ describe('review regressions round 2 (18714a3 findings)', () => {
     const transport: WorldTransport = { async execute(operation) {
       ops.push(operation);
       if (operation === 'checkpoint_start_advance') return new Promise((resolve) => { release = resolve as (value: unknown) => void; });
-      return { protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation, requestId: 'x', requestHash: 'hash', world: mkWorld({ advance: { advanceId: 'adv1', inputId: 'in1', intentStatus: 'consumed', inputAvailable: false }, activeRoundId: 'r1', round: { roundId: 'r1', trigger: 'player', order: ORDER, cursor: 0, actedIds: [], visitedIds: [], conclusion: null } }), control: mkControl({ paused: true, revision: 2 }), work: null, data: { paused: true } } as never;
+      return { protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation, requestId: 'x', requestHash: 'hash', world: mkWorld({ advance: { advanceId: 'adv1', inputId: 'in1', intentStatus: 'consumed', inputAvailable: false }, activeRoundId: 'r1', round: { roundId: 'r1', trigger: 'player', order: ORDER, cursor: 0, actedIds: [], visitedIds: [], conclusion: null } }), control: mkControl({ paused: true, revision: 2 }), work: null, data: { paused: true } } as never;
     } };
     const driver = new ControllerDriver({ transport, model: new ScriptedModel([]) }, memoryWithAdvanceStart(), { world, control });
     const inFlight = driver.step();
     driver.deliver({ kind: 'pause' });
-    release!({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation: 'checkpoint_start_advance', requestId: 'x', requestHash: 'hash', world: mkWorld({ advance: { advanceId: 'adv1', inputId: 'in1', intentStatus: 'consumed', inputAvailable: false }, activeRoundId: 'r1', round: { roundId: 'r1', trigger: 'player', order: ORDER, cursor: 0, actedIds: [], visitedIds: [], conclusion: null } }), control: mkControl({ revision: 1 }), work: null, data: { advanceId: 'adv1', inputId: 'in1', roundId: 'r1' } });
+    release!({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation: 'checkpoint_start_advance', requestId: 'x', requestHash: 'hash', world: mkWorld({ advance: { advanceId: 'adv1', inputId: 'in1', intentStatus: 'consumed', inputAvailable: false }, activeRoundId: 'r1', round: { roundId: 'r1', trigger: 'player', order: ORDER, cursor: 0, actedIds: [], visitedIds: [], conclusion: null } }), control: mkControl({ revision: 1 }), work: null, data: { advanceId: 'adv1', inputId: 'in1', roundId: 'r1' } });
     await inFlight;
     await driver.step();
     expect(ops).toEqual(['checkpoint_start_advance', 'checkpoint_pause']);
@@ -1118,10 +1118,10 @@ describe('review regressions round 2 (18714a3 findings)', () => {
     const control = mkControl({ revision: 13 });
     const transport = new ScriptedTransport([
       { op: 'narration_submit', respond: (r) => apiError('claim_fenced', (r as { requestId?: Id })?.requestId ?? 'req') },
-      { op: 'get_context', respond: () => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, world, control: mkControl({ revision: 14 }), work: null, activeInput: null, recovery: null }) },
-      { op: 'narration_claim', respond: (r) => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation: 'narration_claim', requestId: (r as { requestId: Id }).requestId, requestHash: 'hash', world, control, work: null, data: { pointId: 'p1', mode: 'head', generation: 2, fenceEpoch: 1, issuedAtEpochMilli: 9, expiresAtEpochMilli: 10, claimToken: 'ct_new' } }) },
-      { op: 'get_state', respond: () => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, world, control, data: { pointId: 'p1', version: 1, state: workingState(), stateDigest: 'd1', previousPointId: null, timeAdvance: null, entityDeltas: {} } }) },
-      { op: 'narration_submit', respond: (r) => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation: 'narration_submit', requestId: (r as { requestId: Id }).requestId, requestHash: 'hash', world: { ...world, head: { ...world.head, narrationStatus: 'ready' } }, control, work: null, data: { pointId: 'p1', narrationStatus: 'ready', generation: 2 } }) },
+      { op: 'get_context', respond: () => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, world, control: mkControl({ revision: 14 }), work: null, activeInput: null, recovery: null }) },
+      { op: 'narration_claim', respond: (r) => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation: 'narration_claim', requestId: (r as { requestId: Id }).requestId, requestHash: 'hash', world, control, work: null, data: { pointId: 'p1', mode: 'head', generation: 2, fenceEpoch: 1, issuedAtEpochMilli: 9, expiresAtEpochMilli: 10, claimToken: 'ct_new' } }) },
+      { op: 'get_state', respond: () => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, world, control, data: { pointId: 'p1', version: 1, state: workingState(), stateDigest: 'd1', previousPointId: null, timeAdvance: null, entityDeltas: {} } }) },
+      { op: 'narration_submit', respond: (r) => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation: 'narration_submit', requestId: (r as { requestId: Id }).requestId, requestHash: 'hash', world: { ...world, head: { ...world.head, narrationStatus: 'ready' } }, control, work: null, data: { pointId: 'p1', narrationStatus: 'ready', generation: 2 } }) },
     ]);
     const model = new ScriptedModel([{ task: 'narration', output: '新叙事。' }]);
     const memory = memoryWithAdvanceStart({
@@ -1146,8 +1146,8 @@ describe('review regressions round 2 (18714a3 findings)', () => {
     const control = mkControl({ revision: 4 });
     const work = mkWork();
     const transport = new ScriptedTransport([
-      { op: 'checkpoint_pause', respond: (r) => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation: 'checkpoint_pause', requestId: (r as { requestId: Id }).requestId, requestHash: 'hash', world: { ...world, lease: { fenceEpoch: 2, expiresAtEpochMilli: 9 } }, control: mkControl({ paused: true, revision: 5 }), work, data: { paused: true } }) },
-      { op: 'narration_claim', respond: (r) => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation: 'narration_claim', requestId: (r as { requestId: Id }).requestId, requestHash: 'hash', world, control: mkControl({ paused: true, revision: 6 }), work, data: { pointId: 'p1', mode: 'head', generation: 2, fenceEpoch: 2, issuedAtEpochMilli: 20, expiresAtEpochMilli: 30, claimToken: 'ct_fresh' } }) },
+      { op: 'checkpoint_pause', respond: (r) => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation: 'checkpoint_pause', requestId: (r as { requestId: Id }).requestId, requestHash: 'hash', world: { ...world, lease: { fenceEpoch: 2, expiresAtEpochMilli: 9 } }, control: mkControl({ paused: true, revision: 5 }), work, data: { paused: true } }) },
+      { op: 'narration_claim', respond: (r) => ({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation: 'narration_claim', requestId: (r as { requestId: Id }).requestId, requestHash: 'hash', world, control: mkControl({ paused: true, revision: 6 }), work, data: { pointId: 'p1', mode: 'head', generation: 2, fenceEpoch: 2, issuedAtEpochMilli: 20, expiresAtEpochMilli: 30, claimToken: 'ct_fresh' } }) },
     ]);
     const memory = memoryWithAdvanceStart({
       narration: { pointId: 'p1', claim: { claimToken: 'ct_old', generation: 1, issuedAtEpochMilli: 1 }, input: { pointId: 'p1', after: null, delta: null, previousPointId: null, before: null } },
@@ -1195,11 +1195,11 @@ describe('review regressions round 3 (bb5abd3 findings)', () => {
     let rejectStart: ((error: unknown) => void) | null = null;
     const world = mkWorld();
     const control = mkControl();
-    const pausedError = new WorldApiError({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation: null, requestId: 'req', worldId: 'w1', control: mkControl({ paused: true, revision: 1 }), error: { code: 'paused', httpStatus: 409, retryable: false, clientAction: 'resolve_gate', details: {} } });
+    const pausedError = new WorldApiError({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation: null, requestId: 'req', worldId: 'w1', control: mkControl({ paused: true, revision: 1 }), error: { code: 'paused', httpStatus: 409, retryable: false, clientAction: 'resolve_gate', details: {} } });
     const transport: WorldTransport = { async execute(operation) {
       ops.push(operation);
       if (operation === 'checkpoint_start_advance') return new Promise((_, reject) => { rejectStart = reject; });
-      return { protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation, requestId: 'x', requestHash: 'hash', world, control: mkControl({ paused: false, revision: 2 }), work: null, data: { paused: false } } as never;
+      return { protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation, requestId: 'x', requestHash: 'hash', world, control: mkControl({ paused: false, revision: 2 }), work: null, data: { paused: false } } as never;
     } };
     const driver = new ControllerDriver({ transport, model: new ScriptedModel([]) }, memoryWithAdvanceStart(), { world, control });
     const inFlight = driver.step();
@@ -1214,8 +1214,8 @@ describe('review regressions round 3 (bb5abd3 findings)', () => {
     const world = mkWorld({ head: { pointId: 'p1', version: 1, stateDigest: 'd1', narrationStatus: 'pending' }, lease: { fenceEpoch: 1, expiresAtEpochMilli: 9 }, advance: { advanceId: 'adv1', inputId: 'in1', intentStatus: 'consumed', inputAvailable: false }, activeRoundId: 'r1', activePointId: 'p1', round: { roundId: 'r1', trigger: 'player', order: ORDER, cursor: 0, actedIds: [], visitedIds: [], conclusion: null } });
     const control = mkControl({ revision: 4 });
     const work = mkWork();
-    const leaseLost = new WorldApiError({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation: null, requestId: 'req', worldId: 'w1', world: { ...world, lease: null }, error: { code: 'lease_invalid', httpStatus: 409, retryable: false, clientAction: 'reacquire_lease', details: {} } });
-    const heldError = new WorldApiError({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation: null, requestId: 'req', worldId: 'w1', error: { code: 'lease_invalid', httpStatus: 409, retryable: false, clientAction: 'reacquire_lease', details: { reason: 'lease_held' } } });
+    const leaseLost = new WorldApiError({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation: null, requestId: 'req', worldId: 'w1', world: { ...world, lease: null }, error: { code: 'lease_invalid', httpStatus: 409, retryable: false, clientAction: 'reacquire_lease', details: {} } });
+    const heldError = new WorldApiError({ protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation: null, requestId: 'req', worldId: 'w1', error: { code: 'lease_invalid', httpStatus: 409, retryable: false, clientAction: 'reacquire_lease', details: { reason: 'lease_held' } } });
     const transport = new ScriptedTransport([
       { op: 'narration_submit', respond: () => { throw leaseLost; } },
       { op: 'lease_acquire', respond: () => { throw heldError; } },
@@ -1251,7 +1251,7 @@ describe('model-input review (2026-10-26)', () => {
     let world = mkWorld();
     const control = mkControl({ revision: 0 });
     const writeOk = (operation: WorldOperation, request: unknown, data: unknown) => ({
-      protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation, requestId: (request as { requestId: Id }).requestId, requestHash: 'hash', world, control, work: null, data,
+      protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation, requestId: (request as { requestId: Id }).requestId, requestHash: 'hash', world, control, work: null, data,
     });
     const transport = new ScriptedTransport([
       { op: 'checkpoint_start_advance', respond: (r) => {
@@ -1278,7 +1278,7 @@ describe('continuation context (#9, §7.1)', () => {
     const work = mkWork({ sealed: true, prefixDigest: 'pd1', working: { cursor: 6, actedIds: ['person_a'], visitedIds: ORDER, settledUnitIds: ['u1'], intentStatus: 'consumed' } });
     const point = { worldId: 'w1', id: 'p1', sequence: 1, kind: 'normal', previousPointId: 'root', roundId: 'r1', advanceId: 'adv1', trigger: 'player', linkedFromPointId: null, timeAdvance: ta(2), entityDeltas: { person_a: { entityId: 'person_a', positionSet: position } } };
     const writeOk = (operation: WorldOperation, request: unknown, data: unknown) => ({
-      protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false,
+      protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false,
       operation, requestId: (request as { requestId: Id }).requestId, requestHash: 'hash', world, control, work: null, data,
     });
     const transport = new ScriptedTransport([

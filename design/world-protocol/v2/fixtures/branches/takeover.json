@@ -14,13 +14,13 @@
       "success": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": 1792617780000,
         "replayed": false,
         "operation": "lease_acquire",
         "requestId": "request_takeover",
-        "requestHash": "d2bb4dd71f47c035194fe7aa758ec2a0a27178e9ac8adabab1d437dae9f9e2c6",
+        "requestHash": "4a4ae195b0c1273161e1e985dda5c3bc69531cd2f4355ac6631ae702c97f201f",
         "world": {
           "worldId": "world_school",
           "head": {
@@ -183,7 +183,7 @@
       "success": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": 1792617780000,
         "world": {
@@ -506,7 +506,7 @@
                     "memberId": "person_f",
                     "actionContentHash": "84764244db0bb0fa954a11f044cc11427692c44ffc4d3e0e313c3114df00dbc0",
                     "resultContentHash": null,
-                    "targetsContentHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+                    "targetsContentHash": null,
                     "candidatesContentHash": null
                   }
                 ]
@@ -554,13 +554,13 @@
       "success": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": 1792617780000,
         "replayed": false,
         "operation": "checkpoint_restore_group_work",
         "requestId": "request_restore_current",
-        "requestHash": "694b2fc618b25a851b76da30c36c2bb2033df2224e330884a7c13ef9d94cc911",
+        "requestHash": "d3d6dbf6c7445df704cfc3bb0268d2f979ad8557d922854ae6aaf4293c986f60",
         "world": {
           "worldId": "world_school",
           "head": {
@@ -745,7 +745,7 @@
             "memberId": "person_f",
             "actionContentHash": "84764244db0bb0fa954a11f044cc11427692c44ffc4d3e0e313c3114df00dbc0",
             "resultContentHash": null,
-            "targetsContentHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+            "targetsContentHash": null,
             "candidatesContentHash": null
           }
         ],
@@ -755,13 +755,13 @@
       "success": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": 1792617780000,
         "replayed": false,
         "operation": "checkpoint_restore_group_work",
         "requestId": "request_restore_successor",
-        "requestHash": "694b2fc618b25a851b76da30c36c2bb2033df2224e330884a7c13ef9d94cc911",
+        "requestHash": "d7acd5b630eaf96a4d0f293ed9cd9ac204e057eea4cc7a15e97383af66857e9a",
         "world": {
           "worldId": "world_school",
           "head": {
@@ -930,7 +930,7 @@
       "success": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": 1792617780000,
         "world": {
@@ -1239,6 +1239,35 @@
                     "person_f"
                   ],
                   "personalityCoverageIds": []
+                },
+                "rolls": [
+                  {
+                    "sourceId": "person_c",
+                    "targetId": "person_d",
+                    "triggerKey": "trigger_cd",
+                    "rollId": "roll_cd",
+                    "groupId": "group_cd",
+                    "ruleVersion": "reaction-d20-v1",
+                    "target": 11,
+                    "result": 15,
+                    "eligibilityBaselineDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+                    "eligible": true,
+                    "admitted": true
+                  }
+                ],
+                "progress": {
+                  "sourceStack": [],
+                  "threats": [
+                    {
+                      "sourceId": "person_c",
+                      "targetId": "person_d",
+                      "triggerKey": "trigger_cd",
+                      "rollId": "roll_cd",
+                      "status": "handled",
+                      "actionDisposition": "created",
+                      "reactionMemberId": "person_d"
+                    }
+                  ]
                 }
               }
             ],
@@ -1350,7 +1379,7 @@
                   {
                     "memberId": "person_f",
                     "actionText": "F 避开门边。",
-                    "targets": [],
+                    "targets": null,
                     "resultText": null,
                     "rollRefs": []
                   }
@@ -1371,11 +1400,43 @@
                     "sourceAttempt": 1,
                     "actionContentHash": "84764244db0bb0fa954a11f044cc11427692c44ffc4d3e0e313c3114df00dbc0",
                     "resultContentHash": null,
-                    "targetsContentHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+                    "targetsContentHash": null,
                     "candidatesContentHash": null
                   }
                 ],
-                "candidates": null
+                "candidates": null,
+                "rolls": [
+                  {
+                    "sourceId": "person_e",
+                    "targetId": "person_f",
+                    "triggerKey": "trigger_ef",
+                    "rollId": "roll_ef",
+                    "groupId": "group_ef",
+                    "ruleVersion": "reaction-d20-v1",
+                    "target": 11,
+                    "result": 15,
+                    "eligibilityBaselineDigest": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
+                    "eligible": true,
+                    "admitted": true
+                  }
+                ],
+                "progress": {
+                  "sourceStack": [
+                    "person_f",
+                    "person_e"
+                  ],
+                  "threats": [
+                    {
+                      "sourceId": "person_e",
+                      "targetId": "person_f",
+                      "triggerKey": "trigger_ef",
+                      "rollId": "roll_ef",
+                      "status": "handled",
+                      "actionDisposition": "created",
+                      "reactionMemberId": "person_f"
+                    }
+                  ]
+                }
               }
             ],
             "timeScanCandidates": null,
@@ -1398,7 +1459,7 @@
                     "memberId": "person_f",
                     "actionContentHash": "84764244db0bb0fa954a11f044cc11427692c44ffc4d3e0e313c3114df00dbc0",
                     "resultContentHash": null,
-                    "targetsContentHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+                    "targetsContentHash": null,
                     "candidatesContentHash": null
                   }
                 ]
@@ -1450,7 +1511,7 @@
       "error": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": 1792617780000,
         "replayed": false,
@@ -1650,7 +1711,7 @@
       "error": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": 1792617780000,
         "replayed": false,
@@ -1850,7 +1911,7 @@
       "error": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": 1792617780000,
         "replayed": false,
@@ -2051,7 +2112,7 @@
       "error": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": 1792617780000,
         "replayed": false,
@@ -2252,7 +2313,7 @@
       "error": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": 1792617780000,
         "replayed": false,
@@ -2443,7 +2504,7 @@
             "memberId": "person_f",
             "actionContentHash": "84764244db0bb0fa954a11f044cc11427692c44ffc4d3e0e313c3114df00dbc0",
             "resultContentHash": null,
-            "targetsContentHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+            "targetsContentHash": null,
             "candidatesContentHash": null
           }
         ],
@@ -2453,7 +2514,7 @@
       "error": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": 1792617780000,
         "replayed": false,
@@ -2643,7 +2704,7 @@
             "memberId": "person_f",
             "actionContentHash": "84764244db0bb0fa954a11f044cc11427692c44ffc4d3e0e313c3114df00dbc0",
             "resultContentHash": null,
-            "targetsContentHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+            "targetsContentHash": null,
             "candidatesContentHash": null
           }
         ],
@@ -2653,7 +2714,7 @@
       "error": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": 1792617780000,
         "replayed": false,
@@ -2843,7 +2904,7 @@
             "memberId": "person_f",
             "actionContentHash": "84764244db0bb0fa954a11f044cc11427692c44ffc4d3e0e313c3114df00dbc0",
             "resultContentHash": null,
-            "targetsContentHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+            "targetsContentHash": null,
             "candidatesContentHash": null
           }
         ],
@@ -2853,7 +2914,7 @@
       "error": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": 1792617780000,
         "replayed": false,
@@ -3044,7 +3105,7 @@
             "memberId": "person_f",
             "actionContentHash": "84764244db0bb0fa954a11f044cc11427692c44ffc4d3e0e313c3114df00dbc0",
             "resultContentHash": null,
-            "targetsContentHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+            "targetsContentHash": null,
             "candidatesContentHash": null
           }
         ],
@@ -3054,7 +3115,7 @@
       "error": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": 1792617780000,
         "replayed": false,
@@ -3245,7 +3306,7 @@
             "memberId": "person_f",
             "actionContentHash": "84764244db0bb0fa954a11f044cc11427692c44ffc4d3e0e313c3114df00dbc0",
             "resultContentHash": null,
-            "targetsContentHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+            "targetsContentHash": null,
             "candidatesContentHash": null
           }
         ],
@@ -3255,7 +3316,7 @@
       "error": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": 1792617780000,
         "replayed": false,

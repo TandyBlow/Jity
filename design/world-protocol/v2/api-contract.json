@@ -311,6 +311,14 @@
         {
           "code": "stale_epoch",
           "controlRequired": true
+        },
+        {
+          "code": "frozen_work_missing",
+          "controlRequired": false
+        },
+        {
+          "code": "frozen_work_corrupt",
+          "controlRequired": false
         }
       ],
       "mutatesRevision": false,
@@ -326,7 +334,7 @@
         "leaseToken",
         "fenceEpoch"
       ],
-      "notes": "includeRecovery=true validates the live lease/epoch, then returns active accepted restoreSources independently of payload visibility for current and reserved successor work. Sources include the old epoch/attempt and hashes needed to build restore requests, but no raw text or candidates. If copying is needed, payloadStatus=restore_required with groups=[] and timeScanCandidates=null; after copying, payloadStatus=available returns only current-epoch bytes. Missing/corrupt payload rows do not erase accepted references or authorize resampling. Consumed/abandoned sources are excluded; ordinary reads return recovery=null. Invalid/old lease cannot read frozen text. No requestId; the only response carrying activeInput. Context never returns lease or claim tokens."
+      "notes": "includeRecovery=true validates the live lease/epoch, then returns active accepted restoreSources independently of payload visibility for current and reserved successor work. Sources include the old epoch/attempt and hashes needed to build restore requests, but no raw text or candidates. If copying is needed, payloadStatus=restore_required with groups=[] and timeScanCandidates=null; after copying, payloadStatus=available returns only current-epoch bytes, complete immutable rolls and persisted DFS/threat progress. Missing referenced rows return frozen_work_missing; invalid hashes, roll associations or progress return frozen_work_corrupt. Missing/corrupt payload rows do not erase accepted references or authorize resampling. Consumed/abandoned sources are excluded; ordinary reads return recovery=null. Invalid/old lease cannot read frozen text. No requestId; the only response carrying activeInput. Context never returns lease or claim tokens."
     },
     {
       "operation": "checkpoint_start_advance",

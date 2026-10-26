@@ -373,7 +373,7 @@ export function buildT03Scenario(traceName: T03TraceName, sampleId: string): T03
         requestIdRequired: true, requestIdExpectation: 'fresh' as const,
         scope: { worldId: envelope.world.worldId },
         response: {
-          protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1',
+          protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1',
           serverTimeEpochMilli: 1, replayed: false, operation: 'checkpoint_record_skip', requestId: `b_skip_${i}`, requestHash: `${i}`.repeat(64),
           world: envelope.world, control: { ...envelope.control, revision: 3 + i },
           work: { ...envelope.work, timeLocked: true, working }, data: { pointId: envelope.work.pointId, working },
