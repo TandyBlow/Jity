@@ -189,6 +189,10 @@ export interface ControllerMemory {
    * NOT a named group — commit_point keeps its plain settlementGroups. */
   stagedTimeScan: SettlementGroup | null;
   groupActors: Id[];
+  /** 本结算组的冻结行动与全部骰点判定（§7.1 results 输入；含未准入 roll）。
+   * 随 sources 同生命周期：discover 建立、admit 前插、create_rolls 追加、
+   * stage/commit 归零——只覆盖当前组，不是长期行动记录。 */
+  groupActions: { memberId: Id; actionText: string; rolls: { targetId: Id; rollId: Id; result: number; eligible: boolean; admitted: boolean }[] }[];
   lastModel: ModelResolution | null;
   /** Targets the model just declared for the current source, kept OUT of
    * lastModel on purpose: every successful transport clears lastModel, and
@@ -232,7 +236,7 @@ export type Decision =
   | { kind: 'await_command'; reason: string }
   | { kind: 'stop'; reason: string };
 
-export interface ScheduleView { world: WorldContext | null; control: ControlState; work: PointWork | null; memory: ControllerMemory; command?: HarnessCommand }
+export interface ScheduleView { world: WorldContext | null; control: ControlState; work: PointWork | null; memory: ControllerMemory; command?: HarnessCommand; activeInput: { advanceId: Id; inputId: Id; text: string } | null }
 
 const STATE_COMPUTATION_TASKS: ModelTask[] = ['action', 'targets', 'reaction', 'results', 'updates', 'continuation'];
 
@@ -669,7 +673,18 @@ function selectActorDecision(view: ScheduleView): Decision {
     const blocked = modelBlocked(view, 'action');
     if (blocked) return blocked;
     if (!freshState(memory, work!)) return { kind: 'read_working_state' };
-    return { kind: 'model', task: 'action', key: actor, input: { actor, workingState: asJson(memory.workingState!.state) } };
+    // §6.1：行动输入携带链级 advance 上下文——玩家输入文本与消费状态。
+    // intentStatus=pending ⇒ 待处理命令（主角行动必须执行它）；consumed ⇒
+    // 已是触发背景（不得重复执行）。文本来自服务端 activeInput（控制器
+    // 从 context 回包保留），状态来自 world.advance。
+    return {
+      kind: 'model', task: 'action', key: actor,
+      input: {
+        actor,
+        advance: { inputText: view.activeInput?.text ?? null, intentStatus: world!.advance.intentStatus },
+        workingState: asJson(memory.workingState!.state),
+      },
+    };
   }
   // Time scan: required for empty/actionless points (T03) AND for actor
   // points whose every planned actor skipped — nothing settled means the
@@ -821,7 +836,8 @@ function buildDecision(view: ScheduleView): Decision {
     const blocked = modelBlocked(view, 'reaction');
     if (blocked) return blocked;
     if (!freshState(memory, work!)) return { kind: 'read_working_state' };
-    return { kind: 'model', task: 'reaction', key: current.sourceId, input: { sourceId: current.sourceId, memberId: waiting.targetId, rollId: waiting.rollId, workingState: asJson(memory.workingState!.state) } };
+    // §6.2 步骤 4：目标读取发起者的具体威胁（冻结行动文本）生成反应。
+    return { kind: 'model', task: 'reaction', key: current.sourceId, input: { sourceId: current.sourceId, sourceActionText: current.actionText, memberId: waiting.targetId, rollId: waiting.rollId, workingState: asJson(memory.workingState!.state) } };
   }
   const next = current.pendingTargets[0];
   if (next) {
@@ -885,7 +901,16 @@ function settleDecision(view: ScheduleView): Decision {
     const blocked = modelBlocked(view, 'results');
     if (blocked) return blocked;
     if (!freshState(memory, work!)) return { kind: 'read_working_state' };
-    return { kind: 'model', task: 'results', key: pending.groupId, input: { groupId: pending.groupId, workingState: asJson(memory.workingState!.state) } };
+    // §7.1：结算输入携带全组冻结行动与全部骰点判定（含未准入 roll）——
+    // 记忆字段 groupActions 与 sources 同生命周期，只覆盖当前组。
+    return {
+      kind: 'model', task: 'results', key: pending.groupId,
+      input: {
+        groupId: pending.groupId,
+        members: memory.groupActions.map((member) => ({ memberId: member.memberId, actionText: member.actionText, rollRefs: member.rolls })),
+        workingState: asJson(memory.workingState!.state),
+      },
+    };
   }
   const blocked = modelBlocked(view, 'updates');
   if (blocked) return blocked;

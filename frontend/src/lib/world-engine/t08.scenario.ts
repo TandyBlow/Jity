@@ -73,6 +73,7 @@ export function buildT08Scenario(sampleId: string, mode: T08Mode = 'normal') {
     corpus.steps.splice(invalidCommitIndex, 1, fault, bridge);
   }
   const groupId = stage.groupId as Id;
+  const recordedActiveInput = (context as unknown as { activeInput: { advanceId: Id; inputId: Id; text: string } | null }).activeInput;
   const declared: DeclaredModelCall[] = [
     { task: 'pointPlan', key: context.world.activeRoundId!, input: { round: context.world.round, head: context.world.head }, output: [
       { pointId: begin.pointId, kind: begin.kind, timeAdvance: begin.timeAdvance, actorIds: ['person_a'] },
@@ -80,9 +81,10 @@ export function buildT08Scenario(sampleId: string, mode: T08Mode = 'normal') {
       // external command before any of their model calls, not fake skips.
       { pointId: prepare.successorPointId, kind: 'instant', timeAdvance: prepare.timeAdvance, actorIds: ['person_b', 'person_c', 'person_d', 'person_e', 'person_f'] },
     ] as Json },
-    { task: 'action', key: 'person_a', input: { actor: 'person_a', workingState }, output: { kind: 'act', text: requests.get('s3')!.actionText } as Json },
+    { task: 'action', key: 'person_a', input: { actor: 'person_a', advance: { inputText: recordedActiveInput?.text ?? null, intentStatus: context.world.advance.intentStatus }, workingState }, output: { kind: 'act', text: requests.get('s3')!.actionText } as Json },
     { task: 'targets', key: 'person_a', input: { sourceId: 'person_a', actionText: requests.get('s3')!.actionText, workingState } as Json, output: { targets: [] } },
-    { task: 'results', key: groupId, input: { groupId, workingState }, output: stage.results as Json },
+    // §7.1：results 输入带全组冻结行动（T08 目标集为空——零骰点判定）。
+    { task: 'results', key: groupId, input: { groupId, members: [{ memberId: 'person_a', actionText: (requests.get('s3') as { actionText: string }).actionText, rollRefs: [] }], workingState }, output: stage.results as Json },
     { task: 'updates', key: groupId, input: { groupId, mode: 'group', workingState }, output: [] },
     { task: 'time', key: `successor:${begin.pointId as Id}`, input: { head: context.world.head, workingState }, output: prepare.timeAdvance as Json },
     { task: 'narration', key: committed.world.head.pointId, input: { pointId: committed.world.head.pointId, before: beforeState, delta: { timeAdvance: commitPoint.timeAdvance, entityDeltas: commitPoint.entityDeltas }, after: state, perspective: `主角视角（${(state as { protagonistId: Id }).protagonistId}「${(state as { initial: { characters: Record<string, { name: string }> } }).initial.characters[(state as { protagonistId: Id }).protagonistId].name}」）；只表达已结算的世界事实` }, output: requests.get('s12')!.text as Json },
@@ -95,6 +97,6 @@ export function buildT08Scenario(sampleId: string, mode: T08Mode = 'normal') {
   memory.prepareSuccessor = true;
   const transport = new ScenarioTransport(corpus.steps, 'T08');
   const model = new ScenarioModelPort(declared, 'T08');
-  const driver = new ControllerDriver({ transport, model }, memory, { world: context.world, control: context.control });
+  const driver = new ControllerDriver({ transport, model }, memory, { world: context.world, control: context.control, activeInput: recordedActiveInput });
   return { driver, transport, model, corpus, cancelReason: requests.get('s13')!.cancelReason as string };
 }

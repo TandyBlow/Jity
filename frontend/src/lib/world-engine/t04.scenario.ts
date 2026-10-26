@@ -5,7 +5,7 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { ControllerDriver, initialMemory } from './controller';
-import { buildCorpus, ScenarioModelPort, ScenarioTransport, type DeclaredModelCall, type PreviewSpecimenSpec, type ReadStateSpecimenSpec } from './harness';
+import { buildCorpus, ScenarioModelPort, ScenarioTransport, servedBeforeSteps, type DeclaredModelCall, type PreviewSpecimenSpec, type ReadStateSpecimenSpec } from './harness';
 import { instantiate, readTrace } from './trace-runner';
 import { advanceTime, type WallTime } from './t02.scenario';
 import type { ControlState, Id, Json, WorldContext } from './types';
@@ -52,12 +52,22 @@ export function buildT04Scenario(sampleId: string) {
   }
   const groupId = stage.groupId as Id;
   const roundId = automatic.world.activeRoundId!;
+  const recordedActiveInput = (context as unknown as { activeInput: { advanceId: Id; inputId: Id; text: string } | null }).activeInput;
+  // §6.1：调用时刻的 advance——世界取 s4（begin）服务态，输入文本取最后一次
+  // context 回包；s1/s3 都是 harness 边界，驱动器只播种 s1。
+  const servedBefore = servedBeforeSteps(trace.steps, responses);
+  const actionAdvance = (() => {
+    const served = servedBefore.get('s5')!;
+    return { inputText: recordedActiveInput?.text ?? null, intentStatus: served.world!.advance.intentStatus } as Json;
+  })();
+  const personCActionText = (requests.get('s5') as { actionText: string }).actionText;
   const declared: DeclaredModelCall[] = [
     { task: 'continuation', key: context.world.activeRoundId!, input: { round: context.world.round, head: context.world.head, workingState: null }, output: requests.get('s2')!.conclusion as Json },
     { task: 'pointPlan', key: roundId, input: { round: automatic.world.round, head: automatic.world.head }, output: [{ pointId: begin.pointId, kind: begin.kind, timeAdvance: begin.timeAdvance, actorIds: ['person_c'] }] as Json },
-    { task: 'action', key: 'person_c', input: { actor: 'person_c', workingState }, output: { kind: 'act', text: requests.get('s5')!.actionText } as Json },
-    { task: 'targets', key: 'person_c', input: { sourceId: 'person_c', actionText: requests.get('s5')!.actionText, workingState } as Json, output: { targets: [] } },
-    { task: 'results', key: groupId, input: { groupId, workingState }, output: stage.results as Json },
+    { task: 'action', key: 'person_c', input: { actor: 'person_c', advance: actionAdvance, workingState }, output: { kind: 'act', text: personCActionText } as Json },
+    { task: 'targets', key: 'person_c', input: { sourceId: 'person_c', actionText: personCActionText, workingState } as Json, output: { targets: [] } },
+    // §7.1：results 输入带全组冻结行动（T04 目标集为空——零骰点判定）。
+    { task: 'results', key: groupId, input: { groupId, members: [{ memberId: 'person_c', actionText: personCActionText, rollRefs: [] }], workingState }, output: stage.results as Json },
     { task: 'updates', key: groupId, input: { groupId, mode: 'group', workingState }, output: [] },
     { task: 'narration', key: committed.world.head.pointId, input: { pointId: committed.world.head.pointId, before: beforeState, delta: { timeAdvance: commitPoint.timeAdvance, entityDeltas: commitPoint.entityDeltas }, after: state, perspective: `主角视角（${(state as { protagonistId: Id }).protagonistId}「${(state as { initial: { characters: Record<string, { name: string }> } }).initial.characters[(state as { protagonistId: Id }).protagonistId].name}」）；只表达已结算的世界事实` }, output: requests.get('s12')!.text as Json },
     { task: 'continuation', key: roundId, input: { round: committed.world.round, head: { ...committed.world.head, narrationStatus: 'ready' }, workingState }, output: requests.get('s13')!.conclusion as Json },
@@ -72,6 +82,6 @@ export function buildT04Scenario(sampleId: string) {
   memory.planIndex = 1;
   const transport = new ScenarioTransport(corpus.steps, 'T04');
   const model = new ScenarioModelPort(declared, 'T04');
-  const driver = new ControllerDriver({ transport, model }, memory, { world: context.world, control: context.control });
+  const driver = new ControllerDriver({ transport, model }, memory, { world: context.world, control: context.control, activeInput: recordedActiveInput });
   return { driver, transport, model, corpus };
 }

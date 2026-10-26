@@ -153,9 +153,12 @@ export function buildT01Scenario(sampleId: string, rawOverride?: object, driverO
     { task: 'initial', key: 'initial', input: null, output: reqS1.initial },
     { task: 'narration', key: head1.pointId, input: declaredRootNarrationInput, output: reqS3.text },
     { task: 'pointPlan', key: roundId, input: { round: structuredClone(world5.round) as Json, head: structuredClone(world5.head) as Json }, output: [{ pointId: reqS6.pointId, kind: reqS6.kind, timeAdvance: reqS6.timeAdvance, actorIds: ['person_a'] }] },
-    { task: 'action', key: 'person_a', input: { actor: 'person_a', workingState: specimenState }, output: { kind: 'act', text: reqS7.actionText } as unknown as Json },
+    // §6.1/§7.1：行动输入带链级 advance 上下文（T01 录制中没有任何 context
+    // 回包送达驱动器——activeInput 保持 null；消费状态取 begin 后的 world）。
+    { task: 'action', key: 'person_a', input: { actor: 'person_a', advance: { inputText: null, intentStatus: corpus.servedAfter.s6.world!.advance.intentStatus }, workingState: specimenState }, output: { kind: 'act', text: reqS7.actionText } as unknown as Json },
     { task: 'targets', key: 'person_a', input: { sourceId: 'person_a', actionText: reqS7.actionText, workingState: specimenState }, output: { targets: [] } },
-    { task: 'results', key: groupId, input: { groupId, workingState: specimenState }, output: structuredClone(reqS10.results) },
+    // §7.1：results 输入带全组冻结行动（T01 目标集为空——零骰点判定）。
+    { task: 'results', key: groupId, input: { groupId, members: [{ memberId: 'person_a', actionText: reqS7.actionText, rollRefs: [] }], workingState: specimenState }, output: structuredClone(reqS10.results) },
     { task: 'updates', key: groupId, input: { groupId, mode: 'group', workingState: specimenState }, output: [{ stage: 'position', changes: { person_a: { positionSet: structuredClone(position) } } }] },
     { task: 'narration', key: head18.pointId, input: declaredP1NarrationInput, output: reqS20.text },
   ], 'T01');

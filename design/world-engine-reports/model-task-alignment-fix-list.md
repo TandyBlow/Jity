@@ -81,3 +81,34 @@
 - 其余不变：记忆形状 `narration={pointId, previousPointId, capturedDelta(缓存), claim, input}`；组装阶梯改为 after 读（按目标 pointId）→ before 读（previousPointId，经 list_points 兜底推导）→ **原始 Δ 读** → `assembleNarrationInput` 补 perspective；harness `ReadStateSpecimen`；同步面=B3 两样本+T01 两叙事+T02–T08 各一（T06 无）。
 - **原始 Δ 读取的落地形状（2026-10-25 用户确认三字段扩展，契约同步已完成）**：`GetStateData` 增加必填 `previousPointId: Id|null`、`timeAdvance: TimeAdvance|null`、`entityDeltas: dict[Id,EntityDelta]`（该点自身已保存记录，与 data.pointId 对应；根点=null/null/{}；**无默认值——缺字段=读取能力不完整，客户端必须停止叙事生成，不得当空增量**）。同步面全部落地：Pydantic 定义（requests.py）→ 重导出 schema/manifest → **11 条轨迹 get_state 步骤回填三字段**（提交点读=逐字复制最近前置 commit 的 point 记录含模板变量；根读=null/null/{}；sync_get_state_traces.mjs 一次性工具留档）→ 轨迹 contractDigest 重钉（新摘要 abda4555…）→ 契约夹具 get_state/success.json（历史读：p1≠头 root_0，三字段与 p1 对应）→ TS 类型（types.ts 必填三字段）→ 前端契约钉 contract-digest.json。验证：后端 923/923（含 export 16、traces 16）、前端 396/396＋tsc 净。
 - **待做：控制器与场景接线**（下一批次）：①调度器组装阶梯——after 读（get_state 按目标 pointId）→ 补 previousPointId/timeAdvance/entityDeltas（缺任一→stop 原因 `narration_read_incomplete`）→ before 读（get_state 按 previousPointId；根点 before=null 不读）→ 发模型调用；commit 捕获 Δ 仅作缓存优化，恢复路径一律走读取。②adoptSuccess 路由 get_state.data 进 narration.input。③harness ReadStateSpecimen（锚点后插 get_state：served 取锚点后快照、data 由场景供给）。④六场景叙事声明改全量输入（**独立手写字面量，不经 assembleNarrationInput**）＋B3 两叙事样本＋prompts.ts 叙事契约。⑤验证：正常提交与全新控制器冷启动两条路径、独立期望；忠诚性对照（真实前后状态＋原始 Δ）。
+
+## 6. #6/#5 落地（已随 8a2efcd、5759234 提交）与 #1/3/4 完成记录（2026-10-26）
+
+**批次状态**：清单第 1、3、4 项本轮完成；第 6 项控制面与场景接线、第 5 项多阶段验收已在此前的 8a2efcd／5759234 提交中落地（5 节的「待做」列表即那两次提交的内容，本节不再重复）。剩余：#7（pointPlan 逐人判断）、#9（continuation 上下文复核）、#6 的恢复路径补读（随 H2 恢复批次）、以及 B3 全量重跑（用户裁定暂不做）。
+
+**#1 action —— 链级 advance 上下文**
+
+- 数据源（核对结果）：`ContextResponse.activeInput {advanceId,inputId,text}`（仅活动链、只由 context 回包携带）＋ `world.advance.intentStatus`。控制器新增 `activeInput` 服务态（`adoptState` 只在回包携带该字段时更新；`undefined`＝保持现状，不把缺失当 null）。
+- 实现：调度器 action 输入补 `advance:{inputText|null, intentStatus}`；`inputText` 取最后采纳的 context 文本，`intentStatus` 取调用时刻的 `world.advance`——不是「有文本就 pending」。提示词契约同步（pending＝待处理命令必须执行；consumed＝已是触发背景不得重复执行）。
+- 边界：T01 链内没有 context 回包，行动输入文本为 `null`（声明已注明）；文本与状态是两路数据，不互相推断。
+
+**#3 reaction —— 发起者威胁文本**
+
+- 输入补 `sourceActionText`，逐字取当前源（`sources[0].actionText`）的冻结行动文本——与 targets 同源。提示词契约要求反应针对该具体威胁。
+
+**#4 results —— 全组冻结行动与全部骰点判定**
+
+- 输入补 `members:[{memberId, actionText, rollRefs}]`，`rollRefs` 含 `{targetId, rollId, result, eligible, admitted}`——**未准入与不合格的判定同样入列**（§7.1「骰点」）。
+- 数据源：§3 核对时定为「控制器留存」（服务端 `FrozenGroup.members[].actionText` 只走恢复载荷；本轮不改 wire）。新记忆字段 `groupActions` 与 `sources` 同生命周期：`discover` 重置建立、准入 `extend` 前插、`create_rolls` 追加、`stage_unit`/`stage_time_scan`/`commit_point`/`clearRoundWork` 归零——只覆盖当前组，不是长期行动记录。
+- **已知缺口（不掩盖）**：刷新/冷启动后内存丢失，`groupActions` 为空，此时 results 输入缺全组行动。补读路径归 H2 恢复批次（恢复载荷的 `FrozenGroup.members` 即数据源），本轮不做静默兜底。
+
+**验证（固定模型输出机制，协议/状态/恢复断言保留）**
+
+- 输入形状断言（提示词序列化后的实际内容）：`runtime/b3.test.ts` 断言 action 提示词含 `"inputText"`/`"intentStatus"`、reaction 含 `"sourceActionText"`、results 含成员的 `"actionText"` 与未准入判定的 `"eligible":false`。
+- 调度器单测：action 的 advance 两态（有文本/无 context 读取）与「状态取自服务态」；reaction 的 `sourceActionText`；results 的成员顺序与两类判定（合格未准入、不合格未准入）。
+- 真实控制器回归：`controller.test.ts` 端到端断言 action/reaction/results 三处实测输入与提交后 `groupActions` 归零。
+- 场景级：T01/T02/T03/T04/T08 的声明输入全部改为**独立期望**——action 的 advance 由 `servedBeforeSteps` 取「调用时刻最近服务态＋最后一次 context」，results 的 members 由 `frozenGroupActionsAtStage` 按录制镜像（发起者先入、准入前插、roll 追加、stage 结算归零）。T02 新增手写字面量断言：四次行动的状态序列 `pending,pending,consumed,consumed`（第二/三点的 consume 由 commit 转态，一次性声明的旧写法会漏掉）＋四条 results 的成员顺序＋逐条判定值（含 `person_d` 准入后对 `person_e` 的合格未准入判定）。T02-empty-linked：`consumed`＋四人逆序前插＋三条准入判定。
+- 顺带修复：5759234 遗留的 `prefer-const` lint 错误（`controller.test.ts` 两处 `let`）使 `npm run build` 断在 lint 阶段，本轮改为 `const` 后 build 通过。
+- B3 冻结样本：action 两样本的 `inputText` 改为 T01 录制 `start_advance` 的逐字文本「我推开重门。」（原先是另写的句子，与「T01 school 世界派生」的出处不符）。
+
+**本轮验证**：前端全量 477/477（world-engine 415）、`tsc -p tsconfig.world-contract.json` 净、`tsc --noEmit` 净、`npm run build` 通过（lint 仅既有 warning）；后端 `python -X utf8 -m pytest -q` 923/923。

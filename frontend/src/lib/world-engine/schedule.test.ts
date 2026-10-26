@@ -50,13 +50,13 @@ const pointWork = (over: Partial<PointWork> = {}): PointWork => ({
 const memory = (over: Partial<ControllerMemory> = {}): ControllerMemory => ({
   requestId: 'rq1', leaseToken: 'lease1', holderId: 'browser', ids: {}, allocPlan: null, roundAllocations: {}, allocatedKeys: [], playerInput: null,
   plan: null, planIndex: 0, prepareSuccessor: false, localPause: false, budget: { used: 0, max: null },
-  narration: null, workingState: null, sources: [], staged: [], stagedTimeScan: null, groupActors: [], lastModel: null, lastTargets: null, lastResults: null,
+  narration: null, workingState: null, sources: [], staged: [], stagedTimeScan: null, groupActors: [], groupActions: [], lastModel: null, lastTargets: null, lastResults: null,
   updatesStages: [], updatesCalls: [], updatesApplied: 0, updatesPreviewSkipped: 0, updatesPendingRefs: [],
   continuation: null, successorTime: null, commitPayload: null, initialTemplate: null, ...over,
 });
 
-const view = (world_: WorldContext | null, control_: ControlState, work_: PointWork | null, memory_: ControllerMemory, command?: ScheduleView['command']): ScheduleView =>
-  ({ world: world_, control: control_, work: work_, memory: memory_, command });
+const view = (world_: WorldContext | null, control_: ControlState, work_: PointWork | null, memory_: ControllerMemory, command?: ScheduleView['command'], activeInput: ScheduleView['activeInput'] = null): ScheduleView =>
+  ({ world: world_, control: control_, work: work_, memory: memory_, command, activeInput });
 
 const next = (w: WorldContext | null, c: ControlState, wk: PointWork | null, m: ControllerMemory, command?: ScheduleView['command']): Decision =>
   scheduleNext(view(w, c, wk, m, command));
@@ -245,12 +245,53 @@ describe('normal point: group cycle (T01/T02 shapes)', () => {
     expect(expectTransport(next(w, c, wk, m), 'create_rolls')).toBeTruthy();
     pending.rolled.push({ targetId: 'person_d', triggerKey: 'tk_d', rule: { ruleVersion: 'reaction-fixture-v1', target: 11 }, rollId: 'roll_d', admitted: true, reacted: false });
     pending.pendingTargets = [];
-    expect(next(w, c, wk, m)).toMatchObject({ kind: 'model', task: 'reaction', key: 'person_c', input: { memberId: 'person_d', rollId: 'roll_d' } });
+    // 反应读发起者的冻结威胁文本（§6.2 步骤 4）——与 targets 同源。
+    expect(next(w, c, wk, m)).toMatchObject({ kind: 'model', task: 'reaction', key: 'person_c', input: { sourceActionText: '行动。', memberId: 'person_d', rollId: 'roll_d' } });
     m.lastModel = { task: 'reaction', key: 'person_c', output: 'person_d被迫反应。' };
     const extend = expectTransport(next(w, c, wk, m), 'checkpoint_extend_group') as Extract<Decision, { kind: 'transport' }>;
     expect((extend.request as unknown as { admittedMember: unknown }).admittedMember).toEqual({
       memberId: 'person_d', actionText: 'person_d被迫反应。',
       rollRefs: [{ sourceId: 'person_c', targetId: 'person_d', triggerKey: 'tk_d', rollId: 'roll_d' }],
+    });
+  });
+  test('action input carries the chain-level advance: player text plus the served intent status (#1, §6.1)', () => {
+    const { w, c, wk, m } = spine();
+    m.workingState = { key: workingStateKey(wk), state: workingState() };
+    expect(scheduleNext(view(w, c, wk, m, undefined, { advanceId: 'adv1', inputId: 'in1', text: '我推开重门。' }))).toMatchObject({
+      kind: 'model', task: 'action', key: 'person_a',
+      input: { actor: 'person_a', advance: { inputText: '我推开重门。', intentStatus: 'consumed' } },
+    });
+    // 消费状态取自服务态，不是文本的有无：尚无 context 读取时文本为 null，
+    // 未消费的 advance 仍是 pending。
+    const pendingWorld = { ...w, advance: { advanceId: 'adv1', inputId: 'in1', intentStatus: 'pending' as const, inputAvailable: true } };
+    expect(next(pendingWorld, c, wk, m)).toMatchObject({ kind: 'model', task: 'action', input: { advance: { inputText: null, intentStatus: 'pending' } } });
+  });
+  test('results input carries the whole frozen group and every roll outcome, inadmissible included (#4, §7.1)', () => {
+    const { w, c, wk, m } = spine({
+      work: { phase: 'settle_group', pendingGroup: { groupId: 'g1', sourceId: 'person_a', memberIds: ['person_a', 'person_b'], targetIds: [], frontierIds: [], closed: true } },
+      memory: {
+        workingState: { key: workingStateKey(pointWork()), state: workingState() },
+        groupActions: [
+          { memberId: 'person_b', actionText: '从储物柜里取出钥匙', rolls: [] },
+          { memberId: 'person_a', actionText: '用力推开走廊尽头的门', rolls: [
+            { targetId: 'person_b', rollId: 'roll_1', result: 12, eligible: true, admitted: true },
+            { targetId: 'person_c', rollId: 'roll_2', result: 3, eligible: false, admitted: false },
+          ] },
+        ],
+      },
+    });
+    expect(next(w, c, wk, m)).toMatchObject({
+      kind: 'model', task: 'results', key: 'g1',
+      input: {
+        groupId: 'g1',
+        members: [
+          { memberId: 'person_b', actionText: '从储物柜里取出钥匙', rollRefs: [] },
+          { memberId: 'person_a', actionText: '用力推开走廊尽头的门', rollRefs: [
+            { targetId: 'person_b', rollId: 'roll_1', result: 12, eligible: true, admitted: true },
+            { targetId: 'person_c', rollId: 'roll_2', result: 3, eligible: false, admitted: false },
+          ] },
+        ],
+      },
     });
   });
   test('DFS: the reaction of an admitted sibling precedes rolling the next one (T02-el s5–s8)', () => {

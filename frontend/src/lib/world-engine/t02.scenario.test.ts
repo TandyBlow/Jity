@@ -21,6 +21,26 @@ const EXPECTED_PREVIEW_TIMES: Record<T02TraceName, { dateTime: string; instantOr
   ],
 };
 
+/** §6.1：行动输入的消费状态随调用时刻的最近服务态变化——T02 的点 1 两组在
+ * commit 前（pending），commit 后的点 2/3 已消费；空链开在已消费之后。文本
+ * 始终是最后一次 context 回包的玩家输入。 */
+const EXPECTED_ACTION_ADVANCE: Record<T02TraceName, { intentStatus: string; inputText: string }[]> = {
+  'T02': [
+    { intentStatus: 'pending', inputText: '我推开重门。' },
+    { intentStatus: 'pending', inputText: '我推开重门。' },
+    { intentStatus: 'consumed', inputText: '我推开重门。' },
+    { intentStatus: 'consumed', inputText: '我推开重门。' },
+  ],
+  'T02-empty-linked': [{ intentStatus: 'consumed', inputText: '我推开重门。' }],
+};
+
+/** §7.1：results 输入的全组冻结行动顺序——发起者先入，被准入者逐个前插。
+ * results 调用按录制中的 stage_unit 顺序排列。 */
+const EXPECTED_RESULT_MEMBERS: Record<T02TraceName, string[][]> = {
+  'T02': [['person_a'], ['person_b'], ['person_d', 'person_c'], ['person_f', 'person_e']],
+  'T02-empty-linked': [['person_f', 'person_e', 'person_d', 'person_c']],
+};
+
 async function runT02Acceptance(traceName: T02TraceName, sampleId: string) {
   const scenario = buildT02Scenario(traceName, sampleId);
   await scenario.transport.runInspect(scenario.bootstrapStepId); // session-open get_context
@@ -73,6 +93,41 @@ describe.each([
     const calls = scenario.model.calls.map((c) => `${c.task}:${c.key}`);
     expect(calls[0]).toBe(`pointPlan:${scenario.roundId}`);
     expect(calls.at(-1)).toMatch(/^narration:/);
+
+    // §6.1：每次行动调用的 advance＝调用时刻的消费状态＋最后的 context 文本。
+    const actions = scenario.model.calls.filter((c) => c.task === 'action').map((c) => (c.input as { advance: { intentStatus: string; inputText: string } }).advance);
+    expect(actions).toEqual(EXPECTED_ACTION_ADVANCE[traceName]);
+
+    // §7.1：results 携带本组冻结行动（跨组不混）与全部骰点判定（含未准入）。
+    const results = scenario.model.calls.filter((c) => c.task === 'results').map((c) => c.input as { members: { memberId: string; actionText: string; rollRefs: { targetId: string; result: number; eligible: boolean; admitted: boolean }[] }[] });
+    expect(results.map((call) => call.members.map((member) => member.memberId))).toEqual(EXPECTED_RESULT_MEMBERS[traceName]);
+    expect(results.flatMap((call) => call.members).every((member) => member.actionText.length > 0)).toBe(true);
+    const rollFacts = results.map((call) => call.members.map((member) => member.rollRefs.map(({ targetId, result, eligible, admitted }) => ({ targetId, result, eligible, admitted }))));
+    if (traceName === 'T02') {
+      // 发起者的两个判定：未准入且不合格 / 准入；被牵连者准入后的判定：
+      // 合格但未准入（仍入列）。
+      expect(rollFacts[2]).toEqual([
+        [{ targetId: 'person_e', result: 5, eligible: true, admitted: false }],
+        [
+          { targetId: 'person_a', result: 17, eligible: false, admitted: false },
+          { targetId: 'person_d', result: 15, eligible: true, admitted: true },
+        ],
+      ]);
+      expect(rollFacts[3]).toEqual([
+        [],
+        [
+          { targetId: 'person_c', result: 17, eligible: false, admitted: false },
+          { targetId: 'person_f', result: 15, eligible: true, admitted: true },
+        ],
+      ]);
+    } else {
+      expect(rollFacts[0].at(-1)).toEqual([
+        { targetId: 'person_d', result: 15, eligible: true, admitted: true },
+        { targetId: 'person_e', result: 15, eligible: true, admitted: true },
+        { targetId: 'person_f', result: 15, eligible: true, admitted: true },
+      ]);
+      expect(rollFacts[0].slice(0, -1).every((rolls) => rolls.length === 0)).toBe(true);
+    }
     expect(calls.filter((c) => c.startsWith('action:')).length).toBeGreaterThan(0);
   });
 });

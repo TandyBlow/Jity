@@ -33,7 +33,7 @@ export type DriverStatus =
   | { kind: 'stop'; reason: string }
   | { kind: 'error'; detail: string };
 
-interface ServedState { world: WorldContext | null; control: ControlState; work: PointWork | null }
+interface ServedState { world: WorldContext | null; control: ControlState; work: PointWork | null; activeInput: { advanceId: Id; inputId: Id; text: string } | null }
 
 const INITIAL_CONTROL: ControlState = {
   phase: 'select_actor', paused: false, revision: 0,
@@ -45,7 +45,7 @@ export function initialMemory(prefix: string, holderId: string): ControllerMemor
   return {
     requestId: `${prefix}_0`, leaseToken: null, holderId, ids: {}, allocPlan: null, roundAllocations: {}, allocatedKeys: [], playerInput: null,
     plan: null, planIndex: 0, prepareSuccessor: false, localPause: false, budget: { used: 0, max: null },
-    narration: null, workingState: null, sources: [], staged: [], stagedTimeScan: null, groupActors: [], lastModel: null, lastTargets: null, lastResults: null,
+    narration: null, workingState: null, sources: [], staged: [], stagedTimeScan: null, groupActors: [], groupActions: [], lastModel: null, lastTargets: null, lastResults: null,
     updatesStages: [], updatesCalls: [], updatesApplied: 0, updatesPreviewSkipped: 0, updatesPendingRefs: [],
     continuation: null, successorTime: null, commitPayload: null, initialTemplate: null,
   };
@@ -82,7 +82,7 @@ export class ControllerDriver {
 
   constructor(private io: ControllerIo, memory: ControllerMemory, state?: Partial<ServedState>, options?: DriverOptions) {
     this.memory = memory;
-    this.state = { world: null, control: INITIAL_CONTROL, work: null, ...state };
+    this.state = { world: null, control: INITIAL_CONTROL, work: null, activeInput: null, ...state };
     this.retryLimit = options?.retryLimit ?? 3;
     this.identityAliases = options?.identityAliases ?? {};
   }
@@ -92,7 +92,7 @@ export class ControllerDriver {
 
   /** Read-only scheduler introspection for declared scenario boundaries. */
   pendingDecision(): Decision {
-    return scheduleNext({ world: this.state.world, control: this.state.control, work: this.state.work, memory: this.memory });
+    return scheduleNext({ world: this.state.world, control: this.state.control, work: this.state.work, memory: this.memory, activeInput: this.state.activeInput });
   }
 
   /** Queues an external command; consumed when its operation executes, so it survives detours (lease loss). */
@@ -129,7 +129,7 @@ export class ControllerDriver {
     const command = this.command;
     this.stepCommand = command;
     if (command?.kind === 'player_input' && this.command === command) this.command = null; // consumed via memory.playerInput
-    const decision = scheduleNext({ world: this.state.world, control: this.state.control, work: this.state.work, memory: this.memory, command: command && command.kind !== 'player_input' ? command : undefined });
+    const decision = scheduleNext({ world: this.state.world, control: this.state.control, work: this.state.work, memory: this.memory, command: command && command.kind !== 'player_input' ? command : undefined, activeInput: this.state.activeInput });
     switch (decision.kind) {
       case 'await_command':
         if (this.command === command) this.command = null;
@@ -449,6 +449,10 @@ export class ControllerDriver {
       }
     }
     if (envelope.work !== undefined) this.state.work = envelope.work;
+    // 玩家输入文本（仅 context 回包携带该字段；undefined=未携带，保持现状）。
+    if ((envelope as { activeInput?: unknown }).activeInput !== undefined) {
+      this.state.activeInput = (envelope as { activeInput: { advanceId: Id; inputId: Id; text: string } | null }).activeInput;
+    }
   }
 
   private retireFinishedSources(): void {
@@ -483,6 +487,7 @@ export class ControllerDriver {
         const actor = req.initiatorId as Id;
         if (!this.memory.groupActors.includes(actor)) this.memory.groupActors.push(actor);
         this.memory.sources = [{ sourceId: actor, actionText: req.actionText as string, targetsExtended: false, pendingTargets: [], rolled: [] }];
+        this.memory.groupActions = [{ memberId: actor, actionText: req.actionText as string, rolls: [] }];
         this.memory.updatesCalls = [];
         this.memory.updatesApplied = 0;
         this.memory.updatesPendingRefs = [];
@@ -504,6 +509,7 @@ export class ControllerDriver {
           if (entry) entry.reacted = true;
           if (!this.memory.groupActors.includes(member.memberId)) this.memory.groupActors.push(member.memberId); // the member has acted in this point
           sources.unshift({ sourceId: member.memberId, actionText: member.actionText ?? '', targetsExtended: false, pendingTargets: [], rolled: [] });
+          this.memory.groupActions.unshift({ memberId: member.memberId, actionText: member.actionText ?? '', rolls: [] });
         }
         this.retireFinishedSources();
         break;
@@ -511,11 +517,14 @@ export class ControllerDriver {
       case 'create_rolls': {
         const current = sources[0];
         const spec = (req.rolls as { sourceId: Id; targetId: Id; triggerKey: Id; ruleVersion: RollRule['ruleVersion']; target: number }[])[0];
-        const outcome = (data as { rolls: { rollId: Id; admitted: boolean }[] }).rolls[0];
+        const outcome = (data as { rolls: { rollId: Id; result: number; eligible: boolean; admitted: boolean }[] }).rolls[0];
         if (!current || current.sourceId !== spec.sourceId || !outcome) throw new Error('Roll outcome without matching source');
         const pending = current.pendingTargets.find((t) => t.targetId === spec.targetId);
         current.pendingTargets = current.pendingTargets.filter((t) => t !== pending);
         current.rolled.push({ targetId: spec.targetId, triggerKey: spec.triggerKey, rule: pending?.rule ?? { ruleVersion: spec.ruleVersion, target: spec.target }, rollId: outcome.rollId, admitted: outcome.admitted, reacted: false });
+        // 判定留存（§7.1 results 输入）：未准入与已行动目标都带结果。
+        const frozenMember = this.memory.groupActions.find((member) => member.memberId === spec.sourceId);
+        frozenMember?.rolls.push({ targetId: spec.targetId, rollId: outcome.rollId, result: outcome.result, eligible: outcome.eligible, admitted: outcome.admitted });
         this.retireFinishedSources(); // a final not-admitted roll can finish the source too
         break;
       }
@@ -525,6 +534,7 @@ export class ControllerDriver {
         this.memory.updatesCalls = [];
         this.memory.updatesApplied = 0;
         this.memory.updatesPendingRefs = []; // 未决引用已随结算批次成为状态事实
+        this.memory.groupActions = []; // 本组冻结行动已随暂存批次结算
         this.memory.commitPayload = null;
         break;
       case 'checkpoint_stage_time_scan':
@@ -535,6 +545,7 @@ export class ControllerDriver {
         this.memory.updatesCalls = [];
         this.memory.updatesApplied = 0;
         this.memory.updatesPendingRefs = []; // 未决引用已随结算批次成为状态事实
+        this.memory.groupActions = []; // 本组冻结行动已随暂存批次结算
         this.memory.commitPayload = null;
         break;
       case 'checkpoint_record_skip': {
@@ -555,6 +566,7 @@ export class ControllerDriver {
         this.memory.updatesCalls = [];
         this.memory.updatesApplied = 0;
         this.memory.updatesPendingRefs = [];
+        this.memory.groupActions = [];
         this.memory.commitPayload = null;
         const head = this.state.world?.head;
         if (head) this.memory.narration = { pointId: head.pointId, claim: null, input: initialNarrationAssembly(head.pointId) };
@@ -644,7 +656,7 @@ export class ControllerDriver {
     Object.assign(this.memory, {
       playerInput: null, plan: null, planIndex: 0, prepareSuccessor: false,
       workingState: null, sources: [], staged: [], stagedTimeScan: null,
-      groupActors: [], lastModel: null, lastTargets: null, lastResults: null, updatesCalls: [], updatesApplied: 0, updatesPreviewSkipped: 0, updatesPendingRefs: [],
+      groupActors: [], groupActions: [], lastModel: null, lastTargets: null, lastResults: null, updatesCalls: [], updatesApplied: 0, updatesPreviewSkipped: 0, updatesPendingRefs: [],
       continuation: null, successorTime: null, commitPayload: null, narration: null,
     });
   }

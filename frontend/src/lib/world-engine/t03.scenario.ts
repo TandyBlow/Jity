@@ -35,7 +35,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { ControllerDriver, initialMemory } from './controller';
 import { assembleCandidates, mergeUpdatesStages, timeScanCandidates, triggerSlotKey, type UpdatesCall, type UpdatesStage } from './schedule';
-import { buildCorpus, ScenarioModelPort, ScenarioTransport, type Corpus, type DeclaredModelCall, type PreviewSpecimenSpec, type ReadStateSpecimenSpec } from './harness';
+import { buildCorpus, frozenGroupActionsAtStage, ScenarioModelPort, ScenarioTransport, servedBeforeSteps, type Corpus, type DeclaredModelCall, type PreviewSpecimenSpec, type ReadStateSpecimenSpec } from './harness';
 import { ProtocolError } from './protocol';
 import { equal, instantiate, readTrace } from './trace-runner';
 import { advanceTime, type WallTime } from './t02.scenario';
@@ -344,11 +344,20 @@ export function buildT03Scenario(traceName: T03TraceName, sampleId: string): T03
     const req = requestOf.get(b.id)! as { pointId: Id; kind: Json; timeAdvance: Json };
     return { pointId: req.pointId, kind: req.kind, timeAdvance: structuredClone(req.timeAdvance), actorIds: actorsByPoint[i].actors };
   }) as unknown as Json });
+  const recordedActiveInput = (context as unknown as { activeInput: { advanceId: Id; inputId: Id; text: string } | null }).activeInput;
+  // §6.1/§7.1：行动输入取调用时刻的 advance（最近服务态＋最后一次 context），
+  // results 输入取本组冻结行动——两者均与控制器逐字镜像。
+  const servedBefore = servedBeforeSteps(steps, responseOf);
+  const declaredAdvance = (stepId: string): Json => {
+    const served = servedBefore.get(stepId)!;
+    return { inputText: served.activeInput?.text ?? null, intentStatus: served.world!.advance.intentStatus };
+  };
+  const frozenActions = frozenGroupActionsAtStage(steps, requestOf, responseOf);
   for (const s of steps) {
     const index = stepIndex.get(s.id)!;
     const req = requestOf.get(s.id)!;
     if (s.operation === 'checkpoint_discover_group') {
-      declared.push({ task: 'action', key: req.initiatorId as Id, input: { actor: req.initiatorId as Id, workingState: previewStateAt(index) }, output: { kind: 'act', text: req.actionText } as unknown as Json });
+      declared.push({ task: 'action', key: req.initiatorId as Id, input: { actor: req.initiatorId as Id, advance: declaredAdvance(s.id), workingState: previewStateAt(index) }, output: { kind: 'act', text: req.actionText } as unknown as Json });
     } else if (s.operation === 'checkpoint_extend_group') {
       if (req.targets != null) {
         const targetIds = (req.targets as { targetId: Id }[]).map((t) => ({ targetId: t.targetId }));
@@ -356,12 +365,13 @@ export function buildT03Scenario(traceName: T03TraceName, sampleId: string): T03
         declared.push({ task: 'targets', key: req.sourceId as Id, input: { sourceId: req.sourceId as Id, actionText, workingState: previewStateAt(index) }, output: { targets: targetIds } as unknown as Json });
       } else {
         const admit = req.admittedMember as { memberId: Id; actionText: string; rollRefs: { rollId: Id }[] };
-        declared.push({ task: 'reaction', key: req.sourceId as Id, input: { sourceId: req.sourceId as Id, memberId: admit.memberId, rollId: admit.rollRefs[0].rollId, workingState: previewStateAt(index) }, output: admit.actionText as unknown as Json });
+        const sourceActionText = actorsByPoint[pointAt(index)].actionText.get(req.sourceId as Id) ?? '';
+        declared.push({ task: 'reaction', key: req.sourceId as Id, input: { sourceId: req.sourceId as Id, sourceActionText, memberId: admit.memberId, rollId: admit.rollRefs[0].rollId, workingState: previewStateAt(index) }, output: admit.actionText as unknown as Json });
       }
     } else if (s.operation === 'checkpoint_stage_unit') {
       const candidates = withRuledCoverage(req.candidates as Record<string, unknown>, roster, traceName);
       const groupId = (candidates as { groupId: Id }).groupId;
-      declared.push({ task: 'results', key: groupId, input: { groupId, workingState: previewStateAt(index) }, output: structuredClone(req.results) as Json });
+      declared.push({ task: 'results', key: groupId, input: { groupId, members: structuredClone(frozenActions.get(s.id)!) as unknown as Json, workingState: previewStateAt(index) }, output: structuredClone(req.results) as Json });
       // 拆分阶梯：逐阶段单对象输出（首阶段读阶梯前状态，后序阶段读边界
       // preview 应用前序候选后的部分应用正文——§6.3）。
       if (s.id !== stageStep.id) throw new ProtocolError(`[${traceName}] unexpected stage_unit outside the split ladder`);
@@ -429,7 +439,7 @@ export function buildT03Scenario(traceName: T03TraceName, sampleId: string): T03
 
   const transport = new ScenarioTransport(corpus.steps, traceName);
   const model = new ScenarioModelPort(declared, traceName);
-  const driver = new ControllerDriver({ transport, model }, memory, { world: context.world, control: context.control }, { retryLimit: 3, identityAliases: { 'group:person_c': 'group' } });
+  const driver = new ControllerDriver({ transport, model }, memory, { world: context.world, control: context.control, activeInput: recordedActiveInput }, { retryLimit: 3, identityAliases: { 'group:person_c': 'group' } });
   return { driver, transport, model, memory, corpus, roundId, bootstrapStepIds, finalStepId: finalStep.id };
 }
 

@@ -24,7 +24,7 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { ControllerDriver, initialMemory } from './controller';
-import { buildCorpus, ScenarioModelPort, ScenarioTransport, type Corpus, type DeclaredModelCall, type PreviewSpecimenSpec, type ReadStateSpecimenSpec } from './harness';
+import { buildCorpus, frozenGroupActionsAtStage, ScenarioModelPort, ScenarioTransport, servedBeforeSteps, type Corpus, type DeclaredModelCall, type PreviewSpecimenSpec, type ReadStateSpecimenSpec } from './harness';
 import { ProtocolError } from './protocol';
 import { triggerSlotKey } from './schedule';
 import { instantiate, readTrace } from './trace-runner';
@@ -114,6 +114,9 @@ export function buildT02Scenario(traceName: T02TraceName, sampleId: string): T02
     }
     return { actors: order.filter((id) => actors.has(id)), actionText };
   });
+  // 本组冻结行动与全部骰点判定（§7.1 results 输入）——与控制器 groupActions
+  // 逐字镜像：discover 重置建立、admit 前插、create_rolls 追加判定。按组注册
+  // （一点可结算多组，驱动器记忆按组重置）。
   const commitByPoint = begins.map((_, i) => {
     const end = i + 1 < beginIndex.length ? beginIndex[i + 1] : steps.length;
     const commit = steps.slice(beginIndex[i], end).find((s) => s.operation === 'commit_point');
@@ -231,11 +234,22 @@ export function buildT02Scenario(traceName: T02TraceName, sampleId: string): T02
     const req = requestOf.get(b.id)! as { pointId: Id; kind: Json; timeAdvance: Json };
     return { pointId: req.pointId, kind: req.kind, timeAdvance: structuredClone(req.timeAdvance), actorIds: actorsByPoint[i].actors };
   }) as unknown as Json });
+  const recordedActiveInput = (context as unknown as { activeInput: { advanceId: Id; inputId: Id; text: string } | null }).activeInput;
+  // §6.1：行动输入携带调用时刻的链级 advance——玩家输入文本（最后一次
+  // context 回包）与消费状态（最近服务态；本轨迹的 2/3 点已在 commit 后
+  // 转为 consumed）。
+  const servedBefore = servedBeforeSteps(steps, responseOf);
+  const declaredAdvance = (stepId: string): Json => {
+    const served = servedBefore.get(stepId)!;
+    return { inputText: served.activeInput?.text ?? null, intentStatus: served.world!.advance.intentStatus };
+  };
+  // §7.1：results 输入的全组冻结行动与骰点判定——与控制器 groupActions 同源同序。
+  const frozenActions = frozenGroupActionsAtStage(steps, requestOf, responseOf);
   for (const s of steps) {
     const index = stepIndex.get(s.id)!;
     const req = requestOf.get(s.id)!;
     if (s.operation === 'checkpoint_discover_group') {
-      declared.push({ task: 'action', key: req.initiatorId as Id, input: { actor: req.initiatorId as Id, workingState: previewStateAt(index) }, output: { kind: 'act', text: req.actionText } as unknown as Json });
+      declared.push({ task: 'action', key: req.initiatorId as Id, input: { actor: req.initiatorId as Id, advance: declaredAdvance(s.id), workingState: previewStateAt(index) }, output: { kind: 'act', text: req.actionText } as unknown as Json });
     } else if (s.operation === 'checkpoint_extend_group') {
       if (req.targets != null) {
         const targetIds = (req.targets as { targetId: Id }[]).map((t) => ({ targetId: t.targetId }));
@@ -243,11 +257,12 @@ export function buildT02Scenario(traceName: T02TraceName, sampleId: string): T02
         declared.push({ task: 'targets', key: req.sourceId as Id, input: { sourceId: req.sourceId as Id, actionText, workingState: previewStateAt(index) }, output: { targets: targetIds } as unknown as Json });
       } else {
         const admit = req.admittedMember as { memberId: Id; actionText: string; rollRefs: { rollId: Id }[] };
-        declared.push({ task: 'reaction', key: req.sourceId as Id, input: { sourceId: req.sourceId as Id, memberId: admit.memberId, rollId: admit.rollRefs[0].rollId, workingState: previewStateAt(index) }, output: admit.actionText as unknown as Json });
+        const sourceActionText = actorsByPoint[pointAt(index)].actionText.get(req.sourceId as Id) ?? '';
+        declared.push({ task: 'reaction', key: req.sourceId as Id, input: { sourceId: req.sourceId as Id, sourceActionText, memberId: admit.memberId, rollId: admit.rollRefs[0].rollId, workingState: previewStateAt(index) }, output: admit.actionText as unknown as Json });
       }
     } else if (s.operation === 'checkpoint_stage_unit') {
       const groupId = (req.candidates as { groupId: Id }).groupId;
-      declared.push({ task: 'results', key: groupId, input: { groupId, workingState: previewStateAt(index) }, output: structuredClone(req.results) as Json });
+      declared.push({ task: 'results', key: groupId, input: { groupId, members: structuredClone(frozenActions.get(s.id)!) as unknown as Json, workingState: previewStateAt(index) }, output: structuredClone(req.results) as Json });
       declared.push({ task: 'updates', key: groupId, input: { groupId, mode: 'group', workingState: previewStateAt(index) }, output: [] as unknown as Json });
     } else if (s.operation === 'checkpoint_stage_time_scan') {
       declared.push({ task: 'updates', key: `time_scan:${req.pointId as Id}`, input: { mode: 'time_scan', workingState: previewStateAt(index) }, output: [] as unknown as Json });
@@ -294,6 +309,6 @@ export function buildT02Scenario(traceName: T02TraceName, sampleId: string): T02
 
   const transport = new ScenarioTransport(corpus.steps, traceName);
   const model = new ScenarioModelPort(declared, traceName);
-  const driver = new ControllerDriver({ transport, model }, memory, { world: context.world, control: context.control }, { retryLimit: 3 });
+  const driver = new ControllerDriver({ transport, model }, memory, { world: context.world, control: context.control, activeInput: recordedActiveInput }, { retryLimit: 3 });
   return { driver, transport, model, memory, corpus, roundId, bootstrapStepId: 's1', finalStepId: finalStep.id };
 }

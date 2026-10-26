@@ -132,6 +132,68 @@ function collectVariablePositions(template: unknown, value: unknown, pointer: st
  * construction; the envelope mirrors the served fixture shape exactly. */
 export interface ReadStateSpecimenSpec { label: string; afterStepId: string; data: Json }
 
+/** Frozen group action as the driver retains it for the §7.1 results input. */
+export interface FrozenGroupAction {
+  memberId: Id;
+  actionText: string;
+  rollRefs: { targetId: Id; rollId: Id; result: number; eligible: boolean; admitted: boolean }[];
+}
+
+/** Mirrors the driver's retained frozen group actions from the recording:
+ * discover resets the group, an admitted extend unshifts the reacting member,
+ * create_rolls appends EVERY outcome (inadmissible included), and staging or
+ * committing settles the batch (reset). Returns each stage unit's snapshot
+ * taken BEFORE it is consumed — what that group's results call must declare. */
+export function frozenGroupActionsAtStage(
+  steps: { id: string; operation: string }[],
+  requestOf: Map<string, Record<string, unknown>>,
+  responseOf: Map<string, Record<string, unknown>>,
+): Map<string, FrozenGroupAction[]> {
+  const snapshots = new Map<string, FrozenGroupAction[]>();
+  let current: FrozenGroupAction[] = [];
+  for (const step of steps) {
+    const request = requestOf.get(step.id)!;
+    if (step.operation === 'checkpoint_discover_group') {
+      current = [{ memberId: request.initiatorId as Id, actionText: request.actionText as string, rollRefs: [] }];
+    } else if (step.operation === 'checkpoint_extend_group') {
+      const admit = request.admittedMember as { memberId: Id; actionText?: string | null } | null | undefined;
+      if (admit?.memberId) current = [{ memberId: admit.memberId, actionText: admit.actionText ?? '', rollRefs: [] }, ...current];
+    } else if (step.operation === 'create_rolls') {
+      const spec = (request.rolls as { sourceId: Id; targetId: Id }[])[0];
+      const outcome = (responseOf.get(step.id) as { data: { rolls: { rollId: Id; result: number; eligible: boolean; admitted: boolean }[] } }).data.rolls[0];
+      current.find((member) => member.memberId === spec.sourceId)?.rollRefs.push({ targetId: spec.targetId, rollId: outcome.rollId, result: outcome.result, eligible: outcome.eligible, admitted: outcome.admitted });
+    } else if (step.operation === 'checkpoint_stage_unit') {
+      snapshots.set(step.id, structuredClone(current));
+      current = [];
+    } else if (step.operation === 'checkpoint_stage_time_scan' || step.operation === 'commit_point') {
+      current = [];
+    }
+  }
+  return snapshots;
+}
+
+/** State the driver holds when the model call declared at a step runs: the
+ * world served by the last response carrying one, and the last get_context's
+ * activeInput (other envelopes omit the field, so the driver retains it).
+ * Seeded bootstrap contexts are supplied by the scenario itself, not here. */
+export interface ServedBefore { world: WorldContext | null; activeInput: { advanceId: Id; inputId: Id; text: string } | null }
+
+export function servedBeforeSteps(
+  steps: { id: string; operation: string }[],
+  responseOf: Map<string, Record<string, unknown>>,
+): Map<string, ServedBefore> {
+  const before = new Map<string, ServedBefore>();
+  let world: WorldContext | null = null;
+  let activeInput: ServedBefore['activeInput'] = null;
+  for (const step of steps) {
+    before.set(step.id, { world, activeInput });
+    const response = responseOf.get(step.id) as { world?: WorldContext | null; activeInput?: ServedBefore['activeInput'] } | undefined;
+    if (response?.world !== undefined) world = response.world;
+    if (response?.activeInput !== undefined) activeInput = response.activeInput;
+  }
+  return before;
+}
+
 export function buildCorpus(rawTrace: unknown, sampleId: string, specimens: PreviewSpecimenSpec[], inspectStepIds: string[], previewAlignments: PreviewAlignment[] = [], digestPins: IndependentDigestPin[] = [], retries: RetryDeclaration[] = [], readSpecimens: ReadStateSpecimenSpec[] = []): Corpus {
   const trace = readTrace(rawTrace);
   const sample = trace.samples.find((s) => s.id === sampleId);

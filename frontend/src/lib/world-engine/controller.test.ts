@@ -195,8 +195,22 @@ describe('driver end-to-end: entry, group cycle, seal/commit, narration', () => 
     const perspective = '主角视角（person_a「甲」）；只表达已结算的世界事实';
     expect(model.calls[1].input).toEqual({ pointId: 'root', before: null, delta: { timeAdvance: null, entityDeltas: {} }, after: nsState, perspective });
     expect(model.calls[9].input).toEqual({ pointId: 'p1', before: nsState, delta: { timeAdvance: ta(2), entityDeltas: { person_a: { entityId: 'person_a', positionSet: position } } }, after: nsState, perspective });
+    // §6.1/§6.2/§7.1：实测输入补充——行动 advance（无 context 读取→无文本）、
+    // 反应读发起者威胁、结算读全组冻结行动与全部骰点判定。
+    expect(model.calls[3].input).toMatchObject({ actor: 'person_a', advance: { inputText: null, intentStatus: 'consumed' } });
+    expect(model.calls[5].input).toMatchObject({ sourceId: 'person_a', sourceActionText: 'person_a采取冻结行动。', memberId: 'person_d' });
+    expect(model.calls[7].input).toMatchObject({
+      groupId: 'g1',
+      members: [
+        { memberId: 'person_d', actionText: 'person_d被迫反应。', rollRefs: [] },
+        { memberId: 'person_a', actionText: 'person_a采取冻结行动。', rollRefs: [
+          { targetId: 'person_a', rollId: 'roll_a', result: 3, eligible: false, admitted: false },
+          { targetId: 'person_d', rollId: 'roll_d', result: 12, eligible: true, admitted: true },
+        ] },
+      ],
+    });
     const committed = driver.getMemory();
-    expect(committed).toMatchObject({ leaseToken: 'lease1', planIndex: 1, staged: [], groupActors: [], narration: null, budget: { used: 10 } });
+    expect(committed).toMatchObject({ leaseToken: 'lease1', planIndex: 1, staged: [], groupActors: [], groupActions: [], narration: null, budget: { used: 10 } });
     expect(committed.ids).toMatchObject({ advance: 'adv1', input: 'in1', round: 'r1' });
     const plan = committed.plan as PlannedPoint[];
     expect(plan[0]).toMatchObject({ pointId: 'p1', actorIds: ['person_a'] });
@@ -320,8 +334,8 @@ describe('review regressions (553e341 findings)', () => {
     // 位置阶段引用不存在的容器 → preview 被 A 拒绝（ID_UNRESOLVED →
     // version_mismatch）→ 原有终态处理；外貌模型零调用、无跳过计数。
     const world = mkWorld({ head: { pointId: 'root', version: 0, stateDigest: 'd0', narrationStatus: 'ready' }, lease: { fenceEpoch: 1, expiresAtEpochMilli: 999999 }, activePointId: 'p1', activeRoundId: 'r1', advance: { advanceId: 'adv1', inputId: 'in1', intentStatus: 'consumed', inputAvailable: false } });
-    let control = mkControl({ revision: 2 });
-    let work = mkWork({ timeLocked: true, phase: 'settle_group', pendingGroup: { groupId: 'g1', sourceId: 'person_a', memberIds: ['person_a'], targetIds: [], frontierIds: [], closed: true } });
+    const control = mkControl({ revision: 2 });
+    const work = mkWork({ timeLocked: true, phase: 'settle_group', pendingGroup: { groupId: 'g1', sourceId: 'person_a', memberIds: ['person_a'], targetIds: [], frontierIds: [], closed: true } });
     const memory = initialMemory('req', 'browser');
     memory.leaseToken = 'lease1';
     memory.workingState = { key: workingStateKey(work), state: workingState() };

@@ -18,6 +18,19 @@ describe('buildTaskPrompt', () => {
     expect(prompt).toContain('在场角色: person_a, person_b, person_c');
   });
 
+  test('§6.1/§6.2/§7.1 inputs reach the prompt verbatim, not only as contract wording', () => {
+    const action = buildTaskPrompt('action', 'person_a', { actor: 'person_a', advance: { inputText: '去走廊尽头看看那扇门', intentStatus: 'pending' }, workingState: T01_WORKING_STATE });
+    expect(action).toContain('"inputText":"去走廊尽头看看那扇门"');
+    expect(action).toContain('"intentStatus":"pending"');
+    const reaction = buildTaskPrompt('reaction', 'person_a', { sourceId: 'person_a', sourceActionText: '用力推开走廊尽头的门', memberId: 'person_b', rollId: 'roll_1', workingState: T01_WORKING_STATE });
+    expect(reaction).toContain('"sourceActionText":"用力推开走廊尽头的门"');
+    const results = buildTaskPrompt('results', 'group_a', {
+      groupId: 'group_a', workingState: T01_WORKING_STATE,
+      members: [{ memberId: 'person_a', actionText: '用力推开走廊尽头的门', rollRefs: [{ targetId: 'person_b', rollId: 'roll_1', result: 3, eligible: false, admitted: false }] }],
+    });
+    expect(results).toContain('"actionText":"用力推开走廊尽头的门"');
+    expect(results).toContain('"eligible":false');
+  });
   test('text tasks forbid JSON and never show a schema', () => {
     const narration = buildTaskPrompt('narration', 'root_0', { pointId: 'root_0', stateDigest: 'd' });
     expect(narration).toContain('不要 JSON');
