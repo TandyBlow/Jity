@@ -36,7 +36,7 @@ def create_world_app(*, store=None, allowed_origins=None):
 
 
 def create_persistent_world_app():
-    """Opt-in A3 development adapter; not the finished TTL/takeover service.
+    """Opt-in SQLite service with transactional A3 authority and recovery.
 
     WORLD_SQLITE_PATH is required so startup cannot silently use memory or
     create a database in an unexpected working directory.

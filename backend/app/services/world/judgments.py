@@ -109,6 +109,8 @@ def _baseline(connection, record, work, group):
         inputProjectionHash=_input_hash(record, work, group['groupId']),
         baseline=work['baseline'], timeAdvance=work['timeAdvance'],
         workingActedIds=sorted(work['working'].actedIds),
+        groupAcceptedIds=sorted(member for member, action in group['actionTexts'].items()
+                                if action is not None),
         characterIds=sorted(record['state'].characters),
     )
 
@@ -120,11 +122,13 @@ def create_rolls(store, record, request):
     The private RNG/fixture configuration is test/server input, never wire data.
     """
     from app.database.world_frozen_repository import confirmed_targets
+    from .progress import before_operation, record_roll
     connection = _connection(store)
     work = record.get('work')
     group = work.get('pendingGroup') if work else None
     if group is None or not work['timeLocked'] or group['closed']:
         _refuse('phase_invalid', 'rolls require the active open group with locked time')
+    before_operation(store, record, 'create_rolls', request)
     world = record['worldId']
     output = []
     for spec in request.rolls:
@@ -146,7 +150,9 @@ def create_rolls(store, record, request):
             if (row[2], row[4], row[9], row[11]) != (work['pointId'], spec.advanceId, spec.ruleVersion, spec.target):
                 _refuse('request_malformed', 'a fixed judgment cannot change its rule or threshold')
             _validated_baseline(connection, row)
-            output.append(roll_outcome(row))
+            outcome = roll_outcome(row)
+            record_roll(record, outcome)
+            output.append(outcome)
             continue
         baseline = _baseline(connection, record, work, group)
         if spec.ruleVersion == 'reaction-fixture-v1':
@@ -158,7 +164,8 @@ def create_rolls(store, record, request):
             result = getattr(store, '_roll_rng', lambda: secrets.randbelow(20) + 1)()
         if type(result) is not int or not 1 <= result <= 20:
             raise ValueError('Server roll generator must produce an integer in [1,20]')
-        eligible = spec.targetId not in baseline['workingActedIds']
+        eligible = (spec.targetId not in baseline['workingActedIds']
+                    and spec.targetId not in baseline['groupAcceptedIds'])
         identity = store.next_id('roll')
         values = (world, identity, work['pointId'], spec.roundId, spec.advanceId, spec.groupId,
                   spec.sourceId, spec.targetId, spec.triggerKey, spec.ruleVersion, result,
@@ -168,5 +175,6 @@ def create_rolls(store, record, request):
         record.setdefault('_judgmentIds', []).append(identity)
         outcome = roll_outcome(values)
         record.setdefault('_judgmentDigests', {})[identity] = canonical_digest(outcome)
+        record_roll(record, outcome)
         output.append(outcome)
     return {'rolls': output}

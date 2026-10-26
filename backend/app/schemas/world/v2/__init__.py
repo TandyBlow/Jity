@@ -1,8 +1,9 @@
-"""v2 protocol contracts: field-level interface baseline (candidate snapshot S1).
+"""v2 protocol contracts, including the unfrozen R1 recovery read candidate.
 
-Only `protocolVersion` is bumped for S1; WorldState, initial worlds and apply
-semantics stay on schemaVersion 1 / world-engine-v1. The v1 package imports in
-`app.schemas.world` remain untouched and authoritative for WorldState.
+R1 retains protocolVersion 2 and publishes a new candidate contract digest;
+it does not claim that B has consumed or jointly frozen that digest.
+WorldState, initial worlds and apply semantics remain on schemaVersion 1 /
+world-engine-v1. The v1 package remains authoritative for WorldState.
 """
 
 from app.schemas.world.contracts import CONTRACT_MODELS as _v1_models
@@ -157,7 +158,10 @@ from .requests import (
 
 # S1 revision additions are explicitly part of the exported field snapshot.
 from .contexts import PointRecoveryView, RecoveryView
-from .work import AcceptedWorkSource, FrozenMemberView, FrozenGroupView, GroupWorkSource
+from .work import (
+    AcceptedWorkSource, FrozenMemberView, FrozenGroupView, GroupWorkSource,
+    GroupProgress, PendingRollThreat, ReactionPendingThreat, HandledThreat,
+)
 from .requests import (
     StartAdvanceRequest, StartAdvanceData, StartAdvanceSuccess,
     WorldInitialTemplate, CheckpointDispatch, RoundConclusionDispatch,
@@ -224,6 +228,7 @@ SCHEMA_MODELS += (
     CheckpointDispatch, RoundConclusionDispatch, NarrationClaimSummary,
     ListPointsRequest, GetStateRequest, GetContextRequest,
     PointRecoveryView, RecoveryView, AcceptedWorkSource, FrozenMemberView, FrozenGroupView, GroupWorkSource,
+    GroupProgress, PendingRollThreat, ReactionPendingThreat, HandledThreat,
 )
 from .projections import PrefixProjection
 SCHEMA_MODELS += (PrefixProjection,)

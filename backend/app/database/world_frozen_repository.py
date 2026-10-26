@@ -389,6 +389,8 @@ def point_payload(connection, record, point_view):
         groups.append(dict(groupId=group, pointId=point, inputProjectionHash=projection,
                            members=sorted(members, key=lambda m:m['memberId']),
                            acceptedSources=sorted(accepted,key=lambda s:s['memberId']), candidates=candidates))
+        from app.database.world_progress_repository import group_progress_view
+        groups[-1].update(group_progress_view(connection, record, point_view, group))
     scan = connection.execute('SELECT time_scan_json FROM world_point_work WHERE world_id=? AND point_id=?',
                               (world, point)).fetchone()
     return dict(work=point_view, payloadStatus='available', restoreSources=[], groups=groups,

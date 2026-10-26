@@ -19,6 +19,7 @@ from app.schemas.world.contracts import (
 )
 
 from .base import EpochMilli, Hex64, ProtocolVersion, SchemaVersion
+from .judgments import RollOutcome
 from .work import SettlementGroup, TargetSpec, RollRef, WorkManifestItem, GroupWorkSource
 from .contexts import (
     SuccessorSummary, WorkingProgress, NarrationStatus,
@@ -597,26 +598,6 @@ class PreviewData(Contract):
             raise ValueError("preview projection names another point")
         if self.mergedEntityDeltas != (self.pointProjection.entityDeltas or {}):
             raise ValueError("merged deltas differ from point projection")
-        return self
-
-
-class RollOutcome(Contract):
-    rollId: Id
-    groupId: Id
-    sourceId: Id
-    targetId: Id
-    triggerKey: Id
-    ruleVersion: Literal["reaction-fixture-v1", "reaction-d20-v1"]
-    target: Annotated[SafeInt, Field(ge=1, le=20)]
-    result: Annotated[SafeInt, Field(ge=1, le=20)]
-    eligibilityBaselineDigest: Hex64
-    eligible: bool
-    admitted: bool
-
-    @model_validator(mode="after")
-    def final_admission(self):
-        if self.admitted != (self.eligible and self.result >= self.target):
-            raise ValueError("admission differs from fixed roll and eligibility")
         return self
 
 

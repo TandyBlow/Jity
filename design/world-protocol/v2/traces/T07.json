@@ -1,7 +1,7 @@
 {
   "traceFormatVersion": 1,
   "protocolVersion": 2,
-  "contractDigest": "abda455597e743f63da1c205ca7bc68044728c5f92a3cb7ae920440ef324eedd",
+  "contractDigest": "bff913209dc3c91084912542b5ac7af8927b3e46f530ed162d2b759faf5d5afe",
   "scenario": "T07",
   "acceptanceLayer": "contract",
   "runtimeTarget": "runtime-A3",
@@ -952,7 +952,7 @@
                     "memberId": "person_f",
                     "actionContentHash": "84764244db0bb0fa954a11f044cc11427692c44ffc4d3e0e313c3114df00dbc0",
                     "resultContentHash": null,
-                    "targetsContentHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+                    "targetsContentHash": null,
                     "candidatesContentHash": null
                   }
                 ]
@@ -1336,7 +1336,7 @@
             "memberId": "person_f",
             "actionContentHash": "84764244db0bb0fa954a11f044cc11427692c44ffc4d3e0e313c3114df00dbc0",
             "resultContentHash": null,
-            "targetsContentHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+            "targetsContentHash": null,
             "candidatesContentHash": null
           }
         ],
@@ -2021,6 +2021,47 @@
                     "person_f"
                   ],
                   "personalityCoverageIds": []
+                },
+                "rolls": [
+                  {
+                    "sourceId": "person_c",
+                    "targetId": "person_d",
+                    "triggerKey": {
+                      "$var": "v17"
+                    },
+                    "rollId": {
+                      "$var": "v18"
+                    },
+                    "groupId": {
+                      "$var": "v13"
+                    },
+                    "ruleVersion": "reaction-d20-v1",
+                    "target": 11,
+                    "result": 15,
+                    "eligibilityBaselineDigest": {
+                      "$var": "v4"
+                    },
+                    "eligible": true,
+                    "admitted": true
+                  }
+                ],
+                "progress": {
+                  "sourceStack": [],
+                  "threats": [
+                    {
+                      "sourceId": "person_c",
+                      "targetId": "person_d",
+                      "triggerKey": {
+                        "$var": "v17"
+                      },
+                      "rollId": {
+                        "$var": "v18"
+                      },
+                      "status": "handled",
+                      "actionDisposition": "created",
+                      "reactionMemberId": "person_d"
+                    }
+                  ]
                 }
               }
             ],
@@ -2152,7 +2193,7 @@
                   {
                     "memberId": "person_f",
                     "actionText": "F 避开门边。",
-                    "targets": [],
+                    "targets": null,
                     "resultText": null,
                     "rollRefs": []
                   }
@@ -2177,11 +2218,47 @@
                     "sourceAttempt": 1,
                     "actionContentHash": "84764244db0bb0fa954a11f044cc11427692c44ffc4d3e0e313c3114df00dbc0",
                     "resultContentHash": null,
-                    "targetsContentHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+                    "targetsContentHash": null,
                     "candidatesContentHash": null
                   }
                 ],
-                "candidates": null
+                "candidates": null,
+                "rolls": [
+                  {
+                    "sourceId": "person_e",
+                    "targetId": "person_f",
+                    "triggerKey": "trigger_ef",
+                    "rollId": "roll_ef",
+                    "groupId": {
+                      "$var": "v16"
+                    },
+                    "ruleVersion": "reaction-d20-v1",
+                    "target": 11,
+                    "result": 15,
+                    "eligibilityBaselineDigest": {
+                      "$var": "v4"
+                    },
+                    "eligible": true,
+                    "admitted": true
+                  }
+                ],
+                "progress": {
+                  "sourceStack": [
+                    "person_f",
+                    "person_e"
+                  ],
+                  "threats": [
+                    {
+                      "sourceId": "person_e",
+                      "targetId": "person_f",
+                      "triggerKey": "trigger_ef",
+                      "rollId": "roll_ef",
+                      "status": "handled",
+                      "actionDisposition": "created",
+                      "reactionMemberId": "person_f"
+                    }
+                  ]
+                }
               }
             ],
             "timeScanCandidates": null,
@@ -2210,7 +2287,7 @@
                     "memberId": "person_f",
                     "actionContentHash": "84764244db0bb0fa954a11f044cc11427692c44ffc4d3e0e313c3114df00dbc0",
                     "resultContentHash": null,
-                    "targetsContentHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+                    "targetsContentHash": null,
                     "candidatesContentHash": null
                   }
                 ]
@@ -3729,7 +3806,7 @@
             "memberId": "person_f",
             "actionContentHash": "84764244db0bb0fa954a11f044cc11427692c44ffc4d3e0e313c3114df00dbc0",
             "resultContentHash": null,
-            "targetsContentHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+            "targetsContentHash": null,
             "candidatesContentHash": null
           }
         ],
@@ -4016,7 +4093,7 @@
             "memberId": "person_f",
             "actionContentHash": "84764244db0bb0fa954a11f044cc11427692c44ffc4d3e0e313c3114df00dbc0",
             "resultContentHash": null,
-            "targetsContentHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+            "targetsContentHash": null,
             "candidatesContentHash": null
           }
         ],
@@ -4303,7 +4380,7 @@
             "memberId": "person_f",
             "actionContentHash": "84764244db0bb0fa954a11f044cc11427692c44ffc4d3e0e313c3114df00dbc0",
             "resultContentHash": null,
-            "targetsContentHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+            "targetsContentHash": null,
             "candidatesContentHash": null
           }
         ],
@@ -4591,7 +4668,7 @@
             "memberId": "person_f",
             "actionContentHash": "84764244db0bb0fa954a11f044cc11427692c44ffc4d3e0e313c3114df00dbc0",
             "resultContentHash": null,
-            "targetsContentHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+            "targetsContentHash": null,
             "candidatesContentHash": null
           }
         ],
@@ -4879,7 +4956,7 @@
             "memberId": "person_f",
             "actionContentHash": "84764244db0bb0fa954a11f044cc11427692c44ffc4d3e0e313c3114df00dbc0",
             "resultContentHash": null,
-            "targetsContentHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+            "targetsContentHash": null,
             "candidatesContentHash": null
           }
         ],
@@ -6527,7 +6604,7 @@
         "state_hash_s16": "9301b7992248a972f78706c34f56b6b6834f4ce7283c48159589ceca949079a5",
         "request_hash_s1": "4a4ae195b0c1273161e1e985dda5c3bc69531cd2f4355ac6631ae702c97f201f",
         "request_hash_s3": "d3d6dbf6c7445df704cfc3bb0268d2f979ad8557d922854ae6aaf4293c986f60",
-        "request_hash_s4": "baa996793822c8dca349c1f9947889ac403ac6190e7c82cae659cefeb7eaa3c1",
+        "request_hash_s4": "d7acd5b630eaf96a4d0f293ed9cd9ac204e057eea4cc7a15e97383af66857e9a",
         "previous_epoch": 7
       },
       "expectedDigests": {
@@ -6560,7 +6637,7 @@
         "state_hash_s16": "d476a569702112e28b4077ed12d75d5cc8009a3445c2a5df207790182ea94ca1",
         "request_hash_s1": "f3cfa300351c154691fb2d05a0726a3b4bf0ddaca51c3ee1fcb7f6697dd87b69",
         "request_hash_s3": "84f0ef073a9ebf0c17e5602638822f58044b3a1bffa83aa51d1cb09e3ff5eaab",
-        "request_hash_s4": "7bffdbcae018a00711c183fae192c8131aaf45ca1ee4a0ae96ec4daf9ce6ec38",
+        "request_hash_s4": "d4922a31497a7147c310328a14f86b7a4746b47d55c9e889d72b75d4024f1831",
         "previous_epoch": 107
       },
       "expectedDigests": {

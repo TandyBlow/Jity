@@ -183,6 +183,8 @@ class SQLiteBaselineStore:
             initialize_frozen_schema(connection)
             from app.database.world_judgment_repository import initialize_judgment_schema
             initialize_judgment_schema(connection)
+            from app.database.world_progress_repository import initialize_progress_schema
+            initialize_progress_schema(connection)
             connection.execute('''CREATE TRIGGER IF NOT EXISTS authority_epoch_monotone
                 BEFORE UPDATE ON world_authority_meta WHEN NEW.highest_epoch<OLD.highest_epoch
                 BEGIN SELECT RAISE(ABORT,'authority_epoch_cannot_decrease'); END''')
@@ -252,7 +254,8 @@ class SQLiteBaselineStore:
     def _dump_record(record):
         # The relational work tables are authoritative. Do not leave a second
         # work copy inside the A2-compatible core adapter snapshot.
-        stored = {key: value for key, value in record.items() if key not in ('work', '_successorWork')}
+        stored = {key: value for key, value in record.items()
+                  if key not in ('work', '_successorWork', '_groupProgress')}
         stored['_activeWorkPointId'] = (record.get('work') or {}).get('pointId')
         stored['_reservedWorkPointId'] = (record.get('_successorWork') or {}).get('pointId')
         return _dump(stored)
@@ -268,6 +271,16 @@ class SQLiteBaselineStore:
             return self._read_world(reader, world_id)
 
     def _read_world(self, connection, world_id):
+        try:
+            return self._load_world_record(connection, world_id)
+        except LedgerMismatch:
+            raise
+        except (ValueError, TypeError, KeyError) as error:
+            # Validation failures here describe saved SQL data, after request
+            # validation. Keep them on the same corruption/refusal path.
+            raise LedgerMismatch('Persistent world record is malformed') from error
+
+    def _load_world_record(self, connection, world_id):
         row = connection.execute('SELECT record_json FROM world_snapshots WHERE world_id=?',
                                  (world_id,)).fetchone()
         if row is None:
@@ -285,11 +298,14 @@ class SQLiteBaselineStore:
             raise LedgerMismatch('Reserved work differs from its bound successor pointer')
         if (record['work'] or {}).get('pointId') != expected_work_point:
             raise LedgerMismatch('Relational work differs from the bound active point')
+        from app.database.world_progress_repository import load_progress, check_progress
+        record['_groupProgress'] = load_progress(connection, record)
         check_core(connection, record)
         check_work(connection, record)
         from app.database.world_frozen_repository import check_frozen_work
         check_frozen_work(connection, record)
         from app.database.world_judgment_repository import check_judgments
+        check_progress(connection, record)
         check_judgments(connection, record)
         return record
 
@@ -306,11 +322,14 @@ class SQLiteBaselineStore:
             save_work(self._local.connection, before, snapshot)
             from app.database.world_frozen_repository import save_frozen_work, check_frozen_work
             save_frozen_work(self._local.connection, before, snapshot)
+            from app.database.world_progress_repository import save_progress, check_progress
+            save_progress(self._local.connection, before, snapshot)
             from app.database.world_judgment_repository import save_allocations, check_judgments
             save_allocations(self._local.connection, before, snapshot)
             check_core(self._local.connection, snapshot)
             check_work(self._local.connection, snapshot)
             check_frozen_work(self._local.connection, snapshot)
+            check_progress(self._local.connection, snapshot)
             check_judgments(self._local.connection, snapshot)
             if load_work(self._local.connection, world_id) != snapshot['work']:
                 raise LedgerMismatch('Relational work does not reconstruct the transaction result')
@@ -381,8 +400,12 @@ class SQLiteBaselineStore:
             validate_admission(self._local.connection, record, request)
         if operation == 'checkpoint_close_group':
             validate_group_closure(self._local.connection, record, request)
+        from app.services.world.progress import before_operation
+        before_operation(self, record, operation, request)
 
     def finish_operation(self, operation, record, request, data):
+        from app.services.world.progress import after_operation
+        after_operation(self, record, operation, request, data)
         from app.services.world.successor import finish_operation
         finish_operation(self, record, operation, request, data, getattr(record, '_work_selection', None))
         if hasattr(record, '_work_selection'):
@@ -460,8 +483,11 @@ class SQLiteBaselineStore:
     def collect_garbage(self, world_id):
         """Trusted maintenance job: retain identities, collect only terminal payloads."""
         from app.database.world_frozen_repository import collect_terminal_frozen
+        from app.database.world_progress_repository import collect_terminal_progress
         with self.locked():
-            return collect_terminal_frozen(self._local.connection, world_id)
+            counts = collect_terminal_frozen(self._local.connection, world_id)
+            counts['world_group_progress'] = collect_terminal_progress(self._local.connection, world_id)
+            return counts
 
     def note_global(self, request_id, entry):
         with self.locked():

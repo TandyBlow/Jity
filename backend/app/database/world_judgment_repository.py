@@ -80,12 +80,13 @@ def roll_outcome(row):
 
 
 def _validated_baseline(connection, row, cache=None):
+    from app.database.world_frozen_repository import FrozenWorkError
     value = dict(zip(ROLL_COLUMNS, row))
     baseline_row = (cache['baselines'].get(value['id']) if cache is not None else
         connection.execute('''SELECT baseline_json FROM world_roll_baselines
             WHERE world_id=? AND roll_id=?''', (value['world_id'], value['id'])).fetchone())
     if baseline_row is None:
-        raise LedgerMismatch('Judgment eligibility baseline is missing')
+        raise FrozenWorkError('frozen_work_missing', 'Judgment eligibility baseline is missing')
     try:
         baseline = json.loads(baseline_row[0])
         if canonical_digest(baseline) != value['eligibility_digest']:
@@ -98,7 +99,8 @@ def _validated_baseline(connection, row, cache=None):
         if baseline['ruleVersion'] != 'reaction-eligibility-v1':
             raise ValueError('unknown eligibility rule')
         eligible = value['target_id'] in baseline['characterIds'] \
-            and value['target_id'] not in baseline['workingActedIds']
+            and value['target_id'] not in baseline['workingActedIds'] \
+            and value['target_id'] not in baseline.get('groupAcceptedIds', [])
         if bool(value['eligible']) != eligible:
             raise ValueError('eligibility differs from the frozen working progress')
         roll_outcome(value)
@@ -117,7 +119,7 @@ def _validated_baseline(connection, row, cache=None):
         if any(item[0] != baseline['inputProjectionHash'] for item in accepted):
             raise ValueError('accepted group input differs from the judgment baseline')
     except (KeyError, TypeError, ValueError) as error:
-        raise LedgerMismatch('Judgment differs from its frozen eligibility snapshot') from error
+        raise FrozenWorkError('frozen_work_corrupt', 'Judgment differs from its frozen eligibility snapshot') from error
     return baseline
 
 
@@ -133,7 +135,7 @@ def validate_admission(connection, record, request):
     seen = set()
     for reference in member.rollRefs:
         key = (reference.sourceId, reference.targetId, reference.triggerKey, reference.rollId)
-        if key in seen or reference.targetId != member.memberId:
+        if key in seen or reference.targetId != member.memberId or reference.sourceId != request.sourceId:
             _refuse('request_malformed', 'admission references duplicate or unrelated judgments')
         seen.add(key)
         row = connection.execute('SELECT ' + ','.join(ROLL_COLUMNS) + ''' FROM world_rolls
@@ -173,6 +175,7 @@ def validate_group_closure(connection, record, request):
 
 
 def check_judgments(connection, record):
+    from app.database.world_frozen_repository import FrozenWorkError
     world = record['worldId']
     expected = {(key, slot, item['kind'], item['id'], wire(item['scope']))
                 for key, slots in record.get('_allocationMetadata', {}).items()
@@ -189,15 +192,22 @@ def check_judgments(connection, record):
     rows = connection.execute('SELECT ' + ','.join(ROLL_COLUMNS) + ' FROM world_rolls WHERE world_id=?',
                               (world,)).fetchall()
     ids = {row[1] for row in rows}
-    if ids != set(record.get('_judgmentIds', [])):
-        raise LedgerMismatch('Immutable judgment identities differ from their saved bindings')
+    expected_ids = set(record.get('_judgmentIds', []))
+    if ids != expected_ids:
+        raise FrozenWorkError('frozen_work_missing' if expected_ids - ids else 'frozen_work_corrupt',
+                              'Immutable judgment identities differ from their saved bindings')
     digests = record.get('_judgmentDigests', {})
-    if ids != set(digests) or any(canonical_digest(roll_outcome(row)) != digests[row[1]] for row in rows):
-        raise LedgerMismatch('Immutable judgment results differ from their saved outcome hashes')
+    try:
+        if ids != set(digests) or any(canonical_digest(roll_outcome(row)) != digests[row[1]] for row in rows):
+            raise ValueError('outcome hash differs')
+    except (TypeError, ValueError) as error:
+        raise FrozenWorkError('frozen_work_corrupt',
+                              'Immutable judgment results differ from their saved outcome hashes') from error
     baselines = {row[0]: row[1:] for row in connection.execute(
         'SELECT roll_id,baseline_json FROM world_roll_baselines WHERE world_id=?', (world,))}
     if ids != set(baselines):
-        raise LedgerMismatch('Judgment rows and eligibility snapshots differ')
+        raise FrozenWorkError('frozen_work_missing' if ids - set(baselines) else 'frozen_work_corrupt',
+                              'Judgment rows and eligibility snapshots differ')
     if not rows:
         return
     # Keep full historical checks while bounding database round trips.

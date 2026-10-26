@@ -188,7 +188,9 @@ def test_group_cycle_uses_fixed_eligibility_and_does_not_readmit_existing_member
     request.update(requestId='cycle_roll', expectedCheckpointRevision=confirmed['control']['revision'])
     request['rolls'][0].update(sourceId='person_b', targetId='person_a', triggerKey=trigger)
     cycle = flow['service'].execute('create_rolls', request)['data']['rolls'][0]
-    assert cycle['eligible'] and cycle['admitted']
+    # A's accepted initiating action already exists in this group. Its
+    # relation still gets a final roll, frozen as ineligible at issue time.
+    assert not cycle['eligible'] and not cycle['admitted']
     assert flow['store'].world(flow['world'])['work']['pendingGroup']['memberIds'] == ['person_a', 'person_b']
     flow['service'].execute('checkpoint_close_group', _payload(
         'cycle_closed', flow['world'], flow['lease'], operation='close_group',
@@ -419,7 +421,7 @@ def test_admitted_member_without_action_survives_takeover_and_can_confirm_once(t
     accepted = service.execute('checkpoint_extend_group', incoming)
     revision = accepted['control']['revision']
     raw = service.store.world(world)['work']['pendingGroup']
-    assert raw['actionTexts']['person_b'] is None and raw['frontierIds'] == ['person_b']
+    assert raw['actionTexts']['person_b'] is None and raw['frontierIds'] == ['person_a']
     service.execute('lease_release', _payload('pending_release', world, lease))
     lease = service.execute('lease_acquire', {'protocolVersion': 2, 'requestId': 'pending_acquire',
         'worldId': world, 'holderId': 'new_tab'})['data']

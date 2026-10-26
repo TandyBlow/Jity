@@ -4082,6 +4082,16 @@
               "type": "null"
             }
           ]
+        },
+        "rolls": {
+          "items": {
+            "$ref": "#/$defs/RollOutcome"
+          },
+          "title": "Rolls",
+          "type": "array"
+        },
+        "progress": {
+          "$ref": "#/$defs/GroupProgress"
         }
       },
       "required": [
@@ -4090,7 +4100,9 @@
         "inputProjectionHash",
         "members",
         "acceptedSources",
-        "candidates"
+        "candidates",
+        "rolls",
+        "progress"
       ],
       "title": "FrozenGroupView",
       "type": "object"
@@ -4475,6 +4487,52 @@
       "title": "GetStateSuccess",
       "type": "object"
     },
+    "GroupProgress": {
+      "additionalProperties": false,
+      "description": "Persisted DFS checkpoint; sourceStack order is significant.",
+      "properties": {
+        "sourceStack": {
+          "items": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+            "type": "string"
+          },
+          "title": "Sourcestack",
+          "type": "array",
+          "uniqueItems": true
+        },
+        "threats": {
+          "items": {
+            "discriminator": {
+              "mapping": {
+                "handled": "#/$defs/HandledThreat",
+                "pending_roll": "#/$defs/PendingRollThreat",
+                "reaction_pending": "#/$defs/ReactionPendingThreat"
+              },
+              "propertyName": "status"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/$defs/PendingRollThreat"
+              },
+              {
+                "$ref": "#/$defs/ReactionPendingThreat"
+              },
+              {
+                "$ref": "#/$defs/HandledThreat"
+              }
+            ]
+          },
+          "title": "Threats",
+          "type": "array"
+        }
+      },
+      "required": [
+        "sourceStack",
+        "threats"
+      ],
+      "title": "GroupProgress",
+      "type": "object"
+    },
     "GroupWorkSource": {
       "additionalProperties": false,
       "description": "Active accepted reference readable before copying any old-epoch payload.\n\nThis is authority metadata, not a visibility grant for the referenced bytes.\nMissing/corrupt rows retain their reference and must fail restore explicitly.",
@@ -4518,6 +4576,93 @@
         "manifest"
       ],
       "title": "GroupWorkSource",
+      "type": "object"
+    },
+    "HandledThreat": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "else": {
+            "properties": {
+              "reactionMemberId": {
+                "type": "string"
+              }
+            }
+          },
+          "if": {
+            "properties": {
+              "actionDisposition": {
+                "const": "none"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "reactionMemberId": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      ],
+      "properties": {
+        "sourceId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Sourceid",
+          "type": "string"
+        },
+        "targetId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Targetid",
+          "type": "string"
+        },
+        "triggerKey": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Triggerkey",
+          "type": "string"
+        },
+        "status": {
+          "const": "handled",
+          "title": "Status",
+          "type": "string"
+        },
+        "rollId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Rollid",
+          "type": "string"
+        },
+        "actionDisposition": {
+          "enum": [
+            "none",
+            "created",
+            "reused"
+          ],
+          "title": "Actiondisposition",
+          "type": "string"
+        },
+        "reactionMemberId": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Reactionmemberid"
+        }
+      },
+      "required": [
+        "sourceId",
+        "targetId",
+        "triggerKey",
+        "status",
+        "rollId",
+        "actionDisposition",
+        "reactionMemberId"
+      ],
+      "title": "HandledThreat",
       "type": "object"
     },
     "HeadNarrationClaim": {
@@ -7444,6 +7589,49 @@
       "title": "PendingGroupView",
       "type": "object"
     },
+    "PendingRollThreat": {
+      "additionalProperties": false,
+      "properties": {
+        "sourceId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Sourceid",
+          "type": "string"
+        },
+        "targetId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Targetid",
+          "type": "string"
+        },
+        "triggerKey": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Triggerkey",
+          "type": "string"
+        },
+        "status": {
+          "const": "pending_roll",
+          "title": "Status",
+          "type": "string"
+        },
+        "rollId": {
+          "title": "Rollid",
+          "type": "null"
+        },
+        "reactionMemberId": {
+          "title": "Reactionmemberid",
+          "type": "null"
+        }
+      },
+      "required": [
+        "sourceId",
+        "targetId",
+        "triggerKey",
+        "status",
+        "rollId",
+        "reactionMemberId"
+      ],
+      "title": "PendingRollThreat",
+      "type": "object"
+    },
     "PendingTask": {
       "additionalProperties": false,
       "properties": {
@@ -8606,6 +8794,50 @@
       "title": "Reaction",
       "type": "object"
     },
+    "ReactionPendingThreat": {
+      "additionalProperties": false,
+      "properties": {
+        "sourceId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Sourceid",
+          "type": "string"
+        },
+        "targetId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Targetid",
+          "type": "string"
+        },
+        "triggerKey": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Triggerkey",
+          "type": "string"
+        },
+        "status": {
+          "const": "reaction_pending",
+          "title": "Status",
+          "type": "string"
+        },
+        "rollId": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Rollid",
+          "type": "string"
+        },
+        "reactionMemberId": {
+          "title": "Reactionmemberid",
+          "type": "null"
+        }
+      },
+      "required": [
+        "sourceId",
+        "targetId",
+        "triggerKey",
+        "status",
+        "rollId",
+        "reactionMemberId"
+      ],
+      "title": "ReactionPendingThreat",
+      "type": "object"
+    },
     "RecordSkipRequest": {
       "additionalProperties": false,
       "properties": {
@@ -9707,6 +9939,24 @@
     },
     "RollOutcome": {
       "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "ruleVersion": {
+                "const": "reaction-d20-v1"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "target": {
+                "const": 11
+              }
+            }
+          }
+        }
+      ],
       "properties": {
         "rollId": {
           "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$",

@@ -1,7 +1,7 @@
 {
   "traceFormatVersion": 1,
   "protocolVersion": 2,
-  "contractDigest": "abda455597e743f63da1c205ca7bc68044728c5f92a3cb7ae920440ef324eedd",
+  "contractDigest": "bff913209dc3c91084912542b5ac7af8927b3e46f530ed162d2b759faf5d5afe",
   "scenario": "T04",
   "acceptanceLayer": "contract",
   "runtimeTarget": "runtime-A2",

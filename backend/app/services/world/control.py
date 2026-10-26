@@ -1298,7 +1298,13 @@ class WorldService:
         self.store = store
 
     def error_response(self, error, operation=None, request_id=None, world_id=None):
-        record = self.store.world(world_id) if world_id else None
+        from app.database.world_repository import LedgerMismatch
+        try:
+            record = self.store.world(world_id) if world_id else None
+        except LedgerMismatch:
+            # A damaged recovery ledger cannot be read again to decorate its
+            # own refusal. The protocol permits an error without state views.
+            record = None
         return ErrorResponse.model_validate({
             **_envelope_base(self.store), 'replayed': False,
             'operation': operation, 'requestId': request_id, 'worldId': world_id,
@@ -1392,10 +1398,18 @@ class WorldService:
         if operation == 'get_context' and getattr(self.store, 'persistent', False):
             # Recovery authority, active pointers and original payload must all
             # belong to one database snapshot, including concurrent takeovers.
-            with self.store.locked():
-                record = self._record(request_dict.get('worldId'))
-                data = READ_HANDLERS[operation](self.store, record, request)
-                return _context_envelope(self.store, data)
+            from app.database.world_frozen_repository import FrozenWorkError
+            from app.database.world_repository import LedgerMismatch
+            try:
+                with self.store.locked():
+                    record = self._record(request_dict.get('worldId'))
+                    data = READ_HANDLERS[operation](self.store, record, request)
+                    return _context_envelope(self.store, data)
+            except FrozenWorkError as error:
+                raise ServiceRefusal(error.code, str(error), error.details) from error
+            except LedgerMismatch as error:
+                raise ServiceRefusal('frozen_work_corrupt', str(error),
+                                     {'reason': 'recovery_ledger_mismatch'}) from error
         record = self._record(request_dict.get('worldId'))
         data = READ_HANDLERS[operation](self.store, record, request)
         if operation == 'get_context':
@@ -1505,10 +1519,19 @@ class WorldService:
                 'views': views, 'pathPointId': path_point_id}
             return data, views, False
 
+        from app.database.world_repository import LedgerMismatch
         try:
             result = self.store.transact(world_id, handler)
         except WorldNotFound:
             _refuse('version_mismatch', 'unknown world')
+        except LedgerMismatch as error:
+            from app.database.world_frozen_repository import FrozenWorkError
+            if operation == 'checkpoint_restore_group_work':
+                if isinstance(error, FrozenWorkError):
+                    raise ServiceRefusal(error.code, str(error), error.details) from error
+                raise ServiceRefusal('frozen_work_corrupt', str(error),
+                                     {'reason': 'recovery_ledger_mismatch'}) from error
+            raise
         if isinstance(result, _DeferredRefusal):
             raise result.error
         data, views, replayed = result

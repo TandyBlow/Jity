@@ -242,7 +242,8 @@ OPERATIONS: tuple[OperationSpec, ...] = tuple(OperationSpec.model_validate(spec)
         "requestSchema": "GetContextRequest", "successSchema": "ContextResponse",
         "successHttpStatus": 200, "bindings": ["worldId", "leaseToken", "fenceEpoch"],
         "preconditions": [_pre("lease", "valid", _when("includeRecovery", True))],
-        "errorCodes": _errors("protocol_version_unsupported", "request_malformed", "version_mismatch", "lease_invalid", "stale_epoch"),
+        "errorCodes": _errors("protocol_version_unsupported", "request_malformed", "version_mismatch", "lease_invalid", "stale_epoch",
+                              "frozen_work_missing", "frozen_work_corrupt"),
         "mutatesRevision": False, "sideEffects": [],
         "idempotency": {"scope": "none", "key": None, "replay": "recomputable"},
         "queryBindings": ["includeRecovery", "leaseToken", "fenceEpoch"],
@@ -251,7 +252,9 @@ OPERATIONS: tuple[OperationSpec, ...] = tuple(OperationSpec.model_validate(spec)
                  "Sources include the old epoch/attempt and hashes needed to build restore requests, "
                  "but no raw text or candidates. If copying is needed, payloadStatus=restore_required "
                  "with groups=[] and timeScanCandidates=null; after copying, payloadStatus=available "
-                 "returns only current-epoch bytes. Missing/corrupt payload rows do not erase "
+                 "returns only current-epoch bytes, complete immutable rolls and persisted DFS/threat progress. "
+                 "Missing referenced rows return frozen_work_missing; invalid hashes, roll associations or "
+                 "progress return frozen_work_corrupt. Missing/corrupt payload rows do not erase "
                  "accepted references or authorize resampling. Consumed/abandoned sources are excluded; ordinary reads "
                  "return recovery=null. Invalid/old lease cannot read frozen text. No requestId; the only response carrying activeInput. Context never returns "
                  "lease or claim tokens.",

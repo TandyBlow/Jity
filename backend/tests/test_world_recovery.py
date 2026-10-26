@@ -339,4 +339,7 @@ def test_discover_nonempty_target_ids_allocate_once_and_recover_full_specs(tmp_p
         assert connection.execute('SELECT sequence FROM world_snapshot_meta').fetchone()[0] == before_sequence
         assert targets[0]['triggerKey'] in [entry['id'] for entry in record['_allocationMetadata']['_auto_targets'].values()]
         save_frozen_work(connection,None,record)
-        assert connection.execute('SELECT count(*) FROM world_frozen_target_specs').fetchone()[0] == 1
+        saved = json.loads(connection.execute('SELECT group_json FROM world_group_payloads').fetchone()[0])
+        assert saved['targetSpecsBySource']['person_a'] == targets
+        assert connection.execute('SELECT count(*) FROM world_id_allocations WHERE allocated_id=?',
+                                  (targets[0]['triggerKey'],)).fetchone()[0] == 1

@@ -265,6 +265,26 @@ class PointRecoveryView(Contract):
             raise ValueError("time scan marker differs from saved candidates")
         if self.timeScanCandidates is not None and self.timeScanCandidates.groupId is not None:
             raise ValueError("time scan cannot name an action group")
+        group_ids = [group.groupId for group in self.groups]
+        if len(group_ids) != len(set(group_ids)) or set(group_ids) != set(active_groups):
+            raise ValueError("available recovery must contain every active group exactly once")
+        pending = self.work.pendingGroup
+        for group in self.groups:
+            if {member.memberId for member in group.members} != active_groups[group.groupId]:
+                raise ValueError("recovery members differ from active work group")
+            is_pending = pending is not None and pending.groupId == group.groupId
+            if is_pending:
+                if group.initiator_id() != pending.sourceId:
+                    raise ValueError("recovery initiator differs from pending group source")
+                if group.frontier_ids() != pending.frontierIds:
+                    raise ValueError("pending frontier differs from persisted source stack")
+                if sorted({item.targetId for member in group.members for item in member.targets or []}) != pending.targetIds:
+                    raise ValueError("pending target set differs from confirmed targets")
+            if not is_pending or pending.closed:
+                if group.progress.sourceStack or any(member.targets is None for member in group.members):
+                    raise ValueError("closed or staged group has unfinished source progress")
+                if any(item.status != "handled" for item in group.progress.threats):
+                    raise ValueError("closed or staged group has unfinished threat progress")
         return self
 
 

@@ -1,7 +1,7 @@
 {
   "traceFormatVersion": 1,
   "protocolVersion": 2,
-  "contractDigest": "abda455597e743f63da1c205ca7bc68044728c5f92a3cb7ae920440ef324eedd",
+  "contractDigest": "bff913209dc3c91084912542b5ac7af8927b3e46f530ed162d2b759faf5d5afe",
   "scenario": "T09",
   "acceptanceLayer": "contract",
   "runtimeTarget": "runtime-A3",
@@ -9,7 +9,8 @@
   "preconditions": [
     "School world and sealed fixture baseline; model outputs and business answers authored independently.",
     "Input identity variables denote known preallocated identities/authority from the scenario setup; no arbitrary state upload.",
-    "Contract response specimens are not executed service transactions; runtimeTarget remains a later acceptance."
+    "Contract response specimens are not executed service transactions; runtimeTarget remains a later acceptance.",
+    "R1 recovery-read errors are authored contract specimens: missing referenced roll rows and corrupt persisted DFS progress stop recovery; these are not SQL transaction evidence."
   ],
   "variables": [
     {
@@ -995,6 +996,474 @@
           "op": "eq",
           "path": "/error/clientAction",
           "expected": "pause",
+          "baseline": null
+        }
+      ],
+      "projectionPath": null,
+      "digestPath": null,
+      "expectedProjection": null,
+      "nextAction": "pause"
+    },
+    {
+      "id": "r1_missing_read",
+      "operation": "get_context",
+      "scope": {
+        "worldId": {
+          "$var": "v1"
+        }
+      },
+      "request": {
+        "includeRecovery": true,
+        "leaseToken": {
+          "$var": "v14"
+        },
+        "fenceEpoch": {
+          "$var": "v8"
+        }
+      },
+      "response": {
+        "protocolVersion": 2,
+        "engineVersion": "world-engine-v1",
+        "schemaVersion": 1,
+        "canonicalVersion": "world-canonical-v1",
+        "serverTimeEpochMilli": {
+          "$var": "v16"
+        },
+        "replayed": false,
+        "operation": "get_context",
+        "requestId": null,
+        "worldId": {
+          "$var": "v1"
+        },
+        "error": {
+          "code": "frozen_work_missing",
+          "httpStatus": 409,
+          "retryable": false,
+          "clientAction": "pause",
+          "details": {
+            "pointId": {
+              "$var": "v10"
+            },
+            "groupId": {
+              "$var": "v12"
+            },
+            "component": "roll",
+            "reason": "referenced_row_missing"
+          }
+        },
+        "world": {
+          "worldId": {
+            "$var": "v1"
+          },
+          "head": {
+            "pointId": {
+              "$var": "v3"
+            },
+            "version": 0,
+            "stateDigest": {
+              "$var": "v4"
+            },
+            "narrationStatus": "ready"
+          },
+          "advance": {
+            "advanceId": {
+              "$var": "v5"
+            },
+            "inputId": {
+              "$var": "v6"
+            },
+            "intentStatus": "pending",
+            "inputAvailable": true
+          },
+          "round": {
+            "roundId": {
+              "$var": "v7"
+            },
+            "trigger": "player",
+            "conclusion": null,
+            "order": [
+              "person_c",
+              "person_d",
+              "person_e",
+              "person_f"
+            ],
+            "cursor": 0,
+            "actedIds": [],
+            "visitedIds": []
+          },
+          "time": {
+            "calendar": "gregorian",
+            "dateTime": "2026-01-01T11:59:00",
+            "instantOrdinal": 0
+          },
+          "lease": {
+            "fenceEpoch": {
+              "$var": "v8"
+            },
+            "expiresAtEpochMilli": {
+              "$var": "v9"
+            }
+          },
+          "successor": null,
+          "activePointId": {
+            "$var": "v10"
+          },
+          "activeRoundId": {
+            "$var": "v7"
+          }
+        },
+        "control": {
+          "phase": "select_actor",
+          "paused": false,
+          "revision": 1,
+          "gate": {
+            "status": "none",
+            "generation": null,
+            "issuedAtEpochMilli": null,
+            "expiresAtEpochMilli": null
+          },
+          "blockedReasons": [],
+          "canCompute": true
+        },
+        "work": {
+          "pointId": {
+            "$var": "v10"
+          },
+          "kind": "normal",
+          "timeAdvance": {
+            "boundary": "elapsed",
+            "duration": {
+              "amount": 2,
+              "unit": "second"
+            }
+          },
+          "timeLocked": true,
+          "baseline": {
+            "headPointId": {
+              "$var": "v3"
+            },
+            "version": 0,
+            "stateDigest": {
+              "$var": "v4"
+            }
+          },
+          "phase": "select_actor",
+          "working": {
+            "cursor": 2,
+            "actedIds": [
+              "person_c",
+              "person_d"
+            ],
+            "visitedIds": [
+              "person_c",
+              "person_d"
+            ],
+            "settledUnitIds": [
+              {
+                "$var": "v11"
+              }
+            ],
+            "intentStatus": "consumed"
+          },
+          "settledUnits": [
+            {
+              "unitId": {
+                "$var": "v11"
+              },
+              "groupId": {
+                "$var": "v12"
+              },
+              "memberIds": [
+                "person_c",
+                "person_d"
+              ],
+              "contentHash": "12b9771f7e83b9e8cb56d13c81efaf733483d9707beda5ad1013f8fbce753fc3"
+            }
+          ],
+          "pendingGroup": null,
+          "successor": {
+            "pointId": {
+              "$var": "v13"
+            },
+            "predecessorPointId": {
+              "$var": "v10"
+            },
+            "timeAdvance": {
+              "boundary": "instant",
+              "duration": {
+                "amount": 0,
+                "unit": "second"
+              }
+            },
+            "expectedPredecessorVersion": 1,
+            "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195",
+            "expectedPredecessorStateDigest": {
+              "$var": "v4"
+            },
+            "baseline": {
+              "headPointId": {
+                "$var": "v10"
+              },
+              "version": 1,
+              "stateDigest": {
+                "$var": "v4"
+              }
+            }
+          },
+          "sealed": true,
+          "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195",
+          "predecessorWorkDigest": null,
+          "timeScanComplete": false
+        }
+      },
+      "responseKind": "error",
+      "httpStatus": 409,
+      "captures": [],
+      "assertions": [
+        {
+          "op": "eq",
+          "path": "/error/code",
+          "expected": "frozen_work_missing",
+          "baseline": null
+        },
+        {
+          "op": "eq",
+          "path": "/error/details/component",
+          "expected": "roll",
+          "baseline": null
+        }
+      ],
+      "projectionPath": null,
+      "digestPath": null,
+      "expectedProjection": null,
+      "nextAction": "pause"
+    },
+    {
+      "id": "r1_corrupt_read",
+      "operation": "get_context",
+      "scope": {
+        "worldId": {
+          "$var": "v1"
+        }
+      },
+      "request": {
+        "includeRecovery": true,
+        "leaseToken": {
+          "$var": "v14"
+        },
+        "fenceEpoch": {
+          "$var": "v8"
+        }
+      },
+      "response": {
+        "protocolVersion": 2,
+        "engineVersion": "world-engine-v1",
+        "schemaVersion": 1,
+        "canonicalVersion": "world-canonical-v1",
+        "serverTimeEpochMilli": {
+          "$var": "v17"
+        },
+        "replayed": false,
+        "operation": "get_context",
+        "requestId": null,
+        "worldId": {
+          "$var": "v1"
+        },
+        "error": {
+          "code": "frozen_work_corrupt",
+          "httpStatus": 409,
+          "retryable": false,
+          "clientAction": "pause",
+          "details": {
+            "pointId": {
+              "$var": "v10"
+            },
+            "groupId": {
+              "$var": "v12"
+            },
+            "component": "progress",
+            "reason": "stack_binding_mismatch"
+          }
+        },
+        "world": {
+          "worldId": {
+            "$var": "v1"
+          },
+          "head": {
+            "pointId": {
+              "$var": "v3"
+            },
+            "version": 0,
+            "stateDigest": {
+              "$var": "v4"
+            },
+            "narrationStatus": "ready"
+          },
+          "advance": {
+            "advanceId": {
+              "$var": "v5"
+            },
+            "inputId": {
+              "$var": "v6"
+            },
+            "intentStatus": "pending",
+            "inputAvailable": true
+          },
+          "round": {
+            "roundId": {
+              "$var": "v7"
+            },
+            "trigger": "player",
+            "conclusion": null,
+            "order": [
+              "person_c",
+              "person_d",
+              "person_e",
+              "person_f"
+            ],
+            "cursor": 0,
+            "actedIds": [],
+            "visitedIds": []
+          },
+          "time": {
+            "calendar": "gregorian",
+            "dateTime": "2026-01-01T11:59:00",
+            "instantOrdinal": 0
+          },
+          "lease": {
+            "fenceEpoch": {
+              "$var": "v8"
+            },
+            "expiresAtEpochMilli": {
+              "$var": "v9"
+            }
+          },
+          "successor": null,
+          "activePointId": {
+            "$var": "v10"
+          },
+          "activeRoundId": {
+            "$var": "v7"
+          }
+        },
+        "control": {
+          "phase": "select_actor",
+          "paused": false,
+          "revision": 1,
+          "gate": {
+            "status": "none",
+            "generation": null,
+            "issuedAtEpochMilli": null,
+            "expiresAtEpochMilli": null
+          },
+          "blockedReasons": [],
+          "canCompute": true
+        },
+        "work": {
+          "pointId": {
+            "$var": "v10"
+          },
+          "kind": "normal",
+          "timeAdvance": {
+            "boundary": "elapsed",
+            "duration": {
+              "amount": 2,
+              "unit": "second"
+            }
+          },
+          "timeLocked": true,
+          "baseline": {
+            "headPointId": {
+              "$var": "v3"
+            },
+            "version": 0,
+            "stateDigest": {
+              "$var": "v4"
+            }
+          },
+          "phase": "select_actor",
+          "working": {
+            "cursor": 2,
+            "actedIds": [
+              "person_c",
+              "person_d"
+            ],
+            "visitedIds": [
+              "person_c",
+              "person_d"
+            ],
+            "settledUnitIds": [
+              {
+                "$var": "v11"
+              }
+            ],
+            "intentStatus": "consumed"
+          },
+          "settledUnits": [
+            {
+              "unitId": {
+                "$var": "v11"
+              },
+              "groupId": {
+                "$var": "v12"
+              },
+              "memberIds": [
+                "person_c",
+                "person_d"
+              ],
+              "contentHash": "12b9771f7e83b9e8cb56d13c81efaf733483d9707beda5ad1013f8fbce753fc3"
+            }
+          ],
+          "pendingGroup": null,
+          "successor": {
+            "pointId": {
+              "$var": "v13"
+            },
+            "predecessorPointId": {
+              "$var": "v10"
+            },
+            "timeAdvance": {
+              "boundary": "instant",
+              "duration": {
+                "amount": 0,
+                "unit": "second"
+              }
+            },
+            "expectedPredecessorVersion": 1,
+            "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195",
+            "expectedPredecessorStateDigest": {
+              "$var": "v4"
+            },
+            "baseline": {
+              "headPointId": {
+                "$var": "v10"
+              },
+              "version": 1,
+              "stateDigest": {
+                "$var": "v4"
+              }
+            }
+          },
+          "sealed": true,
+          "prefixDigest": "4625bbddb694ac8825840d21c750cd8477e1168f4bc7308eeb8bf61c451b9195",
+          "predecessorWorkDigest": null,
+          "timeScanComplete": false
+        }
+      },
+      "responseKind": "error",
+      "httpStatus": 409,
+      "captures": [],
+      "assertions": [
+        {
+          "op": "eq",
+          "path": "/error/code",
+          "expected": "frozen_work_corrupt",
+          "baseline": null
+        },
+        {
+          "op": "eq",
+          "path": "/error/details/component",
+          "expected": "progress",
           "baseline": null
         }
       ],

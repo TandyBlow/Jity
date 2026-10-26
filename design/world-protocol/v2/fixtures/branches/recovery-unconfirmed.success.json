@@ -177,7 +177,14 @@
               "candidatesContentHash": null
             }
           ],
-          "candidates": null
+          "candidates": null,
+          "rolls": [],
+          "progress": {
+            "sourceStack": [
+              "person_c"
+            ],
+            "threats": []
+          }
         }
       ],
       "timeScanCandidates": null,
