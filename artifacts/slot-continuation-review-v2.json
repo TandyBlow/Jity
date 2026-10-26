@@ -1,0 +1,65 @@
+{
+  "status": "PASS_REVIEWED_GUARDS",
+  "recordedAt": "2026-10-26T05:51:34.458Z",
+  "layer": "real scheduler/controller with deterministic boundary probes",
+  "rows": [
+    {
+      "probe": "empty_plan_with_unvisited_frozen_slots",
+      "frozenOrder": [
+        "person_a",
+        "person_b",
+        "person_c",
+        "person_d",
+        "person_e",
+        "person_f"
+      ],
+      "cursor": 0,
+      "visitedIds": [],
+      "plannedActorIds": [],
+      "decision": "model",
+      "task": "action"
+    },
+    {
+      "probe": "nonempty_plan_control",
+      "decision": "model",
+      "task": "action",
+      "actor": "person_a"
+    },
+    {
+      "probe": "continuation_without_world_or_round_history",
+      "modelCalls": 0,
+      "submittedDecision": null,
+      "conclusion": null,
+      "decision": {
+        "kind": "stop",
+        "reason": "continuation_context_missing:workingState,roundChanges"
+      }
+    },
+    {
+      "probe": "processed_empty_point_still_scans",
+      "decision": "model",
+      "task": "updates",
+      "mode": "time_scan"
+    },
+    {
+      "probe": "continuation_no_state",
+      "decision": "stop",
+      "reason": "continuation_context_missing:workingState"
+    },
+    {
+      "probe": "continuation_no_changes",
+      "decision": "stop",
+      "reason": "continuation_context_missing:roundChanges"
+    },
+    {
+      "probe": "continuation_previous_round",
+      "decision": "stop",
+      "reason": "continuation_context_missing:roundChanges"
+    },
+    {
+      "probe": "continuation_complete",
+      "decision": "model",
+      "task": "continuation"
+    }
+  ]
+}

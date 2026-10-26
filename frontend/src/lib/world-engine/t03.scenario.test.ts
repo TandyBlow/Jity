@@ -177,6 +177,23 @@ describe.each([
         ...ROSTER.map((actor) => `action:${actor}`),
         `updates:time_scan:${pointId}#tasks`, `updates:time_scan:${pointId}#personality`, `updates:time_scan:${pointId}#sanity`, `narration:${pointId}`,
       ]);
+      // 补的跳过交换必须与真实 A 服务同语义（定向复核实测）：首次 skip 即
+      // 锁定时间、本点输入机会标为已处理；stage/seal 保持该工作态；提交时
+      // world.advance 随点位结算翻为 consumed（后续叙事/读取视图一致）。
+      type WorkView = { timeLocked: boolean; working: { intentStatus: string } };
+      const skipWork = (scenario.corpus.steps.find((step) => step.id === 'b-skip-person_a')!.response as unknown as { work: WorkView }).work;
+      expect(skipWork.timeLocked).toBe(true);
+      expect(skipWork.working.intentStatus).toBe('consumed');
+      for (const operation of ['checkpoint_stage_time_scan', 'checkpoint_seal_point']) {
+        const stageWork = (scenario.corpus.steps.find((step) => step.operation === operation)!.response as unknown as { work: WorkView }).work;
+        expect(stageWork.timeLocked).toBe(true);
+        expect(stageWork.working.intentStatus).toBe('consumed');
+      }
+      const commitIndex = scenario.corpus.steps.findIndex((step) => step.operation === 'commit_point');
+      for (const step of scenario.corpus.steps.slice(commitIndex)) {
+        const view = step.response as unknown as { world?: { advance: { intentStatus: string } } };
+        if (view.world) expect(view.world.advance.intentStatus).toBe('consumed');
+      }
     } else {
       expect(calls).toEqual([`pointPlan:${scenario.roundId}`, 'action:person_c', 'targets:person_c', `results:${groupId}`, `updates:${groupId}#appearance`, `updates:${groupId}#tasks`, `updates:${groupId}#subtasks`, `narration:${pointId}`]);
     }

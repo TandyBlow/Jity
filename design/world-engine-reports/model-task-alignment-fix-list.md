@@ -204,3 +204,16 @@
 - 合法空点的判定改由「人物机会已处理」表达：调度器空点单测改为 visited=全序；controller 的 split-updates 测试同样改为已访问空点。新增强制反例：零覆盖计划＋未处理槽位必须问 action。
 
 **验证**：前端全量 484/484（world-engine 422）、两套 tsc 净、`npm run build` 通过；后端 `python -X utf8 -m pytest -q` 923/923。
+
+## 11. T03 补标本语义收口（2026-10-26，artifacts/slot-continuation-fixture-review.json）
+
+复核以真实 A 服务对照 T03 补的 `record_skip` 回包，发现只顺延了 revision、没跟上状态语义：补标本一直是 `work.timeLocked=false`、`working.intentStatus='pending'`，真实服务首次 skip 即返回 `timeLocked=true`、`working.intentStatus='consumed'`（两个样本一致）。
+
+**处理（场景标本，轨迹文件不动）**
+
+- 六条 `record_skip` 回包：`timeLocked=true`、`working.intentStatus='consumed'`（从首次 skip 起）。与 T01 录制中「stage 后即 consumed/locked」的语义对齐——跳过也是已确认的当前点工作。
+- 后续 stage_time_scan / seal 的工作态同步为 `consumed`（timeLocked 原本已 true）；提交点起（commit、narration claim/submit、其后的读取标本与世界视图）的 `world.advance.intentStatus='consumed'`——输入机会随点位结算提交时翻转，与 §5.1 一致。
+- 模型输入不变：六次行动判断读 `world.advance`（提交前仍 pending），与 T01 录制的行动输入一致；`work.*` 是点内工作标记，不冒充链级状态。
+- 回归：T03 断言首次 skip 的 `timeLocked/intentStatus`、stage/seal 的 `consumed`、提交及其后世界视图的 `advance.intentStatus=consumed`。
+
+**验证**：前端全量 484/484（world-engine 422）、两套 tsc 净、`npm run build` 通过；后端 `python -X utf8 -m pytest -q` 923/923。两处运行时守卫（空计划逐人判断、continuation 缺数据停止）按复核报告 v2 已通过，本轮不重开。

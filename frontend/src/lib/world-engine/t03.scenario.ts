@@ -355,7 +355,11 @@ export function buildT03Scenario(traceName: T03TraceName, sampleId: string): T03
     const order = envelope.world.round?.order ?? [];
     if (order.length === 0) throw new ProtocolError(`[${traceName}] empty-plan point has no frozen order to judge`);
     const skips: CorpusStep[] = order.map((actor, i) => {
-      const working = { cursor: i + 1, actedIds: [], visitedIds: order.slice(0, i + 1), settledUnitIds: [], intentStatus: 'pending' as const };
+      // 真实 A 服务在首次 skip 后返回 work.timeLocked=true、working.intentStatus
+      // =consumed（定向复核实测，两个样本一致）：跳过也是「已确认的当前点工作」，
+      // 锁定时间并把本点的输入机会标为已处理。world.advance.intentStatus 仍然
+      // 只在提交时随点位结算翻转（与 T01 录制一致）。
+      const working = { cursor: i + 1, actedIds: [], visitedIds: order.slice(0, i + 1), settledUnitIds: [], intentStatus: 'consumed' as const };
       return {
         id: `b-skip-${actor}`, sharedStepId: null, segment: 'controller' as const,
         operation: 'checkpoint_record_skip' as const,
@@ -372,7 +376,7 @@ export function buildT03Scenario(traceName: T03TraceName, sampleId: string): T03
           protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1',
           serverTimeEpochMilli: 1, replayed: false, operation: 'checkpoint_record_skip', requestId: `b_skip_${i}`, requestHash: `${i}`.repeat(64),
           world: envelope.world, control: { ...envelope.control, revision: 3 + i },
-          work: { ...envelope.work, working }, data: { pointId: envelope.work.pointId, working },
+          work: { ...envelope.work, timeLocked: true, working }, data: { pointId: envelope.work.pointId, working },
         } as unknown as Json,
         responseKind: 'success' as const, captures: [], digestChain: [],
       };
@@ -388,6 +392,22 @@ export function buildT03Scenario(traceName: T03TraceName, sampleId: string): T03
     rebind('checkpoint_stage_time_scan', 8, 9);
     rebind('checkpoint_seal_point', 9, 10);
     rebind('commit_point', 10, 11);
+    // 状态语义一并跟进（不是只顺延 revision）：跳过之后本点的输入机会已处理，
+    // 后续 stage/seal 的工作态保持 consumed；提交时 world.advance 随点位结算
+    // 翻为 consumed，之后叙事与读取的世界视图同样如此。
+    for (const operation of ['checkpoint_stage_time_scan', 'checkpoint_seal_point']) {
+      const step = corpus.steps.find((entry) => entry.operation === operation)!;
+      (step.response as unknown as { work: PointWork }).work = {
+        ...(step.response as unknown as { work: PointWork }).work,
+        working: { ...(step.response as unknown as { work: PointWork }).work.working, intentStatus: 'consumed' },
+      };
+    }
+    const commitIndex = corpus.steps.findIndex((entry) => entry.operation === 'commit_point');
+    for (const step of corpus.steps.slice(commitIndex)) {
+      const envelope = step.response as unknown as { world?: WorldContext };
+      if (!envelope.world) continue;
+      envelope.world = { ...envelope.world, advance: { ...envelope.world.advance, intentStatus: 'consumed' } };
+    }
     for (const step of corpus.steps) {
       if (step.segment !== 'preview') continue;
       // 阶段边界预览在拆分阶梯中途发出——此时 revision 已是跳过后的 8，
