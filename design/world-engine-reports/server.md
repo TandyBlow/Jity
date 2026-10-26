@@ -493,3 +493,94 @@ python backend/scripts/check_world_http_h2.py \
 执行顺序。R1 文字方案已收敛，但正式 Python/schema、导出/夹具、B 消费及新契约摘要
 尚未冻结。下一步先按共同变更流程落实这些读取能力，再固定新的 A/B 组合，运行
 真实 B 恢复控制器的 SQLite 刷新、接管及后继接续全链。A3-2/H2 保持未关闭。
+
+---
+
+# A3-2 A 端首批交付：R1 恢复读取候选（待 B 消费）
+
+日期：2026-10-26。按用户本轮范围，**只交付 A 端接口候选，由 B 接线**。
+实现提交 `4739ae4dbce284c7c73a5ca5efeebf35217a4f9c`，分支 `world-server`，
+基线 `3c81ad6`。上节所述 Python/导出/夹具缺口在本候选落实；B 消费、共同冻结及
+正式 H2 仍待完成，不把本批通过写成 A3-2 整体关闭。
+
+候选仍使用 protocolVersion 2；新增必填字段会改变恢复响应形状，**不宣称兼容旧 B**。
+旧摘要 `abda455597e743f63da1c205ca7bc68044728c5f92a3cb7ae920440ef324eedd` 更新为：
+
+```text
+bff913209dc3c91084912542b5ac7af8927b3e46f530ed162d2b759faf5d5afe
+```
+
+## 接口与事务行为
+
+- `FrozenGroupView` 必填完整 `rolls` 和 `progress`。每条 roll 保留原 result、target、
+  eligibilityBaselineDigest、eligible/admitted，包含拒绝判定；`reaction-d20-v1` 固定
+  target=11。`progress.sourceStack` 是保存的有序 DFS 栈，当前来源在首位，等待子树的
+  祖先继续保留；`threats` 逐键对应已确认目标，分 pending_roll、reaction_pending、handled。
+- handled 明确区分 none/created/reused。新行动的 created 接受边唯一且无环；其他已
+  定稿准入关系可 reused 同一行动，不覆盖原文、不重复压栈、不翻转旧 admitted。
+  新 roll 在目标已接受本组行动时按原时刻资格判为 ineligible，但仍保存完整判定。
+- 未确认目标 `null` 与已确认空目标 `[]` 保持区别。行动原文为 null 的占位成员必须
+  有已定稿准入的 reaction_pending 因果关系，确认原文后才 created/压栈，不能凭空占位。
+  恢复成员 rollRefs 是该成员发出的全部判定投影；入组请求 rollRefs 是本次接受的入向依据。
+- 新增 `world_progress_repository.py` / `progress.py`。SQL checkpoint 保存处理栈、
+  威胁及点/组/轮次/输入/时间/基线绑定；目标、roll、原文接受与对应推进同事务保存。
+  读取不根据成员排列制造处理顺序，核心适配记录不保存第二份 progress。
+  当前与预约后继各自使用独立基线，复制与原子提升后保持原事实。
+- `get_context` 声明 frozen_work_missing / frozen_work_corrupt。缺 checkpoint、roll
+  或资格基线返回 missing；坏内容、错关联、错栈或存储形状返回 corrupt。
+  HTTP context/restore 的错误信封不再次读取坏账本而变成 500，不重采样，也不写入成功记录。
+- 活动进度保留，提交/取消终结后可清理短期 progress，既有不可变 roll 保留。
+  旧开发库若已有活动组却没有进度 checkpoint，明确拒绝读取；使用新开发库或显式迁移，
+  不从旧成员顺序猜建历史接受边。
+
+共享导出、manifest、所有 trace pin 和消费摘要同步更新。T07 补全完整判定/进度，修正
+后继 F 尚待分析却标成空目标的矛盾；T09 补缺失/损坏读取拒绝及双样本绑定。
+这些是契约标本；真实事务证据来自以下 SQLite/HTTP 测试。B 业务源码和 TS 业务类型未改。
+
+## 验收
+
+| 新增测试模块 | 项数 | 主要验证 |
+|---|---:|---|
+| test_world_protocol_v2_recovery.py | 56 | 完整字段、威胁/roll 双向绑定、DFS/frontier、唯一接受边、nullable 因果关系、阈值及声明错误 |
+| test_world_progress.py | 20 | 真实 SQLite 断点、批量预掷/跨源复用、环、晚 roll、事务中断、缺损、接管原样复制及清理 |
+| test_world_recovery_http.py | 15 | context/restore 缺损两路 HTTP 拒绝、SQL 不变、零重掷、重开后完整事实读取 |
+
+最终后端全量 **1407 passed，61.05 秒**，3 条已有 SWIG 弃用警告。共同入口
+**PASS**：Python v1 109、v2 373，TS 类型、契约 38/轨迹 65及四类破坏探针全部通过；
+导出 `--check` 和 `git diff --check` 通过。
+
+实现 `4739ae4` 已推送；对应
+[CI 40350494711](https://github.com/TandyBlow/Jity/actions/runs/40350494711) 已完成，
+结论 **success**。本节交付记录另作文档提交，不改变上述已参测实现。
+
+独立只读复审发现模型允许无因果关系的 nullable 成员占位：先复现 3 失败/1 通过，
+修复后独立复跑新增 4 项通过。另在临时真实库验证 nullable 重开后凭原 roll 确认、
+当前和预约点同时接管/分别复制、预约已定稿判定及处理栈经原子提升保持一致；预约未来
+baseline、提升 current baseline、重开 SQL checkpoint binding 三者一致。存储形状错误
+补丁再独立复跑 HTTP 15 项通过。**本次 A 端候选范围未发现剩余阻断。**
+
+从 backend 运行；解释器及依赖设置沿用前节：
+
+```sh
+python -m pytest -q tests/test_world_protocol_v2_recovery.py \
+  tests/test_world_progress.py tests/test_world_recovery_http.py
+python -m pytest -q
+# 以下共同入口从根目录运行
+python backend/scripts/check_world_interface_baseline.py
+```
+
+## B 接线及下一次共同验收
+
+1. 获取本候选，成套同步共享 schema、api-contract、夹具/轨迹和摘要，更新 B 的
+   FrozenGroup 类型及消费代码；不能只替换摘要或过滤未知字段让旧验证器放行。
+2. 从 rolls 读取所有原判定；按 sourceStack 的首项和 threats 三态恢复。
+   created/reused 均复用已接受原文，只有真正 pending 的工作才继续生成。
+3. 正式 create_rolls 使用 reaction-d20-v1/target=11；B 当前固定的 reaction-fixture-v1
+   需要调整，固定骰点只用于显式测试配置。目标、trigger 和已有 rollId 均原样绑定。
+4. 保留完整 recovery 的二次对账及缺损停止守卫：create_rolls 不递增 checkpoint revision，
+   revision 相同不证明判定/进度未变化。
+5. B 消费候选通过后再确认共同摘要与版本策略，固定 A/B 提交，运行真实 B 控制器的
+   SQLite 刷新/接管、当前＋后继接续、多源/环/批量判定及损坏/迁移反例，记录 H2 结果。
+
+本批未改 B 恢复业务，未运行新版 B 控制器的正式 H2。
+候选交付与共同冻结、A3-2 整体验收分别记录。
