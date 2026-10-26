@@ -15,6 +15,11 @@ function requireRecovery(condition: unknown, reason: string): asserts condition 
   if (!condition) throw new RecoveryStopped(reason);
 }
 
+/** Threat identity across progress entries and final roll rows. */
+function threatKey(item: { sourceId: Id; targetId: Id; triggerKey: Id }): string {
+  return `${item.sourceId}|${item.targetId}|${item.triggerKey}`;
+}
+
 /** JSON equality for wire records; property insertion order is irrelevant. */
 function equal(a: unknown, b: unknown): boolean {
   const normalize = (value: unknown): unknown => {
@@ -37,8 +42,9 @@ function snapshot(world: WorldContext): unknown {
 export type PointMemory = Pick<ControllerMemory, 'staged' | 'stagedTimeScan' | 'groupActors' | 'groupActions' | 'sources' | 'lastResults' | 'restoredUnit'>;
 
 /** Copy only confirmed current work. Missing fields are never empty work.
- * The wire currently lacks roll outcomes: when those facts are needed we
- * stop rather than re-roll or send a results task an invented empty list. */
+ * The recovery payload now carries the full dice facts (rolls) and the
+ * persisted DFS checkpoint (progress); neither is ever re-derived from
+ * member order, and a rejected roll is still reported to results. */
 export function recoverPoint(point: PointRecovery, world: WorldContext, baseline: Baseline = { headPointId: world.head.pointId, version: world.head.version, stateDigest: world.head.stateDigest }): PointMemory {
   const work = point.work;
   requireRecovery(equal(work.baseline, baseline), 'recovery_baseline_mismatch');
@@ -69,9 +75,29 @@ export function recoverPoint(point: PointRecovery, world: WorldContext, baseline
   const group = point.groups.find((g) => g.groupId === pending.groupId);
   requireRecovery(group, `recovery_group_missing:${pending.groupId}`);
   requireRecovery(equal(group.members.map((m) => m.memberId).sort(), [...pending.memberIds].sort()), 'recovery_members_mismatch');
+  // Independent cross-checks over the payload the wire schema cannot bind:
+  // threat progress mirrors confirmed targets one-to-one, every non-pending
+  // threat references exactly one final roll of the same key, and rolls
+  // never outrun their references.
+  const threats = new Map(group.progress.threats.map((t) => [threatKey(t), t] as const));
+  const rolls = new Map(group.rolls.map((r) => [threatKey(r), r] as const));
+  const confirmed = new Set(group.members.flatMap((m) => (m.targets ?? []).map((t) => threatKey({ sourceId: m.memberId, targetId: t.targetId, triggerKey: t.triggerKey }))));
+  requireRecovery(threats.size === confirmed.size && [...threats.keys()].every((key) => confirmed.has(key)), 'recovery_progress_target_mismatch');
+  for (const [key, threat] of threats) {
+    const roll = rolls.get(key);
+    if (threat.status === 'pending_roll') requireRecovery(roll === undefined, 'recovery_progress_roll_conflict');
+    else requireRecovery(roll !== undefined && threat.rollId === roll.rollId, 'recovery_progress_roll_mismatch');
+  }
+  requireRecovery(rolls.size === [...threats.values()].filter((t) => t.status !== 'pending_roll').length, 'recovery_progress_roll_unreferenced');
+  // Reaction-pending members are placeholders awaiting their generated
+  // reaction; every other member must carry confirmed frozen text.
+  const pendingReactions = new Set([...threats.values()].filter((t) => t.status === 'reaction_pending').map((t) => t.targetId));
   for (const member of group.members) {
-    requireRecovery(typeof member.actionText === 'string' && member.actionText.length > 0, `frozen_actions_missing:${member.memberId}`);
-    memory.groupActions.push({ memberId: member.memberId, actionText: member.actionText, rolls: [] });
+    requireRecovery(member.actionText === null ? pendingReactions.has(member.memberId) : member.actionText.length > 0, `frozen_actions_missing:${member.memberId}`);
+    if (member.actionText !== null) {
+      memory.groupActions.push({ memberId: member.memberId, actionText: member.actionText,
+        rolls: group.rolls.filter((roll) => roll.sourceId === member.memberId).map((roll) => ({ targetId: roll.targetId, rollId: roll.rollId, result: roll.result, eligible: roll.eligible, admitted: roll.admitted })) });
+    }
     if (!memory.groupActors.includes(member.memberId)) memory.groupActors.push(member.memberId);
   }
   const results = Object.fromEntries(group.members.filter((m) => m.resultText !== null).map((m) => [m.memberId, m.resultText! ]));
@@ -83,21 +109,43 @@ export function recoverPoint(point: PointRecovery, world: WorldContext, baseline
     memory.restoredUnit = { groupId: group.groupId, actorIds: [...pending.memberIds], candidates: structuredClone(group.candidates), results };
     return memory;
   }
-  // A saved result permits updates without asking results again. Otherwise
-  // closed groups need ALL dice facts, which rollRefs alone cannot provide.
-  if (pending.closed && memory.lastResults) return memory;
-  requireRecovery(group.members.every((m) => m.rollRefs.length === 0), 'recovery_roll_outcomes_missing');
-  if (pending.closed) {
-    requireRecovery(group.members.every((m) => m.targets !== null && m.targets.length === 0), 'recovery_roll_outcomes_missing');
+  // A saved result permits updates without asking results again. Closed
+  // groups without saved results go straight to the results task instead:
+  // groupActions above already carries every confirmed member's frozen text
+  // and full dice facts, including rejected rolls.
+  if (group.candidates) {
+    requireRecovery(pending.closed && memory.lastResults, 'recovery_candidates_without_results');
+    memory.restoredUnit = { groupId: group.groupId, actorIds: [...pending.memberIds], candidates: structuredClone(group.candidates), results };
     return memory;
   }
-  // Multiple open sources require the saved reaction/roll frontier, not a
-  // guessed member order. The current wire provides insufficient dice facts.
-  requireRecovery(group.members.length === 1 && group.members[0].memberId === pending.sourceId, 'recovery_frontier_incomplete');
-  const member = group.members[0];
-  const source: SourceAnalysis = { sourceId: member.memberId, actionText: member.actionText!, targetsExtended: member.targets !== null,
-    pendingTargets: [...member.targets ?? []].sort((a, b) => a.targetId < b.targetId ? -1 : 1).map((t) => ({ ...t, rule: PROGRAM_ROLL_RULE })), rolled: [] };
-  if (!source.targetsExtended || source.pendingTargets.length) memory.sources = [source];
+  if (pending.closed) {
+    requireRecovery(group.progress.sourceStack.length === 0, 'recovery_closed_stack_remaining');
+    return memory;
+  }
+  // Rebuild the saved DFS checkpoint instead of guessing an order from
+  // member layout: sourceStack[0] is the source to work on, the tail is the
+  // initiator. Threat states decide what each frame still owes — a
+  // pending_roll frame re-rolls the SAME key, a reaction_pending frame
+  // generates only the unconfirmed reaction, and handled frames simply wait
+  // until the subtree saved above them finishes. Frames are never re-pushed
+  // here: the stack is the server-persisted truth.
+  if (group.progress.sourceStack.length === 0) return memory; // every threat handled; the next decision is close_group
+  const members = new Map(group.members.map((m) => [m.memberId, m] as const));
+  const order = (a: { targetId: Id; triggerKey: Id }, b: { targetId: Id; triggerKey: Id }) =>
+    a.targetId < b.targetId ? -1 : a.targetId > b.targetId ? 1 : a.triggerKey < b.triggerKey ? -1 : a.triggerKey > b.triggerKey ? 1 : 0;
+  memory.sources = group.progress.sourceStack.map((sourceId) => {
+    const actionText = members.get(sourceId)?.actionText ?? null;
+    requireRecovery(typeof actionText === 'string' && actionText.length > 0, `recovery_stack_source_unconfirmed:${sourceId}`);
+    const mine = [...threats.values()].filter((t) => t.sourceId === sourceId);
+    const pendingTargets = mine.filter((t) => t.status === 'pending_roll')
+      .map((t) => ({ targetId: t.targetId, triggerKey: t.triggerKey, rule: PROGRAM_ROLL_RULE })).sort(order);
+    const rolled = mine.filter((t) => t.status !== 'pending_roll').map((t) => {
+      const roll = rolls.get(threatKey(t))!;
+      return { targetId: t.targetId, triggerKey: t.triggerKey, rule: { ruleVersion: roll.ruleVersion, target: roll.target },
+        rollId: roll.rollId, admitted: roll.admitted, reacted: t.status === 'handled' };
+    }).sort(order);
+    return { sourceId, actionText, targetsExtended: members.get(sourceId)!.targets !== null, pendingTargets, rolled };
+  });
   return memory;
 }
 

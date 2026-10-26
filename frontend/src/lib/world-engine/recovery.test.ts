@@ -324,22 +324,183 @@ describe('H2 frozen work', () => {
     expect(() => recoverPoint(c.recovery!.current!, c.world)).toThrow(reason);
   });
 
-  test('closed unsettled group without roll outcomes explicitly stops; never re-rolls to recover missing facts', async () => {
+  test('a closed group without saved results consumes the full dice facts, rejected rolls included', async () => {
     const c = openContext();
     const p = c.recovery!.current!;
+    const group = p.groups[0];
     p.work.pendingGroup!.closed = true;
     p.work.pendingGroup!.frontierIds = [];
+    p.work.pendingGroup!.targetIds = ['person_d'];
     p.work.phase = 'settle_group';
-    p.groups[0].members[0].targets = [{ targetId: 'person_d', triggerKey: 'trigger_cd' }];
-    p.groups[0].members[0].rollRefs = [{ sourceId: 'person_c', targetId: 'person_d', triggerKey: 'trigger_cd', rollId: 'roll_cd' }];
+    c.control.phase = 'settle_group';
+    group.members[0].targets = [{ targetId: 'person_d', triggerKey: 'trigger_cd' }];
+    group.members[0].rollRefs = [{ sourceId: 'person_c', targetId: 'person_d', triggerKey: 'trigger_cd', rollId: 'roll_cd' }];
+    group.rolls = [{ rollId: 'roll_cd', groupId: 'group_cd', sourceId: 'person_c', targetId: 'person_d', triggerKey: 'trigger_cd',
+      ruleVersion: 'reaction-fixture-v1', target: 11, result: 4, eligibilityBaselineDigest: 'a'.repeat(64), eligible: false, admitted: false }];
+    group.progress = { sourceStack: [], threats: [{ sourceId: 'person_c', targetId: 'person_d', triggerKey: 'trigger_cd',
+      status: 'handled', rollId: 'roll_cd', actionDisposition: 'none', reactionMemberId: null }] };
+    c.work = copy(p.work);
+    const t = new RecoveryTransport(c);
+    t.extra = (op) => {
+      expect(op).toBe('preview_point');
+      return { world: c.world, control: c.control, work: c.work, data: { workingState: stateFixture.data.state, pointProjection: {} } };
+    };
+    const m = model();
+    const driver = new ControllerDriver({ transport: t, model: m.port }, initialMemory('fresh', 'new_holder'));
+    expect(await driver.recover('world_school')).toBeUndefined();
+    expect(driver.getMemory().groupActions).toEqual([{ memberId: 'person_c', actionText: 'C 推开重门，示意 D 避开门边。',
+      rolls: [{ targetId: 'person_d', rollId: 'roll_cd', result: 4, eligible: false, admitted: false }] }]);
+    await driver.step(); // preview
+    await driver.step(); // results
+    expect(m.calls).toHaveLength(1);
+    expect(m.calls[0]).toMatchObject({ task: 'results', key: 'group_cd',
+      input: { members: [{ memberId: 'person_c', actionText: 'C 推开重门，示意 D 避开门边。',
+        rollRefs: [{ targetId: 'person_d', rollId: 'roll_cd', result: 4, eligible: false, admitted: false }] }] } });
+  });
+
+  test('progress referencing a missing final roll stops; corrupted dice facts are never re-rolled', async () => {
+    const c = openContext();
+    const p = c.recovery!.current!;
+    const group = p.groups[0];
+    p.work.pendingGroup!.closed = true;
+    p.work.pendingGroup!.frontierIds = [];
+    group.members[0].targets = [{ targetId: 'person_d', triggerKey: 'trigger_cd' }];
+    group.members[0].rollRefs = [{ sourceId: 'person_c', targetId: 'person_d', triggerKey: 'trigger_cd', rollId: 'roll_cd' }];
+    group.progress = { sourceStack: [], threats: [{ sourceId: 'person_c', targetId: 'person_d', triggerKey: 'trigger_cd',
+      status: 'handled', rollId: 'roll_cd', actionDisposition: 'none', reactionMemberId: null }] };
+    // group.rolls stays empty: the handled threat references a missing row.
     c.work = copy(p.work);
     const t = new RecoveryTransport(c);
     const m = model();
     const driver = new ControllerDriver({ transport: t, model: m.port }, initialMemory('fresh', 'new_holder'));
-    expect(await driver.recover('world_school')).toEqual({ kind: 'stop', reason: 'recovery_roll_outcomes_missing' });
-    expect(await driver.run()).toEqual({ kind: 'stop', reason: 'recovery_roll_outcomes_missing' });
+    expect(await driver.recover('world_school')).toEqual({ kind: 'stop', reason: 'recovery_progress_roll_mismatch' });
+    expect(await driver.run()).toEqual({ kind: 'stop', reason: 'recovery_progress_roll_mismatch' });
     expect(m.calls).toEqual([]);
     expect(t.calls.map((c) => c.operation)).toEqual(['lease_acquire', 'get_context']);
+  });
+
+  test('a multi-source group resumes from the saved stack: T07 shape, saved frames are never re-pushed', async () => {
+    const c = openContext();
+    const p = c.recovery!.current!;
+    const group = p.groups[0];
+    p.work.pendingGroup = { groupId: 'group_cef', sourceId: 'person_c', memberIds: ['person_c', 'person_e', 'person_f'], targetIds: ['person_e', 'person_f'], frontierIds: ['person_f'], closed: false };
+    group.groupId = 'group_cef';
+    // C pre-rolled E and F; inside E's subtree E first accepted F, so C→F is
+    // handled/reused. F is the unanalysed stack head, E only waits on it.
+    group.members = [
+      { memberId: 'person_c', actionText: 'C 推开重门，示意 D 避开门边。', targets: [{ targetId: 'person_e', triggerKey: 'trigger_ce' }, { targetId: 'person_f', triggerKey: 'trigger_cf' }], resultText: null,
+        rollRefs: [{ sourceId: 'person_c', targetId: 'person_e', triggerKey: 'trigger_ce', rollId: 'roll_ce' }, { sourceId: 'person_c', targetId: 'person_f', triggerKey: 'trigger_cf', rollId: 'roll_cf' }] },
+      { memberId: 'person_e', actionText: 'E 稳住门轴。', targets: [{ targetId: 'person_f', triggerKey: 'trigger_ef' }], resultText: null,
+        rollRefs: [{ sourceId: 'person_e', targetId: 'person_f', triggerKey: 'trigger_ef', rollId: 'roll_ef' }] },
+      { memberId: 'person_f', actionText: 'F 护住门边。', targets: null, resultText: null, rollRefs: [] },
+    ];
+    group.acceptedSources = [
+      { memberId: 'person_c', sourceEpoch: 7, sourceAttempt: 1, actionContentHash: 'a'.repeat(64), resultContentHash: null, targetsContentHash: 'b'.repeat(64), candidatesContentHash: null },
+      { memberId: 'person_e', sourceEpoch: 7, sourceAttempt: 1, actionContentHash: 'c'.repeat(64), resultContentHash: null, targetsContentHash: 'd'.repeat(64), candidatesContentHash: null },
+      { memberId: 'person_f', sourceEpoch: 7, sourceAttempt: 1, actionContentHash: 'e'.repeat(64), resultContentHash: null, targetsContentHash: null, candidatesContentHash: null },
+    ];
+    group.rolls = [
+      { rollId: 'roll_ce', groupId: 'group_cef', sourceId: 'person_c', targetId: 'person_e', triggerKey: 'trigger_ce', ruleVersion: 'reaction-fixture-v1', target: 11, result: 15, eligibilityBaselineDigest: 'f'.repeat(64), eligible: true, admitted: true },
+      { rollId: 'roll_cf', groupId: 'group_cef', sourceId: 'person_c', targetId: 'person_f', triggerKey: 'trigger_cf', ruleVersion: 'reaction-fixture-v1', target: 11, result: 15, eligibilityBaselineDigest: 'f'.repeat(64), eligible: true, admitted: true },
+      { rollId: 'roll_ef', groupId: 'group_cef', sourceId: 'person_e', targetId: 'person_f', triggerKey: 'trigger_ef', ruleVersion: 'reaction-fixture-v1', target: 11, result: 12, eligibilityBaselineDigest: 'f'.repeat(64), eligible: true, admitted: true },
+    ];
+    group.progress = { sourceStack: ['person_f', 'person_e', 'person_c'], threats: [
+      { sourceId: 'person_c', targetId: 'person_e', triggerKey: 'trigger_ce', status: 'handled', rollId: 'roll_ce', actionDisposition: 'created', reactionMemberId: 'person_e' },
+      { sourceId: 'person_c', targetId: 'person_f', triggerKey: 'trigger_cf', status: 'handled', rollId: 'roll_cf', actionDisposition: 'reused', reactionMemberId: 'person_f' },
+      { sourceId: 'person_e', targetId: 'person_f', triggerKey: 'trigger_ef', status: 'handled', rollId: 'roll_ef', actionDisposition: 'created', reactionMemberId: 'person_f' }] };
+    c.work = copy(p.work);
+    const t = new RecoveryTransport(c);
+    t.extra = (op) => {
+      expect(op).toBe('preview_point');
+      return { world: c.world, control: c.control, work: c.work, data: { workingState: stateFixture.data.state, pointProjection: {} } };
+    };
+    const m = model();
+    const driver = new ControllerDriver({ transport: t, model: m.port }, initialMemory('fresh', 'new_holder'));
+    expect(await driver.recover('world_school')).toBeUndefined();
+    // The saved stack IS the order: current source first, initiator last;
+    // F is already on it and nothing is pushed again on top of it.
+    expect(driver.getMemory().sources.map((s) => s.sourceId)).toEqual(['person_f', 'person_e', 'person_c']);
+    expect(driver.getMemory().groupActions.map((m) => m.memberId)).toEqual(['person_c', 'person_e', 'person_f']);
+    await driver.step(); // preview
+    await driver.step(); // F targets — the only unfinished source in the frontier
+    expect(m.calls).toHaveLength(1);
+    expect(m.calls[0]).toMatchObject({ task: 'targets', key: 'person_f', input: { sourceId: 'person_f', actionText: 'F 护住门边。' } });
+  });
+
+  test('a saved pending_roll threat re-rolls the SAME key, never a new trigger identity', async () => {
+    const c = openContext();
+    const p = c.recovery!.current!;
+    const group = p.groups[0];
+    group.members[0].targets = [{ targetId: 'person_d', triggerKey: 'trigger_cd' }];
+    group.rolls = [];
+    group.progress = { sourceStack: ['person_c'], threats: [{ sourceId: 'person_c', targetId: 'person_d', triggerKey: 'trigger_cd', status: 'pending_roll', rollId: null, reactionMemberId: null }] };
+    p.work.pendingGroup!.targetIds = ['person_d'];
+    c.work = copy(p.work);
+    const t = new RecoveryTransport(c);
+    t.extra = (op) => {
+      expect(op).toBe('create_rolls');
+      return { world: c.world, control: c.control, work: c.work, data: { rolls: [{ rollId: 'roll_cd', result: 15, eligible: true, admitted: true }] } };
+    };
+    const m = model();
+    const driver = new ControllerDriver({ transport: t, model: m.port }, initialMemory('fresh', 'new_holder'));
+    expect(await driver.recover('world_school')).toBeUndefined();
+    await driver.step(); // create_rolls — a transport decision, no preview needed
+    const call = t.calls.find((c) => c.operation === 'create_rolls');
+    expect(call).toBeDefined();
+    expect((call!.request as RequestMap['create_rolls']).rolls[0]).toMatchObject({
+      groupId: 'group_cd', sourceId: 'person_c', targetId: 'person_d', triggerKey: 'trigger_cd', ruleVersion: 'reaction-fixture-v1', target: 11 });
+    expect(m.calls).toEqual([]);
+  });
+
+  test('a saved reaction_pending threat generates only the unconfirmed reaction', async () => {
+    const c = openContext();
+    const p = c.recovery!.current!;
+    const group = p.groups[0];
+    group.members[0].targets = [{ targetId: 'person_d', triggerKey: 'trigger_cd' }];
+    group.members.push({ memberId: 'person_d', actionText: null, targets: null, resultText: null, rollRefs: [] });
+    p.work.pendingGroup!.memberIds = ['person_c', 'person_d'];
+    p.work.pendingGroup!.targetIds = ['person_d'];
+    group.rolls = [{ rollId: 'roll_cd', groupId: 'group_cd', sourceId: 'person_c', targetId: 'person_d', triggerKey: 'trigger_cd', ruleVersion: 'reaction-fixture-v1', target: 11, result: 15, eligibilityBaselineDigest: 'f'.repeat(64), eligible: true, admitted: true }];
+    group.progress = { sourceStack: ['person_c'], threats: [{ sourceId: 'person_c', targetId: 'person_d', triggerKey: 'trigger_cd', status: 'reaction_pending', rollId: 'roll_cd', reactionMemberId: null }] };
+    c.work = copy(p.work);
+    const t = new RecoveryTransport(c);
+    t.extra = (op) => {
+      expect(op).toBe('preview_point');
+      return { world: c.world, control: c.control, work: c.work, data: { workingState: stateFixture.data.state, pointProjection: {} } };
+    };
+    const m = model();
+    const driver = new ControllerDriver({ transport: t, model: m.port }, initialMemory('fresh', 'new_holder'));
+    expect(await driver.recover('world_school')).toBeUndefined();
+    expect(driver.getMemory().groupActions.map((m) => m.memberId)).toEqual(['person_c']);
+    await driver.step(); // preview
+    await driver.step(); // reaction
+    expect(m.calls).toHaveLength(1);
+    expect(m.calls[0]).toMatchObject({ task: 'reaction', key: 'person_c', input: { sourceId: 'person_c', memberId: 'person_d', rollId: 'roll_cd' } });
+  });
+
+  test('an open group whose every threat is handled goes straight to close_group', async () => {
+    const c = openContext();
+    const p = c.recovery!.current!;
+    const group = p.groups[0];
+    group.members[0].targets = [{ targetId: 'person_d', triggerKey: 'trigger_cd' }];
+    group.rolls = [{ rollId: 'roll_cd', groupId: 'group_cd', sourceId: 'person_c', targetId: 'person_d', triggerKey: 'trigger_cd', ruleVersion: 'reaction-fixture-v1', target: 11, result: 4, eligibilityBaselineDigest: 'f'.repeat(64), eligible: false, admitted: false }];
+    group.progress = { sourceStack: [], threats: [{ sourceId: 'person_c', targetId: 'person_d', triggerKey: 'trigger_cd', status: 'handled', rollId: 'roll_cd', actionDisposition: 'none', reactionMemberId: null }] };
+    p.work.pendingGroup!.targetIds = ['person_d'];
+    c.work = copy(p.work);
+    const t = new RecoveryTransport(c);
+    t.extra = (op) => {
+      expect(op).toBe('checkpoint_close_group');
+      return { world: c.world, control: c.control, work: c.work, data: {} };
+    };
+    const m = model();
+    const driver = new ControllerDriver({ transport: t, model: m.port }, initialMemory('fresh', 'new_holder'));
+    expect(await driver.recover('world_school')).toBeUndefined();
+    expect(driver.getMemory().sources).toEqual([]);
+    expect(driver.getMemory().groupActions[0].rolls).toEqual([{ targetId: 'person_d', rollId: 'roll_cd', result: 4, eligible: false, admitted: false }]);
+    await driver.step(); // close_group
+    const call = t.calls.find((c) => c.operation === 'checkpoint_close_group');
+    expect(call).toBeDefined();
+    expect(m.calls).toEqual([]);
   });
 
   test('restore timeout retries identical request and manifest, then reads original text', async () => {

@@ -49,7 +49,13 @@ export interface SettlementGroup { groupId: Id | null; actorIds: Id[]; positions
 export interface ManifestItem { memberId: Id; actionContentHash: Digest; targetsContentHash: Digest | null; resultContentHash: Digest | null; candidatesContentHash: Digest | null }
 export interface GroupSource { pointId: Id; groupId: Id; sourceEpoch: number; sourceAttempt: number; manifest: ManifestItem[] }
 export interface RollRef { sourceId: Id; targetId: Id; triggerKey: Id; rollId: Id }
-export interface FrozenGroup { groupId: Id; pointId: Id; inputProjectionHash: Digest; members: { memberId: Id; actionText: string | null; targets: { targetId: Id; triggerKey: Id }[] | null; resultText: string | null; rollRefs: RollRef[] }[]; acceptedSources: (ManifestItem & { sourceEpoch: number; sourceAttempt: number })[]; candidates: SettlementGroup | null }
+export interface RollOutcome { rollId: Id; groupId: Id; sourceId: Id; targetId: Id; triggerKey: Id; ruleVersion: 'reaction-fixture-v1' | 'reaction-d20-v1'; target: number; result: number; eligibilityBaselineDigest: Digest; eligible: boolean; admitted: boolean }
+export type ThreatProgress =
+  | { sourceId: Id; targetId: Id; triggerKey: Id; status: 'pending_roll'; rollId: null; reactionMemberId: null }
+  | { sourceId: Id; targetId: Id; triggerKey: Id; status: 'reaction_pending'; rollId: Id; reactionMemberId: null }
+  | { sourceId: Id; targetId: Id; triggerKey: Id; status: 'handled'; rollId: Id; actionDisposition: 'none' | 'created' | 'reused'; reactionMemberId: Id | null };
+export interface GroupProgress { sourceStack: Id[]; threats: ThreatProgress[] }
+export interface FrozenGroup { groupId: Id; pointId: Id; inputProjectionHash: Digest; members: { memberId: Id; actionText: string | null; targets: { targetId: Id; triggerKey: Id }[] | null; resultText: string | null; rollRefs: RollRef[] }[]; acceptedSources: (ManifestItem & { sourceEpoch: number; sourceAttempt: number })[]; candidates: SettlementGroup | null; rolls: RollOutcome[]; progress: GroupProgress }
 export interface PointRecovery { work: PointWork; payloadStatus: 'available' | 'restore_required'; restoreSources: GroupSource[]; groups: FrozenGroup[]; timeScanCandidates: SettlementGroup | null }
 export interface Recovery { fenceEpoch: number; current: PointRecovery | null; successor: PointRecovery | null }
 export interface VersionBlock { protocolVersion: 2; engineVersion: 'world-engine-v1'; schemaVersion: 2; canonicalVersion: 'world-canonical-v1'; serverTimeEpochMilli: number }
