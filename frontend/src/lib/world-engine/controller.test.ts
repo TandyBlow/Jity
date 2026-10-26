@@ -507,6 +507,62 @@ describe('review regressions (553e341 findings)', () => {
     expect(memory.updatesApplied).toBe(0); // 阶梯已被 stage_time_scan 消费
   });
 
+  test('#5 v5 修正回归：本批已生产的任务达成共同投影——个性阶段读到 achieved', async () => {
+    // 真实服务 v5 组合路径：tasks 同批声明「已有任务 t1＋新任务 v13 达成」，
+    // subtasks 生产 v13。边界 1 时 v13 尚无生产者（延后、只应用 t1）；边界
+    // 2 起本批候选已生产 v13——引用随合并候选交 A 共同投影，不再滤掉：
+    // 个性阶段的输入必须已含 v13=achieved（此前被继续延后导致读错输入）。
+    const world = mkWorld({ head: { pointId: 'root', version: 0, stateDigest: 'd0', narrationStatus: 'ready' }, lease: { fenceEpoch: 1, expiresAtEpochMilli: 999999 }, activePointId: 'p1', activeRoundId: 'r1', advance: { advanceId: 'adv1', inputId: 'in1', intentStatus: 'consumed', inputAvailable: false } });
+    const control = mkControl({ revision: 2 });
+    const work = mkWork({ working: { cursor: 1, actedIds: ['person_a'], visitedIds: ['person_a'], settledUnitIds: [], intentStatus: 'consumed' } });
+    const taskOf = (id: string, status: 'pending' | 'achieved') => ({ id, ownerId: 'person_a', parentTaskId: id === 'v13' ? 't1' : null, goal: `任务${id}`, status });
+    const stateWithTasks = (tasks: Record<string, ReturnType<typeof taskOf>>) => ({ ...workingState(), characters: { ...workingState().characters, person_a: { ...workingState().characters.person_a, tasks } } });
+    const previewEnvelope = (state: unknown) => ({
+      protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1,
+      operation: 'preview_point', world, control, work,
+      data: { pointId: 'p1', pointProjection: { worldId: 'w1', id: 'p1', sequence: 1, kind: 'normal', previousPointId: 'root', roundId: 'r1', advanceId: 'adv1', trigger: 'player', linkedFromPointId: null, timeAdvance: ta(2), entityDeltas: {} }, mergedEntityDeltas: {}, workingStateDigest: 'wsd', pointProjectionDigest: 'ppd', workingState: state },
+    });
+    const transport = new ScriptedTransport([
+      { op: 'preview_point', respond: (r) => {
+        const group = (r as { settlementGroups: { tasksAchieved: Record<string, string[]>; subtasksAdded: Record<string, unknown[]> }[] }).settlementGroups[0];
+        if (JSON.stringify(group.tasksAchieved.person_a) !== JSON.stringify(['t1'])) throw new Error(`boundary 1 must defer the not-yet-produced v13, got ${JSON.stringify(group.tasksAchieved)}`);
+        return previewEnvelope(stateWithTasks({ t1: taskOf('t1', 'achieved') }));
+      } },
+      { op: 'preview_point', respond: (r) => {
+        // 共同投影：v13 的达成与本批生产（subtasksAdded）同批折入。
+        const group = (r as { settlementGroups: { tasksAchieved: Record<string, string[]>; subtasksAdded: Record<string, { id: string }[]> }[] }).settlementGroups[0];
+        if (JSON.stringify(group.tasksAchieved.person_a) !== JSON.stringify(['t1', 'v13'])) throw new Error(`boundary 2 must carry the batch-produced achievement, got ${JSON.stringify(group.tasksAchieved)}`);
+        if (!group.subtasksAdded.person_a?.some((task) => task.id === 'v13')) throw new Error('boundary 2 lost the producer');
+        return previewEnvelope(stateWithTasks({ t1: taskOf('t1', 'achieved'), v13: taskOf('v13', 'achieved') }));
+      } },
+    ]);
+    const model = new ScriptedModel([
+      { task: 'updates', output: { stage: 'tasks', changes: { person_a: { tasksAchieved: ['t1', 'v13'] } } } as unknown as Json },
+      { task: 'updates', output: { stage: 'subtasks', changes: { person_a: { subtasksAdded: [{ id: 'v13', ownerId: 'person_a', parentTaskId: 't1', goal: '任务v13', status: 'pending' }] } } } as unknown as Json },
+      { task: 'updates', output: { stage: 'personality', changes: {} } as unknown as Json },
+    ]);
+    const memory = initialMemory('req', 'browser');
+    memory.leaseToken = 'lease1';
+    memory.workingState = { key: workingStateKey(work), state: stateWithTasks({ t1: taskOf('t1', 'pending') }) as never };
+    memory.plan = [{ pointId: 'p1', kind: 'normal' as const, timeAdvance: ta(2), actorIds: ['person_a'] }];
+    memory.groupActors = ['person_a'];
+    memory.updatesStages = ['tasks', 'subtasks', 'personality'];
+    const driver = new ControllerDriver({ transport, model }, memory, { world, control, work });
+    await driver.step(); // updates#tasks
+    await driver.step(); // 边界 1：v13 无生产者——延后，只应用 t1
+    expect(memory.updatesPendingRefs).toEqual(['person_a:v13']);
+    await driver.step(); // subtasks 模型（读 t1 已应用状态）
+    await driver.step(); // 边界 2：v13 已由本批生产——共同投影，不再延后
+    expect(memory.updatesPendingRefs).toEqual([]); // 边界干净——未决清零
+    expect(memory.updatesPreviewSkipped).toBe(0); // 应用了整批——不是跳过
+    expect(memory.updatesApplied).toBe(2);
+    await driver.step(); // personality 模型——必须读到 v13=achieved
+    expect(transport.ops).toEqual(['preview_point', 'preview_point']);
+    const personalityInput = model.calls[2].input as { workingState: { characters: Record<string, { tasks: Record<string, { status: string }> }> } };
+    expect(personalityInput.workingState.characters.person_a.tasks.v13.status).toBe('achieved');
+    expect(personalityInput.workingState.characters.person_a.tasks.t1.status).toBe('achieved');
+  });
+
   test('#5 复审修正：无生产者的悬挂引用即使同批有可达变化也立即停止', async () => {
     // updatesStages=['tasks','sanity']：v13 既无剩余生产者、也已生产集中无主，
     // 明确停止（模型契约违约，快速失败、零网络调用）；停止原因携带引用。

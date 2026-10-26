@@ -24,17 +24,22 @@
  *
  * T03-collapse's task/change/point/group allocation is controller-issued
  * before pointPlan. Identities are adopted from its actual response; only
- * the initial get_context is a harness bootstrap. */
+ * the initial get_context is a harness bootstrap.
+ *
+ * #5 场景级多阶段（2026-10-26 验收）：两条轨迹的录制候选按规范阶段无损分解
+ * 为逐阶段 updates 调用（T03=tasks→personality→sanity；collapse=appearance
+ * →tasks→subtasks），阶段边界插入 B 授权的部分应用正文预览标本。合并候选
+ * 与录制逐字一致，无需语料适配；崩溃组的 tasks 边界触发前向引用拆分（被
+ * 延后的达成不入预览，仅可达部分随边界应用），与驱动器发送前预检逐步镜像。 */
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { ControllerDriver, initialMemory } from './controller';
+import { assembleCandidates, mergeUpdatesStages, timeScanCandidates, triggerSlotKey, type UpdatesCall, type UpdatesStage } from './schedule';
 import { buildCorpus, ScenarioModelPort, ScenarioTransport, type Corpus, type DeclaredModelCall, type PreviewSpecimenSpec, type ReadStateSpecimenSpec } from './harness';
 import { ProtocolError } from './protocol';
-import { triggerSlotKey } from './schedule';
 import { equal, instantiate, readTrace } from './trace-runner';
 import { advanceTime, type WallTime } from './t02.scenario';
-import type { UpdatesCall, UpdatesStage } from './schedule';
-import type { ControlState, Id, Json, WorldContext } from './types';
+import type { ControlState, EntityDelta, Id, Json, SettlementGroup, WorldContext } from './types';
 
 export type T03TraceName = 'T03' | 'T03-collapse';
 
@@ -206,6 +211,83 @@ export function buildT03Scenario(traceName: T03TraceName, sampleId: string): T03
     return specimenBody(chosen).workingState;
   };
 
+  // —— #5 场景级多阶段声明（2026-10-26 验收）——录制候选按规范阶段无损分解
+  // 为逐阶段模型调用；阶梯在阶段边界经 preview 应用前序候选（部分阶段预览），
+  // 最终合并候选与录制逐字一致（transport 的请求全等断言即独立期望）。边界
+  // 正文=最终态去掉未应用阶段的内容（部分应用态，时间取点位推进值）；崩溃
+  // 组的 tasks 阶段边界触发前向引用拆分——被延后的达成绝不入预览，仅可达
+  // 部分随边界再次应用（与驱动器的发送前预检逐步镜像）。轨迹文件不动。
+  const stageStep = steps.find((s) => s.operation === (traceName === 'T03' ? 'checkpoint_stage_time_scan' : 'checkpoint_stage_unit'));
+  if (!stageStep) throw new ProtocolError(`[${traceName}] no stage step for the split ladder`);
+  const stageIndex = stepIndex.get(stageStep.id)!;
+  const stageCalls = updatesCallsFromCandidates(withRuledCoverage(requestOf.get(stageStep.id)!.candidates as Record<string, unknown>, roster, traceName));
+  if (stageCalls.length < 2) throw new ProtocolError(`[${traceName}] split ladder needs at least two recorded stages`);
+  const stageTime = pointTimes[pointAt(stageIndex)];
+  const stageGroupId = (requestOf.get(stageStep.id)!.candidates as { groupId?: Id }).groupId ?? null;
+  const stageActorIds = (requestOf.get(stageStep.id)!.candidates as { actorIds?: Id[] }).actorIds ?? [];
+  const atStageTime = (state: Json): Json => ({ ...(structuredClone(state) as Record<string, unknown>), time: structuredClone(stageTime) }) as unknown as Json;
+  // 部分应用正文：最终态去掉未应用内容；理智/位置回落到基态值（录制的最
+  // 终态含全部阶段内容，按 id 删除即可精确还原已应用前缀）。
+  const stateWithoutCalls = (calls: UpdatesCall[]): Json => {
+    const body = structuredClone(finalState) as unknown as { characters: Record<string, Record<string, unknown>> };
+    for (const call of calls) {
+      for (const [entity, delta] of Object.entries(call.changes)) {
+        const character = body.characters[entity];
+        if (!character) continue;
+        const tasks = character.tasks as Record<string, unknown> | undefined;
+        if (tasks) {
+          for (const id of delta.tasksAchieved ?? []) delete tasks[id];
+          for (const task of delta.subtasksAdded ?? []) delete tasks[task.id];
+        }
+        if (delta.appearanceChanges?.length) character.appearanceChanges = (character.appearanceChanges as { id: Id }[]).filter((change) => !delta.appearanceChanges!.some((authored) => authored.id === change.id));
+        if (delta.personalityChanges?.length) character.personalityChanges = (character.personalityChanges as { id: Id }[]).filter((change) => !delta.personalityChanges!.some((authored) => authored.id === change.id));
+        if (delta.sanitySet != null) {
+          const base = (baseBody as unknown as { characters: Record<string, { sanity: number }> }).characters[entity];
+          if (base) character.sanity = base.sanity;
+        }
+        if (delta.positionSet) {
+          const base = (baseBody as unknown as { characters: Record<string, { position: unknown }> }).characters[entity];
+          if (base) character.position = structuredClone(base.position);
+        }
+      }
+    }
+    return body as unknown as Json;
+  };
+  // 逐边界镜像驱动器：合并已声明阶段 → 按上一边界正文的状态过滤前向引用
+  // （拆分：仅可达部分入折）→ 在途组与部分应用正文。被延后的达成保留在
+  // 原始调用里随最终批次结算，正文推导将其持续视为未应用。
+  const boundaryBodies: Json[] = [previewStateAt(stageIndex)];
+  const boundaryGroups: SettlementGroup[] = [];
+  const deferredByEntity: Record<Id, Id[]> = {};
+  for (let k = 1; k < stageCalls.length; k++) {
+    const merged = mergeUpdatesStages(stageCalls.slice(0, k));
+    const live = boundaryBodies[k - 1] as unknown as { characters: Record<string, { tasks?: Record<string, unknown> }> };
+    const valid: Record<Id, EntityDelta> = {};
+    for (const [entity, delta] of Object.entries(merged)) {
+      const achieved = delta.tasksAchieved ?? [];
+      const liveTasks = live.characters[entity]?.tasks ?? {};
+      const forward = achieved.filter((id) => liveTasks[id] == null);
+      for (const id of forward) (deferredByEntity[entity] ??= []).push(id);
+      valid[entity] = forward.length === 0 ? delta : { ...delta, tasksAchieved: achieved.filter((id) => !forward.includes(id)) };
+    }
+    boundaryGroups.push(stageGroupId == null
+      ? timeScanCandidates(valid, roster)
+      : assembleCandidates({ groupId: stageGroupId, actorIds: stageActorIds, deltas: valid, roster }));
+    const pending = [...stageCalls.slice(k)];
+    if (Object.keys(deferredByEntity).length > 0) pending.push({ stage: 'tasks', changes: structuredClone(deferredByEntity) as UpdatesCall['changes'] });
+    boundaryBodies.push(atStageTime(stateWithoutCalls(pending)));
+  }
+  const boundarySpecs: PreviewSpecimenSpec[] = boundaryGroups.map((group, i) => ({
+    afterStepId: steps[stageIndex - 1].id,
+    label: `b-boundary-${i + 1}-before-${stageStep.id}`,
+    build: () => ({
+      workingState: atStageTime(boundaryBodies[i + 1]),
+      pointProjection: { ...(requestOf.get(commitByPoint[pointAt(stageIndex)].id)! as { point: Record<string, Json> }).point, entityDeltas: {} },
+      mergedEntityDeltas: {},
+      settlementGroups: [structuredClone(group) as unknown as Json],
+    }),
+  }));
+
   const allocateStep = steps.find((s) => s.operation === 'allocate_ids');
   const bootstrapStepIds = ['s1'];
 
@@ -241,7 +323,7 @@ export function buildT03Scenario(traceName: T03TraceName, sampleId: string): T03
     }
   }
 
-  const corpus = buildCorpus(raw, sampleId, specimens, [...bootstrapStepIds, finalStep.id], [
+  const corpus = buildCorpus(raw, sampleId, [...specimens, ...boundarySpecs], [...bootstrapStepIds, finalStep.id], [
     { previewStepId: specimenSpecs[specimenSpecs.length - 1].label, expectationStepId: finalStep.id, workingStatePath: '/data/workingState', workingStateDigestPath: '/data/workingStateDigest' },
   ], [], [], readSpecimens);
   // Coverage normalization on the shared requests too: the stage candidates
@@ -280,10 +362,26 @@ export function buildT03Scenario(traceName: T03TraceName, sampleId: string): T03
       const candidates = withRuledCoverage(req.candidates as Record<string, unknown>, roster, traceName);
       const groupId = (candidates as { groupId: Id }).groupId;
       declared.push({ task: 'results', key: groupId, input: { groupId, workingState: previewStateAt(index) }, output: structuredClone(req.results) as Json });
-      declared.push({ task: 'updates', key: groupId, input: { groupId, mode: 'group', workingState: previewStateAt(index) }, output: updatesCallsFromCandidates(candidates) as unknown as Json });
+      // 拆分阶梯：逐阶段单对象输出（首阶段读阶梯前状态，后序阶段读边界
+      // preview 应用前序候选后的部分应用正文——§6.3）。
+      if (s.id !== stageStep.id) throw new ProtocolError(`[${traceName}] unexpected stage_unit outside the split ladder`);
+      stageCalls.forEach((call, j) => {
+        declared.push({
+          task: 'updates', key: `${groupId}#${call.stage}`,
+          input: { groupId, mode: 'group', stage: call.stage, workingState: j === 0 ? previewStateAt(index) : atStageTime(boundaryBodies[j]) } as unknown as Json,
+          output: call as unknown as Json,
+        });
+      });
     } else if (s.operation === 'checkpoint_stage_time_scan') {
       const candidates = withRuledCoverage(req.candidates as Record<string, unknown>, roster, traceName);
-      declared.push({ task: 'updates', key: `time_scan:${req.pointId as Id}`, input: { mode: 'time_scan', workingState: previewStateAt(index) }, output: updatesCallsFromCandidates(candidates) as unknown as Json });
+      if (s.id !== stageStep.id) throw new ProtocolError(`[${traceName}] unexpected stage_time_scan outside the split ladder`);
+      stageCalls.forEach((call, j) => {
+        declared.push({
+          task: 'updates', key: `time_scan:${req.pointId as Id}#${call.stage}`,
+          input: { mode: 'time_scan', stage: call.stage, workingState: j === 0 ? previewStateAt(index) : atStageTime(boundaryBodies[j]) } as unknown as Json,
+          output: call as unknown as Json,
+        });
+      });
     } else if (s.operation === 'narration_submit') {
       const k = pointAt(index);
       const head = (responseOf.get(commitByPoint[k].id) as unknown as { world: { head: { pointId: Id; stateDigest: string } } }).world.head;
@@ -311,6 +409,7 @@ export function buildT03Scenario(traceName: T03TraceName, sampleId: string): T03
   if (!ownership) throw new ProtocolError(`[${traceName}] no input ownership variable to seed the lease`);
   const memory = initialMemory(`req_${traceName}`, 'browser');
   memory.leaseToken = sample.values[ownership.name] as Id;
+  memory.updatesStages = stageCalls.map((call) => call.stage);
   if (allocateStep) {
     const allocation = requestOf.get(allocateStep.id)!;
     memory.roundAllocations[roundId] = { allocationKey: allocation.allocationKey as Id, slots: allocation.slots as NonNullable<typeof memory.allocPlan>['slots'] };

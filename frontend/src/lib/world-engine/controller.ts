@@ -69,19 +69,6 @@ function deltasHaveContent(deltas: Record<Id, EntityDelta>): boolean {
     || (d.tasksAchieved?.length ?? 0) > 0 || (d.subtasksAdded?.length ?? 0) > 0);
 }
 
-/** Entity-scoped task identities the accumulated stage calls already
- * produce — a deferred reference one of these declares stays deferrable at
- * later boundaries even after the subtasks stage itself has run. */
-function producedRefKeys(calls: UpdatesCall[]): Set<string> {
-  const keys = new Set<string>();
-  for (const call of calls) {
-    for (const [entity, delta] of Object.entries(call.changes)) {
-      for (const task of delta.subtasksAdded ?? []) keys.add(`${entity}:${task.id}`);
-    }
-  }
-  return keys;
-}
-
 type CallOutcome = { ok: true; response: unknown } | { ok: false; terminal?: DriverStatus };
 
 export class ControllerDriver {
@@ -261,22 +248,27 @@ export class ControllerDriver {
       const pending = work.pendingGroup;
       const roster = this.memory.workingState ? Object.keys(this.memory.workingState.state.characters) : [];
       const mergedStages = mergeUpdatesStages(this.memory.updatesCalls);
-      // 前向任务引用预检＋已应用/未决拆分（2026-10-26 复审修正 1）：在途候选
-      // 引用当前状态中不存在的任务时，A 必然拒绝应用（_apply_tasks 的
-      // ID_UNRESOLVED）——但不再整批延后：可达变化照常折入本边界 preview
-      // 应用，仅悬挂引用被滤出、记为「未决」（updatesPendingRefs），由后序
-      // subtasks 阶段生产该任务、随最终批次经 checkUpdatesStages 结算。这
-      // 样后序阶段读到的是已应用有效变化的状态（§6.3），不能凭「后面还有
-      // subtasks」就放行读旧状态。有效部分为空才整边界跳过（计一次 skip）；
-      // 既无剩余生产者、也已生产集中无主的悬挂引用明确停止。其余一切候选/
-      // 绑定错误照常走 call() 的原有处理（超时/租约/刷新/终态），绝不按错
-      // 误码吞咽。
+      // 前向任务引用预检＋已应用/未决拆分（2026-10-26 复审修正 1；v5 修正：
+      // 引用核对=当前状态∪本批已生产候选）：在途候选引用的任务，凡当前状
+      // 态存在、或本批 subtasksAdded 已生产的，随合并候选交 A 共同投影——
+      // A 在同一批内先建后达，个性等后序阶段立即读到 achieved（v5 实测组合
+      // 路径的读错输入回归：只查状态会把已生产任务继续延后）。只有当前状
+      // 态与本批生产都不覆盖的悬挂引用才滤出、记「未决」（updatesPendingRefs），
+      // 由后序 subtasks 阶段生产、随最终批次经 checkUpdatesStages 结算；可
+      // 达变化照常折入本边界 preview（§6.3：不能凭「后面还有 subtasks」就
+      // 放行读旧状态），有效部分为空才整边界跳过（计一次 skip）；既无剩余
+      // 生产者的悬挂引用明确停止。其余一切候选/绑定错误照常走 call() 的原
+      // 有处理（超时/租约/刷新/终态），绝不按错误码吞咽。
       const liveTasks = this.memory.workingState?.state.characters ?? {};
+      const producedByBatch = new Set<string>();
+      for (const [entity, delta] of Object.entries(mergedStages)) {
+        for (const task of delta.subtasksAdded ?? []) producedByBatch.add(`${entity}:${task.id}`);
+      }
       const validDeltas: Record<Id, EntityDelta> = {};
       const forwardRefs: string[] = [];
       for (const [entity, delta] of Object.entries(mergedStages)) {
         const achieved = delta.tasksAchieved ?? [];
-        const forward = achieved.filter((taskId) => liveTasks[entity]?.tasks?.[taskId] == null);
+        const forward = achieved.filter((taskId) => liveTasks[entity]?.tasks?.[taskId] == null && !producedByBatch.has(`${entity}:${taskId}`));
         for (const taskId of forward) forwardRefs.push(`${entity}:${taskId}`);
         validDeltas[entity] = forward.length === 0 ? delta : { ...delta, tasksAchieved: achieved.filter((taskId) => !forward.includes(taskId)) };
       }
@@ -295,13 +287,14 @@ export class ControllerDriver {
         this.memory.updatesPendingRefs = [];
         inProgressGroup = fold(mergedStages);
       } else {
-        const laterSubtasks = this.memory.updatesStages.slice(this.memory.updatesCalls.length).includes('subtasks');
-        const resolvable = laterSubtasks || [...forwardRefs].some((ref) => producedRefKeys(this.memory.updatesCalls).has(ref));
-        this.memory.lastModel = null;
-        if (!resolvable) {
+        // 悬挂引用只可能由剩余的 subtasks 阶段生产（本批生产已被共同投影
+        // 排除）——无剩余生产者即明确停止。
+        if (!this.memory.updatesStages.slice(this.memory.updatesCalls.length).includes('subtasks')) {
+          this.memory.lastModel = null;
           this.memory.updatesPendingRefs = forwardRefs;
           return { kind: 'stop', reason: `dangling_updates_refs:${JSON.stringify(forwardRefs)}` };
         }
+        this.memory.lastModel = null;
         this.memory.updatesPendingRefs = forwardRefs;
         if (!deltasHaveContent(validDeltas)) {
           // 整批皆未决：零网络调用跳过本边界，后序阶段读最后良好状态。
