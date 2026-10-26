@@ -9,13 +9,14 @@
  * re-schedule. External commands are consumed only when actually executed,
  * so a pause survives a lease detour. */
 import { WorldApiError, WorldTimeoutError, type WorldTransport } from './transport';
+import { readControllerRecovery, recoverPoint, RecoveryStopped, type RecoveryLease } from './recovery';
 import {
   assembleCandidates, errorReaction, initialNarrationAssembly, mergeUpdatesStages, PROGRAM_ROLL_RULE, scheduleNext, timeScanCandidates, workingStateKey,
   type ControllerMemory, type Decision, type HarnessCommand, type ModelTask, type PlannedPoint, type RollRule, type SourceAnalysis, type UpdatesCall,
 } from './schedule';
 import type {
   Conclusion, ControlState, CurrentClaim, EntityDelta, ErrorResponse, Id, InitialTemplate, Json, PointWork, RequestMap,
-  SettlementGroup, TimeAdvance, WorldContext, WorldOperation,
+  PointRecovery, SettlementGroup, TimeAdvance, WorldContext, WorldOperation,
 } from './types';
 
 export interface WorldModelPort { generate(task: ModelTask, key: string, input: Json): Promise<Json> }
@@ -45,7 +46,7 @@ export function initialMemory(prefix: string, holderId: string): ControllerMemor
   return {
     requestId: `${prefix}_0`, leaseToken: null, holderId, ids: {}, allocPlan: null, roundAllocations: {}, allocatedKeys: [], playerInput: null, playerAdvance: null,
     plan: null, planIndex: 0, prepareSuccessor: false, localPause: false, budget: { used: 0, max: null },
-    narration: null, workingState: null, sources: [], staged: [], stagedTimeScan: null, groupActors: [], groupActions: [], lastModel: null, lastTargets: null, lastResults: null,
+    narration: null, workingState: null, sources: [], staged: [], restoredUnit: null, stagedTimeScan: null, groupActors: [], groupActions: [], lastModel: null, lastTargets: null, lastResults: null,
     updatesStages: [], updatesCalls: [], updatesApplied: 0, updatesPreviewSkipped: 0, updatesPendingRefs: [],
     continuation: null, roundChanges: null, successorTime: null, commitPayload: null, initialTemplate: null,
   };
@@ -79,6 +80,11 @@ export class ControllerDriver {
   private requestCounter = 0;
   private readonly retryLimit: number;
   private readonly identityAliases: Record<string, string>;
+  private recoveryPromise: Promise<DriverStatus | undefined> | null = null;
+  private recoveryBarrier: string | null = null;
+  private recoveredSuccessor: PointRecovery | null = null;
+  private recoveringPointIds = new Set<Id>();
+  private hasStepped = false;
 
   constructor(private io: ControllerIo, memory: ControllerMemory, state?: Partial<ServedState>, options?: DriverOptions) {
     this.memory = memory;
@@ -90,8 +96,43 @@ export class ControllerDriver {
   getMemory(): ControllerMemory { return structuredClone(this.memory); }
   getRequestCounter(): number { return this.requestCounter; }
 
+  /** Refresh/takeover always creates a NEW driver/session. A dead session's
+   * in-flight writes/model outputs are never resumed or imported. */
+  recover(worldId: Id, heldLease?: RecoveryLease): Promise<DriverStatus | undefined> {
+    if (this.recoveryPromise) return this.recoveryPromise;
+    if (this.hasStepped || this.requestCounter !== 0 || this.state.world !== null) return Promise.resolve({ kind: 'stop', reason: 'recovery_requires_fresh_driver' });
+    this.recoveryBarrier = 'recovery_in_progress';
+    this.recoveryPromise = this.bootstrapRecovery(worldId, heldLease);
+    return this.recoveryPromise;
+  }
+
+  private async bootstrapRecovery(worldId: Id, heldLease?: RecoveryLease): Promise<DriverStatus | undefined> {
+    try {
+      const recovered = await readControllerRecovery(this.io.transport, worldId, this.memory.holderId, () => this.nextRequestId(), this.retryLimit, heldLease);
+      const { context } = recovered;
+      // Discard every pre-bootstrap unconfirmed output, old identity and
+      // claim. Only the verified server snapshot may seed this session.
+      const clean = initialMemory(this.memory.requestId.replace(/_\d+$/, ''), this.memory.holderId);
+      clean.requestId = this.memory.requestId;
+      clean.budget.max = this.memory.budget.max;
+      clean.updatesStages = this.memory.updatesStages;
+      this.memory = { ...clean, leaseToken: recovered.leaseToken, ids: recovered.ids, plan: recovered.plan,
+        workingState: recovered.workingState, roundChanges: recovered.roundChanges, ...recovered.point };
+      this.state = { world: context.world, control: context.control, work: context.work, activeInput: context.activeInput };
+      this.recoveredSuccessor = recovered.successor;
+      this.recoveringPointIds = new Set(recovered.plan?.map((p) => p.pointId));
+      this.nextRequestId();
+      this.recoveryBarrier = null;
+      return undefined;
+    } catch (error) {
+      this.recoveryBarrier = error instanceof RecoveryStopped ? error.reason : `recovery_failed:${error instanceof Error ? error.message : String(error)}`;
+      return { kind: 'stop', reason: this.recoveryBarrier };
+    }
+  }
+
   /** Read-only scheduler introspection for declared scenario boundaries. */
   pendingDecision(): Decision {
+    if (this.recoveryBarrier) return { kind: 'stop', reason: this.recoveryBarrier };
     return scheduleNext({ world: this.state.world, control: this.state.control, work: this.state.work, memory: this.memory, activeInput: this.state.activeInput });
   }
 
@@ -126,6 +167,8 @@ export class ControllerDriver {
    * Commands are consumed only when this.command still IS the captured
    * command — one delivered while a request is in flight survives. */
   async step(): Promise<DriverStatus | undefined> {
+    this.hasStepped = true;
+    if (this.recoveryBarrier) return { kind: 'stop', reason: this.recoveryBarrier };
     const command = this.command;
     this.stepCommand = command;
     if (command?.kind === 'player_input' && this.command === command) this.command = null; // consumed via memory.playerInput
@@ -537,6 +580,7 @@ export class ControllerDriver {
         break;
       }
       case 'checkpoint_stage_unit':
+        this.memory.restoredUnit = null;
         this.memory.staged.push({ groupId: req.groupId as Id, actorIds: (req.candidates as { actorIds: Id[] }).actorIds, candidates: req.candidates as never, results: req.results as Record<Id, string> });
         this.memory.lastResults = null;
         this.memory.updatesCalls = [];
@@ -582,9 +626,27 @@ export class ControllerDriver {
         this.memory.updatesApplied = 0;
         this.memory.updatesPendingRefs = [];
         this.memory.groupActions = [];
+        this.memory.restoredUnit = null;
         this.memory.commitPayload = null;
         const head = this.state.world?.head;
         if (head) this.memory.narration = { pointId: head.pointId, claim: null, input: initialNarrationAssembly(head.pointId) };
+        if (this.recoveringPointIds.delete(point.id)) {
+          if (this.recoveredSuccessor) {
+            const successor = this.recoveredSuccessor;
+            this.recoveredSuccessor = null;
+            if (this.state.work?.pointId !== successor.work.pointId) {
+              this.recoveryBarrier = 'recovery_successor_context_missing';
+            } else {
+              try { Object.assign(this.memory, recoverPoint({ ...successor, work: this.state.work }, this.state.world!)); }
+              catch (error) { this.recoveryBarrier = error instanceof RecoveryStopped ? error.reason : 'recovery_successor_incomplete'; }
+            }
+          } else if (!this.state.work) {
+            // Unconfirmed future plans are intentionally not reconstructed.
+            // A later point may be planned from the new served round cursor.
+            this.memory.plan = null;
+            this.memory.planIndex = 0;
+          }
+        }
         break;
       }
       case 'get_state': {
@@ -673,6 +735,7 @@ export class ControllerDriver {
       playerInput: null, plan: null, planIndex: 0, prepareSuccessor: false,
       roundChanges: null,
       workingState: null, sources: [], staged: [], stagedTimeScan: null,
+      restoredUnit: null,
       groupActors: [], groupActions: [], lastModel: null, lastTargets: null, lastResults: null, updatesCalls: [], updatesApplied: 0, updatesPreviewSkipped: 0, updatesPendingRefs: [],
       continuation: null, successorTime: null, commitPayload: null, narration: null,
     });

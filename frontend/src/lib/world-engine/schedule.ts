@@ -191,6 +191,8 @@ export interface ControllerMemory {
   workingState: { key: string; state: WorldState } | null;
   sources: SourceAnalysis[];
   staged: StagedUnit[];
+  /** Confirmed candidates recovered before stage_unit; replay verbatim. */
+  restoredUnit?: StagedUnit | null;
   /** Time-scan unit staged for the open point: it rides into every later
    * preview's settlementGroups (A §7: one list, no separate channel) but is
    * NOT a named group — commit_point keeps its plain settlementGroups. */
@@ -647,7 +649,19 @@ function pointDecision(view: ScheduleView): Decision {
   const { world, control, work, memory } = view;
   const pending = work!.pendingGroup;
   if (work!.sealed) {
-    if (!memory.commitPayload) return { kind: 'await_command', reason: 'commit_payload_missing' };
+    if (!memory.commitPayload) {
+      // A preview can rebuild the projection only when ALL saved candidate
+      // bytes are present. Missing frozen units must never become an empty
+      // preview/commit followed by an automatic conflict loop.
+      const complete = memory.staged.length === work!.settledUnits.length
+        && work!.settledUnits.every((unit, index) => {
+          const staged = memory.staged[index];
+          return staged.groupId === unit.groupId && staged.candidates.groupId === unit.groupId
+            && JSON.stringify([...staged.actorIds].sort()) === JSON.stringify([...unit.memberIds].sort());
+        }) && (!work!.timeScanComplete || memory.stagedTimeScan != null)
+        && (work!.settledUnits.length > 0 || work!.timeScanComplete);
+      return complete ? { kind: 'read_working_state' } : { kind: 'stop', reason: 'sealed_work_missing' };
+    }
     const bind = writeBind(view);
     return {
       kind: 'transport', operation: 'commit_point',
@@ -916,6 +930,12 @@ function settleDecision(view: ScheduleView): Decision {
   const { world, work, memory } = view;
   const bind = writeBind(view);
   const pending = work!.pendingGroup!;
+  if (memory.restoredUnit) {
+    if (memory.restoredUnit.groupId !== pending.groupId) return { kind: 'stop', reason: 'recovery_group_mismatch' };
+    return { kind: 'transport', operation: 'checkpoint_stage_unit', scope: worldScope(view),
+      request: { protocolVersion: 2, requestId: memory.requestId, ...bind, operation: 'stage_unit', pointId: work!.pointId,
+        groupId: pending.groupId, candidates: memory.restoredUnit.candidates, results: memory.restoredUnit.results } as RequestMap['checkpoint_stage_unit'] };
+  }
   const single = memory.updatesStages.length === 0;
   const calls: UpdatesCall[] | null = single
     ? (memory.lastModel?.task === 'updates' ? memory.lastModel.output as unknown as UpdatesCall[] : null)

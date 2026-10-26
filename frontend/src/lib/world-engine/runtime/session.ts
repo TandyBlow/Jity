@@ -30,6 +30,7 @@ import { ControllerDriver, initialMemory, type ControllerIo, type DriverStatus, 
 import type { WorldTransport } from '../transport';
 import { WorldApiError } from '../transport';
 import type { ControllerMemory, HarnessCommand } from '../schedule';
+import type { RecoveryLease } from '../recovery';
 import type { ClaimHeartbeatState, HeartbeatClock, HeartbeatLoss } from './heartbeat';
 import { HeartbeatScheduler, SystemHeartbeatClock } from './heartbeat';
 import type { RuntimeWorldModelPort } from './model-port';
@@ -41,6 +42,7 @@ export interface DriverLike {
   step(): Promise<DriverStatus | undefined>;
   deliver(command: HarnessCommand): void;
   getMemory(): ControllerMemory;
+  recover?(worldId: Id, heldLease?: RecoveryLease): Promise<DriverStatus | undefined>;
 }
 
 export type DriverFactory = (io: ControllerIo) => DriverLike;
@@ -52,6 +54,11 @@ export interface WorldSessionHooks {
 }
 
 export interface WorldSessionOptions {
+  /** Bootstrap an existing world through verified H2 reads in a new session. */
+  recoverWorldId?: Id;
+  /** Optional authority retained by a refresh; validated by lease_renew.
+   * Omit for takeover after the previous authority has been released/expired. */
+  recoveryLease?: RecoveryLease;
   clock?: HeartbeatClock;
   heartbeatLeadMs?: number;
   retryBackoffMs?: number;
@@ -98,12 +105,18 @@ export class WorldSession {
   private status: SessionStatus = 'idle';
   private lease: { token: Id; fenceEpoch: number } | null = null;
   private claimPointId: Id | null = null;
+  private readonly recoverWorldId: Id | undefined;
+  private readonly recoveryLease: RecoveryLease | undefined;
+  private recoveryStarted = false;
+  private recoveryTerminal: DriverStatus | null = null;
 
 
   constructor(transport: WorldTransport, port: RuntimeWorldModelPort, options: WorldSessionOptions = {}) {
     this.rawTransport = transport;
     this.port = port;
     this.hooks = options.hooks ?? {};
+    this.recoverWorldId = options.recoverWorldId;
+    this.recoveryLease = options.recoveryLease;
     sessionCounter += 1;
     // Entropy makes the default namespace unique across module instances
     // (two tabs start their own counter at zero in the same millisecond).
@@ -158,7 +171,7 @@ export class WorldSession {
     const boundModel: WorldModelPort = {
       generate: (task, key, input) => port.generate(task, key, input, this.inference.signal),
     };
-    const createDriver = options.createDriver ?? ((io: ControllerIo) => new ControllerDriver(io, initialMemory(`req_${this.namespace}`, 'browser'), { world: null }, {}));
+    const createDriver = options.createDriver ?? ((io: ControllerIo) => new ControllerDriver(io, initialMemory(`req_${this.namespace}`, `browser_${this.namespace}`), { world: null }, {}));
     this.driver = createDriver({ transport: observed, model: boundModel });
   }
 
@@ -184,6 +197,14 @@ export class WorldSession {
 
   private async loop(epochAtStart: number): Promise<DriverStatus> {
     try {
+      if (this.recoveryTerminal) return this.recoveryTerminal;
+      if (this.recoverWorldId && !this.recoveryStarted) {
+        this.recoveryStarted = true;
+        if (!this.driver.recover) return this.recoveryTerminal = { kind: 'stop', reason: 'recovery_driver_unsupported' };
+        const recovered = await this.driver.recover(this.recoverWorldId, this.recoveryLease);
+        if (epochAtStart !== this.epoch) return this.pendingTerminal ?? { kind: 'error', detail: 'session superseded' };
+        if (recovered) { this.recoveryTerminal = recovered; this.hooks.onStatus?.(recovered); return recovered; }
+      }
       for (let step = 0; step < 500; step++) {
         if (epochAtStart !== this.epoch) return this.pendingTerminal ?? { kind: 'error', detail: 'session superseded' };
         const terminal = await this.driver.step();
@@ -291,7 +312,7 @@ export class WorldSession {
 
   /** The observation layer: heartbeat state follows envelope content alone. */
   private observe(operation: WorldOperation, request: unknown, scope: Scope, envelope: AnyEnvelope, isError: boolean): void {
-    if (operation === 'lease_renew' || operation === 'narration_claim_renew') return; // the heartbeat consumes its own receipts
+    if (operation === 'narration_claim_renew') return; // the heartbeat consumes its own receipts
     if (isError && envelope.error) {
       const code = envelope.error.code;
       if (LEASE_DEAD_CODES.has(code)) {
@@ -305,7 +326,7 @@ export class WorldSession {
       }
     }
     const data = envelope.data;
-    if (!isError && (operation === 'create_world' || operation === 'lease_acquire') && data) {
+    if (!isError && (operation === 'create_world' || operation === 'lease_acquire' || operation === 'lease_renew') && data) {
       const grant = data.lease ?? data; // create_world nests the grant; lease_acquire's data IS the grant
       const lease = grant as { leaseToken: Id; fenceEpoch: number; expiresAtEpochMilli: number } | undefined;
       const worldId = (scope.worldId ?? (request as { worldId?: Id }).worldId ?? data.worldId) as Id | undefined;
