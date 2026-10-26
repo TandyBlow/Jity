@@ -5,6 +5,7 @@ from pathlib import Path
 import sys
 
 from jsonschema import Draft202012Validator
+from pydantic import ValidationError
 import pytest
 
 ROOT=Path(__file__).resolve().parents[2]
@@ -28,7 +29,7 @@ def test_trace_schema_and_all_operation_coverage():
     assert seen==set(OPERATION_BY_NAME),'no fixture-only exemptions: every operation must have a trace step'
 
 
-@pytest.mark.parametrize('mutation',['business','future','duplicate','missing_assertion','missing_response_field','missing_capture','wrong_pin','unknown_field','request_hash'])
+@pytest.mark.parametrize('mutation',['business','future','duplicate','missing_assertion','missing_response_field','missing_capture','wrong_pin','unknown_field','request_hash','bool_trace_version'])
 def test_bad_trace_is_rejected(mutation):
     value=load()
     if mutation=='business':
@@ -41,8 +42,25 @@ def test_bad_trace_is_rejected(mutation):
     elif mutation=='missing_capture':value['steps'][0]['captures'][0]['path']='/nonexistent'
     elif mutation=='wrong_pin':value['contractDigest']='0'*64
     elif mutation=='request_hash':value['steps'][0]['response']['requestHash']='0'*64
+    elif mutation=='bool_trace_version':value['traceFormatVersion']=True
     else:value['unexpected']=True
     with pytest.raises(Exception):validate_trace(value)
+
+
+def test_trace_format_version_rejects_bools_on_both_validation_sides():
+    """Regression guard for the R1 fix round: the trace format alias must keep
+    the shared integer guard, because a bare Literal[1] accepts True (== 1)
+    while the exported JSON schema rejects it — a Python/JSON split."""
+    value=load('T07')
+    schema=json.loads((BASE/'trace.schema.json').read_text(encoding='utf-8'))
+    with pytest.raises(Exception):
+        Draft202012Validator(schema).validate({**value,'traceFormatVersion':True})
+    with pytest.raises(ValidationError):
+        TraceDocument.model_validate({**value,'traceFormatVersion':True})
+    with pytest.raises(Exception):
+        validate_trace({**value,'traceFormatVersion':True})
+    # the shared _integer guard still admits an integral float, as before
+    TraceDocument.model_validate({**value,'traceFormatVersion':1.0})
 
 
 def test_failed_response_cannot_supply_a_missing_capture_to_later_steps():

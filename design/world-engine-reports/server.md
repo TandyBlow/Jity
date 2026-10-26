@@ -661,3 +661,17 @@ Git blob 未改动，Windows 干净检出的 packaged SQL 测试恢复绿色。
 边界不变：B 消费（七项版本/pin 同步、恢复业务类型与 rolls/progress 消费、
 DFS/三态调度、reaction-d20-v1 正式切换）、共同冻结、新版 B 控制器完整 H2、
 A3-2 整体验收仍未完成；本修复轮只宣告响应版本策略修复与候选同步完成。
+
+## 复验轮（2026-10-27）：TraceFormatVersion 整数守卫补齐
+
+B 复验（`artifacts/h2-r1-review-fafc859.md`）关闭前轮 P1，另报一处 P2：
+修复轮把 traceFormatVersion 改为裸 `Literal[1]`，丢失共享整数守卫——Pydantic
+的 Literal 比较接受 `True`（== 1）并归一为整数，而导出 JSON Schema 拒绝布尔，
+构成 Python/导出一致性回归；轨迹加载入口先过 TraceDocument，不会再到
+JSON Schema，因此布尔会一路进入轨迹校验。修复为
+`TraceFormatVersion = Annotated[Literal[1], BeforeValidator(_integer)]`，
+并补负例：布尔 true 在 TraceDocument、validate_trace 与 JSON Schema 三处均被
+拒绝，数值为整数的浮点 1.0 仍被接受（守卫原语义，不新增限制）。
+导出物零漂移（v1/v2 --check 过，候选摘要不变），后端全量 1410 passed。
+共同入口状态与上节一致：Python/tsc 绿，TS 契约/轨迹红于旧 B 守卫，
+由 B 七项同步解除。

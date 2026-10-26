@@ -27,7 +27,9 @@ ProtocolVersion = Annotated[Literal[2], BeforeValidator(_integer)]
 EngineVersion = Literal["world-engine-v1"]
 SchemaVersion = Annotated[Literal[2], BeforeValidator(_integer)]
 StateSchemaVersion = Annotated[Literal[1], BeforeValidator(_integer)]
-TraceFormatVersion = Literal[1]
+# The shared integer guard matters on every version axis: a bare Literal[1]
+# accepts True (== 1) while the exported JSON schema rejects it.
+TraceFormatVersion = Annotated[Literal[1], BeforeValidator(_integer)]
 CanonicalVersion = Literal["world-canonical-v1"]
 EpochMilli = Positive
 Hex64 = Annotated[str, Field(pattern=r"^[0-9a-f]{64}$")]
