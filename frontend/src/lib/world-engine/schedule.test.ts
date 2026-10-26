@@ -589,12 +589,20 @@ describe('narration pipeline', () => {
 });
 
 describe('empty point time scan (T03)', () => {
+  // 合法空点：人物机会都已处理（visited 前缀=全序），时间扫描承包槽位。
   const emptyPoint = (over: Partial<PointWork> = {}) => pointWork({ pointId: 'p0', timeScanComplete: false, ...over });
   const setup = (over: Partial<ControllerMemory> = {}) => ({
-    w: world({ advance: { advanceId: 'adv1', inputId: 'in1', intentStatus: 'consumed' as const, inputAvailable: false }, activeRoundId: 'r1', activePointId: 'p0', round: { roundId: 'r1', trigger: 'automatic' as const, order: ORDER, cursor: 0, actedIds: [], visitedIds: [], conclusion: null } }),
+    w: world({ advance: { advanceId: 'adv1', inputId: 'in1', intentStatus: 'consumed' as const, inputAvailable: false }, activeRoundId: 'r1', activePointId: 'p0', round: { roundId: 'r1', trigger: 'automatic' as const, order: ORDER, cursor: 6, actedIds: [], visitedIds: ORDER, conclusion: null } }),
     c: control({ revision: 2 }),
-    wk: emptyPoint(),
+    wk: emptyPoint({ working: { cursor: 6, actedIds: [], visitedIds: ORDER, settledUnitIds: [], intentStatus: 'consumed' } }),
     m: memory({ plan: [{ pointId: 'p0', kind: 'normal' as const, timeAdvance: ta(60), actorIds: [] }], ...over }),
+  });
+  test('an empty plan with unvisited slots still asks each actor (review guard)', () => {
+    // actorIds: [] 且游标 0、六人未处理——不得直接进时间扫描。
+    const w = world({ advance: { advanceId: 'adv1', inputId: 'in1', intentStatus: 'consumed' as const, inputAvailable: false }, activeRoundId: 'r1', activePointId: 'p0', round: { roundId: 'r1', trigger: 'automatic' as const, order: ORDER, cursor: 0, actedIds: [], visitedIds: [], conclusion: null } });
+    const wk = pointWork({ pointId: 'p0', timeScanComplete: false });
+    const m = memory({ plan: [{ pointId: 'p0', kind: 'normal' as const, timeAdvance: ta(60), actorIds: [] }], workingState: { key: workingStateKey(wk), state: workingState() } });
+    expect(next(w, control(), wk, m)).toMatchObject({ kind: 'model', task: 'action', key: 'person_a' });
   });
   test('previews, then asks the updates model for the scan', () => {
     const { w, c, wk, m } = setup();
@@ -656,10 +664,12 @@ describe('round conclusion', () => {
       kind: 'model', task: 'continuation', key: 'r1',
       input: { workingState: { protagonistId: 'person_a' }, roundChanges: changes },
     });
-    // 零本地历史：变化是 null（不能假装「本轮没变化」），世界也如实为 null。
-    expect(next(w, c, null, memory())).toMatchObject({ kind: 'model', task: 'continuation', input: { workingState: null, roundChanges: null } });
-    // 上一轮遗留的变化不串到本轮。
-    expect(next(w, c, null, memory({ roundChanges: { roundId: 'r0', points: changes } }))).toMatchObject({ kind: 'model', task: 'continuation', input: { roundChanges: null } });
+    // 缺数据时零模型调用：世界与变化都不能为空（H2 补读另做）。
+    expect(next(w, c, null, memory())).toEqual({ kind: 'stop', reason: 'continuation_context_missing:workingState,roundChanges' });
+    expect(next(w, c, null, memory({ workingState: { key: 'k', state } }))).toEqual({ kind: 'stop', reason: 'continuation_context_missing:roundChanges' });
+    // 上一轮遗留的变化不串到本轮——roundId 不符同样算缺。
+    expect(next(w, c, null, memory({ workingState: { key: 'k', state }, roundChanges: { roundId: 'r0', points: changes } }))).toEqual({ kind: 'stop', reason: 'continuation_context_missing:roundChanges' });
+    expect(next(w, c, null, memory({ roundChanges: { roundId: 'r1', points: changes } }))).toEqual({ kind: 'stop', reason: 'continuation_context_missing:workingState' });
     const concluding = memory({ continuation: { kind: 'handback', closedBy: 'model', cancelReason: null } });
     const conclude = expectTransport(next(w, c, null, concluding), 'round_conclusion_conclude') as Extract<Decision, { kind: 'transport' }>;
     expect((conclude.request as unknown as { conclusion: unknown }).conclusion).toEqual({ kind: 'handback', closedBy: 'model', cancelReason: null });

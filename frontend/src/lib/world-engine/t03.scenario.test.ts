@@ -171,7 +171,12 @@ describe.each([
     const calls = scenario.model.calls.map((c) => `${c.task}:${c.key}`);
     expect(calls[0]).toBe(`pointPlan:${scenario.roundId}`);
     if (traceName === 'T03') {
-      expect(calls).toEqual([`pointPlan:${scenario.roundId}`, `updates:time_scan:${pointId}#tasks`, `updates:time_scan:${pointId}#personality`, `updates:time_scan:${pointId}#sanity`, `narration:${pointId}`]);
+      // #7：零覆盖计划 + 六个未处理槽位 → 逐人判断（固定输出=skip），再扫时间。
+      expect(calls).toEqual([
+        `pointPlan:${scenario.roundId}`,
+        ...ROSTER.map((actor) => `action:${actor}`),
+        `updates:time_scan:${pointId}#tasks`, `updates:time_scan:${pointId}#personality`, `updates:time_scan:${pointId}#sanity`, `narration:${pointId}`,
+      ]);
     } else {
       expect(calls).toEqual([`pointPlan:${scenario.roundId}`, 'action:person_c', 'targets:person_c', `results:${groupId}`, `updates:${groupId}#appearance`, `updates:${groupId}#tasks`, `updates:${groupId}#subtasks`, `narration:${pointId}`]);
     }
@@ -222,7 +227,7 @@ describe.each([
     expect(scenario.driver.getMemory().stagedTimeScan).toBeNull();
     expect(scenario.driver.getMemory().staged).toEqual([]);
     // 组装阶梯：每条叙事链 +2 次读取（目标＋前驱）。
-    expect(scenario.transport.ops).toHaveLength(traceName === 'T03' ? 14 : 18);
+    expect(scenario.transport.ops).toHaveLength(traceName === 'T03' ? 20 : 18);
     if (traceName === 'T03-collapse') {
       expect(scenario.transport.ops[1]).toBe('allocate_ids');
       expect((scenario.transport.requests[1] as { requestId: string }).requestId).toMatch(/^req_T03-collapse_\d+$/);

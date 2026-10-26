@@ -19,6 +19,25 @@ export function buildT04Scenario(sampleId: string) {
   const responses = new Map(trace.steps.map((step) => [step.id, instantiate(step.response, sample.values) as Record<string, unknown>]));
   const context = responses.get('s1') as unknown as { world: WorldContext; control: ControlState };
   const automatic = responses.get('s2') as unknown as { world: WorldContext };
+  // §7.1/#9：T04 开在「上一轮（T02 的 round_1）刚结束」的 assess_continuation。
+  // 连续会话会自带该轮的当前世界与本轮已提交变化；录制只留了结束后的
+  // get_context。这里从 T02 的录制取源（同一 world/advance/round，末点 p3 的
+  // 状态摘要必须与 T04 s1 头一致），把两块数据如实补齐——不是伪造「无变化」。
+  const t02Raw = JSON.parse(readFileSync(resolve(process.cwd(), '../design/world-protocol/v2/traces/T02.json'), 'utf8'));
+  const t02Trace = readTrace(t02Raw);
+  const t02Sample = t02Trace.samples.find((entry) => entry.id === sampleId);
+  if (!t02Sample) throw new Error(`T02 has no sample ${sampleId} to seed T04's prior round`);
+  const t02Final = instantiate(t02Trace.steps.find((step) => step.id === 's42')!.response, t02Sample.values) as unknown as { data: { pointId: Id; state: Json; stateDigest: string } };
+  if (t02Final.data.stateDigest !== context.world.head.stateDigest || t02Final.data.pointId !== context.world.head.pointId) {
+    throw new Error('[T04] prior-round seed diverges from the served head — T02 sample pairing is broken');
+  }
+  const priorState = structuredClone(t02Final.data.state);
+  const priorCommitSteps = t02Trace.steps.filter((step) => step.operation === 'commit_point');
+  const priorPoints = priorCommitSteps.map((step) => (instantiate(step.request, t02Sample.values) as { point: { id: Id; roundId: Id; timeAdvance: Json; entityDeltas: Json } }).point);
+  if (priorPoints.length === 0) throw new Error('[T04] T02 recorded no committed points to seed the prior round');
+  const priorRoundChanges = priorPoints.map((priorPoint) => ({ pointId: priorPoint.id, timeAdvance: structuredClone(priorPoint.timeAdvance), entityDeltas: structuredClone(priorPoint.entityDeltas) }));
+  const priorRoundId = priorPoints[0].roundId;
+  if (priorRoundId !== context.world.round!.roundId) throw new Error('[T04] prior-round id diverges from the served round');
   const committed = responses.get('s10') as unknown as { world: WorldContext };
   const begin = requests.get('s4')!;
   const stage = requests.get('s8')!;
@@ -63,9 +82,9 @@ export function buildT04Scenario(sampleId: string) {
   })();
   const personCActionText = (requests.get('s5') as { actionText: string }).actionText;
   const declared: DeclaredModelCall[] = [
-    // §7.1：继续推进判断读「当前世界＋本轮状态变化」。会话在半途打开时没有本地
-    // 本轮历史：workingState 与 roundChanges 都如实为 null（不假装无变化）。
-    { task: 'continuation', key: context.world.activeRoundId!, input: { round: context.world.round, head: context.world.head, workingState: null, roundChanges: null }, output: requests.get('s2')!.conclusion as Json },
+    // §7.1：继续推进判断读「当前世界＋本轮状态变化」——两者都取自已录制的
+    // 上一轮（T02 round_1）：末点状态逐字复用，变化=所有提交点的时间与 Δ。
+    { task: 'continuation', key: context.world.activeRoundId!, input: { round: context.world.round, head: context.world.head, workingState: structuredClone(priorState), roundChanges: structuredClone(priorRoundChanges) as Json }, output: requests.get('s2')!.conclusion as Json },
     { task: 'pointPlan', key: roundId, input: { round: automatic.world.round, head: automatic.world.head }, output: [{ pointId: begin.pointId, kind: begin.kind, timeAdvance: begin.timeAdvance, actorIds: ['person_c'] }] as Json },
     { task: 'action', key: 'person_c', input: { actor: 'person_c', advance: actionAdvance, workingState }, output: { kind: 'act', text: personCActionText } as Json },
     { task: 'targets', key: 'person_c', input: { sourceId: 'person_c', actionText: personCActionText, workingState } as Json, output: { targets: [] } },
@@ -79,6 +98,10 @@ export function buildT04Scenario(sampleId: string) {
   const memory = initialMemory('req_T04', 'browser');
   const ownership = trace.variables.find((variable) => variable.origin === 'input' && variable.kind === 'ownership')!;
   memory.leaseToken = sample.values[ownership.name] as Id;
+  // 连续会话携带上一轮的当前世界与本轮变化（见上方 T02 取源）；会话在半途
+  // 打开且没有这些数据时，调度器会停止而不是调用模型。
+  memory.workingState = { key: `continuation_seed:${priorRoundId}`, state: structuredClone(priorState) as never };
+  memory.roundChanges = { roundId: priorRoundId, points: structuredClone(priorRoundChanges) as never };
   memory.ids['group:person_c'] = groupId;
   // A preceding player plan must be retired by continue, without the
   // harness resetting the driver's memory between rounds.
@@ -87,5 +110,5 @@ export function buildT04Scenario(sampleId: string) {
   const transport = new ScenarioTransport(corpus.steps, 'T04');
   const model = new ScenarioModelPort(declared, 'T04');
   const driver = new ControllerDriver({ transport, model }, memory, { world: context.world, control: context.control, activeInput: recordedActiveInput });
-  return { driver, transport, model, corpus };
+  return { driver, transport, model, corpus, memory };
 }

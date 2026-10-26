@@ -591,18 +591,24 @@ function continuationDecision(view: ScheduleView): Decision {
       scope: worldScope(view),
     };
   }
+  // 缺少判断依据时明确停止：没有当前世界或没有本轮变化就不得调用模型，
+  // 更不能把模型输出写成结论（H2 的补读另做）。
+  const state = view.work ? freshState(memory, view.work) : memory.workingState?.state ?? null;
+  const roundId = roundIdOf(world!);
+  const missing: string[] = [];
+  if (!state) missing.push('workingState');
+  if (!memory.roundChanges || memory.roundChanges.roundId !== roundId) missing.push('roundChanges');
+  if (missing.length > 0) return { kind: 'stop', reason: `continuation_context_missing:${missing.join(',')}` };
   const blocked = modelBlocked(view, 'continuation');
   if (blocked) return blocked;
-  const state = view.work ? freshState(memory, view.work) : memory.workingState?.state ?? null;
   // §7.1：继续推进判断读「主角、当前世界和本轮状态变化」。主角与当前世界都
   // 在 workingState 里（protagonistId/characters）；本轮变化是已提交点的时间
   // 与实体 Δ，按提交顺序给出。零本地历史（会话在半途打开）时为 null——不
   // 假装「本轮没有变化」。
-  const roundId = roundIdOf(world!);
-  const roundChanges = memory.roundChanges && memory.roundChanges.roundId === roundId ? asJson(memory.roundChanges.points) : null;
+  const roundChanges = asJson(memory.roundChanges!.points);
   return {
     kind: 'model', task: 'continuation', key: roundId,
-    input: { round: asJson(world!.round), head: asJson(world!.head), workingState: state ? asJson(state) : null, roundChanges },
+    input: { round: asJson(world!.round), head: asJson(world!.head), workingState: asJson(state!), roundChanges },
   };
 }
 
@@ -663,13 +669,14 @@ function pointDecision(view: ScheduleView): Decision {
  * served working cursor. A slot covered by a LATER planned point is deferred
  * (skipping it now would visit it and cancel its later opportunity); a slot
  * no point covers is still JUDGED here — a pointPlan omission is never a
- * skip. Empty (actorless) points keep their rule: the time scan owns slots.
+ * skip, not even when the plan lists NOBODY while unvisited slots remain (an
+ * actorless plan is only legitimate once every opportunity is processed).
  * Actors already processed (acted or explicitly skipped) never repeat. */
 function nextActor(view: ScheduleView): Id | null {
   const { world, work, memory } = view;
   const round = world!.round;
   const planned = memory.plan?.[memory.planIndex];
-  if (!round || !planned || planned.actorIds.length === 0) return null;
+  if (!round || !planned) return null;
   const plannedNow = new Set(planned.actorIds);
   const coveredLater = new Set(memory.plan!.slice(memory.planIndex + 1).flatMap((point) => point.actorIds));
   for (const actor of round.order.slice(work!.working.cursor)) {

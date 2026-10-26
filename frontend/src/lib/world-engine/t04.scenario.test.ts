@@ -102,3 +102,15 @@ describe.each(['sample_1', 'sample_2'])('T04 %s', (sampleId) => {
     await expect(driveControllerSlice(scenario)).rejects.toThrow(/input mismatch/);
   });
 });
+
+describe('T04 prior-round context guard', () => {
+  test('the cold continuation stops when the session has no current world or round history', async () => {
+    const scenario = buildT04Scenario('sample_1');
+    scenario.memory.workingState = null;
+    scenario.memory.roundChanges = null;
+    // 零模型调用、零结论写入：直接 stop，不碰任何传输。
+    expect(await scenario.driver.step()).toEqual({ kind: 'stop', reason: 'continuation_context_missing:workingState,roundChanges' });
+    expect(scenario.model.calls).toEqual([]);
+    expect(scenario.transport.ops).toEqual([]);
+  });
+});

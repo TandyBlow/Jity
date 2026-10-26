@@ -887,9 +887,12 @@ describe('review regressions (553e341 findings)', () => {
   });
 
   test('split updates restart per point (no candidate leakage through commit)', async () => {
-    let world = mkWorld({ advance: { advanceId: 'adv1', inputId: 'in1', intentStatus: 'consumed', inputAvailable: false }, activeRoundId: 'r1', activePointId: 'p0', round: { roundId: 'r1', trigger: 'player', order: ORDER, cursor: 0, actedIds: [], visitedIds: [], conclusion: null } });
+    // 合法空点：人物机会已全部处理（visited 前缀=全序）。#7 后空计划仍有
+    // 未处理槽位时会先逐人判断，不再是「空计划=跳过」。
+    const emptyPointWork = { cursor: 6, actedIds: [], visitedIds: ORDER, settledUnitIds: [], intentStatus: 'consumed' as const };
+    let world = mkWorld({ advance: { advanceId: 'adv1', inputId: 'in1', intentStatus: 'consumed', inputAvailable: false }, activeRoundId: 'r1', activePointId: 'p0', round: { roundId: 'r1', trigger: 'player', order: ORDER, cursor: 6, actedIds: [], visitedIds: ORDER, conclusion: null } });
     let control = mkControl({ revision: 2 });
-    let work: PointWork | null = mkWork({ pointId: 'p0', timeAdvance: ta(60) });
+    let work: PointWork | null = mkWork({ pointId: 'p0', timeAdvance: ta(60), working: emptyPointWork });
     const writeOk = (operation: WorldOperation, request: unknown, data: unknown) => ({
       protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1,
       replayed: false, operation, requestId: (request as { requestId?: Id })?.requestId ?? 'req', requestHash: 'hash', world, control, work, data,
@@ -954,7 +957,7 @@ describe('review regressions (553e341 findings)', () => {
       {
         op: 'checkpoint_begin_point',
         respond: (r) => {
-          work = mkWork({ pointId: 'p1', timeAdvance: ta(60) });
+          work = mkWork({ pointId: 'p1', timeAdvance: ta(60), working: emptyPointWork });
           world = { ...world, activePointId: 'p1' };
           control = mkControl({ revision: control.revision + 1 });
           return writeOk('checkpoint_begin_point', r, { pointId: 'p1' });
@@ -1311,5 +1314,20 @@ describe('continuation context (#9, §7.1)', () => {
     await driver.step(); // conclude handback
     // 本轮结束：变化缓存清空，下一轮不串。
     expect(driver.getMemory().roundChanges).toBeNull();
+  });
+});
+
+describe('slot/continuation guards (2026-10-26 review)', () => {
+  test('continuation without the current world or the round history stops before any model call', async () => {
+    const world = mkWorld({ advance: { advanceId: 'adv1', inputId: 'in1', intentStatus: 'consumed', inputAvailable: false }, activeRoundId: 'r1', round: { roundId: 'r1', trigger: 'player', order: ORDER, cursor: 6, actedIds: [], visitedIds: ORDER, conclusion: null } });
+    const control = mkControl({ phase: 'assess_continuation', revision: 2 });
+    const transport = new ScriptedTransport([]);
+    const model = new ScriptedModel([]);
+    const memory = memoryWithAdvanceStart();
+    const driver = new ControllerDriver({ transport, model }, memory, { world, control });
+    expect(await driver.step()).toEqual({ kind: 'stop', reason: 'continuation_context_missing:workingState,roundChanges' });
+    expect(model.calls).toEqual([]);
+    expect(transport.ops).toEqual([]);
+    expect(driver.pendingDecision()).toEqual({ kind: 'stop', reason: 'continuation_context_missing:workingState,roundChanges' });
   });
 });

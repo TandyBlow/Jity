@@ -35,11 +35,11 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { ControllerDriver, initialMemory } from './controller';
 import { assembleCandidates, mergeUpdatesStages, timeScanCandidates, triggerSlotKey, type UpdatesCall, type UpdatesStage } from './schedule';
-import { buildCorpus, frozenGroupActionsAtStage, ScenarioModelPort, ScenarioTransport, servedBeforeSteps, type Corpus, type DeclaredModelCall, type PreviewSpecimenSpec, type ReadStateSpecimenSpec } from './harness';
+import { buildCorpus, frozenGroupActionsAtStage, ScenarioModelPort, ScenarioTransport, servedBeforeSteps, type Corpus, type CorpusStep, type DeclaredModelCall, type PreviewSpecimenSpec, type ReadStateSpecimenSpec } from './harness';
 import { ProtocolError } from './protocol';
 import { equal, instantiate, readTrace } from './trace-runner';
 import { advanceTime, type WallTime } from './t02.scenario';
-import type { ControlState, EntityDelta, Id, Json, SettlementGroup, WorldContext } from './types';
+import type { ControlState, EntityDelta, Id, Json, PointWork, SettlementGroup, WorldContext } from './types';
 
 export type T03TraceName = 'T03' | 'T03-collapse';
 
@@ -339,6 +339,71 @@ export function buildT03Scenario(traceName: T03TraceName, sampleId: string): T03
     }
   }
 
+  // #7 复核：`actorIds: []` 不是「跳过所有未处理人物」。录制在 begin 后直接
+  // stage_time_scan（旧偏差的产物）；现在补上六个行动判断对应的 record_skip
+  // 交换（固定输出=skip），并顺延 revision 链：2..8（六次跳过）→ 9（stage）
+  // → 10（seal）→ 11（commit）。只有零覆盖计划的轨迹需要（T03 空点）；
+  // T03-collapse 的计划覆盖 person_c，不插入。
+  if (actorsByPoint[0].actors.length === 0) {
+    const beginStep = steps[beginIndex[0]];
+    const beginAt = corpus.steps.findIndex((step) => step.sharedStepId === beginStep.id);
+    const previewAt = corpus.steps.findIndex((step) => step.id === `b-preview-after-${beginStep.id}`);
+    if (beginAt < 0 || previewAt < 0) throw new ProtocolError(`[${traceName}] empty-plan point needs the begin exchange and its preview anchor`);
+    const begin = corpus.steps[beginAt];
+    const envelope = begin.response as unknown as { world: WorldContext; control: ControlState; work: PointWork };
+    const bindBase = begin.request as { worldId: Id; leaseToken: Id; fenceEpoch: number; expectedPointId: Id };
+    const order = envelope.world.round?.order ?? [];
+    if (order.length === 0) throw new ProtocolError(`[${traceName}] empty-plan point has no frozen order to judge`);
+    const skips: CorpusStep[] = order.map((actor, i) => {
+      const working = { cursor: i + 1, actedIds: [], visitedIds: order.slice(0, i + 1), settledUnitIds: [], intentStatus: 'pending' as const };
+      return {
+        id: `b-skip-${actor}`, sharedStepId: null, segment: 'controller' as const,
+        operation: 'checkpoint_record_skip' as const,
+        request: {
+          // 录制请求 ID 在语料构建期被剥离；这里同样只声明载荷本身。
+          protocolVersion: 2,
+          worldId: bindBase.worldId, leaseToken: bindBase.leaseToken, fenceEpoch: bindBase.fenceEpoch,
+          expectedPointId: bindBase.expectedPointId, expectedVersion: 0, expectedCheckpointRevision: 2 + i,
+          operation: 'record_skip', pointId: envelope.work.pointId, slotActorId: actor,
+        } as unknown as Json,
+        requestIdRequired: true, requestIdExpectation: 'fresh' as const,
+        scope: { worldId: envelope.world.worldId },
+        response: {
+          protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1',
+          serverTimeEpochMilli: 1, replayed: false, operation: 'checkpoint_record_skip', requestId: `b_skip_${i}`, requestHash: `${i}`.repeat(64),
+          world: envelope.world, control: { ...envelope.control, revision: 3 + i },
+          work: { ...envelope.work, working }, data: { pointId: envelope.work.pointId, working },
+        } as unknown as Json,
+        responseKind: 'success' as const, captures: [], digestChain: [],
+      };
+    });
+    corpus.steps.splice(previewAt + 1, 0, ...skips);
+    // 后续录制交换按新 revision 链重绑（请求与响应成对），并同步由旧
+    // revision 生成的边界预览标本请求。
+    const rebind = (operation: string, requestRevision: number, responseRevision: number): void => {
+      const step = corpus.steps.find((entry) => entry.operation === operation)!;
+      (step.request as { expectedCheckpointRevision: number }).expectedCheckpointRevision = requestRevision;
+      (step.response as unknown as { control: ControlState }).control.revision = responseRevision;
+    };
+    rebind('checkpoint_stage_time_scan', 8, 9);
+    rebind('checkpoint_seal_point', 9, 10);
+    rebind('commit_point', 10, 11);
+    for (const step of corpus.steps) {
+      if (step.segment !== 'preview') continue;
+      // 阶段边界预览在拆分阶梯中途发出——此时 revision 已是跳过后的 8，
+      // 且预览只读、不回退 revision。begin 后、跳过前的那份标本不动。
+      if (step.id.startsWith('b-boundary-')) {
+        (step.request as { expectedCheckpointRevision: number }).expectedCheckpointRevision = 8;
+        // 复制控制块：标本响应的 control 与 begin 响应共享引用，直接改会把
+        // begin 之后的 revision 也改成 8。
+        const envelope = step.response as unknown as { control: ControlState };
+        envelope.control = { ...envelope.control, revision: 8 };
+      }
+      // stage 之后的预览响应带 stage 的 9，请求也要跟着 9。
+      if (step.id === `b-preview-after-${stageStep.id}`) (step.request as { expectedCheckpointRevision: number }).expectedCheckpointRevision = 9;
+    }
+  }
+
   const declared: DeclaredModelCall[] = [];
   declared.push({ task: 'pointPlan', key: roundId, input: { round: structuredClone(context.world.round) as Json, head: structuredClone(context.world.head) as Json }, output: begins.map((b, i) => {
     const req = requestOf.get(b.id)! as { pointId: Id; kind: Json; timeAdvance: Json };
@@ -357,7 +422,18 @@ export function buildT03Scenario(traceName: T03TraceName, sampleId: string): T03
   for (const s of steps) {
     const index = stepIndex.get(s.id)!;
     const req = requestOf.get(s.id)!;
-    if (s.operation === 'checkpoint_discover_group') {
+    if (s.operation === 'checkpoint_begin_point' && actorsByPoint[pointAt(index)].actors.length === 0) {
+      // 零覆盖计划：冻结顺序里每个未处理槽位都要在本点判断（固定输出=skip）。
+      const order = servedBefore.get(stageStep.id)!.world!.round!.order;
+      const beginPreviewState = previewStateAt(stepIndex.get(stageStep.id)!); // begin 后、行动前的那次预览
+      for (const actor of order) {
+        declared.push({
+          task: 'action', key: actor,
+          input: { actor, advance: declaredAdvance(stageStep.id), workingState: beginPreviewState },
+          output: { kind: 'skip' } as unknown as Json,
+        });
+      }
+    } else if (s.operation === 'checkpoint_discover_group') {
       declared.push({ task: 'action', key: req.initiatorId as Id, input: { actor: req.initiatorId as Id, advance: declaredAdvance(s.id), workingState: previewStateAt(index) }, output: { kind: 'act', text: req.actionText } as unknown as Json });
     } else if (s.operation === 'checkpoint_extend_group') {
       if (req.targets != null) {

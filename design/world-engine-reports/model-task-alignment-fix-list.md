@@ -174,9 +174,33 @@
 
 - 调度器单测：同 round 变化进入输入、零历史为 null、上一轮变化不串到本轮（roundId 不匹配即 null）。
 - 真实控制器：提交后 `roundChanges` 记录点的时间与 Δ；continuation 模型输入含当前世界（`protagonistId`）与该变化；handback 结论后缓存清空。
-- 场景：T04 两条 continuation 声明分别固定 `null` 与「本点 Δ」；输入由模型端口逐字核对。
+- 场景：T04 两条 continuation 声明——第一条取自已录制的上一轮（T02 round_1：末点状态＋三个提交点的时间/Δ，见 §10），第二条为自动轮本点 Δ；输入由模型端口逐字核对。
 - 提示词：断言 continuation 契约含当前世界与 `roundChanges`，输入序列化带出实际数组。
 
-**边界（不掩盖）**：会话在 assess_continuation 半途打开时，客户端没有本轮历史，`workingState`/`roundChanges` 均为 null。补齐需要恢复批次（H2）读取/重建本轮点记录；本批不新增读接口，也不把 null 当作「无变化」。
+**边界（不掩盖，§10 已收紧）**：会话在 assess_continuation 半途打开且客户端没有本轮历史时，调度器在调用模型前明确停止（`continuation_context_missing:*`），补齐（服务端读/重建本轮点记录）归 H2；本批不新增读接口。
 
 **验证数字**：前端全量 481/481（world-engine 419）、两套 tsc 净、`npm run build` 通过；后端 `python -X utf8 -m pytest -q` 923/923。清单第 1/3/4、5、6、7、8、9 项全部关闭（#6 叙事读取此前已关闭；H2 冻结组行动恢复与评估批次独立跟踪）。
+
+## 10. #7/#9 定向复核跟进（2026-10-26，artifacts/slot-continuation-review.json）
+
+复核确认两处守卫缺失（481 项测试与类型检查之外的定向探针）：
+
+| 探针 | 实测 | 本轮处理 |
+|---|---|---|
+| `empty_plan_with_unvisited_frozen_slots` | `actorIds: []`＋游标 0＋六人未处理 → 直接进行时间扫描 | 删除「空计划即空点」的早退：`nextActor` 一律按冻结顺序取下一个未处理槽位；只有**人物机会都处理完**（visited 前缀到全序/游标走完）才是合法空点，时间扫描承包槽位。T03 的录制即旧偏差产物，按 §7 的同一套机制补齐。 |
+| `continuation_without_world_or_round_history` | `workingState`、`roundChanges` 都为 null 仍调用模型并写入 handback | `continuationDecision` 先做完整性检查：缺任一即 `stop`（`continuation_context_missing:workingState,roundChanges`），零模型调用、零结论写入；H2 补读另做。 |
+
+**T03 空点适配（录制不动，场景补交换）**
+
+- T03 的 `plan` 零覆盖、六人未处理：在 begin 后、其预览标本之后插入 6 条 B-authored `record_skip`（固定输出=skip 对应的显式跳过），并顺延 revision 链：2..8（六次跳过）→ 9（stage_time_scan）→ 10（seal）→ 11（commit）；请求/响应成对重绑，拆分阶梯的边界预览（在建语料时按 begin 的旧 revision 生成）改为 8，stage 后的预览请求改为 9。轨迹文件与共享契约不动。
+- 模型声明同步：六次 `action`（person_a..f，固定 `skip`，输入=begin 后预览的工作态）在时间扫描的阶段更新之前；测试断言调用序列与 ops 计数（T03 14→20）。
+
+**T04 首条 continuation 的数据来源（不伪造）**
+
+- T04 的世界正是 T02 的结束态（同 head/摘要/round/advance，两样本逐一核对，构建期断言）。场景从 T02 录制取「上一轮当前世界」＝s42 的 state，与「本轮已提交变化」＝三段 commit 请求点的时间/Δ；作为连续会话的内存种子（workingState + roundChanges）与 s2 的声明输入。新增守卫测试：抹掉这两块种子后，驱动直接 `continuation_context_missing`，零模型调用、零传输。
+
+**其他回归**
+
+- 合法空点的判定改由「人物机会已处理」表达：调度器空点单测改为 visited=全序；controller 的 split-updates 测试同样改为已访问空点。新增强制反例：零覆盖计划＋未处理槽位必须问 action。
+
+**验证**：前端全量 484/484（world-engine 422）、两套 tsc 净、`npm run build` 通过；后端 `python -X utf8 -m pytest -q` 923/923。
