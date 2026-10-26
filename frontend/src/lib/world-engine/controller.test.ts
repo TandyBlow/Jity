@@ -132,15 +132,18 @@ describe('driver end-to-end: entry, group cycle, seal/commit, narration', () => 
       { op: 'checkpoint_extend_group', respond: (r) => { control = mkControl({ revision: 8 }); return writeOk('checkpoint_extend_group', (r as { requestId: Id }).requestId, { groupId: 'g1', memberIds: ['person_a', 'person_d'], frontierIds: [] }); } },
       { op: 'checkpoint_close_group', respond: (r) => { work = mkWork({ phase: 'settle_group', pendingGroup: { groupId: 'g1', sourceId: 'person_a', memberIds: ['person_a', 'person_d'], targetIds: [], frontierIds: [], closed: true } }); control = mkControl({ revision: 9 }); return writeOk('checkpoint_close_group', (r as { requestId: Id }).requestId, { groupId: 'g1', closed: true }); } },
       { op: 'checkpoint_stage_unit', respond: (r) => { work = mkWork({ working: { cursor: 1, actedIds: ['person_a'], visitedIds: [], settledUnitIds: ['u1'], intentStatus: 'pending' } }); control = mkControl({ revision: 10 }); return writeOk('checkpoint_stage_unit', (r as { requestId: Id }).requestId, { groupId: 'g1', unitId: 'u1', working: work.working }); } },
-      ...ORDER.slice(1).map((slotActorId, i) => ({
+      // #7：暂存后逐人判断（旧路径是程序补记跳过），判断前要读最新工作态。
+      { op: 'preview_point', respond: (r) => previewOk((r as { requestId?: Id }).requestId ?? 'req') },
+      // person_d 已在共同组行动过（groupActors）→ 不再询问也不再补记跳过，
+      // 剩余 b、c、e、f 四个槽位逐人判断（本夹具全部 skip）。
+      ...['person_b', 'person_c', 'person_e', 'person_f'].map((_slotActorId, i) => ({
         op: 'checkpoint_record_skip' as WorldOperation,
         respond: (r: unknown) => {
-          work = mkWork({ working: { cursor: i + 2, actedIds: ['person_a'], visitedIds: [], settledUnitIds: ['u1'], intentStatus: 'pending' } });
+          work = mkWork({ working: { cursor: [2, 3, 4, 5][i], actedIds: ['person_a'], visitedIds: [], settledUnitIds: ['u1'], intentStatus: 'pending' } });
           control = mkControl({ revision: 11 + i });
           return writeOk('checkpoint_record_skip', (r as { requestId: Id }).requestId, { pointId: 'p1', working: work.working });
         },
       })),
-      { op: 'preview_point', respond: (r) => previewOk((r as { requestId?: Id }).requestId ?? 'req') },
       { op: 'checkpoint_seal_point', respond: (r) => { work = mkWork({ sealed: true, prefixDigest: 'pd1', working: { cursor: 6, actedIds: ORDER, visitedIds: ORDER, settledUnitIds: ['u1'], intentStatus: 'pending' } }); control = mkControl({ revision: 16 }); return writeOk('checkpoint_seal_point', (r as { requestId: Id }).requestId, { pointId: 'p1', prefixDigest: 'pd1' }); } },
       { op: 'commit_point', respond: (r) => { world = { ...world, head: { pointId: 'p1', version: 1, stateDigest: 'd1', narrationStatus: 'pending' } }; work = null; control = mkControl({ revision: 17 }); return writeOk('commit_point', (r as { requestId: Id }).requestId, { pointId: 'p1', version: 1, stateDigest: 'd1' }); } },
       { op: 'narration_claim', respond: (r) => writeOk('narration_claim', (r as { requestId: Id }).requestId, { pointId: 'p1', mode: 'head', generation: 1, fenceEpoch: 1, issuedAtEpochMilli: 7, expiresAtEpochMilli: 8, claimToken: 'ct_p1' }) },
@@ -158,6 +161,8 @@ describe('driver end-to-end: entry, group cycle, seal/commit, narration', () => 
       { task: 'targets', output: { targets: [] } },
       { task: 'results', output: { person_a: '结果a。', person_d: '结果d。' } },
       { task: 'updates', output: [{ stage: 'appearance', changes: { person_a: { appearanceChanges: [{ id: 'ch1', text: '指尖结霜。', supersedes: [] }] } } }] as unknown as Json },
+      // #7：计划未覆盖的槽位逐人判断（全部 skip）；person_d 已在组内行动。
+      ...['person_b', 'person_c', 'person_e', 'person_f'].map(() => ({ task: 'action' as const, output: { kind: 'skip' } as unknown as Json })),
       { task: 'narration', output: 'p1叙事完成。' },
     ]);
     const memory = initialMemory('req', 'browser');
@@ -174,13 +179,15 @@ describe('driver end-to-end: entry, group cycle, seal/commit, narration', () => 
       'create_world', 'narration_claim', 'get_state', 'narration_submit', 'allocate_ids', 'checkpoint_start_advance',
       'checkpoint_begin_point', 'preview_point', 'checkpoint_discover_group',
       'checkpoint_extend_group', 'create_rolls', 'create_rolls', 'checkpoint_extend_group', 'checkpoint_extend_group',
-      'checkpoint_close_group', 'checkpoint_stage_unit',
-      ...ORDER.slice(1).map(() => 'checkpoint_record_skip' as WorldOperation),
-      'preview_point', 'checkpoint_seal_point', 'commit_point', 'narration_claim', 'get_state', 'get_state', 'narration_submit',
+      'checkpoint_close_group', 'checkpoint_stage_unit', 'preview_point',
+      ...Array.from({ length: 4 }, () => 'checkpoint_record_skip' as WorldOperation),
+      'checkpoint_seal_point', 'commit_point', 'narration_claim', 'get_state', 'get_state', 'narration_submit',
     ]);
     expect(model.calls.map((c) => `${c.task}:${c.key}`)).toEqual([
       'initial:initial', 'narration:root', 'pointPlan:r1', 'action:person_a', 'targets:person_a',
-      'reaction:person_a', 'targets:person_d', 'results:g1', 'updates:g1', 'narration:p1',
+      'reaction:person_a', 'targets:person_d', 'results:g1', 'updates:g1',
+      'action:person_b', 'action:person_c', 'action:person_e', 'action:person_f',
+      'narration:p1',
     ]);
     const requestIds = (transport.requests as { requestId?: Id }[]).map((r) => r.requestId).filter((id): id is Id => id != null);
     expect(new Set(requestIds).size).toBe(requestIds.length);
@@ -194,7 +201,7 @@ describe('driver end-to-end: entry, group cycle, seal/commit, narration', () => 
     const nsState = workingState() as unknown as Json;
     const perspective = '主角视角（person_a「甲」）；只表达已结算的世界事实';
     expect(model.calls[1].input).toEqual({ pointId: 'root', before: null, delta: { timeAdvance: null, entityDeltas: {} }, after: nsState, perspective });
-    expect(model.calls[9].input).toEqual({ pointId: 'p1', before: nsState, delta: { timeAdvance: ta(2), entityDeltas: { person_a: { entityId: 'person_a', positionSet: position } } }, after: nsState, perspective });
+    expect(model.calls[13].input).toEqual({ pointId: 'p1', before: nsState, delta: { timeAdvance: ta(2), entityDeltas: { person_a: { entityId: 'person_a', positionSet: position } } }, after: nsState, perspective });
     // §6.1/§6.2/§7.1：实测输入补充——行动 advance（无 context 读取时，驱动
     // 自己 start_advance 的原文仍是输入）、反应读发起者威胁、结算读全组冻结
     // 行动与全部骰点判定。
@@ -213,7 +220,7 @@ describe('driver end-to-end: entry, group cycle, seal/commit, narration', () => 
     // §7.1：更新输入带已确认结果（不是只存在 lastResults 里）。
     expect(model.calls[8].input).toMatchObject({ groupId: 'g1', mode: 'group', results: { person_a: '结果a。', person_d: '结果d。' } });
     const committed = driver.getMemory();
-    expect(committed).toMatchObject({ leaseToken: 'lease1', planIndex: 1, staged: [], groupActors: [], groupActions: [], narration: null, budget: { used: 10 } });
+    expect(committed).toMatchObject({ leaseToken: 'lease1', planIndex: 1, staged: [], groupActors: [], groupActions: [], narration: null, budget: { used: 14 } });
     // start_advance 保留与 advance/input 身份绑定的原文（不依赖 context 回读）。
     expect(committed.playerAdvance).toEqual({ advanceId: 'adv1', inputId: 'in1', text: '探索走廊' });
     expect(committed.ids).toMatchObject({ advance: 'adv1', input: 'in1', round: 'r1' });
@@ -852,12 +859,15 @@ describe('review regressions (553e341 findings)', () => {
       { op: 'checkpoint_extend_group', respond: (r) => writeOk('checkpoint_extend_group', r, { groupId: 'g1', memberIds: ['person_a', 'person_d'], frontierIds: [] }) },
       { op: 'checkpoint_close_group', respond: (r) => { Object.assign(work!, { phase: 'settle_group', pendingGroup: { groupId: 'g1', sourceId: 'person_a', memberIds: ['person_a', 'person_d'], targetIds: [], frontierIds: [], closed: true } }); return writeOk('checkpoint_close_group', r, { groupId: 'g1', closed: true }); } },
       { op: 'checkpoint_stage_unit', respond: (r) => { Object.assign(work!, { phase: 'select_actor', pendingGroup: null, working: { cursor: 2, actedIds: ['person_a', 'person_d'], visitedIds: [], settledUnitIds: ['u1'], intentStatus: 'pending' } }); return writeOk('checkpoint_stage_unit', r, { groupId: 'g1', unitId: 'u1', working: work.working }); } },
+      // #7：暂存后判断下一个槽位（person_c）前读最新工作态。
+      { op: 'preview_point', respond: (r) => writeOk('preview_point', r, { pointId: 'p1', pointProjection: { worldId: 'w1', id: 'p1', sequence: 1, kind: 'normal', previousPointId: 'root', roundId: 'r1', advanceId: 'adv1', trigger: 'player', linkedFromPointId: null, timeAdvance: ta(2), entityDeltas: {} }, mergedEntityDeltas: {}, workingStateDigest: 'wsd', pointProjectionDigest: 'ppd', workingState: workingState() }) },
       { op: 'checkpoint_record_skip', respond: (r) => writeOk('checkpoint_record_skip', r, { pointId: 'p1', working: work.working }) },
     ];
     model.script = [
       { task: 'targets', output: { targets: [] } },
       { task: 'results', output: { person_a: 'a。', person_d: 'd。' } },
       { task: 'updates', output: [] as unknown as Json },
+      { task: 'action', output: { kind: 'skip' } as unknown as Json },
     ];
     await driver.step(); // extend admittedMember (consumes the reaction output)
     await driver.step(); // model targets for person_d (DFS)
@@ -866,11 +876,14 @@ describe('review regressions (553e341 findings)', () => {
     await driver.step(); // model results
     await driver.step(); // model updates
     await driver.step(); // stage
-    await driver.step(); // leave-behind skip
-    expect(model.calls.map((c) => `${c.task}:${c.key}`)).toEqual(['targets:person_d', 'results:g1', 'updates:g1']);
-    expect(transport.ops).toEqual(['checkpoint_extend_group', 'checkpoint_extend_group', 'checkpoint_close_group', 'checkpoint_stage_unit', 'checkpoint_record_skip']);
-    expect((transport.requests[4] as { slotActorId: string }).slotActorId).toBe('person_c');
-    expect(driver.getMemory().groupActors).toEqual(['person_a', 'person_d']);
+    await driver.step(); // #7 fresh-state preview for the leftover slot
+    await driver.step(); // #7 leftover judgment: person_c skips
+    await driver.step(); // record_skip
+    expect(model.calls.map((c) => `${c.task}:${c.key}`)).toEqual(['targets:person_d', 'results:g1', 'updates:g1', 'action:person_c']);
+    expect(transport.ops).toEqual(['checkpoint_extend_group', 'checkpoint_extend_group', 'checkpoint_close_group', 'checkpoint_stage_unit', 'preview_point', 'checkpoint_record_skip']);
+    expect((transport.requests[5] as { slotActorId: string }).slotActorId).toBe('person_c');
+    // person_d 在共同组行动过（不再询问）；person_c 被显式跳过，也记为已处理。
+    expect(driver.getMemory().groupActors).toEqual(['person_a', 'person_d', 'person_c']);
   });
 
   test('split updates restart per point (no candidate leakage through commit)', async () => {
@@ -1247,5 +1260,56 @@ describe('model-input review (2026-10-26)', () => {
     const driver = new ControllerDriver({ transport, model: new ScriptedModel([]) }, memory, { world, control });
     await driver.step();
     expect(driver.getMemory().playerAdvance).toEqual({ advanceId: 'adv1', inputId: 'in1', text: '探索走廊' });
+  });
+});
+
+describe('continuation context (#9, §7.1)', () => {
+  test('the continuation call reads the current world plus this round\u2019s committed changes', async () => {
+    let world = mkWorld({
+      head: { pointId: 'root', version: 0, stateDigest: 'd0', narrationStatus: 'ready' },
+      advance: { advanceId: 'adv1', inputId: 'in1', intentStatus: 'consumed', inputAvailable: false },
+      activeRoundId: 'r1',
+      round: { roundId: 'r1', trigger: 'player', order: ORDER, cursor: 6, actedIds: ['person_a'], visitedIds: ORDER, conclusion: null },
+    });
+    let control = mkControl({ phase: 'select_actor', revision: 2 });
+    const work = mkWork({ sealed: true, prefixDigest: 'pd1', working: { cursor: 6, actedIds: ['person_a'], visitedIds: ORDER, settledUnitIds: ['u1'], intentStatus: 'consumed' } });
+    const point = { worldId: 'w1', id: 'p1', sequence: 1, kind: 'normal', previousPointId: 'root', roundId: 'r1', advanceId: 'adv1', trigger: 'player', linkedFromPointId: null, timeAdvance: ta(2), entityDeltas: { person_a: { entityId: 'person_a', positionSet: position } } };
+    const writeOk = (operation: WorldOperation, request: unknown, data: unknown) => ({
+      protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false,
+      operation, requestId: (request as { requestId: Id }).requestId, requestHash: 'hash', world, control, work: null, data,
+    });
+    const transport = new ScriptedTransport([
+      { op: 'commit_point', respond: (r) => {
+        world = { ...world, head: { pointId: 'p1', version: 1, stateDigest: 'd1', narrationStatus: 'ready' } };
+        control = mkControl({ phase: 'assess_continuation', revision: 3 });
+        return writeOk('commit_point', r, { pointId: 'p1', version: 1, stateDigest: 'd1' });
+      } },
+      { op: 'round_conclusion_conclude', respond: (r) => {
+        world = { ...world, activeRoundId: null, round: null };
+        control = mkControl({ phase: 'complete', revision: 4 });
+        return writeOk('round_conclusion_conclude', r, { kind: 'handback', roundId: 'r1' });
+      } },
+    ]);
+    const model = new ScriptedModel([{ task: 'continuation', output: { kind: 'handback', closedBy: 'model', cancelReason: null } as unknown as Json }]);
+    const memory = memoryWithAdvanceStart({
+      plan: [{ pointId: 'p1', kind: 'normal', timeAdvance: ta(2), actorIds: ['person_a'] }],
+      planIndex: 0,
+      staged: [{ groupId: 'g1', actorIds: ['person_a'], results: {}, candidates: { groupId: 'g1', actorIds: ['person_a'], positions: {}, appearances: {}, tasksAchieved: {}, subtasksAdded: {}, personalities: {}, sanities: {}, taskCoverageIds: [], personalityCoverageIds: [] } }],
+      workingState: { key: workingStateKey(work), state: workingState() },
+      commitPayload: { point: point as never, settlementGroups: [] },
+    });
+    const driver = new ControllerDriver({ transport, model }, memory, { world, control, work });
+    await driver.step(); // commit_point
+    expect(driver.getMemory().roundChanges).toEqual({ roundId: 'r1', points: [{ pointId: 'p1', timeAdvance: ta(2), entityDeltas: point.entityDeltas }] });
+    await driver.step(); // continuation model
+    expect(model.calls[0].input).toMatchObject({
+      round: { roundId: 'r1', order: ORDER },
+      head: { pointId: 'p1', version: 1 },
+      workingState: { protagonistId: 'person_a' },
+      roundChanges: [{ pointId: 'p1', timeAdvance: ta(2), entityDeltas: point.entityDeltas }],
+    });
+    await driver.step(); // conclude handback
+    // 本轮结束：变化缓存清空，下一轮不串。
+    expect(driver.getMemory().roundChanges).toBeNull();
   });
 });

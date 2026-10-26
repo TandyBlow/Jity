@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { driveControllerSegment } from './harness';
+import { driveControllerSlice } from './harness';
 import { buildT06Scenario } from './t06.scenario';
 import { WorldTimeoutError } from './transport';
 import type { FaultAction, FaultAttempt } from './fault-transport';
@@ -9,6 +9,11 @@ type Scenario = ReturnType<typeof buildT06Scenario>;
 
 async function beforeStep(scenario: Scenario, stepId: string) {
   for (let i = 0; i < 500; i++) {
+    // #7：控制器段在录制预览 s16（已改为 harness 校验位）处分成两段。
+    if (scenario.transport.nextStepId === 's16' && scenario.driver.pendingDecision().kind === 'transport') {
+      await scenario.transport.runInspect('s16');
+      continue;
+    }
     if (scenario.transport.nextStepId === stepId && scenario.driver.pendingDecision().kind === 'transport') return;
     const terminal = await scenario.driver.step();
     if (terminal) throw new Error(`Ended before ${stepId}: ${JSON.stringify(terminal)}`);
@@ -36,13 +41,16 @@ function probeRequest(scenario: Scenario, stepId: string, requestId: string): Js
 }
 
 async function finish(scenario: Scenario) {
-  await driveControllerSegment(scenario, 'T06 fault session');
+  await driveControllerSlice(scenario, 'T06 fault session');
+  if (scenario.transport.nextStepId === 's16') await scenario.transport.runInspect('s16');
+  await driveControllerSlice(scenario, 'T06 fault session');
   for (const stepId of ['s21', 's22', 's23']) await scenario.transport.runInspect(stepId);
   scenario.transport.assertConsumed();
   scenario.model.assertConsumed();
   scenario.fault.assertFaultsConsumed();
   expect(scenario.driver.pendingDecision()).toMatchObject({ kind: 'model', task: 'continuation' });
-  expect(scenario.driver.getMemory()).toMatchObject({ planIndex: 1, staged: [], stagedTimeScan: null, groupActors: [], narration: null, budget: { used: 8 } });
+  // #7 后 T01 多 5 次逐人判断（b–f 全 skip）。
+  expect(scenario.driver.getMemory()).toMatchObject({ planIndex: 1, staged: [], stagedTimeScan: null, groupActors: [], narration: null, budget: { used: 13 } });
 }
 
 function sameAttempt(attempts: FaultAttempt[]) {
@@ -84,7 +92,9 @@ describe.each(['sample_1', 'sample_2'])('T06 %s loss and idempotency', (sampleId
     expect(last.requestId).not.toBe(first.requestId);
     expect({ ...last, requestId: null }).toEqual({ ...first, requestId: null });
     expect(attempts[1].outcome).toBe('context_bridge');
-    expect(scenario.model.calls.filter((call) => ['action', 'results', 'updates'].includes(call.task)).map((call) => call.task)).toEqual(['action', 'results', 'updates']);
+    // #7 后 leftover 逐人判断也存在；被复用的 confirmed work 仍是 a 的行动、
+    // 结算与更新，没有被重新采样。
+    expect(scenario.model.calls.filter((call) => call.task === 'results' || call.task === 'updates' || (call.task === 'action' && call.key === 'person_a')).map((call) => call.task)).toEqual(['action', 'results', 'updates']);
   });
 
   test.each(['timeout_before_send', 'request_in_progress', 'lose_response'])('%s hits the retry bound and can resume the still-pending write without resampling', async (kind) => {

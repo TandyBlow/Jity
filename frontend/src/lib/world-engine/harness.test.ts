@@ -16,6 +16,13 @@ const rawT01 = () => JSON.parse(readFileSync(resolve(process.cwd(), '../design/w
 
 async function runT01Acceptance(sampleId: string) {
   const scenario = buildT01Scenario(sampleId);
+  // #7：逐人判断需要 a 暂存后的工作态，控制器在 s10 后的 B 预览处到达第一段
+  // 边界；录制预览 s16 被移作其后的 harness 校验位（跳过不改世界态）。
+  await driveControllerSegment(scenario);
+  {
+    const { step, response } = await scenario.transport.runInspect('s16');
+    assertSharedExpectation(step, response);
+  }
   await driveControllerSegment(scenario);
 
   // Inspect segment: harness-issued reads verified against the shared corpus.
@@ -37,23 +44,27 @@ describe('T01 fixed-response controller acceptance', () => {
   test.each(['sample_1', 'sample_2'])('%s: controller segment, previews, inspect, stop boundary', async (sampleId) => {
     const scenario = await runT01Acceptance(sampleId);
 
-    // Controller segment order: shared steps s1–s20 with one declared B
-    // preview after begin; no command/probe claims for T01.
+    // Controller segment order: shared steps s1–s20 with the B preview after
+    // begin and the #7 fresh-state preview after the stage. The recorded s16
+    // preview stays where it was recorded (its digest feeds s18–s20) and is
+    // replayed as a harness inspect between the skips and the seal.
     expect(scenario.transport.ops).toEqual([
       'create_world', 'narration_claim', 'get_state', 'narration_submit', 'allocate_ids', 'checkpoint_start_advance',
       'checkpoint_begin_point', 'preview_point', 'checkpoint_discover_group', 'checkpoint_extend_group',
-      'checkpoint_close_group', 'checkpoint_stage_unit',
+      'checkpoint_close_group', 'checkpoint_stage_unit', 'preview_point',
       ...Array.from({ length: 5 }, () => 'checkpoint_record_skip' as const),
       'preview_point', 'checkpoint_seal_point', 'commit_point', 'narration_claim', 'get_state', 'get_state', 'narration_submit',
       'get_state', 'list_points', 'narration_get',
     ]);
 
-    // Preview declarations: exactly one B specimen (after begin, placeholder
-    // digests); the final preview is the shared s16 with real sample digests.
+    // Preview declarations: two B specimens (after begin, after stage) with
+    // placeholder digests; the shared s16 is a harness-issued inspect now and
+    // keeps its real recorded digests.
     const previews = scenario.corpus.steps.filter((s) => s.segment === 'preview');
-    expect(previews.map((s) => s.id)).toEqual(['b-preview-after-begin-s6']);
+    expect(previews.map((s) => s.id)).toEqual(['b-preview-after-begin-s6', 'b-preview-after-stage-s10']);
     expect(previews.every((s) => s.placeholderDigests === true)).toBe(true);
     const s16 = scenario.corpus.steps.find((s) => s.sharedStepId === 's16')!;
+    expect(s16.segment).toBe('inspect');
     expect(s16.placeholderDigests).toBeUndefined();
     expect(String((s16.response as { data: { workingStateDigest: string } }).data.workingStateDigest)).not.toBe('0'.repeat(64));
 
@@ -76,14 +87,29 @@ describe('T01 fixed-response controller acceptance', () => {
     expect(specimenData.pointProjection).toEqual({ ...(structuredClone(recorded16.pointProjection) as Record<string, unknown>), entityDeltas: {} });
     expect((specimenData.pointProjection as { roundId: Id }).roundId).toBe(scenario.roundId);
 
+    // #7 标本：a 暂存后的预览 body 与录制 s16 逐字同源（跳过不改世界态与
+    // 已暂存单元），b–f 的行动判断读的就是它。
+    const postStage = (scenario.corpus.steps.find((s) => s.id === 'b-preview-after-stage-s10')!.response as { data: { workingState: Json; pointProjection: Json; mergedEntityDeltas: Json } }).data;
+    expect(postStage.workingState).toEqual(recorded16.workingState);
+    expect(postStage.pointProjection).toEqual(recorded16.pointProjection);
+    expect(postStage.mergedEntityDeltas).toEqual((s16.response as { data: { mergedEntityDeltas: Json } }).data.mergedEntityDeltas);
+
     // Model call order: task/key sequence, inputs already strictly verified.
     const rootId = scenario.corpus.servedAfter.s1.world!.head.pointId;
     const pointId = (scenario.corpus.requests.s6 as { pointId: string }).pointId;
     const groupId = (scenario.corpus.requests.s10 as { candidates: { groupId: string } }).candidates.groupId;
     expect(scenario.model.calls.map((c) => `${c.task}:${c.key}`)).toEqual([
       'initial:initial', `narration:${rootId}`, `pointPlan:${scenario.roundId}`, 'action:person_a',
-      'targets:person_a', `results:${groupId}`, `updates:${groupId}`, `narration:${pointId}`,
+      'targets:person_a', `results:${groupId}`, `updates:${groupId}`,
+      // #7：计划未覆盖的 b–f 逐人判断（全部 skip），不是程序补记跳过。
+      'action:person_b', 'action:person_c', 'action:person_d', 'action:person_e', 'action:person_f',
+      `narration:${pointId}`,
     ]);
+    // 未覆盖人物的行动输入读的是 a 暂存后的工作态（不是行动前那份）。
+    for (const call of scenario.model.calls.filter((entry) => entry.task === 'action' && entry.key !== 'person_a')) {
+      const state = (call.input as { workingState: { characters: Record<string, { position: Json }> } }).workingState;
+      expect(state.characters.person_a.position).toEqual({ containerId: 'corridor', slotId: null, relativeTo: null });
+    }
 
     // The inspect reads belong to the harness, not the driver.
     expect(scenario.transport.ops.slice(-3)).toEqual(['get_state', 'list_points', 'narration_get']);
@@ -128,6 +154,8 @@ describe('T01 harness directed negatives', () => {
     sample.expectedDigests.s21 = 'f'.repeat(64);
     const scenario = buildT01Scenario('sample_1', raw);
     await driveControllerSegment(scenario);
+    await scenario.transport.runInspect('s16');
+    await driveControllerSegment(scenario);
     // The independent expectation is enforced at serve time — the inspect
     // read itself refuses the tampered pin.
     await expect(scenario.transport.runInspect('s21')).rejects.toThrow(/shared digest mismatch/);
@@ -136,25 +164,33 @@ describe('T01 harness directed negatives', () => {
   test('rejects a tampered final preview digest via the runtime digest chain', async () => {
     const scenario = buildT01Scenario('sample_1');
     (scenario.corpus.steps.find((s) => s.sharedStepId === 's16')!.response as { data: { workingStateDigest: string } }).data.workingStateDigest = 'f'.repeat(64);
+    await driveControllerSegment(scenario);
+    await scenario.transport.runInspect('s16');
+    // v32 由 s18–s20 引用：篡改在下一控制器步（s18 commit）的服务时暴露。
     await expect(driveControllerSegment(scenario)).rejects.toThrow(/digest chain broken/);
   });
 
   test('rejects a tampered commit state digest via the runtime digest chain', async () => {
     const scenario = buildT01Scenario('sample_1');
     (scenario.corpus.steps.find((s) => s.sharedStepId === 's18')!.response as { data: { stateDigest: string } }).data.stateDigest = 'f'.repeat(64);
+    await driveControllerSegment(scenario);
+    await scenario.transport.runInspect('s16');
     await expect(driveControllerSegment(scenario)).rejects.toThrow(/digest chain broken/);
   });
 
   test('rejects a tampered point projection digest via the independent pin', async () => {
     const scenario = buildT01Scenario('sample_1');
     (scenario.corpus.steps.find((s) => s.sharedStepId === 's16')!.response as { data: { pointProjectionDigest: string } }).data.pointProjectionDigest = 'f'.repeat(64);
-    await expect(driveControllerSegment(scenario)).rejects.toThrow(/independent digest pin broken/);
+    await driveControllerSegment(scenario);
+    await expect(scenario.transport.runInspect('s16')).rejects.toThrow(/independent digest pin broken/);
   });
 
   test('rejects a tampered final preview working state via the s21 alignment', async () => {
     const scenario = buildT01Scenario('sample_1');
     const working = (scenario.corpus.steps.find((s) => s.sharedStepId === 's16')!.response as { data: { workingState: { characters: Record<string, { sanity: number }> } } }).data.workingState;
     working.characters.person_a.sanity = 11; // the s21 independent expectation pins 10
+    await driveControllerSegment(scenario);
+    await scenario.transport.runInspect('s16');
     await driveControllerSegment(scenario);
     // The alignment binds s16's served body to s21's independent projection,
     // so the divergence surfaces when s21 is served.

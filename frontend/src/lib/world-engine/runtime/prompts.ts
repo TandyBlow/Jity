@@ -28,10 +28,10 @@ const JSON_CONTRACTS: Record<Exclude<ModelTask, 'narration' | 'reaction' | 'upda
   action: '判断输入 actor 指定的角色此刻是否行动（不一定是主角）。advance 给出玩家输入与消费状态：仅当该角色是主角且 intentStatus 为 pending 时，它是待处理命令，必须结合最新工作状态判断能否执行——目标或条件已失效则不可执行；consumed 时它已是触发背景，不得重复执行；其他角色按自身任务与个性判断。只输出 JSON：{"kind":"act","text":"一句话行动描述"} 或 {"kind":"skip"}',
   targets: '列出这一行动会牵连的其他在场角色。只输出 JSON：{"targets":[{"targetId":"角色id"}]}；没有目标则 {"targets":[]}。不要输出触发键或骰点参数',
   results: '结算本组每个成员行动的结果。members 给出全组冻结行动与全部骰点判定（含未准入），结果必须与这些行动和判定一致。只输出 JSON 对象：{"角色id":"结果描述",...}，至少一条',
-  continuation: '判断回合是否结束。只输出 JSON：继续 {"kind":"continue","closedBy":"model","cancelReason":null,"candidateCharacterIds":["角色id"],"nextRoundId":"新回合id"} 或交还 {"kind":"handback","closedBy":"model","cancelReason":null}',
+  continuation: '判断回合是否结束。输入含当前世界 workingState（主角在其中）与本轮已提交变化 roundChanges。只输出 JSON：继续 {"kind":"continue","closedBy":"model","cancelReason":null,"candidateCharacterIds":["角色id"],"nextRoundId":"新回合id"} 或交还 {"kind":"handback","closedBy":"model","cancelReason":null}',
   initial: '根据设定构建世界初始状态。只输出 JSON，字段恰为 engineVersion/schemaVersion/protagonistId/initialTime/locations/items/characters',
   time: '给出下一个点位的时间推进。只输出 JSON：{"boundary":"elapsed","duration":{"amount":秒数...}} 或零时长 {"boundary":"instant","duration":{"amount":0,"unit":"second"}}；unit 是 second/minute/hour/day/month/year 之一',
-  pointPlan: '规划本回合的点位序列。只输出 JSON 数组：[{"pointId":"点id","kind":"normal|instant|linked","timeAdvance":{...同时间格式},"actorIds":["角色id"]}]，至少一个点；无行动者用空数组',
+  pointPlan: '规划本回合的点位序列。actorIds 声明本点覆盖的冻结槽位（点位切分），每个被列出的槽位都会单独判断行动（act/skip）；未列出的槽位不得被当作跳过。只输出 JSON 数组：[{"pointId":"点id","kind":"normal|instant|linked","timeAdvance":{...同时间格式},"actorIds":["角色id"]}]，至少一个点；无行动者用空数组',
 };
 
 const TEXT_CONTRACTS: Record<'narration' | 'reaction', string> = {

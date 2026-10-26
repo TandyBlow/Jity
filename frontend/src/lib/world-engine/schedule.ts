@@ -14,9 +14,10 @@ export type ModelTask = 'action' | 'targets' | 'reaction' | 'results' | 'updates
 export const updateStages = ['position', 'appearance', 'tasks', 'subtasks', 'personality', 'sanity'] as const;
 export type UpdatesStage = typeof updateStages[number];
 
-/** One planned point: scenario segmentation with an explicit boundary — the
- * controller seals a point once every actorId here has been staged (or the
- * round members are skipped, or the empty point ran its time scan). */
+/** One planned point: scenario segmentation with an explicit boundary. The
+ * actorIds declare which frozen slots this point covers (a later point's
+ * slots are deferred); actors NO point covers are still judged here (§6.1),
+ * and an empty list keeps the actorless rule (time scan owns the slots). */
 export interface PlannedPoint { pointId: Id; kind: 'normal' | 'instant' | 'linked'; timeAdvance: TimeAdvance; actorIds: Id[] }
 export interface RollRule { ruleVersion: RollSpec['ruleVersion']; target: number }
 /** Program-owned dice rule (§6.2): the model never declares versions or
@@ -194,6 +195,10 @@ export interface ControllerMemory {
    * preview's settlementGroups (A §7: one list, no separate channel) but is
    * NOT a named group — commit_point keeps its plain settlementGroups. */
   stagedTimeScan: SettlementGroup | null;
+  /** Actors of this point/round already processed — acted in a discovered
+   * group or explicitly skipped (record_skip). A processed slot is never
+   * judged twice (§5.1: a common-settlement member never acts again at its
+   * own slot). Reset at commit/round teardown. */
   groupActors: Id[];
   /** 本结算组的冻结行动与全部骰点判定（§7.1 results 输入；含未准入 roll）。
    * 随 sources 同生命周期：discover 建立、admit 前插、create_rolls 追加、
@@ -230,6 +235,11 @@ export interface ControllerMemory {
    * the dangling stop keeps its refs in the terminal reason. */
   updatesPendingRefs: string[];
   continuation: Conclusion | null;
+  /** This round's committed point Δs in commit order — the continuation
+   * input's 「本轮状态变化」 (§7.1). Built from the client's own committed
+   * point projections (no extra read). null until this driver commits a point
+   * of the round: a session opened mid-transition has no local history. */
+  roundChanges: { roundId: Id; points: { pointId: Id; timeAdvance: TimeAdvance; entityDeltas: Record<Id, EntityDelta> }[] } | null;
   successorTime: TimeAdvance | null;
   commitPayload: { point: TimelinePoint; settlementGroups: SettlementGroup[] } | null;
   initialTemplate: InitialTemplate | null;
@@ -584,7 +594,16 @@ function continuationDecision(view: ScheduleView): Decision {
   const blocked = modelBlocked(view, 'continuation');
   if (blocked) return blocked;
   const state = view.work ? freshState(memory, view.work) : memory.workingState?.state ?? null;
-  return { kind: 'model', task: 'continuation', key: roundIdOf(world!), input: { round: asJson(world!.round), head: asJson(world!.head), workingState: state ? asJson(state) : null } };
+  // §7.1：继续推进判断读「主角、当前世界和本轮状态变化」。主角与当前世界都
+  // 在 workingState 里（protagonistId/characters）；本轮变化是已提交点的时间
+  // 与实体 Δ，按提交顺序给出。零本地历史（会话在半途打开）时为 null——不
+  // 假装「本轮没有变化」。
+  const roundId = roundIdOf(world!);
+  const roundChanges = memory.roundChanges && memory.roundChanges.roundId === roundId ? asJson(memory.roundChanges.points) : null;
+  return {
+    kind: 'model', task: 'continuation', key: roundId,
+    input: { round: asJson(world!.round), head: asJson(world!.head), workingState: state ? asJson(state) : null, roundChanges },
+  };
 }
 
 function idlePointDecision(view: ScheduleView): Decision {
@@ -640,11 +659,25 @@ function pointDecision(view: ScheduleView): Decision {
   throw new Error(`Unschedulable point state: phase=${work!.phase} closed=${pending?.closed ?? 'null'}`);
 }
 
-function actorsComplete(view: ScheduleView): boolean {
-  const planned = view.memory.plan?.[view.memory.planIndex];
-  if (!planned) return true;
-  const started = new Set(view.memory.groupActors);
-  return planned.actorIds.every((actor) => started.has(actor));
+/** The actor whose action opportunity comes next, in the FROZEN order at the
+ * served working cursor. A slot covered by a LATER planned point is deferred
+ * (skipping it now would visit it and cancel its later opportunity); a slot
+ * no point covers is still JUDGED here — a pointPlan omission is never a
+ * skip. Empty (actorless) points keep their rule: the time scan owns slots.
+ * Actors already processed (acted or explicitly skipped) never repeat. */
+function nextActor(view: ScheduleView): Id | null {
+  const { world, work, memory } = view;
+  const round = world!.round;
+  const planned = memory.plan?.[memory.planIndex];
+  if (!round || !planned || planned.actorIds.length === 0) return null;
+  const plannedNow = new Set(planned.actorIds);
+  const coveredLater = new Set(memory.plan!.slice(memory.planIndex + 1).flatMap((point) => point.actorIds));
+  for (const actor of round.order.slice(work!.working.cursor)) {
+    if (memory.groupActors.includes(actor)) continue;
+    if (!plannedNow.has(actor) && coveredLater.has(actor)) return null;
+    return actor;
+  }
+  return null;
 }
 
 /** §6.1 action advance input. The player text is identity-bound: a get_context
@@ -659,11 +692,15 @@ function actionAdvance(view: ScheduleView): { inputText: string | null; intentSt
 }
 
 function selectActorDecision(view: ScheduleView): Decision {
-  const { world, control, work, memory } = view;
+  const { world, work, memory } = view;
   const bind = writeBind(view);
   const planned = memory.plan?.[memory.planIndex];
-  if (!actorsComplete(view)) {
-    const actor = planned!.actorIds.find((a) => !memory.groupActors.includes(a))!;
+  // §5.1/§6.1：行动机会按冻结顺序与游标逐人判断。计划里的 actorIds 只决定
+  // 点位切分（哪些槽位属于后序点），不决定谁被问；未被任何点覆盖的槽位
+  // 也要在本点判断——省略不是跳过。空点（actorIds 为空）仍由时间扫描
+  // 承包所有槽位，保留 T03/T02-empty-linked 的原有规则。
+  const actor = nextActor(view);
+  if (actor) {
     if (memory.lastModel?.task === 'action' && memory.lastModel.key === actor) {
       const output = memory.lastModel.output as { kind: 'act'; text: string } | { kind: 'skip' };
       if (output.kind === 'skip') {
@@ -703,7 +740,7 @@ function selectActorDecision(view: ScheduleView): Decision {
     };
   }
   // Time scan: required for empty/actionless points (T03) AND for actor
-  // points whose every planned actor skipped — nothing settled means the
+  // points whose every judged actor skipped — nothing settled means the
   // point still owes its time-scan candidates before sealing.
   if (planned && !work!.timeScanComplete && memory.staged.length === 0) {
     const single = memory.updatesStages.length === 0;
@@ -727,25 +764,6 @@ function selectActorDecision(view: ScheduleView): Decision {
     if (blocked) return blocked;
     if (!freshState(memory, work!)) return { kind: 'read_working_state' };
     return updatesModelCall(view, `time_scan:${work!.pointId}`, { mode: 'time_scan', workingState: asJson(memory.workingState!.state) });
-  }
-  // Actor points: record explicit skips for round members this point leaves
-  // behind AND no later planned point covers (T01 skips b–f; T02 P1 seals at
-  // once because c–f belong to P2/P3). Empty points never skip (T03).
-  const round = world!.round;
-  const plannedNow = memory.plan?.[memory.planIndex];
-  if (round && plannedNow && plannedNow.actorIds.length > 0) {
-    const coveredLater = new Set(memory.plan!.slice(memory.planIndex + 1).flatMap((p) => p.actorIds));
-    const pendingSkip = round.order.slice(work!.working.cursor).find((id) => !coveredLater.has(id));
-    if (pendingSkip) {
-      return {
-        kind: 'transport', operation: 'checkpoint_record_skip',
-        request: {
-          protocolVersion: 2, requestId: memory.requestId, ...bind,
-          operation: 'record_skip', pointId: work!.pointId, slotActorId: pendingSkip,
-        } as RequestMap['checkpoint_record_skip'],
-        scope: worldScope(view),
-      };
-    }
   }
   // Successor time generation and sealing both need the latest staged state.
   if (!freshState(memory, work!)) return { kind: 'read_working_state' };

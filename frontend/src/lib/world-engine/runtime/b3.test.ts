@@ -41,6 +41,19 @@ describe('buildTaskPrompt', () => {
     expect(updates).toContain('results 是已确认的结算结果');
     const scan = buildTaskPrompt('updates', 'time_scan:p1', { mode: 'time_scan', workingState: T01_WORKING_STATE });
     expect(scan).not.toContain('results 是已确认的结算结果');
+    // §6.1/#7：计划只做点位切分——列出的槽位逐个判断，省略不是跳过。
+    const plan = buildTaskPrompt('pointPlan', 'round_1', { round: { roundId: 'round_1', order: ['person_a'] }, head: { pointId: 'root' } });
+    expect(plan).toContain('actorIds 声明本点覆盖的冻结槽位');
+    expect(plan).toContain('未列出的槽位不得被当作跳过');
+    // §7.1/#9：继续推进读当前世界与本轮已提交变化。
+    const continuation = buildTaskPrompt('continuation', 'round_1', {
+      round: { roundId: 'round_1', order: ['person_a'] }, head: { pointId: 'p1' },
+      workingState: T01_WORKING_STATE,
+      roundChanges: [{ pointId: 'p1', timeAdvance: { boundary: 'elapsed', duration: { amount: 2, unit: 'second' } }, entityDeltas: {} }],
+    });
+    expect(continuation).toContain('当前世界 workingState');
+    expect(continuation).toContain('roundChanges');
+    expect(continuation).toContain('\"roundChanges\":[');
   });
   test('text tasks forbid JSON and never show a schema', () => {
     const narration = buildTaskPrompt('narration', 'root_0', { pointId: 'root_0', stateDigest: 'd' });

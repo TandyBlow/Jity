@@ -63,7 +63,9 @@ export function buildT04Scenario(sampleId: string) {
   })();
   const personCActionText = (requests.get('s5') as { actionText: string }).actionText;
   const declared: DeclaredModelCall[] = [
-    { task: 'continuation', key: context.world.activeRoundId!, input: { round: context.world.round, head: context.world.head, workingState: null }, output: requests.get('s2')!.conclusion as Json },
+    // §7.1：继续推进判断读「当前世界＋本轮状态变化」。会话在半途打开时没有本地
+    // 本轮历史：workingState 与 roundChanges 都如实为 null（不假装无变化）。
+    { task: 'continuation', key: context.world.activeRoundId!, input: { round: context.world.round, head: context.world.head, workingState: null, roundChanges: null }, output: requests.get('s2')!.conclusion as Json },
     { task: 'pointPlan', key: roundId, input: { round: automatic.world.round, head: automatic.world.head }, output: [{ pointId: begin.pointId, kind: begin.kind, timeAdvance: begin.timeAdvance, actorIds: ['person_c'] }] as Json },
     { task: 'action', key: 'person_c', input: { actor: 'person_c', advance: actionAdvance, workingState }, output: { kind: 'act', text: personCActionText } as Json },
     { task: 'targets', key: 'person_c', input: { sourceId: 'person_c', actionText: personCActionText, workingState } as Json, output: { targets: [] } },
@@ -71,7 +73,8 @@ export function buildT04Scenario(sampleId: string) {
     { task: 'results', key: groupId, input: { groupId, members: [{ memberId: 'person_c', actionText: personCActionText, rollRefs: [] }], workingState }, output: stage.results as Json },
     { task: 'updates', key: groupId, input: { groupId, mode: 'group', results: structuredClone(stage.results) as Json, workingState }, output: [] },
     { task: 'narration', key: committed.world.head.pointId, input: { pointId: committed.world.head.pointId, before: beforeState, delta: { timeAdvance: commitPoint.timeAdvance, entityDeltas: commitPoint.entityDeltas }, after: state, perspective: `主角视角（${(state as { protagonistId: Id }).protagonistId}「${(state as { initial: { characters: Record<string, { name: string }> } }).initial.characters[(state as { protagonistId: Id }).protagonistId].name}」）；只表达已结算的世界事实` }, output: requests.get('s12')!.text as Json },
-    { task: 'continuation', key: roundId, input: { round: committed.world.round, head: { ...committed.world.head, narrationStatus: 'ready' }, workingState }, output: requests.get('s13')!.conclusion as Json },
+    // 本轮（r2）只提交了本点：变化=该点的时间与实体 Δ（逐字取 commit 请求）。
+    { task: 'continuation', key: roundId, input: { round: committed.world.round, head: { ...committed.world.head, narrationStatus: 'ready' }, workingState, roundChanges: [{ pointId: committed.world.head.pointId, timeAdvance: commitPoint.timeAdvance, entityDeltas: commitPoint.entityDeltas }] }, output: requests.get('s13')!.conclusion as Json },
   ];
   const memory = initialMemory('req_T04', 'browser');
   const ownership = trace.variables.find((variable) => variable.origin === 'input' && variable.kind === 'ownership')!;

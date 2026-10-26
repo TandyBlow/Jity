@@ -6,7 +6,7 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { ControllerDriver, initialMemory, type DriverOptions } from './controller';
-import { buildCorpus, ScenarioModelPort, ScenarioTransport, type Corpus, type PreviewSpecimenSpec, type ReadStateSpecimenSpec } from './harness';
+import { buildCorpus, driveControllerSlice, ScenarioModelPort, ScenarioTransport, type Corpus, type PreviewSpecimenSpec, type ReadStateSpecimenSpec } from './harness';
 import { ProtocolError } from './protocol';
 import { instantiate, readTrace } from './trace-runner';
 import type { WorldTransport } from './transport';
@@ -122,13 +122,35 @@ export function buildT01Scenario(sampleId: string, rawOverride?: object, driverO
     after: s21payload.state,
     perspective: PERSPECTIVE_PERSON_C,
   };
-  const specimens: PreviewSpecimenSpec[] = [{ afterStepId: 's6', label: 'b-preview-after-begin-s6', build: () => structuredClone(specimen) }];
+  const recorded16 = recorded.data;
+  const recorded16Request = instantiate(recordedPreview.request, sample.values) as unknown as { settlementGroups: Json[] };
+  const specimens: PreviewSpecimenSpec[] = [
+    { afterStepId: 's6', label: 'b-preview-after-begin-s6', build: () => structuredClone(specimen) },
+    // #7：a 的组暂存后、逐人判断 b 前，驱动器必须读 Python 重放的最新工作态。
+    // 录制里的这次预览（s16）排在 5 次跳过之后；跳过只推进 visited/cursor，
+    // 不改世界态与已暂存单元，所以这里逐字重用 s16 的 body，而 s16 本身改为
+    // harness 校验位（见下方说明）。
+    {
+      afterStepId: 's10', label: 'b-preview-after-stage-s10',
+      build: () => ({
+        workingState: structuredClone(recorded16.workingState),
+        pointProjection: structuredClone(recorded16.pointProjection),
+        mergedEntityDeltas: structuredClone((recorded16 as { mergedEntityDeltas?: Json }).mergedEntityDeltas ?? {}),
+        settlementGroups: structuredClone(recorded16Request.settlementGroups),
+      }),
+    },
+  ];
   const projectionPin = POINT_PROJECTION_DIGEST_PINS[sampleId];
   if (!projectionPin) throw new ProtocolError(`[T01] no independent pointProjectionDigest pin for ${sampleId}`);
-  // The final preview (s16) is bound to s21's independent expectation: its
+  // #7 调用顺序适配：驱动器在 s10 后就用 B 预览取了最新工作态，因此它不会
+  // 再发录制里的 s16 预览。s16 留在原位置（它的 workingStateDigest 被 s18–
+  // s20 的响应按 $var 引用，不能后移），改为 harness 校验位：跳过之后、封存
+  // 之前由测试发出，逐字核对录制 body、digest 链、独立 pin 与 s21 对齐。
+  //
+  // The recorded preview (s16) is bound to s21's independent expectation: its
   // served working state must BE the expected committed projection and its
   // workingStateDigest the independently pinned state digest.
-  const corpus = buildCorpus(raw, sampleId, specimens, ['s21', 's22', 's23'],
+  const corpus = buildCorpus(raw, sampleId, specimens, ['s16', 's21', 's22', 's23'],
     [{ previewStepId: 's16', expectationStepId: 's21', workingStatePath: '/data/workingState', workingStateDigestPath: '/data/workingStateDigest' }],
     [{ stepId: 's16', path: '/data/pointProjectionDigest', digest: projectionPin }], [],
     readSpecimens);
@@ -148,6 +170,7 @@ export function buildT01Scenario(sampleId: string, rawOverride?: object, driverO
   const groupId = reqS10.candidates.groupId;
   const position = reqS10.candidates.positions.person_a;
   const specimenState = specimen.workingState;
+  const postStageState = structuredClone(recorded16.workingState);
 
   const model = new ScenarioModelPort([
     { task: 'initial', key: 'initial', input: null, output: reqS1.initial },
@@ -162,6 +185,14 @@ export function buildT01Scenario(sampleId: string, rawOverride?: object, driverO
     { task: 'results', key: groupId, input: { groupId, members: [{ memberId: 'person_a', actionText: reqS7.actionText, rollRefs: [] }], workingState: specimenState }, output: structuredClone(reqS10.results) },
     // §7.1：更新读已确认结果。
     { task: 'updates', key: groupId, input: { groupId, mode: 'group', results: structuredClone(reqS10.results), workingState: specimenState }, output: [{ stage: 'position', changes: { person_a: { positionSet: structuredClone(position) } } }] },
+    // §6.1/#7：计划未覆盖的 b–f 不能被程序补记跳过——逐人调用行动判断（本
+    // 录制全部 skip），再由 record_skip 落盘 visited。输入的工作态是 a 暂存后
+    // 的 #7 预览 body。
+    ...(['person_b', 'person_c', 'person_d', 'person_e', 'person_f'] as const).map((actor) => ({
+      task: 'action' as const, key: actor,
+      input: { actor, advance: { inputText: reqS5.inputText, intentStatus: corpus.servedAfter.s10.world!.advance.intentStatus }, workingState: structuredClone(postStageState) } as Json,
+      output: { kind: 'skip' } as unknown as Json,
+    })),
     { task: 'narration', key: head18.pointId, input: declaredP1NarrationInput, output: reqS20.text },
   ], 'T01');
 
@@ -178,13 +209,10 @@ export function buildT01Scenario(sampleId: string, rawOverride?: object, driverO
   return { driver, transport, model, memory, corpus, roundId };
 }
 
-/** Drives the controller segment until every controller/preview step and
- * model call is consumed; any early terminal status fails the run. Inspect
- * steps stay for the harness to issue afterwards. */
+/** Drives the controller segment to the next harness boundary (inspect/
+ * probe/command); any early terminal status fails the run. #7 splits T01's
+ * segment at the relocated s16 preview — the leftover action judgments need a
+ * fresh working state and the recorded preview is replayed as an inspect. */
 export async function driveControllerSegment(scenario: T01Scenario): Promise<void> {
-  for (;;) {
-    const terminal = await scenario.driver.step();
-    if (terminal) throw new Error(`[T01] controller segment ended early: ${terminal.kind}/${'reason' in terminal ? terminal.reason : terminal.detail}`);
-    if (scenario.transport.controllerDrained && scenario.model.exhausted) return;
-  }
+  await driveControllerSlice(scenario, 'T01');
 }

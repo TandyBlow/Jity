@@ -52,7 +52,7 @@ const memory = (over: Partial<ControllerMemory> = {}): ControllerMemory => ({
   plan: null, planIndex: 0, prepareSuccessor: false, localPause: false, budget: { used: 0, max: null },
   narration: null, workingState: null, sources: [], staged: [], stagedTimeScan: null, groupActors: [], groupActions: [], lastModel: null, lastTargets: null, lastResults: null,
   updatesStages: [], updatesCalls: [], updatesApplied: 0, updatesPreviewSkipped: 0, updatesPendingRefs: [],
-  continuation: null, successorTime: null, commitPayload: null, initialTemplate: null, ...over,
+  continuation: null, roundChanges: null, successorTime: null, commitPayload: null, initialTemplate: null, ...over,
 });
 
 const view = (world_: WorldContext | null, control_: ControlState, work_: PointWork | null, memory_: ControllerMemory, command?: ScheduleView['command'], activeInput: ScheduleView['activeInput'] = null): ScheduleView =>
@@ -380,10 +380,15 @@ describe('normal point: group cycle (T01/T02 shapes)', () => {
     const candidates = (stage.request as unknown as { candidates: Record<string, unknown> }).candidates;
     expect(candidates).toMatchObject({ actorIds: ['person_a'], tasksAchieved: { person_a: ['t1'] }, positions: {}, taskCoverageIds: ['person_a'], personalityCoverageIds: ['person_a'] });
   });
-  test('skips only members no later planned point covers (T01 five skips; T02 P1 none)', () => {
-    const { w, c, wk, m } = spine({ work: { working: { cursor: 1, actedIds: ['person_a'], visitedIds: [], settledUnitIds: ['u1'], intentStatus: 'consumed' } }, memory: { groupActors: ['person_a'], staged: [stagedUnit()] } });
+  test('uncovered slots are judged in frozen order; later-covered slots are deferred (T01/T02 P1)', () => {
+    // T01：计划只覆盖 person_a——a 的组 stage 后，b 必须被询问，不能由程序补记跳过。
+    const { w, c, wk, m } = spine({ work: { working: { cursor: 1, actedIds: ['person_a'], visitedIds: ['person_a'], settledUnitIds: ['u1'], intentStatus: 'consumed' } }, memory: { groupActors: ['person_a'], staged: [stagedUnit()] } });
+    m.workingState = { key: workingStateKey(wk), state: workingState() };
+    expect(next(w, c, wk, m)).toMatchObject({ kind: 'model', task: 'action', key: 'person_b' });
+    m.lastModel = { task: 'action', key: 'person_b', output: { kind: 'skip' } as unknown as Json };
     const skip = expectTransport(next(w, c, wk, m), 'checkpoint_record_skip') as Extract<Decision, { kind: 'transport' }>;
     expect((skip.request as unknown as { slotActorId: string }).slotActorId).toBe('person_b');
+    // T02 P1：a、b 都已暂存、游标到 2，c 属 P2 → 本点不跳也不问。
     const plan2: PlannedPoint[] = [
       { pointId: 'p1', kind: 'normal', timeAdvance: ta(2), actorIds: ['person_a', 'person_b'] },
       { pointId: 'p2', kind: 'instant', timeAdvance: ta(0, 'instant'), actorIds: ['person_c', 'person_d'] },
@@ -395,17 +400,22 @@ describe('normal point: group cycle (T01/T02 shapes)', () => {
     m2.workingState = { key: workingStateKey(wk2), state: workingState() };
     expectTransport(next(w, c, wk2, m2), 'checkpoint_seal_point');
   });
-  test('a point whose every planned actor skipped still owes its time scan', () => {
-    const { w, c, wk, m } = spine({ work: { working: { cursor: 1, actedIds: ['person_a'], visitedIds: [], settledUnitIds: [], intentStatus: 'consumed' } }, memory: { groupActors: ['person_a'] } });
+  test('a point whose every judged actor skipped still owes its time scan', () => {
+    const { w, c, wk, m } = spine({ work: { working: { cursor: 1, actedIds: ['person_a'], visitedIds: ['person_a'], settledUnitIds: [], intentStatus: 'consumed' } }, memory: { groupActors: ['person_a'] } });
+    m.workingState = { key: workingStateKey(wk), state: workingState() };
+    // 未被计划覆盖的 b 仍要逐人判断（省略不是跳过）。
+    expect(next(w, c, wk, m)).toMatchObject({ kind: 'model', task: 'action', key: 'person_b' });
+    m.lastModel = { task: 'action', key: 'person_b', output: { kind: 'skip' } as unknown as Json };
+    const skip = expectTransport(next(w, c, wk, m), 'checkpoint_record_skip') as Extract<Decision, { kind: 'transport' }>;
+    expect((skip.request as unknown as { slotActorId: string }).slotActorId).toBe('person_b');
+    // 其余槽位均已处理且无结算单位 → 本点仍须时间扫描（时间不会因无人行动而丢弃）。
+    wk.working = { ...wk.working, cursor: 6, visitedIds: ORDER, actedIds: ['person_a'] };
+    m.lastModel = null;
+    m.groupActors = [...ORDER];
     m.workingState = { key: workingStateKey(wk), state: workingState() };
     expect(next(w, c, wk, m)).toMatchObject({ kind: 'model', task: 'updates', key: 'time_scan:p1', input: { mode: 'time_scan' } });
     m.lastModel = { task: 'updates', key: 'time_scan:p1', output: [{ stage: 'sanity', changes: { person_a: { sanitySet: 40 } } }] as unknown as Json };
     expectTransport(next(w, c, wk, m), 'checkpoint_stage_time_scan');
-    wk.timeScanComplete = true;
-    m.lastModel = null;
-    // Scan done: leave-behind members still skip before the seal (single point plan).
-    const skip = expectTransport(next(w, c, wk, m), 'checkpoint_record_skip') as Extract<Decision, { kind: 'transport' }>;
-    expect((skip.request as unknown as { slotActorId: string }).slotActorId).toBe('person_b');
   });
   test('previews before sealing, then seals', () => {
     const { w, c, wk, m } = spine({ work: { working: { cursor: 6, actedIds: ORDER, visitedIds: ORDER, settledUnitIds: ['u1'], intentStatus: 'consumed' } }, memory: { groupActors: ['person_a'], staged: [stagedUnit()] } });
@@ -637,11 +647,21 @@ describe('round conclusion', () => {
     w: world({ advance: { advanceId: 'adv1', inputId: 'in1', intentStatus: 'consumed' as const, inputAvailable: false }, activeRoundId: 'r1', round: { roundId: 'r1', trigger: 'automatic' as const, order: ORDER, cursor: 6, actedIds: ORDER, visitedIds: ORDER, conclusion: null } }),
     c: control({ phase: 'assess_continuation' as const, revision: 9 }),
   });
-  test('asks the continuation model, then concludes handback', () => {
+  test('asks the continuation model with the current world and this round’s changes', () => {
     const { w, c } = assessing();
-    expect(next(w, c, null, memory())).toMatchObject({ kind: 'model', task: 'continuation', key: 'r1' });
-    const m = memory({ continuation: { kind: 'handback', closedBy: 'model', cancelReason: null } });
-    const conclude = expectTransport(next(w, c, null, m), 'round_conclusion_conclude') as Extract<Decision, { kind: 'transport' }>;
+    const state = workingState();
+    const changes = [{ pointId: 'p1', timeAdvance: ta(2), entityDeltas: { person_a: { entityId: 'person_a', positionSet: position } } }];
+    const m = memory({ workingState: { key: workingStateKey(pointWork()), state }, roundChanges: { roundId: 'r1', points: changes } });
+    expect(next(w, c, null, m)).toMatchObject({
+      kind: 'model', task: 'continuation', key: 'r1',
+      input: { workingState: { protagonistId: 'person_a' }, roundChanges: changes },
+    });
+    // 零本地历史：变化是 null（不能假装「本轮没变化」），世界也如实为 null。
+    expect(next(w, c, null, memory())).toMatchObject({ kind: 'model', task: 'continuation', input: { workingState: null, roundChanges: null } });
+    // 上一轮遗留的变化不串到本轮。
+    expect(next(w, c, null, memory({ roundChanges: { roundId: 'r0', points: changes } }))).toMatchObject({ kind: 'model', task: 'continuation', input: { roundChanges: null } });
+    const concluding = memory({ continuation: { kind: 'handback', closedBy: 'model', cancelReason: null } });
+    const conclude = expectTransport(next(w, c, null, concluding), 'round_conclusion_conclude') as Extract<Decision, { kind: 'transport' }>;
     expect((conclude.request as unknown as { conclusion: unknown }).conclusion).toEqual({ kind: 'handback', closedBy: 'model', cancelReason: null });
   });
   test('concludes continue with a seeded next round id', () => {

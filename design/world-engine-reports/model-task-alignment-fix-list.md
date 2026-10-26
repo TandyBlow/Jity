@@ -134,3 +134,49 @@
 - B3 冻结样本：updates 两样本补 `results`（T01 stage_unit 逐字值）。
 
 **本轮验证**：前端全量 480/480（world-engine 418）、`tsc -p tsconfig.world-contract.json` 净、`tsc --noEmit` 净、`npm run build` 通过（lint 仅既有 warning）；后端 `python -X utf8 -m pytest -q` 923/923。
+
+## 8. #7 pointPlan 逐人判断（2026-10-26）
+
+**结论**：逐人跳过判断回到模型职责——计划只做点位切分，不再决定谁被问；省略不是跳过。空点（`actorIds` 为空）保留时间扫描承包槽位的原规则。
+
+**调度器（`schedule.ts`）**
+
+- 新增 `nextActor(view)`：从服务端 `working.cursor` 起按**冻结顺序**取下一个行动机会。槽位若只被**后序点**覆盖则推迟（本轮结束，不跳也不问——跳过会把它标成 visited、抹掉后序机会）；若**没有任何点覆盖**则在本点照常判断；已处理槽位（`groupActors`）绝不重复。
+- `selectActorDecision` 以该单一入口取代 `actorsComplete` + 计划内查找：act → discover_group，skip → record_skip；多余分叉删除。
+- 删除封存前的「程序补记跳过」分支——这正是「未被 pointPlan 覆盖 = 跳过」的偏差来源。
+- `groupActors` 语义明确为「本点/本轮已处理」（在组内行动或显式跳过），`record_skip` 采纳时一律登记（原先只登记计划内人物），重试/回放不会二次询问。共同结算组成员不会再在自己的槽位上被问第二次（复核守卫 2）。
+- 计划内人物、普通/瞬时/关联续点、空点时间扫描、successor 预约与叙事门槛的规则未改；`actorIds` 仍是点位切分的输入形状，wire/codec 不变。
+
+**提示词**：`pointPlan` 契约补一句语义——`actorIds` 声明本点覆盖的冻结槽位，每个列出的槽位都会单独判断行动，未列出的槽位不得被当作跳过。
+
+**场景与固定输出验证（T01，共享录制）**
+
+- T01 的 `pointPlan` 只覆盖 person_a；旧实现由程序补记 b–f 五次 `record_skip`。现在 b–f 各有一次 `action` 调用（固定输出 `skip`）后再落 `record_skip`——transport 操作序列不变，模型调用 +5。
+- 逐人判断需要「a 暂存后的最新工作态」：新增 B 预览标本 `b-preview-after-stage-s10`，body 逐字取自录制 s16（跳过只推进 visited/cursor，不改世界态与已暂存单元），测试断言其 workingState/pointProjection/mergedEntityDeltas 与 s16 全等。
+- 录制 s16 预览留在原位置，改为 harness 校验位（`runInspect('s16')`）：驱动器不再发它（B 标本已覆盖同一读），但 s18–s20 的响应按 `$var` 引用 s16 捕获的 `workingStateDigest`，后移会破坏录制绑定——测试在跳过与封存之间发出该读，逐字核对 body、digest 链、独立 pin 与 s21 对齐。T01 因此分成两段控制器驱动（跳过之后 / 封存之前）。
+- 端到端（`controller.test.ts`）与故障场景（T06）同步：段边界处理 s16、预算计数更新（e2e used 10→14、T06 used 8→13）、T06 的「复用已确认工作」断言收窄到 person_a 的行动/结算/更新。
+- 复核守卫 2 的直接证据：旧 e2e 对已在共同组行动的 person_d 仍补记了一次 skip（夹具期望 5 次 skip），现在 person_d 既不询问也不补记（4 次 skip，b/c/e/f），模型调用序列与 `groupActors` 断言钉死该行为。
+
+**验证（#7 交付时）**：前端全量 480/480（world-engine 418）、`tsc -p tsconfig.world-contract.json` 净、`tsc --noEmit` 净、`npm run build` 通过；后端 `python -X utf8 -m pytest -q` 923/923。
+
+## 9. #9 continuation 输入复核（2026-10-26）
+
+**复核结论**：#9 的缺口是「本轮状态变化」缺失——输入只有 `round + head + workingState`，没有本轮已提交点的 Δ；主角与当前世界本身已在 `workingState`（含 `protagonistId`/`characters`）里，再加重复字段没有意义。
+
+**实现**
+
+- 记忆新增 `roundChanges: {roundId, points:[{pointId, timeAdvance, entityDeltas}]} | null`，由提交成功的点投影累计（`commit_point` 采纳时按 `roundId` 追加，换 round 重置），continue/handback/cancel 后清空。数据源是控制器自己发出的 commit 请求，不新增读取。
+- continuation 输入补 `roundChanges`：同 round 时为已提交点的时间与实体 Δ（按提交顺序）；**零本地历史时为 `null`**——会话在半途打开（如 T04 首个 assess_continuation）不能假装「本轮没有变化」。`workingState` 保持当前世界语义（最后一次 preview 的提交后投影），如此时也没有则如实为 `null`。
+- 提示词契约补一句：输入含当前世界 `workingState`（主角在其中）与本轮已提交变化 `roundChanges`。
+- B3 两样本：continuation-1 带一条已提交点变化，continuation-2 为零历史 `null`，note 记录依据。
+
+**验证**
+
+- 调度器单测：同 round 变化进入输入、零历史为 null、上一轮变化不串到本轮（roundId 不匹配即 null）。
+- 真实控制器：提交后 `roundChanges` 记录点的时间与 Δ；continuation 模型输入含当前世界（`protagonistId`）与该变化；handback 结论后缓存清空。
+- 场景：T04 两条 continuation 声明分别固定 `null` 与「本点 Δ」；输入由模型端口逐字核对。
+- 提示词：断言 continuation 契约含当前世界与 `roundChanges`，输入序列化带出实际数组。
+
+**边界（不掩盖）**：会话在 assess_continuation 半途打开时，客户端没有本轮历史，`workingState`/`roundChanges` 均为 null。补齐需要恢复批次（H2）读取/重建本轮点记录；本批不新增读接口，也不把 null 当作「无变化」。
+
+**验证数字**：前端全量 481/481（world-engine 419）、两套 tsc 净、`npm run build` 通过；后端 `python -X utf8 -m pytest -q` 923/923。清单第 1/3/4、5、6、7、8、9 项全部关闭（#6 叙事读取此前已关闭；H2 冻结组行动恢复与评估批次独立跟踪）。

@@ -47,7 +47,7 @@ export function initialMemory(prefix: string, holderId: string): ControllerMemor
     plan: null, planIndex: 0, prepareSuccessor: false, localPause: false, budget: { used: 0, max: null },
     narration: null, workingState: null, sources: [], staged: [], stagedTimeScan: null, groupActors: [], groupActions: [], lastModel: null, lastTargets: null, lastResults: null,
     updatesStages: [], updatesCalls: [], updatesApplied: 0, updatesPreviewSkipped: 0, updatesPendingRefs: [],
-    continuation: null, successorTime: null, commitPayload: null, initialTemplate: null,
+    continuation: null, roundChanges: null, successorTime: null, commitPayload: null, initialTemplate: null,
   };
 }
 
@@ -557,9 +557,9 @@ export class ControllerDriver {
         this.memory.commitPayload = null;
         break;
       case 'checkpoint_record_skip': {
+        // 该槽位已处理（显式跳过）：即使后续重试/回放，也不再重新询问行动。
         const slotActorId = req.slotActorId as Id;
-        const plannedActor = this.memory.plan?.[this.memory.planIndex]?.actorIds.includes(slotActorId);
-        if (plannedActor && !this.memory.groupActors.includes(slotActorId)) this.memory.groupActors.push(slotActorId);
+        if (!this.memory.groupActors.includes(slotActorId)) this.memory.groupActors.push(slotActorId);
         break;
       }
       case 'checkpoint_prepare_successor':
@@ -567,6 +567,13 @@ export class ControllerDriver {
         this.memory.successorTime = null;
         break;
       case 'commit_point': {
+        // §7.1 本轮状态变化：留存本驱动器自己提交的点 Δ（时间＋实体），供
+        // 继续推进判断读。不额外读取；同 round 追加，换 round 重置。
+        const point = req.point as { id: Id; roundId: Id; timeAdvance: TimeAdvance; entityDeltas: Record<Id, EntityDelta> };
+        const entry = { pointId: point.id, timeAdvance: structuredClone(point.timeAdvance), entityDeltas: structuredClone(point.entityDeltas) };
+        this.memory.roundChanges = this.memory.roundChanges && this.memory.roundChanges.roundId === point.roundId
+          ? { roundId: point.roundId, points: [...this.memory.roundChanges.points, entry] }
+          : { roundId: point.roundId, points: [entry] };
         this.memory.planIndex++;
         this.memory.staged = [];
         this.memory.stagedTimeScan = null;
@@ -630,6 +637,7 @@ export class ControllerDriver {
         break;
       case 'round_conclusion_conclude': {
         this.memory.continuation = null;
+        this.memory.roundChanges = null; // 本轮已结束：下一 round 从零累计
         const kind = (data as { kind?: string }).kind;
         if (kind === 'continue') {
           this.memory.plan = null;
@@ -663,6 +671,7 @@ export class ControllerDriver {
   private clearRoundWork(): void {
     Object.assign(this.memory, {
       playerInput: null, plan: null, planIndex: 0, prepareSuccessor: false,
+      roundChanges: null,
       workingState: null, sources: [], staged: [], stagedTimeScan: null,
       groupActors: [], groupActions: [], lastModel: null, lastTargets: null, lastResults: null, updatesCalls: [], updatesApplied: 0, updatesPreviewSkipped: 0, updatesPendingRefs: [],
       continuation: null, successorTime: null, commitPayload: null, narration: null,
