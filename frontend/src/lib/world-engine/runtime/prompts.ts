@@ -10,10 +10,11 @@ import type { ModelTask } from '../schedule';
 import type { Json } from '../types';
 
 function updatesContract(input: Json): string {
+  const confirmed = (input as { results?: unknown }).results !== undefined ? 'results 是已确认的结算结果，更新必须与之一致。' : '';
   if ((input as { stage?: unknown }).stage !== undefined) {
-    return `只输出一个 JSON 对象（不要数组）：{"stage":"${String((input as { stage: unknown }).stage)}","changes":{"实体id":{...增量}}}`;
+    return `${confirmed}只输出一个 JSON 对象（不要数组）：{"stage":"${String((input as { stage: unknown }).stage)}","changes":{"实体id":{...增量}}}`;
   }
-  return '只输出 JSON 数组：[{"stage":"position","changes":{"实体id":{...增量}}}]。stage 只能是 position/appearance/tasks/subtasks/personality/sanity 之一';
+  return `${confirmed}只输出 JSON 数组：[{"stage":"position","changes":{"实体id":{...增量}}}]。stage 只能是 position/appearance/tasks/subtasks/personality/sanity 之一`;
 }
 
 function workingCharacters(input: Json): string[] {
@@ -24,7 +25,7 @@ function workingCharacters(input: Json): string[] {
 /** Batch and split updates get MUTUALLY EXCLUSIVE contracts — a split call
  * must never read a shape-teaching it may obey against the codec. */
 const JSON_CONTRACTS: Record<Exclude<ModelTask, 'narration' | 'reaction' | 'updates'>, string> = {
-  action: '决定主角是否行动。输入的 advance 给出玩家输入与消费状态：intentStatus 为 pending 时它是待处理命令，行动必须执行它；consumed 时它已是触发背景，不得重复执行。只输出 JSON：{"kind":"act","text":"一句话行动描述"} 或 {"kind":"skip"}',
+  action: '判断输入 actor 指定的角色此刻是否行动（不一定是主角）。advance 给出玩家输入与消费状态：仅当该角色是主角且 intentStatus 为 pending 时，它是待处理命令，必须结合最新工作状态判断能否执行——目标或条件已失效则不可执行；consumed 时它已是触发背景，不得重复执行；其他角色按自身任务与个性判断。只输出 JSON：{"kind":"act","text":"一句话行动描述"} 或 {"kind":"skip"}',
   targets: '列出这一行动会牵连的其他在场角色。只输出 JSON：{"targets":[{"targetId":"角色id"}]}；没有目标则 {"targets":[]}。不要输出触发键或骰点参数',
   results: '结算本组每个成员行动的结果。members 给出全组冻结行动与全部骰点判定（含未准入），结果必须与这些行动和判定一致。只输出 JSON 对象：{"角色id":"结果描述",...}，至少一条',
   continuation: '判断回合是否结束。只输出 JSON：继续 {"kind":"continue","closedBy":"model","cancelReason":null,"candidateCharacterIds":["角色id"],"nextRoundId":"新回合id"} 或交还 {"kind":"handback","closedBy":"model","cancelReason":null}',

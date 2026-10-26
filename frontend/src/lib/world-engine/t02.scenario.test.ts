@@ -102,6 +102,11 @@ describe.each([
     const results = scenario.model.calls.filter((c) => c.task === 'results').map((c) => c.input as { members: { memberId: string; actionText: string; rollRefs: { targetId: string; result: number; eligible: boolean; admitted: boolean }[] }[] });
     expect(results.map((call) => call.members.map((member) => member.memberId))).toEqual(EXPECTED_RESULT_MEMBERS[traceName]);
     expect(results.flatMap((call) => call.members).every((member) => member.actionText.length > 0)).toBe(true);
+    // §7.1：更新输入逐组带已确认结果（与录制的 stage 请求一致），不是空字段。
+    const groupUpdates = scenario.model.calls.filter((c) => c.task === 'updates' && (c.input as { mode: string }).mode === 'group').map((c) => (c.input as { results: Record<string, string> }).results);
+    const recordedResults = scenario.corpus.steps.filter((s) => s.operation === 'checkpoint_stage_unit').map((s) => (s.request as { results: Record<string, string> }).results);
+    expect(groupUpdates).toEqual(recordedResults);
+    expect(groupUpdates.every((map) => Object.values(map).every((text) => text.length > 0))).toBe(true);
     const rollFacts = results.map((call) => call.members.map((member) => member.rollRefs.map(({ targetId, result, eligible, admitted }) => ({ targetId, result, eligible, admitted }))));
     if (traceName === 'T02') {
       // 发起者的两个判定：未准入且不合格 / 准入；被牵连者准入后的判定：

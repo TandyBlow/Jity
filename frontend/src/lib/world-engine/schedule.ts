@@ -169,6 +169,12 @@ export interface ControllerMemory {
   roundAllocations: Record<Id, AllocationPlan>;
   allocatedKeys: Id[];
   playerInput: { text: string; order: Id[] } | null;
+  /** The advance the driver itself started, with the input text it sent —
+   * identity-bound (§6.1): action reads it only while the world's advanceId
+   * still matches, so a record from an earlier advance never leaks into a
+   * new one. The normal path has no get_context at all (T01), so without
+   * this retention the player text would be lost. */
+  playerAdvance: { advanceId: Id; inputId: Id; text: string } | null;
   plan: PlannedPoint[] | null;
   planIndex: number;
   /** Set when the scenario pre-declares a successor binding (T08 path). */
@@ -641,6 +647,17 @@ function actorsComplete(view: ScheduleView): boolean {
   return planned.actorIds.every((actor) => started.has(actor));
 }
 
+/** §6.1 action advance input. The player text is identity-bound: a get_context
+ * activeInput counts only for the advance it names (server authority), the
+ * driver's own start_advance record covers the normal path with no context
+ * read at all (T01). Neither source ever leaks across advances. */
+function actionAdvance(view: ScheduleView): { inputText: string | null; intentStatus: WorldContext['advance']['intentStatus'] } {
+  const advanceId = view.world!.advance.advanceId;
+  const served = advanceId !== null && view.activeInput?.advanceId === advanceId ? view.activeInput.text : null;
+  const retained = advanceId !== null && view.memory.playerAdvance?.advanceId === advanceId ? view.memory.playerAdvance.text : null;
+  return { inputText: served ?? retained, intentStatus: view.world!.advance.intentStatus };
+}
+
 function selectActorDecision(view: ScheduleView): Decision {
   const { world, control, work, memory } = view;
   const bind = writeBind(view);
@@ -674,14 +691,13 @@ function selectActorDecision(view: ScheduleView): Decision {
     if (blocked) return blocked;
     if (!freshState(memory, work!)) return { kind: 'read_working_state' };
     // §6.1：行动输入携带链级 advance 上下文——玩家输入文本与消费状态。
-    // intentStatus=pending ⇒ 待处理命令（主角行动必须执行它）；consumed ⇒
-    // 已是触发背景（不得重复执行）。文本来自服务端 activeInput（控制器
-    // 从 context 回包保留），状态来自 world.advance。
+    // 文本只能来自与当前 advance 身份绑定的记录（驱动器 start_advance 的
+    // 原文，或同一 advance 的 context activeInput）；状态来自 world.advance。
     return {
       kind: 'model', task: 'action', key: actor,
       input: {
         actor,
-        advance: { inputText: view.activeInput?.text ?? null, intentStatus: world!.advance.intentStatus },
+        advance: actionAdvance(view),
         workingState: asJson(memory.workingState!.state),
       },
     };
@@ -901,6 +917,13 @@ function settleDecision(view: ScheduleView): Decision {
     const blocked = modelBlocked(view, 'results');
     if (blocked) return blocked;
     if (!freshState(memory, work!)) return { kind: 'read_working_state' };
+    // §7.1 完整性：模型只能结算它确实读到的冻结行动。组成员缺失（刷新/冷
+    // 启动丢内存）时不得用空列表生成结果——补数据（H2 从服务端 FrozenGroup
+    // 恢复）之前明确停止。
+    const requiredActors = pending.memberIds.length ? pending.memberIds : [pending.sourceId];
+    const known = new Set(memory.groupActions.map((member) => member.memberId));
+    const missing = requiredActors.filter((actor) => !known.has(actor));
+    if (missing.length > 0) return { kind: 'stop', reason: `frozen_actions_missing:${missing.join(',')}` };
     // §7.1：结算输入携带全组冻结行动与全部骰点判定（含未准入 roll）——
     // 记忆字段 groupActions 与 sources 同生命周期，只覆盖当前组。
     return {
@@ -914,7 +937,8 @@ function settleDecision(view: ScheduleView): Decision {
   }
   const blocked = modelBlocked(view, 'updates');
   if (blocked) return blocked;
-  return updatesModelCall(view, pending.groupId, { groupId: pending.groupId, mode: 'group', workingState: memory.workingState ? asJson(memory.workingState.state) : null });
+  // §7.1：更新读已确认结果——results 是上一步模型产出、随本批次结算的事实。
+  return updatesModelCall(view, pending.groupId, { groupId: pending.groupId, mode: 'group', results: asJson(memory.lastResults), workingState: memory.workingState ? asJson(memory.workingState.state) : null });
 }
 
 // ---------- memory readers ----------

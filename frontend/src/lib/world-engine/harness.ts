@@ -173,20 +173,25 @@ export function frozenGroupActionsAtStage(
 }
 
 /** State the driver holds when the model call declared at a step runs: the
- * world served by the last response carrying one, and the last get_context's
- * activeInput (other envelopes omit the field, so the driver retains it).
- * Seeded bootstrap contexts are supplied by the scenario itself, not here. */
+ * world served by the last response the driver actually adopted, and the last
+ * adopted get_context's activeInput (other envelopes omit the field, so the
+ * driver retains it). Harness-issued inspect steps never reach the driver, so
+ * the caller lists them as never-adopted (the seeded bootstrap context is the
+ * exception — scenarios seed it and pass only the later inspects). */
 export interface ServedBefore { world: WorldContext | null; activeInput: { advanceId: Id; inputId: Id; text: string } | null }
 
 export function servedBeforeSteps(
   steps: { id: string; operation: string }[],
   responseOf: Map<string, Record<string, unknown>>,
+  notAdoptedStepIds: Iterable<string> = [],
 ): Map<string, ServedBefore> {
+  const notAdopted = new Set(notAdoptedStepIds);
   const before = new Map<string, ServedBefore>();
   let world: WorldContext | null = null;
   let activeInput: ServedBefore['activeInput'] = null;
   for (const step of steps) {
     before.set(step.id, { world, activeInput });
+    if (notAdopted.has(step.id)) continue;
     const response = responseOf.get(step.id) as { world?: WorldContext | null; activeInput?: ServedBefore['activeInput'] } | undefined;
     if (response?.world !== undefined) world = response.world;
     if (response?.activeInput !== undefined) activeInput = response.activeInput;

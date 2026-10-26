@@ -85,7 +85,7 @@ export function buildT08Scenario(sampleId: string, mode: T08Mode = 'normal') {
     { task: 'targets', key: 'person_a', input: { sourceId: 'person_a', actionText: requests.get('s3')!.actionText, workingState } as Json, output: { targets: [] } },
     // §7.1：results 输入带全组冻结行动（T08 目标集为空——零骰点判定）。
     { task: 'results', key: groupId, input: { groupId, members: [{ memberId: 'person_a', actionText: (requests.get('s3') as { actionText: string }).actionText, rollRefs: [] }], workingState }, output: stage.results as Json },
-    { task: 'updates', key: groupId, input: { groupId, mode: 'group', workingState }, output: [] },
+    { task: 'updates', key: groupId, input: { groupId, mode: 'group', results: structuredClone(stage.results) as Json, workingState }, output: [] },
     { task: 'time', key: `successor:${begin.pointId as Id}`, input: { head: context.world.head, workingState }, output: prepare.timeAdvance as Json },
     { task: 'narration', key: committed.world.head.pointId, input: { pointId: committed.world.head.pointId, before: beforeState, delta: { timeAdvance: commitPoint.timeAdvance, entityDeltas: commitPoint.entityDeltas }, after: state, perspective: `主角视角（${(state as { protagonistId: Id }).protagonistId}「${(state as { initial: { characters: Record<string, { name: string }> } }).initial.characters[(state as { protagonistId: Id }).protagonistId].name}」）；只表达已结算的世界事实` }, output: requests.get('s12')!.text as Json },
   ];

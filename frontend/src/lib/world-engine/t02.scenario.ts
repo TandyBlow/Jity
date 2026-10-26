@@ -238,7 +238,9 @@ export function buildT02Scenario(traceName: T02TraceName, sampleId: string): T02
   // §6.1：行动输入携带调用时刻的链级 advance——玩家输入文本（最后一次
   // context 回包）与消费状态（最近服务态；本轨迹的 2/3 点已在 commit 后
   // 转为 consumed）。
-  const servedBefore = servedBeforeSteps(steps, responseOf);
+  // 除已播种的引导 context 外，其余 inspect 步骤不经过驱动器，不得更新
+  // 「调用时刻服务态」的推导。
+  const servedBefore = servedBeforeSteps(steps, responseOf, [finalStep.id]);
   const declaredAdvance = (stepId: string): Json => {
     const served = servedBefore.get(stepId)!;
     return { inputText: served.activeInput?.text ?? null, intentStatus: served.world!.advance.intentStatus };
@@ -263,7 +265,7 @@ export function buildT02Scenario(traceName: T02TraceName, sampleId: string): T02
     } else if (s.operation === 'checkpoint_stage_unit') {
       const groupId = (req.candidates as { groupId: Id }).groupId;
       declared.push({ task: 'results', key: groupId, input: { groupId, members: structuredClone(frozenActions.get(s.id)!) as unknown as Json, workingState: previewStateAt(index) }, output: structuredClone(req.results) as Json });
-      declared.push({ task: 'updates', key: groupId, input: { groupId, mode: 'group', workingState: previewStateAt(index) }, output: [] as unknown as Json });
+      declared.push({ task: 'updates', key: groupId, input: { groupId, mode: 'group', results: structuredClone(req.results) as Json, workingState: previewStateAt(index) }, output: [] as unknown as Json });
     } else if (s.operation === 'checkpoint_stage_time_scan') {
       declared.push({ task: 'updates', key: `time_scan:${req.pointId as Id}`, input: { mode: 'time_scan', workingState: previewStateAt(index) }, output: [] as unknown as Json });
     } else if (s.operation === 'narration_submit') {

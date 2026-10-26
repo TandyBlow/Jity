@@ -55,7 +55,8 @@ export function buildT04Scenario(sampleId: string) {
   const recordedActiveInput = (context as unknown as { activeInput: { advanceId: Id; inputId: Id; text: string } | null }).activeInput;
   // §6.1：调用时刻的 advance——世界取 s4（begin）服务态，输入文本取最后一次
   // context 回包；s1/s3 都是 harness 边界，驱动器只播种 s1。
-  const servedBefore = servedBeforeSteps(trace.steps, responses);
+  // s1 已播种进驱动器；其余 inspect（s3/s14–s17）不经过驱动器。
+  const servedBefore = servedBeforeSteps(trace.steps, responses, ['s3', 's14', 's15', 's16', 's17']);
   const actionAdvance = (() => {
     const served = servedBefore.get('s5')!;
     return { inputText: recordedActiveInput?.text ?? null, intentStatus: served.world!.advance.intentStatus } as Json;
@@ -68,7 +69,7 @@ export function buildT04Scenario(sampleId: string) {
     { task: 'targets', key: 'person_c', input: { sourceId: 'person_c', actionText: personCActionText, workingState } as Json, output: { targets: [] } },
     // §7.1：results 输入带全组冻结行动（T04 目标集为空——零骰点判定）。
     { task: 'results', key: groupId, input: { groupId, members: [{ memberId: 'person_c', actionText: personCActionText, rollRefs: [] }], workingState }, output: stage.results as Json },
-    { task: 'updates', key: groupId, input: { groupId, mode: 'group', workingState }, output: [] },
+    { task: 'updates', key: groupId, input: { groupId, mode: 'group', results: structuredClone(stage.results) as Json, workingState }, output: [] },
     { task: 'narration', key: committed.world.head.pointId, input: { pointId: committed.world.head.pointId, before: beforeState, delta: { timeAdvance: commitPoint.timeAdvance, entityDeltas: commitPoint.entityDeltas }, after: state, perspective: `主角视角（${(state as { protagonistId: Id }).protagonistId}「${(state as { initial: { characters: Record<string, { name: string }> } }).initial.characters[(state as { protagonistId: Id }).protagonistId].name}」）；只表达已结算的世界事实` }, output: requests.get('s12')!.text as Json },
     { task: 'continuation', key: roundId, input: { round: committed.world.round, head: { ...committed.world.head, narrationStatus: 'ready' }, workingState }, output: requests.get('s13')!.conclusion as Json },
   ];

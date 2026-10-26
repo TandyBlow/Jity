@@ -347,7 +347,8 @@ export function buildT03Scenario(traceName: T03TraceName, sampleId: string): T03
   const recordedActiveInput = (context as unknown as { activeInput: { advanceId: Id; inputId: Id; text: string } | null }).activeInput;
   // §6.1/§7.1：行动输入取调用时刻的 advance（最近服务态＋最后一次 context），
   // results 输入取本组冻结行动——两者均与控制器逐字镜像。
-  const servedBefore = servedBeforeSteps(steps, responseOf);
+  // 除已播种的引导 context 外，其余 inspect 步骤不经过驱动器。
+  const servedBefore = servedBeforeSteps(steps, responseOf, [finalStep.id]);
   const declaredAdvance = (stepId: string): Json => {
     const served = servedBefore.get(stepId)!;
     return { inputText: served.activeInput?.text ?? null, intentStatus: served.world!.advance.intentStatus };
@@ -378,7 +379,7 @@ export function buildT03Scenario(traceName: T03TraceName, sampleId: string): T03
       stageCalls.forEach((call, j) => {
         declared.push({
           task: 'updates', key: `${groupId}#${call.stage}`,
-          input: { groupId, mode: 'group', stage: call.stage, workingState: j === 0 ? previewStateAt(index) : atStageTime(boundaryBodies[j]) } as unknown as Json,
+          input: { groupId, mode: 'group', stage: call.stage, results: structuredClone(req.results) as Json, workingState: j === 0 ? previewStateAt(index) : atStageTime(boundaryBodies[j]) } as unknown as Json,
           output: call as unknown as Json,
         });
       });

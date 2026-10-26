@@ -48,7 +48,7 @@ const pointWork = (over: Partial<PointWork> = {}): PointWork => ({
 });
 
 const memory = (over: Partial<ControllerMemory> = {}): ControllerMemory => ({
-  requestId: 'rq1', leaseToken: 'lease1', holderId: 'browser', ids: {}, allocPlan: null, roundAllocations: {}, allocatedKeys: [], playerInput: null,
+  requestId: 'rq1', leaseToken: 'lease1', holderId: 'browser', ids: {}, allocPlan: null, roundAllocations: {}, allocatedKeys: [], playerInput: null, playerAdvance: null,
   plan: null, planIndex: 0, prepareSuccessor: false, localPause: false, budget: { used: 0, max: null },
   narration: null, workingState: null, sources: [], staged: [], stagedTimeScan: null, groupActors: [], groupActions: [], lastModel: null, lastTargets: null, lastResults: null,
   updatesStages: [], updatesCalls: [], updatesApplied: 0, updatesPreviewSkipped: 0, updatesPendingRefs: [],
@@ -261,8 +261,16 @@ describe('normal point: group cycle (T01/T02 shapes)', () => {
       kind: 'model', task: 'action', key: 'person_a',
       input: { actor: 'person_a', advance: { inputText: '我推开重门。', intentStatus: 'consumed' } },
     });
-    // 消费状态取自服务态，不是文本的有无：尚无 context 读取时文本为 null，
-    // 未消费的 advance 仍是 pending。
+    // 正常输入路径：没有 context 回读时，驱动器自己 start_advance 的原文仍可用，
+    // 且只在 advance 身份一致时生效。
+    const retained: ControllerMemory = { ...m, playerAdvance: { advanceId: 'adv1', inputId: 'in1', text: '我推开重门。' } };
+    expect(next(w, c, wk, retained)).toMatchObject({ kind: 'model', task: 'action', input: { advance: { inputText: '我推开重门。' } } });
+    const stale: ControllerMemory = { ...m, playerAdvance: { advanceId: 'adv0', inputId: 'in0', text: '上一轮的输入' } };
+    expect(next(w, c, wk, stale)).toMatchObject({ kind: 'model', task: 'action', input: { advance: { inputText: null } } });
+    // 旧 advance 的 context 快照同样不得泄漏；同一 advance 的 context 是权威来源。
+    expect(scheduleNext(view(w, c, wk, m, undefined, { advanceId: 'adv0', inputId: 'in0', text: '上一轮的输入' }))).toMatchObject({ kind: 'model', task: 'action', input: { advance: { inputText: null } } });
+    expect(scheduleNext(view(w, c, wk, retained, undefined, { advanceId: 'adv1', inputId: 'in1', text: '服务端原文' }))).toMatchObject({ kind: 'model', task: 'action', input: { advance: { inputText: '服务端原文' } } });
+    // 消费状态取自服务态，不是文本的有无：未消费的 advance 仍是 pending。
     const pendingWorld = { ...w, advance: { advanceId: 'adv1', inputId: 'in1', intentStatus: 'pending' as const, inputAvailable: true } };
     expect(next(pendingWorld, c, wk, m)).toMatchObject({ kind: 'model', task: 'action', input: { advance: { inputText: null, intentStatus: 'pending' } } });
   });
@@ -294,6 +302,16 @@ describe('normal point: group cycle (T01/T02 shapes)', () => {
       },
     });
   });
+  test('missing frozen group actions stop before results instead of an empty member list (#4)', () => {
+    const { w, c, wk, m } = spine({
+      work: { phase: 'settle_group', pendingGroup: { groupId: 'g1', sourceId: 'person_a', memberIds: ['person_a', 'person_b'], targetIds: [], frontierIds: [], closed: true } },
+      memory: {
+        workingState: { key: workingStateKey(pointWork()), state: workingState() },
+        groupActions: [{ memberId: 'person_a', actionText: '行动。', rolls: [] }],
+      },
+    });
+    expect(next(w, c, wk, m)).toEqual({ kind: 'stop', reason: 'frozen_actions_missing:person_b' });
+  });
   test('DFS: the reaction of an admitted sibling precedes rolling the next one (T02-el s5–s8)', () => {
     const pending: SourceAnalysis = {
       sourceId: 'person_c', actionText: '行动。', targetsExtended: true,
@@ -323,11 +341,15 @@ describe('normal point: group cycle (T01/T02 shapes)', () => {
   test('results then updates then stage; positions only from positionSet deltas (T02 s6)', () => {
     const { w, c, wk, m } = spine({
       work: { phase: 'settle_group', pendingGroup: { groupId: 'g1', sourceId: 'person_a', memberIds: ['person_a'], targetIds: [], frontierIds: [], closed: true } },
-      memory: { workingState: { key: workingStateKey(pointWork()), state: workingState() } },
+      memory: {
+        workingState: { key: workingStateKey(pointWork()), state: workingState() },
+        groupActions: [{ memberId: 'person_a', actionText: '行动。', rolls: [] }],
+      },
     });
     expect(next(w, c, wk, m)).toMatchObject({ kind: 'model', task: 'results', key: 'g1' });
     m.lastResults = { person_a: 'person_a的行动结果已确认。' };
-    expect(next(w, c, wk, m)).toMatchObject({ kind: 'model', task: 'updates', key: 'g1' });
+    // §7.1：更新读已确认结果——不是在提示词里提一下，而是输入真的带上。
+    expect(next(w, c, wk, m)).toMatchObject({ kind: 'model', task: 'updates', key: 'g1', input: { groupId: 'g1', mode: 'group', results: { person_a: 'person_a的行动结果已确认。' } } });
     m.lastModel = {
       task: 'updates', key: 'g1', output: [{
         stage: 'appearance',

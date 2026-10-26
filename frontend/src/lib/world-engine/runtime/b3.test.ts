@@ -22,6 +22,11 @@ describe('buildTaskPrompt', () => {
     const action = buildTaskPrompt('action', 'person_a', { actor: 'person_a', advance: { inputText: '去走廊尽头看看那扇门', intentStatus: 'pending' }, workingState: T01_WORKING_STATE });
     expect(action).toContain('"inputText":"去走廊尽头看看那扇门"');
     expect(action).toContain('"intentStatus":"pending"');
+    // 行动是对「输入 actor 指定的人物」的判断，不是固定写主角；pending 输入需
+    // 结合最新状态判断能否执行（可能已失效）。
+    expect(action).toContain('输入 actor 指定的角色');
+    expect(action).toContain('不一定是主角');
+    expect(action).toContain('结合最新工作状态判断能否执行');
     const reaction = buildTaskPrompt('reaction', 'person_a', { sourceId: 'person_a', sourceActionText: '用力推开走廊尽头的门', memberId: 'person_b', rollId: 'roll_1', workingState: T01_WORKING_STATE });
     expect(reaction).toContain('"sourceActionText":"用力推开走廊尽头的门"');
     const results = buildTaskPrompt('results', 'group_a', {
@@ -30,6 +35,12 @@ describe('buildTaskPrompt', () => {
     });
     expect(results).toContain('"actionText":"用力推开走廊尽头的门"');
     expect(results).toContain('"eligible":false');
+    // §7.1：更新读已确认结果——输入与契约都体现，时间扫描（无 results）不提。
+    const updates = buildTaskPrompt('updates', 'group_a', { groupId: 'group_a', mode: 'group', results: { person_a: '结果已确认。' }, workingState: T01_WORKING_STATE });
+    expect(updates).toContain('"results":{"person_a":"结果已确认。"}');
+    expect(updates).toContain('results 是已确认的结算结果');
+    const scan = buildTaskPrompt('updates', 'time_scan:p1', { mode: 'time_scan', workingState: T01_WORKING_STATE });
+    expect(scan).not.toContain('results 是已确认的结算结果');
   });
   test('text tasks forbid JSON and never show a schema', () => {
     const narration = buildTaskPrompt('narration', 'root_0', { pointId: 'root_0', stateDigest: 'd' });

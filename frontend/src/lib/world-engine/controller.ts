@@ -43,7 +43,7 @@ const INITIAL_CONTROL: ControlState = {
 
 export function initialMemory(prefix: string, holderId: string): ControllerMemory {
   return {
-    requestId: `${prefix}_0`, leaseToken: null, holderId, ids: {}, allocPlan: null, roundAllocations: {}, allocatedKeys: [], playerInput: null,
+    requestId: `${prefix}_0`, leaseToken: null, holderId, ids: {}, allocPlan: null, roundAllocations: {}, allocatedKeys: [], playerInput: null, playerAdvance: null,
     plan: null, planIndex: 0, prepareSuccessor: false, localPause: false, budget: { used: 0, max: null },
     narration: null, workingState: null, sources: [], staged: [], stagedTimeScan: null, groupActors: [], groupActions: [], lastModel: null, lastTargets: null, lastResults: null,
     updatesStages: [], updatesCalls: [], updatesApplied: 0, updatesPreviewSkipped: 0, updatesPendingRefs: [],
@@ -480,9 +480,17 @@ export class ControllerDriver {
         if (!this.memory.allocatedKeys.includes(req.allocationKey as Id)) this.memory.allocatedKeys.push(req.allocationKey as Id);
         break;
       }
-      case 'checkpoint_start_advance':
+      case 'checkpoint_start_advance': {
+        // §6.1 正常输入路径：驱动自己发起的 advance 留下与身份绑定的原文，
+        // 行动读它（不需要 context 回包）；advanceId 变化后自动失效。
+        const startData = data as { advanceId?: Id; inputId?: Id };
+        const sentText = req.inputText;
+        this.memory.playerAdvance = startData.advanceId && startData.inputId && typeof sentText === 'string'
+          ? { advanceId: startData.advanceId, inputId: startData.inputId, text: sentText }
+          : null;
         this.memory.playerInput = null;
         break;
+      }
       case 'checkpoint_discover_group': {
         const actor = req.initiatorId as Id;
         if (!this.memory.groupActors.includes(actor)) this.memory.groupActors.push(actor);

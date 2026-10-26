@@ -84,13 +84,13 @@
 
 ## 6. #6/#5 落地（已随 8a2efcd、5759234 提交）与 #1/3/4 完成记录（2026-10-26）
 
-**批次状态**：清单第 1、3、4 项本轮完成；第 6 项控制面与场景接线、第 5 项多阶段验收已在此前的 8a2efcd／5759234 提交中落地（5 节的「待做」列表即那两次提交的内容，本节不再重复）。剩余：#7（pointPlan 逐人判断）、#9（continuation 上下文复核）、#6 的恢复路径补读（随 H2 恢复批次）、以及 B3 全量重跑（用户裁定暂不做）。
+**批次状态**：清单第 1、3、4 项与本轮复核跟进已完成（复核跟进见 §7）；第 6 项控制面与场景接线、第 5 项多阶段验收已在此前的 8a2efcd／5759234 提交中落地（5 节的「待做」列表即那两次提交的内容，本节不再重复）。命名按复核裁定：**#6「叙事读取」已关闭**；当前遗留的 H2 缺口是**冻结组行动恢复**（刷新/冷启动后 `groupActions` 为空），不是叙事读取。剩余：#7（pointPlan 逐人判断）、#9（continuation 上下文复核）、H2 冻结组行动恢复、以及 B3 全量重跑（用户裁定暂不做）。
 
 **#1 action —— 链级 advance 上下文**
 
 - 数据源（核对结果）：`ContextResponse.activeInput {advanceId,inputId,text}`（仅活动链、只由 context 回包携带）＋ `world.advance.intentStatus`。控制器新增 `activeInput` 服务态（`adoptState` 只在回包携带该字段时更新；`undefined`＝保持现状，不把缺失当 null）。
-- 实现：调度器 action 输入补 `advance:{inputText|null, intentStatus}`；`inputText` 取最后采纳的 context 文本，`intentStatus` 取调用时刻的 `world.advance`——不是「有文本就 pending」。提示词契约同步（pending＝待处理命令必须执行；consumed＝已是触发背景不得重复执行）。
-- 边界：T01 链内没有 context 回包，行动输入文本为 `null`（声明已注明）；文本与状态是两路数据，不互相推断。
+- 实现（经 §7 复核修正）：调度器 action 输入补 `advance:{inputText|null, intentStatus}`；`inputText` 按 **advance 身份绑定**取源——同一 advance 的 context `activeInput` 优先（服务端权威），否则用控制器保留的 `playerAdvance`（`start_advance` 成功时以请求原文＋回包 advanceId/inputId 留存）；advanceId 一变，旧记录自动失效、不跨轮泄漏。`intentStatus` 取调用时刻的 `world.advance`——不是「有文本就 pending」。提示词契约同步：判断**输入 actor 指定的角色**（不一定是主角），主角的 pending 输入须结合最新状态判断能否执行（可能已失效），consumed 只是触发背景。
+- 边界：T01 没有 context 回包，文本来自 `playerAdvance`（不再接受 `inputText=null` 作为正确期望）；文本与状态是两路数据，不互相推断。
 
 **#3 reaction —— 发起者威胁文本**
 
@@ -100,15 +100,37 @@
 
 - 输入补 `members:[{memberId, actionText, rollRefs}]`，`rollRefs` 含 `{targetId, rollId, result, eligible, admitted}`——**未准入与不合格的判定同样入列**（§7.1「骰点」）。
 - 数据源：§3 核对时定为「控制器留存」（服务端 `FrozenGroup.members[].actionText` 只走恢复载荷；本轮不改 wire）。新记忆字段 `groupActions` 与 `sources` 同生命周期：`discover` 重置建立、准入 `extend` 前插、`create_rolls` 追加、`stage_unit`/`stage_time_scan`/`commit_point`/`clearRoundWork` 归零——只覆盖当前组，不是长期行动记录。
-- **已知缺口（不掩盖）**：刷新/冷启动后内存丢失，`groupActions` 为空，此时 results 输入缺全组行动。补读路径归 H2 恢复批次（恢复载荷的 `FrozenGroup.members` 即数据源），本轮不做静默兜底。
+- **完整性守卫（§7 复核追加）**：results 调用前核对组成员（`pending.memberIds`，空则 `[sourceId]`）是否都有留存行动；缺任何一个就 `stop`（原因 `frozen_actions_missing:<ids>`），**绝不以 `members=[]` 让模型编结果**。刷新/冷启动的内存丢失由 H2 恢复批次从服务端 `FrozenGroup.members` 补水；补水完成前该路径明确停止。
 
 **验证（固定模型输出机制，协议/状态/恢复断言保留）**
 
 - 输入形状断言（提示词序列化后的实际内容）：`runtime/b3.test.ts` 断言 action 提示词含 `"inputText"`/`"intentStatus"`、reaction 含 `"sourceActionText"`、results 含成员的 `"actionText"` 与未准入判定的 `"eligible":false`。
 - 调度器单测：action 的 advance 两态（有文本/无 context 读取）与「状态取自服务态」；reaction 的 `sourceActionText`；results 的成员顺序与两类判定（合格未准入、不合格未准入）。
-- 真实控制器回归：`controller.test.ts` 端到端断言 action/reaction/results 三处实测输入与提交后 `groupActions` 归零。
+- 真实控制器回归：`controller.test.ts` 端到端断言 action/reaction/results/updates 四处实测输入与提交后 `groupActions` 归零、`playerAdvance` 留存；另加「无冻结行动即停止」的驱动级探针。
 - 场景级：T01/T02/T03/T04/T08 的声明输入全部改为**独立期望**——action 的 advance 由 `servedBeforeSteps` 取「调用时刻最近服务态＋最后一次 context」，results 的 members 由 `frozenGroupActionsAtStage` 按录制镜像（发起者先入、准入前插、roll 追加、stage 结算归零）。T02 新增手写字面量断言：四次行动的状态序列 `pending,pending,consumed,consumed`（第二/三点的 consume 由 commit 转态，一次性声明的旧写法会漏掉）＋四条 results 的成员顺序＋逐条判定值（含 `person_d` 准入后对 `person_e` 的合格未准入判定）。T02-empty-linked：`consumed`＋四人逆序前插＋三条准入判定。
 - 顺带修复：5759234 遗留的 `prefer-const` lint 错误（`controller.test.ts` 两处 `let`）使 `npm run build` 断在 lint 阶段，本轮改为 `const` 后 build 通过。
 - B3 冻结样本：action 两样本的 `inputText` 改为 T01 录制 `start_advance` 的逐字文本「我推开重门。」（原先是另写的句子，与「T01 school 世界派生」的出处不符）。
 
 **本轮验证**：前端全量 477/477（world-engine 415）、`tsc -p tsconfig.world-contract.json` 净、`tsc --noEmit` 净、`npm run build` 通过（lint 仅既有 warning）；后端 `python -X utf8 -m pytest -q` 923/923。
+
+## 7. 输入补齐复核跟进（2026-10-26，review 报告 artifacts/model-input-review.json）
+
+复核裁定：477/477 与两套 tsc 通过**不足以**关闭「输入补齐」；控制器探针查出三处缺口。命名同步修正：**#6「叙事读取」已关闭**，当前遗留的 H2 缺口是**冻结组行动恢复**（与叙事读取无关）。
+
+| 探针行 | 实测缺口 | 本轮处理 |
+|---|---|---|
+| `normal_input_without_context_roundtrip` | `start_advance` 收到原文，随后 action 得到 `inputText=null、intentStatus=pending` | 控制器在 `checkpoint_start_advance` 成功时留存 `playerAdvance={advanceId,inputId,text}`（原文取自请求、身份取自回包）；调度器 action 的文本按 advance 身份取源：同一 advance 的 context `activeInput` 优先，否则用留存原文；advanceId 不同则一律不用（不跨轮泄漏）。T01 不再以 null 为期望。 |
+| `results_to_updates` | 结果已存 `lastResults`，updates 输入没有结果内容 | `settleDecision` 的 group updates 基座补 `results`（batch 与拆分阶梯每一阶段都带）；`updatesContract` 在 results 存在时明说「更新必须与之一致」；时间扫描（无 results）不提该句。 |
+| `missing_frozen_actions` | 冻结行动缺失时仍调用 results、传 `members=[]` | results 前做完整性守卫：`pending.memberIds`（空则 `[sourceId]`）逐个核对其留存行动，缺一个即 `stop`（`frozen_actions_missing:<ids>`）、不发起模型调用；补水归 H2。 |
+
+**提示词修正（action）**：原措辞「决定主角是否行动」与「pending 时必须执行」把两件事说死——调度器会对不同人物调用 action，先前变化也可能让玩家行动失效。改为判断**输入 actor 指定的角色**（不一定是主角）；仅当该角色是主角且 `intentStatus=pending` 时，输入才是待处理命令，且必须结合最新工作状态判断能否执行（目标/条件失效则不可执行）；consumed 只作触发背景；其他角色按自身任务与个性判断。
+
+**验证**
+
+- 调度器：advance 文本四态（无源/留存/旧 advance 失效/同 advance 的 context 优先）、留存与 context 的优先级、`results` 进入 updates 输入、缺成员即 stop。
+- 真实控制器：端到端断言 action 的 `inputText='探索走廊'`（驱动自己发起的 advance，无 context 回读）、updates 的 `results`、提交后 `playerAdvance` 留存；新增两个探针级用例——「settle 点无冻结行动 → `frozen_actions_missing:person_a`，零模型调用、零传输」与「start_advance 成功后 `playerAdvance` 与身份绑定」。
+- 场景级：T01 的 action 文本改为录制的 `start_advance` 原文（不再是 null）；T01/T02/T03/T04/T08 的 updates 声明补 `results`（T02/T03 逐阶段、逐组）；T02 复算断言更新输入 `results` 与录制 stage 请求逐组一致且非空；T02 的 results 声明由 `frozenGroupActionsAtStage` 生成，完整性守卫同时被"组 B 不得混入组 A 的行动"约束。
+- 提示词：断言 action 契约含「输入 actor 指定的角色」「不一定是主角」「结合最新工作状态判断能否执行」；updates 含 results 时出现「已确认」句、时间扫描不出现。
+- B3 冻结样本：updates 两样本补 `results`（T01 stage_unit 逐字值）。
+
+**本轮验证**：前端全量 480/480（world-engine 418）、`tsc -p tsconfig.world-contract.json` 净、`tsc --noEmit` 净、`npm run build` 通过（lint 仅既有 warning）；后端 `python -X utf8 -m pytest -q` 923/923。

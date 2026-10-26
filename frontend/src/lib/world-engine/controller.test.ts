@@ -195,9 +195,10 @@ describe('driver end-to-end: entry, group cycle, seal/commit, narration', () => 
     const perspective = '主角视角（person_a「甲」）；只表达已结算的世界事实';
     expect(model.calls[1].input).toEqual({ pointId: 'root', before: null, delta: { timeAdvance: null, entityDeltas: {} }, after: nsState, perspective });
     expect(model.calls[9].input).toEqual({ pointId: 'p1', before: nsState, delta: { timeAdvance: ta(2), entityDeltas: { person_a: { entityId: 'person_a', positionSet: position } } }, after: nsState, perspective });
-    // §6.1/§6.2/§7.1：实测输入补充——行动 advance（无 context 读取→无文本）、
-    // 反应读发起者威胁、结算读全组冻结行动与全部骰点判定。
-    expect(model.calls[3].input).toMatchObject({ actor: 'person_a', advance: { inputText: null, intentStatus: 'consumed' } });
+    // §6.1/§6.2/§7.1：实测输入补充——行动 advance（无 context 读取时，驱动
+    // 自己 start_advance 的原文仍是输入）、反应读发起者威胁、结算读全组冻结
+    // 行动与全部骰点判定。
+    expect(model.calls[3].input).toMatchObject({ actor: 'person_a', advance: { inputText: '探索走廊', intentStatus: 'consumed' } });
     expect(model.calls[5].input).toMatchObject({ sourceId: 'person_a', sourceActionText: 'person_a采取冻结行动。', memberId: 'person_d' });
     expect(model.calls[7].input).toMatchObject({
       groupId: 'g1',
@@ -209,8 +210,12 @@ describe('driver end-to-end: entry, group cycle, seal/commit, narration', () => 
         ] },
       ],
     });
+    // §7.1：更新输入带已确认结果（不是只存在 lastResults 里）。
+    expect(model.calls[8].input).toMatchObject({ groupId: 'g1', mode: 'group', results: { person_a: '结果a。', person_d: '结果d。' } });
     const committed = driver.getMemory();
     expect(committed).toMatchObject({ leaseToken: 'lease1', planIndex: 1, staged: [], groupActors: [], groupActions: [], narration: null, budget: { used: 10 } });
+    // start_advance 保留与 advance/input 身份绑定的原文（不依赖 context 回读）。
+    expect(committed.playerAdvance).toEqual({ advanceId: 'adv1', inputId: 'in1', text: '探索走廊' });
     expect(committed.ids).toMatchObject({ advance: 'adv1', input: 'in1', round: 'r1' });
     const plan = committed.plan as PlannedPoint[];
     expect(plan[0]).toMatchObject({ pointId: 'p1', actorIds: ['person_a'] });
@@ -835,6 +840,11 @@ describe('review regressions (553e341 findings)', () => {
         groupActors: ['person_a'],
         lastModel: { task: 'reaction', key: 'person_a', output: 'person_d被迫反应。' },
         sources: [{ sourceId: 'person_a', actionText: '行动。', targetsExtended: true, pendingTargets: [], rolled: [{ targetId: 'person_d', triggerKey: 'tk_d', rule: { ruleVersion: 'reaction-fixture-v1', target: 11 }, rollId: 'roll_d', admitted: true, reacted: false }] }],
+        // 冻结行动留存（§7.1 results 输入）：被准入者前插、发起者带判定。
+        groupActions: [
+          { memberId: 'person_d', actionText: 'person_d被迫反应。', rolls: [] },
+          { memberId: 'person_a', actionText: '行动。', rolls: [{ targetId: 'person_d', rollId: 'roll_d', result: 12, eligible: true, admitted: true }] },
+        ],
       },
     );
     transport.script = [
@@ -1202,5 +1212,40 @@ describe('review regressions round 3 (bb5abd3 findings)', () => {
     const status = await driver.step();
     expect(status).toEqual({ kind: 'await', reason: 'lease_held_by_other' });
     expect(driver.getMemory().narration).toMatchObject({ pointId: 'p1', claim: null });
+  });
+});
+
+describe('model-input review (2026-10-26)', () => {
+  test('a settle point without retained frozen actions stops before any results call', async () => {
+    const world = mkWorld({ advance: { advanceId: 'adv1', inputId: 'in1', intentStatus: 'consumed', inputAvailable: false }, activePointId: 'p1', activeRoundId: 'r1', round: { roundId: 'r1', trigger: 'player', order: ORDER, cursor: 0, actedIds: [], visitedIds: [], conclusion: null } });
+    const control = mkControl({ revision: 2 });
+    const work = mkWork({ timeLocked: true, phase: 'settle_group', pendingGroup: { groupId: 'g1', sourceId: 'person_a', memberIds: ['person_a'], targetIds: [], frontierIds: [], closed: true } });
+    const memory = initialMemory('req', 'browser');
+    memory.leaseToken = 'lease1';
+    memory.workingState = { key: workingStateKey(work), state: workingState() };
+    const transport = new ScriptedTransport([]);
+    const model = new ScriptedModel([]);
+    const driver = new ControllerDriver({ transport, model }, memory, { world, control, work });
+    // 刷新/冷启动丢内存：不得用 members=[] 让模型编结果。
+    expect(await driver.step()).toEqual({ kind: 'stop', reason: 'frozen_actions_missing:person_a' });
+    expect(model.calls).toEqual([]);
+    expect(transport.ops).toEqual([]);
+  });
+  test('the normal start_advance path keeps the player text for the action call', async () => {
+    let world = mkWorld();
+    const control = mkControl({ revision: 0 });
+    const writeOk = (operation: WorldOperation, request: unknown, data: unknown) => ({
+      protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 1, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1, replayed: false, operation, requestId: (request as { requestId: Id }).requestId, requestHash: 'hash', world, control, work: null, data,
+    });
+    const transport = new ScriptedTransport([
+      { op: 'checkpoint_start_advance', respond: (r) => {
+        world = mkWorld({ advance: { advanceId: 'adv1', inputId: 'in1', intentStatus: 'pending', inputAvailable: true }, activeRoundId: 'r1', round: { roundId: 'r1', trigger: 'player', order: ORDER, cursor: 0, actedIds: [], visitedIds: [], conclusion: null } });
+        return writeOk('checkpoint_start_advance', r, { advanceId: 'adv1', inputId: 'in1', roundId: 'r1' });
+      } },
+    ]);
+    const memory = memoryWithAdvanceStart();
+    const driver = new ControllerDriver({ transport, model: new ScriptedModel([]) }, memory, { world, control });
+    await driver.step();
+    expect(driver.getMemory().playerAdvance).toEqual({ advanceId: 'adv1', inputId: 'in1', text: '探索走廊' });
   });
 });
