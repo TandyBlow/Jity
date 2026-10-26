@@ -71,13 +71,21 @@ export function buildT02Scenario(traceName: T02TraceName, sampleId: string): T02
   const requestOf = new Map<string, Record<string, unknown>>();
   const responseOf = new Map<string, Record<string, unknown>>();
   for (const step of trace.steps) {
-    // The dice rule is program-owned (§6.2): the recorded request pinned the
-    // constant value at recording time. Rewrite it to the CURRENT constant
-    // on the raw trace step, before any instantiation, so the fixture→d20
-    // switch does not masquerade as a request drift. Saved roll rows in
-    // responses are history and stay exactly as recorded.
+    // B-derived corpus note (§6.2): the dice rule is program-owned, and the
+    // recorded corpus pinned the constant value at recording time. Both
+    // sides of every create_rolls step are derived to the CURRENT constant
+    // on the raw trace step, before any instantiation: the request carries
+    // the rule the driver must send, and the response row is the outcome
+    // the server saved for THAT request, so it must name the same rule.
+    // eligible/admitted are unchanged (the d20 target is also 11). The
+    // shared design tree itself stays byte-identical to A — this is a
+    // derivation at scenario-build time, never an edit to the recording.
     if (step.operation === 'create_rolls') {
       for (const roll of ((step.request as { rolls?: { ruleVersion: string; target: number }[] }).rolls ?? [])) {
+        roll.ruleVersion = PROGRAM_ROLL_RULE.ruleVersion;
+        roll.target = PROGRAM_ROLL_RULE.target;
+      }
+      for (const roll of ((step.response as { data?: { rolls?: { ruleVersion: string; target: number }[] } }).data?.rolls ?? [])) {
         roll.ruleVersion = PROGRAM_ROLL_RULE.ruleVersion;
         roll.target = PROGRAM_ROLL_RULE.target;
       }

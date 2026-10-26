@@ -433,12 +433,15 @@ describe('H2 frozen work', () => {
     const group = p.groups[0];
     group.members[0].targets = [{ targetId: 'person_d', triggerKey: 'trigger_cd' }, { targetId: 'person_e', triggerKey: 'trigger_ce' }];
     group.members[0].rollRefs = [{ sourceId: 'person_c', targetId: 'person_d', triggerKey: 'trigger_cd', rollId: 'roll_cd' }];
-    group.members.push({ memberId: 'person_d', actionText: 'D 稳住门轴。', targets: null, resultText: null, rollRefs: [] });
+    // D finished its whole frame: accepted, CONFIRMED EMPTY targets, no
+    // threats — the saved stack [C] is legal because nothing is unfinished
+    // above C (a confirmed-but-unanalysed D would have to sit on the stack).
+    group.members.push({ memberId: 'person_d', actionText: 'D 稳住门轴。', targets: [], resultText: null, rollRefs: [] });
     p.work.pendingGroup!.memberIds = ['person_c', 'person_d'];
     p.work.pendingGroup!.targetIds = ['person_d', 'person_e'];
     group.acceptedSources = [
       { memberId: 'person_c', sourceEpoch: 7, sourceAttempt: 1, actionContentHash: 'a'.repeat(64), resultContentHash: null, targetsContentHash: 'b'.repeat(64), candidatesContentHash: null },
-      { memberId: 'person_d', sourceEpoch: 7, sourceAttempt: 1, actionContentHash: 'c'.repeat(64), resultContentHash: null, targetsContentHash: null, candidatesContentHash: null },
+      { memberId: 'person_d', sourceEpoch: 7, sourceAttempt: 1, actionContentHash: 'c'.repeat(64), resultContentHash: null, targetsContentHash: 'd'.repeat(64), candidatesContentHash: null },
     ];
     // roll_cd was saved under the stage fixture rule BEFORE the switch;
     // (c,e) was never rolled, so its final row does not exist yet.
