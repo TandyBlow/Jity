@@ -293,7 +293,19 @@ H1 harness 原以 `window.fetch.bind(window)` 显式注入绕过 B 默认实现�
 
 ---
 
-# A3 本批交付：SQLite 持久化与当前工作态恢复
+# A3 阶段划分
+
+2026-10-26 起沿用 A2 的两段交付方式：
+
+| 阶段 | 范围 | 关闭标准 |
+|---|---|---|
+| A3-1：SQLite 事务与恢复服务 | 持久化、幂等、租约/claim/gate、roll、冻结工作复制、时间锁/后继预约及清理 | 后端正反例、真实 SQLite 故障矩阵、共同检查与独立复审通过 |
+| A3-2：HTTP 刷新与接管联调 | 与 B 的真实持久化服务连接、刷新恢复、所有权交接及恢复后提交 | 指定 A/B 提交组合完成 H2，保留请求绑定、原文字节/候选哈希和迟到围栏证据 |
+
+首批仅交付存储功能；本页末尾记录 A3-1 完整后端交付与 A3-2 的最新依赖。
+协议消费、ASGI 和 transport 探针不替代 B 恢复客户端的正式 H2。
+
+# A3-1 首批交付：SQLite 持久化与当前工作态恢复
 
 日期：2026-10-26。分支 `world-server`，基线 `aacb572`，实现提交
 `ce446c85dff0310bb9adf47ebcd3fbcc20930b07`，含 7 个实现/接入文件和 6 个测试模块。
@@ -374,7 +386,7 @@ LedgerMismatch 拒绝，重开后记录不变。**本批范围未发现遗留阻
 本批 HTTP 证据是每次请求重新创建应用/存储的本进程 ASGI 测试，未完成真实浏览器
 刷新/接管。H1 的既有结论不外推为持久化入口或 H2 通过。
 
-## 未完成边界
+## 首批交付时的未完成边界（历史记录）
 
 普通读取仍依赖过渡核心快照。租约 TTL、单调 epoch、claim/gate 生命周期、roll、
 规范化分配记录、accepted/frozen 清单及原文复制、完整后继预约和引用清理继续待办。
@@ -384,3 +396,100 @@ LedgerMismatch 拒绝，重开后记录不变。**本批范围未发现遗留阻
 FC01–FC32 已有部分同类故障覆盖，但指定运行测试矩阵尚未逐项接入；共同轨迹的
 契约/消费检查也不等于所有 runtime-A3 路径通过。后续须完成上述实现、真实 SQLite
 故障矩阵，并与 B 记录指定 A/B 提交组合的 H2，之后才能关闭整个 A3。
+
+---
+
+# A3-1 完整后端交付：事务权威、冻结恢复与后继预约
+
+日期：2026-10-26。分支 `world-server`，实现提交
+`c19340fa5401b8d69045e7cafdafbe66cf45d974`，已推送至同名远端分支。
+本批接在远端 `be87679` 之后，保留其 get_state 原始点记录字段及 preview/正式采纳
+规则分离。**既定 A3-1 后端范围通过验收与独立复审；整个 A3 尚未完成。**
+上节的首批缺口是历史记录，本节为当前状态。交付继续写在本文件。
+
+## 实现与边界
+
+1. **事务、幂等和读取。** `world_store.py` 将权威、工作、判定、冻结来源与复制
+   记录放入同一个 SQLite 写事务；跨连接并发、重复请求、SQL 中断和进程退出均有
+   回滚/重放检查。get_state 从初始世界和关系历史回放并核对摘要，同时返回所请求点
+   自己的 previousPointId/timeAdvance/entityDeltas；重启及清理后读取一致。
+2. **租约、claim 和 gate。** `authority.py` 保存服务端随机凭证与独立到期时间：
+   lease 默认 120 秒，claim 默认 180 秒；释放、到期接管及重启均保持 epoch 单调。
+   根点创建和点提交立即签发 head claim/gate；过期和迟到写入受围栏拒绝。合法 gate
+   清理不增加 checkpoint revision，resume 不跳过叙事条件；叙事缓存丢失后通过新一代
+   claim 恢复，读取不偷偷改库。租约和 claim 分别续期。
+3. **身份与判定。** `judgments.py` / `world_judgment_repository.py` 持久化有类型和
+   作用域的身份分配、不可变最终骰点及签发时的资格基线；准入/闭组核对真实判定，
+   不接受浏览器指定结果。人物顺序由服务端按理智、身份排序，重复请求不重新掷骰。
+4. **冻结原文与复制。** `world_frozen_repository.py` / `recovery.py` 保存已确认行动、
+   逐源目标、结果及候选的原始字节/摘要与接受来源。接管后先隐藏旧 epoch 正文，仅
+   返回可恢复来源；restore 原样核对来源和 manifest，再在事务内分配副本 attempt。
+   同业务重复复制返回同一副本；缺失/损坏拒绝，不重采样。未确认行动或目标与已确认
+   空目标明确区分；纯时间扫描按保存候选恢复。
+5. **时间锁、后继和清理。** `successor.py` / `world_work_repository.py` 保存独立的
+   后继工作、封存前缀及未来基线；前驱提交前仅允许边界源行动、目标及判定。前驱
+   正式提交与后继提升原子完成，当前/后继分别绑定自己的原文与候选。六种合法单位
+   的 instant/0 预约均保留原单位。维护入口只清理 consumed/abandoned 的短期载荷，
+   保留活动引用、身份及判定记录。
+
+启动沿用上节的 `create_persistent_world_app`、显式 WORLD_SQLITE_PATH 与
+WORLD_ALLOWED_ORIGINS。非空旧库缺少所需 schema 标记时明确拒绝自动迁移，保留
+原数据，开发时选新库路径或另做显式迁移。核心控制元数据仍使用 A2 适配记录并与
+关系表核对；当前工作与后继不再在该记录中保存第二份正文。
+
+## 验收
+
+新增 authority、authority_integration、judgments、recovery、successor、transactions
+六个测试模块共 **159 项**。FC01–FC32 的指定 runtimeTest 均有实际函数落点，使用
+真实 SQLite 语句故障、并发连接及重开验证，不把冻结规格或录制响应当作事务通过。
+既有存储/服务回归同步改为使用服务端分配身份。
+
+- 最终提交后端全量：**1316 passed，66.55 秒**，3 条已有 SWIG 弃用警告。
+- 共同入口：**PASS**，v1/v2 导出一致，Python 109＋317、TS 类型/契约 38/轨迹 65，
+  四类破坏探针均被拒绝；`git diff --check` 通过。
+- 独立只读复审：authority/恢复/FC 聚焦 103 项、successor/judgments 聚焦 50 项；
+  发现合法零分钟预约被内部硬编码拒绝，修复后整个 successor 组 26 项通过。
+  整合远端 get_state 后的读取/清理及 units ladder 复验 27 项通过。
+  最终 successor＋transactions 联合 **63 passed**，未发现剩余既定后端阻断。
+  非时序后继及 FC22 测试显式注入时钟；过期/接管另用可推进时钟检查，不改生产 TTL。
+- [CI 40243749381](https://github.com/TandyBlow/Jity/actions/runs/40243749381)：
+  对应实现 `c19340f`，backend、frontend、world-interface 三个作业全部 **success**。
+
+命令沿用前节解释器与依赖设置；从 backend 运行全量与下列聚焦组，共同入口从根运行：
+
+```sh
+python -m pytest -q tests/test_world_authority.py tests/test_world_authority_integration.py \
+  tests/test_world_judgments.py tests/test_world_recovery.py tests/test_world_successor.py \
+  tests/test_world_transactions.py
+python -m pytest -q
+python backend/scripts/check_world_interface_baseline.py
+```
+
+## 真实浏览器前置验证与 A3-2 状态
+
+A=`c19340f`、B=`ec68f6e4d63e23e9a6eb0d42cb0a59c4fb8040e0`，真实 Chrome
+155.0.8059.85、默认 B HttpWorldTransport、真实 CORS 与独立 SQLite 服务：
+**两组前置流程通过，两次实际服务重启**。检查页面堆内存已丢失、重启后幂等重放、
+释放/接管后 epoch 递增、旧持有者迟到写拒绝、旧正文先隐藏、受控复制后原文字节与
+候选哈希相同，以及恢复后正式提交且无重复消费。最终状态由 Python 手写预期独立
+对拍；运行前后 A/B 源码身份一致。原始请求及凭证只放在忽略的 `.local` 下。
+
+```sh
+# 从根目录运行；参数是固定到指定 B 提交的独立测试副本
+python backend/scripts/check_world_http_h2.py \
+  --browser-worktree /absolute/path/to/browser-checkout --browser-channel chrome
+```
+
+该脚本是 A 侧固定轨迹驱动的传输/恢复前置检查，**不覆盖 B 新恢复控制器的完整 H2**。
+
+2026-10-26 再次 fetch，B 已更新至 `8b080574bccdbadde1b89a23a7b55a41568835a8`，
+其中 `cc70105` 已新增真实恢复客户端首批：新会话续期/申请租约、带凭证读取 recovery、
+按来源受控复制、重读原文、分页恢复历史并核对快照，Controller/Session 已接线。
+因此此前“B 没有恢复客户端”的判断已过时。B 的真实 HTTP 历史子检查使用旧 A
+`be87679`，也不能替代本次 SQLite 完整联调。
+
+**A3-2 当前依赖：** B 的 R1 提案要求恢复读取提供完整骰点事实、逐威胁处理状态及
+有序 sourceStack；当前已冻结恢复投影只有判定身份引用，不能据此还原全部结果与
+执行顺序。R1 文字方案已收敛，但正式 Python/schema、导出/夹具、B 消费及新契约摘要
+尚未冻结。下一步先按共同变更流程落实这些读取能力，再固定新的 A/B 组合，运行
+真实 B 恢复控制器的 SQLite 刷新、接管及后继接续全链。A3-2/H2 保持未关闭。
