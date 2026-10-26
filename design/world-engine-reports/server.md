@@ -503,12 +503,18 @@ python backend/scripts/check_world_http_h2.py \
 基线 `3c81ad6`。上节所述 Python/导出/夹具缺口在本候选落实；B 消费、共同冻结及
 正式 H2 仍待完成，不把本批通过写成 A3-2 整体关闭。
 
-候选仍使用 protocolVersion 2；新增必填字段会改变恢复响应形状，**不宣称兼容旧 B**。
+候选仍使用 protocolVersion 2；新增必填字段会改变恢复响应形状。本批初版把响应
+schemaVersion 留在 1、以"不宣称兼容旧 B"代替具体版本策略，B 复核判定为 P1：
+旧 B 会接受普通响应、直到读到新恢复载荷才在形状层拒绝。2026-10-27 修复轮已按
+锁定决策把响应信封 schemaVersion 升到 2（旧 B 在第一个响应即拒绝新版响应），
+状态模型、创建模板与轨迹格式保持各自的 1，见文末"候选修复轮"。
 旧摘要 `abda455597e743f63da1c205ca7bc68044728c5f92a3cb7ae920440ef324eedd` 更新为：
 
 ```text
 bff913209dc3c91084912542b5ac7af8927b3e46f530ed162d2b759faf5d5afe
 ```
+
+（此摘要属于未升版的初版候选，2026-10-27 修复轮重算后作废，见文末。）
 
 ## 接口与事务行为
 
@@ -584,3 +590,74 @@ python backend/scripts/check_world_interface_baseline.py
 
 本批未改 B 恢复业务，未运行新版 B 控制器的正式 H2。
 候选交付与共同冻结、A3-2 整体验收分别记录。
+
+---
+
+# 候选修复轮：响应 schemaVersion 1→2 与交付范围对齐
+
+日期：2026-10-27。回应 B 复核报告（`artifacts/h2-r1-review-4739ae4.md`，复核对象
+`4739ae4`/`0042528`）。修复实现提交 `fafc859`（完整哈希见 git），分支
+`world-server`，基线仍为 `4739ae4`（父 `3c81ad6`）。本轮 B 消费代码零修改；
+本节交付记录另作文档提交，不改变上述已参测实现。
+
+## 交付范围差异（对齐复核要求）
+
+`4739ae4` 相对 `3c81ad6` 除契约/夹具/导出外，实际包含事务运行时
+（`world_progress_repository.py`、`services/world/progress.py` 及存储/控制/判定
+服务修改）与 frontend `contract-digest.json` pin 更新，**不是原约定的纯契约 (a)
+单笔**。此处记录该范围差异；B 复核已实际审查这些事务路径并运行相关测试，
+本修复轮不重复该审查，也不以此处测试通过代替范围确认。
+
+## P1 修复：版本轴拆分
+
+- 响应信封 `schemaVersion` 1→2：`SCHEMA_VERSION=2` 与 `SchemaVersion=Literal[2]`
+  同步；运行时响应组装（control.py `_envelope_base`）改为引用契约层常量，
+  删除独立 `SCHEMA = 1`，运行时出口与导出 schema 共用同一来源。
+- 版本别名拆开：新增 `StateSchemaVersion=Literal[1]`（创建模板
+  WorldInitialTemplate.schemaVersion 用）与 `TraceFormatVersion=Literal[1]`
+  （TraceDocument.traceFormatVersion 用）；WorldInitialState/WorldState 沿用
+  v1 冻结契约各自的 Literal[1]。requests.py/trace.py 不再复用响应别名；
+  "不得全局替换 schemaVersion"由别名拆分落实，模板/投影/轨迹格式的 1 未动。
+- versions.json 的 schemaVersion 同步为 2；traceFormatVersion 改为引用
+  `v2.TRACE_FORMAT_VERSION` 单源；api-contract 与 trace.schema 内容不变。
+- 响应夹具与轨迹同步：api 成功/错误、branches、errors 及 T01–T09 步内嵌响应
+  信封共 292 处 schemaVersion 1→2；创建模板请求、状态投影及
+  get_state/preview_point 内嵌状态模型保持 1。
+- 轨迹文档自带的 contractDigest pin 同步重算摘要（轨迹不在摘要输入内）。
+- **旧 B 行为（具体版本策略）**：响应信封升 2 后，旧 B 版本守卫
+  （protocol.ts:35）在第一个响应即拒绝新版响应，不再出现"普通响应可读、
+  恢复载荷才在形状层拒"的中间态。共同入口的 TS 契约/轨迹两层在 B 同步其
+  守卫（B 七项同步第 1 项）之前保持红色，属设计内中间态，不是本候选缺陷。
+- 新增 `test_response_version_is_split_from_state_and_trace_versions`：
+  断言常量组 (2,1,1)、三个别名注解、导出 schema 中响应模型
+  （ContextResponse）=2 与 WorldInitialTemplate/WorldState=1、
+  traceFormatVersion=1、versions.json 分层，以及 get_state 夹具
+  "信封 2 + 内嵌状态模型 1"的层次。
+
+## 附带修复
+
+为 `backend/app/database/world_storage_v2.sql` 增加 `text eol=lf` 检出规则
+（复核报告归因的既有 Windows 检出换行差异，与 design 侧既有规则同型）；
+Git blob 未改动，Windows 干净检出的 packaged SQL 测试恢复绿色。
+
+## 验证
+
+- 聚焦契约/导出/恢复/进度/HTTP/判定/控制服务：289 passed。
+- 从 backend 全量 `python -X utf8 -m pytest -q`：**1408 passed**
+  （原 1407 + 新增版本拆分测试；packaged SQL 换行失败已随 eol=lf 规则消失）。
+- 导出 `--check`：v1、v2 均退出 0（漂移、manifest/artifact 哈希与 A 候选自身
+  pin 一致）。
+- `git diff --check`：通过。
+- 共同入口分层：v1/v2 导出 --check 过；Python v1 109、v2 374 全过；tsc 过；
+  TS 契约层 35/38 与 TS 轨迹层 46/65 红于 protocol.ts:35 版本守卫（设计内，
+  由 B 七项同步解除），入口在 TS 契约层停止，轨迹层为单独运行取证。
+
+摘要重算：`bff9132…` 作废，新候选摘要：
+
+```text
+902918016f2bf7eff4cd1afd52da4ca96defdb5ee4082f171fda987de86680c2
+```
+
+边界不变：B 消费（七项版本/pin 同步、恢复业务类型与 rolls/progress 消费、
+DFS/三态调度、reaction-d20-v1 正式切换）、共同冻结、新版 B 控制器完整 H2、
+A3-2 整体验收仍未完成；本修复轮只宣告响应版本策略修复与候选同步完成。
