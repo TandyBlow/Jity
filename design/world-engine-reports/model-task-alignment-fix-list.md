@@ -217,3 +217,9 @@
 - 回归：T03 断言首次 skip 的 `timeLocked/intentStatus`、stage/seal 的 `consumed`、提交及其后世界视图的 `advance.intentStatus=consumed`。
 
 **验证**：前端全量 484/484（world-engine 422）、两套 tsc 净、`npm run build` 通过；后端 `python -X utf8 -m pytest -q` 923/923。两处运行时守卫（空计划逐人判断、continuation 缺数据停止）按复核报告 v2 已通过，本轮不重开。
+
+## 12. d6dce8c 复核收口与 H2 范围（2026-10-26，用户验收）
+
+用户独立复核通过：相关测试 144/144；T03 两样本首次 skip 与真实 A 服务一致，后续 stage/seal/commit 传播正确；空计划逐人判断、continuation 缺数据零模型调用/零结论写入的守卫继续通过。**本批收口，#7/#9 正常路径关闭**。
+
+下一批进入 H2：恢复冻结行动原文后不重新生成；本轮历史包含全部已提交点；资料不全继续明确停止。不新增长期行动历史，B3 全量继续暂缓。浏览器恢复客户端、历史读取子检查与真实 A3 接管验收分开记录，见 [H2 恢复记录](h2-recovery.md)。
