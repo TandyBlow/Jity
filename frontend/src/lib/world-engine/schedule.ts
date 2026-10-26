@@ -862,7 +862,11 @@ function buildDecision(view: ScheduleView): Decision {
     };
   }
   if (memory.lastModel?.task === 'reaction' && memory.lastModel.key === current.sourceId) {
-    const entry = [...current.rolled].reverse().find((r) => r.admitted === true && !r.reacted);
+    // Same first-fit rule as the waiting scan below: generation and
+    // submission must bind to the SAME threat, otherwise a source owing two
+    // reactions submits the reaction written for one target under the
+    // roll identity of the other.
+    const entry = current.rolled.find((r) => r.admitted === true && !r.reacted);
     if (!entry || entry.rollId == null) throw new Error('Reaction output without an admitted roll');
     const text = memory.lastModel.output;
     if (typeof text !== 'string') throw new Error('Reaction output must be action text');

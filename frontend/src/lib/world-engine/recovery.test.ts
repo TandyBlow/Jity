@@ -503,6 +503,106 @@ describe('H2 frozen work', () => {
     expect(m.calls).toEqual([]);
   });
 
+  test('a source owing two reactions submits the reaction under the SAME threat it was written for', async () => {
+    const c = openContext();
+    const p = c.recovery!.current!;
+    const group = p.groups[0];
+    group.members[0].targets = [{ targetId: 'person_d', triggerKey: 'trigger_cd' }, { targetId: 'person_e', triggerKey: 'trigger_ce' }];
+    group.members.push({ memberId: 'person_d', actionText: null, targets: null, resultText: null, rollRefs: [] });
+    group.members.push({ memberId: 'person_e', actionText: null, targets: null, resultText: null, rollRefs: [] });
+    p.work.pendingGroup!.memberIds = ['person_c', 'person_d', 'person_e'];
+    p.work.pendingGroup!.targetIds = ['person_d', 'person_e'];
+    group.rolls = [
+      { rollId: 'roll_cd', groupId: 'group_cd', sourceId: 'person_c', targetId: 'person_d', triggerKey: 'trigger_cd', ruleVersion: 'reaction-fixture-v1', target: 11, result: 15, eligibilityBaselineDigest: 'f'.repeat(64), eligible: true, admitted: true },
+      { rollId: 'roll_ce', groupId: 'group_cd', sourceId: 'person_c', targetId: 'person_e', triggerKey: 'trigger_ce', ruleVersion: 'reaction-fixture-v1', target: 11, result: 12, eligibilityBaselineDigest: 'f'.repeat(64), eligible: true, admitted: true },
+    ];
+    group.progress = { sourceStack: ['person_c'], threats: [
+      { sourceId: 'person_c', targetId: 'person_d', triggerKey: 'trigger_cd', status: 'reaction_pending', rollId: 'roll_cd', reactionMemberId: null },
+      { sourceId: 'person_c', targetId: 'person_e', triggerKey: 'trigger_ce', status: 'reaction_pending', rollId: 'roll_ce', reactionMemberId: null }] };
+    c.work = copy(p.work);
+    const t = new RecoveryTransport(c);
+    t.extra = (op) => {
+      if (op === 'preview_point') return { world: c.world, control: c.control, work: c.work, data: { workingState: stateFixture.data.state, pointProjection: {} } };
+      expect(op).toBe('checkpoint_extend_group');
+      return { world: c.world, control: c.control, work: c.work, data: {} };
+    };
+    const m = model();
+    const reactionPort: WorldModelPort = { async generate(task, key, input): Promise<Json> {
+      const recorded = m.port.generate(task, key, input);
+      return task === 'reaction' ? 'D 侧身避开门边。' : recorded;
+    } };
+    const driver = new ControllerDriver({ transport: t, model: reactionPort }, initialMemory('fresh', 'new_holder'));
+    expect(await driver.recover('world_school')).toBeUndefined();
+    await driver.step(); // preview
+    await driver.step(); // reaction for D — first pending threat in saved order
+    expect(m.calls).toHaveLength(1);
+    expect(m.calls[0]).toMatchObject({ task: 'reaction', key: 'person_c', input: { sourceId: 'person_c', memberId: 'person_d', rollId: 'roll_cd' } });
+    await driver.step(); // extend accepting D under roll_cd — never E's identity
+    const extend = t.calls.find((c) => c.operation === 'checkpoint_extend_group');
+    expect(extend).toBeDefined();
+    expect((extend!.request as RequestMap['checkpoint_extend_group']).admittedMember).toMatchObject({
+      memberId: 'person_d', rollRefs: [{ sourceId: 'person_c', targetId: 'person_d', triggerKey: 'trigger_cd', rollId: 'roll_cd' }] });
+  });
+
+  test('accepting a pre-rolled member retires every source waiting on it; the reused ancestor never reacts again', async () => {
+    const c = openContext();
+    const p = c.recovery!.current!;
+    const group = p.groups[0];
+    p.work.pendingGroup = { groupId: 'group_cde', sourceId: 'person_c', memberIds: ['person_c', 'person_d', 'person_e'], targetIds: ['person_d', 'person_e'], frontierIds: ['person_c', 'person_d'], closed: false };
+    group.groupId = 'group_cde';
+    // C pre-rolled D and E (both admitted); C accepted D, whose saved frame
+    // now owes E its reaction. E is still unconfirmed: both C→E and D→E are
+    // reaction_pending until D accepts E and the server reuses C→E.
+    group.members = [
+      { memberId: 'person_c', actionText: 'C 推开重门，示意 D 避开门边。', targets: [{ targetId: 'person_d', triggerKey: 'trigger_cd' }, { targetId: 'person_e', triggerKey: 'trigger_ce' }], resultText: null,
+        rollRefs: [{ sourceId: 'person_c', targetId: 'person_d', triggerKey: 'trigger_cd', rollId: 'roll_cd' }, { sourceId: 'person_c', targetId: 'person_e', triggerKey: 'trigger_ce', rollId: 'roll_ce' }] },
+      { memberId: 'person_d', actionText: 'D 稳住门轴。', targets: [{ targetId: 'person_e', triggerKey: 'trigger_de' }], resultText: null,
+        rollRefs: [{ sourceId: 'person_d', targetId: 'person_e', triggerKey: 'trigger_de', rollId: 'roll_de' }] },
+      { memberId: 'person_e', actionText: null, targets: null, resultText: null, rollRefs: [] },
+    ];
+    group.acceptedSources = [
+      { memberId: 'person_c', sourceEpoch: 7, sourceAttempt: 1, actionContentHash: 'a'.repeat(64), resultContentHash: null, targetsContentHash: 'b'.repeat(64), candidatesContentHash: null },
+      { memberId: 'person_d', sourceEpoch: 7, sourceAttempt: 1, actionContentHash: 'c'.repeat(64), resultContentHash: null, targetsContentHash: 'd'.repeat(64), candidatesContentHash: null },
+    ];
+    group.rolls = [
+      { rollId: 'roll_cd', groupId: 'group_cde', sourceId: 'person_c', targetId: 'person_d', triggerKey: 'trigger_cd', ruleVersion: 'reaction-fixture-v1', target: 11, result: 15, eligibilityBaselineDigest: 'f'.repeat(64), eligible: true, admitted: true },
+      { rollId: 'roll_ce', groupId: 'group_cde', sourceId: 'person_c', targetId: 'person_e', triggerKey: 'trigger_ce', ruleVersion: 'reaction-fixture-v1', target: 11, result: 12, eligibilityBaselineDigest: 'f'.repeat(64), eligible: true, admitted: true },
+      { rollId: 'roll_de', groupId: 'group_cde', sourceId: 'person_d', targetId: 'person_e', triggerKey: 'trigger_de', ruleVersion: 'reaction-fixture-v1', target: 11, result: 14, eligibilityBaselineDigest: 'f'.repeat(64), eligible: true, admitted: true },
+    ];
+    group.progress = { sourceStack: ['person_d', 'person_c'], threats: [
+      { sourceId: 'person_c', targetId: 'person_d', triggerKey: 'trigger_cd', status: 'handled', rollId: 'roll_cd', actionDisposition: 'created', reactionMemberId: 'person_d' },
+      { sourceId: 'person_c', targetId: 'person_e', triggerKey: 'trigger_ce', status: 'reaction_pending', rollId: 'roll_ce', reactionMemberId: null },
+      { sourceId: 'person_d', targetId: 'person_e', triggerKey: 'trigger_de', status: 'reaction_pending', rollId: 'roll_de', reactionMemberId: null }] };
+    c.work = copy(p.work);
+    const t = new RecoveryTransport(c);
+    t.extra = (op, request) => {
+      if (op === 'preview_point') return { world: c.world, control: c.control, work: c.work, data: { workingState: stateFixture.data.state, pointProjection: {} } };
+      if (op === 'checkpoint_extend_group') return { world: c.world, control: c.control, work: c.work, data: {} };
+      if (op === 'checkpoint_close_group') return { world: c.world, control: c.control, work: c.work, data: {} };
+      throw new Error(`Unexpected call ${op} ${JSON.stringify(request)}`);
+    };
+    const reactionCalls: { task: ModelTask; key: string; input: Json }[] = [];
+    const port: WorldModelPort = { async generate(task, key, input): Promise<Json> {
+      if (task === 'reaction') { reactionCalls.push({ task, key, input: copy(input) }); return 'E 在 D 的警告下护住门边。'; }
+      if (task === 'targets') return { targets: [] };
+      return {};
+    } };
+    const driver = new ControllerDriver({ transport: t, model: port }, initialMemory('fresh', 'new_holder'));
+    expect(await driver.recover('world_school')).toBeUndefined();
+    for (let i = 0; i < 8 && !t.calls.some((c) => c.operation === 'checkpoint_close_group'); i++) await driver.step();
+    // D's acceptance of E must reach the ancestor: C's waiting C→E roll is
+    // consumed by the same transition (admitted kept, reacted set), so the
+    // reaction text is generated exactly once and the walk reaches close.
+    expect(reactionCalls).toHaveLength(1);
+    expect(reactionCalls[0]).toMatchObject({ key: 'person_d', input: { sourceId: 'person_d', memberId: 'person_e', rollId: 'roll_de' } });
+    const extends_ = t.calls.filter((c) => c.operation === 'checkpoint_extend_group').map((c) => c.request as RequestMap['checkpoint_extend_group']);
+    expect(extends_).toHaveLength(2);
+    expect(extends_[0].admittedMember).toMatchObject({ memberId: 'person_e', rollRefs: [{ sourceId: 'person_d', targetId: 'person_e', triggerKey: 'trigger_de', rollId: 'roll_de' }] });
+    expect(extends_[1].targets).toEqual([]);
+    expect(t.calls.some((c) => c.operation === 'checkpoint_close_group')).toBe(true);
+    expect(driver.getMemory().sources).toEqual([]);
+  });
+
   test('restore timeout retries identical request and manifest, then reads original text', async () => {
     const c = context();
     const t = new RecoveryTransport(c);

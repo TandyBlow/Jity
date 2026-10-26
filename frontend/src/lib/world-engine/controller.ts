@@ -558,6 +558,15 @@ export class ControllerDriver {
           const member = req.admittedMember as { memberId: Id; actionText?: string | null; rollRefs: { rollId: Id }[] };
           const entry = current.rolled.find((r) => r.rollId === member.rollRefs[0]?.rollId);
           if (entry) entry.reacted = true;
+          // 接受一个成员行动时，服务端在同一事务把本组其他已定稿、admitted 且
+          // 指向该成员的待反应关系标为 handled/reused（R1 §3.4）。本地同步这些
+          // 项：祖先帧弹回后不得再生成或提交第二次反应。原 admitted 保持，
+          // 成员仍只被当前帧压栈一次。
+          for (const source of sources) {
+            for (const item of source.rolled) {
+              if (item !== entry && item.targetId === member.memberId && item.admitted === true && !item.reacted) item.reacted = true;
+            }
+          }
           if (!this.memory.groupActors.includes(member.memberId)) this.memory.groupActors.push(member.memberId); // the member has acted in this point
           sources.unshift({ sourceId: member.memberId, actionText: member.actionText ?? '', targetsExtended: false, pendingTargets: [], rolled: [] });
           this.memory.groupActions.unshift({ memberId: member.memberId, actionText: member.actionText ?? '', rolls: [] });
