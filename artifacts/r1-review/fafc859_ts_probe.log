@@ -1,0 +1,8 @@
+# Archived copy note: local absolute paths in the original output are replaced with <worktree>.
+ RUN  v5.0.1 <worktree>/frontend
+
+
+ Test Files  2 passed (2)
+      Tests  103 passed (103)
+   Start at  01:03:52
+   Duration  2.89s (tests 57%, import 29%, transform 14%)

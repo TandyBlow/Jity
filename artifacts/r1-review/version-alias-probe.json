@@ -1,0 +1,30 @@
+{
+  "simulation": "Change the response SchemaVersion alias to Literal[2] without separating its other consumers",
+  "templateResults": [
+    {
+      "templateSchemaVersion": 1,
+      "accepted": false,
+      "failures": [
+        {
+          "location": [
+            "schemaVersion"
+          ],
+          "type": "literal_error"
+        }
+      ]
+    },
+    {
+      "templateSchemaVersion": 2,
+      "accepted": false,
+      "failures": [
+        {
+          "location": [
+            "schemaVersion"
+          ],
+          "type": "literal_error"
+        }
+      ]
+    }
+  ],
+  "unchangedTraceFormat1Rejected": true
+}
