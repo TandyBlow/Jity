@@ -3,6 +3,11 @@
 design/world-protocol/** text eol=lf
 frontend/src/lib/world-engine/contract-digest.json text eol=lf
 
+# The packaged storage SQL is byte-compared against its frozen specification
+# on every test run; its working-copy bytes must match the committed LF blob
+# on Windows checkouts too.
+backend/app/database/world_storage_v2.sql text eol=lf
+
 # Windows reserved device names written by shell redirects (e.g. `>nul`).
 # They cannot be checked out on Windows, so they must never be tracked.
 nul -text

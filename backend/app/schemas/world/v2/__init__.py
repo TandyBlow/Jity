@@ -1,9 +1,11 @@
 """v2 protocol contracts, including the unfrozen R1 recovery read candidate.
 
-R1 retains protocolVersion 2 and publishes a new candidate contract digest;
-it does not claim that B has consumed or jointly frozen that digest.
-WorldState, initial worlds and apply semantics remain on schemaVersion 1 /
-world-engine-v1. The v1 package remains authoritative for WorldState.
+R1 retains protocolVersion 2, moves the response envelope schemaVersion 1 -> 2
+(old B clients reject new-version responses at the first response) and
+publishes a new candidate contract digest; it does not claim that B has
+consumed or jointly frozen that digest. The state model (WorldState, creation
+templates) and the trace format stay on their own schemaVersion 1 /
+world-engine-v1 axes. The v1 package remains authoritative for WorldState.
 """
 
 from app.schemas.world.contracts import CONTRACT_MODELS as _v1_models
@@ -13,10 +15,14 @@ from .base import (
     ENGINE_VERSION,
     PROTOCOL_VERSION,
     SCHEMA_VERSION,
+    STATE_SCHEMA_VERSION,
+    TRACE_FORMAT_VERSION,
     Envelope,
     EpochMilli,
     Hex64,
     ProtocolVersion,
+    StateSchemaVersion,
+    TraceFormatVersion,
 )
 from .contexts import (
     AdvanceSummary,

@@ -14,7 +14,7 @@
       "success": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": 1792617780000,
         "replayed": false,
@@ -183,7 +183,7 @@
       "success": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": 1792617780000,
         "world": {
@@ -554,7 +554,7 @@
       "success": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": 1792617780000,
         "replayed": false,
@@ -755,7 +755,7 @@
       "success": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": 1792617780000,
         "replayed": false,
@@ -930,7 +930,7 @@
       "success": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": 1792617780000,
         "world": {
@@ -1511,7 +1511,7 @@
       "error": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": 1792617780000,
         "replayed": false,
@@ -1711,7 +1711,7 @@
       "error": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": 1792617780000,
         "replayed": false,
@@ -1911,7 +1911,7 @@
       "error": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": 1792617780000,
         "replayed": false,
@@ -2112,7 +2112,7 @@
       "error": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": 1792617780000,
         "replayed": false,
@@ -2313,7 +2313,7 @@
       "error": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": 1792617780000,
         "replayed": false,
@@ -2514,7 +2514,7 @@
       "error": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": 1792617780000,
         "replayed": false,
@@ -2714,7 +2714,7 @@
       "error": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": 1792617780000,
         "replayed": false,
@@ -2914,7 +2914,7 @@
       "error": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": 1792617780000,
         "replayed": false,
@@ -3115,7 +3115,7 @@
       "error": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": 1792617780000,
         "replayed": false,
@@ -3316,7 +3316,7 @@
       "error": {
         "protocolVersion": 2,
         "engineVersion": "world-engine-v1",
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1",
         "serverTimeEpochMilli": 1792617780000,
         "replayed": false,

@@ -68,6 +68,39 @@ def test_v1_models_live_inside_the_v2_schema_without_version_drift():
     assert defs["WorldInitialState"]["properties"]["engineVersion"]["const"] == "world-engine-v1"
 
 
+def test_response_version_is_split_from_state_and_trace_versions():
+    """R1: the response envelope moves to schemaVersion 2 while the state
+    model, the creation template and the trace format keep their own version-1
+    axes; the split must be visible in the exported schemas and the runtime
+    envelope outlet must reference the same constant."""
+    from typing import get_args
+    from app.schemas.world.v2 import (
+        SCHEMA_VERSION, STATE_SCHEMA_VERSION, TRACE_FORMAT_VERSION, Envelope,
+    )
+    from app.schemas.world.v2.requests import WorldInitialTemplate
+    from app.schemas.world.v2.trace import TraceDocument
+
+    assert (SCHEMA_VERSION, STATE_SCHEMA_VERSION, TRACE_FORMAT_VERSION) == (2, 1, 1)
+    assert get_args(Envelope.model_fields["schemaVersion"].annotation) == (2,)
+    assert get_args(WorldInitialTemplate.model_fields["schemaVersion"].annotation) == (1,)
+    assert get_args(TraceDocument.model_fields["traceFormatVersion"].annotation) == (1,)
+    defs = load("world-protocol.schema.json")["$defs"]
+    assert defs["ContextResponse"]["properties"]["schemaVersion"]["const"] == 2
+    assert defs["WorldInitialTemplate"]["properties"]["schemaVersion"]["const"] == 1
+    assert defs["WorldState"]["properties"]["schemaVersion"]["const"] == 1
+    trace_schema = load("trace.schema.json")
+    assert trace_schema["properties"]["traceFormatVersion"]["const"] == 1
+    versions = json.loads((ARTIFACTS / "versions.json").read_text(encoding="utf-8"))
+    assert versions["schemaVersion"] == 2
+    assert versions["traceFormatVersion"] == 1
+    response_payload = json.loads((ARTIFACTS / "fixtures/api/get_state/success.json").read_text(encoding="utf-8"))
+    assert response_payload["schemaVersion"] == 2
+    assert response_payload["data"]["state"]["schemaVersion"] == 1
+    assert response_payload["data"]["state"]["initial"]["schemaVersion"] == 1
+    error_payload = json.loads((ARTIFACTS / "fixtures/errors/version_mismatch.json").read_text(encoding="utf-8"))
+    assert error_payload["schemaVersion"] == 2
+
+
 def test_exported_api_contract_is_current():
     contract = load("api-contract.json")
     assert contract["protocolVersion"] == 2
@@ -568,7 +601,7 @@ def test_discover_group_freezes_time_with_complete_target_set():
 @pytest.mark.parametrize("limit", ["request", "response"])
 def test_preview_budget_details_limit_is_typed(limit):
     value = {
-        "protocolVersion": 2, "engineVersion": "world-engine-v1", "schemaVersion": 1,
+        "protocolVersion": 2, "engineVersion": "world-engine-v1", "schemaVersion": 2,
         "canonicalVersion": "world-canonical-v1", "serverTimeEpochMilli": 1792617600000,
         "replayed": False, "operation": "preview_point", "requestId": None, "worldId": "world_school",
         "error": {"code": "preview_budget_exceeded", "httpStatus": 413, "retryable": False,

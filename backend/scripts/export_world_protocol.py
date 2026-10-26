@@ -84,7 +84,8 @@ def build_v2():
     write_v2("trace.schema.json", trace_schema)
     write_v2("versions.json", {"protocolVersion": v2.PROTOCOL_VERSION, "engineVersion": v2.ENGINE_VERSION,
         "schemaVersion": v2.SCHEMA_VERSION, "canonicalVersion": v2.CANONICAL_VERSION,
-        "traceFormatVersion": 1, "contractDigestAlgorithm": "sha256-path-nul-length-nul-bytes-v1"})
+        "traceFormatVersion": v2.TRACE_FORMAT_VERSION,
+        "contractDigestAlgorithm": "sha256-path-nul-length-nul-bytes-v1"})
 
 
 CONTRACT_FILES = ("api-contract.json", "trace.schema.json", "versions.json", "world-protocol.schema.json")

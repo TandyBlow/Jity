@@ -18,7 +18,7 @@ from app.schemas.world.contracts import (
     EntityDelta, WorldTime, InitialLocation, InitialItem, InitialCharacter,
 )
 
-from .base import EpochMilli, Hex64, ProtocolVersion, SchemaVersion
+from .base import EpochMilli, Hex64, ProtocolVersion, StateSchemaVersion
 from .judgments import RollOutcome
 from .work import SettlementGroup, TargetSpec, RollRef, WorkManifestItem, GroupWorkSource
 from .contexts import (
@@ -81,7 +81,7 @@ class WorldInitialTemplate(Contract):
     """
 
     engineVersion: Literal["world-engine-v1"]
-    schemaVersion: SchemaVersion
+    schemaVersion: StateSchemaVersion
     protagonistId: Id
     initialTime: WorldTime
     locations: dict[Id, InitialLocation]

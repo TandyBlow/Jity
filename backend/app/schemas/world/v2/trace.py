@@ -2,7 +2,7 @@
 from typing import Literal
 from pydantic import ConfigDict, Field, JsonValue, model_validator
 from app.schemas.world.contracts import Contract, Id
-from .base import Hex64, ProtocolVersion, SchemaVersion
+from .base import Hex64, ProtocolVersion, TraceFormatVersion
 from .registry import OperationName
 
 
@@ -83,7 +83,7 @@ class TraceSample(Contract):
 class TraceDocument(Contract):
     model_config=ConfigDict(extra='forbid',strict=True,json_schema_extra={'allOf':[{'properties':{'steps':{
         'contains':{'required':['expectedProjection'],'properties':{'expectedProjection':{'not':{'type':'null'}}}},'minContains':1}}}]})
-    traceFormatVersion: SchemaVersion
+    traceFormatVersion: TraceFormatVersion
     protocolVersion: ProtocolVersion
     contractDigest: Hex64
     scenario: Literal['T01','T02','T03','T04','T05','T06','T07','T08','T09']

@@ -40,6 +40,7 @@ from app.schemas.world.v2.envelopes import ErrorResponse
 from app.schemas.world.v2.projections import prefix_projection, request_projection
 from app.schemas.world.v2.registry import OPERATION_BY_NAME
 from app.schemas.world.v2 import SCHEMA_MODELS as _SCHEMA_MODELS
+from app.schemas.world.v2 import SCHEMA_VERSION as _RESPONSE_SCHEMA_VERSION
 _ALL_REQUEST_MODELS = [m for m in _SCHEMA_MODELS if m.__name__.endswith('Request')]
 from app.schemas.world.v2.requests import PreviewPointRequest
 
@@ -59,7 +60,9 @@ from .violations import KernelViolation, ViolationKind
 
 ENGINE = 'world-engine-v1'
 CANONICAL = 'world-canonical-v1'
-SCHEMA = 1
+# Response envelope schemaVersion comes from the v2 contract module so the
+# runtime outlet and the exported schema can never drift apart.
+SCHEMA = _RESPONSE_SCHEMA_VERSION
 PROTOCOL = 2
 DEFAULT_TTL_MILLI = 3_600_000
 
