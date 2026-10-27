@@ -1,5 +1,10 @@
 # H2 骰点事实与组处理进度读取契约提案
 
+后续状态（2026-10-27）：本文件保留 R1 讨论历史。候选已由 B=`6b809dc`＋A=`0cb1951`
+成套实现与消费，固定摘要为 `90291801…`；本轮约定的完整 H2 验收矩阵已通过，
+当前证据与边界见 [固定组合验收记录](../../artifacts/h2-full-6b809dc-0cb1951/README.md)。
+以下“未冻结/尚无候选”等表述均为提案当时状态。
+
 日期：2026-10-26。版本：R1（纳入 A 完整只读答复，B 接纳其字段方案）。状态：**提案口径已收敛；未冻结，未改正式 wire/schema 或运行时**。A 的原答复见 [h2-a-read-contract-review.json](../../artifacts/h2-a-read-contract-review.json)。尚无新的 Python/导出/夹具候选提交、B 消费提交和共同契约摘要，不能据此宣称接口基线已冻结或 A3 已实现。
 
 基线：A `be87679800bdfd313fb9c7bf24bd1317136b81e9`；B `cc70105`（`d6dce8c` 上的 H2 客户端首批，用户复核通过）；共同摘要 `abda455597e743f63da1c205ca7bc68044728c5f92a3cb7ae920440ef324eedd`（对应旧基线，本稿与客户端首批均未改变它）。客户端首批及历史读取子检查通过，完整 H2 仍未验收。用户独立复跑：[history.json](../../artifacts/h2-history-http-review-independent.json)（B 自跑记录另见 [h2-history-http-review.json](../../artifacts/h2-history-http-review.json)）。
