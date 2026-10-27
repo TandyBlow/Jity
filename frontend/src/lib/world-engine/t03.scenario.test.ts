@@ -151,9 +151,14 @@ describe.each([
       expect(after.appearanceChanges).toEqual([expect.objectContaining({ id: `change_final${suffix}`, sourcePointId: pointId, active: true })]);
       // The candidate adds a pending child and achieves it in the same unit;
       // the server projection collapses that into one achieved addition.
-      expect(sealGroups[0].tasksAchieved.person_c).toEqual([child]);
-      // 子任务 id 已按 §9.3 派生为分配身份，按 parent 引用定位（引用是
-      // 已登记身份，不随分配改写）。
+      const added = sealGroups[0].subtasksAdded.person_c;
+      const parentTask = added.find((task) => task.parentTaskId === 'task_c_root');
+      const childTask = added.find((task) => task.parentTaskId === parentTask?.id);
+      expect(parentTask).toBeDefined();
+      expect(childTask).toBeDefined();
+      expect(sealGroups[0].tasksAchieved.person_c).toEqual([childTask!.id]);
+      // 子任务 id 已按 §9.3 派生为分配身份；同一映射也改写 parentTaskId 与
+      // tasksAchieved 引用，预览折入已暂存候选时保持与 stage/commit 一致。
       expect(sealGroups[0].subtasksAdded.person_c.find((task) => task.parentTaskId === 'task_c_root')?.status).toBe('pending');
       expect(seal.pointProjection.entityDeltas.person_c).toMatchObject({
         subtasksAdded: [expect.objectContaining({ id: parent, status: 'pending' }), expect.objectContaining({ id: child, status: 'achieved' })],
@@ -230,14 +235,17 @@ describe.each([
     recordedCandidates.personalityCoverageIds = hasAchieved ? [...ROSTER] : [];
     const sentStageRequest = scenario.transport.requests[scenario.transport.ops.indexOf(stageOp)] as unknown as { candidates: Record<string, unknown> };
     // §9.3 身份派生：候选里的 change/task id 是程序分配值（发送前改写），
-    // 结构/文本/覆盖仍须与独立权威夹具逐字一致——比较剥除 id 字段，分配
-    // 形态单独断言。
+    // 结构/文本/覆盖仍须与独立权威夹具逐字一致——比较剥除定义 id、父引用
+    // 与 tasksAchieved 引用值，分配形态另行断言。
     const stripIds = (candidates: Record<string, unknown>): Record<string, unknown> => {
-      const clone = structuredClone(candidates) as { appearances?: Record<string, Record<string, unknown>[]>; personalities?: Record<string, Record<string, unknown>[]>; subtasksAdded?: Record<string, Record<string, unknown>[]> };
+      const clone = structuredClone(candidates) as { appearances?: Record<string, Record<string, unknown>[]>; personalities?: Record<string, Record<string, unknown>[]>; subtasksAdded?: Record<string, Record<string, unknown>[]>; tasksAchieved?: Record<string, string[]> };
       for (const section of [clone.appearances, clone.personalities, clone.subtasksAdded]) {
       for (const [entity, list] of Object.entries(section ?? {})) {
-        section![entity] = list.map(({ id: _id, ...rest }) => rest);
+        section![entity] = list.map(({ id: _id, parentTaskId: _parent, supersedes: _supersedes, ...rest }) => rest);
       }
+      }
+      for (const [entity, list] of Object.entries(clone.tasksAchieved ?? {})) {
+        clone.tasksAchieved![entity] = list.map(() => 'task_ref');
       }
       return clone;
     };
@@ -245,6 +253,18 @@ describe.each([
     for (const section of [sentStageRequest.candidates.appearances, sentStageRequest.candidates.personalities, sentStageRequest.candidates.subtasksAdded] as Record<string, { id: string }[]>[]) {
       for (const list of Object.values(section ?? {})) {
         for (const item of list) expect(item.id).toMatch(/^alloc_(change|task)_\d+$/);
+      }
+    }
+    const sentCandidates = sentStageRequest.candidates as { tasksAchieved?: Record<string, string[]>; subtasksAdded?: Record<string, { id: string; parentTaskId: string | null }[]> };
+    for (const list of Object.values(sentCandidates.tasksAchieved ?? {})) {
+      for (const reference of list) {
+        if (traceName === 'T03-collapse') expect(reference).toMatch(/^alloc_task_\d+$/);
+        else expect(reference).toBe('task_wait_noon'); // 已登记的状态任务不是新分配身份
+      }
+    }
+    for (const list of Object.values(sentCandidates.subtasksAdded ?? {})) {
+      for (const task of list) if (task.parentTaskId != null && task.parentTaskId.startsWith('task_new')) {
+        expect(task.parentTaskId).toMatch(/^alloc_task_\d+$/);
       }
     }
 

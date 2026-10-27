@@ -538,12 +538,119 @@ describe('review regressions (553e341 findings)', () => {
     expect(transport.ops).toEqual(['preview_point', 'allocate_ids', 'checkpoint_stage_time_scan']);
     const subtasksInput = model.calls[1].input as { workingState: { characters: Record<string, { tasks: Record<string, { status: string }> }> } };
     expect(subtasksInput.workingState.characters.person_a.tasks.t1.status).toBe('achieved');
-    const stageReq = transport.requests[2] as { candidates: { tasksAchieved: Record<string, string[]>; subtasksAdded: Record<string, { id: string }[]> } };
-    expect(stageReq.candidates.tasksAchieved.person_a).toEqual(['t1', 'v13']);
+    const stageReq = transport.requests[2] as { candidates: { tasksAchieved: Record<string, string[]>; subtasksAdded: Record<string, { id: string; parentTaskId: string | null }[]> } };
+    expect(stageReq.candidates.tasksAchieved.person_a).toEqual(['t1', 'alloc_id_0']);
     // 子任务身份在发送前改写为程序分配 id（§9.3）：模型只提供草稿 id。
     expect(stageReq.candidates.subtasksAdded.person_a.map((t) => t.id)).toEqual(['alloc_id_0']);
+    expect(stageReq.candidates.subtasksAdded.person_a[0].parentTaskId).toBe('t1');
     expect(memory.updatesPendingRefs).toEqual([]); // 随结算批次落定——未决清零
     expect(memory.updatesApplied).toBe(0); // 阶梯已被 stage_time_scan 消费
+  });
+
+  test('#9 已缓存的候选身份也应用到重建候选，且不重复分配', async () => {
+    // 同一次暂存重试/重建会重新构造候选对象：memory.ids 命中时必须把草稿
+    // id 改写为已分配 id，并同步 tasksAchieved 引用，不能因「无需分配」跳过。
+    const world = mkWorld({ head: { pointId: 'root', version: 0, stateDigest: 'd0', narrationStatus: 'ready' }, lease: { fenceEpoch: 1, expiresAtEpochMilli: 999999 }, activePointId: 'p1', activeRoundId: 'r1', advance: { advanceId: 'adv1', inputId: 'in1', intentStatus: 'consumed', inputAvailable: false } });
+    const control = mkControl({ revision: 2 });
+    const work = mkWork({ working: { cursor: 1, actedIds: ['person_a'], visitedIds: ['person_a'], settledUnitIds: [], intentStatus: 'consumed' } });
+    const taskOf = (id: string, status: 'pending' | 'achieved') => ({ id, ownerId: 'person_a', parentTaskId: id === 'v13' ? 't1' : null, goal: `任务${id}`, status });
+    const stateWithTasks = (tasks: Record<string, ReturnType<typeof taskOf>>) => ({ ...workingState(), characters: { ...workingState().characters, person_a: { ...workingState().characters.person_a, tasks } } });
+    const memory = initialMemory('req', 'browser');
+    memory.leaseToken = 'lease1';
+    memory.workingState = { key: workingStateKey(work), state: stateWithTasks({ t1: taskOf('t1', 'pending') }) as never };
+    memory.plan = [{ pointId: 'p1', kind: 'normal' as const, timeAdvance: ta(2), actorIds: ['person_a'] }];
+    memory.groupActors = ['person_a'];
+    memory.updatesStages = ['subtasks'];
+    memory.ids[`task:${foldIdentity('p1', 'person_a', 'v13')}`] = 'alloc_task_0';
+    const transport = new ScriptedTransport([
+      { op: 'checkpoint_stage_time_scan', respond: (r) => ({
+        protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1,
+        replayed: false, operation: 'checkpoint_stage_time_scan', requestId: (r as { requestId: Id }).requestId, requestHash: 'hash', world, control, work, data: {},
+      }) },
+    ]);
+    const model = new ScriptedModel([
+      { task: 'updates', output: { stage: 'subtasks', changes: { person_a: {
+        tasksAchieved: ['v13'],
+        subtasksAdded: [{ id: 'v13', ownerId: 'person_a', parentTaskId: 't1', goal: '任务v13', status: 'pending' }],
+      } } } as unknown as Json },
+    ]);
+    const driver = new ControllerDriver({ transport, model }, memory, { world, control, work });
+    await driver.step(); // updates#subtasks
+    await driver.step(); // stage：复用缓存映射，零 allocate_ids
+    expect(transport.ops).toEqual(['checkpoint_stage_time_scan']);
+    const stageReq = transport.requests[0] as { candidates: { tasksAchieved: Record<string, string[]>; subtasksAdded: Record<string, { id: string; parentTaskId: string | null }[]> } };
+    expect(stageReq.candidates.subtasksAdded.person_a[0].id).toBe('alloc_task_0');
+    expect(stageReq.candidates.subtasksAdded.person_a[0].parentTaskId).toBe('t1');
+    expect(stageReq.candidates.tasksAchieved.person_a).toEqual(['alloc_task_0']);
+  });
+
+  test('#9 新任务定义、tasksAchieved 与 parentTaskId 使用同一分配映射', async () => {
+    // v13/v14 同批新增，v14 的父任务指向 v13：分配后两个定义都改写，
+    // tasksAchieved 引用与 v14.parentTaskId 也必须改写为同一批程序身份。
+    const world = mkWorld({ head: { pointId: 'root', version: 0, stateDigest: 'd0', narrationStatus: 'ready' }, lease: { fenceEpoch: 1, expiresAtEpochMilli: 999999 }, activePointId: 'p1', activeRoundId: 'r1', advance: { advanceId: 'adv1', inputId: 'in1', intentStatus: 'consumed', inputAvailable: false } });
+    const control = mkControl({ revision: 2 });
+    const work = mkWork({ working: { cursor: 1, actedIds: ['person_a'], visitedIds: ['person_a'], settledUnitIds: [], intentStatus: 'consumed' } });
+    const memory = initialMemory('req', 'browser');
+    memory.leaseToken = 'lease1';
+    memory.workingState = { key: workingStateKey(work), state: { ...workingState(), characters: { ...workingState().characters, person_a: { ...workingState().characters.person_a, tasks: { t1: { id: 't1', ownerId: 'person_a', parentTaskId: null, goal: '已有任务', status: 'pending' as const } } } } } as never };
+    memory.plan = [{ pointId: 'p1', kind: 'normal' as const, timeAdvance: ta(2), actorIds: ['person_a'] }];
+    memory.groupActors = ['person_a'];
+    memory.updatesStages = ['subtasks'];
+    const transport = new ScriptedTransport([
+      { op: 'allocate_ids', respond: (r) => ({
+        protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1,
+        replayed: false, operation: 'allocate_ids', requestId: (r as { requestId: Id }).requestId, requestHash: 'hash', world, control, work,
+        data: { allocations: (r as { slots: { slotKey: Id }[] }).slots.map((slot, index) => ({ slotKey: slot.slotKey, id: `alloc_task_${index}` })) },
+      }) },
+      { op: 'checkpoint_stage_time_scan', respond: (r) => ({
+        protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1,
+        replayed: false, operation: 'checkpoint_stage_time_scan', requestId: (r as { requestId: Id }).requestId, requestHash: 'hash', world, control, work, data: {},
+      }) },
+    ]);
+    const model = new ScriptedModel([
+      { task: 'updates', output: { stage: 'subtasks', changes: { person_a: {
+        tasksAchieved: ['v13', 'v14'],
+        subtasksAdded: [
+          { id: 'v13', ownerId: 'person_a', parentTaskId: 't1', goal: '任务v13', status: 'pending' },
+          { id: 'v14', ownerId: 'person_a', parentTaskId: 'v13', goal: '任务v14', status: 'pending' },
+        ],
+      } } } as unknown as Json },
+    ]);
+    const driver = new ControllerDriver({ transport, model }, memory, { world, control, work });
+    await driver.step(); // updates#subtasks
+    await driver.step(); // allocate + stage
+    expect(transport.ops).toEqual(['allocate_ids', 'checkpoint_stage_time_scan']);
+    const allocation = transport.requests[0] as { slots: { slotKey: Id; kind: string }[] };
+    expect(allocation.slots.map((slot) => slot.kind)).toEqual(['task', 'task']);
+    const stageReq = transport.requests[1] as { candidates: { tasksAchieved: Record<string, string[]>; subtasksAdded: Record<string, { id: string; parentTaskId: string | null }[]> } };
+    expect(stageReq.candidates.subtasksAdded.person_a.map((task) => task.id)).toEqual(['alloc_task_0', 'alloc_task_1']);
+    expect(stageReq.candidates.subtasksAdded.person_a[1].parentTaskId).toBe('alloc_task_0');
+    expect(stageReq.candidates.tasksAchieved.person_a).toEqual(['alloc_task_0', 'alloc_task_1']);
+  });
+
+  test('#9 分配被拒绝时立即结束依赖它的 stage，不发送未分配候选', async () => {
+    const world = mkWorld({ head: { pointId: 'root', version: 0, stateDigest: 'd0', narrationStatus: 'ready' }, lease: { fenceEpoch: 1, expiresAtEpochMilli: 999999 }, activePointId: 'p1', activeRoundId: 'r1', advance: { advanceId: 'adv1', inputId: 'in1', intentStatus: 'consumed', inputAvailable: false } });
+    const control = mkControl({ revision: 2 });
+    const work = mkWork({ working: { cursor: 1, actedIds: ['person_a'], visitedIds: ['person_a'], settledUnitIds: [], intentStatus: 'consumed' } });
+    const memory = initialMemory('req', 'browser');
+    memory.leaseToken = 'lease1';
+    memory.workingState = { key: workingStateKey(work), state: workingState() };
+    memory.plan = [{ pointId: 'p1', kind: 'normal' as const, timeAdvance: ta(2), actorIds: ['person_a'] }];
+    memory.groupActors = ['person_a'];
+    memory.updatesStages = ['subtasks'];
+    const transport = new ScriptedTransport([
+      { op: 'allocate_ids', respond: () => apiError('request_malformed', 'req') },
+    ]);
+    const model = new ScriptedModel([
+      { task: 'updates', output: { stage: 'subtasks', changes: { person_a: {
+        subtasksAdded: [{ id: 'v13', ownerId: 'person_a', parentTaskId: null, goal: '任务v13', status: 'pending' }],
+      } } } as unknown as Json },
+    ]);
+    const driver = new ControllerDriver({ transport, model }, memory, { world, control, work });
+    await driver.step(); // updates#subtasks
+    const status = await driver.step(); // allocate 拒绝 → 明确停止；stage 绝不发出
+    expect(status).toEqual({ kind: 'stop', reason: 'fix_request:request_malformed' });
+    expect(transport.ops).toEqual(['allocate_ids']);
   });
 
   test('#5 v5 修正回归：本批已生产的任务达成共同投影——个性阶段读到 achieved', async () => {

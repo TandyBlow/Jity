@@ -72,6 +72,8 @@ function deltasHaveContent(deltas: Record<Id, EntityDelta>): boolean {
 
 type CallOutcome = { ok: true; response: unknown } | { ok: false; terminal?: DriverStatus };
 
+type CandidateIdentitySite = { alias: Id; required: boolean; apply: (allocated: Id) => void };
+
 export class ControllerDriver {
   private state: ServedState;
   private memory: ControllerMemory;
@@ -210,16 +212,18 @@ export class ControllerDriver {
    * held by another owner is a wait, not a reacquire loop. */
   /** Stage-bound candidates carry model-chosen change/task identities, but
    * the server binds every stored identity to a program allocation (§9.3):
-   * the missing ones are allocated at send time and the candidates are
-   * rewritten in place, so preview, stage and commit all carry the same
+   * the missing definitions are allocated at send time and the candidates are
+   * rewritten in place — definition ids plus tasksAchieved/parentTaskId/
+   * supersedes references — so preview, stage and commit all carry the same
    * allocated ids. Slot keys fold the group (or point for the time scan)
    * plus entity plus the model-chosen id — stable across retries, so a
    * retried stage re-checks and allocates nothing. */
   private collectCandidateIdentityWork(operation: WorldOperation, request: unknown, scope: { worldId?: Id }):
-    { world: WorldContext; allocation: RequestMap['allocate_ids']; items: { alias: Id; target: { id: Id } }[] } | null {
+    { world: WorldContext; allocation: RequestMap['allocate_ids']; sites: CandidateIdentitySite[] } | null {
     if (operation !== 'checkpoint_stage_unit' && operation !== 'checkpoint_stage_time_scan') return null;
     const { candidates, pointId } = request as { candidates?: {
-      groupId?: Id | null; appearances?: Record<Id, { id: Id }[]>; personalities?: Record<Id, { id: Id }[]>; subtasksAdded?: Record<Id, { id: Id }[]>;
+      groupId?: Id | null; appearances?: Record<Id, { id: Id; supersedes: Id[] }[]>; personalities?: Record<Id, { id: Id; supersedes: Id[] }[]>;
+      tasksAchieved?: Record<Id, Id[]>; subtasksAdded?: Record<Id, { id: Id; parentTaskId: Id | null }[]>;
     } | null; pointId?: Id };
     if (!candidates) return null;
     // Restored units are server originals: their identities were allocated
@@ -227,53 +231,85 @@ export class ControllerDriver {
     // exact-original fidelity the recovery contract requires.
     if (this.memory.restoredUnit && candidates === (this.memory.restoredUnit.candidates as unknown)) return null;
     const scopeKey = candidates.groupId ?? pointId ?? scope.worldId ?? 'point';
-    const items: { alias: Id; kind: 'change' | 'task'; target: { id: Id } }[] = [];
-    const collect = (entity: Id, kind: 'change' | 'task', list: { id: Id }[] | undefined) => {
-      for (const target of list ?? []) {
-        const alias = `${kind}:${foldIdentity(scopeKey, entity, target.id)}`;
-        if (this.memory.ids[alias] == null) items.push({ alias, kind, target });
+    const sites: CandidateIdentitySite[] = [];
+    const missing = new Map<Id, 'change' | 'task'>();
+    const define = (entity: Id, kind: 'change' | 'task', target: { id: Id }) => {
+      const alias = `${kind}:${foldIdentity(scopeKey, entity, target.id)}`;
+      sites.push({ alias, required: true, apply: (allocated) => { target.id = allocated; } });
+      if (this.memory.ids[alias] == null) missing.set(alias, kind);
+    };
+    const refer = (entity: Id, kind: 'change' | 'task', reference: Id, apply: (allocated: Id) => void) => {
+      sites.push({ alias: `${kind}:${foldIdentity(scopeKey, entity, reference)}`, required: false, apply });
+    };
+    const changes = (entity: Id, list: { id: Id; supersedes: Id[] }[]) => {
+      for (const change of list) {
+        define(entity, 'change', change);
+        for (const [index, reference] of (change.supersedes ?? []).entries()) {
+          refer(entity, 'change', reference, (allocated) => { change.supersedes[index] = allocated; });
+        }
       }
     };
-    for (const [entity, list] of Object.entries(candidates.appearances ?? {})) collect(entity, 'change', list);
-    for (const [entity, list] of Object.entries(candidates.personalities ?? {})) collect(entity, 'change', list);
-    for (const [entity, list] of Object.entries(candidates.subtasksAdded ?? {})) collect(entity, 'task', list);
-    if (!items.length) return null;
+    for (const [entity, list] of Object.entries(candidates.appearances ?? {})) changes(entity, list);
+    for (const [entity, list] of Object.entries(candidates.personalities ?? {})) changes(entity, list);
+    for (const [entity, list] of Object.entries(candidates.subtasksAdded ?? {})) {
+      for (const task of list) {
+        define(entity, 'task', task);
+        if (task.parentTaskId != null) {
+          refer(entity, 'task', task.parentTaskId, (allocated) => { task.parentTaskId = allocated; });
+        }
+      }
+    }
+    for (const [entity, list] of Object.entries(candidates.tasksAchieved ?? {})) {
+      list.forEach((reference, index) => refer(entity, 'task', reference, (allocated) => { list[index] = allocated; }));
+    }
+    if (!sites.length) return null;
+    if (!missing.size) {
+      // A rebuilt candidate may reuse a draft whose identity was granted on
+      // an earlier attempt. Apply the cached mapping even when no new
+      // allocation is needed, otherwise the stage would carry the raw draft.
+      this.writeCandidateIdentities(sites);
+      return null;
+    }
     const world = this.state.world;
     if (!world?.lease) throw new Error('Candidate identity allocation without a live lease');
     const allocation = {
       protocolVersion: 2 as const, requestId: this.nextRequestId(), worldId: world.worldId,
       leaseToken: this.memory.leaseToken as Id, fenceEpoch: world.lease.fenceEpoch,
       allocationKey: `candidates:${foldIdentity(scopeKey)}` as Id,
-      slots: items.map(({ alias, kind }) => ({ slotKey: alias, kind })),
+      slots: [...missing.entries()].map(([slotKey, kind]) => ({ slotKey, kind })),
     } as unknown as RequestMap['allocate_ids'];
-    return { world, allocation, items };
+    return { world, allocation, sites };
+  }
+
+  private writeCandidateIdentities(sites: CandidateIdentitySite[]): void {
+    for (const site of sites) {
+      const allocated = this.memory.ids[site.alias];
+      if (allocated != null) site.apply(allocated);
+      else if (site.required) throw new Error('Candidate identity allocation returned no id');
+    }
   }
 
   /** call() alone does not adopt: write the granted ids here so the rewrite
-   * below sees them. A refused allocation leaves an explicit barrier — the
-   * stage behind us would go out with unallocated identities and be refused
-   * anyway. */
-  private async ensureCandidateIdentities(work: { world: WorldContext; allocation: RequestMap['allocate_ids']; items: { alias: Id; target: { id: Id } }[] }): Promise<void> {
+   * below sees them. A refused allocation propagates its outcome verbatim —
+   * the stage behind it must never go out with unallocated identities. */
+  private async ensureCandidateIdentities(work: { world: WorldContext; allocation: RequestMap['allocate_ids']; sites: CandidateIdentitySite[] }): Promise<CallOutcome> {
     const outcome = await this.call('allocate_ids', work.allocation, { worldId: work.world.worldId });
-    if (!outcome.ok) {
-      this.recoveryBarrier = 'candidate_identity_allocation_refused';
-      return;
-    }
+    if (!outcome.ok) return outcome;
     for (const allocation of (outcome.response as unknown as { data: { allocations: { slotKey: Id; id: Id }[] } }).data.allocations) {
       this.memory.ids[allocation.slotKey] = allocation.id;
     }
-    for (const { alias, target } of work.items) {
-      const allocated = this.memory.ids[alias];
-      if (allocated == null) throw new Error('Candidate identity allocation returned no id');
-      target.id = allocated;
-    }
+    this.writeCandidateIdentities(work.sites);
+    return outcome;
   }
 
   private async call(operation: WorldOperation, request: unknown, scope: { worldId?: Id; pointId?: Id }, budget?: { left: number }): Promise<CallOutcome> {
     // Sync scan first: the no-allocation path must stay await-free so a step
     // still reaches the transport synchronously (command-delivery timing).
     const identityWork = this.collectCandidateIdentityWork(operation, request, scope);
-    if (identityWork) await this.ensureCandidateIdentities(identityWork);
+    if (identityWork) {
+      const identity = await this.ensureCandidateIdentities(identityWork);
+      if (!identity.ok) return identity;
+    }
     const retries = budget ?? { left: this.retryLimit };
     for (;;) {
       try {

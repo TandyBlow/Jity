@@ -3,15 +3,21 @@
  * identities to allocations. The live controller allocates at send time and
  * rewrites the ids (controller.ensureCandidateIdentities); the corpus must
  * declare exactly that — one allocate_ids step per stage step plus every
- * stored id rewritten to the granted value. Recorded preview requests are
- * NOT touched: previews are model-shaped and the server validates stored
- * identities only on stage/commit. Slot keys mirror the controller's
+ * stored definition AND its references (tasksAchieved, parentTaskId,
+ * supersedes) rewritten to the granted value. Recorded preview requests are
+ * only touched where they fold already-staged candidates; previews are
+ * model-shaped and the server validates stored identities only on
+ * stage/commit. Slot keys mirror the controller's
  * foldIdentity(scopeKey, entity, modelId) derivation exactly. */
 import { foldIdentity } from './schedule';
 import type { CorpusStep } from './harness';
 import type { Id, Json } from './types';
 
-type CandidateCarrier = { groupId?: Id | null; appearances?: Record<Id, { id: Id }[]>; personalities?: Record<Id, { id: Id }[]>; subtasksAdded?: Record<Id, { id: Id }[]> };
+type CandidateCarrier = { groupId?: Id | null;
+  appearances?: Record<Id, { id: Id; supersedes?: Id[] }[]>;
+  personalities?: Record<Id, { id: Id; supersedes?: Id[] }[]>;
+  tasksAchieved?: Record<Id, Id[]>;
+  subtasksAdded?: Record<Id, { id: Id; parentTaskId?: Id | null }[]> };
 
 function groupsOf(step: CorpusStep): { scopeKey: Id; candidates: CandidateCarrier }[] {
   const request = step.request as Record<string, unknown>;
@@ -78,6 +84,35 @@ export function deriveCandidateIdentities(steps: CorpusStep[]): void {
       }
     }
   }
+  // Stored identities are definitions; tasksAchieved, parentTaskId and
+  // supersedes are references. The live controller rewrites both sides with
+  // the SAME slot map, so the corpus must not leave a reference on the draft
+  // after the definition moved to its allocated id.
+  const rewriteReferences = (scopeKey: Id, candidates: CandidateCarrier, index: number, inclusive: boolean): void => {
+    const grants = byScope.get(scopeKey);
+    if (!grants) return;
+    const mapped = (id: Id): Id => {
+      const grant = grants.get(id);
+      return grant && (inclusive ? grant.at <= index : grant.at < index) ? grant.alloc : id;
+    };
+    for (const list of [...Object.values(candidates.appearances ?? {}), ...Object.values(candidates.personalities ?? {})]) {
+      for (const change of list) if (change.supersedes) change.supersedes = change.supersedes.map(mapped);
+    }
+    for (const list of Object.values(candidates.tasksAchieved ?? {})) {
+      for (let position = 0; position < list.length; position++) list[position] = mapped(list[position]);
+    }
+    for (const list of Object.values(candidates.subtasksAdded ?? {})) {
+      for (const task of list) if (task.parentTaskId != null) task.parentTaskId = mapped(task.parentTaskId);
+    }
+  };
+  // Stage/commit requests carry the complete identity set at send time, so a
+  // definition granted in this same step is a legal reference target.
+  for (let index = 0; index < steps.length; index++) {
+    const step = steps[index];
+    if (step.operation !== 'checkpoint_stage_unit' && step.operation !== 'checkpoint_stage_time_scan'
+        && step.operation !== 'commit_point') continue;
+    for (const { scopeKey, candidates } of groupsOf(step)) rewriteReferences(scopeKey, candidates, index, true);
+  }
   // Second pass: staged-derived previews. Once a group has been staged, the
   // controller folds the SAME (rewritten) candidate objects into later
   // preview requests, so recorded previews whose ids were granted at an
@@ -105,6 +140,7 @@ export function deriveCandidateIdentities(steps: CorpusStep[]): void {
       for (const [entity, list] of Object.entries(group.appearances ?? {})) rewrite(list);
       for (const [entity, list] of Object.entries(group.personalities ?? {})) rewrite(list);
       for (const [entity, list] of Object.entries(group.subtasksAdded ?? {})) rewrite(list);
+      rewriteReferences((group.groupId ?? request.pointId ?? step.scope.worldId ?? 'point') as Id, group, index, false);
     }
   }
   // Second pass: splice one allocate step before each stage site, last first

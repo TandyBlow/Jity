@@ -674,6 +674,23 @@ describe('H2 frozen work', () => {
     expect(m.calls).toEqual([]);
     expect(t.calls.filter((c) => c.operation === 'lease_acquire')).toHaveLength(1);
   });
+
+  test.each(['frozen_work_corrupt', 'frozen_work_missing'] as const)('refresh renews the lease first and reports %s at get_context', async (code) => {
+    // lease_renew is authority-only; damaged frozen facts belong to the
+    // protected context read, whose declared error stops this bootstrap.
+    const c = context();
+    const t = new RecoveryTransport(c);
+    t.mutate = (op, response) => {
+      if (op === 'get_context') throw new WorldApiError({ error: { code } } as never);
+      return response;
+    };
+    const m = model();
+    const driver = new ControllerDriver({ transport: t, model: m.port }, initialMemory('fresh', 'new_holder'));
+    const stopped = { kind: 'stop', reason: `recovery_refused:get_context:${code}` };
+    expect(await driver.recover('world_school', { leaseToken: 'held_lease', fenceEpoch: 7 })).toEqual(stopped);
+    expect(t.calls.map((c) => c.operation)).toEqual(['lease_renew', 'get_context']);
+    expect(m.calls).toEqual([]);
+  });
 });
 
 describe('H2 session bootstrap', () => {
