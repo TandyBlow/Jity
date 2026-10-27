@@ -33,7 +33,7 @@ import type { ControllerMemory, HarnessCommand } from '../schedule';
 import type { RecoveryLease } from '../recovery';
 import type { ClaimHeartbeatState, HeartbeatClock, HeartbeatLoss } from './heartbeat';
 import { HeartbeatScheduler, SystemHeartbeatClock } from './heartbeat';
-import type { RuntimeWorldModelPort } from './model-port';
+import type { RuntimePortLike } from './model-port';
 import type { Id, RequestMap, Scope, Success, WorldOperation } from '../types';
 
 /** The driver surface the session depends on; the real ControllerDriver
@@ -88,7 +88,7 @@ export type SessionStatus = 'idle' | 'running' | 'stopped' | 'lost_lease';
 
 export class WorldSession {
   private readonly rawTransport: WorldTransport;
-  private readonly port: RuntimeWorldModelPort;
+  private readonly port: RuntimePortLike;
   private readonly scheduler: HeartbeatScheduler;
   private readonly hooks: WorldSessionHooks;
   private readonly driver: DriverLike;
@@ -111,7 +111,7 @@ export class WorldSession {
   private recoveryTerminal: DriverStatus | null = null;
 
 
-  constructor(transport: WorldTransport, port: RuntimeWorldModelPort, options: WorldSessionOptions = {}) {
+  constructor(transport: WorldTransport, port: RuntimePortLike, options: WorldSessionOptions = {}) {
     this.rawTransport = transport;
     this.port = port;
     this.hooks = options.hooks ?? {};

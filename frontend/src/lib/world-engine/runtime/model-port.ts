@@ -22,6 +22,14 @@ export interface GenerationResult {
   completion?: CompletionEvidence;
 }
 
+/** The member surface WorldSession actually consumes. A structural interface
+ * instead of the RuntimeWorldModelPort class so deterministic compositions
+ * (the rule page runtime) can satisfy it without a real engine. */
+export interface RuntimePortLike {
+  generate(task: ModelTask, key: string, input: Json, signal?: AbortSignal): Promise<Json>;
+  dispose(): Promise<void>;
+}
+
 export interface ModelPortOptions {
   maxTokens?: number;
   seed?: number;
