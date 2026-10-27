@@ -8,9 +8,11 @@
  * small-model prose and must not creep back through the prompt. */
 import type { ModelTask } from '../schedule';
 import type { Json } from '../types';
+import { projectTaskInput } from './focused-input';
+import type { CommittedRead } from './committed-narration';
 
 function updatesContract(input: Json): string {
-  const confirmed = (input as { results?: unknown }).results !== undefined ? 'results 是已确认的结算结果，更新必须与之一致。' : '';
+  const confirmed = (input as { results?: unknown }).results !== undefined ? 'results 是结算描述，文本本身不是执行事实；这里只生成待核对候选，权威更新必须由规则凭据产生。' : '';
   const stageFields: Record<string, string> = {
     position: 'positionSet={containerId,slotId:null,relativeTo:null}', appearance: 'appearanceChanges=[{id,text,supersedes:[]}]',
     tasks: 'tasksAchieved=[任务id]', subtasks: 'subtasksAdded=[{id,ownerId,parentTaskId,goal,status}]',
@@ -59,16 +61,30 @@ function context(task: ModelTask, key: string, input: Json): string {
   if (task === 'action') {
     const actor = (input as { actor?: string }).actor;
     const state = (input as { workingState?: { protagonistId?: string; initial?: { characters?: Record<string, { name?: string }> } } }).workingState;
-    sections.push(`本次只判断: ${actor ?? key}（${state?.initial?.characters?.[actor ?? key]?.name ?? actor ?? key}）；主角: ${state?.protagonistId ?? '由输入给出'}。行动句写明该角色。${actor === state?.protagonistId ? '本角色就是主角，判断待处理命令。' : '本角色不是主角，不得代主角执行玩家命令。'}`);
+    const focused = input as { protagonistId?: string; actorState?: { name?: string } };
+    const protagonist = state?.protagonistId ?? focused.protagonistId;
+    const name = state?.initial?.characters?.[actor ?? key]?.name ?? focused.actorState?.name ?? actor ?? key;
+    sections.push(`本次只判断: ${actor ?? key}（${name}）；主角: ${protagonist ?? '由输入给出'}。行动句写明该角色。${actor === protagonist ? '本角色就是主角，判断待处理命令。' : '本角色不是主角，不得代主角执行玩家命令。'}`);
   }
   sections.push(`输入:\n${JSON.stringify(input)}`);
   return sections.join('\n');
 }
 
-export function buildTaskPrompt(task: ModelTask, key: string, input: Json): string {
+export function buildTaskPrompt(task: ModelTask, key: string, input: Json, options: { inputMode?: 'full' | 'focused'; committedReads?: { before: CommittedRead | null; after: CommittedRead } } = {}): string {
+  let view = options.inputMode === 'focused' ? projectTaskInput(task, input, options.committedReads) : input;
+  if (task === 'narration' && options.committedReads && options.inputMode !== 'focused') {
+    // Both comparison arms have the SAME expression facts and instruction.
+    // The full arm additionally carries before/delta/after once, not the
+    // get_state proof objects a second time.
+    const focused = projectTaskInput(task, input, options.committedReads) as Record<string, Json>;
+    view = { ...(input as Record<string, Json>), facts: focused.facts };
+  }
   if (task === 'narration' || task === 'reaction') {
-    return `[任务: ${task}]\n${TEXT_CONTRACTS[task]}\n${context(task, key, input)}\n正文:`;
+    const contract = task === 'narration' && options.committedReads
+      ? '只用 facts 中的允许短句组织正文，每条事实表达一次；可换顺序，句间用句号。不要增加、遗漏或修改事实；不要标题、不要 JSON。'
+      : TEXT_CONTRACTS[task];
+    return `[任务: ${task}]\n${contract}\n${context(task, key, view)}\n正文:`;
   }
   const contract = task === 'updates' ? updatesContract(input) : JSON_CONTRACTS[task];
-  return `[任务: ${task}]\n${contract}\n${context(task, key, input)}\n输出:`;
+  return `[任务: ${task}]\n${contract}\n${context(task, key, view)}\n输出:`;
 }

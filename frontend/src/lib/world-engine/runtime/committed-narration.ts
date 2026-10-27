@@ -1,0 +1,127 @@
+/** Narrow narration baseline: only saved get_state records may enter this
+ * application path. Validate their lineage and before/delta/after agreement,
+ * then expose position and sanity facts. Proposals/results text is absent. */
+import type { DataMap, Id } from '../types';
+
+export type CommittedRead = DataMap['get_state'];
+export type NarrationFact = { id: string; actorId: Id; name: string } & (
+  { kind: 'at'; locationId: Id; location: string }
+  | { kind: 'moved'; fromId: Id; from: string; toId: Id; to: string }
+  | { kind: 'sanity'; value: number }
+  | { kind: 'sanity_changed'; from: number; to: number }
+  | { kind: 'task_achieved'; taskId: Id; goal: string }
+  | { kind: 'personality_changed'; changeId: Id; text: string }
+);
+export interface CommittedNarration {
+  anchor: { worldId: Id; pointId: Id; version: number; stateDigest: string; previousPointId: Id | null };
+  facts: NarrationFact[];
+}
+const same = (a: unknown, b: unknown) => JSON.stringify(a) === JSON.stringify(b);
+
+export function projectCommittedNarration(after: CommittedRead, before: CommittedRead | null): CommittedNarration {
+  if (!after.stateDigest || !after.pointId || !Number.isSafeInteger(after.version) || after.version < 0) throw new Error('narration_anchor_missing');
+  if (after.previousPointId === null) {
+    if (before !== null || after.version !== 0 || Object.keys(after.entityDeltas).length || after.timeAdvance !== null) throw new Error('narration_root_record_invalid');
+  } else if (!before || before.pointId !== after.previousPointId || before.version + 1 !== after.version
+    || before.state.worldId !== after.state.worldId || after.timeAdvance === null) throw new Error('narration_read_lineage_mismatch');
+  if (before && (!same(before.state.initial, after.state.initial) || !same(before.state.items, after.state.items)
+    || !same(before.state.locations, after.state.locations))) throw new Error('unsupported_narration_world_change');
+  const facts: NarrationFact[] = [];
+  const names = new Set<string>();
+  const characters = Object.keys(after.state.characters).sort();
+  if (before && !same(characters, Object.keys(before.state.characters).sort())) throw new Error('narration_roster_changed');
+  for (const [id, delta] of Object.entries(after.entityDeltas)) {
+    if (delta.entityId !== id || !after.state.characters[id]
+      || Object.keys(delta).some((key) => !['entityId', 'positionSet', 'sanitySet', 'tasksAchieved', 'personalityChanges'].includes(key))) throw new Error('unsupported_committed_delta');
+    if (delta.positionSet === null || delta.sanitySet === null) throw new Error('unsupported_null_delta');
+    if ((delta.tasksAchieved?.length || delta.personalityChanges?.length || delta.sanitySet !== undefined)
+      && !(delta.tasksAchieved?.length && delta.personalityChanges?.length && delta.sanitySet !== undefined)) throw new Error('narration_requires_complete_numeric_cause');
+  }
+  for (const actorId of characters) {
+    const actor = after.state.characters[actorId];
+    const name = after.state.initial.characters[actorId]?.name;
+    const previous = before?.state.characters[actorId];
+    const delta = after.entityDeltas[actorId];
+    if (!name || names.has(name) || (previous && before!.state.initial.characters[actorId].name !== name)) throw new Error('narration_actor_name_ambiguous');
+    names.add(name);
+    if (!Number.isFinite(actor.sanity)) throw new Error('narration_number_invalid');
+    const location = after.state.initial.locations[actor.position.containerId]?.name;
+    if (!location || actor.position.slotId != null || actor.position.relativeTo != null) throw new Error('unsupported_narration_position');
+    const base = { actorId, name };
+    if (previous && !same(previous.appearanceChanges, actor.appearanceChanges)) throw new Error('unrecorded_appearance_change');
+    if (delta?.positionSet !== undefined) {
+      if (!previous || !same(delta.positionSet, actor.position)) throw new Error('committed_position_delta_disagrees');
+      const from = before!.state.initial.locations[previous.position.containerId]?.name;
+      if (!from) throw new Error('narration_source_location_missing');
+      facts.push({ ...base, id: `${actorId}:position`, kind: 'moved', fromId: previous.position.containerId, from, toId: actor.position.containerId, to: location });
+    } else {
+      if (previous && !same(previous.position, actor.position)) throw new Error('unrecorded_position_change');
+      facts.push({ ...base, id: `${actorId}:position`, kind: 'at', locationId: actor.position.containerId, location });
+    }
+    if (delta?.sanitySet !== undefined) {
+      if (!previous || delta.sanitySet !== actor.sanity) throw new Error('committed_numeric_delta_disagrees');
+      facts.push({ ...base, id: `${actorId}:sanity`, kind: 'sanity_changed', from: previous.sanity, to: actor.sanity });
+      for (const taskId of delta.tasksAchieved ?? []) {
+        const oldTask = previous.tasks[taskId];
+        const task = actor.tasks[taskId];
+        if (!oldTask || oldTask.status !== 'pending' || !task || task.status !== 'achieved' || task.goal !== oldTask.goal
+          || task.ownerId !== actorId || oldTask.ownerId !== actorId) throw new Error('committed_task_cause_disagrees');
+        facts.push({ ...base, id: `${actorId}:task:${taskId}`, kind: 'task_achieved', taskId, goal: task.goal });
+      }
+      for (const change of delta.personalityChanges ?? []) {
+        const stored = actor.personalityChanges.find((entry) => entry.id === change.id);
+        if (!change.text || !stored || stored.text !== change.text || !same(stored.supersedes, change.supersedes)
+          || stored.sourcePointId !== after.pointId || stored.sourceSequence !== after.version || !stored.active
+          || change.supersedes.length) throw new Error('committed_personality_cause_disagrees');
+        facts.push({ ...base, id: `${actorId}:personality:${change.id}`, kind: 'personality_changed', changeId: change.id, text: change.text });
+      }
+    } else {
+      if (previous && previous.sanity !== actor.sanity) throw new Error('unrecorded_numeric_change');
+      facts.push({ ...base, id: `${actorId}:sanity`, kind: 'sanity', value: actor.sanity });
+    }
+    if (previous) {
+      const expectedTasks = structuredClone(previous.tasks);
+      for (const taskId of delta?.tasksAchieved ?? []) expectedTasks[taskId].status = 'achieved';
+      if (!same(expectedTasks, actor.tasks)) throw new Error('unrecorded_task_change');
+      const previousIds = new Set(previous.personalityChanges.map((change) => change.id));
+      const newChanges = actor.personalityChanges.filter((change) => !previousIds.has(change.id));
+      if (!same(actor.personalityChanges.filter((change) => previousIds.has(change.id)), previous.personalityChanges)
+        || !same(newChanges.map((change) => change.id), (delta?.personalityChanges ?? []).map((change) => change.id))) throw new Error('unrecorded_personality_change');
+    }
+  }
+  return { anchor: { worldId: after.state.worldId, pointId: after.pointId, version: after.version,
+    stateDigest: after.stateDigest, previousPointId: after.previousPointId }, facts };
+}
+
+/** A small, explicit paraphrase language. Unknown clauses fail closed;
+ * keyword/number presence alone cannot prove absence of invented events. */
+export function factPhrases(fact: NarrationFact): string[] {
+  switch (fact.kind) {
+    case 'at': return [`${fact.name}位于${fact.location}`, `${fact.name}现在在${fact.location}`];
+    case 'moved': return [`${fact.name}从${fact.from}走到${fact.to}`, `${fact.name}从${fact.from}来到${fact.to}`];
+    case 'sanity': return [`${fact.name}的精神值为${fact.value}`, `${fact.name}当前精神值是${fact.value}`];
+    case 'sanity_changed': return [`${fact.name}的精神值从${fact.from}变为${fact.to}`,
+      `${fact.name}的精神值由${fact.from}${fact.to < fact.from ? '降至' : '升至'}${fact.to}`];
+    case 'task_achieved': return [`${fact.name}完成了任务「${fact.goal}」`, `${fact.name}已达成任务「${fact.goal}」`];
+    case 'personality_changed': return [`${fact.name}的人格变化为「${fact.text}」`, `${fact.name}形成了新的人格描述「${fact.text}」`];
+  }
+}
+export function renderCommittedNarration(packet: CommittedNarration): string {
+  return packet.facts.map((fact) => `${factPhrases(fact)[0]}。`).join('');
+}
+export function checkFactNarration(packet: CommittedNarration, text: string): { ok: boolean; reason: string | null } {
+  const seen = new Set<string>();
+  const clauses = text.split(/[。！？\n]+/).map((part) => part.trim()).filter(Boolean);
+  for (const clause of clauses) {
+    const matches = packet.facts.filter((fact) => factPhrases(fact).includes(clause));
+    if (matches.length !== 1) return { ok: false, reason: 'unknown_or_ambiguous_clause' };
+    if (seen.has(matches[0].id)) return { ok: false, reason: 'duplicate_fact' };
+    seen.add(matches[0].id);
+  }
+  return seen.size === packet.facts.length ? { ok: true, reason: null } : { ok: false, reason: 'missing_fact' };
+}
+
+export function selectFactNarration(packet: CommittedNarration, modelText: string): { text: string; accepted: boolean; reason: string | null } {
+  const verdict = checkFactNarration(packet, modelText);
+  return { text: verdict.ok ? modelText : renderCommittedNarration(packet), accepted: verdict.ok, reason: verdict.reason };
+}

@@ -97,7 +97,7 @@ export class WllamaInferenceEngine implements InferenceEngine {
       await instance.createChatCompletion({
         messages: [{ role: 'user', content: prompt }],
         chat_template_kwargs: { enable_thinking: false },
-        cache_prompt: true,
+        cache_prompt: options?.cachePrompt ?? true,
         stream: true,
         max_tokens: options?.maxTokens ?? 256,
         temperature: options?.temperature ?? 0,

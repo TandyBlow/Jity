@@ -17,6 +17,7 @@ export interface CompleteOptions {
   seed?: number;
   stop?: string[];
   timeoutMs?: number;
+  cachePrompt?: boolean;
   /** Optional generation grammar; the task codec still validates the result. */
   jsonSchema?: unknown;
   /** Streaming evidence, including the partial text if generation is cancelled. */

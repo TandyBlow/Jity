@@ -38,9 +38,9 @@ describe('buildTaskPrompt', () => {
     // §7.1：更新读已确认结果——输入与契约都体现，时间扫描（无 results）不提。
     const updates = buildTaskPrompt('updates', 'group_a', { groupId: 'group_a', mode: 'group', results: { person_a: '结果已确认。' }, workingState: T01_WORKING_STATE });
     expect(updates).toContain('"results":{"person_a":"结果已确认。"}');
-    expect(updates).toContain('results 是已确认的结算结果');
+    expect(updates).toContain('results 是结算描述');
     const scan = buildTaskPrompt('updates', 'time_scan:p1', { mode: 'time_scan', workingState: T01_WORKING_STATE });
-    expect(scan).not.toContain('results 是已确认的结算结果');
+    expect(scan).not.toContain('results 是结算描述');
     // §6.1/#7：计划只做点位切分——列出的槽位逐个判断，省略不是跳过。
     const plan = buildTaskPrompt('pointPlan', 'round_1', { round: { roundId: 'round_1', order: ['person_a'] }, head: { pointId: 'root' } });
     expect(plan).toContain('actorIds 声明本点覆盖的冻结槽位');

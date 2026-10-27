@@ -14,6 +14,7 @@ import { SerialInferenceQueue, type QueueTiming } from './inference-queue';
 import { decodeTaskOutput } from './structured-output';
 import { taskOutputSchema } from './output-schema';
 import type { CompletionEvidence } from './engine';
+import type { CommittedRead } from './committed-narration';
 
 export interface GenerationResult {
   value: Json;
@@ -26,6 +27,9 @@ export interface ModelPortOptions {
   seed?: number;
   temperature?: number;
   timeoutMs?: number;
+  inputMode?: 'full' | 'focused';
+  cachePrompt?: boolean;
+  committedReads?: { before: CommittedRead | null; after: CommittedRead };
   taskMaxTokens?: Partial<Record<ModelTask, number>>;
   onProgress?: (task: ModelTask, key: string, progress: { raw: string; elapsedMs: number }) => void;
   onCompletion?: (task: ModelTask, key: string, completion: CompletionEvidence) => void;
@@ -56,7 +60,7 @@ export class RuntimeWorldModelPort implements WorldModelPort {
 
   async generateDetailed(task: ModelTask, key: string, input: Json, signal?: AbortSignal): Promise<GenerationResult> {
     await this.queue.run({ label: `load:${this.engine.info.backend}`, signal, start: (runSignal) => this.engine.load({ signal: runSignal }) });
-    const prompt = encodePrompt(task, key, input);
+    const prompt = encodePrompt(task, key, input, { inputMode: this.options.inputMode, committedReads: this.options.committedReads });
     let evidence: CompletionEvidence | undefined;
     const completion = await this.queue.run({
       label: `${task}:${key}`,
@@ -68,6 +72,7 @@ export class RuntimeWorldModelPort implements WorldModelPort {
         temperature: this.options.temperature ?? 0,
         seed: this.options.seed,
         timeoutMs: this.options.timeoutMs,
+        cachePrompt: this.options.cachePrompt,
         jsonSchema: taskOutputSchema(task, input),
         onProgress: (progress) => this.options.onProgress?.(task, key, progress),
         onCompletion: (completion) => {
