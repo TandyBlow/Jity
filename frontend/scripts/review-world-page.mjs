@@ -378,6 +378,52 @@ try {
     const returnRows = await logSection.locator('li').count();
     assert.equal(returnRows, 7, `navigation round-trip must rebuild all 7 narrations, got ${returnRows}`);
     step('spa-roundtrip', { logRows: returnRows, location: '门厅', sanity: 9 });
+
+    // r8 异步竞态回归：旧代挂载的 attach 首读（get_state）被扣到新代完成
+    // 之后才放行。修复前旧 attach 会继续创建会话、覆盖 activeRef 并污染页
+    // 面状态，外层按实例清理随后清空引用——执行命令失效。修复后旧代在
+    // get_state 返回处取消，不碰引用/页面。黑盒判据：放行后状态与日志不
+    // 变，且下一条命令照常执行（引用存活的证明）。
+    let stateCalls = 0;
+    let heldStateRoute = null;
+    await page.route(/\/worlds\/[^/]+\/state$/, async (route) => {
+      stateCalls += 1;
+      if (stateCalls === 1 && !heldStateRoute) { heldStateRoute = route; return; } // 扣住旧代首读
+      await route.continue();
+    });
+    try {
+      await page.getByRole('link', { name: '返回控制台' }).click();
+      await page.waitForTimeout(300);
+      await page.goBack();
+      await page.waitForTimeout(300); // 挂载 B：其 attach 首读此刻被扣住
+      await page.getByRole('link', { name: '返回控制台' }).click();
+      await page.waitForTimeout(300); // 卸载 B（attach 悬挂中，cleanup 已置失效）
+      await page.goBack();
+      await page.waitForTimeout(300); // 挂载 C：第 2 次首读直接放行
+      await statusSection.getByText('门厅', { exact: true }).waitFor({ timeout: 60_000 });
+      await expect(statusSection.getByText('9', { exact: true })).toBeVisible({ timeout: 30_000 });
+      const cRows = await logSection.locator('li').count();
+      assert.equal(cRows, 7, `generation C must rebuild all 7 narrations, got ${cRows}`);
+      assert.ok(heldStateRoute, 'generation B get_state must have been captured');
+      const lateResponse = await heldStateRoute.fetch(); // 旧代读真实转发（幂等读）
+      await heldStateRoute.fulfill({ response: lateResponse });
+      heldStateRoute = null;
+      await page.waitForTimeout(800); // 让旧代 attach 晚到路径稳定结算
+      // 旧代未夺走页面：状态/日志原样
+      await expect(statusSection.getByText('门厅', { exact: true })).toBeVisible();
+      await expect(statusSection.getByText('9', { exact: true })).toBeVisible();
+      assert.equal(await logSection.locator('li').count(), 7, 'late attach must not rebuild or alter the log');
+      // 引用存活：下一条命令照常执行
+      await runCommand('走到走廊');
+      await logSection.getByText('周宁从门厅走到走廊。').first().waitFor({ timeout: 30_000 });
+      await expect(statusSection.getByText('走廊', { exact: true })).toBeVisible();
+      const facts = await http.execute('get_state', {}, { worldId });
+      assert.equal(facts.data.version, 7, 'the post-race command must commit exactly one more round');
+      assert.equal(facts.data.state.characters.person_c.position.containerId, 'corridor');
+      step('late-attach-race', { logRows: 7, commandAfter: '走到走廊', version: 7, note: 'late get_state cancelled before any session/reference/page write' });
+    } finally {
+      await page.unroute(/\/worlds\/[^/]+\/state$/);
+    }
     report.browser.status = 'PASS_BROWSER_LOOP';
     report.status = 'PASS_WORLD_PAGE';
   } finally {

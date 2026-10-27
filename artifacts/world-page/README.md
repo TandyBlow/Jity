@@ -90,6 +90,22 @@ node scripts/review-world-page.mjs --out <path>     # 报告落点
    停止；页面补「返回控制台」Link。回归=review 脚本 r7：SPA 离开 → goBack 返回
    → 重新初始化自动续接 → 7 行叙事与状态恢复（review.json: spa-roundtrip）。
 
+## 竞态修复轮（2026-10-28 复核补充，r8）
+
+导航修复仍留一处异步竞态：代际检查只在 `attach()` 整体返回后执行，其内部各
+`await` 之后仍会无条件创建会话、发布 `activeRef`、写页面状态。受控复现序列：
+旧代挂起在 `get_state` → cleanup、新代开始恢复 → 新代先完成并发布引用 →
+旧代读晚到，继续创建旧会话覆盖引用 → 外层发现旧代失效并按实例清理 →
+`activeRef=null`，新会话存活但页面失去引用。
+
+修复：`BootstrapCancelled` 信号贯穿 `attach`/`rebuild` 的每个 `await` 边界——
+`get_state` 返回后、创建会话前、发布 `activeRef` 前、`setPhase('ready')` 前各闸
+一次；`attachOnce` 对自己创建的会话兜底 `stopOwned`（取消/恢复拒绝/终态都不
+泄漏心跳中的会话，且按实例判断不误清新代引用）。回归=review 脚本
+**r8 `late-attach-race`**：路由拦截扣住旧代挂载的首读 → 三段导航使新代先完成 →
+真实转发放行旧代读 → 断言状态/日志原样、下一条命令照常提交 v7。该探针已在
+竞态版页面上复红（放行后页面被污染、命令无法推进），修复版转绿。
+
 ## 已知边界
 
 - 无头环境下 wllama 加载可能挂起（r6 轮以模板呈现，即回退路径的实证）；带
