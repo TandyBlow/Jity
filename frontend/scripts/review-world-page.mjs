@@ -365,6 +365,19 @@ try {
       assert.equal(narration.data.narrationStatus, 'ready', `narration ready for ${point.pointId}`);
     }
     step('server-facts', { version: 6, points: 7, sanity: 9, location: 'hall' });
+
+    // r7 客户端导航往返：SPA 离开（卸载，会话停止）→ 返回（组件级重新
+    // 初始化 + 自动续接 + 服务端事实重建）。模块级 boot 标记会让这一步
+    // 永远停在 boot——本探针即该回归。
+    await page.getByRole('link', { name: '返回控制台' }).click();
+    await page.waitForURL((url) => !url.pathname.endsWith('/world'), { timeout: 30_000 });
+    await page.goBack();
+    await page.waitForURL((url) => url.pathname.endsWith('/world'), { timeout: 30_000 });
+    await statusSection.getByText('门厅', { exact: true }).waitFor({ timeout: 60_000 });
+    await expect(statusSection.getByText('9', { exact: true })).toBeVisible({ timeout: 30_000 });
+    const returnRows = await logSection.locator('li').count();
+    assert.equal(returnRows, 7, `navigation round-trip must rebuild all 7 narrations, got ${returnRows}`);
+    step('spa-roundtrip', { logRows: returnRows, location: '门厅', sanity: 9 });
     report.browser.status = 'PASS_BROWSER_LOOP';
     report.status = 'PASS_WORLD_PAGE';
   } finally {
