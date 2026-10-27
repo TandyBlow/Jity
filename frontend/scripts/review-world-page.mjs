@@ -379,16 +379,23 @@ try {
     assert.equal(returnRows, 7, `navigation round-trip must rebuild all 7 narrations, got ${returnRows}`);
     step('spa-roundtrip', { logRows: returnRows, location: '门厅', sanity: 9 });
 
-    // r8 异步竞态回归：旧代挂载的 attach 首读（get_state）被扣到新代完成
-    // 之后才放行。修复前旧 attach 会继续创建会话、覆盖 activeRef 并污染页
-    // 面状态，外层按实例清理随后清空引用——执行命令失效。修复后旧代在
-    // get_state 返回处取消，不碰引用/页面。黑盒判据：放行后状态与日志不
-    // 变，且下一条命令照常执行（引用存活的证明）。
+    // r8 异步竞态回归（漏传 isStale 时转红）：旧代挂载的 attach 首读
+    // （get_state）被扣到新代完成之后才放行。修复前旧 attach 继续创建会话、
+    // 发布 activeRef 并触发 rebuild（逐点 state 读）——覆盖新代引用，外层
+    // 按实例清理随后清空引用，命令失效。确定性判据有二：放行后窗口内
+    // 「逐点 state 读增量必须为 0」（漏传时旧代 rebuild 必然发出这些读，
+    // 与任何按钮/渲染时序无关），以及下一条命令照常提交 v7。
     let stateCalls = 0;
     let heldStateRoute = null;
     await page.route(/\/worlds\/[^/]+\/state$/, async (route) => {
       stateCalls += 1;
       if (stateCalls === 1 && !heldStateRoute) { heldStateRoute = route; return; } // 扣住旧代首读
+      await route.continue();
+    });
+    let pagedStateReads = 0; // /state?point=…：rebuild 的逐点读
+    let pagedBaseline = 0;
+    await page.route(/\/worlds\/[^/]+\/state\?/, async (route) => {
+      pagedStateReads += 1;
       await route.continue();
     });
     try {
@@ -405,24 +412,119 @@ try {
       const cRows = await logSection.locator('li').count();
       assert.equal(cRows, 7, `generation C must rebuild all 7 narrations, got ${cRows}`);
       assert.ok(heldStateRoute, 'generation B get_state must have been captured');
+      pagedBaseline = pagedStateReads; // C 的恢复读到此为止；此后增量都属旧代
+      let rebuildReadsAfterRelease = 0; // 断言时刻快照（step 诊断用）
       const lateResponse = await heldStateRoute.fetch(); // 旧代读真实转发（幂等读）
       await heldStateRoute.fulfill({ response: lateResponse });
       heldStateRoute = null;
-      await page.waitForTimeout(800); // 让旧代 attach 晚到路径稳定结算
+      await page.waitForTimeout(2000); // 旧代 attach 晚到路径稳定结算
+      // 确定性判据 1：放行后旧代不得发出任何 rebuild 逐点读（漏传 isStale
+      // 时旧 attach 走到 rebuild，增量 ≥1，此处转红）。
+      rebuildReadsAfterRelease = pagedStateReads - pagedBaseline;
+      assert.equal(rebuildReadsAfterRelease, 0,
+        `late attach must not issue any rebuild read after release, got ${rebuildReadsAfterRelease}`);
       // 旧代未夺走页面：状态/日志原样
       await expect(statusSection.getByText('门厅', { exact: true })).toBeVisible();
       await expect(statusSection.getByText('9', { exact: true })).toBeVisible();
       assert.equal(await logSection.locator('li').count(), 7, 'late attach must not rebuild or alter the log');
-      // 引用存活：下一条命令照常执行
+      // 确定性判据 2：引用存活，下一条命令照常执行
       await runCommand('走到走廊');
       await logSection.getByText('周宁从门厅走到走廊。').first().waitFor({ timeout: 30_000 });
       await expect(statusSection.getByText('走廊', { exact: true })).toBeVisible();
       const facts = await http.execute('get_state', {}, { worldId });
       assert.equal(facts.data.version, 7, 'the post-race command must commit exactly one more round');
       assert.equal(facts.data.state.characters.person_c.position.containerId, 'corridor');
-      step('late-attach-race', { logRows: 7, commandAfter: '走到走廊', version: 7, note: 'late get_state cancelled before any session/reference/page write' });
+      step('late-attach-race', { logRows: 7, commandAfter: '走到走廊', version: 7,
+        rebuildReadsAfterRelease,
+        note: 'late get_state cancelled before any session/reference/page write' });
     } finally {
       await page.unroute(/\/worlds\/[^/]+\/state$/);
+      await page.unroute(/\/worlds\/[^/]+\/state\?/);
+    }
+
+    // r9 恢复期间取消回归（attachOnce 漏停时转红）：旧代挂载已过首读与
+    // lease_renew、挂起在恢复流程的 get_context（即 session.attach() 悬挂
+    // 中）时卸载。恢复中途的读在 attach 返回前发出、闸门拦不住（观察为
+    // 软诊断）；修复版在恢复返回处取消并 stopOwned——会话死亡、心跳永不
+    // 启动；漏停版会话泄漏，其心跳（服务端 TTL 120s、lead 30s → 恢复完成
+    // 后 ~90s 首次续租）必然出现。确定性判据：断开活跃会话后 100s 窗口内
+    // lease 续租必须为 0。随后新代会话照常执行命令（引用未被旧代破坏）。
+    let contextCalls = 0;
+    let heldContextRoute = null;
+    await page.route(/\/worlds\/[^/]+\/context/, async (route) => {
+      contextCalls += 1;
+      if (contextCalls === 1 && !heldContextRoute) { heldContextRoute = route; return; } // 扣住旧代恢复首读
+      await route.continue();
+    });
+    let recoveryReads = 0;
+    let recoveryBaseline = 0;
+    const recoveryReadUrls = [];
+    await page.route(/\/worlds\/[^/]+\/points\?/, async (route) => {
+      recoveryReads += 1; recoveryReadUrls.push(`${new Date().toISOString().slice(11, 19)} ${route.request().url()}`);
+      await route.continue();
+    });
+    await page.route(/\/worlds\/[^/]+\/state\?/, async (route) => {
+      recoveryReads += 1; recoveryReadUrls.push(`${new Date().toISOString().slice(11, 19)} ${route.request().url()}`);
+      await route.continue();
+    });
+    try {
+      await page.getByRole('link', { name: '返回控制台' }).click();
+      await page.waitForTimeout(300);
+      await page.goBack();
+      await page.waitForTimeout(800); // 挂载 B：过首读与续租，挂起在恢复 get_context
+      await page.getByRole('link', { name: '返回控制台' }).click();
+      await page.waitForTimeout(300); // 卸载 B：恢复悬挂中，cleanup 已置失效
+      await page.goBack();
+      await page.waitForTimeout(300); // 挂载 C：第 2 个 context 直接放行，恢复完成
+      await statusSection.getByText('走廊', { exact: true }).waitFor({ timeout: 60_000 });
+      await expect(statusSection.getByText('9', { exact: true })).toBeVisible({ timeout: 30_000 });
+      const cRows9 = await logSection.locator('li').count();
+      assert.equal(cRows9, 8, `generation C must rebuild all 8 narrations, got ${cRows9}`);
+      assert.ok(heldContextRoute, 'generation B recovery get_context must have been captured');
+      recoveryBaseline = recoveryReads; // C 的恢复读到此为止
+      let recoveryReadsAfterRelease = 0;
+      const lateRecovery = await heldContextRoute.fetch(); // 恢复读幂等，真实转发
+      await heldContextRoute.fulfill({ response: lateRecovery });
+      heldContextRoute = null;
+      await page.waitForTimeout(3000); // 旧代恢复晚到路径稳定结算
+      // 确定性判据：放行后旧会话不得继续恢复（漏停时它走完剩余恢复读，
+      // 增量 ≥1，此处转红；修复后 attachOnce 在恢复返回处取消并停止会话）。
+      recoveryReadsAfterRelease = recoveryReads - recoveryBaseline;
+      // 软诊断（不 assert）：死代恢复中途的读不可拦，数量取决于恢复 filter。
+      await expect(statusSection.getByText('走廊', { exact: true })).toBeVisible();
+      assert.equal(await logSection.locator('li').count(), 8, 'late recovery must not alter the log');
+      // 新代引用存活：命令照常提交
+      await runCommand('走到门厅');
+      await logSection.getByText('周宁从走廊走到门厅。').first().waitFor({ timeout: 30_000 });
+      await expect(statusSection.getByText('门厅', { exact: true })).toBeVisible();
+      const facts9 = await http.execute('get_state', {}, { worldId });
+      assert.equal(facts9.data.version, 8, 'the post-race command must commit exactly one more round');
+      assert.equal(facts9.data.state.characters.person_c.position.containerId, 'hall');
+      // 硬判据：断开活跃会话后，泄漏的旧会话心跳必然出现（~90s 相位）；
+      // 修复版旧会话已在 attachOnce 内停止——窗口内零续租。
+      let leasePuts = 0;
+      await page.route(/\/worlds\/[^/]+\/lease$/, async (route) => {
+        leasePuts += 1;
+        await route.continue();
+      });
+      try {
+        await page.getByRole('button', { name: '断开' }).click();
+        await statusSection.getByText('尚未连接世界。').waitFor({ timeout: 30_000 });
+        const cut = leasePuts; // 断开瞬间的计数即基线
+        await page.waitForTimeout(100_000);
+        const leaked = leasePuts - cut;
+        assert.equal(leaked, 0,
+          `a cancelled attach must not keep renewing the lease after disconnect, got ${leaked} lease renewals in 100s`);
+        step('cancelled-recovery', { logRows: 8, commandAfter: '走到门厅', version: 8,
+          recoveryReadsAfterRelease, leaseRenewalsAfterDisconnect: leaked,
+          note: 'cancelled attach stopped inside attachOnce; new generation reference intact' });
+      } finally {
+        await page.unroute(/\/worlds\/[^/]+\/lease$/);
+      }
+    } finally {
+      await page.unroute(/\/worlds\/[^/]+\/context/);
+      await page.unroute(/\/worlds\/[^/]+\/points\?/);
+      await page.unroute(/\/worlds\/[^/]+\/state\?/);
     }
     report.browser.status = 'PASS_BROWSER_LOOP';
     report.status = 'PASS_WORLD_PAGE';
