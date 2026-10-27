@@ -1,0 +1,174 @@
+{
+  "status": "PASS_WORLD_PAGE",
+  "recordedAt": "2026-10-27T15:59:24.332Z",
+  "apiOrigin": "http://127.0.0.1:64139",
+  "nextOrigin": "http://127.0.0.1:64140",
+  "browserSource": {
+    "head": "4e463acc21cdb4296338032137034111108b1563",
+    "status": "M frontend/src/lib/world-engine/controller.ts\n M frontend/src/lib/world-engine/recovery.ts\n M frontend/src/lib/world-engine/runtime/rule-session.test.ts\n M frontend/src/lib/world-engine/runtime/rule-session.ts\n M frontend/src/lib/world-engine/runtime/session.ts\n?? artifacts/world-page-review.json\n?? frontend/scripts/review-world-page.mjs\n?? frontend/src/app/world/",
+    "sha256": {
+      "frontend/scripts/review-world-page.mjs": "9face26449d2cb3e71e21c602100101078d613f025105974f12f2f9fdd4816ed",
+      "frontend/src/app/world/page.tsx": "27175485de6bdc7de3e34914eb396ef0e9d5d25b5c19d8757833140ec56e32dc",
+      "frontend/src/app/world/world-defaults.ts": "30141cad33d0b313bdd304f2bb1dc862af9d4976ff5774ef7b91d26dd36f27ef",
+      "frontend/src/lib/world-engine/runtime/rule-session.ts": "d793e6fc85ff1a48334ca92a111d924385442ed0db8114d4f60f76f18451052d",
+      "frontend/src/lib/world-engine/runtime/session.ts": "125a318e94969145e616644a268d020e8b6cfa8e05012de8493cbbb6f61edbc5",
+      "frontend/src/lib/world-engine/runtime/rule-facts.ts": "0a0084ce29f0c07e3f4592b941092585338041f70b996d0ef7115851bf10d5d0",
+      "frontend/src/lib/world-engine/runtime/committed-narration.ts": "249fa2f77f58cdec7fa483d551c31cf17da754438adc90c5cf1754991affd934",
+      "frontend/src/lib/world-engine/controller.ts": "fc68f5e248226c57389d27c621ff125cebe828f86729ad3372d73f851650214d",
+      "frontend/src/lib/world-engine/recovery.ts": "0fa60c7609d6ee93e0b6ebef4a42ca50ff7552242c9b795203331f7e0ab1088b",
+      "frontend/src/lib/world-engine/http-transport.ts": "60b1ee3158e6d8d41c491a7234e140dfe95f5d786fd110d1806444eb3f9dcd58"
+    }
+  },
+  "serverSource": {
+    "head": "31660cc0f59eec7a1d8976b8b5ace8722f99af72",
+    "status": "?? backend/_proj_create.json"
+  },
+  "probes": {
+    "p1": {
+      "status": "PASS",
+      "worldId": "world_1",
+      "version": 2,
+      "points": 3,
+      "commits": [
+        {
+          "requestId": "rule_probe_b0gasb_16",
+          "pointId": "point_7"
+        },
+        {
+          "requestId": "rule_probe_b0gasb_16",
+          "pointId": "point_7"
+        },
+        {
+          "requestId": "rule_probe_b0gasb_33",
+          "pointId": "point_14"
+        }
+      ],
+      "narrationRows": [
+        {
+          "pointId": "root_3",
+          "status": "ready",
+          "text": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值为10。"
+        },
+        {
+          "pointId": "point_7",
+          "status": "ready",
+          "text": "林川位于走廊。林川的精神值为10。周宁位于走廊。周宁的精神值从10变为8。周宁完成了任务「完成压力试验」。周宁的人格变化为「经历压力试验后更谨慎」。"
+        },
+        {
+          "pointId": "point_14",
+          "status": "ready",
+          "text": "林川位于走廊。林川的精神值为10。周宁从走廊走到门厅。周宁的精神值为8。"
+        }
+      ],
+      "sanity": 8
+    },
+    "p2": {
+      "status": "PASS",
+      "worldId": "world_17",
+      "versionBeforeRefresh": 0,
+      "versionAfterRecovery": 1,
+      "points": 2,
+      "narrationText": "林川位于走廊。林川的精神值为10。周宁从走廊走到门厅。周宁的精神值为10。"
+    },
+    "p3": {
+      "status": "PASS",
+      "worldId": "world_26",
+      "version": 3,
+      "sanity": 8,
+      "decisions": 3
+    }
+  },
+  "browser": {
+    "steps": [
+      {
+        "name": "new-world",
+        "detail": {
+          "location": "走廊",
+          "sanity": 10,
+          "logRows": 1
+        },
+        "at": "2026-10-27T16:00:09.732Z"
+      },
+      {
+        "name": "r1-move",
+        "detail": {
+          "command": "走到门厅",
+          "narration": "周宁从走廊走到门厅。",
+          "timeAdvance": "+1秒"
+        },
+        "at": "2026-10-27T16:00:14.871Z"
+      },
+      {
+        "name": "r2-refused",
+        "detail": {
+          "command": "完成压力试验",
+          "reason": "milestone_location_mismatch"
+        },
+        "at": "2026-10-27T16:00:19.960Z"
+      },
+      {
+        "name": "r3-move-back",
+        "detail": {
+          "command": "走到走廊"
+        },
+        "at": "2026-10-27T16:00:25.055Z"
+      },
+      {
+        "name": "reload-recover",
+        "detail": {
+          "logRows": 4,
+          "location": "走廊",
+          "sanity": 10
+        },
+        "at": "2026-10-27T16:00:27.895Z"
+      },
+      {
+        "name": "r4-strain",
+        "detail": {
+          "sanity": 8,
+          "task": "完成压力试验 achieved"
+        },
+        "at": "2026-10-27T16:00:33.014Z"
+      },
+      {
+        "name": "r5-lost-receipt",
+        "detail": {
+          "sanity": 9,
+          "worldId": "world_48"
+        },
+        "at": "2026-10-27T16:00:38.159Z"
+      },
+      {
+        "name": "r6-polish",
+        "detail": {
+          "polishedBadge": 0,
+          "note": "either a fact-valid polish or the template fallback is displayed"
+        },
+        "at": "2026-10-27T16:02:42.649Z"
+      },
+      {
+        "name": "server-facts",
+        "detail": {
+          "version": 6,
+          "points": 7,
+          "sanity": 9,
+          "location": "hall"
+        },
+        "at": "2026-10-27T16:02:43.080Z"
+      }
+    ],
+    "status": "PASS_BROWSER_LOOP"
+  },
+  "lifecycle": [
+    {
+      "event": "ready",
+      "label": "World HTTP service",
+      "url": "http://127.0.0.1:64139/openapi.json"
+    },
+    {
+      "event": "ready",
+      "label": "Next dev server",
+      "url": "http://127.0.0.1:64140/"
+    }
+  ]
+}
