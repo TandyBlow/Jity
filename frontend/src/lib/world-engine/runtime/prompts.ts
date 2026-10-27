@@ -11,10 +11,17 @@ import type { Json } from '../types';
 
 function updatesContract(input: Json): string {
   const confirmed = (input as { results?: unknown }).results !== undefined ? 'results 是已确认的结算结果，更新必须与之一致。' : '';
+  const stageFields: Record<string, string> = {
+    position: 'positionSet={containerId,slotId:null,relativeTo:null}', appearance: 'appearanceChanges=[{id,text,supersedes:[]}]',
+    tasks: 'tasksAchieved=[任务id]', subtasks: 'subtasksAdded=[{id,ownerId,parentTaskId,goal,status}]',
+    personality: 'personalityChanges=[{id,text,supersedes:[]}]', sanity: 'sanitySet=数值',
+  };
+  const stage = (input as { stage?: string }).stage;
+  const fields = `增量字段：${stage ? stageFields[stage] : Object.entries(stageFields).map(([key, field]) => `${key}→${field}`).join('；')}。只写本阶段已确认发生变化的实体；未变化用 changes={}，不要添加事实。`;
   if ((input as { stage?: unknown }).stage !== undefined) {
-    return `${confirmed}只输出一个 JSON 对象（不要数组）：{"stage":"${String((input as { stage: unknown }).stage)}","changes":{"实体id":{...增量}}}`;
+    return `${confirmed}只输出一个 JSON 对象（不要数组）：{"stage":"${String((input as { stage: unknown }).stage)}","changes":{"实体id":{...增量}}}。${fields}`;
   }
-  return `${confirmed}只输出 JSON 数组：[{"stage":"position","changes":{"实体id":{...增量}}}]。stage 只能是 position/appearance/tasks/subtasks/personality/sanity 之一`;
+  return `${confirmed}只输出 JSON 数组：[{"stage":"position","changes":{"实体id":{...增量}}}]。stage 只能是 position/appearance/tasks/subtasks/personality/sanity 之一。${fields}`;
 }
 
 function workingCharacters(input: Json): string[] {
@@ -35,7 +42,7 @@ const JSON_CONTRACTS: Record<Exclude<ModelTask, 'narration' | 'reaction' | 'upda
 };
 
 const TEXT_CONTRACTS: Record<'narration' | 'reaction', string> = {
-  narration: '用两到四句中文写出这一点位的叙事正文：把已结算的行动与变化讲成一个连贯片段。只输出正文文字，不要 JSON、不要标题、不要列表。',
+  narration: '用两句中文、不超过80字写出这一点位的叙事正文：只表达 before/变化 delta/after 中的事实，人物动作归属不得互换，不补写新事件或物品。只输出正文文字，不要 JSON、不要标题、不要列表。',
   reaction: '用一两句中文写出该角色被牵连时的反应：必须针对输入 sourceActionText 里的具体威胁。只输出正文文字，不要 JSON。',
 };
 
@@ -48,6 +55,11 @@ function context(task: ModelTask, key: string, input: Json): string {
   if (task === 'action' || task === 'targets' || task === 'reaction') {
     const actors = workingCharacters(input);
     if (actors.length) sections.push(`在场角色: ${actors.join(', ')}`);
+  }
+  if (task === 'action') {
+    const actor = (input as { actor?: string }).actor;
+    const state = (input as { workingState?: { protagonistId?: string; initial?: { characters?: Record<string, { name?: string }> } } }).workingState;
+    sections.push(`本次只判断: ${actor ?? key}（${state?.initial?.characters?.[actor ?? key]?.name ?? actor ?? key}）；主角: ${state?.protagonistId ?? '由输入给出'}。行动句写明该角色。${actor === state?.protagonistId ? '本角色就是主角，判断待处理命令。' : '本角色不是主角，不得代主角执行玩家命令。'}`);
   }
   sections.push(`输入:\n${JSON.stringify(input)}`);
   return sections.join('\n');

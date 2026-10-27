@@ -126,6 +126,7 @@ export interface DecodeConstraints {
   /** updates split mode consumes ONE call per stage (input carries stage);
    * batch mode consumes an array of calls. */
   updatesSplitMode?: boolean;
+  updatesStage?: string;
 }
 
 type JsonValidator = (value: unknown, constraints: DecodeConstraints | undefined) => void;
@@ -171,6 +172,7 @@ const jsonValidators: Record<Exclude<ModelTask, 'narration' | 'reaction'>, JsonV
       const call = asObject(entry, 'update call must be an object');
       exactKeys(call, ['stage', 'changes'], 'update call keys');
       if (!updateStages.includes(call.stage as typeof updateStages[number])) throw new Error('unknown update stage');
+      if (constraints?.updatesStage !== undefined && call.stage !== constraints.updatesStage) throw new Error('updates stage differs from declared call');
       const changes = asObject(call.changes, 'update changes must be an object');
       for (const delta of Object.values(changes)) validateEntityDelta(delta);
     }
@@ -224,7 +226,7 @@ const jsonValidators: Record<Exclude<ModelTask, 'narration' | 'reaction'>, JsonV
 /** Strips the one tolerated wrapper (a leading fenced code block) before
  * parsing; anything the model wraps otherwise is rejected, not guessed. */
 function parseJsonTask(raw: string, task: ModelTask): unknown {
-  const fenced = /```(?:json)?\s*([\s\S]*?)```/.exec(raw);
+  const fenced = /^\s*```(?:json)?\s*([\s\S]*?)```\s*$/.exec(raw);
   const candidate = (fenced ? fenced[1] : raw).trim();
   if (!candidate.length) throw new StructuredOutputError(task, 'empty output', raw);
   try {
@@ -238,6 +240,7 @@ export function decodeTaskOutput(task: ModelTask, raw: string, constraints?: Dec
   if (task === 'narration' || task === 'reaction') {
     const text = raw.trim();
     if (!text.length) throw new StructuredOutputError(task, 'empty output', raw);
+    if (/<\/?think>|<\|im_end\|>|<\|endoftext\|>/.test(text)) throw new StructuredOutputError(task, 'unexpected reasoning or end-token markup', raw);
     return text;
   }
   const parsed = parseJsonTask(raw, task);

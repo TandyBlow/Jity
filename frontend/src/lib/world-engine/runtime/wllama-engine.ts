@@ -8,18 +8,13 @@
  * nothing resurrects. */
 import type { Wllama } from '@wllama/wllama';
 import { createWllama } from '../../benchmark/wllama-loader';
-import { abortError, type CompleteOptions, type EngineInfo, type InferenceEngine } from './engine';
-
-/** The slice of wllama's completion response this adapter consumes; typed
- * locally like the benchmark does instead of importing build-time internals. */
-interface CompletionResponse {
-  choices?: Array<{ text?: string }>;
-}
+import { abortError, IncompleteGenerationError, type CompletionEvidence, type CompleteOptions, type EngineInfo, type InferenceEngine } from './engine';
 
 export interface WllamaEngineOptions {
   /** Default model source for load(); a per-call modelUrl overrides it. */
   modelUrl?: string;
   contextSize?: number;
+  numThreads?: number;
 }
 
 export class WllamaInferenceEngine implements InferenceEngine {
@@ -33,6 +28,10 @@ export class WllamaInferenceEngine implements InferenceEngine {
     private readonly options: WllamaEngineOptions = {},
     private readonly factory: () => Promise<Wllama> = createWllama,
   ) {}
+
+  get diagnostics(): { multithread: boolean; numThreads: number } | null {
+    return this.instance ? { multithread: this.instance.isMultithread(), numThreads: this.instance.getNumThreads() } : null;
+  }
 
   async load(options?: { signal?: AbortSignal; modelUrl?: string }): Promise<void> {
     if (this.disposed) throw abortError();
@@ -64,6 +63,7 @@ export class WllamaInferenceEngine implements InferenceEngine {
       await instance.loadModelFromUrl(modelUrl, {
         n_ctx: this.options.contextSize ?? 4096,
         n_gpu_layers: 0,
+        ...(this.options.numThreads !== undefined ? { n_threads: this.options.numThreads } : {}),
         signal: controller.signal,
       });
       if (this.disposed) {
@@ -83,15 +83,58 @@ export class WllamaInferenceEngine implements InferenceEngine {
   async complete(prompt: string, options?: CompleteOptions): Promise<string> {
     const instance = this.instance;
     if (!instance) throw new Error('wllama engine is not loaded');
-    const response = (await instance.createCompletion({
-      prompt,
-      max_tokens: options?.maxTokens ?? 256,
-      temperature: options?.temperature ?? 0,
-      ...(options?.seed !== undefined ? { seed: options.seed } : {}),
-      ...(options?.stop !== undefined ? { stop: options.stop } : {}),
-      abortSignal: options?.signal,
-    })) as CompletionResponse;
-    return response.choices?.[0]?.text ?? '';
+    if (options?.signal?.aborted || this.disposed) throw abortError();
+    const timeoutMs = options?.timeoutMs ?? 120_000;
+    if (!Number.isFinite(timeoutMs) || timeoutMs <= 0) throw new Error('timeoutMs must be positive and finite');
+    const controller = new AbortController();
+    const callerAbort = () => controller.abort();
+    options?.signal?.addEventListener('abort', callerAbort, { once: true });
+    let timedOut = false;
+    const timer = setTimeout(() => { timedOut = true; controller.abort(); }, timeoutMs);
+    const started = performance.now();
+    const evidence: CompletionEvidence = { raw: '', finishReason: null, firstTokenMs: null, wallMs: 0 };
+    try {
+      await instance.createChatCompletion({
+        messages: [{ role: 'user', content: prompt }],
+        chat_template_kwargs: { enable_thinking: false },
+        cache_prompt: true,
+        stream: true,
+        max_tokens: options?.maxTokens ?? 256,
+        temperature: options?.temperature ?? 0,
+        ...(options?.seed !== undefined ? { seed: options.seed } : {}),
+        ...(options?.stop !== undefined ? { stop: options.stop } : {}),
+        ...(options?.jsonSchema !== undefined ? { response_format: {
+          type: 'json_schema' as const, json_schema: { name: 'task_output', schema: options.jsonSchema, strict: true },
+        } } : {}),
+        abortSignal: controller.signal,
+        onData: (chunk) => {
+          const choice = chunk.choices?.[0];
+          const text = choice?.delta?.content ?? '';
+          if (text && evidence.firstTokenMs === null) evidence.firstTokenMs = performance.now() - started;
+          evidence.raw += text;
+          if (choice?.finish_reason) evidence.finishReason = choice.finish_reason;
+          if (chunk.usage) evidence.usage = chunk.usage;
+          if (chunk.timings) evidence.timings = chunk.timings;
+          options?.onProgress?.({ raw: evidence.raw, elapsedMs: performance.now() - started });
+        },
+      });
+      if (options?.signal?.aborted || this.disposed) throw abortError();
+      if (timedOut) throw new IncompleteGenerationError(evidence, 'generation deadline exceeded');
+    } catch (error) {
+      if (options?.signal?.aborted || this.disposed) throw abortError();
+      if (timedOut) {
+        evidence.finishReason = 'timeout';
+        throw new IncompleteGenerationError(evidence, 'generation deadline exceeded');
+      }
+      throw error;
+    } finally {
+      clearTimeout(timer);
+      options?.signal?.removeEventListener('abort', callerAbort);
+      evidence.wallMs = performance.now() - started;
+      options?.onCompletion?.(evidence);
+    }
+    if (evidence.finishReason !== 'stop') throw new IncompleteGenerationError(evidence);
+    return evidence.raw;
   }
 
   async dispose(): Promise<void> {

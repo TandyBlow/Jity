@@ -16,6 +16,30 @@ export interface CompleteOptions {
   temperature?: number;
   seed?: number;
   stop?: string[];
+  timeoutMs?: number;
+  /** Optional generation grammar; the task codec still validates the result. */
+  jsonSchema?: unknown;
+  /** Streaming evidence, including the partial text if generation is cancelled. */
+  onProgress?: (progress: { raw: string; elapsedMs: number }) => void;
+  onCompletion?: (completion: CompletionEvidence) => void;
+}
+
+export interface CompletionEvidence {
+  raw: string;
+  finishReason: string | null;
+  firstTokenMs: number | null;
+  wallMs: number;
+  usage?: { prompt_tokens: number; completion_tokens: number; total_tokens: number; prompt_tokens_details?: { cached_tokens: number } };
+  timings?: { prompt_ms: number; predicted_ms: number; cache_n: number; prompt_n: number; predicted_n: number };
+}
+
+/** A truncated or interrupted answer must never become a state candidate,
+ * even if its prefix happens to be parseable JSON. Keep the paid evidence. */
+export class IncompleteGenerationError extends Error {
+  readonly name = 'IncompleteGenerationError';
+  constructor(readonly completion: CompletionEvidence, reason = `generation ended with ${completion.finishReason ?? 'no finish reason'}`) {
+    super(reason);
+  }
 }
 
 export interface InferenceEngine {

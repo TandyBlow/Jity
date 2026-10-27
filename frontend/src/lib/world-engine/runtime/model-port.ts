@@ -12,16 +12,23 @@ import type { ModelTask } from '../schedule';
 import { type InferenceEngine } from './engine';
 import { SerialInferenceQueue, type QueueTiming } from './inference-queue';
 import { decodeTaskOutput } from './structured-output';
+import { taskOutputSchema } from './output-schema';
+import type { CompletionEvidence } from './engine';
 
 export interface GenerationResult {
   value: Json;
   timing: QueueTiming;
+  completion?: CompletionEvidence;
 }
 
 export interface ModelPortOptions {
   maxTokens?: number;
   seed?: number;
   temperature?: number;
+  timeoutMs?: number;
+  taskMaxTokens?: Partial<Record<ModelTask, number>>;
+  onProgress?: (task: ModelTask, key: string, progress: { raw: string; elapsedMs: number }) => void;
+  onCompletion?: (task: ModelTask, key: string, completion: CompletionEvidence) => void;
 }
 /** The real B3 prompt layer (prompts.ts); also re-exported so existing
  * imports and determinism tests stay stable. */
@@ -50,23 +57,33 @@ export class RuntimeWorldModelPort implements WorldModelPort {
   async generateDetailed(task: ModelTask, key: string, input: Json, signal?: AbortSignal): Promise<GenerationResult> {
     await this.queue.run({ label: `load:${this.engine.info.backend}`, signal, start: (runSignal) => this.engine.load({ signal: runSignal }) });
     const prompt = encodePrompt(task, key, input);
+    let evidence: CompletionEvidence | undefined;
     const completion = await this.queue.run({
       label: `${task}:${key}`,
       signal,
       start: (runSignal) => this.engine.complete(prompt, {
         signal: runSignal,
-        maxTokens: this.options.maxTokens,
+        maxTokens: this.options.taskMaxTokens?.[task] ?? this.options.maxTokens ??
+          ({ action: 80, updates: 192, narration: 128, reaction: 80 } as Partial<Record<ModelTask, number>>)[task] ?? 256,
         temperature: this.options.temperature ?? 0,
         seed: this.options.seed,
+        timeoutMs: this.options.timeoutMs,
+        jsonSchema: taskOutputSchema(task, input),
+        onProgress: (progress) => this.options.onProgress?.(task, key, progress),
+        onCompletion: (completion) => {
+          evidence = completion;
+          this.options.onCompletion?.(task, key, completion);
+        },
       }),
     });
     // The declared call input decides the updates shape: a split call
     // (input carries stage) must yield ONE call, a batch call an array —
     // the wrong shape rejects here instead of in the controller. A decode
     // failure keeps the completion's timing: the generation cost was paid.
-    const constraints = task === 'updates' ? { updatesSplitMode: (input as { stage?: unknown }).stage !== undefined } : undefined;
+    const constraints = task === 'updates' ? { updatesSplitMode: (input as { stage?: unknown }).stage !== undefined,
+      updatesStage: (input as { stage?: string }).stage } : undefined;
     try {
-      return { value: decodeTaskOutput(task, completion.value, constraints), timing: completion.timing };
+      return { value: decodeTaskOutput(task, completion.value, constraints), timing: completion.timing, completion: evidence };
     } catch (error) {
       (error as { timing?: QueueTiming }).timing = completion.timing;
       throw error;

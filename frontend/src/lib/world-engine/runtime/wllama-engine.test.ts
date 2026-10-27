@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import type { Wllama } from '@wllama/wllama';
 import { WllamaInferenceEngine } from './wllama-engine';
+import { IncompleteGenerationError, type CompletionEvidence } from './engine';
 
 /** Records every mapped call; the wasm is never touched in Node. The load
  * can be held (deterministic observation of mid-load abort and dispose) and
@@ -14,15 +15,23 @@ function fakeWllama() {
   let holdLoads = false;
   let honorAbort = true;
   const loadGates: Array<() => void> = [];
+  let finishReason: string | null = 'stop';
+  let waitForAbort = false;
   const instance = {
     loadModelFromUrl: async (url: string, params: Record<string, unknown>) => {
       calls.loads.push({ url, params });
       if (holdLoads) await new Promise<void>((resolve) => loadGates.push(resolve));
       if (honorAbort && (params.signal as AbortSignal | undefined)?.aborted) throw new DOMException('Aborted', 'AbortError');
     },
-    createCompletion: async (options: Record<string, unknown>) => {
+    createChatCompletion: async (options: Record<string, unknown>) => {
       calls.completions.push(options);
-      return { choices: [{ text: 'ok' }] };
+      const onData = options.onData as (chunk: unknown) => void;
+      onData({ choices: [{ delta: { content: 'ok' }, finish_reason: null }] });
+      if (waitForAbort) await new Promise<void>((_resolve, reject) => {
+        (options.abortSignal as AbortSignal).addEventListener('abort', () => reject(new DOMException('Aborted', 'AbortError')), { once: true });
+      });
+      onData({ choices: [{ delta: {}, finish_reason: finishReason }],
+        usage: { prompt_tokens: 5, completion_tokens: 1, total_tokens: 6 } });
     },
     exit: async () => {
       calls.exits += 1;
@@ -34,6 +43,8 @@ function fakeWllama() {
     holdLoads(value: boolean) { holdLoads = value; },
     honorAbort(value: boolean) { honorAbort = value; },
     releaseLoads() { for (const gate of loadGates.splice(0)) gate(); },
+    finish(reason: string | null) { finishReason = reason; },
+    waitForAbort() { waitForAbort = true; },
   };
 }
 
@@ -128,24 +139,62 @@ describe('WllamaInferenceEngine option mapping', () => {
     expect(factories).toBe(2); // the failed load released its memo; a new engine instance was created
   });
 
-  test('complete maps prompt, sampling options and the abort signal; extracts the text', async () => {
+  test('chat template, no thinking, grammar and native EOS; keeps streaming evidence', async () => {
     const { instance, calls } = fakeWllama();
     const engine = new WllamaInferenceEngine({ modelUrl: '/models/m.gguf' }, async () => instance);
     await engine.load();
     const controller = new AbortController();
-    const text = await engine.complete('PROMPT', { maxTokens: 64, temperature: 0.3, seed: 7, stop: ['\n'], signal: controller.signal });
+    let evidence: CompletionEvidence | undefined;
+    const progress: string[] = [];
+    const schema = { type: 'object' };
+    const text = await engine.complete('PROMPT', { maxTokens: 64, temperature: 0.3, seed: 7, stop: ['\n'], signal: controller.signal,
+      jsonSchema: schema, onCompletion: (row) => { evidence = row; }, onProgress: (row) => progress.push(row.raw) });
     expect(text).toBe('ok');
-    expect(calls.completions[0]).toEqual({
-      prompt: 'PROMPT', max_tokens: 64, temperature: 0.3, seed: 7, stop: ['\n'], abortSignal: controller.signal,
+    expect(calls.completions[0]).toMatchObject({
+      messages: [{ role: 'user', content: 'PROMPT' }], max_tokens: 64, temperature: 0.3, seed: 7, stop: ['\n'],
+      abortSignal: expect.any(AbortSignal), stream: true, cache_prompt: true, chat_template_kwargs: { enable_thinking: false },
+      response_format: { type: 'json_schema', json_schema: { name: 'task_output', schema, strict: true } },
     });
+    expect(evidence).toMatchObject({ raw: 'ok', finishReason: 'stop', usage: { prompt_tokens: 5 } });
+    expect(evidence!.firstTokenMs).toBeGreaterThanOrEqual(0);
+    expect(progress[0]).toBe('ok');
   });
 
-  test('unset sampling options are omitted, missing choices yield an empty string', async () => {
+  test('text generation has no JSON grammar and uses bounded defaults', async () => {
     const { instance, calls } = fakeWllama();
     const engine = new WllamaInferenceEngine({ modelUrl: '/models/m.gguf' }, async () => instance);
     await engine.load();
     await engine.complete('P');
-    expect(calls.completions[0]).toEqual({ prompt: 'P', max_tokens: 256, temperature: 0, abortSignal: undefined });
+    expect(calls.completions[0]).toMatchObject({ messages: [{ role: 'user', content: 'P' }], max_tokens: 256, temperature: 0 });
+    expect(calls.completions[0]).not.toHaveProperty('response_format');
+  });
+
+  test('length and missing finish reject with raw output and measured cost', async () => {
+    const fake = fakeWllama();
+    const engine = new WllamaInferenceEngine({ modelUrl: '/models/m.gguf' }, async () => fake.instance);
+    await engine.load();
+    for (const reason of ['length', null]) {
+      fake.finish(reason);
+      const error = await engine.complete('P').catch((error) => error);
+      expect(error).toBeInstanceOf(IncompleteGenerationError);
+      expect(error.completion).toMatchObject({ raw: 'ok', finishReason: reason });
+      expect(error.completion.wallMs).toBeGreaterThanOrEqual(0);
+    }
+  });
+
+  test('generation deadline aborts device work and retains partial output; caller abort stays AbortError', async () => {
+    const fake = fakeWllama();
+    fake.waitForAbort();
+    const engine = new WllamaInferenceEngine({ modelUrl: '/models/m.gguf' }, async () => fake.instance);
+    await engine.load();
+    const error = await engine.complete('P', { timeoutMs: 10 }).catch((error) => error);
+    expect(error).toBeInstanceOf(IncompleteGenerationError);
+    expect(error.completion).toMatchObject({ raw: 'ok', finishReason: 'timeout' });
+    expect((fake.calls.completions[0].abortSignal as AbortSignal).aborted).toBe(true);
+    const controller = new AbortController();
+    const cancelled = engine.complete('P', { signal: controller.signal });
+    controller.abort();
+    await expect(cancelled).rejects.toMatchObject({ name: 'AbortError' });
   });
 
   test('complete before load is an ordering error, and dispose is terminal', async () => {

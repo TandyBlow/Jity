@@ -9,7 +9,7 @@
  * the on-device numbers later — same harness, no code change. */
 import type { ModelTask } from '../schedule';
 import type { Json } from '../types';
-import type { InferenceEngine } from './engine';
+import type { CompletionEvidence, InferenceEngine } from './engine';
 import { RuntimeWorldModelPort, type ModelPortOptions } from './model-port';
 import { SerialInferenceQueue, type QueueTiming } from './inference-queue';
 import { StructuredOutputError } from './structured-output';
@@ -115,6 +115,7 @@ export interface B3SampleResult {
    * evidence prompt iteration is judged against. Absent when the engine
    * call itself failed. */
   raw?: string;
+  completion?: CompletionEvidence;
 }
 
 export interface B3TaskReport {
@@ -155,6 +156,8 @@ export async function runB3Evaluation(engine: InferenceEngine, samples: readonly
   // engine cooperation needed, no receiver lost, and a failed load wraps
   // to zero calls.
   let completions = 0;
+  const evidence: { last?: CompletionEvidence } = {};
+  const latestCompletion = (): CompletionEvidence | undefined => evidence.last;
   const raws: string[] = [];
   // Explicit method forwarding on the ORIGINAL receiver: object spread
   // only copies own enumerable properties, so a class instance's
@@ -164,7 +167,10 @@ export async function runB3Evaluation(engine: InferenceEngine, samples: readonly
     load: (options) => engine.load(options),
     complete: (prompt, options) => {
       completions += 1;
-      return engine.complete(prompt, options).then((text) => {
+      return engine.complete(prompt, { ...options, onCompletion: (completion) => {
+        evidence.last = completion;
+        options?.onCompletion?.(completion);
+      } }).then((text) => {
         raws.push(text); // every completion's raw text is baseline evidence
         return text;
       });
@@ -175,6 +181,7 @@ export async function runB3Evaluation(engine: InferenceEngine, samples: readonly
   const engineCalls = new Map<string, number>(); // per sample: actual engine completions
   const results: B3SampleResult[] = [];
   for (const sample of samples) {
+    evidence.last = undefined;
     const callsAtStart = completions;
     try {
       const generation = await port.generateDetailed(sample.task, sample.key, sample.input);
@@ -193,6 +200,7 @@ export async function runB3Evaluation(engine: InferenceEngine, samples: readonly
         failure: judgeError !== undefined ? 'judge' : note === null ? null : 'semantic',
         semanticNote: note ?? undefined, judgeError, timing: generation.timing,
         raw: raws[raws.length - 1],
+        completion: evidence.last,
       };
       results.push(row);
       options.onSample?.(row, results.length - 1, samples.length);
@@ -201,11 +209,14 @@ export async function runB3Evaluation(engine: InferenceEngine, samples: readonly
       if (error instanceof StructuredOutputError) {
         // The decode rejection carries the completed generation's timing:
         // the cost was paid even though the output was rejected.
-        const row: B3SampleResult = { id: sample.id, task: sample.task, failure: 'structure', structureError: error.reason, timing: (error as { timing?: QueueTiming }).timing ?? null, raw: raws[raws.length - 1] };
+        const row: B3SampleResult = { id: sample.id, task: sample.task, failure: 'structure', structureError: error.reason, timing: (error as { timing?: QueueTiming }).timing ?? null, raw: raws[raws.length - 1], completion: evidence.last };
         results.push(row);
         options.onSample?.(row, results.length - 1, samples.length);
       } else {
-        results.push({ id: sample.id, task: sample.task, failure: 'engine', structureError: `${(error as Error).name}: ${(error as Error).message}`, timing: null });
+        const row: B3SampleResult = { id: sample.id, task: sample.task, failure: 'engine', structureError: `${(error as Error).name}: ${(error as Error).message}`, timing: null,
+          raw: latestCompletion()?.raw, completion: latestCompletion() };
+        results.push(row);
+        options.onSample?.(row, results.length - 1, samples.length);
       }
     }
   }

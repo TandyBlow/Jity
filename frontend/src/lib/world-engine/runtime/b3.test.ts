@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest';
 import { buildTaskPrompt } from './prompts';
 import { B3_SAMPLES, T01_WORKING_STATE } from './b3-samples';
 import { runB3Evaluation, formatB3Summary, type B3Judge } from './b3-eval';
-import type { InferenceEngine } from './engine';
+import { IncompleteGenerationError, type InferenceEngine } from './engine';
 import { WllamaInferenceEngine } from './wllama-engine';
 import type { Wllama } from '@wllama/wllama';
 import type { ModelTask } from '../schedule';
@@ -163,6 +163,25 @@ function validOutputsFor(samples: typeof B3_SAMPLES): string[] {
 }
 
 describe('runB3Evaluation', () => {
+  test('a truncated completion checkpoints its own partial output and cost, never the previous sample raw', async () => {
+    let calls = 0;
+    const checkpoints: string[] = [];
+    const engine: InferenceEngine = {
+      info: { backend: 'test', modelId: 'truncated' }, load: async () => {}, dispose: async () => {},
+      complete: async (_prompt, options) => {
+        const first = calls++ === 0;
+        const evidence = { raw: first ? '{"kind":"skip"}' : '{"stage":', finishReason: first ? 'stop' : 'length', firstTokenMs: 1, wallMs: 35 };
+        options?.onCompletion?.(evidence);
+        if (!first) throw new IncompleteGenerationError(evidence);
+        return evidence.raw;
+      },
+    };
+    const samples = [B3_SAMPLES.find((sample) => sample.id === 'action-1')!, B3_SAMPLES.find((sample) => sample.id === 'updates-split-1')!];
+    const report = await runB3Evaluation(engine, samples, { onSample: (row) => checkpoints.push(row.id) });
+    expect(checkpoints).toEqual(samples.map((sample) => sample.id));
+    expect(report.totals.calls).toBe(2);
+    expect(report.results[1]).toMatchObject({ failure: 'engine', raw: '{"stage":', completion: { finishReason: 'length', wallMs: 35 } });
+  });
   test('all-valid outputs: full structure and semantic-floor rates, timings and calls recorded', async () => {
     const report = await runB3Evaluation(scriptedEngine(validOutputsFor(B3_SAMPLES)), B3_SAMPLES);
     expect(report.totals).toMatchObject({ samples: B3_SAMPLES.length, structureOk: B3_SAMPLES.length, semanticFloorOk: B3_SAMPLES.length, calls: B3_SAMPLES.length });
@@ -252,12 +271,12 @@ describe('runB3Evaluation', () => {
     let wasmCompletions = 0;
     const fakeWllama = {
       loadModelFromUrl: async () => {},
-      createCompletion: async (options: Record<string, unknown>) => {
+      createChatCompletion: async (options: Record<string, unknown>) => {
         wasmCompletions += 1;
         createCalls.push(options);
         // Sample order: answer each task with something structurally valid
         // enough to pass or fail the codec — the harness must count it.
-        return { choices: [{ text: '走廊尽头的门吱呀一声开了。' }] };
+        (options.onData as (chunk: unknown) => void)({ choices: [{ delta: { content: '走廊尽头的门吱呀一声开了。' }, finish_reason: 'stop' }] });
       },
       exit: async () => {
         exits += 1;
@@ -271,7 +290,7 @@ describe('runB3Evaluation', () => {
     expect(report.totals.calls).toBe(samples.length); // the wrapper counted them through prototype methods intact
     expect(report.results.every((row) => row.timing !== null)).toBe(true);
     expect(report.results.every((row) => row.failure === null)).toBe(true); // prose decodes cleanly
-    expect(createCalls.every((call) => typeof call.prompt === 'string' && (call.prompt as string).includes('正文:'))).toBe(true);
+    expect(createCalls.every((call) => (call.messages as Array<{ content: string }>)[0].content.includes('正文:'))).toBe(true);
     expect(exits).toBe(0); // the harness never disposes the engine
   });
 

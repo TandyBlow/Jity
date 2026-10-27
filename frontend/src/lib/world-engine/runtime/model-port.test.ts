@@ -133,4 +133,16 @@ describe('RuntimeWorldModelPort', () => {
     expect(encodePrompt('action', 'person_a', { actor: 'person_a' })).toBe(encodePrompt('action', 'person_a', { actor: 'person_a' }));
     expect(encodePrompt('action', 'person_a', {})).not.toBe(encodePrompt('results', 'person_a', {}));
   });
+
+  test('task budgets and generation schemas reach the engine; narration has no JSON constraint', async () => {
+    const fake = fakeEngine(['{"kind":"skip"}', '{"stage":"sanity","changes":{}}', '走廊里十分安静。']);
+    const port = new RuntimeWorldModelPort(fake.engine);
+    await port.generate('action', 'a', { actor: 'a' });
+    await port.generate('updates', 'g#sanity', { stage: 'sanity' });
+    await port.generate('narration', 'p', {});
+    expect(fake.calls.map((call) => call.options?.maxTokens)).toEqual([80, 192, 128]);
+    expect(fake.calls[0].options?.jsonSchema).toBeDefined();
+    expect(fake.calls[1].options?.jsonSchema).toBeDefined();
+    expect(fake.calls[2].options?.jsonSchema).toBeUndefined();
+  });
 });
