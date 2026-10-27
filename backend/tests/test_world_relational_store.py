@@ -7,7 +7,7 @@ import pytest
 
 from app.database.world_repository import LedgerMismatch
 from app.database.world_store import SQLiteBaselineStore, _dump
-from tests.test_world_control_service import _claim_and_submit, _payload, run_t01_flow
+from tests.test_world_control_service import ORDER, _claim_and_submit, _payload, run_t01_flow
 from tests.test_world_sqlite_store import create_request, reopen
 
 
@@ -75,6 +75,41 @@ def test_completed_round_and_ended_input_survive_handback(tmp_path):
         assert json.loads(conclusion)['kind'] == 'handback'
         assert db.execute('SELECT ended,input_text,intent_status FROM world_advances').fetchone() == (
             1, None, 'consumed')
+
+
+def test_new_advance_keeps_the_closed_rounds_recorded_conclusion(tmp_path):
+    """The next player command in a handed-back world must not rewrite the
+    round it replaces: the closing row persists the conclusion the round
+    actually ended with (handback), never a fabricated continue."""
+    path = tmp_path / 'world.sqlite'
+    service = reopen(path)
+    flow = run_t01_flow(service)
+    _claim_and_submit(service, flow['world_id'], flow['lease'], flow['point_id'], 'ready', '已经抵达。')
+    service.execute('round_conclusion_conclude', _payload(
+        'handback', flow['world_id'], flow['lease'], operation='conclude',
+        advanceId=flow['advance_id'], roundId=flow['round_id'],
+        expectedPointId=flow['point_id'], expectedVersion=1,
+        expectedCheckpointRevision=flow['revision'],
+        conclusion={'kind': 'handback', 'closedBy': 'model', 'cancelReason': None}))
+    allocated = service.execute('allocate_ids', _payload('allocate_second_chain', flow['world_id'], flow['lease'],
+        allocationKey='second_chain', slots=[
+            {'slotKey': 'advance', 'kind': 'advance', 'scope': None},
+            {'slotKey': 'input', 'kind': 'input', 'scope': None},
+            {'slotKey': 'round', 'kind': 'round', 'scope': None}]))
+    chain = {slot['slotKey']: slot['id'] for slot in allocated['data']['allocations']}
+    service.execute('checkpoint_start_advance', _payload(
+        'start_second', flow['world_id'], flow['lease'], operation='start_advance',
+        advanceId=chain['advance'], inputId=chain['input'], roundId=chain['round'],
+        inputText='再次行动。', order=ORDER,
+        expectedPointId=flow['point_id'], expectedVersion=1,
+        expectedCheckpointRevision=flow['revision'] + 1))
+    with sqlite3.connect(path) as db:
+        rows = db.execute('SELECT id,phase,conclusion_json FROM world_rounds ORDER BY id').fetchall()
+        by_id = {row[0]: row for row in rows}
+        assert json.loads(by_id[flow['round_id']][2])['kind'] == 'handback', \
+            'the replaced round must keep its recorded handback conclusion'
+        assert by_id[chain['round']][2] is None
+
 
 
 def test_automatic_round_preserves_completed_predecessor(tmp_path):

@@ -154,10 +154,15 @@ def save_core(connection, before, record):
         # pointer switch loses it; A3 round conclusion remains one SQL txn.
         # A handback cleared record['advance'] before this swap, so the old
         # round's advance comes from its persisted row, not the live record.
+        # The conclusion the round actually ended with is history: keep it.
+        # The fabricated continue is only a fallback for a swap that arrives
+        # without any recorded conclusion (the A2 automatic-continue shape),
+        # never an overwrite of a real handback/cancel row.
         closed = dict(old_round)
-        closed['conclusion'] = dict(kind='continue', closedBy='model', cancelReason=None,
-                                    candidateCharacterIds=current_round['order'],
-                                    nextRoundId=current_round['roundId'])
+        if not closed.get('conclusion'):
+            closed['conclusion'] = dict(kind='continue', closedBy='model', cancelReason=None,
+                                        candidateCharacterIds=current_round['order'],
+                                        nextRoundId=current_round['roundId'])
         _save_round(connection, world_id, closed, old_advance or
                     _round_advance(connection, world_id, old_round['roundId']), 'complete')
     if current_round and (before is None or current_round != old_round or
