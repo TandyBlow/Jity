@@ -192,9 +192,9 @@ export default function WorldPage() {
   };
 
   /** 以服务端事实重建整页视图：叙事行（含时间推进）与状态面板。点位台账
-   * 完整分页——单页会把超过一页的世界渲染成旧 head。isStale 在每个 await
-   * 后与发布前检查：已失效的重建绝不写页面状态。 */
-  const rebuild = async (wid: Id, transport: WorldTransport, isStale: () => boolean = () => false) => {
+   * 完整分页——单页会把超过一页的世界渲染成旧 head。isStale 必填，在每个
+   * await 后与发布前检查：已失效的重建绝不写页面状态。 */
+  const rebuild = async (wid: Id, transport: WorldTransport, isStale: () => boolean) => {
     throwIfStale(isStale);
     const points = await readAllPoints(transport, wid);
     throwIfStale(isStale);
@@ -245,10 +245,12 @@ export default function WorldPage() {
    * isStale 贯穿每个 await 边界：旧代（被卸载/被新代接管的挂载）晚到的
    * 读回包绝不能继续走完 attach——创建会话、发布 activeRef、写页面状态
    * 之前都要闸一次，否则旧代会在新代已发布引用之后覆盖它，外层的按实例
-   * 清理随后把 activeRef 清成 null，页面失去对存活会话的引用。attachOnce
-   * 对自己创建的会话兜底 stopOwned：无论取消、恢复拒绝还是终态，都不会
-   * 泄漏一个仍在发心跳的会话。 */
-  const attach = async (saved: PersistedSession, apiBase: string, isStale: () => boolean = () => false): Promise<RuleWorldSession> => {
+   * 清理随后把 activeRef 清成 null，页面失去对存活会话的引用。参数必填：
+   * 自动恢复传代际判断，手动路径传「组件已卸载」判断——漏传在编译期即红。
+   * attachOnce 对自己创建的会话兜底 stopOwned：取消检查放在 try 内（恢复
+   * 返回后），任何取消、恢复拒绝或终态都经 catch 停止该会话——绝无取消后
+   * 仍在外泄漏、继续发心跳的会话。 */
+  const attach = async (saved: PersistedSession, apiBase: string, isStale: () => boolean): Promise<RuleWorldSession> => {
     stopActive();
     throwIfStale(isStale);
     setPhase('connecting');
@@ -267,6 +269,7 @@ export default function WorldPage() {
       }, saved.worldId, lease);
       try {
         const terminal = await session.attach();
+        throwIfStale(isStale); // ★ 恢复期间取消：异常落在本 try 内，catch 停止该会话
         // 任何恢复 stop（除 handback 边界的 world_complete）都意味着驱动已被
         // recoveryBarrier 闩住——绝不能带着死驱动进入 ready。
         if ((terminal.kind === 'stop' && terminal.reason !== 'world_complete') || terminal.kind === 'error') {
@@ -303,20 +306,36 @@ export default function WorldPage() {
   };
 
   const connectNew = async (apiBase: string) => {
+    // 手动路径的取消语义：组件已卸载即失效（busy 禁重入，无代际并发）。
+    // 与 attach 同族——创建后、attach 返回后、发布前各闸一次，取消走
+    // catch 停止自己创建的会话；引用发布统一后置。
+    const isStale = () => disposedRef.current;
     stopActive();
+    throwIfStale(isStale);
     setPhase('connecting');
     setWorldId(null);
     const transport = buildTransport(apiBase);
     const session = RuleWorldSession.createNew({ transport, initial: defaultInitialTemplate(), policy: WORLD_POLICY, polish: lazyPolisher, onEvent: handleEvent });
-    activeRef.current = { session, page: transport };
-    await session.attach(); // 创建世界＋根叙事；无输入即在 handback 边界停住
+    try {
+      await session.attach(); // 创建世界＋根叙事；无输入即在 handback 边界停住
+      throwIfStale(isStale); // 卸载后晚到：停止会话，不发布、不写持久化
+    } catch (error) {
+      stopOwned(session);
+      throw error;
+    }
     const wid = session.worldId;
-    if (!wid) throw new Error('world_creation_missing');
+    if (!wid) {
+      stopOwned(session);
+      throw new Error('world_creation_missing');
+    }
+    throwIfStale(isStale);
+    activeRef.current = { session, page: transport };
     setWorldId(wid);
     commandsRef.current = [];
     savePersisted({ api: apiBase, worldId: wid, leaseToken: transport.grant?.leaseToken ?? null, fenceEpoch: transport.grant?.fenceEpoch ?? null, commands: [] });
     setLeaseLabel(transport.grant ? `租约有效（epoch ${transport.grant.fenceEpoch}）` : '无租约');
-    await rebuild(wid, transport);
+    await rebuild(wid, transport, isStale);
+    throwIfStale(isStale);
     setPhase('ready');
     setNote('');
   };
@@ -354,7 +373,12 @@ export default function WorldPage() {
       setLeaseLabel(active.page.grant ? `租约有效（epoch ${active.page.grant.fenceEpoch}）` : '租约失效');
     } finally {
       setCommand('');
-      await rebuild(wid, active.page);
+      try {
+        // 卸载后中止重建：已失效的组件不再发读请求，页面状态交给新代。
+        await rebuild(wid, active.page, () => disposedRef.current);
+      } catch (error) {
+        if (!(error instanceof BootstrapCancelled)) throw error;
+      }
       setPhase('ready');
     }
   };
@@ -379,8 +403,10 @@ export default function WorldPage() {
         window.localStorage.setItem('jity.world.api', apiBase);
         if (stale()) return;
         if (saved?.worldId) {
-          const session = await attach(saved, apiBase);
-          if (stale()) stopOwned(session);
+          // ★ isStale 必传：attach 的每个闸门都靠它识别本代已失效。漏传即
+          // 全部闸门死寂（默认恒 false 的旧默认值曾造成晚到旧代覆盖新代）。
+          const session = await attach(saved, apiBase, stale);
+          if (stale()) stopOwned(session); // 返回后、下一帧前的残余窗口
         } else {
           setPhase('disconnected');
         }
@@ -431,7 +457,7 @@ export default function WorldPage() {
           </button>
           {phase === 'disconnected' && loadPersisted()?.worldId && (
             <button className="rounded border border-zinc-400 px-3 py-1 text-xs disabled:opacity-50"
-              onClick={() => { const saved = loadPersisted(); if (saved) void attach(saved, api).catch((error) => { setNote(`续接失败：${error instanceof Error ? error.message : String(error)}`); setPhase('disconnected'); }); }}
+              onClick={() => { const saved = loadPersisted(); if (saved) void attach(saved, api, () => disposedRef.current).catch((error) => { setNote(`续接失败：${error instanceof Error ? error.message : String(error)}`); setPhase('disconnected'); }); }}
               disabled={busy}>
               刷新续接
             </button>
