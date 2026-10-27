@@ -12,7 +12,7 @@ import { WorldApiError, WorldTimeoutError, type WorldTransport } from './transpo
 import { readControllerRecovery, recoverPoint, RecoveryStopped, type RecoveryLease } from './recovery';
 import {
   assembleCandidates, errorReaction, foldIdentity, initialNarrationAssembly, mergeUpdatesStages, PROGRAM_ROLL_RULE, scheduleNext, timeScanCandidates, workingStateKey,
-  type ControllerMemory, type Decision, type HarnessCommand, type ModelTask, type PlannedPoint, type RollRule, type SourceAnalysis, type UpdatesCall,
+  type AllocationPlan, type ControllerMemory, type Decision, type HarnessCommand, type ModelTask, type PlannedPoint, type RollRule, type SourceAnalysis, type UpdatesCall,
 } from './schedule';
 import type {
   Conclusion, ControlState, CurrentClaim, EntityDelta, ErrorResponse, Id, InitialTemplate, Json, PointWork, RequestMap,
@@ -97,6 +97,11 @@ export class ControllerDriver {
 
   getMemory(): ControllerMemory { return structuredClone(this.memory); }
   getRequestCounter(): number { return this.requestCounter; }
+  /** The advance the driver itself started (§6.1): the identity-bound player
+   * text model tasks read. A live accessor instead of a captured clone —
+   * bootstrapRecovery replaces the memory object wholesale, so any outside
+   * reference goes stale the moment a session recovers. */
+  get playerAdvance(): { advanceId: Id; inputId: Id; text: string } | null { return this.memory.playerAdvance; }
 
   /** Refresh/takeover always creates a NEW driver/session. A dead session's
    * in-flight writes/model outputs are never resumed or imported. */
@@ -140,6 +145,17 @@ export class ControllerDriver {
 
   /** Queues an external command; consumed when its operation executes, so it survives detours (lease loss). */
   deliver(command: HarnessCommand): void { this.command = command; }
+
+  /** The submit channel for a NEW player command on an idle session: binds
+   * the input text, swaps in the per-command allocation plan and clears the
+   * finished round's ids (advanceDecision allocates only when ids are
+   * missing). Memory stays driver-owned — bootstrapRecovery may have replaced
+   * this object entirely, so an external clone must never be mutated. */
+  preparePlayerInput(text: string, order: Id[], allocPlan: AllocationPlan, clearSlotKeys: string[]): void {
+    this.memory.allocPlan = structuredClone(allocPlan);
+    for (const key of clearSlotKeys) delete this.memory.ids[key];
+    this.memory.playerInput = { text, order: [...order] };
+  }
 
   private nextRequestId(): Id {
     const prefix = this.memory.requestId.replace(/_\d+$/, '');

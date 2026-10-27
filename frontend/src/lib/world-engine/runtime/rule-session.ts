@@ -18,7 +18,7 @@
  * page's model experiment) may rephrase, and its output is accepted only if
  * checkFactNarration admits every clause — any failure keeps the template. */
 import { ControllerDriver, initialMemory, type DriverStatus, type WorldModelPort } from '../controller';
-import type { ControllerMemory, ModelTask, UpdatesCall } from '../schedule';
+import type { AllocationPlan, ControllerMemory, ModelTask, UpdatesCall } from '../schedule';
 import type { WorldTransport } from '../transport';
 import type { RecoveryLease } from '../recovery';
 import type { HeartbeatClock } from './heartbeat';
@@ -40,8 +40,10 @@ export interface RuleNarrationInput {
 }
 
 /** The polisher returns a candidate text; rule-session alone decides via
- * checkFactNarration whether it replaces the template. */
-export type RuleNarrationPolisher = (input: RuleNarrationInput, packet: CommittedNarration) => Promise<string>;
+ * checkFactNarration whether it replaces the template. Returning null means
+ * "polish disabled for this call" — the template stands with no fallback
+ * event (the page toggles the experiment mid-session). */
+export type RuleNarrationPolisher = (input: RuleNarrationInput, packet: CommittedNarration) => Promise<string | null>;
 
 export type RuleSessionEvent =
   | { kind: 'terminal'; status: DriverStatus }
@@ -91,11 +93,14 @@ export async function narrateFromReads(after: CommittedRead, before: CommittedRe
       perspective: `主角视角（${protagonist}「${name}」）；只表达已结算的世界事实`,
     };
     try {
-      const verdict = selectFactNarration(packet, await polisher(assembled, packet));
-      polishReason = verdict.reason;
-      if (verdict.accepted) {
-        text = verdict.text;
-        polished = true;
+      const candidate = await polisher(assembled, packet);
+      if (candidate !== null) {
+        const verdict = selectFactNarration(packet, candidate);
+        polishReason = verdict.reason;
+        if (verdict.accepted) {
+          text = verdict.text;
+          polished = true;
+        }
       }
     } catch (error) {
       onEvent?.({ kind: 'polishFallback', pointId: after.pointId,
@@ -106,20 +111,17 @@ export async function narrateFromReads(after: CommittedRead, before: CommittedRe
   return text;
 }
 
-/** The per-command identity rotation: a fresh allocation plan (new
- * allocationKey, full slot set) plus cleared ids plus the bound input text.
- * advanceDecision allocates only when ids.advance/input/round are missing —
- * without the rotation a second command would silently reuse the finished
- * round's identities and be refused server-side. */
-export function rotateCommandPlan(memory: ControllerMemory, order: Id[], counter: number, command: string): void {
+/** The per-command identity plan: a fresh allocationKey over the full slot
+ * set. advanceDecision allocates only when ids.advance/input/round are
+ * missing — the driver's preparePlayerInput clears them, so a second command
+ * never silently reuses the finished round's identities. */
+export function buildCommandPlan(holderId: string, order: Id[], counter: number): { plan: AllocationPlan; slotKeys: string[] } {
   const slots = [
     { slotKey: 'advance', kind: 'advance' as const }, { slotKey: 'input', kind: 'input' as const },
     { slotKey: 'round', kind: 'round' as const }, { slotKey: 'point', kind: 'point' as const },
     ...order.map((actor) => ({ slotKey: `group:${actor}`, kind: 'group' as const })),
   ];
-  memory.allocPlan = { allocationKey: `${memory.holderId}_cmd${counter}`, slots };
-  for (const slot of slots) delete memory.ids[slot.slotKey];
-  memory.playerInput = { text: command, order: [...order] };
+  return { plan: { allocationKey: `${holderId}_cmd${counter}`, slots }, slotKeys: slots.map((slot) => slot.slotKey) };
 }
 
 export class RuleWorldSession {
@@ -153,7 +155,9 @@ export class RuleWorldSession {
     const groups = new Map<Id, IssuedGroup>();
     const requireScope = () => {
       if (!this.viewWorld || !this.viewWork) throw new Error('rule_live_scope_missing');
-      const held = this.memory.playerAdvance ?? this.viewActiveInput;
+      // 读驱动的活引用：恢复会替换驱动的 memory 对象，会话侧捕获的引用会
+      // 变陈旧（start_advance 的绑定只会落在驱动内存上）。
+      const held = this.driver?.playerAdvance ?? this.viewActiveInput;
       if (!held || held.advanceId !== this.viewWorld.advance.advanceId || held.inputId !== this.viewWorld.advance.inputId) throw new Error('rule_input_identity_missing');
       return { world: this.viewWorld, work: this.viewWork, inputText: held.text };
     };
@@ -270,15 +274,19 @@ export class RuleWorldSession {
 
   /** Prepares ONE new player command in the SAME world and runs the driver
    * until it settles (handback → world_complete, or a terminal error). The
-   * fresh allocation plan plus cleared ids are what make a second advance
-   * legal: advanceDecision would otherwise reuse the finished round's ids. */
+   * per-command plan goes through the driver's own preparePlayerInput —
+   * bootstrapRecovery may have replaced the driver's memory object, so the
+   * input binding must never land on a stale external clone. */
   async submit(command: string): Promise<DriverStatus> {
     if (this.sessionStatus === 'running') throw new Error('rule_session_busy');
     if (this.sessionStatus === 'stopped') throw new Error('rule_session_stopped');
     if (this.sessionStatus === 'lost_lease') throw new Error('rule_session_lease_lost');
     if (this.recoverWorldId !== undefined && !this.viewWorld) throw new Error('rule_session_recovery_incomplete');
+    const driver = this.driver;
+    if (!driver) throw new Error('rule_driver_missing');
     this.commandCounter += 1;
-    rotateCommandPlan(this.memory, this.order, this.commandCounter, command);
+    const { plan, slotKeys } = buildCommandPlan(this.memory.holderId, this.order, this.commandCounter);
+    driver.preparePlayerInput(command, this.order, plan, slotKeys);
     return this.session.run();
   }
 

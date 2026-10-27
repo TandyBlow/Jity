@@ -1,9 +1,8 @@
 import { describe, expect, test } from 'vitest';
 import { SHORT_STATE } from './b3-short-samples';
-import { initialMemory } from '../controller';
 import type { WorldState } from '../types';
 import type { CommittedRead } from './committed-narration';
-import { narrateFromReads, rotateCommandPlan, RuleWorldSession, type RuleNarrationInput, type RuleNarrationPolisher, type RuleSessionEvent } from './rule-session';
+import { narrateFromReads, buildCommandPlan, RuleWorldSession, type RuleNarrationInput, type RuleNarrationPolisher, type RuleSessionEvent } from './rule-session';
 
 function reads() {
   const before: CommittedRead = { pointId: 'root', previousPointId: null, version: 0, stateDigest: 'root_digest',
@@ -18,30 +17,15 @@ function reads() {
 }
 
 describe('per-command identity rotation', () => {
-  test('a second command mints a fresh allocation plan and clears the finished round ids', () => {
-    const memory = initialMemory('rule_t', 'holder_t');
+  test('a second command mints a fresh allocation plan over the full slot set', () => {
     const order = Object.keys(SHORT_STATE.initial.characters).sort();
-    rotateCommandPlan(memory, order, 1, '走到门厅');
-    const first = memory.allocPlan!;
-    memory.ids.advance = 'advance_1';
-    memory.ids.input = 'input_1';
-    memory.ids.round = 'round_1';
-    memory.ids.point = 'point_1';
-    memory.ids['group:person_a'] = 'group_1';
-    expect(first.allocationKey).toBe('holder_t_cmd1');
-    expect(first.slots.map((slot) => slot.slotKey)).toEqual(['advance', 'input', 'round', 'point', 'group:person_a', 'group:person_c']);
-    expect(memory.playerInput).toEqual({ text: '走到门厅', order });
-
-    rotateCommandPlan(memory, order, 2, '完成压力试验');
-    const second = memory.allocPlan!;
-    expect(second.allocationKey).toBe('holder_t_cmd2');
-    expect(second.allocationKey).not.toBe(first.allocationKey);
-    expect(memory.ids).not.toHaveProperty('advance');
-    expect(memory.ids).not.toHaveProperty('input');
-    expect(memory.ids).not.toHaveProperty('round');
-    expect(memory.ids).not.toHaveProperty('point');
-    expect(memory.ids).not.toHaveProperty('group:person_a');
-    expect(memory.playerInput).toEqual({ text: '完成压力试验', order });
+    const first = buildCommandPlan('holder_t', order, 1);
+    const second = buildCommandPlan('holder_t', order, 2);
+    expect(first.plan.allocationKey).toBe('holder_t_cmd1');
+    expect(first.plan.slots.map((slot) => slot.slotKey)).toEqual(['advance', 'input', 'round', 'point', 'group:person_a', 'group:person_c']);
+    expect(second.plan.allocationKey).toBe('holder_t_cmd2');
+    expect(second.plan.allocationKey).not.toBe(first.plan.allocationKey);
+    expect(second.slotKeys).toEqual(first.slotKeys);
   });
 });
 
@@ -78,6 +62,17 @@ describe('narration decision: template baseline, bounded polish, fallback', () =
     expect(text).toBe(baseline);
     const narration = events.find((event) => event.kind === 'narration');
     expect(narration).toMatchObject({ kind: 'narration', polished: false, polishReason: 'unknown_or_ambiguous_clause' });
+  });
+
+  test('a null polisher (experiment off) keeps the template with no fallback event', async () => {
+    const { before, after } = reads();
+    const baseline = '林川位于走廊。林川的精神值为10。周宁从走廊走到门厅。周宁的精神值为10。';
+    const polisher: RuleNarrationPolisher = async () => null;
+    const events: RuleSessionEvent[] = [];
+    const text = await narrateFromReads(after, before, polisher, (event) => events.push(event));
+    expect(text).toBe(baseline);
+    expect(events.find((event) => event.kind === 'narration')).toMatchObject({ kind: 'narration', polished: false, polishReason: null });
+    expect(events.find((event) => event.kind === 'polishFallback')).toBeUndefined();
   });
 
   test('a failing polisher keeps the template usable and emits the fallback', async () => {

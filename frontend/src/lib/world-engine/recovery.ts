@@ -268,7 +268,13 @@ export async function readControllerRecovery(transport: WorldTransport, worldId:
       && data.previousPointId === (summary.sequence === 0 ? null : summaries[summary.sequence - 1].pointId)
       && (summary.sequence === 0 ? data.timeAdvance === null : data.timeAdvance != null), `recovery_point_read_incomplete:${summary.pointId}`);
     if (summary.roundId === roundId) {
-      requireRecovery(summary.advanceId === context.world.advance.advanceId, 'recovery_history_advance_mismatch');
+      // The advance binding only exists while an advance IS active. At a
+      // handback boundary the server keeps the concluded round view while
+      // advance is null — the round points' advanceId is then the advance
+      // that committed them, a historical fact with nothing to bind to.
+      if (context.world.advance.advanceId !== null) {
+        requireRecovery(summary.advanceId === context.world.advance.advanceId, 'recovery_history_advance_mismatch');
+      }
       changes.push({ pointId: summary.pointId, timeAdvance: structuredClone(data.timeAdvance!), entityDeltas: structuredClone(data.entityDeltas) });
     }
     if (summary.pointId === head.pointId) state = data;

@@ -108,7 +108,6 @@ export class WorldSession {
   private readonly recoverWorldId: Id | undefined;
   private readonly recoveryLease: RecoveryLease | undefined;
   private recoveryStarted = false;
-  private recoveryTerminal: DriverStatus | null = null;
 
 
   constructor(transport: WorldTransport, port: RuntimePortLike, options: WorldSessionOptions = {}) {
@@ -197,13 +196,16 @@ export class WorldSession {
 
   private async loop(epochAtStart: number): Promise<DriverStatus> {
     try {
-      if (this.recoveryTerminal) return this.recoveryTerminal;
       if (this.recoverWorldId && !this.recoveryStarted) {
         this.recoveryStarted = true;
-        if (!this.driver.recover) return this.recoveryTerminal = { kind: 'stop', reason: 'recovery_driver_unsupported' };
+        if (!this.driver.recover) return { kind: 'stop', reason: 'recovery_driver_unsupported' };
         const recovered = await this.driver.recover(this.recoverWorldId, this.recoveryLease);
         if (epochAtStart !== this.epoch) return this.pendingTerminal ?? { kind: 'error', detail: 'session superseded' };
-        if (recovered) { this.recoveryTerminal = recovered; this.hooks.onStatus?.(recovered); return recovered; }
+        // A recovery that stops (missing authority, refused snapshot) returns
+        // its terminal here; a successful recovery falls through to the step
+        // loop so later run() calls drive the SAME session onward — a
+        // handback-boundary recovery must still accept new player commands.
+        if (recovered) { this.hooks.onStatus?.(recovered); return recovered; }
       }
       for (let step = 0; step < 500; step++) {
         if (epochAtStart !== this.epoch) return this.pendingTerminal ?? { kind: 'error', detail: 'session superseded' };
