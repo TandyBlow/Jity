@@ -4,7 +4,7 @@
  * cycle (T02-el shape) and seal/commit/narration. */
 import { describe, expect, test } from 'vitest';
 import { ControllerDriver, initialMemory, type WorldModelPort } from './controller';
-import { errorCatalog, triggerAllocationKey, triggerSlotKey, workingStateKey } from './schedule';
+import { errorCatalog, foldIdentity, triggerAllocationKey, triggerSlotKey, workingStateKey } from './schedule';
 import type { ControllerMemory, ModelTask, PlannedPoint } from './schedule';
 import { WorldApiError, WorldTimeoutError, type WorldTransport } from './transport';
 import type { ClientAction, ControlState, ErrorCode, ErrorResponse, Id, Json, PointWork, TimeAdvance, WorldContext, WorldOperation } from './types';
@@ -131,6 +131,8 @@ describe('driver end-to-end: entry, group cycle, seal/commit, narration', () => 
       { op: 'checkpoint_extend_group', respond: (r) => { work = mkWork({ phase: 'build_group', pendingGroup: { groupId: 'g1', sourceId: 'person_a', memberIds: ['person_a', 'person_d'], targetIds: [], frontierIds: [], closed: false } }); control = mkControl({ revision: 7 }); return writeOk('checkpoint_extend_group', (r as { requestId: Id }).requestId, { groupId: 'g1', memberIds: ['person_a', 'person_d'], frontierIds: [] }); } },
       { op: 'checkpoint_extend_group', respond: (r) => { control = mkControl({ revision: 8 }); return writeOk('checkpoint_extend_group', (r as { requestId: Id }).requestId, { groupId: 'g1', memberIds: ['person_a', 'person_d'], frontierIds: [] }); } },
       { op: 'checkpoint_close_group', respond: (r) => { work = mkWork({ phase: 'settle_group', pendingGroup: { groupId: 'g1', sourceId: 'person_a', memberIds: ['person_a', 'person_d'], targetIds: [], frontierIds: [], closed: true } }); control = mkControl({ revision: 9 }); return writeOk('checkpoint_close_group', (r as { requestId: Id }).requestId, { groupId: 'g1', closed: true }); } },
+      // 候选 change 身份是程序分配（§9.3）：驱动在 stage 前为模型选的 change id 补分配。
+      { op: 'allocate_ids', respond: (r) => writeOk('allocate_ids', (r as { requestId: Id }).requestId, { allocations: (r as { slots: { slotKey: Id }[] }).slots.map((s, i) => ({ slotKey: s.slotKey, id: `alloc_change_${i}` })) }) },
       { op: 'checkpoint_stage_unit', respond: (r) => { work = mkWork({ working: { cursor: 1, actedIds: ['person_a'], visitedIds: [], settledUnitIds: ['u1'], intentStatus: 'pending' } }); control = mkControl({ revision: 10 }); return writeOk('checkpoint_stage_unit', (r as { requestId: Id }).requestId, { groupId: 'g1', unitId: 'u1', working: work.working }); } },
       // #7：暂存后逐人判断（旧路径是程序补记跳过），判断前要读最新工作态。
       { op: 'preview_point', respond: (r) => previewOk((r as { requestId?: Id }).requestId ?? 'req') },
@@ -179,7 +181,7 @@ describe('driver end-to-end: entry, group cycle, seal/commit, narration', () => 
       'create_world', 'narration_claim', 'get_state', 'narration_submit', 'allocate_ids', 'checkpoint_start_advance',
       'checkpoint_begin_point', 'preview_point', 'checkpoint_discover_group',
       'checkpoint_extend_group', 'create_rolls', 'create_rolls', 'checkpoint_extend_group', 'checkpoint_extend_group',
-      'checkpoint_close_group', 'checkpoint_stage_unit', 'preview_point',
+      'checkpoint_close_group', 'allocate_ids', 'checkpoint_stage_unit', 'preview_point',
       ...Array.from({ length: 4 }, () => 'checkpoint_record_skip' as WorldOperation),
       'checkpoint_seal_point', 'commit_point', 'narration_claim', 'get_state', 'get_state', 'narration_submit',
     ]);
@@ -197,6 +199,11 @@ describe('driver end-to-end: entry, group cycle, seal/commit, narration', () => 
     const rolls = (transport.requests[10] as { rolls: { targetId: string }[] }).rolls;
     expect(rolls[0].targetId).toBe('person_a');
     expect((transport.requests[11] as { rolls: { targetId: string }[] }).rolls[0].targetId).toBe('person_d');
+    // stage 前的分配：槽位键折叠（组,实体,模型 id），候选改写为分配身份。
+    const allocateSlots = (transport.requests[15] as { slots: { slotKey: Id; kind: string }[] }).slots;
+    expect(allocateSlots).toEqual([{ slotKey: `change:${foldIdentity('g1', 'person_a', 'ch1')}`, kind: 'change' }]);
+    const stageRequest = transport.requests[16] as { candidates: { appearances: Record<Id, { id: Id }[]> } };
+    expect(stageRequest.candidates.appearances.person_a[0].id).toBe('alloc_change_0');
     // 叙事模型输入 = 独立手写字面量（不经 assembleNarrationInput）：固定输出验证。
     const nsState = workingState() as unknown as Json;
     const perspective = '主角视角（person_a「甲」）；只表达已结算的世界事实';
@@ -499,6 +506,11 @@ describe('review regressions (553e341 findings)', () => {
         if (JSON.stringify(achieved) !== JSON.stringify(['t1'])) throw new Error(`boundary preview must carry only the valid part, got ${JSON.stringify(achieved)}`);
         return previewEnvelope(stateWithTasks({ t1: taskOf('t1', 'achieved', null) }));
       } },
+      { op: 'allocate_ids', respond: (r) => ({
+        protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1,
+        replayed: false, operation: 'allocate_ids', requestId: (r as { requestId: Id }).requestId, requestHash: 'hash', world, control, work,
+        data: { allocations: (r as { slots: { slotKey: Id }[] }).slots.map((s, i) => ({ slotKey: s.slotKey, id: `alloc_id_${i}` })) },
+      }) },
       { op: 'checkpoint_stage_time_scan', respond: (r) => ({
         protocolVersion: 2, engineVersion: 'world-engine-v1', schemaVersion: 2, canonicalVersion: 'world-canonical-v1', serverTimeEpochMilli: 1,
         replayed: false, operation: 'checkpoint_stage_time_scan', requestId: (r as { requestId: Id }).requestId, requestHash: 'hash', world, control, work, data: {},
@@ -523,12 +535,13 @@ describe('review regressions (553e341 findings)', () => {
     expect(memory.updatesApplied).toBe(1);
     await driver.step(); // subtasks 模型（读 t1=achieved 的状态——§6.3）
     await driver.step(); // 最终批次：v13 达成＋生产同批出线
-    expect(transport.ops).toEqual(['preview_point', 'checkpoint_stage_time_scan']);
+    expect(transport.ops).toEqual(['preview_point', 'allocate_ids', 'checkpoint_stage_time_scan']);
     const subtasksInput = model.calls[1].input as { workingState: { characters: Record<string, { tasks: Record<string, { status: string }> }> } };
     expect(subtasksInput.workingState.characters.person_a.tasks.t1.status).toBe('achieved');
-    const stageReq = transport.requests[1] as { candidates: { tasksAchieved: Record<string, string[]>; subtasksAdded: Record<string, { id: string }[]> } };
+    const stageReq = transport.requests[2] as { candidates: { tasksAchieved: Record<string, string[]>; subtasksAdded: Record<string, { id: string }[]> } };
     expect(stageReq.candidates.tasksAchieved.person_a).toEqual(['t1', 'v13']);
-    expect(stageReq.candidates.subtasksAdded.person_a.map((t) => t.id)).toEqual(['v13']);
+    // 子任务身份在发送前改写为程序分配 id（§9.3）：模型只提供草稿 id。
+    expect(stageReq.candidates.subtasksAdded.person_a.map((t) => t.id)).toEqual(['alloc_id_0']);
     expect(memory.updatesPendingRefs).toEqual([]); // 随结算批次落定——未决清零
     expect(memory.updatesApplied).toBe(0); // 阶梯已被 stage_time_scan 消费
   });

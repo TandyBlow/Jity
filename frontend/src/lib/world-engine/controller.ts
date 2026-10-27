@@ -11,7 +11,7 @@
 import { WorldApiError, WorldTimeoutError, type WorldTransport } from './transport';
 import { readControllerRecovery, recoverPoint, RecoveryStopped, type RecoveryLease } from './recovery';
 import {
-  assembleCandidates, errorReaction, initialNarrationAssembly, mergeUpdatesStages, PROGRAM_ROLL_RULE, scheduleNext, timeScanCandidates, workingStateKey,
+  assembleCandidates, errorReaction, foldIdentity, initialNarrationAssembly, mergeUpdatesStages, PROGRAM_ROLL_RULE, scheduleNext, timeScanCandidates, workingStateKey,
   type ControllerMemory, type Decision, type HarnessCommand, type ModelTask, type PlannedPoint, type RollRule, type SourceAnalysis, type UpdatesCall,
 } from './schedule';
 import type {
@@ -208,7 +208,72 @@ export class ControllerDriver {
    * retries, recovery hops and follow-up invocations all draw from ONE
    * shared budget, so no recovery chain can outlive retryLimit. A lease
    * held by another owner is a wait, not a reacquire loop. */
+  /** Stage-bound candidates carry model-chosen change/task identities, but
+   * the server binds every stored identity to a program allocation (§9.3):
+   * the missing ones are allocated at send time and the candidates are
+   * rewritten in place, so preview, stage and commit all carry the same
+   * allocated ids. Slot keys fold the group (or point for the time scan)
+   * plus entity plus the model-chosen id — stable across retries, so a
+   * retried stage re-checks and allocates nothing. */
+  private collectCandidateIdentityWork(operation: WorldOperation, request: unknown, scope: { worldId?: Id }):
+    { world: WorldContext; allocation: RequestMap['allocate_ids']; items: { alias: Id; target: { id: Id } }[] } | null {
+    if (operation !== 'checkpoint_stage_unit' && operation !== 'checkpoint_stage_time_scan') return null;
+    const { candidates, pointId } = request as { candidates?: {
+      groupId?: Id | null; appearances?: Record<Id, { id: Id }[]>; personalities?: Record<Id, { id: Id }[]>; subtasksAdded?: Record<Id, { id: Id }[]>;
+    } | null; pointId?: Id };
+    if (!candidates) return null;
+    // Restored units are server originals: their identities were allocated
+    // before the crash and stage verbatim — rewriting them would corrupt the
+    // exact-original fidelity the recovery contract requires.
+    if (this.memory.restoredUnit && candidates === (this.memory.restoredUnit.candidates as unknown)) return null;
+    const scopeKey = candidates.groupId ?? pointId ?? scope.worldId ?? 'point';
+    const items: { alias: Id; kind: 'change' | 'task'; target: { id: Id } }[] = [];
+    const collect = (entity: Id, kind: 'change' | 'task', list: { id: Id }[] | undefined) => {
+      for (const target of list ?? []) {
+        const alias = `${kind}:${foldIdentity(scopeKey, entity, target.id)}`;
+        if (this.memory.ids[alias] == null) items.push({ alias, kind, target });
+      }
+    };
+    for (const [entity, list] of Object.entries(candidates.appearances ?? {})) collect(entity, 'change', list);
+    for (const [entity, list] of Object.entries(candidates.personalities ?? {})) collect(entity, 'change', list);
+    for (const [entity, list] of Object.entries(candidates.subtasksAdded ?? {})) collect(entity, 'task', list);
+    if (!items.length) return null;
+    const world = this.state.world;
+    if (!world?.lease) throw new Error('Candidate identity allocation without a live lease');
+    const allocation = {
+      protocolVersion: 2 as const, requestId: this.nextRequestId(), worldId: world.worldId,
+      leaseToken: this.memory.leaseToken as Id, fenceEpoch: world.lease.fenceEpoch,
+      allocationKey: `candidates:${foldIdentity(scopeKey)}` as Id,
+      slots: items.map(({ alias, kind }) => ({ slotKey: alias, kind })),
+    } as unknown as RequestMap['allocate_ids'];
+    return { world, allocation, items };
+  }
+
+  /** call() alone does not adopt: write the granted ids here so the rewrite
+   * below sees them. A refused allocation leaves an explicit barrier — the
+   * stage behind us would go out with unallocated identities and be refused
+   * anyway. */
+  private async ensureCandidateIdentities(work: { world: WorldContext; allocation: RequestMap['allocate_ids']; items: { alias: Id; target: { id: Id } }[] }): Promise<void> {
+    const outcome = await this.call('allocate_ids', work.allocation, { worldId: work.world.worldId });
+    if (!outcome.ok) {
+      this.recoveryBarrier = 'candidate_identity_allocation_refused';
+      return;
+    }
+    for (const allocation of (outcome.response as unknown as { data: { allocations: { slotKey: Id; id: Id }[] } }).data.allocations) {
+      this.memory.ids[allocation.slotKey] = allocation.id;
+    }
+    for (const { alias, target } of work.items) {
+      const allocated = this.memory.ids[alias];
+      if (allocated == null) throw new Error('Candidate identity allocation returned no id');
+      target.id = allocated;
+    }
+  }
+
   private async call(operation: WorldOperation, request: unknown, scope: { worldId?: Id; pointId?: Id }, budget?: { left: number }): Promise<CallOutcome> {
+    // Sync scan first: the no-allocation path must stay await-free so a step
+    // still reaches the transport synchronously (command-delivery timing).
+    const identityWork = this.collectCandidateIdentityWork(operation, request, scope);
+    if (identityWork) await this.ensureCandidateIdentities(identityWork);
     const retries = budget ?? { left: this.retryLimit };
     for (;;) {
       try {

@@ -152,7 +152,9 @@ describe.each([
       // The candidate adds a pending child and achieves it in the same unit;
       // the server projection collapses that into one achieved addition.
       expect(sealGroups[0].tasksAchieved.person_c).toEqual([child]);
-      expect(sealGroups[0].subtasksAdded.person_c.find((task) => task.id === child)?.status).toBe('pending');
+      // 子任务 id 已按 §9.3 派生为分配身份，按 parent 引用定位（引用是
+      // 已登记身份，不随分配改写）。
+      expect(sealGroups[0].subtasksAdded.person_c.find((task) => task.parentTaskId === 'task_c_root')?.status).toBe('pending');
       expect(seal.pointProjection.entityDeltas.person_c).toMatchObject({
         subtasksAdded: [expect.objectContaining({ id: parent, status: 'pending' }), expect.objectContaining({ id: child, status: 'achieved' })],
       });
@@ -227,7 +229,24 @@ describe.each([
     // 有达成 ⇒ 全角色名册，否则为空。
     recordedCandidates.personalityCoverageIds = hasAchieved ? [...ROSTER] : [];
     const sentStageRequest = scenario.transport.requests[scenario.transport.ops.indexOf(stageOp)] as unknown as { candidates: Record<string, unknown> };
-    expect(sentStageRequest.candidates).toEqual(recordedCandidates);
+    // §9.3 身份派生：候选里的 change/task id 是程序分配值（发送前改写），
+    // 结构/文本/覆盖仍须与独立权威夹具逐字一致——比较剥除 id 字段，分配
+    // 形态单独断言。
+    const stripIds = (candidates: Record<string, unknown>): Record<string, unknown> => {
+      const clone = structuredClone(candidates) as { appearances?: Record<string, Record<string, unknown>[]>; personalities?: Record<string, Record<string, unknown>[]>; subtasksAdded?: Record<string, Record<string, unknown>[]> };
+      for (const section of [clone.appearances, clone.personalities, clone.subtasksAdded]) {
+      for (const [entity, list] of Object.entries(section ?? {})) {
+        section![entity] = list.map(({ id: _id, ...rest }) => rest);
+      }
+      }
+      return clone;
+    };
+    expect(stripIds(sentStageRequest.candidates)).toEqual(stripIds(recordedCandidates));
+    for (const section of [sentStageRequest.candidates.appearances, sentStageRequest.candidates.personalities, sentStageRequest.candidates.subtasksAdded] as Record<string, { id: string }[]>[]) {
+      for (const list of Object.values(section ?? {})) {
+        for (const item of list) expect(item.id).toMatch(/^alloc_(change|task)_\d+$/);
+      }
+    }
 
     // ③ 最终 Δ 与独立权威夹具一致：commit 请求的 point.entityDeltas 与录制
     //    commit 请求逐字（collapse 的子任务状态浓缩是录制投影的一部分）。
@@ -244,7 +263,7 @@ describe.each([
     expect(scenario.driver.getMemory().stagedTimeScan).toBeNull();
     expect(scenario.driver.getMemory().staged).toEqual([]);
     // 组装阶梯：每条叙事链 +2 次读取（目标＋前驱）。
-    expect(scenario.transport.ops).toHaveLength(traceName === 'T03' ? 20 : 18);
+    expect(scenario.transport.ops).toHaveLength(traceName === 'T03' ? 21 : 19);
     if (traceName === 'T03-collapse') {
       expect(scenario.transport.ops[1]).toBe('allocate_ids');
       expect((scenario.transport.requests[1] as { requestId: string }).requestId).toMatch(/^req_T03-collapse_\d+$/);
@@ -287,7 +306,8 @@ describe('T03 harness directed negatives', () => {
     scenario.memory.ids.point = 'old_round_point';
     await openT03Session(scenario);
     await driveControllerSegment(scenario);
-    expect(scenario.transport.ops.filter((operation) => operation === 'allocate_ids')).toHaveLength(1);
+    // 组身份分配（round entry）＋候选 change/task 分配（stage 前）各一次。
+    expect(scenario.transport.ops.filter((operation) => operation === 'allocate_ids')).toHaveLength(2);
     expect(scenario.driver.getMemory().ids['group:person_c']).toBe('group_task');
     expect(scenario.driver.getMemory().ids.point).toBe('p4');
   });

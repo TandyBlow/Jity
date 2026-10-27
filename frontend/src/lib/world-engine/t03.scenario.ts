@@ -36,6 +36,7 @@ import { resolve } from 'node:path';
 import { ControllerDriver, initialMemory } from './controller';
 import { assembleCandidates, mergeUpdatesStages, timeScanCandidates, triggerSlotKey, type UpdatesCall, type UpdatesStage } from './schedule';
 import { buildCorpus, frozenGroupActionsAtStage, ScenarioModelPort, ScenarioTransport, servedBeforeSteps, type Corpus, type CorpusStep, type DeclaredModelCall, type PreviewSpecimenSpec, type ReadStateSpecimenSpec } from './harness';
+import { deriveCandidateIdentities } from './candidate-derivation';
 import { ProtocolError } from './protocol';
 import { equal, instantiate, readTrace } from './trace-runner';
 import { advanceTime, type WallTime } from './t02.scenario';
@@ -338,6 +339,9 @@ export function buildT03Scenario(traceName: T03TraceName, sampleId: string): T03
       req.settlementGroups = ((req.settlementGroups as Record<string, unknown>[]) ?? []).map((group) => withRuledCoverage(group, roster, traceName));
     }
   }
+  // §9.3 身份派生：录制时代的候选 change/task id 未经过分配绑定——按当前
+  // 控制器行为派生（发送前分配并改写）；preview 请求保持模型形状不动。
+  deriveCandidateIdentities(corpus.steps);
 
   // #7 复核：`actorIds: []` 不是「跳过所有未处理人物」。录制在 begin 后直接
   // stage_time_scan（旧偏差的产物）；现在补上六个行动判断对应的 record_skip
