@@ -6,9 +6,11 @@
  * sessionStorage，恢复时先 lease_renew 续租、失败则降级为接管。模型润色
  * 是可选实验：任何加载/生成/校验失败都保持提交模板可用。 */
 import { useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
 import { HttpWorldTransport } from '@/lib/world-engine/http-transport';
 import { WorldTimeoutError, type WorldTransport } from '@/lib/world-engine/transport';
 import { RuleWorldSession, type RuleNarrationPolisher, type RuleSessionEvent } from '@/lib/world-engine/runtime/rule-session';
+import { readAllPoints } from '@/lib/world-engine/runtime/world-reads';
 import type { DriverStatus } from '@/lib/world-engine/controller';
 import { DEFAULT_POLISH_MODEL, WORLD_POLICY, defaultInitialTemplate } from './world-defaults';
 import type { Id, InitialTemplate, Json, RequestMap, Scope, Success, TimeAdvance, WorldOperation, WorldState } from '@/lib/world-engine/types';
@@ -99,9 +101,6 @@ function polishEngine(modelUrl: string): Promise<RuleNarrationPolisher> {
   return engine;
 }
 
-// StrictMode 双挂载下只 bootstrap 一次；刷新续接本来就是整页重载。
-let booted = false;
-
 interface ActiveSession { session: RuleWorldSession; page: PageTransport }
 
 export default function WorldPage() {
@@ -119,6 +118,9 @@ export default function WorldPage() {
   const [dropNextArmed, setDropNextArmed] = useState(false);
   const activeRef = useRef<ActiveSession | null>(null);
   const commandsRef = useRef<string[]>([]);
+  const bootedRef = useRef(false);
+  const generationRef = useRef(0);
+  const disposedRef = useRef(false);
   const polishOnRef = useRef(false);
   const polishModelRef = useRef(DEFAULT_POLISH_MODEL);
   polishOnRef.current = polishOn;
@@ -180,15 +182,17 @@ export default function WorldPage() {
     };
   };
 
-  /** 以服务端事实重建整页视图：叙事行（含时间推进）与状态面板。 */
+  /** 以服务端事实重建整页视图：叙事行（含时间推进）与状态面板。点位台账
+   * 完整分页——单页会把超过一页的世界渲染成旧 head。 */
   const rebuild = async (wid: Id, transport: WorldTransport) => {
-    const points = (await transport.execute('list_points', { after: null, limit: 100 }, { worldId: wid })).data.points;
+    const points = await readAllPoints(transport, wid);
+    const headPointId = points.at(-1)?.pointId;
     const rows: LogRow[] = [];
     let headState: WorldState | null = null;
     for (const point of points) {
       const narration = (await transport.execute('narration_get', {}, { worldId: wid, pointId: point.pointId })).data;
       const read = (await transport.execute('get_state', { point: point.pointId }, { worldId: wid })).data;
-      if (point.pointId === points.at(-1)?.pointId) headState = read.state;
+      if (point.pointId === headPointId) headState = read.state;
       rows.push({
         pointId: point.pointId,
         version: read.version,
@@ -215,9 +219,14 @@ export default function WorldPage() {
     activeRef.current = null;
   };
 
+  const stopOwned = (session: RuleWorldSession) => {
+    session.stop();
+    if (activeRef.current?.session === session) activeRef.current = null;
+  };
+
   /** 恢复既有世界：先读服务端事实派生模板，再走 recover；持约续租失败时
-   * 降级为一次接管。 */
-  const attach = async (saved: PersistedSession, apiBase: string) => {
+   * 降级为一次接管。返回创建的会话，供调用方在已失效时按实例停止。 */
+  const attach = async (saved: PersistedSession, apiBase: string): Promise<RuleWorldSession> => {
     stopActive();
     setPhase('connecting');
     setWorldId(saved.worldId);
@@ -227,29 +236,36 @@ export default function WorldPage() {
     delete initial.worldId;
     const heldLease = saved.leaseToken && saved.fenceEpoch != null ? { leaseToken: saved.leaseToken, fenceEpoch: saved.fenceEpoch } : undefined;
     setLeaseLabel(heldLease ? '续租中' : '接管中');
-    const attachOnce = async (lease: { leaseToken: Id; fenceEpoch: number } | undefined): Promise<DriverStatus> => {
+    const attachOnce = async (lease: { leaseToken: Id; fenceEpoch: number } | undefined): Promise<RuleWorldSession> => {
       const session = RuleWorldSession.createRecovered({
         transport, initial, policy: WORLD_POLICY, polish: lazyPolisher, onEvent: handleEvent,
       }, saved.worldId, lease);
       activeRef.current = { session, page: transport };
       const terminal = await session.attach();
-      return terminal;
+      // 任何恢复 stop（除 handback 边界的 world_complete）都意味着驱动已被
+      // recoveryBarrier 闩住——绝不能带着死驱动进入 ready。
+      if ((terminal.kind === 'stop' && terminal.reason !== 'world_complete') || terminal.kind === 'error') {
+        const reason = terminal.kind === 'error' ? terminal.detail : terminal.reason;
+        stopOwned(session);
+        throw new Error(reason);
+      }
+      return session;
     };
-    let terminal = await attachOnce(heldLease);
-    if (terminal.kind === 'stop' && terminal.reason.startsWith('recovery_refused') && heldLease) {
+    let session: RuleWorldSession;
+    try {
+      session = await attachOnce(heldLease);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      if (!heldLease || !message.startsWith('recovery_refused')) throw error;
       setNote('续租被拒，改为接管重连…');
-      stopActive();
-      terminal = await attachOnce(undefined);
+      session = await attachOnce(undefined);
     }
-    // 任何恢复 stop（除 handback 边界的 world_complete）都意味着驱动已被
-    // recoveryBarrier 闩住——绝不能带着死驱动进入 ready。
-    if (terminal.kind === 'stop' && terminal.reason !== 'world_complete') throw new Error(terminal.reason);
-    if (terminal.kind === 'error') throw new Error(terminal.detail);
     setLeaseLabel(transport.grant ? `租约有效（epoch ${transport.grant.fenceEpoch}）` : '无租约');
     commandsRef.current = saved.commands;
     await rebuild(saved.worldId, transport);
     setPhase('ready');
     setNote('');
+    return session;
   };
 
   const connectNew = async (apiBase: string) => {
@@ -309,9 +325,17 @@ export default function WorldPage() {
     }
   };
 
+  /** 组件级初始化：卸载（或 StrictMode 清理）后重挂载必须重新 bootstrap——
+   * 跨实例保留的模块级标记会让客户端导航返回时永远停在 boot。取消语义按
+   * 代际判定：cleanup 之后被清除的 disposed 只属于当前代，新 effect 会先
+   * 复位 disposed 并推进代数，因此旧 bootstrap 的每个检查点都能识别自己
+   * 已失效，且只停止自己创建的会话，绝不误杀新实例的会话。 */
   useEffect(() => {
-    if (booted) return;
-    booted = true;
+    disposedRef.current = false;
+    if (bootedRef.current) return;
+    bootedRef.current = true;
+    const generation = ++generationRef.current;
+    const stale = () => disposedRef.current || generationRef.current !== generation;
     void (async () => {
       try {
         const params = new URLSearchParams(window.location.search);
@@ -319,13 +343,27 @@ export default function WorldPage() {
         const apiBase = params.get('api') ?? saved?.api ?? window.localStorage.getItem('jity.world.api') ?? DEFAULT_API;
         setApi(apiBase);
         window.localStorage.setItem('jity.world.api', apiBase);
-        if (saved?.worldId) await attach(saved, apiBase);
-        else setPhase('disconnected');
+        if (stale()) return;
+        if (saved?.worldId) {
+          const session = await attach(saved, apiBase);
+          if (stale()) stopOwned(session);
+        } else {
+          setPhase('disconnected');
+        }
       } catch (error) {
+        if (stale()) return;
         setNote(`续接失败：${error instanceof Error ? error.message : String(error)}`);
         setPhase('disconnected');
       }
     })();
+    return () => {
+      disposedRef.current = true;
+      bootedRef.current = false;
+      // 仅当代数仍属于本 effect 时才停会话：新一代已接管时不得误停。
+      // 刻意读取 ref 的最新值做代际比较，而非闭包快照。
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      if (generationRef.current === generation) stopActive();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -338,7 +376,10 @@ export default function WorldPage() {
   return (
     <main className="mx-auto max-w-3xl space-y-4 p-6 text-sm text-zinc-800">
       <header className="flex items-center justify-between">
-        <h1 className="text-lg font-semibold">世界最小交互页</h1>
+        <div className="flex items-center gap-3">
+          <h1 className="text-lg font-semibold">世界最小交互页</h1>
+          <Link href="/" className="text-xs text-zinc-500 underline hover:text-zinc-700">返回控制台</Link>
+        </div>
         <div className="flex items-center gap-2 text-xs text-zinc-500">
           {worldId && <span className="rounded bg-zinc-100 px-2 py-0.5 font-mono">{worldId}</span>}
           <span className={`rounded px-2 py-0.5 ${leaseLabel === '无租约' ? 'bg-zinc-100' : 'bg-emerald-100 text-emerald-700'}`}>{leaseLabel}</span>
