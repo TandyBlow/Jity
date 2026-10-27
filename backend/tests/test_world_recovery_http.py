@@ -85,19 +85,25 @@ def test_lease_renew_stays_authority_only_for_damaged_business_facts(tmp_path):
     """Renewal must not inherit frozen/progress damage: get_context owns the
     frozen_work_* declaration and reports it after the lease is usable again."""
     for fault, expected in (('missing_progress', 'frozen_work_missing'),
-                            ('progress_stack', 'frozen_work_corrupt')):
+                            ('progress_stack', 'frozen_work_corrupt'),
+                            ('group_shape', 'frozen_work_corrupt')):
         (tmp_path / fault).mkdir()
         flow = scenario(tmp_path / fault)
         with sqlite3.connect(flow['path']) as connection:
             if fault == 'missing_progress':
                 connection.execute('DELETE FROM world_group_progress')
-            else:
+            elif fault == 'progress_stack':
                 value = json.loads(connection.execute(
                     'SELECT checkpoint_json FROM world_group_progress').fetchone()[0])
                 value['progress']['sourceStack'] = []
                 connection.execute(
                     'UPDATE world_group_progress SET checkpoint_json=?,checkpoint_digest=?',
                     (json.dumps(value), canonical_digest(value)))
+            else:
+                group = json.loads(connection.execute(
+                    'SELECT group_json FROM world_group_payloads').fetchone()[0])
+                group['actionTexts']['person_a'] = False
+                connection.execute('UPDATE world_group_payloads SET group_json=?', (json.dumps(group),))
         renew_spec = OPERATION_BY_NAME['lease_renew']
         context_spec = OPERATION_BY_NAME['get_context']
         renew_url = renew_spec.path.replace('{worldId}', flow['world'])
@@ -107,7 +113,13 @@ def test_lease_renew_stays_authority_only_for_damaged_business_facts(tmp_path):
                 json=_payload(f'renew_{fault}', flow['world'], flow['lease']))
             assert renewed.status_code == 200, renewed.text
             assert renewed.json()['operation'] == 'lease_renew'
-            assert renewed.json()['work'] is not None
+            # The active-work projection is present when readable; a damaged
+            # work row omits it but keeps the snapshot pointer for the next read.
+            if fault == 'group_shape':
+                assert renewed.json()['work'] is None
+            else:
+                assert renewed.json()['work'] is not None
+            assert renewed.json()['world']['activePointId'] == flow['ids']['point']
             refused = client.get(context_url, headers=HEADERS, params=dict(
                 includeRecovery='true', leaseToken=flow['lease']['leaseToken'],
                 fenceEpoch=flow['lease']['fenceEpoch']))

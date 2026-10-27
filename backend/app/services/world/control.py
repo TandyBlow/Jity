@@ -290,6 +290,12 @@ def _world_view(record):
         active_round_id = round_view['roundId']
     work = record.get('work')
     lease = record.get('lease')
+    # An authority-only load that could not read the active-work projection
+    # keeps the snapshot pointer but omits work; surface that pointer rather
+    # than pretending the world has no active point.
+    active_point_id = (work or {}).get('pointId')
+    if work is None and '_activeWorkPointId' in record:
+        active_point_id = record.get('_activeWorkPointId')
     return WorldContext.model_validate({
         'worldId': record['worldId'],
         'head': {'pointId': record['headPointId'], 'version': record['version'],
@@ -301,7 +307,7 @@ def _world_view(record):
                    'expiresAtEpochMilli': lease['expiresAtEpochMilli']}
                   if lease else None),
         'successor': (work or {}).get('successor'),
-        'activePointId': (work or {}).get('pointId'),
+        'activePointId': active_point_id,
         'activeRoundId': active_round_id,
     }).model_dump(mode='json')
 

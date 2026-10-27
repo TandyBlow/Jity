@@ -295,18 +295,25 @@ class SQLiteBaselineStore:
             # Lease authority must survive damaged frozen/progress/judgment
             # facts: the next protected read (get_context) is the operation
             # that reports frozen_work_*, with its own declared error surface.
-            # Active work is still loaded for an accurate response view, but
-            # its progress/frozen side tables are deliberately not validated.
+            # The active-work projection is still loaded for an accurate
+            # response view; if that projection itself is unreadable, omit it
+            # (work=null) instead of turning a leak of business damage into an
+            # unmapped lease_renew exception. The snapshot pointers remain
+            # untouched for the next transaction.
             check_core(connection, record)
-            record['work'] = load_work(connection, world_id)
-            reserved = load_reserved_work(connection, world_id)
-            if reserved is not None:
-                record['_successorWork'] = reserved
-            if (record['work'] or {}).get('pointId') != record.get('_activeWorkPointId'):
-                raise LedgerMismatch('Relational work differs from the bound active point')
-            if (reserved or {}).get('pointId') != record.get('_reservedWorkPointId'):
-                raise LedgerMismatch('Reserved work differs from its bound successor pointer')
-            check_work(connection, record)
+            try:
+                record['work'] = load_work(connection, world_id)
+                reserved = load_reserved_work(connection, world_id)
+                if reserved is not None:
+                    record['_successorWork'] = reserved
+                if (record['work'] or {}).get('pointId') != record.get('_activeWorkPointId'):
+                    raise LedgerMismatch('Relational work differs from the bound active point')
+                if (reserved or {}).get('pointId') != record.get('_reservedWorkPointId'):
+                    raise LedgerMismatch('Reserved work differs from its bound successor pointer')
+                check_work(connection, record)
+            except LedgerMismatch:
+                record.pop('work', None)
+                record.pop('_successorWork', None)
             return record
         expected_work_point = record.pop('_activeWorkPointId')
         expected_reserved_point = record.pop('_reservedWorkPointId', None)
