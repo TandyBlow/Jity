@@ -38,7 +38,9 @@ node scripts/review-world-page.mjs --out <path>     # 报告落点
 （自动续接，4 行叙事全部由服务端事实重建）→ 完成压力试验（10→8，任务达成）
 → 勾选「下一次提交丢回执」+ 完成恢复练习（8→9；commit_point 回执被注入丢弃后
 驱动以同一 requestId 重试，服务端 replay）→ 勾选「模型润色」+ 走到门厅（回合
-完成，模板可用）→ 服务端核对：恰好 6 回合 7 点位、逐点叙事 ready、无重复消费。
+完成，模板可用）→ 服务端核对：恰好 6 回合 7 点位、逐点叙事 ready、无重复消费
+→ **客户端导航往返**（复核 r7）：SPA 离开 → 返回 → 重新初始化自动续接，
+7 行叙事与状态（门厅/9）完整恢复。
 
 ## Node 探针（review.json: probes）
 
@@ -54,18 +56,39 @@ node scripts/review-world-page.mjs --out <path>     # 报告落点
 - **A 侧（world-server 31660cc）**：同一世界开新回合时，闭合行持久化直接解引用
   已被 handback 清空的 `record['advance']` → start_advance 整事务 500。改为回退
   读该回合已持久化的 advance 行。
-- **B 侧 recovery**：handback 边界的 `recovery_history_advance_mismatch`——回合
-  视图仍在而 advance 已为 null 时，历史 advance 绑定检查无对象，恢复被拒且
-  驱动被 recoveryBarrier 闩死。advance 为 null 时跳过该绑定（recovery.ts）。
-- **B 侧 WorldSession**：恢复成功后的 `recoveryTerminal` 永久短路后续 run()，
-  恢复会话永远接不了新命令。移除短路；恢复失败仍由驱动 barrier 守住。
-- **B 侧 RuleWorldSession/controller**：恢复会整体替换驱动 memory 对象，
-  会话侧持有的旧引用上写入 playerInput、读取 playerAdvance 全部落空
-  （表现为回合静默 world_complete 或 `rule_input_identity_missing`）。
+- **A 侧（world-server 3734a52，复核 P1-1）**：轮换 round 的闭合行无条件捏造
+  `kind='continue'`，把真实 handback 历史改写（复核实读：12 条已接受结论中 8 条
+  变 continue）。修复后保留已记录结论，捏造 continue 仅作为无结论换轮的回退；
+  回归测试先行复红（`test_new_advance_keeps_the_closed_rounds_recorded_conclusion`）。
+  修复后验收库实读：12 条闭合回合全部 handback、0 continue、0 null。
+- **B 侧 recovery（复核前批次已修）**：handback 边界的
+  `recovery_history_advance_mismatch`——回合视图仍在而 advance 已为 null 时，
+  历史 advance 绑定检查无对象，恢复被拒且驱动被 recoveryBarrier 闩死。advance
+  为 null 时跳过该绑定（recovery.ts）。
+- **B 侧 WorldSession（复核前批次已修）**：恢复成功后的 `recoveryTerminal`
+  永久短路后续 run()，恢复会话永远接不了新命令。移除短路；恢复失败仍由驱动
+  barrier 守住。
+- **B 侧 RuleWorldSession/controller（复核前批次已修）**：恢复会整体替换驱动
+  memory 对象，会话侧持有的旧引用上写入 playerInput、读取 playerAdvance 全部
+  落空（表现为回合静默 world_complete 或 `rule_input_identity_missing`）。
   提交通道改经驱动自有 `preparePlayerInput()`，行动作用域改读驱动活引用
   `driver.playerAdvance`。
 - **页面润色实验**：wllama 加载/生成挂起时无界等待会阻塞命令回合；加 120s
   截止时间，超时按失败回退模板。
+
+## 复核修复轮（2026-10-28，三处 P1）
+
+1. **历史结论不变**：见上方 A 侧 3734a52；回归=pytest 红转绿 + 每次验收后实读
+   sqlite 断言无 continue 覆写。
+2. **跨分页刷新**：`rebuild` 原来只读第一页并把页末项当 head——超过 100 点的
+   世界状态面板显示旧 head。提取 `runtime/world-reads.ts#readAllPoints`（完整
+   分页＋游标不前进守卫），页面接入；vitest 回归覆盖 250 点跨 3 页、101 点短页
+   终止、单页、整页卡死四个用例。
+3. **客户端导航往返**：模块级 `booted` 跨实例保留导致重挂载永远停在 boot，且
+   effect 无卸载清理。改为组件级 `bootedRef`＋代际取消（`generationRef`/
+   `disposedRef`，卸载停会话且新代接管不误停旧代会话），attach 失败路径按实例
+   停止；页面补「返回控制台」Link。回归=review 脚本 r7：SPA 离开 → goBack 返回
+   → 重新初始化自动续接 → 7 行叙事与状态恢复（review.json: spa-roundtrip）。
 
 ## 已知边界
 

@@ -1,14 +1,14 @@
 {
   "status": "PASS_WORLD_PAGE",
-  "recordedAt": "2026-10-27T15:59:24.332Z",
-  "apiOrigin": "http://127.0.0.1:64139",
-  "nextOrigin": "http://127.0.0.1:64140",
+  "recordedAt": "2026-10-27T17:15:10.888Z",
+  "apiOrigin": "http://127.0.0.1:57289",
+  "nextOrigin": "http://127.0.0.1:57290",
   "browserSource": {
-    "head": "4e463acc21cdb4296338032137034111108b1563",
-    "status": "M frontend/src/lib/world-engine/controller.ts\n M frontend/src/lib/world-engine/recovery.ts\n M frontend/src/lib/world-engine/runtime/rule-session.test.ts\n M frontend/src/lib/world-engine/runtime/rule-session.ts\n M frontend/src/lib/world-engine/runtime/session.ts\n?? artifacts/world-page-review.json\n?? frontend/scripts/review-world-page.mjs\n?? frontend/src/app/world/",
+    "head": "1767a155fb301d50e274ffa429ac44a8d8ee7182",
+    "status": "M frontend/scripts/review-world-page.mjs\n M frontend/src/app/world/page.tsx\n?? frontend/src/lib/world-engine/runtime/world-reads.test.ts\n?? frontend/src/lib/world-engine/runtime/world-reads.ts",
     "sha256": {
-      "frontend/scripts/review-world-page.mjs": "9face26449d2cb3e71e21c602100101078d613f025105974f12f2f9fdd4816ed",
-      "frontend/src/app/world/page.tsx": "27175485de6bdc7de3e34914eb396ef0e9d5d25b5c19d8757833140ec56e32dc",
+      "frontend/scripts/review-world-page.mjs": "ccfa240534396c28883bde247c402b6761733983fccef715eb93227ab2b3ed13",
+      "frontend/src/app/world/page.tsx": "e2a045a7c123c88b765809a82258b2f7e4a2158d88dc305e64a82f712481279c",
       "frontend/src/app/world/world-defaults.ts": "30141cad33d0b313bdd304f2bb1dc862af9d4976ff5774ef7b91d26dd36f27ef",
       "frontend/src/lib/world-engine/runtime/rule-session.ts": "d793e6fc85ff1a48334ca92a111d924385442ed0db8114d4f60f76f18451052d",
       "frontend/src/lib/world-engine/runtime/session.ts": "125a318e94969145e616644a268d020e8b6cfa8e05012de8493cbbb6f61edbc5",
@@ -20,7 +20,7 @@
     }
   },
   "serverSource": {
-    "head": "31660cc0f59eec7a1d8976b8b5ace8722f99af72",
+    "head": "3734a52291aa2c613e225ab503f0092ff78d73ee",
     "status": "?? backend/_proj_create.json"
   },
   "probes": {
@@ -31,15 +31,15 @@
       "points": 3,
       "commits": [
         {
-          "requestId": "rule_probe_b0gasb_16",
+          "requestId": "rule_probe_3i3f6d_16",
           "pointId": "point_7"
         },
         {
-          "requestId": "rule_probe_b0gasb_16",
+          "requestId": "rule_probe_3i3f6d_16",
           "pointId": "point_7"
         },
         {
-          "requestId": "rule_probe_b0gasb_33",
+          "requestId": "rule_probe_3i3f6d_33",
           "pointId": "point_14"
         }
       ],
@@ -87,7 +87,7 @@
           "sanity": 10,
           "logRows": 1
         },
-        "at": "2026-10-27T16:00:09.732Z"
+        "at": "2026-10-27T17:16:24.999Z"
       },
       {
         "name": "r1-move",
@@ -96,7 +96,7 @@
           "narration": "周宁从走廊走到门厅。",
           "timeAdvance": "+1秒"
         },
-        "at": "2026-10-27T16:00:14.871Z"
+        "at": "2026-10-27T17:16:30.128Z"
       },
       {
         "name": "r2-refused",
@@ -104,14 +104,14 @@
           "command": "完成压力试验",
           "reason": "milestone_location_mismatch"
         },
-        "at": "2026-10-27T16:00:19.960Z"
+        "at": "2026-10-27T17:16:35.242Z"
       },
       {
         "name": "r3-move-back",
         "detail": {
           "command": "走到走廊"
         },
-        "at": "2026-10-27T16:00:25.055Z"
+        "at": "2026-10-27T17:16:40.326Z"
       },
       {
         "name": "reload-recover",
@@ -120,7 +120,7 @@
           "location": "走廊",
           "sanity": 10
         },
-        "at": "2026-10-27T16:00:27.895Z"
+        "at": "2026-10-27T17:16:42.393Z"
       },
       {
         "name": "r4-strain",
@@ -128,7 +128,7 @@
           "sanity": 8,
           "task": "完成压力试验 achieved"
         },
-        "at": "2026-10-27T16:00:33.014Z"
+        "at": "2026-10-27T17:16:47.520Z"
       },
       {
         "name": "r5-lost-receipt",
@@ -136,7 +136,7 @@
           "sanity": 9,
           "worldId": "world_48"
         },
-        "at": "2026-10-27T16:00:38.159Z"
+        "at": "2026-10-27T17:16:52.689Z"
       },
       {
         "name": "r6-polish",
@@ -144,7 +144,7 @@
           "polishedBadge": 0,
           "note": "either a fact-valid polish or the template fallback is displayed"
         },
-        "at": "2026-10-27T16:02:42.649Z"
+        "at": "2026-10-27T17:18:56.831Z"
       },
       {
         "name": "server-facts",
@@ -154,7 +154,16 @@
           "sanity": 9,
           "location": "hall"
         },
-        "at": "2026-10-27T16:02:43.080Z"
+        "at": "2026-10-27T17:18:57.409Z"
+      },
+      {
+        "name": "spa-roundtrip",
+        "detail": {
+          "logRows": 7,
+          "location": "门厅",
+          "sanity": 9
+        },
+        "at": "2026-10-27T17:19:01.022Z"
       }
     ],
     "status": "PASS_BROWSER_LOOP"
@@ -163,12 +172,12 @@
     {
       "event": "ready",
       "label": "World HTTP service",
-      "url": "http://127.0.0.1:64139/openapi.json"
+      "url": "http://127.0.0.1:57289/openapi.json"
     },
     {
       "event": "ready",
       "label": "Next dev server",
-      "url": "http://127.0.0.1:64140/"
+      "url": "http://127.0.0.1:57290/"
     }
   ]
 }
