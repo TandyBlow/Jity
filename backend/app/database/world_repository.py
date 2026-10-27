@@ -152,11 +152,14 @@ def save_core(connection, before, record):
     if old_round and current_round and old_round['roundId'] != current_round['roundId']:
         # A2 swaps the active round dict. Persist the closing row before that
         # pointer switch loses it; A3 round conclusion remains one SQL txn.
+        # A handback cleared record['advance'] before this swap, so the old
+        # round's advance comes from its persisted row, not the live record.
         closed = dict(old_round)
         closed['conclusion'] = dict(kind='continue', closedBy='model', cancelReason=None,
                                     candidateCharacterIds=current_round['order'],
                                     nextRoundId=current_round['roundId'])
-        _save_round(connection, world_id, closed, old_advance, 'complete')
+        _save_round(connection, world_id, closed, old_advance or
+                    _round_advance(connection, world_id, old_round['roundId']), 'complete')
     if current_round and (before is None or current_round != old_round or
                           advance != old_advance or control['phase'] != before['control']['phase']):
         _save_round(connection, world_id, current_round, advance or
