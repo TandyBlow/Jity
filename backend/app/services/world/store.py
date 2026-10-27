@@ -50,9 +50,10 @@ class FixtureBaselineStore:
             record = self._worlds.get(world_id)
             return copy.deepcopy(record) if record is not None else None
 
-    def transact(self, world_id, handler):
+    def transact(self, world_id, handler, *, authority_only=False):
         """Run handler(record_copy) -> response payload on a deep copy and
-        commit by swap; any exception discards the copy."""
+        commit by swap; any exception discards the copy. The fixture store has
+        no frozen/progress side tables, so authority_only is a no-op there."""
         with _LOCK:
             record = self._worlds.get(world_id)
             if record is None:

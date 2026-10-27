@@ -81,6 +81,42 @@ def test_missing_or_damaged_facts_return_declared_http_refusals_without_writes(t
     assert len(flow['calls']) == calls
 
 
+def test_lease_renew_stays_authority_only_for_damaged_business_facts(tmp_path):
+    """Renewal must not inherit frozen/progress damage: get_context owns the
+    frozen_work_* declaration and reports it after the lease is usable again."""
+    for fault, expected in (('missing_progress', 'frozen_work_missing'),
+                            ('progress_stack', 'frozen_work_corrupt')):
+        (tmp_path / fault).mkdir()
+        flow = scenario(tmp_path / fault)
+        with sqlite3.connect(flow['path']) as connection:
+            if fault == 'missing_progress':
+                connection.execute('DELETE FROM world_group_progress')
+            else:
+                value = json.loads(connection.execute(
+                    'SELECT checkpoint_json FROM world_group_progress').fetchone()[0])
+                value['progress']['sourceStack'] = []
+                connection.execute(
+                    'UPDATE world_group_progress SET checkpoint_json=?,checkpoint_digest=?',
+                    (json.dumps(value), canonical_digest(value)))
+        renew_spec = OPERATION_BY_NAME['lease_renew']
+        context_spec = OPERATION_BY_NAME['get_context']
+        renew_url = renew_spec.path.replace('{worldId}', flow['world'])
+        context_url = context_spec.path.replace('{worldId}', flow['world'])
+        with TestClient(create_world_app(store=flow['store'])) as client:
+            renewed = client.request(renew_spec.method, renew_url, headers=HEADERS,
+                json=_payload(f'renew_{fault}', flow['world'], flow['lease']))
+            assert renewed.status_code == 200, renewed.text
+            assert renewed.json()['operation'] == 'lease_renew'
+            assert renewed.json()['work'] is not None
+            refused = client.get(context_url, headers=HEADERS, params=dict(
+                includeRecovery='true', leaseToken=flow['lease']['leaseToken'],
+                fenceEpoch=flow['lease']['fenceEpoch']))
+        assert refused.status_code == 409, refused.text
+        body = ErrorResponse.model_validate(refused.json())
+        assert body.error.code == expected
+        assert expected in {entry.code for entry in context_spec.errorCodes}
+
+
 def test_http_reopen_reads_explicit_order_and_full_rolls_from_sql_not_adapter_copy(tmp_path):
     flow = scenario(tmp_path)
     outcome = rolls(flow, 'person_a', targets(flow, 'person_a', ['person_b']))[0]

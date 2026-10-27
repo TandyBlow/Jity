@@ -256,23 +256,26 @@ class SQLiteBaselineStore:
         # work copy inside the A2-compatible core adapter snapshot.
         stored = {key: value for key, value in record.items()
                   if key not in ('work', '_successorWork', '_groupProgress')}
-        stored['_activeWorkPointId'] = (record.get('work') or {}).get('pointId')
-        stored['_reservedWorkPointId'] = (record.get('_successorWork') or {}).get('pointId')
+        # Authority-only loads keep the pointer fields from the snapshot;
+        # full loads own them from the relational work rows below.
+        if 'work' in record:
+            stored['_activeWorkPointId'] = (record.get('work') or {}).get('pointId')
+            stored['_reservedWorkPointId'] = (record.get('_successorWork') or {}).get('pointId')
         return _dump(stored)
 
-    def world(self, world_id):
+    def world(self, world_id, *, authority_only=False):
         connection = getattr(self._local, 'connection', None)
         if connection is not None:
-            return self._read_world(connection, world_id)
+            return self._read_world(connection, world_id, authority_only=authority_only)
         # One read transaction: a concurrent writer must not create a false
         # corruption report between the cache read and ledger checks.
         with self._connection() as reader:
             reader.execute('BEGIN')
-            return self._read_world(reader, world_id)
+            return self._read_world(reader, world_id, authority_only=authority_only)
 
-    def _read_world(self, connection, world_id):
+    def _read_world(self, connection, world_id, *, authority_only=False):
         try:
-            return self._load_world_record(connection, world_id)
+            return self._load_world_record(connection, world_id, authority_only=authority_only)
         except LedgerMismatch:
             raise
         except (ValueError, TypeError, KeyError) as error:
@@ -280,7 +283,7 @@ class SQLiteBaselineStore:
             # validation. Keep them on the same corruption/refusal path.
             raise LedgerMismatch('Persistent world record is malformed') from error
 
-    def _load_world_record(self, connection, world_id):
+    def _load_world_record(self, connection, world_id, *, authority_only=False):
         row = connection.execute('SELECT record_json FROM world_snapshots WHERE world_id=?',
                                  (world_id,)).fetchone()
         if row is None:
@@ -288,6 +291,23 @@ class SQLiteBaselineStore:
         record = self.prepare_record(_load(row[0]))
         if '_activeWorkPointId' not in record:
             raise LedgerMismatch('Working-pointer binding is missing; explicit migration required')
+        if authority_only:
+            # Lease authority must survive damaged frozen/progress/judgment
+            # facts: the next protected read (get_context) is the operation
+            # that reports frozen_work_*, with its own declared error surface.
+            # Active work is still loaded for an accurate response view, but
+            # its progress/frozen side tables are deliberately not validated.
+            check_core(connection, record)
+            record['work'] = load_work(connection, world_id)
+            reserved = load_reserved_work(connection, world_id)
+            if reserved is not None:
+                record['_successorWork'] = reserved
+            if (record['work'] or {}).get('pointId') != record.get('_activeWorkPointId'):
+                raise LedgerMismatch('Relational work differs from the bound active point')
+            if (reserved or {}).get('pointId') != record.get('_reservedWorkPointId'):
+                raise LedgerMismatch('Reserved work differs from its bound successor pointer')
+            check_work(connection, record)
+            return record
         expected_work_point = record.pop('_activeWorkPointId')
         expected_reserved_point = record.pop('_reservedWorkPointId', None)
         record['work'] = load_work(connection, world_id)
@@ -309,9 +329,10 @@ class SQLiteBaselineStore:
         check_judgments(connection, record)
         return record
 
-    def transact(self, world_id, handler):
+    def transact(self, world_id, handler, *, authority_only=False):
         with self.locked():
-            snapshot = self.world(world_id)
+            snapshot = (self.world(world_id, authority_only=True)
+                        if authority_only else self.world(world_id))
             if snapshot is None:
                 raise WorldNotFound(world_id)
             before = copy.deepcopy(snapshot)
@@ -319,6 +340,13 @@ class SQLiteBaselineStore:
             if snapshot == before:
                 return response
             save_core(self._local.connection, before, snapshot)
+            if authority_only:
+                check_core(self._local.connection, snapshot)
+                check_work(self._local.connection, snapshot)
+                self._local.connection.execute(
+                    'UPDATE world_snapshots SET record_json=? WHERE world_id=?',
+                    (self._dump_record(snapshot), world_id))
+                return response
             save_work(self._local.connection, before, snapshot)
             from app.database.world_frozen_repository import save_frozen_work, check_frozen_work
             save_frozen_work(self._local.connection, before, snapshot)

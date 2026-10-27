@@ -1204,6 +1204,9 @@ WRITE_HANDLERS.update({
     'round_conclusion_cancel': handle_round_conclusion_cancel,
 })
 
+_AUTHORITY_ONLY_OPERATIONS = frozenset(
+    ('lease_acquire', 'lease_renew', 'lease_release'))
+
 _AUTHORITY_HANDLERS = {
     'lease_acquire': authority.handle_lease_acquire,
     'lease_renew': authority.handle_lease_renew,
@@ -1523,8 +1526,10 @@ class WorldService:
             return data, views, False
 
         from app.database.world_repository import LedgerMismatch
+        authority_only = persistent and operation in _AUTHORITY_ONLY_OPERATIONS
         try:
-            result = self.store.transact(world_id, handler)
+            result = (self.store.transact(world_id, handler, authority_only=True)
+                      if authority_only else self.store.transact(world_id, handler))
         except WorldNotFound:
             _refuse('version_mismatch', 'unknown world')
         except LedgerMismatch as error:
