@@ -1,0 +1,148 @@
+{
+  "formatVersion": 1,
+  "recordedAt": "2026-10-27T09:23:32.144787+00:00",
+  "reviewer": "current coding task; no independent user signoff claimed",
+  "scope": "rule fact boundaries, deterministic commits, committed templates, opt-in input projections",
+  "decision": "numeric example follows real task/personality/sanity coupling per user choice; frozen server contract unchanged",
+  "httpCasesPassed": 10,
+  "templateNarrationsChecked": 10,
+  "perWorldCommitCount": 1,
+  "tests": {
+    "frontend": "553/553",
+    "worldTypescript": "passed",
+    "fullTypescript": "passed"
+  },
+  "pairs": [
+    {
+      "task": "action",
+      "full": {
+        "wallSeconds": 84.148,
+        "firstTokenSeconds": 79.492,
+        "prefillSeconds": 79.067,
+        "processedInputTokens": 907,
+        "cacheTokens": 0,
+        "finishReason": "stop"
+      },
+      "focused": {
+        "wallSeconds": 31.651,
+        "firstTokenSeconds": 28.593,
+        "prefillSeconds": 28.26,
+        "processedInputTokens": 469,
+        "cacheTokens": 0,
+        "finishReason": "stop"
+      },
+      "sameOutputBudget": 80,
+      "observedPrefillReduction": 0.6426
+    },
+    {
+      "task": "updates",
+      "full": {
+        "wallSeconds": 75.704,
+        "firstTokenSeconds": 69.505,
+        "prefillSeconds": 69.083,
+        "processedInputTokens": 1092,
+        "cacheTokens": 0,
+        "finishReason": "stop"
+      },
+      "focused": {
+        "wallSeconds": 29.024,
+        "firstTokenSeconds": 25.827,
+        "prefillSeconds": 25.548,
+        "processedInputTokens": 431,
+        "cacheTokens": 0,
+        "finishReason": "stop"
+      },
+      "sameOutputBudget": 192,
+      "observedPrefillReduction": 0.6302
+    },
+    {
+      "task": "narration",
+      "full": {
+        "wallSeconds": 120.279,
+        "firstTokenSeconds": 111.639,
+        "prefillSeconds": null,
+        "processedInputTokens": null,
+        "cacheTokens": null,
+        "finishReason": "timeout"
+      },
+      "focused": {
+        "wallSeconds": 26.277,
+        "firstTokenSeconds": 18.602,
+        "prefillSeconds": 18.388,
+        "processedInputTokens": 207,
+        "cacheTokens": 0,
+        "finishReason": "stop"
+      },
+      "sameOutputBudget": 128,
+      "limitation": "full arm timed out with partial text; native prompt/cache counters absent; do not substitute wall time for prefill"
+    }
+  ],
+  "modelCandidateReviews": [
+    {
+      "id": "action-full",
+      "acceptedCandidate": false,
+      "automaticFailure": null,
+      "finding": "请求仅为走到门厅，模型却提议在门厅完成压力试验；附加未请求任务，且违反该任务走廊前提。自动人物/目的地词检查误放行。",
+      "raw": "{\"kind\":\"act\",\"text\":\"周宁在门厅完成压力试验\"}",
+      "contentReason": null
+    },
+    {
+      "id": "action-focused",
+      "acceptedCandidate": true,
+      "finding": "周宁从走廊走向门厅，作为行动提议与受支持命令相符；不是已执行证明。",
+      "raw": "{\"kind\":\"act\",\"text\":\"周宁在走廊中走向门厅\"}",
+      "automaticFailure": null,
+      "contentReason": null
+    },
+    {
+      "id": "updates-focused",
+      "acceptedCandidate": true,
+      "finding": "对规则判定副本提取出的 sanitySet=8 正确；仅比较该阶段候选，不能单独提交理智变化。",
+      "raw": "{\"stage\":\"sanity\",\"changes\":{\"person_c\":{\"sanitySet\":8}}}",
+      "automaticFailure": null,
+      "contentReason": null
+    },
+    {
+      "id": "updates-full",
+      "acceptedCandidate": true,
+      "finding": "同样正确提取8；本调用不签发规则凭据，也不写状态。",
+      "raw": "{\"stage\":\"sanity\",\"changes\":{\"person_c\":{\"sanitySet\":8}}}",
+      "automaticFailure": null,
+      "contentReason": null
+    },
+    {
+      "id": "narration-full",
+      "acceptedCandidate": false,
+      "finding": "120秒限额内未正常结束，部分文本重复并截断。无最终 prompt/cache 计数，不将已付墙钟当作精确 prefill。",
+      "raw": "林川位于走廊。  \n林川现在在走廊。  \n周宁从走廊走到门",
+      "automaticFailure": "engine",
+      "contentReason": null
+    },
+    {
+      "id": "narration-focused",
+      "acceptedCandidate": false,
+      "physicalFactsAgree": true,
+      "finding": "人物、位置、数值均与保存事实相符，但逐条重复两个备选说法并合句；不满足每条事实一次的受限表达约束。校验拒绝，回退模板。",
+      "raw": "林川位于走廊，现在在走廊。林川的精神值为10，当前精神值是10。周宁从走廊走到门厅，周宁从走廊来到门厅。周宁的精神值为10，当前精神值是10。",
+      "automaticFailure": "content",
+      "contentReason": "unknown_or_ambiguous_clause"
+    }
+  ],
+  "resume": {
+    "paidCalls": 6,
+    "preservedRows": 5,
+    "additionalCalls": 1,
+    "reason": "initial harness asserted cache_n after a deadline without final metrics; fixed to retain failed attempts and resume remaining cases",
+    "unchangedRuntimeSha256": true,
+    "sameConfigurationAndAssets": true,
+    "firstRunnerSnapshot": "runner-first.txt"
+  },
+  "limits": [
+    "one bounded user command and single-subject group per fresh controller world",
+    "rule receipts are trusted in-process capabilities, not new server authentication",
+    "client accepts no model text as execution proof; server continues to enforce existing lease/checkpoint/domain invariants",
+    "closed paraphrase grammar rejects unrecognized prose; it is not a general natural-language truth detector",
+    "one pair per task, two browser sessions due to resume; no statistical/general cross-model performance claim",
+    "no new interactive page, no full B3/model chain"
+  ]
+}

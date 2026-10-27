@@ -1,0 +1,1856 @@
+{
+  "status": "COMPLETED",
+  "recordedAt": "2026-10-27T09:13:11.677Z",
+  "config": {
+    "model": "/models/Qwen3-0.6B-Q4_K_M.gguf",
+    "contextSize": 4096,
+    "numThreads": 4,
+    "channel": "msedge",
+    "seed": 42,
+    "temperature": 0,
+    "cachePrompt": false,
+    "timeoutMs": 120000,
+    "taskMaxTokens": {
+      "action": 80,
+      "updates": 192,
+      "narration": 128
+    }
+  },
+  "source": {
+    "head": "99052099c2a9b035aa10787802eacd29c5d84c9f",
+    "status": "M frontend/src/lib/world-engine/runtime/b3.test.ts\n M frontend/src/lib/world-engine/runtime/engine.ts\n M frontend/src/lib/world-engine/runtime/model-port.ts\n M frontend/src/lib/world-engine/runtime/prompts.ts\n M frontend/src/lib/world-engine/runtime/wllama-engine.ts\n?? frontend/scripts/review-world-rule-facts.mjs\n?? frontend/scripts/run-b3-focused.mjs\n?? frontend/src/lib/world-engine/runtime/committed-narration.test.ts\n?? frontend/src/lib/world-engine/runtime/committed-narration.ts\n?? frontend/src/lib/world-engine/runtime/focused-input.ts\n?? frontend/src/lib/world-engine/runtime/rule-controller.ts\n?? frontend/src/lib/world-engine/runtime/rule-facts.test.ts\n?? frontend/src/lib/world-engine/runtime/rule-facts.ts",
+    "sha256": {
+      "frontend/scripts/run-b3-focused.mjs": "2b28d01a0e8f74ce0e5c6be024f91a35bb1c8dfeb5e53813c292b852b70ffd63",
+      "frontend/src/lib/world-engine/runtime/engine.ts": "8fabe2ecc1640d53c0cc5704fb0f9f9b4dcf78534797f48f7f001a3d6221a266",
+      "frontend/src/lib/world-engine/runtime/wllama-engine.ts": "eeef36cb34a8fe358e923fa9a7ddff2276bd58e4c67c0cbb5871206f2a313799",
+      "frontend/src/lib/world-engine/runtime/model-port.ts": "b32d0dcaa917dff796dfd7a8bcf4c06cc4e39cf2665011d74b37e386307b8c2d",
+      "frontend/src/lib/world-engine/runtime/prompts.ts": "46101dee392d8f3b6782b167546b23c4a65bff9a828b48c743387e1a0eb194ef",
+      "frontend/src/lib/world-engine/runtime/focused-input.ts": "b7c9236af4d7f1760dd8662cdcaa70dcbdd7d5a8916a50038ba712fe5d2bff54",
+      "frontend/src/lib/world-engine/runtime/committed-narration.ts": "249fa2f77f58cdec7fa483d551c31cf17da754438adc90c5cf1754991affd934",
+      "frontend/src/lib/world-engine/runtime/rule-facts.ts": "0a0084ce29f0c07e3f4592b941092585338041f70b996d0ef7115851bf10d5d0",
+      "frontend/src/lib/world-engine/runtime/output-schema.ts": "85a1000eb883824b3d089a85aca221b4daa3f0f9c280e3855e7df731c2a489b4",
+      "frontend/src/lib/world-engine/runtime/structured-output.ts": "26f0a2278df8fa9c03c68220ad847b66272ef937b73f99b1bf1286b3cbb1fd70"
+    }
+  },
+  "factSource": {
+    "reportSha256": "5e77229b63c3d4dcc54d46af5616a6729ad9489a2d6b19da0ecc452fda19b502",
+    "serverCommit": "0cb1951cd1b0181f6a0505026cdd9939dd668de9",
+    "movementAnchor": {
+      "worldId": "world_1",
+      "pointId": "point_7",
+      "version": 1,
+      "stateDigest": "7632719699b400e5790760422c492b2da8a0c2a7180d671a5f86e5664f55e5e2",
+      "previousPointId": "root_3"
+    },
+    "numericAnchor": {
+      "worldId": "world_19",
+      "pointId": "point_25",
+      "version": 1,
+      "stateDigest": "176fc56430f19b6c1c8b640d06efa88680569edbca07d2340cc98705cab5bac1",
+      "previousPointId": "root_21"
+    }
+  },
+  "assets": {
+    "modelSha256": "ac2d97712095a558e31573f62f466a3f9d93990898b0ec79d7c974c1780d524a",
+    "bundleSha256": "834d7be963172248caf13c6f2ae786009b43edfeefc85eeadc20609e8447d118",
+    "wasmSha256": "551f13439366eff11e057b1b91fe46a7fdac29d56d67372d4c5f19a549dfe70c",
+    "packageVersion": "3.8.1"
+  },
+  "device": {
+    "cpu": "13th Gen Intel(R) Core(TM) i7-13700H",
+    "logicalCpus": 20
+  },
+  "rows": [
+    {
+      "id": "action-full",
+      "task": "action",
+      "mode": "full",
+      "input": {
+        "actor": "person_c",
+        "advance": {
+          "inputText": "走到门厅",
+          "intentStatus": "pending"
+        },
+        "workingState": {
+          "engineVersion": "world-engine-v1",
+          "schemaVersion": 1,
+          "worldId": "world_1",
+          "protagonistId": "person_c",
+          "time": {
+            "calendar": "gregorian",
+            "dateTime": "2026-10-27T09:00:00",
+            "instantOrdinal": 0
+          },
+          "initial": {
+            "engineVersion": "world-engine-v1",
+            "schemaVersion": 1,
+            "worldId": "world_1",
+            "protagonistId": "person_c",
+            "initialTime": {
+              "calendar": "gregorian",
+              "dateTime": "2026-10-27T09:00:00",
+              "instantOrdinal": 0
+            },
+            "locations": {
+              "corridor": {
+                "id": "corridor",
+                "name": "走廊",
+                "parentLocationId": null,
+                "initialAppearance": "明亮的走廊，通往门厅。",
+                "slots": []
+              },
+              "hall": {
+                "id": "hall",
+                "name": "门厅",
+                "parentLocationId": null,
+                "initialAppearance": "安静的门厅。",
+                "slots": []
+              }
+            },
+            "items": {
+              "box": {
+                "id": "box",
+                "name": "盒子",
+                "initialPosition": {
+                  "containerId": "corridor",
+                  "slotId": null,
+                  "relativeTo": null
+                },
+                "initialAppearance": "盒盖关闭。",
+                "slots": []
+              }
+            },
+            "characters": {
+              "person_a": {
+                "id": "person_a",
+                "name": "林川",
+                "initialPosition": {
+                  "containerId": "corridor",
+                  "slotId": null,
+                  "relativeTo": null
+                },
+                "initialAppearance": "穿灰衣。",
+                "slots": [],
+                "initialPersonality": "谨慎，恪守职责",
+                "initialSanity": 10,
+                "tasks": {
+                  "task_watch": {
+                    "id": "task_watch",
+                    "ownerId": "person_a",
+                    "parentTaskId": null,
+                    "goal": "留在走廊守门，不碰盒子",
+                    "status": "pending"
+                  }
+                }
+              },
+              "person_c": {
+                "id": "person_c",
+                "name": "周宁",
+                "initialPosition": {
+                  "containerId": "corridor",
+                  "slotId": null,
+                  "relativeTo": null
+                },
+                "initialAppearance": "穿蓝衣。",
+                "slots": [],
+                "initialPersonality": "好奇",
+                "initialSanity": 10,
+                "tasks": {
+                  "task_pressure": {
+                    "id": "task_pressure",
+                    "ownerId": "person_c",
+                    "parentTaskId": null,
+                    "goal": "完成压力试验",
+                    "status": "pending"
+                  },
+                  "task_recover": {
+                    "id": "task_recover",
+                    "ownerId": "person_c",
+                    "parentTaskId": null,
+                    "goal": "完成恢复练习",
+                    "status": "pending"
+                  }
+                }
+              }
+            }
+          },
+          "locations": {
+            "corridor": {
+              "id": "corridor",
+              "appearanceChanges": []
+            },
+            "hall": {
+              "id": "hall",
+              "appearanceChanges": []
+            }
+          },
+          "items": {
+            "box": {
+              "id": "box",
+              "appearanceChanges": [],
+              "position": {
+                "containerId": "corridor",
+                "slotId": null,
+                "relativeTo": null
+              }
+            }
+          },
+          "characters": {
+            "person_a": {
+              "id": "person_a",
+              "appearanceChanges": [],
+              "position": {
+                "containerId": "corridor",
+                "slotId": null,
+                "relativeTo": null
+              },
+              "personalityChanges": [],
+              "sanity": 10,
+              "tasks": {
+                "task_watch": {
+                  "id": "task_watch",
+                  "ownerId": "person_a",
+                  "parentTaskId": null,
+                  "goal": "留在走廊守门，不碰盒子",
+                  "status": "pending"
+                }
+              }
+            },
+            "person_c": {
+              "id": "person_c",
+              "appearanceChanges": [],
+              "position": {
+                "containerId": "corridor",
+                "slotId": null,
+                "relativeTo": null
+              },
+              "personalityChanges": [],
+              "sanity": 10,
+              "tasks": {
+                "task_pressure": {
+                  "id": "task_pressure",
+                  "ownerId": "person_c",
+                  "parentTaskId": null,
+                  "goal": "完成压力试验",
+                  "status": "pending"
+                },
+                "task_recover": {
+                  "id": "task_recover",
+                  "ownerId": "person_c",
+                  "parentTaskId": null,
+                  "goal": "完成恢复练习",
+                  "status": "pending"
+                }
+              }
+            }
+          }
+        }
+      },
+      "prompt": "[任务: action]\n判断输入 actor 指定的角色此刻是否行动（不一定是主角）。advance 给出玩家输入与消费状态：仅当该角色是主角且 intentStatus 为 pending 时，它是待处理命令，必须结合最新工作状态判断能否执行——目标或条件已失效则不可执行；consumed 时它已是触发背景，不得重复执行；其他角色按自身任务与个性判断。只输出 JSON：{\"kind\":\"act\",\"text\":\"一句话行动描述\"} 或 {\"kind\":\"skip\"}\n调用键: person_c\n在场角色: person_a, person_c\n本次只判断: person_c（周宁）；主角: person_c。行动句写明该角色。本角色就是主角，判断待处理命令。\n输入:\n{\"actor\":\"person_c\",\"advance\":{\"inputText\":\"走到门厅\",\"intentStatus\":\"pending\"},\"workingState\":{\"engineVersion\":\"world-engine-v1\",\"schemaVersion\":1,\"worldId\":\"world_1\",\"protagonistId\":\"person_c\",\"time\":{\"calendar\":\"gregorian\",\"dateTime\":\"2026-10-27T09:00:00\",\"instantOrdinal\":0},\"initial\":{\"engineVersion\":\"world-engine-v1\",\"schemaVersion\":1,\"worldId\":\"world_1\",\"protagonistId\":\"person_c\",\"initialTime\":{\"calendar\":\"gregorian\",\"dateTime\":\"2026-10-27T09:00:00\",\"instantOrdinal\":0},\"locations\":{\"corridor\":{\"id\":\"corridor\",\"name\":\"走廊\",\"parentLocationId\":null,\"initialAppearance\":\"明亮的走廊，通往门厅。\",\"slots\":[]},\"hall\":{\"id\":\"hall\",\"name\":\"门厅\",\"parentLocationId\":null,\"initialAppearance\":\"安静的门厅。\",\"slots\":[]}},\"items\":{\"box\":{\"id\":\"box\",\"name\":\"盒子\",\"initialPosition\":{\"containerId\":\"corridor\",\"slotId\":null,\"relativeTo\":null},\"initialAppearance\":\"盒盖关闭。\",\"slots\":[]}},\"characters\":{\"person_a\":{\"id\":\"person_a\",\"name\":\"林川\",\"initialPosition\":{\"containerId\":\"corridor\",\"slotId\":null,\"relativeTo\":null},\"initialAppearance\":\"穿灰衣。\",\"slots\":[],\"initialPersonality\":\"谨慎，恪守职责\",\"initialSanity\":10,\"tasks\":{\"task_watch\":{\"id\":\"task_watch\",\"ownerId\":\"person_a\",\"parentTaskId\":null,\"goal\":\"留在走廊守门，不碰盒子\",\"status\":\"pending\"}}},\"person_c\":{\"id\":\"person_c\",\"name\":\"周宁\",\"initialPosition\":{\"containerId\":\"corridor\",\"slotId\":null,\"relativeTo\":null},\"initialAppearance\":\"穿蓝衣。\",\"slots\":[],\"initialPersonality\":\"好奇\",\"initialSanity\":10,\"tasks\":{\"task_pressure\":{\"id\":\"task_pressure\",\"ownerId\":\"person_c\",\"parentTaskId\":null,\"goal\":\"完成压力试验\",\"status\":\"pending\"},\"task_recover\":{\"id\":\"task_recover\",\"ownerId\":\"person_c\",\"parentTaskId\":null,\"goal\":\"完成恢复练习\",\"status\":\"pending\"}}}}},\"locations\":{\"corridor\":{\"id\":\"corridor\",\"appearanceChanges\":[]},\"hall\":{\"id\":\"hall\",\"appearanceChanges\":[]}},\"items\":{\"box\":{\"id\":\"box\",\"appearanceChanges\":[],\"position\":{\"containerId\":\"corridor\",\"slotId\":null,\"relativeTo\":null}}},\"characters\":{\"person_a\":{\"id\":\"person_a\",\"appearanceChanges\":[],\"position\":{\"containerId\":\"corridor\",\"slotId\":null,\"relativeTo\":null},\"personalityChanges\":[],\"sanity\":10,\"tasks\":{\"task_watch\":{\"id\":\"task_watch\",\"ownerId\":\"person_a\",\"parentTaskId\":null,\"goal\":\"留在走廊守门，不碰盒子\",\"status\":\"pending\"}}},\"person_c\":{\"id\":\"person_c\",\"appearanceChanges\":[],\"position\":{\"containerId\":\"corridor\",\"slotId\":null,\"relativeTo\":null},\"personalityChanges\":[],\"sanity\":10,\"tasks\":{\"task_pressure\":{\"id\":\"task_pressure\",\"ownerId\":\"person_c\",\"parentTaskId\":null,\"goal\":\"完成压力试验\",\"status\":\"pending\"},\"task_recover\":{\"id\":\"task_recover\",\"ownerId\":\"person_c\",\"parentTaskId\":null,\"goal\":\"完成恢复练习\",\"status\":\"pending\"}}}}}}\n输出:",
+      "promptCharacters": 2909,
+      "value": {
+        "kind": "act",
+        "text": "周宁在门厅完成压力试验"
+      },
+      "completion": {
+        "raw": "{\"kind\":\"act\",\"text\":\"周宁在门厅完成压力试验\"}",
+        "finishReason": "stop",
+        "firstTokenMs": 79492.30000019073,
+        "wallMs": 84145.44999980927,
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 907,
+          "prompt_ms": 79067.326,
+          "prompt_per_token_ms": 87.17456008820287,
+          "prompt_per_second": 11.471236550986939,
+          "predicted_n": 17,
+          "predicted_ms": 4980.875,
+          "predicted_per_token_ms": 311.3046875,
+          "predicted_per_second": 3.2122869977664568
+        }
+      },
+      "timing": {
+        "queuedMs": 0.009999275207519531,
+        "runMs": 84146.5450000763,
+        "totalMs": 84146.55999946594
+      },
+      "wallMs": 84147.76000022888,
+      "failure": null,
+      "contentReason": null
+    },
+    {
+      "id": "action-focused",
+      "task": "action",
+      "mode": "focused",
+      "input": {
+        "actor": "person_c",
+        "advance": {
+          "inputText": "走到门厅",
+          "intentStatus": "pending"
+        },
+        "workingState": {
+          "engineVersion": "world-engine-v1",
+          "schemaVersion": 1,
+          "worldId": "world_1",
+          "protagonistId": "person_c",
+          "time": {
+            "calendar": "gregorian",
+            "dateTime": "2026-10-27T09:00:00",
+            "instantOrdinal": 0
+          },
+          "initial": {
+            "engineVersion": "world-engine-v1",
+            "schemaVersion": 1,
+            "worldId": "world_1",
+            "protagonistId": "person_c",
+            "initialTime": {
+              "calendar": "gregorian",
+              "dateTime": "2026-10-27T09:00:00",
+              "instantOrdinal": 0
+            },
+            "locations": {
+              "corridor": {
+                "id": "corridor",
+                "name": "走廊",
+                "parentLocationId": null,
+                "initialAppearance": "明亮的走廊，通往门厅。",
+                "slots": []
+              },
+              "hall": {
+                "id": "hall",
+                "name": "门厅",
+                "parentLocationId": null,
+                "initialAppearance": "安静的门厅。",
+                "slots": []
+              }
+            },
+            "items": {
+              "box": {
+                "id": "box",
+                "name": "盒子",
+                "initialPosition": {
+                  "containerId": "corridor",
+                  "slotId": null,
+                  "relativeTo": null
+                },
+                "initialAppearance": "盒盖关闭。",
+                "slots": []
+              }
+            },
+            "characters": {
+              "person_a": {
+                "id": "person_a",
+                "name": "林川",
+                "initialPosition": {
+                  "containerId": "corridor",
+                  "slotId": null,
+                  "relativeTo": null
+                },
+                "initialAppearance": "穿灰衣。",
+                "slots": [],
+                "initialPersonality": "谨慎，恪守职责",
+                "initialSanity": 10,
+                "tasks": {
+                  "task_watch": {
+                    "id": "task_watch",
+                    "ownerId": "person_a",
+                    "parentTaskId": null,
+                    "goal": "留在走廊守门，不碰盒子",
+                    "status": "pending"
+                  }
+                }
+              },
+              "person_c": {
+                "id": "person_c",
+                "name": "周宁",
+                "initialPosition": {
+                  "containerId": "corridor",
+                  "slotId": null,
+                  "relativeTo": null
+                },
+                "initialAppearance": "穿蓝衣。",
+                "slots": [],
+                "initialPersonality": "好奇",
+                "initialSanity": 10,
+                "tasks": {
+                  "task_pressure": {
+                    "id": "task_pressure",
+                    "ownerId": "person_c",
+                    "parentTaskId": null,
+                    "goal": "完成压力试验",
+                    "status": "pending"
+                  },
+                  "task_recover": {
+                    "id": "task_recover",
+                    "ownerId": "person_c",
+                    "parentTaskId": null,
+                    "goal": "完成恢复练习",
+                    "status": "pending"
+                  }
+                }
+              }
+            }
+          },
+          "locations": {
+            "corridor": {
+              "id": "corridor",
+              "appearanceChanges": []
+            },
+            "hall": {
+              "id": "hall",
+              "appearanceChanges": []
+            }
+          },
+          "items": {
+            "box": {
+              "id": "box",
+              "appearanceChanges": [],
+              "position": {
+                "containerId": "corridor",
+                "slotId": null,
+                "relativeTo": null
+              }
+            }
+          },
+          "characters": {
+            "person_a": {
+              "id": "person_a",
+              "appearanceChanges": [],
+              "position": {
+                "containerId": "corridor",
+                "slotId": null,
+                "relativeTo": null
+              },
+              "personalityChanges": [],
+              "sanity": 10,
+              "tasks": {
+                "task_watch": {
+                  "id": "task_watch",
+                  "ownerId": "person_a",
+                  "parentTaskId": null,
+                  "goal": "留在走廊守门，不碰盒子",
+                  "status": "pending"
+                }
+              }
+            },
+            "person_c": {
+              "id": "person_c",
+              "appearanceChanges": [],
+              "position": {
+                "containerId": "corridor",
+                "slotId": null,
+                "relativeTo": null
+              },
+              "personalityChanges": [],
+              "sanity": 10,
+              "tasks": {
+                "task_pressure": {
+                  "id": "task_pressure",
+                  "ownerId": "person_c",
+                  "parentTaskId": null,
+                  "goal": "完成压力试验",
+                  "status": "pending"
+                },
+                "task_recover": {
+                  "id": "task_recover",
+                  "ownerId": "person_c",
+                  "parentTaskId": null,
+                  "goal": "完成恢复练习",
+                  "status": "pending"
+                }
+              }
+            }
+          }
+        }
+      },
+      "prompt": "[任务: action]\n判断输入 actor 指定的角色此刻是否行动（不一定是主角）。advance 给出玩家输入与消费状态：仅当该角色是主角且 intentStatus 为 pending 时，它是待处理命令，必须结合最新工作状态判断能否执行——目标或条件已失效则不可执行；consumed 时它已是触发背景，不得重复执行；其他角色按自身任务与个性判断。只输出 JSON：{\"kind\":\"act\",\"text\":\"一句话行动描述\"} 或 {\"kind\":\"skip\"}\n调用键: person_c\n本次只判断: person_c（周宁）；主角: person_c。行动句写明该角色。本角色就是主角，判断待处理命令。\n输入:\n{\"actor\":\"person_c\",\"protagonistId\":\"person_c\",\"advance\":{\"inputText\":\"走到门厅\",\"intentStatus\":\"pending\"},\"currentTime\":{\"calendar\":\"gregorian\",\"dateTime\":\"2026-10-27T09:00:00\",\"instantOrdinal\":0},\"actorState\":{\"id\":\"person_c\",\"name\":\"周宁\",\"position\":{\"containerId\":\"corridor\",\"slotId\":null,\"relativeTo\":null},\"sanity\":10,\"personality\":{\"initial\":\"好奇\",\"active\":[]},\"tasks\":[{\"id\":\"task_pressure\",\"goal\":\"完成压力试验\",\"status\":\"pending\"},{\"id\":\"task_recover\",\"goal\":\"完成恢复练习\",\"status\":\"pending\"}]},\"locations\":[{\"id\":\"corridor\",\"name\":\"走廊\",\"parentLocationId\":null,\"appearance\":{\"initial\":\"明亮的走廊，通往门厅。\",\"active\":[]}},{\"id\":\"hall\",\"name\":\"门厅\",\"parentLocationId\":null,\"appearance\":{\"initial\":\"安静的门厅。\",\"active\":[]}}],\"nearbyCharacters\":[{\"id\":\"person_a\",\"name\":\"林川\",\"position\":{\"containerId\":\"corridor\",\"slotId\":null,\"relativeTo\":null}}],\"nearbyItems\":[{\"id\":\"box\",\"name\":\"盒子\",\"position\":{\"containerId\":\"corridor\",\"slotId\":null,\"relativeTo\":null},\"appearance\":{\"initial\":\"盒盖关闭。\",\"active\":[]}}],\"meaning\":\"action proposal only; execution must be adjudicated by program rules\"}\n输出:",
+      "promptCharacters": 1379,
+      "value": {
+        "kind": "act",
+        "text": "周宁在走廊中走向门厅"
+      },
+      "completion": {
+        "raw": "{\"kind\":\"act\",\"text\":\"周宁在走廊中走向门厅\"}",
+        "finishReason": "stop",
+        "firstTokenMs": 28593.454999923706,
+        "wallMs": 31650.135000228882,
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 469,
+          "prompt_ms": 28259.68,
+          "prompt_per_token_ms": 60.25518123667378,
+          "prompt_per_second": 16.596083182824433,
+          "predicted_n": 17,
+          "predicted_ms": 3258.741,
+          "predicted_per_token_ms": 203.6713125,
+          "predicted_per_second": 4.909871634474786
+        }
+      },
+      "timing": {
+        "queuedMs": 0.009999275207519531,
+        "runMs": 31650.22000026703,
+        "totalMs": 31650.229999542236
+      },
+      "wallMs": 31650.60000038147,
+      "failure": null,
+      "contentReason": null
+    },
+    {
+      "id": "updates-focused",
+      "task": "updates",
+      "mode": "focused",
+      "input": {
+        "groupId": "numeric_comparison",
+        "mode": "group",
+        "stage": "sanity",
+        "results": {
+          "person_c": "周宁完成任务「完成压力试验」，经历压力试验后更谨慎；精神值从10变为8。"
+        },
+        "ruleAssessment": {
+          "scope": {
+            "worldId": "world_19",
+            "advanceId": "advance_22",
+            "inputId": "input_23",
+            "roundId": "round_24",
+            "pointId": "point_25",
+            "baselinePointId": "root_21",
+            "baselineVersion": 0,
+            "baselineDigest": "f058d3bd4bd7fa087b2c26e25486cc433d0fc614dc754c46154d57c20e5e0db0",
+            "fenceEpoch": 1
+          },
+          "decision": {
+            "outcome": "allowed",
+            "effects": [
+              {
+                "kind": "sanity_changed",
+                "actorId": "person_c",
+                "from": 10,
+                "to": 8,
+                "achievedTaskId": "task_pressure",
+                "goal": "完成压力试验",
+                "personalityText": "经历压力试验后更谨慎",
+                "draftChangeId": "rule_strain_input_23"
+              }
+            ]
+          },
+          "proposal": {
+            "kind": "sanity",
+            "actorId": "person_c",
+            "effect": "strain"
+          }
+        },
+        "workingState": {
+          "engineVersion": "world-engine-v1",
+          "schemaVersion": 1,
+          "worldId": "world_19",
+          "protagonistId": "person_c",
+          "time": {
+            "calendar": "gregorian",
+            "dateTime": "2026-10-27T09:00:00",
+            "instantOrdinal": 0
+          },
+          "initial": {
+            "engineVersion": "world-engine-v1",
+            "schemaVersion": 1,
+            "worldId": "world_19",
+            "protagonistId": "person_c",
+            "initialTime": {
+              "calendar": "gregorian",
+              "dateTime": "2026-10-27T09:00:00",
+              "instantOrdinal": 0
+            },
+            "locations": {
+              "corridor": {
+                "id": "corridor",
+                "name": "走廊",
+                "parentLocationId": null,
+                "initialAppearance": "明亮的走廊，通往门厅。",
+                "slots": []
+              },
+              "hall": {
+                "id": "hall",
+                "name": "门厅",
+                "parentLocationId": null,
+                "initialAppearance": "安静的门厅。",
+                "slots": []
+              }
+            },
+            "items": {
+              "box": {
+                "id": "box",
+                "name": "盒子",
+                "initialPosition": {
+                  "containerId": "corridor",
+                  "slotId": null,
+                  "relativeTo": null
+                },
+                "initialAppearance": "盒盖关闭。",
+                "slots": []
+              }
+            },
+            "characters": {
+              "person_a": {
+                "id": "person_a",
+                "name": "林川",
+                "initialPosition": {
+                  "containerId": "corridor",
+                  "slotId": null,
+                  "relativeTo": null
+                },
+                "initialAppearance": "穿灰衣。",
+                "slots": [],
+                "initialPersonality": "谨慎，恪守职责",
+                "initialSanity": 10,
+                "tasks": {
+                  "task_watch": {
+                    "id": "task_watch",
+                    "ownerId": "person_a",
+                    "parentTaskId": null,
+                    "goal": "留在走廊守门，不碰盒子",
+                    "status": "pending"
+                  }
+                }
+              },
+              "person_c": {
+                "id": "person_c",
+                "name": "周宁",
+                "initialPosition": {
+                  "containerId": "corridor",
+                  "slotId": null,
+                  "relativeTo": null
+                },
+                "initialAppearance": "穿蓝衣。",
+                "slots": [],
+                "initialPersonality": "好奇",
+                "initialSanity": 10,
+                "tasks": {
+                  "task_pressure": {
+                    "id": "task_pressure",
+                    "ownerId": "person_c",
+                    "parentTaskId": null,
+                    "goal": "完成压力试验",
+                    "status": "pending"
+                  },
+                  "task_recover": {
+                    "id": "task_recover",
+                    "ownerId": "person_c",
+                    "parentTaskId": null,
+                    "goal": "完成恢复练习",
+                    "status": "pending"
+                  }
+                }
+              }
+            }
+          },
+          "locations": {
+            "corridor": {
+              "id": "corridor",
+              "appearanceChanges": []
+            },
+            "hall": {
+              "id": "hall",
+              "appearanceChanges": []
+            }
+          },
+          "items": {
+            "box": {
+              "id": "box",
+              "appearanceChanges": [],
+              "position": {
+                "containerId": "corridor",
+                "slotId": null,
+                "relativeTo": null
+              }
+            }
+          },
+          "characters": {
+            "person_a": {
+              "id": "person_a",
+              "appearanceChanges": [],
+              "position": {
+                "containerId": "corridor",
+                "slotId": null,
+                "relativeTo": null
+              },
+              "personalityChanges": [],
+              "sanity": 10,
+              "tasks": {
+                "task_watch": {
+                  "id": "task_watch",
+                  "ownerId": "person_a",
+                  "parentTaskId": null,
+                  "goal": "留在走廊守门，不碰盒子",
+                  "status": "pending"
+                }
+              }
+            },
+            "person_c": {
+              "id": "person_c",
+              "appearanceChanges": [],
+              "position": {
+                "containerId": "corridor",
+                "slotId": null,
+                "relativeTo": null
+              },
+              "personalityChanges": [],
+              "sanity": 10,
+              "tasks": {
+                "task_pressure": {
+                  "id": "task_pressure",
+                  "ownerId": "person_c",
+                  "parentTaskId": null,
+                  "goal": "完成压力试验",
+                  "status": "pending"
+                },
+                "task_recover": {
+                  "id": "task_recover",
+                  "ownerId": "person_c",
+                  "parentTaskId": null,
+                  "goal": "完成恢复练习",
+                  "status": "pending"
+                }
+              }
+            }
+          }
+        }
+      },
+      "prompt": "[任务: updates]\nresults 是结算描述，文本本身不是执行事实；这里只生成待核对候选，权威更新必须由规则凭据产生。只输出一个 JSON 对象（不要数组）：{\"stage\":\"sanity\",\"changes\":{\"实体id\":{...增量}}}。增量字段：sanitySet=数值。只写本阶段已确认发生变化的实体；未变化用 changes={}，不要添加事实。\n调用键: numeric_comparison#sanity\n本调用阶段: sanity\n输入:\n{\"groupId\":\"numeric_comparison\",\"stage\":\"sanity\",\"entities\":[{\"id\":\"person_a\",\"name\":\"林川\",\"sanity\":10},{\"id\":\"person_c\",\"name\":\"周宁\",\"sanity\":10}],\"resultDescription\":{\"person_c\":\"周宁完成任务「完成压力试验」，经历压力试验后更谨慎；精神值从10变为8。\"},\"ruleAssessmentForComparison\":{\"scope\":{\"worldId\":\"world_19\",\"advanceId\":\"advance_22\",\"inputId\":\"input_23\",\"roundId\":\"round_24\",\"pointId\":\"point_25\",\"baselinePointId\":\"root_21\",\"baselineVersion\":0,\"baselineDigest\":\"f058d3bd4bd7fa087b2c26e25486cc433d0fc614dc754c46154d57c20e5e0db0\",\"fenceEpoch\":1},\"decision\":{\"outcome\":\"allowed\",\"effects\":[{\"kind\":\"sanity_changed\",\"actorId\":\"person_c\",\"from\":10,\"to\":8,\"achievedTaskId\":\"task_pressure\",\"goal\":\"完成压力试验\",\"personalityText\":\"经历压力试验后更谨慎\",\"draftChangeId\":\"rule_strain_input_23\"}]},\"proposal\":{\"kind\":\"sanity\",\"actorId\":\"person_c\",\"effect\":\"strain\"}},\"meaning\":\"comparison candidate only; natural-language results do not mint a rule receipt\"}\n输出:",
+      "promptCharacters": 1144,
+      "value": {
+        "stage": "sanity",
+        "changes": {
+          "person_c": {
+            "sanitySet": 8
+          }
+        }
+      },
+      "completion": {
+        "raw": "{\"stage\":\"sanity\",\"changes\":{\"person_c\":{\"sanitySet\":8}}}",
+        "finishReason": "stop",
+        "firstTokenMs": 25826.59500026703,
+        "wallMs": 29022.47000026703,
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 431,
+          "prompt_ms": 25547.569,
+          "prompt_per_token_ms": 59.27510208816705,
+          "prompt_per_second": 16.8704897127394,
+          "predicted_n": 18,
+          "predicted_ms": 3401.09,
+          "predicted_per_token_ms": 200.06411764705882,
+          "predicted_per_second": 4.9983975725429195
+        }
+      },
+      "timing": {
+        "queuedMs": 0.010000228881835938,
+        "runMs": 29022.670000076294,
+        "totalMs": 29022.685000419617
+      },
+      "wallMs": 29023.60000038147,
+      "failure": null,
+      "contentReason": null
+    },
+    {
+      "id": "updates-full",
+      "task": "updates",
+      "mode": "full",
+      "input": {
+        "groupId": "numeric_comparison",
+        "mode": "group",
+        "stage": "sanity",
+        "results": {
+          "person_c": "周宁完成任务「完成压力试验」，经历压力试验后更谨慎；精神值从10变为8。"
+        },
+        "ruleAssessment": {
+          "scope": {
+            "worldId": "world_19",
+            "advanceId": "advance_22",
+            "inputId": "input_23",
+            "roundId": "round_24",
+            "pointId": "point_25",
+            "baselinePointId": "root_21",
+            "baselineVersion": 0,
+            "baselineDigest": "f058d3bd4bd7fa087b2c26e25486cc433d0fc614dc754c46154d57c20e5e0db0",
+            "fenceEpoch": 1
+          },
+          "decision": {
+            "outcome": "allowed",
+            "effects": [
+              {
+                "kind": "sanity_changed",
+                "actorId": "person_c",
+                "from": 10,
+                "to": 8,
+                "achievedTaskId": "task_pressure",
+                "goal": "完成压力试验",
+                "personalityText": "经历压力试验后更谨慎",
+                "draftChangeId": "rule_strain_input_23"
+              }
+            ]
+          },
+          "proposal": {
+            "kind": "sanity",
+            "actorId": "person_c",
+            "effect": "strain"
+          }
+        },
+        "workingState": {
+          "engineVersion": "world-engine-v1",
+          "schemaVersion": 1,
+          "worldId": "world_19",
+          "protagonistId": "person_c",
+          "time": {
+            "calendar": "gregorian",
+            "dateTime": "2026-10-27T09:00:00",
+            "instantOrdinal": 0
+          },
+          "initial": {
+            "engineVersion": "world-engine-v1",
+            "schemaVersion": 1,
+            "worldId": "world_19",
+            "protagonistId": "person_c",
+            "initialTime": {
+              "calendar": "gregorian",
+              "dateTime": "2026-10-27T09:00:00",
+              "instantOrdinal": 0
+            },
+            "locations": {
+              "corridor": {
+                "id": "corridor",
+                "name": "走廊",
+                "parentLocationId": null,
+                "initialAppearance": "明亮的走廊，通往门厅。",
+                "slots": []
+              },
+              "hall": {
+                "id": "hall",
+                "name": "门厅",
+                "parentLocationId": null,
+                "initialAppearance": "安静的门厅。",
+                "slots": []
+              }
+            },
+            "items": {
+              "box": {
+                "id": "box",
+                "name": "盒子",
+                "initialPosition": {
+                  "containerId": "corridor",
+                  "slotId": null,
+                  "relativeTo": null
+                },
+                "initialAppearance": "盒盖关闭。",
+                "slots": []
+              }
+            },
+            "characters": {
+              "person_a": {
+                "id": "person_a",
+                "name": "林川",
+                "initialPosition": {
+                  "containerId": "corridor",
+                  "slotId": null,
+                  "relativeTo": null
+                },
+                "initialAppearance": "穿灰衣。",
+                "slots": [],
+                "initialPersonality": "谨慎，恪守职责",
+                "initialSanity": 10,
+                "tasks": {
+                  "task_watch": {
+                    "id": "task_watch",
+                    "ownerId": "person_a",
+                    "parentTaskId": null,
+                    "goal": "留在走廊守门，不碰盒子",
+                    "status": "pending"
+                  }
+                }
+              },
+              "person_c": {
+                "id": "person_c",
+                "name": "周宁",
+                "initialPosition": {
+                  "containerId": "corridor",
+                  "slotId": null,
+                  "relativeTo": null
+                },
+                "initialAppearance": "穿蓝衣。",
+                "slots": [],
+                "initialPersonality": "好奇",
+                "initialSanity": 10,
+                "tasks": {
+                  "task_pressure": {
+                    "id": "task_pressure",
+                    "ownerId": "person_c",
+                    "parentTaskId": null,
+                    "goal": "完成压力试验",
+                    "status": "pending"
+                  },
+                  "task_recover": {
+                    "id": "task_recover",
+                    "ownerId": "person_c",
+                    "parentTaskId": null,
+                    "goal": "完成恢复练习",
+                    "status": "pending"
+                  }
+                }
+              }
+            }
+          },
+          "locations": {
+            "corridor": {
+              "id": "corridor",
+              "appearanceChanges": []
+            },
+            "hall": {
+              "id": "hall",
+              "appearanceChanges": []
+            }
+          },
+          "items": {
+            "box": {
+              "id": "box",
+              "appearanceChanges": [],
+              "position": {
+                "containerId": "corridor",
+                "slotId": null,
+                "relativeTo": null
+              }
+            }
+          },
+          "characters": {
+            "person_a": {
+              "id": "person_a",
+              "appearanceChanges": [],
+              "position": {
+                "containerId": "corridor",
+                "slotId": null,
+                "relativeTo": null
+              },
+              "personalityChanges": [],
+              "sanity": 10,
+              "tasks": {
+                "task_watch": {
+                  "id": "task_watch",
+                  "ownerId": "person_a",
+                  "parentTaskId": null,
+                  "goal": "留在走廊守门，不碰盒子",
+                  "status": "pending"
+                }
+              }
+            },
+            "person_c": {
+              "id": "person_c",
+              "appearanceChanges": [],
+              "position": {
+                "containerId": "corridor",
+                "slotId": null,
+                "relativeTo": null
+              },
+              "personalityChanges": [],
+              "sanity": 10,
+              "tasks": {
+                "task_pressure": {
+                  "id": "task_pressure",
+                  "ownerId": "person_c",
+                  "parentTaskId": null,
+                  "goal": "完成压力试验",
+                  "status": "pending"
+                },
+                "task_recover": {
+                  "id": "task_recover",
+                  "ownerId": "person_c",
+                  "parentTaskId": null,
+                  "goal": "完成恢复练习",
+                  "status": "pending"
+                }
+              }
+            }
+          }
+        }
+      },
+      "prompt": "[任务: updates]\nresults 是结算描述，文本本身不是执行事实；这里只生成待核对候选，权威更新必须由规则凭据产生。只输出一个 JSON 对象（不要数组）：{\"stage\":\"sanity\",\"changes\":{\"实体id\":{...增量}}}。增量字段：sanitySet=数值。只写本阶段已确认发生变化的实体；未变化用 changes={}，不要添加事实。\n调用键: numeric_comparison#sanity\n本调用阶段: sanity\n输入:\n{\"groupId\":\"numeric_comparison\",\"mode\":\"group\",\"stage\":\"sanity\",\"results\":{\"person_c\":\"周宁完成任务「完成压力试验」，经历压力试验后更谨慎；精神值从10变为8。\"},\"ruleAssessment\":{\"scope\":{\"worldId\":\"world_19\",\"advanceId\":\"advance_22\",\"inputId\":\"input_23\",\"roundId\":\"round_24\",\"pointId\":\"point_25\",\"baselinePointId\":\"root_21\",\"baselineVersion\":0,\"baselineDigest\":\"f058d3bd4bd7fa087b2c26e25486cc433d0fc614dc754c46154d57c20e5e0db0\",\"fenceEpoch\":1},\"decision\":{\"outcome\":\"allowed\",\"effects\":[{\"kind\":\"sanity_changed\",\"actorId\":\"person_c\",\"from\":10,\"to\":8,\"achievedTaskId\":\"task_pressure\",\"goal\":\"完成压力试验\",\"personalityText\":\"经历压力试验后更谨慎\",\"draftChangeId\":\"rule_strain_input_23\"}]},\"proposal\":{\"kind\":\"sanity\",\"actorId\":\"person_c\",\"effect\":\"strain\"}},\"workingState\":{\"engineVersion\":\"world-engine-v1\",\"schemaVersion\":1,\"worldId\":\"world_19\",\"protagonistId\":\"person_c\",\"time\":{\"calendar\":\"gregorian\",\"dateTime\":\"2026-10-27T09:00:00\",\"instantOrdinal\":0},\"initial\":{\"engineVersion\":\"world-engine-v1\",\"schemaVersion\":1,\"worldId\":\"world_19\",\"protagonistId\":\"person_c\",\"initialTime\":{\"calendar\":\"gregorian\",\"dateTime\":\"2026-10-27T09:00:00\",\"instantOrdinal\":0},\"locations\":{\"corridor\":{\"id\":\"corridor\",\"name\":\"走廊\",\"parentLocationId\":null,\"initialAppearance\":\"明亮的走廊，通往门厅。\",\"slots\":[]},\"hall\":{\"id\":\"hall\",\"name\":\"门厅\",\"parentLocationId\":null,\"initialAppearance\":\"安静的门厅。\",\"slots\":[]}},\"items\":{\"box\":{\"id\":\"box\",\"name\":\"盒子\",\"initialPosition\":{\"containerId\":\"corridor\",\"slotId\":null,\"relativeTo\":null},\"initialAppearance\":\"盒盖关闭。\",\"slots\":[]}},\"characters\":{\"person_a\":{\"id\":\"person_a\",\"name\":\"林川\",\"initialPosition\":{\"containerId\":\"corridor\",\"slotId\":null,\"relativeTo\":null},\"initialAppearance\":\"穿灰衣。\",\"slots\":[],\"initialPersonality\":\"谨慎，恪守职责\",\"initialSanity\":10,\"tasks\":{\"task_watch\":{\"id\":\"task_watch\",\"ownerId\":\"person_a\",\"parentTaskId\":null,\"goal\":\"留在走廊守门，不碰盒子\",\"status\":\"pending\"}}},\"person_c\":{\"id\":\"person_c\",\"name\":\"周宁\",\"initialPosition\":{\"containerId\":\"corridor\",\"slotId\":null,\"relativeTo\":null},\"initialAppearance\":\"穿蓝衣。\",\"slots\":[],\"initialPersonality\":\"好奇\",\"initialSanity\":10,\"tasks\":{\"task_pressure\":{\"id\":\"task_pressure\",\"ownerId\":\"person_c\",\"parentTaskId\":null,\"goal\":\"完成压力试验\",\"status\":\"pending\"},\"task_recover\":{\"id\":\"task_recover\",\"ownerId\":\"person_c\",\"parentTaskId\":null,\"goal\":\"完成恢复练习\",\"status\":\"pending\"}}}}},\"locations\":{\"corridor\":{\"id\":\"corridor\",\"appearanceChanges\":[]},\"hall\":{\"id\":\"hall\",\"appearanceChanges\":[]}},\"items\":{\"box\":{\"id\":\"box\",\"appearanceChanges\":[],\"position\":{\"containerId\":\"corridor\",\"slotId\":null,\"relativeTo\":null}}},\"characters\":{\"person_a\":{\"id\":\"person_a\",\"appearanceChanges\":[],\"position\":{\"containerId\":\"corridor\",\"slotId\":null,\"relativeTo\":null},\"personalityChanges\":[],\"sanity\":10,\"tasks\":{\"task_watch\":{\"id\":\"task_watch\",\"ownerId\":\"person_a\",\"parentTaskId\":null,\"goal\":\"留在走廊守门，不碰盒子\",\"status\":\"pending\"}}},\"person_c\":{\"id\":\"person_c\",\"appearanceChanges\":[],\"position\":{\"containerId\":\"corridor\",\"slotId\":null,\"relativeTo\":null},\"personalityChanges\":[],\"sanity\":10,\"tasks\":{\"task_pressure\":{\"id\":\"task_pressure\",\"ownerId\":\"person_c\",\"parentTaskId\":null,\"goal\":\"完成压力试验\",\"status\":\"pending\"},\"task_recover\":{\"id\":\"task_recover\",\"ownerId\":\"person_c\",\"parentTaskId\":null,\"goal\":\"完成恢复练习\",\"status\":\"pending\"}}}}}}\n输出:",
+      "promptCharacters": 3439,
+      "value": {
+        "stage": "sanity",
+        "changes": {
+          "person_c": {
+            "sanitySet": 8
+          }
+        }
+      },
+      "completion": {
+        "raw": "{\"stage\":\"sanity\",\"changes\":{\"person_c\":{\"sanitySet\":8}}}",
+        "finishReason": "stop",
+        "firstTokenMs": 69505.35499954224,
+        "wallMs": 75703.52499961853,
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 1092,
+          "prompt_ms": 69083.05,
+          "prompt_per_token_ms": 63.262866300366305,
+          "prompt_per_second": 15.8070612111075,
+          "predicted_n": 19,
+          "predicted_ms": 6544.555,
+          "predicted_per_token_ms": 363.5863888888889,
+          "predicted_per_second": 2.7503779859746
+        }
+      },
+      "timing": {
+        "queuedMs": 0.005000114440917969,
+        "runMs": 75703.60000038147,
+        "totalMs": 75703.61000061035
+      },
+      "wallMs": 75703.7950000763,
+      "failure": null,
+      "contentReason": null
+    },
+    {
+      "id": "narration-full",
+      "task": "narration",
+      "mode": "full",
+      "input": {
+        "pointId": "point_7",
+        "before": {
+          "engineVersion": "world-engine-v1",
+          "schemaVersion": 1,
+          "worldId": "world_1",
+          "protagonistId": "person_c",
+          "time": {
+            "calendar": "gregorian",
+            "dateTime": "2026-10-27T09:00:00",
+            "instantOrdinal": 0
+          },
+          "initial": {
+            "engineVersion": "world-engine-v1",
+            "schemaVersion": 1,
+            "worldId": "world_1",
+            "protagonistId": "person_c",
+            "initialTime": {
+              "calendar": "gregorian",
+              "dateTime": "2026-10-27T09:00:00",
+              "instantOrdinal": 0
+            },
+            "locations": {
+              "corridor": {
+                "id": "corridor",
+                "name": "走廊",
+                "parentLocationId": null,
+                "initialAppearance": "明亮的走廊，通往门厅。",
+                "slots": []
+              },
+              "hall": {
+                "id": "hall",
+                "name": "门厅",
+                "parentLocationId": null,
+                "initialAppearance": "安静的门厅。",
+                "slots": []
+              }
+            },
+            "items": {
+              "box": {
+                "id": "box",
+                "name": "盒子",
+                "initialPosition": {
+                  "containerId": "corridor",
+                  "slotId": null,
+                  "relativeTo": null
+                },
+                "initialAppearance": "盒盖关闭。",
+                "slots": []
+              }
+            },
+            "characters": {
+              "person_a": {
+                "id": "person_a",
+                "name": "林川",
+                "initialPosition": {
+                  "containerId": "corridor",
+                  "slotId": null,
+                  "relativeTo": null
+                },
+                "initialAppearance": "穿灰衣。",
+                "slots": [],
+                "initialPersonality": "谨慎，恪守职责",
+                "initialSanity": 10,
+                "tasks": {
+                  "task_watch": {
+                    "id": "task_watch",
+                    "ownerId": "person_a",
+                    "parentTaskId": null,
+                    "goal": "留在走廊守门，不碰盒子",
+                    "status": "pending"
+                  }
+                }
+              },
+              "person_c": {
+                "id": "person_c",
+                "name": "周宁",
+                "initialPosition": {
+                  "containerId": "corridor",
+                  "slotId": null,
+                  "relativeTo": null
+                },
+                "initialAppearance": "穿蓝衣。",
+                "slots": [],
+                "initialPersonality": "好奇",
+                "initialSanity": 10,
+                "tasks": {
+                  "task_pressure": {
+                    "id": "task_pressure",
+                    "ownerId": "person_c",
+                    "parentTaskId": null,
+                    "goal": "完成压力试验",
+                    "status": "pending"
+                  },
+                  "task_recover": {
+                    "id": "task_recover",
+                    "ownerId": "person_c",
+                    "parentTaskId": null,
+                    "goal": "完成恢复练习",
+                    "status": "pending"
+                  }
+                }
+              }
+            }
+          },
+          "locations": {
+            "corridor": {
+              "id": "corridor",
+              "appearanceChanges": []
+            },
+            "hall": {
+              "id": "hall",
+              "appearanceChanges": []
+            }
+          },
+          "items": {
+            "box": {
+              "id": "box",
+              "appearanceChanges": [],
+              "position": {
+                "containerId": "corridor",
+                "slotId": null,
+                "relativeTo": null
+              }
+            }
+          },
+          "characters": {
+            "person_a": {
+              "id": "person_a",
+              "appearanceChanges": [],
+              "position": {
+                "containerId": "corridor",
+                "slotId": null,
+                "relativeTo": null
+              },
+              "personalityChanges": [],
+              "sanity": 10,
+              "tasks": {
+                "task_watch": {
+                  "id": "task_watch",
+                  "ownerId": "person_a",
+                  "parentTaskId": null,
+                  "goal": "留在走廊守门，不碰盒子",
+                  "status": "pending"
+                }
+              }
+            },
+            "person_c": {
+              "id": "person_c",
+              "appearanceChanges": [],
+              "position": {
+                "containerId": "corridor",
+                "slotId": null,
+                "relativeTo": null
+              },
+              "personalityChanges": [],
+              "sanity": 10,
+              "tasks": {
+                "task_pressure": {
+                  "id": "task_pressure",
+                  "ownerId": "person_c",
+                  "parentTaskId": null,
+                  "goal": "完成压力试验",
+                  "status": "pending"
+                },
+                "task_recover": {
+                  "id": "task_recover",
+                  "ownerId": "person_c",
+                  "parentTaskId": null,
+                  "goal": "完成恢复练习",
+                  "status": "pending"
+                }
+              }
+            }
+          }
+        },
+        "delta": {
+          "timeAdvance": {
+            "boundary": "elapsed",
+            "duration": {
+              "amount": 1,
+              "unit": "second"
+            }
+          },
+          "entityDeltas": {
+            "person_c": {
+              "entityId": "person_c",
+              "positionSet": {
+                "containerId": "hall",
+                "slotId": null,
+                "relativeTo": null
+              }
+            }
+          }
+        },
+        "after": {
+          "engineVersion": "world-engine-v1",
+          "schemaVersion": 1,
+          "worldId": "world_1",
+          "protagonistId": "person_c",
+          "time": {
+            "calendar": "gregorian",
+            "dateTime": "2026-10-27T09:00:01",
+            "instantOrdinal": 0
+          },
+          "initial": {
+            "engineVersion": "world-engine-v1",
+            "schemaVersion": 1,
+            "worldId": "world_1",
+            "protagonistId": "person_c",
+            "initialTime": {
+              "calendar": "gregorian",
+              "dateTime": "2026-10-27T09:00:00",
+              "instantOrdinal": 0
+            },
+            "locations": {
+              "corridor": {
+                "id": "corridor",
+                "name": "走廊",
+                "parentLocationId": null,
+                "initialAppearance": "明亮的走廊，通往门厅。",
+                "slots": []
+              },
+              "hall": {
+                "id": "hall",
+                "name": "门厅",
+                "parentLocationId": null,
+                "initialAppearance": "安静的门厅。",
+                "slots": []
+              }
+            },
+            "items": {
+              "box": {
+                "id": "box",
+                "name": "盒子",
+                "initialPosition": {
+                  "containerId": "corridor",
+                  "slotId": null,
+                  "relativeTo": null
+                },
+                "initialAppearance": "盒盖关闭。",
+                "slots": []
+              }
+            },
+            "characters": {
+              "person_a": {
+                "id": "person_a",
+                "name": "林川",
+                "initialPosition": {
+                  "containerId": "corridor",
+                  "slotId": null,
+                  "relativeTo": null
+                },
+                "initialAppearance": "穿灰衣。",
+                "slots": [],
+                "initialPersonality": "谨慎，恪守职责",
+                "initialSanity": 10,
+                "tasks": {
+                  "task_watch": {
+                    "id": "task_watch",
+                    "ownerId": "person_a",
+                    "parentTaskId": null,
+                    "goal": "留在走廊守门，不碰盒子",
+                    "status": "pending"
+                  }
+                }
+              },
+              "person_c": {
+                "id": "person_c",
+                "name": "周宁",
+                "initialPosition": {
+                  "containerId": "corridor",
+                  "slotId": null,
+                  "relativeTo": null
+                },
+                "initialAppearance": "穿蓝衣。",
+                "slots": [],
+                "initialPersonality": "好奇",
+                "initialSanity": 10,
+                "tasks": {
+                  "task_pressure": {
+                    "id": "task_pressure",
+                    "ownerId": "person_c",
+                    "parentTaskId": null,
+                    "goal": "完成压力试验",
+                    "status": "pending"
+                  },
+                  "task_recover": {
+                    "id": "task_recover",
+                    "ownerId": "person_c",
+                    "parentTaskId": null,
+                    "goal": "完成恢复练习",
+                    "status": "pending"
+                  }
+                }
+              }
+            }
+          },
+          "locations": {
+            "corridor": {
+              "id": "corridor",
+              "appearanceChanges": []
+            },
+            "hall": {
+              "id": "hall",
+              "appearanceChanges": []
+            }
+          },
+          "items": {
+            "box": {
+              "id": "box",
+              "appearanceChanges": [],
+              "position": {
+                "containerId": "corridor",
+                "slotId": null,
+                "relativeTo": null
+              }
+            }
+          },
+          "characters": {
+            "person_a": {
+              "id": "person_a",
+              "appearanceChanges": [],
+              "position": {
+                "containerId": "corridor",
+                "slotId": null,
+                "relativeTo": null
+              },
+              "personalityChanges": [],
+              "sanity": 10,
+              "tasks": {
+                "task_watch": {
+                  "id": "task_watch",
+                  "ownerId": "person_a",
+                  "parentTaskId": null,
+                  "goal": "留在走廊守门，不碰盒子",
+                  "status": "pending"
+                }
+              }
+            },
+            "person_c": {
+              "id": "person_c",
+              "appearanceChanges": [],
+              "position": {
+                "containerId": "hall",
+                "slotId": null,
+                "relativeTo": null
+              },
+              "personalityChanges": [],
+              "sanity": 10,
+              "tasks": {
+                "task_pressure": {
+                  "id": "task_pressure",
+                  "ownerId": "person_c",
+                  "parentTaskId": null,
+                  "goal": "完成压力试验",
+                  "status": "pending"
+                },
+                "task_recover": {
+                  "id": "task_recover",
+                  "ownerId": "person_c",
+                  "parentTaskId": null,
+                  "goal": "完成恢复练习",
+                  "status": "pending"
+                }
+              }
+            }
+          }
+        },
+        "perspective": "周宁视角，仅表达保存事实"
+      },
+      "prompt": "[任务: narration]\n只用 facts 中的允许短句组织正文，每条事实表达一次；可换顺序，句间用句号。不要增加、遗漏或修改事实；不要标题、不要 JSON。\n调用键: point_7\n输入:\n{\"pointId\":\"point_7\",\"before\":{\"engineVersion\":\"world-engine-v1\",\"schemaVersion\":1,\"worldId\":\"world_1\",\"protagonistId\":\"person_c\",\"time\":{\"calendar\":\"gregorian\",\"dateTime\":\"2026-10-27T09:00:00\",\"instantOrdinal\":0},\"initial\":{\"engineVersion\":\"world-engine-v1\",\"schemaVersion\":1,\"worldId\":\"world_1\",\"protagonistId\":\"person_c\",\"initialTime\":{\"calendar\":\"gregorian\",\"dateTime\":\"2026-10-27T09:00:00\",\"instantOrdinal\":0},\"locations\":{\"corridor\":{\"id\":\"corridor\",\"name\":\"走廊\",\"parentLocationId\":null,\"initialAppearance\":\"明亮的走廊，通往门厅。\",\"slots\":[]},\"hall\":{\"id\":\"hall\",\"name\":\"门厅\",\"parentLocationId\":null,\"initialAppearance\":\"安静的门厅。\",\"slots\":[]}},\"items\":{\"box\":{\"id\":\"box\",\"name\":\"盒子\",\"initialPosition\":{\"containerId\":\"corridor\",\"slotId\":null,\"relativeTo\":null},\"initialAppearance\":\"盒盖关闭。\",\"slots\":[]}},\"characters\":{\"person_a\":{\"id\":\"person_a\",\"name\":\"林川\",\"initialPosition\":{\"containerId\":\"corridor\",\"slotId\":null,\"relativeTo\":null},\"initialAppearance\":\"穿灰衣。\",\"slots\":[],\"initialPersonality\":\"谨慎，恪守职责\",\"initialSanity\":10,\"tasks\":{\"task_watch\":{\"id\":\"task_watch\",\"ownerId\":\"person_a\",\"parentTaskId\":null,\"goal\":\"留在走廊守门，不碰盒子\",\"status\":\"pending\"}}},\"person_c\":{\"id\":\"person_c\",\"name\":\"周宁\",\"initialPosition\":{\"containerId\":\"corridor\",\"slotId\":null,\"relativeTo\":null},\"initialAppearance\":\"穿蓝衣。\",\"slots\":[],\"initialPersonality\":\"好奇\",\"initialSanity\":10,\"tasks\":{\"task_pressure\":{\"id\":\"task_pressure\",\"ownerId\":\"person_c\",\"parentTaskId\":null,\"goal\":\"完成压力试验\",\"status\":\"pending\"},\"task_recover\":{\"id\":\"task_recover\",\"ownerId\":\"person_c\",\"parentTaskId\":null,\"goal\":\"完成恢复练习\",\"status\":\"pending\"}}}}},\"locations\":{\"corridor\":{\"id\":\"corridor\",\"appearanceChanges\":[]},\"hall\":{\"id\":\"hall\",\"appearanceChanges\":[]}},\"items\":{\"box\":{\"id\":\"box\",\"appearanceChanges\":[],\"position\":{\"containerId\":\"corridor\",\"slotId\":null,\"relativeTo\":null}}},\"characters\":{\"person_a\":{\"id\":\"person_a\",\"appearanceChanges\":[],\"position\":{\"containerId\":\"corridor\",\"slotId\":null,\"relativeTo\":null},\"personalityChanges\":[],\"sanity\":10,\"tasks\":{\"task_watch\":{\"id\":\"task_watch\",\"ownerId\":\"person_a\",\"parentTaskId\":null,\"goal\":\"留在走廊守门，不碰盒子\",\"status\":\"pending\"}}},\"person_c\":{\"id\":\"person_c\",\"appearanceChanges\":[],\"position\":{\"containerId\":\"corridor\",\"slotId\":null,\"relativeTo\":null},\"personalityChanges\":[],\"sanity\":10,\"tasks\":{\"task_pressure\":{\"id\":\"task_pressure\",\"ownerId\":\"person_c\",\"parentTaskId\":null,\"goal\":\"完成压力试验\",\"status\":\"pending\"},\"task_recover\":{\"id\":\"task_recover\",\"ownerId\":\"person_c\",\"parentTaskId\":null,\"goal\":\"完成恢复练习\",\"status\":\"pending\"}}}}},\"delta\":{\"timeAdvance\":{\"boundary\":\"elapsed\",\"duration\":{\"amount\":1,\"unit\":\"second\"}},\"entityDeltas\":{\"person_c\":{\"entityId\":\"person_c\",\"positionSet\":{\"containerId\":\"hall\",\"slotId\":null,\"relativeTo\":null}}}},\"after\":{\"engineVersion\":\"world-engine-v1\",\"schemaVersion\":1,\"worldId\":\"world_1\",\"protagonistId\":\"person_c\",\"time\":{\"calendar\":\"gregorian\",\"dateTime\":\"2026-10-27T09:00:01\",\"instantOrdinal\":0},\"initial\":{\"engineVersion\":\"world-engine-v1\",\"schemaVersion\":1,\"worldId\":\"world_1\",\"protagonistId\":\"person_c\",\"initialTime\":{\"calendar\":\"gregorian\",\"dateTime\":\"2026-10-27T09:00:00\",\"instantOrdinal\":0},\"locations\":{\"corridor\":{\"id\":\"corridor\",\"name\":\"走廊\",\"parentLocationId\":null,\"initialAppearance\":\"明亮的走廊，通往门厅。\",\"slots\":[]},\"hall\":{\"id\":\"hall\",\"name\":\"门厅\",\"parentLocationId\":null,\"initialAppearance\":\"安静的门厅。\",\"slots\":[]}},\"items\":{\"box\":{\"id\":\"box\",\"name\":\"盒子\",\"initialPosition\":{\"containerId\":\"corridor\",\"slotId\":null,\"relativeTo\":null},\"initialAppearance\":\"盒盖关闭。\",\"slots\":[]}},\"characters\":{\"person_a\":{\"id\":\"person_a\",\"name\":\"林川\",\"initialPosition\":{\"containerId\":\"corridor\",\"slotId\":null,\"relativeTo\":null},\"initialAppearance\":\"穿灰衣。\",\"slots\":[],\"initialPersonality\":\"谨慎，恪守职责\",\"initialSanity\":10,\"tasks\":{\"task_watch\":{\"id\":\"task_watch\",\"ownerId\":\"person_a\",\"parentTaskId\":null,\"goal\":\"留在走廊守门，不碰盒子\",\"status\":\"pending\"}}},\"person_c\":{\"id\":\"person_c\",\"name\":\"周宁\",\"initialPosition\":{\"containerId\":\"corridor\",\"slotId\":null,\"relativeTo\":null},\"initialAppearance\":\"穿蓝衣。\",\"slots\":[],\"initialPersonality\":\"好奇\",\"initialSanity\":10,\"tasks\":{\"task_pressure\":{\"id\":\"task_pressure\",\"ownerId\":\"person_c\",\"parentTaskId\":null,\"goal\":\"完成压力试验\",\"status\":\"pending\"},\"task_recover\":{\"id\":\"task_recover\",\"ownerId\":\"person_c\",\"parentTaskId\":null,\"goal\":\"完成恢复练习\",\"status\":\"pending\"}}}}},\"locations\":{\"corridor\":{\"id\":\"corridor\",\"appearanceChanges\":[]},\"hall\":{\"id\":\"hall\",\"appearanceChanges\":[]}},\"items\":{\"box\":{\"id\":\"box\",\"appearanceChanges\":[],\"position\":{\"containerId\":\"corridor\",\"slotId\":null,\"relativeTo\":null}}},\"characters\":{\"person_a\":{\"id\":\"person_a\",\"appearanceChanges\":[],\"position\":{\"containerId\":\"corridor\",\"slotId\":null,\"relativeTo\":null},\"personalityChanges\":[],\"sanity\":10,\"tasks\":{\"task_watch\":{\"id\":\"task_watch\",\"ownerId\":\"person_a\",\"parentTaskId\":null,\"goal\":\"留在走廊守门，不碰盒子\",\"status\":\"pending\"}}},\"person_c\":{\"id\":\"person_c\",\"appearanceChanges\":[],\"position\":{\"containerId\":\"hall\",\"slotId\":null,\"relativeTo\":null},\"personalityChanges\":[],\"sanity\":10,\"tasks\":{\"task_pressure\":{\"id\":\"task_pressure\",\"ownerId\":\"person_c\",\"parentTaskId\":null,\"goal\":\"完成压力试验\",\"status\":\"pending\"},\"task_recover\":{\"id\":\"task_recover\",\"ownerId\":\"person_c\",\"parentTaskId\":null,\"goal\":\"完成恢复练习\",\"status\":\"pending\"}}}}},\"perspective\":\"周宁视角，仅表达保存事实\",\"facts\":[{\"id\":\"person_a:position\",\"allowedPhrases\":[\"林川位于走廊\",\"林川现在在走廊\"]},{\"id\":\"person_a:sanity\",\"allowedPhrases\":[\"林川的精神值为10\",\"林川当前精神值是10\"]},{\"id\":\"person_c:position\",\"allowedPhrases\":[\"周宁从走廊走到门厅\",\"周宁从走廊来到门厅\"]},{\"id\":\"person_c:sanity\",\"allowedPhrases\":[\"周宁的精神值为10\",\"周宁当前精神值是10\"]}]}\n正文:",
+      "promptCharacters": 5606,
+      "completion": {
+        "raw": "林川位于走廊。  \n林川现在在走廊。  \n周宁从走廊走到门",
+        "finishReason": "timeout",
+        "firstTokenMs": 111638.94999980927,
+        "wallMs": 120279.11999988556
+      },
+      "failure": "engine",
+      "error": "IncompleteGenerationError: generation deadline exceeded",
+      "wallMs": 120279.49499988556
+    },
+    {
+      "id": "narration-focused",
+      "task": "narration",
+      "mode": "focused",
+      "input": {
+        "pointId": "point_7",
+        "before": {
+          "engineVersion": "world-engine-v1",
+          "schemaVersion": 1,
+          "worldId": "world_1",
+          "protagonistId": "person_c",
+          "time": {
+            "calendar": "gregorian",
+            "dateTime": "2026-10-27T09:00:00",
+            "instantOrdinal": 0
+          },
+          "initial": {
+            "engineVersion": "world-engine-v1",
+            "schemaVersion": 1,
+            "worldId": "world_1",
+            "protagonistId": "person_c",
+            "initialTime": {
+              "calendar": "gregorian",
+              "dateTime": "2026-10-27T09:00:00",
+              "instantOrdinal": 0
+            },
+            "locations": {
+              "corridor": {
+                "id": "corridor",
+                "name": "走廊",
+                "parentLocationId": null,
+                "initialAppearance": "明亮的走廊，通往门厅。",
+                "slots": []
+              },
+              "hall": {
+                "id": "hall",
+                "name": "门厅",
+                "parentLocationId": null,
+                "initialAppearance": "安静的门厅。",
+                "slots": []
+              }
+            },
+            "items": {
+              "box": {
+                "id": "box",
+                "name": "盒子",
+                "initialPosition": {
+                  "containerId": "corridor",
+                  "slotId": null,
+                  "relativeTo": null
+                },
+                "initialAppearance": "盒盖关闭。",
+                "slots": []
+              }
+            },
+            "characters": {
+              "person_a": {
+                "id": "person_a",
+                "name": "林川",
+                "initialPosition": {
+                  "containerId": "corridor",
+                  "slotId": null,
+                  "relativeTo": null
+                },
+                "initialAppearance": "穿灰衣。",
+                "slots": [],
+                "initialPersonality": "谨慎，恪守职责",
+                "initialSanity": 10,
+                "tasks": {
+                  "task_watch": {
+                    "id": "task_watch",
+                    "ownerId": "person_a",
+                    "parentTaskId": null,
+                    "goal": "留在走廊守门，不碰盒子",
+                    "status": "pending"
+                  }
+                }
+              },
+              "person_c": {
+                "id": "person_c",
+                "name": "周宁",
+                "initialPosition": {
+                  "containerId": "corridor",
+                  "slotId": null,
+                  "relativeTo": null
+                },
+                "initialAppearance": "穿蓝衣。",
+                "slots": [],
+                "initialPersonality": "好奇",
+                "initialSanity": 10,
+                "tasks": {
+                  "task_pressure": {
+                    "id": "task_pressure",
+                    "ownerId": "person_c",
+                    "parentTaskId": null,
+                    "goal": "完成压力试验",
+                    "status": "pending"
+                  },
+                  "task_recover": {
+                    "id": "task_recover",
+                    "ownerId": "person_c",
+                    "parentTaskId": null,
+                    "goal": "完成恢复练习",
+                    "status": "pending"
+                  }
+                }
+              }
+            }
+          },
+          "locations": {
+            "corridor": {
+              "id": "corridor",
+              "appearanceChanges": []
+            },
+            "hall": {
+              "id": "hall",
+              "appearanceChanges": []
+            }
+          },
+          "items": {
+            "box": {
+              "id": "box",
+              "appearanceChanges": [],
+              "position": {
+                "containerId": "corridor",
+                "slotId": null,
+                "relativeTo": null
+              }
+            }
+          },
+          "characters": {
+            "person_a": {
+              "id": "person_a",
+              "appearanceChanges": [],
+              "position": {
+                "containerId": "corridor",
+                "slotId": null,
+                "relativeTo": null
+              },
+              "personalityChanges": [],
+              "sanity": 10,
+              "tasks": {
+                "task_watch": {
+                  "id": "task_watch",
+                  "ownerId": "person_a",
+                  "parentTaskId": null,
+                  "goal": "留在走廊守门，不碰盒子",
+                  "status": "pending"
+                }
+              }
+            },
+            "person_c": {
+              "id": "person_c",
+              "appearanceChanges": [],
+              "position": {
+                "containerId": "corridor",
+                "slotId": null,
+                "relativeTo": null
+              },
+              "personalityChanges": [],
+              "sanity": 10,
+              "tasks": {
+                "task_pressure": {
+                  "id": "task_pressure",
+                  "ownerId": "person_c",
+                  "parentTaskId": null,
+                  "goal": "完成压力试验",
+                  "status": "pending"
+                },
+                "task_recover": {
+                  "id": "task_recover",
+                  "ownerId": "person_c",
+                  "parentTaskId": null,
+                  "goal": "完成恢复练习",
+                  "status": "pending"
+                }
+              }
+            }
+          }
+        },
+        "delta": {
+          "timeAdvance": {
+            "boundary": "elapsed",
+            "duration": {
+              "amount": 1,
+              "unit": "second"
+            }
+          },
+          "entityDeltas": {
+            "person_c": {
+              "entityId": "person_c",
+              "positionSet": {
+                "containerId": "hall",
+                "slotId": null,
+                "relativeTo": null
+              }
+            }
+          }
+        },
+        "after": {
+          "engineVersion": "world-engine-v1",
+          "schemaVersion": 1,
+          "worldId": "world_1",
+          "protagonistId": "person_c",
+          "time": {
+            "calendar": "gregorian",
+            "dateTime": "2026-10-27T09:00:01",
+            "instantOrdinal": 0
+          },
+          "initial": {
+            "engineVersion": "world-engine-v1",
+            "schemaVersion": 1,
+            "worldId": "world_1",
+            "protagonistId": "person_c",
+            "initialTime": {
+              "calendar": "gregorian",
+              "dateTime": "2026-10-27T09:00:00",
+              "instantOrdinal": 0
+            },
+            "locations": {
+              "corridor": {
+                "id": "corridor",
+                "name": "走廊",
+                "parentLocationId": null,
+                "initialAppearance": "明亮的走廊，通往门厅。",
+                "slots": []
+              },
+              "hall": {
+                "id": "hall",
+                "name": "门厅",
+                "parentLocationId": null,
+                "initialAppearance": "安静的门厅。",
+                "slots": []
+              }
+            },
+            "items": {
+              "box": {
+                "id": "box",
+                "name": "盒子",
+                "initialPosition": {
+                  "containerId": "corridor",
+                  "slotId": null,
+                  "relativeTo": null
+                },
+                "initialAppearance": "盒盖关闭。",
+                "slots": []
+              }
+            },
+            "characters": {
+              "person_a": {
+                "id": "person_a",
+                "name": "林川",
+                "initialPosition": {
+                  "containerId": "corridor",
+                  "slotId": null,
+                  "relativeTo": null
+                },
+                "initialAppearance": "穿灰衣。",
+                "slots": [],
+                "initialPersonality": "谨慎，恪守职责",
+                "initialSanity": 10,
+                "tasks": {
+                  "task_watch": {
+                    "id": "task_watch",
+                    "ownerId": "person_a",
+                    "parentTaskId": null,
+                    "goal": "留在走廊守门，不碰盒子",
+                    "status": "pending"
+                  }
+                }
+              },
+              "person_c": {
+                "id": "person_c",
+                "name": "周宁",
+                "initialPosition": {
+                  "containerId": "corridor",
+                  "slotId": null,
+                  "relativeTo": null
+                },
+                "initialAppearance": "穿蓝衣。",
+                "slots": [],
+                "initialPersonality": "好奇",
+                "initialSanity": 10,
+                "tasks": {
+                  "task_pressure": {
+                    "id": "task_pressure",
+                    "ownerId": "person_c",
+                    "parentTaskId": null,
+                    "goal": "完成压力试验",
+                    "status": "pending"
+                  },
+                  "task_recover": {
+                    "id": "task_recover",
+                    "ownerId": "person_c",
+                    "parentTaskId": null,
+                    "goal": "完成恢复练习",
+                    "status": "pending"
+                  }
+                }
+              }
+            }
+          },
+          "locations": {
+            "corridor": {
+              "id": "corridor",
+              "appearanceChanges": []
+            },
+            "hall": {
+              "id": "hall",
+              "appearanceChanges": []
+            }
+          },
+          "items": {
+            "box": {
+              "id": "box",
+              "appearanceChanges": [],
+              "position": {
+                "containerId": "corridor",
+                "slotId": null,
+                "relativeTo": null
+              }
+            }
+          },
+          "characters": {
+            "person_a": {
+              "id": "person_a",
+              "appearanceChanges": [],
+              "position": {
+                "containerId": "corridor",
+                "slotId": null,
+                "relativeTo": null
+              },
+              "personalityChanges": [],
+              "sanity": 10,
+              "tasks": {
+                "task_watch": {
+                  "id": "task_watch",
+                  "ownerId": "person_a",
+                  "parentTaskId": null,
+                  "goal": "留在走廊守门，不碰盒子",
+                  "status": "pending"
+                }
+              }
+            },
+            "person_c": {
+              "id": "person_c",
+              "appearanceChanges": [],
+              "position": {
+                "containerId": "hall",
+                "slotId": null,
+                "relativeTo": null
+              },
+              "personalityChanges": [],
+              "sanity": 10,
+              "tasks": {
+                "task_pressure": {
+                  "id": "task_pressure",
+                  "ownerId": "person_c",
+                  "parentTaskId": null,
+                  "goal": "完成压力试验",
+                  "status": "pending"
+                },
+                "task_recover": {
+                  "id": "task_recover",
+                  "ownerId": "person_c",
+                  "parentTaskId": null,
+                  "goal": "完成恢复练习",
+                  "status": "pending"
+                }
+              }
+            }
+          }
+        },
+        "perspective": "周宁视角，仅表达保存事实"
+      },
+      "prompt": "[任务: narration]\n只用 facts 中的允许短句组织正文，每条事实表达一次；可换顺序，句间用句号。不要增加、遗漏或修改事实；不要标题、不要 JSON。\n调用键: point_7\n输入:\n{\"pointId\":\"point_7\",\"meaning\":\"only express these saved facts; no additional people, locations, numbers or events\",\"facts\":[{\"id\":\"person_a:position\",\"allowedPhrases\":[\"林川位于走廊\",\"林川现在在走廊\"]},{\"id\":\"person_a:sanity\",\"allowedPhrases\":[\"林川的精神值为10\",\"林川当前精神值是10\"]},{\"id\":\"person_c:position\",\"allowedPhrases\":[\"周宁从走廊走到门厅\",\"周宁从走廊来到门厅\"]},{\"id\":\"person_c:sanity\",\"allowedPhrases\":[\"周宁的精神值为10\",\"周宁当前精神值是10\"]}]}\n正文:",
+      "promptCharacters": 503,
+      "value": "林川位于走廊，现在在走廊。林川的精神值为10，当前精神值是10。周宁从走廊走到门厅，周宁从走廊来到门厅。周宁的精神值为10，当前精神值是10。",
+      "completion": {
+        "raw": "林川位于走廊，现在在走廊。林川的精神值为10，当前精神值是10。周宁从走廊走到门厅，周宁从走廊来到门厅。周宁的精神值为10，当前精神值是10。",
+        "finishReason": "stop",
+        "firstTokenMs": 18601.829999923706,
+        "wallMs": 26274.3049993515,
+        "timings": {
+          "cache_n": 0,
+          "prompt_n": 207,
+          "prompt_ms": 18387.754,
+          "prompt_per_token_ms": 88.82972946859904,
+          "prompt_per_second": 11.257492350615523,
+          "predicted_n": 56,
+          "predicted_ms": 7820.926,
+          "predicted_per_token_ms": 142.19865454545456,
+          "predicted_per_second": 7.032415343144788
+        }
+      },
+      "timing": {
+        "queuedMs": 0.005000114440917969,
+        "runMs": 26274.8049993515,
+        "totalMs": 26274.819999694824
+      },
+      "wallMs": 26276.51499938965,
+      "failure": "content",
+      "contentReason": "unknown_or_ambiguous_clause"
+    }
+  ],
+  "rowProvenance": {
+    "action-full": "02d5c668058aa6e84941ce04cf8eb8d82150a32d23a2cc9d4ca3cd81740d0f54",
+    "action-focused": "02d5c668058aa6e84941ce04cf8eb8d82150a32d23a2cc9d4ca3cd81740d0f54",
+    "updates-focused": "02d5c668058aa6e84941ce04cf8eb8d82150a32d23a2cc9d4ca3cd81740d0f54",
+    "updates-full": "02d5c668058aa6e84941ce04cf8eb8d82150a32d23a2cc9d4ca3cd81740d0f54",
+    "narration-full": "02d5c668058aa6e84941ce04cf8eb8d82150a32d23a2cc9d4ca3cd81740d0f54",
+    "narration-focused": "current_run"
+  },
+  "resume": {
+    "previousReportSha256": "02d5c668058aa6e84941ce04cf8eb8d82150a32d23a2cc9d4ca3cd81740d0f54",
+    "previousSource": {
+      "head": "99052099c2a9b035aa10787802eacd29c5d84c9f",
+      "status": "M frontend/src/lib/world-engine/runtime/b3.test.ts\n M frontend/src/lib/world-engine/runtime/engine.ts\n M frontend/src/lib/world-engine/runtime/model-port.ts\n M frontend/src/lib/world-engine/runtime/prompts.ts\n M frontend/src/lib/world-engine/runtime/wllama-engine.ts\n?? frontend/scripts/review-world-rule-facts.mjs\n?? frontend/scripts/run-b3-focused.mjs\n?? frontend/src/lib/world-engine/runtime/committed-narration.test.ts\n?? frontend/src/lib/world-engine/runtime/committed-narration.ts\n?? frontend/src/lib/world-engine/runtime/focused-input.ts\n?? frontend/src/lib/world-engine/runtime/rule-controller.ts\n?? frontend/src/lib/world-engine/runtime/rule-facts.test.ts\n?? frontend/src/lib/world-engine/runtime/rule-facts.ts",
+      "sha256": {
+        "frontend/scripts/run-b3-focused.mjs": "3344bb7457c33f0351fa3d1d004df4ac37db90d840440316ef05bce50a6160e4",
+        "frontend/src/lib/world-engine/runtime/engine.ts": "8fabe2ecc1640d53c0cc5704fb0f9f9b4dcf78534797f48f7f001a3d6221a266",
+        "frontend/src/lib/world-engine/runtime/wllama-engine.ts": "eeef36cb34a8fe358e923fa9a7ddff2276bd58e4c67c0cbb5871206f2a313799",
+        "frontend/src/lib/world-engine/runtime/model-port.ts": "b32d0dcaa917dff796dfd7a8bcf4c06cc4e39cf2665011d74b37e386307b8c2d",
+        "frontend/src/lib/world-engine/runtime/prompts.ts": "46101dee392d8f3b6782b167546b23c4a65bff9a828b48c743387e1a0eb194ef",
+        "frontend/src/lib/world-engine/runtime/focused-input.ts": "b7c9236af4d7f1760dd8662cdcaa70dcbdd7d5a8916a50038ba712fe5d2bff54",
+        "frontend/src/lib/world-engine/runtime/committed-narration.ts": "249fa2f77f58cdec7fa483d551c31cf17da754438adc90c5cf1754991affd934",
+        "frontend/src/lib/world-engine/runtime/rule-facts.ts": "0a0084ce29f0c07e3f4592b941092585338041f70b996d0ef7115851bf10d5d0",
+        "frontend/src/lib/world-engine/runtime/output-schema.ts": "85a1000eb883824b3d089a85aca221b4daa3f0f9c280e3855e7df731c2a489b4",
+        "frontend/src/lib/world-engine/runtime/structured-output.ts": "26f0a2278df8fa9c03c68220ad847b66272ef937b73f99b1bf1286b3cbb1fd70"
+      }
+    },
+    "previousStatus": "INTERRUPTED",
+    "previousError": "AssertionError [ERR_ASSERTION]: comparison must not attribute cache reuse to input cropping\n\nundefined !== 0\n",
+    "previousBrowser": "155.0.4283.62",
+    "previousDevice": {
+      "cpu": "13th Gen Intel(R) Core(TM) i7-13700H",
+      "logicalCpus": 20
+    },
+    "previousTopology": {
+      "multithread": true,
+      "numThreads": 4
+    },
+    "previousLoadMs": 11516.449999809265,
+    "previousCleanup": {
+      "browserClosed": true,
+      "serverClosed": true
+    }
+  },
+  "serverPort": 65289,
+  "browser": "155.0.4283.62",
+  "loadMs": 11257.829999923706,
+  "topology": {
+    "multithread": true,
+    "numThreads": 4
+  },
+  "crossOriginIsolated": true,
+  "completedAt": "2026-10-27T09:13:51.586Z",
+  "cleanup": {
+    "browserClosed": true,
+    "serverClosed": true
+  }
+}

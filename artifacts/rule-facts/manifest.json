@@ -1,0 +1,174 @@
+{
+  "formatVersion": 1,
+  "recordedAt": "2026-10-27T09:31:38.105206+00:00",
+  "status": "DELIVERED_FOR_REVIEW",
+  "implementationCommit": "2a6eff2654de81b45c07afe01ea47f8aa63b82ca",
+  "serverCommit": "0cb1951cd1b0181f6a0505026cdd9939dd668de9",
+  "contractDigest": "902918016f2bf7eff4cd1afd52da4ca96defdb5ee4082f171fda987de86680c2",
+  "sourceProfiles": {
+    "http": {
+      "recordedHead": "99052099c2a9b035aa10787802eacd29c5d84c9f",
+      "recordedWorkingTreeWasDirty": true,
+      "files": {
+        "frontend/scripts/review-world-rule-facts.mjs": {
+          "recordedWorkingSha256": "9ebd8babbebc389a59cb320d7fe07b5da85f02a22656cb0241ebad8a820a95ba",
+          "implementationGitBlobSha256": "9ebd8babbebc389a59cb320d7fe07b5da85f02a22656cb0241ebad8a820a95ba",
+          "comparison": "raw working bytes bind measurement; CRLF-to-LF only for Git blob comparison"
+        },
+        "frontend/src/lib/world-engine/runtime/rule-facts.ts": {
+          "recordedWorkingSha256": "0a0084ce29f0c07e3f4592b941092585338041f70b996d0ef7115851bf10d5d0",
+          "implementationGitBlobSha256": "0a0084ce29f0c07e3f4592b941092585338041f70b996d0ef7115851bf10d5d0",
+          "comparison": "raw working bytes bind measurement; CRLF-to-LF only for Git blob comparison"
+        },
+        "frontend/src/lib/world-engine/runtime/rule-controller.ts": {
+          "recordedWorkingSha256": "c1f08f8bcd3b3c19eccc3d05d184c1d7b154ebcd3dcde5d0aa16c0fecee890f9",
+          "implementationGitBlobSha256": "c1f08f8bcd3b3c19eccc3d05d184c1d7b154ebcd3dcde5d0aa16c0fecee890f9",
+          "comparison": "raw working bytes bind measurement; CRLF-to-LF only for Git blob comparison"
+        },
+        "frontend/src/lib/world-engine/runtime/committed-narration.ts": {
+          "recordedWorkingSha256": "249fa2f77f58cdec7fa483d551c31cf17da754438adc90c5cf1754991affd934",
+          "implementationGitBlobSha256": "249fa2f77f58cdec7fa483d551c31cf17da754438adc90c5cf1754991affd934",
+          "comparison": "raw working bytes bind measurement; CRLF-to-LF only for Git blob comparison"
+        }
+      }
+    },
+    "latencyFirst": {
+      "recordedHead": "99052099c2a9b035aa10787802eacd29c5d84c9f",
+      "recordedWorkingTreeWasDirty": true,
+      "files": {
+        "frontend/scripts/run-b3-focused.mjs": {
+          "recordedWorkingSha256": "3344bb7457c33f0351fa3d1d004df4ac37db90d840440316ef05bce50a6160e4",
+          "archiveSnapshot": "runner-first.txt"
+        },
+        "frontend/src/lib/world-engine/runtime/engine.ts": {
+          "recordedWorkingSha256": "8fabe2ecc1640d53c0cc5704fb0f9f9b4dcf78534797f48f7f001a3d6221a266",
+          "implementationGitBlobSha256": "8fabe2ecc1640d53c0cc5704fb0f9f9b4dcf78534797f48f7f001a3d6221a266",
+          "comparison": "raw working bytes bind measurement; CRLF-to-LF only for Git blob comparison"
+        },
+        "frontend/src/lib/world-engine/runtime/wllama-engine.ts": {
+          "recordedWorkingSha256": "eeef36cb34a8fe358e923fa9a7ddff2276bd58e4c67c0cbb5871206f2a313799",
+          "implementationGitBlobSha256": "eeef36cb34a8fe358e923fa9a7ddff2276bd58e4c67c0cbb5871206f2a313799",
+          "comparison": "raw working bytes bind measurement; CRLF-to-LF only for Git blob comparison"
+        },
+        "frontend/src/lib/world-engine/runtime/model-port.ts": {
+          "recordedWorkingSha256": "b32d0dcaa917dff796dfd7a8bcf4c06cc4e39cf2665011d74b37e386307b8c2d",
+          "implementationGitBlobSha256": "b32d0dcaa917dff796dfd7a8bcf4c06cc4e39cf2665011d74b37e386307b8c2d",
+          "comparison": "raw working bytes bind measurement; CRLF-to-LF only for Git blob comparison"
+        },
+        "frontend/src/lib/world-engine/runtime/prompts.ts": {
+          "recordedWorkingSha256": "46101dee392d8f3b6782b167546b23c4a65bff9a828b48c743387e1a0eb194ef",
+          "implementationGitBlobSha256": "46101dee392d8f3b6782b167546b23c4a65bff9a828b48c743387e1a0eb194ef",
+          "comparison": "raw working bytes bind measurement; CRLF-to-LF only for Git blob comparison"
+        },
+        "frontend/src/lib/world-engine/runtime/focused-input.ts": {
+          "recordedWorkingSha256": "b7c9236af4d7f1760dd8662cdcaa70dcbdd7d5a8916a50038ba712fe5d2bff54",
+          "implementationGitBlobSha256": "b7c9236af4d7f1760dd8662cdcaa70dcbdd7d5a8916a50038ba712fe5d2bff54",
+          "comparison": "raw working bytes bind measurement; CRLF-to-LF only for Git blob comparison"
+        },
+        "frontend/src/lib/world-engine/runtime/committed-narration.ts": {
+          "recordedWorkingSha256": "249fa2f77f58cdec7fa483d551c31cf17da754438adc90c5cf1754991affd934",
+          "implementationGitBlobSha256": "249fa2f77f58cdec7fa483d551c31cf17da754438adc90c5cf1754991affd934",
+          "comparison": "raw working bytes bind measurement; CRLF-to-LF only for Git blob comparison"
+        },
+        "frontend/src/lib/world-engine/runtime/rule-facts.ts": {
+          "recordedWorkingSha256": "0a0084ce29f0c07e3f4592b941092585338041f70b996d0ef7115851bf10d5d0",
+          "implementationGitBlobSha256": "0a0084ce29f0c07e3f4592b941092585338041f70b996d0ef7115851bf10d5d0",
+          "comparison": "raw working bytes bind measurement; CRLF-to-LF only for Git blob comparison"
+        },
+        "frontend/src/lib/world-engine/runtime/output-schema.ts": {
+          "recordedWorkingSha256": "85a1000eb883824b3d089a85aca221b4daa3f0f9c280e3855e7df731c2a489b4",
+          "implementationGitBlobSha256": "85a1000eb883824b3d089a85aca221b4daa3f0f9c280e3855e7df731c2a489b4",
+          "comparison": "raw working bytes bind measurement; CRLF-to-LF only for Git blob comparison"
+        },
+        "frontend/src/lib/world-engine/runtime/structured-output.ts": {
+          "recordedWorkingSha256": "26f0a2278df8fa9c03c68220ad847b66272ef937b73f99b1bf1286b3cbb1fd70",
+          "implementationGitBlobSha256": "3ae9450e3f133a683a1bb0f598ebfb9a7f9bdc4750c346aeb9f82215b510bd87",
+          "comparison": "raw working bytes bind measurement; CRLF-to-LF only for Git blob comparison"
+        }
+      }
+    },
+    "latencyResumed": {
+      "recordedHead": "99052099c2a9b035aa10787802eacd29c5d84c9f",
+      "recordedWorkingTreeWasDirty": true,
+      "files": {
+        "frontend/scripts/run-b3-focused.mjs": {
+          "recordedWorkingSha256": "2b28d01a0e8f74ce0e5c6be024f91a35bb1c8dfeb5e53813c292b852b70ffd63",
+          "implementationGitBlobSha256": "2b28d01a0e8f74ce0e5c6be024f91a35bb1c8dfeb5e53813c292b852b70ffd63",
+          "comparison": "raw working bytes bind measurement; CRLF-to-LF only for Git blob comparison"
+        },
+        "frontend/src/lib/world-engine/runtime/engine.ts": {
+          "recordedWorkingSha256": "8fabe2ecc1640d53c0cc5704fb0f9f9b4dcf78534797f48f7f001a3d6221a266",
+          "implementationGitBlobSha256": "8fabe2ecc1640d53c0cc5704fb0f9f9b4dcf78534797f48f7f001a3d6221a266",
+          "comparison": "raw working bytes bind measurement; CRLF-to-LF only for Git blob comparison"
+        },
+        "frontend/src/lib/world-engine/runtime/wllama-engine.ts": {
+          "recordedWorkingSha256": "eeef36cb34a8fe358e923fa9a7ddff2276bd58e4c67c0cbb5871206f2a313799",
+          "implementationGitBlobSha256": "eeef36cb34a8fe358e923fa9a7ddff2276bd58e4c67c0cbb5871206f2a313799",
+          "comparison": "raw working bytes bind measurement; CRLF-to-LF only for Git blob comparison"
+        },
+        "frontend/src/lib/world-engine/runtime/model-port.ts": {
+          "recordedWorkingSha256": "b32d0dcaa917dff796dfd7a8bcf4c06cc4e39cf2665011d74b37e386307b8c2d",
+          "implementationGitBlobSha256": "b32d0dcaa917dff796dfd7a8bcf4c06cc4e39cf2665011d74b37e386307b8c2d",
+          "comparison": "raw working bytes bind measurement; CRLF-to-LF only for Git blob comparison"
+        },
+        "frontend/src/lib/world-engine/runtime/prompts.ts": {
+          "recordedWorkingSha256": "46101dee392d8f3b6782b167546b23c4a65bff9a828b48c743387e1a0eb194ef",
+          "implementationGitBlobSha256": "46101dee392d8f3b6782b167546b23c4a65bff9a828b48c743387e1a0eb194ef",
+          "comparison": "raw working bytes bind measurement; CRLF-to-LF only for Git blob comparison"
+        },
+        "frontend/src/lib/world-engine/runtime/focused-input.ts": {
+          "recordedWorkingSha256": "b7c9236af4d7f1760dd8662cdcaa70dcbdd7d5a8916a50038ba712fe5d2bff54",
+          "implementationGitBlobSha256": "b7c9236af4d7f1760dd8662cdcaa70dcbdd7d5a8916a50038ba712fe5d2bff54",
+          "comparison": "raw working bytes bind measurement; CRLF-to-LF only for Git blob comparison"
+        },
+        "frontend/src/lib/world-engine/runtime/committed-narration.ts": {
+          "recordedWorkingSha256": "249fa2f77f58cdec7fa483d551c31cf17da754438adc90c5cf1754991affd934",
+          "implementationGitBlobSha256": "249fa2f77f58cdec7fa483d551c31cf17da754438adc90c5cf1754991affd934",
+          "comparison": "raw working bytes bind measurement; CRLF-to-LF only for Git blob comparison"
+        },
+        "frontend/src/lib/world-engine/runtime/rule-facts.ts": {
+          "recordedWorkingSha256": "0a0084ce29f0c07e3f4592b941092585338041f70b996d0ef7115851bf10d5d0",
+          "implementationGitBlobSha256": "0a0084ce29f0c07e3f4592b941092585338041f70b996d0ef7115851bf10d5d0",
+          "comparison": "raw working bytes bind measurement; CRLF-to-LF only for Git blob comparison"
+        },
+        "frontend/src/lib/world-engine/runtime/output-schema.ts": {
+          "recordedWorkingSha256": "85a1000eb883824b3d089a85aca221b4daa3f0f9c280e3855e7df731c2a489b4",
+          "implementationGitBlobSha256": "85a1000eb883824b3d089a85aca221b4daa3f0f9c280e3855e7df731c2a489b4",
+          "comparison": "raw working bytes bind measurement; CRLF-to-LF only for Git blob comparison"
+        },
+        "frontend/src/lib/world-engine/runtime/structured-output.ts": {
+          "recordedWorkingSha256": "26f0a2278df8fa9c03c68220ad847b66272ef937b73f99b1bf1286b3cbb1fd70",
+          "implementationGitBlobSha256": "3ae9450e3f133a683a1bb0f598ebfb9a7f9bdc4750c346aeb9f82215b510bd87",
+          "comparison": "raw working bytes bind measurement; CRLF-to-LF only for Git blob comparison"
+        }
+      }
+    }
+  },
+  "files": {
+    "database-evidence.json": "3a77699eddf1977f45d32b2585ef01c594068c4c3150eb21f4941faff7d2bbfd",
+    "http.json": "5e77229b63c3d4dcc54d46af5616a6729ad9489a2d6b19da0ecc452fda19b502",
+    "latency-first.json": "02d5c668058aa6e84941ce04cf8eb8d82150a32d23a2cc9d4ca3cd81740d0f54",
+    "latency.json": "7d685af8a7250d480b207afc60c3fb21bfff83c5774ffe7d9cbe00d19fb99699",
+    "polish-selection.json": "fe6ed170d0f96c97a731e04562af3e2ce6b8ea1c3ba6c287868c9675d75c238e",
+    "README.md": "f8597e834eeae43ffe52d825be87041404debd0292f7a36e50d713ba4489ec39",
+    "review.json": "37df3d3d7e98b572fc04dfd788bd1b80cb3a0b50da8fdf5b5dcc180aff0c65f7",
+    "runner-first.txt": "3344bb7457c33f0351fa3d1d004df4ac37db90d840440316ef05bce50a6160e4",
+    "verify.mjs": "c09ec517077453eebb3832a977dec16ea721e2e2cd976f0886246be995894eda"
+  },
+  "verification": {
+    "frontend": "553/553",
+    "worldTypescript": "passed",
+    "fullTypescript": "passed",
+    "realSqliteCases": "10/10",
+    "successfulCommitsPerWorld": 1,
+    "persistedNarrations": 20,
+    "modelPaidCalls": 6
+  },
+  "boundaries": {
+    "numeric": "real registered pending task + personality + sanity coupling, per user choice",
+    "ruleAuthority": "trusted application process, not a new server authorization protocol",
+    "modelOutputs": "read-only candidates; cannot mint receipts or replace rejected template narratives",
+    "page": "not implemented",
+    "fullB3": "not run"
+  }
+}

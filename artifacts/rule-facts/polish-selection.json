@@ -1,0 +1,25 @@
+{
+  "implementationCommit": "2a6eff2654de81b45c07afe01ea47f8aa63b82ca",
+  "paidModelCalls": 0,
+  "source": "same saved movement packet and the recorded focused candidate",
+  "anchor": {
+    "worldId": "world_1",
+    "pointId": "point_7",
+    "version": 1,
+    "stateDigest": "7632719699b400e5790760422c492b2da8a0c2a7180d671a5f86e5664f55e5e2",
+    "previousPointId": "root_3"
+  },
+  "candidate": "林川位于走廊，现在在走廊。林川的精神值为10，当前精神值是10。周宁从走廊走到门厅，周宁从走廊来到门厅。周宁的精神值为10，当前精神值是10。",
+  "selection": {
+    "text": "林川位于走廊。林川的精神值为10。周宁从走廊走到门厅。周宁的精神值为10。",
+    "accepted": false,
+    "reason": "unknown_or_ambiguous_clause"
+  },
+  "matchesAlreadySavedTemplate": true,
+  "templateWasNeverOverwritten": true,
+  "fullArm": {
+    "reason": "incomplete_generation_timeout",
+    "accepted": false,
+    "text": "林川位于走廊。林川的精神值为10。周宁从走廊走到门厅。周宁的精神值为10。"
+  }
+}
