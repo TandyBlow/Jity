@@ -17,6 +17,15 @@ import type { Id, InitialTemplate, Json, RequestMap, Scope, Success, TimeAdvance
 
 interface LeaseGrant { leaseToken: Id; fenceEpoch: number }
 
+/** 取消信号：attach/rebuild 在每个 await 边界与发布点检查 isStale，失效时
+ * 抛出。调用方的 stale 分支吞掉它；它绝不应出现在非 stale 路径。 */
+class BootstrapCancelled extends Error {
+  readonly name = 'BootstrapCancelled';
+}
+function throwIfStale(isStale: () => boolean): void {
+  if (isStale()) throw new BootstrapCancelled();
+}
+
 /** 页面传输层：记录最新租约凭据（供 sessionStorage 续接），并可注入一次
  * 「提交回执丢失」——服务端已受理 commit_point 之后抛超时，驱动必须以同一
  * requestId 重试并收到 replayed 回执，世界不得被重复消费。 */
@@ -183,15 +192,20 @@ export default function WorldPage() {
   };
 
   /** 以服务端事实重建整页视图：叙事行（含时间推进）与状态面板。点位台账
-   * 完整分页——单页会把超过一页的世界渲染成旧 head。 */
-  const rebuild = async (wid: Id, transport: WorldTransport) => {
+   * 完整分页——单页会把超过一页的世界渲染成旧 head。isStale 在每个 await
+   * 后与发布前检查：已失效的重建绝不写页面状态。 */
+  const rebuild = async (wid: Id, transport: WorldTransport, isStale: () => boolean = () => false) => {
+    throwIfStale(isStale);
     const points = await readAllPoints(transport, wid);
+    throwIfStale(isStale);
     const headPointId = points.at(-1)?.pointId;
     const rows: LogRow[] = [];
     let headState: WorldState | null = null;
     for (const point of points) {
       const narration = (await transport.execute('narration_get', {}, { worldId: wid, pointId: point.pointId })).data;
+      throwIfStale(isStale);
       const read = (await transport.execute('get_state', { point: point.pointId }, { worldId: wid })).data;
+      throwIfStale(isStale);
       if (point.pointId === headPointId) headState = read.state;
       rows.push({
         pointId: point.pointId,
@@ -201,6 +215,7 @@ export default function WorldPage() {
         polished: false,
       });
     }
+    throwIfStale(isStale);
     setLog(rows);
     if (headState) setStatus(describeStatus(headState));
   };
@@ -225,44 +240,63 @@ export default function WorldPage() {
   };
 
   /** 恢复既有世界：先读服务端事实派生模板，再走 recover；持约续租失败时
-   * 降级为一次接管。返回创建的会话，供调用方在已失效时按实例停止。 */
-  const attach = async (saved: PersistedSession, apiBase: string): Promise<RuleWorldSession> => {
+   * 降级为一次接管。返回创建的会话，供调用方在已失效时按实例停止。
+   *
+   * isStale 贯穿每个 await 边界：旧代（被卸载/被新代接管的挂载）晚到的
+   * 读回包绝不能继续走完 attach——创建会话、发布 activeRef、写页面状态
+   * 之前都要闸一次，否则旧代会在新代已发布引用之后覆盖它，外层的按实例
+   * 清理随后把 activeRef 清成 null，页面失去对存活会话的引用。attachOnce
+   * 对自己创建的会话兜底 stopOwned：无论取消、恢复拒绝还是终态，都不会
+   * 泄漏一个仍在发心跳的会话。 */
+  const attach = async (saved: PersistedSession, apiBase: string, isStale: () => boolean = () => false): Promise<RuleWorldSession> => {
     stopActive();
+    throwIfStale(isStale);
     setPhase('connecting');
     setWorldId(saved.worldId);
     const transport = buildTransport(apiBase);
     const head = await transport.execute('get_state', {}, { worldId: saved.worldId });
+    throwIfStale(isStale); // ★ 竞态闸门：挂起读晚到时到此为止，不创建会话
     const initial = structuredClone(head.data.state.initial) as InitialTemplate & { worldId?: Id };
     delete initial.worldId;
     const heldLease = saved.leaseToken && saved.fenceEpoch != null ? { leaseToken: saved.leaseToken, fenceEpoch: saved.fenceEpoch } : undefined;
     setLeaseLabel(heldLease ? '续租中' : '接管中');
     const attachOnce = async (lease: { leaseToken: Id; fenceEpoch: number } | undefined): Promise<RuleWorldSession> => {
+      throwIfStale(isStale); // 创建会话前：晚代已存在时旧代不再产生任何会话
       const session = RuleWorldSession.createRecovered({
         transport, initial, policy: WORLD_POLICY, polish: lazyPolisher, onEvent: handleEvent,
       }, saved.worldId, lease);
-      activeRef.current = { session, page: transport };
-      const terminal = await session.attach();
-      // 任何恢复 stop（除 handback 边界的 world_complete）都意味着驱动已被
-      // recoveryBarrier 闩住——绝不能带着死驱动进入 ready。
-      if ((terminal.kind === 'stop' && terminal.reason !== 'world_complete') || terminal.kind === 'error') {
-        const reason = terminal.kind === 'error' ? terminal.detail : terminal.reason;
-        stopOwned(session);
-        throw new Error(reason);
+      try {
+        const terminal = await session.attach();
+        // 任何恢复 stop（除 handback 边界的 world_complete）都意味着驱动已被
+        // recoveryBarrier 闩住——绝不能带着死驱动进入 ready。
+        if ((terminal.kind === 'stop' && terminal.reason !== 'world_complete') || terminal.kind === 'error') {
+          const reason = terminal.kind === 'error' ? terminal.detail : terminal.reason;
+          stopOwned(session);
+          throw new Error(reason);
+        }
+        return session;
+      } catch (error) {
+        stopOwned(session); // 自己创建的会话自己停（幂等）；不误清新代引用
+        throw error;
       }
-      return session;
     };
     let session: RuleWorldSession;
     try {
       session = await attachOnce(heldLease);
     } catch (error) {
+      if (error instanceof BootstrapCancelled) throw error;
       const message = error instanceof Error ? error.message : String(error);
       if (!heldLease || !message.startsWith('recovery_refused')) throw error;
+      throwIfStale(isStale);
       setNote('续租被拒，改为接管重连…');
       session = await attachOnce(undefined);
     }
+    throwIfStale(isStale); // ★ 发布引用前：绝不覆盖新代已发布的会话
+    activeRef.current = { session, page: transport };
     setLeaseLabel(transport.grant ? `租约有效（epoch ${transport.grant.fenceEpoch}）` : '无租约');
     commandsRef.current = saved.commands;
-    await rebuild(saved.worldId, transport);
+    await rebuild(saved.worldId, transport, isStale);
+    throwIfStale(isStale);
     setPhase('ready');
     setNote('');
     return session;
