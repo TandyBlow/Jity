@@ -1,5 +1,7 @@
 # 原方案对照修复清单（模型任务输入与职责）
 
+> **方向更新（2026-10-28）：** 用户明确要求完整实现原设计。本文历史批次的“无 LLM、无 WebGPU”和暂缓安排不再作为产品方向；已关闭项仅证明当时列明范围。后续真实模型任务与尚未补齐能力见[完整设计实施方向](full-design-implementation-direction.md)，不能用规则/脚本替代模型语义职责后关闭原要求。
+
 状态：2026-10-25。背景：用户指令——叙事拆分实验推进前，先按原方案（browser-world-state-workflow.md）§7.1/§6.x 修正现有模型任务的输入与职责偏差；验证重点是「**模型收到的信息和程序执行的行为符合原方案**」，不是输出格式。核查对象：`schedule.ts`（任务输入构造）、`controller.ts`（输出消费与 preview）、`runtime/structured-output.ts`（输出 codec）、`runtime/prompts.ts`（提示词契约）。
 
 ## 1. 逐任务对照
