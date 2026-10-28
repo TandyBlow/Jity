@@ -24,7 +24,7 @@ OUT = HERE / "rewrites.jsonl"
 # (groupId, planRefs, text) — text by ZCode, 2026-10-29. planRefs are
 # sentence-scoped (sentences split on 。).
 REWRITES = [
-    ("n4-loc-001", [[0], [1]], "约三分钟过去了，陈舟从东门一路走到了钟楼。"),
+    ("n4-loc-001", [[0, 1]], "约三分钟过去了，陈舟从东门一路走到了钟楼。"),
     ("n4-loc-002", [[0], [1]], "苏晚从水房进入了侧院。八分钟过去了。"),
     ("n4-loc-003", [[0], [1]], "周砚离开了钟楼一路走到了柴房。前后大约十二分钟。"),
     ("n4-loc-004", [[0, 1]], "二十五分钟过去了，林望从侧院抵达石桥。"),
