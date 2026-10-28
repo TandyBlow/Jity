@@ -1,0 +1,74 @@
+{
+  "purpose": "n4 finetune process trial r1 (quality accepted separately)",
+  "model": {
+    "base": "D:\\others\\Jity\\.local\\world-components-worktree\\experiments\\world-components\\assets\\randeng-t5-77m",
+    "hfId": "IDEA-CCNL/Randeng-T5-77M-MultiTask-Chinese",
+    "paramCount": 77440384
+  },
+  "tokenizer": {
+    "class": "T5Tokenizer",
+    "legacy": false,
+    "note": "same pin as zero-shot baseline v3 and eval script"
+  },
+  "data": {
+    "trainPairs": 48,
+    "devPairs": 4,
+    "devGroupIds": [
+      "n4-loc-025",
+      "n4-task-026"
+    ],
+    "renderer": "n4_render.render_input (shared train/inference)",
+    "trainRowKinds": [
+      "rewrite",
+      "template-seed"
+    ]
+  },
+  "hyper": {
+    "seed": 20261029,
+    "epochs": 6,
+    "batch": 8,
+    "lr": 0.0001,
+    "maxInput": 128,
+    "maxOutput": 64,
+    "optimizer": "AdamW",
+    "device": "cuda",
+    "precision": "fp32"
+  },
+  "lossLog": [
+    {
+      "epoch": 1,
+      "meanLoss": 3.2706,
+      "seconds": 4.4
+    },
+    {
+      "epoch": 2,
+      "meanLoss": 2.248,
+      "seconds": 6.3
+    },
+    {
+      "epoch": 3,
+      "meanLoss": 1.7021,
+      "seconds": 8.0
+    },
+    {
+      "epoch": 4,
+      "meanLoss": 1.3321,
+      "seconds": 9.5
+    },
+    {
+      "epoch": 5,
+      "meanLoss": 1.0985,
+      "seconds": 11.3
+    },
+    {
+      "epoch": 6,
+      "meanLoss": 0.8971,
+      "seconds": 13.2
+    }
+  ],
+  "checkpoint": "D:\\others\\Jity\\.local\\world-components-worktree\\experiments\\world-components\\assets\\n4-finetune\\r1",
+  "disclaimers": [
+    "process trial only; not presupposed to be enough for 77M",
+    "no quality verdict here; dev eval is eval_n4_finetune.py, accepted separately"
+  ]
+}

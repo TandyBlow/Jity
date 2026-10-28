@@ -1,0 +1,146 @@
+{
+  "purpose": "n4 finetune dev eval r1 (recognizer-judged; quality accepted separately)",
+  "decode": {
+    "greedy": true,
+    "maxNewTokens": 64,
+    "numBeams": 1
+  },
+  "tokenizer": {
+    "legacy": false,
+    "note": "same pin as training and the zero-shot baseline"
+  },
+  "judge": "corpus_check.check_row over the dev row's own plan/refs/must (hashes recomputed for the generated text)",
+  "devGroups": [
+    "n4-loc-025",
+    "n4-task-026"
+  ],
+  "arms": {
+    "base": {
+      "verdicts": {
+        "pass": 0,
+        "review": 4,
+        "fail": 0
+      },
+      "rows": [
+        {
+          "sourceGroupId": "n4-loc-025",
+          "rowOrigin": "template-seed",
+          "input": "叙事生成任务。\n事实：\n1. 位置：沈青 从柴房到东门\n2. 时间推进：约一小时\n正文：",
+          "output": "时间推进:约一小时",
+          "outputTokens": 9,
+          "wallSeconds": 0.83,
+          "verdict": "review",
+          "fails": [],
+          "reviews": [
+            "clause '时间推进:约一小时' not fully covered by plan recognizers (covered 4/9) — unrecognized content, needs review",
+            "mustExpress [0] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+          ]
+        },
+        {
+          "sourceGroupId": "n4-loc-025",
+          "rowOrigin": "rewrite",
+          "input": "叙事生成任务。\n事实：\n1. 位置：沈青 从柴房到东门\n2. 时间推进：约一小时\n正文：",
+          "output": "时间推进:约一小时",
+          "outputTokens": 9,
+          "wallSeconds": 0.45,
+          "verdict": "review",
+          "fails": [],
+          "reviews": [
+            "clause '时间推进:约一小时' not fully covered by plan recognizers (covered 4/9) — unrecognized content, needs review",
+            "mustExpress [0] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+          ]
+        },
+        {
+          "sourceGroupId": "n4-task-026",
+          "rowOrigin": "template-seed",
+          "input": "叙事生成任务。\n事实：\n1. 任务达成：林望「清点碑亭石刻」\n2. 时间推进：约三分钟\n正文：",
+          "output": "任务达成:林望「清点碑亭石刻」",
+          "outputTokens": 16,
+          "wallSeconds": 0.73,
+          "verdict": "review",
+          "fails": [],
+          "reviews": [
+            "clause '任务达成:林望「清点碑亭石刻」' not fully covered by plan recognizers (covered 0/15) — unrecognized content, needs review",
+            "mustExpress [0, 1] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+          ]
+        },
+        {
+          "sourceGroupId": "n4-task-026",
+          "rowOrigin": "rewrite",
+          "input": "叙事生成任务。\n事实：\n1. 任务达成：林望「清点碑亭石刻」\n2. 时间推进：约三分钟\n正文：",
+          "output": "任务达成:林望「清点碑亭石刻」",
+          "outputTokens": 16,
+          "wallSeconds": 0.7,
+          "verdict": "review",
+          "fails": [],
+          "reviews": [
+            "clause '任务达成:林望「清点碑亭石刻」' not fully covered by plan recognizers (covered 0/15) — unrecognized content, needs review",
+            "mustExpress [0, 1] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+          ]
+        }
+      ],
+      "meanWall": 0.68,
+      "meanTokens": 12.5
+    },
+    "finetuned": {
+      "verdicts": {
+        "pass": 4,
+        "review": 0,
+        "fail": 0
+      },
+      "rows": [
+        {
+          "sourceGroupId": "n4-loc-025",
+          "rowOrigin": "template-seed",
+          "input": "叙事生成任务。\n事实：\n1. 位置：沈青 从柴房到东门\n2. 时间推进：约一小时\n正文：",
+          "output": "沈青从柴房来到东门。前后大约一小时。",
+          "outputTokens": 17,
+          "wallSeconds": 1.12,
+          "verdict": "pass",
+          "fails": [],
+          "reviews": []
+        },
+        {
+          "sourceGroupId": "n4-loc-025",
+          "rowOrigin": "rewrite",
+          "input": "叙事生成任务。\n事实：\n1. 位置：沈青 从柴房到东门\n2. 时间推进：约一小时\n正文：",
+          "output": "沈青从柴房来到东门。前后大约一小时。",
+          "outputTokens": 17,
+          "wallSeconds": 0.88,
+          "verdict": "pass",
+          "fails": [],
+          "reviews": []
+        },
+        {
+          "sourceGroupId": "n4-task-026",
+          "rowOrigin": "template-seed",
+          "input": "叙事生成任务。\n事实：\n1. 任务达成：林望「清点碑亭石刻」\n2. 时间推进：约三分钟\n正文：",
+          "output": "林望完成了任务「清点碑亭石刻」。前后大约三分钟。",
+          "outputTokens": 20,
+          "wallSeconds": 0.95,
+          "verdict": "pass",
+          "fails": [],
+          "reviews": []
+        },
+        {
+          "sourceGroupId": "n4-task-026",
+          "rowOrigin": "rewrite",
+          "input": "叙事生成任务。\n事实：\n1. 任务达成：林望「清点碑亭石刻」\n2. 时间推进：约三分钟\n正文：",
+          "output": "林望完成了任务「清点碑亭石刻」。前后大约三分钟。",
+          "outputTokens": 20,
+          "wallSeconds": 1.01,
+          "verdict": "pass",
+          "fails": [],
+          "reviews": []
+        }
+      ],
+      "meanWall": 0.99,
+      "meanTokens": 18.5
+    }
+  },
+  "disclaimers": [
+    "4 dev rows / 2 groups only — indicative, not a quality gate",
+    "Chinese naturalness is left to human review at delivery acceptance",
+    "training saw the plan rendering; zero-shot base did not"
+  ]
+}
