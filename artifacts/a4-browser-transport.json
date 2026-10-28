@@ -1,0 +1,142 @@
+{
+  "status": "PASS",
+  "recordedAt": "2026-10-28T16:48:19.031Z",
+  "A": {
+    "head": "d4e0dd37ed0c840467d3d2128c333bb3ffa5e5a4",
+    "status": "?? backend/_proj_create.json",
+    "sha256": {
+      "backend/app/world_app.py": "b6291cf697793fe543d36098b6c976f73fb5b28a394dc6a53b3f514f9ab45509",
+      "backend/app/routers/worlds.py": "a9364afe54662b4b14d5692621192e8570f962454e12ef1f79ec15ed092c6b5d",
+      "backend/app/services/world/authority.py": "5ef2417c02f74ba349196b7c83ae25cea41f3dd9dac8374f30132ea490dac96a",
+      "backend/app/services/world/control.py": "cd3b6e5a297f27a30f2f10a72de0ec002ff5ec335be8388ebd083ba544fdb0e5",
+      "backend/app/database/world_store.py": "b130b13274180d33f9ef532c2674a0211dadd5544ab6f127c9e2e1211168ecef"
+    }
+  },
+  "B": {
+    "head": "77cb0afa45211d9d0e16b6ab3210c9d54a6b92bb",
+    "status": "M frontend/scripts/review-world-h2-history.mjs\n?? artifacts/a4-browser-transport.json\n?? frontend/scripts/review-world-a4-transport.mjs",
+    "sha256": {
+      "frontend/scripts/review-world-a4-transport.mjs": "1a8074a067655666e0ef993e8ae7cd0c58441a146645b4e3e155e41387b5bf42",
+      "frontend/scripts/review-world-h2-history.mjs": "0891f69748a74d623b5c681384ac92356ecee2a452cdd3667f560b1b56e39bc6",
+      "frontend/src/lib/world-engine/controller.ts": "fc68f5e248226c57389d27c621ff125cebe828f86729ad3372d73f851650214d",
+      "frontend/src/lib/world-engine/schedule.ts": "7e55809b1e5da53b35e8f8b6037d9d374335f9b835d7f13bd8cdc0761d0b7f8c",
+      "frontend/src/lib/world-engine/http-transport.ts": "60b1ee3158e6d8d41c491a7234e140dfe95f5d786fd110d1806444eb3f9dcd58",
+      "frontend/src/lib/world-engine/protocol.ts": "0e2ffd0a70e7aabf56452052f428a9c1edd69920f14a9faa66d26c9ae419259f",
+      "frontend/src/lib/world-engine/recovery.ts": "0fa60c7609d6ee93e0b6ebef4a42ca50ff7552242c9b795203331f7e0ab1088b"
+    }
+  },
+  "scope": "A4 B transport connection; fixed outputs; excludes TTL expiry, full H2 and real-model acceptance",
+  "factory": "app.world_app:create_persistent_world_app",
+  "contractDigest": {
+    "protocolVersion": 2,
+    "contractDigest": "902918016f2bf7eff4cd1afd52da4ca96defdb5ee4082f171fda987de86680c2"
+  },
+  "cors": {
+    "allowedStatus": 200,
+    "deniedStatus": 400,
+    "exactOrigin": true
+  },
+  "browser": "155.0.4283.62",
+  "rootFlows": [
+    {
+      "sampleId": "sample_1",
+      "worldId": "world_1",
+      "stateDigest": "8a5e02e4720746c85a07d123d73dd455890eb03ea3df44043974456e501f517a",
+      "operations": [
+        "create_world",
+        "narration_claim",
+        "get_state",
+        "narration_submit"
+      ],
+      "tasks": [
+        "initial",
+        "narration"
+      ],
+      "claimTriplePreserved": true,
+      "freshRequestIds": true,
+      "rootGateResolved": true,
+      "readStable": true
+    },
+    {
+      "sampleId": "sample_2",
+      "worldId": "world_4",
+      "stateDigest": "88a77cb0d761705b1d9d7af69e02b80af56152bc4824c3b16fca2db2d9211b15",
+      "operations": [
+        "create_world",
+        "narration_claim",
+        "get_state",
+        "narration_submit"
+      ],
+      "tasks": [
+        "initial",
+        "narration"
+      ],
+      "claimTriplePreserved": true,
+      "freshRequestIds": true,
+      "rootGateResolved": true,
+      "readStable": true
+    }
+  ],
+  "history": {
+    "status": "PASS_HISTORY_SUBCHECK",
+    "recordedAt": "2026-10-28T16:48:38.846Z",
+    "scope": "real HTTP + A state service + fresh B controller; not full H2 takeover acceptance",
+    "command": "node scripts/review-world-h2-history.mjs API_URL [REPORT_PATH] [A_CHECKOUT]",
+    "browser": {
+      "head": "77cb0afa45211d9d0e16b6ab3210c9d54a6b92bb",
+      "status": "M frontend/scripts/review-world-h2-history.mjs\n?? artifacts/a4-browser-transport.json\n?? frontend/scripts/review-world-a4-transport.mjs",
+      "sourceSha256": {
+        "frontend/src/lib/world-engine/recovery.ts": "0fa60c7609d6ee93e0b6ebef4a42ca50ff7552242c9b795203331f7e0ab1088b",
+        "frontend/src/lib/world-engine/controller.ts": "fc68f5e248226c57389d27c621ff125cebe828f86729ad3372d73f851650214d",
+        "frontend/src/lib/world-engine/schedule.ts": "7e55809b1e5da53b35e8f8b6037d9d374335f9b835d7f13bd8cdc0761d0b7f8c",
+        "frontend/src/lib/world-engine/runtime/session.ts": "125a318e94969145e616644a268d020e8b6cfa8e05012de8493cbbb6f61edbc5",
+        "frontend/scripts/review-world-h2-history.mjs": "0891f69748a74d623b5c681384ac92356ecee2a452cdd3667f560b1b56e39bc6"
+      }
+    },
+    "server": {
+      "head": "d4e0dd37ed0c840467d3d2128c333bb3ffa5e5a4",
+      "status": "?? backend/_proj_create.json",
+      "sourceSha256": {
+        "backend/app/services/world/control.py": "cd3b6e5a297f27a30f2f10a72de0ec002ff5ec335be8388ebd083ba544fdb0e5",
+        "backend/app/world_app.py": "b6291cf697793fe543d36098b6c976f73fb5b28a394dc6a53b3f514f9ab45509"
+      }
+    },
+    "worldId": "world_7",
+    "roundId": "round_12",
+    "committedPointIds": [
+      "point_13",
+      "point_14",
+      "point_15",
+      "point_16",
+      "point_17",
+      "point_18"
+    ],
+    "rawDeltasMatchIndependentExpectation": true,
+    "modelCalls": [
+      "continuation"
+    ],
+    "recoveryOps": [
+      "lease_renew",
+      "get_context",
+      "list_points",
+      "get_state",
+      "get_state",
+      "get_state",
+      "get_state",
+      "get_state",
+      "get_state",
+      "get_context"
+    ],
+    "contractDigest": {
+      "protocolVersion": 2,
+      "contractDigest": "902918016f2bf7eff4cd1afd52da4ca96defdb5ee4082f171fda987de86680c2"
+    }
+  },
+  "sourceUnchangedDuringRun": true,
+  "cleanup": {
+    "browserClosed": true,
+    "viteClosed": true,
+    "serviceStopped": true
+  },
+  "completedAt": "2026-10-28T16:48:40.034Z"
+}

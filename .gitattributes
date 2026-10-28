@@ -7,7 +7,14 @@ frontend/src/lib/world-engine/contract-digest.json text eol=lf
 # on every test run; its working-copy bytes must match the committed LF blob
 # on Windows checkouts too.
 backend/app/database/world_storage_v2.sql text eol=lf
+
+# H2 evidence manifests bind file bytes, including the recorded orchestrator.
+artifacts/h2-full-6b809dc-0cb1951/** text eol=lf
 artifacts/h2-integration-d1d2de0/** text eol=lf
+
+# The short browser evaluation records byte hashes for replay and review.
+artifacts/b3-short/** text eol=lf
+artifacts/rule-facts/** text eol=lf
 
 # Windows reserved device names written by shell redirects (e.g. `>nul`).
 # They cannot be checked out on Windows, so they must never be tracked.

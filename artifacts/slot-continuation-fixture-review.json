@@ -1,0 +1,31 @@
+{
+  "status": "FIXTURE_FIDELITY_FINDING",
+  "recordedAt": "2026-10-26T05:53:23.858Z",
+  "layer": "T03 synthetic responses compared with real A WorldService record_skip",
+  "rows": [
+    {
+      "sample": "sample_1",
+      "skipCount": 6,
+      "firstSyntheticSkip": {
+        "intentStatus": "pending",
+        "timeLocked": false
+      },
+      "realServiceFirstSkip": {
+        "intentStatus": "consumed",
+        "timeLocked": true
+      }
+    },
+    {
+      "sample": "sample_2",
+      "skipCount": 6,
+      "firstSyntheticSkip": {
+        "intentStatus": "pending",
+        "timeLocked": false
+      },
+      "realServiceFirstSkip": {
+        "intentStatus": "consumed",
+        "timeLocked": true
+      }
+    }
+  ]
+}

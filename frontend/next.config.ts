@@ -6,18 +6,18 @@ const frontendRoot = path.dirname(fileURLToPath(import.meta.url));
 
 const nextConfig: NextConfig = {
   outputFileTracingRoot: frontendRoot,
-  // Cross-origin isolation is required for the multi-threaded wasm runtime on
-  // /benchmark (SharedArrayBuffer). Scoped to that path so the game pages are
-  // unaffected.
+  // Cross-origin isolation is required for the multi-threaded wasm runtime
+  // (SharedArrayBuffer): /benchmark for the inference benchmarks and /world
+  // for the page's narration model — single-threaded prompt eval measured
+  // ~200ms/token, which no deadline can absorb. Game pages stay unaffected.
   async headers() {
+    const isolation = [
+      { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
+      { key: "Cross-Origin-Embedder-Policy", value: "require-corp" },
+    ];
     return [
-      {
-        source: "/benchmark",
-        headers: [
-          { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
-          { key: "Cross-Origin-Embedder-Policy", value: "require-corp" },
-        ],
-      },
+      { source: "/benchmark", headers: isolation },
+      { source: "/world", headers: isolation },
     ];
   },
 };

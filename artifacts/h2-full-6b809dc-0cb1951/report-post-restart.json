@@ -1,0 +1,37 @@
+{
+  "namespace": "h2full_mvqb4944",
+  "recordedAt": "2026-10-27T06:30:58.144Z",
+  "phase": "post-restart",
+  "browser": {
+    "head": "6b809dca846b407ae24f545adeef7ae068fcf5b5",
+    "status": "",
+    "sourceSha256": {
+      "frontend/src/lib/world-engine/recovery.ts": "152f2a63e0f0f7524ac4719cd871f6c056daaeda24ab1fff6cdda1d8a0ba5808",
+      "frontend/src/lib/world-engine/controller.ts": "20a77dab1bf98778cb786a79f4e71d8c9ab96f7efb86290c4948e5b523a6f011",
+      "frontend/src/lib/world-engine/schedule.ts": "7e55809b1e5da53b35e8f8b6037d9d374335f9b835d7f13bd8cdc0761d0b7f8c",
+      "frontend/scripts/review-world-h2-full.mjs": "b0e86f6d1e236585fbb0572ee18b44f557b3a566dd6c7ca51945b0523d0ab9f3"
+    }
+  },
+  "server": {
+    "head": "0cb1951cd1b0181f6a0505026cdd9939dd668de9",
+    "status": "?? backend/_proj_create.json",
+    "sourceSha256": {
+      "backend/app/services/world/control.py": "cd3b6e5a297f27a30f2f10a72de0ec002ff5ec335be8388ebd083ba544fdb0e5",
+      "backend/app/services/world/authority.py": "5ef2417c02f74ba349196b7c83ae25cea41f3dd9dac8374f30132ea490dac96a",
+      "backend/app/database/world_frozen_repository.py": "74471c58be73534846ca43bd1a5844aae070d9d7a5e352189436293632e3d559"
+    }
+  },
+  "contractDigest": {
+    "protocolVersion": 2,
+    "contractDigest": "902918016f2bf7eff4cd1afd52da4ca96defdb5ee4082f171fda987de86680c2"
+  },
+  "status": "PASS_POST_RESTART",
+  "worldId": "world_52",
+  "detail": {
+    "rollId": "roll_61",
+    "admitted": true,
+    "stack": [
+      "person_a"
+    ]
+  }
+}

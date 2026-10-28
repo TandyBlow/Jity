@@ -1,0 +1,50 @@
+{
+  "formatVersion": 1,
+  "recordedAt": "2026-10-27T06:38:52Z",
+  "status": "FROZEN",
+  "scope": "Shared v2 contract and fixed A/B implementation pair after the agreed H2 acceptance matrix",
+  "authorization": "User instructed archive first, then freeze jointly after main, successor, post-restart and damage checks pass",
+  "baseline": {
+    "browserCommit": "6b809dca846b407ae24f545adeef7ae068fcf5b5",
+    "serverCommit": "0cb1951cd1b0181f6a0505026cdd9939dd668de9",
+    "contractDigest": "902918016f2bf7eff4cd1afd52da4ca96defdb5ee4082f171fda987de86680c2",
+    "sharedFilesCompared": 155,
+    "protocolVersion": 2,
+    "responseSchemaVersion": 2,
+    "stateSchemaVersion": 1,
+    "traceFormatVersion": 1,
+    "rollRuleVersion": "reaction-d20-v1",
+    "rollTarget": 11
+  },
+  "evidence": {
+    "archiveCommit": "e377e46614e2e8c765970d7a2bbbbc997f262bfe",
+    "directory": "artifacts/h2-full-6b809dc-0cb1951",
+    "manifest": "artifacts/h2-full-6b809dc-0cb1951/manifest.json",
+    "manifestSha256": "a6c842ffb45d044c561108aeb0980447280a78f1b194ddb6bf9adeeb79de60a2",
+    "archivePrecedesFreeze": true,
+    "allManifestFileHashesMatchGitBlobs": true,
+    "credentialScrubPassed": true,
+    "serviceStarts": 8,
+    "serviceStops": 8,
+    "remainingAcceptanceServiceProcesses": 0
+  },
+  "acceptance": {
+    "main": "PASS_MAIN",
+    "successor": "PASS_SUCCESSOR",
+    "postRestart": "PASS_POST_RESTART",
+    "missingFrozenPayload": "PASS_FROZEN_MISSING",
+    "corruptFrozenBytes": "PASS_FROZEN_CORRUPT",
+    "corruptActiveGroup": "PASS_FROZEN_CORRUPT",
+    "agreedFullH2Matrix": "PASSED"
+  },
+  "boundaries": {
+    "takeover": "release/acquire epoch handover with controlled restore and sealed-point commit",
+    "restart": "same SQLite database and held lease; recover facts verified; no subsequent run in that world",
+    "successor": "sealed predecessor with reserved successor, before successor begin",
+    "model": "scripted model through real controller and real HTTP transport",
+    "wallClockTtlExpiryTakeover": "not exercised by this matrix",
+    "realModelBrowserEvaluation": "not exercised by this matrix",
+    "b3FullEvaluation": "deferred",
+    "longTermActionHistory": "not added"
+  }
+}

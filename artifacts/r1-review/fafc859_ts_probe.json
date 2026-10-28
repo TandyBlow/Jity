@@ -1,0 +1,7 @@
+{
+  "redactionNote": "Local absolute paths in the original output are replaced with <worktree>.",
+  "returncode": 0,
+  "temporaryChange": "Only v.schemaVersion !== 1 -> !== 2 in a temporary consumer copy",
+  "sourceWorktreesChanged": false,
+  "finalOutput": "\n RUN  v5.0.1 <worktree>/frontend\n\n\n Test Files  2 passed (2)\n      Tests  103 passed (103)\n   Start at  01:03:52\n   Duration  2.89s (tests 57%, import 29%, transform 14%)\n\n"
+}

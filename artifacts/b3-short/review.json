@@ -1,0 +1,127 @@
+{
+  "formatVersion": 1,
+  "recordedAt": "2026-10-27T07:15:03.365399+00:00",
+  "reviewer": "current coding task; content review, not a user signoff or independent human review",
+  "rawReport": "qwen3-0.6b.json",
+  "rawReportSha256": "dbb2034ea95a25702e9fefc42c9fdece5052f7fe44118c64951ff6c9e95a0d63",
+  "execution": "COMPLETED",
+  "structurePassed": 6,
+  "semanticCorrect": 3,
+  "totalSamples": 6,
+  "automaticFloorPassed": 4,
+  "automaticFloorIsNotContentAccuracy": true,
+  "perTask": [
+    {
+      "task": "action",
+      "samples": 2,
+      "semanticCorrect": 2,
+      "meanSeconds": 46.098
+    },
+    {
+      "task": "updates",
+      "samples": 2,
+      "semanticCorrect": 0,
+      "meanSeconds": 38.253
+    },
+    {
+      "task": "narration",
+      "samples": 2,
+      "semanticCorrect": 1,
+      "meanSeconds": 52.053
+    }
+  ],
+  "latency": {
+    "minSeconds": 35.933,
+    "maxSeconds": 68.174,
+    "medianSeconds": 38.253,
+    "totalCallSeconds": 272.809,
+    "modelLoadSeconds": 7.976,
+    "observedPrefillShare": 0.9236
+  },
+  "rows": [
+    {
+      "id": "action-npc",
+      "semanticCorrect": true,
+      "finding": "林川继续在走廊守门，没有代替主角开盒；满足本样本允许的守门/skip 窄判据。",
+      "raw": "{\"kind\":\"act\",\"text\":\"林川在走廊守门\"}",
+      "seconds": 55.358,
+      "firstTokenSeconds": 52.675,
+      "finishReason": "stop",
+      "automaticFailure": null
+    },
+    {
+      "id": "action-player",
+      "semanticCorrect": true,
+      "finding": "行动提议归属周宁且为开盒，符合 pending 输入。该行动文本不是开盒成功的结算证明。",
+      "raw": "{\"kind\":\"act\",\"text\":\"周宁打开盒子\"}",
+      "seconds": 36.839,
+      "firstTokenSeconds": 34.527,
+      "finishReason": "stop",
+      "automaticFailure": null
+    },
+    {
+      "id": "updates-position",
+      "semanticCorrect": false,
+      "finding": "确认结果为林川进入门厅，输出却仍设 corridor；并将 slotId 写成字符串 null。结构合法，状态事实错误。",
+      "raw": "{\"stage\":\"position\",\"changes\":{\"person_a\":{\"positionSet\":{\"containerId\":\"corridor\",\"slotId\":\"null\",\"relativeTo\":null}}}}",
+      "seconds": 39.375,
+      "firstTokenSeconds": 34.41,
+      "finishReason": "stop",
+      "automaticFailure": "semantic"
+    },
+    {
+      "id": "updates-sanity",
+      "semanticCorrect": false,
+      "finding": "确认结果为精神值从10降到8，输出复制旧值10。",
+      "raw": "{\"stage\":\"sanity\",\"changes\":{\"person_a\":{\"sanitySet\":10}}}",
+      "seconds": 37.131,
+      "firstTokenSeconds": 33.983,
+      "finishReason": "stop",
+      "automaticFailure": "semantic"
+    },
+    {
+      "id": "narration-root",
+      "semanticCorrect": false,
+      "finding": "初始两人均在走廊，输出却把周宁写到门厅。旧自动底线未检查这种地点错认，误放行。",
+      "automaticJudgeMiss": true,
+      "styleNote": "仅一句，未满足两句的风格指令。",
+      "raw": "走廊明亮，周宁站在门厅，保持警惕。",
+      "seconds": 35.933,
+      "firstTokenSeconds": 33.985,
+      "finishReason": "stop",
+      "automaticFailure": null
+    },
+    {
+      "id": "narration-move",
+      "semanticCorrect": true,
+      "finding": "林川去门厅，周宁留走廊，盒盖关闭；三个事实均匹配 before/Δ/after。",
+      "styleNote": "仅一句，事实正确但未满足两句的风格指令。",
+      "raw": "周宁留在走廊，林川走入门厅，盒盖仍关闭。",
+      "seconds": 68.174,
+      "firstTokenSeconds": 64.026,
+      "finishReason": "stop",
+      "automaticFailure": null
+    }
+  ],
+  "setupExploration": {
+    "outcome": "interrupted before any completed sample",
+    "observedTopology": {
+      "multithread": false,
+      "numThreads": 1
+    },
+    "cause": "custom Vite HTML ended before Vite header middleware; COOP/COEP missing on that page",
+    "resolution": "closed only the owned Playwright browser; finally stopped runner server; added explicit HTML headers and pre-load isolation guard",
+    "provenance": "observed terminal/tool output; original preflight report was overwritten before a separate copy was saved; no completed generation output existed",
+    "countedInSixSamples": false
+  },
+  "decisions": {
+    "identityAndInputConsumption": "program rules and server allocated identities",
+    "action": "guarded small-model proposal candidate only; 2 explicit examples are insufficient for general readiness",
+    "updates": "do not use this model output as authoritative deltas; require typed confirmed facts, deterministic mapping and validation",
+    "narration": "facts projection or rule template first; small model can polish wording with fact checks and template fallback",
+    "nextPage": "defer state-writing interaction until the facts/validation boundary is in place",
+    "fullB3": "not rerun",
+    "fullModelChain": "not exercised",
+    "otherModels": "not benchmarked; no cross-model ranking"
+  }
+}

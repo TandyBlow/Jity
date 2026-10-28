@@ -49,10 +49,16 @@ export interface SettlementGroup { groupId: Id | null; actorIds: Id[]; positions
 export interface ManifestItem { memberId: Id; actionContentHash: Digest; targetsContentHash: Digest | null; resultContentHash: Digest | null; candidatesContentHash: Digest | null }
 export interface GroupSource { pointId: Id; groupId: Id; sourceEpoch: number; sourceAttempt: number; manifest: ManifestItem[] }
 export interface RollRef { sourceId: Id; targetId: Id; triggerKey: Id; rollId: Id }
-export interface FrozenGroup { groupId: Id; pointId: Id; inputProjectionHash: Digest; members: { memberId: Id; actionText: string | null; targets: { targetId: Id; triggerKey: Id }[] | null; resultText: string | null; rollRefs: RollRef[] }[]; acceptedSources: (ManifestItem & { sourceEpoch: number; sourceAttempt: number })[]; candidates: SettlementGroup | null }
+export interface RollOutcome { rollId: Id; groupId: Id; sourceId: Id; targetId: Id; triggerKey: Id; ruleVersion: 'reaction-fixture-v1' | 'reaction-d20-v1'; target: number; result: number; eligibilityBaselineDigest: Digest; eligible: boolean; admitted: boolean }
+export type ThreatProgress =
+  | { sourceId: Id; targetId: Id; triggerKey: Id; status: 'pending_roll'; rollId: null; reactionMemberId: null }
+  | { sourceId: Id; targetId: Id; triggerKey: Id; status: 'reaction_pending'; rollId: Id; reactionMemberId: null }
+  | { sourceId: Id; targetId: Id; triggerKey: Id; status: 'handled'; rollId: Id; actionDisposition: 'none' | 'created' | 'reused'; reactionMemberId: Id | null };
+export interface GroupProgress { sourceStack: Id[]; threats: ThreatProgress[] }
+export interface FrozenGroup { groupId: Id; pointId: Id; inputProjectionHash: Digest; members: { memberId: Id; actionText: string | null; targets: { targetId: Id; triggerKey: Id }[] | null; resultText: string | null; rollRefs: RollRef[] }[]; acceptedSources: (ManifestItem & { sourceEpoch: number; sourceAttempt: number })[]; candidates: SettlementGroup | null; rolls: RollOutcome[]; progress: GroupProgress }
 export interface PointRecovery { work: PointWork; payloadStatus: 'available' | 'restore_required'; restoreSources: GroupSource[]; groups: FrozenGroup[]; timeScanCandidates: SettlementGroup | null }
 export interface Recovery { fenceEpoch: number; current: PointRecovery | null; successor: PointRecovery | null }
-export interface VersionBlock { protocolVersion: 2; engineVersion: 'world-engine-v1'; schemaVersion: 1; canonicalVersion: 'world-canonical-v1'; serverTimeEpochMilli: number }
+export interface VersionBlock { protocolVersion: 2; engineVersion: 'world-engine-v1'; schemaVersion: 2; canonicalVersion: 'world-canonical-v1'; serverTimeEpochMilli: number }
 export interface ContextResponse extends VersionBlock { world: WorldContext; control: ControlState; work: PointWork | null; activeInput: { advanceId: Id; inputId: Id; text: string } | null; recovery: Recovery | null }
 export interface ErrorResponse extends VersionBlock { replayed: boolean; operation: WorldOperation | null; requestId: Id | null; worldId: Id | null; error: { code: ErrorCode; httpStatus: number; retryable: boolean; clientAction: ClientAction; details: Record<string, Json> }; world?: WorldContext | null; control?: ControlState | null; work?: PointWork | null }
 export interface LeaseGrant { leaseToken: Id; fenceEpoch: number; expiresAtEpochMilli: number }
@@ -127,7 +133,7 @@ export interface DataMap {
   create_rolls: { rolls: RollOutcome[] };
   commit_point: { pointId: Id; version: number; stateDigest: Digest };
   list_points: { points: { pointId: Id; sequence: number; kind: 'root' | 'normal' | 'instant' | 'linked'; roundId: Id | null; advanceId: Id | null; stateDigest: Digest }[] };
-  get_state: { pointId: Id; version: number; state: WorldState; stateDigest: Digest };
+  get_state: { pointId: Id; version: number; state: WorldState; stateDigest: Digest; /** 该点自身已保存的记录（§7.1/§8.2 叙事组装）：根点为 null/null/{}；缺任一字段=读取能力不完整，客户端必须停止叙事生成，不得默认为空增量。 */ previousPointId: Id | null; timeAdvance: TimeAdvance | null; entityDeltas: Record<Id, EntityDelta> };
   narration_claim: ClaimSummary & { claimToken?: Id };
   narration_claim_renew: ClaimSummary;
   narration_submit: { pointId: Id; narrationStatus: NarrationStatus; generation: number };

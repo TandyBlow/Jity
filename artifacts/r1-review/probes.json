@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "probes": [
+    {
+      "name": "old_B_accepts_first_response_then_rejects_recovery",
+      "passed": true,
+      "firstResponseSchemaVersion": 1,
+      "oldBFirstResponseAccepted": true,
+      "oldBRecoveryAccepted": false
+    },
+    {
+      "name": "pending_with_roll_id",
+      "passed": true,
+      "pythonRejected": true,
+      "jsonSchemaRejected": true
+    },
+    {
+      "name": "reaction_pending_with_disposition",
+      "passed": true,
+      "pythonRejected": true,
+      "jsonSchemaRejected": true
+    },
+    {
+      "name": "handled_none_with_member",
+      "passed": true,
+      "pythonRejected": true,
+      "jsonSchemaRejected": true
+    },
+    {
+      "name": "handled_created_without_member",
+      "passed": true,
+      "pythonRejected": true,
+      "jsonSchemaRejected": true
+    },
+    {
+      "name": "T07_stack_FE_frontier_F",
+      "passed": true,
+      "matchingViews": 1
+    },
+    {
+      "name": "error_fixture_declared_frozen_work_missing",
+      "passed": true
+    },
+    {
+      "name": "error_fixture_declared_frozen_work_corrupt",
+      "passed": true
+    },
+    {
+      "name": "stack_nested_object",
+      "passed": true,
+      "httpStatus": 409,
+      "code": "frozen_work_corrupt"
+    },
+    {
+      "name": "threat_null",
+      "passed": true,
+      "httpStatus": 409,
+      "code": "frozen_work_corrupt"
+    },
+    {
+      "name": "progress_null",
+      "passed": true,
+      "httpStatus": 409,
+      "code": "frozen_work_corrupt"
+    },
+    {
+      "name": "binding_array",
+      "passed": true,
+      "httpStatus": 409,
+      "code": "frozen_work_corrupt"
+    }
+  ]
+}
