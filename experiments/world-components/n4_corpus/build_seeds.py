@@ -61,8 +61,11 @@ def row(group: str, origin: str, rewriter: str, split: str, plan: list,
         "plan": plan,
         "planConstruction": {"method": "program-enum-v1",
                              "note": "程序枚举独立构造，非状态差分反推"},
-        "planValidation": {"checker": "corpus_check.py plan-schema-v1",
-                           "note": "字段合法性+引用合法性校验，逐类忠实核对见协议 §5"},
+        "planValidation": {
+            "authority": "validate_plan_authority.py -> authority-report.json",
+            "note": "行内字段仅为构造声明；权威校验由独立脚本把 plan 映射为 backend "
+                    "v2 EntityDelta/TimeAdvance 并经 pydantic 逐行执行，结果落 "
+                    "authority-report.json（含 contracts.py 源哈希与草稿键映射）"},
         "text": text,
         "planRefs": plan_refs,
         "mustExpress": must,
@@ -100,14 +103,17 @@ for i in range(6):
                     "N4 成句微调：位置事实＋时间句"))
 
 # --- family 2: empty point + time (4 groups, train) ---
+# v2: 空点行不再对具体地点作"一切如旧"主张（无计划支持）——plan 补 no_change
+# 全局条目，正文去掉具体地点名，校验器禁 no_change 句出现实体名。
 for i in range(4):
     g += 1
-    loc = LOCS[(i + 3) % len(LOCS)]
-    plan = [{"ref": 0, **time_f(i + 1)}]
-    text = f"大约{DURATIONS[(i + 1) % len(DURATIONS)][2]}过去了，{loc}一切如旧。"
+    dur = DURATIONS[(i + 1) % len(DURATIONS)]
+    plan = [{"ref": 0, **time_f(i + 1)},
+            {"ref": 1, "kind": "no_change", "scope": "全局"}]
+    text = f"大约{dur[2]}过去了，一切如旧。"
     rows.append(row(f"n4-empty-{g:03d}", "template-seed", "program", "train", plan,
-                    text, [[0]], [0], [], NO_ADD_STD,
-                    "N4 成句微调：空点＋时间（句式避开 B 空点模板短语）"))
+                    text, [[0, 1]], [0, 1], [], NO_ADD_STD,
+                    "N4 成句微调：空点＋时间（无实体主张；句式避开 B 空点模板短语）"))
 
 # --- family 3: task achieved + time (5 groups, train) ---
 for i in range(5):
@@ -129,6 +135,8 @@ for i in range(3):
     goal = GOALS[(i + 1) % len(GOALS)]
     lo, hi = SANITY_PAIRS[i]
     pers = PERSONALITIES[i % len(PERSONALITIES)]
+    # v2: 方向动词按数据渲染（15→12 是下降，写"升到了"是错误监督）
+    sanity_verb = "升到了" if hi > lo else "降到了"
     plan = [
         {"ref": 0, "kind": "task_achieved", "entityId": f"c_{name}", "name": name, "goal": goal},
         {"ref": 1, "kind": "personality_changed", "entityId": f"c_{name}", "name": name, "text": pers},
@@ -137,7 +145,7 @@ for i in range(3):
         {"ref": 3, **time_f(i + 3)},
     ]
     text = (f"{name}完成了任务「{goal}」，{pers}，"
-            f"精神值从{lo}升到了{hi}。前后大约{DURATIONS[(i + 3) % len(DURATIONS)][2]}。")
+            f"精神值从{lo}{sanity_verb}{hi}。前后大约{DURATIONS[(i + 3) % len(DURATIONS)][2]}。")
     rows.append(row(f"n4-chain-{g:03d}", "template-seed", "program", "train", plan,
                     text, [[0, 1, 2], [3]], [0, 1, 2, 3], [], NO_ADD_STD,
                     "N4 成句微调：任务→人格→理智联动一文体"))

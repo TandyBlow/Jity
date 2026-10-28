@@ -1,0 +1,1065 @@
+{
+  "purpose": "authority-path validation of corpus fact plans (evidence, not a claim)",
+  "pydanticVersion": "2.13.4",
+  "contractsSource": {
+    "path": "backend/app/schemas/world/contracts.py",
+    "sha256_16": "236038a933d14ebf"
+  },
+  "draftIdAssignment": {
+    "characters": {
+      "陈舟": "char_001",
+      "苏晚": "char_002",
+      "周砚": "char_003",
+      "林望": "char_004",
+      "沈青": "char_005"
+    },
+    "locations": {
+      "东门": "loc_001",
+      "钟楼": "loc_002",
+      "水房": "loc_003",
+      "侧院": "loc_004",
+      "柴房": "loc_005",
+      "石桥": "loc_006",
+      "碑亭": "loc_007"
+    },
+    "tasks": {
+      "把铜铃挂回钟楼": "task_001",
+      "整理柴房": "task_002",
+      "修缮石桥栏杆": "task_003",
+      "清点碑亭石刻": "task_004"
+    }
+  },
+  "rows": [
+    {
+      "sourceGroupId": "n4-loc-001",
+      "idMap": {
+        "陈舟": "char_001"
+      },
+      "timeAdvance": {
+        "boundary": "elapsed",
+        "duration": {
+          "amount": 3,
+          "unit": "minute"
+        }
+      },
+      "deltas": [
+        {
+          "entityId": "char_001",
+          "positionSet": {
+            "containerId": "loc_002"
+          }
+        }
+      ],
+      "entries": [
+        {
+          "ref": 0,
+          "kind": "moved",
+          "result": "ok",
+          "mapped": "positionSet(container=loc_002)"
+        },
+        {
+          "ref": 1,
+          "kind": "time",
+          "result": "ok",
+          "mapped": "TimeAdvance(elapsed)"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4-loc-002",
+      "idMap": {
+        "苏晚": "char_002"
+      },
+      "timeAdvance": {
+        "boundary": "elapsed",
+        "duration": {
+          "amount": 8,
+          "unit": "minute"
+        }
+      },
+      "deltas": [
+        {
+          "entityId": "char_002",
+          "positionSet": {
+            "containerId": "loc_004"
+          }
+        }
+      ],
+      "entries": [
+        {
+          "ref": 0,
+          "kind": "moved",
+          "result": "ok",
+          "mapped": "positionSet(container=loc_004)"
+        },
+        {
+          "ref": 1,
+          "kind": "time",
+          "result": "ok",
+          "mapped": "TimeAdvance(elapsed)"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4-loc-003",
+      "idMap": {
+        "周砚": "char_003"
+      },
+      "timeAdvance": {
+        "boundary": "elapsed",
+        "duration": {
+          "amount": 12,
+          "unit": "minute"
+        }
+      },
+      "deltas": [
+        {
+          "entityId": "char_003",
+          "positionSet": {
+            "containerId": "loc_005"
+          }
+        }
+      ],
+      "entries": [
+        {
+          "ref": 0,
+          "kind": "moved",
+          "result": "ok",
+          "mapped": "positionSet(container=loc_005)"
+        },
+        {
+          "ref": 1,
+          "kind": "time",
+          "result": "ok",
+          "mapped": "TimeAdvance(elapsed)"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4-loc-004",
+      "idMap": {
+        "林望": "char_004"
+      },
+      "timeAdvance": {
+        "boundary": "elapsed",
+        "duration": {
+          "amount": 25,
+          "unit": "minute"
+        }
+      },
+      "deltas": [
+        {
+          "entityId": "char_004",
+          "positionSet": {
+            "containerId": "loc_006"
+          }
+        }
+      ],
+      "entries": [
+        {
+          "ref": 0,
+          "kind": "moved",
+          "result": "ok",
+          "mapped": "positionSet(container=loc_006)"
+        },
+        {
+          "ref": 1,
+          "kind": "time",
+          "result": "ok",
+          "mapped": "TimeAdvance(elapsed)"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4-loc-005",
+      "idMap": {
+        "沈青": "char_005"
+      },
+      "timeAdvance": {
+        "boundary": "elapsed",
+        "duration": {
+          "amount": 40,
+          "unit": "minute"
+        }
+      },
+      "deltas": [
+        {
+          "entityId": "char_005",
+          "positionSet": {
+            "containerId": "loc_007"
+          }
+        }
+      ],
+      "entries": [
+        {
+          "ref": 0,
+          "kind": "moved",
+          "result": "ok",
+          "mapped": "positionSet(container=loc_007)"
+        },
+        {
+          "ref": 1,
+          "kind": "time",
+          "result": "ok",
+          "mapped": "TimeAdvance(elapsed)"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4-loc-006",
+      "idMap": {
+        "陈舟": "char_001"
+      },
+      "timeAdvance": {
+        "boundary": "elapsed",
+        "duration": {
+          "amount": 1,
+          "unit": "hour"
+        }
+      },
+      "deltas": [
+        {
+          "entityId": "char_001",
+          "positionSet": {
+            "containerId": "loc_001"
+          }
+        }
+      ],
+      "entries": [
+        {
+          "ref": 0,
+          "kind": "moved",
+          "result": "ok",
+          "mapped": "positionSet(container=loc_001)"
+        },
+        {
+          "ref": 1,
+          "kind": "time",
+          "result": "ok",
+          "mapped": "TimeAdvance(elapsed)"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4-empty-007",
+      "idMap": {},
+      "timeAdvance": {
+        "boundary": "elapsed",
+        "duration": {
+          "amount": 8,
+          "unit": "minute"
+        }
+      },
+      "deltas": [],
+      "entries": [
+        {
+          "ref": 0,
+          "kind": "time",
+          "result": "ok",
+          "mapped": "TimeAdvance(elapsed)"
+        },
+        {
+          "ref": 1,
+          "kind": "no_change",
+          "result": "ok",
+          "mapped": "no delta (explicit)"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4-empty-008",
+      "idMap": {},
+      "timeAdvance": {
+        "boundary": "elapsed",
+        "duration": {
+          "amount": 12,
+          "unit": "minute"
+        }
+      },
+      "deltas": [],
+      "entries": [
+        {
+          "ref": 0,
+          "kind": "time",
+          "result": "ok",
+          "mapped": "TimeAdvance(elapsed)"
+        },
+        {
+          "ref": 1,
+          "kind": "no_change",
+          "result": "ok",
+          "mapped": "no delta (explicit)"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4-empty-009",
+      "idMap": {},
+      "timeAdvance": {
+        "boundary": "elapsed",
+        "duration": {
+          "amount": 25,
+          "unit": "minute"
+        }
+      },
+      "deltas": [],
+      "entries": [
+        {
+          "ref": 0,
+          "kind": "time",
+          "result": "ok",
+          "mapped": "TimeAdvance(elapsed)"
+        },
+        {
+          "ref": 1,
+          "kind": "no_change",
+          "result": "ok",
+          "mapped": "no delta (explicit)"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4-empty-010",
+      "idMap": {},
+      "timeAdvance": {
+        "boundary": "elapsed",
+        "duration": {
+          "amount": 40,
+          "unit": "minute"
+        }
+      },
+      "deltas": [],
+      "entries": [
+        {
+          "ref": 0,
+          "kind": "time",
+          "result": "ok",
+          "mapped": "TimeAdvance(elapsed)"
+        },
+        {
+          "ref": 1,
+          "kind": "no_change",
+          "result": "ok",
+          "mapped": "no delta (explicit)"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4-task-011",
+      "idMap": {
+        "苏晚": "char_002"
+      },
+      "timeAdvance": {
+        "boundary": "elapsed",
+        "duration": {
+          "amount": 12,
+          "unit": "minute"
+        }
+      },
+      "deltas": [
+        {
+          "entityId": "char_002",
+          "tasksAchieved": [
+            "task_001"
+          ]
+        }
+      ],
+      "entries": [
+        {
+          "ref": 0,
+          "kind": "task_achieved",
+          "result": "ok",
+          "mapped": "tasksAchieved+=task_001"
+        },
+        {
+          "ref": 1,
+          "kind": "time",
+          "result": "ok",
+          "mapped": "TimeAdvance(elapsed)"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4-task-012",
+      "idMap": {
+        "周砚": "char_003"
+      },
+      "timeAdvance": {
+        "boundary": "elapsed",
+        "duration": {
+          "amount": 25,
+          "unit": "minute"
+        }
+      },
+      "deltas": [
+        {
+          "entityId": "char_003",
+          "tasksAchieved": [
+            "task_002"
+          ]
+        }
+      ],
+      "entries": [
+        {
+          "ref": 0,
+          "kind": "task_achieved",
+          "result": "ok",
+          "mapped": "tasksAchieved+=task_002"
+        },
+        {
+          "ref": 1,
+          "kind": "time",
+          "result": "ok",
+          "mapped": "TimeAdvance(elapsed)"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4-task-013",
+      "idMap": {
+        "林望": "char_004"
+      },
+      "timeAdvance": {
+        "boundary": "elapsed",
+        "duration": {
+          "amount": 40,
+          "unit": "minute"
+        }
+      },
+      "deltas": [
+        {
+          "entityId": "char_004",
+          "tasksAchieved": [
+            "task_003"
+          ]
+        }
+      ],
+      "entries": [
+        {
+          "ref": 0,
+          "kind": "task_achieved",
+          "result": "ok",
+          "mapped": "tasksAchieved+=task_003"
+        },
+        {
+          "ref": 1,
+          "kind": "time",
+          "result": "ok",
+          "mapped": "TimeAdvance(elapsed)"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4-task-014",
+      "idMap": {
+        "沈青": "char_005"
+      },
+      "timeAdvance": {
+        "boundary": "elapsed",
+        "duration": {
+          "amount": 1,
+          "unit": "hour"
+        }
+      },
+      "deltas": [
+        {
+          "entityId": "char_005",
+          "tasksAchieved": [
+            "task_004"
+          ]
+        }
+      ],
+      "entries": [
+        {
+          "ref": 0,
+          "kind": "task_achieved",
+          "result": "ok",
+          "mapped": "tasksAchieved+=task_004"
+        },
+        {
+          "ref": 1,
+          "kind": "time",
+          "result": "ok",
+          "mapped": "TimeAdvance(elapsed)"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4-task-015",
+      "idMap": {
+        "陈舟": "char_001"
+      },
+      "timeAdvance": {
+        "boundary": "elapsed",
+        "duration": {
+          "amount": 3,
+          "unit": "minute"
+        }
+      },
+      "deltas": [
+        {
+          "entityId": "char_001",
+          "tasksAchieved": [
+            "task_001"
+          ]
+        }
+      ],
+      "entries": [
+        {
+          "ref": 0,
+          "kind": "task_achieved",
+          "result": "ok",
+          "mapped": "tasksAchieved+=task_001"
+        },
+        {
+          "ref": 1,
+          "kind": "time",
+          "result": "ok",
+          "mapped": "TimeAdvance(elapsed)"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4-chain-016",
+      "idMap": {
+        "周砚": "char_003"
+      },
+      "timeAdvance": {
+        "boundary": "elapsed",
+        "duration": {
+          "amount": 25,
+          "unit": "minute"
+        }
+      },
+      "deltas": [
+        {
+          "entityId": "char_003",
+          "personalityChanges": [
+            {
+              "id": "chg_002",
+              "text": "变得沉稳",
+              "supersedes": []
+            }
+          ],
+          "sanitySet": 13,
+          "tasksAchieved": [
+            "task_002"
+          ]
+        }
+      ],
+      "entries": [
+        {
+          "ref": 0,
+          "kind": "task_achieved",
+          "result": "ok",
+          "mapped": "tasksAchieved+=task_002"
+        },
+        {
+          "ref": 1,
+          "kind": "personality_changed",
+          "result": "ok",
+          "mapped": "personalityChanges+=chg_002"
+        },
+        {
+          "ref": 2,
+          "kind": "sanity_changed",
+          "result": "ok",
+          "mapped": "sanitySet=13"
+        },
+        {
+          "ref": 3,
+          "kind": "time",
+          "result": "ok",
+          "mapped": "TimeAdvance(elapsed)"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4-chain-017",
+      "idMap": {
+        "林望": "char_004"
+      },
+      "timeAdvance": {
+        "boundary": "elapsed",
+        "duration": {
+          "amount": 40,
+          "unit": "minute"
+        }
+      },
+      "deltas": [
+        {
+          "entityId": "char_004",
+          "personalityChanges": [
+            {
+              "id": "chg_002",
+              "text": "话多了起来",
+              "supersedes": []
+            }
+          ],
+          "sanitySet": 14,
+          "tasksAchieved": [
+            "task_003"
+          ]
+        }
+      ],
+      "entries": [
+        {
+          "ref": 0,
+          "kind": "task_achieved",
+          "result": "ok",
+          "mapped": "tasksAchieved+=task_003"
+        },
+        {
+          "ref": 1,
+          "kind": "personality_changed",
+          "result": "ok",
+          "mapped": "personalityChanges+=chg_002"
+        },
+        {
+          "ref": 2,
+          "kind": "sanity_changed",
+          "result": "ok",
+          "mapped": "sanitySet=14"
+        },
+        {
+          "ref": 3,
+          "kind": "time",
+          "result": "ok",
+          "mapped": "TimeAdvance(elapsed)"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4-chain-018",
+      "idMap": {
+        "沈青": "char_005"
+      },
+      "timeAdvance": {
+        "boundary": "elapsed",
+        "duration": {
+          "amount": 1,
+          "unit": "hour"
+        }
+      },
+      "deltas": [
+        {
+          "entityId": "char_005",
+          "personalityChanges": [
+            {
+              "id": "chg_002",
+              "text": "变得沉稳",
+              "supersedes": []
+            }
+          ],
+          "sanitySet": 12,
+          "tasksAchieved": [
+            "task_004"
+          ]
+        }
+      ],
+      "entries": [
+        {
+          "ref": 0,
+          "kind": "task_achieved",
+          "result": "ok",
+          "mapped": "tasksAchieved+=task_004"
+        },
+        {
+          "ref": 1,
+          "kind": "personality_changed",
+          "result": "ok",
+          "mapped": "personalityChanges+=chg_002"
+        },
+        {
+          "ref": 2,
+          "kind": "sanity_changed",
+          "result": "ok",
+          "mapped": "sanitySet=12"
+        },
+        {
+          "ref": 3,
+          "kind": "time",
+          "result": "ok",
+          "mapped": "TimeAdvance(elapsed)"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4-appear-019",
+      "idMap": {
+        "石桥": "loc_006"
+      },
+      "timeAdvance": {
+        "boundary": "elapsed",
+        "duration": {
+          "amount": 40,
+          "unit": "minute"
+        }
+      },
+      "deltas": [
+        {
+          "entityId": "loc_006",
+          "appearanceChanges": [
+            {
+              "id": "chg_001",
+              "text": "门柱上的漆皮剥落了大半",
+              "supersedes": []
+            }
+          ]
+        }
+      ],
+      "entries": [
+        {
+          "ref": 0,
+          "kind": "appearance_changed",
+          "result": "ok",
+          "mapped": "appearanceChanges+=chg_001"
+        },
+        {
+          "ref": 1,
+          "kind": "time",
+          "result": "ok",
+          "mapped": "TimeAdvance(elapsed)"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4-appear-020",
+      "idMap": {
+        "碑亭": "loc_007"
+      },
+      "timeAdvance": {
+        "boundary": "elapsed",
+        "duration": {
+          "amount": 1,
+          "unit": "hour"
+        }
+      },
+      "deltas": [
+        {
+          "entityId": "loc_007",
+          "appearanceChanges": [
+            {
+              "id": "chg_001",
+              "text": "石阶缝里长出了青苔",
+              "supersedes": []
+            }
+          ]
+        }
+      ],
+      "entries": [
+        {
+          "ref": 0,
+          "kind": "appearance_changed",
+          "result": "ok",
+          "mapped": "appearanceChanges+=chg_001"
+        },
+        {
+          "ref": 1,
+          "kind": "time",
+          "result": "ok",
+          "mapped": "TimeAdvance(elapsed)"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4-appear-021",
+      "idMap": {
+        "东门": "loc_001"
+      },
+      "timeAdvance": {
+        "boundary": "elapsed",
+        "duration": {
+          "amount": 3,
+          "unit": "minute"
+        }
+      },
+      "deltas": [
+        {
+          "entityId": "loc_001",
+          "appearanceChanges": [
+            {
+              "id": "chg_001",
+              "text": "门柱上的漆皮剥落了大半",
+              "supersedes": []
+            }
+          ]
+        }
+      ],
+      "entries": [
+        {
+          "ref": 0,
+          "kind": "appearance_changed",
+          "result": "ok",
+          "mapped": "appearanceChanges+=chg_001"
+        },
+        {
+          "ref": 1,
+          "kind": "time",
+          "result": "ok",
+          "mapped": "TimeAdvance(elapsed)"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4-multi-022",
+      "idMap": {
+        "陈舟": "char_001"
+      },
+      "timeAdvance": {
+        "boundary": "elapsed",
+        "duration": {
+          "amount": 3,
+          "unit": "minute"
+        }
+      },
+      "deltas": [
+        {
+          "entityId": "char_001",
+          "positionSet": {
+            "containerId": "loc_005"
+          }
+        }
+      ],
+      "entries": [
+        {
+          "ref": 0,
+          "kind": "moved",
+          "result": "ok",
+          "mapped": "positionSet(container=loc_005)"
+        },
+        {
+          "ref": 1,
+          "kind": "positioned_at",
+          "result": "skipped",
+          "reason": "current-state statement is not an increment"
+        },
+        {
+          "ref": 2,
+          "kind": "time",
+          "result": "ok",
+          "mapped": "TimeAdvance(elapsed)"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4-multi-023",
+      "idMap": {
+        "苏晚": "char_002"
+      },
+      "timeAdvance": {
+        "boundary": "elapsed",
+        "duration": {
+          "amount": 8,
+          "unit": "minute"
+        }
+      },
+      "deltas": [
+        {
+          "entityId": "char_002",
+          "positionSet": {
+            "containerId": "loc_006"
+          }
+        }
+      ],
+      "entries": [
+        {
+          "ref": 0,
+          "kind": "moved",
+          "result": "ok",
+          "mapped": "positionSet(container=loc_006)"
+        },
+        {
+          "ref": 1,
+          "kind": "positioned_at",
+          "result": "skipped",
+          "reason": "current-state statement is not an increment"
+        },
+        {
+          "ref": 2,
+          "kind": "time",
+          "result": "ok",
+          "mapped": "TimeAdvance(elapsed)"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4-multi-024",
+      "idMap": {
+        "周砚": "char_003"
+      },
+      "timeAdvance": {
+        "boundary": "elapsed",
+        "duration": {
+          "amount": 12,
+          "unit": "minute"
+        }
+      },
+      "deltas": [
+        {
+          "entityId": "char_003",
+          "positionSet": {
+            "containerId": "loc_007"
+          }
+        }
+      ],
+      "entries": [
+        {
+          "ref": 0,
+          "kind": "moved",
+          "result": "ok",
+          "mapped": "positionSet(container=loc_007)"
+        },
+        {
+          "ref": 1,
+          "kind": "positioned_at",
+          "result": "skipped",
+          "reason": "current-state statement is not an increment"
+        },
+        {
+          "ref": 2,
+          "kind": "time",
+          "result": "ok",
+          "mapped": "TimeAdvance(elapsed)"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4-loc-025",
+      "idMap": {
+        "沈青": "char_005"
+      },
+      "timeAdvance": {
+        "boundary": "elapsed",
+        "duration": {
+          "amount": 1,
+          "unit": "hour"
+        }
+      },
+      "deltas": [
+        {
+          "entityId": "char_005",
+          "positionSet": {
+            "containerId": "loc_001"
+          }
+        }
+      ],
+      "entries": [
+        {
+          "ref": 0,
+          "kind": "moved",
+          "result": "ok",
+          "mapped": "positionSet(container=loc_001)"
+        },
+        {
+          "ref": 1,
+          "kind": "time",
+          "result": "ok",
+          "mapped": "TimeAdvance(elapsed)"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4-task-026",
+      "idMap": {
+        "林望": "char_004"
+      },
+      "timeAdvance": {
+        "boundary": "elapsed",
+        "duration": {
+          "amount": 3,
+          "unit": "minute"
+        }
+      },
+      "deltas": [
+        {
+          "entityId": "char_004",
+          "tasksAchieved": [
+            "task_004"
+          ]
+        }
+      ],
+      "entries": [
+        {
+          "ref": 0,
+          "kind": "task_achieved",
+          "result": "ok",
+          "mapped": "tasksAchieved+=task_004"
+        },
+        {
+          "ref": 1,
+          "kind": "time",
+          "result": "ok",
+          "mapped": "TimeAdvance(elapsed)"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4-loc-001",
+      "idMap": {
+        "陈舟": "char_001"
+      },
+      "timeAdvance": {
+        "boundary": "elapsed",
+        "duration": {
+          "amount": 3,
+          "unit": "minute"
+        }
+      },
+      "deltas": [
+        {
+          "entityId": "char_001",
+          "positionSet": {
+            "containerId": "loc_002"
+          }
+        }
+      ],
+      "entries": [
+        {
+          "ref": 0,
+          "kind": "moved",
+          "result": "ok",
+          "mapped": "positionSet(container=loc_002)"
+        },
+        {
+          "ref": 1,
+          "kind": "time",
+          "result": "ok",
+          "mapped": "TimeAdvance(elapsed)"
+        }
+      ],
+      "errors": []
+    }
+  ],
+  "summary": {
+    "rows": 27,
+    "validationErrors": 0,
+    "verdict": "all plans valid under backend v2 contracts"
+  }
+}

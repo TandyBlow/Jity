@@ -65,6 +65,13 @@ KNOWN_MISSES = [
     "模板句式拼接代码以短语人工核对补（「没有新的变化」教训，种子句式已避开）",
 ]
 
+# Corpus fields that carry NARRATIVE CONTENT and are substring-scanned.
+# Structural fields (kind/unit/ref/amount/entityId/rendered/scope) are
+# excluded: they are protocol vocabulary, and short values like kind="time"
+# produce false direction hits against long meta-strings ("time" ⊂
+# "timePassage…") — review finding on v1 per-field matching.
+CONTENT_FIELDS = {"name", "from", "to", "at", "goal", "text"}
+
 
 def strip_notes(s: str) -> list:
     """Forbid-string note-stripping variants: （…） suffix/prefix removed."""
@@ -77,27 +84,30 @@ def strip_notes(s: str) -> list:
     return out
 
 
-def collect_ts(path: pathlib.Path):
+def collect_ts(path: pathlib.Path, label: str):
+    """value -> set of origins. Key is the VALUE (v1 keyed by field NAME and
+    silently dropped same-named later fields — review-found bug)."""
     text = path.read_text(encoding="utf-8")
-    fields, arrays = {}, 0
+    fields = {}
+    n = 0
     for m in TS_SINGLE.finditer(text):
-        fields.setdefault(m.group(1), m.group(2))
-        arrays += 1
+        fields.setdefault(m.group(2), set()).add(f"{label}:{m.group(1)}")
+        n += 1
     for m in TS_ARRAY.finditer(text):
         for s in TS_STR.findall(m.group(1)):
-            fields.setdefault(s, "array-field")
-            arrays += 1
-    return fields, arrays
+            fields.setdefault(s, set()).add(f"{label}:{m.group(1)}-array")
+            n += 1
+    return fields, n
 
 
-def collect_json(path: pathlib.Path):
+def collect_json(path: pathlib.Path, label: str):
     data = json.loads(path.read_text(encoding="utf-8"))
     out = {}
 
     def walk(o):
         if isinstance(o, str):
             if len(o) >= 4 and o not in GENERIC_TOKENS:
-                out.setdefault(o, "json-string")
+                out.setdefault(o, set()).add(f"{label}:json")
         elif isinstance(o, dict):
             for v in o.values():
                 walk(v)
@@ -116,23 +126,24 @@ def main() -> None:
         rows += [json.loads(line) for line in
                  cf.read_text(encoding="utf-8").splitlines() if line.strip()]
 
-    source_set = {}   # >=4 chars: substring-checked
-    cast_set = {}     # <4 chars: registered only
+    source_set = {}   # >=4 chars: value -> origins
+    cast_set = {}     # <4 chars: value -> origins
     manifest = []
     for label, rel, kind in SOURCES:
         path = REPO / rel
         if kind == "ts":
-            fields, n = collect_ts(path)
+            fields, n = collect_ts(path, label)
         else:
-            fields, n = collect_json(path)
+            fields, n = collect_json(path, label)
         digest = hashlib.sha256(path.read_bytes()).hexdigest()[:16]
-        for s, where in fields.items():
+        for s, origins in fields.items():
             if len(s) >= 4:
-                source_set[s] = (label, where)
+                source_set.setdefault(s, set()).update(origins)
                 for core in strip_notes(s):
-                    source_set[core] = (label, where + "+note-stripped")
+                    source_set.setdefault(core, set()).update(
+                        o + "+note-stripped" for o in origins)
             else:
-                cast_set[s] = (label, where)
+                cast_set.setdefault(s, set()).update(origins)
         manifest.append({"source": label, "file": rel, "sha256_16": digest,
                          "extractedStrings": n})
 
@@ -148,23 +159,32 @@ def main() -> None:
         sys.exit(2)
     print(f"self-test PASS: probe derivation caught via {hits}")
 
-    # scan corpus
+    # scan corpus: PER-FIELD bidirectional matching over CONTENT fields only
+    # (text + plan semantic values; structural keys excluded, see
+    # CONTENT_FIELDS note).
+    corpus_fields = []
+    for r in rows:
+        fields = [("text", r["text"])]
+        for e in r.get("plan", []):
+            for k, v in e.items():
+                if k in CONTENT_FIELDS and isinstance(v, str):
+                    fields.append((f"plan.{k}", v))
+        for fname, field in fields:
+            if field:
+                corpus_fields.append((r["sourceGroupId"], fname, field))
+
     failures = 0
     cast_hits = {}
-    for r in rows:
-        corpus_strings = [r["text"]]
-        for e in r.get("plan", []):
-            corpus_strings += [str(v) for v in e.values() if isinstance(v, str)]
-        joined = "。".join(corpus_strings)
-        row_hits = [s for s in source_set if s in joined or joined in s]
-        if row_hits:
+    for gid, fname, field in corpus_fields:
+        hits = [(s, o) for s, o in source_set.items() if s in field or field in s]
+        if hits:
             failures += 1
-            print(f"HIT {r['sourceGroupId']}:")
-            for s in row_hits:
-                print(f"   - {s!r}  (from {source_set[s][0]})")
-        for w, where in cast_set.items():
-            if w in joined:
-                cast_hits.setdefault(w, []).append(r["sourceGroupId"])
+            print(f"HIT {gid} [{fname}]:")
+            for s, origins in hits:
+                print(f"   - {s!r}  (from {sorted(origins)[0]})")
+        for w, origins in cast_set.items():
+            if w in field:
+                cast_hits.setdefault(w, set()).add(gid)
 
     print(f"\nsubstring scan: {len(rows) - failures}/{len(rows)} rows zero-hit "
           f"(within the listed scope and rules)")
