@@ -25,10 +25,10 @@ const option = (flag, fallback) => process.argv.includes(flag) ? process.argv[pr
 const hasFlag = (flag) => process.argv.includes(flag);
 const config = { model: '/models/Qwen3-0.6B-Q4_K_M.gguf', contextSize: 4096, numThreads: 4,
   channel: 'msedge', seed: 42, temperature: 0, maxTokens: 160, cachePrompt: false, timeoutMs: 120_000,
-  requireTime: hasFlag('--require-time'), holdout: hasFlag('--holdout') };
+  requireTime: hasFlag('--require-time'), validation: hasFlag('--validation') };
 const output = resolve(frontend, option('--out', '../.local/narration-eval.json'));
 const files = ['frontend/scripts/run-narration-eval.mjs',
-  ...['narration-alignment', 'narration-eval', 'narration-eval-samples', 'narration-eval-holdout', 'committed-narration', 'wllama-engine', 'engine']
+  ...['narration-alignment', 'narration-eval', 'narration-eval-samples', 'narration-eval-validation', 'committed-narration', 'wllama-engine', 'engine']
     .map((name) => `frontend/src/lib/world-engine/runtime/${name}.ts`)];
 const sha = (bytes) => createHash('sha256').update(bytes).digest('hex');
 const git = (...args) => execFileSync('git', ['-c', `safe.directory=${root.replaceAll('\\', '/')}`, '-C', root, ...args], { encoding: 'utf8' }).trim();
@@ -77,15 +77,15 @@ try {
 
   for (const entry of ['nv-move-1', 'nv-task-pers-sanity-1', 'nv-multi-1', 'nv-task-only-1', 'nv-refused-1',
     'nv-empty-1', 'nv-cont-1', 'nv-cont-2', 'nv-cont-3', 'nv-multi-opposite-1',
-    ...(config.holdout ? ['hv-move-1', 'hv-sanity-1', 'hv-task-pers-1', 'hv-refused-1', 'hv-empty-1', 'hv-multi-opposite-1'] : [])]) {
+    ...(config.validation ? ['hv-move-1', 'hv-sanity-1', 'hv-task-pers-1', 'hv-refused-1', 'hv-empty-1', 'hv-multi-opposite-1'] : [])]) {
     if (report.runs.some((run) => run.sampleId === entry)) continue;
     console.log(`[narration] ${entry}`);
     const row = await page.evaluate(async ({ entry, config }) => {
       const { runNarrationEvaluation } = await import('/src/lib/world-engine/runtime/narration-eval.ts');
       const { NARRATION_EVAL_SAMPLES } = await import('/src/lib/world-engine/runtime/narration-eval-samples.ts');
-      const { NARRATION_EVAL_HOLDOUT_SAMPLES } = await import('/src/lib/world-engine/runtime/narration-eval-holdout.ts');
+      const { NARRATION_EVAL_VALIDATION_SAMPLES } = await import('/src/lib/world-engine/runtime/narration-eval-validation.ts');
       const engine = window.__narration.engine;
-      const sample = [...NARRATION_EVAL_SAMPLES, ...NARRATION_EVAL_HOLDOUT_SAMPLES].find((item) => item.id === entry);
+      const sample = [...NARRATION_EVAL_SAMPLES, ...NARRATION_EVAL_VALIDATION_SAMPLES].find((item) => item.id === entry);
       const started = performance.now();
       const report = await runNarrationEvaluation({ samples: [sample], maxAttempts: 2, requireTime: config.requireTime, generator: {
         async generate(prompt, _sample, attempt) {
@@ -114,7 +114,7 @@ try {
   report.summary = {
     samples: report.runs.length,
     requireTime: config.requireTime,
-    holdout: config.holdout,
+    validation: config.validation,
     templateAccepted: report.runs.filter((run) => run.template.verdict.ok).length,
     mechanicalAccepted: report.runs.filter((run) => run.mechanical.verdict.ok).length,
     naturalAdopted: report.runs.filter((run) => run.natural.adopted).length,

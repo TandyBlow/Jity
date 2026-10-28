@@ -125,11 +125,13 @@ function scopeFor(fact: NarrationFact, sentence: string, names: Set<string>): st
   return scope;
 }
 
-/** Colloquial inserts between the frozen personality text's characters stay a
- * statement of that change: 变得「十分」健谈. Up to two extra characters per
- * gap; negation is not handled anywhere in this grader (documented limit). */
+/** Degree adverbs may sit inside the frozen personality text (变得「十分」健谈
+ * states the same change); anything else inserted between its words is a
+ * different trait and must not bind (二轮复核：健壮而谈吐粗鲁 ≠ 健谈).
+ * Negation is not handled anywhere in this grader (documented limit). */
+const DEGREE_ADVERBS = '(?:十分|非常|特别|格外|相当|颇为|极为|极其|更加|越发|有些|很|挺)';
 function loosePhrase(text: string): RegExp {
-  return new RegExp(text.split('').map(escape).join('[^，。！？；、]{0,2}'), 'u');
+  return new RegExp(text.split('').map(escape).join(DEGREE_ADVERBS + '?'), 'u');
 }
 
 function binds(fact: NarrationFact, sentence: string, names: Set<string>): boolean {
@@ -431,6 +433,23 @@ export function alignNarration(packet: CommittedNarration, text: string, options
       if (completionClause) {
         violations.push({ kind: 'task_claimed_without_fact', sentence,
           detail: 'completion claim names an actor but no task_achieved fact binds this sentence' });
+        continue;
+      }
+    }
+
+    // 5.6 An event verb riding with a bound fact: the clause that phrases the
+    // fact itself may use one («学生A推开门走进大厅» — movement phrasing, and
+    // the reason the plain event check below only sees fact-free sentences),
+    // but any further clause with an event verb («走到大厅，打开门») is new
+    // content and must be flagged even though the sentence bound a fact
+    // (二轮复核：事实绑定此前让整个事件检查失守).
+    if (bound.length) {
+      const boundActors = new Set(bound.map((fact) => fact.name));
+      const eventClause = clauses.find((clause) => EVENT_VERBS.some((verb) => clause.includes(verb))
+        && ![...boundActors].some((name) => bareOf(clause).includes(name)));
+      if (eventClause) {
+        violations.push({ kind: 'added_event', sentence,
+          detail: `event verb beyond the fact's own phrasing clause: ${eventClause}` });
         continue;
       }
     }

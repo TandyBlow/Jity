@@ -11,7 +11,7 @@ import { describe, expect, it } from 'vitest';
 import { checkFactNarration, renderCommittedNarration } from './committed-narration';
 import { alignNarration, cnNumber, mentionsNumber, mentionsTime } from './narration-alignment';
 import { NARRATION_EVAL_SAMPLES, type NarrationEvalSample } from './narration-eval-samples';
-import { NARRATION_EVAL_HOLDOUT_SAMPLES } from './narration-eval-holdout';
+import { NARRATION_EVAL_VALIDATION_SAMPLES } from './narration-eval-validation';
 import { buildNaturalPrompt, runNarrationEvaluation, templateText, type NarrationGenerator } from './narration-eval';
 
 const sample = (id: string): NarrationEvalSample => {
@@ -19,13 +19,13 @@ const sample = (id: string): NarrationEvalSample => {
   if (!found) throw new Error(`missing sample ${id}`);
   return found;
 };
-const holdout = (id: string): NarrationEvalSample => {
-  const found = NARRATION_EVAL_HOLDOUT_SAMPLES.find((entry) => entry.id === id);
-  if (!found) throw new Error(`missing holdout sample ${id}`);
+const validation = (id: string): NarrationEvalSample => {
+  const found = NARRATION_EVAL_VALIDATION_SAMPLES.find((entry) => entry.id === id);
+  if (!found) throw new Error(`missing validation sample ${id}`);
   return found;
 };
-const gradeHoldout = (id: string, text: string, requireTime = false) => {
-  const entry = holdout(id);
+const gradeValidation = (id: string, text: string, requireTime = false) => {
+  const entry = validation(id);
   return alignNarration(entry.packet, text, { time: entry.time, locations: entry.locations,
     roster: entry.roster, previousText: entry.previousText, requireTime });
 };
@@ -104,7 +104,7 @@ describe('grader rejects factual contradictions', () => {
   // 强签名事实即使已被绑定，别的分句把同一载荷安给其他角色仍是 swap；
   // 完成声明骑在已绑定的位置事实上，仍是无事实任务。
   it('flags a sanity change invented for an actor with no fact at all', () => {
-    const verdict = gradeHoldout('hv-sanity-1', '学生C的精神值从12降至9，学生D的精神值从12降至9。时间推进，2分钟。');
+    const verdict = gradeValidation('hv-sanity-1', '学生C的精神值从12降至9，学生D的精神值从12降至9。时间推进，2分钟。');
     expect(verdict.ok).toBe(false);
     expect(verdict.violations.map((violation) => violation.kind)).toContain('actor_swap');
   });
@@ -113,6 +113,27 @@ describe('grader rejects factual contradictions', () => {
     const verdict = grade('nv-cont-3', '学生A在大厅内完成任务，时间推进为5分钟。');
     expect(verdict.ok).toBe(false);
     expect(verdict.violations.map((violation) => violation.kind)).toContain('task_claimed_without_fact');
+  });
+
+  // 二轮复核：人格宽容只容程度副词——「健壮而谈吐粗鲁」是另一种人格，不是
+  // 「健谈」的口语改写，不得绑定（复核探针原样：其余事实全对仍 ok=true）。
+  it('does not bind a different trait as a colloquial insert', () => {
+    const verdict = grade('nv-task-pers-sanity-1',
+      '学生B完成了任务「帮主角熟悉校园」，变得健壮而谈吐粗鲁，精神值从10升到12。一分钟过去了。', true);
+    expect(verdict.ok).toBe(false);
+    expect(verdict.violations).toEqual([]);
+    expect(verdict.omissions).toEqual(['学生B的人格变化为「变得健谈」']);
+  });
+
+  // 二轮复核：事实绑定不豁免事件检查——分句里词表内的新增事件照样拦截。
+  it('flags an event verb in a bound sentence beyond the fact clause', () => {
+    const verdict = grade('nv-move-1', '学生A从走廊走到大厅，打开门。两分钟过去了。');
+    expect(verdict.ok).toBe(false);
+    expect(verdict.violations.map((violation) => violation.kind)).toContain('added_event');
+    // 事实本身的分句仍可用这类动词组句（推开门走进大厅 是移动的合法措辞）。
+    const phrased = grade('nv-move-1', '学生A推开门走进大厅，前后大约花了两分钟。');
+    expect(phrased.ok).toBe(true);
+    expect(phrased.violations).toEqual([]);
   });
 
   it('flags a reversed direction', () => {
@@ -273,19 +294,20 @@ describe('number and time helpers', () => {
   });
 });
 
-describe('held-out corpus', () => {
-  it('freezes six samples the grader was never calibrated on', () => {
-    expect(NARRATION_EVAL_HOLDOUT_SAMPLES).toHaveLength(6);
-    expect(new Set(NARRATION_EVAL_HOLDOUT_SAMPLES.map((entry) => entry.id)).size).toBe(6);
+describe('validation corpus', () => {
+  // 口径：冻结时是留出集，但 hv-sanity-1 的重跑采纳稿随后推动了判分器修正并
+  // 进入回归——这六例现在是验证集，不再声明「从未参与校准」。
+  it('freezes six validation samples over a different surface', () => {
+    expect(NARRATION_EVAL_VALIDATION_SAMPLES).toHaveLength(6);
+    expect(new Set(NARRATION_EVAL_VALIDATION_SAMPLES.map((entry) => entry.id)).size).toBe(6);
     const main = new Set(NARRATION_EVAL_SAMPLES.map((entry) => entry.id));
-    for (const entry of NARRATION_EVAL_HOLDOUT_SAMPLES) expect(main.has(entry.id)).toBe(false);
-    // 留出集换了一层皮：角色与地点都不同，判分器只拿到事实包与名册。
-    expect(NARRATION_EVAL_HOLDOUT_SAMPLES.every((entry) => entry.roster.includes('学生C'))).toBe(true);
+    for (const entry of NARRATION_EVAL_VALIDATION_SAMPLES) expect(main.has(entry.id)).toBe(false);
+    expect(NARRATION_EVAL_VALIDATION_SAMPLES.every((entry) => entry.roster.includes('学生C'))).toBe(true);
     expect(NARRATION_EVAL_SAMPLES.some((entry) => entry.roster.includes('学生C'))).toBe(false);
   });
 
-  it('accepts every held-out reference under requireTime and the template arm', () => {
-    for (const entry of NARRATION_EVAL_HOLDOUT_SAMPLES) {
+  it('accepts every validation reference under requireTime and the template arm', () => {
+    for (const entry of NARRATION_EVAL_VALIDATION_SAMPLES) {
       const reference = alignNarration(entry.packet, entry.reference,
         { time: entry.time, locations: entry.locations, roster: entry.roster, previousText: entry.previousText, requireTime: true });
       expect(reference.ok, `${entry.id} reference: ${JSON.stringify(reference.violations)} missing=${JSON.stringify(reference.omissions)}`).toBe(true);
@@ -295,29 +317,28 @@ describe('held-out corpus', () => {
     }
   });
 
-  it('keeps every held-out mechanical text inside the old exact-clause gate', () => {
-    for (const entry of NARRATION_EVAL_HOLDOUT_SAMPLES) {
+  it('keeps every validation mechanical text inside the old exact-clause gate', () => {
+    for (const entry of NARRATION_EVAL_VALIDATION_SAMPLES) {
       if (!entry.mechanical) continue;
       expect(checkFactNarration(entry.packet, entry.mechanical).ok,
         `${entry.id} must stay acceptable to the old exact-clause gate`).toBe(true);
-      expect(gradeHoldout(entry.id, entry.mechanical).ok).toBe(true);
+      expect(gradeValidation(entry.id, entry.mechanical).ok).toBe(true);
     }
   });
 
-  it('still rejects the held-out mutations the corpus documents', () => {
-    expect(gradeHoldout('hv-move-1', '学生C从操场走到食堂，前后约三分钟。').violations.map((violation) => violation.kind))
+  it('still rejects the validation mutations the corpus documents', () => {
+    expect(gradeValidation('hv-move-1', '学生C从操场走到食堂，前后约三分钟。').violations.map((violation) => violation.kind))
       .toContain('direction_reversed');
-    expect(gradeHoldout('hv-sanity-1', '学生C的精神值从12变为了8，前后大约两分钟。').violations.map((violation) => violation.kind))
+    expect(gradeValidation('hv-sanity-1', '学生C的精神值从12变为了8，前后大约两分钟。').violations.map((violation) => violation.kind))
       .toContain('wrong_number');
-    expect(gradeHoldout('hv-refused-1', '学生C走到了图书馆。').violations.map((violation) => violation.kind))
+    expect(gradeValidation('hv-refused-1', '学生C走到了图书馆。').violations.map((violation) => violation.kind))
       .toContain('movement_without_fact');
-    // 留出集上的空点站位洞：无事实背书的站位必须仍然被拦下。
-    expect(gradeHoldout('hv-empty-1', '学生C站在食堂。').violations.map((violation) => violation.kind))
+    expect(gradeValidation('hv-empty-1', '学生C站在食堂。').violations.map((violation) => violation.kind))
       .toContain('state_claim_without_fact');
-    expect(gradeHoldout('hv-task-pers-1', '学生C完成了任务「整理图书角」。').violations.map((violation) => violation.kind))
+    expect(gradeValidation('hv-task-pers-1', '学生C完成了任务「整理图书角」。').violations.map((violation) => violation.kind))
       .toContain('actor_swap');
-    // 留出集重跑首稿原样：给无事实的学生D 捏造同款数值变化。
-    expect(gradeHoldout('hv-sanity-1', '学生D的精神值从12降到了9，前后大约两分钟。').violations.map((violation) => violation.kind))
+    // hv-sanity-1 重跑首稿原样：给无事实的学生D 捏造同款数值变化。
+    expect(gradeValidation('hv-sanity-1', '学生D的精神值从12降到了9，前后大约两分钟。').violations.map((violation) => violation.kind))
       .toContain('actor_swap');
   });
 });

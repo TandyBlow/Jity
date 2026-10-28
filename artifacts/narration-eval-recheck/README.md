@@ -64,8 +64,34 @@
 ```powershell
 # 仓库根目录
 cd frontend
-node scripts/run-narration-eval.mjs --out ../artifacts/narration-eval-recheck/run.json --require-time --holdout
+node scripts/run-narration-eval.mjs --out ../artifacts/narration-eval-recheck/run.json --require-time --validation
 ```
 
 单测：`npm test -- src/lib/world-engine/runtime/narration-alignment.test.ts`
-（601 项全绿，含留出集不变式）。
+（含验证集不变式）。
+
+## 二轮复核更正（2026-10-28）
+
+归档数字经独立复算确认（模板 16/16、mechanical 0/16、natural 10/16、时间
+15/16；29 次调用 mean 13.986s、p50 13.497s、prompt 中位 193；61 次判分重放
+全部一致），以下三处口径与边界更正：
+
+1. **「留出集」改为「验证集」。** 冻结时 `hv-*` 确实从未参与校准，但重跑
+   首轮的 `hv-sanity-1` 采纳稿直接推动了两处判分器修正（值槽位「值一路」
+   误杀、强签名 swap 的 bound 跳过）并进入回归测试。六例自此参与过校准，
+   是验证集：4/6 的成绩如实保留，「样本外、未参与校准」的说法不再成立；
+   真正样本外的检查需从当前头另行冻结新集。样本文件更名
+   `narration-eval-validation.ts`（导出与 `--validation` 开关同步更名；
+   `run.json` 里的 `config.holdout=true` 是该次运行的原始记录，不改）。
+2. **溯源区分。** 本目录 `run.json` 的 `source.head` 记录的是生成代码头
+   `3fdbaac`；归档提交 `e21ecbb` 只修正了 harness 的聚合字段
+   （prompt token 读 `timings.prompt_n`，`summary.medianPromptTokens` 由
+   同一批已记录 attempts 重算 193）——生成数据未动，但生成代码与归档提交
+   不是同一个头，引用时须区分。
+3. **判分边界两处收窄（二轮复核 P2）。** ①人格宽容收窄为程度副词白名单
+   （变得「十分」健谈 合法；「变得健壮而谈吐粗鲁」不得绑定「变得健谈」，
+   此前任意两字插入的实现会放行）；②事实绑定不再豁免事件检查——分句里
+   词表内的新增事件（「走到大厅，打开门」）照拦，事实自身分句的动词组句
+   （「推开门走进大厅」）仍合法。两项修复均有红/绿回归（复核探针原样）。
+   **离线核验：定档的 10 稿采纳文本全不含事件动词、人格样本零采纳，
+   新检查不翻动任何已归档判定，16 样本数字维持不变。**
