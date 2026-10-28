@@ -1,19 +1,24 @@
 {
   "status": "PASS_WORLD_PAGE",
-  "recordedAt": "2026-10-28T03:25:45.647Z",
-  "apiOrigin": "http://127.0.0.1:49881",
-  "nextOrigin": "http://127.0.0.1:49882",
+  "recordedAt": "2026-10-28T05:06:31.151Z",
+  "apiOrigin": "http://127.0.0.1:55973",
+  "nextOrigin": "http://127.0.0.1:55974",
   "browserSource": {
-    "head": "3a06eb5fc527ac92fb168740170c850b89530b21",
-    "status": "M artifacts/world-page/review.json\n M frontend/next.config.ts\n M frontend/scripts/review-world-page.mjs\n M frontend/src/app/world/page.tsx\n M frontend/src/app/world/world-defaults.ts\n M frontend/src/lib/world-engine/runtime/prompts.ts\n M frontend/src/lib/world-engine/runtime/rule-session.test.ts\n M frontend/src/lib/world-engine/runtime/rule-session.ts",
+    "head": "2e5f1776d7d7090662f1206bc045b4162af57cf9",
+    "status": "M artifacts/world-page/README.md\n M artifacts/world-page/review.json\n M frontend/scripts/review-world-page.mjs\n M frontend/src/app/world/page.tsx\n M frontend/src/lib/world-engine/runtime/committed-narration.test.ts\n M frontend/src/lib/world-engine/runtime/output-schema.test.ts\n M frontend/src/lib/world-engine/runtime/rule-controller.ts",
     "sha256": {
-      "frontend/scripts/review-world-page.mjs": "7d982f43d5f879e2f4682fbe1f4df72f93c5b2d74d3d029fae71a637e125b172",
-      "frontend/src/app/world/page.tsx": "8c350090611b4eb6c0509d4ee8f39f4fd43f8c175e997e643a72480e23ecbeaf",
+      "frontend/scripts/review-world-page.mjs": "c7803395ddddae19c02cb751e770d1aeeb88489866c806cc8994d251354e4dcb",
+      "frontend/next.config.ts": "998bb6ab73f3ec47d3f42f5653d5fa92749b503c3788043de66c43a426986254",
+      "frontend/src/app/world/page.tsx": "705d06b939834380d8c7ccdd5abca7e47772d0d3edb92a710d21ca99442242c1",
       "frontend/src/app/world/world-defaults.ts": "632c22cce08fbc2825894b004175ef5856931dfe96805b13aaaac13f7c3d97e6",
       "frontend/src/lib/world-engine/runtime/rule-session.ts": "ccff17f87fc3ef11c4a3e0c7f71d46723cc139aece317a8aa9e8cba68b73f6a9",
       "frontend/src/lib/world-engine/runtime/session.ts": "125a318e94969145e616644a268d020e8b6cfa8e05012de8493cbbb6f61edbc5",
       "frontend/src/lib/world-engine/runtime/rule-facts.ts": "0a0084ce29f0c07e3f4592b941092585338041f70b996d0ef7115851bf10d5d0",
       "frontend/src/lib/world-engine/runtime/committed-narration.ts": "249fa2f77f58cdec7fa483d551c31cf17da754438adc90c5cf1754991affd934",
+      "frontend/src/lib/world-engine/runtime/prompts.ts": "e5c666b64949ea21a9e840d6823b5b4c857c37e09c5661f3d0d27609cc70151f",
+      "frontend/src/lib/world-engine/runtime/focused-input.ts": "b7c9236af4d7f1760dd8662cdcaa70dcbdd7d5a8916a50038ba712fe5d2bff54",
+      "frontend/src/lib/world-engine/runtime/world-reads.ts": "40820124e24aaa04168e0ea1b82d9137a90d07b913b4b65caae2ebdf633fcc06",
+      "frontend/src/lib/world-engine/runtime/wllama-engine.ts": "eeef36cb34a8fe358e923fa9a7ddff2276bd58e4c67c0cbb5871206f2a313799",
       "frontend/src/lib/world-engine/controller.ts": "fc68f5e248226c57389d27c621ff125cebe828f86729ad3372d73f851650214d",
       "frontend/src/lib/world-engine/recovery.ts": "0fa60c7609d6ee93e0b6ebef4a42ca50ff7552242c9b795203331f7e0ab1088b",
       "frontend/src/lib/world-engine/http-transport.ts": "60b1ee3158e6d8d41c491a7234e140dfe95f5d786fd110d1806444eb3f9dcd58"
@@ -31,15 +36,15 @@
       "points": 3,
       "commits": [
         {
-          "requestId": "rule_probe_m2yff8_16",
+          "requestId": "rule_probe_m1std0_16",
           "pointId": "point_7"
         },
         {
-          "requestId": "rule_probe_m2yff8_16",
+          "requestId": "rule_probe_m1std0_16",
           "pointId": "point_7"
         },
         {
-          "requestId": "rule_probe_m2yff8_33",
+          "requestId": "rule_probe_m1std0_33",
           "pointId": "point_14"
         }
       ],
@@ -87,7 +92,7 @@
           "sanity": 10,
           "logRows": 1
         },
-        "at": "2026-10-28T03:26:11.531Z"
+        "at": "2026-10-28T05:08:14.339Z"
       },
       {
         "name": "r1-move",
@@ -96,7 +101,7 @@
           "narration": "周宁从走廊走到门厅。",
           "timeAdvance": "+1秒"
         },
-        "at": "2026-10-28T03:26:16.637Z"
+        "at": "2026-10-28T05:08:19.421Z"
       },
       {
         "name": "r2-refused",
@@ -104,14 +109,14 @@
           "command": "完成压力试验",
           "reason": "milestone_location_mismatch"
         },
-        "at": "2026-10-28T03:26:21.718Z"
+        "at": "2026-10-28T05:08:24.491Z"
       },
       {
         "name": "r3-move-back",
         "detail": {
           "command": "走到走廊"
         },
-        "at": "2026-10-28T03:26:26.792Z"
+        "at": "2026-10-28T05:08:29.561Z"
       },
       {
         "name": "reload-recover",
@@ -120,7 +125,7 @@
           "location": "走廊",
           "sanity": 10
         },
-        "at": "2026-10-28T03:26:28.867Z"
+        "at": "2026-10-28T05:08:31.290Z"
       },
       {
         "name": "r4-strain",
@@ -128,7 +133,7 @@
           "sanity": 8,
           "task": "完成压力试验 achieved"
         },
-        "at": "2026-10-28T03:26:33.953Z"
+        "at": "2026-10-28T05:08:36.365Z"
       },
       {
         "name": "r5-lost-receipt",
@@ -136,16 +141,16 @@
           "sanity": 9,
           "worldId": "world_48"
         },
-        "at": "2026-10-28T03:26:39.076Z"
+        "at": "2026-10-28T05:08:41.452Z"
       },
       {
         "name": "r6-model-narration",
         "detail": {
           "polishedBadge": 1,
-          "narrationMs": 36767,
+          "narrationMs": 30572,
           "note": "model-first narration adopted by the fact judge; regeneration and template fallback remain wired"
         },
-        "at": "2026-10-28T03:27:15.853Z"
+        "at": "2026-10-28T05:09:12.035Z"
       },
       {
         "name": "server-facts",
@@ -155,7 +160,7 @@
           "sanity": 9,
           "location": "hall"
         },
-        "at": "2026-10-28T03:27:16.385Z"
+        "at": "2026-10-28T05:09:12.335Z"
       },
       {
         "name": "spa-roundtrip",
@@ -164,7 +169,19 @@
           "location": "门厅",
           "sanity": 9
         },
-        "at": "2026-10-28T03:27:18.783Z"
+        "at": "2026-10-28T05:09:14.041Z"
+      },
+      {
+        "name": "spa-entry-isolation",
+        "detail": {
+          "crossOriginIsolated": true,
+          "navigationType": "reload",
+          "logRows": 7,
+          "location": "门厅",
+          "sanity": 9,
+          "note": "the mount self-check reloaded the soft entry once into an isolated document, world re-attached"
+        },
+        "at": "2026-10-28T05:09:17.210Z"
       },
       {
         "name": "late-attach-race",
@@ -175,7 +192,7 @@
           "rebuildReadsAfterRelease": 0,
           "note": "late get_state cancelled before any session/reference/page write"
         },
-        "at": "2026-10-28T03:27:29.235Z"
+        "at": "2026-10-28T05:09:26.550Z"
       },
       {
         "name": "cancelled-recovery",
@@ -187,7 +204,7 @@
           "leaseRenewalsAfterDisconnect": 0,
           "note": "cancelled attach stopped inside attachOnce; new generation reference intact"
         },
-        "at": "2026-10-28T03:29:20.639Z"
+        "at": "2026-10-28T05:11:17.920Z"
       }
     ],
     "status": "PASS_BROWSER_LOOP"
@@ -196,12 +213,12 @@
     {
       "event": "ready",
       "label": "World HTTP service",
-      "url": "http://127.0.0.1:49881/openapi.json"
+      "url": "http://127.0.0.1:55973/openapi.json"
     },
     {
       "event": "ready",
       "label": "Next dev server",
-      "url": "http://127.0.0.1:49882/"
+      "url": "http://127.0.0.1:55974/"
     }
   ]
 }

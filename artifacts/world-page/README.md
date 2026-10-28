@@ -133,9 +133,49 @@ node scripts/review-world-page.mjs --out <path>     # 报告落点
 双绿；仅去恢复返回闸门（隔离 A）r9 红（`got 2 lease renewals in 100s`）；
 漏传（隔离 B）reload 处即 TypeError 红（必填化的运行时表现，tsc 同样红）。
 
+## SPA 进入隔离轮（2026-10-28，r10）
+
+跨源隔离是**文档创建时定型**的属性。`next.config.ts` 只为 `/benchmark` 与
+`/world` 的响应加 COOP/COEP；从 `/`（无隔离头）经客户端路由进入 `/world`
+时，既有文档不会因新页面的响应头获得隔离——`crossOriginIsolated` 仍为
+false，`SharedArrayBuffer` 不可用，多线程 wasm 路径全程缺失（单线程预填补
+实测约 200ms/token，模型叙事大概率超时回退模板）。此前的 r7 只覆盖
+「已在隔离文档内往返」，覆盖不到这一入口。
+
+修复：`/world` 挂载时自检隔离，失败即 `location.reload()` 一次——重载后的
+文档由 `/world` 的响应头创建，天然隔离；`sessionStorage` 护栏防循环，
+存储被禁时无法防循环故宁可不重载、只降级提示（不静默）。重载后世界凭已存
+租约自动续接，叙事仍全部由服务端事实重建。
+
+回归=**r10 `spa-entry-isolation`**：真实浏览器整页载入 `/`（断言未隔离）→
+用设置菜单开合作 hydration 判据 → `next dev` 暴露的
+`window.next.router.push('/world')` 做软导航（与 `<Link>` 同一个 App Router
+动作；控制台目前没有进入 /world 的链接）→ 自检重载后断言：隔离为真
+（`navigationType=reload`）、护栏已清除、7 行叙事与门厅/9 全部恢复。
+
+探针自身的两处取证经验（写在这里防重犯）：
+
+1. `history.pushState` + 手派 `popstate` **不会**驱动 App Router（它不认没有
+   内部 `__NA` 状态的条目）——页面停在控制台、WorldPage 从未挂载，诊断里
+   表现为 `flag:null` 且 body 仍是 GM 控制台。旧版探针正是这样失败的。
+2. `window.next.router` 在 hydration 前已存在，但此时派发会抛
+   `Router action dispatched before initialization`（未捕获的 pageerror，
+   URL 不变）。判据必须先等一个只在 hydration 后生效的交互（本探针用设置
+   菜单的开合）。
+3. 自检的整页重载会销毁执行上下文，`page.waitForFunction` 会直接报错——
+   隔离轮询改在 Node 侧做，把导航中的 evaluate 异常当作「正在重载」吞掉。
+
+**实证矩阵**：不装载自检修复跑完整脚本 → 软导航成功、世界照常恢复，但
+隔离恒为 false、无 reload，r10 在 60s 轮询后红于隔离断言（此前 10 步全绿，
+`spa-entry-diagnostic` 记录 pathname/flag/body）；装载修复后 13 步全绿。
+本轮同时把关：前端全量 **565** 项、`tsc --noEmit`、`next lint`、`next build`
+通过。lint 顺带清掉 2a6eff2 遗留的 5 处测试 `any` 与 1 处 `prefer-const`
+（该提交之后 `npm run lint` 在本地即已失败，前端 CI 的 lint 步骤会红）。
+
 ## 已知边界
 
-- 无头环境下 wllama 加载可能挂起（r6 轮以模板呈现，即回退路径的实证）；带
-  COOP/COEP 的多线程 wasm 不在 /world 生效（仅 /benchmark 配置）。
+- 无头环境下 wllama 加载可能挂起（r6 轮以模板呈现，即回退路径的实证）；
+  `/world` 与 `/benchmark` 现在都带 COOP/COEP，SPA 进入 `/world` 时由挂载
+  自检整页重载一次进入隔离文档（部署缺响应头时降级为单线程提示）。
 - 叙事日志重建假定逐点叙事已就绪；提交后叙事未完成时刷新会显示
   「叙事状态：pending/failed」占位行（GET 事实，不伪造文本）。
