@@ -125,15 +125,29 @@ describe('grader rejects factual contradictions', () => {
     expect(verdict.omissions).toEqual(['学生B的人格变化为「变得健谈」']);
   });
 
-  // 二轮复核：事实绑定不豁免事件检查——分句里词表内的新增事件照样拦截。
-  it('flags an event verb in a bound sentence beyond the fact clause', () => {
-    const verdict = grade('nv-move-1', '学生A从走廊走到大厅，打开门。两分钟过去了。');
-    expect(verdict.ok).toBe(false);
-    expect(verdict.violations.map((violation) => violation.kind)).toContain('added_event');
-    // 事实本身的分句仍可用这类动词组句（推开门走进大厅 是移动的合法措辞）。
+  // 三轮复核：事件检查不再有任何豁免——重复主语绕不过（复核探针原样：
+  // 分句含已绑定人名曾被当作背书）、「推开门」也不是移动事实的合法措辞：
+  // 没有哪种已提交事实能背书事件发生。「」内冻结原文不参与动词扫描。
+  it('flags event verbs regardless of fact binding or clause', () => {
+    const repeat = grade('nv-move-1', '学生A从走廊走到大厅，学生A打开门。两分钟过去了。');
+    expect(repeat.ok).toBe(false);
+    expect(repeat.violations.map((violation) => violation.kind)).toContain('added_event');
     const phrased = grade('nv-move-1', '学生A推开门走进大厅，前后大约花了两分钟。');
-    expect(phrased.ok).toBe(true);
-    expect(phrased.violations).toEqual([]);
+    expect(phrased.ok).toBe(false);
+    expect(phrased.violations.map((violation) => violation.kind)).toContain('added_event');
+    // 冻结原文引用（「」内）不参与动词扫描：目标原文自带动词时引用它不算事件。
+    const packet = { anchor: { worldId: 'world_school', pointId: 'p_quote', version: 1,
+      stateDigest: '1'.repeat(64), previousPointId: 'root' }, facts: [
+      { id: 'p:task:t1', actorId: 'p', name: '学生A', kind: 'task_achieved' as const,
+        taskId: 't1', goal: '砸碎封印救出守林人' }] };
+    const cited = alignNarration(packet, '学生A完成了任务「砸碎封印救出守林人」。约一分钟过去了。',
+      { time: { amount: 1, unit: 'minute' }, roster: ['学生A'] });
+    expect(cited.ok).toBe(true);
+    expect(cited.violations).toEqual([]);
+    const done = alignNarration(packet, '学生A完成了任务「砸碎封印救出守林人」，随后砸碎了门锁。约一分钟过去了。',
+      { time: { amount: 1, unit: 'minute' }, roster: ['学生A'] });
+    expect(done.ok).toBe(false);
+    expect(done.violations.map((violation) => violation.kind)).toContain('added_event');
   });
 
   it('flags a reversed direction', () => {

@@ -78,9 +78,10 @@ const FROM_MARK = '(?:从|离开|自)';
 const COMPLETION = /(完成|达成|做完|搞定|结束|成功|办完|了结)/;
 const CHANGE_VERB = /(变|升|降|掉|减|增|恢复|回落|涨)/;
 
-/** Event verbs that assert something HAPPENED. Only used on sentences that
- * bind no committed fact: a movement/appearance fact may legitimately be
- * phrased with one of these verbs and then it is bound, not flagged. */
+/** Event verbs that assert something HAPPENED. No committed fact kind is an
+ * event, so one of these verbs is an added event wherever it stands — not
+ * even the fact's own clause licenses it (三轮复核：推开门 不能由移动事实
+ * 背书，重复主语也不能豁免). Quoted frozen text (「」) is not scanned. */
 const EVENT_VERBS = ['推开', '踢开', '踹开', '冲进', '冲出', '奔跑', '跑向', '攻击', '开枪', '拔出', '举起',
   '捡起', '拾起', '递给', '塞进', '敲门', '打开', '关上', '锁上', '躲到', '藏在', '翻过', '爬上', '跳下',
   '喊住', '大叫', '大喊', '呼喊', '点燃', '砸碎', '撕开'];
@@ -437,21 +438,15 @@ export function alignNarration(packet: CommittedNarration, text: string, options
       }
     }
 
-    // 5.6 An event verb riding with a bound fact: the clause that phrases the
-    // fact itself may use one («学生A推开门走进大厅» — movement phrasing, and
-    // the reason the plain event check below only sees fact-free sentences),
-    // but any further clause with an event verb («走到大厅，打开门») is new
-    // content and must be flagged even though the sentence bound a fact
-    // (二轮复核：事实绑定此前让整个事件检查失守).
-    if (bound.length) {
-      const boundActors = new Set(bound.map((fact) => fact.name));
-      const eventClause = clauses.find((clause) => EVENT_VERBS.some((verb) => clause.includes(verb))
-        && ![...boundActors].some((name) => bareOf(clause).includes(name)));
-      if (eventClause) {
-        violations.push({ kind: 'added_event', sentence,
-          detail: `event verb beyond the fact's own phrasing clause: ${eventClause}` });
-        continue;
-      }
+    // 5.6 An event verb anywhere is an added event, bound fact or not: the
+    // previous bound-gate exemption let both a repeated-subject clause
+    // («学生A打开门» — the actor's name was read as backing) and the fact's
+    // own clause («推开门») escape, though no committed fact kind licenses an
+    // event. Quoted frozen text does not count (目标原文自带动词的引用).
+    const event = EVENT_VERBS.find((verb) => bareOf(sentence).includes(verb));
+    if (event) {
+      violations.push({ kind: 'added_event', sentence, detail: `event verb ${event} has no committed fact` });
+      continue;
     }
 
     if (bound.length) continue;
@@ -470,13 +465,6 @@ export function alignNarration(packet: CommittedNarration, text: string, options
     const moveClaim = locations.find((location) => sentence.includes(location) && adjacent.test(masked));
     if (moveClaim) {
       violations.push({ kind: 'movement_without_fact', sentence, detail: `claims movement involving ${moveClaim}` });
-      continue;
-    }
-
-    // 8. An event verb with no committed fact behind it.
-    const event = EVENT_VERBS.find((verb) => sentence.includes(verb));
-    if (event) {
-      violations.push({ kind: 'added_event', sentence, detail: `event verb ${event} has no committed fact` });
       continue;
     }
 
