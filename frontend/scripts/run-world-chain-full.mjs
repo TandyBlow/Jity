@@ -20,7 +20,7 @@
 import assert from 'node:assert/strict';
 import { execFileSync, spawn } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { createWriteStream, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { createWriteStream, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { resolve } from 'node:path';
 import { createServer as createNetServer } from 'node:net';
@@ -38,17 +38,42 @@ const sources = ['frontend/scripts/run-world-chain-full.mjs', 'frontend/src/app/
   ...['runtime/rule-session', 'runtime/rule-facts', 'runtime/committed-narration', 'runtime/prompts', 'runtime/wllama-engine',
     'controller', 'schedule', 'http-transport', 'recovery'].map((name) => `frontend/src/lib/world-engine/${name}.ts`)];
 const git = (checkout, ...args) => { try {
-  return execFileSync('git', ['-c', `safe.directory=${checkout.replaceAll('\\', '/')}`, '-C', checkout, ...args], { encoding: 'utf8' }).trim();
+  // 只去尾部换行：status 首行的前导空格是 porcelain 格式的一部分，
+  // 整串 trim 会把它吃掉（守卫按 slice(3) 解析就会切错首行）
+  return execFileSync('git', ['-c', `safe.directory=${checkout.replaceAll('\\', '/')}`, '-C', checkout, ...args], { encoding: 'utf8' }).replace(/\n+$/, '');
 } catch { return null; } };
+// 服务端钉档=backend/app 全部代码文件（首轮教训：serverSource 只有 head/status，
+// head 还写错过——sha256 逐文件钉住实际执行的代码，不依赖 git 状态陈述）。
+const walkServerFiles = (dir) => readdirSync(dir, { withFileTypes: true }).flatMap((entry) => entry.isDirectory()
+  ? (entry.name === '__pycache__' ? [] : walkServerFiles(resolve(dir, entry.name))) : [resolve(dir, entry.name)]);
+const serverAppRoot = resolve(a, 'backend', 'app').replaceAll('\\', '/');
+const serverFiles = walkServerFiles(resolve(a, 'backend', 'app'))
+  .map((file) => ({ path: `backend/app/${file.replaceAll('\\', '/').slice(serverAppRoot.length + 1)}`, file }));
 const report = {
   status: 'IN_PROGRESS', recordedAt: new Date().toISOString(), phase,
   browserSource: { head: git(root, 'rev-parse', 'HEAD'), status: git(root, 'status', '--short'),
     sha256: Object.fromEntries(sources.map((file) => [file, createHash('sha256').update(readFileSync(resolve(root, file))).digest('hex')])) },
-  serverSource: { head: git(a, 'rev-parse', 'HEAD'), status: git(a, 'status', '--short') },
+  serverSource: { head: git(a, 'rev-parse', 'HEAD'), status: git(a, 'status', '--short'),
+    sha256: Object.fromEntries(serverFiles.map(({ path, file }) => [path, createHash('sha256').update(readFileSync(file)).digest('hex')])) },
   modelLoad: null, action: null, chain: null,
 };
 const save = () => { mkdirSync(resolve(output, '..'), { recursive: true }); writeFileSync(output, JSON.stringify(report, null, 2) + '\n'); };
 save();
+
+// 钉住集必须 tracked-clean，否则 sha256 对不上任何提交、复跑不保证同代码；
+// 豁免开关（--allow-dirty-server / --allow-dirty-browser）只是放行，artifact 仍如实记录。
+const trackedDirty = (status, pinned) => (status ?? '').split('\n').filter((line) => line && !line.startsWith('??'))
+  .map((line) => line.slice(3).replaceAll('\\', '/')).filter((path) => pinned.some((item) => path === item || path.startsWith(`${item}/`)));
+const dirtyPinned = { server: trackedDirty(report.serverSource.status, ['backend/app']), browser: trackedDirty(report.browserSource.status, sources) };
+if ((dirtyPinned.server.length || dirtyPinned.browser.length) &&
+  !(process.argv.includes('--allow-dirty-server') || process.argv.includes('--allow-dirty-browser'))) {
+  report.status = 'FAILED';
+  report.error = `pinned source tree dirty: server=${JSON.stringify(dirtyPinned.server)} browser=${JSON.stringify(dirtyPinned.browser)} ` +
+    `— commit/stash first, or pass --allow-dirty-server/--allow-dirty-browser`;
+  save();
+  console.error(`[world-chain] FAILED: ${report.error}`);
+  process.exit(1);
+}
 
 async function freePort() {
   const probe = createNetServer();
@@ -151,8 +176,12 @@ try {
       const basePolisher = await narrationPolisher(DEFAULT_POLISH_MODEL, { onCompletion: (item) => evidence.push(item) });
       const polish = async (input, packet, focused, attempt) => {
         const started = performance.now();
+        const evidenceBefore = evidence.length;
         const text = await basePolisher(input, packet, focused, attempt);
-        modelAttempts.push({ at: Date.now(), attempt: attempt.index, ms: Math.round(performance.now() - started), chars: text.length, text });
+        modelAttempts.push({ at: Date.now(), attempt: attempt.index, ms: Math.round(performance.now() - started), chars: text.length, text,
+          pointId: input?.pointId ?? null,
+          facts: (focused?.facts ?? []).map((fact) => ({ id: fact.id, phrase: fact.allowedPhrases[0] })),
+          completion: evidence.slice(evidenceBefore) }); // usage/timings/raw 逐尝试落盘（首轮只存了数量）
         return text;
       };
       const http = new HttpWorldTransport(apiBase, capturingFetcher);
@@ -211,13 +240,15 @@ try {
           tasks: Object.values(protagonist.tasks).map((task) => ({ goal: task.goal, status: task.status })),
           personality: [...protagonist.personalityChanges].filter((change) => change.active).map((change) => change.text) },
         points: points.map((point, index) => ({ pointId: point.pointId, narrationStatus: narrations[index].narrationStatus, text: narrations[index].text })),
-        totals: { modelAttempts: modelAttempts.length, serverOps: opLog.length, completionEvidence: evidence.length },
+        totals: { modelAttempts: modelAttempts.length, serverOps: opLog.length, completionEvidence: evidence.length,
+          inputWallRange: { minMs: Math.min(...inputs.map((item) => item.wallMs)), maxMs: Math.max(...inputs.map((item) => item.wallMs)) } },
         opLog, modelAttempts, events,
       };
       } catch (error) {
         return { failed: true, error: String(error?.stack ?? error), wireCaptures, opLog, events, modelAttempts };
       }
     }, { api: apiOrigin });
+    report.action.netTrail = netTrail.splice(0); // 原始 wire 逐场景落盘（首轮成功路径缺原始轨迹）
     if (report.action.failed) {
       report.netTrail = netTrail;
       save();
@@ -247,8 +278,12 @@ try {
       const basePolisher = await narrationPolisher(DEFAULT_POLISH_MODEL, { onCompletion: (item) => evidence.push(item) });
       const polish = async (input, packet, focused, attempt) => {
         const started = performance.now();
+        const evidenceBefore = evidence.length;
         const text = await basePolisher(input, packet, focused, attempt);
-        modelAttempts.push({ at: Date.now(), attempt: attempt.index, ms: Math.round(performance.now() - started), chars: text.length, text });
+        modelAttempts.push({ at: Date.now(), attempt: attempt.index, ms: Math.round(performance.now() - started), chars: text.length, text,
+          pointId: input?.pointId ?? null,
+          facts: (focused?.facts ?? []).map((fact) => ({ id: fact.id, phrase: fact.allowedPhrases[0] })),
+          completion: evidence.slice(evidenceBefore) }); // usage/timings/raw 逐尝试落盘（首轮只存了数量）
         return text;
       };
       const http = new HttpWorldTransport(apiBase);
@@ -272,7 +307,9 @@ try {
       const api = async (operation, payload) => {
         setupOps.push({ op: operation, at: Date.now() });
         try {
-        const result = await http.execute(operation, payload, worldId ? { worldId } : {});
+        // setup 期必须走带记录的 transport（首轮直连 http.execute，create_rolls/
+        // checkpoint 全部绕过 opLog/rollsOut——secondRoll 恒 null、首骰未落盘的根因）
+        const result = await transport.execute(operation, payload, worldId ? { worldId } : {});
         if (result.world) { worldId = result.world.worldId; head = result.world.head; }
         const flat = result.data?.leaseToken != null ? result.data : null;
         const granted = result.data?.lease ?? flat ?? result.world?.lease;
@@ -310,10 +347,11 @@ try {
       const setupStarted = performance.now();
       let attempts = 0;
       let ids = null;
-      let firstRoll = null;
+      const worldAttempts = []; // 每次世界尝试的骰点逐条落盘（首轮重试覆盖 firstRoll，被丢弃世界的骰值丢失）
       let firstAdmitted = false;
       for (attempts = 1; attempts <= 6 && !firstAdmitted; attempts++) {
         await createWorld(); // 每次尝试都从全新世界开始（含根叙事引导）
+        const attemptWorldId = worldId;
         ids = await allocate([
           { slotKey: 'advance', kind: 'advance' }, { slotKey: 'input', kind: 'input' }, { slotKey: 'round', kind: 'round' },
           { slotKey: 'point_1', kind: 'point' }, { slotKey: 'group_1', kind: 'group' },
@@ -327,14 +365,16 @@ try {
           initiatorId: initiator, actionText: inputText, targetIds: null });
         await api('checkpoint_extend_group', { ...ck(), operation: 'extend_group', pointId: ids.point_1, groupId: ids.group_1,
           sourceId: initiator, targets: [{ targetId: reactor, triggerKey: ids['trigger:group_1:person_a:person_c'] }], admittedMember: null });
-        firstRoll = (await api('create_rolls', { ...ck(), rolls: [{ advanceId: ids.advance, roundId: ids.round, groupId: ids.group_1,
+        const ringRoll = (await api('create_rolls', { ...ck(), rolls: [{ advanceId: ids.advance, roundId: ids.round, groupId: ids.group_1,
           sourceId: initiator, targetId: reactor, triggerKey: ids['trigger:group_1:person_a:person_c'],
           ruleVersion: 'reaction-d20-v1', target: 11 }] })).data.rolls[0];
-        if (firstRoll.admitted) {
+        worldAttempts.push({ attempt: attempts, worldId: attemptWorldId,
+          roll: { admitted: ringRoll.admitted, rollId: ringRoll.rollId, result: ringRoll.result, ruleVersion: ringRoll.ruleVersion } });
+        if (ringRoll.admitted) {
           await api('checkpoint_extend_group', { ...ck(), operation: 'extend_group', pointId: ids.point_1, groupId: ids.group_1,
             sourceId: initiator, targets: null, admittedMember: { memberId: reactor,
               actionText: '周宁在门边稳住身形，与林川一起撑住重门。',
-              rollRefs: [{ sourceId: initiator, targetId: reactor, triggerKey: ids['trigger:group_1:person_a:person_c'], rollId: firstRoll.rollId }] } });
+              rollRefs: [{ sourceId: initiator, targetId: reactor, triggerKey: ids['trigger:group_1:person_a:person_c'], rollId: ringRoll.rollId }] } });
           firstAdmitted = true;
         }
       }
@@ -343,8 +383,11 @@ try {
 
       // ---- hybrid port: scripted settlement candidates + REAL narrated gate ----
       const modelLog = [];
-      const port = { async generate(task, key, input) {
-        modelLog.push({ task, key, at: Date.now() });
+      const summarizeReturned = (value) => {
+        const text = typeof value === 'string' ? value : JSON.stringify(value);
+        return typeof text === 'string' && text.length > 800 ? `${text.slice(0, 800)}…[truncated, total ${text.length}]` : value;
+      };
+      const generateTask = async (task, key, input) => {
         if (task === 'action') return { kind: 'skip' };
         if (task === 'targets') return input.sourceId === reactor ? { targets: [{ targetId: initiator }] } : { targets: [] };
         if (task === 'reaction') return `${input.memberId} 稳住身形，撑住门轴。`;
@@ -369,6 +412,11 @@ try {
           return narrateFromReads(after, before, polish, (event) => events.push({ ...event, at: Date.now() }));
         }
         throw new Error(`unexpected model task ${task} (${String(key)})`);
+      };
+      const port = { async generate(task, key, input) {
+        const returned = await generateTask(task, key, input);
+        modelLog.push({ task, key, at: Date.now(), returned: summarizeReturned(returned) });
+        return returned;
       } };
       const driver = new ControllerDriver({ transport, model: port }, initialMemory(`${namespace}_driver`, 'chain_full_holder'));
       const walkStarted = performance.now();
@@ -382,23 +430,28 @@ try {
       const narrations = [];
       for (const point of points) narrations.push((await http.execute('narration_get', {}, { worldId, pointId: point.pointId })).data);
       const commitCount = opLog.filter((entry) => entry.op === 'commit_point').length;
-      const secondRoll = rollsOut.flat().find((roll) => roll.sourceId === 'person_a');
       return {
-        worldId, attempts, firstRoll: { admitted: firstRoll.admitted, rollId: firstRoll.rollId, result: firstRoll.result, ruleVersion: firstRoll.ruleVersion },
-        secondRoll: secondRoll ? { admitted: secondRoll.admitted, rollId: secondRoll.rollId, result: secondRoll.result } : null,
+        // attempts 必须取实际尝试数：循环变量退出时已自增 +1（首轮 README
+        // 的「换世界重试」叙事正是把这个退出值 2 误读成了两次尝试）
+        worldId, attempts: worldAttempts.length, worldAttempts,
         status: completed ? 'COMPLETED' : status, setupMs, walkMs,
         modelTasks: modelLog, narrationEvents: events, modelAttempts,
         commitCount, rollsRolled: rollsOut.flat().map((roll) => ({ sourceId: roll.sourceId, targetId: roll.targetId, admitted: roll.admitted, result: roll.result })),
         points: points.map((point, index) => ({ pointId: point.pointId, version: point.version, narrationStatus: narrations[index].narrationStatus, text: narrations[index].text })),
         finalState: { version: state.version, time: state.state.time.dateTime,
-          appearances: Object.fromEntries(Object.entries(state.state.characters).map(([id, actor]) => [id, actor.appearanceChanges.map((change) => change.text)])) },
-        totals: { modelAttempts: modelAttempts.length, serverOps: opLog.length },
-        opLog,
+          characters: Object.fromEntries(Object.entries(state.state.characters).map(([id, actor]) => [id, {
+            position: actor.position.containerId, sanity: actor.sanity,
+            tasks: Object.values(actor.tasks).map((task) => ({ goal: task.goal, status: task.status })),
+            personality: [...actor.personalityChanges].filter((change) => change.active).map((change) => change.text),
+            appearance: actor.appearanceChanges.map((change) => change.text) }])) },
+        totals: { modelAttempts: modelAttempts.length, serverOps: opLog.length, completionEvidence: evidence.length },
+        opLog, setupOps, readPointIds: [...reads.keys()],
       };
       } catch (error) {
         return { failed: true, error: String(error?.stack ?? error), setupOps, opLog, events, modelAttempts, reads: [...reads.keys()] };
       }
     }, { api: apiOrigin });
+    report.chain.netTrail = netTrail.splice(0); // 原始 wire 逐场景落盘（首轮成功路径缺原始轨迹）
     if (report.chain.failed) {
       report.netTrail = netTrail;
       save();
