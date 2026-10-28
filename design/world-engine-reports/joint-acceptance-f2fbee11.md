@@ -12,7 +12,7 @@
 | 共同基点 | `79f8120`（`agent`）；双方对 `design/world-protocol/v2` 的字节完全相同（A 的 `812e721..3734a52` 对该目录零 diff，B 镜像同一候选） |
 | 组合提交 | `44996f3a5413b0bcd446480e879b1115132816ce`（`git merge --no-ff 552148c`） |
 | 验收树 | `f2fbee118fa21f0aaf1f03fa2be7953068d96b64` |
-| 记录头 | `64efb6d`（本文件所在的集成分支头；A 侧镜像待同步） |
+| 记录头 | `1c39aec`（集成分支 `integration/a3734a52-b552148c`；`world-server` 同文镜像 `3a73537`） |
 | 契约摘要 | `902918016f2bf7eff4cd1afd52da4ca96defdb5ee4082f171fda987de86680c2`（manifest 与前端 pin 一致） |
 | 环境 | Windows 11 / Python 3.12.3 / Node 22.20.0 / npm 10.9.3，fresh `npm ci`（385 packages） |
 
@@ -100,7 +100,7 @@ frontend 与 world-interface 按设计失败（B 的七项版本/pin 同步未�
 ```powershell
 git clone https://github.com/TandyBlow/Jity.git jity-integration
 cd jity-integration
-git checkout integration/a3734a52-b552148c   # 64efb6d
+git checkout integration/a3734a52-b552148c   # 1c39aec
 git rev-parse HEAD^{tree}
 npm --prefix frontend ci
 python -X utf8 backend/scripts/check_world_interface_baseline.py
@@ -108,6 +108,6 @@ python -X utf8 -m pytest -q
 npm --prefix frontend test
 ```
 
-记录头 `64efb6d` 的树比验收树多三处文档记录（merge 之后的 CI 记录、本签字
+记录头 `1c39aec` 的树比验收树多几处文档记录（merge 之后的 CI 记录、本签字
 页、server.md 的引用段）。验收树 `f2fbee11…` 对应提交 `44996f3`，其数字即
-第三节所列；`64efb6d` 未重跑，因为它只增删 Markdown。
+第三节所列；`1c39aec` 未重跑，因为它只增删 Markdown。
