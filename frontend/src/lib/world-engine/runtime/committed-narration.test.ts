@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import { SHORT_STATE } from './b3-short-samples';
 import { checkFactNarration, projectCommittedNarration, renderCommittedNarration, selectFactNarration, type CommittedRead } from './committed-narration';
-import type { WorldState } from '../types';
+import type { Json, WorldState } from '../types';
 import { projectTaskInput } from './focused-input';
 import { buildTaskPrompt } from './prompts';
 
@@ -71,25 +71,26 @@ describe('saved facts, template baseline and bounded polish', () => {
   test('focused action preserves identity/current facts and removes unrelated task duplication', () => {
     const { before } = reads();
     const input = { actor: 'person_c', advance: { inputText: '走到门厅', intentStatus: 'pending' }, workingState: before.state };
-    const prompt = buildTaskPrompt('action', 'person_c', input as any, { inputMode: 'focused' });
+    const prompt = buildTaskPrompt('action', 'person_c', input as unknown as Json, { inputMode: 'focused' });
     expect(prompt).toContain('本角色就是主角');
     expect(prompt).not.toContain('本角色不是主角');
     expect(prompt).toContain('周宁');
     expect(prompt).toContain('person_a');
     expect(prompt).not.toContain('task_watch');
-    expect(prompt.length).toBeLessThan(buildTaskPrompt('action', 'person_c', input as any).length);
+    expect(prompt.length).toBeLessThan(buildTaskPrompt('action', 'person_c', input as unknown as Json).length);
   });
 
   test('focused narration binds original input to saved records without duplicating them into the full arm', () => {
     const { before, after } = reads();
     const input = { pointId: after.pointId, before: before.state, after: after.state,
-      delta: { timeAdvance: after.timeAdvance, entityDeltas: after.entityDeltas }, perspective: '周宁视角' } as any;
-    expect(projectTaskInput('narration', input)).toBe(input);
-    const focused = projectTaskInput('narration', input, { before, after }) as any;
+      delta: { timeAdvance: after.timeAdvance, entityDeltas: after.entityDeltas }, perspective: '周宁视角' };
+    expect(projectTaskInput('narration', input as unknown as Json)).toBe(input as unknown as Json);
+    const focused = projectTaskInput('narration', input as unknown as Json, { before, after }) as {
+      facts: Json[]; before?: Json; after?: Json };
     expect(focused.facts).toHaveLength(4);
     expect(focused.before).toBeUndefined(); expect(focused.after).toBeUndefined();
     expect(JSON.stringify(focused)).not.toContain('initialPersonality');
     const changed = { ...input, pointId: 'other' };
-    expect(() => projectTaskInput('narration', changed, { before, after })).toThrow(/read_binding/);
+    expect(() => projectTaskInput('narration', changed as unknown as Json, { before, after })).toThrow(/read_binding/);
   });
 });

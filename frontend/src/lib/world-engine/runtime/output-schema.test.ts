@@ -2,7 +2,7 @@ import Ajv from 'ajv';
 import { describe, expect, test } from 'vitest';
 import { taskOutputSchema } from './output-schema';
 import { decodeTaskOutput } from './structured-output';
-import { B3_SHORT_SAMPLES, judgeShortSample } from './b3-short-samples';
+import { B3_SHORT_SAMPLES, SHORT_STATE, judgeShortSample } from './b3-short-samples';
 import { buildTaskPrompt } from './prompts';
 
 const ajv = new Ajv({ strict: false, allowUnionTypes: true });
@@ -44,7 +44,13 @@ describe('B3 constrained generation and independent fact probes', () => {
     expect(judgeShortSample('action-player', { kind: 'act', text: '周宁试着打开盒盖。' })).toBeNull();
     expect(judgeShortSample('updates-sanity', { stage: 'sanity', changes: { person_a: { sanitySet: 2 } } })).toMatch(/应设为8/);
     expect(judgeShortSample('narration-root', '周宁从盒子中拿出了钥匙。')).toMatch(/未提交/);
-    const moved = B3_SHORT_SAMPLES.find((sample) => sample.id === 'narration-move')!.input as Record<string, any>;
+    // The sample input is a Json fixture; read the moved entity's position
+    // through the fixture's own type so the probe stays refactor-checked.
+    type SampleState = typeof SHORT_STATE;
+    const moved = B3_SHORT_SAMPLES.find((sample) => sample.id === 'narration-move')!.input as unknown as {
+      before: SampleState; after: SampleState;
+      delta: { entityDeltas: { person_a: { positionSet: SampleState['characters']['person_a']['position'] } } };
+    };
     expect(moved.before.characters.person_a.position.containerId).toBe('corridor');
     expect(moved.after.characters.person_a.position.containerId).toBe('hall');
     expect(moved.delta.entityDeltas.person_a.positionSet).toEqual(moved.after.characters.person_a.position);

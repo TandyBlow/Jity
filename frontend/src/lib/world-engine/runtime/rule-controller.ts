@@ -42,6 +42,10 @@ export function createRuleController(options: { transport: WorldTransport; initi
       return response;
     },
   };
+  // Assigned once, after the closures that read it are defined: a const here
+  // would be in the closures' temporal dead zone (requireScope/model run only
+  // after the driver exists).
+  // eslint-disable-next-line prefer-const
   let driver: ControllerDriver;
   const requireScope = () => {
     if (!world || !work) throw new Error('rule_live_scope_missing');
