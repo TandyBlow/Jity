@@ -993,6 +993,24 @@ gate 清理）与浏览器段全部通过；h2-history 子检查的 `checkpoint_
 及 B 产品侧 roster 不一致），改用完整名单后同一步返回 200。结论：非 transport
 不兼容。A4 的 B 向条件待 B 侧修正夹具、提交脚本与报告并重跑 PASS 后关闭。
 
+## A4 的 B 向条件闭环（2026-10-29 第二轮）
+
+B 侧夹具共修正四处（均为 A 契约强制，非产品代码问题）：玩家回合 order 用完整
+角色名单；变化 id 改走 `allocate_ids` 的 `change` 槽；同回合首点
+normal/elapsed、后续点 instant/0 时长；恢复读取的 `get_state` 次数随提交点数
+（每点一次）。重跑结果
+[artifacts/a4-browser-transport.json](https://github.com/TandyBlow/Jity/blob/cd077a2/artifacts/a4-browser-transport.json)：
+**PASS**，运行时 A=`d4e0dd3`、B=`77cb0af`（B 工作树含未提交夹具修复），CORS
+精确 origin、两个浏览器 root flow、浏览器段与 h2-history 全过；history 6 个
+提交点、恢复期 6 次 `get_state`、原始 Δ 与独立期望一致、运行前后双方源身份
+不变；修复后的脚本与该报告随 world-browser `cd077a2` 提交推送。模型输出为
+transport 固定值，真实模型整链验收仍按原计划另批执行。
+
+**至此 A4 四项（运行入口、初始化方式、固定场景执行器、API 行为与限制说明）
+连同其 A 向验收（干净启动＋执行器）与 B 向验收（transport 连接复验）全部
+关闭；A4 关闭。** 后续仅剩叙事新留出集（B 侧，冻结须先于任何提示词或 gate
+改动）与真实模型整链合并验收。
+
 ## 共同检查现状与本批边界
 
 统一入口在本分支当前状态下 TS 契约消费为红（contract.test.ts 35 项：
