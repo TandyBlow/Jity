@@ -100,7 +100,7 @@ export function createRuleController(options: { transport: WorldTransport; initi
         const before = after.previousPointId ? reads.get(after.previousPointId) : null;
         if (before === undefined) throw new Error('narration_requires_saved_predecessor_read');
         const packet = projectCommittedNarration(after, before);
-        const text = renderCommittedNarration(packet);
+        const text = renderCommittedNarration(packet, { time: after.timeAdvance?.duration ?? null });
         narrations.push({ packet, text });
         return text;
       }

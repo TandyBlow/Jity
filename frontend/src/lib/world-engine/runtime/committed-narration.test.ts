@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import { SHORT_STATE } from './b3-short-samples';
-import { checkFactNarration, projectCommittedNarration, renderCommittedNarration, selectFactNarration, type CommittedRead } from './committed-narration';
+import { checkFactNarration, projectCommittedNarration, renderCommittedNarration, selectFactNarration,
+  type CommittedNarration, type CommittedRead } from './committed-narration';
 import type { Json, WorldState } from '../types';
 import { projectTaskInput } from './focused-input';
 import { buildTaskPrompt } from './prompts';
@@ -66,6 +67,23 @@ describe('saved facts, template baseline and bounded polish', () => {
       expect(selectFactNarration(packet, candidate)).toMatchObject({ accepted: false, text: baseline });
     }
     expect(checkFactNarration(packet, baseline.replace('周宁从走廊走到门厅', '周宁从走廊来到门厅')).ok).toBe(true);
+  });
+
+  // 2026-10-28 复核：模板先述本点时间推进（§5.2 timeAdvance 属于 Δ），空事实点
+  // 用「时间 + 没有新的变化」固定句式代替空串——关闭归档记录的两个已知缺口。
+  test('the template narrates the elapsed time and fills empty points with a fixed line', () => {
+    const { before, after } = reads();
+    const packet = projectCommittedNarration(after, before);
+    const duration = after.timeAdvance?.duration ?? null;
+    const timed = renderCommittedNarration(packet, { time: duration });
+    expect(timed.startsWith('约一秒过去了。')).toBe(true);
+    expect(timed).toContain('周宁从走廊走到门厅。');
+    const empty: CommittedNarration = { anchor: packet.anchor, facts: [] };
+    expect(renderCommittedNarration(empty, { time: duration })).toBe('约一秒过去了，没有新的变化。');
+    expect(renderCommittedNarration(empty)).toBe('');
+    const fallback = selectFactNarration(packet, '周宁拿到了钥匙。', { time: duration });
+    expect(fallback.accepted).toBe(false);
+    expect(fallback.text).toBe(timed);
   });
 
   test('focused action preserves identity/current facts and removes unrelated task duplication', () => {

@@ -1,7 +1,7 @@
 /** Narrow narration baseline: only saved get_state records may enter this
  * application path. Validate their lineage and before/delta/after agreement,
  * then expose position and sanity facts. Proposals/results text is absent. */
-import type { DataMap, Id } from '../types';
+import type { DataMap, Id, TimeAdvance } from '../types';
 
 export type CommittedRead = DataMap['get_state'];
 export type NarrationFact = { id: string; actorId: Id; name: string } & (
@@ -106,8 +106,23 @@ export function factPhrases(fact: NarrationFact): string[] {
     case 'personality_changed': return [`${fact.name}的人格变化为「${fact.text}」`, `${fact.name}形成了新的人格描述「${fact.text}」`];
   }
 }
-export function renderCommittedNarration(packet: CommittedNarration): string {
-  return packet.facts.map((fact) => `${factPhrases(fact)[0]}。`).join('');
+const TIME_UNIT_CN: Record<TimeAdvance['duration']['unit'], string> =
+  { second: '秒', minute: '分钟', hour: '小时', day: '天', month: '个月', year: '年' };
+const CN_TIME_DIGITS = ['零', '一', '两', '三', '四', '五', '六', '七', '八', '九', '十'];
+const cnAmount = (n: number) => (Number.isInteger(n) && n >= 0 && n <= 10 ? CN_TIME_DIGITS[n] : String(n));
+
+export interface NarrationRenderOptions {
+  /** §5.2：timeAdvance 属于 Δ。给出时模板先述本点时间；空事实包不再输出空串，
+   * 改用「时间 + 没有新的变化」固定句式。关闭 2026-10-28 归档记录的两个已知
+   * 缺口（模板从不写时间、空增量点输出空串）。 */
+  time?: { amount: number; unit: TimeAdvance['duration']['unit'] } | null;
+}
+export function renderCommittedNarration(packet: CommittedNarration, options: NarrationRenderOptions = {}): string {
+  const time = options.time ?? null;
+  const elapsed = time ? `约${cnAmount(time.amount)}${TIME_UNIT_CN[time.unit]}过去了` : null;
+  if (packet.facts.length === 0) return elapsed ? `${elapsed}，没有新的变化。` : '';
+  const body = packet.facts.map((fact) => `${factPhrases(fact)[0]}。`).join('');
+  return elapsed ? `${elapsed}。${body}` : body;
 }
 export function checkFactNarration(packet: CommittedNarration, text: string): { ok: boolean; reason: string | null } {
   const seen = new Set<string>();
@@ -121,7 +136,8 @@ export function checkFactNarration(packet: CommittedNarration, text: string): { 
   return seen.size === packet.facts.length ? { ok: true, reason: null } : { ok: false, reason: 'missing_fact' };
 }
 
-export function selectFactNarration(packet: CommittedNarration, modelText: string): { text: string; accepted: boolean; reason: string | null } {
+export function selectFactNarration(packet: CommittedNarration, modelText: string,
+  options: NarrationRenderOptions = {}): { text: string; accepted: boolean; reason: string | null } {
   const verdict = checkFactNarration(packet, modelText);
-  return { text: verdict.ok ? modelText : renderCommittedNarration(packet), accepted: verdict.ok, reason: verdict.reason };
+  return { text: verdict.ok ? modelText : renderCommittedNarration(packet, options), accepted: verdict.ok, reason: verdict.reason };
 }

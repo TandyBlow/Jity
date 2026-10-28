@@ -96,7 +96,8 @@ interface IssuedGroup { receipt: RuleReceipt; result: Record<Id, string> }
 export async function narrateFromReads(after: CommittedRead, before: CommittedRead | null,
   polisher: RuleNarrationPolisher | null, onEvent?: (event: RuleSessionEvent) => void): Promise<string> {
   const packet = projectCommittedNarration(after, before);
-  const template = renderCommittedNarration(packet);
+  const render = { time: after.timeAdvance?.duration ?? null };
+  const template = renderCommittedNarration(packet, render);
   let text = template;
   let polished = false;
   let polishReason: string | null = null;
@@ -119,7 +120,7 @@ export async function narrateFromReads(after: CommittedRead, before: CommittedRe
         const candidate = await polisher(assembled, packet, focused, { index, previous });
         if (candidate === null) break; // polish disabled mid-session
         attempts = index;
-        const verdict = selectFactNarration(packet, candidate);
+        const verdict = selectFactNarration(packet, candidate, render);
         polishReason = verdict.reason;
         if (verdict.accepted) {
           text = verdict.text;

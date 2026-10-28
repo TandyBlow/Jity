@@ -16,7 +16,8 @@ function reads() {
   return { before, after };
 }
 
-const BASELINE = '林川位于走廊。林川的精神值为10。周宁从走廊走到门厅。周宁的精神值为10。';
+// 2026-10-28 复核后模板先述本点时间推进（narrateFromReads 传入 after.timeAdvance）。
+const BASELINE = '约一秒过去了。林川位于走廊。林川的精神值为10。周宁从走廊走到门厅。周宁的精神值为10。';
 
 describe('per-command identity rotation', () => {
   test('a second command mints a fresh allocation plan over the full slot set', () => {

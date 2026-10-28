@@ -1,0 +1,1972 @@
+{
+  "status": "COMPLETED",
+  "recordedAt": "2026-10-28T10:42:47.028Z",
+  "config": {
+    "model": "/models/Qwen3-0.6B-Q4_K_M.gguf",
+    "contextSize": 4096,
+    "numThreads": 4,
+    "channel": "msedge",
+    "seed": 42,
+    "temperature": 0,
+    "maxTokens": 160,
+    "cachePrompt": false,
+    "timeoutMs": 120000
+  },
+  "source": {
+    "head": "ffdd8478f4ca261272907050d6cb90e6768f65f5",
+    "status": "",
+    "sha256": {
+      "frontend/scripts/run-narration-eval.mjs": "5cf60cc89b25970b3dd3a56abff89973854bc348743f1472917b3a3f2219e598",
+      "frontend/src/lib/world-engine/runtime/narration-alignment.ts": "5403dada0426a5f6a4d1efd89545cb89b06fb90b4e7e06f0224af20fc49f3f20",
+      "frontend/src/lib/world-engine/runtime/narration-eval.ts": "985ab7e82b2f2b55b1dc5a158ce70167cbf8168c156b377f023dc6b349ff03ad",
+      "frontend/src/lib/world-engine/runtime/narration-eval-samples.ts": "c3ca0c5e6e52670eb961ea2de9450ee4fd7d7f4d18bd092a4249b646cceddd48",
+      "frontend/src/lib/world-engine/runtime/committed-narration.ts": "249fa2f77f58cdec7fa483d551c31cf17da754438adc90c5cf1754991affd934",
+      "frontend/src/lib/world-engine/runtime/wllama-engine.ts": "eeef36cb34a8fe358e923fa9a7ddff2276bd58e4c67c0cbb5871206f2a313799",
+      "frontend/src/lib/world-engine/runtime/engine.ts": "8fabe2ecc1640d53c0cc5704fb0f9f9b4dcf78534797f48f7f001a3d6221a266"
+    },
+    "contractDigest": {
+      "protocolVersion": 2,
+      "contractDigest": "902918016f2bf7eff4cd1afd52da4ca96defdb5ee4082f171fda987de86680c2"
+    }
+  },
+  "assets": {
+    "modelSha256": "ac2d97712095a558e31573f62f466a3f9d93990898b0ec79d7c974c1780d524a",
+    "bundleSha256": "834d7be963172248caf13c6f2ae786009b43edfeefc85eeadc20609e8447d118",
+    "wasmSha256": "551f13439366eff11e057b1b91fe46a7fdac29d56d67372d4c5f19a549dfe70c",
+    "packageVersion": "3.8.1"
+  },
+  "device": {
+    "cpu": "13th Gen Intel(R) Core(TM) i7-13700H",
+    "logicalCpus": 20
+  },
+  "runs": [
+    {
+      "sampleId": "nv-move-1",
+      "category": "movement",
+      "template": {
+        "text": "学生A从走廊走到大厅。",
+        "verdict": {
+          "ok": true,
+          "timeRequired": false,
+          "coverage": [
+            {
+              "id": "person_a:position",
+              "kind": "moved",
+              "expressed": true
+            }
+          ],
+          "omissions": [],
+          "violations": [],
+          "unverified": [],
+          "repetition": null,
+          "timeExpressed": false
+        }
+      },
+      "mechanical": {
+        "text": "学生A从走廊来到大厅。",
+        "verdict": {
+          "ok": true,
+          "timeRequired": false,
+          "coverage": [
+            {
+              "id": "person_a:position",
+              "kind": "moved",
+              "expressed": true
+            }
+          ],
+          "omissions": [],
+          "violations": [],
+          "unverified": [],
+          "repetition": null,
+          "timeExpressed": false
+        }
+      },
+      "natural": {
+        "attempts": [
+          {
+            "attempt": 1,
+            "prompt": "[任务: narration-natural]\n用一到三句顺畅的中文写出这一点位的叙事正文，像小说旁白，不要逐条罗列。\n只能使用下面的事实；人物动作的归属不得互换，方向、数值、任务名称必须与事实一致；不要补写没有给出的事件、物品或经过。\n本点时间推进：2 分钟（必须自然地写出来）。\n事实：\n- 学生A / 位置 = 从 走廊 到 大厅\n不得出现：学生A从大厅走到走廊（方向反转）；学生A推开门冲进大厅（新增事件）。\n最后用一句话写出时间推进，时长数值必须与上面给出的完全一致。\n只输出正文文字，不要 JSON、不要标题、不要列表、不要解释。\n正文:",
+            "text": "学生A从走廊走到大厅。",
+            "ms": 10971.389999389648,
+            "verdict": {
+              "ok": true,
+              "timeRequired": false,
+              "coverage": [
+                {
+                  "id": "person_a:position",
+                  "kind": "moved",
+                  "expressed": true
+                }
+              ],
+              "omissions": [],
+              "violations": [],
+              "unverified": [],
+              "repetition": null,
+              "timeExpressed": false
+            },
+            "completion": {
+              "raw": "学生A从走廊走到大厅。",
+              "finishReason": "stop",
+              "firstTokenMs": 10438.005000114441,
+              "wallMs": 10971.109999656677,
+              "timings": {
+                "cache_n": 0,
+                "prompt_n": 183,
+                "prompt_ms": 10305.845,
+                "prompt_per_token_ms": 56.31609289617486,
+                "prompt_per_second": 17.756913673745338,
+                "predicted_n": 8,
+                "predicted_ms": 625.14,
+                "predicted_per_token_ms": 89.30571428571429,
+                "predicted_per_second": 11.197491761845347
+              }
+            }
+          }
+        ],
+        "adopted": true,
+        "fellBack": false,
+        "text": "学生A从走廊走到大厅。",
+        "final": {
+          "ok": true,
+          "timeRequired": false,
+          "coverage": [
+            {
+              "id": "person_a:position",
+              "kind": "moved",
+              "expressed": true
+            }
+          ],
+          "omissions": [],
+          "violations": [],
+          "unverified": [],
+          "repetition": null,
+          "timeExpressed": false
+        }
+      },
+      "wallMs": 10983.220000267029,
+      "attempts": [
+        {
+          "attempt": 1,
+          "prompt": "[任务: narration-natural]\n用一到三句顺畅的中文写出这一点位的叙事正文，像小说旁白，不要逐条罗列。\n只能使用下面的事实；人物动作的归属不得互换，方向、数值、任务名称必须与事实一致；不要补写没有给出的事件、物品或经过。\n本点时间推进：2 分钟（必须自然地写出来）。\n事实：\n- 学生A / 位置 = 从 走廊 到 大厅\n不得出现：学生A从大厅走到走廊（方向反转）；学生A推开门冲进大厅（新增事件）。\n最后用一句话写出时间推进，时长数值必须与上面给出的完全一致。\n只输出正文文字，不要 JSON、不要标题、不要列表、不要解释。\n正文:",
+          "text": "学生A从走廊走到大厅。",
+          "ms": 10971.389999389648,
+          "verdict": {
+            "ok": true,
+            "timeRequired": false,
+            "coverage": [
+              {
+                "id": "person_a:position",
+                "kind": "moved",
+                "expressed": true
+              }
+            ],
+            "omissions": [],
+            "violations": [],
+            "unverified": [],
+            "repetition": null,
+            "timeExpressed": false
+          },
+          "completion": {
+            "raw": "学生A从走廊走到大厅。",
+            "finishReason": "stop",
+            "firstTokenMs": 10438.005000114441,
+            "wallMs": 10971.109999656677,
+            "timings": {
+              "cache_n": 0,
+              "prompt_n": 183,
+              "prompt_ms": 10305.845,
+              "prompt_per_token_ms": 56.31609289617486,
+              "prompt_per_second": 17.756913673745338,
+              "predicted_n": 8,
+              "predicted_ms": 625.14,
+              "predicted_per_token_ms": 89.30571428571429,
+              "predicted_per_second": 11.197491761845347
+            }
+          }
+        }
+      ]
+    },
+    {
+      "sampleId": "nv-task-pers-sanity-1",
+      "category": "task_personality_sanity",
+      "template": {
+        "text": "学生B完成了任务「帮主角熟悉校园」。学生B的人格变化为「变得健谈」。学生B的精神值从10变为12。",
+        "verdict": {
+          "ok": true,
+          "timeRequired": false,
+          "coverage": [
+            {
+              "id": "person_b:task:task_intro",
+              "kind": "task_achieved",
+              "expressed": true
+            },
+            {
+              "id": "person_b:personality:chg_b_1",
+              "kind": "personality_changed",
+              "expressed": true
+            },
+            {
+              "id": "person_b:sanity",
+              "kind": "sanity_changed",
+              "expressed": true
+            }
+          ],
+          "omissions": [],
+          "violations": [],
+          "unverified": [],
+          "repetition": null,
+          "timeExpressed": false
+        }
+      },
+      "mechanical": {
+        "text": "学生B已达成任务「帮主角熟悉校园」。学生B形成了新的人格描述「变得健谈」。学生B的精神值由10升至12。",
+        "verdict": {
+          "ok": true,
+          "timeRequired": false,
+          "coverage": [
+            {
+              "id": "person_b:task:task_intro",
+              "kind": "task_achieved",
+              "expressed": true
+            },
+            {
+              "id": "person_b:personality:chg_b_1",
+              "kind": "personality_changed",
+              "expressed": true
+            },
+            {
+              "id": "person_b:sanity",
+              "kind": "sanity_changed",
+              "expressed": true
+            }
+          ],
+          "omissions": [],
+          "violations": [],
+          "unverified": [],
+          "repetition": null,
+          "timeExpressed": false
+        }
+      },
+      "natural": {
+        "attempts": [
+          {
+            "attempt": 1,
+            "prompt": "[任务: narration-natural]\n用一到三句顺畅的中文写出这一点位的叙事正文，像小说旁白，不要逐条罗列。\n只能使用下面的事实；人物动作的归属不得互换，方向、数值、任务名称必须与事实一致；不要补写没有给出的事件、物品或经过。\n本点时间推进：1 分钟（必须自然地写出来）。\n事实：\n- 学生B / 达成任务 = 「帮主角熟悉校园」\n- 学生B / 个性变化 = 「变得健谈」\n- 学生B / 精神值 = 10 → 12\n不得出现：精神值从10变为8（数值错误）；主角完成了任务「帮主角熟悉校园」（人物互换）；学生B完成了任务「取回柜子里的东西」（任务替换）。\n最后用一句话写出时间推进，时长数值必须与上面给出的完全一致。\n只输出正文文字，不要 JSON、不要标题、不要列表、不要解释。\n正文:",
+            "text": "学生B变得健谈，精神值从10提升至12。",
+            "ms": 11495.979999542236,
+            "verdict": {
+              "ok": false,
+              "timeRequired": false,
+              "coverage": [
+                {
+                  "id": "person_b:task:task_intro",
+                  "kind": "task_achieved",
+                  "expressed": false
+                },
+                {
+                  "id": "person_b:personality:chg_b_1",
+                  "kind": "personality_changed",
+                  "expressed": true
+                },
+                {
+                  "id": "person_b:sanity",
+                  "kind": "sanity_changed",
+                  "expressed": true
+                }
+              ],
+              "omissions": [
+                "学生B完成了任务「帮主角熟悉校园」"
+              ],
+              "violations": [],
+              "unverified": [],
+              "repetition": null,
+              "timeExpressed": false
+            },
+            "completion": {
+              "raw": "学生B变得健谈，精神值从10提升至12。",
+              "finishReason": "stop",
+              "firstTokenMs": 10123.240000724792,
+              "wallMs": 11495.95000076294,
+              "timings": {
+                "cache_n": 0,
+                "prompt_n": 236,
+                "prompt_ms": 10000.005,
+                "prompt_per_token_ms": 42.37290254237288,
+                "prompt_per_second": 23.599988200005903,
+                "predicted_n": 17,
+                "predicted_ms": 1461.58,
+                "predicted_per_token_ms": 91.34875,
+                "predicted_per_second": 10.947057294161114
+              }
+            }
+          },
+          {
+            "attempt": 2,
+            "prompt": "[任务: narration-natural]\n用一到三句顺畅的中文写出这一点位的叙事正文，像小说旁白，不要逐条罗列。\n只能使用下面的事实；人物动作的归属不得互换，方向、数值、任务名称必须与事实一致；不要补写没有给出的事件、物品或经过。\n本点时间推进：1 分钟（必须自然地写出来）。\n事实：\n- 学生B / 达成任务 = 「帮主角熟悉校园」\n- 学生B / 个性变化 = 「变得健谈」\n- 学生B / 精神值 = 10 → 12\n不得出现：精神值从10变为8（数值错误）；主角完成了任务「帮主角熟悉校园」（人物互换）；学生B完成了任务「取回柜子里的东西」（任务替换）。\n最后用一句话写出时间推进，时长数值必须与上面给出的完全一致。\n只输出正文文字，不要 JSON、不要标题、不要列表、不要解释。\n上一稿的问题：遗漏事实：学生B完成了任务「帮主角熟悉校园」；没有写出时间推进。请改写。\n正文:",
+            "text": "学生B变得健谈，精神值从10提升至12。时间推进：1分钟。",
+            "ms": 14002.085000038147,
+            "verdict": {
+              "ok": false,
+              "timeRequired": false,
+              "coverage": [
+                {
+                  "id": "person_b:task:task_intro",
+                  "kind": "task_achieved",
+                  "expressed": false
+                },
+                {
+                  "id": "person_b:personality:chg_b_1",
+                  "kind": "personality_changed",
+                  "expressed": true
+                },
+                {
+                  "id": "person_b:sanity",
+                  "kind": "sanity_changed",
+                  "expressed": true
+                }
+              ],
+              "omissions": [
+                "学生B完成了任务「帮主角熟悉校园」"
+              ],
+              "violations": [],
+              "unverified": [],
+              "repetition": null,
+              "timeExpressed": true
+            },
+            "completion": {
+              "raw": "学生B变得健谈，精神值从10提升至12。时间推进：1分钟。",
+              "finishReason": "stop",
+              "firstTokenMs": 11362.224999427795,
+              "wallMs": 14002.034999847412,
+              "timings": {
+                "cache_n": 0,
+                "prompt_n": 264,
+                "prompt_ms": 11219.806,
+                "prompt_per_token_ms": 42.499265151515154,
+                "prompt_per_second": 23.529818608271835,
+                "predicted_n": 23,
+                "predicted_ms": 2764.075,
+                "predicted_per_token_ms": 125.63977272727271,
+                "predicted_per_second": 7.959263044599007
+              }
+            }
+          }
+        ],
+        "adopted": false,
+        "fellBack": true,
+        "text": "学生B完成了任务「帮主角熟悉校园」。学生B的人格变化为「变得健谈」。学生B的精神值从10变为12。",
+        "final": {
+          "ok": false,
+          "timeRequired": false,
+          "coverage": [
+            {
+              "id": "person_b:task:task_intro",
+              "kind": "task_achieved",
+              "expressed": false
+            },
+            {
+              "id": "person_b:personality:chg_b_1",
+              "kind": "personality_changed",
+              "expressed": true
+            },
+            {
+              "id": "person_b:sanity",
+              "kind": "sanity_changed",
+              "expressed": true
+            }
+          ],
+          "omissions": [
+            "学生B完成了任务「帮主角熟悉校园」"
+          ],
+          "violations": [],
+          "unverified": [],
+          "repetition": null,
+          "timeExpressed": true
+        }
+      },
+      "wallMs": 25514.194999694824,
+      "attempts": [
+        {
+          "attempt": 1,
+          "prompt": "[任务: narration-natural]\n用一到三句顺畅的中文写出这一点位的叙事正文，像小说旁白，不要逐条罗列。\n只能使用下面的事实；人物动作的归属不得互换，方向、数值、任务名称必须与事实一致；不要补写没有给出的事件、物品或经过。\n本点时间推进：1 分钟（必须自然地写出来）。\n事实：\n- 学生B / 达成任务 = 「帮主角熟悉校园」\n- 学生B / 个性变化 = 「变得健谈」\n- 学生B / 精神值 = 10 → 12\n不得出现：精神值从10变为8（数值错误）；主角完成了任务「帮主角熟悉校园」（人物互换）；学生B完成了任务「取回柜子里的东西」（任务替换）。\n最后用一句话写出时间推进，时长数值必须与上面给出的完全一致。\n只输出正文文字，不要 JSON、不要标题、不要列表、不要解释。\n正文:",
+          "text": "学生B变得健谈，精神值从10提升至12。",
+          "ms": 11495.979999542236,
+          "verdict": {
+            "ok": false,
+            "timeRequired": false,
+            "coverage": [
+              {
+                "id": "person_b:task:task_intro",
+                "kind": "task_achieved",
+                "expressed": false
+              },
+              {
+                "id": "person_b:personality:chg_b_1",
+                "kind": "personality_changed",
+                "expressed": true
+              },
+              {
+                "id": "person_b:sanity",
+                "kind": "sanity_changed",
+                "expressed": true
+              }
+            ],
+            "omissions": [
+              "学生B完成了任务「帮主角熟悉校园」"
+            ],
+            "violations": [],
+            "unverified": [],
+            "repetition": null,
+            "timeExpressed": false
+          },
+          "completion": {
+            "raw": "学生B变得健谈，精神值从10提升至12。",
+            "finishReason": "stop",
+            "firstTokenMs": 10123.240000724792,
+            "wallMs": 11495.95000076294,
+            "timings": {
+              "cache_n": 0,
+              "prompt_n": 236,
+              "prompt_ms": 10000.005,
+              "prompt_per_token_ms": 42.37290254237288,
+              "prompt_per_second": 23.599988200005903,
+              "predicted_n": 17,
+              "predicted_ms": 1461.58,
+              "predicted_per_token_ms": 91.34875,
+              "predicted_per_second": 10.947057294161114
+            }
+          }
+        },
+        {
+          "attempt": 2,
+          "prompt": "[任务: narration-natural]\n用一到三句顺畅的中文写出这一点位的叙事正文，像小说旁白，不要逐条罗列。\n只能使用下面的事实；人物动作的归属不得互换，方向、数值、任务名称必须与事实一致；不要补写没有给出的事件、物品或经过。\n本点时间推进：1 分钟（必须自然地写出来）。\n事实：\n- 学生B / 达成任务 = 「帮主角熟悉校园」\n- 学生B / 个性变化 = 「变得健谈」\n- 学生B / 精神值 = 10 → 12\n不得出现：精神值从10变为8（数值错误）；主角完成了任务「帮主角熟悉校园」（人物互换）；学生B完成了任务「取回柜子里的东西」（任务替换）。\n最后用一句话写出时间推进，时长数值必须与上面给出的完全一致。\n只输出正文文字，不要 JSON、不要标题、不要列表、不要解释。\n上一稿的问题：遗漏事实：学生B完成了任务「帮主角熟悉校园」；没有写出时间推进。请改写。\n正文:",
+          "text": "学生B变得健谈，精神值从10提升至12。时间推进：1分钟。",
+          "ms": 14002.085000038147,
+          "verdict": {
+            "ok": false,
+            "timeRequired": false,
+            "coverage": [
+              {
+                "id": "person_b:task:task_intro",
+                "kind": "task_achieved",
+                "expressed": false
+              },
+              {
+                "id": "person_b:personality:chg_b_1",
+                "kind": "personality_changed",
+                "expressed": true
+              },
+              {
+                "id": "person_b:sanity",
+                "kind": "sanity_changed",
+                "expressed": true
+              }
+            ],
+            "omissions": [
+              "学生B完成了任务「帮主角熟悉校园」"
+            ],
+            "violations": [],
+            "unverified": [],
+            "repetition": null,
+            "timeExpressed": true
+          },
+          "completion": {
+            "raw": "学生B变得健谈，精神值从10提升至12。时间推进：1分钟。",
+            "finishReason": "stop",
+            "firstTokenMs": 11362.224999427795,
+            "wallMs": 14002.034999847412,
+            "timings": {
+              "cache_n": 0,
+              "prompt_n": 264,
+              "prompt_ms": 11219.806,
+              "prompt_per_token_ms": 42.499265151515154,
+              "prompt_per_second": 23.529818608271835,
+              "predicted_n": 23,
+              "predicted_ms": 2764.075,
+              "predicted_per_token_ms": 125.63977272727271,
+              "predicted_per_second": 7.959263044599007
+            }
+          }
+        }
+      ]
+    },
+    {
+      "sampleId": "nv-multi-1",
+      "category": "multi_character",
+      "template": {
+        "text": "学生A从走廊走到大厅。主角位于大厅。",
+        "verdict": {
+          "ok": true,
+          "timeRequired": false,
+          "coverage": [
+            {
+              "id": "person_a:position",
+              "kind": "moved",
+              "expressed": true
+            },
+            {
+              "id": "person_c:position",
+              "kind": "at",
+              "expressed": true
+            }
+          ],
+          "omissions": [],
+          "violations": [],
+          "unverified": [],
+          "repetition": null,
+          "timeExpressed": false
+        }
+      },
+      "mechanical": {
+        "text": "学生A从走廊来到大厅。主角现在在大厅。",
+        "verdict": {
+          "ok": true,
+          "timeRequired": false,
+          "coverage": [
+            {
+              "id": "person_a:position",
+              "kind": "moved",
+              "expressed": true
+            },
+            {
+              "id": "person_c:position",
+              "kind": "at",
+              "expressed": true
+            }
+          ],
+          "omissions": [],
+          "violations": [],
+          "unverified": [],
+          "repetition": null,
+          "timeExpressed": false
+        }
+      },
+      "natural": {
+        "attempts": [
+          {
+            "attempt": 1,
+            "prompt": "[任务: narration-natural]\n用一到三句顺畅的中文写出这一点位的叙事正文，像小说旁白，不要逐条罗列。\n只能使用下面的事实；人物动作的归属不得互换，方向、数值、任务名称必须与事实一致；不要补写没有给出的事件、物品或经过。\n本点时间推进：1 分钟（必须自然地写出来）。\n事实：\n- 学生A / 位置 = 从 走廊 到 大厅\n- 主角 / 所在位置 = 大厅\n不得出现：主角从走廊走到大厅（人物互换＋方向）；学生A位于大厅，主角从走廊走到大厅（人物互换）。\n最后用一句话写出时间推进，时长数值必须与上面给出的完全一致。\n只输出正文文字，不要 JSON、不要标题、不要列表、不要解释。\n正文:",
+            "text": "学生A从走廊走到大厅，主角在大厅。时间推进：1分钟。",
+            "ms": 10256,
+            "verdict": {
+              "ok": true,
+              "timeRequired": false,
+              "coverage": [
+                {
+                  "id": "person_a:position",
+                  "kind": "moved",
+                  "expressed": true
+                },
+                {
+                  "id": "person_c:position",
+                  "kind": "at",
+                  "expressed": true
+                }
+              ],
+              "omissions": [],
+              "violations": [],
+              "unverified": [],
+              "repetition": null,
+              "timeExpressed": true
+            },
+            "completion": {
+              "raw": "学生A从走廊走到大厅，主角在大厅。时间推进：1分钟。",
+              "finishReason": "stop",
+              "firstTokenMs": 8866.634999275208,
+              "wallMs": 10255.960000038147,
+              "timings": {
+                "cache_n": 0,
+                "prompt_n": 202,
+                "prompt_ms": 8735.374,
+                "prompt_per_token_ms": 43.24442574257426,
+                "prompt_per_second": 23.12436765729779,
+                "predicted_n": 18,
+                "predicted_ms": 1477.116,
+                "predicted_per_token_ms": 86.88917647058824,
+                "predicted_per_second": 11.508913314864913
+              }
+            }
+          }
+        ],
+        "adopted": true,
+        "fellBack": false,
+        "text": "学生A从走廊走到大厅，主角在大厅。时间推进：1分钟。",
+        "final": {
+          "ok": true,
+          "timeRequired": false,
+          "coverage": [
+            {
+              "id": "person_a:position",
+              "kind": "moved",
+              "expressed": true
+            },
+            {
+              "id": "person_c:position",
+              "kind": "at",
+              "expressed": true
+            }
+          ],
+          "omissions": [],
+          "violations": [],
+          "unverified": [],
+          "repetition": null,
+          "timeExpressed": true
+        }
+      },
+      "wallMs": 10262.345000267029,
+      "attempts": [
+        {
+          "attempt": 1,
+          "prompt": "[任务: narration-natural]\n用一到三句顺畅的中文写出这一点位的叙事正文，像小说旁白，不要逐条罗列。\n只能使用下面的事实；人物动作的归属不得互换，方向、数值、任务名称必须与事实一致；不要补写没有给出的事件、物品或经过。\n本点时间推进：1 分钟（必须自然地写出来）。\n事实：\n- 学生A / 位置 = 从 走廊 到 大厅\n- 主角 / 所在位置 = 大厅\n不得出现：主角从走廊走到大厅（人物互换＋方向）；学生A位于大厅，主角从走廊走到大厅（人物互换）。\n最后用一句话写出时间推进，时长数值必须与上面给出的完全一致。\n只输出正文文字，不要 JSON、不要标题、不要列表、不要解释。\n正文:",
+          "text": "学生A从走廊走到大厅，主角在大厅。时间推进：1分钟。",
+          "ms": 10256,
+          "verdict": {
+            "ok": true,
+            "timeRequired": false,
+            "coverage": [
+              {
+                "id": "person_a:position",
+                "kind": "moved",
+                "expressed": true
+              },
+              {
+                "id": "person_c:position",
+                "kind": "at",
+                "expressed": true
+              }
+            ],
+            "omissions": [],
+            "violations": [],
+            "unverified": [],
+            "repetition": null,
+            "timeExpressed": true
+          },
+          "completion": {
+            "raw": "学生A从走廊走到大厅，主角在大厅。时间推进：1分钟。",
+            "finishReason": "stop",
+            "firstTokenMs": 8866.634999275208,
+            "wallMs": 10255.960000038147,
+            "timings": {
+              "cache_n": 0,
+              "prompt_n": 202,
+              "prompt_ms": 8735.374,
+              "prompt_per_token_ms": 43.24442574257426,
+              "prompt_per_second": 23.12436765729779,
+              "predicted_n": 18,
+              "predicted_ms": 1477.116,
+              "predicted_per_token_ms": 86.88917647058824,
+              "predicted_per_second": 11.508913314864913
+            }
+          }
+        }
+      ]
+    },
+    {
+      "sampleId": "nv-task-only-1",
+      "category": "task_personality_sanity",
+      "template": {
+        "text": "主角完成了任务「取回柜子里的东西」。",
+        "verdict": {
+          "ok": true,
+          "timeRequired": false,
+          "coverage": [
+            {
+              "id": "person_c:task:task_shelf",
+              "kind": "task_achieved",
+              "expressed": true
+            }
+          ],
+          "omissions": [],
+          "violations": [],
+          "unverified": [],
+          "repetition": null,
+          "timeExpressed": false
+        }
+      },
+      "mechanical": {
+        "text": "主角已达成任务「取回柜子里的东西」。",
+        "verdict": {
+          "ok": true,
+          "timeRequired": false,
+          "coverage": [
+            {
+              "id": "person_c:task:task_shelf",
+              "kind": "task_achieved",
+              "expressed": true
+            }
+          ],
+          "omissions": [],
+          "violations": [],
+          "unverified": [],
+          "repetition": null,
+          "timeExpressed": false
+        }
+      },
+      "natural": {
+        "attempts": [
+          {
+            "attempt": 1,
+            "prompt": "[任务: narration-natural]\n用一到三句顺畅的中文写出这一点位的叙事正文，像小说旁白，不要逐条罗列。\n只能使用下面的事实；人物动作的归属不得互换，方向、数值、任务名称必须与事实一致；不要补写没有给出的事件、物品或经过。\n本点时间推进：30 秒（必须自然地写出来）。\n事实：\n- 主角 / 达成任务 = 「取回柜子里的东西」\n不得出现：主角完成了任务「帮主角熟悉校园」（任务替换）；学生B完成了任务「取回柜子里的东西」（人物互换）。\n最后用一句话写出时间推进，时长数值必须与上面给出的完全一致。\n只输出正文文字，不要 JSON、不要标题、不要列表、不要解释。\n正文:",
+            "text": "主角从柜子里取出了一件物品，时间推进30秒。",
+            "ms": 9397.405000686646,
+            "verdict": {
+              "ok": false,
+              "timeRequired": false,
+              "coverage": [
+                {
+                  "id": "person_c:task:task_shelf",
+                  "kind": "task_achieved",
+                  "expressed": false
+                }
+              ],
+              "omissions": [
+                "主角完成了任务「取回柜子里的东西」"
+              ],
+              "violations": [],
+              "unverified": [],
+              "repetition": null,
+              "timeExpressed": true
+            },
+            "completion": {
+              "raw": "主角从柜子里取出了一件物品，时间推进30秒。",
+              "finishReason": "stop",
+              "firstTokenMs": 8147.870000839233,
+              "wallMs": 9397.345000267029,
+              "timings": {
+                "cache_n": 0,
+                "prompt_n": 188,
+                "prompt_ms": 8028.879,
+                "prompt_per_token_ms": 42.706803191489364,
+                "prompt_per_second": 23.415473069154487,
+                "predicted_n": 16,
+                "predicted_ms": 1340.745,
+                "predicted_per_token_ms": 89.383,
+                "predicted_per_second": 11.1878097624828
+              }
+            }
+          },
+          {
+            "attempt": 2,
+            "prompt": "[任务: narration-natural]\n用一到三句顺畅的中文写出这一点位的叙事正文，像小说旁白，不要逐条罗列。\n只能使用下面的事实；人物动作的归属不得互换，方向、数值、任务名称必须与事实一致；不要补写没有给出的事件、物品或经过。\n本点时间推进：30 秒（必须自然地写出来）。\n事实：\n- 主角 / 达成任务 = 「取回柜子里的东西」\n不得出现：主角完成了任务「帮主角熟悉校园」（任务替换）；学生B完成了任务「取回柜子里的东西」（人物互换）。\n最后用一句话写出时间推进，时长数值必须与上面给出的完全一致。\n只输出正文文字，不要 JSON、不要标题、不要列表、不要解释。\n上一稿的问题：遗漏事实：主角完成了任务「取回柜子里的东西」。请改写。\n正文:",
+            "text": "主角取回柜子里的东西。",
+            "ms": 9981.360000610352,
+            "verdict": {
+              "ok": false,
+              "timeRequired": false,
+              "coverage": [
+                {
+                  "id": "person_c:task:task_shelf",
+                  "kind": "task_achieved",
+                  "expressed": false
+                }
+              ],
+              "omissions": [
+                "主角完成了任务「取回柜子里的东西」"
+              ],
+              "violations": [],
+              "unverified": [
+                "主角取回柜子里的东西"
+              ],
+              "repetition": null,
+              "timeExpressed": false
+            },
+            "completion": {
+              "raw": "主角取回柜子里的东西。",
+              "finishReason": "stop",
+              "firstTokenMs": 9419.32500076294,
+              "wallMs": 9981.310000419617,
+              "timings": {
+                "cache_n": 0,
+                "prompt_n": 211,
+                "prompt_ms": 9305.635,
+                "prompt_per_token_ms": 44.1025355450237,
+                "prompt_per_second": 22.67443328692776,
+                "predicted_n": 8,
+                "predicted_ms": 656.441,
+                "predicted_per_token_ms": 93.77728571428572,
+                "predicted_per_second": 10.663563062026899
+              }
+            }
+          }
+        ],
+        "adopted": false,
+        "fellBack": true,
+        "text": "主角完成了任务「取回柜子里的东西」。",
+        "final": {
+          "ok": false,
+          "timeRequired": false,
+          "coverage": [
+            {
+              "id": "person_c:task:task_shelf",
+              "kind": "task_achieved",
+              "expressed": false
+            }
+          ],
+          "omissions": [
+            "主角完成了任务「取回柜子里的东西」"
+          ],
+          "violations": [],
+          "unverified": [
+            "主角取回柜子里的东西"
+          ],
+          "repetition": null,
+          "timeExpressed": false
+        }
+      },
+      "wallMs": 19383.335000038147,
+      "attempts": [
+        {
+          "attempt": 1,
+          "prompt": "[任务: narration-natural]\n用一到三句顺畅的中文写出这一点位的叙事正文，像小说旁白，不要逐条罗列。\n只能使用下面的事实；人物动作的归属不得互换，方向、数值、任务名称必须与事实一致；不要补写没有给出的事件、物品或经过。\n本点时间推进：30 秒（必须自然地写出来）。\n事实：\n- 主角 / 达成任务 = 「取回柜子里的东西」\n不得出现：主角完成了任务「帮主角熟悉校园」（任务替换）；学生B完成了任务「取回柜子里的东西」（人物互换）。\n最后用一句话写出时间推进，时长数值必须与上面给出的完全一致。\n只输出正文文字，不要 JSON、不要标题、不要列表、不要解释。\n正文:",
+          "text": "主角从柜子里取出了一件物品，时间推进30秒。",
+          "ms": 9397.405000686646,
+          "verdict": {
+            "ok": false,
+            "timeRequired": false,
+            "coverage": [
+              {
+                "id": "person_c:task:task_shelf",
+                "kind": "task_achieved",
+                "expressed": false
+              }
+            ],
+            "omissions": [
+              "主角完成了任务「取回柜子里的东西」"
+            ],
+            "violations": [],
+            "unverified": [],
+            "repetition": null,
+            "timeExpressed": true
+          },
+          "completion": {
+            "raw": "主角从柜子里取出了一件物品，时间推进30秒。",
+            "finishReason": "stop",
+            "firstTokenMs": 8147.870000839233,
+            "wallMs": 9397.345000267029,
+            "timings": {
+              "cache_n": 0,
+              "prompt_n": 188,
+              "prompt_ms": 8028.879,
+              "prompt_per_token_ms": 42.706803191489364,
+              "prompt_per_second": 23.415473069154487,
+              "predicted_n": 16,
+              "predicted_ms": 1340.745,
+              "predicted_per_token_ms": 89.383,
+              "predicted_per_second": 11.1878097624828
+            }
+          }
+        },
+        {
+          "attempt": 2,
+          "prompt": "[任务: narration-natural]\n用一到三句顺畅的中文写出这一点位的叙事正文，像小说旁白，不要逐条罗列。\n只能使用下面的事实；人物动作的归属不得互换，方向、数值、任务名称必须与事实一致；不要补写没有给出的事件、物品或经过。\n本点时间推进：30 秒（必须自然地写出来）。\n事实：\n- 主角 / 达成任务 = 「取回柜子里的东西」\n不得出现：主角完成了任务「帮主角熟悉校园」（任务替换）；学生B完成了任务「取回柜子里的东西」（人物互换）。\n最后用一句话写出时间推进，时长数值必须与上面给出的完全一致。\n只输出正文文字，不要 JSON、不要标题、不要列表、不要解释。\n上一稿的问题：遗漏事实：主角完成了任务「取回柜子里的东西」。请改写。\n正文:",
+          "text": "主角取回柜子里的东西。",
+          "ms": 9981.360000610352,
+          "verdict": {
+            "ok": false,
+            "timeRequired": false,
+            "coverage": [
+              {
+                "id": "person_c:task:task_shelf",
+                "kind": "task_achieved",
+                "expressed": false
+              }
+            ],
+            "omissions": [
+              "主角完成了任务「取回柜子里的东西」"
+            ],
+            "violations": [],
+            "unverified": [
+              "主角取回柜子里的东西"
+            ],
+            "repetition": null,
+            "timeExpressed": false
+          },
+          "completion": {
+            "raw": "主角取回柜子里的东西。",
+            "finishReason": "stop",
+            "firstTokenMs": 9419.32500076294,
+            "wallMs": 9981.310000419617,
+            "timings": {
+              "cache_n": 0,
+              "prompt_n": 211,
+              "prompt_ms": 9305.635,
+              "prompt_per_token_ms": 44.1025355450237,
+              "prompt_per_second": 22.67443328692776,
+              "predicted_n": 8,
+              "predicted_ms": 656.441,
+              "predicted_per_token_ms": 93.77728571428572,
+              "predicted_per_second": 10.663563062026899
+            }
+          }
+        }
+      ]
+    },
+    {
+      "sampleId": "nv-refused-1",
+      "category": "refused_action",
+      "template": {
+        "text": "",
+        "verdict": {
+          "ok": false,
+          "timeRequired": false,
+          "coverage": [],
+          "omissions": [],
+          "violations": [
+            {
+              "kind": "empty_narration",
+              "sentence": "",
+              "detail": "empty or whitespace-only narration"
+            }
+          ],
+          "unverified": [],
+          "repetition": null,
+          "timeExpressed": false
+        }
+      },
+      "mechanical": {
+        "text": "",
+        "verdict": {
+          "ok": false,
+          "timeRequired": false,
+          "coverage": [],
+          "omissions": [],
+          "violations": [
+            {
+              "kind": "empty_narration",
+              "sentence": "",
+              "detail": "empty or whitespace-only narration"
+            }
+          ],
+          "unverified": [],
+          "repetition": null,
+          "timeExpressed": false
+        }
+      },
+      "natural": {
+        "attempts": [
+          {
+            "attempt": 1,
+            "prompt": "[任务: narration-natural]\n用一到三句顺畅的中文写出这一点位的叙事正文，像小说旁白，不要逐条罗列。\n只能使用下面的事实；人物动作的归属不得互换，方向、数值、任务名称必须与事实一致；不要补写没有给出的事件、物品或经过。\n本点时间推进：1 秒（必须自然地写出来）。\n事实：\n- 本点没有任何实体变化（只有时间推进）。\n不得出现：主角走到了门厅（拒绝的行动被叙述成发生）；主角推开走廊尽头的门（新增事件）。\n最后用一句话写出时间推进，时长数值必须与上面给出的完全一致。\n只输出正文文字，不要 JSON、不要标题、不要列表、不要解释。\n正文:",
+            "text": "时间推进。",
+            "ms": 8296.155000686646,
+            "verdict": {
+              "ok": true,
+              "timeRequired": false,
+              "coverage": [],
+              "omissions": [],
+              "violations": [],
+              "unverified": [
+                "时间推进"
+              ],
+              "repetition": null,
+              "timeExpressed": false
+            },
+            "completion": {
+              "raw": "时间推进。",
+              "finishReason": "stop",
+              "firstTokenMs": 8112.939999580383,
+              "wallMs": 8296.114999771118,
+              "timings": {
+                "cache_n": 0,
+                "prompt_n": 178,
+                "prompt_ms": 7963.149,
+                "prompt_per_token_ms": 44.73679213483146,
+                "prompt_per_second": 22.352966144423515,
+                "predicted_n": 4,
+                "predicted_ms": 293.961,
+                "predicted_per_token_ms": 97.98700000000001,
+                "predicted_per_second": 10.205435414901977
+              }
+            }
+          }
+        ],
+        "adopted": true,
+        "fellBack": false,
+        "text": "时间推进。",
+        "final": {
+          "ok": true,
+          "timeRequired": false,
+          "coverage": [],
+          "omissions": [],
+          "violations": [],
+          "unverified": [
+            "时间推进"
+          ],
+          "repetition": null,
+          "timeExpressed": false
+        }
+      },
+      "wallMs": 8297.529999732971,
+      "attempts": [
+        {
+          "attempt": 1,
+          "prompt": "[任务: narration-natural]\n用一到三句顺畅的中文写出这一点位的叙事正文，像小说旁白，不要逐条罗列。\n只能使用下面的事实；人物动作的归属不得互换，方向、数值、任务名称必须与事实一致；不要补写没有给出的事件、物品或经过。\n本点时间推进：1 秒（必须自然地写出来）。\n事实：\n- 本点没有任何实体变化（只有时间推进）。\n不得出现：主角走到了门厅（拒绝的行动被叙述成发生）；主角推开走廊尽头的门（新增事件）。\n最后用一句话写出时间推进，时长数值必须与上面给出的完全一致。\n只输出正文文字，不要 JSON、不要标题、不要列表、不要解释。\n正文:",
+          "text": "时间推进。",
+          "ms": 8296.155000686646,
+          "verdict": {
+            "ok": true,
+            "timeRequired": false,
+            "coverage": [],
+            "omissions": [],
+            "violations": [],
+            "unverified": [
+              "时间推进"
+            ],
+            "repetition": null,
+            "timeExpressed": false
+          },
+          "completion": {
+            "raw": "时间推进。",
+            "finishReason": "stop",
+            "firstTokenMs": 8112.939999580383,
+            "wallMs": 8296.114999771118,
+            "timings": {
+              "cache_n": 0,
+              "prompt_n": 178,
+              "prompt_ms": 7963.149,
+              "prompt_per_token_ms": 44.73679213483146,
+              "prompt_per_second": 22.352966144423515,
+              "predicted_n": 4,
+              "predicted_ms": 293.961,
+              "predicted_per_token_ms": 97.98700000000001,
+              "predicted_per_second": 10.205435414901977
+            }
+          }
+        }
+      ]
+    },
+    {
+      "sampleId": "nv-empty-1",
+      "category": "no_change",
+      "template": {
+        "text": "",
+        "verdict": {
+          "ok": false,
+          "timeRequired": false,
+          "coverage": [],
+          "omissions": [],
+          "violations": [
+            {
+              "kind": "empty_narration",
+              "sentence": "",
+              "detail": "empty or whitespace-only narration"
+            }
+          ],
+          "unverified": [],
+          "repetition": null,
+          "timeExpressed": false
+        }
+      },
+      "mechanical": {
+        "text": "",
+        "verdict": {
+          "ok": false,
+          "timeRequired": false,
+          "coverage": [],
+          "omissions": [],
+          "violations": [
+            {
+              "kind": "empty_narration",
+              "sentence": "",
+              "detail": "empty or whitespace-only narration"
+            }
+          ],
+          "unverified": [],
+          "repetition": null,
+          "timeExpressed": false
+        }
+      },
+      "natural": {
+        "attempts": [
+          {
+            "attempt": 1,
+            "prompt": "[任务: narration-natural]\n用一到三句顺畅的中文写出这一点位的叙事正文，像小说旁白，不要逐条罗列。\n只能使用下面的事实；人物动作的归属不得互换，方向、数值、任务名称必须与事实一致；不要补写没有给出的事件、物品或经过。\n本点时间推进：5 分钟（必须自然地写出来）。\n事实：\n- 本点没有任何实体变化（只有时间推进）。\n不得出现：学生A走进了大厅（无事实的移动）；主角完成了任务「取回柜子里的东西」（无事实的任务）。\n最后用一句话写出时间推进，时长数值必须与上面给出的完全一致。\n只输出正文文字，不要 JSON、不要标题、不要列表、不要解释。\n正文:",
+            "text": "时间推进。",
+            "ms": 8259.335000038147,
+            "verdict": {
+              "ok": true,
+              "timeRequired": false,
+              "coverage": [],
+              "omissions": [],
+              "violations": [],
+              "unverified": [
+                "时间推进"
+              ],
+              "repetition": null,
+              "timeExpressed": false
+            },
+            "completion": {
+              "raw": "时间推进。",
+              "finishReason": "stop",
+              "firstTokenMs": 8081.08000087738,
+              "wallMs": 8259.280000686646,
+              "timings": {
+                "cache_n": 0,
+                "prompt_n": 180,
+                "prompt_ms": 7963.319,
+                "prompt_per_token_ms": 44.240661111111116,
+                "prompt_per_second": 22.603640517226548,
+                "predicted_n": 4,
+                "predicted_ms": 267.966,
+                "predicted_per_token_ms": 89.322,
+                "predicted_per_second": 11.195450169051297
+              }
+            }
+          }
+        ],
+        "adopted": true,
+        "fellBack": false,
+        "text": "时间推进。",
+        "final": {
+          "ok": true,
+          "timeRequired": false,
+          "coverage": [],
+          "omissions": [],
+          "violations": [],
+          "unverified": [
+            "时间推进"
+          ],
+          "repetition": null,
+          "timeExpressed": false
+        }
+      },
+      "wallMs": 8260.425000190735,
+      "attempts": [
+        {
+          "attempt": 1,
+          "prompt": "[任务: narration-natural]\n用一到三句顺畅的中文写出这一点位的叙事正文，像小说旁白，不要逐条罗列。\n只能使用下面的事实；人物动作的归属不得互换，方向、数值、任务名称必须与事实一致；不要补写没有给出的事件、物品或经过。\n本点时间推进：5 分钟（必须自然地写出来）。\n事实：\n- 本点没有任何实体变化（只有时间推进）。\n不得出现：学生A走进了大厅（无事实的移动）；主角完成了任务「取回柜子里的东西」（无事实的任务）。\n最后用一句话写出时间推进，时长数值必须与上面给出的完全一致。\n只输出正文文字，不要 JSON、不要标题、不要列表、不要解释。\n正文:",
+          "text": "时间推进。",
+          "ms": 8259.335000038147,
+          "verdict": {
+            "ok": true,
+            "timeRequired": false,
+            "coverage": [],
+            "omissions": [],
+            "violations": [],
+            "unverified": [
+              "时间推进"
+            ],
+            "repetition": null,
+            "timeExpressed": false
+          },
+          "completion": {
+            "raw": "时间推进。",
+            "finishReason": "stop",
+            "firstTokenMs": 8081.08000087738,
+            "wallMs": 8259.280000686646,
+            "timings": {
+              "cache_n": 0,
+              "prompt_n": 180,
+              "prompt_ms": 7963.319,
+              "prompt_per_token_ms": 44.240661111111116,
+              "prompt_per_second": 22.603640517226548,
+              "predicted_n": 4,
+              "predicted_ms": 267.966,
+              "predicted_per_token_ms": 89.322,
+              "predicted_per_second": 11.195450169051297
+            }
+          }
+        }
+      ]
+    },
+    {
+      "sampleId": "nv-cont-1",
+      "category": "continuity",
+      "template": {
+        "text": "学生A从走廊走到大厅。",
+        "verdict": {
+          "ok": true,
+          "timeRequired": false,
+          "coverage": [
+            {
+              "id": "person_a:position",
+              "kind": "moved",
+              "expressed": true
+            }
+          ],
+          "omissions": [],
+          "violations": [],
+          "unverified": [],
+          "repetition": null,
+          "timeExpressed": false
+        }
+      },
+      "mechanical": {
+        "text": "学生A从走廊来到大厅。",
+        "verdict": {
+          "ok": true,
+          "timeRequired": false,
+          "coverage": [
+            {
+              "id": "person_a:position",
+              "kind": "moved",
+              "expressed": true
+            }
+          ],
+          "omissions": [],
+          "violations": [],
+          "unverified": [],
+          "repetition": null,
+          "timeExpressed": false
+        }
+      },
+      "natural": {
+        "attempts": [
+          {
+            "attempt": 1,
+            "prompt": "[任务: narration-natural]\n用一到三句顺畅的中文写出这一点位的叙事正文，像小说旁白，不要逐条罗列。\n只能使用下面的事实；人物动作的归属不得互换，方向、数值、任务名称必须与事实一致；不要补写没有给出的事件、物品或经过。\n本点时间推进：2 秒（必须自然地写出来）。\n事实：\n- 学生A / 位置 = 从 走廊 到 大厅\n不得出现：学生A从大厅走到了走廊（方向反转）。\n最后用一句话写出时间推进，时长数值必须与上面给出的完全一致。\n只输出正文文字，不要 JSON、不要标题、不要列表、不要解释。\n正文:",
+            "text": "学生A从走廊走向大厅。",
+            "ms": 8024.550000190735,
+            "verdict": {
+              "ok": true,
+              "timeRequired": false,
+              "coverage": [
+                {
+                  "id": "person_a:position",
+                  "kind": "moved",
+                  "expressed": true
+                }
+              ],
+              "omissions": [],
+              "violations": [],
+              "unverified": [],
+              "repetition": null,
+              "timeExpressed": false
+            },
+            "completion": {
+              "raw": "学生A从走廊走向大厅。",
+              "finishReason": "stop",
+              "firstTokenMs": 7502.359999656677,
+              "wallMs": 8024.510000228882,
+              "timings": {
+                "cache_n": 0,
+                "prompt_n": 172,
+                "prompt_ms": 7376.134,
+                "prompt_per_token_ms": 42.8845,
+                "prompt_per_second": 23.3184483904441,
+                "predicted_n": 8,
+                "predicted_ms": 618.031,
+                "predicted_per_token_ms": 88.29014285714285,
+                "predicted_per_second": 11.3262926940558
+              }
+            }
+          }
+        ],
+        "adopted": true,
+        "fellBack": false,
+        "text": "学生A从走廊走向大厅。",
+        "final": {
+          "ok": true,
+          "timeRequired": false,
+          "coverage": [
+            {
+              "id": "person_a:position",
+              "kind": "moved",
+              "expressed": true
+            }
+          ],
+          "omissions": [],
+          "violations": [],
+          "unverified": [],
+          "repetition": null,
+          "timeExpressed": false
+        }
+      },
+      "wallMs": 8027.72500038147,
+      "attempts": [
+        {
+          "attempt": 1,
+          "prompt": "[任务: narration-natural]\n用一到三句顺畅的中文写出这一点位的叙事正文，像小说旁白，不要逐条罗列。\n只能使用下面的事实；人物动作的归属不得互换，方向、数值、任务名称必须与事实一致；不要补写没有给出的事件、物品或经过。\n本点时间推进：2 秒（必须自然地写出来）。\n事实：\n- 学生A / 位置 = 从 走廊 到 大厅\n不得出现：学生A从大厅走到了走廊（方向反转）。\n最后用一句话写出时间推进，时长数值必须与上面给出的完全一致。\n只输出正文文字，不要 JSON、不要标题、不要列表、不要解释。\n正文:",
+          "text": "学生A从走廊走向大厅。",
+          "ms": 8024.550000190735,
+          "verdict": {
+            "ok": true,
+            "timeRequired": false,
+            "coverage": [
+              {
+                "id": "person_a:position",
+                "kind": "moved",
+                "expressed": true
+              }
+            ],
+            "omissions": [],
+            "violations": [],
+            "unverified": [],
+            "repetition": null,
+            "timeExpressed": false
+          },
+          "completion": {
+            "raw": "学生A从走廊走向大厅。",
+            "finishReason": "stop",
+            "firstTokenMs": 7502.359999656677,
+            "wallMs": 8024.510000228882,
+            "timings": {
+              "cache_n": 0,
+              "prompt_n": 172,
+              "prompt_ms": 7376.134,
+              "prompt_per_token_ms": 42.8845,
+              "prompt_per_second": 23.3184483904441,
+              "predicted_n": 8,
+              "predicted_ms": 618.031,
+              "predicted_per_token_ms": 88.29014285714285,
+              "predicted_per_second": 11.3262926940558
+            }
+          }
+        }
+      ]
+    },
+    {
+      "sampleId": "nv-cont-2",
+      "category": "continuity",
+      "template": {
+        "text": "学生B位于大厅。",
+        "verdict": {
+          "ok": true,
+          "timeRequired": false,
+          "coverage": [
+            {
+              "id": "person_b:position",
+              "kind": "at",
+              "expressed": true
+            }
+          ],
+          "omissions": [],
+          "violations": [],
+          "unverified": [],
+          "repetition": null,
+          "timeExpressed": false
+        }
+      },
+      "mechanical": {
+        "text": "学生B现在在大厅。",
+        "verdict": {
+          "ok": true,
+          "timeRequired": false,
+          "coverage": [
+            {
+              "id": "person_b:position",
+              "kind": "at",
+              "expressed": true
+            }
+          ],
+          "omissions": [],
+          "violations": [],
+          "unverified": [],
+          "repetition": null,
+          "timeExpressed": false
+        }
+      },
+      "natural": {
+        "attempts": [
+          {
+            "attempt": 1,
+            "prompt": "[任务: narration-natural]\n用一到三句顺畅的中文写出这一点位的叙事正文，像小说旁白，不要逐条罗列。\n只能使用下面的事实；人物动作的归属不得互换，方向、数值、任务名称必须与事实一致；不要补写没有给出的事件、物品或经过。\n本点时间推进：2 分钟（必须自然地写出来）。\n事实：\n- 学生B / 所在位置 = 大厅\n不得出现：学生B从走廊走到大厅（本点没有移动事实）；学生A位于大厅（人物互换）。\n最后用一句话写出时间推进，时长数值必须与上面给出的完全一致。\n只输出正文文字，不要 JSON、不要标题、不要列表、不要解释。\n正文:",
+            "text": "学生B在大厅内，学生A在走廊。时间推进：2分钟。",
+            "ms": 9210.5,
+            "verdict": {
+              "ok": false,
+              "timeRequired": false,
+              "coverage": [
+                {
+                  "id": "person_b:position",
+                  "kind": "at",
+                  "expressed": true
+                }
+              ],
+              "omissions": [],
+              "violations": [
+                {
+                  "kind": "state_claim_without_fact",
+                  "sentence": "学生B在大厅内，学生A在走廊",
+                  "detail": "学生A at 走廊 has no committed position fact"
+                }
+              ],
+              "unverified": [],
+              "repetition": null,
+              "timeExpressed": true
+            },
+            "completion": {
+              "raw": "学生B在大厅内，学生A在走廊。时间推进：2分钟。",
+              "finishReason": "stop",
+              "firstTokenMs": 7817.734999656677,
+              "wallMs": 9210.474999427795,
+              "timings": {
+                "cache_n": 0,
+                "prompt_n": 178,
+                "prompt_ms": 7686.851,
+                "prompt_per_token_ms": 43.18455617977528,
+                "prompt_per_second": 23.156426474248036,
+                "predicted_n": 18,
+                "predicted_ms": 1483.78,
+                "predicted_per_token_ms": 87.28117647058824,
+                "predicted_per_second": 11.457224116782811
+              }
+            }
+          },
+          {
+            "attempt": 2,
+            "prompt": "[任务: narration-natural]\n用一到三句顺畅的中文写出这一点位的叙事正文，像小说旁白，不要逐条罗列。\n只能使用下面的事实；人物动作的归属不得互换，方向、数值、任务名称必须与事实一致；不要补写没有给出的事件、物品或经过。\n本点时间推进：2 分钟（必须自然地写出来）。\n事实：\n- 学生B / 所在位置 = 大厅\n不得出现：学生B从走廊走到大厅（本点没有移动事实）；学生A位于大厅（人物互换）。\n最后用一句话写出时间推进，时长数值必须与上面给出的完全一致。\n只输出正文文字，不要 JSON、不要标题、不要列表、不要解释。\n上一稿的问题：学生A at 走廊 has no committed position fact。请改写。\n正文:",
+            "text": "学生B在大厅，学生A在走廊。时间推进：2分钟。",
+            "ms": 10269.820000648499,
+            "verdict": {
+              "ok": false,
+              "timeRequired": false,
+              "coverage": [
+                {
+                  "id": "person_b:position",
+                  "kind": "at",
+                  "expressed": true
+                }
+              ],
+              "omissions": [],
+              "violations": [
+                {
+                  "kind": "state_claim_without_fact",
+                  "sentence": "学生B在大厅，学生A在走廊",
+                  "detail": "学生A at 走廊 has no committed position fact"
+                }
+              ],
+              "unverified": [],
+              "repetition": null,
+              "timeExpressed": true
+            },
+            "completion": {
+              "raw": "学生B在大厅，学生A在走廊。时间推进：2分钟。",
+              "finishReason": "stop",
+              "firstTokenMs": 8894.135000228882,
+              "wallMs": 10269.800000190735,
+              "timings": {
+                "cache_n": 0,
+                "prompt_n": 200,
+                "prompt_ms": 8782.854,
+                "prompt_per_token_ms": 43.914269999999995,
+                "prompt_per_second": 22.77164120000173,
+                "predicted_n": 17,
+                "predicted_ms": 1464.346,
+                "predicted_per_token_ms": 91.521625,
+                "predicted_per_second": 10.926379421256998
+              }
+            }
+          }
+        ],
+        "adopted": false,
+        "fellBack": true,
+        "text": "学生B位于大厅。",
+        "final": {
+          "ok": false,
+          "timeRequired": false,
+          "coverage": [
+            {
+              "id": "person_b:position",
+              "kind": "at",
+              "expressed": true
+            }
+          ],
+          "omissions": [],
+          "violations": [
+            {
+              "kind": "state_claim_without_fact",
+              "sentence": "学生B在大厅，学生A在走廊",
+              "detail": "学生A at 走廊 has no committed position fact"
+            }
+          ],
+          "unverified": [],
+          "repetition": null,
+          "timeExpressed": true
+        }
+      },
+      "wallMs": 19486.099999427795,
+      "attempts": [
+        {
+          "attempt": 1,
+          "prompt": "[任务: narration-natural]\n用一到三句顺畅的中文写出这一点位的叙事正文，像小说旁白，不要逐条罗列。\n只能使用下面的事实；人物动作的归属不得互换，方向、数值、任务名称必须与事实一致；不要补写没有给出的事件、物品或经过。\n本点时间推进：2 分钟（必须自然地写出来）。\n事实：\n- 学生B / 所在位置 = 大厅\n不得出现：学生B从走廊走到大厅（本点没有移动事实）；学生A位于大厅（人物互换）。\n最后用一句话写出时间推进，时长数值必须与上面给出的完全一致。\n只输出正文文字，不要 JSON、不要标题、不要列表、不要解释。\n正文:",
+          "text": "学生B在大厅内，学生A在走廊。时间推进：2分钟。",
+          "ms": 9210.5,
+          "verdict": {
+            "ok": false,
+            "timeRequired": false,
+            "coverage": [
+              {
+                "id": "person_b:position",
+                "kind": "at",
+                "expressed": true
+              }
+            ],
+            "omissions": [],
+            "violations": [
+              {
+                "kind": "state_claim_without_fact",
+                "sentence": "学生B在大厅内，学生A在走廊",
+                "detail": "学生A at 走廊 has no committed position fact"
+              }
+            ],
+            "unverified": [],
+            "repetition": null,
+            "timeExpressed": true
+          },
+          "completion": {
+            "raw": "学生B在大厅内，学生A在走廊。时间推进：2分钟。",
+            "finishReason": "stop",
+            "firstTokenMs": 7817.734999656677,
+            "wallMs": 9210.474999427795,
+            "timings": {
+              "cache_n": 0,
+              "prompt_n": 178,
+              "prompt_ms": 7686.851,
+              "prompt_per_token_ms": 43.18455617977528,
+              "prompt_per_second": 23.156426474248036,
+              "predicted_n": 18,
+              "predicted_ms": 1483.78,
+              "predicted_per_token_ms": 87.28117647058824,
+              "predicted_per_second": 11.457224116782811
+            }
+          }
+        },
+        {
+          "attempt": 2,
+          "prompt": "[任务: narration-natural]\n用一到三句顺畅的中文写出这一点位的叙事正文，像小说旁白，不要逐条罗列。\n只能使用下面的事实；人物动作的归属不得互换，方向、数值、任务名称必须与事实一致；不要补写没有给出的事件、物品或经过。\n本点时间推进：2 分钟（必须自然地写出来）。\n事实：\n- 学生B / 所在位置 = 大厅\n不得出现：学生B从走廊走到大厅（本点没有移动事实）；学生A位于大厅（人物互换）。\n最后用一句话写出时间推进，时长数值必须与上面给出的完全一致。\n只输出正文文字，不要 JSON、不要标题、不要列表、不要解释。\n上一稿的问题：学生A at 走廊 has no committed position fact。请改写。\n正文:",
+          "text": "学生B在大厅，学生A在走廊。时间推进：2分钟。",
+          "ms": 10269.820000648499,
+          "verdict": {
+            "ok": false,
+            "timeRequired": false,
+            "coverage": [
+              {
+                "id": "person_b:position",
+                "kind": "at",
+                "expressed": true
+              }
+            ],
+            "omissions": [],
+            "violations": [
+              {
+                "kind": "state_claim_without_fact",
+                "sentence": "学生B在大厅，学生A在走廊",
+                "detail": "学生A at 走廊 has no committed position fact"
+              }
+            ],
+            "unverified": [],
+            "repetition": null,
+            "timeExpressed": true
+          },
+          "completion": {
+            "raw": "学生B在大厅，学生A在走廊。时间推进：2分钟。",
+            "finishReason": "stop",
+            "firstTokenMs": 8894.135000228882,
+            "wallMs": 10269.800000190735,
+            "timings": {
+              "cache_n": 0,
+              "prompt_n": 200,
+              "prompt_ms": 8782.854,
+              "prompt_per_token_ms": 43.914269999999995,
+              "prompt_per_second": 22.77164120000173,
+              "predicted_n": 17,
+              "predicted_ms": 1464.346,
+              "predicted_per_token_ms": 91.521625,
+              "predicted_per_second": 10.926379421256998
+            }
+          }
+        }
+      ]
+    },
+    {
+      "sampleId": "nv-cont-3",
+      "category": "continuity",
+      "template": {
+        "text": "",
+        "verdict": {
+          "ok": false,
+          "timeRequired": false,
+          "coverage": [],
+          "omissions": [],
+          "violations": [
+            {
+              "kind": "empty_narration",
+              "sentence": "",
+              "detail": "empty or whitespace-only narration"
+            }
+          ],
+          "unverified": [],
+          "repetition": null,
+          "timeExpressed": false
+        }
+      },
+      "mechanical": {
+        "text": "",
+        "verdict": {
+          "ok": false,
+          "timeRequired": false,
+          "coverage": [],
+          "omissions": [],
+          "violations": [
+            {
+              "kind": "empty_narration",
+              "sentence": "",
+              "detail": "empty or whitespace-only narration"
+            }
+          ],
+          "unverified": [],
+          "repetition": null,
+          "timeExpressed": false
+        }
+      },
+      "natural": {
+        "attempts": [
+          {
+            "attempt": 1,
+            "prompt": "[任务: narration-natural]\n用一到三句顺畅的中文写出这一点位的叙事正文，像小说旁白，不要逐条罗列。\n只能使用下面的事实；人物动作的归属不得互换，方向、数值、任务名称必须与事实一致；不要补写没有给出的事件、物品或经过。\n本点时间推进：5 分钟（必须自然地写出来）。\n事实：\n- 本点没有任何实体变化（只有时间推进）。\n不得出现：学生A又从走廊走到了大厅（把旧变化说成再次发生）。\n最后用一句话写出时间推进，时长数值必须与上面给出的完全一致。\n只输出正文文字，不要 JSON、不要标题、不要列表、不要解释。\n正文:",
+            "text": "时间推进，走廊与大厅的界限逐渐模糊，脚步声在寂静中回响。学生A从走廊走向大厅，步伐坚定，仿佛在追寻某种目标。最终，他停在大厅中央，目光坚定地注视着前方，时间推进，5分钟。",
+            "ms": 12521.510000228882,
+            "verdict": {
+              "ok": false,
+              "timeRequired": false,
+              "coverage": [],
+              "omissions": [],
+              "violations": [
+                {
+                  "kind": "movement_without_fact",
+                  "sentence": "学生A从走廊走向大厅，步伐坚定，仿佛在追寻某种目标",
+                  "detail": "claims movement involving 走廊"
+                }
+              ],
+              "unverified": [
+                "时间推进，走廊与大厅的界限逐渐模糊，脚步声在寂静中回响"
+              ],
+              "repetition": 0.13636363636363635,
+              "timeExpressed": true
+            },
+            "completion": {
+              "raw": "时间推进，走廊与大厅的界限逐渐模糊，脚步声在寂静中回响。学生A从走廊走向大厅，步伐坚定，仿佛在追寻某种目标。最终，他停在大厅中央，目光坚定地注视着前方，时间推进，5分钟。",
+              "finishReason": "stop",
+              "firstTokenMs": 7583.270000457764,
+              "wallMs": 12521.48000049591,
+              "timings": {
+                "cache_n": 0,
+                "prompt_n": 170,
+                "prompt_ms": 7457.559,
+                "prompt_per_token_ms": 43.86799411764706,
+                "prompt_per_second": 22.795662763110556,
+                "predicted_n": 57,
+                "predicted_ms": 5023.68,
+                "predicted_per_token_ms": 89.70857142857143,
+                "predicted_per_second": 11.14720682846041
+              }
+            }
+          },
+          {
+            "attempt": 2,
+            "prompt": "[任务: narration-natural]\n用一到三句顺畅的中文写出这一点位的叙事正文，像小说旁白，不要逐条罗列。\n只能使用下面的事实；人物动作的归属不得互换，方向、数值、任务名称必须与事实一致；不要补写没有给出的事件、物品或经过。\n本点时间推进：5 分钟（必须自然地写出来）。\n事实：\n- 本点没有任何实体变化（只有时间推进）。\n不得出现：学生A又从走廊走到了大厅（把旧变化说成再次发生）。\n最后用一句话写出时间推进，时长数值必须与上面给出的完全一致。\n只输出正文文字，不要 JSON、不要标题、不要列表、不要解释。\n上一稿的问题：claims movement involving 走廊。请改写。\n正文:",
+            "text": "时间推进：5 分钟。",
+            "ms": 8899.484999656677,
+            "verdict": {
+              "ok": true,
+              "timeRequired": false,
+              "coverage": [],
+              "omissions": [],
+              "violations": [],
+              "unverified": [
+                "时间推进：5 分钟"
+              ],
+              "repetition": 0.03333333333333333,
+              "timeExpressed": false
+            },
+            "completion": {
+              "raw": "时间推进：5 分钟。",
+              "finishReason": "stop",
+              "firstTokenMs": 8382.73000049591,
+              "wallMs": 8899.460000038147,
+              "timings": {
+                "cache_n": 0,
+                "prompt_n": 187,
+                "prompt_ms": 8274.189,
+                "prompt_per_token_ms": 44.247,
+                "prompt_per_second": 22.600402287160712,
+                "predicted_n": 8,
+                "predicted_ms": 604.041,
+                "predicted_per_token_ms": 86.29157142857143,
+                "predicted_per_second": 11.588617328956147
+              }
+            }
+          }
+        ],
+        "adopted": true,
+        "fellBack": false,
+        "text": "时间推进：5 分钟。",
+        "final": {
+          "ok": true,
+          "timeRequired": false,
+          "coverage": [],
+          "omissions": [],
+          "violations": [],
+          "unverified": [
+            "时间推进：5 分钟"
+          ],
+          "repetition": 0.03333333333333333,
+          "timeExpressed": false
+        }
+      },
+      "wallMs": 21427.534999847412,
+      "attempts": [
+        {
+          "attempt": 1,
+          "prompt": "[任务: narration-natural]\n用一到三句顺畅的中文写出这一点位的叙事正文，像小说旁白，不要逐条罗列。\n只能使用下面的事实；人物动作的归属不得互换，方向、数值、任务名称必须与事实一致；不要补写没有给出的事件、物品或经过。\n本点时间推进：5 分钟（必须自然地写出来）。\n事实：\n- 本点没有任何实体变化（只有时间推进）。\n不得出现：学生A又从走廊走到了大厅（把旧变化说成再次发生）。\n最后用一句话写出时间推进，时长数值必须与上面给出的完全一致。\n只输出正文文字，不要 JSON、不要标题、不要列表、不要解释。\n正文:",
+          "text": "时间推进，走廊与大厅的界限逐渐模糊，脚步声在寂静中回响。学生A从走廊走向大厅，步伐坚定，仿佛在追寻某种目标。最终，他停在大厅中央，目光坚定地注视着前方，时间推进，5分钟。",
+          "ms": 12521.510000228882,
+          "verdict": {
+            "ok": false,
+            "timeRequired": false,
+            "coverage": [],
+            "omissions": [],
+            "violations": [
+              {
+                "kind": "movement_without_fact",
+                "sentence": "学生A从走廊走向大厅，步伐坚定，仿佛在追寻某种目标",
+                "detail": "claims movement involving 走廊"
+              }
+            ],
+            "unverified": [
+              "时间推进，走廊与大厅的界限逐渐模糊，脚步声在寂静中回响"
+            ],
+            "repetition": 0.13636363636363635,
+            "timeExpressed": true
+          },
+          "completion": {
+            "raw": "时间推进，走廊与大厅的界限逐渐模糊，脚步声在寂静中回响。学生A从走廊走向大厅，步伐坚定，仿佛在追寻某种目标。最终，他停在大厅中央，目光坚定地注视着前方，时间推进，5分钟。",
+            "finishReason": "stop",
+            "firstTokenMs": 7583.270000457764,
+            "wallMs": 12521.48000049591,
+            "timings": {
+              "cache_n": 0,
+              "prompt_n": 170,
+              "prompt_ms": 7457.559,
+              "prompt_per_token_ms": 43.86799411764706,
+              "prompt_per_second": 22.795662763110556,
+              "predicted_n": 57,
+              "predicted_ms": 5023.68,
+              "predicted_per_token_ms": 89.70857142857143,
+              "predicted_per_second": 11.14720682846041
+            }
+          }
+        },
+        {
+          "attempt": 2,
+          "prompt": "[任务: narration-natural]\n用一到三句顺畅的中文写出这一点位的叙事正文，像小说旁白，不要逐条罗列。\n只能使用下面的事实；人物动作的归属不得互换，方向、数值、任务名称必须与事实一致；不要补写没有给出的事件、物品或经过。\n本点时间推进：5 分钟（必须自然地写出来）。\n事实：\n- 本点没有任何实体变化（只有时间推进）。\n不得出现：学生A又从走廊走到了大厅（把旧变化说成再次发生）。\n最后用一句话写出时间推进，时长数值必须与上面给出的完全一致。\n只输出正文文字，不要 JSON、不要标题、不要列表、不要解释。\n上一稿的问题：claims movement involving 走廊。请改写。\n正文:",
+          "text": "时间推进：5 分钟。",
+          "ms": 8899.484999656677,
+          "verdict": {
+            "ok": true,
+            "timeRequired": false,
+            "coverage": [],
+            "omissions": [],
+            "violations": [],
+            "unverified": [
+              "时间推进：5 分钟"
+            ],
+            "repetition": 0.03333333333333333,
+            "timeExpressed": false
+          },
+          "completion": {
+            "raw": "时间推进：5 分钟。",
+            "finishReason": "stop",
+            "firstTokenMs": 8382.73000049591,
+            "wallMs": 8899.460000038147,
+            "timings": {
+              "cache_n": 0,
+              "prompt_n": 187,
+              "prompt_ms": 8274.189,
+              "prompt_per_token_ms": 44.247,
+              "prompt_per_second": 22.600402287160712,
+              "predicted_n": 8,
+              "predicted_ms": 604.041,
+              "predicted_per_token_ms": 86.29157142857143,
+              "predicted_per_second": 11.588617328956147
+            }
+          }
+        }
+      ]
+    },
+    {
+      "sampleId": "nv-multi-opposite-1",
+      "category": "multi_character",
+      "template": {
+        "text": "学生A从走廊走到大厅。学生B从大厅走到走廊。",
+        "verdict": {
+          "ok": true,
+          "timeRequired": false,
+          "coverage": [
+            {
+              "id": "person_a:position",
+              "kind": "moved",
+              "expressed": true
+            },
+            {
+              "id": "person_b:position",
+              "kind": "moved",
+              "expressed": true
+            }
+          ],
+          "omissions": [],
+          "violations": [],
+          "unverified": [],
+          "repetition": null,
+          "timeExpressed": false
+        }
+      },
+      "mechanical": {
+        "text": "学生A从走廊来到大厅。学生B从大厅来到走廊。",
+        "verdict": {
+          "ok": true,
+          "timeRequired": false,
+          "coverage": [
+            {
+              "id": "person_a:position",
+              "kind": "moved",
+              "expressed": true
+            },
+            {
+              "id": "person_b:position",
+              "kind": "moved",
+              "expressed": true
+            }
+          ],
+          "omissions": [],
+          "violations": [],
+          "unverified": [],
+          "repetition": null,
+          "timeExpressed": false
+        }
+      },
+      "natural": {
+        "attempts": [
+          {
+            "attempt": 1,
+            "prompt": "[任务: narration-natural]\n用一到三句顺畅的中文写出这一点位的叙事正文，像小说旁白，不要逐条罗列。\n只能使用下面的事实；人物动作的归属不得互换，方向、数值、任务名称必须与事实一致；不要补写没有给出的事件、物品或经过。\n本点时间推进：3 秒（必须自然地写出来）。\n事实：\n- 学生A / 位置 = 从 走廊 到 大厅\n- 学生B / 位置 = 从 大厅 到 走廊\n不得出现：学生A从大厅走到走廊（两人方向互换）；学生B从走廊走到大厅（两人方向互换）。\n最后用一句话写出时间推进，时长数值必须与上面给出的完全一致。\n只输出正文文字，不要 JSON、不要标题、不要列表、不要解释。\n正文:",
+            "text": "学生A从走廊走到大厅，学生B从大厅走到走廊。时间推进：3秒。",
+            "ms": 10805.220000267029,
+            "verdict": {
+              "ok": true,
+              "timeRequired": false,
+              "coverage": [
+                {
+                  "id": "person_a:position",
+                  "kind": "moved",
+                  "expressed": true
+                },
+                {
+                  "id": "person_b:position",
+                  "kind": "moved",
+                  "expressed": true
+                }
+              ],
+              "omissions": [],
+              "violations": [],
+              "unverified": [],
+              "repetition": null,
+              "timeExpressed": true
+            },
+            "completion": {
+              "raw": "学生A从走廊走到大厅，学生B从大厅走到走廊。时间推进：3秒。",
+              "finishReason": "stop",
+              "firstTokenMs": 9114.25,
+              "wallMs": 10805.194999694824,
+              "timings": {
+                "cache_n": 0,
+                "prompt_n": 207,
+                "prompt_ms": 8990.206,
+                "prompt_per_token_ms": 43.43094685990338,
+                "prompt_per_second": 23.02505637801848,
+                "predicted_n": 21,
+                "predicted_ms": 1779.71,
+                "predicted_per_token_ms": 88.9855,
+                "predicted_per_second": 11.237785931415791
+              }
+            }
+          }
+        ],
+        "adopted": true,
+        "fellBack": false,
+        "text": "学生A从走廊走到大厅，学生B从大厅走到走廊。时间推进：3秒。",
+        "final": {
+          "ok": true,
+          "timeRequired": false,
+          "coverage": [
+            {
+              "id": "person_a:position",
+              "kind": "moved",
+              "expressed": true
+            },
+            {
+              "id": "person_b:position",
+              "kind": "moved",
+              "expressed": true
+            }
+          ],
+          "omissions": [],
+          "violations": [],
+          "unverified": [],
+          "repetition": null,
+          "timeExpressed": true
+        }
+      },
+      "wallMs": 10811.02499961853,
+      "attempts": [
+        {
+          "attempt": 1,
+          "prompt": "[任务: narration-natural]\n用一到三句顺畅的中文写出这一点位的叙事正文，像小说旁白，不要逐条罗列。\n只能使用下面的事实；人物动作的归属不得互换，方向、数值、任务名称必须与事实一致；不要补写没有给出的事件、物品或经过。\n本点时间推进：3 秒（必须自然地写出来）。\n事实：\n- 学生A / 位置 = 从 走廊 到 大厅\n- 学生B / 位置 = 从 大厅 到 走廊\n不得出现：学生A从大厅走到走廊（两人方向互换）；学生B从走廊走到大厅（两人方向互换）。\n最后用一句话写出时间推进，时长数值必须与上面给出的完全一致。\n只输出正文文字，不要 JSON、不要标题、不要列表、不要解释。\n正文:",
+          "text": "学生A从走廊走到大厅，学生B从大厅走到走廊。时间推进：3秒。",
+          "ms": 10805.220000267029,
+          "verdict": {
+            "ok": true,
+            "timeRequired": false,
+            "coverage": [
+              {
+                "id": "person_a:position",
+                "kind": "moved",
+                "expressed": true
+              },
+              {
+                "id": "person_b:position",
+                "kind": "moved",
+                "expressed": true
+              }
+            ],
+            "omissions": [],
+            "violations": [],
+            "unverified": [],
+            "repetition": null,
+            "timeExpressed": true
+          },
+          "completion": {
+            "raw": "学生A从走廊走到大厅，学生B从大厅走到走廊。时间推进：3秒。",
+            "finishReason": "stop",
+            "firstTokenMs": 9114.25,
+            "wallMs": 10805.194999694824,
+            "timings": {
+              "cache_n": 0,
+              "prompt_n": 207,
+              "prompt_ms": 8990.206,
+              "prompt_per_token_ms": 43.43094685990338,
+              "prompt_per_second": 23.02505637801848,
+              "predicted_n": 21,
+              "predicted_ms": 1779.71,
+              "predicted_per_token_ms": 88.9855,
+              "predicted_per_second": 11.237785931415791
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "serverPort": 63793,
+  "browser": "155.0.4283.62",
+  "loadMs": 7502.744999885559,
+  "topology": {
+    "multithread": true,
+    "numThreads": 4
+  },
+  "completedAt": "2026-10-28T10:45:19.334Z",
+  "cleanup": {
+    "browserClosed": true,
+    "serverClosed": true
+  }
+}
