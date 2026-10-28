@@ -733,3 +733,41 @@ world-interface 按设计失败（旧 B 守卫未同步），本组合消掉了�
   分支，未改契约与摘要；临时分支单独存在，不因本记录成为新基线。
 - 仍未验收：A3-2 整体验收、H2 在真实 SQLite 上的刷新/接管/fencing、真实
   模型整链。本节只宣告“同一集成树下 backend 与 world-interface 绿”。
+
+---
+
+# A3-2 H2 实跑：固定组合 `d1d2de0`（2026-10-28）
+
+按用户本轮范围，A3-2 的关闭标准（「指定 A/B 提交组合完成 H2，保留请求绑定、
+原文字节/候选哈希和迟到围栏证据」）在**单一集成 checkout** 上实跑：
+A=`1ef34e7`（`3734a52` + 联合验收记录）＋ B=`21a95f0`（`552148c` + 两处 H2
+harness 修复），merge 提交 `d1d2de0cf2805d0f3ce1d182cde57821800d3bef`
+（tree `6f16783c834b758d4f8a907f7a972e1836e0ed16`）。前后端都从该提交运行，
+脚本不再指向旧 A worktree。
+
+隔离 SQLite、真实 `app.world_app:create_persistent_world_app`、真实
+`ControllerDriver.recover`；10 个 phase 全绿，8 次启动与 8 次停止配对，
+运行窗口 07:13:03–07:14:00 UTC。契约未改，摘要仍为
+`902918016f2bf7eff4cd1afd52da4ca96defdb5ee4082f171fda987de86680c2`。
+
+| 检查 | 结果 |
+| --- | --- |
+| main：多源组 DFS 恢复、保存骰点参与 results、提交、叙事、continuation 一次 | PASS_MAIN |
+| main：`claim_fenced` ×2、`stale_epoch` ×1、新 claim、epoch 1→2、接管后 epoch 3、跨 epoch 复制并提交 | PASS_MAIN |
+| successor：已封点 + 已预约后继，两点各提交一次、原始 Δ 顺序完整、无重掷 | PASS_SUCCESSOR |
+| post-restart：同库重启，租约续期、DFS 栈 `["person_a"]` 与保存骰点存活 | PASS_POST_RESTART |
+| 冻结载荷缺行 / 行动字节损坏 / 活动组文本损坏 | PASS_FROZEN_MISSING / PASS_FROZEN_CORRUPT ×2 |
+
+数据库只读证据另外核对：每世界 `commit_point` 数 = 非根提交数（1/1、1/1、2/2），
+`requestId` 无重复、幂等表无 `inputText`/`claimToken`，所有冻结工作
+`sha256(action_bytes)` 等于 accepted `actionContentHash`、候选规范摘要等于
+accepted `candidatesContentHash`、settled 单元哈希重算一致；`world_31` 恰 1 条
+副本记录与 1 次 `restore_group_work`。重启前库文件 SHA-256
+`6a94b6f7f31a…`，重启用同一文件（generation 1→2）。
+
+脱敏归档、复跑入口、源码身份与启停记录：
+[artifacts/h2-integration-d1d2de0](../../artifacts/h2-integration-d1d2de0/README.md)。
+
+边界不变：接管是 release/acquire 的 epoch 交接，**未实等 120 s TTL 到期**；
+未运行真实浏览器页面、B3 全量与真实模型整链；A3-1 既有验收范围不变。
+按用户要求，本轮不自行宣告 A3-2 关闭，交复核后决定。

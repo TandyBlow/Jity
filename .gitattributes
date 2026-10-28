@@ -7,6 +7,7 @@ frontend/src/lib/world-engine/contract-digest.json text eol=lf
 # on every test run; its working-copy bytes must match the committed LF blob
 # on Windows checkouts too.
 backend/app/database/world_storage_v2.sql text eol=lf
+artifacts/h2-integration-d1d2de0/** text eol=lf
 
 # Windows reserved device names written by shell redirects (e.g. `>nul`).
 # They cannot be checked out on Windows, so they must never be tracked.

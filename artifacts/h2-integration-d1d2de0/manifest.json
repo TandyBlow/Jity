@@ -1,0 +1,142 @@
+{
+  "status": "PASS_INTEGRATION_H2",
+  "pin": "d1d2de0cf2805d0f3ce1d182cde57821800d3bef",
+  "combination": {
+    "a": "1ef34e7c959c5addc803ea91aea7992e005d27ef",
+    "aBase": "3734a52",
+    "b": "21a95f0",
+    "bBase": "552148c",
+    "base": "79f8120"
+  },
+  "contractDigest": "902918016f2bf7eff4cd1afd52da4ca96defdb5ee4082f171fda987de86680c2",
+  "contractArtifacts": 149,
+  "environment": {
+    "python": "3.12.3",
+    "node": "v22.20.0",
+    "platform": "Windows 11"
+  },
+  "sourceSha256": {
+    "browser": {
+      "frontend/src/lib/world-engine/recovery.ts": "84e6d8df25347063f6ff55c40e8a200d4ef7cee1b84b601c68d46263900a9ae8",
+      "frontend/src/lib/world-engine/controller.ts": "ec97a1a0c050fb9238127cc24a89eab1e129ee81993f2edc3a0f3013af343d20",
+      "frontend/src/lib/world-engine/schedule.ts": "fc897c64f7c33efe828b0647f04c40e918e243f9b0e9d7af734bb41cc32ab6c4",
+      "frontend/scripts/review-world-h2-full.mjs": "428005caa9f55a2c649e9fd19523f6a322164f985c4396bdf3f9e2ecaae010e5"
+    },
+    "server": {
+      "backend/app/services/world/control.py": "cd3b6e5a297f27a30f2f10a72de0ec002ff5ec335be8388ebd083ba544fdb0e5",
+      "backend/app/services/world/authority.py": "5ef2417c02f74ba349196b7c83ae25cea41f3dd9dac8374f30132ea490dac96a",
+      "backend/app/database/world_frozen_repository.py": "74471c58be73534846ca43bd1a5844aae070d9d7a5e352189436293632e3d559"
+    }
+  },
+  "databases": {
+    "positive": "positive.db",
+    "missing": "missing.db",
+    "corrupt": "corrupt.db",
+    "group": "group.db"
+  },
+  "restart": {
+    "database": "positive.db",
+    "beforeRestartSha256": "6a94b6f7f31a0c0f210e90931f04ccc5a2f0f4562033f6d3a5bb907fc2a12b06",
+    "fromGeneration": 1,
+    "toGeneration": 2
+  },
+  "phases": [
+    {
+      "label": "main",
+      "status": "PASS_MAIN",
+      "exitCode": 0
+    },
+    {
+      "label": "successor",
+      "status": "PASS_SUCCESSOR",
+      "exitCode": 0
+    },
+    {
+      "label": "build-frozen-case",
+      "status": "BUILT_FROZEN_CASE",
+      "exitCode": 0
+    },
+    {
+      "label": "post-restart",
+      "status": "PASS_POST_RESTART",
+      "exitCode": 0
+    },
+    {
+      "label": "build-missing",
+      "status": "BUILT_FROZEN_CASE",
+      "exitCode": 0
+    },
+    {
+      "label": "frozen-missing",
+      "status": "PASS_FROZEN_MISSING",
+      "exitCode": 0
+    },
+    {
+      "label": "build-corrupt",
+      "status": "BUILT_FROZEN_CASE",
+      "exitCode": 0
+    },
+    {
+      "label": "frozen-corrupt",
+      "status": "PASS_FROZEN_CORRUPT",
+      "exitCode": 0
+    },
+    {
+      "label": "build-group",
+      "status": "BUILT_FROZEN_CASE",
+      "exitCode": 0
+    },
+    {
+      "label": "frozen-group",
+      "status": "PASS_FROZEN_CORRUPT",
+      "exitCode": 0
+    }
+  ],
+  "damage": [
+    {
+      "mode": "missing",
+      "worldId": "world_11",
+      "pointId": "point_17",
+      "groupId": "group_18",
+      "affectedRows": 1,
+      "database": "missing.db"
+    },
+    {
+      "mode": "corrupt",
+      "worldId": "world_1",
+      "pointId": "point_7",
+      "groupId": "group_8",
+      "affectedRows": 1,
+      "database": "corrupt.db"
+    },
+    {
+      "mode": "group",
+      "worldId": "world_1",
+      "pointId": "point_7",
+      "groupId": "group_8",
+      "affectedRows": 1,
+      "database": "group.db"
+    }
+  ],
+  "files": {
+    "report-build-corrupt.json": "6e880301ce51ef34ebd4edcb426c657b99a8339836e759b7b87da1571538f219",
+    "report-build-frozen-case.json": "2a239d0e75e3cd62a3233c049d6ee4287f0716fed41a4b7a390b5545cc009a51",
+    "report-build-group.json": "c3f03570d3b340881c2b819e5212e94e2b9844caa713d6a12d961ccea913ea47",
+    "report-build-missing.json": "17efc93450d55ed1302ad4ec281d373bf96676c453c5b48c276f9bdac07c76a9",
+    "report-frozen-corrupt.json": "083171a5915029814e144cdebc14580cbb8cd0c05d620be7f212b61caf92f513",
+    "report-frozen-group.json": "1d83cc40139361ec0805a5b2e354eba23a6cac4fd8166a28848197227d7d444b",
+    "report-frozen-missing.json": "129c8683aba02a8af865df1d22067f63c73ccc23034b624e86ee3463b51ca722",
+    "report-main.json": "bb15606124c08ed83a920cd7333d95cf457fd557816c52cba5d236ddd4de92f5",
+    "report-post-restart.json": "b1c4245457f0fbf637dd9ff70a95da25d4a474c956baa81be26af49eac27d2f6",
+    "report-successor.json": "f0af6d3973fbbb9e61d70353ba98af9d3dec17b6e96af90d97676210bfbdfe25",
+    "lifecycle.json": "ebc85825528423306b24e80daeab621a48c5e43b6f9bbd6aeda8002da666386a",
+    "database-evidence.json": "f0441bc6effa57dd303552815271d57bc25ce8d880d90ace4f6665ae1665105a",
+    "run-integration-h2.py": "fe5620050df4a08e2947b3dfa6bf513e91ab8aa0fe9826db7a455b5e0ca01f3e"
+  },
+  "boundaries": [
+    "release/acquire epoch handover, not a 120 s TTL expiry takeover",
+    "real browser page, B3 full evaluation and real model output are not covered",
+    "dice outcomes come from the live reaction-d20-v1 rule; realized branches are recorded",
+    "raw databases, state files, phase logs and server logs stay out of the repository"
+  ]
+}
