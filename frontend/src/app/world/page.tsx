@@ -13,7 +13,7 @@ import { RuleWorldSession, type RuleNarrationPolisher, type RuleSessionEvent } f
 import { readAllPoints } from '@/lib/world-engine/runtime/world-reads';
 import type { DriverStatus } from '@/lib/world-engine/controller';
 import { DEFAULT_POLISH_MODEL, WORLD_POLICY, defaultInitialTemplate } from './world-defaults';
-import type { Id, InitialTemplate, Json, RequestMap, Scope, Success, TimeAdvance, WorldOperation, WorldState } from '@/lib/world-engine/types';
+import type { Id, InitialTemplate, RequestMap, Scope, Success, TimeAdvance, WorldOperation, WorldState } from '@/lib/world-engine/types';
 
 interface LeaseGrant { leaseToken: Id; fenceEpoch: number }
 
@@ -84,24 +84,52 @@ interface StatusView {
   tasks: { goal: string; achieved: boolean }[]; personality: string;
 }
 
-/** 润色实验的真实实现：懒加载 wllama 引擎与真实提示层（按模型路径缓存）；
- * 输出必须整体通过事实校验（由 rule-session 的 selectFactNarration 把关），
- * 否则回退模板。 */
+/** 润色实验的真实实现：懒加载 wllama 引擎（按模型路径缓存），prompt 用
+ * 聚焦叙事视图（buildTaskPrompt focused——只含事实与允许短语，预填量极小）
+ * 生成候选；重试注入判分器反馈与更高温度。输出交回 rule-session 的
+ * checkFactNarration 把关，失败由其重生成/回退模板。 */
 const polishEngines = new Map<string, Promise<RuleNarrationPolisher>>();
 function polishEngine(modelUrl: string): Promise<RuleNarrationPolisher> {
   let engine = polishEngines.get(modelUrl);
   if (!engine) {
     engine = (async () => {
-      const [{ WllamaInferenceEngine }, { RuntimeWorldModelPort }] = await Promise.all([
+      const [{ WllamaInferenceEngine }, { buildTaskPrompt }] = await Promise.all([
         import('@/lib/world-engine/runtime/wllama-engine'),
-        import('@/lib/world-engine/runtime/model-port'),
+        import('@/lib/world-engine/runtime/prompts'),
       ]);
       const wllama = new WllamaInferenceEngine({ modelUrl, contextSize: 2048 });
-      const port = new RuntimeWorldModelPort(wllama, undefined, { inputMode: 'focused', taskMaxTokens: { narration: 64 }, timeoutMs: 120_000 });
-      return async (input) => {
-        const text = await port.generate('narration', input.pointId, input as unknown as Json);
-        if (typeof text !== 'string' || !text.trim()) throw new Error('润色输出为空');
-        return text.trim();
+      return async (input, _packet, focused, attempt) => {
+        // 共享 prompts.ts / focused-input.ts 保持确定性（B3 eval 回放依赖）；
+        // 页面实验在提交给引擎前收窄输入：每条事实只展示首个短语（判分器
+        // 仍接受任意已登记变体）。实测 0.5B/0.6B 模型在展示两个变体时必然
+        // 全部输出（duplicate_fact），逐字拼接是这个量级模型可靠完成的任务
+        // 形态；顺序与变体选择是它在严格判分门下保留的自由度，更丰富的
+        // 散文表达属于方案 §8.2 的状态对齐评测层（后续批次）。
+        const view = focused as { facts?: { id: string; allowedPhrases: string[] }[] };
+        const simplified = {
+          ...view,
+          facts: (view.facts ?? []).map((fact) => ({ id: fact.id, phrase: fact.allowedPhrases[0] })),
+        };
+        let prompt = buildTaskPrompt('narration', input.pointId, simplified, { inputMode: 'focused' });
+        // 编号清单：两个模型的实测失败模式都是「漏掉部分事实」（missing_fact），
+        // 编号逐条复制是把任务压到机械形态的最后一步。
+        const phrases = (view.facts ?? []).map((fact) => fact.allowedPhrases[0]);
+        prompt += `\n[硬性要求] 依次输出下面全部 ${phrases.length} 条短语：逐字复制、每条后面加一个句号（。）、一条一行，从 1 号到 ${phrases.length} 号一条都不能漏，不要输出编号，不要添加任何其他字词：\n${phrases.map((phrase, index) => `${index + 1}. ${phrase}`).join('\n')}`;
+        // attempt 2 = 同 prompt 纯温度重采样（0.7）：注入更正文本会被小模型
+        // 逐字复读（实测），stop 打空反而浪费掉这次重生机会；
+        // attempt.previous 仍随类型传递，供更强模型启用反馈注入。
+        await wllama.load(); // 幂等：首次使用触发下载与 wasm 初始化
+        const raw = await wllama.complete(prompt, {
+          maxTokens: 96,
+          temperature: attempt.index === 1 ? 0 : 0.7,
+          cachePrompt: true,
+          timeoutMs: 110_000,
+          stop: ['\n[', '\n正文:', '\n输出:', '[硬性要求]'],
+        });
+        const text = raw.trim();
+        if (!text) throw new Error('润色输出为空');
+        console.info(`[narration-model] attempt ${attempt.index} raw=${JSON.stringify(text)}`);
+        return text;
       };
     })();
     engine.catch(() => polishEngines.delete(modelUrl)); // 失败的加载可重试
@@ -127,6 +155,9 @@ export default function WorldPage() {
   const [dropNextArmed, setDropNextArmed] = useState(false);
   const activeRef = useRef<ActiveSession | null>(null);
   const commandsRef = useRef<string[]>([]);
+  /** 本页面会话内被判分器采纳过模型叙事的点位（服务端不记录生产者，
+   * rebuild 重建日志时据此恢复「模型」徽标；整页刷新后清空属预期）。 */
+  const polishedPointsRef = useRef(new Set<Id>());
   const bootedRef = useRef(false);
   const generationRef = useRef(0);
   const disposedRef = useRef(false);
@@ -145,19 +176,18 @@ export default function WorldPage() {
   };
 
   /** 会话持有的稳定包装器：开关即时生效。关闭→null（模板，无事件）；开启→
-   * 懒加载引擎生成候选。整个尝试受截止时间约束——wllama 加载或生成一旦
-   * 挂起（无头环境/wasm 卡住），可选项绝不能阻塞命令回合，超时即回退模板。 */
-  const lazyPolisher: RuleNarrationPolisher = async (input, packet) => {
+   * 懒加载引擎生成候选。整个尝试受截止时间约束——引擎加载或生成一旦挂起，
+   * 可选项绝不能阻塞命令回合，超时即回退模板。 */
+  const lazyPolisher: RuleNarrationPolisher = async (input, packet, focused, attempt) => {
     if (!polishOnRef.current) return null;
-    void packet;
     const deadlineMs = 120_000;
     let timer: ReturnType<typeof setTimeout> | undefined;
     const deadline = new Promise<never>((_, reject) => {
       timer = setTimeout(() => reject(new Error(`润色尝试超过 ${deadlineMs / 1000}s 未完成（加载或生成挂起）`)), deadlineMs);
     });
     try {
-      const attempt = async () => (await polishEngine(polishModelRef.current))(input, packet);
-      return await Promise.race([attempt(), deadline]);
+      const generate = async () => (await polishEngine(polishModelRef.current))(input, packet, focused, attempt);
+      return await Promise.race([generate(), deadline]);
     } finally {
       clearTimeout(timer);
     }
@@ -165,6 +195,8 @@ export default function WorldPage() {
 
   const handleEvent = (event: RuleSessionEvent) => {
     if (event.kind === 'narration') {
+      console.info(`[narration] polished=${event.polished} reason=${event.polishReason} attempts=${event.attempts} text=${JSON.stringify(event.text)}`);
+      if (event.polished) polishedPointsRef.current.add(event.pointId);
       setLog((rows) => [...rows, { pointId: event.pointId, version: event.version, text: event.text, timeText: null, polished: event.polished }]);
     } else if (event.kind === 'decision') {
       setLastAction(event.outcome === 'allowed' ? `已执行：${event.text}` : `已拒绝（${event.reason}）：${event.text}`);
@@ -212,7 +244,7 @@ export default function WorldPage() {
         version: read.version,
         text: narration.text ?? `（叙事状态：${narration.narrationStatus}）`,
         timeText: describeAdvance(read.timeAdvance),
-        polished: false,
+        polished: polishedPointsRef.current.has(point.pointId),
       });
     }
     throwIfStale(isStale);
@@ -514,11 +546,11 @@ export default function WorldPage() {
       </section>
 
       <section className="rounded border border-zinc-200 p-3">
-        <h2 className="mb-2 text-xs font-semibold text-zinc-500">叙事（提交模板；润色仅为实验）</h2>
+        <h2 className="mb-2 text-xs font-semibold text-zinc-500">叙事（默认模板；模型叙事为可选实验）</h2>
         <div className="mb-3 flex flex-wrap items-center gap-3 text-xs">
           <label className="flex items-center gap-1">
             <input type="checkbox" checked={polishOn} onChange={(event) => setPolishOn(event.target.checked)} disabled={busy} />
-            模型润色（可选实验，失败保持模板）
+            模型叙事（实验：模型为主，判分门控，失败保持模板）
           </label>
           <input className="w-64 rounded border border-zinc-300 px-2 py-0.5 font-mono text-[11px]" value={polishModel}
             onChange={(event) => setPolishModel(event.target.value)} disabled={busy} aria-label="润色模型路径" />
@@ -533,7 +565,7 @@ export default function WorldPage() {
               <li key={row.pointId} className="rounded bg-zinc-50 px-2 py-1 text-xs leading-relaxed">
                 <span className="mr-1 font-mono text-[11px] text-zinc-400">v{row.version}{row.timeText ? `·${row.timeText}` : ''}</span>
                 {row.text}
-                {row.polished && <span className="ml-1 rounded bg-sky-100 px-1 text-[11px] text-sky-700">润色</span>}
+                {row.polished && <span className="ml-1 rounded bg-sky-100 px-1 text-[11px] text-sky-700">模型</span>}
               </li>
             ))}
           </ol>

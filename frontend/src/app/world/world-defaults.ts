@@ -47,4 +47,4 @@ export function defaultInitialTemplate(): InitialTemplate {
 /** Optional narration-polish experiment default: a small instruct model
  * already shipped under public/models. Any load or generation failure keeps
  * the committed template. */
-export const DEFAULT_POLISH_MODEL = '/models/qwen2.5-0.5b-instruct-q4_k_m.gguf';
+export const DEFAULT_POLISH_MODEL = '/models/Qwen3-0.6B-Q4_K_M.gguf';

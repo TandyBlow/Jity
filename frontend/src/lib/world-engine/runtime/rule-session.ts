@@ -27,6 +27,7 @@ import type { RuntimePortLike } from './model-port';
 import type { CommittedNarration, CommittedRead } from './committed-narration';
 import { projectCommittedNarration, renderCommittedNarration, selectFactNarration } from './committed-narration';
 import { RuleAuthority, decodeRuleAction, describeRuleDecision, encodeRuleAction, parseRuleCommand, type RulePolicy, type RuleReceipt } from './rule-facts';
+import { projectTaskInput } from './focused-input';
 import type { Id, InitialTemplate, Json, PointWork, WorldContext, WorldState } from '../types';
 
 /** The driver-shaped §7.1 narration input, mirrored from the scheduler's
@@ -42,12 +43,27 @@ export interface RuleNarrationInput {
 /** The polisher returns a candidate text; rule-session alone decides via
  * checkFactNarration whether it replaces the template. Returning null means
  * "polish disabled for this call" — the template stands with no fallback
- * event (the page toggles the experiment mid-session). */
-export type RuleNarrationPolisher = (input: RuleNarrationInput, packet: CommittedNarration) => Promise<string | null>;
+ * event (the page toggles the experiment mid-session).
+ *
+ * focused is the projected §7.1 view (facts + allowed phrases only) — the
+ * prompt the small model should read; attempt carries the regen context:
+ * on index 2 the first candidate failed the fact check and previous.text /
+ * previous.reason say what to correct. The judge gate itself lives in
+ * narrateFromReads (§8.2: 校验调用，失败则只重生文本). */
+export interface PolishAttempt {
+  index: 1 | 2;
+  previous?: { text: string; reason: string };
+}
+export type RuleNarrationPolisher = (
+  input: RuleNarrationInput,
+  packet: CommittedNarration,
+  focused: Json,
+  attempt: PolishAttempt,
+) => Promise<string | null>;
 
 export type RuleSessionEvent =
   | { kind: 'terminal'; status: DriverStatus }
-  | { kind: 'narration'; pointId: Id; version: number; text: string; polished: boolean; polishReason: string | null }
+  | { kind: 'narration'; pointId: Id; version: number; text: string; polished: boolean; polishReason: string | null; attempts: number }
   | { kind: 'polishFallback'; pointId: Id; detail: string }
   | { kind: 'decision'; inputText: string; outcome: 'allowed' | 'refused'; reason: string | null; text: string }
   | { kind: 'unparsed'; inputText: string };
@@ -72,9 +88,11 @@ export interface RuleSessionSnapshot {
 
 interface IssuedGroup { receipt: RuleReceipt; result: Record<Id, string> }
 
-/** One narration decision, isolated for tests: template by default, a
- * polisher candidate only when EVERY clause passes checkFactNarration; any
- * polisher failure falls back to the template with a fallback event. */
+/** One narration decision, isolated for tests: template by default; with a
+ * polisher the model candidate must pass the fact-clause judge, and a
+ * rejected candidate gets ONE regeneration attempt with feedback (§8.2:
+ * 校验调用，失败则只重生文本) before the template stands. Any polisher
+ * failure falls back to the template with a fallback event. */
 export async function narrateFromReads(after: CommittedRead, before: CommittedRead | null,
   polisher: RuleNarrationPolisher | null, onEvent?: (event: RuleSessionEvent) => void): Promise<string> {
   const packet = projectCommittedNarration(after, before);
@@ -82,6 +100,7 @@ export async function narrateFromReads(after: CommittedRead, before: CommittedRe
   let text = template;
   let polished = false;
   let polishReason: string | null = null;
+  let attempts = 0;
   if (polisher) {
     const protagonist = after.state.protagonistId;
     const name = after.state.initial.characters[protagonist]?.name ?? protagonist;
@@ -92,22 +111,31 @@ export async function narrateFromReads(after: CommittedRead, before: CommittedRe
       after: structuredClone(after.state),
       perspective: `主角视角（${protagonist}「${name}」）；只表达已结算的世界事实`,
     };
+    const focused: Json = projectTaskInput('narration', structuredClone(assembled) as unknown as Json,
+      { before, after });
     try {
-      const candidate = await polisher(assembled, packet);
-      if (candidate !== null) {
+      let previous: { text: string; reason: string } | undefined;
+      for (const index of [1, 2] as const) {
+        const candidate = await polisher(assembled, packet, focused, { index, previous });
+        if (candidate === null) break; // polish disabled mid-session
+        attempts = index;
         const verdict = selectFactNarration(packet, candidate);
         polishReason = verdict.reason;
         if (verdict.accepted) {
           text = verdict.text;
           polished = true;
+          break;
         }
+        previous = { text: candidate, reason: verdict.reason ?? 'unknown' };
+        if (index === 1) continue; // §8.2: one regeneration with feedback
+        break;
       }
     } catch (error) {
       onEvent?.({ kind: 'polishFallback', pointId: after.pointId,
         detail: error instanceof Error ? `${error.name}: ${error.message}` : String(error) });
     }
   }
-  onEvent?.({ kind: 'narration', pointId: packet.anchor.pointId, version: packet.anchor.version, text, polished, polishReason });
+  onEvent?.({ kind: 'narration', pointId: packet.anchor.pointId, version: packet.anchor.version, text, polished, polishReason, attempts });
   return text;
 }
 

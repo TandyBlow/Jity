@@ -80,7 +80,13 @@ export function buildTaskPrompt(task: ModelTask, key: string, input: Json, optio
     view = { ...(input as Record<string, Json>), facts: focused.facts };
   }
   if (task === 'narration' || task === 'reaction') {
-    const contract = task === 'narration' && options.committedReads
+    // The facts contract applies whenever the view IS (or carries) the
+    // focused projection — focused-without-reads passes the projected view
+    // directly, and giving it the full-mode prose instruction (which names
+    // before/delta/after fields the view does not contain) measurably
+    // derails a 0.5B model into listing every allowed phrase instead of
+    // picking one per fact.
+    const contract = task === 'narration' && (options.committedReads !== undefined || options.inputMode === 'focused')
       ? '只用 facts 中的允许短句组织正文，每条事实表达一次；可换顺序，句间用句号。不要增加、遗漏或修改事实；不要标题、不要 JSON。'
       : TEXT_CONTRACTS[task];
     return `[任务: ${task}]\n${contract}\n${context(task, key, view)}\n正文:`;
