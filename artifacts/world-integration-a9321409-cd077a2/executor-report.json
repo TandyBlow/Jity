@@ -1,0 +1,180 @@
+{
+  "status": "PASS",
+  "layer": "real HTTP + SQLite persistent service; no browser, no B code",
+  "contractDigest": "902918016f2bf7eff4cd1afd52da4ca96defdb5ee4082f171fda987de86680c2",
+  "service": "create_persistent_world_app; SQLiteBaselineStore; one worker",
+  "restarts": 2,
+  "restartReplayChecks": [
+    "T01/sample_1 get_state digest unchanged",
+    "T03/sample_1 get_state digest unchanged"
+  ],
+  "assertionDriftCount": 12,
+  "assertionDriftNote": "registered exemptions only: T01 s1-s4 control phase/canCompute value mismatches authored before creation issued the head gate; every response schema-validated; hard checks all passed",
+  "traces": [
+    {
+      "trace": "T01/sample_1",
+      "sample": "sample_1",
+      "worldId": "world_1",
+      "steps": 23,
+      "stateDigests": {
+        "s21": "0dbc65a69515265ef1a4c904eb71271a906111a6b7923aa4aebe6ee378c62c9b"
+      },
+      "finalStateDigest": "0dbc65a69515265ef1a4c904eb71271a906111a6b7923aa4aebe6ee378c62c9b",
+      "assertionDrift": [
+        {
+          "step": "s1",
+          "operation": "create_world",
+          "assertion": "eq",
+          "path": "/control/phase",
+          "detail": "eq assertion failed: /control/phase"
+        },
+        {
+          "step": "s2",
+          "operation": "narration_claim",
+          "assertion": "eq",
+          "path": "/control/phase",
+          "detail": "eq assertion failed: /control/phase"
+        },
+        {
+          "step": "s3",
+          "operation": "narration_submit",
+          "assertion": "eq",
+          "path": "/control/phase",
+          "detail": "eq assertion failed: /control/phase"
+        },
+        {
+          "step": "s3",
+          "operation": "narration_submit",
+          "assertion": "eq",
+          "path": "/control/canCompute",
+          "detail": "eq assertion failed: /control/canCompute"
+        },
+        {
+          "step": "s4",
+          "operation": "allocate_ids",
+          "assertion": "eq",
+          "path": "/control/phase",
+          "detail": "eq assertion failed: /control/phase"
+        },
+        {
+          "step": "s4",
+          "operation": "allocate_ids",
+          "assertion": "eq",
+          "path": "/control/canCompute",
+          "detail": "eq assertion failed: /control/canCompute"
+        }
+      ]
+    },
+    {
+      "trace": "T01/sample_2",
+      "sample": "sample_2",
+      "worldId": "world_9",
+      "steps": 23,
+      "stateDigests": {
+        "s21": "0ca512710b83b319846b7fd844cbde8ca5b86faf36f3d1a8ec423a795574c6ff"
+      },
+      "finalStateDigest": "0ca512710b83b319846b7fd844cbde8ca5b86faf36f3d1a8ec423a795574c6ff",
+      "assertionDrift": [
+        {
+          "step": "s1",
+          "operation": "create_world",
+          "assertion": "eq",
+          "path": "/control/phase",
+          "detail": "eq assertion failed: /control/phase"
+        },
+        {
+          "step": "s2",
+          "operation": "narration_claim",
+          "assertion": "eq",
+          "path": "/control/phase",
+          "detail": "eq assertion failed: /control/phase"
+        },
+        {
+          "step": "s3",
+          "operation": "narration_submit",
+          "assertion": "eq",
+          "path": "/control/phase",
+          "detail": "eq assertion failed: /control/phase"
+        },
+        {
+          "step": "s3",
+          "operation": "narration_submit",
+          "assertion": "eq",
+          "path": "/control/canCompute",
+          "detail": "eq assertion failed: /control/canCompute"
+        },
+        {
+          "step": "s4",
+          "operation": "allocate_ids",
+          "assertion": "eq",
+          "path": "/control/phase",
+          "detail": "eq assertion failed: /control/phase"
+        },
+        {
+          "step": "s4",
+          "operation": "allocate_ids",
+          "assertion": "eq",
+          "path": "/control/canCompute",
+          "detail": "eq assertion failed: /control/canCompute"
+        }
+      ]
+    },
+    {
+      "trace": "T03/sample_1",
+      "sample": "sample_1",
+      "worldId": "world_17",
+      "steps": 8,
+      "stateDigests": {
+        "s8": "4a9b2e72e8dbe575a52f21a0ae8a94466cfe384d502fd61000db1b4a0c21d47f"
+      },
+      "finalStateDigest": "4a9b2e72e8dbe575a52f21a0ae8a94466cfe384d502fd61000db1b4a0c21d47f",
+      "assertionDrift": [],
+      "previewWorkingStateDigest": "4a9b2e72e8dbe575a52f21a0ae8a94466cfe384d502fd61000db1b4a0c21d47f"
+    },
+    {
+      "trace": "T03/sample_2",
+      "sample": "sample_2",
+      "worldId": "world_25",
+      "steps": 8,
+      "stateDigests": {
+        "s8": "2e4ceb1e888b988df74013b4137efcd19449f2787f97d09fcaa82249659dc930"
+      },
+      "finalStateDigest": "2e4ceb1e888b988df74013b4137efcd19449f2787f97d09fcaa82249659dc930",
+      "assertionDrift": [],
+      "previewWorkingStateDigest": "2e4ceb1e888b988df74013b4137efcd19449f2787f97d09fcaa82249659dc930"
+    }
+  ],
+  "A": {
+    "head": "9892089f46790c691f0dd07e512c03a04ef36120",
+    "sourceSha256": {
+      "backend/app/world_app.py": "b6291cf697793fe543d36098b6c976f73fb5b28a394dc6a53b3f514f9ab45509",
+      "backend/app/routers/worlds.py": "a9364afe54662b4b14d5692621192e8570f962454e12ef1f79ec15ed092c6b5d",
+      "backend/scripts/check_world_http_scenarios.py": "21c45611e0215695da15ce05c6f8647ec6fe487e14f809cf85cae4cc404a8a36",
+      "backend\\app\\services\\world\\__init__.py": "d7adde8f0c0d84bf58ee4c9908d309cae630d17f2a3afdf9001b8112c90af72b",
+      "backend\\app\\services\\world\\apply.py": "08deedf8e4b13ac805e38455f204572760b7d8c8221023846a1bf2f92ed7b4f6",
+      "backend\\app\\services\\world\\authority.py": "5ef2417c02f74ba349196b7c83ae25cea41f3dd9dac8374f30132ea490dac96a",
+      "backend\\app\\services\\world\\commit.py": "c0d6582764e5b017f080c9994f1a4c3c41797fbcf0ce4159d092718a226f2194",
+      "backend\\app\\services\\world\\control.py": "cd3b6e5a297f27a30f2f10a72de0ec002ff5ec335be8388ebd083ba544fdb0e5",
+      "backend\\app\\services\\world\\judgments.py": "4d883d0d875ea73a42c0e618feea332ee803d40f669b7969ec039135076f876a",
+      "backend\\app\\services\\world\\ladder.py": "3dbb4e493a5081d9aff788a4c561de17552dd58c09e38435e1a4f38ff5c18479",
+      "backend\\app\\services\\world\\merge.py": "76a8cc4e9dd7277543fd6d581808238e331bd6b3ecb31a1b177162e8da20a6f6",
+      "backend\\app\\services\\world\\preview.py": "5bb3b3464c5f91571f941dd6c1dcbf1220c1c55280424c050d835ac94b634d3b",
+      "backend\\app\\services\\world\\progress.py": "32f9036260c74a09879df4f6743db7b3c85a40d474238076d34f7a339b554040",
+      "backend\\app\\services\\world\\recovery.py": "12d2e6e771f8b86ad0e620e90f9cc49c07dcade3cb487bf0a49d1e3459eaca19",
+      "backend\\app\\services\\world\\replay.py": "af3ff2fe804d2e5a6e46d043d560f6a9b3502a418892bd1b7d29ae4ee896b60e",
+      "backend\\app\\services\\world\\state.py": "c5b1f49774923dcc6ec81288f43c4ae6976e41cb827366cfeb87f6acfbfabea4",
+      "backend\\app\\services\\world\\store.py": "e4784c38347895326f638e7c0f15e3dad2ea61924d0f0fca8384a8977238dbc4",
+      "backend\\app\\services\\world\\successor.py": "93c7e398e6dc6a0de4d17e83078b29018e28413647664862815e575ec0918a4e",
+      "backend\\app\\services\\world\\timing.py": "7f0a461db433f2abbd80d800e54c6e70d8c72d86887f0748c42b857f52c2cc8d",
+      "backend\\app\\services\\world\\units.py": "1b62625219658735387557436944c2c7ca8e4ce23c0b1d3117138c1ce28ce1c5",
+      "backend\\app\\services\\world\\violations.py": "ced7f1d816da3cb861cce4690a349b50fa5d7c0f8956be21a8dd58f542a293de",
+      "backend\\app\\database\\world_frozen_repository.py": "74471c58be73534846ca43bd1a5844aae070d9d7a5e352189436293632e3d559",
+      "backend\\app\\database\\world_judgment_repository.py": "42941bd1a07f3dd6f400899c612fd4b76fe054edb1d4c79be3804c25507d174e",
+      "backend\\app\\database\\world_progress_repository.py": "2db2aaa7d1ef52531a7ed94f0f85482c92d2bb1bd9770c6bc249c46a2a398175",
+      "backend\\app\\database\\world_repository.py": "35ee95f9f78acd3b4b01d7e2cbf154068557c180ec9fa253f82deb1c30621068",
+      "backend\\app\\database\\world_store.py": "b130b13274180d33f9ef532c2674a0211dadd5544ab6f127c9e2e1211168ecef",
+      "backend\\app\\database\\world_work_repository.py": "f7715b333b2be91f76292a5ab15c0734387184debbb3e46ebc56e2028471a886"
+    }
+  },
+  "sourceUnchangedDuringRun": true
+}

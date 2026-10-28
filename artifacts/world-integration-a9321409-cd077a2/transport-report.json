@@ -1,0 +1,142 @@
+{
+  "status": "PASS",
+  "recordedAt": "2026-10-28T17:18:53.635Z",
+  "A": {
+    "head": "9892089f46790c691f0dd07e512c03a04ef36120",
+    "status": "M artifacts/world-http-scenarios.json",
+    "sha256": {
+      "backend/app/world_app.py": "b6291cf697793fe543d36098b6c976f73fb5b28a394dc6a53b3f514f9ab45509",
+      "backend/app/routers/worlds.py": "a9364afe54662b4b14d5692621192e8570f962454e12ef1f79ec15ed092c6b5d",
+      "backend/app/services/world/authority.py": "5ef2417c02f74ba349196b7c83ae25cea41f3dd9dac8374f30132ea490dac96a",
+      "backend/app/services/world/control.py": "cd3b6e5a297f27a30f2f10a72de0ec002ff5ec335be8388ebd083ba544fdb0e5",
+      "backend/app/database/world_store.py": "b130b13274180d33f9ef532c2674a0211dadd5544ab6f127c9e2e1211168ecef"
+    }
+  },
+  "B": {
+    "head": "9892089f46790c691f0dd07e512c03a04ef36120",
+    "status": "M artifacts/world-http-scenarios.json",
+    "sha256": {
+      "frontend/scripts/review-world-a4-transport.mjs": "1a8074a067655666e0ef993e8ae7cd0c58441a146645b4e3e155e41387b5bf42",
+      "frontend/scripts/review-world-h2-history.mjs": "0891f69748a74d623b5c681384ac92356ecee2a452cdd3667f560b1b56e39bc6",
+      "frontend/src/lib/world-engine/controller.ts": "ec97a1a0c050fb9238127cc24a89eab1e129ee81993f2edc3a0f3013af343d20",
+      "frontend/src/lib/world-engine/schedule.ts": "fc897c64f7c33efe828b0647f04c40e918e243f9b0e9d7af734bb41cc32ab6c4",
+      "frontend/src/lib/world-engine/http-transport.ts": "e0da1da81d45df6e4c1ba417a9ff602d976fe5610ce3764e752457093006409b",
+      "frontend/src/lib/world-engine/protocol.ts": "5fc5ae0445bd5f289f4c522ee9c4b5deca0fe67a68522aec6e457cdb965459e4",
+      "frontend/src/lib/world-engine/recovery.ts": "84e6d8df25347063f6ff55c40e8a200d4ef7cee1b84b601c68d46263900a9ae8"
+    }
+  },
+  "scope": "A4 B transport connection; fixed outputs; excludes TTL expiry, full H2 and real-model acceptance",
+  "factory": "app.world_app:create_persistent_world_app",
+  "contractDigest": {
+    "protocolVersion": 2,
+    "contractDigest": "902918016f2bf7eff4cd1afd52da4ca96defdb5ee4082f171fda987de86680c2"
+  },
+  "cors": {
+    "allowedStatus": 200,
+    "deniedStatus": 400,
+    "exactOrigin": true
+  },
+  "browser": "155.0.4283.62",
+  "rootFlows": [
+    {
+      "sampleId": "sample_1",
+      "worldId": "world_1",
+      "stateDigest": "8a5e02e4720746c85a07d123d73dd455890eb03ea3df44043974456e501f517a",
+      "operations": [
+        "create_world",
+        "narration_claim",
+        "get_state",
+        "narration_submit"
+      ],
+      "tasks": [
+        "initial",
+        "narration"
+      ],
+      "claimTriplePreserved": true,
+      "freshRequestIds": true,
+      "rootGateResolved": true,
+      "readStable": true
+    },
+    {
+      "sampleId": "sample_2",
+      "worldId": "world_4",
+      "stateDigest": "88a77cb0d761705b1d9d7af69e02b80af56152bc4824c3b16fca2db2d9211b15",
+      "operations": [
+        "create_world",
+        "narration_claim",
+        "get_state",
+        "narration_submit"
+      ],
+      "tasks": [
+        "initial",
+        "narration"
+      ],
+      "claimTriplePreserved": true,
+      "freshRequestIds": true,
+      "rootGateResolved": true,
+      "readStable": true
+    }
+  ],
+  "history": {
+    "status": "PASS_HISTORY_SUBCHECK",
+    "recordedAt": "2026-10-28T17:19:16.356Z",
+    "scope": "real HTTP + A state service + fresh B controller; not full H2 takeover acceptance",
+    "command": "node scripts/review-world-h2-history.mjs API_URL [REPORT_PATH] [A_CHECKOUT]",
+    "browser": {
+      "head": "9892089f46790c691f0dd07e512c03a04ef36120",
+      "status": "M artifacts/world-http-scenarios.json",
+      "sourceSha256": {
+        "frontend/src/lib/world-engine/recovery.ts": "84e6d8df25347063f6ff55c40e8a200d4ef7cee1b84b601c68d46263900a9ae8",
+        "frontend/src/lib/world-engine/controller.ts": "ec97a1a0c050fb9238127cc24a89eab1e129ee81993f2edc3a0f3013af343d20",
+        "frontend/src/lib/world-engine/schedule.ts": "fc897c64f7c33efe828b0647f04c40e918e243f9b0e9d7af734bb41cc32ab6c4",
+        "frontend/src/lib/world-engine/runtime/session.ts": "e7b0bdad607b9a57cf6848acd7cbfc2188dfb363f49dba7805e1568d7357f9e2",
+        "frontend/scripts/review-world-h2-history.mjs": "0891f69748a74d623b5c681384ac92356ecee2a452cdd3667f560b1b56e39bc6"
+      }
+    },
+    "server": {
+      "head": "9892089f46790c691f0dd07e512c03a04ef36120",
+      "status": "M artifacts/world-http-scenarios.json",
+      "sourceSha256": {
+        "backend/app/services/world/control.py": "cd3b6e5a297f27a30f2f10a72de0ec002ff5ec335be8388ebd083ba544fdb0e5",
+        "backend/app/world_app.py": "b6291cf697793fe543d36098b6c976f73fb5b28a394dc6a53b3f514f9ab45509"
+      }
+    },
+    "worldId": "world_7",
+    "roundId": "round_12",
+    "committedPointIds": [
+      "point_13",
+      "point_14",
+      "point_15",
+      "point_16",
+      "point_17",
+      "point_18"
+    ],
+    "rawDeltasMatchIndependentExpectation": true,
+    "modelCalls": [
+      "continuation"
+    ],
+    "recoveryOps": [
+      "lease_renew",
+      "get_context",
+      "list_points",
+      "get_state",
+      "get_state",
+      "get_state",
+      "get_state",
+      "get_state",
+      "get_state",
+      "get_context"
+    ],
+    "contractDigest": {
+      "protocolVersion": 2,
+      "contractDigest": "902918016f2bf7eff4cd1afd52da4ca96defdb5ee4082f171fda987de86680c2"
+    }
+  },
+  "sourceUnchangedDuringRun": true,
+  "cleanup": {
+    "browserClosed": true,
+    "viteClosed": true,
+    "serviceStopped": true
+  },
+  "completedAt": "2026-10-28T17:19:17.574Z"
+}
