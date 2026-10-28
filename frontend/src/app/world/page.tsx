@@ -140,6 +140,10 @@ function polishEngine(modelUrl: string): Promise<RuleNarrationPolisher> {
 
 interface ActiveSession { session: RuleWorldSession; page: PageTransport }
 
+/** 本次文档已请求过隔离自检的整页重载：同一文档内的二次挂载（StrictMode）
+ * 不得再起会话——重载已经在路上。文档重建后模块重新求值，标记自然复位。 */
+let isoReloadPending = false;
+
 export default function WorldPage() {
   const [phase, setPhase] = useState<'boot' | 'disconnected' | 'connecting' | 'ready' | 'running'>('boot');
   const [api, setApi] = useState('');
@@ -150,6 +154,8 @@ export default function WorldPage() {
   const [command, setCommand] = useState('');
   const [lastAction, setLastAction] = useState('');
   const [note, setNote] = useState('');
+  /** 隔离自检的持久告警：boot 成功会清空 note，这条必须活到重载/关闭。 */
+  const [isoWarning, setIsoWarning] = useState('');
   const [polishOn, setPolishOn] = useState(false);
   const [polishModel, setPolishModel] = useState(DEFAULT_POLISH_MODEL);
   const [dropNextArmed, setDropNextArmed] = useState(false);
@@ -421,6 +427,31 @@ export default function WorldPage() {
    * 复位 disposed 并推进代数，因此旧 bootstrap 的每个检查点都能识别自己
    * 已失效，且只停止自己创建的会话，绝不误杀新实例的会话。 */
   useEffect(() => {
+    // SPA 进入时响应头无法改变既有文档的隔离状态（crossOriginIsolated 是
+    // 文档创建时定型的属性）：自检失败就整页重载一次，护栏防循环；重载后
+    // 仍不隔离说明部署缺响应头，降级提示（单线程预填实测 ~200ms/token，
+    // 模型叙事大概率超时回退模板）。护栏读写包 try：存储不可用就无法防
+    // 循环，此时宁可不重载，只降级（告警用独立 state，boot 成功清空 note，
+    // 但这降级事实必须持续可见）。
+    const isoFlag = 'jity.world.isoReload';
+    if (!window.crossOriginIsolated) {
+      if (isoReloadPending) return; // 已请求重载（StrictMode 二次挂载不再起会话）
+      let reload = false;
+      try {
+        if (!window.sessionStorage.getItem(isoFlag)) {
+          window.sessionStorage.setItem(isoFlag, '1');
+          reload = true;
+        }
+      } catch { /* 存储被禁：无法防循环，直接降级 */ }
+      if (reload) {
+        isoReloadPending = true;
+        window.location.reload();
+        return; // 整页重载，本实例随之销毁
+      }
+      setIsoWarning('跨源隔离不可用（部署响应头缺失）：模型叙事降级为单线程，可能超时回退模板。');
+    } else {
+      try { window.sessionStorage.removeItem(isoFlag); } catch { /* 无事可清 */ }
+    }
     disposedRef.current = false;
     if (bootedRef.current) return;
     bootedRef.current = true;
@@ -497,6 +528,7 @@ export default function WorldPage() {
           {worldId && <button className="rounded border border-zinc-400 px-3 py-1 text-xs" onClick={disconnect} disabled={busy}>断开</button>}
         </div>
         {note && <p className="mt-2 text-xs text-amber-700">{note}</p>}
+        {isoWarning && <p className="mt-2 text-xs text-amber-700">{isoWarning}</p>}
       </section>
 
       <section className="rounded border border-zinc-200 p-3">
