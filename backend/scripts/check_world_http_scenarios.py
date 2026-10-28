@@ -12,11 +12,14 @@ speaks: requestIds are freshly chosen per step and sample (a pinned literal
 would collide across samples in the idempotency ledger), and narration_submit
 carries claimToken/generation/issuedAtEpochMilli from the paired claim receipt
 (the persistent authority binds claim identity to its issue time; the
-templates predate that and bind the context clock). Authored per-step
-assertions are checked and reported: current mismatches are T01 s1–s4
-control phase/canCompute values authored before creation issued the head
-gate — recorded as assertionDrift, not failures, while all projections,
-digests, envelopes and hashes must match.
+templates predate that and bind the context clock). Every response is
+validated against its operation's declared success schema. Authored per-step
+assertions are checked: only the six registered T01 s1–s4 control
+phase/canCompute VALUE mismatches (authored before creation issued the head
+gate) are exempted as assertionDrift — any other assertion failure,
+including a missing path on those very steps, fails the run. The T03
+preview is additionally verified against the independently computed
+time-scan state and digest.
 
 Run from the repository root:
     python backend/scripts/check_world_http_scenarios.py
@@ -40,14 +43,49 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / 'backend'))
+from jsonschema import Draft202012Validator
 from app.schemas.world.canonical import canonical_digest
 from app.schemas.world.v2.projections import request_projection
 from app.schemas.world.v2.registry import OPERATION_BY_NAME
 from app.schemas.world.v2.trace import TraceDocument
 from world_trace_expected import assertion, expected_digest, instantiate, pointer, validate_trace
 
-HEADERS = {'X-World-Protocol-Version': '2', 'Content-Type': 'application/json'}
 BASE = ROOT / 'design/world-protocol/v2'
+_WIRE_SCHEMA = json.loads((BASE / 'world-protocol.schema.json').read_text(encoding='utf-8'))
+_RESPONSE_VALIDATORS = {}
+
+
+def validate_response(operation, response):
+    """The full wire contract of one response, including required envelope
+    fields (operation/requestId are required keys of every success schema)."""
+    name = OPERATION_BY_NAME[operation].successSchema
+    validator = _RESPONSE_VALIDATORS.get(name)
+    if validator is None:
+        validator = Draft202012Validator(
+            {**_WIRE_SCHEMA, '$ref': f'#/$defs/{name}'})
+        _RESPONSE_VALIDATORS[name] = validator
+    errors = sorted(validator.iter_errors(response), key=lambda error: list(error.path))
+    if errors:
+        first = errors[0]
+        raise AssertionError(f'{operation}: response violates {name} at '
+                             f'{list(first.path)}: {first.message}')
+
+
+# Authored trace assertions that the evolved runtime legitimately answers
+# differently: T01 s1–s4 predate "creation issues the head gate" (root
+# narration pending keeps phase select_actor; once it is ready canCompute
+# turns true). Only these value mismatches are drift — anything else,
+# including a missing path on these very steps, fails the run.
+REGISTERED_DRIFT = frozenset({
+    ('T01', 's1', '/control/phase', 'eq'),
+    ('T01', 's2', '/control/phase', 'eq'),
+    ('T01', 's3', '/control/phase', 'eq'),
+    ('T01', 's3', '/control/canCompute', 'eq'),
+    ('T01', 's4', '/control/phase', 'eq'),
+    ('T01', 's4', '/control/canCompute', 'eq'),
+})
+
+HEADERS = {'X-World-Protocol-Version': '2', 'Content-Type': 'application/json'}
 IDENTITY_FILES = ['backend/app/world_app.py', 'backend/app/routers/worlds.py',
                   'backend/scripts/check_world_http_scenarios.py']
 IDENTITY_FILES += [str(path.relative_to(ROOT)) for path in sorted(
@@ -173,6 +211,7 @@ def replay(service, trace, sample, bindings, steps, label, rid_prefix):
         if status != step.httpStatus:
             raise AssertionError(f'{label}/{step.id}: HTTP {status} != {step.httpStatus}; '
                                  f'body {json.dumps(response, ensure_ascii=False)[:600]}')
+        validate_response(step.operation, response)
         if response.get('operation') is not None and response['operation'] != step.operation:
             raise AssertionError(f'{label}/{step.id}: response operation mismatch')
         if request.get('requestId') is not None and response.get('requestId') is not None \
@@ -194,6 +233,13 @@ def replay(service, trace, sample, bindings, steps, label, rid_prefix):
             try:
                 assertion(response, item, bindings)
             except (ValueError, KeyError) as error:
+                registered = ((trace.scenario, step.id, item.path, item.op)
+                              in REGISTERED_DRIFT)
+                value_mismatch = str(error) == f'{item.op} assertion failed: {item.path}'
+                if not (registered and value_mismatch):
+                    raise AssertionError(
+                        f'{label}/{step.id}: assertion {item.op} {item.path} failed '
+                        f'(registered exemption: {registered}): {error}') from error
                 drift.append({'step': step.id, 'operation': step.operation,
                               'assertion': item.op, 'path': item.path,
                               'detail': str(error)})
@@ -309,7 +355,11 @@ def t03_preamble(service, t01_raw, trace, sample):
 
 
 def preview_time_scan(service, trace, bindings, revision, label):
-    """The T03 driver's extra preview: stage result before sealing, twice."""
+    """The T03 driver's extra preview: stage result before sealing, twice.
+
+    Idempotence only here; the independent correctness check runs in
+    run_t03 once the full replay has assembled the bindings.
+    """
     begin = next(step for step in trace.steps if step.id == 's2')
     stage = next(step for step in trace.steps if step.id == 's3')
     request = {
@@ -326,7 +376,30 @@ def preview_time_scan(service, trace, bindings, revision, label):
     assert status == 200, second
     if first['data'] != second['data']:
         raise AssertionError(f'{label}: repeated time-scan preview changed')
-    return canonical_digest(first['data']['workingState'])
+    return first
+
+
+def verify_time_scan_preview(trace, sample, bindings, preview, label):
+    """The preview must already show the committed time-scan state.
+
+    Independent expectation: the s8 get_state projection instantiated from
+    the completed bindings — never from the preview response itself. The
+    committed head equals the preview working state because sealing does not
+    change state and the narration does not either.
+    """
+    declarations = {variable.name: variable for variable in trace.variables}
+    commit = next(step for step in trace.steps if step.id == 's8')
+    expected_state, digest = expected_digest(commit.expectedProjection,
+                                             declarations, bindings)
+    data = preview['data']
+    if data['workingState'] != expected_state:
+        raise AssertionError(f'{label}: preview workingState differs from the independent '
+                             'expected time-scan state')
+    if data['workingStateDigest'] != digest:
+        raise AssertionError(f'{label}: preview workingStateDigest differs from the '
+                            f'independent expected digest ({data["workingStateDigest"]} '
+                            f'!= {digest})')
+    return digest
 
 
 def run_t03(service, t01_raw, trace, sample):
@@ -335,10 +408,12 @@ def run_t03(service, t01_raw, trace, sample):
     split = steps['s3'] + 1
     _, responses, drift_a = replay(service, trace, sample, bindings, trace.steps[:split],
                                    f'T03/{sample.id}', f'req_A4_T03_{sample.id}')
-    preview_digest = preview_time_scan(
+    preview = preview_time_scan(
         service, trace, bindings, responses['s3']['control']['revision'], f'T03/{sample.id}')
     digests, _, drift_b = replay(service, trace, sample, bindings, trace.steps[split:],
                                  f'T03/{sample.id}', f'req_A4_T03_{sample.id}')
+    preview_digest = verify_time_scan_preview(trace, sample, bindings, preview,
+                                              f'T03/{sample.id}')
     return {'sample': sample.id, 'worldId': bindings['v1'],
             'steps': len(trace.steps), 'stateDigests': digests,
             'finalDigest': digests['s8'], 'previewDigest': preview_digest,
@@ -396,8 +471,9 @@ def main():
         'restartReplayChecks': ['T01/sample_1 get_state digest unchanged',
                                 'T03/sample_1 get_state digest unchanged'],
         'assertionDriftCount': drift_count,
-        'assertionDriftNote': 'authored trace assertions (S1-era control phase/gate TTL '
-                              'expectations) that the evolved runtime no longer matches; '
+        'assertionDriftNote': 'registered exemptions only: T01 s1-s4 control '
+                              'phase/canCompute value mismatches authored before creation '
+                              'issued the head gate; every response schema-validated; '
                               'hard checks all passed',
         'traces': report_traces,
         'A': identity_before,
