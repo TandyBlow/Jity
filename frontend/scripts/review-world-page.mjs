@@ -40,8 +40,9 @@ const apiOrigin = `http://127.0.0.1:${apiPort}`;
 const nextOrigin = `http://127.0.0.1:${nextPort}`;
 
 const git = (checkout, ...args) => execFileSync('git', ['-c', `safe.directory=${checkout.replaceAll('\\', '/')}`, '-C', checkout, ...args], { encoding: 'utf8' }).trim();
-const sourceFiles = ['frontend/scripts/review-world-page.mjs', 'frontend/src/app/world/page.tsx', 'frontend/src/app/world/world-defaults.ts',
-  ...['runtime/rule-session', 'runtime/session', 'runtime/rule-facts', 'runtime/committed-narration', 'controller', 'recovery', 'http-transport']
+const sourceFiles = ['frontend/scripts/review-world-page.mjs', 'frontend/next.config.ts', 'frontend/src/app/world/page.tsx', 'frontend/src/app/world/world-defaults.ts',
+  ...['runtime/rule-session', 'runtime/session', 'runtime/rule-facts', 'runtime/committed-narration', 'runtime/prompts', 'runtime/focused-input',
+    'runtime/world-reads', 'runtime/wllama-engine', 'controller', 'recovery', 'http-transport']
     .map((name) => `frontend/src/lib/world-engine/${name}.ts`)];
 const report = { status: 'IN_PROGRESS', recordedAt: new Date().toISOString(), apiOrigin, nextOrigin,
   browserSource: { head: git(root, 'rev-parse', 'HEAD'), status: git(root, 'status', '--short'),
@@ -394,6 +395,63 @@ try {
     const returnRows = await logSection.locator('li').count();
     assert.equal(returnRows, 7, `navigation round-trip must rebuild all 7 narrations, got ${returnRows}`);
     step('spa-roundtrip', { logRows: returnRows, location: '门厅', sanity: 9 });
+
+    // r10 SPA 进入隔离回归：COOP/COEP 只在文档创建时生效——从 /（无隔离
+    // 头）经客户端路由进入 /world 时，响应头不会追认既有文档的隔离状态，
+    // crossOriginIsolated 仍为 false，多线程模型路径（SharedArrayBuffer）
+    // 全程不可用。修复=挂载自检失败整页重载一次（sessionStorage 护栏防
+    // 循环），重载后的文档由 /world 的响应头创建即隔离。判据：软导航后
+    // 隔离为真、本次导航类型是 reload、世界凭 sessionStorage 自动续接
+    // （7 行、门厅/9），且护栏标记已清除（没有重载循环）。
+    // 软导航由 next dev 暴露的 window.next.router 触发——与真实 <Link> 走
+    // 同一个 App Router 动作；页面当前没有从控制台进入 /world 的链接。
+    // 路由器在 hydration 前已存在但派发会抛「dispatched before initialization」，
+    // 所以先用设置菜单的开合作 hydration 判据（点击只在 hydration 后生效）。
+    await page.goto(`${nextOrigin}/`, { waitUntil: 'load', timeout: 120_000 });
+    assert.equal(await page.evaluate(() => window.crossOriginIsolated), false,
+      'the console document must start without the isolation headers');
+    await page.getByRole('button', { name: '设置' }).click();
+    await page.getByRole('menu', { name: '游戏设置' }).waitFor({ timeout: 60_000 });
+    await page.keyboard.press('Escape');
+    await page.getByRole('menu', { name: '游戏设置' }).waitFor({ state: 'detached', timeout: 10_000 });
+    await page.evaluate(() => window.next.router.push('/world'));
+    await page.waitForURL((url) => url.pathname.endsWith('/world'), { timeout: 30_000 });
+    // 自检的整页重载会销毁执行上下文，waitForFunction 会因此直接失败；
+    // 从 Node 侧轮询，把导航中的 evaluate 异常当作「正在重载」吞掉。
+    let isolated = null;
+    let navigationType = null;
+    for (const deadline = Date.now() + 60_000; Date.now() < deadline;) {
+      try {
+        isolated = await page.evaluate(() => window.crossOriginIsolated);
+        if (isolated) navigationType = await page.evaluate(() => performance.getEntriesByType('navigation')[0]?.type ?? null);
+      } catch { /* the mount self-check is reloading the document */ }
+      if (isolated) break;
+      await page.waitForTimeout(200);
+    }
+    if (!isolated) {
+      const diagnostic = { isolated: null, navigationType: null, pathname: null, flag: null, hasWorldUi: 0, body: '' };
+      try {
+        diagnostic.pathname = await page.evaluate(() => window.location.pathname);
+        diagnostic.flag = await page.evaluate(() => window.sessionStorage.getItem('jity.world.isoReload'));
+        diagnostic.body = (await page.evaluate(() => document.body.innerText)).slice(0, 200);
+        diagnostic.hasWorldUi = await page.getByText('世界最小交互页').count();
+      } catch { /* navigation still in flight */ }
+      step('spa-entry-diagnostic', diagnostic);
+      assert.fail('a soft entry into /world must end up in a cross-origin isolated document');
+    }
+    assert.equal(navigationType, 'reload',
+      'the mount self-check must reload into a document created with the isolation headers');
+    // 隔离状态在文档创建时即为真，早于 React 挂载——护栏清除要等挂载后的
+    // else 分支，所以用「世界已重建完成」作为挂载完成的判据再读护栏。
+    await statusSection.getByText('门厅', { exact: true }).waitFor({ timeout: 90_000 });
+    await expect(statusSection.getByText('9', { exact: true })).toBeVisible({ timeout: 30_000 });
+    const spaEntryRows = await logSection.locator('li').count();
+    assert.equal(spaEntryRows, 7, `SPA entry must rebuild all 7 narrations, got ${spaEntryRows}`);
+    assert.equal(await page.evaluate(() => window.sessionStorage.getItem('jity.world.isoReload')), null,
+      'the reload guard must be cleared once the isolated document is mounted');
+    step('spa-entry-isolation', { crossOriginIsolated: true, navigationType, logRows: spaEntryRows,
+      location: '门厅', sanity: 9,
+      note: 'the mount self-check reloaded the soft entry once into an isolated document, world re-attached' });
 
     // r8 异步竞态回归（漏传 isStale 时转红）：旧代挂载的 attach 首读
     // （get_state）被扣到新代完成之后才放行。修复前旧 attach 继续创建会话、
