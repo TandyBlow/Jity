@@ -65,11 +65,12 @@ save();
 const trackedDirty = (status, pinned) => (status ?? '').split('\n').filter((line) => line && !line.startsWith('??'))
   .map((line) => line.slice(3).replaceAll('\\', '/')).filter((path) => pinned.some((item) => path === item || path.startsWith(`${item}/`)));
 const dirtyPinned = { server: trackedDirty(report.serverSource.status, ['backend/app']), browser: trackedDirty(report.browserSource.status, sources) };
-if ((dirtyPinned.server.length || dirtyPinned.browser.length) &&
-  !(process.argv.includes('--allow-dirty-server') || process.argv.includes('--allow-dirty-browser'))) {
+const allowDirty = { server: process.argv.includes('--allow-dirty-server'), browser: process.argv.includes('--allow-dirty-browser') };
+if ((dirtyPinned.server.length && !allowDirty.server) || (dirtyPinned.browser.length && !allowDirty.browser)) {
   report.status = 'FAILED';
-  report.error = `pinned source tree dirty: server=${JSON.stringify(dirtyPinned.server)} browser=${JSON.stringify(dirtyPinned.browser)} ` +
-    `— commit/stash first, or pass --allow-dirty-server/--allow-dirty-browser`;
+  report.error = `pinned source tree dirty: server=${JSON.stringify(dirtyPinned.server)}${allowDirty.server ? ' (allowed)' : ''} ` +
+    `browser=${JSON.stringify(dirtyPinned.browser)}${allowDirty.browser ? ' (allowed)' : ''} — commit/stash first, ` +
+    `or pass --allow-dirty-server / --allow-dirty-browser for the side being run`;
   save();
   console.error(`[world-chain] FAILED: ${report.error}`);
   process.exit(1);
@@ -173,11 +174,14 @@ try {
         if (response.status >= 400) wireCaptures.push({ url: String(input), body: String(init?.body ?? ''), status: response.status, response: await response.clone().text() });
         return response;
       };
-      const basePolisher = await narrationPolisher(DEFAULT_POLISH_MODEL, { onCompletion: (item) => evidence.push(item) });
+      const basePolisher = await narrationPolisher(DEFAULT_POLISH_MODEL);
       const polish = async (input, packet, focused, attempt) => {
         const started = performance.now();
         const evidenceBefore = evidence.length;
-        const text = await basePolisher(input, packet, focused, attempt);
+        // 证据回调必须逐调用传入：实例级 onCompletion 会被 polisher 的模块级
+        // 缓存吞掉（v2 的 chain completion 证据为空即此因——action 先建实例、
+        // chain 复用同一实例，chain 的回调被忽略）
+        const text = await basePolisher(input, packet, focused, attempt, (item) => evidence.push(item));
         modelAttempts.push({ at: Date.now(), attempt: attempt.index, ms: Math.round(performance.now() - started), chars: text.length, text,
           pointId: input?.pointId ?? null,
           facts: (focused?.facts ?? []).map((fact) => ({ id: fact.id, phrase: fact.allowedPhrases[0] })),
@@ -254,6 +258,9 @@ try {
       save();
       throw new Error(`action failed: ${report.action.error}\nwire=${JSON.stringify(report.action.wireCaptures)}\nops=${JSON.stringify((report.action.opLog ?? []).slice(-10))}\nevents=${JSON.stringify((report.action.events ?? []).slice(-4))}\nnet=${JSON.stringify(netTrail, null, 1).slice(0, 3000)}`);
     }
+    if (report.action.totals.completionEvidence < 1) {
+      throw new Error('action narration produced no completion evidence — per-call onCompletion plumbing regressed');
+    }
     report.status = 'PASS_ACTION'; save();
     console.log(`[world-chain] action: attach=${report.action.attach.ms}ms inputs=${report.action.inputs.length} ` +
       `modelAttempts=${report.action.totals.modelAttempts} wall=${Math.round(report.action.inputs.reduce((sum, item) => sum + item.wallMs, 0))}ms`);
@@ -275,11 +282,14 @@ try {
       const rollsOut = [];
       const reads = new Map();
       try {
-      const basePolisher = await narrationPolisher(DEFAULT_POLISH_MODEL, { onCompletion: (item) => evidence.push(item) });
+      const basePolisher = await narrationPolisher(DEFAULT_POLISH_MODEL);
       const polish = async (input, packet, focused, attempt) => {
         const started = performance.now();
         const evidenceBefore = evidence.length;
-        const text = await basePolisher(input, packet, focused, attempt);
+        // 证据回调必须逐调用传入：实例级 onCompletion 会被 polisher 的模块级
+        // 缓存吞掉（v2 的 chain completion 证据为空即此因——action 先建实例、
+        // chain 复用同一实例，chain 的回调被忽略）
+        const text = await basePolisher(input, packet, focused, attempt, (item) => evidence.push(item));
         modelAttempts.push({ at: Date.now(), attempt: attempt.index, ms: Math.round(performance.now() - started), chars: text.length, text,
           pointId: input?.pointId ?? null,
           facts: (focused?.facts ?? []).map((fact) => ({ id: fact.id, phrase: fact.allowedPhrases[0] })),
@@ -459,6 +469,11 @@ try {
 setupOps=${JSON.stringify(report.chain.setupOps)}
 ops=${JSON.stringify((report.chain.opLog ?? []).slice(-8))}
 events=${JSON.stringify((report.chain.events ?? []).slice(-3))}`);
+    }
+    if (report.chain.totals.completionEvidence < 1) {
+      // v2 的阻断项：chain 的 completion 证据为空（polisher 实例级回调被缓存吞掉），
+      // 断言钉住这条管道，防回归
+      throw new Error('chain narration produced no completion evidence — per-call onCompletion plumbing regressed');
     }
     report.status = phase === 'both' ? 'PASS_BOTH' : 'PASS_CHAIN'; save();
     console.log(`[world-chain] chain: attempts=${report.chain.attempts} setup=${report.chain.setupMs}ms walk=${report.chain.walkMs}ms ` +

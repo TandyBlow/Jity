@@ -31,15 +31,14 @@ export async function warmNarrationEngine(modelUrl: string): Promise<{ loadMs: n
   return { loadMs: Math.round(performance.now() - started), topology: engine.diagnostics };
 }
 
-export function narrationPolisher(modelUrl: string,
-  options: { onCompletion?: (evidence: unknown) => void } = {}): Promise<RuleNarrationPolisher> {
-  const key = `${modelUrl}|${options.onCompletion ? 'evidence' : 'plain'}`;
+export function narrationPolisher(modelUrl: string): Promise<RuleNarrationPolisher> {
+  const key = modelUrl; // 实例按模型共享；证据回调走逐调用参数，不参与缓存键
   let engine = polishEngines.get(key);
   if (!engine) {
     engine = (async () => {
       const { buildTaskPrompt } = await import('../../lib/world-engine/runtime/prompts');
       const wllama = await engineFor(modelUrl);
-      return async (input, _packet, focused, attempt) => {
+      return async (input, _packet, focused, attempt, onCompletion) => {
         // 共享 prompts.ts / focused-input.ts 保持确定性（B3 eval 回放依赖）；
         // 页面实验在提交给引擎前收窄输入：每条事实只展示首个短语（判分器
         // 仍接受任意已登记变体）。实测 0.5B/0.6B 模型在展示两个变体时必然
@@ -66,7 +65,7 @@ export function narrationPolisher(modelUrl: string,
           cachePrompt: true,
           timeoutMs: 110_000,
           stop: ['\n[', '\n正文:', '\n输出:', '[硬性要求]'],
-          onCompletion: options.onCompletion,
+          onCompletion,
         });
         const text = raw.trim();
         if (!text) throw new Error('润色输出为空');

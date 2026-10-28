@@ -59,6 +59,9 @@ export type RuleNarrationPolisher = (
   packet: CommittedNarration,
   focused: Json,
   attempt: PolishAttempt,
+  /** 逐调用证据回调（usage/timings/raw）。必须按调用传入——实例级回调会被
+   * polisher 的模块级缓存吞掉（整链验收 v2 的 chain completion 证据为空即此因）。 */
+  onCompletion?: (evidence: unknown) => void,
 ) => Promise<string | null>;
 
 export type RuleSessionEvent =
