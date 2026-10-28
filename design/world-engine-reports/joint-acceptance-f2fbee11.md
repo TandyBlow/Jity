@@ -12,13 +12,11 @@
 | 共同基点 | `79f8120`（`agent`）；双方对 `design/world-protocol/v2` 的字节完全相同（A 的 `812e721..3734a52` 对该目录零 diff，B 镜像同一候选） |
 | 组合提交 | `44996f3a5413b0bcd446480e879b1115132816ce`（`git merge --no-ff 552148c`） |
 | 验收树 | `f2fbee118fa21f0aaf1f03fa2be7953068d96b64` |
-| 签字页所在提交 | `integration/a3734a52-b552148c` 分支头，及 `world-server` 上的同文镜像；以 `git log -1 -- design/world-engine-reports/joint-acceptance-f2fbee11.md` 为准（本表不写死自身哈希，避免自指） |
+| 签字页所在提交 | 当前维护于 `world-server`；原集成分支于 2026-10-28 整理撤销，以 `git log -1 -- design/world-engine-reports/joint-acceptance-f2fbee11.md` 为准（本表不写死自身哈希，避免自指） |
 | 契约摘要 | `902918016f2bf7eff4cd1afd52da4ca96defdb5ee4082f171fda987de86680c2`（manifest 与前端 pin 一致） |
 | 环境 | Windows 11 / Python 3.12.3 / Node 22.20.0 / npm 10.9.3，fresh `npm ci`（385 packages） |
 
-组合只存在于临时分支 `integration/a3734a52-b552148c`，按
-[分工文档](../browser-world-state-work-split.md) §2.2 建立；`world-server` 与
-`world-browser` 开发分支保持各自历史，未合并、未改写。
+验收时组合位于临时分支 `integration/a3734a52-b552148c`。2026-10-28 按用户要求撤销该分支，组合提交保存在本机 `.local/branch-cleanup-20261028/backup.bundle` 完整备份及 detached checkout 中。`world-server` 与 `world-browser` 开发分支保持各自历史，未互相合并、未改写。后续按[分工文档](../browser-world-state-work-split.md)的两分支约定执行。
 
 ## 二、冲突裁决（两处，均为契约权威判定）
 
@@ -98,9 +96,10 @@ frontend 与 world-interface 按设计失败（B 的七项版本/pin 同步未�
 ## 七、复现
 
 ```powershell
-git clone https://github.com/TandyBlow/Jity.git jity-integration
-cd jity-integration
-git checkout integration/a3734a52-b552148c   # 分支头即签字页所在提交
+# 在保存了备份文件的原仓库执行；fetch 不创建开发分支。
+git fetch .local/branch-cleanup-20261028/backup.bundle refs/heads/integration/a3734a52-b552148c
+# 在干净的独立 checkout 中检出实际验收提交，而不是已撤销的分支名。
+git switch --detach 44996f3a5413b0bcd446480e879b1115132816ce
 git rev-parse HEAD^{tree}
 npm --prefix frontend ci
 python -X utf8 backend/scripts/check_world_interface_baseline.py
