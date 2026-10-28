@@ -79,19 +79,22 @@ def esc(s: str) -> str:
     return re.escape(s)
 
 
+UNIT_EN = {"分钟": "minute", "小时": "hour"}
+
+
 def entry_patterns(entry: dict) -> list:
     """Controlled recognizer patterns for one plan entry (regex, unanchored).
-    The ONLY free-value point is moved's embedded duration; every other
-    pattern is built from the plan's own values, so a match pins the value.
-    moved's duration group is parsed and compared against the row's time
-    entry by the caller (v4: matched-but-inconsistent = not expressed)."""
+    Free-value points are ONLY the numeric durations (moved-embedded and the
+    time entry itself): both are parsed (value, unit) and compared against
+    the plan by the caller. `rendered` is a construction hint and is NEVER
+    trusted as a fact source (v5: a tampered rendered no longer defines what
+    the text may say). All other patterns are built from plan values, so a
+    match pins the value."""
     kind = entry.get("kind")
     if kind == "moved":
         name, frm, to = entry["name"], entry["from"], entry["to"]
         return [rf"(?P<subj>{esc(name)})(?P<dur>(用了|花了)?{CN_NUM}(分钟|小时))?(从|由|离开){esc(frm)}(一路)?((走|来|进)到了?|到了?|抵达|进入)了?{esc(to)}(时?)"]
     if kind == "task_achieved":
-        # v4: no `.*` — the negated form must NOT match (it used to swallow
-        # 尚未/没有 and read as a completion claim)
         return [rf"{esc(entry['name'])}(已经|已)?(完成|达成|办妥)了?任务「{esc(entry['goal'])}」"]
     if kind == "personality_changed":
         return [rf"(?:{esc(entry['name'])})?(?:形成了新的人格描述|变得)?了?「?{esc(entry['text'])}」?"]
@@ -104,10 +107,43 @@ def entry_patterns(entry: dict) -> list:
     if kind == "positioned_at":
         return [rf"{esc(entry['name'])}已经在{esc(entry['at'])}了?"]
     if kind == "time":
-        return [rf"(前后)?(大约|约|整整)?{esc(entry['rendered'])}(过去了?)?"]
+        # v5: value+unit parsed and compared to amount/unit; rendered unused
+        return [rf"(?P<pre>前后)?(大约|约|整整)?(?P<num>{CN_NUM}|\d+)(?P<unit>分钟|小时)(?P<post>过去了?)?"]
     if kind == "no_change":
         return [rf"一切(如旧|照旧)|没有动静|平静如常|风平浪静"]
     return []
+
+
+def moved_duration_ok(entry: dict, m: "re.Match", plan: list) -> tuple:
+    """moved's parsed duration must agree with the row's time entry in BOTH
+    value and unit (三小时 != 三分钟 even when the numbers match)."""
+    dur = m.group("dur")
+    if not dur:
+        return True, None
+    time_entry = next((e for e in plan if e.get("kind") == "time"), None)
+    if time_entry is None:
+        return False, "moved clause embeds a duration but the plan has no time entry"
+    num = re.sub(r"^(用了|花了)", "", dur)
+    unit_cn = "分钟" if num.endswith("分钟") else "小时"
+    v = cn_to_int(num[:-2])
+    unit_en = UNIT_EN[unit_cn]
+    if v != time_entry["amount"] or unit_en != time_entry["unit"]:
+        return False, (f"embedded duration {dur}={v}{unit_en} contradicts the planned "
+                       f"time {time_entry['amount']}{time_entry['unit']}")
+    return True, None
+
+
+def time_value_ok(entry: dict, m: "re.Match", plan: list) -> tuple:
+    """The time clause's parsed (value, unit) must equal the plan entry."""
+    v = cn_to_int(m.group("num"))
+    unit_en = UNIT_EN[m.group("unit")]
+    if v != entry["amount"] or unit_en != entry["unit"]:
+        return False, (f"time clause reads {v}{unit_en} but the plan says "
+                       f"{entry['amount']}{entry['unit']}")
+    return True, None
+
+
+PARSERS = {"moved": moved_duration_ok, "time": time_value_ok}
 
 
 def moved_duration_ok(entry: dict, m: "re.Match", plan: list) -> tuple:
@@ -154,11 +190,12 @@ def check_row(r: dict):
             core = clause.strip()
             spans = []
             for entry in entries:
+                parser = PARSERS.get(entry.get("kind"))
                 for p in entry_patterns(entry):
                     for m in re.finditer(p, core):
                         spans.append((m.start(), m.end()))
-                        if entry.get("kind") == "moved":
-                            ok, why = moved_duration_ok(entry, m, plan)
+                        if parser is not None:
+                            ok, why = parser(entry, m, plan)
                             if not ok:
                                 reviews.append(why)
                                 continue
@@ -261,7 +298,17 @@ def main() -> None:
         (with_text(loc1, "前后大约三分钟。", planRefs=[[0, 1]]), "review", "must-not-expressed"),
         (with_text(loc1, "陈舟用了八分钟从东门走到了钟楼。前后大约三分钟。"), "review", "embedded-duration-mismatch"),
         (with_text(task, f"{task_entry['name']}任务尚未完成「{task_entry['goal']}」。前后大约三分钟。"), "review", "task-yet-incomplete"),
+        # v5 round-5 counterexamples
+        (with_text(loc1, "陈舟用了三小时从东门走到了钟楼。前后大约三分钟。"), "review", "embedded-unit-mismatch"),
+        (with_text(loc1, "陈舟从东门走到了钟楼。前后大约八分钟。", ),
+         "review", "time-clause-value-mismatch"),
     ]
+    # rendered tamper: plan's rendered hint says 八分钟 but amount stays 3 —
+    # the recognizer must follow amount/unit, not rendered
+    r_rendered = variant(loc1)
+    r_rendered["plan"][1]["rendered"] = "八分钟"
+    r_rendered["text"] = "陈舟从东门走到了钟楼。前后大约八分钟。"
+    bads.append((rehash(r_rendered), "review", "rendered-not-trusted"))
     void = []
     for bad, expected, label in bads:
         f, rv = check_row(bad)
@@ -273,7 +320,7 @@ def main() -> None:
         for x in void:
             print(" ", x)
         sys.exit(2)
-    print("self-test PASS: 15/15 negative rows caught with expected verdict class")
+    print(f"self-test PASS: {len(bads)}/{len(bads)} negative rows caught with expected verdict class")
 
     # ---- group consistency ----
     groups = {}
