@@ -5,6 +5,7 @@ frontend/src/lib/world-engine/contract-digest.json text eol=lf
 
 # H2 evidence manifests bind file bytes, including the recorded orchestrator.
 artifacts/h2-full-6b809dc-0cb1951/** text eol=lf
+artifacts/h2-integration-d1d2de0/** text eol=lf
 
 # The short browser evaluation records byte hashes for replay and review.
 artifacts/b3-short/** text eol=lf

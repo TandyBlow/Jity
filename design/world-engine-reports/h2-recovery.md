@@ -1,6 +1,14 @@
 # H2：浏览器恢复与 SQLite 联调验收
 
-当前状态：2026-10-27。固定组合 **B=`6b809dc`＋A=`0cb1951`** 的 main、successor、
+当前状态：2026-10-28。完整 H2 矩阵已在固定集成组合 **A=`1ef34e7`＋B=`21a95f0`**
+（merge `d1d2de0`）上重新跑过：main、successor、post-restart 与三种损坏场景
+全绿，隔离 SQLite、真实 `ControllerDriver.recover`，证据见
+[集成组合验收记录](../../artifacts/h2-integration-d1d2de0/README.md)。
+此前 2026-10-27 的固定组合 **B=`6b809dc`＋A=`0cb1951`** 记录保留原范围如下。
+
+### 2026-10-27 记录
+
+固定组合的 main、successor、
 post-restart 正向路径全部重跑通过，三种损坏场景也重新按声明码停止。
 本轮约定的完整 H2 验收矩阵通过，执行步骤与脱敏证据已归档至
 [固定组合验收记录](../../artifacts/h2-full-6b809dc-0cb1951/README.md)。
@@ -66,8 +74,22 @@ python -X utf8 -m uvicorn app.world_app:create_world_app --factory --host 127.0.
 node scripts/review-world-h2-history.mjs http://127.0.0.1:18769 ../artifacts/h2-history-http-review.json ../.local/world-server-worktree
 ```
 
-## 尚未关闭的 H2 依赖
+## H2 依赖的关闭情况（2026-10-28）
 
-1. **骰点读取事实不足。** 当前 `FrozenGroup.members[].rollRefs` 仅有 source/target/trigger/roll 身份，没有 result/eligible/admitted/ruleVersion/target。闭组后尚未保存结果且存在骰点时，不能构造合规的 results 输入。客户端明确返回 `recovery_roll_outcomes_missing`，不重新掷骰或假装空骰点列表。多来源未完成组也不能凭成员排列猜测 DFS frontier，资料不足时返回 `recovery_frontier_incomplete`。需先与 A 固定短期恢复载荷/只读查询中完整骰点事实及处理进度的读取能力，再接线，不增加长期行动历史；本批没有单方改 wire schema。
-2. **真实 A3 复制/围栏尚未提供。** 已检查的 A checkout `handle_restore_group_work` 仍按占位实现返回 `frozen_work_missing`；其 persistent development adapter 明确不代表已完成 TTL/takeover。现有客户端复制测试使用合同标本，不是事务执行证据。
-3. **完整 H2 联调尚未运行。** 仍须在真实 SQLite 服务上验证刷新、租约交接、epoch/claim 围栏和重领、当前/后继原文与候选副本、旧持有者迟到写入拒绝、恢复后提交及无重复消费。历史读取子检查不代替这项验收。
+原先列出的三项依赖在集成组合 `d1d2de0` 上均已实测：
+
+1. **骰点读取事实**：恢复载荷现在携带逐成员 `rollRefs`（source/target/trigger/
+   rollId）与 `group.rolls`（result/eligible/admitted/ruleVersion/target）、以及
+   服务端保存的 `progress.sourceStack`/威胁状态；重启后原骰点身份与准入结果
+   原样存活，客户端不再返回 `recovery_roll_outcomes_missing`。
+2. **真实 A3 复制/围栏**：`world_31` 有 1 条 `world_copy_results`、1 次
+   `checkpoint_restore_group_work`、随后 1 次 `commit_point`；旧持有者的
+   `narration_submit`/`narration_claim_renew` 收 `claim_fenced`，旧租约的
+   `checkpoint_seal_point` 收 `stale_epoch`，新持有者取得新 claim 与新 epoch。
+3. **完整 H2 联调**：刷新（post-restart）、接管（main 的跨 epoch 段）、后继
+   （successor）、重启持久化与三种损坏场景在同一固定提交上通过，原始
+   行动字节/候选哈希与 accepted 记录逐行相等。
+
+仍未覆盖，不得据上表扩大：120 秒 TTL 自然过期的接管时序、真实浏览器页面、
+B3 全量评估与真实模型输出。
+

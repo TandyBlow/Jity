@@ -1,0 +1,1193 @@
+{
+  "recordedAt": "2026-10-28T07:14:00.885606+00:00",
+  "databases": [
+    {
+      "label": "positive",
+      "database": "positive.db",
+      "worlds": {
+        "world_1": {
+          "submissions": {
+            "narration_claim": 1,
+            "narration_submit": 1,
+            "allocate_ids": 1,
+            "checkpoint_start_advance": 1,
+            "checkpoint_begin_point": 1,
+            "checkpoint_discover_group": 1,
+            "checkpoint_extend_group": 1,
+            "create_rolls": 1
+          },
+          "points": [],
+          "work": [
+            {
+              "pointId": "point_7",
+              "groupId": "group_8",
+              "memberId": "person_a",
+              "epoch": 1,
+              "attempt": 1,
+              "actionBytes": 51,
+              "actionSha256": "830d074c0ff57c800c5c6fbde8f550f838d8238cc7976365bdbdebecea8d78af",
+              "acceptedActionSha256": "830d074c0ff57c800c5c6fbde8f550f838d8238cc7976365bdbdebecea8d78af",
+              "actionBytesMatchAccepted": true,
+              "targetsSha256": null,
+              "resultSha256": null
+            },
+            {
+              "pointId": "point_7",
+              "groupId": "group_8",
+              "memberId": "person_a",
+              "epoch": 1,
+              "attempt": 2,
+              "actionBytes": 51,
+              "actionSha256": "830d074c0ff57c800c5c6fbde8f550f838d8238cc7976365bdbdebecea8d78af",
+              "acceptedActionSha256": "830d074c0ff57c800c5c6fbde8f550f838d8238cc7976365bdbdebecea8d78af",
+              "actionBytesMatchAccepted": true,
+              "targetsSha256": "9c0112adeedcb3658463673084655cb4aafa69b49d47c1771e2e7351521c63e5",
+              "resultSha256": null
+            }
+          ],
+          "copies": [],
+          "rolls": {
+            "reaction-d20-v1": {
+              "count": 1,
+              "admitted": 0
+            }
+          },
+          "narrations": 1,
+          "lease": {
+            "epoch": 1,
+            "holder_id": "initial",
+            "expires_at": 1793171715820
+          },
+          "groups": {
+            "group_8": "open"
+          },
+          "settledUnits": [],
+          "requestIds": [
+            "h2full_mvrs2ife_2",
+            "h2full_mvrs2ife_3",
+            "h2full_mvrs2ife_4",
+            "h2full_mvrs2ife_5",
+            "h2full_mvrs2ife_6",
+            "h2full_mvrs2ife_7",
+            "h2full_mvrs2ife_8",
+            "h2full_mvrs2ife_9"
+          ],
+          "pointRows": [
+            {
+              "id": "root_3",
+              "sequence": 0,
+              "kind": "root",
+              "previous_point_id": null,
+              "state_digest": "8a5e02e4720746c85a07d123d73dd455890eb03ea3df44043974456e501f517a"
+            }
+          ],
+          "nonRootCommits": 0
+        },
+        "world_12": {
+          "submissions": {
+            "narration_claim": 2,
+            "narration_submit": 2,
+            "allocate_ids": 4,
+            "checkpoint_start_advance": 1,
+            "checkpoint_begin_point": 1,
+            "checkpoint_discover_group": 1,
+            "checkpoint_extend_group": 5,
+            "create_rolls": 3,
+            "lease_renew": 1,
+            "checkpoint_close_group": 1,
+            "checkpoint_stage_unit": 1,
+            "checkpoint_record_skip": 3,
+            "checkpoint_seal_point": 1,
+            "commit_point": 1,
+            "round_conclusion_conclude": 1
+          },
+          "points": [],
+          "work": [
+            {
+              "pointId": "point_18",
+              "groupId": "group_19",
+              "memberId": "person_a",
+              "epoch": 1,
+              "attempt": 1,
+              "actionBytes": 51,
+              "actionSha256": "830d074c0ff57c800c5c6fbde8f550f838d8238cc7976365bdbdebecea8d78af",
+              "acceptedActionSha256": "830d074c0ff57c800c5c6fbde8f550f838d8238cc7976365bdbdebecea8d78af",
+              "actionBytesMatchAccepted": true,
+              "targetsSha256": null,
+              "resultSha256": null
+            },
+            {
+              "pointId": "point_18",
+              "groupId": "group_19",
+              "memberId": "person_a",
+              "epoch": 1,
+              "attempt": 2,
+              "actionBytes": 51,
+              "actionSha256": "830d074c0ff57c800c5c6fbde8f550f838d8238cc7976365bdbdebecea8d78af",
+              "acceptedActionSha256": "830d074c0ff57c800c5c6fbde8f550f838d8238cc7976365bdbdebecea8d78af",
+              "actionBytesMatchAccepted": true,
+              "targetsSha256": "e43186d92be53b176ecb2291b81c1c06e0819d0dc01e1fa282ec643b715b411c",
+              "resultSha256": null
+            },
+            {
+              "pointId": "point_18",
+              "groupId": "group_19",
+              "memberId": "person_a",
+              "epoch": 1,
+              "attempt": 3,
+              "actionBytes": 51,
+              "actionSha256": "830d074c0ff57c800c5c6fbde8f550f838d8238cc7976365bdbdebecea8d78af",
+              "acceptedActionSha256": "830d074c0ff57c800c5c6fbde8f550f838d8238cc7976365bdbdebecea8d78af",
+              "actionBytesMatchAccepted": true,
+              "targetsSha256": "e43186d92be53b176ecb2291b81c1c06e0819d0dc01e1fa282ec643b715b411c",
+              "resultSha256": null
+            },
+            {
+              "pointId": "point_18",
+              "groupId": "group_19",
+              "memberId": "person_a",
+              "epoch": 1,
+              "attempt": 4,
+              "actionBytes": 51,
+              "actionSha256": "830d074c0ff57c800c5c6fbde8f550f838d8238cc7976365bdbdebecea8d78af",
+              "acceptedActionSha256": "830d074c0ff57c800c5c6fbde8f550f838d8238cc7976365bdbdebecea8d78af",
+              "actionBytesMatchAccepted": true,
+              "targetsSha256": "e43186d92be53b176ecb2291b81c1c06e0819d0dc01e1fa282ec643b715b411c",
+              "resultSha256": null
+            },
+            {
+              "pointId": "point_18",
+              "groupId": "group_19",
+              "memberId": "person_a",
+              "epoch": 1,
+              "attempt": 5,
+              "actionBytes": 51,
+              "actionSha256": "830d074c0ff57c800c5c6fbde8f550f838d8238cc7976365bdbdebecea8d78af",
+              "acceptedActionSha256": "830d074c0ff57c800c5c6fbde8f550f838d8238cc7976365bdbdebecea8d78af",
+              "actionBytesMatchAccepted": true,
+              "targetsSha256": "e43186d92be53b176ecb2291b81c1c06e0819d0dc01e1fa282ec643b715b411c",
+              "resultSha256": null
+            },
+            {
+              "pointId": "point_18",
+              "groupId": "group_19",
+              "memberId": "person_a",
+              "epoch": 1,
+              "attempt": 6,
+              "actionBytes": 51,
+              "actionSha256": "830d074c0ff57c800c5c6fbde8f550f838d8238cc7976365bdbdebecea8d78af",
+              "acceptedActionSha256": "830d074c0ff57c800c5c6fbde8f550f838d8238cc7976365bdbdebecea8d78af",
+              "actionBytesMatchAccepted": true,
+              "targetsSha256": "e43186d92be53b176ecb2291b81c1c06e0819d0dc01e1fa282ec643b715b411c",
+              "resultSha256": null
+            },
+            {
+              "pointId": "point_18",
+              "groupId": "group_19",
+              "memberId": "person_a",
+              "epoch": 1,
+              "attempt": 7,
+              "actionBytes": 51,
+              "actionSha256": "830d074c0ff57c800c5c6fbde8f550f838d8238cc7976365bdbdebecea8d78af",
+              "acceptedActionSha256": "830d074c0ff57c800c5c6fbde8f550f838d8238cc7976365bdbdebecea8d78af",
+              "actionBytesMatchAccepted": true,
+              "targetsSha256": "e43186d92be53b176ecb2291b81c1c06e0819d0dc01e1fa282ec643b715b411c",
+              "resultSha256": "a30052e4aa7de7d1a2d22ae76010542987643a01c31add67c08a3e2bfe73a0f1",
+              "candidatesSha256": "aad37cd10b0b3543f9c32bb688eca8f8de97926a1a7cfc8ac0ce6aef6a526471",
+              "acceptedCandidatesSha256": "aad37cd10b0b3543f9c32bb688eca8f8de97926a1a7cfc8ac0ce6aef6a526471",
+              "candidatesMatchAccepted": true
+            },
+            {
+              "pointId": "point_18",
+              "groupId": "group_19",
+              "memberId": "person_b",
+              "epoch": 1,
+              "attempt": 3,
+              "actionBytes": 24,
+              "actionSha256": "a98881b1f979657e80d0a571b4173e24037489bf24f3f76f83c6f2f3b97193cd",
+              "acceptedActionSha256": "a98881b1f979657e80d0a571b4173e24037489bf24f3f76f83c6f2f3b97193cd",
+              "actionBytesMatchAccepted": true,
+              "targetsSha256": null,
+              "resultSha256": null
+            },
+            {
+              "pointId": "point_18",
+              "groupId": "group_19",
+              "memberId": "person_b",
+              "epoch": 1,
+              "attempt": 4,
+              "actionBytes": 24,
+              "actionSha256": "a98881b1f979657e80d0a571b4173e24037489bf24f3f76f83c6f2f3b97193cd",
+              "acceptedActionSha256": "a98881b1f979657e80d0a571b4173e24037489bf24f3f76f83c6f2f3b97193cd",
+              "actionBytesMatchAccepted": true,
+              "targetsSha256": "2a0cb9ff1f6893ca6bf120a0c2b52fc12c13b4ea774ea0d4cc1061413c62ba1f",
+              "resultSha256": null
+            },
+            {
+              "pointId": "point_18",
+              "groupId": "group_19",
+              "memberId": "person_b",
+              "epoch": 1,
+              "attempt": 5,
+              "actionBytes": 24,
+              "actionSha256": "a98881b1f979657e80d0a571b4173e24037489bf24f3f76f83c6f2f3b97193cd",
+              "acceptedActionSha256": "a98881b1f979657e80d0a571b4173e24037489bf24f3f76f83c6f2f3b97193cd",
+              "actionBytesMatchAccepted": true,
+              "targetsSha256": "2a0cb9ff1f6893ca6bf120a0c2b52fc12c13b4ea774ea0d4cc1061413c62ba1f",
+              "resultSha256": null
+            },
+            {
+              "pointId": "point_18",
+              "groupId": "group_19",
+              "memberId": "person_b",
+              "epoch": 1,
+              "attempt": 6,
+              "actionBytes": 24,
+              "actionSha256": "a98881b1f979657e80d0a571b4173e24037489bf24f3f76f83c6f2f3b97193cd",
+              "acceptedActionSha256": "a98881b1f979657e80d0a571b4173e24037489bf24f3f76f83c6f2f3b97193cd",
+              "actionBytesMatchAccepted": true,
+              "targetsSha256": "2a0cb9ff1f6893ca6bf120a0c2b52fc12c13b4ea774ea0d4cc1061413c62ba1f",
+              "resultSha256": null
+            },
+            {
+              "pointId": "point_18",
+              "groupId": "group_19",
+              "memberId": "person_b",
+              "epoch": 1,
+              "attempt": 7,
+              "actionBytes": 24,
+              "actionSha256": "a98881b1f979657e80d0a571b4173e24037489bf24f3f76f83c6f2f3b97193cd",
+              "acceptedActionSha256": "a98881b1f979657e80d0a571b4173e24037489bf24f3f76f83c6f2f3b97193cd",
+              "actionBytesMatchAccepted": true,
+              "targetsSha256": "2a0cb9ff1f6893ca6bf120a0c2b52fc12c13b4ea774ea0d4cc1061413c62ba1f",
+              "resultSha256": "5373471f827001df587b43f52e501bf419db08aa414768a80e4e95bce08f0fb5",
+              "candidatesSha256": "aad37cd10b0b3543f9c32bb688eca8f8de97926a1a7cfc8ac0ce6aef6a526471",
+              "acceptedCandidatesSha256": "aad37cd10b0b3543f9c32bb688eca8f8de97926a1a7cfc8ac0ce6aef6a526471",
+              "candidatesMatchAccepted": true
+            },
+            {
+              "pointId": "point_18",
+              "groupId": "group_19",
+              "memberId": "person_c",
+              "epoch": 1,
+              "attempt": 5,
+              "actionBytes": 36,
+              "actionSha256": "2709841fe6cb62db5c26817e8d9b4608dae0ddde68b9f0ead4e5735c44935771",
+              "acceptedActionSha256": "2709841fe6cb62db5c26817e8d9b4608dae0ddde68b9f0ead4e5735c44935771",
+              "actionBytesMatchAccepted": true,
+              "targetsSha256": null,
+              "resultSha256": null
+            },
+            {
+              "pointId": "point_18",
+              "groupId": "group_19",
+              "memberId": "person_c",
+              "epoch": 1,
+              "attempt": 6,
+              "actionBytes": 36,
+              "actionSha256": "2709841fe6cb62db5c26817e8d9b4608dae0ddde68b9f0ead4e5735c44935771",
+              "acceptedActionSha256": "2709841fe6cb62db5c26817e8d9b4608dae0ddde68b9f0ead4e5735c44935771",
+              "actionBytesMatchAccepted": true,
+              "targetsSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+              "resultSha256": null
+            },
+            {
+              "pointId": "point_18",
+              "groupId": "group_19",
+              "memberId": "person_c",
+              "epoch": 1,
+              "attempt": 7,
+              "actionBytes": 36,
+              "actionSha256": "2709841fe6cb62db5c26817e8d9b4608dae0ddde68b9f0ead4e5735c44935771",
+              "acceptedActionSha256": "2709841fe6cb62db5c26817e8d9b4608dae0ddde68b9f0ead4e5735c44935771",
+              "actionBytesMatchAccepted": true,
+              "targetsSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+              "resultSha256": "7d2c2ec78ffd89161bff51e604049ed51a8465278e60c1f212d7408b2f5d48a3",
+              "candidatesSha256": "aad37cd10b0b3543f9c32bb688eca8f8de97926a1a7cfc8ac0ce6aef6a526471",
+              "acceptedCandidatesSha256": "aad37cd10b0b3543f9c32bb688eca8f8de97926a1a7cfc8ac0ce6aef6a526471",
+              "candidatesMatchAccepted": true
+            }
+          ],
+          "copies": [],
+          "rolls": {
+            "reaction-d20-v1": {
+              "count": 3,
+              "admitted": 2
+            }
+          },
+          "narrations": 2,
+          "lease": {
+            "epoch": 1,
+            "holder_id": "initial",
+            "expires_at": 1793171717255
+          },
+          "groups": {
+            "group_19": "consumed"
+          },
+          "settledUnits": [
+            {
+              "pointId": "point_18",
+              "groupId": "group_19",
+              "ordinal": 0,
+              "unitId": "unit_1_group_19",
+              "contentHash": "aad37cd10b0b3543f9c32bb688eca8f8de97926a1a7cfc8ac0ce6aef6a526471",
+              "recomputedContentHash": "aad37cd10b0b3543f9c32bb688eca8f8de97926a1a7cfc8ac0ce6aef6a526471",
+              "matches": true
+            }
+          ],
+          "requestIds": [
+            "h2full_mvrs2ife_11",
+            "h2full_mvrs2ife_12",
+            "h2full_mvrs2ife_13",
+            "h2full_mvrs2ife_14",
+            "h2full_mvrs2ife_15",
+            "h2full_mvrs2ife_16",
+            "h2full_mvrs2ife_17",
+            "h2full_mvrs2ife_18",
+            "h2full_mvrs2ife_19",
+            "h2full_mvrs2ife_fresh_1",
+            "h2full_mvrs2ife_fresh_10",
+            "h2full_mvrs2ife_fresh_11",
+            "h2full_mvrs2ife_fresh_12",
+            "h2full_mvrs2ife_fresh_14",
+            "h2full_mvrs2ife_fresh_15",
+            "h2full_mvrs2ife_fresh_16",
+            "h2full_mvrs2ife_fresh_17",
+            "h2full_mvrs2ife_fresh_18",
+            "h2full_mvrs2ife_fresh_19",
+            "h2full_mvrs2ife_fresh_2",
+            "h2full_mvrs2ife_fresh_22",
+            "h2full_mvrs2ife_fresh_23",
+            "h2full_mvrs2ife_fresh_4",
+            "h2full_mvrs2ife_fresh_5",
+            "h2full_mvrs2ife_fresh_6",
+            "h2full_mvrs2ife_fresh_7",
+            "h2full_mvrs2ife_fresh_8",
+            "h2full_mvrs2ife_fresh_9"
+          ],
+          "pointRows": [
+            {
+              "id": "root_14",
+              "sequence": 0,
+              "kind": "root",
+              "previous_point_id": null,
+              "state_digest": "eeb26e6a1b3185d87572698c169aeb2202d83babae1b457eb6e4e70dbd48c619"
+            },
+            {
+              "id": "point_18",
+              "sequence": 1,
+              "kind": "normal",
+              "previous_point_id": "root_14",
+              "state_digest": "b8b67789245c6f33c923ad9c2f8fc509a1b00613e190749d1468dec286be6126"
+            }
+          ],
+          "nonRootCommits": 1
+        },
+        "world_31": {
+          "submissions": {
+            "narration_claim": 4,
+            "narration_submit": 3,
+            "allocate_ids": 2,
+            "checkpoint_start_advance": 1,
+            "checkpoint_begin_point": 1,
+            "checkpoint_discover_group": 1,
+            "checkpoint_extend_group": 1,
+            "checkpoint_close_group": 1,
+            "checkpoint_stage_unit": 1,
+            "checkpoint_record_skip": 5,
+            "checkpoint_seal_point": 1,
+            "lease_release": 2,
+            "lease_acquire": 2,
+            "checkpoint_restore_group_work": 1,
+            "commit_point": 1,
+            "round_conclusion_conclude": 1
+          },
+          "points": [],
+          "work": [
+            {
+              "pointId": "point_37",
+              "groupId": "group_38",
+              "memberId": "person_a",
+              "epoch": 1,
+              "attempt": 1,
+              "actionBytes": 30,
+              "actionSha256": "dd120844c93ecc46a80665aeb261d36f3a736c46d8a14503941d36e172e1baee",
+              "acceptedActionSha256": "dd120844c93ecc46a80665aeb261d36f3a736c46d8a14503941d36e172e1baee",
+              "actionBytesMatchAccepted": true,
+              "targetsSha256": null,
+              "resultSha256": null
+            },
+            {
+              "pointId": "point_37",
+              "groupId": "group_38",
+              "memberId": "person_a",
+              "epoch": 1,
+              "attempt": 2,
+              "actionBytes": 30,
+              "actionSha256": "dd120844c93ecc46a80665aeb261d36f3a736c46d8a14503941d36e172e1baee",
+              "acceptedActionSha256": "dd120844c93ecc46a80665aeb261d36f3a736c46d8a14503941d36e172e1baee",
+              "actionBytesMatchAccepted": true,
+              "targetsSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+              "resultSha256": null
+            },
+            {
+              "pointId": "point_37",
+              "groupId": "group_38",
+              "memberId": "person_a",
+              "epoch": 1,
+              "attempt": 3,
+              "actionBytes": 30,
+              "actionSha256": "dd120844c93ecc46a80665aeb261d36f3a736c46d8a14503941d36e172e1baee",
+              "acceptedActionSha256": "dd120844c93ecc46a80665aeb261d36f3a736c46d8a14503941d36e172e1baee",
+              "actionBytesMatchAccepted": true,
+              "targetsSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+              "resultSha256": "7fdbb0a583048f30931bddc92ec6edc7cb48c807686727c7e21dde9d10322849",
+              "candidatesSha256": "84edb75f0dd12284c06e6f573921ce6618a2d624785ec5bc4d69fcb9b5103c0c",
+              "acceptedCandidatesSha256": "84edb75f0dd12284c06e6f573921ce6618a2d624785ec5bc4d69fcb9b5103c0c",
+              "candidatesMatchAccepted": true
+            },
+            {
+              "pointId": "point_37",
+              "groupId": "group_38",
+              "memberId": "person_a",
+              "epoch": 3,
+              "attempt": 4,
+              "actionBytes": 30,
+              "actionSha256": "dd120844c93ecc46a80665aeb261d36f3a736c46d8a14503941d36e172e1baee",
+              "acceptedActionSha256": "dd120844c93ecc46a80665aeb261d36f3a736c46d8a14503941d36e172e1baee",
+              "actionBytesMatchAccepted": true,
+              "targetsSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+              "resultSha256": "7fdbb0a583048f30931bddc92ec6edc7cb48c807686727c7e21dde9d10322849",
+              "candidatesSha256": "84edb75f0dd12284c06e6f573921ce6618a2d624785ec5bc4d69fcb9b5103c0c",
+              "acceptedCandidatesSha256": "84edb75f0dd12284c06e6f573921ce6618a2d624785ec5bc4d69fcb9b5103c0c",
+              "candidatesMatchAccepted": true
+            }
+          ],
+          "copies": [
+            {
+              "point_id": "point_37",
+              "group_id": "group_38",
+              "target_epoch": 3,
+              "source_epoch": 1,
+              "source_attempt": 3,
+              "manifest_hash": "d0d050f79e0dba749071016f6835bdf2c5bffd0fbb8efa6147beea26f9dd7c58",
+              "attempt": 4
+            }
+          ],
+          "rolls": {},
+          "narrations": 2,
+          "lease": {
+            "epoch": 3,
+            "holder_id": "h2_recovery_takeover",
+            "expires_at": 1793171721505
+          },
+          "groups": {
+            "group_38": "consumed"
+          },
+          "settledUnits": [
+            {
+              "pointId": "point_37",
+              "groupId": "group_38",
+              "ordinal": 0,
+              "unitId": "unit_1_group_38",
+              "contentHash": "84edb75f0dd12284c06e6f573921ce6618a2d624785ec5bc4d69fcb9b5103c0c",
+              "recomputedContentHash": "84edb75f0dd12284c06e6f573921ce6618a2d624785ec5bc4d69fcb9b5103c0c",
+              "matches": true
+            }
+          ],
+          "requestIds": [
+            "h2full_mvrs2ife_21",
+            "h2full_mvrs2ife_22",
+            "h2full_mvrs2ife_23",
+            "h2full_mvrs2ife_24",
+            "h2full_mvrs2ife_25",
+            "h2full_mvrs2ife_26",
+            "h2full_mvrs2ife_27",
+            "h2full_mvrs2ife_28",
+            "h2full_mvrs2ife_29",
+            "h2full_mvrs2ife_30",
+            "h2full_mvrs2ife_31",
+            "h2full_mvrs2ife_32",
+            "h2full_mvrs2ife_33",
+            "h2full_mvrs2ife_34",
+            "h2full_mvrs2ife_35",
+            "h2full_mvrs2ife_36",
+            "h2full_mvrs2ife_37",
+            "h2full_mvrs2ife_38",
+            "h2full_mvrs2ife_39",
+            "h2full_mvrs2ife_43",
+            "h2full_mvrs2ife_44",
+            "h2full_mvrs2ife_45",
+            "h2full_mvrs2ife_takeover_1",
+            "h2full_mvrs2ife_takeover_2",
+            "h2full_mvrs2ife_takeover_4",
+            "h2full_mvrs2ife_takeover_5",
+            "h2full_mvrs2ife_takeover_8",
+            "h2full_mvrs2ife_takeover_9"
+          ],
+          "pointRows": [
+            {
+              "id": "root_33",
+              "sequence": 0,
+              "kind": "root",
+              "previous_point_id": null,
+              "state_digest": "4fbcedecdb59b41236b299c1678e0c114d4452b14c2d00add9f5e0c29aa953a4"
+            },
+            {
+              "id": "point_37",
+              "sequence": 1,
+              "kind": "normal",
+              "previous_point_id": "root_33",
+              "state_digest": "3b708c785499ee053a73eacd7b759a0b9a9808b58b394c383872a409f6f2d993"
+            }
+          ],
+          "nonRootCommits": 1
+        },
+        "world_40": {
+          "submissions": {
+            "checkpoint_close_group": 1,
+            "allocate_ids": 2,
+            "checkpoint_stage_unit": 1,
+            "checkpoint_record_skip": 5,
+            "checkpoint_prepare_successor": 1,
+            "narration_claim": 3,
+            "narration_submit": 3,
+            "checkpoint_start_advance": 1,
+            "checkpoint_begin_point": 1,
+            "checkpoint_discover_group": 1,
+            "checkpoint_extend_group": 1,
+            "create_rolls": 1,
+            "lease_renew": 1,
+            "checkpoint_seal_point": 1,
+            "commit_point": 2,
+            "round_conclusion_conclude": 1,
+            "checkpoint_stage_time_scan": 1
+          },
+          "points": [],
+          "work": [
+            {
+              "pointId": "point_46",
+              "groupId": "group_48",
+              "memberId": "person_a",
+              "epoch": 1,
+              "attempt": 1,
+              "actionBytes": 61,
+              "actionSha256": "73b43728a83315348b1e65c7b4e233711967bdf0b78230acca47a81057b19f4a",
+              "acceptedActionSha256": "73b43728a83315348b1e65c7b4e233711967bdf0b78230acca47a81057b19f4a",
+              "actionBytesMatchAccepted": true,
+              "targetsSha256": null,
+              "resultSha256": null
+            },
+            {
+              "pointId": "point_46",
+              "groupId": "group_48",
+              "memberId": "person_a",
+              "epoch": 1,
+              "attempt": 2,
+              "actionBytes": 61,
+              "actionSha256": "73b43728a83315348b1e65c7b4e233711967bdf0b78230acca47a81057b19f4a",
+              "acceptedActionSha256": "73b43728a83315348b1e65c7b4e233711967bdf0b78230acca47a81057b19f4a",
+              "actionBytesMatchAccepted": true,
+              "targetsSha256": "b4928ef9e3ea1171c3c3737b9d6fc03cdc6f459b0312c708806b9cf4f13f1bbd",
+              "resultSha256": null
+            },
+            {
+              "pointId": "point_46",
+              "groupId": "group_48",
+              "memberId": "person_a",
+              "epoch": 1,
+              "attempt": 3,
+              "actionBytes": 61,
+              "actionSha256": "73b43728a83315348b1e65c7b4e233711967bdf0b78230acca47a81057b19f4a",
+              "acceptedActionSha256": "73b43728a83315348b1e65c7b4e233711967bdf0b78230acca47a81057b19f4a",
+              "actionBytesMatchAccepted": true,
+              "targetsSha256": "b4928ef9e3ea1171c3c3737b9d6fc03cdc6f459b0312c708806b9cf4f13f1bbd",
+              "resultSha256": "6f91a62fcf0887760e47faf6bb997c1b3281c3c840e1f46fdd7c5814ae6d4116",
+              "candidatesSha256": "e53fee9e7f245dd418102b4b78a5bb196869e8b13921d6e991c4f49fab31a068",
+              "acceptedCandidatesSha256": "e53fee9e7f245dd418102b4b78a5bb196869e8b13921d6e991c4f49fab31a068",
+              "candidatesMatchAccepted": true
+            }
+          ],
+          "copies": [],
+          "rolls": {
+            "reaction-d20-v1": {
+              "count": 1,
+              "admitted": 0
+            }
+          },
+          "narrations": 3,
+          "lease": {
+            "epoch": 1,
+            "holder_id": "initial",
+            "expires_at": 1793171725620
+          },
+          "groups": {
+            "group_48": "consumed"
+          },
+          "settledUnits": [
+            {
+              "pointId": "point_46",
+              "groupId": "group_48",
+              "ordinal": 0,
+              "unitId": "unit_1_group_48",
+              "contentHash": "e53fee9e7f245dd418102b4b78a5bb196869e8b13921d6e991c4f49fab31a068",
+              "recomputedContentHash": "e53fee9e7f245dd418102b4b78a5bb196869e8b13921d6e991c4f49fab31a068",
+              "matches": true
+            }
+          ],
+          "requestIds": [
+            "h2full_mvrs2op1_10",
+            "h2full_mvrs2op1_11",
+            "h2full_mvrs2op1_12",
+            "h2full_mvrs2op1_13",
+            "h2full_mvrs2op1_14",
+            "h2full_mvrs2op1_15",
+            "h2full_mvrs2op1_16",
+            "h2full_mvrs2op1_17",
+            "h2full_mvrs2op1_18",
+            "h2full_mvrs2op1_2",
+            "h2full_mvrs2op1_3",
+            "h2full_mvrs2op1_4",
+            "h2full_mvrs2op1_5",
+            "h2full_mvrs2op1_6",
+            "h2full_mvrs2op1_7",
+            "h2full_mvrs2op1_8",
+            "h2full_mvrs2op1_9",
+            "h2full_mvrs2op1_fresh_1",
+            "h2full_mvrs2op1_fresh_11",
+            "h2full_mvrs2op1_fresh_12",
+            "h2full_mvrs2op1_fresh_13",
+            "h2full_mvrs2op1_fresh_16",
+            "h2full_mvrs2op1_fresh_17",
+            "h2full_mvrs2op1_fresh_3",
+            "h2full_mvrs2op1_fresh_4",
+            "h2full_mvrs2op1_fresh_7",
+            "h2full_mvrs2op1_fresh_9"
+          ],
+          "pointRows": [
+            {
+              "id": "root_42",
+              "sequence": 0,
+              "kind": "root",
+              "previous_point_id": null,
+              "state_digest": "318a3018b190a16457e1f2adf4cf2ec583b798dadb22de9e0aad4695176a1426"
+            },
+            {
+              "id": "point_46",
+              "sequence": 1,
+              "kind": "normal",
+              "previous_point_id": "root_42",
+              "state_digest": "4437d9be54c0488c371c3fccb8e23d7f3ce836909f60f03b0765a081d37475d0"
+            },
+            {
+              "id": "point_47",
+              "sequence": 2,
+              "kind": "instant",
+              "previous_point_id": "point_46",
+              "state_digest": "e870fa46de7d25565a3d07e8ddc34ce0a918a47075e547f57c06c72a203632ef"
+            }
+          ],
+          "nonRootCommits": 2
+        },
+        "world_52": {
+          "submissions": {
+            "narration_claim": 1,
+            "narration_submit": 1,
+            "allocate_ids": 1,
+            "checkpoint_start_advance": 1,
+            "checkpoint_begin_point": 1,
+            "checkpoint_discover_group": 1,
+            "checkpoint_extend_group": 1,
+            "create_rolls": 1
+          },
+          "points": [],
+          "work": [
+            {
+              "pointId": "point_58",
+              "groupId": "group_59",
+              "memberId": "person_a",
+              "epoch": 1,
+              "attempt": 1,
+              "actionBytes": 55,
+              "actionSha256": "d28661c58c8672b0fa6ad70eda7bc74cf869e52ad51498e0ddec04ac81bced30",
+              "acceptedActionSha256": "d28661c58c8672b0fa6ad70eda7bc74cf869e52ad51498e0ddec04ac81bced30",
+              "actionBytesMatchAccepted": true,
+              "targetsSha256": null,
+              "resultSha256": null
+            },
+            {
+              "pointId": "point_58",
+              "groupId": "group_59",
+              "memberId": "person_a",
+              "epoch": 1,
+              "attempt": 2,
+              "actionBytes": 55,
+              "actionSha256": "d28661c58c8672b0fa6ad70eda7bc74cf869e52ad51498e0ddec04ac81bced30",
+              "acceptedActionSha256": "d28661c58c8672b0fa6ad70eda7bc74cf869e52ad51498e0ddec04ac81bced30",
+              "actionBytesMatchAccepted": true,
+              "targetsSha256": "a13e48d547beb1e8d9093533d80dc641e6762285938b31a7aa39d5951309c666",
+              "resultSha256": null
+            }
+          ],
+          "copies": [],
+          "rolls": {
+            "reaction-d20-v1": {
+              "count": 1,
+              "admitted": 0
+            }
+          },
+          "narrations": 1,
+          "lease": {
+            "epoch": 1,
+            "holder_id": "initial",
+            "expires_at": 1793171728586
+          },
+          "groups": {
+            "group_59": "open"
+          },
+          "settledUnits": [],
+          "requestIds": [
+            "h2full_mvrs2sat_2",
+            "h2full_mvrs2sat_3",
+            "h2full_mvrs2sat_4",
+            "h2full_mvrs2sat_5",
+            "h2full_mvrs2sat_6",
+            "h2full_mvrs2sat_7",
+            "h2full_mvrs2sat_8",
+            "h2full_mvrs2sat_9"
+          ],
+          "pointRows": [
+            {
+              "id": "root_54",
+              "sequence": 0,
+              "kind": "root",
+              "previous_point_id": null,
+              "state_digest": "ff28516c58f48ecc0707f851fbf3d494cc5133231bec4f35d4bdbb73eb707d25"
+            }
+          ],
+          "nonRootCommits": 0
+        },
+        "world_62": {
+          "submissions": {
+            "narration_claim": 1,
+            "narration_submit": 1,
+            "allocate_ids": 2,
+            "checkpoint_start_advance": 1,
+            "checkpoint_begin_point": 1,
+            "checkpoint_discover_group": 1,
+            "checkpoint_extend_group": 1,
+            "create_rolls": 1,
+            "lease_renew": 1
+          },
+          "points": [],
+          "work": [
+            {
+              "pointId": "point_68",
+              "groupId": "group_69",
+              "memberId": "person_a",
+              "epoch": 1,
+              "attempt": 1,
+              "actionBytes": 55,
+              "actionSha256": "d28661c58c8672b0fa6ad70eda7bc74cf869e52ad51498e0ddec04ac81bced30",
+              "acceptedActionSha256": "d28661c58c8672b0fa6ad70eda7bc74cf869e52ad51498e0ddec04ac81bced30",
+              "actionBytesMatchAccepted": true,
+              "targetsSha256": null,
+              "resultSha256": null
+            },
+            {
+              "pointId": "point_68",
+              "groupId": "group_69",
+              "memberId": "person_a",
+              "epoch": 1,
+              "attempt": 2,
+              "actionBytes": 55,
+              "actionSha256": "d28661c58c8672b0fa6ad70eda7bc74cf869e52ad51498e0ddec04ac81bced30",
+              "acceptedActionSha256": "d28661c58c8672b0fa6ad70eda7bc74cf869e52ad51498e0ddec04ac81bced30",
+              "actionBytesMatchAccepted": true,
+              "targetsSha256": "577c8c9018267af1af5e004ad656de42f43bfe423d54b259359fa15cc2b730f7",
+              "resultSha256": null
+            }
+          ],
+          "copies": [],
+          "rolls": {
+            "reaction-d20-v1": {
+              "count": 1,
+              "admitted": 1
+            }
+          },
+          "narrations": 1,
+          "lease": {
+            "epoch": 1,
+            "holder_id": "initial",
+            "expires_at": 1793171733583
+          },
+          "groups": {
+            "group_69": "open"
+          },
+          "settledUnits": [],
+          "requestIds": [
+            "h2full_mvrs2sat_11",
+            "h2full_mvrs2sat_12",
+            "h2full_mvrs2sat_13",
+            "h2full_mvrs2sat_14",
+            "h2full_mvrs2sat_15",
+            "h2full_mvrs2sat_16",
+            "h2full_mvrs2sat_17",
+            "h2full_mvrs2sat_18",
+            "h2full_mvrs2w5u_restart_1",
+            "h2full_mvrs2w5u_restart_2"
+          ],
+          "pointRows": [
+            {
+              "id": "root_64",
+              "sequence": 0,
+              "kind": "root",
+              "previous_point_id": null,
+              "state_digest": "1963963b87a9cf7b27f4797c91560e7065f56e626d2bf0eaa174e53ffd2a7bfc"
+            }
+          ],
+          "nonRootCommits": 0
+        }
+      },
+      "creations": {
+        "rows": 6,
+        "distinctWorlds": 6
+      }
+    },
+    {
+      "label": "missing",
+      "database": "missing.db",
+      "worlds": {
+        "world_1": {
+          "submissions": {
+            "narration_claim": 1,
+            "narration_submit": 1,
+            "allocate_ids": 1,
+            "checkpoint_start_advance": 1,
+            "checkpoint_begin_point": 1,
+            "checkpoint_discover_group": 1,
+            "checkpoint_extend_group": 1,
+            "create_rolls": 1
+          },
+          "points": [],
+          "work": [
+            {
+              "pointId": "point_7",
+              "groupId": "group_8",
+              "memberId": "person_a",
+              "epoch": 1,
+              "attempt": 1,
+              "actionBytes": 55,
+              "actionSha256": "d28661c58c8672b0fa6ad70eda7bc74cf869e52ad51498e0ddec04ac81bced30",
+              "acceptedActionSha256": "d28661c58c8672b0fa6ad70eda7bc74cf869e52ad51498e0ddec04ac81bced30",
+              "actionBytesMatchAccepted": true,
+              "targetsSha256": null,
+              "resultSha256": null
+            },
+            {
+              "pointId": "point_7",
+              "groupId": "group_8",
+              "memberId": "person_a",
+              "epoch": 1,
+              "attempt": 2,
+              "actionBytes": 55,
+              "actionSha256": "d28661c58c8672b0fa6ad70eda7bc74cf869e52ad51498e0ddec04ac81bced30",
+              "acceptedActionSha256": "d28661c58c8672b0fa6ad70eda7bc74cf869e52ad51498e0ddec04ac81bced30",
+              "actionBytesMatchAccepted": true,
+              "targetsSha256": "7c61da9a82477e1b3cba6806a457b1e88fa75e39af21f54bdc53d91cc60c47e2",
+              "resultSha256": null
+            }
+          ],
+          "copies": [],
+          "rolls": {
+            "reaction-d20-v1": {
+              "count": 1,
+              "admitted": 0
+            }
+          },
+          "narrations": 1,
+          "lease": {
+            "epoch": 1,
+            "holder_id": "initial",
+            "expires_at": 1793171737883
+          },
+          "groups": {
+            "group_8": "open"
+          },
+          "settledUnits": [],
+          "requestIds": [
+            "h2full_mvrs2zgn_2",
+            "h2full_mvrs2zgn_3",
+            "h2full_mvrs2zgn_4",
+            "h2full_mvrs2zgn_5",
+            "h2full_mvrs2zgn_6",
+            "h2full_mvrs2zgn_7",
+            "h2full_mvrs2zgn_8",
+            "h2full_mvrs2zgn_9"
+          ],
+          "pointRows": [
+            {
+              "id": "root_3",
+              "sequence": 0,
+              "kind": "root",
+              "previous_point_id": null,
+              "state_digest": "8a5e02e4720746c85a07d123d73dd455890eb03ea3df44043974456e501f517a"
+            }
+          ],
+          "nonRootCommits": 0
+        },
+        "world_11": {
+          "submissions": {
+            "narration_claim": 1,
+            "narration_submit": 1,
+            "allocate_ids": 1,
+            "checkpoint_start_advance": 1,
+            "checkpoint_begin_point": 1,
+            "checkpoint_discover_group": 1,
+            "checkpoint_extend_group": 1,
+            "create_rolls": 1,
+            "lease_renew": 1
+          },
+          "points": [],
+          "work": [
+            {
+              "pointId": "point_17",
+              "groupId": "group_18",
+              "memberId": "person_a",
+              "epoch": 1,
+              "attempt": 1,
+              "actionBytes": 55,
+              "actionSha256": "d28661c58c8672b0fa6ad70eda7bc74cf869e52ad51498e0ddec04ac81bced30",
+              "acceptedActionSha256": "d28661c58c8672b0fa6ad70eda7bc74cf869e52ad51498e0ddec04ac81bced30",
+              "actionBytesMatchAccepted": true,
+              "targetsSha256": null,
+              "resultSha256": null
+            }
+          ],
+          "copies": [],
+          "rolls": {
+            "reaction-d20-v1": {
+              "count": 1,
+              "admitted": 1
+            }
+          },
+          "narrations": 1,
+          "lease": {
+            "epoch": 1,
+            "holder_id": "initial",
+            "expires_at": 1793171743150
+          },
+          "groups": {
+            "group_18": "open"
+          },
+          "settledUnits": [],
+          "requestIds": [
+            "h2full_mvrs2zgn_11",
+            "h2full_mvrs2zgn_12",
+            "h2full_mvrs2zgn_13",
+            "h2full_mvrs2zgn_14",
+            "h2full_mvrs2zgn_15",
+            "h2full_mvrs2zgn_16",
+            "h2full_mvrs2zgn_17",
+            "h2full_mvrs2zgn_18",
+            "h2full_mvrs33j6_frozen_1"
+          ],
+          "pointRows": [
+            {
+              "id": "root_13",
+              "sequence": 0,
+              "kind": "root",
+              "previous_point_id": null,
+              "state_digest": "299fd1e1263a260e66f1fc80603d5075a66ca8e37010e8945722f63a8a99ff3e"
+            }
+          ],
+          "nonRootCommits": 0
+        }
+      },
+      "creations": {
+        "rows": 2,
+        "distinctWorlds": 2
+      }
+    },
+    {
+      "label": "corrupt",
+      "database": "corrupt.db",
+      "worlds": {
+        "world_1": {
+          "submissions": {
+            "narration_claim": 1,
+            "narration_submit": 1,
+            "allocate_ids": 1,
+            "checkpoint_start_advance": 1,
+            "checkpoint_begin_point": 1,
+            "checkpoint_discover_group": 1,
+            "checkpoint_extend_group": 1,
+            "create_rolls": 1,
+            "lease_renew": 1
+          },
+          "points": [],
+          "work": [
+            {
+              "pointId": "point_7",
+              "groupId": "group_8",
+              "memberId": "person_a",
+              "epoch": 1,
+              "attempt": 1,
+              "actionBytes": 55,
+              "actionSha256": "d28661c58c8672b0fa6ad70eda7bc74cf869e52ad51498e0ddec04ac81bced30",
+              "acceptedActionSha256": "d28661c58c8672b0fa6ad70eda7bc74cf869e52ad51498e0ddec04ac81bced30",
+              "actionBytesMatchAccepted": true,
+              "targetsSha256": null,
+              "resultSha256": null
+            },
+            {
+              "pointId": "point_7",
+              "groupId": "group_8",
+              "memberId": "person_a",
+              "epoch": 1,
+              "attempt": 2,
+              "actionBytes": 29,
+              "actionSha256": "1da4f6e37734a7cf09a9b14308402b30f1627feb193fa1089f00414c74e247ab",
+              "acceptedActionSha256": "d28661c58c8672b0fa6ad70eda7bc74cf869e52ad51498e0ddec04ac81bced30",
+              "actionBytesMatchAccepted": false,
+              "targetsSha256": "7c61da9a82477e1b3cba6806a457b1e88fa75e39af21f54bdc53d91cc60c47e2",
+              "resultSha256": null
+            }
+          ],
+          "copies": [],
+          "rolls": {
+            "reaction-d20-v1": {
+              "count": 1,
+              "admitted": 1
+            }
+          },
+          "narrations": 1,
+          "lease": {
+            "epoch": 1,
+            "holder_id": "initial",
+            "expires_at": 1793171751587
+          },
+          "groups": {
+            "group_8": "open"
+          },
+          "settledUnits": [],
+          "requestIds": [
+            "h2full_mvrs36lk_2",
+            "h2full_mvrs36lk_3",
+            "h2full_mvrs36lk_4",
+            "h2full_mvrs36lk_5",
+            "h2full_mvrs36lk_6",
+            "h2full_mvrs36lk_7",
+            "h2full_mvrs36lk_8",
+            "h2full_mvrs36lk_9",
+            "h2full_mvrs3a1x_frozen_1"
+          ],
+          "pointRows": [
+            {
+              "id": "root_3",
+              "sequence": 0,
+              "kind": "root",
+              "previous_point_id": null,
+              "state_digest": "8a5e02e4720746c85a07d123d73dd455890eb03ea3df44043974456e501f517a"
+            }
+          ],
+          "nonRootCommits": 0
+        }
+      },
+      "creations": {
+        "rows": 1,
+        "distinctWorlds": 1
+      }
+    },
+    {
+      "label": "group",
+      "database": "group.db",
+      "worlds": {
+        "world_1": {
+          "submissions": {
+            "narration_claim": 1,
+            "narration_submit": 1,
+            "allocate_ids": 1,
+            "checkpoint_start_advance": 1,
+            "checkpoint_begin_point": 1,
+            "checkpoint_discover_group": 1,
+            "checkpoint_extend_group": 1,
+            "create_rolls": 1,
+            "lease_renew": 1
+          },
+          "points": [],
+          "work": [
+            {
+              "pointId": "point_7",
+              "groupId": "group_8",
+              "memberId": "person_a",
+              "epoch": 1,
+              "attempt": 1,
+              "actionBytes": 55,
+              "actionSha256": "d28661c58c8672b0fa6ad70eda7bc74cf869e52ad51498e0ddec04ac81bced30",
+              "acceptedActionSha256": "d28661c58c8672b0fa6ad70eda7bc74cf869e52ad51498e0ddec04ac81bced30",
+              "actionBytesMatchAccepted": true,
+              "targetsSha256": null,
+              "resultSha256": null
+            },
+            {
+              "pointId": "point_7",
+              "groupId": "group_8",
+              "memberId": "person_a",
+              "epoch": 1,
+              "attempt": 2,
+              "actionBytes": 55,
+              "actionSha256": "d28661c58c8672b0fa6ad70eda7bc74cf869e52ad51498e0ddec04ac81bced30",
+              "acceptedActionSha256": "d28661c58c8672b0fa6ad70eda7bc74cf869e52ad51498e0ddec04ac81bced30",
+              "actionBytesMatchAccepted": true,
+              "targetsSha256": "7c61da9a82477e1b3cba6806a457b1e88fa75e39af21f54bdc53d91cc60c47e2",
+              "resultSha256": null
+            }
+          ],
+          "copies": [],
+          "rolls": {
+            "reaction-d20-v1": {
+              "count": 1,
+              "admitted": 1
+            }
+          },
+          "narrations": 1,
+          "lease": {
+            "epoch": 1,
+            "holder_id": "initial",
+            "expires_at": 1793171759864
+          },
+          "groups": {
+            "group_8": "open"
+          },
+          "settledUnits": [],
+          "requestIds": [
+            "h2full_mvrs3d0f_2",
+            "h2full_mvrs3d0f_3",
+            "h2full_mvrs3d0f_4",
+            "h2full_mvrs3d0f_5",
+            "h2full_mvrs3d0f_6",
+            "h2full_mvrs3d0f_7",
+            "h2full_mvrs3d0f_8",
+            "h2full_mvrs3d0f_9",
+            "h2full_mvrs3gfx_frozen_1"
+          ],
+          "pointRows": [
+            {
+              "id": "root_3",
+              "sequence": 0,
+              "kind": "root",
+              "previous_point_id": null,
+              "state_digest": "8a5e02e4720746c85a07d123d73dd455890eb03ea3df44043974456e501f517a"
+            }
+          ],
+          "nonRootCommits": 0
+        }
+      },
+      "creations": {
+        "rows": 1,
+        "distinctWorlds": 1
+      }
+    }
+  ]
+}
