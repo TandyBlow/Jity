@@ -53,12 +53,12 @@ HTTP 固定输出整链（运行时路径由单元测试与离线轨迹覆盖）
 ## 可复跑命令（在集成检出根目录）
 
 ```sh
-D:/software/Anaconda/python.exe -X utf8 -m pytest -q            # 在 backend/
+python -X utf8 -m pytest -q            # 在 backend/
 npm --prefix frontend test
 npm --prefix frontend run lint
 npm --prefix frontend run build
-D:/software/Anaconda/python.exe -X utf8 backend/scripts/check_world_interface_baseline.py
-D:/software/Anaconda/python.exe -X utf8 backend/scripts/check_world_http_scenarios.py
+python -X utf8 backend/scripts/check_world_interface_baseline.py
+python -X utf8 backend/scripts/check_world_http_scenarios.py
 node frontend/scripts/review-world-a4-transport.mjs . artifacts/world-integration-a9321409-cd077a2/transport-report.json
 ```
 
