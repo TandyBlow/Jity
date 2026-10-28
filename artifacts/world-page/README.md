@@ -138,8 +138,8 @@ node scripts/review-world-page.mjs --out <path>     # 报告落点
 跨源隔离是**文档创建时定型**的属性。`next.config.ts` 只为 `/benchmark` 与
 `/world` 的响应加 COOP/COEP；从 `/`（无隔离头）经客户端路由进入 `/world`
 时，既有文档不会因新页面的响应头获得隔离——`crossOriginIsolated` 仍为
-false，`SharedArrayBuffer` 不可用，多线程 wasm 路径全程缺失（单线程预填补
-实测约 200ms/token，模型叙事大概率超时回退模板）。此前的 r7 只覆盖
+false，`SharedArrayBuffer` 不可用，多线程 wasm 路径全程缺失（单线程预填实测
+约 200ms/token，模型叙事大概率超时回退模板）。此前的 r7 只覆盖
 「已在隔离文档内往返」，覆盖不到这一入口。
 
 修复：`/world` 挂载时自检隔离，失败即 `location.reload()` 一次——重载后的
@@ -153,7 +153,7 @@ false，`SharedArrayBuffer` 不可用，多线程 wasm 路径全程缺失（单�
 动作；控制台目前没有进入 /world 的链接）→ 自检重载后断言：隔离为真
 （`navigationType=reload`）、护栏已清除、7 行叙事与门厅/9 全部恢复。
 
-探针自身的两处取证经验（写在这里防重犯）：
+探针自身的三处取证经验（写在这里防重犯）：
 
 1. `history.pushState` + 手派 `popstate` **不会**驱动 App Router（它不认没有
    内部 `__NA` 状态的条目）——页面停在控制台、WorldPage 从未挂载，诊断里
@@ -169,8 +169,8 @@ false，`SharedArrayBuffer` 不可用，多线程 wasm 路径全程缺失（单�
 隔离恒为 false、无 reload，r10 在 60s 轮询后红于隔离断言（此前 10 步全绿，
 `spa-entry-diagnostic` 记录 pathname/flag/body）；装载修复后 13 步全绿。
 本轮同时把关：前端全量 **565** 项、`tsc --noEmit`、`next lint`、`next build`
-通过。lint 顺带清掉 2a6eff2 遗留的 5 处测试 `any` 与 1 处 `prefer-const`
-（该提交之后 `npm run lint` 在本地即已失败，前端 CI 的 lint 步骤会红）。
+通过。lint 顺带清掉规则事实切片遗留的 5 处测试 `any` 与 1 处 `prefer-const`
+（自 2a6eff2/c25ede4 起 `npm run lint` 在本地即已失败，前端 CI 的 lint 步骤会红）。
 
 ## 已知边界
 
