@@ -771,3 +771,22 @@ accepted `candidatesContentHash`、settled 单元哈希重算一致；`world_31`
 边界不变：接管是 release/acquire 的 epoch 交接，**未实等 120 s TTL 到期**；
 未运行真实浏览器页面、B3 全量与真实模型整链；A3-1 既有验收范围不变。
 按用户要求，本轮不自行宣告 A3-2 关闭，交复核后决定。
+
+## A3-2 关闭与 H2 范围冻结（2026-10-28）
+
+用户在独立核对归档哈希、源码身份、10 个 phase、8 组启停、四个数据库与 35 条
+冻结行（其中仅 `corrupt.db/world_1` 一条按设计不匹配）后，**同意关闭 A3-2 并
+冻结本轮约定的 H2 验收范围**。远程 CI `40649575022` 绑定归档提交 `a41a9d4`，
+backend / frontend / world-interface 三作业全绿。
+
+- 冻结对象：实现组合 `d1d2de0`（tree `6f16783c834b758d4f8a907f7a972e1836e0ed16`，
+  A=`1ef34e7` + B=`21a95f0`）与归档提交 `a41a9d4` 及其 manifest
+  （SHA-256 `1a92a165740a861cf8a8b89504bd54a730bdc9d27dfbe5a3de8ed64b64efe21d`）。
+- 记录：[关闭签字](../../artifacts/a3-2-signoff-d1d2de0.md)、
+  [冻结记录](../../artifacts/h2-freeze-d1d2de0.json)。
+- 范围：刷新、接管（release/acquire）、围栏、后继接续、重启持久化与三种损坏
+  检查；**不含** 120 s TTL 自然到期接管、真实浏览器页面、B3 全量与真实模型整链。
+- 旧冻结记录 `artifacts/h2-freeze-6b809dc-0cb1951.json` 保留原有范围，不被本次
+  替换或扩大；接口基线 `e3b197a`/`480d950c…` 同样独立。
+- 后续若修改 A3-2 涉及的产品源码、契约或 H2 harness 断言，须重新固定组合并
+  重跑，不能沿用本冻结。
