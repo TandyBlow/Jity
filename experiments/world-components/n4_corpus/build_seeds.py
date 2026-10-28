@@ -354,6 +354,67 @@ rows.append(row(f"n4-task-{g:03d}", "template-seed", "program", "dev",
                 world, deltas, time_entry, text, [[0], [1]], [0, 1], [],
                 NO_ADD_STD, "N4 开发验收（组级隔离，构造起即 dev）"))
 
+# --- dev expansion (review round 9): one dev group per unevaluated family
+# (empty / chain / appearance / multi) so finetune eval covers them. New
+# vocabulary/values, held out from construction.
+g += 1
+dur = DURATIONS[3]
+world = make_world(["陈舟"], ["东门"])
+time_entry = {"amount": dur[0], "unit": dur[1], "rendered": dur[2]}
+text = f"整整{dur[2]}过去了，没有动静。"
+rows.append(row(f"n4-empty-{g:03d}", "template-seed", "program", "dev", world,
+                [], time_entry, text, [[0, 1]], [0, 1], [], NO_ADD_STD,
+                "N4 dev 扩批：空点场景（此前 dev 未覆盖）",
+                claims=[{"kind": "no_change", "scope": "全局"}]))
+g += 1
+name = "陈舟"
+cid = CHAR_BY_NAME[name][0]
+goal = TASK_OF[name]
+lo = CHAR_BY_NAME[name][2]   # 10
+hi = 8                        # downward direction — train chains are all upward
+world = make_world([name], [])
+deltas = [task_delta(cid, goal),
+          personality_delta(cid, "chg_dev01", "变得大胆"),
+          sanity_delta(cid, hi)]
+dur = DURATIONS[0]
+time_entry = {"amount": dur[0], "unit": dur[1], "rendered": dur[2]}
+text = (f"{name}达成了任务「{goal}」，变得大胆，"
+        f"精神值从{lo}降到了{hi}。前后大约{dur[2]}。")
+rows.append(row(f"n4-chain-{g:03d}", "template-seed", "program", "dev", world,
+                deltas, time_entry, text, [[0, 1, 2], [3]], [0, 1, 2, 3], [],
+                NO_ADD_STD,
+                "N4 dev 扩批：联动场景＋下降方向（train 链全为上升）"))
+g += 1
+loc_name = "水房"
+desc = "墙角的青砖泛了潮"
+dur = DURATIONS[2]
+world = make_world(["陈舟"], [loc_name])
+deltas = [appearance_delta(loc_name, "chg_dev02", desc)]
+time_entry = {"amount": dur[0], "unit": dur[1], "rendered": dur[2]}
+text = f"{loc_name}的外观变了：{desc}。前后大约{dur[2]}。"
+rows.append(row(f"n4-appear-{g:03d}", "template-seed", "program", "dev", world,
+                deltas, time_entry, text, [[0], [1]], [0, 1], [], NO_ADD_STD,
+                "N4 dev 扩批：外貌场景＋新描述词表"))
+g += 1
+n1, n2 = "沈青", "苏晚"
+c1 = CHAR_BY_NAME[n1][0]
+frm_name = LOC_NAME[CHAR_BY_NAME[n1][1]]
+to_name = "水房"
+dur = DURATIONS[2]
+world = make_world([n1, n2], [frm_name, to_name])
+c2 = CHAR_BY_NAME[n2][0]
+for c in world["characters"]:
+    if c["id"] == c2:
+        c["homeLocId"] = LOC_ID[to_name]
+deltas = [moved_delta(c1, to_name)]
+time_entry = {"amount": dur[0], "unit": dur[1], "rendered": dur[2]}
+text = f"{dur[2]}过去了，{n1}从{frm_name}来到{to_name}，{n2}已经在{to_name}了。"
+rows.append(row(f"n4-multi-{g:03d}", "template-seed", "program", "dev", world,
+                deltas, time_entry, text, [[0, 1, 2]], [0, 1, 2], [], NO_ADD_STD,
+                "N4 dev 扩批：多人物场景（单句三段组织）",
+                claims=[{"kind": "positioned_at", "entityId": c2,
+                         "name": n2, "at": to_name}]))
+
 for r in rows:
     for word in B_CAST:
         if word in r["text"]:

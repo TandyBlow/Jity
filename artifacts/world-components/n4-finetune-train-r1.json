@@ -5,16 +5,46 @@
     "hfId": "IDEA-CCNL/Randeng-T5-77M-MultiTask-Chinese",
     "paramCount": 77440384
   },
+  "provenance": {
+    "corpusAndRenderer": {
+      "n4_render.py": "1cc8d06f4b26f657959a7ce62f6e3538b68cb537f284cad99a7c2169b3526e02",
+      "corpus.seeds.jsonl": "1611da00c8592928f774a744032f17d1533a118daea1606a5b94ee54bfdad125",
+      "rewrites.jsonl": "c96d4b59894b536275150738d0f1ddaf38b19e7bf579c439e5ebd139c70498d6"
+    },
+    "checkpointSha256_16": {
+      "added_tokens.json": "a247922ac010bc17",
+      "config.json": "a35e9d4382657106",
+      "generation_config.json": "691648bea8d35875",
+      "model.safetensors": "ce335cac90427547",
+      "special_tokens_map.json": "65d84a9271d68f12",
+      "spiece.model": "c65feffa65ff0378",
+      "tokenizer_config.json": "553da19a6ed43c57"
+    }
+  },
   "tokenizer": {
     "class": "T5Tokenizer",
     "legacy": false,
     "note": "same pin as zero-shot baseline v3 and eval script"
   },
+  "environment": {
+    "python": "3.12.3",
+    "torch": "2.7.0+cu126",
+    "transformers": "4.57.3",
+    "device": "NVIDIA GeForce RTX 4060 Laptop GPU"
+  },
+  "isolation": {
+    "check": "corpus_check.split_isolation_problems(24 train groups, 6 dev groups)",
+    "result": "pass"
+  },
   "data": {
     "trainPairs": 48,
-    "devPairs": 4,
+    "devPairs": 12,
     "devGroupIds": [
+      "n4-appear-029",
+      "n4-chain-028",
+      "n4-empty-027",
       "n4-loc-025",
+      "n4-multi-030",
       "n4-task-026"
     ],
     "renderer": "n4_render.render_input (shared train/inference)",
@@ -38,32 +68,32 @@
     {
       "epoch": 1,
       "meanLoss": 3.2706,
-      "seconds": 4.4
+      "seconds": 4.5
     },
     {
       "epoch": 2,
       "meanLoss": 2.248,
-      "seconds": 6.3
+      "seconds": 6.5
     },
     {
       "epoch": 3,
       "meanLoss": 1.7021,
-      "seconds": 8.0
+      "seconds": 8.4
     },
     {
       "epoch": 4,
       "meanLoss": 1.3321,
-      "seconds": 9.5
+      "seconds": 10.2
     },
     {
       "epoch": 5,
       "meanLoss": 1.0985,
-      "seconds": 11.3
+      "seconds": 11.9
     },
     {
       "epoch": 6,
       "meanLoss": 0.8971,
-      "seconds": 13.2
+      "seconds": 13.7
     }
   ],
   "checkpoint": "D:\\others\\Jity\\.local\\world-components-worktree\\experiments\\world-components\\assets\\n4-finetune\\r1",

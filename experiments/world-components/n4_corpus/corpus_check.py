@@ -39,6 +39,40 @@ def corpus_files() -> list:
     return files
 
 
+def split_isolation_problems(rows: list, expect_train_groups: int,
+                             expect_dev_groups: int) -> list:
+    """Shared train/eval-side isolation assertion (review round 9): rows are
+    grouped by sourceGroupId; within a group split must be constant; the
+    train and dev GROUP sets must be disjoint; group/row counts must match
+    the expected shape. Both train_n4_sentence and eval_n4_finetune call
+    this, so neither side can drift into training on its dev rows."""
+    problems = []
+    groups = {}
+    for r in rows:
+        groups.setdefault(r["sourceGroupId"], []).append(r)
+    for gid, ms in groups.items():
+        if len({m["split"] for m in ms}) != 1:
+            problems.append(f"{gid}: split varies within group")
+        if len(ms) != 2:
+            problems.append(f"{gid}: expected seed+rewrite (2 rows), got {len(ms)}")
+    train_groups = {gid for gid, ms in groups.items()
+                    if ms[0]["split"] == "train"}
+    dev_groups = {gid for gid, ms in groups.items() if ms[0]["split"] == "dev"}
+    if train_groups & dev_groups:
+        problems.append(f"train/dev group overlap: {sorted(train_groups & dev_groups)}")
+    if len(train_groups) != expect_train_groups:
+        problems.append(f"expected {expect_train_groups} train groups, got {len(train_groups)}")
+    if len(dev_groups) != expect_dev_groups:
+        problems.append(f"expected {expect_dev_groups} dev groups, got {len(dev_groups)}")
+    train_rows = sum(len(groups[g]) for g in train_groups)
+    dev_rows = sum(len(groups[g]) for g in dev_groups)
+    if train_rows != expect_train_groups * 2:
+        problems.append(f"expected {expect_train_groups * 2} train rows, got {train_rows}")
+    if dev_rows != expect_dev_groups * 2:
+        problems.append(f"expected {expect_dev_groups * 2} dev rows, got {dev_rows}")
+    return problems
+
+
 REQUIRED = ["sourceGroupId", "rowOrigin", "rewriter", "task", "split", "world",
             "rawDelta", "plan", "planConstruction", "planValidation", "text",
             "planRefs", "mustExpress", "mayMention", "mustNotAdd", "hashes",

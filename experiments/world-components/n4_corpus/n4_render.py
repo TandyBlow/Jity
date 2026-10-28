@@ -6,8 +6,30 @@
 # converted through the same table the recognizer accepts, keeping one
 # numeric vocabulary across train/eval/check.
 
+import hashlib
+import pathlib
+
 CN = {1: "一", 3: "三", 8: "八", 12: "十二", 25: "二十五", 40: "四十"}
 UNIT_CN = {"minute": "分钟", "hour": "小时"}
+
+
+def sha256_file(path) -> str:
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
+        for chunk in iter(lambda: f.read(1 << 20), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def corpus_hashes() -> dict:
+    """Run-record provenance (review round 9): corpus files and this
+    renderer, hashed — training and eval reports both embed it so a report
+    names exactly which bytes produced it."""
+    here = pathlib.Path(__file__).resolve().parent
+    out = {"n4_render.py": sha256_file(here / "n4_render.py")}
+    for name in ("corpus.seeds.jsonl", "rewrites.jsonl"):
+        out[name] = sha256_file(here / name)
+    return out
 
 
 def num_cn(amount: int) -> str:

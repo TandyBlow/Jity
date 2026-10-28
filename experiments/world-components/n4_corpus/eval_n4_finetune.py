@@ -32,12 +32,13 @@ tf_stub.__path__ = []
 sys.modules.setdefault("tensorflow", tf_stub)
 
 import torch  # noqa: E402
+import transformers  # noqa: E402
 from transformers.models.t5.modeling_t5 import T5ForConditionalGeneration  # noqa: E402
 from transformers.models.t5.tokenization_t5 import T5Tokenizer  # noqa: E402
 
 HERE = pathlib.Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
-from n4_render import render_input  # noqa: E402
+from n4_render import render_input, corpus_hashes  # noqa: E402
 import corpus_check  # noqa: E402
 
 REPO = HERE.parent.parent.parent
@@ -82,6 +83,15 @@ def judge(dev_row: dict, text: str) -> dict:
 
 
 def main() -> None:
+    rows = []
+    for f in (HERE / "corpus.seeds.jsonl", HERE / "rewrites.jsonl"):
+        rows += [json.loads(line) for line in
+                 f.read_text(encoding="utf-8").splitlines() if line.strip()]
+    problems = corpus_check.split_isolation_problems(rows, 24, 6)
+    if problems:
+        for p in problems:
+            print("ISOLATION:", p)
+        sys.exit(2)
     dev = load_dev()
     print(f"dev rows: {len(dev)} (groups {sorted({r['sourceGroupId'] for r in dev})})")
     tokenizer = T5Tokenizer(vocab_file=str(BASE_MODEL / "spiece.model"), legacy=False)
@@ -117,16 +127,28 @@ def main() -> None:
         del model
 
     report = {
-        "purpose": "n4 finetune dev eval r1 (recognizer-judged; quality accepted separately)",
+        "purpose": "n4 finetune dev eval (recognizer-judged; quality accepted separately)",
+        "provenance": {"corpusAndRenderer": corpus_hashes(),
+                       "baseModel": {f.name: hashlib.sha256(f.read_bytes()).hexdigest()[:16]
+                                     for f in sorted(BASE_MODEL.iterdir()) if f.is_file()},
+                       "finetuned": {f.name: hashlib.sha256(f.read_bytes()).hexdigest()[:16]
+                                     for f in sorted(FINETUNED.iterdir()) if f.is_file()}},
+        "environment": {"python": sys.version.split()[0], "torch": torch.__version__,
+                        "transformers": transformers.__version__,
+                        "device": torch.cuda.get_device_name(0)},
+        "isolation": {"check": "corpus_check.split_isolation_problems(24 train groups, 6 dev groups)",
+                      "result": "pass"},
         "decode": {"greedy": True, "maxNewTokens": MAX_NEW, "numBeams": 1},
         "tokenizer": {"legacy": False,
                       "note": "same pin as training and the zero-shot baseline"},
         "judge": "corpus_check.check_row over the dev row's own plan/refs/must "
-                 "(hashes recomputed for the generated text)",
+                 "(hashes recomputed for the generated text; planRefs re-expanded "
+                 "to the generated sentence count)",
         "devGroups": sorted({r["sourceGroupId"] for r in dev}),
         "arms": arms,
         "disclaimers": [
-            "4 dev rows / 2 groups only — indicative, not a quality gate",
+            "dev-group count is the current expansion's; quality gate closure needs "
+            "broader coverage and human review",
             "Chinese naturalness is left to human review at delivery acceptance",
             "training saw the plan rendering; zero-shot base did not",
         ],

@@ -38,12 +38,14 @@ tf_stub.__path__ = []
 sys.modules.setdefault("tensorflow", tf_stub)
 
 import torch  # noqa: E402
+import transformers  # noqa: E402
 from transformers.models.t5.modeling_t5 import T5ForConditionalGeneration  # noqa: E402
 from transformers.models.t5.tokenization_t5 import T5Tokenizer  # noqa: E402
 
 HERE = pathlib.Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
-from n4_render import render_input  # noqa: E402
+from n4_render import render_input, corpus_hashes  # noqa: E402
+import corpus_check  # noqa: E402
 
 REPO = HERE.parent.parent.parent
 SEEDS = HERE / "corpus.seeds.jsonl"
@@ -71,6 +73,14 @@ def load_rows():
             if line.strip():
                 r = json.loads(line)
                 rows.setdefault(r["sourceGroupId"], []).append(r)
+    all_rows = [r for ms in rows.values() for r in ms]
+    # shared isolation assertion (review round 9): train/dev group sets must
+    # be disjoint with the expected shape — same function the eval side runs
+    problems = corpus_check.split_isolation_problems(all_rows, 24, 6)
+    if problems:
+        for p in problems:
+            print("ISOLATION:", p)
+        sys.exit(2)
     train, dev = [], []
     for gid, members in rows.items():
         split = members[0]["split"]
@@ -90,7 +100,7 @@ def main() -> None:
     assert torch.cuda.is_available(), "process trial runs on cuda per plan"
     train, dev = load_rows()
     print(f"train pairs: {len(train)}  dev pairs: {len(dev)}")
-    assert len(train) == 48 and len(dev) == 4, "group isolation changed"
+    assert len(train) == 48 and len(dev) == 12, "group shape changed"
 
     torch.manual_seed(SEED)
     tokenizer = T5Tokenizer(vocab_file=str(BASE_MODEL / "spiece.model"), legacy=False)
@@ -130,13 +140,22 @@ def main() -> None:
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     model.save_pretrained(OUT_DIR)
     tokenizer.save_pretrained(OUT_DIR)
+    checkpoint_hashes = {f.name: hashlib.sha256(f.read_bytes()).hexdigest()[:16]
+                         for f in sorted(OUT_DIR.iterdir()) if f.is_file()}
 
     report = {
         "purpose": "n4 finetune process trial r1 (quality accepted separately)",
         "model": {"base": str(BASE_MODEL), "hfId": "IDEA-CCNL/Randeng-T5-77M-MultiTask-Chinese",
                   "paramCount": sum(p.numel() for p in model.parameters())},
+        "provenance": {"corpusAndRenderer": corpus_hashes(),
+                       "checkpointSha256_16": checkpoint_hashes},
         "tokenizer": {"class": "T5Tokenizer", "legacy": False,
                       "note": "same pin as zero-shot baseline v3 and eval script"},
+        "environment": {"python": sys.version.split()[0], "torch": torch.__version__,
+                        "transformers": transformers.__version__,
+                        "device": torch.cuda.get_device_name(0)},
+        "isolation": {"check": "corpus_check.split_isolation_problems(24 train groups, 6 dev groups)",
+                      "result": "pass"},
         "data": {"trainPairs": len(train), "devPairs": len(dev),
                  "devGroupIds": sorted({p["groupId"] for p in dev}),
                  "renderer": "n4_render.render_input (shared train/inference)",

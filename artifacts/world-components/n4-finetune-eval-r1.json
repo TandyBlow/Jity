@@ -1,5 +1,38 @@
 {
-  "purpose": "n4 finetune dev eval r1 (recognizer-judged; quality accepted separately)",
+  "purpose": "n4 finetune dev eval (recognizer-judged; quality accepted separately)",
+  "provenance": {
+    "corpusAndRenderer": {
+      "n4_render.py": "1cc8d06f4b26f657959a7ce62f6e3538b68cb537f284cad99a7c2169b3526e02",
+      "corpus.seeds.jsonl": "1611da00c8592928f774a744032f17d1533a118daea1606a5b94ee54bfdad125",
+      "rewrites.jsonl": "c96d4b59894b536275150738d0f1ddaf38b19e7bf579c439e5ebd139c70498d6"
+    },
+    "baseModel": {
+      "config.json": "9b2480c0a39fd09b",
+      "model.safetensors": "5cdc572109cf2591",
+      "special_tokens_map.json": "09059cedc26bc46b",
+      "spiece.model": "c65feffa65ff0378",
+      "tokenizer_config.json": "af072c7d91576727"
+    },
+    "finetuned": {
+      "added_tokens.json": "a247922ac010bc17",
+      "config.json": "a35e9d4382657106",
+      "generation_config.json": "691648bea8d35875",
+      "model.safetensors": "ce335cac90427547",
+      "special_tokens_map.json": "65d84a9271d68f12",
+      "spiece.model": "c65feffa65ff0378",
+      "tokenizer_config.json": "553da19a6ed43c57"
+    }
+  },
+  "environment": {
+    "python": "3.12.3",
+    "torch": "2.7.0+cu126",
+    "transformers": "4.57.3",
+    "device": "NVIDIA GeForce RTX 4060 Laptop GPU"
+  },
+  "isolation": {
+    "check": "corpus_check.split_isolation_problems(24 train groups, 6 dev groups)",
+    "result": "pass"
+  },
   "decode": {
     "greedy": true,
     "maxNewTokens": 64,
@@ -9,16 +42,20 @@
     "legacy": false,
     "note": "same pin as training and the zero-shot baseline"
   },
-  "judge": "corpus_check.check_row over the dev row's own plan/refs/must (hashes recomputed for the generated text)",
+  "judge": "corpus_check.check_row over the dev row's own plan/refs/must (hashes recomputed for the generated text; planRefs re-expanded to the generated sentence count)",
   "devGroups": [
+    "n4-appear-029",
+    "n4-chain-028",
+    "n4-empty-027",
     "n4-loc-025",
+    "n4-multi-030",
     "n4-task-026"
   ],
   "arms": {
     "base": {
       "verdicts": {
         "pass": 0,
-        "review": 4,
+        "review": 12,
         "fail": 0
       },
       "rows": [
@@ -28,7 +65,7 @@
           "input": "叙事生成任务。\n事实：\n1. 位置：沈青 从柴房到东门\n2. 时间推进：约一小时\n正文：",
           "output": "时间推进:约一小时",
           "outputTokens": 9,
-          "wallSeconds": 0.83,
+          "wallSeconds": 0.93,
           "verdict": "review",
           "fails": [],
           "reviews": [
@@ -42,7 +79,7 @@
           "input": "叙事生成任务。\n事实：\n1. 位置：沈青 从柴房到东门\n2. 时间推进：约一小时\n正文：",
           "output": "时间推进:约一小时",
           "outputTokens": 9,
-          "wallSeconds": 0.45,
+          "wallSeconds": 0.43,
           "verdict": "review",
           "fails": [],
           "reviews": [
@@ -56,7 +93,7 @@
           "input": "叙事生成任务。\n事实：\n1. 任务达成：林望「清点碑亭石刻」\n2. 时间推进：约三分钟\n正文：",
           "output": "任务达成:林望「清点碑亭石刻」",
           "outputTokens": 16,
-          "wallSeconds": 0.73,
+          "wallSeconds": 0.87,
           "verdict": "review",
           "fails": [],
           "reviews": [
@@ -70,22 +107,134 @@
           "input": "叙事生成任务。\n事实：\n1. 任务达成：林望「清点碑亭石刻」\n2. 时间推进：约三分钟\n正文：",
           "output": "任务达成:林望「清点碑亭石刻」",
           "outputTokens": 16,
-          "wallSeconds": 0.7,
+          "wallSeconds": 0.89,
           "verdict": "review",
           "fails": [],
           "reviews": [
             "clause '任务达成:林望「清点碑亭石刻」' not fully covered by plan recognizers (covered 0/15) — unrecognized content, needs review",
             "mustExpress [0, 1] mentioned in planRefs but has no value-consistent expression in the text — needs review"
           ]
+        },
+        {
+          "sourceGroupId": "n4-empty-027",
+          "rowOrigin": "template-seed",
+          "input": "叙事生成任务。\n事实：\n1. 时间推进：约二十五分钟\n2. 无变化\n正文：",
+          "output": "时间推进:约二十五分钟",
+          "outputTokens": 10,
+          "wallSeconds": 0.6,
+          "verdict": "review",
+          "fails": [],
+          "reviews": [
+            "clause '时间推进:约二十五分钟' not fully covered by plan recognizers (covered 6/11) — unrecognized content, needs review",
+            "mustExpress [1] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+          ]
+        },
+        {
+          "sourceGroupId": "n4-empty-027",
+          "rowOrigin": "rewrite",
+          "input": "叙事生成任务。\n事实：\n1. 时间推进：约二十五分钟\n2. 无变化\n正文：",
+          "output": "时间推进:约二十五分钟",
+          "outputTokens": 10,
+          "wallSeconds": 0.55,
+          "verdict": "review",
+          "fails": [],
+          "reviews": [
+            "clause '时间推进:约二十五分钟' not fully covered by plan recognizers (covered 6/11) — unrecognized content, needs review",
+            "mustExpress [1] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+          ]
+        },
+        {
+          "sourceGroupId": "n4-chain-028",
+          "rowOrigin": "template-seed",
+          "input": "叙事生成任务。\n事实：\n1. 任务达成：陈舟「把铜铃挂回钟楼」\n2. 个性：陈舟变得大胆\n3. 理智：陈舟 10→8\n4. 时间推进：约三分钟\n正文：",
+          "output": "时间推进:约三分钟",
+          "outputTokens": 9,
+          "wallSeconds": 0.49,
+          "verdict": "review",
+          "fails": [],
+          "reviews": [
+            "clause '时间推进:约三分钟' not fully covered by plan recognizers (covered 4/9) — unrecognized content, needs review",
+            "mustExpress [0, 1, 2] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+          ]
+        },
+        {
+          "sourceGroupId": "n4-chain-028",
+          "rowOrigin": "rewrite",
+          "input": "叙事生成任务。\n事实：\n1. 任务达成：陈舟「把铜铃挂回钟楼」\n2. 个性：陈舟变得大胆\n3. 理智：陈舟 10→8\n4. 时间推进：约三分钟\n正文：",
+          "output": "时间推进:约三分钟",
+          "outputTokens": 9,
+          "wallSeconds": 0.52,
+          "verdict": "review",
+          "fails": [],
+          "reviews": [
+            "clause '时间推进:约三分钟' not fully covered by plan recognizers (covered 4/9) — unrecognized content, needs review",
+            "mustExpress [0, 1, 2] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+          ]
+        },
+        {
+          "sourceGroupId": "n4-appear-029",
+          "rowOrigin": "template-seed",
+          "input": "叙事生成任务。\n事实：\n1. 外貌：水房 墙角的青砖泛了潮\n2. 时间推进：约十二分钟\n正文：",
+          "output": "外貌:水房 墙角的青砖泛了潮",
+          "outputTokens": 17,
+          "wallSeconds": 0.94,
+          "verdict": "review",
+          "fails": [],
+          "reviews": [
+            "clause '外貌:水房 墙角的青砖泛了潮' not fully covered by plan recognizers (covered 0/13) — unrecognized content, needs review",
+            "mustExpress [0, 1] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+          ]
+        },
+        {
+          "sourceGroupId": "n4-appear-029",
+          "rowOrigin": "rewrite",
+          "input": "叙事生成任务。\n事实：\n1. 外貌：水房 墙角的青砖泛了潮\n2. 时间推进：约十二分钟\n正文：",
+          "output": "外貌:水房 墙角的青砖泛了潮",
+          "outputTokens": 17,
+          "wallSeconds": 1.04,
+          "verdict": "review",
+          "fails": [],
+          "reviews": [
+            "clause '外貌:水房 墙角的青砖泛了潮' not fully covered by plan recognizers (covered 0/13) — unrecognized content, needs review",
+            "mustExpress [0, 1] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+          ]
+        },
+        {
+          "sourceGroupId": "n4-multi-030",
+          "rowOrigin": "template-seed",
+          "input": "叙事生成任务。\n事实：\n1. 位置：沈青 从柴房到水房\n2. 现状：苏晚 已在水房\n3. 时间推进：约十二分钟\n正文：",
+          "output": "时间推进:约十二分钟",
+          "outputTokens": 9,
+          "wallSeconds": 0.53,
+          "verdict": "review",
+          "fails": [],
+          "reviews": [
+            "clause '时间推进:约十二分钟' not fully covered by plan recognizers (covered 5/10) — unrecognized content, needs review",
+            "mustExpress [0, 1] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+          ]
+        },
+        {
+          "sourceGroupId": "n4-multi-030",
+          "rowOrigin": "rewrite",
+          "input": "叙事生成任务。\n事实：\n1. 位置：沈青 从柴房到水房\n2. 现状：苏晚 已在水房\n3. 时间推进：约十二分钟\n正文：",
+          "output": "时间推进:约十二分钟",
+          "outputTokens": 9,
+          "wallSeconds": 0.51,
+          "verdict": "review",
+          "fails": [],
+          "reviews": [
+            "clause '时间推进:约十二分钟' not fully covered by plan recognizers (covered 5/10) — unrecognized content, needs review",
+            "mustExpress [0, 1] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+          ]
         }
       ],
-      "meanWall": 0.68,
-      "meanTokens": 12.5
+      "meanWall": 0.69,
+      "meanTokens": 11.7
     },
     "finetuned": {
       "verdicts": {
         "pass": 4,
-        "review": 0,
+        "review": 8,
         "fail": 0
       },
       "rows": [
@@ -95,7 +244,7 @@
           "input": "叙事生成任务。\n事实：\n1. 位置：沈青 从柴房到东门\n2. 时间推进：约一小时\n正文：",
           "output": "沈青从柴房来到东门。前后大约一小时。",
           "outputTokens": 17,
-          "wallSeconds": 1.12,
+          "wallSeconds": 1.39,
           "verdict": "pass",
           "fails": [],
           "reviews": []
@@ -106,7 +255,7 @@
           "input": "叙事生成任务。\n事实：\n1. 位置：沈青 从柴房到东门\n2. 时间推进：约一小时\n正文：",
           "output": "沈青从柴房来到东门。前后大约一小时。",
           "outputTokens": 17,
-          "wallSeconds": 0.88,
+          "wallSeconds": 0.98,
           "verdict": "pass",
           "fails": [],
           "reviews": []
@@ -117,7 +266,7 @@
           "input": "叙事生成任务。\n事实：\n1. 任务达成：林望「清点碑亭石刻」\n2. 时间推进：约三分钟\n正文：",
           "output": "林望完成了任务「清点碑亭石刻」。前后大约三分钟。",
           "outputTokens": 20,
-          "wallSeconds": 0.95,
+          "wallSeconds": 1.2,
           "verdict": "pass",
           "fails": [],
           "reviews": []
@@ -128,18 +277,130 @@
           "input": "叙事生成任务。\n事实：\n1. 任务达成：林望「清点碑亭石刻」\n2. 时间推进：约三分钟\n正文：",
           "output": "林望完成了任务「清点碑亭石刻」。前后大约三分钟。",
           "outputTokens": 20,
-          "wallSeconds": 1.01,
+          "wallSeconds": 1.04,
           "verdict": "pass",
           "fails": [],
           "reviews": []
+        },
+        {
+          "sourceGroupId": "n4-empty-027",
+          "rowOrigin": "template-seed",
+          "input": "叙事生成任务。\n事实：\n1. 时间推进：约二十五分钟\n2. 无变化\n正文：",
+          "output": "二十五分钟过去了,叙事开始了,前后大约二十五分钟。",
+          "outputTokens": 20,
+          "wallSeconds": 0.99,
+          "verdict": "review",
+          "fails": [],
+          "reviews": [
+            "clause '叙事开始了' not fully covered by plan recognizers (covered 0/5) — unrecognized content, needs review",
+            "mustExpress [1] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+          ]
+        },
+        {
+          "sourceGroupId": "n4-empty-027",
+          "rowOrigin": "rewrite",
+          "input": "叙事生成任务。\n事实：\n1. 时间推进：约二十五分钟\n2. 无变化\n正文：",
+          "output": "二十五分钟过去了,叙事开始了,前后大约二十五分钟。",
+          "outputTokens": 20,
+          "wallSeconds": 1.04,
+          "verdict": "review",
+          "fails": [],
+          "reviews": [
+            "clause '叙事开始了' not fully covered by plan recognizers (covered 0/5) — unrecognized content, needs review",
+            "mustExpress [1] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+          ]
+        },
+        {
+          "sourceGroupId": "n4-chain-028",
+          "rowOrigin": "template-seed",
+          "input": "叙事生成任务。\n事实：\n1. 任务达成：陈舟「把铜铃挂回钟楼」\n2. 个性：陈舟变得大胆\n3. 理智：陈舟 10→8\n4. 时间推进：约三分钟\n正文：",
+          "output": "叙事完成了任务「把铜铃挂回钟楼」。前后大约三分钟。",
+          "outputTokens": 21,
+          "wallSeconds": 1.04,
+          "verdict": "review",
+          "fails": [],
+          "reviews": [
+            "clause '叙事完成了任务「把铜铃挂回钟楼」' not fully covered by plan recognizers (covered 0/16) — unrecognized content, needs review",
+            "mustExpress [0, 1, 2] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+          ]
+        },
+        {
+          "sourceGroupId": "n4-chain-028",
+          "rowOrigin": "rewrite",
+          "input": "叙事生成任务。\n事实：\n1. 任务达成：陈舟「把铜铃挂回钟楼」\n2. 个性：陈舟变得大胆\n3. 理智：陈舟 10→8\n4. 时间推进：约三分钟\n正文：",
+          "output": "叙事完成了任务「把铜铃挂回钟楼」。前后大约三分钟。",
+          "outputTokens": 21,
+          "wallSeconds": 0.96,
+          "verdict": "review",
+          "fails": [],
+          "reviews": [
+            "clause '叙事完成了任务「把铜铃挂回钟楼」' not fully covered by plan recognizers (covered 0/16) — unrecognized content, needs review",
+            "mustExpress [0, 1, 2] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+          ]
+        },
+        {
+          "sourceGroupId": "n4-appear-029",
+          "rowOrigin": "template-seed",
+          "input": "叙事生成任务。\n事实：\n1. 外貌：水房 墙角的青砖泛了潮\n2. 时间推进：约十二分钟\n正文：",
+          "output": "水房的外貌变了:墙角的青砖泛了潮。前后大约十二分钟。",
+          "outputTokens": 25,
+          "wallSeconds": 1.12,
+          "verdict": "review",
+          "fails": [],
+          "reviews": [
+            "clause '水房的外貌变了:墙角的青砖泛了潮' not fully covered by plan recognizers (covered 0/16) — unrecognized content, needs review",
+            "mustExpress [0] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+          ]
+        },
+        {
+          "sourceGroupId": "n4-appear-029",
+          "rowOrigin": "rewrite",
+          "input": "叙事生成任务。\n事实：\n1. 外貌：水房 墙角的青砖泛了潮\n2. 时间推进：约十二分钟\n正文：",
+          "output": "水房的外貌变了:墙角的青砖泛了潮。前后大约十二分钟。",
+          "outputTokens": 25,
+          "wallSeconds": 1.13,
+          "verdict": "review",
+          "fails": [],
+          "reviews": [
+            "clause '水房的外貌变了:墙角的青砖泛了潮' not fully covered by plan recognizers (covered 0/16) — unrecognized content, needs review",
+            "mustExpress [0] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+          ]
+        },
+        {
+          "sourceGroupId": "n4-multi-030",
+          "rowOrigin": "template-seed",
+          "input": "叙事生成任务。\n事实：\n1. 位置：沈青 从柴房到水房\n2. 现状：苏晚 已在水房\n3. 时间推进：约十二分钟\n正文：",
+          "output": "苏晚从柴房来到水房。前后大约十二分钟。",
+          "outputTokens": 17,
+          "wallSeconds": 0.72,
+          "verdict": "review",
+          "fails": [],
+          "reviews": [
+            "clause '苏晚从柴房来到水房' not fully covered by plan recognizers (covered 0/9) — unrecognized content, needs review",
+            "mustExpress [0, 1] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+          ]
+        },
+        {
+          "sourceGroupId": "n4-multi-030",
+          "rowOrigin": "rewrite",
+          "input": "叙事生成任务。\n事实：\n1. 位置：沈青 从柴房到水房\n2. 现状：苏晚 已在水房\n3. 时间推进：约十二分钟\n正文：",
+          "output": "苏晚从柴房来到水房。前后大约十二分钟。",
+          "outputTokens": 17,
+          "wallSeconds": 0.72,
+          "verdict": "review",
+          "fails": [],
+          "reviews": [
+            "clause '苏晚从柴房来到水房' not fully covered by plan recognizers (covered 0/9) — unrecognized content, needs review",
+            "mustExpress [0, 1] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+          ]
         }
       ],
-      "meanWall": 0.99,
-      "meanTokens": 18.5
+      "meanWall": 1.03,
+      "meanTokens": 20.0
     }
   },
   "disclaimers": [
-    "4 dev rows / 2 groups only — indicative, not a quality gate",
+    "dev-group count is the current expansion's; quality gate closure needs broader coverage and human review",
     "Chinese naturalness is left to human review at delivery acceptance",
     "training saw the plan rendering; zero-shot base did not"
   ]
