@@ -1,0 +1,440 @@
+{
+  "status": "PASS",
+  "layer": "real wall-clock waits; service clock is the store default, never injected",
+  "service": "create_persistent_world_app; SQLiteBaselineStore; one worker",
+  "repetitions": 3,
+  "waitMarginMilli": 3000,
+  "window": {
+    "startedAtEpochMilli": 1793205581861,
+    "finishedAtEpochMilli": 1793205823602,
+    "wallSeconds": 241.7
+  },
+  "paths": [
+    "renew+reacquire while alive",
+    "expired claim refused (claim_expired)",
+    "takeover after real expiry (fenceEpoch monotonic, stale write fenced, expired claim claim_fenced)"
+  ],
+  "repetitions_detail": [
+    {
+      "worldId": "world_1",
+      "claimIssued": {
+        "claimToken": "claim_eb479d05cb8332c1b0d6408b12621aae27755968729b80c7645a6c1943958257",
+        "generation": 1,
+        "issuedAtEpochMilli": 1793205584761,
+        "fenceEpoch": 1,
+        "expiresAtEpochMilli": 1793205764761
+      },
+      "leaseRenewals": [
+        {
+          "phase": "alive",
+          "renewedAtEpochMilli": 1793205585228,
+          "expiresBefore": 1793205704761,
+          "expiresAfter": 1793205705195
+        },
+        {
+          "phase": "pre-claim-expiry",
+          "renewedAtEpochMilli": 1793205699473,
+          "expiresBefore": 1793205705195,
+          "expiresAfter": 1793205819438
+        }
+      ],
+      "expiredClaimRefusal": {
+        "code": "claim_expired",
+        "clientAction": "regenerate_narration",
+        "submittedAtEpochMilli": 1793205768304,
+        "claimExpiredAtEpochMilli": 1793205764761,
+        "leaseStillValidUntil": 1793205819438
+      },
+      "takeover": {
+        "fenceEpoch": 2,
+        "acquiredAtEpochMilli": 1793205822834,
+        "leaseExpiredAtEpochMilli": 1793205819438,
+        "staleLeaseWriteCode": "stale_epoch",
+        "newLeaseWriteOk": true,
+        "expiredClaimAfterTakeover": "claim_fenced"
+      },
+      "events": [
+        {
+          "requestId": "req_ttl_1_1",
+          "operation": "create_world",
+          "clientAtEpochMilli": 1793205584800,
+          "serverTimeEpochMilli": 1793205584798,
+          "httpStatus": 201,
+          "refusalCode": null
+        },
+        {
+          "requestId": "req_ttl_1_2",
+          "operation": "narration_claim",
+          "clientAtEpochMilli": 1793205585015,
+          "serverTimeEpochMilli": 1793205585014,
+          "httpStatus": 200,
+          "refusalCode": null
+        },
+        {
+          "requestId": "req_ttl_1_3",
+          "operation": "lease_renew",
+          "clientAtEpochMilli": 1793205585228,
+          "serverTimeEpochMilli": 1793205585225,
+          "httpStatus": 200,
+          "refusalCode": null
+        },
+        {
+          "requestId": "req_ttl_1_4",
+          "operation": "narration_claim",
+          "clientAtEpochMilli": 1793205585296,
+          "serverTimeEpochMilli": 1793205585294,
+          "httpStatus": 200,
+          "refusalCode": null
+        },
+        {
+          "requestId": "req_ttl_1_5",
+          "operation": "allocate_ids",
+          "clientAtEpochMilli": 1793205585370,
+          "serverTimeEpochMilli": 1793205585368,
+          "httpStatus": 200,
+          "refusalCode": null
+        },
+        {
+          "requestId": "req_ttl_1_6",
+          "operation": "lease_renew",
+          "clientAtEpochMilli": 1793205699473,
+          "serverTimeEpochMilli": 1793205699471,
+          "httpStatus": 200,
+          "refusalCode": null
+        },
+        {
+          "requestId": "req_ttl_1_7",
+          "operation": "narration_submit",
+          "clientAtEpochMilli": 1793205768304,
+          "serverTimeEpochMilli": 1793205768298,
+          "httpStatus": 409,
+          "refusalCode": "claim_expired"
+        },
+        {
+          "requestId": "req_ttl_1_8",
+          "operation": "lease_acquire",
+          "clientAtEpochMilli": 1793205822604,
+          "serverTimeEpochMilli": 1793205822603,
+          "httpStatus": 200,
+          "refusalCode": null
+        },
+        {
+          "requestId": "req_ttl_1_9",
+          "operation": "allocate_ids",
+          "clientAtEpochMilli": 1793205822677,
+          "serverTimeEpochMilli": 1793205822671,
+          "httpStatus": 409,
+          "refusalCode": "stale_epoch"
+        },
+        {
+          "requestId": "req_ttl_1_10",
+          "operation": "allocate_ids",
+          "clientAtEpochMilli": 1793205822764,
+          "serverTimeEpochMilli": 1793205822762,
+          "httpStatus": 200,
+          "refusalCode": null
+        },
+        {
+          "requestId": "req_ttl_1_11",
+          "operation": "narration_submit",
+          "clientAtEpochMilli": 1793205822834,
+          "serverTimeEpochMilli": 1793205822830,
+          "httpStatus": 409,
+          "refusalCode": "claim_fenced"
+        }
+      ]
+    },
+    {
+      "worldId": "world_4",
+      "claimIssued": {
+        "claimToken": "claim_0e37495c91709c50d26d346a6d5430428c8cbb64cc591e9659549e097dd39ab4",
+        "generation": 1,
+        "issuedAtEpochMilli": 1793205584834,
+        "fenceEpoch": 1,
+        "expiresAtEpochMilli": 1793205764834
+      },
+      "leaseRenewals": [
+        {
+          "phase": "alive",
+          "renewedAtEpochMilli": 1793205585439,
+          "expiresBefore": 1793205704834,
+          "expiresAfter": 1793205705404
+        },
+        {
+          "phase": "pre-claim-expiry",
+          "renewedAtEpochMilli": 1793205699579,
+          "expiresBefore": 1793205705404,
+          "expiresAfter": 1793205819520
+        }
+      ],
+      "expiredClaimRefusal": {
+        "code": "claim_expired",
+        "clientAction": "regenerate_narration",
+        "submittedAtEpochMilli": 1793205768383,
+        "claimExpiredAtEpochMilli": 1793205764834,
+        "leaseStillValidUntil": 1793205819520
+      },
+      "takeover": {
+        "fenceEpoch": 2,
+        "acquiredAtEpochMilli": 1793205823159,
+        "leaseExpiredAtEpochMilli": 1793205819520,
+        "staleLeaseWriteCode": "stale_epoch",
+        "newLeaseWriteOk": true,
+        "expiredClaimAfterTakeover": "claim_fenced"
+      },
+      "events": [
+        {
+          "requestId": "req_ttl_2_1",
+          "operation": "create_world",
+          "clientAtEpochMilli": 1793205584864,
+          "serverTimeEpochMilli": 1793205584863,
+          "httpStatus": 201,
+          "refusalCode": null
+        },
+        {
+          "requestId": "req_ttl_2_2",
+          "operation": "narration_claim",
+          "clientAtEpochMilli": 1793205585094,
+          "serverTimeEpochMilli": 1793205585093,
+          "httpStatus": 200,
+          "refusalCode": null
+        },
+        {
+          "requestId": "req_ttl_2_3",
+          "operation": "lease_renew",
+          "clientAtEpochMilli": 1793205585439,
+          "serverTimeEpochMilli": 1793205585437,
+          "httpStatus": 200,
+          "refusalCode": null
+        },
+        {
+          "requestId": "req_ttl_2_4",
+          "operation": "narration_claim",
+          "clientAtEpochMilli": 1793205585503,
+          "serverTimeEpochMilli": 1793205585501,
+          "httpStatus": 200,
+          "refusalCode": null
+        },
+        {
+          "requestId": "req_ttl_2_5",
+          "operation": "allocate_ids",
+          "clientAtEpochMilli": 1793205585569,
+          "serverTimeEpochMilli": 1793205585566,
+          "httpStatus": 200,
+          "refusalCode": null
+        },
+        {
+          "requestId": "req_ttl_2_6",
+          "operation": "lease_renew",
+          "clientAtEpochMilli": 1793205699579,
+          "serverTimeEpochMilli": 1793205699578,
+          "httpStatus": 200,
+          "refusalCode": null
+        },
+        {
+          "requestId": "req_ttl_2_7",
+          "operation": "narration_submit",
+          "clientAtEpochMilli": 1793205768383,
+          "serverTimeEpochMilli": 1793205768378,
+          "httpStatus": 409,
+          "refusalCode": "claim_expired"
+        },
+        {
+          "requestId": "req_ttl_2_8",
+          "operation": "lease_acquire",
+          "clientAtEpochMilli": 1793205822927,
+          "serverTimeEpochMilli": 1793205822926,
+          "httpStatus": 200,
+          "refusalCode": null
+        },
+        {
+          "requestId": "req_ttl_2_9",
+          "operation": "allocate_ids",
+          "clientAtEpochMilli": 1793205822993,
+          "serverTimeEpochMilli": 1793205822989,
+          "httpStatus": 409,
+          "refusalCode": "stale_epoch"
+        },
+        {
+          "requestId": "req_ttl_2_10",
+          "operation": "allocate_ids",
+          "clientAtEpochMilli": 1793205823084,
+          "serverTimeEpochMilli": 1793205823082,
+          "httpStatus": 200,
+          "refusalCode": null
+        },
+        {
+          "requestId": "req_ttl_2_11",
+          "operation": "narration_submit",
+          "clientAtEpochMilli": 1793205823159,
+          "serverTimeEpochMilli": 1793205823152,
+          "httpStatus": 409,
+          "refusalCode": "claim_fenced"
+        }
+      ]
+    },
+    {
+      "worldId": "world_7",
+      "claimIssued": {
+        "claimToken": "claim_a386225a02cf27ef1c59f92ff6eec5da37ab6e6aeba31b54cebb35444c9defb1",
+        "generation": 1,
+        "issuedAtEpochMilli": 1793205584884,
+        "fenceEpoch": 1,
+        "expiresAtEpochMilli": 1793205764884
+      },
+      "leaseRenewals": [
+        {
+          "phase": "alive",
+          "renewedAtEpochMilli": 1793205585632,
+          "expiresBefore": 1793205704884,
+          "expiresAfter": 1793205705598
+        },
+        {
+          "phase": "pre-claim-expiry",
+          "renewedAtEpochMilli": 1793205700169,
+          "expiresBefore": 1793205705598,
+          "expiresAfter": 1793205820125
+        }
+      ],
+      "expiredClaimRefusal": {
+        "code": "claim_expired",
+        "clientAction": "regenerate_narration",
+        "submittedAtEpochMilli": 1793205768443,
+        "claimExpiredAtEpochMilli": 1793205764884,
+        "leaseStillValidUntil": 1793205820125
+      },
+      "takeover": {
+        "fenceEpoch": 2,
+        "acquiredAtEpochMilli": 1793205823490,
+        "leaseExpiredAtEpochMilli": 1793205820125,
+        "staleLeaseWriteCode": "stale_epoch",
+        "newLeaseWriteOk": true,
+        "expiredClaimAfterTakeover": "claim_fenced"
+      },
+      "events": [
+        {
+          "requestId": "req_ttl_3_1",
+          "operation": "create_world",
+          "clientAtEpochMilli": 1793205584918,
+          "serverTimeEpochMilli": 1793205584917,
+          "httpStatus": 201,
+          "refusalCode": null
+        },
+        {
+          "requestId": "req_ttl_3_2",
+          "operation": "narration_claim",
+          "clientAtEpochMilli": 1793205585160,
+          "serverTimeEpochMilli": 1793205585159,
+          "httpStatus": 200,
+          "refusalCode": null
+        },
+        {
+          "requestId": "req_ttl_3_3",
+          "operation": "lease_renew",
+          "clientAtEpochMilli": 1793205585632,
+          "serverTimeEpochMilli": 1793205585630,
+          "httpStatus": 200,
+          "refusalCode": null
+        },
+        {
+          "requestId": "req_ttl_3_4",
+          "operation": "narration_claim",
+          "clientAtEpochMilli": 1793205585695,
+          "serverTimeEpochMilli": 1793205585694,
+          "httpStatus": 200,
+          "refusalCode": null
+        },
+        {
+          "requestId": "req_ttl_3_5",
+          "operation": "allocate_ids",
+          "clientAtEpochMilli": 1793205585777,
+          "serverTimeEpochMilli": 1793205585776,
+          "httpStatus": 200,
+          "refusalCode": null
+        },
+        {
+          "requestId": "req_ttl_3_6",
+          "operation": "lease_renew",
+          "clientAtEpochMilli": 1793205700169,
+          "serverTimeEpochMilli": 1793205700168,
+          "httpStatus": 200,
+          "refusalCode": null
+        },
+        {
+          "requestId": "req_ttl_3_7",
+          "operation": "narration_submit",
+          "clientAtEpochMilli": 1793205768443,
+          "serverTimeEpochMilli": 1793205768437,
+          "httpStatus": 409,
+          "refusalCode": "claim_expired"
+        },
+        {
+          "requestId": "req_ttl_3_8",
+          "operation": "lease_acquire",
+          "clientAtEpochMilli": 1793205823272,
+          "serverTimeEpochMilli": 1793205823270,
+          "httpStatus": 200,
+          "refusalCode": null
+        },
+        {
+          "requestId": "req_ttl_3_9",
+          "operation": "allocate_ids",
+          "clientAtEpochMilli": 1793205823335,
+          "serverTimeEpochMilli": 1793205823329,
+          "httpStatus": 409,
+          "refusalCode": "stale_epoch"
+        },
+        {
+          "requestId": "req_ttl_3_10",
+          "operation": "allocate_ids",
+          "clientAtEpochMilli": 1793205823433,
+          "serverTimeEpochMilli": 1793205823431,
+          "httpStatus": 200,
+          "refusalCode": null
+        },
+        {
+          "requestId": "req_ttl_3_11",
+          "operation": "narration_submit",
+          "clientAtEpochMilli": 1793205823490,
+          "serverTimeEpochMilli": 1793205823484,
+          "httpStatus": 409,
+          "refusalCode": "claim_fenced"
+        }
+      ]
+    }
+  ],
+  "A": {
+    "head": "1200cbde99951a815ae4a901012eb97d4b6518f1",
+    "sourceSha256": {
+      "backend/app/world_app.py": "b6291cf697793fe543d36098b6c976f73fb5b28a394dc6a53b3f514f9ab45509",
+      "backend/app/routers/worlds.py": "a9364afe54662b4b14d5692621192e8570f962454e12ef1f79ec15ed092c6b5d",
+      "backend/scripts/check_world_http_scenarios.py": "1ee8d17eea9a1931597a854638a4b97bac6f05eccb6c0a4a314ae0ef5ee7b849",
+      "backend\\app\\services\\world\\__init__.py": "7b69f36a39e571846df32c14dc632a713d536a6fc6d436755b8557456011f086",
+      "backend\\app\\services\\world\\apply.py": "e626fdbb0679ca0cff73053f06b5887bf8a8a0f42280219fdd94b8e4b257af66",
+      "backend\\app\\services\\world\\authority.py": "5ef2417c02f74ba349196b7c83ae25cea41f3dd9dac8374f30132ea490dac96a",
+      "backend\\app\\services\\world\\commit.py": "53d9c82b296e6b5ce1108a4117e929ad4f6b196ecc85386c633c69ad7c586e6f",
+      "backend\\app\\services\\world\\control.py": "cd3b6e5a297f27a30f2f10a72de0ec002ff5ec335be8388ebd083ba544fdb0e5",
+      "backend\\app\\services\\world\\judgments.py": "4d883d0d875ea73a42c0e618feea332ee803d40f669b7969ec039135076f876a",
+      "backend\\app\\services\\world\\ladder.py": "06533d0ca2b3cdd0d7e602a50ab30986f9567a48b228f67c761c82d9ad55002a",
+      "backend\\app\\services\\world\\merge.py": "dbe5fb4b22c62d0bc6bc86599c84227528cb9a636e5728021ad44d748a4647c4",
+      "backend\\app\\services\\world\\preview.py": "55e7852e74b0db0de9b213833155b33d3577cb8388f43d0c31bd7f4e63fd888d",
+      "backend\\app\\services\\world\\progress.py": "32f9036260c74a09879df4f6743db7b3c85a40d474238076d34f7a339b554040",
+      "backend\\app\\services\\world\\recovery.py": "12d2e6e771f8b86ad0e620e90f9cc49c07dcade3cb487bf0a49d1e3459eaca19",
+      "backend\\app\\services\\world\\replay.py": "af45a5d18bdb4adc08282082f3b7555c48353f7757b574a948f8a3f4f5cde7ed",
+      "backend\\app\\services\\world\\state.py": "b13ce5de770e7be883bae03ad682482f097393b597dce7e8d117b151df0a1ed6",
+      "backend\\app\\services\\world\\store.py": "e4784c38347895326f638e7c0f15e3dad2ea61924d0f0fca8384a8977238dbc4",
+      "backend\\app\\services\\world\\successor.py": "93c7e398e6dc6a0de4d17e83078b29018e28413647664862815e575ec0918a4e",
+      "backend\\app\\services\\world\\timing.py": "3dfd9c8072177dd26cf8875fe0b09881af41f56c3124bea2a60ca29d4d4b2407",
+      "backend\\app\\services\\world\\units.py": "1b62625219658735387557436944c2c7ca8e4ce23c0b1d3117138c1ce28ce1c5",
+      "backend\\app\\services\\world\\violations.py": "84b8a529cb688675f2a7e12da7ed0f84838f58c182f81f1234065644c8fd5e7e",
+      "backend\\app\\database\\world_frozen_repository.py": "74471c58be73534846ca43bd1a5844aae070d9d7a5e352189436293632e3d559",
+      "backend\\app\\database\\world_judgment_repository.py": "42941bd1a07f3dd6f400899c612fd4b76fe054edb1d4c79be3804c25507d174e",
+      "backend\\app\\database\\world_progress_repository.py": "2db2aaa7d1ef52531a7ed94f0f85482c92d2bb1bd9770c6bc249c46a2a398175",
+      "backend\\app\\database\\world_repository.py": "35ee95f9f78acd3b4b01d7e2cbf154068557c180ec9fa253f82deb1c30621068",
+      "backend\\app\\database\\world_store.py": "b130b13274180d33f9ef532c2674a0211dadd5544ab6f127c9e2e1211168ecef",
+      "backend\\app\\database\\world_work_repository.py": "f7715b333b2be91f76292a5ab15c0734387184debbb3e46ebc56e2028471a886",
+      "backend/scripts/check_world_ttl_realtime.py": "70c0a1276459227ec2b0871a3a17ad9152d3c70803bd20eb7ad2728b7d505fb3"
+    }
+  },
+  "sourceUnchangedDuringRun": true
+}

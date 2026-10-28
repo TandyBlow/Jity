@@ -952,6 +952,47 @@ A 侧复核复跑确认四场景、两次重启与 12 条漂移复现，同时�
 **执行器验收关闭**；A4 剩余项（B transport 连接复验、真实 120 秒 TTL 到期
 接管）维持原分工不变。
 
+---
+
+# 真实 120 秒 TTL 到期批次（2026-10-29）
+
+关闭 A4 剩余项中的「真实 120 秒 TTL 到期接管」：此前全部 TTL/围栏验收都走
+推进时钟，本批以**真实墙钟**跨过两个到期，全程无时钟注入——服务是文档入口
+`create_persistent_world_app`（存储默认时钟即真实时间），驱动脚本不提供任何
+时钟，只 sleep 与记录。实现为本批交付的
+`backend/scripts/check_world_ttl_realtime.py`；证据
+[artifacts/world-ttl-realtime.json](../../artifacts/world-ttl-realtime.json)。
+
+方法：三个独立世界并行走同一真实时间窗口（并行只共享等待，各世界的租约、
+claim、epoch 相互独立，不削弱单世界证据力度），每个世界按序走三条路径，
+截止时间一律取服务端签发的 `expiresAtEpochMilli`＋3 秒裕量：
+
+| 路径 | 断言 | 实测（三个世界一致） |
+|---|---|---|
+| 存活期内续期＋重新取得 | `lease_renew` 使过期时间自续期时刻顺延 120 s；带 `currentClaim` 回执的 `narration_claim` 返回同一 claim 身份；续期后写入 200 | 首次续期距原到期约 119.5 s；第二次续期在原到期前 5.4–5.8 s，新到期晚于 claim 到期约 55 s |
+| 过期 claim 提交被拒 | claim 到期后、租约仍有效时 `narration_submit`（携 claim 回执三元组）必须 409 `claim_expired` | 提交发生在 claim 到期后约 3.5 s（距租约到期尚余约 51 s），三个世界均 `claim_expired` |
+| 真实到期后接管 | 租约到期后 `lease_acquire` 成功且 fenceEpoch 单调 1→2；旧租约写入 `stale_epoch`；新租约写入 200；接管后过期 claim `claim_fenced` | 接管发生在租约到期后 3.4–3.6 s，fence 恰为 2，三种写入/提交码全部符合 |
+
+总窗口 241.7 秒（约一个租约寿命＋一个 claim 寿命）；运行前后 A 源身份一致，
+报告含逐事件（11 个/世界）的客户端与服务端时刻、状态码与拒绝码，接管路径的
+三个码均自实际响应回填。
+
+边界：本批只覆盖租约/claim 的到期、续期与接管路径，不含叙事 renew 的到期、
+冻结工作复制与后继预约（分别由既有推进时钟测试与 H2 覆盖）；`claim_expired`
+的隔离依赖第二次续期把租约维持到 claim 到期之后——这也是「claim 过期先于
+租约过期时，租约围栏优先于过期判定」这一顺序的实际证据（接管移动 epoch 后，
+同一过期 claim 转为 `claim_fenced`）。
+
+## B transport 连接复验状态（2026-10-29 首轮）
+
+B 侧以其 transport 复验脚本对 A=`1200cbd`、B=`77cb0af` 完成首轮运行：CORS
+精确 origin、两个 root flow（claim 回执三元组保留、requestId 逐步重选、根
+gate 清理）与浏览器段全部通过；h2-history 子检查的 `checkpoint_start_advance`
+返回 400 `request_malformed`，定位为 B 侧 harness 自 A3 起（`c19340f` 要求
+玩家回合 order 覆盖完整角色名单）的过期夹具（硬编码 3 人 order，与 T01 轨迹
+及 B 产品侧 roster 不一致），改用完整名单后同一步返回 200。结论：非 transport
+不兼容。A4 的 B 向条件待 B 侧修正夹具、提交脚本与报告并重跑 PASS 后关闭。
+
 ## 共同检查现状与本批边界
 
 统一入口在本分支当前状态下 TS 契约消费为红（contract.test.ts 35 项：
