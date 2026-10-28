@@ -38,7 +38,7 @@
 | 分词器 | JS 手写 BertTokenizerFast 等价（中文按字、lowercase、ASCII wordpiece 回退），在跑对照 Python 参考 id 校验通过 [实测] | sentencepiece（unigram）；**浏览器侧 JS 实现是 T5 路线的最大单点成本**，wllama 路径则由 GGUF 内嵌 tokenizer 解决 | 同左 | GGUF 内嵌，llama.cpp 处理 |
 | 取消/生成循环 | `session.run` 不可中途取消→AbortSignal 外包＋迟到结果按接口表 §2.1 隔离丢弃；加载与解码循环可取消 | wllama 有中断 API；ORT 直驱路径同左；生成循环=encoder 一次＋decoder 逐步（带 past），步数上限与早停显式配置 | 同左 | wllama 中断已在使用 |
 
-许可状态：**三候选均 Apache-2.0**——Randeng/Mengzi 模型卡 [外部]；MiniRBT 经 `hfl/minirbt-h256` 模型卡 `cardData.license` 与 `license:apache-2.0` tag 核实（复核轮关闭；GitHub README 本身未标许可）。锁定权重时以 LICENSE 文件为准写入运行记录。
+许可状态：**三候选均声明 Apache-2.0**——Randeng/Mengzi 模型卡 [外部]；MiniRBT 经 `hfl/minirbt-h256` 模型卡 `cardData.license` 与 `license:apache-2.0` tag 核实（复核轮关闭；GitHub README 本身未标许可）。落实口径：Randeng 仓库无 LICENSE 文件（siblings 仅 README/config/权重/tokenizer，复核轮确认），Mengzi/MiniRBT 锁定权重时核对 LICENSE 文件；声明均以模型卡标签为准写入运行记录。
 
 ## 3. 组件×任务×方案映射
 

@@ -35,52 +35,66 @@
     "transformers": "4.57.3"
   },
   "load": {
-    "seconds": 0.51,
+    "seconds": 0.45,
     "paramCount": 77440384,
     "officialClaim": 77440384,
     "paramCountMatches": true
+  },
+  "decodeConfig": {
+    "maxNewTokens": 64,
+    "numBeams": 1,
+    "doSample": false
+  },
+  "tokenizerConfig": {
+    "class": "T5Tokenizer(vocab_file=spiece.model)",
+    "legacy": "transformers default (legacy behavior warning observed on 4.57.3); explicit pin required before finetune comparisons"
   },
   "probes": [
     {
       "name": "multitask-template-sentiment",
       "note": "模型卡风格的多任务模板探针：检查模板跟随行为",
+      "provenance": "官方模型卡示例改写；与 B 语料无字符串级交集",
       "input": "情感分析任务：【这间图书馆的藏书非常丰富。】这篇文章的情感态度是什么？正面/负面",
       "inputTokens": 28,
       "output": "正面",
       "outputTokens": 4,
-      "wallSeconds": 0.382
+      "wallSeconds": 0.389
     },
     {
       "name": "narration-freeform",
       "note": "自由格式成句探针：一段自然语言变化描述",
+      "provenance": "B 派生例：nv-cont-1 forbidden 串剥注记＋nv-move-1 方向反转；cast 名=共享学校名册",
       "input": "用一句中文叙述以下变化：学生A从大厅走到了走廊。时间过去了约三十分钟。",
       "inputTokens": 26,
       "output": "学生A从大厅走到了走廊。时间过去了约三十分钟。",
       "outputTokens": 19,
-      "wallSeconds": 0.871
+      "wallSeconds": 0.851
     },
     {
       "name": "narration-template",
       "note": "结构化模板成句探针：位置事实＋时间",
+      "provenance": "B 派生例：nv-move-1 实体对（学生A 走廊/大厅）反向＋forbidden 同族",
       "input": "叙事生成任务：【位置：学生A 大厅→走廊】【时间：约30分钟】请用一句中文叙述这一变化。",
       "inputTokens": 35,
       "output": "时间:约30分钟",
       "outputTokens": 8,
-      "wallSeconds": 0.381
+      "wallSeconds": 0.358
     },
     {
       "name": "narration-empty-point",
       "note": "空点探针：只有时间、无实体变化（对应叙事子步的时间/空点难点）",
+      "provenance": "B 派生例：「没有新的变化」=B 模板空点固定句式短语；时长值「约30分钟」未命中归档样本文本",
       "input": "叙事生成任务：【时间：约30分钟】【变化：没有新的变化】请用一句中文叙述。",
       "inputTokens": 27,
       "output": "时间:约30分钟",
       "outputTokens": 8,
-      "wallSeconds": 0.339
+      "wallSeconds": 0.337
     }
   ],
   "disclaimers": [
-    "probes are newly written for this smoke, not from any existing corpus",
+    "provenance per-probe in the probes list; three of four are registered B-derivation examples (see script header)",
     "no quality verdict is issued here; deliverable 3 quality gates use the isolated dev set",
-    "card recipe resizes embeddings with 100 extra tokens; this smoke loads as-is"
+    "card recipe resizes embeddings with 100 extra tokens; this smoke loads as-is",
+    "timings include 8-19 token short outputs; compare against Qwen only at matched token counts"
   ]
 }
