@@ -790,3 +790,143 @@ backend / frontend / world-interface 三作业全绿。
   替换或扩大；接口基线 `e3b197a`/`480d950c…` 同样独立。
 - 后续若修改 A3-2 涉及的产品源码、契约或 H2 harness 断言，须重新固定组合并
   重跑，不能沿用本冻结。
+
+---
+
+# A4 交付：运行入口、初始化、固定场景执行器与限制说明（2026-10-28）
+
+A4 范围（[分工文档](../browser-world-state-work-split.md)）：交付真实服务运行入口、
+初始化方式、固定场景执行器、API 行为与限制说明；完成标准为「B 仅替换 transport
+配置即可连接；相同轨迹得到接口基线约定的响应和结果」。本节补齐 A 侧缺口并登记
+首轮实证：入口/初始化/CORS 在 A3-1/A3-2 已有实现与说明，本批新增 **A 侧独立固定
+场景执行器**（此前 H1/H2 都依赖 B 工作树与浏览器，A 无法单独证明「相同轨迹得到
+基线约定的响应和结果」），并把散落的运行事实收拢为本节限制说明。实现提交
+`38e35c3`；契约未改，摘要仍为 `902918016f2bf7…`。
+
+## 运行入口
+
+从 backend 目录运行，两条入口共用同一世界路由与内核：
+
+```sh
+# 持久服务（交付入口）：WORLD_SQLITE_PATH 必填，缺失即启动报错，
+# 不会静默退回内存或在意料外的目录建库。数据库父目录必须已存在。
+WORLD_SQLITE_PATH=/absolute/path/world-dev.sqlite \
+  python -m uvicorn app.world_app:create_persistent_world_app --factory \
+  --host 127.0.0.1 --port 8100
+
+# 内存夹具入口（A2 开发用）：重启丢弃全部世界。
+python -m uvicorn app.world_app:create_world_app --factory \
+  --host 127.0.0.1 --port 8100
+```
+
+按交付验证范围是单 worker 进程；SQLite 入口用 BEGIN IMMEDIATE 串行化写事务，
+另一写事务并发到达时以 `request_in_progress` 拒绝（retryable）。服务是开发
+服务：无鉴权、无限流，不得暴露到本机以外。
+
+## 初始化方式
+
+新库路径在首次连接时自动建表（`world_storage_v2.sql` 与共同 SQL 逐字节一致），
+无需手工初始化步骤。非空旧库缺少所需 schema 标记时拒绝自动迁移并保留原数据
+（A3-1 行为，要求显式迁移或改用新开发库路径）。重启后不丢权威数据：读取从
+初始世界与关系历史回放并核对摘要（本批执行器在两次真实重启后以 get_state
+摘要不变验证）。
+
+## CORS 与版本轴
+
+- 出生源由 `WORLD_ALLOWED_ORIGINS` 控制，缺省为本机 3000/3001/3100 的
+  http 源；非浏览器客户端不受 CORS 影响。
+- 每个请求须带 `X-World-Protocol-Version: 2` 头；写请求 body 须带
+  `protocolVersion: 2`。
+- 响应信封 `schemaVersion` 为 **2**；状态模型与初始模板仍为 **1**；
+  轨迹格式 `TraceFormatVersion` 为 **1**（R1 版本轴拆分后的既定值）。
+
+## API 行为要点（B 接入须知）
+
+1. 路径与派发由注册表唯一权威：32 个操作各有 method/path/success/error 面；
+   `checkpoint_*` 与 `round_conclusion_*` 共享一条路径，以 body `operation`
+   字段选择具体操作。
+2. 请求体先经共享解析（拒绝重复键、非安全数字），再按该操作的 wire schema
+   校验；路径身份是权威，body 与路径身份冲突一律 `version_mismatch`。
+3. GET/DELETE 的查询字段严格匹配该操作的 queryBindings：未知或重复字段拒绝、
+   整数字段只收 ASCII 十进制、`includeRecovery` 只收 `true`/`false`。
+4. 幂等：同 requestId＋同请求摘要在同一世界重放原成功响应（`replayed` 标记）；
+   同 requestId 不同内容为 `request_id_reused` 409。requestId 是客户端自选
+   身份，真实客户端每步应发新值（执行器与 B 控制器均如此）。
+5. 叙事固有两次请求：`narration_claim` 签发凭证后，`narration_submit` 必须携带
+   **成对回执的 `claimToken`/`generation`/`issuedAtEpochMilli`**——持久权威层把
+   claim 身份固定为 token＋generation＋签发时刻＋模式（head 另核 epoch）。凭
+   上下文时钟充当签发时刻会被 `claim_fenced` 拒绝。
+6. `preview_point` 是无状态重算，重放同请求得到逐字节相同结果；只有请求中的
+   `settlementGroups` 参与合并。
+7. 错误信封由单一构造器产出：`error.code/httpStatus/retryable/clientAction`，
+   code 恒在该操作注册的 errorCodes 面内；`clientAction` 按协议消费。
+
+## 限制说明
+
+| 项 | 值 | 出处 |
+|---|---|---|
+| 预览请求字节预算 | 512 KiB（超出 `preview_budget_exceeded`，`details.limit=request`） | 预览服务 |
+| 预览响应字节预算 | 2 MiB（`details.limit=response`） | 预览服务 |
+| 结算单元数 | 单次预览 `settlementGroups` ≤ 32 | HTTP 适配层 |
+| 租约 TTL | 120 秒（持久入口；到期后可被接管，epoch 单调） | 权威层/存储 |
+| 叙事 claim TTL | 180 秒 | 权威层/存储 |
+| 创建期 head gate | 随首个 claim，180 秒窗口 | 权威层 |
+| 夹具入口控制 gate | 3600 秒（仅内存夹具入口） | 控制层 |
+| 并发写 | 单写事务（BEGIN IMMEDIATE），第二个写事务 `request_in_progress` | 存储层 |
+| 鉴权/限流 | 无（开发服务） | — |
+
+轨迹、报告与固化的 H2 范围不受本节影响；任何数值变更走接口基线修订。
+
+## 固定场景执行器
+
+`backend/scripts/check_world_http_scenarios.py`（提交 `38e35c3`）从仓库根运行：
+
+```sh
+python backend/scripts/check_world_http_scenarios.py
+```
+
+无浏览器、无 B 代码，干净检出只需 Python。行为：自起持久服务（隔离 SQLite），
+**按轨迹模板逐字重放 T01 两样本全部 23 步**（create_world 到 narration_get），
+**按既有前导驱动 T03 两样本**（建世界→根叙事 ready→分配 id→start_advance→
+时间扫描轨迹 8 步），插入 T03 预览的两次等值检查，并在每个轨迹首个样本完成后
+真实重启服务、以 get_state 摘要不变验证回放读。硬检查一票否决：HTTP 状态、
+operation/requestId 回显、requestHash（幂等操作按实例化请求重算）、捕获路径、
+服务状态等于独立期望投影、服务摘要等于独立期望摘要。
+
+两处与模板字面量的刻意分歧均为真实客户端语义，已写入脚本 docstring：requestId
+逐步重选（钉死字面量会在幂等账本跨样本碰撞）、narration_submit 携带 claim 回执
+三元组（见 API 行为第 5 条）。
+
+## 首轮实证与断言漂移登记
+
+本机（实现提交 `38e35c3`）与干净 detached worktree（同一提交）各跑一轮：
+
+- 执行器 PASS：4 份固定场景全轨迹重放、2 次重启回读、独立摘要全对；
+- 文档启动冒烟 PASS：干净检出按上节命令起服务，外部客户端以共享
+  create_world 夹具 POST 得 201 并读回状态摘要；
+- 后端全量 **1412 passed**；
+- 报告（身份、逐步摘要、漂移清单）：
+  [artifacts/world-http-scenarios.json](../../artifacts/world-http-scenarios.json)。
+
+**发现并登记：T01 s1–s4 的纸面断言与当前运行时漂移（12 条，全部为
+control.phase/canCompute 期望）。** 轨迹的逐断言只在离线 validate_trace 中核对
+（从不对活服务运行），H1/H2 也从未断言这些字段；而运行时在 A2/A3 演进出
+「创建即签发 head gate、根叙事 ready 前 canCompute=false、ready 后翻 true」的
+语义，T01 s1–s4 仍按 S1 时代期望 `complete`/`false`。执行器把断言失配记为
+`assertionDrift` 上报而不失败——集成结果（投影/摘要/信封/哈希）必须且已经
+全对。T03 的断言全部活验证通过（其成文晚于语义演进）。处置建议：刷新 T01
+s1–s4 四步断言属接口基线修订，须双方检查共同通过后另行登记，本批不改手写
+轨迹。
+
+## 共同检查现状与本批边界
+
+统一入口在本分支当前状态下 TS 契约消费为红（contract.test.ts 35 项：
+本分支 frontend 的旧 B 消费守卫仍钉信封 `schemaVersion=1`，契约产物已是 2）。
+这是既有的设计内中间态：B 侧已在 world-browser `88311b2` 完成版本同步与消费
+批次，未回流本分支；Python 侧 1412 项与执行器轨迹钉（契约摘要
+`90291801…`）全绿。B 消费批次接线后该红应转绿。
+
+本批边界：固定场景执行器覆盖 T01/T03（自驱动轨迹＋时间扫描），T02/T04–T09
+的前导驱动仍属 B harness 与后续共同验收；A4 的「B 仅改 transport 配置即可
+连接」由 B 侧以其 harness 对本节入口做连接复验后关闭；真实 120 秒 TTL 自然
+到期接管与旧请求围栏是另一独立批次（现有覆盖均为推进时钟）。
