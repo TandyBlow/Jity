@@ -53,7 +53,10 @@ CHAR_DEFS = {}
 
 
 def register_registry(world: dict):
-    """Collect name->id maps and per-char before values from the row's world."""
+    """Collect name->id maps and per-char before values from the row's world.
+    v5b: also returns an id-keyed index — current-state provenance must be
+    checked by entityId directly, never via a name that may itself be
+    misbound (review round 6 composition tamper)."""
     locs = {l["name"]: l["id"] for l in world["locations"]}
     chars = {}
     for c in world["characters"]:
@@ -61,7 +64,10 @@ def register_registry(world: dict):
                             "sanity": c["initialSanity"],
                             "personality": c["initialPersonality"],
                             "tasks": {t["goal"]: t for t in c["tasks"]}}
-    return locs, chars
+    chars_by_id = {reg["id"]: reg for reg in chars.values()}
+    if len(chars_by_id) != len(chars):
+        raise ValueError("world registry has two names for one character id")
+    return locs, chars, chars_by_id
 
 
 def build_before(world: dict) -> WorldState:
@@ -104,10 +110,12 @@ def build_before(world: dict) -> WorldState:
 def identity_problem(entry: dict, locs: dict, chars: dict):
     """v5 invariant: entityId <-> name binding. The name is the human-facing
     side, the registry maps it to exactly one id; a plan entry may never
-    carry a name pointing at a different id."""
+    carry a name pointing at a different id. Works for plan entries and
+    planOnlyClaims alike (claims have no ref)."""
     name = entry.get("name")
     if name is None:
         return None
+    label = f"plan ref {entry['ref']}" if "ref" in entry else "claim"
     kind = entry["kind"]
     if kind == "appearance_changed":
         expected = locs.get(name)
@@ -115,14 +123,14 @@ def identity_problem(entry: dict, locs: dict, chars: dict):
         reg = chars.get(name)
         expected = reg["id"] if reg else None
     if expected is None:
-        return f"plan ref {entry['ref']}: name '{name}' not in the world registry"
+        return f"{label}: name '{name}' not in the world registry"
     if expected != entry["entityId"]:
-        return (f"plan ref {entry['ref']}: identity mismatch — name '{name}' is "
+        return (f"{label}: identity mismatch — name '{name}' is "
                 f"{expected} in the registry but the entry says {entry['entityId']}")
     return None
 
 
-def reconcile(r: dict, locs: dict, chars: dict):
+def reconcile(r: dict, locs: dict, chars: dict, chars_by_id: dict):
     """v3: full plan <-> rawDelta reconciliation (review round 4, gap 3).
     v5 (review round 5): entityId<->name binding; positioned plan entries
     reconcile against planOnlyClaims in BOTH directions; reverse coverage is
@@ -211,7 +219,30 @@ def reconcile(r: dict, locs: dict, chars: dict):
                                 f"({claim['at'] if claim else 'missing'}) — two "
                                 f"copies of the current state disagree")
             else:
-                checks.append({"check": "reconcile-positioned", "ref": ref, "result": "ok"})
+                # v5b: the claim itself is identity-checked and its current
+                # state is proven against BEFORE by entityId directly —
+                # never via the claim's name (which may be misbound)
+                idp = identity_problem(claim, locs, chars)
+                if idp:
+                    problems.append(f"plan ref {ref} planOnlyClaims identity: {idp}")
+                else:
+                    reg = chars_by_id.get(claim["entityId"])
+                    home = reg["home"] if reg else None
+                    if reg is None:
+                        problems.append(f"plan ref {ref} positioned provenance: entityId "
+                                        f"{claim['entityId']} not in the world registry")
+                    elif locs.get(claim["at"]) is None:
+                        problems.append(f"plan ref {ref} positioned provenance: at "
+                                        f"'{claim['at']}' is not in the world registry")
+                    elif home != locs[claim["at"]]:
+                        problems.append(f"plan ref {ref} positioned provenance: "
+                                        f"{claim['name']}({claim['entityId']}) claimed at "
+                                        f"{claim['at']}({locs[claim['at']]}) but registry "
+                                        f"home is {home} — current state not backed by "
+                                        f"the before state")
+                    else:
+                        checks.append({"check": "reconcile-positioned", "ref": ref,
+                                       "result": "ok"})
         elif k == "no_change":
             if deltas:
                 problems.append("plan claims no_change but rawDelta carries deltas")
@@ -298,8 +329,8 @@ def main() -> None:
     def tampered_problems(src, mutate):
         t = copy.deepcopy(src)
         mutate(t)
-        locs_t, chars_t = register_registry(t["world"])
-        return reconcile(t, locs_t, chars_t)[0]
+        locs_t, chars_t, byid_t = register_registry(t["world"])
+        return reconcile(t, locs_t, chars_t, byid_t)[0]
 
     loc1 = next(r for r in rows if r["sourceGroupId"] == "n4-loc-001")
     appear = next(r for r in rows if r["sourceGroupId"].startswith("n4-appear"))
@@ -329,6 +360,16 @@ def main() -> None:
          .__setitem__("at", "东门")),
         ("II: positioned claim dropped", multi,
          lambda t: t.__setitem__("planOnlyClaims", [])),
+        # review round 6 composition tamper: claim name misbound to another
+        # person whose home IS the claimed location (陈舟 lives at 东门)
+        ("II: claim name/id mismatch", multi,
+         lambda t: t["planOnlyClaims"][0].__setitem__("name", "陈舟")),
+        # both copies agree but the entity's BEFORE position does not back
+        # the claim — provenance must be keyed by entityId (林望 lives at 柴房)
+        ("II: positioned at without before support", multi,
+         lambda t: (next(e for e in t["plan"] if e["kind"] == "positioned_at")
+                    .__setitem__("at", "东门"),
+                    t["planOnlyClaims"][0].__setitem__("at", "东门"))),
         ("III: extra appearance change", appear,
          lambda t: t["rawDelta"]["entityDeltas"][0]["appearanceChanges"].append(
              {"id": "chg_extra", "text": "屋顶变成了红色", "supersedes": []})),
@@ -366,7 +407,7 @@ def main() -> None:
     for r in rows:
         problems = []
         checks = []
-        locs, chars = register_registry(r["world"])
+        locs, chars, chars_by_id = register_registry(r["world"])
 
         # 1. before state (pydantic, incl. fixed_registry)
         try:
@@ -384,7 +425,9 @@ def main() -> None:
         deltas_json = r["rawDelta"]["entityDeltas"]
         time_entry = r["rawDelta"]["time"]
 
-        # 2. provenance checks against BEFORE (source legality, not format)
+        # 2. provenance checks against BEFORE (source legality, not format).
+        # v5b: everything is keyed by entityId directly — a name is only
+        # human-facing and may itself be misbound.
         merged = {}
         for d in deltas_json:
             eid = d["entityId"]
@@ -400,18 +443,26 @@ def main() -> None:
         for entry in r["plan"]:
             kind = entry["kind"]
             if kind == "moved":
-                cid, frm = entry["entityId"], entry["from"]
-                home = chars[entry["name"]]["home"]
-                if home != locs[frm]:
+                frm = entry["from"]
+                reg = chars_by_id.get(entry["entityId"])
+                home = reg["home"] if reg else None
+                if reg is None:
                     problems.append(
-                        f"moved start provenance: plan from={frm}({locs[frm]}) but world "
-                        f"registry home for {entry['name']} is {home} — start value not "
+                        f"moved start provenance: entityId {entry['entityId']} not in "
+                        f"the world registry")
+                elif home != locs.get(frm):
+                    problems.append(
+                        f"moved start provenance: plan from={frm}({locs.get(frm)}) but world "
+                        f"registry home for {entry['entityId']} is {home} — start value not "
                         f"backed by the before state")
                 else:
                     checks.append({"check": "moved-start", "ref": entry["ref"], "result": "ok"})
             elif kind == "sanity_changed":
-                reg = chars[entry["name"]]
-                if entry["from"] != reg["sanity"]:
+                reg = chars_by_id.get(entry["entityId"])
+                if reg is None:
+                    problems.append(
+                        f"sanity provenance: entityId {entry['entityId']} not in the registry")
+                elif entry["from"] != reg["sanity"]:
                     problems.append(
                         f"sanity old-value provenance: plan from={entry['from']} but "
                         f"registry sanity={reg['sanity']} — old value not backed by "
@@ -420,13 +471,15 @@ def main() -> None:
                     checks.append({"check": "sanity-old-value", "ref": entry["ref"],
                                    "result": "ok"})
             elif kind == "task_achieved":
-                reg = chars[entry["name"]]
-                tid = reg["tasks"].get(entry["goal"], {}).get("id")
-                t = reg["tasks"].get(entry["goal"])
-                if t is None:
+                reg = chars_by_id.get(entry["entityId"])
+                t = (reg or {}).get("tasks", {}).get(entry["goal"])
+                if reg is None:
+                    problems.append(
+                        f"task provenance: entityId {entry['entityId']} not in the registry")
+                elif t is None:
                     problems.append(
                         f"task provenance: goal '{entry['goal']}' not registered for "
-                        f"{entry['name']} in the before state")
+                        f"{entry['entityId']} in the before state")
                 elif t["ownerId"] != entry["entityId"]:
                     problems.append(
                         f"task ownership: '{entry['goal']}' owned by {t['ownerId']}, "
@@ -440,23 +493,13 @@ def main() -> None:
                 else:
                     checks.append({"check": "empty-delta", "result": "ok"})
 
-        for claim in r.get("planOnlyClaims", []):
-            if claim["kind"] == "positioned_at":
-                home = chars[claim["name"]]["home"]
-                if locs.get(claim["at"]) is None:
-                    problems.append(
-                        f"positioned claim provenance: {claim['name']} claimed at "
-                        f"'{claim['at']}' which is not in the world registry")
-                elif home != locs[claim["at"]]:
-                    problems.append(
-                        f"positioned claim provenance: {claim['name']} claimed at "
-                        f"{claim['at']}({locs[claim['at']]}) but registry home is {home} "
-                        f"— current-state claim not backed by the before state")
-                else:
-                    checks.append({"check": "positioned-before", "result": "ok"})
+        # positioned current-state checks (claim identity, entityId-keyed
+        # before provenance, plan<->claim agreement) live in reconcile() so
+        # the tamper matrix exercises the exact same code path.
 
-        # 2b. full plan <-> rawDelta reconciliation (both directions)
-        rec_problems, rec_checks = reconcile(r, locs, chars)
+        # 2b. full plan <-> rawDelta reconciliation (both directions), incl.
+        # positioned claim identity + entityId-keyed before provenance
+        rec_problems, rec_checks = reconcile(r, locs, chars, chars_by_id)
         problems.extend(rec_problems)
         checks.extend(rec_checks)
 

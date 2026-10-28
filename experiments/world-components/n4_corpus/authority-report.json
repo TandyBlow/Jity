@@ -677,10 +677,6 @@
           "result": "ok"
         },
         {
-          "check": "positioned-before",
-          "result": "ok"
-        },
-        {
           "check": "reconcile-moved",
           "ref": 0,
           "result": "ok"
@@ -716,10 +712,6 @@
           "result": "ok"
         },
         {
-          "check": "positioned-before",
-          "result": "ok"
-        },
-        {
           "check": "reconcile-moved",
           "ref": 0,
           "result": "ok"
@@ -752,10 +744,6 @@
         {
           "check": "moved-start",
           "ref": 0,
-          "result": "ok"
-        },
-        {
-          "check": "positioned-before",
           "result": "ok"
         },
         {
