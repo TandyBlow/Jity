@@ -93,9 +93,13 @@ def entry_patterns(entry: dict) -> list:
     kind = entry.get("kind")
     if kind == "moved":
         name, frm, to = entry["name"], entry["from"], entry["to"]
-        # 一路 may precede or follow the from-marker; the from-marker takes
-        # an optional 了 (离开了钟楼)
-        return [rf"(?P<subj>{esc(name)})(?P<pre>(一路))?(?P<dur>(用了|花了)?{CN_NUM}(分钟|小时))?(从|由|离开)了?{esc(frm)}(一路)?((走|来|进)到了?|到了?|抵达|进入)了?{esc(to)}(时?)"]
+        # v6: NO embedded duration — the plan's time entry is POINT TIME
+        # ADVANCE (world clock), not walking time; the source has no
+        # action-start/action-end times, so a 用了/花了 duration clause is a
+        # different (unsupported) claim and falls out as unrecognized
+        # residue -> needs review. 一路 may precede or follow the
+        # from-marker; the from-marker takes an optional 了.
+        return [rf"(?P<subj>{esc(name)})(?P<pre>(一路))?(从|由|离开)了?{esc(frm)}(一路)?((走|来|进)到了?|到了?|抵达|进入)了?{esc(to)}(时?)"]
     if kind == "task_achieved":
         return [rf"{esc(entry['name'])}(已经|已)?(完成|达成|办妥)了?任务「{esc(entry['goal'])}」"]
     if kind == "personality_changed":
@@ -116,25 +120,6 @@ def entry_patterns(entry: dict) -> list:
     return []
 
 
-def moved_duration_ok(entry: dict, m: "re.Match", plan: list) -> tuple:
-    """moved's parsed duration must agree with the row's time entry in BOTH
-    value and unit (三小时 != 三分钟 even when the numbers match)."""
-    dur = m.group("dur")
-    if not dur:
-        return True, None
-    time_entry = next((e for e in plan if e.get("kind") == "time"), None)
-    if time_entry is None:
-        return False, "moved clause embeds a duration but the plan has no time entry"
-    num = re.sub(r"^(用了|花了)", "", dur)
-    unit_cn = "分钟" if num.endswith("分钟") else "小时"
-    v = cn_to_int(num[:-2])
-    unit_en = UNIT_EN[unit_cn]
-    if v != time_entry["amount"] or unit_en != time_entry["unit"]:
-        return False, (f"embedded duration {dur}={v}{unit_en} contradicts the planned "
-                       f"time {time_entry['amount']}{time_entry['unit']}")
-    return True, None
-
-
 def time_value_ok(entry: dict, m: "re.Match", plan: list) -> tuple:
     """The time clause's parsed (value, unit) must equal the plan entry."""
     v = cn_to_int(m.group("num"))
@@ -145,7 +130,7 @@ def time_value_ok(entry: dict, m: "re.Match", plan: list) -> tuple:
     return True, None
 
 
-PARSERS = {"moved": moved_duration_ok, "time": time_value_ok}
+PARSERS = {"time": time_value_ok}
 
 
 def moved_duration_ok(entry: dict, m: "re.Match", plan: list) -> tuple:

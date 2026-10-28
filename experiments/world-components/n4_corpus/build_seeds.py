@@ -203,12 +203,17 @@ def row(group, origin, rewriter, split, world, deltas, time_entry, text,
 
 
 # --- family 1: movement + time (6 groups, train) ---
+# v6: the target must differ from the mover's home — an idempotent position
+# set does not evidence a move (review round 7, n4-loc-006 regression).
 for i in range(6):
     g += 1
     name = list(CHAR_BY_NAME)[i % 5]
     cid = CHAR_BY_NAME[name][0]
     frm_name = LOC_NAME[CHAR_BY_NAME[name][1]]
     to_name = LOCS[(i + 2) % 7][1]
+    if to_name == frm_name:
+        to_name = LOCS[(i + 3) % 7][1]
+    assert to_name != frm_name, f"family 1 row {g}: idempotent move {frm_name}->{to_name}"
     dur = DURATIONS[i % 6]
     world = make_world([name], [frm_name, to_name])
     deltas = [moved_delta(cid, to_name)]
