@@ -29,7 +29,7 @@ import sys
 HERE = pathlib.Path(__file__).resolve().parent
 REPO = HERE.parent.parent.parent  # n4_corpus -> world-components -> experiments -> worktree root
 
-# (label, path, kind) - kind: ts-field extraction or json-recursive
+# (label, path-or-glob, kind) - kind: ts / json / glob-json
 SOURCES = [
     ("narration-eval-samples.ts (nv-*)",
      "frontend/src/lib/world-engine/runtime/narration-eval-samples.ts", "ts"),
@@ -44,6 +44,20 @@ SOURCES = [
     ("artifacts/narration-split-baseline.json",
      "artifacts/narration-split-baseline.json", "json"),
 ]
+
+# v3 (review round 3): full-chain live-run archives are part of the required
+# exclusion scope. They are untracked in the B main tree and absent from the
+# C worktree, so resolution order is: C worktree -> B main tree; unresolved
+# entries are reported as missing, never silently skipped.
+EXTRA_SOURCES = [
+    ("artifacts/world-page/*.json (整链页面归档)",
+     "artifacts/world-page", "glob-json"),
+    ("artifacts/world-chain/*.json (整链运行归档)",
+     "artifacts/world-chain", "glob-json"),
+    ("artifacts/narration-http-review.json (真实 HTTP 叙事复核)",
+     "artifacts/narration-http-review.json", "json"),
+]
+MAIN_TREE = pathlib.Path("D:/others/Jity")
 
 TS_SINGLE = re.compile(r"\b(mechanical|reference|goal|note|text|phrase|desc|appearance|initialAppearance|name|from|to)\s*:\s*'([^']+)'")
 TS_ARRAY = re.compile(r"\b(?:forbidden|mayMention|mustNotFabricate)\s*:\s*\[([^\]]*)\]")
@@ -61,7 +75,7 @@ GENERIC_TOKENS = {
 
 KNOWN_MISSES = [
     "TS 类型代码与注释不扫",
-    "world-page/、world-chain/ 等整链归档的真机输入原文未扫",
+    "整链归档的 narration-*.md 等 Markdown 产物不扫（json 产物已全部纳入）",
     "模板句式拼接代码以短语人工核对补（「没有新的变化」教训，种子句式已避开）",
 ]
 
@@ -129,8 +143,15 @@ def main() -> None:
     source_set = {}   # >=4 chars: value -> origins
     cast_set = {}     # <4 chars: value -> origins
     manifest = []
-    for label, rel, kind in SOURCES:
-        path = REPO / rel
+
+    def resolve(rel: str):
+        for base in (REPO, MAIN_TREE):
+            p = base / rel
+            if p.exists():
+                return p, str(base.name)
+        return None, None
+
+    def ingest(path: pathlib.Path, label: str, kind: str):
         if kind == "ts":
             fields, n = collect_ts(path, label)
         else:
@@ -144,8 +165,43 @@ def main() -> None:
                         o + "+note-stripped" for o in origins)
             else:
                 cast_set.setdefault(s, set()).update(origins)
-        manifest.append({"source": label, "file": rel, "sha256_16": digest,
+        manifest.append({"source": label, "file": str(path.relative_to(path.anchor))
+                         if False else str(path), "sha256_16": digest,
                          "extractedStrings": n})
+
+    for label, rel, kind in SOURCES:
+        path, base = resolve(rel)
+        if path is None:
+            manifest.append({"source": label, "file": rel, "status": "MISSING"})
+            continue
+        ingest(path, f"{label} [{base}]", kind)
+    for label, rel, kind in EXTRA_SOURCES:
+        target, base = resolve(rel)
+        if target is None:
+            manifest.append({"source": label, "file": rel, "status": "MISSING"})
+            continue
+        if kind == "glob-json":
+            files = sorted(target.glob("*.json"))
+            if not files:
+                manifest.append({"source": label, "file": rel, "status": "MISSING(no json)"})
+                continue
+            total = 0
+            for f in files:
+                _f, n = collect_json(f, label)
+                total += n
+                digest = hashlib.sha256(f.read_bytes()).hexdigest()[:16]
+                for s, origins in collect_json(f, f"{label} [{base}]")[0].items():
+                    if len(s) >= 4:
+                        source_set.setdefault(s, set()).update(origins)
+                        for core in strip_notes(s):
+                            source_set.setdefault(core, set()).update(
+                                o + "+note-stripped" for o in origins)
+                    else:
+                        cast_set.setdefault(s, set()).update(origins)
+                manifest.append({"source": f"{label} [{base}]", "file": str(f),
+                                 "sha256_16": digest, "extractedStrings": n})
+            continue
+        ingest(target, f"{label} [{base}]", kind)
 
     print(f"source set: {len(source_set)} strings (>=4 chars, substring-checked), "
           f"{len(cast_set)} cast words (<4 chars, registered)")

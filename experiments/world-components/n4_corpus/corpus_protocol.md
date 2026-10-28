@@ -29,6 +29,7 @@
 | `frontend/src/lib/world-engine/runtime/b3-samples.ts`，同上 | 任务 goal、appearance、描述 |
 | `artifacts/narration-eval-recheck/run.json`（归档采纳稿/参照/生成文本） | 递归全部字符串值 ≥4 字 |
 | `artifacts/narration-split-baseline.json`（程序基线输出） | 同上 |
+| `artifacts/world-page/*.json`＋`artifacts/world-chain/*.json`＋`artifacts/narration-http-review.json`（**整链真机归档**，复核轮 3 要求纳入） | 递归全部字符串值；C 树缺失时回退主树读取并记录实际路径，仍缺记 MISSING 不静默跳过 |
 
 **Forbid 串剥注记变体**：含 `（…）` 的源串，剥注记后的核心串同样入源集——直接来自冒烟探针教训（`narration-freeform` = nv-cont-1 forbidden 串剥「（方向反转）」派生）。
 
@@ -47,23 +48,13 @@
 - **用途**：ratio > 0.6 的行标 `review-flag`（人工看是否真的改写了），**不因此失败**；低于阈值不构成质量证明，只是不再触发复核。
 - 防照抄机制=重叠率信号＋校验器逐类忠实核对＋协调人抽验三层。
 
-## 5. 校验器逐类核对（corpus_check.py，v2 三态判定）
+## 5. 校验器逐类核对（corpus_check.py，v3 识别器白名单）
 
-**行判定三态：pass / needs-review / fail；needs-review 不算事实通过**（程序无法确认的表达必须标待复核）。逐类核对：
+**判定模型（复核轮 2 翻转）：pass 只覆盖被受控识别模式完整识别且与计划一致的表达；任何未识别残句（无依据细节、否定、意图、换人物、错数值、新增事件）一律 needs-review，needs-review 不算事实通过。** 正文按逗号切段，每段必须被该句所引条目的识别模式 span **完整覆盖**；事件动词黑名单机制退役（覆盖缺失自动拦截未枚举的新增主张）。语料 schema v3：行携带独立构造的 `world`（before 注册表）与 `rawDelta`，`plan` 为同一生成器对 Δ 的投影（同源保证）；`planOnlyClaims` 承载非 Δ 计划条目（positioned 现状、no_change 空点断言）。哈希覆盖 plan/world/rawDelta/text；组级一致性含 world/rawDelta/planOnlyClaims。**负例自检十二例**（2 fail＋10 review：越界/漏覆盖/方向反转/人物交换/数值错/任务否定/新增事件/无依据细节/否定移动/意图冒充/否定空点/完成人物不符）必须以预期判定类被抓，否则报告作废（exit 2）。
 
-- planRefs 下标有效（含句数=refs 行数）；mustExpress ⊆ 被引用并集。
-- **方向**：moved 须含起点标记（从/由/离开＋from）；to 须含到达标记（到[了]?/进[了]?/在/往＋to）——关键词同现不等于方向正确，方向反转必须 FAIL。
-- **人物归属**：起点标记前若出现其他人物名=FAIL；标记前无任何人名=needs-review（主语不可程序确认）。positioned 的"在{at}"前最近人物（按句中位置）须为条目人名。
-- **数值**：时间数值须**紧邻**单位词（"三个人等了八分钟"这类插入结构不得通过）；理智数值须带"从{lo}"标记，且升/降动词与 lo→hi 方向一致。
-- **引语与否定**：任务引语紧邻否定词（没/未/尚未/不再）=FAIL；完成类动词不可定位=needs-review。
-- **新增事件**：正文（引语「…」遮蔽后）出现事件动词表内的动词且不在被引用条目的支持动词集=needs-review（可能的新增事件）。
-- **no_change**：引用句不得含任何具体实体名（无支持的主张=FAIL），须含无变化断言词。
-- 组级一致性（split/plan/mustExpress；purpose 行级）；哈希重算；三类标注齐备；改写行 rewriter/overlap 登记。
-- **负例自检七例**（下标越界、必述漏覆盖、方向反转、人物交换、数值错、任务否定、新增事件）必须以预期判定类被抓，否则报告作废（exit 2）。
+## 6. 权威验证（validate_plan_authority.py，v2 apply 来源核对）
 
-## 6. 权威验证（validate_plan_authority.py）
-
-独立于构造器与校验器的第三脚本：读语料→按映射规则（moved→positionSet、task→tasksAchieved、personality/appearance→DescriptionChange、sanity→sanitySet、time→TimeAdvance；positioned/no_change 记 skip 理由）构造 backend v2 契约对象→pydantic 全量校验（model_validator 含任务树/同点 supersedes 等规则）。中文实体名映射为程序草稿键（v2 Id 为 ASCII 模式），映射表入报告。报告含 contracts.py sha256 钉验证目标。
+格式合法之外证明**事实来源合法**（复核轮 2 要求）。三阶段：①行 `world` 构造 before `WorldState`（pydantic 含 fixed_registry 一致性）；②**before 层来源核对**——moved 起点==注册表 home、sanity 旧值==注册表理智（−999 类必炸）、任务 goal 必须是该人物注册任务且 owner 一致且仍 pending、positioned 现状==before 位置、no_change 行 Δ 必须为空；③**A 侧 kernel `apply_point`** 把 rawDelta 应用到 before（KernelViolation=非法），after 核对（位置/理智/任务 achieved）。脚本以 `--server-tree` 钉 A 工作树（默认 `.local/world-server-worktree`），报告含 server HEAD＋apply.py sha256，逐行绑定 plan+world+rawDelta 组合哈希。
 
 ## 7. 首批规模与顺序
 

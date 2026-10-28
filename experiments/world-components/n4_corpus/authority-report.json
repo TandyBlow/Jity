@@ -1,1057 +1,556 @@
 {
-  "purpose": "authority-path validation of corpus fact plans (evidence, not a claim)",
+  "purpose": "apply-based provenance validation of corpus fact plans (evidence, not a claim)",
   "pydanticVersion": "2.13.4",
-  "contractsSource": {
-    "path": "backend/app/schemas/world/contracts.py",
-    "sha256_16": "236038a933d14ebf"
-  },
-  "draftIdAssignment": {
-    "characters": {
-      "陈舟": "char_001",
-      "苏晚": "char_002",
-      "周砚": "char_003",
-      "林望": "char_004",
-      "沈青": "char_005"
-    },
-    "locations": {
-      "东门": "loc_001",
-      "钟楼": "loc_002",
-      "水房": "loc_003",
-      "侧院": "loc_004",
-      "柴房": "loc_005",
-      "石桥": "loc_006",
-      "碑亭": "loc_007"
-    },
-    "tasks": {
-      "把铜铃挂回钟楼": "task_001",
-      "整理柴房": "task_002",
-      "修缮石桥栏杆": "task_003",
-      "清点碑亭石刻": "task_004"
-    }
+  "serverTree": {
+    "path": "D:\\others\\Jity\\.local\\world-server-worktree",
+    "head": "4e1702546df3337d28600b2caa55fb5ed86a5d83",
+    "applyPySha256_16": "e626fdbb0679ca0c"
   },
   "rows": [
     {
       "sourceGroupId": "n4-loc-001",
-      "idMap": {
-        "陈舟": "char_001"
-      },
-      "timeAdvance": {
-        "boundary": "elapsed",
-        "duration": {
-          "amount": 3,
-          "unit": "minute"
-        }
-      },
-      "deltas": [
+      "rowHash": "6a196c1fb611de7963cc2277b54f59de6f4b53d9aee11776ef02a894447e63b3",
+      "checks": [
         {
-          "entityId": "char_001",
-          "positionSet": {
-            "containerId": "loc_002"
-          }
-        }
-      ],
-      "entries": [
-        {
-          "ref": 0,
-          "kind": "moved",
-          "result": "ok",
-          "mapped": "positionSet(container=loc_002)"
+          "check": "before-state-pydantic",
+          "result": "ok"
         },
         {
-          "ref": 1,
-          "kind": "time",
-          "result": "ok",
-          "mapped": "TimeAdvance(elapsed)"
+          "check": "moved-start",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
         }
       ],
       "errors": []
     },
     {
       "sourceGroupId": "n4-loc-002",
-      "idMap": {
-        "苏晚": "char_002"
-      },
-      "timeAdvance": {
-        "boundary": "elapsed",
-        "duration": {
-          "amount": 8,
-          "unit": "minute"
-        }
-      },
-      "deltas": [
+      "rowHash": "821ec77562aee5a83ffcd3e3c4e5cf015c1f23b224c24d43af5dd3f99f098b22",
+      "checks": [
         {
-          "entityId": "char_002",
-          "positionSet": {
-            "containerId": "loc_004"
-          }
-        }
-      ],
-      "entries": [
-        {
-          "ref": 0,
-          "kind": "moved",
-          "result": "ok",
-          "mapped": "positionSet(container=loc_004)"
+          "check": "before-state-pydantic",
+          "result": "ok"
         },
         {
-          "ref": 1,
-          "kind": "time",
-          "result": "ok",
-          "mapped": "TimeAdvance(elapsed)"
+          "check": "moved-start",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
         }
       ],
       "errors": []
     },
     {
       "sourceGroupId": "n4-loc-003",
-      "idMap": {
-        "周砚": "char_003"
-      },
-      "timeAdvance": {
-        "boundary": "elapsed",
-        "duration": {
-          "amount": 12,
-          "unit": "minute"
-        }
-      },
-      "deltas": [
+      "rowHash": "bf264219bf83eae95fc820ccd9f6c8f7f6ba29987c13b4f352cd609278753943",
+      "checks": [
         {
-          "entityId": "char_003",
-          "positionSet": {
-            "containerId": "loc_005"
-          }
-        }
-      ],
-      "entries": [
-        {
-          "ref": 0,
-          "kind": "moved",
-          "result": "ok",
-          "mapped": "positionSet(container=loc_005)"
+          "check": "before-state-pydantic",
+          "result": "ok"
         },
         {
-          "ref": 1,
-          "kind": "time",
-          "result": "ok",
-          "mapped": "TimeAdvance(elapsed)"
+          "check": "moved-start",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
         }
       ],
       "errors": []
     },
     {
       "sourceGroupId": "n4-loc-004",
-      "idMap": {
-        "林望": "char_004"
-      },
-      "timeAdvance": {
-        "boundary": "elapsed",
-        "duration": {
-          "amount": 25,
-          "unit": "minute"
-        }
-      },
-      "deltas": [
+      "rowHash": "bec98439705a0aae84ac5c76fcc64952d55d9411ad482d64db27b9b3d006d670",
+      "checks": [
         {
-          "entityId": "char_004",
-          "positionSet": {
-            "containerId": "loc_006"
-          }
-        }
-      ],
-      "entries": [
-        {
-          "ref": 0,
-          "kind": "moved",
-          "result": "ok",
-          "mapped": "positionSet(container=loc_006)"
+          "check": "before-state-pydantic",
+          "result": "ok"
         },
         {
-          "ref": 1,
-          "kind": "time",
-          "result": "ok",
-          "mapped": "TimeAdvance(elapsed)"
+          "check": "moved-start",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
         }
       ],
       "errors": []
     },
     {
       "sourceGroupId": "n4-loc-005",
-      "idMap": {
-        "沈青": "char_005"
-      },
-      "timeAdvance": {
-        "boundary": "elapsed",
-        "duration": {
-          "amount": 40,
-          "unit": "minute"
-        }
-      },
-      "deltas": [
+      "rowHash": "6c9784baf87d462379e8604ee78810d5a87cc25d2f5cb00ef1ec617266df6f9b",
+      "checks": [
         {
-          "entityId": "char_005",
-          "positionSet": {
-            "containerId": "loc_007"
-          }
-        }
-      ],
-      "entries": [
-        {
-          "ref": 0,
-          "kind": "moved",
-          "result": "ok",
-          "mapped": "positionSet(container=loc_007)"
+          "check": "before-state-pydantic",
+          "result": "ok"
         },
         {
-          "ref": 1,
-          "kind": "time",
-          "result": "ok",
-          "mapped": "TimeAdvance(elapsed)"
+          "check": "moved-start",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
         }
       ],
       "errors": []
     },
     {
       "sourceGroupId": "n4-loc-006",
-      "idMap": {
-        "陈舟": "char_001"
-      },
-      "timeAdvance": {
-        "boundary": "elapsed",
-        "duration": {
-          "amount": 1,
-          "unit": "hour"
-        }
-      },
-      "deltas": [
+      "rowHash": "379219524909b49d7a39c0ac0c2bda1b18aee3854cd57c21ddc48e9dd65069f0",
+      "checks": [
         {
-          "entityId": "char_001",
-          "positionSet": {
-            "containerId": "loc_001"
-          }
-        }
-      ],
-      "entries": [
-        {
-          "ref": 0,
-          "kind": "moved",
-          "result": "ok",
-          "mapped": "positionSet(container=loc_001)"
+          "check": "before-state-pydantic",
+          "result": "ok"
         },
         {
-          "ref": 1,
-          "kind": "time",
-          "result": "ok",
-          "mapped": "TimeAdvance(elapsed)"
+          "check": "moved-start",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
         }
       ],
       "errors": []
     },
     {
       "sourceGroupId": "n4-empty-007",
-      "idMap": {},
-      "timeAdvance": {
-        "boundary": "elapsed",
-        "duration": {
-          "amount": 8,
-          "unit": "minute"
-        }
-      },
-      "deltas": [],
-      "entries": [
+      "rowHash": "0d80eacbc777fd53198735d9daf1fbdd07d4a8b8fac7a2ed9e16c0bfbf2f7aae",
+      "checks": [
         {
-          "ref": 0,
-          "kind": "time",
-          "result": "ok",
-          "mapped": "TimeAdvance(elapsed)"
+          "check": "before-state-pydantic",
+          "result": "ok"
         },
         {
-          "ref": 1,
-          "kind": "no_change",
-          "result": "ok",
-          "mapped": "no delta (explicit)"
+          "check": "empty-delta",
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
         }
       ],
       "errors": []
     },
     {
       "sourceGroupId": "n4-empty-008",
-      "idMap": {},
-      "timeAdvance": {
-        "boundary": "elapsed",
-        "duration": {
-          "amount": 12,
-          "unit": "minute"
-        }
-      },
-      "deltas": [],
-      "entries": [
+      "rowHash": "08d74f3a90a90bf24cb5407e854ee0b15ea28d93eb83f04a75e46541cc03999a",
+      "checks": [
         {
-          "ref": 0,
-          "kind": "time",
-          "result": "ok",
-          "mapped": "TimeAdvance(elapsed)"
+          "check": "before-state-pydantic",
+          "result": "ok"
         },
         {
-          "ref": 1,
-          "kind": "no_change",
-          "result": "ok",
-          "mapped": "no delta (explicit)"
+          "check": "empty-delta",
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
         }
       ],
       "errors": []
     },
     {
       "sourceGroupId": "n4-empty-009",
-      "idMap": {},
-      "timeAdvance": {
-        "boundary": "elapsed",
-        "duration": {
-          "amount": 25,
-          "unit": "minute"
-        }
-      },
-      "deltas": [],
-      "entries": [
+      "rowHash": "60798edb29f52795b4ebc0e74beb03aa092a68e54792ee279d5c931d51c97e8d",
+      "checks": [
         {
-          "ref": 0,
-          "kind": "time",
-          "result": "ok",
-          "mapped": "TimeAdvance(elapsed)"
+          "check": "before-state-pydantic",
+          "result": "ok"
         },
         {
-          "ref": 1,
-          "kind": "no_change",
-          "result": "ok",
-          "mapped": "no delta (explicit)"
+          "check": "empty-delta",
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
         }
       ],
       "errors": []
     },
     {
       "sourceGroupId": "n4-empty-010",
-      "idMap": {},
-      "timeAdvance": {
-        "boundary": "elapsed",
-        "duration": {
-          "amount": 40,
-          "unit": "minute"
-        }
-      },
-      "deltas": [],
-      "entries": [
+      "rowHash": "36a9199ae4206a26be79737710bb416f966a0141fc2b47451bbc7a9cc3ff6124",
+      "checks": [
         {
-          "ref": 0,
-          "kind": "time",
-          "result": "ok",
-          "mapped": "TimeAdvance(elapsed)"
+          "check": "before-state-pydantic",
+          "result": "ok"
         },
         {
-          "ref": 1,
-          "kind": "no_change",
-          "result": "ok",
-          "mapped": "no delta (explicit)"
+          "check": "empty-delta",
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
         }
       ],
       "errors": []
     },
     {
       "sourceGroupId": "n4-task-011",
-      "idMap": {
-        "苏晚": "char_002"
-      },
-      "timeAdvance": {
-        "boundary": "elapsed",
-        "duration": {
-          "amount": 12,
-          "unit": "minute"
-        }
-      },
-      "deltas": [
+      "rowHash": "98c2e20fe54e013becfe0bc59a1ada7622a25bd6caf3d4c7f38928feb338c168",
+      "checks": [
         {
-          "entityId": "char_002",
-          "tasksAchieved": [
-            "task_001"
-          ]
-        }
-      ],
-      "entries": [
-        {
-          "ref": 0,
-          "kind": "task_achieved",
-          "result": "ok",
-          "mapped": "tasksAchieved+=task_001"
+          "check": "before-state-pydantic",
+          "result": "ok"
         },
         {
-          "ref": 1,
-          "kind": "time",
-          "result": "ok",
-          "mapped": "TimeAdvance(elapsed)"
+          "check": "task-owned-pending",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
         }
       ],
       "errors": []
     },
     {
       "sourceGroupId": "n4-task-012",
-      "idMap": {
-        "周砚": "char_003"
-      },
-      "timeAdvance": {
-        "boundary": "elapsed",
-        "duration": {
-          "amount": 25,
-          "unit": "minute"
-        }
-      },
-      "deltas": [
+      "rowHash": "a9a78c3837695016fc9651edc484cf7ecd67faa2a376a815b8df7a5aad7ab6a1",
+      "checks": [
         {
-          "entityId": "char_003",
-          "tasksAchieved": [
-            "task_002"
-          ]
-        }
-      ],
-      "entries": [
-        {
-          "ref": 0,
-          "kind": "task_achieved",
-          "result": "ok",
-          "mapped": "tasksAchieved+=task_002"
+          "check": "before-state-pydantic",
+          "result": "ok"
         },
         {
-          "ref": 1,
-          "kind": "time",
-          "result": "ok",
-          "mapped": "TimeAdvance(elapsed)"
+          "check": "task-owned-pending",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
         }
       ],
       "errors": []
     },
     {
       "sourceGroupId": "n4-task-013",
-      "idMap": {
-        "林望": "char_004"
-      },
-      "timeAdvance": {
-        "boundary": "elapsed",
-        "duration": {
-          "amount": 40,
-          "unit": "minute"
-        }
-      },
-      "deltas": [
+      "rowHash": "c51a4963b735d72f8e6ee55ec39f38c18a47ba22b38631df95e390a18f3e2c66",
+      "checks": [
         {
-          "entityId": "char_004",
-          "tasksAchieved": [
-            "task_003"
-          ]
-        }
-      ],
-      "entries": [
-        {
-          "ref": 0,
-          "kind": "task_achieved",
-          "result": "ok",
-          "mapped": "tasksAchieved+=task_003"
+          "check": "before-state-pydantic",
+          "result": "ok"
         },
         {
-          "ref": 1,
-          "kind": "time",
-          "result": "ok",
-          "mapped": "TimeAdvance(elapsed)"
+          "check": "task-owned-pending",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
         }
       ],
       "errors": []
     },
     {
       "sourceGroupId": "n4-task-014",
-      "idMap": {
-        "沈青": "char_005"
-      },
-      "timeAdvance": {
-        "boundary": "elapsed",
-        "duration": {
-          "amount": 1,
-          "unit": "hour"
-        }
-      },
-      "deltas": [
+      "rowHash": "745444600fac360907f85c4d751e5a773c857d23bb458f314f731fb8d2ea9b1f",
+      "checks": [
         {
-          "entityId": "char_005",
-          "tasksAchieved": [
-            "task_004"
-          ]
-        }
-      ],
-      "entries": [
-        {
-          "ref": 0,
-          "kind": "task_achieved",
-          "result": "ok",
-          "mapped": "tasksAchieved+=task_004"
+          "check": "before-state-pydantic",
+          "result": "ok"
         },
         {
-          "ref": 1,
-          "kind": "time",
-          "result": "ok",
-          "mapped": "TimeAdvance(elapsed)"
+          "check": "task-owned-pending",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
         }
       ],
       "errors": []
     },
     {
       "sourceGroupId": "n4-task-015",
-      "idMap": {
-        "陈舟": "char_001"
-      },
-      "timeAdvance": {
-        "boundary": "elapsed",
-        "duration": {
-          "amount": 3,
-          "unit": "minute"
-        }
-      },
-      "deltas": [
+      "rowHash": "53ecc8165d2a97ab2be964fa53398261f4554681ac7ec97cc830f65dd9aad6a9",
+      "checks": [
         {
-          "entityId": "char_001",
-          "tasksAchieved": [
-            "task_001"
-          ]
-        }
-      ],
-      "entries": [
-        {
-          "ref": 0,
-          "kind": "task_achieved",
-          "result": "ok",
-          "mapped": "tasksAchieved+=task_001"
+          "check": "before-state-pydantic",
+          "result": "ok"
         },
         {
-          "ref": 1,
-          "kind": "time",
-          "result": "ok",
-          "mapped": "TimeAdvance(elapsed)"
+          "check": "task-owned-pending",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
         }
       ],
       "errors": []
     },
     {
       "sourceGroupId": "n4-chain-016",
-      "idMap": {
-        "周砚": "char_003"
-      },
-      "timeAdvance": {
-        "boundary": "elapsed",
-        "duration": {
-          "amount": 25,
-          "unit": "minute"
-        }
-      },
-      "deltas": [
+      "rowHash": "9ea2951b7e74d7992bf7e97ad2e9b5d2eb88805338a175d549268b967af5fa1b",
+      "checks": [
         {
-          "entityId": "char_003",
-          "personalityChanges": [
-            {
-              "id": "chg_002",
-              "text": "变得沉稳",
-              "supersedes": []
-            }
-          ],
-          "sanitySet": 13,
-          "tasksAchieved": [
-            "task_002"
-          ]
-        }
-      ],
-      "entries": [
+          "check": "before-state-pydantic",
+          "result": "ok"
+        },
         {
+          "check": "task-owned-pending",
           "ref": 0,
-          "kind": "task_achieved",
-          "result": "ok",
-          "mapped": "tasksAchieved+=task_002"
+          "result": "ok"
         },
         {
-          "ref": 1,
-          "kind": "personality_changed",
-          "result": "ok",
-          "mapped": "personalityChanges+=chg_002"
-        },
-        {
+          "check": "sanity-old-value",
           "ref": 2,
-          "kind": "sanity_changed",
-          "result": "ok",
-          "mapped": "sanitySet=13"
+          "result": "ok"
         },
         {
-          "ref": 3,
-          "kind": "time",
-          "result": "ok",
-          "mapped": "TimeAdvance(elapsed)"
+          "check": "kernel-apply",
+          "result": "ok"
         }
       ],
       "errors": []
     },
     {
       "sourceGroupId": "n4-chain-017",
-      "idMap": {
-        "林望": "char_004"
-      },
-      "timeAdvance": {
-        "boundary": "elapsed",
-        "duration": {
-          "amount": 40,
-          "unit": "minute"
-        }
-      },
-      "deltas": [
+      "rowHash": "079c7c7ca4ba89f8b6a2840e58b91c3ec5ae152f2c64c297f42b055964d88c24",
+      "checks": [
         {
-          "entityId": "char_004",
-          "personalityChanges": [
-            {
-              "id": "chg_002",
-              "text": "话多了起来",
-              "supersedes": []
-            }
-          ],
-          "sanitySet": 14,
-          "tasksAchieved": [
-            "task_003"
-          ]
-        }
-      ],
-      "entries": [
+          "check": "before-state-pydantic",
+          "result": "ok"
+        },
         {
+          "check": "task-owned-pending",
           "ref": 0,
-          "kind": "task_achieved",
-          "result": "ok",
-          "mapped": "tasksAchieved+=task_003"
+          "result": "ok"
         },
         {
-          "ref": 1,
-          "kind": "personality_changed",
-          "result": "ok",
-          "mapped": "personalityChanges+=chg_002"
-        },
-        {
+          "check": "sanity-old-value",
           "ref": 2,
-          "kind": "sanity_changed",
-          "result": "ok",
-          "mapped": "sanitySet=14"
+          "result": "ok"
         },
         {
-          "ref": 3,
-          "kind": "time",
-          "result": "ok",
-          "mapped": "TimeAdvance(elapsed)"
+          "check": "kernel-apply",
+          "result": "ok"
         }
       ],
       "errors": []
     },
     {
       "sourceGroupId": "n4-chain-018",
-      "idMap": {
-        "沈青": "char_005"
-      },
-      "timeAdvance": {
-        "boundary": "elapsed",
-        "duration": {
-          "amount": 1,
-          "unit": "hour"
-        }
-      },
-      "deltas": [
+      "rowHash": "4a89193e333c9a2a4ab4996b4356f3f25007a5d65d3c779c2c652552bc465571",
+      "checks": [
         {
-          "entityId": "char_005",
-          "personalityChanges": [
-            {
-              "id": "chg_002",
-              "text": "变得沉稳",
-              "supersedes": []
-            }
-          ],
-          "sanitySet": 12,
-          "tasksAchieved": [
-            "task_004"
-          ]
-        }
-      ],
-      "entries": [
+          "check": "before-state-pydantic",
+          "result": "ok"
+        },
         {
+          "check": "task-owned-pending",
           "ref": 0,
-          "kind": "task_achieved",
-          "result": "ok",
-          "mapped": "tasksAchieved+=task_004"
+          "result": "ok"
         },
         {
-          "ref": 1,
-          "kind": "personality_changed",
-          "result": "ok",
-          "mapped": "personalityChanges+=chg_002"
-        },
-        {
+          "check": "sanity-old-value",
           "ref": 2,
-          "kind": "sanity_changed",
-          "result": "ok",
-          "mapped": "sanitySet=12"
+          "result": "ok"
         },
         {
-          "ref": 3,
-          "kind": "time",
-          "result": "ok",
-          "mapped": "TimeAdvance(elapsed)"
+          "check": "kernel-apply",
+          "result": "ok"
         }
       ],
       "errors": []
     },
     {
       "sourceGroupId": "n4-appear-019",
-      "idMap": {
-        "石桥": "loc_006"
-      },
-      "timeAdvance": {
-        "boundary": "elapsed",
-        "duration": {
-          "amount": 40,
-          "unit": "minute"
-        }
-      },
-      "deltas": [
+      "rowHash": "74c80b99d8d2a57a030c325cd7df308fc4ce7e814d141aa823d0d2baec1403c3",
+      "checks": [
         {
-          "entityId": "loc_006",
-          "appearanceChanges": [
-            {
-              "id": "chg_001",
-              "text": "门柱上的漆皮剥落了大半",
-              "supersedes": []
-            }
-          ]
-        }
-      ],
-      "entries": [
-        {
-          "ref": 0,
-          "kind": "appearance_changed",
-          "result": "ok",
-          "mapped": "appearanceChanges+=chg_001"
+          "check": "before-state-pydantic",
+          "result": "ok"
         },
         {
-          "ref": 1,
-          "kind": "time",
-          "result": "ok",
-          "mapped": "TimeAdvance(elapsed)"
+          "check": "kernel-apply",
+          "result": "ok"
         }
       ],
       "errors": []
     },
     {
       "sourceGroupId": "n4-appear-020",
-      "idMap": {
-        "碑亭": "loc_007"
-      },
-      "timeAdvance": {
-        "boundary": "elapsed",
-        "duration": {
-          "amount": 1,
-          "unit": "hour"
-        }
-      },
-      "deltas": [
+      "rowHash": "0c3aa32783ded61e7b5826b89e2bdecd9c1d10a4d3cee5f0ebd57787a4998603",
+      "checks": [
         {
-          "entityId": "loc_007",
-          "appearanceChanges": [
-            {
-              "id": "chg_001",
-              "text": "石阶缝里长出了青苔",
-              "supersedes": []
-            }
-          ]
-        }
-      ],
-      "entries": [
-        {
-          "ref": 0,
-          "kind": "appearance_changed",
-          "result": "ok",
-          "mapped": "appearanceChanges+=chg_001"
+          "check": "before-state-pydantic",
+          "result": "ok"
         },
         {
-          "ref": 1,
-          "kind": "time",
-          "result": "ok",
-          "mapped": "TimeAdvance(elapsed)"
+          "check": "kernel-apply",
+          "result": "ok"
         }
       ],
       "errors": []
     },
     {
       "sourceGroupId": "n4-appear-021",
-      "idMap": {
-        "东门": "loc_001"
-      },
-      "timeAdvance": {
-        "boundary": "elapsed",
-        "duration": {
-          "amount": 3,
-          "unit": "minute"
-        }
-      },
-      "deltas": [
+      "rowHash": "33bfb6e6273c1ff0c00f8e5532866e750ced67c4b4c7c35c2e71b56537924d96",
+      "checks": [
         {
-          "entityId": "loc_001",
-          "appearanceChanges": [
-            {
-              "id": "chg_001",
-              "text": "门柱上的漆皮剥落了大半",
-              "supersedes": []
-            }
-          ]
-        }
-      ],
-      "entries": [
-        {
-          "ref": 0,
-          "kind": "appearance_changed",
-          "result": "ok",
-          "mapped": "appearanceChanges+=chg_001"
+          "check": "before-state-pydantic",
+          "result": "ok"
         },
         {
-          "ref": 1,
-          "kind": "time",
-          "result": "ok",
-          "mapped": "TimeAdvance(elapsed)"
+          "check": "kernel-apply",
+          "result": "ok"
         }
       ],
       "errors": []
     },
     {
       "sourceGroupId": "n4-multi-022",
-      "idMap": {
-        "陈舟": "char_001"
-      },
-      "timeAdvance": {
-        "boundary": "elapsed",
-        "duration": {
-          "amount": 3,
-          "unit": "minute"
-        }
-      },
-      "deltas": [
+      "rowHash": "b981a893ad7e25733e23eccc6917d4cb0f99264f1ac637c5878904df912699b2",
+      "checks": [
         {
-          "entityId": "char_001",
-          "positionSet": {
-            "containerId": "loc_005"
-          }
-        }
-      ],
-      "entries": [
+          "check": "before-state-pydantic",
+          "result": "ok"
+        },
         {
+          "check": "moved-start",
           "ref": 0,
-          "kind": "moved",
-          "result": "ok",
-          "mapped": "positionSet(container=loc_005)"
+          "result": "ok"
         },
         {
-          "ref": 1,
-          "kind": "positioned_at",
-          "result": "skipped",
-          "reason": "current-state statement is not an increment"
+          "check": "positioned-before",
+          "result": "ok"
         },
         {
-          "ref": 2,
-          "kind": "time",
-          "result": "ok",
-          "mapped": "TimeAdvance(elapsed)"
+          "check": "kernel-apply",
+          "result": "ok"
         }
       ],
       "errors": []
     },
     {
       "sourceGroupId": "n4-multi-023",
-      "idMap": {
-        "苏晚": "char_002"
-      },
-      "timeAdvance": {
-        "boundary": "elapsed",
-        "duration": {
-          "amount": 8,
-          "unit": "minute"
-        }
-      },
-      "deltas": [
+      "rowHash": "f059d1886c55276f301aefffde24c4838ca343680c074f2c201e2caf3aacaccc",
+      "checks": [
         {
-          "entityId": "char_002",
-          "positionSet": {
-            "containerId": "loc_006"
-          }
-        }
-      ],
-      "entries": [
+          "check": "before-state-pydantic",
+          "result": "ok"
+        },
         {
+          "check": "moved-start",
           "ref": 0,
-          "kind": "moved",
-          "result": "ok",
-          "mapped": "positionSet(container=loc_006)"
+          "result": "ok"
         },
         {
-          "ref": 1,
-          "kind": "positioned_at",
-          "result": "skipped",
-          "reason": "current-state statement is not an increment"
+          "check": "positioned-before",
+          "result": "ok"
         },
         {
-          "ref": 2,
-          "kind": "time",
-          "result": "ok",
-          "mapped": "TimeAdvance(elapsed)"
+          "check": "kernel-apply",
+          "result": "ok"
         }
       ],
       "errors": []
     },
     {
       "sourceGroupId": "n4-multi-024",
-      "idMap": {
-        "周砚": "char_003"
-      },
-      "timeAdvance": {
-        "boundary": "elapsed",
-        "duration": {
-          "amount": 12,
-          "unit": "minute"
-        }
-      },
-      "deltas": [
+      "rowHash": "33e1c4586cfee3ff63af815229813a570f25c81508d634c4daaf9f9a9e878bf5",
+      "checks": [
         {
-          "entityId": "char_003",
-          "positionSet": {
-            "containerId": "loc_007"
-          }
-        }
-      ],
-      "entries": [
+          "check": "before-state-pydantic",
+          "result": "ok"
+        },
         {
+          "check": "moved-start",
           "ref": 0,
-          "kind": "moved",
-          "result": "ok",
-          "mapped": "positionSet(container=loc_007)"
+          "result": "ok"
         },
         {
-          "ref": 1,
-          "kind": "positioned_at",
-          "result": "skipped",
-          "reason": "current-state statement is not an increment"
+          "check": "positioned-before",
+          "result": "ok"
         },
         {
-          "ref": 2,
-          "kind": "time",
-          "result": "ok",
-          "mapped": "TimeAdvance(elapsed)"
+          "check": "kernel-apply",
+          "result": "ok"
         }
       ],
       "errors": []
     },
     {
       "sourceGroupId": "n4-loc-025",
-      "idMap": {
-        "沈青": "char_005"
-      },
-      "timeAdvance": {
-        "boundary": "elapsed",
-        "duration": {
-          "amount": 1,
-          "unit": "hour"
-        }
-      },
-      "deltas": [
+      "rowHash": "17ba2685b7b402d6593294a2be68d67d5ef0115f9ab0c7fc7a930d2c55585adf",
+      "checks": [
         {
-          "entityId": "char_005",
-          "positionSet": {
-            "containerId": "loc_001"
-          }
-        }
-      ],
-      "entries": [
-        {
-          "ref": 0,
-          "kind": "moved",
-          "result": "ok",
-          "mapped": "positionSet(container=loc_001)"
+          "check": "before-state-pydantic",
+          "result": "ok"
         },
         {
-          "ref": 1,
-          "kind": "time",
-          "result": "ok",
-          "mapped": "TimeAdvance(elapsed)"
+          "check": "moved-start",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
         }
       ],
       "errors": []
     },
     {
       "sourceGroupId": "n4-task-026",
-      "idMap": {
-        "林望": "char_004"
-      },
-      "timeAdvance": {
-        "boundary": "elapsed",
-        "duration": {
-          "amount": 3,
-          "unit": "minute"
-        }
-      },
-      "deltas": [
+      "rowHash": "13b0a5b77526870c59741f01f78680ffbb219f66946fa7810818895fee64f0e3",
+      "checks": [
         {
-          "entityId": "char_004",
-          "tasksAchieved": [
-            "task_004"
-          ]
-        }
-      ],
-      "entries": [
-        {
-          "ref": 0,
-          "kind": "task_achieved",
-          "result": "ok",
-          "mapped": "tasksAchieved+=task_004"
+          "check": "before-state-pydantic",
+          "result": "ok"
         },
         {
-          "ref": 1,
-          "kind": "time",
-          "result": "ok",
-          "mapped": "TimeAdvance(elapsed)"
+          "check": "task-owned-pending",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
         }
       ],
       "errors": []
     },
     {
       "sourceGroupId": "n4-loc-001",
-      "idMap": {
-        "陈舟": "char_001"
-      },
-      "timeAdvance": {
-        "boundary": "elapsed",
-        "duration": {
-          "amount": 3,
-          "unit": "minute"
-        }
-      },
-      "deltas": [
+      "rowHash": "6a196c1fb611de7963cc2277b54f59de6f4b53d9aee11776ef02a894447e63b3",
+      "checks": [
         {
-          "entityId": "char_001",
-          "positionSet": {
-            "containerId": "loc_002"
-          }
-        }
-      ],
-      "entries": [
-        {
-          "ref": 0,
-          "kind": "moved",
-          "result": "ok",
-          "mapped": "positionSet(container=loc_002)"
+          "check": "before-state-pydantic",
+          "result": "ok"
         },
         {
-          "ref": 1,
-          "kind": "time",
-          "result": "ok",
-          "mapped": "TimeAdvance(elapsed)"
+          "check": "moved-start",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
         }
       ],
       "errors": []
@@ -1060,6 +559,6 @@
   "summary": {
     "rows": 27,
     "validationErrors": 0,
-    "verdict": "all plans valid under backend v2 contracts"
+    "verdict": "all plans provenance-valid under the A-side kernel"
   }
 }
