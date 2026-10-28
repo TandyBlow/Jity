@@ -675,3 +675,47 @@ JSON Schema，因此布尔会一路进入轨迹校验。修复为
 导出物零漂移（v1/v2 --check 过，候选摘要不变），后端全量 1410 passed。
 共同入口状态与上节一致：Python/tsc 绿，TS 契约/轨迹红于旧 B 守卫，
 由 B 七项同步解除。
+
+## 联合接口验收（2026-10-28）：A=`3734a52` ＋ B=`552148c`
+
+按分工约定 §2.2 在临时集成 checkout 中组合双方指定提交，不再分树推断：
+
+- 组合方式：从 A=`3734a52` 建临时分支，`git merge --no-ff 552148c`。
+  merge commit `44996f3a5413b0bcd446480e879b1115132816ce`，tree
+  `f2fbee118fa21f0aaf1f03fa2be7953068d96b64`。B 其后仅追加签字文档
+  （`1dc2272`），不在本组合内。开发分支未合并、契约未改、摘要未重签。
+- 冲突只有两处，均为契约权威判定（`design/world-protocol/v2` 在两侧逐字节
+  相同：A 的 `812e721..3734a52` 对 design 零 diff，B 镜像的正是 `812e721`）：
+
+  1. `backend/app/schemas/world/v2/requests.py`：取 A 版——`RollOutcome` 来自
+     `judgments`（含 reaction-d20-v1 的 `target=11` 约束），创建模板保留
+     `StateSchemaVersion` 轴；B 侧本地 `RollOutcome` 副本与注释措辞丢弃。
+  2. `.gitattributes`：并集——A 的 packaged SQL `eol=lf` 规则 + B 的 H2/B3/
+     rule-facts 证据字节规则。
+
+- 依赖：集成树 `npm ci`（fresh，385 packages，1m27s）；lockfile 与两侧一致，
+  未覆盖任何一边的依赖。
+
+### 实跑结果（Windows / Python 3.12.3 / Node 22.20.0）
+
+- 共同入口 `backend/scripts/check_world_interface_baseline.py`：**exit 0**
+  - v1、v2 导出 `--check` 均退出 0；manifest 摘要与前端 pin 一致：
+    `902918016f2bf7eff4cd1afd52da4ca96defdb5ee4082f171fda987de86680c2`
+  - Python v1 **109 passed**；v2 **376 passed**（77.60s）
+  - `typecheck:world` 通过；TS 契约 **38 passed**；轨迹 **65 passed**
+  - 4 项变异全部被拒（generated_crlf / response_field / dynamic_digest /
+    gate_handling），源工件未被修改
+- 全量 backend：**1412 passed**（505.35s，0 failed）
+- 全量前端：**565/565**；`npm run lint` 0 error（警告保留）；`npm run build`
+  成功（9 条路由，`/world` 91.6 kB）
+- `git diff --check`：通过
+
+上节遗留的“TS 契约/轨迹红于旧 B 守卫”在同一树上消失：B 的七项同步
+（`88311b2`）与 A 的响应版本拆分在此组合中互相闭合。
+
+### 边界
+
+- 本组合只作为接口验收证据：未合并 `world-server` / `world-browser` 开发
+  分支，未改契约与摘要；临时分支单独存在，不因本记录成为新基线。
+- 仍未验收：A3-2 整体验收、H2 在真实 SQLite 上的刷新/接管/fencing、真实
+  模型整链。本节只宣告“同一集成树下 backend 与 world-interface 绿”。
