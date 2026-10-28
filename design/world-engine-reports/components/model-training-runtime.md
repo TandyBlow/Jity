@@ -1,6 +1,6 @@
 # 交付项 2：模型、训练与运行时方案表
 
-日期：2026-10-28。版本：C方案表0.1。依据：[组件接口表](component-contracts.md)（`79b8fa4`）、[C任务边界](README.md)（`886dfe8`）。本文只交方案与已核实事实，不运行模型、不产生质量结论；质量数字由交付项3的隔离实验产出。
+日期：2026-10-28。版本：C方案表0.2（0.1 经 2026-10-29 复核轮修订：Mengzi 参数实数、F4 计时口径、F11 快照归属、MiniRBT 许可关闭、F2 版本来源注记）。依据：[组件接口表](component-contracts.md)（`79b8fa4`）、[C任务边界](README.md)（`886dfe8`）。本文只交方案与已核实事实，不运行模型、不产生质量结论；质量数字由交付项3的隔离实验产出。
 
 证据分三类，引用时区分：**[实测]**=本仓库已提交试验/归档（可复跑核对）；**[核实]**=本轮本机核实（注明方法）；**[外部]**=官方模型卡/README（2026-10-28 抓取，锁定权重时逐项复核）。下载体积不是参数量，模型卡能力不代表本项目达标。
 
@@ -9,16 +9,16 @@
 | # | 事实 | 类别 | 证据 |
 | --- | --- | --- | --- |
 | F1 | transformers.js 4.3.1 web 版被拒：裸说明符、hub-only 文件解析、其 pinned ORT 1.31.0-dev 会话挂起 | [实测] | `run-classifier-trial.mjs` 头注 |
-| F2 | ORT-web 1.30.0 稳定版 vendored 到 `/ort/` 由脚本直驱，可运行且计时 | [实测] | `copy-ort-assets.mjs`、分类器/标注器试验 |
+| F2 | ORT-web 稳定版 vendored 到 `/ort/` 由脚本直驱，可运行且计时；实际版本 1.30.0 来自 devDep `^1.30.0` 经 lockfile 固定——`copy-ort-assets.mjs` 只按文件名复制、无版本断言 | [实测] | `copy-ort-assets.mjs`、`package.json`/lockfile、分类器/标注器试验 |
 | F3 | ORT wasm >1 线程的会话创建在本环境永久挂起（含 headless Edge，独立新页逐一验证），全部 ORT 推理按单线程计时；wllama 侧 4 线程正常 | [实测] | `run-classifier-trial.mjs` v2 头注、`run-target-benchmark.mjs` |
-| F4 | MiniRBT-H256 int8 浏览器 CPU 单线程全链：加载 2620ms、冷启动首推理 125ms、热态每调用 8–12ms（含分词→feed→run→argmax），分词器对齐校验 PASS | [实测] | `classifier-trial-1791486826233-action.json`（已提交） |
+| F4 | MiniRBT-H256 浏览器 CPU 单线程全链：加载 2620ms、冷启动首推理 125ms、int8 热态每调用全链 7.7–10.1ms（中位 7.73ms、max 10.05ms；fp32 对照 10.3–15.3ms；含分词→feed→run→argmax），分词器对齐校验 PASS | [实测] | `classifier-trial-1791486826233-action.json`（已提交） |
 | F5 | 同机同用例 Qwen3-0.6B 解析臂：compact 8/12 全调用中位 25.8s；split-state 11/12 子调用约 15s | [实测] | 同上 `reference` 字段及脚本头注 |
 | F6 | MiniRBT-H256 全参微调（cuda）＋ONNX fp32/int8 导出＋数据纪律（评分句全排除）已走通；base 环境需 pyarrow 进程内桩 | [实测] | `train-action-classifier.py` 头注及正文 |
 | F7 | CRF（Viterbi）对照轮在 cuda 跑完（30 epochs 固定预算、冻结切分）：与 MiniRBT 标注头同量级、未取代之；MiniRBT 头同轮 scored 批 greedy 7/12、constrained 8/12，CRF 臂数字见该 json 的 table/pairedFlips | [实测] | `crf-compare-1791714189547.json`（已提交） |
 | F8 | 旧 span 任务的预登记封存门（per-field strict ≥90% 且 e2e ≤4s）从未以 `--with-acceptance` 评估，提交记录均为 not-evaluated；且该门属于旧 parse 任务体系，阈值不可平移到新组件任务 | [实测] | labeler/combo 试验 json 的 `acceptance.verdict` |
 | F9 | Qwen3-0.6B Q4_K_M 真实浏览器叙事链：29 次调用 mean 13.986s、p50 13.497s（CPU 4 线程、n_ctx4096、maxTokens160） | [实测] | `artifacts/narration-eval-recheck/`（已提交） |
 | F10 | wllama 3.8.1 打包的 llama.cpp wasm 内含 `t5`、`t5encoder` 架构字符串：T5 家族加载器已编译进 wasm；但其 JS API 能否端到端驱动 encoder-decoder **未验证** | [核实] | 本轮 `tr` 提取 `node_modules/@wllama/wllama/esm/wasm/wllama.wasm` 字符串 |
-| F11 | 本地已有 MiniRBT-H256 快照（config+pytorch_model.bin+vocab.txt，40MB），H256 微调不依赖网络 | [核实] | 本轮 `ls ../artifacts/benchmark/minirbt-h256-snapshot` |
+| F11 | MiniRBT-H256 权重快照（config.json＋pytorch_model.bin 41.5MB＋vocab.txt）**只在主工作树** `D:/others/Jity/artifacts/benchmark/minirbt-h256-snapshot`，被 `.gitignore` 排除、C 工作树内不存在——"微调不依赖网络"仅在主树成立；C 树开工须重新配置并记录获取方式 | [核实] | 本轮 `ls`（主树 frontend 相对路径）；C 树同路径不存在（复核轮确认） |
 | F12 | Anaconda base：torch 2.7.0+cu126、transformers 4.57.3、onnx 1.21.0、onnxruntime 1.25.1 已装；**sentencepiece 未装**（T5 分词必需）；datasets/accelerate/peft 未装（当前方案不需要） | [核实] | 本轮 `importlib.metadata` 核查 |
 | F13 | hf-mirror 对 Randeng 仓库 resolve 实测可达（本轮取回 config.json）；Mengzi 卡片经 huggingface.co 网页核到、mirror api 本轮空返回未通；MiniRBT 的具体 HF 仓库 ID 待定（GitHub 官方示例用 `hfl/minirbt-h256`，`iflytek/MiniRBT-H256` 本轮 resolve 401） | [核实] | 本轮 curl 实测 |
 
@@ -26,7 +26,7 @@
 
 | 字段 | MiniRBT-H256（编码器骨干首选） | Randeng-T5-77M-MultiTask（生成候选） | Mengzi-T5-base（容量对照） | Qwen3-0.6B（现役基线/对照臂） |
 | --- | --- | --- | --- | --- |
-| 全参数量 | 官方 10.4M（6层×隐256×8头）[外部] | 官方 77,440,384 [外部] | 卡片 0.2B；按 config（12+12层、d_model 768、d_ff 2048、vocab 32128、gated-gelu、共享嵌入）推算 ≈223M，锁定权重后以 safetensors 实数为准 [外部+推算] | 0.6B；GGUF Q4_K_M 文件体积以锁定权重为准 |
+| 全参数量 | 官方 10.4M（6层×隐256×8头）[外部] | 官方 77,440,384，复核轮与 safetensors.total 逐位一致 [外部] | **247,577,856（≈247.6M）**：HF safetensors.total 实数（复核轮经 mirror API 取元数据，未下载权重）[核实]；口径=encoder 7.08M/层＋decoder 9.44M/层（self 2.36M＋cross-attention 2.36M＋FF 4.72M，12+12 层）＋输入嵌入 24.67M＋lm_head 独立 24.67M（`tie_word_embeddings:false`）；独立复算 247,585,536 与实数差 7,680（LN/偏置零头）；此前 0.1 版 ≈223M 推算作废 | 0.6B；GGUF Q4_K_M 文件体积以锁定权重为准 |
 | 架构/任务头方式 | BERT 编码器；每任务一个轻头（池化分类头／逐 token 标注头／句对 cross-encoder 打分头），**一份骨干多任务共享** | T5 encoder-decoder，text2text；任务即提示词模板 | 同左 | decoder-only chat；结构输出靠 GBNF/schema 约束 |
 | 中文能力依据 | WWM 预训练＋两阶段蒸馏（官方README）；本仓库旧任务分类 8/8 旧批泛化、Python 侧 11/12 [外部+实测] | 在 Randeng-T5-77M 上用 100+ 中文多任务数据集（30万+样本）统一 text2text 微调；卡仅演示标签/摘要类短输出，无流畅度评测 [外部] | 300GB 中文语料预训练；卡无质量评测；社区用途为标点恢复/问答 [外部] | 本仓库叙事评测归档：requireTime 定档 natural 10/16，四失败模式已知 [实测] |
 | 微调/蒸馏需求 | 每任务头全参微调（官方建议 lr≈1e-4、多于常规轮数）；微调期蒸馏可选非必需 | 先零样本测模板任务；N4 成句需本项目数据微调/评测；蒸馏暂不需要（模型够小） | 本轮仅作容量对照，不微调起步 | 不微调（基线臂）；提示词与操作点已归档 |
@@ -38,7 +38,7 @@
 | 分词器 | JS 手写 BertTokenizerFast 等价（中文按字、lowercase、ASCII wordpiece 回退），在跑对照 Python 参考 id 校验通过 [实测] | sentencepiece（unigram）；**浏览器侧 JS 实现是 T5 路线的最大单点成本**，wllama 路径则由 GGUF 内嵌 tokenizer 解决 | 同左 | GGUF 内嵌，llama.cpp 处理 |
 | 取消/生成循环 | `session.run` 不可中途取消→AbortSignal 外包＋迟到结果按接口表 §2.1 隔离丢弃；加载与解码循环可取消 | wllama 有中断 API；ORT 直驱路径同左；生成循环=encoder 一次＋decoder 逐步（带 past），步数上限与早停显式配置 | 同左 | wllama 中断已在使用 |
 
-许可状态：MiniRBT GitHub README 未标许可（HF 页本轮 401 未核到标签，F13）；Randeng/Mengzi 模型卡均为 Apache-2.0 [外部]。三个候选的 LICENSE 文件在锁定权重时逐一核对后写入运行记录。
+许可状态：**三候选均 Apache-2.0**——Randeng/Mengzi 模型卡 [外部]；MiniRBT 经 `hfl/minirbt-h256` 模型卡 `cardData.license` 与 `license:apache-2.0` tag 核实（复核轮关闭；GitHub README 本身未标许可）。锁定权重时以 LICENSE 文件为准写入运行记录。
 
 ## 3. 组件×任务×方案映射
 
@@ -92,7 +92,8 @@
 ## 6. 环境与通道待办（第3项开工前置）
 
 - `pip install sentencepiece`（T5 离线分词必需，F12）；pyarrow 桩沿用 `train-action-classifier.py` 方案（F6）。
-- MiniRBT HF 仓库 ID 与许可核实（F13）；Randeng/Mengzi 走 hf-mirror 下载（F13 已通）后**以 safetensors 实数回填参数量并核对 LICENSE**。
+- MiniRBT ID 与许可已核（复核轮：`hfl/minirbt-h256`→200、`iflytek/MiniRBT-H256`→401、许可 apache-2.0）；Randeng/Mengzi 权重走 hf-mirror 下载，下载后以锁定权重文件核对 LICENSE。
+- 在 C 工作树重新配置 MiniRBT-H256 快照并记录获取方式（F11：主树快照不入库不共享；通道=hfl/minirbt-h256 经 hf-mirror）。主树 `train-action-classifier.py` 头注仍写旧 ID `iflytek/MiniRBT-H256`（历史注释、不影响产物；正确 ID 以 F13 为准，脚本修正归 B 线后续批次，C 运行记录只用正确 ID）。
 - 浏览器分发：`public/models/` 当前为空（模型文件不入库），重建路径=各 train 脚本导出＋`copy-*-assets.mjs` 机制（已有）。
 - 旧试验资产只复用**方法学**（数据纪律、封存批协议、计时口径、导出脚本骨架）；旧语料、旧标签体系、旧门阈值一律不复用（F8）。
 
