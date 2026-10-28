@@ -143,9 +143,13 @@ def entry_patterns(entry: dict) -> list:
         verb = "升到了|提升至|涨到了" if hi > lo else "降到了|降至|跌到了"
         return [rf"精神值从{lo}({verb}){hi}"]
     if kind == "appearance_changed":
-        return [rf"{esc(entry['name'])}的外观变了：{esc(entry['text'])}"]
+        # v7 controlled equivalence (review round 9): 外貌/外观 and full/half
+        # width colon are surface variants; entity, description text and the
+        # change claim itself stay strict
+        return [rf"{esc(entry['name'])}的(?:外貌|外观)变了[：:]{esc(entry['text'])}"]
     if kind == "positioned_at":
-        return [rf"{esc(entry['name'])}已经在{esc(entry['at'])}了?"]
+        # 已在/已经在 are the same current-state claim
+        return [rf"{esc(entry['name'])}(?:已经在|已在){esc(entry['at'])}了?"]
     if kind == "time":
         # v5: value+unit parsed and compared to amount/unit; rendered unused
         return [rf"(?P<pre>前后)?(大约|约|整整)?(?P<num>{CN_NUM}|\d+)(?P<unit>分钟|小时)(?P<post>过去了?)?"]
@@ -330,7 +334,22 @@ def main() -> None:
     r_rendered["plan"][1]["rendered"] = "八分钟"
     r_rendered["text"] = "陈舟从东门走到了钟楼。前后大约八分钟。"
     bads.append((rehash(r_rendered), "review", "rendered-not-trusted"))
+
     void = []
+    # v7: positive-equivalence rows MUST pass (controlled variants), pinned
+    # so the equivalence rules themselves are tested, not just the negatives
+    appear = next(r for r in rows if r["sourceGroupId"].startswith("n4-appear"))
+    multi = next(r for r in rows if r["sourceGroupId"].startswith("n4-multi"))
+    equivalents = [
+        (with_text(appear, "四十分钟过去了，石桥的外貌变了:门柱上的漆皮剥落了大半。",
+                   planRefs=[[0, 1]]), "equiv-appearance-variant"),
+        (with_text(multi, "陈舟从东门来到柴房时，林望已在柴房了。前后大约三分钟。"),
+         "equiv-positioned-variant"),
+    ]
+    for good_row, label in equivalents:
+        f, rv = check_row(good_row)
+        if f or rv:
+            void.append(f"equivalence {label}: expected pass, got fail={f} review={rv[:2]}")
     for bad, expected, label in bads:
         f, rv = check_row(bad)
         verdict = "fail" if f else ("review" if rv else "pass")
@@ -341,7 +360,8 @@ def main() -> None:
         for x in void:
             print(" ", x)
         sys.exit(2)
-    print(f"self-test PASS: {len(bads)}/{len(bads)} negative rows caught with expected verdict class")
+    print(f"self-test PASS: {len(bads)}/{len(bads)} negative rows + "
+          f"{len(equivalents)}/{len(equivalents)} equivalence rows")
 
     # ---- group consistency ----
     groups = {}

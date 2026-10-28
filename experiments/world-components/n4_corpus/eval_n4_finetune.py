@@ -99,6 +99,7 @@ def main() -> None:
     arms = {}
     for arm, path in (("base", BASE_MODEL), ("finetuned", FINETUNED)):
         model = T5ForConditionalGeneration.from_pretrained(str(path), torch_dtype=torch.float32)
+        model.cuda()  # v7: review found r1 silently ran this eval on CPU
         model.eval()
         results = []
         for r in dev:
@@ -135,7 +136,11 @@ def main() -> None:
                                      for f in sorted(FINETUNED.iterdir()) if f.is_file()}},
         "environment": {"python": sys.version.split()[0], "torch": torch.__version__,
                         "transformers": transformers.__version__,
-                        "device": torch.cuda.get_device_name(0)},
+                        "device": "cuda",
+                        "deviceName": torch.cuda.get_device_name(0),
+                        "note": "v7 correction: r1's eval actually ran on CPU because "
+                                "the model was never moved; reports now record the "
+                                "real placement (model.cuda() before generate)"},
         "isolation": {"check": "corpus_check.split_isolation_problems(24 train groups, 6 dev groups)",
                       "result": "pass"},
         "decode": {"greedy": True, "maxNewTokens": MAX_NEW, "numBeams": 1},

@@ -1,0 +1,1690 @@
+{
+  "purpose": "fitting diagnosis: does more training fix train-plan errors?",
+  "provenance": {
+    "corpusAndRenderer": {
+      "n4_render.py": "1cc8d06f4b26f657959a7ce62f6e3538b68cb537f284cad99a7c2169b3526e02",
+      "corpus.seeds.jsonl": "1611da00c8592928f774a744032f17d1533a118daea1606a5b94ee54bfdad125",
+      "rewrites.jsonl": "c96d4b59894b536275150738d0f1ddaf38b19e7bf579c439e5ebd139c70498d6"
+    }
+  },
+  "environment": {
+    "python": "3.12.3",
+    "torch": "2.7.0+cu126",
+    "transformers": "4.57.3",
+    "device": "cuda",
+    "deviceName": "NVIDIA GeForce RTX 4060 Laptop GPU"
+  },
+  "config": {
+    "seed": 20261029,
+    "totalSteps": 360,
+    "checkEvery": 60,
+    "batch": 8,
+    "lr": 0.0001,
+    "optimizer": "AdamW",
+    "tokenizerLegacy": false,
+    "precision": "fp32"
+  },
+  "counting": "per independent plan (48 train rows = 24 plans; 12 dev rows = 6 plans)",
+  "judge": "eval_n4_finetune.judge (recognizer, refs re-expanded; v7 equivalence rules active; human verdicts are separate)",
+  "points": [
+    {
+      "step": 60,
+      "meanLossLast60": 1.2978,
+      "seconds": 50.8,
+      "train": {
+        "counts": {
+          "pass": 24,
+          "review": 0,
+          "fail": 0
+        },
+        "rows": [
+          {
+            "groupId": "n4-loc-001",
+            "output": "陈舟从东门来到钟楼。前后大约三分钟。",
+            "outputTokens": 16,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-loc-002",
+            "output": "苏晚从水房来到侧院。前后大约八分钟。",
+            "outputTokens": 17,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-loc-003",
+            "output": "周砚从钟楼来到柴房。前后大约十二分钟。",
+            "outputTokens": 17,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-loc-004",
+            "output": "林望从侧院来到石桥。前后大约二十五分钟。",
+            "outputTokens": 18,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-loc-005",
+            "output": "沈青从柴房来到碑亭。前后大约四十分钟。",
+            "outputTokens": 17,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-loc-006",
+            "output": "陈舟从东门来到水房。前后大约一小时。",
+            "outputTokens": 16,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-empty-007",
+            "output": "八分钟过去了,一切如旧。",
+            "outputTokens": 12,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-empty-008",
+            "output": "十二分钟过去了,一切如旧。",
+            "outputTokens": 12,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-empty-009",
+            "output": "二十五分钟过去了,一切如旧。",
+            "outputTokens": 13,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-empty-010",
+            "output": "四十分钟过去了,一切如旧。",
+            "outputTokens": 12,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-task-011",
+            "output": "陈舟完成了任务「把铜铃挂回钟楼」。前后大约十二分钟。",
+            "outputTokens": 20,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-task-012",
+            "output": "苏晚完成了任务「整理柴房」。前后大约二十五分钟。",
+            "outputTokens": 18,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-task-013",
+            "output": "周砚完成了任务「修缮石桥栏杆」。前后大约四十分钟。",
+            "outputTokens": 20,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-task-014",
+            "output": "林望完成了任务「清点碑亭石刻」。前后大约一小时。",
+            "outputTokens": 20,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-task-015",
+            "output": "陈舟完成了任务「把铜铃挂回钟楼」。前后大约三分钟。",
+            "outputTokens": 20,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-chain-016",
+            "output": "苏晚完成了任务「整理柴房」,变得沉稳,精神值从10升到了13。前后大约二十五分钟。",
+            "outputTokens": 31,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-chain-017",
+            "output": "周砚完成了任务「修缮石桥栏杆」,话多了起来,话多了起来,精神值从12升到了14。前后大约四十分钟。",
+            "outputTokens": 37,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-chain-018",
+            "output": "林望完成了任务「清点碑亭石刻」,变得内敛,精神值从11升到了12。前后大约一小时。",
+            "outputTokens": 33,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-appear-019",
+            "output": "石桥的外观变了:门柱上的漆皮剥落了大半。前后大约四十分钟。",
+            "outputTokens": 25,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-appear-020",
+            "output": "碑亭的外观变了:石阶缝里长出了青苔。前后大约一小时。",
+            "outputTokens": 24,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-appear-021",
+            "output": "东门的外观变了:栏杆的漆色褪成了灰白。前后大约三分钟。",
+            "outputTokens": 25,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-multi-022",
+            "output": "陈舟从东门来到柴房时,林望已经在柴房了。前后大约三分钟。",
+            "outputTokens": 25,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-multi-023",
+            "output": "苏晚从水房来到石桥时,沈青已经在石桥了。前后大约八分钟。",
+            "outputTokens": 26,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-multi-024",
+            "output": "周砚从钟楼来到碑亭时,陈舟已经在碑亭了。前后大约十二分钟。",
+            "outputTokens": 26,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          }
+        ]
+      },
+      "dev": {
+        "counts": {
+          "pass": 5,
+          "review": 1,
+          "fail": 0
+        },
+        "rows": [
+          {
+            "groupId": "n4-loc-025",
+            "output": "沈青从柴房来到东门。前后大约一小时。",
+            "outputTokens": 17,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-task-026",
+            "output": "林望完成了任务「清点碑亭石刻」。前后大约三分钟。",
+            "outputTokens": 20,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-empty-027",
+            "output": "二十五分钟过去了,一切如旧。",
+            "outputTokens": 13,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-chain-028",
+            "output": "整整三分钟过去了,陈舟完成了任务「把铜铃挂回钟楼」。前后大约三分钟。",
+            "outputTokens": 28,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "mustExpress [1, 2] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          },
+          {
+            "groupId": "n4-appear-029",
+            "output": "水房的外貌变了:墙角的青砖泛了潮。前后大约十二分钟。",
+            "outputTokens": 25,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-multi-030",
+            "output": "沈青从柴房来到水房时,苏晚已经在水房了。前后大约十二分钟。",
+            "outputTokens": 26,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          }
+        ]
+      },
+      "checkpoint": "D:\\others\\Jity\\.local\\world-components-worktree\\experiments\\world-components\\assets\\n4-finetune\\diag-step60",
+      "checkpointSha256_16": {
+        "added_tokens.json": "a247922ac010bc17",
+        "config.json": "a35e9d4382657106",
+        "generation_config.json": "691648bea8d35875",
+        "model.safetensors": "5d37ebf37a0519ea",
+        "special_tokens_map.json": "65d84a9271d68f12",
+        "spiece.model": "c65feffa65ff0378",
+        "tokenizer_config.json": "553da19a6ed43c57"
+      }
+    },
+    {
+      "step": 120,
+      "meanLossLast60": 0.8139,
+      "seconds": 97.8,
+      "train": {
+        "counts": {
+          "pass": 24,
+          "review": 0,
+          "fail": 0
+        },
+        "rows": [
+          {
+            "groupId": "n4-loc-001",
+            "output": "陈舟从东门一路走到了钟楼。前后大约三分钟。",
+            "outputTokens": 18,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-loc-002",
+            "output": "苏晚从水房来到侧院。前后大约八分钟。",
+            "outputTokens": 17,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-loc-003",
+            "output": "周砚从钟楼来到柴房。前后大约十二分钟。",
+            "outputTokens": 17,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-loc-004",
+            "output": "林望从侧院来到石桥。前后大约二十五分钟。",
+            "outputTokens": 18,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-loc-005",
+            "output": "沈青从柴房来到碑亭。前后大约四十分钟。",
+            "outputTokens": 17,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-loc-006",
+            "output": "陈舟从东门一路走到了水房。前后大约一小时。",
+            "outputTokens": 18,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-empty-007",
+            "output": "大约八分钟过去了,一切如旧。",
+            "outputTokens": 13,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-empty-008",
+            "output": "大约十二分钟过去了,一切如旧。",
+            "outputTokens": 13,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-empty-009",
+            "output": "大约二十五分钟过去了,一切如旧。",
+            "outputTokens": 14,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-empty-010",
+            "output": "大约四十分钟过去了,一切如旧。",
+            "outputTokens": 13,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-task-011",
+            "output": "陈舟完成了任务「把铜铃挂回钟楼」。前后大约十二分钟。",
+            "outputTokens": 20,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-task-012",
+            "output": "苏晚完成了任务「整理柴房」。前后大约二十五分钟。",
+            "outputTokens": 18,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-task-013",
+            "output": "周砚完成了任务「修缮石桥栏杆」。前后大约四十分钟。",
+            "outputTokens": 20,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-task-014",
+            "output": "林望办妥了任务「清点碑亭石刻」。前后大约一小时。",
+            "outputTokens": 22,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-task-015",
+            "output": "陈舟完成了任务「把铜铃挂回钟楼」。前后大约三分钟。",
+            "outputTokens": 20,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-chain-016",
+            "output": "苏晚完成了任务「整理柴房」,变得沉稳,精神值从10升到了13。前后大约二十五分钟。",
+            "outputTokens": 31,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-chain-017",
+            "output": "周砚完成了任务「修缮石桥栏杆」,话多了起来,精神值从12升到了14。前后大约四十分钟。",
+            "outputTokens": 33,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-chain-018",
+            "output": "林望完成了任务「清点碑亭石刻」,变得内敛,精神值从11升到了12。前后大约一小时。",
+            "outputTokens": 33,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-appear-019",
+            "output": "四十分钟过去了,石桥的外观变了:门柱上的漆皮剥落了大半。",
+            "outputTokens": 25,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-appear-020",
+            "output": "碑亭的外观变了:石阶缝里长出了青苔。前后大约一小时。",
+            "outputTokens": 24,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-appear-021",
+            "output": "约三分钟过去了,东门的外观变了:栏杆的漆色褪成了灰白。",
+            "outputTokens": 26,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-multi-022",
+            "output": "陈舟从东门来到柴房时,林望已经在柴房了。前后大约三分钟。",
+            "outputTokens": 25,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-multi-023",
+            "output": "苏晚从水房来到石桥时,沈青已经在石桥了。前后大约八分钟。",
+            "outputTokens": 26,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-multi-024",
+            "output": "周砚从钟楼来到碑亭时,陈舟已经在碑亭了。前后大约十二分钟。",
+            "outputTokens": 26,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          }
+        ]
+      },
+      "dev": {
+        "counts": {
+          "pass": 5,
+          "review": 1,
+          "fail": 0
+        },
+        "rows": [
+          {
+            "groupId": "n4-loc-025",
+            "output": "沈青从柴房来到东门。前后大约一小时。",
+            "outputTokens": 17,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-task-026",
+            "output": "林望办妥了任务「清点碑亭石刻」。前后大约三分钟。",
+            "outputTokens": 22,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-empty-027",
+            "output": "大约二十五分钟过去了,一切如旧。",
+            "outputTokens": 14,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-chain-028",
+            "output": "约三分钟过去了,陈舟完成了任务「把铜铃挂回钟楼」,变得大胆,精神值从10升到了8。",
+            "outputTokens": 34,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "clause '精神值从10升到了8' not fully covered by plan recognizers (covered 0/10) — unrecognized content, needs review",
+              "mustExpress [2] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          },
+          {
+            "groupId": "n4-appear-029",
+            "output": "水房的外观变了:墙角的青砖泛了潮。前后大约十二分钟。",
+            "outputTokens": 24,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-multi-030",
+            "output": "沈青从柴房来到水房时,苏晚已经在水房了。前后大约十二分钟。",
+            "outputTokens": 26,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          }
+        ]
+      },
+      "checkpoint": "D:\\others\\Jity\\.local\\world-components-worktree\\experiments\\world-components\\assets\\n4-finetune\\diag-step120",
+      "checkpointSha256_16": {
+        "added_tokens.json": "a247922ac010bc17",
+        "config.json": "a35e9d4382657106",
+        "generation_config.json": "691648bea8d35875",
+        "model.safetensors": "9c1e08fd769b69fd",
+        "special_tokens_map.json": "65d84a9271d68f12",
+        "spiece.model": "c65feffa65ff0378",
+        "tokenizer_config.json": "553da19a6ed43c57"
+      }
+    },
+    {
+      "step": 180,
+      "meanLossLast60": 0.618,
+      "seconds": 145.4,
+      "train": {
+        "counts": {
+          "pass": 24,
+          "review": 0,
+          "fail": 0
+        },
+        "rows": [
+          {
+            "groupId": "n4-loc-001",
+            "output": "陈舟从东门来到钟楼。前后大约三分钟。",
+            "outputTokens": 16,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-loc-002",
+            "output": "苏晚从水房来到侧院。前后大约八分钟。",
+            "outputTokens": 17,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-loc-003",
+            "output": "周砚从钟楼来到柴房。前后大约十二分钟。",
+            "outputTokens": 17,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-loc-004",
+            "output": "林望从侧院来到石桥。前后大约二十五分钟。",
+            "outputTokens": 18,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-loc-005",
+            "output": "沈青从柴房来到碑亭。前后大约四十分钟。",
+            "outputTokens": 17,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-loc-006",
+            "output": "陈舟从东门来到水房。前后大约一小时。",
+            "outputTokens": 16,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-empty-007",
+            "output": "八分钟过去了,一切如旧。",
+            "outputTokens": 12,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-empty-008",
+            "output": "大约十二分钟过去了,一切如旧。",
+            "outputTokens": 13,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-empty-009",
+            "output": "大约二十五分钟过去了,一切如旧。",
+            "outputTokens": 14,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-empty-010",
+            "output": "大约四十分钟过去了,一切如旧。",
+            "outputTokens": 13,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-task-011",
+            "output": "陈舟完成了任务「把铜铃挂回钟楼」。前后大约十二分钟。",
+            "outputTokens": 20,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-task-012",
+            "output": "苏晚完成了任务「整理柴房」。前后大约二十五分钟。",
+            "outputTokens": 18,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-task-013",
+            "output": "周砚完成了任务「修缮石桥栏杆」。前后大约四十分钟。",
+            "outputTokens": 20,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-task-014",
+            "output": "林望完成了任务「清点碑亭石刻」。前后大约一小时。",
+            "outputTokens": 20,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-task-015",
+            "output": "陈舟完成了任务「把铜铃挂回钟楼」。前后大约三分钟。",
+            "outputTokens": 20,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-chain-016",
+            "output": "苏晚完成了任务「整理柴房」,变得沉稳,精神值从10升到了13。前后大约二十五分钟。",
+            "outputTokens": 31,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-chain-017",
+            "output": "周砚完成了任务「修缮石桥栏杆」,话多了起来,精神值从12升到了14。前后大约四十分钟。",
+            "outputTokens": 33,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-chain-018",
+            "output": "林望完成了任务「清点碑亭石刻」,变得内敛,精神值从11升到了12。前后大约一小时。",
+            "outputTokens": 33,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-appear-019",
+            "output": "四十分钟过去了,石桥的外观变了:门柱上的漆皮剥落了大半。",
+            "outputTokens": 25,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-appear-020",
+            "output": "碑亭的外观变了:石阶缝里长出了青苔。前后大约一小时。",
+            "outputTokens": 24,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-appear-021",
+            "output": "东门的外观变了:栏杆的漆色褪成了灰白。前后大约三分钟。",
+            "outputTokens": 25,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-multi-022",
+            "output": "陈舟从东门来到柴房时,林望已经在柴房了。前后大约三分钟。",
+            "outputTokens": 25,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-multi-023",
+            "output": "苏晚从水房来到石桥时,沈青已经在石桥了。前后大约八分钟。",
+            "outputTokens": 26,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-multi-024",
+            "output": "周砚从钟楼来到碑亭时,陈舟已经在碑亭了。前后大约十二分钟。",
+            "outputTokens": 26,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          }
+        ]
+      },
+      "dev": {
+        "counts": {
+          "pass": 5,
+          "review": 1,
+          "fail": 0
+        },
+        "rows": [
+          {
+            "groupId": "n4-loc-025",
+            "output": "沈青从柴房来到东门。前后大约一小时。",
+            "outputTokens": 17,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-task-026",
+            "output": "林望完成了任务「清点碑亭石刻」。前后大约三分钟。",
+            "outputTokens": 20,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-empty-027",
+            "output": "大约二十五分钟过去了,一切如旧。",
+            "outputTokens": 14,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-chain-028",
+            "output": "约三分钟过去了,陈舟完成了任务「把铜铃挂回钟楼」,变得大胆,精神值从10升到了8。",
+            "outputTokens": 34,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "clause '精神值从10升到了8' not fully covered by plan recognizers (covered 0/10) — unrecognized content, needs review",
+              "mustExpress [2] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          },
+          {
+            "groupId": "n4-appear-029",
+            "output": "水房的外观变了:墙角的青砖泛了潮。前后大约十二分钟。",
+            "outputTokens": 24,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-multi-030",
+            "output": "沈青从柴房来到水房时,苏晚已经在水房了。前后大约十二分钟。",
+            "outputTokens": 26,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          }
+        ]
+      },
+      "checkpoint": "D:\\others\\Jity\\.local\\world-components-worktree\\experiments\\world-components\\assets\\n4-finetune\\diag-step180",
+      "checkpointSha256_16": {
+        "added_tokens.json": "a247922ac010bc17",
+        "config.json": "a35e9d4382657106",
+        "generation_config.json": "691648bea8d35875",
+        "model.safetensors": "e033755897521bbb",
+        "special_tokens_map.json": "65d84a9271d68f12",
+        "spiece.model": "c65feffa65ff0378",
+        "tokenizer_config.json": "553da19a6ed43c57"
+      }
+    },
+    {
+      "step": 240,
+      "meanLossLast60": 0.5065,
+      "seconds": 194.7,
+      "train": {
+        "counts": {
+          "pass": 24,
+          "review": 0,
+          "fail": 0
+        },
+        "rows": [
+          {
+            "groupId": "n4-loc-001",
+            "output": "陈舟从东门来到钟楼。前后大约三分钟。",
+            "outputTokens": 16,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-loc-002",
+            "output": "苏晚从水房来到侧院。前后大约八分钟。",
+            "outputTokens": 17,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-loc-003",
+            "output": "周砚从钟楼来到柴房。前后大约十二分钟。",
+            "outputTokens": 17,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-loc-004",
+            "output": "林望从侧院来到石桥。前后大约二十五分钟。",
+            "outputTokens": 18,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-loc-005",
+            "output": "沈青由柴房进入碑亭。整整四十分钟过去了。",
+            "outputTokens": 19,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-loc-006",
+            "output": "陈舟从东门来到水房。前后大约一小时。",
+            "outputTokens": 16,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-empty-007",
+            "output": "八分钟过去了,一切如旧。",
+            "outputTokens": 12,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-empty-008",
+            "output": "大约十二分钟过去了,一切如旧。",
+            "outputTokens": 13,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-empty-009",
+            "output": "大约二十五分钟过去了,一切如旧。",
+            "outputTokens": 14,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-empty-010",
+            "output": "四十分钟过去了,一切如旧。",
+            "outputTokens": 12,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-task-011",
+            "output": "陈舟已达成任务「把铜铃挂回钟楼」。前后大约十二分钟。",
+            "outputTokens": 21,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-task-012",
+            "output": "苏晚办妥了任务「整理柴房」。前后大约二十五分钟。",
+            "outputTokens": 20,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-task-013",
+            "output": "周砚完成了任务「修缮石桥栏杆」。前后大约四十分钟。",
+            "outputTokens": 20,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-task-014",
+            "output": "林望完成了任务「清点碑亭石刻」。前后大约一小时。",
+            "outputTokens": 20,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-task-015",
+            "output": "陈舟已达成任务「把铜铃挂回钟楼」。约三分钟过去了。",
+            "outputTokens": 22,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-chain-016",
+            "output": "苏晚完成了任务「整理柴房」,变得沉稳,精神值从10提升至13。前后大约二十五分钟。",
+            "outputTokens": 31,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-chain-017",
+            "output": "周砚完成了任务「修缮石桥栏杆」,话多了起来,精神值从12涨到了14。前后大约四十分钟。",
+            "outputTokens": 33,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-chain-018",
+            "output": "林望完成了任务「清点碑亭石刻」,变得内敛,精神值从11升到了12。前后大约一小时。",
+            "outputTokens": 33,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-appear-019",
+            "output": "石桥的外观变了:门柱上的漆皮剥落了大半。前后大约四十分钟。",
+            "outputTokens": 25,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-appear-020",
+            "output": "碑亭的外观变了:石阶缝里长出了青苔。前后大约一小时。",
+            "outputTokens": 24,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-appear-021",
+            "output": "约三分钟过去了,东门的外观变了:栏杆的漆色褪成了灰白。",
+            "outputTokens": 26,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-multi-022",
+            "output": "陈舟从东门来到柴房时,林望已经在柴房了。约三分钟过去了。",
+            "outputTokens": 26,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-multi-023",
+            "output": "八分钟过去了,苏晚从水房抵达石桥时,沈青已经在石桥了。",
+            "outputTokens": 26,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-multi-024",
+            "output": "周砚从钟楼来到碑亭时,陈舟已经在碑亭了。前后大约十二分钟。",
+            "outputTokens": 26,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          }
+        ]
+      },
+      "dev": {
+        "counts": {
+          "pass": 5,
+          "review": 1,
+          "fail": 0
+        },
+        "rows": [
+          {
+            "groupId": "n4-loc-025",
+            "output": "沈青从柴房来到东门。前后大约一小时。",
+            "outputTokens": 17,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-task-026",
+            "output": "林望完成了任务「清点碑亭石刻」。前后大约三分钟。",
+            "outputTokens": 20,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-empty-027",
+            "output": "大约二十五分钟过去了,一切如旧。",
+            "outputTokens": 14,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-chain-028",
+            "output": "约三分钟过去了,陈舟完成了任务「把铜铃挂回钟楼」,变得大胆,精神值从10升到了8。",
+            "outputTokens": 34,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "clause '精神值从10升到了8' not fully covered by plan recognizers (covered 0/10) — unrecognized content, needs review",
+              "mustExpress [2] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          },
+          {
+            "groupId": "n4-appear-029",
+            "output": "水房的外观变了:墙角的青砖泛了潮。前后大约十二分钟。",
+            "outputTokens": 24,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-multi-030",
+            "output": "沈青从柴房来到水房时,苏晚已经在水房了。前后大约十二分钟。",
+            "outputTokens": 26,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          }
+        ]
+      },
+      "checkpoint": "D:\\others\\Jity\\.local\\world-components-worktree\\experiments\\world-components\\assets\\n4-finetune\\diag-step240",
+      "checkpointSha256_16": {
+        "added_tokens.json": "a247922ac010bc17",
+        "config.json": "a35e9d4382657106",
+        "generation_config.json": "691648bea8d35875",
+        "model.safetensors": "65beb317d5972a39",
+        "special_tokens_map.json": "65d84a9271d68f12",
+        "spiece.model": "c65feffa65ff0378",
+        "tokenizer_config.json": "553da19a6ed43c57"
+      }
+    },
+    {
+      "step": 300,
+      "meanLossLast60": 0.4353,
+      "seconds": 246.5,
+      "train": {
+        "counts": {
+          "pass": 24,
+          "review": 0,
+          "fail": 0
+        },
+        "rows": [
+          {
+            "groupId": "n4-loc-001",
+            "output": "陈舟从东门来到钟楼。前后大约三分钟。",
+            "outputTokens": 16,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-loc-002",
+            "output": "苏晚从水房来到侧院。八分钟过去了。",
+            "outputTokens": 17,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-loc-003",
+            "output": "周砚从钟楼来到柴房。前后大约十二分钟。",
+            "outputTokens": 17,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-loc-004",
+            "output": "二十五分钟过去了,林望从侧院抵达石桥。",
+            "outputTokens": 18,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-loc-005",
+            "output": "沈青由柴房进入碑亭。整整四十分钟过去了。",
+            "outputTokens": 19,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-loc-006",
+            "output": "陈舟从东门来到水房。前后大约一小时。",
+            "outputTokens": 16,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-empty-007",
+            "output": "八分钟过去了,一切如旧。",
+            "outputTokens": 12,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-empty-008",
+            "output": "大约十二分钟过去了,一切如旧。",
+            "outputTokens": 13,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-empty-009",
+            "output": "大约二十五分钟过去了,一切如旧。",
+            "outputTokens": 14,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-empty-010",
+            "output": "四十分钟过去了,一切如旧。",
+            "outputTokens": 12,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-task-011",
+            "output": "陈舟完成了任务「把铜铃挂回钟楼」。前后大约十二分钟。",
+            "outputTokens": 20,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-task-012",
+            "output": "苏晚办妥了任务「整理柴房」。整整二十五分钟过去了。",
+            "outputTokens": 22,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-task-013",
+            "output": "周砚完成了任务「修缮石桥栏杆」。前后大约四十分钟。",
+            "outputTokens": 20,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-task-014",
+            "output": "林望办妥了任务「清点碑亭石刻」。前后大约一小时。",
+            "outputTokens": 22,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-task-015",
+            "output": "陈舟完成了任务「把铜铃挂回钟楼」。前后大约三分钟。",
+            "outputTokens": 20,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-chain-016",
+            "output": "苏晚办妥了任务「整理柴房」,变得沉稳,精神值从10升到了13。前后大约二十五分钟。",
+            "outputTokens": 33,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-chain-017",
+            "output": "周砚完成了任务「修缮石桥栏杆」,话多了起来,精神值从12升到了14。前后大约四十分钟。",
+            "outputTokens": 33,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-chain-018",
+            "output": "林望完成了任务「清点碑亭石刻」,变得内敛,精神值从11升到了12。前后大约一小时。",
+            "outputTokens": 33,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-appear-019",
+            "output": "四十分钟过去了,石桥的外观变了:门柱上的漆皮剥落了大半。",
+            "outputTokens": 25,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-appear-020",
+            "output": "碑亭的外观变了:石阶缝里长出了青苔。前后大约一小时。",
+            "outputTokens": 24,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-appear-021",
+            "output": "约三分钟过去了,东门的外观变了:栏杆的漆色褪成了灰白。",
+            "outputTokens": 26,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-multi-022",
+            "output": "陈舟从东门来到柴房时,林望已经在柴房了。约三分钟过去了。",
+            "outputTokens": 26,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-multi-023",
+            "output": "苏晚从水房来到石桥时,沈青已经在石桥了。八分钟过去了。",
+            "outputTokens": 26,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-multi-024",
+            "output": "周砚从钟楼来到碑亭时,陈舟已经在碑亭了。前后大约十二分钟。",
+            "outputTokens": 26,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          }
+        ]
+      },
+      "dev": {
+        "counts": {
+          "pass": 5,
+          "review": 1,
+          "fail": 0
+        },
+        "rows": [
+          {
+            "groupId": "n4-loc-025",
+            "output": "沈青从柴房来到东门。前后大约一小时。",
+            "outputTokens": 17,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-task-026",
+            "output": "林望完成了任务「清点碑亭石刻」。前后大约三分钟。",
+            "outputTokens": 20,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-empty-027",
+            "output": "大约二十五分钟过去了,一切如旧。",
+            "outputTokens": 14,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-chain-028",
+            "output": "约三分钟过去了,陈舟完成了任务「把铜铃挂回钟楼」,变得大胆,精神值从10升到了8。",
+            "outputTokens": 34,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "clause '精神值从10升到了8' not fully covered by plan recognizers (covered 0/10) — unrecognized content, needs review",
+              "mustExpress [2] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          },
+          {
+            "groupId": "n4-appear-029",
+            "output": "水房的外观变了:墙角的青砖泛了潮。前后大约十二分钟。",
+            "outputTokens": 24,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-multi-030",
+            "output": "沈青从柴房来到水房时,苏晚已经在水房了。前后大约十二分钟。",
+            "outputTokens": 26,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          }
+        ]
+      },
+      "checkpoint": "D:\\others\\Jity\\.local\\world-components-worktree\\experiments\\world-components\\assets\\n4-finetune\\diag-step300",
+      "checkpointSha256_16": {
+        "added_tokens.json": "a247922ac010bc17",
+        "config.json": "a35e9d4382657106",
+        "generation_config.json": "691648bea8d35875",
+        "model.safetensors": "8f082bb63e1587f2",
+        "special_tokens_map.json": "65d84a9271d68f12",
+        "spiece.model": "c65feffa65ff0378",
+        "tokenizer_config.json": "553da19a6ed43c57"
+      }
+    },
+    {
+      "step": 360,
+      "meanLossLast60": 0.3847,
+      "seconds": 291.7,
+      "train": {
+        "counts": {
+          "pass": 24,
+          "review": 0,
+          "fail": 0
+        },
+        "rows": [
+          {
+            "groupId": "n4-loc-001",
+            "output": "陈舟从东门来到钟楼。前后大约三分钟。",
+            "outputTokens": 16,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-loc-002",
+            "output": "苏晚从水房来到侧院。前后大约八分钟。",
+            "outputTokens": 17,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-loc-003",
+            "output": "周砚从钟楼来到柴房。前后大约十二分钟。",
+            "outputTokens": 17,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-loc-004",
+            "output": "二十五分钟过去了,林望从侧院抵达石桥。",
+            "outputTokens": 18,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-loc-005",
+            "output": "沈青由柴房进入碑亭。整整四十分钟过去了。",
+            "outputTokens": 19,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-loc-006",
+            "output": "陈舟从东门来到水房。前后大约一小时。",
+            "outputTokens": 16,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-empty-007",
+            "output": "八分钟过去了,风平浪静。",
+            "outputTokens": 13,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-empty-008",
+            "output": "大约十二分钟过去了,一切如旧。",
+            "outputTokens": 13,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-empty-009",
+            "output": "大约二十五分钟过去了,一切如旧。",
+            "outputTokens": 14,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-empty-010",
+            "output": "大约四十分钟过去了,一切如旧。",
+            "outputTokens": 13,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-task-011",
+            "output": "陈舟完成了任务「把铜铃挂回钟楼」。前后大约十二分钟。",
+            "outputTokens": 20,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-task-012",
+            "output": "苏晚完成了任务「整理柴房」。前后大约二十五分钟。",
+            "outputTokens": 18,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-task-013",
+            "output": "周砚完成了任务「修缮石桥栏杆」。前后大约四十分钟。",
+            "outputTokens": 20,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-task-014",
+            "output": "林望完成了任务「清点碑亭石刻」。前后大约一小时。",
+            "outputTokens": 20,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-task-015",
+            "output": "陈舟完成了任务「把铜铃挂回钟楼」。前后大约三分钟。",
+            "outputTokens": 20,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-chain-016",
+            "output": "苏晚办妥了任务「整理柴房」,变得沉稳,精神值从10提升至13。前后大约二十五分钟。",
+            "outputTokens": 33,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-chain-017",
+            "output": "周砚完成了任务「修缮石桥栏杆」,话多了起来,精神值从12涨到了14。前后大约四十分钟。",
+            "outputTokens": 33,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-chain-018",
+            "output": "林望达成了任务「清点碑亭石刻」,变得内敛,精神值从11升到了12。前后大约一小时。",
+            "outputTokens": 34,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-appear-019",
+            "output": "四十分钟过去了,石桥的外观变了:门柱上的漆皮剥落了大半。",
+            "outputTokens": 25,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-appear-020",
+            "output": "碑亭的外观变了:石阶缝里长出了青苔。前后大约一小时。",
+            "outputTokens": 24,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-appear-021",
+            "output": "约三分钟过去了,东门的外观变了:栏杆的漆色褪成了灰白。",
+            "outputTokens": 26,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-multi-022",
+            "output": "陈舟从东门来到柴房时,林望已经在柴房了。前后大约三分钟。",
+            "outputTokens": 25,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-multi-023",
+            "output": "八分钟过去了,苏晚从水房抵达石桥时,沈青已经在石桥了。",
+            "outputTokens": 26,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-multi-024",
+            "output": "周砚从钟楼来到碑亭时,陈舟已经在碑亭了。前后大约十二分钟。",
+            "outputTokens": 26,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          }
+        ]
+      },
+      "dev": {
+        "counts": {
+          "pass": 5,
+          "review": 1,
+          "fail": 0
+        },
+        "rows": [
+          {
+            "groupId": "n4-loc-025",
+            "output": "沈青由柴房进入东门。整整一小时过去。",
+            "outputTokens": 18,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-task-026",
+            "output": "林望完成了任务「清点碑亭石刻」。前后大约三分钟。",
+            "outputTokens": 20,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-empty-027",
+            "output": "大约二十五分钟过去了,一切如旧。",
+            "outputTokens": 14,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-chain-028",
+            "output": "陈舟完成了任务「把铜铃挂回钟楼」,变得大胆,精神值从10升到了8。前后大约三分钟。",
+            "outputTokens": 32,
+            "verdict": "review",
+            "fails": [],
+            "reviews": [
+              "clause '精神值从10升到了8' not fully covered by plan recognizers (covered 0/10) — unrecognized content, needs review",
+              "mustExpress [2] mentioned in planRefs but has no value-consistent expression in the text — needs review"
+            ]
+          },
+          {
+            "groupId": "n4-appear-029",
+            "output": "水房的外观变了:墙角的青砖泛了潮。前后大约十二分钟。",
+            "outputTokens": 24,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          },
+          {
+            "groupId": "n4-multi-030",
+            "output": "沈青从柴房来到水房时,苏晚已经在水房了。前后大约十二分钟。",
+            "outputTokens": 26,
+            "verdict": "pass",
+            "fails": [],
+            "reviews": []
+          }
+        ]
+      },
+      "checkpoint": "D:\\others\\Jity\\.local\\world-components-worktree\\experiments\\world-components\\assets\\n4-finetune\\diag-step360",
+      "checkpointSha256_16": {
+        "added_tokens.json": "a247922ac010bc17",
+        "config.json": "a35e9d4382657106",
+        "generation_config.json": "691648bea8d35875",
+        "model.safetensors": "b80e8d0fdce04fe9",
+        "special_tokens_map.json": "65d84a9271d68f12",
+        "spiece.model": "c65feffa65ff0378",
+        "tokenizer_config.json": "553da19a6ed43c57"
+      }
+    }
+  ],
+  "conclusionInputs": {
+    "question": "does 60->360 steps fix train-plan errors (empty/chain/multi)?",
+    "readTogetherWith": "human verdicts (review round 9): dev 3/6 plans pass with the appearance false-reject now equivalence-ruled"
+  }
+}
