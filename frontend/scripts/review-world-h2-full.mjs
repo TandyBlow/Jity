@@ -450,7 +450,7 @@ try {
     let roll = null;
     let attempts = 0;
     for (attempts = 1; attempts <= 6 && !roll?.admitted; attempts++) {
-      if (attempts > 1) await createWorld();
+      await createWorld();
       const attemptIds = await allocate([
         { slotKey: 'advance', kind: 'advance' }, { slotKey: 'input', kind: 'input' }, { slotKey: 'round', kind: 'round' },
         { slotKey: 'point_1', kind: 'point' }, { slotKey: 'group_1', kind: 'group' },
