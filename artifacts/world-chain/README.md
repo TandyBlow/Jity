@@ -1,4 +1,4 @@
-# 真实模型小世界两场景验收：混合首轮报告（勘误后）
+# 真实模型小世界验收报告：混合首轮 + 二十次输入（§798 阶段 5）
 
 日期：2026-10-28/29。分支 `world-browser`。本目录的原始记录与角色：
 
@@ -10,9 +10,13 @@
   场景段的证据完整。
 - `first-round-v3.json` —— **chain 段的 canonical 记录**（harness
   `ae67b86`）：token 级证据、逐世界骰点、全量轨迹齐备且可复验。
+- `twenty-round.json` + `twenty-run-db/` —— **二十次输入验收（2026-10-29，
+  见第六节）**：单世界四阶段、逐 commit S₀ 折算、原始 SQLite 库与
+  server.log 随报告留存。
 
-脚本：`frontend/scripts/run-world-chain-full.mjs`（可复跑，`--phase
-action|chain|both`）。
+脚本：`frontend/scripts/run-world-chain-full.mjs`（两场景，`--phase
+action|chain|both`）；`frontend/scripts/run-world-twenty.mjs`（二十次输入，
+单模式）。
 
 **范围声明：这是「混合首轮」基线，不是全模型语义的整链验收。** 场景 A
 结算=规则权威组件（action/targets/results/updates/continuation 零模型
@@ -194,7 +198,76 @@ continuation 全部零模型调用）+ 真实模型叙事（模型为主 → 判
    completion 证据与断言），20 次跑直接产出；逐输入服务端操作明细表同
    由 opLog 直接聚合。
 
-## 五、复跑
+**→ 上述 1–5 已全部由第六节的二十次输入验收覆盖（2026-10-29）。**
+
+## 五、二十次输入验收结果（2026-10-29；harness run-world-twenty.mjs）
+
+**PASS_TWENTY：21 次玩家输入、单世界四阶段、全部 hard assert 通过。**
+原始记录 `twenty-round.json`；原始 SQLite 库（3.1MB）+ server.log（53KB）
+留存于 `twenty-run-db/`（取证后不删原始数据）。范围口径同第四节：端到端
++持久化+真实叙事；结算语义留 B3。
+
+| 阶段 | 内容 | 结果 |
+| --- | --- | --- |
+| A | RuleWorldSession，输入 1–8（任务达成/被拒/未识别/移动） | 全部 world_complete；逐输入等待 10.0–16.5s；9 次模型尝试（根+8）全首稿过门 |
+| B | 外部 checkpoint_pause → 服务进程重启（同 SQLite 文件，停机 2.6s）→ resume → 恢复会话 attach | paused 标志跨重启存活 ✓；状态 parity（version/head/理智/位置）全等 ✓ |
+| C | 驱动器接管同世界：脚本化共同结算（真实 d20 首环）→ 空 linked 续段 → continue×2 自动轮 → handback（输入 9） | 3 个世界骰点 3/3 被拒、11 准入（worldAttempts 全落盘）；2 条 continue 链；走链 43.5s |
+| D | 恢复规则会话，输入 10–21（12 条）+ 叙事缓存删除重生成 | 全部 world_complete；narration_delete 后 claim→删除→再 claim→真实模型重生成→回填，generation 1→2，首稿过门 |
+
+逐项交付证据（均在 `twenty-round.json`）：
+
+- **≥20 次玩家输入**：21 条，逐输入 terminal/判定/叙事/wallMs/模型尝试
+  （含 facts 与 completion 证据）/wireCaptures/serverOps 全落盘。
+- **多条自动推进链**：`continuationLog` = continue(round_96) →
+  continue(round_97) → handback；自动轮普通点 point_98/point_99。
+- **至少一次连锁共同结算**：真实服务端 d20（target 11，result 11 准入）；
+  结算候选为脚本（B3 边界），settled unit 含任务+人格+理智完整因果。
+- **共同结算后的空 linked 续段**：point_95（kind instant，同轮
+  round_91）——**`linked_from_point_id = point_92` 由留存 SQLite
+  `world_points` 列直接核验**（list_points 的 wire 投影不含该列，DB 为准）；
+  该点零行动、纯时间扫描、真实模型叙事。
+- **暂停续接与服务重启**：见上表 B 行；重启前后 PID、停机时长、parity
+  在 `phases.B_*` 与 `restarts`。
+- **每次提交后从 S₀ 重建一致状态**：共享 transport 在**每个 commit_point
+  成功回执上**做全链折算（root 状态 + Σ 各点 recorded timeAdvance/
+  entityDeltas 与各点 served state 逐一深比较）；25 次 fold 全部 ok
+  （`foldLog`），终局再跑一次全量 fold。
+- **清除叙事缓存后重生成**：claim(gen 1) → narration_delete（status
+  missing，invalidatedGeneration 1）→ claim(gen 2) → narrateFromReads
+  （真实模型+同一判分门）→ narration_submit → narration_get ready(gen 2)。
+- **token 级证据**：26 次模型尝试 / 26 条 completion 证据（prompt_n/
+  predicted_n/分段耗时/finishReason），零缺失（断言钉住）。
+
+本轮钉档：browser pin 与 server pin（156 文件 sha256）在 artifact 头部，
+`git diff -- backend/app` 对 v3 pin 仍为空。
+
+### 本批发现（按发现顺序）
+
+1. **[harness 缺陷，已修]** `list_points` 的 limit 上限是 100（schema
+   硬约束）——fold 钩子用 200 触发 ProtocolError 污染驱动器终态。
+2. **[语义确认]** `ControllerDriver.getMemory()` 返回深拷贝——外部
+   prepareSuccessor 注入必须走恢复计划路径（recovery 原生携带 prepared
+   successor：plan=[current, successor]，commit 后服务端自动提升）。
+3. **[语义确认]** commit 后服务端直接进 `assess_continuation`（轮随
+   commit 结束，游标耗尽时）——同轮 plan 的后续点只在游标未耗尽时开始；
+   共同结算吞满 roster 游标，因此空 linked 续段必须走 prepare_successor
+   预绑定+恢复提升，而不是同轮 plan。
+4. **[语义确认]** 轮内第一个点必须 kind='normal'、后续点必须非 normal
+   （judgments.py 身份校验）；instant/linked 点必须 boundary='instant'
+   （instant 另要 duration 0，T08 s7 录制形状）。
+5. **[语义确认]** 租约生命周期：handback 不释放租约；lease_acquire 在
+   任何存活租约上拒绝（lease_held）；lease TTL=1h。恢复路径对 held
+   lease 做 lease_renew。harness 的 raw 操作因此需要 token 同步与
+   lease_invalid 自愈重试。
+6. **[wire 形状]** narration_delete 是查询串模型（无 worldId/pointId
+   字段、pointId 走路径）；narration_get 客户端无 requestSchema（body
+   必须为空，pointId 走 scope 进路径）；list_points 投影不含
+   linkedFromPointId/trigger/timeAdvance。
+7. **[稳定性]** wllama wasm 偶发崩溃（chat template assert）会毒化
+   模块级引擎缓存——harness 对崩溃错误做新模块实例重载+单次重试；
+   本轮最终 run 未触发（9+17 次模型调用零崩溃）。
+
+## 六、复跑
 
 ```powershell
 # 仓库根目录；服务检出默认 .local/world-server-worktree（sha256 钉档，
@@ -203,4 +276,8 @@ cd frontend
 node scripts/run-world-chain-full.mjs --out artifacts/world-chain/first-round-v3.json
 #   [--phase action|chain|both] [--server-checkout 路径] [--python python]
 #   [--allow-dirty-server] [--allow-dirty-browser]  # 按侧豁免脏钉住集（artifact 仍记录 status）
+
+node scripts/run-world-twenty.mjs --out artifacts/world-chain/twenty-round.json
+#   [--server-checkout 路径] [--python python]  # 单模式；DB+日志自动留存到
+#   # artifacts/world-chain/twenty-run-db/（每次运行覆盖，复跑前自行归档）
 ```
