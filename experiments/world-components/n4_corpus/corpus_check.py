@@ -93,7 +93,9 @@ def entry_patterns(entry: dict) -> list:
     kind = entry.get("kind")
     if kind == "moved":
         name, frm, to = entry["name"], entry["from"], entry["to"]
-        return [rf"(?P<subj>{esc(name)})(?P<dur>(用了|花了)?{CN_NUM}(分钟|小时))?(从|由|离开){esc(frm)}(一路)?((走|来|进)到了?|到了?|抵达|进入)了?{esc(to)}(时?)"]
+        # 一路 may precede or follow the from-marker; the from-marker takes
+        # an optional 了 (离开了钟楼)
+        return [rf"(?P<subj>{esc(name)})(?P<pre>(一路))?(?P<dur>(用了|花了)?{CN_NUM}(分钟|小时))?(从|由|离开)了?{esc(frm)}(一路)?((走|来|进)到了?|到了?|抵达|进入)了?{esc(to)}(时?)"]
     if kind == "task_achieved":
         return [rf"{esc(entry['name'])}(已经|已)?(完成|达成|办妥)了?任务「{esc(entry['goal'])}」"]
     if kind == "personality_changed":
