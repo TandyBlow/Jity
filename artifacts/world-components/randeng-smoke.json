@@ -1,0 +1,86 @@
+{
+  "purpose": "offline loadability smoke (not a quality gate)",
+  "model": {
+    "hfId": "IDEA-CCNL/Randeng-T5-77M-MultiTask-Chinese",
+    "source": "https://hf-mirror.com/IDEA-CCNL/Randeng-T5-77M-MultiTask-Chinese",
+    "localDir": "D:\\others\\Jity\\.local\\world-components-worktree\\experiments\\world-components\\assets\\randeng-t5-77m",
+    "files": {
+      "config.json": {
+        "bytes": 780,
+        "sha256": "9b2480c0a39fd09b6c40a879cb925a5f93dadb699f22f9a419a8b070a68fe8f5"
+      },
+      "model.safetensors": {
+        "bytes": 309783974,
+        "sha256": "5cdc572109cf25914b43fede20a6949b5fbf50b3a091a9c445fac60059bf5557"
+      },
+      "special_tokens_map.json": {
+        "bytes": 65,
+        "sha256": "09059cedc26bc46bc09a52f05b92d4922e11917e87f3b92059bb1a63a59ab2c4"
+      },
+      "spiece.model": {
+        "bytes": 680811,
+        "sha256": "c65feffa65ff0378759778193852083d23349cb1b40c906e9463a12f8076ff32"
+      },
+      "tokenizer_config.json": {
+        "bytes": 439,
+        "sha256": "af072c7d91576727b73b161e484110848724c5243d6256ee8c2e505f0b044880"
+      }
+    }
+  },
+  "environment": {
+    "python": "3.12.3",
+    "torch": "2.7.0+cu126",
+    "device": "cpu",
+    "sentencepiece": "0.2.2",
+    "transformers": "4.57.3"
+  },
+  "load": {
+    "seconds": 0.51,
+    "paramCount": 77440384,
+    "officialClaim": 77440384,
+    "paramCountMatches": true
+  },
+  "probes": [
+    {
+      "name": "multitask-template-sentiment",
+      "note": "模型卡风格的多任务模板探针：检查模板跟随行为",
+      "input": "情感分析任务：【这间图书馆的藏书非常丰富。】这篇文章的情感态度是什么？正面/负面",
+      "inputTokens": 28,
+      "output": "正面",
+      "outputTokens": 4,
+      "wallSeconds": 0.382
+    },
+    {
+      "name": "narration-freeform",
+      "note": "自由格式成句探针：一段自然语言变化描述",
+      "input": "用一句中文叙述以下变化：学生A从大厅走到了走廊。时间过去了约三十分钟。",
+      "inputTokens": 26,
+      "output": "学生A从大厅走到了走廊。时间过去了约三十分钟。",
+      "outputTokens": 19,
+      "wallSeconds": 0.871
+    },
+    {
+      "name": "narration-template",
+      "note": "结构化模板成句探针：位置事实＋时间",
+      "input": "叙事生成任务：【位置：学生A 大厅→走廊】【时间：约30分钟】请用一句中文叙述这一变化。",
+      "inputTokens": 35,
+      "output": "时间:约30分钟",
+      "outputTokens": 8,
+      "wallSeconds": 0.381
+    },
+    {
+      "name": "narration-empty-point",
+      "note": "空点探针：只有时间、无实体变化（对应叙事子步的时间/空点难点）",
+      "input": "叙事生成任务：【时间：约30分钟】【变化：没有新的变化】请用一句中文叙述。",
+      "inputTokens": 27,
+      "output": "时间:约30分钟",
+      "outputTokens": 8,
+      "wallSeconds": 0.339
+    }
+  ],
+  "disclaimers": [
+    "probes are newly written for this smoke, not from any existing corpus",
+    "no quality verdict is issued here; deliverable 3 quality gates use the isolated dev set",
+    "card recipe resizes embeddings with 100 extra tokens; this smoke loads as-is"
+  ]
+}
