@@ -1,9 +1,13 @@
 # H2：浏览器恢复与 SQLite 联调验收
 
-当前状态：2026-10-28。完整 H2 矩阵已在固定集成组合 **A=`1ef34e7`＋B=`21a95f0`**
-（merge `d1d2de0`）上重新跑过：main、successor、post-restart 与三种损坏场景
-全绿，隔离 SQLite、真实 `ControllerDriver.recover`，证据见
-[集成组合验收记录](../../artifacts/h2-integration-d1d2de0/README.md)。
+当前状态：2026-10-28，**A3-2 关闭、本轮 H2 范围冻结**。完整 H2 矩阵已在固定
+集成组合 **A=`1ef34e7`＋B=`21a95f0`**（merge `d1d2de0`）上跑过：main、successor、
+post-restart 与三种损坏场景全绿，隔离 SQLite、真实 `ControllerDriver.recover`，
+证据见[集成组合验收记录](../../artifacts/h2-integration-d1d2de0/README.md)；
+[关闭签字](../../artifacts/a3-2-signoff-d1d2de0.md)与
+[冻结记录](../../artifacts/h2-freeze-d1d2de0.json)绑定归档提交 `a41a9d4`。
+冻结范围只含本轮约定矩阵：release/acquire 接管，不含 TTL 自然到期、真实
+浏览器、B3 全量与真实模型整链。此前 2026-10-27 的冻结记录保留原范围。
 此前 2026-10-27 的固定组合 **B=`6b809dc`＋A=`0cb1951`** 记录保留原范围如下。
 
 ### 2026-10-27 记录
