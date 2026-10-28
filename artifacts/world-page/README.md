@@ -172,6 +172,21 @@ false，`SharedArrayBuffer` 不可用，多线程 wasm 路径全程缺失（单�
 通过。lint 顺带清掉规则事实切片遗留的 5 处测试 `any` 与 1 处 `prefer-const`
 （自 2a6eff2/c25ede4 起 `npm run lint` 在本地即已失败，前端 CI 的 lint 步骤会红）。
 
+## 复核签字（2026-10-28，B=552148c）
+
+用户独立验收通过，签字文档：[signoff-552148c.md](signoff-552148c.md)。
+
+- 关闭两项 P2：SPA 进入 `/world` 不隔离；缺响应头时降级静默（告警被 boot
+  清空）。复核实测：软导航后自动重载、隔离生效、护栏清除；缺头环境只重载
+  一次且告警持续可见。
+- 复核实跑：15 个源码摘要全匹配、565/565、双 tsc、lint 通过（仅 warning）；
+  `world-browser` 与 origin 一致、工作树干净。
+- 边界：**B 批次通过，整体 CI 未闭环**。B 单树导出检查在 `api-contract.json`
+  报 drift、backend 75 个失败全在 v2 契约/恢复/导出用例；根因是 R1 契约已镜像
+  （`88311b2`）而本分支 backend 仍在 `cabb04c`（A 的 `4739ae4` 未合）。下一步由
+  A 在临时集成 checkout 组合 **A=`3734a52` + B=`552148c`**，收绿 backend 与
+  world-interface。
+
 ## 已知边界
 
 - 无头环境下 wllama 加载可能挂起（r6 轮以模板呈现，即回退路径的实证）；
