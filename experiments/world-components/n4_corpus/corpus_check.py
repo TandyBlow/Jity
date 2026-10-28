@@ -48,22 +48,23 @@ CN_NUM = r"[\d零一二两三四五六七八九十]+"
 QUOTE = r"「[^」]*」"
 
 
+CN_DIGITS = {"零": 0, "一": 1, "二": 2, "两": 2, "三": 3, "四": 4, "五": 5,
+             "六": 6, "七": 7, "八": 8, "九": 9}
+
+
 def cn_to_int(s: str):
     if s.isdigit():
         return int(s)
     if s == "十":
         return 10
     if s.startswith("十"):
-        return 10 + {"一": 1, "二": 2, "两": 2, "三": 3, "四": 4, "五": 5,
-                     "六": 6, "七": 7, "八": 8, "九": 9}[s[1]] if len(s) == 2 else None
+        return 10 + CN_DIGITS[s[1]] if len(s) == 2 else None
     if "十" in s:
-        CN = {"一": 1, "二": 2, "两": 2, "三": 3, "四": 4, "五": 5, "六": 6,
-              "七": 7, "八": 8, "九": 9}
-        tens = CN.get(s[0])
+        tens = CN_DIGITS.get(s[0])
         if tens is None or tens < 2:
             return None
-        return tens * 10 + CN.get(s[2], 0) if len(s) == 3 else tens * 10
-    return None
+        return tens * 10 + CN_DIGITS.get(s[2], 0) if len(s) == 3 else tens * 10
+    return CN_DIGITS.get(s)
 
 
 def sha(text: str) -> str:
@@ -80,19 +81,19 @@ def esc(s: str) -> str:
 
 def entry_patterns(entry: dict) -> list:
     """Controlled recognizer patterns for one plan entry (regex, unanchored).
-    positions: the row's positionedClaims (for positioned_at entries)."""
+    The ONLY free-value point is moved's embedded duration; every other
+    pattern is built from the plan's own values, so a match pins the value.
+    moved's duration group is parsed and compared against the row's time
+    entry by the caller (v4: matched-but-inconsistent = not expressed)."""
     kind = entry.get("kind")
     if kind == "moved":
         name, frm, to = entry["name"], entry["from"], entry["to"]
-        # subject + optional program-spent-time phrase + from-marker + arrival;
-        # anything else between components breaks the match -> review
-        return [rf"{esc(name)}((用了|花了)?{CN_NUM}(分钟|小时))?(从|由|离开){esc(frm)}(一路)?((走|来|进)到了?|到了?|抵达|进入)了?{esc(to)}(时?)"]
+        return [rf"(?P<subj>{esc(name)})(?P<dur>(用了|花了)?{CN_NUM}(分钟|小时))?(从|由|离开){esc(frm)}(一路)?((走|来|进)到了?|到了?|抵达|进入)了?{esc(to)}(时?)"]
     if kind == "task_achieved":
-        return [rf"{esc(entry['name'])}((已经|已)?(完成|达成|办妥)了?任务|任务.*(已经|已)?(完成|达成))了?「{esc(entry['goal'])}」"]
+        # v4: no `.*` — the negated form must NOT match (it used to swallow
+        # 尚未/没有 and read as a completion claim)
+        return [rf"{esc(entry['name'])}(已经|已)?(完成|达成|办妥)了?任务「{esc(entry['goal'])}」"]
     if kind == "personality_changed":
-        # text may itself start with 变得 or be a standalone change phrase;
-        # the optional verb prefix only extends the match, the plan text is
-        # what must appear verbatim
         return [rf"(?:{esc(entry['name'])})?(?:形成了新的人格描述|变得)?了?「?{esc(entry['text'])}」?"]
     if kind == "sanity_changed":
         lo, hi = entry["from"], entry["to"]
@@ -109,8 +110,28 @@ def entry_patterns(entry: dict) -> list:
     return []
 
 
+def moved_duration_ok(entry: dict, m: "re.Match", plan: list) -> tuple:
+    """moved's parsed duration must agree with the row's time entry."""
+    dur = m.group("dur")
+    if not dur:
+        return True, None
+    time_entry = next((e for e in plan if e.get("kind") == "time"), None)
+    if time_entry is None:
+        return False, "moved clause embeds a duration but the plan has no time entry"
+    num = re.sub(r"^(用了|花了)", "", dur)
+    unit = "分钟" if num.endswith("分钟") else "小时" if num.endswith("小时") else None
+    digits = num[: -len(unit)] if unit else num
+    v = cn_to_int(digits)
+    if v != time_entry["amount"]:
+        return False, (f"embedded duration {dur}={v} contradicts the planned time "
+                       f"{time_entry['amount']}{time_entry['unit']}")
+    return True, None
+
+
 def check_row(r: dict):
-    """Returns (fails, reviews). Coverage-based; unrecognized residue reviews."""
+    """Returns (fails, reviews). v4: a plan entry counts as EXPRESSED only
+    when a recognizer matched it AND parsed values agree with the plan;
+    mustExpress requires expression evidence, not a planRefs mention."""
     fails, reviews = [], []
     text, plan, refs = r["text"], r["plan"], r["planRefs"]
     sentences = [s for s in text.split("。") if s.strip()]
@@ -118,6 +139,7 @@ def check_row(r: dict):
         fails.append(f"planRefs has {len(refs)} entries for {len(sentences)} sentences")
 
     cited = set()
+    expressed = set()
     for si, srefs in enumerate(refs):
         sent = sentences[si] if si < len(sentences) else ""
         for ref in srefs:
@@ -125,17 +147,22 @@ def check_row(r: dict):
                 fails.append(f"sentence {si}: plan ref {ref} out of range (plan has {len(plan)})")
             else:
                 cited.add(ref)
-        # clause coverage: every comma-clause must be fully covered by
-        # recognizer spans of the entries this sentence cites
+        # clause coverage + value-consistent expression evidence
         entries = [plan[ref] for ref in srefs
                    if isinstance(ref, int) and 0 <= ref < len(plan)]
-        pats = [(e, p) for e in entries for p in entry_patterns(e)]
         for clause in [c for c in re.split(r"[,，;；]", sent) if c.strip()]:
             core = clause.strip()
             spans = []
-            for _e, p in pats:
-                for m in re.finditer(p, core):
-                    spans.append((m.start(), m.end()))
+            for entry in entries:
+                for p in entry_patterns(entry):
+                    for m in re.finditer(p, core):
+                        spans.append((m.start(), m.end()))
+                        if entry.get("kind") == "moved":
+                            ok, why = moved_duration_ok(entry, m, plan)
+                            if not ok:
+                                reviews.append(why)
+                                continue
+                        expressed.add(entry["ref"])
             merged = []
             for s0, e0 in sorted(spans):
                 if merged and s0 <= merged[-1][1]:
@@ -152,6 +179,11 @@ def check_row(r: dict):
     must = set(r["mustExpress"])
     if not must <= cited:
         fails.append(f"mustExpress {sorted(must - cited)} not covered by planRefs")
+    unexpressed = sorted(must - expressed)
+    if unexpressed:
+        reviews.append(
+            f"mustExpress {unexpressed} mentioned in planRefs but has no value-"
+            f"consistent expression in the text — needs review")
 
     if r["rowOrigin"] == "rewrite":
         if r.get("rewriter") != "zcode-model":
@@ -225,6 +257,10 @@ def main() -> None:
         (with_text(loc1, "陈舟打算从东门来到钟楼。前后大约三分钟。"), "review", "intent-as-fact"),
         (with_text(empty, "大约八分钟过去了，一切并非如旧。"), "review", "negated-empty"),
         (with_text(task, f"沈青知道{task_entry['name']}完成了任务「{task_entry['goal']}」。", planRefs=[[0]], mustExpress=[0]), "review", "wrong-actor"),
+        # v4 round-4 counterexamples
+        (with_text(loc1, "前后大约三分钟。", planRefs=[[0, 1]]), "review", "must-not-expressed"),
+        (with_text(loc1, "陈舟用了八分钟从东门走到了钟楼。前后大约三分钟。"), "review", "embedded-duration-mismatch"),
+        (with_text(task, f"{task_entry['name']}任务尚未完成「{task_entry['goal']}」。前后大约三分钟。"), "review", "task-yet-incomplete"),
     ]
     void = []
     for bad, expected, label in bads:
@@ -237,7 +273,7 @@ def main() -> None:
         for x in void:
             print(" ", x)
         sys.exit(2)
-    print("self-test PASS: 12/12 negative rows caught with expected verdict class")
+    print("self-test PASS: 15/15 negative rows caught with expected verdict class")
 
     # ---- group consistency ----
     groups = {}

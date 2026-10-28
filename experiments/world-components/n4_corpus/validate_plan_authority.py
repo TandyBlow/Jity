@@ -101,6 +101,109 @@ def build_before(world: dict) -> WorldState:
             for c in world["characters"]})
 
 
+def reconcile(r: dict, locs: dict, chars: dict):
+    """v3: full plan <-> rawDelta reconciliation (review round 4, gap 3).
+    The generator's same-source promise is NOT trusted: every plan entry
+    must correspond to a delta field with an EQUAL value, and every delta
+    field must be covered by a plan entry - both directions, all kinds
+    (time, appearance, personality, positioned current-state included)."""
+    problems, checks = [], []
+    deltas = r["rawDelta"]["entityDeltas"]
+    time_entry = r["rawDelta"]["time"]
+    plan = r["plan"]
+
+    for entry in plan:
+        k, ref = entry["kind"], entry["ref"]
+        if k == "moved":
+            d = next((d for d in deltas if d["entityId"] == entry["entityId"]
+                      and "positionSet" in d), None)
+            if d is None:
+                problems.append(f"plan ref {ref} moved: no positionSet in rawDelta")
+            elif d["positionSet"]["containerId"] != locs[entry["to"]]:
+                problems.append(f"plan ref {ref} moved to {entry['to']} "
+                                f"({locs[entry['to']]}) but rawDelta positionSet is "
+                                f"{d['positionSet']['containerId']}")
+            else:
+                checks.append({"check": "reconcile-moved", "ref": ref, "result": "ok"})
+        elif k == "task_achieved":
+            tid = chars[entry["name"]]["tasks"].get(entry["goal"], {}).get("id")
+            d = next((d for d in deltas if d["entityId"] == entry["entityId"]
+                      and "tasksAchieved" in d), None)
+            if d is None or tid is None or tid not in d["tasksAchieved"]:
+                problems.append(f"plan ref {ref} task '{entry['goal']}' has no matching "
+                                f"tasksAchieved in rawDelta")
+            else:
+                checks.append({"check": "reconcile-task", "ref": ref, "result": "ok"})
+        elif k == "sanity_changed":
+            d = next((d for d in deltas if d["entityId"] == entry["entityId"]
+                      and "sanitySet" in d), None)
+            if d is None or d["sanitySet"] != entry["to"]:
+                problems.append(f"plan ref {ref} sanity to={entry['to']} but rawDelta "
+                                f"sanitySet={d['sanitySet'] if d else None}")
+            else:
+                checks.append({"check": "reconcile-sanity", "ref": ref, "result": "ok"})
+        elif k == "personality_changed":
+            texts = [c["text"] for d in deltas if d["entityId"] == entry["entityId"]
+                     for c in d.get("personalityChanges", [])]
+            if entry["text"] not in texts:
+                problems.append(f"plan ref {ref} personality text '{entry['text']}' not "
+                                f"in rawDelta personalityChanges {texts}")
+            else:
+                checks.append({"check": "reconcile-personality", "ref": ref, "result": "ok"})
+        elif k == "appearance_changed":
+            texts = [c["text"] for d in deltas if d["entityId"] == entry["entityId"]
+                     for c in d.get("appearanceChanges", [])]
+            if entry["text"] not in texts:
+                problems.append(f"plan ref {ref} appearance text '{entry['text']}' not in "
+                                f"rawDelta appearanceChanges {texts}")
+            else:
+                checks.append({"check": "reconcile-appearance", "ref": ref, "result": "ok"})
+        elif k == "time":
+            if (time_entry["amount"] != entry["amount"]
+                    or time_entry["unit"] != entry["unit"]):
+                problems.append(f"plan ref {ref} time {entry['amount']}{entry['unit']} but "
+                                f"rawDelta time {time_entry['amount']}{time_entry['unit']}")
+            else:
+                checks.append({"check": "reconcile-time", "ref": ref, "result": "ok"})
+        elif k == "positioned_at":
+            if any(d["entityId"] == entry["entityId"] and "positionSet" in d
+                   for d in deltas):
+                problems.append(f"plan ref {ref} claims {entry['name']} is ALREADY at "
+                                f"{entry['at']} but rawDelta moves them — current state "
+                                f"must not be a delta")
+            else:
+                checks.append({"check": "reconcile-positioned", "ref": ref, "result": "ok"})
+        elif k == "no_change":
+            if deltas:
+                problems.append("plan claims no_change but rawDelta carries deltas")
+            else:
+                checks.append({"check": "reconcile-no-change", "ref": ref, "result": "ok"})
+
+    # reverse direction: every delta field must be covered by a plan entry
+    for d in deltas:
+        eid = d["entityId"]
+        if "positionSet" in d and not any(
+                e["kind"] == "moved" and e["entityId"] == eid for e in plan):
+            problems.append(f"rawDelta moves {eid} but no plan entry expresses it")
+        if "tasksAchieved" in d and not any(
+                e["kind"] == "task_achieved" and e["entityId"] == eid for e in plan):
+            problems.append(f"rawDelta completes tasks for {eid} but no plan entry expresses it")
+        if "sanitySet" in d and not any(
+                e["kind"] == "sanity_changed" and e["entityId"] == eid for e in plan):
+            problems.append(f"rawDelta sets sanity for {eid} but no plan entry expresses it")
+        if "personalityChanges" in d and not any(
+                e["kind"] == "personality_changed" and e["entityId"] == eid for e in plan):
+            problems.append(f"rawDelta changes personality for {eid} but no plan entry "
+                            f"expresses it")
+        if "appearanceChanges" in d and not any(
+                e["kind"] == "appearance_changed" and e["entityId"] == eid for e in plan):
+            problems.append(f"rawDelta changes appearance for {eid} but no plan entry "
+                            f"expresses it")
+    if time_entry is not None and not any(e["kind"] == "time" for e in plan):
+        problems.append("rawDelta carries a time advance but no plan entry expresses it")
+    return problems, checks
+
+
 def main() -> None:
     rows = []
     for cf in CORPUS_FILES:
@@ -111,6 +214,32 @@ def main() -> None:
     head = subprocess.run(["git", "-C", str(SERVER_TREE), "rev-parse", "HEAD"],
                           capture_output=True, text=True).stdout.strip()
     apply_py = SERVER_TREE / "backend" / "app" / "services" / "world" / "apply.py"
+
+    # ---- tamper self-test: plan<->delta divergence MUST be caught ----
+    def tampered_problems(src, mutate):
+        import copy
+        t = copy.deepcopy(src)
+        mutate(t)
+        locs_t, chars_t = register_registry(t["world"])
+        return reconcile(t, locs_t, chars_t)[0]
+
+    loc1 = next(r for r in rows if r["sourceGroupId"] == "n4-loc-001")
+    appear = next(r for r in rows if r["sourceGroupId"].startswith("n4-appear"))
+    void = []
+    p1 = tampered_problems(loc1, lambda t: t["rawDelta"]["time"].__setitem__("amount", 8))
+    if not any("time" in p for p in p1):
+        void.append(f"time tamper not caught: {p1}")
+    p2 = tampered_problems(appear, lambda t: t["rawDelta"]["entityDeltas"][0]
+                           ["appearanceChanges"][0].__setitem__("text", "门柱刷上了金漆"))
+    if not any("appearance" in p for p in p2):
+        void.append(f"appearance tamper not caught: {p2}")
+    if void:
+        print("REPORT VOID — reconciliation self-test failed:")
+        for x in void:
+            print(" ", x)
+        sys.exit(2)
+    print("self-test PASS: 2/2 plan<->delta tamper rows caught")
+
     report = {
         "purpose": "apply-based provenance validation of corpus fact plans (evidence, not a claim)",
         "pydanticVersion": pydantic.VERSION,
@@ -206,6 +335,11 @@ def main() -> None:
                         f"— current-state claim not backed by the before state")
                 else:
                     checks.append({"check": "positioned-before", "result": "ok"})
+
+        # 2b. full plan <-> rawDelta reconciliation (both directions)
+        rec_problems, rec_checks = reconcile(r, locs, chars)
+        problems.extend(rec_problems)
+        checks.extend(rec_checks)
 
         # 3. apply via the A-side kernel, then check AFTER values
         if not problems:
