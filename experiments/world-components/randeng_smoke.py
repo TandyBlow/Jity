@@ -131,7 +131,7 @@ def main() -> None:
             "provenance per-probe in the probes list; three of four are registered B-derivation examples (see script header)",
             "no quality verdict is issued here; deliverable 3 quality gates use the isolated dev set",
             "card recipe resizes embeddings with 100 extra tokens; this smoke loads as-is",
-            "timings include 8-19 token short outputs; compare against Qwen only at matched token counts",
+            "timings cover 4/19/8/8 output tokens (r2 measured); compare against Qwen only at matched token counts",
         ],
     }
 

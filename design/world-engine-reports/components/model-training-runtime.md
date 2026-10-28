@@ -92,7 +92,7 @@
 ## 6. 环境与通道待办（第3项开工前置）
 
 - `pip install sentencepiece`（T5 离线分词必需，F12）；pyarrow 桩沿用 `train-action-classifier.py` 方案（F6）。
-- MiniRBT ID 与许可已核（复核轮：`hfl/minirbt-h256`→200、`iflytek/MiniRBT-H256`→401、许可 apache-2.0）；Randeng/Mengzi 权重走 hf-mirror 下载，下载后以锁定权重文件核对 LICENSE。
+- MiniRBT ID 与许可已核（复核轮：`hfl/minirbt-h256`→200、`iflytek/MiniRBT-H256`→401、许可 apache-2.0）；Randeng/Mengzi 权重走 hf-mirror 下载。下载后许可落实：Mengzi 核对 LICENSE 文件；Randeng 仓库无 LICENSE 文件，以模型卡声明为准（§2 许可段）。
 - 在 C 工作树重新配置 MiniRBT-H256 快照并记录获取方式（F11：主树快照不入库不共享；通道=hfl/minirbt-h256 经 hf-mirror）。主树 `train-action-classifier.py` 头注仍写旧 ID `iflytek/MiniRBT-H256`（历史注释、不影响产物；正确 ID 以 F13 为准，脚本修正归 B 线后续批次，C 运行记录只用正确 ID）。
 - 浏览器分发：`public/models/` 当前为空（模型文件不入库），重建路径=各 train 脚本导出＋`copy-*-assets.mjs` 机制（已有）。
 - 旧试验资产只复用**方法学**（数据纪律、封存批协议、计时口径、导出脚本骨架）；旧语料、旧标签体系、旧门阈值一律不复用（F8）。
