@@ -713,6 +713,13 @@ JSON Schema，因此布尔会一路进入轨迹校验。修复为
 上节遗留的“TS 契约/轨迹红于旧 B 守卫”在同一树上消失：B 的七项同步
 （`88311b2`）与 A 的响应版本拆分在此组合中互相闭合。
 
+### 远程 CI
+
+本分支 `2019f9b` 的 GitHub Actions（run `40641906544`，2026-10-28T06:07Z）：
+backend / frontend / world-interface 三个作业全部 **success**。这是该组合第一次
+在远端 CI 上闭环——`world-server` 单树（`3734a52`）此前 frontend 与
+world-interface 按设计失败（旧 B 守卫未同步），本组合消掉了这两个红项。
+
 ### 边界
 
 - 本组合只作为接口验收证据：未合并 `world-server` / `world-browser` 开发
