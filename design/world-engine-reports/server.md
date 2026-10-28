@@ -720,6 +720,13 @@ backend / frontend / world-interface 三个作业全部 **success**。这是该�
 在远端 CI 上闭环——`world-server` 单树（`3734a52`）此前 frontend 与
 world-interface 按设计失败（旧 B 守卫未同步），本组合消掉了这两个红项。
 
+### 用户签字（2026-10-28）
+
+用户独立核对合并双亲、验收树、契约摘要、远程 CI run 绑定与本记录数字后，
+**签字同意本组合的联合接口验收**。签字页见
+[joint-acceptance-f2fbee11.md](joint-acceptance-f2fbee11.md)：范围仅限本组合
+的接口验收，不构成冻结，不含 A3-2、真库 H2 与真实模型整链。
+
 ### 边界
 
 - 本组合只作为接口验收证据：未合并 `world-server` / `world-browser` 开发
