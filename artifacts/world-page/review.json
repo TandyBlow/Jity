@@ -1,16 +1,16 @@
 {
   "status": "PASS_WORLD_PAGE",
-  "recordedAt": "2026-10-27T18:41:53.289Z",
-  "apiOrigin": "http://127.0.0.1:58757",
-  "nextOrigin": "http://127.0.0.1:58758",
+  "recordedAt": "2026-10-28T03:25:45.647Z",
+  "apiOrigin": "http://127.0.0.1:49881",
+  "nextOrigin": "http://127.0.0.1:49882",
   "browserSource": {
-    "head": "54fd4abbb782f56cbdcecd223075013b1bb6b766",
-    "status": "M artifacts/world-page/review.json\n M frontend/scripts/review-world-page.mjs\n M frontend/src/app/world/page.tsx",
+    "head": "3a06eb5fc527ac92fb168740170c850b89530b21",
+    "status": "M artifacts/world-page/review.json\n M frontend/next.config.ts\n M frontend/scripts/review-world-page.mjs\n M frontend/src/app/world/page.tsx\n M frontend/src/app/world/world-defaults.ts\n M frontend/src/lib/world-engine/runtime/prompts.ts\n M frontend/src/lib/world-engine/runtime/rule-session.test.ts\n M frontend/src/lib/world-engine/runtime/rule-session.ts",
     "sha256": {
-      "frontend/scripts/review-world-page.mjs": "826655b829a0c748332ca971e98db34890e65f5f7a16cf7955b9a03f55b833ea",
-      "frontend/src/app/world/page.tsx": "147c9714d8e3cf260e3e4d4020259ee5f744ce1454867593d673cf5b67ef5561",
-      "frontend/src/app/world/world-defaults.ts": "30141cad33d0b313bdd304f2bb1dc862af9d4976ff5774ef7b91d26dd36f27ef",
-      "frontend/src/lib/world-engine/runtime/rule-session.ts": "d793e6fc85ff1a48334ca92a111d924385442ed0db8114d4f60f76f18451052d",
+      "frontend/scripts/review-world-page.mjs": "7d982f43d5f879e2f4682fbe1f4df72f93c5b2d74d3d029fae71a637e125b172",
+      "frontend/src/app/world/page.tsx": "8c350090611b4eb6c0509d4ee8f39f4fd43f8c175e997e643a72480e23ecbeaf",
+      "frontend/src/app/world/world-defaults.ts": "632c22cce08fbc2825894b004175ef5856931dfe96805b13aaaac13f7c3d97e6",
+      "frontend/src/lib/world-engine/runtime/rule-session.ts": "ccff17f87fc3ef11c4a3e0c7f71d46723cc139aece317a8aa9e8cba68b73f6a9",
       "frontend/src/lib/world-engine/runtime/session.ts": "125a318e94969145e616644a268d020e8b6cfa8e05012de8493cbbb6f61edbc5",
       "frontend/src/lib/world-engine/runtime/rule-facts.ts": "0a0084ce29f0c07e3f4592b941092585338041f70b996d0ef7115851bf10d5d0",
       "frontend/src/lib/world-engine/runtime/committed-narration.ts": "249fa2f77f58cdec7fa483d551c31cf17da754438adc90c5cf1754991affd934",
@@ -31,15 +31,15 @@
       "points": 3,
       "commits": [
         {
-          "requestId": "rule_probe_zcq24a_16",
+          "requestId": "rule_probe_m2yff8_16",
           "pointId": "point_7"
         },
         {
-          "requestId": "rule_probe_zcq24a_16",
+          "requestId": "rule_probe_m2yff8_16",
           "pointId": "point_7"
         },
         {
-          "requestId": "rule_probe_zcq24a_33",
+          "requestId": "rule_probe_m2yff8_33",
           "pointId": "point_14"
         }
       ],
@@ -87,7 +87,7 @@
           "sanity": 10,
           "logRows": 1
         },
-        "at": "2026-10-27T18:42:19.127Z"
+        "at": "2026-10-28T03:26:11.531Z"
       },
       {
         "name": "r1-move",
@@ -96,7 +96,7 @@
           "narration": "周宁从走廊走到门厅。",
           "timeAdvance": "+1秒"
         },
-        "at": "2026-10-27T18:42:24.229Z"
+        "at": "2026-10-28T03:26:16.637Z"
       },
       {
         "name": "r2-refused",
@@ -104,14 +104,14 @@
           "command": "完成压力试验",
           "reason": "milestone_location_mismatch"
         },
-        "at": "2026-10-27T18:42:29.317Z"
+        "at": "2026-10-28T03:26:21.718Z"
       },
       {
         "name": "r3-move-back",
         "detail": {
           "command": "走到走廊"
         },
-        "at": "2026-10-27T18:42:34.397Z"
+        "at": "2026-10-28T03:26:26.792Z"
       },
       {
         "name": "reload-recover",
@@ -120,7 +120,7 @@
           "location": "走廊",
           "sanity": 10
         },
-        "at": "2026-10-27T18:42:36.590Z"
+        "at": "2026-10-28T03:26:28.867Z"
       },
       {
         "name": "r4-strain",
@@ -128,7 +128,7 @@
           "sanity": 8,
           "task": "完成压力试验 achieved"
         },
-        "at": "2026-10-27T18:42:41.686Z"
+        "at": "2026-10-28T03:26:33.953Z"
       },
       {
         "name": "r5-lost-receipt",
@@ -136,15 +136,16 @@
           "sanity": 9,
           "worldId": "world_48"
         },
-        "at": "2026-10-27T18:42:46.810Z"
+        "at": "2026-10-28T03:26:39.076Z"
       },
       {
-        "name": "r6-polish",
+        "name": "r6-model-narration",
         "detail": {
-          "polishedBadge": 0,
-          "note": "either a fact-valid polish or the template fallback is displayed"
+          "polishedBadge": 1,
+          "narrationMs": 36767,
+          "note": "model-first narration adopted by the fact judge; regeneration and template fallback remain wired"
         },
-        "at": "2026-10-27T18:44:50.382Z"
+        "at": "2026-10-28T03:27:15.853Z"
       },
       {
         "name": "server-facts",
@@ -154,7 +155,7 @@
           "sanity": 9,
           "location": "hall"
         },
-        "at": "2026-10-27T18:44:50.849Z"
+        "at": "2026-10-28T03:27:16.385Z"
       },
       {
         "name": "spa-roundtrip",
@@ -163,7 +164,7 @@
           "location": "门厅",
           "sanity": 9
         },
-        "at": "2026-10-27T18:44:53.186Z"
+        "at": "2026-10-28T03:27:18.783Z"
       },
       {
         "name": "late-attach-race",
@@ -174,7 +175,7 @@
           "rebuildReadsAfterRelease": 0,
           "note": "late get_state cancelled before any session/reference/page write"
         },
-        "at": "2026-10-27T18:45:03.092Z"
+        "at": "2026-10-28T03:27:29.235Z"
       },
       {
         "name": "cancelled-recovery",
@@ -186,7 +187,7 @@
           "leaseRenewalsAfterDisconnect": 0,
           "note": "cancelled attach stopped inside attachOnce; new generation reference intact"
         },
-        "at": "2026-10-27T18:46:55.073Z"
+        "at": "2026-10-28T03:29:20.639Z"
       }
     ],
     "status": "PASS_BROWSER_LOOP"
@@ -195,12 +196,12 @@
     {
       "event": "ready",
       "label": "World HTTP service",
-      "url": "http://127.0.0.1:58757/openapi.json"
+      "url": "http://127.0.0.1:49881/openapi.json"
     },
     {
       "event": "ready",
       "label": "Next dev server",
-      "url": "http://127.0.0.1:58758/"
+      "url": "http://127.0.0.1:49882/"
     }
   ]
 }

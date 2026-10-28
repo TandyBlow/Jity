@@ -266,9 +266,14 @@ try {
     const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
     const page = await context.newPage();
     page.on('pageerror', (error) => report.browser.steps.push({ name: 'pageerror', detail: String(error) }));
+    const modelConsole = [];
+    page.on('console', (message) => {
+      const text = message.text();
+      if (text.includes('[narration-model]') || text.includes('[narration]')) modelConsole.push(text);
+    });
     const statusSection = page.locator('section').filter({ hasText: '状态（服务端事实）' });
     const commandSection = page.locator('section').filter({ hasText: '支持命令与执行状态' });
-    const logSection = page.locator('section').filter({ hasText: '叙事（提交模板；润色仅为实验）' });
+    const logSection = page.locator('section').filter({ hasText: '叙事（默认模板；模型叙事为可选实验）' });
     const commandInput = commandSection.locator('input[placeholder*="输入命令"]');
     const runButton = commandSection.getByRole('button', { name: '执行', exact: true });
 
@@ -344,13 +349,24 @@ try {
     assert.ok(worldId, 'worldId chip visible in the page header');
     step('r5-lost-receipt', { sanity: 9, worldId });
 
-    // r6 可选实验：模型润色（失败保持模板）——时间预算放宽
-    await logSection.locator('label').filter({ hasText: '模型润色' }).locator('input').check();
-    await runCommand('走到门厅', 300_000);
+    // r6 模型叙事（本批核心）：模型为主、判分器门控、失败重生成一次后模板
+    // 兜底。硬断言：至少一条叙事由模型生成并通过事实校验（badge≥1）——
+    // 模板回退永远可用，但小模型必须真实接入并产出。
+    const polishStart = Date.now();
+    await logSection.locator('label').filter({ hasText: '模型叙事' }).locator('input').check();
+    await runCommand('走到门厅', 420_000);
+    const narrationMs = Date.now() - polishStart;
     await logSection.getByText('v6·').first().waitFor({ timeout: 30_000 });
     await expect(statusSection.getByText('门厅', { exact: true })).toBeVisible();
-    const polishedBadge = await logSection.getByText('润色', { exact: true }).count();
-    step('r6-polish', { polishedBadge, note: 'either a fact-valid polish or the template fallback is displayed' });
+    const polishedBadge = await logSection.getByText('模型', { exact: true }).count();
+    if (polishedBadge < 1) {
+      step('r6-diagnostic', { narrationMs, log: (await logSection.innerText()).slice(-500),
+        note: await page.locator('p.text-amber-700').allTextContents(),
+        modelConsole: modelConsole.slice(-12),
+        lastAction: (await commandSection.innerText()).slice(-200) });
+    }
+    assert.ok(polishedBadge >= 1, `the model narration must be adopted at least once, got ${polishedBadge} adopted rows`);
+    step('r6-model-narration', { polishedBadge, narrationMs, note: 'model-first narration adopted by the fact judge; regeneration and template fallback remain wired' });
 
     // 服务端事实核对：root + 6 rounds，逐点叙事就绪，无重复点（走带协议头
     // 的传输层——裸 fetch 缺 v2 头只会拿到错误信封）
