@@ -437,25 +437,41 @@ try {
 
   // ================= frozen-case world: build / restart / damage =================
   if (phase === 'build-frozen-case') {
-    await createWorld();
-    const ids = await allocate([
-      { slotKey: 'advance', kind: 'advance' }, { slotKey: 'input', kind: 'input' }, { slotKey: 'round', kind: 'round' },
-      { slotKey: 'point_1', kind: 'point' }, { slotKey: 'group_1', kind: 'group' },
-      { slotKey: 'trigger:group_1:person_a:person_b', kind: 'trigger' },
-    ]);
-    await call('checkpoint_start_advance', { ...ck(), operation: 'start_advance', advanceId: ids.advance, inputId: ids.input,
-      roundId: ids.round, inputText: '冻结事实验收输入。', order: roster });
-    await beginPoint(ids.point_1, 2);
-    await discover(ids.point_1, ids.group_1, 'person_a', 'person_a 推开重门，示意 person_b 避开门边。');
-    await extendTargets(ids.point_1, ids.group_1, 'person_a', [{ targetId: 'person_b', triggerKey: ids['trigger:group_1:person_a:person_b'] }]);
-    const roll = (await rollOne(ids.advance, ids.round, ids.group_1, 'person_a', 'person_b', ids['trigger:group_1:person_a:person_b'])).data.rolls[0];
-    assert.equal(roll.ruleVersion, 'reaction-d20-v1', 'frozen-case rolls must carry the live rule');
+    // post-restart proves the SAVED DFS FRAME survives the restart, which only
+    // exists while the accepted threat still owes work: an ADMITTED roll that
+    // has not been extended pushes person_a back onto the sourceStack. A
+    // rejected roll is handled immediately and leaves an empty stack, so this
+    // fixture retries fresh worlds until one roll admits (max six, the same
+    // bound as main) and records the realized branch. Without the retry the
+    // post-restart assertion below failed on every rejected first roll
+    // (2026-10-28, integration c4fbb97: "the saved DFS frame must survive the
+    // restart").
+    let ids = null;
+    let roll = null;
+    let attempts = 0;
+    for (attempts = 1; attempts <= 6 && !roll?.admitted; attempts++) {
+      if (attempts > 1) await createWorld();
+      const attemptIds = await allocate([
+        { slotKey: 'advance', kind: 'advance' }, { slotKey: 'input', kind: 'input' }, { slotKey: 'round', kind: 'round' },
+        { slotKey: 'point_1', kind: 'point' }, { slotKey: 'group_1', kind: 'group' },
+        { slotKey: 'trigger:group_1:person_a:person_b', kind: 'trigger' },
+      ]);
+      ids = attemptIds;
+      await call('checkpoint_start_advance', { ...ck(), operation: 'start_advance', advanceId: ids.advance, inputId: ids.input,
+        roundId: ids.round, inputText: '冻结事实验收输入。', order: roster });
+      await beginPoint(ids.point_1, 2);
+      await discover(ids.point_1, ids.group_1, 'person_a', 'person_a 推开重门，示意 person_b 避开门边。');
+      await extendTargets(ids.point_1, ids.group_1, 'person_a', [{ targetId: 'person_b', triggerKey: ids['trigger:group_1:person_a:person_b'] }]);
+      roll = (await rollOne(ids.advance, ids.round, ids.group_1, 'person_a', 'person_b', ids['trigger:group_1:person_a:person_b'])).data.rolls[0];
+      assert.equal(roll.ruleVersion, 'reaction-d20-v1', 'frozen-case rolls must carry the live rule');
+    }
+    assert.ok(roll.admitted, 'no admitting roll in six frozen-case attempts');
     const state = { namespace, worldId, lease: { leaseToken: lease.leaseToken, fenceEpoch: lease.fenceEpoch },
       pointId: ids.point_1, groupId: ids.group_1, roundId: ids.round, rollId: roll.rollId,
       triggerKey: ids['trigger:group_1:person_a:person_b'], admitted: roll.admitted };
     if (!statePath) throw new Error('build-frozen-case requires --state PATH');
     writeFileSync(statePath, JSON.stringify(state, null, 2) + '\n');
-    writeReport({ status: 'BUILT_FROZEN_CASE', worldId, detail: state });
+    writeReport({ status: 'BUILT_FROZEN_CASE', worldId, detail: { ...state, attempts } });
   }
   if (phase === 'post-restart') {
     assert.ok(statePath, 'post-restart requires --state PATH');
