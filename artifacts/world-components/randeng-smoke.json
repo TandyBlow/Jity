@@ -35,7 +35,7 @@
     "transformers": "4.57.3"
   },
   "load": {
-    "seconds": 0.37,
+    "seconds": 0.8,
     "paramCount": 77440384,
     "officialClaim": 77440384,
     "paramCountMatches": true
@@ -47,7 +47,8 @@
   },
   "tokenizerConfig": {
     "class": "T5Tokenizer(vocab_file=spiece.model)",
-    "legacy": "transformers default (legacy behavior warning observed on 4.57.3); explicit pin required before finetune comparisons"
+    "legacy": false,
+    "note": "explicitly pinned to corrected behavior for ALL n4 training/eval/baseline paths (plan-table §6); r2 ran the legacy default and is superseded by this rerun"
   },
   "probes": [
     {
@@ -58,7 +59,7 @@
       "inputTokens": 28,
       "output": "正面",
       "outputTokens": 4,
-      "wallSeconds": 0.327
+      "wallSeconds": 0.417
     },
     {
       "name": "narration-freeform",
@@ -68,7 +69,7 @@
       "inputTokens": 26,
       "output": "学生A从大厅走到了走廊。时间过去了约三十分钟。",
       "outputTokens": 19,
-      "wallSeconds": 0.715
+      "wallSeconds": 0.865
     },
     {
       "name": "narration-template",
@@ -78,7 +79,7 @@
       "inputTokens": 35,
       "output": "时间:约30分钟",
       "outputTokens": 8,
-      "wallSeconds": 0.289
+      "wallSeconds": 0.365
     },
     {
       "name": "narration-empty-point",
@@ -88,7 +89,7 @@
       "inputTokens": 27,
       "output": "时间:约30分钟",
       "outputTokens": 8,
-      "wallSeconds": 0.258
+      "wallSeconds": 0.364
     }
   ],
   "disclaimers": [

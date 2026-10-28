@@ -124,7 +124,8 @@ def main() -> None:
         },
         "tokenizerConfig": {
             "class": "T5Tokenizer(vocab_file=spiece.model)",
-            "legacy": "transformers default (legacy behavior warning observed on 4.57.3); explicit pin required before finetune comparisons",
+            "legacy": False,
+            "note": "explicitly pinned to corrected behavior for ALL n4 training/eval/baseline paths (plan-table §6); r2 ran the legacy default and is superseded by this rerun",
         },
         "probes": [],
         "disclaimers": [
@@ -149,7 +150,12 @@ def main() -> None:
         }
 
     t0 = time.perf_counter()
-    tokenizer = T5Tokenizer(vocab_file=str(MODEL_DIR / "spiece.model"))
+    # v3 (finetune round): tokenizer legacy behavior is now EXPLICITLY pinned
+    # to the corrected behavior (legacy=False) per plan-table §6 — train,
+    # dev eval and this zero-shot baseline must all use the SAME setting,
+    # and this rerun re-verifies the baseline under it (r2 numbers were
+    # legacy-default and are superseded).
+    tokenizer = T5Tokenizer(vocab_file=str(MODEL_DIR / "spiece.model"), legacy=False)
     model = T5ForConditionalGeneration.from_pretrained(str(MODEL_DIR), torch_dtype=torch.float32)
     model.eval()
     load_s = time.perf_counter() - t0
