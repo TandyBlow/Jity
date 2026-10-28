@@ -278,6 +278,12 @@ try {
     assert.equal(opLog.filter((op) => op === 'commit_point').length, 1, 'exactly one commit (point_1)');
     const finalContext = await api('get_context', { includeRecovery: false, leaseToken: lease.leaseToken, fenceEpoch: lease.fenceEpoch });
     assert.equal(finalContext.world.head.narrationStatus, 'ready', 'head narration must be ready after the walk');
+    // The fencing world below replaces `worldId`; capture the walked world first
+    // so the report names the world the walk actually committed. The previous
+    // form reported the fencing world here (integration beeb510: walkedWorld
+    // world_20 while the walk's commit lives in world_1).
+    const walkedWorld = worldId;
+    const walkAttempts = bAccepted ? attempts - 1 : attempts;
 
     // ---- fencing on a second world (sealed uncommitted point as the crash state) ----
     opLog.length = 0;
@@ -359,7 +365,7 @@ try {
     const takeoverOpSlice = opLog.slice(takeoverOps);
     assert.equal(takeoverOpSlice.filter((op) => op === 'commit_point').length, 1, 'takeover must commit the sealed point exactly once');
     assert.ok(!takeoverOpSlice.includes('create_rolls'), 'takeover must not roll anything');
-    writeReport({ status: 'PASS_MAIN', worldId, detail: { walkedWorld: worldId, fenceWorld, branch: { rollBadmitted: rollB.admitted, bAccepted, attempts },
+    writeReport({ status: 'PASS_MAIN', worldId, detail: { walkedWorld, fenceWorld, branch: { rollBadmitted: rollB.admitted, bAccepted, attempts: walkAttempts },
       savedRollIds, modelTasks: modelLog.map((c) => c.task), fenceEpochs: { first: oldLease.fenceEpoch, second: taken.fenceEpoch },
       takeoverOps: takeoverOpSlice } });
   }
@@ -471,7 +477,7 @@ try {
       triggerKey: ids['trigger:group_1:person_a:person_b'], admitted: roll.admitted };
     if (!statePath) throw new Error('build-frozen-case requires --state PATH');
     writeFileSync(statePath, JSON.stringify(state, null, 2) + '\n');
-    writeReport({ status: 'BUILT_FROZEN_CASE', worldId, detail: { ...state, attempts } });
+    writeReport({ status: 'BUILT_FROZEN_CASE', worldId, detail: { ...state, attempts: roll.admitted ? attempts - 1 : attempts } });
   }
   if (phase === 'post-restart') {
     assert.ok(statePath, 'post-restart requires --state PATH');
