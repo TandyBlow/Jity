@@ -81,7 +81,9 @@ const CHANGE_VERB = /(变|升|降|掉|减|增|恢复|回落|涨)/;
 /** Event verbs that assert something HAPPENED. No committed fact kind is an
  * event, so one of these verbs is an added event wherever it stands — not
  * even the fact's own clause licenses it (三轮复核：推开门 不能由移动事实
- * 背书，重复主语也不能豁免). Quoted frozen text (「」) is not scanned. */
+ * 背书，重复主语也不能豁免). 引用豁免只认与当前事实包冻结原文逐字一致的
+ * 「」段（任务目标/人格文本）；其余引号内容照扫——四轮复核：给自己的
+ * 捏造套引号不能借无条件剥引号逃过扫描（并「打开」门）。 */
 const EVENT_VERBS = ['推开', '踢开', '踹开', '冲进', '冲出', '奔跑', '跑向', '攻击', '开枪', '拔出', '举起',
   '捡起', '拾起', '递给', '塞进', '敲门', '打开', '关上', '锁上', '躲到', '藏在', '翻过', '爬上', '跳下',
   '喊住', '大叫', '大喊', '呼喊', '点燃', '砸碎', '撕开'];
@@ -299,6 +301,12 @@ export function alignNarration(packet: CommittedNarration, text: string, options
   const unverified: string[] = [];
   const coverage = new Map<string, boolean>(packet.facts.map((fact) => [fact.id, false]));
   let timeExpressed: boolean | null = options.time ? false : null;
+  // 逐字一致的冻结原文引用才豁免（任务目标/人格文本）；自拟引号内容照扫。
+  const frozenQuotes = new Set(packet.facts.flatMap((fact) =>
+    fact.kind === 'task_achieved' ? [`「${fact.goal}」`]
+      : fact.kind === 'personality_changed' ? [`「${fact.text}」`] : []));
+  const maskFrozenQuotes = (masked: string): string =>
+    [...frozenQuotes].reduce((text, quote) => text.split(quote).join('「」'), masked);
   if (!parts.length) {
     violations.push({ kind: 'empty_narration', sentence: '', detail: 'empty or whitespace-only narration' });
   }
@@ -442,8 +450,8 @@ export function alignNarration(packet: CommittedNarration, text: string, options
     // previous bound-gate exemption let both a repeated-subject clause
     // («学生A打开门» — the actor's name was read as backing) and the fact's
     // own clause («推开门») escape, though no committed fact kind licenses an
-    // event. Quoted frozen text does not count (目标原文自带动词的引用).
-    const event = EVENT_VERBS.find((verb) => bareOf(sentence).includes(verb));
+    // event. Only quotes matching the packet's frozen text are exempt.
+    const event = EVENT_VERBS.find((verb) => maskFrozenQuotes(sentence).includes(verb));
     if (event) {
       violations.push({ kind: 'added_event', sentence, detail: `event verb ${event} has no committed fact` });
       continue;

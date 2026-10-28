@@ -127,15 +127,21 @@ describe('grader rejects factual contradictions', () => {
 
   // 三轮复核：事件检查不再有任何豁免——重复主语绕不过（复核探针原样：
   // 分句含已绑定人名曾被当作背书）、「推开门」也不是移动事实的合法措辞：
-  // 没有哪种已提交事实能背书事件发生。「」内冻结原文不参与动词扫描。
-  it('flags event verbs regardless of fact binding or clause', () => {
+  // 没有哪种已提交事实能背书事件发生。四轮复核：引用豁免收窄为「与当前
+  // 事实包冻结原文逐字一致」——给自己的捏造套引号（并「打开」门）不能借
+  // bareOf 的无条件剥引号逃过扫描。
+  it('flags event verbs regardless of fact binding, clause, or quoting', () => {
     const repeat = grade('nv-move-1', '学生A从走廊走到大厅，学生A打开门。两分钟过去了。');
     expect(repeat.ok).toBe(false);
     expect(repeat.violations.map((violation) => violation.kind)).toContain('added_event');
     const phrased = grade('nv-move-1', '学生A推开门走进大厅，前后大约花了两分钟。');
     expect(phrased.ok).toBe(false);
     expect(phrased.violations.map((violation) => violation.kind)).toContain('added_event');
-    // 冻结原文引用（「」内）不参与动词扫描：目标原文自带动词时引用它不算事件。
+    // 复核探针原样：该包没有任何含「打开」的冻结原文，引号不构成豁免。
+    const quoted = grade('nv-move-1', '学生A从走廊走到大厅，并「打开」门。两分钟过去了。');
+    expect(quoted.ok).toBe(false);
+    expect(quoted.violations.map((violation) => violation.kind)).toContain('added_event');
+    // 冻结原文引用（与事实包逐字一致）才豁免：目标原文自带动词时引用它不算事件。
     const packet = { anchor: { worldId: 'world_school', pointId: 'p_quote', version: 1,
       stateDigest: '1'.repeat(64), previousPointId: 'root' }, facts: [
       { id: 'p:task:t1', actorId: 'p', name: '学生A', kind: 'task_achieved' as const,
@@ -148,6 +154,11 @@ describe('grader rejects factual contradictions', () => {
       { time: { amount: 1, unit: 'minute' }, roster: ['学生A'] });
     expect(done.ok).toBe(false);
     expect(done.violations.map((violation) => violation.kind)).toContain('added_event');
+    // 引号里的内容对不上任何冻结原文时照扫。
+    const invented = alignNarration(packet, '学生A「打开」了门。约一分钟过去了。',
+      { time: { amount: 1, unit: 'minute' }, roster: ['学生A'] });
+    expect(invented.ok).toBe(false);
+    expect(invented.violations.map((violation) => violation.kind)).toContain('added_event');
   });
 
   it('flags a reversed direction', () => {
