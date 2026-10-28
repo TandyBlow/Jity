@@ -9,7 +9,7 @@
     "T03/sample_1 get_state digest unchanged"
   ],
   "assertionDriftCount": 12,
-  "assertionDriftNote": "authored trace assertions (S1-era control phase/gate TTL expectations) that the evolved runtime no longer matches; hard checks all passed",
+  "assertionDriftNote": "registered exemptions only: T01 s1-s4 control phase/canCompute value mismatches authored before creation issued the head gate; every response schema-validated; hard checks all passed",
   "traces": [
     {
       "trace": "T01/sample_1",
@@ -145,11 +145,11 @@
     }
   ],
   "A": {
-    "head": "38e35c350520c628d7eb6d187e9db45ff0c5ebde",
+    "head": "c65603dae36377a9f5e37fe3351aa577069340ab",
     "sourceSha256": {
       "backend/app/world_app.py": "b6291cf697793fe543d36098b6c976f73fb5b28a394dc6a53b3f514f9ab45509",
       "backend/app/routers/worlds.py": "a9364afe54662b4b14d5692621192e8570f962454e12ef1f79ec15ed092c6b5d",
-      "backend/scripts/check_world_http_scenarios.py": "ff1c93a3d64259ca2029fb8967286d838b244bbcab7b129a70a0b5095a9b7fc8",
+      "backend/scripts/check_world_http_scenarios.py": "1ee8d17eea9a1931597a854638a4b97bac6f05eccb6c0a4a314ae0ef5ee7b849",
       "backend\\app\\services\\world\\__init__.py": "7b69f36a39e571846df32c14dc632a713d536a6fc6d436755b8557456011f086",
       "backend\\app\\services\\world\\apply.py": "e626fdbb0679ca0cff73053f06b5887bf8a8a0f42280219fdd94b8e4b257af66",
       "backend\\app\\services\\world\\authority.py": "5ef2417c02f74ba349196b7c83ae25cea41f3dd9dac8374f30132ea490dac96a",

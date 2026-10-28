@@ -890,8 +890,12 @@ python backend/scripts/check_world_http_scenarios.py
 **按既有前导驱动 T03 两样本**（建世界→根叙事 ready→分配 id→start_advance→
 时间扫描轨迹 8 步），插入 T03 预览的两次等值检查，并在每个轨迹首个样本完成后
 真实重启服务、以 get_state 摘要不变验证回放读。硬检查一票否决：HTTP 状态、
-operation/requestId 回显、requestHash（幂等操作按实例化请求重算）、捕获路径、
-服务状态等于独立期望投影、服务摘要等于独立期望摘要。
+**每个响应按该操作声明的 successSchema 做 JSON Schema 全量校验**（required 已含
+operation/requestId 等信封键，缺失或多余字段均拒绝）、operation/requestId 回显
+一致、requestHash（幂等操作按实例化请求重算）、捕获路径、服务状态等于独立期望
+投影、服务摘要等于独立期望摘要；T03 预览在轨迹回放完成后以 s8 独立期望投影与
+摘要核对 `workingState`（封存与叙事都不改状态，预览工作态即提交后头状态），
+仅凭两次预览相等不算通过。
 
 两处与模板字面量的刻意分歧均为真实客户端语义，已写入脚本 docstring：requestId
 逐步重选（钉死字面量会在幂等账本跨样本碰撞）、narration_submit 携带 claim 回执
@@ -912,11 +916,29 @@ operation/requestId 回显、requestHash（幂等操作按实例化请求重算�
 control.phase/canCompute 期望）。** 轨迹的逐断言只在离线 validate_trace 中核对
 （从不对活服务运行），H1/H2 也从未断言这些字段；而运行时在 A2/A3 演进出
 「创建即签发 head gate、根叙事 ready 前 canCompute=false、ready 后翻 true」的
-语义，T01 s1–s4 仍按 S1 时代期望 `complete`/`false`。执行器把断言失配记为
-`assertionDrift` 上报而不失败——集成结果（投影/摘要/信封/哈希）必须且已经
-全对。T03 的断言全部活验证通过（其成文晚于语义演进）。处置建议：刷新 T01
-s1–s4 四步断言属接口基线修订，须双方检查共同通过后另行登记，本批不改手写
-轨迹。
+语义，T01 s1–s4 仍按 S1 时代期望 `complete`/`false`。**豁免按登记收窄**：只有
+登记表中的六组（trace 名＋步骤＋路径＋断言种类）**值失配**记为
+`assertionDrift`；同键的结构性失败（如路径缺失、响应字段被删）与其余一切断言
+失败立即硬败。此外每个响应都过 successSchema 校验，信封字段被删在断言层之前
+即被拒绝。集成结果（投影/摘要/信封/哈希）必须且已经全对。T03 的断言全部活
+验证通过（其成文晚于语义演进）。处置建议：刷新 T01 s1–s4 四步断言属接口基线
+修订，须双方检查共同通过后另行登记，本批不改手写轨迹。
+
+## 复核修复轮（2026-10-28 同日）
+
+A 侧复核复跑确认四场景、两次重启与 12 条漂移复现，同时指出执行器三处漏检，
+本轮全部修复并以同款篡改探针验证由「接受」变「硬败」：
+
+| 级别 | 漏检 | 修复 |
+|---|---|---|
+| P1 | 断言失败一律吞为 drift：篡改 s5 phase/canCompute/人物顺序仍被接受 | 豁免收窄为登记表六组（trace＋步骤＋路径＋断言种类）且仅限值失配；其余立即硬败 |
+| P2 | T03 预览只比两次相等：workingState 被替换为 `{}`、摘要全零仍通过 | 回放完成后以 s8 独立期望投影与摘要核对预览 workingState/workingStateDigest |
+| P2 | 回显字段缺失绕过检查：删除全部响应 operation/requestId 仍通过 | 每个响应按操作 successSchema 做 JSON Schema 全量校验（required 含信封键） |
+
+四个负向探针（篡改 s5 期望值、登记键＋结构性删字段、篡改预览、删信封字段）
+全部按需失败；其中登记键＋结构性的组合由 schema 校验在断言层之前拦截。
+无篡改重跑仍 PASS，漂移仍恰为已登记的 12 条。探针脚本与结果在本地
+`.local/a4-tamper-probe.py` 与 `.local/a4-independent-review/`。
 
 ## 共同检查现状与本批边界
 
