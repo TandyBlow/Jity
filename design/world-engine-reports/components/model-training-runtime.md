@@ -98,7 +98,7 @@
 - Randeng 微调开工时：`T5Tokenizer` 的 legacy 分词行为须显式决策——`legacy=False` 会改变当前默认分词/规范化，训练、开发评估与零样本基线必须统一同一设置并重新验证后再比较（冒烟 r2 报告的 tokenizerConfig 记录了当前默认态）。
 - 在 C 工作树重新配置 MiniRBT-H256 快照并记录获取方式（F11：主树快照不入库不共享；通道=hfl/minirbt-h256 经 hf-mirror）。主树 `train-action-classifier.py` 头注仍写旧 ID `iflytek/MiniRBT-H256`（历史注释、不影响产物；正确 ID 以 F13 为准，脚本修正归 B 线后续批次，C 运行记录只用正确 ID）。
 - 浏览器分发：`public/models/` 当前为空（模型文件不入库），重建路径=各 train 脚本导出＋`copy-*-assets.mjs` 机制（已有）。
-- N4 语料现为 150 组 / 600 行（构造器 v9.2），行校验/去重/A 侧权威核对全绿；dev 按渲染输入归并为 56 个独立输入（53 未见 / 3 回归）。两档 `--tier small|large` 均 360 步（`r2-small`/`r2-large`）；方向单变量臂 `r3-direction` 只改共享渲染器，53/53 未见输入过识别器并经复核保留。独立留出验收：`n4_holdout/`（新词表/新时长，44 未见 + 1 共享回归），冻结清单 `freeze-r3-direction.json`，一次运行 44/44 + 1/1 pass，自动规则 met；整体质量门待协调人裁定。口径见[语料协议 §9–§11](../../../experiments/world-components/n4_corpus/corpus_protocol.md)。
+- N4 语料现为 150 组 / 600 行（构造器 v9.2），行校验/去重/A 侧权威核对全绿；dev 按渲染输入归并为 56 个独立输入（53 未见 / 3 回归）。两档 `--tier small|large` 均 360 步（`r2-small`/`r2-large`）；方向单变量臂 `r3-direction` 只改共享渲染器，53/53 未见输入过识别器并经复核保留。独立留出验收：`n4_holdout/`（新词表，冻结集实际覆盖 9/11/13/18 分钟，44 未见 + 1 共享回归），冻结清单 `freeze-r3-direction.json`，一次运行 44/44 + 1/1 pass；冻结校验已含训练报告、留出权威报告与解码配置（13 例自检），`--verify-only` 可只验证不推理。口径与两项收口见[语料协议 §9–§12](../../../experiments/world-components/n4_corpus/corpus_protocol.md)。
 - 旧试验资产只复用**方法学**（数据纪律、封存批协议、计时口径、导出脚本骨架）；旧语料、旧标签体系、旧门阈值一律不复用（F8）。
 
 ## 7. 明确未验证清单

@@ -433,10 +433,12 @@ def main() -> None:
         "pydanticVersion": pydantic.VERSION,
         "serverTree": {"path": str(SERVER_TREE), "head": head,
                        "applyPySha256_16": hashlib.sha256(apply_py.read_bytes()).hexdigest()[:16]},
-        "rows": [],
     }
     if ROWS_FILE is not None:
+        # key order kept identical to the frozen report so re-running the
+        # validator reproduces the pinned bytes
         report["rowsFile"] = str(ROWS_FILE)
+    report["rows"] = []
     failures = 0
     for r in rows:
         problems = []

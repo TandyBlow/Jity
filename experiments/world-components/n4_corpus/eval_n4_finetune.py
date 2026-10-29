@@ -179,24 +179,97 @@ def load_holdout_inputs(path: pathlib.Path, corpus_rows: list) -> list:
     return units
 
 
-def verify_freeze(manifest_path: pathlib.Path, holdout_path: pathlib.Path):
-    m = json.loads(manifest_path.read_text(encoding="utf-8"))
+DECODE = {"greedy": True, "maxNewTokens": MAX_NEW, "numBeams": 1,
+          "tokenizerLegacy": False}
+
+
+def freeze_problems(m: dict, holdout_path: pathlib.Path) -> list:
+    """Every pinned artifact plus the runtime decode configuration is
+    compared against the manifest. Round 15 review: trainingReport and the
+    holdout authority report were pinned but never checked, and the runtime
+    decode settings were not compared with the frozen ones at all."""
+    problems = []
     checks = {
         "renderer": (sha_file(HERE / "n4_render.py"), m["renderer"]["sha256"]),
         "judge": (sha_file(HERE / "corpus_check.py"), m["judge"]["sha256"]),
         "holdout": (sha_file(holdout_path), m["holdout"]["sha256"]),
+        "holdout.authorityReport": (
+            sha_file(pathlib.Path(m["holdout"]["authorityReport"]["file"])),
+            m["holdout"]["authorityReport"]["sha256"]),
         "corpus.seeds.jsonl": (sha_file(HERE / "corpus.seeds.jsonl"),
                                m["corpus"]["corpus.seeds.jsonl"]),
         "rewrites.jsonl": (sha_file(HERE / "rewrites.jsonl"),
                            m["corpus"]["rewrites.jsonl"]),
+        "trainingReport": (sha_file(pathlib.Path(m["trainingReport"]["file"])),
+                           m["trainingReport"]["sha256"]),
         "checkpoint": (dir_hashes(FINETUNED), m["checkpoint"]["sha256_16"]),
         "baseModel": (dir_hashes(BASE_MODEL), m["baseModel"]["sha256_16"]),
     }
-    bad = {k: v for k, v in checks.items() if v[0] != v[1]}
-    if bad:
-        for k, (cur, want) in bad.items():
-            print(f"FREEZE MISMATCH {k}: current={cur} frozen={want}")
+    for k, (cur, want) in checks.items():
+        if cur != want:
+            problems.append(f"FREEZE MISMATCH {k}: current={cur} frozen={want}")
+    if m.get("decode") != DECODE:
+        problems.append(f"FREEZE MISMATCH decode: runtime={DECODE} "
+                        f"frozen={m.get('decode')}")
+    return problems
+
+
+def freeze_selftest(m: dict, holdout_path: pathlib.Path) -> list:
+    """Tamper self-test (round 15): every pinned field must be caught when
+    its recorded value is altered, and the untouched manifest must pass.
+    Runs in memory on a copy; the real manifest file is never written."""
+    import copy
+    void = []
+    if freeze_problems(m, holdout_path):
+        void.append("clean manifest does not verify")
+    tampers = [
+        ("renderer", lambda d: d["renderer"].__setitem__("sha256", "0" * 64)),
+        ("judge", lambda d: d["judge"].__setitem__("sha256", "0" * 64)),
+        ("holdout", lambda d: d["holdout"].__setitem__("sha256", "0" * 64)),
+        ("holdout.authorityReport",
+         lambda d: d["holdout"]["authorityReport"].__setitem__("sha256", "0" * 64)),
+        ("corpus.seeds.jsonl",
+         lambda d: d["corpus"].__setitem__("corpus.seeds.jsonl", "0" * 64)),
+        ("rewrites.jsonl",
+         lambda d: d["corpus"].__setitem__("rewrites.jsonl", "0" * 64)),
+        ("trainingReport",
+         lambda d: d["trainingReport"].__setitem__("sha256", "0" * 64)),
+        ("checkpoint",
+         lambda d: d["checkpoint"].__setitem__("sha256_16", {"model.safetensors": "0" * 16})),
+        ("baseModel",
+         lambda d: d["baseModel"].__setitem__("sha256_16", {"config.json": "0" * 16})),
+        ("decode.maxNewTokens", lambda d: d["decode"].__setitem__("maxNewTokens", 1)),
+        ("decode.greedy", lambda d: d["decode"].__setitem__("greedy", False)),
+        ("decode.numBeams", lambda d: d["decode"].__setitem__("numBeams", 4)),
+        ("decode.tokenizerLegacy",
+         lambda d: d["decode"].__setitem__("tokenizerLegacy", True)),
+    ]
+    for label, mutate in tampers:
+        tampered = copy.deepcopy(m)
+        mutate(tampered)
+        if not freeze_problems(tampered, holdout_path):
+            void.append(f"freeze self-test {label}: tamper NOT caught")
+    return void
+
+
+def verify_freeze(manifest_path: pathlib.Path, holdout_path: pathlib.Path):
+    m = json.loads(manifest_path.read_text(encoding="utf-8"))
+    # 1. the supplied manifest must match the files on disk (a tampered
+    #    manifest is rejected here, before the self-test can mask it)
+    problems = freeze_problems(m, holdout_path)
+    if problems:
+        for x in problems:
+            print(x)
         sys.exit(2)
+    # 2. the checks themselves must be able to catch tampering
+    void = freeze_selftest(m, holdout_path)
+    if void:
+        print("REPORT VOID — freeze self-test failed:")
+        for x in void:
+            print(" ", x)
+        sys.exit(2)
+    print(f"freeze self-test PASS: 13/13 tampers caught (trainingReport, "
+          f"holdout authority report and decode config included)")
     return m
 
 
@@ -265,14 +338,50 @@ def run_arms(units: list, tokenizer) -> dict:
     return arms
 
 
+def write_verify_only(freeze: dict, units: list) -> None:
+    """--verify-only: prove the frozen pieces and the tamper self-test hold
+    WITHOUT running inference (used for engineering sign-off, round 15)."""
+    unseen = [u for u in units if not u["seenInTrain"]]
+    regression = [u for u in units if u["seenInTrain"]]
+    out = {
+        "purpose": f"freeze verification only ({RUN_TAG}); no model inference",
+        "mode": "freeze-verify",
+        "freeze": {"file": FREEZE, "sha256": sha_file(pathlib.Path(FREEZE))},
+        "checks": {
+            "pinnedArtifacts": ["renderer", "judge", "holdout",
+                                "holdout.authorityReport",
+                                "corpus.seeds.jsonl", "rewrites.jsonl",
+                                "trainingReport", "checkpoint", "baseModel"],
+            "decode": DECODE,
+            "decodeComparedToFrozen": True,
+            "tamperSelftest": "13/13 caught",
+        },
+        "holdout": {"file": HOLDOUT, "sha256": sha_file(pathlib.Path(HOLDOUT)),
+                    "rows": sum(u["rowsMerged"] for u in units),
+                    "distinctInputs": len(units),
+                    "unseenInputs": len(unseen),
+                    "sharedRegressionInputs": len(regression)},
+        "note": "engineering closure only; the acceptance numbers stay in "
+                "n4-holdout-eval-r3-direction.json (no re-run performed)",
+    }
+    path = REPO / "artifacts" / "world-components" / f"n4-holdout-freeze-verify-{RUN_TAG}.json"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(out, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(f"verify-only report -> {path}")
+
+
 def main() -> None:
     corpus_rows = load_corpus_rows()
     freeze = None
+    verify_only = "--verify-only" in sys.argv
     if HOLDOUT:
         if not FREEZE:
             sys.exit("holdout mode requires --freeze <manifest>")
         freeze = verify_freeze(pathlib.Path(FREEZE), pathlib.Path(HOLDOUT))
         units = load_holdout_inputs(pathlib.Path(HOLDOUT), corpus_rows)
+        if verify_only:
+            write_verify_only(freeze, units)
+            return
         unseen = [u for u in units if not u["seenInTrain"]]
         regression = [u for u in units if u["seenInTrain"]]
         dev_rows = sum(u["rowsMerged"] for u in units)

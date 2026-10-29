@@ -7,10 +7,13 @@
 # checkpoint and judge.
 #
 # Isolation rules:
-# - new cast / locations / tasks / appearances / personalities / durations
-#   (disjoint from both the training corpus vocabulary and every duration
-#   used by the 600-row corpus: 1-8,10,12,15,20,25,30,40,45,60,90 minutes;
-#   this file uses 9/11/13/18/22/35/50/75)
+# - new cast / locations / tasks / appearances / personalities, and durations
+#   disjoint from the 600-row corpus (which uses 1-8,10,12,15,20,25,30,40,
+#   45,60,90 minutes). NOTE (round 15 correction): DURATIONS lists eight
+#   values (9/11/13/18/22/35/50/75) but each family indexes 0..3, so the
+#   frozen holdout actually covers ONLY 9/11/13/18 minutes. The data is
+#   frozen as accepted; do not regenerate to add coverage. Any future
+#   holdout must advance the duration index across families as well.
 # - every rendered input must be absent from all 600 corpus rows (asserted
 #   at build time), so no holdout prompt was seen during training or selection
 # - no rewrite targets are authored here: rows carry a program template text
@@ -321,6 +324,12 @@ def main() -> None:
                                   for r in rows if atomic_no_change(r)}
     print(f"distinct holdout inputs: {len(inputs)} = {len(non_atomic_inputs)} "
           f"unseen + {len(inputs) - len(non_atomic_inputs)} shared regression")
+    used = sorted({e["amount"] for r in rows for e in r["plan"]
+                   if e["kind"] == "time"})
+    unused = [a for a, _ in DURATIONS if a not in used]
+    print(f"durations actually used: {used} min"
+          + (f"  (declared but UNUSED: {unused} — families index only the "
+             f"first four slots; see header note)" if unused else ""))
     OUT.write_text("\n".join(json.dumps(r, ensure_ascii=False)
                              for r in rows) + "\n", encoding="utf-8")
     print(f"groups: {len({r['sourceGroupId'] for r in rows})}  "

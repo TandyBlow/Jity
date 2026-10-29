@@ -1,0 +1,38 @@
+{
+  "purpose": "freeze verification only (r3-direction); no model inference",
+  "mode": "freeze-verify",
+  "freeze": {
+    "file": "experiments/world-components/n4_holdout/freeze-r3-direction.json",
+    "sha256": "090f195c57d31534f62bf525684eb3abc3b17c90cf69b83d304f1bbca12d9290"
+  },
+  "checks": {
+    "pinnedArtifacts": [
+      "renderer",
+      "judge",
+      "holdout",
+      "holdout.authorityReport",
+      "corpus.seeds.jsonl",
+      "rewrites.jsonl",
+      "trainingReport",
+      "checkpoint",
+      "baseModel"
+    ],
+    "decode": {
+      "greedy": true,
+      "maxNewTokens": 64,
+      "numBeams": 1,
+      "tokenizerLegacy": false
+    },
+    "decodeComparedToFrozen": true,
+    "tamperSelftest": "13/13 caught"
+  },
+  "holdout": {
+    "file": "experiments/world-components/n4_holdout/holdout.jsonl",
+    "sha256": "a9323e0334242a1a14e6625dc355f6d64f6aa56c4e624d712a556bdd6bd7fe5e",
+    "rows": 48,
+    "distinctInputs": 45,
+    "unseenInputs": 44,
+    "sharedRegressionInputs": 1
+  },
+  "note": "engineering closure only; the acceptance numbers stay in n4-holdout-eval-r3-direction.json (no re-run performed)"
+}

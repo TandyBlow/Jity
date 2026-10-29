@@ -144,7 +144,9 @@
 
 **冻结清单**：`experiments/world-components/n4_holdout/freeze-r3-direction.json`，在验收前固定并逐项校验哈希：r3-direction 检查点（7 文件）、基座、共享渲染器 `n4_render.py`、判据 `corpus_check.py`、600 行语料、留出集与权威报告、解码设置（greedy、max_new_tokens=64、legacy=False）。验收脚本发现任何一项不符即中止，不会静默换件重跑。
 
-**留出集**：`experiments/world-components/n4_holdout/holdout.jsonl`，24 组 / 48 行 / 45 个独立输入。人物、地点、任务、外貌、人格与时长（9/11/13/18/22/35/50/75 分钟）均为新词表，与训练/开发语料零输入重合；只有省略时间后的原子“无变化”输入必然共享，作为 1 个回归项单列（4 行合 1 输入），不计入未见分母。留出集校验：行校验 648 pass（600 语料＋48 留出，19＋3 自检）、去重 48/48 零命中、权威核对 0 错误（server `4e17025`、apply `e626fdbb`）、174/174 组一致。留出集构造一次后冻结，未据模型输出改动。校验命令：`corpus_check.py corpus.seeds.jsonl rewrites.jsonl holdout.jsonl`、`dedup_check.py holdout.jsonl`、`validate_plan_authority.py --rows holdout.jsonl --report holdout-authority-report.json`。
+**留出集**：`experiments/world-components/n4_holdout/holdout.jsonl`，24 组 / 48 行 / 45 个独立输入。人物、地点、任务、外貌、人格均为新词表，时长取自与语料不相交的池子；与训练/开发语料零输入重合；只有省略时间后的原子“无变化”输入必然共享，作为 1 个回归项单列（4 行合 1 输入），不计入未见分母。留出集校验：行校验 648 pass（600 语料＋48 留出，19＋3 自检）、去重 48/48 零命中、权威核对 0 错误（server `4e17025`、apply `e626fdbb`）、174/174 组一致。**时长覆盖（复核轮 15 更正）**：构造器定义了八档时长 9/11/13/18/22/35/50/75 分钟，但每族只取前四档，所以本次冻结留出集**实际只覆盖 9/11/13/18 分钟**（每档 6 行）；22/35/50/75 未被使用。此前本节与汇报误写为八档全覆盖，现更正。按复核要求**保留冻结数据、不为补覆盖而改动本次留出集**；未来新留出集应让时长下标跨族推进。构造器未改生成逻辑，重跑 `build_holdout.py` 仍逐字节复现同一文件（sha256 `a9323e03…`）。
+
+留出集构造一次后冻结，未据模型输出改动。校验命令：`corpus_check.py corpus.seeds.jsonl rewrites.jsonl holdout.jsonl`、`dedup_check.py holdout.jsonl`、`validate_plan_authority.py --rows holdout.jsonl --report holdout-authority-report.json`。
 
 **预登记验收规则**：每个未见留出输入由冻结判据判定，verdict 必须为 pass；任何 review/fail 即本次留出验收不通过；不重生、不回退、不改判据；一次贪心解码。共享回归输入不参与未见分母。
 
@@ -158,3 +160,26 @@
 自动规则结果：**met**（44/44 未见输入通过）。归档：`artifacts/world-components/n4-holdout-eval-r3-direction.json`。复跑命令：`eval_n4_finetune.py --run-tag r3-direction --holdout experiments/world-components/n4_holdout/holdout.jsonl --freeze experiments/world-components/n4_holdout/freeze-r3-direction.json`。
 
 **边界**：这是冻结设置下的一次独立留出结果，不追溯改写开发批 53 项的证据地位；整体质量门是否关闭由协调人裁定，本文不代替签字。
+
+## 12. 复核轮 15 工程收口（2026-10-29）
+
+不做重训、不重跑留出验收，只补两项检查与一处文档更正。
+
+**1. 冻结校验补齐。** `eval_n4_finetune.py` 的 `verify_freeze` 原先漏验两项、也未核对解码配置。现在逐项比对 9 个钉定对象与运行期解码设置：
+
+| 检查项 | 内容 |
+| --- | --- |
+| 渲染器 / 判据 | `n4_render.py`、`corpus_check.py` sha256 |
+| 留出集 / 其权威报告 | `holdout.jsonl`、`holdout-authority-report.json` sha256 |
+| 语料 | `corpus.seeds.jsonl`、`rewrites.jsonl` sha256 |
+| **训练报告** | `n4-finetune-train-r3-direction.json` sha256（本轮新增） |
+| 检查点 / 基座 | 目录内逐文件 sha256_16 |
+| **解码配置** | 运行期 greedy/maxNewTokens/numBeams/tokenizerLegacy 与冻结清单**全等**（本轮新增） |
+
+**篡改自检 13 例**：上述每个钉定值各改一次、解码四项各改一次，必须全部被捕获；未改动的清单必须通过。不通过则中止（exit 2）。核对方式只读，不改冻结文件、不写回清单。
+
+**验证方式**：`eval_n4_finetune.py --run-tag r3-direction --holdout …/holdout.jsonl --freeze …/freeze-r3-direction.json --verify-only`。该模式只跑冻结校验与自检、**不执行推理**，输出 `artifacts/world-components/n4-holdout-freeze-verify-r3-direction.json`；既有接受结果仍以 `n4-holdout-eval-r3-direction.json` 为准，未重跑。本轮实测：自检 13/13 通过、9 项与解码全等、留出结构 48 行 / 45 输入（44 未见 + 1 共享回归）。
+
+**端到端篡改演示**（改清单副本、不动冻结文件）：把 `trainingReport.file` 指向 r2-large 报告 → `FREEZE MISMATCH trainingReport`；把 `decode.maxNewTokens` 改为 32 → `FREEZE MISMATCH decode: runtime={…64…} frozen={…32…}`；把 `holdout.authorityReport.file` 指向语料报告 → `FREEZE MISMATCH holdout.authorityReport`。三例均在推理前中止（exit 2）。校验顺序为先验真清单、再跑自检，避免篡改清单被自检信息掩盖。
+
+**2. 时长覆盖更正。** 见 §11 的“时长覆盖”段：冻结留出集实际只覆盖 9/11/13/18 分钟，22/35/50/75 未被使用；构造器新增打印实际使用档位与未用档位，数据未改（重跑仍复现 sha256 `a9323e03…`）。
