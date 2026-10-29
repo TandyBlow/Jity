@@ -31,6 +31,11 @@ HERE = pathlib.Path(__file__).resolve().parent
 args = sys.argv[1:]
 SERVER_TREE = pathlib.Path(args[args.index("--server-tree") + 1]) if "--server-tree" in args \
     else pathlib.Path("D:/others/Jity/.local/world-server-worktree")
+# --rows <file> validates a different row set (e.g. the independent holdout)
+# against the same A-side kernel; the tamper matrix still uses the frozen
+# corpus rows. --report sets the output path.
+ROWS_FILE = pathlib.Path(args[args.index("--rows") + 1]) if "--rows" in args else None
+REPORT_OUT = pathlib.Path(args[args.index("--report") + 1]) if "--report" in args else None
 BACKEND = SERVER_TREE / "backend"
 sys.path.insert(0, str(BACKEND))
 
@@ -328,11 +333,17 @@ def reconcile(r: dict, locs: dict, chars: dict, chars_by_id: dict):
 
 
 def main() -> None:
-    rows = []
+    base_rows = []
     for cf in CORPUS_FILES:
         if cf.exists():
-            rows += [json.loads(line) for line in
-                     cf.read_text(encoding="utf-8").splitlines() if line.strip()]
+            base_rows += [json.loads(line) for line in
+                          cf.read_text(encoding="utf-8").splitlines() if line.strip()]
+    if ROWS_FILE is not None:
+        rows = [json.loads(line) for line in
+                ROWS_FILE.read_text(encoding="utf-8").splitlines() if line.strip()]
+    else:
+        rows = base_rows
+    out_path = REPORT_OUT or OUT
 
     head = subprocess.run(["git", "-C", str(SERVER_TREE), "rev-parse", "HEAD"],
                           capture_output=True, text=True).stdout.strip()
@@ -353,12 +364,12 @@ def main() -> None:
         locs_t, chars_t, byid_t = register_registry(t["world"])
         return reconcile(t, locs_t, chars_t, byid_t)[0]
 
-    loc1 = next(r for r in rows if r["sourceGroupId"] == "n4-loc-001")
-    appear = next(r for r in rows if r["sourceGroupId"].startswith("n4-appear"))
-    chain = next(r for r in rows if r["sourceGroupId"].startswith("n4-chain"))
-    multi = next(r for r in rows if r["sourceGroupId"].startswith("n4-multi"))
-    empty = next(r for r in rows if r["sourceGroupId"].startswith("n4-empty"))
-    task = next(r for r in rows if any(e["kind"] == "task_achieved" for e in r["plan"])
+    loc1 = next(r for r in base_rows if r["sourceGroupId"] == "n4-loc-001")
+    appear = next(r for r in base_rows if r["sourceGroupId"].startswith("n4-appear"))
+    chain = next(r for r in base_rows if r["sourceGroupId"].startswith("n4-chain"))
+    multi = next(r for r in base_rows if r["sourceGroupId"].startswith("n4-multi"))
+    empty = next(r for r in base_rows if r["sourceGroupId"].startswith("n4-empty"))
+    task = next(r for r in base_rows if any(e["kind"] == "task_achieved" for e in r["plan"])
                 and r["split"] == "train")
 
     other_loc = next(l["id"] for l in loc1["world"]["locations"]
@@ -424,6 +435,8 @@ def main() -> None:
                        "applyPySha256_16": hashlib.sha256(apply_py.read_bytes()).hexdigest()[:16]},
         "rows": [],
     }
+    if ROWS_FILE is not None:
+        report["rowsFile"] = str(ROWS_FILE)
     failures = 0
     for r in rows:
         problems = []
@@ -587,10 +600,10 @@ def main() -> None:
         "verdict": "all plans provenance-valid under the A-side kernel"
         if failures == 0 else f"{failures} provenance errors",
     }
-    OUT.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
+    out_path.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"{report['summary']['verdict']}")
     print(f"server tree: {head[:12]} apply.py={report['serverTree']['applyPySha256_16']}")
-    print(f"report -> {OUT}")
+    print(f"report -> {out_path}")
     sys.exit(0 if failures == 0 else 1)
 
 

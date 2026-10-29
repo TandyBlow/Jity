@@ -1,0 +1,1569 @@
+{
+  "purpose": "apply-based provenance validation of corpus fact plans (evidence, not a claim)",
+  "pydanticVersion": "2.13.4",
+  "serverTree": {
+    "path": "D:\\others\\Jity\\.local\\world-server-worktree",
+    "head": "4e1702546df3337d28600b2caa55fb5ed86a5d83",
+    "applyPySha256_16": "e626fdbb0679ca0c"
+  },
+  "rowsFile": "experiments\\world-components\\n4_holdout\\holdout.jsonl",
+  "rows": [
+    {
+      "sourceGroupId": "n4h-loc-01",
+      "rowHash": "067651fefca589a5fdf30548c60bbd652351176836d8dff1133cbcf70efeca81",
+      "checks": [
+        {
+          "check": "before-state-pydantic",
+          "result": "ok"
+        },
+        {
+          "check": "moved-start",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-moved",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-time",
+          "ref": 1,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4h-loc-01",
+      "rowHash": "9a726cefae226f8863d2cfc0d9f8526d6c7198aedaa1f0ff4fede957e42791b1",
+      "checks": [
+        {
+          "check": "before-state-pydantic",
+          "result": "ok"
+        },
+        {
+          "check": "moved-start",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-moved",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-time",
+          "ref": 1,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4h-loc-02",
+      "rowHash": "64a3c356377de4fed02bbedde6062ccb41fbe0b07ff76be02e41eee1c6324f16",
+      "checks": [
+        {
+          "check": "before-state-pydantic",
+          "result": "ok"
+        },
+        {
+          "check": "moved-start",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-moved",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-time",
+          "ref": 1,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4h-loc-02",
+      "rowHash": "60544db6bff5fb4e8591d8213653c8bb9f63dd800850a915ab1bbaae5a3ebb80",
+      "checks": [
+        {
+          "check": "before-state-pydantic",
+          "result": "ok"
+        },
+        {
+          "check": "moved-start",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-moved",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-time",
+          "ref": 1,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4h-loc-03",
+      "rowHash": "e0cf9a42d877adfd7682de6e4d403d92deed4c88f29b4ddccb78d0eab19d4c7a",
+      "checks": [
+        {
+          "check": "before-state-pydantic",
+          "result": "ok"
+        },
+        {
+          "check": "moved-start",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-moved",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-time",
+          "ref": 1,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4h-loc-03",
+      "rowHash": "db55124d297ef151cf17280c147be8077aaadf97f4f81424e68a9e469ec40f68",
+      "checks": [
+        {
+          "check": "before-state-pydantic",
+          "result": "ok"
+        },
+        {
+          "check": "moved-start",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-moved",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-time",
+          "ref": 1,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4h-loc-04",
+      "rowHash": "6046d6fbfa1bc96f0df07bc17fd98fddd8555eea2647112518f071e2e39dbbc7",
+      "checks": [
+        {
+          "check": "before-state-pydantic",
+          "result": "ok"
+        },
+        {
+          "check": "moved-start",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-moved",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-time",
+          "ref": 1,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4h-loc-04",
+      "rowHash": "d8f759e81b992ac035df66f56cf8ffe32f21767be364773fa0bc471e88abf8e7",
+      "checks": [
+        {
+          "check": "before-state-pydantic",
+          "result": "ok"
+        },
+        {
+          "check": "moved-start",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-moved",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-time",
+          "ref": 1,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4h-empty-01",
+      "rowHash": "d19e2adf40e04fa49fc8ad1e663c813cbb7b0a12c911f8b55dce962908854d22",
+      "checks": [
+        {
+          "check": "before-state-pydantic",
+          "result": "ok"
+        },
+        {
+          "check": "empty-delta",
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-no-change",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-time",
+          "ref": 1,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4h-empty-01",
+      "rowHash": "834b45f187637a9c4fe35b75f9004573ce243f5eabcbc8bdb363a82f42795ba9",
+      "checks": [
+        {
+          "check": "before-state-pydantic",
+          "result": "ok"
+        },
+        {
+          "check": "empty-delta",
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-no-change",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-time",
+          "ref": 1,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4h-empty-02",
+      "rowHash": "54e7dfc7e22557d2ec8ae36bc4fb638676b6ddec15c5d8ab2083207c81129048",
+      "checks": [
+        {
+          "check": "before-state-pydantic",
+          "result": "ok"
+        },
+        {
+          "check": "empty-delta",
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-no-change",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-time",
+          "ref": 1,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4h-empty-02",
+      "rowHash": "f609c442495061c1ff6b3d011756080740fa588473e39ecec7d982ae2b6e2e45",
+      "checks": [
+        {
+          "check": "before-state-pydantic",
+          "result": "ok"
+        },
+        {
+          "check": "empty-delta",
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-no-change",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-time",
+          "ref": 1,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4h-empty-03",
+      "rowHash": "8ab111b4d243730a8c69703545da0cc7b42aa17704b7c2496e174c503fcd8003",
+      "checks": [
+        {
+          "check": "before-state-pydantic",
+          "result": "ok"
+        },
+        {
+          "check": "empty-delta",
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-no-change",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-time",
+          "ref": 1,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4h-empty-03",
+      "rowHash": "cf1afc09964d8d164b9fe90f68d023f03cb76caf0aa00bdf2aec220455047d01",
+      "checks": [
+        {
+          "check": "before-state-pydantic",
+          "result": "ok"
+        },
+        {
+          "check": "empty-delta",
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-no-change",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-time",
+          "ref": 1,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4h-empty-04",
+      "rowHash": "edf97a969283729a08eddad26afa43b0fd26ceab2c3dc114e347a9dcf866b36d",
+      "checks": [
+        {
+          "check": "before-state-pydantic",
+          "result": "ok"
+        },
+        {
+          "check": "empty-delta",
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-no-change",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-time",
+          "ref": 1,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4h-empty-04",
+      "rowHash": "5b1c42c3d4654baf83a171c157f3ffcb2b323e217daca894e73431aae1562a5f",
+      "checks": [
+        {
+          "check": "before-state-pydantic",
+          "result": "ok"
+        },
+        {
+          "check": "empty-delta",
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-no-change",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-time",
+          "ref": 1,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4h-task-01",
+      "rowHash": "8d8688fc3a9ed54938aa18169bd84ebde0549323b6d920708b8c96538df6d521",
+      "checks": [
+        {
+          "check": "before-state-pydantic",
+          "result": "ok"
+        },
+        {
+          "check": "task-owned-pending",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-task",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-time",
+          "ref": 1,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4h-task-01",
+      "rowHash": "99d98b63a77c5efb37bd82af9518a2ea6e9f3903234d05b5951a0be91932b7c7",
+      "checks": [
+        {
+          "check": "before-state-pydantic",
+          "result": "ok"
+        },
+        {
+          "check": "task-owned-pending",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-task",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-time",
+          "ref": 1,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4h-task-02",
+      "rowHash": "960091c35b83f6ad247259a23852d7165f36cd65d1df310b73cc2e262e7ea3f5",
+      "checks": [
+        {
+          "check": "before-state-pydantic",
+          "result": "ok"
+        },
+        {
+          "check": "task-owned-pending",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-task",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-time",
+          "ref": 1,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4h-task-02",
+      "rowHash": "dd5a3d9c4d83d8b1d38d4b307a3e7a6a78d340826eedadd84da7a5e4b797562e",
+      "checks": [
+        {
+          "check": "before-state-pydantic",
+          "result": "ok"
+        },
+        {
+          "check": "task-owned-pending",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-task",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-time",
+          "ref": 1,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4h-task-03",
+      "rowHash": "37a955387aa69b15a0724b381d78c9ba6652f4da263cda7237a655ab7366bb75",
+      "checks": [
+        {
+          "check": "before-state-pydantic",
+          "result": "ok"
+        },
+        {
+          "check": "task-owned-pending",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-task",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-time",
+          "ref": 1,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4h-task-03",
+      "rowHash": "32ce56b816e0e4ab55bbdc24c215edaa327d41e300ff66f2e04575b5b4100a99",
+      "checks": [
+        {
+          "check": "before-state-pydantic",
+          "result": "ok"
+        },
+        {
+          "check": "task-owned-pending",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-task",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-time",
+          "ref": 1,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4h-task-04",
+      "rowHash": "b67e0f63a71a966c96aa5b619b83c73451f8dd04acebf7afaabb1ffe3aa73de2",
+      "checks": [
+        {
+          "check": "before-state-pydantic",
+          "result": "ok"
+        },
+        {
+          "check": "task-owned-pending",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-task",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-time",
+          "ref": 1,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4h-task-04",
+      "rowHash": "b528f2fa50feacf5fc5fa354abfc613cd5ff94d5a73b11ef61f5413c065b8a5a",
+      "checks": [
+        {
+          "check": "before-state-pydantic",
+          "result": "ok"
+        },
+        {
+          "check": "task-owned-pending",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-task",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-time",
+          "ref": 1,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4h-chain-01",
+      "rowHash": "0b20b640d6a3a1ebd862f7d56d962e3ecd1df05be33cd6f78325aedb03fc2d06",
+      "checks": [
+        {
+          "check": "before-state-pydantic",
+          "result": "ok"
+        },
+        {
+          "check": "task-owned-pending",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "sanity-old-value",
+          "ref": 2,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-task",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-personality",
+          "ref": 1,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-sanity",
+          "ref": 2,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-time",
+          "ref": 3,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4h-chain-01",
+      "rowHash": "136517367c61147422882cbb2512fa67f3fb75425574417322e4b856c87fd6c0",
+      "checks": [
+        {
+          "check": "before-state-pydantic",
+          "result": "ok"
+        },
+        {
+          "check": "task-owned-pending",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "sanity-old-value",
+          "ref": 2,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-task",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-personality",
+          "ref": 1,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-sanity",
+          "ref": 2,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-time",
+          "ref": 3,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4h-chain-02",
+      "rowHash": "7d500a07e86e1e3604c476643228a6cf7d0b7122446a534440b8adeab02e42b3",
+      "checks": [
+        {
+          "check": "before-state-pydantic",
+          "result": "ok"
+        },
+        {
+          "check": "task-owned-pending",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "sanity-old-value",
+          "ref": 2,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-task",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-personality",
+          "ref": 1,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-sanity",
+          "ref": 2,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-time",
+          "ref": 3,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4h-chain-02",
+      "rowHash": "11b48e911c9e6db405033bc996c9204c845297749a77ec183f3a6d11e1940760",
+      "checks": [
+        {
+          "check": "before-state-pydantic",
+          "result": "ok"
+        },
+        {
+          "check": "task-owned-pending",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "sanity-old-value",
+          "ref": 2,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-task",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-personality",
+          "ref": 1,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-sanity",
+          "ref": 2,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-time",
+          "ref": 3,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4h-chain-03",
+      "rowHash": "bb2e55ceb35a61c30fecba021c6816ae046af24beee5747bdbb1b6062ade4e72",
+      "checks": [
+        {
+          "check": "before-state-pydantic",
+          "result": "ok"
+        },
+        {
+          "check": "task-owned-pending",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "sanity-old-value",
+          "ref": 2,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-task",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-personality",
+          "ref": 1,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-sanity",
+          "ref": 2,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-time",
+          "ref": 3,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4h-chain-03",
+      "rowHash": "a6386264ecab235c5d37a57cc868dcaad9cfe2808b0958656a80ed0ab71626ec",
+      "checks": [
+        {
+          "check": "before-state-pydantic",
+          "result": "ok"
+        },
+        {
+          "check": "task-owned-pending",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "sanity-old-value",
+          "ref": 2,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-task",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-personality",
+          "ref": 1,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-sanity",
+          "ref": 2,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-time",
+          "ref": 3,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4h-chain-04",
+      "rowHash": "2b40aad39b64dcd0fc8655d57fdb47c5c0abbf7b7bf0a3a8703055a167d3cc43",
+      "checks": [
+        {
+          "check": "before-state-pydantic",
+          "result": "ok"
+        },
+        {
+          "check": "task-owned-pending",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "sanity-old-value",
+          "ref": 2,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-task",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-personality",
+          "ref": 1,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-sanity",
+          "ref": 2,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-time",
+          "ref": 3,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4h-chain-04",
+      "rowHash": "f3036aa8748277821ca650a02b8d1ff04667a7e577dccdd83cea6c3389d0d6b5",
+      "checks": [
+        {
+          "check": "before-state-pydantic",
+          "result": "ok"
+        },
+        {
+          "check": "task-owned-pending",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "sanity-old-value",
+          "ref": 2,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-task",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-personality",
+          "ref": 1,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-sanity",
+          "ref": 2,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-time",
+          "ref": 3,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4h-appear-01",
+      "rowHash": "e07c52f2a685525f5e6694b4bb46b4402849bd01f4a26ac2f8b9d49f38fc2b43",
+      "checks": [
+        {
+          "check": "before-state-pydantic",
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-appearance",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-time",
+          "ref": 1,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4h-appear-01",
+      "rowHash": "2378382f258beaa9ccce41970a46f2165a44bcd1d2b1559d101c5241f30736eb",
+      "checks": [
+        {
+          "check": "before-state-pydantic",
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-appearance",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-time",
+          "ref": 1,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4h-appear-02",
+      "rowHash": "3b461622b37d96039740b7a32b0b0127d980ae1b08ecb90c2372bdce0db4567a",
+      "checks": [
+        {
+          "check": "before-state-pydantic",
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-appearance",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-time",
+          "ref": 1,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4h-appear-02",
+      "rowHash": "95480a1125a72464433c472a5bdfb7ec18b25ec979f7a30d68c1a976c54e046a",
+      "checks": [
+        {
+          "check": "before-state-pydantic",
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-appearance",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-time",
+          "ref": 1,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4h-appear-03",
+      "rowHash": "843484f74b4d8c1b7c3c92258558b63e077a4c4247687b08ae54e06e4a04dc5f",
+      "checks": [
+        {
+          "check": "before-state-pydantic",
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-appearance",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-time",
+          "ref": 1,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4h-appear-03",
+      "rowHash": "15a60dc0be14f93d0792ebe111ca72a01cb713a33368e7d2b5b78828706aaba8",
+      "checks": [
+        {
+          "check": "before-state-pydantic",
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-appearance",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-time",
+          "ref": 1,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4h-appear-04",
+      "rowHash": "dbd057790f99c644b7956169d75b4329502121eca2c9a953157ac2fc57ea7e5e",
+      "checks": [
+        {
+          "check": "before-state-pydantic",
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-appearance",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-time",
+          "ref": 1,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4h-appear-04",
+      "rowHash": "ff49ff7ae83e3a40a25c5a8ca2efe8804e36694fc5a19a9b4ab86588152ac818",
+      "checks": [
+        {
+          "check": "before-state-pydantic",
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-appearance",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-time",
+          "ref": 1,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4h-multi-01",
+      "rowHash": "6743788167ad832b9c3a55cba4972b2c8f4c30e64998d94fdeade19bfae2b522",
+      "checks": [
+        {
+          "check": "before-state-pydantic",
+          "result": "ok"
+        },
+        {
+          "check": "moved-start",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-moved",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-positioned",
+          "ref": 1,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-time",
+          "ref": 2,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4h-multi-01",
+      "rowHash": "fa1dd44ec48135ac309855f915542d3f262cb357ab09f26f3514cd6e10302ac2",
+      "checks": [
+        {
+          "check": "before-state-pydantic",
+          "result": "ok"
+        },
+        {
+          "check": "moved-start",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-moved",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-positioned",
+          "ref": 1,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-time",
+          "ref": 2,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4h-multi-02",
+      "rowHash": "f8cbeff4aff528f324f73ce736d58a3b4f9c3ebdc729fdd44e79e1ba264175a7",
+      "checks": [
+        {
+          "check": "before-state-pydantic",
+          "result": "ok"
+        },
+        {
+          "check": "moved-start",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-moved",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-positioned",
+          "ref": 1,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-time",
+          "ref": 2,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4h-multi-02",
+      "rowHash": "d4d5e01168ad32c04cacc2ef1c143c3d263a3c1aceb6322bfc9bc63594418b7f",
+      "checks": [
+        {
+          "check": "before-state-pydantic",
+          "result": "ok"
+        },
+        {
+          "check": "moved-start",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-moved",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-positioned",
+          "ref": 1,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-time",
+          "ref": 2,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4h-multi-03",
+      "rowHash": "3a5bb388c7a6edf2a6c4f647f7bfda508465393bee81a966982a1d859f130844",
+      "checks": [
+        {
+          "check": "before-state-pydantic",
+          "result": "ok"
+        },
+        {
+          "check": "moved-start",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-moved",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-positioned",
+          "ref": 1,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-time",
+          "ref": 2,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4h-multi-03",
+      "rowHash": "e881970eac74591101e40e0094e2cee5ed505b09f7d6e5ab3d33e3f848b2aecf",
+      "checks": [
+        {
+          "check": "before-state-pydantic",
+          "result": "ok"
+        },
+        {
+          "check": "moved-start",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-moved",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-positioned",
+          "ref": 1,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-time",
+          "ref": 2,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4h-multi-04",
+      "rowHash": "4e20ddbef24e7a4aaa7747ee3ca5e55a72ef7bd2d161c236fea7e22d632e6f89",
+      "checks": [
+        {
+          "check": "before-state-pydantic",
+          "result": "ok"
+        },
+        {
+          "check": "moved-start",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-moved",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-positioned",
+          "ref": 1,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-time",
+          "ref": 2,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "sourceGroupId": "n4h-multi-04",
+      "rowHash": "148fce1fdb25553b39a98cd8a66575063403fe76fcf629b18cbbc1e1fa73a139",
+      "checks": [
+        {
+          "check": "before-state-pydantic",
+          "result": "ok"
+        },
+        {
+          "check": "moved-start",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-moved",
+          "ref": 0,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-positioned",
+          "ref": 1,
+          "result": "ok"
+        },
+        {
+          "check": "reconcile-time",
+          "ref": 2,
+          "result": "ok"
+        },
+        {
+          "check": "kernel-apply",
+          "result": "ok"
+        }
+      ],
+      "errors": []
+    }
+  ],
+  "summary": {
+    "rows": 48,
+    "validationErrors": 0,
+    "verdict": "all plans provenance-valid under the A-side kernel"
+  }
+}

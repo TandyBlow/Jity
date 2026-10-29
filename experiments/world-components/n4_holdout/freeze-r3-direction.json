@@ -1,0 +1,83 @@
+{
+  "purpose": "frozen setup for the one-shot N4 independent holdout acceptance",
+  "date": "2026-10-29",
+  "checkpoint": {
+    "path": "D:\\others\\Jity\\.local\\world-components-worktree\\experiments\\world-components\\assets\\n4-finetune\\r3-direction",
+    "sha256_16": {
+      "added_tokens.json": "a247922ac010bc17",
+      "config.json": "a35e9d4382657106",
+      "generation_config.json": "691648bea8d35875",
+      "model.safetensors": "baceebff5d33eacf",
+      "special_tokens_map.json": "65d84a9271d68f12",
+      "spiece.model": "c65feffa65ff0378",
+      "tokenizer_config.json": "553da19a6ed43c57"
+    }
+  },
+  "baseModel": {
+    "path": "D:\\others\\Jity\\.local\\world-components-worktree\\experiments\\world-components\\assets\\randeng-t5-77m",
+    "sha256_16": {
+      "config.json": "9b2480c0a39fd09b",
+      "model.safetensors": "5cdc572109cf2591",
+      "special_tokens_map.json": "09059cedc26bc46b",
+      "spiece.model": "c65feffa65ff0378",
+      "tokenizer_config.json": "af072c7d91576727"
+    }
+  },
+  "renderer": {
+    "file": "D:\\others\\Jity\\.local\\world-components-worktree\\experiments\\world-components\\n4_corpus\\n4_render.py",
+    "sha256": "65bfe89adfbb75d5637d3661cab383aa9bc678dffb97ab5eb8a0d28ac1e3f2ef"
+  },
+  "judge": {
+    "file": "D:\\others\\Jity\\.local\\world-components-worktree\\experiments\\world-components\\n4_corpus\\corpus_check.py",
+    "sha256": "e16bd2c98a7141aaf8251c6562f191eb78809840e477e2b24f8345ecd351ac50"
+  },
+  "corpus": {
+    "corpus.seeds.jsonl": "f14e451a9cc410bd2cb4c90adf07ca227ee60f888e27510510f65893b829dfb7",
+    "rewrites.jsonl": "2811d7310c42666a7d796ea4f72252dc003c3e88cb5c069c2b12c88defbed6d3"
+  },
+  "decode": {
+    "greedy": true,
+    "maxNewTokens": 64,
+    "numBeams": 1,
+    "tokenizerLegacy": false
+  },
+  "trainingReport": {
+    "file": "D:\\others\\Jity\\.local\\world-components-worktree\\artifacts\\world-components\\n4-finetune-train-r3-direction.json",
+    "sha256": "3615747096d9f2f766340cd34ea9f09ddd6b3bef30583fef31c45efc07db3cde"
+  },
+  "holdout": {
+    "file": "D:\\others\\Jity\\.local\\world-components-worktree\\experiments\\world-components\\n4_holdout\\holdout.jsonl",
+    "sha256": "a9323e0334242a1a14e6625dc355f6d64f6aa56c4e624d712a556bdd6bd7fe5e",
+    "authorityReport": {
+      "file": "D:\\others\\Jity\\.local\\world-components-worktree\\experiments\\world-components\\n4_holdout\\holdout-authority-report.json",
+      "sha256": "1b5cd0bc078ae9a3ccb6593ec37f19f35d6f2217d1f72896bb277402b3f4f91a"
+    },
+    "rows": 48,
+    "groups": 24,
+    "distinctInputs": 45,
+    "unseenInputs": 44,
+    "sharedRegressionInputs": 1,
+    "sharedRegression": [
+      {
+        "input": "叙事生成任务。\n事实：\n1. 无变化\n正文：",
+        "rows": 4,
+        "kind": "atomic omitted-time no_change (唯一渲染“无变化”)"
+      }
+    ]
+  },
+  "isolation": {
+    "corpusInputs": 263,
+    "nonAtomicOverlap": 0
+  },
+  "acceptanceRule": [
+    "每个未见留出输入由冻结的 corpus_check.check_row 判定，verdict 必须为 pass",
+    "任何 review/fail 即本次留出验收不通过；不重生、不回退、不改判据",
+    "共享回归输入（原子 no_change）单列，不计入未见分母",
+    "一次贪心解码（max_new_tokens=64），不因失败重试",
+    "本清单哈希在验收前固定；验收脚本校验不符即中止"
+  ],
+  "notes": [
+    "留出集只构造一次，未参与训练、两轮开发选择或判据修订",
+    "参考正文仅用于 schema/校验器检查，验收只判模型输出对 plan 的忠实度"
+  ]
+}

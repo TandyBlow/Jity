@@ -139,3 +139,22 @@
 相对 r2-large：50 个原本通过的输入保持通过，已知的 3 个方向错误输入（`d109` 有/无时间、`d115` 无时间）全部转为通过，无其他输入改善或倒退。零样本 base 臂仍全 review。归档：`artifacts/world-components/n4-finetune-{train,eval}-r3-direction.json`。
 
 **未做**：小档不重跑（单变量对照只针对大档）；耗时未按交错重放口径重测；人工抽验与质量门结论仍待后续。**本轮不宣布 N4 质量通过**；渲染器方向提示是否保留，待协调人复核后决定。
+
+## 11. 独立留出验收（2026-10-29，冻结 r3-direction）
+
+**冻结清单**：`experiments/world-components/n4_holdout/freeze-r3-direction.json`，在验收前固定并逐项校验哈希：r3-direction 检查点（7 文件）、基座、共享渲染器 `n4_render.py`、判据 `corpus_check.py`、600 行语料、留出集与权威报告、解码设置（greedy、max_new_tokens=64、legacy=False）。验收脚本发现任何一项不符即中止，不会静默换件重跑。
+
+**留出集**：`experiments/world-components/n4_holdout/holdout.jsonl`，24 组 / 48 行 / 45 个独立输入。人物、地点、任务、外貌、人格与时长（9/11/13/18/22/35/50/75 分钟）均为新词表，与训练/开发语料零输入重合；只有省略时间后的原子“无变化”输入必然共享，作为 1 个回归项单列（4 行合 1 输入），不计入未见分母。留出集校验：行校验 648 pass（600 语料＋48 留出，19＋3 自检）、去重 48/48 零命中、权威核对 0 错误（server `4e17025`、apply `e626fdbb`）、174/174 组一致。留出集构造一次后冻结，未据模型输出改动。校验命令：`corpus_check.py corpus.seeds.jsonl rewrites.jsonl holdout.jsonl`、`dedup_check.py holdout.jsonl`、`validate_plan_authority.py --rows holdout.jsonl --report holdout-authority-report.json`。
+
+**预登记验收规则**：每个未见留出输入由冻结判据判定，verdict 必须为 pass；任何 review/fail 即本次留出验收不通过；不重生、不回退、不改判据；一次贪心解码。共享回归输入不参与未见分母。
+
+**一次运行结果（2026-10-29）**：
+
+| 臂 | 未见 44 | 共享回归 1 |
+| --- | --- | --- |
+| r3-direction | **44 pass / 0 review / 0 fail** | 1 pass |
+| base（零样本） | 0 pass / 44 review | 0 pass / 1 review |
+
+自动规则结果：**met**（44/44 未见输入通过）。归档：`artifacts/world-components/n4-holdout-eval-r3-direction.json`。复跑命令：`eval_n4_finetune.py --run-tag r3-direction --holdout experiments/world-components/n4_holdout/holdout.jsonl --freeze experiments/world-components/n4_holdout/freeze-r3-direction.json`。
+
+**边界**：这是冻结设置下的一次独立留出结果，不追溯改写开发批 53 项的证据地位；整体质量门是否关闭由协调人裁定，本文不代替签字。
