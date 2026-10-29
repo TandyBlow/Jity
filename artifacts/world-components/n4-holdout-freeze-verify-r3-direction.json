@@ -24,6 +24,10 @@
       "tokenizerLegacy": false
     },
     "decodeComparedToFrozen": true,
+    "tokenizer": {
+      "legacy": false,
+      "note": "reported from DECODE, the same dict the tokenizer and generate() read"
+    },
     "tamperSelftest": "13/13 caught"
   },
   "holdout": {

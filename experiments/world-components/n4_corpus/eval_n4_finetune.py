@@ -380,6 +380,9 @@ def write_verify_only(freeze: dict, units: list) -> None:
                                 "trainingReport", "checkpoint", "baseModel"],
             "decode": dict(DECODE),
             "decodeComparedToFrozen": True,
+            "tokenizer": {"legacy": DECODE["tokenizerLegacy"],
+                          "note": "reported from DECODE, the same dict the "
+                                  "tokenizer and generate() read"},
             "tamperSelftest": "13/13 caught",
         },
         "holdout": {"file": HOLDOUT, "sha256": sha_file(pathlib.Path(HOLDOUT)),
@@ -440,7 +443,7 @@ def main() -> None:
                         "device": "cuda",
                         "deviceName": torch.cuda.get_device_name(0)},
         "decode": dict(DECODE),
-        "tokenizer": {"legacy": False,
+        "tokenizer": {"legacy": DECODE["tokenizerLegacy"],
                       "note": "same pin as training and the zero-shot baseline"},
         "judge": "corpus_check.check_row over the row's own plan/refs/must "
                  "(hashes recomputed for the generated text; planRefs re-expanded "
