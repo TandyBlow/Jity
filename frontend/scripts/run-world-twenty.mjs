@@ -540,7 +540,13 @@ try {
       const api = async (operation, payload) => {
         setupOps.push({ op: operation, at: Date.now() });
         try { return await H.rawOp(operation, payload, { tag: 'setup' }); }
-        catch (error) { setupOps.push({ op: `${operation}:REFUSED`, error: error?.response?.error ?? null }); throw error; }
+        catch (error) {
+          setupOps.push({ op: `${operation}:REFUSED`, error: error?.response?.error ?? null });
+          // 服务错误信封不带 detail（问题清单 4）——把操作名与 wire 尾巴拼进
+          // 错误消息，否则定位只能盲猜
+          throw new Error(`${operation} refused: ${error?.message ?? error} ` +
+            `wire=${JSON.stringify(H.wireCaptures.slice(-2))}`);
+        }
       };
       const base = () => ({ requestId: next() });
       const allocate = async (slots) => {
