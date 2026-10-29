@@ -1,13 +1,19 @@
 {
   "kind": "b3-rescore",
   "judgeVersion": 5,
-  "recordedAt": "2026-10-29T08:25:41.980Z",
+  "judgeSource": {
+    "path": "frontend/scripts/b3-judges.mjs",
+    "sha256": "12be98c898c03f8bc47d41f35c3df082f14bff291eb69ec275716da7ba166234"
+  },
+  "recordedAt": "2026-10-29T08:49:20.506Z",
   "source": {
     "path": "artifacts/world-chain/b3-baseline-v3.json",
     "recordedAt": "2026-10-29T07:42:20.986Z",
     "status": "COMPLETED_WITH_FAILURES",
     "browserHead": "d33a1cab1e940a9ebec3f020c218d6359d112687",
-    "serverHead": "4e1702546df3337d28600b2caa55fb5ed86a5d83"
+    "serverHead": "4e1702546df3337d28600b2caa55fb5ed86a5d83",
+    "browserStatus": " M frontend/scripts/b3-judges.mjs\n?? .local-b3-v3.log",
+    "pinnedWithJudgeHash": false
   },
   "contextFingerprint": {
     "worldId": "world_1",
@@ -1095,6 +1101,7 @@
   },
   "notes": [
     "Scoring only: no model call, no server, no new evidence.",
+    "judgeSource={\"path\":\"frontend/scripts/b3-judges.mjs\",\"sha256\":\"12be98c898c03f8bc47d41f35c3df082f14bff291eb69ec275716da7ba166234\"} — this hash is the judge that produced these verdicts.",
     "Old archives did not store result/reaction input context or continuation judgement fields; those aspects are `review`, never `pass`.",
     "The old action/continuation prompts encoded the superseded contract (consumed => skip every actor; incomplete tasks => continue); the new verdicts judge the outputs against the design contract."
   ],

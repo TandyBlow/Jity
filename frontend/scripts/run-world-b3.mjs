@@ -49,6 +49,11 @@ const dbSnapshotOption = option('--db-snapshot', 'artifacts/world-chain/b3-run-d
 const scope = { tasks: !process.argv.includes('--skip-tasks'), scenes: option('--only', 'both') };
 if (!['action', 'chain', 'both', 'none'].includes(scope.scenes)) throw new Error(`--only expects action|chain|both|none, got ${scope.scenes}`);
 
+// The judge is pinned wherever a report claims a judgeVersion: scoring lives in
+// this file, so every report (baseline runs AND rescores) must carry its hash.
+const JUDGE_PATH = 'frontend/scripts/b3-judges.mjs';
+const judgeSource = { path: JUDGE_PATH, sha256: createHash('sha256').update(readFileSync(resolve(root, JUDGE_PATH))).digest('hex') };
+
 // ---- re-score an existing archive with the current judges (no services) ----
 //   node scripts/run-world-b3.mjs --rescore artifacts/world-chain/b3-baseline.json //        --out artifacts/world-chain/b3-rescore.json
 // Old reports keep their raw prompts/outputs, so the same judge can be replayed
@@ -70,9 +75,11 @@ if (rescoreSource) {
   }]));
   const selfTest = runJudgeSelfTests(context);
   const rescored = {
-    kind: 'b3-rescore', judgeVersion: 5, recordedAt: new Date().toISOString(),
+    kind: 'b3-rescore', judgeVersion: 5, judgeSource, recordedAt: new Date().toISOString(),
     source: { path: rescoreSource, recordedAt: source.recordedAt, status: source.status,
-      browserHead: source.browserSource?.head ?? null, serverHead: source.serverSource?.head ?? null },
+      browserHead: source.browserSource?.head ?? null, serverHead: source.serverSource?.head ?? null,
+      browserStatus: source.browserSource?.status ?? null,
+      pinnedWithJudgeHash: Object.keys(source.browserSource?.sha256 ?? {}).includes(JUDGE_PATH) },
     contextFingerprint: { worldId: worldState.worldId, protagonist: context.protagonist, roster: context.roster, time: worldState.time },
     tasks: {
       rates: summarizeProbes(probes), judgeSelfTest: selfTest,
@@ -84,6 +91,7 @@ if (rescoreSource) {
     scenes,
     notes: [
       'Scoring only: no model call, no server, no new evidence.',
+      `judgeSource=${JSON.stringify(judgeSource)} — this hash is the judge that produced these verdicts.`,
       'Old archives did not store result/reaction input context or continuation judgement fields; '
         + 'those aspects are `review`, never `pass`.',
       'The old action/continuation prompts encoded the superseded contract (consumed => skip every actor; '
@@ -101,7 +109,7 @@ if (rescoreSource) {
 }
 const privateDir = resolve(root, `.local/world-b3-${Date.now()}`);
 mkdirSync(privateDir, { recursive: true });
-const sources = ['frontend/scripts/run-world-b3.mjs', 'frontend/scripts/b3-judges.mjs', 'frontend/src/app/world/narration-polisher.ts',
+const sources = ['frontend/scripts/run-world-b3.mjs', JUDGE_PATH, 'frontend/src/app/world/narration-polisher.ts',
   'frontend/src/app/world/world-defaults.ts',
   ...['runtime/rule-session', 'runtime/rule-facts', 'runtime/committed-narration', 'runtime/prompts', 'runtime/wllama-engine',
     'runtime/focused-input', 'runtime/narration-split', 'runtime/engine', 'types',
@@ -121,7 +129,7 @@ const report = {
     sha256: Object.fromEntries(sources.map((file) => [file, createHash('sha256').update(readFileSync(resolve(root, file))).digest('hex')])) },
   serverSource: { head: git(a, 'rev-parse', 'HEAD'), status: git(a, 'status', '--short'),
     sha256: Object.fromEntries(serverFiles.map(({ path, file }) => [path, createHash('sha256').update(readFileSync(file)).digest('hex')])) },
-  scope, judgeVersion: 5, modelLoad: null, modelConfig: {
+  scope, judgeVersion: 5, judgeSource, modelLoad: null, modelConfig: {
     settlement: { model: '/models/Qwen3-0.6B-Q4_K_M.gguf', contextSize: 2048, temperature: 0, seed: 42,
       maxTokens: 'per task (64-384)', timeoutMs: 110_000, constrainedDecoding: 'json_schema strict' },
     narration: { model: null, contextSize: 2048, maxTokens: 96, temperature: [0, 0.7], timeoutMs: 110_000,
@@ -270,6 +278,7 @@ try {
       if (response.world) {
         H.worldId = response.world.worldId;
         H.head = response.world.head;
+        H.capturedRound = response.world.round ?? null;
         if (response.world.lease) H.lease = { ...H.lease, ...response.world.lease };
       }
       const data = response.data;
@@ -737,12 +746,42 @@ ${view}
     };
 
     // 带记录的 tracked transport（场景用；commit 后不做 fold——B3 记录失败即交付）
+    // 复核轮 20（①a）：continue 结论确认后，新 round 的 group/point 身份由
+    // 程序负责——harness 立即按新 roundId 预分配并清掉旧的 group:* 槽位，
+    // discover_group 永不携带上一轮已 consumed 的 group id
+    // （v4 action 场景的 `allocated group identity has already been used`
+    // 即此因；模型无责）。这同时是 ①b 产品路径的对照实现。
     H.transport = { async execute(operation, request, scope, signal) {
       const started = performance.now();
       const response = await H.http.execute(operation, request, scope, signal);
       H.opLog.push({ op: operation, ms: Math.round(performance.now() - started) });
       H.captureEnvelope(response);
       if (operation === 'get_state') H.reads.set(response.data.pointId, structuredClone(response.data));
+      if (operation === 'round_conclusion_conclude') {
+        const conclusion = request?.conclusion ?? {};
+        if (conclusion.kind === 'continue' && conclusion.nextRoundId && H.worldId) {
+          const roundId = conclusion.nextRoundId;
+          // 新轮名册：conclude 回包携带的 served round（captureEnvelope 已存）；
+          // 缺失时退回模型的候选集合（仍是名册子集——端口已过滤）。
+          const actors = (H.capturedRound?.order?.length ? H.capturedRound.order : null)
+            ?? conclusion.candidateCharacterIds ?? [];
+          const slots = actors.map((actor) => ({ slotKey: `group:${actor}`, kind: 'group' }));
+          let allocated = {};
+          if (slots.length && H.lease?.leaseToken) {
+            const allocation = await H.http.execute('allocate_ids', {
+              protocolVersion: 2, requestId: `b3_round_${++H.rawSeq}`, worldId: H.worldId,
+              leaseToken: H.lease.leaseToken, fenceEpoch: H.lease.fenceEpoch,
+              allocationKey: `b3_groups_${roundId}`, slots }, { worldId: H.worldId });
+            H.opLog.push({ op: 'allocate_ids(next-round groups)', ms: Math.round(performance.now() - started) });
+            H.captureEnvelope(allocation);
+            allocated = Object.fromEntries(allocation.data.allocations.map((entry) => [entry.slotKey, entry.id]));
+          }
+          // 程序职责（①a）：新轮身份即刻生效；旧的 group:* 槽位绝不跨轮
+          // 复用——v4 的 action 场景正是复用了 round_27 已 consumed 的
+          // group_29。场景通过 driverBindRoundGroups 把新 id 写进驱动内存。
+          if (H.driverBindRoundGroups) H.driverBindRoundGroups(roundId, allocated);
+        }
+      }
       return response;
     } };
     return { narrationModel: H.narrationModel };
@@ -1019,6 +1058,13 @@ ${view}
       const memory = initialMemory(`${namespace}_driver`, 'b3_action_holder');
       memory.budget.max = 40; // 场景预算：只防无界继续推进，不替模型做语义判断
       const driver = new ControllerDriver({ transport: H.transport, model: H.b3Port }, memory);
+      // ①a：continue 后的新轮 group 身份由程序分配（tracked transport 回调）
+      H.driverBindRoundGroups = (roundId, allocated) => {
+        for (const [slotKey, id] of Object.entries(allocated)) memory.ids[slotKey] = id;
+        memory.roundAllocations[roundId] = { allocationKey: `b3_groups_${roundId}`,
+          slots: Object.keys(allocated).map((slotKey) => ({ slotKey, kind: 'group' })) };
+        memory.allocatedKeys.push(`b3_groups_${roundId}`);
+      };
       const setupStarted = performance.now();
       const recovered = await driver.recover(H.worldId, { leaseToken: H.lease.leaseToken, fenceEpoch: H.lease.fenceEpoch });
       if (recovered) throw new Error(`action recover: ${JSON.stringify(recovered)}`);
@@ -1158,6 +1204,12 @@ ${view}
       H.programNextRoundIds = Array.from({ length: 4 }, (_, index) => ids[`round_auto${index + 1}`]);
       const memory = initialMemory(`${namespace}_driver`, 'b3_chain_holder');
       memory.budget.max = 40;
+      H.driverBindRoundGroups = (roundId, allocated) => {
+        for (const [slotKey, id] of Object.entries(allocated)) memory.ids[slotKey] = id;
+        memory.roundAllocations[roundId] = { allocationKey: `b3_groups_${roundId}`,
+          slots: Object.keys(allocated).map((slotKey) => ({ slotKey, kind: 'group' })) };
+        memory.allocatedKeys.push(`b3_groups_${roundId}`);
+      };
       const driver = new ControllerDriver({ transport: H.transport, model: H.b3Port }, memory);
       const recovered = await driver.recover(H.worldId, { leaseToken: H.lease.leaseToken, fenceEpoch: H.lease.fenceEpoch });
       if (recovered) throw new Error(`chain recover: ${JSON.stringify(recovered)}`);
