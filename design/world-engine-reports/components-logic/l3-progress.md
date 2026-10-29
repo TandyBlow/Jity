@@ -8,19 +8,19 @@
 |---|---|---|
 | 原创开发草稿 | 40 个来源组、42 个 case；34 个应调用、8 个结构守卫项 | [输入](../../../experiments/world-components-logic/data/dev-inputs.jsonl)、[AI 判据草稿](../../../experiments/world-components-logic/data/dev-review-drafts.jsonl)、[来源登记](../../../experiments/world-components-logic/data/dev-provenance.json)；人审和语义同源独立性均未通过，未建封存/训练/短链 |
 | 工程核心 | 阶段输入隔离、确定性守卫、输出结构校验、全尝试耗时台账 | [lab.py](../../../experiments/world-components-logic/lab.py)；不是另一套服务/协议，不替模型判断开放语义 |
-| 工程测试 | 52 项通过（含对 682fa37 旧实现反向验证：缺失 workloadId 回归测试必失败） | [test_lab.py](../../../experiments/world-components-logic/tests/test_lab.py)；不证明模型质量/性能 |
+| 工程测试 | 59 项通过（缺失 workloadId 与 smoke 台账的回归测试均经反向验证，对各自修复前实现必失败） | [test_lab.py](../../../experiments/world-components-logic/tests/test_lab.py)；不证明模型质量/性能 |
 | 数据可复现 | 生成器 `--check` 重建同字节 | [生成器](../../../experiments/world-components-logic/generate_dev_drafts.py)；不会覆盖已被人工修改/签字的草稿 |
 | 人审材料 | 生成可本地审阅/导出意见的 HTML 草稿 | [审阅页](../../../artifacts/world-components-logic/l3-1-review.html)、[生成程序](../../../experiments/world-components-logic/prepare_review.py)；浏览器界面/导出尚未验收，未替用户作审阅决定 |
 | 独立环境 | 新建隔离 venv，安装 25 个依赖并保存版本/安装报告哈希 | [环境身份](../../../artifacts/world-components-logic/l3-1-environment.json)、[平台锁](../../../experiments/world-components-logic/requirements-probe-macos-arm64-py311.lock.txt)；无共享 system-site-packages，未改 Anaconda base |
 | 小模型准备 | M02 固定 revision 的 6 个文件已下载并核对完整 SHA-256 | [获取脚本](../../../experiments/world-components-logic/fetch_model.py)；权重/缓存仅在本工作树 `.local/world-components-logic/`，不入库、不借 B/C 缓存 |
-| 无业务试跑草稿 | 只执行过 `--prepare-only`，未 import/load 模型或推理 | [runtime_smoke.py](../../../experiments/world-components-logic/runtime_smoke.py)；有下列未修 P2，不能作为可运行交付或模型测试结果 |
+| 无业务试跑草稿 | 只执行过 `--prepare-only`，未 import/load 模型或推理 | [runtime_smoke.py](../../../experiments/world-components-logic/runtime_smoke.py)；失败台账与不覆盖规则已修复（见条目 2），运行记录仍为空，不作为可运行交付或模型测试结果 |
 
 全部 42 个开发输入均未交给候选模型；没有业务推理、训练、浏览器接线、真实服务调用、共享 GPU 或重 CPU 实验。环境安装和文件验真不等于模型运行。
 
 ## 复核与已知未完成项
 
 1. 独立只读审查发现 D03 先前判定可能来自尚未冻结的来源或不完整记录。已修复并补反例：必须为已冻结其他人物的完整、自洽且唯一的判定。43 项测试通过。缺少目标确认账本/服务回执时，仍不能证明关系实际已确认，验证汇总如实标未核实。
-2. **未修 P2：** `runtime_smoke.py` 的依赖导入、分词器/模型加载在生成尝试的 `try/finally` 之外。若此处失败，最终记录可能缺失，准备计划也可能被后续运行覆盖。用户暂停前尚未修复；恢复时先补完整失败台账/不覆盖规则，再复核，**不要直接执行推理模式**。
+2. 原未修 P2 已于 2026-10-29 按总指挥指令修复（仅工程修复与测试，未运行模型）：依赖导入、分词器加载、模型加载改为逐阶段日志（stage/耗时/错误），任一阶段失败都会先把完整运行记录（`status/failedStage/stages/attempts`）写盘再抛错，已有准备与运行证据不被改动；准备计划字节相同则复用（幂等重 prep），不同则拒绝覆盖并要求 `--run-id` 注册新运行，运行记录防覆盖守卫保留并接入同一机制。新增 7 项回归测试（覆盖四个失败阶段、成功路径、计划保护、run-id 路径及打桩环境的端到端 `--prepare-only`；工程测试 52 → 59 项通过），并对修复前实现反向验证 7/7 失败。推理模式仍未执行；执行仍须用户/总指挥恢复指令与本修复的审查复核。
 3. 审阅 HTML 已生成；2026-10-29 已完成只读浏览器显示/导航核验（10 道 D03 目标展示正确、42 项可载入、无脚本错误，见第 6 条）。本地保存与导出仍未验证。导出是待核对的用户声明，不能自动升级为正式人工签字；不得由代理点击认可冒充人审。
 4. 用户已明确由本人先人工复核。题目与判据全部仍为 `pending`；正式独立评审角色、B/C 完整保护来源/语义同源核验及正式计算窗口尚待落实。没有正式筛选放行。
 5. 首批只完成工程准备和开发草稿。A0 真实生成基线、小组件协同、封存筛选、短链、D06–D08/完整请求及 500 ms 观测全部未开展。

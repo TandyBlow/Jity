@@ -1,8 +1,13 @@
 """Engineering invariants only: these fixtures are not semantic evaluation data."""
 
+import contextlib
 import copy
+import hashlib
 import importlib.util
+import io
 import json
+import os
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -11,6 +16,12 @@ from pathlib import Path
 SPEC = importlib.util.spec_from_file_location("d_logic_lab", Path(__file__).resolve().parents[1] / "lab.py")
 lab = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(lab)
+
+SMOKE_PATH = Path(__file__).resolve().parents[1] / "runtime_smoke.py"
+sys.path.insert(0, str(SMOKE_PATH.parent))
+SMOKE_SPEC = importlib.util.spec_from_file_location("d_runtime_smoke", SMOKE_PATH)
+smoke = importlib.util.module_from_spec(SMOKE_SPEC)
+SMOKE_SPEC.loader.exec_module(smoke)
 
 
 def world():
@@ -518,6 +529,220 @@ class TimingTests(unittest.TestCase):
             lab.summarize_attempts([attempt(elapsedMs=float("nan"))])
         with self.assertRaises(lab.LabValidationError):
             lab.summarize_attempts([attempt(budgetMs=1000)])
+
+
+class RuntimeSmokeTests(unittest.TestCase):
+    """Regression coverage for the smoke journaling and no-overwrite rules."""
+
+    def test_missing_dependency_import_writes_failure_record_and_preserves_plan(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            plan, record = root / "plan.json", root / "record.json"
+            plan.write_bytes(b'{"earlier": "evidence"}\n')
+
+            def broken_import():
+                raise ImportError("torch is not installed")
+
+            report = smoke_report()
+            with self.assertRaisesRegex(RuntimeError, "dependency_import"):
+                smoke.run_with_journal(report, root, record, import_stack=broken_import,
+                                       load_tokenizer=_not_called, load_model=_not_called,
+                                       generation_attempt=_not_called)
+            written = json.loads(record.read_text(encoding="utf-8"))
+            self.assertEqual(written["status"], "failed")
+            self.assertEqual(written["failedStage"], "dependency_import")
+            self.assertEqual(written["stages"][0]["stage"], "dependency_import")
+            self.assertEqual(written["stages"][0]["error"],
+                             {"type": "ImportError", "message": "torch is not installed"})
+            self.assertIsInstance(written["stages"][0]["elapsedMs"], float)
+            self.assertEqual(written["attempts"][0]["status"], "failed")
+            self.assertEqual(written["attempts"][0]["stage"], "dependency_import")
+            self.assertEqual(written["formalVerdict"], "not_evaluated")
+            self.assertEqual(plan.read_bytes(), b'{"earlier": "evidence"}\n')
+
+    def test_tokenizer_and_model_load_failures_are_journaled_with_stage(self):
+        for stage in ("tokenizer_load", "model_load"):
+            with tempfile.TemporaryDirectory() as directory:
+                record = Path(directory) / "record.json"
+
+                def failing(*_args, _stage=stage):
+                    raise ValueError(f"broken {_stage}")
+
+                steps = {"import_stack": lambda: {"importWallMs": 1.0},
+                         "load_tokenizer": lambda ns, d: _FakeTokenizer(),
+                         "load_model": lambda ns, d: _FakeModel(),
+                         "generation_attempt": _not_called}
+                steps["load_tokenizer" if stage == "tokenizer_load" else "load_model"] = failing
+                report = smoke_report()
+                with self.assertRaisesRegex(RuntimeError, stage):
+                    smoke.run_with_journal(report, Path(directory), record, **steps)
+                written = json.loads(record.read_text(encoding="utf-8"))
+                self.assertEqual(written["failedStage"], stage)
+                self.assertEqual([s["stage"] for s in written["stages"] if s["status"] == "failed"], [stage])
+                self.assertEqual(written["attempts"][0]["stage"], stage)
+
+    def test_generation_failure_keeps_partial_attempt_and_fails_the_run(self):
+        with tempfile.TemporaryDirectory() as directory:
+            record = Path(directory) / "record.json"
+
+            def broken_generation(ns, tokenizer, model):
+                return {"status": "failed", "stage": "generate", "raw": "", "inputTokens": 4,
+                        "error": {"type": "RuntimeError", "message": "device vanished"}, "elapsedMs": 7.0}
+
+            report = smoke_report()
+            with self.assertRaisesRegex(RuntimeError, "generate"):
+                smoke.run_with_journal(report, Path(directory), record,
+                                       import_stack=lambda: {"importWallMs": 1.0},
+                                       load_tokenizer=lambda ns, d: _FakeTokenizer(),
+                                       load_model=lambda ns, d: _FakeModel(),
+                                       generation_attempt=broken_generation)
+            written = json.loads(record.read_text(encoding="utf-8"))
+            self.assertEqual(written["failedStage"], "generate")
+            self.assertEqual(written["attempts"][0]["inputTokens"], 4)
+            self.assertEqual((written["stages"][-1]["stage"], written["stages"][-1]["status"]),
+                             ("generation_attempt", "failed"))
+
+    def test_complete_run_records_every_stage_and_load_wall_ms(self):
+        with tempfile.TemporaryDirectory() as directory:
+            record = Path(directory) / "record.json"
+            report = smoke_report()
+            result = smoke.run_with_journal(report, Path(directory), record,
+                                            import_stack=lambda: {"importWallMs": 1.0},
+                                            load_tokenizer=lambda ns, d: _FakeTokenizer(),
+                                            load_model=lambda ns, d: _FakeModel(),
+                                            generation_attempt=ok_generation())
+            self.assertIs(result, report)
+            written = json.loads(record.read_text(encoding="utf-8"))
+            self.assertEqual(written["status"], "complete")
+            self.assertIsNone(written["failedStage"])
+            self.assertEqual([s["stage"] for s in written["stages"]],
+                             ["dependency_import", "tokenizer_load", "model_load", "generation_attempt"])
+            self.assertEqual([s["status"] for s in written["stages"]],
+                             ["ok", "ok", "ok", "complete"])
+            self.assertEqual(written["parameterCount"], 5)
+            self.assertEqual(written["tokenizerLength"], 9)
+            self.assertEqual(written["embeddingRows"], 7)
+            self.assertIsInstance(written["loadWallMs"], float)
+            self.assertEqual(written["attempts"][0]["status"], "complete")
+
+    def test_plan_is_never_silently_overwritten(self):
+        with tempfile.TemporaryDirectory() as directory:
+            plan = Path(directory) / "runtime-smoke-plan.json"
+            self.assertEqual(smoke.write_plan(plan, {"identity": "A"}), "written")
+            first = plan.read_bytes()
+            with self.assertRaises(FileExistsError):
+                smoke.write_plan(plan, {"identity": "B"})
+            self.assertEqual(plan.read_bytes(), first)
+            self.assertEqual(smoke.write_plan(plan, {"identity": "A"}), "reused")
+            self.assertEqual(plan.read_bytes(), first)
+
+    def test_run_ids_register_distinct_plan_and_record_names(self):
+        plan, record = smoke.resolve_run_paths(None)
+        self.assertEqual(plan.name, "runtime-smoke-plan.json")
+        self.assertEqual(record.name, "l3-1-runtime-smoke.json")
+        plan, record = smoke.resolve_run_paths("cpu-retry-1")
+        self.assertEqual(plan.name, "runtime-smoke-plan-cpu-retry-1.json")
+        self.assertEqual(record.name, "l3-1-runtime-smoke-cpu-retry-1.json")
+        for bad in ("", "../escape", "a/b", "-lead", "x" * 65):
+            with self.assertRaises(ValueError):
+                smoke.resolve_run_paths(bad)
+
+    def test_prepare_only_freezes_the_plan_without_loading_any_model(self):
+        with tempfile.TemporaryDirectory() as directory:
+            local = Path(directory)
+            payload_files = {}
+            selected = ("README.md", "config.json", "tokenizer_config.json",
+                        "special_tokens_map.json", "spiece.model", "model.safetensors")
+            for name in selected:
+                payload_files[name] = hashlib.sha256(f"payload-{name}".encode()).hexdigest()
+            model_dir = local / "models" / "M02" / "r1"
+            model_dir.mkdir(parents=True)
+            (model_dir / "payload-manifest.json").write_text(json.dumps({
+                "modelId": "IDEA-CCNL/Randeng-T5-77M-MultiTask-Chinese", "revision": "r1",
+                "files": [{"path": name, "sha256": digest} for name, digest in payload_files.items()],
+            }), encoding="utf-8")
+            for name, digest in payload_files.items():
+                (model_dir / name).write_text(f"payload-{name}", encoding="utf-8")
+            registry_path = local / "registry.json"
+            registry_path.write_text(json.dumps({"models": [{
+                "id": "IDEA-CCNL/Randeng-T5-77M-MultiTask-Chinese", "revision": "r1",
+                "files": [{"path": name, "sha256_of_fetched_bytes": digest}
+                          for name, digest in payload_files.items()],
+            }]}), encoding="utf-8")
+            saved = (smoke.LOCAL, smoke.REGISTRY, smoke._dependency_versions, sys.argv,
+                     {k: os.environ.get(k) for k in ("HF_HOME", "HF_HUB_OFFLINE")})
+            smoke.LOCAL, smoke.REGISTRY = local, registry_path
+            smoke._dependency_versions = lambda: {"torch": "stub"}
+            sys.argv = ["runtime_smoke.py", "--prepare-only"]
+            try:
+                output = io.StringIO()
+                with contextlib.redirect_stdout(output):
+                    smoke.main()
+                summary = json.loads(output.getvalue())
+                plan_path = local / "runtime-smoke-plan.json"
+                self.assertEqual(summary["modelLoaded"], False)
+                self.assertEqual(summary["planState"], "written")
+                plan = json.loads(plan_path.read_text(encoding="utf-8"))
+                self.assertEqual(plan["formalVerdict"], "not_evaluated")
+                self.assertEqual(plan["model"]["revision"], "r1")
+                plan_bytes_after_first = plan_path.read_bytes()
+                output = io.StringIO()
+                with contextlib.redirect_stdout(output):
+                    smoke.main()
+                self.assertEqual(json.loads(output.getvalue())["planState"], "reused")
+                self.assertEqual(plan_path.read_bytes(), plan_bytes_after_first)
+            finally:
+                smoke.LOCAL, smoke.REGISTRY = saved[0], saved[1]
+                smoke._dependency_versions = saved[2]
+                sys.argv = saved[3]
+                for key, value in saved[4].items():
+                    if value is None:
+                        os.environ.pop(key, None)
+                    else:
+                        os.environ[key] = value
+
+
+def _not_called(*_args, **_kwargs):
+    raise AssertionError("this step must not be reached")
+
+
+def _FakeTokenizer():
+    class _Tokenizer:
+        def __len__(self):
+            return 9
+    return _Tokenizer()
+
+
+def _FakeModel():
+    class _Param:
+        def numel(self):
+            return 5
+
+    class _Embeddings:
+        num_embeddings = 7
+
+    class _Model:
+        generation_config = type("GenerationConfig", (), {"eos_token_id": 1})()
+
+        def parameters(self):
+            return [_Param()]
+
+        def get_input_embeddings(self):
+            return _Embeddings()
+    return _Model()
+
+
+def ok_generation(record_status="complete", stage="decoded"):
+    def generate(_ns, _tokenizer, _model):
+        return {"status": record_status, "stage": stage, "raw": "模型已载入",
+                "finishedWithEos": record_status == "complete",
+                "elapsedMs": 5.0, "settledElapsedMs": 5.0}
+    return generate
+
+
+def smoke_report():
+    return {"schema": "jity-d-nonbusiness-runtime-smoke-v1", "formalVerdict": "not_evaluated",
+            "semanticStatus": "not_evaluated"}
 
 
 class JsonTests(unittest.TestCase):
