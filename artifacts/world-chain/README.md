@@ -1,4 +1,4 @@
-# 真实模型小世界验收报告：混合首轮 + 二十次输入（§798 阶段 5）
+# 真实模型小世界验收报告：混合首轮 + 二十次输入 + B3 结算任务基线（§798 阶段 5/6）
 
 日期：2026-10-28/29。分支 `world-browser`。本目录的原始记录与角色：
 
@@ -17,6 +17,11 @@
   canonical（2026-10-29，见第五节）**：单世界连续 21 输入、逐 commit 全链
   折算（缺读即败）、成本全切片、头点+历史点双重缓存重生成；原始 SQLite
   （3.4MB）与 server.log 随报告留存。首轮证据保留于 `twenty-run-db/`。
+- `b3-baseline.json` + `b3-run-db/` —— **B3 结算任务基线 canonical
+  （2026-10-29，见第六节）**：`run-world-b3.mjs` 在真实 Python + Edge +
+  wllama 上跑任务级探针与两个最小场景；模型负责 action/targets/reaction/
+  results/updates/continuation，身份、骰点与状态应用仍归程序。任务结构
+  12/12、语义 7/12；两个场景均以语义失败收尾——**不得读作整链验收通过**。
 
 脚本：`frontend/scripts/run-world-chain-full.mjs`（两场景，`--phase
 action|chain|both`）；`frontend/scripts/run-world-twenty.mjs`（二十次输入，
@@ -26,7 +31,8 @@ action|chain|both`）；`frontend/scripts/run-world-twenty.mjs`（二十次输�
 结算=规则权威组件（action/targets/results/updates/continuation 零模型
 调用）；场景 B 结算=脚本候选；两场景只有叙事走真实模型（同一
 narration-polisher + checkFactNarration 门）。结算组件的模型化属 B3 独立
-批次；文中「PASS_BOTH」指两场景在该混合边界下通过，不覆盖
+批次（第六节；B3 基线本身也未通过整链，不得与本节「PASS_BOTH」混读）；
+文中「PASS_BOTH」指两场景在该混合边界下通过，不覆盖
 action/reaction/results/updates 的模型语义责任。
 
 环境：真实 Python 持久服务（SQLite，每轮独立库文件）+ 真实 Edge
@@ -298,7 +304,96 @@ continuation 全部零模型调用）+ 真实模型叙事（模型为主 → 判
 10. **✚[语义确认，修正轮]** 未准入尝试的同世界重试=整轮 cancel（Registry
     只要求 head 叙事 ready+lease valid，任意阶段含未提交工作均可取消）。
 
-## 六、复跑
+## 六、B3 结算任务基线（2026-10-29；harness run-world-b3.mjs）
+
+**状态：`COMPLETED_WITH_FAILURES`。** 这是任务级结算语义基线，不是整链
+验收，也不替换二十次输入的混合口径。harness `ed3eb0b`（脚本
+`frontend/scripts/run-world-b3.mjs`）；canonical=`b3-baseline.json`，
+原始 SQLite 与 server.log 在 `b3-run-db/`。报告头部钉档：browser 源
+`status=""`（干净），server `4e17025`（仅 `backend/_proj_create.json`
+未跟踪）；逐文件 sha256、逐调用 prompt/原始输出/结构解析/completion
+证据/耗时全部落盘。**ed3eb0b 之前的 `b3-baseline.json` 是 harness 缺陷
+记录（名字未解析、场景无法启动），不作模型基线引用。**
+
+配置：Qwen3-0.6B Q4_K_M；结算端口 context 2048、temperature 0、seed 42、
+json_schema strict、maxTokens 64–384、timeout 110s；叙事走已交付
+narration-polisher + checkFactNarration（同一判分门，context 2048、
+maxTokens 96、temperature 0/0.7 两尝试）；真实 Edge headless、跨源隔离；
+真实 Python 持久服务（SQLite）。模型加载 8.8s。
+
+### 6.1 任务级探针（12 项；结构 12/12，语义 7/12，模型耗时 119.2s）
+
+| 探针 | 结构 | 语义 | 观察 |
+| --- | --- | --- | --- |
+| action_pending | ✓ | ✗ | 输出「周宁需要完成压力试验」——目标/计划，不是具体行动 |
+| action_consumed | ✓ | ✗ | 输入状态=已消费仍输出 act |
+| action_nonactor | ✓ | ✓ | 「林川上下打量四周」——角色归属正确 |
+| targets_directed | ✓ | ✗ | 行动点名林川，仍返回 `[]` |
+| targets_solo | ✓ | ✓ | solo 行动返回 `[]` |
+| reaction_joint | ✓ | ✗ | 「林川被卷入重门，精神值下降」——反应文本夹带状态变化 |
+| results_joint | ✓ | ✓ | 两名成员的键与非空结果齐备 |
+| updates_merged | ✓ | ✓ | 单条 tasks 更新；task_pressure 归 person_c |
+| updates_stage_tasks | ✓ | ✓ | 分阶段调用返回单个对象（与控制器契约一致） |
+| updates_stage_sanity | ✓ | ✓ | 单个 sanity 对象，sanitySet 为整数 |
+| continuation_more | ✓ | ✓ | 未完成任务 → continue，候选 ID 合法 |
+| continuation_done | ✓ | ✗ | 所有任务已达成仍 continue（应 handback） |
+
+语义失败五项（action_pending/action_consumed/targets_directed/reaction_joint/
+continuation_done）的结构化输出全部合法；失败是内容级。逐条调用的 prompt、原始文本、
+JSON 解析结果与 completion 证据在 canonical 报告中。
+
+### 6.2 场景一：普通行动点（模型结算；8 次模型调用 + 1 次 pointPlan）
+
+- 程序预分配 point/round 身份并恢复驱动器；首点 `normal`、全名册行动；
+  行动/目标/结果/更新/继续全部走模型端口，pointPlan 为程序职责。
+- person_a：action「林川在走廊守门」→ targets `[]` → results → updates
+  `task_watch`（owner=person_a，合法）。
+- person_c：action「周宁需要守门」（目标句）→ targets `[]` → results →
+  updates 把 person_a 的 `task_watch` 挂到 person_c。harness 的更新审计
+  在发往服务端前拒绝（`task task_watch is owned by person_a, not
+  person_c`）；round 被整轮 cancel，点未提交，终局 head 仍为 point_13。
+- 该场景未到达 commit，因此没有叙事调用/模板回退。修复前的版本会把这
+  条非法更新送到 preview，控制器在 409 上反复 refresh，直到 step limit；
+  现在的审计快速失败并保留两条语义错误（目标句、任务归属）。
+- 模型耗时：action 8.1/6.7s、targets 6.5/4.9s、results 7.2/6.2s、
+  updates 18.9/18.1s（prompt 347–1224 字符）；总 walk 78.3s。
+
+### 6.3 场景二：连锁共同结算（真实 d20；模型 4 次调用；walk 40.6s）
+
+- **边界**：第一条目标与 roll 是程序 setup fixture（模型不选第一环目标），
+  真实服务端 d20 决定是否准入；本次 3 次尝试：result 8、3 拒绝，result 18
+  准入（person_a→person_c）；两次拒绝各自整轮 cancel。
+- 驱动器恢复后：reaction「周宁推开门厅深处的重门」（7.0s）；targets `[]`
+  （5.1s）；results 覆盖两人但新增「体力/精神值耗尽而撤退」（11.5s，
+  冻结行动中没有的事件）；updates 把 person_c 的 `task_pressure` 标记达成
+  （15.7s，owner 合法）。
+- 提交 `point_64`（version 3，时间 09:00:04，+2s）；终局状态
+  `task_pressure=achieved`。
+- **叙事被投影契约拒绝**：`projectCommittedNarration` 在调用模型前抛
+  `narration_requires_complete_numeric_cause`——该实体只有
+  `tasksAchieved`，缺少 `personalityChanges` 与 `sanitySet`；投影要求
+  任务/人格/理智三件套同有同无。零叙事尝试、零模板回退；这是
+  「六阶段更新 + 叙事」的核心缺口，不是模型叙事质量。
+- continuation/自动轮未到达（在上一步停止）；模型 continuation 只在任务
+  探针中测过（continuation_done 失败）。
+
+### 6.4 结论与下一步
+
+- 0.6B 在该配置下能稳定产出合法 JSON（结构 12/12），但尚不能承担结算
+  语义（7/12）：目标句冒充行动、已消费输入仍行动、目标 ID 漏选、反应夹带
+  状态、完成态仍继续。两个场景进一步暴露任务归属错误与因果三件套缺失。
+- 本批修复的 harness 缺陷必须保留：名字从 `state.initial` 解析（服务
+  投影不带 name；修复前所有 prompt 都是 `undefined`）、action 驱动器先
+  recover、point/round 身份预分配队列、首点 normal 与整轮 cancel 隔离、
+  叙事逐调用证据、失败/超时调用原样落盘、更新字段/顺序/任务归属审计。
+- 下一步（按顺序）：① 针对 action/targets/reaction/continuation 的提示词
+  与模型迭代；② 明确因果契约——要么模型为每个达成任务同时给出
+  personalityChanges 与 sanitySet，要么叙事投影支持 task-only 变化（产品
+  决定，不能由 harness 用模板掩盖）；③ 按该契约重跑 B3；④ 才谈全模型
+  20 次输入验收。当前 `twenty-round-v2` 仍是混合口径的已验收范围，B3
+  未通过前不得宣称全模型整链验收。
+
+## 七、复跑
 
 ```powershell
 # 仓库根目录；服务检出默认 .local/world-server-worktree（sha256 钉档，
