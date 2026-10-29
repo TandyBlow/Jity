@@ -10,9 +10,13 @@
   场景段的证据完整。
 - `first-round-v3.json` —— **chain 段的 canonical 记录**（harness
   `ae67b86`）：token 级证据、逐世界骰点、全量轨迹齐备且可复验。
-- `twenty-round.json` + `twenty-run-db/` —— **二十次输入验收（2026-10-29，
-  见第六节）**：单世界四阶段、逐 commit S₀ 折算、原始 SQLite 库与
-  server.log 随报告留存。
+- `twenty-round.json` —— 二十次输入首轮（2026-10-29）。复核不通过存档：
+  C 段重建世界致输入跨世界分布、逐 commit fold 跳过刚提交点（`ok:null`）、
+  链输入成本未切片、缓存重生成只盖头点——**不作验收证据引用**。
+- `twenty-round-v2.json` + `twenty-run-db-v2/` —— **二十次输入验收
+  canonical（2026-10-29，见第五节）**：单世界连续 21 输入、逐 commit 全链
+  折算（缺读即败）、成本全切片、头点+历史点双重缓存重生成；原始 SQLite
+  （3.4MB）与 server.log 随报告留存。首轮证据保留于 `twenty-run-db/`。
 
 脚本：`frontend/scripts/run-world-chain-full.mjs`（两场景，`--phase
 action|chain|both`）；`frontend/scripts/run-world-twenty.mjs`（二十次输入，
@@ -198,50 +202,70 @@ continuation 全部零模型调用）+ 真实模型叙事（模型为主 → 判
    completion 证据与断言），20 次跑直接产出；逐输入服务端操作明细表同
    由 opLog 直接聚合。
 
-**→ 上述 1–5 已全部由第六节的二十次输入验收覆盖（2026-10-29）。**
+**→ 上述 1–5 已全部由第五节的二十次输入验收覆盖（2026-10-29，v2）。**
 
 ## 五、二十次输入验收结果（2026-10-29；harness run-world-twenty.mjs）
 
-**PASS_TWENTY：21 次玩家输入、单世界四阶段、全部 hard assert 通过。**
-原始记录 `twenty-round.json`；原始 SQLite 库（3.1MB）+ server.log（53KB）
-留存于 `twenty-run-db/`（取证后不删原始数据）。范围口径同第四节：端到端
-+持久化+真实叙事；结算语义留 B3。
+**PASS_TWENTY（canonical=`twenty-round-v2.json`）：单世界（world_1）连续
+21 次玩家输入、四阶段、全部 hard assert 通过。** 首轮（`twenty-round.json`）
+经复核存在两项 P1（链场景重建世界致输入跨世界分布；逐 commit fold 跳过
+刚提交点）与两项 P2（链输入成本未切片；缓存重生成只盖头点），已全部修正
+并按新证据目录复跑；首轮记录与库（`twenty-run-db/`）原样保留存档。
+范围口径同第四节：端到端+持久化+真实叙事；结算语义留 B3。
 
-| 阶段 | 内容 | 结果 |
+| 阶段 | 内容 | v2 结果 |
 | --- | --- | --- |
-| A | RuleWorldSession，输入 1–8（任务达成/被拒/未识别/移动） | 全部 world_complete；逐输入等待 10.0–16.5s；9 次模型尝试（根+8）全首稿过门 |
-| B | 外部 checkpoint_pause → 服务进程重启（同 SQLite 文件，停机 2.6s）→ resume → 恢复会话 attach | paused 标志跨重启存活 ✓；状态 parity（version/head/理智/位置）全等 ✓ |
-| C | 驱动器接管同世界：脚本化共同结算（真实 d20 首环）→ 空 linked 续段 → continue×2 自动轮 → handback（输入 9） | 3 个世界骰点 3/3 被拒、11 准入（worldAttempts 全落盘）；2 条 continue 链；走链 43.5s |
-| D | 恢复规则会话，输入 10–21（12 条）+ 叙事缓存删除重生成 | 全部 world_complete；narration_delete 后 claim→删除→再 claim→真实模型重生成→回填，generation 1→2，首稿过门 |
+| A | RuleWorldSession，输入 1–8（任务达成/被拒/未识别/移动） | 全部 world_complete；约 10–16s/条；9 次模型尝试（根+8）全首稿过门 |
+| B | 外部 checkpoint_pause → 服务进程重启（停机 2.7s）→ resume → 恢复会话 attach | paused 跨重启存活 ✓；状态 parity 全等 ✓ |
+| C | 同世界接管：脚本化共同结算（真实 d20，发起人=冻结顺序 order[0]）→ 空 linked 续段 → continue×2 自动轮 → handback（输入 9） | roll_66=19 一次准入（person_c→person_a，动态发起人）；2 条 continue 链；走链 52.1s |
+| D | 恢复规则会话，输入 10–21（12 条）+ 双重缓存重生成 | 全部 world_complete；头点 point_136（mode=head，gen 1→2）与非头历史点 point_130（mode=history，gen→3）各走 claim→删→读→真实模型重生成→回填 |
 
-逐项交付证据（均在 `twenty-round.json`）：
+逐项交付证据（均在 `twenty-round-v2.json`）：
 
-- **≥20 次玩家输入**：21 条，逐输入 terminal/判定/叙事/wallMs/模型尝试
-  （含 facts 与 completion 证据）/wireCaptures/serverOps 全落盘。
-- **多条自动推进链**：`continuationLog` = continue(round_96) →
-  continue(round_97) → handback；自动轮普通点 point_98/point_99。
-- **至少一次连锁共同结算**：真实服务端 d20（target 11，result 11 准入）；
-  结算候选为脚本（B3 边界），settled unit 含任务+人格+理智完整因果。
-- **共同结算后的空 linked 续段**：point_95（kind instant，同轮
-  round_91）——**`linked_from_point_id = point_92` 由留存 SQLite
-  `world_points` 列直接核验**（list_points 的 wire 投影不含该列，DB 为准）；
-  该点零行动、纯时间扫描、真实模型叙事。
-- **暂停续接与服务重启**：见上表 B 行；重启前后 PID、停机时长、parity
-  在 `phases.B_*` 与 `restarts`。
-- **每次提交后从 S₀ 重建一致状态**：共享 transport 在**每个 commit_point
-  成功回执上**做全链折算（root 状态 + Σ 各点 recorded timeAdvance/
-  entityDeltas 与各点 served state 逐一深比较）；25 次 fold 全部 ok
-  （`foldLog`），终局再跑一次全量 fold。
-- **清除叙事缓存后重生成**：claim(gen 1) → narration_delete（status
-  missing，invalidatedGeneration 1）→ claim(gen 2) → narrateFromReads
-  （真实模型+同一判分门）→ narration_submit → narration_get ready(gen 2)。
-- **token 级证据**：26 次模型尝试 / 26 条 completion 证据（prompt_n/
-  predicted_n/分段耗时/finishReason），零缺失（断言钉住）。
+- **单世界连续 ≥20 次玩家输入**：21 条全部在 world_1（断言：各阶段
+  worldId 一致 + 全程 `create_world` 恰 1 次 + 留存 SQLite `worlds` 表恰
+  一行）。逐输入 terminal/判定/叙事/wallMs/模型尝试（facts+completion
+  证据）/wireCaptures/serverOps 全落盘，链输入（输入 9）按 C 阶段切片。
+- **多条自动推进链**：`continuationLog` = continue → continue →
+  handback；两个自动轮普通点真实模型叙事。
+- **至少一次连锁共同结算**：真实服务端 d20（roll_66，result 19 ≥ target
+  11 准入）；结算候选为脚本（B3 边界），因果三件套（任务+人格+理智）整体
+  挂 pending 任务的 owner。
+- **共同结算后的空 linked 续段**：point_60（kind instant，同轮
+  round_56）——`linked_from_point_id = point_57` 由留存 SQLite
+  `world_points` 列直接核验；零行动、纯时间扫描、真实模型叙事。
+- **暂停续接与服务重启**：见上表 B 行；重启发生在世界中部（A 与 C/D
+  之间），重启后的状态直接接入后续输入。
+- **每次提交后从 S₀ 重建一致状态（严格）**：每个 commit_point 回执上先
+  get_state 缓存刚提交 head 的读取，再全链折算（root 状态 + Σ 各点
+  recorded timeAdvance/entityDeltas 与各点 served state 逐一深比较）；
+  **缺读即失败**——25 次 fold 全 ok 且零 `no_recorded_read`（每条
+  commit fold 都实际比较了最新点），终局再全量一次。
+- **清除叙事缓存后重生成（两头覆盖）**：头点 mode=head 与非头历史点
+  mode=history 各走 claim→narration_delete（status missing）→narration_get
+  missing→claim→真实模型重生成（同一判分门）→submit→ready，generation
+  递增（history 模式绑定 {mode:'history'} 不携带 lease）。
+- **token 级证据**：27 次模型尝试 / 27 条 completion 证据，全局断言零
+  缺失（链段、根叙事、重生成全部在内）。
 
-本轮钉档：browser pin 与 server pin（156 文件 sha256）在 artifact 头部，
-`git diff -- backend/app` 对 v3 pin 仍为空。
+本轮钉档：browser pin 与 server pin（156 文件 sha256）在 artifact 头部。
 
-### 本批发现（按发现顺序）
+### 首轮修正记录（二轮复核 2P1+2P2）
+
+1. **[P1→已修]** 单世界连续性：C 不再重建世界；未准入尝试在同一世界内
+   整轮 cancel（任意阶段合法：置 phase=complete、清 advance），重新开局
+   下一尝试。本轮骰运一次准入（无弃轮），弃轮路径由 `abandonedRounds`
+   结构承载。
+2. **[P1→已修]** 逐 commit fold 严格化：`afterCommit` 先 get_state 缓存
+   刚提交 head 再折算，缺读即失败；transport 钩子与 raw commit 共用。
+   首轮的 `ok:null/no_recorded_read` 跳过路径已删除（24 次提交检查此前
+   全部漏掉最新点）。
+3. **[P2→已修]** 成本切片与全局断言：输入 9 的 modelAttempts/serverOps/
+   wire 按 C 阶段切片（原为空数组+累计值）；终局断言改为**全局**校验
+   全部模型尝试的 completion 证据（原只遍历输入切片）。
+4. **[P2→已修]** 缓存重生成覆盖非头历史点（mode=history 全流程）。
+
+### 本批发现（按发现顺序；✚ = 修正轮新增）
 
 1. **[harness 缺陷，已修]** `list_points` 的 limit 上限是 100（schema
    硬约束）——fold 钩子用 200 触发 ProtocolError 污染驱动器终态。
@@ -249,23 +273,30 @@ continuation 全部零模型调用）+ 真实模型叙事（模型为主 → 判
    prepareSuccessor 注入必须走恢复计划路径（recovery 原生携带 prepared
    successor：plan=[current, successor]，commit 后服务端自动提升）。
 3. **[语义确认]** commit 后服务端直接进 `assess_continuation`（轮随
-   commit 结束，游标耗尽时）——同轮 plan 的后续点只在游标未耗尽时开始；
-   共同结算吞满 roster 游标，因此空 linked 续段必须走 prepare_successor
-   预绑定+恢复提升，而不是同轮 plan。
-4. **[语义确认]** 轮内第一个点必须 kind='normal'、后续点必须非 normal
-   （judgments.py 身份校验）；instant/linked 点必须 boundary='instant'
-   （instant 另要 duration 0，T08 s7 录制形状）。
+   commit 结束，游标耗尽时）——共同结算吞满 roster 游标，空 linked
+   续段必须走 prepare_successor 预绑定+恢复提升，而不是同轮 plan。
+4. **[语义确认]** 轮内第一个点必须 kind='normal'、后续点必须非 normal；
+   instant/linked 点必须 boundary='instant'（instant 另要 duration 0，
+   T08 s7 录制形状）。
 5. **[语义确认]** 租约生命周期：handback 不释放租约；lease_acquire 在
-   任何存活租约上拒绝（lease_held）；lease TTL=1h。恢复路径对 held
-   lease 做 lease_renew。harness 的 raw 操作因此需要 token 同步与
-   lease_invalid 自愈重试。
+   任何存活租约上拒绝（lease_held）；lease TTL=1h；恢复路径对 held
+   lease 做 lease_renew。raw 操作需要 token 同步与 lease_invalid 自愈。
 6. **[wire 形状]** narration_delete 是查询串模型（无 worldId/pointId
    字段、pointId 走路径）；narration_get 客户端无 requestSchema（body
-   必须为空，pointId 走 scope 进路径）；list_points 投影不含
-   linkedFromPointId/trigger/timeAdvance。
-7. **[稳定性]** wllama wasm 偶发崩溃（chat template assert）会毒化
-   模块级引擎缓存——harness 对崩溃错误做新模块实例重载+单次重试；
-   本轮最终 run 未触发（9+17 次模型调用零崩溃）。
+   必须为空）；list_points 投影不含 linkedFromPointId/trigger/timeAdvance。
+7. **[稳定性]** wllama wasm 偶发崩溃（chat template assert）毒化模块级
+   引擎缓存——harness 崩溃错误做新模块实例（cache-bust）重载+单次重试。
+8. **✚[语义确认，修正轮]** 冻结顺序随理智变化：`finish_operation` 在
+   start_advance 后按（理智值，ID）升序重排——A 阶段改变理智后链发起人
+   不再可预设，必须从 get_context 的 round.order 动态读取（首轮问题 2
+   在同世界延续下的显形）。
+9. **✚[语义确认，修正轮]** 结算因果两硬约束叠加：units.py 裁定（2026-10-22）
+   人格变化必须搭配新达成任务、sanities 键集与 personalities 配对；
+   committed-narration 投影要求**每个实体**的 tasksAchieved/
+   personalityChanges/sanitySet 三者同有同无——三件套必须整体挂到
+   pending 任务 owner 名下，不能按发起人拆开。
+10. **✚[语义确认，修正轮]** 未准入尝试的同世界重试=整轮 cancel（Registry
+    只要求 head 叙事 ready+lease valid，任意阶段含未提交工作均可取消）。
 
 ## 六、复跑
 
@@ -277,7 +308,8 @@ node scripts/run-world-chain-full.mjs --out artifacts/world-chain/first-round-v3
 #   [--phase action|chain|both] [--server-checkout 路径] [--python python]
 #   [--allow-dirty-server] [--allow-dirty-browser]  # 按侧豁免脏钉住集（artifact 仍记录 status）
 
-node scripts/run-world-twenty.mjs --out artifacts/world-chain/twenty-round.json
+node scripts/run-world-twenty.mjs --out artifacts/world-chain/twenty-round-v2.json `
+  --db-snapshot artifacts/world-chain/twenty-run-db-v2
 #   [--server-checkout 路径] [--python python]  # 单模式；DB+日志自动留存到
-#   # artifacts/world-chain/twenty-run-db/（每次运行覆盖，复跑前自行归档）
+#   # --db-snapshot 目录（每次运行覆盖，复跑前自行归档）
 ```
