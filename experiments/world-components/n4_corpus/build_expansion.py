@@ -1,4 +1,16 @@
-# N4 expansion builder v9.1 (review round 11 rewrite).
+# N4 expansion builder v9.2 (review round 12).
+#
+# v9.2 fixes on top of v9.1:
+# a. the no_change exemption is NARROWED to the atomic omitted-time plan
+#    (plan == [no_change], rendering exactly "无变化"). Time-bearing empty
+#    plans (time + no_change) are distinguishable by duration and now obey
+#    the train/dev input-disjointness rule: dev uses a disjoint duration
+#    pool (1/4/7/10 min) so no time-bearing empty dev input repeats a train
+#    input. The old build exempted all no_change plans, which let
+#    n4x-d101-empty reuse n4x-t001-empty's "两分钟+无变化" input.
+# b. the build prints the reviewer's denominator directly: unique train/dev
+#    render inputs, dev inputs also in train, unseen dev inputs, and the
+#    frozen base-group regression pair.
 #
 # v9.1 fixes on top of the v9 draft:
 # a. character task tuples unpack as (task_id, goal), matching the registry
@@ -65,8 +77,14 @@ NEW_TASKS = ["把信笺送去洗砚池", "更换旧灯房的灯油", "修补灰�
 NEW_APPEARANCES = ["桥栏的麻绳磨断了", "灯罩积了厚厚的灰", "墙根的苔痕连成了一片",
                    "碑座裂了一道细缝", "木牌上的字迹晕开了", "池面的浮叶堆到了一角"]
 NEW_PERSONALITIES = ["变得爽朗", "变得寡言", "变得急切", "变得耐心", "变得细心"]
+# Train and dev duration pools are DISJOINT by construction: the empty-point
+# fact table renders to time + no_change, so two 2-minute empty plans are the
+# same input. The round-11 review rejected exempting time-bearing empty dev
+# inputs from the train/dev input-disjointness check; only the atomic
+# omitted-time "无变化" plan (one possible rendering) stays exempt.
 DUR_SLOTS = [(2, "minute"), (5, "minute"), (6, "minute"), (15, "minute"),
              (20, "minute"), (30, "minute"), (45, "minute"), (90, "minute")]
+DEV_DUR_SLOTS = [(1, "minute"), (4, "minute"), (7, "minute"), (10, "minute")]
 
 LOC_ID = {"东门": "loc_001", "水房": "loc_002", "钟楼": "loc_003",
           "侧院": "loc_004", "柴房": "loc_005", "石桥": "loc_006",
@@ -258,7 +276,8 @@ def build_world(names, extra_locs):
 
 def build_new_group(seq, family, split, tier, fc):
     """fc = per-family counter (decoupled slot assignment)."""
-    dur_a, dur_u = DUR_SLOTS[fc % 8]
+    dur_pool = DEV_DUR_SLOTS if split == "dev" else DUR_SLOTS
+    dur_a, dur_u = dur_pool[fc % len(dur_pool)]
     dur_cn = f"{num_cn(dur_a)}{UNIT_CN[dur_u]}"
     name1 = ALL_NAMES[fc % 15]
     name2 = ALL_NAMES[(fc + 7) % 15]
@@ -468,12 +487,15 @@ def main() -> None:
             signatures[sig] = gid
     # disjointness targets BOTH directions: new train inputs must avoid the
     # existing dev rows' inputs, and new dev inputs must avoid every train
-    # input. no_change rows are exempt (tallied separately, see below).
-    def nc(row):
-        return any(e["kind"] == "no_change" for e in row["plan"])
+    # input. ONLY the atomic omitted-time no_change plan (rendering "无变化")
+    # is exempt (tallied separately, see below); time-bearing empty plans are
+    # distinguishable by duration and must obey disjointness.
+    def atomic_no_change(row):
+        plan = row["plan"]
+        return bool(plan) and all(e["kind"] == "no_change" for e in plan)
 
     base_dv_in = {sha(render_input(r["plan"])) for r in all_rows
-                  if r["split"] == "dev" and not nc(r)}
+                  if r["split"] == "dev" and not atomic_no_change(r)}
     # train first: its render inputs define the set dev must avoid
     for seq, fam, split, tier in plan_specs:
         fc = families[fam]
@@ -495,8 +517,7 @@ def main() -> None:
             # from every train input (deterministic retry, step coprime with
             # the name/location/duration pools)
             tr_in = {sha(render_input(r["plan"])) for r in all_rows
-                     if r["split"] == "train"
-                     and not any(e["kind"] == "no_change" for e in r["plan"])}
+                     if r["split"] == "train" and not atomic_no_change(r)}
             for shift in range(60):
                 rows, meta = build_new_group(seq, fam, split, tier, fc + shift * 7)
                 if all(sha(render_input(r["plan"])) not in tr_in for r in rows):
@@ -513,12 +534,12 @@ def main() -> None:
     for r in all_rows:
         render_input(r["plan"])
 
-    # render-input disjointness across splits (review round 11 #2), with the
-    # approved exemption: no_change plans have exactly ONE possible rendering
-    # ("无变化") so their cross-split overlap is an unavoidable regression
-    # item — tallied and reported separately, never counted as a failure
+    # render-input disjointness across splits (review round 11 #2 / round 12):
+    # only the atomic omitted-time no_change plan is exempt — its one possible
+    # rendering ("无变化") is an unavoidable shared input in BOTH splits, so
+    # it is tallied as a regression input, never counted as a failure.
     def has_no_change(r):
-        return any(e["kind"] == "no_change" for e in r["plan"])
+        return atomic_no_change(r)
     tr_in = {sha(render_input(r["plan"])) for r in all_rows
              if r["split"] == "train" and not has_no_change(r)}
     dv_in = {sha(render_input(r["plan"])) for r in all_rows
@@ -553,6 +574,23 @@ def main() -> None:
              if r["split"] == "dev" and has_no_change(r)}
     nc_shared = nc_tr & nc_dv
 
+    # generalization denominator, as the reviewer counts it: distinct dev
+    # inputs minus inputs that also occur in train (atomic no_change included
+    # in the seen set, because the model has seen that input).
+    all_tr_in = {sha(render_input(r["plan"])) for r in all_rows
+                 if r["split"] == "train"}
+    all_dv_in = {sha(render_input(r["plan"])) for r in all_rows
+                 if r["split"] == "dev"}
+    seen_dv = all_tr_in & all_dv_in
+    print(f"unique render inputs: train {len(all_tr_in)} / dev {len(all_dv_in)}; "
+          f"dev inputs also in train: {len(seen_dv)}; unseen dev inputs: "
+          f"{len(all_dv_in - all_tr_in)}")
+    for h in sorted(seen_dv):
+        rows = [r for r in all_rows if sha(render_input(r["plan"])) == h]
+        groups = sorted({r["sourceGroupId"] for r in rows})
+        print(f"   seen dev input {render_input(rows[0]['plan']).replace(chr(10), '|')[:72]}"
+              f" — {groups[:4]}{'...' if len(groups) > 4 else ''}")
+
     SEEDS.write_text("\n".join(json.dumps(r, ensure_ascii=False)
                                for r in seed_rows + new_seeds) + "\n",
                      encoding="utf-8")
@@ -567,9 +605,10 @@ def main() -> None:
         print("   ^ frozen accepted base rows, counted as a regression item "
               "(not re-authored here)")
     print(f"render inputs: train {len(tr_in)} / dev {len(dv_in)}, disjoint "
-          f"(no_change exempt)")
-    print(f"no_change shared-input regression tally: {len(nc_shared)} shared "
-          f"input(s) — counted separately, not a failure")
+          f"(atomic no_change exempt)")
+    print(f"atomic no_change shared-input regression tally: {len(nc_shared)} "
+          f"shared input(s) — counted separately, never in the unseen "
+          f"denominator")
     print("coverage (family, split[, direction]): groups")
     for key in sorted(coverage, key=str):
         print(f"   {key}: {coverage[key]}")

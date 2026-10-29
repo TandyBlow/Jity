@@ -74,6 +74,8 @@
 - `large`：120 个 train 源（包含 small 全部）；
 - `fixed-dev`：30 个 dev 源（6 既有＋24 新）。
 
+时长池按 split 分离：train 使用 2/5/6/15/20/30/45/90 分钟，新增 dev 使用 1/4/7/10 分钟（基础组冻结值不变）。跨 split 输入豁免**仅限省略时间后的原子 `no_change`**（plan == [no_change]，唯一渲染为“无变化”）；含时间的空点（time＋no_change）可由时长区分，不豁免，dev 不得复用 train 输入。
+
 合计 150 组 / 600 行（seed 300＋rewrite 300）。构造顺序：`build_seeds.py` 生成基础 60 行 → `build_expansion.py` 追加扩批行（非幂等，已存在 `n4x-*` 行即中止）。扩批构造时断言：world/rawDelta/fullPlan 组合签名在**含既有组在内**的全组集合唯一（既有组自身重复只登记不篡改）；每行训练输入可由 `n4_render.render_input` 渲染；train/dev 渲染输入（no_change 除外）双向不相交；槽位按族计数器分配，与全局循环下标解耦。语料清单（§1–§6、§8 全部可见）仍先交协调人抽验，通过后才开微调；微调开工时的 tokenizer legacy 决策见方案表 §6（训练/评估/基线统一设置并重新验证）。
 
 ## 8. 复核轮 11 当前结果（2026-10-29）
@@ -85,3 +87,22 @@
 | 权威核对 | `python .../validate_plan_authority.py` | 篡改矩阵 14/14；**全部 plan 经 A 侧 kernel apply 来源合法**；报告钉 server HEAD `4e17025`、apply.py `e626fdbb0679ca0c` |
 
 已登记、未修改的冻结既有回归项：base 组签名重复 1 对（`n4-empty-009`/`n4-empty-027`）；既有 train/dev 共享渲染输入 1 对（`n4-task-014`/`n4-task-026`）；no_change 渲染输入跨 split 共享 6 个（空点的唯一渲染形态）。扩批组不产生新的跨 split 输入冲突。**本批只声明语料构造与校验结果；未在此 600 行语料上重跑微调/评估，质量结论不在此处。**
+
+> 本节是复核轮 11 当时的口径与记录；轮 12 把 no_change 豁免收窄为原子 `no_change`，所以上面的“6 个共享输入”不再描述当前文件，当前计数与两档结果统一见 §9（校验表结果不变）。
+
+## 9. 复核轮 12（2026-10-29）
+
+**语料修正**：上一版把所有含 no_change 的计划都当豁免，导致 4 个新增含时间空点 dev 输入与 train 重合（如 `n4x-d101-empty` 与 `n4x-t001-empty` 同为“两分钟＋无变化”）。现改为：豁免只限原子 `no_change`；新增 dev 使用独立时长池 1/4/7/10 分钟。重建后校验：行校验 600 pass（19 负例＋3 等价自检）、去重 600/600 零命中、权威核对 0 错误（server `4e17025`、apply `e626fdbb`）。
+
+**分母口径**：dev 120 行按渲染输入归并为 **56 个独立输入**；其中 3 个在 train 出现过（原子“无变化”；冻结 `n4-empty-009/027` 的 25 分钟空点；冻结 `n4-task-014/026` 的任务达成），列为 regression 并局部退出泛化分母；**未见输入 53 个**。评估脚本已改为每独立输入只生成一次，unseen/regression 分栏统计。
+
+**两档入口**：`train_n4_sentence.py --tier small|large --run-tag r2-small|r2-large`，两档均 360 优化步（batch 8、lr 1e-4、seed 20261029）；small＝60 组/240 行（12 epochs）、large＝120 组/480 行（6 epochs）；checkpoint 与报告按 tag 分路径。
+
+**原始结果（识别器三态，仅证据，不作质量判定）**：
+
+| 档 | unseen 输入 | unseen pass/review/fail | regression pass/review/fail | unseen meanWall |
+| --- | --- | --- | --- | --- |
+| r2-small | 53 | 45 / 8 / 0 | 3 / 0 / 0 | 0.83s |
+| r2-large | 53 | 50 / 3 / 0 | 3 / 0 / 0 | 2.37s |
+
+零样本 base 臂在全部输入上均为 review（输出回显事实行），仅作对照。8/3 个 review 全部是 chain 组的精神值方向词（下行却写“升到了”），被识别器按方向核对拦下，未判 fail。归档：`artifacts/world-components/n4-finetune-{train,eval}-r2-small.json`、`-r2-large.json`。**人工抽验与质量门结论仍待后续，不用本轮数字宣布通过。**

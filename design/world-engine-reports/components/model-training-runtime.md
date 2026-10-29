@@ -98,7 +98,7 @@
 - Randeng 微调开工时：`T5Tokenizer` 的 legacy 分词行为须显式决策——`legacy=False` 会改变当前默认分词/规范化，训练、开发评估与零样本基线必须统一同一设置并重新验证后再比较（冒烟 r2 报告的 tokenizerConfig 记录了当前默认态）。
 - 在 C 工作树重新配置 MiniRBT-H256 快照并记录获取方式（F11：主树快照不入库不共享；通道=hfl/minirbt-h256 经 hf-mirror）。主树 `train-action-classifier.py` 头注仍写旧 ID `iflytek/MiniRBT-H256`（历史注释、不影响产物；正确 ID 以 F13 为准，脚本修正归 B 线后续批次，C 运行记录只用正确 ID）。
 - 浏览器分发：`public/models/` 当前为空（模型文件不入库），重建路径=各 train 脚本导出＋`copy-*-assets.mjs` 机制（已有）。
-- N4 语料现为 v9.1：150 组 / 600 行，行校验/去重/A 侧权威核对全绿，数字与冻结回归项见[语料协议 §8](../../../experiments/world-components/n4_corpus/corpus_protocol.md)。r1 训练/评估归档钉在早前 52 行语料上；扩充语料重跑必须 `--run-tag r2`（脚本已加 corpus-hash 护栏，阻止默认 r1 覆盖归档）。
+- N4 语料现为 150 组 / 600 行（构造器 v9.2），行校验/去重/A 侧权威核对全绿；dev 按渲染输入归并为 56 个独立输入（53 未见 / 3 回归），口径与两档原始结果见[语料协议 §9](../../../experiments/world-components/n4_corpus/corpus_protocol.md)。r1 归档钉在早前 52 行语料；新语料两档入口为 `--tier small|large`，均 360 步，分别配 `--run-tag r2-small` / `r2-large`（r1 的 corpus-hash 护栏保留）。
 - 旧试验资产只复用**方法学**（数据纪律、封存批协议、计时口径、导出脚本骨架）；旧语料、旧标签体系、旧门阈值一律不复用（F8）。
 
 ## 7. 明确未验证清单

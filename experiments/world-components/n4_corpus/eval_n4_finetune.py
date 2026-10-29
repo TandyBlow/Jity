@@ -1,19 +1,28 @@
-# N4 finetune dev evaluation: two arms (base vs finetuned) on the current
-# dev rows, judged by the SAME recognizer that gates the corpus
-# (corpus_check.check_row) — a generation counts as faithful only when the
-# plan's mustExpress entries are recognized with value-consistent parses.
+# N4 finetune dev evaluation: two arms (base vs finetuned), judged by the
+# SAME recognizer that gates the corpus (corpus_check.check_row) — a
+# generation counts as faithful only when the plan's mustExpress entries are
+# recognized with value-consistent parses.
+#
+# Round 12 (review requirement): statistics are per INDEPENDENT INPUT, not
+# per row. Rows that share one rendered input (seed+rewrite, two time
+# plans of one source group, duplicated frozen groups) produce the same
+# greedy output from the same prompt, so they are merged to one evaluation
+# unit before generation. Dev inputs that also occur in train are reported
+# as REGRESSION, separately from the unseen generalization denominator;
+# frozen base collisions stay visible but never inflate the unseen count.
 #
 # The committed r1 archive was produced on the earlier 52-row corpus (4 dev
-# rows) and is pinned by its corpus hashes; the current v9.1 corpus has 120
-# dev rows. Use a new tag (e.g. `--run-tag r2`) for a new corpus so the r1
-# archive is not overwritten (the script aborts on an r1/hash mismatch).
+# rows) and is pinned by its corpus hashes; the current corpus has 120 dev
+# rows / 56 distinct inputs. Use a run tag (e.g. `--run-tag r2-small`) for a
+# new corpus so the r1 archive is not overwritten (the script aborts on an
+# r1/hash mismatch).
 #
 # Decode: greedy, max_new_tokens=64, tokenizer legacy=False (same pin as
 # training and the zero-shot baseline). No quality verdicts beyond the
 # recognizer's three states; human review of the generated texts happens at
 # delivery acceptance.
 #
-# Usage: python experiments/world-components/n4_corpus/eval_n4_finetune.py [--run-tag r2]
+# Usage: python experiments/world-components/n4_corpus/eval_n4_finetune.py [--run-tag r2-small]
 # Output: artifacts/world-components/n4-finetune-eval-<tag>.json
 
 import hashlib
@@ -58,7 +67,7 @@ if RUN_TAG == "r1" and REPORT.exists():
     recorded = pinned["provenance"]["corpusAndRenderer"]["corpus.seeds.jsonl"]
     if recorded != corpus_hashes()["corpus.seeds.jsonl"]:
         sys.exit("r1 archive is pinned to the earlier corpus; "
-                 "pass --run-tag r2 for the expanded corpus")
+                 "pass --run-tag r2-small for the expanded corpus")
 MAX_NEW = 64
 
 
@@ -66,14 +75,53 @@ def sha(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
 
-def load_dev():
-    groups = {}
+def plan_key(plan: list) -> str:
+    return json.dumps(plan, ensure_ascii=False, sort_keys=True)
+
+
+def load_dev_inputs():
+    """Load both splits; merge dev rows by rendered input (one independent
+    evaluation unit per distinct prompt) and split the units into unseen vs
+    seen-in-train (regression)."""
+    rows = []
     for f in (HERE / "corpus.seeds.jsonl", HERE / "rewrites.jsonl"):
-        for line in f.read_text(encoding="utf-8").splitlines():
-            if line.strip():
-                r = json.loads(line)
-                groups.setdefault(r["sourceGroupId"], []).append(r)
-    return [m for gid, ms in groups.items() if ms[0]["split"] == "dev" for m in ms]
+        rows += [json.loads(line) for line in
+                 f.read_text(encoding="utf-8").splitlines() if line.strip()]
+    problems = corpus_check.split_isolation_problems(rows, 120, 30)
+    if problems:
+        for p in problems:
+            print("ISOLATION:", p)
+        sys.exit(2)
+
+    train_groups_by_input = {}
+    for r in rows:
+        if r["split"] == "train":
+            key = render_input(r["plan"])
+            train_groups_by_input.setdefault(key, set()).add(r["sourceGroupId"])
+
+    by_input = {}
+    for r in rows:
+        if r["split"] == "dev":
+            by_input.setdefault(render_input(r["plan"]), []).append(r)
+
+    units = []
+    for key, members in by_input.items():
+        if len({plan_key(m["plan"]) for m in members}) != 1:
+            print(f"MERGE ERROR: one rendered input maps to different plans: {key!r}")
+            sys.exit(2)
+        rep = members[0]
+        dev_groups = sorted({m["sourceGroupId"] for m in members})
+        units.append({
+            "input": key,
+            "row": rep,
+            "devGroups": dev_groups,
+            "rowsMerged": len(members),
+            "rowOrigins": sorted({m["rowOrigin"] for m in members}),
+            "seenInTrain": key in train_groups_by_input,
+            "trainGroups": sorted(train_groups_by_input.get(key, [])),
+        })
+    units.sort(key=lambda u: (u["seenInTrain"], u["devGroups"][0]))
+    return rows, units
 
 
 def judge(dev_row: dict, text: str) -> dict:
@@ -96,28 +144,38 @@ def judge(dev_row: dict, text: str) -> dict:
     return {"verdict": verdict, "fails": fails, "reviews": reviews}
 
 
+def summarize(results: list) -> dict:
+    counts = {"pass": 0, "review": 0, "fail": 0}
+    for x in results:
+        counts[x["verdict"]] += 1
+    n = len(results) or 1
+    return {"inputs": len(results), "verdicts": counts,
+            "meanWall": round(sum(x["wallSeconds"] for x in results) / n, 2),
+            "meanTokens": round(sum(x["outputTokens"] for x in results) / n, 1)}
+
+
 def main() -> None:
-    rows = []
-    for f in (HERE / "corpus.seeds.jsonl", HERE / "rewrites.jsonl"):
-        rows += [json.loads(line) for line in
-                 f.read_text(encoding="utf-8").splitlines() if line.strip()]
-    problems = corpus_check.split_isolation_problems(rows, 120, 30)
-    if problems:
-        for p in problems:
-            print("ISOLATION:", p)
-        sys.exit(2)
-    dev = load_dev()
-    print(f"dev rows: {len(dev)} (groups {sorted({r['sourceGroupId'] for r in dev})})")
+    rows, units = load_dev_inputs()
+    unseen = [u for u in units if not u["seenInTrain"]]
+    regression = [u for u in units if u["seenInTrain"]]
+    dev_rows = sum(u["rowsMerged"] for u in units)
+    print(f"dev rows: {dev_rows} -> independent inputs: {len(units)} "
+          f"(unseen {len(unseen)}, regression {len(regression)})")
+    for u in regression:
+        print(f"  regression input ({u['devGroups']} <- train {u['trainGroups']}): "
+              f"{u['input'].replace(chr(10), '|')[:80]}")
+
     tokenizer = T5Tokenizer(vocab_file=str(BASE_MODEL / "spiece.model"), legacy=False)
 
     arms = {}
     for arm, path in (("base", BASE_MODEL), ("finetuned", FINETUNED)):
         model = T5ForConditionalGeneration.from_pretrained(str(path), torch_dtype=torch.float32)
-        model.cuda()  # v7: review found r1 silently ran this eval on CPU
+        model.cuda()  # v7 correction: the model must be on the eval device
         model.eval()
-        results = []
-        for r in dev:
-            prompt = render_input(r["plan"])
+        results = {"unseen": [], "regression": []}
+        for u in units:
+            section = "regression" if u["seenInTrain"] else "unseen"
+            prompt = u["input"]
             inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
             t0 = time.perf_counter()
             with torch.no_grad():
@@ -125,24 +183,24 @@ def main() -> None:
                                      num_beams=1, do_sample=False)
             wall = round(time.perf_counter() - t0, 2)
             text = tokenizer.decode(out[0], skip_special_tokens=True)
-            verdict = judge(r, text)
-            results.append({
-                "sourceGroupId": r["sourceGroupId"], "rowOrigin": r["rowOrigin"],
+            verdict = judge(u["row"], text)
+            results[section].append({
+                "devGroups": u["devGroups"], "rowOrigin": u["rowOrigins"],
+                "rowsMerged": u["rowsMerged"],
+                "seenInTrain": u["seenInTrain"],
+                "trainGroups": u["trainGroups"],
                 "input": prompt, "output": text, "outputTokens": int(out.shape[1]),
                 "wallSeconds": wall, **verdict,
             })
-            print(f"[{arm}] {r['sourceGroupId']} ({r['rowOrigin']}) {wall}s "
-                  f"-> {verdict}: {text[:60]}")
-        counts = {"pass": 0, "review": 0, "fail": 0}
-        for x in results:
-            counts[x["verdict"]] += 1
-        arms[arm] = {"verdicts": counts, "rows": results,
-                     "meanWall": round(sum(x["wallSeconds"] for x in results) / len(results), 2),
-                     "meanTokens": round(sum(x["outputTokens"] for x in results) / len(results), 1)}
+            print(f"[{arm}][{section}] {u['devGroups'][0]} ({u['rowsMerged']} row(s)) "
+                  f"{wall}s -> {verdict['verdict']}: {text[:60]}")
+        arms[arm] = {"unseen": summarize(results["unseen"]),
+                     "regression": summarize(results["regression"]),
+                     "results": results}
         del model
 
     report = {
-        "purpose": f"n4 finetune dev eval {RUN_TAG} (recognizer-judged; quality accepted separately)",
+        "purpose": f"n4 finetune dev eval {RUN_TAG} (per-input; quality accepted separately)",
         "provenance": {"corpusAndRenderer": corpus_hashes(),
                        "baseModel": {f.name: hashlib.sha256(f.read_bytes()).hexdigest()[:16]
                                      for f in sorted(BASE_MODEL.iterdir()) if f.is_file()},
@@ -163,11 +221,27 @@ def main() -> None:
         "judge": "corpus_check.check_row over the dev row's own plan/refs/must "
                  "(hashes recomputed for the generated text; planRefs re-expanded "
                  "to the generated sentence count)",
-        "devGroups": sorted({r["sourceGroupId"] for r in dev}),
+        "devInputs": {
+            "devRows": dev_rows,
+            "uniqueInputs": len(units),
+            "unseenInputs": len(unseen),
+            "regressionInputs": len(regression),
+            "regressionDetail": [
+                {"input": u["input"], "devGroups": u["devGroups"],
+                 "trainGroups": u["trainGroups"], "rowsMerged": u["rowsMerged"]}
+                for u in regression],
+            "mergeRule": "one generation per distinct rendered input; rows sharing "
+                         "an input share the plan and greedy output (seed/rewrite, "
+                         "expressed/omitted duplicates, frozen duplicates). Seen "
+                         "inputs are excluded from the unseen denominator.",
+        },
+        "devGroups": sorted({g for r in rows if r["split"] == "dev"
+                             for g in [r["sourceGroupId"]]}),
         "arms": arms,
         "disclaimers": [
-            "dev-group count is the current expansion's; quality gate closure needs "
-            "broader coverage and human review",
+            "unseen-input denominator only; regression inputs are reported "
+            "separately and never counted as generalization",
+            "quality gate closure needs broader coverage and human review",
             "Chinese naturalness is left to human review at delivery acceptance",
             "training saw the plan rendering; zero-shot base did not",
         ],

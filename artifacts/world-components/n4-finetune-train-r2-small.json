@@ -1,0 +1,178 @@
+{
+  "purpose": "n4 finetune small-tier trial r2-small (360 steps; quality accepted separately)",
+  "model": {
+    "base": "D:\\others\\Jity\\.local\\world-components-worktree\\experiments\\world-components\\assets\\randeng-t5-77m",
+    "hfId": "IDEA-CCNL/Randeng-T5-77M-MultiTask-Chinese",
+    "paramCount": 77440384
+  },
+  "provenance": {
+    "corpusAndRenderer": {
+      "n4_render.py": "c5e5442713fb9ca1dcdd83792cc09bbce8ab00a6d136c1ee8526e06cf538d753",
+      "corpus.seeds.jsonl": "f14e451a9cc410bd2cb4c90adf07ca227ee60f888e27510510f65893b829dfb7",
+      "rewrites.jsonl": "2811d7310c42666a7d796ea4f72252dc003c3e88cb5c069c2b12c88defbed6d3"
+    },
+    "checkpointSha256_16": {
+      "added_tokens.json": "a247922ac010bc17",
+      "config.json": "a35e9d4382657106",
+      "generation_config.json": "691648bea8d35875",
+      "model.safetensors": "f0c781d94a6deff3",
+      "special_tokens_map.json": "65d84a9271d68f12",
+      "spiece.model": "c65feffa65ff0378",
+      "tokenizer_config.json": "553da19a6ed43c57"
+    }
+  },
+  "tokenizer": {
+    "class": "T5Tokenizer",
+    "legacy": false,
+    "note": "same pin as zero-shot baseline v3 and eval script"
+  },
+  "environment": {
+    "python": "3.12.3",
+    "torch": "2.7.0+cu126",
+    "transformers": "4.57.3",
+    "device": "NVIDIA GeForce RTX 4060 Laptop GPU"
+  },
+  "isolation": {
+    "check": "corpus_check.split_isolation_problems(120 train groups, 30 dev groups) + tier filter small (60 groups)",
+    "result": "pass"
+  },
+  "data": {
+    "tier": "small",
+    "trainPairs": 240,
+    "trainGroups": 60,
+    "devPairs": 120,
+    "devGroupIds": [
+      "n4-appear-029",
+      "n4-chain-028",
+      "n4-empty-027",
+      "n4-loc-025",
+      "n4-multi-030",
+      "n4-task-026",
+      "n4x-d100-loc",
+      "n4x-d101-empty",
+      "n4x-d102-task",
+      "n4x-d103-chain",
+      "n4x-d104-appear",
+      "n4x-d105-multi",
+      "n4x-d106-loc",
+      "n4x-d107-empty",
+      "n4x-d108-task",
+      "n4x-d109-chain",
+      "n4x-d110-appear",
+      "n4x-d111-multi",
+      "n4x-d112-loc",
+      "n4x-d113-empty",
+      "n4x-d114-task",
+      "n4x-d115-chain",
+      "n4x-d116-appear",
+      "n4x-d117-multi",
+      "n4x-d118-loc",
+      "n4x-d119-empty",
+      "n4x-d120-task",
+      "n4x-d121-chain",
+      "n4x-d122-appear",
+      "n4x-d123-multi"
+    ],
+    "renderer": "n4_render.render_input (shared train/inference)",
+    "trainRowKinds": [
+      "rewrite",
+      "template-seed"
+    ],
+    "tiersIncluded": [
+      "small"
+    ]
+  },
+  "hyper": {
+    "seed": 20261029,
+    "steps": 360,
+    "epochsRun": 12,
+    "batch": 8,
+    "lr": 0.0001,
+    "stepsPerEpoch": 30,
+    "maxInput": 128,
+    "maxOutput": 64,
+    "optimizer": "AdamW",
+    "device": "cuda",
+    "precision": "fp32"
+  },
+  "lossLog": [
+    {
+      "epoch": 1,
+      "steps": 30,
+      "meanLoss": 1.8994,
+      "seconds": 7.6
+    },
+    {
+      "epoch": 2,
+      "steps": 30,
+      "meanLoss": 0.6809,
+      "seconds": 13.7
+    },
+    {
+      "epoch": 3,
+      "steps": 30,
+      "meanLoss": 0.3911,
+      "seconds": 21.3
+    },
+    {
+      "epoch": 4,
+      "steps": 30,
+      "meanLoss": 0.2921,
+      "seconds": 28.3
+    },
+    {
+      "epoch": 5,
+      "steps": 30,
+      "meanLoss": 0.2502,
+      "seconds": 35.0
+    },
+    {
+      "epoch": 6,
+      "steps": 30,
+      "meanLoss": 0.2126,
+      "seconds": 42.3
+    },
+    {
+      "epoch": 7,
+      "steps": 30,
+      "meanLoss": 0.199,
+      "seconds": 49.2
+    },
+    {
+      "epoch": 8,
+      "steps": 30,
+      "meanLoss": 0.1792,
+      "seconds": 55.7
+    },
+    {
+      "epoch": 9,
+      "steps": 30,
+      "meanLoss": 0.1835,
+      "seconds": 62.1
+    },
+    {
+      "epoch": 10,
+      "steps": 30,
+      "meanLoss": 0.1661,
+      "seconds": 67.3
+    },
+    {
+      "epoch": 11,
+      "steps": 30,
+      "meanLoss": 0.1496,
+      "seconds": 73.8
+    },
+    {
+      "epoch": 12,
+      "steps": 30,
+      "meanLoss": 0.1519,
+      "seconds": 80.7
+    }
+  ],
+  "checkpoint": "D:\\others\\Jity\\.local\\world-components-worktree\\experiments\\world-components\\assets\\n4-finetune\\r2-small",
+  "disclaimers": [
+    "process trial only; not presupposed to be enough for 77M",
+    "small/large share steps and hyperparameters; only training data differs",
+    "no quality verdict here; dev eval is eval_n4_finetune.py, accepted separately"
+  ]
+}
