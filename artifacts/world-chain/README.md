@@ -310,8 +310,8 @@ continuation 全部零模型调用）+ 真实模型叙事（模型为主 → 判
 验收，也不替换二十次输入的混合口径。harness `ed3eb0b`（脚本
 `frontend/scripts/run-world-b3.mjs`）；canonical=`b3-baseline.json`，
 原始 SQLite 与 server.log 在 `b3-run-db/`。报告头部钉档：browser 源
-`status=""`（干净），server `4e17025`（仅 `backend/_proj_create.json`
-未跟踪）；逐文件 sha256、逐调用 prompt/原始输出/结构解析/completion
+`head=a502a9b`（脚本内容仍为 `ed3eb0b`）、`status=""`（干净），server
+`4e17025`（仅 `backend/_proj_create.json` 未跟踪）；逐文件 sha256、逐调用 prompt/原始输出/结构解析/completion
 证据/耗时全部落盘。**ed3eb0b 之前的 `b3-baseline.json` 是 harness 缺陷
 记录（名字未解析、场景无法启动），不作模型基线引用。**
 
@@ -319,9 +319,9 @@ continuation 全部零模型调用）+ 真实模型叙事（模型为主 → 判
 json_schema strict、maxTokens 64–384、timeout 110s；叙事走已交付
 narration-polisher + checkFactNarration（同一判分门，context 2048、
 maxTokens 96、temperature 0/0.7 两尝试）；真实 Edge headless、跨源隔离；
-真实 Python 持久服务（SQLite）。模型加载 8.8s。
+真实 Python 持久服务（SQLite）。模型加载 8.7s。
 
-### 6.1 任务级探针（12 项；结构 12/12，语义 7/12，模型耗时 119.2s）
+### 6.1 任务级探针（12 项；结构 12/12，语义 7/12，模型耗时 124.4s）
 
 | 探针 | 结构 | 语义 | 观察 |
 | --- | --- | --- | --- |
@@ -355,19 +355,19 @@ JSON 解析结果与 completion 证据在 canonical 报告中。
 - 该场景未到达 commit，因此没有叙事调用/模板回退。修复前的版本会把这
   条非法更新送到 preview，控制器在 409 上反复 refresh，直到 step limit；
   现在的审计快速失败并保留两条语义错误（目标句、任务归属）。
-- 模型耗时：action 8.1/6.7s、targets 6.5/4.9s、results 7.2/6.2s、
-  updates 18.9/18.1s（prompt 347–1224 字符）；总 walk 78.3s。
+- 模型耗时：action 8.2/6.9s、targets 6.8/5.2s、results 7.5/6.6s、
+  updates 19.8/18.3s（prompt 347–1224 字符）；总 walk 81.0s。
 
-### 6.3 场景二：连锁共同结算（真实 d20；模型 4 次调用；walk 40.6s）
+### 6.3 场景二：连锁共同结算（真实 d20；模型 4 次调用；setup 0.57s，walk 38.5s）
 
 - **边界**：第一条目标与 roll 是程序 setup fixture（模型不选第一环目标），
-  真实服务端 d20 决定是否准入；本次 3 次尝试：result 8、3 拒绝，result 18
-  准入（person_a→person_c）；两次拒绝各自整轮 cancel。
-- 驱动器恢复后：reaction「周宁推开门厅深处的重门」（7.0s）；targets `[]`
-  （5.1s）；results 覆盖两人但新增「体力/精神值耗尽而撤退」（11.5s，
+  真实服务端 d20 决定是否准入；本次 1 次尝试：result 19 准入
+  （person_a→person_c），无弃轮。
+- 驱动器恢复后：reaction「周宁推开门厅深处的重门」（6.8s）；targets `[]`
+  （5.0s）；results 覆盖两人但新增「体力/精神值耗尽而撤退」（10.9s，
   冻结行动中没有的事件）；updates 把 person_c 的 `task_pressure` 标记达成
-  （15.7s，owner 合法）。
-- 提交 `point_64`（version 3，时间 09:00:04，+2s）；终局状态
+  （14.6s，owner 合法）。
+- 提交 `point_34`（version 3，时间 09:00:04，+2s）；终局状态
   `task_pressure=achieved`。
 - **叙事被投影契约拒绝**：`projectCommittedNarration` 在调用模型前抛
   `narration_requires_complete_numeric_cause`——该实体只有
