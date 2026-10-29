@@ -101,7 +101,7 @@ if (rescoreSource) {
 }
 const privateDir = resolve(root, `.local/world-b3-${Date.now()}`);
 mkdirSync(privateDir, { recursive: true });
-const sources = ['frontend/scripts/run-world-b3.mjs', 'frontend/src/app/world/narration-polisher.ts',
+const sources = ['frontend/scripts/run-world-b3.mjs', 'frontend/scripts/b3-judges.mjs', 'frontend/src/app/world/narration-polisher.ts',
   'frontend/src/app/world/world-defaults.ts',
   ...['runtime/rule-session', 'runtime/rule-facts', 'runtime/committed-narration', 'runtime/prompts', 'runtime/wllama-engine',
     'runtime/focused-input', 'runtime/narration-split', 'runtime/engine', 'types',
@@ -475,7 +475,7 @@ try {
       const example = stage ? `{"stage":"${stage}","changes":{"<角色id>":{${exampleField[stage]}}}}`
         : `[{"stage":"tasks","changes":{"<角色id>":{"tasksAchieved":["<状态中已有任务id>"]}}}]`;
       const shape = stage ? `只输出一个 JSON 对象（不要数组）：${example}`
-        : `只输出 JSON 数组；只写实际发生变化的阶段；顺序不影响应用（服务端按每实体字段集应用）：${example}`;
+        : `只输出 JSON 数组，按 position→appearance→tasks→subtasks→personality→sanity 顺序；只写实际发生变化的阶段：${example}`;
       return `字段契约：\n` +
         `- positionSet：{"containerId":"<地点id>","slotId":null,"relativeTo":null}\n` +
         `- appearanceChanges：数组，元素 {"id":"draft_1","text":"<外貌变化>","supersedes":[]}\n` +
