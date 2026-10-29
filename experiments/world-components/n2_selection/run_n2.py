@@ -1,32 +1,33 @@
-# N2 content-selection runner (round 18, first comparison round).
+# N2 content-selection runner (v2, review round 19 corrections).
 #
-# Task: given a committed fact table (numbered) and a viewpoint rule, decide
-# which fact ids go into the narration. The output is a selection, never new
-# world facts: unknown ids are invalid, and the judge checks coverage of the
-# must set plus POV-forbidden selections.
+# Task: given a committed fact table (each fact carries the location it
+# happened at) and a COMPLETE viewpoint (type, person, entityId, current
+# location, rule text), decide which fact ids go into the narration.
 #
-# Arms (same inputs, same judge):
-#   P0 program-select-all  - selects every fact (the trivial "no selection"
-#                            behaviour the plan forbids as a final capability)
-#   P1 program-rule        - selects must + facts whose entity is visible from
-#                            the viewpoint (drops forbidden, keeps omittable)
-#   M1a randeng-zero-shot  - Randeng-T5-77M base, instruction AFTER the data
-#   M1b randeng-answer-slot- same model, instruction BEFORE the data and an
-#                            explicit 「编号：」 answer prefix (prompt-shape
-#                            operation point; parsing keeps only the answer)
+# Corrections over the first round:
+#  a. The program arm no longer reads answer labels. Two reference arms are
+#     reported separately:
+#        P1-labels : selection = must + visible, using the `forbidden` LABEL
+#                    (kept only as a "given the answer key" reference)
+#        P1-rule   : selection derived from viewpoint + fact locations alone
+#     An invariance self-test proves the difference: editing labels must not
+#     move P1-rule's selection, editing the viewpoint must.
+#  b. Prompts carry the complete viewpoint (person, id, location) and every
+#     fact line is tagged with its location, so a model CAN apply the rule.
+#  c. The judge is strict: anything other than ids/separators (plus an
+#     optional 「编号：」 prefix) invalidates the answer — "ids plus prose" no
+#     longer passes.
 #
-# Judge (program, fixed before running):
-#   mustRecall       = |must ∩ sel| / |must|                  hard: 1.0
-#   forbiddenHits    = |forbidden ∩ sel|                      hard: 0
-#   precision/recall/F1 vs the program-defined target
-#   selectAll        = sel ⊇ all facts (recorded, never required)
-#   pass             = mustRecall == 1 and forbiddenHits == 0 and F1 >= 0.6
-#                      (0.6 is a FIRST-ROUND dev threshold, not a frozen gate)
+# Arms: P0 select-all, P1-labels (reference), P1-rule (program), M1a/M1b
+# Randeng zero-shot (instruction after data / answer slot).
 #
-# Usage: python experiments/world-components/n2_selection/run_n2.py \
-#          [--skip-model] [--variants a,b]
-# Output: artifacts/world-components/n2-selection-r1.json
+# Judge: mustRecall == 1, forbiddenHits == 0, F1 >= 0.6 (first-round dev
+# threshold, not a frozen gate), and no invalid content.
+#
+# Usage: python experiments/world-components/n2_selection/run_n2.py [--skip-model]
+# Output: artifacts/world-components/n2-selection-r2.json
 
+import copy
 import hashlib
 import importlib.machinery
 import json
@@ -41,9 +42,9 @@ REPO = HERE.parent.parent.parent
 ITEMS = HERE / "items.jsonl"
 ASSETS = HERE.parent / "assets"
 BASE_MODEL = ASSETS / "randeng-t5-77m"
-REPORT = REPO / "artifacts" / "world-components" / "n2-selection-r1.json"
+REPORT = REPO / "artifacts" / "world-components" / "n2-selection-r2.json"
 
-F1_GATE = 0.6          # first-round dev threshold (not a frozen acceptance gate)
+F1_GATE = 0.6
 MAX_NEW = 32
 
 
@@ -61,106 +62,122 @@ def load_items() -> list:
 
 
 def fact_line(i: int, f: dict) -> str:
+    where = "全局" if f.get("at") is None else f["at"]
     k = f["kind"]
     if k == "moved":
-        return f"{i}. 位置：{f['name']} 从{f['from']}到{f['to']}"
-    if k == "task_achieved":
-        return f"{i}. 任务达成：{f['name']}「{f['goal']}」"
-    if k == "personality_changed":
-        return f"{i}. 个性：{f['name']}{f['text']}"
-    if k == "sanity_changed":
+        body = f"位置：{f['name']} 从{f['from']}到{f['to']}"
+    elif k == "task_achieved":
+        body = f"任务达成：{f['name']}「{f['goal']}」"
+    elif k == "personality_changed":
+        body = f"个性：{f['name']}{f['text']}"
+    elif k == "sanity_changed":
         d = "上升" if f["to"] > f["from"] else "下降" if f["to"] < f["from"] else "不变"
-        return f"{i}. 理智：{f['name']} {f['from']}→{f['to']}（{d}）"
-    if k == "appearance_changed":
-        return f"{i}. 外貌：{f['name']} {f['text']}"
-    if k == "positioned_at":
-        return f"{i}. 现状：{f['name']} 已在{f['at']}"
-    if k == "time":
-        return f"{i}. 时间推进：约{f['amount']}分钟"
-    if k == "no_change":
-        return f"{i}. 无变化：{f.get('scope', '全局')}"
-    raise ValueError(f"unknown fact kind {k}")
+        body = f"理智：{f['name']} {f['from']}→{f['to']}（{d}）"
+    elif k == "appearance_changed":
+        body = f"外貌：{f['name']} {f['text']}"
+    elif k == "positioned_at":
+        body = f"现状：{f['name']} 已在{f['at']}"
+    elif k == "time":
+        body = f"时间推进：约{f['amount']}分钟"
+    elif k == "no_change":
+        body = f"无变化：{f.get('scope') or f.get('at')}"
+    else:
+        raise ValueError(f"unknown fact kind {k}")
+    return f"{i}. [{where}] {body}"
 
 
 def prompt_for(item: dict, variant: str = "a") -> str:
     v = item["viewpoint"]
+    who = (f"{v['name']}（{v['entityId']}）" if v.get("entityId")
+           else "全知叙述者")
+    where = v.get("at") or "全局"
     lines = [fact_line(i + 1, f) for i, f in enumerate(item["facts"])]
     body = ("叙事选材任务。\n"
-            f"视角：{v['rule']}。\n"
-            "事实：\n" + "\n".join(lines) + "\n")
+            f"视角人物：{who}，当前在{where}。\n"
+            f"视角规则：{v['rule']}。\n"
+            "事实（方括号内是事实发生的地点）：\n" + "\n".join(lines) + "\n")
     if variant == "a":
-        return (body
-                + "任务：选出必须写进正文的事实编号，视角看不到的不要选。\n"
-                + "只输出编号，用逗号分隔。")
+        return (body + "任务：选出必须写进正文的事实编号，视角看不到的不要选。\n"
+                + "只输出编号，用逗号分隔，不要写其他文字。")
     if variant == "b":
-        return ("选材。只输出要写进正文的事实编号。\n" + body + "编号：")
+        return ("选材。只输出要写进正文的事实编号，不要写其他文字。\n" + body + "编号：")
     raise ValueError(variant)
 
 
-ANSWER_MARKERS = ("编号：", "编号:", "答案：", "答案:")
+# STRICT format: optional 「编号：」 prefix, then digits separated by commas,
+# optionally ending with one full stop. Anything else is invalid content.
+ID_LIST = re.compile(r"^[\s　]*(?:编号[:：][\s　]*)?\d+(?:[\s　]*[,，、;；][\s　]*\d+)*[。.]?[\s　]*$")
 
 
 def parse_ids(text: str, n_facts: int, answer_only: bool = False) -> tuple:
-    """Model output -> (selected 1-based ids that exist, invalid tokens).
-    answer_only keeps only the part after an answer marker, so an echo of the
-    numbered fact list is not counted as a selection (arm b)."""
-    if answer_only:
-        for marker in ANSWER_MARKERS:
-            if marker in text:
-                text = text.rsplit(marker, 1)[1]
-                break
-    stripped = re.sub(r"[，、;；\s]+", ",", text.strip())
-    sel, bad = set(), []
-    for tok in re.split(r"[,\n]+", stripped):
-        tok = tok.strip().strip("。.")
-        if not tok:
-            continue
-        m = re.fullmatch(r"(?:f|F|事实)?(\d{1,2})", tok)
-        if not m:
-            bad.append(tok[:16])
-            continue
-        v = int(m.group(1))
-        if 1 <= v <= n_facts:
-            sel.add(v)
-        else:
-            bad.append(tok[:16])
-    return sel, bad
+    """-> (selected ids, invalid reason or None). Strict by design."""
+    raw = text
+    if answer_only and "编号" in text:
+        text = text.rsplit("编号", 1)[1].lstrip(":：")
+    if not text.strip():
+        return set(), "empty"
+    if not ID_LIST.match(text):
+        return set(), f"non-id-content: {raw.strip()[:40]!r}"
+    sel = {int(x) for x in re.findall(r"\d+", text)}
+    bad = sorted(x for x in sel if not (1 <= x <= n_facts))
+    if bad:
+        return set(), f"out-of-range ids {bad}"
+    return sel, None
 
 
-def judge(item: dict, sel1: set, bad: list) -> dict:
-    facts = item["facts"]
-    id_of = {i + 1: f["factId"] for i, f in enumerate(facts)}
+def judge(item: dict, sel1: set, invalid) -> dict:
+    id_of = {i + 1: f["factId"] for i, f in enumerate(item["facts"])}
     sel = {id_of[i] for i in sel1}
     must = set(item["must"])
     target = set(item["target"])
     forbidden = set(item["forbidden"])
-    must_hit = len(must & sel)
-    tp = len(target & sel)
-    precision = tp / len(sel) if sel else 0.0
-    recall = tp / len(target) if target else 0.0
+    precision = len(target & sel) / len(sel) if sel else 0.0
+    recall = len(target & sel) / len(target) if target else 0.0
     f1 = (2 * precision * recall / (precision + recall)) if (precision + recall) else 0.0
-    must_recall = must_hit / len(must) if must else 1.0
+    must_recall = len(must & sel) / len(must) if must else 1.0
     forbidden_hits = len(forbidden & sel)
-    verdict = ("pass" if (must_recall == 1.0 and forbidden_hits == 0
-                          and f1 >= F1_GATE) else "fail")
+    verdict = ("pass" if (invalid is None and must_recall == 1.0
+                          and forbidden_hits == 0 and f1 >= F1_GATE) else "fail")
     return {"selected": sorted(sel), "selectedCount": len(sel),
-            "totalFacts": len(facts), "selectAll": len(sel) == len(facts),
+            "totalFacts": len(item["facts"]),
+            "selectAll": len(sel) == len(item["facts"]),
             "mustRecall": round(must_recall, 3), "forbiddenHits": forbidden_hits,
             "precision": round(precision, 3), "recall": round(recall, 3),
-            "f1": round(f1, 3), "invalidTokens": bad, "verdict": verdict}
+            "f1": round(f1, 3), "invalid": invalid, "verdict": verdict}
+
+
+# ---- reference / program arms -------------------------------------------
+def visible_from_viewpoint(vp: dict, fact: dict) -> bool:
+    """Independent implementation of the visibility rule (v2): reads ONLY the
+    viewpoint fields and the fact's own entityId/location — never labels."""
+    if vp["type"] == "omniscient":
+        return True
+    if fact["kind"] == "time":
+        return True
+    if fact.get("entityId") and fact["entityId"] == vp.get("entityId"):
+        return True
+    return fact.get("at") == vp.get("at") and fact["kind"] != "time"
 
 
 def arm_select_all(item: dict) -> tuple:
-    return set(range(1, len(item["facts"]) + 1)), []
+    return set(range(1, len(item["facts"]) + 1)), None
 
 
-def arm_program_rule(item: dict) -> tuple:
-    """must + every fact whose entity is visible from the viewpoint. The
-    viewpoint rule is applied by the program (the forbidden set is its
-    output), never by a model."""
+def arm_rule(item: dict) -> tuple:
+    vp = item["viewpoint"]
+    sel = {i + 1 for i, f in enumerate(item["facts"])
+           if visible_from_viewpoint(vp, f)}
+    return sel, None
+
+
+def arm_labels(item: dict) -> tuple:
+    """REFERENCE arm: uses the answer key (must + forbidden). Kept only to
+    show what the label set implies; it proves nothing about the viewpoint
+    rule being implemented."""
     forbidden = set(item["forbidden"])
-    sel = {i + 1 for i, f in enumerate(item["facts"]) if f["factId"] not in forbidden}
-    return sel, []
+    sel = {i + 1 for i, f in enumerate(item["facts"])
+           if f["factId"] not in forbidden}
+    return sel, None
 
 
 def summarize(rows: list) -> dict:
@@ -171,16 +188,68 @@ def summarize(rows: list) -> dict:
             "forbiddenHitsTotal": sum(r["forbiddenHits"] for r in rows),
             "f1Mean": round(sum(r["f1"] for r in rows) / n, 3),
             "selectAllItems": sum(1 for r in rows if r["selectAll"]),
-            "invalidTokenItems": sum(1 for r in rows if r["invalidTokens"]),
+            "invalidItems": sum(1 for r in rows if r["invalid"]),
             "meanSelected": round(sum(r["selectedCount"] for r in rows) / n, 2)}
 
 
 def run_program_arm(items: list, fn) -> list:
-    out = []
+    return [{"itemId": it["itemId"], **judge(it, *fn(it))} for it in items]
+
+
+def invariance_selftest(items: list) -> dict:
+    """The reviewer's probes: labels must not move the rule arm; viewpoint
+    must. Also pins the strict judge."""
+    void = []
+    labels_changed = 0
     for it in items:
-        sel, bad = fn(it)
-        out.append({"itemId": it["itemId"], **judge(it, sel, bad)})
-    return out
+        tampered = copy.deepcopy(it)
+        tampered["forbidden"] = []          # labels only
+        if arm_rule(tampered) != arm_rule(it):
+            labels_changed += 1
+    if labels_changed:
+        void.append(f"rule arm moved when only labels changed ({labels_changed} items)")
+
+    vp_changed = 0
+    for it in items:
+        if it["viewpoint"]["type"] == "omniscient":
+            continue                        # omnivisible: location change is a no-op
+        tampered = copy.deepcopy(it)
+        others = [f["at"] for f in it["facts"]
+                  if f.get("at") and f["at"] != it["viewpoint"]["at"]]
+        if not others:
+            continue
+        tampered["viewpoint"]["at"] = others[0]
+        if arm_rule(tampered) != arm_rule(it):
+            vp_changed += 1
+    if vp_changed == 0:
+        void.append("rule arm did not move when the viewpoint location changed")
+
+    # the labels arm MUST move on the label probe (documents that it reads them)
+    label_arm_moved = 0
+    for it in items:
+        tampered = copy.deepcopy(it)
+        tampered["forbidden"] = []
+        if arm_labels(tampered) != arm_labels(it):
+            label_arm_moved += 1
+
+    # strict judge: ids plus prose must not pass
+    probe_item = items[0]
+    sel, invalid = parse_ids("1,2 我觉得就这样", len(probe_item["facts"]))
+    if invalid is None:
+        void.append("strict judge accepted ids plus prose")
+    sel2, invalid2 = parse_ids("1,2", len(probe_item["facts"]))
+    if invalid2 is not None:
+        void.append(f"strict judge rejected a clean id list: {invalid2}")
+    if void:
+        print("REPORT VOID — invariance self-test failed:")
+        for x in void:
+            print(" ", x)
+        sys.exit(2)
+    return {"ruleArmItemsMovedByLabelChange": labels_changed,
+            "ruleArmItemsMovedByViewpointChange": vp_changed,
+            "labelArmItemsMovedByLabelChange": label_arm_moved,
+            "judgeRejectsIdsPlusProse": True,
+            "judgeAcceptsCleanIds": True}
 
 
 def run_randeng_arm(items: list, variant: str) -> tuple:
@@ -210,20 +279,19 @@ def run_randeng_arm(items: list, variant: str) -> tuple:
     for it in items:
         prompt = prompt_for(it, variant)
         enc = tokenizer(prompt, return_tensors="pt", truncation=True,
-                        max_length=256).to(model.device)
+                        max_length=320).to(model.device)
         t0 = time.perf_counter()
         with torch.no_grad():
             out = model.generate(**enc, max_new_tokens=MAX_NEW,
                                  num_beams=1, do_sample=False)
         wall = round(time.perf_counter() - t0, 2)
         text = tokenizer.decode(out[0], skip_special_tokens=True)
-        sel, bad = parse_ids(text, len(it["facts"]),
-                             answer_only=(variant == "b"))
+        sel, invalid = parse_ids(text, len(it["facts"]), answer_only=(variant == "b"))
         rows.append({"itemId": it["itemId"], "prompt": prompt, "rawOutput": text,
                      "wallSeconds": wall, "outputTokens": int(out.shape[1]),
-                     **judge(it, sel, bad)})
+                     **judge(it, sel, invalid)})
         print(f"[randeng-{variant}] {it['itemId']} {wall}s -> {rows[-1]['verdict']} "
-              f"sel={len(sel)}: {text[:40]}")
+              f"sel={len(sel)} invalid={rows[-1]['invalid']}")
     env = {"python": sys.version.split()[0], "torch": torch.__version__,
            "transformers": transformers.__version__,
            "device": torch.cuda.get_device_name(0)}
@@ -235,10 +303,16 @@ def main() -> None:
     variants = (sys.argv[sys.argv.index("--variants") + 1].split(",")
                 if "--variants" in sys.argv else ["a", "b"])
     items = load_items()
-    assert len(items) == 16
+    assert len(items) == 16 and all(r.get("batch") == "v2" for r in items)
 
-    arms = {"P0-program-select-all": run_program_arm(items, arm_select_all),
-            "P1-program-rule": run_program_arm(items, arm_program_rule)}
+    selftest = invariance_selftest(items)
+    print(f"self-test PASS: {selftest}")
+
+    arms = {
+        "P0-program-select-all": run_program_arm(items, arm_select_all),
+        "P1-labels-reference": run_program_arm(items, arm_labels),
+        "P1-rule-program": run_program_arm(items, arm_rule),
+    }
     env = None
     if not skip_model:
         for variant in variants:
@@ -246,22 +320,26 @@ def main() -> None:
             arms[f"M1{variant}-randeng-zero-shot"] = rows_v
 
     report = {
-        "purpose": "N2 content-selection first comparison round (program baselines + zero-shot)",
-        "task": "fact table + viewpoint -> selected fact ids",
+        "purpose": "N2 content-selection round 2 (corrected design: labels not read by arms, "
+                   "complete viewpoint, strict judge)",
+        "task": "fact table (with per-fact locations) + complete viewpoint -> selected fact ids",
         "thresholds": {"f1Gate": F1_GATE,
                        "note": "first-round dev threshold; not a frozen acceptance gate"},
         "decode": {"greedy": True, "maxNewTokens": MAX_NEW, "numBeams": 1,
                    "tokenizerLegacy": False},
+        "selfTest": selftest,
         "provenance": {"items": sha_file(ITEMS),
+                       "itemsBatch": "v2",
                        "baseModel": {f.name: sha_file(f)[:16]
                                      for f in sorted(BASE_MODEL.iterdir()) if f.is_file()}},
         "environment": env,
         "arms": {name: {"summary": summarize(rows), "rows": rows}
                  for name, rows in arms.items()},
         "disclaimers": [
+            "P1-labels reads the answer key and is a reference only; P1-rule reads viewpoint+facts",
             "program-defined gold selection; no model output was used as a label",
             "select-all is recorded but never treated as selection ability",
-            "dev set only: 16 items, third independent vocabulary",
+            "dev set only: 16 items, third independent vocabulary, batch v2",
             "no N2 training yet; M1a/M1b are zero-shot prompt-shape operation points",
         ],
     }

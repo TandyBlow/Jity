@@ -35,25 +35,40 @@ const hash = (p) => createHash('sha256').update(readFileSync(p)).digest('hex');
 const items = readFileSync(itemsPath, 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l));
 
 function factLine(i, f) {
+  const where = f.at == null ? '全局' : f.at;
+  let body;
   switch (f.kind) {
-    case 'moved': return `${i}. 位置：${f.name} 从${f.from}到${f.to}`;
-    case 'task_achieved': return `${i}. 任务达成：${f.name}「${f.goal}」`;
-    case 'personality_changed': return `${i}. 个性：${f.name}${f.text}`;
+    case 'moved': body = `位置：${f.name} 从${f.from}到${f.to}`; break;
+    case 'task_achieved': body = `任务达成：${f.name}「${f.goal}」`; break;
+    case 'personality_changed': body = `个性：${f.name}${f.text}`; break;
     case 'sanity_changed': {
       const d = f.to > f.from ? '上升' : f.to < f.from ? '下降' : '不变';
-      return `${i}. 理智：${f.name} ${f.from}→${f.to}（${d}）`;
+      body = `理智：${f.name} ${f.from}→${f.to}（${d}）`;
+      break;
     }
-    case 'appearance_changed': return `${i}. 外貌：${f.name} ${f.text}`;
-    case 'positioned_at': return `${i}. 现状：${f.name} 已在${f.at}`;
-    case 'time': return `${i}. 时间推进：约${f.amount}分钟`;
-    case 'no_change': return `${i}. 无变化：${f.scope ?? '全局'}`;
+    case 'appearance_changed': body = `外貌：${f.name} ${f.text}`; break;
+    case 'positioned_at': body = `现状：${f.name} 已在${f.at}`; break;
+    case 'time': body = `时间推进：约${f.amount}分钟`; break;
+    case 'no_change': body = `无变化：${f.scope ?? f.at}`; break;
     default: throw new Error(`unknown kind ${f.kind}`);
   }
+  return `${i}. [${where}] ${body}`;
 }
 
-const SYSTEM = '你是中文叙事编辑。给定事实表与叙述视角，只选出应当写进正文的事实编号。视角看不到的事实不要选。只输出编号，用逗号分隔，不要解释。';
-const promptOf = (item) => ['事实：', ...item.facts.map((f, i) => factLine(i + 1, f)),
-  `视角：${item.viewpoint.rule}。`, '编号：'].join('\n');
+const SYSTEM = '中文叙事编辑。给定事实表（方括号是事实发生地点）与视角人物、视角规则，只选出应当写进正文的事实编号。视角看不到的不要选。只输出编号，用逗号分隔，不要解释。';
+const promptOf = (item) => {
+  const v = item.viewpoint;
+  const who = v.entityId ? `${v.name}（${v.entityId}）` : '全知叙述者';
+  const where = v.at ?? '全局';
+  return ['叙事选材任务。',
+    `视角人物：${who}，当前在${where}。`,
+    `视角规则：${v.rule}。`,
+    '事实（方括号内是事实发生的地点）：',
+    ...item.facts.map((f, i) => factLine(i + 1, f)),
+    '任务：选出必须写进正文的事实编号，视角看不到的不要选。',
+    '只输出编号，用逗号分隔，不要写其他文字。',
+    '编号：'].join('\n');
+};
 
 const report = {
   purpose: 'N2 arm M2: Qwen3-0.6B zero-shot id selection (real Edge + wllama)',

@@ -1,23 +1,31 @@
-# N2 content-selection items (round 18): fact table + viewpoint -> which facts
-# the narration states.
+# N2 content-selection items (v2, review round 19 corrections).
 #
-# Isolation: third independent vocabulary (not the N4 training corpus cast,
-# not the frozen N4 holdout cast). No model output is used as a label: the
-# gold selection is PROGRAM-DEFINED from the viewpoint rule below, so
-# "select all" is not a legitimate answer and no arm can prove itself.
+# Fixes over v1 (kept as items-v1.jsonl for traceability):
+#  a. IDENTITY CONSISTENCY: the viewpoint entity is the actor of its own
+#     facts — same entityId AND same name (v1 could pair viewpoint char_401
+#     with actor char_480).
+#  b. FACT LOCATIONS: every fact carries `at` (where it happened / what it is
+#     about); a global time advance carries at=None. Visibility is therefore
+#     computable from data, not from a label.
+#  c. VIEWPOINT IS COMPLETE: type + person + entityId + current location +
+#     the rule text handed to a model. Models receive all of it.
+#  d. LABELS ARE DERIVED, NEVER AUTHORED: must / forbidden / omittable come
+#     from the rule below, and `target` is must plus the facts a narrator
+#     would surface. Arms may NOT read labels (a separate reference arm does,
+#     labelled as such).
 #
-# Labels per fact:
-#   must      - the narration has to state it (the protagonist's own action,
-#               the committed task result the player is acting on)
-#   omittable - legitimate to state or skip (background visible at the scene,
-#               redundant time detail, someone else's mood shift)
-#   forbidden - the viewpoint cannot know it (another location's change or a
-#               private action elsewhere); stating it is a fact violation
-#   target    - program-defined competent selection = must + the facts a
-#               narrator would surface (salient); used for precision/recall
+# Visibility rule (the definition the judge uses):
+#   omniscient            -> everything visible
+#   kind == "time"        -> visible (global)
+#   entityId == viewpoint -> visible (one's own action/state)
+#   fact.at == vp.at      -> visible
+#   otherwise             -> POV-inaccessible (forbidden)
+#
+# Isolation: third vocabulary, disjoint from the N4 corpus cast and the frozen
+# N4 holdout cast; checked by check_isolation.py against B's archives.
 #
 # Usage: python experiments/world-components/n2_selection/build_items.py
-# Output: experiments/world-components/n2_selection/items.jsonl
+# Output: experiments/world-components/n2_selection/items.jsonl (v2)
 
 import hashlib
 import json
@@ -26,8 +34,6 @@ import pathlib
 HERE = pathlib.Path(__file__).resolve().parent
 OUT = HERE / "items.jsonl"
 
-# third cast: disjoint from n4 corpus (陈舟/苏晚/周砚/林望/沈青/顾一帆/...) and
-# from the frozen holdout (陆知微/江砚白/顾青梧/秦照野/温屿/...)
 NAMES = ["裴行舟", "沈拾", "岑半夏", "顾知白", "陆停云", "白蘅"]
 LOCS = ["石阶码头", "旧钟铺", "半窗书舍", "竹影茶棚", "西栅桥", "瓦窑"]
 TASKS = ["把船灯挂上桅杆", "补好瓦窑的顶棚", "把账簿送回半窗书舍",
@@ -35,6 +41,9 @@ TASKS = ["把船灯挂上桅杆", "补好瓦窑的顶棚", "把账簿送回半�
 APPEAR = ["檐角的风铃褪了色", "门前的石阶塌了一角", "窗纸被风戳了个洞",
           "柜台上的铜锁生了锈", "墙根的青苔爬上了半尺", "梁上的吊绳磨细了"]
 PERS = ["变得寡言", "变得爽快", "变得谨慎", "变得急躁"]
+
+CHAR_ID = {n: f"char_{400 + i:03d}" for i, n in enumerate(NAMES)}
+LOC_ID = {l: f"loc_{400 + i:03d}" for i, l in enumerate(LOCS)}
 
 
 def canon(obj) -> str:
@@ -45,32 +54,61 @@ def sha(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
 
-def item(iid, viewpoint, facts, must, target, forbidden, note):
-    """omittable is DERIVED: every fact is must, forbidden, or legally
-    skippable. Callers never hand-label omissions, so no fact can silently
-    drop out of the label space."""
+def visible(vp: dict, fact: dict) -> bool:
+    if vp["type"] == "omniscient":
+        return True
+    if fact["kind"] == "time":
+        return True
+    if fact.get("entityId") and fact["entityId"] == vp["entityId"]:
+        return True
+    return fact.get("at") == vp["at"]
+
+
+def make_item(iid, viewpoint, facts, must, target, note):
+    """Derives forbidden/omittable from the visibility rule, asserts identity
+    consistency, and refuses label sets that contradict the rule."""
     ids = [f["factId"] for f in facts]
-    must, target, forbidden = set(must), set(target), set(forbidden)
-    omittable = set(ids) - must - forbidden
-    assert not (must & forbidden), iid
-    assert must <= target, iid
-    assert not (target & forbidden), iid
-    assert target <= set(ids), iid
+    assert len(set(ids)) == len(ids), iid
+    for f in facts:
+        assert "at" in f, f"{iid}/{f['factId']}: fact lacks a location"
+        if f["kind"] == "time":
+            assert f["at"] is None, iid
+        else:
+            assert f["at"] in LOC_ID, f"{iid}/{f['factId']}: unknown location"
+        if f.get("entityId", "").startswith("char_"):
+            assert f.get("name"), f"{iid}/{f['factId']}: character fact without a name"
+            assert CHAR_ID.get(f["name"]) == f["entityId"], (
+                f"{iid}/{f['factId']}: name/id mismatch "
+                f"({f['name']} vs {f['entityId']})")
+        if f.get("entityId", "").startswith("loc_"):
+            assert LOC_ID.get(f.get("name")) == f["entityId"], (
+                f"{iid}/{f['factId']}: location name/id mismatch")
+    own = [f for f in facts
+           if viewpoint["entityId"] and f.get("entityId") == viewpoint["entityId"]]
+    if viewpoint["type"] != "omniscient":
+        assert own, f"{iid}: viewpoint person has no fact of their own"
+        for f in own:
+            assert f.get("name") == viewpoint["name"], f"{iid}: name drift"
+
+    forbidden = [f["factId"] for f in facts if not visible(viewpoint, f)]
+    must_set, target_set = set(must), set(target)
+    assert must_set <= target_set, iid
+    assert not (target_set & set(forbidden)), f"{iid}: target includes POV-forbidden facts"
+    omittable = set(ids) - must_set - set(forbidden)
+    assert omittable | must_set | set(forbidden) == set(ids), iid
+
     return {
-        "itemId": iid,
-        "task": "n2-select",
-        "split": "dev",
+        "itemId": iid, "task": "n2-select", "split": "dev", "batch": "v2",
         "viewpoint": viewpoint,
         "facts": facts,
-        "must": sorted(must),
-        "target": sorted(target),
+        "must": sorted(must_set),
+        "target": sorted(target_set),
         "omittable": sorted(omittable),
         "forbidden": sorted(forbidden),
         "note": note,
         "hashes": {"facts": sha(canon(facts)),
-                   "labels": sha(canon({"must": sorted(must),
-                                        "target": sorted(target),
-                                        "omittable": sorted(omittable),
+                   "labels": sha(canon({"must": sorted(must_set),
+                                        "target": sorted(target_set),
                                         "forbidden": sorted(forbidden)}))},
     }
 
@@ -78,135 +116,134 @@ def item(iid, viewpoint, facts, must, target, forbidden, note):
 def main() -> None:
     items = []
 
-    def prot(idx):
-        return {"type": "protagonist", "entityId": f"char_{400 + idx:03d}",
-                "name": NAMES[idx % len(NAMES)],
-                "rule": "主角只知道自己在场的地点与自己的行动"}
+    def vp_prot(name, at, i):
+        return {"type": "protagonist", "entityId": CHAR_ID[name], "name": name,
+                "at": at,
+                "rule": f"你只知道自己在{at}能看到的，以及自己的行动与状态"}
 
-    def local(name, loc):
-        return {"type": "location-limited", "entityId": name, "at": loc,
-                "rule": "叙述者只知道该人物所在地点发生的事情"}
+    def vp_local(name, at):
+        return {"type": "location-limited", "entityId": CHAR_ID[name],
+                "name": name, "at": at,
+                "rule": f"你只知道{at}发生的事，以及自己的行动与状态"}
 
-    def omni():
-        return {"type": "omniscient", "entityId": None,
-                "rule": "全知视角，但低显著性事实可以省略"}
+    def vp_omni():
+        return {"type": "omniscient", "entityId": None, "name": None, "at": "全局",
+                "rule": "全知视角：全部事实可见，低显著性的可以省略"}
 
-    # 1-4: protagonist moves + own task + scene detail + another location's
-    # change (forbidden) + another character's mood (omittable)
+    # A) 1-4: protagonist moved to L2; two facts at another location are
+    #    POV-inaccessible for this person.
     for i in range(4):
-        n = NAMES[i]
-        other = NAMES[(i + 3) % len(NAMES)]
-        here, there = LOCS[i], LOCS[(i + 2) % len(LOCS)]
+        me, other = NAMES[i], NAMES[(i + 3) % len(NAMES)]
+        frm, to = LOCS[i], LOCS[(i + 2) % len(LOCS)]
         far = LOCS[(i + 4) % len(LOCS)]
         facts = [
-            {"factId": "f1", "kind": "moved", "entityId": f"char_{400 + i:03d}",
-             "name": n, "from": here, "to": there},
-            {"factId": "f2", "kind": "task_achieved",
-             "entityId": f"char_{400 + i:03d}", "name": n,
-             "goal": TASKS[i % len(TASKS)]},
-            {"factId": "f3", "kind": "time", "amount": 6 + i, "unit": "minute"},
-            {"factId": "f4", "kind": "appearance_changed",
-             "entityId": f"loc_{400 + i:03d}", "name": there,
-             "text": APPEAR[i % len(APPEAR)]},
-            {"factId": "f5", "kind": "appearance_changed",
-             "entityId": f"loc_{410 + i:03d}", "name": far,
-             "text": APPEAR[(i + 2) % len(APPEAR)]},
+            {"factId": "f1", "kind": "moved", "entityId": CHAR_ID[me], "name": me,
+             "from": frm, "to": to, "at": to},
+            {"factId": "f2", "kind": "task_achieved", "entityId": CHAR_ID[me],
+             "name": me, "goal": TASKS[i], "at": to},
+            {"factId": "f3", "kind": "appearance_changed",
+             "entityId": LOC_ID[to], "name": to, "text": APPEAR[i], "at": to},
+            {"factId": "f4", "kind": "time", "amount": 6 + i, "unit": "minute",
+             "at": None},
+            {"factId": "f5", "kind": "appearance_changed", "entityId": LOC_ID[far],
+             "name": far, "text": APPEAR[(i + 2) % len(APPEAR)], "at": far},
             {"factId": "f6", "kind": "personality_changed",
-             "entityId": f"char_{420 + i:03d}", "name": other,
-             "text": PERS[i % len(PERS)]},
+             "entityId": CHAR_ID[other], "name": other,
+             "text": PERS[i % len(PERS)], "at": far},
         ]
-        items.append(item(
-            f"n2-{i + 1:02d}", prot(i), facts,
-            must=["f1", "f2"], target=["f1", "f2", "f4"], forbidden=["f5"],
-            note="自述行动与任务结果必述；所在地点变化可选；远处地点变化视角不可知"))
+        items.append(make_item(
+            f"n2-{i + 1:02d}", vp_prot(me, to, i), facts,
+            must=["f1", "f2"], target=["f1", "f2", "f3"],
+            note="自身移动与任务必述；目的地变化可选；他处变化与他的情绪不可知"))
 
-    # 5-8: location-limited viewpoint: only what happens at that location
+    # B) 5-8: location-limited viewpoint: own facts plus what happens here.
     for i in range(4):
-        n = NAMES[(i + 2) % len(NAMES)]
-        here = LOCS[i % len(LOCS)]
-        other = NAMES[(i + 4) % len(NAMES)]
-        far = LOCS[(i + 3) % len(LOCS)]
+        me, other = NAMES[(i + 2) % len(NAMES)], NAMES[(i + 4) % len(NAMES)]
+        here, far = LOCS[i], LOCS[(i + 3) % len(LOCS)]
         facts = [
-            {"factId": "f1", "kind": "task_achieved",
-             "entityId": f"char_{430 + i:03d}", "name": n,
-             "goal": TASKS[(i + 2) % len(TASKS)]},
-            {"factId": "f2", "kind": "appearance_changed",
-             "entityId": f"loc_{440 + i:03d}", "name": here,
-             "text": APPEAR[(i + 1) % len(APPEAR)]},
-            {"factId": "f3", "kind": "sanity_changed",
-             "entityId": f"char_{430 + i:03d}", "name": n,
-             "from": 11, "to": 13},
-            {"factId": "f4", "kind": "moved",
-             "entityId": f"char_{450 + i:03d}", "name": other,
-             "from": far, "to": LOCS[(i + 5) % len(LOCS)]},
-            {"factId": "f5", "kind": "no_change", "scope": here},
+            {"factId": "f1", "kind": "task_achieved", "entityId": CHAR_ID[me],
+             "name": me, "goal": TASKS[(i + 2) % len(TASKS)], "at": here},
+            {"factId": "f2", "kind": "appearance_changed", "entityId": LOC_ID[here],
+             "name": here, "text": APPEAR[(i + 1) % len(APPEAR)], "at": here},
+            {"factId": "f3", "kind": "sanity_changed", "entityId": CHAR_ID[me],
+             "name": me, "from": 11, "to": 13, "at": here},
+            {"factId": "f4", "kind": "moved", "entityId": CHAR_ID[other],
+             "name": other, "from": far, "to": LOCS[(i + 5) % len(LOCS)], "at": far},
+            {"factId": "f5", "kind": "no_change", "scope": here, "at": here},
         ]
-        items.append(item(
-            f"n2-{i + 5:02d}", local(n, here), facts,
-            must=["f1", "f2"], target=["f1", "f2", "f3"], forbidden=["f4"],
-            note="本地任务与本地变化必述；他处移动不可知；空点可省"))
+        items.append(make_item(
+            f"n2-{i + 5:02d}", vp_local(me, here), facts,
+            must=["f1", "f3"], target=["f1", "f2", "f3"],
+            note="本地任务与理智必述；本地变化可选；他处移动不可知"))
 
-    # 9-12: omniscient but redundant material: select-all must lose precision
+    # C) 9-12: omniscient, redundant material (no forbidden facts at all).
     for i in range(4):
-        a = NAMES[i % len(NAMES)]
-        b = NAMES[(i + 1) % len(NAMES)]
+        a, b = NAMES[i % len(NAMES)], NAMES[(i + 1) % len(NAMES)]
         here = LOCS[(i + 1) % len(LOCS)]
         facts = [
-            {"factId": "f1", "kind": "moved", "entityId": f"char_{460 + i:03d}",
-             "name": a, "from": LOCS[i % len(LOCS)], "to": here},
-            {"factId": "f2", "kind": "positioned_at",
-             "entityId": f"char_{470 + i:03d}", "name": b, "at": here},
-            {"factId": "f3", "kind": "personality_changed",
-             "entityId": f"char_{460 + i:03d}", "name": a,
-             "text": PERS[(i + 2) % len(PERS)]},
-            {"factId": "f4", "kind": "personality_changed",
-             "entityId": f"char_{470 + i:03d}", "name": b,
-             "text": PERS[(i + 3) % len(PERS)]},
-            {"factId": "f5", "kind": "time", "amount": 9 + i, "unit": "minute"},
-            {"factId": "f6", "kind": "no_change", "scope": here},
+            {"factId": "f1", "kind": "moved", "entityId": CHAR_ID[a], "name": a,
+             "from": LOCS[i % len(LOCS)], "to": here, "at": here},
+            {"factId": "f2", "kind": "positioned_at", "entityId": CHAR_ID[b],
+             "name": b, "at": here},
+            {"factId": "f3", "kind": "personality_changed", "entityId": CHAR_ID[a],
+             "name": a, "text": PERS[(i + 2) % len(PERS)], "at": here},
+            {"factId": "f4", "kind": "personality_changed", "entityId": CHAR_ID[b],
+             "name": b, "text": PERS[(i + 3) % len(PERS)], "at": here},
+            {"factId": "f5", "kind": "time", "amount": 9 + i, "unit": "minute",
+             "at": None},
+            {"factId": "f6", "kind": "no_change", "scope": here, "at": here},
         ]
-        items.append(item(
-            f"n2-{i + 9:02d}", omni(), facts,
-            must=["f1", "f2"], target=["f1", "f2", "f3"], forbidden=[],
-            note="全知视角无禁止项；冗余时间、空点与他人情绪可省，全选即精度下降"))
+        items.append(make_item(
+            f"n2-{i + 9:02d}", vp_omni(), facts,
+            must=["f1", "f2"], target=["f1", "f2", "f3"],
+            note="全知无禁止项；冗余时间/空点/他人情绪可省，全选即精度下降"))
 
-    # 13-16: protagonist POV with a second actor's private task elsewhere
+    # D) 13-16: protagonist at L1; a same-place task by someone else is
+    #    VISIBLE (must not be treated as forbidden), a remote one is not.
     for i in range(4):
-        n = NAMES[(i + 1) % len(NAMES)]
-        other = NAMES[(i + 5) % len(NAMES)]
-        here = LOCS[(i + 2) % len(LOCS)]
-        far = LOCS[(i + 4) % len(LOCS)]
+        me, near, far_actor = (NAMES[i % len(NAMES)], NAMES[(i + 1) % len(NAMES)],
+                               NAMES[(i + 5) % len(NAMES)])
+        here, far = LOCS[(i + 4) % len(LOCS)], LOCS[(i + 2) % len(LOCS)]
         facts = [
-            {"factId": "f1", "kind": "task_achieved",
-             "entityId": f"char_{480 + i:03d}", "name": n,
-             "goal": TASKS[(i + 4) % len(TASKS)]},
-            {"factId": "f2", "kind": "time", "amount": 12 + i, "unit": "minute"},
-            {"factId": "f3", "kind": "task_achieved",
-             "entityId": f"char_{490 + i:03d}", "name": other,
-             "goal": TASKS[(i + 1) % len(TASKS)]},
-            {"factId": "f4", "kind": "appearance_changed",
-             "entityId": f"loc_{495 + i:03d}", "name": here,
-             "text": APPEAR[(i + 3) % len(APPEAR)]},
-            {"factId": "f5", "kind": "sanity_changed",
-             "entityId": f"char_{480 + i:03d}", "name": n, "from": 12, "to": 10},
+            {"factId": "f1", "kind": "task_achieved", "entityId": CHAR_ID[me],
+             "name": me, "goal": TASKS[(i + 4) % len(TASKS)], "at": here},
+            {"factId": "f2", "kind": "sanity_changed", "entityId": CHAR_ID[me],
+             "name": me, "from": 12, "to": 10, "at": here},
+            {"factId": "f3", "kind": "task_achieved", "entityId": CHAR_ID[near],
+             "name": near, "goal": TASKS[(i + 1) % len(TASKS)], "at": here},
+            {"factId": "f4", "kind": "appearance_changed", "entityId": LOC_ID[here],
+             "name": here, "text": APPEAR[(i + 3) % len(APPEAR)], "at": here},
+            {"factId": "f5", "kind": "task_achieved", "entityId": CHAR_ID[far_actor],
+             "name": far_actor, "goal": TASKS[(i + 2) % len(TASKS)], "at": far},
+            {"factId": "f6", "kind": "time", "amount": 12 + i, "unit": "minute",
+             "at": None},
         ]
-        items.append(item(
-            f"n2-{i + 13:02d}", prot((i + 1) % len(NAMES)), facts,
-            must=["f1", "f5"], target=["f1", "f4", "f5"], forbidden=["f3"],
-            note="自身理智变化必述；他人他处任务不可知；时长可省"))
+        items.append(make_item(
+            f"n2-{i + 13:02d}", vp_prot(me, here, i), facts,
+            must=["f1", "f2"], target=["f1", "f2", "f3", "f4"],
+            note="同地他人任务与本地变化可见；他处任务不可知；时长可省"))
 
     assert len(items) == 16
     OUT.write_text("\n".join(json.dumps(r, ensure_ascii=False)
                              for r in items) + "\n", encoding="utf-8")
-    print(f"items: {len(items)} -> {OUT}")
+
     import collections
-    print("fact counts:",
-          dict(collections.Counter(len(r["facts"]) for r in items)))
-    print("mean must/target/omittable/forbidden:",
-          round(sum(len(r["must"]) for r in items) / len(items), 2),
-          round(sum(len(r["target"]) for r in items) / len(items), 2),
-          round(sum(len(r["omittable"]) for r in items) / len(items), 2),
-          round(sum(len(r["forbidden"]) for r in items) / len(items), 2))
+    print(f"items: {len(items)} (v2) -> {OUT}")
+    print("fact counts:", dict(sorted(collections.Counter(
+        len(r["facts"]) for r in items).items())))
+    print("must/target/omittable/forbidden mean:",
+          round(sum(len(r["must"]) for r in items) / 16, 2),
+          round(sum(len(r["target"]) for r in items) / 16, 2),
+          round(sum(len(r["omittable"]) for r in items) / 16, 2),
+          round(sum(len(r["forbidden"]) for r in items) / 16, 2))
+    print("items with a forbidden fact:",
+          sum(1 for r in items if r["forbidden"]),
+          "| items with same-place other-actor fact:",
+          sum(1 for r in items if any(f.get("entityId", "").startswith("char_")
+                                      and f["entityId"] != r["viewpoint"]["entityId"]
+                                      and f.get("at") == r["viewpoint"]["at"]
+                                      and f.get("at") is not None
+                                      for f in r["facts"])))
 
 
 if __name__ == "__main__":
