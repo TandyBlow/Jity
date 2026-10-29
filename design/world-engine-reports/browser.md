@@ -206,7 +206,7 @@ T08 语料适配逐项登记：①s8 是把已锁定时间从 2s 改成 3s 的�
 
 按用户指令执行 A2-2 三处 P2 复核与 H1。A 侧已推进至 `d59353b`（A2-1 四轮复审通过后进入 A2-2，本地记忆中「da22a1b 待复核、阻塞 A2-2」为过时状态）。三处 P2（精确 JSON 解析/恢复错误码/读路径 ID 校验）经 B 代码复核与回归复跑确认（HTTP 39、全量 1062、统一入口 PASS；从仓库根直跑 campaign_wiring 两例失败为 cwd 伪失败，按 `cd backend` 规程干净）。
 
-**H1 以默认 fetch 路径通过**：B 的 `83dbe3b`（构造器 `fetch.bind(globalThis)`）兑现——A 的 H1 harness 去掉 `window.fetch.bind(window)` 显式注入（`b496da7`），真实 Edge headless 155.0.4283.62、跨源真实 CORS、A=`b496da7`、B=`adfd506`（本仓主工作树，干净）。T01 双样本由真实 B 控制器经默认 fetch 完成（26 交换/8 模型调用/revision 13，服务端动态分配全部身份，Python 独立摘要三方对拍）；T03 双样本经浏览器 transport 直接固定候选 harness 验证。两次运行摘要逐位一致。**B 侧裁定 A2-2 与 H1 关闭**；完整证据在 [server.md](../.local/world-server-worktree/design/world-engine-reports/server.md) 与 `artifacts/world-http-h1.json`（A 仓）。边界不变：SQLite/H2/真实模型/远端 CI 未验收。下一步按序 B4 会话装配 → B3 提示词评测。
+**H1 以默认 fetch 路径通过**：B 的 `83dbe3b`（构造器 `fetch.bind(globalThis)`）兑现——A 的 H1 harness 去掉 `window.fetch.bind(window)` 显式注入（`b496da7`），真实 Edge headless 155.0.4283.62、跨源真实 CORS、A=`b496da7`、B=`adfd506`（本仓主工作树，干净）。T01 双样本由真实 B 控制器经默认 fetch 完成（26 交换/8 模型调用/revision 13，服务端动态分配全部身份，Python 独立摘要三方对拍）；T03 双样本经浏览器 transport 直接固定候选 harness 验证。两次运行摘要逐位一致。**B 侧裁定 A2-2 与 H1 关闭**；完整证据在 [server.md](../.local/world-server-worktree/design/world-engine-reports/server.md)（路径已退役：该 worktree 默认检出已移除，链接为历史记录）与 `artifacts/world-http-h1.json`（A 仓）。边界不变：SQLite/H2/真实模型/远端 CI 未验收。下一步按序 B4 会话装配 → B3 提示词评测。
 
 ## B4 批次一：会话装配
 

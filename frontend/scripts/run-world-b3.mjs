@@ -15,7 +15,7 @@
 //           settlement tasks from the model.
 //
 //   node scripts/run-world-b3.mjs --out artifacts/world-chain/b3-baseline.json
-//        [--server-checkout .local/world-server-worktree] [--python python]
+//        --server-checkout <服务检出>（必填） [--python python]
 //        [--db-snapshot artifacts/world-chain/b3-run-db]
 //        [--only action|chain|both] [--skip-tasks]
 //        [--rescore artifacts/world-chain/b3-baseline.json --out <new report>]
@@ -43,7 +43,6 @@ import { buildContext, judgeProbe, judgeScene, runJudgeSelfTests, summarizeProbe
 const frontend = fileURLToPath(new URL('../', import.meta.url));
 const root = resolve(frontend, '..');
 const option = (flag, fallback) => process.argv.includes(flag) ? process.argv[process.argv.indexOf(flag) + 1] : fallback;
-const a = resolve(root, option('--server-checkout', '.local/world-server-worktree'));
 const output = resolve(root, option('--out', 'artifacts/world-chain/b3-baseline.json'));
 const dbSnapshotOption = option('--db-snapshot', 'artifacts/world-chain/b3-run-db');
 const scope = { tasks: !process.argv.includes('--skip-tasks'), scenes: option('--only', 'both') };
@@ -107,6 +106,32 @@ if (rescoreSource) {
     `overall ${(rescored.tasks.rates.overallPassRate * 100).toFixed(1)}%; self-test failures ${selfTest.failed}`);
   process.exit(0);
 }
+
+// 服务检出必填：旧默认 .local/world-server-worktree 已随工作树重组退役。
+// 缺旗标或检出缺 backend/app/world_app.py 一律拒绝起跑；
+// --expect-server-head <sha 前缀> 可选比对（不写死任何检出 HEAD）。
+const requireServerCheckout = (tag) => {
+  const given = option('--server-checkout', null);
+  if (!given) {
+    console.error(`[${tag}] FAILED: --server-checkout <服务检出> is required (the old default checkout is retired)`);
+    process.exit(1);
+  }
+  const checkout = resolve(root, given);
+  if (!existsSync(resolve(checkout, 'backend', 'app', 'world_app.py'))) {
+    console.error(`[${tag}] FAILED: --server-checkout ${given} has no backend/app/world_app.py`);
+    process.exit(1);
+  }
+  const head = execFileSync('git', ['-c', `safe.directory=${checkout.replaceAll('\\', '/')}`, '-C', checkout, 'rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
+  console.log(`[${tag}] server checkout HEAD ${head}`);
+  const expected = option('--expect-server-head', null);
+  if (expected && !head.startsWith(expected)) {
+    console.error(`[${tag}] FAILED: server HEAD ${head} does not match --expect-server-head ${expected}`);
+    process.exit(1);
+  }
+  return checkout;
+};
+const a = requireServerCheckout('world-b3');
+
 const privateDir = resolve(root, `.local/world-b3-${Date.now()}`);
 mkdirSync(privateDir, { recursive: true });
 const sources = ['frontend/scripts/run-world-b3.mjs', JUDGE_PATH, 'frontend/src/app/world/narration-polisher.ts',

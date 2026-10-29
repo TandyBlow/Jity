@@ -692,10 +692,12 @@ v5 的 `4e17025` 一致——git 层无差；serverSource 逐文件钉的是工�
 cd frontend
 # 路径按**仓库根**解析（不是 frontend）：--out artifacts/... 落在仓库内，
 # 写成 ../artifacts/... 会落到仓库外（v5 就踩过，见 6.6.1）。
-# 服务检出用 --server-checkout 指定（HEAD 与逐文件 sha256 由报告
-# serverSource 钉住；v6 用的 agent 检出 HEAD=dd345b8，backend/app 与
-# origin/world-server 一致）。停止界 round 5 / step 400 / 任务预算 240
-# 冻结在脚本 boundary，随报告落盘。
+# --server-checkout 现在**必填**（旧默认 .local/world-server-worktree 已随
+# 工作树重组退役）：缺旗标或检出缺 backend/app/world_app.py 拒绝起跑，
+# 起跑前打印检出 HEAD，可用 --expect-server-head <sha 前缀> 比对（不写死
+# 检出）。HEAD 与逐文件 sha256 由报告 serverSource 钉住（v6 用的 agent
+# 检出 HEAD=dd345b8，backend/app 与 origin/world-server 一致）。停止界
+# round 5 / step 400 / 任务预算 240 冻结在脚本 boundary，随报告落盘。
 # 完整基线（任务探针 + 两场景；v6 实测 探针 211s + 场景 527s/570s，约 19.5 分钟）
 node scripts/run-world-b3.mjs --server-checkout <服务检出> `
   --out artifacts/world-chain/b3-baseline-v7.json `

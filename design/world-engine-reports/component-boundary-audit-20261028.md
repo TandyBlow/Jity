@@ -10,7 +10,7 @@
 
 | 开发线 | 核对提交 | 读取位置 |
 | --- | --- | --- |
-| A / `world-server` | `7f00a420ef4a2388a0d52f0d16aa665a9d21e259` | `.local/world-server-worktree/` |
+| A / `world-server` | `7f00a420ef4a2388a0d52f0d16aa665a9d21e259` | `.local/world-server-worktree/`（路径已退役） |
 | B / `world-browser` | `50c1c22968bcfec1bd292514efa9d7f613d16bb3` | 主工作树 |
 
 核对开始时 B 工作树干净；A 另有未跟踪文件 `backend/_proj_create.json`，本轮未读取或修改。收尾时观察到 B 的并行改动：`page.tsx` 提取润色器到新增 `narration-polisher.ts`，以及新增 `frontend/scripts/run-world-chain-full.mjs`。本轮只查看这些改动的接线与脚本开头以区分正在进行的工作，没有修改、执行或验收它们；下文主体仍按表中已提交基线解释，源码链接的行号可能随并行改动移动。以下实现判断来自源码，既有验收状态来自关闭记录；未运行真实模型、服务或整链测试，未查询远端新状态。

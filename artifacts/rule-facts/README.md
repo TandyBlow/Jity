@@ -108,7 +108,7 @@ resume 校验参数、事实源、资产和除 runner 外的运行时摘要一�
 selectFactNarration：拒绝重复润色，选中的模板与已保存文本逐字一致，未新增模型调用或覆盖叙事。
 
 ```powershell
-# B/frontend；A 在 B/.local/world-server-worktree，端口18784必须空闲
+# B/frontend；A checkout 由 --server-checkout 必填指定（旧默认路径已退役），端口18784必须空闲
 node scripts/review-world-rule-facts.mjs --out .local/rule-facts-replay.json
 node scripts/run-b3-focused.mjs --http-report .local/rule-facts-replay.json --out .local/focused-replay.json
 # 中断后保留所有已付调用（失败也不自动重试），只补剩余项

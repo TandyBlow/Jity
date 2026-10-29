@@ -4,7 +4,7 @@
 import assert from 'node:assert/strict';
 import { createHash, randomUUID } from 'node:crypto';
 import { execFileSync, spawn } from 'node:child_process';
-import { closeSync, mkdirSync, openSync, readFileSync, writeFileSync } from 'node:fs';
+import { closeSync, existsSync, mkdirSync, openSync, readFileSync, writeFileSync } from 'node:fs';
 import { createServer as createNetServer } from 'node:net';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -13,8 +13,35 @@ import { chromium } from '@playwright/test';
 
 const frontend = fileURLToPath(new URL('../', import.meta.url));
 const root = resolve(frontend, '..');
-const [aPath = resolve(root, '.local/world-server-worktree'), outputPath = resolve(root, 'artifacts/a4-browser-transport.json')] = process.argv.slice(2);
+// 服务检出必填（位置参数）：旧默认 .local/world-server-worktree 已随工作树
+// 重组退役；检出缺 backend/app/world_app.py 拒绝起跑；
+// --expect-server-head <sha 前缀> 可选比对（不写死任何检出 HEAD）。
+const a4Argv = process.argv.slice(2);
+const a4ExpectIdx = a4Argv.indexOf('--expect-server-head');
+const a4ExpectedHead = a4ExpectIdx > -1 ? a4Argv[a4ExpectIdx + 1] : null;
+if (a4ExpectIdx > -1 && !a4ExpectedHead) {
+  console.error('[a4-transport] FAILED: --expect-server-head needs a sha prefix value');
+  process.exit(1);
+}
+const a4Positional = a4ExpectIdx === -1 ? a4Argv
+  : a4Argv.filter((value, index) => value !== '--expect-server-head' && index !== a4ExpectIdx + 1);
+const [aPathArg, outputPath = resolve(root, 'artifacts/a4-browser-transport.json')] = a4Positional;
+if (!aPathArg) {
+  console.error('[a4-transport] FAILED: usage: node scripts/review-world-a4-transport.mjs <服务检出> [output.json] — the old default checkout is retired');
+  process.exit(1);
+}
+const aPath = aPathArg;
 const serverRoot = resolve(aPath);
+if (!existsSync(resolve(serverRoot, 'backend', 'app', 'world_app.py'))) {
+  console.error(`[a4-transport] FAILED: ${aPathArg} has no backend/app/world_app.py`);
+  process.exit(1);
+}
+const a4ServerHead = execFileSync('git', ['-c', `safe.directory=${serverRoot.replaceAll('\\', '/')}`, '-C', serverRoot, 'rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
+console.log(`[a4-transport] server checkout HEAD ${a4ServerHead}`);
+if (a4ExpectedHead && !a4ServerHead.startsWith(a4ExpectedHead)) {
+  console.error(`[a4-transport] FAILED: server HEAD ${a4ServerHead} does not match --expect-server-head ${a4ExpectedHead}`);
+  process.exit(1);
+}
 const output = resolve(outputPath);
 const runtime = resolve(root, '.local/a4-browser-transport', randomUUID());
 mkdirSync(runtime, { recursive: true });

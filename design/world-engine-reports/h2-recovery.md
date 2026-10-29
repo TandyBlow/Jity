@@ -76,6 +76,7 @@ post-restart 正向路径全部重跑通过，三种损坏场景也重新按声�
 python -X utf8 -m uvicorn app.world_app:create_world_app --factory --host 127.0.0.1 --port 18769
 # B checkout/frontend
 node scripts/review-world-h2-history.mjs http://127.0.0.1:18769 ../artifacts/h2-history-http-review.json ../.local/world-server-worktree
+# 注：`.local/world-server-worktree` 默认路径已退役——现行脚本 --server-checkout 必填，此处为历史记录原样保留。
 ```
 
 ## H2 依赖的关闭情况（2026-10-28）

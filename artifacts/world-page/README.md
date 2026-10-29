@@ -9,8 +9,9 @@ node scripts/review-world-page.mjs --skip-browser   # 只跑探针
 node scripts/review-world-page.mjs --out <path>     # 报告落点
 ```
 
-脚本自举：uvicorn（`app.world_app:create_persistent_world_app`，服务端 checkout 默认
-`.local/world-server-worktree`，`WORLD_ALLOWED_ORIGINS` 按前端端口注入）→ `next dev`
+脚本自举：uvicorn（`app.world_app:create_persistent_world_app`，服务端 checkout 由
+`--server-checkout` 必填指定——旧默认 `.local/world-server-worktree` 已退役，缺失即拒绝起跑；
+`WORLD_ALLOWED_ORIGINS` 按前端端口注入）→ `next dev`
 （随机空闲端口）→ Playwright Chromium（`channel: msedge`，与 playwright.config 一致）。
 报告（review.json）记录两侧 head/状态与全部前端/服务端源文件 sha256，绑定本 README
 所述轮次的精确代码。
