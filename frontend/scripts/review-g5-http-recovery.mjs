@@ -284,7 +284,7 @@ try {
     assert.ok(fault.faulted, 'the receipt-drop fault must have fired');
     assert.equal(fault.captured.dbRowsAtInjection.length, fault.captured.responseIds.length, 'server rows exist at the injection moment');
     assert.equal(status.kind, 'stop');
-    assert.match(status.reason, /^round_identity_blocked:sink_failed:r2:/, 'the round entry is blocked by the failed allocation');
+    assert.match(status.reason, new RegExp(`^round_identity_blocked:sink_failed:${win.nextRoundId}:`), 'the round entry is blocked by the failed allocation');
     assert.equal(session.sessionStatus, 'stopped', 'the blocked entry is a session terminal');
     await assert.rejects(session.submit('走到走廊'), /rule_session_identity_blocked/, 'submit refuses before writing input');
     assert.equal(session.getMemory().playerInput, null, 'no input was written into the driver memory');
