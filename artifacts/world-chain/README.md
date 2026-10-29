@@ -30,11 +30,14 @@
   整链验收通过**。
 - `b3-baseline-v5.json` + `b3-run-db-v5/` —— **复核 20 三项修复后的第一份
   干净基线**（`75061b6` 干净树，2026-10-29，judge v5）：探针总体 29.4%、
-  两场景各跑满 3/4 轮提交后止于 harness 步数上限。sha256（**blob 口径**，
-  `git show <commit>:<path>` 的字节；工作树检出经 `core.autocrlf=true` 会变
-  CRLF、与 blob 不同）：报告 `3ed2cf84b00f89a8…`、`world.db`
-  `3ff6a52a52a4110f…`、`server.log` `7fff6fae0ad70fd7…`。**止于 harness 步数上限而非模型 handback，不作
-  整链验收，见 6.6.1。**
+  两场景各跑满 3/4 轮提交后止于 harness 步数上限。sha256 逐文件标注口径
+  （blob = `git show <commit>:<path>` 的字节；工作树检出经
+  `core.autocrlf=true` 会变 CRLF，文本文件两者可能不同）：报告
+  `3ed2cf84b00f89a8…`（blob=文件一致）、`world.db` `3ff6a52a52a4110f…`
+  （blob=文件一致，二进制不受换行转换影响）、`server.log` **blob**
+  `03868486341996c2…`——初稿把工作树文件哈希 `7fff6fae0ad70fd7…` 误标为
+  blob 口径，2026-10-29 复核校正。**止于 harness 步数上限而非模型
+  handback，不作整链验收，见 6.6.1。**
 
 脚本：`frontend/scripts/run-world-chain-full.mjs`（两场景，`--phase
 action|chain|both`）；`frontend/scripts/run-world-twenty.mjs`（二十次输入，
@@ -539,7 +542,8 @@ hash、同 probe 集）→ 模型对照（提示词变体、更大模型）。
   上限，`roundIdentityError: null`。
 - 判分：action 语义错 3（continuation 目标句 ×3）+ review 4（results 裸
   判定）；chain 语义错 5（reaction 复述、results 骰点不符、continuation
-  目标句 ×3）+ review 3。两场景 `accepted=false`。
+  目标句 ×3）+ review 3。**两场景合计：continuation 语义错 6 条、results
+  待复核 7 条**（复核校正补齐的合计口径）。两场景 `accepted=false`。
 - v4→v5 不作改善口径：v4 在 point 内就停（updates 非法 stage），v5 是修复后
   第一次真正跑满多轮——**updates 本轮全解析通过**，停点是模型反复 continue
   撞上 harness 步数上限。
@@ -558,6 +562,31 @@ hash、同 probe 集）→ 模型对照（提示词变体、更大模型）。
   磁盘 `mv` 原样移入本目录（未改写，sha256 见上条**blob 口径**），`retainedEvidence`
   保留的是原 flag 值。6.8 的命令与路径口径已同步修正。
 
+**三项修复关闭（2026-10-29 审查方独立复跑确认）**：607/607、recover 回归
+3/3、port 6/6、双 tsc 通过；v5 判分、judge hash、报告与 DB 哈希逐项一致。
+①b 三项修复（sink 增量折入 / confirmed-continue 门 / 缺失 sink 记录+预置
+兼容）就此关闭。
+
+**停止界已定并实现（2026-10-29 审查建议，提交总指挥确认后跑下一份基线）**
+
+固定 5 轮 = 首轮 + 4 个自动轮，由 `run-world-b3.mjs` 顶层的 `boundary`
+冻结并随报告落盘（`report.boundary`，逐场景 `boundary`/`roundBudget` 镜像）：
+
+- 每轮完整走完 commit、叙事与 continuation 判断；模型提前 handback 正常
+  提交并核验交还完成（场景 `sceneEnd=model_handback`）。
+- 第 5 轮仍 continue：保存模型原始判断（`roundBudget.exhausted.judgment`
+  与调用记录 `roundBudgetExhausted`），不回填第 6 轮身份、不提交
+  conclude，在开启第 6 轮前以 `round_budget_exhausted` 受界停止；场景
+  清理的 cancel 单列在 `cleanup`，**不计模型 handback**。
+- step 上限 80→400、协议调用预算 40→240，均降为保险（v5 的 40 会在第 4
+  轮前抢先截断）；触发时 `sceneEnd=insurance_step_limit` /
+  `insurance_call_budget` 单独标记。
+- 对照各组冻结相同 round/step/调用预算与 judge hash；预算耗尽的运行记为
+  `COMPLETED_ROUND_BUDGET_EXHAUSTED`，**不算整链验收通过**。
+
+v5 保留为干净诊断记录（两场景止于旧 80 step 上限）；下一份按上述停止界
+运行的记录作为**有限轮预算对照基线**。
+
 ### 6.7 结论与下一步
 
 - 判分与因果边界已补齐并可回放（judge v5 + judgeSource hash；28 项自测；
@@ -571,10 +600,11 @@ hash、同 probe 集）→ 模型对照（提示词变体、更大模型）。
 - 当前已知的主要模型失败（同契约实测）：目标漏选、结果裸判定（review）/
   骰点不符、continuation 目标句冒充拟行动、updates 仪式化六阶段（含空
   changes 占位）、虚构任务 id、反应复述。
-- **下一步**：先定场景停止界（步数上限 vs 计划/round 预算，见 6.6.1 边界）→
-  同 judge hash、同 probe 集、每模型 ≥1 次完整 run 的对照（提示词变体、更大
-  模型）→ 之后才谈 20 次输入验收。混合口径的 `twenty-round-v2` 仍是既有
-  混合边界结论。
+- **下一步**：停止界已定为固定 5 轮（首轮 + 4 自动轮，见 6.6.1；待总指挥
+  确认后执行）→ 总指挥确认后跑 v6＝有限轮预算对照基线（同 judge hash、
+  同 probe 集、冻结 round/step/调用预算）→ 每模型 ≥1 次完整 run 的对照
+  （提示词变体、更大模型）→ 之后才谈 20 次输入验收。混合口径的
+  `twenty-round-v2` 仍是既有混合边界结论。
 
 ### 6.8 复跑
 
