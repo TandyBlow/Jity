@@ -324,6 +324,28 @@ def run(args) -> int:
         problems.append("label files must cover exactly the item ids")
     ver_problems, ver_details = verify_registered_inputs(protocol, REPO_ROOT)
     problems.extend(ver_problems)
+    # Bind the CONSUMED files to the protocol registration: checking the
+    # registered paths alone does not help when a tampered copy is passed
+    # via --items/--labels-*. The consumed items bytes must equal the
+    # registered items hash, and each labels file must be the one the
+    # protocol attributes to that annotator.
+    consumed_items = pathlib.Path(args.items)
+    item_entries = [e for e in protocol.get("allowedInputs", [])
+                    if pathlib.Path(e.get("source", "")).name == consumed_items.name]
+    items_sha = sha_file(consumed_items)
+    if not item_entries:
+        problems.append(f"consumed --items {consumed_items.name} matches no registered input by name")
+    else:
+        for e in item_entries:
+            if items_sha != e.get("sha256"):
+                problems.append(
+                    f"consumed --items bytes != registered hash for {e.get('file')}: {consumed_items}")
+    for side, argval in (("ai-a", args.labels_a), ("ai-b", args.labels_b)):
+        spec = next((a for a in protocol.get("annotators", []) if a.get("id") == side), None)
+        if spec is not None and pathlib.Path(argval).name != spec.get("labels"):
+            problems.append(
+                f"--labels-{side[-1]} {pathlib.Path(argval).name} != protocol labels "
+                f"{spec.get('labels')!r} for {side}")
     identities = {}
     if not problems:
         for side, rows in (("ai-a", a_rows), ("ai-b", b_rows)):
@@ -405,8 +427,9 @@ def run(args) -> int:
                                       v["data"].get("exposureBeyondFourInputFiles"),
                                   "context": v["data"].get("context")}
                            for side, v in identities.items()},
-            "items": pathlib.Path(args.items).name,
-            "itemsSha256": sha_file(pathlib.Path(args.items)),
+            "items": consumed_items.name,
+            "itemsSha256": items_sha,
+            "itemsBoundToRegistration": True,
             "labelsA": {"file": pathlib.Path(args.labels_a).name,
                         "sha256": sha_file(pathlib.Path(args.labels_a))},
             "labelsB": {"file": pathlib.Path(args.labels_b).name,
@@ -658,8 +681,36 @@ def selftest() -> int:
             (td / rel_dir / "identity-a.json").write_text(
                 json.dumps(identity(files_list=["rubric.md"]), ensure_ascii=False) + "\n",
                 encoding="utf-8", newline="\n")
-            if mod.run(_ap.Namespace(**base)) != 1:
+            if mod.run(_ap.Namespace(**{**base, "adjudicated": str(td / rel_dir / "adj.jsonl")})) != 1:
                 failures.append("identity inputFileNames mismatch did not abort")
+            (td / rel_dir / "identity-a.json").write_text(
+                json.dumps(identity(), ensure_ascii=False) + "\n",
+                encoding="utf-8", newline="\n")
+
+            def load_rows(p):
+                return [json.loads(l) for l in pathlib.Path(p).read_text(encoding="utf-8").splitlines() if l.strip()]
+
+            def write_rows(p, rows):
+                pathlib.Path(p).write_text(
+                    "\n".join(json.dumps(r, ensure_ascii=False) for r in rows) + "\n",
+                    encoding="utf-8", newline="\n")
+
+            # tamper 5: substituted --items under a different name -> abort
+            rows = load_rows(base["items"])
+            rows[0]["facts"][1]["goal"] = "被改写的协作目标文本"
+            tam = td / "tampered-items.jsonl"
+            write_rows(tam, rows)
+            if mod.run(_ap.Namespace(**{**base, "items": str(tam)})) != 1:
+                failures.append("substituted --items (different name) did not abort")
+            # tamper 6: same-name copy in another directory -> abort
+            rows2 = load_rows(base["items"])
+            rows2[1]["facts"][2]["goal"] = "另一个被改写的目标文本"
+            moved = td / "moved"
+            moved.mkdir()
+            same_name = moved / "d2_capability_items.jsonl"
+            write_rows(same_name, rows2)
+            if mod.run(_ap.Namespace(**{**base, "items": str(same_name)})) != 1:
+                failures.append("same-name substituted --items did not abort")
         finally:
             mod.REPO_ROOT = old_root
     for f in failures:

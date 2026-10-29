@@ -12,7 +12,8 @@
   "P2-2 order concordance compared frozensets against a tuple set and never read actual positions (always agreed); now compares ACTUAL within-group positions of both labelers; reversal probe pins it.",
   "P2-3 freeze entry accepted zeroed registered hashes and did not bind identity files; freeze now verifies registered hashes against working tree AND committed blob, validates identity files bound through the protocol, and records both in the freeze record; .gitattributes pins registered files (-text) and tools (eol=lf) so clean checkouts keep identical bytes.",
   "P2-4 metric tool crashed (KeyError) on legal JSON plans lacking coreference; shape guard now reports structural problems that feed the failure/retry flow (probes T10/T11).",
-  "P2-5 prompt draft had undefined inputs: R3 leading-time self-reference resolved to the first fact WITH an entityId (semantically identical to the frozen annotation interpretation); itemId substitution and the 16-item selected-fact rule (frozen target filter, selected_of-compatible) written down; revision log added. Rubric and annotation evidence unchanged."
+  "P2-5 prompt draft had undefined inputs: R3 leading-time self-reference resolved to the first fact WITH an entityId (semantically identical to the frozen annotation interpretation); itemId substitution and the 16-item selected-fact rule (frozen target filter, selected_of-compatible) written down; revision log added. Rubric and annotation evidence unchanged.",
+  "Round 25: P2-3 residual closed - the freeze entry verified the REGISTERED paths but consumed args.items unbound; consumed --items bytes must now equal the registered items hash, labels files must match the protocol annotator labels names (same-name and renamed substitution rejection probes added)."
  ],
  "changed": {
   "metricTool": {
@@ -23,7 +24,14 @@
   "agreementTool": {
    "file": "experiments/world-components/n2_selection/d2_labels_agreement.py",
    "was": "bb6593a9e6ad1fe82dd127e2d9d059b2ed86c765c5cfcfc8ef61c136b6e03723",
-   "now": "549a4a9fb1d3f0623e02f3fc23fe3dcd439fed0225e55257632d881f91d4692b"
+   "now": "8dd6529ebc40bc137643b5f815f2124fa341597700ec0a78aca0c615e18dd6c5",
+   "history": [
+    {
+     "round": 24,
+     "sha256": "549a4a9fb1d3f0623e02f3fc23fe3dcd439fed0225e55257632d881f91d4692b",
+     "note": "review-24 rewrite; superseded same day"
+    }
+   ]
   },
   "promptDraft": {
    "file": "experiments/world-components/n2_selection/d2-n3-prompt-draft.md",

@@ -47,6 +47,7 @@
  },
  "items": "d2_capability_items.jsonl",
  "itemsSha256": "76d253ab8be026e6a2dd4c77f1f3494c3db7d6dd753de2d930aa7ae5ad931311",
+ "itemsBoundToRegistration": true,
  "labelsA": {
   "file": "labels-d2-ai-a.jsonl",
   "sha256": "cb86aa46c4328cb971721d4ddce38bb4b0429fdc245e5405f193e0a6a99e9c63"

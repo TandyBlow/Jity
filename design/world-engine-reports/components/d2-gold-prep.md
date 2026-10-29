@@ -63,8 +63,14 @@ C 审查者复审发现五项 P2（未签认 D2 准备完成或 prompt 冻结）
 | --- | --- | --- |
 | P2-1 | 隔离检查只按命中数判断，缺失语料来源仍判 `ZERO_HIT`＋退出码 0 | `verdict_for(hits, missing)`：任一来源缺失即 `MISSING_SOURCE`＋失败；自检补三例（零命中过/命中败/缺失败），归档 verdict 带缺失数 |
 | P2-2 | 顺序一致度用 frozenset 查元组集合且不读实际位置，组内全反转仍报 44/44 | 改为对双方共组的事实对按**各自实际组内位置**比较方向；自检补**反转探针**（组内 factIds+coreference 全反转 → 顺序一致 0/2，κ 表不变） |
-| P2-3 | 冻结入口接受被改为全零的登记哈希；身份文件未绑定；`core.autocrlf=true` 下干净检出六份预登记文件哈希全失配 | 冻结前强制校验：协议登记哈希须同时等于**工作树字节**与**提交 blob**（临时仓库自检：清零登记哈希/未提交工作树漂移/身份暴露标记/身份文件清单不匹配四类全拒）；身份文件经协议 `annotators[].identity` 绑定校验（ID/无继承声明/exposure=false/四输入清单）并连同 sha256 写入冻结记录；`.gitattributes` 钉登记材料 `-text`、工具 `eol=lf`；write-tree→git-archive 干净检出模拟：六份预登记文件＋三件工具哈希**全部 MATCH** |
+| P2-3 | 冻结入口接受被改为全零的登记哈希；身份文件未绑定；`core.autocrlf=true` 下干净检出六份预登记文件哈希全失配 | 冻结前强制校验：协议登记哈希须同时等于**工作树字节**与**提交 blob**（临时仓库自检：清零登记哈希/未提交工作树漂移/身份暴露标记/身份文件清单不匹配四类全拒）；身份文件经协议 `annotators[].identity` 绑定校验（ID/无继承声明/exposure=false/四输入清单）并连同 sha256 写入冻结记录；`.gitattributes` 钉登记材料 `-text`、工具 `eol=lf`；write-tree→git-archive 干净检出模拟：六份预登记文件＋三件工具哈希**全部 MATCH**。**复核轮 25 补关闭**：登记路径校验≠消费文件绑定——`--items` 指向改写副本仍可冻结；现消费 `--items` 字节必须等于登记哈希、labels 文件名须与协议 `annotators[].labels` 一致，改名/同名异目录两类替换探针全拒；冻结记录新增 `itemsBoundToRegistration` |
 | P2-4 | 指标工具对合法 JSON 缺 `coreference` 抛 `KeyError` | 形状守卫前置（sentences/factIds/coreference 结构先行校验，形状违规不再进入 `check_invariants`）；H1/H2 对形状违规计失败、该条目 G 指标作废，进入既定失败/重试流程；探针 T10（缺 key）/T11（畸形条目）钉住；一致度工具同型守卫 |
 | P2-5 | prompt 草案 R3 首位 time 自指；条目 ID 提供方式与 16 项集已选规则未定义 | 草案升 v2（`d2-n3-prompt-draft.md` §修订记录）：R3 兜底明确为「首个含 entityId 的事实所在组」（与冻结标注解释语义一致）；占位符逐字替换规则（`<条目ID>`/viewpoint/facts）成文；16 项集已选=冻结 `target` 按 facts 输入序过滤（与 `selected_of` 一致）。**rubric 与标注证据一字不改** |
 
 修复后复跑：三工具自检全过；冻结记录重生成（**冻结标签字节不变**，sha256 `cb86aa46…` 与 f27af30 一致，κ=1.0000 不变；记录新增 inputVerification 四行＋双身份绑定）；gold CLI 端到端自检 PASS；隔离复扫 ZERO_HIT、缺失 0。本轮未运行模型推理。
+
+## 9. prompt v2 签认与剩余门（2026-10-29）
+
+- C 审查者对 `9a2af88` 复审：四项关闭，v2 prompt 文本审查通过，并签认 **prompt v2 完整文件字节** sha256 `a7697894d54f0afbf07ccd79b2e1a8db40a0e07f4a0156b221812ac088199bea`（实现者已复核该哈希与当前工作树及提交字节一致）。
+- 复审同时指出 P2-3 残余（冻结入口校验登记路径但消费 `--items` 未绑定）→ 轮 25 已关闭（见 §8 P2-3 行补记），一致度工具哈希更新登记于修订记录。
+- **剩余门（模型运行前全部须完成）**：① 老板对 prompt v2 签认；② 正式冻结记录（prompt 哈希＋判据引用）落 artifacts；③ N3 模型臂运行（16 项与 8 项分开报告，跑输归档失败）。
