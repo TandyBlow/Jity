@@ -1,0 +1,185 @@
+{
+  "status": "PASS_INTEGRATION_H2",
+  "pin": "9892089f46790c691f0dd07e512c03a04ef36120",
+  "tree": "28d75e154c0ef6ac9677f23f0264b7172b966f8e",
+  "combination": {
+    "A": "9321409 (world-server HEAD at merge time)",
+    "B": "cd077a2 (world-browser HEAD at merge time)",
+    "mergeCommit": "9892089f46790c691f0dd07e512c03a04ef36120",
+    "archiveTag": "integration/a9321409-bcd077a2",
+    "supersedes": null,
+    "note": "first full H2 on this combination; the d1d2de0 freeze record (A=1ef34e7 + B=21a95f0) remains valid historical evidence"
+  },
+  "contractDigest": "902918016f2bf7eff4cd1afd52da4ca96defdb5ee4082f171fda987de86680c2",
+  "contractArtifacts": 149,
+  "environment": {
+    "python": "3.12.3",
+    "node": "v22.20.0",
+    "service": "app.world_app:create_persistent_world_app --workers 1",
+    "databases": [
+      "positive.db",
+      "missing.db",
+      "corrupt.db",
+      "group.db"
+    ]
+  },
+  "sourceSha256": {
+    "browser": {
+      "frontend/src/lib/world-engine/recovery.ts": "84e6d8df25347063f6ff55c40e8a200d4ef7cee1b84b601c68d46263900a9ae8",
+      "frontend/src/lib/world-engine/controller.ts": "ec97a1a0c050fb9238127cc24a89eab1e129ee81993f2edc3a0f3013af343d20",
+      "frontend/src/lib/world-engine/schedule.ts": "fc897c64f7c33efe828b0647f04c40e918e243f9b0e9d7af734bb41cc32ab6c4",
+      "frontend/scripts/review-world-h2-full.mjs": "428005caa9f55a2c649e9fd19523f6a322164f985c4396bdf3f9e2ecaae010e5"
+    },
+    "server": {
+      "backend/app/services/world/control.py": "cd3b6e5a297f27a30f2f10a72de0ec002ff5ec335be8388ebd083ba544fdb0e5",
+      "backend/app/services/world/authority.py": "5ef2417c02f74ba349196b7c83ae25cea41f3dd9dac8374f30132ea490dac96a",
+      "backend/app/database/world_frozen_repository.py": "74471c58be73534846ca43bd1a5844aae070d9d7a5e352189436293632e3d559"
+    }
+  },
+  "sourceUnchangedDuringRun": true,
+  "restart": {
+    "sameDatabase": "positive.db",
+    "databaseBeforeRestartSha256": "7eb1875b0f8a29ddbec0d0bebe8b961e4233db96505027561e366810c749e811",
+    "restartFromGeneration": 1,
+    "restartToGeneration": 2
+  },
+  "phases": [
+    {
+      "phase": "main",
+      "label": "main",
+      "status": "PASS_MAIN"
+    },
+    {
+      "phase": "successor",
+      "label": "successor",
+      "status": "PASS_SUCCESSOR"
+    },
+    {
+      "phase": "build-frozen-case",
+      "label": "build-frozen-case",
+      "status": "BUILT_FROZEN_CASE"
+    },
+    {
+      "phase": "post-restart",
+      "label": "post-restart",
+      "status": "PASS_POST_RESTART"
+    },
+    {
+      "phase": "build-frozen-case",
+      "label": "build-missing",
+      "status": "BUILT_FROZEN_CASE"
+    },
+    {
+      "phase": "expect-frozen",
+      "label": "frozen-missing",
+      "status": "PASS_FROZEN_MISSING"
+    },
+    {
+      "phase": "build-frozen-case",
+      "label": "build-corrupt",
+      "status": "BUILT_FROZEN_CASE"
+    },
+    {
+      "phase": "expect-frozen",
+      "label": "frozen-corrupt",
+      "status": "PASS_FROZEN_CORRUPT"
+    },
+    {
+      "phase": "build-frozen-case",
+      "label": "build-group",
+      "status": "BUILT_FROZEN_CASE"
+    },
+    {
+      "phase": "expect-frozen",
+      "label": "frozen-group",
+      "status": "PASS_FROZEN_CORRUPT"
+    }
+  ],
+  "damage": [
+    {
+      "mode": "missing",
+      "database": "missing.db",
+      "affectedRows": 1,
+      "worldId": "world_11",
+      "pointId": "point_17",
+      "groupId": "group_18"
+    },
+    {
+      "mode": "corrupt",
+      "database": "corrupt.db",
+      "affectedRows": 1,
+      "worldId": "world_11",
+      "pointId": "point_17",
+      "groupId": "group_18"
+    },
+    {
+      "mode": "group",
+      "database": "group.db",
+      "affectedRows": 1,
+      "worldId": "world_1",
+      "pointId": "point_7",
+      "groupId": "group_8"
+    }
+  ],
+  "files": {
+    "database-evidence.json": {
+      "sha256": "b02801c52327bbe7bf1a7bbd1680543f40b08027afbb4713f295e686f347f875",
+      "bytes": 45398
+    },
+    "lifecycle.json": {
+      "sha256": "64980a08e6ed245113e64109a846226edba702bb73dccd1592b3cecb1c550536",
+      "bytes": 8948
+    },
+    "report-build-corrupt.json": {
+      "sha256": "63695b62f26b93a14262f57764578eeddb154558956bec05d0f23c0127b09ec3",
+      "bytes": 1787
+    },
+    "report-build-frozen-case.json": {
+      "sha256": "cd25fb1bed8546c5b0316729164b60ee5b12075b333f3ffbd54468d57b866a1a",
+      "bytes": 1787
+    },
+    "report-build-group.json": {
+      "sha256": "ef201bc273c3ef7f9622a07b7ecd1abbfd5ddfdc7b03bf1eb576a1b2c79006d1",
+      "bytes": 1781
+    },
+    "report-build-missing.json": {
+      "sha256": "312b51fd3ef1c402f9baa7d4d1a119d03a6caed36337beb6e329a707d87fc97a",
+      "bytes": 1787
+    },
+    "report-frozen-corrupt.json": {
+      "sha256": "ec67e851e6e1be2db9931937d0716be745963d072c14691472cce3ecc6789b3b",
+      "bytes": 1515
+    },
+    "report-frozen-group.json": {
+      "sha256": "dbff978cbfc434a157b4517af1ddd7f64eddba42a90851a2023b62eb3c933145",
+      "bytes": 1514
+    },
+    "report-frozen-missing.json": {
+      "sha256": "46cc8cd4e82ac14e25814b61c2d8f9dc4d65dbaafdbece0472be559803deb241",
+      "bytes": 1515
+    },
+    "report-main.json": {
+      "sha256": "5179173edc40ee28b5bd365d95c83242e60e497c777b5d6a0372e88bba819795",
+      "bytes": 2256
+    },
+    "report-post-restart.json": {
+      "sha256": "8ba651946da156439b176116b998bbc0c63b4e64c8402cf2f1088a29a64ddef2",
+      "bytes": 1488
+    },
+    "report-successor.json": {
+      "sha256": "e7752fec9ed5a65527da67e37e78323c9f9214a9b218665ed73f4f6b8fa24887",
+      "bytes": 1598
+    },
+    "run-integration-h2-d1d2de0-base.py": {
+      "sha256": "fe5620050df4a08e2947b3dfa6bf513e91ab8aa0fe9826db7a455b5e0ca01f3e",
+      "bytes": 15488
+    }
+  },
+  "recordedAt": "2026-10-28T17:31:45.188231+00:00",
+  "boundaries": [
+    "fixed model outputs; real dice via reaction-d20-v1; not real-model acceptance",
+    "full H2 gate for landing this combination; merge target and timing are a separate decision",
+    "no product or harness changes were needed for this run",
+    "the d1d2de0 freeze record is preserved unchanged"
+  ]
+}
