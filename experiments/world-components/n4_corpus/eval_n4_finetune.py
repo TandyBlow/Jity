@@ -18,15 +18,21 @@
 # `--run-tag r2-small`) for a new corpus so the r1 archive is not
 # overwritten (the script aborts on an r1/hash mismatch).
 #
-# Decode: greedy, max_new_tokens=64, tokenizer legacy=False (same pin as
-# training and the zero-shot baseline). No quality verdicts beyond the
-# recognizer's three states; the coordinator decides the overall gate.
+# Decode: the single DECODE dict (greedy, max_new_tokens=64, num_beams=1,
+# tokenizer legacy=False) is used by the freeze check, the tokenizer, the
+# generate() call and the report — there is no second copy of these values.
+# No quality verdicts beyond the recognizer's three states; the coordinator
+# decides the overall gate.
 #
 # Usage: python experiments/world-components/n4_corpus/eval_n4_finetune.py [--run-tag r2-small]
 #        python experiments/world-components/n4_corpus/eval_n4_finetune.py \
 #          --run-tag r3-direction \
 #          --holdout experiments/world-components/n4_holdout/holdout.jsonl \
-#          --freeze experiments/world-components/n4_holdout/freeze-r3-direction.json
+#          --freeze experiments/world-components/n4_holdout/freeze-r3-direction.json \
+#          [--verify-only]
+# --holdout and --freeze must be given together; --verify-only without
+# both exits before any model import instead of falling into the dev
+# inference path.
 # Output: artifacts/world-components/n4-finetune-eval-<tag>.json (corpus)
 #         artifacts/world-components/n4-holdout-eval-<tag>.json (holdout)
 
@@ -37,6 +43,31 @@ import pathlib
 import sys
 import time
 import types
+
+
+# ---- argument parsing and entry guards (round 16 review #2) ----------------
+# Parsed before torch/transformers are imported, so a missing flag exits
+# immediately instead of silently falling into the corpus-dev inference path.
+def arg_value(flag: str, default):
+    if flag not in sys.argv:
+        return default
+    i = sys.argv.index(flag)
+    if i + 1 >= len(sys.argv) or sys.argv[i + 1].startswith("--"):
+        sys.exit(f"{flag} requires a value")
+    return sys.argv[i + 1]
+
+
+RUN_TAG = arg_value("--run-tag", "r1")
+HOLDOUT = arg_value("--holdout", None)
+FREEZE = arg_value("--freeze", None)
+VERIFY_ONLY = "--verify-only" in sys.argv
+if bool(HOLDOUT) != bool(FREEZE):
+    missing = "--freeze" if HOLDOUT else "--holdout"
+    sys.exit(f"{missing} is required together with "
+             f"{'--holdout' if HOLDOUT else '--freeze'}; refusing to infer")
+if VERIFY_ONLY and not HOLDOUT:
+    sys.exit("--verify-only requires BOTH --holdout and --freeze; "
+             "refusing to fall into the corpus-dev inference path")
 
 try:
     import pyarrow  # noqa: F401
@@ -62,15 +93,6 @@ import corpus_check  # noqa: E402
 
 REPO = HERE.parent.parent.parent
 BASE_MODEL = HERE.parent / "assets" / "randeng-t5-77m"
-
-
-def arg_value(flag: str, default):
-    return sys.argv[sys.argv.index(flag) + 1] if flag in sys.argv else default
-
-
-RUN_TAG = arg_value("--run-tag", "r1")
-HOLDOUT = arg_value("--holdout", None)
-FREEZE = arg_value("--freeze", None)
 FINETUNED = HERE.parent / "assets" / "n4-finetune" / RUN_TAG
 if HOLDOUT:
     REPORT = REPO / "artifacts" / "world-components" / f"n4-holdout-eval-{RUN_TAG}.json"
@@ -83,7 +105,13 @@ if RUN_TAG == "r1" and REPORT.exists():
     if recorded != corpus_hashes()["corpus.seeds.jsonl"]:
         sys.exit("r1 archive is pinned to the earlier corpus; "
                  "pass --run-tag r2-small for the expanded corpus")
-MAX_NEW = 64
+# SINGLE source of truth for decoding (round 16 review #1): the freeze
+# verification compares THIS dict with the frozen manifest, and the
+# tokenizer setting, generate() call and report all READ THIS DICT. There is
+# no second copy, so editing a "different" constant can no longer pass the
+# freeze check while changing inference.
+DECODE = {"greedy": True, "maxNewTokens": 64, "numBeams": 1,
+          "tokenizerLegacy": False}
 
 
 def sha(text: str) -> str:
@@ -177,10 +205,6 @@ def load_holdout_inputs(path: pathlib.Path, corpus_rows: list) -> list:
             print("HOLDOUT INPUT SEEN IN CORPUS:", u["devGroups"])
         sys.exit(f"holdout shares {len(hard)} non-atomic input(s) with the corpus")
     return units
-
-
-DECODE = {"greedy": True, "maxNewTokens": MAX_NEW, "numBeams": 1,
-          "tokenizerLegacy": False}
 
 
 def freeze_problems(m: dict, holdout_path: pathlib.Path) -> list:
@@ -316,8 +340,10 @@ def run_arms(units: list, tokenizer) -> dict:
             inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
             t0 = time.perf_counter()
             with torch.no_grad():
-                out = model.generate(**inputs, max_new_tokens=MAX_NEW,
-                                     num_beams=1, do_sample=False)
+                out = model.generate(**inputs,
+                                     max_new_tokens=DECODE["maxNewTokens"],
+                                     num_beams=DECODE["numBeams"],
+                                     do_sample=not DECODE["greedy"])
             wall = round(time.perf_counter() - t0, 2)
             text = tokenizer.decode(out[0], skip_special_tokens=True)
             verdict = judge(u["row"], text)
@@ -352,7 +378,7 @@ def write_verify_only(freeze: dict, units: list) -> None:
                                 "holdout.authorityReport",
                                 "corpus.seeds.jsonl", "rewrites.jsonl",
                                 "trainingReport", "checkpoint", "baseModel"],
-            "decode": DECODE,
+            "decode": dict(DECODE),
             "decodeComparedToFrozen": True,
             "tamperSelftest": "13/13 caught",
         },
@@ -373,13 +399,12 @@ def write_verify_only(freeze: dict, units: list) -> None:
 def main() -> None:
     corpus_rows = load_corpus_rows()
     freeze = None
-    verify_only = "--verify-only" in sys.argv
     if HOLDOUT:
         if not FREEZE:
             sys.exit("holdout mode requires --freeze <manifest>")
         freeze = verify_freeze(pathlib.Path(FREEZE), pathlib.Path(HOLDOUT))
         units = load_holdout_inputs(pathlib.Path(HOLDOUT), corpus_rows)
-        if verify_only:
+        if VERIFY_ONLY:
             write_verify_only(freeze, units)
             return
         unseen = [u for u in units if not u["seenInTrain"]]
@@ -398,7 +423,8 @@ def main() -> None:
         print(f"  regression input ({u['devGroups']}): "
               f"{u['input'].replace(chr(10), '|')[:80]}")
 
-    tokenizer = T5Tokenizer(vocab_file=str(BASE_MODEL / "spiece.model"), legacy=False)
+    tokenizer = T5Tokenizer(vocab_file=str(BASE_MODEL / "spiece.model"),
+                            legacy=DECODE["tokenizerLegacy"])
     arms = run_arms(units, tokenizer)
 
     report = {
@@ -413,7 +439,7 @@ def main() -> None:
                         "transformers": transformers.__version__,
                         "device": "cuda",
                         "deviceName": torch.cuda.get_device_name(0)},
-        "decode": {"greedy": True, "maxNewTokens": MAX_NEW, "numBeams": 1},
+        "decode": dict(DECODE),
         "tokenizer": {"legacy": False,
                       "note": "same pin as training and the zero-shot baseline"},
         "judge": "corpus_check.check_row over the row's own plan/refs/must "

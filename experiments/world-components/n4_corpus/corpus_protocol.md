@@ -161,7 +161,7 @@
 
 **边界**：这是冻结设置下的一次独立留出结果，不追溯改写开发批 53 项的证据地位；整体质量门是否关闭由协调人裁定，本文不代替签字。
 
-## 12. 复核轮 15 工程收口（2026-10-29）
+## 12. 复核轮 15–16 工程收口（2026-10-29）
 
 不做重训、不重跑留出验收，只补两项检查与一处文档更正。
 
@@ -183,3 +183,5 @@
 **端到端篡改演示**（改清单副本、不动冻结文件）：把 `trainingReport.file` 指向 r2-large 报告 → `FREEZE MISMATCH trainingReport`；把 `decode.maxNewTokens` 改为 32 → `FREEZE MISMATCH decode: runtime={…64…} frozen={…32…}`；把 `holdout.authorityReport.file` 指向语料报告 → `FREEZE MISMATCH holdout.authorityReport`。三例均在推理前中止（exit 2）。校验顺序为先验真清单、再跑自检，避免篡改清单被自检信息掩盖。
 
 **2. 时长覆盖更正。** 见 §11 的“时长覆盖”段：冻结留出集实际只覆盖 9/11/13/18 分钟，22/35/50/75 未被使用；构造器新增打印实际使用档位与未用档位，数据未改（重跑仍复现 sha256 `a9323e03…`）。
+
+**3. 复核轮 16：配置单一来源与入口守卫。** 此前 `DECODE` 只用于冻结比对，而生成走独立的 `MAX_NEW`、tokenizer 硬编码 `legacy=False`，因此改 `MAX_NEW=32` 仍能通过冻结检查（协调人实测）。现做法：删除 `MAX_NEW` 等重复常量，只保留一个 `DECODE` 字典；冻结比对、tokenizer 构造、`generate()`（`max_new_tokens`/`num_beams`/`do_sample`）与报告四处**全部读取同一字典**，不再有第二份。验证：把 `DECODE["maxNewTokens"]` 改成 32、把 `tokenizerLegacy` 改成 True 各跑一次 `--verify-only`，均报 `FREEZE MISMATCH decode` 并在推理前退出。另修入口：`--holdout` 与 `--freeze` 必须成对出现（任一缺失即退出），`--verify-only` 缺任一参数也立即退出；参数解析移到 torch/transformers 导入之前，所以漏参数不会进入开发批推理（协调人实测原先会进入）。四种漏参组合均已实测退出。
