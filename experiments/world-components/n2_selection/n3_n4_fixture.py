@@ -2,16 +2,20 @@
 # n3-n4-interface-plan.md). NON-MODEL verification of the interface
 # constraints only:
 #
-#   binding      root and non-root points are validated separately: a root
-#                point has version 0, null previousPointId, NULL
-#                timeAdvance and EMPTY deltas; a non-root point needs a
-#                before record with matching world, version-1 and THE SAME
-#                pointId as previousPointId. entityDeltas is an
-#                entity-keyed MAP; each fact's source pointer is resolved
-#                against it and the fact CONTENT is checked (task goal
-#                against the entity's task list, time against timeAdvance).
-#                Missing or mismatched -> binding-failed, never
-#                reconstructed from result text.
+#   binding      root and non-root points are validated separately, on the
+#                REAL GetStateData v2 shape: previousPointId/timeAdvance/
+#                entityDeltas keys MUST EXIST (root points carry explicit
+#                null/null/{}; an absent key is an incomplete read, not a
+#                null). timeAdvance is {boundary, duration:{amount, unit}}.
+#                entityDeltas is an entity-keyed map of EntityDelta; task
+#                achievement is a TASK ID in tasksAchieved and the task
+#                text is resolved from the authoritative task registry
+#                (id -> goal/ownerId/status). Source pointers are checked
+#                for OWNERSHIP (fact entityId == source entityId) and
+#                CONTENT (goal vs registry, time vs duration); unsupported
+#                fact kinds are refused, not silently accepted. Missing or
+#                mismatched -> binding-failed, never reconstructed from
+#                result text.
 #   invariants   the N3 hard invariants are a PRECONDITION of acceptance:
 #                a plan with a known I2 violation (cross-group reference)
 #                stops with error:plan-invariant-violation and produces no
@@ -20,10 +24,12 @@
 #   range        the per-run N4 input is the FLATTENED fact table; more
 #                than 4 facts in total is unsupported (grouping cannot
 #                bypass the limit; no splitting fallback exists).
-#   tokens       counted over the text produced by a DETERMINISTIC render
-#                stand-in (the shape render_input feeds N4), not over JSON;
-#                the 6-char stub tokenizer and the stand-in are NOT real
-#                sentencepiece / real shared-render acceptance.
+#   tokens       counted over the ACTUAL shared renderer output: the
+#                deterministic program render_input() from
+#                experiments/world-components/n4_corpus/n4_render.py is
+#                imported and its full prompt (header, fact lines, tail) is
+#                stub-tokenized. Only the tokenizer is a stub; the rendered
+#                bytes are the real shared-render output.
 #
 # Every verdict embeds the ORIGINAL plan verbatim (deep copy).
 
@@ -37,6 +43,9 @@ import sys
 HERE = pathlib.Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 from n3_plan import check_invariants  # noqa: E402
+
+sys.path.insert(0, str(HERE.parent / "n4_corpus"))
+from n4_render import render_input as shared_render_input  # noqa: E402
 
 REPO_ROOT = HERE.parent.parent.parent
 MAX_FACTS_PER_GROUP = 4
@@ -53,31 +62,33 @@ def stub_tokens(text: str, n: int = 6) -> list:
     return [text[i:i + n] for i in range(0, len(text), n)]
 
 
-def render_text(render_input: list) -> str:
-    """deterministic render stand-in over the flattened fact table — the
-    payload whose token count the interface checks. NOT the real shared
-    render_input; real rendering/tokenizing belong to the N4 batches."""
-    lines = []
-    for f in render_input:
-        if f["kind"] == "time":
-            lines.append(f"过了{f['amount']}{f['unit']}")
-        elif f["kind"] == "task_achieved":
-            lines.append(f"{f['name']}完成了{f['goal']}")
-        else:
-            lines.append(f"{f['name']}的情况有变化")
-    return "\n".join(lines)
-
-
 def make_deltas():
-    """entity-keyed map, the shape of real entityDeltas."""
+    """EntityDelta-shaped map (contracts.py): tasksAchieved carries TASK
+    IDs; the task TEXT lives in the authoritative task registry."""
     return {
-        "char_pa": {"tasks": ["晒网", "织网"], "personality": "沉稳"},
-        "char_pb": {"tasks": ["补网"], "position": "探针镇"},
+        "char_pa": {"entityId": "char_pa", "tasksAchieved": ["task_1", "task_2"],
+                    "appearanceChanges": [], "personalityChanges": [],
+                    "subtasksAdded": [], "positionSet": None, "sanitySet": None},
+        "char_pb": {"entityId": "char_pb", "tasksAchieved": ["task_3"],
+                    "appearanceChanges": [], "personalityChanges": [],
+                    "subtasksAdded": [], "positionSet": None, "sanitySet": None},
+    }
+
+
+def make_registry():
+    """authoritative task definitions (from the committed world state):
+    id -> {ownerId, goal, status}. Task text is resolved from HERE, never
+    from narration output."""
+    return {
+        "task_1": {"id": "task_1", "ownerId": "char_pa", "goal": "晒网", "status": "achieved"},
+        "task_2": {"id": "task_2", "ownerId": "char_pa", "goal": "织网", "status": "achieved"},
+        "task_3": {"id": "task_3", "ownerId": "char_pb", "goal": "补网", "status": "achieved"},
     }
 
 
 def make_time_advance(minutes=5, unit="minute"):
-    return {"minutes": minutes, "unit": unit}
+    """TimeAdvance per contracts.py: boundary + duration{amount, unit}."""
+    return {"boundary": "elapsed", "duration": {"amount": minutes, "unit": unit}}
 
 
 def make_point(version=1, deltas=None, digest="d" * 8, time_advance="default",
@@ -95,29 +106,39 @@ def make_point(version=1, deltas=None, digest="d" * 8, time_advance="default",
             "timeAdvance": time_advance, "entityDeltas": deltas}
 
 
-def bind_point(point: dict, before, manifest_facts: list) -> list:
-    """authoritative input binding. Root and non-root validated separately;
-    source pointers resolved against the entity-keyed delta MAP with
-    content checks. Returns binding-failed reasons (empty = bound)."""
+SUPPORTED_FACT_KINDS = {"task_achieved", "time"}
+
+
+def bind_point(point: dict, before, manifest_facts: list,
+               task_registry: dict) -> list:
+    """authoritative input binding on the real contract shape. Keys must
+    EXIST (root: explicit null/null/{}); sources resolve against the
+    EntityDelta map + task registry with ownership and content checks.
+    Returns binding-failed reasons (empty = bound)."""
     problems = []
-    for field in ("state", "pointId", "version", "stateDigest", "entityDeltas"):
-        if point.get(field) is None:
+    for field in ("state", "pointId", "version", "stateDigest",
+                  "previousPointId", "timeAdvance", "entityDeltas"):
+        if field not in point:
+            problems.append(f"missing-{field}")
+        elif point[field] is None and field in ("state", "pointId", "version",
+                                                "stateDigest", "entityDeltas"):
+            # required-with-no-default fields: null is an incomplete read
             problems.append(f"missing-{field}")
     if problems:
         return problems
     is_root = point["version"] == 0
     if is_root:
-        if point.get("previousPointId") is not None:
+        if point["previousPointId"] is not None:
             problems.append("root-with-predecessor")
-        if point.get("timeAdvance") is not None:
+        if point["timeAdvance"] is not None:
             problems.append("root-with-time")
         if point["entityDeltas"]:
             problems.append("root-with-deltas")
         if before is not None:
             problems.append("root-with-before-record")
     else:
-        if point.get("timeAdvance") is None:
-            problems.append("missing-timeAdvance")
+        if point["timeAdvance"] is None:
+            problems.append("missing-timeAdvance-value")
         if before is None:
             problems.append("missing-before")
         else:
@@ -125,37 +146,42 @@ def bind_point(point: dict, before, manifest_facts: list) -> list:
                 problems.append("world-mismatch")
             if before.get("version") != point["version"] - 1:
                 problems.append("version-gap")
-            if before.get("pointId") != point.get("previousPointId"):
+            if before.get("pointId") != point["previousPointId"]:
                 problems.append("predecessor-identity-mismatch")
     if not isinstance(point["entityDeltas"], dict):
         problems.append("deltas-not-entity-map")
         return problems
-    # source resolution with CONTENT checks
     for f in manifest_facts:
         fid = f.get("factId")
-        src = f.get("source") or {}
+        if f["kind"] not in SUPPORTED_FACT_KINDS:
+            problems.append(f"unsupported-fact-kind:{fid}:{f['kind']}")
+            continue
+        src_ = f.get("source") or {}
         if f["kind"] == "time":
-            ta = point.get("timeAdvance")
-            if not isinstance(ta, dict):
-                problems.append(f"source-content-mismatch:{fid}:timeAdvance")
-            elif f.get("amount") != ta.get("minutes") or f.get("unit") != ta.get("unit"):
+            ta = point["timeAdvance"]
+            if not isinstance(ta, dict) \
+                    or f.get("amount") != (ta.get("duration") or {}).get("amount") \
+                    or f.get("unit") != (ta.get("duration") or {}).get("unit"):
                 problems.append(f"source-content-mismatch:{fid}:timeAdvance")
             continue
-        eid = src.get("entityId")
-        if eid not in point["entityDeltas"]:
+        eid = src_.get("entityId")
+        if f.get("entityId") != eid:
+            problems.append(f"ownership-mismatch:{fid}")
+            continue
+        delta = point["entityDeltas"].get(eid)
+        if delta is None:
             problems.append(f"source-content-mismatch:{fid}:entity")
             continue
-        entry = point["entityDeltas"][eid]
         if f["kind"] == "task_achieved":
-            idx = src.get("taskIndex")
-            tasks = entry.get("tasks") if isinstance(entry, dict) else None
-            if not isinstance(tasks, list) or not isinstance(idx, int) \
-                    or not (0 <= idx < len(tasks)) or tasks[idx] != f.get("goal"):
+            tid = src_.get("taskId")
+            if tid not in (delta.get("tasksAchieved") or []):
+                problems.append(f"source-content-mismatch:{fid}:taskId")
+                continue
+            reg = task_registry.get(tid)
+            if reg is None or reg.get("ownerId") != eid \
+                    or reg.get("goal") != f.get("goal") \
+                    or reg.get("status") != "achieved":
                 problems.append(f"source-content-mismatch:{fid}:task")
-        else:
-            field = src.get("field")
-            if not isinstance(field, str) or field not in entry:
-                problems.append(f"source-content-mismatch:{fid}:field")
     return problems
 
 
@@ -206,7 +232,7 @@ def check_interface(plan: dict, manifest_facts: list, binding_problems: list) ->
                                "maxInputTokens": MAX_INPUT_TOKENS},
                     "observed": {"facts": len(render_input)}})
         return out
-    text = render_text(render_input)
+    text = shared_render_input(render_input)
     n_tokens = len(stub_tokens(text))
     if n_tokens > MAX_INPUT_TOKENS:
         out.update({"status": "unsupported", "reason": "input-too-long",
@@ -215,20 +241,22 @@ def check_interface(plan: dict, manifest_facts: list, binding_problems: list) ->
                     "observed": {"inputTokens": n_tokens}})
         return out
     out.update({"status": "accepted", "renderInput": render_input,
-                "renderText": text, "inputTokensStub": n_tokens,
+                "renderText": text, "sharedRenderer": "n4_render.render_input",
+                "inputTokensStub": n_tokens,
                 "limits": {"maxFactsPerRun": MAX_FACTS_PER_GROUP,
                            "maxInputTokens": MAX_INPUT_TOKENS},
                 "notes": {"coreferenceConsumed": False,
                           "invariantsVerified": True,
-                          "tokenCounter": "deterministic stub over a render "
-                                          "stand-in; not real tokenizer/render acceptance"}})
+                          "tokenCounter": "deterministic 6-char stub over the "
+                                          "REAL shared render_input output; only "
+                                          "the tokenizer is a stub"}})
     return out
 
 
-def task(fid, char, name, goal, task_index):
+def task(fid, char, name, goal, task_id):
     return {"factId": fid, "kind": "task_achieved", "entityId": char,
             "name": name, "goal": goal, "at": "探针镇",
-            "source": {"entityId": char, "taskIndex": task_index}}
+            "source": {"entityId": char, "taskId": task_id}}
 
 
 def time_fact(fid):
@@ -243,43 +271,47 @@ def group(fids, index=0, ref=None):
 
 def fixtures() -> list:
     """(name, description, expected, build). build -> (plan|None, manifest,
-    point, before); plan None means a binding-only assertion."""
+    point, before, registry); plan None means a binding-only assertion."""
+    root = make_point(version=0)
+    reg = make_registry()
 
     def t1():
-        m = [task("f1", "char_pa", "参商", "晒网", 0)]
-        return {"itemId": "fx", "sentences": [group(["f1"])]}, m, make_point(), make_point(version=0)
+        m = [task("f1", "char_pa", "参商", "晒网", "task_1")]
+        return {"itemId": "fx", "sentences": [group(["f1"])]}, m, make_point(), root, reg
 
     def t4():
-        deltas = {"char_pa": {"tasks": ["任务0", "任务1", "任务2", "任务3"]}}
-        m = [task(f"f{i}", "char_pa", "参商", f"任务{i}", i) for i in range(4)]
-        return {"itemId": "fx", "sentences": [group([f"f{i}" for i in range(4)])]}, \
-            m, make_point(deltas=deltas), make_point(version=0)
+        m = [task("f1", "char_pa", "参商", "晒网", "task_1"),
+             task("f2", "char_pa", "参商", "织网", "task_2"),
+             task("f3", "char_pb", "辰星", "补网", "task_3"),
+             time_fact("f4")]
+        plan = {"itemId": "fx", "sentences": [group(["f1", "f2", "f3", "f4"])]}
+        return plan, m, make_point(), root, reg
 
     def t5():
-        deltas = {"char_pa": {"tasks": ["任务0", "任务1"]},
-                  "char_pb": {"tasks": ["任务2", "任务3", "任务4"]}}
-        m = [task("f0", "char_pa", "参商", "任务0", 0), task("f1", "char_pa", "参商", "任务1", 1),
-             task("f2", "char_pb", "辰星", "任务2", 0), task("f3", "char_pb", "辰星", "任务3", 1),
-             task("f4", "char_pb", "辰星", "任务4", 2)]
-        plan = {"itemId": "fx", "sentences": [group([f"f{i}" for i in range(5)])]}
-        return plan, m, make_point(deltas=deltas), make_point(version=0)
+        m = [task("f1", "char_pa", "参商", "晒网", "task_1"),
+             task("f2", "char_pa", "参商", "织网", "task_2"),
+             task("f3", "char_pb", "辰星", "补网", "task_3"),
+             time_fact("f4"),
+             task("f5", "char_pa", "参商", "晒网", "task_1")]
+        plan = {"itemId": "fx", "sentences": [group([f"f{i}" for i in range(1, 6)])]}
+        return plan, m, make_point(), root, reg
 
     def t52():
-        deltas = {"char_pa": {"tasks": ["任务0", "任务1"]},
-                  "char_pb": {"tasks": ["任务2", "任务3", "任务4"]}}
-        m = [task("f0", "char_pa", "参商", "任务0", 0), task("f1", "char_pa", "参商", "任务1", 1),
-             task("f2", "char_pb", "辰星", "任务2", 0), task("f3", "char_pb", "辰星", "任务3", 1),
-             task("f4", "char_pb", "辰星", "任务4", 2)]
-        plan = {"itemId": "fx", "sentences": [group(["f0", "f1"], 0), group(["f2", "f3", "f4"], 1)]}
-        return plan, m, make_point(deltas=deltas), make_point(version=0)
+        m = [task("f1", "char_pa", "参商", "晒网", "task_1"),
+             task("f2", "char_pa", "参商", "织网", "task_2"),
+             task("f3", "char_pb", "辰星", "补网", "task_3"),
+             time_fact("f4"),
+             task("f5", "char_pa", "参商", "晒网", "task_1")]
+        plan = {"itemId": "fx", "sentences": [group(["f1", "f2"]), group(["f3", "f4", "f5"])]}
+        return plan, m, make_point(), root, reg
 
     def sized(total_tokens):
-        m = [task("f1", "char_pa", "参商", "", 0)]
-        base = len(render_text(m))
+        m = [task("f1", "char_pa", "参商", "", "task_1")]
+        base = len(shared_render_input(m))
         goal = "网" * (total_tokens * 6 - base)
         m[0]["goal"] = goal
-        deltas = {"char_pa": {"tasks": [goal]}}
-        return {"itemId": "fx", "sentences": [group(["f1"])]}, m, make_point(deltas=deltas), make_point(version=0)
+        registry = {**reg, "task_1": {**reg["task_1"], "goal": goal}}
+        return {"itemId": "fx", "sentences": [group(["f1"])]}, m, make_point(), root, registry
 
     def t128():
         return sized(128)
@@ -288,88 +320,107 @@ def fixtures() -> list:
         return sized(129)
 
     def missing():
-        deltas = {"char_pa": {"tasks": ["晒网", "织网"]}}
-        m = [task("f1", "char_pa", "参商", "晒网", 0), task("f2", "char_pa", "参商", "织网", 1)]
-        return {"itemId": "fx", "sentences": [group(["f1"])]}, m, make_point(deltas=deltas), make_point(version=0)
+        m = [task("f1", "char_pa", "参商", "晒网", "task_1"),
+             task("f2", "char_pa", "参商", "织网", "task_2")]
+        return {"itemId": "fx", "sentences": [group(["f1"])]}, m, make_point(), root, reg
 
     def duplicate():
-        deltas = {"char_pa": {"tasks": ["晒网", "织网"]}}
-        m = [task("f1", "char_pa", "参商", "晒网", 0), task("f2", "char_pa", "参商", "织网", 1)]
-        return {"itemId": "fx", "sentences": [group(["f1", "f1"])]}, m, make_point(deltas=deltas), make_point(version=0)
+        m = [task("f1", "char_pa", "参商", "晒网", "task_1")]
+        return {"itemId": "fx", "sentences": [group(["f1", "f1"])]}, m, make_point(), root, reg
 
     def unknown():
-        m = [task("f1", "char_pa", "参商", "晒网", 0)]
-        return {"itemId": "fx", "sentences": [group(["f1", "f9"])]}, m, make_point(), make_point(version=0)
+        m = [task("f1", "char_pa", "参商", "晒网", "task_1")]
+        return {"itemId": "fx", "sentences": [group(["f1", "f9"])]}, m, make_point(), root, reg
 
     def order():
-        m = [task("f1", "char_pa", "参商", "晒网", 0), task("f2", "char_pb", "辰星", "补网", 0)]
+        m = [task("f1", "char_pa", "参商", "晒网", "task_1"),
+             task("f2", "char_pb", "辰星", "补网", "task_3")]
         plan = {"itemId": "fx", "sentences": [group(["f2"], 0), group(["f1"], 1)]}
-        return plan, m, make_point(), make_point(version=0)
+        return plan, m, make_point(), root, reg
 
     def time_pred():
-        m = [task("f1", "char_pa", "参商", "晒网", 0), time_fact("f2")]
+        m = [task("f1", "char_pa", "参商", "晒网", "task_1"), time_fact("f2")]
         plan = {"itemId": "fx", "sentences": [group(["f1", "f2"])]}
-        return plan, m, make_point(), make_point(version=0)
+        return plan, m, make_point(), root, reg
 
     def same_name():
-        deltas = {"char_pa": {"tasks": ["扫地"]}, "char_pb": {"tasks": ["洗碗"]}}
-        m = [task("f1", "char_pa", "同名者", "扫地", 0), task("f2", "char_pb", "同名者", "洗碗", 0)]
+        m = [task("f1", "char_pa", "同名者", "晒网", "task_1"),
+             task("f2", "char_pb", "同名者", "补网", "task_3")]
         plan = {"itemId": "fx", "sentences": [
             group(["f1"], 0, {"mention": "同名者", "refersTo": "char_pa"}),
             group(["f2"], 1, {"mention": "同名者", "refersTo": "char_pb"})]}
-        return plan, m, make_point(deltas=deltas), make_point(version=0)
+        return plan, m, make_point(), root, reg
 
     def cross_group():
-        m = [task("f1", "char_pa", "参商", "晒网", 0), task("f2", "char_pb", "辰星", "补网", 0)]
+        m = [task("f1", "char_pa", "参商", "晒网", "task_1"),
+             task("f2", "char_pb", "辰星", "补网", "task_3")]
         plan = {"itemId": "fx", "sentences": [
             group(["f1"], 0, {"mention": "辰星", "refersTo": "char_pb"}),
             group(["f2"], 1)]}
-        return plan, m, make_point(), make_point(version=0)
+        return plan, m, make_point(), root, reg
 
     def no_before():
         return {"itemId": "fx", "sentences": [group(["f1"])]}, \
-            [task("f1", "char_pa", "参商", "晒网", 0)], make_point(version=3), None
+            [task("f1", "char_pa", "参商", "晒网", "task_1")], make_point(version=3), None, reg
 
     def version_gap():
         before = make_point(version=1)
         point = make_point(version=3)
         point["previousPointId"] = before["pointId"]  # isolate the version gap
         return {"itemId": "fx", "sentences": [group(["f1"])]}, \
-            [task("f1", "char_pa", "参商", "晒网", 0)], point, before
+            [task("f1", "char_pa", "参商", "晒网", "task_1")], point, before, reg
 
     def no_digest():
         point = make_point(version=2)
         point["stateDigest"] = None
         return {"itemId": "fx", "sentences": [group(["f1"])]}, \
-            [task("f1", "char_pa", "参商", "晒网", 0)], point, make_point(version=1)
+            [task("f1", "char_pa", "参商", "晒网", "task_1")], point, make_point(version=1), reg
 
     def pred_identity():
         before = make_point(version=1)
         point = make_point(version=2)
         point["previousPointId"] = "pt-9"  # unrelated id
-        return None, [task("f1", "char_pa", "参商", "晒网", 0)], point, before
+        return None, [task("f1", "char_pa", "参商", "晒网", "task_1")], point, before, reg
 
     def root_ok():
-        return None, [], make_point(version=0), None
+        return None, [], make_point(version=0), None, reg
 
     def root_with_time():
-        return None, [], make_point(version=0, time_advance=make_time_advance()), None
+        return None, [], make_point(version=0, time_advance=make_time_advance()), None, reg
+
+    def missing_keys():
+        point = make_point(version=2)
+        del point["previousPointId"]
+        del point["timeAdvance"]
+        return None, [task("f1", "char_pa", "参商", "晒网", "task_1")], point, make_point(version=1), reg
+
+    def ownership():
+        m = [{"factId": "f1", "kind": "task_achieved", "entityId": "char_pb",
+              "name": "辰星", "goal": "晒网", "at": "探针镇",
+              "source": {"entityId": "char_pa", "taskId": "task_1"}}]
+        return {"itemId": "fx", "sentences": [group(["f1"])]}, m, make_point(), root, reg
 
     def source_content():
-        m = [task("f1", "char_pa", "参商", "被篡改的目标", 0)]
-        return {"itemId": "fx", "sentences": [group(["f1"])]}, m, make_point(), make_point(version=0)
+        m = [task("f1", "char_pa", "参商", "被篡改的目标", "task_1")]
+        return {"itemId": "fx", "sentences": [group(["f1"])]}, m, make_point(), root, reg
 
     def time_content():
         m = [{"factId": "f1", "kind": "time", "amount": 9, "unit": "minute",
               "at": None, "source": {"timeAdvance": True}}]
-        return {"itemId": "fx", "sentences": [group(["f1"])]}, m, make_point(), make_point(version=0)
+        return {"itemId": "fx", "sentences": [group(["f1"])]}, m, make_point(), root, reg
+
+    def unsupported_kind():
+        m = [{"factId": "f1", "kind": "personality_changed", "entityId": "char_pa",
+              "name": "参商", "text": "变得沉默", "at": "探针镇",
+              "source": {"entityId": "char_pa"}}]
+        return {"itemId": "fx", "sentences": [group(["f1"])]}, m, make_point(), root, reg
 
     return [
         ("F01", "1 fact in range", "accepted", t1),
         ("F04", "4 facts flattened (upper bound)", "accepted", t4),
         ("F05", "5 facts in one group over limit", "unsupported:plan-too-long", t5),
         ("F52", "3+2 grouping cannot bypass: flattened 5", "unsupported:plan-too-long", t52),
-        ("FT128", "exactly 128 stub tokens of rendered text", "accepted", t128),
+        ("FT128", "128 stub tokens over the REAL shared renderer output", "accepted", t128),
         ("FT129", "129 stub tokens", "unsupported:input-too-long", t129),
         ("FM01", "plan missing a factId", "error:plan-fact-mismatch:missing", missing),
         ("FM02", "plan duplicate factId", "error:plan-fact-mismatch:duplicate", duplicate),
@@ -381,12 +432,19 @@ def fixtures() -> list:
          "error:plan-invariant-violation", cross_group),
         ("FB01", "non-root point without before record", "binding-failed:missing-before", no_before),
         ("FB02", "version discontinuity", "binding-failed:version-gap", version_gap),
-        ("FB03", "missing stateDigest", "binding-failed:missing-stateDigest", no_digest),
+        ("FB03", "missing stateDigest value", "binding-failed:missing-stateDigest", no_digest),
         ("FBL1", "predecessor identity mismatch", "binding-failed:predecessor-identity-mismatch", pred_identity),
-        ("FBR1", "legal root point (null timeAdvance, empty deltas)", "bound", root_ok),
+        ("FBR1", "legal root point (explicit null/null/{})", "bound", root_ok),
         ("FBR2", "root point carrying timeAdvance", "binding-failed:root-with-time", root_with_time),
-        ("FSC1", "fact content diverges from its delta", "binding-failed:source-content-mismatch:f1:task", source_content),
-        ("FTT1", "time amount diverges from timeAdvance", "binding-failed:source-content-mismatch:f1:timeAdvance", time_content),
+        ("FBM1", "GetStateData keys removed (incomplete read)",
+         "binding-failed:missing-previousPointId,missing-timeAdvance", missing_keys),
+        ("FOWN1", "fact entity differs from its source entity", "binding-failed:ownership-mismatch:f1", ownership),
+        ("FSC1", "goal diverges from the authoritative task registry",
+         "binding-failed:source-content-mismatch:f1:task", source_content),
+        ("FTT1", "time amount diverges from TimeAdvance.duration",
+         "binding-failed:source-content-mismatch:f1:timeAdvance", time_content),
+        ("FUK1", "unsupported fact kind refused, not silently accepted",
+         "binding-failed:unsupported-fact-kind:f1:personality_changed", unsupported_kind),
     ]
 
 
@@ -394,9 +452,9 @@ def run_suite(out=None) -> int:
     results = {}
     failures = []
     for name, desc, expected, build in fixtures():
-        plan, manifest, point, before = build()
+        plan, manifest, point, before, registry = build()
         if plan is None:
-            problems = bind_point(point, before, manifest)
+            problems = bind_point(point, before, manifest, registry)
             got = "bound" if not problems else "binding-failed:" + ",".join(problems)
             ok = got == expected
             results[name] = {"description": desc, "expected": expected, "got": got,
@@ -404,7 +462,8 @@ def run_suite(out=None) -> int:
             if not ok:
                 failures.append(f"{name}: expected {expected}, got {got}")
             continue
-        verdict = check_interface(plan, manifest, bind_point(point, before, manifest))
+        verdict = check_interface(plan, manifest,
+                                  bind_point(point, before, manifest, registry))
         tail = (":" + verdict["reason"] if "reason" in verdict
                 else ":" + ",".join(verdict["reasons"]) if "reasons" in verdict else "")
         got = verdict["status"] + tail
@@ -414,22 +473,28 @@ def run_suite(out=None) -> int:
         if verdict["status"] == "accepted":
             if "coreference" in json.dumps(verdict["renderInput"], ensure_ascii=False):
                 ok = False  # coreference is never consumed
-            if len(stub_tokens(verdict["renderText"])) != verdict["inputTokensStub"]:
-                ok = False
+            if len(stub_tokens(shared_render_input(verdict["renderInput"]))) \
+                    != verdict["inputTokensStub"]:
+                ok = False  # token count is over the REAL renderer output
         results[name] = {"description": desc, "expected": expected, "got": got,
                          "pass": ok}
         if not ok:
             failures.append(f"{name}: expected {expected}, got {got}")
     archive = {
         "purpose": "N3->N4 interface fixture verification (non-model)",
-        "tokenCounter": "deterministic 6-char stub over a deterministic render "
-                        "stand-in; NOT real sentencepiece or real shared-render acceptance",
+        "tokenCounter": "deterministic 6-char stub over the REAL shared "
+                        "render_input output (n4_render.py); only the tokenizer is a stub",
+        "sourceModel": "EntityDelta per contracts.py: tasksAchieved task ids "
+                       "resolved through the authoritative task registry; "
+                       "TimeAdvance.duration; GetStateData keys must exist "
+                       "(root = explicit null/null/{})",
         "interfaceConstraints": {"maxFactsPerRun": MAX_FACTS_PER_GROUP,
                                  "maxInputTokens": MAX_INPUT_TOKENS,
                                  "coreferenceConsumed": False,
                                  "invariantsArePrecondition": True,
                                  "unsupportedPreservesPlan": True,
-                                 "rangeCheckedOnFlattenedRun": True},
+                                 "rangeCheckedOnFlattenedRun": True,
+                                 "supportedFactKinds": sorted(SUPPORTED_FACT_KINDS)},
         "results": results,
         "failures": failures,
         "pass": not failures,
@@ -443,32 +508,41 @@ def run_suite(out=None) -> int:
 
 def selftest() -> int:
     failures = []
-    if stub_tokens("abcdefg") != ["abcdef", "g"] or \
-            stub_tokens("abcdefg") != stub_tokens("abcdefg"):
+    reg = make_registry()
+    if stub_tokens("abcdefg") != ["abcdef", "g"] \
+            or stub_tokens("abcdefg") != stub_tokens("abcdefg"):
         failures.append("stub tokenizer nondeterministic")
-    m = [task("f1", "char_pa", "参商", "晒网", 0)]
-    plan = {"itemId": "fx", "sentences": [group(["f1"], 0, {"mention": "参商", "refersTo": "char_pa"})]}
+    m = [task("f1", "char_pa", "参商", "晒网", "task_1")]
+    plan = {"itemId": "fx",
+            "sentences": [group(["f1"], 0, {"mention": "参商", "refersTo": "char_pa"})]}
     v = check_interface(plan, m, [])
     if v["status"] != "accepted" or v["plan"] != plan or v["renderInput"] != m \
-            or "晒网" not in v["renderText"] or v["inputTokensStub"] > 128:
-        failures.append(f"accepted verdict wrong: {json.dumps(v, ensure_ascii=False)[:200]}")
-    m5 = [task(f"f{i}", "char_pa", "参商", f"任务{i}", i) for i in range(5)]
-    deltas5 = {"char_pa": {"tasks": [f"任务{i}" for i in range(5)]}}
-    plan5 = {"itemId": "fx", "sentences": [group([f"f{i}" for i in range(5)])]}
-    v = check_interface(plan5, m5, bind_point(make_point(deltas=deltas5), make_point(version=0), m5))
+            or "晒网" not in v["renderText"] or "叙事生成任务" not in v["renderText"] \
+            or v["inputTokensStub"] > 128:
+        failures.append(f"accepted verdict wrong: {json.dumps(v, ensure_ascii=False)[:220]}")
+    if len(stub_tokens(shared_render_input(m))) != v["inputTokensStub"]:
+        failures.append("token count is not over the shared renderer output")
+    m5 = [task("f1", "char_pa", "参商", "晒网", "task_1"),
+          task("f2", "char_pa", "参商", "织网", "task_2"),
+          task("f3", "char_pb", "辰星", "补网", "task_3"),
+          time_fact("f4"),
+          task("f5", "char_pa", "参商", "晒网", "task_1")]
+    plan5 = {"itemId": "fx", "sentences": [group([f"f{i}" for i in range(1, 6)])]}
+    v = check_interface(plan5, m5, bind_point(make_point(), make_point(version=0), m5, reg))
     if v["status"] != "unsupported" or v["reason"] != "plan-too-long" or v["plan"] != plan5 \
             or v.get("observed", {}).get("facts") != 5:
         failures.append(f"unsupported verdict wrong: {v.get('reason')}/{v.get('observed')}")
     v["plan"]["sentences"][0]["factIds"].append("f9")
     if plan5["sentences"][0]["factIds"] == v["plan"]["sentences"][0]["factIds"]:
         failures.append("embedded plan is not a deep copy")
-    plan52 = {"itemId": "fx", "sentences": [group(["f0", "f1"]), group(["f2", "f3", "f4"])]}
-    v = check_interface(plan52, m5, bind_point(make_point(deltas=deltas5), make_point(version=0), m5))
+    plan52 = {"itemId": "fx", "sentences": [group(["f1", "f2"]), group(["f3", "f4", "f5"])]}
+    v = check_interface(plan52, m5, bind_point(make_point(), make_point(version=0), m5, reg))
     if v["status"] != "unsupported" or v["reason"] != "plan-too-long":
         failures.append(f"3+2 bypass not caught: {v.get('status')}/{v.get('reason')}")
     bad = {"itemId": "fx", "sentences": [
         group(["f1"], 0, {"mention": "辰星", "refersTo": "char_pb"}), group(["f2"], 1)]}
-    m2 = [task("f1", "char_pa", "参商", "晒网", 0), task("f2", "char_pb", "辰星", "补网", 0)]
+    m2 = [task("f1", "char_pa", "参商", "晒网", "task_1"),
+          task("f2", "char_pb", "辰星", "补网", "task_3")]
     v = check_interface(bad, m2, [])
     if v["status"] != "error" or v["reason"] != "plan-invariant-violation" \
             or "renderInput" in v:
@@ -476,22 +550,41 @@ def selftest() -> int:
     before = make_point(version=1)
     point = make_point(version=2)
     point["previousPointId"] = "pt-9"
-    problems = bind_point(point, before, [])
+    problems = bind_point(point, before, [], reg)
     if "predecessor-identity-mismatch" not in problems:
         failures.append(f"predecessor identity not checked: {problems}")
-    if bind_point(make_point(version=0), None, []):
-        failures.append(f"legal root rejected: {bind_point(make_point(version=0), None, [])}")
-    if "root-with-time" not in bind_point(make_point(version=0, time_advance=make_time_advance()), None, []):
+    if bind_point(make_point(version=0), None, [], reg):
+        failures.append(f"legal root rejected: {bind_point(make_point(version=0), None, [], reg)}")
+    if "root-with-time" not in bind_point(make_point(version=0, time_advance=make_time_advance()),
+                                          None, [], reg):
         failures.append("root with timeAdvance not refused")
-    diverged = [task("f1", "char_pa", "参商", "被篡改的目标", 0)]
-    problems = bind_point(make_point(), make_point(version=0), diverged)
+    incomplete = make_point(version=2)
+    del incomplete["previousPointId"]
+    del incomplete["timeAdvance"]
+    problems = bind_point(incomplete, make_point(version=1), [], reg)
+    if "missing-previousPointId" not in problems or "missing-timeAdvance" not in problems:
+        failures.append(f"absent GetStateData keys not reported: {problems}")
+    diverged = [task("f1", "char_pa", "参商", "被篡改的目标", "task_1")]
+    problems = bind_point(make_point(), make_point(version=0), diverged, reg)
     if not any("source-content-mismatch" in x for x in problems):
         failures.append(f"content divergence not caught: {problems}")
     diverged_t = [{"factId": "f1", "kind": "time", "amount": 9, "unit": "minute",
                    "at": None, "source": {"timeAdvance": True}}]
-    problems = bind_point(make_point(), make_point(version=0), diverged_t)
+    problems = bind_point(make_point(), make_point(version=0), diverged_t, reg)
     if not any("source-content-mismatch" in x for x in problems):
         failures.append(f"time divergence not caught: {problems}")
+    owned = [{"factId": "f1", "kind": "task_achieved", "entityId": "char_pb",
+              "name": "辰星", "goal": "晒网", "at": "探针镇",
+              "source": {"entityId": "char_pa", "taskId": "task_1"}}]
+    problems = bind_point(make_point(), make_point(version=0), owned, reg)
+    if not any("ownership-mismatch" in x for x in problems):
+        failures.append(f"ownership divergence not caught: {problems}")
+    wrong_kind = [{"factId": "f1", "kind": "personality_changed", "entityId": "char_pa",
+                   "name": "参商", "text": "变得沉默", "at": "探针镇",
+                   "source": {"entityId": "char_pa"}}]
+    problems = bind_point(make_point(), make_point(version=0), wrong_kind, reg)
+    if not any("unsupported-fact-kind" in x for x in problems):
+        failures.append(f"unsupported kind not refused: {problems}")
     for f in failures:
         print("SELFTEST FAIL:", f)
     print("selftest:", "PASS" if not failures else f"{len(failures)} failure(s)")

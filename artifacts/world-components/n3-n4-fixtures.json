@@ -1,13 +1,18 @@
 {
  "purpose": "N3->N4 interface fixture verification (non-model)",
- "tokenCounter": "deterministic 6-char stub over a deterministic render stand-in; NOT real sentencepiece or real shared-render acceptance",
+ "tokenCounter": "deterministic 6-char stub over the REAL shared render_input output (n4_render.py); only the tokenizer is a stub",
+ "sourceModel": "EntityDelta per contracts.py: tasksAchieved task ids resolved through the authoritative task registry; TimeAdvance.duration; GetStateData keys must exist (root = explicit null/null/{})",
  "interfaceConstraints": {
   "maxFactsPerRun": 4,
   "maxInputTokens": 128,
   "coreferenceConsumed": false,
   "invariantsArePrecondition": true,
   "unsupportedPreservesPlan": true,
-  "rangeCheckedOnFlattenedRun": true
+  "rangeCheckedOnFlattenedRun": true,
+  "supportedFactKinds": [
+   "task_achieved",
+   "time"
+  ]
  },
  "results": {
   "F01": {
@@ -35,7 +40,7 @@
    "pass": true
   },
   "FT128": {
-   "description": "exactly 128 stub tokens of rendered text",
+   "description": "128 stub tokens over the REAL shared renderer output",
    "expected": "accepted",
    "got": "accepted",
    "pass": true
@@ -101,7 +106,7 @@
    "pass": true
   },
   "FB03": {
-   "description": "missing stateDigest",
+   "description": "missing stateDigest value",
    "expected": "binding-failed:missing-stateDigest",
    "got": "binding-failed:missing-stateDigest",
    "pass": true
@@ -114,7 +119,7 @@
    "kind": "binding-only"
   },
   "FBR1": {
-   "description": "legal root point (null timeAdvance, empty deltas)",
+   "description": "legal root point (explicit null/null/{})",
    "expected": "bound",
    "got": "bound",
    "pass": true,
@@ -127,16 +132,35 @@
    "pass": true,
    "kind": "binding-only"
   },
+  "FBM1": {
+   "description": "GetStateData keys removed (incomplete read)",
+   "expected": "binding-failed:missing-previousPointId,missing-timeAdvance",
+   "got": "binding-failed:missing-previousPointId,missing-timeAdvance",
+   "pass": true,
+   "kind": "binding-only"
+  },
+  "FOWN1": {
+   "description": "fact entity differs from its source entity",
+   "expected": "binding-failed:ownership-mismatch:f1",
+   "got": "binding-failed:ownership-mismatch:f1",
+   "pass": true
+  },
   "FSC1": {
-   "description": "fact content diverges from its delta",
+   "description": "goal diverges from the authoritative task registry",
    "expected": "binding-failed:source-content-mismatch:f1:task",
    "got": "binding-failed:source-content-mismatch:f1:task",
    "pass": true
   },
   "FTT1": {
-   "description": "time amount diverges from timeAdvance",
+   "description": "time amount diverges from TimeAdvance.duration",
    "expected": "binding-failed:source-content-mismatch:f1:timeAdvance",
    "got": "binding-failed:source-content-mismatch:f1:timeAdvance",
+   "pass": true
+  },
+  "FUK1": {
+   "description": "unsupported fact kind refused, not silently accepted",
+   "expected": "binding-failed:unsupported-fact-kind:f1:personality_changed",
+   "got": "binding-failed:unsupported-fact-kind:f1:personality_changed",
    "pass": true
   }
  },

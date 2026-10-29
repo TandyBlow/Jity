@@ -2,7 +2,7 @@
 
 日期：2026-10-30。提交人：C 实现者。基线：`world-components@b97adb2`（= origin，已核实）；工作区仅未跟踪的 `signoff-f9c1190.md`（原样保留）与冻结产物，零改动。
 状态：**方案 v2＋夹具，待 C 审查者复审**。本方案定义的是**待实现、待验证的接口约束**，不是已接线能力；本轮不训练、不调用真实模型、不实现任何回退。
-修订记录：v1（`8626082`）→ **v2**（按独立反例收紧五处）：① 绑定按根点/非根点分别校验并核对前驱身份（`before.pointId == previousPointId`），根点 timeAdvance 必须为 null、Δ 为空；② 来源解析改为**按实体组织的映射式 `entityDeltas`＋内容核对**（task goal 对实体任务列表、time 对 timeAdvance），数字索引作废；③ 范围检查以**实际单次 N4 输入（展平事实总数）**为准，分组不能绕过 4 条上限；④ token 计数对象改为**确定性渲染替身文本**（共享 render_input 的消费面替身），非 JSON 列表；⑤ N3 硬不变量为采纳前置——I2 违规计划报 `error:plan-invariant-violation` 并停止，coreference 不被 N4 消费不放行 N3 违规。
+修订记录：v1（`8626082`）→ v2（`291f5ae`，按独立反例收紧五处）→ **v3（本笔，按四项反例对齐实际契约）**：① 来源模型改按**实际 schema**——任务完成由 `EntityDelta.tasksAchieved` 的**任务 ID** 表示，任务正文从权威任务注册表解析（id→goal/ownerId/status），时间为 `TimeAdvance.duration.{amount,unit}`，不再使用简化形状或自称「真实形状」；② 绑定增加**归属核对**（fact.entityId == source.entityId，否则 `ownership-mismatch`）与逐字段内容验证；夹具明确支持类型集（task_achieved、time），**未支持类型显式拒绝**（`unsupported-fact-kind`）；③ 根点校验区分**缺字段与显式 null**——GetStateData 各键必须存在（根点取显式 null/null/{}），键缺失或必填字段为 null 均记读取不完整（`missing-<field>`）；④ token 计数直接作用于**共享渲染器 `n4_render.render_input` 的实际输出**（确定性程序，无模型——完整提示头、事实行、尾部），仅分词为桩；不再使用自造渲染文本。
 
 ## 0. 背景与已确认事实
 
@@ -34,8 +34,8 @@
 
 N3→N4 链的输入只能来自**按目标 pointId 读取的已提交记录**（对齐 [README 权威锚点](README.md)与 R1 冻结读取契约）：`state`、`pointId`、`version`、`stateDigest`、`previousPointId`、`timeAdvance`、**原始 `entityDeltas`**；前状态按 `previousPointId` 显式读取并核对同世界、版本连续（before.version＋1＝version）与血缘；根点用空 Δ、null 前驱、version 0。
 
-- **根点/非根点分别校验**：根点（version=0）要求 previousPointId 为 null、**timeAdvance 为 null**、Δ 为空、无 before 记录；非根点要求 before 记录存在且**同世界、version 连续（before.version＋1＝version）、前驱身份一致（before.pointId == point.previousPointId）**、timeAdvance 存在。
-- **来源解析与内容核对**：正式 `entityDeltas` 是**按实体组织的映射**；每条事实的来源指针指向映射条目（task_achieved → 实体的任务列表下标，time → timeAdvance），绑定校验核对**事实内容与 delta 字段一致**（goal 逐字等于任务项、time 的 amount/unit 等于 timeAdvance），不一致即 `source-content-mismatch`。
+- **根点/非根点分别校验，缺字段≠显式 null**：GetStateData v2 各键**必须存在**（契约要求 no-default）；根点（version=0）取**显式** null/null/{}，非根点 timeAdvance 为 `{boundary, duration{amount,unit}}`。键缺失或必填字段为 null 均记 `missing-<field>`（读取不完整），不与根点的合法 null 混淆。非根点要求 before 记录存在且**同世界、version 连续、前驱身份一致（before.pointId == point.previousPointId）**。
+- **来源解析与内容核对（实际契约）**：`entityDeltas` 是按实体组织的 `EntityDelta` 映射（contracts.py）；task_achieved 的来源是 `tasksAchieved` 中的**任务 ID**，任务正文从权威任务注册表解析（id→goal/ownerId/status），核对归属（fact.entityId == source.entityId，否则 `ownership-mismatch`）、任务 ID 在册、注册表 goal/owner/status 与事实一致；time 的来源是 `TimeAdvance.duration`，核对 amount/unit。**未支持的事实类型显式拒绝**（`unsupported-fact-kind`），不静默接受。不一致即 `source-content-mismatch`。
 - **停止条件**（产出 `binding-failed`，拒绝进入接口检查）：缺 state/digest/version、前驱缺失（非根点）、版本不连续、世界不匹配、事实来源指针解析失败或指向不存在的 delta。
 - **不从结果文本补造**：已提交叙事文本、preview 工作态、当前 head 均不得用于重建事实；绑定失败就是失败，不做任何差分补造。
 
@@ -67,7 +67,7 @@ N3→N4 链的输入只能来自**按目标 pointId 读取的已提交记录**�
 | FSC1 | task goal 与实体任务列表不符 | binding-failed:source-content-mismatch |
 | FTT1 | time amount 与 timeAdvance 不符 | binding-failed:source-content-mismatch |
 
-**渲染替身与桩分词**：token 计数对象是 `render_text`——共享 `render_input` 消费面的**确定性替身**（扁平事实表→固定格式提示行）；6 字符分块桩分词。两者均**不是**真实共享渲染器或真实 sentencepiece 的验收；真实分词与渲染归 N4 浏览器批。
+**渲染与分词**：token 计数直接作用于**共享渲染器 `n4_render.render_input` 的实际输出**（确定性程序、无模型依赖——完整提示头、逐事实行、尾部一并计入）；仅 6 字符分块分词为桩，**不是**真实 sentencepiece 的验收；真实分词归 N4 浏览器批。
 
 ## 4. 未来候选（只登记追踪，不实现）
 
