@@ -278,7 +278,6 @@ try {
       if (response.world) {
         H.worldId = response.world.worldId;
         H.head = response.world.head;
-        H.capturedRound = response.world.round ?? null;
         if (response.world.lease) H.lease = { ...H.lease, ...response.world.lease };
       }
       const data = response.data;
@@ -473,7 +472,9 @@ try {
       const example = stage ? `{"stage":"${stage}","changes":{"<角色id>":{${exampleField[stage]}}}}`
         : `[{"stage":"tasks","changes":{"<角色id>":{"tasksAchieved":["<状态中已有任务id>"]}}}]`;
       const shape = stage ? `只输出一个 JSON 对象（不要数组）：${example}`
-        : `只输出 JSON 数组，按 position→appearance→tasks→subtasks→personality→sanity 顺序；只写实际发生变化的阶段：${example}`;
+        : `只输出 JSON 数组。数组每项的 stage 必须严格按 position → appearance → tasks → subtasks → personality → sanity 的先后排列——` +
+          `appearance 必须写在 tasks 之前，personality 必须写在 sanity 之前，任何回退都会被拒收；` +
+          `只写实际发生变化的阶段（没有变化的阶段整段省略，不要输出空 changes 占位项）：${example}`;
       return `字段契约：\n` +
         `- positionSet：{"containerId":"<地点id>","slotId":null,"relativeTo":null}\n` +
         `- appearanceChanges：数组，元素 {"id":"draft_1","text":"<外貌变化>","supersedes":[]}\n` +
@@ -746,42 +747,15 @@ ${view}
     };
 
     // 带记录的 tracked transport（场景用；commit 后不做 fold——B3 记录失败即交付）
-    // 复核轮 20（①a）：continue 结论确认后，新 round 的 group/point 身份由
-    // 程序负责——harness 立即按新 roundId 预分配并清掉旧的 group:* 槽位，
-    // discover_group 永不携带上一轮已 consumed 的 group id
-    // （v4 action 场景的 `allocated group identity has already been used`
-    // 即此因；模型无责）。这同时是 ①b 产品路径的对照实现。
     H.transport = { async execute(operation, request, scope, signal) {
       const started = performance.now();
       const response = await H.http.execute(operation, request, scope, signal);
       H.opLog.push({ op: operation, ms: Math.round(performance.now() - started) });
       H.captureEnvelope(response);
       if (operation === 'get_state') H.reads.set(response.data.pointId, structuredClone(response.data));
-      if (operation === 'round_conclusion_conclude') {
-        const conclusion = request?.conclusion ?? {};
-        if (conclusion.kind === 'continue' && conclusion.nextRoundId && H.worldId) {
-          const roundId = conclusion.nextRoundId;
-          // 新轮名册：conclude 回包携带的 served round（captureEnvelope 已存）；
-          // 缺失时退回模型的候选集合（仍是名册子集——端口已过滤）。
-          const actors = (H.capturedRound?.order?.length ? H.capturedRound.order : null)
-            ?? conclusion.candidateCharacterIds ?? [];
-          const slots = actors.map((actor) => ({ slotKey: `group:${actor}`, kind: 'group' }));
-          let allocated = {};
-          if (slots.length && H.lease?.leaseToken) {
-            const allocation = await H.http.execute('allocate_ids', {
-              protocolVersion: 2, requestId: `b3_round_${++H.rawSeq}`, worldId: H.worldId,
-              leaseToken: H.lease.leaseToken, fenceEpoch: H.lease.fenceEpoch,
-              allocationKey: `b3_groups_${roundId}`, slots }, { worldId: H.worldId });
-            H.opLog.push({ op: 'allocate_ids(next-round groups)', ms: Math.round(performance.now() - started) });
-            H.captureEnvelope(allocation);
-            allocated = Object.fromEntries(allocation.data.allocations.map((entry) => [entry.slotKey, entry.id]));
-          }
-          // 程序职责（①a）：新轮身份即刻生效；旧的 group:* 槽位绝不跨轮
-          // 复用——v4 的 action 场景正是复用了 round_27 已 consumed 的
-          // group_29。场景通过 driverBindRoundGroups 把新 id 写进驱动内存。
-          if (H.driverBindRoundGroups) H.driverBindRoundGroups(roundId, allocated);
-        }
-      }
+      // 复核轮 20（①b）：continue 后的新轮身份分配移入 ControllerDriver 的
+      // RoundIdentitySink——harness 不再代劳（v4 的 `allocated group identity
+      // has already been used` 由产品路径修复，页面的产品路径也同时有了实现）。
       return response;
     } };
     return { narrationModel: H.narrationModel };
@@ -1057,17 +1031,22 @@ ${view}
       if (!H.lease?.leaseToken) throw new Error('action scene requires the bootstrap lease');
       const memory = initialMemory(`${namespace}_driver`, 'b3_action_holder');
       memory.budget.max = 40; // 场景预算：只防无界继续推进，不替模型做语义判断
+      const memoryRef = { current: memory }; // sink 的身份补丁基线（recover 由驱动自行折叠）
       const driver = new ControllerDriver({ transport: H.transport, model: H.b3Port }, memory);
-      // ①a：continue 后的新轮 group 身份由程序分配（tracked transport 回调）
-      H.driverBindRoundGroups = (roundId, allocated) => {
-        for (const [slotKey, id] of Object.entries(allocated)) memory.ids[slotKey] = id;
-        memory.roundAllocations[roundId] = { allocationKey: `b3_groups_${roundId}`,
-          slots: Object.keys(allocated).map((slotKey) => ({ slotKey, kind: 'group' })) };
-        memory.allocatedKeys.push(`b3_groups_${roundId}`);
-      };
       const setupStarted = performance.now();
       const recovered = await driver.recover(H.worldId, { leaseToken: H.lease.leaseToken, fenceEpoch: H.lease.fenceEpoch });
       if (recovered) throw new Error(`action recover: ${JSON.stringify(recovered)}`);
+      // ①a：continue 后的新轮 group 身份由程序分配——走产品 sink（①b）。
+      driver.setRoundIdentitySink(async (roundId, order) => {
+        const slots = order.map((actor) => ({ slotKey: `group:${actor}`, kind: 'group' }));
+        if (!slots.length) return;
+        const allocation = await api('allocate_ids', { ...base(), allocationKey: `b3_groups_${roundId}`, slots });
+        const ids = Object.fromEntries(allocation.allocations.map((entry) => [entry.slotKey, entry.id]));
+        return { ids: { ...memoryRef.current.ids, ...ids },
+          roundAllocations: { ...memoryRef.current.roundAllocations,
+            [roundId]: { allocationKey: `b3_groups_${roundId}`, slots } },
+          allocatedKeys: [...new Set([...memoryRef.current.allocatedKeys, `b3_groups_${roundId}`])] };
+      });
       // 失败即交付：driver 的 stop 状态原样记录，不换脚本候选
       driver.preparePlayerInput('走到走廊', roster, { allocationKey: `${namespace}_cmd1`, slots: [
         { slotKey: 'advance', kind: 'advance' }, { slotKey: 'input', kind: 'input' }, { slotKey: 'round', kind: 'round' },
@@ -1106,6 +1085,7 @@ ${view}
       }
       return { status: completed ? 'COMPLETED' : status, runError, cleanup, cleanupError, setupMs, walkMs,
         recovered, budget: driver.getMemory().budget, playerInput: '走到走廊',
+        roundIdentityError: driver.getMemory().lastRoundIdentityError,
         pointIds, scenePoints, finalState: { pointId: finalRead.pointId, version: finalRead.version, time: finalRead.state.time,
           characters: Object.fromEntries(Object.entries(finalRead.state.characters).map(([id, actor]) => [id, {
             position: actor.position, sanity: actor.sanity,
@@ -1204,15 +1184,21 @@ ${view}
       H.programNextRoundIds = Array.from({ length: 4 }, (_, index) => ids[`round_auto${index + 1}`]);
       const memory = initialMemory(`${namespace}_driver`, 'b3_chain_holder');
       memory.budget.max = 40;
-      H.driverBindRoundGroups = (roundId, allocated) => {
-        for (const [slotKey, id] of Object.entries(allocated)) memory.ids[slotKey] = id;
-        memory.roundAllocations[roundId] = { allocationKey: `b3_groups_${roundId}`,
-          slots: Object.keys(allocated).map((slotKey) => ({ slotKey, kind: 'group' })) };
-        memory.allocatedKeys.push(`b3_groups_${roundId}`);
-      };
+      const memoryRef = { current: memory };
       const driver = new ControllerDriver({ transport: H.transport, model: H.b3Port }, memory);
       const recovered = await driver.recover(H.worldId, { leaseToken: H.lease.leaseToken, fenceEpoch: H.lease.fenceEpoch });
       if (recovered) throw new Error(`chain recover: ${JSON.stringify(recovered)}`);
+      // ①a（链场景同理）：recover 后注册产品 sink。
+      driver.setRoundIdentitySink(async (roundId, order) => {
+        const slots = order.map((actor) => ({ slotKey: `group:${actor}`, kind: 'group' }));
+        if (!slots.length) return;
+        const allocation = await api('allocate_ids', { ...base(), allocationKey: `b3_groups_${roundId}`, slots });
+        const ids = Object.fromEntries(allocation.allocations.map((entry) => [entry.slotKey, entry.id]));
+        return { ids: { ...memoryRef.current.ids, ...ids },
+          roundAllocations: { ...memoryRef.current.roundAllocations,
+            [roundId]: { allocationKey: `b3_groups_${roundId}`, slots } },
+          allocatedKeys: [...new Set([...memoryRef.current.allocatedKeys, `b3_groups_${roundId}`])] };
+      });
       const started = performance.now();
       let status;
       let runError = null;
@@ -1245,6 +1231,7 @@ ${view}
       }
       return { status: completed ? 'COMPLETED' : status, runError, cleanup, cleanupError, setupMs, walkMs, recovered, budget: driver.getMemory().budget,
         playerInput: '推开门厅深处的重门，示意同伴到门边一起撑住。',
+        roundIdentityError: driver.getMemory().lastRoundIdentityError,
         worldIdBefore, worldAttempts, abandonedRounds, pointIds, scenePoints,
         finalState: { pointId: finalRead.pointId, version: finalRead.version, time: finalRead.state.time,
           characters: Object.fromEntries(Object.entries(finalRead.state.characters).map(([id, actor]) => [id, {

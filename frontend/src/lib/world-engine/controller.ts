@@ -21,6 +21,13 @@ import type {
 
 export interface WorldModelPort { generate(task: ModelTask, key: string, input: Json): Promise<Json> }
 export interface ControllerIo { transport: WorldTransport; model: WorldModelPort }
+/** Program-owned per-round identity allocation (review 20, ①b): continue
+ * conclusions must not strand the next round with used point/groups. The sink
+ * allocates via the transport (program authority, §9.3) and returns a memory
+ * patch; the driver folds it into its own memory. */
+export type RoundIdentitySink =
+  (roundId: Id, order: Id[]) => Promise<Partial<ControllerMemory> | void> | Partial<ControllerMemory> | void;
+
 export interface DriverOptions {
   retryLimit?: number;
   /** Scenario identity binding: scheduler key → allocate slotKey (e.g.
@@ -48,6 +55,7 @@ export function initialMemory(prefix: string, holderId: string): ControllerMemor
     plan: null, planIndex: 0, prepareSuccessor: false, localPause: false, budget: { used: 0, max: null },
     narration: null, workingState: null, sources: [], staged: [], restoredUnit: null, stagedTimeScan: null, groupActors: [], groupActions: [], lastModel: null, lastTargets: null, lastResults: null,
     updatesStages: [], updatesCalls: [], updatesApplied: 0, updatesPreviewSkipped: 0, updatesPendingRefs: [],
+    lastRoundIdentityError: null,
     continuation: null, roundChanges: null, successorTime: null, commitPayload: null, initialTemplate: null,
   };
 }
@@ -96,6 +104,32 @@ export class ControllerDriver {
   }
 
   getMemory(): ControllerMemory { return structuredClone(this.memory); }
+  /** Program-owned per-round identity allocation (①b, review 20): when the
+   * server confirms a continue conclusion, the NEW round needs fresh point/
+   * group identities that the controller cannot derive (the advance plan
+   * belongs to the scenario). Program callers register this hook BEFORE
+   * running the driver; the driver invokes it with the confirmed round id and
+   * the served round order — the program allocates via the transport and
+   * writes the ids straight into memory (the driver's one memory, so recovery
+   * replacement is transparent). Returning a decision is not supported: the
+   * allocations happen inside the conclude followup, never as a step. */
+  setRoundIdentitySink(sink: RoundIdentitySink | null): void {
+    this.roundIdentitySink = sink;
+  }
+  private roundIdentitySink: RoundIdentitySink | null = null;
+  /** Internal: the conclude adoption notifies the program sink for continue.
+   * The sink may return a memory patch (new ids, roundAllocations,
+   * allocatedKeys) which the driver folds into ITS OWN memory — the only
+   * memory, so a later recovery replacement stays transparent. */
+  private async notifyRoundIdentity(roundId: Id, order: Id[]): Promise<void> {
+    if (!this.roundIdentitySink) return;
+    try {
+      const patch = await this.roundIdentitySink(roundId, order);
+      if (patch) Object.assign(this.memory, patch);
+    } catch (error) {
+      this.memory.lastRoundIdentityError = error instanceof Error ? error.message : String(error);
+    }
+  }
   getRequestCounter(): number { return this.requestCounter; }
   /** The advance the driver itself started (§6.1): the identity-bound player
    * text model tasks read. A live accessor instead of a captured clone —
@@ -213,6 +247,10 @@ export class ControllerDriver {
         if (outcome.ok) {
           if ((!command || executesCommand) && this.command === command) this.command = null; // a diverted command survives; a newer delivered command always survives
           this.adoptSuccess(decision.operation, decision.request, outcome.response);
+          if (decision.operation === 'round_conclusion_conclude' && this.state.world?.round?.trigger === 'automatic') {
+            await this.notifyRoundIdentity(this.state.world.activeRoundId ?? this.state.world.round.roundId,
+              this.state.world.round.order);
+          }
           this.memory.lastModel = null;
           this.nextRequestId();
           return undefined;
@@ -830,6 +868,9 @@ export class ControllerDriver {
         if (kind === 'continue') {
           this.memory.plan = null;
           this.memory.planIndex = 0;
+          // ①b 分配走 execute() 的统一挂点（见 transport 分支）：conclude
+          // 成功且服务端已切到 automatic round 后触发 sink；失败记录在
+          // lastRoundIdentityError，后续 step 按产品拒绝走。
         } else if (kind === 'handback') {
           this.clearRoundWork();
         }
