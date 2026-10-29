@@ -69,8 +69,10 @@ C 审查者复审发现五项 P2（未签认 D2 准备完成或 prompt 冻结）
 
 修复后复跑：三工具自检全过；冻结记录重生成（**冻结标签字节不变**，sha256 `cb86aa46…` 与 f27af30 一致，κ=1.0000 不变；记录新增 inputVerification 四行＋双身份绑定）；gold CLI 端到端自检 PASS；隔离复扫 ZERO_HIT、缺失 0。本轮未运行模型推理。
 
-## 9. prompt v2 签认与剩余门（2026-10-29）
+## 9. prompt v2 签认与冻结记录（2026-10-29）
 
 - C 审查者对 `9a2af88` 复审：四项关闭，v2 prompt 文本审查通过，并签认 **prompt v2 完整文件字节** sha256 `a7697894d54f0afbf07ccd79b2e1a8db40a0e07f4a0156b221812ac088199bea`（实现者已复核该哈希与当前工作树及提交字节一致）。
 - 复审同时指出 P2-3 残余（冻结入口校验登记路径但消费 `--items` 未绑定）→ 轮 25 已关闭（见 §8 P2-3 行补记），一致度工具哈希更新登记于修订记录。
-- **剩余门（模型运行前全部须完成）**：① 老板对 prompt v2 签认；② 正式冻结记录（prompt 哈希＋判据引用）落 artifacts；③ N3 模型臂运行（16 项与 8 项分开报告，跑输归档失败）。
+- **项目负责人签认 prompt v2 同一哈希**，条件：解码配置写入正式冻结记录并报批；通过线按预登记执行、不调参。
+- 正式冻结记录已落 [`artifacts/world-components/d2-n3-prompt-freeze.json`](../../../artifacts/world-components/d2-n3-prompt-freeze.json)：prompt 三重核验（工作树＝blob＝签认值）、双签认登记、判据线与 gold/工具引用、**解码配置（贪心 temperature=0/top_p=1、seed 20261029、max_new_tokens 512、上下文 4096、无量化离线 transformers、每条目至多重试 1 次）——状态钉为 DECODING-CONFIG-PENDING-OWNER-APPROVAL**。
+- **剩余门**：① 老板报批解码配置；② 状态翻为可执行后才运行 N3 模型臂（16 项与 8 项分开报告，跑输归档失败）。本轮未运行任何模型推理。

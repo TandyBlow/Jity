@@ -1,0 +1,76 @@
+{
+ "purpose": "D2 N3 model-arm formal prompt freeze. Prompt bytes signed by both C reviewer and project owner; decoding config recorded here awaits owner approval BEFORE any inference.",
+ "decision": "D2",
+ "registeredAt": "2026-10-29",
+ "status": "PROMPT-FROZEN / DECODING-CONFIG-PENDING-OWNER-APPROVAL",
+ "prompt": {
+  "file": "experiments/world-components/n2_selection/d2-n3-prompt-draft.md",
+  "version": "v2",
+  "sha256": "a7697894d54f0afbf07ccd79b2e1a8db40a0e07f4a0156b221812ac088199bea",
+  "verifiedAgainst": {
+   "workingTree": "a7697894d54f0afbf07ccd79b2e1a8db40a0e07f4a0156b221812ac088199bea",
+   "gitBlobHead": "a7697894d54f0afbf07ccd79b2e1a8db40a0e07f4a0156b221812ac088199bea"
+  },
+  "frozenScope": "模板、固定重试后缀、输入装配规则、预登记口径（修订记录节以下全部正文）",
+  "reviewerSignOff": {
+   "who": "C reviewer",
+   "round": 25,
+   "sha256": "a7697894d54f0afbf07ccd79b2e1a8db40a0e07f4a0156b221812ac088199bea",
+   "commit": "9a2af88",
+   "recordedAt": "2026-10-29"
+  },
+  "ownerSignOff": {
+   "who": "project owner",
+   "sha256": "a7697894d54f0afbf07ccd79b2e1a8db40a0e07f4a0156b221812ac088199bea",
+   "recordedAt": "2026-10-29",
+   "conditions": [
+    "解码配置写入本记录并报批后才可开跑",
+    "通过线按预登记执行，不调参"
+   ]
+  }
+ },
+ "decodingConfig": {
+  "approval": "PENDING-OWNER-APPROVAL",
+  "sampling": "greedy（do_sample=false，temperature=0，top_p=1.0，top_k=0）",
+  "seed": 20261029,
+  "maxNewTokens": 512,
+  "contextWindow": 4096,
+  "quantization": "无量化：离线 transformers 原始权重，cuda 用 bfloat16、cpu 用 float32",
+  "runtime": "离线 Python transformers harness（与 N4 离线谱系一致）；浏览器 wllama Q4_K_M 路径属后续浏览器批，不混报不混计时",
+  "retry": "每条目至多 1 次重试，重试后缀逐字取 prompt 文件；两次失败计该条目失败",
+  "logging": "逐调用归档原始输入/输出、尝试次数、设备、耗时；结构违规视同该次失败进入重试",
+  "rationale": "贪心+固定 seed 消除采样自由度（无可调项即无可调参空间）；max_new_tokens 512 覆盖最宽计划（8 项集 7 事实+指代条目的 JSON）约 3 倍余量；4096 上下文与 C 线既有臂谱系一致"
+ },
+ "passLine": {
+  "reference": "artifacts/world-components/d2-preregistration-revision.json",
+  "h1": "all items",
+  "h2": "all items",
+  "g1F1": 0.8,
+  "g2Accuracy": 0.8,
+  "pronounProduction": 0.5,
+  "g3": 0.75,
+  "g4": "report only",
+  "tuning": "跑输即归档失败，本批不调参、不改 prompt、不重生成 gold"
+ },
+ "evaluation": {
+  "metricTool": {
+   "file": "experiments/world-components/n2_selection/d2_metrics.py",
+   "sha256": "a1fca77baa50e4d21650d2af067c9c7ca85c6f78b88ab9457ac4c84d64cc9a97"
+  },
+  "gold": {
+   "file": "artifacts/world-components/n2-labels-d2-gold.jsonl",
+   "sha256": "cb86aa46c4328cb971721d4ddce38bb4b0429fdc245e5405f193e0a6a99e9c63"
+  },
+  "inputSets": {
+   "capability8": "facts 即已选集（输入序）",
+   "v2set16": "冻结 target 成员按 facts 输入序过滤（与 selected_of 一致）",
+   "denominators": "16 项与 8 项分开报告，不合并分母"
+  },
+  "blindAB": "只作佐证记录，不进判据"
+ },
+ "limits": [
+  "本冻结不含浏览器运行时验证",
+  "编码器 pairwise 头不消费本 prompt，另行登记",
+  "冻结后任何字段改动需重新报批"
+ ]
+}
