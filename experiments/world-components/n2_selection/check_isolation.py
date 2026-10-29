@@ -19,11 +19,16 @@
 # listed scope and rules"; renaming/derivation beyond substring matching is
 # not provable.
 #
-# Usage: python experiments/world-components/n2_selection/check_isolation.py
-# Output: prints verdict; exit 1 on any hit or missing source
+# Usage: python experiments/world-components/n2_selection/check_isolation.py [--archive]
+# Output: prints verdict; exit 1 on any hit or missing source.
+#         With --archive also writes artifacts/world-components/n2-isolation-r2.json
+#         (pool size, source groups, commit, timestamp) so reports can cite a
+#         frozen number instead of a moving console output.
 
+import datetime
 import json
 import pathlib
+import subprocess
 import sys
 import tempfile
 
@@ -145,6 +150,7 @@ def selftest() -> list:
 
 
 def main() -> None:
+    archive = "--archive" in sys.argv
     void = selftest()
     if void:
         print("REPORT VOID — isolation self-test failed:")
@@ -173,6 +179,34 @@ def main() -> None:
           f"— zero-hit within the listed scope and rules means no verbatim reuse")
     print("known limits: substring only; renaming/derivation not provable; "
           "B's runtime TS code is not scanned")
+
+    if archive:
+        try:
+            commit = subprocess.check_output(["git", "rev-parse", "HEAD"],
+                                             cwd=REPO, text=True).strip()
+        except Exception:
+            commit = "unknown"
+        out = {
+            "purpose": "N2 dev-set isolation check v2 (short strings, missing sources, self-test)",
+            "generatedAt": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"),
+            "generatedFromCommit": commit,
+            "selftest": "PASS: planted 3-char TS string and 2-char JSON string both caught",
+            "poolStrings": len(pool),
+            "sourceGroups": len(manifest),
+            "n2VocabularyStrings": len(n2),
+            "n2VocabularyShortStrings": sum(1 for s in n2 if len(s) < 4),
+            "sources": manifest,
+            "missingSources": missing,
+            "hits": {s: {"items": ids, "matched": found} for s, (ids, found) in hits.items()},
+            "verdict": ("pass" if not hits and not missing else "fail"),
+            "knownLimits": ["substring only", "renaming/derivation not provable",
+                            "B's runtime TS code is not scanned"],
+        }
+        path = REPO / "artifacts" / "world-components" / "n2-isolation-r2.json"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(out, ensure_ascii=False, indent=2), encoding="utf-8")
+        print(f"archive -> {path}")
+
     sys.exit(1 if (hits or missing) else 0)
 
 

@@ -21,9 +21,16 @@
 #
 # Hard invariance (runner asserts; violation voids the archive):
 #   I1 union(sentence.factIds) == selected fact ids (nothing lost/added)
-#   I2 every coreference.refersTo is the entityId of a fact inside that group
-#      and every mention equals the looked-up name (no invented referents)
+#   I2 every coreference.refersTo is the entityId of a fact inside THAT
+#      sentence group and every mention equals the looked-up name (no
+#      invented referents, no cross-group anchoring)
 #   I3 B1 emits exactly the canonical priority order (0 drift by definition)
+#
+# The runner's --tamper probe mutates a valid plan on purpose (cross-group
+# entity / global factId / unknown entity / wrong mention / dropped fact /
+# duplicated fact / fabricated factId) and asserts check_invariants catches
+# every applicable case. That probe is the evidence that I1/I2 are not
+# vacuously true.
 
 import json
 import pathlib
@@ -86,19 +93,32 @@ def plan_b2(selected: list, names: dict) -> dict:
 
 
 def check_invariants(plan: dict, selected: list, names: dict) -> list:
-    """-> list of problem strings; empty means both hard invariants hold."""
+    """-> list of problem strings; empty means all hard invariants hold.
+
+    I2 is anchored to the sentence group itself: a referent is legal only if
+    it is the entityId of a fact INSIDE that group. The previous version
+    also accepted any id present in the whole plan's factId set (a global
+    `sentence_ids` set), which let a cross-group tamper pass whenever the
+    forged referent happened to equal a factId from another group. The
+    --tamper probe in run_n3_baselines.py pins this.
+    """
     problems = []
     fact_ids = [f["factId"] for f in selected]
     ids_in_plan = [fid for s in plan["sentences"] for fid in s["factIds"]]
     if sorted(ids_in_plan) != sorted(fact_ids):
         problems.append(f"{plan['baseline']}: plan ids != selected ids")
     by_id = {f["factId"]: f for f in selected}
-    entity_by_id = {f["factId"]: f.get("entityId") for f in selected}
-    sentence_ids = {fid for s in plan["sentences"] for fid in s["factIds"]}
     for s in plan["sentences"]:
+        group_entities = set()
+        for fid in s["factIds"]:
+            fact = by_id.get(fid)
+            if fact is None:
+                problems.append(f"{plan['baseline']}: unknown factId {fid} in sentence group")
+                continue
+            if fact.get("entityId"):
+                group_entities.add(fact["entityId"])
         for ref in s["coreference"]:
-            if ref["refersTo"] not in sentence_ids and ref["refersTo"] not in {
-                entity_by_id.get(fid) for fid in s["factIds"]}:
+            if ref["refersTo"] not in group_entities:
                 problems.append(f"{plan['baseline']}: refersTo {ref['refersTo']} not anchored in its sentence group")
             expected = names.get(ref["refersTo"])
             if expected is not None and ref["mention"] != expected:

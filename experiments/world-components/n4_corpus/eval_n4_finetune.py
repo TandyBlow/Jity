@@ -91,6 +91,23 @@ sys.path.insert(0, str(HERE))
 from n4_render import render_input, corpus_hashes  # noqa: E402
 import corpus_check  # noqa: E402
 
+# Determinism (joint decision D3): the eval does not rely on cuDNN
+# autotuning. Record the runtime versions in every archive so a B-side
+# re-run can be compared; bitwise equality is NOT required for acceptance
+# (a holdout re-run is the fallback, see n4-integration-package.md §3).
+torch.backends.cudnn.deterministic = True
+torch.backends.cudnn.benchmark = False
+torch.manual_seed(0)
+DETERMINISM = {
+    "cudnnDeterministic": bool(torch.backends.cudnn.deterministic),
+    "cudnnBenchmark": bool(torch.backends.cudnn.benchmark),
+    "torchManualSeed": 0,
+    "cudnnVersion": torch.backends.cudnn.version(),
+    "cudaVersion": torch.version.cuda,
+    "deviceCapability": (list(torch.cuda.get_device_capability(0))
+                         if torch.cuda.is_available() else None),
+}
+
 REPO = HERE.parent.parent.parent
 BASE_MODEL = HERE.parent / "assets" / "randeng-t5-77m"
 FINETUNED = HERE.parent / "assets" / "n4-finetune" / RUN_TAG
@@ -383,6 +400,7 @@ def write_verify_only(freeze: dict, units: list) -> None:
             "tokenizer": {"legacy": DECODE["tokenizerLegacy"],
                           "note": "reported from DECODE, the same dict the "
                                   "tokenizer and generate() read"},
+            "determinism": DETERMINISM,
             "tamperSelftest": "13/13 caught",
         },
         "holdout": {"file": HOLDOUT, "sha256": sha_file(pathlib.Path(HOLDOUT)),
@@ -441,7 +459,8 @@ def main() -> None:
         "environment": {"python": sys.version.split()[0], "torch": torch.__version__,
                         "transformers": transformers.__version__,
                         "device": "cuda",
-                        "deviceName": torch.cuda.get_device_name(0)},
+                        "deviceName": torch.cuda.get_device_name(0),
+                        "determinism": DETERMINISM},
         "decode": dict(DECODE),
         "tokenizer": {"legacy": DECODE["tokenizerLegacy"],
                       "note": "same pin as training and the zero-shot baseline"},

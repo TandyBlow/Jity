@@ -25,6 +25,8 @@ render_input(plan: list) -> str
 sha256 = 65bfe89adfbb75d5637d3661cab383aa9bc678dffb97ab5eb8a0d28ac1e3f2ef
 ```
 
+**输入只消费事实条目，不消费 coreference 和句组边界**：`render_input` 接收一个扁平事实列表；N3 的 `coreference` 目前没有下游消费者，跨组连贯性未测。N3 的 factIds 已被本渲染器逐一消费（见 `n3-factids-smoke-r1.json`），但这只证明输入格式可接，不证明指代或跨句质量。
+
 ```python
 def render_entry(e):
     moved                -> f"位置：{name} 从{from}到{to}"
@@ -91,7 +93,7 @@ def render_entry(e):
 | --- | --- |
 | 1. 基座 | `IDEA-CCNL/Randeng-T5-77M-MultiTask-Chinese`（经 hf-mirror），全参 77,440,384 |
 | 2a. 直接取检查点 | 由协调人/CI 提供 `n4-finetune/r3-direction/` 目录副本；按下表核对 7 个文件 |
-| 2b. 自行重建 | `python experiments/world-components/n4_corpus/train_n4_sentence.py --tier large --run-tag <新标签>`（**不要用 `r3-direction`**：该脚本的 r1 护栏只防旧语料，同 tag 重跑会覆盖冻结检查点）；360 步、batch 8、lr 1e-4、seed 20261029、cuda、fp32；语料哈希见 §4，重建后与新标签目录逐文件比对 §3 哈希 |
+| 2b. 自行重建 | `python experiments/world-components/n4_corpus/train_n4_sentence.py --tier large --run-tag <新标签>`（**不要用 `r3-direction`**：该脚本的 r1 护栏只防旧语料，同 tag 重跑会覆盖冻结检查点）；360 步、batch 8、lr 1e-4、seed 20261029、cuda、fp32；语料哈希见 §4，重建后与新标签目录逐文件比对 §3 哈希。**重建口径（D3）**：可复现则比哈希；不保证 bitwise 时，以重跑冻结留出集为验收，不卡 bitwise。 |
 
 检查点（`r3-direction`）sha256 前 16 位：
 
@@ -114,12 +116,13 @@ def render_entry(e):
 | 分词器 | `T5Tokenizer(legacy=False)`，`spiece.model` 由检查点自带 | 训练、评测、推理同一设置；`legacy` 改动会使冻结校验失败 |
 | 最大输入 | 128 token | 超出即视为**不支持**（见 §6），不要静默截断 |
 | 解码 | greedy（`do_sample=false`）、`max_new_tokens=64`、`num_beams=1` | 冻结在 `freeze-r3-direction.json` 的 `decode` 字段 |
+| 确定性 | `torch.backends.cudnn.deterministic=True`、`benchmark=False`、`torch.manual_seed(0)`；记录 torch/cuda/cudnn/GPU/驱动 | 评测与冒烟脚本已加；冻结 holdout 归档生成于加 flag 前，B 侧复跑按 §8 的 `offline Python` 标签验收 |
 | 语料/渲染器/判据哈希 | `corpus.seeds.jsonl f14e451a…`、`rewrites.jsonl 2811d731…`、渲染器 `65bfe89a…`、判据 `e16bd2c9…` | 判据 = `corpus_check.py`（Python，离线） |
 
 ## 5. 支持范围（可接线的部分）
 
 - **支持**：§1 的八种事实种类、六类短计划组合、1–2 句输出、**1–4 条事实**的计划（语料实际覆盖范围，未测试更长计划）。
-- **不在范围**：对话生成、人物外貌/物品描述、跨场景长叙事、多轮上下文、事实选择与省略（N2 未通过验收）、排序与指代（N3 未验证）、浏览器内运行（未验证）。
+- **不在范围**：对话生成、人物外貌/物品描述、跨场景长叙事、多轮上下文、事实选择与省略（N2 未通过验收）、排序与指代（N3 模型臂未验证，coreference 未被本包消费）、浏览器内运行（未验证）。
 - **不承诺**：风格多样性（通过项普遍偏模板）、超过 4 条事实的计划、跨句衔接。
 
 ## 6. 异常与降级约定
@@ -147,4 +150,5 @@ def render_entry(e):
 | --- | --- | --- |
 | 离线（六类短计划） | **通过**（协调人签字，复核轮 17） | `artifacts/world-components/n4-holdout-eval-r3-direction.json`（44/44 + 1/1） |
 | 浏览器（T5 端到端） | **未验证** | 无 |
+| 离线包（B 可取回） | **已交，标签 `offline Python`** | `artifacts/world-components/n4-offline-package-r3-direction.json`（检查点/基座/语料/判据哈希、环境与确定性 flag、复跑口径） |
 | 接入后整链 | **未验证** | 待 B 接线 |

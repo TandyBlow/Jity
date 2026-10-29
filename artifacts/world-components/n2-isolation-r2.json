@@ -1,0 +1,29 @@
+{
+  "purpose": "N2 dev-set isolation check v2 (short strings, missing sources, self-test)",
+  "generatedAt": "2026-10-29T08:57:33+00:00",
+  "generatedFromCommit": "f34e992fa48f2fa078ac28b563fdbc09d87314d4",
+  "selftest": "PASS: planted 3-char TS string and 2-char JSON string both caught",
+  "poolStrings": 4041,
+  "sourceGroups": 9,
+  "n2VocabularyStrings": 39,
+  "n2VocabularyShortStrings": 9,
+  "sources": [
+    "nv-*: frontend/src/lib/world-engine/runtime/narration-eval-samples.ts strings=53 raw=71 sha256[:16]=72b568f0476f6acf",
+    "hv-*: frontend/src/lib/world-engine/runtime/narration-eval-validation.ts strings=35 raw=44 sha256[:16]=7186a893ca2c5a7d",
+    "ns-*: frontend/src/lib/world-engine/runtime/narration-split-samples.ts strings=49 raw=74 sha256[:16]=4e8dccebc3b019cb",
+    "b3-*: frontend/src/lib/world-engine/runtime/b3-samples.ts strings=11 raw=12 sha256[:16]=78384c56d2a22908",
+    "archived run: artifacts/narration-eval-recheck/run.json strings=161",
+    "split baseline: artifacts/narration-split-baseline.json strings=76",
+    "http review: artifacts/narration-http-review.json strings=23",
+    "page archive: artifacts/world-page/*.json files=1",
+    "chain archive: artifacts/world-chain/*.json files=19"
+  ],
+  "missingSources": 0,
+  "hits": {},
+  "verdict": "pass",
+  "knownLimits": [
+    "substring only",
+    "renaming/derivation not provable",
+    "B's runtime TS code is not scanned"
+  ]
+}

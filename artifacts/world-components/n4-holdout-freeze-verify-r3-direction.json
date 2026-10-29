@@ -28,6 +28,17 @@
       "legacy": false,
       "note": "reported from DECODE, the same dict the tokenizer and generate() read"
     },
+    "determinism": {
+      "cudnnDeterministic": true,
+      "cudnnBenchmark": false,
+      "torchManualSeed": 0,
+      "cudnnVersion": 90701,
+      "cudaVersion": "12.6",
+      "deviceCapability": [
+        8,
+        9
+      ]
+    },
     "tamperSelftest": "13/13 caught"
   },
   "holdout": {

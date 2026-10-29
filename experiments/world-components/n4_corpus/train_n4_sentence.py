@@ -60,6 +60,19 @@ sys.path.insert(0, str(HERE))
 from n4_render import render_input, corpus_hashes  # noqa: E402
 import corpus_check  # noqa: E402
 
+# Determinism (joint decision D3). The frozen r3-direction checkpoint was
+# trained before these flags were added, so a rebuild is not promised to be
+# bitwise identical; acceptance is a holdout re-run (see
+# n4-integration-package.md §3). Flags are recorded for future rebuilds.
+torch.backends.cudnn.deterministic = True
+torch.backends.cudnn.benchmark = False
+DETERMINISM = {
+    "cudnnDeterministic": bool(torch.backends.cudnn.deterministic),
+    "cudnnBenchmark": bool(torch.backends.cudnn.benchmark),
+    "cudnnVersion": torch.backends.cudnn.version(),
+    "cudaVersion": torch.version.cuda,
+}
+
 REPO = HERE.parent.parent.parent
 SEEDS = HERE / "corpus.seeds.jsonl"
 REWRITES = HERE / "rewrites.jsonl"
@@ -207,7 +220,8 @@ def main() -> None:
                       "note": "same pin as zero-shot baseline v3 and eval script"},
         "environment": {"python": sys.version.split()[0], "torch": torch.__version__,
                         "transformers": transformers.__version__,
-                        "device": torch.cuda.get_device_name(0)},
+                        "device": torch.cuda.get_device_name(0),
+                        "determinism": DETERMINISM},
         "isolation": {"check": "corpus_check.split_isolation_problems(120 train groups, 30 dev groups) "
                                f"+ tier filter {TIER} ({TIER_GROUPS[TIER]} groups)",
                       "result": "pass"},

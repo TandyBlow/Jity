@@ -64,15 +64,15 @@
 | C7 N4 成句 | 短文本生成 | Qwen3-0.6B（现役） | **Randeng-T5-77M 微调臂**：先离线验证质量（含模板种子微调语料），质量过了再走 wllama GGUF 端到端实测；浏览器化是质量门之后的事 | 首批聚焦叙事 |
 | C7 N5 核对 | 程序核对＋语义复核 | 程序为主＋人工复核 | 编码器 NLI/一致性头仅作候选，不自动放行 | V08 |
 
-### 3.1 任务进度（复核轮 18）
+### 3.1 任务进度（复核轮 21 修复）
 
 阶段口径：**仅方案 → 已训练 → 离线验证 → 浏览器验证 → 已接线**。逐组件明细见[接口表 §8](component-contracts.md)。
 
 | 任务 | 首选候选（当前依据） | 备选 | 阶段 | 本轮新增证据 |
 | --- | --- | --- | --- | --- |
-| N4 成句 | Randeng-T5-77M 全参微调 `r3-direction`（方向由程序给出） | Qwen3-0.6B（现役基线，未微调） | **离线验证通过**（六类短计划 44/44） | `n4-holdout-eval-r3-direction.json` |
-| N2 内容选择 | MiniRBT 编码器打分头（事实×视角）——**尚未训练** | 0.6B instruct 生成编号（两轮均 4/16） | **两轮离线对照完成，无模型通过** | `n2-selection-r2.json` |
-| N3 组织表达 | 程序基线 B1/B2 先行 | 0.6B instruct | 仅方案 | 承接安排见[N2 报告](n2-content-selection.md) §6 |
+| N4 成句 | Randeng-T5-77M 全参微调 `r3-direction`（方向由程序给出） | Qwen3-0.6B（现役基线，未微调） | **离线验证通过**（六类短计划 44/44）；浏览器与接线未验证 | `n4-holdout-eval-r3-direction.json`、`n4-offline-package-r3-direction.json`（D3 离线包） |
+| N2 内容选择 | MiniRBT 编码器打分头（事实×视角）——**尚未训练** | 0.6B instruct 生成编号（两轮均 4/16） | **两轮离线对照完成，无模型通过；D1 must 口径已重算** | `n2-selection-r2.json`、`n2-must-r1.json` |
+| N3 组织表达 | 程序基线 B1/B2 先行（窄形状） | 0.6B instruct | **基线已实现＋I2 探针通过；模型臂未跑** | `n3-baselines-r1.json`、`n3-factids-smoke-r1.json`；承接见[N2 报告](n2-content-selection.md) §6 |
 | N5 核对 | 程序识别器（Python，v5） | 编码器一致性头（不自动放行） | 离线可用 | `corpus_check.py`、13 例篡改自检 |
 | C2/C3/C4/C5/C6/C1 | 生成骨干单调用（Qwen3-0.6B）为起点 | 编码器头拆分 | 仅方案 | — |
 
@@ -83,7 +83,10 @@
 | F14 | Randeng-T5-77M 基座在 N2 "编号选择" 形状上零样本无效：两种提示形态（指令在后 / 答案槽前置）均 0/16，输出复述事实行或无关短句 | [实测] | `artifacts/world-components/n2-selection-r1.json` M1a/M1b |
 | F15 | Qwen3-0.6B 零样本在**补齐视角信息后**仍不守视角：16 项中 9 次选到视角不可知事实，must 覆盖 0.875，pass 4/16；单次约 24s（CPU 4 线程，真实 Edge＋wllama）。v1 的 11 次/14.37s 属设计缺陷批次，作废 | [实测] | `n2-selection-r2.json` M2 |
 | F16 | 视角可见性可由程序严格判定：P1-rule 只读视角字段＋事实位置即 16/16、F1 0.818，且对"只改标签"免疫（0 项移动）、对"改视角"敏感（12 项移动）；读标签的参照臂在标签探针下移动 12 项 | [实测] | `n2-selection-r2.json` selfTest 与 P1 臂 |
-| F17 | N2 开发集（v2）与 B 归档零字面重合：15 个来源 3890 条串（**含 <4 字短串**），双向子串 0 命中、0 缺失源；自检确认植入的 3 字人名与 2 字串都能被抓 | [实测] | `n2_selection/check_isolation.py`（v2） |
+| F17 | N2 开发集（v2）与 B 归档零字面重合：**9 组来源、4023 条串**（**含 <4 字短串**），双向子串 0 命中、0 缺失源；自检确认植入的 3 字人名与 2 字串都能被抓。归档：`n2-isolation-r2.json`（提交 `f34e992`，2026-10-29T08:57Z） | [实测] | `n2_selection/check_isolation.py --archive` |
+| F18 | D1 must 口径重算（只用归档输出，不新增推理）：P1-rule must-R 1.0 / must-P 0.433；Qwen must-R 0.875 / must-P 0.459；Randeng 0/16（空选择/无效内容）；P0 must-P 0.35。**P1-rule 的失败分支未在 v2 触发**（must-P<0.85），v3 标注后才可判定 | [实测] | `n2-must-r1.json` |
+| F19 | N3 I2 旧检查把**整份计划**的 factId 集合当锚定域，跨组/全局 factId 篡改可漏检；改为只查**本句组 entityIds** 后，`--tamper` 七类变异 112/112 适用项全部被捕获，16/16 有效计划零问题 | [实测] | `n3-baselines-r1.json` 的 `tamper` |
+| F20 | factIds 消费冒烟：36/36 B1 句组经共享渲染器喂冻结 `r3-direction`（离线 Python，cudnn deterministic、benchmark=False），本次归档墙钟均值 0.8s（同一检查点重复运行在 0.5–0.8s 间波动）；**仅证明 factIds 可被 N4 消费，coreference 未被 `render_input` 消费，跨组连贯未测** | [实测] | `n3-factids-smoke-r1.json` |
 
 ## 4. 训练方案表
 

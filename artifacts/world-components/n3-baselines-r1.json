@@ -1,25 +1,28 @@
 {
-  "purpose": "N3 structured organisation-plan baselines r1 (B1/B2), determinstic program arms",
+  "purpose": "N3 structured organisation-plan baselines r1 (B1/B2), deterministic program arms",
   "planShape": "sentences[{index, factIds, coreference[{mention, refersTo}]}]; no prose (prose stays in N4)",
+  "selection": {
+    "source": "v2 program target (items.jsonl)",
+    "note": "not an N2 model output",
+    "v3Gate": "pending D1 annotation; if v3 vs v2 must differs by more than 2/16 items, these 16 inputs are rebuilt"
+  },
+  "metricScope": "structural stats only. H1/H2/G1-G4 are MODEL-ARM metrics and are not computed here; the earlier ①–⑤ list is superseded by the joint decisions D1/D2. No coreference antecedent score and no readability score is claimed.",
   "provenance": {
     "items": "c574d44ebc48a254942fff276cffd18d8607281b6e3617299c1cc0e35cc947fa",
-    "frozenRenderer": "65bfe89adfbb75d5637d3661cab383aa9bc678dffb97ab5eb8a0d28ac1e3f2ef",
-    "checkpoint": {
-      "added_tokens.json": "a247922ac010bc17",
-      "config.json": "a35e9d4382657106",
-      "generation_config.json": "691648bea8d35875",
-      "model.safetensors": "baceebff5d33eacf",
-      "special_tokens_map.json": "65d84a9271d68f12",
-      "spiece.model": "c65feffa65ff0378",
-      "tokenizer_config.json": "553da19a6ed43c57"
-    }
+    "code": {
+      "n3_plan.py": "6918828cb786cb9318c9cd507d71483351c54f556108549bfa9595a01ec5400f",
+      "run_n3_baselines.py": "c67dc94153bd260fa5d46d325ae1ed9de30e3462b60f00c0c67574a119996cd0"
+    },
+    "generatedAt": "2026-10-29T08:57:17+00:00",
+    "generatedFromCommit": "f34e992fa48f2fa078ac28b563fdbc09d87314d4"
   },
   "summary": {
     "items": 16,
     "b1GroupsTotal": 36,
     "b2GroupsTotal": 52,
     "b1FactsPerGroupMean": 1.46,
-    "invariantViolations": 0
+    "invariantViolations": 0,
+    "tamperVerdict": "PASS"
   },
   "items": [
     {
@@ -1971,393 +1974,157 @@
       }
     }
   ],
-  "smoke": {
-    "groups": [
-      {
-        "itemId": "n2-01",
-        "sentenceIndex": 0,
-        "factIds": [
-          "f1",
-          "f2"
-        ],
-        "prompt": "叙事生成任务。\n事实：\n1. 位置：裴行舟 从石阶码头到半窗书舍\n2. 任务达成：裴行舟「把船灯挂上桅杆」\n正文：",
-        "output": "裴行舟从石阶码头来到半窗书舍。",
-        "wallSeconds": 1.79
+  "tamper": {
+    "purpose": "mutation probe for I1/I2: a valid B1 plan is broken on purpose; every applicable mutation must be caught",
+    "cases": {
+      "crossGroupEntity": {
+        "applicable": 16,
+        "detected": 16
       },
+      "globalFactId": {
+        "applicable": 16,
+        "detected": 16
+      },
+      "unknownEntity": {
+        "applicable": 16,
+        "detected": 16
+      },
+      "wrongMention": {
+        "applicable": 16,
+        "detected": 16
+      },
+      "droppedFact": {
+        "applicable": 16,
+        "detected": 16
+      },
+      "duplicatedFact": {
+        "applicable": 16,
+        "detected": 16
+      },
+      "fabricatedFact": {
+        "applicable": 16,
+        "detected": 16
+      }
+    },
+    "controls": {
+      "validPlans": 16,
+      "zeroProblems": 16
+    },
+    "summary": {
+      "applicable": 112,
+      "detected": 112,
+      "misses": 0
+    },
+    "perItem": [
       {
         "itemId": "n2-01",
-        "sentenceIndex": 1,
-        "factIds": [
-          "f3"
-        ],
-        "prompt": "叙事生成任务。\n事实：\n1. 外貌：半窗书舍 檐角的风铃褪了色\n正文：",
-        "output": "半窗书舍的外观变了:檐角的风铃褪了色。",
-        "wallSeconds": 0.56
+        "groups": 2,
+        "crossGroupEntityAvailable": true,
+        "globalFactIdAvailable": true
       },
       {
         "itemId": "n2-02",
-        "sentenceIndex": 0,
-        "factIds": [
-          "f1",
-          "f2"
-        ],
-        "prompt": "叙事生成任务。\n事实：\n1. 位置：沈拾 从旧钟铺到竹影茶棚\n2. 任务达成：沈拾「补好瓦窑的顶棚」\n正文：",
-        "output": "沈拾从旧钟铺来到竹影茶棚时,沈拾已经办妥任务「补好瓦窑的顶棚」。",
-        "wallSeconds": 0.72
-      },
-      {
-        "itemId": "n2-02",
-        "sentenceIndex": 1,
-        "factIds": [
-          "f3"
-        ],
-        "prompt": "叙事生成任务。\n事实：\n1. 外貌：竹影茶棚 门前的石阶塌了一角\n正文：",
-        "output": "竹影茶棚的外观变了:门前的石阶塌了一角。",
-        "wallSeconds": 0.45
+        "groups": 2,
+        "crossGroupEntityAvailable": true,
+        "globalFactIdAvailable": true
       },
       {
         "itemId": "n2-03",
-        "sentenceIndex": 0,
-        "factIds": [
-          "f1",
-          "f2"
-        ],
-        "prompt": "叙事生成任务。\n事实：\n1. 位置：岑半夏 从半窗书舍到西栅桥\n2. 任务达成：岑半夏「把账簿送回半窗书舍」\n正文：",
-        "output": "岑半夏由半窗书舍进入了西栅桥,完成了任务「把账簿送回半窗书舍」。",
-        "wallSeconds": 0.69
-      },
-      {
-        "itemId": "n2-03",
-        "sentenceIndex": 1,
-        "factIds": [
-          "f3"
-        ],
-        "prompt": "叙事生成任务。\n事实：\n1. 外貌：西栅桥 窗纸被风戳了个洞\n正文：",
-        "output": "西栅桥的外观变了:窗纸被风戳了个洞。",
-        "wallSeconds": 0.45
+        "groups": 2,
+        "crossGroupEntityAvailable": true,
+        "globalFactIdAvailable": true
       },
       {
         "itemId": "n2-04",
-        "sentenceIndex": 0,
-        "factIds": [
-          "f1",
-          "f2"
-        ],
-        "prompt": "叙事生成任务。\n事实：\n1. 位置：顾知白 从竹影茶棚到瓦窑\n2. 任务达成：顾知白「收好茶棚的坐垫」\n正文：",
-        "output": "顾知白从竹影茶棚来到瓦窑时,顾知白已经办妥任务「收好茶棚的坐垫」。",
-        "wallSeconds": 0.72
-      },
-      {
-        "itemId": "n2-04",
-        "sentenceIndex": 1,
-        "factIds": [
-          "f3"
-        ],
-        "prompt": "叙事生成任务。\n事实：\n1. 外貌：瓦窑 柜台上的铜锁生了锈\n正文：",
-        "output": "瓦窑的外观变了:柜台上的铜锁生了锈。",
-        "wallSeconds": 0.43
+        "groups": 2,
+        "crossGroupEntityAvailable": true,
+        "globalFactIdAvailable": true
       },
       {
         "itemId": "n2-05",
-        "sentenceIndex": 0,
-        "factIds": [
-          "f1",
-          "f3"
-        ],
-        "prompt": "叙事生成任务。\n事实：\n1. 任务达成：岑半夏「把账簿送回半窗书舍」\n2. 理智：岑半夏 11→13（上升）\n正文：",
-        "output": "岑半夏完成了任务「把账簿送回半窗书舍」,精神值从11升到了13。",
-        "wallSeconds": 0.63
-      },
-      {
-        "itemId": "n2-05",
-        "sentenceIndex": 1,
-        "factIds": [
-          "f2"
-        ],
-        "prompt": "叙事生成任务。\n事实：\n1. 外貌：石阶码头 门前的石阶塌了一角\n正文：",
-        "output": "石阶码头的外观变了:门前的石阶塌了一角。",
-        "wallSeconds": 0.44
+        "groups": 2,
+        "crossGroupEntityAvailable": true,
+        "globalFactIdAvailable": true
       },
       {
         "itemId": "n2-06",
-        "sentenceIndex": 0,
-        "factIds": [
-          "f1",
-          "f3"
-        ],
-        "prompt": "叙事生成任务。\n事实：\n1. 任务达成：顾知白「收好茶棚的坐垫」\n2. 理智：顾知白 11→13（上升）\n正文：",
-        "output": "顾知白完成了任务「收好茶棚的坐垫」,精神值从11升到了13。",
-        "wallSeconds": 0.62
-      },
-      {
-        "itemId": "n2-06",
-        "sentenceIndex": 1,
-        "factIds": [
-          "f2"
-        ],
-        "prompt": "叙事生成任务。\n事实：\n1. 外貌：旧钟铺 窗纸被风戳了个洞\n正文：",
-        "output": "旧钟铺的外观变了:窗纸被风戳了个洞。",
-        "wallSeconds": 0.43
+        "groups": 2,
+        "crossGroupEntityAvailable": true,
+        "globalFactIdAvailable": true
       },
       {
         "itemId": "n2-07",
-        "sentenceIndex": 0,
-        "factIds": [
-          "f1",
-          "f3"
-        ],
-        "prompt": "叙事生成任务。\n事实：\n1. 任务达成：陆停云「修西栅桥的踏板」\n2. 理智：陆停云 11→13（上升）\n正文：",
-        "output": "陆停云完成了任务「修西栅桥的踏板」,精神值从11升到了13。",
-        "wallSeconds": 0.58
-      },
-      {
-        "itemId": "n2-07",
-        "sentenceIndex": 1,
-        "factIds": [
-          "f2"
-        ],
-        "prompt": "叙事生成任务。\n事实：\n1. 外貌：半窗书舍 柜台上的铜锁生了锈\n正文：",
-        "output": "半窗书舍的外观变了:柜台上的铜锁生了锈。",
-        "wallSeconds": 0.47
+        "groups": 2,
+        "crossGroupEntityAvailable": true,
+        "globalFactIdAvailable": true
       },
       {
         "itemId": "n2-08",
-        "sentenceIndex": 0,
-        "factIds": [
-          "f1",
-          "f3"
-        ],
-        "prompt": "叙事生成任务。\n事实：\n1. 任务达成：白蘅「清点旧钟铺的存货」\n2. 理智：白蘅 11→13（上升）\n正文：",
-        "output": "白蘅完成了任务「清点旧钟铺的存货」,精神值从11升到了13。",
-        "wallSeconds": 0.58
-      },
-      {
-        "itemId": "n2-08",
-        "sentenceIndex": 1,
-        "factIds": [
-          "f2"
-        ],
-        "prompt": "叙事生成任务。\n事实：\n1. 外貌：竹影茶棚 墙根的青苔爬上了半尺\n正文：",
-        "output": "竹影茶棚的外观变了:墙根的青苔爬上了半尺。",
-        "wallSeconds": 0.48
+        "groups": 2,
+        "crossGroupEntityAvailable": true,
+        "globalFactIdAvailable": true
       },
       {
         "itemId": "n2-09",
-        "sentenceIndex": 0,
-        "factIds": [
-          "f1",
-          "f3"
-        ],
-        "prompt": "叙事生成任务。\n事实：\n1. 位置：裴行舟 从石阶码头到旧钟铺\n2. 个性：裴行舟变得谨慎\n正文：",
-        "output": "裴行舟从石阶码头来到旧钟铺。",
-        "wallSeconds": 0.36
-      },
-      {
-        "itemId": "n2-09",
-        "sentenceIndex": 1,
-        "factIds": [
-          "f2"
-        ],
-        "prompt": "叙事生成任务。\n事实：\n1. 现状：沈拾 已在旧钟铺\n正文：",
-        "output": "沈拾已经在旧钟铺了。",
-        "wallSeconds": 0.27
+        "groups": 2,
+        "crossGroupEntityAvailable": true,
+        "globalFactIdAvailable": true
       },
       {
         "itemId": "n2-10",
-        "sentenceIndex": 0,
-        "factIds": [
-          "f1",
-          "f3"
-        ],
-        "prompt": "叙事生成任务。\n事实：\n1. 位置：沈拾 从旧钟铺到半窗书舍\n2. 个性：沈拾变得急躁\n正文：",
-        "output": "沈拾从旧钟铺来到半窗书舍。",
-        "wallSeconds": 0.36
-      },
-      {
-        "itemId": "n2-10",
-        "sentenceIndex": 1,
-        "factIds": [
-          "f2"
-        ],
-        "prompt": "叙事生成任务。\n事实：\n1. 现状：岑半夏 已在半窗书舍\n正文：",
-        "output": "岑半夏已在半窗书舍。",
-        "wallSeconds": 0.31
+        "groups": 2,
+        "crossGroupEntityAvailable": true,
+        "globalFactIdAvailable": true
       },
       {
         "itemId": "n2-11",
-        "sentenceIndex": 0,
-        "factIds": [
-          "f1",
-          "f3"
-        ],
-        "prompt": "叙事生成任务。\n事实：\n1. 位置：岑半夏 从半窗书舍到竹影茶棚\n2. 个性：岑半夏变得寡言\n正文：",
-        "output": "岑半夏由半窗书舍进入了竹影茶棚。",
-        "wallSeconds": 0.45
-      },
-      {
-        "itemId": "n2-11",
-        "sentenceIndex": 1,
-        "factIds": [
-          "f2"
-        ],
-        "prompt": "叙事生成任务。\n事实：\n1. 现状：顾知白 已在竹影茶棚\n正文：",
-        "output": "顾知白已在竹影茶棚。",
-        "wallSeconds": 0.3
+        "groups": 2,
+        "crossGroupEntityAvailable": true,
+        "globalFactIdAvailable": true
       },
       {
         "itemId": "n2-12",
-        "sentenceIndex": 0,
-        "factIds": [
-          "f1",
-          "f3"
-        ],
-        "prompt": "叙事生成任务。\n事实：\n1. 位置：顾知白 从竹影茶棚到西栅桥\n2. 个性：顾知白变得爽快\n正文：",
-        "output": "顾知白从竹影茶棚来到西栅桥。",
-        "wallSeconds": 0.36
-      },
-      {
-        "itemId": "n2-12",
-        "sentenceIndex": 1,
-        "factIds": [
-          "f2"
-        ],
-        "prompt": "叙事生成任务。\n事实：\n1. 现状：陆停云 已在西栅桥\n正文：",
-        "output": "陆停云已经在西栅桥了。",
-        "wallSeconds": 0.29
+        "groups": 2,
+        "crossGroupEntityAvailable": true,
+        "globalFactIdAvailable": true
       },
       {
         "itemId": "n2-13",
-        "sentenceIndex": 0,
-        "factIds": [
-          "f1",
-          "f2"
-        ],
-        "prompt": "叙事生成任务。\n事实：\n1. 任务达成：裴行舟「修西栅桥的踏板」\n2. 理智：裴行舟 12→10（下降）\n正文：",
-        "output": "裴行舟完成了任务「修西栅桥的踏板」,精神值从12降到了10。",
-        "wallSeconds": 0.58
-      },
-      {
-        "itemId": "n2-13",
-        "sentenceIndex": 1,
-        "factIds": [
-          "f3"
-        ],
-        "prompt": "叙事生成任务。\n事实：\n1. 任务达成：沈拾「补好瓦窑的顶棚」\n正文：",
-        "output": "沈拾完成了任务「补好瓦窑的顶棚」。",
-        "wallSeconds": 0.37
-      },
-      {
-        "itemId": "n2-13",
-        "sentenceIndex": 2,
-        "factIds": [
-          "f4"
-        ],
-        "prompt": "叙事生成任务。\n事实：\n1. 外貌：西栅桥 柜台上的铜锁生了锈\n正文：",
-        "output": "西栅桥的外观变了:柜台上的铜锁生了锈。",
-        "wallSeconds": 0.46
+        "groups": 3,
+        "crossGroupEntityAvailable": true,
+        "globalFactIdAvailable": true
       },
       {
         "itemId": "n2-14",
-        "sentenceIndex": 0,
-        "factIds": [
-          "f1",
-          "f2"
-        ],
-        "prompt": "叙事生成任务。\n事实：\n1. 任务达成：沈拾「清点旧钟铺的存货」\n2. 理智：沈拾 12→10（下降）\n正文：",
-        "output": "沈拾完成了任务「清点旧钟铺的存货」,精神值从12降到了10。",
-        "wallSeconds": 0.62
-      },
-      {
-        "itemId": "n2-14",
-        "sentenceIndex": 1,
-        "factIds": [
-          "f3"
-        ],
-        "prompt": "叙事生成任务。\n事实：\n1. 任务达成：岑半夏「把账簿送回半窗书舍」\n正文：",
-        "output": "岑半夏完成了任务「把账簿送回半窗书舍」。",
-        "wallSeconds": 0.47
-      },
-      {
-        "itemId": "n2-14",
-        "sentenceIndex": 2,
-        "factIds": [
-          "f4"
-        ],
-        "prompt": "叙事生成任务。\n事实：\n1. 外貌：瓦窑 墙根的青苔爬上了半尺\n正文：",
-        "output": "瓦窑的外观变了:墙根的青苔爬上了半尺。",
-        "wallSeconds": 0.46
+        "groups": 3,
+        "crossGroupEntityAvailable": true,
+        "globalFactIdAvailable": true
       },
       {
         "itemId": "n2-15",
-        "sentenceIndex": 0,
-        "factIds": [
-          "f1",
-          "f2"
-        ],
-        "prompt": "叙事生成任务。\n事实：\n1. 任务达成：岑半夏「把船灯挂上桅杆」\n2. 理智：岑半夏 12→10（下降）\n正文：",
-        "output": "岑半夏完成了任务「把船灯挂上桅杆」,精神值从12降到了10。",
-        "wallSeconds": 0.6
-      },
-      {
-        "itemId": "n2-15",
-        "sentenceIndex": 1,
-        "factIds": [
-          "f3"
-        ],
-        "prompt": "叙事生成任务。\n事实：\n1. 任务达成：顾知白「收好茶棚的坐垫」\n正文：",
-        "output": "顾知白完成了任务「收好茶棚的坐垫」。",
-        "wallSeconds": 0.37
-      },
-      {
-        "itemId": "n2-15",
-        "sentenceIndex": 2,
-        "factIds": [
-          "f4"
-        ],
-        "prompt": "叙事生成任务。\n事实：\n1. 外貌：石阶码头 梁上的吊绳磨细了\n正文：",
-        "output": "石阶码头的外观变了:梁上的吊绳磨细了。",
-        "wallSeconds": 0.46
+        "groups": 3,
+        "crossGroupEntityAvailable": true,
+        "globalFactIdAvailable": true
       },
       {
         "itemId": "n2-16",
-        "sentenceIndex": 0,
-        "factIds": [
-          "f1",
-          "f2"
-        ],
-        "prompt": "叙事生成任务。\n事实：\n1. 任务达成：顾知白「补好瓦窑的顶棚」\n2. 理智：顾知白 12→10（下降）\n正文：",
-        "output": "顾知白完成了任务「补好瓦窑的顶棚」,精神值从12降到了10。",
-        "wallSeconds": 0.6
-      },
-      {
-        "itemId": "n2-16",
-        "sentenceIndex": 1,
-        "factIds": [
-          "f3"
-        ],
-        "prompt": "叙事生成任务。\n事实：\n1. 任务达成：陆停云「修西栅桥的踏板」\n正文：",
-        "output": "陆停云完成了任务「修西栅桥的踏板」。",
-        "wallSeconds": 0.47
-      },
-      {
-        "itemId": "n2-16",
-        "sentenceIndex": 2,
-        "factIds": [
-          "f4"
-        ],
-        "prompt": "叙事生成任务。\n事实：\n1. 外貌：旧钟铺 檐角的风铃褪了色\n正文：",
-        "output": "旧钟铺的外观变了:檐角的风铃褪了色。",
-        "wallSeconds": 0.48
+        "groups": 3,
+        "crossGroupEntityAvailable": true,
+        "globalFactIdAvailable": true
       }
     ],
-    "disclaimers": [
-      "consumer-path smoke only; not N4 evidence; holdout not used"
-    ]
+    "misses": [],
+    "verdict": "PASS"
+  },
+  "smoke": {
+    "archive": "artifacts\\world-components\\n3-factids-smoke-r1.json",
+    "generatedThisRun": false,
+    "note": "factIds consumer smoke only; see the separate archive"
   },
   "disclaimers": [
     "B1/B2 are program baselines: their grouping/order numbers are guarantees, not achievements",
     "model arms for N3 are NOT run yet; the baselines are the numbers they must beat",
-    "coreference suggestions are NAMES only; pronoun policy needs the coordinator's decision",
+    "coreference suggestions are NAMES only; no pronoun is generated and N4 does not consume coreference",
     "significance target definition inherits N2's open question (human confirmation pending)"
   ]
 }

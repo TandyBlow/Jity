@@ -1,0 +1,43 @@
+{
+  "purpose": "N2 v3 blind annotation package (D1); hashes registered before labeling",
+  "rubric": {
+    "file": "design\\world-engine-reports\\components\\n2-annotation-rubric.md",
+    "sha256": "69f3f4f121af885edab048446d80bd49b0c7d316154cef9bc3ac027d5aed6631"
+  },
+  "blindItems": {
+    "file": "items-blind.jsonl",
+    "sha256": "8641b527a319710982db29f5ee46eb098db628d9d997bf8219696d6e07fcd904"
+  },
+  "sheet": {
+    "file": "sheet.md",
+    "sha256": "83eb1e1d0faa30ca5bf54dec2e11e879dfce728ffc5b2aa55c4188a85f8d6c9f"
+  },
+  "template": {
+    "file": "labels-template.jsonl",
+    "sha256": "fb9092e8a2d742edb879484ab58061459def73a5c8f756b4785f6220083fc412"
+  },
+  "facts": 92,
+  "items": 16,
+  "labelFilesPresentAtGeneration": {
+    "labels-c-impl.jsonl": "8485736630279e85a611448f8cd5bfd99d0c7cd5c2de63ece176c801ba6ea026"
+  },
+  "blindness": {
+    "strippedFromItems": [
+      "must",
+      "target",
+      "omittable",
+      "forbidden",
+      "note",
+      "hashes"
+    ],
+    "annotatorsMustNotRead": [
+      "items.jsonl labels",
+      "run_n2.py outputs",
+      "n3_plan.py outputs",
+      "the other annotator's label file before finishing"
+    ],
+    "implementerExposure": "the C implementer saw v2 labels and aggregate arm outputs during the repair; the reviewer must be blind"
+  },
+  "generatedAt": "2026-10-29T08:56:12+00:00",
+  "generatedFromCommit": "f34e992fa48f2fa078ac28b563fdbc09d87314d4"
+}
