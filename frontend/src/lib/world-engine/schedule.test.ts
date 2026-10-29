@@ -52,7 +52,7 @@ const memory = (over: Partial<ControllerMemory> = {}): ControllerMemory => ({
   plan: null, planIndex: 0, prepareSuccessor: false, localPause: false, budget: { used: 0, max: null },
   narration: null, workingState: null, sources: [], staged: [], stagedTimeScan: null, groupActors: [], groupActions: [], lastModel: null, lastTargets: null, lastResults: null,
   updatesStages: [], updatesCalls: [], updatesApplied: 0, updatesPreviewSkipped: 0, updatesPendingRefs: [],
-  lastRoundIdentityError: null,
+  lastRoundIdentityError: null, roundIdentityBlocked: null,
   continuation: null, roundChanges: null, successorTime: null, commitPayload: null, initialTemplate: null, ...over,
 });
 

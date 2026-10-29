@@ -16,7 +16,16 @@
  *
  * Narration stays committed-template by default; an optional polisher (the
  * page's model experiment) may rephrase, and its output is accepted only if
- * checkFactNarration admits every clause — any failure keeps the template. */
+ * checkFactNarration admits every clause — any failure keeps the template.
+ *
+ * G5 identity chain: the session registers the program round-identity sink and
+ * runs its driver with the automatic-round identity gate. A confirmed continue
+ * allocates the next round's point plus a group slot per served frozen order
+ * member under a per-round stable allocation key (server-idempotent replays),
+ * an incomplete/failed allocation stops the round entry with a recognizable
+ * reason, and a refresh that lands between continue and the first point
+ * re-provisions through the recovery entry. Continuation itself stays
+ * handback until the model continuation batch opens (G4). */
 import { ControllerDriver, initialMemory, type DriverStatus, type WorldModelPort } from '../controller';
 import type { AllocationPlan, ControllerMemory, ModelTask, UpdatesCall } from '../schedule';
 import type { WorldTransport } from '../transport';
@@ -28,7 +37,7 @@ import type { CommittedNarration, CommittedRead } from './committed-narration';
 import { projectCommittedNarration, renderCommittedNarration, selectFactNarration } from './committed-narration';
 import { RuleAuthority, decodeRuleAction, describeRuleDecision, encodeRuleAction, parseRuleCommand, type RulePolicy, type RuleReceipt } from './rule-facts';
 import { projectTaskInput } from './focused-input';
-import type { Id, InitialTemplate, Json, PointWork, WorldContext, WorldState } from '../types';
+import type { Id, InitialTemplate, Json, PointWork, RequestMap, WorldContext, WorldState } from '../types';
 
 /** The driver-shaped §7.1 narration input, mirrored from the scheduler's
  * assembleNarrationInput so the polisher can feed the real prompt layer. */
@@ -275,7 +284,37 @@ export class RuleWorldSession {
             return response;
           },
         };
-        this.driver = new ControllerDriver({ transport: tracked, model }, this.memory, {}, {});
+        this.driver = new ControllerDriver({ transport: tracked, model }, this.memory, {}, { identityGate: true });
+        // G5 产品身份链：CONFIRMED continue 之后，新轮需要程序分配的 point 与
+        // 服务端冻结 order 逐人的 group。allocationKey 按轮稳定（product_round_
+        // <roundId>）——重试、且回执或新会话恢复补调时，服务端按 key 幂等重放
+        // 同一批 id，不重复消费；响应在此做槽完整性校验，缺槽抛错交给驱动的
+        // 身份屏障（roundIdentityBlocked → 可辨认 stop）。
+        let identitySequence = 0;
+        this.driver.setRoundIdentitySink(async (roundId, order) => {
+          const live = this.driver!.getMemory();
+          const worldId = this.viewWorld?.worldId;
+          const fenceEpoch = this.viewWorld?.lease?.fenceEpoch;
+          if (!worldId || !live.leaseToken || fenceEpoch == null) throw new Error('round_identity_scope_missing');
+          const allocationKey: Id = `product_round_${roundId}`;
+          const slots = [{ slotKey: 'point', kind: 'point' as const },
+            ...order.map((actor) => ({ slotKey: `group:${actor}`, kind: 'group' as const }))];
+          identitySequence += 1;
+          const response = await options.transport.execute('allocate_ids', {
+            protocolVersion: 2, requestId: `product_identity_${roundId}_${identitySequence}`, worldId,
+            leaseToken: live.leaseToken, fenceEpoch, allocationKey, slots,
+          } as RequestMap['allocate_ids'], { worldId });
+          const allocations = (response as unknown as { data: { allocations: { slotKey: Id; id: Id }[] } }).data.allocations ?? [];
+          const slotKeys = new Set(allocations.map((entry) => entry.slotKey));
+          if (allocations.length !== slots.length || slotKeys.size !== slots.length || slots.some((slot) => !slotKeys.has(slot.slotKey))) {
+            throw new Error('round_identity_allocation_incomplete');
+          }
+          return {
+            ids: Object.fromEntries(allocations.map((entry) => [entry.slotKey, entry.id])),
+            roundAllocations: { [roundId]: { allocationKey, slots } },
+            allocatedKeys: [allocationKey],
+          };
+        });
         return this.driver;
       },
     });

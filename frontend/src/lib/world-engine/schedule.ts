@@ -243,6 +243,12 @@ export interface ControllerMemory {
    * fail with the server's own refusal if ids are missing). Sticky: a later
    * success does not clear an earlier failure. */
   lastRoundIdentityError: string | null;
+  /** G5（产品组合，identityGate 驱动专用）：待进入的自动轮身份入口尚未就绪
+   * ——sink 失败、无 sink 且无完整预置、或折入补丁缺预期槽位。调度器在
+   * pointPlan/begin 前据此停止，自动轮绝不在陈旧或空身份上开启。与
+   * lastRoundIdentityError（sticky 历史）区分：本字段表达「当前待分配是否
+   * 阻塞」，后续通知补齐入口时清空。gate 关闭的驱动（B3 harness）不写。 */
+  roundIdentityBlocked: string | null;
   continuation: Conclusion | null;
   /** This round's committed point Δs in commit order — the continuation
    * input's 「本轮状态变化」 (§7.1). Built from the client's own committed
@@ -261,7 +267,10 @@ export type Decision =
   | { kind: 'await_command'; reason: string }
   | { kind: 'stop'; reason: string };
 
-export interface ScheduleView { world: WorldContext | null; control: ControlState; work: PointWork | null; memory: ControllerMemory; command?: HarnessCommand; activeInput: { advanceId: Id; inputId: Id; text: string } | null }
+export interface ScheduleView { world: WorldContext | null; control: ControlState; work: PointWork | null; memory: ControllerMemory; command?: HarnessCommand; activeInput: { advanceId: Id; inputId: Id; text: string } | null;
+  /** G5 产品门：自动轮身份就绪屏障（DriverOptions.identityGate）。缺省
+   * 关闭——B3 harness 的自动轮身份走自己的预分配队列，不受此门约束。 */
+  identityGate?: boolean }
 
 const STATE_COMPUTATION_TASKS: ModelTask[] = ['action', 'targets', 'reaction', 'results', 'updates', 'continuation'];
 
@@ -623,6 +632,27 @@ function continuationDecision(view: ScheduleView): Decision {
 
 function idlePointDecision(view: ScheduleView): Decision {
   const { world, control, memory } = view;
+  // G5 身份就绪屏障：automatic 轮在 pointPlan/begin 之前必须有完整的程序
+  // 分配入口——roundAllocations[roundId] 存在、已执行 allocate、且服务端
+  // 冻结 order 的每个 group 槽与 point 槽都有 id。空/不完整入口（空 sink、
+  // 空预置、缺 actor 槽）是可辨认的阻断状态，绝不沿用旧身份开轮。
+  if (view.identityGate && world!.round?.trigger === 'automatic') {
+    if (memory.roundIdentityBlocked) return { kind: 'stop', reason: `round_identity_blocked:${memory.roundIdentityBlocked}` };
+    const gateRoundId = roundIdOf(world!);
+    const gatePlan = memory.roundAllocations[gateRoundId];
+    if (!gatePlan) return { kind: 'stop', reason: `round_identity_plan_missing:${gateRoundId}` };
+    // 完整性按「声明覆盖」判定：计划必须声明 point 与冻结 order 逐人的 group
+    // 槽——空槽计划即使 key 已标已分配、旧 ids 仍在，也不能视为就绪
+    // （预审复现的「空 plan 抑制诊断、下一轮沿用旧 point」由此关闭）。
+    const expected = ['point', ...world!.round.order.map((actor) => `group:${actor}`)];
+    const declared = new Set(gatePlan.slots.map((slot) => slot.slotKey));
+    const undeclared = expected.filter((slot) => !declared.has(slot));
+    if (undeclared.length) return { kind: 'stop', reason: `round_identity_incomplete:${gateRoundId}:${undeclared.join(',')}` };
+    if (memory.allocatedKeys.includes(gatePlan.allocationKey)) {
+      const missing = expected.filter((slot) => memory.ids[slot] == null);
+      if (missing.length) return { kind: 'stop', reason: `round_identity_incomplete:${gateRoundId}:${missing.join(',')}` };
+    }
+  }
   const allocation = memory.roundAllocations[roundIdOf(world!)];
   if (allocation && !memory.allocatedKeys.includes(allocation.allocationKey)) {
     const bind = writeBind(view);
