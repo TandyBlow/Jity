@@ -1,0 +1,1820 @@
+{
+  "purpose": "N2 content-selection first comparison round (program baselines + zero-shot)",
+  "task": "fact table + viewpoint -> selected fact ids",
+  "thresholds": {
+    "f1Gate": 0.6,
+    "note": "first-round dev threshold; not a frozen acceptance gate"
+  },
+  "decode": {
+    "greedy": true,
+    "maxNewTokens": 32,
+    "numBeams": 1,
+    "tokenizerLegacy": false
+  },
+  "provenance": {
+    "items": "76b1ccb7c63e974e78663be61701d8308d9e9bab1bd4639af35f7d66c8db2d50",
+    "baseModel": {
+      "config.json": "9b2480c0a39fd09b",
+      "model.safetensors": "5cdc572109cf2591",
+      "special_tokens_map.json": "09059cedc26bc46b",
+      "spiece.model": "c65feffa65ff0378",
+      "tokenizer_config.json": "af072c7d91576727"
+    },
+    "qwenRaw": {
+      "file": "D:\\others\\Jity\\.local\\world-components-worktree\\experiments\\world-components\\n2_selection\\qwen-raw.json",
+      "sha256": "2c09f2dfd202e9cd902a2b6de3786c9871397183664b9d417acaeaaf373acd20",
+      "itemsSha256": "76b1ccb7c63e974e78663be61701d8308d9e9bab1bd4639af35f7d66c8db2d50"
+    }
+  },
+  "environment": {
+    "python": "3.12.3",
+    "torch": "2.7.0+cu126",
+    "transformers": "4.57.3",
+    "device": "NVIDIA GeForce RTX 4060 Laptop GPU"
+  },
+  "arms": {
+    "P0-program-select-all": {
+      "summary": {
+        "items": 16,
+        "pass": 4,
+        "mustRecallMean": 1.0,
+        "forbiddenHitsTotal": 12,
+        "f1Mean": 0.709,
+        "selectAllItems": 16,
+        "invalidTokenItems": 0,
+        "meanSelected": 5.5
+      },
+      "rows": [
+        {
+          "itemId": "n2-01",
+          "selected": [
+            "f1",
+            "f2",
+            "f3",
+            "f4",
+            "f5",
+            "f6"
+          ],
+          "selectedCount": 6,
+          "totalFacts": 6,
+          "selectAll": true,
+          "mustRecall": 1.0,
+          "forbiddenHits": 1,
+          "precision": 0.5,
+          "recall": 1.0,
+          "f1": 0.667,
+          "invalidTokens": [],
+          "verdict": "fail"
+        },
+        {
+          "itemId": "n2-02",
+          "selected": [
+            "f1",
+            "f2",
+            "f3",
+            "f4",
+            "f5",
+            "f6"
+          ],
+          "selectedCount": 6,
+          "totalFacts": 6,
+          "selectAll": true,
+          "mustRecall": 1.0,
+          "forbiddenHits": 1,
+          "precision": 0.5,
+          "recall": 1.0,
+          "f1": 0.667,
+          "invalidTokens": [],
+          "verdict": "fail"
+        },
+        {
+          "itemId": "n2-03",
+          "selected": [
+            "f1",
+            "f2",
+            "f3",
+            "f4",
+            "f5",
+            "f6"
+          ],
+          "selectedCount": 6,
+          "totalFacts": 6,
+          "selectAll": true,
+          "mustRecall": 1.0,
+          "forbiddenHits": 1,
+          "precision": 0.5,
+          "recall": 1.0,
+          "f1": 0.667,
+          "invalidTokens": [],
+          "verdict": "fail"
+        },
+        {
+          "itemId": "n2-04",
+          "selected": [
+            "f1",
+            "f2",
+            "f3",
+            "f4",
+            "f5",
+            "f6"
+          ],
+          "selectedCount": 6,
+          "totalFacts": 6,
+          "selectAll": true,
+          "mustRecall": 1.0,
+          "forbiddenHits": 1,
+          "precision": 0.5,
+          "recall": 1.0,
+          "f1": 0.667,
+          "invalidTokens": [],
+          "verdict": "fail"
+        },
+        {
+          "itemId": "n2-05",
+          "selected": [
+            "f1",
+            "f2",
+            "f3",
+            "f4",
+            "f5"
+          ],
+          "selectedCount": 5,
+          "totalFacts": 5,
+          "selectAll": true,
+          "mustRecall": 1.0,
+          "forbiddenHits": 1,
+          "precision": 0.6,
+          "recall": 1.0,
+          "f1": 0.75,
+          "invalidTokens": [],
+          "verdict": "fail"
+        },
+        {
+          "itemId": "n2-06",
+          "selected": [
+            "f1",
+            "f2",
+            "f3",
+            "f4",
+            "f5"
+          ],
+          "selectedCount": 5,
+          "totalFacts": 5,
+          "selectAll": true,
+          "mustRecall": 1.0,
+          "forbiddenHits": 1,
+          "precision": 0.6,
+          "recall": 1.0,
+          "f1": 0.75,
+          "invalidTokens": [],
+          "verdict": "fail"
+        },
+        {
+          "itemId": "n2-07",
+          "selected": [
+            "f1",
+            "f2",
+            "f3",
+            "f4",
+            "f5"
+          ],
+          "selectedCount": 5,
+          "totalFacts": 5,
+          "selectAll": true,
+          "mustRecall": 1.0,
+          "forbiddenHits": 1,
+          "precision": 0.6,
+          "recall": 1.0,
+          "f1": 0.75,
+          "invalidTokens": [],
+          "verdict": "fail"
+        },
+        {
+          "itemId": "n2-08",
+          "selected": [
+            "f1",
+            "f2",
+            "f3",
+            "f4",
+            "f5"
+          ],
+          "selectedCount": 5,
+          "totalFacts": 5,
+          "selectAll": true,
+          "mustRecall": 1.0,
+          "forbiddenHits": 1,
+          "precision": 0.6,
+          "recall": 1.0,
+          "f1": 0.75,
+          "invalidTokens": [],
+          "verdict": "fail"
+        },
+        {
+          "itemId": "n2-09",
+          "selected": [
+            "f1",
+            "f2",
+            "f3",
+            "f4",
+            "f5",
+            "f6"
+          ],
+          "selectedCount": 6,
+          "totalFacts": 6,
+          "selectAll": true,
+          "mustRecall": 1.0,
+          "forbiddenHits": 0,
+          "precision": 0.5,
+          "recall": 1.0,
+          "f1": 0.667,
+          "invalidTokens": [],
+          "verdict": "pass"
+        },
+        {
+          "itemId": "n2-10",
+          "selected": [
+            "f1",
+            "f2",
+            "f3",
+            "f4",
+            "f5",
+            "f6"
+          ],
+          "selectedCount": 6,
+          "totalFacts": 6,
+          "selectAll": true,
+          "mustRecall": 1.0,
+          "forbiddenHits": 0,
+          "precision": 0.5,
+          "recall": 1.0,
+          "f1": 0.667,
+          "invalidTokens": [],
+          "verdict": "pass"
+        },
+        {
+          "itemId": "n2-11",
+          "selected": [
+            "f1",
+            "f2",
+            "f3",
+            "f4",
+            "f5",
+            "f6"
+          ],
+          "selectedCount": 6,
+          "totalFacts": 6,
+          "selectAll": true,
+          "mustRecall": 1.0,
+          "forbiddenHits": 0,
+          "precision": 0.5,
+          "recall": 1.0,
+          "f1": 0.667,
+          "invalidTokens": [],
+          "verdict": "pass"
+        },
+        {
+          "itemId": "n2-12",
+          "selected": [
+            "f1",
+            "f2",
+            "f3",
+            "f4",
+            "f5",
+            "f6"
+          ],
+          "selectedCount": 6,
+          "totalFacts": 6,
+          "selectAll": true,
+          "mustRecall": 1.0,
+          "forbiddenHits": 0,
+          "precision": 0.5,
+          "recall": 1.0,
+          "f1": 0.667,
+          "invalidTokens": [],
+          "verdict": "pass"
+        },
+        {
+          "itemId": "n2-13",
+          "selected": [
+            "f1",
+            "f2",
+            "f3",
+            "f4",
+            "f5"
+          ],
+          "selectedCount": 5,
+          "totalFacts": 5,
+          "selectAll": true,
+          "mustRecall": 1.0,
+          "forbiddenHits": 1,
+          "precision": 0.6,
+          "recall": 1.0,
+          "f1": 0.75,
+          "invalidTokens": [],
+          "verdict": "fail"
+        },
+        {
+          "itemId": "n2-14",
+          "selected": [
+            "f1",
+            "f2",
+            "f3",
+            "f4",
+            "f5"
+          ],
+          "selectedCount": 5,
+          "totalFacts": 5,
+          "selectAll": true,
+          "mustRecall": 1.0,
+          "forbiddenHits": 1,
+          "precision": 0.6,
+          "recall": 1.0,
+          "f1": 0.75,
+          "invalidTokens": [],
+          "verdict": "fail"
+        },
+        {
+          "itemId": "n2-15",
+          "selected": [
+            "f1",
+            "f2",
+            "f3",
+            "f4",
+            "f5"
+          ],
+          "selectedCount": 5,
+          "totalFacts": 5,
+          "selectAll": true,
+          "mustRecall": 1.0,
+          "forbiddenHits": 1,
+          "precision": 0.6,
+          "recall": 1.0,
+          "f1": 0.75,
+          "invalidTokens": [],
+          "verdict": "fail"
+        },
+        {
+          "itemId": "n2-16",
+          "selected": [
+            "f1",
+            "f2",
+            "f3",
+            "f4",
+            "f5"
+          ],
+          "selectedCount": 5,
+          "totalFacts": 5,
+          "selectAll": true,
+          "mustRecall": 1.0,
+          "forbiddenHits": 1,
+          "precision": 0.6,
+          "recall": 1.0,
+          "f1": 0.75,
+          "invalidTokens": [],
+          "verdict": "fail"
+        }
+      ]
+    },
+    "P1-program-rule": {
+      "summary": {
+        "items": 16,
+        "pass": 16,
+        "mustRecallMean": 1.0,
+        "forbiddenHitsTotal": 0,
+        "f1Mean": 0.783,
+        "selectAllItems": 4,
+        "invalidTokenItems": 0,
+        "meanSelected": 4.75
+      },
+      "rows": [
+        {
+          "itemId": "n2-01",
+          "selected": [
+            "f1",
+            "f2",
+            "f3",
+            "f4",
+            "f6"
+          ],
+          "selectedCount": 5,
+          "totalFacts": 6,
+          "selectAll": false,
+          "mustRecall": 1.0,
+          "forbiddenHits": 0,
+          "precision": 0.6,
+          "recall": 1.0,
+          "f1": 0.75,
+          "invalidTokens": [],
+          "verdict": "pass"
+        },
+        {
+          "itemId": "n2-02",
+          "selected": [
+            "f1",
+            "f2",
+            "f3",
+            "f4",
+            "f6"
+          ],
+          "selectedCount": 5,
+          "totalFacts": 6,
+          "selectAll": false,
+          "mustRecall": 1.0,
+          "forbiddenHits": 0,
+          "precision": 0.6,
+          "recall": 1.0,
+          "f1": 0.75,
+          "invalidTokens": [],
+          "verdict": "pass"
+        },
+        {
+          "itemId": "n2-03",
+          "selected": [
+            "f1",
+            "f2",
+            "f3",
+            "f4",
+            "f6"
+          ],
+          "selectedCount": 5,
+          "totalFacts": 6,
+          "selectAll": false,
+          "mustRecall": 1.0,
+          "forbiddenHits": 0,
+          "precision": 0.6,
+          "recall": 1.0,
+          "f1": 0.75,
+          "invalidTokens": [],
+          "verdict": "pass"
+        },
+        {
+          "itemId": "n2-04",
+          "selected": [
+            "f1",
+            "f2",
+            "f3",
+            "f4",
+            "f6"
+          ],
+          "selectedCount": 5,
+          "totalFacts": 6,
+          "selectAll": false,
+          "mustRecall": 1.0,
+          "forbiddenHits": 0,
+          "precision": 0.6,
+          "recall": 1.0,
+          "f1": 0.75,
+          "invalidTokens": [],
+          "verdict": "pass"
+        },
+        {
+          "itemId": "n2-05",
+          "selected": [
+            "f1",
+            "f2",
+            "f3",
+            "f5"
+          ],
+          "selectedCount": 4,
+          "totalFacts": 5,
+          "selectAll": false,
+          "mustRecall": 1.0,
+          "forbiddenHits": 0,
+          "precision": 0.75,
+          "recall": 1.0,
+          "f1": 0.857,
+          "invalidTokens": [],
+          "verdict": "pass"
+        },
+        {
+          "itemId": "n2-06",
+          "selected": [
+            "f1",
+            "f2",
+            "f3",
+            "f5"
+          ],
+          "selectedCount": 4,
+          "totalFacts": 5,
+          "selectAll": false,
+          "mustRecall": 1.0,
+          "forbiddenHits": 0,
+          "precision": 0.75,
+          "recall": 1.0,
+          "f1": 0.857,
+          "invalidTokens": [],
+          "verdict": "pass"
+        },
+        {
+          "itemId": "n2-07",
+          "selected": [
+            "f1",
+            "f2",
+            "f3",
+            "f5"
+          ],
+          "selectedCount": 4,
+          "totalFacts": 5,
+          "selectAll": false,
+          "mustRecall": 1.0,
+          "forbiddenHits": 0,
+          "precision": 0.75,
+          "recall": 1.0,
+          "f1": 0.857,
+          "invalidTokens": [],
+          "verdict": "pass"
+        },
+        {
+          "itemId": "n2-08",
+          "selected": [
+            "f1",
+            "f2",
+            "f3",
+            "f5"
+          ],
+          "selectedCount": 4,
+          "totalFacts": 5,
+          "selectAll": false,
+          "mustRecall": 1.0,
+          "forbiddenHits": 0,
+          "precision": 0.75,
+          "recall": 1.0,
+          "f1": 0.857,
+          "invalidTokens": [],
+          "verdict": "pass"
+        },
+        {
+          "itemId": "n2-09",
+          "selected": [
+            "f1",
+            "f2",
+            "f3",
+            "f4",
+            "f5",
+            "f6"
+          ],
+          "selectedCount": 6,
+          "totalFacts": 6,
+          "selectAll": true,
+          "mustRecall": 1.0,
+          "forbiddenHits": 0,
+          "precision": 0.5,
+          "recall": 1.0,
+          "f1": 0.667,
+          "invalidTokens": [],
+          "verdict": "pass"
+        },
+        {
+          "itemId": "n2-10",
+          "selected": [
+            "f1",
+            "f2",
+            "f3",
+            "f4",
+            "f5",
+            "f6"
+          ],
+          "selectedCount": 6,
+          "totalFacts": 6,
+          "selectAll": true,
+          "mustRecall": 1.0,
+          "forbiddenHits": 0,
+          "precision": 0.5,
+          "recall": 1.0,
+          "f1": 0.667,
+          "invalidTokens": [],
+          "verdict": "pass"
+        },
+        {
+          "itemId": "n2-11",
+          "selected": [
+            "f1",
+            "f2",
+            "f3",
+            "f4",
+            "f5",
+            "f6"
+          ],
+          "selectedCount": 6,
+          "totalFacts": 6,
+          "selectAll": true,
+          "mustRecall": 1.0,
+          "forbiddenHits": 0,
+          "precision": 0.5,
+          "recall": 1.0,
+          "f1": 0.667,
+          "invalidTokens": [],
+          "verdict": "pass"
+        },
+        {
+          "itemId": "n2-12",
+          "selected": [
+            "f1",
+            "f2",
+            "f3",
+            "f4",
+            "f5",
+            "f6"
+          ],
+          "selectedCount": 6,
+          "totalFacts": 6,
+          "selectAll": true,
+          "mustRecall": 1.0,
+          "forbiddenHits": 0,
+          "precision": 0.5,
+          "recall": 1.0,
+          "f1": 0.667,
+          "invalidTokens": [],
+          "verdict": "pass"
+        },
+        {
+          "itemId": "n2-13",
+          "selected": [
+            "f1",
+            "f2",
+            "f4",
+            "f5"
+          ],
+          "selectedCount": 4,
+          "totalFacts": 5,
+          "selectAll": false,
+          "mustRecall": 1.0,
+          "forbiddenHits": 0,
+          "precision": 0.75,
+          "recall": 1.0,
+          "f1": 0.857,
+          "invalidTokens": [],
+          "verdict": "pass"
+        },
+        {
+          "itemId": "n2-14",
+          "selected": [
+            "f1",
+            "f2",
+            "f4",
+            "f5"
+          ],
+          "selectedCount": 4,
+          "totalFacts": 5,
+          "selectAll": false,
+          "mustRecall": 1.0,
+          "forbiddenHits": 0,
+          "precision": 0.75,
+          "recall": 1.0,
+          "f1": 0.857,
+          "invalidTokens": [],
+          "verdict": "pass"
+        },
+        {
+          "itemId": "n2-15",
+          "selected": [
+            "f1",
+            "f2",
+            "f4",
+            "f5"
+          ],
+          "selectedCount": 4,
+          "totalFacts": 5,
+          "selectAll": false,
+          "mustRecall": 1.0,
+          "forbiddenHits": 0,
+          "precision": 0.75,
+          "recall": 1.0,
+          "f1": 0.857,
+          "invalidTokens": [],
+          "verdict": "pass"
+        },
+        {
+          "itemId": "n2-16",
+          "selected": [
+            "f1",
+            "f2",
+            "f4",
+            "f5"
+          ],
+          "selectedCount": 4,
+          "totalFacts": 5,
+          "selectAll": false,
+          "mustRecall": 1.0,
+          "forbiddenHits": 0,
+          "precision": 0.75,
+          "recall": 1.0,
+          "f1": 0.857,
+          "invalidTokens": [],
+          "verdict": "pass"
+        }
+      ]
+    },
+    "M1a-randeng-zero-shot": {
+      "summary": {
+        "items": 16,
+        "pass": 0,
+        "mustRecallMean": 0.0,
+        "forbiddenHitsTotal": 0,
+        "f1Mean": 0.0,
+        "selectAllItems": 0,
+        "invalidTokenItems": 16,
+        "meanSelected": 0.0
+      },
+      "rows": [
+        {
+          "itemId": "n2-01",
+          "prompt": "叙事选材任务。\n视角：主角只知道自己在场的地点与自己的行动。\n事实：\n1. 位置：裴行舟 从石阶码头到半窗书舍\n2. 任务达成：裴行舟「把船灯挂上桅杆」\n3. 时间推进：约6分钟\n4. 外貌：半窗书舍 檐角的风铃褪了色\n5. 外貌：西栅桥 窗纸被风戳了个洞\n6. 个性：顾知白变得寡言\n任务：选出必须写进正文的事实编号，视角看不到的不要选。\n只输出编号，用逗号分隔。",
+          "rawOutput": "只输出编号,用逗号分隔。",
+          "wallSeconds": 2.53,
+          "outputTokens": 13,
+          "selected": [],
+          "selectedCount": 0,
+          "totalFacts": 6,
+          "selectAll": false,
+          "mustRecall": 0.0,
+          "forbiddenHits": 0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "invalidTokens": [
+            "只输出编号",
+            "用逗号分隔"
+          ],
+          "verdict": "fail"
+        },
+        {
+          "itemId": "n2-02",
+          "prompt": "叙事选材任务。\n视角：主角只知道自己在场的地点与自己的行动。\n事实：\n1. 位置：沈拾 从旧钟铺到竹影茶棚\n2. 任务达成：沈拾「补好瓦窑的顶棚」\n3. 时间推进：约7分钟\n4. 外貌：竹影茶棚 门前的石阶塌了一角\n5. 外貌：瓦窑 柜台上的铜锁生了锈\n6. 个性：陆停云变得爽快\n任务：选出必须写进正文的事实编号，视角看不到的不要选。\n只输出编号，用逗号分隔。",
+          "rawOutput": "只输出编号,用逗号分隔。",
+          "wallSeconds": 0.7,
+          "outputTokens": 13,
+          "selected": [],
+          "selectedCount": 0,
+          "totalFacts": 6,
+          "selectAll": false,
+          "mustRecall": 0.0,
+          "forbiddenHits": 0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "invalidTokens": [
+            "只输出编号",
+            "用逗号分隔"
+          ],
+          "verdict": "fail"
+        },
+        {
+          "itemId": "n2-03",
+          "prompt": "叙事选材任务。\n视角：主角只知道自己在场的地点与自己的行动。\n事实：\n1. 位置：岑半夏 从半窗书舍到西栅桥\n2. 任务达成：岑半夏「把账簿送回半窗书舍」\n3. 时间推进：约8分钟\n4. 外貌：西栅桥 窗纸被风戳了个洞\n5. 外貌：石阶码头 墙根的青苔爬上了半尺\n6. 个性：白蘅变得谨慎\n任务：选出必须写进正文的事实编号，视角看不到的不要选。\n只输出编号，用逗号分隔。",
+          "rawOutput": "只输出编号,用逗号分隔。",
+          "wallSeconds": 0.53,
+          "outputTokens": 13,
+          "selected": [],
+          "selectedCount": 0,
+          "totalFacts": 6,
+          "selectAll": false,
+          "mustRecall": 0.0,
+          "forbiddenHits": 0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "invalidTokens": [
+            "只输出编号",
+            "用逗号分隔"
+          ],
+          "verdict": "fail"
+        },
+        {
+          "itemId": "n2-04",
+          "prompt": "叙事选材任务。\n视角：主角只知道自己在场的地点与自己的行动。\n事实：\n1. 位置：顾知白 从竹影茶棚到瓦窑\n2. 任务达成：顾知白「收好茶棚的坐垫」\n3. 时间推进：约9分钟\n4. 外貌：瓦窑 柜台上的铜锁生了锈\n5. 外貌：旧钟铺 梁上的吊绳磨细了\n6. 个性：裴行舟变得急躁\n任务：选出必须写进正文的事实编号，视角看不到的不要选。\n只输出编号，用逗号分隔。",
+          "rawOutput": "只输出编号,用逗号分隔。",
+          "wallSeconds": 0.45,
+          "outputTokens": 13,
+          "selected": [],
+          "selectedCount": 0,
+          "totalFacts": 6,
+          "selectAll": false,
+          "mustRecall": 0.0,
+          "forbiddenHits": 0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "invalidTokens": [
+            "只输出编号",
+            "用逗号分隔"
+          ],
+          "verdict": "fail"
+        },
+        {
+          "itemId": "n2-05",
+          "prompt": "叙事选材任务。\n视角：叙述者只知道该人物所在地点发生的事情。\n事实：\n1. 任务达成：岑半夏「把账簿送回半窗书舍」\n2. 外貌：石阶码头 门前的石阶塌了一角\n3. 理智：岑半夏 11→13（上升）\n4. 位置：陆停云 从竹影茶棚到瓦窑\n5. 无变化：石阶码头\n任务：选出必须写进正文的事实编号，视角看不到的不要选。\n只输出编号，用逗号分隔。",
+          "rawOutput": "任务达成:岑半夏「把账簿送回半窗书舍」",
+          "wallSeconds": 0.73,
+          "outputTokens": 20,
+          "selected": [],
+          "selectedCount": 0,
+          "totalFacts": 5,
+          "selectAll": false,
+          "mustRecall": 0.0,
+          "forbiddenHits": 0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "invalidTokens": [
+            "任务达成:岑半夏「把账簿送回半窗"
+          ],
+          "verdict": "fail"
+        },
+        {
+          "itemId": "n2-06",
+          "prompt": "叙事选材任务。\n视角：叙述者只知道该人物所在地点发生的事情。\n事实：\n1. 任务达成：顾知白「收好茶棚的坐垫」\n2. 外貌：旧钟铺 窗纸被风戳了个洞\n3. 理智：顾知白 11→13（上升）\n4. 位置：白蘅 从西栅桥到石阶码头\n5. 无变化：旧钟铺\n任务：选出必须写进正文的事实编号，视角看不到的不要选。\n只输出编号，用逗号分隔。",
+          "rawOutput": "只输出编号,用逗号分隔。",
+          "wallSeconds": 0.51,
+          "outputTokens": 13,
+          "selected": [],
+          "selectedCount": 0,
+          "totalFacts": 5,
+          "selectAll": false,
+          "mustRecall": 0.0,
+          "forbiddenHits": 0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "invalidTokens": [
+            "只输出编号",
+            "用逗号分隔"
+          ],
+          "verdict": "fail"
+        },
+        {
+          "itemId": "n2-07",
+          "prompt": "叙事选材任务。\n视角：叙述者只知道该人物所在地点发生的事情。\n事实：\n1. 任务达成：陆停云「修西栅桥的踏板」\n2. 外貌：半窗书舍 柜台上的铜锁生了锈\n3. 理智：陆停云 11→13（上升）\n4. 位置：裴行舟 从瓦窑到旧钟铺\n5. 无变化：半窗书舍\n任务：选出必须写进正文的事实编号，视角看不到的不要选。\n只输出编号，用逗号分隔。",
+          "rawOutput": "只输出编号,用逗号分隔。",
+          "wallSeconds": 0.43,
+          "outputTokens": 13,
+          "selected": [],
+          "selectedCount": 0,
+          "totalFacts": 5,
+          "selectAll": false,
+          "mustRecall": 0.0,
+          "forbiddenHits": 0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "invalidTokens": [
+            "只输出编号",
+            "用逗号分隔"
+          ],
+          "verdict": "fail"
+        },
+        {
+          "itemId": "n2-08",
+          "prompt": "叙事选材任务。\n视角：叙述者只知道该人物所在地点发生的事情。\n事实：\n1. 任务达成：白蘅「清点旧钟铺的存货」\n2. 外貌：竹影茶棚 墙根的青苔爬上了半尺\n3. 理智：白蘅 11→13（上升）\n4. 位置：沈拾 从石阶码头到半窗书舍\n5. 无变化：竹影茶棚\n任务：选出必须写进正文的事实编号，视角看不到的不要选。\n只输出编号，用逗号分隔。",
+          "rawOutput": "无变化:竹影茶棚",
+          "wallSeconds": 0.35,
+          "outputTokens": 10,
+          "selected": [],
+          "selectedCount": 0,
+          "totalFacts": 5,
+          "selectAll": false,
+          "mustRecall": 0.0,
+          "forbiddenHits": 0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "invalidTokens": [
+            "无变化:竹影茶棚"
+          ],
+          "verdict": "fail"
+        },
+        {
+          "itemId": "n2-09",
+          "prompt": "叙事选材任务。\n视角：全知视角，但低显著性事实可以省略。\n事实：\n1. 位置：裴行舟 从石阶码头到旧钟铺\n2. 现状：沈拾 已在旧钟铺\n3. 个性：裴行舟变得谨慎\n4. 个性：沈拾变得急躁\n5. 时间推进：约9分钟\n6. 无变化：旧钟铺\n任务：选出必须写进正文的事实编号，视角看不到的不要选。\n只输出编号，用逗号分隔。",
+          "rawOutput": "无变化:旧钟铺",
+          "wallSeconds": 0.28,
+          "outputTokens": 9,
+          "selected": [],
+          "selectedCount": 0,
+          "totalFacts": 6,
+          "selectAll": false,
+          "mustRecall": 0.0,
+          "forbiddenHits": 0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "invalidTokens": [
+            "无变化:旧钟铺"
+          ],
+          "verdict": "fail"
+        },
+        {
+          "itemId": "n2-10",
+          "prompt": "叙事选材任务。\n视角：全知视角，但低显著性事实可以省略。\n事实：\n1. 位置：沈拾 从旧钟铺到半窗书舍\n2. 现状：岑半夏 已在半窗书舍\n3. 个性：沈拾变得急躁\n4. 个性：岑半夏变得寡言\n5. 时间推进：约10分钟\n6. 无变化：半窗书舍\n任务：选出必须写进正文的事实编号，视角看不到的不要选。\n只输出编号，用逗号分隔。",
+          "rawOutput": "无变化:半窗书舍",
+          "wallSeconds": 0.38,
+          "outputTokens": 10,
+          "selected": [],
+          "selectedCount": 0,
+          "totalFacts": 6,
+          "selectAll": false,
+          "mustRecall": 0.0,
+          "forbiddenHits": 0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "invalidTokens": [
+            "无变化:半窗书舍"
+          ],
+          "verdict": "fail"
+        },
+        {
+          "itemId": "n2-11",
+          "prompt": "叙事选材任务。\n视角：全知视角，但低显著性事实可以省略。\n事实：\n1. 位置：岑半夏 从半窗书舍到竹影茶棚\n2. 现状：顾知白 已在竹影茶棚\n3. 个性：岑半夏变得寡言\n4. 个性：顾知白变得爽快\n5. 时间推进：约11分钟\n6. 无变化：竹影茶棚\n任务：选出必须写进正文的事实编号，视角看不到的不要选。\n只输出编号，用逗号分隔。",
+          "rawOutput": "无变化:竹影茶棚",
+          "wallSeconds": 0.36,
+          "outputTokens": 10,
+          "selected": [],
+          "selectedCount": 0,
+          "totalFacts": 6,
+          "selectAll": false,
+          "mustRecall": 0.0,
+          "forbiddenHits": 0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "invalidTokens": [
+            "无变化:竹影茶棚"
+          ],
+          "verdict": "fail"
+        },
+        {
+          "itemId": "n2-12",
+          "prompt": "叙事选材任务。\n视角：全知视角，但低显著性事实可以省略。\n事实：\n1. 位置：顾知白 从竹影茶棚到西栅桥\n2. 现状：陆停云 已在西栅桥\n3. 个性：顾知白变得爽快\n4. 个性：陆停云变得谨慎\n5. 时间推进：约12分钟\n6. 无变化：西栅桥\n任务：选出必须写进正文的事实编号，视角看不到的不要选。\n只输出编号，用逗号分隔。",
+          "rawOutput": "视角看不到的不要选。",
+          "wallSeconds": 0.41,
+          "outputTokens": 11,
+          "selected": [],
+          "selectedCount": 0,
+          "totalFacts": 6,
+          "selectAll": false,
+          "mustRecall": 0.0,
+          "forbiddenHits": 0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "invalidTokens": [
+            "视角看不到的不要选"
+          ],
+          "verdict": "fail"
+        },
+        {
+          "itemId": "n2-13",
+          "prompt": "叙事选材任务。\n视角：主角只知道自己在场的地点与自己的行动。\n事实：\n1. 任务达成：沈拾「修西栅桥的踏板」\n2. 时间推进：约12分钟\n3. 任务达成：白蘅「补好瓦窑的顶棚」\n4. 外貌：半窗书舍 柜台上的铜锁生了锈\n5. 理智：沈拾 12→10（下降）\n任务：选出必须写进正文的事实编号，视角看不到的不要选。\n只输出编号，用逗号分隔。",
+          "rawOutput": "只输出编号,用逗号分隔。",
+          "wallSeconds": 0.49,
+          "outputTokens": 13,
+          "selected": [],
+          "selectedCount": 0,
+          "totalFacts": 5,
+          "selectAll": false,
+          "mustRecall": 0.0,
+          "forbiddenHits": 0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "invalidTokens": [
+            "只输出编号",
+            "用逗号分隔"
+          ],
+          "verdict": "fail"
+        },
+        {
+          "itemId": "n2-14",
+          "prompt": "叙事选材任务。\n视角：主角只知道自己在场的地点与自己的行动。\n事实：\n1. 任务达成：岑半夏「清点旧钟铺的存货」\n2. 时间推进：约13分钟\n3. 任务达成：裴行舟「把账簿送回半窗书舍」\n4. 外貌：竹影茶棚 墙根的青苔爬上了半尺\n5. 理智：岑半夏 12→10（下降）\n任务：选出必须写进正文的事实编号，视角看不到的不要选。\n只输出编号，用逗号分隔。",
+          "rawOutput": "只输出编号,用逗号分隔。",
+          "wallSeconds": 0.53,
+          "outputTokens": 13,
+          "selected": [],
+          "selectedCount": 0,
+          "totalFacts": 5,
+          "selectAll": false,
+          "mustRecall": 0.0,
+          "forbiddenHits": 0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "invalidTokens": [
+            "只输出编号",
+            "用逗号分隔"
+          ],
+          "verdict": "fail"
+        },
+        {
+          "itemId": "n2-15",
+          "prompt": "叙事选材任务。\n视角：主角只知道自己在场的地点与自己的行动。\n事实：\n1. 任务达成：顾知白「把船灯挂上桅杆」\n2. 时间推进：约14分钟\n3. 任务达成：沈拾「收好茶棚的坐垫」\n4. 外貌：西栅桥 梁上的吊绳磨细了\n5. 理智：顾知白 12→10（下降）\n任务：选出必须写进正文的事实编号，视角看不到的不要选。\n只输出编号，用逗号分隔。",
+          "rawOutput": "只输出编号,用逗号分隔。",
+          "wallSeconds": 0.46,
+          "outputTokens": 13,
+          "selected": [],
+          "selectedCount": 0,
+          "totalFacts": 5,
+          "selectAll": false,
+          "mustRecall": 0.0,
+          "forbiddenHits": 0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "invalidTokens": [
+            "只输出编号",
+            "用逗号分隔"
+          ],
+          "verdict": "fail"
+        },
+        {
+          "itemId": "n2-16",
+          "prompt": "叙事选材任务。\n视角：主角只知道自己在场的地点与自己的行动。\n事实：\n1. 任务达成：陆停云「补好瓦窑的顶棚」\n2. 时间推进：约15分钟\n3. 任务达成：岑半夏「修西栅桥的踏板」\n4. 外貌：瓦窑 檐角的风铃褪了色\n5. 理智：陆停云 12→10（下降）\n任务：选出必须写进正文的事实编号，视角看不到的不要选。\n只输出编号，用逗号分隔。",
+          "rawOutput": "只输出编号,用逗号分隔。",
+          "wallSeconds": 0.45,
+          "outputTokens": 13,
+          "selected": [],
+          "selectedCount": 0,
+          "totalFacts": 5,
+          "selectAll": false,
+          "mustRecall": 0.0,
+          "forbiddenHits": 0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "invalidTokens": [
+            "只输出编号",
+            "用逗号分隔"
+          ],
+          "verdict": "fail"
+        }
+      ]
+    },
+    "M1b-randeng-zero-shot": {
+      "summary": {
+        "items": 16,
+        "pass": 0,
+        "mustRecallMean": 0.0,
+        "forbiddenHitsTotal": 0,
+        "f1Mean": 0.0,
+        "selectAllItems": 0,
+        "invalidTokenItems": 15,
+        "meanSelected": 0.0
+      },
+      "rows": [
+        {
+          "itemId": "n2-01",
+          "prompt": "选材。只输出要写进正文的事实编号。\n叙事选材任务。\n视角：主角只知道自己在场的地点与自己的行动。\n事实：\n1. 位置：裴行舟 从石阶码头到半窗书舍\n2. 任务达成：裴行舟「把船灯挂上桅杆」\n3. 时间推进：约6分钟\n4. 外貌：半窗书舍 檐角的风铃褪了色\n5. 外貌：西栅桥 窗纸被风戳了个洞\n6. 个性：顾知白变得寡言\n编号：",
+          "rawOutput": "编号:",
+          "wallSeconds": 0.2,
+          "outputTokens": 5,
+          "selected": [],
+          "selectedCount": 0,
+          "totalFacts": 6,
+          "selectAll": false,
+          "mustRecall": 0.0,
+          "forbiddenHits": 0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "invalidTokens": [],
+          "verdict": "fail"
+        },
+        {
+          "itemId": "n2-02",
+          "prompt": "选材。只输出要写进正文的事实编号。\n叙事选材任务。\n视角：主角只知道自己在场的地点与自己的行动。\n事实：\n1. 位置：沈拾 从旧钟铺到竹影茶棚\n2. 任务达成：沈拾「补好瓦窑的顶棚」\n3. 时间推进：约7分钟\n4. 外貌：竹影茶棚 门前的石阶塌了一角\n5. 外貌：瓦窑 柜台上的铜锁生了锈\n6. 个性：陆停云变得爽快\n编号：",
+          "rawOutput": "陆停云变得爽快",
+          "wallSeconds": 0.32,
+          "outputTokens": 9,
+          "selected": [],
+          "selectedCount": 0,
+          "totalFacts": 6,
+          "selectAll": false,
+          "mustRecall": 0.0,
+          "forbiddenHits": 0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "invalidTokens": [
+            "陆停云变得爽快"
+          ],
+          "verdict": "fail"
+        },
+        {
+          "itemId": "n2-03",
+          "prompt": "选材。只输出要写进正文的事实编号。\n叙事选材任务。\n视角：主角只知道自己在场的地点与自己的行动。\n事实：\n1. 位置：岑半夏 从半窗书舍到西栅桥\n2. 任务达成：岑半夏「把账簿送回半窗书舍」\n3. 时间推进：约8分钟\n4. 外貌：西栅桥 窗纸被风戳了个洞\n5. 外貌：石阶码头 墙根的青苔爬上了半尺\n6. 个性：白蘅变得谨慎\n编号：",
+          "rawOutput": "编号:白蘅变得谨慎",
+          "wallSeconds": 0.36,
+          "outputTokens": 10,
+          "selected": [],
+          "selectedCount": 0,
+          "totalFacts": 6,
+          "selectAll": false,
+          "mustRecall": 0.0,
+          "forbiddenHits": 0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "invalidTokens": [
+            "白蘅变得谨慎"
+          ],
+          "verdict": "fail"
+        },
+        {
+          "itemId": "n2-04",
+          "prompt": "选材。只输出要写进正文的事实编号。\n叙事选材任务。\n视角：主角只知道自己在场的地点与自己的行动。\n事实：\n1. 位置：顾知白 从竹影茶棚到瓦窑\n2. 任务达成：顾知白「收好茶棚的坐垫」\n3. 时间推进：约9分钟\n4. 外貌：瓦窑 柜台上的铜锁生了锈\n5. 外貌：旧钟铺 梁上的吊绳磨细了\n6. 个性：裴行舟变得急躁\n编号：",
+          "rawOutput": "裴行舟变得急躁",
+          "wallSeconds": 0.3,
+          "outputTokens": 9,
+          "selected": [],
+          "selectedCount": 0,
+          "totalFacts": 6,
+          "selectAll": false,
+          "mustRecall": 0.0,
+          "forbiddenHits": 0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "invalidTokens": [
+            "裴行舟变得急躁"
+          ],
+          "verdict": "fail"
+        },
+        {
+          "itemId": "n2-05",
+          "prompt": "选材。只输出要写进正文的事实编号。\n叙事选材任务。\n视角：叙述者只知道该人物所在地点发生的事情。\n事实：\n1. 任务达成：岑半夏「把账簿送回半窗书舍」\n2. 外貌：石阶码头 门前的石阶塌了一角\n3. 理智：岑半夏 11→13（上升）\n4. 位置：陆停云 从竹影茶棚到瓦窑\n5. 无变化：石阶码头\n编号：",
+          "rawOutput": "无变化:石阶码头",
+          "wallSeconds": 0.41,
+          "outputTokens": 10,
+          "selected": [],
+          "selectedCount": 0,
+          "totalFacts": 5,
+          "selectAll": false,
+          "mustRecall": 0.0,
+          "forbiddenHits": 0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "invalidTokens": [
+            "无变化:石阶码头"
+          ],
+          "verdict": "fail"
+        },
+        {
+          "itemId": "n2-06",
+          "prompt": "选材。只输出要写进正文的事实编号。\n叙事选材任务。\n视角：叙述者只知道该人物所在地点发生的事情。\n事实：\n1. 任务达成：顾知白「收好茶棚的坐垫」\n2. 外貌：旧钟铺 窗纸被风戳了个洞\n3. 理智：顾知白 11→13（上升）\n4. 位置：白蘅 从西栅桥到石阶码头\n5. 无变化：旧钟铺\n编号：",
+          "rawOutput": "无变化:旧钟铺",
+          "wallSeconds": 0.34,
+          "outputTokens": 9,
+          "selected": [],
+          "selectedCount": 0,
+          "totalFacts": 5,
+          "selectAll": false,
+          "mustRecall": 0.0,
+          "forbiddenHits": 0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "invalidTokens": [
+            "无变化:旧钟铺"
+          ],
+          "verdict": "fail"
+        },
+        {
+          "itemId": "n2-07",
+          "prompt": "选材。只输出要写进正文的事实编号。\n叙事选材任务。\n视角：叙述者只知道该人物所在地点发生的事情。\n事实：\n1. 任务达成：陆停云「修西栅桥的踏板」\n2. 外貌：半窗书舍 柜台上的铜锁生了锈\n3. 理智：陆停云 11→13（上升）\n4. 位置：裴行舟 从瓦窑到旧钟铺\n5. 无变化：半窗书舍\n编号：",
+          "rawOutput": "编号:陆停云 11→13(上升)",
+          "wallSeconds": 0.6,
+          "outputTokens": 16,
+          "selected": [],
+          "selectedCount": 0,
+          "totalFacts": 5,
+          "selectAll": false,
+          "mustRecall": 0.0,
+          "forbiddenHits": 0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "invalidTokens": [
+            "陆停云",
+            "11→13(上升)"
+          ],
+          "verdict": "fail"
+        },
+        {
+          "itemId": "n2-08",
+          "prompt": "选材。只输出要写进正文的事实编号。\n叙事选材任务。\n视角：叙述者只知道该人物所在地点发生的事情。\n事实：\n1. 任务达成：白蘅「清点旧钟铺的存货」\n2. 外貌：竹影茶棚 墙根的青苔爬上了半尺\n3. 理智：白蘅 11→13（上升）\n4. 位置：沈拾 从石阶码头到半窗书舍\n5. 无变化：竹影茶棚\n编号：",
+          "rawOutput": "无变化:竹影茶棚",
+          "wallSeconds": 0.39,
+          "outputTokens": 10,
+          "selected": [],
+          "selectedCount": 0,
+          "totalFacts": 5,
+          "selectAll": false,
+          "mustRecall": 0.0,
+          "forbiddenHits": 0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "invalidTokens": [
+            "无变化:竹影茶棚"
+          ],
+          "verdict": "fail"
+        },
+        {
+          "itemId": "n2-09",
+          "prompt": "选材。只输出要写进正文的事实编号。\n叙事选材任务。\n视角：全知视角，但低显著性事实可以省略。\n事实：\n1. 位置：裴行舟 从石阶码头到旧钟铺\n2. 现状：沈拾 已在旧钟铺\n3. 个性：裴行舟变得谨慎\n4. 个性：沈拾变得急躁\n5. 时间推进：约9分钟\n6. 无变化：旧钟铺\n编号：",
+          "rawOutput": "无变化:旧钟铺",
+          "wallSeconds": 0.31,
+          "outputTokens": 9,
+          "selected": [],
+          "selectedCount": 0,
+          "totalFacts": 6,
+          "selectAll": false,
+          "mustRecall": 0.0,
+          "forbiddenHits": 0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "invalidTokens": [
+            "无变化:旧钟铺"
+          ],
+          "verdict": "fail"
+        },
+        {
+          "itemId": "n2-10",
+          "prompt": "选材。只输出要写进正文的事实编号。\n叙事选材任务。\n视角：全知视角，但低显著性事实可以省略。\n事实：\n1. 位置：沈拾 从旧钟铺到半窗书舍\n2. 现状：岑半夏 已在半窗书舍\n3. 个性：沈拾变得急躁\n4. 个性：岑半夏变得寡言\n5. 时间推进：约10分钟\n6. 无变化：半窗书舍\n编号：",
+          "rawOutput": "无变化:半窗书舍",
+          "wallSeconds": 0.42,
+          "outputTokens": 10,
+          "selected": [],
+          "selectedCount": 0,
+          "totalFacts": 6,
+          "selectAll": false,
+          "mustRecall": 0.0,
+          "forbiddenHits": 0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "invalidTokens": [
+            "无变化:半窗书舍"
+          ],
+          "verdict": "fail"
+        },
+        {
+          "itemId": "n2-11",
+          "prompt": "选材。只输出要写进正文的事实编号。\n叙事选材任务。\n视角：全知视角，但低显著性事实可以省略。\n事实：\n1. 位置：岑半夏 从半窗书舍到竹影茶棚\n2. 现状：顾知白 已在竹影茶棚\n3. 个性：岑半夏变得寡言\n4. 个性：顾知白变得爽快\n5. 时间推进：约11分钟\n6. 无变化：竹影茶棚\n编号：",
+          "rawOutput": "无变化:竹影茶棚",
+          "wallSeconds": 0.36,
+          "outputTokens": 10,
+          "selected": [],
+          "selectedCount": 0,
+          "totalFacts": 6,
+          "selectAll": false,
+          "mustRecall": 0.0,
+          "forbiddenHits": 0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "invalidTokens": [
+            "无变化:竹影茶棚"
+          ],
+          "verdict": "fail"
+        },
+        {
+          "itemId": "n2-12",
+          "prompt": "选材。只输出要写进正文的事实编号。\n叙事选材任务。\n视角：全知视角，但低显著性事实可以省略。\n事实：\n1. 位置：顾知白 从竹影茶棚到西栅桥\n2. 现状：陆停云 已在西栅桥\n3. 个性：顾知白变得爽快\n4. 个性：陆停云变得谨慎\n5. 时间推进：约12分钟\n6. 无变化：西栅桥\n编号：",
+          "rawOutput": "无变化:西栅桥",
+          "wallSeconds": 0.38,
+          "outputTokens": 9,
+          "selected": [],
+          "selectedCount": 0,
+          "totalFacts": 6,
+          "selectAll": false,
+          "mustRecall": 0.0,
+          "forbiddenHits": 0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "invalidTokens": [
+            "无变化:西栅桥"
+          ],
+          "verdict": "fail"
+        },
+        {
+          "itemId": "n2-13",
+          "prompt": "选材。只输出要写进正文的事实编号。\n叙事选材任务。\n视角：主角只知道自己在场的地点与自己的行动。\n事实：\n1. 任务达成：沈拾「修西栅桥的踏板」\n2. 时间推进：约12分钟\n3. 任务达成：白蘅「补好瓦窑的顶棚」\n4. 外貌：半窗书舍 柜台上的铜锁生了锈\n5. 理智：沈拾 12→10（下降）\n编号：",
+          "rawOutput": "编号:沈拾 12→10(下降)",
+          "wallSeconds": 0.58,
+          "outputTokens": 15,
+          "selected": [],
+          "selectedCount": 0,
+          "totalFacts": 5,
+          "selectAll": false,
+          "mustRecall": 0.0,
+          "forbiddenHits": 0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "invalidTokens": [
+            "沈拾",
+            "12→10(下降)"
+          ],
+          "verdict": "fail"
+        },
+        {
+          "itemId": "n2-14",
+          "prompt": "选材。只输出要写进正文的事实编号。\n叙事选材任务。\n视角：主角只知道自己在场的地点与自己的行动。\n事实：\n1. 任务达成：岑半夏「清点旧钟铺的存货」\n2. 时间推进：约13分钟\n3. 任务达成：裴行舟「把账簿送回半窗书舍」\n4. 外貌：竹影茶棚 墙根的青苔爬上了半尺\n5. 理智：岑半夏 12→10（下降）\n编号：",
+          "rawOutput": "情景:竹影茶棚 墙根的青苔爬上了半尺",
+          "wallSeconds": 0.75,
+          "outputTokens": 20,
+          "selected": [],
+          "selectedCount": 0,
+          "totalFacts": 5,
+          "selectAll": false,
+          "mustRecall": 0.0,
+          "forbiddenHits": 0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "invalidTokens": [
+            "情景:竹影茶棚",
+            "墙根的青苔爬上了半尺"
+          ],
+          "verdict": "fail"
+        },
+        {
+          "itemId": "n2-15",
+          "prompt": "选材。只输出要写进正文的事实编号。\n叙事选材任务。\n视角：主角只知道自己在场的地点与自己的行动。\n事实：\n1. 任务达成：顾知白「把船灯挂上桅杆」\n2. 时间推进：约14分钟\n3. 任务达成：沈拾「收好茶棚的坐垫」\n4. 外貌：西栅桥 梁上的吊绳磨细了\n5. 理智：顾知白 12→10（下降）\n编号：",
+          "rawOutput": "投影选材任务",
+          "wallSeconds": 0.32,
+          "outputTokens": 8,
+          "selected": [],
+          "selectedCount": 0,
+          "totalFacts": 5,
+          "selectAll": false,
+          "mustRecall": 0.0,
+          "forbiddenHits": 0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "invalidTokens": [
+            "投影选材任务"
+          ],
+          "verdict": "fail"
+        },
+        {
+          "itemId": "n2-16",
+          "prompt": "选材。只输出要写进正文的事实编号。\n叙事选材任务。\n视角：主角只知道自己在场的地点与自己的行动。\n事实：\n1. 任务达成：陆停云「补好瓦窑的顶棚」\n2. 时间推进：约15分钟\n3. 任务达成：岑半夏「修西栅桥的踏板」\n4. 外貌：瓦窑 檐角的风铃褪了色\n5. 理智：陆停云 12→10（下降）\n编号：",
+          "rawOutput": "理智:陆停云 12→10(下降)",
+          "wallSeconds": 0.76,
+          "outputTokens": 17,
+          "selected": [],
+          "selectedCount": 0,
+          "totalFacts": 5,
+          "selectAll": false,
+          "mustRecall": 0.0,
+          "forbiddenHits": 0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "invalidTokens": [
+            "理智:陆停云",
+            "12→10(下降)"
+          ],
+          "verdict": "fail"
+        }
+      ]
+    },
+    "M2-qwen3-0.6b-zero-shot": {
+      "summary": {
+        "items": 16,
+        "pass": 4,
+        "mustRecallMean": 0.969,
+        "forbiddenHitsTotal": 11,
+        "f1Mean": 0.703,
+        "selectAllItems": 0,
+        "invalidTokenItems": 0,
+        "meanSelected": 4.12
+      },
+      "rows": [
+        {
+          "itemId": "n2-01",
+          "prompt": "事实：\n1. 位置：裴行舟 从石阶码头到半窗书舍\n2. 任务达成：裴行舟「把船灯挂上桅杆」\n3. 时间推进：约6分钟\n4. 外貌：半窗书舍 檐角的风铃褪了色\n5. 外貌：西栅桥 窗纸被风戳了个洞\n6. 个性：顾知白变得寡言\n视角：主角只知道自己在场的地点与自己的行动。\n编号：",
+          "rawOutput": "1,2,3,5",
+          "wallSeconds": 20.15,
+          "outputTokens": 8,
+          "finishReason": "stop",
+          "selected": [
+            "f1",
+            "f2",
+            "f3",
+            "f5"
+          ],
+          "selectedCount": 4,
+          "totalFacts": 6,
+          "selectAll": false,
+          "mustRecall": 1.0,
+          "forbiddenHits": 1,
+          "precision": 0.5,
+          "recall": 0.667,
+          "f1": 0.571,
+          "invalidTokens": [],
+          "verdict": "fail"
+        },
+        {
+          "itemId": "n2-02",
+          "prompt": "事实：\n1. 位置：沈拾 从旧钟铺到竹影茶棚\n2. 任务达成：沈拾「补好瓦窑的顶棚」\n3. 时间推进：约7分钟\n4. 外貌：竹影茶棚 门前的石阶塌了一角\n5. 外貌：瓦窑 柜台上的铜锁生了锈\n6. 个性：陆停云变得爽快\n视角：主角只知道自己在场的地点与自己的行动。\n编号：",
+          "rawOutput": "1,2,3,5",
+          "wallSeconds": 15.18,
+          "outputTokens": 8,
+          "finishReason": "stop",
+          "selected": [
+            "f1",
+            "f2",
+            "f3",
+            "f5"
+          ],
+          "selectedCount": 4,
+          "totalFacts": 6,
+          "selectAll": false,
+          "mustRecall": 1.0,
+          "forbiddenHits": 1,
+          "precision": 0.5,
+          "recall": 0.667,
+          "f1": 0.571,
+          "invalidTokens": [],
+          "verdict": "fail"
+        },
+        {
+          "itemId": "n2-03",
+          "prompt": "事实：\n1. 位置：岑半夏 从半窗书舍到西栅桥\n2. 任务达成：岑半夏「把账簿送回半窗书舍」\n3. 时间推进：约8分钟\n4. 外貌：西栅桥 窗纸被风戳了个洞\n5. 外貌：石阶码头 墙根的青苔爬上了半尺\n6. 个性：白蘅变得谨慎\n视角：主角只知道自己在场的地点与自己的行动。\n编号：",
+          "rawOutput": "1,2,3,5,6",
+          "wallSeconds": 15.95,
+          "outputTokens": 10,
+          "finishReason": "stop",
+          "selected": [
+            "f1",
+            "f2",
+            "f3",
+            "f5",
+            "f6"
+          ],
+          "selectedCount": 5,
+          "totalFacts": 6,
+          "selectAll": false,
+          "mustRecall": 1.0,
+          "forbiddenHits": 1,
+          "precision": 0.4,
+          "recall": 0.667,
+          "f1": 0.5,
+          "invalidTokens": [],
+          "verdict": "fail"
+        },
+        {
+          "itemId": "n2-04",
+          "prompt": "事实：\n1. 位置：顾知白 从竹影茶棚到瓦窑\n2. 任务达成：顾知白「收好茶棚的坐垫」\n3. 时间推进：约9分钟\n4. 外貌：瓦窑 柜台上的铜锁生了锈\n5. 外貌：旧钟铺 梁上的吊绳磨细了\n6. 个性：裴行舟变得急躁\n视角：主角只知道自己在场的地点与自己的行动。\n编号：",
+          "rawOutput": "1,2,3,5",
+          "wallSeconds": 15.04,
+          "outputTokens": 8,
+          "finishReason": "stop",
+          "selected": [
+            "f1",
+            "f2",
+            "f3",
+            "f5"
+          ],
+          "selectedCount": 4,
+          "totalFacts": 6,
+          "selectAll": false,
+          "mustRecall": 1.0,
+          "forbiddenHits": 1,
+          "precision": 0.5,
+          "recall": 0.667,
+          "f1": 0.571,
+          "invalidTokens": [],
+          "verdict": "fail"
+        },
+        {
+          "itemId": "n2-05",
+          "prompt": "事实：\n1. 任务达成：岑半夏「把账簿送回半窗书舍」\n2. 外貌：石阶码头 门前的石阶塌了一角\n3. 理智：岑半夏 11→13（上升）\n4. 位置：陆停云 从竹影茶棚到瓦窑\n5. 无变化：石阶码头\n视角：叙述者只知道该人物所在地点发生的事情。\n编号：",
+          "rawOutput": "1,2,3,4",
+          "wallSeconds": 13.64,
+          "outputTokens": 8,
+          "finishReason": "stop",
+          "selected": [
+            "f1",
+            "f2",
+            "f3",
+            "f4"
+          ],
+          "selectedCount": 4,
+          "totalFacts": 5,
+          "selectAll": false,
+          "mustRecall": 1.0,
+          "forbiddenHits": 1,
+          "precision": 0.75,
+          "recall": 1.0,
+          "f1": 0.857,
+          "invalidTokens": [],
+          "verdict": "fail"
+        },
+        {
+          "itemId": "n2-06",
+          "prompt": "事实：\n1. 任务达成：顾知白「收好茶棚的坐垫」\n2. 外貌：旧钟铺 窗纸被风戳了个洞\n3. 理智：顾知白 11→13（上升）\n4. 位置：白蘅 从西栅桥到石阶码头\n5. 无变化：旧钟铺\n视角：叙述者只知道该人物所在地点发生的事情。\n编号：",
+          "rawOutput": "1,2,3,5",
+          "wallSeconds": 13.66,
+          "outputTokens": 8,
+          "finishReason": "stop",
+          "selected": [
+            "f1",
+            "f2",
+            "f3",
+            "f5"
+          ],
+          "selectedCount": 4,
+          "totalFacts": 5,
+          "selectAll": false,
+          "mustRecall": 1.0,
+          "forbiddenHits": 0,
+          "precision": 0.75,
+          "recall": 1.0,
+          "f1": 0.857,
+          "invalidTokens": [],
+          "verdict": "pass"
+        },
+        {
+          "itemId": "n2-07",
+          "prompt": "事实：\n1. 任务达成：陆停云「修西栅桥的踏板」\n2. 外貌：半窗书舍 柜台上的铜锁生了锈\n3. 理智：陆停云 11→13（上升）\n4. 位置：裴行舟 从瓦窑到旧钟铺\n5. 无变化：半窗书舍\n视角：叙述者只知道该人物所在地点发生的事情。\n编号：",
+          "rawOutput": "1,2,4",
+          "wallSeconds": 13.99,
+          "outputTokens": 6,
+          "finishReason": "stop",
+          "selected": [
+            "f1",
+            "f2",
+            "f4"
+          ],
+          "selectedCount": 3,
+          "totalFacts": 5,
+          "selectAll": false,
+          "mustRecall": 1.0,
+          "forbiddenHits": 1,
+          "precision": 0.667,
+          "recall": 0.667,
+          "f1": 0.667,
+          "invalidTokens": [],
+          "verdict": "fail"
+        },
+        {
+          "itemId": "n2-08",
+          "prompt": "事实：\n1. 任务达成：白蘅「清点旧钟铺的存货」\n2. 外貌：竹影茶棚 墙根的青苔爬上了半尺\n3. 理智：白蘅 11→13（上升）\n4. 位置：沈拾 从石阶码头到半窗书舍\n5. 无变化：竹影茶棚\n视角：叙述者只知道该人物所在地点发生的事情。\n编号：",
+          "rawOutput": "1,2,4",
+          "wallSeconds": 13.58,
+          "outputTokens": 6,
+          "finishReason": "stop",
+          "selected": [
+            "f1",
+            "f2",
+            "f4"
+          ],
+          "selectedCount": 3,
+          "totalFacts": 5,
+          "selectAll": false,
+          "mustRecall": 1.0,
+          "forbiddenHits": 1,
+          "precision": 0.667,
+          "recall": 0.667,
+          "f1": 0.667,
+          "invalidTokens": [],
+          "verdict": "fail"
+        },
+        {
+          "itemId": "n2-09",
+          "prompt": "事实：\n1. 位置：裴行舟 从石阶码头到旧钟铺\n2. 现状：沈拾 已在旧钟铺\n3. 个性：裴行舟变得谨慎\n4. 个性：沈拾变得急躁\n5. 时间推进：约9分钟\n6. 无变化：旧钟铺\n视角：全知视角，但低显著性事实可以省略。\n编号：",
+          "rawOutput": "1,2,3,5,6",
+          "wallSeconds": 13.02,
+          "outputTokens": 10,
+          "finishReason": "stop",
+          "selected": [
+            "f1",
+            "f2",
+            "f3",
+            "f5",
+            "f6"
+          ],
+          "selectedCount": 5,
+          "totalFacts": 6,
+          "selectAll": false,
+          "mustRecall": 1.0,
+          "forbiddenHits": 0,
+          "precision": 0.6,
+          "recall": 1.0,
+          "f1": 0.75,
+          "invalidTokens": [],
+          "verdict": "pass"
+        },
+        {
+          "itemId": "n2-10",
+          "prompt": "事实：\n1. 位置：沈拾 从旧钟铺到半窗书舍\n2. 现状：岑半夏 已在半窗书舍\n3. 个性：沈拾变得急躁\n4. 个性：岑半夏变得寡言\n5. 时间推进：约10分钟\n6. 无变化：半窗书舍\n视角：全知视角，但低显著性事实可以省略。\n编号：",
+          "rawOutput": "1,2,3,5,6",
+          "wallSeconds": 13.66,
+          "outputTokens": 10,
+          "finishReason": "stop",
+          "selected": [
+            "f1",
+            "f2",
+            "f3",
+            "f5",
+            "f6"
+          ],
+          "selectedCount": 5,
+          "totalFacts": 6,
+          "selectAll": false,
+          "mustRecall": 1.0,
+          "forbiddenHits": 0,
+          "precision": 0.6,
+          "recall": 1.0,
+          "f1": 0.75,
+          "invalidTokens": [],
+          "verdict": "pass"
+        },
+        {
+          "itemId": "n2-11",
+          "prompt": "事实：\n1. 位置：岑半夏 从半窗书舍到竹影茶棚\n2. 现状：顾知白 已在竹影茶棚\n3. 个性：岑半夏变得寡言\n4. 个性：顾知白变得爽快\n5. 时间推进：约11分钟\n6. 无变化：竹影茶棚\n视角：全知视角，但低显著性事实可以省略。\n编号：",
+          "rawOutput": "1,2,3,5,6",
+          "wallSeconds": 13.85,
+          "outputTokens": 10,
+          "finishReason": "stop",
+          "selected": [
+            "f1",
+            "f2",
+            "f3",
+            "f5",
+            "f6"
+          ],
+          "selectedCount": 5,
+          "totalFacts": 6,
+          "selectAll": false,
+          "mustRecall": 1.0,
+          "forbiddenHits": 0,
+          "precision": 0.6,
+          "recall": 1.0,
+          "f1": 0.75,
+          "invalidTokens": [],
+          "verdict": "pass"
+        },
+        {
+          "itemId": "n2-12",
+          "prompt": "事实：\n1. 位置：顾知白 从竹影茶棚到西栅桥\n2. 现状：陆停云 已在西栅桥\n3. 个性：顾知白变得爽快\n4. 个性：陆停云变得谨慎\n5. 时间推进：约12分钟\n6. 无变化：西栅桥\n视角：全知视角，但低显著性事实可以省略。\n编号：",
+          "rawOutput": "1,2,4,5,6",
+          "wallSeconds": 13.25,
+          "outputTokens": 10,
+          "finishReason": "stop",
+          "selected": [
+            "f1",
+            "f2",
+            "f4",
+            "f5",
+            "f6"
+          ],
+          "selectedCount": 5,
+          "totalFacts": 6,
+          "selectAll": false,
+          "mustRecall": 1.0,
+          "forbiddenHits": 0,
+          "precision": 0.4,
+          "recall": 0.667,
+          "f1": 0.5,
+          "invalidTokens": [],
+          "verdict": "fail"
+        },
+        {
+          "itemId": "n2-13",
+          "prompt": "事实：\n1. 任务达成：沈拾「修西栅桥的踏板」\n2. 时间推进：约12分钟\n3. 任务达成：白蘅「补好瓦窑的顶棚」\n4. 外貌：半窗书舍 柜台上的铜锁生了锈\n5. 理智：沈拾 12→10（下降）\n视角：主角只知道自己在场的地点与自己的行动。\n编号：",
+          "rawOutput": "1,3,4,5",
+          "wallSeconds": 13.72,
+          "outputTokens": 8,
+          "finishReason": "stop",
+          "selected": [
+            "f1",
+            "f3",
+            "f4",
+            "f5"
+          ],
+          "selectedCount": 4,
+          "totalFacts": 5,
+          "selectAll": false,
+          "mustRecall": 1.0,
+          "forbiddenHits": 1,
+          "precision": 0.75,
+          "recall": 1.0,
+          "f1": 0.857,
+          "invalidTokens": [],
+          "verdict": "fail"
+        },
+        {
+          "itemId": "n2-14",
+          "prompt": "事实：\n1. 任务达成：岑半夏「清点旧钟铺的存货」\n2. 时间推进：约13分钟\n3. 任务达成：裴行舟「把账簿送回半窗书舍」\n4. 外貌：竹影茶棚 墙根的青苔爬上了半尺\n5. 理智：岑半夏 12→10（下降）\n视角：主角只知道自己在场的地点与自己的行动。\n编号：",
+          "rawOutput": "1,3,4,5",
+          "wallSeconds": 14.1,
+          "outputTokens": 8,
+          "finishReason": "stop",
+          "selected": [
+            "f1",
+            "f3",
+            "f4",
+            "f5"
+          ],
+          "selectedCount": 4,
+          "totalFacts": 5,
+          "selectAll": false,
+          "mustRecall": 1.0,
+          "forbiddenHits": 1,
+          "precision": 0.75,
+          "recall": 1.0,
+          "f1": 0.857,
+          "invalidTokens": [],
+          "verdict": "fail"
+        },
+        {
+          "itemId": "n2-15",
+          "prompt": "事实：\n1. 任务达成：顾知白「把船灯挂上桅杆」\n2. 时间推进：约14分钟\n3. 任务达成：沈拾「收好茶棚的坐垫」\n4. 外貌：西栅桥 梁上的吊绳磨细了\n5. 理智：顾知白 12→10（下降）\n视角：主角只知道自己在场的地点与自己的行动。\n编号：",
+          "rawOutput": "1,3,4",
+          "wallSeconds": 13.3,
+          "outputTokens": 6,
+          "finishReason": "stop",
+          "selected": [
+            "f1",
+            "f3",
+            "f4"
+          ],
+          "selectedCount": 3,
+          "totalFacts": 5,
+          "selectAll": false,
+          "mustRecall": 0.5,
+          "forbiddenHits": 1,
+          "precision": 0.667,
+          "recall": 0.667,
+          "f1": 0.667,
+          "invalidTokens": [],
+          "verdict": "fail"
+        },
+        {
+          "itemId": "n2-16",
+          "prompt": "事实：\n1. 任务达成：陆停云「补好瓦窑的顶棚」\n2. 时间推进：约15分钟\n3. 任务达成：岑半夏「修西栅桥的踏板」\n4. 外貌：瓦窑 檐角的风铃褪了色\n5. 理智：陆停云 12→10（下降）\n视角：主角只知道自己在场的地点与自己的行动。\n编号：",
+          "rawOutput": "1,3,4,5",
+          "wallSeconds": 13.77,
+          "outputTokens": 8,
+          "finishReason": "stop",
+          "selected": [
+            "f1",
+            "f3",
+            "f4",
+            "f5"
+          ],
+          "selectedCount": 4,
+          "totalFacts": 5,
+          "selectAll": false,
+          "mustRecall": 1.0,
+          "forbiddenHits": 1,
+          "precision": 0.75,
+          "recall": 1.0,
+          "f1": 0.857,
+          "invalidTokens": [],
+          "verdict": "fail"
+        }
+      ],
+      "environment": {
+        "runtime": "real Edge + wllama 3.8.1 wasm, CPU",
+        "model": "/models/Qwen3-0.6B-Q4_K_M.gguf",
+        "assetSha256": {
+          "modelSha256": "ac2d97712095a558e31573f62f466a3f9d93990898b0ec79d7c974c1780d524a",
+          "bundleSha256": "834d7be963172248caf13c6f2ae786009b43edfeefc85eeadc20609e8447d118",
+          "wasmSha256": "551f13439366eff11e057b1b91fe46a7fdac29d56d67372d4c5f19a549dfe70c",
+          "packageVersion": "3.8.1"
+        },
+        "packageVersion": "3.8.1",
+        "loadMs": 12079,
+        "config": {
+          "model": "/models/Qwen3-0.6B-Q4_K_M.gguf",
+          "channel": "msedge",
+          "contextSize": 4096,
+          "numThreads": 4,
+          "maxTokens": 24,
+          "timeoutMs": 120000
+        },
+        "device": {
+          "cpu": "13th Gen Intel(R) Core(TM) i7-13700H",
+          "logicalCpus": 20
+        },
+        "note": "one greedy chat completion per item, 24 max tokens"
+      }
+    }
+  },
+  "disclaimers": [
+    "program-defined gold selection; no model output was used as a label",
+    "select-all is recorded but never treated as selection ability",
+    "dev set only: 16 items, third independent vocabulary",
+    "no N2 training yet; M1a/M1b are zero-shot prompt-shape operation points"
+  ]
+}

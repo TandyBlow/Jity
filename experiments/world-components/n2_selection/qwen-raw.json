@@ -1,0 +1,183 @@
+{
+  "purpose": "N2 arm M2: Qwen3-0.6B zero-shot id selection (real Edge + wllama)",
+  "status": "COMPLETED",
+  "recordedAt": "2026-10-29T06:58:50.757Z",
+  "config": {
+    "model": "/models/Qwen3-0.6B-Q4_K_M.gguf",
+    "channel": "msedge",
+    "contextSize": 4096,
+    "numThreads": 4,
+    "maxTokens": 24,
+    "timeoutMs": 120000
+  },
+  "promptShape": {
+    "system": "你是中文叙事编辑。给定事实表与叙述视角，只选出应当写进正文的事实编号。视角看不到的事实不要选。只输出编号，用逗号分隔，不要解释。",
+    "answerSlot": "编号："
+  },
+  "assets": {
+    "modelSha256": "ac2d97712095a558e31573f62f466a3f9d93990898b0ec79d7c974c1780d524a",
+    "bundleSha256": "834d7be963172248caf13c6f2ae786009b43edfeefc85eeadc20609e8447d118",
+    "wasmSha256": "551f13439366eff11e057b1b91fe46a7fdac29d56d67372d4c5f19a549dfe70c",
+    "packageVersion": "3.8.1"
+  },
+  "items": {
+    "file": "D:\\others\\Jity\\.local\\world-components-worktree\\experiments\\world-components\\n2_selection\\items.jsonl",
+    "sha256": "76b1ccb7c63e974e78663be61701d8308d9e9bab1bd4639af35f7d66c8db2d50",
+    "count": 16
+  },
+  "device": {
+    "cpu": "13th Gen Intel(R) Core(TM) i7-13700H",
+    "logicalCpus": 20
+  },
+  "rows": [
+    {
+      "itemId": "n2-01",
+      "prompt": "事实：\n1. 位置：裴行舟 从石阶码头到半窗书舍\n2. 任务达成：裴行舟「把船灯挂上桅杆」\n3. 时间推进：约6分钟\n4. 外貌：半窗书舍 檐角的风铃褪了色\n5. 外貌：西栅桥 窗纸被风戳了个洞\n6. 个性：顾知白变得寡言\n视角：主角只知道自己在场的地点与自己的行动。\n编号：",
+      "wallMs": 20147,
+      "text": "1,2,3,5",
+      "finishReason": "stop",
+      "promptTokens": 174,
+      "completionTokens": 8
+    },
+    {
+      "itemId": "n2-02",
+      "prompt": "事实：\n1. 位置：沈拾 从旧钟铺到竹影茶棚\n2. 任务达成：沈拾「补好瓦窑的顶棚」\n3. 时间推进：约7分钟\n4. 外貌：竹影茶棚 门前的石阶塌了一角\n5. 外貌：瓦窑 柜台上的铜锁生了锈\n6. 个性：陆停云变得爽快\n视角：主角只知道自己在场的地点与自己的行动。\n编号：",
+      "wallMs": 15176,
+      "text": "1,2,3,5",
+      "finishReason": "stop",
+      "promptTokens": 170,
+      "completionTokens": 8
+    },
+    {
+      "itemId": "n2-03",
+      "prompt": "事实：\n1. 位置：岑半夏 从半窗书舍到西栅桥\n2. 任务达成：岑半夏「把账簿送回半窗书舍」\n3. 时间推进：约8分钟\n4. 外貌：西栅桥 窗纸被风戳了个洞\n5. 外貌：石阶码头 墙根的青苔爬上了半尺\n6. 个性：白蘅变得谨慎\n视角：主角只知道自己在场的地点与自己的行动。\n编号：",
+      "wallMs": 15954,
+      "text": "1,2,3,5,6",
+      "finishReason": "stop",
+      "promptTokens": 174,
+      "completionTokens": 10
+    },
+    {
+      "itemId": "n2-04",
+      "prompt": "事实：\n1. 位置：顾知白 从竹影茶棚到瓦窑\n2. 任务达成：顾知白「收好茶棚的坐垫」\n3. 时间推进：约9分钟\n4. 外貌：瓦窑 柜台上的铜锁生了锈\n5. 外貌：旧钟铺 梁上的吊绳磨细了\n6. 个性：裴行舟变得急躁\n视角：主角只知道自己在场的地点与自己的行动。\n编号：",
+      "wallMs": 15036,
+      "text": "1,2,3,5",
+      "finishReason": "stop",
+      "promptTokens": 171,
+      "completionTokens": 8
+    },
+    {
+      "itemId": "n2-05",
+      "prompt": "事实：\n1. 任务达成：岑半夏「把账簿送回半窗书舍」\n2. 外貌：石阶码头 门前的石阶塌了一角\n3. 理智：岑半夏 11→13（上升）\n4. 位置：陆停云 从竹影茶棚到瓦窑\n5. 无变化：石阶码头\n视角：叙述者只知道该人物所在地点发生的事情。\n编号：",
+      "wallMs": 13637,
+      "text": "1,2,3,4",
+      "finishReason": "stop",
+      "promptTokens": 160,
+      "completionTokens": 8
+    },
+    {
+      "itemId": "n2-06",
+      "prompt": "事实：\n1. 任务达成：顾知白「收好茶棚的坐垫」\n2. 外貌：旧钟铺 窗纸被风戳了个洞\n3. 理智：顾知白 11→13（上升）\n4. 位置：白蘅 从西栅桥到石阶码头\n5. 无变化：旧钟铺\n视角：叙述者只知道该人物所在地点发生的事情。\n编号：",
+      "wallMs": 13656,
+      "text": "1,2,3,5",
+      "finishReason": "stop",
+      "promptTokens": 158,
+      "completionTokens": 8
+    },
+    {
+      "itemId": "n2-07",
+      "prompt": "事实：\n1. 任务达成：陆停云「修西栅桥的踏板」\n2. 外貌：半窗书舍 柜台上的铜锁生了锈\n3. 理智：陆停云 11→13（上升）\n4. 位置：裴行舟 从瓦窑到旧钟铺\n5. 无变化：半窗书舍\n视角：叙述者只知道该人物所在地点发生的事情。\n编号：",
+      "wallMs": 13993,
+      "text": "1,2,4",
+      "finishReason": "stop",
+      "promptTokens": 161,
+      "completionTokens": 6
+    },
+    {
+      "itemId": "n2-08",
+      "prompt": "事实：\n1. 任务达成：白蘅「清点旧钟铺的存货」\n2. 外貌：竹影茶棚 墙根的青苔爬上了半尺\n3. 理智：白蘅 11→13（上升）\n4. 位置：沈拾 从石阶码头到半窗书舍\n5. 无变化：竹影茶棚\n视角：叙述者只知道该人物所在地点发生的事情。\n编号：",
+      "wallMs": 13581,
+      "text": "1,2,4",
+      "finishReason": "stop",
+      "promptTokens": 161,
+      "completionTokens": 6
+    },
+    {
+      "itemId": "n2-09",
+      "prompt": "事实：\n1. 位置：裴行舟 从石阶码头到旧钟铺\n2. 现状：沈拾 已在旧钟铺\n3. 个性：裴行舟变得谨慎\n4. 个性：沈拾变得急躁\n5. 时间推进：约9分钟\n6. 无变化：旧钟铺\n视角：全知视角，但低显著性事实可以省略。\n编号：",
+      "wallMs": 13024,
+      "text": "1,2,3,5,6",
+      "finishReason": "stop",
+      "promptTokens": 152,
+      "completionTokens": 10
+    },
+    {
+      "itemId": "n2-10",
+      "prompt": "事实：\n1. 位置：沈拾 从旧钟铺到半窗书舍\n2. 现状：岑半夏 已在半窗书舍\n3. 个性：沈拾变得急躁\n4. 个性：岑半夏变得寡言\n5. 时间推进：约10分钟\n6. 无变化：半窗书舍\n视角：全知视角，但低显著性事实可以省略。\n编号：",
+      "wallMs": 13664,
+      "text": "1,2,3,5,6",
+      "finishReason": "stop",
+      "promptTokens": 157,
+      "completionTokens": 10
+    },
+    {
+      "itemId": "n2-11",
+      "prompt": "事实：\n1. 位置：岑半夏 从半窗书舍到竹影茶棚\n2. 现状：顾知白 已在竹影茶棚\n3. 个性：岑半夏变得寡言\n4. 个性：顾知白变得爽快\n5. 时间推进：约11分钟\n6. 无变化：竹影茶棚\n视角：全知视角，但低显著性事实可以省略。\n编号：",
+      "wallMs": 13853,
+      "text": "1,2,3,5,6",
+      "finishReason": "stop",
+      "promptTokens": 160,
+      "completionTokens": 10
+    },
+    {
+      "itemId": "n2-12",
+      "prompt": "事实：\n1. 位置：顾知白 从竹影茶棚到西栅桥\n2. 现状：陆停云 已在西栅桥\n3. 个性：顾知白变得爽快\n4. 个性：陆停云变得谨慎\n5. 时间推进：约12分钟\n6. 无变化：西栅桥\n视角：全知视角，但低显著性事实可以省略。\n编号：",
+      "wallMs": 13253,
+      "text": "1,2,4,5,6",
+      "finishReason": "stop",
+      "promptTokens": 156,
+      "completionTokens": 10
+    },
+    {
+      "itemId": "n2-13",
+      "prompt": "事实：\n1. 任务达成：沈拾「修西栅桥的踏板」\n2. 时间推进：约12分钟\n3. 任务达成：白蘅「补好瓦窑的顶棚」\n4. 外貌：半窗书舍 柜台上的铜锁生了锈\n5. 理智：沈拾 12→10（下降）\n视角：主角只知道自己在场的地点与自己的行动。\n编号：",
+      "wallMs": 13722,
+      "text": "1,3,4,5",
+      "finishReason": "stop",
+      "promptTokens": 160,
+      "completionTokens": 8
+    },
+    {
+      "itemId": "n2-14",
+      "prompt": "事实：\n1. 任务达成：岑半夏「清点旧钟铺的存货」\n2. 时间推进：约13分钟\n3. 任务达成：裴行舟「把账簿送回半窗书舍」\n4. 外貌：竹影茶棚 墙根的青苔爬上了半尺\n5. 理智：岑半夏 12→10（下降）\n视角：主角只知道自己在场的地点与自己的行动。\n编号：",
+      "wallMs": 14102,
+      "text": "1,3,4,5",
+      "finishReason": "stop",
+      "promptTokens": 166,
+      "completionTokens": 8
+    },
+    {
+      "itemId": "n2-15",
+      "prompt": "事实：\n1. 任务达成：顾知白「把船灯挂上桅杆」\n2. 时间推进：约14分钟\n3. 任务达成：沈拾「收好茶棚的坐垫」\n4. 外貌：西栅桥 梁上的吊绳磨细了\n5. 理智：顾知白 12→10（下降）\n视角：主角只知道自己在场的地点与自己的行动。\n编号：",
+      "wallMs": 13305,
+      "text": "1,3,4",
+      "finishReason": "stop",
+      "promptTokens": 160,
+      "completionTokens": 6
+    },
+    {
+      "itemId": "n2-16",
+      "prompt": "事实：\n1. 任务达成：陆停云「补好瓦窑的顶棚」\n2. 时间推进：约15分钟\n3. 任务达成：岑半夏「修西栅桥的踏板」\n4. 外貌：瓦窑 檐角的风铃褪了色\n5. 理智：陆停云 12→10（下降）\n视角：主角只知道自己在场的地点与自己的行动。\n编号：",
+      "wallMs": 13765,
+      "text": "1,3,4,5",
+      "finishReason": "stop",
+      "promptTokens": 161,
+      "completionTokens": 8
+    }
+  ],
+  "browser": "155.0.4283.62",
+  "load": {
+    "loadMs": 12079
+  },
+  "completedAt": "2026-10-29T07:02:56.146Z"
+}
