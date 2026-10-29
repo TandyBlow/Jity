@@ -1,7 +1,8 @@
 # N3→N4 接口约束方案与非模型夹具
 
 日期：2026-10-30。提交人：C 实现者。基线：`world-components@b97adb2`（= origin，已核实）；工作区仅未跟踪的 `signoff-f9c1190.md`（原样保留）与冻结产物，零改动。
-状态：**方案＋夹具，待 C 审查者复审**。本方案定义的是**待实现、待验证的接口约束**，不是已接线能力；本轮不训练、不调用真实模型、不实现任何回退。
+状态：**方案 v2＋夹具，待 C 审查者复审**。本方案定义的是**待实现、待验证的接口约束**，不是已接线能力；本轮不训练、不调用真实模型、不实现任何回退。
+修订记录：v1（`8626082`）→ **v2**（按独立反例收紧五处）：① 绑定按根点/非根点分别校验并核对前驱身份（`before.pointId == previousPointId`），根点 timeAdvance 必须为 null、Δ 为空；② 来源解析改为**按实体组织的映射式 `entityDeltas`＋内容核对**（task goal 对实体任务列表、time 对 timeAdvance），数字索引作废；③ 范围检查以**实际单次 N4 输入（展平事实总数）**为准，分组不能绕过 4 条上限；④ token 计数对象改为**确定性渲染替身文本**（共享 render_input 的消费面替身），非 JSON 列表；⑤ N3 硬不变量为采纳前置——I2 违规计划报 `error:plan-invariant-violation` 并停止，coreference 不被 N4 消费不放行 N3 违规。
 
 ## 0. 背景与已确认事实
 
@@ -27,15 +28,20 @@
 - **保留原计划**：`plan` 字段是 N3 计划的原样深拷贝——句组、factId、顺序、实体、时间全部不变；接口层不重写、不重排、不删指代。
 - **coreference 明确不消费**：`accepted` 时构造的 `renderInput` 只含事实条目（按计划句组序展平的扁平事实表，与现行 `render_input` 消费面一致），coreference 与句组边界不传入；它们仅随 `plan` 原样保留供后续 N4-coref 工作。
 - `unsupported` 不是失败也不是通过：不计入任何门，只标定「该计划超出 N4 当前已验范围」。
-- 两个候选原因：`plan-too-long`（任一句组事实数 > 4）；`input-too-long`（展平后的 render 输入 token 数 > 128，计数器见 §3 桩说明）。
+- 两个候选原因：`plan-too-long`（**实际单次 N4 输入＝展平事实总数** > 4——句组划分不能绕过上限，分组边界的语义意义留给候选方案）；`input-too-long`（**渲染替身文本**的桩 token 数 > 128——N4 消费的是 render_input 生成的提示文本而非 JSON，计数对象与之一致；渲染替身与桩分词均非真实验收，见 §3）。
 
 ## 2. 权威输入绑定（缺失或对不上即停止）
 
 N3→N4 链的输入只能来自**按目标 pointId 读取的已提交记录**（对齐 [README 权威锚点](README.md)与 R1 冻结读取契约）：`state`、`pointId`、`version`、`stateDigest`、`previousPointId`、`timeAdvance`、**原始 `entityDeltas`**；前状态按 `previousPointId` 显式读取并核对同世界、版本连续（before.version＋1＝version）与血缘；根点用空 Δ、null 前驱、version 0。
 
-- 事实清单（manifest）的每条事实必须带指向原始 `entityDeltas` 的来源指针；绑定校验逐条核对指针可解析、指向的 delta 存在于绑定点的原始 Δ 中。
+- **根点/非根点分别校验**：根点（version=0）要求 previousPointId 为 null、**timeAdvance 为 null**、Δ 为空、无 before 记录；非根点要求 before 记录存在且**同世界、version 连续（before.version＋1＝version）、前驱身份一致（before.pointId == point.previousPointId）**、timeAdvance 存在。
+- **来源解析与内容核对**：正式 `entityDeltas` 是**按实体组织的映射**；每条事实的来源指针指向映射条目（task_achieved → 实体的任务列表下标，time → timeAdvance），绑定校验核对**事实内容与 delta 字段一致**（goal 逐字等于任务项、time 的 amount/unit 等于 timeAdvance），不一致即 `source-content-mismatch`。
 - **停止条件**（产出 `binding-failed`，拒绝进入接口检查）：缺 state/digest/version、前驱缺失（非根点）、版本不连续、世界不匹配、事实来源指针解析失败或指向不存在的 delta。
 - **不从结果文本补造**：已提交叙事文本、preview 工作态、当前 head 均不得用于重建事实；绑定失败就是失败，不做任何差分补造。
+
+## 2.1 N3 不变量是采纳前置
+
+接口检查在覆盖检查之后、范围检查之前运行 N3 硬不变量（`n3_plan.check_invariants`）：I2 违规（如跨组指代）或 mention 不实的计划报 `error:plan-invariant-violation` 并停止，**不产出 renderInput**。coreference 不被 N4 消费只说明渲染层忽略指代，不免除计划本身的合法性——上游验证失败即接口停止，映射成功不等于计划可采纳。
 
 ## 3. 非模型夹具（`n3_n4_fixture.py`）
 
@@ -44,20 +50,24 @@ N3→N4 链的输入只能来自**按目标 pointId 读取的已提交记录**�
 | # | 夹具 | 预期 |
 | --- | --- | --- |
 | F01 | 1 条事实单组 | accepted，renderInput 含该事实 |
-| F04 | 4 条事实单组 | accepted（范围内上限） |
-| F05 | 5 条事实单组 | unsupported/plan-too-long，plan 原样保留（逐字段相等断言） |
-| FT128 | render 输入恰 128 桩 token | accepted |
+| F04 | 4 条事实（展平上限） | accepted |
+| F05 | 单组 5 条事实 | unsupported/plan-too-long，plan 原样保留（逐字段＋深拷贝断言） |
+| F52 | 两组 3+2（展平 5 条） | unsupported/plan-too-long——分组不能绕过上限 |
+| FT128 | 渲染替身文本恰 128 桩 token | accepted |
 | FT129 | 129 桩 token | unsupported/input-too-long |
-| FM01 | 计划漏 factId | error/plan-fact-mismatch（missing） |
-| FM02 | 计划重复 factId | error/plan-fact-mismatch（duplicate） |
-| FM03 | 计划引用未知 factId | error/plan-fact-mismatch（unknown） |
-| FO01 | 输入序变化 | accepted，renderInput 展平序随计划句组序（确定性映射断言） |
-| FT01 | time 前驱（time 在前驱之后） | accepted，time 条目原样传递、at=null 处理不变 |
-| FN01 | 同名不同实体 | accepted，coreference 原样保留但不进 renderInput |
-| FX01 | 跨组指代（I2 域外引用） | accepted，coreference 原样保留不进 renderInput（接口不越权改判 N3 的 I2 结论） |
-| FB01 | 非根点缺前驱记录 | binding-failed（missing-before） |
-| FB02 | 版本不连续 | binding-failed（version-gap） |
-| FB03 | 缺 stateDigest | binding-failed（missing-digest） |
+| FM01/02/03 | 计划漏/重/未知 factId | error/plan-fact-mismatch:missing / duplicate / unknown |
+| FO01 | 输入序变化 | accepted，renderInput 展平序随计划句组序 |
+| FT01 | time 在前驱之后 | accepted，time 条目原样传递、at=null 不变 |
+| FN01 | 同名不同实体（各指代本组实体） | accepted（I2 合法） |
+| FX01 | 跨组指代 | **error/plan-invariant-violation**（I2 前置停止，不产 renderInput） |
+| FB01/02/03 | 非根点缺前驱 / 版本断裂 / 缺 stateDigest | binding-failed:missing-before / version-gap / missing-stateDigest |
+| FBL1 | before.pointId 与 previousPointId 不相关 | binding-failed:predecessor-identity-mismatch |
+| FBR1 | 合法根点（timeAdvance=null、空 Δ） | 绑定通过 |
+| FBR2 | 根点带 timeAdvance | binding-failed:root-with-time |
+| FSC1 | task goal 与实体任务列表不符 | binding-failed:source-content-mismatch |
+| FTT1 | time amount 与 timeAdvance 不符 | binding-failed:source-content-mismatch |
+
+**渲染替身与桩分词**：token 计数对象是 `render_text`——共享 `render_input` 消费面的**确定性替身**（扁平事实表→固定格式提示行）；6 字符分块桩分词。两者均**不是**真实共享渲染器或真实 sentencepiece 的验收；真实分词与渲染归 N4 浏览器批。
 
 ## 4. 未来候选（只登记追踪，不实现）
 

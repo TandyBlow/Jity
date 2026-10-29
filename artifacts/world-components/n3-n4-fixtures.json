@@ -1,11 +1,13 @@
 {
  "purpose": "N3->N4 interface fixture verification (non-model)",
- "tokenCounter": "deterministic 6-char stub; NOT a real sentencepiece acceptance",
+ "tokenCounter": "deterministic 6-char stub over a deterministic render stand-in; NOT real sentencepiece or real shared-render acceptance",
  "interfaceConstraints": {
-  "maxFactsPerGroup": 4,
+  "maxFactsPerRun": 4,
   "maxInputTokens": 128,
   "coreferenceConsumed": false,
-  "unsupportedPreservesPlan": true
+  "invariantsArePrecondition": true,
+  "unsupportedPreservesPlan": true,
+  "rangeCheckedOnFlattenedRun": true
  },
  "results": {
   "F01": {
@@ -15,19 +17,25 @@
    "pass": true
   },
   "F04": {
-   "description": "4 facts in range (upper bound)",
+   "description": "4 facts flattened (upper bound)",
    "expected": "accepted",
    "got": "accepted",
    "pass": true
   },
   "F05": {
-   "description": "5 facts over limit, plan preserved",
+   "description": "5 facts in one group over limit",
+   "expected": "unsupported:plan-too-long",
+   "got": "unsupported:plan-too-long",
+   "pass": true
+  },
+  "F52": {
+   "description": "3+2 grouping cannot bypass: flattened 5",
    "expected": "unsupported:plan-too-long",
    "got": "unsupported:plan-too-long",
    "pass": true
   },
   "FT128": {
-   "description": "exactly 128 stub tokens",
+   "description": "exactly 128 stub tokens of rendered text",
    "expected": "accepted",
    "got": "accepted",
    "pass": true
@@ -57,7 +65,7 @@
    "pass": true
   },
   "FO01": {
-   "description": "order change follows plan sentence order",
+   "description": "order follows plan sentence order",
    "expected": "accepted",
    "got": "accepted",
    "pass": true
@@ -69,15 +77,15 @@
    "pass": true
   },
   "FN01": {
-   "description": "same name different entities; coref not consumed",
+   "description": "same name different entities; anchored refs legal",
    "expected": "accepted",
    "got": "accepted",
    "pass": true
   },
   "FX01": {
-   "description": "cross-group reference; coref not consumed",
-   "expected": "accepted",
-   "got": "accepted",
+   "description": "cross-group reference: I2 violation stops acceptance",
+   "expected": "error:plan-invariant-violation",
+   "got": "error:plan-invariant-violation",
    "pass": true
   },
   "FB01": {
@@ -96,6 +104,39 @@
    "description": "missing stateDigest",
    "expected": "binding-failed:missing-stateDigest",
    "got": "binding-failed:missing-stateDigest",
+   "pass": true
+  },
+  "FBL1": {
+   "description": "predecessor identity mismatch",
+   "expected": "binding-failed:predecessor-identity-mismatch",
+   "got": "binding-failed:predecessor-identity-mismatch",
+   "pass": true,
+   "kind": "binding-only"
+  },
+  "FBR1": {
+   "description": "legal root point (null timeAdvance, empty deltas)",
+   "expected": "bound",
+   "got": "bound",
+   "pass": true,
+   "kind": "binding-only"
+  },
+  "FBR2": {
+   "description": "root point carrying timeAdvance",
+   "expected": "binding-failed:root-with-time",
+   "got": "binding-failed:root-with-time",
+   "pass": true,
+   "kind": "binding-only"
+  },
+  "FSC1": {
+   "description": "fact content diverges from its delta",
+   "expected": "binding-failed:source-content-mismatch:f1:task",
+   "got": "binding-failed:source-content-mismatch:f1:task",
+   "pass": true
+  },
+  "FTT1": {
+   "description": "time amount diverges from timeAdvance",
+   "expected": "binding-failed:source-content-mismatch:f1:timeAdvance",
+   "got": "binding-failed:source-content-mismatch:f1:timeAdvance",
    "pass": true
   }
  },
