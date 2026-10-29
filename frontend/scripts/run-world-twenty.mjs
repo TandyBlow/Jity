@@ -549,11 +549,9 @@ try {
       };
 
       // 服务端冻结顺序规则（world_store.finish_operation）：start_advance 后轮次
-      // 顺序按（理智值，ID）升序重排——同为 10 时恒为 ['person_a','person_c']，
-      // 发起人必须是 order[0]。
+      // 顺序按（理智值，ID）升序重排——A 阶段已改变理智，order[0] 不再可预设
+      //（首轮问题 2 在同世界延续下的显形：发起人必须动态读取冻结顺序）。
       const roster = ['person_a', 'person_c'];
-      const initiator = 'person_a';
-      const reactor = 'person_c';
       const inputText = '林川推开门厅深处的重门，示意周宁到门边一起撑住。';
       const TA_SUCCESSOR = { boundary: 'instant', duration: { amount: 0, unit: 'second' } }; // T08 s7 录制形状
       const TA_CHAIN = { boundary: 'elapsed', duration: { amount: 2, unit: 'second' } };
@@ -570,34 +568,41 @@ try {
       const worldAttempts = [];
       const abandonedRounds = [];
       let ids = null;
+      let initiator = null;
+      let reactor = null;
       let admitted = false;
       for (let attempt = 1; attempt <= 6 && !admitted; attempt++) {
         ids = await allocate([
           { slotKey: 'advance', kind: 'advance' }, { slotKey: 'input', kind: 'input' }, { slotKey: 'round', kind: 'round' },
           { slotKey: 'point_1', kind: 'point' }, { slotKey: 'group_1', kind: 'group' },
-          { slotKey: 'trigger:group_1:person_a:person_c', kind: 'trigger' },
+          { slotKey: 'trigger:ring', kind: 'trigger' },
           { slotKey: 'successor', kind: 'point' }, { slotKey: 'round_2', kind: 'round' }, { slotKey: 'round_3', kind: 'round' },
           { slotKey: 'point_auto2', kind: 'point' }, { slotKey: 'point_auto3', kind: 'point' },
           { slotKey: 'change_1', kind: 'change' },
         ]);
         await api('checkpoint_start_advance', { ...base(), operation: 'start_advance', advanceId: ids.advance, inputId: ids.input,
           roundId: ids.round, inputText, order: roster });
+        // 发起人必须是重排后的 order[0]（discover 的绑定校验）
+        const frozenOrder = (await H.rawOp('get_context', { includeRecovery: false }, { tag: 'setup' })).world?.round?.order ?? roster;
+        initiator = frozenOrder[0];
+        reactor = frozenOrder[1] ?? frozenOrder[0];
+        const triggerKey = ids['trigger:ring'];
         await api('checkpoint_begin_point', { ...base(), operation: 'begin_point', pointId: ids.point_1, kind: 'normal',
           timeAdvance: TA_CHAIN });
         await api('checkpoint_discover_group', { ...base(), operation: 'discover_group', pointId: ids.point_1, groupId: ids.group_1,
           initiatorId: initiator, actionText: inputText, targetIds: null });
         await api('checkpoint_extend_group', { ...base(), operation: 'extend_group', pointId: ids.point_1, groupId: ids.group_1,
-          sourceId: initiator, targets: [{ targetId: reactor, triggerKey: ids['trigger:group_1:person_a:person_c'] }], admittedMember: null });
+          sourceId: initiator, targets: [{ targetId: reactor, triggerKey }], admittedMember: null });
         const ringRoll = (await api('create_rolls', { ...base(), rolls: [{ advanceId: ids.advance, roundId: ids.round, groupId: ids.group_1,
-          sourceId: initiator, targetId: reactor, triggerKey: ids['trigger:group_1:person_a:person_c'],
+          sourceId: initiator, targetId: reactor, triggerKey,
           ruleVersion: 'reaction-d20-v1', target: 11 }] })).rolls[0];
-        worldAttempts.push({ attempt, roundId: ids.round,
+        worldAttempts.push({ attempt, roundId: ids.round, initiator, reactor,
           roll: { admitted: ringRoll.admitted, rollId: ringRoll.rollId, result: ringRoll.result, eligible: ringRoll.eligible } });
         if (ringRoll.admitted) {
           await api('checkpoint_extend_group', { ...base(), operation: 'extend_group', pointId: ids.point_1, groupId: ids.group_1,
             sourceId: initiator, targets: null, admittedMember: { memberId: reactor,
-              actionText: '周宁在门边稳住身形，与林川一起撑住重门。',
-              rollRefs: [{ sourceId: initiator, targetId: reactor, triggerKey: ids['trigger:group_1:person_a:person_c'], rollId: ringRoll.rollId }] } });
+              actionText: '另一人赶到门边，与发起者一起撑住了重门。',
+              rollRefs: [{ sourceId: initiator, targetId: reactor, triggerKey, rollId: ringRoll.rollId }] } });
           // 被接纳的反应者成为新 source（有自己的行动机会）：显式空目标集
           // 完成其 source 槽位，否则 close_group 拒绝
           await api('checkpoint_extend_group', { ...base(), operation: 'extend_group', pointId: ids.point_1, groupId: ids.group_1,
@@ -607,13 +612,17 @@ try {
           // plan=[current, successor]+commit 后服务端自动提升），驱动器接手提交
           // 与后续点的驱动。
           await api('checkpoint_close_group', { ...base(), operation: 'close_group', pointId: ids.point_1, groupId: ids.group_1 });
+          // 因果动态化：A 阶段已改变理智与任务，发起人的任务/数值不可预设——
+          // 只降 1 点理智+一条人格变化（对任意发起人都合法，不预设任务归属）
+          const headRead = await H.rawOp('get_state', {}, { tag: 'setup' });
+          const initiatorSanity = headRead.state.characters[initiator]?.sanity ?? 10;
           await api('checkpoint_stage_unit', { ...base(), operation: 'stage_unit', pointId: ids.point_1, groupId: ids.group_1,
             candidates: { groupId: ids.group_1, actorIds: [initiator, reactor], positions: {}, appearances: {}, subtasksAdded: {},
-              tasksAchieved: { [initiator]: ['task_watch'] },
-              personalities: { [initiator]: [{ id: ids.change_1, text: '撑住重门后更加沉稳', supersedes: [] }] },
-              sanities: { [initiator]: 8 },
+              tasksAchieved: {},
+              personalities: { [initiator]: [{ id: ids.change_1, text: '共同撑住重门后更加沉稳', supersedes: [] }] },
+              sanities: { [initiator]: Math.max(0, initiatorSanity - 1) },
               taskCoverageIds: [initiator, reactor], personalityCoverageIds: [initiator, reactor] },
-            results: { [initiator]: '林川撑住了重门，门口的重量终于有人分担。', [reactor]: '周宁在门边稳住身形，与林川一起撑住重门。' } });
+            results: { [initiator]: '重门终于在两人合力下被稳稳撑住。', [reactor]: '另一人赶到门边，与发起者一起撑住了重门。' } });
           await api('checkpoint_prepare_successor', { ...base(), operation: 'prepare_successor', pointId: ids.point_1,
             successorPointId: ids.successor, timeAdvance: TA_SUCCESSOR });
           admitted = true;
