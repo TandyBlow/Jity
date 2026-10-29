@@ -740,24 +740,66 @@ class RuntimeSmokeTests(unittest.TestCase):
                 self.assertEqual(plan.read_bytes(),
                                  lab.canonical_bytes({"identity": written[0]}) + b"\n")
 
-    def test_identical_concurrent_plans_reuse_and_never_overwrite(self):
+    def test_identical_concurrent_plans_reuse_and_never_false_conflict(self):
+        big = "x" * 4_000_000
+        for _trial in range(3):
+            with tempfile.TemporaryDirectory() as directory:
+                plan = Path(directory) / "runtime-smoke-plan.json"
+                barrier = threading.Barrier(3)
+                outcomes: dict[str, object] = {}
+                partial_reads: list[int] = []
+
+                def write(tag: str) -> None:
+                    barrier.wait()
+                    try:
+                        outcomes[tag] = smoke.write_plan(plan, {"blob": big})
+                    except Exception as exc:
+                        outcomes[tag] = exc
+
+                def read_while_writing(writers: list[threading.Thread]) -> None:
+                    barrier.wait()
+                    while any(thread.is_alive() for thread in writers):
+                        try:
+                            data = plan.read_bytes()
+                        except FileNotFoundError:
+                            continue
+                        if data != lab.canonical_bytes({"blob": big}) + b"\n":
+                            partial_reads.append(len(data))
+                            return
+
+                writers = [threading.Thread(target=write, args=("A",)),
+                           threading.Thread(target=write, args=("B",))]
+                reader = threading.Thread(target=read_while_writing, args=(writers,))
+                threads = [*writers, reader]
+                for thread in threads:
+                    thread.start()
+                for thread in threads:
+                    thread.join()
+                self.assertEqual(partial_reads, [], "a reader saw a partially published plan")
+                self.assertEqual(sorted(str(v) for v in outcomes.values()),
+                                 ["reused", "written"], outcomes)
+                self.assertEqual(plan.read_bytes(), lab.canonical_bytes({"blob": big}) + b"\n")
+
+    def test_run_record_placeholder_is_complete_before_stages_run(self):
         with tempfile.TemporaryDirectory() as directory:
-            plan = Path(directory) / "runtime-smoke-plan.json"
-            barrier = threading.Barrier(2)
-            outcomes: dict[str, object] = {}
+            record = Path(directory) / "record.json"
+            observed: dict[str, bytes] = {}
 
-            def write(tag: str) -> None:
-                barrier.wait()
-                outcomes[tag] = smoke.write_plan(plan, {"identity": "same"})
+            def inspect(_ns, _model_dir):
+                observed["raw"] = record.read_bytes()
+                return _FakeTokenizer()
 
-            threads = [threading.Thread(target=write, args=("A",)),
-                       threading.Thread(target=write, args=("B",))]
-            for thread in threads:
-                thread.start()
-            for thread in threads:
-                thread.join()
-            self.assertEqual(sorted(str(v) for v in outcomes.values()), ["reused", "written"])
-            self.assertEqual(plan.read_bytes(), lab.canonical_bytes({"identity": "same"}) + b"\n")
+            smoke.run_with_journal(smoke_report(), Path(directory), record,
+                                   import_stack=lambda: {"importWallMs": 1.0},
+                                   load_tokenizer=inspect,
+                                   load_model=lambda ns, d: _FakeModel(),
+                                   generation_attempt=ok_generation())
+            placeholder = json.loads(observed["raw"].decode("utf-8"))
+            self.assertEqual(placeholder["status"], "running")
+            self.assertEqual(placeholder["formalVerdict"], "not_evaluated")
+            final = json.loads(record.read_text(encoding="utf-8"))
+            self.assertEqual(final["status"], "complete")
+            self.assertEqual(final["attempts"][0]["status"], "complete")
 
     def test_run_record_claim_refuses_to_replace_existing_evidence(self):
         with tempfile.TemporaryDirectory() as directory:

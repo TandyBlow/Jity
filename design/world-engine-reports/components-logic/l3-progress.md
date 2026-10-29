@@ -8,7 +8,7 @@
 |---|---|---|
 | 原创开发草稿 | 40 个来源组、42 个 case；34 个应调用、8 个结构守卫项 | [输入](../../../experiments/world-components-logic/data/dev-inputs.jsonl)、[AI 判据草稿](../../../experiments/world-components-logic/data/dev-review-drafts.jsonl)、[来源登记](../../../experiments/world-components-logic/data/dev-provenance.json)；人审和语义同源独立性均未通过，未建封存/训练/短链 |
 | 工程核心 | 阶段输入隔离、确定性守卫、输出结构校验、全尝试耗时台账 | [lab.py](../../../experiments/world-components-logic/lab.py)；不是另一套服务/协议，不替模型判断开放语义 |
-| 工程测试 | 64 项通过（缺失 workloadId、smoke 台账与 smoke 启动路径的回归测试均经反向验证，对各自修复前实现必失败） | [test_lab.py](../../../experiments/world-components-logic/tests/test_lab.py)；不证明模型质量/性能 |
+| 工程测试 | 65 项通过（workloadId、smoke 台账与 smoke 并发发布的回归测试均经反向验证，对各自修复前实现必失败） | [test_lab.py](../../../experiments/world-components-logic/tests/test_lab.py)；不证明模型质量/性能 |
 | 数据可复现 | 生成器 `--check` 重建同字节 | [生成器](../../../experiments/world-components-logic/generate_dev_drafts.py)；不会覆盖已被人工修改/签字的草稿 |
 | 人审材料 | 生成可本地审阅/导出意见的 HTML 草稿 | [审阅页](../../../artifacts/world-components-logic/l3-1-review.html)、[生成程序](../../../experiments/world-components-logic/prepare_review.py)；浏览器界面/导出尚未验收，未替用户作审阅决定 |
 | 独立环境 | 新建隔离 venv，安装 25 个依赖并保存版本/安装报告哈希 | [环境身份](../../../artifacts/world-components-logic/l3-1-environment.json)、[平台锁](../../../experiments/world-components-logic/requirements-probe-macos-arm64-py311.lock.txt)；无共享 system-site-packages，未改 Anaconda base |
@@ -30,6 +30,7 @@
 9. 四审 76c8e0e：程序修复通过独立反例，但新增回归测试被夹具默认值架空——声称缺失 workloadId 的记录实际由 `attempt()` 填入默认 ID，两个测试接到带故障的 682fa37 实现仍全部通过。已新增 `unbound_attempt()` 夹具真正删除字段并保留完整七维身份；已反向验证该测试对 682fa37 实现失败（合并为 1 节点，`1 != 2`）、对当前实现通过（52 项工程测试通过）。模型质量、500 ms 性能与 L3 就绪仍未签署；条目 2 未修 P2 维持。
 10. 五审 22e0c7e 通过，D-R02 关闭：审查者独立复核了回归测试对 682fa37 失败、对当前实现通过；五项审查 P2（D-R01～R05）全部闭环。仍开放：条目 2 的 `runtime_smoke` 失败台账 P2（恢复计算前先修）、模型质量、500 ms 性能与 L3 就绪签署。
 11. 六审 3a4da18 发现两处启动路径 P2，已修复并补 5 项回归测试（工程测试 59 → 64 项通过，新测试对 3a4da18 实现反向验证 5/5 失败）：依赖版本查询与 payload 验证失败原本发生在台账启动之前、程序无记录退出，现将二者纳入可持久化启动阶段（`payload_verification`/`preparation_identity`），失败先原子写失败记录再抛错且不写计划；计划与运行记录改为 `O_CREAT|O_EXCL` 独占创建——计划由创建即裁决（胜者 `written`、相同 `reused`、不同拒绝），运行记录在跑任何阶段前独占认领（进程硬死留下诚实 `running` 占位），同 run-id 并发无法覆盖已有证据。条目 2 的修复至此含启动路径；推理模式仍未执行，模型质量、500 ms 性能与 L3 就绪仍未签署。
+12. 总指挥复审 c67cce0 发现并发发布缺口：先创建后写内容的窗口里，同 run-id 的相同计划竞争者可读到未写完的文件而误报「计划不同」。已改为临时文件独占硬链接的原子发布（字节在唯一临时名下写完并关闭后才链接到最终路径，最终路径一旦可见即为完整内容），运行台账认领占位同享该机制、终写改为原子替换；补强制交错测试：大载荷下相同计划竞争者必复用不误报、发布期间读者只见完整内容（旧实现对 c67cce0 反向验证确实抓到 0 字节部分发布）、认领占位在阶段运行前完整、记录终写后状态完整。工程测试 64 → 65 项通过；推理模式仍未执行，模型质量、500 ms 性能与 L3 就绪仍未签署。
 
 ## 提交前轻量复核
 

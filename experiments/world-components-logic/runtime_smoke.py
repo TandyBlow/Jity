@@ -4,8 +4,9 @@ Engineering journaling is complete: dependency import, tokenizer load and
 model load are journaled stages, the smoke record is written even when a
 stage fails, and startup failures (registry, payload verification,
 dependency versioning) persist a startup failure record before exiting.
-Plans and run records are published by exclusive creation, so a same
-run-id competitor can neither replace a plan nor clobber evidence.
+Plans and run records are published atomically (bytes closed under a
+temporary name, then exclusive hard link), so a same run-id competitor
+neither sees partial content nor can replace existing evidence.
 Executing the inference path still awaits the L3 resume decision from the
 user/coordinator after re-review. This smoke cannot establish semantic
 quality, component latency or a 500 ms request.
@@ -20,6 +21,7 @@ import platform
 import re
 import subprocess
 import sys
+import tempfile
 import time
 from pathlib import Path
 from typing import Any, Callable, Mapping
@@ -42,33 +44,54 @@ def resolve_run_paths(run_id: str | None) -> tuple[Path, Path]:
             ROOT / 'artifacts/world-components-logic' / f'l3-1-runtime-smoke{suffix}.json')
 
 
-def _create_exclusive(path: Path, payload: bytes) -> bool:
-    """Create path with payload atomically; False when it already exists.
+def _publish_exclusive(path: Path, payload: bytes) -> bool:
+    """Publish payload at path atomically; False when path already exists.
 
-    O_CREAT|O_EXCL is the only check-and-create primitive that leaves no
-    window for a same-run-id competitor to overwrite evidence.
+    The bytes are written and closed under a unique temporary name before
+    the exclusive hard link, so once path exists at all it is complete: a
+    same-run-id competitor that reads it never observes a partially
+    written file and can compare full content without waiting.
     """
     path.parent.mkdir(parents=True, exist_ok=True)
+    descriptor, temp_name = tempfile.mkstemp(dir=str(path.parent),
+                                             prefix=path.name + '.', suffix='.tmp')
+    temp = Path(temp_name)
     try:
-        descriptor = os.open(str(path), os.O_WRONLY | os.O_CREAT | os.O_EXCL
-                             | getattr(os, 'O_BINARY', 0))
-    except FileExistsError:
-        return False
-    with os.fdopen(descriptor, 'wb') as handle:
-        handle.write(payload)
-    return True
+        with os.fdopen(descriptor, 'wb') as handle:
+            handle.write(payload)
+        try:
+            os.link(str(temp), str(path))
+        except FileExistsError:
+            return False
+        return True
+    finally:
+        temp.unlink(missing_ok=True)
+
+
+def _replace_content(path: Path, payload: bytes) -> None:
+    """Atomically re-publish an already claimed record for concurrent readers."""
+    descriptor, temp_name = tempfile.mkstemp(dir=str(path.parent),
+                                             prefix=path.name + '.', suffix='.tmp')
+    temp = Path(temp_name)
+    try:
+        with os.fdopen(descriptor, 'wb') as handle:
+            handle.write(payload)
+        os.replace(str(temp), str(path))
+    finally:
+        temp.unlink(missing_ok=True)
 
 
 def write_plan(plan_path: Path, report: Mapping[str, Any]) -> str:
     """Freeze preparation identity without ever overwriting prior evidence.
 
-    Creation is atomic: the first writer wins and every competitor reads
-    the winner's bytes — identical content reports 'reused', a difference
-    refuses so an operator must decide (keep, remove explicitly, or
-    register a new run id) instead of the file being replaced silently.
+    Publication is atomic: the first writer wins and every competitor
+    reads the winner's complete bytes — identical content reports
+    'reused', a difference refuses so an operator must decide (keep,
+    remove explicitly, or register a new run id) instead of the file
+    being replaced silently.
     """
     payload = canonical_bytes(report) + b'\n'
-    if _create_exclusive(plan_path, payload):
+    if _publish_exclusive(plan_path, payload):
         return 'written'
     if plan_path.read_bytes() == payload:
         return 'reused'
@@ -90,7 +113,7 @@ def _persist_startup_failure(record_path: Path, run_id: str | None,
               'stages': [{'stage': stage, 'status': 'failed', 'error': error}],
               'attempts': [{'status': 'failed', 'stage': stage, 'raw': '', 'error': error}],
               'formalVerdict': 'not_evaluated', 'semanticStatus': 'not_evaluated'}
-    _create_exclusive(record_path, canonical_bytes(record) + b'\n')
+    _publish_exclusive(record_path, canonical_bytes(record) + b'\n')
 
 
 def _dependency_versions() -> dict[str, str]:
@@ -172,7 +195,7 @@ def run_with_journal(report: dict[str, Any], model_dir: Path, record_path: Path,
     """
     stages: list[dict[str, Any]] = []
     report['stages'] = stages
-    if not _create_exclusive(record_path, canonical_bytes({**report, 'status': 'running'}) + b'\n'):
+    if not _publish_exclusive(record_path, canonical_bytes({**report, 'status': 'running'}) + b'\n'):
         raise FileExistsError(f'run record already exists at {record_path}; preserve it '
                               'and register a new run with --run-id')
     status, failed_stage = 'failed', None
@@ -208,8 +231,7 @@ def run_with_journal(report: dict[str, Any], model_dir: Path, record_path: Path,
         report['attempts'] = [attempt]
         report['status'] = status
         report['failedStage'] = failed_stage
-        record_path.parent.mkdir(parents=True, exist_ok=True)
-        record_path.write_bytes(canonical_bytes(report) + b'\n')
+        _replace_content(record_path, canonical_bytes(report) + b'\n')
     if status == 'failed':
         raise RuntimeError(f'runtime smoke failed at stage {failed_stage}; record kept at {record_path}')
     return report
