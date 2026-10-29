@@ -200,9 +200,15 @@ async function buildWindow(label, wire) {
   const nextRoundId = roundAlloc.data.allocations[0].id;
   const memory = initialMemory(`${label}_drv`, `${label}_holder`);
   memory.leaseToken = lease.leaseToken;
+  // pointPlan 每轮规划一次：round 1 给真计划（pointId 读驱动活内存——
+  // bootstrapRecovery 会整体替换 memory，闭包旧引用是陈旧值）；
+  // continue 后的新轮规划即窗口哨兵。
+  const live = { driver: null };
   const port = {
     generate: async (task, key) => {
-      if (task === 'pointPlan') throw new WindowReady(label); // the window: stop right after the continue conclude
+      if (task === 'pointPlan' && key === nextRoundId) throw new WindowReady(label); // the window
+      if (task === 'pointPlan') return [{ pointId: live.driver.getMemory().ids.point, kind: 'normal',
+        timeAdvance: { boundary: 'elapsed', duration: { amount: 1, unit: 'second' } }, actorIds: [...roster] }];
       if (task === 'action') return { kind: 'skip' };
       if (task === 'updates') return [];
       if (task === 'narration') return `（${label} 结算叙事）`;
@@ -211,6 +217,7 @@ async function buildWindow(label, wire) {
     },
   };
   const driver = new ControllerDriver({ transport, model: port }, memory);
+  live.driver = driver;
   await driver.recover(worldId, lease);
   const slots = [{ slotKey: 'advance', kind: 'advance' }, { slotKey: 'input', kind: 'input' }, { slotKey: 'round', kind: 'round' },
     { slotKey: 'point', kind: 'point' }, ...roster.map((actor) => ({ slotKey: `group:${actor}`, kind: 'group' }))];
