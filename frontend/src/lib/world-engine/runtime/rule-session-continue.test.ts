@@ -291,6 +291,33 @@ describe('G5 review fixes (669582d follow-up): request namespace, session isolat
     expect((status as { reason?: string }).reason).toBe('round_identity_blocked:sink_failed:r2:lease_invalid');
     await new Promise((done) => setTimeout(done, 200));
     expect(renewals).toEqual([]);
-    expect(session.sessionStatus).toBe('idle');
+    // 阻断是会话终态：状态落 stopped，submit 在写入任何输入前被拒绝，
+    // 被拒旧租约与驱动内存不再被后续命令触碰（出路=新会话恢复）。
+    expect(session.sessionStatus).toBe('stopped');
+    await expect(session.submit('走到走廊')).rejects.toThrow('rule_session_identity_blocked:sink_failed:r2:lease_invalid');
+    expect(session.getMemory().playerInput).toBeNull();
+  });
+
+  test('a generic allocation failure (non-lease) lands the same terminal: session stopped, submit refused before any input', async () => {
+    const snapshot = entryContext(7);
+    const transport = {
+      execute: async (op: WorldOperation, body: never): Promise<never> => {
+        const head = (snapshot.world as { head: { pointId: Id; stateDigest: string } }).head;
+        const base = () => ({ world: snapshot.world, control: snapshot.control, work: null });
+        if (op === 'lease_acquire') return { ...base(), data: { leaseToken: 'lease_old', fenceEpoch: 7, expiresAtEpochMilli: Date.now() + 60_000, holderId: 'x' } } as never;
+        if (op === 'get_context') return snapshot as never;
+        if (op === 'list_points') return { ...base(), data: { points: [{ pointId: head.pointId, sequence: 0, stateDigest: head.stateDigest, kind: 'root', roundId: null, advanceId: null }] } } as never;
+        if (op === 'get_state') return { ...base(), data: { pointId: head.pointId, version: 0, stateDigest: head.stateDigest, state, previousPointId: null, timeAdvance: null, entityDeltas: {} } } as never;
+        if (op === 'allocate_ids') reject((body as { requestId: Id }).requestId, 'request_malformed');
+        throw new Error(`unexpected transport op ${op}`);
+      },
+    } as never;
+    const session = RuleWorldSession.createRecovered(
+      { transport, initial: minimalInitial, policy: minimalPolicy }, 'world_school');
+    const status = await session.attach();
+    expect((status as { reason?: string }).reason).toBe('round_identity_blocked:sink_failed:r2:request_malformed');
+    expect(session.sessionStatus).toBe('stopped');
+    await expect(session.submit('走到走廊')).rejects.toThrow('rule_session_identity_blocked:sink_failed:r2:request_malformed');
+    expect(session.getMemory().playerInput).toBeNull();
   });
 });

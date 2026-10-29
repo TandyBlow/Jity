@@ -24,8 +24,12 @@
  * member under a per-round stable allocation key (server-idempotent replays),
  * an incomplete/failed allocation stops the round entry with a recognizable
  * reason, and a refresh that lands between continue and the first point
- * re-provisions through the recovery entry. Continuation itself stays
- * handback until the model continuation batch opens (G4). */
+ * re-provisions through the recovery entry. A blocked round entry is the
+ * driver's sticky terminal: the session promotes it to its own terminal
+ * (stopped) and submit refuses with rule_session_identity_blocked before
+ * writing any input — a lease the server rejected is never reused, and the
+ * documented way forward is a fresh recovered session. Continuation itself
+ * stays handback until the model continuation batch opens (G4). */
 import { ControllerDriver, initialMemory, type DriverStatus, type WorldModelPort } from '../controller';
 import type { AllocationPlan, ControllerMemory, ModelTask, UpdatesCall } from '../schedule';
 import type { WorldTransport } from '../transport';
@@ -269,7 +273,13 @@ export class RuleWorldSession {
       clock: options.clock,
       heartbeatLeadMs: options.heartbeatLeadMs,
       retryBackoffMs: options.retryBackoffMs,
-      hooks: { onStatus: (status) => this.onEvent({ kind: 'terminal', status }) },
+      hooks: { onStatus: (status) => {
+        // G5：身份入口阻断（roundIdentityBlocked）是驱动的粘性终态——不会
+        // 自愈，run() 只会反复返回同一阻断。会话随之进入终态（stopped）并
+        // 拒绝新提交，而不是 idle 状态下收下新输入再交回同一个阻断。
+        if (status.kind === 'stop' && status.reason.startsWith('round_identity_blocked:')) this.session.stop();
+        this.onEvent({ kind: 'terminal', status });
+      } },
       createDriver: (io) => {
         const tracked: WorldTransport = {
           execute: async (operation, request, scope, signal) => {
@@ -358,11 +368,15 @@ export class RuleWorldSession {
    * input binding must never land on a stale external clone. */
   async submit(command: string): Promise<DriverStatus> {
     if (this.sessionStatus === 'running') throw new Error('rule_session_busy');
+    const driver = this.driver;
+    if (!driver) throw new Error('rule_driver_missing');
+    // G5：身份入口被阻断的会话不接受新命令——写 playerInput 前即拒绝（精确
+    // 于通用 stopped），驱动内存不留下永远无法消费的输入；出路是新会话恢复。
+    const identityBlocked = driver.getMemory().roundIdentityBlocked;
+    if (identityBlocked) throw new Error(`rule_session_identity_blocked:${identityBlocked}`);
     if (this.sessionStatus === 'stopped') throw new Error('rule_session_stopped');
     if (this.sessionStatus === 'lost_lease') throw new Error('rule_session_lease_lost');
     if (this.recoverWorldId !== undefined && !this.viewWorld) throw new Error('rule_session_recovery_incomplete');
-    const driver = this.driver;
-    if (!driver) throw new Error('rule_driver_missing');
     this.commandCounter += 1;
     const { plan, slotKeys } = buildCommandPlan(this.memory.holderId, this.order, this.commandCounter);
     driver.preparePlayerInput(command, this.order, plan, slotKeys);
