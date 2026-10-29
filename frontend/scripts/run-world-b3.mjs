@@ -70,7 +70,7 @@ if (rescoreSource) {
   }]));
   const selfTest = runJudgeSelfTests(context);
   const rescored = {
-    kind: 'b3-rescore', judgeVersion: 2, recordedAt: new Date().toISOString(),
+    kind: 'b3-rescore', judgeVersion: 3, recordedAt: new Date().toISOString(),
     source: { path: rescoreSource, recordedAt: source.recordedAt, status: source.status,
       browserHead: source.browserSource?.head ?? null, serverHead: source.serverSource?.head ?? null },
     contextFingerprint: { worldId: worldState.worldId, protagonist: context.protagonist, roster: context.roster, time: worldState.time },
@@ -93,9 +93,10 @@ if (rescoreSource) {
   rescored.status = selfTest.failed > 0 ? 'JUDGE_SELF_TEST_FAILED' : 'RESCORED';
   writeFileSync(output, JSON.stringify(rescored, null, 2) + '\n');
   console.log(`[world-b3] rescored ${rescoreSource} → ${output}`);
-  console.log(`[world-b3] probes: structure ${rescored.tasks.rates.structurePass}/${rescored.tasks.rates.probes}, ` +
-    `pass ${rescored.tasks.rates.semanticsPass}, fail ${rescored.tasks.rates.semanticsFail}, review ${rescored.tasks.rates.pendingReview}; ` +
-    `self-test failures ${selfTest.failed}`);
+  console.log(`[world-b3] probes: parsed ${rescored.tasks.rates.parsedPass}/${rescored.tasks.rates.probes}, ` +
+    `codec ${rescored.tasks.rates.codecPass}/${rescored.tasks.rates.probes}, ` +
+    `pass ${rescored.tasks.rates.semanticsPass}, fail ${rescored.tasks.rates.semanticsFail}, review ${rescored.tasks.rates.pendingReview}, ` +
+    `overall ${(rescored.tasks.rates.overallPassRate * 100).toFixed(1)}%; self-test failures ${selfTest.failed}`);
   process.exit(0);
 }
 const privateDir = resolve(root, `.local/world-b3-${Date.now()}`);
@@ -120,7 +121,7 @@ const report = {
     sha256: Object.fromEntries(sources.map((file) => [file, createHash('sha256').update(readFileSync(resolve(root, file))).digest('hex')])) },
   serverSource: { head: git(a, 'rev-parse', 'HEAD'), status: git(a, 'status', '--short'),
     sha256: Object.fromEntries(serverFiles.map(({ path, file }) => [path, createHash('sha256').update(readFileSync(file)).digest('hex')])) },
-  scope, judgeVersion: 2, modelLoad: null, modelConfig: {
+  scope, judgeVersion: 3, modelLoad: null, modelConfig: {
     settlement: { model: '/models/Qwen3-0.6B-Q4_K_M.gguf', contextSize: 2048, temperature: 0, seed: 42,
       maxTokens: 'per task (64-384)', timeoutMs: 110_000, constrainedDecoding: 'json_schema strict' },
     narration: { model: null, contextSize: 2048, maxTokens: 96, temperature: [0, 0.7], timeoutMs: 110_000,
@@ -322,6 +323,7 @@ try {
     };
     const b3 = {
       calls: [], // {task,key,prompt,promptChars,raw,output,ms,completion,backfills[],error}
+      priorStages: new Map(), // 分阶段更新的已确认前序证据（进程内，不持久化）
       temperature: 0,
       async complete(task, key, prompt, schema, maxTokens) {
         const engine = window.__b3engine;
@@ -595,9 +597,32 @@ ${view}
             `${updatesContract(stage)}`;
           const out = await b3.complete(task, key, prompt, updatesSchema(stage), 384);
           const audit = auditUpdates(out, stage, new Set(Object.keys(state?.characters ?? {})), taskOwnersOf(state));
+          const record = b3.calls[b3.calls.length - 1];
           if (audit.error) {
-            b3.calls[b3.calls.length - 1].validationError = audit.error;
+            record.validationError = audit.error;
             throw new Error(`b3 updates semantic: ${audit.error}`);
+          }
+          // 分阶段调用：把控制器已确认的前序阶段证据附给判分（§6.3 因果链
+          // 跨阶段累计）。证据只取服务端工作态中真实存在的已达成任务与
+          // 本次已返回的个性变化——虚构 id 不会成为证据。
+          if (stage) {
+            const historyKey = input.groupId ?? `time_scan:${state?.time?.instantOrdinal ?? 0}`;
+            const prior = H.b3.priorStages.get(historyKey) ?? null;
+            record.context = { stage, groupId: historyKey, priorStages: prior ? structuredClone(prior) : null };
+            const entry = prior ? structuredClone(prior) : { tasksAchieved: {}, personality: {} };
+            for (const call of (Array.isArray(out) ? out : [out])) {
+              for (const [entity, delta] of Object.entries(call?.changes ?? {})) {
+                for (const taskId of delta?.tasksAchieved ?? []) {
+                  if (!state?.characters?.[entity]?.tasks?.[taskId]) continue;
+                  (entry.tasksAchieved[entity] ??= []).push(taskId);
+                }
+                for (const change of delta?.personalityChanges ?? []) {
+                  if (!change?.id) continue;
+                  (entry.personality[entity] ??= []).push(change.id);
+                }
+              }
+            }
+            H.b3.priorStages.set(historyKey, entry);
           }
           return out;
         }
@@ -845,44 +870,58 @@ ${view}
       // 程序应用阶段 3（任务达成），供后续阶段读取
       const applied = structuredClone(state);
       const taskStageCalls = Array.isArray(taskStage) ? taskStage : taskStage ? [taskStage] : [];
-      const appliedTasks = [];
+      const appliedTasksByEntity = {};
+      const recordTask = (entity, taskId) => {
+        if (!appliedTasksByEntity[entity]) appliedTasksByEntity[entity] = [];
+        if (!appliedTasksByEntity[entity].includes(taskId)) appliedTasksByEntity[entity].push(taskId);
+      };
       for (const call of taskStageCalls) {
         for (const [entity, delta] of Object.entries(call.changes ?? {})) {
           for (const taskId of delta.tasksAchieved ?? []) {
-            if (applied.characters[entity]?.tasks?.[taskId]) { applied.characters[entity].tasks[taskId].status = 'achieved'; appliedTasks.push(`${entity}:${taskId}`); }
+            if (applied.characters[entity]?.tasks?.[taskId]) { applied.characters[entity].tasks[taskId].status = 'achieved'; recordTask(entity, taskId); }
           }
           for (const task of delta.subtasksAdded ?? []) {
-            if (applied.characters[entity]?.tasks && task?.id) { applied.characters[entity].tasks[task.id] = task; appliedTasks.push(`${entity}:${task.id}`); }
+            if (applied.characters[entity]?.tasks && task?.id) { applied.characters[entity].tasks[task.id] = task; recordTask(entity, task.id); }
           }
         }
       }
+      // 分阶段调用必须携带已确认的前序阶段证据（§6.3 因果链跨阶段累计），
+      // 否则后序阶段会被误判成「个性无任务 / 理智无个性」。
       const personalityStage = await run({ id: 'updates_stage_personality', task: 'updates',
         focus: 'personality stage reads the applied tasks state',
-        expect: { stage: 'personality' },
+        expect: { stage: 'personality', priorStages: { tasksAchieved: structuredClone(appliedTasksByEntity) } },
         input: { groupId: 'group_probe', mode: 'group', stage: 'personality', results, workingState: structuredClone(applied) } });
       // 程序应用阶段 5：模型给出合法个性变化就用模型的，否则注入带标签的夹具
       const withPersonality = structuredClone(applied);
       const personalityCalls = Array.isArray(personalityStage) ? personalityStage : personalityStage ? [personalityStage] : [];
       let personalityFixture = null;
-      const appliedPersonalities = [];
+      const appliedPersonalitiesByEntity = {};
+      const recordPersonality = (entity, changeId) => {
+        if (!appliedPersonalitiesByEntity[entity]) appliedPersonalitiesByEntity[entity] = [];
+        if (!appliedPersonalitiesByEntity[entity].includes(changeId)) appliedPersonalitiesByEntity[entity].push(changeId);
+      };
       for (const call of personalityCalls) {
         for (const [entity, delta] of Object.entries(call.changes ?? {})) {
           for (const change of delta.personalityChanges ?? []) {
             if (!withPersonality.characters[entity] || !change?.id || !change?.text) continue;
-            withPersonality.characters[entity].personalityChanges.push({ ...change, sourcePointId: 'probe_point', sourceSequence: 1, active: true });
-            appliedPersonalities.push(`${entity}:${change.id}`);
+            withPersonality.characters[entity].personalityChanges.push({ ...change, supersedes: change.supersedes ?? [],
+              sourcePointId: 'probe_point', sourceSequence: 1, active: true });
+            recordPersonality(entity, change.id);
           }
         }
       }
-      if (!appliedPersonalities.length) {
+      if (!Object.keys(appliedPersonalitiesByEntity).length) {
         personalityFixture = { id: 'probe_change_fixture', text: '完成压力试验后更沉稳' };
         withPersonality.characters[protagonist].personalityChanges.push({ ...personalityFixture, supersedes: [],
           sourcePointId: 'probe_point', sourceSequence: 1, active: true });
-        appliedPersonalities.push(`${protagonist}:${personalityFixture.id}`);
+        recordPersonality(protagonist, personalityFixture.id);
       }
+      const sanityTargets = Object.keys(appliedPersonalitiesByEntity).sort();
       const sanityStage = await run({ id: 'updates_stage_sanity', task: 'updates',
-        focus: 'sanity stage must recalculate the actor whose personality changed',
-        expect: { stage: 'sanity', expectSanityFor: [protagonist] },
+        focus: 'sanity stage must recalculate every actor whose personality changed',
+        expect: { stage: 'sanity', expectSanityFor: sanityTargets,
+          priorStages: { tasksAchieved: structuredClone(appliedTasksByEntity),
+            personality: structuredClone(appliedPersonalitiesByEntity) } },
         input: { groupId: 'group_probe', mode: 'group', stage: 'sanity', results, workingState: structuredClone(withPersonality) } });
 
       // 6) 继续推进：§8.1 两条件
@@ -918,12 +957,14 @@ ${view}
     report.tasks.probes = report.tasks.probes.map((probe) => ({ ...probe, judgment: judgeProbe(probe, judgeContext()) }));
     report.tasks.rates = summarizeProbes(report.tasks.probes);
     report.tasks.judgeSelfTest = runJudgeSelfTests(judgeContext());
-    report.judgeVersion = 2;
+    report.judgeVersion = 3;
     save();
     console.log(`[world-b3] task probes recorded: ${report.tasks.probes.length} ` +
-      `(structure ${report.tasks.rates.structurePass}/${report.tasks.rates.probes}, ` +
+      `(parsed ${report.tasks.rates.parsedPass}/${report.tasks.rates.probes}, ` +
+      `codec ${report.tasks.rates.codecPass}/${report.tasks.rates.probes}, ` +
       `semantics pass ${report.tasks.rates.semanticsPass}, fail ${report.tasks.rates.semanticsFail}, ` +
-      `review ${report.tasks.rates.pendingReview}; judge self-test failures ${report.tasks.judgeSelfTest.failed})`);
+      `review ${report.tasks.rates.pendingReview}, overall pass ${(report.tasks.rates.overallPassRate * 100).toFixed(1)}%; ` +
+      `judge self-test failures ${report.tasks.judgeSelfTest.failed})`);
   } catch (error) { harnessError(error, 'task probes'); }
   } else { report.tasks = { skipped: true, reason: '--skip-tasks iteration run' }; save(); }
 
@@ -1172,9 +1213,9 @@ ${view}
   const sceneFailures = expectedScenes.filter((name) => report.scenes[name]?.status !== 'COMPLETED');
   const semanticFailures = expectedScenes.filter((name) => report.scenes[name] && report.scenes[name].judged?.accepted !== true);
   const selfTestFailed = report.tasks?.judgeSelfTest?.failed ?? 0;
-  report.status = sceneFailures.length ? 'COMPLETED_WITH_FAILURES'
-    : semanticFailures.length ? 'COMPLETED_WITH_SEMANTIC_FAILURES'
-    : selfTestFailed > 0 ? 'JUDGE_SELF_TEST_FAILED' : 'COMPLETED';
+  report.status = selfTestFailed > 0 ? 'JUDGE_SELF_TEST_FAILED'
+    : sceneFailures.length ? 'COMPLETED_WITH_FAILURES'
+    : semanticFailures.length ? 'COMPLETED_WITH_SEMANTIC_FAILURES' : 'COMPLETED';
   report.summary = {
     scope, judgeVersion: report.judgeVersion ?? null,
     taskRates: report.tasks?.rates ?? null,
@@ -1183,6 +1224,8 @@ ${view}
       status: report.scenes[name].status, accepted: report.scenes[name].judged?.accepted ?? null,
       modelCalls: report.scenes[name].judged?.modelCalls ?? null,
       programCalls: report.scenes[name].judged?.programCalls ?? null,
+      parsedCalls: report.scenes[name].judged?.parsedCalls ?? null,
+      codecCalls: report.scenes[name].judged?.codecCalls ?? null,
       semanticErrors: report.scenes[name].judged?.semanticErrors?.length ?? null,
       pendingReview: report.scenes[name].judged?.pendingReview?.length ?? null,
       narrationFallbacks: report.scenes[name].judged?.narrationFallbacks?.length ?? null } : null])),

@@ -30,17 +30,19 @@ export function projectCommittedNarration(after: CommittedRead, before: Committe
   const names = new Set<string>();
   const characters = Object.keys(after.state.characters).sort();
   if (before && !same(characters, Object.keys(before.state.characters).sort())) throw new Error('narration_roster_changed');
+  // §6.3 因果链是「任务达成 → 可能的个性变化 → 对应人物理智重算」。
+  // 任务达成可以独立存在（个性变化只是可能发生）；**任何人物的任务达成
+  // 都可能影响任何人物**，所以「有无本批任务达成」按整批 Δ 判断，不要求
+  // 与个性变化同属一个实体。个性与理智仍按对应人物配对（理智变化必须是
+  // 该人物有自己的个性变化）。
+  const batchHasTasks = Object.values(after.entityDeltas)
+    .some((delta) => (delta.tasksAchieved?.length ?? 0) > 0);
   for (const [id, delta] of Object.entries(after.entityDeltas)) {
     if (delta.entityId !== id || !after.state.characters[id]
       || Object.keys(delta).some((key) => !['entityId', 'positionSet', 'sanitySet', 'tasksAchieved', 'personalityChanges'].includes(key))) throw new Error('unsupported_committed_delta');
     if (delta.positionSet === null || delta.sanitySet === null) throw new Error('unsupported_null_delta');
-    // §6.3 因果链是「任务达成 → 可能的个性变化 → 对应人物理智重算」：任务达成
-    // 可以独立存在（个性变化只是可能发生），个性变化必须伴随本批任务达成，
-    // 理智值必须伴随个性变化。旧规则把三件套当作同有同无，会逼模型编造个性/
-    // 理智来迎合叙事投影——那不是设计。
-    const hasTasks = (delta.tasksAchieved?.length ?? 0) > 0;
     const hasPersonality = (delta.personalityChanges?.length ?? 0) > 0;
-    if (hasPersonality && !hasTasks) throw new Error('narration_personality_requires_task');
+    if (hasPersonality && !batchHasTasks) throw new Error('narration_personality_requires_task');
     if (delta.sanitySet !== undefined && !hasPersonality) throw new Error('narration_sanity_requires_personality');
   }
   for (const actorId of characters) {

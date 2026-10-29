@@ -82,6 +82,27 @@ describe('saved facts, template baseline and bounded polish', () => {
     expect(() => projectCommittedNarration(unrecordedSanity, before)).toThrow(/unrecorded_numeric_change/);
     const forgedCause = structuredClone(after); forgedCause.state.characters.person_c.personalityChanges[0].sourcePointId = 'other_point';
     expect(() => projectCommittedNarration(forgedCause, before)).toThrow(/personality_cause/);
+    // §6.3：任何人物的任务达成都可能影响任何人物——A 达成任务、B 个性+理智
+    // 是合法批次；个性与理智仍按 B 自己配对。
+    const crossEntity = structuredClone(after);
+    // 断开 live 状态与 initial 模板的共享引用（SHORT_STATE 里两者同一对象），
+    // 否则改 live 任务会被世界变更检查当成 initial 变化。
+    crossEntity.state.characters = structuredClone(crossEntity.state.characters);
+    crossEntity.state.characters.person_a.tasks.task_watch.status = 'achieved';
+    crossEntity.state.characters.person_c.tasks.task_pressure.status = 'pending';
+    crossEntity.entityDeltas = {
+      person_a: { entityId: 'person_a', tasksAchieved: ['task_watch'] },
+      person_c: { entityId: 'person_c', personalityChanges: [change], sanitySet: 8 },
+    };
+    const crossPacket = projectCommittedNarration(crossEntity, before);
+    expect(crossPacket.facts.filter((fact) => fact.kind === 'task_achieved')).toHaveLength(1);
+    expect(crossPacket.facts.filter((fact) => fact.kind === 'personality_changed')).toHaveLength(1);
+    expect(crossPacket.facts.find((fact) => fact.id === 'person_c:sanity')).toMatchObject({ kind: 'sanity_changed', from: 10, to: 8 });
+    // 理智变化必须属于有个性变化的那个人物。
+    const mispairedSanity = structuredClone(crossEntity);
+    mispairedSanity.state.characters.person_a.sanity = 9;
+    mispairedSanity.entityDeltas.person_a = { entityId: 'person_a', tasksAchieved: ['task_watch'], sanitySet: 9 };
+    expect(() => projectCommittedNarration(mispairedSanity, before)).toThrow(/sanity_requires_personality/);
   });
 
   test('wrong actors, locations, numbers, extra events, omissions and repeats fall back', () => {
