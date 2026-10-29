@@ -6,7 +6,8 @@
  "freezeRecord": "d2-n3-prompt-freeze.json",
  "freezeRecordSha256": "77b37b43989b52325aa2605878c6d967cd5260c5aa020196040f8230434fbfe1",
  "promptSha256": "a7697894d54f0afbf07ccd79b2e1a8db40a0e07f4a0156b221812ac088199bea",
- "runnerSha256": "f8c1b22d42679e7ae9db07c296589b614fae81d07858de3a15040175eb8a6d30",
+ "runnerSha256": "e21a84f2d499044d9929194b1a7452f830ec8931406bf3b5db5bf880968749ec",
+ "metricToolSha256": "a3a349b908edd92a126f34fc530f6ce25a62b5f15283bacf7a16733adc00131c",
  "gatesSkippedForStub": [
   "decodingConfig.approval",
   "runner.pin"
@@ -25,6 +26,7 @@
  "modelId": null,
  "device": "stub",
  "dtype": "stub",
+ "nonGateArm": false,
  "calls": [
   {
    "itemId": "n2-01",

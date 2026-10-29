@@ -104,5 +104,12 @@
   "coreference entries with fields beyond {mention, refersTo} were previously only punished through the G2 exact-entry comparison; they are now a STRUCTURAL violation (H1/H2 fail, the attempt enters the retry flow, the item fails after the retry).",
   "a gold row missing a factId previously crashed the scorers with KeyError; gold rows are now validated like plan rows and a broken gold voids the item with a reported problem.",
   "the 16-item v2 set is demoted to diagnostic-only: its H1 denominator was the FULL fact set while the arm consumes the target-selected subset (a correct selected-coverage plan scored h1 0/16), and it has no organisation gold so G1-G4 are undefined; diagnostic16 mode scores H1/H2 over target-intersected facts with gate=false and never pass=true. The 8-item gate is unchanged. Ruling: coordinator decision, recorded by the C reviewer as not a technical endorsement."
- ]
+ ],
+ "diagnostic16Input": {
+  "file": "experiments/world-components/n2_selection/items.jsonl",
+  "sha256": "c574d44ebc48a254942fff276cffd18d8607281b6e3617299c1cc0e35cc947fa",
+  "basis": "working-tree bytes (file is text eol=crlf; checkout is deterministic)",
+  "expectedItems": 16,
+  "note": "registered round 30 for the runner diagnostic16 input binding (review R2); the gate8 capability-set pin remains unchanged.items from the v1 record"
+ }
 }
