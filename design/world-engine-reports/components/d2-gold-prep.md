@@ -75,3 +75,4 @@ C 审查者复审发现五项 P2（未签认 D2 准备完成或 prompt 冻结）
 - **项目负责人签认 prompt v2 同一哈希**，条件：解码配置写入正式冻结记录并报批；通过线按预登记执行、不调参。解码配置为负责人报批项，审查者不签。
 - 正式冻结记录：[`artifacts/world-components/d2-n3-prompt-freeze.json`](../../../artifacts/world-components/d2-n3-prompt-freeze.json)（prompt 三重核验、双签认口径、passLine 范围＝8 项、16 项 diagnostic-only、runner 块 NOT-IMPLEMENTED、解码配置待批）。
 - **当前状态以冻结记录 `status` 字段为单点**；实现侧剩余门：runner 实现并钉字节、审查者复核、翻 EXECUTABLE 后才运行模型臂。本轮未运行任何模型推理。
+- **审查签认已落档（2026-10-29）**：[`signoff-d5ca042.md`](../../../artifacts/world-components/signoff-d5ca042.md)——范围＝prompt 字节、8 项 passLine、evaluation 段；替代轮 25 的条件性字节确认。
