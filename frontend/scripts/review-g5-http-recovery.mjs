@@ -155,7 +155,7 @@ cur=con.execute(${JSON.stringify(sql)}, ${JSON.stringify(params)})
 print(json.dumps([dict(zip([d[0] for d in cur.description], row)) for row in cur.fetchall()]))`,
   ], { encoding: 'utf8' }));
 const dbAllocations = (worldId) => dbQuery(
-  'SELECT allocation_key, slot_key, id, kind FROM world_id_allocations WHERE world_id=? ORDER BY allocation_key, slot_key', [worldId]);
+  'SELECT allocation_key, slot_key, allocated_id AS id, kind FROM world_id_allocations WHERE world_id=? ORDER BY allocation_key, slot_key', [worldId]);
 const dbConsumedRounds = (worldId) => dbQuery('SELECT id, input_id FROM world_advances WHERE world_id=?', [worldId]);
 
 // ---- wire recording ----
