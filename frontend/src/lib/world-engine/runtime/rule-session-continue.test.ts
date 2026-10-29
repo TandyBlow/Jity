@@ -227,6 +227,51 @@ describe('G5 review fixes (669582d follow-up): request namespace, session isolat
     sessionB.dispose();
   });
 
+  test('the automatic round runs consumed actions without an input binding (G5 S2 product fix)', async () => {
+    // 复现与修复证据：服务端仅在 pending 时携带 activeInput（consumed 窗口
+    // 绑定不可得）；规则端口此前在 consumed 判定前 requireScope →
+    // rule_input_identity_missing，堵死 continue→自动轮。修复后 consumed
+    // 机会直接 skip（不使用事实，不需要绑定），record_skip 正常发出。
+    const snapshot = entryContext(7);
+    const head = (snapshot.world as { head: { pointId: Id; stateDigest: string } }).head;
+    const state = copy((stateSuccess as { data: { state: unknown } }).data.state);
+    const pointId = 'srv_point_1';
+    const work = {
+      pointId, kind: 'normal', timeAdvance: { boundary: 'elapsed', duration: { amount: 1, unit: 'second' } }, timeLocked: false, sealed: false,
+      prefixDigest: null, predecessorWorkDigest: null, timeScanComplete: false,
+      baseline: { headPointId: head.pointId, version: 0, stateDigest: head.stateDigest },
+      phase: 'select_actor', working: { cursor: 0, actedIds: [], visitedIds: [], settledUnitIds: [], intentStatus: 'consumed' },
+      settledUnits: [], pendingGroup: null, successor: null,
+    };
+    const ops: WorldOperation[] = [];
+    const transport = {
+      execute: async (op: WorldOperation, body: never): Promise<never> => {
+        ops.push(op);
+        const base = () => ({ world: snapshot.world, control: snapshot.control, work: work as never });
+        if (op === 'lease_acquire') return { ...base(), data: { leaseToken: 'lease_old', fenceEpoch: 7, expiresAtEpochMilli: Date.now() + 60_000, holderId: 'x' } } as never;
+        if (op === 'get_context') return snapshot as never;
+        if (op === 'list_points') return { ...base(), data: { points: [{ pointId: head.pointId, sequence: 0, stateDigest: head.stateDigest, kind: 'root', roundId: null, advanceId: null }] } } as never;
+        if (op === 'get_state') return { ...base(), data: { pointId: head.pointId, version: 0, stateDigest: head.stateDigest, state, previousPointId: null, timeAdvance: null, entityDeltas: {} } } as never;
+        if (op === 'allocate_ids') return { ...base(), data: { allocations: (body as { slots: { slotKey: Id }[] }).slots.map((slot, index) => ({ slotKey: slot.slotKey, id: `srv_${index}` })) } } as never;
+        if (op === 'checkpoint_begin_point') return { ...base(), data: { pointId } } as never;
+        if (op === 'preview_point') return { ...base(), work: work as never, data: {
+          pointId, pointProjection: { worldId: 'world_school', id: pointId, sequence: 1, kind: 'normal', previousPointId: head.pointId, roundId: 'r2', advanceId: 'adv1', trigger: 'automatic', linkedFromPointId: null, timeAdvance: { boundary: 'elapsed', duration: { amount: 1, unit: 'second' } }, entityDeltas: {} } as never,
+          mergedEntityDeltas: {}, workingStateDigest: 'wsd', pointProjectionDigest: 'ppd', workingState: state } } as never;
+        if (op === 'checkpoint_record_skip') return { ...base(), data: { pointId, working: (work as { working: unknown }).working } } as never;
+        throw new Error(`unexpected transport op ${op}`);
+      },
+    } as never;
+    const session = RuleWorldSession.createRecovered(
+      { transport, initial: minimalInitial, policy: minimalPolicy }, 'world_school');
+    const status = await session.attach();
+    // 修复生效的直接证据：行动机会以 record_skip 落地，而不是
+    // rule_input_identity_missing 错误终止。
+    expect(ops.filter((op) => op === 'checkpoint_record_skip')).toHaveLength(1);
+    expect(String((status as { detail?: string }).detail ?? (status as { reason?: string }).reason))
+      .not.toContain('rule_input_identity_missing');
+    session.dispose();
+  });
+
   test('isolation: a hung allocation cannot hold attach hostage after stop, and a late success is never folded', async () => {
     let release: ((value: unknown) => void) | null = null;
     let allocateSeen = false;

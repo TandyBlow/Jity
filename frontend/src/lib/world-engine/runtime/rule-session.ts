@@ -214,9 +214,15 @@ export class RuleWorldSession {
           timeAdvance: { boundary: 'elapsed', duration: { amount: 1, unit: 'second' } }, actorIds: [...this.order] }];
         if (task === 'action') {
           const data = input as unknown as { actor: string; advance: { inputText: string | null; intentStatus: string }; workingState: WorldState };
+          // consumed 输入或非主角的行动机会按设计直接跳过——§6.1 的身份绑定
+          // 保护的是「裁决」（对输入文本的规则判定），skip 不使用任何事实，
+          // 不需要绑定。自动轮（continue 后输入必为 consumed）此前在此抛
+          // rule_input_identity_missing，堵死了产品的 continue→自动轮组合
+          // （G5 真实 HTTP 验收 S2 复现；服务端仅在 pending 时携带
+          // activeInput，consumed 窗口的绑定本就不可得）。
+          if (data.actor !== data.workingState.protagonistId || data.advance.intentStatus !== 'pending') return { kind: 'skip' };
           const scope = requireScope();
-          if (data.actor !== data.workingState.protagonistId || data.advance.intentStatus !== 'pending'
-            || scope.world.advance.intentStatus !== 'pending') return { kind: 'skip' };
+          if (scope.world.advance.intentStatus !== 'pending') return { kind: 'skip' };
           if (data.advance.inputText !== scope.inputText) throw new Error('action_input_binding_changed');
           const proposal = parseRuleCommand(scope.inputText, data.workingState);
           if (!proposal) {
