@@ -2,8 +2,10 @@
 
 Engineering journaling is complete: dependency import, tokenizer load and
 model load are journaled stages, the smoke record is written even when a
-stage fails, and preparation plans are never silently overwritten (an
-identical plan is reused; a differing one refuses and asks for --run-id).
+stage fails, and startup failures (registry, payload verification,
+dependency versioning) persist a startup failure record before exiting.
+Plans and run records are published by exclusive creation, so a same
+run-id competitor can neither replace a plan nor clobber evidence.
 Executing the inference path still awaits the L3 resume decision from the
 user/coordinator after re-review. This smoke cannot establish semantic
 quality, component latency or a 500 ms request.
@@ -40,22 +42,55 @@ def resolve_run_paths(run_id: str | None) -> tuple[Path, Path]:
             ROOT / 'artifacts/world-components-logic' / f'l3-1-runtime-smoke{suffix}.json')
 
 
+def _create_exclusive(path: Path, payload: bytes) -> bool:
+    """Create path with payload atomically; False when it already exists.
+
+    O_CREAT|O_EXCL is the only check-and-create primitive that leaves no
+    window for a same-run-id competitor to overwrite evidence.
+    """
+    path.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        descriptor = os.open(str(path), os.O_WRONLY | os.O_CREAT | os.O_EXCL
+                             | getattr(os, 'O_BINARY', 0))
+    except FileExistsError:
+        return False
+    with os.fdopen(descriptor, 'wb') as handle:
+        handle.write(payload)
+    return True
+
+
 def write_plan(plan_path: Path, report: Mapping[str, Any]) -> str:
     """Freeze preparation identity without ever overwriting prior evidence.
 
-    Byte-identical replanning reuses the existing plan; any difference
+    Creation is atomic: the first writer wins and every competitor reads
+    the winner's bytes — identical content reports 'reused', a difference
     refuses so an operator must decide (keep, remove explicitly, or
     register a new run id) instead of the file being replaced silently.
     """
     payload = canonical_bytes(report) + b'\n'
-    if plan_path.exists():
-        if plan_path.read_bytes() == payload:
-            return 'reused'
-        raise FileExistsError(f'preparation plan differs at {plan_path}; '
-                              'preserve it and register a new run with --run-id')
-    plan_path.parent.mkdir(parents=True, exist_ok=True)
-    plan_path.write_bytes(payload)
-    return 'written'
+    if _create_exclusive(plan_path, payload):
+        return 'written'
+    if plan_path.read_bytes() == payload:
+        return 'reused'
+    raise FileExistsError(f'preparation plan differs at {plan_path}; '
+                          'preserve it and register a new run with --run-id')
+
+
+def _persist_startup_failure(record_path: Path, run_id: str | None,
+                             stage: str, exc: Exception) -> None:
+    """Best-effort tombstone for failures before the run journal exists.
+
+    The record is created exclusively; when evidence for this run id is
+    already on disk it is left untouched and the original error propagates.
+    """
+    error = {'type': type(exc).__name__, 'message': str(exc)}
+    record = {'schema': 'jity-d-nonbusiness-runtime-smoke-v1',
+              'scope': 'synthetic_runtime_smoke_only', 'runId': run_id,
+              'status': 'failed', 'failedStage': stage,
+              'stages': [{'stage': stage, 'status': 'failed', 'error': error}],
+              'attempts': [{'status': 'failed', 'stage': stage, 'raw': '', 'error': error}],
+              'formalVerdict': 'not_evaluated', 'semanticStatus': 'not_evaluated'}
+    _create_exclusive(record_path, canonical_bytes(record) + b'\n')
 
 
 def _dependency_versions() -> dict[str, str]:
@@ -128,14 +163,18 @@ def run_with_journal(report: dict[str, Any], model_dir: Path, record_path: Path,
                      generation_attempt: Callable[[Mapping[str, Any], Any, Any], dict[str, Any]]) -> dict[str, Any]:
     """Execute the smoke and write the record whatever the outcome.
 
-    Every stage lands in report['stages'] with its elapsed time; on any
-    failure the complete report (status, failedStage, error, stages) is
-    persisted before the error propagates, so a crash can no longer leave
-    the run unrecorded. Existing evidence is only ever appended to disk
-    under this run's own record path, never rewritten in place.
+    The record file is claimed by exclusive creation before any stage
+    runs, so a same-run-id competitor can neither create it nor clobber
+    the evidence; the claim leaves an honest 'running' tombstone if the
+    process dies hard. Every stage lands in report['stages'] with its
+    elapsed time; on any failure the complete report (status, failedStage,
+    error, stages) is persisted before the error propagates.
     """
     stages: list[dict[str, Any]] = []
     report['stages'] = stages
+    if not _create_exclusive(record_path, canonical_bytes({**report, 'status': 'running'}) + b'\n'):
+        raise FileExistsError(f'run record already exists at {record_path}; preserve it '
+                              'and register a new run with --run-id')
     status, failed_stage = 'failed', None
     attempt: dict[str, Any] = {'status': 'failed', 'stage': 'unknown', 'raw': ''}
     started = time.perf_counter()
@@ -190,29 +229,34 @@ def main() -> None:
     os.environ['TOKENIZERS_PARALLELISM'] = 'false'
     os.environ['HF_HUB_OFFLINE'] = '1'
     os.environ['HF_HOME'] = str(LOCAL / 'hf-cache')
-    registry = json.loads(REGISTRY.read_text(encoding='utf-8'))
-    source = next(m for m in registry['models'] if m['id'].endswith('Randeng-T5-77M-MultiTask-Chinese'))
-    model_dir = LOCAL / 'models/M02' / source['revision']
-    payload_path = model_dir / 'payload-manifest.json'
-    payload = json.loads(payload_path.read_text(encoding='utf-8'))
-    expected_files = {f['path']: f for f in source['files']}
-    selected = {'README.md', 'config.json', 'tokenizer_config.json',
-                'special_tokens_map.json', 'spiece.model', 'model.safetensors'}
-    if payload['modelId'] != source['id'] or payload['revision'] != source['revision']:
-        raise ValueError('payload model identity differs from registration')
-    if {f['path'] for f in payload['files']} != selected or len(payload['files']) != len(selected):
-        raise ValueError('unexpected model payload file inventory')
-    for item in payload['files']:
-        spec = expected_files[item['path']]
-        registered = spec.get('lfs_sha256') or spec.get('sha256_of_fetched_bytes')
-        if item['sha256'] != registered or sha256_file(model_dir / item['path']) != registered:
-            raise ValueError('model payload changed: ' + item['path'])
     if out.exists():
         raise FileExistsError('smoke record already exists; preserve it and register a '
                               'new run with --run-id')
+    try:
+        registry = json.loads(REGISTRY.read_text(encoding='utf-8'))
+        source = next(m for m in registry['models'] if m['id'].endswith('Randeng-T5-77M-MultiTask-Chinese'))
+        model_dir = LOCAL / 'models/M02' / source['revision']
+        payload_path = model_dir / 'payload-manifest.json'
+        payload = json.loads(payload_path.read_text(encoding='utf-8'))
+        expected_files = {f['path']: f for f in source['files']}
+        selected = {'README.md', 'config.json', 'tokenizer_config.json',
+                    'special_tokens_map.json', 'spiece.model', 'model.safetensors'}
+        if payload['modelId'] != source['id'] or payload['revision'] != source['revision']:
+            raise ValueError('payload model identity differs from registration')
+        if {f['path'] for f in payload['files']} != selected or len(payload['files']) != len(selected):
+            raise ValueError('unexpected model payload file inventory')
+        for item in payload['files']:
+            spec = expected_files[item['path']]
+            registered = spec.get('lfs_sha256') or spec.get('sha256_of_fetched_bytes')
+            if item['sha256'] != registered or sha256_file(model_dir / item['path']) != registered:
+                raise ValueError('model payload changed: ' + item['path'])
+    except Exception as exc:
+        _persist_startup_failure(out, args.run_id, 'payload_verification', exc)
+        raise
     script_files = ('lab.py', 'runtime_smoke.py', 'fetch_model.py', 'requirements-probe.txt',
                     'requirements-probe-macos-arm64-py311.lock.txt')
-    report: dict[str, Any] = {
+    try:
+        report: dict[str, Any] = {
         'schema': 'jity-d-nonbusiness-runtime-smoke-v1',
         'scope': 'synthetic_runtime_smoke_only', 'businessCasesExposed': [],
         'formalVerdict': 'not_evaluated', 'semanticStatus': 'not_evaluated',
@@ -235,6 +279,9 @@ def main() -> None:
                         'protectedSourceAuditComplete': False, 'formalScreeningAllowed': False,
                         'heavyComputeWindow': 'not_requested_or_used; single-core short smoke only'},
     }
+    except Exception as exc:
+        _persist_startup_failure(out, args.run_id, 'preparation_identity', exc)
+        raise
     plan_state = write_plan(plan_path, report)
     report['preparationPlan'] = {'path': str(plan_path), 'sha256': sha256_file(plan_path),
                                  'state': plan_state}

@@ -3,12 +3,14 @@
 import contextlib
 import copy
 import hashlib
+import importlib.metadata
 import importlib.util
 import io
 import json
 import os
 import sys
 import tempfile
+import threading
 import unittest
 from pathlib import Path
 
@@ -649,32 +651,9 @@ class RuntimeSmokeTests(unittest.TestCase):
 
     def test_prepare_only_freezes_the_plan_without_loading_any_model(self):
         with tempfile.TemporaryDirectory() as directory:
-            local = Path(directory)
-            payload_files = {}
-            selected = ("README.md", "config.json", "tokenizer_config.json",
-                        "special_tokens_map.json", "spiece.model", "model.safetensors")
-            for name in selected:
-                payload_files[name] = hashlib.sha256(f"payload-{name}".encode()).hexdigest()
-            model_dir = local / "models" / "M02" / "r1"
-            model_dir.mkdir(parents=True)
-            (model_dir / "payload-manifest.json").write_text(json.dumps({
-                "modelId": "IDEA-CCNL/Randeng-T5-77M-MultiTask-Chinese", "revision": "r1",
-                "files": [{"path": name, "sha256": digest} for name, digest in payload_files.items()],
-            }), encoding="utf-8")
-            for name, digest in payload_files.items():
-                (model_dir / name).write_text(f"payload-{name}", encoding="utf-8")
-            registry_path = local / "registry.json"
-            registry_path.write_text(json.dumps({"models": [{
-                "id": "IDEA-CCNL/Randeng-T5-77M-MultiTask-Chinese", "revision": "r1",
-                "files": [{"path": name, "sha256_of_fetched_bytes": digest}
-                          for name, digest in payload_files.items()],
-            }]}), encoding="utf-8")
-            saved = (smoke.LOCAL, smoke.REGISTRY, smoke._dependency_versions, sys.argv,
-                     {k: os.environ.get(k) for k in ("HF_HOME", "HF_HUB_OFFLINE")})
-            smoke.LOCAL, smoke.REGISTRY = local, registry_path
-            smoke._dependency_versions = lambda: {"torch": "stub"}
-            sys.argv = ["runtime_smoke.py", "--prepare-only"]
-            try:
+            local, registry_path = _stub_payload_environment(directory)
+            with _stub_smoke(local=local, registry_path=registry_path,
+                             argv=["runtime_smoke.py", "--prepare-only"]):
                 output = io.StringIO()
                 with contextlib.redirect_stdout(output):
                     smoke.main()
@@ -691,19 +670,159 @@ class RuntimeSmokeTests(unittest.TestCase):
                     smoke.main()
                 self.assertEqual(json.loads(output.getvalue())["planState"], "reused")
                 self.assertEqual(plan_path.read_bytes(), plan_bytes_after_first)
-            finally:
-                smoke.LOCAL, smoke.REGISTRY = saved[0], saved[1]
-                smoke._dependency_versions = saved[2]
-                sys.argv = saved[3]
-                for key, value in saved[4].items():
-                    if value is None:
-                        os.environ.pop(key, None)
-                    else:
-                        os.environ[key] = value
+
+    def test_missing_dependency_on_the_main_path_persists_a_startup_failure(self):
+        with tempfile.TemporaryDirectory() as directory:
+            local, registry_path = _stub_payload_environment(directory)
+
+            def no_torch():
+                raise importlib.metadata.PackageNotFoundError("torch")
+
+            with _stub_smoke(local=local, registry_path=registry_path, root=local,
+                             dependency_versions=no_torch,
+                             argv=["runtime_smoke.py", "--prepare-only"]):
+                with self.assertRaises(importlib.metadata.PackageNotFoundError):
+                    smoke.main()
+            record = json.loads(
+                (local / "artifacts" / "world-components-logic" / "l3-1-runtime-smoke.json")
+                .read_text(encoding="utf-8"))
+            self.assertEqual(record["status"], "failed")
+            self.assertEqual(record["failedStage"], "preparation_identity")
+            self.assertEqual(record["stages"][0]["stage"], "preparation_identity")
+            self.assertEqual(record["stages"][0]["status"], "failed")
+            self.assertEqual(record["stages"][0]["error"]["type"], "PackageNotFoundError")
+            self.assertEqual(record["attempts"][0]["stage"], "preparation_identity")
+            self.assertEqual(record["formalVerdict"], "not_evaluated")
+            self.assertFalse((local / "runtime-smoke-plan.json").exists())
+
+    def test_payload_verification_failure_on_the_main_path_is_recorded(self):
+        with tempfile.TemporaryDirectory() as directory:
+            local = Path(directory)
+            registry_path = local / "registry.json"
+            registry_path.write_text(json.dumps({"models": []}), encoding="utf-8")
+            with _stub_smoke(local=local, registry_path=registry_path, root=local,
+                             argv=["runtime_smoke.py", "--prepare-only"]):
+                with self.assertRaises(StopIteration):
+                    smoke.main()
+            record = json.loads(
+                (local / "artifacts" / "world-components-logic" / "l3-1-runtime-smoke.json")
+                .read_text(encoding="utf-8"))
+            self.assertEqual(record["status"], "failed")
+            self.assertEqual(record["failedStage"], "payload_verification")
+            self.assertEqual(record["stages"][0]["error"]["type"], "StopIteration")
+            self.assertFalse((local / "runtime-smoke-plan.json").exists())
+
+    def test_concurrent_plan_writers_cannot_silently_replace_each_other(self):
+        for _trial in range(6):
+            with tempfile.TemporaryDirectory() as directory:
+                plan = Path(directory) / "runtime-smoke-plan.json"
+                barrier = threading.Barrier(2)
+                outcomes: dict[str, object] = {}
+
+                def write(tag: str, payload: dict) -> None:
+                    barrier.wait()
+                    try:
+                        outcomes[tag] = smoke.write_plan(plan, payload)
+                    except Exception as exc:
+                        outcomes[tag] = exc
+
+                threads = [threading.Thread(target=write, args=("A", {"identity": "A"})),
+                           threading.Thread(target=write, args=("B", {"identity": "B"}))]
+                for thread in threads:
+                    thread.start()
+                for thread in threads:
+                    thread.join()
+                written = [tag for tag, value in outcomes.items() if value == "written"]
+                refused = [tag for tag, value in outcomes.items()
+                           if isinstance(value, FileExistsError)]
+                self.assertEqual(len(written), 1, outcomes)
+                self.assertEqual(len(refused), 1, outcomes)
+                self.assertEqual(plan.read_bytes(),
+                                 lab.canonical_bytes({"identity": written[0]}) + b"\n")
+
+    def test_identical_concurrent_plans_reuse_and_never_overwrite(self):
+        with tempfile.TemporaryDirectory() as directory:
+            plan = Path(directory) / "runtime-smoke-plan.json"
+            barrier = threading.Barrier(2)
+            outcomes: dict[str, object] = {}
+
+            def write(tag: str) -> None:
+                barrier.wait()
+                outcomes[tag] = smoke.write_plan(plan, {"identity": "same"})
+
+            threads = [threading.Thread(target=write, args=("A",)),
+                       threading.Thread(target=write, args=("B",))]
+            for thread in threads:
+                thread.start()
+            for thread in threads:
+                thread.join()
+            self.assertEqual(sorted(str(v) for v in outcomes.values()), ["reused", "written"])
+            self.assertEqual(plan.read_bytes(), lab.canonical_bytes({"identity": "same"}) + b"\n")
+
+    def test_run_record_claim_refuses_to_replace_existing_evidence(self):
+        with tempfile.TemporaryDirectory() as directory:
+            record = Path(directory) / "record.json"
+            record.write_bytes(b'{"prior": "evidence"}\n')
+            with self.assertRaisesRegex(FileExistsError, "already exists"):
+                smoke.run_with_journal(smoke_report(), Path(directory), record,
+                                       import_stack=_not_called, load_tokenizer=_not_called,
+                                       load_model=_not_called, generation_attempt=_not_called)
+            self.assertEqual(record.read_bytes(), b'{"prior": "evidence"}\n')
 
 
 def _not_called(*_args, **_kwargs):
     raise AssertionError("this step must not be reached")
+
+
+def _stub_payload_environment(directory):
+    """A verified-looking M02 payload plus registry, all inside directory."""
+    local = Path(directory)
+    selected = ("README.md", "config.json", "tokenizer_config.json",
+                "special_tokens_map.json", "spiece.model", "model.safetensors")
+    digests = {name: hashlib.sha256(f"payload-{name}".encode()).hexdigest() for name in selected}
+    model_dir = local / "models" / "M02" / "r1"
+    model_dir.mkdir(parents=True)
+    (model_dir / "payload-manifest.json").write_text(json.dumps({
+        "modelId": "IDEA-CCNL/Randeng-T5-77M-MultiTask-Chinese", "revision": "r1",
+        "files": [{"path": name, "sha256": digest} for name, digest in digests.items()],
+    }), encoding="utf-8")
+    for name, digest in digests.items():
+        (model_dir / name).write_text(f"payload-{name}", encoding="utf-8")
+    registry_path = local / "registry.json"
+    registry_path.write_text(json.dumps({"models": [{
+        "id": "IDEA-CCNL/Randeng-T5-77M-MultiTask-Chinese", "revision": "r1",
+        "files": [{"path": name, "sha256_of_fetched_bytes": digest}
+                  for name, digest in digests.items()],
+    }]}), encoding="utf-8")
+    return local, registry_path
+
+
+@contextlib.contextmanager
+def _stub_smoke(local=None, registry_path=None, root=None, dependency_versions=None, argv=None):
+    """Redirect the smoke module's paths and version query for one main() call."""
+    saved = (smoke.LOCAL, smoke.REGISTRY, smoke.ROOT, smoke._dependency_versions, sys.argv,
+             {key: os.environ.get(key) for key in ("HF_HOME", "HF_HUB_OFFLINE")})
+    if local is not None:
+        smoke.LOCAL = local
+    if registry_path is not None:
+        smoke.REGISTRY = registry_path
+    if root is not None:
+        smoke.ROOT = root
+    if dependency_versions is not None:
+        smoke._dependency_versions = dependency_versions
+    if argv is not None:
+        sys.argv = argv
+    try:
+        yield
+    finally:
+        smoke.LOCAL, smoke.REGISTRY, smoke.ROOT = saved[0], saved[1], saved[2]
+        smoke._dependency_versions = saved[3]
+        sys.argv = saved[4]
+        for key, value in saved[5].items():
+            if value is None:
+                os.environ.pop(key, None)
+            else:
+                os.environ[key] = value
 
 
 def _FakeTokenizer():
