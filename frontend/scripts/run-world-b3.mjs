@@ -1127,7 +1127,20 @@ ${view}
       const narrationEvents = events.filter((event) => event.kind === 'narration');
       const narrationFallbacks = narrationEvents.filter((event) => !event.polished).length;
       const polishFallbacks = events.filter((event) => event.kind === 'polishFallback').length;
-      return { status: completed ? 'COMPLETED' : status, runError, setupMs, walkMs, recovered, budget: driver.getMemory().budget,
+      let cleanup = null;
+      let cleanupError = null;
+      if (!completed) {
+        try {
+          const context = await H.rawOp('get_context', { includeRecovery: false }, { tag: 'cleanup' });
+          const advanceId = context.world?.advance?.advanceId ?? null;
+          const roundId = context.world?.activeRoundId ?? context.world?.round?.roundId ?? null;
+          if (advanceId) {
+            await api('round_conclusion_cancel', { ...base(), operation: 'cancel', advanceId, roundId, cancelReason: 'b3_chain_scene_stopped' });
+            cleanup = { canceledRound: roundId, advanceId };
+          } else cleanup = { alreadyIdle: true };
+        } catch (error) { cleanupError = String(error?.message ?? error); }
+      }
+      return { status: completed ? 'COMPLETED' : status, runError, cleanup, cleanupError, setupMs, walkMs, recovered, budget: driver.getMemory().budget,
         playerInput: '推开门厅深处的重门，示意同伴到门边一起撑住。',
         worldIdBefore, worldAttempts, abandonedRounds, pointIds, scenePoints,
         finalState: { pointId: finalRead.pointId, version: finalRead.version, time: finalRead.state.time,
