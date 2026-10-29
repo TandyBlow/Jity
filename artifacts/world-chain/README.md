@@ -28,6 +28,13 @@
   口径用 `b3-rescore-v2-j4.json`**（parsed 17/17、codec 14/17、pass 2 /
   fail 10 / review 5，总体 11.8%）。两个场景仍在提交前停止，**不得读作
   整链验收通过**。
+- `b3-baseline-v5.json` + `b3-run-db-v5/` —— **复核 20 三项修复后的第一份
+  干净基线**（`75061b6` 干净树，2026-10-29，judge v5）：探针总体 29.4%、
+  两场景各跑满 3/4 轮提交后止于 harness 步数上限。sha256（**blob 口径**，
+  `git show <commit>:<path>` 的字节；工作树检出经 `core.autocrlf=true` 会变
+  CRLF、与 blob 不同）：报告 `3ed2cf84b00f89a8…`、`world.db`
+  `3ff6a52a52a4110f…`、`server.log` `7fff6fae0ad70fd7…`。**止于 harness 步数上限而非模型 handback，不作
+  整链验收，见 6.6.1。**
 
 脚本：`frontend/scripts/run-world-chain-full.mjs`（两场景，`--phase
 action|chain|both`）；`frontend/scripts/run-world-twenty.mjs`（二十次输入，
@@ -490,6 +497,66 @@ conclude 采纳分支（`execute()` transport 路径），单调用点。场景�
 fixture 6/6。**下一步**：①a（修完）、①b（补完）→ 两场景干净基线（同 judge
 hash、同 probe 集）→ 模型对照（提示词变体、更大模型）。
 
+### 6.6.1 复核 20 三项修复与 v5 干净基线（`75061b6`，2026-10-29）
+
+复核结论：provenance 与 port 夹具关闭；①b 三项中等问题不关闭。修复如下：
+
+1. **sink 补丁曾是整包覆盖 → 现为增量折入**：`RoundIdentitySink` 返回的
+   `ids`/`roundAllocations` 按 key 并进**当前**内存、`allocatedKeys` 取并集；
+   驱动不再 `Object.assign` 整包。B3 两场景改回纯增量（删掉 `memoryRef`
+   旧快照）。恢复出的 point/group 身份与既有 allocation key 不再被擦除
+   （复核复现的正是「补丁从 recover 前内存整包构造」）。
+2. **automatic 的 handback 误触发 → 改按确认结论判定**：挂点不再看
+   `round.trigger`（handback 后服务端保留已结束 automatic 轮摘要），改为读
+   conclude 回包的 `kind === 'continue'`，用服务端 `nextRoundId` 与采纳后新轮
+   `order` 调 sink；回包缺 nextRoundId 记 `round_identity_target_missing`。
+3. **未注册 sink 静默放行 → 记录 + 预置分配兼容规则**：无 sink 且该轮
+   `roundAllocations[nextRoundId]` 已预置 → 合法（场景/测试的预置分配路径，
+   由 `idlePointDecision` 作为一步发 allocate_ids，`controller.test.ts`
+   「continue retires the old plan…」即此路径），不记错；其余记
+   `round_identity_sink_missing:<roundId>`，下一步按产品拒绝走（复用 point/
+   group id 被服务端拒），不静默降级。错误 sticky（成功不清），
+   `lastRoundIdentityError` 注释同步。
+
+**回归**：`controller.test.ts` 新增 4 项（delta 合并 / continue-only /
+缺失 sink + 预置兼容 / sink 抛错保留身份）→ **607/607**；双 tsc 净；lint
+0 error（既有 warning）。外部回归 `.local/regress-round20-sink.cjs`（真实
+`driver.recover` + 桩 transport，不调模型/不起服务）三项全 PASS；复核方
+脚本 `.local/review-b673574.cjs` 钉住的是修复前行为，现按设计在第一条断言
+失败（`recovered_point` 不再被擦除）。
+
+**v5 基线**（`75061b6` 干净树，judge v5 `12be98c8…`，17 探针 + 两场景）
+
+- 探针：parsed 17/17、codec 16/17、语义 pass 5 / fail 7 / review 5 → 总体
+  **29.4%**（auto-decided 12 项 41.7%）；judge 自测 28/28。
+- action：**3 轮提交**（point_16 / point_21 / point_22）+ 3 段叙事
+  （8.4–9.2s），21 次模型调用 + 4 次程序 pointPlan；第 4 轮 point 停在
+  action/targets 之后。止于 harness **步数上限 80**，`roundIdentityError:
+  null`，①a 的 `group_29` 复用未再出现。
+- chain：**4 轮提交**（point_37 / 44 / 45 / 46）+ 4 段叙事（8.7–8.9s），
+  19 次模型调用 + 3 次程序 pointPlan；第 5 轮停在 updates 之后。同样止于步数
+  上限，`roundIdentityError: null`。
+- 判分：action 语义错 3（continuation 目标句 ×3）+ review 4（results 裸
+  判定）；chain 语义错 5（reaction 复述、results 骰点不符、continuation
+  目标句 ×3）+ review 3。两场景 `accepted=false`。
+- v4→v5 不作改善口径：v4 在 point 内就停（updates 非法 stage），v5 是修复后
+  第一次真正跑满多轮——**updates 本轮全解析通过**，停点是模型反复 continue
+  撞上 harness 步数上限。
+
+**边界（下一批先定界，再谈模型对照）**
+
+- 两场景都**不是**模型 handback 收尾：步数上限（80 step）先于计划预算耗尽。
+  要么放宽步数上限让场景跑到 harness 计划预算并定性为 harness 停，要么给
+  场景定 round 预算并在报告里写死。
+- 第 2 项（handback 不触发 sink）现有单测 + 外部脚本证据；**真实模型未走到
+  handback**，因此「产品 continue→自动轮→handback 已通」仍不成立。
+- ①a 的真实模型证据：两场景多轮 point 均以新 group id 提交，未再撞
+  `point id is already committed` / group 复用。
+- 取证瑕疵：v5 的 `--out ../artifacts/...` 被脚本按**仓库根**解析，实际写到
+  仓库外（`D:\others\artifacts`）；报告、`world.db`、`server.log` 随后以同一
+  磁盘 `mv` 原样移入本目录（未改写，sha256 见上条**blob 口径**），`retainedEvidence`
+  保留的是原 flag 值。6.8 的命令与路径口径已同步修正。
+
 ### 6.7 结论与下一步
 
 - 判分与因果边界已补齐并可回放（judge v5 + judgeSource hash；28 项自测；
@@ -498,28 +565,31 @@ hash、同 probe 集）→ 模型对照（提示词变体、更大模型）。
   页面/会话产品路径不再被固定 handback 掩盖。**「产品 continue→自动轮→
   handback 已通」的声明仍以带模型 continue 的产品路径全跑为准。**
 - 基线声明：v1（冻结）、v2（j4 口径 11.8%）为既有记录；v3/v4 是 enum 修复
-  后第一批实测（v4 j5 23.5%），**顺序契约拍板后的干净基线待 `b673574` 树
-  全跑**（v4 的 23.5% 不作对照起点）。
+  后第一批实测（v4 j5 23.5%）；**v5（`75061b6`，6.6.1）是复核 20 三项修复后
+  的第一份干净基线**（29.4%），但两场景止于 harness 步数上限，先定界再对照。
 - 当前已知的主要模型失败（同契约实测）：目标漏选、结果裸判定（review）/
   骰点不符、continuation 目标句冒充拟行动、updates 仪式化六阶段（含空
   changes 占位）、虚构任务 id、反应复述。
-- **下一步**：在 `b673574` 上取两场景干净基线 → 同 judge hash、同 probe 集、
-  每模型 ≥1 次完整 run 的对照（提示词变体、更大模型）→ 之后才谈 20 次
-  输入验收。混合口径的 `twenty-round-v2` 仍是既有混合边界结论。
+- **下一步**：先定场景停止界（步数上限 vs 计划/round 预算，见 6.6.1 边界）→
+  同 judge hash、同 probe 集、每模型 ≥1 次完整 run 的对照（提示词变体、更大
+  模型）→ 之后才谈 20 次输入验收。混合口径的 `twenty-round-v2` 仍是既有
+  混合边界结论。
 
 ### 6.8 复跑
 
 ```powershell
 cd frontend
-# 完整基线（任务探针 + 两场景，约 4–6 分钟；输出与 DB 随报告留存）
-node scripts/run-world-b3.mjs --out ..\artifacts\world-chain\b3-baseline-v5.json `
-  --db-snapshot ..\artifacts\world-chain\b3-run-db-v5
+# 路径按**仓库根**解析（不是 frontend）：--out artifacts/... 落在仓库内，
+# 写成 ../artifacts/... 会落到仓库外（v5 就踩过，见 6.6.1）。
+# 完整基线（任务探针 + 两场景；v5 实测 探针 211s + 场景 283s/312s，约 14 分钟）
+node scripts/run-world-b3.mjs --out artifacts/world-chain/b3-baseline-v6.json `
+  --db-snapshot artifacts/world-chain/b3-run-db-v6
 # 只跑探针 / 只跑指定场景（迭代用，不作 canonical）
-node scripts/run-world-b3.mjs --only none --out ..\.local\probes.json
-node scripts/run-world-b3.mjs --only chain --out ..\.local\chain.json
+node scripts/run-world-b3.mjs --only none --out .local/probes.json
+node scripts/run-world-b3.mjs --only chain --out .local/chain.json
 # 用当前判分重放旧归档（不启动服务、不调模型）
-node scripts/run-world-b3.mjs --rescore ..\artifacts\world-chain\b3-baseline-v4.json `
-  --out ..\artifacts\world-chain\b3-rescore-v4-j5.json
+node scripts/run-world-b3.mjs --rescore artifacts/world-chain/b3-baseline-v4.json `
+  --out artifacts/world-chain/b3-rescore-v4-j5.json
 ```
 
 ## 七、历史批次复跑（混合首轮与二十次输入）
