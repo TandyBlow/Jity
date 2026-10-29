@@ -6,7 +6,7 @@
  "freezeRecord": "d2-n3-prompt-freeze.json",
  "freezeRecordSha256": "77b37b43989b52325aa2605878c6d967cd5260c5aa020196040f8230434fbfe1",
  "promptSha256": "a7697894d54f0afbf07ccd79b2e1a8db40a0e07f4a0156b221812ac088199bea",
- "runnerSha256": "e21a84f2d499044d9929194b1a7452f830ec8931406bf3b5db5bf880968749ec",
+ "runnerSha256": "7189e233d93c870e459696ca609e04e9f26d8730a52400231e12123ee8bac0a2",
  "metricToolSha256": "a3a349b908edd92a126f34fc530f6ce25a62b5f15283bacf7a16733adc00131c",
  "gatesSkippedForStub": [
   "decodingConfig.approval",

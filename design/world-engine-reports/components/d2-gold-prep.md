@@ -51,7 +51,7 @@
 ## 7. 待办与顺序
 
 1. ~~双 AI 标注 → 一致度 κ → 冻结 gold~~ **已完成（2026-10-29）**：κ=1.0000、零分歧、冻结件落库。
-2. **N3 runner：已实现（`run_n3_arm.py`，桩验证；冻结记录 `runner.status` 仍为 NOT-IMPLEMENTED，待 C 审查者复审后钉字节才可开跑）**——装配/解析（仅首个顶层 JSON）/至多一次重试（后缀逐字取 prompt 文件）/失败分类（parse/structural/truncated/timeout）/逐调用日志/开跑前三门（解码未批、runner 未钉即拒绝真实推理）/gold 哈希强制校验（读冻结记录钉值，错钉即中止）；桩验证归档 `artifacts/world-components/n3-runner-stub-gate8.json`（8/8 全过线）与 `n3-runner-stub-diag16.json`（16/16、gate=false）。复核轮 148f412 八项（R1–R8）已修复：gold 钉值唯一权威（删除覆盖参数）、双 scope 输入绑定登记哈希与分母、真实后端 dtype 字段统一并以假 torch/transformers 包走通全程、CPU 臂强制非门、runner 字节钉 `text eol=lf`、实际导入指标工具哈希校验入归档、输出 itemId 必须相等、顶层数组拒绝。复审记录 [`review-148f412.md`](../../../artifacts/world-components/review-148f412.md)。
+2. **N3 runner：已实现（`run_n3_arm.py`，桩验证；冻结记录 `runner.status` 仍为 NOT-IMPLEMENTED，待 C 审查者复审后钉字节才可开跑）**——装配/解析（仅首个顶层 JSON）/至多一次重试（后缀逐字取 prompt 文件）/失败分类（parse/structural/truncated/timeout）/逐调用日志/开跑前三门（解码未批、runner 未钉即拒绝真实推理）/gold 哈希强制校验（读冻结记录钉值，错钉即中止）；桩验证归档 `artifacts/world-components/n3-runner-stub-gate8.json`（8/8 全过线）与 `n3-runner-stub-diag16.json`（16/16、gate=false）。复核轮 148f412 八项（R1–R8）已修复：gold 钉值唯一权威（删除覆盖参数）、双 scope 输入绑定登记哈希与分母、真实后端 dtype 字段统一并以假 torch/transformers 包走通全程、CPU 臂强制非门、runner 字节钉 `text eol=lf`、实际导入指标工具哈希校验入归档、输出 itemId 必须相等、顶层数组拒绝。复审记录 [`review-148f412.md`](../../../artifacts/world-components/review-148f412.md)。复核轮 cf22a65 三项（CF1 解码切片、CF2 超时触发标志、CF3 非门根字段一致）已修复，自检假包改为可逆 tokenizer 并实际驱动 stopping criteria；复审记录 [`review-cf22a65.md`](../../../artifacts/world-components/review-cf22a65.md)。
 3. 审查者按修复指令 §2 复核 → 通过后翻 EXECUTABLE → 运行 N3 模型臂；通过线范围＝8 项（16 项 diagnostic-only）；跑输归档失败，本批不调参。
 4. 解码配置属负责人报批项；代词渲染仍归 N4-coref，不在本轮。
 

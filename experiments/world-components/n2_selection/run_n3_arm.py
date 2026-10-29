@@ -275,23 +275,31 @@ class TransformersBackend:
 
         from transformers import StoppingCriteria, StoppingCriteriaList
 
+        deadline_fired = [False]
+
         class Deadline(StoppingCriteria):
             def __init__(self, budget):
                 self.deadline = start + budget
 
             def __call__(self, input_ids, scores, **kwargs):
-                return time.perf_counter() > self.deadline
+                if time.perf_counter() > self.deadline:
+                    deadline_fired[0] = True
+                    return True
+                return False
 
         with torch.no_grad():
             out = self.model.generate(
                 **inputs, do_sample=False, max_new_tokens=max_new_tokens,
                 stopping_criteria=StoppingCriteriaList([Deadline(timeout_s)]))
-        total = int(out[0].shape[0])
-        n = total - int(inputs["input_ids"].shape[1])
-        text = self.tokenizer.decode(out[0], skip_special_tokens=True)
+        # decoder-only causal LM: only the newly generated tokens are the
+        # answer; decoding out[0] would leak the input prompt
+        # (review-cf22a65 CF1)
+        gen = out[0][int(inputs["input_ids"].shape[1]):]
+        n = int(gen.shape[0])
+        text = self.tokenizer.decode(gen, skip_special_tokens=True)
         return {"text": text,
                 "finish_reason": "length" if n >= max_new_tokens else "stop",
-                "timed_out": False,
+                "timed_out": deadline_fired[0],
                 "prompt_tokens": int(inputs["input_ids"].shape[1]),
                 "output_tokens": n,
                 "wall": time.perf_counter() - start}
@@ -414,6 +422,8 @@ def run(args) -> int:
     # another device is a non-gate arm regardless of its numbers.
     non_gate = backend.name == "transformers" and backend.device != "cuda"
     if non_gate:
+        # CF3: every gate marker must agree — root field included
+        report["gate"] = False
         report["summary"]["gate"] = False
         report["summary"]["verdict"]["pass"] = False
         report["summary"]["verdict"]["note"] = \
@@ -632,9 +642,12 @@ def selftest() -> int:
                     any(not v.startswith("parse:") for v in a["itemOutcomes"].values()):
                 failures.append(f"array-wrap classes wrong: {a['failureClasses']}")
 
-        # real backend through FAKE torch/transformers (R3/R4): full
-        # __init__ -> call -> archive, no real model packages; the fake
-        # model emits the frozen gold plans
+        # real backend through FAKE torch/transformers (CF1/CF2/CF3): full
+        # __init__ -> call -> archive, no real model packages. The fake
+        # tokenizer is REVERSIBLE (decode strictly decodes the tokens it
+        # receives, so a prompt leak cannot hide) and the fake generate
+        # invokes the real stopping criteria (controllable clock: the
+        # timeout probe passes timeout_s=0 so the deadline is already due).
         real_freeze = {
             "prompt": {"file": real_prompt_rel, "sha256": real_prompt_sha},
             "decodingConfig": {"approval": "APPROVED", "seed": 20261029,
@@ -647,23 +660,31 @@ def selftest() -> int:
         }
         (td / "f2.json").write_text(json.dumps(real_freeze, ensure_ascii=False),
                                     encoding="utf-8")
-        write_canned(lambda r: [{"text": json.dumps(r, ensure_ascii=False),
-                                 "finish_reason": "stop", "output_tokens": 64}])
+        gold_map = {r["itemId"]: json.dumps(r, ensure_ascii=False)
+                    for r in gold_rows}
+
+        def chunk(text, n=6):
+            return [text[i:i + n] for i in range(0, len(text), n)]
+
+        config = {"cuda": True}
+        decoded_log = []
 
         class FakeSeq(list):
             @property
             def shape(self):
                 return (len(self),)
 
+            def __getitem__(self, k):
+                r = super().__getitem__(k)
+                return FakeSeq(r) if isinstance(k, slice) else r
+
         class FakeTensor:
-            def __init__(self, n):
-                self.shape = (1, n)
+            def __init__(self, tokens):
+                self.tokens = list(tokens)
+                self.shape = (1, len(self.tokens))
 
             def to(self, device):
                 return self
-
-        config = {"text": json.dumps(gold_rows[0], ensure_ascii=False),
-                  "output_tokens": 64, "cuda": True}
 
         class FakeTokenizer:
             last_prompt = ""
@@ -671,12 +692,12 @@ def selftest() -> int:
             def __call__(self, prompt, return_tensors=None, truncation=False,
                          max_length=None):
                 FakeTokenizer.last_prompt = prompt
-                return {"input_ids": FakeTensor(len(prompt) // 3)}
+                return {"input_ids": FakeTensor(chunk(prompt))}
 
             def decode(self, ids, skip_special_tokens=True):
-                m = re.search(r'\{"itemId": "([^"]+)"', FakeTokenizer.last_prompt)
-                row = next(r for r in gold_rows if r["itemId"] == m.group(1))
-                return json.dumps(row, ensure_ascii=False)
+                text = "".join(ids)
+                decoded_log.append(text)
+                return text
 
         class FakeModel:
             def to(self, device):
@@ -686,8 +707,18 @@ def selftest() -> int:
                 return self
 
             def generate(self, **kw):
-                total = kw["input_ids"].shape[1] + config["output_tokens"]
-                return [FakeSeq([0] * total)]
+                in_tokens = list(kw["input_ids"].tokens)
+                prompt_text = "".join(in_tokens)
+                m = re.search(r'"itemId": "([^"]+)"', prompt_text)
+                answer = chunk(gold_map[m.group(1)])
+                sc = kw.get("stopping_criteria")
+                emitted = []
+                for tok in answer:
+                    out_seq = FakeSeq(in_tokens + emitted + [tok])
+                    if sc is not None and any(c(out_seq, None) for c in sc):
+                        break
+                    emitted.append(tok)
+                return [FakeSeq(in_tokens + emitted)]
 
         class FakeAutoTokenizer:
             @staticmethod
@@ -715,7 +746,9 @@ def selftest() -> int:
         sys.modules["torch"] = fake_torch
         sys.modules["transformers"] = fake_transformers
         try:
-            # cuda path: the gate stays open (R4 control)
+            # CF1 control (cuda): decodes must be exactly the generated
+            # answers — no prompt prefix — and the gate stays open
+            decoded_log.clear()
             rc = run(argparse.Namespace(freeze=str(td / "f2.json"),
                                         items=str(cap_items), scope="gate8",
                                         backend="transformers", stub_replies=None,
@@ -725,16 +758,43 @@ def selftest() -> int:
                 failures.append(f"fake-cuda real-backend run rc={rc}")
             else:
                 a = json.loads((td / "r_cuda.json").read_text(encoding="utf-8"))
-                if not (a["device"] == "cuda" and a["dtype"].startswith("bfloat16")
-                        and a["nonGateArm"] is False
-                        and a["report"]["summary"]["gate"] is True
-                        and a["report"]["summary"]["verdict"]["pass"] is True
-                        and a["calls"] and len(a["calls"]) == 8
-                        and all(c["finishReason"] == "stop" for c in a["calls"])):
+                ok = (a["device"] == "cuda" and a["dtype"].startswith("bfloat16")
+                      and a["nonGateArm"] is False
+                      and a["report"]["gate"] is True
+                      and a["report"]["summary"]["gate"] is True
+                      and a["report"]["summary"]["verdict"]["pass"] is True
+                      and a["calls"] and len(a["calls"]) == 8
+                      and all(c["finishReason"] == "stop" for c in a["calls"])
+                      and all(c["rawOutput"] == gold_map[c["itemId"]]
+                              for c in a["calls"])
+                      and decoded_log and all("叙事组织器" not in t and "视角" not in t
+                                              for t in decoded_log)
+                      and all(t == gold_map[c["itemId"]]
+                              for t, c in zip(decoded_log, a["calls"])))
+                if not ok:
                     failures.append(f"fake-cuda archive wrong: device={a['device']} "
-                                    f"gate={a['report']['summary']['gate']}")
-            # cpu path: run completes and is forced non-gate (R3+R4)
+                                    f"gate={a['report']['gate']} "
+                                    f"decoded={len(decoded_log)}")
+            # CF2 probe: timeout_s=0 makes the real Deadline already due; the
+            # fake generate honours the criteria, so every call must land in
+            # the timeout class with timedOut=true
+            decoded_log.clear()
+            rc = run(argparse.Namespace(freeze=str(td / "f2.json"),
+                                        items=str(cap_items), scope="gate8",
+                                        backend="transformers", stub_replies=None,
+                                        gold=str(real_gold_path), device="cuda",
+                                        timeout_s=0, out=str(td / "r_to.json")))
+            if rc != 0:
+                failures.append(f"timeout probe rc={rc}")
+            else:
+                a = json.loads((td / "r_to.json").read_text(encoding="utf-8"))
+                if a["failureClasses"].get("timeout") != 8 or \
+                        not all(c["timedOut"] for c in a["calls"]) or \
+                        a["report"]["summary"]["verdict"]["pass"] is not False:
+                    failures.append(f"CF2 timeout class wrong: {a['failureClasses']}")
+            # cpu path: run completes and every gate marker agrees false (R4+CF3)
             config["cuda"] = False
+            decoded_log.clear()
             rc = run(argparse.Namespace(freeze=str(td / "f2.json"),
                                         items=str(cap_items), scope="gate8",
                                         backend="transformers", stub_replies=None,
@@ -746,12 +806,13 @@ def selftest() -> int:
                 a = json.loads((td / "r_cpu.json").read_text(encoding="utf-8"))
                 if not (a["device"] == "cpu" and "float32" in a["dtype"]
                         and a["nonGateArm"] is True
+                        and a["report"]["gate"] is False
                         and a["report"]["summary"]["gate"] is False
                         and a["report"]["summary"]["verdict"]["pass"] is False
                         and "non-gate" in a["report"]["summary"]["verdict"].get("note", "")):
                     failures.append(f"fake-cpu archive wrong: {a['device']} "
-                                    f"gate={a['report']['summary']['gate']} "
-                                    f"pass={a['report']['summary']['verdict']}")
+                                    f"report.gate={a['report']['gate']} "
+                                    f"summary.gate={a['report']['summary']['gate']}")
         finally:
             for k, v in saved.items():
                 if v is None:
