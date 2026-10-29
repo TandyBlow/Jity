@@ -520,10 +520,11 @@ hash、同 probe 集）→ 模型对照（提示词变体、更大模型）。
 
 **回归**：`controller.test.ts` 新增 4 项（delta 合并 / continue-only /
 缺失 sink + 预置兼容 / sink 抛错保留身份）→ **607/607**；双 tsc 净；lint
-0 error（既有 warning）。外部回归 `.local/regress-round20-sink.cjs`（真实
-`driver.recover` + 桩 transport，不调模型/不起服务）三项全 PASS；复核方
-脚本 `.local/review-b673574.cjs` 钉住的是修复前行为，现按设计在第一条断言
-失败（`recovered_point` 不再被擦除）。
+0 error（既有 warning）。外部回归 `frontend/scripts/round-identity-regress.mjs`
+（真实 `driver.recover` + 桩 transport，不调模型/不起服务，3 项全 PASS）
+覆盖 recover 整包替换这条单测盖不到的路径；复核方脚本
+`.local/review-b673574.cjs` 钉住的是修复前行为，现按设计在第一条断言失败
+（`recovered_point` 不再被擦除）。
 
 **v5 基线**（`75061b6` 干净树，judge v5 `12be98c8…`，17 探针 + 两场景）
 
@@ -590,6 +591,8 @@ node scripts/run-world-b3.mjs --only chain --out .local/chain.json
 # 用当前判分重放旧归档（不启动服务、不调模型）
 node scripts/run-world-b3.mjs --rescore artifacts/world-chain/b3-baseline-v4.json `
   --out artifacts/world-chain/b3-rescore-v4-j5.json
+# ①b sink 三项回归（不启服务/不调模型，真实 recover + 桩 transport）
+node scripts/round-identity-regress.mjs
 ```
 
 ## 七、历史批次复跑（混合首轮与二十次输入）
