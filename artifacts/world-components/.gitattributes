@@ -1,0 +1,8 @@
+# Reproduce the existing archive's hashed Windows bytes across platforms.
+n2-selection-r2.json text eol=crlf
+
+# Keep the AI D1 freeze and rescore records byte-for-byte.
+n2-annotation-status.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+n2-annotation-status-pre-ai.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+n2-labels-v3.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+n2-must-v3.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol

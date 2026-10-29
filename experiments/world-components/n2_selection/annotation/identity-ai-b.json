@@ -1,0 +1,20 @@
+{
+  "annotatorId": "ai-b",
+  "annotatorType": "AI",
+  "context": "fresh task without inherited turns",
+  "inputFileNames": [
+    "rubric.md",
+    "items-blind.jsonl",
+    "sheet.md",
+    "labels-template.jsonl"
+  ],
+  "exposureBeyondFourInputFiles": false,
+  "exposureDetail": "仅读取指定四份输入材料，未读取旧标签、模型输出、其他标注者文件或其他任务会话。",
+  "method": "完整阅读 rubric、16 场景 92 条事实及模板，按可见性、仅他人、四类必述顺序逐条独立语义判断；全知场景以有位置事实的人物为共同焦点，地点外貌按场景细节处理。代码仅写入已判定标签并校验格式、顺序和数量，未用旧规则推导标签。",
+  "limitations": [
+    "同模型标注者之间可能存在相关偏差，独立上下文不等于独立模型。",
+    "本结果属于 AI 标注，非人工评测，不能据此声称真人一致度。",
+    "仅依据给定 rubric 与盲表，未对场景事实的现实合理性作额外假设。"
+  ],
+  "uncertainItems": []
+}

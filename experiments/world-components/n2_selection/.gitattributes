@@ -1,0 +1,17 @@
+# The original D1 manifest binds Windows CRLF input bytes. Recreate those
+# exact bytes on every platform without changing the existing Git blobs.
+items.jsonl text eol=crlf
+annotation/manifest.json text eol=crlf
+annotation/items-blind.jsonl text eol=crlf
+annotation/sheet.md text eol=crlf
+annotation/labels-template.jsonl text eol=crlf
+annotation/labels-c-impl.jsonl text eol=crlf
+
+# New annotation and freeze evidence must retain its exact archived bytes.
+annotation/labels-ai-*.jsonl -text
+annotation/identity-ai-*.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+annotation/d1-ai-protocol.json -text
+annotation/labels-v3.jsonl -text
+annotation_kappa.py text eol=lf
+recompute_must.py text eol=lf
+recompute_must_v3.py text eol=lf

@@ -50,7 +50,9 @@ def sha_text(s: str) -> str:
 
 def git_commit() -> str:
     try:
-        return subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=REPO,
+        return subprocess.check_output(["git", "-c", f"safe.directory={REPO.as_posix()}",
+                                       "-c", f"safe.directory={REPO.parent.parent.as_posix()}",
+                                       "rev-parse", "HEAD"], cwd=REPO,
                                        text=True).strip()
     except Exception:
         return "unknown"
@@ -112,6 +114,7 @@ def kappa(a: dict, b: dict, keys: list) -> dict:
         k = (observed - expected) / (1.0 - expected)
     return {"n": n, "observedAgreement": round(observed, 4),
             "expectedAgreement": round(expected, 4), "kappa": round(k, 4),
+            "kappaExact": k,
             "confusion": matrix}
 
 
@@ -136,12 +139,48 @@ def write_status(payload: dict) -> None:
     print(f"status -> {STATUS}")
 
 
-def run(labels_a: str, labels_b: str, adjudicated: str) -> None:
+def annotation_protocol(name: str | None, labels_a: str, labels_b: str) -> dict:
+    if name is None:
+        if labels_a.startswith("labels-ai-") or labels_b.startswith("labels-ai-"):
+            sys.exit("AI labels require an explicit --protocol record")
+        return {"mode": "legacy-pair", "limitations": [
+            "Original implementer exposure is recorded in annotation/manifest.json."]}
+    path = OUT / name
+    protocol = json.loads(path.read_text(encoding="utf-8"))
+    if protocol.get("mode") != "AI-independent-annotation":
+        sys.exit("unsupported annotation protocol mode")
+    participants = protocol.get("annotators", [])
+    if len(participants) != 2 or [p["labels"] for p in participants] != [labels_a, labels_b]:
+        sys.exit("protocol participants do not match the two label files")
+    for field in ("id", "task", "labels", "identity"):
+        if len({p[field] for p in participants}) != 2:
+            sys.exit(f"protocol must have two distinct {field} values")
+    for entry in protocol["allowedInputs"]:
+        if sha_file(REPO / entry["source"]) != entry["sha256"]:
+            sys.exit(f"protocol input hash mismatch: {entry['source']}")
+    identities = []
+    for participant in participants:
+        identity_path = OUT / participant["identity"]
+        statement = json.loads(identity_path.read_text(encoding="utf-8"))
+        if statement.get("annotatorId") != participant["id"] or statement.get("annotatorType") != "AI":
+            sys.exit("AI annotator identity mismatch")
+        if participant.get("inheritedTurns") is not False or statement.get("exposureBeyondFourInputFiles") is not False:
+            sys.exit("AI blind annotation requires fresh context and no extra input exposure")
+        if set(statement.get("inputFileNames", [])) != {entry["file"] for entry in protocol["allowedInputs"]}:
+            sys.exit("AI annotator did not declare the registered input set")
+        identities.append({"file": participant["identity"], "sha256": sha_file(identity_path),
+                           "statement": statement})
+    return {"file": name, "sha256": sha_file(path), "registration": protocol,
+            "mode": protocol["mode"], "identities": identities}
+
+
+def run(labels_a: str, labels_b: str, adjudicated: str, protocol: str | None = None) -> None:
     manifest_path = OUT / "manifest.json"
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-    for key, path in (("rubric", REPO / manifest["rubric"]["file"]),
+    for key, path in (("rubric", REPO / pathlib.PureWindowsPath(manifest["rubric"]["file"]).as_posix()),
                       ("blindItems", OUT / manifest["blindItems"]["file"]),
-                      ("template", OUT / manifest["template"]["file"])):
+                      ("template", OUT / manifest["template"]["file"]),
+                      ("sheet", OUT / manifest["sheet"]["file"])):
         if sha_file(path) != manifest[key]["sha256"]:
             sys.exit(f"{key} hash mismatch: {path}")
     template = [json.loads(line) for line in
@@ -165,6 +204,12 @@ def run(labels_a: str, labels_b: str, adjudicated: str) -> None:
         return
 
     b = load_labels(b_path, keys)
+    protocol_record = annotation_protocol(protocol, labels_a, labels_b)
+    provenance = {"script": sha_file(pathlib.Path(__file__)),
+                  "manifest": sha_file(manifest_path), "itemsV2": sha_file(ITEMS),
+                  "blindItems": manifest["blindItems"]["sha256"],
+                  "template": manifest["template"]["sha256"],
+                  "sheet": manifest["sheet"]["sha256"]}
     result = kappa(a, b, keys)
     disagreements = [{"itemId": i, "factId": f,
                       "a": a[(i, f)], "b": b[(i, f)]}
@@ -174,11 +219,13 @@ def run(labels_a: str, labels_b: str, adjudicated: str) -> None:
         "labels": {"a": {"file": labels_a, "sha256": sha_file(OUT / labels_a)},
                    "b": {"file": labels_b, "sha256": sha_file(b_path)}},
         "agreement": result,
+        "annotationProtocol": protocol_record,
+        "provenance": provenance,
         "disagreements": disagreements,
         "generatedAt": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"),
         "generatedFromCommit": git_commit(),
     }
-    if result["kappa"] < 0.7:
+    if result["kappaExact"] < 0.7:
         payload["status"] = "kappa-below-0.7-no-freeze"
         write_status(payload)
         print(f"kappa {result['kappa']} < 0.7 -> no v3 freeze")
@@ -196,11 +243,9 @@ def run(labels_a: str, labels_b: str, adjudicated: str) -> None:
 
     # Adjudication contains ONLY disagreement keys; agreed keys keep both labels.
     v3 = dict(a)
-    if disagreement_keys:
+    if adj_path.exists():
         adj = load_adjudication(adj_path, disagreement_keys)
         for (i, f) in disagreement_keys:
-            if adj[(i, f)] not in (a[(i, f)], b[(i, f)]):
-                sys.exit(f"adjudication for {(i, f)} is neither annotator label")
             v3[(i, f)] = adj[(i, f)]
     v3_path = OUT / "labels-v3.jsonl"
     v3_text = "\n".join(json.dumps({"itemId": i, "factId": f, "label": v3[(i, f)]},
@@ -226,6 +271,8 @@ def run(labels_a: str, labels_b: str, adjudicated: str) -> None:
                                    if adj_path.exists() else None),
                    "v3": {"file": "labels-v3.jsonl", "sha256": sha_file(v3_path)}},
         "agreement": result,
+        "annotationProtocol": protocol_record,
+        "provenance": provenance,
         "disagreements": disagreements,
         "mustGate": gate,
         "generatedAt": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"),
@@ -247,6 +294,7 @@ def selftest() -> None:
     b = dict(a)
     perfect = kappa(a, b, keys)
     assert perfect["kappa"] == 1.0 and perfect["observedAgreement"] == 1.0
+    assert perfect["kappaExact"] == 1.0
     b2 = dict(a)
     for k in keys[:4]:
         b2[k] = "must" if b2[k] != "must" else "may"
@@ -276,12 +324,13 @@ def main() -> None:
     parser.add_argument("--labels-a", default="labels-c-impl.jsonl")
     parser.add_argument("--labels-b", default="labels-c-reviewer.jsonl")
     parser.add_argument("--adjudicated", default="labels-adjudicated.jsonl")
+    parser.add_argument("--protocol", help="registered annotation protocol, required for AI pairs")
     parser.add_argument("--selftest", action="store_true")
     args = parser.parse_args()
     if args.selftest:
         selftest()
         return
-    run(args.labels_a, args.labels_b, args.adjudicated)
+    run(args.labels_a, args.labels_b, args.adjudicated, args.protocol)
 
 
 if __name__ == "__main__":
