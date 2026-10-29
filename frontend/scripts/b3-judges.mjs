@@ -368,13 +368,18 @@ export function auditUpdates(calls, expectation, context) {
   for (const [entity, ids] of Object.entries(prior.personality ?? {})) for (const id of ids) add(batchPersonality, entity, id);
   const anyTask = () => [...batchTasks.values()].some((set) => set.size > 0);
 
-  let last = -1;
+  // 复核轮 19：合并批次的 stage 顺序不是契约——wire 的 entityDeltas 是
+  // 每实体一组的字段集合，A 侧 kernel apply 与产品 structured-output 门都
+  // 不依赖数组顺序（产品门注：pass through unnormalized）。顺序违规降级
+  // 为 formatNotes 记录，不再让整轮死在格式偏好上；stage 合法性、字段
+  // 白名单与批量因果链照旧是硬规则。
+  const formatNotes = [];
+  const seenStages = new Map();
   for (const call of calls) {
     if (!isObject(call)) { codec.push('update call must be an object'); continue; }
     const stageIndex = UPDATE_STAGES.indexOf(call.stage);
     if (stageIndex < 0) { codec.push(`illegal stage ${JSON.stringify(call.stage)}`); continue; }
-    if (stageIndex <= last) codec.push(`out-of-order/duplicate stage ${call.stage}`);
-    last = stageIndex;
+    seenStages.set(call.stage, (seenStages.get(call.stage) ?? 0) + 1);
     if (expectation.stage && call.stage !== expectation.stage) codec.push(`stage ${call.stage} != ${expectation.stage}`);
     if (!isObject(call.changes)) { codec.push(`changes of ${call.stage} must be an object`); continue; }
     const allowed = UPDATE_FIELDS[call.stage];
@@ -460,7 +465,21 @@ export function auditUpdates(calls, expectation, context) {
     const found = calls.some((call) => call?.changes?.[entity]?.sanitySet !== undefined);
     if (!found) semantic.push(`expected ${entity} to receive a recalculated sanity value`);
   }
-  return { codec, semantic, reviews };
+  const duplicated = [...seenStages.entries()].filter(([, count]) => count > 1).map(([name]) => name);
+  const orderNotes = [];
+  if (duplicated.length) orderNotes.push(`duplicate stage ${duplicated.join(',')}`);
+  // canonical-order drift: recorded, never fatal
+  let previous = -1;
+  for (const call of calls) {
+    if (!isObject(call)) continue;
+    const stageIndex = UPDATE_STAGES.indexOf(call.stage);
+    if (stageIndex >= 0) {
+      if (previous >= 0 && stageIndex < previous) orderNotes.push(`non-canonical order at ${call.stage}`);
+      previous = stageIndex;
+    }
+  }
+  formatNotes.push(...orderNotes);
+  return { codec, semantic, reviews, formatNotes };
 }
 
 function judgeUpdates(probe, context) {
@@ -473,10 +492,11 @@ function judgeUpdates(probe, context) {
   if (stage && Array.isArray(modelOutput)) return fail(id, true, false, `stage ${stage} call returned an array`);
   if (!stage && !Array.isArray(modelOutput)) return fail(id, true, false, 'merged updates returned a single object');
   const priorStages = probe.expect?.priorStages ?? call?.context?.priorStages ?? null;
-  const { codec, semantic, reviews } = auditUpdates(calls, { ...(probe.expect ?? {}), stage, priorStages }, context);
+  const { codec, semantic, reviews, formatNotes } = auditUpdates(calls,  { ...(probe.expect ?? {}), stage, priorStages }, context);
   if (codec.length) return fail(id, true, false, codec.join('; '), { reasons: [...codec, ...semantic] });
   if (semantic.length) return fail(id, true, true, semantic.join('; '), { reasons: semantic });
-  if (reviews.length) return review(id, true, true, reviews[0], { reviews, note: JSON.stringify(modelOutput) });
+  if (reviews.length) return review(id, true, true, reviews[0],
+    { reviews, note: formatNotes.length ? JSON.stringify({ output: modelOutput, formatNotes }) : JSON.stringify(modelOutput) });
   return pass(id, true, true, `${calls.length} call(s): ${calls.map((entry) => entry.stage).join(',')}`,
     ['codec', 'entity ownership', 'batch causality', 'expectation']);
 }
@@ -659,10 +679,12 @@ export function judgeScene(scene, context) {
       }
       case 'updates': {
         const calls = Array.isArray(output) ? output : [output];
-        const { codec, semantic, reviews: updateReviews } = auditUpdates(calls, { priorStages: call.context?.priorStages ?? null }, context);
+        const { codec, semantic, reviews: updateReviews, formatNotes } = auditUpdates(calls, { priorStages: call.context?.priorStages ?? null }, context);
         if (codec.length) { codecOk = false; errors.push({ call: label, error: `codec: ${codec.join('; ')}` }); }
         if (semantic.length) errors.push({ call: label, error: `semantic: ${semantic.join('; ')}` });
         if (updateReviews.length) addReview({ call: label, review: updateReviews[0] });
+        // formatNotes（顺序/重复/空阶段）只记录：wire 与 kernel 不依赖顺序。
+        if (formatNotes.length) addReview({ call: label, review: `format (non-fatal): ${formatNotes.join('; ')}` });
         break;
       }
       case 'continuation': {

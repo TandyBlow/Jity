@@ -378,14 +378,17 @@ try {
           for (const task of delta.subtasksAdded ?? []) if (isObject(task) && typeof task.id === 'string') produced[task.id] = entity;
         }
       }
-      let last = -1;
+      // 复核轮 19：合并批次的顺序/重复不再是错误（wire 每实体一组、kernel
+      // apply 与产品门都不依赖数组顺序）；记录在 notes 里随 call 存档，
+      // 其余硬规则照旧。
+      const notes = [];
+      const seenStages = new Map();
       for (const call of calls) {
         if (!isObject(call)) return { calls, error: 'update call must be an object' };
         const index = UPDATE_STAGES.indexOf(call.stage);
         if (index < 0) return { calls, error: `illegal stage ${call.stage}` };
         if (expectedStage && call.stage !== expectedStage) return { calls, error: `stage ${call.stage} != ${expectedStage}` };
-        if (index <= last) return { calls, error: `out-of-order/duplicate stage ${call.stage}` };
-        last = index;
+        seenStages.set(call.stage, (seenStages.get(call.stage) ?? 0) + 1);
         if (!isObject(call.changes)) return { calls, error: `changes of ${call.stage} must be an object` };
         const allowed = UPDATE_FIELDS[call.stage];
         for (const [entity, delta] of Object.entries(call.changes)) {
@@ -431,7 +434,18 @@ try {
           }
         }
       }
-      return { calls, error: null };
+      const duplicated = [...seenStages.entries()].filter(([, count]) => count > 1).map(([name]) => name);
+      if (duplicated.length) notes.push(`duplicate stage ${duplicated.join(',')}`);
+      let previous = -1;
+      for (const call of calls) {
+        if (!isObject(call)) continue;
+        const index = UPDATE_STAGES.indexOf(call.stage);
+        if (index >= 0) {
+          if (previous >= 0 && index < previous) notes.push(`non-canonical order at ${call.stage}`);
+          previous = index;
+        }
+      }
+      return { calls, error: null, notes };
     };
     H.auditUpdates = auditUpdates;
     const allTasksAchieved = (state) => Object.values(state?.characters ?? {})
@@ -461,7 +475,7 @@ try {
       const example = stage ? `{"stage":"${stage}","changes":{"<角色id>":{${exampleField[stage]}}}}`
         : `[{"stage":"tasks","changes":{"<角色id>":{"tasksAchieved":["<状态中已有任务id>"]}}}]`;
       const shape = stage ? `只输出一个 JSON 对象（不要数组）：${example}`
-        : `只输出 JSON 数组，按 position→appearance→tasks→subtasks→personality→sanity 顺序；只写实际发生变化的阶段：${example}`;
+        : `只输出 JSON 数组；只写实际发生变化的阶段；顺序不影响应用（服务端按每实体字段集应用）：${example}`;
       return `字段契约：\n` +
         `- positionSet：{"containerId":"<地点id>","slotId":null,"relativeTo":null}\n` +
         `- appearanceChanges：数组，元素 {"id":"draft_1","text":"<外貌变化>","supersedes":[]}\n` +
@@ -605,6 +619,7 @@ ${view}
             record.validationError = audit.error;
             throw new Error(`b3 updates semantic: ${audit.error}`);
           }
+          if (audit.notes?.length) record.formatNotes = audit.notes;   // 顺序/重复：只记录，不杀轮
           // 分阶段调用：把控制器已确认的前序阶段证据附给判分（§6.3 因果链
           // 跨阶段累计）。证据只取服务端工作态中真实存在的已达成任务与
           // 本次已返回的个性变化——虚构 id 不会成为证据。
@@ -672,10 +687,14 @@ ${view}
             }
           }
           record.backfills = backfills;
-          // §8.1：拟行动长文本只属于判断，不进入 RoundConclusion。
+          // §8.1：拟行动长文本只属于判断，不进入 RoundConclusion；
+          // wire 的 Conclusion 需要 closedBy='model' + cancelReason=null
+          // （复核轮 19：旧版缺 closedBy，chain 场景的 conclude 请求被
+          // 服务端 ProtocolError 整体拒收）。
           return out.kind === 'continue'
-            ? { kind: 'continue', candidateCharacterIds: out.candidateCharacterIds, nextRoundId: out.nextRoundId }
-            : { kind: 'handback' };
+            ? { kind: 'continue', closedBy: 'model', cancelReason: null,
+                candidateCharacterIds: out.candidateCharacterIds, nextRoundId: out.nextRoundId }
+            : { kind: 'handback', closedBy: 'model', cancelReason: null };
         }
         if (task === 'narration') {
           // 已交付的真实模型润色通路（与页面同一判分门）——来源 model
