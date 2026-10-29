@@ -8,19 +8,24 @@
 #                null/null/{}; an absent key is an incomplete read, not a
 #                null). timeAdvance is {boundary, duration:{amount, unit}}.
 #                entityDeltas is an entity-keyed map of EntityDelta; task
-#                achievement is a TASK ID in tasksAchieved, and BOTH the
-#                task text and the entity names are resolved from the
-#                BOUND point.state (WorldState: state.worldId,
-#                state.characters[eid].tasks[tid] -> goal/status, entity
-#                name fields) — no caller-supplied registry exists, so
-#                tampering facts and a side table together cannot pass.
+#                achievement is a TASK ID in tasksAchieved; the TASK text
+#                is resolved from the dynamic state
+#                (state.characters[eid].tasks[tid] -> goal/status/owner)
+#                and the ENTITY NAMES from the initial entity definitions
+#                (state.initial.characters/locations/items[eid].name) —
+#                the dynamic state carries no names, so a forged name
+#                there cannot pass. There is no caller-supplied registry.
 #                Source pointers are checked for OWNERSHIP (fact entityId
-#                == source entityId), NAME (fact name vs the state
-#                registry) and CONTENT (goal/status vs state tasks, time
-#                vs duration); unsupported fact kinds are refused. World
+#                == source entityId), NAME (vs the initial definitions)
+#                and CONTENT (goal/status vs state tasks, time vs
+#                duration); unsupported fact kinds are refused. World
 #                identity is state.worldId (the real GetStateData layer);
 #                a missing worldId stops binding. Missing or mismatched
 #                -> binding-failed, never reconstructed from result text.
+#   state        the positive-path fixture state is built through the REAL
+#                pydantic WorldState (backend/app/schemas/world/
+#                contracts.py) model_validate -> model_dump, so the layer
+#                layout is schema-checked, not a hand-written approximation.
 #   invariants   the N3 hard invariants are a PRECONDITION of acceptance:
 #                a plan with a known I2 violation (cross-group reference)
 #                stops with error:plan-invariant-violation and produces no
@@ -53,7 +58,10 @@ sys.path.insert(0, str(HERE.parent / "n4_corpus"))
 from n4_render import render_input as shared_render_input  # noqa: E402
 
 REPO_ROOT = HERE.parent.parent.parent
-MAX_FACTS_PER_GROUP = 4
+sys.path.insert(0, str(REPO_ROOT / "backend"))
+from app.schemas.world.contracts import WorldState  # noqa: E402
+
+MAX_FACTS_PER_RUN = 4
 MAX_INPUT_TOKENS = 128
 
 
@@ -69,7 +77,7 @@ def stub_tokens(text: str, n: int = 6) -> list:
 
 def make_deltas():
     """EntityDelta-shaped map (contracts.py): tasksAchieved carries TASK
-    IDs; the task TEXT lives in the bound state."""
+    IDs; the task TEXT lives in the dynamic state, the NAMES in initial."""
     return {
         "char_pa": {"entityId": "char_pa", "tasksAchieved": ["task_1", "task_2"],
                     "appearanceChanges": [], "personalityChanges": [],
@@ -80,27 +88,65 @@ def make_deltas():
     }
 
 
-def make_state(world="w_probe"):
-    """WorldState-shaped projection (contracts.py): worldId lives here;
-    character task definitions (id -> goal/status) and entity names are
-    resolved from THIS structure at binding time — there is no
-    caller-supplied registry."""
-    return {
-        "worldId": world,
-        "protagonistId": "char_pa",
-        "locations": {"loc_1": {"entityId": "loc_1", "name": "探针镇"}},
+def _task_def(tid, owner, goal):
+    return {"id": tid, "ownerId": owner, "parentTaskId": None,
+            "goal": goal, "status": "achieved"}
+
+
+def make_state(world="w_probe", char_pa_name="参商", char_pb_name="辰星",
+               task_goals=None):
+    """positive-path WorldState built through the REAL pydantic model
+    (model_validate -> model_dump): the layer layout — names in
+    state.initial.*, task definitions in BOTH initial and dynamic state,
+    worldId at state.worldId — is schema-checked, not hand-written."""
+    goals = {"task_1": "晒网", "task_2": "织网", "task_3": "补网"}
+    if task_goals:
+        goals.update(task_goals)
+    ws = WorldState.model_validate({
+        "engineVersion": "world-engine-v1", "schemaVersion": 1,
+        "worldId": world, "protagonistId": "char_pa",
+        "time": {"calendar": "gregorian", "dateTime": "2026-10-30T00:00:00",
+                 "instantOrdinal": 2},
+        "initial": {
+            "engineVersion": "world-engine-v1", "schemaVersion": 1,
+            "worldId": world, "protagonistId": "char_pa",
+            "initialTime": {"calendar": "gregorian",
+                            "dateTime": "2026-10-30T00:00:00", "instantOrdinal": 1},
+            "locations": {"loc_1": {"id": "loc_1", "name": "探针镇",
+                                    "parentLocationId": None,
+                                    "initialAppearance": "安静", "slots": []}},
+            "items": {},
+            "characters": {
+                "char_pa": {"id": "char_pa", "name": char_pa_name,
+                            "initialPosition": {"containerId": "loc_1",
+                                                "slotId": None, "relativeTo": None},
+                            "initialAppearance": "常态",
+                            "initialPersonality": "沉稳", "initialSanity": 12,
+                            "tasks": {"task_1": _task_def("task_1", "char_pa", goals["task_1"]),
+                                      "task_2": _task_def("task_2", "char_pa", goals["task_2"])}},
+                "char_pb": {"id": "char_pb", "name": char_pb_name,
+                            "initialPosition": {"containerId": "loc_1",
+                                                "slotId": None, "relativeTo": None},
+                            "initialAppearance": "常态",
+                            "initialPersonality": "急躁", "initialSanity": 11,
+                            "tasks": {"task_3": _task_def("task_3", "char_pb", goals["task_3"])}},
+            },
+        },
+        "locations": {"loc_1": {"id": "loc_1", "appearanceChanges": []}},
         "items": {},
         "characters": {
-            "char_pa": {"entityId": "char_pa", "name": "参商",
-                        "tasks": {"task_1": {"id": "task_1", "ownerId": "char_pa",
-                                             "goal": "晒网", "status": "achieved"},
-                                  "task_2": {"id": "task_2", "ownerId": "char_pa",
-                                             "goal": "织网", "status": "achieved"}}},
-            "char_pb": {"entityId": "char_pb", "name": "辰星",
-                        "tasks": {"task_3": {"id": "task_3", "ownerId": "char_pb",
-                                             "goal": "补网", "status": "achieved"}}},
+            "char_pa": {"id": "char_pa", "position": {"containerId": "loc_1",
+                                                      "slotId": None, "relativeTo": None},
+                        "personalityChanges": [], "sanity": 12,
+                        "tasks": {"task_1": _task_def("task_1", "char_pa", goals["task_1"]),
+                                  "task_2": _task_def("task_2", "char_pa", goals["task_2"])}},
+            "char_pb": {"id": "char_pb", "position": {"containerId": "loc_1",
+                                                      "slotId": None, "relativeTo": None},
+                        "personalityChanges": [], "sanity": 11,
+                        "tasks": {"task_3": _task_def("task_3", "char_pb", goals["task_3"])}},
         },
-    }
+    })
+    return ws.model_dump(mode="json")
 
 
 def make_time_advance(minutes=5, unit="minute"):
@@ -126,8 +172,11 @@ def make_point(version=1, deltas=None, digest="d" * 8, time_advance="default",
 
 
 def entity_name(state: dict, eid: str):
+    """names live in the INITIAL entity definitions only; the dynamic
+    state has no name field to forge."""
+    initial = (state or {}).get("initial") or {}
     for group in ("characters", "locations", "items"):
-        entry = (state or {}).get(group, {}).get(eid)
+        entry = (initial.get(group) or {}).get(eid)
         if entry is not None:
             return entry.get("name")
     return None
@@ -139,8 +188,9 @@ SUPPORTED_FACT_KINDS = {"task_achieved", "time"}
 def bind_point(point: dict, before, manifest_facts: list) -> list:
     """authoritative input binding on the real contract shape. Keys must
     EXIST (root: explicit null/null/{}); the world identity is
-    state.worldId; task and name resolution read the BOUND point.state.
-    Returns binding-failed reasons (empty = bound)."""
+    state.worldId; names resolve from state.initial.*[eid].name, task text
+    from state.characters[eid].tasks[tid]. Returns binding-failed reasons
+    (empty = bound)."""
     problems = []
     for field in ("state", "pointId", "version", "stateDigest",
                   "previousPointId", "timeAdvance", "entityDeltas"):
@@ -267,9 +317,9 @@ def check_interface(plan: dict, manifest_facts: list, binding_problems: list) ->
     # the actual per-run N4 input is the FLATTENED table: grouping cannot
     # bypass the fact limit
     render_input = [by_id[fid] for s in plan["sentences"] for fid in s["factIds"]]
-    if len(render_input) > MAX_FACTS_PER_GROUP:
+    if len(render_input) > MAX_FACTS_PER_RUN:
         out.update({"status": "unsupported", "reason": "plan-too-long",
-                    "limits": {"maxFactsPerRun": MAX_FACTS_PER_GROUP,
+                    "limits": {"maxFactsPerRun": MAX_FACTS_PER_RUN,
                                "maxInputTokens": MAX_INPUT_TOKENS},
                     "observed": {"facts": len(render_input)}})
         return out
@@ -277,14 +327,14 @@ def check_interface(plan: dict, manifest_facts: list, binding_problems: list) ->
     n_tokens = len(stub_tokens(text))
     if n_tokens > MAX_INPUT_TOKENS:
         out.update({"status": "unsupported", "reason": "input-too-long",
-                    "limits": {"maxFactsPerRun": MAX_FACTS_PER_GROUP,
+                    "limits": {"maxFactsPerRun": MAX_FACTS_PER_RUN,
                                "maxInputTokens": MAX_INPUT_TOKENS},
                     "observed": {"inputTokens": n_tokens}})
         return out
     out.update({"status": "accepted", "renderInput": render_input,
                 "renderText": text, "sharedRenderer": "n4_render.render_input",
                 "inputTokensStub": n_tokens,
-                "limits": {"maxFactsPerRun": MAX_FACTS_PER_GROUP,
+                "limits": {"maxFactsPerRun": MAX_FACTS_PER_RUN,
                            "maxInputTokens": MAX_INPUT_TOKENS},
                 "notes": {"coreferenceConsumed": False,
                           "invariantsVerified": True,
@@ -350,8 +400,7 @@ def fixtures() -> list:
         base = len(shared_render_input(m))
         goal = "网" * (total_tokens * 6 - base)
         m[0]["goal"] = goal
-        state = make_state()
-        state["characters"]["char_pa"]["tasks"]["task_1"]["goal"] = goal
+        state = make_state(task_goals={"task_1": goal})
         return {"itemId": "fx", "sentences": [group(["f1"])]}, m, make_point(state=state), root
 
     def t128():
@@ -385,11 +434,9 @@ def fixtures() -> list:
         return plan, m, make_point(), root
 
     def same_name():
+        state = make_state(char_pa_name="同名者", char_pb_name="同名者")
         m = [task("f1", "char_pa", "同名者", "晒网", "task_1"),
              task("f2", "char_pb", "同名者", "补网", "task_3")]
-        state = make_state()
-        state["characters"]["char_pa"]["name"] = "同名者"
-        state["characters"]["char_pb"]["name"] = "同名者"
         plan = {"itemId": "fx", "sentences": [
             group(["f1"], 0, {"mention": "同名者", "refersTo": "char_pa"}),
             group(["f2"], 1, {"mention": "同名者", "refersTo": "char_pb"})]}
@@ -463,6 +510,12 @@ def fixtures() -> list:
         m = [task("f1", "char_pa", "冒名者", "晒网", "task_1")]
         return {"itemId": "fx", "sentences": [group(["f1"])]}, m, make_point(), root
 
+    def forged_dynamic_name():
+        state = make_state()
+        state["characters"]["char_pa"]["name"] = "冒名者"  # dynamic has no name field
+        m = [task("f1", "char_pa", "冒名者", "晒网", "task_1")]
+        return {"itemId": "fx", "sentences": [group(["f1"])]}, m, make_point(state=state), root
+
     def world_gap():
         before = make_point(version=1, world="w_other")
         point = make_point(version=2)
@@ -474,7 +527,7 @@ def fixtures() -> list:
         return None, [task("f1", "char_pa", "参商", "晒网", "task_1")], point, make_point(version=1)
 
     return [
-        ("F01", "1 fact in range", "accepted", t1),
+        ("F01", "1 fact in range, schema-checked state", "accepted", t1),
         ("F04", "4 facts flattened (upper bound)", "accepted", t4),
         ("F05", "5 facts in one group over limit", "unsupported:plan-too-long", t5),
         ("F52", "3+2 grouping cannot bypass: flattened 5", "unsupported:plan-too-long", t52),
@@ -497,14 +550,16 @@ def fixtures() -> list:
         ("FBM1", "GetStateData keys removed (incomplete read)",
          "binding-failed:missing-previousPointId,missing-timeAdvance", missing_keys),
         ("FOWN1", "fact entity differs from its source entity", "binding-failed:ownership-mismatch:f1", ownership),
-        ("FSC1", "goal diverges from the bound state task definition",
+        ("FSC1", "goal diverges from the dynamic state task definition",
          "binding-failed:source-content-mismatch:f1:task", source_content),
         ("FTT1", "time amount diverges from TimeAdvance.duration",
          "binding-failed:source-content-mismatch:f1:timeAdvance", time_content),
         ("FUK1", "unsupported fact kind refused, not silently accepted",
          "binding-failed:unsupported-fact-kind:f1:personality_changed", unsupported_kind),
-        ("FNAM1", "fact name diverges from the state entity registry",
+        ("FNAM1", "fact name diverges from the initial entity definition",
          "binding-failed:name-mismatch:f1", wrong_name),
+        ("FFAK1", "forged name in the DYNAMIC state cannot pass (names live "
+                  "in state.initial.*)", "binding-failed:name-mismatch:f1", forged_dynamic_name),
         ("FWLD1", "before.state.worldId differs", "binding-failed:world-mismatch", world_gap),
         ("FWLD2", "state.worldId absent", "binding-failed:world-missing", world_missing),
     ]
@@ -545,12 +600,14 @@ def run_suite(out=None) -> int:
         "purpose": "N3->N4 interface fixture verification (non-model)",
         "tokenCounter": "deterministic 6-char stub over the REAL shared "
                         "render_input output (n4_render.py); only the tokenizer is a stub",
-        "sourceModel": "WorldState/EntityDelta per contracts.py: task ids in "
-                       "tasksAchieved resolved against state.characters[eid].tasks; "
-                       "entity names from the bound state; world identity = "
-                       "state.worldId; GetStateData keys must exist (root = "
-                       "explicit null/null/{})",
-        "interfaceConstraints": {"maxFactsPerRun": MAX_FACTS_PER_GROUP,
+        "sourceModel": "WorldState/EntityDelta per contracts.py, positive-path "
+                       "state built through pydantic WorldState.model_validate: "
+                       "task ids in tasksAchieved resolved against the dynamic "
+                       "state.characters[eid].tasks; entity names from "
+                       "state.initial.*[eid].name (dynamic state carries no "
+                       "names); world identity = state.worldId; GetStateData "
+                       "keys must exist (root = explicit null/null/{})",
+        "interfaceConstraints": {"maxFactsPerRun": MAX_FACTS_PER_RUN,
                                  "maxInputTokens": MAX_INPUT_TOKENS,
                                  "coreferenceConsumed": False,
                                  "invariantsArePrecondition": True,
@@ -573,6 +630,11 @@ def selftest() -> int:
     if stub_tokens("abcdefg") != ["abcdef", "g"] \
             or stub_tokens("abcdefg") != stub_tokens("abcdefg"):
         failures.append("stub tokenizer nondeterministic")
+    # the positive-path state must be REAL-schema valid
+    state = make_state()
+    if state.get("initial", {}).get("characters", {}).get("char_pa", {}).get("name") != "参商" \
+            or "name" in state.get("characters", {}).get("char_pa", {}):
+        failures.append("schema-built state layering wrong")
     m = [task("f1", "char_pa", "参商", "晒网", "task_1")]
     plan = {"itemId": "fx",
             "sentences": [group(["f1"], 0, {"mention": "参商", "refersTo": "char_pa"})]}
@@ -650,6 +712,12 @@ def selftest() -> int:
     problems = bind_point(make_point(), make_point(version=0), renamed)
     if not any("name-mismatch" in x for x in problems):
         failures.append(f"name divergence not caught: {problems}")
+    # a forged name in the DYNAMIC state must not participate
+    forged = make_point()
+    forged["state"]["characters"]["char_pa"]["name"] = "冒名者"
+    problems = bind_point(forged, make_point(version=0), renamed)
+    if not any("name-mismatch" in x for x in problems):
+        failures.append(f"forged dynamic name participated: {problems}")
     other_world = make_point(version=1, world="w_other")
     problems = bind_point(make_point(version=2), other_world, [])
     if "world-mismatch" not in problems:

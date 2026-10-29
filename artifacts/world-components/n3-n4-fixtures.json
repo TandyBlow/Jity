@@ -1,7 +1,7 @@
 {
  "purpose": "N3->N4 interface fixture verification (non-model)",
  "tokenCounter": "deterministic 6-char stub over the REAL shared render_input output (n4_render.py); only the tokenizer is a stub",
- "sourceModel": "WorldState/EntityDelta per contracts.py: task ids in tasksAchieved resolved against state.characters[eid].tasks; entity names from the bound state; world identity = state.worldId; GetStateData keys must exist (root = explicit null/null/{})",
+ "sourceModel": "WorldState/EntityDelta per contracts.py, positive-path state built through pydantic WorldState.model_validate: task ids in tasksAchieved resolved against the dynamic state.characters[eid].tasks; entity names from state.initial.*[eid].name (dynamic state carries no names); world identity = state.worldId; GetStateData keys must exist (root = explicit null/null/{})",
  "interfaceConstraints": {
   "maxFactsPerRun": 4,
   "maxInputTokens": 128,
@@ -16,7 +16,7 @@
  },
  "results": {
   "F01": {
-   "description": "1 fact in range",
+   "description": "1 fact in range, schema-checked state",
    "expected": "accepted",
    "got": "accepted",
    "pass": true
@@ -146,7 +146,7 @@
    "pass": true
   },
   "FSC1": {
-   "description": "goal diverges from the bound state task definition",
+   "description": "goal diverges from the dynamic state task definition",
    "expected": "binding-failed:source-content-mismatch:f1:task",
    "got": "binding-failed:source-content-mismatch:f1:task",
    "pass": true
@@ -164,7 +164,13 @@
    "pass": true
   },
   "FNAM1": {
-   "description": "fact name diverges from the state entity registry",
+   "description": "fact name diverges from the initial entity definition",
+   "expected": "binding-failed:name-mismatch:f1",
+   "got": "binding-failed:name-mismatch:f1",
+   "pass": true
+  },
+  "FFAK1": {
+   "description": "forged name in the DYNAMIC state cannot pass (names live in state.initial.*)",
    "expected": "binding-failed:name-mismatch:f1",
    "got": "binding-failed:name-mismatch:f1",
    "pass": true
