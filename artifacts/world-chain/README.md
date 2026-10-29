@@ -40,14 +40,18 @@
   handback，不作整链验收，见 6.6.1。**
 - `b3-baseline-v6.json` + `b3-run-db-v6/` —— **有限轮预算对照基线**
   （2026-10-29，浏览器 `102f710`，judge v5 `12be98c8…` 同 v5；服务检出
-  `dd345b8`（agent，已推 `origin/agent`）其 `backend/app` 与 v5 的
-  `4e17025` 逐字节一致，逐文件 sha256 钉在报告 serverSource）：固定
+  `dd345b8`（agent，已推 `origin/agent`）其 `backend/app` **提交内容**
+  与 v5 的 `4e17025` 一致（git 层无差）；报告 serverSource 逐文件
+  sha256 钉的是工作树字节，与 v5 归档相比 11 个文件因 LF/CRLF 字节
+  不同）：固定
   5 轮停止界下两场景各跑满 5 轮提交（首轮 + 4 自动轮），第 5 轮
   continue 的原始判断已存，受界停止 `round_budget_exhausted`，cancel
   只进 cleanup，两类保险零触发。探针 29.4% 同 v5（17 项判定逐项相同）。
   sha256 逐文件标注口径：报告 `952d19861f3a7123…`（blob=文件一致）；
-  `world.db` 文件 `f517d8e580b6bb5e…` / blob `1d8bceba8c8e334f…`；
-  `server.log` 文件 `67ec044eeb973d93…` / blob `faa51c1b90fd5159…`。
+  `world.db` `f517d8e580b6bb5e…`（blob=文件一致）；`server.log` 文件
+  `67ec044eeb973d93…` / blob `6f218674a564dd8a…`。初稿曾把
+  `git hash-object` 的 SHA-1 对象名误当 blob 的 sha256 登记
+  （`1d8bceba…` / `faa51c1b…`），2026-10-29 复核校正。
   **预算耗尽不算整链验收，见 6.6.2。**
 
 脚本：`frontend/scripts/run-world-chain-full.mjs`（两场景，`--phase
@@ -610,10 +614,11 @@ v5 保留为干净诊断记录（两场景止于旧 80 step 上限）；下一�
 ### 6.6.2 v6：固定 5 轮停止界下的有限轮预算基线（2026-10-29）
 
 总指挥批准的第一次按停止界运行的完整基线（浏览器 `102f710`，judge v5
-`12be98c8…` 同 v5；服务检出 `dd345b8`，其 `backend/app` 与 v5 的
-`4e17025` 逐字节一致）。运行约 19.5 分钟（探针 211s + action 527s +
-chain 570s），全程未调提示词/判据；停止界参数即 6.6.1 冻结值
-（round 5 / step 400 / 任务预算 240）。
+`12be98c8…` 同 v5；服务检出 `dd345b8`，其 `backend/app` **提交内容**与
+v5 的 `4e17025` 一致——git 层无差；serverSource 逐文件钉的是工作树字节，
+145 个文件中 11 个因 LF/CRLF 与 v5 归档字节哈希不同）。运行约 19.5 分钟
+（探针 211s + action 527s + chain 570s），全程未调提示词/判据；停止界
+参数即 6.6.1 冻结值（round 5 / step 400 / 任务预算 240）。
 
 - 停止方式：两场景都在第 5 轮 continuation 仍 continue 时受界停止——
   `sceneEnd=round_budget_exhausted`、`runError=null`、count 5/5，原始
@@ -622,11 +627,14 @@ chain 570s），全程未调提示词/判据；停止界参数即 6.6.1 冻结�
   关闭 round_20 / round_44（cleanup 单列，不计模型 handback）。
 - 保险零触发：step 400 与任务预算 240（实际 used 38/33）都未接近——
   v5 的「步数上限抢先截断」不再发生，停止界按设计工作。
-- 提交与叙事：action 5 点（point_16/21/22/23/24）+ 5 段叙事（9.2–10.9s）
-  + 34 次模型调用 + 5 次程序 pointPlan；chain 5 点（point_38/45/46/47/48）
-  + 5 段叙事（9.0–55.2s）+ 29 次 + 4 次。叙事零回退、completion 证据每
-  场景 5 条。链场景首骰 roll_49=11 对目标 11 一次准入、无弃轮。
-  `roundIdentityError` 两场景均 null。
+- 提交与调用：action 5 点（point_16/21/22/23/24），**结算模型调用 29
+  次** + 程序 pointPlan 5 次；chain 5 点（point_38/45/46/47/48），**结算
+  模型调用 25 次** + 程序 4 次（口径=报告 judged）。叙事两场景各 5 段
+  （action 9.2–10.9s / chain 9.0–55.2s），零回退、completion 证据每场景
+  5 条，另计不入结算——含叙事总量 34/30。初稿把端口总调用（34/29，含
+  程序任务、不含叙事）误记为模型调用数，2026-10-29 复核改正。链场景
+  首骰 roll_49=11 对目标 11 一次准入、无弃轮；`roundIdentityError` 两
+  场景均 null。
 - 判分（judge v5）：action 语义错 5（continuation ×5）+ review 6
   （results 裸判定 ×6）；chain 语义错 7（reaction 复述、results 骰点
   不符、continuation ×5）+ review 4（results ×4）。**两场景合计：
@@ -635,9 +643,10 @@ chain 570s），全程未调提示词/判据；停止界参数即 6.6.1 冻结�
   `accepted=false`。
 - 探针：parsed 17/17、codec 16/17、语义 pass 5 / fail 7 / review 5 →
   总体 29.4%（auto-decided 41.7%）；17 项判定与 v5 **逐项相同**。
-- v5→v6 读法：停止界从「harness 步数上限抢先截断」变为「轮预算受界停
-  止」，5 轮提交 + 判断全部走完，continuation 判分口径随之不同（v5
-  6 条/7 轮 vs v6 10 条/10 轮），**不作改善或恶化比较**。v6 是后续模型
+- v5→v6 读法：**judge 判据没有变化**（同 hash 同判据）；变化的是停止
+  界（harness 步数上限抢先截断 → 轮预算受界停止）、覆盖轮数（3/4 轮 →
+  满 5 轮）与样本量，continuation 判分数字随之不同（v5 6 条/7 轮 vs v6
+  10 条/10 轮），**不作改善或恶化比较**。v6 是后续模型
   对照（提示词变体、更大模型）的冻结基线：round 5 / step 400 / 任务
   预算 240 / judge `12be98c8…` / probe 集 17 项。
 - 边界事实保持：两场景仍**没有**走到模型 handback（第 5 轮全部
