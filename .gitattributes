@@ -14,3 +14,8 @@ artifacts/rule-facts/** text eol=lf
 # Windows reserved device names written by shell redirects (e.g. `>nul`).
 # They cannot be checked out on Windows, so they must never be tracked.
 nul -text
+
+# D (components-logic) byte-binds its dev inputs/drafts, the generator and
+# the review packet; checkout and commit must not rewrite line endings.
+experiments/world-components-logic/** text eol=lf
+artifacts/world-components-logic/** text eol=lf

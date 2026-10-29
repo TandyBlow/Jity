@@ -219,6 +219,26 @@ class GuardTests(unittest.TestCase):
         item["input"]["confirmedGroup"]["members"].append({"memberId": "b", "actionText": ""})
         self.assertEqual(lab.guard_case(item)["reason"], "missing_frozen_group_text")
 
+    def test_d04_judgment_source_must_have_a_frozen_action(self):
+        item = case("D04")
+        item["input"]["judgments"].append(judgment(sourceId="b", targetId="a", rollId="future-b-a"))
+        with self.assertRaisesRegex(lab.LabValidationError, "source has no frozen action"):
+            lab.build_model_input(item)
+        self.assertEqual(lab.guard_case(item)["reason"], "invalid_input")
+        self.assertFalse(lab.validate_dataset([item], [review(item)])["valid"])
+
+    def test_d04_prior_from_another_frozen_source_is_still_preserved(self):
+        item = case("D04")
+        item["input"]["confirmedGroup"]["members"].append({"memberId": "b", "actionText": "已冻结的先前行动"})
+        item["input"]["judgments"].append(judgment(sourceId="b", targetId="a", rollId="prior-b-a"))
+        self.assertEqual(lab.build_model_input(item), item["input"])
+
+    def test_d04_round_source_judgment_stays_valid_probe_data_when_ledger_contradicts(self):
+        item = case("D04")
+        item["input"]["confirmedGroup"]["members"][0]["actionText"] = ""
+        self.assertTrue(lab.validate_dataset([item], [review(item)])["valid"])
+        self.assertEqual(lab.guard_case(item)["reason"], "source_not_frozen_or_mismatch")
+
     def test_duplicate_roll_id_cannot_bind_two_relations(self):
         item = case("D05")
         group = item["input"]["group"]
@@ -394,6 +414,31 @@ class TimingTests(unittest.TestCase):
     def test_twenty_across_different_workloads_are_not_twenty_per_specification(self):
         records = [attempt(workloadId="short") for _ in range(10)] + [attempt(workloadId="long") for _ in range(10)]
         self.assertEqual(lab.summarize_attempts(records)["latencyStatus"], "latency_unverified")
+
+    def test_mixed_arms_or_tasks_under_one_workload_split_and_cannot_pool_to_twenty(self):
+        records = [attempt(arm=arm, task="D02", caseId=f"{arm}-D02-{i}")
+                   for arm in ("A0", "A1") for i in range(10)]
+        report = lab.summarize_attempts(records)
+        workloads = report["scopeSummaries"]["component"]["workloads"]
+        self.assertEqual(sorted(workloads),
+                         ["fixed-device-and-size|arm=A0,task=D02", "fixed-device-and-size|arm=A1,task=D02"])
+        self.assertTrue(all(node["latencyStatus"] == "latency_unverified" for node in workloads.values()))
+        self.assertEqual(report["latencyStatus"], "latency_unverified")
+        task_records = [attempt(arm="A0", task=task, caseId=f"A0-{task}-{i}")
+                        for task in ("D02", "D03") for i in range(10)]
+        self.assertEqual(lab.summarize_attempts(task_records)["latencyStatus"], "latency_unverified")
+
+    def test_identity_bound_samples_reach_twenty_only_within_one_registered_node(self):
+        records = [attempt(arm="A0", task="D02") for _ in range(10)] + [attempt() for _ in range(10)]
+        workloads = lab.summarize_attempts(records)["scopeSummaries"]["component"]["workloads"]
+        self.assertEqual(sorted(workloads), ["fixed-device-and-size", "fixed-device-and-size|arm=A0,task=D02"])
+        self.assertTrue(all(node["latencyStatus"] == "latency_unverified" for node in workloads.values()))
+        records = [attempt(arm="A0", task="D02") for _ in range(20)]
+        workloads = lab.summarize_attempts(records)["scopeSummaries"]["component"]["workloads"]
+        self.assertEqual(workloads["fixed-device-and-size|arm=A0,task=D02"]["latencyStatus"],
+                         "within_observed_budget")
+        self.assertEqual(workloads["fixed-device-and-size|arm=A0,task=D02"]["identity"],
+                         {"arm": "A0", "task": "D02"})
 
     def test_missing_or_unknown_measurement_cannot_be_zero(self):
         result = lab.summarize_attempts([attempt(elapsedMs=None)])

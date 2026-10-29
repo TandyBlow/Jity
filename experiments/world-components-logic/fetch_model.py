@@ -76,7 +76,7 @@ def fetch_verified(spec: dict, destination: Path) -> dict:
 
 def main() -> None:
     argparse.ArgumentParser(description=__doc__).parse_args()
-    source = json.loads(REGISTRY.read_text())
+    source = json.loads(REGISTRY.read_text(encoding='utf-8'))
     model = next(row for row in source['models'] if row['id'] == M02)
     destination = ROOT / '.local/world-components-logic/models/M02' / model['revision']
     destination.mkdir(parents=True, exist_ok=True)

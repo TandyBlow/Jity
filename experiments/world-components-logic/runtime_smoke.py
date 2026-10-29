@@ -34,11 +34,11 @@ def main() -> None:
     os.environ['TOKENIZERS_PARALLELISM'] = 'false'
     os.environ['HF_HUB_OFFLINE'] = '1'
     os.environ['HF_HOME'] = str(LOCAL / 'hf-cache')
-    registry = json.loads(REGISTRY.read_text())
+    registry = json.loads(REGISTRY.read_text(encoding='utf-8'))
     source = next(m for m in registry['models'] if m['id'].endswith('Randeng-T5-77M-MultiTask-Chinese'))
     model_dir = LOCAL / 'models/M02' / source['revision']
     payload_path = model_dir / 'payload-manifest.json'
-    payload = json.loads(payload_path.read_text())
+    payload = json.loads(payload_path.read_text(encoding='utf-8'))
     expected_files = {f['path']: f for f in source['files']}
     selected = {'README.md', 'config.json', 'tokenizer_config.json',
                 'special_tokens_map.json', 'spiece.model', 'model.safetensors'}

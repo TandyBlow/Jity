@@ -51,7 +51,7 @@ const raw=el('details');raw.append(el('summary','查看完整输入（不省略�
 const rubric=el('article',undefined,'card');rubric.append(el('h2','AI 拟定的判断标准，请你核对'),el('div','这是待审草稿。请判断它是否符合你的游戏规则；有歧义就记“需要修改”或“暂不确定”。','warning'));
 rubric.append(el('p','程序是否应调用模型：'+(e.expectedCall?'应调用':'应停止或复用已确认内容')+'。当前结构守卫：'+c.guard.reason));
 if(e.kind)rubric.append(el('p','拟定行动判断：'+({act:'应该行动',skip:'合理不行动'}[e.kind]||e.kind)));
-if(e.targets)rubric.append(el('p','拟定目标：'+(e.targets.map(v=>name(typeof v==='string'?v:v.targetId)).join('、')||'没有目标')));
+if(e.targetIds)rubric.append(el('p','拟定目标：'+(e.targetIds.map(v=>name(typeof v==='string'?v:v.targetId)).join('、')||'没有目标')));
 bullets(rubric,'必须尊重',e.mustRespect);bullets(rubric,'不能出现',e.forbidden);bullets(rubric,'可接受的其他做法',e.acceptableAlternatives);
 const full=el('details');full.append(el('summary','查看这道题的完整判据草稿'),el('pre',JSON.stringify(e,null,2)));rubric.append(full);root.append(rubric);
 const decision=el('article',undefined,'card');decision.append(el('h2','你的审阅意见'),el('p','先检查情景是否够清楚，再看判据是否合理。这里只记录你的意见，不会修改原题或自动放行模型。'));
