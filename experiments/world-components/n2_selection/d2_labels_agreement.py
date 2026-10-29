@@ -293,6 +293,112 @@ def validate_identity(path: pathlib.Path, expected_id: str,
     return problems, data
 
 
+def registered_pins(repo_root: pathlib.Path) -> dict:
+    """the pre-registration chain is the only legitimate source for the
+    protocol hash and this tool's own hash. The revision artifact
+    supersedes the v1 record; both are checked when present."""
+    pins = {}
+    v1 = repo_root / "artifacts/world-components/d2-metrics-preregistration.json"
+    rev = repo_root / "artifacts/world-components/d2-preregistration-revision.json"
+    for path in (v1, rev):
+        if not path.exists():
+            continue
+        data = json.loads(path.read_text(encoding="utf-8"))
+        if "goldProtocol" in data:
+            pins.setdefault("protocol", (data["goldProtocol"]["sha256"], path.name))
+        if "unchanged" in data and "goldProtocol" in data.get("unchanged", {}):
+            pins["protocol"] = (data["unchanged"]["goldProtocol"]["sha256"], path.name)
+        tool = data.get("agreementTool") or {}
+        if "sha256" in tool:
+            pins.setdefault("agreementTool_v1", (tool["sha256"], path.name))
+        now = (data.get("changed", {}).get("agreementTool") or {}).get("now")
+        if now:
+            pins["agreementTool"] = (now, path.name)
+    return pins
+
+
+def verify_bindings(protocol_path: pathlib.Path, repo_root: pathlib.Path) -> list:
+    """the consumed protocol file and the running tool itself must match
+    the pre-registered hashes; a re-tokened gates copy must not freeze."""
+    pins = registered_pins(repo_root)
+    problems = []
+    if "protocol" not in pins:
+        return ["no pre-registration artifact found to pin the protocol hash"]
+    if sha_file(protocol_path) != pins["protocol"][0]:
+        problems.append(
+            f"protocol file hash != registered pin ({pins['protocol'][1]}); "
+            "gates/annotators/inputs may not be altered without re-registration")
+    if "agreementTool" not in pins:
+        problems.append("no registered agreementTool hash to verify this tool against")
+    elif sha_file(pathlib.Path(__file__)) != pins["agreementTool"][0]:
+        problems.append(
+            f"running agreement tool bytes != registered hash ({pins['agreementTool'][1]})")
+    return problems
+
+
+def bind_consumed(items_path, labels_a, labels_b, protocol) -> tuple:
+    """pure binding check: the CONSUMED files (not the registered paths)
+    must match the protocol registration. Returns (problems, bound); the
+    freeze record carries the ACTUAL bound value."""
+    problems = []
+    bound = True
+    consumed_items = pathlib.Path(items_path)
+    item_entries = [e for e in protocol.get("allowedInputs", [])
+                    if pathlib.Path(e.get("source", "")).name == consumed_items.name]
+    if not item_entries:
+        problems.append(f"consumed --items {consumed_items.name} matches no registered input by name")
+        bound = False
+    else:
+        items_sha = sha_file(consumed_items)
+        for e in item_entries:
+            if items_sha != e.get("sha256"):
+                problems.append(
+                    f"consumed --items bytes != registered hash for {e.get('file')}: {consumed_items}")
+                bound = False
+    for side, argval in (("ai-a", labels_a), ("ai-b", labels_b)):
+        spec = next((a for a in protocol.get("annotators", []) if a.get("id") == side), None)
+        if spec is None or pathlib.Path(argval).name != spec.get("labels"):
+            problems.append(
+                f"--labels-{side[-1]} {pathlib.Path(argval).name} != protocol labels for {side}")
+            bound = False
+    return problems, bound
+
+
+def assert_frozen_paths(repo_root: pathlib.Path) -> list:
+    """read-only freeze-gate assertion (round 27 task 6, limited scope):
+    registered paths must satisfy working tree == HEAD blob == pin.
+    allowedInputs / protocol / the agreement tool itself are covered by
+    verify_registered_inputs / verify_bindings; this adds the metric tool
+    and the archived gold. No working-tree-wide status check."""
+    problems = []
+    checks = []
+    rev_path = repo_root / "artifacts/world-components/d2-preregistration-revision.json"
+    if rev_path.exists():
+        data = json.loads(rev_path.read_text(encoding="utf-8"))
+        mt = data.get("changed", {}).get("metricTool") or {}
+        if mt.get("now") and mt.get("file"):
+            checks.append(("metricTool", repo_root / mt["file"], mt["now"]))
+    freeze_path = repo_root / "artifacts/world-components/d2-n3-prompt-freeze.json"
+    if freeze_path.exists():
+        data = json.loads(freeze_path.read_text(encoding="utf-8"))
+        gold = data.get("evaluation", {}).get("gold") or {}
+        if gold.get("sha256") and gold.get("file"):
+            checks.append(("gold", repo_root / gold["file"], gold["sha256"]))
+    for label, path, pin in checks:
+        if not path.exists():
+            problems.append(f"frozen assertion: {label} missing on disk: {path.name}")
+            continue
+        if sha_file(path) != pin:
+            problems.append(f"frozen assertion: {label} working-tree bytes != pin ({path.name})")
+        rel = path.relative_to(repo_root).as_posix()
+        blob = git_blob_sha(repo_root, rel)
+        if blob is None:
+            problems.append(f"frozen assertion: {label} not tracked at HEAD ({path.name})")
+        elif blob != pin:
+            problems.append(f"frozen assertion: {label} HEAD blob != pin ({path.name})")
+    return problems
+
+
 def validate_adjudication(items: dict, adjud_rows: dict, disagreeing: list) -> list:
     problems = []
     for iid in disagreeing:
@@ -324,28 +430,10 @@ def run(args) -> int:
         problems.append("label files must cover exactly the item ids")
     ver_problems, ver_details = verify_registered_inputs(protocol, REPO_ROOT)
     problems.extend(ver_problems)
-    # Bind the CONSUMED files to the protocol registration: checking the
-    # registered paths alone does not help when a tampered copy is passed
-    # via --items/--labels-*. The consumed items bytes must equal the
-    # registered items hash, and each labels file must be the one the
-    # protocol attributes to that annotator.
-    consumed_items = pathlib.Path(args.items)
-    item_entries = [e for e in protocol.get("allowedInputs", [])
-                    if pathlib.Path(e.get("source", "")).name == consumed_items.name]
-    items_sha = sha_file(consumed_items)
-    if not item_entries:
-        problems.append(f"consumed --items {consumed_items.name} matches no registered input by name")
-    else:
-        for e in item_entries:
-            if items_sha != e.get("sha256"):
-                problems.append(
-                    f"consumed --items bytes != registered hash for {e.get('file')}: {consumed_items}")
-    for side, argval in (("ai-a", args.labels_a), ("ai-b", args.labels_b)):
-        spec = next((a for a in protocol.get("annotators", []) if a.get("id") == side), None)
-        if spec is not None and pathlib.Path(argval).name != spec.get("labels"):
-            problems.append(
-                f"--labels-{side[-1]} {pathlib.Path(argval).name} != protocol labels "
-                f"{spec.get('labels')!r} for {side}")
+    problems.extend(verify_bindings(protocol_path, REPO_ROOT))
+    bind_problems, items_bound = bind_consumed(args.items, args.labels_a,
+                                               args.labels_b, protocol)
+    problems.extend(bind_problems)
     identities = {}
     if not problems:
         for side, rows in (("ai-a", a_rows), ("ai-b", b_rows)):
@@ -402,6 +490,11 @@ def run(args) -> int:
     if verdict == "FAIL":
         return 1
     if args.out:
+        freeze_problems = assert_frozen_paths(REPO_ROOT)
+        if freeze_problems:
+            for p in freeze_problems:
+                print("PROBLEM:", p)
+            return 1
         frozen_rows = []
         for iid in items:
             if iid in adjud_rows:
@@ -427,9 +520,9 @@ def run(args) -> int:
                                       v["data"].get("exposureBeyondFourInputFiles"),
                                   "context": v["data"].get("context")}
                            for side, v in identities.items()},
-            "items": consumed_items.name,
-            "itemsSha256": items_sha,
-            "itemsBoundToRegistration": True,
+            "items": pathlib.Path(args.items).name,
+            "itemsSha256": sha_file(pathlib.Path(args.items)),
+            "itemsBoundToRegistration": items_bound,
             "labelsA": {"file": pathlib.Path(args.labels_a).name,
                         "sha256": sha_file(pathlib.Path(args.labels_a))},
             "labelsB": {"file": pathlib.Path(args.labels_b).name,
@@ -612,11 +705,37 @@ def selftest() -> int:
         proto_rel = f"{rel_dir}/d2-gold-protocol.json"
         (td / proto_rel).write_text(json.dumps(protocol, ensure_ascii=False, indent=1),
                                     encoding="utf-8", newline="\n")
+        temp_proto_sha = sha_file(td / proto_rel)
+        real_tool_sha = sha_file(pathlib.Path(__file__))
+        real_metrics_sha = sha_file(pathlib.Path(__file__).parent / "d2_metrics.py")
+        # pinned artifacts must exist BEFORE the temp commit so the blob
+        # assertions can be exercised end to end
+        rev_art = td / "artifacts/world-components/d2-preregistration-revision.json"
+        rev_art.parent.mkdir(parents=True, exist_ok=True)
+        rev_art.write_text(json.dumps({
+            "changed": {"agreementTool": {"now": real_tool_sha},
+                        "metricTool": {"file": "experiments/world-components/n2_selection/d2_metrics.py",
+                                       "now": real_metrics_sha}},
+            "unchanged": {"goldProtocol": {"sha256": temp_proto_sha}},
+        }, ensure_ascii=False, indent=1), encoding="utf-8", newline="\n")
+        gold_art = td / "artifacts/world-components/n2-labels-d2-gold.jsonl"
+        gold_art.write_text("\n".join(json.dumps(v, ensure_ascii=False)
+                                      for v in lb2.values()) + "\n",
+                            encoding="utf-8", newline="\n")
+        gold_sha = sha_file(gold_art)
+        freeze_art = td / "artifacts/world-components/d2-n3-prompt-freeze.json"
+        freeze_art.write_text(json.dumps({
+            "evaluation": {"gold": {"file": "artifacts/world-components/n2-labels-d2-gold.jsonl",
+                                    "sha256": gold_sha}}}, ensure_ascii=False),
+            encoding="utf-8", newline="\n")
         adj = {"itemId": "n3cap-t2", "source": "ai-b",
                "reason": "rubric R1: facts of one entity stay together",
                "label": lb2["n3cap-t2"]}
         (td / rel_dir / "adj.jsonl").write_text(
             json.dumps(adj, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
+        metrics_mirror = td / "experiments/world-components/n2_selection/d2_metrics.py"
+        metrics_mirror.parent.mkdir(parents=True, exist_ok=True)
+        metrics_mirror.write_bytes((pathlib.Path(__file__).parent / "d2_metrics.py").read_bytes())
         subprocess.run(["git", "init", "-q"], cwd=td, check=True)
         subprocess.run(["git", "add", "-A"], cwd=td, check=True)
         subprocess.run(["git", "-c", "user.email=t@x", "-c", "user.name=t",
@@ -650,42 +769,50 @@ def selftest() -> int:
                         or any(v["blob"] is None for v in rec["inputVerification"]):
                     failures.append("input verification rows incomplete")
                 if rec.get("identities", {}).get("ai-a", {}).get("sha256") is None:
-                    failures.append("identity not bound into freeze record")
-            # tamper 1: registered hash zeroed in protocol -> freeze must abort
-            proto_bad = dict(protocol)
-            proto_bad["allowedInputs"] = [dict(e) for e in protocol["allowedInputs"]]
+                        failures.append("identity not bound into freeze record")
+            probes = []
+
+            def probe(name, ns):
+                rc = mod.run(ns)
+                probes.append((name, rc))
+                return rc
+
+            proto_saved = (td / proto_rel).read_bytes()
+            # zeroed registered hash
+            proto_bad = json.loads(proto_saved.decode("utf-8"))
+            proto_bad["allowedInputs"] = [dict(e) for e in proto_bad["allowedInputs"]]
             proto_bad["allowedInputs"][0]["sha256"] = "0" * 64
             (td / proto_rel).write_text(json.dumps(proto_bad, ensure_ascii=False, indent=1),
                                         encoding="utf-8", newline="\n")
-            if mod.run(_ap.Namespace(**base)) != 1:
-                failures.append("zeroed registered hash did not abort freeze")
-            (td / proto_rel).write_text(json.dumps(protocol, ensure_ascii=False, indent=1),
-                                        encoding="utf-8", newline="\n")
-            # tamper 2: working-tree rubric edited after commit -> abort
+            probe("registered-hash-zeroed", _ap.Namespace(**base))
+            (td / proto_rel).write_bytes(proto_saved)
+            # working-tree rubric drift after commit
             rub = td / rel_dir / "d2-gold-rubric.md"
-            saved = rub.read_bytes()
+            rub_saved = rub.read_bytes()
             rub.write_text("# rubric\nR1-R6 tampered\n", encoding="utf-8", newline="\n")
-            if mod.run(_ap.Namespace(**base)) != 1:
-                failures.append("uncommitted working-tree drift did not abort freeze")
-            rub.write_bytes(saved)
-            # tamper 3: identity exposure flag true -> abort
+            probe("rubric-working-drift", _ap.Namespace(**base))
+            rub.write_bytes(rub_saved)
+            # identity exposure flag true
             (td / rel_dir / "identity-a.json").write_text(
                 json.dumps(identity(exposure=True), ensure_ascii=False) + "\n",
                 encoding="utf-8", newline="\n")
-            if mod.run(_ap.Namespace(**base)) != 1:
-                failures.append("exposed identity did not abort freeze")
+            probe("identity-exposure", _ap.Namespace(**base))
             (td / rel_dir / "identity-a.json").write_text(
                 json.dumps(identity(), ensure_ascii=False) + "\n",
                 encoding="utf-8", newline="\n")
-            # tamper 4: identity file names mismatch protocol -> abort
+            # identity file names mismatch protocol
             (td / rel_dir / "identity-a.json").write_text(
                 json.dumps(identity(files_list=["rubric.md"]), ensure_ascii=False) + "\n",
                 encoding="utf-8", newline="\n")
-            if mod.run(_ap.Namespace(**{**base, "adjudicated": str(td / rel_dir / "adj.jsonl")})) != 1:
-                failures.append("identity inputFileNames mismatch did not abort")
+            probe("identity-file-names-mismatch", _ap.Namespace(**base))
             (td / rel_dir / "identity-a.json").write_text(
                 json.dumps(identity(), ensure_ascii=False) + "\n",
                 encoding="utf-8", newline="\n")
+            # archived gold bytes tampered
+            gold_saved = gold_art.read_bytes()
+            gold_art.write_bytes(gold_saved + b"\n")
+            probe("gold-bytes-tampered", _ap.Namespace(**base))
+            gold_art.write_bytes(gold_saved)
 
             def load_rows(p):
                 return [json.loads(l) for l in pathlib.Path(p).read_text(encoding="utf-8").splitlines() if l.strip()]
@@ -695,22 +822,51 @@ def selftest() -> int:
                     "\n".join(json.dumps(r, ensure_ascii=False) for r in rows) + "\n",
                     encoding="utf-8", newline="\n")
 
-            # tamper 5: substituted --items under a different name -> abort
+            # substituted --items under a different name
             rows = load_rows(base["items"])
             rows[0]["facts"][1]["goal"] = "被改写的协作目标文本"
             tam = td / "tampered-items.jsonl"
             write_rows(tam, rows)
-            if mod.run(_ap.Namespace(**{**base, "items": str(tam)})) != 1:
-                failures.append("substituted --items (different name) did not abort")
-            # tamper 6: same-name copy in another directory -> abort
+            probe("items-renamed-copy", _ap.Namespace(**{**base, "items": str(tam)}))
+            # counterfactual: the pure binding function must report bound=False
+            bproblems, bbound = mod.bind_consumed(
+                str(tam), base["labels_a"], base["labels_b"],
+                json.loads(proto_saved.decode("utf-8")))
+            if bbound is not False or not bproblems:
+                failures.append("counterfactual bind_consumed must return bound=False")
+            probes.append(("bind-consumed-counterfactual", 0 if bbound is False else 1))
+            # same-name copy in another directory
             rows2 = load_rows(base["items"])
             rows2[1]["facts"][2]["goal"] = "另一个被改写的目标文本"
             moved = td / "moved"
             moved.mkdir()
             same_name = moved / "d2_capability_items.jsonl"
             write_rows(same_name, rows2)
-            if mod.run(_ap.Namespace(**{**base, "items": str(same_name)})) != 1:
-                failures.append("same-name substituted --items did not abort")
+            probe("items-same-name-copy", _ap.Namespace(**{**base, "items": str(same_name)}))
+            # protocol copy with lowered kappa gate
+            proto_bad2 = json.loads(proto_saved.decode("utf-8"))
+            proto_bad2["gates"]["kappaMinimum"] = 0.1
+            (td / proto_rel).write_text(json.dumps(proto_bad2, ensure_ascii=False, indent=1),
+                                        encoding="utf-8", newline="\n")
+            probe("gates-retokened-copy", _ap.Namespace(**base))
+            (td / proto_rel).write_bytes(proto_saved)
+            # revision pinning a wrong tool hash
+            rev_saved = rev_art.read_bytes()
+            rev_bad = json.loads(rev_saved.decode("utf-8"))
+            rev_bad["changed"]["agreementTool"]["now"] = "0" * 64
+            rev_art.write_text(json.dumps(rev_bad, ensure_ascii=False, indent=1),
+                               encoding="utf-8", newline="\n")
+            probe("tool-pin-wrong", _ap.Namespace(**base))
+            rev_art.write_bytes(rev_saved)
+            for name in ("items-renamed-copy", "items-same-name-copy", "identity-exposure",
+                         "registered-hash-zeroed", "rubric-working-drift",
+                         "gold-bytes-tampered", "gates-retokened-copy", "tool-pin-wrong"):
+                rc = dict(probes)[name]
+                if rc != 1:
+                    failures.append(f"probe {name} exit {rc}, expected 1")
+            for name, rc in probes:
+                print(f"probe {name}: exit {rc}")
+                rev_art.write_bytes(rev_saved)
         finally:
             mod.REPO_ROOT = old_root
     for f in failures:

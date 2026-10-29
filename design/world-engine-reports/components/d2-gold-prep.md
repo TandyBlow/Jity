@@ -8,7 +8,7 @@
 - gold 已按项目负责人裁决完成**双 AI 独立标注**并冻结：两份标签 **24 句组/45 指代条目全部一致，池化共组 κ=1.0000**（门 0.7），分歧 0，无裁决项；冻结件 `artifacts/world-components/n2-labels-d2-gold.jsonl`（记录 `n2-labels-d2-gold.json`），与程序化 rubric 实现逐条一致（诊断对照）。这是 **AI gold，不是人工标注**。
 - 三件工具就绪：标注一致度/裁决/冻结工具、预登记指标工具（H1/H2/G1–G4＋通过线）、D2 隔离扫描；自检与篡改探针全过；冻结 gold 的 CLI 端到端自检 PASS（`d2-gold-metrics-selfcheck.json`）。
 - 隔离：对 B 冻结语料（4026 串，poolDigest `d7613154…`）**0 命中**；对 C 内部 16 项集与 N4 语料亦无字符串重叠（诊断）。
-- prompt 预登记草案已成文，**待签认冻结**；冻结前不运行模型臂。
+- prompt v2 已获审查者条件签认与负责人签认（见 §9 与[冻结记录](../../../artifacts/world-components/d2-n3-prompt-freeze.json)）；当前状态与剩余门以该记录为准，此处不复述。
 
 ## 2. 8 项能力样本
 
@@ -42,7 +42,7 @@
 
 `artifacts/world-components/n2-isolation-d2.json`：B 冻结语料 4026 串（poolDigest `d7613154…`，与复核轮 22 归档一致），D2 扫 36 串/8 项，**ZERO_HIT**；来源清单与逐文件哈希入档。附加诊断：与 16 项集、N4 语料（1831 串）无重叠（首版样本中「变得急躁」与 C 内部语料撞串，已改「变得焦躁」后清零——撞串发生在 C 内部集之间，不涉 B 隔离，仍按来源组卫生处理）。
 
-## 6. Prompt 预登记（待冻结）
+## 6. Prompt 预登记（当前状态见冻结记录）
 
 `d2-n3-prompt-draft.md`：唯一 prompt 模板（R1–R6 原文进 prompt）、固定重试后缀、总重试 1 次、盲 A/B 只作佐证、解析与判定走 `d2_metrics.py`。**待 C 审查者与项目负责人签认后冻结哈希**；冻结前不运行任何模型推理。
 
@@ -51,9 +51,9 @@
 ## 7. 待办与顺序
 
 1. ~~双 AI 标注 → 一致度 κ → 冻结 gold~~ **已完成（2026-10-29）**：κ=1.0000、零分歧、冻结件落库。
-2. prompt 草案 v2 签认 → 冻结哈希。**（当前阻塞项，等 C 审查者与项目负责人）**
-3. 两者齐备后才运行 N3 模型臂；16 项与 8 项分开报告；跑输归档失败，本批不调参。
-4. 代词渲染仍归 N4-coref，不在本轮。
+2. **N3 runner：未实现（NOT-IMPLEMENTED）**——装配/解析/重试/失败分类（含 finish_reason 截断单列）/逐调用日志的契约登记在[冻结记录](../../../artifacts/world-components/d2-n3-prompt-freeze.json)的 `runner` 块；实现后其字节须先钉进该记录才可开跑。
+3. 审查者按修复指令 §2 复核 → 通过后翻 EXECUTABLE → 运行 N3 模型臂；通过线范围＝8 项（16 项 diagnostic-only）；跑输归档失败，本批不调参。
+4. 解码配置属负责人报批项；代词渲染仍归 N4-coref，不在本轮。
 
 ## 8. 复核轮 24 修复（五项 P2，全部关闭）
 
@@ -69,10 +69,9 @@ C 审查者复审发现五项 P2（未签认 D2 准备完成或 prompt 冻结）
 
 修复后复跑：三工具自检全过；冻结记录重生成（**冻结标签字节不变**，sha256 `cb86aa46…` 与 f27af30 一致，κ=1.0000 不变；记录新增 inputVerification 四行＋双身份绑定）；gold CLI 端到端自检 PASS；隔离复扫 ZERO_HIT、缺失 0。本轮未运行模型推理。
 
-## 9. prompt v2 签认与冻结记录（2026-10-29）
+## 9. prompt v2 签认口径（2026-10-29，轮 27 改正）
 
-- C 审查者对 `9a2af88` 复审：四项关闭，v2 prompt 文本审查通过，并签认 **prompt v2 完整文件字节** sha256 `a7697894d54f0afbf07ccd79b2e1a8db40a0e07f4a0156b221812ac088199bea`（实现者已复核该哈希与当前工作树及提交字节一致）。
-- 复审同时指出 P2-3 残余（冻结入口校验登记路径但消费 `--items` 未绑定）→ 轮 25 已关闭（见 §8 P2-3 行补记），一致度工具哈希更新登记于修订记录。
-- **项目负责人签认 prompt v2 同一哈希**，条件：解码配置写入正式冻结记录并报批；通过线按预登记执行、不调参。
-- 正式冻结记录已落 [`artifacts/world-components/d2-n3-prompt-freeze.json`](../../../artifacts/world-components/d2-n3-prompt-freeze.json)：prompt 三重核验（工作树＝blob＝签认值）、双签认登记、判据线与 gold/工具引用、**解码配置（贪心 temperature=0/top_p=1、seed 20261029、max_new_tokens 512、上下文 4096、无量化离线 transformers、每条目至多重试 1 次）——状态钉为 DECODING-CONFIG-PENDING-OWNER-APPROVAL**。
-- **剩余门**：① 老板报批解码配置；② 状态翻为可执行后才运行 N3 模型臂（16 项与 8 项分开报告，跑输归档失败）。本轮未运行任何模型推理。
+- **签字对象改正**：审查者轮 25 对 `9a2af88` 的结论是 prompt v2 **文本字节的条件确认**（sha256 `a7697894…bea`），附带记录补正条件；实现者曾误记为无条件签认，冻结记录与本文均已改为**条件签认**口径。无条件签字将由审查者在轮 27 复核后以 `signoff-<hash>.md` 另行落档（范围＝prompt 字节、冻结记录 prompt/passLine/evaluation 段）。
+- **项目负责人签认 prompt v2 同一哈希**，条件：解码配置写入正式冻结记录并报批；通过线按预登记执行、不调参。解码配置为负责人报批项，审查者不签。
+- 正式冻结记录：[`artifacts/world-components/d2-n3-prompt-freeze.json`](../../../artifacts/world-components/d2-n3-prompt-freeze.json)（prompt 三重核验、双签认口径、passLine 范围＝8 项、16 项 diagnostic-only、runner 块 NOT-IMPLEMENTED、解码配置待批）。
+- **当前状态以冻结记录 `status` 字段为单点**；实现侧剩余门：runner 实现并钉字节、审查者复核、翻 EXECUTABLE 后才运行模型臂。本轮未运行任何模型推理。
