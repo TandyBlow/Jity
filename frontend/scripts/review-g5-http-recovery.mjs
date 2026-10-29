@@ -434,6 +434,7 @@ try {
   report.error = String(error?.stack ?? error);
   save();
   console.error('[g5-http] FAILED:', error);
+  process.exitCode = 1; // 自动化判据：失败必须以非零退出码呈现，不能只看报告
 } finally {
   cleanup();
   await new Promise((done) => { if (service.exitCode !== null) return done(); const t = setTimeout(done, 5000); service.once('exit', () => { clearTimeout(t); done(); }); });
