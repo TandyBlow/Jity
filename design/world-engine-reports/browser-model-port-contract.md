@@ -14,7 +14,7 @@
 
 ---
 
-## 〇、总览：一个接口、两个现实实现、三层输出
+## 〇、总览：一个接口、两个现实实现、四层输出
 
 **接口**【设计】：`WorldModelPort.generate(task, key, input): Promise<Json>`
 （`frontend/src/lib/world-engine/controller.ts:22`）。任务全集 `ModelTask =
@@ -35,16 +35,29 @@ initial | time | pointPlan`（`schedule.ts:13`）。决策由纯调度器产生
    ——页面/会话在用的实现：结算六任务全部走规则权威（零模型），
    `continuation` 固定 `handback`，只有 `narration` 走真实模型（模板 +
    可选润色器 + 事实门）。另有通用 `RuntimeWorldModelPort`
-   （`runtime/model-port.ts:50-112`，encode→队列→decode/validate），
-   其 encode 半边是占位、由 B3 提示词层替换——**未接任何产品路径**。
+   （`runtime/model-port.ts:50-112`，encode → 串行队列 → decode/validate）：
+   其 encode 已是**真实提示词构造器**——调用 `prompts.ts` 的
+   `buildTaskPrompt`，支持 `focused` 投影与 `committedReads`（`:45-48,71`；
+   文件头「encode 是占位」的注释已过时，以代码为准）——**未接任何产品路径**。
 
-**三层输出**（本文所有任务条目都按此区分）：
+**四层输出**（本文所有任务条目都按此区分——四层不重合，B3 归档只直接
+记录第一层）：
 
-- **raw**：模型受控解码后的原始 JSON（B3 归档 `modelTasks[].raw`）。
-- **适配后 output**：端口校验/回填后返回给驱动器的值
-  （`modelTasks[].output`；产品路径为 `consumeModelOutput` 后的内存形态）。
-- **wire**：提交服务端的数据（`types.ts:75-108` RequestMap；归档
-  `ops`/`wire` 捕获）。
+1. **模型原始输出（归档 `output`）**：`b3.complete` 受控解码后的 JSON
+   原样解析值，随调用记录落盘（`run-world-b3.mjs:356-358`）。
+2. **端口返回值**：任务分支对解析值校验/归一/裁剪后 `generate()` 实际
+   返回给驱动器的值。
+3. **驱动内存**：`consumeModelOutput`/调度器适配后的内存形态
+   （`lastModel`/`lastTargets`/`lastResults`/`continuation` 等）。
+4. **wire**：提交服务端的数据（`types.ts:75-108` RequestMap；归档
+   `ops`/`wire` 捕获）。
+
+两个易混实例（v6 归档可验）：**reaction** 归档 `output` 是 `{text}`
+对象，端口返回的是纯字符串（`run-world-b3.mjs:596 return out.text`，
+调度器按字符串校验，`schedule.ts:879`）；**continuation** 归档保留完整
+判断文本（含 plannedAction/protagonistRelevance 与回填记录），端口返回
+值已裁剪为 wire 形状的 Conclusion，`memory.continuation` 与 conclude
+wire 都只见裁剪后字段。
 
 ---
 
@@ -58,8 +71,12 @@ initial | time | pointPlan`（`schedule.ts:13`）。决策由纯调度器产生
 - **预算门**：`STATE_COMPUTATION_TASKS = action/targets/reaction/results/
   updates/continuation`（`schedule.ts:266`）受 `modelBlocked` 约束
   （`schedule.ts:427-443`）：`used >= max` 时发 `checkpoint_pause` 并停在
-  `local_budget_pause`。**narration/pointPlan/time 不被预算或暂停阻断**
-  （`schedule.ts:428-431`）。
+  `local_budget_pause`。**narration 不受预算门**（`schedule.ts:428-431`）。
+- **暂停/gate 门**：`scheduleNext` 里 gate（`:465`）与 paused（`:466`）
+  检查位于相位分支之前——pointPlan/time 虽不受预算门限制，**同样被
+  暂停/gate 挡住**（它们的决策只会在未暂停分支里到达）；唯一的例外是
+  **narration**：`narrationDecision` 在 `:459-460` 先于 gate/paused 检查
+  执行——叙事管线必须穿过暂停运行（T05）。
 - **重试**：模型调用本身零重试——端口 throw 直接穿透 `step()`（见第二节）。
   传输层重试只针对 HTTP 超时/`request_in_progress`（同 requestId，默认
   3 次，`controller.ts:397-406`）。
@@ -97,7 +114,7 @@ initial | time | pointPlan`（`schedule.ts:13`）。决策由纯调度器产生
 | --- | --- |
 | 调度位置 | `buildDecision` DFS 等待分支（`schedule.ts:900-906`）：准入目标先完成整棵子树再滚下一个兄弟（T02-el） |
 | 输入 | `{ sourceId, sourceActionText, memberId, rollId, workingState }`（读发起者的具体威胁） |
-| 输出形状 | 纯字符串（反应行动文本）；B3 schema `{text}`、≤30 字、maxTokens 96（`:588-593`） |
+| 输出形状 | 模型原始输出（归档）`{text:"<反应行动>"}`；**端口返回纯字符串** `out.text`（`run-world-b3.mjs:596`）；B3 schema `{text}`、≤30 字、maxTokens 96（`:588-593`）。驱动内存 `lastModel.output` 即该字符串（调度器按 `typeof !== 'string'` 校验，`schedule.ts:879`） |
 | 校验 | 调度器：非字符串 throw（`schedule.ts:879`）；必须绑定同一个 admitted roll（first-fit 同一威胁，`:871-877`）；B3 判据：与来源行动逐字/结构重复 → `reaction copies the source action` fail（`b3-judges.mjs:140,244`） |
 | 程序回填 | 无；rollRefs 由程序从 admitted 条目构造 |
 | wire 消费 | `checkpoint_extend_group admittedMember:{memberId, actionText, rollRefs}`（`schedule.ts:880-889`）；接受成员后其槽位标记已处理、源帧压栈（`controller.ts:742-758`） |
@@ -133,9 +150,9 @@ initial | time | pointPlan`（`schedule.ts:13`）。决策由纯调度器产生
 | --- | --- |
 | 调度位置 | `continuationDecision`（`schedule.ts:590-622`），`assess_continuation` 相位 |
 | 输入 | `{ round, head, workingState, roundChanges }`（§7.1 主角/当前世界/本轮变化；roundChanges 是本驱动器提交点 Δ 按序累计，`controller.ts:807-814`）；**依据缺失明确停止** `continuation_context_missing`，不得无据调模型（`schedule.ts:605-610`） |
-| 输出形状 | B3 schema：`{kind:'continue' \| 'handback', candidateCharacterIds, nextRoundId, plannedAction, protagonistRelevance, cancelReason}`，maxTokens 160（`run-world-b3.mjs:657-662`） |
+| 输出形状 | 模型原始输出（归档，四层之第 1 层）：`{kind:'continue' \| 'handback', candidateCharacterIds, nextRoundId, plannedAction, protagonistRelevance, cancelReason}`，maxTokens 160（`run-world-b3.mjs:657-662`）；**端口返回值已裁剪**为 Conclusion `{kind, closedBy:'model', cancelReason:null, candidateCharacterIds, nextRoundId}`（`continue` 分支，`:692-695`）——归档与返回值不同（§〇 实例二） |
 | 校验 | B3 判据：continue 必须 `plannedAction` 非空且**非目标句**（`isGoalSentence` → fail，`b3-judges.mjs:524-525`）+ 主角关联；handback 却带行动/关联 → review（`:510`） |
-| 程序回填 | candidates 按名册过滤、空则回填名册；`nextRoundId` 由程序预分配队列回填（`pending` → 真 id，backfill 记录在案；队列空 = `b3 next round id budget exhausted`）（`run-world-b3.mjs:669-687`）；B3 停止界：第 5 轮仍 continue 保存原始判断、**不回填第 6 轮身份、不提交 conclude**（`d4db44b`） |
+| 程序回填 | **`candidateCharacterIds` 是模型决策**：合法角色逐字保留（v6 两名册场景模型选 `[person_a]` 即原样上 wire）；程序只丢弃不在名册的非法项（记 backfill），**仅当过滤后为空**才回填整名册（`run-world-b3.mjs:669-679`）。`nextRoundId` 是程序分配：模型占位 `pending` 被预分配队列真 id 替换（backfill 记录在案；队列空 = `b3 next round id budget exhausted`）（`:680-686`）。B3 停止界：第 5 轮仍 continue 保存原始判断、**不回填第 6 轮身份、不提交 conclude**（`d4db44b`） |
 | wire 消费 | `round_conclusion_conclude`，Conclusion **只含 kind/closedBy/cancelReason/candidates/nextRoundId**——`plannedAction/protagonistRelevance` 是判断产物不上 wire（§8.1，端口裁剪在 `run-world-b3.mjs:692-695`，wire 类型 `types.ts:37`）；conclude 回执 `{kind, roundId, nextRoundId}`（`types.ts:126`），confirmed continue 触发程序身份 sink（`controller.ts:276-282`） |
 | v6 证据 | **10/10 判全为目标句**（温度 0 下确定性复现；例：raw `plannedAction:"林川需要观察盒子的状态，以确保守门任务的完成"`，同调用 `nextRoundId:"pending"` 被程序回填为 `round_41`）。服务端只收到合法 continue（裁剪后），**质量失败不影响 wire**——但 §8.1 两条件判断的实际质量因此完全不可验收 |
 
@@ -148,8 +165,8 @@ initial | time | pointPlan`（`schedule.ts:13`）。决策由纯调度器产生
 | --- | --- |
 | 调度位置 | `narrationDecision`（`schedule.ts:500-562`，优先于一切相位）：claim → 目标点 get_state（取回 Δ 原始记录）→ 前驱 get_state → 组装 → 模型 → submit；**读能力不完整即停止**（`readIncomplete`/`narration_read_incomplete`，缺字段不得默认空 Δ） |
 | 输入 | `{ pointId, before, delta:{timeAdvance, entityDeltas}, after, perspective }`（§7.1 Sₜ₋₁/Δₜ/Sₜ/视角，`assembleNarrationInput`，`schedule.ts:134-146`） |
-| 输出形状 | 文本或 null（null = submit `outcome:'failed', failureReason:'model_failed'`，`schedule.ts:513-531`）；润色器 maxTokens 96、attempt1 温度 0 / attempt2 温度 0.7（`narration-polisher.ts:62-67`） |
-| 校验 | 产品与 B3 同一门：`narrateFromReads`（`rule-session.ts:99-143`）——模板为底，润色候选过 `selectFactNarration` 逐句事实门，**失败重生一次（带 feedback）仍败则回模板**（§8.2）；B3 判据 = 同一 checkFactNarration 家族 |
+| 输出形状 | 端口返回文本或 null（null = submit `outcome:'failed', failureReason:'model_failed'`，`schedule.ts:513-531`）；润色器 maxTokens 96、attempt1 温度 0 / attempt2 温度 0.7（`narration-polisher.ts:62-67`）。**归档来源不同于其它任务**：narration 不走 `b3.complete`、不在 `modelTasks` 里——其 attempt/证据落 `narrationLog[].attempts[]`（含 `completion` 证据与判分所用 facts） |
+| 校验 | 产品与 B3 同一门：`narrateFromReads`（`rule-session.ts:99-143`）——模板为底，润色候选过 `selectFactNarration` 逐句事实门，**门拒后重生一次、仍败回模板**（§8.2）；B3 判据 = 同一 checkFactNarration 家族。重生实现的精确口径：attempt 2 是**同提示词、温度 0→0.7 的重采样**——`attempt.previous` 随类型传递但**未注入提示词**（更正文本会被小模型逐字复读，实测否定注入，`narration-polisher.ts:58-60`）；注入反馈属更强模型的待启用项 |
 | 程序回填 | 模板是程序渲染；编号清单提示词把任务压到逐字复制形态（`narration-polisher.ts:53-57`） |
 | wire 消费 | `narration_claim` / `narration_submit`（三元组 claimToken+generation+issuedAtEpochMilli；租约/围栏变化即弃 claim 重取，`controller.ts:660-668,672-677`） |
 | v6 证据 | 两场景各 5 段、零回退、completion 证据各 5 条（逐调用回调——实例级回调会被模块缓存吞掉，整链验收 v2 教训，`rule-session.ts:62-64`） |
@@ -174,7 +191,7 @@ initial | time | pointPlan`（`schedule.ts:13`）。决策由纯调度器产生
 【现状】端口 throw（解析失败、schema 校验失败、语义校验 throw、引擎错误）
 从 `step()` 的 `case 'model'` 直接穿透 `driver.run()`：
 
-- B3 harness：场景 catch 记 `runError='model port threw'`（`run-world-b3.mjs:1084-1087`），失败即交付，不换候选。唯一例外：narration 的事实门重生/模板回退发生在端口内部（`narrateFromReads`），对驱动器永远成功。
+- B3 harness：场景 catch 记 `runError='model port threw'`（`run-world-b3.mjs:1084-1087`），失败即交付，不换候选。部分例外：narration 的**润色失败**（门拒、润色器异常）在端口内部被 `narrateFromReads` 吸收——重生一次后回模板，对驱动器仍是成功文本；但**模板回退只覆盖润色失败**——缺读（`narration_requires_saved_point_read` / 前驱缺失，`rule-session.ts:243-247`）、谱系或投影校验失败仍会 throw 并走本行终止路径。
 - 产品：`WorldSession` catch 后返回 `{kind:'error', detail}` 并收尾本轮循环（`session.ts:219-225`）；不重试、不改写。
 - 引擎层：wllama complete 110s 超时（B3 配置）/abort → 错误上抛；取消信号原生透传（`wllama-engine.ts`）。
 
@@ -203,7 +220,7 @@ initial | time | pointPlan`（`schedule.ts:13`）。决策由纯调度器产生
 
 ### 2.3 预算与步数停止（保险语义）
 
-【现状】三层，v6 全部未触发（used 38/33，上限 240；step 400 未触及）：
+【现状】四层，v6 仅第 4 层按设计触发（used 38/33，上限 240；step 400 未触及）：
 
 1. 控制器任务预算（`memory.budget`，v6=240）：触顶 → `checkpoint_pause` →
    await `local_budget_pause`（`schedule.ts:433-441,466`）；外部命令
@@ -216,7 +233,7 @@ initial | time | pointPlan`（`schedule.ts:13`）。决策由纯调度器产生
    不分配第 6 轮、不提交 conclude，场景记 `round_budget_exhausted`；
    cancel 单列 cleanup（`run-world-b3.mjs` 端口 675-689 段 + 场景捕获）。
 
-### 2.4 cancel 的作用范围
+### 2.4 cancel 的作用范围与两种取消入口
 
 【现状】`cancel` 命令 → `round_conclusion_cancel`（`controller.ts:226-233`）；
 成功后 `clearRoundWork()`（`:909-911,930-939`）：清空未提交候选（staged/
@@ -225,6 +242,17 @@ narration、plan——**已提交点与已分配身份（ids/roundAllocations/al
 不清**；服务端废弃开启中的 advance 并返回 `abandonedGroupIds`
 （`types.ts:127`）。B3 场景停止后的清理 cancel 只关 advance（v6：round_20 /
 round_44），**单列在 `cleanup` 字段，不计模型 handback**。
+
+**两种取消入口必须区分**【现状】：
+
+1. **`deliver(cancel)`（协议取消）**：命令只在其操作真正执行时被消费——
+   送达发生在生成/请求在途期间时会**存活到当前 step 完成**，下一步才作为
+   `round_conclusion_cancel` 发出（命令消费规则 `controller.ts:250-253,271-274`；
+   捕获命令与在途完成之间送达的命令不被吞）。当前生成不受打断、其输出
+   可能已被消费——取消不回滚已发生的 step。
+2. **`WorldSession.stop()`（中止）**：提升 epoch、终态隔离——在途交换被
+   abort/隔离、心跳停止、late settle 不复活（`session.ts:14-15,99-100,239-251`）。
+   这是接管/关闭路径，不是协议轮取消。
 
 ### 2.5 recover 的三条铁律
 
@@ -266,7 +294,7 @@ round_44），**单列在 `cleanup` 字段，不计模型 handback**。
 | G1 | **continuation 目标句 10/10**：plannedAction 全部是「需要/确保…」句式，judge 全 fail；§8.1 两条件判断质量完全不可验收 | v6 `roundBudget.exhausted.judgment` ×2 + 判分 10 条（`b3-judges.mjs:525`）；`artifacts/world-chain/README.md` §6.6.2 | **模型能力**为主；端口无生成前校验（目标句照常裁剪上 wire）——是否加端口内拒绝/重生属设计待决（见四.2） |
 | G2 | **results 裸判定 ×10 review + 骰点不符 ×1 fail**：无骰证据的裸「没有成功」按设计只给 review；准入写成失败是硬错（group_39，roll 11/11） | v6 judged pendingReview 10 条 + `semanticErrors[1]`；判据 `b3-judges.mjs:319-335`；提示词已明示规则（`run-world-b3.mjs:604-607`） | **模型能力**（无视输入中的骰点证据）；端口/调度器在 stage_unit 前**没有**程序侧骰点一致性预检【现状】——是否补预检属设计待决 |
 | G3 | **reaction 复述 ×1 fail**：原始输出与来源行动逐字相同 | v6 chain `reaction:person_a` raw；判据 `b3-judges.mjs:244` | **模型能力**；n=1，样本极小【假设：发生率未知】 |
-| G4 | **产品结算路径零模型**：页面/RuleWorldSession 六任务全走规则权威（action=parseRuleCommand、未解析即 skip；targets 恒空；results=adjudicate；updates=deltas；continuation 恒 handback） | `rule-session.ts:197-249` | **产品接线**：B3 模型端口没有任何产品路径；`RuntimeWorldModelPort`（encode 占位）也未接 |
+| G4 | **产品结算路径零模型**：页面/RuleWorldSession 六任务全走规则权威（action=parseRuleCommand、未解析即 skip；targets 恒空；results=adjudicate；updates=deltas；continuation 恒 handback） | `rule-session.ts:197-249` | **产品接线**：B3 模型端口没有任何产品路径；`RuntimeWorldModelPort`（encode 已是真实 `buildTaskPrompt`，含 focused 投影）也未接任何产品路径 |
 | G5 | **产品 continue 路径无身份 sink**：`setRoundIdentitySink` 仅 B3 两场景与回归脚本注册，产品运行时未注册 | grep 全仓：`controller.ts:122`（定义）、`round-identity-regress.mjs:54,86`、`run-world-b3.mjs:1068,1233`，产品 src 零调用 | **产品接线**：当前因 G4（恒 handback）不可达；一旦接模型 continuation，continue 即记 `round_identity_sink_missing` 并在下一步撞服务端重用 id 拒绝 |
 | G6 | **initial/time/pointPlan 无模型证据**：两条现实路径均程序/规则供给（§1.8） | `run-world-b3.mjs:509-518`、`rule-session.ts:189,200-201` | **端口+harness**：组件设计必须显式决定归属；多点规划能力（B3 预分配 5 点 vs 产品单点）未测【假设】 |
 | G7 | **判分门未接页面**：narration 页面走 checkFactNarration 放行门 + 模板；B3 判分（b3-judges）只在 harness | 已登记边界（world-chain README 环境节、§6.7） | **产品接线** |
@@ -304,10 +332,15 @@ stage 候选身份重写）、服务端权威状态应用（客户端无 apply�
    （重生一次 → 模板兜底，§8.2）。若组件需要「可重试的语义失败」通道
    （如目标句拒绝后原模型重问），这是**新机制**，须与驱动器的零重试纪律
    和预算记账（每次消费计 1）一起设计——见待决 Q2。
-6. **长生成与租约**：模型生成期间租约靠心跳维持（`WorldSession` 双心跳）；
-   B3 无心跳（harness 持 bootstrap 租约）。组件的 110s 级超时预算必须与
-   租约 TTL/心跳协调【现状：页面 lease TTL 120s、B3 bootstrap 租约 ~1h；
-   两者都未与 110s 生成超时做过压力组合】【假设】。
+6. **长生成与租约**：模型生成期间租约靠心跳维持（`WorldSession` 双心跳：
+   心跳走 transport、与推理并发）。**B3 也有心跳**——探针段创建的
+   bootstrap `RuleWorldSession`（`run-world-b3.mjs:810`）全程未停止，
+   其心跳在两场景期间持续续租（v6 归档：action/chain 场景 ops 各记录
+   **7 次 `lease_renew`**）。持久服务默认 lease TTL = **120 秒**
+   （`world_store.py:38` `lease_ttl=120_000`、`authority.py:12
+   LEASE_TTL_MILLI`）。组件的 110s 级生成超时相对 120s TTL 只有一个
+   心跳间隔的余量【现状：v6 未出现续租失败；生成与心跳竞争的边界未做
+   压力组合】【假设】。
 
 ### 4.2 待决问题（需总指挥/C/D 方案决定，B 不预设答案）
 
