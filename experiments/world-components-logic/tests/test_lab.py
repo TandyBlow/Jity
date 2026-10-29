@@ -67,6 +67,15 @@ def attempt(**changes):
     return value
 
 
+FULL_IDENTITY = {"arm": "A0", "task": "D02", "stage": "current", "component": "action",
+                 "modelId": "M02", "deviceId": "dev1", "configHash": "cfg0"}
+
+
+def bound_attempt(**changes):
+    """Attempt whose record explicitly carries every comparability dimension."""
+    return attempt(**{**FULL_IDENTITY, **changes})
+
+
 class IsolationTests(unittest.TestCase):
     def test_review_and_metadata_never_enter_model_input(self):
         item = case()
@@ -391,19 +400,20 @@ class TimingTests(unittest.TestCase):
         self.assertEqual(result["latencyStatus"], "latency_unverified")
 
     def test_micro_success_never_proves_full_request_or_human_semantics(self):
-        result = lab.summarize_attempts([attempt() for _ in range(20)])
+        result = lab.summarize_attempts([bound_attempt() for _ in range(20)])
         self.assertEqual(result["scopeSummaries"]["component"]["latencyStatus"], "within_observed_budget")
         self.assertEqual(result["fullRequestLatencyStatus"], "latency_unverified")
         self.assertEqual(result["semanticStatus"], "pending_human_review")
         self.assertEqual(result["formalVerdict"], "not_evaluated")
 
     def test_partial_range_chain_does_not_prove_complete_calculation(self):
-        result = lab.summarize_attempts([attempt(measurementScope="range_chain", budgetMs=500, elapsedMs=100) for _ in range(20)])
+        records = [bound_attempt(measurementScope="range_chain", budgetMs=500, elapsedMs=100) for _ in range(20)]
+        result = lab.summarize_attempts(records)
         self.assertEqual(result["scopeSummaries"]["range_chain"]["latencyStatus"], "within_observed_budget")
         self.assertEqual(result["fullRequestLatencyStatus"], "latency_unverified")
 
     def test_full_request_budget_and_minimum_measurements_are_independent_of_quality(self):
-        records = [attempt(measurementScope="full_request", budgetMs=500, elapsedMs=400) for _ in range(20)]
+        records = [bound_attempt(measurementScope="full_request", budgetMs=500, elapsedMs=400) for _ in range(20)]
         report = lab.summarize_attempts(records)
         self.assertEqual(report["fullRequestLatencyStatus"], "within_observed_budget")
         self.assertEqual(report["semanticStatus"], "pending_human_review")
@@ -419,26 +429,51 @@ class TimingTests(unittest.TestCase):
         records = [attempt(arm=arm, task="D02", caseId=f"{arm}-D02-{i}")
                    for arm in ("A0", "A1") for i in range(10)]
         report = lab.summarize_attempts(records)
-        workloads = report["scopeSummaries"]["component"]["workloads"]
-        self.assertEqual(sorted(workloads),
-                         ["fixed-device-and-size|arm=A0,task=D02", "fixed-device-and-size|arm=A1,task=D02"])
-        self.assertTrue(all(node["latencyStatus"] == "latency_unverified" for node in workloads.values()))
+        nodes = report["scopeSummaries"]["component"]["workloads"]
+        self.assertEqual(len(nodes), 2)
+        self.assertEqual(sorted(node["identity"]["arm"] for node in nodes.values()), ["A0", "A1"])
+        self.assertTrue(all(node["latencyStatus"] == "latency_unverified" for node in nodes.values()))
         self.assertEqual(report["latencyStatus"], "latency_unverified")
         task_records = [attempt(arm="A0", task=task, caseId=f"A0-{task}-{i}")
                         for task in ("D02", "D03") for i in range(10)]
         self.assertEqual(lab.summarize_attempts(task_records)["latencyStatus"], "latency_unverified")
 
-    def test_identity_bound_samples_reach_twenty_only_within_one_registered_node(self):
-        records = [attempt(arm="A0", task="D02") for _ in range(10)] + [attempt() for _ in range(10)]
-        workloads = lab.summarize_attempts(records)["scopeSummaries"]["component"]["workloads"]
-        self.assertEqual(sorted(workloads), ["fixed-device-and-size", "fixed-device-and-size|arm=A0,task=D02"])
-        self.assertTrue(all(node["latencyStatus"] == "latency_unverified" for node in workloads.values()))
-        records = [attempt(arm="A0", task="D02") for _ in range(20)]
-        workloads = lab.summarize_attempts(records)["scopeSummaries"]["component"]["workloads"]
-        self.assertEqual(workloads["fixed-device-and-size|arm=A0,task=D02"]["latencyStatus"],
-                         "within_observed_budget")
-        self.assertEqual(workloads["fixed-device-and-size|arm=A0,task=D02"]["identity"],
-                         {"arm": "A0", "task": "D02"})
+    def test_partial_or_missing_identity_never_reaches_the_sample_floor(self):
+        for records in ([attempt() for _ in range(20)],
+                        [attempt(arm="A0", task="D02") for _ in range(20)]):
+            report = lab.summarize_attempts(records)
+            nodes = report["scopeSummaries"]["component"]["workloads"]
+            self.assertEqual(len(nodes), 1)
+            self.assertEqual(list(nodes.values())[0]["latencyStatus"], "latency_unverified")
+            self.assertEqual(report["latencyStatus"], "latency_unverified")
+
+    def test_full_identity_and_twenty_complete_attempts_pass_component_scope(self):
+        report = lab.summarize_attempts([bound_attempt() for _ in range(20)])
+        nodes = report["scopeSummaries"]["component"]["workloads"]
+        self.assertEqual(len(nodes), 1)
+        node = list(nodes.values())[0]
+        self.assertEqual(node["latencyStatus"], "within_observed_budget")
+        self.assertEqual(node["identity"], FULL_IDENTITY)
+        self.assertEqual(node["completeCount"], 20)
+
+    def test_structural_keys_keep_lookalike_identities_and_workloads_separate(self):
+        records = [attempt(workloadId="job|arm=A0", caseId=f"one-{i}") for i in range(10)] + [
+            attempt(workloadId="job", arm="A0", caseId=f"two-{i}") for i in range(10)]
+        report = lab.summarize_attempts(records)
+        nodes = report["scopeSummaries"]["component"]["workloads"]
+        self.assertEqual(len(nodes), 2)
+        self.assertTrue(all(node["attemptCount"] == 10 for node in nodes.values()))
+        self.assertEqual(report["latencyStatus"], "latency_unverified")
+        base = {"arm": "A0", "task": "D02", "stage": "current", "deviceId": "cpu", "configHash": "config"}
+        records = [attempt(**base, component="action,modelId=qwen", modelId="t5", caseId=f"full-one-{i}")
+                   for i in range(10)] + [
+            attempt(**base, component="action", modelId="qwen,modelId=t5", caseId=f"full-two-{i}")
+            for i in range(10)]
+        report = lab.summarize_attempts(records)
+        nodes = report["scopeSummaries"]["component"]["workloads"]
+        self.assertEqual(len(nodes), 2)
+        self.assertTrue(all(node["latencyStatus"] == "latency_unverified" for node in nodes.values()))
+        self.assertTrue(all(len(node["identity"]) == len(lab.TIMING_IDENTITY_FIELDS) for node in nodes.values()))
 
     def test_missing_or_unknown_measurement_cannot_be_zero(self):
         result = lab.summarize_attempts([attempt(elapsedMs=None)])

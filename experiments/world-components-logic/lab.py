@@ -624,9 +624,13 @@ def _percentiles(values: Sequence[float]) -> dict[str, Any]:
 
 
 # Timing samples are only comparable within one experiment arm, decision
-# task, pipeline stage and bound model/device/config identity. A workloadId
-# that mixes these identities is not one registered node: such samples split
-# into separate nodes and each must reach the sample floor on its own.
+# task, pipeline stage and bound model/device/config identity. Nodes are
+# keyed structurally, so separator characters inside values cannot merge
+# two identities. A node may pass the sample floor only when every record
+# explicitly carries the full identity; until a verified workload registry
+# binds unset dimensions, a sample missing any of them stays
+# latency_unverified. A scope where a dimension does not apply must say so
+# explicitly in the data, never by silently omitting the field.
 TIMING_IDENTITY_FIELDS = ("arm", "task", "stage", "component", "modelId", "deviceId", "configHash")
 
 
@@ -641,17 +645,20 @@ def _timing_identity(record: Mapping[str, Any]) -> dict[str, str]:
     return identity
 
 
-def _comparability_node(workload_key: str, record: Mapping[str, Any]) -> tuple[str, dict[str, str]]:
-    identity = _timing_identity(record)
-    suffix = ",".join(f"{field}={identity[field]}" for field in TIMING_IDENTITY_FIELDS if field in identity)
-    return (f"{workload_key}|{suffix}" if suffix else workload_key), identity
+def _comparability_key(workload_key: str, identity: dict[str, str]) -> tuple[str, ...]:
+    return (workload_key, *(identity.get(field, "") for field in TIMING_IDENTITY_FIELDS))
+
+
+def _display_key(key: tuple[str, ...]) -> str:
+    return json.dumps(list(key), ensure_ascii=False, separators=(",", ":"))
 
 
 def summarize_attempts(records: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
     """Keep every attempt, including incomplete callers and late engine settle.
 
-    Latency nodes split by arm/task/stage and bound model/device/config
-    identity; samples of different nodes never pool into one count.
+    Latency nodes are keyed structurally by workload and the bound
+    arm/task/stage/component/model/device/config identity; a node may pass
+    the sample floor only when every dimension is explicitly recorded.
     This report cannot sign human semantics or a formal project acceptance.
     Full-request timing remains unverified if only component/scope data exists.
     """
@@ -699,14 +706,14 @@ def summarize_attempts(records: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
         complete = sum(record.get("status") in complete_statuses for record, _, _ in attempts)
         over = sum(elapsed is not None and elapsed > budget for _, elapsed, budget in attempts)
         missing = sum(elapsed is None for _, elapsed, _ in attempts)
-        workloads: dict[str, list[tuple[Mapping[str, Any], float | None, float]]] = defaultdict(list)
+        workloads: dict[tuple[str, ...], list[tuple[Mapping[str, Any], float | None, float]]] = defaultdict(list)
         for attempt in attempts:
             workload_id = attempt[0].get("workloadId")
             workload_key = workload_id if isinstance(workload_id, str) and workload_id.strip() else "unregistered"
-            node_key, _ = _comparability_node(workload_key, attempt[0])
-            workloads[node_key].append(attempt)
+            workloads[_comparability_key(workload_key, _timing_identity(attempt[0]))].append(attempt)
         workload_reports: dict[str, Any] = {}
-        for node_key, workload_attempts in sorted(workloads.items()):
+        for node, workload_attempts in sorted(workloads.items()):
+            identity = _timing_identity(workload_attempts[0][0])
             w_complete = sum(record.get("status") in complete_statuses for record, _, _ in workload_attempts)
             w_over = sum(elapsed is not None and elapsed > budget for _, elapsed, budget in workload_attempts)
             w_missing = sum(elapsed is None for _, elapsed, _ in workload_attempts)
@@ -714,14 +721,15 @@ def summarize_attempts(records: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
                 workload_attempts[0][0]["workloadId"].strip())
             if w_over:
                 w_status = "latency_fail"
-            elif not registered or w_missing or w_complete < 20 or w_complete != len(workload_attempts):
+            elif (not registered or len(identity) != len(TIMING_IDENTITY_FIELDS)
+                  or w_missing or w_complete < 20 or w_complete != len(workload_attempts)):
                 w_status = "latency_unverified"
             else:
                 w_status = "within_observed_budget"
-            workload_reports[node_key] = {
+            workload_reports[_display_key(node)] = {
                 "attemptCount": len(workload_attempts), "completeCount": w_complete,
                 "overBudgetCount": w_over, "missingTimingCount": w_missing,
-                "identity": _timing_identity(workload_attempts[0][0]),
+                "identity": identity,
                 **_percentiles([elapsed for _, elapsed, _ in workload_attempts if elapsed is not None]),
                 "latencyStatus": w_status,
             }
