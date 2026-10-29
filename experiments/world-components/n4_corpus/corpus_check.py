@@ -41,11 +41,14 @@ def corpus_files() -> list:
 
 def split_isolation_problems(rows: list, expect_train_groups: int,
                              expect_dev_groups: int) -> list:
-    """Shared train/eval-side isolation assertion (review round 9): rows are
-    grouped by sourceGroupId; within a group split must be constant; the
-    train and dev GROUP sets must be disjoint; group/row counts must match
-    the expected shape. Both train_n4_sentence and eval_n4_finetune call
-    this, so neither side can drift into training on its dev rows."""
+    """Shared train/eval-side isolation assertion (review round 9, extended
+    round 10 for the two-plan time-choice structure): rows are grouped by
+    sourceGroupId; within a group split must be constant; each group holds
+    exactly two plans (expressed + omitted time), each a seed+rewrite pair
+    (4 rows); the train and dev GROUP sets must be disjoint; group/row
+    counts must match the expected shape. Both train_n4_sentence and
+    eval_n4_finetune call this, so neither side can drift into training on
+    its dev rows."""
     problems = []
     groups = {}
     for r in rows:
@@ -53,8 +56,18 @@ def split_isolation_problems(rows: list, expect_train_groups: int,
     for gid, ms in groups.items():
         if len({m["split"] for m in ms}) != 1:
             problems.append(f"{gid}: split varies within group")
-        if len(ms) != 2:
-            problems.append(f"{gid}: expected seed+rewrite (2 rows), got {len(ms)}")
+        if len(ms) != 4:
+            problems.append(f"{gid}: expected 4 rows (2 plans x seed+rewrite), got {len(ms)}")
+        plan_hashes = [m["hashes"]["plan"] for m in ms]
+        if len(set(plan_hashes)) != 2:
+            problems.append(f"{gid}: expected exactly 2 distinct plans, got {len(set(plan_hashes))}")
+        scopes = sorted(m["timeScope"] for m in ms)
+        if scopes != ["expressed", "expressed", "omitted", "omitted"]:
+            problems.append(f"{gid}: timeScope pair broken: {scopes}")
+        for ph in set(plan_hashes):
+            pair = [m for m in ms if m["hashes"]["plan"] == ph]
+            if sorted(m["rowOrigin"] for m in pair) != ["rewrite", "template-seed"]:
+                problems.append(f"{gid}: plan {ph[:8]} is not a seed+rewrite pair")
     train_groups = {gid for gid, ms in groups.items()
                     if ms[0]["split"] == "train"}
     dev_groups = {gid for gid, ms in groups.items() if ms[0]["split"] == "dev"}
@@ -64,19 +77,19 @@ def split_isolation_problems(rows: list, expect_train_groups: int,
         problems.append(f"expected {expect_train_groups} train groups, got {len(train_groups)}")
     if len(dev_groups) != expect_dev_groups:
         problems.append(f"expected {expect_dev_groups} dev groups, got {len(dev_groups)}")
-    train_rows = sum(len(groups[g]) for g in train_groups)
-    dev_rows = sum(len(groups[g]) for g in dev_groups)
-    if train_rows != expect_train_groups * 2:
-        problems.append(f"expected {expect_train_groups * 2} train rows, got {train_rows}")
-    if dev_rows != expect_dev_groups * 2:
-        problems.append(f"expected {expect_dev_groups * 2} dev rows, got {dev_rows}")
+    if expect_train_groups * 4 != sum(len(groups[g]) for g in train_groups):
+        problems.append(f"expected {expect_train_groups * 4} train rows, got "
+                        f"{sum(len(groups[g]) for g in train_groups)}")
+    if expect_dev_groups * 4 != sum(len(groups[g]) for g in dev_groups):
+        problems.append(f"expected {expect_dev_groups * 4} dev rows, got "
+                        f"{sum(len(groups[g]) for g in dev_groups)}")
     return problems
 
 
 REQUIRED = ["sourceGroupId", "rowOrigin", "rewriter", "task", "split", "world",
-            "rawDelta", "plan", "planConstruction", "planValidation", "text",
-            "planRefs", "mustExpress", "mayMention", "mustNotAdd", "hashes",
-            "purpose"]
+            "rawDelta", "fullPlan", "plan", "timeScope", "planConstruction",
+            "planValidation", "text", "planRefs", "mustExpress", "mayMention",
+            "mustNotAdd", "hashes", "purpose"]
 
 CN_NUM = r"[\d零一二两三四五六七八九十]+"
 QUOTE = r"「[^」]*」"
@@ -257,10 +270,41 @@ def check_row(r: dict):
         fails.append("text hash mismatch")
     if r["hashes"]["plan"] != hashlib.sha256(canon(r["plan"]).encode("utf-8")).hexdigest():
         fails.append("plan hash mismatch")
+    if r["hashes"].get("fullPlan") != hashlib.sha256(
+            canon(r["fullPlan"]).encode("utf-8")).hexdigest():
+        fails.append("fullPlan hash mismatch")
     if r["hashes"]["world"] != hashlib.sha256(canon(r["world"]).encode("utf-8")).hexdigest():
         fails.append("world hash mismatch")
     if r["hashes"]["rawDelta"] != hashlib.sha256(canon(r["rawDelta"]).encode("utf-8")).hexdigest():
         fails.append("rawDelta hash mismatch")
+
+    # v8 time-choice boundary: plan is fullPlan minus the time entry iff
+    # omitted; fullPlan always carries exactly one time entry; an omitted
+    # row's text must not state time at all
+    def strip_refs(entries):
+        return [{k: v for k, v in e.items() if k != "ref"} for e in entries]
+
+    fp, pl = strip_refs(r["fullPlan"]), strip_refs(r["plan"])
+    fp_time = [e for e in fp if e.get("kind") == "time"]
+    pl_time = [e for e in pl if e.get("kind") == "time"]
+    if len(fp_time) != 1:
+        fails.append(f"fullPlan must carry exactly one time entry, got {len(fp_time)}")
+    if r["timeScope"] == "expressed":
+        if len(pl_time) != 1 or pl_time[0] != fp_time[0]:
+            fails.append("expressed row: plan time entry missing or differs from fullPlan")
+        if canon(fp) != canon(pl):
+            fails.append("expressed row: plan must equal fullPlan")
+    elif r["timeScope"] == "omitted":
+        if pl_time:
+            fails.append("omitted row: plan still carries a time entry")
+        if canon(pl) != canon([e for e in fp if e.get("kind") != "time"]):
+            fails.append("omitted row: plan is not fullPlan minus time")
+        if re.search(r"分钟|小时", text):
+            reviews.append("omitted row: text states time although the plan omits it")
+    else:
+        fails.append(f"unknown timeScope {r['timeScope']}")
+    if pl_time and len(pl_time) == 1 and fp_time and pl_time[0] != fp_time[0]:
+        fails.append("plan time entry differs from fullPlan time entry")
 
     return fails, reviews
 
@@ -297,6 +341,7 @@ def main() -> None:
 
     def rehash(v):
         v["hashes"] = {"plan": hashlib.sha256(canon(v["plan"]).encode("utf-8")).hexdigest(),
+                       "fullPlan": hashlib.sha256(canon(v["fullPlan"]).encode("utf-8")).hexdigest(),
                        "world": hashlib.sha256(canon(v["world"]).encode("utf-8")).hexdigest(),
                        "rawDelta": hashlib.sha256(canon(v["rawDelta"]).encode("utf-8")).hexdigest(),
                        "text": sha(v["text"])}
@@ -329,9 +374,12 @@ def main() -> None:
          "review", "time-clause-value-mismatch"),
     ]
     # rendered tamper: plan's rendered hint says 八分钟 but amount stays 3 —
-    # the recognizer must follow amount/unit, not rendered
+    # the recognizer must follow amount/unit, not rendered. The tamper
+    # syncs fullPlan so plan⊆fullPlan stays intact (isolating the rendered
+    # variable from the plan/wholesale structure check).
     r_rendered = variant(loc1)
     r_rendered["plan"][1]["rendered"] = "八分钟"
+    r_rendered["fullPlan"][1]["rendered"] = "八分钟"
     r_rendered["text"] = "陈舟从东门走到了钟楼。前后大约八分钟。"
     bads.append((rehash(r_rendered), "review", "rendered-not-trusted"))
 
@@ -369,12 +417,15 @@ def main() -> None:
         groups.setdefault(r["sourceGroupId"], []).append(r)
     gfail = 0
     for gid, members in groups.items():
-        for key in ["split", "plan", "mustExpress", "world", "rawDelta", "planOnlyClaims"]:
+        # v8: a group intentionally holds two plans (expressed/omitted time);
+        # plan/mustExpress/planRefs are per-plan-scope, only split/world/
+        # rawDelta/claims are group-level
+        for key in ["split", "world", "rawDelta", "planOnlyClaims"]:
             vals = {canon(m.get(key)) for m in members}
             if len(vals) > 1:
                 gfail += 1
                 print(f"GROUP FAIL {gid}: inconsistent {key}")
-    print(f"group checks: {len(groups) - gfail}/{len(groups)} groups consistent")
+    print(f"group checks: {len(groups) - gfail}/{len(groups)} groups consistent")  # group-level keys only
 
     # ---- overlap signal for rewrites ----
     for r in (x for x in rows if x["rowOrigin"] == "rewrite"):

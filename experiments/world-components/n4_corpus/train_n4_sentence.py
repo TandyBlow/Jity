@@ -76,7 +76,7 @@ def load_rows():
     all_rows = [r for ms in rows.values() for r in ms]
     # shared isolation assertion (review round 9): train/dev group sets must
     # be disjoint with the expected shape — same function the eval side runs
-    problems = corpus_check.split_isolation_problems(all_rows, 24, 6)
+    problems = corpus_check.split_isolation_problems(all_rows, 120, 30)
     if problems:
         for p in problems:
             print("ISOLATION:", p)
@@ -100,7 +100,7 @@ def main() -> None:
     assert torch.cuda.is_available(), "process trial runs on cuda per plan"
     train, dev = load_rows()
     print(f"train pairs: {len(train)}  dev pairs: {len(dev)}")
-    assert len(train) == 48 and len(dev) == 12, "group shape changed"
+    assert len(train) == 480 and len(dev) == 120, "group shape changed"
 
     torch.manual_seed(SEED)
     tokenizer = T5Tokenizer(vocab_file=str(BASE_MODEL / "spiece.model"), legacy=False)
@@ -154,7 +154,7 @@ def main() -> None:
         "environment": {"python": sys.version.split()[0], "torch": torch.__version__,
                         "transformers": transformers.__version__,
                         "device": torch.cuda.get_device_name(0)},
-        "isolation": {"check": "corpus_check.split_isolation_problems(24 train groups, 6 dev groups)",
+        "isolation": {"check": "corpus_check.split_isolation_problems(120 train groups, 30 dev groups)",
                       "result": "pass"},
         "data": {"trainPairs": len(train), "devPairs": len(dev),
                  "devGroupIds": sorted({p["groupId"] for p in dev}),

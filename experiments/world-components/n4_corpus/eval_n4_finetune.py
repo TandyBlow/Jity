@@ -87,7 +87,7 @@ def main() -> None:
     for f in (HERE / "corpus.seeds.jsonl", HERE / "rewrites.jsonl"):
         rows += [json.loads(line) for line in
                  f.read_text(encoding="utf-8").splitlines() if line.strip()]
-    problems = corpus_check.split_isolation_problems(rows, 24, 6)
+    problems = corpus_check.split_isolation_problems(rows, 120, 30)
     if problems:
         for p in problems:
             print("ISOLATION:", p)
@@ -141,7 +141,7 @@ def main() -> None:
                         "note": "v7 correction: r1's eval actually ran on CPU because "
                                 "the model was never moved; reports now record the "
                                 "real placement (model.cuda() before generate)"},
-        "isolation": {"check": "corpus_check.split_isolation_problems(24 train groups, 6 dev groups)",
+        "isolation": {"check": "corpus_check.split_isolation_problems(120 train groups, 30 dev groups)",
                       "result": "pass"},
         "decode": {"greedy": True, "maxNewTokens": MAX_NEW, "numBeams": 1},
         "tokenizer": {"legacy": False,

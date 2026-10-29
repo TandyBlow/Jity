@@ -132,14 +132,35 @@ def identity_problem(entry: dict, locs: dict, chars: dict):
 
 def reconcile(r: dict, locs: dict, chars: dict, chars_by_id: dict):
     """v3: full plan <-> rawDelta reconciliation (review round 4, gap 3).
-    v5 (review round 5): entityId<->name binding; positioned plan entries
-    reconcile against planOnlyClaims in BOTH directions; reverse coverage is
-    PER-CHANGE (each delta list item must be consumed by a plan entry), not
-    per-field. The generator's same-source promise is NOT trusted."""
+    v5: entityId<->name binding; positioned plan entries reconcile against
+    planOnlyClaims in BOTH directions; reverse coverage is PER-CHANGE.
+    v8 (time-choice boundary): source reconciliation runs on `fullPlan` —
+    the complete fact table including the original time advance — so an
+    omitted-time narration can never weaken the delta side; the EXPRESSION
+    plan must be exactly fullPlan minus its time entry (or equal for
+    expressed rows), verified here against the row's timeScope."""
     problems, checks = [], []
     deltas = r["rawDelta"]["entityDeltas"]
     time_entry = r["rawDelta"]["time"]
-    plan = r["plan"]
+    plan = r["fullPlan"]
+
+    # plan<->fullPlan boundary (v8): strip refs, compare
+    def strip_refs(entries):
+        return [{k: v for k, v in e.items() if k != "ref"} for e in entries]
+
+    fp = strip_refs(r["fullPlan"])
+    ep = strip_refs(r["plan"])
+    fp_time = [e for e in fp if e.get("kind") == "time"]
+    if len(fp_time) != 1:
+        problems.append("fullPlan must carry exactly one time entry")
+    if r["timeScope"] == "expressed":
+        if ep != fp:
+            problems.append("expressed row: plan != fullPlan")
+    elif r["timeScope"] == "omitted":
+        if ep != [e for e in fp if e.get("kind") != "time"]:
+            problems.append("omitted row: plan is not fullPlan minus time")
+    else:
+        problems.append(f"unknown timeScope {r.get('timeScope')}")
 
     for entry in plan:
         k, ref = entry["kind"], entry["ref"]
