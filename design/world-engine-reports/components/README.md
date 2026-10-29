@@ -97,7 +97,7 @@ C使用不同的隔离开发集，这些数值只给历史规模和失败模式�
 
 ## 交付进度
 
-**D1 最新执行（2026-10-29）：** 两位新会话 AI 独立标注，92/92 一致、κ=1.0、无分歧；v3 已冻结，must 差异 0/16，沿用 N3 输入。P1-rule must-R=1.0、must-P macro=0.433333，不触发降级与资源转移。此为 AI 标注，不是人工评测；本轮待 C 审查者独立复核。详情见 [D1 交付](d1-ai-closure.md)。
+**D1 已关闭（2026-10-29）：** 两位新会话 AI 独立标注，92/92 一致、κ=1.0、无分歧；v3 已冻结，must 差异 0/16，沿用 N3 输入。P1-rule must-R=1.0、must-P macro=0.433333，不触发降级与资源转移。C 审查者在 `core.autocrlf=false` 干净检出独立复现后对 `dd2a513` 签字关闭；记录见 [`signoff-dd2a513.md`](../../../artifacts/world-components/signoff-dd2a513.md)。此为 AI 标注，不是人工评测；签字不代表真人评价、模型质量通过或 D2 完成。下一步 D2：8 项能力样本、gold、隔离与指标/prompt 冻结。详情见 [D1 交付](d1-ai-closure.md)。
 
 复核轮 23 签字：C 审查者对 `f0c7ae7` 签署**交付项 1 完成**，范围限本轮五条验收（四处状态行、§5.2 唯一口径、I2 探针、冒烟限定、隔离数字）及三项 P2 关闭；记录见 [`signoff-f0c7ae7.md`](../../../artifacts/world-components/signoff-f0c7ae7.md)。独立盲标/κ/v3 冻结、模型臂、浏览器接线不在签字内。
 复核轮 22 修复：P2-1 隔离数字改为冻结 B 已提交语料（`8878e97`，**4026 串/9 组**，`poolDigest d7613154…`）；旧引用的 4023（未归档中间值）、4041（16:57Z 扫到写入中的 action7）、4042（复核复跑）均不再作为归档数；B 工作区未提交的 `b3-dbg-a6/a7/a8` 单列在 `excludedWorkingFiles`，live 诊断 4048 串、0 命中。P2-2 N3 检查器对**首位捏造 factId**、**空句组**返回违规列表而非 `KeyError`/`IndexError`，`--tamper` **144/144**。P2-3 N4 离线包写入判据哈希，`corpus.judge = corpus_check.py e16bd2c9…` 不再为 `null`。
