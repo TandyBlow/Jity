@@ -1,0 +1,997 @@
+{
+  "author": "assistant",
+  "authoredOn": "2026-10-29",
+  "canonicalization": "json.dumps(ensure_ascii=False,sort_keys=True,separators=(',',':'),allow_nan=False), UTF-8; JSONL adds exactly LF per row",
+  "cases": [
+    {
+      "anchorCase": true,
+      "caseId": "dev-d02-01",
+      "derivedFrom": null,
+      "humanReview": "pending",
+      "modelVisibleInputSha256": "3c54ae85fcffed894360b9ff317588182a014b7387679beea863d4feac9cccf8",
+      "rawCanonicalRowSha256": "23ee59e5b04648566d3d04b3710784527740d16d9d6f507e55c5feae5b223e12",
+      "reviewDraftSha256": "945c2fd36221cdc1245b7af8294f350568165f07e65ec78fee640701dd8c148d",
+      "sourceGroup": "d-origin-d02-01",
+      "stageCut": "actor_opportunity_before_action_confirmation",
+      "task": "D02",
+      "tuningExposureAtCreation": []
+    },
+    {
+      "anchorCase": true,
+      "caseId": "dev-d02-02",
+      "derivedFrom": null,
+      "humanReview": "pending",
+      "modelVisibleInputSha256": "b6fe7a6828eaf812fdce3eb3e3f220fb6c1f44a143e645e4c40798f92ff7af73",
+      "rawCanonicalRowSha256": "601a90c7f1b82bdacb9094f469c7da260be8b641a3b3ad82e52ccd830f79295d",
+      "reviewDraftSha256": "99c9b823f5b48779c8ced59e572024b8798be3725d94c25a49090932d1e15a0d",
+      "sourceGroup": "d-origin-d02-02",
+      "stageCut": "actor_opportunity_before_action_confirmation",
+      "task": "D02",
+      "tuningExposureAtCreation": []
+    },
+    {
+      "anchorCase": true,
+      "caseId": "dev-d02-03",
+      "derivedFrom": null,
+      "humanReview": "pending",
+      "modelVisibleInputSha256": "228ecb09b2420cfc06867d9d128ebbbb7418835188f353c0c7b7a847c05fe75f",
+      "rawCanonicalRowSha256": "3723af9616953180bdd23a7acf3c543dc6ae648e8e8967379544c39d41a5a0e8",
+      "reviewDraftSha256": "f89eae3b2018d2d7314e39f22fec6e3010fe7340feb2056e9589c05b61425893",
+      "sourceGroup": "d-origin-d02-03",
+      "stageCut": "actor_opportunity_before_action_confirmation",
+      "task": "D02",
+      "tuningExposureAtCreation": []
+    },
+    {
+      "anchorCase": true,
+      "caseId": "dev-d02-04",
+      "derivedFrom": null,
+      "humanReview": "pending",
+      "modelVisibleInputSha256": "373f9021cd33430c43b1b573fc77a4b805e91b6fcb9f44697c7a4f1dbd1d0b87",
+      "rawCanonicalRowSha256": "a146caf0085938c5cb003b044726fdbf4308fffc58618524ce85a00c006cf6a7",
+      "reviewDraftSha256": "ae880a0a3051600abd1ea0ae756eee6a6979c425013a47e942297db065c2e349",
+      "sourceGroup": "d-origin-d02-04",
+      "stageCut": "actor_opportunity_before_action_confirmation",
+      "task": "D02",
+      "tuningExposureAtCreation": []
+    },
+    {
+      "anchorCase": true,
+      "caseId": "dev-d02-05",
+      "derivedFrom": null,
+      "humanReview": "pending",
+      "modelVisibleInputSha256": "91389de63be4c63472fa5f9c3612d33a77b1f6fa13ca7e47903d7b0c368e6ac4",
+      "rawCanonicalRowSha256": "cd890e138acb8e9ca7b277222e77230ef9a73890f23aa9029083575d0c7f7576",
+      "reviewDraftSha256": "f921a254c64ae923eb5b9105ea1e6a718d6b47c67f9cd655d3e359d8b1792bff",
+      "sourceGroup": "d-origin-d02-05",
+      "stageCut": "actor_opportunity_before_action_confirmation",
+      "task": "D02",
+      "tuningExposureAtCreation": []
+    },
+    {
+      "anchorCase": true,
+      "caseId": "dev-d02-06",
+      "derivedFrom": null,
+      "humanReview": "pending",
+      "modelVisibleInputSha256": "64d9bdef211e4a212bc0593701a4395ccd27af278c8a209c1079847da62b62ae",
+      "rawCanonicalRowSha256": "01d34a3de0e1e9f2f1ca0abad54739b15e5b9f64f4da42973cfd9f9e2a87c015",
+      "reviewDraftSha256": "faf0473642793ef494813d8d3ee58af4358de5bb29fca775cfa2308c69b7342e",
+      "sourceGroup": "d-origin-d02-06",
+      "stageCut": "actor_opportunity_before_action_confirmation",
+      "task": "D02",
+      "tuningExposureAtCreation": []
+    },
+    {
+      "anchorCase": true,
+      "caseId": "dev-d02-07",
+      "derivedFrom": null,
+      "humanReview": "pending",
+      "modelVisibleInputSha256": "1fc4e6ab2cfccd07286335c490ec5f967d2fd6671058301172376011be21d86a",
+      "rawCanonicalRowSha256": "e15f76c15bb4ed89c7362199e8d4cb53456fb5921314b5bf6fecc8985b6e3f93",
+      "reviewDraftSha256": "3a2d1746e8d4d0e6ccd662425e80ee2dabc31f095a33936ca95eb96e74933831",
+      "sourceGroup": "d-origin-d02-07",
+      "stageCut": "actor_opportunity_before_action_confirmation",
+      "task": "D02",
+      "tuningExposureAtCreation": []
+    },
+    {
+      "anchorCase": true,
+      "caseId": "dev-d02-08",
+      "derivedFrom": null,
+      "humanReview": "pending",
+      "modelVisibleInputSha256": "7267efe8c2d05fa7934800ed466ca55132c8726e28ed2849424e1d1077567c3d",
+      "rawCanonicalRowSha256": "72817242636a859acf3852f7898c5d3bdfe5f6dbb12eb537724bd5c22bdd5958",
+      "reviewDraftSha256": "130ef2c7042a788fb86a569f9d1474ab9346b0ae3a4f461cc3dc6ad6910dbbdb",
+      "sourceGroup": "d-origin-d02-08",
+      "stageCut": "actor_opportunity_before_action_confirmation",
+      "task": "D02",
+      "tuningExposureAtCreation": []
+    },
+    {
+      "anchorCase": true,
+      "caseId": "dev-d02-09",
+      "derivedFrom": null,
+      "humanReview": "pending",
+      "modelVisibleInputSha256": "544814278b2777cb45b213e77851d361ded99471fac83758f1e112ac096a0a2d",
+      "rawCanonicalRowSha256": "6889aa1cf67624090c7c4f9ab94520b04b9c9dd74b3e988ad0bd3bf0f5b6353f",
+      "reviewDraftSha256": "394092aa65330351e4d611361a6b778d158295b37db43d8a7957ad929b32cc5c",
+      "sourceGroup": "d-origin-d02-09",
+      "stageCut": "actor_opportunity_before_action_confirmation",
+      "task": "D02",
+      "tuningExposureAtCreation": []
+    },
+    {
+      "anchorCase": true,
+      "caseId": "dev-d02-10",
+      "derivedFrom": null,
+      "humanReview": "pending",
+      "modelVisibleInputSha256": "3ff603f77079849e342e7f36f7c98ecaa5bb70e3920d428f0a7ed6ee563d3d7c",
+      "rawCanonicalRowSha256": "76a7a3a005968298ec417099f27fec806411c91a618e6ede49818575893c5861",
+      "reviewDraftSha256": "a8449b191ece82bb3b542d1014b66426afefd43d34c03b203e9214e07407f427",
+      "sourceGroup": "d-origin-d02-10",
+      "stageCut": "actor_opportunity_before_action_confirmation",
+      "task": "D02",
+      "tuningExposureAtCreation": []
+    },
+    {
+      "anchorCase": true,
+      "caseId": "dev-d03-01",
+      "derivedFrom": null,
+      "humanReview": "pending",
+      "modelVisibleInputSha256": "9f2165956f4c94d0966bb100dd536d2cb76bf1580440876fe3c544f8982c038f",
+      "rawCanonicalRowSha256": "c674b151558f15c3b629ebf44a532a20d9eabeaebbd3a96d523169b95c487dbf",
+      "reviewDraftSha256": "148a7c732103dffbcd14f9458d99968d2a23adfc7ff231f676c1ec006557aff4",
+      "sourceGroup": "d-origin-d03-01",
+      "stageCut": "source_frozen_before_current_targets_confirmation",
+      "task": "D03",
+      "tuningExposureAtCreation": []
+    },
+    {
+      "anchorCase": true,
+      "caseId": "dev-d03-02",
+      "derivedFrom": null,
+      "humanReview": "pending",
+      "modelVisibleInputSha256": "2bc40ad22feaa9dac96ff3eb95b88e3235f1f506ac82ffc409caa7161ed38919",
+      "rawCanonicalRowSha256": "acc456293855a52834ad61759301e2bdae658c6f9590b859f3a9168be88fcf7b",
+      "reviewDraftSha256": "ce06c1c3b3b60dcc1d976d77dd358aead6aa7f2eb794f956c1e8e3368c96e4bd",
+      "sourceGroup": "d-origin-d03-02",
+      "stageCut": "source_frozen_before_current_targets_confirmation",
+      "task": "D03",
+      "tuningExposureAtCreation": []
+    },
+    {
+      "anchorCase": true,
+      "caseId": "dev-d03-03",
+      "derivedFrom": null,
+      "humanReview": "pending",
+      "modelVisibleInputSha256": "b8330979c808cbe13e4a822c10a52a67ea4704ce76d4b0ee2dcac3be2d2284a7",
+      "rawCanonicalRowSha256": "3e1cc3339a3c2fb60d64fe6bb2752550925281bd46589eb00c96fc6f78b18446",
+      "reviewDraftSha256": "78ac850d032cb1437d336f39b3996eaf28731ce28fd40bdd7fa69d2cf5724144",
+      "sourceGroup": "d-origin-d03-03",
+      "stageCut": "source_frozen_before_current_targets_confirmation",
+      "task": "D03",
+      "tuningExposureAtCreation": []
+    },
+    {
+      "anchorCase": true,
+      "caseId": "dev-d03-04",
+      "derivedFrom": null,
+      "humanReview": "pending",
+      "modelVisibleInputSha256": "6e83dbf74c6bcaa83eac22c538ac70894bc941fcde223dc6ebda6cfa8df2cc1a",
+      "rawCanonicalRowSha256": "d9a89ac264a185a14491d36899cf9a5d7208dc79ff09cb95533f28ff4fc0d1c7",
+      "reviewDraftSha256": "7ac5481acf98d4a18d4bc014b9ad4d54c1d0789fbfb9546b84905f93d323d429",
+      "sourceGroup": "d-origin-d03-04",
+      "stageCut": "source_frozen_before_current_targets_confirmation",
+      "task": "D03",
+      "tuningExposureAtCreation": []
+    },
+    {
+      "anchorCase": true,
+      "caseId": "dev-d03-05",
+      "derivedFrom": null,
+      "humanReview": "pending",
+      "modelVisibleInputSha256": "b13ceb5df5e263dc91b9669b0bdbb8d839e15e93f1e944bba15bc951bf3411b5",
+      "rawCanonicalRowSha256": "fdc87205a1749b5a18efaa4afb9f79289510a0b6d804f5f8299d7e4e72c44621",
+      "reviewDraftSha256": "2b767625bc10340691c6532f92fd1b8865a88989f4bb4bbed5338ff6a468aee5",
+      "sourceGroup": "d-origin-d03-05",
+      "stageCut": "source_frozen_before_current_targets_confirmation",
+      "task": "D03",
+      "tuningExposureAtCreation": []
+    },
+    {
+      "anchorCase": true,
+      "caseId": "dev-d03-06",
+      "derivedFrom": null,
+      "humanReview": "pending",
+      "modelVisibleInputSha256": "a408692baaf222ba18d764edb072916276690ddd6b580c74a2326ae049f9a7ec",
+      "rawCanonicalRowSha256": "5fc1c6fec9311cfac448949ff77fdb73861f9853927d7617586ddd9c9f079ad3",
+      "reviewDraftSha256": "47cfcc4d6a23b73b0bdef0a9b00d679131ebcff8dad5f47e31464f8924c52c54",
+      "sourceGroup": "d-origin-d03-06",
+      "stageCut": "source_frozen_before_current_targets_confirmation",
+      "task": "D03",
+      "tuningExposureAtCreation": []
+    },
+    {
+      "anchorCase": true,
+      "caseId": "dev-d03-07",
+      "derivedFrom": null,
+      "humanReview": "pending",
+      "modelVisibleInputSha256": "b68cd7940d9f3be18b266c15d658bda5cc561abfd4b95e889addfcf6fad4366d",
+      "rawCanonicalRowSha256": "89eacdaabe0d19e43b42645a2dd6b75b2dd986e6c553a41e58324306d91cdedf",
+      "reviewDraftSha256": "2e179168fd277b4bced07e546e1a425d7dfdbe5b10eaed604fe4849eae03337d",
+      "sourceGroup": "d-origin-d03-07",
+      "stageCut": "source_frozen_before_current_targets_confirmation",
+      "task": "D03",
+      "tuningExposureAtCreation": []
+    },
+    {
+      "anchorCase": true,
+      "caseId": "dev-d03-08",
+      "derivedFrom": null,
+      "humanReview": "pending",
+      "modelVisibleInputSha256": "9c34ddefb974e1bc65500d8be8a7731021a3d309d0cee8e0589c24d2ea386c10",
+      "rawCanonicalRowSha256": "42d113448afabad0c4561a93b046d6f33691b34044347f4105f10fa37739ad17",
+      "reviewDraftSha256": "8ace31ecb5e8402b2f5cfc4dfd28b8610ec0e81c465f20098e7f1d2725c823c4",
+      "sourceGroup": "d-origin-d03-08",
+      "stageCut": "source_frozen_before_current_targets_confirmation",
+      "task": "D03",
+      "tuningExposureAtCreation": []
+    },
+    {
+      "anchorCase": true,
+      "caseId": "dev-d03-09",
+      "derivedFrom": null,
+      "humanReview": "pending",
+      "modelVisibleInputSha256": "05387e166038cdb0df60da03fe8f81f5e35f63ccb5265ea372b5341261af9013",
+      "rawCanonicalRowSha256": "a76275f79c74099ccb42556f13d61d3a3ad5c1a24d69b00cb0588414baa82ab8",
+      "reviewDraftSha256": "d5116e987bcc7ed7cb7f34c30c2a7ec0cd4dbff7fcc30e3edeea8aab77601bad",
+      "sourceGroup": "d-origin-d03-09",
+      "stageCut": "source_frozen_before_current_targets_confirmation",
+      "task": "D03",
+      "tuningExposureAtCreation": []
+    },
+    {
+      "anchorCase": true,
+      "caseId": "dev-d03-10",
+      "derivedFrom": null,
+      "humanReview": "pending",
+      "modelVisibleInputSha256": "f54caf1fe2dd4cbfcf907014f3d2f6bc6525da9abda6d743a954ffef5a66ebde",
+      "rawCanonicalRowSha256": "14e61e002a32ddfff2281ab8916fc255c62cb64f933433d1ca9fec449b702f1a",
+      "reviewDraftSha256": "665657ddfc478b39f1e9c0d5097cae6c0b731ce612a2a6ca60bbc3bf81a96432",
+      "sourceGroup": "d-origin-d03-10",
+      "stageCut": "source_frozen_before_current_targets_confirmation",
+      "task": "D03",
+      "tuningExposureAtCreation": []
+    },
+    {
+      "anchorCase": true,
+      "caseId": "dev-d04-01",
+      "derivedFrom": null,
+      "humanReview": "pending",
+      "modelVisibleInputSha256": "d10d13df3bc8fb5fdee00009c1b1edd37268627dd40e9a8670aa2d0709798529",
+      "rawCanonicalRowSha256": "36b5ac5ba0c1908605586ad6408304274de98340f650488d765fa1eb5dbf37a2",
+      "reviewDraftSha256": "c2d549868e88af7e8b4a23eb693a5337335cfd81ca752489e40208bb18f4485f",
+      "sourceGroup": "d-origin-d04-01",
+      "stageCut": "admission_decided_before_reaction_confirmation",
+      "task": "D04",
+      "tuningExposureAtCreation": []
+    },
+    {
+      "anchorCase": false,
+      "caseId": "dev-d04-01-low",
+      "derivedFrom": "dev-d04-01",
+      "humanReview": "pending",
+      "modelVisibleInputSha256": "e027127a6b50d5e02c0fc38d6dcbf25a4f6f5b159369c51d0f9715ad24a443a5",
+      "rawCanonicalRowSha256": "7393881ec3a72a921dee0120436f9ebb874f40b5fcc1ba90991cb98ad11b2085",
+      "reviewDraftSha256": "2464d06fd229d4b5c23a7ec6caebf6575fa5b4254593685c1f98c7004f3fdb28",
+      "sourceGroup": "d-origin-d04-01",
+      "stageCut": "admission_decided_before_reaction_confirmation",
+      "task": "D04",
+      "tuningExposureAtCreation": []
+    },
+    {
+      "anchorCase": true,
+      "caseId": "dev-d04-02",
+      "derivedFrom": null,
+      "humanReview": "pending",
+      "modelVisibleInputSha256": "dd52c6ba25dc00aa78386f8907fee5c52425ea5b4edf974d7efb863ea1ce74e1",
+      "rawCanonicalRowSha256": "faea1f20827726b8ff03eb151dfb08c04a93618517c69641e6863c2cd457e38f",
+      "reviewDraftSha256": "f8fbd72dac3f6b90a31581ff7a5feb25d1b396bb3b2a2abb7a9a9a6ea1e329ee",
+      "sourceGroup": "d-origin-d04-02",
+      "stageCut": "admission_decided_before_reaction_confirmation",
+      "task": "D04",
+      "tuningExposureAtCreation": []
+    },
+    {
+      "anchorCase": true,
+      "caseId": "dev-d04-03",
+      "derivedFrom": null,
+      "humanReview": "pending",
+      "modelVisibleInputSha256": "6e1a377e2bb27ff2f1cf7b2ee29fd0b7d5e758e4ed4bf7b0e866107597deb7c5",
+      "rawCanonicalRowSha256": "348dab4500d8799bfdf5ebafe7411641ac87a157672810f65a4675798fbef8aa",
+      "reviewDraftSha256": "307344db3c5b2eae64d599a44b7119337b334d2ed5e629c3f800ebd5f62e9734",
+      "sourceGroup": "d-origin-d04-03",
+      "stageCut": "admission_decided_before_reaction_confirmation",
+      "task": "D04",
+      "tuningExposureAtCreation": []
+    },
+    {
+      "anchorCase": true,
+      "caseId": "dev-d04-04",
+      "derivedFrom": null,
+      "humanReview": "pending",
+      "modelVisibleInputSha256": "7f44720eea1f4161d7e0649251c918c847361de3ef4557c02e75626c85a6035f",
+      "rawCanonicalRowSha256": "9a85da1b1d3f8de74c4ae90bf9bf1786862409079c2cea329293d3d1221b18ed",
+      "reviewDraftSha256": "ceb2e05c58f5b0d7e1717edac4256bab5bbf507227e99ac7d5d872a67a8d07bf",
+      "sourceGroup": "d-origin-d04-04",
+      "stageCut": "admission_decided_before_reaction_confirmation",
+      "task": "D04",
+      "tuningExposureAtCreation": []
+    },
+    {
+      "anchorCase": true,
+      "caseId": "dev-d04-05",
+      "derivedFrom": null,
+      "humanReview": "pending",
+      "modelVisibleInputSha256": "898ff603f0aa8516cae46cb30e07976a24c06335b08feb6efb18d40bb47ea4ae",
+      "rawCanonicalRowSha256": "081cf8fb72415b67ca7467775ff39828d5b47fd83c4c68fab015d3c06ed21adf",
+      "reviewDraftSha256": "7439f37ef098cc1062c2b3fdad6458b3cf2cce1514e881bd5079d9191108b932",
+      "sourceGroup": "d-origin-d04-05",
+      "stageCut": "admission_decided_before_reaction_confirmation",
+      "task": "D04",
+      "tuningExposureAtCreation": []
+    },
+    {
+      "anchorCase": true,
+      "caseId": "dev-d04-06",
+      "derivedFrom": null,
+      "humanReview": "pending",
+      "modelVisibleInputSha256": "bdf0bc26adce93d9253fdb1b74560b636c5d19e20cabd08eadfda519ffd4e95e",
+      "rawCanonicalRowSha256": "dd4f1348218779df3dc988d953eccf8797a84d4cb2768fa45734cd67362b689f",
+      "reviewDraftSha256": "330e2faf6029b36f766440074e88351830968fa7643be7e0f6548526639ac381",
+      "sourceGroup": "d-origin-d04-06",
+      "stageCut": "admission_decided_before_reaction_confirmation",
+      "task": "D04",
+      "tuningExposureAtCreation": []
+    },
+    {
+      "anchorCase": true,
+      "caseId": "dev-d04-07",
+      "derivedFrom": null,
+      "humanReview": "pending",
+      "modelVisibleInputSha256": "d72bf693eddc15286419d169e2ce1e4deb4ba31a2fb70f14e7d15facc87fe3a5",
+      "rawCanonicalRowSha256": "79410d5fbb4d7731437944989713fc0ac4f189f5641196c23d00b56222719241",
+      "reviewDraftSha256": "0064c0a0e2633c00e072a6789e10b00d857d963904e75e23b8961c669199006d",
+      "sourceGroup": "d-origin-d04-07",
+      "stageCut": "admission_decided_before_reaction_confirmation",
+      "task": "D04",
+      "tuningExposureAtCreation": []
+    },
+    {
+      "anchorCase": true,
+      "caseId": "dev-d04-08",
+      "derivedFrom": null,
+      "humanReview": "pending",
+      "modelVisibleInputSha256": "4a5a2cdef196757d3196668c9a96966edb62a1eb6d3604eef27de8e406a06a98",
+      "rawCanonicalRowSha256": "65697feb72707ab016971c93d86772dfe097851808aa3a5ffdb58ac29e6e0994",
+      "reviewDraftSha256": "9fa48457a5c1d0ee155843c21c801071836c8dd1c72fa2b1238fdfa37f02698c",
+      "sourceGroup": "d-origin-d04-08",
+      "stageCut": "admission_decided_before_reaction_confirmation",
+      "task": "D04",
+      "tuningExposureAtCreation": []
+    },
+    {
+      "anchorCase": true,
+      "caseId": "dev-d04-09",
+      "derivedFrom": null,
+      "humanReview": "pending",
+      "modelVisibleInputSha256": "8603748af24d3c212f17f9965750c9efe6b59fddc121520008de079942679762",
+      "rawCanonicalRowSha256": "d859357480bef2351b9b2a3afcf01cc3425280c0661bb3118b6af4b1a4c5fe23",
+      "reviewDraftSha256": "5133f2b236c5a1d770c4b1b2455016f61936fb87c1dceaedb59dab7a37a2a6a4",
+      "sourceGroup": "d-origin-d04-09",
+      "stageCut": "admission_decided_before_reaction_confirmation",
+      "task": "D04",
+      "tuningExposureAtCreation": []
+    },
+    {
+      "anchorCase": true,
+      "caseId": "dev-d04-10",
+      "derivedFrom": null,
+      "humanReview": "pending",
+      "modelVisibleInputSha256": "75e97cee1a5f8933b59d7606fe1969029fa330976a090351e6fe4e29c11f5ac4",
+      "rawCanonicalRowSha256": "4d9b21f959183b1e19b51c1a4b43f461d18ed189b2506ee16a704d0eefb8e10a",
+      "reviewDraftSha256": "db99861ea839d2b4aaff0c031f6b66318ccd4b39bf4348a6cfd22d01019e6e98",
+      "sourceGroup": "d-origin-d04-10",
+      "stageCut": "admission_decided_before_reaction_confirmation",
+      "task": "D04",
+      "tuningExposureAtCreation": []
+    },
+    {
+      "anchorCase": true,
+      "caseId": "dev-d05-01",
+      "derivedFrom": null,
+      "humanReview": "pending",
+      "modelVisibleInputSha256": "c82211255aa6031e18ae3f590593de29b6acb5cefbce71c325dcee1dc3b8d915",
+      "rawCanonicalRowSha256": "cabaa1931c95170776203900c9d817a9be5cbcf04dba4a6922e99abcbf84f02e",
+      "reviewDraftSha256": "6f7528688a4b826de67a131deab5a3a01ba9338217cf3328a3272a3626ee52c9",
+      "sourceGroup": "d-origin-d05-01",
+      "stageCut": "group_close_guard_before_joint_results",
+      "task": "D05",
+      "tuningExposureAtCreation": []
+    },
+    {
+      "anchorCase": true,
+      "caseId": "dev-d05-02",
+      "derivedFrom": null,
+      "humanReview": "pending",
+      "modelVisibleInputSha256": "902eff7e985110324cea9c5e3e30a5e9528f07b3f97c382952fdbb84d60d8369",
+      "rawCanonicalRowSha256": "bb522165331bc5f7105652959a126130d72af1355184b6605e01d59fad70b095",
+      "reviewDraftSha256": "806557990b6a237b9b22da37cb61b668da3b8fc3736ba38de1e7d085211442aa",
+      "sourceGroup": "d-origin-d05-02",
+      "stageCut": "group_close_guard_before_joint_results",
+      "task": "D05",
+      "tuningExposureAtCreation": []
+    },
+    {
+      "anchorCase": true,
+      "caseId": "dev-d05-03",
+      "derivedFrom": null,
+      "humanReview": "pending",
+      "modelVisibleInputSha256": "b86422b1e68f0c9d34da7a5969383c591af5d1df6b2e8690e850ed53a051c17e",
+      "rawCanonicalRowSha256": "2d8954c084ec3abac4b9756bc931d7a0711c0181f2f59cd584a4b6f14c976e81",
+      "reviewDraftSha256": "e00528c14402fa03e91a3aa8b73fa7ad5ff460b9370bdb7a435b71a1fcc1c76d",
+      "sourceGroup": "d-origin-d05-03",
+      "stageCut": "group_close_guard_before_joint_results",
+      "task": "D05",
+      "tuningExposureAtCreation": []
+    },
+    {
+      "anchorCase": true,
+      "caseId": "dev-d05-04",
+      "derivedFrom": null,
+      "humanReview": "pending",
+      "modelVisibleInputSha256": "2e48aabf31e0084c9d4604817423e3051926186a6c556d80e0ffcd1cedc42275",
+      "rawCanonicalRowSha256": "25435f65cad4141fa6e515509ac7c8bca2303c64db552db07ddc01ce0273c593",
+      "reviewDraftSha256": "fb326f4677cbb8929d681ff0e583578be642c43f3f9826efb634bc3cb5b0389b",
+      "sourceGroup": "d-origin-d05-04",
+      "stageCut": "group_close_guard_before_joint_results",
+      "task": "D05",
+      "tuningExposureAtCreation": []
+    },
+    {
+      "anchorCase": true,
+      "caseId": "dev-d05-05",
+      "derivedFrom": null,
+      "humanReview": "pending",
+      "modelVisibleInputSha256": "745fa11c6e662e9363b30fc7a9caef5d2e37e9a19d34b4ea094fe2a9f042e636",
+      "rawCanonicalRowSha256": "0f3bd9cd1e1a6de8cea04d8d2b0272a6be2914ceb9dab1b34cd16d89bfbde94f",
+      "reviewDraftSha256": "391e4fe1b3940874b07a2343957eafc901e807a460196e1d6918d0b42c5dd671",
+      "sourceGroup": "d-origin-d05-05",
+      "stageCut": "group_close_guard_before_joint_results",
+      "task": "D05",
+      "tuningExposureAtCreation": []
+    },
+    {
+      "anchorCase": true,
+      "caseId": "dev-d05-06",
+      "derivedFrom": null,
+      "humanReview": "pending",
+      "modelVisibleInputSha256": "58e6920fa83083146d49ef52ca46908e1802524b2d9adf54462d90333d972252",
+      "rawCanonicalRowSha256": "b4c3975dcfa7f2ba303b460064f702526e77416b48afe372c414d2d30dd0424b",
+      "reviewDraftSha256": "435b1c68c3ee6c9b3aea775251bd38a3738152303739c83634b2113da99ab903",
+      "sourceGroup": "d-origin-d05-06",
+      "stageCut": "group_close_guard_before_joint_results",
+      "task": "D05",
+      "tuningExposureAtCreation": []
+    },
+    {
+      "anchorCase": false,
+      "caseId": "dev-d05-06-denied",
+      "derivedFrom": "dev-d05-06",
+      "humanReview": "pending",
+      "modelVisibleInputSha256": "6542a2239f58995797ddfae737cc20745becfb928426f848634897e3e09a81ab",
+      "rawCanonicalRowSha256": "d24eb0a2ecc86e1577d677ef1541c14c8691bedbb99a609eb9b7460730831809",
+      "reviewDraftSha256": "d71e2cd5b8a665c193b516ba098d5b3e3ef71301803d25e97b069915a34b2d22",
+      "sourceGroup": "d-origin-d05-06",
+      "stageCut": "group_close_guard_before_joint_results",
+      "task": "D05",
+      "tuningExposureAtCreation": []
+    },
+    {
+      "anchorCase": true,
+      "caseId": "dev-d05-07",
+      "derivedFrom": null,
+      "humanReview": "pending",
+      "modelVisibleInputSha256": "5b562b7ca88431bb39ea23183bf42cb2c999dcbc3f850ff51ecc3d362c8897b4",
+      "rawCanonicalRowSha256": "b1e00f02fc1b9dc5e08394fc01807ad49908c3df68e357d7aba48abd0bbccf77",
+      "reviewDraftSha256": "727583f650aea98672f3a04072d255b683cfa8ab7834bf0350929e2cef18417d",
+      "sourceGroup": "d-origin-d05-07",
+      "stageCut": "group_close_guard_before_joint_results",
+      "task": "D05",
+      "tuningExposureAtCreation": []
+    },
+    {
+      "anchorCase": true,
+      "caseId": "dev-d05-08",
+      "derivedFrom": null,
+      "humanReview": "pending",
+      "modelVisibleInputSha256": "35dfe45ac64fefae00d297f810f71e2e89bf93ea9b1d8cf390627729a2842526",
+      "rawCanonicalRowSha256": "fa144ec9fbaa0db8d6d7bc03bf7bcd9fb53ecdcca88225051d9ef6d591e12812",
+      "reviewDraftSha256": "4c79b3fc5c4c703b0be88b26785fd86e07b763c33f633406fbd808ae2c189f2a",
+      "sourceGroup": "d-origin-d05-08",
+      "stageCut": "group_close_guard_before_joint_results",
+      "task": "D05",
+      "tuningExposureAtCreation": []
+    },
+    {
+      "anchorCase": true,
+      "caseId": "dev-d05-09",
+      "derivedFrom": null,
+      "humanReview": "pending",
+      "modelVisibleInputSha256": "2fe3f648753b9640ddd33e1376dbbb41e44adde9847f8c1c0f3ba8a062f39277",
+      "rawCanonicalRowSha256": "e0fc86596b41aa0e426f77f73ed05b1d5c0fd6c2a37521d36edf4e7ea51bd7c8",
+      "reviewDraftSha256": "8234956e885a74ba34bb1fd031084fa65259bcfa73491bb9e6b927866294116c",
+      "sourceGroup": "d-origin-d05-09",
+      "stageCut": "group_close_guard_before_joint_results",
+      "task": "D05",
+      "tuningExposureAtCreation": []
+    },
+    {
+      "anchorCase": true,
+      "caseId": "dev-d05-10",
+      "derivedFrom": null,
+      "humanReview": "pending",
+      "modelVisibleInputSha256": "2ec617d7d37defe5e9caa206886de8a0b5f4f616ae1950cd59d8e105bc9759a0",
+      "rawCanonicalRowSha256": "dbeaf490c17703784c75f37a78256e38f840bdf534a5245f03980ecbdbf975ce",
+      "reviewDraftSha256": "0ff86c1e14ddef1e91a0dfddbc20895b9fda0c7942e2e9978522167208d90d8f",
+      "sourceGroup": "d-origin-d05-10",
+      "stageCut": "group_close_guard_before_joint_results",
+      "task": "D05",
+      "tuningExposureAtCreation": []
+    }
+  ],
+  "counterfactualNote": "Dice contrasts change case inputs/confirmed work within the same sourceGroup; they are not a retry of one authoritative game operation.",
+  "entityAliasNote": "Character names explicitly include 甲/乙/丙/丁/戊/己 aliases so frozen action prose binds unambiguously to p1..p6; aliases are input identity facts, not answer labels.",
+  "files": {
+    "dev-inputs.jsonl": {
+      "bytes": 89091,
+      "sha256": "5db17d612a02425a00f555c178d74689cd84a7fd745656ce87f0daf7c7b3061e"
+    },
+    "dev-review-drafts.jsonl": {
+      "bytes": 28778,
+      "sha256": "e5a772691b81c6f6e8281706a75725f8fc33cab1c78e5f010b06ff4fc5d9ea1b"
+    },
+    "generate_dev_drafts.py": {
+      "sha256": "2385f92b5966177d3a004fa9c802e2ec156dd653ad7e94ce91824ade413980a7"
+    }
+  },
+  "generatorVersion": "d-l3-dev-drafts-r1",
+  "humanReview": "pending",
+  "humanReviewerPlan": "User volunteered to review; no human signoff has occurred.",
+  "purpose": "exploratory_development_drafts_only",
+  "readiness": {
+    "contentDeduplication": "unverified",
+    "developmentChainsCreated": false,
+    "formalEvaluationAllowed": false,
+    "holdoutCreated": false,
+    "humanLabels": "pending",
+    "modelSeenInputsAtCreation": false,
+    "protectedSourceCompleteness": "unverified",
+    "secondHumanReview": "unassigned",
+    "semanticSourceIndependence": "unverified",
+    "subsequentExposureMustBeLoggedInRunManifest": true,
+    "trainingCreated": false
+  },
+  "representationNote": "Small isolated experiment inputs, not a new public service/world protocol. D03-D05 use component_oracle_prefix; they are not a real upstream model chain.",
+  "rules": {
+    "admitted": "passed && eligible",
+    "meaning": "reaction admission; not a guaranteed attack-hit or damage rule",
+    "name": "reaction-d20-v1",
+    "passed": "value >= 11",
+    "threshold": 11,
+    "values": [
+      1,
+      20
+    ]
+  },
+  "schemaVersion": "d-l3-development-provenance-v1",
+  "sourceBasis": [
+    {
+      "commit": "fd5fa49af6570380329a08e3ecab312dae45ad32",
+      "gitBlobSha1": "eb31063939a6e30ae719b42e331368fee9ebf9a3",
+      "path": "design/browser-world-state-workflow.md",
+      "scope": "sections 6.1-6.2 rules, not sample prose",
+      "sha256": "5775af1686631410d06746888c56ce6c93fa0784ca0d92eb9a42462abc04a1bb"
+    },
+    {
+      "commit": "fd5fa49af6570380329a08e3ecab312dae45ad32",
+      "gitBlobSha1": "f2b29a882538d7947759ee1369e9297f50f7fc9a",
+      "path": "design/world-engine-reports/components-logic/evaluation-plan.md",
+      "scope": "L2-r2 case quotas and data discipline",
+      "sha256": "97d33f83f55770d47618b2c5c8135681256cd149b8d7dc4113433793997bfbce"
+    }
+  ],
+  "sourceGroups": [
+    {
+      "caseIds": [
+        "dev-d02-01"
+      ],
+      "originDescription": "展馆闭馆前，主角需推开已解锁侧门进入值班室交接钥匙。",
+      "originType": "assistant_original_scenario_draft",
+      "sourceGroup": "d-origin-d02-01",
+      "sourceIndependenceReview": "unverified"
+    },
+    {
+      "caseIds": [
+        "dev-d02-02"
+      ],
+      "originDescription": "渡口的主角要在开船前敲响身旁铜铃，船长仍在对岸等信号。",
+      "originType": "assistant_original_scenario_draft",
+      "sourceGroup": "d-origin-d02-02",
+      "sourceIndependenceReview": "unverified"
+    },
+    {
+      "caseIds": [
+        "dev-d02-03"
+      ],
+      "originDescription": "冰窖检修井的梯子已经断裂，主角手边没有跨越工具，命令要求一步跨过六米井口。",
+      "originType": "assistant_original_scenario_draft",
+      "sourceGroup": "d-origin-d02-03",
+      "sourceIndependenceReview": "unverified"
+    },
+    {
+      "caseIds": [
+        "dev-d02-04"
+      ],
+      "originDescription": "封闭温室中不存在玩家提到的潜水艇，主角的当前任务是等候检疫灯而不是离开。",
+      "originType": "assistant_original_scenario_draft",
+      "sourceGroup": "d-origin-d02-04",
+      "sourceIndependenceReview": "unverified"
+    },
+    {
+      "caseIds": [
+        "dev-d02-05"
+      ],
+      "originDescription": "档案室的输入命令已经消费；新发生的漏水正接近主角负责保护的纸卷。",
+      "originType": "assistant_original_scenario_draft",
+      "sourceGroup": "d-origin-d02-05",
+      "sourceIndependenceReview": "unverified"
+    },
+    {
+      "caseIds": [
+        "dev-d02-06"
+      ],
+      "originDescription": "夜间观测亭没有新事件；主角任务已完成，旧输入已过期，正在安静等待交班。",
+      "originType": "assistant_original_scenario_draft",
+      "sourceGroup": "d-origin-d02-06",
+      "sourceIndependenceReview": "unverified"
+    },
+    {
+      "caseIds": [
+        "dev-d02-07"
+      ],
+      "originDescription": "粮仓值班员NPC发现自己负责的秤盘开始滑落；玩家旧命令与该NPC无关。",
+      "originType": "assistant_original_scenario_draft",
+      "sourceGroup": "d-origin-d02-07",
+      "sourceIndependenceReview": "unverified"
+    },
+    {
+      "caseIds": [
+        "dev-d02-08"
+      ],
+      "originDescription": "钟楼维修员NPC看见共用工作台上的沙漏将被风吹倒，自己的任务是保护计时器。",
+      "originType": "assistant_original_scenario_draft",
+      "sourceGroup": "d-origin-d02-08",
+      "sourceIndependenceReview": "unverified"
+    },
+    {
+      "caseIds": [
+        "dev-d02-09"
+      ],
+      "originDescription": "药铺NPC已封好本批药包，当前没有顾客或新问题；旧输入已消费。",
+      "originType": "assistant_original_scenario_draft",
+      "sourceGroup": "d-origin-d02-09",
+      "sourceIndependenceReview": "unverified"
+    },
+    {
+      "caseIds": [
+        "dev-d02-10"
+      ],
+      "originDescription": "堤坝巡查NPC在规定观察时段内记录平稳水位，任务要求不打断连续观察，旧输入已过期。",
+      "originType": "assistant_original_scenario_draft",
+      "sourceGroup": "d-origin-d02-10",
+      "sourceIndependenceReview": "unverified"
+    },
+    {
+      "caseIds": [
+        "dev-d03-01"
+      ],
+      "originDescription": "版画工作间中，主角只把自己桌面的干燥试印纸按页码排好，无人依赖这些纸做当前动作。",
+      "originType": "assistant_original_scenario_draft",
+      "sourceGroup": "d-origin-d03-01",
+      "sourceIndependenceReview": "unverified"
+    },
+    {
+      "caseIds": [
+        "dev-d03-02"
+      ],
+      "originDescription": "城门候车棚中，主角原地系紧自己的鞋带，不进入通道也不接触他人物品。",
+      "originType": "assistant_original_scenario_draft",
+      "sourceGroup": "d-origin-d03-02",
+      "sourceIndependenceReview": "unverified"
+    },
+    {
+      "caseIds": [
+        "dev-d03-03"
+      ],
+      "originDescription": "潮汐观景台上，主角观察远处浪线，其他人在关闭的室内整理展示板。",
+      "originType": "assistant_original_scenario_draft",
+      "sourceGroup": "d-origin-d03-03",
+      "sourceIndependenceReview": "unverified"
+    },
+    {
+      "caseIds": [
+        "dev-d03-04"
+      ],
+      "originDescription": "吊装平台上，主角转动横梁，梁端将同时扫过两名工友所在的狭窄落脚处。",
+      "originType": "assistant_original_scenario_draft",
+      "sourceGroup": "d-origin-d03-04",
+      "sourceIndependenceReview": "unverified"
+    },
+    {
+      "caseIds": [
+        "dev-d03-05"
+      ],
+      "originDescription": "电梯测试井里，主角松开平台的一侧固定卡，两位检验员站在会倾斜的同一平台上。",
+      "originType": "assistant_original_scenario_draft",
+      "sourceGroup": "d-origin-d03-05",
+      "sourceIndependenceReview": "unverified"
+    },
+    {
+      "caseIds": [
+        "dev-d03-06"
+      ],
+      "originDescription": "染坊水槽边，主角开启排水闸，突出的水流会冲向槽内两名整理布匹的人。",
+      "originType": "assistant_original_scenario_draft",
+      "sourceGroup": "d-origin-d03-06",
+      "sourceIndependenceReview": "unverified"
+    },
+    {
+      "caseIds": [
+        "dev-d03-07"
+      ],
+      "originDescription": "滑板场中，滑行者乙已在本轮确认一次行动；主角随后拉紧乙滑行线路前方的阻拦带。",
+      "originType": "assistant_original_scenario_draft",
+      "sourceGroup": "d-origin-d03-07",
+      "sourceIndependenceReview": "unverified"
+    },
+    {
+      "caseIds": [
+        "dev-d03-08"
+      ],
+      "originDescription": "窑场的乙已因甲的火盆威胁冻住反应文本；乙当前反应把滚烫火盆推向丙的脚边。",
+      "originType": "assistant_original_scenario_draft",
+      "sourceGroup": "d-origin-d03-08",
+      "sourceIndependenceReview": "unverified"
+    },
+    {
+      "caseIds": [
+        "dev-d03-09"
+      ],
+      "originDescription": "练武堂中三人的行动均已冻结，当前丙把练习盾推回甲胸前，形成回到甲的环。",
+      "originType": "assistant_original_scenario_draft",
+      "sourceGroup": "d-origin-d03-09",
+      "sourceIndependenceReview": "unverified"
+    },
+    {
+      "caseIds": [
+        "dev-d03-10"
+      ],
+      "originDescription": "摆渡仓中，乙和丙已因甲甩来的吊袋准入；乙反应已冻结，当前丙又让另一条传送带上的箱子滑向乙。",
+      "originType": "assistant_original_scenario_draft",
+      "sourceGroup": "d-origin-d03-10",
+      "sourceIndependenceReview": "unverified"
+    },
+    {
+      "caseIds": [
+        "dev-d04-01",
+        "dev-d04-01-low"
+      ],
+      "originDescription": "锅炉房甲正在合上热隔板，乙的手臂还在夹口，乙已获准反应。",
+      "originType": "assistant_original_scenario_draft",
+      "sourceGroup": "d-origin-d04-01",
+      "sourceIndependenceReview": "unverified"
+    },
+    {
+      "caseIds": [
+        "dev-d04-02"
+      ],
+      "originDescription": "码头甲把木箱推向狭窄跳板，乙抱着记录册站在箱子经过的路线，已准入。",
+      "originType": "assistant_original_scenario_draft",
+      "sourceGroup": "d-origin-d04-02",
+      "sourceIndependenceReview": "unverified"
+    },
+    {
+      "caseIds": [
+        "dev-d04-03"
+      ],
+      "originDescription": "档锁工坊甲将带电探针逼近乙手里的密封锁芯，乙需保护锁芯且不泄露开锁口令，已准入。",
+      "originType": "assistant_original_scenario_draft",
+      "sourceGroup": "d-origin-d04-03",
+      "sourceIndependenceReview": "unverified"
+    },
+    {
+      "caseIds": [
+        "dev-d04-04"
+      ],
+      "originDescription": "冷藏库甲打开融水管，乙负责的样品箱位于即将被水淹的低架，已准入。",
+      "originType": "assistant_original_scenario_draft",
+      "sourceGroup": "d-origin-d04-04",
+      "sourceIndependenceReview": "unverified"
+    },
+    {
+      "caseIds": [
+        "dev-d04-05"
+      ],
+      "originDescription": "缆车检修台甲把失稳小车推向乙，乙可选择拦住或拨开，小车后方另有丙；乙已准入。",
+      "originType": "assistant_original_scenario_draft",
+      "sourceGroup": "d-origin-d04-05",
+      "sourceIndependenceReview": "unverified"
+    },
+    {
+      "caseIds": [
+        "dev-d04-06"
+      ],
+      "originDescription": "邮袋站乙先前主动skip但尚未实际行动；甲突然放松悬袋绳，邮袋向乙头顶落下，乙已准入。",
+      "originType": "assistant_original_scenario_draft",
+      "sourceGroup": "d-origin-d04-06",
+      "sourceIndependenceReview": "unverified"
+    },
+    {
+      "caseIds": [
+        "dev-d04-07"
+      ],
+      "originDescription": "纺机房甲甩动断纱杆朝乙靠近，但本关系骰点8未通过准入，乙没有模型反应入口。",
+      "originType": "assistant_original_scenario_draft",
+      "sourceGroup": "d-origin-d04-07",
+      "sourceIndependenceReview": "unverified"
+    },
+    {
+      "caseIds": [
+        "dev-d04-08"
+      ],
+      "originDescription": "射箭棚乙本轮已经冻结举盾动作，甲又把练习箭指向乙；本次骰点通过但资格false。",
+      "originType": "assistant_original_scenario_draft",
+      "sourceGroup": "d-origin-d04-08",
+      "sourceIndependenceReview": "unverified"
+    },
+    {
+      "caseIds": [
+        "dev-d04-09"
+      ],
+      "originDescription": "玻璃房恢复快照标记乙已准入，但甲原先冻结的威胁原文缺损为空。",
+      "originType": "assistant_original_scenario_draft",
+      "sourceGroup": "d-origin-d04-09",
+      "sourceIndependenceReview": "unverified"
+    },
+    {
+      "caseIds": [
+        "dev-d04-10"
+      ],
+      "originDescription": "磨坊乙有准入标记但当前源到乙的完整判定没有随快照提供，不能只凭准入标记补骰点。",
+      "originType": "assistant_original_scenario_draft",
+      "sourceGroup": "d-origin-d04-10",
+      "sourceIndependenceReview": "unverified"
+    },
+    {
+      "caseIds": [
+        "dev-d05-01"
+      ],
+      "originDescription": "封签室只有一把钥匙，甲抓取而乙同时按住，联合结果不能让两人各自独占同一钥匙。",
+      "originType": "assistant_original_scenario_draft",
+      "sourceGroup": "d-origin-d05-01",
+      "sourceIndependenceReview": "unverified"
+    },
+    {
+      "caseIds": [
+        "dev-d05-02"
+      ],
+      "originDescription": "天文台六名工作人员在重钟罩失稳时分别冻结了拉绳、制动、左右支撑、配重和尾部保护动作。",
+      "originType": "assistant_original_scenario_draft",
+      "sourceGroup": "d-origin-d05-02",
+      "sourceIndependenceReview": "unverified"
+    },
+    {
+      "caseIds": [
+        "dev-d05-03"
+      ],
+      "originDescription": "盐车引发甲→乙→丙→甲的闭合环；三段原文均已冻结，后果应联合分析而不再加行动。",
+      "originType": "assistant_original_scenario_draft",
+      "sourceGroup": "d-origin-d05-03",
+      "sourceIndependenceReview": "unverified"
+    },
+    {
+      "caseIds": [
+        "dev-d05-04"
+      ],
+      "originDescription": "甲、丙两条牵引线均威胁此前已行动的乙；乙不加入本组再次行动，但两条判定都影响全组后果。",
+      "originType": "assistant_original_scenario_draft",
+      "sourceGroup": "d-origin-d05-04",
+      "sourceIndependenceReview": "unverified"
+    },
+    {
+      "caseIds": [
+        "dev-d05-05"
+      ],
+      "originDescription": "甲转闸轮，乙已准入冻结制动反应，丙关系未准入；丙不能被补写成已反应。",
+      "originType": "assistant_original_scenario_draft",
+      "sourceGroup": "d-origin-d05-05",
+      "sourceIndependenceReview": "unverified"
+    },
+    {
+      "caseIds": [
+        "dev-d05-06",
+        "dev-d05-06-denied"
+      ],
+      "originDescription": "同一浆管场景登记两种实际准入结果：基础例乙、丙均准入；派生例乙未准入且不在闭组，丙仍准入。",
+      "originType": "assistant_original_scenario_draft",
+      "sourceGroup": "d-origin-d05-06",
+      "sourceIndependenceReview": "unverified"
+    },
+    {
+      "caseIds": [
+        "dev-d05-07"
+      ],
+      "originDescription": "护栏松动时甲拉防坠绳、乙持有裂纹旧钳试图处理锈铰链，允许联合失败或部分后果而非强行双成功。",
+      "originType": "assistant_original_scenario_draft",
+      "sourceGroup": "d-origin-d05-07",
+      "sourceIndependenceReview": "unverified"
+    },
+    {
+      "caseIds": [
+        "dev-d05-08"
+      ],
+      "originDescription": "雨棚装配站的程序守卫草稿：blocked_missing_member，不能由模型补齐缺失的确认事实。",
+      "originType": "assistant_original_scenario_draft",
+      "sourceGroup": "d-origin-d05-08",
+      "sourceIndependenceReview": "unverified"
+    },
+    {
+      "caseIds": [
+        "dev-d05-09"
+      ],
+      "originDescription": "矿灯仓的程序守卫草稿：blocked_missing_judgment，不能由模型补齐缺失的确认事实。",
+      "originType": "assistant_original_scenario_draft",
+      "sourceGroup": "d-origin-d05-09",
+      "sourceIndependenceReview": "unverified"
+    },
+    {
+      "caseIds": [
+        "dev-d05-10"
+      ],
+      "originDescription": "陶瓷检验室的程序守卫草稿：blocked_not_closed，不能由模型补齐缺失的确认事实。",
+      "originType": "assistant_original_scenario_draft",
+      "sourceGroup": "d-origin-d05-10",
+      "sourceIndependenceReview": "unverified"
+    }
+  ],
+  "sourceMethod": "Newly authored scenario drafts from original design rules; no B/C sample bodies consulted.",
+  "summary": {
+    "anchorGroupCount": 40,
+    "anchorGroupsByTask": {
+      "D02": 10,
+      "D03": 10,
+      "D04": 10,
+      "D05": 10
+    },
+    "caseCount": 42,
+    "casesByTask": {
+      "D02": 10,
+      "D03": 10,
+      "D04": 11,
+      "D05": 11
+    },
+    "draftQuotaCheck": "pass",
+    "semanticCorrectness": "pending_human_review"
+  }
+}
