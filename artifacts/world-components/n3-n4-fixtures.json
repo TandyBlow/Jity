@@ -1,7 +1,7 @@
 {
  "purpose": "N3->N4 interface fixture verification (non-model)",
  "tokenCounter": "deterministic 6-char stub over the REAL shared render_input output (n4_render.py); only the tokenizer is a stub",
- "sourceModel": "EntityDelta per contracts.py: tasksAchieved task ids resolved through the authoritative task registry; TimeAdvance.duration; GetStateData keys must exist (root = explicit null/null/{})",
+ "sourceModel": "WorldState/EntityDelta per contracts.py: task ids in tasksAchieved resolved against state.characters[eid].tasks; entity names from the bound state; world identity = state.worldId; GetStateData keys must exist (root = explicit null/null/{})",
  "interfaceConstraints": {
   "maxFactsPerRun": 4,
   "maxInputTokens": 128,
@@ -146,7 +146,7 @@
    "pass": true
   },
   "FSC1": {
-   "description": "goal diverges from the authoritative task registry",
+   "description": "goal diverges from the bound state task definition",
    "expected": "binding-failed:source-content-mismatch:f1:task",
    "got": "binding-failed:source-content-mismatch:f1:task",
    "pass": true
@@ -162,6 +162,26 @@
    "expected": "binding-failed:unsupported-fact-kind:f1:personality_changed",
    "got": "binding-failed:unsupported-fact-kind:f1:personality_changed",
    "pass": true
+  },
+  "FNAM1": {
+   "description": "fact name diverges from the state entity registry",
+   "expected": "binding-failed:name-mismatch:f1",
+   "got": "binding-failed:name-mismatch:f1",
+   "pass": true
+  },
+  "FWLD1": {
+   "description": "before.state.worldId differs",
+   "expected": "binding-failed:world-mismatch",
+   "got": "binding-failed:world-mismatch",
+   "pass": true,
+   "kind": "binding-only"
+  },
+  "FWLD2": {
+   "description": "state.worldId absent",
+   "expected": "binding-failed:world-missing",
+   "got": "binding-failed:world-missing",
+   "pass": true,
+   "kind": "binding-only"
   }
  },
  "failures": [],

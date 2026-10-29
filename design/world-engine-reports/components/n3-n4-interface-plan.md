@@ -2,7 +2,7 @@
 
 日期：2026-10-30。提交人：C 实现者。基线：`world-components@b97adb2`（= origin，已核实）；工作区仅未跟踪的 `signoff-f9c1190.md`（原样保留）与冻结产物，零改动。
 状态：**方案 v2＋夹具，待 C 审查者复审**。本方案定义的是**待实现、待验证的接口约束**，不是已接线能力；本轮不训练、不调用真实模型、不实现任何回退。
-修订记录：v1（`8626082`）→ v2（`291f5ae`，按独立反例收紧五处）→ **v3（本笔，按四项反例对齐实际契约）**：① 来源模型改按**实际 schema**——任务完成由 `EntityDelta.tasksAchieved` 的**任务 ID** 表示，任务正文从权威任务注册表解析（id→goal/ownerId/status），时间为 `TimeAdvance.duration.{amount,unit}`，不再使用简化形状或自称「真实形状」；② 绑定增加**归属核对**（fact.entityId == source.entityId，否则 `ownership-mismatch`）与逐字段内容验证；夹具明确支持类型集（task_achieved、time），**未支持类型显式拒绝**（`unsupported-fact-kind`）；③ 根点校验区分**缺字段与显式 null**——GetStateData 各键必须存在（根点取显式 null/null/{}），键缺失或必填字段为 null 均记读取不完整（`missing-<field>`）；④ token 计数直接作用于**共享渲染器 `n4_render.render_input` 的实际输出**（确定性程序，无模型——完整提示头、事实行、尾部），仅分词为桩；不再使用自造渲染文本。
+修订记录：v1（`8626082`）→ v2（`291f5ae`）→ v3（`641efe8`）→ **v4（本笔，按两项独立反例收敛权威绑定）**：① **任务与姓名解析绑定已提交状态**——任务正文从 `state.characters[eid].tasks[tid]`（goal/status/ownerId）解析、实体姓名从 state 实体表解析并核对（`name-mismatch`）；不存在调用者自带的独立注册表，同时篡改事实与旁路注册表的绕过不再存在；② **世界身份按正式层级校验**——`state.worldId`（WorldState 字段），缺失即 `world-missing` 停止，前后状态 `state.worldId` 不一致报 `world-mismatch`（不再比较顶层不存在字段）；v3 及更早：：① 来源模型改按**实际 schema**——任务完成由 `EntityDelta.tasksAchieved` 的**任务 ID** 表示，任务正文从权威任务注册表解析（id→goal/ownerId/status），时间为 `TimeAdvance.duration.{amount,unit}`，不再使用简化形状或自称「真实形状」；② 绑定增加**归属核对**（fact.entityId == source.entityId，否则 `ownership-mismatch`）与逐字段内容验证；夹具明确支持类型集（task_achieved、time），**未支持类型显式拒绝**（`unsupported-fact-kind`）；③ 根点校验区分**缺字段与显式 null**——GetStateData 各键必须存在（根点取显式 null/null/{}），键缺失或必填字段为 null 均记读取不完整（`missing-<field>`）；④ token 计数直接作用于**共享渲染器 `n4_render.render_input` 的实际输出**（确定性程序，无模型——完整提示头、事实行、尾部），仅分词为桩；不再使用自造渲染文本。
 
 ## 0. 背景与已确认事实
 
@@ -34,8 +34,8 @@
 
 N3→N4 链的输入只能来自**按目标 pointId 读取的已提交记录**（对齐 [README 权威锚点](README.md)与 R1 冻结读取契约）：`state`、`pointId`、`version`、`stateDigest`、`previousPointId`、`timeAdvance`、**原始 `entityDeltas`**；前状态按 `previousPointId` 显式读取并核对同世界、版本连续（before.version＋1＝version）与血缘；根点用空 Δ、null 前驱、version 0。
 
-- **根点/非根点分别校验，缺字段≠显式 null**：GetStateData v2 各键**必须存在**（契约要求 no-default）；根点（version=0）取**显式** null/null/{}，非根点 timeAdvance 为 `{boundary, duration{amount,unit}}`。键缺失或必填字段为 null 均记 `missing-<field>`（读取不完整），不与根点的合法 null 混淆。非根点要求 before 记录存在且**同世界、version 连续、前驱身份一致（before.pointId == point.previousPointId）**。
-- **来源解析与内容核对（实际契约）**：`entityDeltas` 是按实体组织的 `EntityDelta` 映射（contracts.py）；task_achieved 的来源是 `tasksAchieved` 中的**任务 ID**，任务正文从权威任务注册表解析（id→goal/ownerId/status），核对归属（fact.entityId == source.entityId，否则 `ownership-mismatch`）、任务 ID 在册、注册表 goal/owner/status 与事实一致；time 的来源是 `TimeAdvance.duration`，核对 amount/unit。**未支持的事实类型显式拒绝**（`unsupported-fact-kind`），不静默接受。不一致即 `source-content-mismatch`。
+- **根点/非根点分别校验，缺字段≠显式 null，世界身份在 state 层**：GetStateData v2 各键**必须存在**（no-default）；根点取**显式** null/null/{}。键缺失或必填字段为 null 均记 `missing-<field>`。**世界身份是 `state.worldId`（WorldState 字段，非顶层）**：缺失即 `world-missing` 并停止绑定；非根点 before 记录须存在且**前后 `state.worldId` 一致**（否则 `world-mismatch`）、version 连续、前驱身份一致（before.pointId == point.previousPointId）。
+- **来源解析与内容核对（绑定到 state）**：`entityDeltas` 是按实体组织的 `EntityDelta` 映射（contracts.py）；task_achieved 的来源是 `tasksAchieved` 中的**任务 ID**，任务正文从**绑定 point 的 state**（`state.characters[eid].tasks[tid]`）解析，核对归属（fact.entityId == source.entityId → 否则 `ownership-mismatch`）、**实体姓名与 state 实体表一致**（否则 `name-mismatch`）、任务在册且 goal/owner/status 与事实一致；time 的来源是 `TimeAdvance.duration`，核对 amount/unit。**未支持的事实类型显式拒绝**（`unsupported-fact-kind`）。不一致即 `source-content-mismatch`。**不存在调用者自带的独立任务注册表**——任何旁路表都无法与事实合谋绕过 state 解析。
 - **停止条件**（产出 `binding-failed`，拒绝进入接口检查）：缺 state/digest/version、前驱缺失（非根点）、版本不连续、世界不匹配、事实来源指针解析失败或指向不存在的 delta。
 - **不从结果文本补造**：已提交叙事文本、preview 工作态、当前 head 均不得用于重建事实；绑定失败就是失败，不做任何差分补造。
 
