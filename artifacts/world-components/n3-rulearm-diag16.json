@@ -2,8 +2,8 @@
  "purpose": "D2 N3 rule arm run (program comparison arm)",
  "scope": "diagnostic16",
  "registration": "n3-rulearm-registration.json",
- "registrationSha256": "38d08f965780e67f7d486cd8279824f7e08bfdf7c96244ba750a32abe149d7aa",
- "ruleArmSha256": "cebe4d281797571ee80039d10a6866852663ffac330bfbd87c9e03179e9efa67",
+ "registrationSha256": "cbdc6be8532c9ccc6229c1d5947a4a4ce991121dee855e725f4109dd5487d370",
+ "ruleArmSha256": "75bee589987f72c1e61aaa0d03672e75e9fcbeac6ae35065ef8a14ee55f9194f",
  "metricToolSha256": "a3a349b908edd92a126f34fc530f6ce25a62b5f15283bacf7a16733adc00131c",
  "gateModuleSha256": "7189e233d93c870e459696ca609e04e9f26d8730a52400231e12123ee8bac0a2",
  "goldExpectedSha256": null,
@@ -11,20 +11,20 @@
  "gold": "n2-labels-d2-gold.jsonl",
  "timingsPerItem": {
   "n2-01": 5.3e-05,
-  "n2-02": 3.3e-05,
-  "n2-03": 2.4e-05,
+  "n2-02": 3.1e-05,
+  "n2-03": 2.5e-05,
   "n2-04": 2e-05,
-  "n2-05": 1.8e-05,
-  "n2-06": 1.8e-05,
-  "n2-07": 1.4e-05,
-  "n2-08": 1.6e-05,
-  "n2-09": 1.6e-05,
+  "n2-05": 2.1e-05,
+  "n2-06": 1.6e-05,
+  "n2-07": 1.5e-05,
+  "n2-08": 1.5e-05,
+  "n2-09": 1.7e-05,
   "n2-10": 1.8e-05,
-  "n2-11": 1.6e-05,
-  "n2-12": 1.5e-05,
-  "n2-13": 2.2e-05,
-  "n2-14": 0.000102,
-  "n2-15": 2.2e-05,
+  "n2-11": 1.2e-05,
+  "n2-12": 1.4e-05,
+  "n2-13": 0.000111,
+  "n2-14": 2.4e-05,
+  "n2-15": 1.9e-05,
   "n2-16": 1.8e-05
  },
  "totalWall": 0.0008,
@@ -36,6 +36,648 @@
   "inapplicable": []
  },
  "n4OutOfRange": [],
+ "plans": {
+  "n2-01": {
+   "itemId": "n2-01",
+   "sentences": [
+    {
+     "index": 0,
+     "factIds": [
+      "f1",
+      "f2"
+     ],
+     "coreference": [
+      {
+       "mention": "裴行舟",
+       "refersTo": "char_400"
+      },
+      {
+       "mention": "裴行舟",
+       "refersTo": "char_400"
+      }
+     ]
+    },
+    {
+     "index": 1,
+     "factIds": [
+      "f3"
+     ],
+     "coreference": [
+      {
+       "mention": "半窗书舍",
+       "refersTo": "loc_402"
+      }
+     ]
+    }
+   ],
+   "edges": {
+    "consecutive-time": false
+   }
+  },
+  "n2-02": {
+   "itemId": "n2-02",
+   "sentences": [
+    {
+     "index": 0,
+     "factIds": [
+      "f1",
+      "f2"
+     ],
+     "coreference": [
+      {
+       "mention": "沈拾",
+       "refersTo": "char_401"
+      },
+      {
+       "mention": "沈拾",
+       "refersTo": "char_401"
+      }
+     ]
+    },
+    {
+     "index": 1,
+     "factIds": [
+      "f3"
+     ],
+     "coreference": [
+      {
+       "mention": "竹影茶棚",
+       "refersTo": "loc_403"
+      }
+     ]
+    }
+   ],
+   "edges": {
+    "consecutive-time": false
+   }
+  },
+  "n2-03": {
+   "itemId": "n2-03",
+   "sentences": [
+    {
+     "index": 0,
+     "factIds": [
+      "f1",
+      "f2"
+     ],
+     "coreference": [
+      {
+       "mention": "岑半夏",
+       "refersTo": "char_402"
+      },
+      {
+       "mention": "岑半夏",
+       "refersTo": "char_402"
+      }
+     ]
+    },
+    {
+     "index": 1,
+     "factIds": [
+      "f3"
+     ],
+     "coreference": [
+      {
+       "mention": "西栅桥",
+       "refersTo": "loc_404"
+      }
+     ]
+    }
+   ],
+   "edges": {
+    "consecutive-time": false
+   }
+  },
+  "n2-04": {
+   "itemId": "n2-04",
+   "sentences": [
+    {
+     "index": 0,
+     "factIds": [
+      "f1",
+      "f2"
+     ],
+     "coreference": [
+      {
+       "mention": "顾知白",
+       "refersTo": "char_403"
+      },
+      {
+       "mention": "顾知白",
+       "refersTo": "char_403"
+      }
+     ]
+    },
+    {
+     "index": 1,
+     "factIds": [
+      "f3"
+     ],
+     "coreference": [
+      {
+       "mention": "瓦窑",
+       "refersTo": "loc_405"
+      }
+     ]
+    }
+   ],
+   "edges": {
+    "consecutive-time": false
+   }
+  },
+  "n2-05": {
+   "itemId": "n2-05",
+   "sentences": [
+    {
+     "index": 0,
+     "factIds": [
+      "f1",
+      "f3"
+     ],
+     "coreference": [
+      {
+       "mention": "岑半夏",
+       "refersTo": "char_402"
+      },
+      {
+       "mention": "岑半夏",
+       "refersTo": "char_402"
+      }
+     ]
+    },
+    {
+     "index": 1,
+     "factIds": [
+      "f2"
+     ],
+     "coreference": [
+      {
+       "mention": "石阶码头",
+       "refersTo": "loc_400"
+      }
+     ]
+    }
+   ],
+   "edges": {
+    "consecutive-time": false
+   }
+  },
+  "n2-06": {
+   "itemId": "n2-06",
+   "sentences": [
+    {
+     "index": 0,
+     "factIds": [
+      "f1",
+      "f3"
+     ],
+     "coreference": [
+      {
+       "mention": "顾知白",
+       "refersTo": "char_403"
+      },
+      {
+       "mention": "顾知白",
+       "refersTo": "char_403"
+      }
+     ]
+    },
+    {
+     "index": 1,
+     "factIds": [
+      "f2"
+     ],
+     "coreference": [
+      {
+       "mention": "旧钟铺",
+       "refersTo": "loc_401"
+      }
+     ]
+    }
+   ],
+   "edges": {
+    "consecutive-time": false
+   }
+  },
+  "n2-07": {
+   "itemId": "n2-07",
+   "sentences": [
+    {
+     "index": 0,
+     "factIds": [
+      "f1",
+      "f3"
+     ],
+     "coreference": [
+      {
+       "mention": "陆停云",
+       "refersTo": "char_404"
+      },
+      {
+       "mention": "陆停云",
+       "refersTo": "char_404"
+      }
+     ]
+    },
+    {
+     "index": 1,
+     "factIds": [
+      "f2"
+     ],
+     "coreference": [
+      {
+       "mention": "半窗书舍",
+       "refersTo": "loc_402"
+      }
+     ]
+    }
+   ],
+   "edges": {
+    "consecutive-time": false
+   }
+  },
+  "n2-08": {
+   "itemId": "n2-08",
+   "sentences": [
+    {
+     "index": 0,
+     "factIds": [
+      "f1",
+      "f3"
+     ],
+     "coreference": [
+      {
+       "mention": "白蘅",
+       "refersTo": "char_405"
+      },
+      {
+       "mention": "白蘅",
+       "refersTo": "char_405"
+      }
+     ]
+    },
+    {
+     "index": 1,
+     "factIds": [
+      "f2"
+     ],
+     "coreference": [
+      {
+       "mention": "竹影茶棚",
+       "refersTo": "loc_403"
+      }
+     ]
+    }
+   ],
+   "edges": {
+    "consecutive-time": false
+   }
+  },
+  "n2-09": {
+   "itemId": "n2-09",
+   "sentences": [
+    {
+     "index": 0,
+     "factIds": [
+      "f1",
+      "f3"
+     ],
+     "coreference": [
+      {
+       "mention": "裴行舟",
+       "refersTo": "char_400"
+      },
+      {
+       "mention": "裴行舟",
+       "refersTo": "char_400"
+      }
+     ]
+    },
+    {
+     "index": 1,
+     "factIds": [
+      "f2"
+     ],
+     "coreference": [
+      {
+       "mention": "沈拾",
+       "refersTo": "char_401"
+      }
+     ]
+    }
+   ],
+   "edges": {
+    "consecutive-time": false
+   }
+  },
+  "n2-10": {
+   "itemId": "n2-10",
+   "sentences": [
+    {
+     "index": 0,
+     "factIds": [
+      "f1",
+      "f3"
+     ],
+     "coreference": [
+      {
+       "mention": "沈拾",
+       "refersTo": "char_401"
+      },
+      {
+       "mention": "沈拾",
+       "refersTo": "char_401"
+      }
+     ]
+    },
+    {
+     "index": 1,
+     "factIds": [
+      "f2"
+     ],
+     "coreference": [
+      {
+       "mention": "岑半夏",
+       "refersTo": "char_402"
+      }
+     ]
+    }
+   ],
+   "edges": {
+    "consecutive-time": false
+   }
+  },
+  "n2-11": {
+   "itemId": "n2-11",
+   "sentences": [
+    {
+     "index": 0,
+     "factIds": [
+      "f1",
+      "f3"
+     ],
+     "coreference": [
+      {
+       "mention": "岑半夏",
+       "refersTo": "char_402"
+      },
+      {
+       "mention": "岑半夏",
+       "refersTo": "char_402"
+      }
+     ]
+    },
+    {
+     "index": 1,
+     "factIds": [
+      "f2"
+     ],
+     "coreference": [
+      {
+       "mention": "顾知白",
+       "refersTo": "char_403"
+      }
+     ]
+    }
+   ],
+   "edges": {
+    "consecutive-time": false
+   }
+  },
+  "n2-12": {
+   "itemId": "n2-12",
+   "sentences": [
+    {
+     "index": 0,
+     "factIds": [
+      "f1",
+      "f3"
+     ],
+     "coreference": [
+      {
+       "mention": "顾知白",
+       "refersTo": "char_403"
+      },
+      {
+       "mention": "顾知白",
+       "refersTo": "char_403"
+      }
+     ]
+    },
+    {
+     "index": 1,
+     "factIds": [
+      "f2"
+     ],
+     "coreference": [
+      {
+       "mention": "陆停云",
+       "refersTo": "char_404"
+      }
+     ]
+    }
+   ],
+   "edges": {
+    "consecutive-time": false
+   }
+  },
+  "n2-13": {
+   "itemId": "n2-13",
+   "sentences": [
+    {
+     "index": 0,
+     "factIds": [
+      "f1",
+      "f2"
+     ],
+     "coreference": [
+      {
+       "mention": "裴行舟",
+       "refersTo": "char_400"
+      },
+      {
+       "mention": "裴行舟",
+       "refersTo": "char_400"
+      }
+     ]
+    },
+    {
+     "index": 1,
+     "factIds": [
+      "f3"
+     ],
+     "coreference": [
+      {
+       "mention": "沈拾",
+       "refersTo": "char_401"
+      }
+     ]
+    },
+    {
+     "index": 2,
+     "factIds": [
+      "f4"
+     ],
+     "coreference": [
+      {
+       "mention": "西栅桥",
+       "refersTo": "loc_404"
+      }
+     ]
+    }
+   ],
+   "edges": {
+    "consecutive-time": false
+   }
+  },
+  "n2-14": {
+   "itemId": "n2-14",
+   "sentences": [
+    {
+     "index": 0,
+     "factIds": [
+      "f1",
+      "f2"
+     ],
+     "coreference": [
+      {
+       "mention": "沈拾",
+       "refersTo": "char_401"
+      },
+      {
+       "mention": "沈拾",
+       "refersTo": "char_401"
+      }
+     ]
+    },
+    {
+     "index": 1,
+     "factIds": [
+      "f3"
+     ],
+     "coreference": [
+      {
+       "mention": "岑半夏",
+       "refersTo": "char_402"
+      }
+     ]
+    },
+    {
+     "index": 2,
+     "factIds": [
+      "f4"
+     ],
+     "coreference": [
+      {
+       "mention": "瓦窑",
+       "refersTo": "loc_405"
+      }
+     ]
+    }
+   ],
+   "edges": {
+    "consecutive-time": false
+   }
+  },
+  "n2-15": {
+   "itemId": "n2-15",
+   "sentences": [
+    {
+     "index": 0,
+     "factIds": [
+      "f1",
+      "f2"
+     ],
+     "coreference": [
+      {
+       "mention": "岑半夏",
+       "refersTo": "char_402"
+      },
+      {
+       "mention": "岑半夏",
+       "refersTo": "char_402"
+      }
+     ]
+    },
+    {
+     "index": 1,
+     "factIds": [
+      "f3"
+     ],
+     "coreference": [
+      {
+       "mention": "顾知白",
+       "refersTo": "char_403"
+      }
+     ]
+    },
+    {
+     "index": 2,
+     "factIds": [
+      "f4"
+     ],
+     "coreference": [
+      {
+       "mention": "石阶码头",
+       "refersTo": "loc_400"
+      }
+     ]
+    }
+   ],
+   "edges": {
+    "consecutive-time": false
+   }
+  },
+  "n2-16": {
+   "itemId": "n2-16",
+   "sentences": [
+    {
+     "index": 0,
+     "factIds": [
+      "f1",
+      "f2"
+     ],
+     "coreference": [
+      {
+       "mention": "顾知白",
+       "refersTo": "char_403"
+      },
+      {
+       "mention": "顾知白",
+       "refersTo": "char_403"
+      }
+     ]
+    },
+    {
+     "index": 1,
+     "factIds": [
+      "f3"
+     ],
+     "coreference": [
+      {
+       "mention": "陆停云",
+       "refersTo": "char_404"
+      }
+     ]
+    },
+    {
+     "index": 2,
+     "factIds": [
+      "f4"
+     ],
+     "coreference": [
+      {
+       "mention": "旧钟铺",
+       "refersTo": "loc_401"
+      }
+     ]
+    }
+   ],
+   "edges": {
+    "consecutive-time": false
+   }
+  }
+ },
  "itemOutcomes": {
   "n2-01": "ok",
   "n2-02": "ok",
@@ -54,6 +696,7 @@
   "n2-15": "ok",
   "n2-16": "ok"
  },
+ "baselines": null,
  "report": {
   "items": {
    "n2-01": {

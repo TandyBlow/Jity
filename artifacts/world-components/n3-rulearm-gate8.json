@@ -2,24 +2,24 @@
  "purpose": "D2 N3 rule arm run (program comparison arm)",
  "scope": "gate8",
  "registration": "n3-rulearm-registration.json",
- "registrationSha256": "38d08f965780e67f7d486cd8279824f7e08bfdf7c96244ba750a32abe149d7aa",
- "ruleArmSha256": "cebe4d281797571ee80039d10a6866852663ffac330bfbd87c9e03179e9efa67",
+ "registrationSha256": "cbdc6be8532c9ccc6229c1d5947a4a4ce991121dee855e725f4109dd5487d370",
+ "ruleArmSha256": "75bee589987f72c1e61aaa0d03672e75e9fcbeac6ae35065ef8a14ee55f9194f",
  "metricToolSha256": "a3a349b908edd92a126f34fc530f6ce25a62b5f15283bacf7a16733adc00131c",
  "gateModuleSha256": "7189e233d93c870e459696ca609e04e9f26d8730a52400231e12123ee8bac0a2",
  "goldExpectedSha256": "cb86aa46c4328cb971721d4ddce38bb4b0429fdc245e5405f193e0a6a99e9c63",
  "items": "d2_capability_items.jsonl",
  "gold": "n2-labels-d2-gold.jsonl",
  "timingsPerItem": {
-  "n3cap-01": 7.2e-05,
-  "n3cap-02": 5.6e-05,
-  "n3cap-03": 4.5e-05,
-  "n3cap-04": 3.8e-05,
-  "n3cap-05": 2.9e-05,
-  "n3cap-06": 2.8e-05,
+  "n3cap-01": 7.4e-05,
+  "n3cap-02": 5.5e-05,
+  "n3cap-03": 4.2e-05,
+  "n3cap-04": 3.6e-05,
+  "n3cap-05": 3.1e-05,
+  "n3cap-06": 2.9e-05,
   "n3cap-07": 2.6e-05,
-  "n3cap-08": 2.8e-05
+  "n3cap-08": 3.3e-05
  },
- "totalWall": 0.0635,
+ "totalWall": 0.0009,
  "timingNote": "offline CPU generation only; not comparable with model inference",
  "differential": {
   "compared": 8,
@@ -34,6 +34,469 @@
    "facts": 5
   }
  ],
+ "plans": {
+  "n3cap-01": {
+   "itemId": "n3cap-01",
+   "sentences": [
+    {
+     "index": 0,
+     "factIds": [
+      "f1",
+      "f2"
+     ],
+     "coreference": [
+      {
+       "mention": "洛九针",
+       "refersTo": "char_600"
+      },
+      {
+       "mention": "洛九针",
+       "refersTo": "char_600"
+      }
+     ]
+    },
+    {
+     "index": 1,
+     "factIds": [
+      "f3",
+      "f4",
+      "f5"
+     ],
+     "coreference": [
+      {
+       "mention": "孟潮生",
+       "refersTo": "char_601"
+      },
+      {
+       "mention": "孟潮生",
+       "refersTo": "char_601"
+      }
+     ]
+    },
+    {
+     "index": 2,
+     "factIds": [
+      "f6"
+     ],
+     "coreference": [
+      {
+       "mention": "潮音渡",
+       "refersTo": "loc_600"
+      }
+     ]
+    }
+   ],
+   "edges": {
+    "consecutive-time": false
+   }
+  },
+  "n3cap-02": {
+   "itemId": "n3cap-02",
+   "sentences": [
+    {
+     "index": 0,
+     "factIds": [
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "coreference": [
+      {
+       "mention": "桑晚照",
+       "refersTo": "char_603"
+      },
+      {
+       "mention": "桑晚照",
+       "refersTo": "char_603"
+      }
+     ]
+    },
+    {
+     "index": 1,
+     "factIds": [
+      "f4",
+      "f5"
+     ],
+     "coreference": [
+      {
+       "mention": "阮听澜",
+       "refersTo": "char_604"
+      },
+      {
+       "mention": "阮听澜",
+       "refersTo": "char_604"
+      }
+     ]
+    },
+    {
+     "index": 2,
+     "factIds": [
+      "f6"
+     ],
+     "coreference": [
+      {
+       "mention": "苇塘集",
+       "refersTo": "loc_603"
+      }
+     ]
+    }
+   ],
+   "edges": {
+    "consecutive-time": false
+   }
+  },
+  "n3cap-03": {
+   "itemId": "n3cap-03",
+   "sentences": [
+    {
+     "index": 0,
+     "factIds": [
+      "f1",
+      "f2"
+     ],
+     "coreference": [
+      {
+       "mention": "温白山",
+       "refersTo": "char_602"
+      },
+      {
+       "mention": "温白山",
+       "refersTo": "char_602"
+      }
+     ]
+    },
+    {
+     "index": 1,
+     "factIds": [
+      "f3"
+     ],
+     "coreference": [
+      {
+       "mention": "望火楼",
+       "refersTo": "loc_602"
+      }
+     ]
+    },
+    {
+     "index": 2,
+     "factIds": [
+      "f4",
+      "f5",
+      "f6"
+     ],
+     "coreference": [
+      {
+       "mention": "孟潮生",
+       "refersTo": "char_601"
+      },
+      {
+       "mention": "孟潮生",
+       "refersTo": "char_601"
+      }
+     ]
+    }
+   ],
+   "edges": {
+    "consecutive-time": false
+   }
+  },
+  "n3cap-04": {
+   "itemId": "n3cap-04",
+   "sentences": [
+    {
+     "index": 0,
+     "factIds": [
+      "f1",
+      "f2"
+     ],
+     "coreference": [
+      {
+       "mention": "阮听澜",
+       "refersTo": "char_604"
+      },
+      {
+       "mention": "阮听澜",
+       "refersTo": "char_604"
+      }
+     ]
+    },
+    {
+     "index": 1,
+     "factIds": [
+      "f3",
+      "f4",
+      "f5"
+     ],
+     "coreference": [
+      {
+       "mention": "洛九针",
+       "refersTo": "char_600"
+      },
+      {
+       "mention": "洛九针",
+       "refersTo": "char_600"
+      }
+     ]
+    },
+    {
+     "index": 2,
+     "factIds": [
+      "f6"
+     ],
+     "coreference": [
+      {
+       "mention": "潮音渡",
+       "refersTo": "loc_600"
+      }
+     ]
+    },
+    {
+     "index": 3,
+     "factIds": [
+      "f7"
+     ],
+     "coreference": [
+      {
+       "mention": "温白山",
+       "refersTo": "char_602"
+      }
+     ]
+    }
+   ],
+   "edges": {
+    "consecutive-time": false
+   }
+  },
+  "n3cap-05": {
+   "itemId": "n3cap-05",
+   "sentences": [
+    {
+     "index": 0,
+     "factIds": [
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "coreference": [
+      {
+       "mention": "洛九针",
+       "refersTo": "char_600"
+      },
+      {
+       "mention": "洛九针",
+       "refersTo": "char_600"
+      },
+      {
+       "mention": "孟潮生",
+       "refersTo": "char_601"
+      },
+      {
+       "mention": "孟潮生",
+       "refersTo": "char_601"
+      }
+     ]
+    },
+    {
+     "index": 1,
+     "factIds": [
+      "f5"
+     ],
+     "coreference": [
+      {
+       "mention": "温白山",
+       "refersTo": "char_602"
+      }
+     ]
+    },
+    {
+     "index": 2,
+     "factIds": [
+      "f6"
+     ],
+     "coreference": [
+      {
+       "mention": "老闸口",
+       "refersTo": "loc_604"
+      }
+     ]
+    }
+   ],
+   "edges": {
+    "consecutive-time": false
+   }
+  },
+  "n3cap-06": {
+   "itemId": "n3cap-06",
+   "sentences": [
+    {
+     "index": 0,
+     "factIds": [
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "coreference": [
+      {
+       "mention": "桑晚照",
+       "refersTo": "char_603"
+      },
+      {
+       "mention": "桑晚照",
+       "refersTo": "char_603"
+      },
+      {
+       "mention": "阮听澜",
+       "refersTo": "char_604"
+      },
+      {
+       "mention": "阮听澜",
+       "refersTo": "char_604"
+      }
+     ]
+    },
+    {
+     "index": 1,
+     "factIds": [
+      "f5"
+     ],
+     "coreference": [
+      {
+       "mention": "温白山",
+       "refersTo": "char_602"
+      }
+     ]
+    },
+    {
+     "index": 2,
+     "factIds": [
+      "f6"
+     ],
+     "coreference": [
+      {
+       "mention": "苇塘集",
+       "refersTo": "loc_603"
+      }
+     ]
+    }
+   ],
+   "edges": {
+    "consecutive-time": false
+   }
+  },
+  "n3cap-07": {
+   "itemId": "n3cap-07",
+   "sentences": [
+    {
+     "index": 0,
+     "factIds": [
+      "f1",
+      "f2",
+      "f3",
+      "f4",
+      "f5"
+     ],
+     "coreference": [
+      {
+       "mention": "孟潮生",
+       "refersTo": "char_601"
+      },
+      {
+       "mention": "孟潮生",
+       "refersTo": "char_601"
+      },
+      {
+       "mention": "阮听澜",
+       "refersTo": "char_604"
+      },
+      {
+       "mention": "温白山",
+       "refersTo": "char_602"
+      },
+      {
+       "mention": "阮听澜",
+       "refersTo": "char_604"
+      }
+     ]
+    },
+    {
+     "index": 1,
+     "factIds": [
+      "f6"
+     ],
+     "coreference": [
+      {
+       "mention": "潮音渡",
+       "refersTo": "loc_600"
+      }
+     ]
+    }
+   ],
+   "edges": {
+    "consecutive-time": false
+   }
+  },
+  "n3cap-08": {
+   "itemId": "n3cap-08",
+   "sentences": [
+    {
+     "index": 0,
+     "factIds": [
+      "f1",
+      "f2",
+      "f3",
+      "f5"
+     ],
+     "coreference": [
+      {
+       "mention": "温白山",
+       "refersTo": "char_602"
+      },
+      {
+       "mention": "温白山",
+       "refersTo": "char_602"
+      },
+      {
+       "mention": "洛九针",
+       "refersTo": "char_600"
+      },
+      {
+       "mention": "洛九针",
+       "refersTo": "char_600"
+      }
+     ]
+    },
+    {
+     "index": 1,
+     "factIds": [
+      "f4"
+     ],
+     "coreference": [
+      {
+       "mention": "孟潮生",
+       "refersTo": "char_601"
+      }
+     ]
+    },
+    {
+     "index": 2,
+     "factIds": [
+      "f6"
+     ],
+     "coreference": [
+      {
+       "mention": "望火楼",
+       "refersTo": "loc_602"
+      }
+     ]
+    }
+   ],
+   "edges": {
+    "consecutive-time": false
+   }
+  }
+ },
  "itemOutcomes": {
   "n3cap-01": "ok",
   "n3cap-02": "ok",
@@ -43,6 +506,28 @@
   "n3cap-06": "ok",
   "n3cap-07": "ok",
   "n3cap-08": "ok"
+ },
+ "baselines": {
+  "B1": {
+   "h1": "8/8",
+   "h2": "8/8",
+   "g1F1": 0.5333333333333333,
+   "pronounProduction": 0.25,
+   "g3": 0.0,
+   "gate": true,
+   "pass": false,
+   "note": "historical comparison only; not part of the rule arm verdict"
+  },
+  "B2": {
+   "h1": "8/8",
+   "h2": "8/8",
+   "g1F1": 0.0,
+   "pronounProduction": 0.0,
+   "g3": 0.25,
+   "gate": true,
+   "pass": false,
+   "note": "historical comparison only; not part of the rule arm verdict"
+  }
  },
  "report": {
   "items": {
