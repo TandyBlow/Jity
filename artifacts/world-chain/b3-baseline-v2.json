@@ -1,11 +1,11 @@
 {
   "status": "COMPLETED_WITH_FAILURES",
-  "recordedAt": "2026-10-29T07:05:29.401Z",
+  "recordedAt": "2026-10-29T07:14:03.771Z",
   "kind": "b3-baseline",
-  "privateDir": "D:\\others\\Jity\\.local\\world-b3-1793257529366",
+  "privateDir": "D:\\others\\Jity\\.local\\world-b3-1793258043749",
   "browserSource": {
-    "head": "7124565250f1ddb17d66dc2814d912d4fe05f74b",
-    "status": "?? artifacts/world-chain/b3-baseline-v1.json\n?? artifacts/world-chain/b3-baseline-v2.json\n?? artifacts/world-chain/b3-rescore-v1.json\n?? artifacts/world-chain/b3-run-db-v2/",
+    "head": "88b59deb8edcf87a2ee3fd996ddf8dd93e90c371",
+    "status": "",
     "sha256": {
       "frontend/scripts/run-world-b3.mjs": "ac36d9dd3f75e485941c8eb74f2d5a4049ed54f900e5381f61e22208fd8289ca",
       "frontend/src/app/world/narration-polisher.ts": "3121b16209289a89e5dcd65d8a9810201917ab7f208c8455d69997e29367c595",
@@ -194,7 +194,7 @@
   "judgeVersion": 2,
   "modelLoad": {
     "model": "/models/Qwen3-0.6B-Q4_K_M.gguf",
-    "loadMs": 19168
+    "loadMs": 11719
   },
   "modelConfig": {
     "settlement": {
@@ -411,11 +411,11 @@
           "text": "转身进入走廊"
         },
         "failure": null,
-        "ms": 10845,
+        "ms": 11008,
         "call": {
           "task": "action",
           "key": "probe",
-          "at": 1793257602633,
+          "at": 1793258110076,
           "prompt": "你是文字冒险游戏的行动裁判。所有文本必须使用简体中文。\n时间：2026-10-27T09:00:02\n角色 林川（id=person_a）：位于走廊，精神值10。任务：留在走廊守门，不碰盒子(task_watch,未完成)\n角色 周宁（id=person_c）：位于门厅，精神值10。任务：完成压力试验(task_pressure,未完成)；完成恢复练习(task_recover,未完成)\n地点：走廊(id=corridor)、门厅(id=hall)\n物品：盒子（id=box，位于走廊）\n玩家输入原文：走到走廊\n本次行动机会属于：周宁（id=person_c），他是主角。\n输入状态：待处理（玩家命令尚未执行成功）\n规则：\n- 只有主角的行动受玩家命令约束；主角不得把玩家命令当成已成功发生的事实。\n- 输入已消费时，主角不得再次执行玩家命令；其他人物的行动只依据自己的任务、个性与处境判断。\n- 输出一个具体的身体动作或发言（不超过 40 字，第三人称，以周宁为主语），不要写任务目标、计划、心理活动或状态数值。\n- 不得引入状态中未列出的角色或物品。若不行动，输出 {\"kind\":\"skip\",\"text\":\"\"}。\n只输出 JSON：{\"kind\":\"act\",\"text\":\"<行动描述>\"} 或 {\"kind\":\"skip\",\"text\":\"\"}",
           "promptChars": 581,
           "raw": "{\"kind\":\"act\",\"text\":\"转身进入走廊\"}",
@@ -427,22 +427,22 @@
           "validationError": null,
           "error": null,
           "errorName": null,
-          "ms": 10843,
+          "ms": 11006,
           "completion": {
             "raw": "{\"kind\":\"act\",\"text\":\"转身进入走廊\"}",
             "finishReason": "stop",
-            "firstTokenMs": 9814.08000087738,
-            "wallMs": 10843.030000686646,
+            "firstTokenMs": 9976.10500049591,
+            "wallMs": 11006.175000190735,
             "timings": {
               "cache_n": 0,
               "prompt_n": 329,
-              "prompt_ms": 9654.311,
-              "prompt_per_token_ms": 29.344410334346502,
-              "prompt_per_second": 34.078040369737415,
+              "prompt_ms": 9823.025,
+              "prompt_per_token_ms": 29.8572188449848,
+              "prompt_per_second": 33.49273772590419,
               "predicted_n": 12,
-              "predicted_ms": 1131.595,
-              "predicted_per_token_ms": 102.87227272727273,
-              "predicted_per_second": 9.720792332945974
+              "predicted_ms": 1134.834,
+              "predicted_per_token_ms": 103.16672727272727,
+              "predicted_per_second": 9.693047617537013
             }
           },
           "backfills": [],
@@ -663,11 +663,11 @@
           "text": "转身避开盒子"
         },
         "failure": null,
-        "ms": 5846,
+        "ms": 6477,
         "call": {
           "task": "action",
           "key": "probe",
-          "at": 1793257608479,
+          "at": 1793258116553,
           "prompt": "你是文字冒险游戏的行动裁判。所有文本必须使用简体中文。\n时间：2026-10-27T09:00:02\n角色 林川（id=person_a）：位于走廊，精神值10。任务：留在走廊守门，不碰盒子(task_watch,未完成)\n角色 周宁（id=person_c）：位于门厅，精神值10。任务：完成压力试验(task_pressure,未完成)；完成恢复练习(task_recover,未完成)\n地点：走廊(id=corridor)、门厅(id=hall)\n物品：盒子（id=box，位于走廊）\n玩家输入原文：走到走廊\n本次行动机会属于：周宁（id=person_c），他是主角。\n输入状态：已消费（该输入机会已处理，输入只作为背景，不得再执行玩家命令）\n规则：\n- 只有主角的行动受玩家命令约束；主角不得把玩家命令当成已成功发生的事实。\n- 输入已消费时，主角不得再次执行玩家命令；其他人物的行动只依据自己的任务、个性与处境判断。\n- 输出一个具体的身体动作或发言（不超过 40 字，第三人称，以周宁为主语），不要写任务目标、计划、心理活动或状态数值。\n- 不得引入状态中未列出的角色或物品。若不行动，输出 {\"kind\":\"skip\",\"text\":\"\"}。\n只输出 JSON：{\"kind\":\"act\",\"text\":\"<行动描述>\"} 或 {\"kind\":\"skip\",\"text\":\"\"}",
           "promptChars": 597,
           "raw": "{\"kind\":\"act\",\"text\":\"转身避开盒子\"}",
@@ -679,22 +679,22 @@
           "validationError": null,
           "error": null,
           "errorName": null,
-          "ms": 5846,
+          "ms": 6477,
           "completion": {
             "raw": "{\"kind\":\"act\",\"text\":\"转身避开盒子\"}",
             "finishReason": "stop",
-            "firstTokenMs": 4910.564999580383,
-            "wallMs": 5845.460000038147,
+            "firstTokenMs": 5412.010000228882,
+            "wallMs": 6476.980000495911,
             "timings": {
               "cache_n": 171,
               "prompt_n": 169,
-              "prompt_ms": 4777.181,
-              "prompt_per_token_ms": 28.26734319526627,
-              "prompt_per_second": 35.37651179639206,
+              "prompt_ms": 5273.694,
+              "prompt_per_token_ms": 31.205289940828404,
+              "prompt_per_second": 32.04584869732677,
               "predicted_n": 12,
-              "predicted_ms": 1028.49,
-              "predicted_per_token_ms": 93.49909090909091,
-              "predicted_per_second": 10.695291154994214
+              "predicted_ms": 1167.411,
+              "predicted_per_token_ms": 106.12827272727273,
+              "predicted_per_second": 9.422559835396445
             }
           },
           "backfills": [],
@@ -917,11 +917,11 @@
           "text": "转身避开盒子"
         },
         "failure": null,
-        "ms": 6360,
+        "ms": 6875,
         "call": {
           "task": "action",
           "key": "probe",
-          "at": 1793257614838,
+          "at": 1793258123428,
           "prompt": "你是文字冒险游戏的行动裁判。所有文本必须使用简体中文。\n时间：2026-10-27T09:00:02\n角色 林川（id=person_a）：位于走廊，精神值10。任务：留在走廊守门，不碰盒子(task_watch,未完成)\n角色 周宁（id=person_c）：位于门厅，精神值10。任务：完成压力试验(task_pressure,未完成)；完成恢复练习(task_recover,未完成)\n地点：走廊(id=corridor)、门厅(id=hall)\n物品：盒子（id=box，位于走廊）\n玩家输入原文：走到走廊\n本次行动机会属于：林川（id=person_a），他不是主角。\n输入状态：已消费（该输入机会已处理，输入只作为背景，不得再执行玩家命令）\n规则：\n- 只有主角的行动受玩家命令约束；主角不得把玩家命令当成已成功发生的事实。\n- 输入已消费时，主角不得再次执行玩家命令；其他人物的行动只依据自己的任务、个性与处境判断。\n- 输出一个具体的身体动作或发言（不超过 40 字，第三人称，以林川为主语），不要写任务目标、计划、心理活动或状态数值。\n- 不得引入状态中未列出的角色或物品。若不行动，输出 {\"kind\":\"skip\",\"text\":\"\"}。\n只输出 JSON：{\"kind\":\"act\",\"text\":\"<行动描述>\"} 或 {\"kind\":\"skip\",\"text\":\"\"}",
           "promptChars": 598,
           "raw": "{\"kind\":\"act\",\"text\":\"转身避开盒子\"}",
@@ -933,22 +933,22 @@
           "validationError": null,
           "error": null,
           "errorName": null,
-          "ms": 6359,
+          "ms": 6875,
           "completion": {
             "raw": "{\"kind\":\"act\",\"text\":\"转身避开盒子\"}",
             "finishReason": "stop",
-            "firstTokenMs": 5396.534999847412,
-            "wallMs": 6359.3049993515015,
+            "firstTokenMs": 5810.920000076294,
+            "wallMs": 6874.729999542236,
             "timings": {
               "cache_n": 157,
               "prompt_n": 184,
-              "prompt_ms": 5213.965,
-              "prompt_per_token_ms": 28.336766304347826,
-              "prompt_per_second": 35.28984179985865,
+              "prompt_ms": 5632.81,
+              "prompt_per_token_ms": 30.61309782608696,
+              "prompt_per_second": 32.665756522943255,
               "predicted_n": 12,
-              "predicted_ms": 1066.351,
-              "predicted_per_token_ms": 96.94100000000002,
-              "predicted_per_second": 10.315552758894585
+              "predicted_ms": 1170.59,
+              "predicted_per_token_ms": 106.41727272727272,
+              "predicted_per_second": 9.396970758335542
             }
           },
           "backfills": [],
@@ -1166,11 +1166,11 @@
           "targets": []
         },
         "failure": null,
-        "ms": 8257,
+        "ms": 8494,
         "call": {
           "task": "targets",
           "key": "probe",
-          "at": 1793257623096,
+          "at": 1793258131922,
           "prompt": "你是目标判定器。所有文本必须使用简体中文。\n时间：2026-10-27T09:00:02\n角色 林川（id=person_a）：位于走廊，精神值10。任务：留在走廊守门，不碰盒子(task_watch,未完成)\n角色 周宁（id=person_c）：位于门厅，精神值10。任务：完成压力试验(task_pressure,未完成)；完成恢复练习(task_recover,未完成)\n地点：走廊(id=corridor)、门厅(id=hall)\n物品：盒子（id=box，位于走廊）\n行动（发起者 周宁，id=person_c）：周宁 推开门厅深处的重门，示意 林川 到门边一起撑住。\n判断该行动是否指向场上另一名角色。行动文本中出现的角色名字，按状态里的 id 输出；目标必须是状态里列出的其他角色。\n不要指向发起者自己，也不要指向已经行动过的角色。不指向任何角色就输出空数组。\n只输出 JSON：{\"targets\":[{\"targetId\":\"<被指向角色的id>\"}]} 或 {\"targets\":[]}",
           "promptChars": 454,
           "raw": "{\"targets\":[]}",
@@ -1181,22 +1181,22 @@
           "validationError": null,
           "error": null,
           "errorName": null,
-          "ms": 8257,
+          "ms": 8493,
           "completion": {
             "raw": "{\"targets\":[]}",
             "finishReason": "stop",
-            "firstTokenMs": 7888.644999504089,
-            "wallMs": 8256.734999656677,
+            "firstTokenMs": 8053.074999809265,
+            "wallMs": 8493.369999885559,
             "timings": {
               "cache_n": 0,
               "prompt_n": 268,
-              "prompt_ms": 7720.736,
-              "prompt_per_token_ms": 28.808716417910446,
-              "prompt_per_second": 34.711716603183945,
+              "prompt_ms": 7881.515,
+              "prompt_per_token_ms": 29.408638059701495,
+              "prompt_per_second": 34.00361478725854,
               "predicted_n": 6,
-              "predicted_ms": 467.909,
-              "predicted_per_token_ms": 93.5818,
-              "predicted_per_second": 10.685838485688457
+              "predicted_ms": 547.145,
+              "predicted_per_token_ms": 109.429,
+              "predicted_per_second": 9.138345411179852
             }
           },
           "backfills": [],
@@ -1405,11 +1405,11 @@
           "targets": []
         },
         "failure": null,
-        "ms": 3779,
+        "ms": 3609,
         "call": {
           "task": "targets",
           "key": "probe",
-          "at": 1793257626875,
+          "at": 1793258135532,
           "prompt": "你是目标判定器。所有文本必须使用简体中文。\n时间：2026-10-27T09:00:02\n角色 林川（id=person_a）：位于走廊，精神值10。任务：留在走廊守门，不碰盒子(task_watch,未完成)\n角色 周宁（id=person_c）：位于门厅，精神值10。任务：完成压力试验(task_pressure,未完成)；完成恢复练习(task_recover,未完成)\n地点：走廊(id=corridor)、门厅(id=hall)\n物品：盒子（id=box，位于走廊）\n行动（发起者 周宁，id=person_c）：周宁 独自检查了走廊的墙壁。\n判断该行动是否指向场上另一名角色。行动文本中出现的角色名字，按状态里的 id 输出；目标必须是状态里列出的其他角色。\n不要指向发起者自己，也不要指向已经行动过的角色。不指向任何角色就输出空数组。\n只输出 JSON：{\"targets\":[{\"targetId\":\"<被指向角色的id>\"}]} 或 {\"targets\":[]}",
           "promptChars": 441,
           "raw": "{\"targets\": []}",
@@ -1420,22 +1420,22 @@
           "validationError": null,
           "error": null,
           "errorName": null,
-          "ms": 3779,
+          "ms": 3609,
           "completion": {
             "raw": "{\"targets\": []}",
             "finishReason": "stop",
-            "firstTokenMs": 3255.704999923706,
-            "wallMs": 3778.545000076294,
+            "firstTokenMs": 3204.8049993515015,
+            "wallMs": 3608.994999885559,
             "timings": {
               "cache_n": 159,
               "prompt_n": 98,
-              "prompt_ms": 3091.334,
-              "prompt_per_token_ms": 31.544224489795916,
-              "prompt_per_second": 31.701524325744163,
+              "prompt_ms": 3069.13,
+              "prompt_per_token_ms": 31.31765306122449,
+              "prompt_per_second": 31.930872918384036,
               "predicted_n": 6,
-              "predicted_ms": 648.97,
-              "predicted_per_token_ms": 129.794,
-              "predicted_per_second": 7.704516387506356
+              "predicted_ms": 507.735,
+              "predicted_per_token_ms": 101.547,
+              "predicted_per_second": 9.847656750076318
             }
           },
           "backfills": [],
@@ -1644,11 +1644,11 @@
         },
         "output": "林川将盒子稳稳地放在门框上",
         "failure": null,
-        "ms": 8016,
+        "ms": 9651,
         "call": {
           "task": "reaction",
           "key": "probe",
-          "at": 1793257634891,
+          "at": 1793258145183,
           "prompt": "你是反应描写器。所有文本必须使用简体中文。\n时间：2026-10-27T09:00:02\n角色 林川（id=person_a）：位于走廊，精神值10。任务：留在走廊守门，不碰盒子(task_watch,未完成)\n角色 周宁（id=person_c）：位于门厅，精神值10。任务：完成压力试验(task_pressure,未完成)；完成恢复练习(task_recover,未完成)\n地点：走廊(id=corridor)、门厅(id=hall)\n物品：盒子（id=box，位于走廊）\n发起者 周宁 的行动：周宁 示意 林川 一起撑住重门。\n林川 已被卷入（判定已准入）。写一句 林川 的第三人称反应行动，不超过 30 字；\n只写这个人的反应动作，不要重复发起者的行动，不要写结果、心理活动、精神值、理智或任务状态。\n只输出 JSON：{\"text\":\"<反应行动>\"}",
           "promptChars": 382,
           "raw": "{\"text\":\"林川将盒子稳稳地放在门框上\"}",
@@ -1659,22 +1659,22 @@
           "validationError": null,
           "error": null,
           "errorName": null,
-          "ms": 8016,
+          "ms": 9651,
           "completion": {
             "raw": "{\"text\":\"林川将盒子稳稳地放在门框上\"}",
             "finishReason": "stop",
-            "firstTokenMs": 6990.199999809265,
-            "wallMs": 8016.045000076294,
+            "firstTokenMs": 7961.319999694824,
+            "wallMs": 9650.840000152588,
             "timings": {
               "cache_n": 0,
               "prompt_n": 243,
-              "prompt_ms": 6820.266,
-              "prompt_per_token_ms": 28.066938271604936,
-              "prompt_per_second": 35.62910889399328,
+              "prompt_ms": 7817.755,
+              "prompt_per_token_ms": 32.171831275720166,
+              "prompt_per_second": 31.083092268816305,
               "predicted_n": 16,
-              "predicted_ms": 1100.064,
-              "predicted_per_token_ms": 73.33760000000001,
-              "predicted_per_second": 13.635570294091979
+              "predicted_ms": 1778.269,
+              "predicted_per_token_ms": 118.55126666666666,
+              "predicted_per_second": 8.435169257294593
             }
           },
           "backfills": [],
@@ -1898,11 +1898,11 @@
           "person_a": "没有成功"
         },
         "failure": null,
-        "ms": 11611,
+        "ms": 13279,
         "call": {
           "task": "results",
           "key": "probe",
-          "at": 1793257646503,
+          "at": 1793258158462,
           "prompt": "你是结果判定器。所有文本必须使用简体中文。\n时间：2026-10-27T09:00:02\n角色 林川（id=person_a）：位于走廊，精神值10。任务：留在走廊守门，不碰盒子(task_watch,未完成)\n角色 周宁（id=person_c）：位于门厅，精神值10。任务：完成压力试验(task_pressure,未完成)；完成恢复练习(task_recover,未完成)\n地点：走廊(id=corridor)、门厅(id=hall)\n物品：盒子（id=box，位于走廊）\n本组冻结行动与判定：\n- id=person_c（周宁）：周宁 推开门示意同伴一起撑住。；判定：无（单人行动，没有反应判定）\n- id=person_a（林川）：林川 上前与同伴一起撑住重门。；判定：无（单人行动，没有反应判定）\n为每个成员写一句第三人称结算结果，只描述这些冻结行动的直接后果。\n不得新增行动文本中没有的事件（撤退、受伤、耗尽等都不算直接后果）；判定为“未准入”的关系必须写成没有成功，判定为“准入”的不得写成失败。\n只输出 JSON 对象，必须恰好包含这些键：\"person_c\", \"person_a\"",
           "promptChars": 501,
           "raw": "{\n  \"person_c\": \"没有成功\",\n  \"person_a\": \"没有成功\"\n}",
@@ -1914,22 +1914,22 @@
           "validationError": null,
           "error": null,
           "errorName": null,
-          "ms": 11610,
+          "ms": 13277,
           "completion": {
             "raw": "{\n  \"person_c\": \"没有成功\",\n  \"person_a\": \"没有成功\"\n}",
             "finishReason": "stop",
-            "firstTokenMs": 9523.199999809265,
-            "wallMs": 11609.559999465942,
+            "firstTokenMs": 10715.335000038147,
+            "wallMs": 13275.789999961853,
             "timings": {
               "cache_n": 0,
               "prompt_n": 311,
-              "prompt_ms": 9018.945,
-              "prompt_per_token_ms": 28.9998231511254,
-              "prompt_per_second": 34.48296890600841,
+              "prompt_ms": 10118.675,
+              "prompt_per_token_ms": 32.535932475884245,
+              "prompt_per_second": 30.735249427420094,
               "predicted_n": 25,
-              "predicted_ms": 2519.334,
-              "predicted_per_token_ms": 104.97224999999999,
-              "predicted_per_second": 9.526327195997037
+              "predicted_ms": 3075.6,
+              "predicted_per_token_ms": 128.15,
+              "predicted_per_second": 7.803355442840422
             }
           },
           "backfills": [],
@@ -2172,11 +2172,11 @@
           "person_a": "林川未成功"
         },
         "failure": null,
-        "ms": 7674,
+        "ms": 8392,
         "call": {
           "task": "results",
           "key": "probe",
-          "at": 1793257654177,
+          "at": 1793258166855,
           "prompt": "你是结果判定器。所有文本必须使用简体中文。\n时间：2026-10-27T09:00:02\n角色 林川（id=person_a）：位于走廊，精神值10。任务：留在走廊守门，不碰盒子(task_watch,未完成)\n角色 周宁（id=person_c）：位于门厅，精神值10。任务：完成压力试验(task_pressure,未完成)；完成恢复练习(task_recover,未完成)\n地点：走廊(id=corridor)、门厅(id=hall)\n物品：盒子（id=box，位于走廊）\n本组冻结行动与判定：\n- id=person_c（周宁）：周宁 示意 林川 一起撑住重门。；判定：无（单人行动，没有反应判定）\n- id=person_a（林川）：林川 被卷入重门。；判定：骰点 8 / 阈值 11 → 未准入\n为每个成员写一句第三人称结算结果，只描述这些冻结行动的直接后果。\n不得新增行动文本中没有的事件（撤退、受伤、耗尽等都不算直接后果）；判定为“未准入”的关系必须写成没有成功，判定为“准入”的不得写成失败。\n只输出 JSON 对象，必须恰好包含这些键：\"person_c\", \"person_a\"",
           "promptChars": 500,
           "raw": "{\n  \"person_c\": \"周宁未成功\",\n  \"person_a\": \"林川未成功\"\n}",
@@ -2188,22 +2188,22 @@
           "validationError": null,
           "error": null,
           "errorName": null,
-          "ms": 7674,
+          "ms": 8392,
           "completion": {
             "raw": "{\n  \"person_c\": \"周宁未成功\",\n  \"person_a\": \"林川未成功\"\n}",
             "finishReason": "stop",
-            "firstTokenMs": 5245.805000305176,
-            "wallMs": 7674.060000419617,
+            "firstTokenMs": 5468.064999580383,
+            "wallMs": 8392.109999656677,
             "timings": {
               "cache_n": 161,
               "prompt_n": 158,
-              "prompt_ms": 4799.55,
-              "prompt_per_token_ms": 30.376898734177217,
-              "prompt_per_second": 32.91975289350043,
+              "prompt_ms": 4923.965,
+              "prompt_per_token_ms": 31.164335443037977,
+              "prompt_per_second": 32.087961632546126,
               "predicted_n": 29,
-              "predicted_ms": 2816.085,
-              "predicted_per_token_ms": 100.57446428571428,
-              "predicted_per_second": 9.942881695687452
+              "predicted_ms": 3415.32,
+              "predicted_per_token_ms": 121.97571428571429,
+              "predicted_per_second": 8.19835330217959
             }
           },
           "backfills": [],
@@ -2456,11 +2456,11 @@
           "person_a": "林川未成功"
         },
         "failure": null,
-        "ms": 6737,
+        "ms": 7639,
         "call": {
           "task": "results",
           "key": "probe",
-          "at": 1793257660915,
+          "at": 1793258174494,
           "prompt": "你是结果判定器。所有文本必须使用简体中文。\n时间：2026-10-27T09:00:02\n角色 林川（id=person_a）：位于走廊，精神值10。任务：留在走廊守门，不碰盒子(task_watch,未完成)\n角色 周宁（id=person_c）：位于门厅，精神值10。任务：完成压力试验(task_pressure,未完成)；完成恢复练习(task_recover,未完成)\n地点：走廊(id=corridor)、门厅(id=hall)\n物品：盒子（id=box，位于走廊）\n本组冻结行动与判定：\n- id=person_c（周宁）：周宁 示意 林川 一起撑住重门。；判定：无（单人行动，没有反应判定）\n- id=person_a（林川）：林川 到门边一起撑住重门。；判定：骰点 19 / 阈值 11 → 准入\n为每个成员写一句第三人称结算结果，只描述这些冻结行动的直接后果。\n不得新增行动文本中没有的事件（撤退、受伤、耗尽等都不算直接后果）；判定为“未准入”的关系必须写成没有成功，判定为“准入”的不得写成失败。\n只输出 JSON 对象，必须恰好包含这些键：\"person_c\", \"person_a\"",
           "promptChars": 504,
           "raw": "{\n  \"person_c\": \"周宁未成功\",\n  \"person_a\": \"林川未成功\"\n}",
@@ -2472,22 +2472,22 @@
           "validationError": null,
           "error": null,
           "errorName": null,
-          "ms": 6737,
+          "ms": 7639,
           "completion": {
             "raw": "{\n  \"person_c\": \"周宁未成功\",\n  \"person_a\": \"林川未成功\"\n}",
             "finishReason": "stop",
-            "firstTokenMs": 4262.784999847412,
-            "wallMs": 6737.060000419617,
+            "firstTokenMs": 4633.770000457764,
+            "wallMs": 7638.9450006484985,
             "timings": {
               "cache_n": 198,
               "prompt_n": 124,
-              "prompt_ms": 3797.551,
-              "prompt_per_token_ms": 30.62541129032258,
-              "prompt_per_second": 32.65262270342123,
+              "prompt_ms": 4118.09,
+              "prompt_per_token_ms": 33.21040322580645,
+              "prompt_per_second": 30.111046625984375,
               "predicted_n": 29,
-              "predicted_ms": 2901.199,
-              "predicted_per_token_ms": 103.61425,
-              "predicted_per_second": 9.651182149173497
+              "predicted_ms": 3486.44,
+              "predicted_per_token_ms": 124.51571428571428,
+              "predicted_per_second": 8.031114833469097
             }
           },
           "backfills": [],
@@ -2726,11 +2726,11 @@
         },
         "output": null,
         "failure": "b3 updates semantic: illegal stage appearanceChanges",
-        "ms": 50613,
+        "ms": 59785,
         "call": {
           "task": "updates",
           "key": "probe",
-          "at": 1793257711521,
+          "at": 1793258234273,
           "prompt": "你是世界状态更新器。所有文本必须使用简体中文。\n时间：2026-10-27T09:00:02\n角色 林川（id=person_a）：位于走廊，精神值10。任务：留在走廊守门，不碰盒子(task_watch,未完成)\n角色 周宁（id=person_c）：位于门厅，精神值10。任务：完成压力试验(task_pressure,未完成)；完成恢复练习(task_recover,未完成)\n地点：走廊(id=corridor)、门厅(id=hall)\n物品：盒子（id=box，位于走廊）\n已确认结算结果：{\"person_c\":\"周宁 完成了压力试验。\",\"person_a\":\"林川 在一旁见证，没有新的变化。\"}\n根据已发生的事实产出世界状态更新候选。\n字段契约：\n- positionSet：{\"containerId\":\"<地点id>\",\"slotId\":null,\"relativeTo\":null}\n- appearanceChanges：数组，元素 {\"id\":\"draft_1\",\"text\":\"<外貌变化>\",\"supersedes\":[]}\n- tasksAchieved：数组，元素必须是状态中已有的任务 id，且该任务属于同一个角色\n- subtasksAdded：数组，元素 {\"id\":\"draft_1\",\"ownerId\":\"<角色id>\",\"parentTaskId\":null,\"goal\":\"<新任务>\",\"status\":\"pending\"}\n- personalityChanges：数组，元素 {\"id\":\"draft_1\",\"text\":\"<个性变化>\",\"supersedes\":[]}；只有本批有任务达成时才允许\n- sanitySet：0 到 100 的整数，只写最终值；只有本批有该角色的个性变化时才允许\n因果规则：任务达成可以单独出现（个性变化只是可能发生，不是必须）；没有新达成任务就不要写个性；没有个性变化就不要写理智。\n- position 阶段只允许字段 positionSet。\n- appearance 阶段只允许字段 appearanceChanges。\n- tasks 阶段只允许字段 tasksAchieved。\n- subtasks 阶段只允许字段 subtasksAdded。\n- personality 阶段只允许字段 personalityChanges。\n- sanity 阶段只允许字段 sanitySet。\nchanges 的键只能是状态中列出的角色 id；不得嵌套 changes；不得输出契约外的字段。\n示例：[{\"stage\":\"tasks\",\"changes\":{\"<角色id>\":{\"tasksAchieved\":[\"<状态中已有任务id>\"]}}}]\n只输出 JSON 数组，按 position→appearance→tasks→subtasks→personality→sanity 顺序；只写实际发生变化的阶段：[{\"stage\":\"tasks\",\"changes\":{\"<角色id>\":{\"tasksAchieved\":[\"<状态中已有任务id>\"]}}}]\n无变化输出 []。",
           "promptChars": 1340,
           "raw": "[\n  {\n    \"stage\": \"tasks\",\n    \"changes\": {\n      \"person_c\": {\n        \"tasksAchieved\": [\"task_pressure\"]\n      }\n    }\n  },\n  {\n    \"stage\": \"appearanceChanges\",\n    \"changes\": {\n      \"draft_1\": {\n        \"text\": \"周宁的外貌没有变化\",\n        \"supersedes\": []\n      }\n    }\n  },\n  {\n    \"stage\": \"subtasksAdded\",\n    \"changes\": {\n      \"draft_1\": {\n        \"ownerId\": \"person_c\",\n        \"parentTaskId\": null,\n        \"goal\": \"task_recover\",\n        \"status\": \"pending\"\n      }\n    }\n  },\n  {\n    \"stage\": \"personalityChanges\",\n    \"changes\": {\n      \"draft_1\": {\n        \"text\": \"林川的个性没有变化\",\n        \"supersedes\": []\n      }\n    }\n  },\n  {\n    \"stage\": \"sanitySet\",\n    \"changes\": {\n      \"person_a\": {\n        \"sanitySet\": 100\n      }\n    }\n  }\n]",
@@ -2787,22 +2787,22 @@
           "validationError": "illegal stage appearanceChanges",
           "error": null,
           "errorName": null,
-          "ms": 50606,
+          "ms": 59777,
           "completion": {
             "raw": "[\n  {\n    \"stage\": \"tasks\",\n    \"changes\": {\n      \"person_c\": {\n        \"tasksAchieved\": [\"task_pressure\"]\n      }\n    }\n  },\n  {\n    \"stage\": \"appearanceChanges\",\n    \"changes\": {\n      \"draft_1\": {\n        \"text\": \"周宁的外貌没有变化\",\n        \"supersedes\": []\n      }\n    }\n  },\n  {\n    \"stage\": \"subtasksAdded\",\n    \"changes\": {\n      \"draft_1\": {\n        \"ownerId\": \"person_c\",\n        \"parentTaskId\": null,\n        \"goal\": \"task_recover\",\n        \"status\": \"pending\"\n      }\n    }\n  },\n  {\n    \"stage\": \"personalityChanges\",\n    \"changes\": {\n      \"draft_1\": {\n        \"text\": \"林川的个性没有变化\",\n        \"supersedes\": []\n      }\n    }\n  },\n  {\n    \"stage\": \"sanitySet\",\n    \"changes\": {\n      \"person_a\": {\n        \"sanitySet\": 100\n      }\n    }\n  }\n]",
             "finishReason": "stop",
-            "firstTokenMs": 18264.634999275208,
-            "wallMs": 50605.58999919891,
+            "firstTokenMs": 19546.545000076294,
+            "wallMs": 59776.89999961853,
             "timings": {
               "cache_n": 0,
               "prompt_n": 609,
-              "prompt_ms": 18078.554,
-              "prompt_per_token_ms": 29.685638752052544,
-              "prompt_per_second": 33.68632247910978,
+              "prompt_ms": 19326.625,
+              "prompt_per_token_ms": 31.735016420361248,
+              "prompt_per_second": 31.510933750719538,
               "predicted_n": 236,
-              "predicted_ms": 32452.62,
-              "predicted_per_token_ms": 138.09625531914892,
-              "predicted_per_second": 7.2413259699833175
+              "predicted_ms": 40370.726,
+              "predicted_per_token_ms": 171.79032340425533,
+              "predicted_per_second": 5.821049638790246
             }
           },
           "backfills": [],
@@ -3017,11 +3017,11 @@
         },
         "output": null,
         "failure": "b3 updates semantic: illegal stage appearanceChanges",
-        "ms": 45627,
+        "ms": 52028,
         "call": {
           "task": "updates",
           "key": "probe",
-          "at": 1793257757155,
+          "at": 1793258286308,
           "prompt": "你是世界状态更新器。所有文本必须使用简体中文。\n时间：2026-10-27T09:00:02\n角色 林川（id=person_a）：位于走廊，精神值10。任务：留在走廊守门，不碰盒子(task_watch,未完成)\n角色 周宁（id=person_c）：位于门厅，精神值10。任务：完成压力试验(task_pressure,未完成)；完成恢复练习(task_recover,未完成)\n地点：走廊(id=corridor)、门厅(id=hall)\n物品：盒子（id=box，位于走廊）\n已确认结算结果：{\"person_c\":\"周宁 站着没有动。\",\"person_a\":\"林川 站在一旁，没有新的变化。\"}\n根据已发生的事实产出世界状态更新候选。\n字段契约：\n- positionSet：{\"containerId\":\"<地点id>\",\"slotId\":null,\"relativeTo\":null}\n- appearanceChanges：数组，元素 {\"id\":\"draft_1\",\"text\":\"<外貌变化>\",\"supersedes\":[]}\n- tasksAchieved：数组，元素必须是状态中已有的任务 id，且该任务属于同一个角色\n- subtasksAdded：数组，元素 {\"id\":\"draft_1\",\"ownerId\":\"<角色id>\",\"parentTaskId\":null,\"goal\":\"<新任务>\",\"status\":\"pending\"}\n- personalityChanges：数组，元素 {\"id\":\"draft_1\",\"text\":\"<个性变化>\",\"supersedes\":[]}；只有本批有任务达成时才允许\n- sanitySet：0 到 100 的整数，只写最终值；只有本批有该角色的个性变化时才允许\n因果规则：任务达成可以单独出现（个性变化只是可能发生，不是必须）；没有新达成任务就不要写个性；没有个性变化就不要写理智。\n- position 阶段只允许字段 positionSet。\n- appearance 阶段只允许字段 appearanceChanges。\n- tasks 阶段只允许字段 tasksAchieved。\n- subtasks 阶段只允许字段 subtasksAdded。\n- personality 阶段只允许字段 personalityChanges。\n- sanity 阶段只允许字段 sanitySet。\nchanges 的键只能是状态中列出的角色 id；不得嵌套 changes；不得输出契约外的字段。\n示例：[{\"stage\":\"tasks\",\"changes\":{\"<角色id>\":{\"tasksAchieved\":[\"<状态中已有任务id>\"]}}}]\n只输出 JSON 数组，按 position→appearance→tasks→subtasks→personality→sanity 顺序；只写实际发生变化的阶段：[{\"stage\":\"tasks\",\"changes\":{\"<角色id>\":{\"tasksAchieved\":[\"<状态中已有任务id>\"]}}}]\n无变化输出 []。",
           "promptChars": 1337,
           "raw": "[\n  {\n    \"stage\": \"tasks\",\n    \"changes\": {\n      \"person_c\": {\n        \"tasksAchieved\": [\"task_pressure\"]\n      }\n    }\n  },\n  {\n    \"stage\": \"appearanceChanges\",\n    \"changes\": {\n      \"id\": \"draft_1\",\n      \"text\": \"周宁 站着没有动。\"\n    }\n  },\n  {\n    \"stage\": \"subtasksAdded\",\n    \"changes\": {\n      \"id\": \"draft_1\",\n      \"ownerId\": \"person_c\",\n      \"parentTaskId\": null,\n      \"goal\": \"task_recover\",\n      \"status\": \"pending\"\n    }\n  },\n  {\n    \"stage\": \"personalityChanges\",\n    \"changes\": {\n      \"id\": \"draft_1\",\n      \"text\": \"林川 站在一旁，没有新的变化。\"\n    }\n  },\n  {\n    \"stage\": \"sanitySet\",\n    \"changes\": {\n      \"0\": \"林川 站在一旁，没有新的变化。\"\n    }\n  }\n]",
@@ -3071,22 +3071,22 @@
           "validationError": "illegal stage appearanceChanges",
           "error": null,
           "errorName": null,
-          "ms": 45627,
+          "ms": 52027,
           "completion": {
             "raw": "[\n  {\n    \"stage\": \"tasks\",\n    \"changes\": {\n      \"person_c\": {\n        \"tasksAchieved\": [\"task_pressure\"]\n      }\n    }\n  },\n  {\n    \"stage\": \"appearanceChanges\",\n    \"changes\": {\n      \"id\": \"draft_1\",\n      \"text\": \"周宁 站着没有动。\"\n    }\n  },\n  {\n    \"stage\": \"subtasksAdded\",\n    \"changes\": {\n      \"id\": \"draft_1\",\n      \"ownerId\": \"person_c\",\n      \"parentTaskId\": null,\n      \"goal\": \"task_recover\",\n      \"status\": \"pending\"\n    }\n  },\n  {\n    \"stage\": \"personalityChanges\",\n    \"changes\": {\n      \"id\": \"draft_1\",\n      \"text\": \"林川 站在一旁，没有新的变化。\"\n    }\n  },\n  {\n    \"stage\": \"sanitySet\",\n    \"changes\": {\n      \"0\": \"林川 站在一旁，没有新的变化。\"\n    }\n  }\n]",
             "finishReason": "stop",
-            "firstTokenMs": 15402.490000724792,
-            "wallMs": 45626.4450006485,
+            "firstTokenMs": 15738.319999694824,
+            "wallMs": 52027.03999996185,
             "timings": {
               "cache_n": 154,
               "prompt_n": 456,
-              "prompt_ms": 15062.74,
-              "prompt_per_token_ms": 33.032324561403506,
-              "prompt_per_second": 30.27337655698764,
+              "prompt_ms": 15449.114,
+              "prompt_per_token_ms": 33.87963596491228,
+              "prompt_per_second": 29.51625575421348,
               "predicted_n": 227,
-              "predicted_ms": 30426.629,
-              "predicted_per_token_ms": 134.6311017699115,
-              "predicted_per_second": 7.427704199502349
+              "predicted_ms": 36434.096,
+              "predicted_per_token_ms": 161.21281415929204,
+              "predicted_per_second": 6.202980856173843
             }
           },
           "backfills": [],
@@ -3307,11 +3307,11 @@
         },
         "output": null,
         "failure": "b3 updates semantic: tasksAchieved person_1 is not in the state or produced by this batch",
-        "ms": 13825,
+        "ms": 15351,
         "call": {
           "task": "updates",
           "key": "probe",
-          "at": 1793257770981,
+          "at": 1793258301660,
           "prompt": "你是世界状态更新器。所有文本必须使用简体中文。\n时间：2026-10-27T09:00:02\n角色 林川（id=person_a）：位于走廊，精神值10。任务：留在走廊守门，不碰盒子(task_watch,未完成)\n角色 周宁（id=person_c）：位于门厅，精神值10。任务：完成压力试验(task_pressure,未完成)；完成恢复练习(task_recover,未完成)\n地点：走廊(id=corridor)、门厅(id=hall)\n物品：盒子（id=box，位于走廊）\n已确认结算结果：{\"person_c\":\"周宁 完成了压力试验。\",\"person_a\":\"林川 在一旁见证，没有新的变化。\"}\n根据已发生的事实产出世界状态更新候选。只产出 stage=\"tasks\" 的更新。\n字段契约：\n- positionSet：{\"containerId\":\"<地点id>\",\"slotId\":null,\"relativeTo\":null}\n- appearanceChanges：数组，元素 {\"id\":\"draft_1\",\"text\":\"<外貌变化>\",\"supersedes\":[]}\n- tasksAchieved：数组，元素必须是状态中已有的任务 id，且该任务属于同一个角色\n- subtasksAdded：数组，元素 {\"id\":\"draft_1\",\"ownerId\":\"<角色id>\",\"parentTaskId\":null,\"goal\":\"<新任务>\",\"status\":\"pending\"}\n- personalityChanges：数组，元素 {\"id\":\"draft_1\",\"text\":\"<个性变化>\",\"supersedes\":[]}；只有本批有任务达成时才允许\n- sanitySet：0 到 100 的整数，只写最终值；只有本批有该角色的个性变化时才允许\n因果规则：任务达成可以单独出现（个性变化只是可能发生，不是必须）；没有新达成任务就不要写个性；没有个性变化就不要写理智。\n- tasks 阶段只允许字段 tasksAchieved。\nchanges 的键只能是状态中列出的角色 id；不得嵌套 changes；不得输出契约外的字段。\n示例：{\"stage\":\"tasks\",\"changes\":{\"<角色id>\":{\"tasksAchieved\":[\"<状态中已有任务id>\"]}}}\n只输出一个 JSON 对象（不要数组）：{\"stage\":\"tasks\",\"changes\":{\"<角色id>\":{\"tasksAchieved\":[\"<状态中已有任务id>\"]}}}\n无变化输出 {\"stage\":\"tasks\",\"changes\":{}}。",
           "promptChars": 1147,
           "raw": "{\"stage\":\"tasks\",\"changes\":{\"person_a\":{\"tasksAchieved\":[\"person_1\"]}}}",
@@ -3329,22 +3329,22 @@
           "validationError": "tasksAchieved person_1 is not in the state or produced by this batch",
           "error": null,
           "errorName": null,
-          "ms": 13825,
+          "ms": 15351,
           "completion": {
             "raw": "{\"stage\":\"tasks\",\"changes\":{\"person_a\":{\"tasksAchieved\":[\"person_1\"]}}}",
             "finishReason": "stop",
-            "firstTokenMs": 11528.800000190735,
-            "wallMs": 13824.460000038147,
+            "firstTokenMs": 12458.234999656677,
+            "wallMs": 15350.859999656677,
             "timings": {
               "cache_n": 154,
               "prompt_n": 388,
-              "prompt_ms": 11305.01,
-              "prompt_per_token_ms": 29.136623711340206,
-              "prompt_per_second": 34.321066500604594,
+              "prompt_ms": 12197.045,
+              "prompt_per_token_ms": 31.435682989690722,
+              "prompt_per_second": 31.810983725976254,
               "predicted_n": 21,
-              "predicted_ms": 2416.31,
-              "predicted_per_token_ms": 120.8155,
-              "predicted_per_second": 8.277083652345933
+              "predicted_ms": 2963.615,
+              "predicted_per_token_ms": 148.18075,
+              "predicted_per_second": 6.748514904938733
             }
           },
           "backfills": [],
@@ -3557,11 +3557,11 @@
         },
         "output": null,
         "failure": "b3 updates semantic: invalid personalityChanges item (supersedes must be an array)",
-        "ms": 16007,
+        "ms": 17269,
         "call": {
           "task": "updates",
           "key": "probe",
-          "at": 1793257786988,
+          "at": 1793258318929,
           "prompt": "你是世界状态更新器。所有文本必须使用简体中文。\n时间：2026-10-27T09:00:02\n角色 林川（id=person_a）：位于走廊，精神值10。任务：留在走廊守门，不碰盒子(task_watch,未完成)\n角色 周宁（id=person_c）：位于门厅，精神值10。任务：完成压力试验(task_pressure,未完成)；完成恢复练习(task_recover,未完成)\n地点：走廊(id=corridor)、门厅(id=hall)\n物品：盒子（id=box，位于走廊）\n已确认结算结果：{\"person_c\":\"周宁 完成了压力试验。\",\"person_a\":\"林川 在一旁见证，没有新的变化。\"}\n根据已发生的事实产出世界状态更新候选。只产出 stage=\"personality\" 的更新。\n字段契约：\n- positionSet：{\"containerId\":\"<地点id>\",\"slotId\":null,\"relativeTo\":null}\n- appearanceChanges：数组，元素 {\"id\":\"draft_1\",\"text\":\"<外貌变化>\",\"supersedes\":[]}\n- tasksAchieved：数组，元素必须是状态中已有的任务 id，且该任务属于同一个角色\n- subtasksAdded：数组，元素 {\"id\":\"draft_1\",\"ownerId\":\"<角色id>\",\"parentTaskId\":null,\"goal\":\"<新任务>\",\"status\":\"pending\"}\n- personalityChanges：数组，元素 {\"id\":\"draft_1\",\"text\":\"<个性变化>\",\"supersedes\":[]}；只有本批有任务达成时才允许\n- sanitySet：0 到 100 的整数，只写最终值；只有本批有该角色的个性变化时才允许\n因果规则：任务达成可以单独出现（个性变化只是可能发生，不是必须）；没有新达成任务就不要写个性；没有个性变化就不要写理智。\n- personality 阶段只允许字段 personalityChanges。\nchanges 的键只能是状态中列出的角色 id；不得嵌套 changes；不得输出契约外的字段。\n示例：{\"stage\":\"personality\",\"changes\":{\"<角色id>\":{\"personalityChanges\":[{\"id\":\"draft_1\",\"text\":\"<个性变化>\",\"supersedes\":[]}]}}}\n只输出一个 JSON 对象（不要数组）：{\"stage\":\"personality\",\"changes\":{\"<角色id>\":{\"personalityChanges\":[{\"id\":\"draft_1\",\"text\":\"<个性变化>\",\"supersedes\":[]}]}}}\n无变化输出 {\"stage\":\"personality\",\"changes\":{}}。",
           "promptChars": 1262,
           "raw": "{\"stage\":\"personality\",\"changes\":{\"person_c\":{\"personalityChanges\":[{\"id\":\"draft_1\",\"text\":\"周宁 完成了压力试验。\"}]}}}",
@@ -3582,22 +3582,22 @@
           "validationError": "invalid personalityChanges item (supersedes must be an array)",
           "error": null,
           "errorName": null,
-          "ms": 16006,
+          "ms": 17269,
           "completion": {
             "raw": "{\"stage\":\"personality\",\"changes\":{\"person_c\":{\"personalityChanges\":[{\"id\":\"draft_1\",\"text\":\"周宁 完成了压力试验。\"}]}}}",
             "finishReason": "stop",
-            "firstTokenMs": 11695.030000686646,
-            "wallMs": 16006.365000724792,
+            "firstTokenMs": 12183.95000076294,
+            "wallMs": 17268.555000305176,
             "timings": {
               "cache_n": 190,
               "prompt_n": 377,
-              "prompt_ms": 11449.75,
-              "prompt_per_token_ms": 30.370689655172413,
-              "prompt_per_second": 32.926483110984954,
+              "prompt_ms": 11962.615,
+              "prompt_per_token_ms": 31.731074270557027,
+              "prompt_per_second": 31.51484855109021,
               "predicted_n": 36,
-              "predicted_ms": 4441.779,
-              "predicted_per_token_ms": 126.90797142857144,
-              "predicted_per_second": 7.879725668476526
+              "predicted_ms": 5223.066,
+              "predicted_per_token_ms": 149.23045714285715,
+              "predicted_per_second": 6.701044941802382
             }
           },
           "backfills": [],
@@ -3829,11 +3829,11 @@
           }
         },
         "failure": null,
-        "ms": 13792,
+        "ms": 14096,
         "call": {
           "task": "updates",
           "key": "probe",
-          "at": 1793257800780,
+          "at": 1793258333025,
           "prompt": "你是世界状态更新器。所有文本必须使用简体中文。\n时间：2026-10-27T09:00:02\n角色 林川（id=person_a）：位于走廊，精神值10。任务：留在走廊守门，不碰盒子(task_watch,未完成)\n角色 周宁（id=person_c）：位于门厅，精神值10。任务：完成压力试验(task_pressure,未完成)；完成恢复练习(task_recover,未完成)\n地点：走廊(id=corridor)、门厅(id=hall)\n物品：盒子（id=box，位于走廊）\n已确认结算结果：{\"person_c\":\"周宁 完成了压力试验。\",\"person_a\":\"林川 在一旁见证，没有新的变化。\"}\n根据已发生的事实产出世界状态更新候选。只产出 stage=\"sanity\" 的更新。\n字段契约：\n- positionSet：{\"containerId\":\"<地点id>\",\"slotId\":null,\"relativeTo\":null}\n- appearanceChanges：数组，元素 {\"id\":\"draft_1\",\"text\":\"<外貌变化>\",\"supersedes\":[]}\n- tasksAchieved：数组，元素必须是状态中已有的任务 id，且该任务属于同一个角色\n- subtasksAdded：数组，元素 {\"id\":\"draft_1\",\"ownerId\":\"<角色id>\",\"parentTaskId\":null,\"goal\":\"<新任务>\",\"status\":\"pending\"}\n- personalityChanges：数组，元素 {\"id\":\"draft_1\",\"text\":\"<个性变化>\",\"supersedes\":[]}；只有本批有任务达成时才允许\n- sanitySet：0 到 100 的整数，只写最终值；只有本批有该角色的个性变化时才允许\n因果规则：任务达成可以单独出现（个性变化只是可能发生，不是必须）；没有新达成任务就不要写个性；没有个性变化就不要写理智。\n- sanity 阶段只允许字段 sanitySet。\nchanges 的键只能是状态中列出的角色 id；不得嵌套 changes；不得输出契约外的字段。\n示例：{\"stage\":\"sanity\",\"changes\":{\"<角色id>\":{\"sanitySet\":<0-100整数>}}}\n只输出一个 JSON 对象（不要数组）：{\"stage\":\"sanity\",\"changes\":{\"<角色id>\":{\"sanitySet\":<0-100整数>}}}\n无变化输出 {\"stage\":\"sanity\",\"changes\":{}}。",
           "promptChars": 1128,
           "raw": "{\"stage\":\"sanity\",\"changes\":{\"person_a\":{\"sanitySet\":90}}}",
@@ -3849,22 +3849,22 @@
           "validationError": null,
           "error": null,
           "errorName": null,
-          "ms": 13791,
+          "ms": 14096,
           "completion": {
             "raw": "{\"stage\":\"sanity\",\"changes\":{\"person_a\":{\"sanitySet\":90}}}",
             "finishReason": "stop",
-            "firstTokenMs": 11484.75,
-            "wallMs": 13791.199999809265,
+            "firstTokenMs": 11695.914999961853,
+            "wallMs": 14095.520000457764,
             "timings": {
               "cache_n": 190,
               "prompt_n": 357,
-              "prompt_ms": 11274.62,
-              "prompt_per_token_ms": 31.581568627450984,
-              "prompt_per_second": 31.664038344529573,
+              "prompt_ms": 11468.895,
+              "prompt_per_token_ms": 32.12575630252101,
+              "prompt_per_second": 31.127671846328695,
               "predicted_n": 20,
-              "predicted_ms": 2434.106,
-              "predicted_per_token_ms": 128.11084210526317,
-              "predicted_per_second": 7.805740588125579
+              "predicted_ms": 2533.274,
+              "predicted_per_token_ms": 133.3302105263158,
+              "predicted_per_second": 7.500175662008926
             }
           },
           "backfills": [],
@@ -4121,11 +4121,11 @@
           "nextRoundId": "round_probe_likely"
         },
         "failure": null,
-        "ms": 22365,
+        "ms": 23399,
         "call": {
           "task": "continuation",
           "key": "probe",
-          "at": 1793257823147,
+          "at": 1793258356425,
           "prompt": "你是继续推进判断器。所有文本必须使用简体中文。\n时间：2026-10-27T09:00:02\n角色 林川（id=person_a）：位于走廊，精神值10。任务：留在走廊守门，不碰盒子(task_watch,未完成)；拦下周宁，不让他离开(task_probe_block,未完成)\n角色 周宁（id=person_c）：位于门厅，精神值10。任务：完成压力试验(task_pressure,未完成)；完成恢复练习(task_recover,未完成)\n地点：走廊(id=corridor)、门厅(id=hall)\n物品：盒子（id=box，位于走廊）\n本轮已提交的变化：[{\"pointId\":\"point_probe\",\"timeAdvance\":{\"boundary\":\"elapsed\",\"duration\":{\"amount\":2,\"unit\":\"second\"}},\"entityDeltas\":{}}]\n当前轮：{\"roundId\":\"round_probe\",\"trigger\":\"player\",\"order\":[\"person_a\",\"person_c\"],\"cursor\":2,\"actedIds\":[\"person_a\",\"person_c\"],\"visitedIds\":[\"person_a\",\"person_c\"],\"conclusion\":null}\n当前未完成任务数：4\n判断本 round 结束后是否继续自动推进。只有同时满足下面两条才 continue：\n1) 后续有大概率会发生的行动：依据未完成任务、人物个性与处境判断，而不是只看“还有任务未完成”；\n2) 该行动与主角有关：针对、涉及主角，或主角必然参与。\n只满足其中一条，或两条都不满足，就 handback 交还玩家。\ncontinue 时必须给出：candidateCharacterIds（至少一个、必须是状态中的角色 id）、plannedAction（拟发生的一句第三人称行动）、protagonistRelevance（一句说明该行动与周宁的联系）。\nhandback 时 plannedAction 与 protagonistRelevance 输出空字符串。nextRoundId 写占位符 \"pending\"（程序会回填永久身份）。\n只输出 JSON：\n{\"kind\":\"continue\",\"candidateCharacterIds\":[\"<角色id>\"],\"nextRoundId\":\"pending\",\"plannedAction\":\"<拟行动>\",\"protagonistRelevance\":\"<与主角的联系>\",\"cancelReason\":null}\n或\n{\"kind\":\"handback\",\"plannedAction\":\"\",\"protagonistRelevance\":\"\",\"cancelReason\":null}",
           "promptChars": 1224,
           "raw": "{\"kind\":\"continue\",\"candidateCharacterIds\":[\"person_a\"],\"nextRoundId\":\"pending\",\"plannedAction\":\"林川需要观察周宁的行动，以确保其安全\",\"protagonistRelevance\":\"林川需要观察周宁的行动，以确保其安全\"}",
@@ -4143,22 +4143,22 @@
           "validationError": null,
           "error": null,
           "errorName": null,
-          "ms": 22364,
+          "ms": 23398,
           "completion": {
             "raw": "{\"kind\":\"continue\",\"candidateCharacterIds\":[\"person_a\"],\"nextRoundId\":\"pending\",\"plannedAction\":\"林川需要观察周宁的行动，以确保其安全\",\"protagonistRelevance\":\"林川需要观察周宁的行动，以确保其安全\"}",
             "finishReason": "stop",
-            "firstTokenMs": 15377.929999351501,
-            "wallMs": 22364.11999988556,
+            "firstTokenMs": 15729.185000419617,
+            "wallMs": 23397.550000190735,
             "timings": {
               "cache_n": 0,
               "prompt_n": 509,
-              "prompt_ms": 15135.475,
-              "prompt_per_token_ms": 29.735707269155206,
-              "prompt_per_second": 33.62960197813415,
+              "prompt_ms": 15466.7,
+              "prompt_per_token_ms": 30.386444007858547,
+              "prompt_per_second": 32.90941183316416,
               "predicted_n": 57,
-              "predicted_ms": 7083.024,
-              "predicted_per_token_ms": 126.48257142857143,
-              "predicted_per_second": 7.9062276225521755
+              "predicted_ms": 7783.805,
+              "predicted_per_token_ms": 138.99651785714286,
+              "predicted_per_second": 7.1944248346406425
             }
           },
           "backfills": [
@@ -4422,11 +4422,11 @@
           "nextRoundId": "round_probe_unrelated"
         },
         "failure": null,
-        "ms": 21007,
+        "ms": 21163,
         "call": {
           "task": "continuation",
           "key": "probe",
-          "at": 1793257844155,
+          "at": 1793258377588,
           "prompt": "你是继续推进判断器。所有文本必须使用简体中文。\n时间：2026-10-27T09:00:02\n角色 林川（id=person_a）：位于走廊，精神值10。任务：留在走廊守门，不碰盒子(task_watch,未完成)；独自清点走廊尽头的箱子(task_probe_inventory,未完成)\n角色 周宁（id=person_c）：位于门厅，精神值10。任务：完成压力试验(task_pressure,未完成)；完成恢复练习(task_recover,未完成)\n地点：走廊(id=corridor)、门厅(id=hall)\n物品：盒子（id=box，位于走廊）\n本轮已提交的变化：[{\"pointId\":\"point_probe\",\"timeAdvance\":{\"boundary\":\"elapsed\",\"duration\":{\"amount\":2,\"unit\":\"second\"}},\"entityDeltas\":{}}]\n当前轮：{\"roundId\":\"round_probe\",\"trigger\":\"player\",\"order\":[\"person_a\",\"person_c\"],\"cursor\":2,\"actedIds\":[\"person_a\",\"person_c\"],\"visitedIds\":[\"person_a\",\"person_c\"],\"conclusion\":null}\n当前未完成任务数：4\n判断本 round 结束后是否继续自动推进。只有同时满足下面两条才 continue：\n1) 后续有大概率会发生的行动：依据未完成任务、人物个性与处境判断，而不是只看“还有任务未完成”；\n2) 该行动与主角有关：针对、涉及主角，或主角必然参与。\n只满足其中一条，或两条都不满足，就 handback 交还玩家。\ncontinue 时必须给出：candidateCharacterIds（至少一个、必须是状态中的角色 id）、plannedAction（拟发生的一句第三人称行动）、protagonistRelevance（一句说明该行动与周宁的联系）。\nhandback 时 plannedAction 与 protagonistRelevance 输出空字符串。nextRoundId 写占位符 \"pending\"（程序会回填永久身份）。\n只输出 JSON：\n{\"kind\":\"continue\",\"candidateCharacterIds\":[\"<角色id>\"],\"nextRoundId\":\"pending\",\"plannedAction\":\"<拟行动>\",\"protagonistRelevance\":\"<与主角的联系>\",\"cancelReason\":null}\n或\n{\"kind\":\"handback\",\"plannedAction\":\"\",\"protagonistRelevance\":\"\",\"cancelReason\":null}",
           "promptChars": 1229,
           "raw": "{\"kind\":\"continue\",\"candidateCharacterIds\":[\"person_a\"],\"nextRoundId\":\"pending\",\"plannedAction\":\"林川需要继续守门以确保走廊的安全，同时清点箱子以推进任务\",\"protagonistRelevance\":\"林川与任务相关，需要继续守门和清点箱子\"}",
@@ -4444,22 +4444,22 @@
           "validationError": null,
           "error": null,
           "errorName": null,
-          "ms": 21007,
+          "ms": 21163,
           "completion": {
             "raw": "{\"kind\":\"continue\",\"candidateCharacterIds\":[\"person_a\"],\"nextRoundId\":\"pending\",\"plannedAction\":\"林川需要继续守门以确保走廊的安全，同时清点箱子以推进任务\",\"protagonistRelevance\":\"林川与任务相关，需要继续守门和清点箱子\"}",
             "finishReason": "stop",
-            "firstTokenMs": 13353.614999771118,
-            "wallMs": 21007.074999809265,
+            "firstTokenMs": 13180.284999847412,
+            "wallMs": 21162.52999973297,
             "timings": {
               "cache_n": 75,
               "prompt_n": 434,
-              "prompt_ms": 13174.57,
-              "prompt_per_token_ms": 30.35615207373272,
-              "prompt_per_second": 32.94225162566976,
+              "prompt_ms": 12983.721,
+              "prompt_per_token_ms": 29.91640783410138,
+              "prompt_per_second": 33.426473042666274,
               "predicted_n": 63,
-              "predicted_ms": 7761.179,
-              "predicted_per_token_ms": 125.1803064516129,
-              "predicted_per_second": 7.988477008454515
+              "predicted_ms": 8065.045,
+              "predicted_per_token_ms": 130.08137096774195,
+              "predicted_per_second": 7.687495854021893
             }
           },
           "backfills": [
@@ -4716,11 +4716,11 @@
           "nextRoundId": "round_probe_done"
         },
         "failure": null,
-        "ms": 20617,
+        "ms": 21748,
         "call": {
           "task": "continuation",
           "key": "probe",
-          "at": 1793257864772,
+          "at": 1793258399335,
           "prompt": "你是继续推进判断器。所有文本必须使用简体中文。\n时间：2026-10-27T09:00:02\n角色 林川（id=person_a）：位于走廊，精神值10。任务：留在走廊守门，不碰盒子(task_watch,已达成)\n角色 周宁（id=person_c）：位于门厅，精神值10。任务：完成压力试验(task_pressure,已达成)；完成恢复练习(task_recover,已达成)\n地点：走廊(id=corridor)、门厅(id=hall)\n物品：盒子（id=box，位于走廊）\n本轮已提交的变化：[{\"pointId\":\"point_probe\",\"timeAdvance\":{\"boundary\":\"elapsed\",\"duration\":{\"amount\":2,\"unit\":\"second\"}},\"entityDeltas\":{}}]\n当前轮：{\"roundId\":\"round_probe\",\"trigger\":\"player\",\"order\":[\"person_a\",\"person_c\"],\"cursor\":2,\"actedIds\":[\"person_a\",\"person_c\"],\"visitedIds\":[\"person_a\",\"person_c\"],\"conclusion\":null}\n当前未完成任务数：0\n判断本 round 结束后是否继续自动推进。只有同时满足下面两条才 continue：\n1) 后续有大概率会发生的行动：依据未完成任务、人物个性与处境判断，而不是只看“还有任务未完成”；\n2) 该行动与主角有关：针对、涉及主角，或主角必然参与。\n只满足其中一条，或两条都不满足，就 handback 交还玩家。\ncontinue 时必须给出：candidateCharacterIds（至少一个、必须是状态中的角色 id）、plannedAction（拟发生的一句第三人称行动）、protagonistRelevance（一句说明该行动与周宁的联系）。\nhandback 时 plannedAction 与 protagonistRelevance 输出空字符串。nextRoundId 写占位符 \"pending\"（程序会回填永久身份）。\n只输出 JSON：\n{\"kind\":\"continue\",\"candidateCharacterIds\":[\"<角色id>\"],\"nextRoundId\":\"pending\",\"plannedAction\":\"<拟行动>\",\"protagonistRelevance\":\"<与主角的联系>\",\"cancelReason\":null}\n或\n{\"kind\":\"handback\",\"plannedAction\":\"\",\"protagonistRelevance\":\"\",\"cancelReason\":null}",
           "promptChars": 1191,
           "raw": "{\"kind\":\"continue\",\"candidateCharacterIds\":[\"person_a\"],\"nextRoundId\":\"pending\",\"plannedAction\":\"林川需要观察并处理盒子中的情况以确保守门任务的完成\",\"protagonistRelevance\":\"林川的行动与周宁无关，但需要确保守门任务的顺利进行\"}",
@@ -4738,22 +4738,22 @@
           "validationError": null,
           "error": null,
           "errorName": null,
-          "ms": 20617,
+          "ms": 21747,
           "completion": {
             "raw": "{\"kind\":\"continue\",\"candidateCharacterIds\":[\"person_a\"],\"nextRoundId\":\"pending\",\"plannedAction\":\"林川需要观察并处理盒子中的情况以确保守门任务的完成\",\"protagonistRelevance\":\"林川的行动与周宁无关，但需要确保守门任务的顺利进行\"}",
             "finishReason": "stop",
-            "firstTokenMs": 12917.25,
-            "wallMs": 20617.15499973297,
+            "firstTokenMs": 13422.045000076294,
+            "wallMs": 21747.38000011444,
             "timings": {
               "cache_n": 71,
               "prompt_n": 423,
-              "prompt_ms": 12719.036,
-              "prompt_per_token_ms": 30.06864302600473,
-              "prompt_per_second": 33.25723741956544,
+              "prompt_ms": 13208.395,
+              "prompt_per_token_ms": 31.22552009456265,
+              "prompt_per_second": 32.02508707530324,
               "predicted_n": 65,
-              "predicted_ms": 7801.75,
-              "predicted_per_token_ms": 121.90234375,
-              "predicted_per_second": 8.203287723908097
+              "predicted_ms": 8439.01,
+              "predicted_per_token_ms": 131.85953125,
+              "predicted_per_second": 7.583827960862708
             }
           },
           "backfills": [
@@ -4940,14 +4940,14 @@
         "kind": "error",
         "detail": "model port threw"
       },
-      "runError": "Error: b3 updates semantic: illegal stage appearanceChanges\n    at Object.generate (eval at evaluate (:311:30), <anonymous>:373:19)\n    at async ControllerDriver.step (http://127.0.0.1:50794/src/lib/world-engine/controller.ts:261:20)\n    at async ControllerDriver.run (http://127.0.0.1:50794/src/lib/world-engine/controller.ts:219:21)\n    at async eval (eval at evaluate (:311:30), <anonymous>:51:22)\n    at async <anonymous>:337:30",
+      "runError": "Error: b3 updates semantic: illegal stage appearanceChanges\n    at Object.generate (eval at evaluate (:311:30), <anonymous>:373:19)\n    at async ControllerDriver.step (http://127.0.0.1:54915/src/lib/world-engine/controller.ts:261:20)\n    at async ControllerDriver.run (http://127.0.0.1:54915/src/lib/world-engine/controller.ts:219:21)\n    at async eval (eval at evaluate (:311:30), <anonymous>:51:22)\n    at async <anonymous>:337:30",
       "cleanup": {
         "canceledRound": "round_27",
         "advanceId": "advance_25"
       },
       "cleanupError": null,
-      "setupMs": 238,
-      "walkMs": 71065,
+      "setupMs": 391,
+      "walkMs": 86821,
       "budget": {
         "used": 4,
         "max": 40
@@ -5013,7 +5013,7 @@
         {
           "task": "pointPlan",
           "key": "round_27",
-          "at": 1793257865846,
+          "at": 1793258400683,
           "source": "program",
           "output": [
             {
@@ -5043,7 +5043,7 @@
         {
           "task": "action",
           "key": "person_a",
-          "at": 1793257876887,
+          "at": 1793258412246,
           "source": "model",
           "prompt": "你是文字冒险游戏的行动裁判。所有文本必须使用简体中文。\n时间：2026-10-27T09:00:04\n角色 林川（id=person_a）：位于走廊，精神值10。任务：留在走廊守门，不碰盒子(task_watch,未完成)\n角色 周宁（id=person_c）：位于门厅，精神值10。任务：完成压力试验(task_pressure,未完成)；完成恢复练习(task_recover,未完成)\n地点：走廊(id=corridor)、门厅(id=hall)\n物品：盒子（id=box，位于走廊）\n玩家输入原文：走到走廊\n本次行动机会属于：林川（id=person_a），他不是主角。\n输入状态：待处理（玩家命令尚未执行成功）\n规则：\n- 只有主角的行动受玩家命令约束；主角不得把玩家命令当成已成功发生的事实。\n- 输入已消费时，主角不得再次执行玩家命令；其他人物的行动只依据自己的任务、个性与处境判断。\n- 输出一个具体的身体动作或发言（不超过 40 字，第三人称，以林川为主语），不要写任务目标、计划、心理活动或状态数值。\n- 不得引入状态中未列出的角色或物品。若不行动，输出 {\"kind\":\"skip\",\"text\":\"\"}。\n只输出 JSON：{\"kind\":\"act\",\"text\":\"<行动描述>\"} 或 {\"kind\":\"skip\",\"text\":\"\"}",
           "promptChars": 582,
@@ -5060,18 +5060,18 @@
           "completion": {
             "raw": "{\"kind\":\"act\",\"text\":\"转身进入走廊\"}",
             "finishReason": "stop",
-            "firstTokenMs": 9941.57500076294,
-            "wallMs": 10944.650000572205,
+            "firstTokenMs": 10267.824999809265,
+            "wallMs": 11397.329999923706,
             "timings": {
               "cache_n": 0,
               "prompt_n": 330,
-              "prompt_ms": 9768.674,
-              "prompt_per_token_ms": 29.602042424242427,
-              "prompt_per_second": 33.78145283587107,
+              "prompt_ms": 10073.916,
+              "prompt_per_token_ms": 30.52701818181818,
+              "prompt_per_second": 32.757866950647596,
               "predicted_n": 12,
-              "predicted_ms": 1100.576,
-              "predicted_per_token_ms": 100.05236363636364,
-              "predicted_per_second": 9.994766376879017
+              "predicted_ms": 1221.155,
+              "predicted_per_token_ms": 111.01409090909091,
+              "predicted_per_second": 9.007865504379051
             }
           },
           "context": {
@@ -5081,12 +5081,12 @@
             "inputText": "走到走廊",
             "isProtagonist": false
           },
-          "ms": 10945
+          "ms": 11397
         },
         {
           "task": "targets",
           "key": "person_a",
-          "at": 1793257884615,
+          "at": 1793258420149,
           "source": "model",
           "prompt": "你是目标判定器。所有文本必须使用简体中文。\n时间：2026-10-27T09:00:04\n角色 林川（id=person_a）：位于走廊，精神值10。任务：留在走廊守门，不碰盒子(task_watch,未完成)\n角色 周宁（id=person_c）：位于门厅，精神值10。任务：完成压力试验(task_pressure,未完成)；完成恢复练习(task_recover,未完成)\n地点：走廊(id=corridor)、门厅(id=hall)\n物品：盒子（id=box，位于走廊）\n行动（发起者 林川，id=person_a）：转身进入走廊\n判断该行动是否指向场上另一名角色。行动文本中出现的角色名字，按状态里的 id 输出；目标必须是状态里列出的其他角色。\n不要指向发起者自己，也不要指向已经行动过的角色。不指向任何角色就输出空数组。\n只输出 JSON：{\"targets\":[{\"targetId\":\"<被指向角色的id>\"}]} 或 {\"targets\":[]}",
           "promptChars": 433,
@@ -5102,27 +5102,27 @@
           "completion": {
             "raw": "{\"targets\": []}",
             "finishReason": "stop",
-            "firstTokenMs": 7294.659999847412,
-            "wallMs": 7583.769999504089,
+            "firstTokenMs": 7434.265000343323,
+            "wallMs": 7751.5,
             "timings": {
               "cache_n": 0,
               "prompt_n": 248,
-              "prompt_ms": 7153.139,
-              "prompt_per_token_ms": 28.84330241935484,
-              "prompt_per_second": 34.67009378679766,
+              "prompt_ms": 7269.93,
+              "prompt_per_token_ms": 29.314233870967744,
+              "prompt_per_second": 34.11312075907196,
               "predicted_n": 6,
-              "predicted_ms": 358.15,
-              "predicted_per_token_ms": 71.63,
-              "predicted_per_second": 13.96063102052213
+              "predicted_ms": 393.32,
+              "predicted_per_token_ms": 78.664,
+              "predicted_per_second": 12.712295332045153
             }
           },
           "context": null,
-          "ms": 7584
+          "ms": 7752
         },
         {
           "task": "results",
           "key": "group_29",
-          "at": 1793257893964,
+          "at": 1793258430075,
           "source": "model",
           "prompt": "你是结果判定器。所有文本必须使用简体中文。\n时间：2026-10-27T09:00:04\n角色 林川（id=person_a）：位于走廊，精神值10。任务：留在走廊守门，不碰盒子(task_watch,未完成)\n角色 周宁（id=person_c）：位于门厅，精神值10。任务：完成压力试验(task_pressure,未完成)；完成恢复练习(task_recover,未完成)\n地点：走廊(id=corridor)、门厅(id=hall)\n物品：盒子（id=box，位于走廊）\n本组冻结行动与判定：\n- id=person_a（林川）：转身进入走廊；判定：无（单人行动，没有反应判定）\n为每个成员写一句第三人称结算结果，只描述这些冻结行动的直接后果。\n不得新增行动文本中没有的事件（撤退、受伤、耗尽等都不算直接后果）；判定为“未准入”的关系必须写成没有成功，判定为“准入”的不得写成失败。\n只输出 JSON 对象，必须恰好包含这些键：\"person_a\"",
           "promptChars": 428,
@@ -5138,18 +5138,18 @@
           "completion": {
             "raw": "{\n  \"person_a\": \"没有成功\"\n}",
             "finishReason": "stop",
-            "firstTokenMs": 8041.369999885559,
-            "wallMs": 9104.229999542236,
+            "firstTokenMs": 8401.965000152588,
+            "wallMs": 9675.115000724792,
             "timings": {
               "cache_n": 0,
               "prompt_n": 264,
-              "prompt_ms": 7603.814,
-              "prompt_per_token_ms": 28.80232575757576,
-              "prompt_per_second": 34.71941843922011,
+              "prompt_ms": 7917.69,
+              "prompt_per_token_ms": 29.991249999999997,
+              "prompt_per_second": 33.34305839203101,
               "predicted_n": 16,
-              "predicted_ms": 1442.14,
-              "predicted_per_token_ms": 96.14266666666667,
-              "predicted_per_second": 10.401209313936231
+              "predicted_ms": 1688.145,
+              "predicted_per_token_ms": 112.54299999999999,
+              "predicted_per_second": 8.88549265614032
             }
           },
           "context": {
@@ -5162,12 +5162,12 @@
               }
             ]
           },
-          "ms": 9104
+          "ms": 9675
         },
         {
           "task": "updates",
           "key": "group_29",
-          "at": 1793257936528,
+          "at": 1793258487076,
           "source": "model",
           "prompt": "你是世界状态更新器。所有文本必须使用简体中文。\n时间：2026-10-27T09:00:04\n角色 林川（id=person_a）：位于走廊，精神值10。任务：留在走廊守门，不碰盒子(task_watch,未完成)\n角色 周宁（id=person_c）：位于门厅，精神值10。任务：完成压力试验(task_pressure,未完成)；完成恢复练习(task_recover,未完成)\n地点：走廊(id=corridor)、门厅(id=hall)\n物品：盒子（id=box，位于走廊）\n已确认结算结果：{\"person_a\":\"没有成功\"}\n根据已发生的事实产出世界状态更新候选。\n字段契约：\n- positionSet：{\"containerId\":\"<地点id>\",\"slotId\":null,\"relativeTo\":null}\n- appearanceChanges：数组，元素 {\"id\":\"draft_1\",\"text\":\"<外貌变化>\",\"supersedes\":[]}\n- tasksAchieved：数组，元素必须是状态中已有的任务 id，且该任务属于同一个角色\n- subtasksAdded：数组，元素 {\"id\":\"draft_1\",\"ownerId\":\"<角色id>\",\"parentTaskId\":null,\"goal\":\"<新任务>\",\"status\":\"pending\"}\n- personalityChanges：数组，元素 {\"id\":\"draft_1\",\"text\":\"<个性变化>\",\"supersedes\":[]}；只有本批有任务达成时才允许\n- sanitySet：0 到 100 的整数，只写最终值；只有本批有该角色的个性变化时才允许\n因果规则：任务达成可以单独出现（个性变化只是可能发生，不是必须）；没有新达成任务就不要写个性；没有个性变化就不要写理智。\n- position 阶段只允许字段 positionSet。\n- appearance 阶段只允许字段 appearanceChanges。\n- tasks 阶段只允许字段 tasksAchieved。\n- subtasks 阶段只允许字段 subtasksAdded。\n- personality 阶段只允许字段 personalityChanges。\n- sanity 阶段只允许字段 sanitySet。\nchanges 的键只能是状态中列出的角色 id；不得嵌套 changes；不得输出契约外的字段。\n示例：[{\"stage\":\"tasks\",\"changes\":{\"<角色id>\":{\"tasksAchieved\":[\"<状态中已有任务id>\"]}}}]\n只输出 JSON 数组，按 position→appearance→tasks→subtasks→personality→sanity 顺序；只写实际发生变化的阶段：[{\"stage\":\"tasks\",\"changes\":{\"<角色id>\":{\"tasksAchieved\":[\"<状态中已有任务id>\"]}}}]\n无变化输出 []。",
           "promptChars": 1303,
@@ -5220,22 +5220,22 @@
           "completion": {
             "raw": "[\n  {\n    \"stage\": \"tasks\",\n    \"changes\": {\n      \"person_a\": {\n        \"tasksAchieved\": []\n      }\n    }\n  },\n  {\n    \"stage\": \"appearanceChanges\",\n    \"changes\": {\n      \"id\": \"draft_1\",\n      \"text\": \"外貌变化\"\n    }\n  },\n  {\n    \"stage\": \"subtasksAdded\",\n    \"changes\": {\n      \"id\": \"draft_1\",\n      \"ownerId\": \"person_a\",\n      \"parentTaskId\": null,\n      \"goal\": \"task_pressure\",\n      \"status\": \"pending\"\n    }\n  },\n  {\n    \"stage\": \"personalityChanges\",\n    \"changes\": {\n      \"id\": \"draft_1\",\n      \"text\": \"个性变化\"\n    }\n  },\n  {\n    \"stage\": \"sanitySet\",\n    \"changes\": {\n      \"value\": 0\n    }\n  }\n]",
             "finishReason": "stop",
-            "firstTokenMs": 17463.324999809265,
-            "wallMs": 42563.40499973297,
+            "firstTokenMs": 26047.329999923706,
+            "wallMs": 57000.055000305176,
             "timings": {
               "cache_n": 0,
               "prompt_n": 588,
-              "prompt_ms": 17305.451,
-              "prompt_per_token_ms": 29.43103911564626,
-              "prompt_per_second": 33.97773337429923,
+              "prompt_ms": 25856.885,
+              "prompt_per_token_ms": 43.974294217687074,
+              "prompt_per_second": 22.740558269103182,
               "predicted_n": 198,
-              "predicted_ms": 25216.49,
-              "predicted_per_token_ms": 128.00248730964466,
-              "predicted_per_second": 7.8123481896171905
+              "predicted_ms": 31095.216,
+              "predicted_per_token_ms": 157.84373604060914,
+              "predicted_per_second": 6.335379693133503
             }
           },
           "context": null,
-          "ms": 42563
+          "ms": 57000
         }
       ],
       "narration": [],
@@ -5246,79 +5246,79 @@
       "ops": [
         {
           "op": "allocate_ids",
-          "ms": 84,
+          "ms": 133,
           "tag": "setup"
         },
         {
           "op": "lease_renew",
-          "ms": 59
+          "ms": 114
         },
         {
           "op": "get_context",
-          "ms": 96
+          "ms": 165
         },
         {
           "op": "list_points",
-          "ms": 30
+          "ms": 44
         },
         {
           "op": "get_state",
-          "ms": 28
+          "ms": 38
         },
         {
           "op": "get_context",
-          "ms": 22
+          "ms": 27
         },
         {
           "op": "allocate_ids",
-          "ms": 309
+          "ms": 335
         },
         {
           "op": "checkpoint_start_advance",
-          "ms": 72
+          "ms": 90
         },
         {
           "op": "checkpoint_begin_point",
-          "ms": 67
+          "ms": 134
         },
         {
           "op": "preview_point",
-          "ms": 28
+          "ms": 30
         },
         {
           "op": "checkpoint_discover_group",
-          "ms": 144
+          "ms": 151
         },
         {
           "op": "checkpoint_extend_group",
-          "ms": 132
+          "ms": 149
         },
         {
           "op": "checkpoint_close_group",
-          "ms": 113
+          "ms": 101
         },
         {
           "op": "lease_renew",
-          "ms": 128
+          "ms": 130
         },
         {
           "op": "get_state",
-          "ms": 55,
+          "ms": 56,
           "tag": "probe"
         },
         {
           "op": "list_points",
-          "ms": 41,
+          "ms": 39,
           "tag": "probe"
         },
         {
           "op": "get_context",
-          "ms": 46,
+          "ms": 54,
           "tag": "cleanup"
         },
         {
           "op": "round_conclusion_cancel",
-          "ms": 191,
+          "ms": 203,
           "tag": "setup"
         }
       ],
@@ -5349,14 +5349,14 @@
         "kind": "error",
         "detail": "model port threw"
       },
-      "runError": "Error: b3 updates semantic: illegal stage appearanceChanges\n    at Object.generate (eval at evaluate (:311:30), <anonymous>:373:19)\n    at async ControllerDriver.step (http://127.0.0.1:50794/src/lib/world-engine/controller.ts:261:20)\n    at async ControllerDriver.run (http://127.0.0.1:50794/src/lib/world-engine/controller.ts:219:21)\n    at async eval (eval at evaluate (:311:30), <anonymous>:79:22)\n    at async <anonymous>:337:30",
+      "runError": "Error: b3 updates semantic: illegal stage appearanceChanges\n    at Object.generate (eval at evaluate (:311:30), <anonymous>:373:19)\n    at async ControllerDriver.step (http://127.0.0.1:54915/src/lib/world-engine/controller.ts:261:20)\n    at async ControllerDriver.run (http://127.0.0.1:54915/src/lib/world-engine/controller.ts:219:21)\n    at async eval (eval at evaluate (:311:30), <anonymous>:79:22)\n    at async <anonymous>:337:30",
       "cleanup": {
-        "canceledRound": "round_78",
-        "advanceId": "advance_76"
+        "canceledRound": "round_33",
+        "advanceId": "advance_31"
       },
       "cleanupError": null,
-      "setupMs": 4289,
-      "walkMs": 68310,
+      "setupMs": 916,
+      "walkMs": 69728,
       "budget": {
         "used": 3,
         "max": 40
@@ -5370,72 +5370,20 @@
           "initiator": "person_a",
           "reactor": "person_c",
           "roll": {
-            "admitted": false,
-            "rollId": "roll_45",
-            "result": 9,
-            "eligible": true
-          }
-        },
-        {
-          "attempt": 2,
-          "roundId": "round_48",
-          "initiator": "person_a",
-          "reactor": "person_c",
-          "roll": {
-            "admitted": false,
-            "rollId": "roll_60",
-            "result": 5,
-            "eligible": true
-          }
-        },
-        {
-          "attempt": 3,
-          "roundId": "round_63",
-          "initiator": "person_a",
-          "reactor": "person_c",
-          "roll": {
-            "admitted": false,
-            "rollId": "roll_75",
-            "result": 1,
-            "eligible": true
-          }
-        },
-        {
-          "attempt": 4,
-          "roundId": "round_78",
-          "initiator": "person_a",
-          "reactor": "person_c",
-          "roll": {
             "admitted": true,
-            "rollId": "roll_90",
-            "result": 12,
+            "rollId": "roll_45",
+            "result": 19,
             "eligible": true
           }
         }
       ],
-      "abandonedRounds": [
-        {
-          "attempt": 1,
-          "roundId": "round_33",
-          "rollResult": 9
-        },
-        {
-          "attempt": 2,
-          "roundId": "round_48",
-          "rollResult": 5
-        },
-        {
-          "attempt": 3,
-          "roundId": "round_63",
-          "rollResult": 1
-        }
-      ],
+      "abandonedRounds": [],
       "pointIds": [
-        "point_79",
-        "point_86",
-        "point_87",
-        "point_88",
-        "point_89"
+        "point_34",
+        "point_41",
+        "point_42",
+        "point_43",
+        "point_44"
       ],
       "scenePoints": [],
       "finalState": {
@@ -5490,7 +5438,7 @@
         {
           "task": "reaction",
           "key": "person_a",
-          "at": 1793257951145,
+          "at": 1793258499097,
           "source": "model",
           "prompt": "你是反应描写器。所有文本必须使用简体中文。\n时间：2026-10-27T09:00:04\n角色 林川（id=person_a）：位于走廊，精神值10。任务：留在走廊守门，不碰盒子(task_watch,未完成)\n角色 周宁（id=person_c）：位于门厅，精神值10。任务：完成压力试验(task_pressure,未完成)；完成恢复练习(task_recover,未完成)\n地点：走廊(id=corridor)、门厅(id=hall)\n物品：盒子（id=box，位于走廊）\n发起者 林川 的行动：推开门厅深处的重门，示意同伴到门边一起撑住。\n周宁 已被卷入（判定已准入）。写一句 周宁 的第三人称反应行动，不超过 30 字；\n只写这个人的反应动作，不要重复发起者的行动，不要写结果、心理活动、精神值、理智或任务状态。\n只输出 JSON：{\"text\":\"<反应行动>\"}",
           "promptChars": 388,
@@ -5506,30 +5454,30 @@
           "completion": {
             "raw": "{\"text\":\"推开门厅深处的重门，示意周宁到门边一起撑住。\"}",
             "finishReason": "stop",
-            "firstTokenMs": 7406.89999961853,
-            "wallMs": 9324.824999809265,
+            "firstTokenMs": 7931.025000572205,
+            "wallMs": 10137.10000038147,
             "timings": {
               "cache_n": 0,
               "prompt_n": 246,
-              "prompt_ms": 7206.289,
-              "prompt_per_token_ms": 29.293857723577236,
-              "prompt_per_second": 34.136849077243504,
+              "prompt_ms": 7716.389,
+              "prompt_per_token_ms": 31.367434959349595,
+              "prompt_per_second": 31.880196812265428,
               "predicted_n": 23,
-              "predicted_ms": 1994.94,
-              "predicted_per_token_ms": 90.67909090909092,
-              "predicted_per_second": 11.027900588488876
+              "predicted_ms": 2290.916,
+              "predicted_per_token_ms": 104.13254545454546,
+              "predicted_per_second": 9.603145641306796
             }
           },
           "context": {
             "sourceActionText": "推开门厅深处的重门，示意同伴到门边一起撑住。",
             "memberId": "person_c"
           },
-          "ms": 9325
+          "ms": 10137
         },
         {
           "task": "targets",
           "key": "person_c",
-          "at": 1793257955517,
+          "at": 1793258503770,
           "source": "model",
           "prompt": "你是目标判定器。所有文本必须使用简体中文。\n时间：2026-10-27T09:00:04\n角色 林川（id=person_a）：位于走廊，精神值10。任务：留在走廊守门，不碰盒子(task_watch,未完成)\n角色 周宁（id=person_c）：位于门厅，精神值10。任务：完成压力试验(task_pressure,未完成)；完成恢复练习(task_recover,未完成)\n地点：走廊(id=corridor)、门厅(id=hall)\n物品：盒子（id=box，位于走廊）\n行动（发起者 周宁，id=person_c）：推开门厅深处的重门，示意周宁到门边一起撑住。\n判断该行动是否指向场上另一名角色。行动文本中出现的角色名字，按状态里的 id 输出；目标必须是状态里列出的其他角色。\n不要指向发起者自己，也不要指向已经行动过的角色。不指向任何角色就输出空数组。\n只输出 JSON：{\"targets\":[{\"targetId\":\"<被指向角色的id>\"}]} 或 {\"targets\":[]}",
           "promptChars": 449,
@@ -5545,29 +5493,29 @@
           "completion": {
             "raw": "{\"targets\":[]}",
             "finishReason": "stop",
-            "firstTokenMs": 3780.449999809265,
-            "wallMs": 4192.89999961853,
+            "firstTokenMs": 4049.010000228882,
+            "wallMs": 4509.430000305176,
             "timings": {
               "cache_n": 146,
               "prompt_n": 117,
-              "prompt_ms": 3604.629,
-              "prompt_per_token_ms": 30.80879487179487,
-              "prompt_per_second": 32.4582640821011,
+              "prompt_ms": 3848.339,
+              "prompt_per_token_ms": 32.891786324786324,
+              "prompt_per_second": 30.40272699468524,
               "predicted_n": 6,
-              "predicted_ms": 520.835,
-              "predicted_per_token_ms": 104.167,
-              "predicted_per_second": 9.599969280098303
+              "predicted_ms": 583.711,
+              "predicted_per_token_ms": 116.7422,
+              "predicted_per_second": 8.565882774181059
             }
           },
           "context": null,
-          "ms": 4193
+          "ms": 4509
         },
         {
           "task": "results",
-          "key": "group_80",
-          "at": 1793257964242,
+          "key": "group_35",
+          "at": 1793258513131,
           "source": "model",
-          "prompt": "你是结果判定器。所有文本必须使用简体中文。\n时间：2026-10-27T09:00:04\n角色 林川（id=person_a）：位于走廊，精神值10。任务：留在走廊守门，不碰盒子(task_watch,未完成)\n角色 周宁（id=person_c）：位于门厅，精神值10。任务：完成压力试验(task_pressure,未完成)；完成恢复练习(task_recover,未完成)\n地点：走廊(id=corridor)、门厅(id=hall)\n物品：盒子（id=box，位于走廊）\n本组冻结行动与判定：\n- id=person_c（周宁）：推开门厅深处的重门，示意周宁到门边一起撑住。；判定：无（单人行动，没有反应判定）\n- id=person_a（林川）：推开门厅深处的重门，示意同伴到门边一起撑住。；判定：骰点 12 / 阈值 11 → 准入\n为每个成员写一句第三人称结算结果，只描述这些冻结行动的直接后果。\n不得新增行动文本中没有的事件（撤退、受伤、耗尽等都不算直接后果）；判定为“未准入”的关系必须写成没有成功，判定为“准入”的不得写成失败。\n只输出 JSON 对象，必须恰好包含这些键：\"person_c\", \"person_a\"",
+          "prompt": "你是结果判定器。所有文本必须使用简体中文。\n时间：2026-10-27T09:00:04\n角色 林川（id=person_a）：位于走廊，精神值10。任务：留在走廊守门，不碰盒子(task_watch,未完成)\n角色 周宁（id=person_c）：位于门厅，精神值10。任务：完成压力试验(task_pressure,未完成)；完成恢复练习(task_recover,未完成)\n地点：走廊(id=corridor)、门厅(id=hall)\n物品：盒子（id=box，位于走廊）\n本组冻结行动与判定：\n- id=person_c（周宁）：推开门厅深处的重门，示意周宁到门边一起撑住。；判定：无（单人行动，没有反应判定）\n- id=person_a（林川）：推开门厅深处的重门，示意同伴到门边一起撑住。；判定：骰点 19 / 阈值 11 → 准入\n为每个成员写一句第三人称结算结果，只描述这些冻结行动的直接后果。\n不得新增行动文本中没有的事件（撤退、受伤、耗尽等都不算直接后果）；判定为“未准入”的关系必须写成没有成功，判定为“准入”的不得写成失败。\n只输出 JSON 对象，必须恰好包含这些键：\"person_c\", \"person_a\"",
           "promptChars": 519,
           "raw": "{\n  \"person_c\": \"没有成功\",\n  \"person_a\": \"没有成功\"\n}",
           "output": {
@@ -5582,22 +5530,22 @@
           "completion": {
             "raw": "{\n  \"person_c\": \"没有成功\",\n  \"person_a\": \"没有成功\"\n}",
             "finishReason": "stop",
-            "firstTokenMs": 6140.720000267029,
-            "wallMs": 8274.970000267029,
+            "firstTokenMs": 6520.369999885559,
+            "wallMs": 8968.034999847412,
             "timings": {
               "cache_n": 153,
               "prompt_n": 178,
-              "prompt_ms": 5674.285,
-              "prompt_per_token_ms": 31.87800561797753,
-              "prompt_per_second": 31.369591058609146,
+              "prompt_ms": 5977.774,
+              "prompt_per_token_ms": 33.583,
+              "prompt_per_second": 29.776970491022244,
               "predicted_n": 25,
-              "predicted_ms": 2554.48,
-              "predicted_per_token_ms": 106.43666666666667,
-              "predicted_per_second": 9.395258526197113
+              "predicted_ms": 2929.306,
+              "predicted_per_token_ms": 122.05441666666667,
+              "predicted_per_second": 8.193066890246358
             }
           },
           "context": {
-            "groupId": "group_80",
+            "groupId": "group_35",
             "members": [
               {
                 "memberId": "person_c",
@@ -5610,8 +5558,8 @@
                 "rollRefs": [
                   {
                     "targetId": "person_c",
-                    "rollId": "roll_90",
-                    "result": 12,
+                    "rollId": "roll_45",
+                    "result": 19,
                     "eligible": true,
                     "admitted": true
                   }
@@ -5619,12 +5567,12 @@
               }
             ]
           },
-          "ms": 8275
+          "ms": 8968
         },
         {
           "task": "updates",
-          "key": "group_80",
-          "at": 1793258010087,
+          "key": "group_35",
+          "at": 1793258558638,
           "source": "model",
           "prompt": "你是世界状态更新器。所有文本必须使用简体中文。\n时间：2026-10-27T09:00:04\n角色 林川（id=person_a）：位于走廊，精神值10。任务：留在走廊守门，不碰盒子(task_watch,未完成)\n角色 周宁（id=person_c）：位于门厅，精神值10。任务：完成压力试验(task_pressure,未完成)；完成恢复练习(task_recover,未完成)\n地点：走廊(id=corridor)、门厅(id=hall)\n物品：盒子（id=box，位于走廊）\n已确认结算结果：{\"person_c\":\"没有成功\",\"person_a\":\"没有成功\"}\n根据已发生的事实产出世界状态更新候选。\n字段契约：\n- positionSet：{\"containerId\":\"<地点id>\",\"slotId\":null,\"relativeTo\":null}\n- appearanceChanges：数组，元素 {\"id\":\"draft_1\",\"text\":\"<外貌变化>\",\"supersedes\":[]}\n- tasksAchieved：数组，元素必须是状态中已有的任务 id，且该任务属于同一个角色\n- subtasksAdded：数组，元素 {\"id\":\"draft_1\",\"ownerId\":\"<角色id>\",\"parentTaskId\":null,\"goal\":\"<新任务>\",\"status\":\"pending\"}\n- personalityChanges：数组，元素 {\"id\":\"draft_1\",\"text\":\"<个性变化>\",\"supersedes\":[]}；只有本批有任务达成时才允许\n- sanitySet：0 到 100 的整数，只写最终值；只有本批有该角色的个性变化时才允许\n因果规则：任务达成可以单独出现（个性变化只是可能发生，不是必须）；没有新达成任务就不要写个性；没有个性变化就不要写理智。\n- position 阶段只允许字段 positionSet。\n- appearance 阶段只允许字段 appearanceChanges。\n- tasks 阶段只允许字段 tasksAchieved。\n- subtasks 阶段只允许字段 subtasksAdded。\n- personality 阶段只允许字段 personalityChanges。\n- sanity 阶段只允许字段 sanitySet。\nchanges 的键只能是状态中列出的角色 id；不得嵌套 changes；不得输出契约外的字段。\n示例：[{\"stage\":\"tasks\",\"changes\":{\"<角色id>\":{\"tasksAchieved\":[\"<状态中已有任务id>\"]}}}]\n只输出 JSON 数组，按 position→appearance→tasks→subtasks→personality→sanity 顺序；只写实际发生变化的阶段：[{\"stage\":\"tasks\",\"changes\":{\"<角色id>\":{\"tasksAchieved\":[\"<状态中已有任务id>\"]}}}]\n无变化输出 []。",
           "promptChars": 1321,
@@ -5683,22 +5631,22 @@
           "completion": {
             "raw": "[\n  {\n    \"stage\": \"tasks\",\n    \"changes\": {\n      \"person_a\": {\n        \"tasksAchieved\": [\"task_watch\"]\n      }\n    }\n  },\n  {\n    \"stage\": \"appearanceChanges\",\n    \"changes\": {\n      \"person_c\": {\n        \"text\": \"外貌变化\"\n      }\n    }\n  },\n  {\n    \"stage\": \"subtasksAdded\",\n    \"changes\": {\n      \"person_c\": {\n        \"parentTaskId\": \"task_pressure\",\n        \"goal\": \"task_recover\",\n        \"status\": \"pending\"\n      }\n    }\n  },\n  {\n    \"stage\": \"personalityChanges\",\n    \"changes\": {\n      \"person_c\": {\n        \"text\": \"个性变化\"\n      }\n    }\n  },\n  {\n    \"stage\": \"sanitySet\",\n    \"changes\": {\n      \"person_c\": {\n        \"value\": 0\n      }\n    }\n  }\n]",
             "finishReason": "stop",
-            "firstTokenMs": 18782.800000190735,
-            "wallMs": 45844.545000076294,
+            "firstTokenMs": 19252.82500076294,
+            "wallMs": 45506.38000011444,
             "timings": {
               "cache_n": 0,
               "prompt_n": 594,
-              "prompt_ms": 18585.27,
-              "prompt_per_token_ms": 31.288333333333334,
-              "prompt_per_second": 31.96079475842966,
+              "prompt_ms": 19063.249,
+              "prompt_per_token_ms": 32.09301178451179,
+              "prompt_per_second": 31.159431427454997,
               "predicted_n": 200,
-              "predicted_ms": 27194.549,
-              "predicted_per_token_ms": 136.65602512562813,
-              "predicted_per_second": 7.3176429585208425
+              "predicted_ms": 26392.141,
+              "predicted_per_token_ms": 132.62382412060302,
+              "predicted_per_second": 7.54012340264475
             }
           },
           "context": null,
-          "ms": 45845
+          "ms": 45506
         }
       ],
       "narration": [],
@@ -5709,7 +5657,7 @@
       "ops": [
         {
           "op": "lease_renew",
-          "ms": 178
+          "ms": 140
         },
         {
           "op": "get_context",
@@ -5717,58 +5665,58 @@
         },
         {
           "op": "list_points",
-          "ms": 44
+          "ms": 43
         },
         {
           "op": "get_state",
-          "ms": 53
+          "ms": 49
         },
         {
           "op": "get_context",
-          "ms": 39
+          "ms": 47
         },
         {
           "op": "allocate_ids",
-          "ms": 150
+          "ms": 127
         },
         {
           "op": "preview_point",
-          "ms": 42
+          "ms": 49
         },
         {
           "op": "checkpoint_extend_group",
-          "ms": 178
+          "ms": 162
         },
         {
           "op": "checkpoint_extend_group",
-          "ms": 246
+          "ms": 212
         },
         {
           "op": "checkpoint_close_group",
-          "ms": 203
+          "ms": 180
         },
         {
           "op": "lease_renew",
-          "ms": 144
+          "ms": 142
         },
         {
           "op": "get_state",
-          "ms": 73,
+          "ms": 63,
           "tag": "probe"
         },
         {
           "op": "list_points",
-          "ms": 55,
+          "ms": 40,
           "tag": "probe"
         },
         {
           "op": "get_context",
-          "ms": 57,
+          "ms": 40,
           "tag": "cleanup"
         },
         {
           "op": "round_conclusion_cancel",
-          "ms": 205,
+          "ms": 156,
           "tag": "setup"
         }
       ],
@@ -5786,11 +5734,11 @@
             "error": "reaction copies the source action"
           },
           {
-            "call": "results:group_80",
+            "call": "results:group_35",
             "error": "result for person_c is not traceable to the frozen action or its tasks: 没有成功"
           },
           {
-            "call": "updates:group_80",
+            "call": "updates:group_35",
             "error": "illegal stage appearanceChanges"
           }
         ],
@@ -5800,8 +5748,8 @@
     }
   },
   "lifecycle": {
-    "apiOrigin": "http://127.0.0.1:50793",
-    "viteOrigin": "http://127.0.0.1:50794",
+    "apiOrigin": "http://127.0.0.1:54914",
+    "viteOrigin": "http://127.0.0.1:54915",
     "serviceReady": true,
     "harnessReady": true
   },
@@ -6045,7 +5993,7 @@
     "note": "Model calls are counted by source; program-owned pointPlan/time calls are reported separately. accepted=false means the protocol completed but settlement/narration semantics failed or still need review; see the scene evidence."
   },
   "retainedEvidence": {
-    "privateDir": "D:\\others\\Jity\\.local\\world-b3-1793257529366",
+    "privateDir": "D:\\others\\Jity\\.local\\world-b3-1793258043749",
     "dbSnapshot": "artifacts/world-chain/b3-run-db-v2"
   }
 }
