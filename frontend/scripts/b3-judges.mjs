@@ -240,8 +240,12 @@ function judgeReaction(probe, context) {
   const subject = subjectActor(reactionText, context);
   if (member && subject && subject !== member) return fail(id, true, true, `reaction attributed to ${subject}, expected ${member}: ${reactionText}`);
   if (hasStateClaim(reactionText)) return fail(id, true, true, `reaction claims a state change: ${reactionText}`);
-  const sourceAction = text(call?.context?.sourceActionText ?? probe.expect?.sourceActionText);
+  const sourceAction = text(call?.context?.sourceActionText ?? probe.expect?.sourceActionText ?? probe.input?.sourceActionText);
   if (sourceAction && copiesAction(reactionText, sourceAction)) return fail(id, true, true, `reaction copies the source action: ${reactionText}`);
+  if (!sourceAction) {
+    return review(id, true, true, 'source action context was not archived; traceability unverified',
+      { note: reactionText, checked: ['attribution', 'no-state-claim'] });
+  }
   const evidence = [sourceAction, ...taskGoalsOf(context, member)];
   if (!traceableTo(reactionText, evidence, context)) {
     return fail(id, true, true, `reaction is not traceable to the source action or the member's tasks: ${reactionText}`);
@@ -341,7 +345,7 @@ function judgeResults(probe, context) {
     { note: JSON.stringify(modelOutput), reasons: reviewNotes,
       checked: ['per-member attribution', 'roster actors', 'pure-verdict exemption', 'dice evidence'] });
   return pass(id, true, true, 'results match roster, attribution, dice agreement and traceability/pure-verdict rules',
-    { checked: ['per-member attribution', 'roster actors', 'traceability/pure-verdict', 'dice agreement'] });
+    ['per-member attribution', 'roster actors', 'traceability/pure-verdict', 'dice agreement']);
 }
 
 // ---------- updates ----------
@@ -638,8 +642,11 @@ export function judgeScene(scene, context) {
         if (hasStateClaim(reactionText)) errors.push({ call: label, error: `reaction claims a state change: ${reactionText}` });
         if (call.context?.sourceActionText && copiesAction(reactionText, call.context.sourceActionText)) errors.push({ call: label, error: 'reaction copies the source action' });
         if (!member) addReview({ call: label, review: 'reaction member context was not archived' });
-        const evidence = [call.context?.sourceActionText, ...taskGoalsOf(context, member)];
-        if (!traceableTo(reactionText, evidence, context)) errors.push({ call: label, error: `reaction is not traceable to the source action or the member's tasks: ${reactionText}` });
+        if (!call.context?.sourceActionText) {
+          addReview({ call: label, review: 'source action context was not archived; traceability unverified' });
+        } else if (!traceableTo(reactionText, [call.context.sourceActionText, ...taskGoalsOf(context, member)], context)) {
+          errors.push({ call: label, error: `reaction is not traceable to the source action or the member's tasks: ${reactionText}` });
+        }
         break;
       }
       case 'results': {

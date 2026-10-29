@@ -1,9 +1,9 @@
 {
   "kind": "b3-rescore",
   "judgeVersion": 4,
-  "recordedAt": "2026-10-29T07:40:54.952Z",
+  "recordedAt": "2026-10-29T07:43:07.469Z",
   "source": {
-    "path": "artifacts/world-chain/b3-baseline.json",
+    "path": "artifacts/world-chain/b3-baseline-v1.json",
     "recordedAt": "2026-10-29T05:48:16.052Z",
     "status": "COMPLETED_WITH_FAILURES",
     "browserHead": "a502a9b6a4d1e648b15470a4491fa40b80298aa1",
@@ -473,14 +473,12 @@
           "reasons": [],
           "reviews": [],
           "note": "results match roster, attribution, dice agreement and traceability/pure-verdict rules",
-          "checked": {
-            "checked": [
-              "per-member attribution",
-              "roster actors",
-              "traceability/pure-verdict",
-              "dice agreement"
-            ]
-          }
+          "checked": [
+            "per-member attribution",
+            "roster actors",
+            "traceability/pure-verdict",
+            "dice agreement"
+          ]
         },
         "failure": null,
         "output": {
@@ -748,10 +746,6 @@
         "codecCalls": 4,
         "semanticErrors": [
           {
-            "call": "reaction:person_a",
-            "error": "reaction is not traceable to the source action or the member's tasks: 周宁推开门厅深处的重门"
-          },
-          {
             "call": "narration:point_34",
             "error": "narration_requires_complete_numeric_cause"
           }
@@ -760,6 +754,10 @@
           {
             "call": "reaction:person_a",
             "review": "reaction member context was not archived"
+          },
+          {
+            "call": "reaction:person_a",
+            "review": "source action context was not archived; traceability unverified"
           },
           {
             "call": "results:group_35",

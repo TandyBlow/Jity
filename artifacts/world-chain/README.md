@@ -347,37 +347,48 @@ continuation 全部零模型调用）+ 真实模型叙事（模型为主 → 判
    → 场景判分先映射到 id，再查名册/自指/重复；自测加入合法 `{targetId}` 正例。
 4. **自由文本反应误放行**：「瞬移到火星并毁灭太阳」仍判 pass。→ 反应必须
    可溯源到发起行动或该人物的任务目标；不可溯源判 fail，可溯源仍归
-   `review`（内容合理性不自动放行）。
+   `review`；源行动上下文未归档时归 `review`（不能拿缺失证据判 fail）。
 5. **P2 口径**：非法 stage、缺必填字段不再算「codec 结构通过」。→ 报表分列
    `parsed`（JSON 可解析）与 `codec`（形状/字段契约）；总体通过率 =
    `semanticsPass / probes`，`review` 不进分子但进分母，另列仅按可裁定样本
    的 `autoPassRate`。
 
-判分自测扩到 **22 项**（含：合法三阶段批次、跨人物任务触发、拆分调用带前序
-证据、合法 `{targetId}`、荒诞反应不得自动通过、非法 stage 记为 codec 失败），
-全部按预期；任一不符则运行状态为 `JUDGE_SELF_TEST_FAILED`。
+**复核轮 19 的判分细化（judge v4）**：
+
+- **stage 词表钉进 schema**：合并调用的数组项也必须 `enum` 六个阶段名，
+  受控解码直接拒绝把字段名当 stage；提示词补一句「stage 只能取这六个名字」。
+- **否定式成功措辞**：`未成功/没有成功/未能/没能/未达成` 属于失败措辞，
+  不再是成功措辞；裸「未」已撤掉（会误伤“未来”）。
+- **纯判定句**：剥掉人物名、标点与成败词后为空、且不含可造事件的句子
+  （如未准入关系要求的「未成功」）免于可追溯性检查；无骰点成员的裸成败
+  判定没有证据支撑，归 `review` 而不是通过。
+- **骰点不符单独标注**：准入写成失败、未准入写成成功记 `[dice mismatch]`，
+  与可追溯性失败分开；每个成员的错误全部收集，首个错误不再掩盖后续违规。
+- 判分自测扩到 **27 项**，覆盖上述正反例；任一不符则运行状态为
+  `JUDGE_SELF_TEST_FAILED`。
 
 ### 6.3 归档与重评分
 
 - `b3-baseline-v1.json` + `b3-run-db/`：第一版归档（harness `ed3eb0b`，
   browser `a502a9b`，13 项旧契约探针）。**冻结，不作基线引用。**
-- `b3-rescore-v1.json`：judge v2 对 v1 的首次重评分（历史记录）。
-- `b3-rescore-v1-j3.json`：**judge v3 重评分 v1**（12 项旧探针）：
-  parsed 12/12、codec 10/12、**pass 4 / fail 6 / review 2**，总体 33.3%，
-  可裁定样本 40.0%。
+- `b3-rescore-v1.json`、`b3-rescore-v1-j3.json`：judge v2/v3 的历史重评分。
+- `b3-rescore-v1-j4.json`：**judge v4 重评分 v1**（12 项旧探针）：
+  parsed 12/12、codec 10/12、**pass 5 / fail 6 / review 1**，总体 41.7%，
+  可裁定样本 45.5%。
 - `b3-baseline-v2.json` + `b3-run-db-v2/`：第一轮修正后的 canonical 运行
   （browser `88b59d`，干净树；server `4e17025`）：17 项探针 + 两场景；
-  报告内嵌的是 judge v2 判定，**正式口径以下一条 v3 重评分为准**。
-- `b3-rescore-v2-j3.json`：**judge v3 重评分 v2 原始输出**：parsed 17/17、
-  codec 14/17、**pass 2 / fail 12 / review 3**，总体 **11.8%**，可裁定样本
-  14.3%。原始模型输出与数据库原样保留。
+  报告内嵌的是 judge v2 判定，**正式口径以 judge v4 重评分为准**。
+- `b3-rescore-v2-j3.json`：judge v3 重评分 v2（历史记录）。
+- `b3-rescore-v2-j4.json`：**judge v4 重评分 v2 原始输出**（正式口径）：
+  parsed 17/17、codec 14/17、**pass 2 / fail 10 / review 5**，总体
+  **11.8%**，可裁定样本 16.7%。原始模型输出与数据库原样保留。
 
 配置：Qwen3-0.6B Q4_K_M；结算端口 context 2048、temperature 0、seed 42、
 json_schema strict、maxTokens 64–384、timeout 110s；叙事仍是已交付
 narration-polisher + checkFactNarration（本轮未触发）；真实 Edge headless、
 跨源隔离；真实 Python 持久服务。v2 运行模型加载 11.7s。
 
-### 6.4 v2 探针（judge v3 重评分；解析 17/17，codec 14/17，pass 2，fail 12，review 3）
+### 6.4 v2 探针（judge v4 重评分；解析 17/17，codec 14/17，pass 2，fail 10，review 5）
 
 | 探针 | codec | 判定 | 观察（原始输出） |
 | --- | --- | --- | --- |
@@ -387,9 +398,9 @@ narration-polisher + checkFactNarration（本轮未触发）；真实 Edge headl
 | targets_directed | ✓ | fail | 点名林川，仍返回 `[]` |
 | targets_solo | ✓ | pass | 空集 |
 | reaction_joint | ✓ | review | 「林川将盒子稳稳地放在门框上」——可溯源于任务，内容待人工复核 |
-| results_joint | ✓ | fail | 「没有成功」——不可溯源到冻结行动/任务 |
-| results_rejected_roll | ✓ | fail | 「周宁未成功」——同上 |
-| results_admitted_roll | ✓ | fail | 「周宁未成功」——同上 |
+| results_joint | ✓ | review | 两人均「没有成功」——无可造事件，但无骰点证据的裸判定待复核 |
+| results_rejected_roll | ✓ | review | 有未准入骰点的一方是契约写法的纯判定；另一人无骰点的裸判定仍待复核 |
+| results_admitted_roll | ✓ | fail | 准入一方写成「林川未成功」——`dice mismatch` |
 | updates_merged | ✗ | fail | 把 `appearanceChanges/subtasksAdded/...` 当 stage 名 |
 | updates_none_expected | ✗ | fail | 同批非法 stage；无变化场景仍产出任务变化 |
 | updates_stage_tasks | ✓ | fail | `tasksAchieved:["person_1"]`——虚构任务 id，且归属 person_a |
@@ -399,40 +410,44 @@ narration-polisher + checkFactNarration（本轮未触发）；真实 Edge headl
 | continuation_unrelated | ✓ | fail | 同上；`protagonistRelevance` 未提主角 |
 | continuation_done | ✓ | fail | 无驱动仍 continue |
 
-### 6.5 场景（v2 原始运行；judge v3 重评分）
+### 6.5 场景（v2 原始运行；judge v4 重评分）
 
 两场景均为 `COMPLETED_WITH_FAILURES`，失败即证据，未用脚本候选替换。
 
 **普通行动点（setup 0.3s，walk 86.8s，4 次模型调用 + 1 次程序 pointPlan）**
 
 - person_a：action「转身进入走廊」（11.4s）→ targets `[]`（7.8s）→
-  results「没有成功」（9.7s，不可溯源）→ updates 57.0s 输出非法 stage，
-  端口在发往服务端前拒绝，控制器停止，round 整轮 cancel，head 仍 point_13。
+  results「没有成功」（9.7s，无骰点证据的裸判定 → review）→ updates 57.0s
+  输出非法 stage，端口在发往服务端前拒绝，控制器停止，round 整轮 cancel，
+  head 仍 point_13。
 - 未提交，因此没有叙事调用；task-only 投影只有单测证据。
 
 **连锁共同结算（setup 1.4s，walk 69.7s，4 次模型调用）**
 
 - 真实 d20：result 19 一次准入（person_a→person_c，roll_45）。
 - reaction 复述发起行动（10.1s，判分 fail）→ targets `[]` → results
-  两人均「没有成功」→ updates 非法 stage（45.5s）；round cancel，未提交。
+  两人均「没有成功」（准入一方 → `dice mismatch` fail）→ updates 非法
+  stage（45.5s）；round cancel，未提交。
 - 本轮同样未到达 commit/narration；task-only 叙事链尚未在真实模型输出上复验。
 
-场景判分（v3 重评）：action 4/4 解析、3/4 codec、2 条语义错误；
-chain 4/4 解析、3/4 codec、3 条语义错误。模型/程序调用分列为
-`modelCalls`/`programCalls`。
+场景判分（v4 重评）：action 4/4 解析、3/4 codec、1 条语义错误
+（updates 非法 stage）+1 条待复核（无骰点裸判定）；chain 4/4 解析、
+3/4 codec、3 条语义错误（reaction 复述、结果骰点不符、updates 非法 stage）。
+模型/程序调用分列为 `modelCalls`/`programCalls`。
 
 ### 6.6 结论与下一步
 
 - 判分与因果边界已补齐并可回放；`review` 不计通过，旧归档可重评分。
 - 0.6B 在修正后的契约下：JSON 可解析率 17/17，codec 14/17，语义总体
-  通过率 11.8%；主要失败是目标漏选、结果不可溯源、updates 非法 stage/
-  虚构任务/因果不成立、continuation 用目标句当拟行动。
+  通过率 11.8%（pass 2 / fail 10 / review 5）；主要失败是目标漏选、
+  updates 非法 stage/虚构任务/因果不成立、continuation 用目标句当拟行动、
+  准入骰点写成失败。
 - 评测缺口仍在：初始世界生成未覆盖；自由文本结果/反应的「是否编造事件」
   只做部分自动检查，其余归人工复核；合法 updates 未出现，叙事 gate 与
   task-only Δ 的真实链路未复验；continue→自动轮→handback 整链未跑。
-- **下一步（按用户裁定）**：以同一契约、同一判分开展模型对照（提示词变体、
-  更大模型），并在出现合法 updates 的场景中复验 task-only 叙事；之后才谈
-  20 次输入验收。混合口径的 `twenty-round-v2` 仍是既有混合边界结论，B3
+- **下一步（按用户裁定）**：以同一契约、同一判分（judge v4）开展模型对照
+  （提示词变体、更大模型），并在出现合法 updates 的场景中复验 task-only
+  叙事；之后才谈 20 次输入验收。混合口径的 `twenty-round-v2` 仍是既有混合边界结论，B3
   未通过前不得宣称全模型整链。
 
 ### 6.7 复跑
