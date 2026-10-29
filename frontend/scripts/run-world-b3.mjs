@@ -70,7 +70,7 @@ if (rescoreSource) {
   }]));
   const selfTest = runJudgeSelfTests(context);
   const rescored = {
-    kind: 'b3-rescore', judgeVersion: 4, recordedAt: new Date().toISOString(),
+    kind: 'b3-rescore', judgeVersion: 5, recordedAt: new Date().toISOString(),
     source: { path: rescoreSource, recordedAt: source.recordedAt, status: source.status,
       browserHead: source.browserSource?.head ?? null, serverHead: source.serverSource?.head ?? null },
     contextFingerprint: { worldId: worldState.worldId, protagonist: context.protagonist, roster: context.roster, time: worldState.time },
@@ -121,7 +121,7 @@ const report = {
     sha256: Object.fromEntries(sources.map((file) => [file, createHash('sha256').update(readFileSync(resolve(root, file))).digest('hex')])) },
   serverSource: { head: git(a, 'rev-parse', 'HEAD'), status: git(a, 'status', '--short'),
     sha256: Object.fromEntries(serverFiles.map(({ path, file }) => [path, createHash('sha256').update(readFileSync(file)).digest('hex')])) },
-  scope, judgeVersion: 4, modelLoad: null, modelConfig: {
+  scope, judgeVersion: 5, modelLoad: null, modelConfig: {
     settlement: { model: '/models/Qwen3-0.6B-Q4_K_M.gguf', contextSize: 2048, temperature: 0, seed: 42,
       maxTokens: 'per task (64-384)', timeoutMs: 110_000, constrainedDecoding: 'json_schema strict' },
     narration: { model: null, contextSize: 2048, maxTokens: 96, temperature: [0, 0.7], timeoutMs: 110_000,
@@ -979,7 +979,7 @@ ${view}
     report.tasks.probes = report.tasks.probes.map((probe) => ({ ...probe, judgment: judgeProbe(probe, judgeContext()) }));
     report.tasks.rates = summarizeProbes(report.tasks.probes);
     report.tasks.judgeSelfTest = runJudgeSelfTests(judgeContext());
-    report.judgeVersion = 4;
+    report.judgeVersion = 5;
     save();
     console.log(`[world-b3] task probes recorded: ${report.tasks.probes.length} ` +
       `(parsed ${report.tasks.rates.parsedPass}/${report.tasks.rates.probes}, ` +
