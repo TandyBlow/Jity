@@ -20,14 +20,14 @@
 - `b3-baseline-v1.json` + `b3-run-db/` —— B3 第一版归档（2026-10-29，
   harness `ed3eb0b`）：13 项旧契约探针。经复核后**冻结，不作基线引用**；
   其证据被重新判分如下一条。
-- `b3-rescore-v1.json` / `b3-rescore-v1-j3.json` —— v1 证据的两次重评分
-  （judge v2 / v3）。v3：parsed 12/12、codec 10/12、4 pass / 6 fail /
-  2 review，总体 33.3%。旧结论「7/12 语义」撤回。
+- `b3-rescore-v1.json` / `-v1-j3` / `-v1-j4` —— v1 证据的历次重评分
+  （judge v2 / v3 / v4）。**正式口径 j4**：parsed 12/12、codec 10/12、
+  5 pass / 6 fail / 1 review，总体 41.7%。旧结论「7/12 语义」撤回。
 - `b3-baseline-v2.json` + `b3-run-db-v2/` —— B3 第一次修正后的 canonical
-  运行（2026-10-29）：17 项探针 + 两场景。报告内嵌 judge v2 判定；正式
-  口径用 `b3-rescore-v2-j3.json`（parsed 17/17、codec 14/17、pass 2 /
-  fail 12 / review 3，总体 11.8%）。两个场景仍在提交前停止，**不得读作
-  整链验收通过**。该文件见 `b3-rescore-v2-j3.json`。
+  运行（2026-10-29）：17 项探针 + 两场景。报告内嵌 judge v2 判定；**正式
+  口径用 `b3-rescore-v2-j4.json`**（parsed 17/17、codec 14/17、pass 2 /
+  fail 10 / review 5，总体 11.8%）。两个场景仍在提交前停止，**不得读作
+  整链验收通过**。
 
 脚本：`frontend/scripts/run-world-chain-full.mjs`（两场景，`--phase
 action|chain|both`）；`frontend/scripts/run-world-twenty.mjs`（二十次输入，
