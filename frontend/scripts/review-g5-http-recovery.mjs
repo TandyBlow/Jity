@@ -149,9 +149,10 @@ console.log('[g5-http] service ready');
 // ---- DB evidence (direct read of the real SQLite file) ----
 const dbQuery = (sql, params = []) => JSON.parse(execFileSync(option('--python', 'python'),
   ['-X', 'utf8', '-c',
-    `import sqlite3,json,sys
+    `import sqlite3,json
 con=sqlite3.connect(r'file:${dbPath.replaceAll('\\', '/')}?mode=ro',uri=True)
-print(json.dumps([dict(zip([d[0] for d in con.execute(sql).description], row)) for row in con.execute(sql, ${JSON.stringify(params)})]))`,
+cur=con.execute(${JSON.stringify(sql)}, ${JSON.stringify(params)})
+print(json.dumps([dict(zip([d[0] for d in cur.description], row)) for row in cur.fetchall()]))`,
   ], { encoding: 'utf8' }));
 const dbAllocations = (worldId) => dbQuery(
   'SELECT allocation_key, slot_key, id, kind FROM world_id_allocations WHERE world_id=? ORDER BY allocation_key, slot_key', [worldId]);
