@@ -1451,3 +1451,91 @@ describe('slot/continuation guards (2026-10-26 review)', () => {
     expect(driver.pendingDecision()).toEqual({ kind: 'stop', reason: 'continuation_context_missing:workingState,roundChanges' });
   });
 });
+
+describe('round identity sink (review 20 follow-up)', () => {
+  const playerWorld = () => mkWorld({
+    head: { pointId: 'p1', version: 1, stateDigest: 'd1', narrationStatus: 'ready' },
+    advance: { advanceId: 'adv1', inputId: 'in1', intentStatus: 'consumed', inputAvailable: true },
+    activeRoundId: 'r1',
+    round: { roundId: 'r1', trigger: 'player', order: ORDER, cursor: 6, actedIds: [], visitedIds: ORDER, conclusion: null },
+  });
+  const automaticWorld = (player: WorldContext): WorldContext => ({
+    ...player, activeRoundId: 'r2',
+    round: { roundId: 'r2', trigger: 'automatic', order: ['person_c'], cursor: 0, actedIds: [], visitedIds: [], conclusion: null },
+  });
+  const continueConclusion = { kind: 'continue' as const, closedBy: 'model' as const, cancelReason: null, candidateCharacterIds: ['person_c'], nextRoundId: 'r2' };
+  const concludeTransport = (world: WorldContext, data: Json) => new ScriptedTransport([
+    { op: 'round_conclusion_conclude', respond: () => ({ world, control: mkControl({ phase: 'complete', revision: 1 }), work: null, data }) },
+  ]);
+  const driving = (player: WorldContext, transport: ScriptedTransport, memory: ControllerMemory) =>
+    new ControllerDriver({ transport, model: new ScriptedModel([]) }, memory, { world: player, control: mkControl({ phase: 'assess_continuation' }) });
+
+  test('a sink patch is a delta — a stale whole-memory snapshot cannot erase recovered ids or keys', async () => {
+    const player = playerWorld();
+    const stale = { ids: {}, roundAllocations: {}, allocatedKeys: ['stale_key'] }; // 恢复前的旧内存快照
+    const memory = memoryWithAdvanceStart({
+      playerInput: null, ids: { point: 'recovered_point', 'group:person_a': 'recovered_group' },
+      allocatedKeys: ['existing_key'], continuation: continueConclusion,
+    });
+    const driver = driving(player, concludeTransport(automaticWorld(player), { kind: 'continue', roundId: 'r1', nextRoundId: 'r2' }), memory);
+    driver.setRoundIdentitySink(async (roundId) => ({
+      ids: { ...stale.ids, 'group:person_c': 'new_group' },
+      roundAllocations: { ...stale.roundAllocations, [roundId]: { allocationKey: 'new_key', slots: [] } },
+      allocatedKeys: [...stale.allocatedKeys, 'new_key'],
+    }));
+    await driver.step();
+    expect(driver.getMemory()).toMatchObject({
+      ids: { point: 'recovered_point', 'group:person_a': 'recovered_group', 'group:person_c': 'new_group' },
+      allocatedKeys: ['existing_key', 'stale_key', 'new_key'],
+    });
+    expect(driver.getMemory().roundAllocations.r2).toEqual({ allocationKey: 'new_key', slots: [] });
+  });
+
+  test('the sink fires once for the confirmed continue — a handback over the finished automatic round does not', async () => {
+    const player = playerWorld();
+    const calls: { roundId: Id; order: Id[] }[] = [];
+    const driver = driving(player, concludeTransport(automaticWorld(player), { kind: 'continue', roundId: 'r1', nextRoundId: 'r2' }),
+      memoryWithAdvanceStart({ playerInput: null, continuation: continueConclusion }));
+    driver.setRoundIdentitySink((roundId, order) => { calls.push({ roundId, order }); });
+    await driver.step();
+    expect(calls).toEqual([{ roundId: 'r2', order: ['person_c'] }]);
+
+    // 服务端 handback 后保留已结束 automatic round 的摘要：trigger 仍是 automatic，
+    // 但确认的结论不是 continue —— 不得再对已结束轮分配。
+    const automatic = automaticWorld(player);
+    const handback = { kind: 'handback' as const, closedBy: 'model' as const, cancelReason: null };
+    const handWorld: WorldContext = { ...automatic, round: { roundId: 'r2', trigger: 'automatic', order: ['person_c'], cursor: 0, actedIds: [], visitedIds: [], conclusion: handback } };
+    let handCalls = 0;
+    const handDriver = driving(automatic, concludeTransport(handWorld, { kind: 'handback', roundId: 'r2', nextRoundId: null }),
+      memoryWithAdvanceStart({ playerInput: null, continuation: handback }));
+    handDriver.setRoundIdentitySink(() => { handCalls++; });
+    await handDriver.step();
+    expect(handCalls).toBe(0);
+    expect(handDriver.getMemory().lastRoundIdentityError).toBeNull();
+  });
+
+  test('a missing sink is recorded, unless the next round allocation was pre-seeded', async () => {
+    const player = playerWorld();
+    const world = automaticWorld(player);
+    const response: Json = { kind: 'continue', roundId: 'r1', nextRoundId: 'r2' };
+    const bare = driving(player, concludeTransport(world, response), memoryWithAdvanceStart({ playerInput: null, continuation: continueConclusion }));
+    await bare.step();
+    expect(bare.getMemory().lastRoundIdentityError).toBe('round_identity_sink_missing:r2');
+
+    const seeded = driving(player, concludeTransport(world, response), memoryWithAdvanceStart({
+      playerInput: null, continuation: continueConclusion,
+      roundAllocations: { r2: { allocationKey: 'r2_slots', slots: [{ slotKey: 'point', kind: 'point', scope: 'r2' }] } },
+    }));
+    await seeded.step();
+    expect(seeded.getMemory().lastRoundIdentityError).toBeNull();
+  });
+
+  test('a throwing sink is recorded and keeps the recovered identities', async () => {
+    const player = playerWorld();
+    const driver = driving(player, concludeTransport(automaticWorld(player), { kind: 'continue', roundId: 'r1', nextRoundId: 'r2' }),
+      memoryWithAdvanceStart({ playerInput: null, ids: { point: 'recovered_point' }, continuation: continueConclusion }));
+    driver.setRoundIdentitySink(() => { throw new Error('allocation offline'); });
+    await driver.step();
+    expect(driver.getMemory()).toMatchObject({ lastRoundIdentityError: 'allocation offline', ids: { point: 'recovered_point' } });
+  });
+});

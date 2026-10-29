@@ -23,8 +23,11 @@ export interface WorldModelPort { generate(task: ModelTask, key: string, input: 
 export interface ControllerIo { transport: WorldTransport; model: WorldModelPort }
 /** Program-owned per-round identity allocation (review 20, ①b): continue
  * conclusions must not strand the next round with used point/groups. The sink
- * allocates via the transport (program authority, §9.3) and returns a memory
- * patch; the driver folds it into its own memory. */
+ * allocates via the transport (program authority, §9.3) and returns a DELTA
+ * patch: `ids`/`roundAllocations` merge key-wise and `allocatedKeys` unions
+ * against the driver's CURRENT memory, so a caller that built its patch from a
+ * snapshot taken before recovery cannot erase recovered identities
+ * (review 20-2). A patch is never a memory snapshot. */
 export type RoundIdentitySink =
   (roundId: Id, order: Id[]) => Promise<Partial<ControllerMemory> | void> | Partial<ControllerMemory> | void;
 
@@ -108,27 +111,50 @@ export class ControllerDriver {
    * server confirms a continue conclusion, the NEW round needs fresh point/
    * group identities that the controller cannot derive (the advance plan
    * belongs to the scenario). Program callers register this hook BEFORE
-   * running the driver; the driver invokes it with the confirmed round id and
-   * the served round order — the program allocates via the transport and
-   * writes the ids straight into memory (the driver's one memory, so recovery
-   * replacement is transparent). Returning a decision is not supported: the
-   * allocations happen inside the conclude followup, never as a step. */
+   * running the driver; the driver invokes it exactly once per CONFIRMED
+   * continue conclusion, with the server's nextRoundId and the served order of
+   * the round that round opens — the program allocates via the transport and
+   * returns a delta patch (never a whole-memory snapshot). Returning a
+   * decision is not supported: the allocations happen inside the conclude
+   * followup, never as a step. Unregistered sinks are recorded as
+   * `lastRoundIdentityError` unless the next round's allocation was
+   * pre-seeded. */
   setRoundIdentitySink(sink: RoundIdentitySink | null): void {
     this.roundIdentitySink = sink;
   }
   private roundIdentitySink: RoundIdentitySink | null = null;
-  /** Internal: the conclude adoption notifies the program sink for continue.
-   * The sink may return a memory patch (new ids, roundAllocations,
-   * allocatedKeys) which the driver folds into ITS OWN memory — the only
-   * memory, so a later recovery replacement stays transparent. */
+  /** Internal: the conclude adoption notifies the program sink for a
+   * CONFIRMED continue. The confirmation's own kind decides — a handback keeps
+   * the finished automatic round's summary, so gating on `round.trigger` alone
+   * re-allocates an ended round (review 20-3).
+   *
+   * Missing sink: legal only on the PRE-SEEDED path (scenario fixtures put
+   * `roundAllocations[nextRoundId]` into memory before concluding, and
+   * idlePointDecision allocates it as a step). Everywhere else the absence is
+   * recorded, not papered over: the next step runs into the product rejection
+   * (reused point/group ids) instead of silently degrading. */
   private async notifyRoundIdentity(roundId: Id, order: Id[]): Promise<void> {
-    if (!this.roundIdentitySink) return;
+    if (!this.roundIdentitySink) {
+      if (this.memory.roundAllocations[roundId]) return;
+      this.memory.lastRoundIdentityError = `round_identity_sink_missing:${roundId}`;
+      return;
+    }
     try {
       const patch = await this.roundIdentitySink(roundId, order);
-      if (patch) Object.assign(this.memory, patch);
+      if (patch) this.foldRoundIdentityPatch(patch);
     } catch (error) {
       this.memory.lastRoundIdentityError = error instanceof Error ? error.message : String(error);
     }
+  }
+  /** Delta fold, never a snapshot replacement: map fields merge key-wise
+   * against the driver's own current memory, allocatedKeys unions. The first
+   * recorded error stays (diagnostic only; a later success does not clear it). */
+  private foldRoundIdentityPatch(patch: Partial<ControllerMemory>): void {
+    const { ids, roundAllocations, allocatedKeys, ...rest } = patch;
+    if (ids) this.memory.ids = { ...this.memory.ids, ...ids };
+    if (roundAllocations) this.memory.roundAllocations = { ...this.memory.roundAllocations, ...roundAllocations };
+    if (allocatedKeys) this.memory.allocatedKeys = [...new Set([...this.memory.allocatedKeys, ...allocatedKeys])];
+    Object.assign(this.memory, rest);
   }
   getRequestCounter(): number { return this.requestCounter; }
   /** The advance the driver itself started (§6.1): the identity-bound player
@@ -247,9 +273,13 @@ export class ControllerDriver {
         if (outcome.ok) {
           if ((!command || executesCommand) && this.command === command) this.command = null; // a diverted command survives; a newer delivered command always survives
           this.adoptSuccess(decision.operation, decision.request, outcome.response);
-          if (decision.operation === 'round_conclusion_conclude' && this.state.world?.round?.trigger === 'automatic') {
-            await this.notifyRoundIdentity(this.state.world.activeRoundId ?? this.state.world.round.roundId,
-              this.state.world.round.order);
+          if (decision.operation === 'round_conclusion_conclude') {
+            const confirmed = (outcome.response as { data?: { kind?: string; nextRoundId?: Id | null } }).data ?? {};
+            if (confirmed.kind === 'continue') {
+              const nextRoundId = confirmed.nextRoundId ?? this.state.world?.activeRoundId ?? this.state.world?.round?.roundId ?? null;
+              if (nextRoundId) await this.notifyRoundIdentity(nextRoundId, this.state.world?.round?.order ?? []);
+              else this.memory.lastRoundIdentityError = 'round_identity_target_missing';
+            }
           }
           this.memory.lastModel = null;
           this.nextRequestId();

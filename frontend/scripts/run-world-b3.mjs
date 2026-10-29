@@ -1031,21 +1031,20 @@ ${view}
       if (!H.lease?.leaseToken) throw new Error('action scene requires the bootstrap lease');
       const memory = initialMemory(`${namespace}_driver`, 'b3_action_holder');
       memory.budget.max = 40; // 场景预算：只防无界继续推进，不替模型做语义判断
-      const memoryRef = { current: memory }; // sink 的身份补丁基线（recover 由驱动自行折叠）
       const driver = new ControllerDriver({ transport: H.transport, model: H.b3Port }, memory);
       const setupStarted = performance.now();
       const recovered = await driver.recover(H.worldId, { leaseToken: H.lease.leaseToken, fenceEpoch: H.lease.fenceEpoch });
       if (recovered) throw new Error(`action recover: ${JSON.stringify(recovered)}`);
       // ①a：continue 后的新轮 group 身份由程序分配——走产品 sink（①b）。
+      // 只返回增量：驱动按 slot 合并进当前内存（ids/roundAllocations 键合并、
+      // allocatedKeys 并集），快照式整包会擦掉 recover 出来的身份（复核 20-2）。
       driver.setRoundIdentitySink(async (roundId, order) => {
         const slots = order.map((actor) => ({ slotKey: `group:${actor}`, kind: 'group' }));
         if (!slots.length) return;
-        const allocation = await api('allocate_ids', { ...base(), allocationKey: `b3_groups_${roundId}`, slots });
+        const allocationKey = `b3_groups_${roundId}`;
+        const allocation = await api('allocate_ids', { ...base(), allocationKey, slots });
         const ids = Object.fromEntries(allocation.allocations.map((entry) => [entry.slotKey, entry.id]));
-        return { ids: { ...memoryRef.current.ids, ...ids },
-          roundAllocations: { ...memoryRef.current.roundAllocations,
-            [roundId]: { allocationKey: `b3_groups_${roundId}`, slots } },
-          allocatedKeys: [...new Set([...memoryRef.current.allocatedKeys, `b3_groups_${roundId}`])] };
+        return { ids, roundAllocations: { [roundId]: { allocationKey, slots } }, allocatedKeys: [allocationKey] };
       });
       // 失败即交付：driver 的 stop 状态原样记录，不换脚本候选
       driver.preparePlayerInput('走到走廊', roster, { allocationKey: `${namespace}_cmd1`, slots: [
@@ -1184,20 +1183,17 @@ ${view}
       H.programNextRoundIds = Array.from({ length: 4 }, (_, index) => ids[`round_auto${index + 1}`]);
       const memory = initialMemory(`${namespace}_driver`, 'b3_chain_holder');
       memory.budget.max = 40;
-      const memoryRef = { current: memory };
       const driver = new ControllerDriver({ transport: H.transport, model: H.b3Port }, memory);
       const recovered = await driver.recover(H.worldId, { leaseToken: H.lease.leaseToken, fenceEpoch: H.lease.fenceEpoch });
       if (recovered) throw new Error(`chain recover: ${JSON.stringify(recovered)}`);
-      // ①a（链场景同理）：recover 后注册产品 sink。
+      // ①a（链场景同理）：recover 后注册产品 sink，只返回增量补丁。
       driver.setRoundIdentitySink(async (roundId, order) => {
         const slots = order.map((actor) => ({ slotKey: `group:${actor}`, kind: 'group' }));
         if (!slots.length) return;
-        const allocation = await api('allocate_ids', { ...base(), allocationKey: `b3_groups_${roundId}`, slots });
+        const allocationKey = `b3_groups_${roundId}`;
+        const allocation = await api('allocate_ids', { ...base(), allocationKey, slots });
         const ids = Object.fromEntries(allocation.allocations.map((entry) => [entry.slotKey, entry.id]));
-        return { ids: { ...memoryRef.current.ids, ...ids },
-          roundAllocations: { ...memoryRef.current.roundAllocations,
-            [roundId]: { allocationKey: `b3_groups_${roundId}`, slots } },
-          allocatedKeys: [...new Set([...memoryRef.current.allocatedKeys, `b3_groups_${roundId}`])] };
+        return { ids, roundAllocations: { [roundId]: { allocationKey, slots } }, allocatedKeys: [allocationKey] };
       });
       const started = performance.now();
       let status;

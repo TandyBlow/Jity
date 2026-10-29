@@ -237,9 +237,11 @@ export interface ControllerMemory {
    * ruling). Reset once the group's ladder is consumed (stage/commit) —
    * the dangling stop keeps its refs in the terminal reason. */
   updatesPendingRefs: string[];
-  /** Set when the program-owned round-identity sink (controller ①b) throws —
-   * visible for diagnostics; the driver continues scheduling (the next
-   * discover will fail with the server's own refusal if ids are missing). */
+  /** Set when the program-owned round-identity sink (controller ①b) throws or
+   * is missing on a confirmed continue with no pre-seeded allocation — visible
+   * for diagnostics; the driver continues scheduling (the next discover will
+   * fail with the server's own refusal if ids are missing). Sticky: a later
+   * success does not clear an earlier failure. */
   lastRoundIdentityError: string | null;
   continuation: Conclusion | null;
   /** This round's committed point Δs in commit order — the continuation
