@@ -29,8 +29,36 @@
 
 const GOAL_WORDS = /需要|应该|打算|想要|愿意|必须|准备|试图|计划|希望|决定要/;
 const STATE_CLAIM = /精神值|理智值|理智|生命值|血量|任务(达成|完成)|状态值|属性(值|变化)/;
-const SUCCESS_WORDS = /成功|顺利|达成|完成|通过|做到了|搞定/;
-const FAILURE_WORDS = /未|没能|没有|失败|落空|被挡|挡下|无效|拒绝/;
+// 骰点表述词表（复核轮 19 修正）：裸「未」会误伤“未来”，必须撤掉；
+// “未成功/没有成功/未能/没能”是否定式成功表述，属于失败措辞，不属于成功措辞。
+const NEGATED_SUCCESS = /未成功|没有成功|未能成功|没能成功|未能达成|没有达成|未达成|没有完成|未完成|没有通过|未通过|没有做到|未能|没能/;
+const SUCCESS_NAKED = /成功|顺利|得手|达成|完成|通过|做到|搞定/;
+const FAILURE_TRIGGERS = new RegExp(`${NEGATED_SUCCESS.source}|失败|落空|被挡|挡下|无效|拒绝`);
+const STRIP_NEGATED = new RegExp(NEGATED_SUCCESS.source, 'g');
+
+/** 成功措辞：先把否定式成功表述全部剥掉，再看剩下的部分里有没有裸成功词。
+ *  “未成功”永远不再被当作成功表述。 */
+function successWording(clause) {
+  return SUCCESS_NAKED.test(text(clause).replace(STRIP_NEGATED, ''));
+}
+
+/** 失败措辞：不含裸「未」，但含未成功/失败/落空/被挡/无效/拒绝等明确否定。 */
+function failureWording(clause) {
+  return FAILURE_TRIGGERS.test(text(clause));
+}
+
+/** 纯判定句：剥掉人物名、标点与时点表述词后剩下零字符——
+ *  这类句子正是提示词对未准入关系要求的写法，免于可追溯性检查
+ *  （可追溯性检查会必判 untraceable，与契约直接冲突）。它不包含
+ *  可造事件，骰点一致性由骰点规则单独把关。 */
+const VERDICT_TOKENS = new RegExp(`${FAILURE_TRIGGERS.source}|${SUCCESS_NAKED.source}`, 'g');
+function isPureVerdictClause(clause, context) {
+  let residual = text(clause);
+  for (const name of Object.values(context.names)) residual = residual.split(name).join('');
+  residual = residual.replace(/[\s，。；、！？：,.!?;:：""''（）()【】\[\]]/g, '');
+  residual = residual.replace(VERDICT_TOKENS, '');
+  return residual.length === 0;
+}
 const UPDATE_STAGES = ['position', 'appearance', 'tasks', 'subtasks', 'personality', 'sanity'];
 const UPDATE_FIELDS = {
   position: ['positionSet'], appearance: ['appearanceChanges'], tasks: ['tasksAchieved'],
@@ -266,28 +294,54 @@ function judgeResults(probe, context) {
   const wanted = members.map((member) => member.memberId).sort();
   if (keys.join(',') !== wanted.join(',')) return fail(id, true, true, `results keys ${keys} != [${wanted}]`);
   if (keys.some((key) => !text(modelOutput[key]).trim())) return fail(id, true, true, 'results contain an empty text');
+  // 每个成员的错误全部收集后才决定（复核轮 19）：首错即退会掩盖后续成员的
+  // 真正违规（准入骰点被写成失败等）。
+  const problems = [];
+  const reviewNotes = [];
   for (const member of members) {
     const value = text(modelOutput[member.memberId]);
     const subject = subjectActor(value, context);
-    if (subject && subject !== member.memberId) return fail(id, true, true, `result for ${member.memberId} is acted by ${subject}: ${value}`);
-    const evidence = [text(member.actionText), ...taskGoalsOf(context, member.memberId)];
-    if (!traceableTo(value, evidence, context)) {
-      return fail(id, true, true, `result for ${member.memberId} is not traceable to the frozen action or its tasks: ${value}`);
+    if (subject && subject !== member.memberId) {
+      problems.push(`result for ${member.memberId} is acted by ${subject}: ${value}`);
+      continue;                                  // 后续检查对本成员无意义
     }
     const rolls = rollsOf(member);
+    const clause = resultClause(value, member, context);
+    const pureVerdict = isPureVerdictClause(clause, context);
+    const rejected = rolls.length > 0 && rolls.every((roll) => !roll.admitted);
+    const admittedSome = rolls.some((roll) => roll.admitted);
     if (rolls.length) {
-      const clause = resultClause(value, member, context);
-      const rejected = rolls.every((roll) => !roll.admitted);
-      const admitted = rolls.some((roll) => roll.admitted);
-      if (rejected && SUCCESS_WORDS.test(clause)) return fail(id, true, true, `rejected roll described as success (${member.memberId}): ${value}`);
-      if (admitted && FAILURE_WORDS.test(clause) && !SUCCESS_WORDS.test(clause)) {
-        return fail(id, true, true, `admitted roll described as failure (${member.memberId}): ${value}`);
+      // 骰点一致性是硬规则：未准入写成功、准入写失败，都必须 fail，
+      // 原因里带 [dice mismatch]，不与可追溯性混在一起。
+      if (rejected && successWording(clause)) {
+        problems.push(`rejected roll described as success (${member.memberId}): ${value} [dice mismatch]`);
+        continue;
+      }
+      if (admittedSome && failureWording(clause) && !successWording(clause)) {
+        problems.push(`admitted roll described as failure (${member.memberId}): ${value} [dice mismatch]`);
+        continue;
+      }
+      const evidence = [text(member.actionText), ...taskGoalsOf(context, member.memberId)];
+      if (!pureVerdict && !traceableTo(value, evidence, context)) {
+        problems.push(`result for ${member.memberId} is not traceable to the frozen action or its tasks: ${value}`);
+      }
+    } else if (pureVerdict && (failureWording(clause) || successWording(clause))) {
+      // 无骰点成员写裸成败判定：没有骰点证据支撑，不判 fail，也不算通过，
+      // 归入待复核并写明。
+      reviewNotes.push(`${member.memberId} wrote a bare success/failure verdict without any dice evidence`);
+    } else {
+      const evidence = [text(member.actionText), ...taskGoalsOf(context, member.memberId)];
+      if (!traceableTo(value, evidence, context)) {
+        problems.push(`result for ${member.memberId} is not traceable to the frozen action or its tasks: ${value}`);
       }
     }
   }
-  return review(id, true, true, 'result plausibility (invented events beyond the frozen actions) needs human review', {
-    note: JSON.stringify(modelOutput), checked: ['per-member attribution', 'roster actors', 'traceability', 'dice agreement'],
-  });
+  if (problems.length) return fail(id, true, true, problems[0], { reasons: problems, checked: ['per-member attribution', 'roster actors', 'dice agreement', 'traceability'] });
+  if (reviewNotes.length) return review(id, true, true, 'bare success/failure verdict without dice evidence needs human review',
+    { note: JSON.stringify(modelOutput), reasons: reviewNotes,
+      checked: ['per-member attribution', 'roster actors', 'pure-verdict exemption', 'dice evidence'] });
+  return pass(id, true, true, 'results match roster, attribution, dice agreement and traceability/pure-verdict rules',
+    { checked: ['per-member attribution', 'roster actors', 'traceability/pure-verdict', 'dice agreement'] });
 }
 
 // ---------- updates ----------
@@ -673,6 +727,40 @@ export function runJudgeSelfTests(context) {
     { members: [{ memberId: protagonist, actionText: memberAction,
       rollRefs: [{ targetId: other, result: 8, admitted: false }] }] },
     { [protagonist]: `${context.names[protagonist]} 成功推开了重门。` }));
+  // 复核轮 19：未准入→没有成功是契约要求的写法，纯判定句免可追溯，不掩篮错误。
+  record('rejected roll written as the required bare verdict', 'pass', probeOf('results_rejected_roll',
+    { members: [{ memberId: protagonist, actionText: memberAction,
+      rollRefs: [{ targetId: other, result: 8, admitted: false }] }] },
+    { [protagonist]: `${context.names[protagonist]} 没有成功。` }));
+  record('rejected roll verdict with negated-success wording is not success wording', 'pass', probeOf('results_rejected_roll',
+    { members: [{ memberId: protagonist, actionText: memberAction,
+      rollRefs: [{ targetId: other, result: 8, admitted: false }] }] },
+    { [protagonist]: `${context.names[protagonist]} 未成功。` }));
+  // 准入写失败 = fail 且原因必须是骰点不符（“未成功”不再被当作成功表述）。
+  record('admitted roll written as failure', 'fail', probeOf('results_admitted_roll',
+    { members: [{ memberId: protagonist, actionText: memberAction,
+      rollRefs: [{ targetId: other, result: 19, admitted: true }] }] },
+    { [protagonist]: `${context.names[protagonist]} 没有成功。` }),
+    (verdict) => String(verdict.why).startsWith('admitted roll described as failure')
+      && String(verdict.why).includes('[dice mismatch]'));
+  // 无骰点成员的裸成败判定：没有证据，待复核而非通过。
+  record('bare verdict without dice evidence', 'review', probeOf('results_joint',
+    { members: [{ memberId: protagonist, actionText: memberAction, rollRefs: [] }] },
+    { [protagonist]: '没有成功。' }));
+  // 违规不再掩盖后续成员（复核轮 19）：首人写荒谬事件、次人骰点不符，
+  // fail 的 reasons 必须同时包含两处。
+  record('member errors are all collected, the first does not mask the second', 'fail',
+    probeOf('results_joint',
+      { members: [
+        { memberId: protagonist, actionText: memberAction,
+          rollRefs: [{ targetId: other, result: 8, admitted: false }] },
+        { memberId: other, actionText: `${context.names[other]} 在门边见证。`, rollRefs: [] },
+      ] },
+      { [protagonist]: `${context.names[protagonist]} 召唤了陨石。`,
+        [other]: `${context.names[other]} 成功了。` }),
+    (verdict) => (verdict.reasons ?? []).length === 2
+      && verdict.reasons.every((reason) => String(reason).includes(protagonist)
+        || String(reason).includes(other)));
   record('legal task-only update', 'pass', probeOf('updates_merged', {},
     [{ stage: 'tasks', changes: { [protagonist]: { tasksAchieved: [taskId] } } }],
     { expectTasks: { [protagonist]: [taskId] } }));

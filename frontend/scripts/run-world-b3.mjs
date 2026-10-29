@@ -70,7 +70,7 @@ if (rescoreSource) {
   }]));
   const selfTest = runJudgeSelfTests(context);
   const rescored = {
-    kind: 'b3-rescore', judgeVersion: 3, recordedAt: new Date().toISOString(),
+    kind: 'b3-rescore', judgeVersion: 4, recordedAt: new Date().toISOString(),
     source: { path: rescoreSource, recordedAt: source.recordedAt, status: source.status,
       browserHead: source.browserSource?.head ?? null, serverHead: source.serverSource?.head ?? null },
     contextFingerprint: { worldId: worldState.worldId, protagonist: context.protagonist, roster: context.roster, time: worldState.time },
@@ -121,7 +121,7 @@ const report = {
     sha256: Object.fromEntries(sources.map((file) => [file, createHash('sha256').update(readFileSync(resolve(root, file))).digest('hex')])) },
   serverSource: { head: git(a, 'rev-parse', 'HEAD'), status: git(a, 'status', '--short'),
     sha256: Object.fromEntries(serverFiles.map(({ path, file }) => [path, createHash('sha256').update(readFileSync(file)).digest('hex')])) },
-  scope, judgeVersion: 3, modelLoad: null, modelConfig: {
+  scope, judgeVersion: 4, modelLoad: null, modelConfig: {
     settlement: { model: '/models/Qwen3-0.6B-Q4_K_M.gguf', contextSize: 2048, temperature: 0, seed: 42,
       maxTokens: 'per task (64-384)', timeoutMs: 110_000, constrainedDecoding: 'json_schema strict' },
     narration: { model: null, contextSize: 2048, maxTokens: 96, temperature: [0, 0.7], timeoutMs: 110_000,
@@ -470,12 +470,15 @@ try {
         `- personalityChanges：数组，元素 {"id":"draft_1","text":"<个性变化>","supersedes":[]}；只有本批有任务达成时才允许\n` +
         `- sanitySet：0 到 100 的整数，只写最终值；只有本批有该角色的个性变化时才允许\n` +
         `因果规则：任务达成可以单独出现（个性变化只是可能发生，不是必须）；没有新达成任务就不要写个性；没有个性变化就不要写理智。\n` +
-        `${fields}\nchanges 的键只能是状态中列出的角色 id；不得嵌套 changes；不得输出契约外的字段。\n` +
+        `${fields}\n数组每项的 stage 只能取 position/appearance/tasks/subtasks/personality/sanity 这六个名字，不要写字段名。\nchanges 的键只能是状态中列出的角色 id；不得嵌套 changes；不得输出契约外的字段。\n` +
         `示例：${example}\n${shape}\n无变化${stage ? `输出 {"stage":"${stage}","changes":{}}` : '输出 []'}。`;
     };
     const updatesSchema = (stage) => stage
       ? { type: 'object', properties: { stage: { type: 'string', enum: [stage] }, changes: { type: 'object' } }, required: ['stage', 'changes'] }
-      : { type: 'array', items: { type: 'object', properties: { stage: { type: 'string' }, changes: { type: 'object' } }, required: ['stage', 'changes'] } };
+      // 合并路径同样必须钉住 stage（复核轮 19）：旧版只写 type:'string'，
+      // 模型在后续数组项里全部写出字段名（appearanceChanges 等），两个场景
+      // 因此在 updates 阶段被取消。enum 让受控解码直接拒绝非法 stage。
+      : { type: 'array', items: { type: 'object', properties: { stage: { type: 'string', enum: UPDATE_STAGES }, changes: { type: 'object' } }, required: ['stage', 'changes'] } };
 
     H.b3Port = {
       async generate(task, key, input) {
@@ -957,7 +960,7 @@ ${view}
     report.tasks.probes = report.tasks.probes.map((probe) => ({ ...probe, judgment: judgeProbe(probe, judgeContext()) }));
     report.tasks.rates = summarizeProbes(report.tasks.probes);
     report.tasks.judgeSelfTest = runJudgeSelfTests(judgeContext());
-    report.judgeVersion = 3;
+    report.judgeVersion = 4;
     save();
     console.log(`[world-b3] task probes recorded: ${report.tasks.probes.length} ` +
       `(parsed ${report.tasks.rates.parsedPass}/${report.tasks.rates.probes}, ` +

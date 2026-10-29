@@ -1,0 +1,1117 @@
+{
+  "kind": "b3-rescore",
+  "judgeVersion": 4,
+  "recordedAt": "2026-10-29T07:40:54.514Z",
+  "source": {
+    "path": "artifacts/world-chain/b3-baseline-v2.json",
+    "recordedAt": "2026-10-29T07:14:03.771Z",
+    "status": "COMPLETED_WITH_FAILURES",
+    "browserHead": "88b59deb8edcf87a2ee3fd996ddf8dd93e90c371",
+    "serverHead": "4e1702546df3337d28600b2caa55fb5ed86a5d83"
+  },
+  "contextFingerprint": {
+    "worldId": "world_1",
+    "protagonist": "person_c",
+    "roster": [
+      "person_a",
+      "person_c"
+    ],
+    "time": {
+      "calendar": "gregorian",
+      "dateTime": "2026-10-27T09:00:02",
+      "instantOrdinal": 0
+    }
+  },
+  "tasks": {
+    "rates": {
+      "probes": 17,
+      "parsedPass": 17,
+      "codecPass": 14,
+      "semanticsPass": 2,
+      "semanticsFail": 10,
+      "pendingReview": 5,
+      "parsedRate": 1,
+      "codecRate": 0.824,
+      "overallPassRate": 0.118,
+      "autoDecided": 12,
+      "autoPassRate": 0.167
+    },
+    "judgeSelfTest": {
+      "cases": [
+        {
+          "name": "absurd joint results",
+          "expect": "fail",
+          "got": "fail",
+          "codec": true,
+          "why": "result for person_c is not traceable to the frozen action or its tasks: 周宁 召唤了陨石毁灭了世界。",
+          "reviews": [],
+          "ok": true
+        },
+        {
+          "name": "empty update after a claimed completion",
+          "expect": "fail",
+          "got": "fail",
+          "codec": true,
+          "why": "expected person_c to achieve task_pressure",
+          "reviews": [],
+          "ok": true
+        },
+        {
+          "name": "causeless sanity 99",
+          "expect": "fail",
+          "got": "fail",
+          "codec": true,
+          "why": "person_c sanity change without a personality change for the same character",
+          "reviews": [],
+          "ok": true
+        },
+        {
+          "name": "wrong-actor action",
+          "expect": "fail",
+          "got": "fail",
+          "codec": true,
+          "why": "action attributed to person_c, expected person_a: 周宁 推开门。",
+          "reviews": [],
+          "ok": true
+        },
+        {
+          "name": "goal sentence as action",
+          "expect": "fail",
+          "got": "fail",
+          "codec": true,
+          "why": "goal/plan is not an action: 周宁 需要去走廊。",
+          "reviews": [],
+          "ok": true
+        },
+        {
+          "name": "consumed protagonist re-executes the command",
+          "expect": "fail",
+          "got": "fail",
+          "codec": true,
+          "why": "consumed input re-executed: 周宁 走到走廊。",
+          "reviews": [],
+          "ok": true
+        },
+        {
+          "name": "reaction with a state claim",
+          "expect": "fail",
+          "got": "fail",
+          "codec": true,
+          "why": "reaction claims a state change: 林川 精神值下降。",
+          "reviews": [],
+          "ok": true
+        },
+        {
+          "name": "reaction copying the source action",
+          "expect": "fail",
+          "got": "fail",
+          "codec": true,
+          "why": "reaction attributed to person_c, expected person_a: 周宁 推开门厅深处的重门。",
+          "reviews": [],
+          "ok": true
+        },
+        {
+          "name": "absurd reaction is never auto-passed",
+          "expect": "fail",
+          "got": "fail",
+          "codec": true,
+          "why": "reaction is not traceable to the source action or the member's tasks: 林川 瞬移到火星并毁灭太阳。",
+          "reviews": [],
+          "ok": true
+        },
+        {
+          "name": "results claiming success on a rejected roll",
+          "expect": "fail",
+          "got": "fail",
+          "codec": true,
+          "why": "rejected roll described as success (person_c): 周宁 成功推开了重门。 [dice mismatch]",
+          "reviews": [],
+          "ok": true
+        },
+        {
+          "name": "rejected roll written as the required bare verdict",
+          "expect": "pass",
+          "got": "pass",
+          "codec": true,
+          "why": null,
+          "reviews": [],
+          "ok": true
+        },
+        {
+          "name": "rejected roll verdict with negated-success wording is not success wording",
+          "expect": "pass",
+          "got": "pass",
+          "codec": true,
+          "why": null,
+          "reviews": [],
+          "ok": true
+        },
+        {
+          "name": "admitted roll written as failure",
+          "expect": "fail",
+          "got": "fail",
+          "codec": true,
+          "why": "admitted roll described as failure (person_c): 周宁 没有成功。 [dice mismatch]",
+          "reviews": [],
+          "ok": true
+        },
+        {
+          "name": "bare verdict without dice evidence",
+          "expect": "review",
+          "got": "review",
+          "codec": true,
+          "why": null,
+          "reviews": [
+            "bare success/failure verdict without dice evidence needs human review"
+          ],
+          "ok": true
+        },
+        {
+          "name": "member errors are all collected, the first does not mask the second",
+          "expect": "fail",
+          "got": "fail",
+          "codec": true,
+          "why": "result for person_c is not traceable to the frozen action or its tasks: 周宁 召唤了陨石。",
+          "reviews": [],
+          "ok": true
+        },
+        {
+          "name": "legal task-only update",
+          "expect": "pass",
+          "got": "pass",
+          "codec": true,
+          "why": null,
+          "reviews": [],
+          "ok": true
+        },
+        {
+          "name": "legal staged batch tasks->personality->sanity",
+          "expect": "pass",
+          "got": "pass",
+          "codec": true,
+          "why": null,
+          "reviews": [],
+          "ok": true
+        },
+        {
+          "name": "legal cross-entity trigger: A task, B personality+sanity",
+          "expect": "pass",
+          "got": "pass",
+          "codec": true,
+          "why": null,
+          "reviews": [],
+          "ok": true
+        },
+        {
+          "name": "split personality stage with prior task evidence",
+          "expect": "pass",
+          "got": "pass",
+          "codec": true,
+          "why": null,
+          "reviews": [],
+          "ok": true
+        },
+        {
+          "name": "personality without any achieved task",
+          "expect": "fail",
+          "got": "fail",
+          "codec": true,
+          "why": "person_c personality change without any achieved task in the batch",
+          "reviews": [],
+          "ok": true
+        },
+        {
+          "name": "sanity without its own personality change",
+          "expect": "fail",
+          "got": "fail",
+          "codec": true,
+          "why": "person_a sanity change without a personality change for the same character",
+          "reviews": [],
+          "ok": true
+        },
+        {
+          "name": "illegal stage is a codec failure",
+          "expect": "fail",
+          "got": "fail",
+          "codec": false,
+          "why": "illegal stage \"appearanceChanges\"",
+          "reviews": [],
+          "ok": true
+        },
+        {
+          "name": "continue without the §8.1 conditions",
+          "expect": "fail",
+          "got": "fail",
+          "codec": true,
+          "why": "continue without a planned action (the §8.1 likelihood condition is unstated)",
+          "reviews": [],
+          "ok": true
+        },
+        {
+          "name": "continue with both conditions is not auto-passed",
+          "expect": "review",
+          "got": "review",
+          "codec": true,
+          "why": null,
+          "reviews": [
+            "planned action plausibility (large-likelihood + protagonist relation) needs human review"
+          ],
+          "ok": true
+        },
+        {
+          "name": "handback where a clear driver existed",
+          "expect": "fail",
+          "got": "fail",
+          "codec": true,
+          "why": "clear protagonist-related driver was handed back",
+          "reviews": [],
+          "ok": true
+        },
+        {
+          "name": "continue where no driver existed",
+          "expect": "fail",
+          "got": "fail",
+          "codec": true,
+          "why": "no driving action was expected, model continued",
+          "reviews": [],
+          "ok": true
+        },
+        {
+          "name": "scene accepts the {targetId} codec shape",
+          "expect": "pass",
+          "got": "pass",
+          "codec": true,
+          "why": null,
+          "reviews": [],
+          "ok": true
+        }
+      ],
+      "failed": 0
+    },
+    "probes": [
+      {
+        "id": "action_pending",
+        "task": "action",
+        "judgment": {
+          "id": "action_pending",
+          "parsed": true,
+          "codec": true,
+          "semantics": "review",
+          "why": null,
+          "reasons": [],
+          "reviews": [
+            "action deviates from the pending command; plausibility needs review"
+          ],
+          "note": "转身进入走廊",
+          "checked": []
+        },
+        "failure": null,
+        "output": {
+          "kind": "act",
+          "text": "转身进入走廊"
+        },
+        "call": {
+          "key": "probe",
+          "raw": "{\"kind\":\"act\",\"text\":\"转身进入走廊\"}",
+          "ms": 11006,
+          "backfills": [],
+          "context": {
+            "actor": "person_c",
+            "protagonist": "person_c",
+            "consumed": false,
+            "inputText": "走到走廊",
+            "isProtagonist": true
+          }
+        }
+      },
+      {
+        "id": "action_consumed_protagonist",
+        "task": "action",
+        "judgment": {
+          "id": "action_consumed_protagonist",
+          "parsed": true,
+          "codec": true,
+          "semantics": "review",
+          "why": null,
+          "reasons": [],
+          "reviews": [
+            "spontaneous action after a consumed input needs semantic review"
+          ],
+          "note": "转身避开盒子",
+          "checked": []
+        },
+        "failure": null,
+        "output": {
+          "kind": "act",
+          "text": "转身避开盒子"
+        },
+        "call": {
+          "key": "probe",
+          "raw": "{\"kind\":\"act\",\"text\":\"转身避开盒子\"}",
+          "ms": 6477,
+          "backfills": [],
+          "context": {
+            "actor": "person_c",
+            "protagonist": "person_c",
+            "consumed": true,
+            "inputText": "走到走廊",
+            "isProtagonist": true
+          }
+        }
+      },
+      {
+        "id": "action_consumed_npc",
+        "task": "action",
+        "judgment": {
+          "id": "action_consumed_npc",
+          "parsed": true,
+          "codec": true,
+          "semantics": "pass",
+          "why": null,
+          "reasons": [],
+          "reviews": [],
+          "note": "转身避开盒子",
+          "checked": [
+            "attribution",
+            "not-a-goal",
+            "no-state-claim",
+            "command-reuse"
+          ]
+        },
+        "failure": null,
+        "output": {
+          "kind": "act",
+          "text": "转身避开盒子"
+        },
+        "call": {
+          "key": "probe",
+          "raw": "{\"kind\":\"act\",\"text\":\"转身避开盒子\"}",
+          "ms": 6875,
+          "backfills": [],
+          "context": {
+            "actor": "person_a",
+            "protagonist": "person_c",
+            "consumed": true,
+            "inputText": "走到走廊",
+            "isProtagonist": false
+          }
+        }
+      },
+      {
+        "id": "targets_directed",
+        "task": "targets",
+        "judgment": {
+          "id": "targets_directed",
+          "parsed": true,
+          "codec": true,
+          "semantics": "fail",
+          "why": "expected person_a in []",
+          "reasons": [
+            "expected person_a in []"
+          ],
+          "reviews": [],
+          "note": null,
+          "checked": []
+        },
+        "failure": null,
+        "output": {
+          "targets": []
+        },
+        "call": {
+          "key": "probe",
+          "raw": "{\"targets\":[]}",
+          "ms": 8493,
+          "backfills": [],
+          "context": null
+        }
+      },
+      {
+        "id": "targets_solo",
+        "task": "targets",
+        "judgment": {
+          "id": "targets_solo",
+          "parsed": true,
+          "codec": true,
+          "semantics": "pass",
+          "why": null,
+          "reasons": [],
+          "reviews": [],
+          "note": "targets=[]",
+          "checked": [
+            "roster-and-self checks"
+          ]
+        },
+        "failure": null,
+        "output": {
+          "targets": []
+        },
+        "call": {
+          "key": "probe",
+          "raw": "{\"targets\": []}",
+          "ms": 3609,
+          "backfills": [],
+          "context": null
+        }
+      },
+      {
+        "id": "reaction_joint",
+        "task": "reaction",
+        "judgment": {
+          "id": "reaction_joint",
+          "parsed": true,
+          "codec": true,
+          "semantics": "review",
+          "why": null,
+          "reasons": [],
+          "reviews": [
+            "reaction plausibility beyond attribution/traceability needs human review"
+          ],
+          "note": "林川将盒子稳稳地放在门框上",
+          "checked": [
+            "attribution",
+            "no-state-claim",
+            "not-a-copy",
+            "traceable"
+          ]
+        },
+        "failure": null,
+        "output": "林川将盒子稳稳地放在门框上",
+        "call": {
+          "key": "probe",
+          "raw": "{\"text\":\"林川将盒子稳稳地放在门框上\"}",
+          "ms": 9651,
+          "backfills": [],
+          "context": {
+            "sourceActionText": "周宁 示意 林川 一起撑住重门。",
+            "memberId": "person_a"
+          }
+        }
+      },
+      {
+        "id": "results_joint",
+        "task": "results",
+        "judgment": {
+          "id": "results_joint",
+          "parsed": true,
+          "codec": true,
+          "semantics": "review",
+          "why": null,
+          "reasons": [
+            "person_c wrote a bare success/failure verdict without any dice evidence",
+            "person_a wrote a bare success/failure verdict without any dice evidence"
+          ],
+          "reviews": [
+            "bare success/failure verdict without dice evidence needs human review"
+          ],
+          "note": "{\"person_c\":\"没有成功\",\"person_a\":\"没有成功\"}",
+          "checked": [
+            "per-member attribution",
+            "roster actors",
+            "pure-verdict exemption",
+            "dice evidence"
+          ]
+        },
+        "failure": null,
+        "output": {
+          "person_c": "没有成功",
+          "person_a": "没有成功"
+        },
+        "call": {
+          "key": "probe",
+          "raw": "{\n  \"person_c\": \"没有成功\",\n  \"person_a\": \"没有成功\"\n}",
+          "ms": 13277,
+          "backfills": [],
+          "context": {
+            "groupId": "group_probe",
+            "members": [
+              {
+                "memberId": "person_c",
+                "actionText": "周宁 推开门示意同伴一起撑住。",
+                "rollRefs": []
+              },
+              {
+                "memberId": "person_a",
+                "actionText": "林川 上前与同伴一起撑住重门。",
+                "rollRefs": []
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "results_rejected_roll",
+        "task": "results",
+        "judgment": {
+          "id": "results_rejected_roll",
+          "parsed": true,
+          "codec": true,
+          "semantics": "review",
+          "why": null,
+          "reasons": [
+            "person_c wrote a bare success/failure verdict without any dice evidence"
+          ],
+          "reviews": [
+            "bare success/failure verdict without dice evidence needs human review"
+          ],
+          "note": "{\"person_c\":\"周宁未成功\",\"person_a\":\"林川未成功\"}",
+          "checked": [
+            "per-member attribution",
+            "roster actors",
+            "pure-verdict exemption",
+            "dice evidence"
+          ]
+        },
+        "failure": null,
+        "output": {
+          "person_c": "周宁未成功",
+          "person_a": "林川未成功"
+        },
+        "call": {
+          "key": "probe",
+          "raw": "{\n  \"person_c\": \"周宁未成功\",\n  \"person_a\": \"林川未成功\"\n}",
+          "ms": 8392,
+          "backfills": [],
+          "context": {
+            "groupId": "group_probe_rejected",
+            "members": [
+              {
+                "memberId": "person_c",
+                "actionText": "周宁 示意 林川 一起撑住重门。",
+                "rollRefs": []
+              },
+              {
+                "memberId": "person_a",
+                "actionText": "林川 被卷入重门。",
+                "rollRefs": [
+                  {
+                    "sourceId": "person_c",
+                    "targetId": "person_a",
+                    "triggerKey": "probe_trigger",
+                    "rollId": "probe_roll_rejected",
+                    "result": 8,
+                    "eligible": true,
+                    "admitted": false
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "results_admitted_roll",
+        "task": "results",
+        "judgment": {
+          "id": "results_admitted_roll",
+          "parsed": true,
+          "codec": true,
+          "semantics": "fail",
+          "why": "admitted roll described as failure (person_a): 林川未成功 [dice mismatch]",
+          "reasons": [
+            "admitted roll described as failure (person_a): 林川未成功 [dice mismatch]"
+          ],
+          "reviews": [],
+          "note": null,
+          "checked": [
+            "per-member attribution",
+            "roster actors",
+            "dice agreement",
+            "traceability"
+          ]
+        },
+        "failure": null,
+        "output": {
+          "person_c": "周宁未成功",
+          "person_a": "林川未成功"
+        },
+        "call": {
+          "key": "probe",
+          "raw": "{\n  \"person_c\": \"周宁未成功\",\n  \"person_a\": \"林川未成功\"\n}",
+          "ms": 7639,
+          "backfills": [],
+          "context": {
+            "groupId": "group_probe_admitted",
+            "members": [
+              {
+                "memberId": "person_c",
+                "actionText": "周宁 示意 林川 一起撑住重门。",
+                "rollRefs": []
+              },
+              {
+                "memberId": "person_a",
+                "actionText": "林川 到门边一起撑住重门。",
+                "rollRefs": [
+                  {
+                    "sourceId": "person_c",
+                    "targetId": "person_a",
+                    "triggerKey": "probe_trigger",
+                    "rollId": "probe_roll_admitted",
+                    "result": 19,
+                    "eligible": true,
+                    "admitted": true
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "updates_merged",
+        "task": "updates",
+        "judgment": {
+          "id": "updates_merged",
+          "parsed": true,
+          "codec": false,
+          "semantics": "fail",
+          "why": "illegal stage \"appearanceChanges\"; illegal stage \"subtasksAdded\"; illegal stage \"personalityChanges\"; illegal stage \"sanitySet\"",
+          "reasons": [
+            "illegal stage \"appearanceChanges\"",
+            "illegal stage \"subtasksAdded\"",
+            "illegal stage \"personalityChanges\"",
+            "illegal stage \"sanitySet\"",
+            "person_a sanity change without a personality change for the same character"
+          ],
+          "reviews": [],
+          "note": null,
+          "checked": []
+        },
+        "failure": "b3 updates semantic: illegal stage appearanceChanges",
+        "output": [
+          {
+            "stage": "tasks",
+            "changes": {
+              "person_c": {
+                "tasksAchieved": [
+                  "task_pressure"
+                ]
+              }
+            }
+          },
+          {
+            "stage": "appearanceChanges",
+            "changes": {
+              "draft_1": {
+                "text": "周宁的外貌没有变化",
+                "supersedes": []
+              }
+            }
+          },
+          {
+            "stage": "subtasksAdded",
+            "changes": {
+              "draft_1": {
+                "ownerId": "person_c",
+                "parentTaskId": null,
+                "goal": "task_recover",
+                "status": "pending"
+              }
+            }
+          },
+          {
+            "stage": "personalityChanges",
+            "changes": {
+              "draft_1": {
+                "text": "林川的个性没有变化",
+                "supersedes": []
+              }
+            }
+          },
+          {
+            "stage": "sanitySet",
+            "changes": {
+              "person_a": {
+                "sanitySet": 100
+              }
+            }
+          }
+        ],
+        "call": {
+          "key": "probe",
+          "raw": "[\n  {\n    \"stage\": \"tasks\",\n    \"changes\": {\n      \"person_c\": {\n        \"tasksAchieved\": [\"task_pressure\"]\n      }\n    }\n  },\n  {\n    \"stage\": \"appearanceChanges\",\n    \"changes\": {\n      \"draft_1\": {\n        \"text\": \"周宁的外貌没有变化\",\n        \"supersedes\": []\n      }\n    }\n  },\n  {\n    \"stage\": \"subtasksAdded\",\n    \"changes\": {\n      \"draft_1\": {\n        \"ownerId\": \"person_c\",\n        \"parentTaskId\": null,\n        \"goal\": \"task_recover\",\n        \"status\": \"pending\"\n      }\n    }\n  },\n  {\n    \"stage\": \"personalityChanges\",\n    \"changes\": {\n      \"draft_1\": {\n        \"text\": \"林川的个性没有变化\",\n        \"supersedes\": []\n      }\n    }\n  },\n  {\n    \"stage\": \"sanitySet\",\n    \"changes\": {\n      \"person_a\": {\n        \"sanitySet\": 100\n      }\n    }\n  }\n]",
+          "ms": 59777,
+          "backfills": [],
+          "context": null
+        }
+      },
+      {
+        "id": "updates_none_expected",
+        "task": "updates",
+        "judgment": {
+          "id": "updates_none_expected",
+          "parsed": true,
+          "codec": false,
+          "semantics": "fail",
+          "why": "illegal stage \"appearanceChanges\"; illegal stage \"subtasksAdded\"; illegal stage \"personalityChanges\"; illegal stage \"sanitySet\"",
+          "reasons": [
+            "illegal stage \"appearanceChanges\"",
+            "illegal stage \"subtasksAdded\"",
+            "illegal stage \"personalityChanges\"",
+            "illegal stage \"sanitySet\"",
+            "unexpected change for person_c ({\"tasksAchieved\":[\"task_pressure\"]})"
+          ],
+          "reviews": [],
+          "note": null,
+          "checked": []
+        },
+        "failure": "b3 updates semantic: illegal stage appearanceChanges",
+        "output": [
+          {
+            "stage": "tasks",
+            "changes": {
+              "person_c": {
+                "tasksAchieved": [
+                  "task_pressure"
+                ]
+              }
+            }
+          },
+          {
+            "stage": "appearanceChanges",
+            "changes": {
+              "id": "draft_1",
+              "text": "周宁 站着没有动。"
+            }
+          },
+          {
+            "stage": "subtasksAdded",
+            "changes": {
+              "id": "draft_1",
+              "ownerId": "person_c",
+              "parentTaskId": null,
+              "goal": "task_recover",
+              "status": "pending"
+            }
+          },
+          {
+            "stage": "personalityChanges",
+            "changes": {
+              "id": "draft_1",
+              "text": "林川 站在一旁，没有新的变化。"
+            }
+          },
+          {
+            "stage": "sanitySet",
+            "changes": {
+              "0": "林川 站在一旁，没有新的变化。"
+            }
+          }
+        ],
+        "call": {
+          "key": "probe",
+          "raw": "[\n  {\n    \"stage\": \"tasks\",\n    \"changes\": {\n      \"person_c\": {\n        \"tasksAchieved\": [\"task_pressure\"]\n      }\n    }\n  },\n  {\n    \"stage\": \"appearanceChanges\",\n    \"changes\": {\n      \"id\": \"draft_1\",\n      \"text\": \"周宁 站着没有动。\"\n    }\n  },\n  {\n    \"stage\": \"subtasksAdded\",\n    \"changes\": {\n      \"id\": \"draft_1\",\n      \"ownerId\": \"person_c\",\n      \"parentTaskId\": null,\n      \"goal\": \"task_recover\",\n      \"status\": \"pending\"\n    }\n  },\n  {\n    \"stage\": \"personalityChanges\",\n    \"changes\": {\n      \"id\": \"draft_1\",\n      \"text\": \"林川 站在一旁，没有新的变化。\"\n    }\n  },\n  {\n    \"stage\": \"sanitySet\",\n    \"changes\": {\n      \"0\": \"林川 站在一旁，没有新的变化。\"\n    }\n  }\n]",
+          "ms": 52027,
+          "backfills": [],
+          "context": null
+        }
+      },
+      {
+        "id": "updates_stage_tasks",
+        "task": "updates",
+        "judgment": {
+          "id": "updates_stage_tasks",
+          "parsed": true,
+          "codec": true,
+          "semantics": "fail",
+          "why": "tasksAchieved person_1 is not in the state or produced by this batch; expected person_c to achieve task_pressure",
+          "reasons": [
+            "tasksAchieved person_1 is not in the state or produced by this batch",
+            "expected person_c to achieve task_pressure"
+          ],
+          "reviews": [],
+          "note": null,
+          "checked": []
+        },
+        "failure": "b3 updates semantic: tasksAchieved person_1 is not in the state or produced by this batch",
+        "output": {
+          "stage": "tasks",
+          "changes": {
+            "person_a": {
+              "tasksAchieved": [
+                "person_1"
+              ]
+            }
+          }
+        },
+        "call": {
+          "key": "probe",
+          "raw": "{\"stage\":\"tasks\",\"changes\":{\"person_a\":{\"tasksAchieved\":[\"person_1\"]}}}",
+          "ms": 15351,
+          "backfills": [],
+          "context": null
+        }
+      },
+      {
+        "id": "updates_stage_personality",
+        "task": "updates",
+        "judgment": {
+          "id": "updates_stage_personality",
+          "parsed": true,
+          "codec": false,
+          "semantics": "fail",
+          "why": "invalid personality change for person_c (id/text/supersedes required)",
+          "reasons": [
+            "invalid personality change for person_c (id/text/supersedes required)",
+            "person_c personality change without any achieved task in the batch"
+          ],
+          "reviews": [],
+          "note": null,
+          "checked": []
+        },
+        "failure": "b3 updates semantic: invalid personalityChanges item (supersedes must be an array)",
+        "output": {
+          "stage": "personality",
+          "changes": {
+            "person_c": {
+              "personalityChanges": [
+                {
+                  "id": "draft_1",
+                  "text": "周宁 完成了压力试验。"
+                }
+              ]
+            }
+          }
+        },
+        "call": {
+          "key": "probe",
+          "raw": "{\"stage\":\"personality\",\"changes\":{\"person_c\":{\"personalityChanges\":[{\"id\":\"draft_1\",\"text\":\"周宁 完成了压力试验。\"}]}}}",
+          "ms": 17269,
+          "backfills": [],
+          "context": null
+        }
+      },
+      {
+        "id": "updates_stage_sanity",
+        "task": "updates",
+        "judgment": {
+          "id": "updates_stage_sanity",
+          "parsed": true,
+          "codec": true,
+          "semantics": "fail",
+          "why": "person_a sanity change without a personality change for the same character; expected person_c to receive a recalculated sanity value",
+          "reasons": [
+            "person_a sanity change without a personality change for the same character",
+            "expected person_c to receive a recalculated sanity value"
+          ],
+          "reviews": [],
+          "note": null,
+          "checked": []
+        },
+        "failure": null,
+        "output": {
+          "stage": "sanity",
+          "changes": {
+            "person_a": {
+              "sanitySet": 90
+            }
+          }
+        },
+        "call": {
+          "key": "probe",
+          "raw": "{\"stage\":\"sanity\",\"changes\":{\"person_a\":{\"sanitySet\":90}}}",
+          "ms": 14096,
+          "backfills": [],
+          "context": null
+        }
+      },
+      {
+        "id": "continuation_likely_related",
+        "task": "continuation",
+        "judgment": {
+          "id": "continuation_likely_related",
+          "parsed": true,
+          "codec": true,
+          "semantics": "fail",
+          "why": "planned action is a goal/plan sentence, not an action: 林川需要观察周宁的行动，以确保其安全",
+          "reasons": [
+            "planned action is a goal/plan sentence, not an action: 林川需要观察周宁的行动，以确保其安全"
+          ],
+          "reviews": [],
+          "note": null,
+          "checked": []
+        },
+        "failure": null,
+        "output": {
+          "kind": "continue",
+          "candidateCharacterIds": [
+            "person_a"
+          ],
+          "nextRoundId": "round_probe_likely"
+        },
+        "call": {
+          "key": "probe",
+          "raw": "{\"kind\":\"continue\",\"candidateCharacterIds\":[\"person_a\"],\"nextRoundId\":\"pending\",\"plannedAction\":\"林川需要观察周宁的行动，以确保其安全\",\"protagonistRelevance\":\"林川需要观察周宁的行动，以确保其安全\"}",
+          "ms": 23398,
+          "backfills": [
+            {
+              "kind": "next_round_id_backfilled",
+              "modelValue": "pending",
+              "programValue": "round_probe_likely"
+            }
+          ],
+          "context": {
+            "pending": 4,
+            "prototype": "two-condition"
+          }
+        }
+      },
+      {
+        "id": "continuation_unrelated",
+        "task": "continuation",
+        "judgment": {
+          "id": "continuation_unrelated",
+          "parsed": true,
+          "codec": true,
+          "semantics": "fail",
+          "why": "planned action is a goal/plan sentence, not an action: 林川需要继续守门以确保走廊的安全，同时清点箱子以推进任务",
+          "reasons": [
+            "planned action is a goal/plan sentence, not an action: 林川需要继续守门以确保走廊的安全，同时清点箱子以推进任务"
+          ],
+          "reviews": [],
+          "note": null,
+          "checked": []
+        },
+        "failure": null,
+        "output": {
+          "kind": "continue",
+          "candidateCharacterIds": [
+            "person_a"
+          ],
+          "nextRoundId": "round_probe_unrelated"
+        },
+        "call": {
+          "key": "probe",
+          "raw": "{\"kind\":\"continue\",\"candidateCharacterIds\":[\"person_a\"],\"nextRoundId\":\"pending\",\"plannedAction\":\"林川需要继续守门以确保走廊的安全，同时清点箱子以推进任务\",\"protagonistRelevance\":\"林川与任务相关，需要继续守门和清点箱子\"}",
+          "ms": 21163,
+          "backfills": [
+            {
+              "kind": "next_round_id_backfilled",
+              "modelValue": "pending",
+              "programValue": "round_probe_unrelated"
+            }
+          ],
+          "context": {
+            "pending": 4,
+            "prototype": "two-condition"
+          }
+        }
+      },
+      {
+        "id": "continuation_done",
+        "task": "continuation",
+        "judgment": {
+          "id": "continuation_done",
+          "parsed": true,
+          "codec": true,
+          "semantics": "fail",
+          "why": "no driving action was expected, model continued",
+          "reasons": [
+            "no driving action was expected, model continued"
+          ],
+          "reviews": [],
+          "note": null,
+          "checked": []
+        },
+        "failure": null,
+        "output": {
+          "kind": "continue",
+          "candidateCharacterIds": [
+            "person_a"
+          ],
+          "nextRoundId": "round_probe_done"
+        },
+        "call": {
+          "key": "probe",
+          "raw": "{\"kind\":\"continue\",\"candidateCharacterIds\":[\"person_a\"],\"nextRoundId\":\"pending\",\"plannedAction\":\"林川需要观察并处理盒子中的情况以确保守门任务的完成\",\"protagonistRelevance\":\"林川的行动与周宁无关，但需要确保守门任务的顺利进行\"}",
+          "ms": 21747,
+          "backfills": [
+            {
+              "kind": "next_round_id_backfilled",
+              "modelValue": "pending",
+              "programValue": "round_probe_done"
+            }
+          ],
+          "context": {
+            "pending": 0,
+            "prototype": "two-condition"
+          }
+        }
+      }
+    ]
+  },
+  "scenes": {
+    "action": {
+      "sourceStatus": {
+        "kind": "error",
+        "detail": "model port threw"
+      },
+      "playerInput": "走到走廊",
+      "modelTasks": 5,
+      "judged": {
+        "status": {
+          "kind": "error",
+          "detail": "model port threw"
+        },
+        "accepted": false,
+        "modelCalls": 4,
+        "programCalls": 1,
+        "parsedCalls": 4,
+        "codecCalls": 3,
+        "semanticErrors": [
+          {
+            "call": "updates:group_29",
+            "error": "illegal stage appearanceChanges"
+          }
+        ],
+        "pendingReview": [
+          {
+            "call": "results:group_29",
+            "review": "bare success/failure verdict without dice evidence needs human review"
+          }
+        ],
+        "narrationFallbacks": []
+      }
+    },
+    "chain": {
+      "sourceStatus": {
+        "kind": "error",
+        "detail": "model port threw"
+      },
+      "playerInput": "推开门厅深处的重门，示意同伴到门边一起撑住。",
+      "modelTasks": 4,
+      "judged": {
+        "status": {
+          "kind": "error",
+          "detail": "model port threw"
+        },
+        "accepted": false,
+        "modelCalls": 4,
+        "programCalls": 0,
+        "parsedCalls": 4,
+        "codecCalls": 3,
+        "semanticErrors": [
+          {
+            "call": "reaction:person_a",
+            "error": "reaction copies the source action"
+          },
+          {
+            "call": "results:group_35",
+            "error": "admitted roll described as failure (person_a): 没有成功 [dice mismatch]"
+          },
+          {
+            "call": "updates:group_35",
+            "error": "illegal stage appearanceChanges"
+          }
+        ],
+        "pendingReview": [],
+        "narrationFallbacks": []
+      }
+    }
+  },
+  "notes": [
+    "Scoring only: no model call, no server, no new evidence.",
+    "Old archives did not store result/reaction input context or continuation judgement fields; those aspects are `review`, never `pass`.",
+    "The old action/continuation prompts encoded the superseded contract (consumed => skip every actor; incomplete tasks => continue); the new verdicts judge the outputs against the design contract."
+  ],
+  "status": "RESCORED"
+}
