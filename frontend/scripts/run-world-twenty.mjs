@@ -267,7 +267,9 @@ try {
       return next;
     };
 
-    // 从 S₀ 折算整条点链并与各点 served state 逐一比对
+    // 从 S₀ 折算整条点链并与各点 served state 逐一比对。
+    // 严格模式：缺读即失败（ok:null 曾让逐 commit fold 永远跳过刚提交的点——
+    // 二轮复核 P1-2）。调用方必须先缓存刚提交 head 的读取（H.afterCommit）。
     H.foldAll = async (reason) => {
       const points = (await H.rawOp('list_points', { after: null, limit: 100 }, { tag: 'fold' })).points;
       const steps = [];
@@ -275,7 +277,11 @@ try {
       let ok = true;
       for (const point of points) {
         const read = H.reads.get(point.pointId) ?? null;
-        if (!read) { steps.push({ pointId: point.pointId, kind: point.kind, ok: null, note: 'no_recorded_read' }); continue; }
+        if (!read) {
+          ok = false; // 缺读点与其后所有点都无法折算——显式失败，不静默跳过
+          steps.push({ pointId: point.pointId, kind: point.kind, ok: false, note: 'no_recorded_read' });
+          break;
+        }
         if (!state) {
           state = structuredClone(read.state); // S₀ = root 点的 committed 状态
           steps.push({ pointId: point.pointId, kind: point.kind, ok: true, note: 's0' });
@@ -292,6 +298,14 @@ try {
       H.foldLog.push(entry);
       return entry;
     };
+    // 提交后的完整核验：先读新 head（缓存该点 committed 状态），再折算全链。
+    // 缺任何点的读取或任何失配都抛错（transport 钩子与 raw commit 共用）。
+    H.afterCommit = async (committedPointId) => {
+      await H.rawOp('get_state', {}, { tag: 'fold' }); // 缓存刚提交点的读取
+      const fold = await H.foldAll(`commit:${committedPointId}`);
+      if (!fold.ok) throw new Error(`S0 fold failed after commit ${committedPointId}: ` +
+        `${JSON.stringify(fold.steps.filter((step) => step.ok !== true))}`);
+    };
 
     // 无 lease 的读操作；写操作自动合并 requestId+当前 lease 绑定——
     // checkpoint_*/create_rolls 另需 head 乐观并发三元组
@@ -306,18 +320,24 @@ try {
     // narration_delete/narration_get：查询串/无 body 操作——pointId 走 scope 进
     // 路径，payload 不得进 body（客户端按 bodyless 校验）
     const PATH_POINT_OPS = new Set(['narration_delete', 'narration_get']);
+    // history 模式的叙述操作绑定 {mode:'history', leaseToken?:null}——不得合并
+    // lease 字段（string token 会破坏判别联合）
+    const isHistoryNarration = (operation, payload) =>
+      ['narration_claim', 'narration_submit', 'narration_delete'].includes(operation) && payload.mode === 'history';
     H.rawSeq = 0;
     H.rawOp = async (operation, payload = {}, opts = {}) => {
       const started = performance.now();
       const scope = PATH_POINT_OPS.has(operation) ? { worldId: H.worldId, pointId: payload.pointId }
         : H.worldId && operation !== 'create_world' ? { worldId: H.worldId } : {};
+      const historyMode = isHistoryNarration(operation, payload);
       const body = DELETE_RAW.has(operation) ? { protocolVersion: 2, requestId: payload.requestId ?? `twenty_raw_${++H.rawSeq}`,
-          mode: payload.mode, leaseToken: H.lease?.leaseToken, fenceEpoch: H.lease?.fenceEpoch,
+          mode: payload.mode,
+          ...(payload.mode === 'head' ? { leaseToken: H.lease?.leaseToken, fenceEpoch: H.lease?.fenceEpoch } : {}),
           claimToken: payload.claimToken, generation: payload.generation, issuedAtEpochMilli: payload.issuedAtEpochMilli }
         : operation === 'narration_get' ? {}
         : LEASE_FREE.has(operation) ? payload
         : { protocolVersion: 2, requestId: payload.requestId ?? `twenty_raw_${++H.rawSeq}`, worldId: H.worldId,
-            ...(LEASE_OWN.has(operation) ? {} : { leaseToken: H.lease?.leaseToken, fenceEpoch: H.lease?.fenceEpoch }),
+            ...(LEASE_OWN.has(operation) || historyMode ? {} : { leaseToken: H.lease?.leaseToken, fenceEpoch: H.lease?.fenceEpoch }),
             ...(NEEDS_HEAD(operation) ? { expectedPointId: H.head?.pointId, expectedVersion: H.head?.version,
               expectedCheckpointRevision: H.revision } : {}),
             ...payload };
@@ -325,6 +345,7 @@ try {
       H.opLog.push({ op: operation, ms: Math.round(performance.now() - started), tag: opts.tag });
       H.captureEnvelope(response);
       if (operation === 'get_state') H.reads.set(response.data.pointId, structuredClone(response.data));
+      if (operation === 'commit_point' && H.head) await H.afterCommit(H.head.pointId); // raw 提交与 transport 钩子同一核验
       return response.data ?? response;
     };
     // 信封里的 world.lease 形状不含 leaseToken（token 只在 create/acquire/renew
@@ -362,9 +383,7 @@ try {
       H.captureEnvelope(response);
       if (operation === 'get_state') H.reads.set(response.data.pointId, structuredClone(response.data));
       if (operation === 'commit_point' && response.world) {
-        const committedPointId = response.world.head.pointId;
-        const fold = await H.foldAll(`commit:${committedPointId}`);
-        if (!fold.ok) throw new Error(`S0 fold mismatch after commit ${committedPointId}: ${JSON.stringify(fold.steps.filter((step) => step.ok === false))}`);
+        await H.afterCommit(response.world.head.pointId); // 读取新点+全链折算，失败即抛
       }
       return response;
     } };
@@ -438,8 +457,9 @@ try {
         inputs.push(await H.submitRecorded(session, commands[index], 'A', index + 1));
         H.assertCleanTerminal(inputs[index], `A input ${index + 1}`);
       }
-      return { attach, s0, inputs, totals: { modelAttempts: H.modelAttempts.length, completionEvidence: H.completionEvidence.length } };
+      return { worldId: H.worldId, attach, s0, inputs, totals: { modelAttempts: H.modelAttempts.length, completionEvidence: H.completionEvidence.length } };
     });
+    report.worldId = report.phases.A.worldId;
     report.inputs.push(...report.phases.A.inputs);
     report.status = 'PASS_A'; save();
     console.log(`[world-twenty] A: inputs=${report.phases.A.inputs.length} wall=${report.phases.A.inputs.reduce((sum, item) => sum + item.wallMs, 0)}ms modelAttempts=${report.phases.A.totals.modelAttempts}`);
@@ -536,21 +556,22 @@ try {
       const reactor = 'person_c';
       const inputText = '林川推开门厅深处的重门，示意周宁到门边一起撑住。';
       const TA_SUCCESSOR = { boundary: 'instant', duration: { amount: 0, unit: 'second' } }; // T08 s7 录制形状
+      const TA_CHAIN = { boundary: 'elapsed', duration: { amount: 2, unit: 'second' } };
       const TA_AUTO = { boundary: 'elapsed', duration: { amount: 1, unit: 'second' } };
+      // P1-1（二轮复核）：链场景必须发生在同一世界——不再重建世界；未准入的
+      // 尝试在同一世界内整轮取消（cancel 任意阶段合法：置 phase=complete、清
+      // advance），下一轮尝试重新开局。全部 21 次输入因此落在同一个世界。
+      const worldIdBefore = H.worldId;
+      if (!worldIdBefore) throw new Error('C requires the world created in phase A');
+      const attemptMark = H.modelAttempts.length;
+      const opMark = H.opLog.length;
+      const wireMark = H.wireCaptures.length;
       const setupStarted = performance.now();
       const worldAttempts = [];
+      const abandonedRounds = [];
       let ids = null;
       let admitted = false;
       for (let attempt = 1; attempt <= 6 && !admitted; attempt++) {
-        H.worldId = null; // 每次尝试都从全新世界开始（含根叙事引导）
-        await api('create_world', { protocolVersion: 2, requestId: next(), initial: (await import('/src/app/world/world-defaults.ts')).defaultInitialTemplate() });
-        const attemptWorldId = H.worldId;
-        // 根点叙事引导（v3 同款）：gate 要求根叙事先就绪，否则后续操作 narration_blocked
-        const rootPointId = H.head.pointId;
-        const rootClaim = await api('narration_claim', { ...base(), mode: 'head', pointId: rootPointId });
-        await api('narration_submit', { ...base(), mode: 'head', pointId: rootPointId, claimToken: rootClaim.claimToken,
-          generation: rootClaim.generation, issuedAtEpochMilli: rootClaim.issuedAtEpochMilli, outcome: 'ready',
-          text: '根点模板叙事（脚本引导，不计入模型成本）。', failureReason: null });
         ids = await allocate([
           { slotKey: 'advance', kind: 'advance' }, { slotKey: 'input', kind: 'input' }, { slotKey: 'round', kind: 'round' },
           { slotKey: 'point_1', kind: 'point' }, { slotKey: 'group_1', kind: 'group' },
@@ -562,7 +583,7 @@ try {
         await api('checkpoint_start_advance', { ...base(), operation: 'start_advance', advanceId: ids.advance, inputId: ids.input,
           roundId: ids.round, inputText, order: roster });
         await api('checkpoint_begin_point', { ...base(), operation: 'begin_point', pointId: ids.point_1, kind: 'normal',
-          timeAdvance: { boundary: 'elapsed', duration: { amount: 2, unit: 'second' } } });
+          timeAdvance: TA_CHAIN });
         await api('checkpoint_discover_group', { ...base(), operation: 'discover_group', pointId: ids.point_1, groupId: ids.group_1,
           initiatorId: initiator, actionText: inputText, targetIds: null });
         await api('checkpoint_extend_group', { ...base(), operation: 'extend_group', pointId: ids.point_1, groupId: ids.group_1,
@@ -570,7 +591,7 @@ try {
         const ringRoll = (await api('create_rolls', { ...base(), rolls: [{ advanceId: ids.advance, roundId: ids.round, groupId: ids.group_1,
           sourceId: initiator, targetId: reactor, triggerKey: ids['trigger:group_1:person_a:person_c'],
           ruleVersion: 'reaction-d20-v1', target: 11 }] })).rolls[0];
-        worldAttempts.push({ attempt, worldId: attemptWorldId,
+        worldAttempts.push({ attempt, roundId: ids.round,
           roll: { admitted: ringRoll.admitted, rollId: ringRoll.rollId, result: ringRoll.result, eligible: ringRoll.eligible } });
         if (ringRoll.admitted) {
           await api('checkpoint_extend_group', { ...base(), operation: 'extend_group', pointId: ids.point_1, groupId: ids.group_1,
@@ -596,11 +617,17 @@ try {
           await api('checkpoint_prepare_successor', { ...base(), operation: 'prepare_successor', pointId: ids.point_1,
             successorPointId: ids.successor, timeAdvance: TA_SUCCESSOR });
           admitted = true;
+        } else {
+          // 未准入：整轮取消（未提交工作一并放弃），身份随轮废弃，不产生点
+          await api('round_conclusion_cancel', { ...base(), operation: 'cancel', advanceId: ids.advance,
+            roundId: ids.round, cancelReason: `first_ring_roll_${ringRoll.result}_not_admitted` });
+          abandonedRounds.push({ attempt, roundId: ids.round, rollResult: ringRoll.result });
         }
       }
       if (!admitted) throw new Error('no admitting first-link roll in six attempts');
       const setupMs = Math.round(performance.now() - setupStarted);
       const chainWorldId = H.worldId;
+      if (chainWorldId !== worldIdBefore) throw new Error(`C left the world: ${chainWorldId} != ${worldIdBefore}`);
       const chainLease = { ...H.lease };
 
       // ---- hybrid port: REAL narrated gate + continue chain（结算已脚本化入 setup）----
@@ -661,9 +688,15 @@ try {
       const chainRoundIds = new Set([ids.round, ids.round_2, ids.round_3]);
       const chainPoints = points.points.filter((point) => chainRoundIds.has(point.roundId));
       return {
-        chainInput: { index: 9, phase: 'C', command: inputText, wallMs: setupMs + walkMs, terminal: { kind: 'stop', reason: 'world_complete' },
-          setupMs, walkMs, modelAttempts: [], serverOps: H.opLog.length },
-        chainWorldId, attempts: worldAttempts.length, worldAttempts,
+        // P2-3：输入 9 的成本按切片记录（此前 modelAttempts 恒空、serverOps
+        // 是累计值——切片覆盖 setup+walk 的全部模型尝试/操作/wire）
+        chainInput: { index: 9, phase: 'C', command: inputText, wallMs: setupMs + walkMs,
+          terminal: { kind: 'stop', reason: 'world_complete' },
+          setupMs, walkMs,
+          modelAttempts: H.modelAttempts.slice(attemptMark),
+          serverOps: H.opLog.length - opMark,
+          wireCaptures: H.wireCaptures.slice(wireMark) },
+        chainWorldId, worldIdBefore, attempts: worldAttempts.length, worldAttempts, abandonedRounds,
         modelTasks: modelLog, continuationLog: H.continuationLog.slice(),
         chainPoints: chainPoints.map((point) => ({ pointId: point.pointId, kind: point.kind, roundId: point.roundId })),
         leaseTokenHead: H.lease?.leaseToken?.slice(0, 14) ?? null,
@@ -680,6 +713,11 @@ try {
     assert.ok(continues.length >= 2, `expected ≥2 continue links, got ${JSON.stringify(report.phases.C.continuationLog)}`);
     assert.ok(linked.length >= 1, `expected ≥1 linked successor segment, got ${JSON.stringify(report.phases.C.chainPoints)}`);
     assert.equal(chainNarrations.length, 4, `expected 4 chain-segment narrations (chain point + linked segment + 2 auto rounds), got ${chainNarrations.length}`);
+    assert.equal(report.phases.C.worldIdBefore, report.worldId, `C left the phase-A world: ${report.phases.C.worldIdBefore} != ${report.worldId}`);
+    assert.equal(report.phases.C.chainWorldId, report.worldId, `C chain world mismatch: ${report.phases.C.chainWorldId} != ${report.worldId}`);
+    assert.ok(report.phases.C.worldAttempts.some((entry) => entry.roll.admitted), 'no admitting roll recorded');
+    assert.ok(report.phases.C.chainInput.modelAttempts.length >= 4, `chain input model slice too small: ${report.phases.C.chainInput.modelAttempts.length}`);
+    assert.ok(report.phases.C.chainInput.serverOps > 0, 'chain input serverOps slice empty');
     report.status = 'PASS_C'; save();
     console.log(`[world-twenty] C: setup=${report.phases.C.chainInput.setupMs}ms walk=${report.phases.C.chainInput.walkMs}ms continues=${continues.length} linked=${linked.length}`);
   } catch (error) { harnessError(error, 'phase C'); }
@@ -723,46 +761,56 @@ try {
       }
 
       // 每次 handback 后会话释放租约、下次 submit 重新 acquire（token 逐次更替）。
-      // regen 的 raw 操作撞上释放后空窗会 lease_invalid：整段重试一次（先换新租约）。
-      const runRegen = async () => {
+      // regen 的 raw 操作撞上释放后空窗会 lease_invalid：整段重试一次（先从
+      // 会话内存克隆读回驱动器当前 token——克隆读取安全）。
+      const regenPoint = async (pickPoint, mode) => {
         const points = (await H.rawOp('list_points', { after: null, limit: 100 }, { tag: 'regen' })).points;
-        const head = points[points.length - 1];
-        const after = H.reads.get(head.pointId) ?? await H.rawOp('get_state', {}, { tag: 'regen' });
-        if (after.pointId !== head.pointId) throw new Error(`head read mismatch: ${after.pointId} != ${head.pointId}`);
+        const target = pickPoint(points);
+        if (!target) throw new Error('regen target point not found');
+        const after = H.reads.get(target.pointId) ?? (mode === 'head' ? await H.rawOp('get_state', {}, { tag: 'regen' }) : null);
+        if (!after || after.pointId !== target.pointId) throw new Error(`target read mismatch: ${after?.pointId} != ${target.pointId}`);
         const before = after.previousPointId ? H.reads.get(after.previousPointId) ?? null : null;
-        const claim1 = await H.rawOp('narration_claim', { mode: 'head', pointId: head.pointId }, { tag: 'regen' });
-        const del = await H.rawOp('narration_delete', { mode: 'head', pointId: head.pointId, claimToken: claim1.claimToken,
+        const claim1 = await H.rawOp('narration_claim', { mode, pointId: target.pointId }, { tag: 'regen' });
+        const del = await H.rawOp('narration_delete', { mode, pointId: target.pointId, claimToken: claim1.claimToken,
           generation: claim1.generation, issuedAtEpochMilli: claim1.issuedAtEpochMilli }, { tag: 'regen' });
         if (del.narrationStatus !== 'missing') throw new Error(`delete status ${del.narrationStatus}`);
-        const claim2 = await H.rawOp('narration_claim', { mode: 'head', pointId: head.pointId }, { tag: 'regen' });
+        const gone = await H.rawOp('narration_get', { pointId: target.pointId }, { tag: 'regen' });
+        if (gone.narrationStatus !== 'missing') throw new Error(`post-delete status ${gone.narrationStatus}`);
+        const claim2 = await H.rawOp('narration_claim', { mode, pointId: target.pointId }, { tag: 'regen' });
         const eventMark = H.events.length;
         const regenerated = await narrateFromReads(after, before, H.polish, (event) => H.events.push({ ...event, at: Date.now() }));
         const regenEvents = H.events.slice(eventMark).filter((event) => event.kind === 'narration' || event.kind === 'polishFallback');
-        await H.rawOp('narration_submit', { mode: 'head', pointId: head.pointId, claimToken: claim2.claimToken,
+        await H.rawOp('narration_submit', { mode, pointId: target.pointId, claimToken: claim2.claimToken,
           generation: claim2.generation, issuedAtEpochMilli: claim2.issuedAtEpochMilli, outcome: 'ready', text: regenerated, failureReason: null }, { tag: 'regen' });
-        const back = await H.rawOp('narration_get', { pointId: head.pointId }, { tag: 'regen' });
+        const back = await H.rawOp('narration_get', { pointId: target.pointId }, { tag: 'regen' });
         if (back.narrationStatus !== 'ready') throw new Error(`regenerated narration status ${back.narrationStatus}`);
-        return { pointId: head.pointId, invalidatedGeneration: del.invalidatedGeneration, claim1Generation: claim1.generation,
+        return { pointId: target.pointId, mode, postDeleteStatus: gone.narrationStatus,
+          invalidatedGeneration: del.invalidatedGeneration, claim1Generation: claim1.generation,
           claim2Generation: claim2.generation, regeneratedGeneration: back.generation ?? null, text: regenerated,
           polished: regenEvents.some((event) => event.kind === 'narration' && event.polished), events: regenEvents };
       };
+      // P2-4：缓存清除重生成覆盖两头——当前头点（mode=head）与非头历史点
+      // （mode=history，倒数第二点）
       let regen = null;
-      try {
-        regen = await runRegen();
-      } catch (error) {
-        if (!/lease_invalid/i.test(String(error))) throw error;
-        // 提交循环里驱动器的租约可能已更替：从会话内存克隆读回驱动器当前
-        // token（克隆读取安全），再整段重试一次
-        const current = session.getMemory().leaseToken ?? null;
-        H.lease = { ...H.lease, leaseToken: current };
-        regen = await runRegen();
+      let historyRegen = null;
+      for (let tried = 0; ; tried++) {
+        try {
+          regen = await regenPoint((points) => points[points.length - 1], 'head');
+          historyRegen = await regenPoint((points) => points[points.length - 2], 'history');
+          break;
+        } catch (error) {
+          if (tried >= 1 || !/lease_invalid/i.test(String(error))) throw error;
+          const current = session.getMemory().leaseToken ?? null;
+          H.lease = { ...H.lease, leaseToken: current };
+        }
       }
       const finalFold = await H.foldAll('final');
-      return { attach, inputs, regen, finalFold, totals: { modelAttempts: H.modelAttempts.length, completionEvidence: H.completionEvidence.length } };
+      return { attach, inputs, regen, historyRegen, finalFold, totals: { modelAttempts: H.modelAttempts.length, completionEvidence: H.completionEvidence.length } };
     });
     report.inputs.push(...report.phases.D.inputs);
     report.status = 'PASS_D'; save();
-    console.log(`[world-twenty] D: inputs=${report.phases.D.inputs.length} regen=${report.phases.D.regen.pointId} polished=${report.phases.D.regen.polished}`);
+    console.log(`[world-twenty] D: inputs=${report.phases.D.inputs.length} regen=${report.phases.D.regen.pointId}(head) ` +
+      `historyRegen=${report.phases.D.historyRegen.pointId} polished=${report.phases.D.regen.polished}/${report.phases.D.historyRegen.polished}`);
   } catch (error) { harnessError(error, 'phase D'); }
 
   // ---- final evidence + hard assertions ----
@@ -785,23 +833,38 @@ try {
             personality: actor.personalityChanges.filter((change) => change.active).map((change) => change.text) }])) },
         points: points.map((point) => ({ pointId: point.pointId, sequence: point.sequence, kind: point.kind, roundId: point.roundId,
           trigger: point.trigger, linkedFromPointId: point.linkedFromPointId, previousPointId: point.previousPointId })),
-        narrations, foldLog: H.foldLog, opLog: H.opLog, modelAttempts: H.modelAttempts,
+        narrations, foldLog: H.foldLog, opLog: H.opLog, modelAttempts: H.modelAttempts, worldId: H.worldId,
         totals: { modelAttempts: H.modelAttempts.length, completionEvidence: H.completionEvidence.length, serverOps: H.opLog.length },
       };
     });
     report.netTrail = netTrail;
-    const attemptsWithoutCompletion = [];
-    for (const input of report.inputs) {
-      for (const attempt of input.modelAttempts ?? []) {
-        if (!attempt.completion?.length) attemptsWithoutCompletion.push({ where: `input ${input.index}`, attempt: attempt.attempt });
-      }
-    }
+    // P2-3：全局校验——全部模型尝试（含链段、根叙事、重生成）都必须带
+    // completion 证据；此前只遍历输入切片，链段缺证据不会被抓
+    const globalWithoutCompletion = (report.phases.final.modelAttempts ?? [])
+      .map((attempt, index) => ({ index, attempt: attempt.attempt, pointId: attempt.pointId, ok: Boolean(attempt.completion?.length) }))
+      .filter((entry) => !entry.ok);
+    // 输入切片完整性：每条输入切片的尝试数之和不得超过全局总数（切片来自同一数组）
+    const inputSliceAttempts = report.inputs.reduce((sum, input) => sum + (input.modelAttempts?.length ?? 0), 0)
+      + (report.phases.A.attach?.modelAttempts?.length ?? 0) + (report.phases.D.attach?.modelAttempts?.length ?? 0);
     assert.equal(report.inputs.length, 21, `expected 21 player inputs, got ${report.inputs.length}`);
     assert.ok(report.phases.final.narrations.every((narration) => narration.narrationStatus === 'ready'),
       `narrations not all ready: ${JSON.stringify(report.phases.final.narrations.filter((entry) => entry.narrationStatus !== 'ready'))}`);
-    assert.ok(report.phases.final.foldLog.every((entry) => entry.ok), `S₀ fold failures: ${JSON.stringify(report.phases.final.foldLog.filter((entry) => !entry.ok))}`);
-    assert.ok(report.phases.D.regen.invalidatedGeneration >= 1, 'regeneration did not bump generation');
-    assert.equal(attemptsWithoutCompletion.length, 0, `attempts without completion: ${JSON.stringify(attemptsWithoutCompletion)}`);
+    assert.ok(report.phases.final.foldLog.length > 0 && report.phases.final.foldLog.every((entry) => entry.ok
+      && entry.steps.every((step) => step.ok === true)),
+      `S₀ fold failures/skips: ${JSON.stringify(report.phases.final.foldLog.filter((entry) => !entry.ok || entry.steps.some((step) => step.ok !== true)))}`);
+    assert.ok(report.phases.D.regen.invalidatedGeneration >= 1, 'head regeneration did not bump generation');
+    assert.ok(report.phases.D.historyRegen && report.phases.D.historyRegen.mode === 'history'
+      && report.phases.D.historyRegen.invalidatedGeneration >= 1, 'history regeneration missing or did not bump generation');
+    assert.notEqual(report.phases.D.historyRegen.pointId, report.phases.D.regen.pointId, 'history regen must target a non-head point');
+    assert.equal(globalWithoutCompletion.length, 0, `global attempts without completion: ${JSON.stringify(globalWithoutCompletion)}`);
+    assert.ok(report.phases.final.totals.modelAttempts >= inputSliceAttempts,
+      `global attempt count ${report.phases.final.totals.modelAttempts} < sliced total ${inputSliceAttempts}`);
+    // P1-1：单世界——全程恰一次 create_world，各阶段 worldId 一致
+    assert.equal((report.phases.final.opLog ?? []).filter((entry) => entry.op === 'create_world').length, 1,
+      'expected exactly one create_world in the whole run');
+    assert.equal(report.phases.C.chainWorldId, report.worldId, 'C ran in a different world');
+    assert.equal(report.phases.final.worldId ?? report.worldId, report.worldId, 'final world mismatch');
+    assert.ok(report.phases.D.historyRegen, 'history regen missing');
     report.status = 'PASS_TWENTY';
     save();
     console.log(`[world-twenty] PASS_TWENTY: inputs=${report.inputs.length} points=${report.phases.final.points.length} ` +
@@ -819,16 +882,16 @@ try {
     service.once('exit', () => { clearTimeout(timer); done(); });
   });
   try { service.kill('SIGKILL'); } catch {}
-  const dbSnapshotDir = resolve(root, 'artifacts', 'world-chain', 'twenty-run-db');
+  const dbSnapshotDir = resolve(root, option('--db-snapshot', 'artifacts/world-chain/twenty-run-db'));
   mkdirSync(dbSnapshotDir, { recursive: true });
-  report.retainedEvidence = { privateDir, dbSnapshot: 'artifacts/world-chain/twenty-run-db' };
+  report.retainedEvidence = { privateDir, dbSnapshot: option('--db-snapshot', 'artifacts/world-chain/twenty-run-db') };
   for (const suffix of ['', '-wal', '-shm']) {
     const source = resolve(privateDir, `world.db${suffix}`);
     if (existsSync(source)) copyFileSync(source, resolve(dbSnapshotDir, `world.db${suffix}`));
   }
   if (existsSync(resolve(privateDir, 'server.log'))) copyFileSync(resolve(privateDir, 'server.log'), resolve(dbSnapshotDir, 'server.log'));
   save();
-  console.log(`[world-twenty] ${report.status} → ${output} (db+log retained in artifacts/world-chain/twenty-run-db)`);
+  console.log(`[world-twenty] ${report.status} → ${output} (db+log retained in ${dbSnapshotDir})`);
   process.exit(0);
 } catch (error) {
   report.status = 'FAILED';
