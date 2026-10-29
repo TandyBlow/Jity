@@ -11,7 +11,7 @@ annotation/labels-c-impl.jsonl text eol=crlf
 annotation/labels-ai-*.jsonl -text
 annotation/identity-ai-*.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 annotation/d1-ai-protocol.json -text
-annotation/labels-v3.jsonl -text
+annotation/labels-v3.jsonl -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 annotation_kappa.py text eol=lf
 recompute_must.py text eol=lf
 recompute_must_v3.py text eol=lf

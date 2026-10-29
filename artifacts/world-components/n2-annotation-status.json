@@ -1,18 +1,170 @@
 {
-  "purpose": "N2 v3 annotation status (D1)",
-  "status": "awaiting-reviewer-labels",
-  "rubric": {
-    "file": "design\\world-engine-reports\\components\\n2-annotation-rubric.md",
-    "sha256": "69f3f4f121af885edab048446d80bd49b0c7d316154cef9bc3ac027d5aed6631"
+  "purpose": "N2 v3 annotation agreement (D1)",
+  "labels": {
+    "a": {
+      "file": "labels-ai-a.jsonl",
+      "sha256": "c3a5f82d318424285813264c2e7b9970705e2bd6f7b25aba86821d004c21740a"
+    },
+    "b": {
+      "file": "labels-ai-b.jsonl",
+      "sha256": "40a4b0ec82d8b3532cad2291001db663024f29492a95c4df2a9009e34732b2b6"
+    }
   },
-  "labelsA": {
-    "file": "labels-c-impl.jsonl",
-    "sha256": "8485736630279e85a611448f8cd5bfd99d0c7cd5c2de63ece176c801ba6ea026"
+  "agreement": {
+    "n": 92,
+    "observedAgreement": 1.0,
+    "expectedAgreement": 0.3573,
+    "kappa": 1.0,
+    "kappaExact": 1.0,
+    "confusion": {
+      "must": {
+        "must": 32,
+        "omit": 0,
+        "may": 0
+      },
+      "omit": {
+        "must": 0,
+        "omit": 20,
+        "may": 0
+      },
+      "may": {
+        "must": 0,
+        "omit": 0,
+        "may": 40
+      }
+    }
   },
-  "labelsB": {
-    "file": "labels-c-reviewer.jsonl",
-    "present": false
+  "annotationProtocol": {
+    "file": "d1-ai-protocol.json",
+    "sha256": "f13cd3c98ec2fddd2755189c7eebbe840c00029c0fd7691bb0af37e6207e7dc0",
+    "registration": {
+      "decision": "D1",
+      "mode": "AI-independent-annotation",
+      "registeredAt": "2026-10-29",
+      "sourceCommit": "30069354cc061be94fc31c897dada0f641ed3f90",
+      "authorization": "Project owner explicitly assigned the coordinator to perform AI independent annotation, push the result to world-components, and notify the C reviewer.",
+      "protocolChange": "Two fresh AI annotator tasks replace the exposed implementer/reviewer pair for this run. Original labels-c-impl.jsonl remains historical and is excluded from this run's agreement calculation. The rubric and decision thresholds are unchanged.",
+      "annotators": [
+        {
+          "id": "ai-a",
+          "task": "/root/d1_annotator_a",
+          "labels": "labels-ai-a.jsonl",
+          "identity": "identity-ai-a.json",
+          "inheritedTurns": false
+        },
+        {
+          "id": "ai-b",
+          "task": "/root/d1_annotator_b",
+          "labels": "labels-ai-b.jsonl",
+          "identity": "identity-ai-b.json",
+          "inheritedTurns": false
+        }
+      ],
+      "allowedInputs": [
+        {
+          "file": "rubric.md",
+          "source": "design/world-engine-reports/components/n2-annotation-rubric.md",
+          "sha256": "69f3f4f121af885edab048446d80bd49b0c7d316154cef9bc3ac027d5aed6631"
+        },
+        {
+          "file": "items-blind.jsonl",
+          "source": "experiments/world-components/n2_selection/annotation/items-blind.jsonl",
+          "sha256": "8641b527a319710982db29f5ee46eb098db628d9d997bf8219696d6e07fcd904"
+        },
+        {
+          "file": "sheet.md",
+          "source": "experiments/world-components/n2_selection/annotation/sheet.md",
+          "sha256": "83eb1e1d0faa30ca5bf54dec2e11e879dfce728ffc5b2aa55c4188a85f8d6c9f"
+        },
+        {
+          "file": "labels-template.jsonl",
+          "source": "experiments/world-components/n2_selection/annotation/labels-template.jsonl",
+          "sha256": "fb9092e8a2d742edb879484ab58061459def73a5c8f756b4785f6220083fc412"
+        }
+      ],
+      "gates": {
+        "facts": 92,
+        "items": 16,
+        "kappaMinimum": 0.7,
+        "adjudicateAllDisagreements": true,
+        "n3RebuildWhenChangedMustItemsExceed": 2
+      },
+      "adjudication": "The coordinator resolves disagreements against the unchanged rubric after both original AI files are sealed. Decisions and reasons are archived; the C reviewer independently audits the process and result.",
+      "limitations": [
+        "This is AI independent annotation, not human annotation or human evaluation.",
+        "Independence concerns task context and answer exposure, not different model families; shared-model biases remain possible.",
+        "Cohen's kappa measures agreement under this rubric, not semantic correctness or product quality.",
+        "The coordinator and C reviewer have prior exposure and are not represented as blind annotators.",
+        "No model training or new N2/N3 inference is authorized by a successful annotation gate alone."
+      ]
+    },
+    "mode": "AI-independent-annotation",
+    "identities": [
+      {
+        "file": "identity-ai-a.json",
+        "sha256": "b3f721ce6c7bd2c199d510e4f867d613ca0088bf98163af8219b8dc07e6a8db8",
+        "statement": {
+          "annotatorId": "ai-a",
+          "annotatorType": "AI",
+          "context": "fresh task without inherited turns",
+          "inputFileNames": [
+            "rubric.md",
+            "items-blind.jsonl",
+            "sheet.md",
+            "labels-template.jsonl"
+          ],
+          "exposureBeyondFourInputFiles": false,
+          "method": "完整阅读四个指定输入文件，逐条独立语义判断可见性、人物或地点主体、全知共同焦点及四类必述条件；标签先由AI判定，再用代码写入并校验92条数量、模板顺序、ID和标签合法性；未读取旧标签、模型输出或其他标注者结果，未计算一致度。",
+          "limitations": [
+            "AI标注，非人工评测，不能替代独立真人标注。",
+            "同模型可能存在相关偏差，不能将多份AI判断视为独立人工证据。",
+            "仅依据所给rubric及盲表，缺少未提供的叙事上下文；不推断未明示的共同任务或主角危险。"
+          ]
+        }
+      },
+      {
+        "file": "identity-ai-b.json",
+        "sha256": "f76e4a7c0fb6bf70583852546dec119ce5f3d3edddbec4c9df4e3c076a03506a",
+        "statement": {
+          "annotatorId": "ai-b",
+          "annotatorType": "AI",
+          "context": "fresh task without inherited turns",
+          "inputFileNames": [
+            "rubric.md",
+            "items-blind.jsonl",
+            "sheet.md",
+            "labels-template.jsonl"
+          ],
+          "exposureBeyondFourInputFiles": false,
+          "exposureDetail": "仅读取指定四份输入材料，未读取旧标签、模型输出、其他标注者文件或其他任务会话。",
+          "method": "完整阅读 rubric、16 场景 92 条事实及模板，按可见性、仅他人、四类必述顺序逐条独立语义判断；全知场景以有位置事实的人物为共同焦点，地点外貌按场景细节处理。代码仅写入已判定标签并校验格式、顺序和数量，未用旧规则推导标签。",
+          "limitations": [
+            "同模型标注者之间可能存在相关偏差，独立上下文不等于独立模型。",
+            "本结果属于 AI 标注，非人工评测，不能据此声称真人一致度。",
+            "仅依据给定 rubric 与盲表，未对场景事实的现实合理性作额外假设。"
+          ],
+          "uncertainItems": []
+        }
+      }
+    ]
   },
-  "generatedAt": "2026-10-29T08:55:15+00:00",
-  "generatedFromCommit": "f34e992fa48f2fa078ac28b563fdbc09d87314d4"
+  "provenance": {
+    "script": "6a3d02487e06f6b177eed7760d43e0edd6cd342a4560919bcc9c7205291c4827",
+    "manifest": "171469cf38c11789fbdf0e276381f65a8e04fcacb0a3814a6a0b939cdd4eb599",
+    "itemsV2": "c574d44ebc48a254942fff276cffd18d8607281b6e3617299c1cc0e35cc947fa",
+    "blindItems": "8641b527a319710982db29f5ee46eb098db628d9d997bf8219696d6e07fcd904",
+    "template": "fb9092e8a2d742edb879484ab58061459def73a5c8f756b4785f6220083fc412",
+    "sheet": "83eb1e1d0faa30ca5bf54dec2e11e879dfce728ffc5b2aa55c4188a85f8d6c9f"
+  },
+  "disagreements": [],
+  "generatedAt": "2026-10-29T09:58:35+00:00",
+  "generatedFromCommit": "2386ca0c90b608b1f52bdb801effcee4bb002431",
+  "status": "frozen",
+  "mustGate": {
+    "threshold": ">2 items out of 16",
+    "changedItems": 0,
+    "action": "reuse-n3-16-inputs",
+    "items": []
+  },
+  "frozenArchive": "artifacts\\world-components\\n2-labels-v3.json"
 }

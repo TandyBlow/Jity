@@ -117,9 +117,11 @@ D1 把旧的 `target` 精确匹配降为诊断，硬指标改为 must 的召回�
 
 ## 5. 结论与下一步
 
+**D1 本次交付：** v3 已按明确登记的 AI 独立标注协议冻结，κ=1.0、无分歧；既有六臂重算均未通过。P1-rule must-R=1.0、must-P macro=0.433333，不触发降级；must 差异 0/16，沿用 N3 输入。详见 [D1 交付与复跑](d1-ai-closure.md)。下述 v2 观察保留为历史依据。
+
 - **N2 未通过（D1 口径）**：六臂都没有达到 must-R≥0.95 且 must-P≥0.85；Qwen 仍有 9 次视角违规，Randeng 仍是空选择/无效内容。
 - 视角约束本身是**程序可判定**的（P1-rule 证据），但 must 口径下 P1-rule 的 must-P 只有 0.433：它不能替代“必述选择”。N2 的价值在**显著性与省略判断**，而显著性口径要由 v3 独立标注确认，不能再用 `target` 精确匹配。
-- **D1 失败分支未在 v2 触发**；v3 标注与 κ 冻结后再判。若触发，N2 模型臂降为规则臂＋人工抽检，产能转 N3/N4（D1 原文）。
+- **D1 失败分支在 v2 与本次冻结 v3 上均未触发**；不按此分支降级 N2 或转移产能。
 - 模型路线（v3 冻结后才开始）：编码器打分头（事实条目×视角→must/may/omit），输入含视角字段与事实位置；生成编号的形态（M1/M2）两轮均未通过，不优先。
 - 数据纪律：训练与调参用开发集；**N4 独立留出集保持封存**，不与 N2 混用。
 - 在 v3 冻结、预登记判据与独立留出前，不宣布 N2 通过。
@@ -130,7 +132,7 @@ N3 的契约是**组织计划**，不是成句。**唯一形状定义在[接口�
 
 | 项 | 安排 |
 | --- | --- |
-| 输入 | 已选事实（16 项暂用 v2 `target`；v3 冻结后按 D1 的 >2/16 must 门决定是否重建）＋视角；**不接 N2 模型输出** |
+| 输入 | 已选事实（按 v3 的 D1 must 差异门，0/16，沿用既有 16 项 v2 `target` 输入）＋视角；**不接 N2 模型输出**；这是 N3 组织实验输入，不等同 N2 已通过 |
 | 输出 | 只引用 §5.2 的窄形状；不另写第二份 shape |
 | 程序基线 B1 | 按 kind 优先级（位置→任务→人格→理智→外貌→时间→空点）分组，同人多事实合入同句组；指代建议：同句组内第二次提及用姓名，不生成代词 |
 | 程序基线 B2 | 保留计划原始顺序，每条事实一个句组 |
@@ -147,14 +149,15 @@ N3 的契约是**组织计划**，不是成句。**唯一形状定义在[接口�
 | 篡改探针 | `--tamper`：跨组 entity、跨组/全局 factId、未知 entity、错 mention、丢 fact、重复 fact、捏造 factId，以及本轮新增的**首位捏造 factId**与**空句组**共九类变异，**144/144 适用项全部被捕获**；16/16 有效计划零问题。检查器对首位捏造编号与空句组返回问题列表，不再抛 `KeyError`/`IndexError`。归档在 `n3-baselines-r1.json` 的 `tamper` |
 | 基线数字 | B1 共 **36 句组**（facts/组均值 1.46；actor 内聚），B2 共 **52 句组**（每事实一组）；这是后续模型臂必须优化的对照，不是成绩 |
 | **factIds 消费冒烟** | 每个 B1 句组作为**扁平事实表**喂共享渲染器与**冻结 r3-direction** 检查点（离线 Python，cudnn deterministic、benchmark=False）：36 组全部成句，本次归档墙钟均值 0.8s（重复运行 0.5–0.8s 波动）；原文存档 `n3-factids-smoke-r1.json`。**coreference 未被 `render_input` 消费，句组边界未传入，跨组连贯性未测；不是 N4 质量证据，封存留出集未动** |
-| 待定 | N3 模型臂未跑；H1/H2/G1–G4 未预登记；8 项能力样本与 gold 未建；代词策略未定；显著性口径继承 N2 v3 待冻结 |
+| 待定 | N3 模型臂未跑；H1/H2/G1–G4 未预登记；8 项能力样本与 gold 未建；代词策略未定；N2 v3 已按 AI 协议冻结 |
 
 ## 7. 独立标注与 v3 冻结（D1）
 
 - **Rubric**：[n2-annotation-rubric.md](n2-annotation-rubric.md)，标注前定稿；`sha256` 见 `experiments/world-components/n2_selection/annotation/manifest.json`（当前 `69f3f4f1…`）。
 - **盲表**：`annotation/items-blind.jsonl` / `sheet.md`，16 项、92 条事实；已剥离 `must/target/omittable/forbidden`、构造备注与标签哈希。生成器 `make_annotation_sheet.py`。
-- **实现者标签**：`annotation/labels-c-impl.jsonl`（92 条，哈希见 manifest）。其类别分布与对 v2 的差异**暂不在本报告展开**，避免影响审查者盲标；κ 与 v3 冻结后再补录。
-- **审查者标签**：必须盲标，写到 `annotation/labels-c-reviewer.jsonl`；不要先打开 `labels-c-impl.jsonl`，也不要先读本节之外的实现者标签对比。
+- **实现者历史标签**：`annotation/labels-c-impl.jsonl` 保留，本轮 κ 不使用该暴露标签。
+- **本轮标注者**：两位不继承原会话的 AI，仅接触原 rubric、盲表和空模板；原标签为 `annotation/labels-ai-a.jsonl`、`labels-ai-b.jsonl`，身份与限制单独归档。原实现者／审查者安排的变更见 `annotation/d1-ai-protocol.json`；不改 rubric 与门槛，不称人工评测。
 - **κ 与冻结**：`annotation_kappa.py` 校验 rubric/盲表哈希、逐项对齐、计算三分类 Cohen's κ；κ≥0.7 且分歧全部裁决后冻结 `labels-v3.jsonl`，并执行门：v3 与 v2 的 `must` 差异 >2/16 → 重建 N3 16 项输入，否则沿用。
-- **状态**：当前 `artifacts/world-components/n2-annotation-status.json` 为 `awaiting-reviewer-labels`；κ 与 v3 冻结未完成，不得提前引用。
-- **独立性说明**：实现者在修复中看过 v2 标签与汇总输出（manifest 已记录）；审查者必须是盲标，κ 结果按此限制解读。
+- **状态**：`artifacts/world-components/n2-annotation-status.json` 为 `frozen`；92/92 一致、κ=1.0，无分歧需裁决。冻结件 `n2-labels-v3.json`，重算 `n2-must-v3.json`；原待标注状态另存 `n2-annotation-status-pre-ai.json`。
+- **分支结论**：must 差异 0/16，沿用 N3 输入。P1-rule must-R=1.0、must-P macro=0.433333，未达 0.85，不触发 N2 降级或资源转移。
+- **独立性限制**：协调人／C 审查者不充当盲标者；独立性限于新任务上下文与答案隔离，同模型偏差仍可能存在。C 审查者负责流程与冻结证据复审，本报告不代替其签字。

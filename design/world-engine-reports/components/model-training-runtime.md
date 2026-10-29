@@ -66,12 +66,14 @@
 
 ### 3.1 任务进度（复核轮 21 修复）
 
+**D1 更新（2026-10-29）：** v3 AI 独立标注已冻结，κ=1.0；既有输出重算与不降级结论见 [D1 交付](d1-ai-closure.md)。该结果不是人工评测，不增加 N2 模型质量通过记录。
+
 阶段口径：**仅方案 → 已训练 → 离线验证 → 浏览器验证 → 已接线**。逐组件明细见[接口表 §8](component-contracts.md)。
 
 | 任务 | 首选候选（当前依据） | 备选 | 阶段 | 本轮新增证据 |
 | --- | --- | --- | --- | --- |
 | N4 成句 | Randeng-T5-77M 全参微调 `r3-direction`（方向由程序给出） | Qwen3-0.6B（现役基线，未微调） | **离线验证通过**（六类短计划 44/44）；浏览器与接线未验证 | `n4-holdout-eval-r3-direction.json`、`n4-offline-package-r3-direction.json`（D3 离线包） |
-| N2 内容选择 | MiniRBT 编码器打分头（事实×视角）——**尚未训练** | 0.6B instruct 生成编号（两轮均 4/16） | **两轮离线对照完成，无模型通过；D1 must 口径已重算** | `n2-selection-r2.json`、`n2-must-r1.json` |
+| N2 内容选择 | MiniRBT 编码器打分头（事实×视角）——**尚未训练** | 0.6B instruct 生成编号（旧判据两轮均 4/16） | **v3 AI 标注冻结并重算，无模型通过；D1 不触发降级** | `n2-selection-r2.json`、`n2-labels-v3.json`、`n2-must-v3.json` |
 | N3 组织表达 | 程序基线 B1/B2 先行（窄形状） | 0.6B instruct | **基线已实现＋I2 探针通过；模型臂未跑** | `n3-baselines-r1.json`、`n3-factids-smoke-r1.json`；承接见[N2 报告](n2-content-selection.md) §6 |
 | N5 核对 | 程序识别器（Python，v5） | 编码器一致性头（不自动放行） | 离线可用 | `corpus_check.py`、13 例篡改自检 |
 | C2/C3/C4/C5/C6/C1 | 生成骨干单调用（Qwen3-0.6B）为起点 | 编码器头拆分 | 仅方案 | — |

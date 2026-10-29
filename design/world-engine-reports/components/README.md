@@ -97,6 +97,8 @@ C使用不同的隔离开发集，这些数值只给历史规模和失败模式�
 
 ## 交付进度
 
+**D1 最新执行（2026-10-29）：** 两位新会话 AI 独立标注，92/92 一致、κ=1.0、无分歧；v3 已冻结，must 差异 0/16，沿用 N3 输入。P1-rule must-R=1.0、must-P macro=0.433333，不触发降级与资源转移。此为 AI 标注，不是人工评测；本轮待 C 审查者独立复核。详情见 [D1 交付](d1-ai-closure.md)。
+
 复核轮 23 签字：C 审查者对 `f0c7ae7` 签署**交付项 1 完成**，范围限本轮五条验收（四处状态行、§5.2 唯一口径、I2 探针、冒烟限定、隔离数字）及三项 P2 关闭；记录见 [`signoff-f0c7ae7.md`](../../../artifacts/world-components/signoff-f0c7ae7.md)。独立盲标/κ/v3 冻结、模型臂、浏览器接线不在签字内。
 复核轮 22 修复：P2-1 隔离数字改为冻结 B 已提交语料（`8878e97`，**4026 串/9 组**，`poolDigest d7613154…`）；旧引用的 4023（未归档中间值）、4041（16:57Z 扫到写入中的 action7）、4042（复核复跑）均不再作为归档数；B 工作区未提交的 `b3-dbg-a6/a7/a8` 单列在 `excludedWorkingFiles`，live 诊断 4048 串、0 命中。P2-2 N3 检查器对**首位捏造 factId**、**空句组**返回违规列表而非 `KeyError`/`IndexError`，`--tamper` **144/144**。P2-3 N4 离线包写入判据哈希，`corpus.judge = corpus_check.py e16bd2c9…` 不再为 `null`。
 复核轮 21 修复：四处状态行统一；§5.2 冻结窄形状＋程序派生表；N3 `I2` 只查本句组并加 `--tamper`；冒烟限定为 factIds 消费；N2 must-P/R 重算；标注 rubric/盲表/κ 脚本；N4 确定性 flag＋可验证离线包。联合决策 D1–D3 的权威记录在 B 审查者的联合索引，本文只引 ID。
@@ -105,7 +107,7 @@ C使用不同的隔离开发集，这些数值只给历史规模和失败模式�
 - **交付项2：** [模型、训练与运行时方案表](model-training-runtime.md) 0.3。§3.1 为任务×候选×阶段进度表，F14–F20 记录本轮实测。
 - **交付项3：** N4 离线通过并交可验证离线包；N2 两轮对照完成、D1 must 口径已重算；N3 程序基线已实现并过 I2 探针；三者均未接线。
   - **N4（唯一离线通过项）**：[接入包](n4-integration-package.md)（输入输出示例、支持范围、渲染器、哈希、分词/解码、异常约定）。离线质量门在六类短计划内关闭（独立留出 44/44，协调人复核轮 17 签字）；按 D3 另交 `artifacts/world-components/n4-offline-package-r3-direction.json`（哈希含 `corpus.judge=corpus_check.py e16bd2c9…`、torch/cuda/GPU、确定性 flag、复跑口径）；**浏览器侧与接线未验证**。
-  - **N2**：[内容选择报告](n2-content-selection.md)（复核轮 19 修正设计并重跑，轮 21 按 D1 重算）。六臂（含 P1-labels 参照臂）同输入同判据：程序全选 4/16、程序读标签参照臂 16/16、**程序规则臂（只读视角）16/16（旧 target 判据）且对标签改动免疫**、Randeng 零样本 0/16、Qwen3-0.6B 零样本 4/16（9 次违反视角，约 24s/次）。D1 must 口径：P1-rule must-R 1.0 / must-P 0.433，Qwen 0.875 / 0.459，Randeng 0/16，P0 0.35。**没有模型通过**；v3 独立标注尚未冻结，训练未开始。
+  - **N2**：[内容选择报告](n2-content-selection.md)。v3 已按 [D1 AI 协议](d1-ai-closure.md)冻结并重算既有六臂，逐项 D1 均 0/16；P1-rule must-R=1.0、must-P macro=0.433333，不触发降级。**没有模型通过**；训练未开始。旧 target 判据成绩保留为历史，不用作 v3 成绩。
   - **N3**：基线 B1/B2 **已实现并归档**（结构化组织计划，不生成正文）：16 项 I1/I2/I3 零违规，B1 36 句组 / B2 52 句组；`--tamper` 144/144 适用篡改被捕获；factIds 消费冒烟 36/36（离线，非 N4 质量证据）。**模型臂未跑；coreference 未被 N4 消费；跨组连贯与代词渲染未测**（`artifacts/world-components/n3-baselines-r1.json`、`n3-factids-smoke-r1.json`）。
   - **C1–C6**：全部停留在接口方案，无训练与质量证据。
 
