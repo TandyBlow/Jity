@@ -1,0 +1,104 @@
+{
+ "purpose": "N3->N4 interface fixture verification (non-model)",
+ "tokenCounter": "deterministic 6-char stub; NOT a real sentencepiece acceptance",
+ "interfaceConstraints": {
+  "maxFactsPerGroup": 4,
+  "maxInputTokens": 128,
+  "coreferenceConsumed": false,
+  "unsupportedPreservesPlan": true
+ },
+ "results": {
+  "F01": {
+   "description": "1 fact in range",
+   "expected": "accepted",
+   "got": "accepted",
+   "pass": true
+  },
+  "F04": {
+   "description": "4 facts in range (upper bound)",
+   "expected": "accepted",
+   "got": "accepted",
+   "pass": true
+  },
+  "F05": {
+   "description": "5 facts over limit, plan preserved",
+   "expected": "unsupported:plan-too-long",
+   "got": "unsupported:plan-too-long",
+   "pass": true
+  },
+  "FT128": {
+   "description": "exactly 128 stub tokens",
+   "expected": "accepted",
+   "got": "accepted",
+   "pass": true
+  },
+  "FT129": {
+   "description": "129 stub tokens",
+   "expected": "unsupported:input-too-long",
+   "got": "unsupported:input-too-long",
+   "pass": true
+  },
+  "FM01": {
+   "description": "plan missing a factId",
+   "expected": "error:plan-fact-mismatch:missing",
+   "got": "error:plan-fact-mismatch:missing",
+   "pass": true
+  },
+  "FM02": {
+   "description": "plan duplicate factId",
+   "expected": "error:plan-fact-mismatch:duplicate",
+   "got": "error:plan-fact-mismatch:duplicate",
+   "pass": true
+  },
+  "FM03": {
+   "description": "plan unknown factId",
+   "expected": "error:plan-fact-mismatch:unknown",
+   "got": "error:plan-fact-mismatch:unknown",
+   "pass": true
+  },
+  "FO01": {
+   "description": "order change follows plan sentence order",
+   "expected": "accepted",
+   "got": "accepted",
+   "pass": true
+  },
+  "FT01": {
+   "description": "time after its predecessor passes through",
+   "expected": "accepted",
+   "got": "accepted",
+   "pass": true
+  },
+  "FN01": {
+   "description": "same name different entities; coref not consumed",
+   "expected": "accepted",
+   "got": "accepted",
+   "pass": true
+  },
+  "FX01": {
+   "description": "cross-group reference; coref not consumed",
+   "expected": "accepted",
+   "got": "accepted",
+   "pass": true
+  },
+  "FB01": {
+   "description": "non-root point without before record",
+   "expected": "binding-failed:missing-before",
+   "got": "binding-failed:missing-before",
+   "pass": true
+  },
+  "FB02": {
+   "description": "version discontinuity",
+   "expected": "binding-failed:version-gap",
+   "got": "binding-failed:version-gap",
+   "pass": true
+  },
+  "FB03": {
+   "description": "missing stateDigest",
+   "expected": "binding-failed:missing-stateDigest",
+   "got": "binding-failed:missing-stateDigest",
+   "pass": true
+  }
+ },
+ "failures": [],
+ "pass": true
+}
