@@ -104,7 +104,7 @@ def main() -> None:
         results = []
         for r in dev:
             prompt = render_input(r["plan"])
-            inputs = tokenizer(prompt, return_tensors="pt")
+            inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
             t0 = time.perf_counter()
             with torch.no_grad():
                 out = model.generate(**inputs, max_new_tokens=MAX_NEW,

@@ -29,7 +29,6 @@
   "points": [
     {
       "step": 60,
-      "meanLossLast60": 1.2978,
       "seconds": 50.8,
       "train": {
         "counts": {
@@ -300,11 +299,11 @@
         "special_tokens_map.json": "65d84a9271d68f12",
         "spiece.model": "c65feffa65ff0378",
         "tokenizer_config.json": "553da19a6ed43c57"
-      }
+      },
+      "meanLossCumulative": 1.2978
     },
     {
       "step": 120,
-      "meanLossLast60": 0.8139,
       "seconds": 97.8,
       "train": {
         "counts": {
@@ -576,11 +575,11 @@
         "special_tokens_map.json": "65d84a9271d68f12",
         "spiece.model": "c65feffa65ff0378",
         "tokenizer_config.json": "553da19a6ed43c57"
-      }
+      },
+      "meanLossCumulative": 0.8139
     },
     {
       "step": 180,
-      "meanLossLast60": 0.618,
       "seconds": 145.4,
       "train": {
         "counts": {
@@ -852,11 +851,11 @@
         "special_tokens_map.json": "65d84a9271d68f12",
         "spiece.model": "c65feffa65ff0378",
         "tokenizer_config.json": "553da19a6ed43c57"
-      }
+      },
+      "meanLossCumulative": 0.618
     },
     {
       "step": 240,
-      "meanLossLast60": 0.5065,
       "seconds": 194.7,
       "train": {
         "counts": {
@@ -1128,11 +1127,11 @@
         "special_tokens_map.json": "65d84a9271d68f12",
         "spiece.model": "c65feffa65ff0378",
         "tokenizer_config.json": "553da19a6ed43c57"
-      }
+      },
+      "meanLossCumulative": 0.5065
     },
     {
       "step": 300,
-      "meanLossLast60": 0.4353,
       "seconds": 246.5,
       "train": {
         "counts": {
@@ -1404,11 +1403,11 @@
         "special_tokens_map.json": "65d84a9271d68f12",
         "spiece.model": "c65feffa65ff0378",
         "tokenizer_config.json": "553da19a6ed43c57"
-      }
+      },
+      "meanLossCumulative": 0.4353
     },
     {
       "step": 360,
-      "meanLossLast60": 0.3847,
       "seconds": 291.7,
       "train": {
         "counts": {
@@ -1680,11 +1679,13 @@
         "special_tokens_map.json": "65d84a9271d68f12",
         "spiece.model": "c65feffa65ff0378",
         "tokenizer_config.json": "553da19a6ed43c57"
-      }
+      },
+      "meanLossCumulative": 0.3847
     }
   ],
   "conclusionInputs": {
     "question": "does 60->360 steps fix train-plan errors (empty/chain/multi)?",
-    "readTogetherWith": "human verdicts (review round 9): dev 3/6 plans pass with the appearance false-reject now equivalence-ruled"
+    "readTogetherWith": "human verdicts (review round 9): dev 3/6 plans pass with the appearance false-reject now equivalence-ruled",
+    "attribution": "under the CURRENT training distribution, steps 60-360 did not resolve the failing dev instance (step 60 omitted personality/sanity; later checkpoints produce the direction error); this SUPPORTS added downward-direction coverage but does not prove further training can never help"
   }
 }

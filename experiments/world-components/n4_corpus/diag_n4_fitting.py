@@ -182,7 +182,11 @@ def main() -> None:
             tr = evaluate(model, tokenizer, train_plans, f"step{step} train")
             dv = evaluate(model, tokenizer, dev_plans, f"step{step} dev")
             model.train()
-            point = {"step": step, "meanLossLast60": round(sum(losses) / len(losses), 4),
+            point = {"step": step,
+                     # v8: true last-60-step window (the r1-diag report shipped
+                     # this field as a cumulative average — renamed there)
+                     "meanLossLast60": round(sum(losses[-60:]) / min(len(losses), 60), 4),
+                     "meanLossCumulative": round(sum(losses) / len(losses), 4),
                      "seconds": round(time.perf_counter() - t0, 1),
                      "train": tr, "dev": dv,
                      "checkpoint": str(ckpt),
@@ -192,6 +196,11 @@ def main() -> None:
 
     report["conclusionInputs"] = {
         "question": "does 60->360 steps fix train-plan errors (empty/chain/multi)?",
+        "attribution": "under the CURRENT training distribution, steps 60-360 did "
+                       "not resolve the failing dev instance (step 60 omitted "
+                       "personality/sanity; later checkpoints produce the direction "
+                       "error); this SUPPORTS added downward-direction coverage but "
+                       "does not prove further training can never help",
         "readTogetherWith": "human verdicts (review round 9): dev 3/6 plans pass "
                             "with the appearance false-reject now equivalence-ruled",
     }
