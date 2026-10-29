@@ -1,0 +1,9 @@
+{
+ "annotatorId": "ai-a",
+ "annotatorType": "AI",
+ "context": "fresh task without inherited turns",
+ "inputFileNames": ["d2-gold-rubric.md", "d2_capability_items.jsonl", "d2-sheet.md", "d2-labels-template.jsonl"],
+ "exposureBeyondFourInputFiles": false,
+ "method": "先用 Read 工具依次完整读取 rubric、盲表数据、任务说明与模板四个文件；随后对 8 个条目逐条机械化应用 rubric 规则：先按 R1 将每个 entityId 的全部事实归入同一句组，再按 R2 检查不同实体的 task_achieved 是否 goal 逐字相同并合并句组，再按 R3 将 time 事实并入输入序紧邻前驱事实所在句组（首位 time 并入输入序第一个事实所在句组），再按 R4/R5 以各组最小输入序号升序排列句组、组内 factIds 按输入序号升序，最后按 R6 为每个含 entityId 的事实产一条 coreference（mention 取 facts 中登记 name，refersTo 取 entityId，顺序与 factIds 一致，time 不产条目）。写入前逐条自查：factIds 恰好覆盖该条目全部事实各一次、sentence index 从 0 连续、coreference 与 factIds 同长且顺序一致（无 entityId 的 time 除外）、每个 mention 与登记 name 一致、每个 refersTo 的实体在本句组内有事实。",
+ "limitations": ["本标注由 AI 完成，不是人工标注，可能存在模型系统性偏差", "标注者与可能的其他标注者若来自同一模型家族，可能存在相关偏差，影响一致度评估的独立性", "仅依据所给 rubric 与盲表文本判断，未接触任何外部世界知识或语料，rubric 未覆盖的情形只能机械套用规则", "coreference 仅按 entityId 登记名逐条复写，不代表真正的语言层面指代消解"]
+}

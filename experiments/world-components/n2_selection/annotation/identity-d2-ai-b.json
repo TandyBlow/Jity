@@ -1,0 +1,19 @@
+{
+  "annotatorId": "ai-b",
+  "annotatorType": "AI",
+  "context": "fresh task without inherited turns",
+  "inputFileNames": [
+    "d2-gold-rubric.md",
+    "d2_capability_items.jsonl",
+    "d2-sheet.md",
+    "d2-labels-template.jsonl"
+  ],
+  "exposureBeyondFourInputFiles": false,
+  "method": "先用 Read 工具依次读完四个指定输入文件，不接触仓库内其他任何文件。然后对 d2_capability_items.jsonl 的 8 个条目逐一机械执行 rubric 规则：R1 按 entityId 形成每实体句组；R2 对 goal 逐字相同的 task_achieved 事实合并各实体句组；R3 将 time 事实并入其输入序紧邻前驱所在句组（n3cap-02 的 time 位于输入首位，按规则并入输入序第一个有实体的事实所在句组）；R4/R5 让不满足 R2 的实体各自成组，并按组内最小输入序号排列句组、组内按输入序号排序 factIds；R6 对每个含 entityId 的事实按 factIds 顺序产出 {mention=登记 name, refersTo=entityId}，time 不产 coreference。最后按 rubric 校验清单逐条自查：factIds 恰好覆盖该条目全部事实编号且不重不漏、sentences.index 从 0 连续、coreference 数量与 factIds 同长（time 除外）且顺序一致、mention 与 facts 登记名一致、refersTo 指向的实体在本句组内有事实，全部通过后按盲表顺序以 JSONL 写出。",
+  "limitations": [
+    "本标注由 AI 完成，不是人工标注，可能带有模型推理的系统性偏差。",
+    "标注者与其他 AI 标注者可能来自同一模型家族，存在相关偏差的风险，独立性不等于人类标注者之间的独立性。",
+    "仅依据所给的 rubric 与盲表（items/sheet/template）作答，未接触任何外部世界知识或仓库内其他材料。",
+    "rubric 个别措辞存在解释空间（如 time 位于输入首位时『输入序第一个事实所在的句组』的字面自指），我按最机械的读法处理并如实记录，不同读法可能产生不同结果。"
+  ]
+}

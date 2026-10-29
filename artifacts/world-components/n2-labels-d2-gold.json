@@ -1,0 +1,51 @@
+{
+ "purpose": "D2 gold freeze (AI independent annotation)",
+ "decision": "D2",
+ "annotationProtocol": "d2-gold-protocol.json",
+ "protocolSha256": "ff621edebf9d2f25e25bfdbefda7fc480ea6bb3431a166d6d8af6b09409fb172",
+ "items": "d2_capability_items.jsonl",
+ "itemsSha256": "76d253ab8be026e6a2dd4c77f1f3494c3db7d6dd753de2d930aa7ae5ad931311",
+ "labelsA": {
+  "file": "labels-d2-ai-a.jsonl",
+  "sha256": "cb86aa46c4328cb971721d4ddce38bb4b0429fdc245e5405f193e0a6a99e9c63"
+ },
+ "labelsB": {
+  "file": "labels-d2-ai-b.jsonl",
+  "sha256": "cb86aa46c4328cb971721d4ddce38bb4b0429fdc245e5405f193e0a6a99e9c63"
+ },
+ "kappa": {
+  "definition": "pooled pairwise co-grouping kappa: over all unordered fact pairs within each item, whether the two annotators place the pair in the same sentence group; 2x2 tables pooled across items",
+  "value": 1.0,
+  "minimum": 0.7,
+  "verdict": "PASS",
+  "pairTable": {
+   "both": 44,
+   "aOnly": 0,
+   "bOnly": 0,
+   "neither": 82
+  }
+ },
+ "orderConcordance": {
+  "agreed": 44,
+  "of": 44
+ },
+ "corefAgreement": {
+  "equal": 45,
+  "compared": 45,
+  "comparableGroups": 24,
+  "totalGroups": 24
+ },
+ "disagreeingItems": [],
+ "adjudication": null,
+ "frozenLabels": {
+  "file": "n2-labels-d2-gold.jsonl",
+  "sha256": "cb86aa46c4328cb971721d4ddce38bb4b0429fdc245e5405f193e0a6a99e9c63"
+ },
+ "limitations": [
+  "This is AI independent annotation producing AI gold, not human annotation or human evaluation.",
+  "Independence concerns task context and answer exposure, not different model families; shared-model biases remain possible.",
+  "The rubric is a mechanical convention that defines gold for this experiment; kappa measures agreement under it, not narrative quality or product correctness.",
+  "The implementer and C reviewer have prior exposure to the sample construction and are not represented as blind annotators.",
+  "A successful annotation gate alone authorises no model inference; N3 model arms require the separately pre-registered prompt and metric freeze."
+ ]
+}
