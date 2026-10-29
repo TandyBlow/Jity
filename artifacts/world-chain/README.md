@@ -20,13 +20,14 @@
 - `b3-baseline-v1.json` + `b3-run-db/` —— B3 第一版归档（2026-10-29，
   harness `ed3eb0b`）：13 项旧契约探针。经复核后**冻结，不作基线引用**；
   其证据被重新判分如下一条。
-- `b3-rescore-v1.json` —— 用当前判分（judge v2）重放 v1 证据：12/12 结构，
-  4 pass / 6 fail / 2 review。旧结论「7/12 语义」撤回。
-- `b3-baseline-v2.json` + `b3-run-db-v2/` —— **B3 修正后 canonical
-  （2026-10-29，见第六节）**：17 项探针 + 两场景，修正了 action/
-  continuation/results 的任务契约、判分与 task-only 叙事投影；结构 17/17，
-  语义 pass 3 / fail 12 / review 2，判分自测 15/15。两个场景仍在语义
-  阶段被停止，**不得读作整链验收通过**。
+- `b3-rescore-v1.json` / `b3-rescore-v1-j3.json` —— v1 证据的两次重评分
+  （judge v2 / v3）。v3：parsed 12/12、codec 10/12、4 pass / 6 fail /
+  2 review，总体 33.3%。旧结论「7/12 语义」撤回。
+- `b3-baseline-v2.json` + `b3-run-db-v2/` —— B3 第一次修正后的 canonical
+  运行（2026-10-29）：17 项探针 + 两场景。报告内嵌 judge v2 判定；正式
+  口径用 `b3-rescore-v2-j3.json`（parsed 17/17、codec 14/17、pass 2 /
+  fail 12 / review 3，总体 11.8%）。两个场景仍在提交前停止，**不得读作
+  整链验收通过**。该文件见 `b3-rescore-v2-j3.json`。
 
 脚本：`frontend/scripts/run-world-chain-full.mjs`（两场景，`--phase
 action|chain|both`）；`frontend/scripts/run-world-twenty.mjs`（二十次输入，
@@ -309,158 +310,132 @@ continuation 全部零模型调用）+ 真实模型叙事（模型为主 → 判
 10. **✚[语义确认，修正轮]** 未准入尝试的同世界重试=整轮 cancel（Registry
     只要求 head 叙事 ready+lease valid，任意阶段含未提交工作均可取消）。
 
-## 六、B3 结算任务基线（复核修正后，2026-10-29）
+## 六、B3 结算任务基线（两轮复核修正后，2026-10-29）
 
-**批次状态：未关闭。** 2026-10-29 复核驳回了上一版「12/12 结构、7/12 语义」
-作为可信语义基线，理由四项（P1×3、P2×1）：
+**批次状态：未关闭。** 2026-10-29 的两轮独立复核驳回了「12/12 结构、7/12
+语义」作为可信语义基线。原 7/12 结论撤回；当前结论是：**模型能稳定产出
+可解析 JSON，但修正后的契约与判分下结算语义不达标，两场景均在提交前停止。**
 
-1. **提示词改变了原设计职责**：action 把 `consumed` 写成「所有角色必须
-   skip」（原设计只有主角不得重复执行玩家命令，其他人物仍按任务与个性
-   判断，§6.1）；continuation 把「任务未完成」等同于继续（原设计要求同时
-   判断「行动大概率发生」与「与主角有关」，§8.1）；results 提示词遗漏输入
-   里的骰点判定。
-2. **部分语义判分实际只检查结构**：荒诞共同结果、空任务更新、无因果
-   `sanitySet=99`、给林川生成周宁行动，旧 judge 均判 `semantics=true`。
-3. **task-only 被当成必须补齐三件套**：原设计是「任务达成 → **可能**发生
-   个性变化」，数据库已接受 task-only 提交；失败点在受限叙事投影
-   `committed-narration.ts`，不能反过来逼模型编造个性/理智。
-4. **调用计数混入程序职责**：普通场景 9 条 `modelTasks` 含 1 条
-   `source=program` 的 pointPlan，summary 把它算进 `modelCalls`。
+### 6.1 第一轮复核（P1×3、P2×1）与修正
 
-本批先修评测与契约，再谈模型。**原 7/12 结论撤回**。
+1. **提示词改变职责**：action 把 `consumed` 写成「所有角色必须 skip」，
+   原设计只有主角不得重复执行玩家命令（§6.1）；continuation 把「任务未完成」
+   等同于继续，原设计要求同时判断「大概率发生」与「与主角有关」（§8.1）；
+   results 遗漏输入中的骰点判定。→ 提示词全部按设计重写；continuation 的
+   拟行动与主角关联只作判断产物，端口在返回 wire 结论前剥离。
+2. **判分只查结构**：荒诞结果、空任务更新、无因果 `sanitySet=99`、错人物
+   行动都被判通过。→ 判分改为 `pass | fail | review`，`review` 不计通过；
+   新增归属、目标句、复执命令、目标选择、结果溯源/骰点、更新归属/阶段/
+   因果/变化预期、continuation 两条件检查。
+3. **task-only 被当作必须补齐三件套**：设计是「任务达成 → **可能**个性变化」。
+   → 叙事投影取消三件套同有同无；task-only Δ 合法，个性仍需任务、理智仍需
+   个性；事实按六阶段顺序产出。
+4. **调用计数混入程序职责**：场景 9 条调用含 1 条程序 pointPlan。→
+   `modelCalls` / `programCalls` 分列。
 
-### 6.1 本轮修正
+### 6.2 第二轮复核（P1×4、P2×2）与修正
 
-**提示词与契约（`frontend/scripts/run-world-b3.mjs`）**
+1. **合法分阶段更新被因果检查误拒**：旧检查在每个阶段的单个 delta 内找
+   任务/个性/理智，合法的 `tasks → personality → sanity` 被报「个性无任务、
+   理智无个性」。→ 因果链按**整批累计**；拆分调用必须携带已确认的前序阶段
+   证据（探针显式传入已应用的 tasks/personality；端口为分阶段调用记录前序
+   证据，只收服务端工作态中真实存在的任务）。
+2. **任务与个性被错误要求同属一人**：设计允许任何人物的任务达成影响任何
+   人物。→ 叙事投影与判分改为：本批（或前序阶段）**任意人物**有任务达成，
+   即可触发某人的个性变化；个性与理智仍按对应人物配对。
+3. **场景 targets 仍用旧形状**：`{targetId}` 对象被直接和字符串名册比较。
+   → 场景判分先映射到 id，再查名册/自指/重复；自测加入合法 `{targetId}` 正例。
+4. **自由文本反应误放行**：「瞬移到火星并毁灭太阳」仍判 pass。→ 反应必须
+   可溯源到发起行动或该人物的任务目标；不可溯源判 fail，可溯源仍归
+   `review`（内容合理性不自动放行）。
+5. **P2 口径**：非法 stage、缺必填字段不再算「codec 结构通过」。→ 报表分列
+   `parsed`（JSON 可解析）与 `codec`（形状/字段契约）；总体通过率 =
+   `semanticsPass / probes`，`review` 不进分子但进分母，另列仅按可裁定样本
+   的 `autoPassRate`。
 
-- action：只有主角受玩家命令约束；`consumed` 只表示「输入机会已处理」，
-  主角不得再执行该命令，其他人物仍按自己的任务/个性/处境判断；禁止目标句、
-  计划、心理活动与状态数值。
-- results：输入逐成员带 `rollRefs`（骰点、阈值 11、准入/未准入）；要求只写
-  冻结行动的直接后果，未准入不得写成成功，准入不得写成失败，不得新增
-  撤退/受伤/耗尽等行动文本中不存在的后果。
-- continuation：要求同时满足「后续行动大概率发生」与「该行动与主角有关」；
-  continue 必须给出候选人物、`plannedAction`、`protagonistRelevance`。后两者
-  是判断产物，端口在返回结论前剥离——wire 的 `RoundConclusion` 仍只含
-  `kind/candidateCharacterIds/nextRoundId`（§8.1：拟行动长文本不保存）。
-- targets：形状改为产品 codec 的 `{targets:[{targetId}]}`（旧 harness 返回
-  字符串数组，控制器会把 `t.targetId` 读成 `undefined` 并崩在触发器身份分配；
-  这是 harness 缺陷，不是产品行为）。自指/重复目标记语义错误并停止，不静默
-  改写冻结目标集。
-- updates：因果契约写进提示词——任务达成可单独出现，个性变化需有本批任务
-  达成，理智变化需有本批个性变化；字段契约与控制器一致（分阶段调用返回单个
-  对象，合并调用返回数组，变化数组元素必须带 `supersedes`）。
+判分自测扩到 **22 项**（含：合法三阶段批次、跨人物任务触发、拆分调用带前序
+证据、合法 `{targetId}`、荒诞反应不得自动通过、非法 stage 记为 codec 失败），
+全部按预期；任一不符则运行状态为 `JUDGE_SELF_TEST_FAILED`。
 
-**判分（`frontend/scripts/b3-judges.mjs`，Node 侧，可回放）**
+### 6.3 归档与重评分
 
-- 判定三值：`pass | fail | review`。`review` 表示该方面无法自动裁定，**不计入
-  通过**；探针与场景的 `accepted` 都要求零 fail 且零 review。摘要同时给
-  `semanticsPass/semanticsFail/pendingReview` 与仅按可裁定样本计算的
-  `semanticsRate`。
-- 自动检查：人物归属（点名别人当主语才算错；call key 绑定行动者）、目标句
-  冒充行动、`consumed` 主角复用玩家命令、目标自指/名册外/重复、反应状态
-  声明与复述发起行动（≥8 字共同前缀）、共同结果逐成员归属 + 冻结行动/任务
-  目标可溯源 + 骰点一致、更新阶段的字段/顺序/实体归属/任务归属/因果链/
-  探针声明的变化预期、continuation 两条件与判断字段。
-- **15 项篡改自测**（judge self-test，跑在真实世界状态上）：荒诞共同结果、
-  空任务更新、无因果 `sanitySet=99`、给其他人物生成行动、目标句冒充行动、
-  `consumed` 复执命令、反应夹带状态、反应复述、未准入写成成功、task-only
-  更新应通过、无任务个性变化、缺两条件的 continue、两条件齐全（应为
-  review 而非 pass）、有明确驱动却 handback、无驱动却 continue。任一项与
-  预期不符，运行状态直接写 `JUDGE_SELF_TEST_FAILED`；本轮 15/15 符合。
-- 旧归档可用 `--rescore <report> --out <new>` 重新判分；缺证据的方面保留
-  `review`，不冒充通过。
-
-**叙事投影（`frontend/src/lib/world-engine/runtime/committed-narration.ts`）**
-
-- 取消「三件套同有同无」。新规则：`tasksAchieved` 可单独成立；个性变化必须
-  有本批任务达成；`sanitySet` 必须有个性变化（个性变化后同值可省略）。
-- 事实按六阶段顺序产出（任务 → 个性 → 理智），task-only Δ 可生成
-  `task_achieved` 事实并进入叙事；未登记的任务/个性/数值变化仍拒绝。
-- 单测覆盖 task-only 合法、个性无任务拒绝、理智无个性拒绝、个性后同值省略、
-  未登记数值拒绝。
-
-**调用计数**
-
-- summary 与场景记录分开 `modelCalls` / `programCalls`；普通场景本轮为
-  **4 次模型调用 + 1 次程序 pointPlan**，链场景 4 次模型调用。
-
-### 6.2 归档与回放
-
-- `b3-baseline-v1.json` + `b3-run-db/`：修正前的归档（harness `ed3eb0b`，
-  browser head `a502a9b`，13 项旧契约探针）。**冻结，不作基线引用。**
-- `b3-rescore-v1.json`：用 judge v2 对 v1 证据重新判分。12/12 结构，
-  **4 pass / 6 fail / 2 review**（旧 7/12 大部分是结构检查）。
-- `b3-baseline-v2.json` + `b3-run-db-v2/`：本轮 canonical。browser
-  `head=88b59d`、`status=""`（干净树），server `4e17025`（仅
-  `backend/_proj_create.json` 未跟踪）；16 文件 browser 钉档 + 156 文件
-  server 钉档。运行状态 `COMPLETED_WITH_FAILURES`。
+- `b3-baseline-v1.json` + `b3-run-db/`：第一版归档（harness `ed3eb0b`，
+  browser `a502a9b`，13 项旧契约探针）。**冻结，不作基线引用。**
+- `b3-rescore-v1.json`：judge v2 对 v1 的首次重评分（历史记录）。
+- `b3-rescore-v1-j3.json`：**judge v3 重评分 v1**（12 项旧探针）：
+  parsed 12/12、codec 10/12、**pass 4 / fail 6 / review 2**，总体 33.3%，
+  可裁定样本 40.0%。
+- `b3-baseline-v2.json` + `b3-run-db-v2/`：第一轮修正后的 canonical 运行
+  （browser `88b59d`，干净树；server `4e17025`）：17 项探针 + 两场景；
+  报告内嵌的是 judge v2 判定，**正式口径以下一条 v3 重评分为准**。
+- `b3-rescore-v2-j3.json`：**judge v3 重评分 v2 原始输出**：parsed 17/17、
+  codec 14/17、**pass 2 / fail 12 / review 3**，总体 **11.8%**，可裁定样本
+  14.3%。原始模型输出与数据库原样保留。
 
 配置：Qwen3-0.6B Q4_K_M；结算端口 context 2048、temperature 0、seed 42、
 json_schema strict、maxTokens 64–384、timeout 110s；叙事仍是已交付
 narration-polisher + checkFactNarration（本轮未触发）；真实 Edge headless、
-跨源隔离；真实 Python 持久服务。模型加载 11.7s。
+跨源隔离；真实 Python 持久服务。v2 运行模型加载 11.7s。
 
-### 6.3 任务级探针（17 项；结构 17/17，pass 3，fail 12，review 2，模型耗时 300.3s）
+### 6.4 v2 探针（judge v3 重评分；解析 17/17，codec 14/17，pass 2，fail 12，review 3）
 
-| 探针 | 判定 | 观察（原始输出） |
-| --- | --- | --- |
-| action_pending | review | 「转身进入走廊」——偏离玩家命令，但具体、未冒充目标 |
-| action_consumed_protagonist | review | 「转身避开盒子」——未复执命令；自发行动待人工判断 |
-| action_consumed_npc | **pass** | 同一输出在林川名下合法（consumed 只是背景） |
-| targets_directed | fail | 点名林川，仍返回 `[]` |
-| targets_solo | pass | 空集 |
-| reaction_joint | pass | 「林川将盒子稳稳地放在门框上」——归属与形态合法 |
-| results_joint | fail | 「没有成功」——无法溯源于冻结行动或任务 |
-| results_rejected_roll | fail | 「周宁未成功」——同上（无法溯源；骰点检查未触发） |
-| results_admitted_roll | fail | 「周宁未成功」——同上 |
-| updates_merged | fail | 把 `appearanceChanges/subtasksAdded/...` 当 stage 名 |
-| updates_none_expected | fail | 同批非法 stage；且 results 声称无变化仍产出任务变化 |
-| updates_stage_tasks | fail | `tasksAchieved:["person_1"]`——虚构任务 id，且归属 person_a |
-| updates_stage_personality | fail | 个性变化缺 `supersedes`，且本批无任务达成 |
-| updates_stage_sanity | fail | 给 person_a `sanitySet:90`——无个性变化、也不是任务当事人 |
-| continuation_likely_related | fail | 两条件字段给出了，但 `plannedAction` 是目标句 |
-| continuation_unrelated | fail | 同上；`protagonistRelevance` 未提主角 |
-| continuation_done | fail | 无驱动仍 continue，且自述「与周宁无关」 |
+| 探针 | codec | 判定 | 观察（原始输出） |
+| --- | --- | --- | --- |
+| action_pending | ✓ | review | 「转身进入走廊」——偏离命令但具体，待人工判断 |
+| action_consumed_protagonist | ✓ | review | 「转身避开盒子」——未复执命令；自发行动待判断 |
+| action_consumed_npc | ✓ | **pass** | 同一输出在林川名下合法（consumed 只是背景） |
+| targets_directed | ✓ | fail | 点名林川，仍返回 `[]` |
+| targets_solo | ✓ | pass | 空集 |
+| reaction_joint | ✓ | review | 「林川将盒子稳稳地放在门框上」——可溯源于任务，内容待人工复核 |
+| results_joint | ✓ | fail | 「没有成功」——不可溯源到冻结行动/任务 |
+| results_rejected_roll | ✓ | fail | 「周宁未成功」——同上 |
+| results_admitted_roll | ✓ | fail | 「周宁未成功」——同上 |
+| updates_merged | ✗ | fail | 把 `appearanceChanges/subtasksAdded/...` 当 stage 名 |
+| updates_none_expected | ✗ | fail | 同批非法 stage；无变化场景仍产出任务变化 |
+| updates_stage_tasks | ✓ | fail | `tasksAchieved:["person_1"]`——虚构任务 id，且归属 person_a |
+| updates_stage_personality | ✗ | fail | 个性变化缺 `supersedes` |
+| updates_stage_sanity | ✓ | fail | 给 person_a `sanitySet:90`——无该人物的个性变化 |
+| continuation_likely_related | ✓ | fail | `plannedAction` 是目标句 |
+| continuation_unrelated | ✓ | fail | 同上；`protagonistRelevance` 未提主角 |
+| continuation_done | ✓ | fail | 无驱动仍 continue |
 
-语义结论：0.6B 在本配置下能稳定产出**合法 JSON**（17/17 结构），但在修正后的
-契约下结算语义仍不过关；旧「7/12」主要是结构/宽松判分。
+### 6.5 场景（v2 原始运行；judge v3 重评分）
 
-### 6.4 场景（均为 `COMPLETED_WITH_FAILURES`，失败即证据）
+两场景均为 `COMPLETED_WITH_FAILURES`，失败即证据，未用脚本候选替换。
 
-**普通行动点（setup 0.3s，walk 86.8s，4 次模型调用 + 1 次 pointPlan）**
+**普通行动点（setup 0.3s，walk 86.8s，4 次模型调用 + 1 次程序 pointPlan）**
 
-- person_a：action「转身进入走廊」（11.4s，林川已行动）→ targets `[]`
-  （7.8s）→ results「没有成功」（9.7s，判分 fail：不可溯源）→ updates
-  57.0s，输出含 `stage:"appearanceChanges"` 等非法阶段；端口在发往服务端前
-  拒绝，控制器停止，round 整轮 cancel，终局 head 仍 point_13。
-- 该场景没有提交，因此没有叙事调用，也未触发本轮修好的 task-only 投影。
+- person_a：action「转身进入走廊」（11.4s）→ targets `[]`（7.8s）→
+  results「没有成功」（9.7s，不可溯源）→ updates 57.0s 输出非法 stage，
+  端口在发往服务端前拒绝，控制器停止，round 整轮 cancel，head 仍 point_13。
+- 未提交，因此没有叙事调用；task-only 投影只有单测证据。
 
 **连锁共同结算（setup 1.4s，walk 69.7s，4 次模型调用）**
 
-- 真实服务端 d20：第 1 次尝试 result 19 准入（person_a→person_c），
-  roll_45。
-- reaction「推开门厅深处的重门，示意周宁到门边一起撑住。」（10.1s）——
-  复述发起者行动，判分 fail；targets `[]`；results 两人均「没有成功」；
-  updates 再次使用非法 stage（45.5s）。round cancel（round_33），无提交。
-- **本轮未到达 commit/narration**；task-only 叙事投影只有单测证据，
-  需在合法 updates 的场景里复验。
+- 真实 d20：result 19 一次准入（person_a→person_c，roll_45）。
+- reaction 复述发起行动（10.1s，判分 fail）→ targets `[]` → results
+  两人均「没有成功」→ updates 非法 stage（45.5s）；round cancel，未提交。
+- 本轮同样未到达 commit/narration；task-only 叙事链尚未在真实模型输出上复验。
 
-### 6.5 结论与下一步
+场景判分（v3 重评）：action 4/4 解析、3/4 codec、2 条语义错误；
+chain 4/4 解析、3/4 codec、3 条语义错误。模型/程序调用分列为
+`modelCalls`/`programCalls`。
 
-- 旧基线撤回，本轮结论是：**修正后的契约下，0.6B 的结构能力可复现，语义
-  能力不足**；场景在 updates 阶段即被程序拒绝，链式结算/叙事未进入。
-- 判分现在是可回放、可自测的；`review` 不计通过，旧归档可重新判分。
-- 仍需完成的评测缺口：① 初始世界生成未覆盖；② 自由文本结果/反应的
-  「是否编造事件」只有部分自动检查，其余归 review，需要人工抽查；③ 本轮
-  没有合法 updates，叙事 gate 与 task-only Δ 的真实模型链路未复验；④
-  continue→自动轮→handback 的整链未跑；⑤ 提示词/模型对照（含更大模型）
-  必须在同一契约与同一判分下进行。
-- **顺序**：修提示词/模型 → 让 updates 达标并复跑两场景（届时验证 task-only
-  叙事）→ 原样本重评分与人工复核 → 再讨论 20 次输入验收。混合口径的
-  `twenty-round-v2` 仍是既有混合边界结论，B3 未通过前不得宣称全模型整链。
+### 6.6 结论与下一步
 
-### 6.6 复跑
+- 判分与因果边界已补齐并可回放；`review` 不计通过，旧归档可重评分。
+- 0.6B 在修正后的契约下：JSON 可解析率 17/17，codec 14/17，语义总体
+  通过率 11.8%；主要失败是目标漏选、结果不可溯源、updates 非法 stage/
+  虚构任务/因果不成立、continuation 用目标句当拟行动。
+- 评测缺口仍在：初始世界生成未覆盖；自由文本结果/反应的「是否编造事件」
+  只做部分自动检查，其余归人工复核；合法 updates 未出现，叙事 gate 与
+  task-only Δ 的真实链路未复验；continue→自动轮→handback 整链未跑。
+- **下一步（按用户裁定）**：以同一契约、同一判分开展模型对照（提示词变体、
+  更大模型），并在出现合法 updates 的场景中复验 task-only 叙事；之后才谈
+  20 次输入验收。混合口径的 `twenty-round-v2` 仍是既有混合边界结论，B3
+  未通过前不得宣称全模型整链。
+
+### 6.7 复跑
 
 ```powershell
 cd frontend
@@ -472,7 +447,9 @@ node scripts/run-world-b3.mjs --only none --out ..\.local\probes.json
 node scripts/run-world-b3.mjs --only chain --out ..\.local\chain.json
 # 用当前判分重放旧归档（不启动服务、不调模型）
 node scripts/run-world-b3.mjs --rescore ..\artifacts\world-chain\b3-baseline-v1.json `
-  --out ..\artifacts\world-chain\b3-rescore-v1.json
+  --out ..\artifacts\world-chain\b3-rescore-v1-j3.json
+node scripts/run-world-b3.mjs --rescore ..\artifacts\world-chain\b3-baseline-v2.json `
+  --out ..\artifacts\world-chain\b3-rescore-v2-j3.json
 ```
 ## 七、复跑
 
