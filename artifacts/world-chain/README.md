@@ -679,6 +679,14 @@ v5 的 `4e17025` 一致——git 层无差；serverSource 逐文件钉的是工�
   暂不启动新的通用模型提示词／扩容对照，也不启动产品真实模型 handback
   闭环或 20 次输入验收；这些任务保留未完成，后续另行调度。
   混合口径的 `twenty-round-v2` 仍是既有混合边界结论。
+- **G5 真实 HTTP/SQLite 验收已交付**（2026-10-30）：
+  `artifacts/g5-http-recovery/`（PASS_G5_HTTP_RECOVERY，五场景；产品
+  `54f630c` + 服务 `agent@dd345b8`）。回执丢弃注入在真实 HTTP 往返与
+  DB 提交证明之后；同 requestId 重放、换租约接管（新会话业务幂等取回
+  同批并跑完全轮）、两层幂等分核、旧租约拒绝与逐字重放分记、故障后
+  终态全过。过程发现并修复规则端口 consumed 行动机会的
+  rule_input_identity_missing 缺陷（54f630c，§6.1 绑定只保护裁决）——
+  产品的 continue→自动轮组合首次端到端跑通。
 - **交接清单已交付**：`design/world-engine-reports/browser-model-port-contract.md`
   （2026-10-29）——十任务实际输入输出表（归档/端口返回值/驱动内存/wire
   四层区分）、
