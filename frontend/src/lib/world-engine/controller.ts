@@ -180,7 +180,10 @@ export class ControllerDriver {
       }
       this.foldRoundIdentityPatch(patch);
       const plan = this.memory.roundAllocations[roundId];
-      const missing = expected.filter((slot) => this.memory.ids[slot] == null);
+      // 完整性以「本轮补丁携带」为准：缺槽判定只看 patch.ids，内存里的旧
+      // point/group 不能冒充本轮分配结果（复审 P2：声明完整 + key 已折入
+      // 但补丁不带 ids 时，旧身份曾被放行进 pointPlan）。
+      const missing = expected.filter((slot) => patch.ids?.[slot] == null);
       if (!plan || !this.memory.allocatedKeys.includes(plan.allocationKey) || missing.length) {
         return block(`incomplete:${roundId}:${missing.join(',')}`, `round_identity_incomplete:${roundId}`);
       }

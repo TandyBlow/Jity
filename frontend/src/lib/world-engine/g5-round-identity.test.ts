@@ -272,6 +272,37 @@ describe('G5 product round-identity chain (pre-audit 2026-10-29, identityGate dr
     expect(delta.getMemory()).toMatchObject({ ids: { point: 'recovered_point', 'group:person_c': 'fresh_group' }, allocatedKeys: ['existing_key', 'product_round_r2'] });
   });
 
+  test('case 6b (review P2): declared-complete slots and keys cannot borrow stale ids — the patch must carry them', async () => {
+    const player = playerWorld();
+    const transport = { execute: async (op: WorldOperation) => (op === 'round_conclusion_conclude'
+      ? { world: automaticWorld('r2', ['person_c']), control: mkControl({ revision: 2 }), work: null,
+          data: { kind: 'continue', roundId: 'r1', nextRoundId: 'r2' } } as never
+      : Promise.reject(new Error(`unexpected ${op}`))) };
+    const build = (ids: Record<Id, Id> | undefined) => {
+      const driver = gateDriver(transport, { generate: async () => { throw new Error('pointPlan must not run'); } },
+        memoryPending({ continuation: continueTo('r2') }), player);
+      driver.setRoundIdentitySink(async (roundId) => ({
+        ...(ids ? { ids } : {}),
+        roundAllocations: { [roundId]: { allocationKey: `product_round_${roundId}`,
+          slots: [{ slotKey: 'point', kind: 'point' }, { slotKey: 'group:person_c', kind: 'group' }] } },
+        allocatedKeys: [`product_round_${roundId}`],
+      }));
+      return driver;
+    };
+    // 反例一：声明完整 + key 已折入，但补丁完全不带 ids——旧 point/group 不得冒充本轮结果。
+    const noIds = build(undefined);
+    await noIds.step();
+    expect(noIds.getMemory().roundIdentityBlocked).toBe('incomplete:r2:point,group:person_c');
+    expect(noIds.getMemory().ids).toMatchObject({ point: 'old_point', 'group:person_c': 'old_group' });
+    expect(await noIds.step()).toEqual({ kind: 'stop', reason: 'round_identity_blocked:incomplete:r2:point,group:person_c' });
+
+    // 反例二：patch.ids 缺一名 actor——只缺的槽位进入阻断明细。
+    const missingActor = build({ point: 'fresh_point' });
+    await missingActor.step();
+    expect(missingActor.getMemory().roundIdentityBlocked).toBe('incomplete:r2:group:person_c');
+    expect(await missingActor.step()).toEqual({ kind: 'stop', reason: 'round_identity_blocked:incomplete:r2:group:person_c' });
+  });
+
   test('case 8: an automatic handback allocates nothing and leaves no blocked state', async () => {
     const player = playerWorld();
     const handbackWorld: WorldContext = { ...automaticWorld('r2', ['person_c']),

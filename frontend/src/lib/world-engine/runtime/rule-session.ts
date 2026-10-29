@@ -296,12 +296,20 @@ export class RuleWorldSession {
           const worldId = this.viewWorld?.worldId;
           const fenceEpoch = this.viewWorld?.lease?.fenceEpoch;
           if (!worldId || !live.leaseToken || fenceEpoch == null) throw new Error('round_identity_scope_missing');
+          // 请求命名空间按会话独立（idNamespace 计数器+时间+熵）：接管后新会话
+          // 对同一轮的补调 requestId 不与旧会话碰撞——协议先核验请求幂等
+          // （同 requestId 不同正文即 request_id_reused），业务重放只认
+          // allocationKey。补调恒为新 requestId + 稳定 key，由业务层重放原批次。
+          const namespace = this.session!.idNamespace;
           const allocationKey: Id = `product_round_${roundId}`;
           const slots = [{ slotKey: 'point', kind: 'point' as const },
             ...order.map((actor) => ({ slotKey: `group:${actor}`, kind: 'group' as const }))];
           identitySequence += 1;
-          const response = await options.transport.execute('allocate_ids', {
-            protocolVersion: 2, requestId: `product_identity_${roundId}_${identitySequence}`, worldId,
+          // 分配经会话受控 transport（tracked → observed）：stop/失租及时
+          // 结束等待、迟到回执不折入死会话、错误信封进入会话租约观察层；
+          // 绝不绕行裸 transport。
+          const response = await tracked.execute('allocate_ids', {
+            protocolVersion: 2, requestId: `${namespace}_identity_${roundId}_${identitySequence}`, worldId,
             leaseToken: live.leaseToken, fenceEpoch, allocationKey, slots,
           } as RequestMap['allocate_ids'], { worldId });
           const allocations = (response as unknown as { data: { allocations: { slotKey: Id; id: Id }[] } }).data.allocations ?? [];
