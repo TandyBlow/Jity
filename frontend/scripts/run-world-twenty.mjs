@@ -618,21 +618,24 @@ try {
           // plan=[current, successor]+commit 后服务端自动提升），驱动器接手提交
           // 与后续点的驱动。
           await api('checkpoint_close_group', { ...base(), operation: 'close_group', pointId: ids.point_1, groupId: ids.group_1 });
-          // 因果动态化：A 阶段已改变理智与任务。服务端裁定（units.py，2026-10-22）：
-          // 人格变化必须搭配至少一个新达成任务，且 sanities 键集须与 personalities
-          // 配对——从当前 served 状态动态取一个 pending 任务（owner 自己的，归属
-          // 天然合法）构成 任务+人格+理智 三件套，对任意发起人都成立
+          // 因果动态化：A 阶段已改变理智与任务。两条硬约束叠加——
+          // ① units.py 裁定（2026-10-22）：人格变化必须搭配新达成任务，sanities
+          //    键集与 personalities 配对；
+          // ② committed-narration 投影：每个实体的 tasksAchieved/personalityChanges/
+          //    sanitySet 三者同有同无（narration_requires_complete_numeric_cause）。
+          // 因此 任务+人格+理智 三件套必须整体挂到 pending 任务的 owner 名下
+          // （裁定允许达成任务作用于任意角色），而不是按发起人拆开。
           const headRead = await H.rawOp('get_state', {}, { tag: 'setup' });
           const pendingTask = Object.entries(headRead.state.characters)
             .flatMap(([ownerId, actor]) => Object.values(actor.tasks)
               .filter((task) => task.status === 'pending').map((task) => ({ ownerId, taskId: task.id })))[0];
           if (!pendingTask) throw new Error('no pending task available for the settlement causal triple');
-          const initiatorSanity = headRead.state.characters[initiator]?.sanity ?? 10;
+          const causeOwnerSanity = headRead.state.characters[pendingTask.ownerId]?.sanity ?? 10;
           await api('checkpoint_stage_unit', { ...base(), operation: 'stage_unit', pointId: ids.point_1, groupId: ids.group_1,
             candidates: { groupId: ids.group_1, actorIds: [initiator, reactor], positions: {}, appearances: {}, subtasksAdded: {},
               tasksAchieved: { [pendingTask.ownerId]: [pendingTask.taskId] },
-              personalities: { [initiator]: [{ id: ids.change_1, text: '共同撑住重门后更加沉稳', supersedes: [] }] },
-              sanities: { [initiator]: Math.max(0, initiatorSanity - 1) },
+              personalities: { [pendingTask.ownerId]: [{ id: ids.change_1, text: '共同撑住重门后更加沉稳', supersedes: [] }] },
+              sanities: { [pendingTask.ownerId]: Math.max(0, causeOwnerSanity - 1) },
               taskCoverageIds: [initiator, reactor], personalityCoverageIds: [initiator, reactor] },
             results: { [initiator]: '重门终于在两人合力下被稳稳撑住。', [reactor]: '另一人赶到门边，与发起者一起撑住了重门。' } });
           await api('checkpoint_prepare_successor', { ...base(), operation: 'prepare_successor', pointId: ids.point_1,
