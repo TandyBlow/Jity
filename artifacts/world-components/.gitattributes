@@ -13,3 +13,10 @@ n2-labels-d2-gold.jsonl -text
 d2-n3-prompt-freeze.json -text
 d2-preregistration-revision.json -text
 d2-metrics-preregistration.json -text
+
+# N3 rule arm evidence keeps LF on every checkout (byte-verified chain).
+n3-rulearm-registration.json -text
+n3-rulearm-gate8.json -text
+n3-rulearm-diag16.json -text
+n3-rulearm-probes.json -text
+n3-rulearm-delivery.md -text

@@ -32,6 +32,7 @@ import time
 HERE = pathlib.Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 import d2_metrics as dm  # noqa: E402
+import n3_plan  # noqa: E402  (indirect dependency of d2_metrics; pinned)
 import run_n3_arm as rn  # noqa: E402
 
 REPO_ROOT = rn.REPO_ROOT
@@ -177,7 +178,10 @@ def entity_order_first(selected_facts: list, order: dict) -> str:
 
 def check_bindings(args, registration: dict) -> list:
     """every byte this run actually executes or consumes must match the
-    pre-run registration (plan v2 note 3)."""
+    pre-run registration (plan v2 note 3; review of c66236b items 2-3):
+    the rule arm, the reused gate module, the metric tool, its indirect
+    n3_plan dependency, the consumed freeze record, the consumed items
+    file and the consumed gold file."""
     problems = []
     self_sha = sha_file(pathlib.Path(__file__))
     if registration.get("ruleArm", {}).get("sha256") != self_sha:
@@ -192,12 +196,35 @@ def check_bindings(args, registration: dict) -> list:
     want_dm = registration.get("dependencies", {}).get("d2_metrics", {}).get("sha256")
     if want_dm != dm_sha:
         problems.append(f"metric tool drifted ({dm_sha} != {want_dm})")
+    n3_sha = sha_file(pathlib.Path(n3_plan.__file__))
+    want_n3 = registration.get("dependencies", {}).get("n3_plan", {}).get("sha256")
+    if want_n3 != n3_sha:
+        problems.append(f"indirect dependency n3_plan drifted "
+                        f"({n3_sha} != {want_n3}); structural verdicts could change")
     freeze = json.loads(pathlib.Path(args.freeze).read_text(encoding="utf-8"))
     fm_problems, _fm_sha = rn.check_metric_tool(freeze)
     problems.extend(fm_problems)
     want_gold = (freeze.get("evaluation", {}).get("gold") or {}).get("sha256")
     if registration.get("gold", {}).get("sha256") != want_gold:
         problems.append("registration gold pin disagrees with the freeze record")
+    # consumed files vs the registration pins (review of c66236b item 2):
+    # a drifted freeze record or items file must refuse even when the
+    # registration itself names the drifted bytes as expected.
+    consumed = {
+        "freezeRecord": (args.freeze, registration.get("freezeRecord", {}).get("sha256")),
+        "inputs": (args.items, (registration.get("inputs", {}).get(
+            "diagnostic16Items" if args.scope == "diagnostic16" else "gate8Items")
+            or {}).get("sha256")),
+    }
+    if args.gold:
+        consumed["gold"] = (args.gold, registration.get("gold", {}).get("sha256"))
+    for label, (path, want) in consumed.items():
+        got = sha_file(path)
+        if want is None:
+            problems.append(f"registration has no {label} pin to verify {path}")
+        elif got != want:
+            problems.append(f"consumed {label} bytes {got} != registration pin "
+                            f"{want} ({path})")
     return problems
 
 
@@ -260,6 +287,25 @@ def run(args) -> int:
             for iid, p in plans.items() for s in p["sentences"]
             if len(s["factIds"]) > 4]
 
+    # B1/B2 historical comparison, listed separately and never part of the
+    # rule arm verdict (gate8 only: the baselines are an 8-item reference)
+    baselines = None
+    if gold_rows:
+        baselines = {}
+        for name, fn in (("B1", n3_plan.plan_b1), ("B2", n3_plan.plan_b2)):
+            rows = {}
+            for iid, item in items.items():
+                generated = fn(item["facts"], dm.names_map(item))
+                rows[iid] = {"itemId": iid, "sentences": generated["sentences"]}
+            s_ = dm.evaluate(items, gold_rows, rows)["summary"]
+            baselines[name] = {"h1": s_["h1"], "h2": s_["h2"],
+                               "g1F1": s_["g1"]["f1"],
+                               "pronounProduction": s_["pronounProduction"],
+                               "g3": s_["g3"], "gate": s_["gate"],
+                               "pass": s_["verdict"]["pass"],
+                               "note": "historical comparison only; not part "
+                                       "of the rule arm verdict"}
+
     # differential vs the reference convention function, on the SAME
     # selected fact set (a temp item is built for diagnostic16)
     differential = {"compared": 0, "identical": 0, "mismatches": [],
@@ -294,8 +340,10 @@ def run(args) -> int:
         "timingNote": "offline CPU generation only; not comparable with model inference",
         "differential": differential,
         "n4OutOfRange": over,
+        "plans": plans,
         "itemOutcomes": {iid: ("ok" if iid in plans else refusals[iid])
                          for iid in items},
+        "baselines": baselines,
         "report": report,
     }
     text = json.dumps(archive, ensure_ascii=False, indent=1) + "\n"
@@ -427,6 +475,42 @@ def selftest() -> int:
     if err is not None or plan["sentences"][0]["factIds"] != ["f1", "f2", "f3"] \
             or len(plan["sentences"][0]["coreference"]) != 2:
         failures.append(f"leading-time unit failed: {err}")
+    # binding checks: consumed freeze/items/gold vs registration, and the
+    # indirect n3_plan dependency pin (review of c66236b items 2-3)
+    import tempfile
+    with tempfile.TemporaryDirectory() as td1:
+        b = pathlib.Path(td1)
+        dm_sha = sha_file(pathlib.Path(dm.__file__))
+        (b / "gold.jsonl").write_text("gold", encoding="utf-8")
+        gold_sha = sha_file(b / "gold.jsonl")
+        (b / "freeze.json").write_text(json.dumps(
+            {"evaluation": {"metricTool": {"sha256": dm_sha},
+                            "gold": {"sha256": gold_sha}}}), encoding="utf-8")
+        (b / "items.jsonl").write_text("rows", encoding="utf-8")
+        reg = {"ruleArm": {"sha256": sha_file(pathlib.Path(__file__))},
+               "dependencies": {"run_n3_arm": {"sha256": sha_file(pathlib.Path(rn.__file__))},
+                                "d2_metrics": {"sha256": dm_sha},
+                                "n3_plan": {"sha256": sha_file(pathlib.Path(n3_plan.__file__))}},
+               "gold": {"sha256": gold_sha},
+               "freezeRecord": {"sha256": sha_file(b / "freeze.json")},
+               "inputs": {"gate8Items": {"sha256": sha_file(b / "items.jsonl")}}}
+        ns = argparse.Namespace(freeze=str(b / "freeze.json"),
+                                items=str(b / "items.jsonl"),
+                                gold=str(b / "gold.jsonl"), scope="gate8")
+        if check_bindings(ns, reg):
+            failures.append("consistent registration produced problems")
+        bad = json.loads(json.dumps(reg))
+        bad["freezeRecord"]["sha256"] = "0" * 64
+        if not [x for x in check_bindings(ns, bad) if "freezeRecord bytes" in x]:
+            failures.append("consumed freeze drift not refused")
+        bad2 = json.loads(json.dumps(reg))
+        bad2["inputs"]["gate8Items"]["sha256"] = "0" * 64
+        if not [x for x in check_bindings(ns, bad2) if "inputs bytes" in x]:
+            failures.append("consumed items drift not refused")
+        bad3 = json.loads(json.dumps(reg))
+        bad3["dependencies"]["n3_plan"]["sha256"] = "0" * 64
+        if not [x for x in check_bindings(ns, bad3) if "n3_plan drifted" in x]:
+            failures.append("n3_plan dependency drift not refused")
     for f in failures:
         print("SELFTEST FAIL:", f)
     # the probe suite doubles as the generator's behavioural test

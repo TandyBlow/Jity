@@ -33,3 +33,4 @@ check_isolation_d2.py text eol=lf
 d2_labels_agreement.py text eol=lf
 d2_metrics.py text eol=lf
 run_n3_arm.py text eol=lf
+n3_rule_arm.py text eol=lf

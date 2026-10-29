@@ -8,7 +8,7 @@
  },
  "ruleArm": {
   "file": "experiments/world-components/n2_selection/n3_rule_arm.py",
-  "sha256": "cebe4d281797571ee80039d10a6866852663ffac330bfbd87c9e03179e9efa67"
+  "sha256": "75bee589987f72c1e61aaa0d03672e75e9fcbeac6ae35065ef8a14ee55f9194f"
  },
  "dependencies": {
   "run_n3_arm": {
@@ -20,6 +20,11 @@
    "file": "experiments/world-components/n2_selection/d2_metrics.py",
    "sha256": "a3a349b908edd92a126f34fc530f6ce25a62b5f15283bacf7a16733adc00131c",
    "role": "scoring, shape checks, check_gold_sha, differential reference build_gold_row"
+  },
+  "n3_plan": {
+   "file": "experiments/world-components/n2_selection/n3_plan.py",
+   "sha256": "11824a208acdb4cc0f790072be9a9672dbb2171eb087a8b61b88f52fab8e8e09",
+   "role": "indirect dependency of d2_metrics (check_invariants); structural verdicts depend on it"
   }
  },
  "inputs": {
