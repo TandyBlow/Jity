@@ -28,9 +28,13 @@
 #
 # The runner's --tamper probe mutates a valid plan on purpose (cross-group
 # entity / global factId / unknown entity / wrong mention / dropped fact /
-# duplicated fact / fabricated factId) and asserts check_invariants catches
-# every applicable case. That probe is the evidence that I1/I2 are not
-# vacuously true.
+# duplicated fact / fabricated factId / fabricated FIRST factId / empty
+# sentence group) and asserts check_invariants catches every applicable
+# case. That probe is the evidence that I1/I2 are not vacuously true.
+#
+# check_invariants never indexes a missing fact or an empty group: every
+# invalid input is reported as a problem string, not raised as KeyError or
+# IndexError.
 
 import json
 import pathlib
@@ -109,6 +113,9 @@ def check_invariants(plan: dict, selected: list, names: dict) -> list:
         problems.append(f"{plan['baseline']}: plan ids != selected ids")
     by_id = {f["factId"]: f for f in selected}
     for s in plan["sentences"]:
+        if not s["factIds"]:
+            problems.append(f"{plan['baseline']}: empty sentence group at index {s.get('index')}")
+            continue
         group_entities = set()
         for fid in s["factIds"]:
             fact = by_id.get(fid)
@@ -126,7 +133,20 @@ def check_invariants(plan: dict, selected: list, names: dict) -> list:
     if plan["baseline"] == "B1":
         # I3 在**句组级**断言：相邻句组的首事实优先级单调不减。actor 内聚
         # 合法地把低优先级事实并入已有句组，展平后的序列允许回落。
-        firsts = [PRIORITY[by_id[s["factIds"][0]]["kind"]] for s in plan["sentences"]]
+        # 空组、捏造首编号和未知 kind 已在上方报告，这里只收集可判定的
+        # 首事实；报告整体仍因已有 problem 而判违规。
+        firsts = []
+        for s in plan["sentences"]:
+            if not s["factIds"]:
+                continue
+            fact = by_id.get(s["factIds"][0])
+            if fact is None:
+                continue
+            kind = fact.get("kind")
+            if kind not in PRIORITY:
+                problems.append(f"{plan['baseline']}: unknown kind {kind!r} for factId {fact['factId']}")
+                continue
+            firsts.append(PRIORITY[kind])
         if firsts != sorted(firsts):
             problems.append(f"{plan['baseline']}: canonical priority order violated ({firsts})")
     return problems

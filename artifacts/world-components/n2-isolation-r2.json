@@ -1,29 +1,419 @@
 {
-  "purpose": "N2 dev-set isolation check v2 (short strings, missing sources, self-test)",
-  "generatedAt": "2026-10-29T08:57:33+00:00",
-  "generatedFromCommit": "f34e992fa48f2fa078ac28b563fdbc09d87314d4",
+  "purpose": "N2 dev-set isolation check v3: canonical pool from B's tracked corpus at a pinned commit, plus a live working-tree diagnostic",
+  "generatedAt": "2026-10-29T09:10:08+00:00",
+  "generatedFromCommit": "83f56701272d0ae4808ff28777c8dbb8d0c8e770",
+  "pinnedMainCommit": "8878e970278a9d311ea1ff669527eebb078458da",
+  "pinPolicy": "bump only when B commits new calibration corpus; the pin keeps the cited pool reproducible instead of following B's live writes",
+  "hashBasis": "git blob bytes at the pinned commit (LF); a working-tree checkout may hash differently under core.autocrlf",
   "selftest": "PASS: planted 3-char TS string and 2-char JSON string both caught",
-  "poolStrings": 4041,
+  "poolStrings": 4026,
+  "poolDigest": "d7613154b5530e6c933783974c7e4bb3991140d7a3d511850f7f3ed700aa0a6f",
+  "sourceDigest": "cae219d3c81433b9b59a9531bf70d57ff3a70f4cc2f0af3227323b76aa9875d9",
   "sourceGroups": 9,
   "n2VocabularyStrings": 39,
   "n2VocabularyShortStrings": 9,
   "sources": [
-    "nv-*: frontend/src/lib/world-engine/runtime/narration-eval-samples.ts strings=53 raw=71 sha256[:16]=72b568f0476f6acf",
-    "hv-*: frontend/src/lib/world-engine/runtime/narration-eval-validation.ts strings=35 raw=44 sha256[:16]=7186a893ca2c5a7d",
-    "ns-*: frontend/src/lib/world-engine/runtime/narration-split-samples.ts strings=49 raw=74 sha256[:16]=4e8dccebc3b019cb",
-    "b3-*: frontend/src/lib/world-engine/runtime/b3-samples.ts strings=11 raw=12 sha256[:16]=78384c56d2a22908",
-    "archived run: artifacts/narration-eval-recheck/run.json strings=161",
-    "split baseline: artifacts/narration-split-baseline.json strings=76",
-    "http review: artifacts/narration-http-review.json strings=23",
-    "page archive: artifacts/world-page/*.json files=1",
-    "chain archive: artifacts/world-chain/*.json files=19"
+    "nv-*: frontend/src/lib/world-engine/runtime/narration-eval-samples.ts strings=53 raw=71 sha256[:16]=05170dd3b85b49ab",
+    "hv-*: frontend/src/lib/world-engine/runtime/narration-eval-validation.ts strings=35 raw=44 sha256[:16]=899a8db714852bb9",
+    "ns-*: frontend/src/lib/world-engine/runtime/narration-split-samples.ts strings=49 raw=74 sha256[:16]=83f1c7c1f9998490",
+    "b3-*: frontend/src/lib/world-engine/runtime/b3-samples.ts strings=11 raw=12 sha256[:16]=471c64cffb949eb2",
+    "archived run: artifacts/narration-eval-recheck/run.json strings=161 sha256[:16]=436f886d3f1a3fc1",
+    "split baseline: artifacts/narration-split-baseline.json strings=76 sha256[:16]=5e136b866f902d21",
+    "http review: artifacts/narration-http-review.json strings=23 sha256[:16]=8efb2033dd5a3fa6",
+    "page archive: artifacts/world-page/*.json files=1 listSha256[:16]=6c6f41a99462f47a",
+    "chain archive: artifacts/world-chain/*.json files=17 listSha256[:16]=e9a9f6855f8d872c"
+  ],
+  "sourceFiles": [
+    {
+      "label": "nv-*",
+      "kind": "ts",
+      "path": "frontend/src/lib/world-engine/runtime/narration-eval-samples.ts",
+      "sha256": "05170dd3b85b49ab5191e48e5e615071b291795636a5c237da834252054de9bf",
+      "strings": 53
+    },
+    {
+      "label": "hv-*",
+      "kind": "ts",
+      "path": "frontend/src/lib/world-engine/runtime/narration-eval-validation.ts",
+      "sha256": "899a8db714852bb949fe2c5fb927dd0ecc29828f1ff356defdc5745357ca1f72",
+      "strings": 35
+    },
+    {
+      "label": "ns-*",
+      "kind": "ts",
+      "path": "frontend/src/lib/world-engine/runtime/narration-split-samples.ts",
+      "sha256": "83f1c7c1f9998490d26aef980b5747326c99b6e8d7ad30c2007df7b06058043d",
+      "strings": 49
+    },
+    {
+      "label": "b3-*",
+      "kind": "ts",
+      "path": "frontend/src/lib/world-engine/runtime/b3-samples.ts",
+      "sha256": "471c64cffb949eb2f7975a7a549f429e8fe3191ffef7e06991e813f7fce2a256",
+      "strings": 11
+    },
+    {
+      "label": "archived run",
+      "kind": "json",
+      "path": "artifacts/narration-eval-recheck/run.json",
+      "sha256": "436f886d3f1a3fc17a08fe320bc6368a234ad0d16505c1741cdf0d85961b2a46",
+      "strings": 161
+    },
+    {
+      "label": "split baseline",
+      "kind": "json",
+      "path": "artifacts/narration-split-baseline.json",
+      "sha256": "5e136b866f902d21118832922e12d3091ded3bb9de6fb05edb96943797086ce7",
+      "strings": 76
+    },
+    {
+      "label": "http review",
+      "kind": "json",
+      "path": "artifacts/narration-http-review.json",
+      "sha256": "8efb2033dd5a3fa66b1544cb6f42a56ac2170ab813fe6aff56a7ab7e5d40ca5d",
+      "strings": 23
+    },
+    {
+      "label": "page archive",
+      "kind": "json_glob",
+      "base": "B@8878e970",
+      "dir": "artifacts/world-page",
+      "listSha256": "6c6f41a99462f47a5ec95f3e1c0b5760de8a0503d2be309f5f862cd1f71bcfe7",
+      "files": [
+        {
+          "path": "review.json",
+          "sha256": "bb2d04dec7b19bf2665cab5cc0697ace67d53c90aee233f07ac36cf086422d3a",
+          "strings": 84
+        }
+      ]
+    },
+    {
+      "label": "chain archive",
+      "kind": "json_glob",
+      "base": "B@8878e970",
+      "dir": "artifacts/world-chain",
+      "listSha256": "e9a9f6855f8d872c776594a908e37e6ee898788cdb8b0e5599ed3dfe6903062e",
+      "files": [
+        {
+          "path": "b3-baseline-v1.json",
+          "sha256": "5c56df2e48636bd3def4484de15c2a551cfbeb47d0f584ba80c5d4905ef948d3",
+          "strings": 390
+        },
+        {
+          "path": "b3-baseline-v2.json",
+          "sha256": "3033580c800026cf1cdbdd279a78febbf5d7501621501349c65e5342cd2f56a8",
+          "strings": 487
+        },
+        {
+          "path": "b3-baseline-v3.json",
+          "sha256": "6223708714653cd3008a649f4905b4ef153e4a45a4652352e88aa6a91761569a",
+          "strings": 527
+        },
+        {
+          "path": "b3-baseline-v4.json",
+          "sha256": "158942eb664e37e0bb4e1c47d0bd8c3a65a325325d46d9c8d3e06658667b19c3",
+          "strings": 539
+        },
+        {
+          "path": "b3-baseline.json",
+          "sha256": "5c56df2e48636bd3def4484de15c2a551cfbeb47d0f584ba80c5d4905ef948d3",
+          "strings": 390
+        },
+        {
+          "path": "b3-rescore-v1-j3.json",
+          "sha256": "84de06bcacad607e2f37acf0c5b3e23e4d31e10e3d9e64823b770fc08f99b35e",
+          "strings": 139
+        },
+        {
+          "path": "b3-rescore-v1-j4.json",
+          "sha256": "4d1e2ede58cd66f9d7e0c1eb0dbea22258f8bba2433a7ab94647e33821b195a8",
+          "strings": 146
+        },
+        {
+          "path": "b3-rescore-v1.json",
+          "sha256": "96e7246f03ac85e7f3136798d5df3469d336677be3fae54984abd11c5a501f7e",
+          "strings": 128
+        },
+        {
+          "path": "b3-rescore-v2-j3.json",
+          "sha256": "a56bb0f572f57456f28ee8be3bba06bf7a471beab802f378b50cebf1dd8fccc4",
+          "strings": 179
+        },
+        {
+          "path": "b3-rescore-v2-j4.json",
+          "sha256": "5ce3f7e372a8835607fdcc428ec33746b4e32764b97227f73e741da6ba8fb99b",
+          "strings": 196
+        },
+        {
+          "path": "b3-rescore-v3-j5.json",
+          "sha256": "5144ce00e31765cf94252a9f606a3a8aa1a5984ad2e9c2d4abe298518bd89cff",
+          "strings": 195
+        },
+        {
+          "path": "b3-rescore-v4-j5.json",
+          "sha256": "73d426c8bfb8a00042ba54d73559aee2427f7d7199a41755c0008b9b794208ac",
+          "strings": 194
+        },
+        {
+          "path": "first-round-v2.json",
+          "sha256": "c382e63d905ce2aa442b12ff9f7f24fef160892a8d4195efe91372d6290c5451",
+          "strings": 701
+        },
+        {
+          "path": "first-round-v3.json",
+          "sha256": "60f38478e30dc534e198ec7ea0ab850a4b0865c457764a9a19a813c32a7da195",
+          "strings": 651
+        },
+        {
+          "path": "first-round.json",
+          "sha256": "b3739bf9e1e97a9c1918c885f052c23076a4038997dba580f5f0cfda25afd66e",
+          "strings": 103
+        },
+        {
+          "path": "twenty-round-v2.json",
+          "sha256": "a9d944b422f863f5067614fd639df062f36d6fcc266064fedc986303ff6d0047",
+          "strings": 1351
+        },
+        {
+          "path": "twenty-round.json",
+          "sha256": "db26dad85231262fbc888f0e2722d672a9b0ae8c5edc9db58a991e0335fd58b6",
+          "strings": 1378
+        }
+      ]
+    }
   ],
   "missingSources": 0,
   "hits": {},
   "verdict": "pass",
+  "excludedWorkingFiles": [
+    {
+      "dir": "artifacts/world-chain",
+      "path": "b3-dbg-a8.json",
+      "sha256": "47149a711301f7f21ea5ee461cbbdaa7c402047cebea76388da6ccea30b17148",
+      "reason": "not tracked at the pinned commit"
+    },
+    {
+      "dir": "artifacts/world-chain",
+      "path": "b3-dbg-action6.json",
+      "sha256": "a2f91c23dc9c8d883679fbb169fa09d17b1622d84d8ba656fbfc87a142351592",
+      "reason": "not tracked at the pinned commit"
+    },
+    {
+      "dir": "artifacts/world-chain",
+      "path": "b3-dbg-action7.json",
+      "sha256": "9eef3b141ef76ebda166c306660d621604715730bb88310468b0cc9670cff13d",
+      "reason": "not tracked at the pinned commit"
+    }
+  ],
+  "liveDiagnostic": {
+    "note": "working tree snapshot; moves whenever B writes a run archive. Not the canonical number; compare with poolDigest, not with poolStrings alone. Working-tree hashes here may also differ from the frozen blob hashes by CRLF conversion.",
+    "generatedAt": "2026-10-29T09:10:08+00:00",
+    "mainWorktree": {
+      "path": "D:\\others\\Jity",
+      "commit": "8878e970278a9d311ea1ff669527eebb078458da",
+      "dirty": [
+        "?? artifacts/world-chain/b3-dbg-a8.json",
+        "?? artifacts/world-chain/b3-dbg-action6.json",
+        "?? artifacts/world-chain/b3-dbg-action7.json"
+      ]
+    },
+    "poolStrings": 4048,
+    "poolDigest": "871cfca549c9dc9dcf7c2e2fe1890a33db9939f5004f8d7dfa1bd36acaf382b4",
+    "sourceDigest": "51adbb602c05ad084ffc057827c7b141d375a71c3ebfa5e7ddb07873265dccf2",
+    "sources": [
+      "nv-*: frontend/src/lib/world-engine/runtime/narration-eval-samples.ts strings=53 raw=71 sha256[:16]=72b568f0476f6acf",
+      "hv-*: frontend/src/lib/world-engine/runtime/narration-eval-validation.ts strings=35 raw=44 sha256[:16]=899a8db714852bb9",
+      "ns-*: frontend/src/lib/world-engine/runtime/narration-split-samples.ts strings=49 raw=74 sha256[:16]=4e8dccebc3b019cb",
+      "b3-*: frontend/src/lib/world-engine/runtime/b3-samples.ts strings=11 raw=12 sha256[:16]=471c64cffb949eb2",
+      "archived run: artifacts/narration-eval-recheck/run.json strings=161 sha256[:16]=e4774d6148dbeb9e",
+      "split baseline: artifacts/narration-split-baseline.json strings=76 sha256[:16]=0a5fac45845af4a0",
+      "http review: artifacts/narration-http-review.json strings=23 sha256[:16]=25a8aa98df508039",
+      "page archive: artifacts/world-page/*.json files=1 listSha256[:16]=6c6f41a99462f47a",
+      "chain archive: artifacts/world-chain/*.json files=20 listSha256[:16]=71185740cf8c5147"
+    ],
+    "sourceFiles": [
+      {
+        "label": "nv-*",
+        "kind": "ts",
+        "path": "frontend/src/lib/world-engine/runtime/narration-eval-samples.ts",
+        "sha256": "72b568f0476f6acfb2b471a16899495b0334d2f2edac0ae15bac4244e6b50224",
+        "strings": 53
+      },
+      {
+        "label": "hv-*",
+        "kind": "ts",
+        "path": "frontend/src/lib/world-engine/runtime/narration-eval-validation.ts",
+        "sha256": "899a8db714852bb949fe2c5fb927dd0ecc29828f1ff356defdc5745357ca1f72",
+        "strings": 35
+      },
+      {
+        "label": "ns-*",
+        "kind": "ts",
+        "path": "frontend/src/lib/world-engine/runtime/narration-split-samples.ts",
+        "sha256": "4e8dccebc3b019cbde4de3b4d84643d2a35faa95bf081a5d1f8e9a218ebb2a12",
+        "strings": 49
+      },
+      {
+        "label": "b3-*",
+        "kind": "ts",
+        "path": "frontend/src/lib/world-engine/runtime/b3-samples.ts",
+        "sha256": "471c64cffb949eb2f7975a7a549f429e8fe3191ffef7e06991e813f7fce2a256",
+        "strings": 11
+      },
+      {
+        "label": "archived run",
+        "kind": "json",
+        "path": "artifacts/narration-eval-recheck/run.json",
+        "sha256": "e4774d6148dbeb9e0c841d35dd49bf7782fb43f8c0d2d65bf7582143c00c20ae",
+        "strings": 161
+      },
+      {
+        "label": "split baseline",
+        "kind": "json",
+        "path": "artifacts/narration-split-baseline.json",
+        "sha256": "0a5fac45845af4a022257529bcebc0b5917ea3266dedf997ac46352e491ddf20",
+        "strings": 76
+      },
+      {
+        "label": "http review",
+        "kind": "json",
+        "path": "artifacts/narration-http-review.json",
+        "sha256": "25a8aa98df508039b202e21185f6cd6b772042a39383710cca2ac2617d6703da",
+        "strings": 23
+      },
+      {
+        "label": "page archive",
+        "kind": "json_glob",
+        "base": "MAIN",
+        "dir": "artifacts/world-page",
+        "listSha256": "6c6f41a99462f47a5ec95f3e1c0b5760de8a0503d2be309f5f862cd1f71bcfe7",
+        "files": [
+          {
+            "path": "review.json",
+            "sha256": "bb2d04dec7b19bf2665cab5cc0697ace67d53c90aee233f07ac36cf086422d3a",
+            "strings": 84
+          }
+        ]
+      },
+      {
+        "label": "chain archive",
+        "kind": "json_glob",
+        "base": "MAIN",
+        "dir": "artifacts/world-chain",
+        "listSha256": "71185740cf8c5147e266cd953da58d6b2f3cacd89eaaebe9dcedb951bb54b982",
+        "files": [
+          {
+            "path": "b3-baseline-v1.json",
+            "sha256": "5c56df2e48636bd3def4484de15c2a551cfbeb47d0f584ba80c5d4905ef948d3",
+            "strings": 390
+          },
+          {
+            "path": "b3-baseline-v2.json",
+            "sha256": "3033580c800026cf1cdbdd279a78febbf5d7501621501349c65e5342cd2f56a8",
+            "strings": 487
+          },
+          {
+            "path": "b3-baseline-v3.json",
+            "sha256": "6223708714653cd3008a649f4905b4ef153e4a45a4652352e88aa6a91761569a",
+            "strings": 527
+          },
+          {
+            "path": "b3-baseline-v4.json",
+            "sha256": "158942eb664e37e0bb4e1c47d0bd8c3a65a325325d46d9c8d3e06658667b19c3",
+            "strings": 539
+          },
+          {
+            "path": "b3-baseline.json",
+            "sha256": "5c56df2e48636bd3def4484de15c2a551cfbeb47d0f584ba80c5d4905ef948d3",
+            "strings": 390
+          },
+          {
+            "path": "b3-dbg-a8.json",
+            "sha256": "47149a711301f7f21ea5ee461cbbdaa7c402047cebea76388da6ccea30b17148",
+            "strings": 222
+          },
+          {
+            "path": "b3-dbg-action6.json",
+            "sha256": "a2f91c23dc9c8d883679fbb169fa09d17b1622d84d8ba656fbfc87a142351592",
+            "strings": 279
+          },
+          {
+            "path": "b3-dbg-action7.json",
+            "sha256": "9eef3b141ef76ebda166c306660d621604715730bb88310468b0cc9670cff13d",
+            "strings": 280
+          },
+          {
+            "path": "b3-rescore-v1-j3.json",
+            "sha256": "84de06bcacad607e2f37acf0c5b3e23e4d31e10e3d9e64823b770fc08f99b35e",
+            "strings": 139
+          },
+          {
+            "path": "b3-rescore-v1-j4.json",
+            "sha256": "4d1e2ede58cd66f9d7e0c1eb0dbea22258f8bba2433a7ab94647e33821b195a8",
+            "strings": 146
+          },
+          {
+            "path": "b3-rescore-v1.json",
+            "sha256": "96e7246f03ac85e7f3136798d5df3469d336677be3fae54984abd11c5a501f7e",
+            "strings": 128
+          },
+          {
+            "path": "b3-rescore-v2-j3.json",
+            "sha256": "a56bb0f572f57456f28ee8be3bba06bf7a471beab802f378b50cebf1dd8fccc4",
+            "strings": 179
+          },
+          {
+            "path": "b3-rescore-v2-j4.json",
+            "sha256": "5ce3f7e372a8835607fdcc428ec33746b4e32764b97227f73e741da6ba8fb99b",
+            "strings": 196
+          },
+          {
+            "path": "b3-rescore-v3-j5.json",
+            "sha256": "5144ce00e31765cf94252a9f606a3a8aa1a5984ad2e9c2d4abe298518bd89cff",
+            "strings": 195
+          },
+          {
+            "path": "b3-rescore-v4-j5.json",
+            "sha256": "73d426c8bfb8a00042ba54d73559aee2427f7d7199a41755c0008b9b794208ac",
+            "strings": 194
+          },
+          {
+            "path": "first-round-v2.json",
+            "sha256": "c382e63d905ce2aa442b12ff9f7f24fef160892a8d4195efe91372d6290c5451",
+            "strings": 701
+          },
+          {
+            "path": "first-round-v3.json",
+            "sha256": "60f38478e30dc534e198ec7ea0ab850a4b0865c457764a9a19a813c32a7da195",
+            "strings": 651
+          },
+          {
+            "path": "first-round.json",
+            "sha256": "b3739bf9e1e97a9c1918c885f052c23076a4038997dba580f5f0cfda25afd66e",
+            "strings": 103
+          },
+          {
+            "path": "twenty-round-v2.json",
+            "sha256": "a9d944b422f863f5067614fd639df062f36d6fcc266064fedc986303ff6d0047",
+            "strings": 1351
+          },
+          {
+            "path": "twenty-round.json",
+            "sha256": "db26dad85231262fbc888f0e2722d672a9b0ae8c5edc9db58a991e0335fd58b6",
+            "strings": 1378
+          }
+        ]
+      }
+    ],
+    "missingSources": 0,
+    "hits": {},
+    "verdict": "pass"
+  },
   "knownLimits": [
     "substring only",
     "renaming/derivation not provable",
-    "B's runtime TS code is not scanned"
+    "B's runtime TS code is not scanned",
+    "untracked working files are excluded from the canonical pool and listed in excludedWorkingFiles; the live diagnostic includes them",
+    "frozen file hashes are git blob bytes; working-tree hashes may differ by CRLF without changing strings"
   ]
 }

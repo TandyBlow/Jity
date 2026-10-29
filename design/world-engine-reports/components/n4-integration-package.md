@@ -1,6 +1,6 @@
 # N4 接入包（B 侧工程接入用）
 
-日期：2026-10-29（复核轮 18）。对象：**冻结的 N4 短计划成句组件 `r3-direction`**。离线质量门已在六类短计划范围内关闭（独立留出 44/44，见[语料协议 §11](../../../experiments/world-components/n4_corpus/corpus_protocol.md)）。
+日期：2026-10-29（复核轮 18；复核轮 22 补齐离线包判据哈希）。对象：**冻结的 N4 短计划成句组件 `r3-direction`**。离线质量门已在六类短计划范围内关闭（独立留出 44/44，见[语料协议 §11](../../../experiments/world-components/n4_corpus/corpus_protocol.md)）。
 
 C 负责解释接口与定位差异；页面、控制器、运行层与接线归 B。**离线验收与浏览器验收分别记录，不能互相顶替**：本包给出的是离线结论，浏览器侧（T5 端到端、JS sentencepiece、共存开销）仍未验证。
 
@@ -150,5 +150,5 @@ def render_entry(e):
 | --- | --- | --- |
 | 离线（六类短计划） | **通过**（协调人签字，复核轮 17） | `artifacts/world-components/n4-holdout-eval-r3-direction.json`（44/44 + 1/1） |
 | 浏览器（T5 端到端） | **未验证** | 无 |
-| 离线包（B 可取回） | **已交，标签 `offline Python`** | `artifacts/world-components/n4-offline-package-r3-direction.json`（检查点/基座/语料/判据哈希、环境与确定性 flag、复跑口径） |
+| 离线包（B 可取回） | **已交，标签 `offline Python`** | `artifacts/world-components/n4-offline-package-r3-direction.json`（检查点/基座/语料/判据哈希、环境与确定性 flag、复跑口径；本轮补齐 `corpus.judge = corpus_check.py e16bd2c9…` 并同步 `corpus.all`，不再为 `null`） |
 | 接入后整链 | **未验证** | 待 B 接线 |

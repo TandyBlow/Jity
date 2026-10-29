@@ -83,9 +83,9 @@
 | F14 | Randeng-T5-77M 基座在 N2 "编号选择" 形状上零样本无效：两种提示形态（指令在后 / 答案槽前置）均 0/16，输出复述事实行或无关短句 | [实测] | `artifacts/world-components/n2-selection-r1.json` M1a/M1b |
 | F15 | Qwen3-0.6B 零样本在**补齐视角信息后**仍不守视角：16 项中 9 次选到视角不可知事实，must 覆盖 0.875，pass 4/16；单次约 24s（CPU 4 线程，真实 Edge＋wllama）。v1 的 11 次/14.37s 属设计缺陷批次，作废 | [实测] | `n2-selection-r2.json` M2 |
 | F16 | 视角可见性可由程序严格判定：P1-rule 只读视角字段＋事实位置即 16/16、F1 0.818，且对"只改标签"免疫（0 项移动）、对"改视角"敏感（12 项移动）；读标签的参照臂在标签探针下移动 12 项 | [实测] | `n2-selection-r2.json` selfTest 与 P1 臂 |
-| F17 | N2 开发集（v2）与 B 归档零字面重合：**9 组来源、4023 条串**（**含 <4 字短串**），双向子串 0 命中、0 缺失源；自检确认植入的 3 字人名与 2 字串都能被抓。归档：`n2-isolation-r2.json`（提交 `f34e992`，2026-10-29T08:57Z） | [实测] | `n2_selection/check_isolation.py --archive` |
+| F17 | N2 开发集（v2）与 B 语料零字面重合：**9 组来源、4026 条串**（**含 <4 字短串**），双向子串 0 命中、0 缺失源；自检确认植入的 3 字人名与 2 字串都能被抓。口径为**冻结 B `world-browser` 提交 `8878e97` 的已提交语料**（`poolDigest d7613154…`、`sourceDigest cae219d3…`）；B 工作区未提交的 `b3-dbg-a6/a7/a8` 不计入冻结数，单列在 `excludedWorkingFiles`；同脚本的 live 诊断为 4048 串、0 命中。旧引用的 4023（未归档中间值）、4041（16:57Z 部分写入）与 4042（复核复跑）撤回。归档：`n2-isolation-r2.json`（2026-10-29T09:10Z） | [实测] | `n2_selection/check_isolation.py --archive` |
 | F18 | D1 must 口径重算（只用归档输出，不新增推理）：P1-rule must-R 1.0 / must-P 0.433；Qwen must-R 0.875 / must-P 0.459；Randeng 0/16（空选择/无效内容）；P0 must-P 0.35。**P1-rule 的失败分支未在 v2 触发**（must-P<0.85），v3 标注后才可判定 | [实测] | `n2-must-r1.json` |
-| F19 | N3 I2 旧检查把**整份计划**的 factId 集合当锚定域，跨组/全局 factId 篡改可漏检；改为只查**本句组 entityIds** 后，`--tamper` 七类变异 112/112 适用项全部被捕获，16/16 有效计划零问题 | [实测] | `n3-baselines-r1.json` 的 `tamper` |
+| F19 | N3 I2 旧检查把**整份计划**的 factId 集合当锚定域，跨组/全局 factId 篡改可漏检；改为只查**本句组 entityIds** 后，`--tamper` **九类**变异 144/144 适用项全部被捕获，16/16 有效计划零问题；新增**首位捏造 factId**与**空句组**两类，检查器返回违规列表而不抛异常 | [实测] | `n3-baselines-r1.json` 的 `tamper` |
 | F20 | factIds 消费冒烟：36/36 B1 句组经共享渲染器喂冻结 `r3-direction`（离线 Python，cudnn deterministic、benchmark=False），本次归档墙钟均值 0.8s（同一检查点重复运行在 0.5–0.8s 间波动）；**仅证明 factIds 可被 N4 消费，coreference 未被 `render_input` 消费，跨组连贯未测** | [实测] | `n3-factids-smoke-r1.json` |
 
 ## 4. 训练方案表

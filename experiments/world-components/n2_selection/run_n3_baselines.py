@@ -10,7 +10,7 @@
 #
 # I2 anchoring is checked against the sentence group's OWN entityIds only
 # (the r1 global `sentence_ids` set is gone). `--tamper` runs the mutation
-# probe: a valid plan is deliberately broken in six ways and every
+# probe: a valid plan is deliberately broken in nine ways and every
 # applicable mutation MUST be caught. The probe result is archived.
 #
 # Two separate archives:
@@ -155,6 +155,8 @@ def run_tamper(items: list) -> dict:
         "droppedFact": {"applicable": 0, "detected": 0},
         "duplicatedFact": {"applicable": 0, "detected": 0},
         "fabricatedFact": {"applicable": 0, "detected": 0},
+        "fabricatedFirst": {"applicable": 0, "detected": 0},
+        "emptyGroup": {"applicable": 0, "detected": 0},
     }
     controls = {"validPlans": 0, "zeroProblems": 0}
     misses = []
@@ -223,6 +225,18 @@ def run_tamper(items: list) -> dict:
             p["sentences"][0]["factIds"].append("f999")
             return True
 
+        def fabricated_first(p):
+            # Replacing the FIRST id used to raise KeyError in the B1 priority
+            # loop; the checker must report the violation instead.
+            p["sentences"][0]["factIds"][0] = "f999"
+            return True
+
+        def empty_group(p):
+            # An empty group used to raise IndexError on factIds[0]; it must
+            # be reported as a violation.
+            p["sentences"][0]["factIds"] = []
+            return True
+
         for label, mutate in (
                 ("crossGroupEntity", cross_group),
                 ("globalFactId", global_fact),
@@ -230,7 +244,9 @@ def run_tamper(items: list) -> dict:
                 ("wrongMention", wrong_name),
                 ("droppedFact", dropped),
                 ("duplicatedFact", duplicated),
-                ("fabricatedFact", fabricated)):
+                ("fabricatedFact", fabricated),
+                ("fabricatedFirst", fabricated_first),
+                ("emptyGroup", empty_group)):
             if label == "crossGroupEntity" and not cross_entity:
                 continue
             if label == "globalFactId" and not global_fid:

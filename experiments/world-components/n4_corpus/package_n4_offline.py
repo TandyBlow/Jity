@@ -25,6 +25,7 @@ import torch
 
 HERE = pathlib.Path(__file__).resolve().parent
 REPO = HERE.parent.parent.parent
+CORPUS_CHECK = HERE / "corpus_check.py"
 ASSETS = HERE.parent / "assets"
 BASE = ASSETS / "randeng-t5-77m"
 CKPT = ASSETS / "n4-finetune" / "r3-direction"
@@ -103,6 +104,7 @@ def main() -> None:
         sys.exit(2)
 
     corpus = corpus_hashes()
+    judge_sha = sha_file(CORPUS_CHECK)
     package = {
         "purpose": "N4 offline package (r3-direction) for B-side retrieval and verification; offline Python only",
         "status": "offline package, browser integration NOT started (D3)",
@@ -112,10 +114,10 @@ def main() -> None:
                       "hfId": "IDEA-CCNL/Randeng-T5-77M-MultiTask-Chinese",
                       "pinned": BASE_PINS},
         "corpus": {"renderer": corpus.get("n4_render.py"),
-                   "judge": corpus.get("corpus_check.py"),
+                   "judge": judge_sha,
                    "seeds": corpus.get("corpus.seeds.jsonl"),
                    "rewrites": corpus.get("rewrites.jsonl"),
-                   "all": corpus},
+                   "all": {**corpus, "corpus_check.py": judge_sha}},
         "decode": dict(DECODE),
         "environment": {
             "python": sys.version.split()[0],

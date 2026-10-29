@@ -56,7 +56,8 @@ D1 把旧的 `target` 精确匹配降为诊断，硬指标改为 must 的召回�
 标签全部由 v2 可见性规则推导：`必须 = 视角人物自身行动/任务/理智`；`禁止 = 规则判为不可见`；`可省 = 其余`；`target = 必须 ∪ 显著可见事实`。构造期断言姓名↔ID 一致、视角人物有自身事实、target 不含禁止项。**v3 不再沿用这套推导，改由 §7 的独立标注产生。**
 
 - 事实数 5–6；must 2、target 3.25、omittable 2.75、forbidden 1.0（均值）；12/16 项含禁止事实。
-- 隔离：`check_isolation.py` v2，**9 组来源、4023 条串**（含短串），**0 命中、0 缺失**；归档 `n2-isolation-r2.json`（生成于提交 `f34e992`，2026-10-29T08:57Z）；自检确认 3 字人名与 2 字串都能被抓。
+- 隔离：`check_isolation.py` v3，**9 组来源、4026 条串**（含短串），**0 命中、0 缺失**。归档 `n2-isolation-r2.json`（2026-10-29T09:10Z）的口径是**冻结 B `world-browser` 提交 `8878e97` 的已提交语料**（`poolDigest d7613154…`、`sourceDigest cae219d3…`，逐文件 sha256 见 `sourceFiles`；git blob 字节，pin 仅在 B 提交新语料时更新）；B 工作区未提交的 `b3-dbg-a6/a7/a8` 不计入冻结数，单列在 `excludedWorkingFiles`；同脚本的 live 诊断为 4048 串、0 命中。自检确认 3 字人名与 2 字串都能被抓。
+- 隔离数字差异：4041（16:57Z，action7 写入中）、4042（复核复跑，action7 完成）、4048（B 于 17:06 写入 a8 后的 live）都是**未提交工作区**的 live 扫描；4023 无对应归档，作废。冻结口径只取 B 已提交语料（`8878e97`），所以归档数为 4026；`n2-isolation-r2.json` 同时保存 live 诊断与 `excludedWorkingFiles`，不把 live 数当归档数。
 
 ## 4. 两轮对照与 D1 重算
 
@@ -143,7 +144,7 @@ N3 的契约是**组织计划**，不是成句。**唯一形状定义在[接口�
 | 项 | 结果 |
 | --- | --- |
 | 硬不变量 | I1 覆盖不变（句组 factIds 并集＝选中集合）；I2 改为**只查本句组 entityIds**（删除 r1 的整份计划 factId 集合），mention＝查表人名；I3 B1 句组级优先级单调——16/16 项零违规 |
-| 篡改探针 | `--tamper`：跨组 entity、跨组/全局 factId、未知 entity、错 mention、丢 fact、重复 fact、捏造 factId 七类变异，**112/112 适用项全部被捕获**；16/16 有效计划零问题。归档在 `n3-baselines-r1.json` 的 `tamper` |
+| 篡改探针 | `--tamper`：跨组 entity、跨组/全局 factId、未知 entity、错 mention、丢 fact、重复 fact、捏造 factId，以及本轮新增的**首位捏造 factId**与**空句组**共九类变异，**144/144 适用项全部被捕获**；16/16 有效计划零问题。检查器对首位捏造编号与空句组返回问题列表，不再抛 `KeyError`/`IndexError`。归档在 `n3-baselines-r1.json` 的 `tamper` |
 | 基线数字 | B1 共 **36 句组**（facts/组均值 1.46；actor 内聚），B2 共 **52 句组**（每事实一组）；这是后续模型臂必须优化的对照，不是成绩 |
 | **factIds 消费冒烟** | 每个 B1 句组作为**扁平事实表**喂共享渲染器与**冻结 r3-direction** 检查点（离线 Python，cudnn deterministic、benchmark=False）：36 组全部成句，本次归档墙钟均值 0.8s（重复运行 0.5–0.8s 波动）；原文存档 `n3-factids-smoke-r1.json`。**coreference 未被 `render_input` 消费，句组边界未传入，跨组连贯性未测；不是 N4 质量证据，封存留出集未动** |
 | 待定 | N3 模型臂未跑；H1/H2/G1–G4 未预登记；8 项能力样本与 gold 未建；代词策略未定；显著性口径继承 N2 v3 待冻结 |

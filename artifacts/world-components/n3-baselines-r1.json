@@ -10,11 +10,11 @@
   "provenance": {
     "items": "c574d44ebc48a254942fff276cffd18d8607281b6e3617299c1cc0e35cc947fa",
     "code": {
-      "n3_plan.py": "6918828cb786cb9318c9cd507d71483351c54f556108549bfa9595a01ec5400f",
-      "run_n3_baselines.py": "c67dc94153bd260fa5d46d325ae1ed9de30e3462b60f00c0c67574a119996cd0"
+      "n3_plan.py": "11824a208acdb4cc0f790072be9a9672dbb2171eb087a8b61b88f52fab8e8e09",
+      "run_n3_baselines.py": "0ee43d4dac5a97e6cbfbf9846bb8e380bfbe737198747f22022519609fc33dbc"
     },
-    "generatedAt": "2026-10-29T08:57:17+00:00",
-    "generatedFromCommit": "f34e992fa48f2fa078ac28b563fdbc09d87314d4"
+    "generatedAt": "2026-10-29T09:11:21+00:00",
+    "generatedFromCommit": "83f56701272d0ae4808ff28777c8dbb8d0c8e770"
   },
   "summary": {
     "items": 16,
@@ -2004,6 +2004,14 @@
       "fabricatedFact": {
         "applicable": 16,
         "detected": 16
+      },
+      "fabricatedFirst": {
+        "applicable": 16,
+        "detected": 16
+      },
+      "emptyGroup": {
+        "applicable": 16,
+        "detected": 16
       }
     },
     "controls": {
@@ -2011,8 +2019,8 @@
       "zeroProblems": 16
     },
     "summary": {
-      "applicable": 112,
-      "detected": 112,
+      "applicable": 144,
+      "detected": 144,
       "misses": 0
     },
     "perItem": [

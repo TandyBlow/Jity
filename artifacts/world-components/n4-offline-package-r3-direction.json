@@ -42,13 +42,14 @@
   },
   "corpus": {
     "renderer": "65bfe89adfbb75d5637d3661cab383aa9bc678dffb97ab5eb8a0d28ac1e3f2ef",
-    "judge": null,
+    "judge": "e16bd2c98a7141aaf8251c6562f191eb78809840e477e2b24f8345ecd351ac50",
     "seeds": "f14e451a9cc410bd2cb4c90adf07ca227ee60f888e27510510f65893b829dfb7",
     "rewrites": "2811d7310c42666a7d796ea4f72252dc003c3e88cb5c069c2b12c88defbed6d3",
     "all": {
       "n4_render.py": "65bfe89adfbb75d5637d3661cab383aa9bc678dffb97ab5eb8a0d28ac1e3f2ef",
       "corpus.seeds.jsonl": "f14e451a9cc410bd2cb4c90adf07ca227ee60f888e27510510f65893b829dfb7",
-      "rewrites.jsonl": "2811d7310c42666a7d796ea4f72252dc003c3e88cb5c069c2b12c88defbed6d3"
+      "rewrites.jsonl": "2811d7310c42666a7d796ea4f72252dc003c3e88cb5c069c2b12c88defbed6d3",
+      "corpus_check.py": "e16bd2c98a7141aaf8251c6562f191eb78809840e477e2b24f8345ecd351ac50"
     }
   },
   "decode": {
@@ -101,8 +102,8 @@
     "rebuild": "python experiments/world-components/n4_corpus/train_n4_sentence.py --tier large --run-tag <new-tag>  (never reuse r3-direction; 360 steps, batch 8, lr 1e-4, seed 20261029)",
     "verify": "python experiments/world-components/n4_corpus/package_n4_offline.py against the copied/ rebuilt directory (edit CKPT first)"
   },
-  "generatedAt": "2026-10-29T08:47:35+00:00",
-  "generatedFromCommit": "f34e992fa48f2fa078ac28b563fdbc09d87314d4",
+  "generatedAt": "2026-10-29T09:05:45+00:00",
+  "generatedFromCommit": "83f56701272d0ae4808ff28777c8dbb8d0c8e770",
   "disclaimers": [
     "offline Python only; no browser runtime, no JS sentencepiece, no page wiring",
     "the 297MB checkpoint is not committed; this manifest is the retrievable artifact",
