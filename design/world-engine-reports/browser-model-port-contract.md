@@ -40,17 +40,22 @@ initial | time | pointPlan`（`schedule.ts:13`）。决策由纯调度器产生
    `buildTaskPrompt`，支持 `focused` 投影与 `committedReads`（`:45-48,71`；
    文件头「encode 是占位」的注释已过时，以代码为准）——**未接任何产品路径**。
 
-**四层输出**（本文所有任务条目都按此区分——四层不重合，B3 归档只直接
-记录第一层）：
+**四层输出**（涉及分层的条目按此标注；B3 归档直接记录第 1 层）：
 
-1. **模型原始输出（归档 `output`）**：`b3.complete` 受控解码后的 JSON
-   原样解析值，随调用记录落盘（`run-world-b3.mjs:356-358`）。
+1. **归档层**：`modelTasks[].raw` = 受控解码的**原样文本**——唯一的原始
+   层；`modelTasks[].output` = JSON 解析值经端口**就地回填后**的形态
+   （回填直接改写解析对象、对象按引用随记录落盘，`b3.calls.push` 在
+   `run-world-b3.mjs:367`），回填明细另记 `backfills`。例：v6 chain
+   round_37 `raw` 里是 `"nextRoundId":"pending"`，`output` 已是
+   `"round_41"`。读模型原始行为必须看 `raw`，读回填必须看 `backfills`。
 2. **端口返回值**：任务分支对解析值校验/归一/裁剪后 `generate()` 实际
    返回给驱动器的值。
 3. **驱动内存**：`consumeModelOutput`/调度器适配后的内存形态
    （`lastModel`/`lastTargets`/`lastResults`/`continuation` 等）。
-4. **wire**：提交服务端的数据（`types.ts:75-108` RequestMap；归档
-   `ops`/`wire` 捕获）。
+4. **wire**：提交服务端的数据（`types.ts:75-108` RequestMap）。注意
+   归档 `wire` 只存 HTTP ≥400 的错误回包（`run-world-b3.mjs:289-293`），
+   正常写操作只见于 `ops` 序列——「X 上 wire」的归档证据仅在出错时存在，
+   正常路径是代码推断。
 
 两个易混实例（v6 归档可验）：**reaction** 归档 `output` 是 `{text}`
 对象，端口返回的是纯字符串（`run-world-b3.mjs:596 return out.text`，
@@ -87,7 +92,7 @@ wire 都只见裁剪后字段。
 | --- | --- |
 | 调度位置 | `selectActorDecision`（`schedule.ts:761-768`），按冻结顺序逐人判断（`nextActor`，`schedule.ts:696-709`；被后序点覆盖的槽位延后，已处理槽位不重问） |
 | 输入 | `{ actor, advance: { inputText, intentStatus }, workingState }`；玩家文本身份绑定当前 advance（`actionAdvance`，`schedule.ts:715-720`：服务端 activeInput 或驱动器自己 start_advance 的原文，二者不跨 advance 泄漏） |
-| 输出形状 | `{ kind:'act', text } \| { kind:'skip' }`；B3 schema enum 钉死、maxTokens 128（`run-world-b3.mjs:536-537`） |
+| 输出形状 | 四层：归档 `{ kind:'act', text }`（skip 原样带 `text:''`）→ 返回归一化（skip 去 text，`run-world-b3.mjs:540`）→ 内存 `lastModel.output` → wire `checkpoint_discover_group` 的 actionText / `checkpoint_record_skip`（无模型文本）。B3 schema enum 钉死、maxTokens 128（`:536-537`） |
 | 校验 | 调度器：非 `act`/`skip` 或 act 空 text 直接 throw（`schedule.ts:744`）；B3 判据：目标句 `goal/plan is not an action` fail（`b3-judges.mjs:194`）、已消费输入后主角自发动 review（`:200`） |
 | 程序回填 | 无改写；`{kind:'skip',text:''}` 归一化为 `{kind:'skip'}`（B3 `:540`） |
 | wire 消费 | act → `checkpoint_discover_group`（actionText=模型文本，groupId 程序槽位 `group:<actor>`）；skip → `checkpoint_record_skip`（`schedule.ts:733-753`） |
@@ -102,8 +107,8 @@ wire 都只见裁剪后字段。
 | --- | --- |
 | 调度位置 | `buildDecision`（`schedule.ts:891-895`），组内 DFS 的来源帧扩展前 |
 | 输入 | `{ sourceId, actionText, workingState }` |
-| 输出形状 | `{ targets: [{ targetId }] }`（产品 codec 形状，B3 `:555-558`）；maxTokens 96 |
-| 校验 | 调度器：必须带 targets 数组否则 throw（`controller.ts:449-455`）；B3 端口：畸形/不在名册的目标**丢弃并记 backfill**（`target_dropped_not_in_roster`），自指/重复目标是语义错误**记 validationError 并 throw**，不静默改写冻结目标集（`run-world-b3.mjs:559-583`） |
+| 输出形状 | 四层：归档=模型原始 `{targets:[{targetId}]}` 列表 → 返回=过滤后同形（§校验行）→ 内存 `lastTargets {sourceId, targets}`（独立于 `lastModel` 存放——allocate 桥成功会清 `lastModel`，不能丢声明集，`controller.ts:449-455`）→ wire `checkpoint_extend_group` targets 带 triggerKey（键模型不可见）。产品 codec 形状，maxTokens 96（B3 `:555-558`） |
+| 校验 | 调度器：必须带 targets 数组否则 throw（`controller.ts:449-455`）；B3 端口：畸形项记 `target_malformed`（`run-world-b3.mjs:564`）、不在名册记 `target_dropped_not_in_roster`（`:569`），两类均**丢弃并记 backfill**；自指/重复目标是语义错误**记 validationError 并 throw**，不静默改写冻结目标集（`:574-582`） |
 | 程序回填 | 触发键与骰规则**模型不可见**：`triggerSlotKey = trigger:foldIdentity(groupId, sourceId, targetId)` 程序分配（§9.3，`schedule.ts:89-96`）；骰规则为程序常量 `PROGRAM_ROLL_RULE = reaction-d20-v1, target 11`（`schedule.ts:26`） |
 | wire 消费 | 缺失 trigger 槽先 `allocate_ids`（`schedule.ts:845-860`），再 `checkpoint_extend_group targets:[{targetId, triggerKey}]`；roll 由 `create_rolls`（程序发起，ASCII 序，`controller.ts:66-70`） |
 | v6 证据 | targets 未进错误族（漏选在探针层有历史记录，v6 场景零命中） |
@@ -126,7 +131,7 @@ wire 都只见裁剪后字段。
 | --- | --- |
 | 调度位置 | `settleDecision`（`schedule.ts:972-993`），组关闭后 |
 | 输入 | `{ groupId, members: [{ memberId, actionText, rollRefs（含未准入 roll） }], workingState }`——冻结行动与全部骰点判定来自 `memory.groupActions`（§7.1；`controller.ts:722-774` 维护）；**成员缺失时明确停止** `frozen_actions_missing`，不用空列表结算（`schedule.ts:979-982`） |
-| 输出形状 | `Record<memberId, string>`（每成员一句第三人称结算）；B3 schema 恰好含全部成员键、缺键 throw（`run-world-b3.mjs:608-614`）；maxTokens 128 |
+| 输出形状 | 四层同形：归档=返回=内存均为 `Record<memberId, string>`（每成员一句第三人称结算，无回填改写）；wire=`checkpoint_stage_unit` 的 `results` 原样。B3 schema 恰好含全部成员键、缺键 throw（`run-world-b3.mjs:608-614`）；maxTokens 128 |
 | 校验 | B3 判据（`b3-judges.mjs:295-348`）：逐成员归属、骰点一致（未准入写成成功 / 准入写成失败 = fail，带 `[dice mismatch]`）、可追溯性、**无骰点证据的裸判定 = review（不计通过）** |
 | 程序回填 | 无（结果文本逐字进 wire） |
 | wire 消费 | `checkpoint_stage_unit { groupId, candidates, results }`（`schedule.ts:963-970`）——candidates 由 updates 输出组装（见 1.5），results 原样 |
@@ -138,7 +143,7 @@ wire 都只见裁剪后字段。
 | --- | --- |
 | 调度位置 | `settleDecision` 尾部 / `updatesModelCall`（`schedule.ts:928-938,994-997`）；阶段切分由场景声明（`memory.updatesStages`，空 = 单次合并调用；阶段序列跨恢复保留，`controller.ts:185`） |
 | 输入 | 组模式 `{ groupId, mode:'group', results, stage?, workingState }` / 空点模式 `{ mode:'time_scan', workingState }`；后序阶段**读前一阶段已应用的状态**（§6.3，stage 间经 `preview_point` 折入，`controller.ts:467-597` 含前向引用拆分应用） |
-| 输出形状 | 合并模式 `UpdatesCall[]`（stage 顺序 position→appearance→tasks→subtasks→personality→sanity）；切分模式单 `{stage, changes}`；无变化输出 `[]` / `{stage,changes:{}}`；B3 schema 用 **enum 钉死 stage 名**（复核轮 19 修复，`run-world-b3.mjs:500-505`）、maxTokens 384 |
+| 输出形状 | 合并模式 `UpdatesCall[]`（stage 顺序 position→appearance→tasks→subtasks→personality→sanity）；切分模式单 `{stage, changes}`；无变化输出 `[]` / `{stage,changes:{}}`；B3 schema 用 **enum 钉死 stage 名**（复核轮 19 修复，`run-world-b3.mjs:500-505`）、maxTokens 384。四层：归档=返回 `UpdatesCall[]`/单 `{stage,changes}` → 内存 `updatesCalls`（合并后 Δ）→ wire=`checkpoint_stage_unit` 的 `candidates`——**change/task 草稿 id 已被程序重写为分配 id**（见程序回填行），草稿 id 不上 wire |
 | 校验 | 端口 audit：阶段顺序/字段白名单/名册/sanity∈[0,100]/tasksAchieved 归属（`run-world-b3.mjs:400-457`）；调度器 `checkUpdatesStages` 悬挂引用守卫 → stop `dangling_updates_refs`（`schedule.ts:387-400`）；判据：因果链（无新任务达成不得个性、无个性不得理智）、>30 理智跳变 review |
 | 程序回填 | **change/task 身份全程序所有**：模型草稿 id 在 stage 发送前经 `allocate_ids` 重写（`collectCandidateIdentityWork`，`controller.ts:305-366`；槽键 fold 组+实体+草稿 id，重试零重分配）；恢复的已确认单元逐字 stage、重写被显式禁止（`:313-316`） |
 | wire 消费 | `checkpoint_stage_unit` / `checkpoint_stage_time_scan`（coverage 规则：taskCoverage=全名册，personalityCoverage 有达成才全名册，positions 只来自 positionSet——`schedule.ts:1037-1059`）→ `preview_point` 共同投影 → `commit_point` |
@@ -150,13 +155,13 @@ wire 都只见裁剪后字段。
 | --- | --- |
 | 调度位置 | `continuationDecision`（`schedule.ts:590-622`），`assess_continuation` 相位 |
 | 输入 | `{ round, head, workingState, roundChanges }`（§7.1 主角/当前世界/本轮变化；roundChanges 是本驱动器提交点 Δ 按序累计，`controller.ts:807-814`）；**依据缺失明确停止** `continuation_context_missing`，不得无据调模型（`schedule.ts:605-610`） |
-| 输出形状 | 模型原始输出（归档，四层之第 1 层）：`{kind:'continue' \| 'handback', candidateCharacterIds, nextRoundId, plannedAction, protagonistRelevance, cancelReason}`，maxTokens 160（`run-world-b3.mjs:657-662`）；**端口返回值已裁剪**为 Conclusion `{kind, closedBy:'model', cancelReason:null, candidateCharacterIds, nextRoundId}`（`continue` 分支，`:692-695`）——归档与返回值不同（§〇 实例二） |
+| 输出形状 | 模型原始输出（归档，四层之第 1 层）：`{kind:'continue' \| 'handback', candidateCharacterIds, nextRoundId, plannedAction, protagonistRelevance, cancelReason}`，maxTokens 160（`run-world-b3.mjs:657-662`）；**端口返回值已裁剪**为 Conclusion `{kind, closedBy:'model', cancelReason:null, candidateCharacterIds, nextRoundId}`（`continue` 分支，`:717-723`）——归档与返回值不同（§〇 实例二） |
 | 校验 | B3 判据：continue 必须 `plannedAction` 非空且**非目标句**（`isGoalSentence` → fail，`b3-judges.mjs:524-525`）+ 主角关联；handback 却带行动/关联 → review（`:510`） |
-| 程序回填 | **`candidateCharacterIds` 是模型决策**：合法角色逐字保留（v6 两名册场景模型选 `[person_a]` 即原样上 wire）；程序只丢弃不在名册的非法项（记 backfill），**仅当过滤后为空**才回填整名册（`run-world-b3.mjs:669-679`）。`nextRoundId` 是程序分配：模型占位 `pending` 被预分配队列真 id 替换（backfill 记录在案；队列空 = `b3 next round id budget exhausted`）（`:680-686`）。B3 停止界：第 5 轮仍 continue 保存原始判断、**不回填第 6 轮身份、不提交 conclude**（`d4db44b`） |
-| wire 消费 | `round_conclusion_conclude`，Conclusion **只含 kind/closedBy/cancelReason/candidates/nextRoundId**——`plannedAction/protagonistRelevance` 是判断产物不上 wire（§8.1，端口裁剪在 `run-world-b3.mjs:692-695`，wire 类型 `types.ts:37`）；conclude 回执 `{kind, roundId, nextRoundId}`（`types.ts:126`），confirmed continue 触发程序身份 sink（`controller.ts:276-282`） |
+| 程序回填 | **`candidateCharacterIds` 是模型决策**：合法角色逐字保留进端口返回值与 Conclusion（v6 两名册场景模型选 `[person_a]` 即原样保留——归档 `output` 可证；归档 `wire` 只存错误回包、正常 conclude 不在其中，「上 wire」为代码路径推断）；程序只丢弃不在名册的非法项（记 backfill），**仅当过滤后为空**才回填整名册（`run-world-b3.mjs:695-704`）。`nextRoundId` 是程序分配：模型占位 `pending` 被预分配队列真 id 替换（backfill 记录在案；队列空 = `b3 next round id budget exhausted`）（`:705-710`）。B3 停止界：第 5 轮仍 continue 保存原始判断、**不回填第 6 轮身份、不提交 conclude**（`d4db44b`） |
+| wire 消费 | `round_conclusion_conclude`，Conclusion **只含 kind/closedBy/cancelReason/candidates/nextRoundId**——`plannedAction/protagonistRelevance` 是判断产物不上 wire（§8.1，端口裁剪在 `run-world-b3.mjs:717-723`，wire 类型 `types.ts:37`）；conclude 回执 `{kind, roundId, nextRoundId}`（`types.ts:126`），confirmed continue 触发程序身份 sink（`controller.ts:276-282`） |
 | v6 证据 | **10/10 判全为目标句**（温度 0 下确定性复现；例：raw `plannedAction:"林川需要观察盒子的状态，以确保守门任务的完成"`，同调用 `nextRoundId:"pending"` 被程序回填为 `round_41`）。服务端只收到合法 continue（裁剪后），**质量失败不影响 wire**——但 §8.1 两条件判断的实际质量因此完全不可验收 |
 
-【现状】产品路径 `continuation` 固定返回 handback（`rule-session.ts:248`）——
+【现状】产品路径 `continuation` 固定返回 handback（`rule-session.ts:252`）——
 页面上任何轮都以交还玩家收尾，自动轮链从未在产品路径打开。
 
 ### 1.7 narration（叙事）
@@ -165,8 +170,8 @@ wire 都只见裁剪后字段。
 | --- | --- |
 | 调度位置 | `narrationDecision`（`schedule.ts:500-562`，优先于一切相位）：claim → 目标点 get_state（取回 Δ 原始记录）→ 前驱 get_state → 组装 → 模型 → submit；**读能力不完整即停止**（`readIncomplete`/`narration_read_incomplete`，缺字段不得默认空 Δ） |
 | 输入 | `{ pointId, before, delta:{timeAdvance, entityDeltas}, after, perspective }`（§7.1 Sₜ₋₁/Δₜ/Sₜ/视角，`assembleNarrationInput`，`schedule.ts:134-146`） |
-| 输出形状 | 端口返回文本或 null（null = submit `outcome:'failed', failureReason:'model_failed'`，`schedule.ts:513-531`）；润色器 maxTokens 96、attempt1 温度 0 / attempt2 温度 0.7（`narration-polisher.ts:62-67`）。**归档来源不同于其它任务**：narration 不走 `b3.complete`、不在 `modelTasks` 里——其 attempt/证据落 `narrationLog[].attempts[]`（含 `completion` 证据与判分所用 facts） |
-| 校验 | 产品与 B3 同一门：`narrateFromReads`（`rule-session.ts:99-143`）——模板为底，润色候选过 `selectFactNarration` 逐句事实门，**门拒后重生一次、仍败回模板**（§8.2）；B3 判据 = 同一 checkFactNarration 家族。重生实现的精确口径：attempt 2 是**同提示词、温度 0→0.7 的重采样**——`attempt.previous` 随类型传递但**未注入提示词**（更正文本会被小模型逐字复读，实测否定注入，`narration-polisher.ts:58-60`）；注入反馈属更强模型的待启用项 |
+| 输出形状 | 端口返回文本或 null（null = submit `outcome:'failed', failureReason:'model_failed'`，`schedule.ts:513-531`）；润色器 maxTokens 96、attempt1 温度 0 / attempt2 温度 0.7（`narration-polisher.ts:62-67`）。**归档来源不同于其它任务**：narration 不走 `b3.complete`、不在 `modelTasks` 里——归档字段是 `scenes[].narration[]`（`run-world-b3.mjs:1123,1282` 随场景返回），条目内才有 `attempts[]/completion/facts`（`narrationLog` 只是 harness 变量名） |
+| 校验 | 产品与 B3 同一门：`narrateFromReads`（`rule-session.ts:99-143`）——模板为底，润色候选过 `selectFactNarration` 逐句事实门，**门拒后重生一次、仍败回模板**（§8.2）。重生实现的精确口径：attempt 2 是**同提示词、温度 0→0.7 的重采样**——`attempt.previous` 随类型传递但**未注入提示词**（更正文本会被小模型逐字复读，实测否定注入，`narration-polisher.ts:58-60`）；注入反馈属更强模型的待启用项。**判分层没有叙事事实复判**：`b3-judges.mjs:683-684` 对 `case 'narration'` 直接 break，归档判分只统计 polishFallback/未 polished 事件（`:691-693`）——事实门只存在于运行内 |
 | 程序回填 | 模板是程序渲染；编号清单提示词把任务压到逐字复制形态（`narration-polisher.ts:53-57`） |
 | wire 消费 | `narration_claim` / `narration_submit`（三元组 claimToken+generation+issuedAtEpochMilli；租约/围栏变化即弃 claim 重取，`controller.ts:660-668,672-677`） |
 | v6 证据 | 两场景各 5 段、零回退、completion 证据各 5 条（逐调用回调——实例级回调会被模块缓存吞掉，整链验收 v2 教训，`rule-session.ts:62-64`） |
@@ -178,7 +183,7 @@ wire 都只见裁剪后字段。
 
 | 任务 | 现状 |
 | --- | --- |
-| initial | 调度器在世界为空时可发 `{kind:'model', task:'initial', input:null}` → InitialTemplate → `create_world`（`schedule.ts:451-455`）。【现状】B3 明确出界（端口 throw，`run-world-b3.mjs:519`）；页面直接种子 `defaultInitialTemplate()`（`rule-session.ts:189`）。**两条现实路径都从未调模型 initial。** |
+| initial | 调度器在世界为空时可发 `{kind:'model', task:'initial', input:null}` → InitialTemplate → `create_world`（`schedule.ts:451-455`）。【现状】B3 明确出界（端口 throw，`run-world-b3.mjs:519`）；页面创建会话时以 `defaultInitialTemplate()` 播种（`page.tsx:306`；模板构造器在 `world-defaults.ts:28`，`rule-session.ts:189` 只是克隆 `options.initial`）。**两条现实路径都从未调模型 initial。** |
 | time | 仅 T08 场景 prepareSuccessor 路径（`schedule.ts:799-813`），输入 `{head, workingState}`，输出 TimeAdvance → `checkpoint_prepare_successor`。【现状】B3 用程序常量 `instant 0s`（`:515-518`，source 记 `program`）；无真实模型证据。 |
 | pointPlan | `idlePointDecision`（`schedule.ts:635-650`）：输入 `{round, head}`，输出 `PlannedPoint[]`（点切分 + actorIds 声明 + timeAdvance）；计划省略的槽位仍被逐人判断（§6.1，不是跳过）；continue 后 plan 清零、下一轮需新计划（`controller.ts:898-900`）。【现状】B3 = 程序预分配队列 shift（耗尽 throw）；产品 = 单点固定计划（全部角色、1 秒，`rule-session.ts:200-201`）。**无模型 pointPlan 证据；多轮/多点规划能力未测。** |
 
@@ -215,8 +220,9 @@ wire 都只见裁剪后字段。
 | fix_request / none | stop `fix_request:<code>` | 是 |
 
 【现状】在途 split-updates 的 preview 拒绝是例外路径：**至多一次刷新 + 一次
-重试**，仍拒即 stop `updates_preview_refused:<code>`——候选性拒绝不进
-无限自愈循环（`controller.ts:553-584`）。
+重试**；刷新后核对工作基线未迁移（head 点已变即 stop
+`updates_preview_baseline_moved`，`controller.ts:577-582`），仍拒即 stop
+`updates_preview_refused:<code>`（`:584`）——候选性拒绝不进无限自愈循环。
 
 ### 2.3 预算与步数停止（保险语义）
 
@@ -295,7 +301,7 @@ round_44），**单列在 `cleanup` 字段，不计模型 handback**。
 | G2 | **results 裸判定 ×10 review + 骰点不符 ×1 fail**：无骰证据的裸「没有成功」按设计只给 review；准入写成失败是硬错（group_39，roll 11/11） | v6 judged pendingReview 10 条 + `semanticErrors[1]`；判据 `b3-judges.mjs:319-335`；提示词已明示规则（`run-world-b3.mjs:604-607`） | **模型能力**（无视输入中的骰点证据）；端口/调度器在 stage_unit 前**没有**程序侧骰点一致性预检【现状】——是否补预检属设计待决 |
 | G3 | **reaction 复述 ×1 fail**：原始输出与来源行动逐字相同 | v6 chain `reaction:person_a` raw；判据 `b3-judges.mjs:244` | **模型能力**；n=1，样本极小【假设：发生率未知】 |
 | G4 | **产品结算路径零模型**：页面/RuleWorldSession 六任务全走规则权威（action=parseRuleCommand、未解析即 skip；targets 恒空；results=adjudicate；updates=deltas；continuation 恒 handback） | `rule-session.ts:197-249` | **产品接线**：B3 模型端口没有任何产品路径；`RuntimeWorldModelPort`（encode 已是真实 `buildTaskPrompt`，含 focused 投影）也未接任何产品路径 |
-| G5 | **产品 continue 路径无身份 sink**：`setRoundIdentitySink` 仅 B3 两场景与回归脚本注册，产品运行时未注册 | grep 全仓：`controller.ts:122`（定义）、`round-identity-regress.mjs:54,86`、`run-world-b3.mjs:1068,1233`，产品 src 零调用 | **产品接线**：当前因 G4（恒 handback）不可达；一旦接模型 continuation，continue 即记 `round_identity_sink_missing` 并在下一步撞服务端重用 id 拒绝 |
+| G5 | **产品 continue 路径无身份 sink**：`setRoundIdentitySink` 仅 B3 两场景与回归脚本注册，产品运行时未注册 | grep 全仓：`controller.ts:122`（定义）、`round-identity-regress.mjs:54,86`、`run-world-b3.mjs:1068,1233`，产品运行代码零调用（仅测试 `controller.test.ts:1481,1499,1511,1537` 四处） | **产品接线**：当前因 G4（恒 handback）不可达；一旦接模型 continuation，continue 即记 `round_identity_sink_missing` 并在下一步撞服务端重用 id 拒绝 |
 | G6 | **initial/time/pointPlan 无模型证据**：两条现实路径均程序/规则供给（§1.8） | `run-world-b3.mjs:509-518`、`rule-session.ts:189,200-201` | **端口+harness**：组件设计必须显式决定归属；多点规划能力（B3 预分配 5 点 vs 产品单点）未测【假设】 |
 | G7 | **判分门未接页面**：narration 页面走 checkFactNarration 放行门 + 模板；B3 判分（b3-judges）只在 harness | 已登记边界（world-chain README 环境节、§6.7） | **产品接线** |
 | G8 | **updates 非平凡产出未复验**：v6 updates 零错误但样本小、多数 `[]`；六阶段仪式化空 changes 是 v4 失败族 | v6 `modelTasks[task=updates]`（chain 5 次：group_39/51–54，输出 `[]` 为主）；v4 记录 | **模型能力**【假设：当前 n 不足以定性】 |
@@ -337,10 +343,13 @@ stage 候选身份重写）、服务端权威状态应用（客户端无 apply�
    bootstrap `RuleWorldSession`（`run-world-b3.mjs:810`）全程未停止，
    其心跳在两场景期间持续续租（v6 归档：action/chain 场景 ops 各记录
    **7 次 `lease_renew`**）。持久服务默认 lease TTL = **120 秒**
-   （`world_store.py:38` `lease_ttl=120_000`、`authority.py:12
-   LEASE_TTL_MILLI`）。组件的 110s 级生成超时相对 120s TTL 只有一个
-   心跳间隔的余量【现状：v6 未出现续租失败；生成与心跳竞争的边界未做
-   压力组合】【假设】。
+   （服务检出 A 树 `dd345b8`：`backend/app/database/world_store.py:38`
+   `lease_ttl=120_000`、`backend/app/services/world/authority.py:12`
+   `LEASE_TTL_MILLI`——这两个文件不在 `world-browser` 树，按服务检出
+   引用；1h TTL 只属于非持久 fixture 的 `control.py:67`，持久路径被
+   `initialize_world` 覆盖）。组件的 110s 级生成超时相对 120s TTL 只有
+   一个心跳间隔的余量【现状：v6 未出现续租失败；生成与心跳竞争的边界
+   未做压力组合】【假设】。
 
 ### 4.2 待决问题（需总指挥/C/D 方案决定，B 不预设答案）
 
@@ -363,7 +372,9 @@ stage 候选身份重写）、服务端权威状态应用（客户端无 apply�
   G5 从不可达变阻断。
 - **Q6 判据复用**：N4 先例（评估判据复用语料门控识别器）提示组件验收
   直接复用 b3-judges 同源规则；判据 hash 需与运行记录一起冻结（v6 基线
-  口径）。
+  口径）。**范围注意**：b3-judges 只覆盖六个结算任务——`case
+  'narration'` 直接 break（`b3-judges.mjs:683-684`），叙事侧没有可复用
+  的判分层，只有运行内事实门（§1.7）；叙事组件的验收口径需另行确定。
 
 ### 4.3 明确不在本批范围
 
