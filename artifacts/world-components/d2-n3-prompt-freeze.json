@@ -34,11 +34,11 @@
   "seed": 20261029,
   "maxNewTokens": 512,
   "contextWindow": 4096,
-  "quantization": "无量化：离线 transformers 原始权重，cuda 用 bfloat16、cpu 用 float32",
+  "quantization": "无量化：离线 transformers 原始权重；门设备为 cuda bfloat16（见 gateDevice），cpu float32 属非门臂、单列报告，不与门合并",
   "runtime": "待实现（见 runner 块，NOT-IMPLEMENTED）；浏览器 wllama Q4_K_M 路径属后续浏览器批，不混报不混计时",
   "retry": "每条目至多 1 次重试，重试后缀逐字取 prompt 文件；两次失败计该条目失败",
   "logging": "逐调用归档原始输入/输出、尝试次数、设备、耗时；结构违规视同该次失败进入重试",
-  "rationale": "贪心+固定 seed 消除采样自由度（无可调项即无可调参空间）；max_new_tokens 512 覆盖最宽计划（8 项集 7 事实+指代条目的 JSON）约 3 倍余量；4096 上下文与 C 线既有臂谱系一致",
+  "rationale": "贪心+固定 seed 消除采样自由度（无可调项即无可调参空间）；max_new_tokens 余量口径见 maxNewTokensRationale（实测 321–386 token，1.3–1.6×）；4096 上下文与 C 线既有臂谱系一致",
   "gateDevice": "cuda bfloat16 is THE gate; a cpu run would be a separately reported arm (float32), never merged with the cuda gate",
   "maxNewTokensRationale": "reviewer-measured widest frozen-gold item renders ~321-386 tokens; 512 gives a 1.3-1.6x margin, and truncation (finish_reason=length) is recorded as its own failure class"
  },
@@ -58,7 +58,7 @@
  "evaluation": {
   "metricTool": {
    "file": "experiments/world-components/n2_selection/d2_metrics.py",
-   "sha256": "609fa571803230bd7fbfc1face12bcfa3bd17c4e5d319d4dc10f941e4c108ef1"
+   "sha256": "a3a349b908edd92a126f34fc530f6ce25a62b5f15283bacf7a16733adc00131c"
   },
   "gold": {
    "file": "artifacts/world-components/n2-labels-d2-gold.jsonl",
@@ -70,7 +70,7 @@
    "denominators": "16 项与 8 项分开报告，不合并分母"
   },
   "blindAB": "只作佐证记录，不进判据",
-  "toolBlobSha256": "609fa571803230bd7fbfc1face12bcfa3bd17c4e5d319d4dc10f941e4c108ef1",
+  "toolBlobSha256": "a3a349b908edd92a126f34fc530f6ce25a62b5f15283bacf7a16733adc00131c",
   "toolBlobSha256Note": "equals git show HEAD:<file> | sha256sum; working tree is byte-identical (-text/eol=lf pins)"
  },
  "limits": [

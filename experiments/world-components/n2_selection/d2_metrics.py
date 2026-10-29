@@ -30,6 +30,7 @@
 # tamper probes that must move each metric.
 
 import argparse
+import hashlib
 import json
 import pathlib
 import sys
@@ -327,6 +328,18 @@ def evaluate(items: dict, gold_rows: dict, plan_rows: dict,
     return report
 
 
+def check_gold_sha(gold_path, expected: str) -> str:
+    """arm-time binding: the gold actually consumed by the gate must match
+    the hash pinned in the freeze record (evaluation.gold.sha256). Returns
+    a problem string, or empty when unset/matching."""
+    if not expected:
+        return ""
+    got = hashlib.sha256(pathlib.Path(gold_path).read_bytes()).hexdigest()
+    if got == expected:
+        return ""
+    return f"gold sha256 {got} != expected {expected}"
+
+
 def build_gold_row(item: dict) -> dict:
     """rubric convention (R1-R6) applied programmatically; self-test only.
     The real gold comes from the frozen AI annotation."""
@@ -567,6 +580,14 @@ def selftest() -> int:
     if s["g3"] is not None or s["g2Accuracy"] is not None:
         failures.append("T15 diagnostic16 must not score G-series")
 
+    import tempfile
+    with tempfile.TemporaryDirectory() as td:
+        g = pathlib.Path(td) / "g.jsonl"
+        g.write_text("any bytes", encoding="utf-8")
+        wrong = check_gold_sha(g, "0" * 64)
+        right = check_gold_sha(g, hashlib.sha256(g.read_bytes()).hexdigest())
+        if wrong == "" or right != "":
+            failures.append("gold sha check misbehaves")
     for f in failures:
         print("SELFTEST FAIL:", f)
     print("selftest:", "PASS" if not failures else f"{len(failures)} failure(s)")
@@ -582,6 +603,8 @@ def main() -> int:
                              "never a gate")
     parser.add_argument("--items", default=str(HERE / "d2_capability_items.jsonl"))
     parser.add_argument("--gold", help="frozen gold plan JSONL")
+    parser.add_argument("--expect-gold-sha256", default=None,
+                        help="verify the consumed gold bytes against the freeze-record pin before scoring")
     parser.add_argument("--plan", help="arm plan JSONL")
     parser.add_argument("--out", help="report JSON path")
     args = parser.parse_args()
@@ -596,6 +619,11 @@ def main() -> int:
     items = {r["itemId"]: r for r in load_jsonl(pathlib.Path(args.items))}
     gold_rows = {r["itemId"]: r for r in load_jsonl(pathlib.Path(args.gold))} \
         if args.gold else {}
+    if args.gold and args.expect_gold_sha256:
+        problem = check_gold_sha(args.gold, args.expect_gold_sha256)
+        if problem:
+            print("PROBLEM:", problem)
+            return 2
     plan_rows = {r["itemId"]: r for r in load_jsonl(pathlib.Path(args.plan))}
     report = evaluate(items, gold_rows, plan_rows,
                       diagnostic=args.scope == "diagnostic16",

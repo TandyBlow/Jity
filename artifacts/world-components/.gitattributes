@@ -6,3 +6,10 @@ n2-annotation-status.json -text whitespace=blank-at-eol,blank-at-eof,space-befor
 n2-annotation-status-pre-ai.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 n2-labels-v3.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 n2-must-v3.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+
+# D2 hash-cited evidence must keep LF on every checkout.
+n2-labels-d2-gold.json -text
+n2-labels-d2-gold.jsonl -text
+d2-n3-prompt-freeze.json -text
+d2-preregistration-revision.json -text
+d2-metrics-preregistration.json -text

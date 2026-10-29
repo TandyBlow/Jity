@@ -13,18 +13,24 @@
   "P2-3 freeze entry accepted zeroed registered hashes and did not bind identity files; freeze now verifies registered hashes against working tree AND committed blob, validates identity files bound through the protocol, and records both in the freeze record; .gitattributes pins registered files (-text) and tools (eol=lf) so clean checkouts keep identical bytes.",
   "P2-4 metric tool crashed (KeyError) on legal JSON plans lacking coreference; shape guard now reports structural problems that feed the failure/retry flow (probes T10/T11).",
   "P2-5 prompt draft had undefined inputs: R3 leading-time self-reference resolved to the first fact WITH an entityId (semantically identical to the frozen annotation interpretation); itemId substitution and the 16-item selected-fact rule (frozen target filter, selected_of-compatible) written down; revision log added. Rubric and annotation evidence unchanged.",
-  "Round 25: P2-3 residual closed - the freeze entry verified the REGISTERED paths but consumed args.items unbound; consumed --items bytes must now equal the registered items hash, labels files must match the protocol annotator labels names (same-name and renamed substitution rejection probes added)."
+  "Round 25: P2-3 residual closed - the freeze entry verified the REGISTERED paths but consumed args.items unbound; consumed --items bytes must now equal the registered items hash, labels files must match the protocol annotator labels names (same-name and renamed substitution rejection probes added).",
+  "Round 28: arm-time gold binding added to the metric tool (--expect-gold-sha256 / check_gold_sha); the gate run must verify the consumed gold against the freeze-record pin, closing the reviewer note that the arm evidence chain was unguarded at scoring time."
  ],
  "changed": {
   "metricTool": {
    "file": "experiments/world-components/n2_selection/d2_metrics.py",
    "was": "6a19b0d5b6bb1c3f293ae6fd124faf8e3a1d06c54744e96522e6655a2e6545a0",
-   "now": "609fa571803230bd7fbfc1face12bcfa3bd17c4e5d319d4dc10f941e4c108ef1",
+   "now": "a3a349b908edd92a126f34fc530f6ce25a62b5f15283bacf7a16733adc00131c",
    "history": [
     {
      "round": 24,
      "sha256": "a1fca77baa50e4d21650d2af067c9c7ca85c6f78b88ab9457ac4c84d64cc9a97",
      "note": "review-24 rewrite; superseded by round-27 gold-side validation, strict coreference entry shape and diagnostic16 mode"
+    },
+    {
+     "round": 27,
+     "sha256": "609fa571803230bd7fbfc1face12bcfa3bd17c4e5d319d4dc10f941e4c108ef1",
+     "note": "gold-side validation, strict coreference entry shape, diagnostic16 scope; superseded by round-28 arm-time gold sha binding"
     }
    ]
   },
