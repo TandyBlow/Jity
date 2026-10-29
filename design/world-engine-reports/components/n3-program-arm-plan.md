@@ -55,7 +55,7 @@
 | --- | --- | --- |
 | T-P1 传递合并 | A-B 共 goal₁，B-C 共 goal₂（A-C 无共同 goal） | 三实体同一句组 |
 | T-P2 time 居首位 | time 位于输入序 0，其后有实体事实 | 并入首个实体事实所在组 |
-| T-P3a 前驱保持的重排 | 打乱输入序但 time 与其前驱的相对关系不变 | 分组与归属不变 |
+| T-P3a 前驱保持的重排 | 打乱输入序但 **time 的紧邻前驱保持不变**；首位 time 探针须同时保持其所属的首个实体组 | 分组与归属不变 |
 | T-P3b 前驱改变的重排 | 将 time 移到另一实体事实之后（前驱改变） | time 归属随新前驱改变（按 R3 构造性断言） |
 | T-P4 重名不同实体 | char_a/char_b 登记名相同 | 两组独立；coreference 同名不同 refersTo |
 | T-P5 非法输入 | 未知 kind / 重复 factId / 缺 goal | `ill-formed` 拒绝，不产出计划 |
@@ -78,8 +78,9 @@
 - **计时口径**：离线 CPU，每条目生成 wall time（`perf_counter`）与整批总时长入归档；与模型推理耗时不可比，不混报。浏览器整链（wllama + N4 浏览器端到端）属未来独立批次，当前**未测**。
 - **拟新增文件**：
   - `experiments/world-components/n2_selection/n3_rule_arm.py`（生成器＋绑定门复用＋探针＋CLI）
-  - `artifacts/world-components/n3-rulearm-registration.json`（**运行前提交**：钉程序字节、双 scope 输入哈希、gold 钉、判据引用、§1 边界行为清单；**运行后归档哈希另记于归档文件自身与交付说明**，登记文件保持运行前字节不变，可独立审计）
+  - `artifacts/world-components/n3-rulearm-registration.json`（**运行前提交**：钉程序字节、复用的 `run_n3_arm.py` 门模块与指标工具等实际执行依赖字节、双 scope 输入哈希、gold 钉、判据引用、§1 边界行为清单；运行时逐项校验，任一漂移即拒绝执行；**运行后归档哈希另记于独立交付说明 `n3-rulearm-delivery.md`**（归档文件不含自身哈希，避免自引用），登记文件保持运行前字节不变，可独立审计）
   - `artifacts/world-components/n3-rulearm-gate8.json`、`n3-rulearm-diag16.json`、`n3-rulearm-probes.json`（运行归档）
+  - `artifacts/world-components/n3-rulearm-delivery.md`（运行后交付说明：归档哈希、差分结果、未完成项）
   - 本方案 v2（已随本笔提交）
 - **已签认制品**：预登记修订记录（`0afb78af…`）保持原字节，规则臂不写入。
 - **验证命令**：`n3_rule_arm.py --selftest`（含 §3 全部探针）；`n3_rule_arm.py --scope gate8 --out ...`；`--scope diagnostic16 --out ...`；差分核对结果（含不适用清单）在归档中可查。

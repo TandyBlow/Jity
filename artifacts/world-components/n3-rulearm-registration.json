@@ -1,0 +1,58 @@
+{
+ "purpose": "Pre-run registration for the N3 rule arm (plan v2, review notes 1-3): pins the program, its executed dependencies, scope inputs, gold pin, judges and boundary behaviours. Archive hashes are recorded separately in n3-rulearm-delivery.md; this file stays byte-identical after runs.",
+ "status": "REGISTERED-PRE-RUN",
+ "registeredAt": "2026-10-29",
+ "plan": {
+  "file": "design/world-engine-reports/components/n3-program-arm-plan.md",
+  "sha256": "ccc279e37be64b575bdb42841622c4c9eff47a609338b7bb970ccbc5cd12a536"
+ },
+ "ruleArm": {
+  "file": "experiments/world-components/n2_selection/n3_rule_arm.py",
+  "sha256": "cebe4d281797571ee80039d10a6866852663ffac330bfbd87c9e03179e9efa67"
+ },
+ "dependencies": {
+  "run_n3_arm": {
+   "file": "experiments/world-components/n2_selection/run_n3_arm.py",
+   "sha256": "7189e233d93c870e459696ca609e04e9f26d8730a52400231e12123ee8bac0a2",
+   "role": "gate functions: check_items_binding / check_metric_tool / selected_facts_of / classify_plan / load_jsonl"
+  },
+  "d2_metrics": {
+   "file": "experiments/world-components/n2_selection/d2_metrics.py",
+   "sha256": "a3a349b908edd92a126f34fc530f6ce25a62b5f15283bacf7a16733adc00131c",
+   "role": "scoring, shape checks, check_gold_sha, differential reference build_gold_row"
+  }
+ },
+ "inputs": {
+  "gate8Items": {
+   "file": "experiments/world-components/n2_selection/d2_capability_items.jsonl",
+   "sha256": "76d253ab8be026e6a2dd4c77f1f3494c3db7d6dd753de2d930aa7ae5ad931311",
+   "expectedItems": 8
+  },
+  "diagnostic16Items": {
+   "file": "experiments/world-components/n2_selection/items.jsonl",
+   "sha256": "c574d44ebc48a254942fff276cffd18d8607281b6e3617299c1cc0e35cc947fa",
+   "expectedItems": 16,
+   "basis": "working-tree bytes (text eol=crlf)"
+  }
+ },
+ "gold": {
+  "file": "artifacts/world-components/n2-labels-d2-gold.jsonl",
+  "sha256": "cb86aa46c4328cb971721d4ddce38bb4b0429fdc245e5405f193e0a6a99e9c63"
+ },
+ "freezeRecord": {
+  "file": "artifacts/world-components/d2-n3-prompt-freeze.json",
+  "sha256": "77b37b43989b52325aa2605878c6d967cd5260c5aa020196040f8230434fbfe1"
+ },
+ "passLine": {
+  "reference": "frozen record passLine, scope 8-item only; 16-item diagnostic-only"
+ },
+ "boundaryBehaviours": [
+  "ill-formed (unknown kind / missing-duplicate factId / non-string goal): refuse generation",
+  "unsupported time-orphan (leading time, no entity fact): refuse official plan, reason archived",
+  "unsupported no-entity: refuse official plan (empty plan would drop selected facts)",
+  "consecutive time: exploration probe T-P7 only, never part of the frozen gate",
+  "same name different entityIds: separate groups, identical mentions allowed (rendering ambiguity = N4-coref, unverified)"
+ ],
+ "n4Boundary": "groups with more than 4 facts are marked n4_out_of_range and listed; no splitting, no fallback (coordinator ruling)",
+ "archiveHashes": "recorded post-run in n3-rulearm-delivery.md; not in this file"
+}
