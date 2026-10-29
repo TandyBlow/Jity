@@ -76,6 +76,13 @@ def bound_attempt(**changes):
     return attempt(**{**FULL_IDENTITY, **changes})
 
 
+def unbound_attempt(**changes):
+    """Attempt with the workloadId field genuinely removed, not re-labeled."""
+    value = attempt(**changes)
+    del value["workloadId"]
+    return value
+
+
 class IsolationTests(unittest.TestCase):
     def test_review_and_metadata_never_enter_model_input(self):
         item = case()
@@ -477,7 +484,7 @@ class TimingTests(unittest.TestCase):
 
     def test_missing_workload_id_never_shares_a_node_with_the_literal_id(self):
         records = [attempt(workloadId="unregistered", **FULL_IDENTITY, caseId=f"lit-{i}") for i in range(19)]
-        records.append(attempt(**FULL_IDENTITY, caseId="absent"))
+        records.append(unbound_attempt(**FULL_IDENTITY, caseId="absent"))
         report = lab.summarize_attempts(records)
         nodes = report["scopeSummaries"]["component"]["workloads"]
         self.assertEqual(len(nodes), 2)
@@ -486,7 +493,7 @@ class TimingTests(unittest.TestCase):
         self.assertEqual(lab.summarize_attempts(list(reversed(records)))["scopeSummaries"]["component"]["workloads"],
                          nodes)
         records = [attempt(workloadId="unregistered", **FULL_IDENTITY, caseId=f"lit-{i}") for i in range(10)] + [
-            attempt(**FULL_IDENTITY, caseId=f"absent-{i}") for i in range(10)]
+            unbound_attempt(**FULL_IDENTITY, caseId=f"absent-{i}") for i in range(10)]
         report = lab.summarize_attempts(records)
         self.assertEqual(len(report["scopeSummaries"]["component"]["workloads"]), 2)
         self.assertEqual(report["latencyStatus"], "latency_unverified")

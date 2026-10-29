@@ -8,7 +8,7 @@
 |---|---|---|
 | 原创开发草稿 | 40 个来源组、42 个 case；34 个应调用、8 个结构守卫项 | [输入](../../../experiments/world-components-logic/data/dev-inputs.jsonl)、[AI 判据草稿](../../../experiments/world-components-logic/data/dev-review-drafts.jsonl)、[来源登记](../../../experiments/world-components-logic/data/dev-provenance.json)；人审和语义同源独立性均未通过，未建封存/训练/短链 |
 | 工程核心 | 阶段输入隔离、确定性守卫、输出结构校验、全尝试耗时台账 | [lab.py](../../../experiments/world-components-logic/lab.py)；不是另一套服务/协议，不替模型判断开放语义 |
-| 工程测试 | 52 项通过 | [test_lab.py](../../../experiments/world-components-logic/tests/test_lab.py)；不证明模型质量/性能 |
+| 工程测试 | 52 项通过（含对 682fa37 旧实现反向验证：缺失 workloadId 回归测试必失败） | [test_lab.py](../../../experiments/world-components-logic/tests/test_lab.py)；不证明模型质量/性能 |
 | 数据可复现 | 生成器 `--check` 重建同字节 | [生成器](../../../experiments/world-components-logic/generate_dev_drafts.py)；不会覆盖已被人工修改/签字的草稿 |
 | 人审材料 | 生成可本地审阅/导出意见的 HTML 草稿 | [审阅页](../../../artifacts/world-components-logic/l3-1-review.html)、[生成程序](../../../experiments/world-components-logic/prepare_review.py)；浏览器界面/导出尚未验收，未替用户作审阅决定 |
 | 独立环境 | 新建隔离 venv，安装 25 个依赖并保存版本/安装报告哈希 | [环境身份](../../../artifacts/world-components-logic/l3-1-environment.json)、[平台锁](../../../experiments/world-components-logic/requirements-probe-macos-arm64-py311.lock.txt)；无共享 system-site-packages，未改 Anaconda base |
@@ -27,6 +27,7 @@
 6. 独立审查 2f8ca38（范围 `6ba4dc9..2f8ca38`）提出 5 项 P2，已全部修复并补 5 项反例/边界测试（工程测试 43 → 48 项通过）：D04 判定来源限为本轮 source 或已冻结成员，堵住待生成反应者的未来关系泄漏——已提交 42 题经新校验复核无一泄漏，`dev-d04-09` 为受损探针题（source 文本为空，守卫以 `missing_frozen_source_text` 拒调），按受损探针保持数据有效；耗时台账按 arm/task/stage/绑定身份分节点计数，混臂混任务不再合并凑满 20 次，不足即 `latency_unverified`；审阅页改读 `targetIds`，10 道 D03 题经浏览器只读核验均显示拟定目标（空集显式「没有目标」，D02 无目标行），HTML 已重新生成；根 `.gitattributes` 为 D 字节绑定目录建立 LF 规则（公共文件变更提案），D 目录工作区字节与 Git blob 及登记哈希对齐后 `--check` 通过；`fetch_model.py`/`runtime_smoke.py` 登记读取显式 UTF-8，cp936 默认编码环境复现原失败、修复后通过。模型质量与 500 ms 性能仍未验证，L3 不签就绪；条目 2 的未修 P2 维持不变。
 7. 复审 a7cf585 通过 D-R01/R03/R04/R05；D-R02 剩余两项缺口已修复并补反例（工程测试 48 → 50 项通过）：耗时节点仅当每条样本显式记录全部绑定身份（arm/task/stage/component/modelId/deviceId/configHash）才可越过 20 次样本门槛，缺任一维度或 workloadId 未经核验登记绑定一律 `latency_unverified`——维度不适用时必须显式写入数据，不允许默默省略；节点改用结构化键并以规范化 JSON 序列化展示，`job|arm=A0` 与 `job`+`arm=A0`、含分隔符的 component/modelId 组合均不再碰撞。第 3 条已同步只读浏览器核验事实。模型质量、500 ms 性能与 L3 就绪仍未签署；条目 2 未修 P2 维持。
 8. 三审 682fa37：缺失/空白/非字符串 workloadId 不再转为字符串 `"unregistered"` 参与分组，而是以结构化「存在标记 + ID」进入分组键，与任何字面 ID（含占位名 `"unregistered"`）分属不同节点；节点的注册性由键对全部记录逐条成立，不再只查第一条，同一组记录的结论不再依赖输入顺序。补 19+1 双序、10+10、空白 ID 及字面占位 ID 完整身份绑定反例（工程测试 50 → 52 项通过）。模型质量、500 ms 性能与 L3 就绪仍未签署；条目 2 未修 P2 维持。
+9. 四审 76c8e0e：程序修复通过独立反例，但新增回归测试被夹具默认值架空——声称缺失 workloadId 的记录实际由 `attempt()` 填入默认 ID，两个测试接到带故障的 682fa37 实现仍全部通过。已新增 `unbound_attempt()` 夹具真正删除字段并保留完整七维身份；已反向验证该测试对 682fa37 实现失败（合并为 1 节点，`1 != 2`）、对当前实现通过（52 项工程测试通过）。模型质量、500 ms 性能与 L3 就绪仍未签署；条目 2 未修 P2 维持。
 
 ## 提交前轻量复核
 
