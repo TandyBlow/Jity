@@ -440,78 +440,72 @@ narration-polisher + checkFactNarration（本轮未触发）；真实 Edge headl
 3/4 codec、3 条语义错误（reaction 复述、结果骰点不符、updates 非法 stage）。
 模型/程序调用分列为 `modelCalls`/`programCalls`。
 
-### 6.6 复核轮 20：v3/v4 的实测与新判定（批次仍未关闭）
+### 6.6 复核轮 20：v3/v4 的实测、两层 action-stop 与 ①b 产品 sink（批次仍未关闭）
 
 **并发运行的处置**：v3（15:42–15:49，pin `d33a1ca`）与 v4（15:57–16:13，
-pin `99bea60`）由另一进程自行跑完，两份报告 + v4 的 DB 快照已提交为归档
-（`1355abd`）。原始输出与数据库原样保留；两者**都不是同契约基线**——
-v3 的 judge 源码无 hash（provenance 缺口），且 chain 段死于 harness 协议
-bug（conclusion 缺 `closedBy`/`cancelReason`，`99bea60` 修复）；v4 的
-judge 未含顺序契约的恢复。
+pin `99bea60`）由另一进程自行跑完并已归档（`1355abd`）。v3 没有 DB 快照；
+**后续不再把 v3 当对照**。v1 的 DB 快照曾被中断运行短暂覆盖后已还原。
 
-**99bea60 的裁决（复核轮 20）**：其「stage 顺序不是契约」的前提不成立。
-structured-output 门确实 pass-through，但调度器是产品门的一环：
+**99bea60 否决与顺序契约恢复（`1076c5b`）**：其「stage 顺序不是契约」的
+前提不成立——`mergeUpdatesStages`（schedule.ts:356）对 `index <= last`
+直接 throw，合并路径经 `checkUpdatesStages`（schedule.ts:382）必撞，
+`schedule.test.ts:516` 钉住该 throw，设计 §6.3「六步生成顺序仍不改变」。
+放宽只把失败从端口挪进产品运行时，且判分把顺序降级为 formatNotes（pass
+分支还不带备注）。选择 **(a) 保持顺序契约**：prompt 恢复六阶段顺序要求；
+judge 把 `index <= last` 记为语义失败（注明产品会 throw）；port audit 同步；
+`formatNotes` 双标准删除。**provenance（`8878e97`）**：rescore 报告现在带
+`judgeSource {path, sha256}`（v3/v4 的 j5 已重新生成，率不变），并记录源
+归档是否钉过 judge（v3 = false，脏树）；新增
+`scripts/b3-port-audit-fixture.mjs`——机械切片 port 的 audit 源码实跑 6 项
+负例（乱序/重复/字段名冒充 stage/split 单对象），audit 源 sha256 打印在输出。
 
-- `schedule.ts:356` `mergeUpdatesStages` 对 `index <= last` 直接 throw；
-- 合并路径（`updatesStages` 为空）经 `settleDecision` → `checkUpdatesStages`
-  （`schedule.ts:382`）第一行就调它；
-- `schedule.test.ts:516` 专门断言该 throw；设计 §6.3「六步生成顺序仍不改变」。
+**action stop 的两层定性（复核确认）**：
+- **直接原因（①a，harness）**：`group_29` 已在 point_16 consumed，自动轮
+  point_21 复用被服务端拒（judgments.py:80）。模型无责；harness 已修
+  （v4 后的调试验证 point_21/point_22 以新 group id 正常提交）。
+- **产品缺口（①b，产品路径，`b673574` 已补）**：生产代码没有任何填充
+  `roundAllocations` 的路径（只有场景/测试种子）；rule-session 的 pointPlan
+  在 continue 后仍返回已消费的 point id；页面固定 handback 掩盖了两者——
+  一旦接入模型 continue，页面会先撞 `point id is already committed`
+  （control.py:659）、再到 group 复用。**B3 场景与产品整链分开写：B3 基线
+  是 harness-scoped，不声明产品 continue→自动轮→handback 已通。**
 
-放宽只把失败从端口审计挪进产品运行时（`Out-of-order/duplicate updates
-stage`），且判分把顺序降级为 formatNotes、pass 分支还不带备注——探针判分
-与产品契约脱节。**处置（选项 a，`1076c5b`）**：保持顺序契约——恢复 prompt
-的六阶段顺序要求；judge 把 `index <= last` 记为**语义失败**（注明产品
-mergeUpdatesStages 会 throw）；判分自测增到 28 项并全过；把
-`frontend/scripts/b3-judges.mjs` 钉进报告源哈希列表（provenance 缺口）。
+**①b 产品 sink（`b673574`）**：`ControllerDriver.setRoundIdentitySink`——
+每次确认的 continue 结论（服务端已切 automatic round 后恰好一次）收到
+`(roundId, served order)`，由程序经 transport 分配新身份（§9.3），返回内存
+补丁由驱动折进自己的唯一内存（recover 替换透明）；未注册/抛错记
+`lastRoundIdentityError`，下一个 step 按产品拒绝走，绝不静默降级。触发点在
+conclude 采纳分支（`execute()` transport 路径），单调用点。场景证据字段
+`roundIdentityError` 随报告留存。
 
-**实测结果（v4，pin `99bea60`；重评分 `b3-rescore-v4-j5.json`，judge v5）**
-probes：parsed 17/17、codec 16/17、pass 4 / fail 8 / review 5，总体 23.5%，
-自测 27/27（本轮 28 项规则向后兼容）。场景：
+**实测（调试验证 + `.local` 探针运行；正式基线待 `7ea0f2d` 树全跑）**：
+①a 修复后 action 场景跨轮提交正常（round_17/round_18 的 point_21/point_22
+以新 group id 提交，updates 合法批次 `[]`，narration/继续继续工作）；
+当前停点是**模型语义**——`plannedAction` 连续写成目标句（判分 fail），
+模型持续 continue 直到 step limit，随后 harness 按整轮 cancel 收尾。这是
+要进模型对照的样本，不是 harness 缺陷。prompt 已把顺序与「外观必须先于
+任务、无空占位阶段」写明确（复核 20 的措辞）。
 
-- **action**：恢复后的驱动循环首次走完两个点——point_16 提交
-  （updates 合法、narration 一次成型判 pass），continue 结论创建 round_17
-  并驱动第二个点；stop原因是产品自身的 `fix_request:request_malformed`
-  （continue 后的 `discover_group` 被服务端拒绝，wire 原文留存）——
-  这是**产品/驱动器待跟进缺陷**，不是模型格式问题。156.6s / 10 模型调用。
-- **chain**：4 次模型调用、53.1s；真实 d20 result 17 准入；模型违规
-  完整暴露——reaction 复述发起行动、准入骰点写成「没有成功」、
-  updates 把人物 id 当任务 id（`tasksAchieved:{"person_a":["person_c"]}`）。
-- 判分（v5）：action 1 条语义错误（continuation 目标句）+2 review；
-  chain 3 条语义错误（reaction 复述、dice mismatch、虚构任务 id）。
-
-v3（pin `d33a1ca`，重评分 `b3-rescore-v3-j5.json`）：probes 同率
-（4/8/5）；action 段死于合并批次乱序（模型把 appearance 放 tasks 前）——
-即模型格式失败，不再是「harness 惯例」；chain 死于协议 bug（已修）。
-
-**口径**：603/603 与双 tsc 在 `99bea60` 后的净树上重新通过；`b3-run-db-v2/`
-的数据库快照被 v3 运行短暂覆盖后已从提交还原（`1355abd`），frozen 归档
-未损。当前基线声明仍然只有 v1（冻结）与 v2；v3/v4 是 enum 修复后的第一批
-真实行为证据。**模型对照条件如复核所述**：同一 judge hash、同一 probe 集、
-两场景全跑、每模型至少一次完整 run、原始失败全保留。下一步先修 action
-场景的 `request_malformed` 跟进缺陷（产品证据已留存），再进入对照。
+**口径**：603/603 与双 tsc 在 `b673574` 后全过；judge 自测 28/28；port
+fixture 6/6。**下一步**：①a（修完）、①b（补完）→ 两场景干净基线（同 judge
+hash、同 probe 集）→ 模型对照（提示词变体、更大模型）。
 
 ### 6.7 结论与下一步
 
-- 判分与因果边界已补齐并可回放（judge v5：拆分/合并/顺序/跨人物/骰点/
-  反应全边界，自测 28 项）；`review` 不计通过，旧归档可重评分。
-- 0.6B 在各契约版本下的探针率：v1（j4 重评分）41.7%，v2（j4）11.8%，
-  v3/v4（j5）23.5%。**拍板前（顺序契约 a）不把 v4 的 23.5% 当作对照起点，
-  也不与 v1/v2 的数字直接比较**——prompt 的顺序要求被删又恢复，行为基线
-  必须用当前契约（`1076c5b` 树）重新实测。
-- 实测已证明的产品进展与缺口：updates 合法批次可以通过（v4 探针
-  updates_merged/updates_stage_tasks pass；场景里 point_16 提交后 model
-  narration 一次成型判 pass，task-only Δ 链路复验通过）；action 场景止于
-  产品/驱动器缺陷（continue 后 discover_group 被 `fix_request:
-  request_malformed` 拒绝，wire 原文留存），**待产品跟进**；chain 场景
-  止于模型违规（复述发起行动、准入写成失败、人物 id 冒充任务 id）。
-- 评测缺口：初始世界生成未覆盖；自由文本结果/反应的编造检查部分自动、
-  其余待人工；continue→自动轮→handback 整链未跑通（卡在上面那条产品
-  缺陷）。
-- **下一步**：① 修 continue 后 `discover_group` 被拒的缺陷（v4 已留产品
-  证据）；② 完整重跑两场景取得**当前契约干净基线**；③ 再开展模型对照
-  （同一 judge hash、同一 probe 集、两场景全跑、每模型 ≥1 次完整 run、
-  原始失败全保留）；④ 之后才谈 20 次输入验收。混合口径的
-  `twenty-round-v2` 仍是既有混合边界结论，B3 未通过前不得宣称全模型整链。
+- 判分与因果边界已补齐并可回放（judge v5 + judgeSource hash；28 项自测；
+  port fixture 6 项）；`review` 不计通过，旧归档可重评分。
+- 产品侧新增：`RoundIdentitySink`（①b），continue 后新轮身份由程序分配；
+  页面/会话产品路径不再被固定 handback 掩盖。**「产品 continue→自动轮→
+  handback 已通」的声明仍以带模型 continue 的产品路径全跑为准。**
+- 基线声明：v1（冻结）、v2（j4 口径 11.8%）为既有记录；v3/v4 是 enum 修复
+  后第一批实测（v4 j5 23.5%），**顺序契约拍板后的干净基线待 `b673574` 树
+  全跑**（v4 的 23.5% 不作对照起点）。
+- 当前已知的主要模型失败（同契约实测）：目标漏选、结果裸判定（review）/
+  骰点不符、continuation 目标句冒充拟行动、updates 仪式化六阶段（含空
+  changes 占位）、虚构任务 id、反应复述。
+- **下一步**：在 `b673574` 上取两场景干净基线 → 同 judge hash、同 probe 集、
+  每模型 ≥1 次完整 run 的对照（提示词变体、更大模型）→ 之后才谈 20 次
+  输入验收。混合口径的 `twenty-round-v2` 仍是既有混合边界结论。
 
 ### 6.8 复跑
 
