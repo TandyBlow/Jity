@@ -9,7 +9,8 @@
 import hashlib
 import pathlib
 
-CN = {1: "一", 3: "三", 8: "八", 12: "十二", 25: "二十五", 40: "四十"}
+CN_DIGITS = {0: "零", 1: "一", 2: "二", 3: "三", 4: "四", 5: "五", 6: "六",
+             7: "七", 8: "八", 9: "九"}
 UNIT_CN = {"minute": "分钟", "hour": "小时"}
 
 
@@ -33,13 +34,20 @@ def corpus_hashes() -> dict:
 
 
 def num_cn(amount: int) -> str:
-    if amount in CN:
-        return CN[amount]
-    if 10 < amount < 20:
-        return "十" + CN[amount - 10]
-    if amount % 10 == 0 and amount // 10 in CN:
-        return CN[amount // 10] + "十"
-    raise ValueError(f"no Chinese numeral mapping for {amount} — extend CN")
+    """SINGLE numeric formatter for 1..99 (v8: the old fixed table missed
+    2/6/15/20/45/90 and broke 210 renderings). 个位 2 reads 两 in duration
+    contexts (两分钟); 十位 reads standard 二十 — the recognizer's cn_to_int
+    maps both back to 2. Shared by the corpus builder's rendered fields and
+    the train/inference renderer."""
+    if not (1 <= amount <= 99):
+        raise ValueError(f"num_cn out of range: {amount}")
+    tens, ones = divmod(amount, 10)
+    if tens == 0:
+        return "两" if amount == 2 else CN_DIGITS[amount]
+    if tens == 1:
+        return "十" + (CN_DIGITS[ones] if ones else "")
+    head = CN_DIGITS[tens] + "十"
+    return head if ones == 0 else head + CN_DIGITS[ones]
 
 
 def render_entry(e: dict) -> str:

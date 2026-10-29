@@ -1,18 +1,26 @@
-# N4 corpus row checker v3: recognizer-whitelist faithfulness.
+# N4 corpus row checker v4: recognizer-whitelist faithfulness.
+#
+# v4 (2026-10-29 review round 11): coverage is evaluated per SENTENCE, not
+# per comma-clause, and the moved recognizer accepts one optional comma
+# between origin and destination (「X离开了A，抵达了B」). The old clause
+# split made that natural split expression unrecognizable in both halves
+# (10 needs-review rows); sentence-level union coverage is the same test
+# (every character must be covered) without the artificial comma boundary.
+# All other verdict rules are unchanged.
 #
 # v3 (2026-10-29 review): v2's keyword-presence checks still let unknown
 # expressions pass (five counterexamples all got `pass`). The verdict model
-# is now WHITELIST-based: every sentence is split into clauses, and each
-# clause must be FULLY COVERED by controlled recognizer patterns built from
-# the row's own plan entries. pass = every clause recognized and consistent
-# with the plan; any unrecognized residue (added details like 沿着石阶,
-# negations like 没有/并非, intents like 打算, wrong actor/value/direction,
-# added events) lands in needs-review. needs-review is NOT a pass.
-# The old event-verb blocklist is gone: unrecognized content is caught by
-# coverage, not by enumerating verbs.
+# is now WHITELIST-based: every sentence must be FULLY COVERED by controlled
+# recognizer patterns built from the row's own plan entries. pass = every
+# sentence recognized and consistent with the plan; any unrecognized residue
+# (added details like 沿着石阶, negations like 没有/并非, intents like 打算,
+# wrong actor/value/direction, added events) lands in needs-review.
+# needs-review is NOT a pass. The old event-verb blocklist is gone:
+# unrecognized content is caught by coverage, not by enumerating verbs.
 #
-# Negative self-test: TWELVE bad rows must each land on the expected verdict
-# class (2 fail + 10 review), else the report is void.
+# Negative self-test: every bad row must land on the expected verdict class
+# (2 fail + 17 review) and every controlled equivalence row must pass, else
+# the report is void.
 #
 # Corpus schema v3: rows carry `world` (before-state registry) and
 # `rawDelta` (independently constructed delta); `plan` is its projection.
@@ -146,7 +154,7 @@ def entry_patterns(entry: dict) -> list:
         # different (unsupported) claim and falls out as unrecognized
         # residue -> needs review. 一路 may precede or follow the
         # from-marker; the from-marker takes an optional 了.
-        return [rf"(?P<subj>{esc(name)})(?P<pre>(一路))?(从|由|离开)了?{esc(frm)}(一路)?((走|来|进)到了?|到了?|抵达|进入)了?{esc(to)}(时?)"]
+        return [rf"(?P<subj>{esc(name)})(?P<pre>(一路))?(从|由|离开)了?{esc(frm)}(一路)?[，,]?((走|来|进)到了?|到了?|抵达|进入)了?{esc(to)}(时?)"]
     if kind == "task_achieved":
         return [rf"{esc(entry['name'])}(已经|已)?(完成|达成|办妥)了?任务「{esc(entry['goal'])}」"]
     if kind == "personality_changed":
@@ -221,35 +229,39 @@ def check_row(r: dict):
                 fails.append(f"sentence {si}: plan ref {ref} out of range (plan has {len(plan)})")
             else:
                 cited.add(ref)
-        # clause coverage + value-consistent expression evidence
+        # sentence coverage + value-consistent expression evidence (v4:
+        # the whole sentence is one coverage unit; recognizer patterns may
+        # span a comma, e.g. 「X离开了A，抵达了B」)
         entries = [plan[ref] for ref in srefs
                    if isinstance(ref, int) and 0 <= ref < len(plan)]
-        for clause in [c for c in re.split(r"[,，;；]", sent) if c.strip()]:
-            core = clause.strip()
-            spans = []
-            for entry in entries:
-                parser = PARSERS.get(entry.get("kind"))
-                for p in entry_patterns(entry):
-                    for m in re.finditer(p, core):
-                        spans.append((m.start(), m.end()))
-                        if parser is not None:
-                            ok, why = parser(entry, m, plan)
-                            if not ok:
-                                reviews.append(why)
-                                continue
-                        expressed.add(entry["ref"])
-            merged = []
-            for s0, e0 in sorted(spans):
-                if merged and s0 <= merged[-1][1]:
-                    merged[-1] = (merged[-1][0], max(merged[-1][1], e0))
-                else:
-                    merged.append((s0, e0))
-            covered = sum(e0 - s0 for s0, e0 in merged)
-            residue = re.sub(r"\s", "", core)
-            if covered < len(residue):
-                reviews.append(
-                    f"clause '{core[:24]}' not fully covered by plan recognizers "
-                    f"(covered {covered}/{len(residue)}) — unrecognized content, needs review")
+        spans = []
+        # v4: punctuation is a free separator, not content — strip clause
+        # punctuation before coverage so the union test is about words, and
+        # patterns that allow an optional comma still match the joined form
+        sent_n = re.sub(r"[，,；;、]", "", sent)
+        for entry in entries:
+            parser = PARSERS.get(entry.get("kind"))
+            for p in entry_patterns(entry):
+                for m in re.finditer(p, sent_n):
+                    spans.append((m.start(), m.end()))
+                    if parser is not None:
+                        ok, why = parser(entry, m, plan)
+                        if not ok:
+                            reviews.append(why)
+                            continue
+                    expressed.add(entry["ref"])
+        merged = []
+        for s0, e0 in sorted(spans):
+            if merged and s0 <= merged[-1][1]:
+                merged[-1] = (merged[-1][0], max(merged[-1][1], e0))
+            else:
+                merged.append((s0, e0))
+        covered = sum(e0 - s0 for s0, e0 in merged)
+        residue = re.sub(r"\s", "", sent_n)
+        if covered < len(residue):
+            reviews.append(
+                f"sentence '{sent[:24]}' not fully covered by plan recognizers "
+                f"(covered {covered}/{len(residue)}) — unrecognized content, needs review")
 
     must = set(r["mustExpress"])
     if not must <= cited:
@@ -372,6 +384,10 @@ def main() -> None:
         (with_text(loc1, "陈舟用了三小时从东门走到了钟楼。前后大约三分钟。"), "review", "embedded-unit-mismatch"),
         (with_text(loc1, "陈舟从东门走到了钟楼。前后大约八分钟。", ),
          "review", "time-clause-value-mismatch"),
+        # v4 round-11 counterexample: the split-move equivalence must NOT
+        # let a half expression (origin only, destination never stated) pass
+        (with_text(loc1, "陈舟离开了东门。前后大约三分钟。"),
+         "review", "half-split-move-no-destination"),
     ]
     # rendered tamper: plan's rendered hint says 八分钟 but amount stays 3 —
     # the recognizer must follow amount/unit, not rendered. The tamper
@@ -393,6 +409,8 @@ def main() -> None:
                    planRefs=[[0, 1]]), "equiv-appearance-variant"),
         (with_text(multi, "陈舟从东门来到柴房时，林望已在柴房了。前后大约三分钟。"),
          "equiv-positioned-variant"),
+        (with_text(loc1, "陈舟离开了东门，抵达了钟楼。前后大约三分钟。"),
+         "equiv-split-move-variant"),
     ]
     for good_row, label in equivalents:
         f, rv = check_row(good_row)

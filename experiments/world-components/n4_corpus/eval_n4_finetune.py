@@ -1,15 +1,20 @@
-# N4 finetune dev evaluation, round 1: two arms (base vs finetuned) on the
-# 4 held-out dev rows, judged by the SAME recognizer that gates the corpus
+# N4 finetune dev evaluation: two arms (base vs finetuned) on the current
+# dev rows, judged by the SAME recognizer that gates the corpus
 # (corpus_check.check_row) — a generation counts as faithful only when the
 # plan's mustExpress entries are recognized with value-consistent parses.
+#
+# The committed r1 archive was produced on the earlier 52-row corpus (4 dev
+# rows) and is pinned by its corpus hashes; the current v9.1 corpus has 120
+# dev rows. Use a new tag (e.g. `--run-tag r2`) for a new corpus so the r1
+# archive is not overwritten (the script aborts on an r1/hash mismatch).
 #
 # Decode: greedy, max_new_tokens=64, tokenizer legacy=False (same pin as
 # training and the zero-shot baseline). No quality verdicts beyond the
 # recognizer's three states; human review of the generated texts happens at
 # delivery acceptance.
 #
-# Usage: python experiments/world-components/n4_corpus/eval_n4_finetune.py
-# Output: artifacts/world-components/n4-finetune-eval-r1.json
+# Usage: python experiments/world-components/n4_corpus/eval_n4_finetune.py [--run-tag r2]
+# Output: artifacts/world-components/n4-finetune-eval-<tag>.json
 
 import hashlib
 import importlib.machinery
@@ -43,8 +48,17 @@ import corpus_check  # noqa: E402
 
 REPO = HERE.parent.parent.parent
 BASE_MODEL = HERE.parent / "assets" / "randeng-t5-77m"
-FINETUNED = HERE.parent / "assets" / "n4-finetune" / "r1"
-REPORT = REPO / "artifacts" / "world-components" / "n4-finetune-eval-r1.json"
+RUN_TAG = (sys.argv[sys.argv.index("--run-tag") + 1]
+           if "--run-tag" in sys.argv else "r1")
+FINETUNED = HERE.parent / "assets" / "n4-finetune" / RUN_TAG
+REPORT = REPO / "artifacts" / "world-components" / f"n4-finetune-eval-{RUN_TAG}.json"
+
+if RUN_TAG == "r1" and REPORT.exists():
+    pinned = json.loads(REPORT.read_text(encoding="utf-8"))
+    recorded = pinned["provenance"]["corpusAndRenderer"]["corpus.seeds.jsonl"]
+    if recorded != corpus_hashes()["corpus.seeds.jsonl"]:
+        sys.exit("r1 archive is pinned to the earlier corpus; "
+                 "pass --run-tag r2 for the expanded corpus")
 MAX_NEW = 64
 
 
@@ -128,7 +142,7 @@ def main() -> None:
         del model
 
     report = {
-        "purpose": "n4 finetune dev eval (recognizer-judged; quality accepted separately)",
+        "purpose": f"n4 finetune dev eval {RUN_TAG} (recognizer-judged; quality accepted separately)",
         "provenance": {"corpusAndRenderer": corpus_hashes(),
                        "baseModel": {f.name: hashlib.sha256(f.read_bytes()).hexdigest()[:16]
                                      for f in sorted(BASE_MODEL.iterdir()) if f.is_file()},

@@ -1,9 +1,13 @@
-# N4 sentence finetune, round 1 (deliverable-3 process trial).
+# N4 sentence finetune (deliverable-3 process trial).
 #
-# Scope per the approved plan: this is a PROCESS trial on the reviewed
-# 52-row corpus — 48 train rows (24 groups x seed+rewrite), 4 dev rows held
-# out by sourceGroupId; model quality is accepted SEPARATELY from this run.
-# Not presupposed to be enough to train 77M well (plan-table §4).
+# Scope per the approved plan: process trial on the reviewed N4 corpus. The
+# committed r1 archive was produced on the earlier 52-row corpus (48 train
+# rows / 24 groups, 4 dev rows) and is pinned by its corpus hashes; the
+# current v9.1 corpus is 150 groups / 600 rows (480 train pairs, 120 dev
+# pairs). Running on a different corpus MUST use a new tag, e.g.
+# `--run-tag r2`, so the r1 archive is not overwritten (the script aborts
+# on an r1/corpus-hash mismatch). Model quality is accepted separately from
+# this run and is not presupposed to be enough to train 77M well (plan-table §4).
 #
 # Fixed settings (plan-table §6):
 # - tokenizer: T5Tokenizer(legacy=False) — same pin as the re-verified
@@ -13,9 +17,9 @@
 # - full-parameter finetune on the local Randeng-T5-77M weights, cuda
 # - greedy decode at eval; quality verdicts are NOT issued here
 #
-# Usage: python experiments/world-components/n4_corpus/train_n4_sentence.py
-# Output: assets/n4-finetune/r1/ (checkpoint, NOT committed) +
-#         artifacts/world-components/n4-finetune-train-r1.json (config+loss log)
+# Usage: python experiments/world-components/n4_corpus/train_n4_sentence.py [--run-tag r2]
+# Output: assets/n4-finetune/<tag>/ (checkpoint, NOT committed) +
+#         artifacts/world-components/n4-finetune-train-<tag>.json
 
 import hashlib
 import importlib.machinery
@@ -51,8 +55,17 @@ REPO = HERE.parent.parent.parent
 SEEDS = HERE / "corpus.seeds.jsonl"
 REWRITES = HERE / "rewrites.jsonl"
 BASE_MODEL = HERE.parent / "assets" / "randeng-t5-77m"
-OUT_DIR = HERE.parent / "assets" / "n4-finetune" / "r1"
-REPORT = REPO / "artifacts" / "world-components" / "n4-finetune-train-r1.json"
+RUN_TAG = (sys.argv[sys.argv.index("--run-tag") + 1]
+           if "--run-tag" in sys.argv else "r1")
+OUT_DIR = HERE.parent / "assets" / "n4-finetune" / RUN_TAG
+REPORT = REPO / "artifacts" / "world-components" / f"n4-finetune-train-{RUN_TAG}.json"
+
+if RUN_TAG == "r1" and REPORT.exists():
+    pinned = json.loads(REPORT.read_text(encoding="utf-8"))
+    recorded = pinned["provenance"]["corpusAndRenderer"]["corpus.seeds.jsonl"]
+    if recorded != corpus_hashes()["corpus.seeds.jsonl"]:
+        sys.exit("r1 archive is pinned to the earlier corpus; "
+                 "pass --run-tag r2 for the expanded corpus")
 
 SEED = 20261029
 EPOCHS = 6
@@ -144,7 +157,7 @@ def main() -> None:
                          for f in sorted(OUT_DIR.iterdir()) if f.is_file()}
 
     report = {
-        "purpose": "n4 finetune process trial r1 (quality accepted separately)",
+        "purpose": f"n4 finetune process trial {RUN_TAG} (quality accepted separately)",
         "model": {"base": str(BASE_MODEL), "hfId": "IDEA-CCNL/Randeng-T5-77M-MultiTask-Chinese",
                   "paramCount": sum(p.numel() for p in model.parameters())},
         "provenance": {"corpusAndRenderer": corpus_hashes(),

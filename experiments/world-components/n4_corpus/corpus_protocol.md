@@ -1,6 +1,6 @@
-# N4 成句语料构造协议（首批）
+# N4 成句语料构造协议
 
-日期：2026-10-29。依据：[方案表](../../model-training-runtime.md)（N4 例外条款）、[C任务边界](../../README.md)样本隔离、2026-10-29 语料设计评审六项要求。本协议约束 `build_seeds.py`（构造）、`corpus_check.py`（行校验）、`dedup_check.py`（去重）三工具与语料 JSONL 形状。
+日期：2026-10-29。复核轮 11 修订：扩批 v9.1（600 行 / 150 组）、句级覆盖与可选逗号移动识别、三项工具最新结果见 §8。依据：[方案表](../../model-training-runtime.md)（N4 例外条款）、[C任务边界](../../README.md)样本隔离、2026-10-29 语料设计评审六项要求。本协议约束 `build_seeds.py`（构造）、`build_expansion.py`（扩批）、`corpus_check.py`（行校验）、`dedup_check.py`（去重）、`validate_plan_authority.py`（权威核对）与语料 JSONL 形状。
 
 ## 1. 行 schema（JSONL，每行一对象）
 
@@ -11,13 +11,19 @@
 | `rewriter` | `program`（种子行）或 `zcode-model`（改写行，如实标注；模型改写进入训练依据方案表 N4 例外条款） |
 | `task` | 本批全部 `n4-sentence` |
 | `split` | `train` 或 `dev`（组级） |
-| `plan` | 事实计划条目数组，`ref` 下标＋kind/entityId/name/值。由程序枚举**独立构造**（非状态差分反推），`planConstruction` 记录构造方法（声明）；权威证据由 `validate_plan_authority.py` 独立产出——把 plan 映射为 backend v2 `EntityDelta`/`TimeAdvance` 并经 pydantic 逐行校验，结果落 `authority-report.json`（含 contracts.py 源哈希与中文实体名→ASCII 草稿键映射），行内 `planValidation` 仅指向该报告 |
+| `tier` | `small`（60 个 train 源：24 既有＋36 新）/`large`（120 个 train 源，含 small）/`fixed-dev`（30 个 dev 源） |
+| `world` | 独立构造的 before 注册表：`protagonistId`＋全部被引用地点＋每个人物 id/homeLocId/initialSanity/initialPersonality/tasks。**每个被引用容器必须登记**；移动目标不得等于移动者 home（无幂等移动） |
+| `rawDelta` | 独立构造的原始 Δ（`entityDeltas`＋`time`）。时间推进始终保留在 Δ 中；正文可省略时间，但 Δ 不因省略而删除 |
+| `fullPlan` | 完整事实表（**含**时间条目的 plan 超集）；权威来源核对与 Δ 对账跑在 fullPlan 上 |
+| `timeScope` | `expressed`（plan＝fullPlan）或 `omitted`（plan＝fullPlan 去掉时间条目）；正文检查只对 plan 负责 |
+| `plan` | 事实计划条目数组（表达计划），`ref` 下标＋kind/entityId/name/值。由程序枚举**独立构造**（非状态差分反推），`planConstruction` 记录构造方法（声明）；权威证据由 `validate_plan_authority.py` 独立产出——把 plan 映射为 backend v2 `EntityDelta`/`TimeAdvance` 并经 pydantic 逐行校验，结果落 `authority-report.json`（含 server 树 HEAD、apply.py 哈希与逐行组合哈希），行内 `planValidation` 仅指向该报告 |
+| `planOnlyClaims` | 非 Δ 的计划条目（positioned 现状、no_change 空点断言）；组级一致 |
 | `text` | 正文 |
 | `planRefs` | 逐句回指：句子按句号切分后每句引用的 plan 下标数组。**引用存在≠事实忠实**，忠实由校验器逐类核对＋人工抽验 |
 | `mustExpress` / `mayMention` / `mustNotAdd` | 三类标注齐备（必述下标／可选下标／禁止新增主张的文字描述） |
-| `hashes` | `plan`（canonical JSON sha256）＋`text`（sha256），校验器重算比对 |
+| `hashes` | `plan`/`fullPlan`/`world`/`rawDelta`/`text` 的 canonical JSON sha256，校验器重算比对 |
 | `purpose` | 用途记录（一行一写） |
-| `overlap` | 仅改写行：见 §4 |
+| `overlap` | 仅改写行、**校验时计算不写回**：见 §4 |
 
 ## 2. 排除清单（dedup_check.py 扫描源，版本钉 commit）
 
@@ -37,25 +43,45 @@
 
 **扫描规则**：语料侧只扫**内容字段**（text＋plan 的 name/from/to/at/goal/text；结构字段 kind/unit/ref/amount/entityId/rendered/scope 排除——短结构值如 kind="time" 会对长元描述串产生假方向命中）；源串 ≥4 字做逐字段**双向**子串检查（不拼接整行——拼接改变方向且掩盖字段边界）；<4 字（人名/短地名等 cast 词）不判失败只登记命中（设计目标=新词表零 cast 命中，命中即回改）。
 
-## 3. 词表（全新，与 B cast 零交集）
+## 3. 词表（与 B cast 零交集）
 
-人物：陈舟/苏晚/周砚/林望/沈青；地点：东门/水房/钟楼/侧院/柴房/石桥/碑亭；物品：铜铃/木匣/青瓷碗/油纸伞；任务 goal：把铜铃挂回钟楼/整理柴房/修缮石桥栏杆/清点碑亭石刻；时长：三/八/十二/二十五/四十分钟、一小时。构造器断言新词表与 dedup cast 集合零交。
+基础组：人物陈舟/苏晚/周砚/林望/沈青；地点东门/水房/钟楼/侧院/柴房/石桥/碑亭；物品铜铃/木匣/青瓷碗/油纸伞；任务 goal 把铜铃挂回钟楼/整理柴房/修缮石桥栏杆/清点碑亭石刻。
+
+扩批新增：人物顾一帆/白桦/祁霖/温以宁/阮秋/岑野/宋知远/贺清言/洛之衡/薛映（char_2xx）；地点灰墙巷/洗砚池/南渡口/旧灯房/竹径/断碑崖（loc_2xx）；任务 goal 把信笺送去洗砚池/更换旧灯房的灯油/修补灰墙巷的路面/抄录断碑崖的铭文/给竹径立一块木牌/打捞洗砚池的木匣（task_2xx）；外貌描述与人格描述词表见 `build_expansion.py`。
+
+时长取自 `n4_render.num_cn`（唯一数字格式器，1–99）：2/5/6/15/20/30/45 分钟与 90 分钟（渲染为“两/五/六/十五/二十/三十/四十五分钟”“一小时”）；识别器 `cn_to_int` 反向解析“两”=2。构造器断言新词表与 dedup cast 集合零交。
 
 ## 4. 改写重叠率（复核信号，非硬门）
 
 - **遮蔽单列**：人名、数值＋单位、任务引语「」三类先替换为占位符 ⟨N⟩/⟨V⟩/⟨Q⟩——它们本来就应原样保留（引语逐字、人名一致、数值与计划一致由校验器按忠实性单独核对），不计入重叠率。
 - **算法**：字符 2-gram 集合重合率 = |bigrams(rewrite_masked) ∩ bigrams(seed_masked)| ÷ |bigrams(rewrite_masked)|，分母=改写行。同组 template-seed 行为种子基线。
-- **用途**：ratio > 0.6 的行标 `review-flag`（人工看是否真的改写了），**不因此失败**；低于阈值不构成质量证明，只是不再触发复核。
+- **用途**：ratio > 0.6 的行标 `review-flag`（人工看是否真的改写了），**不因此失败**；低于阈值不构成质量证明，只是不再触发复核。该比值由 `corpus_check.py` 运行时计算并打印，**不写回语料行**。
 - 防照抄机制=重叠率信号＋校验器逐类忠实核对＋协调人抽验三层。
 
-## 5. 校验器逐类核对（corpus_check.py，v3 识别器白名单）
+## 5. 校验器逐类核对（corpus_check.py，v4 识别器白名单）
 
-**判定模型（复核轮 2 翻转）：pass 只覆盖被受控识别模式完整识别且与计划一致的表达；任何未识别残句（无依据细节、否定、意图、换人物、错数值、新增事件）一律 needs-review，needs-review 不算事实通过。** 正文按逗号切段，每段必须被该句所引条目的识别模式 span **完整覆盖**；事件动词黑名单机制退役（覆盖缺失自动拦截未枚举的新增主张）。语料 schema v3：行携带独立构造的 `world`（before 注册表）与 `rawDelta`，`plan` 为同一生成器对 Δ 的投影（同源保证）；`planOnlyClaims` 承载非 Δ 计划条目（positioned 现状、no_change 空点断言）。哈希覆盖 plan/world/rawDelta/text；组级一致性含 world/rawDelta/planOnlyClaims。**负例自检十二例**（2 fail＋10 review：越界/漏覆盖/方向反转/人物交换/数值错/任务否定/新增事件/无依据细节/否定移动/意图冒充/否定空点/完成人物不符）必须以预期判定类被抓，否则报告作废（exit 2）。
+**判定模型：pass 只覆盖被受控识别模式完整识别且与计划一致的表达；任何未识别残句（无依据细节、否定、意图、换人物、错数值、新增事件）一律 needs-review，needs-review 不算事实通过。** v4 起按**句**计算覆盖（不再按逗号切段），标点视为分隔符不计入残句；移动识别器允许起点与终点之间有一个可选逗号，因此「X离开了A，抵达了B」是可识别的同一事实，而「X离开了A。」（未述终点）仍是 needs-review。语料 schema v3：行携带独立构造的 `world`（before 注册表）与 `rawDelta`，`plan` 为同一生成器对 Δ 的投影（同源保证）；`planOnlyClaims` 承载非 Δ 计划条目。哈希覆盖 plan/fullPlan/world/rawDelta/text；组级一致性含 world/rawDelta/planOnlyClaims。**负例自检 19 例**（口径类 fail 2 例、review 17 例：越界/漏覆盖/方向反转/人物交换/数值错/任务否定/新增事件/无依据细节/否定移动/意图冒充/否定空点/完成人物不符/半截移动等）**＋可控等价 3 例**（外貌变体、已在变体、分行移动变体）必须以预期判定类通过，否则报告作废（exit 2）。
 
 ## 6. 权威验证（validate_plan_authority.py，v2 apply 来源核对）
 
 格式合法之外证明**事实来源合法**（复核轮 2 要求）。三阶段：①行 `world` 构造 before `WorldState`（pydantic 含 fixed_registry 一致性）；②**before 层来源核对**——moved 起点==注册表 home、sanity 旧值==注册表理智（−999 类必炸）、任务 goal 必须是该人物注册任务且 owner 一致且仍 pending、positioned 现状==before 位置、no_change 行 Δ 必须为空；③**A 侧 kernel `apply_point`** 把 rawDelta 应用到 before（KernelViolation=非法），after 核对（位置/理智/任务 achieved）。脚本以 `--server-tree` 钉 A 工作树（默认 `.local/world-server-worktree`），报告含 server HEAD＋apply.py sha256，逐行绑定 plan+world+rawDelta 组合哈希。
 
-## 7. 首批规模与顺序
+## 7. 规模与构造顺序
 
-首批 26 组种子行＋1 行改写样例（走通改写全链），**流程试验性质，不预设足以训练 77M**。语料清单先交付协调人抽验（§1–§6 全部可见），通过后才开微调；批量改写在工具链获认可后进行。微调开工时的 tokenizer legacy 决策见方案表 §6（训练/评估/基线统一设置并重新验证）。
+首批（已冻结）为 30 个源组（24 train＋6 dev），组内两种时间表达（expressed/omitted）×（模板种子＋改写）＝每组 4 行。复核轮 11 的扩批规模：
+
+- `small`：60 个 train 源（24 既有＋36 新）；
+- `large`：120 个 train 源（包含 small 全部）；
+- `fixed-dev`：30 个 dev 源（6 既有＋24 新）。
+
+合计 150 组 / 600 行（seed 300＋rewrite 300）。构造顺序：`build_seeds.py` 生成基础 60 行 → `build_expansion.py` 追加扩批行（非幂等，已存在 `n4x-*` 行即中止）。扩批构造时断言：world/rawDelta/fullPlan 组合签名在**含既有组在内**的全组集合唯一（既有组自身重复只登记不篡改）；每行训练输入可由 `n4_render.render_input` 渲染；train/dev 渲染输入（no_change 除外）双向不相交；槽位按族计数器分配，与全局循环下标解耦。语料清单（§1–§6、§8 全部可见）仍先交协调人抽验，通过后才开微调；微调开工时的 tokenizer legacy 决策见方案表 §6（训练/评估/基线统一设置并重新验证）。
+
+## 8. 复核轮 11 当前结果（2026-10-29）
+
+| 工具 | 命令 | 结果 |
+| --- | --- | --- |
+| 行校验 | `python experiments/world-components/n4_corpus/corpus_check.py` | 自检 19 负例＋3 等价通过；150/150 组一致；**600 pass / 0 needs-review / 0 fail** |
+| 去重 | `python .../dedup_check.py corpus.seeds.jsonl rewrites.jsonl` | 探针自检通过；**600/600 行在清单范围与规则下零命中**；cast 词零命中 |
+| 权威核对 | `python .../validate_plan_authority.py` | 篡改矩阵 14/14；**全部 plan 经 A 侧 kernel apply 来源合法**；报告钉 server HEAD `4e17025`、apply.py `e626fdbb0679ca0c` |
+
+已登记、未修改的冻结既有回归项：base 组签名重复 1 对（`n4-empty-009`/`n4-empty-027`）；既有 train/dev 共享渲染输入 1 对（`n4-task-014`/`n4-task-026`）；no_change 渲染输入跨 split 共享 6 个（空点的唯一渲染形态）。扩批组不产生新的跨 split 输入冲突。**本批只声明语料构造与校验结果；未在此 600 行语料上重跑微调/评估，质量结论不在此处。**
