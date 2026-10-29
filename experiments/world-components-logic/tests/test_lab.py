@@ -475,6 +475,33 @@ class TimingTests(unittest.TestCase):
         self.assertTrue(all(node["latencyStatus"] == "latency_unverified" for node in nodes.values()))
         self.assertTrue(all(len(node["identity"]) == len(lab.TIMING_IDENTITY_FIELDS) for node in nodes.values()))
 
+    def test_missing_workload_id_never_shares_a_node_with_the_literal_id(self):
+        records = [attempt(workloadId="unregistered", **FULL_IDENTITY, caseId=f"lit-{i}") for i in range(19)]
+        records.append(attempt(**FULL_IDENTITY, caseId="absent"))
+        report = lab.summarize_attempts(records)
+        nodes = report["scopeSummaries"]["component"]["workloads"]
+        self.assertEqual(len(nodes), 2)
+        self.assertEqual(sorted(node["attemptCount"] for node in nodes.values()), [1, 19])
+        self.assertTrue(all(node["latencyStatus"] == "latency_unverified" for node in nodes.values()))
+        self.assertEqual(lab.summarize_attempts(list(reversed(records)))["scopeSummaries"]["component"]["workloads"],
+                         nodes)
+        records = [attempt(workloadId="unregistered", **FULL_IDENTITY, caseId=f"lit-{i}") for i in range(10)] + [
+            attempt(**FULL_IDENTITY, caseId=f"absent-{i}") for i in range(10)]
+        report = lab.summarize_attempts(records)
+        self.assertEqual(len(report["scopeSummaries"]["component"]["workloads"]), 2)
+        self.assertEqual(report["latencyStatus"], "latency_unverified")
+
+    def test_blank_workload_id_is_absent_and_a_literal_id_binds_with_full_identity(self):
+        report = lab.summarize_attempts([attempt(workloadId="  ", **FULL_IDENTITY) for _ in range(20)])
+        nodes = report["scopeSummaries"]["component"]["workloads"]
+        self.assertEqual(len(nodes), 1)
+        self.assertEqual(list(nodes.values())[0]["latencyStatus"], "latency_unverified")
+        nodes = lab.summarize_attempts(
+            [attempt(workloadId="unregistered", **FULL_IDENTITY) for _ in range(20)]
+        )["scopeSummaries"]["component"]["workloads"]
+        self.assertEqual(len(nodes), 1)
+        self.assertEqual(list(nodes.values())[0]["latencyStatus"], "within_observed_budget")
+
     def test_missing_or_unknown_measurement_cannot_be_zero(self):
         result = lab.summarize_attempts([attempt(elapsedMs=None)])
         self.assertIsNone(result["timing"]["maxMs"])

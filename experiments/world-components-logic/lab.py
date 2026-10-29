@@ -645,11 +645,26 @@ def _timing_identity(record: Mapping[str, Any]) -> dict[str, str]:
     return identity
 
 
-def _comparability_key(workload_key: str, identity: dict[str, str]) -> tuple[str, ...]:
-    return (workload_key, *(identity.get(field, "") for field in TIMING_IDENTITY_FIELDS))
+def _workload_binding(record: Mapping[str, Any]) -> tuple[bool, str]:
+    """Missing, non-string or blank workloadIds are absent bindings, never IDs.
+
+    A node's registered flag comes from this key, so it holds for every
+    record in the node; the literal string "unregistered" is just another
+    explicit ID and never shares a node with an absent binding.
+    """
+    workload_id = record.get("workloadId")
+    if isinstance(workload_id, str) and workload_id.strip():
+        return True, workload_id.strip()
+    return False, ""
 
 
-def _display_key(key: tuple[str, ...]) -> str:
+def _comparability_key(record: Mapping[str, Any]) -> tuple[Any, ...]:
+    registered, workload_id = _workload_binding(record)
+    identity = _timing_identity(record)
+    return (registered, workload_id, *(identity.get(field, "") for field in TIMING_IDENTITY_FIELDS))
+
+
+def _display_key(key: tuple[Any, ...]) -> str:
     return json.dumps(list(key), ensure_ascii=False, separators=(",", ":"))
 
 
@@ -659,6 +674,7 @@ def summarize_attempts(records: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
     Latency nodes are keyed structurally by workload and the bound
     arm/task/stage/component/model/device/config identity; a node may pass
     the sample floor only when every dimension is explicitly recorded.
+    A missing workloadId is an absent binding, distinct from any literal ID.
     This report cannot sign human semantics or a formal project acceptance.
     Full-request timing remains unverified if only component/scope data exists.
     """
@@ -706,22 +722,18 @@ def summarize_attempts(records: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
         complete = sum(record.get("status") in complete_statuses for record, _, _ in attempts)
         over = sum(elapsed is not None and elapsed > budget for _, elapsed, budget in attempts)
         missing = sum(elapsed is None for _, elapsed, _ in attempts)
-        workloads: dict[tuple[str, ...], list[tuple[Mapping[str, Any], float | None, float]]] = defaultdict(list)
+        workloads: dict[tuple[Any, ...], list[tuple[Mapping[str, Any], float | None, float]]] = defaultdict(list)
         for attempt in attempts:
-            workload_id = attempt[0].get("workloadId")
-            workload_key = workload_id if isinstance(workload_id, str) and workload_id.strip() else "unregistered"
-            workloads[_comparability_key(workload_key, _timing_identity(attempt[0]))].append(attempt)
+            workloads[_comparability_key(attempt[0])].append(attempt)
         workload_reports: dict[str, Any] = {}
         for node, workload_attempts in sorted(workloads.items()):
             identity = _timing_identity(workload_attempts[0][0])
             w_complete = sum(record.get("status") in complete_statuses for record, _, _ in workload_attempts)
             w_over = sum(elapsed is not None and elapsed > budget for _, elapsed, budget in workload_attempts)
             w_missing = sum(elapsed is None for _, elapsed, _ in workload_attempts)
-            registered = isinstance(workload_attempts[0][0].get("workloadId"), str) and bool(
-                workload_attempts[0][0]["workloadId"].strip())
             if w_over:
                 w_status = "latency_fail"
-            elif (not registered or len(identity) != len(TIMING_IDENTITY_FIELDS)
+            elif (not node[0] or len(identity) != len(TIMING_IDENTITY_FIELDS)
                   or w_missing or w_complete < 20 or w_complete != len(workload_attempts)):
                 w_status = "latency_unverified"
             else:
