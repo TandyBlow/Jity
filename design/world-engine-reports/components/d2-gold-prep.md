@@ -51,6 +51,20 @@
 ## 7. 待办与顺序
 
 1. ~~双 AI 标注 → 一致度 κ → 冻结 gold~~ **已完成（2026-10-29）**：κ=1.0000、零分歧、冻结件落库。
-2. prompt 草案签认 → 冻结哈希。**（当前阻塞项，等 C 审查者与项目负责人）**
+2. prompt 草案 v2 签认 → 冻结哈希。**（当前阻塞项，等 C 审查者与项目负责人）**
 3. 两者齐备后才运行 N3 模型臂；16 项与 8 项分开报告；跑输归档失败，本批不调参。
 4. 代词渲染仍归 N4-coref，不在本轮。
+
+## 8. 复核轮 24 修复（五项 P2，全部关闭）
+
+C 审查者复审发现五项 P2（未签认 D2 准备完成或 prompt 冻结）；修复如下，原预登记 v1 记录保留不动（`d2-metrics-preregistration.json`），修订原因与新哈希登记在 `artifacts/world-components/d2-preregistration-revision.json`。
+
+| # | 缺陷 | 修复与证据 |
+| --- | --- | --- |
+| P2-1 | 隔离检查只按命中数判断，缺失语料来源仍判 `ZERO_HIT`＋退出码 0 | `verdict_for(hits, missing)`：任一来源缺失即 `MISSING_SOURCE`＋失败；自检补三例（零命中过/命中败/缺失败），归档 verdict 带缺失数 |
+| P2-2 | 顺序一致度用 frozenset 查元组集合且不读实际位置，组内全反转仍报 44/44 | 改为对双方共组的事实对按**各自实际组内位置**比较方向；自检补**反转探针**（组内 factIds+coreference 全反转 → 顺序一致 0/2，κ 表不变） |
+| P2-3 | 冻结入口接受被改为全零的登记哈希；身份文件未绑定；`core.autocrlf=true` 下干净检出六份预登记文件哈希全失配 | 冻结前强制校验：协议登记哈希须同时等于**工作树字节**与**提交 blob**（临时仓库自检：清零登记哈希/未提交工作树漂移/身份暴露标记/身份文件清单不匹配四类全拒）；身份文件经协议 `annotators[].identity` 绑定校验（ID/无继承声明/exposure=false/四输入清单）并连同 sha256 写入冻结记录；`.gitattributes` 钉登记材料 `-text`、工具 `eol=lf`；write-tree→git-archive 干净检出模拟：六份预登记文件＋三件工具哈希**全部 MATCH** |
+| P2-4 | 指标工具对合法 JSON 缺 `coreference` 抛 `KeyError` | 形状守卫前置（sentences/factIds/coreference 结构先行校验，形状违规不再进入 `check_invariants`）；H1/H2 对形状违规计失败、该条目 G 指标作废，进入既定失败/重试流程；探针 T10（缺 key）/T11（畸形条目）钉住；一致度工具同型守卫 |
+| P2-5 | prompt 草案 R3 首位 time 自指；条目 ID 提供方式与 16 项集已选规则未定义 | 草案升 v2（`d2-n3-prompt-draft.md` §修订记录）：R3 兜底明确为「首个含 entityId 的事实所在组」（与冻结标注解释语义一致）；占位符逐字替换规则（`<条目ID>`/viewpoint/facts）成文；16 项集已选=冻结 `target` 按 facts 输入序过滤（与 `selected_of` 一致）。**rubric 与标注证据一字不改** |
+
+修复后复跑：三工具自检全过；冻结记录重生成（**冻结标签字节不变**，sha256 `cb86aa46…` 与 f27af30 一致，κ=1.0000 不变；记录新增 inputVerification 四行＋双身份绑定）；gold CLI 端到端自检 PASS；隔离复扫 ZERO_HIT、缺失 0。本轮未运行模型推理。

@@ -72,8 +72,39 @@ def h2(row: dict, item: dict) -> bool:
     return not [p for p in problems if "anchored" in p or "mention" in p]
 
 
+def sentence_shape_problems(sentences, tag: str) -> list:
+    """shape check that never indexes into missing keys: a legal JSON plan
+    missing `coreference` (or carrying malformed entries) is a structural
+    problem for the failure/retry flow, not a crash."""
+    if not isinstance(sentences, list) or not sentences:
+        return [f"{tag}: sentences missing or empty"]
+    problems = []
+    for s in sentences:
+        if not isinstance(s, dict):
+            problems.append(f"{tag}: sentence group is not an object")
+            continue
+        fids = s.get("factIds")
+        if not isinstance(fids, list) or not fids \
+                or not all(isinstance(x, str) for x in fids):
+            problems.append(f"{tag}: sentence group factIds missing/empty/non-string")
+        refs = s.get("coreference")
+        if not isinstance(refs, list):
+            problems.append(f"{tag}: sentence group coreference missing or not a list")
+            continue
+        for ref in refs:
+            if not isinstance(ref, dict) \
+                    or not isinstance(ref.get("mention"), str) \
+                    or not isinstance(ref.get("refersTo"), str):
+                problems.append(f"{tag}: coreference entry malformed")
+                break
+    return problems
+
+
 def structural_problems(row: dict, item: dict, tag: str) -> list:
-    problems = check_invariants({"baseline": tag, "sentences": row.get("sentences", [])},
+    problems = sentence_shape_problems(row.get("sentences") or [], tag)
+    if problems:
+        return problems
+    problems = check_invariants({"baseline": tag, "sentences": row["sentences"]},
                                 item["facts"], names_map(item))
     sentences = row.get("sentences") or []
     if sentences and [s.get("index") for s in sentences] != list(range(len(sentences))):
@@ -188,9 +219,14 @@ def evaluate(items: dict, gold_rows: dict, plan_rows: dict) -> dict:
             report["problems"].append(f"{iid}: missing gold or plan row")
             continue
         rows_present += 1
-        problems = structural_problems(plan_row, item, f"plan:{iid}")
-        h1_ok = h1(plan_row, item)
-        h2_ok = h2(plan_row, item)
+        shape = sentence_shape_problems(plan_row.get("sentences") or [], f"plan:{iid}")
+        h1_ok = h2_ok = False
+        if shape:
+            problems = shape
+        else:
+            h1_ok = h1(plan_row, item)
+            h2_ok = h2(plan_row, item)
+            problems = structural_problems(plan_row, item, f"plan:{iid}")
         h1_pass += int(h1_ok)
         h2_pass += int(h2_ok)
         entry = {"h1": h1_ok, "h2": h2_ok, "g1": None, "g2": None,
@@ -431,6 +467,23 @@ def selftest() -> int:
     if not any("plan ids" in p for p in rep["problems"]) \
             or rep["items"]["n3cap-02"]["g1"] is not None:
         failures.append("T9 uncovered fact not reported/voided")
+
+    # T10 legal JSON without coreference key -> structural problem, no crash
+    plans = deep_copy(gold_rows)
+    for s_ in plans["n3cap-04"]["sentences"]:
+        s_.pop("coreference", None)
+    rep = evaluate(items, gold_rows, plans)
+    if not any("coreference missing" in p for p in rep["problems"]) \
+            or rep["summary"]["verdict"]["pass"] \
+            or rep["summary"]["h1"] != "7/8" or rep["summary"]["h2"] != "7/8":
+        failures.append(f"T10 missing coreference not handled: "
+                        f"{rep['summary']['h1']}/{rep['summary']['h2']} pass={rep['summary']['verdict']['pass']}")
+    # T11 malformed coreference entries -> structural problem
+    plans = deep_copy(gold_rows)
+    plans["n3cap-05"]["sentences"][0]["coreference"] = [{"mention": "洛九针"}]
+    rep = evaluate(items, gold_rows, plans)
+    if not any("malformed" in p or "not a list" in p for p in rep["problems"]):
+        failures.append(f"T11 malformed entry not reported: {rep['problems'][:2]}")
 
     for f in failures:
         print("SELFTEST FAIL:", f)

@@ -34,6 +34,16 @@ def d2_strings() -> dict:
     return out
 
 
+def verdict_for(hits: dict, missing: int) -> tuple:
+    """-> (verdict, ok). A missing source is a FAILURE, not a pass: a pool
+    that silently lost a corpus would make zero hits meaningless."""
+    if missing:
+        return "MISSING_SOURCE", False
+    if hits:
+        return "HIT", False
+    return "ZERO_HIT", True
+
+
 def selftest() -> list:
     problems = []
     pool = {"潮音渡口的风"}
@@ -43,6 +53,15 @@ def selftest() -> list:
     hits2 = ci.match_hits(pool, {"潮音渡": {"n3cap-selftest"}})
     if "潮音渡" not in hits2:
         problems.append("selftest: substring containment not caught")
+    v, ok = verdict_for({}, 0)
+    if v != "ZERO_HIT" or not ok:
+        problems.append("selftest: clean zero-hit must pass")
+    v, ok = verdict_for({"x": {"items": ["i"], "matched": ["m"]}}, 0)
+    if v != "HIT" or ok:
+        problems.append("selftest: hit must fail")
+    v, ok = verdict_for({}, 1)
+    if v != "MISSING_SOURCE" or ok:
+        problems.append("selftest: missing source must fail even with zero hits")
     return problems
 
 
@@ -56,6 +75,7 @@ def main() -> int:
     pool, manifest, missing, details = ci.collect_frozen(ci.PINNED_MAIN_COMMIT)
     strings = d2_strings()
     hits = ci.match_hits(pool, strings)
+    verdict, ok = verdict_for(hits, missing)
     record = {
         "purpose": "D2 capability items isolation vs B frozen corpus",
         "decision": "D2",
@@ -69,7 +89,8 @@ def main() -> int:
         "missingSources": missing,
         "scannedStrings": len(strings),
         "scannedItems": len({i for ids in strings.values() for i in ids}),
-        "verdict": "ZERO_HIT" if not hits else "HIT",
+        "verdict": verdict,
+        "ok": ok,
         "hits": hits,
         "stringList": sorted(strings),
         "tool": "check_isolation_d2.py (reuses check_isolation.collect_frozen/match_hits)",
@@ -79,8 +100,8 @@ def main() -> int:
     print(f"frozen pool: {len(pool)} strings, digest {ci.pool_digest(pool)[:16]}…")
     print(f"scanned d2 strings: {len(strings)} across "
           f"{len({i for ids in strings.values() for i in ids})} items")
-    print(f"verdict: {record['verdict']} -> {OUT.name}")
-    return 0 if not hits else 1
+    print(f"missing sources: {missing}; verdict: {verdict} -> {OUT.name}")
+    return 0 if ok else 1
 
 
 if __name__ == "__main__":

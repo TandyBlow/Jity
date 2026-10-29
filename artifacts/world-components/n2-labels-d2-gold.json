@@ -3,6 +3,48 @@
  "decision": "D2",
  "annotationProtocol": "d2-gold-protocol.json",
  "protocolSha256": "ff621edebf9d2f25e25bfdbefda7fc480ea6bb3431a166d6d8af6b09409fb172",
+ "inputVerification": [
+  {
+   "file": "d2-gold-rubric.md",
+   "registered": "fd7eb518c92a5cc585ef2a4127d113df0724d114936f7a38aadcdd57c73e76c0",
+   "workingTree": "fd7eb518c92a5cc585ef2a4127d113df0724d114936f7a38aadcdd57c73e76c0",
+   "blob": "fd7eb518c92a5cc585ef2a4127d113df0724d114936f7a38aadcdd57c73e76c0"
+  },
+  {
+   "file": "d2_capability_items.jsonl",
+   "registered": "76d253ab8be026e6a2dd4c77f1f3494c3db7d6dd753de2d930aa7ae5ad931311",
+   "workingTree": "76d253ab8be026e6a2dd4c77f1f3494c3db7d6dd753de2d930aa7ae5ad931311",
+   "blob": "76d253ab8be026e6a2dd4c77f1f3494c3db7d6dd753de2d930aa7ae5ad931311"
+  },
+  {
+   "file": "d2-sheet.md",
+   "registered": "93105ce3ff50ab6a31d64dadab9df43db1cb72defa4a9cb23132a8a37dded646",
+   "workingTree": "93105ce3ff50ab6a31d64dadab9df43db1cb72defa4a9cb23132a8a37dded646",
+   "blob": "93105ce3ff50ab6a31d64dadab9df43db1cb72defa4a9cb23132a8a37dded646"
+  },
+  {
+   "file": "d2-labels-template.jsonl",
+   "registered": "eb08861b3561bf5cb18b61eb31ab4461073e7cd42cffcbb728cc14860eeba04f",
+   "workingTree": "eb08861b3561bf5cb18b61eb31ab4461073e7cd42cffcbb728cc14860eeba04f",
+   "blob": "eb08861b3561bf5cb18b61eb31ab4461073e7cd42cffcbb728cc14860eeba04f"
+  }
+ ],
+ "identities": {
+  "ai-a": {
+   "file": "identity-d2-ai-a.json",
+   "sha256": "d0ff8ea69eb3b90951f07d79b7d115a04441e83f45ca3b9f21837acf4415d22d",
+   "annotatorId": "ai-a",
+   "exposureBeyondFourInputFiles": false,
+   "context": "fresh task without inherited turns"
+  },
+  "ai-b": {
+   "file": "identity-d2-ai-b.json",
+   "sha256": "1c12d10e52aa9ee6e36d9a98fc726702bdcc1dd9728c55d9d30b99fa597557e3",
+   "annotatorId": "ai-b",
+   "exposureBeyondFourInputFiles": false,
+   "context": "fresh task without inherited turns"
+  }
+ },
  "items": "d2_capability_items.jsonl",
  "itemsSha256": "76d253ab8be026e6a2dd4c77f1f3494c3db7d6dd753de2d930aa7ae5ad931311",
  "labelsA": {

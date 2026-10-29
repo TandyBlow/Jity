@@ -2,17 +2,23 @@
 #
 # Consumes two independent AI label files for the 8 capability items and
 # the pre-registered protocol (annotation/d2-gold-protocol.json):
-#   1. validates each label against the N3 narrow shape (I1 coverage via
-#      n3_plan.check_invariants + strict coreference count/order/name
-#      alignment + sentence index continuity),
+#   1. validates each label against the N3 narrow shape: sentence/entry
+#       shape first (a legal JSON row missing `coreference` or carrying
+#       malformed entries is a reported structural problem, never a
+#       crash), then I1 coverage via n3_plan.check_invariants, then
+#       strict coreference count/order/name alignment,
 #   2. computes the pre-registered agreement: pooled pairwise co-grouping
-#      Cohen's kappa over all unordered fact pairs, plus report-only order
-#      concordance and coreference agreement over comparable groups
-#      (identical factId sets in both labels),
-#   3. enforces the gates: kappa >= protocol.kappaMinimum and EVERY
-#      disagreeing item adjudicated (source tag + written reason),
+#      Cohen's kappa over all unordered fact pairs, order concordance by
+#      ACTUAL within-group positions (both labels must place the pair in
+#      the same direction), and coreference agreement over comparable
+#      groups (identical factId sets),
+#   3. verifies the protocol's registered input hashes against BOTH the
+#      working tree and the committed git blob (always, not only at
+#      freeze), validates the annotator identity files bound by the
+#      protocol, and enforces the gates: kappa >= protocol.kappaMinimum
+#      and EVERY disagreeing item adjudicated (source tag + reason),
 #   4. freezes: writes the frozen label JSONL and an evidence JSON with
-#      hashes, kappa tables and the adjudication record.
+#      hashes, kappa tables, input verification and the identity record.
 #
 # The tool never edits labels; disagreement resolution happens in the
 # adjudicated file passed on the command line.
@@ -21,15 +27,31 @@ import argparse
 import hashlib
 import json
 import pathlib
+import subprocess
 import sys
 
 HERE = pathlib.Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 from n3_plan import check_invariants  # noqa: E402
 
+REPO_ROOT = HERE.parent.parent.parent
+
+
+def sha_bytes(data: bytes) -> str:
+    return hashlib.sha256(data).hexdigest()
+
 
 def sha_file(path: pathlib.Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+    return sha_bytes(path.read_bytes())
+
+
+def git_blob_sha(repo_root: pathlib.Path, rel: str):
+    proc = subprocess.run(
+        ["git", "-C", str(repo_root), "cat-file", "blob", f"HEAD:{rel}"],
+        capture_output=True)
+    if proc.returncode != 0:
+        return None
+    return sha_bytes(proc.stdout)
 
 
 def load_jsonl(path: pathlib.Path) -> list:
@@ -51,21 +73,45 @@ def names_map(item: dict) -> dict:
     return {f["entityId"]: f["name"] for f in item["facts"] if f.get("entityId")}
 
 
-def validate_label(row: dict, item: dict, tag: str) -> list:
-    problems = []
-    if row.get("itemId") != item["itemId"]:
-        problems.append(f"{tag}: itemId mismatch {row.get('itemId')!r}")
-        return problems
-    sentences = row.get("sentences")
+def sentence_shape_problems(sentences, tag: str) -> list:
+    """structural shape check that never indexes into missing keys."""
     if not isinstance(sentences, list) or not sentences:
-        problems.append(f"{tag}: sentences missing or empty")
+        return [f"{tag}: sentences missing or empty"]
+    problems = []
+    for s in sentences:
+        if not isinstance(s, dict):
+            problems.append(f"{tag}: sentence group is not an object")
+            continue
+        fids = s.get("factIds")
+        if not isinstance(fids, list) or not fids \
+                or not all(isinstance(x, str) for x in fids):
+            problems.append(f"{tag}: sentence group factIds missing/empty/non-string")
+        refs = s.get("coreference")
+        if not isinstance(refs, list):
+            problems.append(f"{tag}: sentence group coreference missing or not a list")
+            continue
+        for ref in refs:
+            if not isinstance(ref, dict) \
+                    or not isinstance(ref.get("mention"), str) \
+                    or not isinstance(ref.get("refersTo"), str):
+                problems.append(f"{tag}: coreference entry malformed")
+                break
+    return problems
+
+
+def validate_label(row: dict, item: dict, tag: str) -> list:
+    if row.get("itemId") != item["itemId"]:
+        return [f"{tag}: itemId mismatch {row.get('itemId')!r}"]
+    sentences = row.get("sentences")
+    problems = sentence_shape_problems(sentences, tag)
+    if problems:
         return problems
     want_index = list(range(len(sentences)))
     if [s.get("index") for s in sentences] != want_index:
         problems.append(f"{tag}: sentence index not 0..n-1 contiguous")
     names = names_map(item)
-    plan = {"baseline": tag, "sentences": sentences}
-    problems.extend(check_invariants(plan, item["facts"], names))
+    problems.extend(check_invariants({"baseline": tag, "sentences": sentences},
+                                     item["facts"], names))
     facts_by_id = {f["factId"]: f for f in item["facts"]}
     for s in sentences:
         group = [facts_by_id.get(fid) for fid in s.get("factIds", [])]
@@ -97,15 +143,13 @@ def pair_sets(row: dict, item: dict) -> set:
             if group_of[a] == group_of[b]}
 
 
-def order_pairs(row: dict, item: dict) -> set:
-    """within-group relative order as a set of ordered pairs"""
-    ids = [f["factId"] for f in item["facts"]]
-    group_of = {}
+def positions_map(row: dict) -> dict:
+    """factId -> (group index, position within group), from ACTUAL output"""
+    pos = {}
     for s in row["sentences"]:
-        for fid in s["factIds"]:
-            group_of[fid] = s["index"]
-    return {(a, b) for i, a in enumerate(ids) for b in ids[i + 1:]
-            if group_of[a] == group_of[b]}
+        for i, fid in enumerate(s["factIds"]):
+            pos[fid] = (s["index"], i)
+    return pos
 
 
 def kappa_from_table(a: int, b: int, c: int, d: int) -> float:
@@ -167,11 +211,13 @@ def compare_items(items: dict, a_rows: dict, b_rows: dict) -> dict:
                     t["neither"] += 1
         for k in table:
             table[k] += t[k]
-        a_order = order_pairs(a_rows[iid], item)
-        b_order = order_pairs(b_rows[iid], item)
-        for p in a_pairs & b_pairs:
+        a_pos = positions_map(a_rows[iid])
+        b_pos = positions_map(b_rows[iid])
+        input_order = {fid: k for k, fid in enumerate(ids)}
+        for pair in a_pairs & b_pairs:
+            x, y = sorted(pair, key=lambda f: input_order[f])
             order_total += 1
-            if (p in a_order) == (p in b_order):
+            if (a_pos[x] < a_pos[y]) == (b_pos[x] < b_pos[y]):
                 order_agree += 1
         c_comp, c_eq, comp_groups, tot_groups = coref_comparable(a_rows[iid], b_rows[iid])
         coref_comp += c_comp
@@ -189,6 +235,62 @@ def compare_items(items: dict, a_rows: dict, b_rows: dict) -> dict:
             "coref": {"equal": coref_eq, "compared": coref_comp,
                       "comparableGroups": comparable_groups,
                       "totalGroups": total_groups}}
+
+
+def verify_registered_inputs(protocol: dict, repo_root: pathlib.Path) -> tuple:
+    """registered hash must equal the working-tree bytes AND, when tracked,
+    the committed blob. -> (problems, details)"""
+    entries = protocol.get("allowedInputs")
+    if not entries:
+        return ["protocol registers no allowedInputs"], []
+    problems = []
+    details = []
+    in_repo = (repo_root / ".git").exists()
+    for entry in entries:
+        rel = entry.get("source")
+        reg = entry.get("sha256")
+        path = repo_root / rel
+        if not isinstance(rel, str) or not path.exists():
+            problems.append(f"registered input missing on disk: {rel!r}")
+            continue
+        working = sha_file(path)
+        row = {"file": entry.get("file"), "registered": reg,
+               "workingTree": working, "blob": None}
+        if in_repo:
+            blob = git_blob_sha(repo_root, rel.replace("\\", "/"))
+            if blob is None:
+                problems.append(f"registered input not tracked at HEAD: {rel}")
+            else:
+                row["blob"] = blob
+                if blob != reg:
+                    problems.append(f"registered hash != committed blob: {rel}")
+        if working != reg:
+            problems.append(f"registered hash != working-tree bytes: {rel}")
+        details.append(row)
+    return problems, details
+
+
+def validate_identity(path: pathlib.Path, expected_id: str,
+                      protocol: dict) -> tuple:
+    problems = []
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except Exception as exc:
+        return [f"{path.name}: unreadable identity file ({exc})"], None
+    if data.get("annotatorId") != expected_id:
+        problems.append(f"{path.name}: annotatorId {data.get('annotatorId')!r} != {expected_id!r}")
+    if data.get("exposureBeyondFourInputFiles") is not False:
+        problems.append(f"{path.name}: exposureBeyondFourInputFiles must be false")
+    if data.get("context") != "fresh task without inherited turns":
+        problems.append(f"{path.name}: context must declare no inherited turns")
+    want = sorted(e["file"] for e in protocol.get("allowedInputs", []))
+    if sorted(data.get("inputFileNames", [])) != want:
+        problems.append(f"{path.name}: inputFileNames != protocol allowedInputs")
+    if not isinstance(data.get("method"), str) or len(data.get("method", "")) < 8:
+        problems.append(f"{path.name}: method description missing")
+    if not isinstance(data.get("limitations"), list) or not data.get("limitations"):
+        problems.append(f"{path.name}: limitations missing")
+    return problems, data
 
 
 def validate_adjudication(items: dict, adjud_rows: dict, disagreeing: list) -> list:
@@ -215,10 +317,29 @@ def run(args) -> int:
     items = load_items(pathlib.Path(args.items))
     a_rows = {r["itemId"]: r for r in load_jsonl(pathlib.Path(args.labels_a))}
     b_rows = {r["itemId"]: r for r in load_jsonl(pathlib.Path(args.labels_b))}
-    protocol = json.loads(pathlib.Path(args.protocol).read_text(encoding="utf-8"))
+    protocol_path = pathlib.Path(args.protocol)
+    protocol = json.loads(protocol_path.read_text(encoding="utf-8"))
     problems = []
     if sorted(items) != sorted(a_rows) or sorted(items) != sorted(b_rows):
         problems.append("label files must cover exactly the item ids")
+    ver_problems, ver_details = verify_registered_inputs(protocol, REPO_ROOT)
+    problems.extend(ver_problems)
+    identities = {}
+    if not problems:
+        for side, rows in (("ai-a", a_rows), ("ai-b", b_rows)):
+            spec = next((a for a in protocol.get("annotators", [])
+                         if a.get("id") == side), None)
+            if spec is None:
+                problems.append(f"protocol has no annotator spec for {side}")
+                continue
+            id_path = protocol_path.parent / spec.get("identity", "")
+            if not id_path.exists():
+                problems.append(f"identity file missing for {side}: {id_path.name}")
+                continue
+            iproblems, idata = validate_identity(id_path, side, protocol)
+            problems.extend(iproblems)
+            identities[side] = {"file": id_path.name,
+                                "sha256": sha_file(id_path), "data": idata}
     for iid, item in items.items():
         if iid in a_rows:
             problems.extend(validate_label(a_rows[iid], item, "ai-a"))
@@ -276,7 +397,14 @@ def run(args) -> int:
             "purpose": "D2 gold freeze (AI independent annotation)",
             "decision": "D2",
             "annotationProtocol": pathlib.Path(args.protocol).name,
-            "protocolSha256": sha_file(pathlib.Path(args.protocol)),
+            "protocolSha256": sha_file(protocol_path),
+            "inputVerification": ver_details,
+            "identities": {side: {"file": v["file"], "sha256": v["sha256"],
+                                  "annotatorId": v["data"].get("annotatorId"),
+                                  "exposureBeyondFourInputFiles":
+                                      v["data"].get("exposureBeyondFourInputFiles"),
+                                  "context": v["data"].get("context")}
+                           for side, v in identities.items()},
             "items": pathlib.Path(args.items).name,
             "itemsSha256": sha_file(pathlib.Path(args.items)),
             "labelsA": {"file": pathlib.Path(args.labels_a).name,
@@ -304,6 +432,8 @@ def run(args) -> int:
 
 def selftest() -> int:
     failures = []
+    import tempfile
+    import argparse as _ap
 
     def fact(fid, char, name):
         return {"factId": fid, "kind": "task_achieved", "entityId": char,
@@ -332,6 +462,29 @@ def selftest() -> int:
     t = cmp["table"]
     if cmp["disagreeingItems"] or kappa_from_table(t["both"], t["aOnly"], t["bOnly"], t["neither"]) != 1.0:
         failures.append("perfect agreement case failed")
+    if cmp["orderConcordance"] != {"agreed": 2, "of": 2}:
+        failures.append(f"order concordance baseline wrong: {cmp['orderConcordance']}")
+
+    # order reversal probe: reversed within-group order must NOT agree 2/2
+    def reversed_label(groups):
+        row = label(groups)
+        for s in row["sentences"]:
+            s["factIds"] = list(reversed(s["factIds"]))
+            s["coreference"] = list(reversed(s["coreference"]))
+        return row
+    cmp_rev = compare_items(items, rows_a, {"n3cap-t1": reversed_label([["f1", "f2"], ["f3", "f4"]])})
+    if cmp_rev["orderConcordance"]["agreed"] != 0 \
+            or cmp_rev["orderConcordance"]["of"] != 2:
+        failures.append(f"reversal probe: order concordance {cmp_rev['orderConcordance']}, must be 0/2")
+    if cmp_rev["table"] != {"both": 2, "aOnly": 0, "bOnly": 0, "neither": 4}:
+        failures.append(f"reversal probe: grouping table changed {cmp_rev['table']}")
+    # stale-index reordering must be caught
+    bad4 = label([["f1"], ["f2"], ["f3"], ["f4"]])
+    bad4["sentences"][2], bad4["sentences"][3] = bad4["sentences"][3], bad4["sentences"][2]
+    p = validate_label(bad4, item, "bad4")
+    if not any("index" in x for x in p):
+        failures.append(f"sentence reordering with stale indices not caught: {p}")
+    # known disagreement kappa matches hand computation
     rows_b2 = {"n3cap-t1": label([["f1"], ["f2", "f3"], ["f4"]])}
     cmp2 = compare_items(items, rows_a, rows_b2)
     t2 = cmp2["table"]
@@ -342,17 +495,16 @@ def selftest() -> int:
     n = 6
     po = (0 + 3) / n
     pe = ((0 + 2) * (0 + 1) + (3 + 1) * (2 + 3)) / (n * n)
-    want_k = (po - pe) / (1 - pe)
-    if abs(k - want_k) > 1e-12:
-        failures.append(f"kappa {k} != hand-computed {want_k}")
-    cmp3 = compare_items(items, {"n3cap-t1": label([["f1", "f2", "f3", "f4"]])},
-                         {"n3cap-t1": label([["f1", "f2", "f3", "f4"]])})
-    t3 = cmp3["table"]
+    if abs(k - (po - pe) / (1 - pe)) > 1e-12:
+        failures.append(f"kappa {k} != hand-computed")
+    # degenerate table raises
+    t3 = {"both": 6, "aOnly": 0, "bOnly": 0, "neither": 0}
     try:
         kappa_from_table(t3["both"], t3["aOnly"], t3["bOnly"], t3["neither"])
         failures.append("degenerate case did not raise")
     except ValueError:
         pass
+    # invalid labels caught
     bad = label([["f1", "f2"], ["f3"]])
     p = validate_label(bad, item, "bad")
     if not any("plan ids" in x for x in p):
@@ -367,68 +519,149 @@ def selftest() -> int:
     p = validate_label(bad3, item, "bad3")
     if not any("coreference has" in x for x in p):
         failures.append(f"coref count misalignment not caught: {p}")
-    bad4 = label([["f1"], ["f2"], ["f3"], ["f4"]])
-    bad4["sentences"][2], bad4["sentences"][3] = bad4["sentences"][3], bad4["sentences"][2]
-    p = validate_label(bad4, item, "bad4")
-    if not any("index" in x for x in p):
-        failures.append(f"sentence reordering with stale indices not caught: {p}")
-    import tempfile
-    import argparse as _ap
+    # legal JSON without coreference key -> structural problem, no crash
+    bad5 = {"itemId": "n3cap-t1",
+            "sentences": [{"index": 0, "factIds": ["f1", "f2"]},
+                          {"index": 1, "factIds": ["f3", "f4"]}]}
+    p = validate_label(bad5, item, "bad5")
+    if not any("coreference missing" in x for x in p):
+        failures.append(f"missing coreference key not reported: {p}")
+    bad6 = {"itemId": "n3cap-t1",
+            "sentences": [{"index": 0, "factIds": ["f1", "f2"], "coreference": "x"},
+                          {"index": 1, "factIds": ["f3", "f4"], "coreference": []}]}
+    p = validate_label(bad6, item, "bad6")
+    if not any("not a list" in x for x in p):
+        failures.append(f"non-list coreference not reported: {p}")
+
+    # freeze gate: registered-hash verification + identity binding, in a temp repo
     with tempfile.TemporaryDirectory() as td:
         td = pathlib.Path(td)
-        item2 = {"itemId": "n3cap-t2", "task": "n3-plan", "split": "dev", "batch": "d2",
-                 "viewpoint": {"type": "protagonist", "entityId": "char_600",
-                               "name": "洛九针", "at": "潮音渡", "rule": "r"},
-                 "facts": facts, "hashes": {"facts": "x"}}
+        rel_dir = "experiments/world-components/n2_selection/annotation"
+        (td / rel_dir).mkdir(parents=True)
+        (td / "experiments/world-components/n2_selection").mkdir(parents=True, exist_ok=True)
+        item2 = {**item, "itemId": "n3cap-t2"}
         items2 = {"n3cap-t1": item, "n3cap-t2": item2}
         la2 = {"n3cap-t1": la,
                "n3cap-t2": {**label([["f1", "f2"], ["f3"], ["f4"]]), "itemId": "n3cap-t2"}}
         lb2 = {"n3cap-t1": label([["f1", "f2"], ["f3", "f4"]]),
                "n3cap-t2": {**label([["f1", "f2"], ["f3", "f4"]]), "itemId": "n3cap-t2"}}
-        items_p = td / "items.jsonl"
-        items_p.write_text("\n".join(json.dumps(v, ensure_ascii=False) for v in items2.values()) + "\n",
-                           encoding="utf-8")
-        la_p = td / "a.jsonl"
-        la_p.write_text("\n".join(json.dumps(v, ensure_ascii=False) for v in la2.values()) + "\n",
-                        encoding="utf-8")
-        lb_p = td / "b.jsonl"
-        lb_p.write_text("\n".join(json.dumps(v, ensure_ascii=False) for v in lb2.values()) + "\n",
-                        encoding="utf-8")
-        proto_p = td / "proto.json"
-        proto_p.write_text(json.dumps({"gates": {"kappaMinimum": 0.7,
-                                                 "kappaDefinition": "test"},
-                                       "limitations": []}),
-                           encoding="utf-8")
-        base = {"items": str(items_p), "labels_a": str(la_p), "labels_b": str(lb_p),
-                "protocol": str(proto_p), "adjudicated": None, "out": None,
-                "freeze_labels": "frozen.jsonl"}
-        if run(_ap.Namespace(**base)) != 1:
-            failures.append("missing adjudication not enforced")
-        cmp_pool = compare_items(items2, la2, lb2)
-        kt = cmp_pool["table"]
-        pooled = kappa_from_table(kt["both"], kt["aOnly"], kt["bOnly"], kt["neither"])
-        if not (0.7 <= pooled < 1.0) or cmp_pool["disagreeingItems"] != ["n3cap-t2"]:
-            failures.append(f"pooled scenario wrong: kappa={pooled}, disagreeing={cmp_pool['disagreeingItems']}")
+        files = {
+            "experiments/world-components/n2_selection/d2_capability_items.jsonl":
+                "\n".join(json.dumps(v, ensure_ascii=False) for v in items2.values()) + "\n",
+            f"{rel_dir}/labels-a.jsonl":
+                "\n".join(json.dumps(v, ensure_ascii=False) for v in la2.values()) + "\n",
+            f"{rel_dir}/labels-b.jsonl":
+                "\n".join(json.dumps(v, ensure_ascii=False) for v in lb2.values()) + "\n",
+            f"{rel_dir}/d2-gold-rubric.md": "# rubric\nR1-R6\n",
+            f"{rel_dir}/d2-sheet.md": "# sheet\n",
+            f"{rel_dir}/d2-labels-template.jsonl": "{}\n",
+        }
+        for rel, text in files.items():
+            (td / rel).write_text(text, encoding="utf-8", newline="\n")
+
+        def sha_rel(rel):
+            return sha_bytes((td / rel).read_bytes())
+
+        def identity(exposure=False, iid="ai-a", files_list=None):
+            return {"annotatorId": iid, "annotatorType": "AI",
+                    "context": "fresh task without inherited turns",
+                    "inputFileNames": files_list or ["rubric.md", "items.jsonl", "sheet.md", "template.jsonl"],
+                    "exposureBeyondFourInputFiles": exposure,
+                    "method": "按 rubric 独立标注并自查。",
+                    "limitations": ["AI 标注非人工。"]}
+
+        protocol = {
+            "gates": {"kappaMinimum": 0.7, "kappaDefinition": "test"},
+            "limitations": [],
+            "annotators": [
+                {"id": "ai-a", "identity": "identity-a.json", "labels": "labels-a.jsonl"},
+                {"id": "ai-b", "identity": "identity-b.json", "labels": "labels-b.jsonl"}],
+            "allowedInputs": [
+                {"file": "rubric.md", "source": f"{rel_dir}/d2-gold-rubric.md", "sha256": sha_rel(f"{rel_dir}/d2-gold-rubric.md")},
+                {"file": "items.jsonl", "source": "experiments/world-components/n2_selection/d2_capability_items.jsonl", "sha256": sha_rel("experiments/world-components/n2_selection/d2_capability_items.jsonl")},
+                {"file": "sheet.md", "source": f"{rel_dir}/d2-sheet.md", "sha256": sha_rel(f"{rel_dir}/d2-sheet.md")},
+                {"file": "template.jsonl", "source": f"{rel_dir}/d2-labels-template.jsonl", "sha256": sha_rel(f"{rel_dir}/d2-labels-template.jsonl")}],
+        }
+        (td / rel_dir / "identity-a.json").write_text(
+            json.dumps(identity(), ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
+        (td / rel_dir / "identity-b.json").write_text(
+            json.dumps(identity(iid="ai-b"), ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
+        proto_rel = f"{rel_dir}/d2-gold-protocol.json"
+        (td / proto_rel).write_text(json.dumps(protocol, ensure_ascii=False, indent=1),
+                                    encoding="utf-8", newline="\n")
         adj = {"itemId": "n3cap-t2", "source": "ai-b",
-               "reason": "rubric R1: facts of one entity stay together", "label": lb2["n3cap-t2"]}
-        adj_p = td / "adj.jsonl"
-        adj_p.write_text(json.dumps(adj, ensure_ascii=False) + "\n", encoding="utf-8")
-        if run(_ap.Namespace(**{**base, "adjudicated": str(adj_p),
-                                "out": str(td / "record.json")})) != 0:
-            failures.append("valid adjudication rejected")
-        if not (td / "record.json").exists() or not (td / "frozen.jsonl").exists():
-            failures.append("freeze outputs missing")
-        else:
-            record = json.loads((td / "record.json").read_text(encoding="utf-8"))
-            if record["kappa"]["value"] != 1.0:
-                pass  # kappa below 1 with disagreement is expected here
-            if "frozenLabels" not in record or "sha256" not in record["frozenLabels"]:
-                failures.append("freeze record incomplete")
-        bad_adj = {"itemId": "n3cap-t1", "source": "ai-a", "reason": "", "label": la}
-        bad_p = td / "badadj.jsonl"
-        bad_p.write_text(json.dumps(bad_adj, ensure_ascii=False) + "\n", encoding="utf-8")
-        if run(_ap.Namespace(**{**base, "adjudicated": str(bad_p)})) != 1:
-            failures.append("empty adjudication reason not caught")
+               "reason": "rubric R1: facts of one entity stay together",
+               "label": lb2["n3cap-t2"]}
+        (td / rel_dir / "adj.jsonl").write_text(
+            json.dumps(adj, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
+        subprocess.run(["git", "init", "-q"], cwd=td, check=True)
+        subprocess.run(["git", "add", "-A"], cwd=td, check=True)
+        subprocess.run(["git", "-c", "user.email=t@x", "-c", "user.name=t",
+                        "commit", "-qm", "init"], cwd=td, check=True)
+        base = {"items": "experiments/world-components/n2_selection/d2_capability_items.jsonl",
+                "labels_a": f"{rel_dir}/labels-a.jsonl",
+                "labels_b": f"{rel_dir}/labels-b.jsonl",
+                "protocol": proto_rel, "adjudicated": f"{rel_dir}/adj.jsonl",
+                "out": str(td / "record.json"), "freeze_labels": "frozen.jsonl"}
+        # relative paths resolved against cwd: run chdir-safe via absolute
+        base = {k: (str(td / v) if not pathlib.Path(v).is_absolute() and k != "items"
+                    else v) for k, v in base.items()}
+        # items path also relative to repo root but REPO_ROOT is this repo's root;
+        # for the selftest we must keep the tool's REPO_ROOT pointing at td.
+        import d2_labels_agreement as mod
+        old_root = mod.REPO_ROOT
+        mod.REPO_ROOT = td
+        try:
+            base["items"] = str(td / "experiments/world-components/n2_selection/d2_capability_items.jsonl")
+            base["labels_a"] = str(td / rel_dir / "labels-a.jsonl")
+            base["labels_b"] = str(td / rel_dir / "labels-b.jsonl")
+            base["protocol"] = str(td / proto_rel)
+            base["adjudicated"] = str(td / rel_dir / "adj.jsonl")
+            if mod.run(_ap.Namespace(**base)) != 0:
+                failures.append("clean temp-repo freeze rejected")
+            if not (td / "record.json").exists() or not (td / "frozen.jsonl").exists():
+                failures.append("freeze outputs missing")
+            else:
+                rec = json.loads((td / "record.json").read_text(encoding="utf-8"))
+                if len(rec.get("inputVerification", [])) != 4 \
+                        or any(v["blob"] is None for v in rec["inputVerification"]):
+                    failures.append("input verification rows incomplete")
+                if rec.get("identities", {}).get("ai-a", {}).get("sha256") is None:
+                    failures.append("identity not bound into freeze record")
+            # tamper 1: registered hash zeroed in protocol -> freeze must abort
+            proto_bad = dict(protocol)
+            proto_bad["allowedInputs"] = [dict(e) for e in protocol["allowedInputs"]]
+            proto_bad["allowedInputs"][0]["sha256"] = "0" * 64
+            (td / proto_rel).write_text(json.dumps(proto_bad, ensure_ascii=False, indent=1),
+                                        encoding="utf-8", newline="\n")
+            if mod.run(_ap.Namespace(**base)) != 1:
+                failures.append("zeroed registered hash did not abort freeze")
+            (td / proto_rel).write_text(json.dumps(protocol, ensure_ascii=False, indent=1),
+                                        encoding="utf-8", newline="\n")
+            # tamper 2: working-tree rubric edited after commit -> abort
+            rub = td / rel_dir / "d2-gold-rubric.md"
+            saved = rub.read_bytes()
+            rub.write_text("# rubric\nR1-R6 tampered\n", encoding="utf-8", newline="\n")
+            if mod.run(_ap.Namespace(**base)) != 1:
+                failures.append("uncommitted working-tree drift did not abort freeze")
+            rub.write_bytes(saved)
+            # tamper 3: identity exposure flag true -> abort
+            (td / rel_dir / "identity-a.json").write_text(
+                json.dumps(identity(exposure=True), ensure_ascii=False) + "\n",
+                encoding="utf-8", newline="\n")
+            if mod.run(_ap.Namespace(**base)) != 1:
+                failures.append("exposed identity did not abort freeze")
+            (td / rel_dir / "identity-a.json").write_text(
+                json.dumps(identity(), ensure_ascii=False) + "\n",
+                encoding="utf-8", newline="\n")
+            # tamper 4: identity file names mismatch protocol -> abort
+            (td / rel_dir / "identity-a.json").write_text(
+                json.dumps(identity(files_list=["rubric.md"]), ensure_ascii=False) + "\n",
+                encoding="utf-8", newline="\n")
+            if mod.run(_ap.Namespace(**base)) != 1:
+                failures.append("identity inputFileNames mismatch did not abort")
+        finally:
+            mod.REPO_ROOT = old_root
     for f in failures:
         print("SELFTEST FAIL:", f)
     print("selftest:", "PASS" if not failures else f"{len(failures)} failure(s)")

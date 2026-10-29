@@ -15,3 +15,20 @@ annotation/labels-v3.jsonl -text whitespace=blank-at-eol,blank-at-eof,space-befo
 annotation_kappa.py text eol=lf
 recompute_must.py text eol=lf
 recompute_must_v3.py text eol=lf
+
+# D2 (2026-10-29): registered materials keep their committed LF bytes on
+# every checkout so the pre-registered hashes hold under core.autocrlf=true.
+d2_capability_items.jsonl -text
+d2-n3-prompt-draft.md -text
+annotation/d2-gold-rubric.md -text
+annotation/d2-sheet.md -text
+annotation/d2-labels-template.jsonl -text
+annotation/d2-gold-protocol.json -text
+annotation/labels-d2-ai-*.jsonl -text
+annotation/identity-d2-ai-*.json -text
+
+# D2 tools are LF everywhere; their hashes are pinned by the pre-registration.
+build_d2_capability_items.py text eol=lf
+check_isolation_d2.py text eol=lf
+d2_labels_agreement.py text eol=lf
+d2_metrics.py text eol=lf
