@@ -123,13 +123,21 @@ const walkServerFiles = (dir) => readdirSync(dir, { withFileTypes: true }).flatM
 const serverAppRoot = resolve(a, 'backend', 'app').replaceAll('\\', '/');
 const serverFiles = walkServerFiles(resolve(a, 'backend', 'app'))
   .map((file) => ({ path: `backend/app/${file.replaceAll('\\', '/').slice(serverAppRoot.length + 1)}`, file }));
+// 固定轮预算停止界（复核 20 收尾批次的对照参数）：首轮 + 4 个自动轮 = 5。
+// step 上限与协议调用预算只作保险；保险触发在场景证据里单独标记。
+// 对照各组冻结同一组参数与 judge hash；预算耗尽是受界停止，不是整链验收通过。
+const boundary = {
+  roundBudget: { limit: 5, basis: 'first player round + 4 auto rounds' },
+  stepLimit: 400,
+  protocolCallBudget: 240,
+};
 const report = {
   status: 'IN_PROGRESS', recordedAt: new Date().toISOString(), kind: 'b3-baseline',
   privateDir, browserSource: { head: git(root, 'rev-parse', 'HEAD'), status: git(root, 'status', '--short'),
     sha256: Object.fromEntries(sources.map((file) => [file, createHash('sha256').update(readFileSync(resolve(root, file))).digest('hex')])) },
   serverSource: { head: git(a, 'rev-parse', 'HEAD'), status: git(a, 'status', '--short'),
     sha256: Object.fromEntries(serverFiles.map(({ path, file }) => [path, createHash('sha256').update(readFileSync(file)).digest('hex')])) },
-  scope, judgeVersion: 5, judgeSource, modelLoad: null, modelConfig: {
+  scope, boundary, judgeVersion: 5, judgeSource, modelLoad: null, modelConfig: {
     settlement: { model: '/models/Qwen3-0.6B-Q4_K_M.gguf', contextSize: 2048, temperature: 0, seed: 42,
       maxTokens: 'per task (64-384)', timeoutMs: 110_000, constrainedDecoding: 'json_schema strict' },
     narration: { model: null, contextSize: 2048, maxTokens: 96, temperature: [0, 0.7], timeoutMs: 110_000,
@@ -234,7 +242,7 @@ try {
   save();
 
   // ---- shared page-side harness: raw ops + B3 model port ----
-  await page.evaluate(async ({ api: apiBase }) => {
+  await page.evaluate(async ({ api: apiBase, boundary }) => {
     const [{ HttpWorldTransport }, { RuleWorldSession, narrateFromReads }, { ControllerDriver, initialMemory },
       { defaultInitialTemplate, WORLD_POLICY, DEFAULT_POLISH_MODEL }, { narrationPolisher }] = await Promise.all([
       import('/src/lib/world-engine/http-transport.ts'), import('/src/lib/world-engine/runtime/rule-session.ts'),
@@ -245,6 +253,7 @@ try {
       apiBase, worldId: null, lease: null, revision: null, head: null, rawSeq: 0,
       opLog: [], wireCaptures: [], events: [], calls: [], reads: new Map(),
       completionEvidence: [], narrationAttempts: [], narrationLog: [], programPlans: [], programNextRoundIds: [],
+      boundary, roundBudget: null,
       sessionOptions(holderId) {
         return { transport: H.transport, initial: defaultInitialTemplate(), policy: WORLD_POLICY, polish: H.polish,
           onEvent: (event) => H.events.push({ ...event, at: Date.now() }), holderId };
@@ -666,6 +675,20 @@ ${view}
           out.cancelReason = null;
           if (typeof out.plannedAction !== 'string') out.plannedAction = '';
           if (typeof out.protagonistRelevance !== 'string') out.protagonistRelevance = '';
+          // 固定轮预算停止界：第 limit 次判断（第 5 轮收尾）仍 continue 时，
+          // 保存原始判断、不回填第 6 轮身份、不提交 conclude——在开启第 6 轮
+          // 前以 round_budget_exhausted 停止；场景侧的 cancel 只是清理，
+          // 不计模型 handback。模型提前 handback 走下方正常分支。
+          const budget = H.roundBudget;
+          if (budget) budget.count++;
+          if (budget && out.kind === 'continue' && budget.count >= budget.limit) {
+            budget.exhausted = { at: Date.now(), roundId: input.round?.roundId ?? null,
+              roundConcluded: budget.count, judgment: structuredClone(out) };
+            record.roundBudgetExhausted = { roundId: budget.exhausted.roundId, judgment: structuredClone(out) };
+            const stop = new Error('round_budget_exhausted');
+            stop.roundBudgetExhausted = { roundId: budget.exhausted.roundId, roundConcluded: budget.count };
+            throw stop;
+          }
           if (out.kind === 'continue') {
             const roster = new Set(Object.keys(state?.characters ?? {}));
             out.candidateCharacterIds = (out.candidateCharacterIds ?? []).filter((id) => {
@@ -759,7 +782,7 @@ ${view}
       return response;
     } };
     return { narrationModel: H.narrationModel };
-  }, { api: apiOrigin });
+  }, { api: apiOrigin, boundary });
   report.lifecycle.harnessReady = true;
   report.modelConfig.narration.model = (await page.evaluate(() => window.__h.narrationModel));
   save();
@@ -1028,9 +1051,11 @@ ${view}
           timeAdvance: T_AUTO, actorIds: [...roster] }]),
       ];
       H.programNextRoundIds = Array.from({ length: 4 }, (_, index) => ids[`round_auto${index + 1}`]);
+      // 固定轮预算停止界：首轮 + 4 自动轮 = 5（与 identity 预分配一致）。
+      H.roundBudget = { limit: H.boundary.roundBudget.limit, count: 0, exhausted: null };
       if (!H.lease?.leaseToken) throw new Error('action scene requires the bootstrap lease');
       const memory = initialMemory(`${namespace}_driver`, 'b3_action_holder');
-      memory.budget.max = 40; // 场景预算：只防无界继续推进，不替模型做语义判断
+      memory.budget.max = H.boundary.protocolCallBudget; // 保险：只防无界继续推进，不替模型做语义判断
       const driver = new ControllerDriver({ transport: H.transport, model: H.b3Port }, memory);
       const setupStarted = performance.now();
       const recovered = await driver.recover(H.worldId, { leaseToken: H.lease.leaseToken, fenceEpoch: H.lease.fenceEpoch });
@@ -1055,9 +1080,20 @@ ${view}
       const started = performance.now();
       let status;
       let runError = null;
-      try { status = await driver.run(80); } catch (error) { runError = String(error?.stack ?? error); status = { kind: 'error', detail: 'model port threw' }; }
+      try { status = await driver.run(H.boundary.stepLimit); } catch (error) {
+        if (error?.roundBudgetExhausted) status = { kind: 'stop', reason: 'round_budget_exhausted' };
+        else { runError = String(error?.stack ?? error); status = { kind: 'error', detail: 'model port threw' }; }
+      }
       const walkMs = Math.round(performance.now() - started);
       const completed = !runError && (status === undefined || (status.kind === 'stop' && status.reason === 'world_complete'));
+      // 结束方式单独成字段：模型 handback 才是 handback；轮预算耗尽与两类
+      // 保险（step 上限 / 协议调用预算）各自独立标记，cancel 只进 cleanup。
+      const sceneEnd = runError ? 'port_error'
+        : status?.kind === 'stop' && status.reason === 'world_complete' ? 'model_handback'
+        : status?.kind === 'stop' && status.reason === 'round_budget_exhausted' ? 'round_budget_exhausted'
+        : status?.kind === 'error' && status.detail === 'driver step limit exceeded' ? 'insurance_step_limit'
+        : status?.kind === 'await' && status.reason === 'local_budget_pause' ? 'insurance_call_budget'
+        : `other:${JSON.stringify(status)}`;
       const modelTasks = H.b3.calls.slice(callsMark);
       const narration = H.narrationLog.slice(narrationMark);
       const events = H.events.slice(eventMark);
@@ -1082,8 +1118,9 @@ ${view}
           } else cleanup = { alreadyIdle: true };
         } catch (error) { cleanupError = String(error?.message ?? error); }
       }
-      return { status: completed ? 'COMPLETED' : status, runError, cleanup, cleanupError, setupMs, walkMs,
+      return { status: completed ? 'COMPLETED' : status, runError, sceneEnd, cleanup, cleanupError, setupMs, walkMs,
         recovered, budget: driver.getMemory().budget, playerInput: '走到走廊',
+        roundBudget: H.roundBudget, boundary: H.boundary,
         roundIdentityError: driver.getMemory().lastRoundIdentityError,
         pointIds, scenePoints, finalState: { pointId: finalRead.pointId, version: finalRead.version, time: finalRead.state.time,
           characters: Object.fromEntries(Object.entries(finalRead.state.characters).map(([id, actor]) => [id, {
@@ -1093,7 +1130,8 @@ ${view}
         modelTasks: modelTasks.map((call) => ({ task: call.task, key: call.key, at: call.at, source: call.source ?? 'model',
           prompt: call.prompt, promptChars: call.promptChars, raw: call.raw, output: call.output, parseError: call.parseError ?? null,
           validationError: call.validationError ?? null, error: call.error ?? null, errorName: call.errorName ?? null,
-          backfills: call.backfills ?? [], completion: call.completion ?? null, context: call.context ?? null, ms: call.ms })),
+          backfills: call.backfills ?? [], completion: call.completion ?? null, context: call.context ?? null, ms: call.ms,
+          roundBudgetExhausted: call.roundBudgetExhausted ?? null })),
         narration, events, narrationFallbacks, polishFallbacks,
         wire: H.wireCaptures.slice(wireMark), ops: H.opLog.slice(opMark) };
     });
@@ -1181,8 +1219,11 @@ ${view}
       H.programPlans = Array.from({ length: 4 }, (_, index) => [{ pointId: ids[`point_auto${index + 1}`], kind: 'normal',
         timeAdvance: T_AUTO, actorIds: [...roster] }]);
       H.programNextRoundIds = Array.from({ length: 4 }, (_, index) => ids[`round_auto${index + 1}`]);
+      // 固定轮预算停止界：首轮 + 4 自动轮 = 5（首轮 point 由 setup 提交，
+      // 驱动器从首轮结算接管；计数仍按 continuation 判断次数）。
+      H.roundBudget = { limit: H.boundary.roundBudget.limit, count: 0, exhausted: null };
       const memory = initialMemory(`${namespace}_driver`, 'b3_chain_holder');
-      memory.budget.max = 40;
+      memory.budget.max = H.boundary.protocolCallBudget; // 保险：与 5 轮规模协调，防止提前截断
       const driver = new ControllerDriver({ transport: H.transport, model: H.b3Port }, memory);
       const recovered = await driver.recover(H.worldId, { leaseToken: H.lease.leaseToken, fenceEpoch: H.lease.fenceEpoch });
       if (recovered) throw new Error(`chain recover: ${JSON.stringify(recovered)}`);
@@ -1198,9 +1239,20 @@ ${view}
       const started = performance.now();
       let status;
       let runError = null;
-      try { status = await driver.run(80); } catch (error) { runError = String(error?.stack ?? error); status = { kind: 'error', detail: 'model port threw' }; }
+      try { status = await driver.run(H.boundary.stepLimit); } catch (error) {
+        if (error?.roundBudgetExhausted) status = { kind: 'stop', reason: 'round_budget_exhausted' };
+        else { runError = String(error?.stack ?? error); status = { kind: 'error', detail: 'model port threw' }; }
+      }
       const walkMs = Math.round(performance.now() - started);
       const completed = !runError && (status === undefined || (status.kind === 'stop' && status.reason === 'world_complete'));
+      // 结束方式单独成字段（与 action 场景同口径）：模型 handback、轮预算
+      // 耗尽与两类保险各自独立标记。
+      const sceneEnd = runError ? 'port_error'
+        : status?.kind === 'stop' && status.reason === 'world_complete' ? 'model_handback'
+        : status?.kind === 'stop' && status.reason === 'round_budget_exhausted' ? 'round_budget_exhausted'
+        : status?.kind === 'error' && status.detail === 'driver step limit exceeded' ? 'insurance_step_limit'
+        : status?.kind === 'await' && status.reason === 'local_budget_pause' ? 'insurance_call_budget'
+        : `other:${JSON.stringify(status)}`;
       const modelTasks = H.b3.calls.slice(callsBefore);
       const narration = H.narrationLog.slice(narrationMark);
       const events = H.events.slice(eventMark);
@@ -1225,8 +1277,9 @@ ${view}
           } else cleanup = { alreadyIdle: true };
         } catch (error) { cleanupError = String(error?.message ?? error); }
       }
-      return { status: completed ? 'COMPLETED' : status, runError, cleanup, cleanupError, setupMs, walkMs, recovered, budget: driver.getMemory().budget,
+      return { status: completed ? 'COMPLETED' : status, runError, sceneEnd, cleanup, cleanupError, setupMs, walkMs, recovered, budget: driver.getMemory().budget,
         playerInput: '推开门厅深处的重门，示意同伴到门边一起撑住。',
+        roundBudget: H.roundBudget, boundary: H.boundary,
         roundIdentityError: driver.getMemory().lastRoundIdentityError,
         worldIdBefore, worldAttempts, abandonedRounds, pointIds, scenePoints,
         finalState: { pointId: finalRead.pointId, version: finalRead.version, time: finalRead.state.time,
@@ -1237,7 +1290,8 @@ ${view}
         modelTasks: modelTasks.map((call) => ({ task: call.task, key: call.key, at: call.at, source: call.source ?? 'model',
           prompt: call.prompt, promptChars: call.promptChars, raw: call.raw, output: call.output, parseError: call.parseError ?? null,
           validationError: call.validationError ?? null, error: call.error ?? null, errorName: call.errorName ?? null,
-          backfills: call.backfills ?? [], completion: call.completion ?? null, context: call.context ?? null, ms: call.ms })),
+          backfills: call.backfills ?? [], completion: call.completion ?? null, context: call.context ?? null, ms: call.ms,
+          roundBudgetExhausted: call.roundBudgetExhausted ?? null })),
         narration, events, narrationFallbacks, polishFallbacks,
         wire: H.wireCaptures.slice(wireMark), ops: H.opLog.slice(opMark) };
     });
@@ -1256,10 +1310,15 @@ ${view}
   if (!report.tasks) report.tasks = { skipped: true, reason: '--skip-tasks iteration run' };
   const expectedScenes = scope.scenes === 'both' ? ['action', 'chain'] : scope.scenes === 'none' ? [] : [scope.scenes];
   const sceneFailures = expectedScenes.filter((name) => report.scenes[name]?.status !== 'COMPLETED');
+  const boundaryStops = expectedScenes.filter((name) => report.scenes[name]?.sceneEnd === 'round_budget_exhausted');
+  const otherSceneFailures = sceneFailures.filter((name) => !boundaryStops.includes(name));
   const semanticFailures = expectedScenes.filter((name) => report.scenes[name] && report.scenes[name].judged?.accepted !== true);
   const selfTestFailed = report.tasks?.judgeSelfTest?.failed ?? 0;
+  // 轮预算耗尽是受界停止（不算失败也不算验收通过）；保险触发仍算失败，
+  // 由场景 sceneEnd 字段单独标记是哪一类保险。
   report.status = selfTestFailed > 0 ? 'JUDGE_SELF_TEST_FAILED'
-    : sceneFailures.length ? 'COMPLETED_WITH_FAILURES'
+    : otherSceneFailures.length ? 'COMPLETED_WITH_FAILURES'
+    : boundaryStops.length ? 'COMPLETED_ROUND_BUDGET_EXHAUSTED'
     : semanticFailures.length ? 'COMPLETED_WITH_SEMANTIC_FAILURES' : 'COMPLETED';
   report.summary = {
     scope, judgeVersion: report.judgeVersion ?? null,
@@ -1267,6 +1326,7 @@ ${view}
     judgeSelfTest: report.tasks?.judgeSelfTest ? { cases: report.tasks.judgeSelfTest.cases.length, failed: report.tasks.judgeSelfTest.failed } : null,
     scenes: Object.fromEntries(expectedScenes.map((name) => [name, report.scenes[name] ? {
       status: report.scenes[name].status, accepted: report.scenes[name].judged?.accepted ?? null,
+      sceneEnd: report.scenes[name].sceneEnd ?? null,
       modelCalls: report.scenes[name].judged?.modelCalls ?? null,
       programCalls: report.scenes[name].judged?.programCalls ?? null,
       parsedCalls: report.scenes[name].judged?.parsedCalls ?? null,
