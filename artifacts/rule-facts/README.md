@@ -109,7 +109,7 @@ selectFactNarration：拒绝重复润色，选中的模板与已保存文本逐�
 
 ```powershell
 # B/frontend；A checkout 由 --server-checkout 必填指定（旧默认路径已退役），端口18784必须空闲
-node scripts/review-world-rule-facts.mjs --out .local/rule-facts-replay.json
+node scripts/review-world-rule-facts.mjs --server-checkout <服务检出> --out .local/rule-facts-replay.json
 node scripts/run-b3-focused.mjs --http-report .local/rule-facts-replay.json --out .local/focused-replay.json
 # 中断后保留所有已付调用（失败也不自动重试），只补剩余项
 node scripts/run-b3-focused.mjs --http-report .local/rule-facts-replay.json --resume .local/focused-replay.json --out .local/focused-resumed.json

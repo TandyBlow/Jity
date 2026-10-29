@@ -698,13 +698,15 @@ cd frontend
 # 检出）。HEAD 与逐文件 sha256 由报告 serverSource 钉住（v6 用的 agent
 # 检出 HEAD=dd345b8，backend/app 与 origin/world-server 一致）。停止界
 # round 5 / step 400 / 任务预算 240 冻结在脚本 boundary，随报告落盘。
+# 守卫引入（e8302bf）后 run-world-b3.mjs sha256=f5c22672…，v6 归档钉的是
+# 61569d56…——v6 不能按当前树字节复现，v7 起以新哈希入档。
 # 完整基线（任务探针 + 两场景；v6 实测 探针 211s + 场景 527s/570s，约 19.5 分钟）
 node scripts/run-world-b3.mjs --server-checkout <服务检出> `
   --out artifacts/world-chain/b3-baseline-v7.json `
   --db-snapshot artifacts/world-chain/b3-run-db-v7
-# 只跑探针 / 只跑指定场景（迭代用，不作 canonical）
-node scripts/run-world-b3.mjs --only none --out .local/probes.json
-node scripts/run-world-b3.mjs --only chain --out .local/chain.json
+# 只跑探针 / 只跑指定场景（迭代用，不作 canonical；同样必填检出）
+node scripts/run-world-b3.mjs --server-checkout <服务检出> --only none --out .local/probes.json
+node scripts/run-world-b3.mjs --server-checkout <服务检出> --only chain --out .local/chain.json
 # 用当前判分重放旧归档（不启动服务、不调模型）
 node scripts/run-world-b3.mjs --rescore artifacts/world-chain/b3-baseline-v4.json `
   --out artifacts/world-chain/b3-rescore-v4-j5.json
@@ -715,15 +717,16 @@ node scripts/round-identity-regress.mjs
 ## 七、历史批次复跑（混合首轮与二十次输入）
 
 ```powershell
-# 仓库根目录；服务检出默认 .local/world-server-worktree（sha256 钉档，
-# 不依赖 head 记忆；钉住集 tracked 脏时脚本拒绝起跑）
+# 仓库根目录；服务检出由 --server-checkout 必填指定（旧默认
+# .local/world-server-worktree 已退役；sha256 钉档、不依赖 head 记忆；
+# 钉住集 tracked 脏时脚本拒绝起跑）
 cd frontend
-node scripts/run-world-chain-full.mjs --out artifacts/world-chain/first-round-v3.json
-#   [--phase action|chain|both] [--server-checkout 路径] [--python python]
+node scripts/run-world-chain-full.mjs --server-checkout <服务检出> --out artifacts/world-chain/first-round-v3.json
+#   [--phase action|chain|both] --server-checkout 路径（必填） [--python python]
 #   [--allow-dirty-server] [--allow-dirty-browser]  # 按侧豁免脏钉住集（artifact 仍记录 status）
 
-node scripts/run-world-twenty.mjs --out artifacts/world-chain/twenty-round-v2.json `
+node scripts/run-world-twenty.mjs --server-checkout <服务检出> --out artifacts/world-chain/twenty-round-v2.json `
   --db-snapshot artifacts/world-chain/twenty-run-db-v2
-#   [--server-checkout 路径] [--python python]  # 单模式；DB+日志自动留存到
+#   --server-checkout 路径（必填） [--python python]  # 单模式；DB+日志自动留存到
 #   # --db-snapshot 目录（每次运行覆盖，复跑前自行归档）
 ```

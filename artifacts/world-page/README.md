@@ -4,9 +4,9 @@
 
 ```
 cd frontend
-node scripts/review-world-page.mjs            # 完整：三个 Node 探针 + 真实浏览器闭环
-node scripts/review-world-page.mjs --skip-browser   # 只跑探针
-node scripts/review-world-page.mjs --out <path>     # 报告落点
+node scripts/review-world-page.mjs --server-checkout <服务检出>            # 完整：三个 Node 探针 + 真实浏览器闭环
+node scripts/review-world-page.mjs --server-checkout <服务检出> --skip-browser   # 只跑探针
+node scripts/review-world-page.mjs --server-checkout <服务检出> --out <path>     # 报告落点
 ```
 
 脚本自举：uvicorn（`app.world_app:create_persistent_world_app`，服务端 checkout 由
