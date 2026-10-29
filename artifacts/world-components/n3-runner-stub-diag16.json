@@ -1,0 +1,390 @@
+{
+ "purpose": "D2 N3 arm run (frozen prompt, frozen metrics)",
+ "scope": "diagnostic16",
+ "backend": "stub",
+ "stub": true,
+ "freezeRecord": "d2-n3-prompt-freeze.json",
+ "freezeRecordSha256": "77b37b43989b52325aa2605878c6d967cd5260c5aa020196040f8230434fbfe1",
+ "promptSha256": "a7697894d54f0afbf07ccd79b2e1a8db40a0e07f4a0156b221812ac088199bea",
+ "runnerSha256": "f8c1b22d42679e7ae9db07c296589b614fae81d07858de3a15040175eb8a6d30",
+ "gatesSkippedForStub": [
+  "decodingConfig.approval",
+  "runner.pin"
+ ],
+ "decoding": {
+  "sampling": "greedy（do_sample=false，temperature=0，top_p=1.0，top_k=0）",
+  "seed": 20261029,
+  "maxNewTokens": 512,
+  "contextWindow": 4096,
+  "quantization": "无量化：离线 transformers 原始权重；门设备为 cuda bfloat16（见 gateDevice），cpu float32 属非门臂、单列报告，不与门合并",
+  "gateDevice": "cuda bfloat16 is THE gate; a cpu run would be a separately reported arm (float32), never merged with the cuda gate"
+ },
+ "goldExpectedSha256": null,
+ "items": "items.jsonl",
+ "gold": null,
+ "modelId": null,
+ "device": "stub",
+ "dtype": "stub",
+ "calls": [
+  {
+   "itemId": "n2-01",
+   "attempt": 1,
+   "prompt": "你是叙事组织器。输入是一个视角和一组已选定的事实条目（JSON）。你的唯一任务是把它们组织成句组计划，不写正文。\n\n规则（必须全部遵守）：\nR1 同一 entityId 的全部事实进入同一个句组。\nR2 不同实体的 task_achieved 事实若 goal 逐字相同，这些实体所在的句组合并为一个句组。\nR3 kind 为 time 的事实并入其输入序中紧邻前驱事实所在的句组；若 time 位于输入首位，则并入输入序中首个含 entityId 的事实所在的句组。\nR4 不满足 R2 的不同实体事实各自成句组，不合并。\nR5 句组之间按各组内最小输入序号升序排列；句组内部 factIds 按输入序号升序。\nR6 每个句组输出 coreference：句组内每条含 entityId 的事实各产一条 {\"mention\": 该实体登记名, \"refersTo\": 该 entityId}，顺序与该句组 factIds 一致。\n\n只输出一个 JSON 对象，不要输出任何其他文字：\n{\"itemId\": \"n2-01\", \"sentences\": [{\"index\": 0, \"factIds\": [\"f1\"], \"coreference\": [{\"mention\": \"名字\", \"refersTo\": \"entityId\"}]}]}\n\n视角：{\"type\": \"protagonist\", \"entityId\": \"char_400\", \"name\": \"裴行舟\", \"at\": \"半窗书舍\", \"rule\": \"你只知道自己在半窗书舍能看到的，以及自己的行动与状态\"}\n事实条目（输入序）：[{\"factId\": \"f1\", \"kind\": \"moved\", \"entityId\": \"char_400\", \"name\": \"裴行舟\", \"from\": \"石阶码头\", \"to\": \"半窗书舍\", \"at\": \"半窗书舍\"}, {\"factId\": \"f2\", \"kind\": \"task_achieved\", \"entityId\": \"char_400\", \"name\": \"裴行舟\", \"goal\": \"把船灯挂上桅杆\", \"at\": \"半窗书舍\"}, {\"factId\": \"f3\", \"kind\": \"appearance_changed\", \"entityId\": \"loc_402\", \"name\": \"半窗书舍\", \"text\": \"檐角的风铃褪了色\", \"at\": \"半窗书舍\"}]",
+   "rawOutput": "{\"itemId\": \"n2-01\", \"sentences\": [{\"index\": 0, \"factIds\": [\"f1\"], \"coreference\": [{\"mention\": \"裴行舟\", \"refersTo\": \"char_400\"}]}, {\"index\": 1, \"factIds\": [\"f2\"], \"coreference\": [{\"mention\": \"裴行舟\", \"refersTo\": \"char_400\"}]}, {\"index\": 2, \"factIds\": [\"f3\"], \"coreference\": [{\"mention\": \"半窗书舍\", \"refersTo\": \"loc_402\"}]}]}",
+   "finishReason": "stop",
+   "timedOut": false,
+   "promptTokens": 351,
+   "outputTokens": 105,
+   "wall": 0.0
+  },
+  {
+   "itemId": "n2-02",
+   "attempt": 1,
+   "prompt": "你是叙事组织器。输入是一个视角和一组已选定的事实条目（JSON）。你的唯一任务是把它们组织成句组计划，不写正文。\n\n规则（必须全部遵守）：\nR1 同一 entityId 的全部事实进入同一个句组。\nR2 不同实体的 task_achieved 事实若 goal 逐字相同，这些实体所在的句组合并为一个句组。\nR3 kind 为 time 的事实并入其输入序中紧邻前驱事实所在的句组；若 time 位于输入首位，则并入输入序中首个含 entityId 的事实所在的句组。\nR4 不满足 R2 的不同实体事实各自成句组，不合并。\nR5 句组之间按各组内最小输入序号升序排列；句组内部 factIds 按输入序号升序。\nR6 每个句组输出 coreference：句组内每条含 entityId 的事实各产一条 {\"mention\": 该实体登记名, \"refersTo\": 该 entityId}，顺序与该句组 factIds 一致。\n\n只输出一个 JSON 对象，不要输出任何其他文字：\n{\"itemId\": \"n2-02\", \"sentences\": [{\"index\": 0, \"factIds\": [\"f1\"], \"coreference\": [{\"mention\": \"名字\", \"refersTo\": \"entityId\"}]}]}\n\n视角：{\"type\": \"protagonist\", \"entityId\": \"char_401\", \"name\": \"沈拾\", \"at\": \"竹影茶棚\", \"rule\": \"你只知道自己在竹影茶棚能看到的，以及自己的行动与状态\"}\n事实条目（输入序）：[{\"factId\": \"f1\", \"kind\": \"moved\", \"entityId\": \"char_401\", \"name\": \"沈拾\", \"from\": \"旧钟铺\", \"to\": \"竹影茶棚\", \"at\": \"竹影茶棚\"}, {\"factId\": \"f2\", \"kind\": \"task_achieved\", \"entityId\": \"char_401\", \"name\": \"沈拾\", \"goal\": \"补好瓦窑的顶棚\", \"at\": \"竹影茶棚\"}, {\"factId\": \"f3\", \"kind\": \"appearance_changed\", \"entityId\": \"loc_403\", \"name\": \"竹影茶棚\", \"text\": \"门前的石阶塌了一角\", \"at\": \"竹影茶棚\"}]",
+   "rawOutput": "{\"itemId\": \"n2-02\", \"sentences\": [{\"index\": 0, \"factIds\": [\"f1\"], \"coreference\": [{\"mention\": \"沈拾\", \"refersTo\": \"char_401\"}]}, {\"index\": 1, \"factIds\": [\"f2\"], \"coreference\": [{\"mention\": \"沈拾\", \"refersTo\": \"char_401\"}]}, {\"index\": 2, \"factIds\": [\"f3\"], \"coreference\": [{\"mention\": \"竹影茶棚\", \"refersTo\": \"loc_403\"}]}]}",
+   "finishReason": "stop",
+   "timedOut": false,
+   "promptTokens": 350,
+   "outputTokens": 104,
+   "wall": 0.0
+  },
+  {
+   "itemId": "n2-03",
+   "attempt": 1,
+   "prompt": "你是叙事组织器。输入是一个视角和一组已选定的事实条目（JSON）。你的唯一任务是把它们组织成句组计划，不写正文。\n\n规则（必须全部遵守）：\nR1 同一 entityId 的全部事实进入同一个句组。\nR2 不同实体的 task_achieved 事实若 goal 逐字相同，这些实体所在的句组合并为一个句组。\nR3 kind 为 time 的事实并入其输入序中紧邻前驱事实所在的句组；若 time 位于输入首位，则并入输入序中首个含 entityId 的事实所在的句组。\nR4 不满足 R2 的不同实体事实各自成句组，不合并。\nR5 句组之间按各组内最小输入序号升序排列；句组内部 factIds 按输入序号升序。\nR6 每个句组输出 coreference：句组内每条含 entityId 的事实各产一条 {\"mention\": 该实体登记名, \"refersTo\": 该 entityId}，顺序与该句组 factIds 一致。\n\n只输出一个 JSON 对象，不要输出任何其他文字：\n{\"itemId\": \"n2-03\", \"sentences\": [{\"index\": 0, \"factIds\": [\"f1\"], \"coreference\": [{\"mention\": \"名字\", \"refersTo\": \"entityId\"}]}]}\n\n视角：{\"type\": \"protagonist\", \"entityId\": \"char_402\", \"name\": \"岑半夏\", \"at\": \"西栅桥\", \"rule\": \"你只知道自己在西栅桥能看到的，以及自己的行动与状态\"}\n事实条目（输入序）：[{\"factId\": \"f1\", \"kind\": \"moved\", \"entityId\": \"char_402\", \"name\": \"岑半夏\", \"from\": \"半窗书舍\", \"to\": \"西栅桥\", \"at\": \"西栅桥\"}, {\"factId\": \"f2\", \"kind\": \"task_achieved\", \"entityId\": \"char_402\", \"name\": \"岑半夏\", \"goal\": \"把账簿送回半窗书舍\", \"at\": \"西栅桥\"}, {\"factId\": \"f3\", \"kind\": \"appearance_changed\", \"entityId\": \"loc_404\", \"name\": \"西栅桥\", \"text\": \"窗纸被风戳了个洞\", \"at\": \"西栅桥\"}]",
+   "rawOutput": "{\"itemId\": \"n2-03\", \"sentences\": [{\"index\": 0, \"factIds\": [\"f1\"], \"coreference\": [{\"mention\": \"岑半夏\", \"refersTo\": \"char_402\"}]}, {\"index\": 1, \"factIds\": [\"f2\"], \"coreference\": [{\"mention\": \"岑半夏\", \"refersTo\": \"char_402\"}]}, {\"index\": 2, \"factIds\": [\"f3\"], \"coreference\": [{\"mention\": \"西栅桥\", \"refersTo\": \"loc_404\"}]}]}",
+   "finishReason": "stop",
+   "timedOut": false,
+   "promptTokens": 349,
+   "outputTokens": 105,
+   "wall": 0.0
+  },
+  {
+   "itemId": "n2-04",
+   "attempt": 1,
+   "prompt": "你是叙事组织器。输入是一个视角和一组已选定的事实条目（JSON）。你的唯一任务是把它们组织成句组计划，不写正文。\n\n规则（必须全部遵守）：\nR1 同一 entityId 的全部事实进入同一个句组。\nR2 不同实体的 task_achieved 事实若 goal 逐字相同，这些实体所在的句组合并为一个句组。\nR3 kind 为 time 的事实并入其输入序中紧邻前驱事实所在的句组；若 time 位于输入首位，则并入输入序中首个含 entityId 的事实所在的句组。\nR4 不满足 R2 的不同实体事实各自成句组，不合并。\nR5 句组之间按各组内最小输入序号升序排列；句组内部 factIds 按输入序号升序。\nR6 每个句组输出 coreference：句组内每条含 entityId 的事实各产一条 {\"mention\": 该实体登记名, \"refersTo\": 该 entityId}，顺序与该句组 factIds 一致。\n\n只输出一个 JSON 对象，不要输出任何其他文字：\n{\"itemId\": \"n2-04\", \"sentences\": [{\"index\": 0, \"factIds\": [\"f1\"], \"coreference\": [{\"mention\": \"名字\", \"refersTo\": \"entityId\"}]}]}\n\n视角：{\"type\": \"protagonist\", \"entityId\": \"char_403\", \"name\": \"顾知白\", \"at\": \"瓦窑\", \"rule\": \"你只知道自己在瓦窑能看到的，以及自己的行动与状态\"}\n事实条目（输入序）：[{\"factId\": \"f1\", \"kind\": \"moved\", \"entityId\": \"char_403\", \"name\": \"顾知白\", \"from\": \"竹影茶棚\", \"to\": \"瓦窑\", \"at\": \"瓦窑\"}, {\"factId\": \"f2\", \"kind\": \"task_achieved\", \"entityId\": \"char_403\", \"name\": \"顾知白\", \"goal\": \"收好茶棚的坐垫\", \"at\": \"瓦窑\"}, {\"factId\": \"f3\", \"kind\": \"appearance_changed\", \"entityId\": \"loc_405\", \"name\": \"瓦窑\", \"text\": \"柜台上的铜锁生了锈\", \"at\": \"瓦窑\"}]",
+   "rawOutput": "{\"itemId\": \"n2-04\", \"sentences\": [{\"index\": 0, \"factIds\": [\"f1\"], \"coreference\": [{\"mention\": \"顾知白\", \"refersTo\": \"char_403\"}]}, {\"index\": 1, \"factIds\": [\"f2\"], \"coreference\": [{\"mention\": \"顾知白\", \"refersTo\": \"char_403\"}]}, {\"index\": 2, \"factIds\": [\"f3\"], \"coreference\": [{\"mention\": \"瓦窑\", \"refersTo\": \"loc_405\"}]}]}",
+   "finishReason": "stop",
+   "timedOut": false,
+   "promptTokens": 347,
+   "outputTokens": 104,
+   "wall": 0.0
+  },
+  {
+   "itemId": "n2-05",
+   "attempt": 1,
+   "prompt": "你是叙事组织器。输入是一个视角和一组已选定的事实条目（JSON）。你的唯一任务是把它们组织成句组计划，不写正文。\n\n规则（必须全部遵守）：\nR1 同一 entityId 的全部事实进入同一个句组。\nR2 不同实体的 task_achieved 事实若 goal 逐字相同，这些实体所在的句组合并为一个句组。\nR3 kind 为 time 的事实并入其输入序中紧邻前驱事实所在的句组；若 time 位于输入首位，则并入输入序中首个含 entityId 的事实所在的句组。\nR4 不满足 R2 的不同实体事实各自成句组，不合并。\nR5 句组之间按各组内最小输入序号升序排列；句组内部 factIds 按输入序号升序。\nR6 每个句组输出 coreference：句组内每条含 entityId 的事实各产一条 {\"mention\": 该实体登记名, \"refersTo\": 该 entityId}，顺序与该句组 factIds 一致。\n\n只输出一个 JSON 对象，不要输出任何其他文字：\n{\"itemId\": \"n2-05\", \"sentences\": [{\"index\": 0, \"factIds\": [\"f1\"], \"coreference\": [{\"mention\": \"名字\", \"refersTo\": \"entityId\"}]}]}\n\n视角：{\"type\": \"location-limited\", \"entityId\": \"char_402\", \"name\": \"岑半夏\", \"at\": \"石阶码头\", \"rule\": \"你只知道石阶码头发生的事，以及自己的行动与状态\"}\n事实条目（输入序）：[{\"factId\": \"f1\", \"kind\": \"task_achieved\", \"entityId\": \"char_402\", \"name\": \"岑半夏\", \"goal\": \"把账簿送回半窗书舍\", \"at\": \"石阶码头\"}, {\"factId\": \"f2\", \"kind\": \"appearance_changed\", \"entityId\": \"loc_400\", \"name\": \"石阶码头\", \"text\": \"门前的石阶塌了一角\", \"at\": \"石阶码头\"}, {\"factId\": \"f3\", \"kind\": \"sanity_changed\", \"entityId\": \"char_402\", \"name\": \"岑半夏\", \"from\": 11, \"to\": 13, \"at\": \"石阶码头\"}]",
+   "rawOutput": "{\"itemId\": \"n2-05\", \"sentences\": [{\"index\": 0, \"factIds\": [\"f1\"], \"coreference\": [{\"mention\": \"岑半夏\", \"refersTo\": \"char_402\"}]}, {\"index\": 1, \"factIds\": [\"f2\"], \"coreference\": [{\"mention\": \"石阶码头\", \"refersTo\": \"loc_400\"}]}, {\"index\": 2, \"factIds\": [\"f3\"], \"coreference\": [{\"mention\": \"岑半夏\", \"refersTo\": \"char_402\"}]}]}",
+   "finishReason": "stop",
+   "timedOut": false,
+   "promptTokens": 353,
+   "outputTokens": 105,
+   "wall": 0.0
+  },
+  {
+   "itemId": "n2-06",
+   "attempt": 1,
+   "prompt": "你是叙事组织器。输入是一个视角和一组已选定的事实条目（JSON）。你的唯一任务是把它们组织成句组计划，不写正文。\n\n规则（必须全部遵守）：\nR1 同一 entityId 的全部事实进入同一个句组。\nR2 不同实体的 task_achieved 事实若 goal 逐字相同，这些实体所在的句组合并为一个句组。\nR3 kind 为 time 的事实并入其输入序中紧邻前驱事实所在的句组；若 time 位于输入首位，则并入输入序中首个含 entityId 的事实所在的句组。\nR4 不满足 R2 的不同实体事实各自成句组，不合并。\nR5 句组之间按各组内最小输入序号升序排列；句组内部 factIds 按输入序号升序。\nR6 每个句组输出 coreference：句组内每条含 entityId 的事实各产一条 {\"mention\": 该实体登记名, \"refersTo\": 该 entityId}，顺序与该句组 factIds 一致。\n\n只输出一个 JSON 对象，不要输出任何其他文字：\n{\"itemId\": \"n2-06\", \"sentences\": [{\"index\": 0, \"factIds\": [\"f1\"], \"coreference\": [{\"mention\": \"名字\", \"refersTo\": \"entityId\"}]}]}\n\n视角：{\"type\": \"location-limited\", \"entityId\": \"char_403\", \"name\": \"顾知白\", \"at\": \"旧钟铺\", \"rule\": \"你只知道旧钟铺发生的事，以及自己的行动与状态\"}\n事实条目（输入序）：[{\"factId\": \"f1\", \"kind\": \"task_achieved\", \"entityId\": \"char_403\", \"name\": \"顾知白\", \"goal\": \"收好茶棚的坐垫\", \"at\": \"旧钟铺\"}, {\"factId\": \"f2\", \"kind\": \"appearance_changed\", \"entityId\": \"loc_401\", \"name\": \"旧钟铺\", \"text\": \"窗纸被风戳了个洞\", \"at\": \"旧钟铺\"}, {\"factId\": \"f3\", \"kind\": \"sanity_changed\", \"entityId\": \"char_403\", \"name\": \"顾知白\", \"from\": 11, \"to\": 13, \"at\": \"旧钟铺\"}]",
+   "rawOutput": "{\"itemId\": \"n2-06\", \"sentences\": [{\"index\": 0, \"factIds\": [\"f1\"], \"coreference\": [{\"mention\": \"顾知白\", \"refersTo\": \"char_403\"}]}, {\"index\": 1, \"factIds\": [\"f2\"], \"coreference\": [{\"mention\": \"旧钟铺\", \"refersTo\": \"loc_401\"}]}, {\"index\": 2, \"factIds\": [\"f3\"], \"coreference\": [{\"mention\": \"顾知白\", \"refersTo\": \"char_403\"}]}]}",
+   "finishReason": "stop",
+   "timedOut": false,
+   "promptTokens": 350,
+   "outputTokens": 105,
+   "wall": 0.0
+  },
+  {
+   "itemId": "n2-07",
+   "attempt": 1,
+   "prompt": "你是叙事组织器。输入是一个视角和一组已选定的事实条目（JSON）。你的唯一任务是把它们组织成句组计划，不写正文。\n\n规则（必须全部遵守）：\nR1 同一 entityId 的全部事实进入同一个句组。\nR2 不同实体的 task_achieved 事实若 goal 逐字相同，这些实体所在的句组合并为一个句组。\nR3 kind 为 time 的事实并入其输入序中紧邻前驱事实所在的句组；若 time 位于输入首位，则并入输入序中首个含 entityId 的事实所在的句组。\nR4 不满足 R2 的不同实体事实各自成句组，不合并。\nR5 句组之间按各组内最小输入序号升序排列；句组内部 factIds 按输入序号升序。\nR6 每个句组输出 coreference：句组内每条含 entityId 的事实各产一条 {\"mention\": 该实体登记名, \"refersTo\": 该 entityId}，顺序与该句组 factIds 一致。\n\n只输出一个 JSON 对象，不要输出任何其他文字：\n{\"itemId\": \"n2-07\", \"sentences\": [{\"index\": 0, \"factIds\": [\"f1\"], \"coreference\": [{\"mention\": \"名字\", \"refersTo\": \"entityId\"}]}]}\n\n视角：{\"type\": \"location-limited\", \"entityId\": \"char_404\", \"name\": \"陆停云\", \"at\": \"半窗书舍\", \"rule\": \"你只知道半窗书舍发生的事，以及自己的行动与状态\"}\n事实条目（输入序）：[{\"factId\": \"f1\", \"kind\": \"task_achieved\", \"entityId\": \"char_404\", \"name\": \"陆停云\", \"goal\": \"修西栅桥的踏板\", \"at\": \"半窗书舍\"}, {\"factId\": \"f2\", \"kind\": \"appearance_changed\", \"entityId\": \"loc_402\", \"name\": \"半窗书舍\", \"text\": \"柜台上的铜锁生了锈\", \"at\": \"半窗书舍\"}, {\"factId\": \"f3\", \"kind\": \"sanity_changed\", \"entityId\": \"char_404\", \"name\": \"陆停云\", \"from\": 11, \"to\": 13, \"at\": \"半窗书舍\"}]",
+   "rawOutput": "{\"itemId\": \"n2-07\", \"sentences\": [{\"index\": 0, \"factIds\": [\"f1\"], \"coreference\": [{\"mention\": \"陆停云\", \"refersTo\": \"char_404\"}]}, {\"index\": 1, \"factIds\": [\"f2\"], \"coreference\": [{\"mention\": \"半窗书舍\", \"refersTo\": \"loc_402\"}]}, {\"index\": 2, \"factIds\": [\"f3\"], \"coreference\": [{\"mention\": \"陆停云\", \"refersTo\": \"char_404\"}]}]}",
+   "finishReason": "stop",
+   "timedOut": false,
+   "promptTokens": 352,
+   "outputTokens": 105,
+   "wall": 0.0
+  },
+  {
+   "itemId": "n2-08",
+   "attempt": 1,
+   "prompt": "你是叙事组织器。输入是一个视角和一组已选定的事实条目（JSON）。你的唯一任务是把它们组织成句组计划，不写正文。\n\n规则（必须全部遵守）：\nR1 同一 entityId 的全部事实进入同一个句组。\nR2 不同实体的 task_achieved 事实若 goal 逐字相同，这些实体所在的句组合并为一个句组。\nR3 kind 为 time 的事实并入其输入序中紧邻前驱事实所在的句组；若 time 位于输入首位，则并入输入序中首个含 entityId 的事实所在的句组。\nR4 不满足 R2 的不同实体事实各自成句组，不合并。\nR5 句组之间按各组内最小输入序号升序排列；句组内部 factIds 按输入序号升序。\nR6 每个句组输出 coreference：句组内每条含 entityId 的事实各产一条 {\"mention\": 该实体登记名, \"refersTo\": 该 entityId}，顺序与该句组 factIds 一致。\n\n只输出一个 JSON 对象，不要输出任何其他文字：\n{\"itemId\": \"n2-08\", \"sentences\": [{\"index\": 0, \"factIds\": [\"f1\"], \"coreference\": [{\"mention\": \"名字\", \"refersTo\": \"entityId\"}]}]}\n\n视角：{\"type\": \"location-limited\", \"entityId\": \"char_405\", \"name\": \"白蘅\", \"at\": \"竹影茶棚\", \"rule\": \"你只知道竹影茶棚发生的事，以及自己的行动与状态\"}\n事实条目（输入序）：[{\"factId\": \"f1\", \"kind\": \"task_achieved\", \"entityId\": \"char_405\", \"name\": \"白蘅\", \"goal\": \"清点旧钟铺的存货\", \"at\": \"竹影茶棚\"}, {\"factId\": \"f2\", \"kind\": \"appearance_changed\", \"entityId\": \"loc_403\", \"name\": \"竹影茶棚\", \"text\": \"墙根的青苔爬上了半尺\", \"at\": \"竹影茶棚\"}, {\"factId\": \"f3\", \"kind\": \"sanity_changed\", \"entityId\": \"char_405\", \"name\": \"白蘅\", \"from\": 11, \"to\": 13, \"at\": \"竹影茶棚\"}]",
+   "rawOutput": "{\"itemId\": \"n2-08\", \"sentences\": [{\"index\": 0, \"factIds\": [\"f1\"], \"coreference\": [{\"mention\": \"白蘅\", \"refersTo\": \"char_405\"}]}, {\"index\": 1, \"factIds\": [\"f2\"], \"coreference\": [{\"mention\": \"竹影茶棚\", \"refersTo\": \"loc_403\"}]}, {\"index\": 2, \"factIds\": [\"f3\"], \"coreference\": [{\"mention\": \"白蘅\", \"refersTo\": \"char_405\"}]}]}",
+   "finishReason": "stop",
+   "timedOut": false,
+   "promptTokens": 352,
+   "outputTokens": 104,
+   "wall": 0.0
+  },
+  {
+   "itemId": "n2-09",
+   "attempt": 1,
+   "prompt": "你是叙事组织器。输入是一个视角和一组已选定的事实条目（JSON）。你的唯一任务是把它们组织成句组计划，不写正文。\n\n规则（必须全部遵守）：\nR1 同一 entityId 的全部事实进入同一个句组。\nR2 不同实体的 task_achieved 事实若 goal 逐字相同，这些实体所在的句组合并为一个句组。\nR3 kind 为 time 的事实并入其输入序中紧邻前驱事实所在的句组；若 time 位于输入首位，则并入输入序中首个含 entityId 的事实所在的句组。\nR4 不满足 R2 的不同实体事实各自成句组，不合并。\nR5 句组之间按各组内最小输入序号升序排列；句组内部 factIds 按输入序号升序。\nR6 每个句组输出 coreference：句组内每条含 entityId 的事实各产一条 {\"mention\": 该实体登记名, \"refersTo\": 该 entityId}，顺序与该句组 factIds 一致。\n\n只输出一个 JSON 对象，不要输出任何其他文字：\n{\"itemId\": \"n2-09\", \"sentences\": [{\"index\": 0, \"factIds\": [\"f1\"], \"coreference\": [{\"mention\": \"名字\", \"refersTo\": \"entityId\"}]}]}\n\n视角：{\"type\": \"omniscient\", \"entityId\": null, \"name\": null, \"at\": \"全局\", \"rule\": \"全知视角：全部事实可见，低显著性的可以省略\"}\n事实条目（输入序）：[{\"factId\": \"f1\", \"kind\": \"moved\", \"entityId\": \"char_400\", \"name\": \"裴行舟\", \"from\": \"石阶码头\", \"to\": \"旧钟铺\", \"at\": \"旧钟铺\"}, {\"factId\": \"f2\", \"kind\": \"positioned_at\", \"entityId\": \"char_401\", \"name\": \"沈拾\", \"at\": \"旧钟铺\"}, {\"factId\": \"f3\", \"kind\": \"personality_changed\", \"entityId\": \"char_400\", \"name\": \"裴行舟\", \"text\": \"变得谨慎\", \"at\": \"旧钟铺\"}]",
+   "rawOutput": "{\"itemId\": \"n2-09\", \"sentences\": [{\"index\": 0, \"factIds\": [\"f1\"], \"coreference\": [{\"mention\": \"裴行舟\", \"refersTo\": \"char_400\"}]}, {\"index\": 1, \"factIds\": [\"f2\"], \"coreference\": [{\"mention\": \"沈拾\", \"refersTo\": \"char_401\"}]}, {\"index\": 2, \"factIds\": [\"f3\"], \"coreference\": [{\"mention\": \"裴行舟\", \"refersTo\": \"char_400\"}]}]}",
+   "finishReason": "stop",
+   "timedOut": false,
+   "promptTokens": 337,
+   "outputTokens": 105,
+   "wall": 0.0
+  },
+  {
+   "itemId": "n2-10",
+   "attempt": 1,
+   "prompt": "你是叙事组织器。输入是一个视角和一组已选定的事实条目（JSON）。你的唯一任务是把它们组织成句组计划，不写正文。\n\n规则（必须全部遵守）：\nR1 同一 entityId 的全部事实进入同一个句组。\nR2 不同实体的 task_achieved 事实若 goal 逐字相同，这些实体所在的句组合并为一个句组。\nR3 kind 为 time 的事实并入其输入序中紧邻前驱事实所在的句组；若 time 位于输入首位，则并入输入序中首个含 entityId 的事实所在的句组。\nR4 不满足 R2 的不同实体事实各自成句组，不合并。\nR5 句组之间按各组内最小输入序号升序排列；句组内部 factIds 按输入序号升序。\nR6 每个句组输出 coreference：句组内每条含 entityId 的事实各产一条 {\"mention\": 该实体登记名, \"refersTo\": 该 entityId}，顺序与该句组 factIds 一致。\n\n只输出一个 JSON 对象，不要输出任何其他文字：\n{\"itemId\": \"n2-10\", \"sentences\": [{\"index\": 0, \"factIds\": [\"f1\"], \"coreference\": [{\"mention\": \"名字\", \"refersTo\": \"entityId\"}]}]}\n\n视角：{\"type\": \"omniscient\", \"entityId\": null, \"name\": null, \"at\": \"全局\", \"rule\": \"全知视角：全部事实可见，低显著性的可以省略\"}\n事实条目（输入序）：[{\"factId\": \"f1\", \"kind\": \"moved\", \"entityId\": \"char_401\", \"name\": \"沈拾\", \"from\": \"旧钟铺\", \"to\": \"半窗书舍\", \"at\": \"半窗书舍\"}, {\"factId\": \"f2\", \"kind\": \"positioned_at\", \"entityId\": \"char_402\", \"name\": \"岑半夏\", \"at\": \"半窗书舍\"}, {\"factId\": \"f3\", \"kind\": \"personality_changed\", \"entityId\": \"char_401\", \"name\": \"沈拾\", \"text\": \"变得急躁\", \"at\": \"半窗书舍\"}]",
+   "rawOutput": "{\"itemId\": \"n2-10\", \"sentences\": [{\"index\": 0, \"factIds\": [\"f1\"], \"coreference\": [{\"mention\": \"沈拾\", \"refersTo\": \"char_401\"}]}, {\"index\": 1, \"factIds\": [\"f2\"], \"coreference\": [{\"mention\": \"岑半夏\", \"refersTo\": \"char_402\"}]}, {\"index\": 2, \"factIds\": [\"f3\"], \"coreference\": [{\"mention\": \"沈拾\", \"refersTo\": \"char_401\"}]}]}",
+   "finishReason": "stop",
+   "timedOut": false,
+   "promptTokens": 338,
+   "outputTokens": 104,
+   "wall": 0.0
+  },
+  {
+   "itemId": "n2-11",
+   "attempt": 1,
+   "prompt": "你是叙事组织器。输入是一个视角和一组已选定的事实条目（JSON）。你的唯一任务是把它们组织成句组计划，不写正文。\n\n规则（必须全部遵守）：\nR1 同一 entityId 的全部事实进入同一个句组。\nR2 不同实体的 task_achieved 事实若 goal 逐字相同，这些实体所在的句组合并为一个句组。\nR3 kind 为 time 的事实并入其输入序中紧邻前驱事实所在的句组；若 time 位于输入首位，则并入输入序中首个含 entityId 的事实所在的句组。\nR4 不满足 R2 的不同实体事实各自成句组，不合并。\nR5 句组之间按各组内最小输入序号升序排列；句组内部 factIds 按输入序号升序。\nR6 每个句组输出 coreference：句组内每条含 entityId 的事实各产一条 {\"mention\": 该实体登记名, \"refersTo\": 该 entityId}，顺序与该句组 factIds 一致。\n\n只输出一个 JSON 对象，不要输出任何其他文字：\n{\"itemId\": \"n2-11\", \"sentences\": [{\"index\": 0, \"factIds\": [\"f1\"], \"coreference\": [{\"mention\": \"名字\", \"refersTo\": \"entityId\"}]}]}\n\n视角：{\"type\": \"omniscient\", \"entityId\": null, \"name\": null, \"at\": \"全局\", \"rule\": \"全知视角：全部事实可见，低显著性的可以省略\"}\n事实条目（输入序）：[{\"factId\": \"f1\", \"kind\": \"moved\", \"entityId\": \"char_402\", \"name\": \"岑半夏\", \"from\": \"半窗书舍\", \"to\": \"竹影茶棚\", \"at\": \"竹影茶棚\"}, {\"factId\": \"f2\", \"kind\": \"positioned_at\", \"entityId\": \"char_403\", \"name\": \"顾知白\", \"at\": \"竹影茶棚\"}, {\"factId\": \"f3\", \"kind\": \"personality_changed\", \"entityId\": \"char_402\", \"name\": \"岑半夏\", \"text\": \"变得寡言\", \"at\": \"竹影茶棚\"}]",
+   "rawOutput": "{\"itemId\": \"n2-11\", \"sentences\": [{\"index\": 0, \"factIds\": [\"f1\"], \"coreference\": [{\"mention\": \"岑半夏\", \"refersTo\": \"char_402\"}]}, {\"index\": 1, \"factIds\": [\"f2\"], \"coreference\": [{\"mention\": \"顾知白\", \"refersTo\": \"char_403\"}]}, {\"index\": 2, \"factIds\": [\"f3\"], \"coreference\": [{\"mention\": \"岑半夏\", \"refersTo\": \"char_402\"}]}]}",
+   "finishReason": "stop",
+   "timedOut": false,
+   "promptTokens": 339,
+   "outputTokens": 105,
+   "wall": 0.0
+  },
+  {
+   "itemId": "n2-12",
+   "attempt": 1,
+   "prompt": "你是叙事组织器。输入是一个视角和一组已选定的事实条目（JSON）。你的唯一任务是把它们组织成句组计划，不写正文。\n\n规则（必须全部遵守）：\nR1 同一 entityId 的全部事实进入同一个句组。\nR2 不同实体的 task_achieved 事实若 goal 逐字相同，这些实体所在的句组合并为一个句组。\nR3 kind 为 time 的事实并入其输入序中紧邻前驱事实所在的句组；若 time 位于输入首位，则并入输入序中首个含 entityId 的事实所在的句组。\nR4 不满足 R2 的不同实体事实各自成句组，不合并。\nR5 句组之间按各组内最小输入序号升序排列；句组内部 factIds 按输入序号升序。\nR6 每个句组输出 coreference：句组内每条含 entityId 的事实各产一条 {\"mention\": 该实体登记名, \"refersTo\": 该 entityId}，顺序与该句组 factIds 一致。\n\n只输出一个 JSON 对象，不要输出任何其他文字：\n{\"itemId\": \"n2-12\", \"sentences\": [{\"index\": 0, \"factIds\": [\"f1\"], \"coreference\": [{\"mention\": \"名字\", \"refersTo\": \"entityId\"}]}]}\n\n视角：{\"type\": \"omniscient\", \"entityId\": null, \"name\": null, \"at\": \"全局\", \"rule\": \"全知视角：全部事实可见，低显著性的可以省略\"}\n事实条目（输入序）：[{\"factId\": \"f1\", \"kind\": \"moved\", \"entityId\": \"char_403\", \"name\": \"顾知白\", \"from\": \"竹影茶棚\", \"to\": \"西栅桥\", \"at\": \"西栅桥\"}, {\"factId\": \"f2\", \"kind\": \"positioned_at\", \"entityId\": \"char_404\", \"name\": \"陆停云\", \"at\": \"西栅桥\"}, {\"factId\": \"f3\", \"kind\": \"personality_changed\", \"entityId\": \"char_403\", \"name\": \"顾知白\", \"text\": \"变得爽快\", \"at\": \"西栅桥\"}]",
+   "rawOutput": "{\"itemId\": \"n2-12\", \"sentences\": [{\"index\": 0, \"factIds\": [\"f1\"], \"coreference\": [{\"mention\": \"顾知白\", \"refersTo\": \"char_403\"}]}, {\"index\": 1, \"factIds\": [\"f2\"], \"coreference\": [{\"mention\": \"陆停云\", \"refersTo\": \"char_404\"}]}, {\"index\": 2, \"factIds\": [\"f3\"], \"coreference\": [{\"mention\": \"顾知白\", \"refersTo\": \"char_403\"}]}]}",
+   "finishReason": "stop",
+   "timedOut": false,
+   "promptTokens": 337,
+   "outputTokens": 105,
+   "wall": 0.0
+  },
+  {
+   "itemId": "n2-13",
+   "attempt": 1,
+   "prompt": "你是叙事组织器。输入是一个视角和一组已选定的事实条目（JSON）。你的唯一任务是把它们组织成句组计划，不写正文。\n\n规则（必须全部遵守）：\nR1 同一 entityId 的全部事实进入同一个句组。\nR2 不同实体的 task_achieved 事实若 goal 逐字相同，这些实体所在的句组合并为一个句组。\nR3 kind 为 time 的事实并入其输入序中紧邻前驱事实所在的句组；若 time 位于输入首位，则并入输入序中首个含 entityId 的事实所在的句组。\nR4 不满足 R2 的不同实体事实各自成句组，不合并。\nR5 句组之间按各组内最小输入序号升序排列；句组内部 factIds 按输入序号升序。\nR6 每个句组输出 coreference：句组内每条含 entityId 的事实各产一条 {\"mention\": 该实体登记名, \"refersTo\": 该 entityId}，顺序与该句组 factIds 一致。\n\n只输出一个 JSON 对象，不要输出任何其他文字：\n{\"itemId\": \"n2-13\", \"sentences\": [{\"index\": 0, \"factIds\": [\"f1\"], \"coreference\": [{\"mention\": \"名字\", \"refersTo\": \"entityId\"}]}]}\n\n视角：{\"type\": \"protagonist\", \"entityId\": \"char_400\", \"name\": \"裴行舟\", \"at\": \"西栅桥\", \"rule\": \"你只知道自己在西栅桥能看到的，以及自己的行动与状态\"}\n事实条目（输入序）：[{\"factId\": \"f1\", \"kind\": \"task_achieved\", \"entityId\": \"char_400\", \"name\": \"裴行舟\", \"goal\": \"修西栅桥的踏板\", \"at\": \"西栅桥\"}, {\"factId\": \"f2\", \"kind\": \"sanity_changed\", \"entityId\": \"char_400\", \"name\": \"裴行舟\", \"from\": 12, \"to\": 10, \"at\": \"西栅桥\"}, {\"factId\": \"f3\", \"kind\": \"task_achieved\", \"entityId\": \"char_401\", \"name\": \"沈拾\", \"goal\": \"补好瓦窑的顶棚\", \"at\": \"西栅桥\"}, {\"factId\": \"f4\", \"kind\": \"appearance_changed\", \"entityId\": \"loc_404\", \"name\": \"西栅桥\", \"text\": \"柜台上的铜锁生了锈\", \"at\": \"西栅桥\"}]",
+   "rawOutput": "{\"itemId\": \"n2-13\", \"sentences\": [{\"index\": 0, \"factIds\": [\"f1\"], \"coreference\": [{\"mention\": \"裴行舟\", \"refersTo\": \"char_400\"}]}, {\"index\": 1, \"factIds\": [\"f2\"], \"coreference\": [{\"mention\": \"裴行舟\", \"refersTo\": \"char_400\"}]}, {\"index\": 2, \"factIds\": [\"f3\"], \"coreference\": [{\"mention\": \"沈拾\", \"refersTo\": \"char_401\"}]}, {\"index\": 3, \"factIds\": [\"f4\"], \"coreference\": [{\"mention\": \"西栅桥\", \"refersTo\": \"loc_404\"}]}]}",
+   "finishReason": "stop",
+   "timedOut": false,
+   "promptTokens": 387,
+   "outputTokens": 136,
+   "wall": 0.0
+  },
+  {
+   "itemId": "n2-14",
+   "attempt": 1,
+   "prompt": "你是叙事组织器。输入是一个视角和一组已选定的事实条目（JSON）。你的唯一任务是把它们组织成句组计划，不写正文。\n\n规则（必须全部遵守）：\nR1 同一 entityId 的全部事实进入同一个句组。\nR2 不同实体的 task_achieved 事实若 goal 逐字相同，这些实体所在的句组合并为一个句组。\nR3 kind 为 time 的事实并入其输入序中紧邻前驱事实所在的句组；若 time 位于输入首位，则并入输入序中首个含 entityId 的事实所在的句组。\nR4 不满足 R2 的不同实体事实各自成句组，不合并。\nR5 句组之间按各组内最小输入序号升序排列；句组内部 factIds 按输入序号升序。\nR6 每个句组输出 coreference：句组内每条含 entityId 的事实各产一条 {\"mention\": 该实体登记名, \"refersTo\": 该 entityId}，顺序与该句组 factIds 一致。\n\n只输出一个 JSON 对象，不要输出任何其他文字：\n{\"itemId\": \"n2-14\", \"sentences\": [{\"index\": 0, \"factIds\": [\"f1\"], \"coreference\": [{\"mention\": \"名字\", \"refersTo\": \"entityId\"}]}]}\n\n视角：{\"type\": \"protagonist\", \"entityId\": \"char_401\", \"name\": \"沈拾\", \"at\": \"瓦窑\", \"rule\": \"你只知道自己在瓦窑能看到的，以及自己的行动与状态\"}\n事实条目（输入序）：[{\"factId\": \"f1\", \"kind\": \"task_achieved\", \"entityId\": \"char_401\", \"name\": \"沈拾\", \"goal\": \"清点旧钟铺的存货\", \"at\": \"瓦窑\"}, {\"factId\": \"f2\", \"kind\": \"sanity_changed\", \"entityId\": \"char_401\", \"name\": \"沈拾\", \"from\": 12, \"to\": 10, \"at\": \"瓦窑\"}, {\"factId\": \"f3\", \"kind\": \"task_achieved\", \"entityId\": \"char_402\", \"name\": \"岑半夏\", \"goal\": \"把账簿送回半窗书舍\", \"at\": \"瓦窑\"}, {\"factId\": \"f4\", \"kind\": \"appearance_changed\", \"entityId\": \"loc_405\", \"name\": \"瓦窑\", \"text\": \"墙根的青苔爬上了半尺\", \"at\": \"瓦窑\"}]",
+   "rawOutput": "{\"itemId\": \"n2-14\", \"sentences\": [{\"index\": 0, \"factIds\": [\"f1\"], \"coreference\": [{\"mention\": \"沈拾\", \"refersTo\": \"char_401\"}]}, {\"index\": 1, \"factIds\": [\"f2\"], \"coreference\": [{\"mention\": \"沈拾\", \"refersTo\": \"char_401\"}]}, {\"index\": 2, \"factIds\": [\"f3\"], \"coreference\": [{\"mention\": \"岑半夏\", \"refersTo\": \"char_402\"}]}, {\"index\": 3, \"factIds\": [\"f4\"], \"coreference\": [{\"mention\": \"瓦窑\", \"refersTo\": \"loc_405\"}]}]}",
+   "finishReason": "stop",
+   "timedOut": false,
+   "promptTokens": 386,
+   "outputTokens": 135,
+   "wall": 0.0
+  },
+  {
+   "itemId": "n2-15",
+   "attempt": 1,
+   "prompt": "你是叙事组织器。输入是一个视角和一组已选定的事实条目（JSON）。你的唯一任务是把它们组织成句组计划，不写正文。\n\n规则（必须全部遵守）：\nR1 同一 entityId 的全部事实进入同一个句组。\nR2 不同实体的 task_achieved 事实若 goal 逐字相同，这些实体所在的句组合并为一个句组。\nR3 kind 为 time 的事实并入其输入序中紧邻前驱事实所在的句组；若 time 位于输入首位，则并入输入序中首个含 entityId 的事实所在的句组。\nR4 不满足 R2 的不同实体事实各自成句组，不合并。\nR5 句组之间按各组内最小输入序号升序排列；句组内部 factIds 按输入序号升序。\nR6 每个句组输出 coreference：句组内每条含 entityId 的事实各产一条 {\"mention\": 该实体登记名, \"refersTo\": 该 entityId}，顺序与该句组 factIds 一致。\n\n只输出一个 JSON 对象，不要输出任何其他文字：\n{\"itemId\": \"n2-15\", \"sentences\": [{\"index\": 0, \"factIds\": [\"f1\"], \"coreference\": [{\"mention\": \"名字\", \"refersTo\": \"entityId\"}]}]}\n\n视角：{\"type\": \"protagonist\", \"entityId\": \"char_402\", \"name\": \"岑半夏\", \"at\": \"石阶码头\", \"rule\": \"你只知道自己在石阶码头能看到的，以及自己的行动与状态\"}\n事实条目（输入序）：[{\"factId\": \"f1\", \"kind\": \"task_achieved\", \"entityId\": \"char_402\", \"name\": \"岑半夏\", \"goal\": \"把船灯挂上桅杆\", \"at\": \"石阶码头\"}, {\"factId\": \"f2\", \"kind\": \"sanity_changed\", \"entityId\": \"char_402\", \"name\": \"岑半夏\", \"from\": 12, \"to\": 10, \"at\": \"石阶码头\"}, {\"factId\": \"f3\", \"kind\": \"task_achieved\", \"entityId\": \"char_403\", \"name\": \"顾知白\", \"goal\": \"收好茶棚的坐垫\", \"at\": \"石阶码头\"}, {\"factId\": \"f4\", \"kind\": \"appearance_changed\", \"entityId\": \"loc_400\", \"name\": \"石阶码头\", \"text\": \"梁上的吊绳磨细了\", \"at\": \"石阶码头\"}]",
+   "rawOutput": "{\"itemId\": \"n2-15\", \"sentences\": [{\"index\": 0, \"factIds\": [\"f1\"], \"coreference\": [{\"mention\": \"岑半夏\", \"refersTo\": \"char_402\"}]}, {\"index\": 1, \"factIds\": [\"f2\"], \"coreference\": [{\"mention\": \"岑半夏\", \"refersTo\": \"char_402\"}]}, {\"index\": 2, \"factIds\": [\"f3\"], \"coreference\": [{\"mention\": \"顾知白\", \"refersTo\": \"char_403\"}]}, {\"index\": 3, \"factIds\": [\"f4\"], \"coreference\": [{\"mention\": \"石阶码头\", \"refersTo\": \"loc_400\"}]}]}",
+   "finishReason": "stop",
+   "timedOut": false,
+   "promptTokens": 390,
+   "outputTokens": 136,
+   "wall": 0.0
+  },
+  {
+   "itemId": "n2-16",
+   "attempt": 1,
+   "prompt": "你是叙事组织器。输入是一个视角和一组已选定的事实条目（JSON）。你的唯一任务是把它们组织成句组计划，不写正文。\n\n规则（必须全部遵守）：\nR1 同一 entityId 的全部事实进入同一个句组。\nR2 不同实体的 task_achieved 事实若 goal 逐字相同，这些实体所在的句组合并为一个句组。\nR3 kind 为 time 的事实并入其输入序中紧邻前驱事实所在的句组；若 time 位于输入首位，则并入输入序中首个含 entityId 的事实所在的句组。\nR4 不满足 R2 的不同实体事实各自成句组，不合并。\nR5 句组之间按各组内最小输入序号升序排列；句组内部 factIds 按输入序号升序。\nR6 每个句组输出 coreference：句组内每条含 entityId 的事实各产一条 {\"mention\": 该实体登记名, \"refersTo\": 该 entityId}，顺序与该句组 factIds 一致。\n\n只输出一个 JSON 对象，不要输出任何其他文字：\n{\"itemId\": \"n2-16\", \"sentences\": [{\"index\": 0, \"factIds\": [\"f1\"], \"coreference\": [{\"mention\": \"名字\", \"refersTo\": \"entityId\"}]}]}\n\n视角：{\"type\": \"protagonist\", \"entityId\": \"char_403\", \"name\": \"顾知白\", \"at\": \"旧钟铺\", \"rule\": \"你只知道自己在旧钟铺能看到的，以及自己的行动与状态\"}\n事实条目（输入序）：[{\"factId\": \"f1\", \"kind\": \"task_achieved\", \"entityId\": \"char_403\", \"name\": \"顾知白\", \"goal\": \"补好瓦窑的顶棚\", \"at\": \"旧钟铺\"}, {\"factId\": \"f2\", \"kind\": \"sanity_changed\", \"entityId\": \"char_403\", \"name\": \"顾知白\", \"from\": 12, \"to\": 10, \"at\": \"旧钟铺\"}, {\"factId\": \"f3\", \"kind\": \"task_achieved\", \"entityId\": \"char_404\", \"name\": \"陆停云\", \"goal\": \"修西栅桥的踏板\", \"at\": \"旧钟铺\"}, {\"factId\": \"f4\", \"kind\": \"appearance_changed\", \"entityId\": \"loc_401\", \"name\": \"旧钟铺\", \"text\": \"檐角的风铃褪了色\", \"at\": \"旧钟铺\"}]",
+   "rawOutput": "{\"itemId\": \"n2-16\", \"sentences\": [{\"index\": 0, \"factIds\": [\"f1\"], \"coreference\": [{\"mention\": \"顾知白\", \"refersTo\": \"char_403\"}]}, {\"index\": 1, \"factIds\": [\"f2\"], \"coreference\": [{\"mention\": \"顾知白\", \"refersTo\": \"char_403\"}]}, {\"index\": 2, \"factIds\": [\"f3\"], \"coreference\": [{\"mention\": \"陆停云\", \"refersTo\": \"char_404\"}]}, {\"index\": 3, \"factIds\": [\"f4\"], \"coreference\": [{\"mention\": \"旧钟铺\", \"refersTo\": \"loc_401\"}]}]}",
+   "finishReason": "stop",
+   "timedOut": false,
+   "promptTokens": 387,
+   "outputTokens": 136,
+   "wall": 0.0
+  }
+ ],
+ "itemOutcomes": {
+  "n2-01": "ok",
+  "n2-02": "ok",
+  "n2-03": "ok",
+  "n2-04": "ok",
+  "n2-05": "ok",
+  "n2-06": "ok",
+  "n2-07": "ok",
+  "n2-08": "ok",
+  "n2-09": "ok",
+  "n2-10": "ok",
+  "n2-11": "ok",
+  "n2-12": "ok",
+  "n2-13": "ok",
+  "n2-14": "ok",
+  "n2-15": "ok",
+  "n2-16": "ok"
+ },
+ "failureClasses": {},
+ "report": {
+  "items": {
+   "n2-01": {
+    "h1": true,
+    "h2": true,
+    "g1": null,
+    "g2": null,
+    "g3": null,
+    "g4": null
+   },
+   "n2-02": {
+    "h1": true,
+    "h2": true,
+    "g1": null,
+    "g2": null,
+    "g3": null,
+    "g4": null
+   },
+   "n2-03": {
+    "h1": true,
+    "h2": true,
+    "g1": null,
+    "g2": null,
+    "g3": null,
+    "g4": null
+   },
+   "n2-04": {
+    "h1": true,
+    "h2": true,
+    "g1": null,
+    "g2": null,
+    "g3": null,
+    "g4": null
+   },
+   "n2-05": {
+    "h1": true,
+    "h2": true,
+    "g1": null,
+    "g2": null,
+    "g3": null,
+    "g4": null
+   },
+   "n2-06": {
+    "h1": true,
+    "h2": true,
+    "g1": null,
+    "g2": null,
+    "g3": null,
+    "g4": null
+   },
+   "n2-07": {
+    "h1": true,
+    "h2": true,
+    "g1": null,
+    "g2": null,
+    "g3": null,
+    "g4": null
+   },
+   "n2-08": {
+    "h1": true,
+    "h2": true,
+    "g1": null,
+    "g2": null,
+    "g3": null,
+    "g4": null
+   },
+   "n2-09": {
+    "h1": true,
+    "h2": true,
+    "g1": null,
+    "g2": null,
+    "g3": null,
+    "g4": null
+   },
+   "n2-10": {
+    "h1": true,
+    "h2": true,
+    "g1": null,
+    "g2": null,
+    "g3": null,
+    "g4": null
+   },
+   "n2-11": {
+    "h1": true,
+    "h2": true,
+    "g1": null,
+    "g2": null,
+    "g3": null,
+    "g4": null
+   },
+   "n2-12": {
+    "h1": true,
+    "h2": true,
+    "g1": null,
+    "g2": null,
+    "g3": null,
+    "g4": null
+   },
+   "n2-13": {
+    "h1": true,
+    "h2": true,
+    "g1": null,
+    "g2": null,
+    "g3": null,
+    "g4": null
+   },
+   "n2-14": {
+    "h1": true,
+    "h2": true,
+    "g1": null,
+    "g2": null,
+    "g3": null,
+    "g4": null
+   },
+   "n2-15": {
+    "h1": true,
+    "h2": true,
+    "g1": null,
+    "g2": null,
+    "g3": null,
+    "g4": null
+   },
+   "n2-16": {
+    "h1": true,
+    "h2": true,
+    "g1": null,
+    "g2": null,
+    "g3": null,
+    "g4": null
+   }
+  },
+  "problems": [],
+  "diagnostic": true,
+  "gate": false,
+  "summary": {
+   "items": 16,
+   "itemsScored": 16,
+   "diagnostic": true,
+   "gate": false,
+   "h1": "16/16",
+   "h2": "16/16",
+   "g1": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "tp": 0,
+    "fp": 0,
+    "fn": 0
+   },
+   "g2Accuracy": null,
+   "pronounProduction": null,
+   "g3": null,
+   "g4": null,
+   "passLine": {
+    "g1F1": 0.8,
+    "g2Accuracy": 0.8,
+    "pronounProduction": 0.5,
+    "g3": 0.75
+   },
+   "verdict": {
+    "pass": false,
+    "note": "diagnostic-only: no gate"
+   }
+  }
+ }
+}
