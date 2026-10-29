@@ -1,0 +1,118 @@
+{
+ "purpose": "D2 capability items isolation vs B frozen corpus",
+ "decision": "D2",
+ "pinnedMainCommit": "8878e970278a9d311ea1ff669527eebb078458da",
+ "poolDigest": "d7613154b5530e6c933783974c7e4bb3991140d7a3d511850f7f3ed700aa0a6f",
+ "poolStrings": 4026,
+ "sources": [
+  {
+   "label": "nv-*",
+   "kind": "ts",
+   "sha256": "05170dd3b85b49ab5191e48e5e615071b291795636a5c237da834252054de9bf",
+   "listSha256": null
+  },
+  {
+   "label": "hv-*",
+   "kind": "ts",
+   "sha256": "899a8db714852bb949fe2c5fb927dd0ecc29828f1ff356defdc5745357ca1f72",
+   "listSha256": null
+  },
+  {
+   "label": "ns-*",
+   "kind": "ts",
+   "sha256": "83f1c7c1f9998490d26aef980b5747326c99b6e8d7ad30c2007df7b06058043d",
+   "listSha256": null
+  },
+  {
+   "label": "b3-*",
+   "kind": "ts",
+   "sha256": "471c64cffb949eb2f7975a7a549f429e8fe3191ffef7e06991e813f7fce2a256",
+   "listSha256": null
+  },
+  {
+   "label": "archived run",
+   "kind": "json",
+   "sha256": "436f886d3f1a3fc17a08fe320bc6368a234ad0d16505c1741cdf0d85961b2a46",
+   "listSha256": null
+  },
+  {
+   "label": "split baseline",
+   "kind": "json",
+   "sha256": "5e136b866f902d21118832922e12d3091ded3bb9de6fb05edb96943797086ce7",
+   "listSha256": null
+  },
+  {
+   "label": "http review",
+   "kind": "json",
+   "sha256": "8efb2033dd5a3fa66b1544cb6f42a56ac2170ab813fe6aff56a7ab7e5d40ca5d",
+   "listSha256": null
+  },
+  {
+   "label": "page archive",
+   "kind": "json_glob",
+   "sha256": null,
+   "listSha256": "6c6f41a99462f47a5ec95f3e1c0b5760de8a0503d2be309f5f862cd1f71bcfe7"
+  },
+  {
+   "label": "chain archive",
+   "kind": "json_glob",
+   "sha256": null,
+   "listSha256": "e9a9f6855f8d872c776594a908e37e6ee898788cdb8b0e5599ed3dfe6903062e"
+  }
+ ],
+ "manifest": [
+  "nv-*: frontend/src/lib/world-engine/runtime/narration-eval-samples.ts strings=53 raw=71 sha256[:16]=05170dd3b85b49ab",
+  "hv-*: frontend/src/lib/world-engine/runtime/narration-eval-validation.ts strings=35 raw=44 sha256[:16]=899a8db714852bb9",
+  "ns-*: frontend/src/lib/world-engine/runtime/narration-split-samples.ts strings=49 raw=74 sha256[:16]=83f1c7c1f9998490",
+  "b3-*: frontend/src/lib/world-engine/runtime/b3-samples.ts strings=11 raw=12 sha256[:16]=471c64cffb949eb2",
+  "archived run: artifacts/narration-eval-recheck/run.json strings=161 sha256[:16]=436f886d3f1a3fc1",
+  "split baseline: artifacts/narration-split-baseline.json strings=76 sha256[:16]=5e136b866f902d21",
+  "http review: artifacts/narration-http-review.json strings=23 sha256[:16]=8efb2033dd5a3fa6",
+  "page archive: artifacts/world-page/*.json files=1 listSha256[:16]=6c6f41a99462f47a",
+  "chain archive: artifacts/world-chain/*.json files=17 listSha256[:16]=e9a9f6855f8d872c"
+ ],
+ "missingSources": 0,
+ "scannedStrings": 36,
+ "scannedItems": 8,
+ "verdict": "ZERO_HIT",
+ "hits": {},
+ "stringList": [
+  "你只知道自己在望火楼亲眼见到的，以及自己的行动与状态",
+  "你只知道自己在潮音渡亲眼见到的，以及自己的行动与状态",
+  "你只知道自己在老闸口亲眼见到的，以及自己的行动与状态",
+  "你只知道自己在苇塘集亲眼见到的，以及自己的行动与状态",
+  "变得热络",
+  "变得焦躁",
+  "合力把搁浅的渡船推回深水",
+  "合力把瞭望窗的破纸重新糊严",
+  "合力把翻倒的药车扶正装好",
+  "合力把闸门绞上闸槽",
+  "孟潮生",
+  "把三匹浸水的绸布拧干晾开",
+  "把晒场的陈皮翻了一遍",
+  "把晾干的绸布叠好装箱",
+  "把火盆里的隔夜炭灰清出去",
+  "把船板缝里的青苔刮净",
+  "旗杆顶端的旧绳还挂在钩上",
+  "望火楼",
+  "桑晚照",
+  "楼板上的响板换过三块新的",
+  "洛九针",
+  "渡口的石阶被水淹了最下面三级",
+  "渡船的新桨架还没有上漆",
+  "温白山",
+  "潮音渡",
+  "给旗杆换一根新缆绳",
+  "给更梆上油",
+  "给瞭望窗糊上一层新纸",
+  "老闸口",
+  "船底的水线露出一截新漆",
+  "苇塘集",
+  "药摊上两只竹匾摔裂了缝",
+  "铁锚巷",
+  "闸槽里卡着的断桨被清了出去",
+  "阮听澜",
+  "集口的蓝布幌子换过一面新的"
+ ],
+ "tool": "check_isolation_d2.py (reuses check_isolation.collect_frozen/match_hits)"
+}

@@ -1,0 +1,59 @@
+{
+ "decision": "D2",
+ "mode": "AI-independent-annotation",
+ "registeredAt": "2026-10-29",
+ "sourceCommit": "dd2a5130bfd4bfb5ea4982f40a427901286dee16",
+ "authorization": "Project owner ruled on 2026-10-29 (in the C implementer session, via an explicit choice among three options) that D2 gold for the 8 capability samples is produced by two independent AI annotators with a kappa gate, per-item adjudication of all disagreements, and freezing — explicitly labelled AI gold, not human gold. The original human-gold wording of D2 is superseded by this ruling for this batch only; the C reviewer audits the process and result.",
+ "protocolChange": "Two fresh AI annotator tasks label the grouping/order/coreference plan for the 8 capability samples. Materials follow the D1 pattern: hashed rubric, blind item table, task sheet and output template only. The annotation convention is mechanical (rubric R1-R6) so that independent reproducibility, not style preference, drives agreement.",
+ "annotators": [
+  {
+   "id": "ai-a",
+   "labels": "labels-d2-ai-a.jsonl",
+   "identity": "identity-d2-ai-a.json",
+   "inheritedTurns": false
+  },
+  {
+   "id": "ai-b",
+   "labels": "labels-d2-ai-b.jsonl",
+   "identity": "identity-d2-ai-b.json",
+   "inheritedTurns": false
+  }
+ ],
+ "allowedInputs": [
+  {
+   "file": "d2-gold-rubric.md",
+   "source": "experiments/world-components/n2_selection/annotation/d2-gold-rubric.md",
+   "sha256": "fd7eb518c92a5cc585ef2a4127d113df0724d114936f7a38aadcdd57c73e76c0"
+  },
+  {
+   "file": "d2_capability_items.jsonl",
+   "source": "experiments/world-components/n2_selection/d2_capability_items.jsonl",
+    "sha256": "76d253ab8be026e6a2dd4c77f1f3494c3db7d6dd753de2d930aa7ae5ad931311"
+  },
+  {
+   "file": "d2-sheet.md",
+   "source": "experiments/world-components/n2_selection/annotation/d2-sheet.md",
+   "sha256": "93105ce3ff50ab6a31d64dadab9df43db1cb72defa4a9cb23132a8a37dded646"
+  },
+  {
+   "file": "d2-labels-template.jsonl",
+   "source": "experiments/world-components/n2_selection/annotation/d2-labels-template.jsonl",
+   "sha256": "eb08861b3561bf5cb18b61eb31ab4461073e7cd42cffcbb728cc14860eeba04f"
+  }
+ ],
+ "gates": {
+  "items": 8,
+  "kappaMinimum": 0.7,
+  "kappaDefinition": "pooled pairwise co-grouping kappa: over all unordered fact pairs within each item, whether the two annotators place the pair in the same sentence group; 2x2 tables pooled across items",
+  "adjudicateAllDisagreements": true,
+  "adjudicationUnit": "whole item; the adjudicated label carries a source tag (ai-a | ai-b | merged) and a written reason"
+ },
+ "adjudication": "The implementer resolves disagreements against the unchanged rubric after both original AI files are sealed. Every item whose two labels differ must appear in the adjudicated file with source tag and reason. The C reviewer independently audits the process and result.",
+ "limitations": [
+  "This is AI independent annotation producing AI gold, not human annotation or human evaluation.",
+  "Independence concerns task context and answer exposure, not different model families; shared-model biases remain possible.",
+  "The rubric is a mechanical convention that defines gold for this experiment; kappa measures agreement under it, not narrative quality or product correctness.",
+  "The implementer and C reviewer have prior exposure to the sample construction and are not represented as blind annotators.",
+  "A successful annotation gate alone authorises no model inference; N3 model arms require the separately pre-registered prompt and metric freeze."
+ ]
+}

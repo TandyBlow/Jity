@@ -149,7 +149,9 @@ N3 的契约是**组织计划**，不是成句。**唯一形状定义在[接口�
 | 篡改探针 | `--tamper`：跨组 entity、跨组/全局 factId、未知 entity、错 mention、丢 fact、重复 fact、捏造 factId，以及本轮新增的**首位捏造 factId**与**空句组**共九类变异，**144/144 适用项全部被捕获**；16/16 有效计划零问题。检查器对首位捏造编号与空句组返回问题列表，不再抛 `KeyError`/`IndexError`。归档在 `n3-baselines-r1.json` 的 `tamper` |
 | 基线数字 | B1 共 **36 句组**（facts/组均值 1.46；actor 内聚），B2 共 **52 句组**（每事实一组）；这是后续模型臂必须优化的对照，不是成绩 |
 | **factIds 消费冒烟** | 每个 B1 句组作为**扁平事实表**喂共享渲染器与**冻结 r3-direction** 检查点（离线 Python，cudnn deterministic、benchmark=False）：36 组全部成句，本次归档墙钟均值 0.8s（重复运行 0.5–0.8s 波动）；原文存档 `n3-factids-smoke-r1.json`。**coreference 未被 `render_input` 消费，句组边界未传入，跨组连贯性未测；不是 N4 质量证据，封存留出集未动** |
-| 待定 | N3 模型臂未跑；H1/H2/G1–G4 未预登记；8 项能力样本与 gold 未建；代词策略未定；N2 v3 已按 AI 协议冻结 |
+| 待定 | N3 模型臂未跑；8 项能力样本已建、gold 协议与指标工具已就绪（见下）；代词策略未定；N2 v3 已按 AI 协议冻结 |
+
+**D2 准备批次（2026-10-29）**：8 项能力样本已构建（4 含时间、4 双人同事件，新来源组，B 冻结语料 4026 串 0 命中）；AI gold 协议按项目负责人裁决登记（双 AI＋κ≥0.7＋逐条裁决，明确标识 AI gold）；一致度/预登记指标工具自检全过（含篡改探针），指标哈希与通过线已预登记（`artifacts/world-components/d2-metrics-preregistration.json`）；prompt 预登记草案待签认冻结。gold 标注与模型臂未开始，见 [D2 准备](d2-gold-prep.md)。
 
 ## 7. 独立标注与 v3 冻结（D1）
 

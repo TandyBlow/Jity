@@ -1,0 +1,48 @@
+{
+ "purpose": "D2 pre-registration of metric tool and pass line (before gold annotation and any model inference)",
+ "decision": "D2",
+ "registeredAt": "2026-10-29",
+ "metricTool": {
+  "file": "experiments/world-components/n2_selection/d2_metrics.py",
+  "sha256": "6a19b0d5b6bb1c3f293ae6fd124faf8e3a1d06c54744e96522e6655a2e6545a0"
+ },
+ "agreementTool": {
+  "file": "experiments/world-components/n2_selection/d2_labels_agreement.py",
+  "sha256": "bb6593a9e6ad1fe82dd127e2d9d059b2ed86c765c5cfcfc8ef61c136b6e03723"
+ },
+ "items": {
+  "file": "experiments/world-components/n2_selection/d2_capability_items.jsonl",
+  "sha256": "76d253ab8be026e6a2dd4c77f1f3494c3db7d6dd753de2d930aa7ae5ad931311"
+ },
+ "goldProtocol": {
+  "file": "experiments/world-components/n2_selection/annotation/d2-gold-protocol.json",
+  "sha256": "ff621edebf9d2f25e25bfdbefda7fc480ea6bb3431a166d6d8af6b09409fb172"
+ },
+ "goldRubric": {
+  "file": "experiments/world-components/n2_selection/annotation/d2-gold-rubric.md",
+  "sha256": "fd7eb518c92a5cc585ef2a4127d113df0724d114936f7a38aadcdd57c73e76c0"
+ },
+ "passLine": {
+  "h1": "all items",
+  "h2": "all items",
+  "g1F1": 0.8,
+  "g2Accuracy": 0.8,
+  "pronounProduction": 0.5,
+  "g3": 0.75,
+  "g4": "report only"
+ },
+ "operationalisation": [
+  "pooled rates across items",
+  "G2 antecedent denominator = comparable groups; pronoun-site denominator = all gold sites",
+  "H1/H2 judge raw plans; structural problems void item G-metrics and fail gates"
+ ],
+ "promptDraft": {
+  "file": "experiments/world-components/n2_selection/d2-n3-prompt-draft.md",
+  "sha256": "82e867dd18c74bb99843efd21bef573511df5455afec8f668f8436a5f1d13e32",
+  "status": "draft - freeze requires reviewer and owner sign-off before any model inference"
+ },
+ "isolation": {
+  "file": "artifacts/world-components/n2-isolation-d2.json",
+  "verdict": "ZERO_HIT"
+ }
+}
