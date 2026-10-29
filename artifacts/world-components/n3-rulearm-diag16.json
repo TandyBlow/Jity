@@ -1,0 +1,222 @@
+{
+ "purpose": "D2 N3 rule arm run (program comparison arm)",
+ "scope": "diagnostic16",
+ "registration": "n3-rulearm-registration.json",
+ "registrationSha256": "38d08f965780e67f7d486cd8279824f7e08bfdf7c96244ba750a32abe149d7aa",
+ "ruleArmSha256": "cebe4d281797571ee80039d10a6866852663ffac330bfbd87c9e03179e9efa67",
+ "metricToolSha256": "a3a349b908edd92a126f34fc530f6ce25a62b5f15283bacf7a16733adc00131c",
+ "gateModuleSha256": "7189e233d93c870e459696ca609e04e9f26d8730a52400231e12123ee8bac0a2",
+ "goldExpectedSha256": null,
+ "items": "items.jsonl",
+ "gold": "n2-labels-d2-gold.jsonl",
+ "timingsPerItem": {
+  "n2-01": 5.3e-05,
+  "n2-02": 3.3e-05,
+  "n2-03": 2.4e-05,
+  "n2-04": 2e-05,
+  "n2-05": 1.8e-05,
+  "n2-06": 1.8e-05,
+  "n2-07": 1.4e-05,
+  "n2-08": 1.6e-05,
+  "n2-09": 1.6e-05,
+  "n2-10": 1.8e-05,
+  "n2-11": 1.6e-05,
+  "n2-12": 1.5e-05,
+  "n2-13": 2.2e-05,
+  "n2-14": 0.000102,
+  "n2-15": 2.2e-05,
+  "n2-16": 1.8e-05
+ },
+ "totalWall": 0.0008,
+ "timingNote": "offline CPU generation only; not comparable with model inference",
+ "differential": {
+  "compared": 16,
+  "identical": 16,
+  "mismatches": [],
+  "inapplicable": []
+ },
+ "n4OutOfRange": [],
+ "itemOutcomes": {
+  "n2-01": "ok",
+  "n2-02": "ok",
+  "n2-03": "ok",
+  "n2-04": "ok",
+  "n2-05": "ok",
+  "n2-06": "ok",
+  "n2-07": "ok",
+  "n2-08": "ok",
+  "n2-09": "ok",
+  "n2-10": "ok",
+  "n2-11": "ok",
+  "n2-12": "ok",
+  "n2-13": "ok",
+  "n2-14": "ok",
+  "n2-15": "ok",
+  "n2-16": "ok"
+ },
+ "report": {
+  "items": {
+   "n2-01": {
+    "h1": true,
+    "h2": true,
+    "g1": null,
+    "g2": null,
+    "g3": null,
+    "g4": null
+   },
+   "n2-02": {
+    "h1": true,
+    "h2": true,
+    "g1": null,
+    "g2": null,
+    "g3": null,
+    "g4": null
+   },
+   "n2-03": {
+    "h1": true,
+    "h2": true,
+    "g1": null,
+    "g2": null,
+    "g3": null,
+    "g4": null
+   },
+   "n2-04": {
+    "h1": true,
+    "h2": true,
+    "g1": null,
+    "g2": null,
+    "g3": null,
+    "g4": null
+   },
+   "n2-05": {
+    "h1": true,
+    "h2": true,
+    "g1": null,
+    "g2": null,
+    "g3": null,
+    "g4": null
+   },
+   "n2-06": {
+    "h1": true,
+    "h2": true,
+    "g1": null,
+    "g2": null,
+    "g3": null,
+    "g4": null
+   },
+   "n2-07": {
+    "h1": true,
+    "h2": true,
+    "g1": null,
+    "g2": null,
+    "g3": null,
+    "g4": null
+   },
+   "n2-08": {
+    "h1": true,
+    "h2": true,
+    "g1": null,
+    "g2": null,
+    "g3": null,
+    "g4": null
+   },
+   "n2-09": {
+    "h1": true,
+    "h2": true,
+    "g1": null,
+    "g2": null,
+    "g3": null,
+    "g4": null
+   },
+   "n2-10": {
+    "h1": true,
+    "h2": true,
+    "g1": null,
+    "g2": null,
+    "g3": null,
+    "g4": null
+   },
+   "n2-11": {
+    "h1": true,
+    "h2": true,
+    "g1": null,
+    "g2": null,
+    "g3": null,
+    "g4": null
+   },
+   "n2-12": {
+    "h1": true,
+    "h2": true,
+    "g1": null,
+    "g2": null,
+    "g3": null,
+    "g4": null
+   },
+   "n2-13": {
+    "h1": true,
+    "h2": true,
+    "g1": null,
+    "g2": null,
+    "g3": null,
+    "g4": null
+   },
+   "n2-14": {
+    "h1": true,
+    "h2": true,
+    "g1": null,
+    "g2": null,
+    "g3": null,
+    "g4": null
+   },
+   "n2-15": {
+    "h1": true,
+    "h2": true,
+    "g1": null,
+    "g2": null,
+    "g3": null,
+    "g4": null
+   },
+   "n2-16": {
+    "h1": true,
+    "h2": true,
+    "g1": null,
+    "g2": null,
+    "g3": null,
+    "g4": null
+   }
+  },
+  "problems": [],
+  "diagnostic": true,
+  "gate": false,
+  "summary": {
+   "items": 16,
+   "itemsScored": 16,
+   "diagnostic": true,
+   "gate": false,
+   "h1": "16/16",
+   "h2": "16/16",
+   "g1": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "tp": 0,
+    "fp": 0,
+    "fn": 0
+   },
+   "g2Accuracy": null,
+   "pronounProduction": null,
+   "g3": null,
+   "g4": null,
+   "passLine": {
+    "g1F1": 0.8,
+    "g2Accuracy": 0.8,
+    "pronounProduction": 0.5,
+    "g3": 0.75
+   },
+   "verdict": {
+    "pass": false,
+    "note": "diagnostic-only: no gate"
+   }
+  }
+ }
+}

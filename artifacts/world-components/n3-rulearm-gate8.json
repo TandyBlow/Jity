@@ -1,0 +1,291 @@
+{
+ "purpose": "D2 N3 rule arm run (program comparison arm)",
+ "scope": "gate8",
+ "registration": "n3-rulearm-registration.json",
+ "registrationSha256": "38d08f965780e67f7d486cd8279824f7e08bfdf7c96244ba750a32abe149d7aa",
+ "ruleArmSha256": "cebe4d281797571ee80039d10a6866852663ffac330bfbd87c9e03179e9efa67",
+ "metricToolSha256": "a3a349b908edd92a126f34fc530f6ce25a62b5f15283bacf7a16733adc00131c",
+ "gateModuleSha256": "7189e233d93c870e459696ca609e04e9f26d8730a52400231e12123ee8bac0a2",
+ "goldExpectedSha256": "cb86aa46c4328cb971721d4ddce38bb4b0429fdc245e5405f193e0a6a99e9c63",
+ "items": "d2_capability_items.jsonl",
+ "gold": "n2-labels-d2-gold.jsonl",
+ "timingsPerItem": {
+  "n3cap-01": 7.2e-05,
+  "n3cap-02": 5.6e-05,
+  "n3cap-03": 4.5e-05,
+  "n3cap-04": 3.8e-05,
+  "n3cap-05": 2.9e-05,
+  "n3cap-06": 2.8e-05,
+  "n3cap-07": 2.6e-05,
+  "n3cap-08": 2.8e-05
+ },
+ "totalWall": 0.0635,
+ "timingNote": "offline CPU generation only; not comparable with model inference",
+ "differential": {
+  "compared": 8,
+  "identical": 8,
+  "mismatches": [],
+  "inapplicable": []
+ },
+ "n4OutOfRange": [
+  {
+   "itemId": "n3cap-07",
+   "groupIndex": 0,
+   "facts": 5
+  }
+ ],
+ "itemOutcomes": {
+  "n3cap-01": "ok",
+  "n3cap-02": "ok",
+  "n3cap-03": "ok",
+  "n3cap-04": "ok",
+  "n3cap-05": "ok",
+  "n3cap-06": "ok",
+  "n3cap-07": "ok",
+  "n3cap-08": "ok"
+ },
+ "report": {
+  "items": {
+   "n3cap-01": {
+    "h1": true,
+    "h2": true,
+    "g1": {
+     "tp": 4,
+     "fp": 0,
+     "fn": 0,
+     "f1": 1.0
+    },
+    "g2": {
+     "correct": 5,
+     "comparableEntries": 5,
+     "produced": 2,
+     "goldSites": 2
+    },
+    "g3": {
+     "match": true,
+     "gold": [
+      1,
+      1
+     ],
+     "arm": [
+      1,
+      1
+     ]
+    },
+    "g4": {
+     "agreed": 4,
+     "of": 4
+    }
+   },
+   "n3cap-02": {
+    "h1": true,
+    "h2": true,
+    "g1": {
+     "tp": 4,
+     "fp": 0,
+     "fn": 0,
+     "f1": 1.0
+    },
+    "g2": {
+     "correct": 5,
+     "comparableEntries": 5,
+     "produced": 2,
+     "goldSites": 2
+    },
+    "g3": {
+     "match": true,
+     "gold": [
+      0,
+      0
+     ],
+     "arm": [
+      0,
+      0
+     ]
+    },
+    "g4": {
+     "agreed": 4,
+     "of": 4
+    }
+   },
+   "n3cap-03": {
+    "h1": true,
+    "h2": true,
+    "g1": {
+     "tp": 4,
+     "fp": 0,
+     "fn": 0,
+     "f1": 1.0
+    },
+    "g2": {
+     "correct": 5,
+     "comparableEntries": 5,
+     "produced": 2,
+     "goldSites": 2
+    },
+    "g3": {
+     "match": true,
+     "gold": [
+      2,
+      2
+     ],
+     "arm": [
+      2,
+      2
+     ]
+    },
+    "g4": {
+     "agreed": 4,
+     "of": 4
+    }
+   },
+   "n3cap-04": {
+    "h1": true,
+    "h2": true,
+    "g1": {
+     "tp": 4,
+     "fp": 0,
+     "fn": 0,
+     "f1": 1.0
+    },
+    "g2": {
+     "correct": 6,
+     "comparableEntries": 6,
+     "produced": 2,
+     "goldSites": 2
+    },
+    "g3": {
+     "match": true,
+     "gold": [
+      1,
+      1
+     ],
+     "arm": [
+      1,
+      1
+     ]
+    },
+    "g4": {
+     "agreed": 4,
+     "of": 4
+    }
+   },
+   "n3cap-05": {
+    "h1": true,
+    "h2": true,
+    "g1": {
+     "tp": 6,
+     "fp": 0,
+     "fn": 0,
+     "f1": 1.0
+    },
+    "g2": {
+     "correct": 6,
+     "comparableEntries": 6,
+     "produced": 2,
+     "goldSites": 2
+    },
+    "g3": null,
+    "g4": {
+     "agreed": 6,
+     "of": 6
+    }
+   },
+   "n3cap-06": {
+    "h1": true,
+    "h2": true,
+    "g1": {
+     "tp": 6,
+     "fp": 0,
+     "fn": 0,
+     "f1": 1.0
+    },
+    "g2": {
+     "correct": 6,
+     "comparableEntries": 6,
+     "produced": 2,
+     "goldSites": 2
+    },
+    "g3": null,
+    "g4": {
+     "agreed": 6,
+     "of": 6
+    }
+   },
+   "n3cap-07": {
+    "h1": true,
+    "h2": true,
+    "g1": {
+     "tp": 10,
+     "fp": 0,
+     "fn": 0,
+     "f1": 1.0
+    },
+    "g2": {
+     "correct": 6,
+     "comparableEntries": 6,
+     "produced": 2,
+     "goldSites": 2
+    },
+    "g3": null,
+    "g4": {
+     "agreed": 10,
+     "of": 10
+    }
+   },
+   "n3cap-08": {
+    "h1": true,
+    "h2": true,
+    "g1": {
+     "tp": 6,
+     "fp": 0,
+     "fn": 0,
+     "f1": 1.0
+    },
+    "g2": {
+     "correct": 6,
+     "comparableEntries": 6,
+     "produced": 2,
+     "goldSites": 2
+    },
+    "g3": null,
+    "g4": {
+     "agreed": 6,
+     "of": 6
+    }
+   }
+  },
+  "problems": [],
+  "diagnostic": false,
+  "gate": true,
+  "summary": {
+   "items": 8,
+   "itemsScored": 8,
+   "diagnostic": false,
+   "gate": true,
+   "h1": "8/8",
+   "h2": "8/8",
+   "g1": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "tp": 44,
+    "fp": 0,
+    "fn": 0
+   },
+   "g2Accuracy": 1.0,
+   "pronounProduction": 1.0,
+   "g3": 1.0,
+   "g4": 1.0,
+   "passLine": {
+    "g1F1": 0.8,
+    "g2Accuracy": 0.8,
+    "pronounProduction": 0.5,
+    "g3": 0.75
+   },
+   "verdict": {
+    "pass": true
+   }
+  }
+ }
+}
