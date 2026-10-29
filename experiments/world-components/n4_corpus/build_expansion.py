@@ -407,6 +407,15 @@ def build_new_group(seq, family, split, tier, fc):
                                  split, tier, world, raw_delta, full_plan,
                                  plan, scope, text, refs_for(text, plan), must,
                                  claims, f"N4 扩批 v9 {family}/{scope}"))
+
+    # round-13 review check: expressed and omitted plans must carry exactly
+    # the same non-time facts (only the time entry may differ). rows[0] is
+    # expressed/seed, rows[2] is omitted/seed.
+    def non_time_facts(plan):
+        return [{k: v for k, v in e.items() if k != "ref"}
+                for e in plan if e["kind"] != "time"]
+    assert non_time_facts(rows[0]["plan"]) == non_time_facts(rows[2]["plan"]), \
+        f"{gid}: non-time facts differ between expressed and omitted plans"
     return rows, meta
 
 

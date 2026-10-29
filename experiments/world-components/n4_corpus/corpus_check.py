@@ -1,4 +1,8 @@
-# N4 corpus row checker v4: recognizer-whitelist faithfulness.
+# N4 corpus row checker v5: recognizer-whitelist faithfulness.
+#
+# v5 (2026-10-29 review round 13): group-level check that the expressed and
+# omitted-time plans of one group carry identical non-time facts (only the
+# time entry may differ). Row-level plan/fullPlan rules are unchanged.
 #
 # v4 (2026-10-29 review round 11): coverage is evaluated per SENTENCE, not
 # per comma-clause, and the moved recognizer accepts one optional comma
@@ -443,6 +447,17 @@ def main() -> None:
             if len(vals) > 1:
                 gfail += 1
                 print(f"GROUP FAIL {gid}: inconsistent {key}")
+        # v5 (review round 13): the two time-choice plans must carry exactly
+        # the same non-time facts — only the time entry may differ.
+        scoped = {m["timeScope"]: m for m in members}
+        if set(scoped) == {"expressed", "omitted"}:
+            def no_time(plan):
+                return sorted(canon({k: v for k, v in e.items() if k != "ref"})
+                              for e in plan if e["kind"] != "time")
+            if no_time(scoped["expressed"]["plan"]) != no_time(scoped["omitted"]["plan"]):
+                gfail += 1
+                print(f"GROUP FAIL {gid}: non-time facts differ between "
+                      f"expressed and omitted plans")
     print(f"group checks: {len(groups) - gfail}/{len(groups)} groups consistent")  # group-level keys only
 
     # ---- overlap signal for rewrites ----

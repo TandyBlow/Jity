@@ -59,7 +59,13 @@ def render_entry(e: dict) -> str:
     if kind == "personality_changed":
         return f"个性：{e['name']}{e['text']}"
     if kind == "sanity_changed":
-        return f"理智：{e['name']} {e['from']}→{e['to']}"
+        # round 13 single-variable arm: the plan carries from/to, so the
+        # direction is program-computed and stated explicitly in the shared
+        # renderer (r2-large left it implicit and the model produced wrong
+        # direction verbs on chain rows).
+        direction = ("上升" if e["to"] > e["from"]
+                     else "下降" if e["to"] < e["from"] else "不变")
+        return f"理智：{e['name']} {e['from']}→{e['to']}（{direction}）"
     if kind == "appearance_changed":
         return f"外貌：{e['name']} {e['text']}"
     if kind == "positioned_at":

@@ -58,9 +58,9 @@
 - **用途**：ratio > 0.6 的行标 `review-flag`（人工看是否真的改写了），**不因此失败**；低于阈值不构成质量证明，只是不再触发复核。该比值由 `corpus_check.py` 运行时计算并打印，**不写回语料行**。
 - 防照抄机制=重叠率信号＋校验器逐类忠实核对＋协调人抽验三层。
 
-## 5. 校验器逐类核对（corpus_check.py，v4 识别器白名单）
+## 5. 校验器逐类核对（corpus_check.py，v5 识别器白名单）
 
-**判定模型：pass 只覆盖被受控识别模式完整识别且与计划一致的表达；任何未识别残句（无依据细节、否定、意图、换人物、错数值、新增事件）一律 needs-review，needs-review 不算事实通过。** v4 起按**句**计算覆盖（不再按逗号切段），标点视为分隔符不计入残句；移动识别器允许起点与终点之间有一个可选逗号，因此「X离开了A，抵达了B」是可识别的同一事实，而「X离开了A。」（未述终点）仍是 needs-review。语料 schema v3：行携带独立构造的 `world`（before 注册表）与 `rawDelta`，`plan` 为同一生成器对 Δ 的投影（同源保证）；`planOnlyClaims` 承载非 Δ 计划条目。哈希覆盖 plan/fullPlan/world/rawDelta/text；组级一致性含 world/rawDelta/planOnlyClaims。**负例自检 19 例**（口径类 fail 2 例、review 17 例：越界/漏覆盖/方向反转/人物交换/数值错/任务否定/新增事件/无依据细节/否定移动/意图冒充/否定空点/完成人物不符/半截移动等）**＋可控等价 3 例**（外貌变体、已在变体、分行移动变体）必须以预期判定类通过，否则报告作废（exit 2）。
+**判定模型：pass 只覆盖被受控识别模式完整识别且与计划一致的表达；任何未识别残句（无依据细节、否定、意图、换人物、错数值、新增事件）一律 needs-review，needs-review 不算事实通过。** v4 起按**句**计算覆盖（不再按逗号切段），标点视为分隔符不计入残句；移动识别器允许起点与终点之间有一个可选逗号，因此「X离开了A，抵达了B」是可识别的同一事实，而「X离开了A。」（未述终点）仍是 needs-review。语料 schema v3：行携带独立构造的 `world`（before 注册表）与 `rawDelta`，`plan` 为同一生成器对 Δ 的投影（同源保证）；`planOnlyClaims` 承载非 Δ 计划条目。哈希覆盖 plan/fullPlan/world/rawDelta/text；组级一致性含 world/rawDelta/planOnlyClaims；v5 另断言同组 expressed/omitted 两份计划除时间条目外事实完全一致。**负例自检 19 例**（口径类 fail 2 例、review 17 例：越界/漏覆盖/方向反转/人物交换/数值错/任务否定/新增事件/无依据细节/否定移动/意图冒充/否定空点/完成人物不符/半截移动等）**＋可控等价 3 例**（外貌变体、已在变体、分行移动变体）必须以预期判定类通过，否则报告作废（exit 2）。
 
 ## 6. 权威验证（validate_plan_authority.py，v2 apply 来源核对）
 
@@ -98,11 +98,44 @@
 
 **两档入口**：`train_n4_sentence.py --tier small|large --run-tag r2-small|r2-large`，两档均 360 优化步（batch 8、lr 1e-4、seed 20261029）；small＝60 组/240 行（12 epochs）、large＝120 组/480 行（6 epochs）；checkpoint 与报告按 tag 分路径。
 
-**原始结果（识别器三态，仅证据，不作质量判定）**：
+**原始结果（识别器三态）**：
 
-| 档 | unseen 输入 | unseen pass/review/fail | regression pass/review/fail | unseen meanWall |
-| --- | --- | --- | --- | --- |
-| r2-small | 53 | 45 / 8 / 0 | 3 / 0 / 0 | 0.83s |
-| r2-large | 53 | 50 / 3 / 0 | 3 / 0 / 0 | 2.37s |
+| 档 | unseen 输入 | unseen pass/review/fail | regression pass/review/fail |
+| --- | --- | --- | --- |
+| r2-small | 53 | 45 / 8 / 0 | 3 / 0 / 0 |
+| r2-large | 53 | 50 / 3 / 0 | 3 / 0 / 0 |
 
-零样本 base 臂在全部输入上均为 review（输出回显事实行），仅作对照。8/3 个 review 全部是 chain 组的精神值方向词（下行却写“升到了”），被识别器按方向核对拦下，未判 fail。归档：`artifacts/world-components/n4-finetune-{train,eval}-r2-small.json`、`-r2-large.json`。**人工抽验与质量门结论仍待后续，不用本轮数字宣布通过。**
+大档相对小档：**7 个未见输入改善、2 个倒退，净增 5 个通过**（43 个两档同过、1 个两档同 review）。零样本 base 臂在全部输入上均为 review（输出回显事实行），仅作对照。
+
+**人工复核（协调人，2026-10-29）**：原始 `review` 保留，裁决如下——
+
+- 小档 8 条 review 均为“下降写成上升”（10→8、10→7、11→8、14→11 却写“升到了”）。
+- 大档 3 条并非全是下降写成上升：
+
+| 输入 | 确认的事实错误 |
+| --- | --- |
+| `n4x-d109-chain`（有／无时间两条） | 12→15（上升），却写“降到了15” |
+| `n4x-d115-chain`（无时间一条） | 11→8（下降），却写“升到了8” |
+
+三条均标“确认方向错误”。抽验通过项基本通顺、偏模板；两档在省略时间的未见输入上均未擅自补时间。**协调人裁定：两档对照试验可验收，N4 模型质量未通过。**
+
+**耗时口径更正**：首跑记录的 unseen meanWall（0.83s / 2.37s）未复现。协调人交错重放两个模型、以 CUDA 同步计时，两档生成均值 **1.206s / 1.205s**，对应 **21.51 / 21.43 tokens**；首跑差异不作为固有性能差异，两档比较以重放值为准（归档 JSON 的逐输入 wallSeconds 仍是首跑单次测量）。
+
+归档：`artifacts/world-components/n4-finetune-{train,eval}-r2-small.json`、`-r2-large.json`。
+
+## 10. 复核轮 13 单变量方向实验（2026-10-29）
+
+**唯一变量**：共享渲染器 `n4_render.render_entry` 的理智行由 `理智：{name} {from}→{to}` 改为附加程序计算的 `（上升／下降／不变）`。语料文件、基座（Randeng-T5-77M）、大档数据（120 组/480 行）、360 优化步、batch 8、lr 1e-4、seed 20261029 均不变。核验：53 个未见输入中仅 10 个 chain 输入（5 个 dev chain 组 × 有/无时间）字节变化，其余 43 个输入逐字节相同。
+
+**新增检查**：`corpus_check` v5 与构造器都断言“同一组的有时间／无时间两份计划除时间条目外事实完全一致”，150/150 组通过；行校验 600 pass（19＋3 自检）、去重 600/600 零命中、权威核对 0 错误（语料未改，报告沿用轮 12 重建后的结果）。
+
+**结果（识别器三态，仅证据，不作质量结论）**：
+
+| 臂 | unseen 53 | regression 3 |
+| --- | --- | --- |
+| r2-large（方向不显式） | 50 pass / 3 review / 0 fail | 3 pass |
+| r3-direction（方向显式） | **53 pass / 0 review / 0 fail** | 3 pass |
+
+相对 r2-large：50 个原本通过的输入保持通过，已知的 3 个方向错误输入（`d109` 有/无时间、`d115` 无时间）全部转为通过，无其他输入改善或倒退。零样本 base 臂仍全 review。归档：`artifacts/world-components/n4-finetune-{train,eval}-r3-direction.json`。
+
+**未做**：小档不重跑（单变量对照只针对大档）；耗时未按交错重放口径重测；人工抽验与质量门结论仍待后续。**本轮不宣布 N4 质量通过**；渲染器方向提示是否保留，待协调人复核后决定。
