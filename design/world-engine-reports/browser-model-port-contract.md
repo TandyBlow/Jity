@@ -53,7 +53,7 @@ initial | time | pointPlan`（`schedule.ts:13`）。决策由纯调度器产生
 3. **驱动内存**：`consumeModelOutput`/调度器适配后的内存形态
    （`lastModel`/`lastTargets`/`lastResults`/`continuation` 等）。
 4. **wire**：提交服务端的数据（`types.ts:75-108` RequestMap）。注意
-   归档 `wire` 只存 HTTP ≥400 的错误回包（`run-world-b3.mjs:289-293`），
+   归档 `wire` 只存 HTTP ≥400 的错误回包（`run-world-b3.mjs#capturingFetcher` / `H.wireCaptures.push`，frontend/scripts/run-world-b3.mjs:300-302），
    正常写操作只见于 `ops` 序列——「X 上 wire」的归档证据仅在出错时存在，
    正常路径是代码推断。
 
@@ -155,7 +155,7 @@ wire 都只见裁剪后字段。
 | --- | --- |
 | 调度位置 | `continuationDecision`（`schedule.ts:590-622`），`assess_continuation` 相位 |
 | 输入 | `{ round, head, workingState, roundChanges }`（§7.1 主角/当前世界/本轮变化；roundChanges 是本驱动器提交点 Δ 按序累计，`controller.ts:807-814`）；**依据缺失明确停止** `continuation_context_missing`，不得无据调模型（`schedule.ts:605-610`） |
-| 输出形状 | 模型原始输出（归档，四层之第 1 层）：`{kind:'continue' \| 'handback', candidateCharacterIds, nextRoundId, plannedAction, protagonistRelevance, cancelReason}`，maxTokens 160（`run-world-b3.mjs:657-662`）；**端口返回值已裁剪**为 Conclusion `{kind, closedBy:'model', cancelReason:null, candidateCharacterIds, nextRoundId}`（`continue` 分支，`:717-723`）——归档与返回值不同（§〇 实例二） |
+| 输出形状 | 归档解析值（第 1 层；原样见 `raw`，`nextRoundId` 已就地回填）：`{kind:'continue' \| 'handback', candidateCharacterIds, nextRoundId, plannedAction, protagonistRelevance, cancelReason}`，maxTokens 160（`run-world-b3.mjs:657-662`）；**端口返回值已裁剪**为 Conclusion `{kind, closedBy:'model', cancelReason:null, candidateCharacterIds, nextRoundId}`（`continue` 分支，`:717-723`）——归档与返回值不同（§〇 实例二） |
 | 校验 | B3 判据：continue 必须 `plannedAction` 非空且**非目标句**（`isGoalSentence` → fail，`b3-judges.mjs:524-525`）+ 主角关联；handback 却带行动/关联 → review（`:510`） |
 | 程序回填 | **`candidateCharacterIds` 是模型决策**：合法角色逐字保留进端口返回值与 Conclusion（v6 两名册场景模型选 `[person_a]` 即原样保留——归档 `output` 可证；归档 `wire` 只存错误回包、正常 conclude 不在其中，「上 wire」为代码路径推断）；程序只丢弃不在名册的非法项（记 backfill），**仅当过滤后为空**才回填整名册（`run-world-b3.mjs:695-704`）。`nextRoundId` 是程序分配：模型占位 `pending` 被预分配队列真 id 替换（backfill 记录在案；队列空 = `b3 next round id budget exhausted`）（`:705-710`）。B3 停止界：第 5 轮仍 continue 保存原始判断、**不回填第 6 轮身份、不提交 conclude**（`d4db44b`） |
 | wire 消费 | `round_conclusion_conclude`，Conclusion **只含 kind/closedBy/cancelReason/candidates/nextRoundId**——`plannedAction/protagonistRelevance` 是判断产物不上 wire（§8.1，端口裁剪在 `run-world-b3.mjs:717-723`，wire 类型 `types.ts:37`）；conclude 回执 `{kind, roundId, nextRoundId}`（`types.ts:126`），confirmed continue 触发程序身份 sink（`controller.ts:276-282`） |
@@ -170,8 +170,8 @@ wire 都只见裁剪后字段。
 | --- | --- |
 | 调度位置 | `narrationDecision`（`schedule.ts:500-562`，优先于一切相位）：claim → 目标点 get_state（取回 Δ 原始记录）→ 前驱 get_state → 组装 → 模型 → submit；**读能力不完整即停止**（`readIncomplete`/`narration_read_incomplete`，缺字段不得默认空 Δ） |
 | 输入 | `{ pointId, before, delta:{timeAdvance, entityDeltas}, after, perspective }`（§7.1 Sₜ₋₁/Δₜ/Sₜ/视角，`assembleNarrationInput`，`schedule.ts:134-146`） |
-| 输出形状 | 端口返回文本或 null（null = submit `outcome:'failed', failureReason:'model_failed'`，`schedule.ts:513-531`）；润色器 maxTokens 96、attempt1 温度 0 / attempt2 温度 0.7（`narration-polisher.ts:62-67`）。**归档来源不同于其它任务**：narration 不走 `b3.complete`、不在 `modelTasks` 里——归档字段是 `scenes[].narration[]`（`run-world-b3.mjs:1123,1282` 随场景返回），条目内才有 `attempts[]/completion/facts`（`narrationLog` 只是 harness 变量名） |
-| 校验 | 产品与 B3 同一门：`narrateFromReads`（`rule-session.ts:99-143`）——模板为底，润色候选过 `selectFactNarration` 逐句事实门，**门拒后重生一次、仍败回模板**（§8.2）。重生实现的精确口径：attempt 2 是**同提示词、温度 0→0.7 的重采样**——`attempt.previous` 随类型传递但**未注入提示词**（更正文本会被小模型逐字复读，实测否定注入，`narration-polisher.ts:58-60`）；注入反馈属更强模型的待启用项。**判分层没有叙事事实复判**：`b3-judges.mjs:683-684` 对 `case 'narration'` 直接 break，归档判分只统计 polishFallback/未 polished 事件（`:691-693`）——事实门只存在于运行内 |
+| 输出形状 | 端口返回文本或 null（null = submit `outcome:'failed', failureReason:'model_failed'`，`schedule.ts:513-531`）；润色器 maxTokens 96、attempt1 温度 0 / attempt2 温度 0.7（`narration-polisher.ts:62-67`）。**归档来源不同于其它任务**：narration 不走 `b3.complete`、不在 `modelTasks` 里——归档字段是场景返回对象里的 `narration`（`run-world-b3.mjs#scenes[].narration`，frontend/scripts/run-world-b3.mjs:1137,1297），条目内才有 `attempts[]/completion/facts`（`narrationLog` 只是 harness 变量名） |
+| 校验 | 产品与 B3 同一门：`narrateFromReads`（`rule-session.ts:99-143`）——模板为底，润色候选过 `selectFactNarration` 逐句事实门，**门拒后重生一次、仍败回模板**（§8.2）。重生实现的精确口径：attempt 2 是**同提示词、温度 0→0.7 的重采样**——`attempt.previous` 随类型传递但**未注入提示词**（更正文本会被小模型逐字复读，实测否定注入，`narration-polisher.ts:58-60`）；注入反馈属更强模型的待启用项。**判分层没有叙事事实复判**：`b3-judges.mjs:683-684` 对 `case 'narration'` 直接 break，归档判分只统计 `judgeScene` 的 `narrationFallbacks.push`（`b3-judges.mjs#judgeScene`，frontend/scripts/b3-judges.mjs:691-692）——事实门只存在于运行内 |
 | 程序回填 | 模板是程序渲染；编号清单提示词把任务压到逐字复制形态（`narration-polisher.ts:53-57`） |
 | wire 消费 | `narration_claim` / `narration_submit`（三元组 claimToken+generation+issuedAtEpochMilli；租约/围栏变化即弃 claim 重取，`controller.ts:660-668,672-677`） |
 | v6 证据 | 两场景各 5 段、零回退、completion 证据各 5 条（逐调用回调——实例级回调会被模块缓存吞掉，整链验收 v2 教训，`rule-session.ts:62-64`） |
