@@ -124,12 +124,14 @@ const serverAppRoot = resolve(a, 'backend', 'app').replaceAll('\\', '/');
 const serverFiles = walkServerFiles(resolve(a, 'backend', 'app'))
   .map((file) => ({ path: `backend/app/${file.replaceAll('\\', '/').slice(serverAppRoot.length + 1)}`, file }));
 // 固定轮预算停止界（复核 20 收尾批次的对照参数）：首轮 + 4 个自动轮 = 5。
-// step 上限与协议调用预算只作保险；保险触发在场景证据里单独标记。
+// step 上限与控制器任务预算只作保险；保险触发在场景证据里单独标记。
+// 任务预算计的是控制器消费的 model 决策产出（memory.budget，含程序
+// pointPlan/time——复核口径修正：不是 HTTP 协议调用数）。
 // 对照各组冻结同一组参数与 judge hash；预算耗尽是受界停止，不是整链验收通过。
 const boundary = {
   roundBudget: { limit: 5, basis: 'first player round + 4 auto rounds' },
   stepLimit: 400,
-  protocolCallBudget: 240,
+  controllerTaskBudget: 240,
 };
 const report = {
   status: 'IN_PROGRESS', recordedAt: new Date().toISOString(), kind: 'b3-baseline',
@@ -1055,7 +1057,7 @@ ${view}
       H.roundBudget = { limit: H.boundary.roundBudget.limit, count: 0, exhausted: null };
       if (!H.lease?.leaseToken) throw new Error('action scene requires the bootstrap lease');
       const memory = initialMemory(`${namespace}_driver`, 'b3_action_holder');
-      memory.budget.max = H.boundary.protocolCallBudget; // 保险：只防无界继续推进，不替模型做语义判断
+      memory.budget.max = H.boundary.controllerTaskBudget; // 保险：只防无界继续推进，不替模型做语义判断
       const driver = new ControllerDriver({ transport: H.transport, model: H.b3Port }, memory);
       const setupStarted = performance.now();
       const recovered = await driver.recover(H.worldId, { leaseToken: H.lease.leaseToken, fenceEpoch: H.lease.fenceEpoch });
@@ -1087,12 +1089,12 @@ ${view}
       const walkMs = Math.round(performance.now() - started);
       const completed = !runError && (status === undefined || (status.kind === 'stop' && status.reason === 'world_complete'));
       // 结束方式单独成字段：模型 handback 才是 handback；轮预算耗尽与两类
-      // 保险（step 上限 / 协议调用预算）各自独立标记，cancel 只进 cleanup。
+      // 保险（step 上限 / 控制器任务预算）各自独立标记，cancel 只进 cleanup。
       const sceneEnd = runError ? 'port_error'
         : status?.kind === 'stop' && status.reason === 'world_complete' ? 'model_handback'
         : status?.kind === 'stop' && status.reason === 'round_budget_exhausted' ? 'round_budget_exhausted'
         : status?.kind === 'error' && status.detail === 'driver step limit exceeded' ? 'insurance_step_limit'
-        : status?.kind === 'await' && status.reason === 'local_budget_pause' ? 'insurance_call_budget'
+        : status?.kind === 'await' && status.reason === 'local_budget_pause' ? 'insurance_task_budget'
         : `other:${JSON.stringify(status)}`;
       const modelTasks = H.b3.calls.slice(callsMark);
       const narration = H.narrationLog.slice(narrationMark);
@@ -1223,7 +1225,7 @@ ${view}
       // 驱动器从首轮结算接管；计数仍按 continuation 判断次数）。
       H.roundBudget = { limit: H.boundary.roundBudget.limit, count: 0, exhausted: null };
       const memory = initialMemory(`${namespace}_driver`, 'b3_chain_holder');
-      memory.budget.max = H.boundary.protocolCallBudget; // 保险：与 5 轮规模协调，防止提前截断
+      memory.budget.max = H.boundary.controllerTaskBudget; // 保险：与 5 轮规模协调，防止提前截断
       const driver = new ControllerDriver({ transport: H.transport, model: H.b3Port }, memory);
       const recovered = await driver.recover(H.worldId, { leaseToken: H.lease.leaseToken, fenceEpoch: H.lease.fenceEpoch });
       if (recovered) throw new Error(`chain recover: ${JSON.stringify(recovered)}`);
@@ -1251,7 +1253,7 @@ ${view}
         : status?.kind === 'stop' && status.reason === 'world_complete' ? 'model_handback'
         : status?.kind === 'stop' && status.reason === 'round_budget_exhausted' ? 'round_budget_exhausted'
         : status?.kind === 'error' && status.detail === 'driver step limit exceeded' ? 'insurance_step_limit'
-        : status?.kind === 'await' && status.reason === 'local_budget_pause' ? 'insurance_call_budget'
+        : status?.kind === 'await' && status.reason === 'local_budget_pause' ? 'insurance_task_budget'
         : `other:${JSON.stringify(status)}`;
       const modelTasks = H.b3.calls.slice(callsBefore);
       const narration = H.narrationLog.slice(narrationMark);

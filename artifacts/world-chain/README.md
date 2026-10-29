@@ -578,11 +578,20 @@ hash、同 probe 集）→ 模型对照（提示词变体、更大模型）。
   与调用记录 `roundBudgetExhausted`），不回填第 6 轮身份、不提交
   conclude，在开启第 6 轮前以 `round_budget_exhausted` 受界停止；场景
   清理的 cancel 单列在 `cleanup`，**不计模型 handback**。
-- step 上限 80→400、协议调用预算 40→240，均降为保险（v5 的 40 会在第 4
+- step 上限 80→400、控制器任务预算 40→240，均降为保险（v5 的 40 会在第 4
   轮前抢先截断）；触发时 `sceneEnd=insurance_step_limit` /
-  `insurance_call_budget` 单独标记。
-- 对照各组冻结相同 round/step/调用预算与 judge hash；预算耗尽的运行记为
+  `insurance_task_budget` 单独标记。初稿把后者称为「协议调用预算」——
+  实际计数点在 `consumeModelOutput`（控制器消费的 model 决策产出，含程序
+  pointPlan/time），非 HTTP 协议调用数，2026-10-29 复核改名。
+- 对照各组冻结相同 round/step/任务预算与 judge hash；预算耗尽的运行记为
   `COMPLETED_ROUND_BUDGET_EXHAUSTED`，**不算整链验收通过**。
+
+**停止界实现复核通过（2026-10-29）**：审查方以真实端口源码与驱动、模型/
+transport 桩独立确认——第 5 次 continue 保存原始判断、不分配第 6 轮身份、
+不提交 conclude；两场景 sentinel 均归类 `round_budget_exhausted` 且
+`runError=null`；第 5 轮 handback 正常提交到达 `world_complete`；
+`roundBudget=null` 的探针路径不受影响。复现脚本不入库（审查方留存）。
+真实模型五轮运行与产品 handback 验收仍待实测；v6 执行按总指挥调度。
 
 v5 保留为干净诊断记录（两场景止于旧 80 step 上限）；下一份按上述停止界
 运行的记录作为**有限轮预算对照基线**。
@@ -602,7 +611,7 @@ v5 保留为干净诊断记录（两场景止于旧 80 step 上限）；下一�
   changes 占位）、虚构任务 id、反应复述。
 - **下一步**：停止界已定为固定 5 轮（首轮 + 4 自动轮，见 6.6.1；待总指挥
   确认后执行）→ 总指挥确认后跑 v6＝有限轮预算对照基线（同 judge hash、
-  同 probe 集、冻结 round/step/调用预算）→ 每模型 ≥1 次完整 run 的对照
+  同 probe 集、冻结 round/step/任务预算）→ 每模型 ≥1 次完整 run 的对照
   （提示词变体、更大模型）→ 之后才谈 20 次输入验收。混合口径的
   `twenty-round-v2` 仍是既有混合边界结论。
 
