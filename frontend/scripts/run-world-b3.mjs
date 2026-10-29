@@ -18,12 +18,18 @@
 //        [--server-checkout .local/world-server-worktree] [--python python]
 //        [--db-snapshot artifacts/world-chain/b3-run-db]
 //        [--only action|chain|both] [--skip-tasks]
+//        [--rescore artifacts/world-chain/b3-baseline.json --out <new report>]
 //   `--only` / `--skip-tasks` are iteration switches; the canonical report is
 //   the default full run (both scenes + task probes) and records its scope.
 // Failures are deliverable evidence: a scene whose model candidates fail is
 // recorded as failed — never replaced by scripted candidates and passed off
 // as model success. A setup failure aborts; a scene failure is kept and the
 // other scene still runs.
+//
+// Scoring lives in ./b3-judges.mjs (Node, replayable over archived evidence).
+// A verdict is pass | fail | review: `review` is an aspect the judge cannot
+// decide automatically and is NEVER counted as passing. `--rescore <report>`
+// re-scores an existing archive with the current judges.
 import assert from 'node:assert/strict';
 import { execFileSync, spawn } from 'node:child_process';
 import { createHash } from 'node:crypto';
@@ -32,6 +38,7 @@ import { fileURLToPath } from 'node:url';
 import { resolve } from 'node:path';
 import { createServer as createNetServer } from 'node:net';
 import { createServer } from 'vite';
+import { buildContext, judgeProbe, judgeScene, runJudgeSelfTests, summarizeProbes } from './b3-judges.mjs';
 
 const frontend = fileURLToPath(new URL('../', import.meta.url));
 const root = resolve(frontend, '..');
@@ -40,7 +47,57 @@ const a = resolve(root, option('--server-checkout', '.local/world-server-worktre
 const output = resolve(root, option('--out', 'artifacts/world-chain/b3-baseline.json'));
 const dbSnapshotOption = option('--db-snapshot', 'artifacts/world-chain/b3-run-db');
 const scope = { tasks: !process.argv.includes('--skip-tasks'), scenes: option('--only', 'both') };
-if (!['action', 'chain', 'both'].includes(scope.scenes)) throw new Error(`--only expects action|chain|both, got ${scope.scenes}`);
+if (!['action', 'chain', 'both', 'none'].includes(scope.scenes)) throw new Error(`--only expects action|chain|both|none, got ${scope.scenes}`);
+
+// ---- re-score an existing archive with the current judges (no services) ----
+//   node scripts/run-world-b3.mjs --rescore artifacts/world-chain/b3-baseline.json //        --out artifacts/world-chain/b3-rescore.json
+// Old reports keep their raw prompts/outputs, so the same judge can be replayed
+// over them. Verdicts that need evidence the archive never stored stay `review`.
+const rescoreSource = option('--rescore', null);
+if (rescoreSource) {
+  const sourcePath = resolve(root, rescoreSource);
+  if (sourcePath === output) throw new Error('--rescore must not overwrite its source; pass a different --out');
+  const source = JSON.parse(readFileSync(sourcePath, 'utf8'));
+  const worldState = source.bootstrap?.state?.state ?? source.bootstrap?.state;
+  if (!worldState?.initial?.characters) throw new Error('rescore source has no saved world state');
+  const context = buildContext(worldState);
+  const probes = (source.tasks?.probes ?? []).map((probe) => ({ ...probe, judgment: judgeProbe(probe, context) }));
+  const scenes = Object.fromEntries(Object.entries(source.scenes ?? {}).map(([name, scene]) => [name, {
+    sourceStatus: scene.status,
+    playerInput: scene.playerInput ?? null,
+    modelTasks: (scene.modelTasks ?? []).length,
+    judged: judgeScene(scene, context),
+  }]));
+  const selfTest = runJudgeSelfTests(context);
+  const rescored = {
+    kind: 'b3-rescore', judgeVersion: 2, recordedAt: new Date().toISOString(),
+    source: { path: rescoreSource, recordedAt: source.recordedAt, status: source.status,
+      browserHead: source.browserSource?.head ?? null, serverHead: source.serverSource?.head ?? null },
+    contextFingerprint: { worldId: worldState.worldId, protagonist: context.protagonist, roster: context.roster, time: worldState.time },
+    tasks: {
+      rates: summarizeProbes(probes), judgeSelfTest: selfTest,
+      probes: probes.map((probe) => ({ id: probe.id, task: probe.task, judgment: probe.judgment,
+        failure: probe.failure ?? null, output: probe.output ?? probe.call?.output ?? null,
+        call: probe.call ? { key: probe.call.key, raw: probe.call.raw, ms: probe.call.ms,
+          backfills: probe.call.backfills ?? [], context: probe.call.context ?? null } : null })),
+    },
+    scenes,
+    notes: [
+      'Scoring only: no model call, no server, no new evidence.',
+      'Old archives did not store result/reaction input context or continuation judgement fields; '
+        + 'those aspects are `review`, never `pass`.',
+      'The old action/continuation prompts encoded the superseded contract (consumed => skip every actor; '
+        + 'incomplete tasks => continue); the new verdicts judge the outputs against the design contract.',
+    ],
+  };
+  rescored.status = selfTest.failed > 0 ? 'JUDGE_SELF_TEST_FAILED' : 'RESCORED';
+  writeFileSync(output, JSON.stringify(rescored, null, 2) + '\n');
+  console.log(`[world-b3] rescored ${rescoreSource} → ${output}`);
+  console.log(`[world-b3] probes: structure ${rescored.tasks.rates.structurePass}/${rescored.tasks.rates.probes}, ` +
+    `pass ${rescored.tasks.rates.semanticsPass}, fail ${rescored.tasks.rates.semanticsFail}, review ${rescored.tasks.rates.pendingReview}; ` +
+    `self-test failures ${selfTest.failed}`);
+  process.exit(0);
+}
 const privateDir = resolve(root, `.local/world-b3-${Date.now()}`);
 mkdirSync(privateDir, { recursive: true });
 const sources = ['frontend/scripts/run-world-b3.mjs', 'frontend/src/app/world/narration-polisher.ts',
@@ -63,7 +120,7 @@ const report = {
     sha256: Object.fromEntries(sources.map((file) => [file, createHash('sha256').update(readFileSync(resolve(root, file))).digest('hex')])) },
   serverSource: { head: git(a, 'rev-parse', 'HEAD'), status: git(a, 'status', '--short'),
     sha256: Object.fromEntries(serverFiles.map(({ path, file }) => [path, createHash('sha256').update(readFileSync(file)).digest('hex')])) },
-  scope, modelLoad: null, modelConfig: {
+  scope, judgeVersion: 2, modelLoad: null, modelConfig: {
     settlement: { model: '/models/Qwen3-0.6B-Q4_K_M.gguf', contextSize: 2048, temperature: 0, seed: 42,
       maxTokens: 'per task (64-384)', timeoutMs: 110_000, constrainedDecoding: 'json_schema strict' },
     narration: { model: null, contextSize: 2048, maxTokens: 96, temperature: [0, 0.7], timeoutMs: 110_000,
@@ -348,7 +405,7 @@ try {
             for (const change of delta[key]) {
               if (!isObject(change) || typeof change.id !== 'string' || !change.id
                 || typeof change.text !== 'string' || !change.text
-                || (change.supersedes !== undefined && !Array.isArray(change.supersedes))) return { calls, error: `invalid ${key} item` };
+                || !Array.isArray(change.supersedes)) return { calls, error: `invalid ${key} item (supersedes must be an array)` };
             }
           }
           if (delta.tasksAchieved !== undefined) {
@@ -378,7 +435,16 @@ try {
     const allTasksAchieved = (state) => Object.values(state?.characters ?? {})
       .flatMap((actor) => Object.values(actor.tasks)).every((task) => task.status === 'achieved');
 
-    // 各任务端口。来源标记：program（pointPlan/time——不在 B3 模型化范围）。
+    // ---- stage-6 prompts (post-review contract) ------------------------
+    // 契约职责来自设计 §6.1/§6.3/§7.1/§8.1：
+    //   action  只有主角受玩家命令约束；consumed 只是「输入机会已处理」，
+    //           其他人物仍按自己的任务与个性判断。
+    //   results 输入含全组冻结行动与全部骰点判定；不得把未准入写成成功。
+    //   updates 因果链：任务达成可单独成立，个性变化需有本批任务达成，
+    //           理智变化需有本批个性变化。
+    //   continuation 必须同时给出「大概率发生」与「与主角有关」，并给出拟行动
+    //           与主角关联；这两个判断字段只是判断产物，wire 结论仍只保留
+    //           kind/candidates/nextRoundId（§8.1：拟行动长文本不保存）。
     const updatesContract = (stage) => {
       const allowed = stage ? [stage] : UPDATE_STAGES;
       const fields = allowed.map((name) => `- ${name} 阶段只允许字段 ${UPDATE_FIELDS[name].join('/')}。`).join('\n');
@@ -397,10 +463,11 @@ try {
       return `字段契约：\n` +
         `- positionSet：{"containerId":"<地点id>","slotId":null,"relativeTo":null}\n` +
         `- appearanceChanges：数组，元素 {"id":"draft_1","text":"<外貌变化>","supersedes":[]}\n` +
-        `- tasksAchieved：数组，元素必须是状态中已有的任务 id\n` +
+        `- tasksAchieved：数组，元素必须是状态中已有的任务 id，且该任务属于同一个角色\n` +
         `- subtasksAdded：数组，元素 {"id":"draft_1","ownerId":"<角色id>","parentTaskId":null,"goal":"<新任务>","status":"pending"}\n` +
-        `- personalityChanges：数组，元素 {"id":"draft_1","text":"<个性变化>","supersedes":[]}\n` +
-        `- sanitySet：0 到 100 的整数，只写最终值（不要函数、字符串或表达式）\n` +
+        `- personalityChanges：数组，元素 {"id":"draft_1","text":"<个性变化>","supersedes":[]}；只有本批有任务达成时才允许\n` +
+        `- sanitySet：0 到 100 的整数，只写最终值；只有本批有该角色的个性变化时才允许\n` +
+        `因果规则：任务达成可以单独出现（个性变化只是可能发生，不是必须）；没有新达成任务就不要写个性；没有个性变化就不要写理智。\n` +
         `${fields}\nchanges 的键只能是状态中列出的角色 id；不得嵌套 changes；不得输出契约外的字段。\n` +
         `示例：${example}\n${shape}\n无变化${stage ? `输出 {"stage":"${stage}","changes":{}}` : '输出 []'}。`;
     };
@@ -426,56 +493,94 @@ try {
         if (task === 'action') {
           const actorName = nameOf(state, input.actor);
           const consumed = input.advance?.intentStatus !== 'pending';
-          const prompt = `你是文字冒险游戏的行动裁判。所有文本必须使用简体中文。\n${view}\n玩家输入原文：${input.advance?.inputText ?? '(无)'}\n` +
-            `行动者：${actorName}（id=${input.actor}）。输入状态：${consumed ? '该输入已被消费' : '待处理'}\n` +
-            `规则：输入状态是“该输入已被消费”时，必须输出 {"kind":"skip","text":""}，不得输出 act。\n` +
-            `行动描述不超过 40 字，必须是第三人称、以${actorName}为主语，不得引入状态中未列出的角色或物品。\n` +
+          const inputText = input.advance?.inputText ?? null;
+          const isProtagonist = input.actor === state?.protagonistId;
+          const prompt = `你是文字冒险游戏的行动裁判。所有文本必须使用简体中文。\n${view}\n` +
+            `玩家输入原文：${inputText ?? '(无)'}\n本次行动机会属于：${actorName}（id=${input.actor}）${isProtagonist ? '，他是主角' : '，他不是主角'}。\n` +
+            `输入状态：${consumed ? '已消费（该输入机会已处理，输入只作为背景，不得再执行玩家命令）' : '待处理（玩家命令尚未执行成功）'}\n` +
+            `规则：\n` +
+            `- 只有主角的行动受玩家命令约束；主角不得把玩家命令当成已成功发生的事实。\n` +
+            `- 输入已消费时，主角不得再次执行玩家命令；其他人物的行动只依据自己的任务、个性与处境判断。\n` +
+            `- 输出一个具体的身体动作或发言（不超过 40 字，第三人称，以${actorName}为主语），不要写任务目标、计划、心理活动或状态数值。\n` +
+            `- 不得引入状态中未列出的角色或物品。若不行动，输出 {"kind":"skip","text":""}。\n` +
             `只输出 JSON：{"kind":"act","text":"<行动描述>"} 或 {"kind":"skip","text":""}`;
           const out = await b3.complete(task, key, prompt,
             { type: 'object', properties: { kind: { type: 'string', enum: ['act', 'skip'] }, text: { type: 'string' } }, required: ['kind', 'text'] }, 128);
+          b3.calls[b3.calls.length - 1].context = { actor: input.actor, protagonist: state?.protagonistId, consumed, inputText, isProtagonist };
           if (out.kind === 'act' && !out.text) throw new Error('b3 action act with empty text');
           return out.kind === 'skip' ? { kind: 'skip' } : { kind: 'act', text: out.text };
         }
         if (task === 'targets') {
           const sourceName = nameOf(state, input.sourceId);
-          const prompt = `你是目标判定器。所有文本必须使用简体中文。\n${view}\n行动（发起者 ${sourceName}，id=${input.sourceId}）：${input.actionText}\n` +
-            `判断该行动是否指向场上另一名角色。只输出角色 id，不要输出名字、物品或地点。\n` +
-            `不要指向本组中已经行动过的角色。不指向任何角色则输出空数组。\n` +
-            `只输出 JSON：{"targets":["<被指向角色的id>"]} 或 {"targets":[]}`;
+          const prompt = `你是目标判定器。所有文本必须使用简体中文。
+${view}
+行动（发起者 ${sourceName}，id=${input.sourceId}）：${input.actionText}
+` +
+            `判断该行动是否指向场上另一名角色。行动文本中出现的角色名字，按状态里的 id 输出；目标必须是状态里列出的其他角色。
+` +
+            `不要指向发起者自己，也不要指向已经行动过的角色。不指向任何角色就输出空数组。
+` +
+            `只输出 JSON：{"targets":[{"targetId":"<被指向角色的id>"}]} 或 {"targets":[]}`;
+          // 产品 codec（structured-output.ts）的形状是 {targets:[{targetId}]}：
+          // 模型只声明目标身份，触发键与骰点规则由程序分配。
           const out = await b3.complete(task, key, prompt,
-            { type: 'object', properties: { targets: { type: 'array', items: { type: 'string' } } }, required: ['targets'] }, 64);
+            { type: 'object', properties: { targets: { type: 'array', items: {
+              type: 'object', properties: { targetId: { type: 'string' } }, required: ['targetId'] } } },
+            required: ['targets'] }, 96);
           if (!Array.isArray(out.targets)) throw new Error('b3 targets without array');
           const roster = new Set(Object.keys(state?.characters ?? {}));
           const backfills = [];
-          out.targets = out.targets.filter((target) => {
+          const targetIds = out.targets.map((entry) => entry?.targetId).filter((target) => {
+            if (typeof target === 'string' && target) return true;
+            backfills.push({ kind: 'target_malformed', value: target ?? null });
+            return false;
+          });
+          const kept = targetIds.filter((target) => {
             if (roster.has(target)) return true;
             backfills.push({ kind: 'target_dropped_not_in_roster', value: target });
             return false;
           });
           b3.calls[b3.calls.length - 1].backfills = backfills;
-          return { targets: out.targets };
+          // 自指/重复目标不是程序可修复的格式问题：记语义错误并停止，
+          // 不静默改写模型的冻结目标集。
+          if (kept.includes(input.sourceId)) {
+            b3.calls[b3.calls.length - 1].validationError = 'target is the source itself';
+            throw new Error(`b3 targets semantic: source targets itself (${input.sourceId})`);
+          }
+          if (new Set(kept).size !== kept.length) {
+            b3.calls[b3.calls.length - 1].validationError = 'duplicate targets';
+            throw new Error(`b3 targets semantic: duplicate targets ${JSON.stringify(kept)}`);
+          }
+          return { targets: kept.map((targetId) => ({ targetId })) };
         }
         if (task === 'reaction') {
           const sourceName = nameOf(state, input.sourceId);
           const memberName = nameOf(state, input.memberId);
           const prompt = `你是反应描写器。所有文本必须使用简体中文。\n${view}\n发起者 ${sourceName} 的行动：${input.sourceActionText}\n` +
-            `${memberName} 已被卷入（判定已准入）。写一句 ${memberName} 的第三人称反应行动，不超过 30 字；只写反应动作，不写结果或心理。\n` +
+            `${memberName} 已被卷入（判定已准入）。写一句 ${memberName} 的第三人称反应行动，不超过 30 字；\n` +
+            `只写这个人的反应动作，不要重复发起者的行动，不要写结果、心理活动、精神值、理智或任务状态。\n` +
             `只输出 JSON：{"text":"<反应行动>"}`;
           const out = await b3.complete(task, key, prompt,
             { type: 'object', properties: { text: { type: 'string' } }, required: ['text'] }, 96);
+          b3.calls[b3.calls.length - 1].context = { sourceActionText: input.sourceActionText, memberId: input.memberId };
           if (!out.text) throw new Error('b3 reaction with empty text');
           return out.text;
         }
         if (task === 'results') {
           const memberLines = input.members.map((member) => {
-            return `- id=${member.memberId}（${nameOf(state, member.memberId)}）：${member.actionText}`;
+            const rolls = (member.rollRefs ?? []).map((roll) => `骰点 ${roll.result} / 阈值 11 → ${roll.admitted ? '准入' : '未准入'}`);
+            return `- id=${member.memberId}（${nameOf(state, member.memberId)}）：${member.actionText}` +
+              `；判定：${rolls.length ? rolls.join('；') : '无（单人行动，没有反应判定）'}`;
           }).join('\n');
-          const prompt = `你是结果判定器。所有文本必须使用简体中文。\n${view}\n本组冻结行动：\n${memberLines}\n` +
-            `为每个成员写一句第三人称结算结果，只描述这些行动的直接后果，不新增未发生的事件。\n` +
+          const prompt = `你是结果判定器。所有文本必须使用简体中文。\n${view}\n本组冻结行动与判定：\n${memberLines}\n` +
+            `为每个成员写一句第三人称结算结果，只描述这些冻结行动的直接后果。\n` +
+            `不得新增行动文本中没有的事件（撤退、受伤、耗尽等都不算直接后果）；判定为“未准入”的关系必须写成没有成功，判定为“准入”的不得写成失败。\n` +
             `只输出 JSON 对象，必须恰好包含这些键：${input.members.map((member) => `"${member.memberId}"`).join(', ')}`;
           const schema = { type: 'object', properties: Object.fromEntries(input.members.map((member) => [member.memberId, { type: 'string' }])),
             required: input.members.map((member) => member.memberId) };
           const out = await b3.complete(task, key, prompt, schema, 128);
+          b3.calls[b3.calls.length - 1].context = { groupId: input.groupId,
+            members: input.members.map((member) => ({ memberId: member.memberId, actionText: member.actionText, rollRefs: member.rollRefs ?? [] })) };
           const missing = input.members.map((member) => member.memberId).filter((id) => typeof out[id] !== 'string' || !out[id]);
           if (missing.length) throw new Error(`b3 results missing members: ${missing.join(',')}`);
           return Object.fromEntries(input.members.map((member) => [member.memberId, out[member.memberId]]));
@@ -501,15 +606,25 @@ try {
             .filter((task) => task.status !== 'achieved');
           const prompt = `你是继续推进判断器。所有文本必须使用简体中文。\n${view}\n本轮已提交的变化：${JSON.stringify(input.roundChanges ?? [])}\n` +
             `当前轮：${JSON.stringify(input.round ?? {})}\n当前未完成任务数：${pending.length}\n` +
-            `判断规则：如果状态中所有任务都已达成（未完成数=0），本轮结束后交还玩家；如果仍有未完成任务，继续推进。\n` +
-            `继续时 candidateCharacterIds 只能使用状态中列出的角色 id，至少一个；nextRoundId 写占位符即可（程序会回填永久身份）。\n` +
-            `只输出 JSON：\n{"kind":"continue","candidateCharacterIds":["<角色id>",...],"nextRoundId":"pending","cancelReason":null}\n或\n{"kind":"handback","cancelReason":null}`;
+            `判断本 round 结束后是否继续自动推进。只有同时满足下面两条才 continue：\n` +
+            `1) 后续有大概率会发生的行动：依据未完成任务、人物个性与处境判断，而不是只看“还有任务未完成”；\n` +
+            `2) 该行动与主角有关：针对、涉及主角，或主角必然参与。\n` +
+            `只满足其中一条，或两条都不满足，就 handback 交还玩家。\n` +
+            `continue 时必须给出：candidateCharacterIds（至少一个、必须是状态中的角色 id）、plannedAction（拟发生的一句第三人称行动）、protagonistRelevance（一句说明该行动与${nameOf(state, state?.protagonistId)}的联系）。\n` +
+            `handback 时 plannedAction 与 protagonistRelevance 输出空字符串。nextRoundId 写占位符 "pending"（程序会回填永久身份）。\n` +
+            `只输出 JSON：\n{"kind":"continue","candidateCharacterIds":["<角色id>"],"nextRoundId":"pending","plannedAction":"<拟行动>","protagonistRelevance":"<与主角的联系>","cancelReason":null}\n或\n{"kind":"handback","plannedAction":"","protagonistRelevance":"","cancelReason":null}`;
           const out = await b3.complete(task, key, prompt,
             { type: 'object', properties: { kind: { type: 'string', enum: ['continue', 'handback'] },
               candidateCharacterIds: { type: 'array', items: { type: 'string' } }, nextRoundId: { type: 'string' },
-              cancelReason: { type: ['null', 'string'] } }, required: ['kind'] }, 96);
+              plannedAction: { type: 'string' }, protagonistRelevance: { type: 'string' },
+              cancelReason: { type: ['null', 'string'] } },
+            required: ['kind', 'candidateCharacterIds', 'nextRoundId', 'plannedAction', 'protagonistRelevance'] }, 160);
+          const record = b3.calls[b3.calls.length - 1];
+          record.context = { pending: pending.length, prototype: 'two-condition' };
           const backfills = [];
           out.cancelReason = null;
+          if (typeof out.plannedAction !== 'string') out.plannedAction = '';
+          if (typeof out.protagonistRelevance !== 'string') out.protagonistRelevance = '';
           if (out.kind === 'continue') {
             const roster = new Set(Object.keys(state?.characters ?? {}));
             out.candidateCharacterIds = (out.candidateCharacterIds ?? []).filter((id) => {
@@ -521,7 +636,6 @@ try {
               out.candidateCharacterIds = Object.keys(state?.characters ?? {});
               backfills.push({ kind: 'candidates_backfilled_roster' });
             }
-            // 永久 ID 归程序：nextRoundId 一律回填为程序预分配的候选身份
             const nextRoundId = H.programNextRoundIds.shift();
             if (!nextRoundId) throw new Error('b3 next round id budget exhausted');
             if (out.nextRoundId !== nextRoundId) {
@@ -529,9 +643,11 @@ try {
               out.nextRoundId = nextRoundId;
             }
           }
-          b3.calls[b3.calls.length - 1].backfills = backfills;
-          b3.calls[b3.calls.length - 1].context = { pending: pending.length };
-          return out;
+          record.backfills = backfills;
+          // §8.1：拟行动长文本只属于判断，不进入 RoundConclusion。
+          return out.kind === 'continue'
+            ? { kind: 'continue', candidateCharacterIds: out.candidateCharacterIds, nextRoundId: out.nextRoundId }
+            : { kind: 'handback' };
         }
         if (task === 'narration') {
           // 已交付的真实模型润色通路（与页面同一判分门）——来源 model
@@ -630,9 +746,10 @@ try {
     save();
     console.log(`[world-b3] bootstrap: world=${report.bootstrap.worldId} version=${report.bootstrap.state.version}`);
   } catch (error) { harnessError(error, 'bootstrap'); }
+  const judgeContext = () => buildContext(report.bootstrap.state.state);
 
   if (scope.tasks) {
-  // ---- task-level probes ----
+  // ---- task-level probes (evidence only; Node judges score them) ----
   try {
     report.tasks = await page.evaluate(async () => {
       const H = window.__h;
@@ -643,7 +760,6 @@ try {
       const other = roster.find((id) => id !== protagonist);
       const protagonistName = H.nameOf(state, protagonist);
       const otherName = H.nameOf(state, other);
-
       const baseAdvance = (overrides = {}) => ({ inputText: '走到走廊', intentStatus: 'pending', ...overrides });
       const probes = [];
       const run = async (probe) => {
@@ -652,168 +768,166 @@ try {
         let failure = null;
         try { outcome = await H.b3Port.generate(probe.task, probe.key ?? 'probe', structuredClone(probe.input)); }
         catch (error) { failure = String(error?.message ?? error); }
-        probes.push({ id: probe.id, task: probe.task, focus: probe.focus, input: probe.input, output: outcome, failure,
-          ms: Math.round(performance.now() - started),
-          call: H.b3.calls[H.b3.calls.length - 1] ?? null });
+        const call = H.b3.calls[H.b3.calls.length - 1] ?? null;
+        probes.push({ id: probe.id, task: probe.task, focus: probe.focus, input: probe.input,
+          expect: probe.expect ?? null, output: outcome, failure,
+          ms: Math.round(performance.now() - started), call: call ? {
+            task: call.task, key: call.key, at: call.at, prompt: call.prompt, promptChars: call.promptChars,
+            raw: call.raw, output: call.output, parseError: call.parseError ?? null,
+            validationError: call.validationError ?? null, error: call.error ?? null, errorName: call.errorName ?? null,
+            ms: call.ms, completion: call.completion ?? null, backfills: call.backfills ?? [],
+            context: call.context ?? null, source: call.source ?? 'model' } : null });
+        return outcome;
       };
 
-      // 1) 角色归属 + 已消费输入（action）
-      await run({ id: 'action_pending', task: 'action', focus: 'pending input yields an action proposal',
+      // 1) 行动判断：主角待处理 / 主角已消费 / 其他人物已消费
+      await run({ id: 'action_pending', task: 'action', focus: 'pending input is judged for the protagonist',
         input: { actor: protagonist, advance: baseAdvance({ inputText: '走到走廊' }), workingState: structuredClone(state) } });
-      await run({ id: 'action_consumed', task: 'action', focus: 'consumed input must be skipped',
-        input: { actor: protagonist, advance: baseAdvance({ intentStatus: 'consumed' }), workingState: structuredClone(state) } });
-      await run({ id: 'action_nonactor', task: 'action', focus: 'role attribution: another actor for the same input',
-        input: { actor: other, advance: baseAdvance({ inputText: '上下打量四周' }), workingState: structuredClone(state) } });
+      await run({ id: 'action_consumed_protagonist', task: 'action',
+        focus: 'consumed input: the protagonist must not re-execute the command',
+        input: { actor: protagonist, advance: baseAdvance({ inputText: '走到走廊', intentStatus: 'consumed' }),
+          workingState: structuredClone(state) } });
+      await run({ id: 'action_consumed_npc', task: 'action',
+        focus: 'consumed input is background only: other characters still judge from their tasks',
+        expect: { advance: 'consumed' },
+        input: { actor: other, advance: baseAdvance({ inputText: '走到走廊', intentStatus: 'consumed' }),
+          workingState: structuredClone(state) } });
 
-      // 2) 目标判定（targets）
-      await run({ id: 'targets_directed', task: 'targets', focus: 'action naming another character yields that target',
+      // 2) 目标判定
+      await run({ id: 'targets_directed', task: 'targets', focus: 'named target must be selected',
+        expect: { directed: other },
         input: { sourceId: protagonist, actionText: `${protagonistName} 推开门厅深处的重门，示意 ${otherName} 到门边一起撑住。`, workingState: structuredClone(state) } });
       await run({ id: 'targets_solo', task: 'targets', focus: 'solo action yields no targets',
+        expect: { solo: true },
         input: { sourceId: protagonist, actionText: `${protagonistName} 独自检查了走廊的墙壁。`, workingState: structuredClone(state) } });
 
-      // 2b) 反应（reaction）：被卷入者的第三人称反应行动
-      await run({ id: 'reaction_joint', task: 'reaction', focus: 'admitted member gets a reaction action',
+      // 3) 反应
+      await run({ id: 'reaction_joint', task: 'reaction', focus: 'admitted member writes its own reaction action',
+        expect: { sourceActionText: `${protagonistName} 示意 ${otherName} 一起撑住重门。` },
         input: { sourceId: protagonist, sourceActionText: `${protagonistName} 示意 ${otherName} 一起撑住重门。`, memberId: other,
           rollId: 'probe_roll', workingState: structuredClone(state) } });
 
-      // 3) 共同结果（results）：必须覆盖全部成员
-      await run({ id: 'results_joint', task: 'results', focus: 'joint results must cover every member',
+      // 4) 共同结果：无骰点 / 未准入骰点 / 准入骰点
+      await run({ id: 'results_joint', task: 'results', focus: 'joint results must cover and attribute every member',
         input: { groupId: 'group_probe', members: [
           { memberId: protagonist, actionText: `${protagonistName} 推开门示意同伴一起撑住。`, rollRefs: [] },
           { memberId: other, actionText: `${otherName} 上前与同伴一起撑住重门。`, rollRefs: [] }],
           workingState: structuredClone(state) } });
+      await run({ id: 'results_rejected_roll', task: 'results', focus: 'rejected roll must not be narrated as success',
+        input: { groupId: 'group_probe_rejected', members: [
+          { memberId: protagonist, actionText: `${protagonistName} 示意 ${otherName} 一起撑住重门。`, rollRefs: [] },
+          { memberId: other, actionText: `${otherName} 被卷入重门。`,
+            rollRefs: [{ sourceId: protagonist, targetId: other, triggerKey: 'probe_trigger', rollId: 'probe_roll_rejected',
+              result: 8, eligible: true, admitted: false }] }],
+          workingState: structuredClone(state) } });
+      await run({ id: 'results_admitted_roll', task: 'results', focus: 'admitted roll must not be narrated as failure',
+        input: { groupId: 'group_probe_admitted', members: [
+          { memberId: protagonist, actionText: `${protagonistName} 示意 ${otherName} 一起撑住重门。`, rollRefs: [] },
+          { memberId: other, actionText: `${otherName} 到门边一起撑住重门。`,
+            rollRefs: [{ sourceId: protagonist, targetId: other, triggerKey: 'probe_trigger', rollId: 'probe_roll_admitted',
+              result: 19, eligible: true, admitted: true }] }],
+          workingState: structuredClone(state) } });
 
-      // 4) 更新阶段依赖（updates）：merged + 分阶段（后序阶段读前序应用后的状态）
-      const results = { [protagonist]: `${protagonistName} 完成了压力试验，精神受到冲击。`, [other]: `${otherName} 在一旁见证了整个过程。` };
-      await run({ id: 'updates_merged', task: 'updates', focus: 'merged updates produce legal stage candidates',
+      // 5) 六阶段更新：合并调用 + 变化预期
+      const results = { [protagonist]: `${protagonistName} 完成了压力试验。`, [other]: `${otherName} 在一旁见证，没有新的变化。` };
+      await run({ id: 'updates_merged', task: 'updates', focus: 'merged updates: task-only change is legal and expected',
+        expect: { expectTasks: { [protagonist]: ['task_pressure'] } },
         input: { groupId: 'group_probe', mode: 'group', results, workingState: structuredClone(state) } });
-      // 分阶段：第一阶段 tasks → 程序应用 → 第二阶段 sanity 读应用后的状态
-      let taskStage = null;
-      let taskStageFailure = null;
-      try { taskStage = await H.b3Port.generate('updates', 'probe#tasks',
-        { groupId: 'group_probe', mode: 'group', stage: 'tasks', results, workingState: structuredClone(state) }); }
-      catch (error) { taskStageFailure = String(error?.message ?? error); }
-      probes.push({ id: 'updates_stage_tasks', task: 'updates', focus: 'tasks stage candidates', input: { stage: 'tasks' },
-        output: taskStage, failure: taskStageFailure, ms: 0, call: H.b3.calls[H.b3.calls.length - 1] ?? null });
-      // 程序应用第一阶段（与控制器 mergeUpdatesStages 同构的最小应用：任务达成 + 新增子任务）
+      await run({ id: 'updates_none_expected', task: 'updates', focus: 'no consequence and no task change yields no updates',
+        expect: { forbidAnyChange: true },
+        input: { groupId: 'group_probe_none', mode: 'group',
+          results: { [protagonist]: `${protagonistName} 站着没有动。`, [other]: `${otherName} 站在一旁，没有新的变化。` },
+          workingState: structuredClone(state) } });
+
+      const taskStage = await run({ id: 'updates_stage_tasks', task: 'updates', focus: 'tasks stage returns one object',
+        expect: { stage: 'tasks', expectTasks: { [protagonist]: ['task_pressure'] } },
+        input: { groupId: 'group_probe', mode: 'group', stage: 'tasks', results, workingState: structuredClone(state) } });
+      // 程序应用阶段 3（任务达成），供后续阶段读取
       const applied = structuredClone(state);
       const taskStageCalls = Array.isArray(taskStage) ? taskStage : taskStage ? [taskStage] : [];
+      const appliedTasks = [];
       for (const call of taskStageCalls) {
         for (const [entity, delta] of Object.entries(call.changes ?? {})) {
-          for (const taskId of delta.tasksAchieved ?? []) if (applied.characters[entity]?.tasks?.[taskId]) applied.characters[entity].tasks[taskId].status = 'achieved';
+          for (const taskId of delta.tasksAchieved ?? []) {
+            if (applied.characters[entity]?.tasks?.[taskId]) { applied.characters[entity].tasks[taskId].status = 'achieved'; appliedTasks.push(`${entity}:${taskId}`); }
+          }
           for (const task of delta.subtasksAdded ?? []) {
-            if (applied.characters[entity]?.tasks && task?.id) applied.characters[entity].tasks[task.id] = task;
+            if (applied.characters[entity]?.tasks && task?.id) { applied.characters[entity].tasks[task.id] = task; appliedTasks.push(`${entity}:${task.id}`); }
           }
         }
       }
-      await run({ id: 'updates_stage_sanity', task: 'updates', focus: 'sanity stage reads the applied post-tasks state',
-        input: { groupId: 'group_probe', mode: 'group', stage: 'sanity', results, workingState: applied } });
+      const personalityStage = await run({ id: 'updates_stage_personality', task: 'updates',
+        focus: 'personality stage reads the applied tasks state',
+        expect: { stage: 'personality' },
+        input: { groupId: 'group_probe', mode: 'group', stage: 'personality', results, workingState: structuredClone(applied) } });
+      // 程序应用阶段 5：模型给出合法个性变化就用模型的，否则注入带标签的夹具
+      const withPersonality = structuredClone(applied);
+      const personalityCalls = Array.isArray(personalityStage) ? personalityStage : personalityStage ? [personalityStage] : [];
+      let personalityFixture = null;
+      const appliedPersonalities = [];
+      for (const call of personalityCalls) {
+        for (const [entity, delta] of Object.entries(call.changes ?? {})) {
+          for (const change of delta.personalityChanges ?? []) {
+            if (!withPersonality.characters[entity] || !change?.id || !change?.text) continue;
+            withPersonality.characters[entity].personalityChanges.push({ ...change, sourcePointId: 'probe_point', sourceSequence: 1, active: true });
+            appliedPersonalities.push(`${entity}:${change.id}`);
+          }
+        }
+      }
+      if (!appliedPersonalities.length) {
+        personalityFixture = { id: 'probe_change_fixture', text: '完成压力试验后更沉稳' };
+        withPersonality.characters[protagonist].personalityChanges.push({ ...personalityFixture, supersedes: [],
+          sourcePointId: 'probe_point', sourceSequence: 1, active: true });
+        appliedPersonalities.push(`${protagonist}:${personalityFixture.id}`);
+      }
+      const sanityStage = await run({ id: 'updates_stage_sanity', task: 'updates',
+        focus: 'sanity stage must recalculate the actor whose personality changed',
+        expect: { stage: 'sanity', expectSanityFor: [protagonist] },
+        input: { groupId: 'group_probe', mode: 'group', stage: 'sanity', results, workingState: structuredClone(withPersonality) } });
 
-      // 5) 继续条件（continuation）：continue 与 handback 两个变体
+      // 6) 继续推进：§8.1 两条件
+      const withTask = (actorId, task) => {
+        const next = structuredClone(state);
+        next.characters[actorId].tasks[task.id] = { id: task.id, ownerId: actorId, parentTaskId: null, goal: task.goal, status: 'pending' };
+        return next;
+      };
+      const likelyState = withTask(other, { id: 'task_probe_block', goal: `拦下${protagonistName}，不让他离开` });
+      const unrelatedState = withTask(other, { id: 'task_probe_inventory', goal: '独自清点走廊尽头的箱子' });
+      const noDriverState = structuredClone(state);
+      for (const actor of Object.values(noDriverState.characters)) for (const task of Object.values(actor.tasks)) task.status = 'achieved';
+      const probeRound = (cursor, acted) => ({ roundId: 'round_probe', trigger: 'player', order: roster, cursor,
+        actedIds: acted, visitedIds: acted, conclusion: null });
       const roundChanges = [{ pointId: 'point_probe', timeAdvance: { boundary: 'elapsed', duration: { amount: 2, unit: 'second' } },
         entityDeltas: {} }];
-      H.programNextRoundIds = ['round_probe_next', 'round_probe_next_2'];
-      await run({ id: 'continuation_more', task: 'continuation', focus: 'unfinished round continues',
-        input: { round: { roundId: 'round_probe', trigger: 'player', order: roster, cursor: 0, actedIds: [], visitedIds: [], conclusion: null },
-          head: H.head, workingState: structuredClone(state), roundChanges } });
-      const doneState = structuredClone(state);
-      for (const actor of Object.values(doneState.characters)) for (const task of Object.values(actor.tasks)) task.status = 'achieved';
-      await run({ id: 'continuation_done', task: 'continuation', focus: 'everything achieved hands back',
-        input: { round: { roundId: 'round_probe', trigger: 'player', order: roster, cursor: roster.length, actedIds: roster, visitedIds: roster, conclusion: null },
-          head: H.head, workingState: doneState, roundChanges } });
+      H.programNextRoundIds = ['round_probe_likely', 'round_probe_unrelated', 'round_probe_done'];
+      await run({ id: 'continuation_likely_related', task: 'continuation',
+        focus: 'a task that drives a likely action toward the protagonist justifies continue',
+        expect: { continuation: 'continue-required', driver: other },
+        input: { round: probeRound(roster.length, roster), head: H.head, workingState: likelyState, roundChanges } });
+      await run({ id: 'continuation_unrelated', task: 'continuation',
+        focus: 'a likely action with no protagonist relation hands back',
+        expect: { continuation: 'handback-expected' },
+        input: { round: probeRound(roster.length, roster), head: H.head, workingState: unrelatedState, roundChanges } });
+      await run({ id: 'continuation_done', task: 'continuation',
+        focus: 'no pending task and no stated driver hands back',
+        expect: { continuation: 'handback-required' },
+        input: { round: probeRound(roster.length, roster), head: H.head, workingState: noDriverState, roundChanges } });
 
-      // ---- judgments: structure vs semantics, counted separately ----
-      const judge = (probe) => {
-        const { id, output: out, failure } = probe;
-        const call = probe.call;
-        if (failure || out == null) {
-          if (call?.output != null && call?.validationError) {
-            return { id, structure: true, semantics: false, why: call.validationError, note: 'parsed but semantically invalid' };
-          }
-          return { id, structure: false, semantics: false, why: failure ?? 'no output' };
-        }
-        const ok = (cond, why) => ({ id, structure: cond, semantics: cond, why: cond ? null : why });
-        switch (id) {
-          case 'action_pending': {
-            if (out.kind !== 'act' && out.kind !== 'skip') return ok(false, `illegal kind ${out.kind}`);
-            if (out.kind === 'act' && (typeof out.text !== 'string' || !out.text.trim())) return ok(false, 'act without text');
-            if (out.kind === 'act' && H.looksLikeGoal(out.text)) return { id, structure: true, semantics: false, why: `goal/plan is not an action: ${out.text}` };
-            return { id, structure: true, semantics: true, why: null, note: out.kind === 'act' ? `act: ${out.text}` : 'skip' };
-          }
-          case 'action_consumed':
-            return out.kind === 'skip' ? { id, structure: true, semantics: true, why: null }
-              : { id, structure: true, semantics: false, why: `consumed input produced ${out.kind}` };
-          case 'action_nonactor': {
-            if (out.kind !== 'act' && out.kind !== 'skip') return ok(false, `illegal kind ${out.kind}`);
-            if (out.kind === 'act' && H.looksLikeGoal(out.text)) return { id, structure: true, semantics: false, why: `goal/plan is not an action: ${out.text}` };
-            return { id, structure: true, semantics: true, why: null, note: out.kind === 'act' ? `act: ${out.text}` : 'skip' };
-          }
-          case 'targets_directed':
-            if (!Array.isArray(out.targets)) return ok(false, 'no targets array');
-            return out.targets.includes(other) ? { id, structure: true, semantics: true, why: null, note: `targets=${JSON.stringify(out.targets)}` }
-              : { id, structure: true, semantics: false, why: `expected ${other} in ${JSON.stringify(out.targets)}` };
-          case 'targets_solo':
-            if (!Array.isArray(out.targets)) return ok(false, 'no targets array');
-            return out.targets.length === 0 ? { id, structure: true, semantics: true, why: null, note: 'no targets' }
-              : { id, structure: true, semantics: false, why: `expected empty, got ${JSON.stringify(out.targets)}` };
-          case 'reaction_joint': {
-            if (typeof out !== 'string' || !out.trim()) return ok(false, 'reaction is empty');
-            if (/精神值|理智|生命值|任务(达成|完成)|状态|属性/.test(out)) return { id, structure: true, semantics: false, why: `reaction claims a state change: ${out}` };
-            return { id, structure: true, semantics: true, why: null, note: out };
-          }
-          case 'results_joint': {
-            const keys = Object.keys(out);
-            const want = [protagonist, other].sort().join(',');
-            return keys.sort().join(',') === want && keys.every((key) => typeof out[key] === 'string' && out[key].trim())
-              ? { id, structure: true, semantics: true, why: null, note: JSON.stringify(out) }
-              : ok(false, `results keys ${keys} != [${protagonist},${other}] or empty text`);
-          }
-          case 'updates_merged':
-          case 'updates_stage_tasks':
-          case 'updates_stage_sanity': {
-            const expected = id === 'updates_merged' ? null : id === 'updates_stage_tasks' ? 'tasks' : 'sanity';
-            const audit = H.auditUpdates(out, expected, new Set(roster), H.taskOwnersOf(state));
-            return audit.error ? { id, structure: true, semantics: false, why: audit.error }
-              : { id, structure: true, semantics: true, why: null, note: `${audit.calls.length} call(s): ${audit.calls.map((call) => call.stage).join(',')}` };
-          }
-          case 'continuation_more': {
-            if (out.kind !== 'continue' && out.kind !== 'handback') return ok(false, `illegal kind ${out.kind}`);
-            if (out.kind !== 'continue') return { id, structure: true, semantics: false, why: 'unfinished round handed back' };
-            const backfills = call?.backfills ?? [];
-            const candidateBad = backfills.some((entry) => entry.kind === 'candidate_dropped_not_in_roster' || entry.kind === 'candidates_backfilled_roster');
-            return candidateBad ? { id, structure: true, semantics: false, why: `invalid candidateCharacterIds: ${JSON.stringify(backfills)}` }
-              : { id, structure: true, semantics: true, why: null, note: 'continue' };
-          }
-          case 'continuation_done': {
-            if (out.kind !== 'continue' && out.kind !== 'handback') return ok(false, `illegal kind ${out.kind}`);
-            return out.kind === 'handback' ? { id, structure: true, semantics: true, why: null, note: 'handback' }
-              : { id, structure: true, semantics: false, why: 'finished round continued' };
-          }
-          default:
-            return ok(false, 'unknown probe');
-        }
-      };
-      const judged = probes.map(judge);
-      const structurePass = judged.filter((entry) => entry.structure).length;
-      const semanticsPass = judged.filter((entry) => entry.semantics).length;
-      return {
-        probes: probes.map((probe, index) => ({ ...probe, judgment: judged[index], call: probe.call ? {
-          task: probe.call.task, key: probe.call.key, at: probe.call.at, prompt: probe.call.prompt, promptChars: probe.call.promptChars,
-          raw: probe.call.raw, output: probe.call.output, parseError: probe.call.parseError, validationError: probe.call.validationError ?? null,
-          error: probe.call.error ?? null, errorName: probe.call.errorName ?? null, ms: probe.call.ms,
-          completion: probe.call.completion ?? null, backfills: probe.call.backfills ?? [], source: probe.call.source ?? 'model' } : null })),
-        rates: { probes: judged.length, structurePass, structureRate: Number((structurePass / judged.length).toFixed(3)),
-          semanticsPass, semanticsRate: Number((semanticsPass / judged.length).toFixed(3)),
-          totalModelMs: probes.reduce((sum, probe) => sum + (probe.call?.ms ?? 0), 0) },
-      };
+      return { probes, stateFingerprint: { worldId: state.worldId, time: state.time, roster, protagonist } };
     });
-    report.status = 'PASS_TASKS'; save();
-    console.log(`[world-b3] tasks: ${report.tasks.rates.structurePass}/${report.tasks.rates.probes} structure, ` +
-      `${report.tasks.rates.semanticsPass}/${report.tasks.rates.probes} semantics, ${report.tasks.rates.totalModelMs}ms model time`);
+    report.tasks.probes = report.tasks.probes.map((probe) => ({ ...probe, judgment: judgeProbe(probe, judgeContext()) }));
+    report.tasks.rates = summarizeProbes(report.tasks.probes);
+    report.tasks.judgeSelfTest = runJudgeSelfTests(judgeContext());
+    report.judgeVersion = 2;
+    save();
+    console.log(`[world-b3] task probes recorded: ${report.tasks.probes.length} ` +
+      `(structure ${report.tasks.rates.structurePass}/${report.tasks.rates.probes}, ` +
+      `semantics pass ${report.tasks.rates.semanticsPass}, fail ${report.tasks.rates.semanticsFail}, ` +
+      `review ${report.tasks.rates.pendingReview}; judge self-test failures ${report.tasks.judgeSelfTest.failed})`);
   } catch (error) { harnessError(error, 'task probes'); }
   } else { report.tasks = { skipped: true, reason: '--skip-tasks iteration run' }; save(); }
 
-  if (scope.scenes !== 'chain') {
+  if (scope.scenes !== 'chain' && scope.scenes !== 'none') {
   // ---- scene 1: normal action point, ALL settlement tasks from the model ----
   try {
     report.scenes.action = await page.evaluate(async () => {
@@ -877,25 +991,6 @@ try {
       const scenePointIds = new Set(pointIds);
       const scenePoints = points.filter((point) => scenePointIds.has(point.pointId))
         .map((point) => ({ pointId: point.pointId, kind: point.kind, roundId: point.roundId, version: point.version }));
-      const semanticErrors = [];
-      for (const call of modelTasks) {
-        if (call.error) semanticErrors.push({ task: call.task, error: call.error });
-        if (call.validationError) semanticErrors.push({ task: call.task, error: call.validationError });
-        if (call.task === 'action' && call.output?.kind === 'act' && H.looksLikeGoal(call.output.text)) {
-          semanticErrors.push({ task: 'action', error: `goal/plan is not an action: ${call.output.text}` });
-        }
-        if (call.task === 'targets' && (call.backfills ?? []).some((entry) => entry.kind === 'target_dropped_not_in_roster')) {
-          semanticErrors.push({ task: 'targets', error: 'target dropped: not in roster', backfills: call.backfills });
-        }
-        if (call.task === 'continuation') {
-          if ((call.backfills ?? []).some((entry) => entry.kind === 'candidate_dropped_not_in_roster' || entry.kind === 'candidates_backfilled_roster')) {
-            semanticErrors.push({ task: 'continuation', error: 'invalid candidateCharacterIds', backfills: call.backfills });
-          }
-          if (call.context?.pending === 0 && call.output?.kind === 'continue') semanticErrors.push({ task: 'continuation', error: 'all tasks achieved but continued' });
-          if (call.context?.pending > 0 && call.output?.kind === 'handback') semanticErrors.push({ task: 'continuation', error: 'pending tasks handed back' });
-        }
-      }
-      for (const entry of narration) if (entry.error) semanticErrors.push({ task: 'narration', error: entry.error });
       const narrationEvents = events.filter((event) => event.kind === 'narration');
       const narrationFallbacks = narrationEvents.filter((event) => !event.polished).length;
       const polishFallbacks = events.filter((event) => event.kind === 'polishFallback').length;
@@ -912,7 +1007,8 @@ try {
           } else cleanup = { alreadyIdle: true };
         } catch (error) { cleanupError = String(error?.message ?? error); }
       }
-      return { status: completed ? 'COMPLETED' : status, runError, cleanup, cleanupError, setupMs, walkMs, recovered, budget: driver.getMemory().budget,
+      return { status: completed ? 'COMPLETED' : status, runError, cleanup, cleanupError, setupMs, walkMs,
+        recovered, budget: driver.getMemory().budget, playerInput: '走到走廊',
         pointIds, scenePoints, finalState: { pointId: finalRead.pointId, version: finalRead.version, time: finalRead.state.time,
           characters: Object.fromEntries(Object.entries(finalRead.state.characters).map(([id, actor]) => [id, {
             position: actor.position, sanity: actor.sanity,
@@ -922,10 +1018,10 @@ try {
           prompt: call.prompt, promptChars: call.promptChars, raw: call.raw, output: call.output, parseError: call.parseError ?? null,
           validationError: call.validationError ?? null, error: call.error ?? null, errorName: call.errorName ?? null,
           backfills: call.backfills ?? [], completion: call.completion ?? null, context: call.context ?? null, ms: call.ms })),
-        narration, events, semanticErrors, narrationFallbacks, polishFallbacks,
-        accepted: completed && semanticErrors.length === 0 && narrationFallbacks === 0 && polishFallbacks === 0,
+        narration, events, narrationFallbacks, polishFallbacks,
         wire: H.wireCaptures.slice(wireMark), ops: H.opLog.slice(opMark) };
     });
+    report.scenes.action.judged = judgeScene(report.scenes.action, judgeContext());
     report.status = 'PASS_ACTION_SCENE'; save();
     console.log(`[world-b3] scene action: ${JSON.stringify(report.scenes.action.status)} walk=${report.scenes.action.walkMs}ms ` +
       `modelCalls=${report.scenes.action.modelTasks.length}`);
@@ -936,7 +1032,7 @@ try {
   }
   }
 
-  if (scope.scenes !== 'action') {
+  if (scope.scenes !== 'action' && scope.scenes !== 'none') {
   // ---- scene 2: joint settlement chain, real d20, all settlement tasks model ----
   try {
     report.scenes.chain = await page.evaluate(async () => {
@@ -1028,29 +1124,11 @@ try {
       const scenePointIds = new Set(pointIds);
       const scenePoints = points.filter((point) => scenePointIds.has(point.pointId))
         .map((point) => ({ pointId: point.pointId, kind: point.kind, roundId: point.roundId, version: point.version }));
-      const semanticErrors = [];
-      for (const call of modelTasks) {
-        if (call.error) semanticErrors.push({ task: call.task, error: call.error });
-        if (call.validationError) semanticErrors.push({ task: call.task, error: call.validationError });
-        if (call.task === 'action' && call.output?.kind === 'act' && H.looksLikeGoal(call.output.text)) {
-          semanticErrors.push({ task: 'action', error: `goal/plan is not an action: ${call.output.text}` });
-        }
-        if (call.task === 'targets' && (call.backfills ?? []).some((entry) => entry.kind === 'target_dropped_not_in_roster')) {
-          semanticErrors.push({ task: 'targets', error: 'target dropped: not in roster', backfills: call.backfills });
-        }
-        if (call.task === 'continuation') {
-          if ((call.backfills ?? []).some((entry) => entry.kind === 'candidate_dropped_not_in_roster' || entry.kind === 'candidates_backfilled_roster')) {
-            semanticErrors.push({ task: 'continuation', error: 'invalid candidateCharacterIds', backfills: call.backfills });
-          }
-          if (call.context?.pending === 0 && call.output?.kind === 'continue') semanticErrors.push({ task: 'continuation', error: 'all tasks achieved but continued' });
-          if (call.context?.pending > 0 && call.output?.kind === 'handback') semanticErrors.push({ task: 'continuation', error: 'pending tasks handed back' });
-        }
-      }
-      for (const entry of narration) if (entry.error) semanticErrors.push({ task: 'narration', error: entry.error });
       const narrationEvents = events.filter((event) => event.kind === 'narration');
       const narrationFallbacks = narrationEvents.filter((event) => !event.polished).length;
       const polishFallbacks = events.filter((event) => event.kind === 'polishFallback').length;
       return { status: completed ? 'COMPLETED' : status, runError, setupMs, walkMs, recovered, budget: driver.getMemory().budget,
+        playerInput: '推开门厅深处的重门，示意同伴到门边一起撑住。',
         worldIdBefore, worldAttempts, abandonedRounds, pointIds, scenePoints,
         finalState: { pointId: finalRead.pointId, version: finalRead.version, time: finalRead.state.time,
           characters: Object.fromEntries(Object.entries(finalRead.state.characters).map(([id, actor]) => [id, {
@@ -1061,10 +1139,10 @@ try {
           prompt: call.prompt, promptChars: call.promptChars, raw: call.raw, output: call.output, parseError: call.parseError ?? null,
           validationError: call.validationError ?? null, error: call.error ?? null, errorName: call.errorName ?? null,
           backfills: call.backfills ?? [], completion: call.completion ?? null, context: call.context ?? null, ms: call.ms })),
-        narration, events, semanticErrors, narrationFallbacks, polishFallbacks,
-        accepted: completed && semanticErrors.length === 0 && narrationFallbacks === 0 && polishFallbacks === 0,
+        narration, events, narrationFallbacks, polishFallbacks,
         wire: H.wireCaptures.slice(wireMark), ops: H.opLog.slice(opMark) };
     });
+    report.scenes.chain.judged = judgeScene(report.scenes.chain, judgeContext());
     report.status = 'PASS_CHAIN_SCENE'; save();
     console.log(`[world-b3] scene chain: ${JSON.stringify(report.scenes.chain.status)} walk=${report.scenes.chain.walkMs}ms ` +
       `modelCalls=${(report.scenes.chain.modelTasks ?? []).length}`);
@@ -1077,20 +1155,26 @@ try {
 
   // ---- final report ----
   if (!report.tasks) report.tasks = { skipped: true, reason: '--skip-tasks iteration run' };
-  const expectedScenes = scope.scenes === 'both' ? ['action', 'chain'] : [scope.scenes];
+  const expectedScenes = scope.scenes === 'both' ? ['action', 'chain'] : scope.scenes === 'none' ? [] : [scope.scenes];
   const sceneFailures = expectedScenes.filter((name) => report.scenes[name]?.status !== 'COMPLETED');
-  const semanticFailures = expectedScenes.filter((name) => report.scenes[name] && report.scenes[name].accepted === false);
+  const semanticFailures = expectedScenes.filter((name) => report.scenes[name] && report.scenes[name].judged?.accepted !== true);
+  const selfTestFailed = report.tasks?.judgeSelfTest?.failed ?? 0;
   report.status = sceneFailures.length ? 'COMPLETED_WITH_FAILURES'
-    : semanticFailures.length ? 'COMPLETED_WITH_SEMANTIC_FAILURES' : 'COMPLETED';
+    : semanticFailures.length ? 'COMPLETED_WITH_SEMANTIC_FAILURES'
+    : selfTestFailed > 0 ? 'JUDGE_SELF_TEST_FAILED' : 'COMPLETED';
   report.summary = {
-    scope,
+    scope, judgeVersion: report.judgeVersion ?? null,
     taskRates: report.tasks?.rates ?? null,
+    judgeSelfTest: report.tasks?.judgeSelfTest ? { cases: report.tasks.judgeSelfTest.cases.length, failed: report.tasks.judgeSelfTest.failed } : null,
     scenes: Object.fromEntries(expectedScenes.map((name) => [name, report.scenes[name] ? {
-      status: report.scenes[name].status, accepted: report.scenes[name].accepted ?? null,
-      modelCalls: report.scenes[name].modelTasks?.length ?? null,
-      semanticErrors: report.scenes[name].semanticErrors?.length ?? null,
-      narrationFallbacks: report.scenes[name].narrationFallbacks ?? null } : null])),
-    note: 'accepted=false means the protocol completed but settlement/narration semantics failed; see the scene evidence.',
+      status: report.scenes[name].status, accepted: report.scenes[name].judged?.accepted ?? null,
+      modelCalls: report.scenes[name].judged?.modelCalls ?? null,
+      programCalls: report.scenes[name].judged?.programCalls ?? null,
+      semanticErrors: report.scenes[name].judged?.semanticErrors?.length ?? null,
+      pendingReview: report.scenes[name].judged?.pendingReview?.length ?? null,
+      narrationFallbacks: report.scenes[name].judged?.narrationFallbacks?.length ?? null } : null])),
+    note: 'Model calls are counted by source; program-owned pointPlan/time calls are reported separately. '
+      + 'accepted=false means the protocol completed but settlement/narration semantics failed or still need review; see the scene evidence.',
   };
   save();
   console.log(`[world-b3] ${report.status} → ${output}`);

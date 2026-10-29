@@ -51,9 +51,35 @@ describe('saved facts, template baseline and bounded polish', () => {
     after.state.characters.person_c.personalityChanges = [{ ...change, sourcePointId: 'point_1', sourceSequence: 1, active: true }];
     after.entityDeltas = { person_c: { entityId: 'person_c', tasksAchieved: ['task_pressure'], personalityChanges: [change], sanitySet: 8 } };
     const packet = projectCommittedNarration(after, before);
-    expect(renderCommittedNarration(packet)).toContain('周宁的精神值从10变为8。周宁完成了任务「完成压力试验」。周宁的人格变化为「经历压力试验后更谨慎」。');
-    const missingTask = structuredClone(after); delete missingTask.entityDeltas.person_c.tasksAchieved;
-    expect(() => projectCommittedNarration(missingTask, before)).toThrow(/complete_numeric_cause/);
+    // 事实顺序按六阶段：任务（阶段 3）→ 个性（阶段 5）→ 理智（阶段 6）。
+    expect(renderCommittedNarration(packet)).toContain('周宁完成了任务「完成压力试验」。周宁的人格变化为「经历压力试验后更谨慎」。周宁的精神值从10变为8。');
+    // 因果链逐级收紧，不再要求三件套同有同无（§6.3）：个性变化必须有本批
+    // 任务达成，理智值必须有个性变化；任务达成可以单独成立。
+    const taskOnly = structuredClone(after);
+    taskOnly.state = structuredClone(before.state);
+    taskOnly.state.characters.person_c.tasks.task_pressure.status = 'achieved';
+    taskOnly.entityDeltas = { person_c: { entityId: 'person_c', tasksAchieved: ['task_pressure'] } };
+    const taskPacket = projectCommittedNarration(taskOnly, before);
+    expect(taskPacket.facts.filter((fact) => fact.kind === 'task_achieved')).toHaveLength(1);
+    expect(taskPacket.facts.find((fact) => fact.id === 'person_c:sanity')).toMatchObject({ kind: 'sanity', value: 10 });
+    expect(renderCommittedNarration(taskPacket)).toContain('周宁完成了任务「完成压力试验」。');
+    const personalityWithoutTask = structuredClone(after);
+    personalityWithoutTask.state.characters.person_c.tasks.task_pressure.status = 'pending';
+    personalityWithoutTask.entityDeltas.person_c = { entityId: 'person_c', personalityChanges: [change], sanitySet: 8 };
+    expect(() => projectCommittedNarration(personalityWithoutTask, before)).toThrow(/personality_requires_task/);
+    const sanityWithoutPersonality = structuredClone(after);
+    sanityWithoutPersonality.entityDeltas.person_c = { entityId: 'person_c', tasksAchieved: ['task_pressure'], sanitySet: 8 };
+    expect(() => projectCommittedNarration(sanityWithoutPersonality, before)).toThrow(/sanity_requires_personality/);
+    // 个性变化但理智重算后数值不变：Δ 可省略 sanitySet（§5.2 允许同值省略）。
+    const personalityWithoutSanity = structuredClone(after);
+    delete personalityWithoutSanity.entityDeltas.person_c.sanitySet;
+    personalityWithoutSanity.state.characters.person_c.sanity = 10;
+    expect(projectCommittedNarration(personalityWithoutSanity, before).facts
+      .filter((fact) => fact.kind === 'personality_changed')).toHaveLength(1);
+    // 理智值真的变了却不报 delta：仍按未登记变化拒绝。
+    const unrecordedSanity = structuredClone(personalityWithoutSanity);
+    unrecordedSanity.state.characters.person_c.sanity = 8;
+    expect(() => projectCommittedNarration(unrecordedSanity, before)).toThrow(/unrecorded_numeric_change/);
     const forgedCause = structuredClone(after); forgedCause.state.characters.person_c.personalityChanges[0].sourcePointId = 'other_point';
     expect(() => projectCommittedNarration(forgedCause, before)).toThrow(/personality_cause/);
   });
