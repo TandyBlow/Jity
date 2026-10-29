@@ -38,6 +38,17 @@
   `03868486341996c2…`——初稿把工作树文件哈希 `7fff6fae0ad70fd7…` 误标为
   blob 口径，2026-10-29 复核校正。**止于 harness 步数上限而非模型
   handback，不作整链验收，见 6.6.1。**
+- `b3-baseline-v6.json` + `b3-run-db-v6/` —— **有限轮预算对照基线**
+  （2026-10-29，浏览器 `102f710`，judge v5 `12be98c8…` 同 v5；服务检出
+  `dd345b8`（agent，已推 `origin/agent`）其 `backend/app` 与 v5 的
+  `4e17025` 逐字节一致，逐文件 sha256 钉在报告 serverSource）：固定
+  5 轮停止界下两场景各跑满 5 轮提交（首轮 + 4 自动轮），第 5 轮
+  continue 的原始判断已存，受界停止 `round_budget_exhausted`，cancel
+  只进 cleanup，两类保险零触发。探针 29.4% 同 v5（17 项判定逐项相同）。
+  sha256 逐文件标注口径：报告 `952d19861f3a7123…`（blob=文件一致）；
+  `world.db` 文件 `f517d8e580b6bb5e…` / blob `1d8bceba8c8e334f…`；
+  `server.log` 文件 `67ec044eeb973d93…` / blob `faa51c1b90fd5159…`。
+  **预算耗尽不算整链验收，见 6.6.2。**
 
 脚本：`frontend/scripts/run-world-chain-full.mjs`（两场景，`--phase
 action|chain|both`）；`frontend/scripts/run-world-twenty.mjs`（二十次输入，
@@ -596,6 +607,43 @@ transport 桩独立确认——第 5 次 continue 保存原始判断、不分配
 v5 保留为干净诊断记录（两场景止于旧 80 step 上限）；下一份按上述停止界
 运行的记录作为**有限轮预算对照基线**。
 
+### 6.6.2 v6：固定 5 轮停止界下的有限轮预算基线（2026-10-29）
+
+总指挥批准的第一次按停止界运行的完整基线（浏览器 `102f710`，judge v5
+`12be98c8…` 同 v5；服务检出 `dd345b8`，其 `backend/app` 与 v5 的
+`4e17025` 逐字节一致）。运行约 19.5 分钟（探针 211s + action 527s +
+chain 570s），全程未调提示词/判据；停止界参数即 6.6.1 冻结值
+（round 5 / step 400 / 任务预算 240）。
+
+- 停止方式：两场景都在第 5 轮 continuation 仍 continue 时受界停止——
+  `sceneEnd=round_budget_exhausted`、`runError=null`、count 5/5，原始
+  判断存 `roundBudget.exhausted.judgment`（两处 plannedAction 仍是目标
+  句家族）；不分配第 6 轮身份、不提交 conclude；场景清理 cancel 分别
+  关闭 round_20 / round_44（cleanup 单列，不计模型 handback）。
+- 保险零触发：step 400 与任务预算 240（实际 used 38/33）都未接近——
+  v5 的「步数上限抢先截断」不再发生，停止界按设计工作。
+- 提交与叙事：action 5 点（point_16/21/22/23/24）+ 5 段叙事（9.2–10.9s）
+  + 34 次模型调用 + 5 次程序 pointPlan；chain 5 点（point_38/45/46/47/48）
+  + 5 段叙事（9.0–55.2s）+ 29 次 + 4 次。叙事零回退、completion 证据每
+  场景 5 条。链场景首骰 roll_49=11 对目标 11 一次准入、无弃轮。
+  `roundIdentityError` 两场景均 null。
+- 判分（judge v5）：action 语义错 5（continuation ×5）+ review 6
+  （results 裸判定 ×6）；chain 语义错 7（reaction 复述、results 骰点
+  不符、continuation ×5）+ review 4（results ×4）。**两场景合计：
+  continuation 语义错 10 条（本轮 10 次 continuation 判断全部为目标句
+  ——温度 0 下该失败家族确定性复现）、results 待复核 10 条。** 两场景
+  `accepted=false`。
+- 探针：parsed 17/17、codec 16/17、语义 pass 5 / fail 7 / review 5 →
+  总体 29.4%（auto-decided 41.7%）；17 项判定与 v5 **逐项相同**。
+- v5→v6 读法：停止界从「harness 步数上限抢先截断」变为「轮预算受界停
+  止」，5 轮提交 + 判断全部走完，continuation 判分口径随之不同（v5
+  6 条/7 轮 vs v6 10 条/10 轮），**不作改善或恶化比较**。v6 是后续模型
+  对照（提示词变体、更大模型）的冻结基线：round 5 / step 400 / 任务
+  预算 240 / judge `12be98c8…` / probe 集 17 项。
+- 边界事实保持：两场景仍**没有**走到模型 handback（第 5 轮全部
+  continue），产品 continue→自动轮→真实模型 handback 的闭环仍未实测；
+  预算耗尽不算整链验收通过。
+
 ### 6.7 结论与下一步
 
 - 判分与因果边界已补齐并可回放（judge v5 + judgeSource hash；28 项自测；
@@ -605,15 +653,17 @@ v5 保留为干净诊断记录（两场景止于旧 80 step 上限）；下一�
   handback 已通」的声明仍以带模型 continue 的产品路径全跑为准。**
 - 基线声明：v1（冻结）、v2（j4 口径 11.8%）为既有记录；v3/v4 是 enum 修复
   后第一批实测（v4 j5 23.5%）；**v5（`75061b6`，6.6.1）是复核 20 三项修复后
-  的第一份干净基线**（29.4%），但两场景止于 harness 步数上限，先定界再对照。
+  的第一份干净基线**（29.4%），但两场景止于 harness 步数上限；**v6
+  （`102f710`，6.6.2）是停止界落地后的有限轮预算对照基线**（29.4%，两场
+  景各满 5 轮受界停止，保险零触发）。
 - 当前已知的主要模型失败（同契约实测）：目标漏选、结果裸判定（review）/
   骰点不符、continuation 目标句冒充拟行动、updates 仪式化六阶段（含空
   changes 占位）、虚构任务 id、反应复述。
-- **下一步**：停止界已定为固定 5 轮（首轮 + 4 自动轮，见 6.6.1；待总指挥
-  确认后执行）→ 总指挥确认后跑 v6＝有限轮预算对照基线（同 judge hash、
-  同 probe 集、冻结 round/step/任务预算）→ 每模型 ≥1 次完整 run 的对照
-  （提示词变体、更大模型）→ 之后才谈 20 次输入验收。混合口径的
-  `twenty-round-v2` 仍是既有混合边界结论。
+- **下一步**：停止界已定并实现（6.6.1，实现经审查方桩验证通过），v6 有
+  限轮预算对照基线已落（6.6.2）→ 每模型 ≥1 次完整 run 的对照（提示词
+  变体、更大模型；同 judge hash、同 probe 集、同冻结预算）→ 产品
+  continue→自动轮→真实模型 handback 闭环实测 → 之后才谈 20 次输入验收。
+  混合口径的 `twenty-round-v2` 仍是既有混合边界结论。
 
 ### 6.8 复跑
 
@@ -621,9 +671,14 @@ v5 保留为干净诊断记录（两场景止于旧 80 step 上限）；下一�
 cd frontend
 # 路径按**仓库根**解析（不是 frontend）：--out artifacts/... 落在仓库内，
 # 写成 ../artifacts/... 会落到仓库外（v5 就踩过，见 6.6.1）。
-# 完整基线（任务探针 + 两场景；v5 实测 探针 211s + 场景 283s/312s，约 14 分钟）
-node scripts/run-world-b3.mjs --out artifacts/world-chain/b3-baseline-v6.json `
-  --db-snapshot artifacts/world-chain/b3-run-db-v6
+# 服务检出用 --server-checkout 指定（HEAD 与逐文件 sha256 由报告
+# serverSource 钉住；v6 用的 agent 检出 HEAD=dd345b8，backend/app 与
+# origin/world-server 一致）。停止界 round 5 / step 400 / 任务预算 240
+# 冻结在脚本 boundary，随报告落盘。
+# 完整基线（任务探针 + 两场景；v6 实测 探针 211s + 场景 527s/570s，约 19.5 分钟）
+node scripts/run-world-b3.mjs --server-checkout <服务检出> `
+  --out artifacts/world-chain/b3-baseline-v7.json `
+  --db-snapshot artifacts/world-chain/b3-run-db-v7
 # 只跑探针 / 只跑指定场景（迭代用，不作 canonical）
 node scripts/run-world-b3.mjs --only none --out .local/probes.json
 node scripts/run-world-b3.mjs --only chain --out .local/chain.json
