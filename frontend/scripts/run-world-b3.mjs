@@ -378,17 +378,17 @@ try {
           for (const task of delta.subtasksAdded ?? []) if (isObject(task) && typeof task.id === 'string') produced[task.id] = entity;
         }
       }
-      // 复核轮 19：合并批次的顺序/重复不再是错误（wire 每实体一组、kernel
-      // apply 与产品门都不依赖数组顺序）；记录在 notes 里随 call 存档，
-      // 其余硬规则照旧。
-      const notes = [];
-      const seenStages = new Map();
+      // 复核轮 20：顺序契约恢复（99bea60 的放宽被否决）——调度器的
+      // mergeUpdatesStages 对 index <= last 直接 throw，合并路径经
+      // checkUpdatesStages 必撞；prompt 已恢复六阶段顺序要求。
+      let previous = -1;
       for (const call of calls) {
         if (!isObject(call)) return { calls, error: 'update call must be an object' };
         const index = UPDATE_STAGES.indexOf(call.stage);
         if (index < 0) return { calls, error: `illegal stage ${call.stage}` };
         if (expectedStage && call.stage !== expectedStage) return { calls, error: `stage ${call.stage} != ${expectedStage}` };
-        seenStages.set(call.stage, (seenStages.get(call.stage) ?? 0) + 1);
+        if (previous >= 0 && index <= previous) return { calls, error: `out-of-order/duplicate stage ${call.stage} (the controller's mergeUpdatesStages throws)` };
+        previous = index;
         if (!isObject(call.changes)) return { calls, error: `changes of ${call.stage} must be an object` };
         const allowed = UPDATE_FIELDS[call.stage];
         for (const [entity, delta] of Object.entries(call.changes)) {
@@ -434,18 +434,7 @@ try {
           }
         }
       }
-      const duplicated = [...seenStages.entries()].filter(([, count]) => count > 1).map(([name]) => name);
-      if (duplicated.length) notes.push(`duplicate stage ${duplicated.join(',')}`);
-      let previous = -1;
-      for (const call of calls) {
-        if (!isObject(call)) continue;
-        const index = UPDATE_STAGES.indexOf(call.stage);
-        if (index >= 0) {
-          if (previous >= 0 && index < previous) notes.push(`non-canonical order at ${call.stage}`);
-          previous = index;
-        }
-      }
-      return { calls, error: null, notes };
+      return { calls, error: null };
     };
     H.auditUpdates = auditUpdates;
     const allTasksAchieved = (state) => Object.values(state?.characters ?? {})
@@ -619,7 +608,6 @@ ${view}
             record.validationError = audit.error;
             throw new Error(`b3 updates semantic: ${audit.error}`);
           }
-          if (audit.notes?.length) record.formatNotes = audit.notes;   // 顺序/重复：只记录，不杀轮
           // 分阶段调用：把控制器已确认的前序阶段证据附给判分（§6.3 因果链
           // 跨阶段累计）。证据只取服务端工作态中真实存在的已达成任务与
           // 本次已返回的个性变化——虚构 id 不会成为证据。
