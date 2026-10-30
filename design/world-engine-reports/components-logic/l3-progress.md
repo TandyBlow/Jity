@@ -4,6 +4,8 @@
 
 2026-10-30 更新：用户授权的“第一步”仅为开跑清单文档复审，见条目 21 和 README §16；不解除模型执行暂停。以下逐项记录保留各版本历史，当前预算/准入口径以 [v4 清单](run-manifest.md) 为准。
 
+同日第二步更新：人审与来源交接材料已准备，见条目 22 和 [人审说明](human-review.md)。用户本人初审、来源回执及浏览器实操仍待完成，模型继续暂停。
+
 ## 已保存内容
 
 | 部分 | 本次进度 | 证据/范围 |
@@ -13,6 +15,7 @@
 | 工程测试 | 65 项通过（workloadId、smoke 台账与 smoke 并发发布的回归测试均经反向验证，对各自修复前实现必失败） | [test_lab.py](../../../experiments/world-components-logic/tests/test_lab.py)；不证明模型质量/性能 |
 | 数据可复现 | 生成器 `--check` 重建同字节 | [生成器](../../../experiments/world-components-logic/generate_dev_drafts.py)；不会覆盖已被人工修改/签字的草稿 |
 | 人审材料 | 生成可本地审阅/导出意见的 HTML 草稿 | [审阅页](../../../artifacts/world-components-logic/l3-1-review.html)、[生成程序](../../../experiments/world-components-logic/prepare_review.py)；浏览器界面/导出尚未验收，未替用户作审阅决定 |
+| 审阅核对准备 | 12 项新增工程检查；批次/逐题身份核对、意见分类、证据不覆盖、内存逻辑探针 | [核对程序](../../../experiments/world-components-logic/review_io.py)、[测试](../../../experiments/world-components-logic/tests/test_review.py)；与原核心合计 77 项。真实浏览器、真实人审及新增工具独立审查未签通过 |
 | 独立环境 | 新建隔离 venv，安装 25 个依赖并保存版本/安装报告哈希 | [环境身份](../../../artifacts/world-components-logic/l3-1-environment.json)、[平台锁](../../../experiments/world-components-logic/requirements-probe-macos-arm64-py311.lock.txt)；无共享 system-site-packages，未改 Anaconda base |
 | 小模型准备 | M02 固定 revision 的 6 个文件已下载并核对完整 SHA-256 | [获取脚本](../../../experiments/world-components-logic/fetch_model.py)；权重/缓存仅在本工作树 `.local/world-components-logic/`，不入库、不借 B/C 缓存 |
 | 无业务试跑草稿 | 只执行过 `--prepare-only`，未 import/load 模型或推理 | [runtime_smoke.py](../../../experiments/world-components-logic/runtime_smoke.py)；失败台账与不覆盖规则已修复（见条目 2），运行记录仍为空，不作为可运行交付或模型测试结果 |
@@ -44,12 +47,15 @@
 
 21. 2026-10-30 用户授权“开始第一步”：从 `444e0c3` 只做清单复审。v3 的 S3 先修加法是 690 而非 680，再补普通 U1–U4 的两项必检与 preview 后，参考账为程序 16 次/160 ms + 模型 14 次/650 ms = **810 ms+该点等待**；同形两轮 **1620 ms+两次独立等待**。S0 到 ready 的段前缀 370 与本请求唯一段/轮并交还的 480 分开；S1 范围 380、S2 限定增量 +120。26 类宏事件显式包含身份分配、纯时间暂存和 seal/commit 全部子操作，实际 API 仍待执行前展开；全部必需阶段与原 round/关联段、自动轮均保留。动态模型分支按实记，不预填金标；准备预算登记与事后 500 ms 达标、训练与新推理批次、历史 Mac 与拟执行机分开。同步修订清单、机器可读提案、选型摘要和准入协议，补轻量账本核对及反例；默认检查与 19 个内存反例通过，两路独立复验确认文档/工具无剩余阻断，61 个本地链接/围栏及 diff 空白检查通过。未创建数据、下载/加载/训练/推理或浏览器运行；来源、人审、资源和模型成绩均未借文档审查签署。
 
+22. 2026-10-30 用户授权第二步并指定“我来协调，你先准备交接材料”。已交 [人审/来源说明](human-review.md)、更新的 42 题审阅页及只读导出核对工具；修复说明切题丢失、保存失败静默、改说明后旧选择仍被计数等问题，分开记录认可/需改/待定。来源身份准备检查确认 3 个 D 文件、2 个固定规则来源、42 项逐题登记与 40 组关系、8 个 B/C 历史 Git 入口匹配，保留[准备记录](../../../artifacts/world-components-logic/l3-2-review-preparation.json)；没有读取 B/C 保护正文，完整/近重复/语义同源仍 unverified。核心 65+新增 12=77 项工程检查通过，含合成夹具内存逻辑探针，不生成真实题模拟认可；生成器同字节/v4 19 反例/diff 检查通过。内置浏览器禁止本地文件，未绕过；实际浏览器显示/下载/刷新恢复、新工具独立审查仍待安排。本人初审、第二位复核/裁定人、来源负责人及回执由用户协调，第二步尚无人工/来源通过结论；未创建新样本或运行模型。
+
 ## 提交前轻量复核
 
 仅执行工程复核，不启动模型/训练/服务：
 
 ```bash
 python3 -m unittest discover -s experiments/world-components-logic/tests -p 'test_lab.py'
+python3 -m unittest discover -s experiments/world-components-logic/tests -p 'test_review.py'
 python3 experiments/world-components-logic/generate_dev_drafts.py --check
 python3 experiments/world-components-logic/check_run_manifest.py --self-test
 git diff --check

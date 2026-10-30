@@ -1,0 +1,140 @@
+{
+  "schema": "jity-d-source-review-preparation-v1",
+  "preparedAt": "2026-10-30T08:46:03.503494+00:00",
+  "DCommit": "4c5188da156e24a2ee395059d217d14d2c004258",
+  "auditTool": {
+    "path": "experiments/world-components-logic/review_io.py",
+    "sha256": "059f0e9264f456dcd499844f94441cfdf02d65163df07f4b08989d2682f536f0"
+  },
+  "inputSha256": "5db17d612a02425a00f555c178d74689cd84a7fd745656ce87f0daf7c7b3061e",
+  "reviewDraftSha256": "e5a772691b81c6f6e8281706a75725f8fc33cab1c78e5f010b06ff4fc5d9ea1b",
+  "provenanceSha256": "d104869ca54b270ab11e8b2206ff3f1932d69eb67799c8bb9cc8416e038c050d",
+  "caseCount": 42,
+  "sourceGroupCount": 40,
+  "identityChecks": [
+    {
+      "kind": "D-file-sha256",
+      "path": "experiments/world-components-logic/data/dev-inputs.jsonl",
+      "matched": true
+    },
+    {
+      "kind": "D-file-sha256",
+      "path": "experiments/world-components-logic/data/dev-review-drafts.jsonl",
+      "matched": true
+    },
+    {
+      "kind": "D-file-sha256",
+      "path": "experiments/world-components-logic/generate_dev_drafts.py",
+      "matched": true
+    },
+    {
+      "kind": "pinned-rule-source",
+      "commit": "fd5fa49af6570380329a08e3ecab312dae45ad32",
+      "path": "design/browser-world-state-workflow.md",
+      "gitBlobSha1": "eb31063939a6e30ae719b42e331368fee9ebf9a3",
+      "sha256": "5775af1686631410d06746888c56ce6c93fa0784ca0d92eb9a42462abc04a1bb",
+      "matched": true
+    },
+    {
+      "kind": "pinned-rule-source",
+      "commit": "fd5fa49af6570380329a08e3ecab312dae45ad32",
+      "path": "design/world-engine-reports/components-logic/evaluation-plan.md",
+      "gitBlobSha1": "f2b29a882538d7947759ee1369e9297f50f7fc9a",
+      "sha256": "97d33f83f55770d47618b2c5c8135681256cd149b8d7dc4113433793997bfbce",
+      "matched": true
+    }
+  ],
+  "perCaseIdentityChecks": 42,
+  "DIdentityProblems": [],
+  "DIdentityStatus": "matched",
+  "protectedAnchors": [
+    {
+      "owner": "B",
+      "commit": "90463b12eac989d4bd3c3bb8b3e2e54720177195",
+      "path": "artifacts",
+      "expectedGitObject": "58e04d7ed2f27133c13a6c446eec600d87d447b7",
+      "observedGitObject": "58e04d7ed2f27133c13a6c446eec600d87d447b7",
+      "objectType": "tree",
+      "status": "anchor_identity_matched",
+      "sampleBodyRead": false
+    },
+    {
+      "owner": "B",
+      "commit": "90463b12eac989d4bd3c3bb8b3e2e54720177195",
+      "path": "frontend/src/lib/world-engine",
+      "expectedGitObject": "7d9a7edfff713858357da6bd36bb120b75d14a4f",
+      "observedGitObject": "7d9a7edfff713858357da6bd36bb120b75d14a4f",
+      "objectType": "tree",
+      "status": "anchor_identity_matched",
+      "sampleBodyRead": false
+    },
+    {
+      "owner": "B",
+      "commit": "90463b12eac989d4bd3c3bb8b3e2e54720177195",
+      "path": "frontend/src/lib/world-engine/runtime/b3-samples.ts",
+      "expectedGitObject": "c7c11bf2d6aa42b21e2b91f9722fc8bdd3d63914",
+      "observedGitObject": "c7c11bf2d6aa42b21e2b91f9722fc8bdd3d63914",
+      "objectType": "blob",
+      "status": "anchor_identity_matched",
+      "sampleBodyRead": false
+    },
+    {
+      "owner": "B",
+      "commit": "90463b12eac989d4bd3c3bb8b3e2e54720177195",
+      "path": "frontend/src/lib/world-engine/runtime/b3-short-samples.ts",
+      "expectedGitObject": "48de5aac7aea468b46678cc3e7b6243047490a96",
+      "observedGitObject": "48de5aac7aea468b46678cc3e7b6243047490a96",
+      "objectType": "blob",
+      "status": "anchor_identity_matched",
+      "sampleBodyRead": false
+    },
+    {
+      "owner": "C",
+      "commit": "30069354cc061be94fc31c897dada0f641ed3f90",
+      "path": "experiments/world-components",
+      "expectedGitObject": "58efd205a733c47448770d50cff13f953a07d318",
+      "observedGitObject": "58efd205a733c47448770d50cff13f953a07d318",
+      "objectType": "tree",
+      "status": "anchor_identity_matched",
+      "sampleBodyRead": false
+    },
+    {
+      "owner": "C",
+      "commit": "30069354cc061be94fc31c897dada0f641ed3f90",
+      "path": "artifacts/world-components",
+      "expectedGitObject": "dda61b65d3c8bd955f1ddd3bfdfc9155ad97bf07",
+      "observedGitObject": "dda61b65d3c8bd955f1ddd3bfdfc9155ad97bf07",
+      "objectType": "tree",
+      "status": "anchor_identity_matched",
+      "sampleBodyRead": false
+    },
+    {
+      "owner": "C",
+      "commit": "30069354cc061be94fc31c897dada0f641ed3f90",
+      "path": "experiments/world-components/n4_holdout/holdout.jsonl",
+      "expectedGitObject": "31ebca6690407634352b5ff277a0f2109300dced",
+      "observedGitObject": "31ebca6690407634352b5ff277a0f2109300dced",
+      "objectType": "blob",
+      "status": "anchor_identity_matched",
+      "sampleBodyRead": false
+    },
+    {
+      "owner": "C",
+      "commit": "30069354cc061be94fc31c897dada0f641ed3f90",
+      "path": "experiments/world-components/n4_holdout/freeze-r3-direction.json",
+      "expectedGitObject": "fe079c0eb8e458edd59a2cecc4dd3496843135c2",
+      "observedGitObject": "fe079c0eb8e458edd59a2cecc4dd3496843135c2",
+      "objectType": "blob",
+      "status": "anchor_identity_matched",
+      "sampleBodyRead": false
+    }
+  ],
+  "humanReview": "pending-user",
+  "secondHumanReview": "unassigned",
+  "adjudicator": "unassigned",
+  "protectedSourceCompleteness": "unverified",
+  "contentDeduplication": "unverified",
+  "semanticSourceIndependence": "unverified",
+  "formalEvaluationAllowed": false,
+  "modelExecutionAuthorized": false
+}
