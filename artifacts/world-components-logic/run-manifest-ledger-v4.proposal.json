@@ -1,0 +1,789 @@
+{
+  "events": [
+    {
+      "id": "P-01",
+      "node": "segment-start",
+      "per": "segment",
+      "budgetMs": 10
+    },
+    {
+      "id": "P-02",
+      "node": "identity-alloc-begin-and-time-preview",
+      "per": "segment",
+      "budgetMs": 10,
+      "includes": [
+        "required identity allocation",
+        "begin_point",
+        "required Python time preview"
+      ],
+      "rpcCount": "unexpanded-before-batch-freeze"
+    },
+    {
+      "id": "P-03",
+      "node": "freeze-action-text",
+      "per": "act",
+      "budgetMs": 10
+    },
+    {
+      "id": "P-04",
+      "node": "confirm-target-set-per-source",
+      "per": "frozen-source",
+      "budgetMs": 10
+    },
+    {
+      "id": "P-05",
+      "node": "dice-admission-per-relation",
+      "per": "confirmed-relation",
+      "budgetMs": 10
+    },
+    {
+      "id": "P-06",
+      "node": "freeze-reaction-text",
+      "per": "new-admitted-unacted",
+      "budgetMs": 10
+    },
+    {
+      "id": "P-07",
+      "node": "close-group",
+      "per": "closed-group",
+      "budgetMs": 10
+    },
+    {
+      "id": "P-08",
+      "node": "record-skip",
+      "per": "legal-skip",
+      "budgetMs": 10
+    },
+    {
+      "id": "P-09",
+      "node": "candidate-identities-and-stage-unit",
+      "per": "unit",
+      "budgetMs": 10,
+      "includes": [
+        "required candidate ID allocation/rewriting",
+        "checkpoint_stage_unit"
+      ],
+      "rpcCount": "unexpanded-before-batch-freeze"
+    },
+    {
+      "id": "P-10",
+      "node": "per-stage-python-preview",
+      "per": "checked-stage-preview",
+      "budgetMs": 10,
+      "order": "U1-before-U2-when-position-affects-appearance",
+      "note": "Reference path previews U1-U4 for each action unit; pure-time previews U3/U4; U5/U6 only when applicable."
+    },
+    {
+      "id": "P-11",
+      "node": "segment-slot-boundary-check",
+      "per": "actual-active-opportunity-outcome",
+      "budgetMs": 10,
+      "note": "One boundary check per D02 opportunity outcome; also covers scanning/skipping already-acted slots; extra work logged."
+    },
+    {
+      "id": "P-12",
+      "node": "time-scan-candidate-identities-and-stage",
+      "per": "completed-pure-time-scan",
+      "budgetMs": 10,
+      "precondition": "no-action-unit-in-segment AND time-scan-incomplete",
+      "exclusiveWith": "P-09-action-unit-path",
+      "conditional": [
+        "U5-if-new-achievements",
+        "U6-if-personality-changed"
+      ],
+      "includes": [
+        "required candidate ID allocation/rewriting",
+        "checkpoint_stage_time_scan"
+      ],
+      "after": [
+        "U3-all-person-task-scan",
+        "U4-new-task-judgment",
+        "required previews",
+        "conditional U5/U6"
+      ],
+      "rpcCount": "unexpanded-before-batch-freeze"
+    },
+    {
+      "id": "P-13",
+      "node": "seal-and-atomic-commit",
+      "per": "completed-point",
+      "budgetMs": 10,
+      "variants": [
+        "normal-with-unit",
+        "pure-time-scan"
+      ],
+      "mutuallyExclusivePerPoint": true,
+      "includes": [
+        "checkpoint_seal_point",
+        "commit_point"
+      ],
+      "rpcCount": "unexpanded-before-batch-freeze"
+    },
+    {
+      "id": "P-14",
+      "node": "narrative-ready-wait",
+      "per": "completed-point",
+      "budgetMs": null,
+      "budgetStatus": "unknown-measured-at-run",
+      "inRequest": true,
+      "attribution": "external_narration",
+      "waitSymbol": "W_r[i]",
+      "note": "Distinct actual wait for every completed point; never assumed equal."
+    },
+    {
+      "id": "P-15",
+      "node": "d07-atomic-confirm-and-successor",
+      "per": "completed-round",
+      "budgetMs": 10,
+      "includes": [
+        "required conclusion/successor identity handling",
+        "atomic continue/handback confirmation and necessary successor creation",
+        "all required acknowledgments"
+      ]
+    },
+    {
+      "id": "P-16",
+      "node": "cancel-late-recovery-probe",
+      "per": "protocol-6-probe",
+      "budgetMs": null,
+      "budgetStatus": "separate-ledger"
+    },
+    {
+      "id": "M-01",
+      "node": "M01.d02.act-skip",
+      "per": "opportunity",
+      "budgetMs": 40
+    },
+    {
+      "id": "M-02",
+      "node": "M02.d02.action-body",
+      "per": "act",
+      "budgetMs": 50
+    },
+    {
+      "id": "M-03",
+      "node": "M01.d03.relation-score",
+      "per": "sum of k_source over actual frozen sources",
+      "batches": "k_source>=1",
+      "budgetMs": 40,
+      "note": "Includes action and reaction sources, including empty target sets; realized batch counts logged."
+    },
+    {
+      "id": "M-04",
+      "node": "M02.d04.reaction",
+      "per": "new-admitted-unacted",
+      "budgetMs": 50
+    },
+    {
+      "id": "M-05",
+      "node": "M02.d05.joint-plan",
+      "per": "closed-group",
+      "budgetMs": 50,
+      "oncePerGroup": true
+    },
+    {
+      "id": "M-06",
+      "node": "M02.d05.member-expression",
+      "per": "sum of expression batches over closed groups",
+      "batches": "b_group>=1",
+      "budgetMs": 50
+    },
+    {
+      "id": "M-07",
+      "node": "M01-M02.d06.stages",
+      "per": "sum of batches over units/scans and checked stages",
+      "batches": "k_unit_stage>=1 when check required",
+      "budgetMs": 50,
+      "includes": "Action reference: U1-U4 all checked; pure time: U3/U4; U5/U6 conditional. No zero because output has no delta."
+    },
+    {
+      "id": "M-08",
+      "node": "M02.d07.candidate",
+      "per": "completed-round requiring candidate generation in this reference arm",
+      "budgetMs": 50,
+      "precondition": "round-and-all-linked-segments-complete",
+      "referenceCalls": 1,
+      "note": "The reference scenarios include a candidate; do not force candidate/handback to match the ledger."
+    },
+    {
+      "id": "M-09",
+      "node": "M01.d07.dual-judgment",
+      "per": "candidate batch requiring dual judgment in this reference arm",
+      "budgetMs": 50,
+      "dualHeadsShareForward": true,
+      "sharesForwardWithGeneration": false,
+      "note": "sharing only between the two M01 judgment heads; M02 generation (M-08) and M01 judgment never share a forward",
+      "precondition": "round-and-all-linked-segments-complete",
+      "referenceCalls": 1
+    },
+    {
+      "id": "M-10",
+      "node": "M02.d08.proposal",
+      "per": "segment",
+      "budgetMs": 30
+    }
+  ],
+  "inputs": [
+    {
+      "kind": "development-drafts",
+      "path": "experiments/world-components-logic/data/dev-inputs.jsonl",
+      "sha256": "5db17d612a02425a00f555c178d74689cd84a7fd745656ce87f0daf7c7b3061e",
+      "role": "development-iteration-only",
+      "humanReview": "pending-user",
+      "admissibleForRun": false
+    },
+    {
+      "kind": "development-drafts",
+      "path": "experiments/world-components-logic/data/dev-review-drafts.jsonl",
+      "sha256": "e5a772691b81c6f6e8281706a75725f8fc33cab1c78e5f010b06ff4fc5d9ea1b",
+      "role": "development-iteration-only",
+      "humanReview": "pending-user",
+      "admissibleForRun": false
+    },
+    {
+      "kind": "provenance",
+      "path": "experiments/world-components-logic/data/dev-provenance.json",
+      "sha256": "d104869ca54b270ab11e8b2206ff3f1932d69eb67799c8bb9cc8416e038c050d"
+    },
+    {
+      "kind": "model-source-registry",
+      "path": "artifacts/world-components-logic/l2-model-sources-20261029.json",
+      "sha256": "dd674851600bd08c5bad796f122ba4ea7fc50f60243d174f32c86f83555312d4"
+    },
+    {
+      "kind": "environment-record",
+      "path": "artifacts/world-components-logic/l3-1-environment.json",
+      "sha256": "68b3914d29b88e083bc1a408f9653c36d0de8c7144c48fced63d25ff5f9edf34",
+      "note": "Original Mac ARM64 isolated environment evidence; reuse only after identity check on that same host. Not proof for Windows/another host."
+    },
+    {
+      "kind": "projection-spec",
+      "ref": "evaluation-plan.md §4.1",
+      "version": "L2-r3 with v4 admission clarification",
+      "implementation": "lab.py experiment allowlist exists; full model tokenizer/batch/chain adapter unbuilt and unvalidated",
+      "admissibleForRun": false
+    },
+    {
+      "kind": "first-round-groups",
+      "alignedWith": "evaluation-plan §2.1 counts 80+10=90",
+      "taskGroupsByDimension": {
+        "D02": {
+          "dev": 10,
+          "sealed": 10
+        },
+        "D03": {
+          "dev": 10,
+          "sealed": 10
+        },
+        "D04": {
+          "dev": 10,
+          "sealed": 10
+        },
+        "D05": {
+          "dev": 10,
+          "sealed": 10
+        }
+      },
+      "chainGroups": {
+        "dev": 4,
+        "sealed": 6
+      },
+      "counts": {
+        "taskSourceGroups": 80,
+        "chainSourceGroups": 10,
+        "sourceGroupsTotal": 90,
+        "cases": null,
+        "casesStatus": "unknown-frozen-before-run",
+        "countingRule": "groupCount != caseCount != expectedCallCount; per-group anchorCase plus derived cases registered at freeze"
+      },
+      "status": "unbuilt",
+      "admissibleForRun": false
+    },
+    {
+      "kind": "dice-fixture",
+      "rule": "reaction-d20-v1",
+      "authority": "program",
+      "modelRolls": false
+    }
+  ],
+  "models": [
+    {
+      "id": "M01",
+      "repo": "hfl/minirbt-h256",
+      "revision": "446e1b4012b10946f479563005700c54c9db3f7c",
+      "role": "priority-path-encoder",
+      "payloadSha256": null,
+      "payloadSha256Status": "unknown-until-fetch-and-verify",
+      "taskHeads": "untrained",
+      "historicalPayloadEvidence": {
+        "host": "original-mac-arm64",
+        "fetched": false,
+        "verified": false
+      },
+      "executionHostId": null,
+      "executionHostPayloadVerified": null,
+      "admissibleForBusinessInference": false
+    },
+    {
+      "id": "M02",
+      "repo": "IDEA-CCNL/Randeng-T5-77M-MultiTask-Chinese",
+      "revision": "06d379d7375245f31cfb87166eff134cfeb5dead",
+      "role": "priority-path-generator",
+      "payloadSha256Status": "per-file-in-registry",
+      "loaded": false,
+      "historicalPayloadEvidence": {
+        "host": "original-mac-arm64",
+        "fetched": true,
+        "verified": true
+      },
+      "executionHostId": null,
+      "executionHostPayloadVerified": null,
+      "admissibleForBusinessInference": false
+    },
+    {
+      "id": "M03",
+      "repo": "Qwen/Qwen2.5-0.5B-Instruct",
+      "revision": "7ae557604adf67be50417f59c2c2f167def9a775",
+      "role": "reference-arm-optional",
+      "prerequisite": false,
+      "historicalPayloadEvidence": {
+        "host": "original-mac-arm64",
+        "fetched": false,
+        "verified": false
+      },
+      "executionHostId": null,
+      "executionHostPayloadVerified": null,
+      "admissibleForBusinessInference": false
+    },
+    {
+      "id": "M04",
+      "repo": "Qwen/Qwen3-0.6B",
+      "revision": "c1899de289a04d12100db370d81485cdf75e47ca",
+      "role": "reference-arm-optional",
+      "prerequisite": false,
+      "historicalPayloadEvidence": {
+        "host": "original-mac-arm64",
+        "fetched": false,
+        "verified": false
+      },
+      "executionHostId": null,
+      "executionHostPayloadVerified": null,
+      "admissibleForBusinessInference": false
+    }
+  ],
+  "schema": "jity-d-run-manifest-v4-proposal",
+  "sourceHeadAtProposal": "444e0c3d67085359b7de2f1b7a7332af933c48cf",
+  "status": "proposal-document-reviewed",
+  "admissionStage": "1-document-review-complete",
+  "executionAuthorized": false,
+  "modelExecutionPerformed": false,
+  "fullRequestTargetMs": 500,
+  "timingUnit": "non-overlapping-logical-macro; not HTTP count",
+  "executionHost": {
+    "plannedHostId": null,
+    "historicalHostId": "original-mac-arm64",
+    "historicalEnvironmentPath": "artifacts/world-components-logic/l3-1-environment.json",
+    "sameMacPolicy": "Verify existing isolated venv/lock/M02 identity in place; do not require reinstallation solely because Windows notes say missing.",
+    "otherHostPolicy": "Create independent environment/payload verification; do not inherit Mac verified flags.",
+    "identityCheckedForThisBatch": false
+  },
+  "configurationBeforeRun": {
+    "deviceId": null,
+    "threads": null,
+    "concurrency": null,
+    "batchInputHashes": [],
+    "attemptsPerSpec": null,
+    "modelArtifactHashes": [],
+    "promptAndDecoderConfigHash": null,
+    "stopResourcePolicy": null,
+    "requiredInputsKnown": false
+  },
+  "dynamicOutcomes": {
+    "names": [
+      "O",
+      "A",
+      "skip",
+      "S",
+      "R",
+      "X",
+      "G",
+      "stageBatches",
+      "C",
+      "W",
+      "k_source",
+      "b_group"
+    ],
+    "values": {
+      "O": null,
+      "A": null,
+      "skip": null,
+      "S": null,
+      "R": null,
+      "X": null,
+      "G": null,
+      "stageBatches": null,
+      "C": null,
+      "W": null,
+      "k_source": null,
+      "b_group": null
+    },
+    "requiresPrecomputedDynamicCounts": false,
+    "policy": "Scenario nominal counts are planning assumptions only; actual branches and all attempts are recorded after execution, never fixed by gold/prompt/forced handback."
+  },
+  "scenarios": [
+    {
+      "id": "S0-segment",
+      "title": "全员 skip 段，到 ready 的前缀",
+      "counts": {
+        "M-01": 3,
+        "M-07": 2,
+        "M-10": 1,
+        "P-01": 1,
+        "P-02": 1,
+        "P-08": 3,
+        "P-10": 2,
+        "P-11": 3,
+        "P-12": 1,
+        "P-13": 1
+      },
+      "requiredD06Stages": [
+        "U3",
+        "U4"
+      ],
+      "d06StageOccurrences": 2,
+      "completedRounds": 0,
+      "waits": [
+        "W_r[1]"
+      ],
+      "completeRequestReference": false,
+      "assumptions": [
+        "O=3; all three active opportunities legally skip; no action unit.",
+        "U3/U4 each one batch; no new achievement/personality trigger in this branch.",
+        "If linked segments remain, no D07 yet; their costs must later be added."
+      ],
+      "programMacroOccurrences": 12,
+      "modelCalls": 6,
+      "programBudgetMs": 120,
+      "modelBudgetMs": 250,
+      "subtotalMs": 370,
+      "budgetStatus": "unmeasured_not_accepted",
+      "requestScope": null
+    },
+    {
+      "id": "S0-round",
+      "title": "全员 skip，唯一段完成回合并交还",
+      "counts": {
+        "M-01": 3,
+        "M-07": 2,
+        "M-08": 1,
+        "M-09": 1,
+        "M-10": 1,
+        "P-01": 1,
+        "P-02": 1,
+        "P-08": 3,
+        "P-10": 2,
+        "P-11": 3,
+        "P-12": 1,
+        "P-13": 1,
+        "P-15": 1
+      },
+      "requiredD06Stages": [
+        "U3",
+        "U4"
+      ],
+      "d06StageOccurrences": 2,
+      "completedRounds": 1,
+      "waits": [
+        "W_r[1]"
+      ],
+      "completeRequestReference": true,
+      "assumptions": [
+        "S0-segment is the only segment and only round of this request; all roster slots processed; no earlier segment/round/wait costs.",
+        "D07 generates a candidate then dual judgment rejects continuation; one atomic handback.",
+        "No forced skip/handback; if actual branch differs, record actual path and costs."
+      ],
+      "programMacroOccurrences": 13,
+      "modelCalls": 8,
+      "programBudgetMs": 130,
+      "modelBudgetMs": 350,
+      "subtotalMs": 480,
+      "budgetStatus": "unmeasured_not_accepted",
+      "requestScope": {
+        "totalSegments": 1,
+        "totalRounds": 1,
+        "omittedPrefix": false
+      }
+    },
+    {
+      "id": "S1",
+      "title": "确认与共同结算范围链",
+      "counts": {
+        "M-01": 1,
+        "M-02": 1,
+        "M-03": 2,
+        "M-04": 1,
+        "M-05": 1,
+        "M-06": 1,
+        "P-03": 1,
+        "P-04": 2,
+        "P-05": 1,
+        "P-06": 1,
+        "P-07": 1
+      },
+      "requiredD06Stages": [],
+      "d06StageOccurrences": 0,
+      "completedRounds": 0,
+      "waits": [],
+      "completeRequestReference": false,
+      "assumptions": [
+        "One ordinary act, one new admitted reaction; two frozen sources; one relation; one closed group.",
+        "k_act=k_reaction=b_expression=1.",
+        "D06/D07/D08, segment setup, staging/seal/commit and narrative waits are external fixtures; not a full request."
+      ],
+      "programMacroOccurrences": 6,
+      "modelCalls": 7,
+      "programBudgetMs": 60,
+      "modelBudgetMs": 320,
+      "subtotalMs": 380,
+      "budgetStatus": "unmeasured_not_accepted",
+      "requestScope": null
+    },
+    {
+      "id": "S2-delta",
+      "title": "增加一级准入反应的限定增量",
+      "counts": {
+        "M-03": 1,
+        "M-04": 1,
+        "P-04": 1,
+        "P-05": 1,
+        "P-06": 1
+      },
+      "requiredD06Stages": [],
+      "d06StageOccurrences": 0,
+      "completedRounds": 0,
+      "waits": [],
+      "completeRequestReference": false,
+      "assumptions": [
+        "deltaS=deltaR=deltaX=1, new source k=1; no side relation or extra expression batch.",
+        "D05 stays once per closed group, but larger inputs/b_group may add cost beyond this increment."
+      ],
+      "programMacroOccurrences": 3,
+      "modelCalls": 2,
+      "programBudgetMs": 30,
+      "modelBudgetMs": 90,
+      "subtotalMs": 120,
+      "budgetStatus": "unmeasured_not_accepted",
+      "requestScope": null
+    },
+    {
+      "id": "S3",
+      "title": "单段回合参考，U1-U4 完整检查",
+      "counts": {
+        "M-01": 1,
+        "M-02": 1,
+        "M-03": 2,
+        "M-04": 1,
+        "M-05": 1,
+        "M-06": 1,
+        "M-07": 4,
+        "M-08": 1,
+        "M-09": 1,
+        "M-10": 1,
+        "P-01": 1,
+        "P-02": 1,
+        "P-03": 1,
+        "P-04": 2,
+        "P-05": 1,
+        "P-06": 1,
+        "P-07": 1,
+        "P-09": 1,
+        "P-10": 4,
+        "P-11": 1,
+        "P-13": 1,
+        "P-15": 1
+      },
+      "requiredD06Stages": [
+        "U1",
+        "U2",
+        "U3",
+        "U4"
+      ],
+      "d06StageOccurrences": 4,
+      "completedRounds": 1,
+      "waits": [
+        "W_r[1]"
+      ],
+      "completeRequestReference": true,
+      "assumptions": [
+        "Exactly two registered characters: initiator plus new admitted responder; full frozen roster visited/acted by end.",
+        "O=1 active D02 opportunity; the responder already acted via D04; skipping its slot is included in P-11.",
+        "A=1,S=2,R=1,X=1,G=1,C=1; k_source=b_expression=1; no linked segment.",
+        "U1-U4 each one model batch and preview; U5/U6 not triggered only in this branch; otherwise add actual checks.",
+        "D07 candidate plus dual judgment and P-15 included; this is a complete request only if final conclusion is handback.",
+        "This is the only segment/round of this request; no earlier work or wait is outside the ledger. A suffix of a longer request is not a complete reference."
+      ],
+      "programMacroOccurrences": 16,
+      "modelCalls": 14,
+      "programBudgetMs": 160,
+      "modelBudgetMs": 650,
+      "subtotalMs": 810,
+      "budgetStatus": "over_target_planning",
+      "requestScope": {
+        "totalSegments": 1,
+        "totalRounds": 1,
+        "omittedPrefix": false
+      }
+    },
+    {
+      "id": "S4",
+      "title": "一次自动后续轮后交还的完整请求参考",
+      "counts": {
+        "M-01": 2,
+        "M-02": 2,
+        "M-03": 4,
+        "M-04": 2,
+        "M-05": 2,
+        "M-06": 2,
+        "M-07": 8,
+        "M-08": 2,
+        "M-09": 2,
+        "M-10": 2,
+        "P-01": 2,
+        "P-02": 2,
+        "P-03": 2,
+        "P-04": 4,
+        "P-05": 2,
+        "P-06": 2,
+        "P-07": 2,
+        "P-09": 2,
+        "P-10": 8,
+        "P-11": 2,
+        "P-13": 2,
+        "P-15": 2
+      },
+      "requiredD06Stages": [
+        "U1",
+        "U2",
+        "U3",
+        "U4",
+        "U1",
+        "U2",
+        "U3",
+        "U4"
+      ],
+      "d06StageOccurrences": 8,
+      "completedRounds": 2,
+      "waits": [
+        "W_r[1]",
+        "W_r[2]"
+      ],
+      "completeRequestReference": true,
+      "assumptions": [
+        "Two rounds with the same event-count shape, not identical world/text/outputs; first continue, second handback.",
+        "Each round accounts for its full roster; no extra linked segment; all S3 assumptions apply separately.",
+        "Waits W_r[1] and W_r[2] are measured independently; more rounds/relations/batches add actual cost.",
+        "The first listed round starts the request; no earlier segment/round/wait costs are outside these two rounds."
+      ],
+      "programMacroOccurrences": 32,
+      "modelCalls": 28,
+      "programBudgetMs": 320,
+      "modelBudgetMs": 1300,
+      "subtotalMs": 1620,
+      "budgetStatus": "over_target_planning",
+      "requestScope": {
+        "totalSegments": 2,
+        "totalRounds": 2,
+        "omittedPrefix": false
+      }
+    }
+  ],
+  "sharingRules": {
+    "M-09": {
+      "dualHeadsShareForward": true,
+      "sharesForwardWithGeneration": false
+    },
+    "rule": "Only two M01 judgment heads may share one real forward; M02 generation never shares that forward."
+  },
+  "batchTypes": {
+    "nonbusiness_smoke": {
+      "businessInputsAllowed": false,
+      "humanSemanticPassClaimAllowed": false,
+      "requiresAll90Groups": false
+    },
+    "head_training": {
+      "newTrainingProtocolRequired": true,
+      "newTrainingGroupsRequired": true,
+      "trainingGroupsIn90": 0,
+      "initialTaskHeadMayBeUntrained": true,
+      "randomHeadMayEnterSemanticComparison": false
+    },
+    "inference_diagnostic": {
+      "exploratory": true,
+      "trainedBusinessHeadRequiredIfM01Used": true,
+      "preexistingMeasuredPassRequired": false,
+      "mayObserveLatencyFail": true,
+      "formalScreeningAllowed": false
+    },
+    "sealed_screening": {
+      "allApplicableSourceAndHumanGatesRequired": true,
+      "trainedBusinessHeadRequiredIfM01Used": true,
+      "dataAndArmsFrozenBeforeExposure": true,
+      "passing500RequiresPostRunEvidence": true
+    }
+  },
+  "admission": {
+    "stages": [
+      "document-review",
+      "batch-config-and-preconditions",
+      "authorized-execution",
+      "post-run-judgment"
+    ],
+    "approvedForExecution": false,
+    "diagnosticBudgetGate": "Register unchanged 500ms target, complete timing, disclosed over-budget plans and explicit resource stops; this is not a latency pass.",
+    "formalPerformanceGate": "All applicable frozen observations within local budgets and full request <=500ms; no discarded failed/late attempts.",
+    "trainingOrder": "Independent training batch and authorization -> checkpoint hash -> new inference batch freeze; no hidden training during configuration.",
+    "resumeInstructionForModelExecutionGiven": false
+  },
+  "rpcMapping": {
+    "status": "unexpanded_blocks_execution_freeze",
+    "logicalMacroBudgetCoversAllSuboperations": true,
+    "sharedRpcDurationCountedOnce": true,
+    "nestedIntervalsMustNotBeSummed": true,
+    "policy": "Bind every transport call, identity read/write, response and wait to one non-overlapping timing owner before an executing batch; P-04/P-05 may share RPC."
+  },
+  "gaps": [
+    "execution-host-unbound",
+    "rpc-map-unexpanded",
+    "formal-projector-unvalidated",
+    "90-groups-unbuilt",
+    "42-drafts-pending-user",
+    "protected-sources-unverified",
+    "roles-unstaffed",
+    "m01-business-head-untrained",
+    "training-protocol-unregistered",
+    "resource-window-unscheduled",
+    "g03-blocked",
+    "model-resume-not-authorized"
+  ],
+  "recordedHistory": {
+    "v3": {
+      "S0Segment": 370,
+      "S1": 380,
+      "S2": 120,
+      "S3Claimed": 680,
+      "S4Claimed": 1360
+    },
+    "arithmeticOnlyCorrectionBeforeU1U4Repair": {
+      "S3": 690,
+      "S4": 1380
+    },
+    "notice": "Historical numbers are not current budgets, measured latency or acceptance."
+  },
+  "documentReview": {
+    "date": "2026-10-30",
+    "arithmeticAndWorkflowIndependentReview": "no-remaining-document-blocker",
+    "staticCounterexamplesRejected": 19,
+    "scope": "document arithmetic, workflow and static checker only; no data/source, semantic quality, measured latency or execution approval",
+    "record": "design/world-engine-reports/components-logic/README.md §16"
+  }
+}

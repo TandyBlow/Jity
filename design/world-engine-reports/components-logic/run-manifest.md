@@ -1,260 +1,172 @@
-# D / L3 开跑前 run-manifest 提案 v3（首批 D02–D05 范围链）
+# D / 开跑前清单复审 v4：事件、预算与准入
 
-日期：2026-10-30（Asia/Shanghai）。状态：**仅方案提案，未运行**；L3 继续暂停，诊断运行也尚未安排。v2 按总指挥对 `58ea66b` 的复审意见补齐账本与四段准入；**v3 按总指挥对 `5ba2249` 的四项意见统一修正**：S3 补 P-15 且 P-11 改为每机会结局一次、全员 skip 纯时间路径补齐 U3/U4（U5/U6 条件执行）、M01 双判别头之间的共享单列（M02 生成与 M01 判别不共享前向）、样本清单按四任务维度对齐协议 80＋10＝90 口径并明确组/case 计数。依据：[验证协议](evaluation-plan.md) §1 六门、§2.1 计数口径、§4.1 投影、§7 测量纪律、[候选表](model-selection.md) §8 依赖图、[L1 架构](architecture.md) §3 屏障。本提案是**协议门材料**：经独立复审后冻结为带哈希的 `artifacts/world-components-logic/run-manifest-l3-first.json`；新增实验臂或改门槛须升版。
+日期：2026-10-30（Asia/Shanghai）。状态：**文档及静态工具已完成独立复验，无剩余文档阻断；模型执行继续暂停**。本次用户只授权“第一步：复审清单”，没有授予训练、加载、推理或诊断运行授权。所有耗时均为预算加总，没有实测成绩，500 ms 目标未验收。
 
-## 1. 实际调用事件清单（26 事件，含次数公式）
+依据：[原设计](../../browser-world-state-workflow.md) §5–§8、[架构](architecture.md) §3/§5、[验证协议](evaluation-plan.md) §1/§4/§7、[选型方案](model-selection.md) §8。审查起点 `444e0c3`。v1–v3 数字保留在 Git 历史及 README 进度历史；**当前数值以本 v4 的逐事件账本为准**。
 
-次数变量：`O`=每段人物机会数（含 skip）、`A`=act 数、`skip=O−A`、`S`=冻结源数（行动源 + 反应源）、`R`=已确认关系判定数（逐关系骰点/准入）、`X`=新准入且未行动反应者数、`G`=闭组数、`U`=D06 触发阶段数、`C`=完成点数、`W`=自动后续轮数。
+## 1. 本轮纠正的口径
 
-| ID | 类型 | 事件 | 次数公式 | 局部预算草案 |
-| --- | --- | --- | --- | --- |
-| P-01 | 程序 | 段起始/顺序采纳 | 1/段 | ≤10 ms |
-| P-02 | 程序 | 身份分配 / begin / Python 时间预览（时间先行） | 1/段 | ≤10 ms |
-| P-03 | 程序 | discover 确认并冻结源行动原文 | 1/act | ≤10 ms |
-| P-04 | 程序 | **按源确认完整目标（含空目标源）** | 1/冻结源 S | ≤10 ms |
-| P-05 | 程序 | **按关系骰点/准入 roll**（服务端权威，逐 source→target 关系） | 1/已确认关系 R | ≤10 ms |
-| P-06 | 程序 | 反应候选原文冻结 | 1/X | ≤10 ms |
-| P-07 | 程序 | close_group 闭组 | 1/G（全部来源与威胁处理完） | ≤10 ms |
-| P-08 | 程序 | record_skip 合法否定登记 | 1/skip | ≤10 ms |
-| P-09 | 程序 | stage_unit 保存完整候选（只提升工作游标） | 1/单元 | ≤10 ms |
-| P-10 | 程序 | **六阶段逐阶段 Python preview**（U1→U2 强制先 preview；顺序不变） | 1/U | ≤10 ms |
-| P-11 | 程序 | 本段槽位/边界判断（**每机会结局恰好一次**：skip 与单元完成是同一机会的两种结局，不重复计） | 1/机会结局 = O/段 | ≤10 ms |
-| P-12 | 程序 | 纯时间任务扫描触发（**仅当本段无行动单元且未完成时间扫描**；触发后必跑 U3 全人物任务扫描与 U4 判断，U5/U6 按条件） | 0–1/段 | ≤10 ms |
-| P-13 | 程序 | commit 原子提交（**普通提交携带单元 或 纯时间扫描提交，每点二选一、互斥**） | 1/C | ≤10 ms |
-| P-14 | 等待 | 外部只读叙事 ready（W_r，计入请求并注明归属） | 1/C | 实测 |
-| P-15 | 程序 | D07 结论原子确认 / continue 后继创建重排 | 1/round 完成 | ≤10 ms |
-| P-16 | 探针 | 取消/迟到/恢复隔离路径 | 按协议 §6 | 单列 |
-| M-01 | M01 | D02 act/skip 判别 | O | ≤40 ms/批 |
-| M-02 | M02 | D02 行动正文 | 0–1/act | ≤50 ms |
-| M-03 | M01 | D03 关系打分（**每个冻结源各 1–K 批，含空目标源；反应源同计**） | S × (1–K) | ≤40 ms/批 |
-| M-04 | M02 | D04 反应候选 | 1/X | ≤50 ms |
-| M-05 | M02 | D05 全组统一后果计划 | 1/G（仅一次） | ≤50 ms |
-| M-06 | M02 | D05 成员表达 | 1–B 批/G | ≤50 ms/批 |
-| M-07 | M01/M02 | D06 六阶段逐阶段模型调用；纯时间路径**必含 U3 全人物×任务扫描批与 U4 判断批**，U5/U6 按条件触发 | U × (0–K) | ≤50 ms/批 |
-| M-08 | M02 | D07 拟行动生成（round 及全部关联段完成后） | 0–1/round | ≤50 ms |
-| M-09 | M01 | D07 双条件判别（**仅 M01 的两个判别头共享一次前向**；M02 生成 M-08 与 M01 判别不共享前向） | 0–1/round | ≤50 ms |
-| M-10 | M02 | D08 时间/分段提议（段起始适用位置） | 0–1/段 | ≤30 ms |
+1. v3 的 S3 所列程序事件实际 14 次，先纠正算术即 690，而非 680；之后还需补普通单元 U1–U4 的完整检查，因此 v4 S3 是 810，不沿用仅修加法的 690。
+2. 全员 skip 到 ready 的段前缀与回合结束分开：前者 370；若它是本请求唯一段/轮、无先前成本且 D07 两步后交还，则 480。合法 skip 不等于剧情已结束。
+3. 普通结算参考路径按 U1–U4 各一模型批及 preview；U5/U6 才按条件。纯时间 U1/U2 无操作特例不可套给普通行动。合法合并/共享另立臂并提供实际依赖及覆盖证据。
+4. 26 个 ID 是逻辑事件类型，不是 HTTP 次数；补齐纯时间候选暂存、seal/commit、候选身份分配的聚合边界。
+5. 运行前配置与运行后动态分支分开；不能要求预知模型会发现多少目标、反应或自动轮，也不能用草案强制模型输出。
+6. 准备、诊断、训练和正式筛选按批分开；准备门登记 500 ms 目标，实测达标只能事后判定。原 Mac 的环境/权重证据不冒充任意执行机现状。
 
-## 2. 纯时间与普通提交的互斥条件
+## 2. 可预定配置与动态观测
 
-1. P-12 仅当**本段无行动单元且未完成时间扫描**时触发；有行动单元的段走 P-09→P-13 普通提交路径。
-2. P-13 每完成点**二选一**：普通提交（携带 P-09 单元结果）或纯时间扫描提交（P-12 之后）；同一提交点不得重复提交，二者互斥。
-3. 全员 skip 的段（S0 场景）没有单元，只有纯时间扫描提交——skip 不终止段处理，经 P-11 汇入后仍抵达 P-12/P-13/P-14 及 round 级 D07。
-4. 纯时间扫描若触发 U3/U4/U5/U6 联动，其模型批计入 M-07 并同样受逐阶段 preview（P-10）与全覆盖对账约束。
-5. **纯时间路径的阶段构成**：U3 全人物（含场外）全部当前任务扫描与 U4 新任务判断**必跑**；U5 仅当 U3 发现新达成（全人物个性检查），U6 仅当个性变化（相应人物理智重算）；无触发即合法空 Δ，不固定 no-op、不省略扫描。
+**执行前必须绑定：** 本批输入文件/用途/来源与所需人审、运行机/线程/并发、代码/模型/实际业务头身份、分词/装箱/完整覆盖规则、提示词/解码、计划尝试数、资源停止规则与时间测量边界。独立组件评测已经确认的前缀也须冻结。所需项缺失则相应批次不能执行。
 
-## 3. 事件—场景—次数账本（逐场景清点；全部待实测）
+**运行后如实记录：** O=实际需要 D02 的主动机会（含 skip，不含已由反应消耗而仅被程序跳过的槽位），A/skip、S=全部冻结源、R=全部关系、X=新增准入反应者、G=闭组、各阶段/源/表达实际批次、C=完成点、W=自动后续轮和每点等待。这些计数在完整链开跑前通常未知，`null` 表示待观测，不是零、也不因其未知而单独阻止已获准的诊断。
 
-**S1 · 确认+结算范围链**（O=1, A=1, S=2, R=1, X=1, G=1；D06/D07/D08、段起始与提交门由夹具代替——L3 首批范围定义）：
+参考场景的整数和 `requestScope`（全请求总段/轮数、是否遗漏前缀）只服务于预算假设。完整参考要求无遗漏前缀；末段增量不能冒充完整请求。实际分支不同、额外关系、更多装箱/表达批或后续轮，一律入完整台账；不把预测值写进模型输入，不删难例、不强制 skip/handback、不缩短连锁以匹配预算。资源停止后是暂停/未完成，不能算完整成功。
 
-| 事件 | 次数 | 预算 | 小计 |
-| --- | --- | --- | --- |
-| M-01 D02 判别 | 1 | 40 | 40 |
-| M-02 D02 行动正文 | 1 | 50 | 50 |
-| M-03 D03 打分（发起者源 1 + 反应者源 1） | 2 | 40 | 80 |
-| M-04 D04 反应候选 | 1 | 50 | 50 |
-| M-05 D05 计划 | 1 | 50 | 50 |
-| M-06 D05 表达 | 1 | 50 | 50 |
-| P-03 冻结源行动 | 1 | 10 | 10 |
-| P-04 按源确认目标 | 2 | 10 | 20 |
-| P-05 按关系骰点/准入 | 1 | 10 | 10 |
-| P-06 反应冻结 | 1 | 10 | 10 |
-| P-07 close_group | 1 | 10 | 10 |
-| **合计（7 模型调用 + 6 程序屏障）** | | | **≈380 ms** |
+## 3. 逻辑事件清单
 
-**S2 · 连锁扩张每级增量**（每级新增 1 个准入未行动反应者作为新源，其目标分析含空目标）：M-03 40 + M-04 50 + P-04 10 + P-05 10 + P-06 10 = **≈+120 ms/级**（不含 D05，不重复结算）。
+每个局部预算覆盖整个聚合内的全部工作。P-02/P-09/P-12/P-13 可有多次身份分配、读写或回执；不能把 10 ms 理解为每个子请求再另享 10 ms。P-12 位于扫描候选和必要 preview **完成之后**，用于 `checkpoint_stage_time_scan`；扫描触发是控制逻辑，未再免费省去暂存。
 
-**S0 · 全员 skip 段**（O=3 全 skip, A=0, S=0, R=0；纯时间提交；对照场景）：
+<!-- BEGIN EVENT-TABLE -->
+| ID | 逻辑事件/聚合 | 次数规则 | 整个聚合预算草案 |
+|---|---|---|---|
+| P-01 | 段起始/冻结顺序采纳 | segment | 10 ms |
+| P-02 | 全部必要身份分配、begin、Python 时间预览 | segment | 10 ms |
+| P-03 | discover 确认冻结行动原文 | act | 10 ms |
+| P-04 | 逐冻结源确认完整目标集（含空集） | frozen-source | 10 ms |
+| P-05 | 逐真实关系保存骰点/资格/准入 | confirmed-relation | 10 ms |
+| P-06 | 确认冻结反应原文 | new-admitted-unacted | 10 ms |
+| P-07 | 全部来源/威胁处理后 close_group | closed-group | 10 ms |
+| P-08 | record_skip | legal-skip | 10 ms |
+| P-09 | 候选身份分配/重写及 stage_unit | unit | 10 ms |
+| P-10 | 逐检查阶段校验/preview | checked-stage-preview | 10 ms |
+| P-11 | 机会结局后的槽位/边界判断，含已行动槽位跳过 | actual-active-opportunity-outcome | 10 ms |
+| P-12 | 纯时间候选完成后：身份分配/重写及 stage_time_scan | completed-pure-time-scan | 10 ms |
+| P-13 | seal_point + commit_point（含全部回执） | completed-point | 10 ms |
+| P-14 | 每点真实叙事 ready 等待 | completed-point | 实测/另计 |
+| P-15 | D07 原子结论确认/必要后继身份分配与创建（含全部回执） | completed-round | 10 ms |
+| P-16 | 取消/迟到/恢复探针 | protocol-6-probe | 实测/另计 |
+| M-01 | M01·D02 act/skip 判别 | opportunity | 40 ms |
+| M-02 | M02·D02 行动正文 | act | 50 ms |
+| M-03 | M01·D03 每源完整候选打分 | sum of k_source over actual frozen sources | 40 ms |
+| M-04 | M02·D04 准入反应 | new-admitted-unacted | 50 ms |
+| M-05 | M02·D05 全组统一后果计划 | closed-group | 50 ms |
+| M-06 | M02·D05 同计划下成员表达 | sum of expression batches over closed groups | 50 ms |
+| M-07 | M01/M02·D06 各必需阶段实际批次 | sum of batches over units/scans and checked stages | 50 ms |
+| M-08 | M02·D07 拟行动候选 | completed-round requiring candidate generation in this reference arm | 50 ms |
+| M-09 | M01·D07 双条件判别（仅两个判别头可共享前向） | candidate batch requiring dual judgment in this reference arm | 50 ms |
+| M-10 | M02·D08 时间/分段提议 | segment | 30 ms |
+<!-- END EVENT-TABLE -->
 
-| 事件 | 次数 | 预算 | 小计 |
-| --- | --- | --- | --- |
-| M-01 D02 判别 | 3 | 40 | 120 |
-| M-10 D08 提议 | 1 | 30 | 30 |
-| M-07 U3 全人物任务扫描 + U4 判断 | 2 | 50 | 100 |
-| P-01/P-02 段起始 / begin | 2 | 10 | 20 |
-| P-08 record_skip | 3 | 10 | 30 |
-| P-11 槽位判断（每机会结局一次） | 3 | 10 | 30 |
-| P-10 preview（U3, U4） | 2 | 10 | 20 |
-| P-12 纯时间触发 | 1 | 10 | 10 |
-| P-13 纯时间提交 | 1 | 10 | 10 |
-| **合计** | | | **≈370 ms + W_r** |
+执行批次冻结前还须展开实际 API/RPC、回执和计时归属；当前映射未完成，不能签为“实际若干次往返”。P-04 的目标确认与 P-05 判定可能在同一次 RPC/事务中：其请求墙钟只归一个计时 owner，子阶段使用不重叠区间或标包含关系，不把嵌套耗时重复相加。本表预算为保守逻辑分配，实际以完整请求墙钟复测。
 
-U5/U6 按条件执行：本场景 U3 无达成 → 0 批；若发现达成则加 U5 全人物个性检查批与相应 U6 理智批，另计。
+## 4. 分支与阶段完整性
 
-**S3 · 完整单段最小轮**（S1 事件 + 段起始 + D08 + U=2 触发阶段 + 单元提交 + **D07 及 P-15 原子确认**；O=1, A=1, S=2, R=1, X=1, G=1, 单元=1, C=1）：程序 P-01/P-02/P-03/P-04×2/P-05/P-06/P-07/P-09/P-10×2/**P-11×1（每机会结局一次，消除 v2 的重复计数）**/P-13/**P-15** = 13×10 = 130；模型 M-01 40 + M-02 50 + M-03 80 + M-04 50 + M-05 50 + M-06 50 + M-07×2 100 + M-10 30 + M-08 50 + M-09 50 = 550 → **≈680 ms + W_r**。
+- 行动、每个源的完整目标集（包括空集）、反应原文均先确认冻结；骰点/资格/准入归程序。新反应是新源，还需 D03；所有来源与威胁处理完才闭组，D05 每闭组一次。
+- 普通单元的参考臂：U1 位置、U2 外貌、U3 全人物全部任务、U4 新子任务均有实际判断与阶段记录；U5 在新达成后查全部人物，U6 仅对应个性实际变化人物。无变化也需要完成检查，不按“非空 Δ 阶段数”计费。参考臂 U1–U4 各 preview 一次，实际优化合并需另行登记。
+- 纯时间：U1/U2 明确无操作，U3/U4 必检；U5/U6 条件执行。先各阶段候选/preview，再 P-12 暂存、P-13 seal+commit、P-14 ready。
+- 原 round 尚有关联段就继续处理关联段；只有原 round/关联段全部结束后才 D07，再 P-15 原子确认。continue 创建的新轮仍在原请求内，不能在第一次结论处结束完整计时。
 
-**S4 · 完整请求含一次自动后续轮**（continue 后继轮按同图重复，边界按协议 §7.1）：S3 ×2 = **≈1360 ms + 2×W_r**。
+调用公式（不是固定上限）：D03 为 `sum(k_source)`，每个冻结源 `k_source>=1`；D05 表达为 `sum(b_group)`；D06 为 `sum(k_unit_or_scan,stage)`。一行动+一反应的确认/结算模型调用为 `4+k_act+k_reaction+b_expression`，最小 7；“7–10”仅在两个源各最多 2 批、表达最多 2 批时成立。新增一级反应的模型增量为 `1+k_new_source`，仅 K<=2 时为 2–3；更多侧边、未准入/已行动关系也增加 R。
 
-细化口径取代历史口径：v1 的 370/630/1260 ms 为粗合并口径（已复审，保留记录）；v2 的 S0=250 **漏计纯时间 U3/U4**、S3=690 **重复计 P-11 且漏 P-15**，均在本版修正为 S0=370、S3=680、S4=1360。**全部口径均为草案待实测，均不改写「S3/S4 超预算、500 ms 未验收」的结论。**
+## 5. 场景、逐事件次数与预算
 
-## 4. 重复次数与测量纪律
+统一假设：串行保守预算，不假定免费并行；K=每源一批，B=每闭组一批表达；无新增任务达成/个性触发仅是所列参考分支，若实际触发则追加 U5/U6 及 preview。下列单位均为 ms，**不是模型运行预测或成绩**。
 
-§1 公式中的变量在清单冻结时逐项写死为整数，`null/unknown = 未定且不得开跑`；测量次数按协议 §7（正式性能比较每个登记规格的微节点与完整请求各 ≥20 个可比完整观测；冷启动 ≥3；探索热任务 ≥5、链级 ≥3；冻结种子交错各臂）。每场景另登记其 S/R/X/U/C 的实际取值，防止只报 anchor 场景。
+<!-- BEGIN BUDGET-SUMMARY -->
+| 场景 | 程序宏事件次数 | 模型调用数 | 程序预算 | 模型预算 | 小计（不含等待） | 等待 |
+|---|---:|---:|---:|---:|---:|---|
+| S0-segment | 12 | 6 | 120 | 250 | 370 | W_r[1] |
+| S0-round | 13 | 8 | 130 | 350 | 480 | W_r[1] |
+| S1 | 6 | 7 | 60 | 320 | 380 | 范围外/无 |
+| S2-delta | 3 | 2 | 30 | 90 | 120 | 范围外/无 |
+| S3 | 16 | 14 | 160 | 650 | 810 | W_r[1] |
+| S4 | 32 | 28 | 320 | 1300 | 1620 | W_r[1] + W_r[2] |
+<!-- END BUDGET-SUMMARY -->
 
-## 5. 等待项
+<!-- BEGIN SCENARIO-MATRIX -->
+| 事件 | S0-segment | S0-round | S1 | S2-delta | S3 | S4 |
+|---|---:|---:|---:|---:|---:|---:|
+| P-01 | 1 | 1 | 0 | 0 | 1 | 2 |
+| P-02 | 1 | 1 | 0 | 0 | 1 | 2 |
+| P-03 | 0 | 0 | 1 | 0 | 1 | 2 |
+| P-04 | 0 | 0 | 2 | 1 | 2 | 4 |
+| P-05 | 0 | 0 | 1 | 1 | 1 | 2 |
+| P-06 | 0 | 0 | 1 | 1 | 1 | 2 |
+| P-07 | 0 | 0 | 1 | 0 | 1 | 2 |
+| P-08 | 3 | 3 | 0 | 0 | 0 | 0 |
+| P-09 | 0 | 0 | 0 | 0 | 1 | 2 |
+| P-10 | 2 | 2 | 0 | 0 | 4 | 8 |
+| P-11 | 3 | 3 | 0 | 0 | 1 | 2 |
+| P-12 | 1 | 1 | 0 | 0 | 0 | 0 |
+| P-13 | 1 | 1 | 0 | 0 | 1 | 2 |
+| P-14 | 1 等待 | 1 等待 | 0 等待 | 0 等待 | 1 等待 | 2 等待 |
+| P-15 | 0 | 1 | 0 | 0 | 1 | 2 |
+| P-16 | 探针另记 | 探针另记 | 探针另记 | 探针另记 | 探针另记 | 探针另记 |
+| M-01 | 3 | 3 | 1 | 0 | 1 | 2 |
+| M-02 | 0 | 0 | 1 | 0 | 1 | 2 |
+| M-03 | 0 | 0 | 2 | 1 | 2 | 4 |
+| M-04 | 0 | 0 | 1 | 1 | 1 | 2 |
+| M-05 | 0 | 0 | 1 | 0 | 1 | 2 |
+| M-06 | 0 | 0 | 1 | 0 | 1 | 2 |
+| M-07 | 2 | 2 | 0 | 0 | 4 | 8 |
+| M-08 | 0 | 1 | 0 | 0 | 1 | 2 |
+| M-09 | 0 | 1 | 0 | 0 | 1 | 2 |
+| M-10 | 1 | 1 | 0 | 0 | 1 | 2 |
+<!-- END SCENARIO-MATRIX -->
 
-- **W_r 叙事 ready**（P-14）：计入 t1–t0，归属外部叙事，逐次记录；不得移到表外。
-- **加载/切换**：冷加载、任务切换、缓存命中/失效按事件单列；发生在 t0 后必须计入完整请求。
-- **重试**：仅解析/结构失败或暂时运行错误，上限 1 次并独立附表；首呼为主成绩。
-- **取消/迟到**：P-16 探针与超时保留完整起止时间，计入性能全集、不计完成成功。
+- **S0-segment：** O=3，全部合法 skip，无行动单元；U3/U4 各一批，到该点 ready 为止。尚有原 round 关联段时，它仅是前缀，不能执行 D07 或签完整请求。
+- **S0-round：** 上述点是本请求唯一段/轮、无先前段/轮/等待成本，全部名册槽位已处理，D07 生成候选并经双条件判别后 handback，再加 M-08/M-09/P-15。480 尚未包含 W_r[1]，不保证总计低于 500。
+- **S1：** O=1,A=1,S=2,R=1,X=1,G=1；两个源各一批目标分析、同计划一批成员表达。D06–D08、起段、暂存/提交及门等待由夹具替代，380 即使实测达标也只支持该范围。
+- **S2-delta：** 只在 ΔS=ΔR=ΔX=1、K=1、无侧边且表达批数不变时追加 120。D05 虽仍每闭组一次，组扩大可能增加输入/表达批次和每次真实耗时；不能将 120 当所有连锁级的固定成本。
+- **S3：** 2 人世界，一主动行动、一准入反应；反应者已消耗机会，P-11 包含跳过该已行动槽位，原冻结名册完整覆盖，O=1 不隐藏其他待判断人物/前段。本请求只有此段/轮且无先前成本，C=1，无关联段；U1–U4 各一批/preview；D07 两步及原子确认均计入。结论 handback 时才是完整请求；continue 时是尚待加后续轮的前缀。程序 **16×10=160**，模型 **650**，合计 **810+W_r[1]**。
+- **S4：** 本请求从所列第一轮开始、无遗漏前缀；两轮事件形状相同（输入/状态/结果不必相同），第一轮 continue、第二轮 handback；32 程序宏事件+28 模型调用，共 **1620+W_r[1]+W_r[2]**。两次真实等待分别记，不假设相等。更多轮另加。
 
-## 6. 模型与环境身份（身份门材料）
+历史：v3 声称的 680/1360 既有加法错误，又缺普通阶段；只修加法的 690/1380 仍非完整账本。选型旧稿的 370/110/630/1260 均降为历史口径。**当前完整请求 500 ms 目标未验收，S3/S4 的预算草案仍超目标。**
 
-| 项 | 登记 | 现状 |
-| --- | --- | --- |
-| M02 | `IDEA-CCNL/Randeng-T5-77M-MultiTask-Chinese` / `06d379d7375245f31cfb87166eff134cfeb5dead`，6 文件 SHA-256 已验真 | ✅ 载荷验真；❌ 加载/推理未验证 |
-| M01 | `hfl/minirbt-h256` / `446e1b4012b10946f479563005700c54c9db3f7c` | ❌ 权重未下载、未验真；任务头未训练（随机头不得进语义比较） |
-| M03 | `Qwen/Qwen2.5-0.5B-Instruct` / `7ae557604adf67be50417f59c2c2f167def9a775` | ❌ 未下载；对照臂（`baseline_missing` 规则适用），非前置 |
-| M04 | `Qwen/Qwen3-0.6B` / `c1899de289a04d12100db370d81485cdf75e47ca` | ❌ 未下载；同上 |
-| 分词/导出 | SentencePiece/WordPiece、ONNX 工具链版本 | ❌ 未验证 |
-| 依赖锁 | 本机（Windows）独立 venv + 版本/分发哈希 | ❌ 未生成（r2 的 ARM64 锁属原实现者机器，不迁移） |
-| 设备 | CPU/内存/GPU/线程/并发 | ❌ 未核实 |
-| 代码 | 分支 commit、`lab.py`/适配器源文件哈希 | 冻结时写入 |
-| 提示词/输出约束 | 模板来源、240/300/600 汉字与结构 schema 版本 | 冻结时写入 |
+## 6. 输入、模型与执行机绑定
 
-## 7. 输入版本（来源门/输入门材料）
+- 90 个新来源组维持协议：D02–D05 各 10 开发+10 封存，共 80；短链 4+6，共 10。组数/case 数/实际调用数分开。尚未创建，不伪造哈希或零污染。每批实际输入清单在曝光前冻结；封存筛选必须按完整协议，不能用诊断免除来源/人审。
+- 现有 42 草稿仅开发迭代、仍待用户本人复核，不抵扣 90 组，未审前不投入业务模型。现有 `lab.py` 的实验 allowlist/守卫已有工程实现；正式模型分词、装箱、覆盖及完整链装配仍未完成，不能笼统说“所有投影器不存在”或“已可生产”。
+- M01 是约 10M MLM 骨干，其 act/skip/关系等业务头未训练。另立训练批次：新训练来源/标签/人审、优化器/步数/停止规则/种子/预算先登记，获准训练后保存检查点与哈希，再冻结新的业务推理批次。90 组协议训练配额是 0，随机头只可做明确的工程探针，不参与语义比较。
+- M02 的固定 revision/6 文件完整 SHA-256 验真和 25 包锁属于原 Mac 的历史证据；同一 Mac 可原地复核已有独立环境/文件，不要求重建。Windows 或其他执行机须单独核验/重建，不能继承 Mac 的 `verified=true`。本提案的执行机仍待本批绑定，本次不重验大文件、不加载模型。
+- M03/M04 保持可并行或后补对照，非小模型路线前置。缺对照如实写 `baseline_missing`。G03 服务适配保持阻断，不签完整生产链。
 
-- **首轮来源组（与协议 §2.1 的 80＋10＝90 口径对齐）**：任务来源组 80 个——D02/D03/D04/D05 四个任务维度各 10 开发 + 10 封存；短链来源组 10 个——4 开发 + 6 封存；合计 **90 个来源组**。**组数 ≠ case 数 ≠ 调用数**：每组 ≥1 个 anchorCase，派生 case 另计，case 清单与各臂调用图冻结前逐组登记（协议 §2.1）；caseCount 在冻结前为 unknown。❌ 全部未创建。
-- **投影器**：协议 §4.1 allowlist 截点投影——❌ 未实现/未验证；D03 前无未来骰点/准入、D02 前无未来行动。
-- **42 题开发草稿**（字节已绑定，见 §10 JSON）：保持 `pending`，待**用户本人**逐题复核，不由代理代签；属开发迭代材料，不进入首轮封存输入，不抵扣 80+10 组。
-- **骰点夹具**：`reaction-d20-v1` 由程序权威给定，模型不掷骰、不分配 rollId（协议 §3）。
-- **G03**：离线样本按原设计标注；服务适配分支保持 `blocked_contract_g03`，不计入通过。
+## 7. 四段准入，按批次而非一次性循环放行
 
-## 8. 预算登记（性能预算门材料）
+1. **文档复审（本次授权）：** 核账本、依赖、动态分支、目标与准备缺口。通过只支持文档，不授权模型执行；哈希只证身份，不是人审/审批/成绩。
+2. **运行前配置/准备检查：** 只绑定本批已知输入/身份/政策，不执行模型，不预置动态分支。区分无业务 smoke、独立训练批、业务诊断、封存筛选；所用来源/人审/设备/执行模型的必需准备项分别检查。
+3. **明确恢复及资源窗口后获准运行：** 初次加载 smoke 限无业务输入，不要求先建完 90 组；训练按独立已审协议，训练后才注册业务头；业务探索诊断只用本批获准输入，42 未审草稿不投模型。M01 臂必须有真实训练头，若缺则该臂不准入，不能以随机头替代。诊断登记 500 ms 目标、完整计时和资源停止政策，已披露超预算的方案可在明确获准的诊断批获得第一份失败/热点证据；**不要求事先已有实测通过，也不以诊断放行正式筛选**。来源未核实的任何获准探索仍不得签来源或语义通过。
+4. **运行后判定：** 正式筛选数据/角色/身份/协议准备齐全，质量按协议；完整性能每规格至少 20 个可比完整观测、全部预登记尝试含失败/超时均保留，局部预算与完整 ≤500 ms 同时满足才可报对应范围通过。无实测是未验证，超时即失败，不能用相对提速抵消。训练/诊断/比较各用自己的冻结清单，前一批产物要重新验真后才成为后一批输入。
 
-| 场景 | 细化账本草案 | 状态 |
-| --- | --- | --- |
-| S0 全员 skip 段（含必跑 U3 扫描 + U4 判断） | ≈370 ms + W_r | 待实测 |
-| S1 确认+结算范围链 | ≈380 ms | 限定场景估算，待实测 |
-| S2 连锁每级增量 | ≈+120 ms/级 | 待实测 |
-| S3 完整单段最小轮（含 P-15，P-11 每机会一次） | ≈680 ms + W_r | **超预算（草案）** |
-| S4 完整请求含一次自动后续轮 | ≈1360 ms + 2×W_r | **超预算（草案）** |
-| 完整请求 500 ms 目标 | — | **未验收**；须按冻结规格实测 ≥20 可比完整观测后判定 |
+六准备门中的“性能预算门”是运行前登记目标、计时、资源政策和超预算风险；**运行后性能达标门**是实际 ≤500。不得把前者要求写成“先证明达标才能诊断”，也不得把前者通过等同目标通过。所有当前批次的执行授权仍为 false；用户此次“第一步”不解除计算暂停。
 
-超预算收敛只允许：实测更紧节点值、协议 §8 条件下的合法合并/批处理、设备真实并行、继续细拆换更小模型；**不得省略任何屏障/等待凑预算**。实测超任一局部/总预算即 `latency_fail` 进入下一轮细拆。
+## 8. 计时和停止规则
 
-## 9. 准入顺序（四段；每段有独立进入/退出条件）
+计入完整请求：队列、分词、所有前向/解码、切换/请求内加载、全部分批/递归、程序身份/preview/暂存/seal/提交/回执、重试、必要叙事 gate 及自动轮。外部 ready 每点单列实际 W_r[i]，不能挪出请求。程序聚合内的物理 RPC 在执行清单中展开，嵌套区间不重复加总；完整墙钟仍独立测。
 
-**第 1 段 · 文档复审（当前所处段）。** 本提案连同 §10 绑定清单交 D 审查者复审。退出条件：复审通过并记录。**哈希只证明文件身份（字节未变），不构成审批、不构成达标证据**；审批是复审者/协调人/用户的流程行为，达标判定只能来自第 4 段。
+同设备/配置交错各臂；探索热任务≥5/范围链≥3、冷加载≥3；正式性能每规格≥20，且失败/取消/迟到/未完成不从全集消失。首 token、单个前向或局部范围不是完整请求结果。资源停止预算可为获准诊断留出定位热点时间，但它不提高 500 ms 验收线；暂停/停止不伪装 handback 或完整成功。实测超预算后继续细拆/换小模型；程序/通信瓶颈交 A/B 协调，等待仍计入。
 
-**第 2 段 · 运行前配置与预算检查。** 内容：§4 变量冻结为整数；创建并冻结 80+10 来源组与投影器；下载验真 M01；生成本机依赖锁并核实设备；按本提案实例化 JSON、整体哈希、登记 sourceHead；六门逐项独立核验。退出条件：六门全过、全部未知值已解决或逐项列为阻断、预算表按冻结规格重算并复核。本段**不运行任何模型**；此前的所有性能数字保持草案/未知。
+## 9. 完整提案数据与一致性核对
 
-**第 3 段 · 获准运行。** 进入条件：用户/总指挥明确恢复指令 + 计算窗口 + 第 2 段冻结清单哈希核验一致。首次运行为**诊断运行**：截至本提案不存在任何 D 实测成绩，诊断运行的全部性能预期为「未知」，其产出是第一批实测数据（细化预算、定位热点），**不得以已有实测通过为前提**；结果标记 `exploratory`，不签任何门、不放行封存筛选（协议 §2.3）。
+完整的 26 事件、6 场景逐 ID 次数、现有输入哈希、模型历史证据/执行机待绑定状态、动态观测规则及分批准入见 [v4 机器可读提案](../../../artifacts/world-components-logic/run-manifest-ledger-v4.proposal.json)。它不是已批准的执行清单。正式运行前另按获准批实例化，补真实身份/API 映射/必需准备并冻结；不能直接把本文件改名开跑。
 
-**第 4 段 · 运行后达标判定。** 质量只按协议 §5.2 预登记门判定；性能只按冻结预算对照 ≥20 个可比完整观测判定；对照臂按 `baseline_missing` 规则报告。哈希依旧只证明身份；达标与否的结论只能由预登记门 + 实测数据产生，不由实现者或任何哈希自签。超预算 → `latency_fail` → 下一轮细拆；改门槛/加臂须升版清单。
-
-## 10. 完整清单绑定（JSON v2；冻结时实例化、整体哈希）
-
+<!-- BEGIN PROPOSAL-INDEX -->
 ```json
 {
-  "schema": "jity-d-run-manifest-v3",
-  "batch": "l3-first-d02-d05",
-  "status": "proposal-awaiting-document-review",
-  "admissionStage": "1-document-review",
-  "sourceHeadAtProposal": "58ea66b1ba490fe587260f704546f1978f54bb9c",
-  "events": [
-    {"id": "P-01", "node": "segment-start", "per": "segment", "budgetMs": 10},
-    {"id": "P-02", "node": "identity-alloc-begin-time-preview", "per": "segment", "budgetMs": 10},
-    {"id": "P-03", "node": "freeze-action-text", "per": "act", "budgetMs": 10},
-    {"id": "P-04", "node": "confirm-target-set-per-source", "per": "frozen-source", "budgetMs": 10},
-    {"id": "P-05", "node": "dice-admission-per-relation", "per": "confirmed-relation", "budgetMs": 10},
-    {"id": "P-06", "node": "freeze-reaction-text", "per": "new-admitted-unacted", "budgetMs": 10},
-    {"id": "P-07", "node": "close-group", "per": "closed-group", "budgetMs": 10},
-    {"id": "P-08", "node": "record-skip", "per": "legal-skip", "budgetMs": 10},
-    {"id": "P-09", "node": "stage-unit", "per": "unit", "budgetMs": 10},
-    {"id": "P-10", "node": "per-stage-python-preview", "per": "triggered-stage", "budgetMs": 10, "order": "U1-before-U2-when-position-affects-appearance"},
-    {"id": "P-11", "node": "segment-slot-boundary-check", "per": "opportunity-outcome", "budgetMs": 10,
-     "note": "exactly once per opportunity; skip and unit completion are the two outcomes of the same opportunity"},
-    {"id": "P-12", "node": "pure-time-scan-trigger", "per": "segment", "budgetMs": 10,
-     "precondition": "no-action-unit-in-segment AND time-scan-incomplete", "exclusiveWith": "P-09-unit-commit-path",
-     "thenRuns": ["U3-all-person-task-scan", "U4-new-task-judgment"],
-     "conditional": ["U5-if-new-achievements", "U6-if-personality-changed"]},
-    {"id": "P-13", "node": "atomic-commit", "per": "completed-point", "budgetMs": 10,
-     "variants": ["normal-with-unit", "pure-time-scan"], "mutuallyExclusivePerPoint": true},
-    {"id": "P-14", "node": "narrative-ready-wait", "per": "completed-point", "budgetMs": null,
-     "budgetStatus": "unknown-measured-at-run", "inRequest": true, "attribution": "external_narration"},
-    {"id": "P-15", "node": "d07-atomic-confirm-and-successor", "per": "completed-round", "budgetMs": 10},
-    {"id": "P-16", "node": "cancel-late-recovery-probe", "per": "protocol-6-probe", "budgetMs": null, "budgetStatus": "separate-ledger"},
-    {"id": "M-01", "node": "M01.d02.act-skip", "per": "opportunity", "budgetMs": 40},
-    {"id": "M-02", "node": "M02.d02.action-body", "per": "act", "budgetMs": 50},
-    {"id": "M-03", "node": "M01.d03.relation-score", "per": "frozen-source", "batches": "1-K", "budgetMs": 40,
-     "note": "every frozen source including empty-target and reaction sources"},
-    {"id": "M-04", "node": "M02.d04.reaction", "per": "new-admitted-unacted", "budgetMs": 50},
-    {"id": "M-05", "node": "M02.d05.joint-plan", "per": "closed-group", "budgetMs": 50, "oncePerGroup": true},
-    {"id": "M-06", "node": "M02.d05.member-expression", "per": "closed-group", "batches": "1-B", "budgetMs": 50},
-    {"id": "M-07", "node": "M01-M02.d06.stages", "per": "triggered-stage", "batches": "0-K", "budgetMs": 50,
-     "includes": "pure-time path always runs U3 all-person task-scan batches and U4 judgment; U5/U6 conditional"},
-    {"id": "M-08", "node": "M02.d07.candidate", "per": "completed-round", "budgetMs": 50,
-     "precondition": "round-and-all-linked-segments-complete"},
-    {"id": "M-09", "node": "M01.d07.dual-judgment", "per": "completed-round", "budgetMs": 50,
-     "dualHeadsShareForward": true, "sharesForwardWithGeneration": false,
-     "note": "sharing only between the two M01 judgment heads; M02 generation (M-08) and M01 judgment never share a forward",
-     "precondition": "round-and-all-linked-segments-complete"},
-    {"id": "M-10", "node": "M02.d08.proposal", "per": "segment", "budgetMs": 30}
-  ],
-  "inputs": [
-    {"kind": "development-drafts", "path": "experiments/world-components-logic/data/dev-inputs.jsonl",
-     "sha256": "5db17d612a02425a00f555c178d74689cd84a7fd745656ce87f0daf7c7b3061e",
-     "role": "development-iteration-only", "humanReview": "pending-user", "admissibleForRun": false},
-    {"kind": "development-drafts", "path": "experiments/world-components-logic/data/dev-review-drafts.jsonl",
-     "sha256": "e5a772691b81c6f6e8281706a75725f8fc33cab1c78e5f010b06ff4fc5d9ea1b",
-     "role": "development-iteration-only", "humanReview": "pending-user", "admissibleForRun": false},
-    {"kind": "provenance", "path": "experiments/world-components-logic/data/dev-provenance.json",
-     "sha256": "d104869ca54b270ab11e8b2206ff3f1932d69eb67799c8bb9cc8416e038c050d"},
-    {"kind": "model-source-registry", "path": "artifacts/world-components-logic/l2-model-sources-20261029.json",
-     "sha256": "dd674851600bd08c5bad796f122ba4ea7fc50f60243d174f32c86f83555312d4"},
-    {"kind": "environment-record", "path": "artifacts/world-components-logic/l3-1-environment.json",
-     "sha256": "68b3914d29b88e083bc1a408f9653c36d0de8c7144c48fced63d25ff5f9edf34",
-     "note": "macOS probe of the original implementer machine; not migrated"},
-    {"kind": "projection-spec", "ref": "evaluation-plan.md §4.1", "version": "L2-r3",
-     "implementation": "unbuilt", "admissibleForRun": false},
-    {"kind": "first-round-groups", "alignedWith": "evaluation-plan §2.1 counts 80+10=90",
-     "taskGroupsByDimension": {"D02": {"dev": 10, "sealed": 10}, "D03": {"dev": 10, "sealed": 10},
-                               "D04": {"dev": 10, "sealed": 10}, "D05": {"dev": 10, "sealed": 10}},
-     "chainGroups": {"dev": 4, "sealed": 6},
-     "counts": {"taskSourceGroups": 80, "chainSourceGroups": 10, "sourceGroupsTotal": 90,
-                "cases": null, "casesStatus": "unknown-frozen-before-run",
-                "countingRule": "groupCount != caseCount != expectedCallCount; per-group anchorCase plus derived cases registered at freeze"},
-     "status": "unbuilt", "admissibleForRun": false},
-    {"kind": "dice-fixture", "rule": "reaction-d20-v1", "authority": "program", "modelRolls": false}
-  ],
-  "models": [
-    {"id": "M01", "repo": "hfl/minirbt-h256", "revision": "446e1b4012b10946f479563005700c54c9db3f7c",
-     "role": "priority-path-encoder", "payloadFetched": false, "payloadVerified": false,
-     "payloadSha256": null, "payloadSha256Status": "unknown-until-fetch-and-verify",
-     "taskHeads": "untrained", "admissibleForRun": false},
-    {"id": "M02", "repo": "IDEA-CCNL/Randeng-T5-77M-MultiTask-Chinese",
-     "revision": "06d379d7375245f31cfb87166eff134cfeb5dead",
-     "role": "priority-path-generator", "payloadFetched": true, "payloadVerified": true,
-     "payloadSha256Status": "per-file-in-registry", "loaded": false, "admissibleForRun": false},
-    {"id": "M03", "repo": "Qwen/Qwen2.5-0.5B-Instruct", "revision": "7ae557604adf67be50417f59c2c2f167def9a775",
-     "role": "reference-arm-optional", "payloadFetched": false, "payloadVerified": false,
-     "prerequisite": false},
-    {"id": "M04", "repo": "Qwen/Qwen3-0.6B", "revision": "c1899de289a04d12100db370d81485cdf75e47ca",
-     "role": "reference-arm-optional", "payloadFetched": false, "payloadVerified": false,
-     "prerequisite": false}
-  ],
-  "workload": {"personOpportunities": null, "frozenSourcesPerRound": null, "chainLevels": null,
-               "d06TriggeredStages": null, "autoRounds": null, "K": null, "B": null,
-               "attemptsPerSpec": null,
-               "freezeRule": "integers-before-stage-2-exit; null blocks any run"},
-  "budgets": {"refinedLedger": {"S0AllSkipSegmentMs": 370, "S1ScopeChainMs": 380,
-               "S2ChainLevelDeltaMs": 120, "S3FullSegmentRoundMs": 680,
-               "S4RequestOneAutoRoundMs": 1360, "waits": "W_r measured separately per point"},
-              "recordedHistory": {"v1Coarse": {"S1": 370, "S3": 630, "S4": 1260, "note": "coarse barriers, reviewed"},
-                                   "v2Corrections": {"S0": 250, "S3": 690, "S4": 1380,
-                                   "reason": "superseded: missing pure-time U3/U4 in S0; duplicate P-11 and missing P-15 in S3"}},
-              "overBudget": ["S3", "S4"],
-              "target": {"fullRequestMs": 500, "status": "not_accepted_unmeasured"}},
-  "admissionSequence": ["1-document-review", "2-pre-run-config-and-budget-check",
-                        "3-authorized-run-diagnostic-exploratory", "4-post-run-judgment"],
-  "gaps": ["source-groups-unbuilt", "protected-sources-unverified", "m01-not-fetched",
-           "dependency-lock-missing", "machine-unverified", "projector-unbuilt",
-           "annotation-roles-unstaffed", "42-drafts-pending-user-review",
-           "compute-window-unscheduled", "g03-blocked", "resume-instruction-not-given"]
+  "schema": "jity-d-run-manifest-v4-proposal",
+  "ledgerFile": "artifacts/world-components-logic/run-manifest-ledger-v4.proposal.json",
+  "ledgerSha256": "4c10e36e284ab72ff3dc9dcfd0f00292f2deef34f868a9de9b12340cae163488",
+  "executionAuthorized": false,
+  "modelExecutionPerformed": false,
+  "fullRequestTargetMs": 500
 }
 ```
+<!-- END PROPOSAL-INDEX -->
 
-## 11. 复审与执行路径
+轻量检查仅解析本专项文档/提案和已登记 D 文件哈希，不加载模型：
 
-本提案交 D 审查者复审（第 1 段）→ 通过后进入第 2 段配置与预算检查（不运行）→ 六门全过 + 恢复指令后第 3 段诊断运行（exploratory）→ 第 4 段按预登记门判定。本批无训练、无推理、无下载；细化账本 380 ms 为限定场景估算，690/1380 ms 记为超预算，500 ms 目标未验收。
+```bash
+python3 experiments/world-components-logic/check_run_manifest.py --self-test
+git diff --check
+```
+
+当前复核状态：算术、流程及轻量工具均经独立只读复验，无剩余文档阻断；默认核对与 19 个内存反例通过，5 份改动文档的 61 个本地链接/围栏及 `git diff --check` 通过。剩余人审/来源/环境绑定/训练准备/API 展开/资源窗口均未在本轮完成。此处任何静态检查都不签模型质量、真实耗时或恢复计算。
