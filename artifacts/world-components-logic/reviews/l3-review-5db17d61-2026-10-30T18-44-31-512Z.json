@@ -1,0 +1,102 @@
+{
+  "schema": "jity-d-user-review-claims-v1",
+  "reviewer": "tobi",
+  "exportedAt": "2026-10-30T18:44:31.512Z",
+  "inputFileSha256": "5db17d612a02425a00f555c178d74689cd84a7fd745656ce87f0daf7c7b3061e",
+  "reviewDraftFileSha256": "e5a772691b81c6f6e8281706a75725f8fc33cab1c78e5f010b06ff4fc5d9ea1b",
+  "provenanceFileSha256": "d104869ca54b270ab11e8b2206ff3f1932d69eb67799c8bb9cc8416e038c050d",
+  "decisions": [
+    {
+      "caseId": "dev-d02-01",
+      "sourceGroup": "d-origin-d02-01",
+      "decision": "agree",
+      "note": "",
+      "inputSha256": "3c54ae85fcffed894360b9ff317588182a014b7387679beea863d4feac9cccf8",
+      "reviewDraftSha256": "945c2fd36221cdc1245b7af8294f350568165f07e65ec78fee640701dd8c148d",
+      "recordedAt": "2026-10-30T18:26:40.881Z"
+    },
+    {
+      "caseId": "dev-d02-02",
+      "sourceGroup": "d-origin-d02-02",
+      "decision": "agree",
+      "note": "",
+      "inputSha256": "b6fe7a6828eaf812fdce3eb3e3f220fb6c1f44a143e645e4c40798f92ff7af73",
+      "reviewDraftSha256": "99c9b823f5b48779c8ced59e572024b8798be3725d94c25a49090932d1e15a0d",
+      "recordedAt": "2026-10-30T18:28:47.065Z"
+    },
+    {
+      "caseId": "dev-d02-03",
+      "sourceGroup": "d-origin-d02-03",
+      "decision": "agree",
+      "note": "",
+      "inputSha256": "228ecb09b2420cfc06867d9d128ebbbb7418835188f353c0c7b7a847c05fe75f",
+      "reviewDraftSha256": "f89eae3b2018d2d7314e39f22fec6e3010fe7340feb2056e9589c05b61425893",
+      "recordedAt": "2026-10-30T18:29:39.565Z"
+    },
+    {
+      "caseId": "dev-d02-04",
+      "sourceGroup": "d-origin-d02-04",
+      "decision": "agree",
+      "note": "",
+      "inputSha256": "373f9021cd33430c43b1b573fc77a4b805e91b6fcb9f44697c7a4f1dbd1d0b87",
+      "reviewDraftSha256": "ae880a0a3051600abd1ea0ae756eee6a6979c425013a47e942297db065c2e349",
+      "recordedAt": "2026-10-30T18:30:00.532Z"
+    },
+    {
+      "caseId": "dev-d02-05",
+      "sourceGroup": "d-origin-d02-05",
+      "decision": "agree",
+      "note": "",
+      "inputSha256": "91389de63be4c63472fa5f9c3612d33a77b1f6fa13ca7e47903d7b0c368e6ac4",
+      "reviewDraftSha256": "f921a254c64ae923eb5b9105ea1e6a718d6b47c67f9cd655d3e359d8b1792bff",
+      "recordedAt": "2026-10-30T18:32:15.998Z"
+    },
+    {
+      "caseId": "dev-d02-06",
+      "sourceGroup": "d-origin-d02-06",
+      "decision": "agree",
+      "note": "",
+      "inputSha256": "64d9bdef211e4a212bc0593701a4395ccd27af278c8a209c1079847da62b62ae",
+      "reviewDraftSha256": "faf0473642793ef494813d8d3ee58af4358de5bb29fca775cfa2308c69b7342e",
+      "recordedAt": "2026-10-30T18:37:41.961Z"
+    },
+    {
+      "caseId": "dev-d02-07",
+      "sourceGroup": "d-origin-d02-07",
+      "decision": "agree",
+      "note": "",
+      "inputSha256": "1fc4e6ab2cfccd07286335c490ec5f967d2fd6671058301172376011be21d86a",
+      "reviewDraftSha256": "3a2d1746e8d4d0e6ccd662425e80ee2dabc31f095a33936ca95eb96e74933831",
+      "recordedAt": "2026-10-30T18:39:30.428Z"
+    },
+    {
+      "caseId": "dev-d02-08",
+      "sourceGroup": "d-origin-d02-08",
+      "decision": "agree",
+      "note": "",
+      "inputSha256": "7267efe8c2d05fa7934800ed466ca55132c8726e28ed2849424e1d1077567c3d",
+      "reviewDraftSha256": "130ef2c7042a788fb86a569f9d1474ab9346b0ae3a4f461cc3dc6ad6910dbbdb",
+      "recordedAt": "2026-10-30T18:41:15.711Z"
+    },
+    {
+      "caseId": "dev-d02-09",
+      "sourceGroup": "d-origin-d02-09",
+      "decision": "agree",
+      "note": "",
+      "inputSha256": "544814278b2777cb45b213e77851d361ded99471fac83758f1e112ac096a0a2d",
+      "reviewDraftSha256": "394092aa65330351e4d611361a6b778d158295b37db43d8a7957ad929b32cc5c",
+      "recordedAt": "2026-10-30T18:41:36.961Z"
+    },
+    {
+      "caseId": "dev-d02-10",
+      "sourceGroup": "d-origin-d02-10",
+      "decision": "agree",
+      "note": "",
+      "inputSha256": "3ff603f77079849e342e7f36f7c98ecaa5bb70e3920d428f0a7ed6ee563d3d7c",
+      "reviewDraftSha256": "a8449b191ece82bb3b542d1014b66426afefd43d34c03b203e9214e07407f427",
+      "recordedAt": "2026-10-30T18:41:48.045Z"
+    }
+  ],
+  "verificationStatus": "unverified_export_pending_reconciliation",
+  "formalEvaluationAllowed": false
+}
