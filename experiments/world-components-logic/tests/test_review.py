@@ -75,6 +75,14 @@ class ReviewClaimsTests(unittest.TestCase):
                 bad = copy.deepcopy(self.claims); bad[key] = "0"*64
                 with self.assertRaises(ValueError): review_io.reconcile_claims(bad, self.packet)
 
+    def test_all_three_file_bindings_are_required(self):
+        for key in ("inputFileSha256", "reviewDraftFileSha256", "provenanceFileSha256"):
+            with self.subTest(missing=key):
+                bad = copy.deepcopy(self.claims)
+                del bad[key]
+                with self.assertRaises(ValueError):
+                    review_io.reconcile_claims(bad, self.packet)
+
     def test_case_hash_group_or_id_mismatch_rejected(self):
         for key in ("inputSha256", "reviewDraftSha256", "sourceGroup", "caseId"):
             with self.subTest(key=key):

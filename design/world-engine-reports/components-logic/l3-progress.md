@@ -6,7 +6,7 @@
 
 同日第二步更新：人审与来源交接材料已准备，见条目 22 和 [人审说明](human-review.md)。用户本人初审、来源回执及浏览器实操仍待完成，模型继续暂停。
 
-2026-10-31 更新：已收到 D02–D05 全部 **42/42 项本人初审，均认可**，完整导出身份核对匹配且前批意见未变，见条目 24–26。来源、正式评审、完整浏览器及新增工具独立审查仍待完成。没有模型或性能新成绩。
+2026-10-31 更新：已收到 D02–D05 全部 **42/42 项本人初审，均认可**（条目 24–26）；新增工具独立工程审查已收口（条目 27）。用户确认来源回执与正式复核/裁定人选尚未完成；完整浏览器另列待验。没有模型或性能新成绩。
 
 ## 已保存内容
 
@@ -17,7 +17,7 @@
 | 工程测试 | 65 项通过（workloadId、smoke 台账与 smoke 并发发布的回归测试均经反向验证，对各自修复前实现必失败） | [test_lab.py](../../../experiments/world-components-logic/tests/test_lab.py)；不证明模型质量/性能 |
 | 数据可复现 | 生成器 `--check` 重建同字节 | [生成器](../../../experiments/world-components-logic/generate_dev_drafts.py)；不会覆盖已被人工修改/签字的草稿 |
 | 人审材料 | 生成可本地审阅/导出意见的 HTML 草稿 | [审阅页](../../../artifacts/world-components-logic/l3-1-review.html)、[生成程序](../../../experiments/world-components-logic/prepare_review.py)；浏览器界面/导出尚未验收，未替用户作审阅决定 |
-| 审阅核对准备 | 12 项新增工程检查；批次/逐题身份核对、意见分类、证据不覆盖、内存逻辑探针 | [核对程序](../../../experiments/world-components-logic/review_io.py)、[测试](../../../experiments/world-components-logic/tests/test_review.py)；与原核心合计 77 项。真实浏览器、真实人审及新增工具独立审查未签通过 |
+| 审阅核对准备 | 13 项新增工程检查；三文件必填、逐题身份、意见分类、证据不覆盖、内存逻辑探针 | [核对程序](../../../experiments/world-components-logic/review_io.py)、[测试](../../../experiments/world-components-logic/tests/test_review.py)；与原核心合计 78 项。独立工程复验无剩余 P2，本人初审已收齐；正式人审/来源和完整浏览器仍待 |
 | 独立环境 | 新建隔离 venv，安装 25 个依赖并保存版本/安装报告哈希 | [环境身份](../../../artifacts/world-components-logic/l3-1-environment.json)、[平台锁](../../../experiments/world-components-logic/requirements-probe-macos-arm64-py311.lock.txt)；无共享 system-site-packages，未改 Anaconda base |
 | 小模型准备 | M02 固定 revision 的 6 个文件已下载并核对完整 SHA-256 | [获取脚本](../../../experiments/world-components-logic/fetch_model.py)；权重/缓存仅在本工作树 `.local/world-components-logic/`，不入库、不借 B/C 缓存 |
 | 无业务试跑草稿 | 只执行过 `--prepare-only`，未 import/load 模型或推理 | [runtime_smoke.py](../../../experiments/world-components-logic/runtime_smoke.py)；失败台账与不覆盖规则已修复（见条目 2），运行记录仍为空，不作为可运行交付或模型测试结果 |
@@ -58,6 +58,8 @@
 25. 2026-10-31 用户回传北京时间 02:52:45 的累计导出：原 D02 10 项完整保留且全部字段一致，新增 `dev-d03-01..10` 目标题 10 项全部认可、无需改或待定。初审按唯一题号累计 **20/42**，不是两次导出数量相加；D04 反应 11+D05 共同结果 11 尚待回传。[原始导出](../../../artifacts/world-components-logic/reviews/l3-review-5db17d61-2026-10-30T18-52-45-546Z.json)与[核对件](../../../artifacts/world-components-logic/reviews/l3-review-5db17d61-2026-10-30T18-52-45-546Z.reconciled.json)独占新建入档，SHA-256 `62c5ccb06cd9cc421c599374b1eb841bbc57066c0334248b53d6ae15b30af1ab`；批次三文件、逐题输入/判据哈希、来源组/题号均匹配，无重复或旧意见撤回。旧回执和冻结数据不改；收录仍限开发题本人初审，不自行扩为来源、正式语义/性能或浏览器全面通过，模型保持暂停。
 
 26. 2026-10-31 用户回传北京时间 03:04:59 的完整累计导出：本次新增 D04 反应 11+D05 共同结果 11，原 D02/D03 20 项全部字段未变，按唯一题号累计 **42/42 项，认可 42、需改 0、待定 0**，本人开发题初审意见收齐。[原始导出](../../../artifacts/world-components-logic/reviews/l3-review-5db17d61-2026-10-30T19-04-59-780Z.json)和[核对件](../../../artifacts/world-components-logic/reviews/l3-review-5db17d61-2026-10-30T19-04-59-780Z.reconciled.json)独占新建，SHA-256 `d9334ca0b1ce3e72abda5c28914afde423717c73b7d91928b015f8333523deed`，三份批次文件及 42 项逐题身份匹配，无漏题、未知题或重复。历史回执和三份冻结数据原样保留，新的本人意见独立入档；v4 机器清单为 10-30 文档快照，执行批需结合新回执另行冻结。来源负责人完整清单/隔离同源回执、第二位复核/裁定、工具独立审查及完整浏览器验收仍待；不将本人初审等同于双人正式评分或模型质量/性能通过，不抵扣 90 新来源组，模型继续暂停。
+
+27. 2026-10-31 用户要求完成第二步，并确认 B/C 来源回执与正式复核/裁定人选“没完成”。本轮复用原独立工程审查者只读核验工具/HTML/真实回执，发现来源登记哈希可省略却返回身份匹配的 P2；修为第三哈希必填，缺失/空值/错值拒绝，新增回归在 HEAD `9420f8a` 旧实现上仅缺第三哈希子项确实失败，当前实现通过。核心 65+审阅 13=78 项通过，审查者独立复验 9 种哈希异常、HTML 同字节和三份回执 10→20→42 累计一致；无剩余工程 P2。原回执/冻结数据不改，没有读取保护正文、运行模型/服务或代替人工评分。工具侧已收口；整体第二步仍待来源负责人回执及正式人选，清单见 [人审说明 §7](human-review.md#7-第二步收口检查2026-10-31)，完整浏览器单独待验，不自签全部完成或恢复模型。
 
 ## 提交前轻量复核
 

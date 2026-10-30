@@ -76,8 +76,10 @@ def reconcile_claims(claims, packet):
                           ("reviewDraftFileSha256", packet["reviewDraftSha256"])):
         if claims.get(key) != expected:
             raise ValueError(f"批次不匹配：{key}")
-    if "provenanceFileSha256" in claims and claims["provenanceFileSha256"] != packet["provenanceSha256"]:
-        raise ValueError("来源登记版本不匹配")
+    # All three files define this review batch. A missing provenance binding
+    # cannot be treated as an identity match, including in older exports.
+    if claims.get("provenanceFileSha256") != packet["provenanceSha256"]:
+        raise ValueError("来源登记版本缺失或不匹配")
     cases = {c["caseId"]: c for c in packet["cases"]}
     decisions = claims.get("decisions")
     if not isinstance(decisions, list) or not 1 <= len(decisions) <= len(cases):
