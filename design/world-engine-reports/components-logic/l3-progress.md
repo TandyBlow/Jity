@@ -6,13 +6,13 @@
 
 同日第二步更新：人审与来源交接材料已准备，见条目 22 和 [人审说明](human-review.md)。用户本人初审、来源回执及浏览器实操仍待完成，模型继续暂停。
 
-2026-10-31 更新：D02 行动 10+D03 目标 10 项收到用户本人初审意见，累计 20 项全部认可，导出身份核对匹配且旧意见未变，见条目 24/25；剩余 22 项初审、来源及正式评审仍待完成。没有模型或性能新成绩。
+2026-10-31 更新：已收到 D02–D05 全部 **42/42 项本人初审，均认可**，完整导出身份核对匹配且前批意见未变，见条目 24–26。来源、正式评审、完整浏览器及新增工具独立审查仍待完成。没有模型或性能新成绩。
 
 ## 已保存内容
 
 | 部分 | 本次进度 | 证据/范围 |
 |---|---|---|
-| 原创开发草稿 | 40 个来源组、42 个 case；34 个应调用、8 个结构守卫项 | [输入](../../../experiments/world-components-logic/data/dev-inputs.jsonl)、[AI 判据草稿](../../../experiments/world-components-logic/data/dev-review-drafts.jsonl)、[来源登记](../../../experiments/world-components-logic/data/dev-provenance.json)；人审和语义同源独立性均未通过，未建封存/训练/短链 |
+| 原创开发草稿 | 40 个来源组、42 个 case；34 个应调用、8 个结构守卫项 | [输入](../../../experiments/world-components-logic/data/dev-inputs.jsonl)、[AI 判据草稿](../../../experiments/world-components-logic/data/dev-review-drafts.jsonl)、[来源登记](../../../experiments/world-components-logic/data/dev-provenance.json)；本人初审 42 项全部认可，正式复核和语义同源核验仍未完成，未建封存/训练/短链 |
 | 工程核心 | 阶段输入隔离、确定性守卫、输出结构校验、全尝试耗时台账 | [lab.py](../../../experiments/world-components-logic/lab.py)；不是另一套服务/协议，不替模型判断开放语义 |
 | 工程测试 | 65 项通过（workloadId、smoke 台账与 smoke 并发发布的回归测试均经反向验证，对各自修复前实现必失败） | [test_lab.py](../../../experiments/world-components-logic/tests/test_lab.py)；不证明模型质量/性能 |
 | 数据可复现 | 生成器 `--check` 重建同字节 | [生成器](../../../experiments/world-components-logic/generate_dev_drafts.py)；不会覆盖已被人工修改/签字的草稿 |
@@ -56,6 +56,8 @@
 24. 2026-10-31 收到用户随后提供的实际导出（称呼 `tobi`，北京时间 02:44:31），对条目 23 的待核对状态完成补录：`dev-d02-01..10` 全部覆盖，认可 10、需改 0、待定 0，已收初审 10/42。原字节[导出](../../../artifacts/world-components-logic/reviews/l3-review-5db17d61-2026-10-30T18-44-31-512Z.json)与[核对件](../../../artifacts/world-components-logic/reviews/l3-review-5db17d61-2026-10-30T18-44-31-512Z.reconciled.json)独占新建入档；文件 SHA-256 `42d5a45074a3182150e94eb9a257b43e79460cf50d9a5a15eec8eeb7c875ffda`，批次三文件版本、逐题输入/判据哈希、来源组、题号及无重复校验匹配。本对话中的本人报告与文件提交支持记录开发题初审意见；机器件不自行认证真人身份或审批，保持原始有限结论。原始三份数据文件不改，剩余 D03 10+D04 11+D05 11 待回传；来源、第二人/裁定人、完整浏览器和新增工具独立审查仍待完成。未运行模型，未放行正式评测或性能验收。
 
 25. 2026-10-31 用户回传北京时间 02:52:45 的累计导出：原 D02 10 项完整保留且全部字段一致，新增 `dev-d03-01..10` 目标题 10 项全部认可、无需改或待定。初审按唯一题号累计 **20/42**，不是两次导出数量相加；D04 反应 11+D05 共同结果 11 尚待回传。[原始导出](../../../artifacts/world-components-logic/reviews/l3-review-5db17d61-2026-10-30T18-52-45-546Z.json)与[核对件](../../../artifacts/world-components-logic/reviews/l3-review-5db17d61-2026-10-30T18-52-45-546Z.reconciled.json)独占新建入档，SHA-256 `62c5ccb06cd9cc421c599374b1eb841bbc57066c0334248b53d6ae15b30af1ab`；批次三文件、逐题输入/判据哈希、来源组/题号均匹配，无重复或旧意见撤回。旧回执和冻结数据不改；收录仍限开发题本人初审，不自行扩为来源、正式语义/性能或浏览器全面通过，模型保持暂停。
+
+26. 2026-10-31 用户回传北京时间 03:04:59 的完整累计导出：本次新增 D04 反应 11+D05 共同结果 11，原 D02/D03 20 项全部字段未变，按唯一题号累计 **42/42 项，认可 42、需改 0、待定 0**，本人开发题初审意见收齐。[原始导出](../../../artifacts/world-components-logic/reviews/l3-review-5db17d61-2026-10-30T19-04-59-780Z.json)和[核对件](../../../artifacts/world-components-logic/reviews/l3-review-5db17d61-2026-10-30T19-04-59-780Z.reconciled.json)独占新建，SHA-256 `d9334ca0b1ce3e72abda5c28914afde423717c73b7d91928b015f8333523deed`，三份批次文件及 42 项逐题身份匹配，无漏题、未知题或重复。历史回执和三份冻结数据原样保留，新的本人意见独立入档；v4 机器清单为 10-30 文档快照，执行批需结合新回执另行冻结。来源负责人完整清单/隔离同源回执、第二位复核/裁定、工具独立审查及完整浏览器验收仍待；不将本人初审等同于双人正式评分或模型质量/性能通过，不抵扣 90 新来源组，模型继续暂停。
 
 ## 提交前轻量复核
 

@@ -1,6 +1,6 @@
 # D / L3 实验准备快照
 
-2026-10-30：模型执行继续暂停。第二步仅准备人工审题、导出核对与来源交接，见[人审说明](../../design/world-engine-reports/components-logic/human-review.md)和 [L3 进度](../../design/world-engine-reports/components-logic/l3-progress.md)。本目录不是生产服务或新权威协议。
+2026-10-31：模型执行继续暂停。第二步已收用户本人 42/42 项开发题初审、全部认可，来源及正式复核仍待完成，见[人审说明](../../design/world-engine-reports/components-logic/human-review.md)和 [L3 进度](../../design/world-engine-reports/components-logic/l3-progress.md)。本目录不是生产服务或新权威协议。
 
 - `lab.py`：纯标准库结构与阶段守卫、严格解码、完整尝试台账。
 - `generate_dev_drafts.py`、`data/`：40 个开发来源组/42 项 AI 草稿，输入与人审判据分离，全部待人工/来源复核；没有封存、训练和短链数据。
@@ -19,4 +19,4 @@ python3 experiments/world-components-logic/generate_dev_drafts.py --check
 python3 experiments/world-components-logic/check_run_manifest.py --self-test
 ```
 
-已有核心 65 项、新增审阅 12 项工程检查都不证明模型质量或 500 ms。审阅逻辑测试需要本机已有 Node.js，仅跑合成内存夹具，不启动浏览器或写人审决定。业务模型输入尚未曝光，用户会先复核题目和判据；正式来源/语义/性能结论仍未评测。
+已有核心 65 项、新增审阅 12 项工程检查都不证明模型质量或 500 ms。审阅逻辑测试需要本机已有 Node.js，仅跑合成内存夹具，不启动浏览器或写人审决定。业务模型输入尚未曝光，本人题目/判据初审意见以独立回执收录，原数据不改；正式来源/模型语义/性能结论仍未评测。
