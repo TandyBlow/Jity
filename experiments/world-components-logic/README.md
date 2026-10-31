@@ -2,6 +2,8 @@
 
 2026-10-31：模型执行继续暂停。第二步已收用户本人 42/42 项开发题初审、全部认可，来源及正式复核仍待完成，见[人审说明](../../design/world-engine-reports/components-logic/human-review.md)和 [L3 进度](../../design/world-engine-reports/components-logic/l3-progress.md)。本目录不是生产服务或新权威协议。
 
+同日第三步：第二步当前交付收口，来源/人选为并行待办。`round1_scenarios.py` 与 `prepare_round1.py` 准备了另外90张来源卡及判据，保存在 `data/round1/`，附独立审阅页和覆盖表。44开发+46封存候选尚未冻结，均待新一轮人审与来源核验；不是 `lab.py` 可执行输入，原42题不抵扣。原78+来源卡10=88项工程测试通过，不等于模型或来源通过。
+
 - `lab.py`：纯标准库结构与阶段守卫、严格解码、完整尝试台账。
 - `generate_dev_drafts.py`、`data/`：40 个开发来源组/42 项 AI 草稿，输入与人审判据分离，全部待人工/来源复核；没有封存、训练和短链数据。
 - `prepare_review.py`：生成人工审阅 HTML，保留说明草稿并提示本地保存失败；实际浏览器显示/下载/恢复尚待验证，导出不自动构成正式签字。
@@ -17,6 +19,10 @@ python3 -m unittest discover -s experiments/world-components-logic/tests -p 'tes
 python3 -m unittest discover -s experiments/world-components-logic/tests -p 'test_review.py'
 python3 experiments/world-components-logic/generate_dev_drafts.py --check
 python3 experiments/world-components-logic/check_run_manifest.py --self-test
+python3 -m unittest discover -s experiments/world-components-logic/tests -p 'test_round1.py'
+python3 experiments/world-components-logic/prepare_round1.py --check
 ```
 
 已有核心 65 项、新增审阅 13 项，共 78 项工程检查都不证明模型质量或 500 ms。缺来源登记哈希的反例已对旧实现反向验证。审阅逻辑测试需要本机已有 Node.js，仅跑合成内存夹具，不启动浏览器或写人审决定。业务模型输入尚未曝光，本人题目/判据初审意见以独立回执收录，原数据不改；正式来源/模型语义/性能结论仍未评测。
+
+新卡导出用 `review_io.py reconcile FILE --batch round1-source-cards --out NEW_FILE`，默认仍核对旧42题。新旧批次/意见不互通；`prepare_round1.py --write-new` 拒绝覆盖不同的已有材料。完整阶段输入、同源骰点派生、D02守卫探针和短链运行器留待补齐，训练数据另立。

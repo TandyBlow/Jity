@@ -69,6 +69,39 @@ refreshProgress();draw();list();
 </script></html>'''
 
 
+def render_source_cards(packet: dict) -> str:
+    """Reuse the reviewed storage/export controls with an authoring-card view.
+
+    The original 42-case HTML and its packet/storage identity remain unchanged.
+    Source cards are human authoring material, not lab.py executable cases.
+    """
+    if packet.get('materialKind') != 'source_card_draft':
+        raise ValueError('Expected a source-card packet')
+    start = HTML.index('function draw(){')
+    end = HTML.index("const rubric=el('article'", start)
+    source_view = r'''function draw(){const c=byId[active],x=c.input,r=c.review,e=r.draftExpected,old=saved.decisions[c.caseId],root=document.getElementById('detail');root.replaceChildren();const name=id=>id;
+const top=el('article',undefined,'card');top.append(el('h2',taskNames[c.task]),el('p',r.sourceNote),el('div',c.caseId+' · '+c.sourceGroup+' · '+(c.split==='development'?'开发用草稿':'封存候选，尚未正式封存'),'muted'));root.append(top);
+const facts=el('article',undefined,'card');facts.append(el('h2','场景卡：已知事实与待判断问题'),el('p',x.sourceCard.facts),el('h3','要判断什么'),el('p',x.sourceCard.question),el('div','这是出题草稿，还不是完整模型输入。实体、任务原文、阶段投影与判定身份须继续补齐；认可本卡不代表可以开跑。','warning'));root.append(facts);
+'''
+    html = HTML[:start] + source_view + HTML[end:]
+    replacements = {
+        '这里是 L3 的开发题草稿，全部由 AI 新写，尚待人工核对。':
+            '这里是 L3 第三步的来源场景卡，含开发用与封存候选，尚未正式封存，全部由 AI 起草、待人工核对。',
+        '40 个来源组 / 42 个测试项': '90 张来源卡 · 开发 44 / 封存候选 46',
+        '</select>': '<option value="CHAIN">短链：步骤如何衔接</option></select>',
+        "D05:'共同结果：全组一起结算'}": "D05:'共同结果：全组一起结算',CHAIN:'短链：步骤如何衔接'}",
+        "'程序是否应调用模型：'+(e.expectedCall?'应调用':'应停止或复用已确认内容')+'。当前结构检查：'+(guardNames[c.guard.reason]||c.guard.reason)":
+            "'本卡仍待完整输入整理，未执行结构守卫。拟定调用要求：'+(typeof e.expectedCall==='boolean'?(e.expectedCall?'完整资料下应调用':'应停止或复用已确认内容'):'按本卡判据与实际路径判断')",
+        '全部仍为开发材料，非封存验收集。': '本批为未冻结的来源卡；封存候选不能用于训练或调参，未经复核不得用于正式评测。',
+    }
+    for old, new in replacements.items():
+        if html.count(old) != 1:
+            raise ValueError('共享审阅模板已变更，请核对来源卡视图接入点')
+        html = html.replace(old, new)
+    embedded = canonical_bytes(packet).decode().replace('<', '\\u003c')
+    return html.replace('__PACKET__', embedded)
+
+
 def main() -> None:
     packet = build_packet()
     # Escape '<' so source text can never close the inert JSON script element.

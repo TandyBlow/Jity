@@ -194,6 +194,8 @@ def main():
     commands = parser.add_subparsers(dest="command", required=True)
     reconciliation = commands.add_parser("reconcile", help="核对导出声明，不改标签、不审批")
     reconciliation.add_argument("file", type=Path)
+    reconciliation.add_argument("--batch", choices=("dev42", "round1-source-cards"),
+                                default="dev42", help="显式选择批次，不能把旧42题意见套用到新卡")
     audit = commands.add_parser("audit-sources", help="只核对 D 身份与 B/C Git 元数据")
     for command in (reconciliation, audit):
         command.add_argument("--out", type=Path, help="独占新建结果文件；拒绝覆盖既有记录")
@@ -203,7 +205,12 @@ def main():
             raw = args.file.read_bytes()
             if len(raw) > 2_000_000:
                 raise ValueError("审阅导出文件过大")
-            result = reconcile_claims(_parse_json(raw.decode("utf-8")), build_packet())
+            if args.batch == "round1-source-cards":
+                from prepare_round1 import build_packet as build_source_packet
+                packet = build_source_packet()
+            else:
+                packet = build_packet()
+            result = reconcile_claims(_parse_json(raw.decode("utf-8")), packet)
             result["exportFileSha256"] = hashlib.sha256(raw).hexdigest()
         else:
             result = audit_sources()
