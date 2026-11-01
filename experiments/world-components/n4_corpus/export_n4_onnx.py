@@ -105,6 +105,126 @@ class DecoderStep(torch.nn.Module):
         return self.model.lm_head(out.last_hidden_state)
 
 
+class DecoderStepKV(torch.nn.Module):
+    """KV-cache decoder step, SELF-ATTENTION-ONLY cache: per-layer self K,V
+    are graph inputs/outputs; cross-attention K/V are RECOMPUTED from
+    encoder_hidden_states every step (correct and trace-safe — a
+    from_legacy_cache 4-tuple marks the cross cache "already computed", so
+    under the 4-tuple contract the tracer never consumes
+    encoder_hidden_states at all and the graph loses the input). The extra
+    cross recompute per step is a few small MatMuls against the saved
+    self-attention cost. cache_position and the extended self-attention
+    mask are explicit inputs so past length stays dynamic."""
+
+    def __init__(self, model):
+        super().__init__()
+        self.model = model
+        self.LAYERS = model.config.num_decoder_layers
+
+    def forward(self, decoder_input_ids, encoder_hidden_states,
+                encoder_attention_mask, cache_position, self_mask, *past_flat):
+        from transformers.cache_utils import EncoderDecoderCache, DynamicCache
+        layers = len(past_flat) // 2
+        cache = EncoderDecoderCache(DynamicCache(config=self.model.config),
+                                    DynamicCache(config=self.model.config))
+        if layers:
+            legacy_self = tuple((past_flat[l * 2], past_flat[l * 2 + 1])
+                                for l in range(layers))
+            cache.self_attention_cache = DynamicCache.from_legacy_cache(legacy_self)
+        out = self.model.decoder(
+            input_ids=decoder_input_ids,
+            encoder_hidden_states=encoder_hidden_states,
+            encoder_attention_mask=encoder_attention_mask,
+            attention_mask=self_mask,
+            cache_position=cache_position,
+            past_key_values=cache,
+            use_cache=True,
+            return_dict=True,
+        )
+        logits = self.model.lm_head(out.last_hidden_state)
+        flat = []
+        for k, v in out.past_key_values.self_attention_cache.to_legacy_cache():
+            flat.append(k)
+            flat.append(v)
+        return (logits, *flat)
+
+
+def export_decoder_kv(model, out_dir: pathlib.Path):
+    nl = model.config.num_decoder_layers
+    dec = DecoderStepKV(model)
+    d_ids = torch.ones((1, 1), dtype=torch.int64)
+    enc_out = torch.ones((1, 8, model.config.d_model), dtype=torch.float32)
+    enc_mask = torch.ones((1, 8), dtype=torch.int64)
+    cache_pos = torch.zeros((1,), dtype=torch.int64)
+    self_mask = torch.ones((1, 1), dtype=torch.int64)
+    H, DK = model.config.num_heads, model.config.d_kv
+    empty = tuple(torch.ones((1, H, 0, DK), dtype=torch.float32)
+                  for _ in range(2 * nl))
+    past_names = [f"past_{l}_{part}" for l in range(nl)
+                  for part in ("self_k", "self_v")]
+    torch.onnx.export(
+        dec, (d_ids, enc_out, enc_mask, cache_pos, self_mask) + empty,
+        str(out_dir / "decoder_kv.onnx"),
+        input_names=["decoder_input_ids", "encoder_hidden_states",
+                     "encoder_attention_mask", "cache_position",
+                     "self_mask"] + past_names,
+        output_names=["logits"] + [n.replace("past_", "present_") for n in past_names],
+        dynamic_axes={
+            "decoder_input_ids": {0: "batch", 1: "step"},
+            "encoder_hidden_states": {0: "batch", 1: "seq"},
+            "encoder_attention_mask": {0: "batch", 1: "seq"},
+            "cache_position": {0: "pos"},
+            "self_mask": {0: "batch", 1: "past+1"},
+            "logits": {0: "batch", 1: "step"},
+            **{n: {0: "batch", 2: "past"} for n in past_names},
+            **{n.replace("past_", "present_"): {0: "batch", 2: "past+1"}
+               for n in past_names},
+        },
+        # folding must stay OFF: with the dummy encoder states it folds the
+        # cross-attention K/V projections into constants and DELETES the
+        # encoder_hidden_states input from the graph
+        opset_version=17, do_constant_folding=False)
+
+
+def ort_greedy_kv(enc_sess, dec_sess, input_ids, attention_mask, eos_id,
+                  pad_id, heads, d_kv, max_new_tokens=64):
+    """Greedy loop over the KV-cache graphs; returns ids + per-step ms.
+    Starts with zero-length self AND cross caches — the first step computes
+    cross K/V from the encoder states itself, and every later step feeds
+    back the previous present tensors."""
+    import time
+    import numpy as np
+    enc = enc_sess.run(["encoder_hidden_states"], {
+        "input_ids": input_ids.astype("int64"),
+        "attention_mask": attention_mask.astype("int64"),
+    })[0]
+    in_names = [i.name for i in dec_sess.get_inputs()][5:]
+    out_names = [o.name for o in dec_sess.get_outputs()][1:]
+    past = {n: np.zeros((1, heads, 0, d_kv), dtype="float32") for n in in_names}
+    dec_ids = np.array([[pad_id]], dtype="int64")
+    out_ids, step_ms = [], []
+    for step in range(max_new_tokens):
+        feeds = {"decoder_input_ids": dec_ids,
+                 "encoder_hidden_states": enc,
+                 "encoder_attention_mask": attention_mask.astype("int64"),
+                 "cache_position": np.array([step], dtype="int64"),
+                 "self_mask": np.ones((1, step + 1), dtype="int64"),
+                 **past}
+        t0 = time.perf_counter()
+        res = dec_sess.run(None, feeds)
+        step_ms.append((time.perf_counter() - t0) * 1000)
+        logits, flat = res[0], res[1:]
+        # outputs mirror the past inputs in order (self_k/self_v per layer):
+        # re-feed under the INPUT names for the next step
+        past = dict(zip(in_names, flat))
+        nxt = int(logits[0, -1].argmax())
+        if nxt == eos_id:
+            break
+        out_ids.append(nxt)
+        dec_ids = np.array([[nxt]], dtype="int64")
+    return out_ids, step_ms
+
+
 def export_decoder(model, out_dir: pathlib.Path):
     dec = DecoderStep(model)
     d_ids = torch.ones((1, 4), dtype=torch.int64)
@@ -187,6 +307,8 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--verify-only", action="store_true",
                         help="skip re-export; only run the parity gate")
+    parser.add_argument("--kv", action="store_true",
+                        help="also export + verify the KV-cache decoder graph")
     parser.add_argument("--texts", nargs="*", default=[
         "叙事生成任务。\n事实：\n1. 位置：陈舟 从东门到钟楼\n2. 时间推进：约三分钟\n正文：",
         "叙事生成任务。\n事实：\n1. 时间推进：约四十秒\n2. 无变化\n正文：",
@@ -199,6 +321,8 @@ def main() -> int:
         tok, model = load_frozen()
         export_encoder(model, OUT_DIR)
         export_decoder(model, OUT_DIR)
+        if args.kv:
+            export_decoder_kv(model, OUT_DIR)
         files = {p.name: sha_file(p) for p in sorted(OUT_DIR.glob("*.onnx"))}
         (OUT_DIR / "export_manifest.json").write_text(json.dumps({
             "checkpoint": str(CHECKPOINT.name),
@@ -209,6 +333,28 @@ def main() -> int:
         print("exported:", list(files))
     tok, model = load_frozen()
     results, drift_free = verify_parity(tok, model, args.texts)
+    if args.kv:
+        import numpy as np
+        import onnxruntime as ort
+        so = ort.SessionOptions()
+        so.intra_op_num_threads = 1
+        enc_sess = ort.InferenceSession(str(OUT_DIR / "encoder.onnx"), so,
+                                        providers=["CPUExecutionProvider"])
+        dec_kv = ort.InferenceSession(str(OUT_DIR / "decoder_kv.onnx"), so,
+                                      providers=["CPUExecutionProvider"])
+        cfg = model.config
+        for text, res in zip(args.texts, results):
+            enc_in = tok(text, return_tensors="np")
+            ids, step_ms = ort_greedy_kv(enc_sess, dec_kv, enc_in["input_ids"],
+                                         enc_in["attention_mask"], tok.eos_token_id,
+                                         tok.pad_token_id, cfg.num_heads, cfg.d_kv)
+            match = ids == res["ortIds"]
+            print(("KV-EXACT" if match else "KV-DIFF"), text[:30],
+                  f"steps={len(step_ms)} mean={sum(step_ms)/max(len(step_ms),1):.1f}ms",
+                  "last-step", f"{step_ms[-1]:.1f}ms" if step_ms else "-")
+            if not match:
+                return 1
+        print("KV PARITY: exact vs the stateless ORT loop")
     if drift_free:
         print("PARITY: EXACT (ORT loop == HF greedy on all probe inputs)")
     else:

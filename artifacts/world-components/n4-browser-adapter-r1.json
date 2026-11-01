@@ -1,0 +1,401 @@
+{
+ "purpose": "N4 browser adapter verification (batch 3): full pipeline in the browser - sentencepiece-js tokenization (id-parity vs Python T5Tokenizer), KV-cache greedy generation on fp32 and int8 graphs, AbortSignal semantics; parity target = ORT-python loop",
+ "environment": {
+  "onnxruntimeWeb": "1.30.0",
+  "execution": "wasm, numThreads=1 (documented single-thread constraint)",
+  "browser": "headless Edge (system)",
+  "cancellation": "AbortSignal between steps; ORT run itself not interruptible (F3) - documented granularity"
+ },
+ "result": {
+  "adapterId": "n4-browser-adapter-r1",
+  "pageVersion": "v3-sanity",
+  "fp32LoadMs": 3636.7999992370605,
+  "int8LoadMs": 1933.6000003814697,
+  "cases": [
+   {
+    "name": "n4h-loc-01",
+    "scope": "frozen-holdout",
+    "tokenizerIdMatch": true,
+    "tokenizerFirstDiff": -1,
+    "tokenizerSample": {
+     "browser": [
+      259,
+      21637,
+      1525,
+      15597,
+      9235,
+      297
+     ],
+     "python": [
+      259,
+      21637,
+      1525,
+      15597,
+      9235,
+      297
+     ],
+     "browserType": "Array"
+    },
+    "fp32": {
+     "tokenMatchVsOrtPy": true,
+     "text": "陆知微由柳堤进入药圃。前后大约九分钟。",
+     "timings": {
+      "encodeMs": null,
+      "encoderMs": 222.5,
+      "generationMs": 484.7,
+      "meanStepMs": 28.5,
+      "steps": 17
+     }
+    },
+    "int8": {
+     "tokenMatchVsOrtPy": false,
+     "text": "陆知微从柳堤来到药圃。前后大约九分钟。",
+     "timings": {
+      "encodeMs": null,
+      "encoderMs": 62.2,
+      "generationMs": 448.9,
+      "meanStepMs": 26.4,
+      "steps": 17
+     },
+     "sameTextAsFp32": false
+    }
+   },
+   {
+    "name": "n4h-empty-01",
+    "scope": "frozen-holdout",
+    "tokenizerIdMatch": true,
+    "tokenizerFirstDiff": -1,
+    "tokenizerSample": {
+     "browser": [
+      259,
+      21637,
+      1525,
+      15597,
+      9235,
+      297
+     ],
+     "python": [
+      259,
+      21637,
+      1525,
+      15597,
+      9235,
+      297
+     ],
+     "browserType": "Array"
+    },
+    "fp32": {
+     "tokenMatchVsOrtPy": true,
+     "text": "一切如旧。前后大约九分钟。",
+     "timings": {
+      "encodeMs": null,
+      "encoderMs": 49.1,
+      "generationMs": 240.9,
+      "meanStepMs": 21.9,
+      "steps": 11
+     }
+    },
+    "int8": {
+     "tokenMatchVsOrtPy": true,
+     "text": "一切如旧。前后大约九分钟。",
+     "timings": {
+      "encodeMs": null,
+      "encoderMs": 29.2,
+      "generationMs": 240.8,
+      "meanStepMs": 21.9,
+      "steps": 11
+     },
+     "sameTextAsFp32": true
+    }
+   },
+   {
+    "name": "n4h-task-01",
+    "scope": "frozen-holdout",
+    "tokenizerIdMatch": true,
+    "tokenizerFirstDiff": -1,
+    "tokenizerSample": {
+     "browser": [
+      259,
+      21637,
+      1525,
+      15597,
+      9235,
+      297
+     ],
+     "python": [
+      259,
+      21637,
+      1525,
+      15597,
+      9235,
+      297
+     ],
+     "browserType": "Array"
+    },
+    "fp32": {
+     "tokenMatchVsOrtPy": true,
+     "text": "陆知微完成了任务「把风灯挂上檐角」。前后大约九分钟。",
+     "timings": {
+      "encodeMs": null,
+      "encoderMs": 67.1,
+      "generationMs": 555.9,
+      "meanStepMs": 26.5,
+      "steps": 21
+     }
+    },
+    "int8": {
+     "tokenMatchVsOrtPy": true,
+     "text": "陆知微完成了任务「把风灯挂上檐角」。前后大约九分钟。",
+     "timings": {
+      "encodeMs": null,
+      "encoderMs": 43.2,
+      "generationMs": 561.1,
+      "meanStepMs": 26.7,
+      "steps": 21
+     },
+     "sameTextAsFp32": true
+    }
+   },
+   {
+    "name": "n4h-chain-01",
+    "scope": "frozen-holdout",
+    "tokenizerIdMatch": true,
+    "tokenizerFirstDiff": -1,
+    "tokenizerSample": {
+     "browser": [
+      259,
+      21637,
+      1525,
+      15597,
+      9235,
+      297
+     ],
+     "python": [
+      259,
+      21637,
+      1525,
+      15597,
+      9235,
+      297
+     ],
+     "browserType": "Array"
+    },
+    "fp32": {
+     "tokenMatchVsOrtPy": true,
+     "text": "陆知微完成了任务「把风灯挂上檐角」,变得从容,精神值从9升到了12。前后大约九分钟。",
+     "timings": {
+      "encodeMs": null,
+      "encoderMs": 111,
+      "generationMs": 1103,
+      "meanStepMs": 32.4,
+      "steps": 34
+     }
+    },
+    "int8": {
+     "tokenMatchVsOrtPy": true,
+     "text": "陆知微完成了任务「把风灯挂上檐角」,变得从容,精神值从9升到了12。前后大约九分钟。",
+     "timings": {
+      "encodeMs": null,
+      "encoderMs": 76.1,
+      "generationMs": 1151.6,
+      "meanStepMs": 33.9,
+      "steps": 34
+     },
+     "sameTextAsFp32": true
+    }
+   },
+   {
+    "name": "synthetic-ext-1",
+    "scope": "batch1-extension",
+    "tokenizerIdMatch": true,
+    "tokenizerFirstDiff": -1,
+    "tokenizerSample": {
+     "browser": [
+      259,
+      21637,
+      1525,
+      15597,
+      9235,
+      297
+     ],
+     "python": [
+      259,
+      21637,
+      1525,
+      15597,
+      9235,
+      297
+     ],
+     "browserType": "Array"
+    },
+    "fp32": {
+     "tokenMatchVsOrtPy": true,
+     "text": "陆知微由柳堤进入药圃。前后大约四十秒。",
+     "timings": {
+      "encodeMs": null,
+      "encoderMs": 61.6,
+      "generationMs": 417.4,
+      "meanStepMs": 24.6,
+      "steps": 17
+     }
+    },
+    "int8": {
+     "tokenMatchVsOrtPy": false,
+     "text": "陆知微从柳堤来到药圃。前后大约四十秒。",
+     "timings": {
+      "encodeMs": null,
+      "encoderMs": 40.1,
+      "generationMs": 423.5,
+      "meanStepMs": 24.9,
+      "steps": 17
+     },
+     "sameTextAsFp32": false
+    }
+   },
+   {
+    "name": "synthetic-ext-2",
+    "scope": "batch1-extension",
+    "tokenizerIdMatch": true,
+    "tokenizerFirstDiff": -1,
+    "tokenizerSample": {
+     "browser": [
+      259,
+      21637,
+      1525,
+      15597,
+      9235,
+      297
+     ],
+     "python": [
+      259,
+      21637,
+      1525,
+      15597,
+      9235,
+      297
+     ],
+     "browserType": "Array"
+    },
+    "fp32": {
+     "tokenMatchVsOrtPy": true,
+     "text": "大约零分钟过去了,一切如旧。",
+     "timings": {
+      "encodeMs": null,
+      "encoderMs": 38.9,
+      "generationMs": 245.3,
+      "meanStepMs": 20.4,
+      "steps": 12
+     }
+    },
+    "int8": {
+     "tokenMatchVsOrtPy": true,
+     "text": "大约零分钟过去了,一切如旧。",
+     "timings": {
+      "encodeMs": null,
+      "encoderMs": 25,
+      "generationMs": 235.8,
+      "meanStepMs": 19.7,
+      "steps": 12
+     },
+     "sameTextAsFp32": true
+    }
+   },
+   {
+    "name": "synthetic-ext-3",
+    "scope": "batch1-extension",
+    "tokenizerIdMatch": true,
+    "tokenizerFirstDiff": -1,
+    "tokenizerSample": {
+     "browser": [
+      259,
+      21637,
+      1525,
+      15597,
+      9235,
+      297
+     ],
+     "python": [
+      259,
+      21637,
+      1525,
+      15597,
+      9235,
+      297
+     ],
+     "browserType": "Array"
+    },
+    "fp32": {
+     "tokenMatchVsOrtPy": true,
+     "text": "一切如旧。前后大约三天。",
+     "timings": {
+      "encodeMs": null,
+      "encoderMs": 45.5,
+      "generationMs": 244.7,
+      "meanStepMs": 22.2,
+      "steps": 11
+     }
+    },
+    "int8": {
+     "tokenMatchVsOrtPy": true,
+     "text": "一切如旧。前后大约三天。",
+     "timings": {
+      "encodeMs": null,
+      "encoderMs": 29,
+      "generationMs": 236.2,
+      "meanStepMs": 21.5,
+      "steps": 11
+     },
+     "sameTextAsFp32": true
+    }
+   }
+  ],
+  "abortTest": {
+   "threw": true,
+   "name": "AbortError",
+   "completedSteps": 4,
+   "wallMs": 191
+  },
+  "allFp32Matched": true,
+  "allTokenizersMatched": true
+ },
+ "judge": {
+  "n4h-loc-01": {
+   "fails": [],
+   "reviews": [],
+   "clean": true
+  },
+  "n4h-empty-01": {
+   "fails": [],
+   "reviews": [],
+   "clean": true
+  },
+  "n4h-task-01": {
+   "fails": [],
+   "reviews": [],
+   "clean": true
+  },
+  "n4h-chain-01": {
+   "fails": [],
+   "reviews": [],
+   "clean": true
+  },
+  "synthetic-ext-1": {
+   "fails": [],
+   "reviews": [],
+   "clean": true
+  },
+  "synthetic-ext-2": {
+   "fails": [],
+   "reviews": [
+    "sentence '大约零分钟过去了,一切如旧' not fully covered by plan recognizers (covered 8/12) — unrecognized content, needs review"
+   ],
+   "clean": true
+  },
+  "synthetic-ext-3": {
+   "fails": [],
+   "reviews": [],
+   "clean": true
+  }
+ },
+ "pass": true
+}

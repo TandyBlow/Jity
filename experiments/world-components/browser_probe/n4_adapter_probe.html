@@ -1,0 +1,91 @@
+<!doctype html>
+<!-- N4 browser adapter probe (batch 3): the full pipeline per case —
+     renderText -> sentencepiece-js tokens -> encoder -> KV-cache greedy
+     loop -> detokenized text — on fp32 AND int8 graphs, compared against
+     the ORT-python greedy references, plus an AbortSignal test. Runs the
+     committed adapter module (n4_browser_adapter.mjs), not a bespoke
+     in-page loop. -->
+<html lang="zh">
+<head><meta charset="utf-8"><title>N4 adapter probe</title></head>
+<body>
+<div id="status">loading…</div>
+<pre id="out"></pre>
+<script type="module">
+  const status = (t) => { document.getElementById("status").textContent = t; };
+  const report = (r) => {
+    window.__N4_ADAPTER_RESULT__ = r;
+    document.getElementById("out").textContent = JSON.stringify(r, null, 1);
+    status("done");
+  };
+  const idArr = (a) => new BigInt64Array(a.map((x) => BigInt(x)));
+  try {
+    const { N4Browser } = await import("/models/n4-probe/n4_browser_adapter.mjs");
+    const cases = (await (await fetch("/models/n4-probe/probe_inputs.json")).json()).cases;
+    const fp32 = await N4Browser.create({
+      spBundleUrl: "/models/n4-probe/sp/index.js",
+      modelBytesUrl: "/models/n4-probe/spiece.model",
+      graphDir: "/models/n4-probe/",
+    });
+    const int8 = await N4Browser.create({
+      spBundleUrl: "/models/n4-probe/sp/index.js",
+      modelBytesUrl: "/models/n4-probe/spiece.model",
+      graphDir: "/models/n4-probe-int8/",
+      int8: true,
+    });
+    const results = [];
+    const eqIds = (a, b) => Array.from(a).length === Array.from(b).length
+        && Array.from(a).every((x, i) => Array.from(b)[i] === x);
+    for (const c of cases) {
+      const myIds = Array.from(fp32.encode(c.renderText));
+      const pyIds = Array.from(c.inputIds);
+      const firstDiff = myIds.findIndex((x, i) => pyIds[i] !== x);
+      const g32 = await fp32.generate(c.renderText);
+      const g8 = await int8.generate(c.renderText);
+      results.push({
+        name: c.name, scope: c.scope,
+        tokenizerIdMatch: eqIds(myIds, pyIds),
+        tokenizerFirstDiff: firstDiff,
+        tokenizerSample: { browser: myIds.slice(0, 6), python: pyIds.slice(0, 6),
+                           browserType: myIds.constructor.name },
+        fp32: { tokenMatchVsOrtPy: eqIds(g32.ids, c.referenceIds),
+                text: g32.text, timings: g32.timings },
+        int8: { tokenMatchVsOrtPy: eqIds(g8.ids, c.referenceIds),
+                text: g8.text, timings: g8.timings,
+                sameTextAsFp32: g8.text === g32.text },
+      });
+    }
+    // AbortSignal semantics: abort mid-generation; the adapter must throw
+    // AbortError and hand back nothing applicable
+    const ctrl = new AbortController();
+    const tAbort0 = performance.now();
+    setTimeout(() => ctrl.abort(), 120);
+    // environment sanity: do timers + AbortController work here at all?
+    const ctrl2 = new AbortController();
+    setTimeout(() => ctrl2.abort(), 30);
+    let abortSanity = null;
+    let abortOutcome;
+    try {
+      const g = await fp32.generate(cases[0].renderText, { signal: ctrl.signal });
+      abortOutcome = { threw: false, steps: g.timings.steps,
+                       wallMs: +(performance.now() - tAbort0).toFixed(0),
+                       abortSanity: ctrl2.aborted };
+    } catch (e) {
+      abortOutcome = { threw: true, name: e.name,
+                       completedSteps: e.detail ? e.detail.completedSteps : null,
+                       wallMs: +(performance.now() - tAbort0).toFixed(0),
+                       abortSanity: ctrl2.aborted };
+    }
+    report({
+      adapterId: "n4-browser-adapter-r1", pageVersion: "v3-sanity",
+      fp32LoadMs: fp32.loadMs, int8LoadMs: int8.loadMs,
+      cases: results,
+      abortTest: abortOutcome,
+      allFp32Matched: results.every((r) => r.fp32.tokenMatchVsOrtPy),
+      allTokenizersMatched: results.every((r) => r.tokenizerIdMatch),
+    });
+  } catch (err) {
+    report({ fatal: String(err && err.stack || err) });
+  }
+</script>
+</body>
+</html>

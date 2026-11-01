@@ -1,0 +1,136 @@
+{
+ "purpose": "int8 dynamic quantization of the exported N4 graphs with the mandatory before/after quality comparison (runtime plan §2); fp32 remains the reference graphs",
+ "graphs": [
+  "encoder.onnx",
+  "decoder_kv.onnx"
+ ],
+ "sizes": {
+  "encoder.onnx": {
+   "fp32": 142418864,
+   "int8": 35848202
+  },
+  "decoder_kv.onnx": {
+   "fp32": 234545169,
+   "int8": 184607589
+  }
+ },
+ "qualityGate": "both fp32 and int8 outputs judge-clean on every case; token-exactness NOT required across dtypes",
+ "results": [
+  {
+   "name": "n4h-loc-01",
+   "scope": "frozen-holdout",
+   "tokenExact": false,
+   "fp32Text": "陆知微由柳堤进入药圃。前后大约九分钟。",
+   "int8Text": "陆知微从柳堤来到药圃。前后大约九分钟。",
+   "verdicts": {
+    "fp32": {
+     "fails": [],
+     "reviews": [],
+     "clean": true
+    },
+    "int8": {
+     "fails": [],
+     "reviews": [],
+     "clean": true
+    }
+   },
+   "meanStepMs": {
+    "fp32": 24.7,
+    "int8": 24.8
+   }
+  },
+  {
+   "name": "n4h-empty-01",
+   "scope": "frozen-holdout",
+   "tokenExact": true,
+   "fp32Text": "一切如旧。前后大约九分钟。",
+   "int8Text": "一切如旧。前后大约九分钟。",
+   "verdicts": {
+    "fp32": {
+     "fails": [],
+     "reviews": [],
+     "clean": true
+    },
+    "int8": {
+     "fails": [],
+     "reviews": [],
+     "clean": true
+    }
+   },
+   "meanStepMs": {
+    "fp32": 24.4,
+    "int8": 24.5
+   }
+  },
+  {
+   "name": "n4h-task-01",
+   "scope": "frozen-holdout",
+   "tokenExact": true,
+   "fp32Text": "陆知微完成了任务「把风灯挂上檐角」。前后大约九分钟。",
+   "int8Text": "陆知微完成了任务「把风灯挂上檐角」。前后大约九分钟。",
+   "verdicts": {
+    "fp32": {
+     "fails": [],
+     "reviews": [],
+     "clean": true
+    },
+    "int8": {
+     "fails": [],
+     "reviews": [],
+     "clean": true
+    }
+   },
+   "meanStepMs": {
+    "fp32": 22.0,
+    "int8": 16.2
+   }
+  },
+  {
+   "name": "n4h-chain-01",
+   "scope": "frozen-holdout",
+   "tokenExact": true,
+   "fp32Text": "陆知微完成了任务「把风灯挂上檐角」,变得从容,精神值从9升到了12。前后大约九分钟。",
+   "int8Text": "陆知微完成了任务「把风灯挂上檐角」,变得从容,精神值从9升到了12。前后大约九分钟。",
+   "verdicts": {
+    "fp32": {
+     "fails": [],
+     "reviews": [],
+     "clean": true
+    },
+    "int8": {
+     "fails": [],
+     "reviews": [],
+     "clean": true
+    }
+   },
+   "meanStepMs": {
+    "fp32": 23.2,
+    "int8": 24.2
+   }
+  },
+  {
+   "name": "synthetic-ext-1",
+   "scope": "batch1-extension",
+   "tokenExact": false,
+   "fp32Text": "陆知微由柳堤进入药圃。前后大约四十秒。",
+   "int8Text": "陆知微从柳堤来到药圃。前后大约四十秒。",
+   "verdicts": {
+    "fp32": {
+     "fails": [],
+     "reviews": [],
+     "clean": true
+    },
+    "int8": {
+     "fails": [],
+     "reviews": [],
+     "clean": true
+    }
+   },
+   "meanStepMs": {
+    "fp32": 21.0,
+    "int8": 16.2
+   }
+  }
+ ],
+ "pass": true
+}

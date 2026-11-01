@@ -244,7 +244,7 @@ coverage完成记录至少能核对本阶段预期人物/任务与实际输入�
 | C7 N1 事实提取 | **全部**（不让模型猜差异） | 可选归类加速 | 程序 | 编码器变化类型归类头（仅加速） | 已实现（程序权威；批次1进管线：GetStateData 绑定→事实条目，无法成述项记诊断不静默丢） | `narration_pipeline.py` `extract_facts`＋`n4_render`/`validate_plan_authority.py` 的 plan→Δ 对账 | 物品/地点/复杂位置的支持面仍待扩展；全人物扫描仍待办 |
 | C7 N2 内容选择 | 引用校验、覆盖检查、**视角可见性（程序可判定）** | 显著性与省略判断（哪些可见事实必须写） | 编码器打分头（事实×视角）——**批次2已训并实测否决**（两折 CV must-R 0.531，15/16 条目硬失败） | 0.6B instruct（暂停中） | **程序规则臂为当前参照（同折 must-R 1.000 / must-P 0.433，复现归档 F18）；v3 冻结标注不变** | `n2-encoder-arm-r1.json`（批次2）；`n2-labels-v3.json`、`n2-must-v3.json` | 46 样本/折不足以支撑 10.4M 头的 must 判别；扩展语料或换任务形状须新预登记 |
 | C7 N3 组织表达 | 顺序/指代校验、事实覆盖；I2 本句组锚定＋篡改探针 | 排序、分组、指代（**输出结构化组织计划**：句组 factIds＋指代建议，不写正文） | 程序基线 B1/B2 **已实现**；模型待定 | 0.6B instruct | **基线已实现＋I2 探针通过；模型臂未跑；runner 未实现（NOT-IMPLEMENTED，契约见冻结记录 runner 块）** | `n3-baselines-r1.json`（36/52 句组，144/144 篡改被捕获）、`n3-factids-smoke-r1.json`（36 组，离线） | D2 状态与剩余门见 [D2 准备](d2-gold-prep.md) 及其冻结记录，此处不另记；coref 未被 N4 消费、跨组连贯未测 |
-| C7 N4 成句 | 渲染器、判据、冻结校验 | 事实计划→中文正文 | **Randeng-T5-77M 全参微调（r3-direction）** | Qwen3-0.6B（现役基线） | **离线验证通过（六类短计划）＋浏览器最小可行性探针通过（批次1）** | `n4-holdout-eval-r3-direction.json`（44/44）；`n4-browser-probe-r1.json`（ONNX 图 7/7 逐 token 一致，fp32、无 KV 缓存、localhost） | JS sentencepiece、int8、KV 缓存、共存开销未验证；风格偏模板 |
+| C7 N4 成句 | 渲染器、判据、冻结校验 | 事实计划→中文正文 | **Randeng-T5-77M 全参微调（r3-direction）** | Qwen3-0.6B（现役基线） | **离线验证通过＋浏览器适配验证通过（批次3）**：sentencepiece-js 分词逐 id 一致＋KV 缓存贪心环 fp32 7/7 逐 token 对齐 ORT-python＋int8 判据全净＋AbortSignal 步级取消生效 | `n4-holdout-eval-r3-direction.json`（44/44）；`n4-browser-adapter-r1.json`、`n4-int8-quality-r1.json`（批次3） | 共存开销总账、整链接线未做；风格偏模板 |
 | C7 N5 核对 | **程序为主**（`corpus_check` 识别器） | 语义复核候选 | 程序判据 | 编码器一致性头（不自动放行） | 离线可用（Python；批次1进管线：review 类单列为语义不确定，不自动放行） | `corpus_check.py`（批次1扩展：`check_narration` 共享核心、23+3 自检） | 运行时 JS 版判据未交付，B 侧门控仍用现有实现 |
 
 ### 8.1 当前验证范围（避免过度外推）
@@ -262,7 +262,7 @@ coverage完成记录至少能核对本阶段预期人物/任务与实际输入�
 3. **C2/C3/C4**：按 V01–V03 建隔离样本；先做"生成骨干单调用"对照，再决定是否拆小模型。
 4. **C5**：六阶段样本与 U3/U5 批量判定；理智方向已由程序计算，模型只需表达。
 5. **C1**：分批草稿与引用校验，排最后（原设计集成顺序）。
-6. **N4 浏览器化**：批次1探针已证明图级可行性（fp32、预烘焙 token ids、无 KV 缓存）；剩 sentencepiece JS、KV 缓存图、int8 与取消语义，属独立工作项（提交3）。
+6. **N4 浏览器化**：批次3已交付并验证（adapter 模块＋KV 缓存图＋sentencepiece-js＋int8＋步级取消）；剩 B 侧页面接线与共存开销总账。
 
 ## 源码与规格依据
 

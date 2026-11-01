@@ -146,6 +146,8 @@ def render_entry(e):
 
 ## 8. 验收记录分离
 
+> **批次3（2026-11-01）浏览器侧已验证**：adapter 模块（`experiments/world-components/browser_probe/n4_browser_adapter.mjs`）在 headless Edge 中完成「spiece 分词（与 Python 逐 id 一致，含尾 `</s>`）→ encoder → KV 缓存贪心环 → 解码」全管线，fp32 7/7 逐 token 对齐 ORT-python 参考；int8 动态量化判据全净；AbortSignal 步级取消生效。B 侧接线注意两条硬约束：① ORT 单线程 wasm 的 run 会饿死宏任务，生成循环每步必须显式让出（否则取消不可观测、页面冻结）；② 跨运行时对齐目标是 ORT-python 环（与 ORT-web 同引擎族），不是 torch-HF。证据 `n4-browser-adapter-r1.json`、`n4-int8-quality-r1.json`。
+
 > **批次1修订（2026-11-01）**：共享渲染器/判据器扩展到全部六个合法时间单位＋零时长（修复合法 `second`/零时长渲染异常）。冻结语料空间字节等价与 90 条归档输出复判一致见 `n4-units-regression-r1.json`；修订与取代关系见 `n4-batch1-amendment-r1.json`。§2/§4 引用的渲染器/判据器旧哈希（65bfe89a…/e16bd2c9…）由新哈希（5595e08e…/1d20fead…）取代，待 C 审查者复核。B 侧前端 `narration-split.ts` 的 UNIT_CN 六单位表本就与扩展后的渲染器一致。
 
 | 验收 | 状态 | 证据 |
