@@ -245,7 +245,7 @@ coverage完成记录至少能核对本阶段预期人物/任务与实际输入�
 | C7 N2 内容选择 | 引用校验、覆盖检查、**视角可见性（程序可判定）** | 显著性与省略判断（哪些可见事实必须写） | 编码器打分头（事实×视角）——**批次2已训并实测否决**（两折 CV must-R 0.531，15/16 条目硬失败） | 0.6B instruct（暂停中） | **程序规则臂为当前参照（同折 must-R 1.000 / must-P 0.433，复现归档 F18）；v3 冻结标注不变** | `n2-encoder-arm-r1.json`（批次2）；`n2-labels-v3.json`、`n2-must-v3.json` | 46 样本/折不足以支撑 10.4M 头的 must 判别；扩展语料或换任务形状须新预登记 |
 | C7 N3 组织表达 | 顺序/指代校验、事实覆盖；I2 本句组锚定＋篡改探针 | 排序、分组、指代（**输出结构化组织计划**：句组 factIds＋指代建议，不写正文） | 程序基线 B1/B2 **已实现**；模型待定 | 0.6B instruct | **基线已实现＋I2 探针通过；模型臂未跑；runner 未实现（NOT-IMPLEMENTED，契约见冻结记录 runner 块）** | `n3-baselines-r1.json`（36/52 句组，144/144 篡改被捕获）、`n3-factids-smoke-r1.json`（36 组，离线） | D2 状态与剩余门见 [D2 准备](d2-gold-prep.md) 及其冻结记录，此处不另记；coref 未被 N4 消费、跨组连贯未测 |
 | C7 N4 成句 | 渲染器、判据、冻结校验 | 事实计划→中文正文 | **Randeng-T5-77M 全参微调（r3-direction）** | Qwen3-0.6B（现役基线） | **离线验证通过＋浏览器适配验证通过（批次3）**：sentencepiece-js 分词逐 id 一致＋KV 缓存贪心环 fp32 7/7 逐 token 对齐 ORT-python＋int8 判据全净＋AbortSignal 步级取消生效 | `n4-holdout-eval-r3-direction.json`（44/44）；`n4-browser-adapter-r1.json`、`n4-int8-quality-r1.json`（批次3） | 共存开销总账、整链接线未做；风格偏模板 |
-| C7 N5 核对 | **程序为主**（`corpus_check` 识别器） | 语义复核候选 | 程序判据 | 编码器一致性头（不自动放行） | 离线可用（Python；批次1进管线：review 类单列为语义不确定，不自动放行） | `corpus_check.py`（批次1扩展：`check_narration` 共享核心、23+3 自检） | 运行时 JS 版判据未交付，B 侧门控仍用现有实现 |
+| C7 N5 核对 | **程序为主**（`corpus_check` 识别器） | 语义复核候选 | 程序判据 | 编码器一致性头（不自动放行） | 离线可用；**批次4组合中真实模型输出的 N5 全净**（0 fail / 0 uncertain） | `corpus_check.py`（`check_narration` 共享核心）；`n1-n5-composition-r1.json` | 运行时 JS 版判据未交付，B 侧门控仍用现有实现 |
 
 ### 8.1 当前验证范围（避免过度外推）
 

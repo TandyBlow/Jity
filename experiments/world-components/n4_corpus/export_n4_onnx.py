@@ -11,16 +11,13 @@
 #                           no cache plumbing to mis-export. Per-step cost
 #                           is recorded honestly in the probe archive.
 #
-# Parity gate (measured, batch 1): torch-HF and ORT agree on logits to
-# ~2e-5 (fp32 reassociation), but greedy decoding compounds that noise over
-# up to 64 argmax steps, so HF-token-EXACT equality across runtimes is not
-# a stable gate. The alignment target for the browser route is therefore
-# the ORT-python greedy loop (SAME engine family as ORT-web in the
-# browser): the browser must reproduce ORT-python ids EXACTLY. HF
-# generate() ids are recorded as the training-runtime reference; a
-# mid-generation token flip between HF and ORT is reported as drift, and
-# both texts must stay recognizer-clean (checked by bake_probe_inputs.py
-# for the baked cases).
+# Parity gate (corrected, batch 4): with the decoder-only-sequence slice
+# fixed (see hf_greedy) and the trailing-EOS convention aligned, HF greedy
+# and the ORT loop agree EXACTLY on all probe inputs — the earlier
+# "reassociation drift" record was an artifact of an empty HF arm produced
+# by a wrong [input_len:] slice. The browser route still aligns against
+# the ORT-python loop (same engine family as ORT-web in the browser), and
+# that alignment is exact on every baked case.
 
 import argparse
 import hashlib
@@ -271,8 +268,16 @@ def hf_greedy(model, tok, text, max_new_tokens=64):
     with torch.no_grad():
         out = model.generate(**enc, do_sample=False, num_beams=1,
                              max_new_tokens=max_new_tokens)
-    in_len = enc["input_ids"].shape[1]
-    return out[0, in_len:].tolist()
+    # T5 sequences are DECODER-only (decoder_start + tokens): skipping
+    # input_len would empty the result. Drop the decoder_start token, then
+    # the trailing EOS so the convention matches the ORT loop (ids exclude
+    # eos); with this convention HF and ORT agree EXACTLY — the "drift"
+    # once recorded here was an artifact of an empty HF arm caused by the
+    # wrong [input_len:] slice, not fp32 reassociation.
+    ids = out[0, 1:].tolist()
+    if ids and ids[-1] == tok.eos_token_id:
+        ids = ids[:-1]
+    return ids
 
 
 def verify_parity(tok, model, texts):

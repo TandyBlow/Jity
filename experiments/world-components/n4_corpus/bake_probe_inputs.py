@@ -120,8 +120,12 @@ def main() -> int:
         with torch.no_grad():
             out = model.generate(**enc, do_sample=False, num_beams=1,
                                  max_new_tokens=64)
-        in_len = enc["input_ids"].shape[1]
-        ref = out[0, in_len:].tolist()
+        # decoder-only sequences: drop the decoder_start token only; then
+        # drop the trailing EOS so the convention matches the ORT loop
+        # (ids exclude eos — texts are unaffected either way)
+        ref = out[0, 1:].tolist()
+        if ref and ref[-1] == tok.eos_token_id:
+            ref = ref[:-1]
         # the browser's alignment target is the ORT-python greedy loop (the
         # same engine family as ORT-web in the browser); HF generate ids are
         # the training-runtime reference, kept for drift reporting
