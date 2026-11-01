@@ -41,3 +41,16 @@ python3 -m unittest discover -s experiments/world-components-logic/tests -p 'tes
 ```
 
 完整输入页面为`artifacts/world-components-logic/l3-3-input-review.html`，导出核对用`review_io.py reconcile /absolute/export.json --batch round1-inputs --out /absolute/new.json`。生成器`--write-new`只新建，差异拒绝覆盖。运行准备的PASS是静态身份一致，后续BLOCKED列明缺失项；不执行模型。具体材料见`design/world-engine-reports/components-logic/round1-review-handoff.md`和`round1-run-preparation.md`。原42题、90卡页与历史回执保留。
+
+## 2026-11-01：首批真实运行
+
+`run_pilot.py`已接入原42项已审开发题、M02固定本地权重和独立venv，`pilot_codec.py`可完整还原编码，`pilot_report.py`从原始记录生成查看页。r1/r2在512下共40次输入超限；r3扩大至1024的独立诊断及r4工程修复后复验共40次业务生成，当前零样本配置明显失败。512内完整分块、实际M01协同和短链尚未实现。原42/90数据及人审记录不变。
+
+运行器只用CPU单线程/单并发，离线、本地模型，监督120秒/2048MiB；进入生成前记账，生成异常与监督中断都保留，未启动项单列。新运行必须用独立run-id，计划/记录/日志拒绝覆盖。r1–r3执行源码按原SHA保存在`artifacts/world-components-logic/pilots/code/`；回放时先恢复其原执行路径及对应依赖，不能用改后的代码冒充旧版本。`--execute`会真实运行模型，重放前按新的工作安排登记批次，不复用旧id。
+
+```bash
+python3 -m unittest discover -s experiments/world-components-logic/tests -p 'test_pilot*.py'
+python3 experiments/world-components-logic/pilot_report.py --check
+```
+
+查看`artifacts/world-components-logic/l3-4-pilot-results.html`与`l3-4-pilot-summary.json`。独立组件调用耗时不能当完整请求；格式通过不证明语义正确，所有完整500ms/正式质量结论仍未通过。

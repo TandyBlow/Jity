@@ -1,0 +1,1824 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src 'none'">
+<title>L3 第一批真实运行：结果与原始回答</title><style>*{box-sizing:border-box}body{margin:0;background:#f4f6f8;color:#172a38;font:16px/1.7 system-ui,sans-serif}main{max-width:1120px;margin:auto;padding:28px 20px}h1{font-size:29px}h2{font-size:22px}article,.metrics{background:white;padding:24px;border:1px solid #d9e1e7;border-radius:12px;margin:18px 0}.metrics{display:flex;gap:28px;flex-wrap:wrap}b.number{display:block;font-size:31px}.bad{color:#a12a25}.muted{color:#657786;font-size:14px}table{width:100%;border-collapse:collapse;font-size:14px}th,td{padding:11px 8px;border-bottom:1px solid #dde4e9;text-align:left;vertical-align:top}.scroll{overflow:auto}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f3f6f8;padding:14px;font-size:13px}a{color:#17647d}details{margin:12px 0}summary{cursor:pointer}.bar{background:#fbe3dc;height:12px;border-radius:5px}.bar span{display:block;height:100%;background:#be5140;border-radius:5px}@media(max-width:700px){main{padding:16px 10px}article{padding:16px}h1{font-size:24px}}</style>
+<main><p class="muted">D / world-components-logic · 2026-11-01 · 已审42项中的4个开发场景</p><h1>L3 第一批真实运行：结果与原始回答</h1>
+<p>已经完成模型加载和第一批真实业务生成。当前77M模型的零样本配置未完成这四道题的要求，仍不能作为可用组件。</p>
+<div class="metrics"><div><b class="number">4 × 5</b>每批四个场景，各重复五次</div><div><b class="number">40</b>真实业务生成，含最终代码复验</div><div><b class="number bad">未通过</b>当前方案的明显失败初筛</div><div><b class="number">未测</b>完整流程500毫秒</div></div>
+<article><h2>这次具体做了什么</h2><ol><li>将已审题接入D独立离线运行器，记录完整输入、回答、错误和耗时。</li><li>新增可完整还原的中文字段、表格和重复文本编码；没有删除事实或截断输入。</li><li>保留512上限下的失败，再单独登记1024探索批取得真实答案。</li><li>单CPU线程、单进程，监督墙钟120秒及内存2048MiB；未运行训练或封存比较。</li></ol></article>
+<article><h2>输入长度：改善了多少</h2><p>无损编码仍未装进512。1024批只是取得诊断证据，512内的完整分块仍待实现。</p><div class="scroll"><table><tr><th>任务</th><th>原JSON token</th><th>无损编码 token</th><th>512上限</th></tr><tr><td>行动</td><td>636</td><td>593</td><td class='bad'>仍超限</td></tr><tr><td>目标</td><td>679</td><td>618</td><td class='bad'>仍超限</td></tr><tr><td>反应</td><td>736</td><td>675</td><td class='bad'>仍超限</td></tr><tr><td>共同结果</td><td>783</td><td>738</td><td class='bad'>仍超限</td></tr></table></div></article><article><h2>真实回答与逐任务耗时</h2><p>耗时包含本次输入装配、分词、生成、解码及格式校验，不包含冷加载，也不是完整游戏流程。每任务仅5次，不能签正式性能通过。初始局部工程预算为50毫秒。</p><div class="scroll"><table><tr><th>任务</th><th>结构通过</th><th>中位数 ms</th><th>p95 / 最大 ms</th><th>相对50ms预算</th></tr><tr><td>行动</td><td>0 / 5</td><td>155.10</td><td>159.53 / 159.53</td><td><div class='bar'><span style='width:44.3%'></span></div>3.1倍</td></tr><tr><td>目标</td><td>0 / 5</td><td>190.09</td><td>209.19 / 209.19</td><td><div class='bar'><span style='width:54.3%'></span></div>3.8倍</td></tr><tr><td>反应</td><td>5 / 5</td><td>252.86</td><td>270.97 / 270.97</td><td><div class='bar'><span style='width:72.2%'></span></div>5.1倍</td></tr><tr><td>共同结果</td><td>0 / 5</td><td>195.83</td><td>213.42 / 213.42</td><td><div class='bar'><span style='width:56.0%'></span></div>3.9倍</td></tr></table></div><p class="bad">反应题的“结构通过”仅表示非空文本；它没有完成应对行动，不能算答对。</p></article><article><h2>行动 · dev-d02-01</h2><p>格式拒绝；输出只是“不能宣布成功”的规则句，没有act/skip结构和行动正文。</p><h3>模型原始回答（5次相同）</h3><pre>不宣布动作已经成功</pre><details><summary>查看已审题完整输入</summary><pre>{
+  &quot;actorId&quot;: &quot;p1&quot;,
+  &quot;advance&quot;: {
+    &quot;inputText&quot;: &quot;推开侧门，进入值班室交钥匙。&quot;,
+    &quot;intentStatus&quot;: &quot;pending&quot;
+  },
+  &quot;confirmedPrefix&quot;: [],
+  &quot;protagonistId&quot;: &quot;p1&quot;,
+  &quot;world&quot;: {
+    &quot;characters&quot;: [
+      {
+        &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+        &quot;id&quot;: &quot;p1&quot;,
+        &quot;name&quot;: &quot;程青（甲）&quot;,
+        &quot;personality&quot;: [
+          &quot;守时，愿意按可行指令办事。&quot;
+        ],
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_a&quot;,
+          &quot;slot&quot;: &quot;地面&quot;
+        },
+        &quot;sanity&quot;: 65,
+        &quot;tasks&quot;: [
+          {
+            &quot;id&quot;: &quot;task_p1&quot;,
+            &quot;parentId&quot;: null,
+            &quot;status&quot;: &quot;pending&quot;,
+            &quot;text&quot;: &quot;将交接钥匙送至值班室。&quot;
+          }
+        ]
+      },
+      {
+        &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+        &quot;id&quot;: &quot;p2&quot;,
+        &quot;name&quot;: &quot;闻雪（乙）&quot;,
+        &quot;personality&quot;: [
+          &quot;耐心核对交接。&quot;
+        ],
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_b&quot;,
+          &quot;slot&quot;: &quot;地面&quot;
+        },
+        &quot;sanity&quot;: 65,
+        &quot;tasks&quot;: [
+          {
+            &quot;id&quot;: &quot;task_p2&quot;,
+            &quot;parentId&quot;: null,
+            &quot;status&quot;: &quot;pending&quot;,
+            &quot;text&quot;: &quot;等待接收钥匙。&quot;
+          }
+        ]
+      },
+      {
+        &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+        &quot;id&quot;: &quot;p3&quot;,
+        &quot;name&quot;: &quot;韩远（丙）&quot;,
+        &quot;personality&quot;: [
+          &quot;专注书面核查。&quot;
+        ],
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_a&quot;,
+          &quot;slot&quot;: &quot;地面&quot;
+        },
+        &quot;sanity&quot;: 65,
+        &quot;tasks&quot;: [
+          {
+            &quot;id&quot;: &quot;task_p3&quot;,
+            &quot;parentId&quot;: null,
+            &quot;status&quot;: &quot;pending&quot;,
+            &quot;text&quot;: &quot;核对墙上的闭馆清单。&quot;
+          }
+        ]
+      }
+    ],
+    &quot;items&quot;: [
+      {
+        &quot;id&quot;: &quot;item_1&quot;,
+        &quot;name&quot;: &quot;交接钥匙&quot;,
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;p1&quot;,
+          &quot;slot&quot;: &quot;可见位置&quot;
+        }
+      },
+      {
+        &quot;id&quot;: &quot;item_2&quot;,
+        &quot;name&quot;: &quot;侧门&quot;,
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_a&quot;,
+          &quot;slot&quot;: &quot;可见位置&quot;
+        }
+      }
+    ],
+    &quot;places&quot;: [
+      {
+        &quot;id&quot;: &quot;loc_outer&quot;,
+        &quot;name&quot;: &quot;旧城展馆&quot;,
+        &quot;parentId&quot;: null
+      },
+      {
+        &quot;id&quot;: &quot;loc_a&quot;,
+        &quot;name&quot;: &quot;侧廊，侧门已解锁且可推开&quot;,
+        &quot;parentId&quot;: &quot;loc_outer&quot;
+      },
+      {
+        &quot;id&quot;: &quot;loc_b&quot;,
+        &quot;name&quot;: &quot;值班室&quot;,
+        &quot;parentId&quot;: &quot;loc_outer&quot;
+      }
+    ],
+    &quot;time&quot;: &quot;2031-04-18T10:20:00+08:00&quot;
+  }
+}</pre></details><details><summary>查看原判据</summary><pre>{
+  &quot;acceptableAlternatives&quot;: [],
+  &quot;expectedCall&quot;: true,
+  &quot;forbidden&quot;: [
+    &quot;把钥匙交接已完成当作输入中自带事实。&quot;
+  ],
+  &quot;kind&quot;: &quot;act&quot;,
+  &quot;mustRespect&quot;: [
+    &quot;可以尝试推门并交接，但描述为行动意图，不能预先宣布交接成功。&quot;
+  ]
+}</pre></details><details><summary>查看5次完整原始记录</summary><pre>[
+  {
+    &quot;activeStage&quot;: &quot;decode_and_validate&quot;,
+    &quot;arm&quot;: &quot;M02-direct-zero-shot&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-01&quot;,
+    &quot;configSha256&quot;: &quot;1f4c226fdbbc8c189841f814b95d25f75816d3d9bb62f9d761f77f7e34ff17a4&quot;,
+    &quot;decodeAndValidateMs&quot;: 0.7729579956503585,
+    &quot;deviceId&quot;: &quot;arm64-cpu-1thread&quot;,
+    &quot;elapsedMs&quot;: 159.52629200182855,
+    &quot;encodeMs&quot;: 0.9588750108378008,
+    &quot;epoch&quot;: 1,
+    &quot;finishedWithEos&quot;: true,
+    &quot;fullRequestMeasured&quot;: false,
+    &quot;generateMs&quot;: 157.15308400103822,
+    &quot;generationCompleted&quot;: true,
+    &quot;generationPerformed&quot;: true,
+    &quot;generationStarted&quot;: true,
+    &quot;generationStartedAt&quot;: &quot;2026-11-01T15:46:25.111744+00:00&quot;,
+    &quot;generationStartedMonotonicNs&quot;: 116252950264083,
+    &quot;inputTokens&quot;: 593,
+    &quot;journalUpdatesIncludedInElapsedMs&quot;: true,
+    &quot;losslessRoundTripMatched&quot;: true,
+    &quot;modelId&quot;: &quot;IDEA-CCNL/Randeng-T5-77M-MultiTask-Chinese&quot;,
+    &quot;modelInputSha256&quot;: &quot;3c54ae85fcffed894360b9ff317588182a014b7387679beea863d4feac9cccf8&quot;,
+    &quot;modelRevision&quot;: &quot;06d379d7375245f31cfb87166eff134cfeb5dead&quot;,
+    &quot;outputTokenIds&quot;: [
+      0,
+      259,
+      785,
+      12968,
+      16621,
+      4116,
+      4579,
+      1
+    ],
+    &quot;outputTokensExcludingDecoderStart&quot;: 7,
+    &quot;parseError&quot;: {
+      &quot;message&quot;: &quot;invalid JSON: Expecting value: line 1 column 1 (char 0)&quot;,
+      &quot;type&quot;: &quot;LabValidationError&quot;
+    },
+    &quot;peakResidentMiB&quot;: 634.171875,
+    &quot;prompt&quot;: &quot;根据完整世界、任务和个性判断当前人物行动。pending输入需重新判断可行性；consumed/expired不重复消费。只输出JSON {\&quot;kind\&quot;:\&quot;act\&quot;,\&quot;text\&quot;:\&quot;尝试的动作\&quot;}或{\&quot;kind\&quot;:\&quot;skip\&quot;}，不宣布动作已经成功。\n完整资料以表格编码：列为字段，行为记录；同文编号引用共用文本。\n{\&quot;共用文本\&quot;:[\&quot;衣物完整，双手可自由活动，无已知伤势。\&quot;],\&quot;格式\&quot;:\&quot;无损表格1\&quot;,\&quot;资料\&quot;:{\&quot;世界\&quot;:{\&quot;人物\&quot;:{\&quot;列\&quot;:[\&quot;外貌\&quot;,\&quot;编号\&quot;,\&quot;名称\&quot;,\&quot;个性\&quot;,\&quot;位置\&quot;,\&quot;理智\&quot;,\&quot;任务\&quot;],\&quot;行\&quot;:[[{\&quot;同文\&quot;:0},\&quot;p1\&quot;,\&quot;程青（甲）\&quot;,[\&quot;守时，愿意按可行指令办事。\&quot;],{\&quot;容器\&quot;:\&quot;loc_a\&quot;,\&quot;部位\&quot;:\&quot;地面\&quot;},65,[{\&quot;上级\&quot;:null,\&quot;正文\&quot;:\&quot;将交接钥匙送至值班室。\&quot;,\&quot;状态\&quot;:\&quot;pending\&quot;,\&quot;编号\&quot;:\&quot;task_p1\&quot;}]],[{\&quot;同文\&quot;:0},\&quot;p2\&quot;,\&quot;闻雪（乙）\&quot;,[\&quot;耐心核对交接。\&quot;],{\&quot;容器\&quot;:\&quot;loc_b\&quot;,\&quot;部位\&quot;:\&quot;地面\&quot;},65,[{\&quot;上级\&quot;:null,\&quot;正文\&quot;:\&quot;等待接收钥匙。\&quot;,\&quot;状态\&quot;:\&quot;pending\&quot;,\&quot;编号\&quot;:\&quot;task_p2\&quot;}]],[{\&quot;同文\&quot;:0},\&quot;p3\&quot;,\&quot;韩远（丙）\&quot;,[\&quot;专注书面核查。\&quot;],{\&quot;容器\&quot;:\&quot;loc_a\&quot;,\&quot;部位\&quot;:\&quot;地面\&quot;},65,[{\&quot;上级\&quot;:null,\&quot;正文\&quot;:\&quot;核对墙上的闭馆清单。\&quot;,\&quot;状态\&quot;:\&quot;pending\&quot;,\&quot;编号\&quot;:\&quot;task_p3\&quot;}]]]},\&quot;地点\&quot;:{\&quot;列\&quot;:[\&quot;编号\&quot;,\&quot;名称\&quot;,\&quot;上级\&quot;],\&quot;行\&quot;:[[\&quot;loc_outer\&quot;,\&quot;旧城展馆\&quot;,null],[\&quot;loc_a\&quot;,\&quot;侧廊，侧门已解锁且可推开\&quot;,\&quot;loc_outer\&quot;],[\&quot;loc_b\&quot;,\&quot;值班室\&quot;,\&quot;loc_outer\&quot;]]},\&quot;时间\&quot;:\&quot;2031-04-18T10:20:00+08:00\&quot;,\&quot;物品\&quot;:{\&quot;列\&quot;:[\&quot;编号\&quot;,\&quot;名称\&quot;,\&quot;位置\&quot;],\&quot;行\&quot;:[[\&quot;item_1\&quot;,\&quot;交接钥匙\&quot;,{\&quot;容器\&quot;:\&quot;p1\&quot;,\&quot;部位\&quot;:\&quot;可见位置\&quot;}],[\&quot;item_2\&quot;,\&quot;侧门\&quot;,{\&quot;容器\&quot;:\&quot;loc_a\&quot;,\&quot;部位\&quot;:\&quot;可见位置\&quot;}]]}},\&quot;主角\&quot;:\&quot;p1\&quot;,\&quot;冻结前缀\&quot;:[],\&quot;当前人物\&quot;:\&quot;p1\&quot;,\&quot;本次输入\&quot;:{\&quot;玩家原文\&quot;:\&quot;推开侧门，进入值班室交钥匙。\&quot;,\&quot;输入状态\&quot;:\&quot;pending\&quot;}}}&quot;,
+    &quot;promptSha256&quot;: &quot;56f7b63528c6ef36762516a0e7b214b66ba3bbea62ee406dbee03ea8b6e176fb&quot;,
+    &quot;raw&quot;: &quot;不宣布动作已经成功&quot;,
+    &quot;rawUtf8Sha256&quot;: &quot;4bc83cc5b092c8521eaca9b69297b5852c651eb136a0e21ab19266b47c9182d0&quot;,
+    &quot;repeat&quot;: 0,
+    &quot;runId&quot;: &quot;m02-dev42-20261101-r4&quot;,
+    &quot;semanticReview&quot;: &quot;pending_not_automatically_approved&quot;,
+    &quot;serializedInputSha256&quot;: &quot;18ce49c21dd8a5e5d02be776bf8d0a62d53cead95937d2c4c5874de465f54f3f&quot;,
+    &quot;settledAt&quot;: &quot;2026-11-01T15:46:25.269679+00:00&quot;,
+    &quot;settledElapsedMs&quot;: 159.52629200182855,
+    &quot;settledMonotonicNs&quot;: 116253108204041,
+    &quot;sourceGroup&quot;: &quot;d-origin-d02-01&quot;,
+    &quot;stage&quot;: &quot;actor_opportunity_before_action_confirmation&quot;,
+    &quot;startedAt&quot;: &quot;2026-11-01T15:46:25.110165+00:00&quot;,
+    &quot;startedMonotonicNs&quot;: 116252948686125,
+    &quot;status&quot;: &quot;invalid_output&quot;,
+    &quot;structureStatus&quot;: &quot;invalid&quot;,
+    &quot;task&quot;: &quot;D02&quot;
+  },
+  {
+    &quot;activeStage&quot;: &quot;decode_and_validate&quot;,
+    &quot;arm&quot;: &quot;M02-direct-zero-shot&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-01&quot;,
+    &quot;configSha256&quot;: &quot;1f4c226fdbbc8c189841f814b95d25f75816d3d9bb62f9d761f77f7e34ff17a4&quot;,
+    &quot;decodeAndValidateMs&quot;: 0.9165420051431283,
+    &quot;deviceId&quot;: &quot;arm64-cpu-1thread&quot;,
+    &quot;elapsedMs&quot;: 153.13779200369027,
+    &quot;encodeMs&quot;: 1.0218750103376806,
+    &quot;epoch&quot;: 1,
+    &quot;finishedWithEos&quot;: true,
+    &quot;fullRequestMeasured&quot;: false,
+    &quot;generateMs&quot;: 150.50587500445545,
+    &quot;generationCompleted&quot;: true,
+    &quot;generationPerformed&quot;: true,
+    &quot;generationStarted&quot;: true,
+    &quot;generationStartedAt&quot;: &quot;2026-11-01T15:46:25.910477+00:00&quot;,
+    &quot;generationStartedMonotonicNs&quot;: 116253748988500,
+    &quot;inputTokens&quot;: 593,
+    &quot;journalUpdatesIncludedInElapsedMs&quot;: true,
+    &quot;losslessRoundTripMatched&quot;: true,
+    &quot;modelId&quot;: &quot;IDEA-CCNL/Randeng-T5-77M-MultiTask-Chinese&quot;,
+    &quot;modelInputSha256&quot;: &quot;3c54ae85fcffed894360b9ff317588182a014b7387679beea863d4feac9cccf8&quot;,
+    &quot;modelRevision&quot;: &quot;06d379d7375245f31cfb87166eff134cfeb5dead&quot;,
+    &quot;outputTokenIds&quot;: [
+      0,
+      259,
+      785,
+      12968,
+      16621,
+      4116,
+      4579,
+      1
+    ],
+    &quot;outputTokensExcludingDecoderStart&quot;: 7,
+    &quot;parseError&quot;: {
+      &quot;message&quot;: &quot;invalid JSON: Expecting value: line 1 column 1 (char 0)&quot;,
+      &quot;type&quot;: &quot;LabValidationError&quot;
+    },
+    &quot;peakResidentMiB&quot;: 755.0625,
+    &quot;prompt&quot;: &quot;根据完整世界、任务和个性判断当前人物行动。pending输入需重新判断可行性；consumed/expired不重复消费。只输出JSON {\&quot;kind\&quot;:\&quot;act\&quot;,\&quot;text\&quot;:\&quot;尝试的动作\&quot;}或{\&quot;kind\&quot;:\&quot;skip\&quot;}，不宣布动作已经成功。\n完整资料以表格编码：列为字段，行为记录；同文编号引用共用文本。\n{\&quot;共用文本\&quot;:[\&quot;衣物完整，双手可自由活动，无已知伤势。\&quot;],\&quot;格式\&quot;:\&quot;无损表格1\&quot;,\&quot;资料\&quot;:{\&quot;世界\&quot;:{\&quot;人物\&quot;:{\&quot;列\&quot;:[\&quot;外貌\&quot;,\&quot;编号\&quot;,\&quot;名称\&quot;,\&quot;个性\&quot;,\&quot;位置\&quot;,\&quot;理智\&quot;,\&quot;任务\&quot;],\&quot;行\&quot;:[[{\&quot;同文\&quot;:0},\&quot;p1\&quot;,\&quot;程青（甲）\&quot;,[\&quot;守时，愿意按可行指令办事。\&quot;],{\&quot;容器\&quot;:\&quot;loc_a\&quot;,\&quot;部位\&quot;:\&quot;地面\&quot;},65,[{\&quot;上级\&quot;:null,\&quot;正文\&quot;:\&quot;将交接钥匙送至值班室。\&quot;,\&quot;状态\&quot;:\&quot;pending\&quot;,\&quot;编号\&quot;:\&quot;task_p1\&quot;}]],[{\&quot;同文\&quot;:0},\&quot;p2\&quot;,\&quot;闻雪（乙）\&quot;,[\&quot;耐心核对交接。\&quot;],{\&quot;容器\&quot;:\&quot;loc_b\&quot;,\&quot;部位\&quot;:\&quot;地面\&quot;},65,[{\&quot;上级\&quot;:null,\&quot;正文\&quot;:\&quot;等待接收钥匙。\&quot;,\&quot;状态\&quot;:\&quot;pending\&quot;,\&quot;编号\&quot;:\&quot;task_p2\&quot;}]],[{\&quot;同文\&quot;:0},\&quot;p3\&quot;,\&quot;韩远（丙）\&quot;,[\&quot;专注书面核查。\&quot;],{\&quot;容器\&quot;:\&quot;loc_a\&quot;,\&quot;部位\&quot;:\&quot;地面\&quot;},65,[{\&quot;上级\&quot;:null,\&quot;正文\&quot;:\&quot;核对墙上的闭馆清单。\&quot;,\&quot;状态\&quot;:\&quot;pending\&quot;,\&quot;编号\&quot;:\&quot;task_p3\&quot;}]]]},\&quot;地点\&quot;:{\&quot;列\&quot;:[\&quot;编号\&quot;,\&quot;名称\&quot;,\&quot;上级\&quot;],\&quot;行\&quot;:[[\&quot;loc_outer\&quot;,\&quot;旧城展馆\&quot;,null],[\&quot;loc_a\&quot;,\&quot;侧廊，侧门已解锁且可推开\&quot;,\&quot;loc_outer\&quot;],[\&quot;loc_b\&quot;,\&quot;值班室\&quot;,\&quot;loc_outer\&quot;]]},\&quot;时间\&quot;:\&quot;2031-04-18T10:20:00+08:00\&quot;,\&quot;物品\&quot;:{\&quot;列\&quot;:[\&quot;编号\&quot;,\&quot;名称\&quot;,\&quot;位置\&quot;],\&quot;行\&quot;:[[\&quot;item_1\&quot;,\&quot;交接钥匙\&quot;,{\&quot;容器\&quot;:\&quot;p1\&quot;,\&quot;部位\&quot;:\&quot;可见位置\&quot;}],[\&quot;item_2\&quot;,\&quot;侧门\&quot;,{\&quot;容器\&quot;:\&quot;loc_a\&quot;,\&quot;部位\&quot;:\&quot;可见位置\&quot;}]]}},\&quot;主角\&quot;:\&quot;p1\&quot;,\&quot;冻结前缀\&quot;:[],\&quot;当前人物\&quot;:\&quot;p1\&quot;,\&quot;本次输入\&quot;:{\&quot;玩家原文\&quot;:\&quot;推开侧门，进入值班室交钥匙。\&quot;,\&quot;输入状态\&quot;:\&quot;pending\&quot;}}}&quot;,
+    &quot;promptSha256&quot;: &quot;56f7b63528c6ef36762516a0e7b214b66ba3bbea62ee406dbee03ea8b6e176fb&quot;,
+    &quot;raw&quot;: &quot;不宣布动作已经成功&quot;,
+    &quot;rawUtf8Sha256&quot;: &quot;4bc83cc5b092c8521eaca9b69297b5852c651eb136a0e21ab19266b47c9182d0&quot;,
+    &quot;repeat&quot;: 1,
+    &quot;runId&quot;: &quot;m02-dev42-20261101-r4&quot;,
+    &quot;semanticReview&quot;: &quot;pending_not_automatically_approved&quot;,
+    &quot;serializedInputSha256&quot;: &quot;18ce49c21dd8a5e5d02be776bf8d0a62d53cead95937d2c4c5874de465f54f3f&quot;,
+    &quot;settledAt&quot;: &quot;2026-11-01T15:46:26.061909+00:00&quot;,
+    &quot;settledElapsedMs&quot;: 153.13779200369027,
+    &quot;settledMonotonicNs&quot;: 116253900422916,
+    &quot;sourceGroup&quot;: &quot;d-origin-d02-01&quot;,
+    &quot;stage&quot;: &quot;actor_opportunity_before_action_confirmation&quot;,
+    &quot;startedAt&quot;: &quot;2026-11-01T15:46:25.908780+00:00&quot;,
+    &quot;startedMonotonicNs&quot;: 116253747290833,
+    &quot;status&quot;: &quot;invalid_output&quot;,
+    &quot;structureStatus&quot;: &quot;invalid&quot;,
+    &quot;task&quot;: &quot;D02&quot;
+  },
+  {
+    &quot;activeStage&quot;: &quot;decode_and_validate&quot;,
+    &quot;arm&quot;: &quot;M02-direct-zero-shot&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-01&quot;,
+    &quot;configSha256&quot;: &quot;1f4c226fdbbc8c189841f814b95d25f75816d3d9bb62f9d761f77f7e34ff17a4&quot;,
+    &quot;decodeAndValidateMs&quot;: 1.06637499993667,
+    &quot;deviceId&quot;: &quot;arm64-cpu-1thread&quot;,
+    &quot;elapsedMs&quot;: 155.10150000045542,
+    &quot;encodeMs&quot;: 1.1700409959303215,
+    &quot;epoch&quot;: 1,
+    &quot;finishedWithEos&quot;: true,
+    &quot;fullRequestMeasured&quot;: false,
+    &quot;generateMs&quot;: 151.7757499968866,
+    &quot;generationCompleted&quot;: true,
+    &quot;generationPerformed&quot;: true,
+    &quot;generationStarted&quot;: true,
+    &quot;generationStartedAt&quot;: &quot;2026-11-01T15:46:26.714949+00:00&quot;,
+    &quot;generationStartedMonotonicNs&quot;: 116254553451833,
+    &quot;inputTokens&quot;: 593,
+    &quot;journalUpdatesIncludedInElapsedMs&quot;: true,
+    &quot;losslessRoundTripMatched&quot;: true,
+    &quot;modelId&quot;: &quot;IDEA-CCNL/Randeng-T5-77M-MultiTask-Chinese&quot;,
+    &quot;modelInputSha256&quot;: &quot;3c54ae85fcffed894360b9ff317588182a014b7387679beea863d4feac9cccf8&quot;,
+    &quot;modelRevision&quot;: &quot;06d379d7375245f31cfb87166eff134cfeb5dead&quot;,
+    &quot;outputTokenIds&quot;: [
+      0,
+      259,
+      785,
+      12968,
+      16621,
+      4116,
+      4579,
+      1
+    ],
+    &quot;outputTokensExcludingDecoderStart&quot;: 7,
+    &quot;parseError&quot;: {
+      &quot;message&quot;: &quot;invalid JSON: Expecting value: line 1 column 1 (char 0)&quot;,
+      &quot;type&quot;: &quot;LabValidationError&quot;
+    },
+    &quot;peakResidentMiB&quot;: 770.8125,
+    &quot;prompt&quot;: &quot;根据完整世界、任务和个性判断当前人物行动。pending输入需重新判断可行性；consumed/expired不重复消费。只输出JSON {\&quot;kind\&quot;:\&quot;act\&quot;,\&quot;text\&quot;:\&quot;尝试的动作\&quot;}或{\&quot;kind\&quot;:\&quot;skip\&quot;}，不宣布动作已经成功。\n完整资料以表格编码：列为字段，行为记录；同文编号引用共用文本。\n{\&quot;共用文本\&quot;:[\&quot;衣物完整，双手可自由活动，无已知伤势。\&quot;],\&quot;格式\&quot;:\&quot;无损表格1\&quot;,\&quot;资料\&quot;:{\&quot;世界\&quot;:{\&quot;人物\&quot;:{\&quot;列\&quot;:[\&quot;外貌\&quot;,\&quot;编号\&quot;,\&quot;名称\&quot;,\&quot;个性\&quot;,\&quot;位置\&quot;,\&quot;理智\&quot;,\&quot;任务\&quot;],\&quot;行\&quot;:[[{\&quot;同文\&quot;:0},\&quot;p1\&quot;,\&quot;程青（甲）\&quot;,[\&quot;守时，愿意按可行指令办事。\&quot;],{\&quot;容器\&quot;:\&quot;loc_a\&quot;,\&quot;部位\&quot;:\&quot;地面\&quot;},65,[{\&quot;上级\&quot;:null,\&quot;正文\&quot;:\&quot;将交接钥匙送至值班室。\&quot;,\&quot;状态\&quot;:\&quot;pending\&quot;,\&quot;编号\&quot;:\&quot;task_p1\&quot;}]],[{\&quot;同文\&quot;:0},\&quot;p2\&quot;,\&quot;闻雪（乙）\&quot;,[\&quot;耐心核对交接。\&quot;],{\&quot;容器\&quot;:\&quot;loc_b\&quot;,\&quot;部位\&quot;:\&quot;地面\&quot;},65,[{\&quot;上级\&quot;:null,\&quot;正文\&quot;:\&quot;等待接收钥匙。\&quot;,\&quot;状态\&quot;:\&quot;pending\&quot;,\&quot;编号\&quot;:\&quot;task_p2\&quot;}]],[{\&quot;同文\&quot;:0},\&quot;p3\&quot;,\&quot;韩远（丙）\&quot;,[\&quot;专注书面核查。\&quot;],{\&quot;容器\&quot;:\&quot;loc_a\&quot;,\&quot;部位\&quot;:\&quot;地面\&quot;},65,[{\&quot;上级\&quot;:null,\&quot;正文\&quot;:\&quot;核对墙上的闭馆清单。\&quot;,\&quot;状态\&quot;:\&quot;pending\&quot;,\&quot;编号\&quot;:\&quot;task_p3\&quot;}]]]},\&quot;地点\&quot;:{\&quot;列\&quot;:[\&quot;编号\&quot;,\&quot;名称\&quot;,\&quot;上级\&quot;],\&quot;行\&quot;:[[\&quot;loc_outer\&quot;,\&quot;旧城展馆\&quot;,null],[\&quot;loc_a\&quot;,\&quot;侧廊，侧门已解锁且可推开\&quot;,\&quot;loc_outer\&quot;],[\&quot;loc_b\&quot;,\&quot;值班室\&quot;,\&quot;loc_outer\&quot;]]},\&quot;时间\&quot;:\&quot;2031-04-18T10:20:00+08:00\&quot;,\&quot;物品\&quot;:{\&quot;列\&quot;:[\&quot;编号\&quot;,\&quot;名称\&quot;,\&quot;位置\&quot;],\&quot;行\&quot;:[[\&quot;item_1\&quot;,\&quot;交接钥匙\&quot;,{\&quot;容器\&quot;:\&quot;p1\&quot;,\&quot;部位\&quot;:\&quot;可见位置\&quot;}],[\&quot;item_2\&quot;,\&quot;侧门\&quot;,{\&quot;容器\&quot;:\&quot;loc_a\&quot;,\&quot;部位\&quot;:\&quot;可见位置\&quot;}]]}},\&quot;主角\&quot;:\&quot;p1\&quot;,\&quot;冻结前缀\&quot;:[],\&quot;当前人物\&quot;:\&quot;p1\&quot;,\&quot;本次输入\&quot;:{\&quot;玩家原文\&quot;:\&quot;推开侧门，进入值班室交钥匙。\&quot;,\&quot;输入状态\&quot;:\&quot;pending\&quot;}}}&quot;,
+    &quot;promptSha256&quot;: &quot;56f7b63528c6ef36762516a0e7b214b66ba3bbea62ee406dbee03ea8b6e176fb&quot;,
+    &quot;raw&quot;: &quot;不宣布动作已经成功&quot;,
+    &quot;rawUtf8Sha256&quot;: &quot;4bc83cc5b092c8521eaca9b69297b5852c651eb136a0e21ab19266b47c9182d0&quot;,
+    &quot;repeat&quot;: 2,
+    &quot;runId&quot;: &quot;m02-dev42-20261101-r4&quot;,
+    &quot;semanticReview&quot;: &quot;pending_not_automatically_approved&quot;,
+    &quot;serializedInputSha256&quot;: &quot;18ce49c21dd8a5e5d02be776bf8d0a62d53cead95937d2c4c5874de465f54f3f&quot;,
+    &quot;settledAt&quot;: &quot;2026-11-01T15:46:26.867800+00:00&quot;,
+    &quot;settledElapsedMs&quot;: 155.10150000045542,
+    &quot;settledMonotonicNs&quot;: 116254706309291,
+    &quot;sourceGroup&quot;: &quot;d-origin-d02-01&quot;,
+    &quot;stage&quot;: &quot;actor_opportunity_before_action_confirmation&quot;,
+    &quot;startedAt&quot;: &quot;2026-11-01T15:46:26.712711+00:00&quot;,
+    &quot;startedMonotonicNs&quot;: 116254551212541,
+    &quot;status&quot;: &quot;invalid_output&quot;,
+    &quot;structureStatus&quot;: &quot;invalid&quot;,
+    &quot;task&quot;: &quot;D02&quot;
+  },
+  {
+    &quot;activeStage&quot;: &quot;decode_and_validate&quot;,
+    &quot;arm&quot;: &quot;M02-direct-zero-shot&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-01&quot;,
+    &quot;configSha256&quot;: &quot;1f4c226fdbbc8c189841f814b95d25f75816d3d9bb62f9d761f77f7e34ff17a4&quot;,
+    &quot;decodeAndValidateMs&quot;: 1.1468339944258332,
+    &quot;deviceId&quot;: &quot;arm64-cpu-1thread&quot;,
+    &quot;elapsedMs&quot;: 153.07645799475722,
+    &quot;encodeMs&quot;: 1.7600000137463212,
+    &quot;epoch&quot;: 1,
+    &quot;finishedWithEos&quot;: true,
+    &quot;fullRequestMeasured&quot;: false,
+    &quot;generateMs&quot;: 148.6418330023298,
+    &quot;generationCompleted&quot;: true,
+    &quot;generationPerformed&quot;: true,
+    &quot;generationStarted&quot;: true,
+    &quot;generationStartedAt&quot;: &quot;2026-11-01T15:46:27.527412+00:00&quot;,
+    &quot;generationStartedMonotonicNs&quot;: 116255365907083,
+    &quot;inputTokens&quot;: 593,
+    &quot;journalUpdatesIncludedInElapsedMs&quot;: true,
+    &quot;losslessRoundTripMatched&quot;: true,
+    &quot;modelId&quot;: &quot;IDEA-CCNL/Randeng-T5-77M-MultiTask-Chinese&quot;,
+    &quot;modelInputSha256&quot;: &quot;3c54ae85fcffed894360b9ff317588182a014b7387679beea863d4feac9cccf8&quot;,
+    &quot;modelRevision&quot;: &quot;06d379d7375245f31cfb87166eff134cfeb5dead&quot;,
+    &quot;outputTokenIds&quot;: [
+      0,
+      259,
+      785,
+      12968,
+      16621,
+      4116,
+      4579,
+      1
+    ],
+    &quot;outputTokensExcludingDecoderStart&quot;: 7,
+    &quot;parseError&quot;: {
+      &quot;message&quot;: &quot;invalid JSON: Expecting value: line 1 column 1 (char 0)&quot;,
+      &quot;type&quot;: &quot;LabValidationError&quot;
+    },
+    &quot;peakResidentMiB&quot;: 776.15625,
+    &quot;prompt&quot;: &quot;根据完整世界、任务和个性判断当前人物行动。pending输入需重新判断可行性；consumed/expired不重复消费。只输出JSON {\&quot;kind\&quot;:\&quot;act\&quot;,\&quot;text\&quot;:\&quot;尝试的动作\&quot;}或{\&quot;kind\&quot;:\&quot;skip\&quot;}，不宣布动作已经成功。\n完整资料以表格编码：列为字段，行为记录；同文编号引用共用文本。\n{\&quot;共用文本\&quot;:[\&quot;衣物完整，双手可自由活动，无已知伤势。\&quot;],\&quot;格式\&quot;:\&quot;无损表格1\&quot;,\&quot;资料\&quot;:{\&quot;世界\&quot;:{\&quot;人物\&quot;:{\&quot;列\&quot;:[\&quot;外貌\&quot;,\&quot;编号\&quot;,\&quot;名称\&quot;,\&quot;个性\&quot;,\&quot;位置\&quot;,\&quot;理智\&quot;,\&quot;任务\&quot;],\&quot;行\&quot;:[[{\&quot;同文\&quot;:0},\&quot;p1\&quot;,\&quot;程青（甲）\&quot;,[\&quot;守时，愿意按可行指令办事。\&quot;],{\&quot;容器\&quot;:\&quot;loc_a\&quot;,\&quot;部位\&quot;:\&quot;地面\&quot;},65,[{\&quot;上级\&quot;:null,\&quot;正文\&quot;:\&quot;将交接钥匙送至值班室。\&quot;,\&quot;状态\&quot;:\&quot;pending\&quot;,\&quot;编号\&quot;:\&quot;task_p1\&quot;}]],[{\&quot;同文\&quot;:0},\&quot;p2\&quot;,\&quot;闻雪（乙）\&quot;,[\&quot;耐心核对交接。\&quot;],{\&quot;容器\&quot;:\&quot;loc_b\&quot;,\&quot;部位\&quot;:\&quot;地面\&quot;},65,[{\&quot;上级\&quot;:null,\&quot;正文\&quot;:\&quot;等待接收钥匙。\&quot;,\&quot;状态\&quot;:\&quot;pending\&quot;,\&quot;编号\&quot;:\&quot;task_p2\&quot;}]],[{\&quot;同文\&quot;:0},\&quot;p3\&quot;,\&quot;韩远（丙）\&quot;,[\&quot;专注书面核查。\&quot;],{\&quot;容器\&quot;:\&quot;loc_a\&quot;,\&quot;部位\&quot;:\&quot;地面\&quot;},65,[{\&quot;上级\&quot;:null,\&quot;正文\&quot;:\&quot;核对墙上的闭馆清单。\&quot;,\&quot;状态\&quot;:\&quot;pending\&quot;,\&quot;编号\&quot;:\&quot;task_p3\&quot;}]]]},\&quot;地点\&quot;:{\&quot;列\&quot;:[\&quot;编号\&quot;,\&quot;名称\&quot;,\&quot;上级\&quot;],\&quot;行\&quot;:[[\&quot;loc_outer\&quot;,\&quot;旧城展馆\&quot;,null],[\&quot;loc_a\&quot;,\&quot;侧廊，侧门已解锁且可推开\&quot;,\&quot;loc_outer\&quot;],[\&quot;loc_b\&quot;,\&quot;值班室\&quot;,\&quot;loc_outer\&quot;]]},\&quot;时间\&quot;:\&quot;2031-04-18T10:20:00+08:00\&quot;,\&quot;物品\&quot;:{\&quot;列\&quot;:[\&quot;编号\&quot;,\&quot;名称\&quot;,\&quot;位置\&quot;],\&quot;行\&quot;:[[\&quot;item_1\&quot;,\&quot;交接钥匙\&quot;,{\&quot;容器\&quot;:\&quot;p1\&quot;,\&quot;部位\&quot;:\&quot;可见位置\&quot;}],[\&quot;item_2\&quot;,\&quot;侧门\&quot;,{\&quot;容器\&quot;:\&quot;loc_a\&quot;,\&quot;部位\&quot;:\&quot;可见位置\&quot;}]]}},\&quot;主角\&quot;:\&quot;p1\&quot;,\&quot;冻结前缀\&quot;:[],\&quot;当前人物\&quot;:\&quot;p1\&quot;,\&quot;本次输入\&quot;:{\&quot;玩家原文\&quot;:\&quot;推开侧门，进入值班室交钥匙。\&quot;,\&quot;输入状态\&quot;:\&quot;pending\&quot;}}}&quot;,
+    &quot;promptSha256&quot;: &quot;56f7b63528c6ef36762516a0e7b214b66ba3bbea62ee406dbee03ea8b6e176fb&quot;,
+    &quot;raw&quot;: &quot;不宣布动作已经成功&quot;,
+    &quot;rawUtf8Sha256&quot;: &quot;4bc83cc5b092c8521eaca9b69297b5852c651eb136a0e21ab19266b47c9182d0&quot;,
+    &quot;repeat&quot;: 3,
+    &quot;runId&quot;: &quot;m02-dev42-20261101-r4&quot;,
+    &quot;semanticReview&quot;: &quot;pending_not_automatically_approved&quot;,
+    &quot;serializedInputSha256&quot;: &quot;18ce49c21dd8a5e5d02be776bf8d0a62d53cead95937d2c4c5874de465f54f3f&quot;,
+    &quot;settledAt&quot;: &quot;2026-11-01T15:46:27.677209+00:00&quot;,
+    &quot;settledElapsedMs&quot;: 153.07645799475722,
+    &quot;settledMonotonicNs&quot;: 116255515704541,
+    &quot;sourceGroup&quot;: &quot;d-origin-d02-01&quot;,
+    &quot;stage&quot;: &quot;actor_opportunity_before_action_confirmation&quot;,
+    &quot;startedAt&quot;: &quot;2026-11-01T15:46:27.524140+00:00&quot;,
+    &quot;startedMonotonicNs&quot;: 116255362633041,
+    &quot;status&quot;: &quot;invalid_output&quot;,
+    &quot;structureStatus&quot;: &quot;invalid&quot;,
+    &quot;task&quot;: &quot;D02&quot;
+  },
+  {
+    &quot;activeStage&quot;: &quot;decode_and_validate&quot;,
+    &quot;arm&quot;: &quot;M02-direct-zero-shot&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-01&quot;,
+    &quot;configSha256&quot;: &quot;1f4c226fdbbc8c189841f814b95d25f75816d3d9bb62f9d761f77f7e34ff17a4&quot;,
+    &quot;decodeAndValidateMs&quot;: 1.7064169951481745,
+    &quot;deviceId&quot;: &quot;arm64-cpu-1thread&quot;,
+    &quot;elapsedMs&quot;: 158.49104199151043,
+    &quot;encodeMs&quot;: 1.6346250049537048,
+    &quot;epoch&quot;: 1,
+    &quot;finishedWithEos&quot;: true,
+    &quot;fullRequestMeasured&quot;: false,
+    &quot;generateMs&quot;: 153.31362500728574,
+    &quot;generationCompleted&quot;: true,
+    &quot;generationPerformed&quot;: true,
+    &quot;generationStarted&quot;: true,
+    &quot;generationStartedAt&quot;: &quot;2026-11-01T15:46:28.334142+00:00&quot;,
+    &quot;generationStartedMonotonicNs&quot;: 116256172629666,
+    &quot;inputTokens&quot;: 593,
+    &quot;journalUpdatesIncludedInElapsedMs&quot;: true,
+    &quot;losslessRoundTripMatched&quot;: true,
+    &quot;modelId&quot;: &quot;IDEA-CCNL/Randeng-T5-77M-MultiTask-Chinese&quot;,
+    &quot;modelInputSha256&quot;: &quot;3c54ae85fcffed894360b9ff317588182a014b7387679beea863d4feac9cccf8&quot;,
+    &quot;modelRevision&quot;: &quot;06d379d7375245f31cfb87166eff134cfeb5dead&quot;,
+    &quot;outputTokenIds&quot;: [
+      0,
+      259,
+      785,
+      12968,
+      16621,
+      4116,
+      4579,
+      1
+    ],
+    &quot;outputTokensExcludingDecoderStart&quot;: 7,
+    &quot;parseError&quot;: {
+      &quot;message&quot;: &quot;invalid JSON: Expecting value: line 1 column 1 (char 0)&quot;,
+      &quot;type&quot;: &quot;LabValidationError&quot;
+    },
+    &quot;peakResidentMiB&quot;: 784.03125,
+    &quot;prompt&quot;: &quot;根据完整世界、任务和个性判断当前人物行动。pending输入需重新判断可行性；consumed/expired不重复消费。只输出JSON {\&quot;kind\&quot;:\&quot;act\&quot;,\&quot;text\&quot;:\&quot;尝试的动作\&quot;}或{\&quot;kind\&quot;:\&quot;skip\&quot;}，不宣布动作已经成功。\n完整资料以表格编码：列为字段，行为记录；同文编号引用共用文本。\n{\&quot;共用文本\&quot;:[\&quot;衣物完整，双手可自由活动，无已知伤势。\&quot;],\&quot;格式\&quot;:\&quot;无损表格1\&quot;,\&quot;资料\&quot;:{\&quot;世界\&quot;:{\&quot;人物\&quot;:{\&quot;列\&quot;:[\&quot;外貌\&quot;,\&quot;编号\&quot;,\&quot;名称\&quot;,\&quot;个性\&quot;,\&quot;位置\&quot;,\&quot;理智\&quot;,\&quot;任务\&quot;],\&quot;行\&quot;:[[{\&quot;同文\&quot;:0},\&quot;p1\&quot;,\&quot;程青（甲）\&quot;,[\&quot;守时，愿意按可行指令办事。\&quot;],{\&quot;容器\&quot;:\&quot;loc_a\&quot;,\&quot;部位\&quot;:\&quot;地面\&quot;},65,[{\&quot;上级\&quot;:null,\&quot;正文\&quot;:\&quot;将交接钥匙送至值班室。\&quot;,\&quot;状态\&quot;:\&quot;pending\&quot;,\&quot;编号\&quot;:\&quot;task_p1\&quot;}]],[{\&quot;同文\&quot;:0},\&quot;p2\&quot;,\&quot;闻雪（乙）\&quot;,[\&quot;耐心核对交接。\&quot;],{\&quot;容器\&quot;:\&quot;loc_b\&quot;,\&quot;部位\&quot;:\&quot;地面\&quot;},65,[{\&quot;上级\&quot;:null,\&quot;正文\&quot;:\&quot;等待接收钥匙。\&quot;,\&quot;状态\&quot;:\&quot;pending\&quot;,\&quot;编号\&quot;:\&quot;task_p2\&quot;}]],[{\&quot;同文\&quot;:0},\&quot;p3\&quot;,\&quot;韩远（丙）\&quot;,[\&quot;专注书面核查。\&quot;],{\&quot;容器\&quot;:\&quot;loc_a\&quot;,\&quot;部位\&quot;:\&quot;地面\&quot;},65,[{\&quot;上级\&quot;:null,\&quot;正文\&quot;:\&quot;核对墙上的闭馆清单。\&quot;,\&quot;状态\&quot;:\&quot;pending\&quot;,\&quot;编号\&quot;:\&quot;task_p3\&quot;}]]]},\&quot;地点\&quot;:{\&quot;列\&quot;:[\&quot;编号\&quot;,\&quot;名称\&quot;,\&quot;上级\&quot;],\&quot;行\&quot;:[[\&quot;loc_outer\&quot;,\&quot;旧城展馆\&quot;,null],[\&quot;loc_a\&quot;,\&quot;侧廊，侧门已解锁且可推开\&quot;,\&quot;loc_outer\&quot;],[\&quot;loc_b\&quot;,\&quot;值班室\&quot;,\&quot;loc_outer\&quot;]]},\&quot;时间\&quot;:\&quot;2031-04-18T10:20:00+08:00\&quot;,\&quot;物品\&quot;:{\&quot;列\&quot;:[\&quot;编号\&quot;,\&quot;名称\&quot;,\&quot;位置\&quot;],\&quot;行\&quot;:[[\&quot;item_1\&quot;,\&quot;交接钥匙\&quot;,{\&quot;容器\&quot;:\&quot;p1\&quot;,\&quot;部位\&quot;:\&quot;可见位置\&quot;}],[\&quot;item_2\&quot;,\&quot;侧门\&quot;,{\&quot;容器\&quot;:\&quot;loc_a\&quot;,\&quot;部位\&quot;:\&quot;可见位置\&quot;}]]}},\&quot;主角\&quot;:\&quot;p1\&quot;,\&quot;冻结前缀\&quot;:[],\&quot;当前人物\&quot;:\&quot;p1\&quot;,\&quot;本次输入\&quot;:{\&quot;玩家原文\&quot;:\&quot;推开侧门，进入值班室交钥匙。\&quot;,\&quot;输入状态\&quot;:\&quot;pending\&quot;}}}&quot;,
+    &quot;promptSha256&quot;: &quot;56f7b63528c6ef36762516a0e7b214b66ba3bbea62ee406dbee03ea8b6e176fb&quot;,
+    &quot;raw&quot;: &quot;不宣布动作已经成功&quot;,
+    &quot;rawUtf8Sha256&quot;: &quot;4bc83cc5b092c8521eaca9b69297b5852c651eb136a0e21ab19266b47c9182d0&quot;,
+    &quot;repeat&quot;: 4,
+    &quot;runId&quot;: &quot;m02-dev42-20261101-r4&quot;,
+    &quot;semanticReview&quot;: &quot;pending_not_automatically_approved&quot;,
+    &quot;serializedInputSha256&quot;: &quot;18ce49c21dd8a5e5d02be776bf8d0a62d53cead95937d2c4c5874de465f54f3f&quot;,
+    &quot;settledAt&quot;: &quot;2026-11-01T15:46:28.489171+00:00&quot;,
+    &quot;settledElapsedMs&quot;: 158.49104199151043,
+    &quot;settledMonotonicNs&quot;: 116256327659416,
+    &quot;sourceGroup&quot;: &quot;d-origin-d02-01&quot;,
+    &quot;stage&quot;: &quot;actor_opportunity_before_action_confirmation&quot;,
+    &quot;startedAt&quot;: &quot;2026-11-01T15:46:28.330693+00:00&quot;,
+    &quot;startedMonotonicNs&quot;: 116256169182750,
+    &quot;status&quot;: &quot;invalid_output&quot;,
+    &quot;structureStatus&quot;: &quot;invalid&quot;,
+    &quot;task&quot;: &quot;D02&quot;
+  }
+]</pre></details></article><article><h2>目标 · dev-d03-01</h2><p>格式拒绝；没有返回目标集合，输出复述禁止事项。</p><h3>模型原始回答（5次相同）</h3><pre>不生成骰点、准入或未来行动</pre><details><summary>查看已审题完整输入</summary><pre>{
+  &quot;alreadyActedIds&quot;: [],
+  &quot;candidateIds&quot;: [
+    &quot;p1&quot;,
+    &quot;p2&quot;,
+    &quot;p3&quot;
+  ],
+  &quot;confirmedGroup&quot;: {
+    &quot;members&quot;: [
+      {
+        &quot;actionText&quot;: &quot;我按页码排好面前的干燥试印纸，不移动其他物品，也不呼唤任何人。&quot;,
+        &quot;memberId&quot;: &quot;p1&quot;
+      }
+    ]
+  },
+  &quot;knownPriorJudgments&quot;: [],
+  &quot;source&quot;: {
+    &quot;actionText&quot;: &quot;我按页码排好面前的干燥试印纸，不移动其他物品，也不呼唤任何人。&quot;,
+    &quot;memberId&quot;: &quot;p1&quot;
+  },
+  &quot;world&quot;: {
+    &quot;characters&quot;: [
+      {
+        &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+        &quot;id&quot;: &quot;p1&quot;,
+        &quot;name&quot;: &quot;宁芷（甲）&quot;,
+        &quot;personality&quot;: [
+          &quot;安静有序。&quot;
+        ],
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_a&quot;,
+          &quot;slot&quot;: &quot;地面&quot;
+        },
+        &quot;sanity&quot;: 65,
+        &quot;tasks&quot;: [
+          {
+            &quot;id&quot;: &quot;task_p1&quot;,
+            &quot;parentId&quot;: null,
+            &quot;status&quot;: &quot;pending&quot;,
+            &quot;text&quot;: &quot;整理自己的试印纸。&quot;
+          }
+        ]
+      },
+      {
+        &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+        &quot;id&quot;: &quot;p2&quot;,
+        &quot;name&quot;: &quot;俞衡（乙）&quot;,
+        &quot;personality&quot;: [
+          &quot;专注。&quot;
+        ],
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_b&quot;,
+          &quot;slot&quot;: &quot;地面&quot;
+        },
+        &quot;sanity&quot;: 65,
+        &quot;tasks&quot;: [
+          {
+            &quot;id&quot;: &quot;task_p2&quot;,
+            &quot;parentId&quot;: null,
+            &quot;status&quot;: &quot;pending&quot;,
+            &quot;text&quot;: &quot;装订另一批书页。&quot;
+          }
+        ]
+      },
+      {
+        &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+        &quot;id&quot;: &quot;p3&quot;,
+        &quot;name&quot;: &quot;宋晚（丙）&quot;,
+        &quot;personality&quot;: [
+          &quot;耐心。&quot;
+        ],
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_b&quot;,
+          &quot;slot&quot;: &quot;地面&quot;
+        },
+        &quot;sanity&quot;: 65,
+        &quot;tasks&quot;: [
+          {
+            &quot;id&quot;: &quot;task_p3&quot;,
+            &quot;parentId&quot;: null,
+            &quot;status&quot;: &quot;pending&quot;,
+            &quot;text&quot;: &quot;登记库存。&quot;
+          }
+        ]
+      }
+    ],
+    &quot;items&quot;: [
+      {
+        &quot;id&quot;: &quot;item_1&quot;,
+        &quot;name&quot;: &quot;试印纸&quot;,
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_a&quot;,
+          &quot;slot&quot;: &quot;可见位置&quot;
+        }
+      },
+      {
+        &quot;id&quot;: &quot;item_2&quot;,
+        &quot;name&quot;: &quot;装订线&quot;,
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_b&quot;,
+          &quot;slot&quot;: &quot;可见位置&quot;
+        }
+      }
+    ],
+    &quot;places&quot;: [
+      {
+        &quot;id&quot;: &quot;loc_outer&quot;,
+        &quot;name&quot;: &quot;版画工作间&quot;,
+        &quot;parentId&quot;: null
+      },
+      {
+        &quot;id&quot;: &quot;loc_a&quot;,
+        &quot;name&quot;: &quot;主角独用试印桌&quot;,
+        &quot;parentId&quot;: &quot;loc_outer&quot;
+      },
+      {
+        &quot;id&quot;: &quot;loc_b&quot;,
+        &quot;name&quot;: &quot;其他人的装订台&quot;,
+        &quot;parentId&quot;: &quot;loc_outer&quot;
+      }
+    ],
+    &quot;time&quot;: &quot;2031-04-18T10:20:00+08:00&quot;
+  }
+}</pre></details><details><summary>查看原判据</summary><pre>{
+  &quot;expectedCall&quot;: true,
+  &quot;forbidden&quot;: [
+    &quot;输出骰点或准入决定。&quot;,
+    &quot;因已经行动而漏掉仍受威胁的目标。&quot;
+  ],
+  &quot;mustRespect&quot;: [
+    &quot;完整检查已登记候选人物；已行动或未来未准入不抹掉当前真实牵连关系。&quot;
+  ],
+  &quot;targetIds&quot;: []
+}</pre></details><details><summary>查看5次完整原始记录</summary><pre>[
+  {
+    &quot;activeStage&quot;: &quot;decode_and_validate&quot;,
+    &quot;arm&quot;: &quot;M02-direct-zero-shot&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-01&quot;,
+    &quot;configSha256&quot;: &quot;1f4c226fdbbc8c189841f814b95d25f75816d3d9bb62f9d761f77f7e34ff17a4&quot;,
+    &quot;decodeAndValidateMs&quot;: 0.8598330023232847,
+    &quot;deviceId&quot;: &quot;arm64-cpu-1thread&quot;,
+    &quot;elapsedMs&quot;: 186.2594169942895,
+    &quot;encodeMs&quot;: 1.0797499999171123,
+    &quot;epoch&quot;: 1,
+    &quot;finishedWithEos&quot;: true,
+    &quot;fullRequestMeasured&quot;: false,
+    &quot;generateMs&quot;: 183.68770899542142,
+    &quot;generationCompleted&quot;: true,
+    &quot;generationPerformed&quot;: true,
+    &quot;generationStarted&quot;: true,
+    &quot;generationStartedAt&quot;: &quot;2026-11-01T15:46:25.271924+00:00&quot;,
+    &quot;generationStartedMonotonicNs&quot;: 116253110442250,
+    &quot;inputTokens&quot;: 618,
+    &quot;journalUpdatesIncludedInElapsedMs&quot;: true,
+    &quot;losslessRoundTripMatched&quot;: true,
+    &quot;modelId&quot;: &quot;IDEA-CCNL/Randeng-T5-77M-MultiTask-Chinese&quot;,
+    &quot;modelInputSha256&quot;: &quot;9f2165956f4c94d0966bb100dd536d2cb76bf1580440876fe3c544f8982c038f&quot;,
+    &quot;modelRevision&quot;: &quot;06d379d7375245f31cfb87166eff134cfeb5dead&quot;,
+    &quot;outputTokenIds&quot;: [
+      0,
+      259,
+      785,
+      15597,
+      29409,
+      1097,
+      287,
+      5572,
+      1542,
+      2303,
+      5337,
+      8662,
+      1
+    ],
+    &quot;outputTokensExcludingDecoderStart&quot;: 12,
+    &quot;parseError&quot;: {
+      &quot;message&quot;: &quot;invalid JSON: Expecting value: line 1 column 1 (char 0)&quot;,
+      &quot;type&quot;: &quot;LabValidationError&quot;
+    },
+    &quot;peakResidentMiB&quot;: 668.5625,
+    &quot;prompt&quot;: &quot;分析当前已冻结源行动会牵连完整名册中的谁，已行动者仍可被牵连。只输出JSON {\&quot;targets\&quot;:[{\&quot;targetId\&quot;:\&quot;人物ID\&quot;}]}，允许空集。不生成骰点、准入或未来行动。\n完整资料以表格编码：列为字段，行为记录；同文编号引用共用文本。\n{\&quot;共用文本\&quot;:[\&quot;我按页码排好面前的干燥试印纸，不移动其他物品，也不呼唤任何人。\&quot;,\&quot;衣物完整，双手可自由活动，无已知伤势。\&quot;],\&quot;格式\&quot;:\&quot;无损表格1\&quot;,\&quot;资料\&quot;:{\&quot;世界\&quot;:{\&quot;人物\&quot;:{\&quot;列\&quot;:[\&quot;外貌\&quot;,\&quot;编号\&quot;,\&quot;名称\&quot;,\&quot;个性\&quot;,\&quot;位置\&quot;,\&quot;理智\&quot;,\&quot;任务\&quot;],\&quot;行\&quot;:[[{\&quot;同文\&quot;:1},\&quot;p1\&quot;,\&quot;宁芷（甲）\&quot;,[\&quot;安静有序。\&quot;],{\&quot;容器\&quot;:\&quot;loc_a\&quot;,\&quot;部位\&quot;:\&quot;地面\&quot;},65,[{\&quot;上级\&quot;:null,\&quot;正文\&quot;:\&quot;整理自己的试印纸。\&quot;,\&quot;状态\&quot;:\&quot;pending\&quot;,\&quot;编号\&quot;:\&quot;task_p1\&quot;}]],[{\&quot;同文\&quot;:1},\&quot;p2\&quot;,\&quot;俞衡（乙）\&quot;,[\&quot;专注。\&quot;],{\&quot;容器\&quot;:\&quot;loc_b\&quot;,\&quot;部位\&quot;:\&quot;地面\&quot;},65,[{\&quot;上级\&quot;:null,\&quot;正文\&quot;:\&quot;装订另一批书页。\&quot;,\&quot;状态\&quot;:\&quot;pending\&quot;,\&quot;编号\&quot;:\&quot;task_p2\&quot;}]],[{\&quot;同文\&quot;:1},\&quot;p3\&quot;,\&quot;宋晚（丙）\&quot;,[\&quot;耐心。\&quot;],{\&quot;容器\&quot;:\&quot;loc_b\&quot;,\&quot;部位\&quot;:\&quot;地面\&quot;},65,[{\&quot;上级\&quot;:null,\&quot;正文\&quot;:\&quot;登记库存。\&quot;,\&quot;状态\&quot;:\&quot;pending\&quot;,\&quot;编号\&quot;:\&quot;task_p3\&quot;}]]]},\&quot;地点\&quot;:{\&quot;列\&quot;:[\&quot;编号\&quot;,\&quot;名称\&quot;,\&quot;上级\&quot;],\&quot;行\&quot;:[[\&quot;loc_outer\&quot;,\&quot;版画工作间\&quot;,null],[\&quot;loc_a\&quot;,\&quot;主角独用试印桌\&quot;,\&quot;loc_outer\&quot;],[\&quot;loc_b\&quot;,\&quot;其他人的装订台\&quot;,\&quot;loc_outer\&quot;]]},\&quot;时间\&quot;:\&quot;2031-04-18T10:20:00+08:00\&quot;,\&quot;物品\&quot;:{\&quot;列\&quot;:[\&quot;编号\&quot;,\&quot;名称\&quot;,\&quot;位置\&quot;],\&quot;行\&quot;:[[\&quot;item_1\&quot;,\&quot;试印纸\&quot;,{\&quot;容器\&quot;:\&quot;loc_a\&quot;,\&quot;部位\&quot;:\&quot;可见位置\&quot;}],[\&quot;item_2\&quot;,\&quot;装订线\&quot;,{\&quot;容器\&quot;:\&quot;loc_b\&quot;,\&quot;部位\&quot;:\&quot;可见位置\&quot;}]]}},\&quot;冻结源\&quot;:{\&quot;成员\&quot;:\&quot;p1\&quot;,\&quot;行动原文\&quot;:{\&quot;同文\&quot;:0}},\&quot;完整候选\&quot;:[\&quot;p1\&quot;,\&quot;p2\&quot;,\&quot;p3\&quot;],\&quot;已确认组\&quot;:{\&quot;成员行动\&quot;:[{\&quot;成员\&quot;:\&quot;p1\&quot;,\&quot;行动原文\&quot;:{\&quot;同文\&quot;:0}}]},\&quot;已行动\&quot;:[],\&quot;过去判定\&quot;:[]}}&quot;,
+    &quot;promptSha256&quot;: &quot;cbd885db87867a965748d49144047ad19a9f81e96c65d4987ba05df34e2adbd9&quot;,
+    &quot;raw&quot;: &quot;不生成骰点、准入或未来行动&quot;,
+    &quot;rawUtf8Sha256&quot;: &quot;06a8086a7fb8ab7bdedaf1bc200933fb81b8da8bb96091639989041f6e1e3697&quot;,
+    &quot;repeat&quot;: 0,
+    &quot;runId&quot;: &quot;m02-dev42-20261101-r4&quot;,
+    &quot;semanticReview&quot;: &quot;pending_not_automatically_approved&quot;,
+    &quot;serializedInputSha256&quot;: &quot;91318c0f6e8772904189d4baf198c14d68c54fa804f17a51156771e78eaad603&quot;,
+    &quot;settledAt&quot;: &quot;2026-11-01T15:46:25.456479+00:00&quot;,
+    &quot;settledElapsedMs&quot;: 186.2594169942895,
+    &quot;settledMonotonicNs&quot;: 116253295000750,
+    &quot;sourceGroup&quot;: &quot;d-origin-d03-01&quot;,
+    &quot;stage&quot;: &quot;source_frozen_before_current_targets_confirmation&quot;,
+    &quot;startedAt&quot;: &quot;2026-11-01T15:46:25.270231+00:00&quot;,
+    &quot;startedMonotonicNs&quot;: 116253108748875,
+    &quot;status&quot;: &quot;invalid_output&quot;,
+    &quot;structureStatus&quot;: &quot;invalid&quot;,
+    &quot;task&quot;: &quot;D03&quot;
+  },
+  {
+    &quot;activeStage&quot;: &quot;decode_and_validate&quot;,
+    &quot;arm&quot;: &quot;M02-direct-zero-shot&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-01&quot;,
+    &quot;configSha256&quot;: &quot;1f4c226fdbbc8c189841f814b95d25f75816d3d9bb62f9d761f77f7e34ff17a4&quot;,
+    &quot;decodeAndValidateMs&quot;: 1.0269170015817508,
+    &quot;deviceId&quot;: &quot;arm64-cpu-1thread&quot;,
+    &quot;elapsedMs&quot;: 209.19449999928474,
+    &quot;encodeMs&quot;: 1.0835409921128303,
+    &quot;epoch&quot;: 1,
+    &quot;finishedWithEos&quot;: true,
+    &quot;fullRequestMeasured&quot;: false,
+    &quot;generateMs&quot;: 206.28604100784287,
+    &quot;generationCompleted&quot;: true,
+    &quot;generationPerformed&quot;: true,
+    &quot;generationStarted&quot;: true,
+    &quot;generationStartedAt&quot;: &quot;2026-11-01T15:46:26.064554+00:00&quot;,
+    &quot;generationStartedMonotonicNs&quot;: 116253903063666,
+    &quot;inputTokens&quot;: 618,
+    &quot;journalUpdatesIncludedInElapsedMs&quot;: true,
+    &quot;losslessRoundTripMatched&quot;: true,
+    &quot;modelId&quot;: &quot;IDEA-CCNL/Randeng-T5-77M-MultiTask-Chinese&quot;,
+    &quot;modelInputSha256&quot;: &quot;9f2165956f4c94d0966bb100dd536d2cb76bf1580440876fe3c544f8982c038f&quot;,
+    &quot;modelRevision&quot;: &quot;06d379d7375245f31cfb87166eff134cfeb5dead&quot;,
+    &quot;outputTokenIds&quot;: [
+      0,
+      259,
+      785,
+      15597,
+      29409,
+      1097,
+      287,
+      5572,
+      1542,
+      2303,
+      5337,
+      8662,
+      1
+    ],
+    &quot;outputTokensExcludingDecoderStart&quot;: 12,
+    &quot;parseError&quot;: {
+      &quot;message&quot;: &quot;invalid JSON: Expecting value: line 1 column 1 (char 0)&quot;,
+      &quot;type&quot;: &quot;LabValidationError&quot;
+    },
+    &quot;peakResidentMiB&quot;: 763.140625,
+    &quot;prompt&quot;: &quot;分析当前已冻结源行动会牵连完整名册中的谁，已行动者仍可被牵连。只输出JSON {\&quot;targets\&quot;:[{\&quot;targetId\&quot;:\&quot;人物ID\&quot;}]}，允许空集。不生成骰点、准入或未来行动。\n完整资料以表格编码：列为字段，行为记录；同文编号引用共用文本。\n{\&quot;共用文本\&quot;:[\&quot;我按页码排好面前的干燥试印纸，不移动其他物品，也不呼唤任何人。\&quot;,\&quot;衣物完整，双手可自由活动，无已知伤势。\&quot;],\&quot;格式\&quot;:\&quot;无损表格1\&quot;,\&quot;资料\&quot;:{\&quot;世界\&quot;:{\&quot;人物\&quot;:{\&quot;列\&quot;:[\&quot;外貌\&quot;,\&quot;编号\&quot;,\&quot;名称\&quot;,\&quot;个性\&quot;,\&quot;位置\&quot;,\&quot;理智\&quot;,\&quot;任务\&quot;],\&quot;行\&quot;:[[{\&quot;同文\&quot;:1},\&quot;p1\&quot;,\&quot;宁芷（甲）\&quot;,[\&quot;安静有序。\&quot;],{\&quot;容器\&quot;:\&quot;loc_a\&quot;,\&quot;部位\&quot;:\&quot;地面\&quot;},65,[{\&quot;上级\&quot;:null,\&quot;正文\&quot;:\&quot;整理自己的试印纸。\&quot;,\&quot;状态\&quot;:\&quot;pending\&quot;,\&quot;编号\&quot;:\&quot;task_p1\&quot;}]],[{\&quot;同文\&quot;:1},\&quot;p2\&quot;,\&quot;俞衡（乙）\&quot;,[\&quot;专注。\&quot;],{\&quot;容器\&quot;:\&quot;loc_b\&quot;,\&quot;部位\&quot;:\&quot;地面\&quot;},65,[{\&quot;上级\&quot;:null,\&quot;正文\&quot;:\&quot;装订另一批书页。\&quot;,\&quot;状态\&quot;:\&quot;pending\&quot;,\&quot;编号\&quot;:\&quot;task_p2\&quot;}]],[{\&quot;同文\&quot;:1},\&quot;p3\&quot;,\&quot;宋晚（丙）\&quot;,[\&quot;耐心。\&quot;],{\&quot;容器\&quot;:\&quot;loc_b\&quot;,\&quot;部位\&quot;:\&quot;地面\&quot;},65,[{\&quot;上级\&quot;:null,\&quot;正文\&quot;:\&quot;登记库存。\&quot;,\&quot;状态\&quot;:\&quot;pending\&quot;,\&quot;编号\&quot;:\&quot;task_p3\&quot;}]]]},\&quot;地点\&quot;:{\&quot;列\&quot;:[\&quot;编号\&quot;,\&quot;名称\&quot;,\&quot;上级\&quot;],\&quot;行\&quot;:[[\&quot;loc_outer\&quot;,\&quot;版画工作间\&quot;,null],[\&quot;loc_a\&quot;,\&quot;主角独用试印桌\&quot;,\&quot;loc_outer\&quot;],[\&quot;loc_b\&quot;,\&quot;其他人的装订台\&quot;,\&quot;loc_outer\&quot;]]},\&quot;时间\&quot;:\&quot;2031-04-18T10:20:00+08:00\&quot;,\&quot;物品\&quot;:{\&quot;列\&quot;:[\&quot;编号\&quot;,\&quot;名称\&quot;,\&quot;位置\&quot;],\&quot;行\&quot;:[[\&quot;item_1\&quot;,\&quot;试印纸\&quot;,{\&quot;容器\&quot;:\&quot;loc_a\&quot;,\&quot;部位\&quot;:\&quot;可见位置\&quot;}],[\&quot;item_2\&quot;,\&quot;装订线\&quot;,{\&quot;容器\&quot;:\&quot;loc_b\&quot;,\&quot;部位\&quot;:\&quot;可见位置\&quot;}]]}},\&quot;冻结源\&quot;:{\&quot;成员\&quot;:\&quot;p1\&quot;,\&quot;行动原文\&quot;:{\&quot;同文\&quot;:0}},\&quot;完整候选\&quot;:[\&quot;p1\&quot;,\&quot;p2\&quot;,\&quot;p3\&quot;],\&quot;已确认组\&quot;:{\&quot;成员行动\&quot;:[{\&quot;成员\&quot;:\&quot;p1\&quot;,\&quot;行动原文\&quot;:{\&quot;同文\&quot;:0}}]},\&quot;已行动\&quot;:[],\&quot;过去判定\&quot;:[]}}&quot;,
+    &quot;promptSha256&quot;: &quot;cbd885db87867a965748d49144047ad19a9f81e96c65d4987ba05df34e2adbd9&quot;,
+    &quot;raw&quot;: &quot;不生成骰点、准入或未来行动&quot;,
+    &quot;rawUtf8Sha256&quot;: &quot;06a8086a7fb8ab7bdedaf1bc200933fb81b8da8bb96091639989041f6e1e3697&quot;,
+    &quot;repeat&quot;: 1,
+    &quot;runId&quot;: &quot;m02-dev42-20261101-r4&quot;,
+    &quot;semanticReview&quot;: &quot;pending_not_automatically_approved&quot;,
+    &quot;serializedInputSha256&quot;: &quot;91318c0f6e8772904189d4baf198c14d68c54fa804f17a51156771e78eaad603&quot;,
+    &quot;settledAt&quot;: &quot;2026-11-01T15:46:26.271878+00:00&quot;,
+    &quot;settledElapsedMs&quot;: 209.19449999928474,
+    &quot;settledMonotonicNs&quot;: 116254110395208,
+    &quot;sourceGroup&quot;: &quot;d-origin-d03-01&quot;,
+    &quot;stage&quot;: &quot;source_frozen_before_current_targets_confirmation&quot;,
+    &quot;startedAt&quot;: &quot;2026-11-01T15:46:26.062697+00:00&quot;,
+    &quot;startedMonotonicNs&quot;: 116253901206500,
+    &quot;status&quot;: &quot;invalid_output&quot;,
+    &quot;structureStatus&quot;: &quot;invalid&quot;,
+    &quot;task&quot;: &quot;D03&quot;
+  },
+  {
+    &quot;activeStage&quot;: &quot;decode_and_validate&quot;,
+    &quot;arm&quot;: &quot;M02-direct-zero-shot&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-01&quot;,
+    &quot;configSha256&quot;: &quot;1f4c226fdbbc8c189841f814b95d25f75816d3d9bb62f9d761f77f7e34ff17a4&quot;,
+    &quot;decodeAndValidateMs&quot;: 1.353375002508983,
+    &quot;deviceId&quot;: &quot;arm64-cpu-1thread&quot;,
+    &quot;elapsedMs&quot;: 190.08679200487677,
+    &quot;encodeMs&quot;: 1.2382080021779984,
+    &quot;epoch&quot;: 1,
+    &quot;finishedWithEos&quot;: true,
+    &quot;fullRequestMeasured&quot;: false,
+    &quot;generateMs&quot;: 186.56850000843406,
+    &quot;generationCompleted&quot;: true,
+    &quot;generationPerformed&quot;: true,
+    &quot;generationStarted&quot;: true,
+    &quot;generationStartedAt&quot;: &quot;2026-11-01T15:46:26.871007+00:00&quot;,
+    &quot;generationStartedMonotonicNs&quot;: 116254709507000,
+    &quot;inputTokens&quot;: 618,
+    &quot;journalUpdatesIncludedInElapsedMs&quot;: true,
+    &quot;losslessRoundTripMatched&quot;: true,
+    &quot;modelId&quot;: &quot;IDEA-CCNL/Randeng-T5-77M-MultiTask-Chinese&quot;,
+    &quot;modelInputSha256&quot;: &quot;9f2165956f4c94d0966bb100dd536d2cb76bf1580440876fe3c544f8982c038f&quot;,
+    &quot;modelRevision&quot;: &quot;06d379d7375245f31cfb87166eff134cfeb5dead&quot;,
+    &quot;outputTokenIds&quot;: [
+      0,
+      259,
+      785,
+      15597,
+      29409,
+      1097,
+      287,
+      5572,
+      1542,
+      2303,
+      5337,
+      8662,
+      1
+    ],
+    &quot;outputTokensExcludingDecoderStart&quot;: 12,
+    &quot;parseError&quot;: {
+      &quot;message&quot;: &quot;invalid JSON: Expecting value: line 1 column 1 (char 0)&quot;,
+      &quot;type&quot;: &quot;LabValidationError&quot;
+    },
+    &quot;peakResidentMiB&quot;: 770.8125,
+    &quot;prompt&quot;: &quot;分析当前已冻结源行动会牵连完整名册中的谁，已行动者仍可被牵连。只输出JSON {\&quot;targets\&quot;:[{\&quot;targetId\&quot;:\&quot;人物ID\&quot;}]}，允许空集。不生成骰点、准入或未来行动。\n完整资料以表格编码：列为字段，行为记录；同文编号引用共用文本。\n{\&quot;共用文本\&quot;:[\&quot;我按页码排好面前的干燥试印纸，不移动其他物品，也不呼唤任何人。\&quot;,\&quot;衣物完整，双手可自由活动，无已知伤势。\&quot;],\&quot;格式\&quot;:\&quot;无损表格1\&quot;,\&quot;资料\&quot;:{\&quot;世界\&quot;:{\&quot;人物\&quot;:{\&quot;列\&quot;:[\&quot;外貌\&quot;,\&quot;编号\&quot;,\&quot;名称\&quot;,\&quot;个性\&quot;,\&quot;位置\&quot;,\&quot;理智\&quot;,\&quot;任务\&quot;],\&quot;行\&quot;:[[{\&quot;同文\&quot;:1},\&quot;p1\&quot;,\&quot;宁芷（甲）\&quot;,[\&quot;安静有序。\&quot;],{\&quot;容器\&quot;:\&quot;loc_a\&quot;,\&quot;部位\&quot;:\&quot;地面\&quot;},65,[{\&quot;上级\&quot;:null,\&quot;正文\&quot;:\&quot;整理自己的试印纸。\&quot;,\&quot;状态\&quot;:\&quot;pending\&quot;,\&quot;编号\&quot;:\&quot;task_p1\&quot;}]],[{\&quot;同文\&quot;:1},\&quot;p2\&quot;,\&quot;俞衡（乙）\&quot;,[\&quot;专注。\&quot;],{\&quot;容器\&quot;:\&quot;loc_b\&quot;,\&quot;部位\&quot;:\&quot;地面\&quot;},65,[{\&quot;上级\&quot;:null,\&quot;正文\&quot;:\&quot;装订另一批书页。\&quot;,\&quot;状态\&quot;:\&quot;pending\&quot;,\&quot;编号\&quot;:\&quot;task_p2\&quot;}]],[{\&quot;同文\&quot;:1},\&quot;p3\&quot;,\&quot;宋晚（丙）\&quot;,[\&quot;耐心。\&quot;],{\&quot;容器\&quot;:\&quot;loc_b\&quot;,\&quot;部位\&quot;:\&quot;地面\&quot;},65,[{\&quot;上级\&quot;:null,\&quot;正文\&quot;:\&quot;登记库存。\&quot;,\&quot;状态\&quot;:\&quot;pending\&quot;,\&quot;编号\&quot;:\&quot;task_p3\&quot;}]]]},\&quot;地点\&quot;:{\&quot;列\&quot;:[\&quot;编号\&quot;,\&quot;名称\&quot;,\&quot;上级\&quot;],\&quot;行\&quot;:[[\&quot;loc_outer\&quot;,\&quot;版画工作间\&quot;,null],[\&quot;loc_a\&quot;,\&quot;主角独用试印桌\&quot;,\&quot;loc_outer\&quot;],[\&quot;loc_b\&quot;,\&quot;其他人的装订台\&quot;,\&quot;loc_outer\&quot;]]},\&quot;时间\&quot;:\&quot;2031-04-18T10:20:00+08:00\&quot;,\&quot;物品\&quot;:{\&quot;列\&quot;:[\&quot;编号\&quot;,\&quot;名称\&quot;,\&quot;位置\&quot;],\&quot;行\&quot;:[[\&quot;item_1\&quot;,\&quot;试印纸\&quot;,{\&quot;容器\&quot;:\&quot;loc_a\&quot;,\&quot;部位\&quot;:\&quot;可见位置\&quot;}],[\&quot;item_2\&quot;,\&quot;装订线\&quot;,{\&quot;容器\&quot;:\&quot;loc_b\&quot;,\&quot;部位\&quot;:\&quot;可见位置\&quot;}]]}},\&quot;冻结源\&quot;:{\&quot;成员\&quot;:\&quot;p1\&quot;,\&quot;行动原文\&quot;:{\&quot;同文\&quot;:0}},\&quot;完整候选\&quot;:[\&quot;p1\&quot;,\&quot;p2\&quot;,\&quot;p3\&quot;],\&quot;已确认组\&quot;:{\&quot;成员行动\&quot;:[{\&quot;成员\&quot;:\&quot;p1\&quot;,\&quot;行动原文\&quot;:{\&quot;同文\&quot;:0}}]},\&quot;已行动\&quot;:[],\&quot;过去判定\&quot;:[]}}&quot;,
+    &quot;promptSha256&quot;: &quot;cbd885db87867a965748d49144047ad19a9f81e96c65d4987ba05df34e2adbd9&quot;,
+    &quot;raw&quot;: &quot;不生成骰点、准入或未来行动&quot;,
+    &quot;rawUtf8Sha256&quot;: &quot;06a8086a7fb8ab7bdedaf1bc200933fb81b8da8bb96091639989041f6e1e3697&quot;,
+    &quot;repeat&quot;: 2,
+    &quot;runId&quot;: &quot;m02-dev42-20261101-r4&quot;,
+    &quot;semanticReview&quot;: &quot;pending_not_automatically_approved&quot;,
+    &quot;serializedInputSha256&quot;: &quot;91318c0f6e8772904189d4baf198c14d68c54fa804f17a51156771e78eaad603&quot;,
+    &quot;settledAt&quot;: &quot;2026-11-01T15:46:27.058939+00:00&quot;,
+    &quot;settledElapsedMs&quot;: 190.08679200487677,
+    &quot;settledMonotonicNs&quot;: 116254897442875,
+    &quot;sourceGroup&quot;: &quot;d-origin-d03-01&quot;,
+    &quot;stage&quot;: &quot;source_frozen_before_current_targets_confirmation&quot;,
+    &quot;startedAt&quot;: &quot;2026-11-01T15:46:26.868861+00:00&quot;,
+    &quot;startedMonotonicNs&quot;: 116254707361083,
+    &quot;status&quot;: &quot;invalid_output&quot;,
+    &quot;structureStatus&quot;: &quot;invalid&quot;,
+    &quot;task&quot;: &quot;D03&quot;
+  },
+  {
+    &quot;activeStage&quot;: &quot;decode_and_validate&quot;,
+    &quot;arm&quot;: &quot;M02-direct-zero-shot&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-01&quot;,
+    &quot;configSha256&quot;: &quot;1f4c226fdbbc8c189841f814b95d25f75816d3d9bb62f9d761f77f7e34ff17a4&quot;,
+    &quot;decodeAndValidateMs&quot;: 1.2728339934255928,
+    &quot;deviceId&quot;: &quot;arm64-cpu-1thread&quot;,
+    &quot;elapsedMs&quot;: 183.12237499048933,
+    &quot;encodeMs&quot;: 1.3222080015111715,
+    &quot;epoch&quot;: 1,
+    &quot;finishedWithEos&quot;: true,
+    &quot;fullRequestMeasured&quot;: false,
+    &quot;generateMs&quot;: 179.50158299936447,
+    &quot;generationCompleted&quot;: true,
+    &quot;generationPerformed&quot;: true,
+    &quot;generationStarted&quot;: true,
+    &quot;generationStartedAt&quot;: &quot;2026-11-01T15:46:27.680861+00:00&quot;,
+    &quot;generationStartedMonotonicNs&quot;: 116255519352083,
+    &quot;inputTokens&quot;: 618,
+    &quot;journalUpdatesIncludedInElapsedMs&quot;: true,
+    &quot;losslessRoundTripMatched&quot;: true,
+    &quot;modelId&quot;: &quot;IDEA-CCNL/Randeng-T5-77M-MultiTask-Chinese&quot;,
+    &quot;modelInputSha256&quot;: &quot;9f2165956f4c94d0966bb100dd536d2cb76bf1580440876fe3c544f8982c038f&quot;,
+    &quot;modelRevision&quot;: &quot;06d379d7375245f31cfb87166eff134cfeb5dead&quot;,
+    &quot;outputTokenIds&quot;: [
+      0,
+      259,
+      785,
+      15597,
+      29409,
+      1097,
+      287,
+      5572,
+      1542,
+      2303,
+      5337,
+      8662,
+      1
+    ],
+    &quot;outputTokensExcludingDecoderStart&quot;: 12,
+    &quot;parseError&quot;: {
+      &quot;message&quot;: &quot;invalid JSON: Expecting value: line 1 column 1 (char 0)&quot;,
+      &quot;type&quot;: &quot;LabValidationError&quot;
+    },
+    &quot;peakResidentMiB&quot;: 776.15625,
+    &quot;prompt&quot;: &quot;分析当前已冻结源行动会牵连完整名册中的谁，已行动者仍可被牵连。只输出JSON {\&quot;targets\&quot;:[{\&quot;targetId\&quot;:\&quot;人物ID\&quot;}]}，允许空集。不生成骰点、准入或未来行动。\n完整资料以表格编码：列为字段，行为记录；同文编号引用共用文本。\n{\&quot;共用文本\&quot;:[\&quot;我按页码排好面前的干燥试印纸，不移动其他物品，也不呼唤任何人。\&quot;,\&quot;衣物完整，双手可自由活动，无已知伤势。\&quot;],\&quot;格式\&quot;:\&quot;无损表格1\&quot;,\&quot;资料\&quot;:{\&quot;世界\&quot;:{\&quot;人物\&quot;:{\&quot;列\&quot;:[\&quot;外貌\&quot;,\&quot;编号\&quot;,\&quot;名称\&quot;,\&quot;个性\&quot;,\&quot;位置\&quot;,\&quot;理智\&quot;,\&quot;任务\&quot;],\&quot;行\&quot;:[[{\&quot;同文\&quot;:1},\&quot;p1\&quot;,\&quot;宁芷（甲）\&quot;,[\&quot;安静有序。\&quot;],{\&quot;容器\&quot;:\&quot;loc_a\&quot;,\&quot;部位\&quot;:\&quot;地面\&quot;},65,[{\&quot;上级\&quot;:null,\&quot;正文\&quot;:\&quot;整理自己的试印纸。\&quot;,\&quot;状态\&quot;:\&quot;pending\&quot;,\&quot;编号\&quot;:\&quot;task_p1\&quot;}]],[{\&quot;同文\&quot;:1},\&quot;p2\&quot;,\&quot;俞衡（乙）\&quot;,[\&quot;专注。\&quot;],{\&quot;容器\&quot;:\&quot;loc_b\&quot;,\&quot;部位\&quot;:\&quot;地面\&quot;},65,[{\&quot;上级\&quot;:null,\&quot;正文\&quot;:\&quot;装订另一批书页。\&quot;,\&quot;状态\&quot;:\&quot;pending\&quot;,\&quot;编号\&quot;:\&quot;task_p2\&quot;}]],[{\&quot;同文\&quot;:1},\&quot;p3\&quot;,\&quot;宋晚（丙）\&quot;,[\&quot;耐心。\&quot;],{\&quot;容器\&quot;:\&quot;loc_b\&quot;,\&quot;部位\&quot;:\&quot;地面\&quot;},65,[{\&quot;上级\&quot;:null,\&quot;正文\&quot;:\&quot;登记库存。\&quot;,\&quot;状态\&quot;:\&quot;pending\&quot;,\&quot;编号\&quot;:\&quot;task_p3\&quot;}]]]},\&quot;地点\&quot;:{\&quot;列\&quot;:[\&quot;编号\&quot;,\&quot;名称\&quot;,\&quot;上级\&quot;],\&quot;行\&quot;:[[\&quot;loc_outer\&quot;,\&quot;版画工作间\&quot;,null],[\&quot;loc_a\&quot;,\&quot;主角独用试印桌\&quot;,\&quot;loc_outer\&quot;],[\&quot;loc_b\&quot;,\&quot;其他人的装订台\&quot;,\&quot;loc_outer\&quot;]]},\&quot;时间\&quot;:\&quot;2031-04-18T10:20:00+08:00\&quot;,\&quot;物品\&quot;:{\&quot;列\&quot;:[\&quot;编号\&quot;,\&quot;名称\&quot;,\&quot;位置\&quot;],\&quot;行\&quot;:[[\&quot;item_1\&quot;,\&quot;试印纸\&quot;,{\&quot;容器\&quot;:\&quot;loc_a\&quot;,\&quot;部位\&quot;:\&quot;可见位置\&quot;}],[\&quot;item_2\&quot;,\&quot;装订线\&quot;,{\&quot;容器\&quot;:\&quot;loc_b\&quot;,\&quot;部位\&quot;:\&quot;可见位置\&quot;}]]}},\&quot;冻结源\&quot;:{\&quot;成员\&quot;:\&quot;p1\&quot;,\&quot;行动原文\&quot;:{\&quot;同文\&quot;:0}},\&quot;完整候选\&quot;:[\&quot;p1\&quot;,\&quot;p2\&quot;,\&quot;p3\&quot;],\&quot;已确认组\&quot;:{\&quot;成员行动\&quot;:[{\&quot;成员\&quot;:\&quot;p1\&quot;,\&quot;行动原文\&quot;:{\&quot;同文\&quot;:0}}]},\&quot;已行动\&quot;:[],\&quot;过去判定\&quot;:[]}}&quot;,
+    &quot;promptSha256&quot;: &quot;cbd885db87867a965748d49144047ad19a9f81e96c65d4987ba05df34e2adbd9&quot;,
+    &quot;raw&quot;: &quot;不生成骰点、准入或未来行动&quot;,
+    &quot;rawUtf8Sha256&quot;: &quot;06a8086a7fb8ab7bdedaf1bc200933fb81b8da8bb96091639989041f6e1e3697&quot;,
+    &quot;repeat&quot;: 3,
+    &quot;runId&quot;: &quot;m02-dev42-20261101-r4&quot;,
+    &quot;semanticReview&quot;: &quot;pending_not_automatically_approved&quot;,
+    &quot;serializedInputSha256&quot;: &quot;91318c0f6e8772904189d4baf198c14d68c54fa804f17a51156771e78eaad603&quot;,
+    &quot;settledAt&quot;: &quot;2026-11-01T15:46:27.861644+00:00&quot;,
+    &quot;settledElapsedMs&quot;: 183.12237499048933,
+    &quot;settledMonotonicNs&quot;: 116255700138000,
+    &quot;sourceGroup&quot;: &quot;d-origin-d03-01&quot;,
+    &quot;stage&quot;: &quot;source_frozen_before_current_targets_confirmation&quot;,
+    &quot;startedAt&quot;: &quot;2026-11-01T15:46:27.678529+00:00&quot;,
+    &quot;startedMonotonicNs&quot;: 116255517020583,
+    &quot;status&quot;: &quot;invalid_output&quot;,
+    &quot;structureStatus&quot;: &quot;invalid&quot;,
+    &quot;task&quot;: &quot;D03&quot;
+  },
+  {
+    &quot;activeStage&quot;: &quot;decode_and_validate&quot;,
+    &quot;arm&quot;: &quot;M02-direct-zero-shot&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-01&quot;,
+    &quot;configSha256&quot;: &quot;1f4c226fdbbc8c189841f814b95d25f75816d3d9bb62f9d761f77f7e34ff17a4&quot;,
+    &quot;decodeAndValidateMs&quot;: 1.5439159906236455,
+    &quot;deviceId&quot;: &quot;arm64-cpu-1thread&quot;,
+    &quot;elapsedMs&quot;: 192.59933299326804,
+    &quot;encodeMs&quot;: 1.818832999560982,
+    &quot;epoch&quot;: 1,
+    &quot;finishedWithEos&quot;: true,
+    &quot;fullRequestMeasured&quot;: false,
+    &quot;generateMs&quot;: 187.4191250099102,
+    &quot;generationCompleted&quot;: true,
+    &quot;generationPerformed&quot;: true,
+    &quot;generationStarted&quot;: true,
+    &quot;generationStartedAt&quot;: &quot;2026-11-01T15:46:28.495107+00:00&quot;,
+    &quot;generationStartedMonotonicNs&quot;: 116256333592708,
+    &quot;inputTokens&quot;: 618,
+    &quot;journalUpdatesIncludedInElapsedMs&quot;: true,
+    &quot;losslessRoundTripMatched&quot;: true,
+    &quot;modelId&quot;: &quot;IDEA-CCNL/Randeng-T5-77M-MultiTask-Chinese&quot;,
+    &quot;modelInputSha256&quot;: &quot;9f2165956f4c94d0966bb100dd536d2cb76bf1580440876fe3c544f8982c038f&quot;,
+    &quot;modelRevision&quot;: &quot;06d379d7375245f31cfb87166eff134cfeb5dead&quot;,
+    &quot;outputTokenIds&quot;: [
+      0,
+      259,
+      785,
+      15597,
+      29409,
+      1097,
+      287,
+      5572,
+      1542,
+      2303,
+      5337,
+      8662,
+      1
+    ],
+    &quot;outputTokensExcludingDecoderStart&quot;: 12,
+    &quot;parseError&quot;: {
+      &quot;message&quot;: &quot;invalid JSON: Expecting value: line 1 column 1 (char 0)&quot;,
+      &quot;type&quot;: &quot;LabValidationError&quot;
+    },
+    &quot;peakResidentMiB&quot;: 784.03125,
+    &quot;prompt&quot;: &quot;分析当前已冻结源行动会牵连完整名册中的谁，已行动者仍可被牵连。只输出JSON {\&quot;targets\&quot;:[{\&quot;targetId\&quot;:\&quot;人物ID\&quot;}]}，允许空集。不生成骰点、准入或未来行动。\n完整资料以表格编码：列为字段，行为记录；同文编号引用共用文本。\n{\&quot;共用文本\&quot;:[\&quot;我按页码排好面前的干燥试印纸，不移动其他物品，也不呼唤任何人。\&quot;,\&quot;衣物完整，双手可自由活动，无已知伤势。\&quot;],\&quot;格式\&quot;:\&quot;无损表格1\&quot;,\&quot;资料\&quot;:{\&quot;世界\&quot;:{\&quot;人物\&quot;:{\&quot;列\&quot;:[\&quot;外貌\&quot;,\&quot;编号\&quot;,\&quot;名称\&quot;,\&quot;个性\&quot;,\&quot;位置\&quot;,\&quot;理智\&quot;,\&quot;任务\&quot;],\&quot;行\&quot;:[[{\&quot;同文\&quot;:1},\&quot;p1\&quot;,\&quot;宁芷（甲）\&quot;,[\&quot;安静有序。\&quot;],{\&quot;容器\&quot;:\&quot;loc_a\&quot;,\&quot;部位\&quot;:\&quot;地面\&quot;},65,[{\&quot;上级\&quot;:null,\&quot;正文\&quot;:\&quot;整理自己的试印纸。\&quot;,\&quot;状态\&quot;:\&quot;pending\&quot;,\&quot;编号\&quot;:\&quot;task_p1\&quot;}]],[{\&quot;同文\&quot;:1},\&quot;p2\&quot;,\&quot;俞衡（乙）\&quot;,[\&quot;专注。\&quot;],{\&quot;容器\&quot;:\&quot;loc_b\&quot;,\&quot;部位\&quot;:\&quot;地面\&quot;},65,[{\&quot;上级\&quot;:null,\&quot;正文\&quot;:\&quot;装订另一批书页。\&quot;,\&quot;状态\&quot;:\&quot;pending\&quot;,\&quot;编号\&quot;:\&quot;task_p2\&quot;}]],[{\&quot;同文\&quot;:1},\&quot;p3\&quot;,\&quot;宋晚（丙）\&quot;,[\&quot;耐心。\&quot;],{\&quot;容器\&quot;:\&quot;loc_b\&quot;,\&quot;部位\&quot;:\&quot;地面\&quot;},65,[{\&quot;上级\&quot;:null,\&quot;正文\&quot;:\&quot;登记库存。\&quot;,\&quot;状态\&quot;:\&quot;pending\&quot;,\&quot;编号\&quot;:\&quot;task_p3\&quot;}]]]},\&quot;地点\&quot;:{\&quot;列\&quot;:[\&quot;编号\&quot;,\&quot;名称\&quot;,\&quot;上级\&quot;],\&quot;行\&quot;:[[\&quot;loc_outer\&quot;,\&quot;版画工作间\&quot;,null],[\&quot;loc_a\&quot;,\&quot;主角独用试印桌\&quot;,\&quot;loc_outer\&quot;],[\&quot;loc_b\&quot;,\&quot;其他人的装订台\&quot;,\&quot;loc_outer\&quot;]]},\&quot;时间\&quot;:\&quot;2031-04-18T10:20:00+08:00\&quot;,\&quot;物品\&quot;:{\&quot;列\&quot;:[\&quot;编号\&quot;,\&quot;名称\&quot;,\&quot;位置\&quot;],\&quot;行\&quot;:[[\&quot;item_1\&quot;,\&quot;试印纸\&quot;,{\&quot;容器\&quot;:\&quot;loc_a\&quot;,\&quot;部位\&quot;:\&quot;可见位置\&quot;}],[\&quot;item_2\&quot;,\&quot;装订线\&quot;,{\&quot;容器\&quot;:\&quot;loc_b\&quot;,\&quot;部位\&quot;:\&quot;可见位置\&quot;}]]}},\&quot;冻结源\&quot;:{\&quot;成员\&quot;:\&quot;p1\&quot;,\&quot;行动原文\&quot;:{\&quot;同文\&quot;:0}},\&quot;完整候选\&quot;:[\&quot;p1\&quot;,\&quot;p2\&quot;,\&quot;p3\&quot;],\&quot;已确认组\&quot;:{\&quot;成员行动\&quot;:[{\&quot;成员\&quot;:\&quot;p1\&quot;,\&quot;行动原文\&quot;:{\&quot;同文\&quot;:0}}]},\&quot;已行动\&quot;:[],\&quot;过去判定\&quot;:[]}}&quot;,
+    &quot;promptSha256&quot;: &quot;cbd885db87867a965748d49144047ad19a9f81e96c65d4987ba05df34e2adbd9&quot;,
+    &quot;raw&quot;: &quot;不生成骰点、准入或未来行动&quot;,
+    &quot;rawUtf8Sha256&quot;: &quot;06a8086a7fb8ab7bdedaf1bc200933fb81b8da8bb96091639989041f6e1e3697&quot;,
+    &quot;repeat&quot;: 4,
+    &quot;runId&quot;: &quot;m02-dev42-20261101-r4&quot;,
+    &quot;semanticReview&quot;: &quot;pending_not_automatically_approved&quot;,
+    &quot;serializedInputSha256&quot;: &quot;91318c0f6e8772904189d4baf198c14d68c54fa804f17a51156771e78eaad603&quot;,
+    &quot;settledAt&quot;: &quot;2026-11-01T15:46:28.684078+00:00&quot;,
+    &quot;settledElapsedMs&quot;: 192.59933299326804,
+    &quot;settledMonotonicNs&quot;: 116256522564791,
+    &quot;sourceGroup&quot;: &quot;d-origin-d03-01&quot;,
+    &quot;stage&quot;: &quot;source_frozen_before_current_targets_confirmation&quot;,
+    &quot;startedAt&quot;: &quot;2026-11-01T15:46:28.491490+00:00&quot;,
+    &quot;startedMonotonicNs&quot;: 116256329973875,
+    &quot;status&quot;: &quot;invalid_output&quot;,
+    &quot;structureStatus&quot;: &quot;invalid&quot;,
+    &quot;task&quot;: &quot;D03&quot;
+  }
+]</pre></details></article><article><h2>反应 · dev-d04-01</h2><p>非空正文结构检查通过，但内容是禁止事项，没有应对冻结威胁的反应行动。</p><h3>模型原始回答（5次相同）</h3><pre>不改写已冻结动作,不保证成功,不自行分配目标或骰点</pre><details><summary>查看已审题完整输入</summary><pre>{
+  &quot;admission&quot;: {
+    &quot;admitted&quot;: true,
+    &quot;eligible&quot;: true
+  },
+  &quot;alreadyActedIds&quot;: [],
+  &quot;confirmedGroup&quot;: {
+    &quot;members&quot;: [
+      {
+        &quot;actionText&quot;: &quot;我扳动操作杆，合上乙手臂所在的热隔板夹口。&quot;,
+        &quot;memberId&quot;: &quot;p1&quot;
+      }
+    ]
+  },
+  &quot;judgments&quot;: [
+    {
+      &quot;admitted&quot;: true,
+      &quot;eligible&quot;: true,
+      &quot;passed&quot;: true,
+      &quot;rollId&quot;: &quot;roll_p1_p2_1&quot;,
+      &quot;ruleVersion&quot;: &quot;reaction-d20-v1&quot;,
+      &quot;sourceId&quot;: &quot;p1&quot;,
+      &quot;targetId&quot;: &quot;p2&quot;,
+      &quot;threshold&quot;: 11,
+      &quot;value&quot;: 16
+    }
+  ],
+  &quot;memberId&quot;: &quot;p2&quot;,
+  &quot;previouslySkippedIds&quot;: [],
+  &quot;source&quot;: {
+    &quot;actionText&quot;: &quot;我扳动操作杆，合上乙手臂所在的热隔板夹口。&quot;,
+    &quot;memberId&quot;: &quot;p1&quot;
+  },
+  &quot;world&quot;: {
+    &quot;characters&quot;: [
+      {
+        &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+        &quot;id&quot;: &quot;p1&quot;,
+        &quot;name&quot;: &quot;林岑（甲）&quot;,
+        &quot;personality&quot;: [
+          &quot;急于封闭热源。&quot;
+        ],
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_a&quot;,
+          &quot;slot&quot;: &quot;地面&quot;
+        },
+        &quot;sanity&quot;: 65,
+        &quot;tasks&quot;: [
+          {
+            &quot;id&quot;: &quot;task_p1&quot;,
+            &quot;parentId&quot;: null,
+            &quot;status&quot;: &quot;pending&quot;,
+            &quot;text&quot;: &quot;合上热隔板。&quot;
+          }
+        ]
+      },
+      {
+        &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+        &quot;id&quot;: &quot;p2&quot;,
+        &quot;name&quot;: &quot;余夏（乙）&quot;,
+        &quot;personality&quot;: [
+          &quot;重视自保。&quot;
+        ],
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_a&quot;,
+          &quot;slot&quot;: &quot;地面&quot;
+        },
+        &quot;sanity&quot;: 65,
+        &quot;tasks&quot;: [
+          {
+            &quot;id&quot;: &quot;task_p2&quot;,
+            &quot;parentId&quot;: null,
+            &quot;status&quot;: &quot;pending&quot;,
+            &quot;text&quot;: &quot;避免手臂被夹伤。&quot;
+          }
+        ]
+      },
+      {
+        &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+        &quot;id&quot;: &quot;p3&quot;,
+        &quot;name&quot;: &quot;赵沅（丙）&quot;,
+        &quot;personality&quot;: [
+          &quot;专注。&quot;
+        ],
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_b&quot;,
+          &quot;slot&quot;: &quot;地面&quot;
+        },
+        &quot;sanity&quot;: 65,
+        &quot;tasks&quot;: [
+          {
+            &quot;id&quot;: &quot;task_p3&quot;,
+            &quot;parentId&quot;: null,
+            &quot;status&quot;: &quot;pending&quot;,
+            &quot;text&quot;: &quot;记录温度。&quot;
+          }
+        ]
+      }
+    ],
+    &quot;items&quot;: [
+      {
+        &quot;id&quot;: &quot;item_1&quot;,
+        &quot;name&quot;: &quot;热隔板&quot;,
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_a&quot;,
+          &quot;slot&quot;: &quot;可见位置&quot;
+        }
+      },
+      {
+        &quot;id&quot;: &quot;item_2&quot;,
+        &quot;name&quot;: &quot;操作杆&quot;,
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;p1&quot;,
+          &quot;slot&quot;: &quot;可见位置&quot;
+        }
+      }
+    ],
+    &quot;places&quot;: [
+      {
+        &quot;id&quot;: &quot;loc_outer&quot;,
+        &quot;name&quot;: &quot;旧锅炉房&quot;,
+        &quot;parentId&quot;: null
+      },
+      {
+        &quot;id&quot;: &quot;loc_a&quot;,
+        &quot;name&quot;: &quot;热隔板夹口&quot;,
+        &quot;parentId&quot;: &quot;loc_outer&quot;
+      },
+      {
+        &quot;id&quot;: &quot;loc_b&quot;,
+        &quot;name&quot;: &quot;冷却走道&quot;,
+        &quot;parentId&quot;: &quot;loc_outer&quot;
+      }
+    ],
+    &quot;time&quot;: &quot;2031-04-18T10:20:00+08:00&quot;
+  }
+}</pre></details><details><summary>查看原判据</summary><pre>{
+  &quot;expectedCall&quot;: true,
+  &quot;forbidden&quot;: [
+    &quot;改变冻结源行动、重新掷骰或自定准入。&quot;,
+    &quot;让骰点通过直接等同攻击必定命中。&quot;
+  ],
+  &quot;guardDisposition&quot;: &quot;generate&quot;,
+  &quot;mustRespect&quot;: [
+    &quot;回应夹口逼近的威胁，可抽手/挡停/躲避等，不能改写甲已冻结动作。&quot;
+  ]
+}</pre></details><details><summary>查看5次完整原始记录</summary><pre>[
+  {
+    &quot;activeStage&quot;: &quot;decode_and_validate&quot;,
+    &quot;arm&quot;: &quot;M02-direct-zero-shot&quot;,
+    &quot;caseId&quot;: &quot;dev-d04-01&quot;,
+    &quot;configSha256&quot;: &quot;1f4c226fdbbc8c189841f814b95d25f75816d3d9bb62f9d761f77f7e34ff17a4&quot;,
+    &quot;decodeAndValidateMs&quot;: 1.0470829874975607,
+    &quot;deviceId&quot;: &quot;arm64-cpu-1thread&quot;,
+    &quot;elapsedMs&quot;: 254.27816600131337,
+    &quot;encodeMs&quot;: 1.1357920011505485,
+    &quot;epoch&quot;: 1,
+    &quot;finishedWithEos&quot;: true,
+    &quot;fullRequestMeasured&quot;: false,
+    &quot;generateMs&quot;: 251.35974999284372,
+    &quot;generationCompleted&quot;: true,
+    &quot;generationPerformed&quot;: true,
+    &quot;generationStarted&quot;: true,
+    &quot;generationStartedAt&quot;: &quot;2026-11-01T15:46:25.458924+00:00&quot;,
+    &quot;generationStartedMonotonicNs&quot;: 116253297440166,
+    &quot;inputTokens&quot;: 675,
+    &quot;journalUpdatesIncludedInElapsedMs&quot;: true,
+    &quot;losslessRoundTripMatched&quot;: true,
+    &quot;modelId&quot;: &quot;IDEA-CCNL/Randeng-T5-77M-MultiTask-Chinese&quot;,
+    &quot;modelInputSha256&quot;: &quot;d10d13df3bc8fb5fdee00009c1b1edd37268627dd40e9a8670aa2d0709798529&quot;,
+    &quot;modelRevision&quot;: &quot;06d379d7375245f31cfb87166eff134cfeb5dead&quot;,
+    &quot;outputTokenIds&quot;: [
+      0,
+      259,
+      785,
+      4040,
+      4123,
+      2798,
+      17989,
+      4806,
+      16621,
+      261,
+      785,
+      12471,
+      4579,
+      261,
+      785,
+      22779,
+      18524,
+      10338,
+      2303,
+      29409,
+      1097,
+      1
+    ],
+    &quot;outputTokensExcludingDecoderStart&quot;: 21,
+    &quot;parsed&quot;: &quot;不改写已冻结动作,不保证成功,不自行分配目标或骰点&quot;,
+    &quot;peakResidentMiB&quot;: 715.625,
+    &quot;prompt&quot;: &quot;结合全部已冻结威胁和实际判定、任务与个性，生成当前已准入人物的一次反应尝试。只输出反应正文；不改写已冻结动作，不保证成功，不自行分配目标或骰点。\n完整资料以表格编码：列为字段，行为记录；同文编号引用共用文本。\n{\&quot;共用文本\&quot;:[\&quot;我扳动操作杆，合上乙手臂所在的热隔板夹口。\&quot;,\&quot;衣物完整，双手可自由活动，无已知伤势。\&quot;],\&quot;格式\&quot;:\&quot;无损表格1\&quot;,\&quot;资料\&quot;:{\&quot;世界\&quot;:{\&quot;人物\&quot;:{\&quot;列\&quot;:[\&quot;外貌\&quot;,\&quot;编号\&quot;,\&quot;名称\&quot;,\&quot;个性\&quot;,\&quot;位置\&quot;,\&quot;理智\&quot;,\&quot;任务\&quot;],\&quot;行\&quot;:[[{\&quot;同文\&quot;:1},\&quot;p1\&quot;,\&quot;林岑（甲）\&quot;,[\&quot;急于封闭热源。\&quot;],{\&quot;容器\&quot;:\&quot;loc_a\&quot;,\&quot;部位\&quot;:\&quot;地面\&quot;},65,[{\&quot;上级\&quot;:null,\&quot;正文\&quot;:\&quot;合上热隔板。\&quot;,\&quot;状态\&quot;:\&quot;pending\&quot;,\&quot;编号\&quot;:\&quot;task_p1\&quot;}]],[{\&quot;同文\&quot;:1},\&quot;p2\&quot;,\&quot;余夏（乙）\&quot;,[\&quot;重视自保。\&quot;],{\&quot;容器\&quot;:\&quot;loc_a\&quot;,\&quot;部位\&quot;:\&quot;地面\&quot;},65,[{\&quot;上级\&quot;:null,\&quot;正文\&quot;:\&quot;避免手臂被夹伤。\&quot;,\&quot;状态\&quot;:\&quot;pending\&quot;,\&quot;编号\&quot;:\&quot;task_p2\&quot;}]],[{\&quot;同文\&quot;:1},\&quot;p3\&quot;,\&quot;赵沅（丙）\&quot;,[\&quot;专注。\&quot;],{\&quot;容器\&quot;:\&quot;loc_b\&quot;,\&quot;部位\&quot;:\&quot;地面\&quot;},65,[{\&quot;上级\&quot;:null,\&quot;正文\&quot;:\&quot;记录温度。\&quot;,\&quot;状态\&quot;:\&quot;pending\&quot;,\&quot;编号\&quot;:\&quot;task_p3\&quot;}]]]},\&quot;地点\&quot;:{\&quot;列\&quot;:[\&quot;编号\&quot;,\&quot;名称\&quot;,\&quot;上级\&quot;],\&quot;行\&quot;:[[\&quot;loc_outer\&quot;,\&quot;旧锅炉房\&quot;,null],[\&quot;loc_a\&quot;,\&quot;热隔板夹口\&quot;,\&quot;loc_outer\&quot;],[\&quot;loc_b\&quot;,\&quot;冷却走道\&quot;,\&quot;loc_outer\&quot;]]},\&quot;时间\&quot;:\&quot;2031-04-18T10:20:00+08:00\&quot;,\&quot;物品\&quot;:{\&quot;列\&quot;:[\&quot;编号\&quot;,\&quot;名称\&quot;,\&quot;位置\&quot;],\&quot;行\&quot;:[[\&quot;item_1\&quot;,\&quot;热隔板\&quot;,{\&quot;容器\&quot;:\&quot;loc_a\&quot;,\&quot;部位\&quot;:\&quot;可见位置\&quot;}],[\&quot;item_2\&quot;,\&quot;操作杆\&quot;,{\&quot;容器\&quot;:\&quot;p1\&quot;,\&quot;部位\&quot;:\&quot;可见位置\&quot;}]]}},\&quot;先前跳过\&quot;:[],\&quot;冻结源\&quot;:{\&quot;成员\&quot;:\&quot;p1\&quot;,\&quot;行动原文\&quot;:{\&quot;同文\&quot;:0}},\&quot;准入\&quot;:{\&quot;已准入\&quot;:true,\&quot;有资格\&quot;:true},\&quot;实际判定\&quot;:[{\&quot;已准入\&quot;:true,\&quot;有资格\&quot;:true,\&quot;来源\&quot;:\&quot;p1\&quot;,\&quot;点数\&quot;:16,\&quot;目标\&quot;:\&quot;p2\&quot;,\&quot;规则版本\&quot;:\&quot;reaction-d20-v1\&quot;,\&quot;通过\&quot;:true,\&quot;阈值\&quot;:11,\&quot;骰点编号\&quot;:\&quot;roll_p1_p2_1\&quot;}],\&quot;已确认组\&quot;:{\&quot;成员行动\&quot;:[{\&quot;成员\&quot;:\&quot;p1\&quot;,\&quot;行动原文\&quot;:{\&quot;同文\&quot;:0}}]},\&quot;已行动\&quot;:[],\&quot;成员\&quot;:\&quot;p2\&quot;}}&quot;,
+    &quot;promptSha256&quot;: &quot;92f7c988242e5d50d92779445ff41e916a293d1bcf2ce7042474035197c9c2bd&quot;,
+    &quot;raw&quot;: &quot;不改写已冻结动作,不保证成功,不自行分配目标或骰点&quot;,
+    &quot;rawUtf8Sha256&quot;: &quot;67299cd65750152519494cb5f78dab7ef3f72f87855897a9135463861a93758f&quot;,
+    &quot;repeat&quot;: 0,
+    &quot;runId&quot;: &quot;m02-dev42-20261101-r4&quot;,
+    &quot;semanticReview&quot;: &quot;pending_not_automatically_approved&quot;,
+    &quot;serializedInputSha256&quot;: &quot;3ac1f68a5d40a4a6a59067de2d94fb005f9d4903309b2442e082b50f878bbf33&quot;,
+    &quot;settledAt&quot;: &quot;2026-11-01T15:46:25.711341+00:00&quot;,
+    &quot;settledElapsedMs&quot;: 254.27816600131337,
+    &quot;settledMonotonicNs&quot;: 116253549859166,
+    &quot;sourceGroup&quot;: &quot;d-origin-d04-01&quot;,
+    &quot;stage&quot;: &quot;admission_decided_before_reaction_confirmation&quot;,
+    &quot;startedAt&quot;: &quot;2026-11-01T15:46:25.457070+00:00&quot;,
+    &quot;startedMonotonicNs&quot;: 116253295586541,
+    &quot;status&quot;: &quot;complete&quot;,
+    &quot;structureStatus&quot;: &quot;valid&quot;,
+    &quot;task&quot;: &quot;D04&quot;
+  },
+  {
+    &quot;activeStage&quot;: &quot;decode_and_validate&quot;,
+    &quot;arm&quot;: &quot;M02-direct-zero-shot&quot;,
+    &quot;caseId&quot;: &quot;dev-d04-01&quot;,
+    &quot;configSha256&quot;: &quot;1f4c226fdbbc8c189841f814b95d25f75816d3d9bb62f9d761f77f7e34ff17a4&quot;,
+    &quot;decodeAndValidateMs&quot;: 1.064459007466212,
+    &quot;deviceId&quot;: &quot;arm64-cpu-1thread&quot;,
+    &quot;elapsedMs&quot;: 246.0200000059558,
+    &quot;encodeMs&quot;: 1.222209000843577,
+    &quot;epoch&quot;: 1,
+    &quot;finishedWithEos&quot;: true,
+    &quot;fullRequestMeasured&quot;: false,
+    &quot;generateMs&quot;: 242.90066699904855,
+    &quot;generationCompleted&quot;: true,
+    &quot;generationPerformed&quot;: true,
+    &quot;generationStarted&quot;: true,
+    &quot;generationStartedAt&quot;: &quot;2026-11-01T15:46:26.274799+00:00&quot;,
+    &quot;generationStartedMonotonicNs&quot;: 116254113307958,
+    &quot;inputTokens&quot;: 675,
+    &quot;journalUpdatesIncludedInElapsedMs&quot;: true,
+    &quot;losslessRoundTripMatched&quot;: true,
+    &quot;modelId&quot;: &quot;IDEA-CCNL/Randeng-T5-77M-MultiTask-Chinese&quot;,
+    &quot;modelInputSha256&quot;: &quot;d10d13df3bc8fb5fdee00009c1b1edd37268627dd40e9a8670aa2d0709798529&quot;,
+    &quot;modelRevision&quot;: &quot;06d379d7375245f31cfb87166eff134cfeb5dead&quot;,
+    &quot;outputTokenIds&quot;: [
+      0,
+      259,
+      785,
+      4040,
+      4123,
+      2798,
+      17989,
+      4806,
+      16621,
+      261,
+      785,
+      12471,
+      4579,
+      261,
+      785,
+      22779,
+      18524,
+      10338,
+      2303,
+      29409,
+      1097,
+      1
+    ],
+    &quot;outputTokensExcludingDecoderStart&quot;: 21,
+    &quot;parsed&quot;: &quot;不改写已冻结动作,不保证成功,不自行分配目标或骰点&quot;,
+    &quot;peakResidentMiB&quot;: 767.0,
+    &quot;prompt&quot;: &quot;结合全部已冻结威胁和实际判定、任务与个性，生成当前已准入人物的一次反应尝试。只输出反应正文；不改写已冻结动作，不保证成功，不自行分配目标或骰点。\n完整资料以表格编码：列为字段，行为记录；同文编号引用共用文本。\n{\&quot;共用文本\&quot;:[\&quot;我扳动操作杆，合上乙手臂所在的热隔板夹口。\&quot;,\&quot;衣物完整，双手可自由活动，无已知伤势。\&quot;],\&quot;格式\&quot;:\&quot;无损表格1\&quot;,\&quot;资料\&quot;:{\&quot;世界\&quot;:{\&quot;人物\&quot;:{\&quot;列\&quot;:[\&quot;外貌\&quot;,\&quot;编号\&quot;,\&quot;名称\&quot;,\&quot;个性\&quot;,\&quot;位置\&quot;,\&quot;理智\&quot;,\&quot;任务\&quot;],\&quot;行\&quot;:[[{\&quot;同文\&quot;:1},\&quot;p1\&quot;,\&quot;林岑（甲）\&quot;,[\&quot;急于封闭热源。\&quot;],{\&quot;容器\&quot;:\&quot;loc_a\&quot;,\&quot;部位\&quot;:\&quot;地面\&quot;},65,[{\&quot;上级\&quot;:null,\&quot;正文\&quot;:\&quot;合上热隔板。\&quot;,\&quot;状态\&quot;:\&quot;pending\&quot;,\&quot;编号\&quot;:\&quot;task_p1\&quot;}]],[{\&quot;同文\&quot;:1},\&quot;p2\&quot;,\&quot;余夏（乙）\&quot;,[\&quot;重视自保。\&quot;],{\&quot;容器\&quot;:\&quot;loc_a\&quot;,\&quot;部位\&quot;:\&quot;地面\&quot;},65,[{\&quot;上级\&quot;:null,\&quot;正文\&quot;:\&quot;避免手臂被夹伤。\&quot;,\&quot;状态\&quot;:\&quot;pending\&quot;,\&quot;编号\&quot;:\&quot;task_p2\&quot;}]],[{\&quot;同文\&quot;:1},\&quot;p3\&quot;,\&quot;赵沅（丙）\&quot;,[\&quot;专注。\&quot;],{\&quot;容器\&quot;:\&quot;loc_b\&quot;,\&quot;部位\&quot;:\&quot;地面\&quot;},65,[{\&quot;上级\&quot;:null,\&quot;正文\&quot;:\&quot;记录温度。\&quot;,\&quot;状态\&quot;:\&quot;pending\&quot;,\&quot;编号\&quot;:\&quot;task_p3\&quot;}]]]},\&quot;地点\&quot;:{\&quot;列\&quot;:[\&quot;编号\&quot;,\&quot;名称\&quot;,\&quot;上级\&quot;],\&quot;行\&quot;:[[\&quot;loc_outer\&quot;,\&quot;旧锅炉房\&quot;,null],[\&quot;loc_a\&quot;,\&quot;热隔板夹口\&quot;,\&quot;loc_outer\&quot;],[\&quot;loc_b\&quot;,\&quot;冷却走道\&quot;,\&quot;loc_outer\&quot;]]},\&quot;时间\&quot;:\&quot;2031-04-18T10:20:00+08:00\&quot;,\&quot;物品\&quot;:{\&quot;列\&quot;:[\&quot;编号\&quot;,\&quot;名称\&quot;,\&quot;位置\&quot;],\&quot;行\&quot;:[[\&quot;item_1\&quot;,\&quot;热隔板\&quot;,{\&quot;容器\&quot;:\&quot;loc_a\&quot;,\&quot;部位\&quot;:\&quot;可见位置\&quot;}],[\&quot;item_2\&quot;,\&quot;操作杆\&quot;,{\&quot;容器\&quot;:\&quot;p1\&quot;,\&quot;部位\&quot;:\&quot;可见位置\&quot;}]]}},\&quot;先前跳过\&quot;:[],\&quot;冻结源\&quot;:{\&quot;成员\&quot;:\&quot;p1\&quot;,\&quot;行动原文\&quot;:{\&quot;同文\&quot;:0}},\&quot;准入\&quot;:{\&quot;已准入\&quot;:true,\&quot;有资格\&quot;:true},\&quot;实际判定\&quot;:[{\&quot;已准入\&quot;:true,\&quot;有资格\&quot;:true,\&quot;来源\&quot;:\&quot;p1\&quot;,\&quot;点数\&quot;:16,\&quot;目标\&quot;:\&quot;p2\&quot;,\&quot;规则版本\&quot;:\&quot;reaction-d20-v1\&quot;,\&quot;通过\&quot;:true,\&quot;阈值\&quot;:11,\&quot;骰点编号\&quot;:\&quot;roll_p1_p2_1\&quot;}],\&quot;已确认组\&quot;:{\&quot;成员行动\&quot;:[{\&quot;成员\&quot;:\&quot;p1\&quot;,\&quot;行动原文\&quot;:{\&quot;同文\&quot;:0}}]},\&quot;已行动\&quot;:[],\&quot;成员\&quot;:\&quot;p2\&quot;}}&quot;,
+    &quot;promptSha256&quot;: &quot;92f7c988242e5d50d92779445ff41e916a293d1bcf2ce7042474035197c9c2bd&quot;,
+    &quot;raw&quot;: &quot;不改写已冻结动作,不保证成功,不自行分配目标或骰点&quot;,
+    &quot;rawUtf8Sha256&quot;: &quot;67299cd65750152519494cb5f78dab7ef3f72f87855897a9135463861a93758f&quot;,
+    &quot;repeat&quot;: 1,
+    &quot;runId&quot;: &quot;m02-dev42-20261101-r4&quot;,
+    &quot;semanticReview&quot;: &quot;pending_not_automatically_approved&quot;,
+    &quot;serializedInputSha256&quot;: &quot;3ac1f68a5d40a4a6a59067de2d94fb005f9d4903309b2442e082b50f878bbf33&quot;,
+    &quot;settledAt&quot;: &quot;2026-11-01T15:46:26.518775+00:00&quot;,
+    &quot;settledElapsedMs&quot;: 246.0200000059558,
+    &quot;settledMonotonicNs&quot;: 116254357284791,
+    &quot;sourceGroup&quot;: &quot;d-origin-d04-01&quot;,
+    &quot;stage&quot;: &quot;admission_decided_before_reaction_confirmation&quot;,
+    &quot;startedAt&quot;: &quot;2026-11-01T15:46:26.272763+00:00&quot;,
+    &quot;startedMonotonicNs&quot;: 116254111270041,
+    &quot;status&quot;: &quot;complete&quot;,
+    &quot;structureStatus&quot;: &quot;valid&quot;,
+    &quot;task&quot;: &quot;D04&quot;
+  },
+  {
+    &quot;activeStage&quot;: &quot;decode_and_validate&quot;,
+    &quot;arm&quot;: &quot;M02-direct-zero-shot&quot;,
+    &quot;caseId&quot;: &quot;dev-d04-01&quot;,
+    &quot;configSha256&quot;: &quot;1f4c226fdbbc8c189841f814b95d25f75816d3d9bb62f9d761f77f7e34ff17a4&quot;,
+    &quot;decodeAndValidateMs&quot;: 1.3083749945508316,
+    &quot;deviceId&quot;: &quot;arm64-cpu-1thread&quot;,
+    &quot;elapsedMs&quot;: 270.96795800025575,
+    &quot;encodeMs&quot;: 1.455833000363782,
+    &quot;epoch&quot;: 1,
+    &quot;finishedWithEos&quot;: true,
+    &quot;fullRequestMeasured&quot;: false,
+    &quot;generateMs&quot;: 267.0928329898743,
+    &quot;generationCompleted&quot;: true,
+    &quot;generationPerformed&quot;: true,
+    &quot;generationStarted&quot;: true,
+    &quot;generationStartedAt&quot;: &quot;2026-11-01T15:46:27.062850+00:00&quot;,
+    &quot;generationStartedMonotonicNs&quot;: 116254901348000,
+    &quot;inputTokens&quot;: 675,
+    &quot;journalUpdatesIncludedInElapsedMs&quot;: true,
+    &quot;losslessRoundTripMatched&quot;: true,
+    &quot;modelId&quot;: &quot;IDEA-CCNL/Randeng-T5-77M-MultiTask-Chinese&quot;,
+    &quot;modelInputSha256&quot;: &quot;d10d13df3bc8fb5fdee00009c1b1edd37268627dd40e9a8670aa2d0709798529&quot;,
+    &quot;modelRevision&quot;: &quot;06d379d7375245f31cfb87166eff134cfeb5dead&quot;,
+    &quot;outputTokenIds&quot;: [
+      0,
+      259,
+      785,
+      4040,
+      4123,
+      2798,
+      17989,
+      4806,
+      16621,
+      261,
+      785,
+      12471,
+      4579,
+      261,
+      785,
+      22779,
+      18524,
+      10338,
+      2303,
+      29409,
+      1097,
+      1
+    ],
+    &quot;outputTokensExcludingDecoderStart&quot;: 21,
+    &quot;parsed&quot;: &quot;不改写已冻结动作,不保证成功,不自行分配目标或骰点&quot;,
+    &quot;peakResidentMiB&quot;: 776.15625,
+    &quot;prompt&quot;: &quot;结合全部已冻结威胁和实际判定、任务与个性，生成当前已准入人物的一次反应尝试。只输出反应正文；不改写已冻结动作，不保证成功，不自行分配目标或骰点。\n完整资料以表格编码：列为字段，行为记录；同文编号引用共用文本。\n{\&quot;共用文本\&quot;:[\&quot;我扳动操作杆，合上乙手臂所在的热隔板夹口。\&quot;,\&quot;衣物完整，双手可自由活动，无已知伤势。\&quot;],\&quot;格式\&quot;:\&quot;无损表格1\&quot;,\&quot;资料\&quot;:{\&quot;世界\&quot;:{\&quot;人物\&quot;:{\&quot;列\&quot;:[\&quot;外貌\&quot;,\&quot;编号\&quot;,\&quot;名称\&quot;,\&quot;个性\&quot;,\&quot;位置\&quot;,\&quot;理智\&quot;,\&quot;任务\&quot;],\&quot;行\&quot;:[[{\&quot;同文\&quot;:1},\&quot;p1\&quot;,\&quot;林岑（甲）\&quot;,[\&quot;急于封闭热源。\&quot;],{\&quot;容器\&quot;:\&quot;loc_a\&quot;,\&quot;部位\&quot;:\&quot;地面\&quot;},65,[{\&quot;上级\&quot;:null,\&quot;正文\&quot;:\&quot;合上热隔板。\&quot;,\&quot;状态\&quot;:\&quot;pending\&quot;,\&quot;编号\&quot;:\&quot;task_p1\&quot;}]],[{\&quot;同文\&quot;:1},\&quot;p2\&quot;,\&quot;余夏（乙）\&quot;,[\&quot;重视自保。\&quot;],{\&quot;容器\&quot;:\&quot;loc_a\&quot;,\&quot;部位\&quot;:\&quot;地面\&quot;},65,[{\&quot;上级\&quot;:null,\&quot;正文\&quot;:\&quot;避免手臂被夹伤。\&quot;,\&quot;状态\&quot;:\&quot;pending\&quot;,\&quot;编号\&quot;:\&quot;task_p2\&quot;}]],[{\&quot;同文\&quot;:1},\&quot;p3\&quot;,\&quot;赵沅（丙）\&quot;,[\&quot;专注。\&quot;],{\&quot;容器\&quot;:\&quot;loc_b\&quot;,\&quot;部位\&quot;:\&quot;地面\&quot;},65,[{\&quot;上级\&quot;:null,\&quot;正文\&quot;:\&quot;记录温度。\&quot;,\&quot;状态\&quot;:\&quot;pending\&quot;,\&quot;编号\&quot;:\&quot;task_p3\&quot;}]]]},\&quot;地点\&quot;:{\&quot;列\&quot;:[\&quot;编号\&quot;,\&quot;名称\&quot;,\&quot;上级\&quot;],\&quot;行\&quot;:[[\&quot;loc_outer\&quot;,\&quot;旧锅炉房\&quot;,null],[\&quot;loc_a\&quot;,\&quot;热隔板夹口\&quot;,\&quot;loc_outer\&quot;],[\&quot;loc_b\&quot;,\&quot;冷却走道\&quot;,\&quot;loc_outer\&quot;]]},\&quot;时间\&quot;:\&quot;2031-04-18T10:20:00+08:00\&quot;,\&quot;物品\&quot;:{\&quot;列\&quot;:[\&quot;编号\&quot;,\&quot;名称\&quot;,\&quot;位置\&quot;],\&quot;行\&quot;:[[\&quot;item_1\&quot;,\&quot;热隔板\&quot;,{\&quot;容器\&quot;:\&quot;loc_a\&quot;,\&quot;部位\&quot;:\&quot;可见位置\&quot;}],[\&quot;item_2\&quot;,\&quot;操作杆\&quot;,{\&quot;容器\&quot;:\&quot;p1\&quot;,\&quot;部位\&quot;:\&quot;可见位置\&quot;}]]}},\&quot;先前跳过\&quot;:[],\&quot;冻结源\&quot;:{\&quot;成员\&quot;:\&quot;p1\&quot;,\&quot;行动原文\&quot;:{\&quot;同文\&quot;:0}},\&quot;准入\&quot;:{\&quot;已准入\&quot;:true,\&quot;有资格\&quot;:true},\&quot;实际判定\&quot;:[{\&quot;已准入\&quot;:true,\&quot;有资格\&quot;:true,\&quot;来源\&quot;:\&quot;p1\&quot;,\&quot;点数\&quot;:16,\&quot;目标\&quot;:\&quot;p2\&quot;,\&quot;规则版本\&quot;:\&quot;reaction-d20-v1\&quot;,\&quot;通过\&quot;:true,\&quot;阈值\&quot;:11,\&quot;骰点编号\&quot;:\&quot;roll_p1_p2_1\&quot;}],\&quot;已确认组\&quot;:{\&quot;成员行动\&quot;:[{\&quot;成员\&quot;:\&quot;p1\&quot;,\&quot;行动原文\&quot;:{\&quot;同文\&quot;:0}}]},\&quot;已行动\&quot;:[],\&quot;成员\&quot;:\&quot;p2\&quot;}}&quot;,
+    &quot;promptSha256&quot;: &quot;92f7c988242e5d50d92779445ff41e916a293d1bcf2ce7042474035197c9c2bd&quot;,
+    &quot;raw&quot;: &quot;不改写已冻结动作,不保证成功,不自行分配目标或骰点&quot;,
+    &quot;rawUtf8Sha256&quot;: &quot;67299cd65750152519494cb5f78dab7ef3f72f87855897a9135463861a93758f&quot;,
+    &quot;repeat&quot;: 2,
+    &quot;runId&quot;: &quot;m02-dev42-20261101-r4&quot;,
+    &quot;semanticReview&quot;: &quot;pending_not_automatically_approved&quot;,
+    &quot;serializedInputSha256&quot;: &quot;3ac1f68a5d40a4a6a59067de2d94fb005f9d4903309b2442e082b50f878bbf33&quot;,
+    &quot;settledAt&quot;: &quot;2026-11-01T15:46:27.331261+00:00&quot;,
+    &quot;settledElapsedMs&quot;: 270.96795800025575,
+    &quot;settledMonotonicNs&quot;: 116255169762708,
+    &quot;sourceGroup&quot;: &quot;d-origin-d04-01&quot;,
+    &quot;stage&quot;: &quot;admission_decided_before_reaction_confirmation&quot;,
+    &quot;startedAt&quot;: &quot;2026-11-01T15:46:27.060301+00:00&quot;,
+    &quot;startedMonotonicNs&quot;: 116254898799500,
+    &quot;status&quot;: &quot;complete&quot;,
+    &quot;structureStatus&quot;: &quot;valid&quot;,
+    &quot;task&quot;: &quot;D04&quot;
+  },
+  {
+    &quot;activeStage&quot;: &quot;decode_and_validate&quot;,
+    &quot;arm&quot;: &quot;M02-direct-zero-shot&quot;,
+    &quot;caseId&quot;: &quot;dev-d04-01&quot;,
+    &quot;configSha256&quot;: &quot;1f4c226fdbbc8c189841f814b95d25f75816d3d9bb62f9d761f77f7e34ff17a4&quot;,
+    &quot;decodeAndValidateMs&quot;: 1.640582995605655,
+    &quot;deviceId&quot;: &quot;arm64-cpu-1thread&quot;,
+    &quot;elapsedMs&quot;: 249.31020800431725,
+    &quot;encodeMs&quot;: 1.4675830025225878,
+    &quot;epoch&quot;: 1,
+    &quot;finishedWithEos&quot;: true,
+    &quot;fullRequestMeasured&quot;: false,
+    &quot;generateMs&quot;: 245.03020900010597,
+    &quot;generationCompleted&quot;: true,
+    &quot;generationPerformed&quot;: true,
+    &quot;generationStarted&quot;: true,
+    &quot;generationStartedAt&quot;: &quot;2026-11-01T15:46:27.865699+00:00&quot;,
+    &quot;generationStartedMonotonicNs&quot;: 116255704188000,
+    &quot;inputTokens&quot;: 675,
+    &quot;journalUpdatesIncludedInElapsedMs&quot;: true,
+    &quot;losslessRoundTripMatched&quot;: true,
+    &quot;modelId&quot;: &quot;IDEA-CCNL/Randeng-T5-77M-MultiTask-Chinese&quot;,
+    &quot;modelInputSha256&quot;: &quot;d10d13df3bc8fb5fdee00009c1b1edd37268627dd40e9a8670aa2d0709798529&quot;,
+    &quot;modelRevision&quot;: &quot;06d379d7375245f31cfb87166eff134cfeb5dead&quot;,
+    &quot;outputTokenIds&quot;: [
+      0,
+      259,
+      785,
+      4040,
+      4123,
+      2798,
+      17989,
+      4806,
+      16621,
+      261,
+      785,
+      12471,
+      4579,
+      261,
+      785,
+      22779,
+      18524,
+      10338,
+      2303,
+      29409,
+      1097,
+      1
+    ],
+    &quot;outputTokensExcludingDecoderStart&quot;: 21,
+    &quot;parsed&quot;: &quot;不改写已冻结动作,不保证成功,不自行分配目标或骰点&quot;,
+    &quot;peakResidentMiB&quot;: 779.703125,
+    &quot;prompt&quot;: &quot;结合全部已冻结威胁和实际判定、任务与个性，生成当前已准入人物的一次反应尝试。只输出反应正文；不改写已冻结动作，不保证成功，不自行分配目标或骰点。\n完整资料以表格编码：列为字段，行为记录；同文编号引用共用文本。\n{\&quot;共用文本\&quot;:[\&quot;我扳动操作杆，合上乙手臂所在的热隔板夹口。\&quot;,\&quot;衣物完整，双手可自由活动，无已知伤势。\&quot;],\&quot;格式\&quot;:\&quot;无损表格1\&quot;,\&quot;资料\&quot;:{\&quot;世界\&quot;:{\&quot;人物\&quot;:{\&quot;列\&quot;:[\&quot;外貌\&quot;,\&quot;编号\&quot;,\&quot;名称\&quot;,\&quot;个性\&quot;,\&quot;位置\&quot;,\&quot;理智\&quot;,\&quot;任务\&quot;],\&quot;行\&quot;:[[{\&quot;同文\&quot;:1},\&quot;p1\&quot;,\&quot;林岑（甲）\&quot;,[\&quot;急于封闭热源。\&quot;],{\&quot;容器\&quot;:\&quot;loc_a\&quot;,\&quot;部位\&quot;:\&quot;地面\&quot;},65,[{\&quot;上级\&quot;:null,\&quot;正文\&quot;:\&quot;合上热隔板。\&quot;,\&quot;状态\&quot;:\&quot;pending\&quot;,\&quot;编号\&quot;:\&quot;task_p1\&quot;}]],[{\&quot;同文\&quot;:1},\&quot;p2\&quot;,\&quot;余夏（乙）\&quot;,[\&quot;重视自保。\&quot;],{\&quot;容器\&quot;:\&quot;loc_a\&quot;,\&quot;部位\&quot;:\&quot;地面\&quot;},65,[{\&quot;上级\&quot;:null,\&quot;正文\&quot;:\&quot;避免手臂被夹伤。\&quot;,\&quot;状态\&quot;:\&quot;pending\&quot;,\&quot;编号\&quot;:\&quot;task_p2\&quot;}]],[{\&quot;同文\&quot;:1},\&quot;p3\&quot;,\&quot;赵沅（丙）\&quot;,[\&quot;专注。\&quot;],{\&quot;容器\&quot;:\&quot;loc_b\&quot;,\&quot;部位\&quot;:\&quot;地面\&quot;},65,[{\&quot;上级\&quot;:null,\&quot;正文\&quot;:\&quot;记录温度。\&quot;,\&quot;状态\&quot;:\&quot;pending\&quot;,\&quot;编号\&quot;:\&quot;task_p3\&quot;}]]]},\&quot;地点\&quot;:{\&quot;列\&quot;:[\&quot;编号\&quot;,\&quot;名称\&quot;,\&quot;上级\&quot;],\&quot;行\&quot;:[[\&quot;loc_outer\&quot;,\&quot;旧锅炉房\&quot;,null],[\&quot;loc_a\&quot;,\&quot;热隔板夹口\&quot;,\&quot;loc_outer\&quot;],[\&quot;loc_b\&quot;,\&quot;冷却走道\&quot;,\&quot;loc_outer\&quot;]]},\&quot;时间\&quot;:\&quot;2031-04-18T10:20:00+08:00\&quot;,\&quot;物品\&quot;:{\&quot;列\&quot;:[\&quot;编号\&quot;,\&quot;名称\&quot;,\&quot;位置\&quot;],\&quot;行\&quot;:[[\&quot;item_1\&quot;,\&quot;热隔板\&quot;,{\&quot;容器\&quot;:\&quot;loc_a\&quot;,\&quot;部位\&quot;:\&quot;可见位置\&quot;}],[\&quot;item_2\&quot;,\&quot;操作杆\&quot;,{\&quot;容器\&quot;:\&quot;p1\&quot;,\&quot;部位\&quot;:\&quot;可见位置\&quot;}]]}},\&quot;先前跳过\&quot;:[],\&quot;冻结源\&quot;:{\&quot;成员\&quot;:\&quot;p1\&quot;,\&quot;行动原文\&quot;:{\&quot;同文\&quot;:0}},\&quot;准入\&quot;:{\&quot;已准入\&quot;:true,\&quot;有资格\&quot;:true},\&quot;实际判定\&quot;:[{\&quot;已准入\&quot;:true,\&quot;有资格\&quot;:true,\&quot;来源\&quot;:\&quot;p1\&quot;,\&quot;点数\&quot;:16,\&quot;目标\&quot;:\&quot;p2\&quot;,\&quot;规则版本\&quot;:\&quot;reaction-d20-v1\&quot;,\&quot;通过\&quot;:true,\&quot;阈值\&quot;:11,\&quot;骰点编号\&quot;:\&quot;roll_p1_p2_1\&quot;}],\&quot;已确认组\&quot;:{\&quot;成员行动\&quot;:[{\&quot;成员\&quot;:\&quot;p1\&quot;,\&quot;行动原文\&quot;:{\&quot;同文\&quot;:0}}]},\&quot;已行动\&quot;:[],\&quot;成员\&quot;:\&quot;p2\&quot;}}&quot;,
+    &quot;promptSha256&quot;: &quot;92f7c988242e5d50d92779445ff41e916a293d1bcf2ce7042474035197c9c2bd&quot;,
+    &quot;raw&quot;: &quot;不改写已冻结动作,不保证成功,不自行分配目标或骰点&quot;,
+    &quot;rawUtf8Sha256&quot;: &quot;67299cd65750152519494cb5f78dab7ef3f72f87855897a9135463861a93758f&quot;,
+    &quot;repeat&quot;: 3,
+    &quot;runId&quot;: &quot;m02-dev42-20261101-r4&quot;,
+    &quot;semanticReview&quot;: &quot;pending_not_automatically_approved&quot;,
+    &quot;serializedInputSha256&quot;: &quot;3ac1f68a5d40a4a6a59067de2d94fb005f9d4903309b2442e082b50f878bbf33&quot;,
+    &quot;settledAt&quot;: &quot;2026-11-01T15:46:28.112381+00:00&quot;,
+    &quot;settledElapsedMs&quot;: 249.31020800431725,
+    &quot;settledMonotonicNs&quot;: 116255950873916,
+    &quot;sourceGroup&quot;: &quot;d-origin-d04-01&quot;,
+    &quot;stage&quot;: &quot;admission_decided_before_reaction_confirmation&quot;,
+    &quot;startedAt&quot;: &quot;2026-11-01T15:46:27.863079+00:00&quot;,
+    &quot;startedMonotonicNs&quot;: 116255701569291,
+    &quot;status&quot;: &quot;complete&quot;,
+    &quot;structureStatus&quot;: &quot;valid&quot;,
+    &quot;task&quot;: &quot;D04&quot;
+  },
+  {
+    &quot;activeStage&quot;: &quot;decode_and_validate&quot;,
+    &quot;arm&quot;: &quot;M02-direct-zero-shot&quot;,
+    &quot;caseId&quot;: &quot;dev-d04-01&quot;,
+    &quot;configSha256&quot;: &quot;1f4c226fdbbc8c189841f814b95d25f75816d3d9bb62f9d761f77f7e34ff17a4&quot;,
+    &quot;decodeAndValidateMs&quot;: 2.3676249984418973,
+    &quot;deviceId&quot;: &quot;arm64-cpu-1thread&quot;,
+    &quot;elapsedMs&quot;: 252.8575420001289,
+    &quot;encodeMs&quot;: 1.8862080032704398,
+    &quot;epoch&quot;: 1,
+    &quot;finishedWithEos&quot;: true,
+    &quot;fullRequestMeasured&quot;: false,
+    &quot;generateMs&quot;: 247.0773750101216,
+    &quot;generationCompleted&quot;: true,
+    &quot;generationPerformed&quot;: true,
+    &quot;generationStarted&quot;: true,
+    &quot;generationStartedAt&quot;: &quot;2026-11-01T15:46:28.689431+00:00&quot;,
+    &quot;generationStartedMonotonicNs&quot;: 116256527911166,
+    &quot;inputTokens&quot;: 675,
+    &quot;journalUpdatesIncludedInElapsedMs&quot;: true,
+    &quot;losslessRoundTripMatched&quot;: true,
+    &quot;modelId&quot;: &quot;IDEA-CCNL/Randeng-T5-77M-MultiTask-Chinese&quot;,
+    &quot;modelInputSha256&quot;: &quot;d10d13df3bc8fb5fdee00009c1b1edd37268627dd40e9a8670aa2d0709798529&quot;,
+    &quot;modelRevision&quot;: &quot;06d379d7375245f31cfb87166eff134cfeb5dead&quot;,
+    &quot;outputTokenIds&quot;: [
+      0,
+      259,
+      785,
+      4040,
+      4123,
+      2798,
+      17989,
+      4806,
+      16621,
+      261,
+      785,
+      12471,
+      4579,
+      261,
+      785,
+      22779,
+      18524,
+      10338,
+      2303,
+      29409,
+      1097,
+      1
+    ],
+    &quot;outputTokensExcludingDecoderStart&quot;: 21,
+    &quot;parsed&quot;: &quot;不改写已冻结动作,不保证成功,不自行分配目标或骰点&quot;,
+    &quot;peakResidentMiB&quot;: 787.546875,
+    &quot;prompt&quot;: &quot;结合全部已冻结威胁和实际判定、任务与个性，生成当前已准入人物的一次反应尝试。只输出反应正文；不改写已冻结动作，不保证成功，不自行分配目标或骰点。\n完整资料以表格编码：列为字段，行为记录；同文编号引用共用文本。\n{\&quot;共用文本\&quot;:[\&quot;我扳动操作杆，合上乙手臂所在的热隔板夹口。\&quot;,\&quot;衣物完整，双手可自由活动，无已知伤势。\&quot;],\&quot;格式\&quot;:\&quot;无损表格1\&quot;,\&quot;资料\&quot;:{\&quot;世界\&quot;:{\&quot;人物\&quot;:{\&quot;列\&quot;:[\&quot;外貌\&quot;,\&quot;编号\&quot;,\&quot;名称\&quot;,\&quot;个性\&quot;,\&quot;位置\&quot;,\&quot;理智\&quot;,\&quot;任务\&quot;],\&quot;行\&quot;:[[{\&quot;同文\&quot;:1},\&quot;p1\&quot;,\&quot;林岑（甲）\&quot;,[\&quot;急于封闭热源。\&quot;],{\&quot;容器\&quot;:\&quot;loc_a\&quot;,\&quot;部位\&quot;:\&quot;地面\&quot;},65,[{\&quot;上级\&quot;:null,\&quot;正文\&quot;:\&quot;合上热隔板。\&quot;,\&quot;状态\&quot;:\&quot;pending\&quot;,\&quot;编号\&quot;:\&quot;task_p1\&quot;}]],[{\&quot;同文\&quot;:1},\&quot;p2\&quot;,\&quot;余夏（乙）\&quot;,[\&quot;重视自保。\&quot;],{\&quot;容器\&quot;:\&quot;loc_a\&quot;,\&quot;部位\&quot;:\&quot;地面\&quot;},65,[{\&quot;上级\&quot;:null,\&quot;正文\&quot;:\&quot;避免手臂被夹伤。\&quot;,\&quot;状态\&quot;:\&quot;pending\&quot;,\&quot;编号\&quot;:\&quot;task_p2\&quot;}]],[{\&quot;同文\&quot;:1},\&quot;p3\&quot;,\&quot;赵沅（丙）\&quot;,[\&quot;专注。\&quot;],{\&quot;容器\&quot;:\&quot;loc_b\&quot;,\&quot;部位\&quot;:\&quot;地面\&quot;},65,[{\&quot;上级\&quot;:null,\&quot;正文\&quot;:\&quot;记录温度。\&quot;,\&quot;状态\&quot;:\&quot;pending\&quot;,\&quot;编号\&quot;:\&quot;task_p3\&quot;}]]]},\&quot;地点\&quot;:{\&quot;列\&quot;:[\&quot;编号\&quot;,\&quot;名称\&quot;,\&quot;上级\&quot;],\&quot;行\&quot;:[[\&quot;loc_outer\&quot;,\&quot;旧锅炉房\&quot;,null],[\&quot;loc_a\&quot;,\&quot;热隔板夹口\&quot;,\&quot;loc_outer\&quot;],[\&quot;loc_b\&quot;,\&quot;冷却走道\&quot;,\&quot;loc_outer\&quot;]]},\&quot;时间\&quot;:\&quot;2031-04-18T10:20:00+08:00\&quot;,\&quot;物品\&quot;:{\&quot;列\&quot;:[\&quot;编号\&quot;,\&quot;名称\&quot;,\&quot;位置\&quot;],\&quot;行\&quot;:[[\&quot;item_1\&quot;,\&quot;热隔板\&quot;,{\&quot;容器\&quot;:\&quot;loc_a\&quot;,\&quot;部位\&quot;:\&quot;可见位置\&quot;}],[\&quot;item_2\&quot;,\&quot;操作杆\&quot;,{\&quot;容器\&quot;:\&quot;p1\&quot;,\&quot;部位\&quot;:\&quot;可见位置\&quot;}]]}},\&quot;先前跳过\&quot;:[],\&quot;冻结源\&quot;:{\&quot;成员\&quot;:\&quot;p1\&quot;,\&quot;行动原文\&quot;:{\&quot;同文\&quot;:0}},\&quot;准入\&quot;:{\&quot;已准入\&quot;:true,\&quot;有资格\&quot;:true},\&quot;实际判定\&quot;:[{\&quot;已准入\&quot;:true,\&quot;有资格\&quot;:true,\&quot;来源\&quot;:\&quot;p1\&quot;,\&quot;点数\&quot;:16,\&quot;目标\&quot;:\&quot;p2\&quot;,\&quot;规则版本\&quot;:\&quot;reaction-d20-v1\&quot;,\&quot;通过\&quot;:true,\&quot;阈值\&quot;:11,\&quot;骰点编号\&quot;:\&quot;roll_p1_p2_1\&quot;}],\&quot;已确认组\&quot;:{\&quot;成员行动\&quot;:[{\&quot;成员\&quot;:\&quot;p1\&quot;,\&quot;行动原文\&quot;:{\&quot;同文\&quot;:0}}]},\&quot;已行动\&quot;:[],\&quot;成员\&quot;:\&quot;p2\&quot;}}&quot;,
+    &quot;promptSha256&quot;: &quot;92f7c988242e5d50d92779445ff41e916a293d1bcf2ce7042474035197c9c2bd&quot;,
+    &quot;raw&quot;: &quot;不改写已冻结动作,不保证成功,不自行分配目标或骰点&quot;,
+    &quot;rawUtf8Sha256&quot;: &quot;67299cd65750152519494cb5f78dab7ef3f72f87855897a9135463861a93758f&quot;,
+    &quot;repeat&quot;: 4,
+    &quot;runId&quot;: &quot;m02-dev42-20261101-r4&quot;,
+    &quot;semanticReview&quot;: &quot;pending_not_automatically_approved&quot;,
+    &quot;serializedInputSha256&quot;: &quot;3ac1f68a5d40a4a6a59067de2d94fb005f9d4903309b2442e082b50f878bbf33&quot;,
+    &quot;settledAt&quot;: &quot;2026-11-01T15:46:28.938886+00:00&quot;,
+    &quot;settledElapsedMs&quot;: 252.8575420001289,
+    &quot;settledMonotonicNs&quot;: 116256777369375,
+    &quot;sourceGroup&quot;: &quot;d-origin-d04-01&quot;,
+    &quot;stage&quot;: &quot;admission_decided_before_reaction_confirmation&quot;,
+    &quot;startedAt&quot;: &quot;2026-11-01T15:46:28.686037+00:00&quot;,
+    &quot;startedMonotonicNs&quot;: 116256524517708,
+    &quot;status&quot;: &quot;complete&quot;,
+    &quot;structureStatus&quot;: &quot;valid&quot;,
+    &quot;task&quot;: &quot;D04&quot;
+  }
+]</pre></details></article><article><h2>共同结果 · dev-d05-01</h2><p>格式拒绝；没有完整成员结果映射，也没有联合因果结算。</p><h3>模型原始回答（5次相同）</h3><pre>不相似</pre><details><summary>查看已审题完整输入</summary><pre>{
+  &quot;group&quot;: {
+    &quot;alreadyActedIds&quot;: [],
+    &quot;closed&quot;: true,
+    &quot;confirmedTargets&quot;: [
+      {
+        &quot;sourceId&quot;: &quot;p1&quot;,
+        &quot;targetIds&quot;: [
+          &quot;p2&quot;
+        ]
+      },
+      {
+        &quot;sourceId&quot;: &quot;p2&quot;,
+        &quot;targetIds&quot;: []
+      }
+    ],
+    &quot;judgments&quot;: [
+      {
+        &quot;admitted&quot;: true,
+        &quot;eligible&quot;: true,
+        &quot;passed&quot;: true,
+        &quot;rollId&quot;: &quot;roll_p1_p2_1&quot;,
+        &quot;ruleVersion&quot;: &quot;reaction-d20-v1&quot;,
+        &quot;sourceId&quot;: &quot;p1&quot;,
+        &quot;targetId&quot;: &quot;p2&quot;,
+        &quot;threshold&quot;: 11,
+        &quot;value&quot;: 16
+      }
+    ],
+    &quot;memberIds&quot;: [
+      &quot;p1&quot;,
+      &quot;p2&quot;
+    ],
+    &quot;members&quot;: [
+      {
+        &quot;actionText&quot;: &quot;我伸手抓取窄台上唯一的封签钥匙。&quot;,
+        &quot;memberId&quot;: &quot;p1&quot;
+      },
+      {
+        &quot;actionText&quot;: &quot;我伸手按住那把钥匙，阻止甲未经登记取走。&quot;,
+        &quot;memberId&quot;: &quot;p2&quot;
+      }
+    ]
+  },
+  &quot;world&quot;: {
+    &quot;characters&quot;: [
+      {
+        &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+        &quot;id&quot;: &quot;p1&quot;,
+        &quot;name&quot;: &quot;施宁（甲）&quot;,
+        &quot;personality&quot;: [
+          &quot;坚持自己的职责。&quot;
+        ],
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_a&quot;,
+          &quot;slot&quot;: &quot;地面&quot;
+        },
+        &quot;sanity&quot;: 65,
+        &quot;tasks&quot;: [
+          {
+            &quot;id&quot;: &quot;task_p1&quot;,
+            &quot;parentId&quot;: null,
+            &quot;status&quot;: &quot;pending&quot;,
+            &quot;text&quot;: &quot;取到唯一钥匙给封签盒上锁。&quot;
+          }
+        ]
+      },
+      {
+        &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+        &quot;id&quot;: &quot;p2&quot;,
+        &quot;name&quot;: &quot;关禾（乙）&quot;,
+        &quot;personality&quot;: [
+          &quot;谨慎守规。&quot;
+        ],
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_a&quot;,
+          &quot;slot&quot;: &quot;地面&quot;
+        },
+        &quot;sanity&quot;: 65,
+        &quot;tasks&quot;: [
+          {
+            &quot;id&quot;: &quot;task_p2&quot;,
+            &quot;parentId&quot;: null,
+            &quot;status&quot;: &quot;pending&quot;,
+            &quot;text&quot;: &quot;拦住钥匙被未经登记取走。&quot;
+          }
+        ]
+      },
+      {
+        &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+        &quot;id&quot;: &quot;p3&quot;,
+        &quot;name&quot;: &quot;程遥（丙）&quot;,
+        &quot;personality&quot;: [
+          &quot;专注。&quot;
+        ],
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_b&quot;,
+          &quot;slot&quot;: &quot;地面&quot;
+        },
+        &quot;sanity&quot;: 65,
+        &quot;tasks&quot;: [
+          {
+            &quot;id&quot;: &quot;task_p3&quot;,
+            &quot;parentId&quot;: null,
+            &quot;status&quot;: &quot;pending&quot;,
+            &quot;text&quot;: &quot;登记钥匙移交。&quot;
+          }
+        ]
+      }
+    ],
+    &quot;items&quot;: [
+      {
+        &quot;id&quot;: &quot;item_1&quot;,
+        &quot;name&quot;: &quot;唯一封签钥匙&quot;,
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_a&quot;,
+          &quot;slot&quot;: &quot;可见位置&quot;
+        }
+      },
+      {
+        &quot;id&quot;: &quot;item_2&quot;,
+        &quot;name&quot;: &quot;封签盒&quot;,
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_b&quot;,
+          &quot;slot&quot;: &quot;可见位置&quot;
+        }
+      }
+    ],
+    &quot;places&quot;: [
+      {
+        &quot;id&quot;: &quot;loc_outer&quot;,
+        &quot;name&quot;: &quot;封签保管室&quot;,
+        &quot;parentId&quot;: null
+      },
+      {
+        &quot;id&quot;: &quot;loc_a&quot;,
+        &quot;name&quot;: &quot;唯一封签钥匙所在的窄台&quot;,
+        &quot;parentId&quot;: &quot;loc_outer&quot;
+      },
+      {
+        &quot;id&quot;: &quot;loc_b&quot;,
+        &quot;name&quot;: &quot;登记柜旁&quot;,
+        &quot;parentId&quot;: &quot;loc_outer&quot;
+      }
+    ],
+    &quot;time&quot;: &quot;2031-04-18T10:20:00+08:00&quot;
+  }
+}</pre></details><details><summary>查看原判据</summary><pre>{
+  &quot;expectedCall&quot;: true,
+  &quot;forbidden&quot;: [
+    &quot;同时说甲和乙各自独占同一钥匙。&quot;,
+    &quot;凭空复制钥匙或新增人物行动。&quot;
+  ],
+  &quot;guardDisposition&quot;: &quot;generate&quot;,
+  &quot;memberIds&quot;: [
+    &quot;p1&quot;,
+    &quot;p2&quot;
+  ],
+  &quot;mustRespect&quot;: [
+    &quot;两人围绕同一把钥匙的后果必须一致，可有一人取得、双方僵持或钥匙留原处等合理方案。&quot;,
+    &quot;结果仅覆盖全组p1/p2，不要求唯一参考句。&quot;
+  ]
+}</pre></details><details><summary>查看5次完整原始记录</summary><pre>[
+  {
+    &quot;activeStage&quot;: &quot;decode_and_validate&quot;,
+    &quot;arm&quot;: &quot;M02-direct-zero-shot&quot;,
+    &quot;caseId&quot;: &quot;dev-d05-01&quot;,
+    &quot;configSha256&quot;: &quot;1f4c226fdbbc8c189841f814b95d25f75816d3d9bb62f9d761f77f7e34ff17a4&quot;,
+    &quot;decodeAndValidateMs&quot;: 1.0746250045485795,
+    &quot;deviceId&quot;: &quot;arm64-cpu-1thread&quot;,
+    &quot;elapsedMs&quot;: 195.83195800078101,
+    &quot;encodeMs&quot;: 1.105041999835521,
+    &quot;epoch&quot;: 1,
+    &quot;finishedWithEos&quot;: true,
+    &quot;fullRequestMeasured&quot;: false,
+    &quot;generateMs&quot;: 192.79154199466575,
+    &quot;generationCompleted&quot;: true,
+    &quot;generationPerformed&quot;: true,
+    &quot;generationStarted&quot;: true,
+    &quot;generationStartedAt&quot;: &quot;2026-11-01T15:46:25.714058+00:00&quot;,
+    &quot;generationStartedMonotonicNs&quot;: 116253552571250,
+    &quot;inputTokens&quot;: 738,
+    &quot;journalUpdatesIncludedInElapsedMs&quot;: true,
+    &quot;losslessRoundTripMatched&quot;: true,
+    &quot;modelId&quot;: &quot;IDEA-CCNL/Randeng-T5-77M-MultiTask-Chinese&quot;,
+    &quot;modelInputSha256&quot;: &quot;c82211255aa6031e18ae3f590593de29b6acb5cefbce71c325dcee1dc3b8d915&quot;,
+    &quot;modelRevision&quot;: &quot;06d379d7375245f31cfb87166eff134cfeb5dead&quot;,
+    &quot;outputTokenIds&quot;: [
+      0,
+      259,
+      785,
+      2031,
+      9066,
+      1
+    ],
+    &quot;outputTokensExcludingDecoderStart&quot;: 5,
+    &quot;parseError&quot;: {
+      &quot;message&quot;: &quot;invalid JSON: Expecting value: line 1 column 1 (char 0)&quot;,
+      &quot;type&quot;: &quot;LabValidationError&quot;
+    },
+    &quot;peakResidentMiB&quot;: 755.03125,
+    &quot;prompt&quot;: &quot;统一推导已闭合全组的自洽后果，考虑全部动作和骰点；骰点用于反应准入，不机械决定胜负。只输出JSON {\&quot;results\&quot;:{\&quot;组成员ID\&quot;:\&quot;后果正文\&quot;}}，results键恰好覆盖memberIds，不补新行动。\n完整资料以表格编码：列为字段，行为记录；同文编号引用共用文本。\n{\&quot;共用文本\&quot;:[\&quot;衣物完整，双手可自由活动，无已知伤势。\&quot;],\&quot;格式\&quot;:\&quot;无损表格1\&quot;,\&quot;资料\&quot;:{\&quot;世界\&quot;:{\&quot;人物\&quot;:{\&quot;列\&quot;:[\&quot;外貌\&quot;,\&quot;编号\&quot;,\&quot;名称\&quot;,\&quot;个性\&quot;,\&quot;位置\&quot;,\&quot;理智\&quot;,\&quot;任务\&quot;],\&quot;行\&quot;:[[{\&quot;同文\&quot;:0},\&quot;p1\&quot;,\&quot;施宁（甲）\&quot;,[\&quot;坚持自己的职责。\&quot;],{\&quot;容器\&quot;:\&quot;loc_a\&quot;,\&quot;部位\&quot;:\&quot;地面\&quot;},65,[{\&quot;上级\&quot;:null,\&quot;正文\&quot;:\&quot;取到唯一钥匙给封签盒上锁。\&quot;,\&quot;状态\&quot;:\&quot;pending\&quot;,\&quot;编号\&quot;:\&quot;task_p1\&quot;}]],[{\&quot;同文\&quot;:0},\&quot;p2\&quot;,\&quot;关禾（乙）\&quot;,[\&quot;谨慎守规。\&quot;],{\&quot;容器\&quot;:\&quot;loc_a\&quot;,\&quot;部位\&quot;:\&quot;地面\&quot;},65,[{\&quot;上级\&quot;:null,\&quot;正文\&quot;:\&quot;拦住钥匙被未经登记取走。\&quot;,\&quot;状态\&quot;:\&quot;pending\&quot;,\&quot;编号\&quot;:\&quot;task_p2\&quot;}]],[{\&quot;同文\&quot;:0},\&quot;p3\&quot;,\&quot;程遥（丙）\&quot;,[\&quot;专注。\&quot;],{\&quot;容器\&quot;:\&quot;loc_b\&quot;,\&quot;部位\&quot;:\&quot;地面\&quot;},65,[{\&quot;上级\&quot;:null,\&quot;正文\&quot;:\&quot;登记钥匙移交。\&quot;,\&quot;状态\&quot;:\&quot;pending\&quot;,\&quot;编号\&quot;:\&quot;task_p3\&quot;}]]]},\&quot;地点\&quot;:{\&quot;列\&quot;:[\&quot;编号\&quot;,\&quot;名称\&quot;,\&quot;上级\&quot;],\&quot;行\&quot;:[[\&quot;loc_outer\&quot;,\&quot;封签保管室\&quot;,null],[\&quot;loc_a\&quot;,\&quot;唯一封签钥匙所在的窄台\&quot;,\&quot;loc_outer\&quot;],[\&quot;loc_b\&quot;,\&quot;登记柜旁\&quot;,\&quot;loc_outer\&quot;]]},\&quot;时间\&quot;:\&quot;2031-04-18T10:20:00+08:00\&quot;,\&quot;物品\&quot;:{\&quot;列\&quot;:[\&quot;编号\&quot;,\&quot;名称\&quot;,\&quot;位置\&quot;],\&quot;行\&quot;:[[\&quot;item_1\&quot;,\&quot;唯一封签钥匙\&quot;,{\&quot;容器\&quot;:\&quot;loc_a\&quot;,\&quot;部位\&quot;:\&quot;可见位置\&quot;}],[\&quot;item_2\&quot;,\&quot;封签盒\&quot;,{\&quot;容器\&quot;:\&quot;loc_b\&quot;,\&quot;部位\&quot;:\&quot;可见位置\&quot;}]]}},\&quot;闭组\&quot;:{\&quot;完整成员\&quot;:[\&quot;p1\&quot;,\&quot;p2\&quot;],\&quot;实际判定\&quot;:[{\&quot;已准入\&quot;:true,\&quot;有资格\&quot;:true,\&quot;来源\&quot;:\&quot;p1\&quot;,\&quot;点数\&quot;:16,\&quot;目标\&quot;:\&quot;p2\&quot;,\&quot;规则版本\&quot;:\&quot;reaction-d20-v1\&quot;,\&quot;通过\&quot;:true,\&quot;阈值\&quot;:11,\&quot;骰点编号\&quot;:\&quot;roll_p1_p2_1\&quot;}],\&quot;已确认目标集\&quot;:{\&quot;列\&quot;:[\&quot;来源\&quot;,\&quot;目标集\&quot;],\&quot;行\&quot;:[[\&quot;p1\&quot;,[\&quot;p2\&quot;]],[\&quot;p2\&quot;,[]]]},\&quot;已行动\&quot;:[],\&quot;已闭合\&quot;:true,\&quot;成员行动\&quot;:{\&quot;列\&quot;:[\&quot;行动原文\&quot;,\&quot;成员\&quot;],\&quot;行\&quot;:[[\&quot;我伸手抓取窄台上唯一的封签钥匙。\&quot;,\&quot;p1\&quot;],[\&quot;我伸手按住那把钥匙，阻止甲未经登记取走。\&quot;,\&quot;p2\&quot;]]}}}}&quot;,
+    &quot;promptSha256&quot;: &quot;eaa344b30ec61153c426ade4d5002ae6c3d7e2c1907de14547a4b0093125d6bf&quot;,
+    &quot;raw&quot;: &quot;不相似&quot;,
+    &quot;rawUtf8Sha256&quot;: &quot;385a31b4da441957aac46714181c425649c89af9ce3b11a04a477ce160850a48&quot;,
+    &quot;repeat&quot;: 0,
+    &quot;runId&quot;: &quot;m02-dev42-20261101-r4&quot;,
+    &quot;semanticReview&quot;: &quot;pending_not_automatically_approved&quot;,
+    &quot;serializedInputSha256&quot;: &quot;ea83f94b2f1fab3121c9b1524753d1a62673fd7fb34b1a63a63744e94458057e&quot;,
+    &quot;settledAt&quot;: &quot;2026-11-01T15:46:25.907935+00:00&quot;,
+    &quot;settledElapsedMs&quot;: 195.83195800078101,
+    &quot;settledMonotonicNs&quot;: 116253746454958,
+    &quot;sourceGroup&quot;: &quot;d-origin-d05-01&quot;,
+    &quot;stage&quot;: &quot;group_close_guard_before_joint_results&quot;,
+    &quot;startedAt&quot;: &quot;2026-11-01T15:46:25.712116+00:00&quot;,
+    &quot;startedMonotonicNs&quot;: 116253550628875,
+    &quot;status&quot;: &quot;invalid_output&quot;,
+    &quot;structureStatus&quot;: &quot;invalid&quot;,
+    &quot;task&quot;: &quot;D05&quot;
+  },
+  {
+    &quot;activeStage&quot;: &quot;decode_and_validate&quot;,
+    &quot;arm&quot;: &quot;M02-direct-zero-shot&quot;,
+    &quot;caseId&quot;: &quot;dev-d05-01&quot;,
+    &quot;configSha256&quot;: &quot;1f4c226fdbbc8c189841f814b95d25f75816d3d9bb62f9d761f77f7e34ff17a4&quot;,
+    &quot;decodeAndValidateMs&quot;: 1.0742500016931444,
+    &quot;deviceId&quot;: &quot;arm64-cpu-1thread&quot;,
+    &quot;elapsedMs&quot;: 191.9857909961138,
+    &quot;encodeMs&quot;: 1.3164169940864667,
+    &quot;epoch&quot;: 1,
+    &quot;finishedWithEos&quot;: true,
+    &quot;fullRequestMeasured&quot;: false,
+    &quot;generateMs&quot;: 188.6725830117939,
+    &quot;generationCompleted&quot;: true,
+    &quot;generationPerformed&quot;: true,
+    &quot;generationStarted&quot;: true,
+    &quot;generationStartedAt&quot;: &quot;2026-11-01T15:46:26.521937+00:00&quot;,
+    &quot;generationStartedMonotonicNs&quot;: 116254360441250,
+    &quot;inputTokens&quot;: 738,
+    &quot;journalUpdatesIncludedInElapsedMs&quot;: true,
+    &quot;losslessRoundTripMatched&quot;: true,
+    &quot;modelId&quot;: &quot;IDEA-CCNL/Randeng-T5-77M-MultiTask-Chinese&quot;,
+    &quot;modelInputSha256&quot;: &quot;c82211255aa6031e18ae3f590593de29b6acb5cefbce71c325dcee1dc3b8d915&quot;,
+    &quot;modelRevision&quot;: &quot;06d379d7375245f31cfb87166eff134cfeb5dead&quot;,
+    &quot;outputTokenIds&quot;: [
+      0,
+      259,
+      785,
+      2031,
+      9066,
+      1
+    ],
+    &quot;outputTokensExcludingDecoderStart&quot;: 5,
+    &quot;parseError&quot;: {
+      &quot;message&quot;: &quot;invalid JSON: Expecting value: line 1 column 1 (char 0)&quot;,
+      &quot;type&quot;: &quot;LabValidationError&quot;
+    },
+    &quot;peakResidentMiB&quot;: 768.125,
+    &quot;prompt&quot;: &quot;统一推导已闭合全组的自洽后果，考虑全部动作和骰点；骰点用于反应准入，不机械决定胜负。只输出JSON {\&quot;results\&quot;:{\&quot;组成员ID\&quot;:\&quot;后果正文\&quot;}}，results键恰好覆盖memberIds，不补新行动。\n完整资料以表格编码：列为字段，行为记录；同文编号引用共用文本。\n{\&quot;共用文本\&quot;:[\&quot;衣物完整，双手可自由活动，无已知伤势。\&quot;],\&quot;格式\&quot;:\&quot;无损表格1\&quot;,\&quot;资料\&quot;:{\&quot;世界\&quot;:{\&quot;人物\&quot;:{\&quot;列\&quot;:[\&quot;外貌\&quot;,\&quot;编号\&quot;,\&quot;名称\&quot;,\&quot;个性\&quot;,\&quot;位置\&quot;,\&quot;理智\&quot;,\&quot;任务\&quot;],\&quot;行\&quot;:[[{\&quot;同文\&quot;:0},\&quot;p1\&quot;,\&quot;施宁（甲）\&quot;,[\&quot;坚持自己的职责。\&quot;],{\&quot;容器\&quot;:\&quot;loc_a\&quot;,\&quot;部位\&quot;:\&quot;地面\&quot;},65,[{\&quot;上级\&quot;:null,\&quot;正文\&quot;:\&quot;取到唯一钥匙给封签盒上锁。\&quot;,\&quot;状态\&quot;:\&quot;pending\&quot;,\&quot;编号\&quot;:\&quot;task_p1\&quot;}]],[{\&quot;同文\&quot;:0},\&quot;p2\&quot;,\&quot;关禾（乙）\&quot;,[\&quot;谨慎守规。\&quot;],{\&quot;容器\&quot;:\&quot;loc_a\&quot;,\&quot;部位\&quot;:\&quot;地面\&quot;},65,[{\&quot;上级\&quot;:null,\&quot;正文\&quot;:\&quot;拦住钥匙被未经登记取走。\&quot;,\&quot;状态\&quot;:\&quot;pending\&quot;,\&quot;编号\&quot;:\&quot;task_p2\&quot;}]],[{\&quot;同文\&quot;:0},\&quot;p3\&quot;,\&quot;程遥（丙）\&quot;,[\&quot;专注。\&quot;],{\&quot;容器\&quot;:\&quot;loc_b\&quot;,\&quot;部位\&quot;:\&quot;地面\&quot;},65,[{\&quot;上级\&quot;:null,\&quot;正文\&quot;:\&quot;登记钥匙移交。\&quot;,\&quot;状态\&quot;:\&quot;pending\&quot;,\&quot;编号\&quot;:\&quot;task_p3\&quot;}]]]},\&quot;地点\&quot;:{\&quot;列\&quot;:[\&quot;编号\&quot;,\&quot;名称\&quot;,\&quot;上级\&quot;],\&quot;行\&quot;:[[\&quot;loc_outer\&quot;,\&quot;封签保管室\&quot;,null],[\&quot;loc_a\&quot;,\&quot;唯一封签钥匙所在的窄台\&quot;,\&quot;loc_outer\&quot;],[\&quot;loc_b\&quot;,\&quot;登记柜旁\&quot;,\&quot;loc_outer\&quot;]]},\&quot;时间\&quot;:\&quot;2031-04-18T10:20:00+08:00\&quot;,\&quot;物品\&quot;:{\&quot;列\&quot;:[\&quot;编号\&quot;,\&quot;名称\&quot;,\&quot;位置\&quot;],\&quot;行\&quot;:[[\&quot;item_1\&quot;,\&quot;唯一封签钥匙\&quot;,{\&quot;容器\&quot;:\&quot;loc_a\&quot;,\&quot;部位\&quot;:\&quot;可见位置\&quot;}],[\&quot;item_2\&quot;,\&quot;封签盒\&quot;,{\&quot;容器\&quot;:\&quot;loc_b\&quot;,\&quot;部位\&quot;:\&quot;可见位置\&quot;}]]}},\&quot;闭组\&quot;:{\&quot;完整成员\&quot;:[\&quot;p1\&quot;,\&quot;p2\&quot;],\&quot;实际判定\&quot;:[{\&quot;已准入\&quot;:true,\&quot;有资格\&quot;:true,\&quot;来源\&quot;:\&quot;p1\&quot;,\&quot;点数\&quot;:16,\&quot;目标\&quot;:\&quot;p2\&quot;,\&quot;规则版本\&quot;:\&quot;reaction-d20-v1\&quot;,\&quot;通过\&quot;:true,\&quot;阈值\&quot;:11,\&quot;骰点编号\&quot;:\&quot;roll_p1_p2_1\&quot;}],\&quot;已确认目标集\&quot;:{\&quot;列\&quot;:[\&quot;来源\&quot;,\&quot;目标集\&quot;],\&quot;行\&quot;:[[\&quot;p1\&quot;,[\&quot;p2\&quot;]],[\&quot;p2\&quot;,[]]]},\&quot;已行动\&quot;:[],\&quot;已闭合\&quot;:true,\&quot;成员行动\&quot;:{\&quot;列\&quot;:[\&quot;行动原文\&quot;,\&quot;成员\&quot;],\&quot;行\&quot;:[[\&quot;我伸手抓取窄台上唯一的封签钥匙。\&quot;,\&quot;p1\&quot;],[\&quot;我伸手按住那把钥匙，阻止甲未经登记取走。\&quot;,\&quot;p2\&quot;]]}}}}&quot;,
+    &quot;promptSha256&quot;: &quot;eaa344b30ec61153c426ade4d5002ae6c3d7e2c1907de14547a4b0093125d6bf&quot;,
+    &quot;raw&quot;: &quot;不相似&quot;,
+    &quot;rawUtf8Sha256&quot;: &quot;385a31b4da441957aac46714181c425649c89af9ce3b11a04a477ce160850a48&quot;,
+    &quot;repeat&quot;: 1,
+    &quot;runId&quot;: &quot;m02-dev42-20261101-r4&quot;,
+    &quot;semanticReview&quot;: &quot;pending_not_automatically_approved&quot;,
+    &quot;serializedInputSha256&quot;: &quot;ea83f94b2f1fab3121c9b1524753d1a62673fd7fb34b1a63a63744e94458057e&quot;,
+    &quot;settledAt&quot;: &quot;2026-11-01T15:46:26.711695+00:00&quot;,
+    &quot;settledElapsedMs&quot;: 191.9857909961138,
+    &quot;settledMonotonicNs&quot;: 116254550202541,
+    &quot;sourceGroup&quot;: &quot;d-origin-d05-01&quot;,
+    &quot;stage&quot;: &quot;group_close_guard_before_joint_results&quot;,
+    &quot;startedAt&quot;: &quot;2026-11-01T15:46:26.519718+00:00&quot;,
+    &quot;startedMonotonicNs&quot;: 116254358222000,
+    &quot;status&quot;: &quot;invalid_output&quot;,
+    &quot;structureStatus&quot;: &quot;invalid&quot;,
+    &quot;task&quot;: &quot;D05&quot;
+  },
+  {
+    &quot;activeStage&quot;: &quot;decode_and_validate&quot;,
+    &quot;arm&quot;: &quot;M02-direct-zero-shot&quot;,
+    &quot;caseId&quot;: &quot;dev-d05-01&quot;,
+    &quot;configSha256&quot;: &quot;1f4c226fdbbc8c189841f814b95d25f75816d3d9bb62f9d761f77f7e34ff17a4&quot;,
+    &quot;decodeAndValidateMs&quot;: 1.232042006449774,
+    &quot;deviceId&quot;: &quot;arm64-cpu-1thread&quot;,
+    &quot;elapsedMs&quot;: 190.33574999775738,
+    &quot;encodeMs&quot;: 1.4847910060780123,
+    &quot;epoch&quot;: 1,
+    &quot;finishedWithEos&quot;: true,
+    &quot;fullRequestMeasured&quot;: false,
+    &quot;generateMs&quot;: 186.58658300410025,
+    &quot;generationCompleted&quot;: true,
+    &quot;generationPerformed&quot;: true,
+    &quot;generationStarted&quot;: true,
+    &quot;generationStartedAt&quot;: &quot;2026-11-01T15:46:27.334989+00:00&quot;,
+    &quot;generationStartedMonotonicNs&quot;: 116255173484458,
+    &quot;inputTokens&quot;: 738,
+    &quot;journalUpdatesIncludedInElapsedMs&quot;: true,
+    &quot;losslessRoundTripMatched&quot;: true,
+    &quot;modelId&quot;: &quot;IDEA-CCNL/Randeng-T5-77M-MultiTask-Chinese&quot;,
+    &quot;modelInputSha256&quot;: &quot;c82211255aa6031e18ae3f590593de29b6acb5cefbce71c325dcee1dc3b8d915&quot;,
+    &quot;modelRevision&quot;: &quot;06d379d7375245f31cfb87166eff134cfeb5dead&quot;,
+    &quot;outputTokenIds&quot;: [
+      0,
+      259,
+      785,
+      2031,
+      9066,
+      1
+    ],
+    &quot;outputTokensExcludingDecoderStart&quot;: 5,
+    &quot;parseError&quot;: {
+      &quot;message&quot;: &quot;invalid JSON: Expecting value: line 1 column 1 (char 0)&quot;,
+      &quot;type&quot;: &quot;LabValidationError&quot;
+    },
+    &quot;peakResidentMiB&quot;: 776.15625,
+    &quot;prompt&quot;: &quot;统一推导已闭合全组的自洽后果，考虑全部动作和骰点；骰点用于反应准入，不机械决定胜负。只输出JSON {\&quot;results\&quot;:{\&quot;组成员ID\&quot;:\&quot;后果正文\&quot;}}，results键恰好覆盖memberIds，不补新行动。\n完整资料以表格编码：列为字段，行为记录；同文编号引用共用文本。\n{\&quot;共用文本\&quot;:[\&quot;衣物完整，双手可自由活动，无已知伤势。\&quot;],\&quot;格式\&quot;:\&quot;无损表格1\&quot;,\&quot;资料\&quot;:{\&quot;世界\&quot;:{\&quot;人物\&quot;:{\&quot;列\&quot;:[\&quot;外貌\&quot;,\&quot;编号\&quot;,\&quot;名称\&quot;,\&quot;个性\&quot;,\&quot;位置\&quot;,\&quot;理智\&quot;,\&quot;任务\&quot;],\&quot;行\&quot;:[[{\&quot;同文\&quot;:0},\&quot;p1\&quot;,\&quot;施宁（甲）\&quot;,[\&quot;坚持自己的职责。\&quot;],{\&quot;容器\&quot;:\&quot;loc_a\&quot;,\&quot;部位\&quot;:\&quot;地面\&quot;},65,[{\&quot;上级\&quot;:null,\&quot;正文\&quot;:\&quot;取到唯一钥匙给封签盒上锁。\&quot;,\&quot;状态\&quot;:\&quot;pending\&quot;,\&quot;编号\&quot;:\&quot;task_p1\&quot;}]],[{\&quot;同文\&quot;:0},\&quot;p2\&quot;,\&quot;关禾（乙）\&quot;,[\&quot;谨慎守规。\&quot;],{\&quot;容器\&quot;:\&quot;loc_a\&quot;,\&quot;部位\&quot;:\&quot;地面\&quot;},65,[{\&quot;上级\&quot;:null,\&quot;正文\&quot;:\&quot;拦住钥匙被未经登记取走。\&quot;,\&quot;状态\&quot;:\&quot;pending\&quot;,\&quot;编号\&quot;:\&quot;task_p2\&quot;}]],[{\&quot;同文\&quot;:0},\&quot;p3\&quot;,\&quot;程遥（丙）\&quot;,[\&quot;专注。\&quot;],{\&quot;容器\&quot;:\&quot;loc_b\&quot;,\&quot;部位\&quot;:\&quot;地面\&quot;},65,[{\&quot;上级\&quot;:null,\&quot;正文\&quot;:\&quot;登记钥匙移交。\&quot;,\&quot;状态\&quot;:\&quot;pending\&quot;,\&quot;编号\&quot;:\&quot;task_p3\&quot;}]]]},\&quot;地点\&quot;:{\&quot;列\&quot;:[\&quot;编号\&quot;,\&quot;名称\&quot;,\&quot;上级\&quot;],\&quot;行\&quot;:[[\&quot;loc_outer\&quot;,\&quot;封签保管室\&quot;,null],[\&quot;loc_a\&quot;,\&quot;唯一封签钥匙所在的窄台\&quot;,\&quot;loc_outer\&quot;],[\&quot;loc_b\&quot;,\&quot;登记柜旁\&quot;,\&quot;loc_outer\&quot;]]},\&quot;时间\&quot;:\&quot;2031-04-18T10:20:00+08:00\&quot;,\&quot;物品\&quot;:{\&quot;列\&quot;:[\&quot;编号\&quot;,\&quot;名称\&quot;,\&quot;位置\&quot;],\&quot;行\&quot;:[[\&quot;item_1\&quot;,\&quot;唯一封签钥匙\&quot;,{\&quot;容器\&quot;:\&quot;loc_a\&quot;,\&quot;部位\&quot;:\&quot;可见位置\&quot;}],[\&quot;item_2\&quot;,\&quot;封签盒\&quot;,{\&quot;容器\&quot;:\&quot;loc_b\&quot;,\&quot;部位\&quot;:\&quot;可见位置\&quot;}]]}},\&quot;闭组\&quot;:{\&quot;完整成员\&quot;:[\&quot;p1\&quot;,\&quot;p2\&quot;],\&quot;实际判定\&quot;:[{\&quot;已准入\&quot;:true,\&quot;有资格\&quot;:true,\&quot;来源\&quot;:\&quot;p1\&quot;,\&quot;点数\&quot;:16,\&quot;目标\&quot;:\&quot;p2\&quot;,\&quot;规则版本\&quot;:\&quot;reaction-d20-v1\&quot;,\&quot;通过\&quot;:true,\&quot;阈值\&quot;:11,\&quot;骰点编号\&quot;:\&quot;roll_p1_p2_1\&quot;}],\&quot;已确认目标集\&quot;:{\&quot;列\&quot;:[\&quot;来源\&quot;,\&quot;目标集\&quot;],\&quot;行\&quot;:[[\&quot;p1\&quot;,[\&quot;p2\&quot;]],[\&quot;p2\&quot;,[]]]},\&quot;已行动\&quot;:[],\&quot;已闭合\&quot;:true,\&quot;成员行动\&quot;:{\&quot;列\&quot;:[\&quot;行动原文\&quot;,\&quot;成员\&quot;],\&quot;行\&quot;:[[\&quot;我伸手抓取窄台上唯一的封签钥匙。\&quot;,\&quot;p1\&quot;],[\&quot;我伸手按住那把钥匙，阻止甲未经登记取走。\&quot;,\&quot;p2\&quot;]]}}}}&quot;,
+    &quot;promptSha256&quot;: &quot;eaa344b30ec61153c426ade4d5002ae6c3d7e2c1907de14547a4b0093125d6bf&quot;,
+    &quot;raw&quot;: &quot;不相似&quot;,
+    &quot;rawUtf8Sha256&quot;: &quot;385a31b4da441957aac46714181c425649c89af9ce3b11a04a477ce160850a48&quot;,
+    &quot;repeat&quot;: 2,
+    &quot;runId&quot;: &quot;m02-dev42-20261101-r4&quot;,
+    &quot;semanticReview&quot;: &quot;pending_not_automatically_approved&quot;,
+    &quot;serializedInputSha256&quot;: &quot;ea83f94b2f1fab3121c9b1524753d1a62673fd7fb34b1a63a63744e94458057e&quot;,
+    &quot;settledAt&quot;: &quot;2026-11-01T15:46:27.522817+00:00&quot;,
+    &quot;settledElapsedMs&quot;: 190.33574999775738,
+    &quot;settledMonotonicNs&quot;: 116255361320375,
+    &quot;sourceGroup&quot;: &quot;d-origin-d05-01&quot;,
+    &quot;stage&quot;: &quot;group_close_guard_before_joint_results&quot;,
+    &quot;startedAt&quot;: &quot;2026-11-01T15:46:27.332495+00:00&quot;,
+    &quot;startedMonotonicNs&quot;: 116255170989708,
+    &quot;status&quot;: &quot;invalid_output&quot;,
+    &quot;structureStatus&quot;: &quot;invalid&quot;,
+    &quot;task&quot;: &quot;D05&quot;
+  },
+  {
+    &quot;activeStage&quot;: &quot;decode_and_validate&quot;,
+    &quot;arm&quot;: &quot;M02-direct-zero-shot&quot;,
+    &quot;caseId&quot;: &quot;dev-d05-01&quot;,
+    &quot;configSha256&quot;: &quot;1f4c226fdbbc8c189841f814b95d25f75816d3d9bb62f9d761f77f7e34ff17a4&quot;,
+    &quot;decodeAndValidateMs&quot;: 3.600666008424014,
+    &quot;deviceId&quot;: &quot;arm64-cpu-1thread&quot;,
+    &quot;elapsedMs&quot;: 213.4158330009086,
+    &quot;encodeMs&quot;: 1.5695830079494044,
+    &quot;epoch&quot;: 1,
+    &quot;finishedWithEos&quot;: true,
+    &quot;fullRequestMeasured&quot;: false,
+    &quot;generateMs&quot;: 207.0603750034934,
+    &quot;generationCompleted&quot;: true,
+    &quot;generationPerformed&quot;: true,
+    &quot;generationStarted&quot;: true,
+    &quot;generationStartedAt&quot;: &quot;2026-11-01T15:46:28.116738+00:00&quot;,
+    &quot;generationStartedMonotonicNs&quot;: 116255955225916,
+    &quot;inputTokens&quot;: 738,
+    &quot;journalUpdatesIncludedInElapsedMs&quot;: true,
+    &quot;losslessRoundTripMatched&quot;: true,
+    &quot;modelId&quot;: &quot;IDEA-CCNL/Randeng-T5-77M-MultiTask-Chinese&quot;,
+    &quot;modelInputSha256&quot;: &quot;c82211255aa6031e18ae3f590593de29b6acb5cefbce71c325dcee1dc3b8d915&quot;,
+    &quot;modelRevision&quot;: &quot;06d379d7375245f31cfb87166eff134cfeb5dead&quot;,
+    &quot;outputTokenIds&quot;: [
+      0,
+      259,
+      785,
+      2031,
+      9066,
+      1
+    ],
+    &quot;outputTokensExcludingDecoderStart&quot;: 5,
+    &quot;parseError&quot;: {
+      &quot;message&quot;: &quot;invalid JSON: Expecting value: line 1 column 1 (char 0)&quot;,
+      &quot;type&quot;: &quot;LabValidationError&quot;
+    },
+    &quot;peakResidentMiB&quot;: 784.03125,
+    &quot;prompt&quot;: &quot;统一推导已闭合全组的自洽后果，考虑全部动作和骰点；骰点用于反应准入，不机械决定胜负。只输出JSON {\&quot;results\&quot;:{\&quot;组成员ID\&quot;:\&quot;后果正文\&quot;}}，results键恰好覆盖memberIds，不补新行动。\n完整资料以表格编码：列为字段，行为记录；同文编号引用共用文本。\n{\&quot;共用文本\&quot;:[\&quot;衣物完整，双手可自由活动，无已知伤势。\&quot;],\&quot;格式\&quot;:\&quot;无损表格1\&quot;,\&quot;资料\&quot;:{\&quot;世界\&quot;:{\&quot;人物\&quot;:{\&quot;列\&quot;:[\&quot;外貌\&quot;,\&quot;编号\&quot;,\&quot;名称\&quot;,\&quot;个性\&quot;,\&quot;位置\&quot;,\&quot;理智\&quot;,\&quot;任务\&quot;],\&quot;行\&quot;:[[{\&quot;同文\&quot;:0},\&quot;p1\&quot;,\&quot;施宁（甲）\&quot;,[\&quot;坚持自己的职责。\&quot;],{\&quot;容器\&quot;:\&quot;loc_a\&quot;,\&quot;部位\&quot;:\&quot;地面\&quot;},65,[{\&quot;上级\&quot;:null,\&quot;正文\&quot;:\&quot;取到唯一钥匙给封签盒上锁。\&quot;,\&quot;状态\&quot;:\&quot;pending\&quot;,\&quot;编号\&quot;:\&quot;task_p1\&quot;}]],[{\&quot;同文\&quot;:0},\&quot;p2\&quot;,\&quot;关禾（乙）\&quot;,[\&quot;谨慎守规。\&quot;],{\&quot;容器\&quot;:\&quot;loc_a\&quot;,\&quot;部位\&quot;:\&quot;地面\&quot;},65,[{\&quot;上级\&quot;:null,\&quot;正文\&quot;:\&quot;拦住钥匙被未经登记取走。\&quot;,\&quot;状态\&quot;:\&quot;pending\&quot;,\&quot;编号\&quot;:\&quot;task_p2\&quot;}]],[{\&quot;同文\&quot;:0},\&quot;p3\&quot;,\&quot;程遥（丙）\&quot;,[\&quot;专注。\&quot;],{\&quot;容器\&quot;:\&quot;loc_b\&quot;,\&quot;部位\&quot;:\&quot;地面\&quot;},65,[{\&quot;上级\&quot;:null,\&quot;正文\&quot;:\&quot;登记钥匙移交。\&quot;,\&quot;状态\&quot;:\&quot;pending\&quot;,\&quot;编号\&quot;:\&quot;task_p3\&quot;}]]]},\&quot;地点\&quot;:{\&quot;列\&quot;:[\&quot;编号\&quot;,\&quot;名称\&quot;,\&quot;上级\&quot;],\&quot;行\&quot;:[[\&quot;loc_outer\&quot;,\&quot;封签保管室\&quot;,null],[\&quot;loc_a\&quot;,\&quot;唯一封签钥匙所在的窄台\&quot;,\&quot;loc_outer\&quot;],[\&quot;loc_b\&quot;,\&quot;登记柜旁\&quot;,\&quot;loc_outer\&quot;]]},\&quot;时间\&quot;:\&quot;2031-04-18T10:20:00+08:00\&quot;,\&quot;物品\&quot;:{\&quot;列\&quot;:[\&quot;编号\&quot;,\&quot;名称\&quot;,\&quot;位置\&quot;],\&quot;行\&quot;:[[\&quot;item_1\&quot;,\&quot;唯一封签钥匙\&quot;,{\&quot;容器\&quot;:\&quot;loc_a\&quot;,\&quot;部位\&quot;:\&quot;可见位置\&quot;}],[\&quot;item_2\&quot;,\&quot;封签盒\&quot;,{\&quot;容器\&quot;:\&quot;loc_b\&quot;,\&quot;部位\&quot;:\&quot;可见位置\&quot;}]]}},\&quot;闭组\&quot;:{\&quot;完整成员\&quot;:[\&quot;p1\&quot;,\&quot;p2\&quot;],\&quot;实际判定\&quot;:[{\&quot;已准入\&quot;:true,\&quot;有资格\&quot;:true,\&quot;来源\&quot;:\&quot;p1\&quot;,\&quot;点数\&quot;:16,\&quot;目标\&quot;:\&quot;p2\&quot;,\&quot;规则版本\&quot;:\&quot;reaction-d20-v1\&quot;,\&quot;通过\&quot;:true,\&quot;阈值\&quot;:11,\&quot;骰点编号\&quot;:\&quot;roll_p1_p2_1\&quot;}],\&quot;已确认目标集\&quot;:{\&quot;列\&quot;:[\&quot;来源\&quot;,\&quot;目标集\&quot;],\&quot;行\&quot;:[[\&quot;p1\&quot;,[\&quot;p2\&quot;]],[\&quot;p2\&quot;,[]]]},\&quot;已行动\&quot;:[],\&quot;已闭合\&quot;:true,\&quot;成员行动\&quot;:{\&quot;列\&quot;:[\&quot;行动原文\&quot;,\&quot;成员\&quot;],\&quot;行\&quot;:[[\&quot;我伸手抓取窄台上唯一的封签钥匙。\&quot;,\&quot;p1\&quot;],[\&quot;我伸手按住那把钥匙，阻止甲未经登记取走。\&quot;,\&quot;p2\&quot;]]}}}}&quot;,
+    &quot;promptSha256&quot;: &quot;eaa344b30ec61153c426ade4d5002ae6c3d7e2c1907de14547a4b0093125d6bf&quot;,
+    &quot;raw&quot;: &quot;不相似&quot;,
+    &quot;rawUtf8Sha256&quot;: &quot;385a31b4da441957aac46714181c425649c89af9ce3b11a04a477ce160850a48&quot;,
+    &quot;repeat&quot;: 3,
+    &quot;runId&quot;: &quot;m02-dev42-20261101-r4&quot;,
+    &quot;semanticReview&quot;: &quot;pending_not_automatically_approved&quot;,
+    &quot;serializedInputSha256&quot;: &quot;ea83f94b2f1fab3121c9b1524753d1a62673fd7fb34b1a63a63744e94458057e&quot;,
+    &quot;settledAt&quot;: &quot;2026-11-01T15:46:28.327412+00:00&quot;,
+    &quot;settledElapsedMs&quot;: 213.4158330009086,
+    &quot;settledMonotonicNs&quot;: 116256165901916,
+    &quot;sourceGroup&quot;: &quot;d-origin-d05-01&quot;,
+    &quot;stage&quot;: &quot;group_close_guard_before_joint_results&quot;,
+    &quot;startedAt&quot;: &quot;2026-11-01T15:46:28.114005+00:00&quot;,
+    &quot;startedMonotonicNs&quot;: 116255952491250,
+    &quot;status&quot;: &quot;invalid_output&quot;,
+    &quot;structureStatus&quot;: &quot;invalid&quot;,
+    &quot;task&quot;: &quot;D05&quot;
+  },
+  {
+    &quot;activeStage&quot;: &quot;decode_and_validate&quot;,
+    &quot;arm&quot;: &quot;M02-direct-zero-shot&quot;,
+    &quot;caseId&quot;: &quot;dev-d05-01&quot;,
+    &quot;configSha256&quot;: &quot;1f4c226fdbbc8c189841f814b95d25f75816d3d9bb62f9d761f77f7e34ff17a4&quot;,
+    &quot;decodeAndValidateMs&quot;: 1.5419999981531873,
+    &quot;deviceId&quot;: &quot;arm64-cpu-1thread&quot;,
+    &quot;elapsedMs&quot;: 197.64312500774395,
+    &quot;encodeMs&quot;: 2.193708991399035,
+    &quot;epoch&quot;: 1,
+    &quot;finishedWithEos&quot;: true,
+    &quot;fullRequestMeasured&quot;: false,
+    &quot;generateMs&quot;: 192.23058299394324,
+    &quot;generationCompleted&quot;: true,
+    &quot;generationPerformed&quot;: true,
+    &quot;generationStarted&quot;: true,
+    &quot;generationStartedAt&quot;: &quot;2026-11-01T15:46:28.944523+00:00&quot;,
+    &quot;generationStartedMonotonicNs&quot;: 116256783002708,
+    &quot;inputTokens&quot;: 738,
+    &quot;journalUpdatesIncludedInElapsedMs&quot;: true,
+    &quot;losslessRoundTripMatched&quot;: true,
+    &quot;modelId&quot;: &quot;IDEA-CCNL/Randeng-T5-77M-MultiTask-Chinese&quot;,
+    &quot;modelInputSha256&quot;: &quot;c82211255aa6031e18ae3f590593de29b6acb5cefbce71c325dcee1dc3b8d915&quot;,
+    &quot;modelRevision&quot;: &quot;06d379d7375245f31cfb87166eff134cfeb5dead&quot;,
+    &quot;outputTokenIds&quot;: [
+      0,
+      259,
+      785,
+      2031,
+      9066,
+      1
+    ],
+    &quot;outputTokensExcludingDecoderStart&quot;: 5,
+    &quot;parseError&quot;: {
+      &quot;message&quot;: &quot;invalid JSON: Expecting value: line 1 column 1 (char 0)&quot;,
+      &quot;type&quot;: &quot;LabValidationError&quot;
+    },
+    &quot;peakResidentMiB&quot;: 787.5625,
+    &quot;prompt&quot;: &quot;统一推导已闭合全组的自洽后果，考虑全部动作和骰点；骰点用于反应准入，不机械决定胜负。只输出JSON {\&quot;results\&quot;:{\&quot;组成员ID\&quot;:\&quot;后果正文\&quot;}}，results键恰好覆盖memberIds，不补新行动。\n完整资料以表格编码：列为字段，行为记录；同文编号引用共用文本。\n{\&quot;共用文本\&quot;:[\&quot;衣物完整，双手可自由活动，无已知伤势。\&quot;],\&quot;格式\&quot;:\&quot;无损表格1\&quot;,\&quot;资料\&quot;:{\&quot;世界\&quot;:{\&quot;人物\&quot;:{\&quot;列\&quot;:[\&quot;外貌\&quot;,\&quot;编号\&quot;,\&quot;名称\&quot;,\&quot;个性\&quot;,\&quot;位置\&quot;,\&quot;理智\&quot;,\&quot;任务\&quot;],\&quot;行\&quot;:[[{\&quot;同文\&quot;:0},\&quot;p1\&quot;,\&quot;施宁（甲）\&quot;,[\&quot;坚持自己的职责。\&quot;],{\&quot;容器\&quot;:\&quot;loc_a\&quot;,\&quot;部位\&quot;:\&quot;地面\&quot;},65,[{\&quot;上级\&quot;:null,\&quot;正文\&quot;:\&quot;取到唯一钥匙给封签盒上锁。\&quot;,\&quot;状态\&quot;:\&quot;pending\&quot;,\&quot;编号\&quot;:\&quot;task_p1\&quot;}]],[{\&quot;同文\&quot;:0},\&quot;p2\&quot;,\&quot;关禾（乙）\&quot;,[\&quot;谨慎守规。\&quot;],{\&quot;容器\&quot;:\&quot;loc_a\&quot;,\&quot;部位\&quot;:\&quot;地面\&quot;},65,[{\&quot;上级\&quot;:null,\&quot;正文\&quot;:\&quot;拦住钥匙被未经登记取走。\&quot;,\&quot;状态\&quot;:\&quot;pending\&quot;,\&quot;编号\&quot;:\&quot;task_p2\&quot;}]],[{\&quot;同文\&quot;:0},\&quot;p3\&quot;,\&quot;程遥（丙）\&quot;,[\&quot;专注。\&quot;],{\&quot;容器\&quot;:\&quot;loc_b\&quot;,\&quot;部位\&quot;:\&quot;地面\&quot;},65,[{\&quot;上级\&quot;:null,\&quot;正文\&quot;:\&quot;登记钥匙移交。\&quot;,\&quot;状态\&quot;:\&quot;pending\&quot;,\&quot;编号\&quot;:\&quot;task_p3\&quot;}]]]},\&quot;地点\&quot;:{\&quot;列\&quot;:[\&quot;编号\&quot;,\&quot;名称\&quot;,\&quot;上级\&quot;],\&quot;行\&quot;:[[\&quot;loc_outer\&quot;,\&quot;封签保管室\&quot;,null],[\&quot;loc_a\&quot;,\&quot;唯一封签钥匙所在的窄台\&quot;,\&quot;loc_outer\&quot;],[\&quot;loc_b\&quot;,\&quot;登记柜旁\&quot;,\&quot;loc_outer\&quot;]]},\&quot;时间\&quot;:\&quot;2031-04-18T10:20:00+08:00\&quot;,\&quot;物品\&quot;:{\&quot;列\&quot;:[\&quot;编号\&quot;,\&quot;名称\&quot;,\&quot;位置\&quot;],\&quot;行\&quot;:[[\&quot;item_1\&quot;,\&quot;唯一封签钥匙\&quot;,{\&quot;容器\&quot;:\&quot;loc_a\&quot;,\&quot;部位\&quot;:\&quot;可见位置\&quot;}],[\&quot;item_2\&quot;,\&quot;封签盒\&quot;,{\&quot;容器\&quot;:\&quot;loc_b\&quot;,\&quot;部位\&quot;:\&quot;可见位置\&quot;}]]}},\&quot;闭组\&quot;:{\&quot;完整成员\&quot;:[\&quot;p1\&quot;,\&quot;p2\&quot;],\&quot;实际判定\&quot;:[{\&quot;已准入\&quot;:true,\&quot;有资格\&quot;:true,\&quot;来源\&quot;:\&quot;p1\&quot;,\&quot;点数\&quot;:16,\&quot;目标\&quot;:\&quot;p2\&quot;,\&quot;规则版本\&quot;:\&quot;reaction-d20-v1\&quot;,\&quot;通过\&quot;:true,\&quot;阈值\&quot;:11,\&quot;骰点编号\&quot;:\&quot;roll_p1_p2_1\&quot;}],\&quot;已确认目标集\&quot;:{\&quot;列\&quot;:[\&quot;来源\&quot;,\&quot;目标集\&quot;],\&quot;行\&quot;:[[\&quot;p1\&quot;,[\&quot;p2\&quot;]],[\&quot;p2\&quot;,[]]]},\&quot;已行动\&quot;:[],\&quot;已闭合\&quot;:true,\&quot;成员行动\&quot;:{\&quot;列\&quot;:[\&quot;行动原文\&quot;,\&quot;成员\&quot;],\&quot;行\&quot;:[[\&quot;我伸手抓取窄台上唯一的封签钥匙。\&quot;,\&quot;p1\&quot;],[\&quot;我伸手按住那把钥匙，阻止甲未经登记取走。\&quot;,\&quot;p2\&quot;]]}}}}&quot;,
+    &quot;promptSha256&quot;: &quot;eaa344b30ec61153c426ade4d5002ae6c3d7e2c1907de14547a4b0093125d6bf&quot;,
+    &quot;raw&quot;: &quot;不相似&quot;,
+    &quot;rawUtf8Sha256&quot;: &quot;385a31b4da441957aac46714181c425649c89af9ce3b11a04a477ce160850a48&quot;,
+    &quot;repeat&quot;: 4,
+    &quot;runId&quot;: &quot;m02-dev42-20261101-r4&quot;,
+    &quot;semanticReview&quot;: &quot;pending_not_automatically_approved&quot;,
+    &quot;serializedInputSha256&quot;: &quot;ea83f94b2f1fab3121c9b1524753d1a62673fd7fb34b1a63a63744e94458057e&quot;,
+    &quot;settledAt&quot;: &quot;2026-11-01T15:46:29.138305+00:00&quot;,
+    &quot;settledElapsedMs&quot;: 197.64312500774395,
+    &quot;settledMonotonicNs&quot;: 116256976785833,
+    &quot;sourceGroup&quot;: &quot;d-origin-d05-01&quot;,
+    &quot;stage&quot;: &quot;group_close_guard_before_joint_results&quot;,
+    &quot;startedAt&quot;: &quot;2026-11-01T15:46:28.940671+00:00&quot;,
+    &quot;startedMonotonicNs&quot;: 116256779147833,
+    &quot;status&quot;: &quot;invalid_output&quot;,
+    &quot;structureStatus&quot;: &quot;invalid&quot;,
+    &quot;task&quot;: &quot;D05&quot;
+  }
+]</pre></details></article><article><h2>四批证据都保留</h2><div class="scroll"><table><tr><th>批次</th><th>输入上限</th><th>真实业务生成</th><th>证据</th></tr><tr><td>m02-dev42-20261101-r1</td><td>512</td><td>0</td><td><a href="pilots/m02-dev42-20261101-r1.plan.json">配置与输入</a> · <a href="pilots/m02-dev42-20261101-r1.record.json">运行记录</a></td></tr><tr><td>m02-dev42-20261101-r2</td><td>512</td><td>0</td><td><a href="pilots/m02-dev42-20261101-r2.plan.json">配置与输入</a> · <a href="pilots/m02-dev42-20261101-r2.record.json">运行记录</a></td></tr><tr><td>m02-dev42-20261101-r3</td><td>1024</td><td>20</td><td><a href="pilots/m02-dev42-20261101-r3.plan.json">配置与输入</a> · <a href="pilots/m02-dev42-20261101-r3.record.json">运行记录</a></td></tr><tr><td>m02-dev42-20261101-r4</td><td>1024</td><td>20</td><td><a href="pilots/m02-dev42-20261101-r4.plan.json">配置与输入</a> · <a href="pilots/m02-dev42-20261101-r4.record.json">运行记录</a></td></tr></table></div><p>r1/r2共40次输入超限拦截；r3首次真实生成20次，r4修复异常记录与环境复核后再生成20次。最终代码复验与早期批次分开，不能合并凑成每任务20次正式样本。耗时包含运行日志开销。r1–r3只保留当时准备环境声明，r4另记录实际解释器、依赖和线程；旧记录没有倒填证明。</p></article><article><h2>下一步与尚未完成</h2><p>当前零样本联合生成不推荐直接使用。下一步是拆分判断与短文本任务，准备独立训练的小判断头，再验证实际协同；512完整输入分块仍待。正式人工盲评、来源核验、短链、完整请求、浏览器与生产接线均未通过。本页的明显失败说明由实现者整理，不冒充独立正式评分。</p><p><a href="l3-4-pilot-summary.json">查看机器可读汇总及文件哈希</a></p></article></main></html>
