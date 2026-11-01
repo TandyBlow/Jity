@@ -92,6 +92,8 @@
 | F21 | 冻结 r3-direction 的 T5 encoder-decoder 以 fp32 ONNX（torch.onnx opset 17，encoder＋无 KV 缓存 decoder 步进图）在 headless Edge＋vendored ORT-web 1.30.0 单线程 wasm 运行：**7/7 case 与 ORT-python 贪心环逐 token 精确一致**（4 冻结留出＋3 合法扩展空间输入；预烘焙真实 spiece ids）。会话冷加载 7.0s、编码 98–358ms、步进 80–194ms（无缓存 O(n²)，localhost 静态服务非网络口径）。图级可行性证据，非整链验收 | [实测] | `artifacts/world-components/n4-browser-probe-r1.json`（批次1） |
 | F22 | torch-HF 与 ORT 的 fp32 logits 差 ~2e-5（编码 7.7e-7），贪心 64 步反馈放大会出现中途 token 翻转；**跨运行时的对齐目标是 ORT-python 贪心环（与 ORT-web 同引擎族，实测逐 token 一致），HF generate 记录为训练侧参考**；两路文本均须判据干净 | [实测] | `export_n4_onnx.py` 头注、`probe_inputs.json`（批次1） |
 | F23 | 合法输入空间修复：共享渲染器/判据器覆盖六个 TimeAdvance 单位＋amount 0；冻结语料 648 计划字节等价、90 条归档输出复判一致；判据覆盖核心抽为 `check_narration(plan,text,refs,must)` 供 N5 管线复用（语料行为不变） | [实测] | `n4-units-regression-r1.json`、`n4-batch1-amendment-r1.json`（批次1） |
+| F24 | N2 编码头候选实测否决：MiniRBT-H256 三分类头（must/may/omit，条目级两折 CV，每折 46 样本）在冻结 v3 集上 must-R 0.531、must-P 0.667，15/16 评测条目触发硬失败（must 漏选）；同折程序规则臂 must-R 1.000 / must-P 0.433（逐位复现归档 F18）。结论：当前数据规模下编码头不承担 N2 选择；扩展语料属新预登记事项 | [实测] | `n2-encoder-arm-r1.json`（批次2，GPU 环境单列：RTX 4090 D / torch 2.5.1+cu124 / transformers 4.51.3） |
+| F25 | N3 runner 钉定完成：已审查字节（7189e233…，signoff-f9c1190）写入冻结记录 `runner.status=EXECUTABLE`；解码配置获批（贪心 / maxNewTokens 512——256 方案在审查者实测最宽 gold 321–386 token 面前会必然截断，经负责人改批 512）；`decodingConfig.modelId` **保持未钉**——唯一门级生成候选是 0.6B 因果 LM，其推理被总指挥暂停，runner 的 modelId 门恰好编码该暂停；暂停解除后钉 modelId 即可开跑 | [实测] | `d2-n3-prompt-freeze.json`（批次2 状态行）、`pin_n3_freeze.py`、`precheck_real` 空问题单 |
 
 ## 4. 训练方案表
 

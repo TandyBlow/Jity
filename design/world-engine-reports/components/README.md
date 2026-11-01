@@ -97,6 +97,8 @@ C使用不同的隔离开发集，这些数值只给历史规模和失败模式�
 
 ## 交付进度
 
+**批次2（2026-11-01，第 2 笔）：** N3 runner 按审查签认钉定（`signoff-f9c1190.md` 入库，冻结记录 runner=EXECUTABLE＋已审查字节）；解码配置经负责人批准落定（贪心 / maxNewTokens 512；初报 256 因与审查者实测最宽 gold 321–386 token 冲突撤回改批）；**modelId 保持未钉——0.6B 推理暂停令由 runner 的 modelId 门编码，模型臂未运行**。N2 编码头候选按实测否决：MiniRBT-H256 三分类头两折 CV（GPU 环境单列）must-R 0.531、15/16 条目硬失败；程序规则臂同折 must-R 1.000 / must-P 0.433 逐位复现归档 F18，保持选择参照（`n2-encoder-arm-r1.json`）。GPU 训练在外部 GPU 环境执行（本地 GPU 未动），运行细节本地登记不入库。
+
 **批次1（2026-11-01，五次提交安排第 1 笔）：** N1–N5 程序管线贯通（`narration_pipeline.py`：权威绑定→N1 提取→N2 选择接口＋程序参照→N3 B1/B2＋不变量→N4 接口检查/渲染→N5 判据核对；失败路径全部结构化停机，自检含合法 `second`、零时长端到端）。共享渲染器/判据器合法输入扩展（六个时间单位＋零时长；冻结语料 648 计划字节等价、90 条归档输出复判一致，证据 `n4-units-regression-r1.json`）；判据覆盖核心抽为 `check_narration` 供 N5 复用。N4 浏览器最小可行性探针通过：冻结 r3-direction 的 T5 encoder-decoder ONNX 图在 headless Edge＋ORT-web 单线程 wasm 下 7/7 case 与 ORT-python 参考**逐 token 精确一致**（fp32、无 KV 缓存、localhost 静态服务；证据 `n4-browser-probe-r1.json`）——可运行证据，非架构字符串。隐私整改：14 个已提交文件的绝对本地路径相对化（扫描器 `scan_privacy_paths.py`＋修订登记 `n4-batch1-amendment-r1.json`；冻结记录旧钉值按预期失效待复审，冻结材料本体全部未动）；审查者文档与 B 辖区文件的同类问题单列上报，不在本笔内改动。
 
 **D1 已关闭（2026-10-29）：** 两位新会话 AI 独立标注，92/92 一致、κ=1.0、无分歧；v3 已冻结，must 差异 0/16，沿用 N3 输入。P1-rule must-R=1.0、must-P macro=0.433333，不触发降级与资源转移。C 审查者在 `core.autocrlf=false` 干净检出独立复现后对 `dd2a513` 签字关闭；记录见 [`signoff-dd2a513.md`](../../../artifacts/world-components/signoff-dd2a513.md)。此为 AI 标注，不是人工评测；签字不代表真人评价、模型质量通过或 D2 完成。下一步 D2：8 项能力样本、gold、隔离与指标/prompt 冻结。详情见 [D1 交付](d1-ai-closure.md)。

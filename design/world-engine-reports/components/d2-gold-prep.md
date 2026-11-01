@@ -48,6 +48,10 @@
 
 指标工具、一致度工具、判据线与操作化选择的哈希已先于 gold 标注和任何模型推理预登记：`artifacts/world-components/d2-metrics-preregistration.json`。
 
+## 6.1 批次2钉定状态（2026-11-01）
+
+runner 钉定提交已做（批次2）：`signoff-f9c1190.md` 随钉定提交入库（字节原样）；冻结记录 `runner.status=EXECUTABLE`＋已审查 sha256；解码配置获批（贪心/512，批准过程含一次 256→512 的数据纠正，见记录 `approvalNote`）；**`decodingConfig.modelId` 未钉**——0.6B 推理在总指挥暂停令下，真实推理由 runner 的 modelId 门拒绝，暂停解除后钉 modelId 即可按既定通过线运行模型臂。
+
 ## 7. 待办与顺序
 
 1. ~~双 AI 标注 → 一致度 κ → 冻结 gold~~ **已完成（2026-10-29）**：κ=1.0000、零分歧、冻结件落库。
