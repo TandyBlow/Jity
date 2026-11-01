@@ -50,7 +50,7 @@
 
 ## 6.1 批次2钉定状态（2026-11-01）
 
-runner 钉定提交已做（批次2）：`signoff-f9c1190.md` 随钉定提交入库（字节原样）；冻结记录 `runner.status=EXECUTABLE`＋已审查 sha256；解码配置获批（贪心/512，批准过程含一次 256→512 的数据纠正，见记录 `approvalNote`）；**`decodingConfig.modelId` 未钉**——0.6B 推理在总指挥暂停令下，真实推理由 runner 的 modelId 门拒绝，暂停解除后钉 modelId 即可按既定通过线运行模型臂。
+~~runner 钉定提交已做（批次2）~~ **（修复轮 1c41587 更正，2026-11-02）**：批次2 曾将批准记为 APPROVED，但复审认定该批准属实现者转述、无可核验原始记录——现按总指挥裁定**统一为 `PENDING-TRACEABLE-OWNER-CONFIRMATION`**（2026-11-02 渠道内所有人口头确认亦不作为批准依据；即使将来批准也不解除暂停），真推理门关闭；runner 因暂停门提前到 precheck 而字节变更，状态 `PENDING-REVIEW` 待复审；modelId 仍未钉（0.6B 暂停不变）。详见 [修复轮登记](fix-round-1c41587.md) 与 `n3-freeze-amendment-r1.json`。
 
 ## 7. 待办与顺序
 

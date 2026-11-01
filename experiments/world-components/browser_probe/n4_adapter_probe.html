@@ -75,10 +75,42 @@
                        wallMs: +(performance.now() - tAbort0).toFixed(0),
                        abortSanity: ctrl2.aborted };
     }
+    // fix round 1c41587 #2: REAL-tokenizer 128/129 boundary gate — build
+    // texts measuring exactly 128 and 129 tokens (ids include the EOS the
+    // adapter appends), then verify: 129 returns structured unsupported
+    // with NO model call; 128 proceeds to the model
+    const boundary = {};
+    const buildLen = (target) => {
+      for (const filler of ["网", "灯", "甲", "绳"]) {
+        for (let k = 0; k < 400; k++) {
+          const t = "叙事生成任务。\n事实：\n1. 任务达成：管线甲「把铜铃挂回钟楼"
+                    + filler.repeat(k) + "」\n2. 时间推进：约五分钟\n正文：";
+          const n = fp32.encode(t).length;
+          if (n === target) return t;
+          if (n > target) break;
+        }
+      }
+      return null;
+    };
+    const t128 = buildLen(128);
+    const t129 = buildLen(129);
+    if (t128 && t129) {
+      const g128 = await fp32.generate(t128);
+      const g129 = await int8.generate(t129);
+      boundary.exact128 = { tokens: fp32.encode(t128).length,
+                            modelCalled: g128.modelCalled === true,
+                            status: g128.status };
+      boundary.exact129 = { tokens: int8.encode(t129).length,
+                            refusedNoModelCall: g129.modelCalled === false,
+                            status: g129.status, reason: g129.reason };
+    } else {
+      boundary.error = "could not construct boundary texts";
+    }
     report({
-      adapterId: "n4-browser-adapter-r1", pageVersion: "v3-sanity",
+      adapterId: "n4-browser-adapter-r1", pageVersion: "v4-fixround",
       fp32LoadMs: fp32.loadMs, int8LoadMs: int8.loadMs,
       cases: results,
+      boundary,
       abortTest: abortOutcome,
       allFp32Matched: results.every((r) => r.fp32.tokenMatchVsOrtPy),
       allTokenizersMatched: results.every((r) => r.tokenizerIdMatch),

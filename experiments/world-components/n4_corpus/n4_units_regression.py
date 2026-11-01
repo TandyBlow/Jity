@@ -254,6 +254,8 @@ def main() -> int:
     if args.out:
         pathlib.Path(args.out).write_text(text, encoding="utf-8", newline="\n")
     print(text[:2000])
+    # the JSON print above is truncated for terminal use; judge by this line
+    print("units-regression:", "PASS" if archive["pass"] else "FAIL")
     return 0 if archive["pass"] else 1
 
 

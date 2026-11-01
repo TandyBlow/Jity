@@ -1,0 +1,1522 @@
+{
+ "purpose": "N2 perspective-rule acceptance over the frozen D2 dev set (16 items / 92 facts, v3 labels via the frozen guards); select-all reported as the labelled baseline",
+ "devSetNote": "the D2 dev set calibrated the rubric — dev-set gates, not an independent-holdout claim",
+ "trackedTaskNote": "items carry no subject task list, so the tracked-task must rule cannot fire here (covered by pipeline unit tests S12/S14)",
+ "frozenLabels": {
+  "file": "n2-labels-v3.json",
+  "agreement": {
+   "n": 92,
+   "observedAgreement": 1.0,
+   "expectedAgreement": 0.3573,
+   "kappa": 1.0,
+   "kappaExact": 1.0,
+   "confusion": {
+    "must": {
+     "must": 32,
+     "omit": 0,
+     "may": 0
+    },
+    "omit": {
+     "must": 0,
+     "omit": 20,
+     "may": 0
+    },
+    "may": {
+     "must": 0,
+     "omit": 0,
+     "may": 40
+    }
+   }
+  }
+ },
+ "gatesPreRegistered": {
+  "selectedNonZeroEveryItem": "selected facts > 0 per item",
+  "perItemMustRecallAtLeast095": "per-item must recall >= 0.95",
+  "noInvalidIds": "invalid/unknown fact ids == 0",
+  "noForbiddenHits": "no invisible fact ever selected"
+ },
+ "summary": {
+  "selectDefault": {
+   "arm": "perspective-rule:select",
+   "items": 16,
+   "selectedNonZero": 16,
+   "mustRecallMin": 1.0,
+   "mustRecallMean": 1.0,
+   "mustPrecisionMean": 0.4583,
+   "forbiddenHits": 0,
+   "unknownIds": 0,
+   "stops": 0,
+   "refusals": 0,
+   "itemsPassingGates": 16
+  },
+  "omitConservative": {
+   "arm": "perspective-rule:omit",
+   "items": 16,
+   "selectedNonZero": 16,
+   "mustRecallMin": 1.0,
+   "mustRecallMean": 1.0,
+   "mustPrecisionMean": 1.0,
+   "forbiddenHits": 0,
+   "unknownIds": 0,
+   "stops": 0,
+   "refusals": 0,
+   "itemsPassingGates": 16
+  },
+  "selectAllBaseline": {
+   "arm": "select-all (baseline)",
+   "items": 16,
+   "selectedNonZero": 16,
+   "mustRecallMin": 1.0,
+   "mustRecallMean": 1.0,
+   "mustPrecisionMean": 0.35,
+   "forbiddenHits": 16,
+   "unknownIds": 0,
+   "stops": 0,
+   "refusals": 0,
+   "itemsPassingGates": 16
+  }
+ },
+ "gates": {
+  "selectedNonZeroEveryItem": true,
+  "perItemMustRecallAtLeast095": true,
+  "noInvalidIds": true,
+  "noForbiddenHits": true
+ },
+ "pass": true,
+ "rows": {
+  "select": [
+   {
+    "itemId": "n2-01",
+    "viewpointType": "protagonist",
+    "facts": 6,
+    "must": 2,
+    "selected": [
+     "f1",
+     "f2",
+     "f3",
+     "f4"
+    ],
+    "selectedCount": 4,
+    "mustRecall": 1.0,
+    "mustPrecision": 0.5,
+    "maySelectionRate": 1.0,
+    "forbiddenHits": 0,
+    "unknownIds": [],
+    "stops": 0,
+    "refusals": 0,
+    "groundCounts": {
+     "must:self-position": 1,
+     "must:self-task": 1,
+     "may:co-location": 1,
+     "may:global-time": 1,
+     "invisible:other-location": 2
+    },
+    "gates": {
+     "selectedNonZero": true,
+     "mustRecallAtLeast095": true,
+     "noInvalidIds": true
+    }
+   },
+   {
+    "itemId": "n2-02",
+    "viewpointType": "protagonist",
+    "facts": 6,
+    "must": 2,
+    "selected": [
+     "f1",
+     "f2",
+     "f3",
+     "f4"
+    ],
+    "selectedCount": 4,
+    "mustRecall": 1.0,
+    "mustPrecision": 0.5,
+    "maySelectionRate": 1.0,
+    "forbiddenHits": 0,
+    "unknownIds": [],
+    "stops": 0,
+    "refusals": 0,
+    "groundCounts": {
+     "must:self-position": 1,
+     "must:self-task": 1,
+     "may:co-location": 1,
+     "may:global-time": 1,
+     "invisible:other-location": 2
+    },
+    "gates": {
+     "selectedNonZero": true,
+     "mustRecallAtLeast095": true,
+     "noInvalidIds": true
+    }
+   },
+   {
+    "itemId": "n2-03",
+    "viewpointType": "protagonist",
+    "facts": 6,
+    "must": 2,
+    "selected": [
+     "f1",
+     "f2",
+     "f3",
+     "f4"
+    ],
+    "selectedCount": 4,
+    "mustRecall": 1.0,
+    "mustPrecision": 0.5,
+    "maySelectionRate": 1.0,
+    "forbiddenHits": 0,
+    "unknownIds": [],
+    "stops": 0,
+    "refusals": 0,
+    "groundCounts": {
+     "must:self-position": 1,
+     "must:self-task": 1,
+     "may:co-location": 1,
+     "may:global-time": 1,
+     "invisible:other-location": 2
+    },
+    "gates": {
+     "selectedNonZero": true,
+     "mustRecallAtLeast095": true,
+     "noInvalidIds": true
+    }
+   },
+   {
+    "itemId": "n2-04",
+    "viewpointType": "protagonist",
+    "facts": 6,
+    "must": 2,
+    "selected": [
+     "f1",
+     "f2",
+     "f3",
+     "f4"
+    ],
+    "selectedCount": 4,
+    "mustRecall": 1.0,
+    "mustPrecision": 0.5,
+    "maySelectionRate": 1.0,
+    "forbiddenHits": 0,
+    "unknownIds": [],
+    "stops": 0,
+    "refusals": 0,
+    "groundCounts": {
+     "must:self-position": 1,
+     "must:self-task": 1,
+     "may:co-location": 1,
+     "may:global-time": 1,
+     "invisible:other-location": 2
+    },
+    "gates": {
+     "selectedNonZero": true,
+     "mustRecallAtLeast095": true,
+     "noInvalidIds": true
+    }
+   },
+   {
+    "itemId": "n2-05",
+    "viewpointType": "location-limited",
+    "facts": 5,
+    "must": 2,
+    "selected": [
+     "f1",
+     "f2",
+     "f3",
+     "f5"
+    ],
+    "selectedCount": 4,
+    "mustRecall": 1.0,
+    "mustPrecision": 0.5,
+    "maySelectionRate": 1.0,
+    "forbiddenHits": 0,
+    "unknownIds": [],
+    "stops": 0,
+    "refusals": 0,
+    "groundCounts": {
+     "must:self-task": 1,
+     "may:co-location": 2,
+     "must:self-safety": 1,
+     "invisible:other-location": 1
+    },
+    "gates": {
+     "selectedNonZero": true,
+     "mustRecallAtLeast095": true,
+     "noInvalidIds": true
+    }
+   },
+   {
+    "itemId": "n2-06",
+    "viewpointType": "location-limited",
+    "facts": 5,
+    "must": 2,
+    "selected": [
+     "f1",
+     "f2",
+     "f3",
+     "f5"
+    ],
+    "selectedCount": 4,
+    "mustRecall": 1.0,
+    "mustPrecision": 0.5,
+    "maySelectionRate": 1.0,
+    "forbiddenHits": 0,
+    "unknownIds": [],
+    "stops": 0,
+    "refusals": 0,
+    "groundCounts": {
+     "must:self-task": 1,
+     "may:co-location": 2,
+     "must:self-safety": 1,
+     "invisible:other-location": 1
+    },
+    "gates": {
+     "selectedNonZero": true,
+     "mustRecallAtLeast095": true,
+     "noInvalidIds": true
+    }
+   },
+   {
+    "itemId": "n2-07",
+    "viewpointType": "location-limited",
+    "facts": 5,
+    "must": 2,
+    "selected": [
+     "f1",
+     "f2",
+     "f3",
+     "f5"
+    ],
+    "selectedCount": 4,
+    "mustRecall": 1.0,
+    "mustPrecision": 0.5,
+    "maySelectionRate": 1.0,
+    "forbiddenHits": 0,
+    "unknownIds": [],
+    "stops": 0,
+    "refusals": 0,
+    "groundCounts": {
+     "must:self-task": 1,
+     "may:co-location": 2,
+     "must:self-safety": 1,
+     "invisible:other-location": 1
+    },
+    "gates": {
+     "selectedNonZero": true,
+     "mustRecallAtLeast095": true,
+     "noInvalidIds": true
+    }
+   },
+   {
+    "itemId": "n2-08",
+    "viewpointType": "location-limited",
+    "facts": 5,
+    "must": 2,
+    "selected": [
+     "f1",
+     "f2",
+     "f3",
+     "f5"
+    ],
+    "selectedCount": 4,
+    "mustRecall": 1.0,
+    "mustPrecision": 0.5,
+    "maySelectionRate": 1.0,
+    "forbiddenHits": 0,
+    "unknownIds": [],
+    "stops": 0,
+    "refusals": 0,
+    "groundCounts": {
+     "must:self-task": 1,
+     "may:co-location": 2,
+     "must:self-safety": 1,
+     "invisible:other-location": 1
+    },
+    "gates": {
+     "selectedNonZero": true,
+     "mustRecallAtLeast095": true,
+     "noInvalidIds": true
+    }
+   },
+   {
+    "itemId": "n2-09",
+    "viewpointType": "omniscient",
+    "facts": 6,
+    "must": 2,
+    "selected": [
+     "f1",
+     "f2",
+     "f3",
+     "f4",
+     "f5",
+     "f6"
+    ],
+    "selectedCount": 6,
+    "mustRecall": 1.0,
+    "mustPrecision": 0.3333,
+    "maySelectionRate": 1.0,
+    "forbiddenHits": 0,
+    "unknownIds": [],
+    "stops": 0,
+    "refusals": 0,
+    "groundCounts": {
+     "must:omniscient-focus-position": 2,
+     "may:omniscient-focus": 2,
+     "may:omniscient": 2
+    },
+    "gates": {
+     "selectedNonZero": true,
+     "mustRecallAtLeast095": true,
+     "noInvalidIds": true
+    }
+   },
+   {
+    "itemId": "n2-10",
+    "viewpointType": "omniscient",
+    "facts": 6,
+    "must": 2,
+    "selected": [
+     "f1",
+     "f2",
+     "f3",
+     "f4",
+     "f5",
+     "f6"
+    ],
+    "selectedCount": 6,
+    "mustRecall": 1.0,
+    "mustPrecision": 0.3333,
+    "maySelectionRate": 1.0,
+    "forbiddenHits": 0,
+    "unknownIds": [],
+    "stops": 0,
+    "refusals": 0,
+    "groundCounts": {
+     "must:omniscient-focus-position": 2,
+     "may:omniscient-focus": 2,
+     "may:omniscient": 2
+    },
+    "gates": {
+     "selectedNonZero": true,
+     "mustRecallAtLeast095": true,
+     "noInvalidIds": true
+    }
+   },
+   {
+    "itemId": "n2-11",
+    "viewpointType": "omniscient",
+    "facts": 6,
+    "must": 2,
+    "selected": [
+     "f1",
+     "f2",
+     "f3",
+     "f4",
+     "f5",
+     "f6"
+    ],
+    "selectedCount": 6,
+    "mustRecall": 1.0,
+    "mustPrecision": 0.3333,
+    "maySelectionRate": 1.0,
+    "forbiddenHits": 0,
+    "unknownIds": [],
+    "stops": 0,
+    "refusals": 0,
+    "groundCounts": {
+     "must:omniscient-focus-position": 2,
+     "may:omniscient-focus": 2,
+     "may:omniscient": 2
+    },
+    "gates": {
+     "selectedNonZero": true,
+     "mustRecallAtLeast095": true,
+     "noInvalidIds": true
+    }
+   },
+   {
+    "itemId": "n2-12",
+    "viewpointType": "omniscient",
+    "facts": 6,
+    "must": 2,
+    "selected": [
+     "f1",
+     "f2",
+     "f3",
+     "f4",
+     "f5",
+     "f6"
+    ],
+    "selectedCount": 6,
+    "mustRecall": 1.0,
+    "mustPrecision": 0.3333,
+    "maySelectionRate": 1.0,
+    "forbiddenHits": 0,
+    "unknownIds": [],
+    "stops": 0,
+    "refusals": 0,
+    "groundCounts": {
+     "must:omniscient-focus-position": 2,
+     "may:omniscient-focus": 2,
+     "may:omniscient": 2
+    },
+    "gates": {
+     "selectedNonZero": true,
+     "mustRecallAtLeast095": true,
+     "noInvalidIds": true
+    }
+   },
+   {
+    "itemId": "n2-13",
+    "viewpointType": "protagonist",
+    "facts": 6,
+    "must": 2,
+    "selected": [
+     "f1",
+     "f2",
+     "f4",
+     "f6"
+    ],
+    "selectedCount": 4,
+    "mustRecall": 1.0,
+    "mustPrecision": 0.5,
+    "maySelectionRate": 0.6667,
+    "forbiddenHits": 0,
+    "unknownIds": [],
+    "stops": 0,
+    "refusals": 0,
+    "groundCounts": {
+     "must:self-task": 1,
+     "must:self-safety": 1,
+     "invisible:only-others": 1,
+     "may:co-location": 1,
+     "invisible:other-location": 1,
+     "may:global-time": 1
+    },
+    "gates": {
+     "selectedNonZero": true,
+     "mustRecallAtLeast095": true,
+     "noInvalidIds": true
+    }
+   },
+   {
+    "itemId": "n2-14",
+    "viewpointType": "protagonist",
+    "facts": 6,
+    "must": 2,
+    "selected": [
+     "f1",
+     "f2",
+     "f4",
+     "f6"
+    ],
+    "selectedCount": 4,
+    "mustRecall": 1.0,
+    "mustPrecision": 0.5,
+    "maySelectionRate": 0.6667,
+    "forbiddenHits": 0,
+    "unknownIds": [],
+    "stops": 0,
+    "refusals": 0,
+    "groundCounts": {
+     "must:self-task": 1,
+     "must:self-safety": 1,
+     "invisible:only-others": 1,
+     "may:co-location": 1,
+     "invisible:other-location": 1,
+     "may:global-time": 1
+    },
+    "gates": {
+     "selectedNonZero": true,
+     "mustRecallAtLeast095": true,
+     "noInvalidIds": true
+    }
+   },
+   {
+    "itemId": "n2-15",
+    "viewpointType": "protagonist",
+    "facts": 6,
+    "must": 2,
+    "selected": [
+     "f1",
+     "f2",
+     "f4",
+     "f6"
+    ],
+    "selectedCount": 4,
+    "mustRecall": 1.0,
+    "mustPrecision": 0.5,
+    "maySelectionRate": 0.6667,
+    "forbiddenHits": 0,
+    "unknownIds": [],
+    "stops": 0,
+    "refusals": 0,
+    "groundCounts": {
+     "must:self-task": 1,
+     "must:self-safety": 1,
+     "invisible:only-others": 1,
+     "may:co-location": 1,
+     "invisible:other-location": 1,
+     "may:global-time": 1
+    },
+    "gates": {
+     "selectedNonZero": true,
+     "mustRecallAtLeast095": true,
+     "noInvalidIds": true
+    }
+   },
+   {
+    "itemId": "n2-16",
+    "viewpointType": "protagonist",
+    "facts": 6,
+    "must": 2,
+    "selected": [
+     "f1",
+     "f2",
+     "f4",
+     "f6"
+    ],
+    "selectedCount": 4,
+    "mustRecall": 1.0,
+    "mustPrecision": 0.5,
+    "maySelectionRate": 0.6667,
+    "forbiddenHits": 0,
+    "unknownIds": [],
+    "stops": 0,
+    "refusals": 0,
+    "groundCounts": {
+     "must:self-task": 1,
+     "must:self-safety": 1,
+     "invisible:only-others": 1,
+     "may:co-location": 1,
+     "invisible:other-location": 1,
+     "may:global-time": 1
+    },
+    "gates": {
+     "selectedNonZero": true,
+     "mustRecallAtLeast095": true,
+     "noInvalidIds": true
+    }
+   }
+  ],
+  "omit": [
+   {
+    "itemId": "n2-01",
+    "viewpointType": "protagonist",
+    "facts": 6,
+    "must": 2,
+    "selected": [
+     "f1",
+     "f2"
+    ],
+    "selectedCount": 2,
+    "mustRecall": 1.0,
+    "mustPrecision": 1.0,
+    "maySelectionRate": 0.0,
+    "forbiddenHits": 0,
+    "unknownIds": [],
+    "stops": 0,
+    "refusals": 0,
+    "groundCounts": {
+     "must:self-position": 1,
+     "must:self-task": 1,
+     "may:co-location": 1,
+     "may:global-time": 1,
+     "invisible:other-location": 2
+    },
+    "gates": {
+     "selectedNonZero": true,
+     "mustRecallAtLeast095": true,
+     "noInvalidIds": true
+    }
+   },
+   {
+    "itemId": "n2-02",
+    "viewpointType": "protagonist",
+    "facts": 6,
+    "must": 2,
+    "selected": [
+     "f1",
+     "f2"
+    ],
+    "selectedCount": 2,
+    "mustRecall": 1.0,
+    "mustPrecision": 1.0,
+    "maySelectionRate": 0.0,
+    "forbiddenHits": 0,
+    "unknownIds": [],
+    "stops": 0,
+    "refusals": 0,
+    "groundCounts": {
+     "must:self-position": 1,
+     "must:self-task": 1,
+     "may:co-location": 1,
+     "may:global-time": 1,
+     "invisible:other-location": 2
+    },
+    "gates": {
+     "selectedNonZero": true,
+     "mustRecallAtLeast095": true,
+     "noInvalidIds": true
+    }
+   },
+   {
+    "itemId": "n2-03",
+    "viewpointType": "protagonist",
+    "facts": 6,
+    "must": 2,
+    "selected": [
+     "f1",
+     "f2"
+    ],
+    "selectedCount": 2,
+    "mustRecall": 1.0,
+    "mustPrecision": 1.0,
+    "maySelectionRate": 0.0,
+    "forbiddenHits": 0,
+    "unknownIds": [],
+    "stops": 0,
+    "refusals": 0,
+    "groundCounts": {
+     "must:self-position": 1,
+     "must:self-task": 1,
+     "may:co-location": 1,
+     "may:global-time": 1,
+     "invisible:other-location": 2
+    },
+    "gates": {
+     "selectedNonZero": true,
+     "mustRecallAtLeast095": true,
+     "noInvalidIds": true
+    }
+   },
+   {
+    "itemId": "n2-04",
+    "viewpointType": "protagonist",
+    "facts": 6,
+    "must": 2,
+    "selected": [
+     "f1",
+     "f2"
+    ],
+    "selectedCount": 2,
+    "mustRecall": 1.0,
+    "mustPrecision": 1.0,
+    "maySelectionRate": 0.0,
+    "forbiddenHits": 0,
+    "unknownIds": [],
+    "stops": 0,
+    "refusals": 0,
+    "groundCounts": {
+     "must:self-position": 1,
+     "must:self-task": 1,
+     "may:co-location": 1,
+     "may:global-time": 1,
+     "invisible:other-location": 2
+    },
+    "gates": {
+     "selectedNonZero": true,
+     "mustRecallAtLeast095": true,
+     "noInvalidIds": true
+    }
+   },
+   {
+    "itemId": "n2-05",
+    "viewpointType": "location-limited",
+    "facts": 5,
+    "must": 2,
+    "selected": [
+     "f1",
+     "f3"
+    ],
+    "selectedCount": 2,
+    "mustRecall": 1.0,
+    "mustPrecision": 1.0,
+    "maySelectionRate": 0.0,
+    "forbiddenHits": 0,
+    "unknownIds": [],
+    "stops": 0,
+    "refusals": 0,
+    "groundCounts": {
+     "must:self-task": 1,
+     "may:co-location": 2,
+     "must:self-safety": 1,
+     "invisible:other-location": 1
+    },
+    "gates": {
+     "selectedNonZero": true,
+     "mustRecallAtLeast095": true,
+     "noInvalidIds": true
+    }
+   },
+   {
+    "itemId": "n2-06",
+    "viewpointType": "location-limited",
+    "facts": 5,
+    "must": 2,
+    "selected": [
+     "f1",
+     "f3"
+    ],
+    "selectedCount": 2,
+    "mustRecall": 1.0,
+    "mustPrecision": 1.0,
+    "maySelectionRate": 0.0,
+    "forbiddenHits": 0,
+    "unknownIds": [],
+    "stops": 0,
+    "refusals": 0,
+    "groundCounts": {
+     "must:self-task": 1,
+     "may:co-location": 2,
+     "must:self-safety": 1,
+     "invisible:other-location": 1
+    },
+    "gates": {
+     "selectedNonZero": true,
+     "mustRecallAtLeast095": true,
+     "noInvalidIds": true
+    }
+   },
+   {
+    "itemId": "n2-07",
+    "viewpointType": "location-limited",
+    "facts": 5,
+    "must": 2,
+    "selected": [
+     "f1",
+     "f3"
+    ],
+    "selectedCount": 2,
+    "mustRecall": 1.0,
+    "mustPrecision": 1.0,
+    "maySelectionRate": 0.0,
+    "forbiddenHits": 0,
+    "unknownIds": [],
+    "stops": 0,
+    "refusals": 0,
+    "groundCounts": {
+     "must:self-task": 1,
+     "may:co-location": 2,
+     "must:self-safety": 1,
+     "invisible:other-location": 1
+    },
+    "gates": {
+     "selectedNonZero": true,
+     "mustRecallAtLeast095": true,
+     "noInvalidIds": true
+    }
+   },
+   {
+    "itemId": "n2-08",
+    "viewpointType": "location-limited",
+    "facts": 5,
+    "must": 2,
+    "selected": [
+     "f1",
+     "f3"
+    ],
+    "selectedCount": 2,
+    "mustRecall": 1.0,
+    "mustPrecision": 1.0,
+    "maySelectionRate": 0.0,
+    "forbiddenHits": 0,
+    "unknownIds": [],
+    "stops": 0,
+    "refusals": 0,
+    "groundCounts": {
+     "must:self-task": 1,
+     "may:co-location": 2,
+     "must:self-safety": 1,
+     "invisible:other-location": 1
+    },
+    "gates": {
+     "selectedNonZero": true,
+     "mustRecallAtLeast095": true,
+     "noInvalidIds": true
+    }
+   },
+   {
+    "itemId": "n2-09",
+    "viewpointType": "omniscient",
+    "facts": 6,
+    "must": 2,
+    "selected": [
+     "f1",
+     "f2"
+    ],
+    "selectedCount": 2,
+    "mustRecall": 1.0,
+    "mustPrecision": 1.0,
+    "maySelectionRate": 0.0,
+    "forbiddenHits": 0,
+    "unknownIds": [],
+    "stops": 0,
+    "refusals": 0,
+    "groundCounts": {
+     "must:omniscient-focus-position": 2,
+     "may:omniscient-focus": 2,
+     "may:omniscient": 2
+    },
+    "gates": {
+     "selectedNonZero": true,
+     "mustRecallAtLeast095": true,
+     "noInvalidIds": true
+    }
+   },
+   {
+    "itemId": "n2-10",
+    "viewpointType": "omniscient",
+    "facts": 6,
+    "must": 2,
+    "selected": [
+     "f1",
+     "f2"
+    ],
+    "selectedCount": 2,
+    "mustRecall": 1.0,
+    "mustPrecision": 1.0,
+    "maySelectionRate": 0.0,
+    "forbiddenHits": 0,
+    "unknownIds": [],
+    "stops": 0,
+    "refusals": 0,
+    "groundCounts": {
+     "must:omniscient-focus-position": 2,
+     "may:omniscient-focus": 2,
+     "may:omniscient": 2
+    },
+    "gates": {
+     "selectedNonZero": true,
+     "mustRecallAtLeast095": true,
+     "noInvalidIds": true
+    }
+   },
+   {
+    "itemId": "n2-11",
+    "viewpointType": "omniscient",
+    "facts": 6,
+    "must": 2,
+    "selected": [
+     "f1",
+     "f2"
+    ],
+    "selectedCount": 2,
+    "mustRecall": 1.0,
+    "mustPrecision": 1.0,
+    "maySelectionRate": 0.0,
+    "forbiddenHits": 0,
+    "unknownIds": [],
+    "stops": 0,
+    "refusals": 0,
+    "groundCounts": {
+     "must:omniscient-focus-position": 2,
+     "may:omniscient-focus": 2,
+     "may:omniscient": 2
+    },
+    "gates": {
+     "selectedNonZero": true,
+     "mustRecallAtLeast095": true,
+     "noInvalidIds": true
+    }
+   },
+   {
+    "itemId": "n2-12",
+    "viewpointType": "omniscient",
+    "facts": 6,
+    "must": 2,
+    "selected": [
+     "f1",
+     "f2"
+    ],
+    "selectedCount": 2,
+    "mustRecall": 1.0,
+    "mustPrecision": 1.0,
+    "maySelectionRate": 0.0,
+    "forbiddenHits": 0,
+    "unknownIds": [],
+    "stops": 0,
+    "refusals": 0,
+    "groundCounts": {
+     "must:omniscient-focus-position": 2,
+     "may:omniscient-focus": 2,
+     "may:omniscient": 2
+    },
+    "gates": {
+     "selectedNonZero": true,
+     "mustRecallAtLeast095": true,
+     "noInvalidIds": true
+    }
+   },
+   {
+    "itemId": "n2-13",
+    "viewpointType": "protagonist",
+    "facts": 6,
+    "must": 2,
+    "selected": [
+     "f1",
+     "f2"
+    ],
+    "selectedCount": 2,
+    "mustRecall": 1.0,
+    "mustPrecision": 1.0,
+    "maySelectionRate": 0.0,
+    "forbiddenHits": 0,
+    "unknownIds": [],
+    "stops": 0,
+    "refusals": 0,
+    "groundCounts": {
+     "must:self-task": 1,
+     "must:self-safety": 1,
+     "invisible:only-others": 1,
+     "may:co-location": 1,
+     "invisible:other-location": 1,
+     "may:global-time": 1
+    },
+    "gates": {
+     "selectedNonZero": true,
+     "mustRecallAtLeast095": true,
+     "noInvalidIds": true
+    }
+   },
+   {
+    "itemId": "n2-14",
+    "viewpointType": "protagonist",
+    "facts": 6,
+    "must": 2,
+    "selected": [
+     "f1",
+     "f2"
+    ],
+    "selectedCount": 2,
+    "mustRecall": 1.0,
+    "mustPrecision": 1.0,
+    "maySelectionRate": 0.0,
+    "forbiddenHits": 0,
+    "unknownIds": [],
+    "stops": 0,
+    "refusals": 0,
+    "groundCounts": {
+     "must:self-task": 1,
+     "must:self-safety": 1,
+     "invisible:only-others": 1,
+     "may:co-location": 1,
+     "invisible:other-location": 1,
+     "may:global-time": 1
+    },
+    "gates": {
+     "selectedNonZero": true,
+     "mustRecallAtLeast095": true,
+     "noInvalidIds": true
+    }
+   },
+   {
+    "itemId": "n2-15",
+    "viewpointType": "protagonist",
+    "facts": 6,
+    "must": 2,
+    "selected": [
+     "f1",
+     "f2"
+    ],
+    "selectedCount": 2,
+    "mustRecall": 1.0,
+    "mustPrecision": 1.0,
+    "maySelectionRate": 0.0,
+    "forbiddenHits": 0,
+    "unknownIds": [],
+    "stops": 0,
+    "refusals": 0,
+    "groundCounts": {
+     "must:self-task": 1,
+     "must:self-safety": 1,
+     "invisible:only-others": 1,
+     "may:co-location": 1,
+     "invisible:other-location": 1,
+     "may:global-time": 1
+    },
+    "gates": {
+     "selectedNonZero": true,
+     "mustRecallAtLeast095": true,
+     "noInvalidIds": true
+    }
+   },
+   {
+    "itemId": "n2-16",
+    "viewpointType": "protagonist",
+    "facts": 6,
+    "must": 2,
+    "selected": [
+     "f1",
+     "f2"
+    ],
+    "selectedCount": 2,
+    "mustRecall": 1.0,
+    "mustPrecision": 1.0,
+    "maySelectionRate": 0.0,
+    "forbiddenHits": 0,
+    "unknownIds": [],
+    "stops": 0,
+    "refusals": 0,
+    "groundCounts": {
+     "must:self-task": 1,
+     "must:self-safety": 1,
+     "invisible:only-others": 1,
+     "may:co-location": 1,
+     "invisible:other-location": 1,
+     "may:global-time": 1
+    },
+    "gates": {
+     "selectedNonZero": true,
+     "mustRecallAtLeast095": true,
+     "noInvalidIds": true
+    }
+   }
+  ],
+  "selectAll": [
+   {
+    "itemId": "n2-01",
+    "viewpointType": "protagonist",
+    "facts": 6,
+    "must": 2,
+    "selected": [
+     "f1",
+     "f2",
+     "f3",
+     "f4",
+     "f5",
+     "f6"
+    ],
+    "selectedCount": 6,
+    "mustRecall": 1.0,
+    "mustPrecision": 0.3333,
+    "maySelectionRate": 1.0,
+    "forbiddenHits": 2,
+    "unknownIds": [],
+    "stops": 0,
+    "refusals": 0,
+    "groundCounts": {},
+    "gates": {
+     "selectedNonZero": true,
+     "mustRecallAtLeast095": true,
+     "noInvalidIds": true
+    }
+   },
+   {
+    "itemId": "n2-02",
+    "viewpointType": "protagonist",
+    "facts": 6,
+    "must": 2,
+    "selected": [
+     "f1",
+     "f2",
+     "f3",
+     "f4",
+     "f5",
+     "f6"
+    ],
+    "selectedCount": 6,
+    "mustRecall": 1.0,
+    "mustPrecision": 0.3333,
+    "maySelectionRate": 1.0,
+    "forbiddenHits": 2,
+    "unknownIds": [],
+    "stops": 0,
+    "refusals": 0,
+    "groundCounts": {},
+    "gates": {
+     "selectedNonZero": true,
+     "mustRecallAtLeast095": true,
+     "noInvalidIds": true
+    }
+   },
+   {
+    "itemId": "n2-03",
+    "viewpointType": "protagonist",
+    "facts": 6,
+    "must": 2,
+    "selected": [
+     "f1",
+     "f2",
+     "f3",
+     "f4",
+     "f5",
+     "f6"
+    ],
+    "selectedCount": 6,
+    "mustRecall": 1.0,
+    "mustPrecision": 0.3333,
+    "maySelectionRate": 1.0,
+    "forbiddenHits": 2,
+    "unknownIds": [],
+    "stops": 0,
+    "refusals": 0,
+    "groundCounts": {},
+    "gates": {
+     "selectedNonZero": true,
+     "mustRecallAtLeast095": true,
+     "noInvalidIds": true
+    }
+   },
+   {
+    "itemId": "n2-04",
+    "viewpointType": "protagonist",
+    "facts": 6,
+    "must": 2,
+    "selected": [
+     "f1",
+     "f2",
+     "f3",
+     "f4",
+     "f5",
+     "f6"
+    ],
+    "selectedCount": 6,
+    "mustRecall": 1.0,
+    "mustPrecision": 0.3333,
+    "maySelectionRate": 1.0,
+    "forbiddenHits": 2,
+    "unknownIds": [],
+    "stops": 0,
+    "refusals": 0,
+    "groundCounts": {},
+    "gates": {
+     "selectedNonZero": true,
+     "mustRecallAtLeast095": true,
+     "noInvalidIds": true
+    }
+   },
+   {
+    "itemId": "n2-05",
+    "viewpointType": "location-limited",
+    "facts": 5,
+    "must": 2,
+    "selected": [
+     "f1",
+     "f2",
+     "f3",
+     "f4",
+     "f5"
+    ],
+    "selectedCount": 5,
+    "mustRecall": 1.0,
+    "mustPrecision": 0.4,
+    "maySelectionRate": 1.0,
+    "forbiddenHits": 1,
+    "unknownIds": [],
+    "stops": 0,
+    "refusals": 0,
+    "groundCounts": {},
+    "gates": {
+     "selectedNonZero": true,
+     "mustRecallAtLeast095": true,
+     "noInvalidIds": true
+    }
+   },
+   {
+    "itemId": "n2-06",
+    "viewpointType": "location-limited",
+    "facts": 5,
+    "must": 2,
+    "selected": [
+     "f1",
+     "f2",
+     "f3",
+     "f4",
+     "f5"
+    ],
+    "selectedCount": 5,
+    "mustRecall": 1.0,
+    "mustPrecision": 0.4,
+    "maySelectionRate": 1.0,
+    "forbiddenHits": 1,
+    "unknownIds": [],
+    "stops": 0,
+    "refusals": 0,
+    "groundCounts": {},
+    "gates": {
+     "selectedNonZero": true,
+     "mustRecallAtLeast095": true,
+     "noInvalidIds": true
+    }
+   },
+   {
+    "itemId": "n2-07",
+    "viewpointType": "location-limited",
+    "facts": 5,
+    "must": 2,
+    "selected": [
+     "f1",
+     "f2",
+     "f3",
+     "f4",
+     "f5"
+    ],
+    "selectedCount": 5,
+    "mustRecall": 1.0,
+    "mustPrecision": 0.4,
+    "maySelectionRate": 1.0,
+    "forbiddenHits": 1,
+    "unknownIds": [],
+    "stops": 0,
+    "refusals": 0,
+    "groundCounts": {},
+    "gates": {
+     "selectedNonZero": true,
+     "mustRecallAtLeast095": true,
+     "noInvalidIds": true
+    }
+   },
+   {
+    "itemId": "n2-08",
+    "viewpointType": "location-limited",
+    "facts": 5,
+    "must": 2,
+    "selected": [
+     "f1",
+     "f2",
+     "f3",
+     "f4",
+     "f5"
+    ],
+    "selectedCount": 5,
+    "mustRecall": 1.0,
+    "mustPrecision": 0.4,
+    "maySelectionRate": 1.0,
+    "forbiddenHits": 1,
+    "unknownIds": [],
+    "stops": 0,
+    "refusals": 0,
+    "groundCounts": {},
+    "gates": {
+     "selectedNonZero": true,
+     "mustRecallAtLeast095": true,
+     "noInvalidIds": true
+    }
+   },
+   {
+    "itemId": "n2-09",
+    "viewpointType": "omniscient",
+    "facts": 6,
+    "must": 2,
+    "selected": [
+     "f1",
+     "f2",
+     "f3",
+     "f4",
+     "f5",
+     "f6"
+    ],
+    "selectedCount": 6,
+    "mustRecall": 1.0,
+    "mustPrecision": 0.3333,
+    "maySelectionRate": 1.0,
+    "forbiddenHits": 0,
+    "unknownIds": [],
+    "stops": 0,
+    "refusals": 0,
+    "groundCounts": {},
+    "gates": {
+     "selectedNonZero": true,
+     "mustRecallAtLeast095": true,
+     "noInvalidIds": true
+    }
+   },
+   {
+    "itemId": "n2-10",
+    "viewpointType": "omniscient",
+    "facts": 6,
+    "must": 2,
+    "selected": [
+     "f1",
+     "f2",
+     "f3",
+     "f4",
+     "f5",
+     "f6"
+    ],
+    "selectedCount": 6,
+    "mustRecall": 1.0,
+    "mustPrecision": 0.3333,
+    "maySelectionRate": 1.0,
+    "forbiddenHits": 0,
+    "unknownIds": [],
+    "stops": 0,
+    "refusals": 0,
+    "groundCounts": {},
+    "gates": {
+     "selectedNonZero": true,
+     "mustRecallAtLeast095": true,
+     "noInvalidIds": true
+    }
+   },
+   {
+    "itemId": "n2-11",
+    "viewpointType": "omniscient",
+    "facts": 6,
+    "must": 2,
+    "selected": [
+     "f1",
+     "f2",
+     "f3",
+     "f4",
+     "f5",
+     "f6"
+    ],
+    "selectedCount": 6,
+    "mustRecall": 1.0,
+    "mustPrecision": 0.3333,
+    "maySelectionRate": 1.0,
+    "forbiddenHits": 0,
+    "unknownIds": [],
+    "stops": 0,
+    "refusals": 0,
+    "groundCounts": {},
+    "gates": {
+     "selectedNonZero": true,
+     "mustRecallAtLeast095": true,
+     "noInvalidIds": true
+    }
+   },
+   {
+    "itemId": "n2-12",
+    "viewpointType": "omniscient",
+    "facts": 6,
+    "must": 2,
+    "selected": [
+     "f1",
+     "f2",
+     "f3",
+     "f4",
+     "f5",
+     "f6"
+    ],
+    "selectedCount": 6,
+    "mustRecall": 1.0,
+    "mustPrecision": 0.3333,
+    "maySelectionRate": 1.0,
+    "forbiddenHits": 0,
+    "unknownIds": [],
+    "stops": 0,
+    "refusals": 0,
+    "groundCounts": {},
+    "gates": {
+     "selectedNonZero": true,
+     "mustRecallAtLeast095": true,
+     "noInvalidIds": true
+    }
+   },
+   {
+    "itemId": "n2-13",
+    "viewpointType": "protagonist",
+    "facts": 6,
+    "must": 2,
+    "selected": [
+     "f1",
+     "f2",
+     "f3",
+     "f4",
+     "f5",
+     "f6"
+    ],
+    "selectedCount": 6,
+    "mustRecall": 1.0,
+    "mustPrecision": 0.3333,
+    "maySelectionRate": 1.0,
+    "forbiddenHits": 1,
+    "unknownIds": [],
+    "stops": 0,
+    "refusals": 0,
+    "groundCounts": {},
+    "gates": {
+     "selectedNonZero": true,
+     "mustRecallAtLeast095": true,
+     "noInvalidIds": true
+    }
+   },
+   {
+    "itemId": "n2-14",
+    "viewpointType": "protagonist",
+    "facts": 6,
+    "must": 2,
+    "selected": [
+     "f1",
+     "f2",
+     "f3",
+     "f4",
+     "f5",
+     "f6"
+    ],
+    "selectedCount": 6,
+    "mustRecall": 1.0,
+    "mustPrecision": 0.3333,
+    "maySelectionRate": 1.0,
+    "forbiddenHits": 1,
+    "unknownIds": [],
+    "stops": 0,
+    "refusals": 0,
+    "groundCounts": {},
+    "gates": {
+     "selectedNonZero": true,
+     "mustRecallAtLeast095": true,
+     "noInvalidIds": true
+    }
+   },
+   {
+    "itemId": "n2-15",
+    "viewpointType": "protagonist",
+    "facts": 6,
+    "must": 2,
+    "selected": [
+     "f1",
+     "f2",
+     "f3",
+     "f4",
+     "f5",
+     "f6"
+    ],
+    "selectedCount": 6,
+    "mustRecall": 1.0,
+    "mustPrecision": 0.3333,
+    "maySelectionRate": 1.0,
+    "forbiddenHits": 1,
+    "unknownIds": [],
+    "stops": 0,
+    "refusals": 0,
+    "groundCounts": {},
+    "gates": {
+     "selectedNonZero": true,
+     "mustRecallAtLeast095": true,
+     "noInvalidIds": true
+    }
+   },
+   {
+    "itemId": "n2-16",
+    "viewpointType": "protagonist",
+    "facts": 6,
+    "must": 2,
+    "selected": [
+     "f1",
+     "f2",
+     "f3",
+     "f4",
+     "f5",
+     "f6"
+    ],
+    "selectedCount": 6,
+    "mustRecall": 1.0,
+    "mustPrecision": 0.3333,
+    "maySelectionRate": 1.0,
+    "forbiddenHits": 1,
+    "unknownIds": [],
+    "stops": 0,
+    "refusals": 0,
+    "groundCounts": {},
+    "gates": {
+     "selectedNonZero": true,
+     "mustRecallAtLeast095": true,
+     "noInvalidIds": true
+    }
+   }
+  ]
+ }
+}

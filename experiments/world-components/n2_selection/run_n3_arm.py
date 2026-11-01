@@ -306,9 +306,18 @@ class TransformersBackend:
 
 
 def precheck_real(freeze: dict, self_sha: str) -> list:
-    """gates that must pass BEFORE any real model load. Empty list = go."""
+    """gates that must pass BEFORE any real model load. Empty list = go.
+    Fix round 1c41587: the modelId gate moved HERE so the 0.6B pause is
+    enforced before torch/transformers are even imported — the previous
+    placement (TransformersBackend.__init__) checked it after the library
+    imports, which the review flagged as too late."""
     problems = []
-    if freeze["decodingConfig"].get("approval") != "APPROVED":
+    if not (freeze.get("decodingConfig") or {}).get("modelId"):
+        problems.append(
+            "real inference refused: decodingConfig.modelId is unpinned - "
+            "the coordinator's 0.6B inference pause is in force; this gate "
+            "runs before any model or library loading")
+    if freeze.get("decodingConfig", {}).get("approval") != "APPROVED":
         problems.append(
             f"real inference refused: decodingConfig.approval is "
             f"{freeze['decodingConfig'].get('approval')!r}, not APPROVED")

@@ -92,9 +92,17 @@ export class N4Browser {
 
   /** Greedy generation. signal: AbortSignal checked between steps; an
    *  aborted call throws DOMException AbortError and returns nothing —
-   *  the partial text is never applied (interface-table §2.1). */
+   *  the partial text is never applied (interface-table §2.1).
+   *  Fix round 1c41587 #2: the REAL tokenizer count (ids include the
+   *  appended EOS special token) gates the call — over 128 returns a
+   *  structured unsupported WITHOUT any model/session call. */
   async generate(text, { maxTokens = 64, signal = null } = {}) {
     const ids = this.encode(text);
+    if (ids.length > 128) {
+      return { status: "unsupported", reason: "input-too-long",
+               tokens: ids.length, modelCalled: false,
+               graphVariant: this.int8 ? "int8" : "fp32" };
+    }
     const tEnc0 = performance.now();
     const hidden = await this.enc.run({
       input_ids: new this.ort.Tensor("int64",
@@ -157,12 +165,15 @@ export class N4Browser {
       prefix.push(best);
     }
     return {
+      status: "ok",
       ids: out,
       text: this.decode(out),
       timings: { encodeMs: null, encoderMs: +encMs.toFixed(1),
                  generationMs: +stepMs.reduce((a, b) => a + b, 0).toFixed(1),
                  meanStepMs: +(stepMs.reduce((a, b) => a + b, 0) / Math.max(stepMs.length, 1)).toFixed(1),
                  steps: stepMs.length },
+      inputTokens: ids.length,
+      modelCalled: true,
       graphVariant: this.int8 ? "int8" : "fp32",
     };
   }

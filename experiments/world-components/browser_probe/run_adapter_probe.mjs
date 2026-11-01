@@ -25,7 +25,7 @@ const CK = path.join(REPO, "experiments", "world-components", "assets", "n4-fine
 const SERVE_ROOT = path.join(FRONTEND, "public");
 const BASE = path.join(SERVE_ROOT, "models", "n4-probe");
 const I8DIR = path.join(SERVE_ROOT, "models", "n4-probe-int8");
-const ARCHIVE = path.join(REPO, "artifacts", "world-components", "n4-browser-adapter-r1.json");
+const ARCHIVE = path.join(REPO, "artifacts", "world-components", "n4-browser-adapter-r2.json");
 
 async function stage() {
   const ortPkg = JSON.parse(await readFile(path.join(
@@ -117,7 +117,11 @@ const archive = {
   judge,
   pass: !result.fatal && result.allFp32Matched === true
         && result.allTokenizersMatched === true
-        && result.abortTest.threw === true,
+        && result.abortTest.threw === true
+        && result.boundary && result.boundary.exact128
+        && result.boundary.exact128.modelCalled === true
+        && result.boundary.exact129.refusedNoModelCall === true
+        && result.boundary.exact129.status === "unsupported",
 };
 await writeFile(ARCHIVE, JSON.stringify(archive, null, 1) + "\n", "utf-8");
 console.log("abortTest keys:", result.abortTest ? Object.keys(result.abortTest) : "none", JSON.stringify(result.abortTest));

@@ -2,7 +2,7 @@
  "purpose": "D2 N3 model-arm formal prompt freeze. Prompt bytes signed by both C reviewer and project owner; decoding config recorded here awaits owner approval BEFORE any inference.",
  "decision": "D2",
  "registeredAt": "2026-10-29",
- "status": "PROMPT-FROZEN / DECODING-CONFIG-APPROVED / RUNNER-PINNED / MODELID-PENDING-PAUSE-LIFT",
+ "status": "PROMPT-FROZEN / DECODE-APPROVAL-PENDING-UNIFIED / RUNNER-BYTES-PENDING-REVIEW / MODELID-UNPINNED-PAUSE",
  "prompt": {
   "file": "experiments/world-components/n2_selection/d2-n3-prompt-draft.md",
   "version": "v2",
@@ -29,7 +29,7 @@
   }
  },
  "decodingConfig": {
-  "approval": "APPROVED",
+  "approval": "PENDING-TRACEABLE-OWNER-CONFIRMATION",
   "sampling": "greedy（do_sample=false，temperature=0，top_p=1.0，top_k=0）",
   "seed": 20261029,
   "maxNewTokens": 512,
@@ -41,9 +41,27 @@
   "rationale": "贪心+固定 seed 消除采样自由度（无可调项即无可调参空间）；max_new_tokens 余量口径见 maxNewTokensRationale（实测 321–386 token，1.3–1.6×）；4096 上下文与 C 线既有臂谱系一致",
   "gateDevice": "cuda bfloat16 is THE gate; a cpu run would be a separately reported arm (float32), never merged with the cuda gate",
   "maxNewTokensRationale": "reviewer-measured widest frozen-gold item renders ~321-386 tokens; 512 gives a 1.3-1.6x margin, and truncation (finish_reason=length) is recorded as its own failure class",
-  "approvalNote": "owner approved greedy / maxNewTokens=512 on 2026-11-01 (an initial 256 proposal was withdrawn after the 321-386-token gold measurement was surfaced; no other field changed)",
+  "approvalNote": "PENDING (unified 2026-11-02 per coordinator ruling): no traceable owner original exists; see approvalProvenance. Real inference remains refused by this gate, the unpinned modelId (0.6B pause, independent of approval) and runner.status.",
   "modelId": null,
-  "modelIdNote": "UNPINNED: the only gate-eligible generative candidate is the 0.6B causal LM, whose inference is paused by coordinator directive. The runner refuses real inference on the missing modelId, which encodes the pause. Pin modelId when the pause is lifted; no other field changes."
+  "modelIdNote": "UNPINNED: the only gate-eligible generative candidate is the 0.6B causal LM, whose inference is paused by coordinator directive. The runner refuses real inference on the missing modelId, which encodes the pause. Pin modelId when the pause is lifted; no other field changes.",
+  "approvalProvenance": {
+   "ownerConfirmation": {
+    "date": "2026-11-02",
+    "channel": "coordination channel (owner answered the implementer's direct question on the record of this approval)",
+    "statement": "owner confirmed the greedy / maxNewTokens=512 decode configuration approval is valid and chose to record it now",
+    "primarySessionRecord": "none in the repository - the original 2026-11-01 exchange lives outside reviewer-visible history; this entry is the owner's dated re-confirmation, not a link to it",
+    "reviewerAction": "verify this round; the classification of this evidence level is the reviewer's call"
+   },
+   "priorAssertion": {
+    "date": "2026-11-01",
+    "note": "the implementer-asserted approval the review flagged (c-review-1c41587 审批和运行记录核查); superseded by the dated owner confirmation above"
+   },
+   "unifiedPending": {
+    "date": "2026-11-02",
+    "ruling": "coordinator directive relayed with the 11-02 re-review: unify to pending — neither the implementer-relayed assertion (2026-11-01) nor the in-channel owner confirmation (2026-11-02) is accepted as an approval basis; only a traceable owner original can serve; even a future approval does NOT lift the 0.6B inference pause",
+    "eventKeptForProvenance": "the 2026-11-02 confirmation event is retained above as a recorded fact, not as an approval basis"
+   }
+  }
  },
  "passLine": {
   "reference": "artifacts/world-components/d2-preregistration-revision.json",
@@ -82,8 +100,8 @@
   "冻结后任何字段改动需重新报批"
  ],
  "runner": {
-  "status": "EXECUTABLE",
-  "sha256": "7189e233d93c870e459696ca609e04e9f26d8730a52400231e12123ee8bac0a2",
+  "status": "PENDING-REVIEW",
+  "sha256": "798289cdd7a62cc299ec0216bdf00b3326c662fdb939f034696fd7f15a2a5769",
   "contract": [
    "input assembly: json.dumps(viewpoint, ensure_ascii=False), the selected fact list, literal <条目ID> replacement; no other rewriting of the frozen prompt text",
    "parsing: first top-level JSON object only, no repair",
@@ -93,6 +111,12 @@
    "the runner bytes are pinned into this record before any model inference"
   ],
   "pinnedAt": "2026-11-01",
-  "signoff": "signoff-f9c1190.md (runner implementation review passed)"
+  "signoff": "signoff-f9c1190.md (runner implementation review passed)",
+  "previouslyPinned": {
+   "sha256": "7189e233d93c870e459696ca609e04e9f26d8730a52400231e12123ee8bac0a2",
+   "signoff": "signoff-f9c1190.md (implementation review passed)",
+   "note": "bytes superseded by the fix-round precheck change; the reviewed diff is reproducible from the repository history"
+  },
+  "changeReason": "fix round 1c41587 #4/#6: the 0.6B pause gate moved into precheck_real (before any model or library loading); awaiting reviewer re-verification before EXECUTABLE"
  }
 }

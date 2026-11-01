@@ -21,6 +21,13 @@ CN_DIGITS = {0: "零", 1: "一", 2: "二", 3: "三", 4: "四", 5: "五", 6: "六
 UNIT_CN = {"second": "秒", "minute": "分钟", "hour": "小时",
            "day": "天", "month": "个月", "year": "年"}
 
+# Commit-1 vocabulary extension: the five NEW fact kinds the pipeline now
+# extracts (n2_perspective.RELATION_CN is the classification-side table; a
+# unit test in narration_pipeline asserts the two tables stay equal, because
+# this module must stay importable without the n2_selection tree on sys.path).
+RELATION_CN = {"under": "下方", "above": "上方", "beside": "旁边",
+               "in_front_of": "前方", "behind": "后方"}
+
 
 def sha256_file(path) -> str:
     h = hashlib.sha256()
@@ -91,6 +98,26 @@ def render_entry(e: dict) -> str:
         return f"时间推进：约{num_cn(e['amount'])}{UNIT_CN[e['unit']]}"
     if kind == "no_change":
         return "无变化"
+    # ---- commit-1 kinds (not yet in the frozen model's trained vocabulary;
+    # the frozen chain stops with kind-awaiting-model-track before rendering
+    # these — the entries exist so the N3->N4 interface and the commit-2
+    # model track can consume them without changing any frozen rendering)
+    if kind == "position_relative":
+        rel = RELATION_CN.get(e.get("relation"), e.get("relation"))
+        if e.get("op") == "removed":
+            return f"相对位置：{e['name']} 不再在{e['targetName']}{rel}"
+        return f"相对位置：{e['name']} 现在在{e['targetName']}{rel}"
+    if kind == "slot_changed":
+        if e.get("op") == "removed":
+            return f"槽位：{e['name']} 不再位于{e['at']}的{e['slotLabel']}"
+        return f"槽位：{e['name']} 现在位于{e['at']}的{e['slotLabel']}"
+    if kind == "appearance_removed":
+        return f"外貌移除：{e['name']} 不再保有「{e['text']}」"
+    if kind == "personality_removed":
+        return f"个性移除：{e['name']} 不再保有「{e['text']}」"
+    if kind == "subtask_added":
+        parent = f"（隶属「{e['parentGoal']}」）" if e.get("parentGoal") else ""
+        return f"新任务：{e['name']} 接到「{e['goal']}」{parent}"
     raise ValueError(f"unknown plan kind {kind}")
 
 

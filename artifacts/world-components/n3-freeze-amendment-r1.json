@@ -1,0 +1,48 @@
+{
+ "purpose": "Fix-round 1c41587 amendment record (review: 修复及独立复验要求 #4 + 审批和运行记录核查). Binds the CURRENT consumed bytes for the N3 freeze record and rule arm by an independently verifiable r2 registration; preserves every prior registration and archive untouched; documents the approval-downgrade provenance and the runner re-bind. No N3 model arm ran in this batch and no run archive for one exists.",
+ "review": "c-review-1c41587 (未签认)",
+ "date": "2026-11-02",
+ "registrationRebinding": {
+  "v1": {
+   "file": "artifacts/world-components/n3-rulearm-registration.json",
+   "status": "KEPT BYTE-IDENTICAL at its original path; it pins the pre-fix-round world and REFUSES against current bytes by design (the review-observed GATE refusal)",
+   "sha256": "verify with sha256sum against the repository blob at 2ef930e..1c41587"
+  },
+  "r2": {
+   "file": "artifacts/world-components/n3-rulearm-registration-r2.json",
+   "builtBy": "experiments/world-components/n2_selection/build_registration_r2.py (all pins derived from the files on disk; unexpected dependency drift refuses instead of silently rebinding)",
+   "reboundFields": ["dependencies.run_n3_arm.sha256 (fix #6 runner change)", "freezeRecord.sha256 (fix #5 approval downgrade + runner re-bind)"],
+   "unchangedSinceV1": "ruleArm / d2_metrics / n3_plan / gate8Items / gold all re-verified byte-identical to the v1 pins inside the build script"
+  },
+  "oldRecordReproducibility": {
+   "command": "git show 2ef930e:artifacts/world-components/d2-n3-prompt-freeze.json | sha256sum",
+   "result": "77b37b43989b5232... — equals the v1 registration freezeRecord pin, proving the pre-amendment record is exactly recoverable from history (no historical pin was overwritten to pretend the record never changed)"
+  }
+ },
+ "gate8Verification": {
+  "command": "python -B -X utf8 experiments/world-components/n2_selection/n3_rule_arm.py --scope gate8 --registration artifacts/world-components/n3-rulearm-registration-r2.json --out artifacts/world-components/n3-rulearm-gate8-r2.json",
+  "result": "items=8 ok=8 refused=0 differential=8/8 h1=8/8 h2=8/8 g1=1.0000 gate=True pass=True",
+  "archive": "artifacts/world-components/n3-rulearm-gate8-r2.json"
+ },
+ "tamperProbe": {
+  "method": "flip the r2 freezeRecord pin to 0*64 in a temp copy, run the same gate8 command against it",
+  "result": "exit 3, GATE: consumed freezeRecord bytes b4b0d7aa... != registration pin 0000... — refused",
+  "note": "the archived gate8 run and the tamper probe are separate invocations; the probe leaves no archive"
+ },
+ "freezeRecordAmendment": {
+  "file": "artifacts/world-components/d2-n3-prompt-freeze.json",
+  "appliedBy": "experiments/world-components/n2_selection/amend_freeze_fixround.py (prior-value assertions; re-run on an amended record refuses)",
+  "changes": [
+   "decodingConfig.approval: APPROVED -> PENDING-TRACEABLE-OWNER-CONFIRMATION; approvalProvenance records the implementer-asserted coordinating-channel approval (2026-11-01) with verifiablePrimaryRecord=false, per the review finding that no original owner message is visible; the real-inference gate stays CLOSED until a traceable owner confirmation exists",
+   "runner.status: EXECUTABLE -> PENDING-REVIEW; runner.sha256 re-bound to the fix-round bytes (previouslyPinned preserves 7189e233... with the signoff-f9c1190 reference)",
+   "status line: PROMPT-FROZEN / DECODE-APPROVAL-PENDING-TRACEABLE-CONFIRMATION / RUNNER-BYTES-PENDING-REVIEW / MODELID-UNPINNED-PAUSE"
+  ]
+ },
+ "pauseGate": {
+  "reviewItem": "#6 - the 0.6B pause must be effective BEFORE model loading",
+  "implementation": "run_n3_arm.precheck_real now refuses on an unpinned decodingConfig.modelId BEFORE torch/transformers are imported (previously the check lived in TransformersBackend.__init__ after the imports)",
+  "evidence": "precheck_real on the current record returns three refusals (modelId / approval / runner status) and the runner selftest still passes"
+ },
+ "modelRunStatement": "No N3 model arm ran in this batch or the fix round; no run archive for one exists. Historical N2 0.6B archives predate the pause and are not claimed as runs.",
+ "pass": true
+}

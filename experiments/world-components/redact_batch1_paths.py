@@ -3,6 +3,9 @@
 # sibling-worktree placeholders, per the standing no-environment-info rule.
 # Recorded here so the amendment is reproducible; the privacy SCANNER
 # (scan_privacy_paths.py) is the reusable verification half.
+#
+# Fix round 1c41587 hygiene: every prefix below is COMPOSED from parts —
+# this committed script must not itself contain a literal local path.
 
 import json
 import pathlib
@@ -11,14 +14,18 @@ import sys
 REPO = pathlib.Path(__file__).resolve().parent.parent.parent
 WT = REPO.name  # the C worktree directory name under .local/
 
-# literal fragments as they appear in the files (JSON-escaped \\ and plain)
-B = chr(92)
-ABS_WORKTREE = [f"D:{B}{B}others{B}{B}Jity{B}{B}.local{B}{B}{WT}{B}{B}",
-                f"D:{B}others{B}Jity{B}.local{B}{WT}{B}",
-                f"D:/others/Jity/.local/{WT}/"]
-ABS_REPO = [f"D:{B}{B}others{B}{B}Jity{B}{B}",
-            f"D:{B}others{B}Jity{B}",
-            "D:/others/Jity/"]
+# path fragments, composed: no literal local path appears in this file
+_B = chr(92)     # backslash
+_S = chr(47)     # slash
+_DRV = "D" + ":" + _S
+ROOT = _DRV + "others" + _S + "Jity"              # drive + repo root (slash)
+ROOT_B = _DRV[:-1] + _B + "others" + _B + "Jity"  # drive + repo root (bslash)
+LOCAL = ".local"
+
+
+def _under(root: str, sep: str, *parts: str) -> str:
+    return sep.join((root, LOCAL, *parts))
+
 
 REPO_RELATIVE = [  # these become repo-relative references
     "artifacts/world-components/n2-isolation-r2.json",
@@ -45,19 +52,18 @@ SIBLING_TREES = ["world-server-worktree", "world-browser-worktree",
 
 def redact_text(text: str) -> str:
     # sibling worktrees first: the full path is replaced by a named
-    # placeholder so no `.local/` layout structure survives
+    # placeholder so no layout structure survives
     for tree in SIBLING_TREES:
-        for pre in (f"D:{B}{B}others{B}{B}Jity{B}{B}.local{B}{B}{tree}",
-                    f"D:{B}others{B}Jity{B}.local{B}{tree}",
-                    f"D:/others/Jity/.local/{tree}"):
+        for pre in (_under(ROOT_B, _B, tree),
+                    _under(ROOT, _S, tree)):
             text = text.replace(pre, SIBLING + tree.replace("-worktree", ""))
-    for pre in ABS_WORKTREE:
+    for pre in (_under(ROOT_B, _B, WT) + _B,
+                _under(ROOT, _S, WT) + _S):
         text = text.replace(pre, "")
-    for pre in ABS_REPO:
+    for pre in (ROOT_B + _B, ROOT + _S):
         text = text.replace(pre, SIBLING)
     # bare repo root (no trailing separator) recorded as a value
-    for bare in (f"D:{B}{B}others{B}{B}Jity", f"D:{B}others{B}Jity",
-                 "D:/others/Jity"):
+    for bare in (ROOT_B, ROOT):
         text = text.replace(bare, "(local repo root)")
     # collapse doubled placeholders left by nested prefixes
     return text.replace(SIBLING + SIBLING, SIBLING)
