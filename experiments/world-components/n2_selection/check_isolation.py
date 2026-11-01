@@ -38,7 +38,8 @@ import tempfile
 HERE = pathlib.Path(__file__).resolve().parent
 REPO = HERE.parent.parent.parent
 CWT = REPO
-MAIN = pathlib.Path("D:/others/Jity")
+# the B main tree is the parent of the C worktree (layout: .local/<name>)
+MAIN = REPO.parent if REPO.parent.name != ".local" else REPO.parent.parent
 
 # B / world-browser HEAD when this round's pool was frozen. Bump only with a
 # reviewable reason; the archive names it so a number cannot silently drift.

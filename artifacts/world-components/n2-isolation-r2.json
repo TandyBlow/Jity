@@ -209,7 +209,7 @@
     "note": "working tree snapshot; moves whenever B writes a run archive. Not the canonical number; compare with poolDigest, not with poolStrings alone. Working-tree hashes here may also differ from the frozen blob hashes by CRLF conversion.",
     "generatedAt": "2026-10-29T09:10:08+00:00",
     "mainWorktree": {
-      "path": "D:\\others\\Jity",
+      "path": "(local repo root)",
       "commit": "8878e970278a9d311ea1ff669527eebb078458da",
       "dirty": [
         "?? artifacts/world-chain/b3-dbg-a8.json",

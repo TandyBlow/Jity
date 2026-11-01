@@ -1,7 +1,7 @@
 {
   "purpose": "n4 finetune process trial r1 (quality accepted separately)",
   "model": {
-    "base": "D:\\others\\Jity\\.local\\world-components-worktree\\experiments\\world-components\\assets\\randeng-t5-77m",
+    "base": "experiments\\world-components\\assets\\randeng-t5-77m",
     "hfId": "IDEA-CCNL/Randeng-T5-77M-MultiTask-Chinese",
     "paramCount": 77440384
   },
@@ -96,7 +96,7 @@
       "seconds": 13.7
     }
   ],
-  "checkpoint": "D:\\others\\Jity\\.local\\world-components-worktree\\experiments\\world-components\\assets\\n4-finetune\\r1",
+  "checkpoint": "experiments\\world-components\\assets\\n4-finetune\\r1",
   "disclaimers": [
     "process trial only; not presupposed to be enough for 77M",
     "no quality verdict here; dev eval is eval_n4_finetune.py, accepted separately"

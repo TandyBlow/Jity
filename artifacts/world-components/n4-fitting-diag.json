@@ -290,7 +290,7 @@
           }
         ]
       },
-      "checkpoint": "D:\\others\\Jity\\.local\\world-components-worktree\\experiments\\world-components\\assets\\n4-finetune\\diag-step60",
+      "checkpoint": "experiments\\world-components\\assets\\n4-finetune\\diag-step60",
       "checkpointSha256_16": {
         "added_tokens.json": "a247922ac010bc17",
         "config.json": "a35e9d4382657106",
@@ -566,7 +566,7 @@
           }
         ]
       },
-      "checkpoint": "D:\\others\\Jity\\.local\\world-components-worktree\\experiments\\world-components\\assets\\n4-finetune\\diag-step120",
+      "checkpoint": "experiments\\world-components\\assets\\n4-finetune\\diag-step120",
       "checkpointSha256_16": {
         "added_tokens.json": "a247922ac010bc17",
         "config.json": "a35e9d4382657106",
@@ -842,7 +842,7 @@
           }
         ]
       },
-      "checkpoint": "D:\\others\\Jity\\.local\\world-components-worktree\\experiments\\world-components\\assets\\n4-finetune\\diag-step180",
+      "checkpoint": "experiments\\world-components\\assets\\n4-finetune\\diag-step180",
       "checkpointSha256_16": {
         "added_tokens.json": "a247922ac010bc17",
         "config.json": "a35e9d4382657106",
@@ -1118,7 +1118,7 @@
           }
         ]
       },
-      "checkpoint": "D:\\others\\Jity\\.local\\world-components-worktree\\experiments\\world-components\\assets\\n4-finetune\\diag-step240",
+      "checkpoint": "experiments\\world-components\\assets\\n4-finetune\\diag-step240",
       "checkpointSha256_16": {
         "added_tokens.json": "a247922ac010bc17",
         "config.json": "a35e9d4382657106",
@@ -1394,7 +1394,7 @@
           }
         ]
       },
-      "checkpoint": "D:\\others\\Jity\\.local\\world-components-worktree\\experiments\\world-components\\assets\\n4-finetune\\diag-step300",
+      "checkpoint": "experiments\\world-components\\assets\\n4-finetune\\diag-step300",
       "checkpointSha256_16": {
         "added_tokens.json": "a247922ac010bc17",
         "config.json": "a35e9d4382657106",
@@ -1670,7 +1670,7 @@
           }
         ]
       },
-      "checkpoint": "D:\\others\\Jity\\.local\\world-components-worktree\\experiments\\world-components\\assets\\n4-finetune\\diag-step360",
+      "checkpoint": "experiments\\world-components\\assets\\n4-finetune\\diag-step360",
       "checkpointSha256_16": {
         "added_tokens.json": "a247922ac010bc17",
         "config.json": "a35e9d4382657106",

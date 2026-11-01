@@ -57,7 +57,8 @@ EXTRA_SOURCES = [
     ("artifacts/narration-http-review.json (真实 HTTP 叙事复核)",
      "artifacts/narration-http-review.json", "json"),
 ]
-MAIN_TREE = pathlib.Path("D:/others/Jity")
+# the B main tree is the parent of the C worktree (layout: .local/<name>)
+MAIN_TREE = REPO.parent if not REPO.parent.name == ".local" else REPO.parent.parent
 
 TS_SINGLE = re.compile(r"\b(mechanical|reference|goal|note|text|phrase|desc|appearance|initialAppearance|name|from|to)\s*:\s*'([^']+)'")
 TS_ARRAY = re.compile(r"\b(?:forbidden|mayMention|mustNotFabricate)\s*:\s*\[([^\]]*)\]")

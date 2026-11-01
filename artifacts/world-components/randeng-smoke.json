@@ -3,7 +3,7 @@
   "model": {
     "hfId": "IDEA-CCNL/Randeng-T5-77M-MultiTask-Chinese",
     "source": "https://hf-mirror.com/IDEA-CCNL/Randeng-T5-77M-MultiTask-Chinese",
-    "localDir": "D:\\others\\Jity\\.local\\world-components-worktree\\experiments\\world-components\\assets\\randeng-t5-77m",
+    "localDir": "experiments\\world-components\\assets\\randeng-t5-77m",
     "files": {
       "config.json": {
         "bytes": 780,

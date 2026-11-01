@@ -1,0 +1,204 @@
+{
+ "purpose": "batch-1 legal-input unit extension regression: renderer and judge extended to all six TimeAdvance units and amount 0 with legacy-space byte equality proven",
+ "renderFix": {
+  "oldSha256": "65bfe89adfbb75d5637d3661cab383aa9bc678dffb97ab5eb8a0d28ac1e3f2ef",
+  "newSha256": "5595e08ef150df32373b26f954c99db67c6b4dcf798008d4f217ab79614959aa",
+  "scope": "UNIT_CN gains second/day/month/year (mirrors the frontend narration-split UNIT_CN table); num_cn accepts 0 (零) and >=100 Arabic digits; the frozen corpus space (minute/hour x 1..99) is byte-identical"
+ },
+ "judgeFix": {
+  "oldSha256": "e16bd2c98a7141aaf8251c6562f191eb78809840e477e2b24f8345ecd351ac50",
+  "newSha256": "1d20feada44a73861545fded8e0faf0bf32cadb3b331d1d5fb7871920d4cd0b7",
+  "scope": "UNIT_EN + time-pattern alternation + masked_bigrams gain 秒/天/个月/年; minute/hour matching unchanged; self-test extended with new-unit positive and mismatch rows (23 negative + 3 equivalence)"
+ },
+ "corpusUnchanged": {
+  "corpus.seeds.jsonl": "f14e451a9cc410bd2cb4c90adf07ca227ee60f888e27510510f65893b829dfb7",
+  "rewrites.jsonl": "2811d7310c42666a7d796ea4f72252dc003c3e88cb5c069c2b12c88defbed6d3",
+  "holdout.jsonl": "a9323e0334242a1a14e6625dc355f6d64f6aa56c4e624d712a556bdd6bd7fe5e"
+ },
+ "proofs": {
+  "legacyByteEquality": {
+   "plansChecked": {
+    "corpus.seeds.jsonl": 300,
+    "rewrites.jsonl": 300,
+    "holdout.jsonl": 48
+   },
+   "mismatches": [],
+   "frozenTimeEntries": [
+    [
+     1,
+     "hour"
+    ],
+    [
+     1,
+     "minute"
+    ],
+    [
+     2,
+     "minute"
+    ],
+    [
+     3,
+     "minute"
+    ],
+    [
+     4,
+     "minute"
+    ],
+    [
+     5,
+     "minute"
+    ],
+    [
+     6,
+     "minute"
+    ],
+    [
+     7,
+     "minute"
+    ],
+    [
+     8,
+     "minute"
+    ],
+    [
+     9,
+     "minute"
+    ],
+    [
+     10,
+     "minute"
+    ],
+    [
+     11,
+     "minute"
+    ],
+    [
+     12,
+     "minute"
+    ],
+    [
+     13,
+     "minute"
+    ],
+    [
+     15,
+     "minute"
+    ],
+    [
+     18,
+     "minute"
+    ],
+    [
+     20,
+     "minute"
+    ],
+    [
+     25,
+     "minute"
+    ],
+    [
+     30,
+     "minute"
+    ],
+    [
+     40,
+     "minute"
+    ],
+    [
+     45,
+     "minute"
+    ],
+    [
+     90,
+     "minute"
+    ]
+   ],
+   "pass": true
+  },
+  "archivedRejudge": {
+   "archivedVerdictsRejudged": 90,
+   "unitMergedInputs": 45,
+   "diffs": [],
+   "pass": true
+  },
+  "newSpaceEndToEnd": {
+   "cases": [
+    {
+     "amount": 40,
+     "unit": "second",
+     "expected": "pass",
+     "got": "pass",
+     "renderedTail": "2. 时间推进：约四十秒",
+     "pass": true
+    },
+    {
+     "amount": 0,
+     "unit": "minute",
+     "expected": "pass",
+     "got": "pass",
+     "renderedTail": "2. 时间推进：约零分钟",
+     "pass": true
+    },
+    {
+     "amount": 0,
+     "unit": "second",
+     "expected": "pass",
+     "got": "pass",
+     "renderedTail": "2. 时间推进：约零秒",
+     "pass": true
+    },
+    {
+     "amount": 3,
+     "unit": "day",
+     "expected": "pass",
+     "got": "pass",
+     "renderedTail": "2. 时间推进：约三天",
+     "pass": true
+    },
+    {
+     "amount": 6,
+     "unit": "month",
+     "expected": "pass",
+     "got": "pass",
+     "renderedTail": "2. 时间推进：约六个月",
+     "pass": true
+    },
+    {
+     "amount": 1,
+     "unit": "year",
+     "expected": "pass",
+     "got": "pass",
+     "renderedTail": "2. 时间推进：约一年",
+     "pass": true
+    },
+    {
+     "amount": 120,
+     "unit": "minute",
+     "expected": "pass",
+     "got": "pass",
+     "renderedTail": "2. 时间推进：约120分钟",
+     "pass": true
+    },
+    {
+     "amount": 40,
+     "unit": "minute",
+     "expected": "review",
+     "got": "review",
+     "renderedTail": "2. 时间推进：约四十分钟",
+     "pass": true
+    },
+    {
+     "amount": 3,
+     "unit": "minute",
+     "expected": "review",
+     "got": "review",
+     "renderedTail": "2. 时间推进：约三分钟",
+     "pass": true
+    }
+   ],
+   "pass": true
+  }
+ },
+ "freezeRecordNote": "freeze-r3-direction.json pins the OLD renderer/judge hashes and is kept untouched for provenance; this file is the amendment evidence for the reviewer to re-verify",
+ "pass": true
+}

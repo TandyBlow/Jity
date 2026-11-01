@@ -138,7 +138,16 @@ def esc(s: str) -> str:
     return re.escape(s)
 
 
-UNIT_EN = {"分钟": "minute", "小时": "hour"}
+# Batch-1 unit extension: the renderer now accepts every legal TimeAdvance
+# unit (n4_render.py UNIT_CN mirrors the frontend table), so the recognizer
+# must parse the same space or correctly rendered seconds/days/zero amounts
+# would fall out as unrecognized residue. Extended alternatives only ADD
+# matches for the new units; minute/hour behavior is unchanged (proven by
+# n4_units_regression.py over the frozen corpus and archived holdout
+# outputs before any new-unit row is judged).
+UNIT_EN = {"分钟": "minute", "小时": "hour", "秒": "second", "天": "day",
+           "个月": "month", "年": "year"}
+UNIT_RE = "分钟|小时|秒|天|个月|年"
 
 
 def entry_patterns(entry: dict) -> list:
@@ -177,7 +186,7 @@ def entry_patterns(entry: dict) -> list:
         return [rf"{esc(entry['name'])}(?:已经在|已在){esc(entry['at'])}了?"]
     if kind == "time":
         # v5: value+unit parsed and compared to amount/unit; rendered unused
-        return [rf"(?P<pre>前后)?(大约|约|整整)?(?P<num>{CN_NUM}|\d+)(?P<unit>分钟|小时)(?P<post>过去了?)?"]
+        return [rf"(?P<pre>前后)?(大约|约|整整)?(?P<num>{CN_NUM}|\d+)(?P<unit>{UNIT_RE})(?P<post>过去了?)?"]
     if kind == "no_change":
         return [rf"一切(如旧|照旧)|没有动静|平静如常|风平浪静"]
     return []
@@ -214,16 +223,15 @@ def moved_duration_ok(entry: dict, m: "re.Match", plan: list) -> tuple:
     return True, None
 
 
-def check_row(r: dict):
-    """Returns (fails, reviews). v4: a plan entry counts as EXPRESSED only
-    when a recognizer matched it AND parsed values agree with the plan;
-    mustExpress requires expression evidence, not a planRefs mention."""
+def check_narration(plan: list, text: str, refs: list, must: list) -> tuple:
+    """Sentence-coverage recognizer core: which plan entries have value-
+    consistent expression evidence in the text, and what stays uncovered.
+    Shared by check_row (corpus rows) and the N5 pipeline stage (arbitrary
+    narration vs plan) so the two can never drift. Batch-1 refactor of the
+    pre-existing check_row body — behavior on corpus rows is unchanged
+    (proven by the self-test and the archived-output re-judge)."""
     fails, reviews = [], []
-    text, plan, refs = r["text"], r["plan"], r["planRefs"]
     sentences = [s for s in text.split("。") if s.strip()]
-    if len(sentences) != len(refs):
-        fails.append(f"planRefs has {len(refs)} entries for {len(sentences)} sentences")
-
     cited = set()
     expressed = set()
     for si, srefs in enumerate(refs):
@@ -267,7 +275,7 @@ def check_row(r: dict):
                 f"sentence '{sent[:24]}' not fully covered by plan recognizers "
                 f"(covered {covered}/{len(residue)}) — unrecognized content, needs review")
 
-    must = set(r["mustExpress"])
+    must = set(must)
     if not must <= cited:
         fails.append(f"mustExpress {sorted(must - cited)} not covered by planRefs")
     unexpressed = sorted(must - expressed)
@@ -275,6 +283,24 @@ def check_row(r: dict):
         reviews.append(
             f"mustExpress {unexpressed} mentioned in planRefs but has no value-"
             f"consistent expression in the text — needs review")
+
+    return fails, reviews
+
+
+def check_row(r: dict):
+    """Returns (fails, reviews). v4: a plan entry counts as EXPRESSED only
+    when a recognizer matched it AND parsed values agree with the plan;
+    mustExpress requires expression evidence, not a planRefs mention.
+    Batch-1: the sentence-coverage core lives in check_narration (shared
+    with the N5 pipeline stage); this wrapper adds the corpus-row checks."""
+    fails, reviews = [], []
+    text, plan, refs = r["text"], r["plan"], r["planRefs"]
+    sentences = [s for s in text.split("。") if s.strip()]
+    if len(sentences) != len(refs):
+        fails.append(f"planRefs has {len(refs)} entries for {len(sentences)} sentences")
+    core_fails, core_reviews = check_narration(plan, text, refs, r["mustExpress"])
+    fails += core_fails
+    reviews += core_reviews
 
     if r["rowOrigin"] == "rewrite":
         if r.get("rewriter") != "zcode-model":
@@ -315,7 +341,7 @@ def check_row(r: dict):
             fails.append("omitted row: plan still carries a time entry")
         if canon(pl) != canon([e for e in fp if e.get("kind") != "time"]):
             fails.append("omitted row: plan is not fullPlan minus time")
-        if re.search(r"分钟|小时", text):
+        if re.search(rf"({UNIT_RE})", text):
             reviews.append("omitted row: text states time although the plan omits it")
     else:
         fails.append(f"unknown timeScope {r['timeScope']}")
@@ -331,7 +357,7 @@ def masked_bigrams(text: str, names: set, goals: set) -> set:
         t = t.replace(name, "⟨N⟩")
     for goal in sorted(goals, key=len, reverse=True):
         t = t.replace(goal, "⟨Q⟩")
-    t = re.sub(r"[零一二两三四五六七八九十\d]+(分钟|小时)", "⟨V⟩", t)
+    t = re.sub(rf"[零一二两三四五六七八九十\d]+({UNIT_RE})", "⟨V⟩", t)
     return {t[i:i + 2] for i in range(len(t) - 1)} if len(t) > 1 else set()
 
 
@@ -402,6 +428,33 @@ def main() -> None:
     r_rendered["fullPlan"][1]["rendered"] = "八分钟"
     r_rendered["text"] = "陈舟从东门走到了钟楼。前后大约八分钟。"
     bads.append((rehash(r_rendered), "review", "rendered-not-trusted"))
+
+    # batch-1 unit extension: the recognizer must judge exactly the clause
+    # space the renderer can now emit — a new-unit clause passes when it
+    # agrees with the plan, stays review-class when it disagrees, and a zero
+    # amount (瞬时点) is a legal value, not residue. plan AND fullPlan time
+    # entries are synced so the wholesale structure check stays intact.
+    def with_time(src, amount, unit, clause):
+        v = json.loads(json.dumps(src, ensure_ascii=False))
+        for scope in ("plan", "fullPlan"):
+            for e in v[scope]:
+                if e.get("kind") == "time":
+                    e["amount"], e["unit"] = amount, unit
+        v["text"] = clause
+        return rehash(v)
+
+    bads.append((with_time(loc1, 40, "second",
+                           "陈舟从东门来到了钟楼。前后大约四十秒。"),
+                 "pass", "new-unit-second-agrees"))
+    bads.append((with_time(loc1, 40, "minute",
+                           "陈舟从东门来到了钟楼。前后大约四十秒。"),
+                 "review", "new-unit-second-vs-minute"))
+    bads.append((with_time(loc1, 0, "minute",
+                           "陈舟从东门来到了钟楼。前后零分钟。"),
+                 "pass", "zero-amount-agrees"))
+    bads.append((with_time(loc1, 3, "minute",
+                           "陈舟从东门来到了钟楼。前后零分钟。"),
+                 "review", "zero-amount-mismatch"))
 
     void = []
     # v7: positive-equivalence rows MUST pass (controlled variants), pinned

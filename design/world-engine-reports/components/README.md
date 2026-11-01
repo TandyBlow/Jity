@@ -1,6 +1,6 @@
 # C：组件结构、小模型选型与叙事拆分
 
-日期：2026-10-28。分支：`world-components`。工作树：`D:/others/Jity/.local/world-components-worktree`。
+日期：2026-10-28。分支：`world-components`。工作树：`.local/world-components-worktree`（相对仓库根）。
 创建基线：B / `world-browser` 的已提交版本 `50c1c22968bcfec1bd292514efa9d7f613d16bb3`。没有复制B未提交的产品改动或运行产物。
 共享文档现已由B提交并推送为 [`376d120`](https://github.com/TandyBlow/Jity/commit/376d12075910bf16ee4c71b6ea4c37b5f8e1e6dc)，C已快进到该**同一提交身份**。原五份修改及两份新报告不再在两边各自待提交；C首笔只提交本目录README。
 
@@ -32,7 +32,7 @@
 
 ### 运行时必须单独确认
 
-- 本机已核对的离线入口为 `D:/software/Anaconda/python.exe`，Python **3.12.3**；这只证明解释器存在，不代表已安装模型依赖、下载权重或跑过候选。先用适用的Python加载/推理框架验证质量，锁定实际依赖和设备。
+- 本机已核对的离线入口为 `python`（Anaconda base，本地安装），Python **3.12.3**；这只证明解释器存在，不代表已安装模型依赖、下载权重或跑过候选。先用适用的Python加载/推理框架验证质量，锁定实际依赖和设备。
 - 当前wllama的GGUF文本生成适配不能默认承载MiniRBT的分类/序列标注任务头。此类编码器须核对ONNX Runtime Web、transformers.js等导出/浏览器路径，保留真实任务头和输出解释。
 - Randeng/Mengzi是encoder-decoder T5，不能因现有Qwen可运行就声称wllama可直接加载。若拟用wllama，须验证锁定版本对该架构的支持；否则明确encoder、decoder及必要缓存的导出和生成适配，验证分词、量化、取消和结果一致性。
 - 每项候选分开记录“离线可加载/任务质量”“导出可执行”“浏览器可运行/耗时”；其中一项通过不自动关闭其余项。冷加载、热推理、各段和端到端成本均带环境标签。
@@ -96,6 +96,8 @@ C使用不同的隔离开发集，这些数值只给历史规模和失败模式�
 先交可评审的组件接口和候选/训练清单，再交可复跑的叙事子任务结果。每项区分“候选”“已适配”“已训练”“已测”“可接线”；失败如实保留，不改原产品要求来宣告成功。
 
 ## 交付进度
+
+**批次1（2026-11-01，五次提交安排第 1 笔）：** N1–N5 程序管线贯通（`narration_pipeline.py`：权威绑定→N1 提取→N2 选择接口＋程序参照→N3 B1/B2＋不变量→N4 接口检查/渲染→N5 判据核对；失败路径全部结构化停机，自检含合法 `second`、零时长端到端）。共享渲染器/判据器合法输入扩展（六个时间单位＋零时长；冻结语料 648 计划字节等价、90 条归档输出复判一致，证据 `n4-units-regression-r1.json`）；判据覆盖核心抽为 `check_narration` 供 N5 复用。N4 浏览器最小可行性探针通过：冻结 r3-direction 的 T5 encoder-decoder ONNX 图在 headless Edge＋ORT-web 单线程 wasm 下 7/7 case 与 ORT-python 参考**逐 token 精确一致**（fp32、无 KV 缓存、localhost 静态服务；证据 `n4-browser-probe-r1.json`）——可运行证据，非架构字符串。隐私整改：14 个已提交文件的绝对本地路径相对化（扫描器 `scan_privacy_paths.py`＋修订登记 `n4-batch1-amendment-r1.json`；冻结记录旧钉值按预期失效待复审，冻结材料本体全部未动）；审查者文档与 B 辖区文件的同类问题单列上报，不在本笔内改动。
 
 **D1 已关闭（2026-10-29）：** 两位新会话 AI 独立标注，92/92 一致、κ=1.0、无分歧；v3 已冻结，must 差异 0/16，沿用 N3 输入。P1-rule must-R=1.0、must-P macro=0.433333，不触发降级与资源转移。C 审查者在 `core.autocrlf=false` 干净检出独立复现后对 `dd2a513` 签字关闭；记录见 [`signoff-dd2a513.md`](../../../artifacts/world-components/signoff-dd2a513.md)。此为 AI 标注，不是人工评测；签字不代表真人评价、模型质量通过或 D2 完成。下一步 D2：8 项能力样本、gold、隔离与指标/prompt 冻结。详情见 [D1 交付](d1-ai-closure.md)。
 

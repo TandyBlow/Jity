@@ -17,11 +17,12 @@
 # by the sha256 of plan+world+rawDelta.
 #
 # Usage: python experiments/world-components/n4_corpus/validate_plan_authority.py
-#         [--server-tree D:/others/Jity/.local/world-server-worktree]
+#         [--server-tree <world-server worktree>]
 # Output: experiments/world-components/n4_corpus/authority-report.json
 
 import hashlib
 import json
+import os
 import pathlib
 import subprocess
 import sys
@@ -29,8 +30,12 @@ import sys
 HERE = pathlib.Path(__file__).resolve().parent
 
 args = sys.argv[1:]
+# default: the world-server worktree at the documented sibling layout
+# (<repo root>/.local/world-server-worktree); override with --server-tree
+# or the WORLD_SERVER_TREE environment variable
+_SERVER_DEFAULT = pathlib.Path(__file__).resolve().parents[3].parent / "world-server-worktree"
 SERVER_TREE = pathlib.Path(args[args.index("--server-tree") + 1]) if "--server-tree" in args \
-    else pathlib.Path("D:/others/Jity/.local/world-server-worktree")
+    else pathlib.Path(os.environ.get("WORLD_SERVER_TREE", _SERVER_DEFAULT))
 # --rows <file> validates a different row set (e.g. the independent holdout)
 # against the same A-side kernel; the tamper matrix still uses the frozen
 # corpus rows. --report sets the output path.

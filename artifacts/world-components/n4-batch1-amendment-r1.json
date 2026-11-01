@@ -1,0 +1,63 @@
+{
+ "purpose": "batch-1 (commit 1) amendment record: legal-input unit extension of the shared N4 renderer and judge, plus privacy redaction of committed local paths. Frozen materials are untouched; the superseded freeze pins are listed with their replacements for reviewer re-verification.",
+ "unitExtension": {
+  "driver": "coordinator batch order: fix rendering exceptions triggered by legal second / zero-duration inputs; the renderer KeyError'd on four TimeAdvance units and ValueError'd on amount 0",
+  "oldRendererSha256": "65bfe89adfbb75d5637d3661cab383aa9bc678dffb97ab5eb8a0d28ac1e3f2ef",
+  "newRendererSha256": "5595e08ef150df32373b26f954c99db67c6b4dcf798008d4f217ab79614959aa",
+  "oldJudgeSha256": "e16bd2c98a7141aaf8251c6562f191eb78809840e477e2b24f8345ecd351ac50",
+  "newJudgeSha256": "1d20feada44a73861545fded8e0faf0bf32cadb3b331d1d5fb7871920d4cd0b7",
+  "proofs": {
+   "archive": "n4-units-regression-r1.json",
+   "legacyByteEquality": "648 frozen plans (corpus 300 + rewrites 300 + holdout 48) render byte-identical under old and new renderer; 0 mismatches",
+   "archivedRejudge": "all 90 archived r3-direction holdout outputs (44 unseen + 1 regression x 2 arms) judged identical under the extended judge",
+   "selfTest": "23 negative + 3 equivalence rows incl. new-unit positive/mismatch and zero-amount cases",
+   "newSpace": "second/zero/day/month/year/3-digit-minute plans render and judge end-to-end (pass on agreement, review on mismatch)"
+  },
+  "judgeRefactorNote": "corpus_check.py also factors the sentence-coverage core into check_narration(plan, text, refs, must) for the N5 pipeline stage; check_row delegates to it, corpus behavior unchanged (self-test and archived re-judge prove it)"
+ },
+ "privacyRedaction": {
+  "rule": "no absolute local disk paths or worktree layout identifiers in committed files (standing user directive); scanner: experiments/world-components/scan_privacy_paths.py",
+  "redactedFiles": [
+   "artifacts/world-components/n2-isolation-r2.json",
+   "artifacts/world-components/n2-selection-r1.json",
+   "artifacts/world-components/n2-selection-r2.json",
+   "artifacts/world-components/n4-finetune-train-r1.json",
+   "artifacts/world-components/n4-finetune-train-r2-large.json",
+   "artifacts/world-components/n4-finetune-train-r2-small.json",
+   "artifacts/world-components/n4-finetune-train-r3-direction.json",
+   "artifacts/world-components/n4-fitting-diag.json",
+   "artifacts/world-components/n4-offline-package-r3-direction.json",
+   "artifacts/world-components/randeng-smoke.json",
+   "experiments/world-components/n2_selection/qwen-raw.json",
+   "experiments/world-components/n4_corpus/authority-report.json",
+   "experiments/world-components/n4_holdout/holdout-authority-report.json",
+   "experiments/world-components/n4_holdout/freeze-r3-direction.json"
+  ],
+  "method": "absolute path prefixes rewritten to repo-relative references or named sibling-worktree placeholders; numeric/hashed evidence fields untouched",
+  "codeChanges": [
+   "check_isolation.py / dedup_check.py derive the sibling main tree from the worktree layout instead of a hardcoded absolute path (live re-run: 0 hits / 0 missing, verdict unchanged)",
+   "validate_plan_authority.py derives the default server tree from the layout, overridable via --server-tree or WORLD_SERVER_TREE",
+   "corpus_check.py omitted-time residue check extended to the new units"
+  ],
+  "outOfScopeReported": [
+   "reviewer-authored records with .local evidence references (review-148f412.md, review-cf22a65.md, signoff-d5ca042.md) - left for the reviewer to amend",
+   "artifacts/benchmark/* and shared design docs under other lines' jurisdiction"
+  ]
+ },
+ "freezeSupersession": {
+  "oldRecord": "experiments/world-components/n4_holdout/freeze-r3-direction.json (kept, paths redacted; its pins below no longer match by design)",
+  "expectedMismatchesOnOldRecord": {
+   "renderer": "unit extension",
+   "judge": "unit extension + core refactor",
+   "holdout.authorityReport": "path redaction",
+   "trainingReport": "path redaction"
+  },
+  "untouchedByVerifyRun": ["holdout.jsonl", "corpus.seeds.jsonl", "rewrites.jsonl", "checkpoint r3-direction", "baseModel randeng-t5-77m", "decode config"],
+  "amendedHashes": {
+   "n4-holdout-eval-r3-direction.json holdout-authority-report": "33cb6cc84d7057b6a10149fe6ceee3f5a339238ca8a072f8e0e1429c1e322103",
+   "n4-finetune-train-r3-direction.json (redacted)": "3d8a0e05508d9aff2e7e34be84ba0ec2a3462793cfbacc91009b9fa39e52206a"
+  },
+  "status": "amendment evidence submitted; reviewer re-verification of the amended pins requested"
+ },
+ "pass": true
+}

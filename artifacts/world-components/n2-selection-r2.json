@@ -29,7 +29,7 @@
       "tokenizer_config.json": "af072c7d91576727"
     },
     "qwenRaw": {
-      "file": "D:\\others\\Jity\\.local\\world-components-worktree\\experiments\\world-components\\n2_selection\\qwen-raw.json",
+      "file": "experiments\\world-components\\n2_selection\\qwen-raw.json",
       "sha256": "b80433eb852e370e535aadd0b194d49f4ca71c96181b0b2fe041cde7657c728c",
       "itemsSha256": "c574d44ebc48a254942fff276cffd18d8607281b6e3617299c1cc0e35cc947fa"
     }

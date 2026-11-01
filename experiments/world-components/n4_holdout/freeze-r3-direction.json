@@ -2,7 +2,7 @@
   "purpose": "frozen setup for the one-shot N4 independent holdout acceptance",
   "date": "2026-10-29",
   "checkpoint": {
-    "path": "D:\\others\\Jity\\.local\\world-components-worktree\\experiments\\world-components\\assets\\n4-finetune\\r3-direction",
+    "path": "experiments\\world-components\\assets\\n4-finetune\\r3-direction",
     "sha256_16": {
       "added_tokens.json": "a247922ac010bc17",
       "config.json": "a35e9d4382657106",
@@ -14,7 +14,7 @@
     }
   },
   "baseModel": {
-    "path": "D:\\others\\Jity\\.local\\world-components-worktree\\experiments\\world-components\\assets\\randeng-t5-77m",
+    "path": "experiments\\world-components\\assets\\randeng-t5-77m",
     "sha256_16": {
       "config.json": "9b2480c0a39fd09b",
       "model.safetensors": "5cdc572109cf2591",
@@ -24,11 +24,11 @@
     }
   },
   "renderer": {
-    "file": "D:\\others\\Jity\\.local\\world-components-worktree\\experiments\\world-components\\n4_corpus\\n4_render.py",
+    "file": "experiments\\world-components\\n4_corpus\\n4_render.py",
     "sha256": "65bfe89adfbb75d5637d3661cab383aa9bc678dffb97ab5eb8a0d28ac1e3f2ef"
   },
   "judge": {
-    "file": "D:\\others\\Jity\\.local\\world-components-worktree\\experiments\\world-components\\n4_corpus\\corpus_check.py",
+    "file": "experiments\\world-components\\n4_corpus\\corpus_check.py",
     "sha256": "e16bd2c98a7141aaf8251c6562f191eb78809840e477e2b24f8345ecd351ac50"
   },
   "corpus": {
@@ -42,14 +42,14 @@
     "tokenizerLegacy": false
   },
   "trainingReport": {
-    "file": "D:\\others\\Jity\\.local\\world-components-worktree\\artifacts\\world-components\\n4-finetune-train-r3-direction.json",
+    "file": "artifacts\\world-components\\n4-finetune-train-r3-direction.json",
     "sha256": "3615747096d9f2f766340cd34ea9f09ddd6b3bef30583fef31c45efc07db3cde"
   },
   "holdout": {
-    "file": "D:\\others\\Jity\\.local\\world-components-worktree\\experiments\\world-components\\n4_holdout\\holdout.jsonl",
+    "file": "experiments\\world-components\\n4_holdout\\holdout.jsonl",
     "sha256": "a9323e0334242a1a14e6625dc355f6d64f6aa56c4e624d712a556bdd6bd7fe5e",
     "authorityReport": {
-      "file": "D:\\others\\Jity\\.local\\world-components-worktree\\experiments\\world-components\\n4_holdout\\holdout-authority-report.json",
+      "file": "experiments\\world-components\\n4_holdout\\holdout-authority-report.json",
       "sha256": "1b5cd0bc078ae9a3ccb6593ec37f19f35d6f2217d1f72896bb277402b3f4f91a"
     },
     "rows": 48,

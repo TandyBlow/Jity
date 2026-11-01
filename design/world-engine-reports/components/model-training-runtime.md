@@ -18,7 +18,7 @@
 | F8 | 旧 span 任务的预登记封存门（per-field strict ≥90% 且 e2e ≤4s）从未以 `--with-acceptance` 评估，提交记录均为 not-evaluated；且该门属于旧 parse 任务体系，阈值不可平移到新组件任务 | [实测] | labeler/combo 试验 json 的 `acceptance.verdict` |
 | F9 | Qwen3-0.6B Q4_K_M 真实浏览器叙事链：29 次调用 mean 13.986s、p50 13.497s（CPU 4 线程、n_ctx4096、maxTokens160） | [实测] | `artifacts/narration-eval-recheck/`（已提交） |
 | F10 | wllama 3.8.1 打包的 llama.cpp wasm 内含 `t5`、`t5encoder` 架构字符串：T5 家族加载器已编译进 wasm；但其 JS API 能否端到端驱动 encoder-decoder **未验证** | [核实] | 本轮 `tr` 提取 `node_modules/@wllama/wllama/esm/wasm/wllama.wasm` 字符串 |
-| F11 | MiniRBT-H256 权重快照（config.json＋pytorch_model.bin 41.5MB＋vocab.txt）**只在主工作树** `D:/others/Jity/artifacts/benchmark/minirbt-h256-snapshot`，被 `.gitignore` 排除、C 工作树内不存在——"微调不依赖网络"仅在主树成立；C 树开工须重新配置并记录获取方式 | [核实] | 本轮 `ls`（主树 frontend 相对路径）；C 树同路径不存在（复核轮确认） |
+| F11 | MiniRBT-H256 权重快照（config.json＋pytorch_model.bin 41.5MB＋vocab.txt）**只在主工作树** 的 `artifacts/benchmark/minirbt-h256-snapshot`，被 `.gitignore` 排除、C 工作树内不存在——"微调不依赖网络"仅在主树成立；C 树开工须重新配置并记录获取方式 | [核实] | 本轮 `ls`（主树 frontend 相对路径）；C 树同路径不存在（复核轮确认） |
 | F12 | Anaconda base：torch 2.7.0+cu126、transformers 4.57.3、onnx 1.21.0、onnxruntime 1.25.1 已装；**sentencepiece 未装**（T5 分词必需）；datasets/accelerate/peft 未装（当前方案不需要） | [核实] | 本轮 `importlib.metadata` 核查 |
 | F13 | hf-mirror 对 Randeng 仓库 resolve 实测可达（本轮取回 config.json）；Mengzi 卡片经 huggingface.co 网页核到、mirror api 本轮空返回未通；MiniRBT 的具体 HF 仓库 ID 待定（GitHub 官方示例用 `hfl/minirbt-h256`，`iflytek/MiniRBT-H256` 本轮 resolve 401） | [核实] | 本轮 curl 实测 |
 
@@ -89,6 +89,9 @@
 | F18 | D1 must 口径重算（只用归档输出，不新增推理）：P1-rule must-R 1.0 / must-P 0.433；Qwen must-R 0.875 / must-P 0.459；Randeng 0/16（空选择/无效内容）；P0 must-P 0.35。**P1-rule 的失败分支未在 v2 触发**（must-P<0.85），v3 标注后才可判定 | [实测] | `n2-must-r1.json` |
 | F19 | N3 I2 旧检查把**整份计划**的 factId 集合当锚定域，跨组/全局 factId 篡改可漏检；改为只查**本句组 entityIds** 后，`--tamper` **九类**变异 144/144 适用项全部被捕获，16/16 有效计划零问题；新增**首位捏造 factId**与**空句组**两类，检查器返回违规列表而不抛异常 | [实测] | `n3-baselines-r1.json` 的 `tamper` |
 | F20 | factIds 消费冒烟：36/36 B1 句组经共享渲染器喂冻结 `r3-direction`（离线 Python，cudnn deterministic、benchmark=False），本次归档墙钟均值 0.8s（同一检查点重复运行在 0.5–0.8s 间波动）；**仅证明 factIds 可被 N4 消费，coreference 未被 `render_input` 消费，跨组连贯未测** | [实测] | `n3-factids-smoke-r1.json` |
+| F21 | 冻结 r3-direction 的 T5 encoder-decoder 以 fp32 ONNX（torch.onnx opset 17，encoder＋无 KV 缓存 decoder 步进图）在 headless Edge＋vendored ORT-web 1.30.0 单线程 wasm 运行：**7/7 case 与 ORT-python 贪心环逐 token 精确一致**（4 冻结留出＋3 合法扩展空间输入；预烘焙真实 spiece ids）。会话冷加载 7.0s、编码 98–358ms、步进 80–194ms（无缓存 O(n²)，localhost 静态服务非网络口径）。图级可行性证据，非整链验收 | [实测] | `artifacts/world-components/n4-browser-probe-r1.json`（批次1） |
+| F22 | torch-HF 与 ORT 的 fp32 logits 差 ~2e-5（编码 7.7e-7），贪心 64 步反馈放大会出现中途 token 翻转；**跨运行时的对齐目标是 ORT-python 贪心环（与 ORT-web 同引擎族，实测逐 token 一致），HF generate 记录为训练侧参考**；两路文本均须判据干净 | [实测] | `export_n4_onnx.py` 头注、`probe_inputs.json`（批次1） |
+| F23 | 合法输入空间修复：共享渲染器/判据器覆盖六个 TimeAdvance 单位＋amount 0；冻结语料 648 计划字节等价、90 条归档输出复判一致；判据覆盖核心抽为 `check_narration(plan,text,refs,must)` 供 N5 管线复用（语料行为不变） | [实测] | `n4-units-regression-r1.json`、`n4-batch1-amendment-r1.json`（批次1） |
 
 ## 4. 训练方案表
 

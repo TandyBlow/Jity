@@ -11,7 +11,15 @@ import pathlib
 
 CN_DIGITS = {0: "零", 1: "一", 2: "二", 3: "三", 4: "四", 5: "五", 6: "六",
              7: "七", 8: "八", 9: "九"}
-UNIT_CN = {"minute": "分钟", "hour": "小时"}
+# Batch-1 unit extension (rendering must accept every legal TimeAdvance
+# unit, not only the two units the frozen corpus happens to cover): the six
+# units and their renderings mirror the frontend narration-split UNIT_CN
+# table (frontend/src/lib/world-engine/runtime/narration-split.ts). The
+# frozen corpus uses only minute/hour, so this table extension is
+# byte-identical on every frozen rendering — proven by
+# n4_units_regression.py before anything is re-judged.
+UNIT_CN = {"second": "秒", "minute": "分钟", "hour": "小时",
+           "day": "天", "month": "个月", "year": "年"}
 
 
 def sha256_file(path) -> str:
@@ -34,13 +42,22 @@ def corpus_hashes() -> dict:
 
 
 def num_cn(amount: int) -> str:
-    """SINGLE numeric formatter for 1..99 (v8: the old fixed table missed
+    """SINGLE numeric formatter for 0..99 (v8: the old fixed table missed
     2/6/15/20/45/90 and broke 210 renderings). 个位 2 reads 两 in duration
     contexts (两分钟); 十位 reads standard 二十 — the recognizer's cn_to_int
     maps both back to 2. Shared by the corpus builder's rendered fields and
-    the train/inference renderer."""
-    if not (1 <= amount <= 99):
+    the train/inference renderer.
+    Batch-1 legal-input extension: 0 is a legal duration amount (瞬时点,
+    non-negative per the time contract) and renders 零 — it used to raise
+    ValueError. Amounts ≥ 100 render as Arabic digits (deterministic; the
+    recognizer's cn_to_int accepts \\d+); they used to raise too. The frozen
+    corpus covers 1..99 only, so those spaces stay byte-identical."""
+    if not isinstance(amount, int) or isinstance(amount, bool) or amount < 0:
         raise ValueError(f"num_cn out of range: {amount}")
+    if amount == 0:
+        return "零"
+    if amount > 99:
+        return str(amount)
     tens, ones = divmod(amount, 10)
     if tens == 0:
         return "两" if amount == 2 else CN_DIGITS[amount]

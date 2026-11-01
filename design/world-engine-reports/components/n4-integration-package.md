@@ -146,6 +146,8 @@ def render_entry(e):
 
 ## 8. 验收记录分离
 
+> **批次1修订（2026-11-01）**：共享渲染器/判据器扩展到全部六个合法时间单位＋零时长（修复合法 `second`/零时长渲染异常）。冻结语料空间字节等价与 90 条归档输出复判一致见 `n4-units-regression-r1.json`；修订与取代关系见 `n4-batch1-amendment-r1.json`。§2/§4 引用的渲染器/判据器旧哈希（65bfe89a…/e16bd2c9…）由新哈希（5595e08e…/1d20fead…）取代，待 C 审查者复核。B 侧前端 `narration-split.ts` 的 UNIT_CN 六单位表本就与扩展后的渲染器一致。
+
 | 验收 | 状态 | 证据 |
 | --- | --- | --- |
 | 离线（六类短计划） | **通过**（协调人签字，复核轮 17） | `artifacts/world-components/n4-holdout-eval-r3-direction.json`（44/44 + 1/1） |

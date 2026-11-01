@@ -1,7 +1,7 @@
 {
   "purpose": "n4 finetune large-tier trial r2-large (360 steps; quality accepted separately)",
   "model": {
-    "base": "D:\\others\\Jity\\.local\\world-components-worktree\\experiments\\world-components\\assets\\randeng-t5-77m",
+    "base": "experiments\\world-components\\assets\\randeng-t5-77m",
     "hfId": "IDEA-CCNL/Randeng-T5-77M-MultiTask-Chinese",
     "paramCount": 77440384
   },
@@ -134,7 +134,7 @@
       "seconds": 87.2
     }
   ],
-  "checkpoint": "D:\\others\\Jity\\.local\\world-components-worktree\\experiments\\world-components\\assets\\n4-finetune\\r2-large",
+  "checkpoint": "experiments\\world-components\\assets\\n4-finetune\\r2-large",
   "disclaimers": [
     "process trial only; not presupposed to be enough for 77M",
     "small/large share steps and hyperparameters; only training data differs",

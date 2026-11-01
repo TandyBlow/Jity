@@ -2,7 +2,7 @@
   "purpose": "apply-based provenance validation of corpus fact plans (evidence, not a claim)",
   "pydanticVersion": "2.13.4",
   "serverTree": {
-    "path": "D:\\others\\Jity\\.local\\world-server-worktree",
+    "path": "(local sibling worktree) world-server",
     "head": "4e1702546df3337d28600b2caa55fb5ed86a5d83",
     "applyPySha256_16": "e626fdbb0679ca0c"
   },
