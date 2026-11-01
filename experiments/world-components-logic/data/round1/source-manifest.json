@@ -1,6 +1,22 @@
 {
   "schema": "jity-d-round1-source-cards-v1",
   "createdDate": "2026-10-31",
+  "revision": 2,
+  "revisedDate": "2026-11-01",
+  "revisionRecord": {
+    "previousCommit": "2184a39f3db839d875e97ac3685b89794d02300e",
+    "previousFileSha256": {
+      "source-cards.jsonl": "78b51ae8baead0f931dd48c114b5582dc6a4903994ac6124b24dd2274e39aaed",
+      "rubric-drafts.jsonl": "8ee49b58af6e52e9b345f1fc60a6653429ba0c840a8afc4f5dd6325dbee04fda",
+      "source-manifest.json": "6d47796a2aad38053b37b1d34f1688d1f6251ca7e5fcaaad81a181dd00935a9c"
+    },
+    "changedCardIds": [
+      "r1-sealed-d05-02"
+    ],
+    "reason": "修正四人闭组缺少合法准入路径：明确丁发起、丁到甲16/11及逐源确认顺序；乙到已行动丙保留判定且不重复反应。",
+    "reviewCarryForward": "none_automatic_revised_card_requires_new_review",
+    "historicalExports": "retain_and_reconcile_against_their_original_version_only"
+  },
   "status": "draft_not_frozen",
   "sourceCardCount": 90,
   "proposedSourceGroupCount": 90,
@@ -24,12 +40,12 @@
     "semanticIndependenceIncludingOldDAndAcrossSplits": "pending_human_review"
   },
   "files": {
-    "source-cards.jsonl": "78b51ae8baead0f931dd48c114b5582dc6a4903994ac6124b24dd2274e39aaed",
-    "rubric-drafts.jsonl": "8ee49b58af6e52e9b345f1fc60a6653429ba0c840a8afc4f5dd6325dbee04fda"
+    "source-cards.jsonl": "fe0b9d2a877619b94d8faacc965dd300385bd2dd9afff84da9b6c08a7f6a6742",
+    "rubric-drafts.jsonl": "0db0de16364a6fee91e75640d88f4f36f07a2371bb98ef9613d5240c19a60e6b"
   },
   "authoringCode": {
-    "round1_scenarios.py": "49690cfd1e1c49b0318f36421b59a7b0763836c791ecf4ddcf226ee8932cd7af",
-    "prepare_round1.py": "d06263f7f95aa92ef7457062fd5f73a3e1b5ee78a2c042537b00df560a213bf1"
+    "round1_scenarios.py": "9e07958c2864bb201c40cd40dacb95b82056df7e03f423e292c8fcc712dcadab",
+    "prepare_round1.py": "c242b5840ecf974b0e7f06a3596d9cccc7103e569d3635508cb89d0c3bfa1b25"
   },
   "ruleSources": [
     {
@@ -1337,8 +1353,8 @@
       "task": "D05",
       "split": "sealed_candidate",
       "derivedCaseIds": [],
-      "inputSha256": "5227ca924a9310543609d1d55fb7800985c4614e781e886730cffb7f979e9d7c",
-      "reviewSha256": "17aa804182c88b99f515fbb9f637901d28e4ebc6650a1cc69e9082b7f5dde2f8",
+      "inputSha256": "85ab5b83a83f0c08aba14e34e8cbbfef72e8b12d5334694f4c1092dd60127f19",
+      "reviewSha256": "517f67fbec321e320229baa5438a25031a51c3e81e2cbbbbb28a016ca632076c",
       "sourceType": "assistant_authored_draft",
       "humanReview": "pending"
     },

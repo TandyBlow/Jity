@@ -3,6 +3,7 @@ import contextlib
 import copy
 import io
 import json
+import re
 from pathlib import Path
 import subprocess
 import sys
@@ -31,6 +32,69 @@ def synthetic_source_packet():
 
 
 class SourceCardsTests(unittest.TestCase):
+    def test_four_member_card_has_a_complete_admission_path(self):
+        inputs, _ = source.build_cards()
+        card = next(c for c in inputs if c['caseId'] == 'r1-sealed-d05-02')
+        facts = card['input']['sourceCard']['facts']
+        # Read the actual published fixture's relations, not a separate copy of
+        # the desired rolls. This is a narrow regression, not a prose evaluator.
+        edges = [(a, b, int(roll), int(threshold)) for a, b, roll, threshold
+                 in re.findall(r'([甲乙丙丁])→([甲乙丙丁])=?(\d+)/(\d+)', facts)]
+        members = set('甲乙丙丁')
+        self.assertEqual(len(edges), 4)
+        reachable_by_root = {}
+        for root in members:
+            seen = {root}
+            while True:
+                expanded = seen | {b for a, b, roll, threshold in edges if a in seen and roll >= threshold}
+                if expanded == seen:
+                    break
+                seen = expanded
+            reachable_by_root[root] = seen
+        self.assertTrue(any(seen == members for seen in reachable_by_root.values()),
+                        f'No single initiator can admit the declared four members: {reachable_by_root}')
+        declared = re.search(r'([甲乙丙丁])发起', facts)
+        self.assertIsNotNone(declared, 'Card must identify its initiator')
+        frozen = {declared.group(1)}
+        reused = []
+        for actor, target, roll, threshold in edges:
+            self.assertIn(actor, frozen, 'Source must be frozen before its relation is judged')
+            self.assertEqual(threshold, 11)
+            self.assertIn(roll, range(1, 21))
+            if target in frozen:
+                reused.append((actor, target))
+            elif roll >= threshold:
+                frozen.add(target)
+        self.assertEqual(frozen, members)
+        self.assertEqual(reused, [('乙', '丙')])
+        self.assertIn('eligible=false、admitted=false', facts)
+        self.assertIn('丙的目标为空', facts)
+
+    def test_revision_only_changes_the_affected_card_and_its_rubric(self):
+        inputs, reviews = source.build_cards()
+        files, _ = source.build_files()
+        manifest = json.loads(files[source.DATA/'source-manifest.json'])
+        for name, current in (('source-cards.jsonl', inputs), ('rubric-drafts.jsonl', reviews)):
+            raw = subprocess.check_output(['git', 'show', f'{source.PREVIOUS_COMMIT}:experiments/world-components-logic/data/round1/{name}'], cwd=source.ROOT)
+            previous = {c['caseId']: c for c in map(json.loads, raw.splitlines())}
+            current = {c['caseId']: c for c in current}
+            self.assertEqual(current.keys(), previous.keys())
+            self.assertEqual([key for key in current if current[key] != previous[key]], [source.REVISED_CARD])
+            self.assertEqual(current[source.REVISED_CARD]['sourceGroup'], previous[source.REVISED_CARD]['sourceGroup'])
+            self.assertEqual(manifest['revisionRecord']['previousFileSha256'][name], source.digest(raw))
+        self.assertEqual(manifest['revision'], 2)
+        self.assertEqual(manifest['revisionRecord']['changedCardIds'], [source.REVISED_CARD])
+
+    def test_previous_source_batch_cannot_approve_revised_material(self):
+        old_claim = claims(synthetic_source_packet())  # QA-only IDs, no real opinions.
+        for claim_key, filename in (('inputFileSha256', 'source-cards.jsonl'),
+                                    ('reviewDraftFileSha256', 'rubric-drafts.jsonl'),
+                                    ('provenanceFileSha256', 'source-manifest.json')):
+            raw = subprocess.check_output(['git', 'show', f'{source.PREVIOUS_COMMIT}:experiments/world-components-logic/data/round1/{filename}'], cwd=source.ROOT)
+            old_claim[claim_key] = source.digest(raw)
+        with self.assertRaisesRegex(ValueError, '批次不匹配'):
+            review_io.reconcile_claims(old_claim, source.build_packet())
+
     def test_current_artifacts_are_reproducible_and_unapproved(self):
         files, summary = source.build_files()
         for path, content in files.items():

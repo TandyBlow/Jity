@@ -87,7 +87,7 @@ const facts=el('article',undefined,'card');facts.append(el('h2','场景卡：已
     replacements = {
         '这里是 L3 的开发题草稿，全部由 AI 新写，尚待人工核对。':
             '这里是 L3 第三步的来源场景卡，含开发用与封存候选，尚未正式封存，全部由 AI 起草、待人工核对。',
-        '40 个来源组 / 42 个测试项': '90 张来源卡 · 开发 44 / 封存候选 46',
+        '40 个来源组 / 42 个测试项': f'来源卡修订 {packet.get("revision", 1)} · 90 张 · 开发 44 / 封存候选 46',
         '</select>': '<option value="CHAIN">短链：步骤如何衔接</option></select>',
         "D05:'共同结果：全组一起结算'}": "D05:'共同结果：全组一起结算',CHAIN:'短链：步骤如何衔接'}",
         "'程序是否应调用模型：'+(e.expectedCall?'应调用':'应停止或复用已确认内容')+'。当前结构检查：'+(guardNames[c.guard.reason]||c.guard.reason)":

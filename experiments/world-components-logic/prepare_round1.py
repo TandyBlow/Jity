@@ -20,6 +20,9 @@ ROOT = BASE.parents[1]
 DATA = BASE / 'data/round1'
 ARTIFACTS = ROOT / 'artifacts/world-components-logic'
 RULE_COMMIT = '6aabd75072be8e60eb6f13fe2d590c2141cb3dba'
+REVISION = 2
+PREVIOUS_COMMIT = '2184a39f3db839d875e97ac3685b89794d02300e'
+REVISED_CARD = 'r1-sealed-d05-02'
 RULE_PATHS = ('design/browser-world-state-workflow.md',
               'design/world-engine-reports/components-logic/evaluation-plan.md')
 QUESTIONS = {
@@ -143,8 +146,19 @@ def build_files():
                                        if c['task'] == task and c['split'] == split
                                        for tag in r['coverageTags']})}
                 for task, split in SECTIONS}
+    previous_files = {name: digest(subprocess.check_output(
+        ['git', 'show', f'{PREVIOUS_COMMIT}:experiments/world-components-logic/data/round1/{name}'], cwd=ROOT))
+        for name in ('source-cards.jsonl', 'rubric-drafts.jsonl', 'source-manifest.json')}
     manifest = {
         'schema': 'jity-d-round1-source-cards-v1', 'createdDate': '2026-10-31',
+        'revision': REVISION, 'revisedDate': '2026-11-01',
+        'revisionRecord': {
+            'previousCommit': PREVIOUS_COMMIT, 'previousFileSha256': previous_files,
+            'changedCardIds': [REVISED_CARD],
+            'reason': '修正四人闭组缺少合法准入路径：明确丁发起、丁到甲16/11及逐源确认顺序；乙到已行动丙保留判定且不重复反应。',
+            'reviewCarryForward': 'none_automatic_revised_card_requires_new_review',
+            'historicalExports': 'retain_and_reconcile_against_their_original_version_only',
+        },
         'status': 'draft_not_frozen', **summary,
         'authoring': {'author': 'assistant_in_current_codex_conversation',
                       'method': 'new_source_card_drafts_from_rules_and_coverage',
@@ -176,7 +190,8 @@ def build_files():
     packet = make_packet(inputs, reviews, digest(input_bytes), digest(review_bytes), digest(manifest_bytes))
     from prepare_review import render_source_cards
     coverage_md = ['# L3 第三步：90 张来源卡的覆盖计划', '',
-                   '日期：2026-10-31。来源卡草稿，未冻结、未运行；标签配额核对不证明场景语义已覆盖。', '',
+                   '初版：2026-10-31；修订2：2026-11-01。来源卡草稿，未冻结、未运行；标签配额核对不证明场景语义已覆盖。', '',
+                   '修订仅涉及 r1-sealed-d05-02 的事实与判据：补齐四人合法准入路径，旧版由提交2184a39及清单中的三文件哈希定位；旧意见不自动迁入。', '',
                    '开发 44 组（四任务各 10 + 短链 4）；封存候选 46 组（四任务各 10 + 短链 6）。',
                    '90 是拟议来源组/基础卡数；可执行 case 数和调用数仍未知。骰点派生必须留在同组同 split。',
                    '新卡本人初审 0/90；原 42 题意见不迁入。B/C、D 内部及跨 split 的语义同源复核均待完成。', '',
@@ -196,6 +211,7 @@ def build_files():
 def make_packet(inputs, reviews, input_hash, review_hash, provenance_hash):
     by_id = {r['caseId']: r for r in reviews}
     return {'schema': 'jity-d-human-review-packet-v1', 'materialKind': 'source_card_draft',
+            'revision': REVISION,
             'inputSha256': input_hash, 'reviewDraftSha256': review_hash,
             'provenanceSha256': provenance_hash,
             'cases': [{**c, 'inputSha256': digest(canonical_bytes(c['input'])),
