@@ -129,7 +129,13 @@ def run_scenario(n4, name, point, before, perspective, expect):
         rec["modelCalled"] = False
         return rec
     t0 = time.perf_counter()
-    gen = n4.generate(verdict["renderText"])
+    gen = n4.generate(verdict["renderText"]) if n4 is not None \
+        else {"text": "", "outputTokens": 0, "wallMs": 0.0}
+    if n4 is None:
+        rec["modelCalled"] = False
+        rec["stages"]["n4Model"] = {"skipped": "no-model dry run"}
+        rec["status"] = "accepted-unrendered"
+        return rec
     rec["stages"]["n4Model"] = {"ms": gen["wallMs"],
                                 "outputTokens": gen["outputTokens"],
                                 "text": gen["text"]}
@@ -145,13 +151,16 @@ def run_scenario(n4, name, point, before, perspective, expect):
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--out",
-                        default=str(HERE.parent.parent / "artifacts" /
-                                    "world-components" / "n1-n5-composition-r1.json"))
+    parser.add_argument("--out", default=None,
+                        help="default: artifacts/world-components/"
+                             "n1-n5-composition-r1.json (dry runs must "
+                             "pass an explicit path)")
     parser.add_argument("--no-model", action="store_true",
                         help="program-only dry run (no checkpoint load)")
     args = parser.parse_args()
 
+    out_path = args.out or str(HERE.parent.parent / "artifacts" /
+                               "world-components" / "n1-n5-composition-r1.json")
     n4 = None
     if not args.no_model:
         t0 = time.perf_counter()
@@ -253,10 +262,10 @@ def main() -> int:
                   "auto-passed; the page gate stays B-side",
         "pass": all(r["expectMet"] for r in results),
     }
-    pathlib.Path(args.out).write_text(
+    pathlib.Path(out_path).write_text(
         json.dumps(archive, ensure_ascii=False, indent=1) + "\n",
         encoding="utf-8")
-    print("pass:", archive["pass"], "->", args.out)
+    print("pass:", archive["pass"], "->", out_path)
     return 0 if archive["pass"] else 1
 
 

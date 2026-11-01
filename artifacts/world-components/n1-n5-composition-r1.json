@@ -21,7 +21,7 @@
    "expect": "ok",
    "stages": {
     "n1": {
-     "ms": 0.05,
+     "ms": 0.03,
      "facts": 3,
      "diagnostics": []
     },
@@ -31,22 +31,22 @@
      "selected": 3
     },
     "n3": {
-     "ms": 0.07,
+     "ms": 0.04,
      "status": "ok"
     },
     "n4Interface": {
-     "ms": 0.16,
+     "ms": 0.13,
      "status": "accepted",
      "reason": null,
      "reasons": null
     },
     "n4Model": {
-     "ms": 1622.0,
+     "ms": 1678.8,
      "outputTokens": 36,
      "text": "管线甲从管线镇来到钟楼时,管线甲已经办妥任务「把铜铃挂回钟楼」。前后大约四十秒。"
     },
     "n5": {
-     "ms": 3.98,
+     "ms": 2.79,
      "status": "checked",
      "fails": [],
      "semanticUncertain": [],
@@ -74,22 +74,22 @@
      "selected": 2
     },
     "n3": {
-     "ms": 0.04,
+     "ms": 0.03,
      "status": "ok"
     },
     "n4Interface": {
-     "ms": 0.11,
+     "ms": 0.09,
      "status": "accepted",
      "reason": null,
      "reasons": null
     },
     "n4Model": {
-     "ms": 554.8,
+     "ms": 570.9,
      "outputTokens": 13,
      "text": "大约零分钟过去了,一切如旧。"
     },
     "n5": {
-     "ms": 0.92,
+     "ms": 0.83,
      "status": "checked",
      "fails": [],
      "semanticUncertain": [],
@@ -107,12 +107,12 @@
    "expect": "ok",
    "stages": {
     "n1": {
-     "ms": 0.01,
+     "ms": 0.02,
      "facts": 1,
      "diagnostics": []
     },
     "n2": {
-     "ms": 0.01,
+     "ms": 0.0,
      "status": "ok",
      "selected": 1
     },
@@ -121,18 +121,18 @@
      "status": "ok"
     },
     "n4Interface": {
-     "ms": 0.08,
+     "ms": 0.07,
      "status": "accepted",
      "reason": null,
      "reasons": null
     },
     "n4Model": {
-     "ms": 314.6,
+     "ms": 311.3,
      "outputTokens": 7,
      "text": "一切如旧。"
     },
     "n5": {
-     "ms": 0.08,
+     "ms": 0.11,
      "status": "checked",
      "fails": [],
      "semanticUncertain": [],
@@ -150,21 +150,21 @@
    "expect": "stopped-at-binding",
    "stages": {
     "n1": {
-     "ms": 0.01,
+     "ms": 0.02,
      "facts": 2,
      "diagnostics": []
     },
     "n2": {
-     "ms": 0.0,
+     "ms": 0.01,
      "status": "ok",
      "selected": 2
     },
     "n3": {
-     "ms": 0.02,
+     "ms": 0.04,
      "status": "ok"
     },
     "n4Interface": {
-     "ms": 0.04,
+     "ms": 0.06,
      "status": "binding-failed",
      "reason": null,
      "reasons": [
@@ -181,21 +181,21 @@
    "expect": "unsupported",
    "stages": {
     "n1": {
-     "ms": 0.04,
+     "ms": 0.06,
      "facts": 6,
      "diagnostics": []
     },
     "n2": {
-     "ms": 0.0,
+     "ms": 0.01,
      "status": "ok",
      "selected": 6
     },
     "n3": {
-     "ms": 0.04,
+     "ms": 0.06,
      "status": "ok"
     },
     "n4Interface": {
-     "ms": 0.09,
+     "ms": 0.14,
      "status": "unsupported",
      "reason": "plan-too-long",
      "reasons": null

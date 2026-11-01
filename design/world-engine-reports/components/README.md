@@ -97,6 +97,8 @@ C使用不同的隔离开发集，这些数值只给历史规模和失败模式�
 
 ## 交付进度
 
+**批次5（2026-11-01，第 5 笔）：** 最终集中登记：五笔提交清单、终验命令与结果、未完成能力清单、待复审项，见[交付总登记](batch-delivery-registration.md)。全门终验复跑全绿（判据 23+3、夹具 28、管线自检、隔离 0 命中、PARITY EXACT、int8 质量门、组合链 5/5）。
+
 **批次4（2026-11-01，第 4 笔）：** 真实模型组件组合贯通：程序 N1→N2→N3＋冻结 r3-direction N4 真实推理（CPU 离线，本地 GPU 不动）＋程序 N5。五个场景（正常×3、失败×1、超限×1）全部符合预期：正常路径真实成句且 N5 全净；版本断裂在绑定层停机、五事实计划 unsupported，**两种情况模型都未被调用**。离线单次成句 315–1622ms，浏览器证据（批次3归档）独立不合并。**更正批次3的 F22**：「HF-ORT 再结合漂移」系 `[input_len:]` 切片误用于 T5 decoder-only 序列导致 HF 臂全空的伪象；修正并统一 EOS 约定后 HF 与 ORT 环 7/7 逐 token 精确一致（冻结评测的 `decode(out[0])` 路径复核无误，44/44 不受影响）。
 
 **批次3（2026-11-01，第 3 笔）：** N4 浏览器适配集中交付并验证：自研 ONNX 导出（encoder＋self-KV 缓存解码图，cross 每步图内重算）、sentencepiece-js 真实分词（垫片加载 spiece.model，与 Python T5Tokenizer 逐 id 一致——含 T5 尾 `</s>` 补齐）、KV 缓存贪心环（步进 22–45ms，较无状态 80–194ms 提升 3–8×）、int8 动态量化（判据全净、体积过半）、AbortSignal 步级取消（实测步 4 生效）。fp32 全管线 7/7 case 与 ORT-python 参考逐 token 精确一致。实测发现并修复宏任务饥饿问题（单线程 wasm run 会饿死 setTimeout——B 侧接线硬约束，F27）。证据 `n4-browser-adapter-r1.json`、`n4-int8-quality-r1.json`。
