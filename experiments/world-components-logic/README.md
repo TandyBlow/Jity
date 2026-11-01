@@ -28,3 +28,16 @@ python3 experiments/world-components-logic/prepare_round1.py --check
 已有核心 65 项、新增审阅 13 项，共 78 项工程检查都不证明模型质量或 500 ms。缺来源登记哈希的反例已对旧实现反向验证。审阅逻辑测试需要本机已有 Node.js，仅跑合成内存夹具，不启动浏览器或写人审决定。业务模型输入尚未曝光，本人题目/判据初审意见以独立回执收录，原数据不改；正式来源/模型语义/性能结论仍未评测。
 
 新卡导出用 `review_io.py reconcile FILE --batch round1-source-cards --out NEW_FILE`，默认仍核对旧42题。新旧批次/意见不互通；`prepare_round1.py --write-new` 拒绝覆盖不同的已有材料。完整阶段输入、同源骰点派生、D02守卫探针和短链运行器留待补齐，训练数据另立。
+
+## 2026-11-01：完整输入、审阅及试跑准备
+
+在原来源卡修订2之外新增`data/round1-inputs/`七文件：80基础任务+4同源骰点对照，10短链初态/计划，2辅助守卫。全部新增上下文待人审/来源，模型未运行；短链动态执行器未实现。`development-inputs.jsonl`只含开发项，不能把结构ready当执行授权。
+
+```bash
+python3 experiments/world-components-logic/prepare_round1_inputs.py --check
+python3 experiments/world-components-logic/prepare_input_review.py --check
+python3 experiments/world-components-logic/prepare_run_batch.py --check
+python3 -m unittest discover -s experiments/world-components-logic/tests -p 'test_*.py'
+```
+
+完整输入页面为`artifacts/world-components-logic/l3-3-input-review.html`，导出核对用`review_io.py reconcile /absolute/export.json --batch round1-inputs --out /absolute/new.json`。生成器`--write-new`只新建，差异拒绝覆盖。运行准备的PASS是静态身份一致，后续BLOCKED列明缺失项；不执行模型。具体材料见`design/world-engine-reports/components-logic/round1-review-handoff.md`和`round1-run-preparation.md`。原42题、90卡页与历史回执保留。

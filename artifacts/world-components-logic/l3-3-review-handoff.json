@@ -1,0 +1,1180 @@
+{
+  "schema": "jity-d-round1-review-handoff-v1",
+  "preparedDate": "2026-11-01",
+  "status": "prepared_for_user_coordination_not_sent",
+  "preparedAgainst": {
+    "branch": "world-components-logic",
+    "sourceHead": "e1e85986d75c960b2b5be0f7af257a98f6d4f292",
+    "instructionScope": "Prepare handoff material only; do not send messages, assign real people, sign human reviews, or run models."
+  },
+  "dBatch": {
+    "batchId": "round1-source-cards",
+    "materialKind": "source_card_draft",
+    "revision": 2,
+    "sourceCommit": "e1e85986d75c960b2b5be0f7af257a98f6d4f292",
+    "files": [
+      {
+        "path": "experiments/world-components-logic/data/round1/source-cards.jsonl",
+        "sourceCommit": "e1e85986d75c960b2b5be0f7af257a98f6d4f292",
+        "sha256": "fe0b9d2a877619b94d8faacc965dd300385bd2dd9afff84da9b6c08a7f6a6742",
+        "byteCount": 51845,
+        "gitBlob": "b5e87ce838e0ea5b5a863e339fdeb5fc69c8a19c"
+      },
+      {
+        "path": "experiments/world-components-logic/data/round1/rubric-drafts.jsonl",
+        "sourceCommit": "e1e85986d75c960b2b5be0f7af257a98f6d4f292",
+        "sha256": "0db0de16364a6fee91e75640d88f4f36f07a2371bb98ef9613d5240c19a60e6b",
+        "byteCount": 44974,
+        "gitBlob": "d952a32a91d2e68f8180f64a5366cb1a6b810bcb"
+      },
+      {
+        "path": "experiments/world-components-logic/data/round1/source-manifest.json",
+        "sourceCommit": "e1e85986d75c960b2b5be0f7af257a98f6d4f292",
+        "sha256": "7274d68dba56240e2cdb9d4c173d652c1e51367015ab46b6dc8a584c4f52ed79",
+        "byteCount": 52810,
+        "gitBlob": "f10599af948ae939cd341cbbfe286ae6e8ae5d04"
+      }
+    ],
+    "sha256Method": "SHA-256 over each complete file in its original bytes; no newline or Unicode rewriting",
+    "sourceCardCount": 90,
+    "proposedSourceGroupCount": 90,
+    "independentlyVerifiedSourceGroupCount": null,
+    "developmentGroups": 44,
+    "sealedCandidateGroups": 46,
+    "countsByTaskAndSplit": {
+      "D02": {
+        "development": 10,
+        "sealed_candidate": 10
+      },
+      "D03": {
+        "development": 10,
+        "sealed_candidate": 10
+      },
+      "D04": {
+        "development": 10,
+        "sealed_candidate": 10
+      },
+      "D05": {
+        "development": 10,
+        "sealed_candidate": 10
+      },
+      "CHAIN": {
+        "development": 4,
+        "sealed_candidate": 6
+      }
+    },
+    "runtimeCaseCount": null,
+    "expectedModelCallCount": null,
+    "trainingGroupQuota": 0,
+    "initialReviewedUniqueCards": 0,
+    "status": "draft_not_frozen",
+    "sourceIndependence": "unverified",
+    "formalEvaluationAllowed": false,
+    "modelExecutionAuthorized": false,
+    "scopeLimit": "Only the three bound source-card files; expanded world/stage inputs are not bound by this request."
+  },
+  "revisionHistory": {
+    "previousCommit": "2184a39f3db839d875e97ac3685b89794d02300e",
+    "previousFileSha256": {
+      "source-cards.jsonl": "78b51ae8baead0f931dd48c114b5582dc6a4903994ac6124b24dd2274e39aaed",
+      "rubric-drafts.jsonl": "8ee49b58af6e52e9b345f1fc60a6653429ba0c840a8afc4f5dd6325dbee04fda",
+      "source-manifest.json": "6d47796a2aad38053b37b1d34f1688d1f6251ca7e5fcaaad81a181dd00935a9c"
+    },
+    "changedCardIds": [
+      "r1-sealed-d05-02"
+    ],
+    "reason": "修正四人闭组缺少合法准入路径：明确丁发起、丁到甲16/11及逐源确认顺序；乙到已行动丙保留判定且不重复反应。",
+    "reviewCarryForward": "none_automatic_revised_card_requires_new_review",
+    "historicalExports": "retain_and_reconcile_against_their_original_version_only"
+  },
+  "knownPriorBatch": {
+    "batchId": "l3-1-dev-42",
+    "caseCount": 42,
+    "sourceGroupCount": 40,
+    "initialReviewedUniqueCases": 42,
+    "initialAcceptedCases": 42,
+    "filesAtSourceCommit": [
+      {
+        "path": "experiments/world-components-logic/data/dev-inputs.jsonl",
+        "sourceCommit": "e1e85986d75c960b2b5be0f7af257a98f6d4f292",
+        "sha256": "5db17d612a02425a00f555c178d74689cd84a7fd745656ce87f0daf7c7b3061e",
+        "byteCount": 89091,
+        "gitBlob": "401ca387d691d246f79f97e8d69053f21bdb755f"
+      },
+      {
+        "path": "experiments/world-components-logic/data/dev-review-drafts.jsonl",
+        "sourceCommit": "e1e85986d75c960b2b5be0f7af257a98f6d4f292",
+        "sha256": "e5a772691b81c6f6e8281706a75725f8fc33cab1c78e5f010b06ff4fc5d9ea1b",
+        "byteCount": 28778,
+        "gitBlob": "5c68b1e84713f7a600699fb0959726f01246591a"
+      },
+      {
+        "path": "experiments/world-components-logic/data/dev-provenance.json",
+        "sourceCommit": "e1e85986d75c960b2b5be0f7af257a98f6d4f292",
+        "sha256": "d104869ca54b270ab11e8b2206ff3f1932d69eb67799c8bb9cc8416e038c050d",
+        "byteCount": 41892,
+        "gitBlob": "cd53e455e1d48f90b5903aad699744d5be12cccb"
+      }
+    ],
+    "reviewEvidenceDocument": "design/world-engine-reports/components-logic/human-review.md#6-当前人审进度2026-10-31",
+    "repeatInitialReviewRequired": false,
+    "creditTowardNew90": 0,
+    "approvalTransfersToNew90": false,
+    "sourceReceiptTransfersToNew90": false
+  },
+  "humanReview": {
+    "status": "pending",
+    "reviewPage": "artifacts/world-components-logic/l3-3-source-review.html",
+    "expectedUniqueCardCount": 90,
+    "receivedUniqueCardCount": 0,
+    "acceptedCount": 0,
+    "needsRevisionCount": 0,
+    "uncertainCount": 0,
+    "actualExports": [],
+    "actualReconciliations": [],
+    "reconcileBatchArgument": "round1-source-cards",
+    "requiredBindings": [
+      "inputFileSha256",
+      "reviewDraftFileSha256",
+      "provenanceFileSha256",
+      "per-card input and review hash",
+      "caseId",
+      "sourceGroup",
+      "decision"
+    ],
+    "roleAssignmentOwner": "user_or_coordinator",
+    "initialReviewer": null,
+    "secondReviewer": null,
+    "adjudicator": null,
+    "formalRoleAssignmentsConfirmedAt": null,
+    "independentEngineeringAgentCanSubstituteForHuman": false,
+    "engineeringReviewIsHumanSemanticApproval": false,
+    "userInitialReviewIsFormalOutputBlindEvaluation": false,
+    "reviewCarryForward": "none_automatic; reconcile historical exports with their original version, then explicitly recheck affected content; revised card needs new review"
+  },
+  "sourceGrouping": {
+    "status": "pending_human_and_owner_review",
+    "cardIdsAndSourceGroupsIndex": {
+      "path": "experiments/world-components-logic/data/round1/source-manifest.json",
+      "sourceCommit": "e1e85986d75c960b2b5be0f7af257a98f6d4f292",
+      "sha256": "7274d68dba56240e2cdb9d4c173d652c1e51367015ab46b6dc8a584c4f52ed79",
+      "byteCount": 52810,
+      "gitBlob": "f10599af948ae939cd341cbbfe286ae6e8ae5d04"
+    },
+    "requiredReviewScopes": [
+      "new cards against each other",
+      "new cards against prior D 42 cases",
+      "development against sealed_candidate",
+      "new D materials against B complete protected scope",
+      "new D materials against C complete protected scope"
+    ],
+    "internalDReviewFindings": null,
+    "crossSplitFindings": null,
+    "groupMergeRecords": null,
+    "replacementIndependentSourceIds": null,
+    "finalIndependentSourceGroupCount": null,
+    "rules": [
+      "Same original, paraphrase, renamed entities, dice contrast and expanded stage variants stay in one source group and one split.",
+      "A group used for development/tuning is not an unseen sealed group.",
+      "Merge confirmed same-origin groups, preserve findings, replace lost independent quota with new sources, and issue a new bound revision.",
+      "Different IDs, titles, file digests, or declared coverage tags do not prove source independence."
+    ]
+  },
+  "expandedInputs": {
+    "status": "identity_bound_pending_new_human_and_source_review",
+    "generationStatus": "drafts_generated_not_executed",
+    "plannedDirectory": "experiments/world-components-logic/data/round1-inputs/",
+    "actualFiles": [
+      {
+        "path": "experiments/world-components-logic/data/round1-inputs/auxiliary-guard-probes.jsonl",
+        "sha256": "73a480f66b91fed785db7c75b326ee60598ac2f99e4ecf31a4fe3c5632dcb3aa",
+        "byteCount": 3996
+      },
+      {
+        "path": "experiments/world-components-logic/data/round1-inputs/chain-plans.jsonl",
+        "sha256": "b3b60a9f371c50e7b17071b2b90851dc91471c2ae5e7b557673232f13477c118",
+        "byteCount": 34016
+      },
+      {
+        "path": "experiments/world-components-logic/data/round1-inputs/context-supplements.jsonl",
+        "sha256": "8829fa7c8e41e956561501597e8e51a30d39a9374ad18e19919993058205cbda",
+        "byteCount": 264879
+      },
+      {
+        "path": "experiments/world-components-logic/data/round1-inputs/development-inputs.jsonl",
+        "sha256": "0911a5f642ebfc6d3d1a062452524090da5eb167b6aff7bb2f107f60d1c890b0",
+        "byteCount": 78854
+      },
+      {
+        "path": "experiments/world-components-logic/data/round1-inputs/input-checks.jsonl",
+        "sha256": "757897b78eeeb8726e6c6ddb714645ae2217bba86e4e5c72e937f6713660f8a3",
+        "byteCount": 37200
+      },
+      {
+        "path": "experiments/world-components-logic/data/round1-inputs/input-manifest.json",
+        "sha256": "458272a0030abe7cd955b3885ee052e3e31bfa6dafbbaaf015c124ba3e679b55",
+        "byteCount": 52851
+      },
+      {
+        "path": "experiments/world-components-logic/data/round1-inputs/task-inputs.jsonl",
+        "sha256": "ae0e11b905b553bb27b32c051ac510051cb269077f3af73157c0a240900127a6",
+        "byteCount": 160018
+      }
+    ],
+    "sourceCommit": null,
+    "fileSha256": {
+      "auxiliary-guard-probes.jsonl": "73a480f66b91fed785db7c75b326ee60598ac2f99e4ecf31a4fe3c5632dcb3aa",
+      "chain-plans.jsonl": "b3b60a9f371c50e7b17071b2b90851dc91471c2ae5e7b557673232f13477c118",
+      "context-supplements.jsonl": "8829fa7c8e41e956561501597e8e51a30d39a9374ad18e19919993058205cbda",
+      "development-inputs.jsonl": "0911a5f642ebfc6d3d1a062452524090da5eb167b6aff7bb2f107f60d1c890b0",
+      "input-checks.jsonl": "757897b78eeeb8726e6c6ddb714645ae2217bba86e4e5c72e937f6713660f8a3",
+      "input-manifest.json": "458272a0030abe7cd955b3885ee052e3e31bfa6dafbbaaf015c124ba3e679b55",
+      "task-inputs.jsonl": "ae0e11b905b553bb27b32c051ac510051cb269077f3af73157c0a240900127a6"
+    },
+    "runtimeCaseCount": 84,
+    "expectedModelCallCount": null,
+    "sourceGroupAndSplitMapping": "input-manifest.json/cases and chains; proposed90 groups, same-source derivatives retained",
+    "stageCutAndAvailableFactsBinding": "task-inputs.jsonl + input-checks.jsonl + context-supplements.jsonl",
+    "programJudgmentAndFrozenIdentityBinding": "authored fixtures only, no actual service receipts",
+    "rubricVersionBinding": {
+      "path": "experiments/world-components-logic/data/round1/rubric-drafts.jsonl",
+      "sourceCommit": "e1e85986d75c960b2b5be0f7af257a98f6d4f292",
+      "sha256": "0db0de16364a6fee91e75640d88f4f36f07a2371bb98ef9613d5240c19a60e6b",
+      "byteCount": 44974,
+      "gitBlob": "d952a32a91d2e68f8180f64a5366cb1a6b810bcb"
+    },
+    "initialHumanReview": {
+      "status": "pending",
+      "recordedCards": 0,
+      "totalCards": 90
+    },
+    "secondHumanReview": null,
+    "adjudication": null,
+    "protectedSourceReceipts": {
+      "B": null,
+      "C": null
+    },
+    "sourceCardApprovalAutomaticallyTransfers": false,
+    "sourceCardSourceReceiptAutomaticallyTransfers": false,
+    "integrationOwner": "D_main_executor",
+    "requiredAfterGeneration": [
+      "bind actual paths, file hashes, code/data commit and case/group/split mapping",
+      "retain same-source dice variants in the same group and split",
+      "independently review complete world facts, original texts, stage visibility, program identities and rubrics",
+      "obtain or explicitly supplement B/C checks for newly added bytes",
+      "keep unreviewed or uncovered scope pending"
+    ],
+    "reviewPage": "artifacts/world-components-logic/l3-3-input-review.html",
+    "reviewBatch": "round1-inputs",
+    "trainingQuota": 0,
+    "chainRunnerStatus": "not_implemented",
+    "deliveryIdentity": "exact file hashes now; delivery commit reported after scoped commit, no self-referential commit invented",
+    "inputManifestSummary": {
+      "sourceGroupCount": 90,
+      "independentTaskAnchors": 80,
+      "shortChainInitialPlans": 10,
+      "diceDerivedCases": 4,
+      "taskCaseCount": 84,
+      "auxiliaryD02ProbesOutsideQuota": 2,
+      "structurallyValidTaskCases": 83,
+      "rawStructurallyInvalidGuardCases": [
+        "r1-sealed-d04-10"
+      ],
+      "guardReasons": {
+        "ready": 70,
+        "not_admitted": 2,
+        "already_acted_reuse": 2,
+        "missing_frozen_source_text": 2,
+        "missing_or_invalid_judgment": 1,
+        "invalid_input": 1,
+        "missing_member_action": 2,
+        "missing_or_duplicate_relation_judgment": 2,
+        "group_not_closed": 2
+      },
+      "chainRunnerStatus": "not_implemented",
+      "modelExecutionAuthorized": false,
+      "trainingQuota": 0,
+      "humanReview": "pending_new_input_review",
+      "sourceIndependence": "unverified",
+      "formalVerdict": "not_evaluated",
+      "semanticQuality": "unverified",
+      "latencyStatus": "latency_unverified"
+    }
+  },
+  "sourceReceipts": {
+    "B": null,
+    "C": null
+  },
+  "sourceStatus": {
+    "protectedSourceCompleteness": "unverified",
+    "contentDeduplication": "unverified",
+    "semanticSourceIndependence": "unverified"
+  },
+  "ownerRequests": {
+    "B": {
+      "schema": "jity-d-protected-source-review-request-v1",
+      "requestStatus": "prepared_not_sent",
+      "ownerLine": "B",
+      "preparedDate": "2026-11-01",
+      "requestedBy": "user_coordination_pending",
+      "ownerPerson": null,
+      "sentAt": null,
+      "receivedAt": null,
+      "dBatch": {
+        "batchId": "round1-source-cards",
+        "materialKind": "source_card_draft",
+        "revision": 2,
+        "sourceCommit": "e1e85986d75c960b2b5be0f7af257a98f6d4f292",
+        "files": [
+          {
+            "path": "experiments/world-components-logic/data/round1/source-cards.jsonl",
+            "sourceCommit": "e1e85986d75c960b2b5be0f7af257a98f6d4f292",
+            "sha256": "fe0b9d2a877619b94d8faacc965dd300385bd2dd9afff84da9b6c08a7f6a6742",
+            "byteCount": 51845,
+            "gitBlob": "b5e87ce838e0ea5b5a863e339fdeb5fc69c8a19c"
+          },
+          {
+            "path": "experiments/world-components-logic/data/round1/rubric-drafts.jsonl",
+            "sourceCommit": "e1e85986d75c960b2b5be0f7af257a98f6d4f292",
+            "sha256": "0db0de16364a6fee91e75640d88f4f36f07a2371bb98ef9613d5240c19a60e6b",
+            "byteCount": 44974,
+            "gitBlob": "d952a32a91d2e68f8180f64a5366cb1a6b810bcb"
+          },
+          {
+            "path": "experiments/world-components-logic/data/round1/source-manifest.json",
+            "sourceCommit": "e1e85986d75c960b2b5be0f7af257a98f6d4f292",
+            "sha256": "7274d68dba56240e2cdb9d4c173d652c1e51367015ab46b6dc8a584c4f52ed79",
+            "byteCount": 52810,
+            "gitBlob": "f10599af948ae939cd341cbbfe286ae6e8ae5d04"
+          }
+        ],
+        "sha256Method": "SHA-256 over each complete file in its original bytes; no newline or Unicode rewriting",
+        "sourceCardCount": 90,
+        "proposedSourceGroupCount": 90,
+        "independentlyVerifiedSourceGroupCount": null,
+        "developmentGroups": 44,
+        "sealedCandidateGroups": 46,
+        "countsByTaskAndSplit": {
+          "D02": {
+            "development": 10,
+            "sealed_candidate": 10
+          },
+          "D03": {
+            "development": 10,
+            "sealed_candidate": 10
+          },
+          "D04": {
+            "development": 10,
+            "sealed_candidate": 10
+          },
+          "D05": {
+            "development": 10,
+            "sealed_candidate": 10
+          },
+          "CHAIN": {
+            "development": 4,
+            "sealed_candidate": 6
+          }
+        },
+        "runtimeCaseCount": null,
+        "expectedModelCallCount": null,
+        "trainingGroupQuota": 0,
+        "initialReviewedUniqueCards": 0,
+        "status": "draft_not_frozen",
+        "sourceIndependence": "unverified",
+        "formalEvaluationAllowed": false,
+        "modelExecutionAuthorized": false,
+        "scopeLimit": "Only the three bound source-card files; expanded world/stage inputs are not bound by this request."
+      },
+      "requiredProtectedScope": [
+        "hv/nv/ns",
+        "training/development/calibration samples",
+        "world-chain and narration evaluation samples",
+        "code-embedded samples",
+        "all historical prompt/threshold tuning cases",
+        "originals and paraphrase/derived source groups",
+        "consumed sealed sets",
+        "appropriately frozen uncommitted sources and their histories"
+      ],
+      "requiredComparisonOrder": [
+        "freeze complete protected inventory and methods",
+        "raw and normalized digest comparisons",
+        "near-duplicate candidate screening",
+        "human same-origin/paraphrase review",
+        "return scoped receipt without protected sample text"
+      ],
+      "returnConstraints": {
+        "protectedSampleBodiesAllowed": false,
+        "protectedParaphrasesAllowed": false,
+        "protectedSealedContentAllowed": false,
+        "rawModelAnswersAllowed": false,
+        "allowedEvidence": [
+          "protected internal IDs",
+          "frozen versions",
+          "inventory hashes",
+          "D caseId/sourceGroup/split",
+          "method and thresholds",
+          "non-text-leaking rationale and decisions"
+        ],
+        "missingEvidenceRule": "Keep unverified; a missing inventory is not zero overlap.",
+        "scopeRule": "Covers only the declared protected range and the exact D files above. It does not cover expanded inputs or the other owner line."
+      },
+      "receiptReceived": false,
+      "actualReceipt": null,
+      "receiptTemplate": {
+        "schema": "jity-d-protected-source-review-receipt-v1",
+        "templateStatus": "unfilled_not_evidence",
+        "receiptId": null,
+        "receiptRevision": null,
+        "ownerLine": "B",
+        "ownerPerson": null,
+        "reviewedAt": null,
+        "boundDRequest": {
+          "batchId": "round1-source-cards",
+          "materialKind": "source_card_draft",
+          "revision": 2,
+          "sourceCommit": "e1e85986d75c960b2b5be0f7af257a98f6d4f292",
+          "files": [
+            {
+              "path": "experiments/world-components-logic/data/round1/source-cards.jsonl",
+              "sourceCommit": "e1e85986d75c960b2b5be0f7af257a98f6d4f292",
+              "sha256": "fe0b9d2a877619b94d8faacc965dd300385bd2dd9afff84da9b6c08a7f6a6742",
+              "byteCount": 51845,
+              "gitBlob": "b5e87ce838e0ea5b5a863e339fdeb5fc69c8a19c"
+            },
+            {
+              "path": "experiments/world-components-logic/data/round1/rubric-drafts.jsonl",
+              "sourceCommit": "e1e85986d75c960b2b5be0f7af257a98f6d4f292",
+              "sha256": "0db0de16364a6fee91e75640d88f4f36f07a2371bb98ef9613d5240c19a60e6b",
+              "byteCount": 44974,
+              "gitBlob": "d952a32a91d2e68f8180f64a5366cb1a6b810bcb"
+            },
+            {
+              "path": "experiments/world-components-logic/data/round1/source-manifest.json",
+              "sourceCommit": "e1e85986d75c960b2b5be0f7af257a98f6d4f292",
+              "sha256": "7274d68dba56240e2cdb9d4c173d652c1e51367015ab46b6dc8a584c4f52ed79",
+              "byteCount": 52810,
+              "gitBlob": "f10599af948ae939cd341cbbfe286ae6e8ae5d04"
+            }
+          ],
+          "sha256Method": "SHA-256 over each complete file in its original bytes; no newline or Unicode rewriting",
+          "sourceCardCount": 90,
+          "proposedSourceGroupCount": 90,
+          "independentlyVerifiedSourceGroupCount": null,
+          "developmentGroups": 44,
+          "sealedCandidateGroups": 46,
+          "countsByTaskAndSplit": {
+            "D02": {
+              "development": 10,
+              "sealed_candidate": 10
+            },
+            "D03": {
+              "development": 10,
+              "sealed_candidate": 10
+            },
+            "D04": {
+              "development": 10,
+              "sealed_candidate": 10
+            },
+            "D05": {
+              "development": 10,
+              "sealed_candidate": 10
+            },
+            "CHAIN": {
+              "development": 4,
+              "sealed_candidate": 6
+            }
+          },
+          "runtimeCaseCount": null,
+          "expectedModelCallCount": null,
+          "trainingGroupQuota": 0,
+          "initialReviewedUniqueCards": 0,
+          "status": "draft_not_frozen",
+          "sourceIndependence": "unverified",
+          "formalEvaluationAllowed": false,
+          "modelExecutionAuthorized": false,
+          "scopeLimit": "Only the three bound source-card files; expanded world/stage inputs are not bound by this request."
+        },
+        "dIdentityVerification": {
+          "checkedBy": null,
+          "checkedAt": null,
+          "threeFilesMatch": null,
+          "receivedFileDigests": null,
+          "versionMismatchDetails": null
+        },
+        "protectedInventory": {
+          "inventoryFiles": null,
+          "historyVersionsCovered": null,
+          "originalParaphraseGroupIndex": null,
+          "frozenUncommittedSnapshots": null,
+          "scopeCompleteness": "unverified",
+          "uncoveredRanges": null,
+          "limitations": null,
+          "inventoryFileEntryTemplate": {
+            "pathOrInternalId": null,
+            "commitOrFrozenSnapshot": null,
+            "sha256": null,
+            "byteCount": null,
+            "scopeAndPurpose": null,
+            "originalDerivedGroupIndexReference": null
+          }
+        },
+        "methods": {
+          "toolNamesVersionsAndCodeCommit": null,
+          "rawDigestAlgorithm": null,
+          "normalizationRulesAndVersion": null,
+          "normalizedDigestAlgorithm": null,
+          "nearDuplicateAlgorithmAndVersion": null,
+          "nearDuplicateThresholds": null,
+          "humanSameOriginRules": null,
+          "humanReviewers": null,
+          "reviewDates": null,
+          "knownBlindSpots": null
+        },
+        "findingsCount": null,
+        "findings": null,
+        "findingRecordTemplate": {
+          "dCardIds": null,
+          "dSourceGroups": null,
+          "dSplits": null,
+          "protectedInternalIds": null,
+          "protectedSourceGroupIds": null,
+          "protectedFrozenVersions": null,
+          "matchType": null,
+          "humanDecision": null,
+          "rationaleWithoutProtectedContent": null,
+          "recommendedDisposition": null,
+          "followUpNeeded": null
+        },
+        "conclusion": {
+          "status": "unverified",
+          "allowedStatuses": [
+            "unverified",
+            "needs_revision",
+            "verified_for_declared_scope"
+          ],
+          "declaredScope": null,
+          "uncoveredRanges": null,
+          "limitations": null,
+          "supportingEvidenceReferences": null
+        },
+        "coordinatorAndIndependentReceiptCheck": {
+          "checkedByCoordinator": null,
+          "checkedByIndependentReviewer": null,
+          "checkedAt": null,
+          "result": null
+        },
+        "fillingRules": [
+          "null means no evidence yet; do not replace it by 0 or an empty list before an actual check.",
+          "An actual zero findings result must also include the frozen complete scope, methods, and human review evidence.",
+          "Use new receipt files; preserve historical originals. Do not edit D source files or their hashes to make a receipt match.",
+          "Do not include protected sample text, paraphrases, sealed content, or raw model outputs."
+        ],
+        "expandedInputScope": {
+          "files": [
+            {
+              "path": "experiments/world-components-logic/data/round1-inputs/auxiliary-guard-probes.jsonl",
+              "sha256": "73a480f66b91fed785db7c75b326ee60598ac2f99e4ecf31a4fe3c5632dcb3aa",
+              "byteCount": 3996
+            },
+            {
+              "path": "experiments/world-components-logic/data/round1-inputs/chain-plans.jsonl",
+              "sha256": "b3b60a9f371c50e7b17071b2b90851dc91471c2ae5e7b557673232f13477c118",
+              "byteCount": 34016
+            },
+            {
+              "path": "experiments/world-components-logic/data/round1-inputs/context-supplements.jsonl",
+              "sha256": "8829fa7c8e41e956561501597e8e51a30d39a9374ad18e19919993058205cbda",
+              "byteCount": 264879
+            },
+            {
+              "path": "experiments/world-components-logic/data/round1-inputs/development-inputs.jsonl",
+              "sha256": "0911a5f642ebfc6d3d1a062452524090da5eb167b6aff7bb2f107f60d1c890b0",
+              "byteCount": 78854
+            },
+            {
+              "path": "experiments/world-components-logic/data/round1-inputs/input-checks.jsonl",
+              "sha256": "757897b78eeeb8726e6c6ddb714645ae2217bba86e4e5c72e937f6713660f8a3",
+              "byteCount": 37200
+            },
+            {
+              "path": "experiments/world-components-logic/data/round1-inputs/input-manifest.json",
+              "sha256": "458272a0030abe7cd955b3885ee052e3e31bfa6dafbbaaf015c124ba3e679b55",
+              "byteCount": 52851
+            },
+            {
+              "path": "experiments/world-components-logic/data/round1-inputs/task-inputs.jsonl",
+              "sha256": "ae0e11b905b553bb27b32c051ac510051cb269077f3af73157c0a240900127a6",
+              "byteCount": 160018
+            }
+          ],
+          "scopeChecked": null,
+          "methodAndVersion": null,
+          "findings": null,
+          "status": "unverified",
+          "checkedBy": null,
+          "checkedAt": null
+        }
+      },
+      "expandedInputs": {
+        "status": "identity_bound_pending_new_human_and_source_review",
+        "generationStatus": "drafts_generated_not_executed",
+        "plannedDirectory": "experiments/world-components-logic/data/round1-inputs/",
+        "actualFiles": [
+          {
+            "path": "experiments/world-components-logic/data/round1-inputs/auxiliary-guard-probes.jsonl",
+            "sha256": "73a480f66b91fed785db7c75b326ee60598ac2f99e4ecf31a4fe3c5632dcb3aa",
+            "byteCount": 3996
+          },
+          {
+            "path": "experiments/world-components-logic/data/round1-inputs/chain-plans.jsonl",
+            "sha256": "b3b60a9f371c50e7b17071b2b90851dc91471c2ae5e7b557673232f13477c118",
+            "byteCount": 34016
+          },
+          {
+            "path": "experiments/world-components-logic/data/round1-inputs/context-supplements.jsonl",
+            "sha256": "8829fa7c8e41e956561501597e8e51a30d39a9374ad18e19919993058205cbda",
+            "byteCount": 264879
+          },
+          {
+            "path": "experiments/world-components-logic/data/round1-inputs/development-inputs.jsonl",
+            "sha256": "0911a5f642ebfc6d3d1a062452524090da5eb167b6aff7bb2f107f60d1c890b0",
+            "byteCount": 78854
+          },
+          {
+            "path": "experiments/world-components-logic/data/round1-inputs/input-checks.jsonl",
+            "sha256": "757897b78eeeb8726e6c6ddb714645ae2217bba86e4e5c72e937f6713660f8a3",
+            "byteCount": 37200
+          },
+          {
+            "path": "experiments/world-components-logic/data/round1-inputs/input-manifest.json",
+            "sha256": "458272a0030abe7cd955b3885ee052e3e31bfa6dafbbaaf015c124ba3e679b55",
+            "byteCount": 52851
+          },
+          {
+            "path": "experiments/world-components-logic/data/round1-inputs/task-inputs.jsonl",
+            "sha256": "ae0e11b905b553bb27b32c051ac510051cb269077f3af73157c0a240900127a6",
+            "byteCount": 160018
+          }
+        ],
+        "sourceCommit": null,
+        "fileSha256": {
+          "auxiliary-guard-probes.jsonl": "73a480f66b91fed785db7c75b326ee60598ac2f99e4ecf31a4fe3c5632dcb3aa",
+          "chain-plans.jsonl": "b3b60a9f371c50e7b17071b2b90851dc91471c2ae5e7b557673232f13477c118",
+          "context-supplements.jsonl": "8829fa7c8e41e956561501597e8e51a30d39a9374ad18e19919993058205cbda",
+          "development-inputs.jsonl": "0911a5f642ebfc6d3d1a062452524090da5eb167b6aff7bb2f107f60d1c890b0",
+          "input-checks.jsonl": "757897b78eeeb8726e6c6ddb714645ae2217bba86e4e5c72e937f6713660f8a3",
+          "input-manifest.json": "458272a0030abe7cd955b3885ee052e3e31bfa6dafbbaaf015c124ba3e679b55",
+          "task-inputs.jsonl": "ae0e11b905b553bb27b32c051ac510051cb269077f3af73157c0a240900127a6"
+        },
+        "runtimeCaseCount": 84,
+        "expectedModelCallCount": null,
+        "sourceGroupAndSplitMapping": "input-manifest.json/cases and chains; proposed90 groups, same-source derivatives retained",
+        "stageCutAndAvailableFactsBinding": "task-inputs.jsonl + input-checks.jsonl + context-supplements.jsonl",
+        "programJudgmentAndFrozenIdentityBinding": "authored fixtures only, no actual service receipts",
+        "rubricVersionBinding": {
+          "path": "experiments/world-components-logic/data/round1/rubric-drafts.jsonl",
+          "sourceCommit": "e1e85986d75c960b2b5be0f7af257a98f6d4f292",
+          "sha256": "0db0de16364a6fee91e75640d88f4f36f07a2371bb98ef9613d5240c19a60e6b",
+          "byteCount": 44974,
+          "gitBlob": "d952a32a91d2e68f8180f64a5366cb1a6b810bcb"
+        },
+        "initialHumanReview": {
+          "status": "pending",
+          "recordedCards": 0,
+          "totalCards": 90
+        },
+        "secondHumanReview": null,
+        "adjudication": null,
+        "protectedSourceReceipts": {
+          "B": null,
+          "C": null
+        },
+        "sourceCardApprovalAutomaticallyTransfers": false,
+        "sourceCardSourceReceiptAutomaticallyTransfers": false,
+        "integrationOwner": "D_main_executor",
+        "requiredAfterGeneration": [
+          "bind actual paths, file hashes, code/data commit and case/group/split mapping",
+          "retain same-source dice variants in the same group and split",
+          "independently review complete world facts, original texts, stage visibility, program identities and rubrics",
+          "obtain or explicitly supplement B/C checks for newly added bytes",
+          "keep unreviewed or uncovered scope pending"
+        ],
+        "reviewPage": "artifacts/world-components-logic/l3-3-input-review.html",
+        "reviewBatch": "round1-inputs",
+        "trainingQuota": 0,
+        "chainRunnerStatus": "not_implemented",
+        "deliveryIdentity": "exact file hashes now; delivery commit reported after scoped commit, no self-referential commit invented",
+        "inputManifestSummary": {
+          "sourceGroupCount": 90,
+          "independentTaskAnchors": 80,
+          "shortChainInitialPlans": 10,
+          "diceDerivedCases": 4,
+          "taskCaseCount": 84,
+          "auxiliaryD02ProbesOutsideQuota": 2,
+          "structurallyValidTaskCases": 83,
+          "rawStructurallyInvalidGuardCases": [
+            "r1-sealed-d04-10"
+          ],
+          "guardReasons": {
+            "ready": 70,
+            "not_admitted": 2,
+            "already_acted_reuse": 2,
+            "missing_frozen_source_text": 2,
+            "missing_or_invalid_judgment": 1,
+            "invalid_input": 1,
+            "missing_member_action": 2,
+            "missing_or_duplicate_relation_judgment": 2,
+            "group_not_closed": 2
+          },
+          "chainRunnerStatus": "not_implemented",
+          "modelExecutionAuthorized": false,
+          "trainingQuota": 0,
+          "humanReview": "pending_new_input_review",
+          "sourceIndependence": "unverified",
+          "formalVerdict": "not_evaluated",
+          "semanticQuality": "unverified",
+          "latencyStatus": "latency_unverified"
+        }
+      }
+    },
+    "C": {
+      "schema": "jity-d-protected-source-review-request-v1",
+      "requestStatus": "prepared_not_sent",
+      "ownerLine": "C",
+      "preparedDate": "2026-11-01",
+      "requestedBy": "user_coordination_pending",
+      "ownerPerson": null,
+      "sentAt": null,
+      "receivedAt": null,
+      "dBatch": {
+        "batchId": "round1-source-cards",
+        "materialKind": "source_card_draft",
+        "revision": 2,
+        "sourceCommit": "e1e85986d75c960b2b5be0f7af257a98f6d4f292",
+        "files": [
+          {
+            "path": "experiments/world-components-logic/data/round1/source-cards.jsonl",
+            "sourceCommit": "e1e85986d75c960b2b5be0f7af257a98f6d4f292",
+            "sha256": "fe0b9d2a877619b94d8faacc965dd300385bd2dd9afff84da9b6c08a7f6a6742",
+            "byteCount": 51845,
+            "gitBlob": "b5e87ce838e0ea5b5a863e339fdeb5fc69c8a19c"
+          },
+          {
+            "path": "experiments/world-components-logic/data/round1/rubric-drafts.jsonl",
+            "sourceCommit": "e1e85986d75c960b2b5be0f7af257a98f6d4f292",
+            "sha256": "0db0de16364a6fee91e75640d88f4f36f07a2371bb98ef9613d5240c19a60e6b",
+            "byteCount": 44974,
+            "gitBlob": "d952a32a91d2e68f8180f64a5366cb1a6b810bcb"
+          },
+          {
+            "path": "experiments/world-components-logic/data/round1/source-manifest.json",
+            "sourceCommit": "e1e85986d75c960b2b5be0f7af257a98f6d4f292",
+            "sha256": "7274d68dba56240e2cdb9d4c173d652c1e51367015ab46b6dc8a584c4f52ed79",
+            "byteCount": 52810,
+            "gitBlob": "f10599af948ae939cd341cbbfe286ae6e8ae5d04"
+          }
+        ],
+        "sha256Method": "SHA-256 over each complete file in its original bytes; no newline or Unicode rewriting",
+        "sourceCardCount": 90,
+        "proposedSourceGroupCount": 90,
+        "independentlyVerifiedSourceGroupCount": null,
+        "developmentGroups": 44,
+        "sealedCandidateGroups": 46,
+        "countsByTaskAndSplit": {
+          "D02": {
+            "development": 10,
+            "sealed_candidate": 10
+          },
+          "D03": {
+            "development": 10,
+            "sealed_candidate": 10
+          },
+          "D04": {
+            "development": 10,
+            "sealed_candidate": 10
+          },
+          "D05": {
+            "development": 10,
+            "sealed_candidate": 10
+          },
+          "CHAIN": {
+            "development": 4,
+            "sealed_candidate": 6
+          }
+        },
+        "runtimeCaseCount": null,
+        "expectedModelCallCount": null,
+        "trainingGroupQuota": 0,
+        "initialReviewedUniqueCards": 0,
+        "status": "draft_not_frozen",
+        "sourceIndependence": "unverified",
+        "formalEvaluationAllowed": false,
+        "modelExecutionAuthorized": false,
+        "scopeLimit": "Only the three bound source-card files; expanded world/stage inputs are not bound by this request."
+      },
+      "requiredProtectedScope": [
+        "N2/N3/N4 training/development/calibration samples",
+        "N2/N3/N4 sealed and consumed sealed samples",
+        "originals and paraphrase/derived source groups",
+        "all historical tuning sources and versions",
+        "appropriately frozen uncommitted sources and their histories"
+      ],
+      "requiredComparisonOrder": [
+        "freeze complete protected inventory and methods",
+        "raw and normalized digest comparisons",
+        "near-duplicate candidate screening",
+        "human same-origin/paraphrase review",
+        "return scoped receipt without protected sample text"
+      ],
+      "returnConstraints": {
+        "protectedSampleBodiesAllowed": false,
+        "protectedParaphrasesAllowed": false,
+        "protectedSealedContentAllowed": false,
+        "rawModelAnswersAllowed": false,
+        "allowedEvidence": [
+          "protected internal IDs",
+          "frozen versions",
+          "inventory hashes",
+          "D caseId/sourceGroup/split",
+          "method and thresholds",
+          "non-text-leaking rationale and decisions"
+        ],
+        "missingEvidenceRule": "Keep unverified; a missing inventory is not zero overlap.",
+        "scopeRule": "Covers only the declared protected range and the exact D files above. It does not cover expanded inputs or the other owner line."
+      },
+      "receiptReceived": false,
+      "actualReceipt": null,
+      "receiptTemplate": {
+        "schema": "jity-d-protected-source-review-receipt-v1",
+        "templateStatus": "unfilled_not_evidence",
+        "receiptId": null,
+        "receiptRevision": null,
+        "ownerLine": "C",
+        "ownerPerson": null,
+        "reviewedAt": null,
+        "boundDRequest": {
+          "batchId": "round1-source-cards",
+          "materialKind": "source_card_draft",
+          "revision": 2,
+          "sourceCommit": "e1e85986d75c960b2b5be0f7af257a98f6d4f292",
+          "files": [
+            {
+              "path": "experiments/world-components-logic/data/round1/source-cards.jsonl",
+              "sourceCommit": "e1e85986d75c960b2b5be0f7af257a98f6d4f292",
+              "sha256": "fe0b9d2a877619b94d8faacc965dd300385bd2dd9afff84da9b6c08a7f6a6742",
+              "byteCount": 51845,
+              "gitBlob": "b5e87ce838e0ea5b5a863e339fdeb5fc69c8a19c"
+            },
+            {
+              "path": "experiments/world-components-logic/data/round1/rubric-drafts.jsonl",
+              "sourceCommit": "e1e85986d75c960b2b5be0f7af257a98f6d4f292",
+              "sha256": "0db0de16364a6fee91e75640d88f4f36f07a2371bb98ef9613d5240c19a60e6b",
+              "byteCount": 44974,
+              "gitBlob": "d952a32a91d2e68f8180f64a5366cb1a6b810bcb"
+            },
+            {
+              "path": "experiments/world-components-logic/data/round1/source-manifest.json",
+              "sourceCommit": "e1e85986d75c960b2b5be0f7af257a98f6d4f292",
+              "sha256": "7274d68dba56240e2cdb9d4c173d652c1e51367015ab46b6dc8a584c4f52ed79",
+              "byteCount": 52810,
+              "gitBlob": "f10599af948ae939cd341cbbfe286ae6e8ae5d04"
+            }
+          ],
+          "sha256Method": "SHA-256 over each complete file in its original bytes; no newline or Unicode rewriting",
+          "sourceCardCount": 90,
+          "proposedSourceGroupCount": 90,
+          "independentlyVerifiedSourceGroupCount": null,
+          "developmentGroups": 44,
+          "sealedCandidateGroups": 46,
+          "countsByTaskAndSplit": {
+            "D02": {
+              "development": 10,
+              "sealed_candidate": 10
+            },
+            "D03": {
+              "development": 10,
+              "sealed_candidate": 10
+            },
+            "D04": {
+              "development": 10,
+              "sealed_candidate": 10
+            },
+            "D05": {
+              "development": 10,
+              "sealed_candidate": 10
+            },
+            "CHAIN": {
+              "development": 4,
+              "sealed_candidate": 6
+            }
+          },
+          "runtimeCaseCount": null,
+          "expectedModelCallCount": null,
+          "trainingGroupQuota": 0,
+          "initialReviewedUniqueCards": 0,
+          "status": "draft_not_frozen",
+          "sourceIndependence": "unverified",
+          "formalEvaluationAllowed": false,
+          "modelExecutionAuthorized": false,
+          "scopeLimit": "Only the three bound source-card files; expanded world/stage inputs are not bound by this request."
+        },
+        "dIdentityVerification": {
+          "checkedBy": null,
+          "checkedAt": null,
+          "threeFilesMatch": null,
+          "receivedFileDigests": null,
+          "versionMismatchDetails": null
+        },
+        "protectedInventory": {
+          "inventoryFiles": null,
+          "historyVersionsCovered": null,
+          "originalParaphraseGroupIndex": null,
+          "frozenUncommittedSnapshots": null,
+          "scopeCompleteness": "unverified",
+          "uncoveredRanges": null,
+          "limitations": null,
+          "inventoryFileEntryTemplate": {
+            "pathOrInternalId": null,
+            "commitOrFrozenSnapshot": null,
+            "sha256": null,
+            "byteCount": null,
+            "scopeAndPurpose": null,
+            "originalDerivedGroupIndexReference": null
+          }
+        },
+        "methods": {
+          "toolNamesVersionsAndCodeCommit": null,
+          "rawDigestAlgorithm": null,
+          "normalizationRulesAndVersion": null,
+          "normalizedDigestAlgorithm": null,
+          "nearDuplicateAlgorithmAndVersion": null,
+          "nearDuplicateThresholds": null,
+          "humanSameOriginRules": null,
+          "humanReviewers": null,
+          "reviewDates": null,
+          "knownBlindSpots": null
+        },
+        "findingsCount": null,
+        "findings": null,
+        "findingRecordTemplate": {
+          "dCardIds": null,
+          "dSourceGroups": null,
+          "dSplits": null,
+          "protectedInternalIds": null,
+          "protectedSourceGroupIds": null,
+          "protectedFrozenVersions": null,
+          "matchType": null,
+          "humanDecision": null,
+          "rationaleWithoutProtectedContent": null,
+          "recommendedDisposition": null,
+          "followUpNeeded": null
+        },
+        "conclusion": {
+          "status": "unverified",
+          "allowedStatuses": [
+            "unverified",
+            "needs_revision",
+            "verified_for_declared_scope"
+          ],
+          "declaredScope": null,
+          "uncoveredRanges": null,
+          "limitations": null,
+          "supportingEvidenceReferences": null
+        },
+        "coordinatorAndIndependentReceiptCheck": {
+          "checkedByCoordinator": null,
+          "checkedByIndependentReviewer": null,
+          "checkedAt": null,
+          "result": null
+        },
+        "fillingRules": [
+          "null means no evidence yet; do not replace it by 0 or an empty list before an actual check.",
+          "An actual zero findings result must also include the frozen complete scope, methods, and human review evidence.",
+          "Use new receipt files; preserve historical originals. Do not edit D source files or their hashes to make a receipt match.",
+          "Do not include protected sample text, paraphrases, sealed content, or raw model outputs."
+        ],
+        "expandedInputScope": {
+          "files": [
+            {
+              "path": "experiments/world-components-logic/data/round1-inputs/auxiliary-guard-probes.jsonl",
+              "sha256": "73a480f66b91fed785db7c75b326ee60598ac2f99e4ecf31a4fe3c5632dcb3aa",
+              "byteCount": 3996
+            },
+            {
+              "path": "experiments/world-components-logic/data/round1-inputs/chain-plans.jsonl",
+              "sha256": "b3b60a9f371c50e7b17071b2b90851dc91471c2ae5e7b557673232f13477c118",
+              "byteCount": 34016
+            },
+            {
+              "path": "experiments/world-components-logic/data/round1-inputs/context-supplements.jsonl",
+              "sha256": "8829fa7c8e41e956561501597e8e51a30d39a9374ad18e19919993058205cbda",
+              "byteCount": 264879
+            },
+            {
+              "path": "experiments/world-components-logic/data/round1-inputs/development-inputs.jsonl",
+              "sha256": "0911a5f642ebfc6d3d1a062452524090da5eb167b6aff7bb2f107f60d1c890b0",
+              "byteCount": 78854
+            },
+            {
+              "path": "experiments/world-components-logic/data/round1-inputs/input-checks.jsonl",
+              "sha256": "757897b78eeeb8726e6c6ddb714645ae2217bba86e4e5c72e937f6713660f8a3",
+              "byteCount": 37200
+            },
+            {
+              "path": "experiments/world-components-logic/data/round1-inputs/input-manifest.json",
+              "sha256": "458272a0030abe7cd955b3885ee052e3e31bfa6dafbbaaf015c124ba3e679b55",
+              "byteCount": 52851
+            },
+            {
+              "path": "experiments/world-components-logic/data/round1-inputs/task-inputs.jsonl",
+              "sha256": "ae0e11b905b553bb27b32c051ac510051cb269077f3af73157c0a240900127a6",
+              "byteCount": 160018
+            }
+          ],
+          "scopeChecked": null,
+          "methodAndVersion": null,
+          "findings": null,
+          "status": "unverified",
+          "checkedBy": null,
+          "checkedAt": null
+        }
+      },
+      "expandedInputs": {
+        "status": "identity_bound_pending_new_human_and_source_review",
+        "generationStatus": "drafts_generated_not_executed",
+        "plannedDirectory": "experiments/world-components-logic/data/round1-inputs/",
+        "actualFiles": [
+          {
+            "path": "experiments/world-components-logic/data/round1-inputs/auxiliary-guard-probes.jsonl",
+            "sha256": "73a480f66b91fed785db7c75b326ee60598ac2f99e4ecf31a4fe3c5632dcb3aa",
+            "byteCount": 3996
+          },
+          {
+            "path": "experiments/world-components-logic/data/round1-inputs/chain-plans.jsonl",
+            "sha256": "b3b60a9f371c50e7b17071b2b90851dc91471c2ae5e7b557673232f13477c118",
+            "byteCount": 34016
+          },
+          {
+            "path": "experiments/world-components-logic/data/round1-inputs/context-supplements.jsonl",
+            "sha256": "8829fa7c8e41e956561501597e8e51a30d39a9374ad18e19919993058205cbda",
+            "byteCount": 264879
+          },
+          {
+            "path": "experiments/world-components-logic/data/round1-inputs/development-inputs.jsonl",
+            "sha256": "0911a5f642ebfc6d3d1a062452524090da5eb167b6aff7bb2f107f60d1c890b0",
+            "byteCount": 78854
+          },
+          {
+            "path": "experiments/world-components-logic/data/round1-inputs/input-checks.jsonl",
+            "sha256": "757897b78eeeb8726e6c6ddb714645ae2217bba86e4e5c72e937f6713660f8a3",
+            "byteCount": 37200
+          },
+          {
+            "path": "experiments/world-components-logic/data/round1-inputs/input-manifest.json",
+            "sha256": "458272a0030abe7cd955b3885ee052e3e31bfa6dafbbaaf015c124ba3e679b55",
+            "byteCount": 52851
+          },
+          {
+            "path": "experiments/world-components-logic/data/round1-inputs/task-inputs.jsonl",
+            "sha256": "ae0e11b905b553bb27b32c051ac510051cb269077f3af73157c0a240900127a6",
+            "byteCount": 160018
+          }
+        ],
+        "sourceCommit": null,
+        "fileSha256": {
+          "auxiliary-guard-probes.jsonl": "73a480f66b91fed785db7c75b326ee60598ac2f99e4ecf31a4fe3c5632dcb3aa",
+          "chain-plans.jsonl": "b3b60a9f371c50e7b17071b2b90851dc91471c2ae5e7b557673232f13477c118",
+          "context-supplements.jsonl": "8829fa7c8e41e956561501597e8e51a30d39a9374ad18e19919993058205cbda",
+          "development-inputs.jsonl": "0911a5f642ebfc6d3d1a062452524090da5eb167b6aff7bb2f107f60d1c890b0",
+          "input-checks.jsonl": "757897b78eeeb8726e6c6ddb714645ae2217bba86e4e5c72e937f6713660f8a3",
+          "input-manifest.json": "458272a0030abe7cd955b3885ee052e3e31bfa6dafbbaaf015c124ba3e679b55",
+          "task-inputs.jsonl": "ae0e11b905b553bb27b32c051ac510051cb269077f3af73157c0a240900127a6"
+        },
+        "runtimeCaseCount": 84,
+        "expectedModelCallCount": null,
+        "sourceGroupAndSplitMapping": "input-manifest.json/cases and chains; proposed90 groups, same-source derivatives retained",
+        "stageCutAndAvailableFactsBinding": "task-inputs.jsonl + input-checks.jsonl + context-supplements.jsonl",
+        "programJudgmentAndFrozenIdentityBinding": "authored fixtures only, no actual service receipts",
+        "rubricVersionBinding": {
+          "path": "experiments/world-components-logic/data/round1/rubric-drafts.jsonl",
+          "sourceCommit": "e1e85986d75c960b2b5be0f7af257a98f6d4f292",
+          "sha256": "0db0de16364a6fee91e75640d88f4f36f07a2371bb98ef9613d5240c19a60e6b",
+          "byteCount": 44974,
+          "gitBlob": "d952a32a91d2e68f8180f64a5366cb1a6b810bcb"
+        },
+        "initialHumanReview": {
+          "status": "pending",
+          "recordedCards": 0,
+          "totalCards": 90
+        },
+        "secondHumanReview": null,
+        "adjudication": null,
+        "protectedSourceReceipts": {
+          "B": null,
+          "C": null
+        },
+        "sourceCardApprovalAutomaticallyTransfers": false,
+        "sourceCardSourceReceiptAutomaticallyTransfers": false,
+        "integrationOwner": "D_main_executor",
+        "requiredAfterGeneration": [
+          "bind actual paths, file hashes, code/data commit and case/group/split mapping",
+          "retain same-source dice variants in the same group and split",
+          "independently review complete world facts, original texts, stage visibility, program identities and rubrics",
+          "obtain or explicitly supplement B/C checks for newly added bytes",
+          "keep unreviewed or uncovered scope pending"
+        ],
+        "reviewPage": "artifacts/world-components-logic/l3-3-input-review.html",
+        "reviewBatch": "round1-inputs",
+        "trainingQuota": 0,
+        "chainRunnerStatus": "not_implemented",
+        "deliveryIdentity": "exact file hashes now; delivery commit reported after scoped commit, no self-referential commit invented",
+        "inputManifestSummary": {
+          "sourceGroupCount": 90,
+          "independentTaskAnchors": 80,
+          "shortChainInitialPlans": 10,
+          "diceDerivedCases": 4,
+          "taskCaseCount": 84,
+          "auxiliaryD02ProbesOutsideQuota": 2,
+          "structurallyValidTaskCases": 83,
+          "rawStructurallyInvalidGuardCases": [
+            "r1-sealed-d04-10"
+          ],
+          "guardReasons": {
+            "ready": 70,
+            "not_admitted": 2,
+            "already_acted_reuse": 2,
+            "missing_frozen_source_text": 2,
+            "missing_or_invalid_judgment": 1,
+            "invalid_input": 1,
+            "missing_member_action": 2,
+            "missing_or_duplicate_relation_judgment": 2,
+            "group_not_closed": 2
+          },
+          "chainRunnerStatus": "not_implemented",
+          "modelExecutionAuthorized": false,
+          "trainingQuota": 0,
+          "humanReview": "pending_new_input_review",
+          "sourceIndependence": "unverified",
+          "formalVerdict": "not_evaluated",
+          "semanticQuality": "unverified",
+          "latencyStatus": "latency_unverified"
+        }
+      }
+    }
+  },
+  "preparationChecks": {
+    "sourceCardFileHashesMatchBoundCommit": true,
+    "manifestRevision": 2,
+    "sourceCardCountMatchesManifest": true,
+    "taskAndSplitCountCheck": true,
+    "actualHumanReviewClaimsCreated": false,
+    "messagesSent": false,
+    "protectedBCSampleBodiesRead": false,
+    "candidateModelCalls": 0,
+    "trainingRuns": 0,
+    "networkBrowserOrServiceUsed": false,
+    "scope": "file identity and handoff structure only; no human/source/model/performance approval",
+    "expandedInputIdentityBound": true
+  }
+}

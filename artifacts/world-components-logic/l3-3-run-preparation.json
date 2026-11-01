@@ -1,0 +1,474 @@
+{
+  "batches": [
+    {
+      "authorizationEvidence": null,
+      "batchId": "nonbusiness_load_diagnostic",
+      "businessCaseIds": [],
+      "configuration": {
+        "attempts": 1,
+        "concurrency": 1,
+        "device": "cpu",
+        "doSample": false,
+        "localFilesOnly": true,
+        "maxNewTokens": 12,
+        "maxResidentMiB": null,
+        "processWallLimitSeconds": null,
+        "prompt": "运行检查：请写出“模型已载入”。",
+        "resizeEmbeddings": false,
+        "seed": 42,
+        "softGenerationLimitSeconds": 3,
+        "threads": 1,
+        "tokenizerExtraIds": 0
+      },
+      "configurationFrozen": false,
+      "executionAuthorized": false,
+      "existingEntrypoint": "experiments/world-components-logic/runtime_smoke.py",
+      "existingEvidenceMayBeOverwritten": false,
+      "formalScreeningAllowed": false,
+      "inputReviewRequired": false,
+      "modelExecutionPerformed": false,
+      "modelIds": [
+        "M02"
+      ],
+      "newRunId": null,
+      "owner": null,
+      "performanceClaimAllowed": false,
+      "requiresAll90Groups": false,
+      "resourceWindow": null,
+      "scope": "nonbusiness_load_and_synthetic_generation_only"
+    },
+    {
+      "arm": "M02_direct_generation_feasibility_probe_not_M01_M02_collaboration",
+      "authorizationEvidence": null,
+      "baselineStatus": "baseline_missing",
+      "batchId": "development_diagnostic",
+      "configurationFrozen": false,
+      "executionAuthorized": false,
+      "fixedProgramFixtureIdentity": {
+        "inputManifestSha256": "458272a0030abe7cd955b3885ee052e3e31bfa6dafbbaaf015c124ba3e679b55",
+        "kind": "authored_program_fixtures_not_service_receipts"
+      },
+      "formalScreeningAllowed": false,
+      "fullRequestClaimAllowed": false,
+      "inputCoveragePolicy": "All required original facts and frozen identities; stageCut projection; no gold/future facts, no silent truncation.",
+      "inputReviewRequired": true,
+      "inputSelection": {
+        "caseIds": [
+          "r1-dev-d02-01",
+          "r1-dev-d03-04",
+          "r1-dev-d04-01",
+          "r1-dev-d05-01"
+        ],
+        "inputReviewEvidence": null,
+        "path": "experiments/world-components-logic/data/round1-inputs/development-inputs.jsonl",
+        "selectedCases": [
+          {
+            "caseId": "r1-dev-d02-01",
+            "caseSha256": "59faa90a30711c333cdd19c91ad682ccd6f42b953e08d61f298260c1ad807ff1",
+            "guard": {
+              "reason": "ready",
+              "shouldCall": true
+            },
+            "task": "D02"
+          },
+          {
+            "caseId": "r1-dev-d03-04",
+            "caseSha256": "2d707ce59d21447e24f57a5fb981e50828cbf8c4fe85eca122c87c190ca4aa35",
+            "guard": {
+              "reason": "ready",
+              "shouldCall": true
+            },
+            "task": "D03"
+          },
+          {
+            "caseId": "r1-dev-d04-01",
+            "caseSha256": "66899c2193016a9843d232ea2a0084eba9fb8e653f9917590c317bd8339dbe2c",
+            "guard": {
+              "reason": "ready",
+              "shouldCall": true
+            },
+            "task": "D04"
+          },
+          {
+            "caseId": "r1-dev-d05-01",
+            "caseSha256": "d9d03c2830c2667084b0c2861c824a06961ecfd08c7902f1034404d015726250",
+            "guard": {
+              "reason": "ready",
+              "shouldCall": true
+            },
+            "task": "D05"
+          }
+        ],
+        "sha256": "0911a5f642ebfc6d3d1a062452524090da5eb167b6aff7bb2f107f60d1c890b0",
+        "sourceIsolationEvidence": null,
+        "sourceManifestPath": "experiments/world-components-logic/data/round1-inputs/input-manifest.json",
+        "sourceManifestSha256": "458272a0030abe7cd955b3885ee052e3e31bfa6dafbbaaf015c124ba3e679b55",
+        "split": "development",
+        "status": "identity_bound_review_and_freeze_pending"
+      },
+      "modelExecutionPerformed": false,
+      "modelIds": [
+        "M02"
+      ],
+      "owner": null,
+      "plannedAttemptsPerCase": 5,
+      "projectionAdapterIdentity": {
+        "file": "experiments/world-components-logic/lab.py",
+        "function": "lab.build_model_input",
+        "runtimeTokenPackingImplemented": false
+      },
+      "promptAndDecoderConfig": {
+        "decoder": "lab.decode_output",
+        "doSample": false,
+        "encodedLengthMeasured": false,
+        "inputSerialization": "complete canonical JSON from lab.build_model_input",
+        "instructions": {
+          "D02": "结合完整世界、当前人物的任务和个性判断行动；pending输入须重新判断可行性，consumed/expired不重复消费。只输出严格JSON {\"kind\":\"act\",\"text\":\"行动尝试\"} 或 {\"kind\":\"skip\"}；不宣布结果成功。",
+          "D03": "分析已冻结源行动对完整人物名册的牵连，包括已行动人物。只输出严格JSON {\"targets\":[{\"targetId\":\"登记人物ID\"}]}，允许空集。不得给出骰点、准入或未来反应。",
+          "D04": "基于全部已冻结威胁、实际判定、世界、任务和个性生成当前获准人物的一次反应尝试。只输出非空正文，不改写冻结动作，不保证成功，不自行分配目标或骰点。",
+          "D05": "对已闭合全组动作和全部实际判定统一推导自洽后果，再输出严格JSON：每个组成员ID对应一段结果文本。键集合须恰好等于memberIds；保留失败、未准入和已行动关系，骰点不是命中或胜负规则。"
+        },
+        "maxInputTokens": 512,
+        "maxNewTokensByTask": {
+          "D02": 128,
+          "D03": 96,
+          "D04": 128,
+          "D05": 256
+        },
+        "outputAtTokenLimitPolicy": "incomplete_attempt_not_success",
+        "overflowPolicy": "stop_and_register_new_complete_coverage_packing_arm",
+        "seed": 42,
+        "status": "draft_not_frozen",
+        "truncationAllowed": false
+      },
+      "requiresAll90Groups": false,
+      "resourceBudget": {
+        "enforcementImplemented": false,
+        "maxResidentMiB": 2048,
+        "maxWallSeconds": 60,
+        "status": "proposed_not_authorized"
+      },
+      "resourceWindow": null,
+      "runtimeRunnerIdentity": null,
+      "scope": "development_components_with_program_fixtures_only",
+      "sealedCandidatesAllowed": false,
+      "tasks": [
+        "D02.direct-act-skip-and-body",
+        "D03.direct-targets",
+        "D04.reaction",
+        "D05.direct-joint-results"
+      ],
+      "tokenCoverageVerified": false,
+      "trainedM01Checkpoint": null,
+      "trainedM01CheckpointSha256": null
+    },
+    {
+      "authorizationEvidence": null,
+      "batchId": "m01_head_training",
+      "configurationFrozen": false,
+      "dataPath": null,
+      "dataSha256": null,
+      "evaluationGroupsUsedForTraining": 0,
+      "executionAuthorized": false,
+      "first90TrainingQuota": 0,
+      "formalScreeningAllowed": false,
+      "modelExecutionPerformed": false,
+      "modelIds": [
+        "M01"
+      ],
+      "outputCheckpointSha256": null,
+      "owner": null,
+      "protocol": {
+        "backbonePolicy": null,
+        "batchSize": null,
+        "earlyStopping": null,
+        "isolationEvidence": null,
+        "labelReviewEvidence": null,
+        "labels": null,
+        "learningRate": null,
+        "losses": null,
+        "maxResidentMiB": null,
+        "maxSteps": null,
+        "maxWallSeconds": null,
+        "optimizer": null,
+        "seed": null,
+        "sourceGroups": null
+      },
+      "protocolDraft": {
+        "backbonePolicy": "frozen_encoder_train_two_heads_only_first_probe",
+        "batchSize": 16,
+        "concurrency": 1,
+        "dataPlan": {
+          "groupSplitSeed": 42,
+          "newGroupsPerHead": 40,
+          "sameOriginAndCandidatePairsStayInOneSplit": true,
+          "sourceGroupsBuilt": 0,
+          "sourcePolicy": "New D-only independent training sources; exclude B/C protected material, old42 and all round1 groups/derivatives.",
+          "trainGroupsPerHead": 32,
+          "validationGroupsPerHead": 8
+        },
+        "device": "cpu",
+        "earlyStopping": {
+          "keepBestCheckpoint": true,
+          "metric": "per-head validation macro-F1",
+          "patienceChecks": 3
+        },
+        "labelPlan": "Human-reviewed D02 act/skip and D03 source-candidate relation labels, with uncertain/disagreement retained; no teacher self-labeling.",
+        "learningRate": 0.0002,
+        "losses": {
+          "D02": "binary_cross_entropy",
+          "D03": "binary_cross_entropy"
+        },
+        "maxResidentMiB": 2048,
+        "maxSteps": 200,
+        "maxWallSeconds": 120,
+        "optimizer": "AdamW",
+        "qualityPassPredicted": false,
+        "resourceCapEnforcement": "runner_not_implemented",
+        "seed": 42,
+        "status": "proposed_not_frozen_not_authorized",
+        "stopOn": [
+          "resource_cap",
+          "nonfinite_loss",
+          "invalid_or_unreviewed_batch",
+          "cancel"
+        ],
+        "threads": 1,
+        "validationEverySteps": 20
+      },
+      "randomHeadSemanticComparisonAllowed": false,
+      "resourceWindow": null,
+      "scope": "independent_new_training_protocol_only",
+      "sourceKind": "independent_new_training_groups",
+      "subsequentInferenceRequiresNewBatch": true,
+      "targetHeads": [
+        "D02.act-skip",
+        "D03.relation-score"
+      ],
+      "trainingRunnerIdentity": null
+    }
+  ],
+  "environmentObservation": {
+    "checkerPythonVersion": "3.11.7",
+    "dependenciesImported": false,
+    "environmentRebuilt": false,
+    "historicalPlatformMatches": true,
+    "historicallyRegisteredPackageCount": 25,
+    "hostAttestation": null,
+    "hostIdentityScope": "Observed original D workspace path, platform and existing isolated files; no unique physical-host attestation or runtime import test.",
+    "lockFile": "experiments/world-components-logic/requirements-probe-macos-arm64-py311.lock.txt",
+    "lockMatchesHistoricalIdentity": true,
+    "lockSha256": "3068c8e63094dcbf71a367da950c60fc1612ee6a30e94a53d8019c31b250ec3c",
+    "machine": "arm64",
+    "platform": "macOS-26.5.1-arm64-arm-64bit",
+    "registeredInstalledVersions": {
+      "certifi": "2026.10.23",
+      "charset-normalizer": "3.5.2",
+      "filelock": "4.2.4",
+      "fsspec": "2026.9.0",
+      "hf-xet": "1.7.1",
+      "huggingface-hub": "0.36.2",
+      "idna": "3.20",
+      "jinja2": "3.1.6",
+      "markupsafe": "3.0.4",
+      "mpmath": "1.3.0",
+      "networkx": "3.6.1",
+      "numpy": "1.26.4",
+      "packaging": "26.3",
+      "pyyaml": "6.0.3",
+      "regex": "2026.9.29",
+      "requests": "2.34.2",
+      "safetensors": "0.6.2",
+      "sentencepiece": "0.2.1",
+      "sympy": "1.14.0",
+      "tokenizers": "0.22.1",
+      "torch": "2.7.1",
+      "tqdm": "4.70.1",
+      "transformers": "4.57.3",
+      "typing-extensions": "4.16.0",
+      "urllib3": "2.8.0"
+    },
+    "registeredVersionsMatch": true,
+    "systemSitePackages": "false",
+    "venvConfigExists": true,
+    "venvConfigSha256": "0eae11aec3fb01aeac275269966329121de1d227d24d3087d227794176e84b0a",
+    "venvExecutableExists": true,
+    "venvExecutablePermission": true,
+    "venvExecutableRelativePath": ".local/world-components-logic/venv/bin/python",
+    "venvExecutableSymlinkTarget": "python3",
+    "venvPythonVersion": "3.11.7",
+    "venvRelativePath": ".local/world-components-logic/venv"
+  },
+  "executionAuthorized": false,
+  "executionDispatchImplemented": false,
+  "integration": {
+    "browserOrProductionClaimAllowed": false,
+    "g03": "blocked_contract_g03",
+    "programApiMapping": "unexpanded"
+  },
+  "m01": {
+    "businessComparisonAllowed": false,
+    "businessHeadStatus": "untrained",
+    "repo": "hfl/minirbt-h256",
+    "revision": "446e1b4012b10946f479563005700c54c9db3f7c",
+    "trainedCheckpoint": null,
+    "trainedCheckpointSha256": null
+  },
+  "m02Observation": {
+    "allSixFilesFullyRehashedAndVerified": true,
+    "directory": ".local/world-components-logic/models/M02/06d379d7375245f31cfb87166eff134cfeb5dead",
+    "files": [
+      {
+        "expectedBytes": 11968,
+        "observedBytes": 11968,
+        "observedSha256": "8b299afc5766f690da82863312ae94360891374e72e96bc80f9ab79c65303848",
+        "path": "README.md",
+        "registeredSha256": "8b299afc5766f690da82863312ae94360891374e72e96bc80f9ab79c65303848",
+        "status": "verified"
+      },
+      {
+        "expectedBytes": 780,
+        "observedBytes": 780,
+        "observedSha256": "9b2480c0a39fd09b6c40a879cb925a5f93dadb699f22f9a419a8b070a68fe8f5",
+        "path": "config.json",
+        "registeredSha256": "9b2480c0a39fd09b6c40a879cb925a5f93dadb699f22f9a419a8b070a68fe8f5",
+        "status": "verified"
+      },
+      {
+        "expectedBytes": 439,
+        "observedBytes": 439,
+        "observedSha256": "af072c7d91576727b73b161e484110848724c5243d6256ee8c2e505f0b044880",
+        "path": "tokenizer_config.json",
+        "registeredSha256": "af072c7d91576727b73b161e484110848724c5243d6256ee8c2e505f0b044880",
+        "status": "verified"
+      },
+      {
+        "expectedBytes": 65,
+        "observedBytes": 65,
+        "observedSha256": "09059cedc26bc46bc09a52f05b92d4922e11917e87f3b92059bb1a63a59ab2c4",
+        "path": "special_tokens_map.json",
+        "registeredSha256": "09059cedc26bc46bc09a52f05b92d4922e11917e87f3b92059bb1a63a59ab2c4",
+        "status": "verified"
+      },
+      {
+        "expectedBytes": 680811,
+        "observedBytes": 680811,
+        "observedSha256": "c65feffa65ff0378759778193852083d23349cb1b40c906e9463a12f8076ff32",
+        "path": "spiece.model",
+        "registeredSha256": "c65feffa65ff0378759778193852083d23349cb1b40c906e9463a12f8076ff32",
+        "status": "verified"
+      },
+      {
+        "expectedBytes": 309783974,
+        "observedBytes": 309783974,
+        "observedSha256": "5cdc572109cf25914b43fede20a6949b5fbf50b3a091a9c445fac60059bf5557",
+        "path": "model.safetensors",
+        "registeredSha256": "5cdc572109cf25914b43fede20a6949b5fbf50b3a091a9c445fac60059bf5557",
+        "status": "verified"
+      }
+    ],
+    "modelExecutionPerformed": false,
+    "modelId": "IDEA-CCNL/Randeng-T5-77M-MultiTask-Chinese",
+    "modelLoaded": false,
+    "payloadInventoryMatchesRegistry": true,
+    "payloadManifestExists": true,
+    "payloadManifestSha256": "09404be534075ecd5aca45bb09c23dcbe6658addee2067f7b45e422178562a08",
+    "revision": "06d379d7375245f31cfb87166eff134cfeb5dead",
+    "tokenizerLoaded": false
+  },
+  "modelExecutionPerformed": false,
+  "networkAccessed": false,
+  "performance": {
+    "allAttemptsIncludingFailuresRecorded": true,
+    "diagnosticMayObserveBudgetFailure": true,
+    "dynamicCountsMustNotBeForced": true,
+    "fullRequestTargetMs": 500,
+    "futureDynamicCounts": null,
+    "localEngineeringBudgetMs": 50,
+    "priorMeasuredPassRequired": false,
+    "referenceBudgets": {
+      "S0-round": {
+        "subtotalMs": 480,
+        "waits": [
+          "W_r[1]"
+        ]
+      },
+      "S0-segment": {
+        "subtotalMs": 370,
+        "waits": [
+          "W_r[1]"
+        ]
+      },
+      "S1": {
+        "subtotalMs": 380,
+        "waits": []
+      },
+      "S2-delta": {
+        "subtotalMs": 120,
+        "waits": []
+      },
+      "S3": {
+        "subtotalMs": 810,
+        "waits": [
+          "W_r[1]"
+        ]
+      },
+      "S4": {
+        "subtotalMs": 1620,
+        "waits": [
+          "W_r[1]",
+          "W_r[2]"
+        ]
+      }
+    },
+    "status": "latency_unverified",
+    "timingUnit": "non-overlapping-logical-macro; not HTTP count",
+    "waitsRemainInFullRequest": true
+  },
+  "preparedOn": "2026-11-01",
+  "schema": "jity-d-run-preparation-v1",
+  "scope": "static_preparation_only_not_an_execution_manifest_or_service_protocol",
+  "sourceHead": "e1e85986d75c960b2b5be0f7af257a98f6d4f292",
+  "sources": [
+    {
+      "path": "artifacts/world-components-logic/l3-1-environment.json",
+      "sha256": "68b3914d29b88e083bc1a408f9653c36d0de8c7144c48fced63d25ff5f9edf34"
+    },
+    {
+      "path": "artifacts/world-components-logic/l2-model-sources-20261029.json",
+      "sha256": "dd674851600bd08c5bad796f122ba4ea7fc50f60243d174f32c86f83555312d4"
+    },
+    {
+      "path": "artifacts/world-components-logic/run-manifest-ledger-v4.proposal.json",
+      "sha256": "4c10e36e284ab72ff3dc9dcfd0f00292f2deef34f868a9de9b12340cae163488"
+    },
+    {
+      "path": "experiments/world-components-logic/requirements-probe-macos-arm64-py311.lock.txt",
+      "sha256": "3068c8e63094dcbf71a367da950c60fc1612ee6a30e94a53d8019c31b250ec3c"
+    },
+    {
+      "path": "experiments/world-components-logic/runtime_smoke.py",
+      "sha256": "c710e80b6b3d1c59163074409694219de9067bb0015ef483a2853316d4be1c63"
+    },
+    {
+      "path": "experiments/world-components-logic/lab.py",
+      "sha256": "92529e7f497d655cd84dc43c6408d229bc878436948db433d9183b2c635e2997"
+    },
+    {
+      "path": "experiments/world-components-logic/prepare_run_batch.py",
+      "sha256": "76c2ba10a834e84058e73ebbd8561baa4674bc84de82d4214258f9ad7b15f301"
+    },
+    {
+      "path": "design/world-engine-reports/components-logic/run-manifest.md",
+      "sha256": "7c1bc776046954612eb97344dd27ff662181a9519ebdac1811b9d50979e1df29"
+    },
+    {
+      "path": "design/world-engine-reports/components-logic/model-selection.md",
+      "sha256": "b8cc9b95c80710c2e70a961fcbf415b7cf09fa434cb4ebbd70297755e22198f4"
+    },
+    {
+      "path": "design/world-engine-reports/components-logic/evaluation-plan.md",
+      "sha256": "d3b5d79ac7de7ec94f4382a75b3e7b788cac296d569485464aa9f72820bafcbb"
+    }
+  ]
+}
