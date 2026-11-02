@@ -13,6 +13,7 @@ import pathlib
 import sys
 
 import torch
+from transformers.generation.logits_process import LogitsProcessor, LogitsProcessorList
 from transformers.models.t5.modeling_t5 import T5ForConditionalGeneration
 from transformers.models.t5.tokenization_t5 import T5Tokenizer
 
@@ -26,6 +27,23 @@ OLD_NAMES = ["沈砚", "顾行舟", "叶知微", "阿棠", "韩渡",
              "潮生巷", "旧灯塔", "潮渡", "潮汐档案馆", "雾堤", "早市"]
 NEW_NAMES = ["陆行", "阿洛", "祁婶", "石青",
              "云关驿", "风口岭", "雪溪", "望雪台"]
+# Copy constraint: input tokens + punctuation + common function words.
+# No general nouns are added, so "冰箱"/"铁盆" cannot be formed unless both
+# characters already appear in the input.
+ALLOWED_EXTRA = ("，。；：？！、,.!?;: "
+                 "“”‘’（）()《》—…"
+                 "的了着在把被从到向又也还只就才和与而但是有没一个这那"
+                 "他她它们上下里外前后中间时候过来去走站看听说问答声")
+
+
+class CopyConstraint(LogitsProcessor):
+    def __init__(self, allowed_ids):
+        self.allowed = sorted(allowed_ids)
+
+    def __call__(self, input_ids, scores):
+        mask = torch.full_like(scores, float("-inf"))
+        mask[:, self.allowed] = 0.0
+        return scores + mask
 
 
 def norm_punct(text):
@@ -36,6 +54,9 @@ def norm_punct(text):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--ckpt", default=str(pathlib.Path("ckpt-formal")))
+    parser.add_argument("--copy-constraint", action="store_true",
+                        help="restrict output tokens to input + punctuation/"
+                             "function words")
     args = parser.parse_args()
 
     rows = [json.loads(line) for line in
@@ -56,14 +77,27 @@ def main():
     for r in rows:
         enc = tok(r["input"], return_tensors="pt", truncation=True,
                   max_length=MAX_INPUT).to(device)
+        processors = None
+        allowed = None
+        if args.copy_constraint:
+            allowed = set(tok(r["input"], add_special_tokens=False).input_ids)
+            allowed |= set(tok(ALLOWED_EXTRA,
+                               add_special_tokens=False).input_ids)
+            allowed.add(tok.eos_token_id)
+            allowed.add(tok.pad_token_id)
+            processors = LogitsProcessorList([CopyConstraint(allowed)])
         with torch.no_grad():
             gen = model.generate(**enc, max_new_tokens=MAX_OUTPUT,
-                                 num_beams=1, do_sample=False)
+                                 num_beams=1, do_sample=False,
+                                 logits_processor=processors)
         text = tok.decode(gen[0], skip_special_tokens=True)
         old_hits = [n for n in OLD_NAMES if n in text]
         new_hits = [n for n in NEW_NAMES if n in text]
+        out_ids = tok(text, add_special_tokens=False).input_ids
+        oov = [i for i in out_ids if allowed is not None and i not in allowed]
         samples.append({
             "rowId": r["rowId"], "sourceId": r["sourceId"],
+            "oovTokens": len(oov),
             "exactNormalized": norm_punct(text) == norm_punct(r["target"]),
             "ratio": round(difflib.SequenceMatcher(
                 None, text, r["target"]).ratio(), 3),
@@ -78,6 +112,7 @@ def main():
 
     report = {
         "purpose": "N4 new-world zero-shot holdout; no training",
+        "mode": "copy-constraint" if args.copy_constraint else "free",
         "ckpt": "ckpt-formal (n4n-fog-harbor, 100 train)",
         "data": {"freeze": freeze, "rows": len(rows)},
         "results": {
@@ -88,10 +123,13 @@ def main():
                                     if s["oldNameHits"]),
             "rowsWithNewNames": sum(1 for s in samples
                                     if s["newNameHits"]),
+            "oovTokens": sum(s["oovTokens"] for s in samples),
         },
         "samples": samples,
     }
-    pathlib.Path("holdout-report.json").write_text(
+    out_name = ("holdout-report-copy.json" if args.copy_constraint
+                else "holdout-report.json")
+    pathlib.Path(out_name).write_text(
         json.dumps(report, ensure_ascii=False, indent=1) + "\n",
         encoding="utf-8")
     print("results:", json.dumps(report["results"], ensure_ascii=False))
