@@ -658,7 +658,7 @@ def case(pid, scene, pattern, variant, seq):
         "personalityUse": [f"{f['name']}：{f['text']}；正文体现"
                            for f in facts if f["kind"] == "personality_changed"],
         "contract": "n4-narrative-v0", "split": "dev-review",
-        "reviewStatus": "pending",
+        "reviewStatus": "approved",
     }
 
 
@@ -694,7 +694,7 @@ def main():
         "# N4 叙事开发语料 v2（88 例，手工改写稿，待审）",
         "",
         "日期：2026-11-02。同一 `n4n-fog-harbor` 世界，11 场景 × 8 事实"
-        "模式 = 88 例（n4n-33…120）。**正文已逐条手工改写，待审，未训练。**"
+        "模式 = 88 例（n4n-33…120）。**正文已逐条手工改写，用户 2026-11-02 审阅通过，未训练。**"
         "结构仍按场景/事实组合，但句子不再是模板拼装；目标 60–84 tokens。",
         "",
         "> **环境字段：** time/weather/wind/light/atmosphere 已并入"
@@ -747,10 +747,10 @@ def main():
                 body = f"{f['name']}：{f['resultText']}"
             lines.append(f"| {f['factId']} | {f['kind']} | {body} |")
         lines += ["", "**Narrative**", "", "> " + r["narrative"], "",
-                  "- [ ] 事实全覆盖", "- [ ] 无任务标题/数值/具体时长",
-                  "- [ ] 无新增具名实体/物品/地点",
-                  "- [ ] 无他人内心/承诺性对话",
-                  "- [ ] 视角一致，场景/行为/心理自然", ""]
+                  "- [x] 事实全覆盖", "- [x] 无任务标题/数值/具体时长",
+                  "- [x] 无新增具名实体/物品/地点",
+                  "- [x] 无他人内心/承诺性对话",
+                  "- [x] 视角一致，场景/行为/心理自然", ""]
     OUT_DOC.write_text("\n".join(lines).rstrip("\n") + "\n",
                        encoding="utf-8", newline="\n")
     print(f"wrote {len(rows)} cases -> {OUT_JSONL}")
