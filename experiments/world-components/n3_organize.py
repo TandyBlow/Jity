@@ -11,7 +11,9 @@
 #   R3  a time fact joins the input-order predecessor's group (leading
 #       time joins the first entity group)
 #   R5  within-group input order; groups by minimal input index
-# Appellation grants (R6, commit-2 rules):
+# Appellation grants (R6, commit-2 rules; gender_hints is an EXPERIMENTAL
+# caller input, not a world-state field — without it every entity keeps its
+# name, which is the product default):
 #   - a pronoun (male→他, female→她, unknown→TA) is granted ONLY when the
 #     entity has a gender hint AND its display name is unique across the
 #     plan AND no other entity in the SAME group resolves to the same

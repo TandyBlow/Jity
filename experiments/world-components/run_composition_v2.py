@@ -14,6 +14,11 @@
 # Decode contract: greedy, num_beams 1, max_new_tokens 128, deterministic
 # flags, offline CPU. Every raw input/output and finish reason is archived.
 # Browser evidence remains a separate archive (commit 3).
+#
+# This archived composition is the SELECT arm (may_policy="select", time and
+# other visible may facts included). The v2 pipeline default is OMIT; the
+# select arm is a labelled comparison and must not be read as the product
+# default. gender_hints is likewise an experimental input, not state.
 
 import argparse
 import copy
@@ -113,8 +118,12 @@ def run_scenario_v2(n4, tok_gate, name, point, before, gender_hints, expect,
     another viewpoint pass it explicitly (the authority still resolves and
     validates it against the point state)."""
     rec = {"name": name, "expect": expect, "stages": {}}
+    # The archived composition is the SELECT arm (time/may facts included).
+    # The v2 pipeline default is omit; this explicit arm keeps the old
+    # comparison reproducible and is never mistaken for the product default.
     chain = np_.run_pipeline_v2(point, before, perspective or
                                 {"type": "protagonist"},
+                                may_policy="select",
                                 gender_hints=gender_hints,
                                 real_tok=tok_gate)
     rec["stages"]["chain"] = {k: chain.get(k) for k in
@@ -151,7 +160,7 @@ def run_scenario_v2(n4, tok_gate, name, point, before, gender_hints, expect,
         # the differential would overweight one draw.
         ablated = np_.run_pipeline_v2(
             point, before, perspective or {"type": "protagonist"},
-            gender_hints={}, real_tok=tok_gate)
+            may_policy="select", gender_hints={}, real_tok=tok_gate)
         if ablated["status"] == "ready-for-model":
             gen2 = n4.generate(ablated["n4"]["renderText"])
             rec["ablation"] = {"inputWithoutGrants": ablated["n4"]["renderText"],

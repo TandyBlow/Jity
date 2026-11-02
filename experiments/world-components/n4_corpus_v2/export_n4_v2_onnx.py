@@ -16,6 +16,12 @@
 # (pronoun cross-reference, same-name, gender-unknown, conflict, new
 # relative/subtask kinds, no-change, co-presence). The grouped input is
 # produced by the SAME render_v2 the training and runtime use.
+#
+# The co-presence case comes from the HISTORICAL v2 corpus (old N1 auto
+# roster scan). Current N1 no longer emits positioned_at without an explicit
+# observation source; the case remains a MODEL capability probe, not current
+# pipeline evidence. gender_hints used by the pronoun cases are likewise
+# experimental inputs, not a world-state field.
 
 import importlib.machinery
 import json

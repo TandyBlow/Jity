@@ -19,6 +19,10 @@
 #                   same-goal misattribution (the other same-name actor's
 #                   goal), time error, semantically-similar-but-wrong
 #                   (relative relation flipped beside<->behind)
+#   positioned_at pairs come from the HISTORICAL v2 corpus (old N1
+#   co-presence convention); current N1 does not emit them automatically.
+#   They remain valid as a model-capability test, not as pipeline evidence.
+#
 #   unknown       the fact paired with a sentence from a DIFFERENT row of
 #                 the same family that does not express it (omission /
 #                 no-evidence class: the honest answer is "cannot tell

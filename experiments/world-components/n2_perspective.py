@@ -158,16 +158,18 @@ def _omniscient_focus(facts: list) -> tuple[set, str]:
 
 def classify_facts(facts: list, perspective: dict,
                    subject_tasks: dict | None = None,
-                   may_policy: str = "select") -> dict:
+                   may_policy: str = "select") -> dict:  # frozen rule-arm default
     """Classify every fact and apply the selection policy. Returns
     {"status": "ok"|"stopped", "stops", "refusals", "decisions",
      "selectedFactIds", "summary"}.
 
-    may_policy: "select" (default; the P1-rule starting point — every
-    VISIBLE may fact is written, while invisible facts are excluded with
-    their grounds) or "omit" (conservative: only must facts are selected,
-    may facts are omitted with a recorded reason). Invisible facts are
-    never selected under either policy."""
+    may_policy: "select" (the frozen P1-rule comparison arm — every VISIBLE
+    may fact is written, while invisible facts are excluded with their
+    grounds) or "omit" (only must facts are selected, may facts are omitted
+    with a recorded reason). The v2 product pipeline passes "omit" by
+    default; "select" must be requested explicitly and is never evidence of
+    narrative salience. Invisible facts are never selected under either
+    policy."""
     if may_policy not in MAY_POLICIES:
         return {"status": "stopped",
                 "stops": [{"code": "unknown-may-policy", "policy": may_policy}],

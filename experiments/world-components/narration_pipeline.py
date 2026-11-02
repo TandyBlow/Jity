@@ -399,27 +399,12 @@ def extract_facts(point: dict, before: dict | None) -> dict:
                  "at": location_of(live_after),
                  "source": {"entityId": eid, "taskId": t.get("id"),
                             "field": "subtasksAdded"}})
-    # co-presence at a destination (the corpus `positioned_at` convention):
-    # entities OUTSIDE the delta whose after-state position equals a moved
-    # entity's destination. Scope note: this is a bounded program rule, not
-    # the deferred full-roster scan (contracts §5.2 待办).
-    destinations = {f["to"] for f in facts if f["kind"] == "moved"}
-    moved_ids = {f["entityId"] for f in facts if f["kind"] == "moved"}
-    if destinations:
-        for group in ("characters", "items"):
-            for eid, ent in ((state.get(group) or {}).items()):
-                if eid in deltas or eid in moved_ids:
-                    continue
-                at = container_name(state, ent.get("position"))
-                if at in destinations:
-                    name = entity_name(state, eid)
-                    if name is None:
-                        diagnostics.append({"code": "entity-unregistered",
-                                            "entityId": eid})
-                        continue
-                    add({"kind": "positioned_at",
-                         "entityId": eid, "name": name, "at": at,
-                         "source": {"entityId": eid, "statePosition": True}})
+    # NO co-presence roster scan. Presence is state, but "who is at the
+    # destination" is not a change and co-location is not "was noticed".
+    # A move to a crowded place must not manufacture one positioned_at fact
+    # per resident (100 NPCs -> 100 facts). positioned_at stays a supported
+    # N4 kind only for a future EXPLICIT observation source; N1 does not
+    # infer it from state positions.
     if ta is not None:
         dur = ta.get("duration") or {}
         add({"kind": "time",
@@ -860,16 +845,24 @@ V2_TOKEN_LIMIT = 128  # the standing product gate over REAL tokens
 
 
 def run_pipeline_v2(point: dict, before: dict | None, perspective,
-                    may_policy: str = "select", gender_hints: dict | None = None,
+                    may_policy: str = "omit",
+                    gender_hints: dict | None = None,
                     real_tok=None) -> dict:
     """The v2 chain: N1 -> N2 (perspective rule) -> N3 (plan_v3: groups,
     appellations, time attribution) -> N4v2 (render_v2 + the REAL-token
     gate). The MODEL call itself stays with the composition runner; this
     function produces everything the model needs and stops at every
-    structured boundary the v1 chain stops at. gender_hints is the
-    caller-supplied {entityId: male|female|unknown} map (the state record
-    carries no gender; without a hint an entity keeps its name — the safe
-    fallback)."""
+    structured boundary the v1 chain stops at.
+
+    may_policy defaults to "omit": only must facts are selected. The old
+    "select every visible may fact" behavior is an explicit comparison arm
+    (may_policy="select"), never the product default: visibility is not
+    salience.
+
+    gender_hints is an EXPERIMENTAL caller-supplied
+    {entityId: male|female|unknown} map, NOT part of the state contract.
+    None/{} keeps every name (the safe fallback); a pronoun is licensed only
+    when an explicit hint exists. Do not source this from inferred UI state."""
     from render_v2 import render_input_v2
     out = {"pointId": point.get("pointId"), "version": point.get("version"),
            "chain": "v2"}
@@ -1211,9 +1204,9 @@ def selftest() -> int:
     check(any(f["kind"] == "no_change" for f in extract_facts(root, None)["facts"]),
           "S3 no_change fact")
 
-    # S4: co-presence positioned_at + sanity — char_pb reached loc_2 in an
-    # EARLIER point (before state), stays put here, and is extracted as
-    # positioned_at when char_pa moves to the same destination
+    # S4 (corrected): co-location does NOT create facts. char_pb is already
+    # at loc_2 in the before state; char_pa moves there. N1 must emit only
+    # the delta facts + time, never a positioned_at entry for the resident.
     st1 = make_pipeline_state()
     st1["characters"]["char_pb"]["position"] = {"containerId": "loc_2",
                                                 "slotId": None, "relativeTo": None}
@@ -1226,11 +1219,37 @@ def selftest() -> int:
     deltas = {"char_pa": {**moved_delta("char_pa", "loc_2"), "sanitySet": 13}}
     n1 = extract_facts(point(deltas, 5, st=st2), before4)
     kinds = sorted(f["kind"] for f in n1["facts"])
-    check("positioned_at" in kinds and "sanity_changed" in kinds,
-          f"S4 co-presence/sanity: {kinds}")
-    pa = next(f for f in n1["facts"] if f["kind"] == "positioned_at")
-    check(pa["entityId"] == "char_pb" and pa["at"] == "钟楼",
-          f"S4 positioned_at fact: {pa}")
+    check(kinds == ["moved", "sanity_changed", "time"],
+          f"S4 co-location adds no fact: {kinds}")
+    check(all(f["kind"] != "positioned_at" for f in n1["facts"]),
+          "S4 no positioned_at roster scan")
+
+    # S4b (regression, review round): a destination with 100 co-located NPCs
+    # still produces ONLY the mover's delta facts. The old roster scan would
+    # have emitted 100 positioned_at facts and blown the 1-4 fact budget.
+    st_many = make_pipeline_state()
+    for i in range(100):
+        eid, nm = f"npc_{i}", f"居民{i}"
+        st_many["initial"]["characters"][eid] = {
+            "id": eid, "name": nm,
+            "initialPosition": {"containerId": "loc_2", "slotId": None,
+                                "relativeTo": None},
+            "initialAppearance": "常态", "initialPersonality": "沉默",
+            "initialSanity": 9, "tasks": {}}
+        st_many["characters"][eid] = {
+            "id": eid,
+            "position": {"containerId": "loc_2", "slotId": None,
+                         "relativeTo": None},
+            "appearanceChanges": [], "personalityChanges": [],
+            "sanity": 9, "tasks": {}}
+    st_many["characters"]["char_pa"]["position"] = {
+        "containerId": "loc_2", "slotId": None, "relativeTo": None}
+    n_many = extract_facts(
+        point({"char_pa": moved_delta("char_pa", "loc_2")}, 5, st=st_many),
+        before)
+    check(len(n_many["facts"]) == 2
+          and [f["kind"] for f in n_many["facts"]] == ["moved", "time"],
+          f"S4b 100-NPC destination: {len(n_many['facts'])} facts")
 
     # S5: five SELECTED self facts -> unsupported/plan-too-long through the
     # REAL interface. Under the perspective rule the binding count is the
@@ -1674,11 +1693,31 @@ def selftest() -> int:
           and "新任务：管线甲" in r17["n4"]["renderText"],
           f"S17 v2 chain: {r17['status']}/{r17.get('reason')}")
     # the grants are data, not decoration: empty hints strip the 称谓 line
-    r17b = run_pipeline_v2(pt17, before, PERS, gender_hints={},
+    r17b = run_pipeline_v2(pt17, before, PERS, gender_hints=None,
                            real_tok=_Tok())
     check(r17b["status"] == "ready-for-model"
           and "称谓" not in r17b["n4"]["renderText"],
           "S17 v2 ablated render (no grants)")
+
+    # S17c (review round): the v2 default is omit, not select-all-visible.
+    # Time is a may fact; it is not narrated unless the select arm is asked
+    # for explicitly. The must facts (move/sanity/task/subtask) still flow.
+    r17c = run_pipeline_v2(pt17, before, PERS,
+                           gender_hints={"char_pa": "male"}, real_tok=_Tok())
+    check(r17c["status"] == "ready-for-model"
+          and r17c["n2"]["summary"]["mayPolicy"] == "omit"
+          and "时间推进" not in r17c["n4"]["renderText"]
+          and "新任务：管线甲" in r17c["n4"]["renderText"],
+          f"S17c v2 default omit: {r17c['status']}/"
+          f"{r17c['n2']['summary']['mayPolicy']}")
+    # the explicit select arm keeps the old comparison behavior
+    r17d = run_pipeline_v2(pt17, before, PERS, may_policy="select",
+                           gender_hints={"char_pa": "male"}, real_tok=_Tok())
+    check(r17d["status"] == "ready-for-model"
+          and r17d["n2"]["summary"]["mayPolicy"] == "select"
+          and "约五分钟" in r17d["n4"]["renderText"],
+          f"S17d v2 select arm: {r17d['status']}/"
+          f"{r17d['n2']['summary']['mayPolicy']}")
 
     # S18: over the 128 real-token limit the v2 chain refuses BEFORE any
     # model call

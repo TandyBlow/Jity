@@ -11,6 +11,13 @@
 #
 # SPLITS ARE BY FAMILY: train+dev rows come from families A and B; the
 # frozen test set comes ONLY from family C (a world training never sees).
+#
+# HISTORICAL v2 CORPUS (old N1 convention): this builder generated the
+# committed holdout-v2/train-v2 rows when N1 still emitted automatic
+# co-presence positioned_at facts. N1 no longer scans the roster (review
+# change: presence is not "noticed"), so rerunning this file now produces a
+# DIFFERENT corpus. Do not overwrite the frozen v2 archive with it; a new
+# corpus/freeze is a separate, pre-registered run.
 # The test split is written FIRST with its freeze registration (row count,
 # case coverage, sha256) — the freeze lands before any training run and the
 # training corpus must not contain family C rows (asserted at build time).
