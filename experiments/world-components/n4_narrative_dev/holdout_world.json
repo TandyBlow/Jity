@@ -1,0 +1,99 @@
+{
+ "worldId": "w_snow_pass",
+ "family": "n4w-snow-pass",
+ "date": "2026-11-02",
+ "locations": {
+  "loc_inn": {
+   "name": "云关驿",
+   "appearance": "石砌驿舍，屋檐挂着冰凌，门里透出炭火味；大堂靠窗，客房在里侧。",
+   "parentLocationId": null,
+   "windExposure": "低（石墙挡风）",
+   "features": ["屋檐冰凌", "木门", "炭火", "石阶"],
+   "sublocations": [
+    {"id": "loc_inn_hall", "name": "大堂", "level": 1,
+     "appearance": "长桌、炭盆、铜壶、结霜的窗"},
+    {"id": "loc_inn_room", "name": "客房", "level": 1,
+     "appearance": "木床、油灯、压在枕下的旧地图"}
+   ]
+  },
+  "loc_pass": {
+   "name": "风口岭",
+   "appearance": "山口石道，风把雪粒吹成横线；隘口有石堆和经幡，旁边是旧马棚。",
+   "parentLocationId": null,
+   "windExposure": "高（山口横风）",
+   "features": ["石道", "雪粒", "石堆", "经幡", "旧马棚"],
+   "sublocations": [
+    {"id": "loc_pass_gate", "name": "隘口", "level": 1,
+     "appearance": "石堆、经幡、雪杖、风口"},
+    {"id": "loc_pass_shed", "name": "旧马棚", "level": 1,
+     "appearance": "干草、马灯、铜铃、破门板"}
+   ]
+  },
+  "loc_brook": {
+   "name": "雪溪",
+   "appearance": "半冻的溪水从石桥下过，冰面反着灰白的光。",
+   "parentLocationId": null,
+   "windExposure": "中（溪谷风）",
+   "features": ["石桥", "冰面", "枯草", "溪水"],
+   "sublocations": [
+    {"id": "loc_brook_bridge", "name": "石桥", "level": 1,
+     "appearance": "石桥、冰面、枯草"}
+   ]
+  },
+  "loc_tower": {
+   "name": "望雪台",
+   "appearance": "驿道尽头的石台，木梯通向台顶；台顶有铜铃架，风大时铃绳乱响。",
+   "parentLocationId": null,
+   "windExposure": "高（台顶直风）",
+   "features": ["石台", "木梯", "铜铃架", "铃绳"],
+   "sublocations": [
+    {"id": "loc_tower_top", "name": "台顶", "level": 1,
+     "appearance": "铜铃架、绳梯、风口"}
+   ]
+  }
+ },
+ "items": {
+  "item_bell": {"name": "铜铃", "appearance": "青铜小铃，铃舌用红绳系着",
+                "position": {"containerId": "loc_tower_top"}},
+  "item_lantern": {"name": "马灯", "appearance": "铁皮马灯，玻璃罩有一道裂纹",
+                   "position": {"containerId": "loc_pass_shed"}},
+  "item_charcoal": {"name": "炭盆", "appearance": "铜炭盆，炭火将熄",
+                    "position": {"containerId": "loc_inn_hall"}},
+  "item_map": {"name": "旧地图", "appearance": "羊皮地图，边角卷起",
+               "position": {"containerId": "loc_inn_room"}},
+  "item_medicine": {"name": "药包", "appearance": "油纸包着的药粉",
+                    "position": {"containerId": "loc_inn_hall"}},
+  "item_snowstaff": {"name": "雪杖", "appearance": "硬木雪杖，杖尖包铁",
+                     "position": {"containerId": "loc_pass_gate"}},
+  "item_rope": {"name": "绳梯", "appearance": "麻绳梯，结着冰碴",
+                "position": {"containerId": "loc_tower_top"}},
+  "item_tea": {"name": "铜壶", "appearance": "铜壶，壶嘴冒白汽",
+               "position": {"containerId": "loc_inn_hall"}},
+  "item_fur": {"name": "皮袄", "appearance": "旧羊皮袄，袖口磨亮",
+               "position": {"holderId": "char_lu"}}
+ },
+ "characters": {
+  "char_lu": {"name": "陆行", "appearance": "旧羊皮袄，手指冻裂",
+              "personality": "谨慎，习惯先看风向", "inventory": ["item_fur"]},
+  "char_aluo": {"name": "阿洛", "appearance": "翻毛皮帽，脸被风吹红",
+                "personality": "直爽，走路快", "inventory": ["item_snowstaff"]},
+  "char_qi": {"name": "祁婶", "appearance": "围裙上有炭灰",
+              "personality": "嘴硬心软", "inventory": []},
+  "char_shi": {"name": "石青", "appearance": "灰棉袍，肩上常落雪",
+               "personality": "寡言，守时", "inventory": ["item_rope"]}
+ },
+ "tasks": {
+  "task_bell": {"owner": "char_shi", "goal": "把铜铃挂到望雪台",
+                "resultText": "把铜铃挂到望雪台"},
+  "task_lamp": {"owner": "char_aluo", "goal": "点亮马棚的马灯",
+                "resultText": "把马灯点着了"},
+  "task_fire": {"owner": "char_qi", "goal": "把大堂的炭盆添满",
+                "resultText": "把炭盆添满了"},
+  "task_map": {"owner": "char_lu", "goal": "从客房找出旧地图",
+               "resultText": "从客房里翻出旧地图"},
+  "task_medicine": {"owner": "char_lu", "goal": "把药包送到马棚",
+                    "resultText": "把药包送到马棚"},
+  "task_snow": {"owner": "char_aluo", "goal": "清开驿道上的积雪",
+                "resultText": "把驿道上的积雪清开"}
+ }
+}

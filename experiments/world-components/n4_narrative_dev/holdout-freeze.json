@@ -1,0 +1,21 @@
+{
+ "scope": "N4 new-world zero-shot holdout; not used for training",
+ "date": "2026-11-02",
+ "ids": [
+  "n4w-01",
+  "n4w-02",
+  "n4w-03",
+  "n4w-04",
+  "n4w-05",
+  "n4w-06",
+  "n4w-07",
+  "n4w-08",
+  "n4w-09",
+  "n4w-10",
+  "n4w-11",
+  "n4w-12"
+ ],
+ "inputSha256": "015f23593c7523bdc40ba1048f873a6ebcb749f2633a6cf587ed7b2d17ebd9a3",
+ "targetSha256": "d1ab5abcc4b9ab74c78b9009df4c9ce6eee163c3e853ebfe3e2f2bf7d129b4bb",
+ "rows": 12
+}
