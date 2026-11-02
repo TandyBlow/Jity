@@ -745,6 +745,8 @@ def _write_review_md(world_path, corpus_path):
               "训练前须重新跑隔离与预登记。",
               "4. 对话暂不纳入（避免模型替角色做出承诺）；如需对话，"
               "另立契约。",
+              "5. 当前 N4 renderer 仍只读事实行；`characterContext` 与"
+              "“时间模糊/省略”是提议的 N4 输入/评测口径，尚未接线。",
               ""]
     DOC.write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
 
