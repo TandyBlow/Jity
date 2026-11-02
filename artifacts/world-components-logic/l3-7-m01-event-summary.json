@@ -1,0 +1,535 @@
+{
+  "schema": "jity-d-event-depth-summary-v1",
+  "date": "2026-11-02",
+  "scope": "exposed_old_development_probe_only",
+  "oldDevelopmentGroups": 20,
+  "fitGroups": 16,
+  "retainedPreviouslyObservedGroups": 4,
+  "newIndependentTrainingGroups": 0,
+  "round1TrainingQuota": 0,
+  "formalEvaluationAllowed": false,
+  "semanticQualityApproved": false,
+  "fullRequest500msStatus": "unverified",
+  "timingDefinition": "fresh input through per-attempt end journal; batch setup/finalization separate",
+  "runs": [
+    {
+      "runId": "m01-event-dev42-20261102-r1",
+      "quality": {
+        "baseline": {
+          "D02": {
+            "fit": {
+              "matched": 8,
+              "groups": 8
+            },
+            "retained_development": {
+              "matched": 2,
+              "groups": 2
+            }
+          },
+          "D03": {
+            "fit": {
+              "matched": 8,
+              "groups": 8,
+              "requiredTargets": 8,
+              "missedTargets": 0,
+              "extraTargets": 0
+            },
+            "retained_development": {
+              "matched": 1,
+              "groups": 2,
+              "requiredTargets": 2,
+              "missedTargets": 0,
+              "extraTargets": 2
+            }
+          }
+        },
+        "event": {
+          "D02": {
+            "fit": {
+              "matched": 8,
+              "groups": 8
+            },
+            "retained_development": {
+              "matched": 2,
+              "groups": 2
+            }
+          },
+          "D03": {
+            "fit": {
+              "matched": 8,
+              "groups": 8,
+              "requiredTargets": 8,
+              "missedTargets": 0,
+              "extraTargets": 0
+            },
+            "retained_development": {
+              "matched": 1,
+              "groups": 2,
+              "requiredTargets": 2,
+              "missedTargets": 2,
+              "extraTargets": 0
+            }
+          }
+        },
+        "event2": {
+          "D02": {
+            "fit": {
+              "matched": 8,
+              "groups": 8
+            },
+            "retained_development": {
+              "matched": 2,
+              "groups": 2
+            }
+          },
+          "D03": {
+            "fit": {
+              "matched": 8,
+              "groups": 8,
+              "requiredTargets": 8,
+              "missedTargets": 0,
+              "extraTargets": 0
+            },
+            "retained_development": {
+              "matched": 2,
+              "groups": 2,
+              "requiredTargets": 2,
+              "missedTargets": 0,
+              "extraTargets": 0
+            }
+          }
+        }
+      },
+      "timing": [
+        {
+          "arm": "baseline",
+          "caseId": "dev-d02-03",
+          "observations": 5,
+          "p50Ms": 461.324583,
+          "maxMs": 544.679667,
+          "meanMs": 457.818125,
+          "componentsMeanMs": {
+            "encoderMs": 241.1990333814174,
+            "packMs": 20.439292199444026,
+            "poolAndDigestMs": 1.171892008278519,
+            "tensorMs": 0.3190999967046082,
+            "windowJournalMs": 1.00975843379274,
+            "headMs": 0.25169160799123347,
+            "startJournalMs": 95.28321660473011,
+            "endJournalMs": 97.30911680380814,
+            "otherMs": 0.8350239638332368
+          },
+          "windows": 4,
+          "predicted": {
+            "kind": "skip"
+          },
+          "probabilities": [
+            0.08529818803071976
+          ],
+          "local50ms": "fail"
+        },
+        {
+          "arm": "baseline",
+          "caseId": "dev-d02-05",
+          "observations": 5,
+          "p50Ms": 457.71775,
+          "maxMs": 565.384875,
+          "meanMs": 461.9972164,
+          "componentsMeanMs": {
+            "encoderMs": 235.24338298593648,
+            "packMs": 18.654525000602007,
+            "poolAndDigestMs": 1.1420156108215451,
+            "tensorMs": 0.30539160943590105,
+            "windowJournalMs": 0.9302748017944396,
+            "headMs": 0.24669139529578388,
+            "startJournalMs": 101.00240839528851,
+            "endJournalMs": 103.77684179111384,
+            "otherMs": 0.6956848097115085
+          },
+          "windows": 4,
+          "predicted": {
+            "kind": "act"
+          },
+          "probabilities": [
+            0.9695144891738892
+          ],
+          "local50ms": "fail"
+        },
+        {
+          "arm": "baseline",
+          "caseId": "dev-d03-02",
+          "observations": 5,
+          "p50Ms": 512.877541,
+          "maxMs": 593.050542,
+          "meanMs": 511.9200666,
+          "componentsMeanMs": {
+            "encoderMs": 246.85501679196022,
+            "packMs": 19.450983207207173,
+            "poolAndDigestMs": 1.181966793956235,
+            "tensorMs": 0.30634181457571685,
+            "windowJournalMs": 0.9291505964938551,
+            "headMs": 0.290783605305478,
+            "startJournalMs": 106.96909160469659,
+            "endJournalMs": 135.1454666000791,
+            "otherMs": 0.7912655857256254
+          },
+          "windows": 4,
+          "predicted": {
+            "targets": [
+              {
+                "targetId": "p2"
+              },
+              {
+                "targetId": "p3"
+              }
+            ]
+          },
+          "probabilities": [
+            0.018044568598270416,
+            0.5487032532691956,
+            0.7279428243637085
+          ],
+          "local50ms": "fail"
+        },
+        {
+          "arm": "baseline",
+          "caseId": "dev-d03-06",
+          "observations": 5,
+          "p50Ms": 490.532,
+          "maxMs": 596.831292,
+          "meanMs": 499.86869179999997,
+          "componentsMeanMs": {
+            "encoderMs": 247.92936680023558,
+            "packMs": 19.630424992647022,
+            "poolAndDigestMs": 1.1870998016092926,
+            "tensorMs": 0.30945001053623855,
+            "windowJournalMs": 0.9321077959612012,
+            "headMs": 0.33073320519179106,
+            "startJournalMs": 113.04008339648135,
+            "endJournalMs": 115.62710839789361,
+            "otherMs": 0.8823173994438775
+          },
+          "windows": 4,
+          "predicted": {
+            "targets": [
+              {
+                "targetId": "p2"
+              },
+              {
+                "targetId": "p3"
+              }
+            ]
+          },
+          "probabilities": [
+            0.019564399495720863,
+            0.8203742504119873,
+            0.7377943396568298
+          ],
+          "local50ms": "fail"
+        },
+        {
+          "arm": "event",
+          "caseId": "dev-d02-03",
+          "observations": 5,
+          "p50Ms": 447.386125,
+          "maxMs": 565.274458,
+          "meanMs": 454.4448166,
+          "componentsMeanMs": {
+            "encoderMs": 237.49409100273624,
+            "packMs": 19.37617539661005,
+            "poolAndDigestMs": 1.0936750040855259,
+            "tensorMs": 0.2981588011607528,
+            "windowJournalMs": 0.8986748056486249,
+            "headMs": 0.29357499442994595,
+            "startJournalMs": 95.89284179965034,
+            "endJournalMs": 98.40158359729685,
+            "otherMs": 0.6960411983816925
+          },
+          "windows": 4,
+          "predicted": {
+            "kind": "skip"
+          },
+          "probabilities": [
+            0.08529818803071976
+          ],
+          "local50ms": "fail"
+        },
+        {
+          "arm": "event",
+          "caseId": "dev-d02-05",
+          "observations": 5,
+          "p50Ms": 451.338583,
+          "maxMs": 555.165083,
+          "meanMs": 462.6672082,
+          "componentsMeanMs": {
+            "encoderMs": 233.26334159937687,
+            "packMs": 19.283058802830055,
+            "poolAndDigestMs": 1.106583612272516,
+            "tensorMs": 0.3057077992707491,
+            "windowJournalMs": 0.9361006144899875,
+            "headMs": 0.2558918029535562,
+            "startJournalMs": 102.2901336022187,
+            "endJournalMs": 104.40060820546933,
+            "otherMs": 0.8257821611182408
+          },
+          "windows": 4,
+          "predicted": {
+            "kind": "act"
+          },
+          "probabilities": [
+            0.9695144891738892
+          ],
+          "local50ms": "fail"
+        },
+        {
+          "arm": "event",
+          "caseId": "dev-d03-02",
+          "observations": 5,
+          "p50Ms": 486.916,
+          "maxMs": 690.731792,
+          "meanMs": 519.9524,
+          "componentsMeanMs": {
+            "encoderMs": 273.25054940884,
+            "packMs": 20.45484179398045,
+            "poolAndDigestMs": 1.1947001970838755,
+            "tensorMs": 0.31335921376012266,
+            "windowJournalMs": 0.9571088070515543,
+            "headMs": 0.3133583930321038,
+            "startJournalMs": 113.19355838932097,
+            "endJournalMs": 109.51691700029187,
+            "otherMs": 0.7580067966390516
+          },
+          "windows": 4,
+          "predicted": {
+            "targets": []
+          },
+          "probabilities": [
+            0.013753868639469147,
+            0.05444543808698654,
+            0.03028927370905876
+          ],
+          "local50ms": "fail"
+        },
+        {
+          "arm": "event",
+          "caseId": "dev-d03-06",
+          "observations": 5,
+          "p50Ms": 511.951209,
+          "maxMs": 619.080583,
+          "meanMs": 504.5073916,
+          "componentsMeanMs": {
+            "encoderMs": 250.9884832019452,
+            "packMs": 19.9157580093015,
+            "poolAndDigestMs": 1.1815419886261225,
+            "tensorMs": 0.31586599070578814,
+            "windowJournalMs": 0.9669420076534152,
+            "headMs": 0.34707498853094876,
+            "startJournalMs": 113.81049999617971,
+            "endJournalMs": 115.97064159577712,
+            "otherMs": 1.0105838212801928
+          },
+          "windows": 4,
+          "predicted": {
+            "targets": []
+          },
+          "probabilities": [
+            0.01622907817363739,
+            0.43583300709724426,
+            0.1213902086019516
+          ],
+          "local50ms": "fail"
+        },
+        {
+          "arm": "event2",
+          "caseId": "dev-d02-03",
+          "observations": 5,
+          "p50Ms": 300.328709,
+          "maxMs": 401.231542,
+          "meanMs": 297.243467,
+          "componentsMeanMs": {
+            "encoderMs": 80.86586678982712,
+            "packMs": 18.7403165968135,
+            "poolAndDigestMs": 1.0777583869639784,
+            "tensorMs": 0.30210898839868605,
+            "windowJournalMs": 0.9090078005101532,
+            "headMs": 0.27734979521483183,
+            "startJournalMs": 95.88017500354908,
+            "endJournalMs": 98.44850820372812,
+            "otherMs": 0.7423754349945284
+          },
+          "windows": 4,
+          "predicted": {
+            "kind": "skip"
+          },
+          "probabilities": [
+            0.020226359367370605
+          ],
+          "local50ms": "fail"
+        },
+        {
+          "arm": "event2",
+          "caseId": "dev-d02-05",
+          "observations": 5,
+          "p50Ms": 319.443167,
+          "maxMs": 407.693708,
+          "meanMs": 309.1846918,
+          "componentsMeanMs": {
+            "encoderMs": 80.37008281680755,
+            "packMs": 18.413366592722014,
+            "poolAndDigestMs": 1.1178327957168221,
+            "tensorMs": 0.30022499267943203,
+            "windowJournalMs": 0.8934832061640918,
+            "headMs": 0.24712479789741337,
+            "startJournalMs": 102.20043339650147,
+            "endJournalMs": 104.92503319401294,
+            "otherMs": 0.7171100074982633
+          },
+          "windows": 4,
+          "predicted": {
+            "kind": "act"
+          },
+          "probabilities": [
+            0.9756626486778259
+          ],
+          "local50ms": "fail"
+        },
+        {
+          "arm": "event2",
+          "caseId": "dev-d03-02",
+          "observations": 5,
+          "p50Ms": 330.372541,
+          "maxMs": 436.376792,
+          "meanMs": 327.70969180000003,
+          "componentsMeanMs": {
+            "encoderMs": 84.31464181048796,
+            "packMs": 19.506883388385177,
+            "poolAndDigestMs": 1.0835166031029075,
+            "tensorMs": 0.2992086054291576,
+            "windowJournalMs": 0.892341195140034,
+            "headMs": 0.3245247935410589,
+            "startJournalMs": 108.80788320209831,
+            "endJournalMs": 111.61492499522865,
+            "otherMs": 0.8657672065867814
+          },
+          "windows": 4,
+          "predicted": {
+            "targets": []
+          },
+          "probabilities": [
+            0.01315467432141304,
+            0.023671815171837807,
+            0.01782318577170372
+          ],
+          "local50ms": "fail"
+        },
+        {
+          "arm": "event2",
+          "caseId": "dev-d03-06",
+          "observations": 5,
+          "p50Ms": 346.187375,
+          "maxMs": 444.34825,
+          "meanMs": 341.0807918,
+          "componentsMeanMs": {
+            "encoderMs": 85.05362519645132,
+            "packMs": 20.1524586067535,
+            "poolAndDigestMs": 1.1510833981446922,
+            "tensorMs": 0.30606641666963696,
+            "windowJournalMs": 0.9531913790851831,
+            "headMs": 0.37698340020142496,
+            "startJournalMs": 115.39960000081919,
+            "endJournalMs": 116.71999979880638,
+            "otherMs": 0.9677836030686535
+          },
+          "windows": 4,
+          "predicted": {
+            "targets": [
+              {
+                "targetId": "p2"
+              },
+              {
+                "targetId": "p3"
+              }
+            ]
+          },
+          "probabilities": [
+            0.022675814107060432,
+            0.912228524684906,
+            0.9493820667266846
+          ],
+          "local50ms": "fail"
+        }
+      ],
+      "encoderVariants": {
+        "baseline": {
+          "layers": 6,
+          "parameters": 10279424,
+          "tensorSha256": "4bb06712a75ab1e2e3f8eff11f8f93e79fda3d41a0aed8cf0f6e8097e522cb1d"
+        },
+        "event": {
+          "layers": 6,
+          "parameters": 10279424,
+          "tensorSha256": "4bb06712a75ab1e2e3f8eff11f8f93e79fda3d41a0aed8cf0f6e8097e522cb1d"
+        },
+        "event2": {
+          "layers": 2,
+          "parameters": 7120384,
+          "tensorSha256": "6bbafd3213e907abef347a0fd96179bf4282d987c1b3000d0498aca1feafb40b"
+        }
+      },
+      "headParametersPerArm": {
+        "baseline": 180418,
+        "event": 180418,
+        "event2": 180418
+      },
+      "checkpoint": {
+        "contains": "four_event_anchor_heads_only",
+        "path": ".local/world-components-logic/checkpoints/m01-event-dev42-20261102-r1.pt",
+        "sha256": "a390a148c81f6a1300908c876a7de905d3af90abd75332fa926189fb86380b56"
+      },
+      "supervisor": {
+        "error": null,
+        "exitCode": 0,
+        "measurement": "ps_rss_every250ms",
+        "observedPeakResidentMiB": 548.71875,
+        "stopReason": null,
+        "wallMs": 40627.803042007145
+      },
+      "forwardWindowsIncludingFitFeatures": 406,
+      "timedInferenceItems": 60,
+      "fitLossFirstLast": {
+        "event": {
+          "D02": [
+            0.6955406665802002,
+            0.02944815345108509
+          ],
+          "D03": [
+            0.9342605471611023,
+            0.0289608146995306
+          ]
+        },
+        "event2": {
+          "D02": [
+            0.7318658828735352,
+            0.024779267609119415
+          ],
+          "D03": [
+            0.9286923408508301,
+            0.02532108686864376
+          ]
+        }
+      }
+    }
+  ],
+  "archives": [
+    {
+      "path": "artifacts/world-components-logic/m01-fitting/m01-event-dev42-20261102-r1.record.json.gz",
+      "gzipSha256": "89adbadfb7cc07a94f16f05a7654ad48292b968f12f138dde8ffe3eccc50975c",
+      "rawSha256": "f9f353dd6beb9945fce030243c47698fdc3f759bd44f70dbe42e997c5dfc2c5c"
+    },
+    {
+      "path": "artifacts/world-components-logic/m01-fitting/m01-event-dev42-20261102-r1.record.windows.jsonl.gz",
+      "gzipSha256": "a408672125a7b23b227f13c1de77374e11e26c903f5991f2a49dce6deab60e09",
+      "rawSha256": "f7e4abfcb9de20b0e7905e126f7ef8f7d63ea748ed516d2bc8dfd0e73c6684e0"
+    }
+  ]
+}

@@ -57,7 +57,7 @@ def quality(rows):
 
 def statistics_by_case(attempts):
     rows=[]
-    for arm in shared.ARMS:
+    for arm in ('legacy','shared'):
         for cid in sorted({a['caseId'] for a in attempts}):
             selected=[a for a in attempts if a['arm']==arm and a['caseId']==cid]
             times=sorted(a['elapsedMs'] for a in selected);coverage=selected[0]['coverage']
@@ -108,7 +108,7 @@ def validate_run(plan,record,events,baseline):
     if plan['datasetSha256']!=plan['baseline']['datasetSha256'] or plan['model']!=plan['baseline']['model']:raise ValueError('baseline dataset/model mismatch')
     if plan['baseline']['trainedHeadSha256']!=baseline['trainedHeadSha256'] or plan['baseline']['checkpoint']!=baseline['checkpoint']:
         raise ValueError('legacy checkpoint identity mismatch')
-    expected={(arm,cid,i) for arm in shared.ARMS for cid in cases for i in range(5)}
+    expected={(arm,cid,i) for arm in ('legacy','shared') for cid in cases for i in range(5)}
     actual=[(a['arm'],a['caseId'],a['repeat']) for a in record['attempts']]
     if len(actual)!=40 or set(actual)!=expected or len(record['attemptSlots'])!=40:raise ValueError('attempt identity/count mismatch')
     trace=[]
@@ -210,10 +210,162 @@ def render(summary,details):
     return ''.join(parts)
 
 
+EVENT_RUN='m01-event-dev42-20261102-r1'
+EVENT_ARMS=('baseline','event','event2')
+EVENT_BASELINE_PLAN=DATA/(PREFIX+'r3.plan.json')
+EVENT_BASELINE_RECORD=DATA/(PREFIX+'r3.record.json.gz')
+
+
+def validate_event_run(plan,record,events,baseline):
+    if (record['status']!='diagnostic_completed' or record['supervisor']['exitCode']!=0
+            or record['supervisor']['stopReason'] is not None or record['unexecutedAttempts']
+            or record.get('windowEventMalformedLines') or not record['encoderUnchanged']):
+        raise ValueError('incomplete event-depth run')
+    if (plan['formalEvaluationAllowed'] is not False or plan['round1TrainingQuota']!=0
+            or plan['newIndependentTrainingGroups']!=0 or not plan['retainedDevelopmentPreviouslyObserved']):
+        raise ValueError('formal scope changed')
+    if (plan['configSha256']!=shared.digest(plan['config']) or plan['config']['reducedEncoderLayerIndices']!=[0,1]
+            or plan['config']['threshold']!=.5 or plan['config']['stepsPerHead']!=200
+            or plan['config']['seed']!=42 or plan['config']['learningRate']!=.0003):raise ValueError('event configuration drift')
+    if (record['formalEvaluationAllowed'] is not False or record['semanticQualityApproved'] is not False
+            or record['fullRequestMeasured'] is not False):raise ValueError('record scope promoted')
+    runtime=record['actualRuntime']
+    if runtime['device']!='cpu' or runtime['threads']!=1 or runtime['interopThreads']!=1:raise ValueError('runtime resource drift')
+    if set(record['fitLosses'])!=set(EVENT_ARMS[1:]):raise ValueError('fitting arm coverage changed')
+    for tasks in record['fitLosses'].values():
+        if set(tasks)!={'D02','D03'} or any(len(v)!=200 or any(not math.isfinite(x) for x in v) for v in tasks.values()):
+            raise ValueError('fitting loss/step coverage changed')
+    original=json.loads(EVENT_BASELINE_PLAN.read_bytes())
+    if plan['dataset']!=original['dataset'] or plan['cases']!=original['cases'] or plan['datasetSha256']!=shared.digest(plan['dataset']):
+        raise ValueError('source groups/labels changed')
+    if (plan['model']!=original['model'] or plan['baseline']['checkpoint']!=baseline['checkpoint']
+            or plan['baseline']['trainedHeadSha256']!=baseline['trainedHeadSha256']):raise ValueError('baseline identity changed')
+    if record['encoderVariants']['event']['tensorSha256']!=baseline['encoderTensorSha256']:raise ValueError('full encoder changed')
+    if {a:v['layers'] for a,v in record['encoderVariants'].items()}!={'baseline':6,'event':6,'event2':2}:raise ValueError('encoder layer count changed')
+    if record['encoderVariants']['baseline']!=record['encoderVariants']['event']:raise ValueError('baseline encoder mismatch')
+    if record['trainedHeadSha256']['baseline']!=baseline['trainedHeadSha256']:raise ValueError('baseline head mismatch')
+    cases={r['case']['caseId']:r for r in plan['dataset']}
+    observed={c['caseId'] for c in plan['cases']}
+    expected={(arm,cid,i) for arm in EVENT_ARMS for cid in observed for i in range(5)}
+    for field in ('attempts','attemptSlots'):
+        rows=record[field]
+        if len(rows)!=60 or {(a['arm'],a['caseId'],a['repeat']) for a in rows}!=expected:raise ValueError('attempt coverage changed')
+        if any(a['status']!='complete' for a in rows):raise ValueError('incomplete attempt')
+    trace=[]
+    def coverage(row,phase):
+        cid=row['caseId'];c=cases[cid]['case'];cov=row['coverage'];validate_coverage(c,cov,'shared')
+        expected_anchor=shared.event_indices(c,cov['factRecords']) if row['arm']!='baseline' else None
+        if cov['eventAnchorFactIds']!=expected_anchor:raise ValueError('action anchor changed')
+        for i,w in enumerate(cov['windows']):trace.append((phase,row['arm'],cid,row.get('repeat'),i,w))
+    feature_ids={(r['arm'],r['caseId']) for r in record['featureCoverage']}
+    if len(record['featureCoverage'])!=40 or feature_ids!={(a,c) for a in EVENT_ARMS[1:] for c in cases}:raise ValueError('fit feature coverage changed')
+    for row in record['featureCoverage']:coverage(row,'feature_fit')
+    fitted={(r['arm'],r['caseId']):r for r in record['fitAndDevelopmentPredictions']}
+    if len(record['fitAndDevelopmentPredictions'])!=40 or set(fitted)!=feature_ids:raise ValueError('fit prediction coverage changed')
+    for (_,cid),r in fitted.items():
+        if any(r[k]!=cases[cid][k] for k in ('role','label')) or r['task']!=cases[cid]['case']['task']:raise ValueError('fit label changed')
+    baseline_predictions={r['caseId']:r for r in baseline['fitAndDevelopmentPredictions']}
+    for a in record['attempts']:
+        coverage(a,'inference')
+        if a['featureCacheUsed'] or a['inputSha256']!=shared.digest(cases[a['caseId']]['case']['input']):raise ValueError('cached/changed input')
+        ref=baseline_predictions[a['caseId']] if a['arm']=='baseline' else fitted[(a['arm'],a['caseId'])]
+        if a['probabilities']!=ref['probabilities'] or a['decoded']!=ref['decoded']:raise ValueError('checkpoint prediction drift')
+        c=cases[a['caseId']]['case'];values=a['probabilities'];targets=a['coverage']['targets']
+        if len(values)!=len(targets) or any(not math.isfinite(v) or not 0<=v<=1 for v in values):raise ValueError('invalid probability vector')
+        decoded=({'kind':'act' if values[0]>=.5 else 'skip'} if c['task']=='D02' else
+                 {'targets':[{'targetId':t} for t,p in zip(targets,values) if p>=.5]})
+        if a['decoded']!=decoded:raise ValueError('decision threshold drift')
+        parts=list(a['coverage']['timing'].values())+[a[k] for k in ('startJournalMs','endJournalMs','headMs')]
+        total=a['elapsedIncludingEndJournalMs']
+        if (any(not math.isfinite(x) or x<0 for x in parts+[total,a['elapsedMs']])
+                or total<a['elapsedMs']+a['endJournalMs'] or total+0.001<sum(parts)):
+            raise ValueError('invalid inclusive timing')
+    starts={e['eventId']:e for e in events if e['status']=='running'}
+    ends={e['eventId']:e for e in events if e['status']=='complete'}
+    if len(events)!=2*len(trace) or set(starts)!=set(range(len(trace))) or set(ends)!=set(starts):raise ValueError('window event count changed')
+    for i,(phase,arm,cid,repeat,index,w) in enumerate(trace):
+        for event in (starts[i],ends[i]):
+            if (event['phase'],event['arm'],event['caseId'],event.get('repeat'),event['windowIndex'])!=(phase,arm,cid,repeat,index):raise ValueError('window event identity changed')
+            for key in ('inputIds','tokenTypeIds','factIds','payloadTokens','totalTokens','factSpans'):
+                if event[key]!=w[key]:raise ValueError('window payload changed')
+    return len(trace)
+
+
+def verify_event_source(name,expected):
+    if (ROOT/name).exists() and sha256_file(ROOT/name)==expected:return
+    # Future maintenance can still verify the exact executed bytes from local history.
+    revisions=subprocess.check_output(['git','log','-30','--format=%H','--',name],cwd=ROOT,text=True).splitlines()
+    for revision in revisions:
+        raw=subprocess.check_output(['git','show',revision+':'+name],cwd=ROOT)
+        if hashlib.sha256(raw).hexdigest()==expected:return
+    raise ValueError('executed event source unavailable in local Git: '+name)
+
+
+def build_event():
+    pp=DATA/(EVENT_RUN+'.plan.json');rp=DATA/(EVENT_RUN+'.record.json.gz');ep=DATA/(EVENT_RUN+'.record.windows.jsonl.gz')
+    plan=json.loads(pp.read_bytes());record=read_archive(rp);raw=gzip.decompress(ep.read_bytes())
+    events=[json.loads(line) for line in raw.splitlines() if line.strip()];baseline=read_archive(EVENT_BASELINE_RECORD)
+    if record['planSha256']!=sha256_file(pp) or record['windowEventsSha256']!=hashlib.sha256(raw).hexdigest():raise ValueError('event evidence digest changed')
+    if plan['baseline']['recordSha256']!=sha256_file(EVENT_BASELINE_RECORD) or plan['baseline']['planSha256']!=sha256_file(EVENT_BASELINE_PLAN):raise ValueError('baseline files changed')
+    for name,h in plan['code'].items():verify_event_source(name,h)
+    if sha256_file(ROOT/plan['protocolPath'])!=plan['protocolSha256']:raise ValueError('event protocol changed')
+    forwards=validate_event_run(plan,record,events,baseline)
+    scores={'baseline':quality(baseline['fitAndDevelopmentPredictions'])}
+    scores.update({a:quality([r for r in record['fitAndDevelopmentPredictions'] if r['arm']==a]) for a in EVENT_ARMS[1:]})
+    timing=[]
+    for arm in EVENT_ARMS:
+        for case in plan['cases']:
+            rows=[a for a in record['attempts'] if a['arm']==arm and a['caseId']==case['caseId']]
+            elapsed=[a['elapsedIncludingEndJournalMs'] for a in rows]
+            components={key:statistics.mean(a['coverage']['timing'][key] for a in rows) for key in rows[0]['coverage']['timing']}
+            components.update({k:statistics.mean(a[k] for a in rows) for k in ('headMs','startJournalMs','endJournalMs')})
+            components['otherMs']=statistics.mean(elapsed)-sum(components.values())
+            timing.append({'arm':arm,'caseId':case['caseId'],'observations':len(rows),'p50Ms':statistics.median(elapsed),'maxMs':max(elapsed),
+                'meanMs':statistics.mean(elapsed),'componentsMeanMs':components,'windows':len(rows[0]['coverage']['windows']),
+                'predicted':rows[0]['decoded'],'probabilities':rows[0]['probabilities'],
+                'local50ms':'fail' if max(elapsed)>50 else 'unverified_insufficient_observations'})
+    run={'runId':EVENT_RUN,'quality':scores,'timing':timing,'encoderVariants':record['encoderVariants'],
+         'headParametersPerArm':record['headParametersPerArm'],'checkpoint':record['checkpoint'],'supervisor':record['supervisor'],
+         'forwardWindowsIncludingFitFeatures':forwards,'timedInferenceItems':len(record['attempts']),
+         'fitLossFirstLast':{a:{t:[v[0],v[-1]] for t,v in tasks.items()} for a,tasks in record['fitLosses'].items()}}
+    summary={'schema':'jity-d-event-depth-summary-v1','date':'2026-11-02','scope':'exposed_old_development_probe_only',
+             'oldDevelopmentGroups':20,'fitGroups':16,'retainedPreviouslyObservedGroups':4,'newIndependentTrainingGroups':0,
+             'round1TrainingQuota':0,'formalEvaluationAllowed':False,'semanticQualityApproved':False,'fullRequest500msStatus':'unverified',
+             'timingDefinition':'fresh input through per-attempt end journal; batch setup/finalization separate','runs':[run],
+             'archives':[{'path':str(p.relative_to(ROOT)),'gzipSha256':sha256_file(p),
+                          'rawSha256':hashlib.sha256(gzip.decompress(p.read_bytes())).hexdigest()} for p in (rp,ep)]}
+    return summary,{ART/'l3-7-m01-event-summary.json':(json.dumps(summary,ensure_ascii=False,indent=2)+'\n').encode(),
+                    ART/'l3-7-m01-event-results.html':render_event(summary,plan,record).encode()}
+
+
+def render_event(summary,plan,record):
+    e=lambda x:html.escape(str(x));run=summary['runs'][0]
+    names={'baseline':'上一版：6层、混合动作表示','event':'独立动作表示、6层','event2':'独立动作表示、2层'}
+    parts=['''<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'"><title>L3 动作判断与更小编码器</title><style>body{background:#f4f6f8;color:#20313e;font:16px/1.7 system-ui;margin:0}main{max-width:1150px;margin:auto;padding:24px}section{background:white;border-radius:12px;padding:20px;margin:20px 0}.scroll{overflow:auto}table{width:100%;border-collapse:collapse;font-size:14px}th,td{padding:9px;text-align:left;border-bottom:1px solid #ddd}pre{white-space:pre-wrap;overflow-wrap:anywhere}.bad{color:#a7352e}h1{font-size:28px}</style><main><p>D / L3 · 2026-11-02 · 开发探索</p><h1>动作单独看，编码器缩小后会怎样？</h1><p>三种方案同机、同题、相同训练设置；旧版直接加载原检查点，两个新版本重新拟合小判断头。完整资料与全部人物均保留，不靠关键词规则决定目标。</p><section><h2>这次结果能说明什么</h2><p>只有4个反复看过的开发场景，每方案每题重复5次，共60次推理；重复不等于新题。拟合使用16组，另4组不参与梯度。新90组未使用，来源核验和独立新题训练仍待。</p><p class="bad">这是开发诊断，不能据此宣布泛化或组件可用。D02仅判断做/不做，没有生成行动；反应、共同结果及完整500毫秒流程仍未测试。</p></section><section><h2>判断是否正确</h2><div class="scroll"><table><tr><th>方案</th><th>任务</th><th>拟合题命中</th><th>已公开开发题命中</th><th>目标漏选 / 多选</th></tr>''']
+    for arm in EVENT_ARMS:
+        for task in ('D02','D03'):
+            q=run['quality'][arm][task];f=q['fit'];r=q['retained_development']
+            extra=f'{r["missedTargets"]} / {r["extraTargets"]}' if task=='D03' else '—'
+            parts.append(f'<tr><td>{names[arm]}</td><td>{task}</td><td>{f["matched"]}/{f["groups"]}</td><td>{r["matched"]}/{r["groups"]}</td><td>{extra}</td></tr>')
+    parts.append('</table></div></section><section><h2>速度：每次从输入到结束存档</h2><p>本批完整单项耗时包含开始和结束存档，旧页未包含结束存档，不能直接拿两页数字比较。以下均为本批同条件数字。窗口仍≤512，未缓存输入特征。</p><div class="scroll"><table><tr><th>方案 / 题目</th><th>中位 / 最大毫秒</th><th>编码器平均</th><th>输入平均</th><th>两次快照存档平均</th><th>局部50毫秒</th></tr>')
+    for t in run['timing']:
+        c=t['componentsMeanMs']
+        parts.append(f'<tr><td>{names[t["arm"]]}<br>{e(t["caseId"])}</td><td>{t["p50Ms"]:.2f} / {t["maxMs"]:.2f}</td><td>{c["encoderMs"]:.2f}</td><td>{c["packMs"]:.2f}</td><td>{c["startJournalMs"]+c["endJournalMs"]:.2f}</td><td>{e(t["local50ms"])}</td></tr>')
+    parts.append('</table></div><p>判断头、张量、池化/哈希、逐窗日志及其他开销见下方完整明细，所有分项使用平均数，合计等于平均总耗时。小批观测不能签正式性能通过。</p></section>')
+    for case in plan['cases']:
+        rows=[{k:a[k] for k in ('arm','caseId','repeat','decoded','probabilities','elapsedMs','elapsedIncludingEndJournalMs')} for a in record['attempts'] if a['caseId']==case['caseId']]
+        label=next(r['label'] for r in plan['dataset'] if r['case']['caseId']==case['caseId'])
+        parts.append(f'<section><details><summary>{e(case["caseId"])} · 原判据 {e(label)} · 展开每次预测</summary><pre>{e(json.dumps(rows,ensure_ascii=False,indent=2))}</pre></details></section>')
+    parts.append(f'<section><h2>更小模型的边界</h2><p>两层版从同一M01保留前两层与全部嵌入，未做蒸馏、未重新训练编码器，不保证语义等价。实际参数和逐项耗时如下。CPU单线程、并发1、120秒/2048MiB监督上限。</p><details><summary>全部汇总和耗时分项</summary><pre>{e(json.dumps(run,ensure_ascii=False,indent=2))}</pre></details><p><a href="m01-fitting/{EVENT_RUN}.plan.json">冻结计划</a> · <a href="m01-fitting/{EVENT_RUN}.record.json.gz">完整记录</a> · <a href="m01-fitting/{EVENT_RUN}.record.windows.jsonl.gz">窗口事件</a> · <a href="l3-7-m01-event-summary.json">机器汇总</a> · <a href="l3-6-m01-shared-results.html">上一批</a></p></section></main></html>')
+    return ''.join(parts)
+
+
+
 def main():
     p=argparse.ArgumentParser(description=__doc__);m=p.add_mutually_exclusive_group(required=True)
-    m.add_argument('--check',action='store_true');m.add_argument('--write-new',action='store_true');a=p.parse_args()
-    summary,files=build()
+    m.add_argument('--check',action='store_true');m.add_argument('--write-new',action='store_true')
+    p.add_argument('--event',action='store_true');a=p.parse_args()
+    summary,files=build_event() if a.event else build()
     for path,raw in files.items():
         if path.exists() and path.read_bytes()!=raw:raise ValueError('report differs; preserve earlier version')
         if a.check and not path.exists():raise ValueError('report missing')

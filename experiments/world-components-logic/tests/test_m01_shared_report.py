@@ -81,4 +81,61 @@ class SharedReportTests(unittest.TestCase):
                 report.executed_source('experiments/world-components-logic/m01_shared.py','expected','r3')
 
 
+class EventDepthReportTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        data=report.DATA;run=report.EVENT_RUN
+        cls.plan=json.loads((data/(run+'.plan.json')).read_bytes())
+        cls.record=report.read_archive(data/(run+'.record.json.gz'))
+        cls.events=[json.loads(x) for x in gzip.decompress((data/(run+'.record.windows.jsonl.gz')).read_bytes()).splitlines()]
+        cls.baseline=report.read_archive(report.EVENT_BASELINE_RECORD)
+
+    def check(self,plan=None,record=None,events=None):
+        return report.validate_event_run(plan or self.plan,record or self.record,events or self.events,self.baseline)
+
+    def test_all_sixty_attempts_and_406_windows_validate_without_scope_promotion(self):
+        self.assertEqual(self.check(),406)
+        summary,files=report.build_event()
+        self.assertFalse(summary['semanticQualityApproved']);self.assertFalse(summary['formalEvaluationAllowed'])
+        self.assertEqual(summary['fullRequest500msStatus'],'unverified')
+        for p,raw in files.items():self.assertEqual(p.read_bytes(),raw)
+
+    def test_omitted_candidate_or_changed_action_anchor_is_rejected(self):
+        for key,value in (('targets',[]),('eventAnchorFactIds',[])):
+            r=copy.deepcopy(self.record);r['featureCoverage'][0]['coverage'][key]=value
+            with self.assertRaises(ValueError):self.check(record=r)
+
+    def test_omitted_end_journal_cost_is_rejected(self):
+        r=copy.deepcopy(self.record);r['attempts'][0]['elapsedIncludingEndJournalMs']=r['attempts'][0]['elapsedMs']
+        with self.assertRaisesRegex(ValueError,'inclusive timing'):self.check(record=r)
+
+    def test_baseline_drift_cached_inference_and_dropped_arm_are_rejected(self):
+        for mutate in (lambda r:r['attempts'].pop(),
+                       lambda r:r['attempts'][0].update(featureCacheUsed=True),
+                       lambda r:r['attempts'][0].update(probabilities=[.9])):
+            r=copy.deepcopy(self.record);mutate(r)
+            with self.assertRaises(ValueError):self.check(record=r)
+
+    def test_wrong_depth_and_missing_training_steps_are_rejected(self):
+        r=copy.deepcopy(self.record);r['encoderVariants']['event2']['layers']=1
+        with self.assertRaisesRegex(ValueError,'layer count'):self.check(record=r)
+        r=copy.deepcopy(self.record);r['fitLosses']['event2']['D03'].pop()
+        with self.assertRaisesRegex(ValueError,'loss/step'):self.check(record=r)
+
+    def test_relabeling_or_replacing_a_source_group_is_rejected(self):
+        p=copy.deepcopy(self.plan);p['dataset'][0]['label']='changed'
+        with self.assertRaisesRegex(ValueError,'source groups'):self.check(plan=p)
+
+    def test_missing_or_changed_window_event_is_rejected(self):
+        es=copy.deepcopy(self.events);es.pop()
+        with self.assertRaisesRegex(ValueError,'event count'):self.check(events=es)
+        es=copy.deepcopy(self.events);es[0]['inputIds']=[101,102]
+        with self.assertRaisesRegex(ValueError,'payload'):self.check(events=es)
+
+    def test_late_source_resolution_requires_matching_historical_bytes(self):
+        with mock.patch.object(report,'sha256_file',return_value='new-code'),mock.patch.object(report.subprocess,'check_output',side_effect=['revision',b'not-the-executed-bytes']):
+            with self.assertRaisesRegex(ValueError,'unavailable'):
+                report.verify_event_source('experiments/world-components-logic/m01_shared.py','expected')
+
+
 if __name__=='__main__':unittest.main()

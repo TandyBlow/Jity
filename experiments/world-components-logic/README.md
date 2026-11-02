@@ -11,20 +11,20 @@ python3 experiments/world-components-logic/experiment.py status
 python3 experiments/world-components-logic/experiment.py check
 ```
 
-`status`只读当前状态，`check`运行工程测试并核验三份历史结果报告，二者不导入模型、不训练或推理。实际新批次使用D独立环境：
+`status`只读当前状态，`check`运行工程测试并核验三份历史结果报告和本批动作/截层报告，二者不导入模型、不训练或推理。实际新批次使用D独立环境：
 
 ```bash
 .local/world-components-logic/venv/bin/python experiments/world-components-logic/experiment.py prepare NEW_RUN_ID
 .local/world-components-logic/venv/bin/python experiments/world-components-logic/experiment.py execute /absolute/NEW_RUN_ID.plan.json
 ```
 
-`prepare`核对本地模型/数据/环境并冻结新计划，不运行模型；`execute`会真实训练和推理，须符合该批工作安排，使用新run-id且仍限CPU单线程、120秒/2048MiB。本次结构整理没有执行这两个命令。旧计划绑定旧代码，不能用当前代码覆盖重跑；历史复现须恢复原提交与环境后登记新批次。
+`prepare`核对本地模型/数据/环境并冻结新计划，不运行模型；`execute`会真实训练和推理，须符合该批工作安排，使用新run-id且仍限CPU单线程、120秒/2048MiB。本次已按附批协议执行动作表示/截层比较，结果由`status`读取。旧计划绑定旧代码，不能用当前代码覆盖重跑；历史复现须恢复原提交与环境后登记新批次。
 
 | 角色 | 文件/位置 | 维护方式 |
 |---|---|---|
 | 当前运行入口与公共流程 | `experiment.py` | 入口、资源监督、阶段计时、记录和中断收尾共同复用 |
 | 当前模型实验实现 | `m01_shared.py` | 完整事实编码、候选融合、拟合与预测，后续算法主要改这里及对应测试 |
-| 当前结果核验/展示 | `m01_shared_report.py`、`artifacts/world-components-logic/l3-6-*` | 报告核验原计划/记录，不以当前算法源码替代历史执行版本 |
+| 当前结果核验/展示 | `m01_shared_report.py`、`artifacts/world-components-logic/l3-7-*` | 报告核验原计划/记录，不以当前算法源码替代历史执行版本 |
 | 共享基础工具 | `lab.py`、`fact_windows.py`、`pilot_codec.py` | 守卫、事实编码和原输入核对，按实际职责维护 |
 | 历史模型入口 | `runtime_smoke.py`、`run_pilot.py`、`m01_probe.py`、`m01_infer.py` | 保留原记录/测试及被复用工具，不作为当前日常入口 |
 | 数据/审阅准备 | `data/`、`prepare_*`、`review_io.py` | 原资料及工具保留，按实际数据工作使用，不冒充模型能力 |
@@ -32,7 +32,7 @@ python3 experiments/world-components-logic/experiment.py check
 
 后续试验优先复用同一入口，以配置和新批次计划表达差异；不按每轮试验复制一套监督器或新建状态页。新职责确实需要独立模块时再拆文件。已有模型头质量和速度问题继续按原标准解决，不以整理目录代替实测。
 
-历史报告核验优先检查已保存源码；当前文件已变化时，使用本地Git中的实际执行提交 `d3b21a53eb901fdfded100ae41a3201d7bbb05b5` 并核SHA。浅克隆缺少该提交会明确报错，不自动下载或放宽核验；直接查看已归档HTML不需要运行检查。既有r1/r2快照和全部记录原样保留，本轮不新增源码快照、结果页或模型数据。
+历史报告核验优先检查已保存源码；当前文件已变化时，使用本地Git中的实际执行提交 `d3b21a53eb901fdfded100ae41a3201d7bbb05b5` 并核SHA。浅克隆缺少该提交会明确报错，不自动下载或放宽核验；直接查看已归档HTML不需要运行检查。既有r1/r2快照和全部记录原样保留，动作/截层批次追加新计划、证据与结果，仍不新增源码快照；当前源码变化后从本地Git按已登记SHA查找实际执行字节，找不到时明确失败。
 
 ## 历史准备快照（2026-10-31）
 
