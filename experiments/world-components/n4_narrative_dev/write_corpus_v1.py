@@ -614,18 +614,18 @@ def main():
         "",
         "日期：2026-11-02。同一 `n4n-fog-harbor` 世界，新增 20 例；"
         "**待用户审阅，未训练**。当前 N4 生成模型未训练；N4.0 结构化输入"
-        "已验证 9/9 训练拟合，但 0/3 check，下一步是扩样。",
+        "在合并前输入上验证 9/9 训练拟合、0/3 check；环境条件并入 "
+        "`地点外貌` 后需重跑，下一步是扩样。",
         "",
         "边界：不新增具名人物/物品/地点；task goal 只作隐藏动机，正文只用 "
         "`resultText`；时间只模糊/省略；理智用心理/生理表达；外貌/个性用"
         "可见细节与行为；他人只写可见动作；不写承诺性对话。",
         "",
         "> **环境字段来源：** 本文 `sceneState` 的 time/weather/wind/light/"
-        "atmosphere 是本稿给定的 **environment overlay**（审阅夹具），"
-        "不是 `WorldState` 字段。生产的 wind 有静态依据 "
-        "`world.locations[].windExposure`，其余四项没有状态来源；必须由"
-        "场景/时间系统或 B/server 显式提供，N4.0 缺失即省略并记 "
-        "`environment-field-missing`。",
+        "atmosphere 已并入 `地点外貌`，不是独立环境层；当前值是审阅夹具。"
+        "生产应由 `LocationState.appearance`（initialAppearance + "
+        "appearanceChanges）提供，wind 的静态依据是 `windExposure`；"
+        "缺失条件省略并记 `environment-field-missing`。",
         "",
         "## 审阅点",
         "",

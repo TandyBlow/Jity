@@ -68,12 +68,7 @@ render_input(case, world, strict=True)
 叙事任务。
 场景：
 地点=旧灯塔>石阶>旋梯>塔顶
-地点外貌=铜框信号灯、玻璃罩、火苗、海风直吹
-天气=夜雾，海风
-时段=夜
-风=塔顶海风直吹
-光=塔顶铜灯已点亮
-氛围=风硬，铜灯罩嗡嗡响
+地点外貌=铜框信号灯、玻璃罩、火苗、海风直吹；夜雾，海风；夜；塔顶海风直吹；塔顶铜灯已点亮；风硬，铜灯罩嗡嗡响
 人物：
 沈砚｜性格=慢而细，习惯把话咽回去｜外貌=青灰长衫，袖口常沾墨｜随身=油布包、油纸伞、外袍
 可见：
@@ -116,7 +111,7 @@ N3 的句组只以 `G1｜f0 f1 f2` 形式出现；组后时间用 `组后时间=
 | 地点链/外貌 | 权威 `state.locations` 初值＋生效 `appearanceChanges` |
 | 人物性格/外貌/随身 | `state.characters` 初值＋生效变化；物品 `position.containerId` |
 | 可见物 | 容器为当前地点或在场人物的物品 |
-| 天气/时段/风/光/氛围 | 显式 `environment` overlay；缺失即省略并记诊断 |
+| 地点外貌（含天气/时段/风/光/氛围） | `state.locations` 初值＋生效 `appearanceChanges`；当前语料的附加条件是显式 overlay 夹具，生产应由场景/时间系统写入 location appearance；缺失项省略并记诊断 |
 | 视角 | N2 `resolve_perspective` |
 
 `present` 仍只含视角主体＋携带已选事实的实体，不做全员扫描。
@@ -139,7 +134,7 @@ N3 的句组只以 `G1｜f0 f1 f2` 形式出现；组后时间用 `组后时间=
 | `scene-state-invalid` / `scene-location-path-missing` | 场景形状错误 |
 | `perspective-unresolved` | 视角主体无法解析 |
 
-缺失 environment 字段不是错误：省略该行并记录诊断。
+缺失的环境条件不是错误：它们并入地点外貌，缺哪项就省略哪项并记录诊断；N4.0 不再单列天气/时段/风/光/氛围。
 
 ## 回归与证据
 
@@ -155,7 +150,7 @@ python -X utf8 experiments/world-components/n4_narrative_dev/test_pipeline_narra
 - `test_renderer.py`：旧句子格式的 12+12 字节回归，仅证明 legacy 路径未被破坏。
 - `test_pipeline_narrative.py`：N1→N2→N3→N4.0 结构化输入；同时保留 legacy 句子臂对照。
 
-结构化输入真实 tokenizer 统计：**299–402** tokens（12 例），目标 75–99。旧 v2 模型 `max_input=160` 不适用；N4 新训练建议 `max_input=512`、`max_output=128`。预览见 [N4.0 结构化输入预览](n4-narrative-input-packing-preview.md)，证据见 `artifacts/world-components/n4-input-packing-r1.json`。
+结构化输入真实 tokenizer 统计：**287–390** tokens（12 例），目标 75–99。旧 v2 模型 `max_input=160` 不适用；N4 新训练建议 `max_input=512`、`max_output=128`。预览见 [N4.0 结构化输入预览](n4-narrative-input-packing-preview.md)，证据见 `artifacts/world-components/n4-input-packing-r1.json`。
 
 ## 已知缺口
 
@@ -165,7 +160,8 @@ python -X utf8 experiments/world-components/n4_narrative_dev/test_pipeline_narra
 4. **未接 B**：页面、控制器、真实整链仍用旧叙事门与旧 v2 输入。
 5. **随身物品重复**：同一物品同时出现在“随身”和“可见物”；v0 未改，避免破坏旧预览。
 6. **旧句子 renderer 保留**：`renderer.py` 继续服务冻结 v2/v3 模型与字节回归，不是新 N4 输入契约。
-7. **environment overlay 的生产来源未接线**：`time/weather/wind/light/atmosphere` 不在 `WorldState` 里；当前语料的值是审阅夹具。wind 有静态 `windExposure` 依据，其余必须由场景/时间系统或 B/server 显式提供；缺失即省略并记诊断。
+7. **环境条件下沉到地点外貌，生产来源未接线**：`time/weather/wind/light/atmosphere` 不再单列；当前语料把它们并入 `地点外貌`，但值是审阅夹具。生产应由 `LocationState.appearance` 的 `initialAppearance`/`appearanceChanges` 提供，wind 的静态依据是 `windExposure`；B/server 或场景/时间系统写入，缺失条件省略并记诊断。
+8. **9/9 过拟合结果对应合并前的输入**：本次把环境条件并入 `地点外貌` 后输入字节变了；正式训练前需用新输入重跑 9/3 检查，不能把旧 9/9 直接当作新契约证据。
 
 ## 下一步
 

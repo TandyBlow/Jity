@@ -110,6 +110,18 @@ def test_records_not_sentences():
     assert "G1｜f0 f1 f2 f3｜组后时间=过去了一会儿" in text
 
 
+def test_scene_conditions_are_location_appearance():
+    world = _world()
+    case = _case([{"factId": "f0", "kind": "no_change"}])
+    packed = pack_narrative_input(
+        case, _plan((["f0"], None)), world, selected_fact_ids=["f0"])
+    assert packed["status"] == "ok", packed
+    text = packed["input"]
+    assert "地点外貌=湿石板；雨；夜；无；灯；安静" in text
+    for label in ("天气=", "时段=", "风=", "光=", "氛围="):
+        assert label not in text, (label, text)
+
+
 def test_fail_closed():
     world = _world()
     facts = [{"factId": "f0", "kind": "moved", "name": "甲",
@@ -141,7 +153,7 @@ def main():
     count = test_12_case_pack()
     test_records_not_sentences()
     test_fail_closed()
-    print(f"N4.0 packer test: PASS ({count} corpus cases + 2 unit)")
+    print(f"N4.0 packer test: PASS ({count} corpus cases + 3 unit)")
     return 0
 
 

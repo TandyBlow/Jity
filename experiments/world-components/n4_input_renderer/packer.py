@@ -114,15 +114,16 @@ def pack_narrative_input(case, plan, world, selected_fact_ids=None,
         ss, path, appearance, characters, visible = _validate_scene(case, world)
 
         path_names = [_loc_name(world, lid) for lid in path]
-        lines = ["叙事任务。", "场景：",
-                 f"地点={'>'.join(path_names)}",
-                 f"地点外貌={appearance}"]
-        for key, label in (("weather", "天气"), ("time", "时段"),
-                           ("wind", "风"), ("light", "光"),
-                           ("atmosphere", "氛围")):
+        # The scene conditions belong to the location appearance, not to a
+        # separate environment layer: fold them into one 地点外貌 value.
+        appearance_parts = [appearance]
+        for key in ("weather", "time", "wind", "light", "atmosphere"):
             value = ss.get(key)
             if value:
-                lines.append(f"{label}={value}")
+                appearance_parts.append(value)
+        lines = ["叙事任务。", "场景：",
+                 f"地点={'>'.join(path_names)}",
+                 f"地点外貌={'；'.join(appearance_parts)}"]
 
         lines.append("人物：")
         for name, personality, char_appearance, inv in characters:
