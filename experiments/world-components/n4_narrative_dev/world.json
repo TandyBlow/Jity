@@ -5,54 +5,447 @@
  "locations": {
   "loc_alley": {
    "name": "潮生巷",
-   "description": "沿河的窄巷，石板常年潮湿，墙上挂着纸灯笼；夜里能听见排水沟的水声。"
+   "appearance": "沿河窄巷，石板常年潮湿，墙上挂纸灯笼，排水沟有水声；窄巷挡风，夜里灯笼光落在水洼里。",
+   "parentLocationId": null,
+   "levels": 1,
+   "windExposure": "低（窄巷挡风）",
+   "sublocations": [
+    {
+     "id": "loc_alley_street",
+     "name": "巷子",
+     "level": 1,
+     "appearance": "湿石板、纸灯笼、排水沟、墙根、水洼"
+    },
+    {
+     "id": "loc_alley_room",
+     "name": "沈砚的屋子",
+     "level": 1,
+     "appearance": "木桌、抽屉、床沿、蜡烛；窗外雨声"
+    }
+   ],
+   "features": [
+    "石板",
+    "纸灯笼",
+    "排水沟",
+    "墙根",
+    "水洼"
+   ]
   },
   "loc_lighthouse": {
    "name": "旧灯塔",
-   "description": "港口北侧的白色石塔，旋梯狭窄，塔顶有一盏铜框信号灯；海风大时灯罩会嗡嗡响。"
+   "appearance": "白色石塔，外壁盐蚀；海雾天塔身只剩轮廓。石阶从巷侧通向旋梯，再上塔顶；塔顶有铜框信号灯，海风大时灯罩嗡嗡响。",
+   "parentLocationId": null,
+   "levels": 3,
+   "windExposure": "高（塔顶海风直吹）",
+   "sublocations": [
+    {
+     "id": "loc_lighthouse_stairs",
+     "name": "石阶",
+     "level": 1,
+     "appearance": "湿滑石阶，靠海一侧有铁链"
+    },
+    {
+     "id": "loc_lighthouse_spiral",
+     "name": "旋梯",
+     "level": 2,
+     "appearance": "狭窄旋梯，铜框窗，擦铜油味"
+    },
+    {
+     "id": "loc_lighthouse_top",
+     "name": "塔顶",
+     "level": 3,
+     "appearance": "铜框信号灯、玻璃罩、火苗、海风直吹"
+    }
+   ],
+   "features": [
+    "石阶",
+    "旋梯",
+    "塔顶",
+    "铜灯罩",
+    "铁链"
+   ]
   },
   "loc_ferry": {
    "name": "潮渡",
-   "description": "河与海交界处的木栈桥，桩上缠着旧缆绳；雾天只见船灯。"
+   "appearance": "河海交界的木栈桥，木桩缠旧缆绳，雾天只见船灯；桥边石阶通向退潮后的浅滩。",
+   "parentLocationId": null,
+   "levels": 1,
+   "windExposure": "中（河口风）",
+   "sublocations": [
+    {
+     "id": "loc_ferry_pier",
+     "name": "栈桥",
+     "level": 1,
+     "appearance": "木桩、缆绳、船灯、水面"
+    },
+    {
+     "id": "loc_ferry_stairs",
+     "name": "石阶",
+     "level": 1,
+     "appearance": "湿滑石阶，通向浅滩"
+    },
+    {
+     "id": "loc_ferry_shoal",
+     "name": "浅滩",
+     "level": 1,
+     "appearance": "退潮后的泥滩、系泊绳、冷光"
+    }
+   ],
+   "features": [
+    "木桩",
+    "缆绳",
+    "船灯",
+    "水面",
+    "浅滩",
+    "石阶"
+   ]
   },
   "loc_archive": {
    "name": "潮汐档案馆",
-   "description": "低矮的砖房，天窗漏雨，屋里是纸、墨和铜灯的气味。"
+   "appearance": "低矮砖房，天窗漏雨，屋里有纸、墨和铜灯的气味；长桌靠窗，门槛磨得发亮。",
+   "parentLocationId": null,
+   "levels": 1,
+   "windExposure": "无（室内）",
+   "sublocations": [
+    {
+     "id": "loc_archive_desk",
+     "name": "长桌",
+     "level": 1,
+     "appearance": "摊开的潮汐簿、墨、干纸、铜灯、笔"
+    }
+   ],
+   "features": [
+    "天窗",
+    "长桌",
+    "门槛",
+    "铜灯",
+    "潮汐簿",
+    "干纸",
+    "墨",
+    "笔尖"
+   ]
   },
   "loc_seawall": {
    "name": "雾堤",
-   "description": "港口外侧的石堤，浪大时白沫能翻上堤面；堤上有一座雾警钟和一盏警示灯。"
+   "appearance": "港口外侧石堤，浪大时白沫翻上堤面；堤上有石阶、铁链、钟架、雾警钟和警示灯。",
+   "parentLocationId": null,
+   "levels": 1,
+   "windExposure": "高（迎海风）",
+   "sublocations": [
+    {
+     "id": "loc_seawall_top",
+     "name": "堤面",
+     "level": 1,
+     "appearance": "石壁、钟架、钟绳、警示灯、铁皮、白沫"
+    }
+   ],
+   "features": [
+    "石阶",
+    "铁链",
+    "钟架",
+    "钟绳",
+    "雾警钟",
+    "警示灯",
+    "铁皮",
+    "石壁"
+   ]
   },
   "loc_market": {
    "name": "早市",
-   "description": "潮生巷尽头的鱼市，帆布棚、蒸汽、鱼鳞和泥水。"
+   "appearance": "潮生巷尽头的鱼市，帆布棚、蒸汽、鱼鳞、泥水；人流拥挤，白汽不散。",
+   "parentLocationId": null,
+   "levels": 1,
+   "windExposure": "低（棚下）",
+   "sublocations": [
+    {
+     "id": "loc_market_stalls",
+     "name": "摊棚",
+     "level": 1,
+     "appearance": "帆布棚、鱼筐、案板、石板、银鳞鱼、白汽"
+    }
+   ],
+   "features": [
+    "帆布棚",
+    "鱼筐",
+    "案板",
+    "石板",
+    "银鳞鱼",
+    "白汽",
+    "人流"
+   ]
+  }
+ },
+ "items": {
+  "item_oilcloth": {
+   "name": "油布包",
+   "appearance": "深褐色油布，边角磨白",
+   "position": {
+    "holderId": "char_shen"
+   }
+  },
+  "item_wick": {
+   "name": "备用灯芯",
+   "appearance": "一小束浸过油的棉芯，用纸包着",
+   "position": {
+    "containerId": "loc_lighthouse_top"
+   },
+   "afterPosition": {
+    "containerId": "item_lamp_cover"
+   },
+   "state": {
+    "burning": true,
+    "ash": "一小截黑灰"
+   }
+  },
+  "item_lamp_cover": {
+   "name": "铜灯罩",
+   "appearance": "铜框玻璃罩，海风大时会嗡嗡响",
+   "position": {
+    "containerId": "loc_lighthouse_top"
+   },
+   "state": {
+    "lit": true
+   }
+  },
+  "item_rope": {
+   "name": "系泊绳",
+   "appearance": "粗麻绳，沾满泥和盐",
+   "position": {
+    "containerId": "loc_ferry_shoal"
+   },
+   "afterPosition": {
+    "containerId": "loc_ferry_pier"
+   }
+  },
+  "item_mooring_rope": {
+   "name": "缆绳",
+   "appearance": "旧麻缆绳，末端起毛",
+   "position": {
+    "containerId": "loc_ferry_pier"
+   }
+  },
+  "item_key": {
+   "name": "备用钥匙",
+   "appearance": "黄铜钥匙，齿口磨圆",
+   "position": {
+    "containerId": "loc_alley_room"
+   },
+   "afterPosition": {
+    "holderId": "char_shen"
+   }
+  },
+  "item_tidebook": {
+   "name": "潮汐簿",
+   "appearance": "厚纸簿，缺一页，边缘毛糙，页边有旧墨迹",
+   "position": {
+    "containerId": "loc_archive_desk"
+   }
+  },
+  "item_paper": {
+   "name": "干纸",
+   "appearance": "一叠裁好的干纸",
+   "position": {
+    "holderId": "char_atang"
+   },
+   "afterPosition": {
+    "containerId": "loc_archive_desk"
+   }
+  },
+  "item_ink": {
+   "name": "墨",
+   "appearance": "半砚旧墨，墨色发乌",
+   "position": {
+    "containerId": "loc_archive_desk"
+   }
+  },
+  "item_brush": {
+   "name": "笔",
+   "appearance": "细杆毛笔，笔尖开叉",
+   "position": {
+    "containerId": "loc_archive_desk"
+   }
+  },
+  "item_archive_lamp": {
+   "name": "铜灯",
+   "appearance": "铜座台灯，灯罩发暗",
+   "position": {
+    "containerId": "loc_archive_desk"
+   },
+   "state": {
+    "lit": true
+   }
+  },
+  "item_archive_wick": {
+   "name": "灯芯",
+   "appearance": "烧出一小截黑灰的灯芯",
+   "position": {
+    "containerId": "loc_archive_desk"
+   },
+   "state": {
+    "ash": "一小截黑灰"
+   }
+  },
+  "item_tea": {
+   "name": "冷茶",
+   "appearance": "凉透的茶，杯口凝着水汽",
+   "position": {
+    "containerId": "loc_archive_desk"
+   }
+  },
+  "item_candle": {
+   "name": "蜡烛",
+   "appearance": "半截白蜡，火苗很小",
+   "position": {
+    "containerId": "loc_alley_room"
+   },
+   "state": {
+    "lit": true
+   }
+  },
+  "item_oldpaper": {
+   "name": "旧纸",
+   "appearance": "压抽屉底的一层旧纸",
+   "position": {
+    "containerId": "loc_alley_room"
+   }
+  },
+  "item_umbrella": {
+   "name": "油纸伞",
+   "appearance": "旧油纸伞，伞骨有一根修过",
+   "position": {
+    "holderId": "char_shen"
+   }
+  },
+  "item_coat": {
+   "name": "外袍",
+   "appearance": "青灰外袍，下摆容易沾泥水",
+   "position": {
+    "holderId": "char_shen"
+   }
+  },
+  "item_ferry": {
+   "name": "渡船",
+   "appearance": "旧木船，船头挂一盏船灯",
+   "position": {
+    "containerId": "loc_ferry_pier"
+   }
+  },
+  "item_boat_light": {
+   "name": "船灯",
+   "appearance": "黄铜船灯，雾里只剩一团黄",
+   "position": {
+    "containerId": "item_ferry"
+   }
+  },
+  "item_rag": {
+   "name": "抹布",
+   "appearance": "沾了擦铜油的软布",
+   "position": {
+    "containerId": "loc_lighthouse_spiral"
+   }
+  },
+  "item_copper_oil": {
+   "name": "擦铜油",
+   "appearance": "小罐铜油，气味刺鼻",
+   "position": {
+    "containerId": "loc_lighthouse_spiral"
+   }
+  },
+  "item_oilcan": {
+   "name": "油壶",
+   "appearance": "长嘴油壶，壶口有油痕",
+   "position": {
+    "containerId": "loc_lighthouse_spiral"
+   }
+  },
+  "item_fish": {
+   "name": "银鳞鱼",
+   "appearance": "一筐银鳞鱼，鱼尾还在拍",
+   "position": {
+    "containerId": "item_fishbasket"
+   },
+   "afterPosition": {
+    "containerId": "loc_market_stalls"
+   }
+  },
+  "item_fishbasket": {
+   "name": "鱼筐",
+   "appearance": "竹编鱼筐，边沿沾着鱼鳞",
+   "position": {
+    "holderId": "char_atang"
+   },
+   "afterPosition": {
+    "containerId": "loc_market_stalls"
+   }
+  },
+  "item_bell": {
+   "name": "雾警钟",
+   "appearance": "青铜雾警钟，钟架被海盐蚀出白斑",
+   "position": {
+    "containerId": "loc_seawall_top"
+   }
+  },
+  "item_bell_rope": {
+   "name": "钟绳",
+   "appearance": "粗麻钟绳，末端磨得起毛",
+   "position": {
+    "containerId": "loc_seawall_top"
+   }
+  },
+  "item_warning_lamp": {
+   "name": "警示灯",
+   "appearance": "铁皮警示灯，玻璃罩被风吹得发晃",
+   "position": {
+    "containerId": "loc_seawall_top"
+   },
+   "state": {
+    "lit": true
+   }
   }
  },
  "characters": {
   "char_shen": {
    "name": "沈砚",
-   "role": "protagonist",
-   "description": "档案馆的年轻抄写员，做事慢而细，习惯把话咽回去。"
+   "appearance": "青灰长衫，袖口常沾墨；随身带油布包",
+   "personality": "慢而细，习惯把话咽回去",
+   "inventory": [
+    "item_oilcloth",
+    "item_umbrella",
+    "item_coat"
+   ]
   },
   "char_gu": {
    "name": "顾行舟",
-   "role": "ferryman",
-   "description": "潮渡的老船夫，话少，手上都是缆绳磨出的茧。"
+   "appearance": "旧短褂，手上有缆绳磨出的茧",
+   "personality": "话少",
+   "inventory": [
+    "item_mooring_rope"
+   ]
   },
   "char_ye": {
    "name": "叶知微",
-   "role": "lighthouse keeper",
-   "description": "旧灯塔的守灯人，干脆，眼睛很亮。"
+   "appearance": "深蓝工作服，袖口有擦铜油",
+   "personality": "干脆，眼睛很亮",
+   "inventory": [
+    "item_rag",
+    "item_copper_oil",
+    "item_oilcan"
+   ]
   },
   "char_atang": {
    "name": "阿棠",
-   "role": "market apprentice",
-   "description": "早市的学徒，十七岁，手脚快，爱看热闹。"
+   "appearance": "十七岁，辫子，围裙上有鱼鳞",
+   "personality": "手脚快，爱看热闹",
+   "inventory": [
+    "item_paper",
+    "item_fishbasket"
+   ]
   },
   "char_han": {
    "name": "韩渡",
-   "role": "harbor master",
-   "description": "港务管事，年纪大，脾气硬，对雾天的规矩极认真。"
+   "appearance": "旧呢外套，眉毛被雾打湿",
+   "personality": "脾气硬，对雾天的规矩极认真",
+   "inventory": []
   }
  },
  "tasks": {
@@ -105,6 +498,11 @@
    "owner": "char_han",
    "goal": "把雾警钟的绳子系紧",
    "resultText": "把松脱的钟绳重新系紧"
+  },
+  "task_wait": {
+   "owner": "char_shen",
+   "goal": "在潮渡等到最后一班船",
+   "resultText": "在潮渡等到了最后一班船"
   }
  }
 }

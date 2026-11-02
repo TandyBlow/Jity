@@ -28,73 +28,7 @@ HERE = pathlib.Path(__file__).resolve().parent
 REPO = HERE.parent.parent.parent
 DOC = REPO / "design" / "world-engine-reports" / "components" / "n4-narrative-dev.md"
 
-WORLD = {
-    "worldId": "w_fog_harbor",
-    "family": "n4n-fog-harbor",
-    "date": "2026-11-02",
-    "locations": {
-        "loc_alley": {
-            "name": "潮生巷",
-            "description": "沿河的窄巷，石板常年潮湿，墙上挂着纸灯笼；夜里能听见"
-                           "排水沟的水声。"},
-        "loc_lighthouse": {
-            "name": "旧灯塔",
-            "description": "港口北侧的白色石塔，旋梯狭窄，塔顶有一盏铜框信号灯；"
-                           "海风大时灯罩会嗡嗡响。"},
-        "loc_ferry": {
-            "name": "潮渡",
-            "description": "河与海交界处的木栈桥，桩上缠着旧缆绳；雾天只见船灯。"},
-        "loc_archive": {
-            "name": "潮汐档案馆",
-            "description": "低矮的砖房，天窗漏雨，屋里是纸、墨和铜灯的气味。"},
-        "loc_seawall": {
-            "name": "雾堤",
-            "description": "港口外侧的石堤，浪大时白沫能翻上堤面；堤上有一座"
-                           "雾警钟和一盏警示灯。"},
-        "loc_market": {
-            "name": "早市",
-            "description": "潮生巷尽头的鱼市，帆布棚、蒸汽、鱼鳞和泥水。"},
-    },
-    "characters": {
-        "char_shen": {
-            "name": "沈砚", "role": "protagonist",
-            "description": "档案馆的年轻抄写员，做事慢而细，习惯把话咽回去。"},
-        "char_gu": {
-            "name": "顾行舟", "role": "ferryman",
-            "description": "潮渡的老船夫，话少，手上都是缆绳磨出的茧。"},
-        "char_ye": {
-            "name": "叶知微", "role": "lighthouse keeper",
-            "description": "旧灯塔的守灯人，干脆，眼睛很亮。"},
-        "char_atang": {
-            "name": "阿棠", "role": "market apprentice",
-            "description": "早市的学徒，十七岁，手脚快，爱看热闹。"},
-        "char_han": {
-            "name": "韩渡", "role": "harbor master",
-            "description": "港务管事，年纪大，脾气硬，对雾天的规矩极认真。"},
-    },
-    "tasks": {
-        "task_lamp": {"owner": "char_shen", "goal": "把备用灯芯送到塔顶",
-                      "resultText": "换好了塔顶的灯芯"},
-        "task_rope": {"owner": "char_shen", "goal": "找回被潮水冲走的系泊绳",
-                      "resultText": "把系泊绳从浅滩拖了回来"},
-        "task_log": {"owner": "char_shen", "goal": "补全潮汐簿缺页",
-                     "resultText": "把潮汐簿缺的那页补全了"},
-        "task_key": {"owner": "char_shen", "goal": "找到档案库的备用钥匙",
-                     "resultText": "从抽屉底层翻出了备用钥匙"},
-        "task_bell": {"owner": "char_shen", "goal": "把雾警钟敲响",
-                      "resultText": "敲响了雾堤上的雾警钟"},
-        "task_warnlamp": {"owner": "char_shen", "goal": "把堤边的警示灯扶正",
-                          "resultText": "把被风吹歪的警示灯扶正"},
-        "task_paper": {"owner": "char_atang", "goal": "把干纸送到档案馆",
-                       "resultText": "把一叠干纸放在桌角"},
-        "task_fish": {"owner": "char_atang", "goal": "把银鳞鱼搬到案板上",
-                      "resultText": "把一筐银鳞鱼搬上案板"},
-        "task_wipe": {"owner": "char_ye", "goal": "把灯塔的灯罩擦干净",
-                      "resultText": "把灯罩擦得透亮"},
-        "task_bell_rope": {"owner": "char_han", "goal": "把雾警钟的绳子系紧",
-                           "resultText": "把松脱的钟绳重新系紧"},
-    },
-}
+from state_data import WORLD_STATE as WORLD, SCENES
 
 
 def F(fid, kind, eid, name, **kw):
@@ -576,10 +510,15 @@ def check_case(c):
         raise SystemExit(f"{c['id']}: forbidden stat/task wording")
     if "完成了任务" in narrative or "任务达成" in narrative:
         raise SystemExit(f"{c['id']}: task-label wording")
+    for g in c["grounding"]:
+        if g["detail"] not in narrative:
+            raise SystemExit(f"{c['id']}: grounding detail not in narrative: "
+                             f"{g['detail']}")
 
 
 def main() -> int:
     for c in CASES:
+        c.update(SCENES[c["id"]])
         check_case(c)
     world_path = HERE / "world.json"
     corpus_path = HERE / "corpus.jsonl"
@@ -626,6 +565,21 @@ def _write_review_md(world_path, corpus_path):
     world = json.loads(world_path.read_text(encoding="utf-8"))
     cases = [json.loads(l) for l in
              corpus_path.read_text(encoding="utf-8").splitlines() if l.strip()]
+
+    def locname(x):
+        if x in world["locations"]:
+            return world["locations"][x]["name"]
+        for loc in world["locations"].values():
+            for sub in loc.get("sublocations", []):
+                if sub["id"] == x:
+                    return sub["name"]
+        return x
+
+    def itemname(x):
+        return world["items"].get(x, {}).get("name", x)
+
+    def charname(x):
+        return world["characters"].get(x, {}).get("name", x)
     lines = [
         "# N4 叙事开发语料 v0（待审）",
         "",
@@ -652,16 +606,38 @@ def _write_review_md(world_path, corpus_path):
         "理智变化用心理/生理反应表达，不打印数值。外貌/个性变化用可见细节"
         "与行为表达，不打印字段名。",
         "",
+        "本稿把每个具体名词都绑定到世界状态/场景状态/物品表；身体部位（手、"
+        "肩、后背等）属于人物自身，不再单列；比喻（如“金箔”）标注为 "
+        "`narrative.simile`，不作世界事实。场景可覆盖物品位置（`itemOverrides`），"
+        "默认位置见物品表。",
+        "",
         "## 世界",
         "",
     ]
+    lines += ["### 地点", ""]
     for lid, loc in world["locations"].items():
-        lines.append(f"- **{loc['name']}**（{lid}）：{loc['description']}")
-    lines += ["", "人物："]
+        lines.append(f"- **{loc['name']}**（{lid}）：{loc['appearance']}")
+        lines.append(f"  - 小地点：" + "；".join(
+            f"{s['name']}（level {s['level']}，{s['appearance']}）"
+            for s in loc.get("sublocations", [])))
+        lines.append(f"  - 特征：{', '.join(loc.get('features', []))}；"
+                     f"风：{loc.get('windExposure', '-')}")
+    lines += ["", "### 物品", ""]
+    for iid, it in world["items"].items():
+        pos = json.dumps(it.get("position"), ensure_ascii=False)
+        after = ("；after=" + json.dumps(it["afterPosition"],
+                                         ensure_ascii=False)
+                 if it.get("afterPosition") else "")
+        state = ("；state=" + json.dumps(it["state"], ensure_ascii=False)
+                 if it.get("state") else "")
+        lines.append(f"- **{it['name']}**（{iid}）：{it['appearance']}；"
+                     f"position={pos}{after}{state}")
+    lines += ["", "### 人物", ""]
     for cid, ch in world["characters"].items():
-        lines.append(f"- **{ch['name']}**（{cid}，{ch['role']}）："
-                     f"{ch['description']}")
-    lines += ["", "任务（隐藏动机，不可打印）："]
+        lines.append(f"- **{ch['name']}**（{cid}）：{ch['appearance']}；"
+                     f"性格：{ch['personality']}；"
+                     f"inventory={', '.join(ch.get('inventory', [])) or '无'}")
+    lines += ["", "### 任务（隐藏动机，不可打印）", ""]
     for tid, t in world["tasks"].items():
         lines.append(f"- `{tid}`：{t['goal']}（owner {t['owner']}；"
                      f"surface resultText=“{t['resultText']}”）")
@@ -678,15 +654,28 @@ def _write_review_md(world_path, corpus_path):
         for f in c["facts"]:
             lines.append(f"| {f['factId']} | {f['kind']} | "
                          f"{f.get('name') or '-'} | {_fact_line(f)} |")
+        ss = c["sceneState"]
         brief = c["sceneBrief"]
-        lines += ["", "**Scene brief**", "",
-                  f"- 地点：{brief['location']}；时间：{brief['time']}；"
-                  f"天气：{brief['weather']}",
-                  f"- 在场：{', '.join(brief['present'])}；"
-                  f"可用道具：{', '.join(brief['props'])}",
-                  f"- 氛围：{brief['atmosphere']}",
+        path = " → ".join(locname(x) for x in ss["locationPath"])
+        lines += ["", "**Scene state**", "",
+                  f"- 地点路径：{path}",
+                  f"- 时间：{ss['time']}；天气：{ss['weather']}；"
+                  f"风：{ss['wind']}；光：{ss['light']}"
+                  + (f"；水：{ss['water']}" if ss.get("water") else ""),
+                  f"- 在场：{', '.join(charname(x) for x in ss['present'])}；"
+                  f"可见物品：{', '.join(itemname(x) for x in ss['visibleItems']) or '无'}",
+                  f"- 氛围：{ss['atmosphere']}",
+                  (f"- 场景物品覆盖："
+                   + "；".join(f"{itemname(k)} → {json.dumps(v, ensure_ascii=False)}"
+                              for k, v in ss.get("itemOverrides", {}).items())
+                   if ss.get("itemOverrides") else "- 场景物品覆盖：无"),
                   f"- 隐藏动机：{', '.join(brief['hiddenMotivation']) or '无'}",
-                  "", "**Narrative**", "", "> " + c["narrative"], "",
+                  "", "**Grounding（每个具体名词 → 状态）**", "",
+                  "| 细节 | 状态来源 | 值 |",
+                  "| --- | --- | --- |"]
+        for g in c["grounding"]:
+            lines.append(f"| {g['detail']} | {g['source']} | {g['value']} |")
+        lines += ["", "**Narrative**", "", "> " + c["narrative"], "",
                   "**Annotations**", "",
                   "| 文本 | covers | 允许的展开 |",
                   "| --- | --- | --- |"]
@@ -702,6 +691,7 @@ def _write_review_md(world_path, corpus_path):
                   "- [ ] 场景/行为/心理自然",
                   "- [ ] 视角一致",
                   "- [ ] 无理智/外貌/个性/位置数值面板",
+                  "- [ ] 每个具体名词都有状态依据（Grounding 表）",
                   ""]
     lines += ["## 已知缺口（先记录，不在审阅稿里假装完成）", "",
               "1. 当前 N1 没有 `outcome`/`resultText`，任务完成只有 `goal`；"
