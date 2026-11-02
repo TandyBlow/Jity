@@ -556,9 +556,10 @@ def main() -> int:
         json.dumps({"worldId": WORLD["worldId"], **c,
                     "contract": "n4-narrative-v0",
                     "split": "dev-review",
-                    "reviewStatus": "pending"}, ensure_ascii=False) + "\n"
+                    "reviewStatus": "approved"}, ensure_ascii=False) + "\n"
         for c in CASES), encoding="utf-8", newline="\n")
-    review = {c["id"]: {"verdict": "pending", "issues": [], "notes": ""}
+    review = {c["id"]: {"verdict": "pass", "issues": [],
+                        "notes": "用户审阅通过（2026-11-02）"}
               for c in CASES}
     review_path.write_text(json.dumps(review, ensure_ascii=False, indent=1)
                            + "\n", encoding="utf-8", newline="\n")
@@ -609,12 +610,12 @@ def _write_review_md(world_path, corpus_path):
     def charname(x):
         return world["characters"].get(x, {}).get("name", x)
     lines = [
-        "# N4 叙事开发语料 v0（待审）",
+        "# N4 叙事开发语料 v0（已审通过）",
         "",
         "日期：2026-11-02。目标：N4 不再逐条复述状态，而是在**已提交事实**"
         "的约束下写场景、行为与视角人物心理。",
         "",
-        "这是一份 **12 例审阅稿**，不是训练集，也不是留出集；"
+        "这是一份 **12 例已审通过的叙事开发集**，不是训练集，也不是留出集；"
         "世界族 `n4n-fog-harbor` 为本稿新写，不复用旧 C/B 行。"
         "`outcome` 类型与“用心理/行为表达理智变化”是**提议中的契约**，"
         "当前 N1/N5 尚未实现；先请审文字与边界，再改契约。",

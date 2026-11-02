@@ -406,7 +406,7 @@
  "characters": {
   "char_shen": {
    "name": "沈砚",
-   "appearance": "青灰长衫，袖口常沾墨；随身带油布包",
+   "appearance": "青灰长衫，袖口常沾墨",
    "personality": "慢而细，习惯把话咽回去",
    "inventory": [
     "item_oilcloth",

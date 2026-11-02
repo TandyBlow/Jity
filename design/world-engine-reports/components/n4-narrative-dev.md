@@ -1,8 +1,8 @@
-# N4 叙事开发语料 v0（待审）
+# N4 叙事开发语料 v0（已审通过）
 
 日期：2026-11-02。目标：N4 不再逐条复述状态，而是在**已提交事实**的约束下写场景、行为与视角人物心理。
 
-这是一份 **12 例审阅稿**，不是训练集，也不是留出集；世界族 `n4n-fog-harbor` 为本稿新写，不复用旧 C/B 行。`outcome` 类型与“用心理/行为表达理智变化”是**提议中的契约**，当前 N1/N5 尚未实现；先请审文字与边界，再改契约。
+这是一份 **12 例已审通过的叙事开发集**，不是训练集，也不是留出集；世界族 `n4n-fog-harbor` 为本稿新写，不复用旧 C/B 行。`outcome` 类型与“用心理/行为表达理智变化”是**提议中的契约**，当前 N1/N5 尚未实现；先请审文字与边界，再改契约。
 
 ## 允许 / 禁止
 
@@ -73,7 +73,7 @@
 
 ### 人物
 
-- **沈砚**（char_shen）：青灰长衫，袖口常沾墨；随身带油布包；性格：慢而细，习惯把话咽回去；inventory=item_oilcloth, item_umbrella, item_coat
+- **沈砚**（char_shen）：青灰长衫，袖口常沾墨；性格：慢而细，习惯把话咽回去；inventory=item_oilcloth, item_umbrella, item_coat
 - **顾行舟**（char_gu）：旧短褂，手上有缆绳磨出的茧；性格：话少；inventory=item_mooring_rope
 - **叶知微**（char_ye）：深蓝工作服，袖口有擦铜油；性格：干脆，眼睛很亮；inventory=item_rag, item_copper_oil, item_oilcan
 - **阿棠**（char_atang）：十七岁，辫子，围裙上有鱼鳞；性格：手脚快，爱看热闹；inventory=item_paper, item_fishbasket
@@ -122,7 +122,7 @@
 
 | 角色 | 个性（读取） | 外貌（读取） | inventory |
 | --- | --- | --- | --- |
-| 沈砚 | 慢而细，习惯把话咽回去 | 青灰长衫，袖口常沾墨；随身带油布包 | item_oilcloth, item_umbrella, item_coat |
+| 沈砚 | 慢而细，习惯把话咽回去 | 青灰长衫，袖口常沾墨 | item_oilcloth, item_umbrella, item_coat |
 
 本场使用（可无；只影响可见行为，不写他人内心）：
 
@@ -195,7 +195,7 @@
 
 | 角色 | 个性（读取） | 外貌（读取） | inventory |
 | --- | --- | --- | --- |
-| 沈砚 | 慢而细，习惯把话咽回去 | 青灰长衫，袖口常沾墨；随身带油布包 | item_oilcloth, item_umbrella, item_coat |
+| 沈砚 | 慢而细，习惯把话咽回去 | 青灰长衫，袖口常沾墨 | item_oilcloth, item_umbrella, item_coat |
 
 本场使用（可无；只影响可见行为，不写他人内心）：
 
@@ -268,7 +268,7 @@
 
 | 角色 | 个性（读取） | 外貌（读取） | inventory |
 | --- | --- | --- | --- |
-| 沈砚 | 慢而细，习惯把话咽回去 | 青灰长衫，袖口常沾墨；随身带油布包 | item_oilcloth, item_umbrella, item_coat |
+| 沈砚 | 慢而细，习惯把话咽回去 | 青灰长衫，袖口常沾墨 | item_oilcloth, item_umbrella, item_coat |
 | 顾行舟 | 话少 | 旧短褂，手上有缆绳磨出的茧 | item_mooring_rope |
 
 本场使用（可无；只影响可见行为，不写他人内心）：
@@ -342,7 +342,7 @@
 
 | 角色 | 个性（读取） | 外貌（读取） | inventory |
 | --- | --- | --- | --- |
-| 沈砚 | 慢而细，习惯把话咽回去 | 青灰长衫，袖口常沾墨；随身带油布包 | item_oilcloth, item_umbrella, item_coat |
+| 沈砚 | 慢而细，习惯把话咽回去 | 青灰长衫，袖口常沾墨 | item_oilcloth, item_umbrella, item_coat |
 | 阿棠 | 手脚快，爱看热闹 | 十七岁，辫子，围裙上有鱼鳞 | item_paper, item_fishbasket |
 
 本场使用（可无；只影响可见行为，不写他人内心）：
@@ -417,7 +417,7 @@
 
 | 角色 | 个性（读取） | 外貌（读取） | inventory |
 | --- | --- | --- | --- |
-| 沈砚 | 慢而细，习惯把话咽回去 | 青灰长衫，袖口常沾墨；随身带油布包 | item_oilcloth, item_umbrella, item_coat |
+| 沈砚 | 慢而细，习惯把话咽回去 | 青灰长衫，袖口常沾墨 | item_oilcloth, item_umbrella, item_coat |
 
 本场使用（可无；只影响可见行为，不写他人内心）：
 
@@ -489,7 +489,7 @@
 
 | 角色 | 个性（读取） | 外貌（读取） | inventory |
 | --- | --- | --- | --- |
-| 沈砚 | 慢而细，习惯把话咽回去 | 青灰长衫，袖口常沾墨；随身带油布包 | item_oilcloth, item_umbrella, item_coat |
+| 沈砚 | 慢而细，习惯把话咽回去 | 青灰长衫，袖口常沾墨 | item_oilcloth, item_umbrella, item_coat |
 
 本场使用（可无；只影响可见行为，不写他人内心）：
 
@@ -561,7 +561,7 @@
 
 | 角色 | 个性（读取） | 外貌（读取） | inventory |
 | --- | --- | --- | --- |
-| 沈砚 | 慢而细，习惯把话咽回去 | 青灰长衫，袖口常沾墨；随身带油布包 | item_oilcloth, item_umbrella, item_coat |
+| 沈砚 | 慢而细，习惯把话咽回去 | 青灰长衫，袖口常沾墨 | item_oilcloth, item_umbrella, item_coat |
 
 本场使用（可无；只影响可见行为，不写他人内心）：
 
@@ -631,7 +631,7 @@
 
 | 角色 | 个性（读取） | 外貌（读取） | inventory |
 | --- | --- | --- | --- |
-| 沈砚 | 慢而细，习惯把话咽回去 | 青灰长衫，袖口常沾墨；随身带油布包 | item_oilcloth, item_umbrella, item_coat |
+| 沈砚 | 慢而细，习惯把话咽回去 | 青灰长衫，袖口常沾墨 | item_oilcloth, item_umbrella, item_coat |
 | 阿棠 | 手脚快，爱看热闹 | 十七岁，辫子，围裙上有鱼鳞 | item_paper, item_fishbasket |
 
 本场使用（可无；只影响可见行为，不写他人内心）：
@@ -708,7 +708,7 @@
 
 | 角色 | 个性（读取） | 外貌（读取） | inventory |
 | --- | --- | --- | --- |
-| 沈砚 | 慢而细，习惯把话咽回去 | 青灰长衫，袖口常沾墨；随身带油布包 | item_oilcloth, item_umbrella, item_coat |
+| 沈砚 | 慢而细，习惯把话咽回去 | 青灰长衫，袖口常沾墨 | item_oilcloth, item_umbrella, item_coat |
 | 叶知微 | 干脆，眼睛很亮 | 深蓝工作服，袖口有擦铜油 | item_rag, item_copper_oil, item_oilcan |
 
 本场使用（可无；只影响可见行为，不写他人内心）：
@@ -783,7 +783,7 @@
 
 | 角色 | 个性（读取） | 外貌（读取） | inventory |
 | --- | --- | --- | --- |
-| 沈砚 | 慢而细，习惯把话咽回去 | 青灰长衫，袖口常沾墨；随身带油布包 | item_oilcloth, item_umbrella, item_coat |
+| 沈砚 | 慢而细，习惯把话咽回去 | 青灰长衫，袖口常沾墨 | item_oilcloth, item_umbrella, item_coat |
 
 本场使用（可无；只影响可见行为，不写他人内心）：
 
@@ -855,7 +855,7 @@
 
 | 角色 | 个性（读取） | 外貌（读取） | inventory |
 | --- | --- | --- | --- |
-| 沈砚 | 慢而细，习惯把话咽回去 | 青灰长衫，袖口常沾墨；随身带油布包 | item_oilcloth, item_umbrella, item_coat |
+| 沈砚 | 慢而细，习惯把话咽回去 | 青灰长衫，袖口常沾墨 | item_oilcloth, item_umbrella, item_coat |
 | 韩渡 | 脾气硬，对雾天的规矩极认真 | 旧呢外套，眉毛被雾打湿 | 无 |
 
 本场使用（可无；只影响可见行为，不写他人内心）：
@@ -934,7 +934,7 @@
 
 | 角色 | 个性（读取） | 外貌（读取） | inventory |
 | --- | --- | --- | --- |
-| 沈砚 | 慢而细，习惯把话咽回去 | 青灰长衫，袖口常沾墨；随身带油布包 | item_oilcloth, item_umbrella, item_coat |
+| 沈砚 | 慢而细，习惯把话咽回去 | 青灰长衫，袖口常沾墨 | item_oilcloth, item_umbrella, item_coat |
 | 顾行舟 | 话少 | 旧短褂，手上有缆绳磨出的茧 | item_mooring_rope |
 
 本场使用（可无；只影响可见行为，不写他人内心）：
