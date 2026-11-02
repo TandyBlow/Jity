@@ -19,11 +19,12 @@ sys.path.insert(0, str(HERE))
 import n2_perspective as n2  # noqa: E402
 import n3_organize as n3  # noqa: E402
 import narration_pipeline as np  # noqa: E402
+import build_scene_context as bsc  # noqa: E402
 import render_narrative as rn  # noqa: E402
 
 
-def run_narrative_pipeline(point, before, perspective, scene_context, world,
-                           may_policy="select"):
+def run_narrative_pipeline(point, before, perspective, scene_context=None,
+                           world=None, environment=None, may_policy="select"):
     out = {"pointId": point.get("pointId"),
            "version": point.get("version"),
            "chain": "narrative-n4"}
@@ -81,8 +82,24 @@ def run_narrative_pipeline(point, before, perspective, scene_context, world,
     out["n3"] = {"status": "ok", "groups": len(plan["sentences"]),
                  "plan": plan, "selectedFacts": selected}
 
+    if scene_context is None:
+        built = bsc.build_scene_context(
+            point.get("state") or {}, persp, selected, environment)
+        if built.get("status") != "ok":
+            out.update(status="incomplete", reason=built.get("reason"),
+                       diagnostics=built.get("diagnostics"))
+            return out
+        scene_context = built["sceneContext"]
+        if world is None:
+            world = built["worldView"]
+        out["sceneContext"] = scene_context
+        out["sceneDiagnostics"] = built.get("diagnostics", [])
+    if world is None:
+        out.update(status="incomplete", reason="world-view-missing")
+        return out
     case = {"facts": n1["facts"],
-            "perspective": {"entityId": persp["entityId"]},
+            "perspective": scene_context.get("perspective")
+            or {"entityId": persp["entityId"]},
             "sceneState": scene_context["sceneState"],
             "characterContext": scene_context["characterContext"]}
     try:

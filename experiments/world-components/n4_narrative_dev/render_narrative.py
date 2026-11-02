@@ -87,8 +87,12 @@ def _context_lines(case, world):
     deepest = ss["locationPath"][-1]
     appearance = _loc_appearance(world, deepest)
     lines = ["叙事任务。"]
-    lines.append(f"场景：{path}。{appearance}。"
-                 f"天气：{ss['weather']}。时间：{ss['time']}。")
+    scene = f"场景：{path}。{appearance}。"
+    if ss.get("weather"):
+        scene += f"天气：{ss['weather']}。"
+    if ss.get("time"):
+        scene += f"时间：{ss['time']}。"
+    lines.append(scene)
     for cc in case.get("characterContext", []):
         inv = "、".join(_item_name(world, x)
                         for x in cc.get("inventory", [])) or "无"
