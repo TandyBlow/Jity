@@ -1,0 +1,17 @@
+{
+ "scope": "relative elevation for N4.0 direction words; 0 is the lowest local level",
+ "w_fog_harbor": {
+  "潮生巷": 1,
+  "潮渡": 0,
+  "旧灯塔": 1,
+  "潮汐档案馆": 1,
+  "雾堤": 2,
+  "早市": 1
+ },
+ "w_snow_pass": {
+  "云关驿": 1,
+  "雪溪": 0,
+  "风口岭": 2,
+  "望雪台": 3
+ }
+}

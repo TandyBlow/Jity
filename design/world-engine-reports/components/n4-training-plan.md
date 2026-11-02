@@ -193,3 +193,24 @@ loss 从 22 例 pilot 的 holdout 6.3927 降到 2.7521，但不是因为学会�
 - 覆盖判据只查“名字是否出现”，不查“名字是不是动作主体”；候选池里可能根本没有正确绑定，重排救不了。
 
 **结论：token copy 和 coverage 重排都不是解。** 下一步先查是否只是欠拟合：120 epochs 时 train 只有 59/100 逐字，继续用同一 100/8/12 跑 240 epochs；若 train 能拟合而 dev/holdout 仍 0，再转 fact verbalizer/plan 或多世界数据/更强骨干。
+
+## 12. 240 epochs 欠拟合检查（2026-11-02）
+
+同一 100/8/12，固定 240 epochs。报告：`artifacts/world-components/n4-formal240-r1.json`。
+
+| epochs | train loss | train 逐字 | dev loss | dev 逐字 | holdout loss | holdout 逐字 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 120 | 0.0203 | 59/100 | 2.1682 | 0/8 | 2.7521 | 0/12 |
+| 240 | 0.0073 | **79/100** | 2.9329 | 0/8 | 3.5684 | 0/12 |
+
+- train 拟合继续上升（59→79），但 dev/holdout 仍 0，loss 反而变差；不是“再训久一点就好”。
+- 端到端 77M T5 + 100 条同世界样本的路线到此为止：token copy、coverage 重排、加 epochs 都没有解决事实绑定。
+
+**下一步转组件拆分，先做 fact verbalizer：**
+
+1. 以单条 fact + 场景/视角为输入，模型只写一个受约束短句（主体、动作/结果、方向/对象）；不做整段叙事。
+2. 短句输出做 phrase-level copy/coverage 核对；不过关即重生/停机，不进入整段。
+3. N3 组织短句，再由轻量 scene composer 加场景/心理；composer 不允许新增事实主体。
+4. 先用现有 120 条目标反向切出 fact→短句对，人工抽验；再训练。若 fact verbalizer 仍不能稳定绑定，再考虑多世界数据或更强骨干。
+
+不再用同世界 loss、token copy 或 coverage 重排当进展。
