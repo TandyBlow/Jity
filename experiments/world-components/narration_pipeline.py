@@ -198,11 +198,18 @@ def _after_entity(state: dict, eid: str):
     return None
 
 
-def extract_facts(point: dict, before: dict | None) -> dict:
+def extract_facts(point: dict, before: dict | None,
+                  narrative_outcome: bool = False) -> dict:
     """N1: enumerate fact entries from the ORIGINAL entityDeltas + time.
     Returns {"facts": [...], "diagnostics": [...]} — diagnostics record
     everything that cannot be determined or expressed as a fact, so nothing
-    is dropped silently and the success path can be stopped."""
+    is dropped silently and the success path can be stopped.
+
+    narrative_outcome=True emits the surface `outcome` + `resultText` for a
+    completed task instead of the internal `task_achieved` + goal. Missing
+    resultText is a blocking `task-outcome-unavailable` diagnostic: the
+    N4 narrative path must stop, never fall back to printing the goal. The
+    default False keeps the frozen v2 task_achieved contract."""
     state = point.get("state") or {}
     deltas = point.get("entityDeltas") or {}
     facts, diagnostics = [], []
@@ -381,9 +388,24 @@ def extract_facts(point: dict, before: dict | None) -> dict:
                 diagnostics.append({"code": "task-unresolvable",
                                     "entityId": eid, "taskId": tid})
                 continue
-            add({"kind": "task_achieved", "entityId": eid, "name": name,
-                 "goal": task["goal"], "at": location_of(live_after),
-                 "source": {"entityId": eid, "taskId": tid}})
+            if narrative_outcome:
+                result_text = task.get("resultText")
+                if not isinstance(result_text, str) or not result_text.strip():
+                    diagnostics.append({
+                        "code": "task-outcome-unavailable",
+                        "entityId": eid, "taskId": tid,
+                        "reason": "完成的 task 没有 resultText；N4 叙事路径"
+                                  "必须停止，不能退回打印 task goal"})
+                    continue
+                add({"kind": "outcome", "entityId": eid, "name": name,
+                     "goal": task["goal"], "resultText": result_text.strip(),
+                     "taskId": tid, "at": location_of(live_after),
+                     "source": {"entityId": eid, "taskId": tid,
+                                "field": "tasksAchieved"}})
+            else:
+                add({"kind": "task_achieved", "entityId": eid, "name": name,
+                     "goal": task["goal"], "at": location_of(live_after),
+                     "source": {"entityId": eid, "taskId": tid}})
         for t in d.get("subtasksAdded") or []:
             # new subtasks are now EXPRESSIBLE: the fact quotes the task
             # goal and the parent goal resolved from the state
@@ -494,7 +516,7 @@ INCOMPLETE_DIAGNOSTIC_CODES = {
     "no-op-position-change", "unknown-position-field",
     "origin-unresolvable", "relative-target-unresolvable",
     "slot-unresolvable", "superseded-change-unresolvable",
-    "subtask-parent-unresolvable",
+    "subtask-parent-unresolvable", "task-outcome-unavailable",
 }
 
 
@@ -713,7 +735,8 @@ def bind_point_full(point: dict, before: dict | None, manifest: list) -> list:
 
 def select_facts(facts: list, perspective: dict, arm: str = "perspective-rule",
                  may_policy: str = "select", subject_tasks: dict | None = None,
-                 selected_ids: list | None = None) -> dict:
+                 selected_ids: list | None = None,
+                 visible_other_actions: bool = False) -> dict:
     """N2 interface. The default arm is the REAL perspective rule
     (n2_perspective.classify_facts): every fact is classified must / may /
     invisible with a recorded visibility ground, wired to the authoritative
@@ -749,9 +772,10 @@ def select_facts(facts: list, perspective: dict, arm: str = "perspective-rule",
                           "perspective rule, the labelled select-all "
                           "baseline and validated manual selections",
                 "selectedFactIds": [], "invalidReferences": []}
-    result = n2_perspective.classify_facts(facts, perspective,
-                                           subject_tasks=subject_tasks,
-                                           may_policy=may_policy)
+    result = n2_perspective.classify_facts(
+        facts, perspective, subject_tasks=subject_tasks,
+        may_policy=may_policy,
+        visible_other_actions=visible_other_actions)
     result["arm"] = arm
     result["invalidReferences"] = [x for x in result.get("selectedFactIds", [])
                                    if x not in valid]
@@ -848,7 +872,8 @@ def run_pipeline_v2(point: dict, before: dict | None, perspective,
                     may_policy: str = "omit",
                     gender_hints: dict | None = None,
                     cross_group_guard: bool = True,
-                    real_tok=None) -> dict:
+                    real_tok=None,
+                    visible_other_actions: bool = False) -> dict:
     """The v2 chain: N1 -> N2 (perspective rule) -> N3 (plan_v3: groups,
     appellations, time attribution) -> N4v2 (render_v2 + the REAL-token
     gate). The MODEL call itself stays with the composition runner; this
@@ -897,7 +922,8 @@ def run_pipeline_v2(point: dict, before: dict | None, perspective,
         subject_tasks = ((point.get("state") or {}).get("characters")
                          or {}).get(persp["entityId"], {}).get("tasks")
     n2 = select_facts(n1["facts"], persp, may_policy=may_policy,
-                      subject_tasks=subject_tasks)
+                      subject_tasks=subject_tasks,
+                      visible_other_actions=visible_other_actions)
     out["n2"] = {"arm": n2.get("arm"), "status": n2["status"],
                  "mayPolicy": n2.get("mayPolicy"),
                  "summary": n2.get("summary"),

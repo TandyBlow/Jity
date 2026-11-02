@@ -102,9 +102,18 @@ def _context_lines(case, world):
     return lines
 
 
-def _tail_lines():
+def _pov_name(case, world):
+    eid = (case.get("perspective") or {}).get("entityId")
+    if not eid and case.get("characterContext"):
+        eid = case["characterContext"][0].get("entityId")
+    if eid:
+        return world.get("characters", {}).get(eid, {}).get("name", eid)
+    return "沈砚"
+
+
+def _tail_lines(pov):
     return [
-        "视角：沈砚（第三人称限知）；只写沈砚的内心，他人只写可见动作。",
+        f"视角：{pov}（第三人称限知）；只写{pov}的内心，他人只写可见动作。",
         "要求：不要写任务标题、数值面板、具体时长、"
         "‘性格/外貌’字段名；不要新增未列出的具名人物/物品/地点。",
         "正文：",
@@ -126,7 +135,7 @@ def render_input(case, world):
             lines.append(f"{n}. {line}")
     if has_time:
         lines.append("时间：过去了一会儿（不写具体时长）。")
-    lines.extend(_tail_lines())
+    lines.extend(_tail_lines(_pov_name(case, world)))
     return "\n".join(lines)
 
 
@@ -154,7 +163,7 @@ def render_plan_input(case, plan, world):
             lines.append("这一组之后，过去了一会儿（不写具体时长）。")
     if not has_group_time and any(f["kind"] == "time" for f in case["facts"]):
         lines.append("时间：过去了一会儿（不写具体时长）。")
-    lines.extend(_tail_lines())
+    lines.extend(_tail_lines(_pov_name(case, world)))
     return "\n".join(lines)
 
 def main():

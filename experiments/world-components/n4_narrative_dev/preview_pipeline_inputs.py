@@ -115,7 +115,9 @@ def main() -> int:
         "# N4 管线输入预览 v0（已审通过语料）",
         "",
         "日期：2026-11-02。语料已审通过；本文件验证 **N2 → N3 → N4 输入**"
-        " 的真实链路，不训练、不调用模型。",
+        " 的真实链路，不训练、不调用模型。N1 的 `outcome/resultText` 已在"
+        " `narrative_outcome=True` 下实现（缺 resultText 停机，见 "
+        "`n4-narrative-runner.md`）；本预览仍用已审 facts 验证 N2/N3/N4。",
         "",
         "## 链路",
         "",
