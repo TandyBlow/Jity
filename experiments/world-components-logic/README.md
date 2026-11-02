@@ -69,3 +69,16 @@ python3 experiments/world-components-logic/m01_report.py --check
 ```
 
 查看`artifacts/world-components-logic/l3-5-m01-results.html`与机器汇总。实际执行需要先按新run-id冻结计划、固定模型/数据/环境，`--execute`会真实消耗CPU；不得复用旧记录或拿缓存特征签推理速度。拟合与推理均有单线程、120秒/2048MiB监督，所有中断与未启动项分开。
+
+## 2026-11-02：完整场景共享编码与候选融合
+
+`m01_shared.py`保留原代码与记录，新增完整事实共享编码、逐事实token池和可学习候选条件注意力；新两头180,418参数，骨干冻结。20旧开发组仍16拟合/4保留，但保留答案已公开，不能称未见留出；新90组训练0。r1在`ps`监测权限处停止、40项未启动，原监督漏slot记录与源码保留，修后回归可区分双臂同题中断。r2原学习率0.01拟合塌缩，r3按独立纠正附批改0.0003，均200步/头和阈值0.5；旧臂原检查点不再训练。
+
+两批各40项交替计时，新旧每臂每题5次；完整重新分词/编码，不用计时缓存。r3目标12窗→4窗，约493–503→199–207ms；行动略慢约186–188ms。新头拟合两任务均8/8，保留D02为2/2、D03仍1/2：开闸不再漏人，空目标题反而误选两人。不是质量或速度通过，也不能把头本身的耗时当整项推理。完整D02–D05协同、500ms、浏览器/生产仍未测。
+
+查看`artifacts/world-components-logic/l3-6-m01-shared-results.html`及对应汇总。r1/r2执行源码固定在`m01-fitting/code/`；r3源码SHA绑定本次代码。四份大记录使用gzip原字节归档，解压到原`.record.json`/`.record.windows.jsonl`路径即可核查；原始副本/权重在D的`.local/`忽略目录。报告检查与测试不导入Torch、不需要本地权重；历史运行必须恢复对应源码、模型和环境并登记新的run-id，禁止覆盖原证据。
+
+```bash
+python3 -m unittest discover -s experiments/world-components-logic/tests -p 'test_m01_shared*.py'
+python3 experiments/world-components-logic/m01_shared_report.py --check
+```
