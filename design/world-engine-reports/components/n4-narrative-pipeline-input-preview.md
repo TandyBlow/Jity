@@ -2,6 +2,8 @@
 
 日期：2026-11-02。语料已审通过；本文件验证 **N2 → N3 → N4 输入** 的真实链路，不训练、不调用模型。N1 的 `outcome/resultText` 已在 `narrative_outcome=True` 下实现（缺 resultText 停机，见 `n4-narrative-runner.md`）；本预览仍用已审 facts 验证 N2/N3/N4。
 
+> **编号迁移（2026-11-02）：** 当前 N4=叙事输入渲染（[契约](n4-input-renderer.md)），旧 N4 成句=N5，旧 N5 核对=N6。本预览的 N4 指输入渲染；选择臂服务于 N5。
+
 ## 链路
 
 1. 已审 facts（N1 形状；`outcome` 是表面行动结果，不是任务 goal）；
@@ -9,7 +11,7 @@
 3. N3 `plan_v3` + `check_plan_v3`；
 4. N4 `render_plan_input`。
 
-`visible_other_actions` 是新增的 N4 叙事选择臂：他人在同地的可见移动/行动结果/可见变化是 `may`；他人的任务 goal/status 和内心状态仍然不可见。旧 v2 臂不传此参数，行为不变。
+`visible_other_actions` 是新增的 N5 叙事选择臂：他人在同地的可见移动/行动结果/可见变化是 `may`；他人的任务 goal/status 和内心状态仍然不可见。旧 v2 臂不传此参数，行为不变。
 
 ## N2 选择臂自检
 

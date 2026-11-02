@@ -1,0 +1,64 @@
+{
+ "component": "N4",
+ "name": "narrative input renderer",
+ "version": "n4-input-renderer-v0.1",
+ "date": "2026-11-02",
+ "parentCommit": "483259ceac1ebb3bf518f97535c8a2b8d6d7d1e9",
+ "numbering": {
+  "N4": "input-render",
+  "N5": "generation (old N4)",
+  "N6": "verification (old N5)"
+ },
+ "regression": {
+  "groupedCases": 12,
+  "flatCases": 12,
+  "byteIdentical": true
+ },
+ "units": [
+  "test_missing_environment_is_omitted",
+  "test_time_amount_never_rendered",
+  "test_global_time_fallback",
+  "test_goal_never_rendered",
+  "test_plan_order_is_authoritative",
+  "test_fail_closed",
+  "test_orchestrator_and_determinism"
+ ],
+ "failClosedCodes": [
+  "plan-shape-invalid",
+  "plan-unknown-fact",
+  "duplicate-fact",
+  "selected-unknown-fact",
+  "plan-coverage-mismatch",
+  "unsupported-fact-kind",
+  "outcome-result-missing",
+  "missing-field",
+  "world-location-missing",
+  "world-location-appearance-missing",
+  "world-item-missing",
+  "world-item-appearance-missing",
+  "world-character-missing",
+  "character-name-missing",
+  "character-personality-missing",
+  "character-appearance-missing",
+  "scene-location-path-missing",
+  "perspective-unresolved"
+ ],
+ "notes": [
+  "Grouped and flat previews are byte-identical to the approved 12-case corpus before the N4 extraction.",
+  "No model call; the renderer is deterministic and program-only.",
+  "Old dev files render_narrative.py/build_scene_context.py are compatibility shims over this component.",
+  "Known gaps: wind/light/atmosphere not rendered; held items are also listed as visible; WorldState.Task has no resultText yet."
+ ],
+ "sources": {
+  "experiments/world-components/n4_input_renderer/renderer.py": "520df42ab03052f665ef6513669d6edc9cc56b0f742cda5d1b76c47dbe60a583",
+  "experiments/world-components/n4_input_renderer/scene_context.py": "3edd636483076ded13723f8dc0f551e09f6cc060c8e379f0184888e59a9e53c8",
+  "experiments/world-components/n4_input_renderer/test_renderer.py": "235975dfbedfdda879f453b750adbe7b9c9df74a05aaa5840b09f9277a15df36",
+  "experiments/world-components/n4_narrative_dev/render_narrative.py": "9a6e705ec80aacc7b09a3c7d48314e160c8ca323b6467efe13b2240eda4f5713",
+  "experiments/world-components/n4_narrative_dev/build_scene_context.py": "b62fae4831c2e106d9250e72c3119c22ad696d108d29dc9b42e8850d14f113cb",
+  "experiments/world-components/n4_narrative_dev/corpus.jsonl": "238ee163c2368ed109fa3412ffd7c9878e75a6bb10b1c50a684a68c1f0992bac",
+  "experiments/world-components/n4_narrative_dev/world.json": "f096f5bdb7539f5b1b3b71eb49bd43b6b1ad53b4fa2ec186ae4b54e00ec6d35c",
+  "experiments/world-components/n4_narrative_dev/pipeline_preview.json": "b1bfa7aabfd1075ebecb9cd2fb2f5bdb3b8c2e21f635d69dd0c8b1cc26cbbf89",
+  "experiments/world-components/n4_narrative_dev/input_preview.json": "6585e93bcbb44da06a449dd5281d004bb6caa0f89b9a7afb8d6ccbf2a4250cb2",
+  "design/world-engine-reports/components/n4-input-renderer.md": "ff582db4e32c4e2c46838c1cab9b13238a6136563734370cf807c2e8445692a9"
+ }
+}

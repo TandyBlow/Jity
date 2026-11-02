@@ -1,6 +1,6 @@
-# Render the approved N4 narrative cases and report input/target lengths.
+# Render the approved N4 cases and report input/target lengths.
 # This is a contract preview, not training:
-#   - input = render_narrative.render_input (scene + character personality +
+#   - input = N4 formal renderer (scene + character personality +
 #     visible items + facts; time internal/vague; no task goals/IDs);
 #   - target = the approved narrative;
 #   - token counts use the real T5Tokenizer from ckpt-v2 (legacy=False).
@@ -16,8 +16,9 @@ HERE = pathlib.Path(__file__).resolve().parent
 WC = HERE.parent
 REPO = WC.parent.parent
 sys.path.insert(0, str(HERE))
+sys.path.insert(0, str(WC))
 
-import render_narrative  # noqa: E402
+import n4_input_renderer as n4r  # noqa: E402
 
 DOC = REPO / "design" / "world-engine-reports" / "components" / \
     "n4-narrative-input-preview.md"
@@ -28,13 +29,13 @@ def main() -> int:
     from transformers.models.t5.tokenization_t5 import T5Tokenizer
     tok = T5Tokenizer.from_pretrained(
         str(WC / "n4_corpus_v2" / "ckpt-v2"), legacy=False)
-    world = render_narrative.load_world()
+    world = json.loads((HERE / "world.json").read_text(encoding="utf-8"))
     cases = [json.loads(l) for l in
              (HERE / "corpus.jsonl").read_text(encoding="utf-8").splitlines()
              if l.strip()]
     rows = []
     for c in cases:
-        text = render_narrative.render_input(c, world)
+        text = n4r.render_input(c, world)
         rows.append({
             "id": c["id"], "title": c["title"],
             "input": text, "target": c["narrative"],
@@ -53,6 +54,10 @@ def main() -> int:
         "契约**，不训练、不调用模型。这是直接读 facts 的简单预览；"
         "N2→N3→N4 的真管线版见 `n4-narrative-pipeline-input-preview.md`。",
         "",
+        "> **编号迁移（2026-11-02）：** 现 N4=叙事输入渲染"
+        "（[契约](n4-input-renderer.md)）；文中“当前 v2 N4”指旧成句模型，"
+        "现为 N5。正文保留旧编号。",
+        "",
         "输入包含：场景/地点外貌、天气、时间（只到时段）、可见物、在场人物"
         "的性格/外貌/随身物、这一拍的事实约束。任务 goal/ID 不进入输入；"
         "结果只写 `resultText`；理智只给方向（松/沉），不给数值；时间只写"
@@ -62,7 +67,8 @@ def main() -> int:
         f"- 真实 tokenizer（ckpt-v2 T5Tokenizer legacy=False）统计："
         f"输入 **{min(r['inputTokens'] for r in rows)}–{max_in}** tokens，"
         f"目标 {min_out}–{max_out} tokens。",
-        f"- 当前 v2 N4 训练 `max_input=160` / `max_output=96`；新契约超过"
+        f"- 当前 v2 成句模型（旧 N4，现 N5）训练 `max_input=160` / "
+        f"`max_output=96`；新契约超过"
         f"两者，训练时须提高（建议 `max_input≥384`、`max_output≥128`；"
         f"T5 支持 512 输入）。",
         "- 12 例是**开发/审阅集**，不是训练集；训练需要扩样与冻结留出。",

@@ -19,8 +19,7 @@ sys.path.insert(0, str(HERE))
 import n2_perspective as n2  # noqa: E402
 import n3_organize as n3  # noqa: E402
 import narration_pipeline as np  # noqa: E402
-import build_scene_context as bsc  # noqa: E402
-import render_narrative as rn  # noqa: E402
+import n4_input_renderer as n4r  # noqa: E402
 
 
 def run_narrative_pipeline(point, before, perspective, scene_context=None,
@@ -83,7 +82,7 @@ def run_narrative_pipeline(point, before, perspective, scene_context=None,
                  "plan": plan, "selectedFacts": selected}
 
     if scene_context is None:
-        built = bsc.build_scene_context(
+        built = n4r.build_scene_context(
             point.get("state") or {}, persp, selected, environment)
         if built.get("status") != "ok":
             out.update(status="incomplete", reason=built.get("reason"),
@@ -103,7 +102,13 @@ def run_narrative_pipeline(point, before, perspective, scene_context=None,
             "sceneState": scene_context["sceneState"],
             "characterContext": scene_context["characterContext"]}
     try:
-        input_text = rn.render_plan_input(case, plan, world)
+        input_text = n4r.render_plan_input(
+            case, plan, world, strict=True,
+            selected_fact_ids=[f["factId"] for f in selected])
+    except n4r.N4RenderError as exc:
+        out.update(status="incomplete", reason="n4-render-failed",
+                   code=exc.code, detail=exc.detail)
+        return out
     except KeyError as exc:
         out.update(status="incomplete", reason="scene-context-incomplete",
                    missing=str(exc))

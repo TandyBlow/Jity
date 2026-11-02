@@ -5,10 +5,11 @@
 #   approved facts (N1-shaped, with `outcome` as the surface action result)
 #     -> N2 classify_facts(may_policy="select", visible_other_actions=True)
 #     -> N3 plan_v3 + check_plan_v3
-#     -> N4 render_narrative.render_plan_input
+#     -> N4 formal input renderer (render_plan_input, strict)
 # and reports every dropped fact, group/plan refusal and token length.
 #
-# `visible_other_actions` is a new opt-in N4 narrative selection arm: another
+# `visible_other_actions` is a new opt-in narrative selection arm (feeds
+# N5): another
 # character's visible move/outcome/appearance at the same place is a `may`
 # fact; their task goal/status and inner state stay invisible. The old v2
 # arm keeps the flag off, so its behaviour is unchanged.
@@ -27,7 +28,7 @@ sys.path.insert(0, str(HERE))
 
 import n2_perspective as n2  # noqa: E402
 import n3_organize as n3  # noqa: E402
-import render_narrative as rn  # noqa: E402
+import n4_input_renderer as n4r  # noqa: E402
 
 DOC = REPO / "design" / "world-engine-reports" / "components" / \
     "n4-narrative-pipeline-input-preview.md"
@@ -70,7 +71,7 @@ def main() -> int:
     from transformers.models.t5.tokenization_t5 import T5Tokenizer
     tok = T5Tokenizer.from_pretrained(
         str(WC / "n4_corpus_v2" / "ckpt-v2"), legacy=False)
-    world = rn.load_world()
+    world = json.loads((HERE / "world.json").read_text(encoding="utf-8"))
     cases = [json.loads(l) for l in
              (HERE / "corpus.jsonl").read_text(encoding="utf-8").splitlines()
              if l.strip()]
@@ -90,8 +91,10 @@ def main() -> int:
         plan = n3.plan_v3(selected, names, cross_group_guard=True)
         problems = ([] if "refusal" in plan
                     else n3.check_plan_v3(plan, selected, names))
-        input_text = (rn.render_plan_input(c, plan, world)
-                      if "refusal" not in plan else "")
+        input_text = (n4r.render_plan_input(
+            c, plan, world, strict=True,
+            selected_fact_ids=res["selectedFactIds"])
+            if "refusal" not in plan else "")
         target = c["narrative"]
         dropped = [f["factId"] for f in facts
                    if f["factId"] not in selected_ids]
@@ -119,6 +122,10 @@ def main() -> int:
         " `narrative_outcome=True` 下实现（缺 resultText 停机，见 "
         "`n4-narrative-runner.md`）；本预览仍用已审 facts 验证 N2/N3/N4。",
         "",
+        "> **编号迁移（2026-11-02）：** 当前 N4=叙事输入渲染"
+        "（[契约](n4-input-renderer.md)），旧 N4 成句=N5，旧 N5 核对=N6。"
+        "本预览的 N4 指输入渲染；选择臂服务于 N5。",
+        "",
         "## 链路",
         "",
         "1. 已审 facts（N1 形状；`outcome` 是表面行动结果，不是任务 goal）；",
@@ -126,7 +133,7 @@ def main() -> int:
         "3. N3 `plan_v3` + `check_plan_v3`；",
         "4. N4 `render_plan_input`。",
         "",
-        "`visible_other_actions` 是新增的 N4 叙事选择臂：他人在同地的可见"
+        "`visible_other_actions` 是新增的 N5 叙事选择臂：他人在同地的可见"
         "移动/行动结果/可见变化是 `may`；他人的任务 goal/status 和内心状态"
         "仍然不可见。旧 v2 臂不传此参数，行为不变。",
         "",
