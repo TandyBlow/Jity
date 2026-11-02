@@ -375,3 +375,22 @@ python -X utf8 experiments/world-components/n4_narrative_dev/validate_scene_corp
 python -X utf8 experiments/world-components/n4_narrative_dev/compose_full.py
 python -X utf8 experiments/world-components/n4_narrative_dev/compose_slots.py
 ```
+
+## 20. 拆分方案的延迟（2026-11-02）
+
+**问题：** 一条 fact 调一次 verbalizer，本回合 2–4 次串行调用，是否还在约 4 s 预算内。
+
+**GPU 实测**（`latency_verbalizer.py`，RTX 4090D，23 例 × 3 轮 = 69 次，greedy，均值输出 17.9 token）：
+
+| 指标 | 值 |
+| --- | --- |
+| 单次均值 / p50 / p95 | **150.8 / 141.3 / 204.6 ms** |
+| 折算 3 次 / 4 次 | 0.45 s / 0.60 s |
+
+**浏览器估算（未实测本 checkpoint，用同族 77M T5 的 ORT-web 实测外推）：** 已有 `n4-browser-adapter-r2.json`、`n4-v2-browser-adapter.json` 的真实浏览器数据：encoder 54–176 ms，每步 22–30 ms（fp32）或 21.9–28 ms（int8），会话加载一次性 2.1 s（int8）/3.9 s（fp32）。
+
+verbalizer 单次 ≈ encoder 100–200 ms + 18 步 × 25 ms ≈ **0.6–0.9 s**；3 次 ≈ **1.8–2.7 s**，4 次 ≈ **2.4–3.6 s**。槽位场景句不调模型。**结论：在 4 s 预算内但接近上限**，且这是外推，不是本 checkpoint 实测。
+
+**可优化项：** 3–4 条 fact 可合成一个 batch（同一 encoder 前向 + batch 解码），成本约 1.3× 单次而不是 3×，能把 3 次压到约 1 s 级；需要改 verbalizer 的批处理接口并重测浏览器。
+
+**未完成：** 本 checkpoint 的 ONNX 导出未做（HPC 环境无 `onnx` 包、无外网；权重 297 MB 经当前链路下载约 80 min，不可行）。导出脚本已就绪（`export_verbalizer_onnx.py`，支持 `N4_VERB_CKPT`/`N4_ONNX_OUT` 环境变量），在能装 `onnx` 的机器上可直接跑；浏览器实测仍需 `onnx` 可用后补。
