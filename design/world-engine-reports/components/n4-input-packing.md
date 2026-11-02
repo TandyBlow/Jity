@@ -161,10 +161,11 @@ python -X utf8 experiments/world-components/n4_narrative_dev/test_pipeline_narra
 
 1. **N4 生成模型未训练**：现有 v2/v3 模型只认旧句子格式；结构化输入需要新语料与训练。
 2. **resultText 来源未接线**：协议落点是 `FrozenGroupView.members[].resultText`（C4 已确认组员结果），当前 N1 读的是 fixture 的 `Task.resultText`，而 `WorldState.Task` 没有该字段。
-3. **12 例是开发集**，不是训练集/留出集；训练前需扩样、冻结与预登记。
+3. **12 例已审 + 20 例待审**，都不是训练集/留出集；训练前需扩样、冻结与预登记。
 4. **未接 B**：页面、控制器、真实整链仍用旧叙事门与旧 v2 输入。
 5. **随身物品重复**：同一物品同时出现在“随身”和“可见物”；v0 未改，避免破坏旧预览。
 6. **旧句子 renderer 保留**：`renderer.py` 继续服务冻结 v2/v3 模型与字节回归，不是新 N4 输入契约。
+7. **environment overlay 的生产来源未接线**：`time/weather/wind/light/atmosphere` 不在 `WorldState` 里；当前语料的值是审阅夹具。wind 有静态 `windExposure` 依据，其余必须由场景/时间系统或 B/server 显式提供；缺失即省略并记诊断。
 
 ## 下一步
 

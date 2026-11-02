@@ -4,6 +4,8 @@
 
 边界：不新增具名人物/物品/地点；task goal 只作隐藏动机，正文只用 `resultText`；时间只模糊/省略；理智用心理/生理表达；外貌/个性用可见细节与行为；他人只写可见动作；不写承诺性对话。
 
+> **环境字段来源：** 本文 `sceneState` 的 time/weather/wind/light/atmosphere 是本稿给定的 **environment overlay**（审阅夹具），不是 `WorldState` 字段。生产的 wind 有静态依据 `world.locations[].windExposure`，其余四项没有状态来源；必须由场景/时间系统或 B/server 显式提供，N4.0 缺失即省略并记 `environment-field-missing`。
+
 ## 审阅点
 
 - 每条事实是否被正文覆盖，且没有改写归属/方向/结果
