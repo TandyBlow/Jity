@@ -12,8 +12,9 @@ import pathlib
 
 HERE = pathlib.Path(__file__).resolve().parent
 EXP = HERE.parent
-EXPORT = EXP / "n4_corpus_v2" / "onnx-n5" / "n5-export-report.json"
-EVAL = EXP.parents[1] / "artifacts" / "world-components" / "n5-relation-eval.json"
+REPO = EXP.parents[1]
+EXPORT = REPO / "artifacts" / "world-components" / "n5-onnx-export.json"
+EVAL = REPO / "artifacts" / "world-components" / "n5-relation-eval.json"
 OUT = HERE / "n5_probe_cases.json"
 
 

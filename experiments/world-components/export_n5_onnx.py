@@ -39,6 +39,7 @@ sys.path.insert(0, str(HERE / "n4_corpus_v2"))
 
 CKPT = HERE / "n4_corpus_v2" / "ckpt-n5"
 OUT_DIR = HERE / "n4_corpus_v2" / "onnx-n5"
+ARTIFACT = HERE.parents[1] / "artifacts" / "world-components" /     "n5-onnx-export.json"
 
 
 class N5Wrapper(torch.nn.Module):
