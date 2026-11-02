@@ -11,11 +11,15 @@
 # Pre-registered smoke gates:
 #   S1 the guard removes at least one grant on the selected rows;
 #   S2 fact groups/time are identical between old and new plans;
-#   S3 every NEW output passes the v2 hard gates (G1/G2/G3/G4/G6);
+#   S3 every NEW output passes the v2 hard gates (G1/G2/G3/G4/G6), judged
+#      against the NEW plan (the plan actually fed to the model). r1 judged
+#      with the row's historical OLD plan and therefore masked the
+#      alternating failure; r2 corrects that and is the record of truth.
 #   S4 no row requires a model call over the 128-token limit.
 #
 # A pass means the safer input did not break these four rows. It does NOT
-# establish N4 quality under guard-on at corpus scale.
+# establish N4 quality under guard-on at corpus scale; a failure is a real
+# N4 finding, not an adapter bug.
 
 import json
 import pathlib
@@ -38,7 +42,7 @@ ROWS = [
     "v2-c-salt:core-move-task-c_wenrenjing-c_granary-5minute:v0",
     "v2-c-salt:conflict-shared-goal:v0",
 ]
-OUT = REPO / "artifacts" / "world-components" / "n3-coref-guard-smoke-r1.json"
+OUT = REPO / "artifacts" / "world-components" / "n3-coref-guard-smoke-r2.json"
 
 
 def names_of(row):
@@ -76,7 +80,10 @@ def main() -> int:
         text = render_input_v2(new, row["facts"])
         input_tokens = len(n4.tok(text).input_ids)
         out = n4.generate(text)
-        verdict = judge_row(row, out["text"], out["finishReason"])
+        # judge against the plan ACTUALLY fed to the model, not the
+        # historical row's old plan (r1's mistake)
+        judged_row = {**row, "plan": new}
+        verdict = judge_row(judged_row, out["text"], out["finishReason"])
         cases.append({
             "rowId": rid,
             "oldGrants": old_grants,
@@ -97,6 +104,12 @@ def main() -> int:
         "scope": "SMOKE, not a quality eval/holdout; rows are the historical "
                  "v2 corpus (their facts are held fixed; N1 is not re-run)",
         "checkpoint": "experiments/world-components/n4_corpus_v2/ckpt-v2",
+        "r1Note": "r1 (n3-coref-guard-smoke-r1.json) judged the outputs "
+                  "against the historical row's OLD plan grants, so it "
+                  "reported 4/4 and masked the alternating misattribution. "
+                  "r2 judges against the NEW plan (the pipeline's actual N5 "
+                  "row); the alternating row fails G1/G2. r1 is retained as "
+                  "a record of the flawed judgement, superseded by r2.",
         "rows": ROWS,
         "cases": cases,
         "gates": {
