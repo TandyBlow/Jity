@@ -96,6 +96,10 @@
 | F26 | N4 浏览器适配验证（批次3）：自研 ONNX 图（encoder＋self-KV decoder 步进图，cross 注意力每步由图内重算——`from_legacy_cache` 的 4 元组契约会把 cross 标记为已算，trace 后 `encoder_hidden_states` 整个从图里消失，self-only 契约才可导出）＋ sentencepiece-js（真实 spiece.model 经垫片加载，id 与 Python T5Tokenizer 逐位一致——T5 需补尾 `</s>`=1）＋ KV 贪心环：headless Edge 中 **7/7 case fp32 生成与 ORT-python 环逐 token 精确一致**；int8 动态量化 5 case 判据全净（2 例换合法等价措辞）；AbortSignal 步级取消实测生效（步 4 AbortError，部分结果不落地） | [实测] | `n4-browser-adapter-r1.json`、`n4-int8-quality-r1.json` |
 | F27 | 单线程 wasm 的 ORT run 同步执行且 Promise 在微任务级联内解决：连续 await 的生成循环会**饿死宏任务**——setTimeout 的取消信号永远不触发、页面冻结。适配器每步显式 `setTimeout(0)` 让出宏任务后取消才可观测（实测步 4 生效）。这是 B 侧接线的硬约束 | [实测] | `n4-browser-adapter.mjs` 头注、`n4-browser-adapter-r1.json` abortTest |
 | F28 | 批次4真实模型组合：程序 N1→N2→N3＋冻结 r3-direction N4（HF generate，fp32 贪心 64，CPU 离线——本地 GPU 不动，GPU 任务按指令走外部 GPU 环境）＋程序 N5。五场景全过预期：三个正常路径真实成句且 **N5 全净（0 fail / 0 uncertain）**，版本断裂在绑定层停机（模型未被调用），五事实计划 unsupported（模型未被调用）。离线单次成句 315–1622ms（CPU fp32）；浏览器证据仍为批次3归档，两口径不合并。冻结评测的解码路径（`decode(out[0])` 不切片）复核无误 | [实测] | `n1-n5-composition-r1.json`、`run_composition.py`（批次4） |
+| F29 | N4 v2 grouped 语料与训练（commit 2）：三个新故事族（渔市 A/山驿 B/盐场 C，与旧 28 名池、D2 与 B 冻结池零命中），514 行训练/开发＋66 行 family-C 冻结测试；案例矩阵覆盖跨句指代、同名、性别未知、时间三位置、新种类、同现、无变化、个性增删改。Randeng-T5-77M 全参微调走 HPC（RTX 4090D）：**12 epochs×54 步=648 步，37.1 秒**，fp32，seed 20261102；训练器内建 holdout sha 守卫与渲染器字节守卫。冻结测试：硬门 64/66、代词使用率 1.0（阈值 dev 固定）、消融差分 39/43；两处失败（subtask 句末缺句号、co-presence 第三实体未覆盖）如实入册 | [实测] | `n4-v2-corpus-report.json`、`train-v2-report.json`、`n4-v2-holdout-eval.json`、`n1-n5-composition-v2-r1.json` |
+| F30 | N4 v2 浏览器适配（commit 3）：encoder＋self-KV decoder 图在 headless Edge＋ORT-web 单线程 wasm 中跑 grouped 接口；8 个 family-C 场景 **8/8 分词 ID 与 Python 一致、8/8 token 序列与 ORT-python 精确一致、文本逐字相同**；生成 0.29–2.00 秒（步均 26–51 ms），冷加载 3.56 秒。浏览器文本经 v2 判据 **6/8**，失败与离线 holdout 相同。**HF↔ORT 的 fp32 再结合漂移**：8 例仅 2 例逐 token 精确，6 例在近并列 token 处翻转（logit 差约 1e-5）；浏览器对齐目标为 ORT-python 同引擎族，不宣称 HF 精确等价 | [实测] | `n4-v2-browser-adapter.json`、`n4-v2-browser-parity-python.json` |
+| F31 | N5 关系头（commit 3）：MiniRBT-H256＋masked-mean-pool＋linear(3)，数据来自 v2 语料（训练 6764 pair：5919 train＋845 dev；冻结测试 758：256/246/256，8 类程序扰动，family C only，freeze sha 先登记）。HPC 8 epochs/1480 steps/31.3 秒。阈值在 dev 上按预登记规则固定为 0.4/0.4；冻结测试 support 0.9805、contradiction 0.9959、wrongPass 0、**wrongReject 5/256**、unknown→unknown 0.8906。G1/G3/G4 通过，**G2 失败，pass:false**；不调阈、不改门 | [实测] | `n5-corpus-report.json`、`train-n5-report.json`、`n5-relation-eval.json` |
+| F32 | N5 ONNX＋浏览器（commit 3）：encoder+mean-pool+head 融合单图，24 个烘焙 pair 的 HF↔ORT-python max-abs logit 漂移 6.44e-6（门 1e-4）；浏览器手写 BertTokenizer 等价分词＋ORT-web：24/24 分词 ID 一致、24/24 logits 在 1e-4 内（最大 7.03e-6）、24/24 冻结阈值标签一致；单次 25–134 ms（p50 23.4 ms），冷加载 1.52 秒。**一致性通过不等于质量门通过**；B 页面门未接线 | [实测] | `n5-onnx-export.json`、`n5-browser-probe.json` |
 | F25 | N3 runner 钉定完成：已审查字节（7189e233…，signoff-f9c1190）写入冻结记录 `runner.status=EXECUTABLE`；解码配置获批（贪心 / maxNewTokens 512——256 方案在审查者实测最宽 gold 321–386 token 面前会必然截断，经负责人改批 512）；`decodingConfig.modelId` **保持未钉**——唯一门级生成候选是 0.6B 因果 LM，其推理被总指挥暂停，runner 的 modelId 门恰好编码该暂停；暂停解除后钉 modelId 即可开跑 | [实测] | `d2-n3-prompt-freeze.json`（批次2 状态行）、`pin_n3_freeze.py`、`precheck_real` 空问题单 |
 
 ## 4. 训练方案表
@@ -111,7 +115,7 @@
 | U6 理智对照臂 | 分桶分类头 / 回归头 | V04 有个性变化的联动样本 | 同上 | 与生成臂同批对照 |
 | N2 选择打分 | H256 打分头（条目×视角/必选标签） | V08 派生：mustExpress/mayMention/省略理由 | 同上 | 必述漏选=硬失败单列 |
 | N3 排序 | H256 pairwise 头 | V08：句序、指代链 | 同上 | 逆序/碎序分列 |
-| N4 成句 | Randeng-T5-77M 全参微调（含卡上 100 extra token 的 resize 注意项 [外部]） | "事实计划→正文"成对语料：程序模板句为种子＋人工改写（隔离新建） | 77M cuda 分钟级；fp16 先行 | 先离线：事实忠实/必述覆盖/时间/空点/中文自然度＋人工核对，过质量门才进浏览器适配 |
+| N4 成句 | Randeng-T5-77M 全参微调（含卡上 100 extra token 的 resize 注意项 [外部]）；**v2 grouped 接口（commit 2）** | "事实计划→正文"成对语料：程序模板句为种子＋人工改写（隔离新建）；**v2 改为程序 case-matrix 生成、先冻结后训练** | 77M cuda 分钟级；fp16 先行；**v2 实测 12 epochs/648 步/37.1 秒（HPC RTX 4090D）** | 离线：事实忠实/必述覆盖/时间/空点/中文自然度＋人工核对；**扁平 44/44 已过；v2 64/66（2 处残留）**；浏览器适配已做（v2 8/8 token 对齐） |
 | 共同结果/反应/行动文本（升级臂） | Mengzi-T5-base 或 Qwen3-1.7B（仅当 Qwen3-0.6B 质量不达标才启动） | 不预建 | 届时定 | 届时定 |
 
 不做的事：不训七份独立权重（骨干共享）；不先做蒸馏（教师标数据=程序枚举＋人工，模型蒸馏等小头质量瓶颈出现再议）；不用模型生成训练数据当监督源（接口表 §2.2 语义候选不得自证）。
@@ -121,7 +125,7 @@
 ## 5. 运行时选型结论（本项交付核心）
 
 1. **编码器路线（已定，不再重开）：** ORT-web 1.30.0 vendored 稳定版直驱＋手写 BertTokenizer 等价分词器＋int8 dynamic，单线程（F1–F4）。重评 transformers.js 的唯一条件：其新版修复 F1 全部三条且其 pinned ORT 在本环境不再挂起——否则不立项。
-2. **生成路线（两步走）：** 近期全部生成任务用 Qwen3-0.6B＋wllama 跑质量基线；Randeng-T5-77M 先离线质量验证（含微调），质量门通过后才做浏览器化，浏览器路径先测 wllama GGUF 端到端（F10），证伪才考虑 ORT 直驱＋自实现 sentencepiece。
+2. **生成路线（两步走）：** 近期全部生成任务用 Qwen3-0.6B＋wllama 跑质量基线；Randeng-T5-77M 先离线质量验证（含微调）。N4 的浏览器路径已走 ORT 直驱＋自实现 sentencepiece（sentencepiece-js），扁平 r3-direction 7/7、v2 grouped 8/8 token 对齐；wllama GGUF 端到端（F10）保留为生成骨干候选，不因 N4 结果自动推广到其他生成任务。**v2 质量门未全绿（64/66），浏览器适配通过不解除质量缺口与 B 侧接线验收。**
 3. **共存与加载：** 编码器 int8 权重约 10–12MB 一份＋生成骨干一份；wllama 与 ORT 会话可并存但总内存与切换开销由第3项实测计总账（README 第4项交付要求），本文不预设数字。
 4. **取消语义：** 统一 AbortSignal；ORT 不可中断 `run`，靠迟到隔离（接口表 §2.1）；wllama 用其已有中断。加载阶段可取消。
 5. **WebGPU（jsep 文件已 staged 但从未测）：** 不立项、不做承诺；单线程 wasm 已满足编码器头量级（F4 毫秒级），生成侧瓶颈在自回归步数而非并行度。

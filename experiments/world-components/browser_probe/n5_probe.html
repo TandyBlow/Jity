@@ -1,0 +1,78 @@
+<!doctype html>
+<!-- N5 browser probe (commit 3): the frozen relation head runs in the
+     browser through the committed adapter module — Bert tokenizer parity
+     first, then ONNX logits vs the baked HF/ORT-python references, then
+     the frozen threshold label. Every case's raw ids/logits/probs are
+     returned so the driver archives them. -->
+<html lang="zh">
+<head><meta charset="utf-8"><title>N5 browser probe</title></head>
+<body>
+<div id="status">loading…</div>
+<pre id="out"></pre>
+<script type="module">
+  const status = (t) => { document.getElementById("status").textContent = t; };
+  const report = (r) => {
+    window.__N5_PROBE_RESULT__ = r;
+    document.getElementById("out").textContent = JSON.stringify(r, null, 1);
+    status("done");
+  };
+  const maxAbs = (a, b) => Math.max(...a.map((x, i) => Math.abs(x - b[i])));
+  try {
+    const { N5Browser } = await import("/models/n5-probe/n5_browser_adapter.mjs");
+    const spec = await (await fetch("/models/n5-probe/probe_cases.json")).json();
+    const n5 = await N5Browser.create({
+      modelUrl: "/models/n5-probe/n5-encoder-head.onnx",
+      vocabUrl: "/models/n5-probe/vocab.txt",
+    });
+    const cases = [];
+    for (const c of spec.cases) {
+      const r = await n5.classify(c.factText, {
+        tSupport: spec.thresholds.t_support,
+        tContradict: spec.thresholds.t_contradict,
+      });
+      const pyLabel = (() => {
+        const e = c.ortLogits;
+        const m = Math.max(...e);
+        const p = e.map((v) => Math.exp(v - m));
+        const s = p.reduce((a, b) => a + b, 0);
+        const probs = p.map((v) => v / s);
+        return probs[0] >= spec.thresholds.t_support ? "support"
+          : probs[1] >= spec.thresholds.t_contradict ? "contradiction"
+          : "unknown";
+      })();
+      cases.push({
+        label: c.label,
+        sentence: c.sentence,
+        inputIdMatch: r.ids.length === c.tokenIds.length
+          && r.ids.every((x, i) => x === c.tokenIds[i]),
+        inputIdFirstDiff: r.ids.findIndex((x, i) => x !== c.tokenIds[i]),
+        inputIdsBrowser: r.ids,
+        inputIdsPython: c.tokenIds,
+        maxAbsLogitDriftVsHf: +maxAbs(r.logits, c.hfLogits).toFixed(8),
+        maxAbsLogitDriftVsOrt: +maxAbs(r.logits, c.ortLogits).toFixed(8),
+        logitsBrowser: r.logits.map((x) => +x.toFixed(5)),
+        probs: r.probs.map((x) => +x.toFixed(5)),
+        labelBrowser: r.label,
+        labelPython: pyLabel,
+        labelMatch: r.label === pyLabel,
+        timings: r.timings,
+      });
+    }
+    report({
+      adapterId: "n5-browser-adapter-r1",
+      onnxSha256: spec.onnxSha256,
+      modelSha256: spec.modelSha256,
+      loadMs: +n5.loadMs.toFixed(1),
+      thresholds: spec.thresholds,
+      cases,
+      allTokenizersMatched: cases.every((c) => c.inputIdMatch),
+      allLogitsMatched: cases.every((c) =>
+        c.maxAbsLogitDriftVsOrt <= 1e-4 && c.maxAbsLogitDriftVsHf <= 1e-4),
+      allLabelsMatched: cases.every((c) => c.labelMatch),
+    });
+  } catch (err) {
+    report({ fatal: String(err && err.stack || err) });
+  }
+</script>
+</body>
+</html>

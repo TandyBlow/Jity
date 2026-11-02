@@ -1,0 +1,63 @@
+<!doctype html>
+<!-- N4 v2 browser probe (commit 3): the grouped-interface checkpoint runs
+     in the browser through the SAME committed adapter module used for the
+     flat r3 model — sentencepiece-js tokenization, KV-cache greedy loop.
+     Parity target: the ORT-python loop baked by export_n4_v2_onnx.py
+     (token ids must match exactly); HF is a cross-check recorded in the
+     Python archive, not the browser target. The v2 Python judge runs in
+     the driver over the returned texts. -->
+<html lang="zh">
+<head><meta charset="utf-8"><title>N4 v2 browser probe</title></head>
+<body>
+<div id="status">loading…</div>
+<pre id="out"></pre>
+<script type="module">
+  const status = (t) => { document.getElementById("status").textContent = t; };
+  const report = (r) => {
+    window.__V2_PROBE_RESULT__ = r;
+    document.getElementById("out").textContent = JSON.stringify(r, null, 1);
+    status("done");
+  };
+  const eq = (a, b) => a.length === b.length && a.every((x, i) => x === b[i]);
+  try {
+    const { N4Browser } = await import("/models/v2-probe/n4_browser_adapter.mjs");
+    const spec = await (await fetch("/models/v2-probe/v2_probe_cases.json")).json();
+    const model = await N4Browser.create({
+      spBundleUrl: "/models/v2-probe/sp/index.js",
+      modelBytesUrl: "/models/v2-probe/spiece.model",
+      graphDir: "/models/v2-probe/",
+    });
+    const cases = [];
+    for (const c of spec.cases) {
+      const ids = Array.from(model.encode(c.renderText));
+      const g = await model.generate(c.renderText, { maxTokens: 128 });
+      cases.push({
+        rowId: c.rowId,
+        tokenizerIdMatch: eq(ids, c.inputIds),
+        tokenizerFirstDiff: ids.findIndex((x, i) => x !== c.inputIds[i]),
+        tokenIds: ids,
+        tokenIdMatchVsOrtPy: eq(g.ids, c.referenceIds),
+        firstDiff: g.ids.findIndex((x, i) => x !== c.referenceIds[i]),
+        text: g.text,
+        referenceText: c.referenceText,
+        ids: g.ids,
+        status: g.status,
+        finishReason: g.timings.steps < 128 ? "eos" : "length",
+        timings: g.timings,
+      });
+    }
+    report({
+      adapterId: "n4-browser-adapter-r1 (v2 graphs)",
+      onnx: spec.onnx,
+      checkpointSha256: spec.checkpointSha256,
+      loadMs: +model.loadMs.toFixed(1),
+      cases,
+      allTokenizersMatched: cases.every((c) => c.tokenizerIdMatch),
+      allTokensMatchedVsOrtPy: cases.every((c) => c.tokenIdMatchVsOrtPy),
+    });
+  } catch (err) {
+    report({ fatal: String(err && err.stack || err) });
+  }
+</script>
+</body>
+</html>

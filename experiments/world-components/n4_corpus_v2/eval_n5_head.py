@@ -21,9 +21,27 @@
 
 import argparse
 import hashlib
+import importlib.machinery
 import json
 import pathlib
 import sys
+import types
+
+# F6 process stubs (same as eval_n4_finetune.py / export_n5_onnx.py): the
+# base env's pyarrow wheel is ABI-broken against numpy 2.x and sklearn
+# transitively imports it through transformers.generation; stubbing it
+# before torch/transformers keeps the local CPU eval alive.
+try:
+    import pyarrow  # noqa: F401
+except Exception:
+    _stub = types.ModuleType("pyarrow")
+    _stub.__version__ = "16.1.0"
+    _stub.__path__ = []
+    sys.modules["pyarrow"] = _stub
+_tf = types.ModuleType("tensorflow")
+_tf.__spec__ = importlib.machinery.ModuleSpec("tensorflow", None)
+_tf.__path__ = []
+sys.modules.setdefault("tensorflow", _tf)
 
 import torch
 from torch import nn
@@ -88,10 +106,8 @@ def rates(pairs, labels):
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--model", default=str(HERE / "n4_corpus_v2" /
-                                               "ckpt-n5"))
-    parser.add_argument("--out", default=str(HERE.parent.parent /
-                                             "artifacts" /
+    parser.add_argument("--model", default=str(HERE / "ckpt-n5"))
+    parser.add_argument("--out", default=str(HERE.parents[2] / "artifacts" /
                                              "world-components" /
                                              "n5-relation-eval.json"))
     args = parser.parse_args()
@@ -157,7 +173,8 @@ def main() -> int:
     }
     archive = {
         "purpose": "N5 relation-head frozen-test eval (commit 3)",
-        "model": {"dir": args.model,
+        "model": {"dir": str(pathlib.Path(args.model).resolve()
+                             .relative_to(HERE.parents[2]).as_posix()),
                   "encoderSha256": hashlib.sha256(
                       (pathlib.Path(args.model) / "model.safetensors")
                       .read_bytes()).hexdigest()},

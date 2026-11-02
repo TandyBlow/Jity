@@ -195,7 +195,7 @@ coverage完成记录至少能核对本阶段预期人物/任务与实际输入�
 | 原文引用 | 事实来源 / N1 条目字段 | 保留可引用原文，不在计划里重写 |
 | 时间表达位置 | `time` fact 在所属句组 `factIds` 中的下标 | 不新增字段；时间仍由 N4 表达 |
 
-**本节只冻结形状，不代表接口已统一**；D2 的 H1/H2/G1–G4 预登记、8 项能力样本与审查者门槛未完成前，不得写“接口已统一”。coreference 目前是 advisory，N4 的 `render_input` 不消费它，跨组连贯性未测。代词渲染不在 N3 本轮，另立 N4-coref 工作项（D2）。
+**本节只冻结形状，不代表接口已统一**；D2 的 H1/H2/G1–G4 预登记、8 项能力样本与审查者门槛未完成前，不得写“接口已统一”。v2 的 `render_v2` 已消费 coreference 与句组边界；扁平 `render_input` 仍不消费，其归档成绩保持原范围。跨组连贯已由 v2 判据间接检查，但 2/66 残留仍在。
 
 **现有投影待办：** `projectCommittedNarration` 对物品/地点状态变化、外貌、slot/relative位置、独立任务达成、部分个性变更/解除及重名人物存在受限处理。N1的通用输入不预先经过该函数；接口表必须保留这些能力，后续补对应离线开发/验证场景。本轮没有实现N1，也没有把 `narration-split` 的程序基线视为已解决所有这些问题。
 
@@ -243,26 +243,26 @@ coverage完成记录至少能核对本阶段预期人物/任务与实际输入�
 | C6 继续判断 | 双条件核对、handback | 候选短生成＋发生可能性/主角关联判断 | 生成骨干 | 生成＋编码器双头打分 | 仅方案 | — | 判据要区分"关联续段"与"新行动" |
 | C7 N1 事实提取 | **全部**（不让模型猜差异） | 可选归类加速 | 程序 | 编码器变化类型归类头（仅加速） | 已实现（程序权威；批次1进管线：GetStateData 绑定→事实条目，无法成述项记诊断不静默丢） | `narration_pipeline.py` `extract_facts`＋`n4_render`/`validate_plan_authority.py` 的 plan→Δ 对账 | 物品/地点/复杂位置的支持面仍待扩展；全人物扫描仍待办 |
 | C7 N2 内容选择 | 引用校验、覆盖检查、**视角可见性（程序可判定）** | 显著性与省略判断（哪些可见事实必须写） | 编码器打分头（事实×视角）——**批次2已训并实测否决**（两折 CV must-R 0.531，15/16 条目硬失败） | 0.6B instruct（暂停中） | **程序规则臂为当前参照（同折 must-R 1.000 / must-P 0.433，复现归档 F18）；v3 冻结标注不变** | `n2-encoder-arm-r1.json`（批次2）；`n2-labels-v3.json`、`n2-must-v3.json` | 46 样本/折不足以支撑 10.4M 头的 must 判别；扩展语料或换任务形状须新预登记 |
-| C7 N3 组织表达 | 顺序/指代校验、事实覆盖；I2 本句组锚定＋篡改探针 | 排序、分组、指代（**输出结构化组织计划**：句组 factIds＋指代建议，不写正文） | 程序基线 B1/B2 **已实现**；模型待定 | 0.6B instruct | **基线已实现＋I2 探针通过；模型臂未跑；runner 未实现（NOT-IMPLEMENTED，契约见冻结记录 runner 块）** | `n3-baselines-r1.json`（36/52 句组，144/144 篡改被捕获）、`n3-factids-smoke-r1.json`（36 组，离线） | D2 状态与剩余门见 [D2 准备](d2-gold-prep.md) 及其冻结记录，此处不另记；coref 未被 N4 消费、跨组连贯未测 |
-| C7 N4 成句 | 渲染器、判据、冻结校验 | 事实计划→中文正文 | **Randeng-T5-77M 全参微调（r3-direction）** | Qwen3-0.6B（现役基线） | **离线验证通过＋浏览器适配验证通过（批次3）**：sentencepiece-js 分词逐 id 一致＋KV 缓存贪心环 fp32 7/7 逐 token 对齐 ORT-python＋int8 判据全净＋AbortSignal 步级取消生效 | `n4-holdout-eval-r3-direction.json`（44/44）；`n4-browser-adapter-r1.json`、`n4-int8-quality-r1.json`（批次3） | 共存开销总账、整链接线未做；风格偏模板 |
-| C7 N5 核对 | **程序为主**（`corpus_check` 识别器） | 语义复核候选 | 程序判据 | 编码器一致性头（不自动放行） | 离线可用；**批次4组合中真实模型输出的 N5 全净**（0 fail / 0 uncertain） | `corpus_check.py`（`check_narration` 共享核心）；`n1-n5-composition-r1.json` | 运行时 JS 版判据未交付，B 侧门控仍用现有实现 |
+| C7 N3 组织表达 | 顺序/指代校验、事实覆盖；I2 本句组锚定＋篡改探针 | 排序、分组、指代（**输出结构化组织计划**：句组 factIds＋时间归属＋称谓授权，不写正文） | 程序 plan_v3 **已实现（commit 2）**；模型待定 | 0.6B instruct | **plan_v3 已实现**：同名不共组＋称谓授权（性别提示/姓名唯一/同组代词不冲突，否则保名）＋`check_plan_v3` 不变量；N4 v2 已消费 coreference；**N3 模型臂未跑** | `n3-baselines-r1.json`（36/52 句组，144/144 篡改被捕获）、`n3-factids-smoke-r1.json`（36 组，离线）、`n4-v2-holdout-eval.json`、`n1-n5-composition-v2-r1.json` | D2 状态与剩余门见 [D2 准备](d2-gold-prep.md)；N3 模型臂未跑、跨组连贯仍只由 plan 顺序与 N4 判据间接检查 |
+| C7 N4 成句 | 渲染器、判据、冻结校验 | 事实计划→中文正文 | **扁平：Randeng-T5-77M 全参微调（r3-direction）；grouped：v2 全参微调（commit 2）** | Qwen3-0.6B（现役基线） | **扁平 r3-direction 离线 44/44＋浏览器 7/7；v2 grouped 离线 64/66＋浏览器 8/8 分词与 token 精确对齐（浏览器判据 6/8，2 处已知模型残留）**；int8 判据全净＋AbortSignal 步级取消生效（批次3） | `n4-holdout-eval-r3-direction.json`（44/44）；`n4-v2-holdout-eval.json`（64/66）；`n4-browser-adapter-r1.json`、`n4-v2-browser-adapter.json`、`n4-v2-browser-parity-python.json`、`n4-int8-quality-r1.json` | v2 质量残留 2/66＋组合链 3/6；共存开销总账、整链接线未做；风格偏模板 |
+| C7 N5 核对 | **程序为主**（`corpus_check` 识别器） | 语义复核候选 | 程序判据 | MiniRBT-H256 关系头（support/contradiction/unknown，不自动放行） | 程序判据可用；**关系头已训练＋ONNX 浏览器化（24/24 一致），但预登记质量门 G2 失败（5/256 support→contradiction），pass:false** | `corpus_check.py`（`check_narration` 共享核心）；`n1-n5-composition-r1.json`；`n5-relation-eval.json`、`n5-onnx-export.json`、`n5-browser-probe.json` | 质量门未过；B 页面门仍用现有程序判据，运行时 JS 侧接线未做 |
 
 ### 8.1 当前验证范围（避免过度外推）
 
-- **已验证的只有一个组件**：N4 成句，且仅限六类短计划、**1–4 条事实**（冻结独立留出集 44/44＋1/1，见[接入包](n4-integration-package.md)「已验证规模」与[语料协议 §11](../../../experiments/world-components/n4_corpus/corpus_protocol.md)；接入包明确更长计划「未测试」）、1–2 句输出、离线 Python。浏览器侧与接线未验证。
+- **已验证的组件（各自范围）**：N1 程序事实提取（扩展词汇＋来源绑定）；N2 视角规则（冻结 D2 开发集门＋管线自检，模型头否决）；N3 程序 plan_v3（句组/时间/称谓＋不变量，模型臂未跑）；N4 v2 grouped 成句（离线 64/66＋浏览器 8/8 token 对齐，浏览器判据 6/8）；N5 关系头（浏览器一致性 24/24，质量门 G2 未过）。扁平 r3-direction 的 44/44 归档保持原范围（六类短计划、1–4 条事实、1–2 句、离线 Python）。**不能由一个组件的成绩推断其他组件可用**。
 - **N2 完成两轮对照及 v3 重算**：两位新会话 AI 对 92 条标签一致，κ=1.0，v3 已冻结；六臂逐项 D1 均 0/16，没有模型通过。P1-rule must-R=1.0 / must-P macro=0.433333，v3 也未触发降级；must 差异 0/16，沿用 N3 输入。原隔离冻结与原始输出保留，详见 [D1 交付](d1-ai-closure.md)。
-- **N3 程序基线已实现**：B1/B2 在 16 项上 I1/I2/I3 零违规；`--tamper` 九类变异 144/144 适用篡改被捕获（含首位捏造 factId、空句组，均返回违规列表而不抛异常）；factIds 消费冒烟 36/36（离线，非 N4 质量证据）。**模型臂未跑；coreference 未被 N4 消费；跨组连贯与代词渲染未测。**
+- **N3 程序 plan_v3 已实现（commit 2）**：句组、时间归属、称谓授权与同名不共组；`check_plan_v3` 硬不变量；N4 v2 训练与判据实际消费 coreference。B1/B2 的 I1/I2/I3 零违规与 144/144 篡改捕获归档保留。**N3 模型臂未跑；跨组连贯只由 plan 顺序与 N4 判据间接检查。**
 - **C1–C6** 全部停留在接口方案，没有训练或质量证据。
-- **浏览器侧**：编码器路线（MiniRBT＋ORT-web int8）有旧批实测（F4）；批次1的 N4 最小可行性探针证明冻结 T5 的 ONNX 图可在浏览器运行且与 ORT-python 参考 7/7 逐 token 一致（`n4-browser-probe-r1.json`）——这是**图级可行性**，JS 分词、int8、KV 缓存与整链接线仍未验证；其余新组件在浏览器内**均未验证**。
+- **浏览器侧**：扁平 r3-direction 已完成 sentencepiece-js＋KV 缓存＋int8＋取消（批次3，7/7）；v2 grouped 已完成 8/8 分词与 token 对齐＋浏览器判据 6/8（commit 3）；N5 关系头已完成 24/24 分词/logits/标签一致（commit 3）。**B 侧页面接线、共存开销总账和新的页面门未做**；这些是组件级浏览器证据，不是页面验收。
 
 ### 8.2 各组件还缺什么（按优先级）
 
 1. **N2**：D1 v3 AI 标注冻结与分支判定已交待复审；后续为训练集（事实×视角→保留/丢弃）、编码器打分头、预登记判据与冻结开发/留出划分。
-2. **N3**：模型臂指标与预登记（H1/H2/G1–G4；H2 必须附跨组篡改探针）；8 项能力样本（4 含 time、4 双人同事件）与 gold grouping/coref；16 项与 8 项分开报。
+2. **N3**：程序 plan_v3 已实现并被 N4 v2 消费；仍缺模型臂指标与预登记（H1/H2/G1–G4；H2 必须附跨组篡改探针）、8 项能力样本与 gold grouping/coref；16 项与 8 项分开报。
 3. **C2/C3/C4**：按 V01–V03 建隔离样本；先做"生成骨干单调用"对照，再决定是否拆小模型。
 4. **C5**：六阶段样本与 U3/U5 批量判定；理智方向已由程序计算，模型只需表达。
 5. **C1**：分批草稿与引用校验，排最后（原设计集成顺序）。
-6. **N4 浏览器化**：批次3已交付并验证（adapter 模块＋KV 缓存图＋sentencepiece-js＋int8＋步级取消）；剩 B 侧页面接线与共存开销总账。
+6. **N4 浏览器化**：批次3交付扁平 r3-direction（adapter＋KV 缓存＋sentencepiece-js＋int8＋取消）；commit 3 交付 v2 grouped 图与 8/8 对齐；N5 头 ONNX 浏览器一致性 24/24。剩 B 侧页面接线、共存开销总账与页面门；v2 质量残留 2/66 不因浏览器适配通过而消失。
 
 ## 源码与规格依据
 

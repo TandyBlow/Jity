@@ -1,0 +1,947 @@
+{
+ "purpose": "N5 relation-head frozen-test eval (commit 3)",
+ "model": {
+  "dir": "experiments/world-components/n4_corpus_v2/ckpt-n5",
+  "encoderSha256": "619576cbc0b437833d0ef77177d60aefc019140d221c22f2344444893ab5c4a6"
+ },
+ "thresholds": {
+  "t_support": 0.4,
+  "t_contradict": 0.4,
+  "rule": "smallest dev-grid pair with zero wrong-pass/wrong-reject and both floors; test untouched during fixing"
+ },
+ "devSummary": {
+  "pairs": 845,
+  "table": [
+   {
+    "t_s": 0.4,
+    "t_c": 0.4,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.4,
+    "t_c": 0.45,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.4,
+    "t_c": 0.5,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.4,
+    "t_c": 0.55,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.4,
+    "t_c": 0.6,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.4,
+    "t_c": 0.65,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.4,
+    "t_c": 0.7,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.4,
+    "t_c": 0.75,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.4,
+    "t_c": 0.8,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.4,
+    "t_c": 0.85,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 0.992,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.45,
+    "t_c": 0.4,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.45,
+    "t_c": 0.45,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.45,
+    "t_c": 0.5,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.45,
+    "t_c": 0.55,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.45,
+    "t_c": 0.6,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.45,
+    "t_c": 0.65,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.45,
+    "t_c": 0.7,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.45,
+    "t_c": 0.75,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.45,
+    "t_c": 0.8,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.45,
+    "t_c": 0.85,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 0.992,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.5,
+    "t_c": 0.4,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.5,
+    "t_c": 0.45,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.5,
+    "t_c": 0.5,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.5,
+    "t_c": 0.55,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.5,
+    "t_c": 0.6,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.5,
+    "t_c": 0.65,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.5,
+    "t_c": 0.7,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.5,
+    "t_c": 0.75,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.5,
+    "t_c": 0.8,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.5,
+    "t_c": 0.85,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 0.992,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.55,
+    "t_c": 0.4,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.55,
+    "t_c": 0.45,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.55,
+    "t_c": 0.5,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.55,
+    "t_c": 0.55,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.55,
+    "t_c": 0.6,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.55,
+    "t_c": 0.65,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.55,
+    "t_c": 0.7,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.55,
+    "t_c": 0.75,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.55,
+    "t_c": 0.8,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.55,
+    "t_c": 0.85,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 0.992,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.6,
+    "t_c": 0.4,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.6,
+    "t_c": 0.45,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.6,
+    "t_c": 0.5,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.6,
+    "t_c": 0.55,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.6,
+    "t_c": 0.6,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.6,
+    "t_c": 0.65,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.6,
+    "t_c": 0.7,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.6,
+    "t_c": 0.75,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.6,
+    "t_c": 0.8,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.6,
+    "t_c": 0.85,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 0.992,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.65,
+    "t_c": 0.4,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.65,
+    "t_c": 0.45,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.65,
+    "t_c": 0.5,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.65,
+    "t_c": 0.55,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.65,
+    "t_c": 0.6,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.65,
+    "t_c": 0.65,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.65,
+    "t_c": 0.7,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.65,
+    "t_c": 0.75,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.65,
+    "t_c": 0.8,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.65,
+    "t_c": 0.85,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 0.992,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.7,
+    "t_c": 0.4,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.7,
+    "t_c": 0.45,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.7,
+    "t_c": 0.5,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.7,
+    "t_c": 0.55,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.7,
+    "t_c": 0.6,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.7,
+    "t_c": 0.65,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.7,
+    "t_c": 0.7,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.7,
+    "t_c": 0.75,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.7,
+    "t_c": 0.8,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.7,
+    "t_c": 0.85,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 0.992,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.75,
+    "t_c": 0.4,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.75,
+    "t_c": 0.45,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.75,
+    "t_c": 0.5,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.75,
+    "t_c": 0.55,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.75,
+    "t_c": 0.6,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.75,
+    "t_c": 0.65,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.75,
+    "t_c": 0.7,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.75,
+    "t_c": 0.75,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.75,
+    "t_c": 0.8,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.75,
+    "t_c": 0.85,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 0.992,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.8,
+    "t_c": 0.4,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.8,
+    "t_c": 0.45,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.8,
+    "t_c": 0.5,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.8,
+    "t_c": 0.55,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.8,
+    "t_c": 0.6,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.8,
+    "t_c": 0.65,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.8,
+    "t_c": 0.7,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.8,
+    "t_c": 0.75,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.8,
+    "t_c": 0.8,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.8,
+    "t_c": 0.85,
+    "ok": true,
+    "supportRate": 0.996,
+    "contradictionRate": 0.992,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.85,
+    "t_c": 0.4,
+    "ok": true,
+    "supportRate": 0.942,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.85,
+    "t_c": 0.45,
+    "ok": true,
+    "supportRate": 0.942,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.85,
+    "t_c": 0.5,
+    "ok": true,
+    "supportRate": 0.942,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.85,
+    "t_c": 0.55,
+    "ok": true,
+    "supportRate": 0.942,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.85,
+    "t_c": 0.6,
+    "ok": true,
+    "supportRate": 0.942,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.85,
+    "t_c": 0.65,
+    "ok": true,
+    "supportRate": 0.942,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.85,
+    "t_c": 0.7,
+    "ok": true,
+    "supportRate": 0.942,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.85,
+    "t_c": 0.75,
+    "ok": true,
+    "supportRate": 0.942,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.85,
+    "t_c": 0.8,
+    "ok": true,
+    "supportRate": 0.942,
+    "contradictionRate": 1.0,
+    "wrongPass": 0,
+    "wrongReject": 0
+   },
+   {
+    "t_s": 0.85,
+    "t_c": 0.85,
+    "ok": true,
+    "supportRate": 0.942,
+    "contradictionRate": 0.992,
+    "wrongPass": 0,
+    "wrongReject": 0
+   }
+  ]
+ },
+ "test": {
+  "pairs": 758,
+  "confusion": {
+   "support->support": 251,
+   "support->contradiction": 5,
+   "support->unknown": 0,
+   "contradiction->support": 0,
+   "contradiction->contradiction": 245,
+   "contradiction->unknown": 1,
+   "unknown->support": 22,
+   "unknown->contradiction": 6,
+   "unknown->unknown": 228
+  },
+  "supportRate": 0.98046875,
+  "contradictionRate": 0.9959349593495935,
+  "wrongPass": 0,
+  "wrongReject": 5,
+  "pendingRate": {
+   "support": 0.0,
+   "contradiction": 0.0040650406504065045,
+   "unknown": 0.890625
+  }
+ },
+ "gates": {
+  "G1_no_wrong_pass": true,
+  "G2_no_wrong_reject": false,
+  "G3_support_floor": true,
+  "G4_contradiction_floor": true
+ },
+ "pass": false
+}
