@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 import sys
 import unittest
+from unittest import mock
 
 BASE=Path(__file__).resolve().parents[1];sys.path.insert(0,str(BASE))
 import m01_shared_report as report
@@ -63,6 +64,21 @@ class SharedReportTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'formal scope'):self.check(plan=p)
         r=copy.deepcopy(self.record);r['fitAndDevelopmentPredictions'][0]['label']='fake'
         with self.assertRaisesRegex(ValueError,'label/split'):self.check(record=r)
+
+    def test_changed_current_source_uses_the_exact_executed_git_revision(self):
+        name='experiments/world-components-logic/m01_shared.py';expected=self.plan['code'][name]
+        raw=report.subprocess.check_output(['git','show',report.EXECUTED_COMMIT+':'+name],cwd=report.ROOT)
+        with mock.patch.object(report,'sha256_file',return_value='changed-current-code'),mock.patch.object(report.subprocess,'check_output',return_value=raw) as git:
+            report.executed_source(name,expected,'r3')
+            self.assertEqual(git.call_args.args[0],['git','show',report.EXECUTED_COMMIT+':'+name])
+        with mock.patch.object(report,'sha256_file',return_value='changed-current-code'),mock.patch.object(report.subprocess,'check_output',return_value=b'wrong historical bytes'):
+            with self.assertRaisesRegex(ValueError,'identity mismatch'):report.executed_source(name,expected,'r3')
+
+    def test_missing_git_history_is_explicit_and_never_accepted(self):
+        error=report.subprocess.CalledProcessError(128,['git','show'])
+        with mock.patch.object(report,'sha256_file',return_value='changed-current-code'),mock.patch.object(report.subprocess,'check_output',side_effect=error):
+            with self.assertRaisesRegex(ValueError,'historical source unavailable'):
+                report.executed_source('experiments/world-components-logic/m01_shared.py','expected','r3')
 
 
 if __name__=='__main__':unittest.main()

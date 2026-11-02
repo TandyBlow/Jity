@@ -1,5 +1,7 @@
 """Shared-window scope, group identity and interruption regression checks."""
 import copy
+from contextlib import redirect_stdout
+import io
 import json
 from pathlib import Path
 import sys
@@ -10,6 +12,7 @@ from unittest import mock
 
 BASE=Path(__file__).resolve().parents[1];sys.path.insert(0,str(BASE))
 import m01_shared as shared
+import experiment
 from fact_windows import fact_text,restore
 
 
@@ -127,6 +130,135 @@ class SharedInterruptionTests(unittest.TestCase):
             self.assertEqual(report['windowEventMalformedLines'],[1])
             self.assertIn('{"partial":',path.read_text())
             settled=json.loads(path.read_text().splitlines()[-1]);self.assertEqual(settled['status'],'interrupted')
+
+
+class ExperimentEntryTests(unittest.TestCase):
+    def test_status_and_default_do_not_import_models_or_write_plans(self):
+        with mock.patch.dict(sys.modules,{'torch':None,'transformers':None}),mock.patch.object(shared,'prepare') as prepare,mock.patch.object(shared,'execute') as execute:
+            for args in ([],['status']):
+                output=io.StringIO()
+                with redirect_stdout(output):self.assertEqual(experiment.main(args),0)
+                status=json.loads(output.getvalue());self.assertFalse(status['modelExecutionPerformed'])
+                self.assertEqual(status['latestRun'],'m01-shared-dev42-20261102-r3')
+            prepare.assert_not_called();execute.assert_not_called()
+
+    def test_prepare_and_execute_delegate_to_the_current_model(self):
+        with mock.patch.object(shared,'prepare',return_value=Path('/tmp/new-plan.json')) as prepare,redirect_stdout(io.StringIO()):
+            self.assertEqual(experiment.main(['prepare','new-id']),0);prepare.assert_called_once_with('new-id')
+        with mock.patch.object(shared,'execute',return_value=3) as execute:
+            self.assertEqual(experiment.main(['execute','new-plan.json']),3);execute.assert_called_once_with(Path('new-plan.json'))
+
+    def test_check_stops_on_failure_without_executing_model(self):
+        with mock.patch.object(experiment.subprocess,'run',return_value=mock.Mock(returncode=7)) as run,mock.patch.object(shared,'execute') as execute:
+            self.assertEqual(experiment.check(),7);self.assertEqual(run.call_count,1);execute.assert_not_called()
+
+    def test_check_runs_only_tests_and_report_verification(self):
+        with mock.patch.object(experiment.subprocess,'run',return_value=mock.Mock(returncode=0)) as run,redirect_stdout(io.StringIO()):
+            self.assertEqual(experiment.check(),0)
+        self.assertEqual(run.call_count,4)
+        for call in run.call_args_list:
+            args=call.args[0]
+            self.assertNotIn('--execute',args);self.assertNotIn('--prepare',args)
+            self.assertEqual(call.kwargs['env']['PYTHONDONTWRITEBYTECODE'],'1')
+
+
+class CommonExecutionTests(unittest.TestCase):
+    def setup_plan(self,directory):
+        root=Path(directory);path=root/'plan.json';out=root/'record.json'
+        plan={'runId':'test-only','config':{'attemptsPerCase':1,'maxResidentMiB':2,'processWallSeconds':120},
+              'cases':[{'caseId':'case'}],'environment':{'venvExecutableRelativePath':'test-metadata-only'}}
+        path.write_text(json.dumps(plan))
+        return plan,path,out
+
+    def execute(self,path,out,**kwargs):
+        return experiment.execute_plan(path,paths=lambda run_id:(path,out),verify=kwargs.get('verify',lambda p:None),
+             worker_script=Path('/test-metadata-only.py'),settle_stages=kwargs.get('settle_stages',mock.Mock()),arms=('legacy','shared'))
+
+    def child(self):
+        child=mock.Mock();child.pid=987654321;child.returncode=-15;child.poll.return_value=None
+        child.wait.side_effect=lambda **kwargs:setattr(child.poll,'return_value',child.returncode)
+        return child
+
+    def test_stage_exception_is_saved_with_failure_and_elapsed_time(self):
+        with tempfile.TemporaryDirectory() as t:
+            out=Path(t)/'stage.json';report={'stages':[]}
+            def fail():raise ValueError('synthetic stage failure')
+            with self.assertRaisesRegex(ValueError,'synthetic'):
+                experiment.record_stage(report,out,'load',fail)
+            stage=json.loads(out.read_text())['stages'][0]
+            self.assertEqual(stage['status'],'failed');self.assertEqual(stage['error']['type'],'ValueError')
+            self.assertGreaterEqual(stage['elapsedMs'],0)
+
+    def test_existing_evidence_is_not_overwritten_or_launched(self):
+        with tempfile.TemporaryDirectory() as t:
+            _,path,out=self.setup_plan(t);out.write_bytes(b'original evidence');verify=mock.Mock()
+            with mock.patch.object(experiment.subprocess,'Popen') as launch:
+                with self.assertRaises(FileExistsError):self.execute(path,out,verify=verify)
+            self.assertEqual(out.read_bytes(),b'original evidence');verify.assert_not_called();launch.assert_not_called()
+
+    def test_preflight_failure_is_recorded_before_launch(self):
+        with tempfile.TemporaryDirectory() as t:
+            _,path,out=self.setup_plan(t)
+            with mock.patch.object(experiment.subprocess,'Popen') as launch:
+                with self.assertRaisesRegex(ValueError,'identity'):
+                    self.execute(path,out,verify=mock.Mock(side_effect=ValueError('identity drift')))
+            self.assertEqual(json.loads(out.read_text())['status'],'failed_preflight');launch.assert_not_called()
+
+    def test_launch_failure_preserves_every_unstarted_arm(self):
+        with tempfile.TemporaryDirectory() as t:
+            _,path,out=self.setup_plan(t)
+            with mock.patch.object(experiment.subprocess,'Popen',side_effect=OSError('synthetic launch failure')):
+                self.assertEqual(self.execute(path,out),1)
+            record=json.loads(out.read_text());self.assertEqual(record['status'],'failed_process_launch')
+            self.assertEqual(record['unexecutedAttempts'],2)
+            self.assertEqual({s['arm'] for s in record['attemptSlots']},{'legacy','shared'})
+
+    def test_success_retains_isolated_single_thread_environment(self):
+        with tempfile.TemporaryDirectory() as t:
+            plan,path,out=self.setup_plan(t);child=self.child();child.returncode=0;child.poll.return_value=0
+            def launched(*args,**kwargs):
+                slots=experiment.planned_slots(plan,('legacy','shared'))
+                for slot in slots:slot['status']='complete'
+                out.write_text(json.dumps({'status':'diagnostic_completed','attempts':slots,'attemptSlots':slots,'activeAttempt':None,'stages':[]}))
+                return child
+            with mock.patch.object(experiment.subprocess,'Popen',side_effect=launched) as launch,redirect_stdout(io.StringIO()):
+                self.assertEqual(self.execute(path,out),0)
+            env=launch.call_args.kwargs['env']
+            for key in ('OMP_NUM_THREADS','MKL_NUM_THREADS','OPENBLAS_NUM_THREADS'):self.assertEqual(env[key],'1')
+            self.assertEqual(env['HF_HUB_OFFLINE'],'1');self.assertTrue(launch.call_args.kwargs['start_new_session'])
+            self.assertEqual(json.loads(out.read_text())['supervisor']['exitCode'],0)
+
+    def test_memory_cap_stops_child_and_counts_unstarted_slots(self):
+        with tempfile.TemporaryDirectory() as t:
+            _,path,out=self.setup_plan(t);child=self.child();settle=mock.Mock()
+            with mock.patch.object(experiment.subprocess,'Popen',return_value=child),mock.patch.object(experiment.subprocess,'run',return_value=mock.Mock(returncode=0,stdout='3072')),mock.patch.object(experiment.os,'killpg') as kill,redirect_stdout(io.StringIO()):
+                self.assertEqual(self.execute(path,out,settle_stages=settle),1)
+            record=json.loads(out.read_text());self.assertEqual(record['supervisor']['stopReason'],'resident_memory_limit')
+            self.assertEqual(record['unexecutedAttempts'],2);kill.assert_called_once_with(child.pid,experiment.signal.SIGTERM)
+            settle.assert_called_once()
+
+    def test_wall_clock_cap_still_applies(self):
+        with tempfile.TemporaryDirectory() as t:
+            _,path,out=self.setup_plan(t);child=self.child()
+            with mock.patch.object(experiment.subprocess,'Popen',return_value=child),mock.patch.object(experiment.subprocess,'run',return_value=mock.Mock(returncode=0,stdout='1024')),mock.patch.object(experiment.time,'monotonic',side_effect=[0,121,122]),mock.patch.object(experiment.os,'killpg'),redirect_stdout(io.StringIO()):
+                self.assertEqual(self.execute(path,out),1)
+            self.assertEqual(json.loads(out.read_text())['supervisor']['stopReason'],'process_wall_limit')
+
+    def test_monitor_error_is_not_recorded_as_model_success(self):
+        with tempfile.TemporaryDirectory() as t:
+            _,path,out=self.setup_plan(t);child=self.child()
+            with mock.patch.object(experiment.subprocess,'Popen',return_value=child),mock.patch.object(experiment.subprocess,'run',side_effect=PermissionError('synthetic ps denial')),mock.patch.object(experiment.os,'killpg'),redirect_stdout(io.StringIO()):
+                self.assertEqual(self.execute(path,out),1)
+            record=json.loads(out.read_text());self.assertEqual(record['supervisor']['stopReason'],'supervisor_failure')
+            self.assertEqual(record['unexecutedAttempts'],2)
+
+    def test_non_exiting_child_is_force_stopped(self):
+        with tempfile.TemporaryDirectory() as t:
+            _,path,out=self.setup_plan(t);child=self.child();child.returncode=-9
+            child.wait.side_effect=[experiment.subprocess.TimeoutExpired('synthetic child',3),None]
+            with mock.patch.object(experiment.subprocess,'Popen',return_value=child),mock.patch.object(experiment.subprocess,'run',return_value=mock.Mock(returncode=0,stdout='3072')),mock.patch.object(experiment.os,'killpg') as kill,redirect_stdout(io.StringIO()):
+                self.assertEqual(self.execute(path,out),1)
+            self.assertEqual(kill.call_args_list,[mock.call(child.pid,experiment.signal.SIGTERM),mock.call(child.pid,experiment.signal.SIGKILL)])
 
 
 if __name__=='__main__':unittest.main()

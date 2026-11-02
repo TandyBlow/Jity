@@ -5,13 +5,11 @@ No model import at module load. Prior inference code/evidence remains immutable.
 from __future__ import annotations
 
 import argparse
-import gzip
+from functools import partial
 import importlib.metadata
 import json
-import os
 from pathlib import Path
 import platform
-import signal
 import subprocess
 import sys
 import time
@@ -21,6 +19,8 @@ from fact_windows import fact_text, make_windows, restore
 from lab import build_model_input, canonical_bytes, guard_case, sha256_file
 from run_pilot import digest, exclusive, save, timestamp
 from prepare_run_batch import observe_environment
+import experiment
+from experiment import read_json,settle_attempts,settle_events
 
 ROOT=old.ROOT
 BASE=old.BASE
@@ -34,11 +34,8 @@ CONFIG={'device':'cpu','threads':1,'concurrency':1,'seed':42,'limit':512,
         'fusionWidth':32,'attemptsPerCase':5,'processWallSeconds':120,
         'maxResidentMiB':2048,'encoderFrozen':True,'earlyStopping':False,
         'featureCacheForTiming':False,'featureCacheForFitOnly':True}
-
-
-def read_json(path):
-    raw=Path(path).read_bytes()
-    return json.loads(gzip.decompress(raw) if str(path).endswith('.gz') else raw)
+planned_slots=partial(experiment.planned_slots,arms=ARMS)
+unstarted_record=partial(experiment.unstarted_record,arms=ARMS)
 
 
 def baseline_identity():
@@ -57,7 +54,7 @@ def prepare(run_id):
     if path.exists() or out.exists():raise FileExistsError('use a new run id; preserve evidence')
     rows,review=old.dataset();baseline=baseline_identity();model=old.model_identity()
     if baseline['datasetSha256']!=digest(rows) or model!=baseline['model']:raise ValueError('baseline dataset/model drift')
-    code=[BASE/name for name in ('m01_shared.py','m01_probe.py','fact_windows.py','pilot_codec.py','lab.py','run_pilot.py','review_io.py','prepare_run_batch.py')]
+    code=[BASE/name for name in ('experiment.py','m01_shared.py','m01_probe.py','fact_windows.py','pilot_codec.py','lab.py','run_pilot.py','review_io.py','prepare_run_batch.py')]
     plan={'schema':'jity-d-m01-shared-probe-plan-v1','runId':run_id,'preparedAt':timestamp(),
           'sourceHead':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
           'protocolPath':str(PROTOCOL.relative_to(ROOT)),'protocolSha256':sha256_file(PROTOCOL),
@@ -81,7 +78,7 @@ def verify(plan):
     if plan['protocolSha256']!=sha256_file(PROTOCOL):raise ValueError('protocol drift')
     if (plan['protocolPath']!=str(PROTOCOL.relative_to(ROOT))
             or plan['inheritedProtocolSha256']!=sha256_file(PROTOCOL.with_name('m01-shared-probe.md'))):raise ValueError('inherited protocol drift')
-    expected={'experiments/world-components-logic/'+n for n in ('m01_shared.py','m01_probe.py','fact_windows.py','pilot_codec.py','lab.py','run_pilot.py','review_io.py','prepare_run_batch.py')}
+    expected={'experiments/world-components-logic/'+n for n in ('experiment.py','m01_shared.py','m01_probe.py','fact_windows.py','pilot_codec.py','lab.py','run_pilot.py','review_io.py','prepare_run_batch.py')}
     if set(plan['code'])!=expected:raise ValueError('incomplete code identity')
     for name,h in plan['code'].items():
         if sha256_file(ROOT/name)!=h:raise ValueError('code drift: '+name)
@@ -196,52 +193,6 @@ def predict(case,data,head,torch):
     return values,decoded
 
 
-def settle_events(report,event_path,reason):
-    if not event_path.exists():return
-    active={}
-    malformed=[]
-    for index,line in enumerate(event_path.read_text(encoding='utf-8').splitlines()):
-        if not line.strip():continue
-        try:e=json.loads(line)
-        except ValueError:malformed.append(index);continue
-        if e['status']=='running':active[e['eventId']]=e
-        else:active.pop(e['eventId'],None)
-    with event_path.open('a',encoding='utf-8') as f:
-        for e in active.values():
-            e.update(status='interrupted',stopReason=reason,settledAt=timestamp(),settledMonotonicNs=time.monotonic_ns())
-            e['elapsedMs']=(e['settledMonotonicNs']-e['startedMonotonicNs'])/1e6
-            f.write('\n'+json.dumps(e,ensure_ascii=False,separators=(',',':'))+'\n')
-    report['windowEventsSha256']=sha256_file(event_path)
-    report['windowEventMalformedLines']=malformed
-
-
-def settle_attempts(report,reason):
-    active=report.get('activeAttempt')
-    if active is not None:
-        active=dict(active)
-        active.update(status='interrupted',stopReason=reason,settledAt=timestamp(),settledMonotonicNs=time.monotonic_ns())
-        active['elapsedMs']=(active['settledMonotonicNs']-active['startedMonotonicNs'])/1e6
-        key=lambda a:(a['arm'],a['caseId'],a['repeat'])
-        if key(active) not in {key(a) for a in report['attempts']}:report['attempts'].append(active)
-        for i,slot in enumerate(report['attemptSlots']):
-            if key(slot)==key(active):report['attemptSlots'][i]=active
-        report['activeAttempt']=None
-    report['unexecutedAttempts']=sum(a['status']=='not_started' for a in report['attemptSlots'])
-
-
-def planned_slots(plan):
-    return [{'arm':arm,'caseId':c['caseId'],'repeat':rep,'status':'not_started'}
-            for rep in range(plan['config']['attemptsPerCase']) for c in plan['cases']
-            for arm in (ARMS if rep%2==0 else ARMS[::-1])]
-
-
-def unstarted_record(plan,path):
-    slots=planned_slots(plan)
-    return {'status':'failed_before_journal','planSha256':sha256_file(path),'attempts':[],
-            'attemptSlots':slots,'unexecutedAttempts':len(slots),'activeAttempt':None,'stages':[],
-            'formalEvaluationAllowed':False,'semanticQualityApproved':False,'fullRequestMeasured':False}
-
-
 def worker(path):
     plan=read_json(path);_,out=old.paths(plan['runId']);events=out.with_suffix('.windows.jsonl')
     slots=planned_slots(plan)
@@ -252,10 +203,7 @@ def worker(path):
             'sourceIndependence':'unverified'}
     exclusive(out,report)
     def stage(name,fn):
-        s={'stage':name,'status':'running','startedAt':timestamp(),'startedMonotonicNs':time.monotonic_ns()};report['stages'].append(s);save(out,report)
-        try:r=fn();s['status']='complete';return r
-        except Exception as e:s.update(status='failed',error={'type':type(e).__name__,'message':str(e)});raise
-        finally:s.update(elapsedMs=(time.monotonic_ns()-s['startedMonotonicNs'])/1e6,settledAt=timestamp());save(out,report)
+        return experiment.record_stage(report,out,name,fn)
     try:
         stage('verify_plan',lambda:verify(plan))
         def stack():
@@ -362,49 +310,8 @@ def worker(path):
 
 
 def execute(path):
-    plan=read_json(path);_,out=old.paths(plan['runId'])
-    if out.exists():raise FileExistsError('preserve original record; use a new run id')
-    try:verify(plan)
-    except Exception as error:
-        exclusive(out,{'status':'failed_preflight','planSha256':sha256_file(path),'attempts':[],
-                      'error':str(error),'formalEvaluationAllowed':False});raise
-    env=dict(os.environ,PYTHONDONTWRITEBYTECODE='1',OMP_NUM_THREADS='1',MKL_NUM_THREADS='1',OPENBLAS_NUM_THREADS='1',
-             TOKENIZERS_PARALLELISM='false',HF_HUB_OFFLINE='1',TRANSFORMERS_OFFLINE='1',HF_HOME=str(old.LOCAL/'hf-cache'))
-    start=time.monotonic();reason=None;peak=0.;error=None
-    with out.with_suffix('.process.log').open('x',encoding='utf-8') as log:
-        try:
-            child=subprocess.Popen([str(ROOT/plan['environment']['venvExecutableRelativePath']),str(Path(__file__)),
-                                    '--worker',str(path)],cwd=ROOT,env=env,stdout=log,stderr=subprocess.STDOUT,start_new_session=True)
-        except Exception as e:
-            r=unstarted_record(plan,path);r.update(status='failed_process_launch',error=str(e));exclusive(out,r)
-            return 1
-        try:
-            while child.poll() is None:
-                rss=subprocess.run(['ps','-o','rss=','-p',str(child.pid)],capture_output=True,text=True)
-                if rss.returncode or not rss.stdout.strip():
-                    if child.poll() is not None:break
-                    raise RuntimeError('RSS monitor unavailable')
-                peak=max(peak,float(rss.stdout)/1024)
-                if peak>CONFIG['maxResidentMiB']:reason='resident_memory_limit'
-                if time.monotonic()-start>CONFIG['processWallSeconds']:reason='process_wall_limit'
-                if reason:break
-                time.sleep(.25)
-        except Exception as e:reason='supervisor_failure';error=str(e)
-        finally:
-            if child.poll() is None:
-                os.killpg(child.pid,signal.SIGTERM)
-                try:child.wait(timeout=3)
-                except subprocess.TimeoutExpired:os.killpg(child.pid,signal.SIGKILL);child.wait()
-    report=read_json(out) if out.exists() else unstarted_record(plan,path)
-    report['supervisor']={'exitCode':child.returncode,'stopReason':reason,'error':error,'wallMs':(time.monotonic()-start)*1000,
-                          'observedPeakResidentMiB':peak,'measurement':'ps_rss_every250ms'}
-    if reason or child.returncode:
-        old.settle_stages(report,reason or 'worker_exit');settle_attempts(report,reason or 'worker_exit')
-        report['status']='stopped_incomplete' if reason else 'failed'
-    settle_events(report,out.with_suffix('.windows.jsonl'),reason or 'worker_exit')
-    save(out,report)
-    print(json.dumps({'status':report['status'],'attempts':len(report['attempts']),'record':str(out)},ensure_ascii=False))
-    return 0 if report['status']=='diagnostic_completed' else 1
+    return experiment.execute_plan(path,paths=old.paths,verify=verify,worker_script=Path(__file__),
+                                   settle_stages=old.settle_stages,arms=ARMS)
 
 
 def main():

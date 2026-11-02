@@ -9,6 +9,7 @@ import json
 import math
 from pathlib import Path
 import statistics
+import subprocess
 
 from fact_windows import restore
 from lab import canonical_bytes,sha256_file
@@ -18,9 +19,21 @@ ROOT=shared.ROOT
 ART=ROOT/'artifacts/world-components-logic'
 DATA=shared.ART
 PREFIX='m01-shared-dev42-20261102-'
+EXECUTED_COMMIT='d3b21a53eb901fdfded100ae41a3201d7bbb05b5'
 
 
 def read_archive(path):return json.loads(gzip.decompress(path.read_bytes()))
+
+
+def executed_source(name,expected_sha,version):
+    """Verify exact historical bytes; never require current code to stay frozen."""
+    source=DATA/'code/m01_shared-r2.py' if version=='r2' and name.endswith('/m01_shared.py') else ROOT/name
+    if source.exists() and sha256_file(source)==expected_sha:return
+    try:
+        raw=subprocess.check_output(['git','show',EXECUTED_COMMIT+':'+name],cwd=ROOT,stderr=subprocess.PIPE)
+    except subprocess.CalledProcessError as error:
+        raise ValueError('historical source unavailable; local Git history must include '+EXECUTED_COMMIT) from error
+    if hashlib.sha256(raw).hexdigest()!=expected_sha:raise ValueError('executed code identity mismatch: '+name)
 
 
 def same(task,label,decoded):
@@ -142,8 +155,7 @@ def build():
         if plan['baseline']['planSha256']!=sha256_file(shared.OLD_PLAN) or plan['baseline']['recordSha256']!=sha256_file(shared.OLD_RECORD):raise ValueError('original baseline evidence changed')
         if plan['dataset']!=old_plan['dataset']:raise ValueError('original split/labels changed')
         for name,h in plan['code'].items():
-            source=DATA/'code/m01_shared-r2.py' if version=='r2' and name.endswith('/m01_shared.py') else ROOT/name
-            if sha256_file(source)!=h:raise ValueError('executed code identity mismatch: '+name)
+            executed_source(name,h,version)
         protocol=ROOT/plan.get('protocolPath','design/world-engine-reports/components-logic/m01-shared-probe.md')
         if sha256_file(protocol)!=plan['protocolSha256']:raise ValueError('protocol changed')
         if version=='r3' and sha256_file(protocol.with_name('m01-shared-probe.md'))!=plan['inheritedProtocolSha256']:raise ValueError('inherited protocol changed')
