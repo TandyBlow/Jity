@@ -937,6 +937,7595 @@
    "unknown": 0.890625
   }
  },
+ "wrongRejectPairIds": [
+  "v2-c-salt:core-move-task-c_qinshu_b-c_windmill-5minute:v0:f0:sup",
+  "v2-c-salt:core-move-task-c_qinshu_b-c_windmill-3minute:v0:f0:sup",
+  "v2-c-salt:core-move-task-c_akui-c_windmill-5minute:v0:f0:sup",
+  "v2-c-salt:core-move-task-c_akui-c_windmill-3minute:v0:f0:sup",
+  "v2-c-salt:alternating-6minute:v0:f2:sup"
+ ],
+ "testPredictions": [
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_windmill-5minute:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.990884,
+    0.000359,
+    0.008757
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_windmill-5minute:v0:f0:role-swap",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000149,
+    0.999252,
+    0.000599
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_windmill-5minute:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000149,
+    0.000727,
+    0.999124
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_windmill-5minute:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.977134,
+    0.000686,
+    0.02218
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_windmill-5minute:v0:f1:goal-misattribution",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000109,
+    0.999597,
+    0.000294
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_windmill-5minute:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000626,
+    0.002723,
+    0.996652
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_windmill-5minute:v0:f2:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.918089,
+    0.00035,
+    0.081561
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_windmill-5minute:v0:f2:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000104,
+    0.000438,
+    0.999458
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_windmill-5minute:v0:f3:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.903368,
+    0.000415,
+    0.096217
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_windmill-5minute:v0:f3:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000269,
+    0.000166,
+    0.999565
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_windmill-5minute:v0:f4:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.870008,
+    0.000612,
+    0.12938
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_windmill-5minute:v0:f4:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    9.3e-05,
+    0.999123,
+    0.000784
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_windmill-5minute:v0:f4:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000108,
+    0.999471,
+    0.00042
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_windmill-5minute:v0:f4:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.003289,
+    0.020567,
+    0.976143
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_windmill-3minute:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.990884,
+    0.000359,
+    0.008757
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_windmill-3minute:v0:f0:role-swap",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000149,
+    0.999252,
+    0.000599
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_windmill-3minute:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000155,
+    0.000804,
+    0.999041
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_windmill-3minute:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.977134,
+    0.000686,
+    0.02218
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_windmill-3minute:v0:f1:goal-misattribution",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000109,
+    0.999597,
+    0.000294
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_windmill-3minute:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.0001,
+    0.001012,
+    0.998889
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_windmill-3minute:v0:f2:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.918089,
+    0.00035,
+    0.081561
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_windmill-3minute:v0:f2:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000792,
+    0.000427,
+    0.998781
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_windmill-3minute:v0:f3:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.904907,
+    0.000404,
+    0.094689
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_windmill-3minute:v0:f3:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000107,
+    0.000677,
+    0.999216
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_windmill-3minute:v0:f4:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.875119,
+    0.0009,
+    0.123982
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_windmill-3minute:v0:f4:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000192,
+    0.991132,
+    0.008675
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_windmill-3minute:v0:f4:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000116,
+    0.999341,
+    0.000543
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_windmill-3minute:v0:f4:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    9.7e-05,
+    0.000902,
+    0.999001
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_granary-5minute:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.989112,
+    0.00025,
+    0.010638
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_granary-5minute:v0:f0:role-swap",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000183,
+    0.998239,
+    0.001578
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_granary-5minute:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000287,
+    0.001008,
+    0.998705
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_granary-5minute:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.977134,
+    0.000686,
+    0.02218
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_granary-5minute:v0:f1:goal-misattribution",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000109,
+    0.999597,
+    0.000294
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_granary-5minute:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000175,
+    0.002771,
+    0.997054
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_granary-5minute:v0:f2:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.910842,
+    0.000392,
+    0.088765
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_granary-5minute:v0:f2:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.0001,
+    0.001469,
+    0.998431
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_granary-5minute:v0:f3:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.880218,
+    0.000651,
+    0.119131
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_granary-5minute:v0:f3:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    8.9e-05,
+    0.999056,
+    0.000855
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_granary-5minute:v0:f3:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000114,
+    0.999499,
+    0.000387
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_granary-5minute:v0:f3:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000103,
+    0.001,
+    0.998897
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_granary-3minute:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.989112,
+    0.00025,
+    0.010638
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_granary-3minute:v0:f0:role-swap",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000183,
+    0.998239,
+    0.001578
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_granary-3minute:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000106,
+    0.000829,
+    0.999065
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_granary-3minute:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.977134,
+    0.000686,
+    0.02218
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_granary-3minute:v0:f1:goal-misattribution",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000109,
+    0.999597,
+    0.000294
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_granary-3minute:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000138,
+    0.001067,
+    0.998795
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_granary-3minute:v0:f2:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.909389,
+    0.000388,
+    0.090223
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_granary-3minute:v0:f2:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000169,
+    0.000469,
+    0.999362
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_granary-3minute:v0:f3:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.888545,
+    0.000823,
+    0.110632
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_granary-3minute:v0:f3:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000185,
+    0.993208,
+    0.006607
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_granary-3minute:v0:f3:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000136,
+    0.999375,
+    0.000489
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_granary-3minute:v0:f3:unk",
+   "label": "unknown",
+   "pred": "support",
+   "probs": [
+    0.888545,
+    0.000823,
+    0.110632
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_wharf-5minute:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.993395,
+    0.000577,
+    0.006028
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_wharf-5minute:v0:f0:role-swap",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000168,
+    0.99915,
+    0.000682
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_wharf-5minute:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000235,
+    0.00115,
+    0.998615
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_wharf-5minute:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.977134,
+    0.000686,
+    0.02218
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_wharf-5minute:v0:f1:goal-misattribution",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000109,
+    0.999597,
+    0.000294
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_wharf-5minute:v0:f1:unk",
+   "label": "unknown",
+   "pred": "support",
+   "probs": [
+    0.977134,
+    0.000686,
+    0.02218
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_wharf-5minute:v0:f2:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.921102,
+    0.000347,
+    0.078551
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_wharf-5minute:v0:f2:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000101,
+    0.000464,
+    0.999434
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_wharf-5minute:v0:f3:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.894919,
+    0.00041,
+    0.104671
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_wharf-5minute:v0:f3:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000153,
+    0.000462,
+    0.999385
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_wharf-5minute:v0:f4:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.873571,
+    0.000664,
+    0.125765
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_wharf-5minute:v0:f4:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    9.1e-05,
+    0.999199,
+    0.00071
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_wharf-5minute:v0:f4:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000112,
+    0.999464,
+    0.000424
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_wharf-5minute:v0:f4:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000104,
+    0.001059,
+    0.998837
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_wharf-3minute:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.993395,
+    0.000577,
+    0.006028
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_wharf-3minute:v0:f0:role-swap",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000168,
+    0.99915,
+    0.000682
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_wharf-3minute:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.00097,
+    0.179657,
+    0.819374
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_wharf-3minute:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.977134,
+    0.000686,
+    0.02218
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_wharf-3minute:v0:f1:goal-misattribution",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000109,
+    0.999597,
+    0.000294
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_wharf-3minute:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000105,
+    0.00137,
+    0.998524
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_wharf-3minute:v0:f2:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.921102,
+    0.000347,
+    0.078551
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_wharf-3minute:v0:f2:unk",
+   "label": "unknown",
+   "pred": "support",
+   "probs": [
+    0.921102,
+    0.000347,
+    0.078551
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_wharf-3minute:v0:f3:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.895243,
+    0.000391,
+    0.104367
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_wharf-3minute:v0:f3:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000151,
+    0.000341,
+    0.999508
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_wharf-3minute:v0:f4:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.879432,
+    0.000917,
+    0.119651
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_wharf-3minute:v0:f4:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000203,
+    0.992761,
+    0.007036
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_wharf-3minute:v0:f4:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000121,
+    0.999312,
+    0.000567
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_wenrenjing-c_wharf-3minute:v0:f4:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000124,
+    0.000647,
+    0.999229
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_flats-5minute:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.992739,
+    0.000339,
+    0.006922
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_flats-5minute:v0:f0:role-swap",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000251,
+    0.999326,
+    0.000423
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_flats-5minute:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000267,
+    0.00048,
+    0.999252
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_flats-5minute:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.980818,
+    0.000405,
+    0.018777
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_flats-5minute:v0:f1:goal-misattribution",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000155,
+    0.999361,
+    0.000484
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_flats-5minute:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000132,
+    0.001456,
+    0.998412
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_flats-5minute:v0:f2:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.839587,
+    0.000495,
+    0.159919
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_flats-5minute:v0:f2:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.00023,
+    0.000348,
+    0.999422
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_flats-5minute:v0:f3:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.868019,
+    0.00085,
+    0.131131
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_flats-5minute:v0:f3:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    9.2e-05,
+    0.998686,
+    0.001221
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_flats-5minute:v0:f3:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000107,
+    0.999466,
+    0.000426
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_flats-5minute:v0:f3:unk",
+   "label": "unknown",
+   "pred": "support",
+   "probs": [
+    0.868019,
+    0.00085,
+    0.131131
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_flats-3minute:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.992739,
+    0.000339,
+    0.006922
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_flats-3minute:v0:f0:role-swap",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000251,
+    0.999326,
+    0.000423
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_flats-3minute:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000168,
+    0.000375,
+    0.999458
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_flats-3minute:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.980818,
+    0.000405,
+    0.018777
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_flats-3minute:v0:f1:goal-misattribution",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000155,
+    0.999361,
+    0.000484
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_flats-3minute:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000101,
+    0.00098,
+    0.998919
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_flats-3minute:v0:f2:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.841381,
+    0.000477,
+    0.158142
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_flats-3minute:v0:f2:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000223,
+    0.000331,
+    0.999445
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_flats-3minute:v0:f3:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.877321,
+    0.001158,
+    0.121521
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_flats-3minute:v0:f3:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000231,
+    0.99079,
+    0.008979
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_flats-3minute:v0:f3:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.00012,
+    0.999357,
+    0.000522
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_flats-3minute:v0:f3:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.00017,
+    0.001736,
+    0.998094
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_windmill-5minute:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.99069,
+    0.000305,
+    0.009005
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_windmill-5minute:v0:f0:role-swap",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000224,
+    0.999328,
+    0.000447
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_windmill-5minute:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000157,
+    0.000894,
+    0.998948
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_windmill-5minute:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.980818,
+    0.000405,
+    0.018777
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_windmill-5minute:v0:f1:goal-misattribution",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000155,
+    0.999361,
+    0.000484
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_windmill-5minute:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.002697,
+    0.104656,
+    0.892647
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_windmill-5minute:v0:f2:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.918089,
+    0.00035,
+    0.081561
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_windmill-5minute:v0:f2:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000307,
+    0.000134,
+    0.999559
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_windmill-5minute:v0:f3:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.903368,
+    0.000415,
+    0.096217
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_windmill-5minute:v0:f3:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000285,
+    0.000152,
+    0.999564
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_windmill-5minute:v0:f4:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.870008,
+    0.000612,
+    0.12938
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_windmill-5minute:v0:f4:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    9.3e-05,
+    0.999123,
+    0.000784
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_windmill-5minute:v0:f4:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000108,
+    0.999471,
+    0.00042
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_windmill-5minute:v0:f4:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000104,
+    0.001059,
+    0.998837
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_windmill-3minute:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.99069,
+    0.000305,
+    0.009005
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_windmill-3minute:v0:f0:role-swap",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000224,
+    0.999328,
+    0.000447
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_windmill-3minute:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000157,
+    0.001405,
+    0.998438
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_windmill-3minute:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.980818,
+    0.000405,
+    0.018777
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_windmill-3minute:v0:f1:goal-misattribution",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000155,
+    0.999361,
+    0.000484
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_windmill-3minute:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000515,
+    0.004676,
+    0.99481
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_windmill-3minute:v0:f2:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.918089,
+    0.00035,
+    0.081561
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_windmill-3minute:v0:f2:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    9.9e-05,
+    0.000562,
+    0.999339
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_windmill-3minute:v0:f3:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.904907,
+    0.000404,
+    0.094689
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_windmill-3minute:v0:f3:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000115,
+    0.000304,
+    0.999581
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_windmill-3minute:v0:f4:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.875119,
+    0.0009,
+    0.123982
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_windmill-3minute:v0:f4:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000192,
+    0.991132,
+    0.008675
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_windmill-3minute:v0:f4:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000116,
+    0.999341,
+    0.000543
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_windmill-3minute:v0:f4:unk",
+   "label": "unknown",
+   "pred": "support",
+   "probs": [
+    0.875119,
+    0.0009,
+    0.123982
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_granary-5minute:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.986556,
+    0.000293,
+    0.013151
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_granary-5minute:v0:f0:role-swap",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000264,
+    0.998619,
+    0.001117
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_granary-5minute:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000116,
+    0.000737,
+    0.999147
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_granary-5minute:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.980818,
+    0.000405,
+    0.018777
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_granary-5minute:v0:f1:goal-misattribution",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000155,
+    0.999361,
+    0.000484
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_granary-5minute:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000112,
+    0.002286,
+    0.997602
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_granary-5minute:v0:f2:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.910842,
+    0.000392,
+    0.088765
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_granary-5minute:v0:f2:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000273,
+    0.001885,
+    0.997843
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_granary-5minute:v0:f3:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.880218,
+    0.000651,
+    0.119131
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_granary-5minute:v0:f3:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    8.9e-05,
+    0.999056,
+    0.000855
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_granary-5minute:v0:f3:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000114,
+    0.999499,
+    0.000387
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_granary-5minute:v0:f3:unk",
+   "label": "unknown",
+   "pred": "support",
+   "probs": [
+    0.880218,
+    0.000651,
+    0.119131
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_granary-3minute:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.986556,
+    0.000293,
+    0.013151
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_granary-3minute:v0:f0:role-swap",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000264,
+    0.998619,
+    0.001117
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_granary-3minute:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000112,
+    0.000807,
+    0.999081
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_granary-3minute:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.980818,
+    0.000405,
+    0.018777
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_granary-3minute:v0:f1:goal-misattribution",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000155,
+    0.999361,
+    0.000484
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_granary-3minute:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.002697,
+    0.104656,
+    0.892647
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_granary-3minute:v0:f2:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.909389,
+    0.000388,
+    0.090223
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_granary-3minute:v0:f2:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000939,
+    0.000875,
+    0.998187
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_granary-3minute:v0:f3:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.888545,
+    0.000823,
+    0.110632
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_granary-3minute:v0:f3:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000185,
+    0.993208,
+    0.006607
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_granary-3minute:v0:f3:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000136,
+    0.999375,
+    0.000489
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_granary-3minute:v0:f3:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000139,
+    0.001202,
+    0.998659
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_wharf-5minute:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.992773,
+    0.000391,
+    0.006836
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_wharf-5minute:v0:f0:role-swap",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000241,
+    0.99928,
+    0.000479
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_wharf-5minute:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000418,
+    0.001006,
+    0.998576
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_wharf-5minute:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.980818,
+    0.000405,
+    0.018777
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_wharf-5minute:v0:f1:goal-misattribution",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000155,
+    0.999361,
+    0.000484
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_wharf-5minute:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000123,
+    0.001681,
+    0.998195
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_wharf-5minute:v0:f2:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.921102,
+    0.000347,
+    0.078551
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_wharf-5minute:v0:f2:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.0002,
+    0.000323,
+    0.999477
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_wharf-5minute:v0:f3:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.894919,
+    0.00041,
+    0.104671
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_wharf-5minute:v0:f3:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000149,
+    0.00024,
+    0.999612
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_wharf-5minute:v0:f4:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.873571,
+    0.000664,
+    0.125765
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_wharf-5minute:v0:f4:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    9.1e-05,
+    0.999199,
+    0.00071
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_wharf-5minute:v0:f4:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000112,
+    0.999464,
+    0.000424
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_wharf-5minute:v0:f4:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    9.7e-05,
+    0.001348,
+    0.998554
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_wharf-3minute:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.992773,
+    0.000391,
+    0.006836
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_wharf-3minute:v0:f0:role-swap",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000241,
+    0.99928,
+    0.000479
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_wharf-3minute:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000185,
+    0.000915,
+    0.9989
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_wharf-3minute:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.980818,
+    0.000405,
+    0.018777
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_wharf-3minute:v0:f1:goal-misattribution",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000155,
+    0.999361,
+    0.000484
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_wharf-3minute:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000222,
+    0.004199,
+    0.99558
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_wharf-3minute:v0:f2:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.921102,
+    0.000347,
+    0.078551
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_wharf-3minute:v0:f2:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000233,
+    0.007089,
+    0.992678
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_wharf-3minute:v0:f3:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.895243,
+    0.000391,
+    0.104367
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_wharf-3minute:v0:f3:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000144,
+    0.000245,
+    0.999611
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_wharf-3minute:v0:f4:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.879432,
+    0.000917,
+    0.119651
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_wharf-3minute:v0:f4:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000203,
+    0.992761,
+    0.007036
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_wharf-3minute:v0:f4:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000121,
+    0.999312,
+    0.000567
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_liufuyi-c_wharf-3minute:v0:f4:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000184,
+    0.000883,
+    0.998933
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_flats-5minute:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.993537,
+    0.000249,
+    0.006214
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_flats-5minute:v0:f0:role-swap",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000136,
+    0.999054,
+    0.00081
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_flats-5minute:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.0001,
+    0.000706,
+    0.999194
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_flats-5minute:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.986102,
+    0.000366,
+    0.013533
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_flats-5minute:v0:f1:goal-misattribution",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000108,
+    0.999565,
+    0.000327
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_flats-5minute:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    9.4e-05,
+    0.00187,
+    0.998036
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_flats-5minute:v0:f2:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.839587,
+    0.000495,
+    0.159919
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_flats-5minute:v0:f2:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000134,
+    0.000398,
+    0.999468
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_flats-5minute:v0:f3:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.868019,
+    0.00085,
+    0.131131
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_flats-5minute:v0:f3:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    9.2e-05,
+    0.998686,
+    0.001221
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_flats-5minute:v0:f3:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000107,
+    0.999466,
+    0.000426
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_flats-5minute:v0:f3:unk",
+   "label": "unknown",
+   "pred": "support",
+   "probs": [
+    0.868019,
+    0.00085,
+    0.131131
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_flats-3minute:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.993537,
+    0.000249,
+    0.006214
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_flats-3minute:v0:f0:role-swap",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000136,
+    0.999054,
+    0.00081
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_flats-3minute:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.002252,
+    0.00078,
+    0.996968
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_flats-3minute:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.986102,
+    0.000366,
+    0.013533
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_flats-3minute:v0:f1:goal-misattribution",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000108,
+    0.999565,
+    0.000327
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_flats-3minute:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000217,
+    0.011063,
+    0.98872
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_flats-3minute:v0:f2:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.841381,
+    0.000477,
+    0.158142
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_flats-3minute:v0:f2:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000128,
+    0.000368,
+    0.999504
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_flats-3minute:v0:f3:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.877321,
+    0.001158,
+    0.121521
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_flats-3minute:v0:f3:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000231,
+    0.99079,
+    0.008979
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_flats-3minute:v0:f3:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.00012,
+    0.999357,
+    0.000522
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_flats-3minute:v0:f3:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.00017,
+    0.001736,
+    0.998094
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_granary-5minute:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.991881,
+    0.000291,
+    0.007827
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_granary-5minute:v0:f0:role-swap",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000149,
+    0.998631,
+    0.00122
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_granary-5minute:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    9.9e-05,
+    0.001901,
+    0.998
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_granary-5minute:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.986102,
+    0.000366,
+    0.013533
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_granary-5minute:v0:f1:goal-misattribution",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000108,
+    0.999565,
+    0.000327
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_granary-5minute:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    9.1e-05,
+    0.001553,
+    0.998356
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_granary-5minute:v0:f2:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.910842,
+    0.000392,
+    0.088765
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_granary-5minute:v0:f2:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    8.9e-05,
+    0.000666,
+    0.999246
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_granary-5minute:v0:f3:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.880218,
+    0.000651,
+    0.119131
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_granary-5minute:v0:f3:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    8.9e-05,
+    0.999056,
+    0.000855
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_granary-5minute:v0:f3:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000114,
+    0.999499,
+    0.000387
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_granary-5minute:v0:f3:unk",
+   "label": "unknown",
+   "pred": "support",
+   "probs": [
+    0.880218,
+    0.000651,
+    0.119131
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_granary-3minute:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.991881,
+    0.000291,
+    0.007827
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_granary-3minute:v0:f0:role-swap",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000149,
+    0.998631,
+    0.00122
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_granary-3minute:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000154,
+    0.000724,
+    0.999123
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_granary-3minute:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.986102,
+    0.000366,
+    0.013533
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_granary-3minute:v0:f1:goal-misattribution",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000108,
+    0.999565,
+    0.000327
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_granary-3minute:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    9.3e-05,
+    0.001779,
+    0.998128
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_granary-3minute:v0:f2:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.909389,
+    0.000388,
+    0.090223
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_granary-3minute:v0:f2:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    9.3e-05,
+    0.000977,
+    0.99893
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_granary-3minute:v0:f3:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.888545,
+    0.000823,
+    0.110632
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_granary-3minute:v0:f3:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000185,
+    0.993208,
+    0.006607
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_granary-3minute:v0:f3:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000136,
+    0.999375,
+    0.000489
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_granary-3minute:v0:f3:unk",
+   "label": "unknown",
+   "pred": "support",
+   "probs": [
+    0.941902,
+    0.00119,
+    0.056907
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_wharf-5minute:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.994248,
+    0.000545,
+    0.005207
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_wharf-5minute:v0:f0:role-swap",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000199,
+    0.999128,
+    0.000673
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_wharf-5minute:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.00012,
+    0.000993,
+    0.998887
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_wharf-5minute:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.986102,
+    0.000366,
+    0.013533
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_wharf-5minute:v0:f1:goal-misattribution",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000108,
+    0.999565,
+    0.000327
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_wharf-5minute:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000114,
+    0.002808,
+    0.997079
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_wharf-5minute:v0:f2:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.921102,
+    0.000347,
+    0.078551
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_wharf-5minute:v0:f2:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000666,
+    0.004611,
+    0.994723
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_wharf-5minute:v0:f3:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.894919,
+    0.00041,
+    0.104671
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_wharf-5minute:v0:f3:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000997,
+    0.000351,
+    0.998652
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_wharf-5minute:v0:f4:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.873571,
+    0.000664,
+    0.125765
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_wharf-5minute:v0:f4:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    9.1e-05,
+    0.999199,
+    0.00071
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_wharf-5minute:v0:f4:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000112,
+    0.999464,
+    0.000424
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_wharf-5minute:v0:f4:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.001678,
+    0.00966,
+    0.988662
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_wharf-3minute:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.994248,
+    0.000545,
+    0.005207
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_wharf-3minute:v0:f0:role-swap",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000199,
+    0.999128,
+    0.000673
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_wharf-3minute:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.0002,
+    0.001286,
+    0.998514
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_wharf-3minute:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.986102,
+    0.000366,
+    0.013533
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_wharf-3minute:v0:f1:goal-misattribution",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000108,
+    0.999565,
+    0.000327
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_wharf-3minute:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000203,
+    0.013107,
+    0.98669
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_wharf-3minute:v0:f2:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.921102,
+    0.000347,
+    0.078551
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_wharf-3minute:v0:f2:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000123,
+    0.003269,
+    0.996608
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_wharf-3minute:v0:f3:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.895243,
+    0.000391,
+    0.104367
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_wharf-3minute:v0:f3:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000117,
+    0.000374,
+    0.999509
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_wharf-3minute:v0:f4:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.879432,
+    0.000917,
+    0.119651
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_wharf-3minute:v0:f4:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000203,
+    0.992761,
+    0.007036
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_wharf-3minute:v0:f4:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000121,
+    0.999312,
+    0.000567
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_xiaoman-c_wharf-3minute:v0:f4:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.00015,
+    0.002045,
+    0.997805
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_flats-5minute:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.988311,
+    0.000192,
+    0.011497
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_flats-5minute:v0:f0:role-swap",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000157,
+    0.998924,
+    0.000919
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_flats-5minute:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000172,
+    0.001018,
+    0.99881
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_flats-5minute:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.984729,
+    0.000521,
+    0.014751
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_flats-5minute:v0:f1:goal-misattribution",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000107,
+    0.999608,
+    0.000285
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_flats-5minute:v0:f1:unk",
+   "label": "unknown",
+   "pred": "contradiction",
+   "probs": [
+    0.015752,
+    0.686997,
+    0.297252
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_flats-5minute:v0:f2:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.839587,
+    0.000495,
+    0.159919
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_flats-5minute:v0:f2:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000301,
+    0.000177,
+    0.999522
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_flats-5minute:v0:f3:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.868019,
+    0.00085,
+    0.131131
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_flats-5minute:v0:f3:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    9.2e-05,
+    0.998686,
+    0.001221
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_flats-5minute:v0:f3:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000107,
+    0.999466,
+    0.000426
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_flats-5minute:v0:f3:unk",
+   "label": "unknown",
+   "pred": "support",
+   "probs": [
+    0.870008,
+    0.000612,
+    0.12938
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_flats-3minute:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.988311,
+    0.000192,
+    0.011497
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_flats-3minute:v0:f0:role-swap",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000157,
+    0.998924,
+    0.000919
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_flats-3minute:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000172,
+    0.001018,
+    0.99881
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_flats-3minute:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.984729,
+    0.000521,
+    0.014751
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_flats-3minute:v0:f1:goal-misattribution",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000107,
+    0.999608,
+    0.000285
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_flats-3minute:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.00017,
+    0.012575,
+    0.987255
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_flats-3minute:v0:f2:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.841381,
+    0.000477,
+    0.158142
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_flats-3minute:v0:f2:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000122,
+    0.000331,
+    0.999546
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_flats-3minute:v0:f3:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.877321,
+    0.001158,
+    0.121521
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_flats-3minute:v0:f3:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000231,
+    0.99079,
+    0.008979
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_flats-3minute:v0:f3:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.00012,
+    0.999357,
+    0.000522
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_flats-3minute:v0:f3:unk",
+   "label": "unknown",
+   "pred": "support",
+   "probs": [
+    0.888545,
+    0.000823,
+    0.110632
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_windmill-5minute:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.990712,
+    0.00023,
+    0.009058
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_windmill-5minute:v0:f0:role-swap",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000161,
+    0.999053,
+    0.000786
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_windmill-5minute:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    8.7e-05,
+    0.001146,
+    0.998767
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_windmill-5minute:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.984729,
+    0.000521,
+    0.014751
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_windmill-5minute:v0:f1:goal-misattribution",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000107,
+    0.999608,
+    0.000285
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_windmill-5minute:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000149,
+    0.002867,
+    0.996984
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_windmill-5minute:v0:f2:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.918089,
+    0.00035,
+    0.081561
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_windmill-5minute:v0:f2:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000123,
+    0.000475,
+    0.999402
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_windmill-5minute:v0:f3:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.903368,
+    0.000415,
+    0.096217
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_windmill-5minute:v0:f3:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000169,
+    0.000182,
+    0.999649
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_windmill-5minute:v0:f4:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.870008,
+    0.000612,
+    0.12938
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_windmill-5minute:v0:f4:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    9.3e-05,
+    0.999123,
+    0.000784
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_windmill-5minute:v0:f4:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000108,
+    0.999471,
+    0.00042
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_windmill-5minute:v0:f4:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000131,
+    0.000712,
+    0.999157
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_windmill-3minute:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.990712,
+    0.00023,
+    0.009058
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_windmill-3minute:v0:f0:role-swap",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000161,
+    0.999053,
+    0.000786
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_windmill-3minute:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000152,
+    0.000665,
+    0.999183
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_windmill-3minute:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.984729,
+    0.000521,
+    0.014751
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_windmill-3minute:v0:f1:goal-misattribution",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000107,
+    0.999608,
+    0.000285
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_windmill-3minute:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000148,
+    0.002676,
+    0.997176
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_windmill-3minute:v0:f2:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.918089,
+    0.00035,
+    0.081561
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_windmill-3minute:v0:f2:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000115,
+    0.000327,
+    0.999558
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_windmill-3minute:v0:f3:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.904907,
+    0.000404,
+    0.094689
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_windmill-3minute:v0:f3:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000117,
+    0.000234,
+    0.999649
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_windmill-3minute:v0:f4:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.875119,
+    0.0009,
+    0.123982
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_windmill-3minute:v0:f4:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000192,
+    0.991132,
+    0.008675
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_windmill-3minute:v0:f4:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000116,
+    0.999341,
+    0.000543
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_windmill-3minute:v0:f4:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.001794,
+    0.013624,
+    0.984582
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_wharf-5minute:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.99125,
+    0.000211,
+    0.008539
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_wharf-5minute:v0:f0:role-swap",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000167,
+    0.998763,
+    0.00107
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_wharf-5minute:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.00207,
+    0.001007,
+    0.996923
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_wharf-5minute:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.989493,
+    0.00035,
+    0.010156
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_wharf-5minute:v0:f1:goal-misattribution",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000106,
+    0.99964,
+    0.000254
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_wharf-5minute:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000124,
+    0.003567,
+    0.996309
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_wharf-5minute:v0:f2:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.921102,
+    0.000347,
+    0.078551
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_wharf-5minute:v0:f2:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.0001,
+    0.001292,
+    0.998608
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_wharf-5minute:v0:f3:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.894919,
+    0.00041,
+    0.104671
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_wharf-5minute:v0:f3:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.001304,
+    9.1e-05,
+    0.998605
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_wharf-5minute:v0:f4:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.873571,
+    0.000664,
+    0.125765
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_wharf-5minute:v0:f4:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    9.1e-05,
+    0.999199,
+    0.00071
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_wharf-5minute:v0:f4:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000112,
+    0.999464,
+    0.000424
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_wharf-5minute:v0:f4:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000158,
+    0.00168,
+    0.998161
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_wharf-3minute:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.99125,
+    0.000211,
+    0.008539
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_wharf-3minute:v0:f0:role-swap",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000167,
+    0.998763,
+    0.00107
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_wharf-3minute:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000271,
+    0.024408,
+    0.97532
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_wharf-3minute:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.989493,
+    0.00035,
+    0.010156
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_wharf-3minute:v0:f1:goal-misattribution",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000106,
+    0.99964,
+    0.000254
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_wharf-3minute:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000111,
+    0.003042,
+    0.996847
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_wharf-3minute:v0:f2:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.921102,
+    0.000347,
+    0.078551
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_wharf-3minute:v0:f2:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    9.8e-05,
+    0.001294,
+    0.998608
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_wharf-3minute:v0:f3:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.895243,
+    0.000391,
+    0.104367
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_wharf-3minute:v0:f3:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000284,
+    0.000425,
+    0.99929
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_wharf-3minute:v0:f4:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.879432,
+    0.000917,
+    0.119651
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_wharf-3minute:v0:f4:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000203,
+    0.992761,
+    0.007036
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_wharf-3minute:v0:f4:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000121,
+    0.999312,
+    0.000567
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_a-c_wharf-3minute:v0:f4:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000124,
+    0.000647,
+    0.999229
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_flats-5minute:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.993561,
+    0.000524,
+    0.005915
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_flats-5minute:v0:f0:role-swap",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000179,
+    0.99932,
+    0.000501
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_flats-5minute:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000881,
+    0.005809,
+    0.99331
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_flats-5minute:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.980979,
+    0.000592,
+    0.018429
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_flats-5minute:v0:f1:goal-misattribution",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000108,
+    0.999613,
+    0.000278
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_flats-5minute:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.00014,
+    0.001369,
+    0.99849
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_flats-5minute:v0:f2:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.839587,
+    0.000495,
+    0.159919
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_flats-5minute:v0:f2:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000233,
+    0.000314,
+    0.999452
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_flats-5minute:v0:f3:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.868019,
+    0.00085,
+    0.131131
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_flats-5minute:v0:f3:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    9.2e-05,
+    0.998686,
+    0.001221
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_flats-5minute:v0:f3:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000107,
+    0.999466,
+    0.000426
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_flats-5minute:v0:f3:unk",
+   "label": "unknown",
+   "pred": "support",
+   "probs": [
+    0.870008,
+    0.000612,
+    0.12938
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_flats-3minute:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.993561,
+    0.000524,
+    0.005915
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_flats-3minute:v0:f0:role-swap",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000179,
+    0.99932,
+    0.000501
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_flats-3minute:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.004683,
+    0.016779,
+    0.978538
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_flats-3minute:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.980979,
+    0.000592,
+    0.018429
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_flats-3minute:v0:f1:goal-misattribution",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000108,
+    0.999613,
+    0.000278
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_flats-3minute:v0:f1:unk",
+   "label": "unknown",
+   "pred": "support",
+   "probs": [
+    0.990111,
+    0.000324,
+    0.009565
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_flats-3minute:v0:f2:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.841381,
+    0.000477,
+    0.158142
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_flats-3minute:v0:f2:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000114,
+    0.000497,
+    0.99939
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_flats-3minute:v0:f3:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.877321,
+    0.001158,
+    0.121521
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_flats-3minute:v0:f3:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000231,
+    0.99079,
+    0.008979
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_flats-3minute:v0:f3:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.00012,
+    0.999357,
+    0.000522
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_flats-3minute:v0:f3:unk",
+   "label": "unknown",
+   "pred": "support",
+   "probs": [
+    0.888545,
+    0.000823,
+    0.110632
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_windmill-5minute:v0:f0:sup",
+   "label": "support",
+   "pred": "contradiction",
+   "probs": [
+    0.017578,
+    0.98033,
+    0.002092
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_windmill-5minute:v0:f0:role-swap",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000222,
+    0.999288,
+    0.00049
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_windmill-5minute:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000171,
+    0.000703,
+    0.999126
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_windmill-5minute:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.980979,
+    0.000592,
+    0.018429
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_windmill-5minute:v0:f1:goal-misattribution",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000108,
+    0.999613,
+    0.000278
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_windmill-5minute:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.00145,
+    0.027984,
+    0.970566
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_windmill-5minute:v0:f2:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.918089,
+    0.00035,
+    0.081561
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_windmill-5minute:v0:f2:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000104,
+    0.000543,
+    0.999353
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_windmill-5minute:v0:f3:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.903368,
+    0.000415,
+    0.096217
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_windmill-5minute:v0:f3:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000109,
+    0.000361,
+    0.99953
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_windmill-5minute:v0:f4:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.870008,
+    0.000612,
+    0.12938
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_windmill-5minute:v0:f4:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    9.3e-05,
+    0.999123,
+    0.000784
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_windmill-5minute:v0:f4:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000108,
+    0.999471,
+    0.00042
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_windmill-5minute:v0:f4:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.003747,
+    0.002771,
+    0.993482
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_windmill-3minute:v0:f0:sup",
+   "label": "support",
+   "pred": "contradiction",
+   "probs": [
+    0.017578,
+    0.98033,
+    0.002092
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_windmill-3minute:v0:f0:role-swap",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000222,
+    0.999288,
+    0.00049
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_windmill-3minute:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000137,
+    0.002646,
+    0.997217
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_windmill-3minute:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.980979,
+    0.000592,
+    0.018429
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_windmill-3minute:v0:f1:goal-misattribution",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000108,
+    0.999613,
+    0.000278
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_windmill-3minute:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000149,
+    0.001829,
+    0.998022
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_windmill-3minute:v0:f2:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.918089,
+    0.00035,
+    0.081561
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_windmill-3minute:v0:f2:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000102,
+    0.000328,
+    0.99957
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_windmill-3minute:v0:f3:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.904907,
+    0.000404,
+    0.094689
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_windmill-3minute:v0:f3:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000107,
+    0.000677,
+    0.999216
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_windmill-3minute:v0:f4:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.875119,
+    0.0009,
+    0.123982
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_windmill-3minute:v0:f4:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000192,
+    0.991132,
+    0.008675
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_windmill-3minute:v0:f4:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000116,
+    0.999341,
+    0.000543
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_windmill-3minute:v0:f4:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.002067,
+    0.028539,
+    0.969394
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_granary-5minute:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.990525,
+    0.000305,
+    0.00917
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_granary-5minute:v0:f0:role-swap",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000161,
+    0.998944,
+    0.000895
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_granary-5minute:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000293,
+    0.001361,
+    0.998346
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_granary-5minute:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.990111,
+    0.000324,
+    0.009565
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_granary-5minute:v0:f1:goal-misattribution",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000112,
+    0.999675,
+    0.000213
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_granary-5minute:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000646,
+    0.060318,
+    0.939036
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_granary-5minute:v0:f2:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.910842,
+    0.000392,
+    0.088765
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_granary-5minute:v0:f2:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    9.3e-05,
+    0.000977,
+    0.99893
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_granary-5minute:v0:f3:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.880218,
+    0.000651,
+    0.119131
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_granary-5minute:v0:f3:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    8.9e-05,
+    0.999056,
+    0.000855
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_granary-5minute:v0:f3:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000114,
+    0.999499,
+    0.000387
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_granary-5minute:v0:f3:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.003747,
+    0.002771,
+    0.993482
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_granary-3minute:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.990525,
+    0.000305,
+    0.00917
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_granary-3minute:v0:f0:role-swap",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000161,
+    0.998944,
+    0.000895
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_granary-3minute:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000162,
+    0.002637,
+    0.9972
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_granary-3minute:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.990111,
+    0.000324,
+    0.009565
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_granary-3minute:v0:f1:goal-misattribution",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000112,
+    0.999675,
+    0.000213
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_granary-3minute:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000743,
+    0.034697,
+    0.96456
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_granary-3minute:v0:f2:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.909389,
+    0.000388,
+    0.090223
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_granary-3minute:v0:f2:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    9.4e-05,
+    0.000857,
+    0.999049
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_granary-3minute:v0:f3:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.888545,
+    0.000823,
+    0.110632
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_granary-3minute:v0:f3:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000185,
+    0.993208,
+    0.006607
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_granary-3minute:v0:f3:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000136,
+    0.999375,
+    0.000489
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_qinshu_b-c_granary-3minute:v0:f3:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000111,
+    0.001415,
+    0.998474
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_flats-5minute:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.993944,
+    0.000254,
+    0.005802
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_flats-5minute:v0:f0:role-swap",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000151,
+    0.999103,
+    0.000747
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_flats-5minute:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000674,
+    0.001782,
+    0.997544
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_flats-5minute:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.989245,
+    0.000356,
+    0.010399
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_flats-5minute:v0:f1:goal-misattribution",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000106,
+    0.999635,
+    0.000259
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_flats-5minute:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.001172,
+    0.057882,
+    0.940946
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_flats-5minute:v0:f2:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.839587,
+    0.000495,
+    0.159919
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_flats-5minute:v0:f2:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000117,
+    0.000513,
+    0.999369
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_flats-5minute:v0:f3:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.868019,
+    0.00085,
+    0.131131
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_flats-5minute:v0:f3:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    9.2e-05,
+    0.998686,
+    0.001221
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_flats-5minute:v0:f3:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000107,
+    0.999466,
+    0.000426
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_flats-5minute:v0:f3:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000142,
+    0.000439,
+    0.99942
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_flats-3minute:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.993944,
+    0.000254,
+    0.005802
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_flats-3minute:v0:f0:role-swap",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000151,
+    0.999103,
+    0.000747
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_flats-3minute:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000758,
+    0.024707,
+    0.974535
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_flats-3minute:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.989245,
+    0.000356,
+    0.010399
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_flats-3minute:v0:f1:goal-misattribution",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000106,
+    0.999635,
+    0.000259
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_flats-3minute:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000207,
+    0.00237,
+    0.997423
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_flats-3minute:v0:f2:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.841381,
+    0.000477,
+    0.158142
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_flats-3minute:v0:f2:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000143,
+    0.00037,
+    0.999487
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_flats-3minute:v0:f3:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.877321,
+    0.001158,
+    0.121521
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_flats-3minute:v0:f3:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000231,
+    0.99079,
+    0.008979
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_flats-3minute:v0:f3:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.00012,
+    0.999357,
+    0.000522
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_flats-3minute:v0:f3:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000112,
+    0.001024,
+    0.998864
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_granary-5minute:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.991351,
+    0.000243,
+    0.008406
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_granary-5minute:v0:f0:role-swap",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000174,
+    0.998322,
+    0.001504
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_granary-5minute:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.002006,
+    0.000237,
+    0.997757
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_granary-5minute:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.989245,
+    0.000356,
+    0.010399
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_granary-5minute:v0:f1:goal-misattribution",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000106,
+    0.999635,
+    0.000259
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_granary-5minute:v0:f1:unk",
+   "label": "unknown",
+   "pred": "support",
+   "probs": [
+    0.989245,
+    0.000356,
+    0.010399
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_granary-5minute:v0:f2:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.910842,
+    0.000392,
+    0.088765
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_granary-5minute:v0:f2:unk",
+   "label": "unknown",
+   "pred": "support",
+   "probs": [
+    0.910842,
+    0.000392,
+    0.088765
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_granary-5minute:v0:f3:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.880218,
+    0.000651,
+    0.119131
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_granary-5minute:v0:f3:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    8.9e-05,
+    0.999056,
+    0.000855
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_granary-5minute:v0:f3:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000114,
+    0.999499,
+    0.000387
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_granary-5minute:v0:f3:unk",
+   "label": "unknown",
+   "pred": "support",
+   "probs": [
+    0.919692,
+    0.001438,
+    0.078871
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_granary-3minute:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.991351,
+    0.000243,
+    0.008406
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_granary-3minute:v0:f0:role-swap",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000174,
+    0.998322,
+    0.001504
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_granary-3minute:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.002006,
+    0.000237,
+    0.997757
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_granary-3minute:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.989245,
+    0.000356,
+    0.010399
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_granary-3minute:v0:f1:goal-misattribution",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000106,
+    0.999635,
+    0.000259
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_granary-3minute:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000133,
+    0.0008,
+    0.999067
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_granary-3minute:v0:f2:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.909389,
+    0.000388,
+    0.090223
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_granary-3minute:v0:f2:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    9.2e-05,
+    0.000929,
+    0.99898
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_granary-3minute:v0:f3:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.888545,
+    0.000823,
+    0.110632
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_granary-3minute:v0:f3:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000185,
+    0.993208,
+    0.006607
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_granary-3minute:v0:f3:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000136,
+    0.999375,
+    0.000489
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_granary-3minute:v0:f3:unk",
+   "label": "unknown",
+   "pred": "contradiction",
+   "probs": [
+    0.005901,
+    0.423998,
+    0.5701
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_wharf-5minute:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.995486,
+    0.000595,
+    0.003919
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_wharf-5minute:v0:f0:role-swap",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000236,
+    0.999015,
+    0.000749
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_wharf-5minute:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000212,
+    0.002168,
+    0.99762
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_wharf-5minute:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.989245,
+    0.000356,
+    0.010399
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_wharf-5minute:v0:f1:goal-misattribution",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000106,
+    0.999635,
+    0.000259
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_wharf-5minute:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.00012,
+    0.001012,
+    0.998868
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_wharf-5minute:v0:f2:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.921102,
+    0.000347,
+    0.078551
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_wharf-5minute:v0:f2:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.00077,
+    0.00035,
+    0.99888
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_wharf-5minute:v0:f3:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.894919,
+    0.00041,
+    0.104671
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_wharf-5minute:v0:f3:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000134,
+    0.000312,
+    0.999554
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_wharf-5minute:v0:f4:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.873571,
+    0.000664,
+    0.125765
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_wharf-5minute:v0:f4:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    9.1e-05,
+    0.999199,
+    0.00071
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_wharf-5minute:v0:f4:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000112,
+    0.999464,
+    0.000424
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_wharf-5minute:v0:f4:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000119,
+    0.0007,
+    0.999181
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_wharf-3minute:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.995486,
+    0.000595,
+    0.003919
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_wharf-3minute:v0:f0:role-swap",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000236,
+    0.999015,
+    0.000749
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_wharf-3minute:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000408,
+    0.002718,
+    0.996875
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_wharf-3minute:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.989245,
+    0.000356,
+    0.010399
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_wharf-3minute:v0:f1:goal-misattribution",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000106,
+    0.999635,
+    0.000259
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_wharf-3minute:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.00012,
+    0.002103,
+    0.997777
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_wharf-3minute:v0:f2:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.921102,
+    0.000347,
+    0.078551
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_wharf-3minute:v0:f2:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.00077,
+    0.00035,
+    0.99888
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_wharf-3minute:v0:f3:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.895243,
+    0.000391,
+    0.104367
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_wharf-3minute:v0:f3:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.001023,
+    7e-05,
+    0.998908
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_wharf-3minute:v0:f4:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.879432,
+    0.000917,
+    0.119651
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_wharf-3minute:v0:f4:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000203,
+    0.992761,
+    0.007036
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_wharf-3minute:v0:f4:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000121,
+    0.999312,
+    0.000567
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_yanbo-c_wharf-3minute:v0:f4:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.002067,
+    0.028539,
+    0.969394
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_flats-5minute:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.992895,
+    0.000457,
+    0.006648
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_flats-5minute:v0:f0:role-swap",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000191,
+    0.999248,
+    0.000561
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_flats-5minute:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000393,
+    0.000635,
+    0.998972
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_flats-5minute:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.988789,
+    0.00032,
+    0.010892
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_flats-5minute:v0:f1:goal-misattribution",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000113,
+    0.999661,
+    0.000226
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_flats-5minute:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000133,
+    0.000957,
+    0.998909
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_flats-5minute:v0:f2:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.839587,
+    0.000495,
+    0.159919
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_flats-5minute:v0:f2:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.00023,
+    0.000348,
+    0.999422
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_flats-5minute:v0:f3:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.868019,
+    0.00085,
+    0.131131
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_flats-5minute:v0:f3:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    9.2e-05,
+    0.998686,
+    0.001221
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_flats-5minute:v0:f3:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000107,
+    0.999466,
+    0.000426
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_flats-5minute:v0:f3:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000122,
+    0.001048,
+    0.99883
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_flats-3minute:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.992895,
+    0.000457,
+    0.006648
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_flats-3minute:v0:f0:role-swap",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000191,
+    0.999248,
+    0.000561
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_flats-3minute:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.001387,
+    0.000356,
+    0.998257
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_flats-3minute:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.988789,
+    0.00032,
+    0.010892
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_flats-3minute:v0:f1:goal-misattribution",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000113,
+    0.999661,
+    0.000226
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_flats-3minute:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000277,
+    0.004659,
+    0.995064
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_flats-3minute:v0:f2:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.841381,
+    0.000477,
+    0.158142
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_flats-3minute:v0:f2:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000562,
+    0.000585,
+    0.998853
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_flats-3minute:v0:f3:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.877321,
+    0.001158,
+    0.121521
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_flats-3minute:v0:f3:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000231,
+    0.99079,
+    0.008979
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_flats-3minute:v0:f3:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.00012,
+    0.999357,
+    0.000522
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_flats-3minute:v0:f3:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000112,
+    0.001024,
+    0.998864
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_windmill-5minute:v0:f0:sup",
+   "label": "support",
+   "pred": "contradiction",
+   "probs": [
+    0.034932,
+    0.961687,
+    0.003381
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_windmill-5minute:v0:f0:role-swap",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000238,
+    0.999161,
+    0.0006
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_windmill-5minute:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000272,
+    0.009791,
+    0.989937
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_windmill-5minute:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.988789,
+    0.00032,
+    0.010892
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_windmill-5minute:v0:f1:goal-misattribution",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000113,
+    0.999661,
+    0.000226
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_windmill-5minute:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000113,
+    0.001293,
+    0.998595
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_windmill-5minute:v0:f2:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.918089,
+    0.00035,
+    0.081561
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_windmill-5minute:v0:f2:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    8.8e-05,
+    0.000519,
+    0.999393
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_windmill-5minute:v0:f3:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.903368,
+    0.000415,
+    0.096217
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_windmill-5minute:v0:f3:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000853,
+    0.000102,
+    0.999045
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_windmill-5minute:v0:f4:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.870008,
+    0.000612,
+    0.12938
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_windmill-5minute:v0:f4:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    9.3e-05,
+    0.999123,
+    0.000784
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_windmill-5minute:v0:f4:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000108,
+    0.999471,
+    0.00042
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_windmill-5minute:v0:f4:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000137,
+    0.000704,
+    0.99916
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_windmill-3minute:v0:f0:sup",
+   "label": "support",
+   "pred": "contradiction",
+   "probs": [
+    0.034932,
+    0.961687,
+    0.003381
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_windmill-3minute:v0:f0:role-swap",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000238,
+    0.999161,
+    0.0006
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_windmill-3minute:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000116,
+    0.000526,
+    0.999359
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_windmill-3minute:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.988789,
+    0.00032,
+    0.010892
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_windmill-3minute:v0:f1:goal-misattribution",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000113,
+    0.999661,
+    0.000226
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_windmill-3minute:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000145,
+    0.001455,
+    0.9984
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_windmill-3minute:v0:f2:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.918089,
+    0.00035,
+    0.081561
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_windmill-3minute:v0:f2:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000104,
+    0.000438,
+    0.999458
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_windmill-3minute:v0:f3:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.904907,
+    0.000404,
+    0.094689
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_windmill-3minute:v0:f3:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000134,
+    0.000291,
+    0.999574
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_windmill-3minute:v0:f4:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.875119,
+    0.0009,
+    0.123982
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_windmill-3minute:v0:f4:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000192,
+    0.991132,
+    0.008675
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_windmill-3minute:v0:f4:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000116,
+    0.999341,
+    0.000543
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_windmill-3minute:v0:f4:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000132,
+    0.001817,
+    0.998051
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_granary-5minute:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.989535,
+    0.000308,
+    0.010157
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_granary-5minute:v0:f0:role-swap",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000184,
+    0.99865,
+    0.001165
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_granary-5minute:v0:f0:unk",
+   "label": "unknown",
+   "pred": "support",
+   "probs": [
+    0.973062,
+    0.000321,
+    0.026617
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_granary-5minute:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.988789,
+    0.00032,
+    0.010892
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_granary-5minute:v0:f1:goal-misattribution",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000113,
+    0.999661,
+    0.000226
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_granary-5minute:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000124,
+    0.000487,
+    0.999388
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_granary-5minute:v0:f2:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.910842,
+    0.000392,
+    0.088765
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_granary-5minute:v0:f2:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    9.2e-05,
+    0.000929,
+    0.99898
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_granary-5minute:v0:f3:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.880218,
+    0.000651,
+    0.119131
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_granary-5minute:v0:f3:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    8.9e-05,
+    0.999056,
+    0.000855
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_granary-5minute:v0:f3:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000114,
+    0.999499,
+    0.000387
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_granary-5minute:v0:f3:unk",
+   "label": "unknown",
+   "pred": "support",
+   "probs": [
+    0.868019,
+    0.00085,
+    0.131131
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_granary-3minute:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.989535,
+    0.000308,
+    0.010157
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_granary-3minute:v0:f0:role-swap",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000184,
+    0.99865,
+    0.001165
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_granary-3minute:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000333,
+    0.038121,
+    0.961545
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_granary-3minute:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.988789,
+    0.00032,
+    0.010892
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_granary-3minute:v0:f1:goal-misattribution",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000113,
+    0.999661,
+    0.000226
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_granary-3minute:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000112,
+    0.001254,
+    0.998634
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_granary-3minute:v0:f2:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.909389,
+    0.000388,
+    0.090223
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_granary-3minute:v0:f2:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.010611,
+    0.000464,
+    0.988924
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_granary-3minute:v0:f3:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.888545,
+    0.000823,
+    0.110632
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_granary-3minute:v0:f3:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000185,
+    0.993208,
+    0.006607
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_granary-3minute:v0:f3:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000136,
+    0.999375,
+    0.000489
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:core-move-task-c_akui-c_granary-3minute:v0:f3:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.00017,
+    0.001736,
+    0.998094
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:cross-reference-8minute:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.989112,
+    0.00025,
+    0.010638
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:cross-reference-8minute:v0:f0:role-swap",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000183,
+    0.998239,
+    0.001578
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:cross-reference-8minute:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.049724,
+    0.000674,
+    0.949602
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:cross-reference-8minute:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.980506,
+    0.001114,
+    0.018381
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:cross-reference-8minute:v0:f1:direction-flip",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000249,
+    0.999297,
+    0.000454
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:cross-reference-8minute:v0:f1:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    9.9e-05,
+    0.999465,
+    0.000436
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:cross-reference-8minute:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000114,
+    0.001667,
+    0.998219
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:cross-reference-8minute:v0:f2:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.985541,
+    0.000683,
+    0.013776
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:cross-reference-8minute:v0:f2:goal-misattribution",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000115,
+    0.999663,
+    0.000222
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:cross-reference-8minute:v0:f2:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000207,
+    0.006059,
+    0.993733
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:cross-reference-8minute:v0:f3:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.939153,
+    0.001113,
+    0.059734
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:cross-reference-8minute:v0:f3:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    9.8e-05,
+    0.999253,
+    0.000648
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:cross-reference-8minute:v0:f3:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000128,
+    0.999505,
+    0.000367
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:cross-reference-8minute:v0:f3:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000115,
+    0.001611,
+    0.998274
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:alternating-6minute:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.989112,
+    0.00025,
+    0.010638
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:alternating-6minute:v0:f0:role-swap",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000183,
+    0.998239,
+    0.001578
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:alternating-6minute:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000123,
+    0.002294,
+    0.997582
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:alternating-6minute:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.988768,
+    0.000369,
+    0.010863
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:alternating-6minute:v0:f1:goal-misattribution",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000105,
+    0.999643,
+    0.000252
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:alternating-6minute:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000452,
+    0.002494,
+    0.997054
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:alternating-6minute:v0:f2:sup",
+   "label": "support",
+   "pred": "contradiction",
+   "probs": [
+    0.396086,
+    0.586692,
+    0.017222
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:alternating-6minute:v0:f2:role-swap",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.003563,
+    0.994451,
+    0.001986
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:alternating-6minute:v0:f2:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000149,
+    0.00084,
+    0.99901
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:alternating-6minute:v0:f3:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.9274,
+    0.002103,
+    0.070497
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:alternating-6minute:v0:f3:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.006868,
+    0.867191,
+    0.125941
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:alternating-6minute:v0:f3:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000132,
+    0.99953,
+    0.000337
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:alternating-6minute:v0:f3:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.001453,
+    0.049177,
+    0.94937
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:same-name:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.988768,
+    0.000369,
+    0.010863
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:same-name:v0:f0:goal-misattribution",
+   "label": "contradiction",
+   "pred": "unknown",
+   "probs": [
+    0.003237,
+    0.071233,
+    0.92553
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:same-name:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000149,
+    0.002867,
+    0.996984
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:same-name:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.986841,
+    0.000381,
+    0.012778
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:same-name:v0:f1:goal-misattribution",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.015752,
+    0.686997,
+    0.297252
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:same-name:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000162,
+    0.001321,
+    0.998518
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:same-name:v0:f2:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.955,
+    0.000807,
+    0.044193
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:same-name:v0:f2:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    9.8e-05,
+    0.999167,
+    0.000735
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:same-name:v0:f2:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000175,
+    0.999518,
+    0.000307
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:same-name:v0:f2:unk",
+   "label": "unknown",
+   "pred": "support",
+   "probs": [
+    0.720805,
+    0.007491,
+    0.271703
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:gender-unknown-7minute:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.991881,
+    0.000291,
+    0.007827
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:gender-unknown-7minute:v0:f0:role-swap",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000149,
+    0.998631,
+    0.00122
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:gender-unknown-7minute:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000113,
+    0.001535,
+    0.998352
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:gender-unknown-7minute:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.986102,
+    0.000366,
+    0.013533
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:gender-unknown-7minute:v0:f1:goal-misattribution",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000108,
+    0.999565,
+    0.000327
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:gender-unknown-7minute:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000114,
+    0.001093,
+    0.998793
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:gender-unknown-7minute:v0:f2:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.910732,
+    0.000383,
+    0.088885
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:gender-unknown-7minute:v0:f2:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000525,
+    0.000299,
+    0.999176
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:gender-unknown-7minute:v0:f3:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.887647,
+    0.00076,
+    0.111593
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:gender-unknown-7minute:v0:f3:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    8e-05,
+    0.998911,
+    0.001009
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:gender-unknown-7minute:v0:f3:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.00011,
+    0.999491,
+    0.000399
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:gender-unknown-7minute:v0:f3:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.183394,
+    0.014569,
+    0.802037
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:conflict-shared-goal:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.98787,
+    0.000262,
+    0.011868
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:conflict-shared-goal:v0:f0:goal-misattribution",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000114,
+    0.999653,
+    0.000232
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:conflict-shared-goal:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000107,
+    0.001278,
+    0.998615
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:conflict-shared-goal:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.981963,
+    0.000409,
+    0.017628
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:conflict-shared-goal:v0:f1:goal-misattribution",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000104,
+    0.999655,
+    0.000241
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:conflict-shared-goal:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000279,
+    0.004073,
+    0.995648
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:conflict-shared-goal:v0:f2:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.941902,
+    0.00119,
+    0.056907
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:conflict-shared-goal:v0:f2:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000192,
+    0.997961,
+    0.001847
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:conflict-shared-goal:v0:f2:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000133,
+    0.999559,
+    0.000309
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:conflict-shared-goal:v0:f2:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    9.7e-05,
+    0.000902,
+    0.999001
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:time-lead-9:v0:f2:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.964021,
+    0.004857,
+    0.031122
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:time-lead-9:v0:f2:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000135,
+    0.999554,
+    0.00031
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:time-lead-9:v0:f2:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    9.6e-05,
+    0.99943,
+    0.000473
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:time-lead-9:v0:f2:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000193,
+    0.001206,
+    0.9986
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:time-lead-9:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.989112,
+    0.00025,
+    0.010638
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:time-lead-9:v0:f0:role-swap",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000183,
+    0.998239,
+    0.001578
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:time-lead-9:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000107,
+    0.000969,
+    0.998923
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:time-lead-9:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.988768,
+    0.000369,
+    0.010863
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:time-lead-9:v0:f1:goal-misattribution",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000105,
+    0.999643,
+    0.000252
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:time-lead-9:v0:f1:unk",
+   "label": "unknown",
+   "pred": "support",
+   "probs": [
+    0.985541,
+    0.000683,
+    0.013776
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:time-mid-9:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.556502,
+    0.135458,
+    0.30804
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:time-mid-9:v0:f0:role-swap",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.00276,
+    0.983326,
+    0.013914
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:time-mid-9:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000108,
+    0.000866,
+    0.999026
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:time-mid-9:v0:f2:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.912569,
+    0.003311,
+    0.08412
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:time-mid-9:v0:f2:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    9.9e-05,
+    0.999358,
+    0.000543
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:time-mid-9:v0:f2:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000125,
+    0.999559,
+    0.000315
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:time-mid-9:v0:f2:unk",
+   "label": "unknown",
+   "pred": "contradiction",
+   "probs": [
+    0.074633,
+    0.863524,
+    0.061843
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:time-mid-9:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.988768,
+    0.000369,
+    0.010863
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:time-mid-9:v0:f1:goal-misattribution",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000105,
+    0.999643,
+    0.000252
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:time-mid-9:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.00011,
+    0.002922,
+    0.996968
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:time-tail-9:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.989112,
+    0.00025,
+    0.010638
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:time-tail-9:v0:f0:role-swap",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000183,
+    0.998239,
+    0.001578
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:time-tail-9:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000335,
+    0.057765,
+    0.941899
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:time-tail-9:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.98548,
+    0.000688,
+    0.013832
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:time-tail-9:v0:f1:goal-misattribution",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000114,
+    0.999663,
+    0.000223
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:time-tail-9:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000267,
+    0.019018,
+    0.980716
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:time-tail-9:v0:f2:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.939441,
+    0.001897,
+    0.058662
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:time-tail-9:v0:f2:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000103,
+    0.999412,
+    0.000485
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:time-tail-9:v0:f2:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.00012,
+    0.999517,
+    0.000363
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:time-tail-9:v0:f2:unk",
+   "label": "unknown",
+   "pred": "contradiction",
+   "probs": [
+    0.001128,
+    0.968088,
+    0.030785
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:group-order-0:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.988311,
+    0.000192,
+    0.011497
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:group-order-0:v0:f0:role-swap",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000157,
+    0.998924,
+    0.000919
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:group-order-0:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000176,
+    0.00099,
+    0.998834
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:group-order-0:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.984061,
+    0.000479,
+    0.01546
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:group-order-0:v0:f1:goal-misattribution",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000143,
+    0.999633,
+    0.000224
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:group-order-0:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000277,
+    0.000524,
+    0.999199
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:group-order-0:v0:f2:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.737632,
+    0.001693,
+    0.260674
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:group-order-0:v0:f2:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000102,
+    0.998896,
+    0.001002
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:group-order-0:v0:f2:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000138,
+    0.999485,
+    0.000377
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:group-order-0:v0:f2:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.002781,
+    0.005622,
+    0.991597
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:personality-add:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.977399,
+    0.001538,
+    0.021063
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:personality-add:v0:f0:text-swap",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000133,
+    0.998744,
+    0.001123
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:personality-add:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000151,
+    0.003354,
+    0.996495
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:personality-add:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.927304,
+    0.001761,
+    0.070935
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:personality-add:v0:f1:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    8.7e-05,
+    0.999267,
+    0.000645
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:personality-add:v0:f1:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000117,
+    0.999494,
+    0.000388
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:personality-add:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.002781,
+    0.005622,
+    0.991597
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:personality-modify:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.961909,
+    0.008933,
+    0.029157
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:personality-modify:v0:f0:text-swap",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000101,
+    0.997947,
+    0.001952
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:personality-modify:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000105,
+    0.000911,
+    0.998983
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:personality-modify:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.915668,
+    0.001343,
+    0.082989
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:personality-modify:v0:f1:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    8.9e-05,
+    0.999254,
+    0.000657
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:personality-modify:v0:f1:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000121,
+    0.999494,
+    0.000385
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:personality-modify:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000137,
+    0.000704,
+    0.99916
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:personality-remove:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.963496,
+    0.00208,
+    0.034424
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:personality-remove:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.00012,
+    0.001739,
+    0.998141
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:personality-remove:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.919692,
+    0.001438,
+    0.078871
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:personality-remove:v0:f1:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    9.2e-05,
+    0.999363,
+    0.000546
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:personality-remove:v0:f1:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000133,
+    0.999552,
+    0.000315
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:personality-remove:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.001678,
+    0.00966,
+    0.988662
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:new-relative:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.923297,
+    0.001719,
+    0.074984
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:new-relative:v0:f0:relation-flip",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000698,
+    0.986796,
+    0.012506
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:new-relative:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000117,
+    0.000687,
+    0.999195
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:new-relative:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.882804,
+    0.002276,
+    0.11492
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:new-relative:v0:f1:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    9.6e-05,
+    0.998578,
+    0.001327
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:new-relative:v0:f1:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000376,
+    0.994007,
+    0.005617
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:new-relative:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.049615,
+    0.059349,
+    0.891036
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:new-slot:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.960636,
+    0.000963,
+    0.038402
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:new-slot:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.00021,
+    0.001418,
+    0.998372
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:new-slot:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.901574,
+    0.002424,
+    0.096002
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:new-slot:v0:f1:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000108,
+    0.998101,
+    0.00179
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:new-slot:v0:f1:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000237,
+    0.99752,
+    0.002243
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:new-slot:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.00969,
+    0.026717,
+    0.963593
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:new-subtask:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.984441,
+    0.000642,
+    0.014916
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:new-subtask:v0:f0:goal-misattribution",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000111,
+    0.999653,
+    0.000236
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:new-subtask:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000162,
+    0.001894,
+    0.997944
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:new-subtask:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.648876,
+    0.104518,
+    0.246606
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:new-subtask:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000306,
+    0.020729,
+    0.978965
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:new-subtask:v0:f2:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.943038,
+    0.000889,
+    0.056073
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:new-subtask:v0:f2:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000152,
+    0.998577,
+    0.001271
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:new-subtask:v0:f2:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.00015,
+    0.999499,
+    0.000351
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:new-subtask:v0:f2:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.002551,
+    0.030121,
+    0.967328
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:appearance-modify:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.978849,
+    0.003067,
+    0.018084
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:appearance-modify:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000138,
+    0.001094,
+    0.998767
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:appearance-modify:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.948777,
+    0.002833,
+    0.048391
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:appearance-modify:v0:f1:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    9.8e-05,
+    0.99923,
+    0.000672
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:appearance-modify:v0:f1:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000147,
+    0.999582,
+    0.000271
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:appearance-modify:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.058883,
+    0.238608,
+    0.702508
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:appearance-remove:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.975856,
+    0.002354,
+    0.021791
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:appearance-remove:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000112,
+    0.001371,
+    0.998517
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:appearance-remove:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.952886,
+    0.001139,
+    0.045975
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:appearance-remove:v0:f1:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    9.4e-05,
+    0.999156,
+    0.000751
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:appearance-remove:v0:f1:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000167,
+    0.999558,
+    0.000276
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:appearance-remove:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.00017,
+    0.001874,
+    0.997957
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:co-presence:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.992503,
+    0.000464,
+    0.007033
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:co-presence:v0:f0:role-swap",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000169,
+    0.999113,
+    0.000718
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:co-presence:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000215,
+    0.000193,
+    0.999592
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:co-presence:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.907558,
+    0.000293,
+    0.092148
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:co-presence:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000182,
+    0.000203,
+    0.999615
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:co-presence:v0:f2:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.920152,
+    0.000309,
+    0.07954
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:co-presence:v0:f2:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000296,
+    0.000149,
+    0.999555
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:co-presence:v0:f3:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.914188,
+    0.000381,
+    0.085432
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:co-presence:v0:f3:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    9e-05,
+    0.000772,
+    0.999137
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:co-presence:v0:f4:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.878626,
+    0.000696,
+    0.120678
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:co-presence:v0:f4:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    9.8e-05,
+    0.998718,
+    0.001184
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:co-presence:v0:f4:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000108,
+    0.999462,
+    0.00043
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:co-presence:v0:f4:unk",
+   "label": "unknown",
+   "pred": "support",
+   "probs": [
+    0.56185,
+    0.020605,
+    0.417545
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:no-change-0:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.968295,
+    0.001626,
+    0.030079
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:no-change-0:v0:f0:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.199242,
+    0.639675,
+    0.161083
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:no-change-0:v0:f0:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000201,
+    0.991023,
+    0.008776
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:no-change-0:v0:f0:unk",
+   "label": "unknown",
+   "pred": "contradiction",
+   "probs": [
+    0.012143,
+    0.443964,
+    0.543893
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:no-change-0:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.97864,
+    0.000474,
+    0.020886
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:no-change-0:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000114,
+    0.000585,
+    0.999301
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:no-change-10:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.958587,
+    0.001867,
+    0.039546
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:no-change-10:v0:f0:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000166,
+    0.999555,
+    0.000279
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:no-change-10:v0:f0:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    9.5e-05,
+    0.99929,
+    0.000615
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:no-change-10:v0:f0:unk",
+   "label": "unknown",
+   "pred": "contradiction",
+   "probs": [
+    0.003627,
+    0.616294,
+    0.380079
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:no-change-10:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.97864,
+    0.000474,
+    0.020886
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:no-change-10:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000103,
+    0.000614,
+    0.999283
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:loc-appearance-1:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.971352,
+    0.003731,
+    0.024916
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:loc-appearance-1:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.001057,
+    0.004193,
+    0.99475
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:loc-appearance-1:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.932141,
+    0.007675,
+    0.060184
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:loc-appearance-1:v0:f1:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000668,
+    0.993696,
+    0.005636
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:loc-appearance-1:v0:f1:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000154,
+    0.999548,
+    0.000297
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:loc-appearance-1:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.000168,
+    0.001966,
+    0.997866
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:loc-appearance-2:v0:f0:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.974049,
+    0.002572,
+    0.023378
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:loc-appearance-2:v0:f0:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    0.002913,
+    0.001123,
+    0.995964
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:loc-appearance-2:v0:f1:sup",
+   "label": "support",
+   "pred": "support",
+   "probs": [
+    0.927875,
+    0.008913,
+    0.063212
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:loc-appearance-2:v0:f1:number-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000577,
+    0.993545,
+    0.005878
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:loc-appearance-2:v0:f1:unit-error",
+   "label": "contradiction",
+   "pred": "contradiction",
+   "probs": [
+    0.000155,
+    0.999556,
+    0.00029
+   ]
+  },
+  {
+   "pairId": "v2-c-salt:loc-appearance-2:v0:f1:unk",
+   "label": "unknown",
+   "pred": "unknown",
+   "probs": [
+    9.5e-05,
+    0.001059,
+    0.998847
+   ]
+  }
+ ],
  "gates": {
   "G1_no_wrong_pass": true,
   "G2_no_wrong_reject": false,

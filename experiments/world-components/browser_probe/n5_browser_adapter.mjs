@@ -1,9 +1,11 @@
 // N5 browser adapter (commit 3): MiniRBT-H256 relation head in the browser.
 //
-//   tokenizer  hand-rolled BertTokenizer-equivalent (Chinese per-char,
-//              lowercase, longest-match WordPiece for ASCII/digit runs,
-//              [CLS]/[SEP]); verified id-identical to Python BertTokenizer
-//              on the baked cases before any label is consumed
+//   tokenizer  hand-rolled BertTokenizer-equivalent ON THE PROBE DOMAIN
+//              (Chinese per-char, lowercase, longest-match WordPiece for
+//              ASCII/digit runs, [CLS]/[SEP]); verified id-identical to
+//              Python BertTokenizer on the 24 baked cases before any label
+//              is consumed. Accent stripping / control-char cleaning are
+//              not exercised by this corpus and are not claimed.
 //   graph      n5-encoder-head.onnx (encoder + masked mean-pool + linear
 //              head fused; exported by export_n5_onnx.py with a
 //              Python-side 1e-4 parity gate)

@@ -171,6 +171,12 @@ def main() -> int:
         "G3_support_floor": r["supportRate"] >= FLOOR,
         "G4_contradiction_floor": r["contradictionRate"] >= FLOOR,
     }
+    predictions = [
+        {"pairId": p["pairId"], "label": p["label"], "pred": l,
+         "probs": [round(float(x), 6) for x in probs]}
+        for p, l, probs in zip(test, labels, test_probs)]
+    wrong_reject_ids = [p["pairId"] for p, l in zip(test, labels)
+                        if p["label"] == "support" and l == "contradiction"]
     archive = {
         "purpose": "N5 relation-head frozen-test eval (commit 3)",
         "model": {"dir": str(pathlib.Path(args.model).resolve()
@@ -184,6 +190,8 @@ def main() -> int:
                                "during fixing"},
         "devSummary": {"pairs": len(dev), "table": table},
         "test": {"pairs": len(test), **r},
+        "wrongRejectPairIds": wrong_reject_ids,
+        "testPredictions": predictions,
         "gates": gates, "pass": all(gates.values()),
     }
     pathlib.Path(args.out).write_text(
