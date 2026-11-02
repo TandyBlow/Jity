@@ -54,3 +54,18 @@ python3 experiments/world-components-logic/pilot_report.py --check
 ```
 
 查看`artifacts/world-components-logic/l3-4-pilot-results.html`与`l3-4-pilot-summary.json`。独立组件调用耗时不能当完整请求；格式通过不证明语义正确，所有完整500ms/正式质量结论仍未通过。
+
+## 2026-11-02：M01完整分窗及两小头拟合探针
+
+新增`fetch_m01.py`获取原L2固定10M模型；`fact_windows.py`保留全部原子事实并装成≤512token窗口，单条超长事实明确拒绝。`m01_probe.py`在已审旧D02/D03开发标签上冻结编码器、拟合两个线性头，16拟合/4保留组；`m01_infer.py`锁定真实检查点后独立推理，不再拟合或改阈值。它是正式独立训练流程之前的工程附批，不冒充新训练配额；90组不进训练。
+
+真实编码器10,279,424参数＋两头514参数，拟合200步/头。D02保留判别2/2、D03完整集合1/2，D03漏目标且整体耗时仍超50ms。每个窗口只编码部分事实，全窗加权聚合语义仍待验证；D02不生成行动正文，M01/M02协同及完整500ms未完成。原子分窗、实际模型学习与性能/语义通过分别报告。
+
+大原始记录以`.json.gz`/`.jsonl.gz`无损归档，汇总保存压缩和解压SHA；复现读取可直接解压到其原路径。未压缩副本、模型和头检查点仅在`.local/world-components-logic/`；权重不入库。旧执行源码按当时计划SHA保留在`artifacts/world-components-logic/m01-fitting/code/`。测试用元数据替身验证配置与身份边界，不要求下载本地权重，也不启动训练。
+
+```bash
+python3 -m unittest discover -s experiments/world-components-logic/tests -p 'test_m01*.py'
+python3 experiments/world-components-logic/m01_report.py --check
+```
+
+查看`artifacts/world-components-logic/l3-5-m01-results.html`与机器汇总。实际执行需要先按新run-id冻结计划、固定模型/数据/环境，`--execute`会真实消耗CPU；不得复用旧记录或拿缓存特征签推理速度。拟合与推理均有单线程、120秒/2048MiB监督，所有中断与未启动项分开。

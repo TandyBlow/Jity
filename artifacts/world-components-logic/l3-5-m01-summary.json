@@ -1,0 +1,341 @@
+{
+  "schema": "jity-d-m01-fitting-summary-v1",
+  "date": "2026-11-02",
+  "scope": "reviewed_development_fitting_probe_only",
+  "fitPlanSha256": "0e4d1132c05f35b69d1ce0bcec61b3cc28dea3a50c5c1d0fc948c644e243e520",
+  "inferencePlanSha256": "ff3feb0baaca52a55edb088fe1d0462c5e07879ea4816c3f41842e2fe73f6940",
+  "archives": [
+    {
+      "path": "artifacts/world-components-logic/m01-fitting/m01-fit-dev42-20261102-r1.record.json.gz",
+      "gzipSha256": "8623688be00225f316202a53b9e3adaf42309f67310e90261287a6100f47fe0d",
+      "rawSha256": "6f8e8baf0ef29eea586cbc38d0b9d2e73c1809f6bf6475e7b86b2cf55a5be9bf",
+      "rawBytes": 3271540,
+      "restoreTo": "artifacts/world-components-logic/m01-fitting/m01-fit-dev42-20261102-r1.record.json"
+    },
+    {
+      "path": "artifacts/world-components-logic/m01-fitting/m01-infer-dev42-20261102-r3.record.json.gz",
+      "gzipSha256": "ab452f9ff2bd2d6e5ab8b155869c6d17a93d2ade2ea246a35564123acd3cb516",
+      "rawSha256": "393541d73c33a972e3de25d551a351ec4392371f753b18c03f35ee15befcb56d",
+      "rawBytes": 1385560,
+      "restoreTo": "artifacts/world-components-logic/m01-fitting/m01-infer-dev42-20261102-r3.record.json"
+    },
+    {
+      "path": "artifacts/world-components-logic/m01-fitting/m01-infer-dev42-20261102-r3.record.windows.jsonl.gz",
+      "gzipSha256": "eed21cdd3bcebd7f99eeba9151378808c3fe6ba56ac64712ab558f210a470295",
+      "rawSha256": "759499ae58602bede88e4029563d15dd39593ba715edec4b49015a6e44047705",
+      "rawBytes": 1084424,
+      "restoreTo": "artifacts/world-components-logic/m01-fitting/m01-infer-dev42-20261102-r3.record.windows.jsonl"
+    }
+  ],
+  "encoderParameters": 10279424,
+  "headParameters": 514,
+  "encoderFrozenAndUnchanged": true,
+  "stepsPerHead": {
+    "D02": 200,
+    "D03": 200
+  },
+  "checkpoint": {
+    "contains": "two_linear_heads_only",
+    "path": ".local/world-components-logic/checkpoints/m01-fit-dev42-20261102-r1.pt",
+    "sha256": "99fb13727407d96c1704afe16cfb4ceed7b4e05818e54517a2ae2dabda9d63ac"
+  },
+  "oldDevelopmentGroupsConsumed": 20,
+  "newIndependentTrainingGroups": 0,
+  "round1TrainingQuota": 0,
+  "qualityObservations": {
+    "D02": {
+      "fit": {
+        "matchingSourceGroups": 8,
+        "sourceGroups": 8
+      },
+      "retained_development": {
+        "matchingSourceGroups": 2,
+        "sourceGroups": 2
+      }
+    },
+    "D03": {
+      "fit": {
+        "matchingSourceGroups": 2,
+        "sourceGroups": 8
+      },
+      "retained_development": {
+        "matchingSourceGroups": 1,
+        "sourceGroups": 2
+      }
+    }
+  },
+  "timingBefore": [
+    {
+      "caseId": "dev-d02-03",
+      "task": "D02",
+      "n": 5,
+      "p50Ms": 750.2425420098007,
+      "p95Ms": 981.7977500060806,
+      "maxMs": 981.7977500060806,
+      "windowsPerItem": 4,
+      "candidateCount": 1,
+      "maxWindowTokens": 506,
+      "local50ms": "fail",
+      "predictions": [
+        {
+          "kind": "skip"
+        },
+        {
+          "kind": "skip"
+        },
+        {
+          "kind": "skip"
+        },
+        {
+          "kind": "skip"
+        },
+        {
+          "kind": "skip"
+        }
+      ]
+    },
+    {
+      "caseId": "dev-d02-05",
+      "task": "D02",
+      "n": 5,
+      "p50Ms": 764.4281249959022,
+      "p95Ms": 978.7305840000045,
+      "maxMs": 978.7305840000045,
+      "windowsPerItem": 4,
+      "candidateCount": 1,
+      "maxWindowTokens": 506,
+      "local50ms": "fail",
+      "predictions": [
+        {
+          "kind": "act"
+        },
+        {
+          "kind": "act"
+        },
+        {
+          "kind": "act"
+        },
+        {
+          "kind": "act"
+        },
+        {
+          "kind": "act"
+        }
+      ]
+    },
+    {
+      "caseId": "dev-d03-02",
+      "task": "D03",
+      "n": 5,
+      "p50Ms": 2313.974791992223,
+      "p95Ms": 2868.159833000391,
+      "maxMs": 2868.159833000391,
+      "windowsPerItem": 12,
+      "candidateCount": 3,
+      "maxWindowTokens": 495,
+      "local50ms": "fail",
+      "predictions": [
+        {
+          "targets": []
+        },
+        {
+          "targets": []
+        },
+        {
+          "targets": []
+        },
+        {
+          "targets": []
+        },
+        {
+          "targets": []
+        }
+      ]
+    },
+    {
+      "caseId": "dev-d03-06",
+      "task": "D03",
+      "n": 5,
+      "p50Ms": 2343.6322499910602,
+      "p95Ms": 3060.4830000083894,
+      "maxMs": 3060.4830000083894,
+      "windowsPerItem": 12,
+      "candidateCount": 3,
+      "maxWindowTokens": 504,
+      "local50ms": "fail",
+      "predictions": [
+        {
+          "targets": []
+        },
+        {
+          "targets": []
+        },
+        {
+          "targets": []
+        },
+        {
+          "targets": []
+        },
+        {
+          "targets": []
+        }
+      ]
+    }
+  ],
+  "timingAfter": [
+    {
+      "caseId": "dev-d02-03",
+      "task": "D02",
+      "n": 5,
+      "p50Ms": 163.65529199538287,
+      "p95Ms": 179.29487499350216,
+      "maxMs": 179.29487499350216,
+      "windowsPerItem": 4,
+      "candidateCount": 1,
+      "maxWindowTokens": 506,
+      "local50ms": "fail",
+      "predictions": [
+        {
+          "kind": "skip"
+        },
+        {
+          "kind": "skip"
+        },
+        {
+          "kind": "skip"
+        },
+        {
+          "kind": "skip"
+        },
+        {
+          "kind": "skip"
+        }
+      ]
+    },
+    {
+      "caseId": "dev-d02-05",
+      "task": "D02",
+      "n": 5,
+      "p50Ms": 162.7715420036111,
+      "p95Ms": 181.436416998622,
+      "maxMs": 181.436416998622,
+      "windowsPerItem": 4,
+      "candidateCount": 1,
+      "maxWindowTokens": 506,
+      "local50ms": "fail",
+      "predictions": [
+        {
+          "kind": "act"
+        },
+        {
+          "kind": "act"
+        },
+        {
+          "kind": "act"
+        },
+        {
+          "kind": "act"
+        },
+        {
+          "kind": "act"
+        }
+      ]
+    },
+    {
+      "caseId": "dev-d03-02",
+      "task": "D03",
+      "n": 5,
+      "p50Ms": 483.4050829958869,
+      "p95Ms": 503.4114580048481,
+      "maxMs": 503.4114580048481,
+      "windowsPerItem": 12,
+      "candidateCount": 3,
+      "maxWindowTokens": 495,
+      "local50ms": "fail",
+      "predictions": [
+        {
+          "targets": []
+        },
+        {
+          "targets": []
+        },
+        {
+          "targets": []
+        },
+        {
+          "targets": []
+        },
+        {
+          "targets": []
+        }
+      ]
+    },
+    {
+      "caseId": "dev-d03-06",
+      "task": "D03",
+      "n": 5,
+      "p50Ms": 517.5520839984529,
+      "p95Ms": 612.9638749989681,
+      "maxMs": 612.9638749989681,
+      "windowsPerItem": 12,
+      "candidateCount": 3,
+      "maxWindowTokens": 504,
+      "local50ms": "fail",
+      "predictions": [
+        {
+          "targets": []
+        },
+        {
+          "targets": []
+        },
+        {
+          "targets": []
+        },
+        {
+          "targets": []
+        },
+        {
+          "targets": []
+        }
+      ]
+    }
+  ],
+  "finalForwardCalls": 160,
+  "fitAndDiagnosticForwardCalls": 329,
+  "actualRuntime": {
+    "dependencies": {
+      "numpy": "1.26.4",
+      "tokenizers": "0.22.1",
+      "torch": "2.7.1",
+      "transformers": "4.57.3"
+    },
+    "device": "cpu",
+    "interopThreads": 1,
+    "python": "/Users/sunhaitong/.codex/worktrees/components-logic-l1/jity/.local/world-components-logic/venv/bin/python",
+    "pythonVersion": "3.11.7",
+    "threads": 1
+  },
+  "supervisor": {
+    "error": null,
+    "exitCode": 0,
+    "measurement": "ps_rss_every250ms",
+    "observedPeakResidentMiB": 414.203125,
+    "stopReason": null,
+    "wallMs": 10074.539624998579
+  },
+  "complete512WindowCoverage": "verified_for_this_probe_not_cross_window_semantic_sufficiency",
+  "formalEvaluationAllowed": false,
+  "semanticQualityApproved": false,
+  "fullRequest500msStatus": "unverified",
+  "trainedTargetHeadPromotion": "rejected_missing_required_targets",
+  "headOutputScope": {
+    "D02": "act_skip_only_no_action_text",
+    "D03": "entire_roster_target_set"
+  },
+  "nextWork": [
+    "Reduce repeated global encoding with a separately registered learned candidate-fusion head; retain complete facts",
+    "Cross-window semantic quality and D03 required-target recall must improve before promotion",
+    "New independent training data and formal calibration still required; round1 is not training data",
+    "D04/D05 generation and real model collaboration remain unfinished"
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "schema": "jity-d-m01-inference-probe-record-v1",
+  "runId": "m01-infer-dev42-20261102-r2",
+  "planSha256": "b183075d48b68212b66791f01ad89838f432bab773f6d1e556588aa425ae916b",
+  "status": "superseded_before_execution",
+  "reason": "Complete fit-plan identity binding checks added before any execution; replaced by r3.",
+  "attempts": [],
+  "unexecutedAttempts": 20,
+  "modelLoaded": false,
+  "trainingPerformed": false,
+  "formalEvaluationAllowed": false
+}

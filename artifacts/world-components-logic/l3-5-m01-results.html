@@ -1,0 +1,1255 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'"><title>L3 小编码器与判断头实测</title><style>body{margin:0;background:#f4f6f8;color:#20313e;font:16px/1.7 system-ui,sans-serif}main{max-width:1100px;margin:auto;padding:24px 18px}article{background:white;padding:22px;margin:18px 0;border:1px solid #dce3e8;border-radius:12px}table{width:100%;border-collapse:collapse;font-size:14px}td,th{padding:10px;text-align:left;border-bottom:1px solid #dde4e8}.scroll{overflow:auto}.bad{color:#a7352e}.muted{color:#667784}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f3f6f8;padding:12px;font-size:13px}h1{font-size:28px}h2{font-size:21px}</style><main><p class="muted">D / 2026-11-02 · 旧开发题拟合探针</p><h1>小编码器、512分窗和两个判断头已经真实运行</h1><p>冻结编码器 10,279,424 参数；两个可学习判断头共 514 参数，每头拟合200步。原输入全部事实保留，每窗不超过512 token。当前路线仍有漏目标和超时问题，尚不可作为可用组件。</p>
+<article><h2>这次做了什么</h2><ol><li>下载并验真已登记M01；安全加载编码器，未创建随机pooler。</li><li>将完整输入按原子事实分窗，重建原文核摘要，不截断、不删除人物或任务。</li><li>复用已审开发标签做工程拟合：16来源组拟合、4来源组保留开发；90组完全不进入训练。</li><li>固定训练检查点后单独做20次推理，逐窗追加日志；没有再拟合、改阈值或换题。</li></ol><p>这些旧20组已用于拟合/开发观察，不是新独立训练数据，不再当未见封存资料。每任务保留组仅2个，不能据此推断普遍准确率。</p></article>
+<article><h2>判断结果：拟合与保留开发分开</h2><div class="scroll"><table><tr><th>任务</th><th>拟合来源组匹配</th><th>保留开发匹配</th><th>范围</th></tr><tr><td>行动判断（仅act/skip）</td><td>8/8</td><td>2/2</td><td>未生成行动正文</td></tr><tr><td>目标分析（完整名册）</td><td>2/8</td><td>1/2</td><td>非空集合题漏掉p2、p3</td></tr></table></div><p class="bad">D03保留题漏掉必需目标，不能晋升。D02的2/2也不代表完整行动组件通过，固定阈值未做正式校准。</p></article><article><h2>完整判别计时：每题重新分词并执行全部窗口</h2><p>第一轮每个窗口重写累计状态，开销很大；第二轮锁定相同权重，以追加窗口事件保存证据。两轮预测完全相同。数字包含日志开销，不是只量线性头。</p><div class="scroll"><table><tr><th>保留题</th><th>窗口/候选</th><th>首次中位数ms</th><th>独立推理中位数ms</th><th>p95/最大ms</th><th>50ms预算</th></tr><tr><td>dev-d02-03</td><td>4窗/1候选</td><td>750.24</td><td>163.66</td><td>179.29/179.29</td><td class='bad'>未通过</td></tr><tr><td>dev-d02-05</td><td>4窗/1候选</td><td>764.43</td><td>162.77</td><td>181.44/181.44</td><td class='bad'>未通过</td></tr><tr><td>dev-d03-02</td><td>12窗/3候选</td><td>2313.97</td><td>483.41</td><td>503.41/503.41</td><td class='bad'>未通过</td></tr><tr><td>dev-d03-06</td><td>12窗/3候选</td><td>2343.63</td><td>517.55</td><td>612.96/612.96</td><td class='bad'>未通过</td></tr></table></div><p>D03按三个人物完整目标集合计时，不能用一个候选或一个窗口的速度代替。每题5次，完整D02–D05协同及500ms游戏请求尚未测量；这个编码器判别任务与上一批生成任务不同，不能直接称模型整体更快或更好。</p></article><article><h2>dev-d02-03</h2><p>原判据：skip；实际预测：{&#x27;kind&#x27;: &#x27;skip&#x27;}</p><pre>原始分数：[0.4988192915916443]</pre><p>5次重复预测相同，仍只算一个来源场景。</p><details><summary>查看原完整输入</summary><pre>{
+  &quot;actorId&quot;: &quot;p1&quot;,
+  &quot;advance&quot;: {
+    &quot;inputText&quot;: &quot;现在一步跨过六米检修井到东侧。&quot;,
+    &quot;intentStatus&quot;: &quot;pending&quot;
+  },
+  &quot;confirmedPrefix&quot;: [],
+  &quot;protagonistId&quot;: &quot;p1&quot;,
+  &quot;world&quot;: {
+    &quot;characters&quot;: [
+      {
+        &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+        &quot;id&quot;: &quot;p1&quot;,
+        &quot;name&quot;: &quot;顾岚（甲）&quot;,
+        &quot;personality&quot;: [
+          &quot;重视安全，不会凭空获得跳跃能力。&quot;
+        ],
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_a&quot;,
+          &quot;slot&quot;: &quot;地面&quot;
+        },
+        &quot;sanity&quot;: 65,
+        &quot;tasks&quot;: [
+          {
+            &quot;id&quot;: &quot;task_p1&quot;,
+            &quot;parentId&quot;: null,
+            &quot;status&quot;: &quot;pending&quot;,
+            &quot;text&quot;: &quot;等待工程师提供安全跨越方案，目前不冒险越井。&quot;
+          }
+        ]
+      },
+      {
+        &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+        &quot;id&quot;: &quot;p2&quot;,
+        &quot;name&quot;: &quot;简工（乙）&quot;,
+        &quot;personality&quot;: [
+          &quot;按工程条件判断。&quot;
+        ],
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_a&quot;,
+          &quot;slot&quot;: &quot;地面&quot;
+        },
+        &quot;sanity&quot;: 65,
+        &quot;tasks&quot;: [
+          {
+            &quot;id&quot;: &quot;task_p2&quot;,
+            &quot;parentId&quot;: null,
+            &quot;status&quot;: &quot;pending&quot;,
+            &quot;text&quot;: &quot;核对断梯尺寸后安排更换。&quot;
+          }
+        ]
+      },
+      {
+        &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+        &quot;id&quot;: &quot;p3&quot;,
+        &quot;name&quot;: &quot;聂禾（丙）&quot;,
+        &quot;personality&quot;: [
+          &quot;遵守隔离要求。&quot;
+        ],
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_b&quot;,
+          &quot;slot&quot;: &quot;地面&quot;
+        },
+        &quot;sanity&quot;: 65,
+        &quot;tasks&quot;: [
+          {
+            &quot;id&quot;: &quot;task_p3&quot;,
+            &quot;parentId&quot;: null,
+            &quot;status&quot;: &quot;pending&quot;,
+            &quot;text&quot;: &quot;在东平台等候，不改变井口状态。&quot;
+          }
+        ]
+      }
+    ],
+    &quot;items&quot;: [
+      {
+        &quot;id&quot;: &quot;item_1&quot;,
+        &quot;name&quot;: &quot;断梯&quot;,
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_a&quot;,
+          &quot;slot&quot;: &quot;可见位置&quot;
+        }
+      },
+      {
+        &quot;id&quot;: &quot;item_2&quot;,
+        &quot;name&quot;: &quot;检修记录册&quot;,
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;p2&quot;,
+          &quot;slot&quot;: &quot;可见位置&quot;
+        }
+      }
+    ],
+    &quot;places&quot;: [
+      {
+        &quot;id&quot;: &quot;loc_outer&quot;,
+        &quot;name&quot;: &quot;冰窖检修站&quot;,
+        &quot;parentId&quot;: null
+      },
+      {
+        &quot;id&quot;: &quot;loc_a&quot;,
+        &quot;name&quot;: &quot;六米宽检修井西侧，梯子断裂，无跨越设施&quot;,
+        &quot;parentId&quot;: &quot;loc_outer&quot;
+      },
+      {
+        &quot;id&quot;: &quot;loc_b&quot;,
+        &quot;name&quot;: &quot;检修井东侧封闭平台&quot;,
+        &quot;parentId&quot;: &quot;loc_outer&quot;
+      }
+    ],
+    &quot;time&quot;: &quot;2031-04-18T10:20:00+08:00&quot;
+  }
+}</pre></details><details><summary>查看5次原始分数、耗时和覆盖摘要</summary><pre>[
+  {
+    &quot;repeat&quot;: 0,
+    &quot;status&quot;: &quot;complete&quot;,
+    &quot;elapsedMs&quot;: 159.78900001209695,
+    &quot;probabilities&quot;: [
+      0.4988192915916443
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;skip&quot;
+    },
+    &quot;featureCacheUsed&quot;: false,
+    &quot;coverage&quot;: [
+      {
+        &quot;targetId&quot;: null,
+        &quot;factSha256&quot;: &quot;2207a0fe18cb77536967b918e789600cdd16af604d6552b59458f5926e8f11a4&quot;,
+        &quot;fullFactsRestored&quot;: true,
+        &quot;windowTokens&quot;: [
+          494,
+          506,
+          486,
+          326
+        ],
+        &quot;coveredFacts&quot;: 56
+      }
+    ]
+  },
+  {
+    &quot;repeat&quot;: 1,
+    &quot;status&quot;: &quot;complete&quot;,
+    &quot;elapsedMs&quot;: 154.7853749943897,
+    &quot;probabilities&quot;: [
+      0.4988192915916443
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;skip&quot;
+    },
+    &quot;featureCacheUsed&quot;: false,
+    &quot;coverage&quot;: [
+      {
+        &quot;targetId&quot;: null,
+        &quot;factSha256&quot;: &quot;2207a0fe18cb77536967b918e789600cdd16af604d6552b59458f5926e8f11a4&quot;,
+        &quot;fullFactsRestored&quot;: true,
+        &quot;windowTokens&quot;: [
+          494,
+          506,
+          486,
+          326
+        ],
+        &quot;coveredFacts&quot;: 56
+      }
+    ]
+  },
+  {
+    &quot;repeat&quot;: 2,
+    &quot;status&quot;: &quot;complete&quot;,
+    &quot;elapsedMs&quot;: 163.65529199538287,
+    &quot;probabilities&quot;: [
+      0.4988192915916443
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;skip&quot;
+    },
+    &quot;featureCacheUsed&quot;: false,
+    &quot;coverage&quot;: [
+      {
+        &quot;targetId&quot;: null,
+        &quot;factSha256&quot;: &quot;2207a0fe18cb77536967b918e789600cdd16af604d6552b59458f5926e8f11a4&quot;,
+        &quot;fullFactsRestored&quot;: true,
+        &quot;windowTokens&quot;: [
+          494,
+          506,
+          486,
+          326
+        ],
+        &quot;coveredFacts&quot;: 56
+      }
+    ]
+  },
+  {
+    &quot;repeat&quot;: 3,
+    &quot;status&quot;: &quot;complete&quot;,
+    &quot;elapsedMs&quot;: 171.38412500207778,
+    &quot;probabilities&quot;: [
+      0.4988192915916443
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;skip&quot;
+    },
+    &quot;featureCacheUsed&quot;: false,
+    &quot;coverage&quot;: [
+      {
+        &quot;targetId&quot;: null,
+        &quot;factSha256&quot;: &quot;2207a0fe18cb77536967b918e789600cdd16af604d6552b59458f5926e8f11a4&quot;,
+        &quot;fullFactsRestored&quot;: true,
+        &quot;windowTokens&quot;: [
+          494,
+          506,
+          486,
+          326
+        ],
+        &quot;coveredFacts&quot;: 56
+      }
+    ]
+  },
+  {
+    &quot;repeat&quot;: 4,
+    &quot;status&quot;: &quot;complete&quot;,
+    &quot;elapsedMs&quot;: 179.29487499350216,
+    &quot;probabilities&quot;: [
+      0.4988192915916443
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;skip&quot;
+    },
+    &quot;featureCacheUsed&quot;: false,
+    &quot;coverage&quot;: [
+      {
+        &quot;targetId&quot;: null,
+        &quot;factSha256&quot;: &quot;2207a0fe18cb77536967b918e789600cdd16af604d6552b59458f5926e8f11a4&quot;,
+        &quot;fullFactsRestored&quot;: true,
+        &quot;windowTokens&quot;: [
+          494,
+          506,
+          486,
+          326
+        ],
+        &quot;coveredFacts&quot;: 56
+      }
+    ]
+  }
+]</pre></details><p>完整逐token记录保留在下方无损归档。</p></article><article><h2>dev-d02-05</h2><p>原判据：act；实际预测：{&#x27;kind&#x27;: &#x27;act&#x27;}</p><pre>原始分数：[0.545242190361023]</pre><p>5次重复预测相同，仍只算一个来源场景。</p><details><summary>查看原完整输入</summary><pre>{
+  &quot;actorId&quot;: &quot;p1&quot;,
+  &quot;advance&quot;: {
+    &quot;inputText&quot;: &quot;把刚才那张借阅凭条送给管理员。&quot;,
+    &quot;intentStatus&quot;: &quot;consumed&quot;
+  },
+  &quot;confirmedPrefix&quot;: [],
+  &quot;protagonistId&quot;: &quot;p1&quot;,
+  &quot;world&quot;: {
+    &quot;characters&quot;: [
+      {
+        &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+        &quot;id&quot;: &quot;p1&quot;,
+        &quot;name&quot;: &quot;纪遥（甲）&quot;,
+        &quot;personality&quot;: [
+          &quot;见到风险会主动保护资料。&quot;
+        ],
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_a&quot;,
+          &quot;slot&quot;: &quot;地面&quot;
+        },
+        &quot;sanity&quot;: 65,
+        &quot;tasks&quot;: [
+          {
+            &quot;id&quot;: &quot;task_p1&quot;,
+            &quot;parentId&quot;: null,
+            &quot;status&quot;: &quot;pending&quot;,
+            &quot;text&quot;: &quot;优先保护自己负责的纸卷不被眼前漏水浸湿。&quot;
+          }
+        ]
+      },
+      {
+        &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+        &quot;id&quot;: &quot;p2&quot;,
+        &quot;name&quot;: &quot;柳川（乙）&quot;,
+        &quot;personality&quot;: [
+          &quot;积极协作。&quot;
+        ],
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_b&quot;,
+          &quot;slot&quot;: &quot;地面&quot;
+        },
+        &quot;sanity&quot;: 65,
+        &quot;tasks&quot;: [
+          {
+            &quot;id&quot;: &quot;task_p2&quot;,
+            &quot;parentId&quot;: null,
+            &quot;status&quot;: &quot;pending&quot;,
+            &quot;text&quot;: &quot;通知维修人员处理屋顶漏水。&quot;
+          }
+        ]
+      },
+      {
+        &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+        &quot;id&quot;: &quot;p3&quot;,
+        &quot;name&quot;: &quot;陶白（丙）&quot;,
+        &quot;personality&quot;: [
+          &quot;做事细致。&quot;
+        ],
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_a&quot;,
+          &quot;slot&quot;: &quot;地面&quot;
+        },
+        &quot;sanity&quot;: 65,
+        &quot;tasks&quot;: [
+          {
+            &quot;id&quot;: &quot;task_p3&quot;,
+            &quot;parentId&quot;: null,
+            &quot;status&quot;: &quot;pending&quot;,
+            &quot;text&quot;: &quot;清点桌面的封签。&quot;
+          }
+        ]
+      }
+    ],
+    &quot;items&quot;: [
+      {
+        &quot;id&quot;: &quot;item_1&quot;,
+        &quot;name&quot;: &quot;纸卷箱&quot;,
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_a&quot;,
+          &quot;slot&quot;: &quot;可见位置&quot;
+        }
+      },
+      {
+        &quot;id&quot;: &quot;item_2&quot;,
+        &quot;name&quot;: &quot;遮水布&quot;,
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;p1&quot;,
+          &quot;slot&quot;: &quot;可见位置&quot;
+        }
+      }
+    ],
+    &quot;places&quot;: [
+      {
+        &quot;id&quot;: &quot;loc_outer&quot;,
+        &quot;name&quot;: &quot;河岸档案室&quot;,
+        &quot;parentId&quot;: null
+      },
+      {
+        &quot;id&quot;: &quot;loc_a&quot;,
+        &quot;name&quot;: &quot;漏水靠近纸卷架的阅档室&quot;,
+        &quot;parentId&quot;: &quot;loc_outer&quot;
+      },
+      {
+        &quot;id&quot;: &quot;loc_b&quot;,
+        &quot;name&quot;: &quot;干燥走廊&quot;,
+        &quot;parentId&quot;: &quot;loc_outer&quot;
+      }
+    ],
+    &quot;time&quot;: &quot;2031-04-18T10:20:00+08:00&quot;
+  }
+}</pre></details><details><summary>查看5次原始分数、耗时和覆盖摘要</summary><pre>[
+  {
+    &quot;repeat&quot;: 0,
+    &quot;status&quot;: &quot;complete&quot;,
+    &quot;elapsedMs&quot;: 145.43662501091603,
+    &quot;probabilities&quot;: [
+      0.545242190361023
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;featureCacheUsed&quot;: false,
+    &quot;coverage&quot;: [
+      {
+        &quot;targetId&quot;: null,
+        &quot;factSha256&quot;: &quot;f686b9728336a905dfce7e65f008328bd1aad03db2884b01aba37aafaea88710&quot;,
+        &quot;fullFactsRestored&quot;: true,
+        &quot;windowTokens&quot;: [
+          489,
+          502,
+          506,
+          285
+        ],
+        &quot;coveredFacts&quot;: 56
+      }
+    ]
+  },
+  {
+    &quot;repeat&quot;: 1,
+    &quot;status&quot;: &quot;complete&quot;,
+    &quot;elapsedMs&quot;: 152.66054098901805,
+    &quot;probabilities&quot;: [
+      0.545242190361023
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;featureCacheUsed&quot;: false,
+    &quot;coverage&quot;: [
+      {
+        &quot;targetId&quot;: null,
+        &quot;factSha256&quot;: &quot;f686b9728336a905dfce7e65f008328bd1aad03db2884b01aba37aafaea88710&quot;,
+        &quot;fullFactsRestored&quot;: true,
+        &quot;windowTokens&quot;: [
+          489,
+          502,
+          506,
+          285
+        ],
+        &quot;coveredFacts&quot;: 56
+      }
+    ]
+  },
+  {
+    &quot;repeat&quot;: 2,
+    &quot;status&quot;: &quot;complete&quot;,
+    &quot;elapsedMs&quot;: 162.7715420036111,
+    &quot;probabilities&quot;: [
+      0.545242190361023
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;featureCacheUsed&quot;: false,
+    &quot;coverage&quot;: [
+      {
+        &quot;targetId&quot;: null,
+        &quot;factSha256&quot;: &quot;f686b9728336a905dfce7e65f008328bd1aad03db2884b01aba37aafaea88710&quot;,
+        &quot;fullFactsRestored&quot;: true,
+        &quot;windowTokens&quot;: [
+          489,
+          502,
+          506,
+          285
+        ],
+        &quot;coveredFacts&quot;: 56
+      }
+    ]
+  },
+  {
+    &quot;repeat&quot;: 3,
+    &quot;status&quot;: &quot;complete&quot;,
+    &quot;elapsedMs&quot;: 171.43933300394565,
+    &quot;probabilities&quot;: [
+      0.545242190361023
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;featureCacheUsed&quot;: false,
+    &quot;coverage&quot;: [
+      {
+        &quot;targetId&quot;: null,
+        &quot;factSha256&quot;: &quot;f686b9728336a905dfce7e65f008328bd1aad03db2884b01aba37aafaea88710&quot;,
+        &quot;fullFactsRestored&quot;: true,
+        &quot;windowTokens&quot;: [
+          489,
+          502,
+          506,
+          285
+        ],
+        &quot;coveredFacts&quot;: 56
+      }
+    ]
+  },
+  {
+    &quot;repeat&quot;: 4,
+    &quot;status&quot;: &quot;complete&quot;,
+    &quot;elapsedMs&quot;: 181.436416998622,
+    &quot;probabilities&quot;: [
+      0.545242190361023
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;featureCacheUsed&quot;: false,
+    &quot;coverage&quot;: [
+      {
+        &quot;targetId&quot;: null,
+        &quot;factSha256&quot;: &quot;f686b9728336a905dfce7e65f008328bd1aad03db2884b01aba37aafaea88710&quot;,
+        &quot;fullFactsRestored&quot;: true,
+        &quot;windowTokens&quot;: [
+          489,
+          502,
+          506,
+          285
+        ],
+        &quot;coveredFacts&quot;: 56
+      }
+    ]
+  }
+]</pre></details><p>完整逐token记录保留在下方无损归档。</p></article><article><h2>dev-d03-02</h2><p>原判据：[]；实际预测：{&#x27;targets&#x27;: []}</p><pre>原始分数：[0.4158635437488556, 0.40375617146492004, 0.4377584755420685]</pre><p>5次重复预测相同，仍只算一个来源场景。</p><details><summary>查看原完整输入</summary><pre>{
+  &quot;alreadyActedIds&quot;: [],
+  &quot;candidateIds&quot;: [
+    &quot;p1&quot;,
+    &quot;p2&quot;,
+    &quot;p3&quot;
+  ],
+  &quot;confirmedGroup&quot;: {
+    &quot;members&quot;: [
+      {
+        &quot;actionText&quot;: &quot;我坐在通道外，低头系紧自己松开的鞋带。&quot;,
+        &quot;memberId&quot;: &quot;p1&quot;
+      }
+    ]
+  },
+  &quot;knownPriorJudgments&quot;: [],
+  &quot;source&quot;: {
+    &quot;actionText&quot;: &quot;我坐在通道外，低头系紧自己松开的鞋带。&quot;,
+    &quot;memberId&quot;: &quot;p1&quot;
+  },
+  &quot;world&quot;: {
+    &quot;characters&quot;: [
+      {
+        &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+        &quot;id&quot;: &quot;p1&quot;,
+        &quot;name&quot;: &quot;周栖（甲）&quot;,
+        &quot;personality&quot;: [
+          &quot;不打扰别人。&quot;
+        ],
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_a&quot;,
+          &quot;slot&quot;: &quot;地面&quot;
+        },
+        &quot;sanity&quot;: 65,
+        &quot;tasks&quot;: [
+          {
+            &quot;id&quot;: &quot;task_p1&quot;,
+            &quot;parentId&quot;: null,
+            &quot;status&quot;: &quot;pending&quot;,
+            &quot;text&quot;: &quot;在车来前整理随身衣物。&quot;
+          }
+        ]
+      },
+      {
+        &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+        &quot;id&quot;: &quot;p2&quot;,
+        &quot;name&quot;: &quot;白茵（乙）&quot;,
+        &quot;personality&quot;: [
+          &quot;认真。&quot;
+        ],
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_b&quot;,
+          &quot;slot&quot;: &quot;地面&quot;
+        },
+        &quot;sanity&quot;: 65,
+        &quot;tasks&quot;: [
+          {
+            &quot;id&quot;: &quot;task_p2&quot;,
+            &quot;parentId&quot;: null,
+            &quot;status&quot;: &quot;pending&quot;,
+            &quot;text&quot;: &quot;保管票夹。&quot;
+          }
+        ]
+      },
+      {
+        &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+        &quot;id&quot;: &quot;p3&quot;,
+        &quot;name&quot;: &quot;江照（丙）&quot;,
+        &quot;personality&quot;: [
+          &quot;平和。&quot;
+        ],
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_a&quot;,
+          &quot;slot&quot;: &quot;地面&quot;
+        },
+        &quot;sanity&quot;: 65,
+        &quot;tasks&quot;: [
+          {
+            &quot;id&quot;: &quot;task_p3&quot;,
+            &quot;parentId&quot;: null,
+            &quot;status&quot;: &quot;pending&quot;,
+            &quot;text&quot;: &quot;等候发车通知。&quot;
+          }
+        ]
+      }
+    ],
+    &quot;items&quot;: [
+      {
+        &quot;id&quot;: &quot;item_1&quot;,
+        &quot;name&quot;: &quot;主角鞋带&quot;,
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;p1&quot;,
+          &quot;slot&quot;: &quot;可见位置&quot;
+        }
+      },
+      {
+        &quot;id&quot;: &quot;item_2&quot;,
+        &quot;name&quot;: &quot;票夹&quot;,
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;p2&quot;,
+          &quot;slot&quot;: &quot;可见位置&quot;
+        }
+      }
+    ],
+    &quot;places&quot;: [
+      {
+        &quot;id&quot;: &quot;loc_outer&quot;,
+        &quot;name&quot;: &quot;城门候车棚&quot;,
+        &quot;parentId&quot;: null
+      },
+      {
+        &quot;id&quot;: &quot;loc_a&quot;,
+        &quot;name&quot;: &quot;通道外的座椅区&quot;,
+        &quot;parentId&quot;: &quot;loc_outer&quot;
+      },
+      {
+        &quot;id&quot;: &quot;loc_b&quot;,
+        &quot;name&quot;: &quot;售票窗&quot;,
+        &quot;parentId&quot;: &quot;loc_outer&quot;
+      }
+    ],
+    &quot;time&quot;: &quot;2031-04-18T10:20:00+08:00&quot;
+  }
+}</pre></details><details><summary>查看5次原始分数、耗时和覆盖摘要</summary><pre>[
+  {
+    &quot;repeat&quot;: 0,
+    &quot;status&quot;: &quot;complete&quot;,
+    &quot;elapsedMs&quot;: 465.6497079995461,
+    &quot;probabilities&quot;: [
+      0.4158635437488556,
+      0.40375617146492004,
+      0.4377584755420685
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;featureCacheUsed&quot;: false,
+    &quot;coverage&quot;: [
+      {
+        &quot;targetId&quot;: &quot;p1&quot;,
+        &quot;factSha256&quot;: &quot;2d9a93220f5743db9824b7caa3c4d61fb8886bb60eca825bc831290709306e16&quot;,
+        &quot;fullFactsRestored&quot;: true,
+        &quot;windowTokens&quot;: [
+          491,
+          481,
+          495,
+          431
+        ],
+        &quot;coveredFacts&quot;: 60
+      },
+      {
+        &quot;targetId&quot;: &quot;p2&quot;,
+        &quot;factSha256&quot;: &quot;2d9a93220f5743db9824b7caa3c4d61fb8886bb60eca825bc831290709306e16&quot;,
+        &quot;fullFactsRestored&quot;: true,
+        &quot;windowTokens&quot;: [
+          491,
+          481,
+          495,
+          431
+        ],
+        &quot;coveredFacts&quot;: 60
+      },
+      {
+        &quot;targetId&quot;: &quot;p3&quot;,
+        &quot;factSha256&quot;: &quot;2d9a93220f5743db9824b7caa3c4d61fb8886bb60eca825bc831290709306e16&quot;,
+        &quot;fullFactsRestored&quot;: true,
+        &quot;windowTokens&quot;: [
+          491,
+          481,
+          495,
+          431
+        ],
+        &quot;coveredFacts&quot;: 60
+      }
+    ]
+  },
+  {
+    &quot;repeat&quot;: 1,
+    &quot;status&quot;: &quot;complete&quot;,
+    &quot;elapsedMs&quot;: 477.778667001985,
+    &quot;probabilities&quot;: [
+      0.4158635437488556,
+      0.40375617146492004,
+      0.4377584755420685
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;featureCacheUsed&quot;: false,
+    &quot;coverage&quot;: [
+      {
+        &quot;targetId&quot;: &quot;p1&quot;,
+        &quot;factSha256&quot;: &quot;2d9a93220f5743db9824b7caa3c4d61fb8886bb60eca825bc831290709306e16&quot;,
+        &quot;fullFactsRestored&quot;: true,
+        &quot;windowTokens&quot;: [
+          491,
+          481,
+          495,
+          431
+        ],
+        &quot;coveredFacts&quot;: 60
+      },
+      {
+        &quot;targetId&quot;: &quot;p2&quot;,
+        &quot;factSha256&quot;: &quot;2d9a93220f5743db9824b7caa3c4d61fb8886bb60eca825bc831290709306e16&quot;,
+        &quot;fullFactsRestored&quot;: true,
+        &quot;windowTokens&quot;: [
+          491,
+          481,
+          495,
+          431
+        ],
+        &quot;coveredFacts&quot;: 60
+      },
+      {
+        &quot;targetId&quot;: &quot;p3&quot;,
+        &quot;factSha256&quot;: &quot;2d9a93220f5743db9824b7caa3c4d61fb8886bb60eca825bc831290709306e16&quot;,
+        &quot;fullFactsRestored&quot;: true,
+        &quot;windowTokens&quot;: [
+          491,
+          481,
+          495,
+          431
+        ],
+        &quot;coveredFacts&quot;: 60
+      }
+    ]
+  },
+  {
+    &quot;repeat&quot;: 2,
+    &quot;status&quot;: &quot;complete&quot;,
+    &quot;elapsedMs&quot;: 483.4050829958869,
+    &quot;probabilities&quot;: [
+      0.4158635437488556,
+      0.40375617146492004,
+      0.4377584755420685
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;featureCacheUsed&quot;: false,
+    &quot;coverage&quot;: [
+      {
+        &quot;targetId&quot;: &quot;p1&quot;,
+        &quot;factSha256&quot;: &quot;2d9a93220f5743db9824b7caa3c4d61fb8886bb60eca825bc831290709306e16&quot;,
+        &quot;fullFactsRestored&quot;: true,
+        &quot;windowTokens&quot;: [
+          491,
+          481,
+          495,
+          431
+        ],
+        &quot;coveredFacts&quot;: 60
+      },
+      {
+        &quot;targetId&quot;: &quot;p2&quot;,
+        &quot;factSha256&quot;: &quot;2d9a93220f5743db9824b7caa3c4d61fb8886bb60eca825bc831290709306e16&quot;,
+        &quot;fullFactsRestored&quot;: true,
+        &quot;windowTokens&quot;: [
+          491,
+          481,
+          495,
+          431
+        ],
+        &quot;coveredFacts&quot;: 60
+      },
+      {
+        &quot;targetId&quot;: &quot;p3&quot;,
+        &quot;factSha256&quot;: &quot;2d9a93220f5743db9824b7caa3c4d61fb8886bb60eca825bc831290709306e16&quot;,
+        &quot;fullFactsRestored&quot;: true,
+        &quot;windowTokens&quot;: [
+          491,
+          481,
+          495,
+          431
+        ],
+        &quot;coveredFacts&quot;: 60
+      }
+    ]
+  },
+  {
+    &quot;repeat&quot;: 3,
+    &quot;status&quot;: &quot;complete&quot;,
+    &quot;elapsedMs&quot;: 493.3890840038657,
+    &quot;probabilities&quot;: [
+      0.4158635437488556,
+      0.40375617146492004,
+      0.4377584755420685
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;featureCacheUsed&quot;: false,
+    &quot;coverage&quot;: [
+      {
+        &quot;targetId&quot;: &quot;p1&quot;,
+        &quot;factSha256&quot;: &quot;2d9a93220f5743db9824b7caa3c4d61fb8886bb60eca825bc831290709306e16&quot;,
+        &quot;fullFactsRestored&quot;: true,
+        &quot;windowTokens&quot;: [
+          491,
+          481,
+          495,
+          431
+        ],
+        &quot;coveredFacts&quot;: 60
+      },
+      {
+        &quot;targetId&quot;: &quot;p2&quot;,
+        &quot;factSha256&quot;: &quot;2d9a93220f5743db9824b7caa3c4d61fb8886bb60eca825bc831290709306e16&quot;,
+        &quot;fullFactsRestored&quot;: true,
+        &quot;windowTokens&quot;: [
+          491,
+          481,
+          495,
+          431
+        ],
+        &quot;coveredFacts&quot;: 60
+      },
+      {
+        &quot;targetId&quot;: &quot;p3&quot;,
+        &quot;factSha256&quot;: &quot;2d9a93220f5743db9824b7caa3c4d61fb8886bb60eca825bc831290709306e16&quot;,
+        &quot;fullFactsRestored&quot;: true,
+        &quot;windowTokens&quot;: [
+          491,
+          481,
+          495,
+          431
+        ],
+        &quot;coveredFacts&quot;: 60
+      }
+    ]
+  },
+  {
+    &quot;repeat&quot;: 4,
+    &quot;status&quot;: &quot;complete&quot;,
+    &quot;elapsedMs&quot;: 503.4114580048481,
+    &quot;probabilities&quot;: [
+      0.4158635437488556,
+      0.40375617146492004,
+      0.4377584755420685
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;featureCacheUsed&quot;: false,
+    &quot;coverage&quot;: [
+      {
+        &quot;targetId&quot;: &quot;p1&quot;,
+        &quot;factSha256&quot;: &quot;2d9a93220f5743db9824b7caa3c4d61fb8886bb60eca825bc831290709306e16&quot;,
+        &quot;fullFactsRestored&quot;: true,
+        &quot;windowTokens&quot;: [
+          491,
+          481,
+          495,
+          431
+        ],
+        &quot;coveredFacts&quot;: 60
+      },
+      {
+        &quot;targetId&quot;: &quot;p2&quot;,
+        &quot;factSha256&quot;: &quot;2d9a93220f5743db9824b7caa3c4d61fb8886bb60eca825bc831290709306e16&quot;,
+        &quot;fullFactsRestored&quot;: true,
+        &quot;windowTokens&quot;: [
+          491,
+          481,
+          495,
+          431
+        ],
+        &quot;coveredFacts&quot;: 60
+      },
+      {
+        &quot;targetId&quot;: &quot;p3&quot;,
+        &quot;factSha256&quot;: &quot;2d9a93220f5743db9824b7caa3c4d61fb8886bb60eca825bc831290709306e16&quot;,
+        &quot;fullFactsRestored&quot;: true,
+        &quot;windowTokens&quot;: [
+          491,
+          481,
+          495,
+          431
+        ],
+        &quot;coveredFacts&quot;: 60
+      }
+    ]
+  }
+]</pre></details><p>完整逐token记录保留在下方无损归档。</p></article><article><h2>dev-d03-06</h2><p>原判据：[&#x27;p2&#x27;, &#x27;p3&#x27;]；实际预测：{&#x27;targets&#x27;: []}</p><pre>原始分数：[0.41010966897010803, 0.4264732599258423, 0.49614644050598145]</pre><p>5次重复预测相同，仍只算一个来源场景。</p><details><summary>查看原完整输入</summary><pre>{
+  &quot;alreadyActedIds&quot;: [],
+  &quot;candidateIds&quot;: [
+    &quot;p1&quot;,
+    &quot;p2&quot;,
+    &quot;p3&quot;
+  ],
+  &quot;confirmedGroup&quot;: {
+    &quot;members&quot;: [
+      {
+        &quot;actionText&quot;: &quot;我突然打开排水闸，让水流冲向槽内两人正在站立的位置。&quot;,
+        &quot;memberId&quot;: &quot;p1&quot;
+      }
+    ]
+  },
+  &quot;knownPriorJudgments&quot;: [],
+  &quot;source&quot;: {
+    &quot;actionText&quot;: &quot;我突然打开排水闸，让水流冲向槽内两人正在站立的位置。&quot;,
+    &quot;memberId&quot;: &quot;p1&quot;
+  },
+  &quot;world&quot;: {
+    &quot;characters&quot;: [
+      {
+        &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+        &quot;id&quot;: &quot;p1&quot;,
+        &quot;name&quot;: &quot;盛澜（甲）&quot;,
+        &quot;personality&quot;: [
+          &quot;动作直接。&quot;
+        ],
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_a&quot;,
+          &quot;slot&quot;: &quot;地面&quot;
+        },
+        &quot;sanity&quot;: 65,
+        &quot;tasks&quot;: [
+          {
+            &quot;id&quot;: &quot;task_p1&quot;,
+            &quot;parentId&quot;: null,
+            &quot;status&quot;: &quot;pending&quot;,
+            &quot;text&quot;: &quot;打开闸门排水。&quot;
+          }
+        ]
+      },
+      {
+        &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+        &quot;id&quot;: &quot;p2&quot;,
+        &quot;name&quot;: &quot;赵晚（乙）&quot;,
+        &quot;personality&quot;: [
+          &quot;反应谨慎。&quot;
+        ],
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_a&quot;,
+          &quot;slot&quot;: &quot;地面&quot;
+        },
+        &quot;sanity&quot;: 65,
+        &quot;tasks&quot;: [
+          {
+            &quot;id&quot;: &quot;task_p2&quot;,
+            &quot;parentId&quot;: null,
+            &quot;status&quot;: &quot;pending&quot;,
+            &quot;text&quot;: &quot;避免自己和布匹被水冲倒。&quot;
+          }
+        ]
+      },
+      {
+        &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+        &quot;id&quot;: &quot;p3&quot;,
+        &quot;name&quot;: &quot;方舟（丙）&quot;,
+        &quot;personality&quot;: [
+          &quot;善于保护工具。&quot;
+        ],
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_a&quot;,
+          &quot;slot&quot;: &quot;地面&quot;
+        },
+        &quot;sanity&quot;: 65,
+        &quot;tasks&quot;: [
+          {
+            &quot;id&quot;: &quot;task_p3&quot;,
+            &quot;parentId&quot;: null,
+            &quot;status&quot;: &quot;pending&quot;,
+            &quot;text&quot;: &quot;稳住脚下并护住布架。&quot;
+          }
+        ]
+      }
+    ],
+    &quot;items&quot;: [
+      {
+        &quot;id&quot;: &quot;item_1&quot;,
+        &quot;name&quot;: &quot;排水闸&quot;,
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_a&quot;,
+          &quot;slot&quot;: &quot;可见位置&quot;
+        }
+      },
+      {
+        &quot;id&quot;: &quot;item_2&quot;,
+        &quot;name&quot;: &quot;待整理布匹&quot;,
+        &quot;position&quot;: {
+          &quot;containerId&quot;: &quot;loc_a&quot;,
+          &quot;slot&quot;: &quot;可见位置&quot;
+        }
+      }
+    ],
+    &quot;places&quot;: [
+      {
+        &quot;id&quot;: &quot;loc_outer&quot;,
+        &quot;name&quot;: &quot;河边染坊&quot;,
+        &quot;parentId&quot;: null
+      },
+      {
+        &quot;id&quot;: &quot;loc_a&quot;,
+        &quot;name&quot;: &quot;槽内工作区及排水闸&quot;,
+        &quot;parentId&quot;: &quot;loc_outer&quot;
+      },
+      {
+        &quot;id&quot;: &quot;loc_b&quot;,
+        &quot;name&quot;: &quot;晾布廊&quot;,
+        &quot;parentId&quot;: &quot;loc_outer&quot;
+      }
+    ],
+    &quot;time&quot;: &quot;2031-04-18T10:20:00+08:00&quot;
+  }
+}</pre></details><details><summary>查看5次原始分数、耗时和覆盖摘要</summary><pre>[
+  {
+    &quot;repeat&quot;: 0,
+    &quot;status&quot;: &quot;complete&quot;,
+    &quot;elapsedMs&quot;: 492.78104200493544,
+    &quot;probabilities&quot;: [
+      0.41010966897010803,
+      0.4264732599258423,
+      0.49614644050598145
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;featureCacheUsed&quot;: false,
+    &quot;coverage&quot;: [
+      {
+        &quot;targetId&quot;: &quot;p1&quot;,
+        &quot;factSha256&quot;: &quot;621e6ece67d5f311be403c00771ccf1392a32bd8684c6e875255673e0c1df1d0&quot;,
+        &quot;fullFactsRestored&quot;: true,
+        &quot;windowTokens&quot;: [
+          504,
+          486,
+          504,
+          438
+        ],
+        &quot;coveredFacts&quot;: 60
+      },
+      {
+        &quot;targetId&quot;: &quot;p2&quot;,
+        &quot;factSha256&quot;: &quot;621e6ece67d5f311be403c00771ccf1392a32bd8684c6e875255673e0c1df1d0&quot;,
+        &quot;fullFactsRestored&quot;: true,
+        &quot;windowTokens&quot;: [
+          504,
+          486,
+          504,
+          438
+        ],
+        &quot;coveredFacts&quot;: 60
+      },
+      {
+        &quot;targetId&quot;: &quot;p3&quot;,
+        &quot;factSha256&quot;: &quot;621e6ece67d5f311be403c00771ccf1392a32bd8684c6e875255673e0c1df1d0&quot;,
+        &quot;fullFactsRestored&quot;: true,
+        &quot;windowTokens&quot;: [
+          504,
+          486,
+          504,
+          438
+        ],
+        &quot;coveredFacts&quot;: 60
+      }
+    ]
+  },
+  {
+    &quot;repeat&quot;: 1,
+    &quot;status&quot;: &quot;complete&quot;,
+    &quot;elapsedMs&quot;: 511.65962500090245,
+    &quot;probabilities&quot;: [
+      0.41010966897010803,
+      0.4264732599258423,
+      0.49614644050598145
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;featureCacheUsed&quot;: false,
+    &quot;coverage&quot;: [
+      {
+        &quot;targetId&quot;: &quot;p1&quot;,
+        &quot;factSha256&quot;: &quot;621e6ece67d5f311be403c00771ccf1392a32bd8684c6e875255673e0c1df1d0&quot;,
+        &quot;fullFactsRestored&quot;: true,
+        &quot;windowTokens&quot;: [
+          504,
+          486,
+          504,
+          438
+        ],
+        &quot;coveredFacts&quot;: 60
+      },
+      {
+        &quot;targetId&quot;: &quot;p2&quot;,
+        &quot;factSha256&quot;: &quot;621e6ece67d5f311be403c00771ccf1392a32bd8684c6e875255673e0c1df1d0&quot;,
+        &quot;fullFactsRestored&quot;: true,
+        &quot;windowTokens&quot;: [
+          504,
+          486,
+          504,
+          438
+        ],
+        &quot;coveredFacts&quot;: 60
+      },
+      {
+        &quot;targetId&quot;: &quot;p3&quot;,
+        &quot;factSha256&quot;: &quot;621e6ece67d5f311be403c00771ccf1392a32bd8684c6e875255673e0c1df1d0&quot;,
+        &quot;fullFactsRestored&quot;: true,
+        &quot;windowTokens&quot;: [
+          504,
+          486,
+          504,
+          438
+        ],
+        &quot;coveredFacts&quot;: 60
+      }
+    ]
+  },
+  {
+    &quot;repeat&quot;: 2,
+    &quot;status&quot;: &quot;complete&quot;,
+    &quot;elapsedMs&quot;: 517.5520839984529,
+    &quot;probabilities&quot;: [
+      0.41010966897010803,
+      0.4264732599258423,
+      0.49614644050598145
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;featureCacheUsed&quot;: false,
+    &quot;coverage&quot;: [
+      {
+        &quot;targetId&quot;: &quot;p1&quot;,
+        &quot;factSha256&quot;: &quot;621e6ece67d5f311be403c00771ccf1392a32bd8684c6e875255673e0c1df1d0&quot;,
+        &quot;fullFactsRestored&quot;: true,
+        &quot;windowTokens&quot;: [
+          504,
+          486,
+          504,
+          438
+        ],
+        &quot;coveredFacts&quot;: 60
+      },
+      {
+        &quot;targetId&quot;: &quot;p2&quot;,
+        &quot;factSha256&quot;: &quot;621e6ece67d5f311be403c00771ccf1392a32bd8684c6e875255673e0c1df1d0&quot;,
+        &quot;fullFactsRestored&quot;: true,
+        &quot;windowTokens&quot;: [
+          504,
+          486,
+          504,
+          438
+        ],
+        &quot;coveredFacts&quot;: 60
+      },
+      {
+        &quot;targetId&quot;: &quot;p3&quot;,
+        &quot;factSha256&quot;: &quot;621e6ece67d5f311be403c00771ccf1392a32bd8684c6e875255673e0c1df1d0&quot;,
+        &quot;fullFactsRestored&quot;: true,
+        &quot;windowTokens&quot;: [
+          504,
+          486,
+          504,
+          438
+        ],
+        &quot;coveredFacts&quot;: 60
+      }
+    ]
+  },
+  {
+    &quot;repeat&quot;: 3,
+    &quot;status&quot;: &quot;complete&quot;,
+    &quot;elapsedMs&quot;: 612.9638749989681,
+    &quot;probabilities&quot;: [
+      0.41010966897010803,
+      0.4264732599258423,
+      0.49614644050598145
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;featureCacheUsed&quot;: false,
+    &quot;coverage&quot;: [
+      {
+        &quot;targetId&quot;: &quot;p1&quot;,
+        &quot;factSha256&quot;: &quot;621e6ece67d5f311be403c00771ccf1392a32bd8684c6e875255673e0c1df1d0&quot;,
+        &quot;fullFactsRestored&quot;: true,
+        &quot;windowTokens&quot;: [
+          504,
+          486,
+          504,
+          438
+        ],
+        &quot;coveredFacts&quot;: 60
+      },
+      {
+        &quot;targetId&quot;: &quot;p2&quot;,
+        &quot;factSha256&quot;: &quot;621e6ece67d5f311be403c00771ccf1392a32bd8684c6e875255673e0c1df1d0&quot;,
+        &quot;fullFactsRestored&quot;: true,
+        &quot;windowTokens&quot;: [
+          504,
+          486,
+          504,
+          438
+        ],
+        &quot;coveredFacts&quot;: 60
+      },
+      {
+        &quot;targetId&quot;: &quot;p3&quot;,
+        &quot;factSha256&quot;: &quot;621e6ece67d5f311be403c00771ccf1392a32bd8684c6e875255673e0c1df1d0&quot;,
+        &quot;fullFactsRestored&quot;: true,
+        &quot;windowTokens&quot;: [
+          504,
+          486,
+          504,
+          438
+        ],
+        &quot;coveredFacts&quot;: 60
+      }
+    ]
+  },
+  {
+    &quot;repeat&quot;: 4,
+    &quot;status&quot;: &quot;complete&quot;,
+    &quot;elapsedMs&quot;: 525.5268329929095,
+    &quot;probabilities&quot;: [
+      0.41010966897010803,
+      0.4264732599258423,
+      0.49614644050598145
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;featureCacheUsed&quot;: false,
+    &quot;coverage&quot;: [
+      {
+        &quot;targetId&quot;: &quot;p1&quot;,
+        &quot;factSha256&quot;: &quot;621e6ece67d5f311be403c00771ccf1392a32bd8684c6e875255673e0c1df1d0&quot;,
+        &quot;fullFactsRestored&quot;: true,
+        &quot;windowTokens&quot;: [
+          504,
+          486,
+          504,
+          438
+        ],
+        &quot;coveredFacts&quot;: 60
+      },
+      {
+        &quot;targetId&quot;: &quot;p2&quot;,
+        &quot;factSha256&quot;: &quot;621e6ece67d5f311be403c00771ccf1392a32bd8684c6e875255673e0c1df1d0&quot;,
+        &quot;fullFactsRestored&quot;: true,
+        &quot;windowTokens&quot;: [
+          504,
+          486,
+          504,
+          438
+        ],
+        &quot;coveredFacts&quot;: 60
+      },
+      {
+        &quot;targetId&quot;: &quot;p3&quot;,
+        &quot;factSha256&quot;: &quot;621e6ece67d5f311be403c00771ccf1392a32bd8684c6e875255673e0c1df1d0&quot;,
+        &quot;fullFactsRestored&quot;: true,
+        &quot;windowTokens&quot;: [
+          504,
+          486,
+          504,
+          438
+        ],
+        &quot;coveredFacts&quot;: 60
+      }
+    ]
+  }
+]</pre></details><p>完整逐token记录保留在下方无损归档。</p></article><article><h2>证据与下一步</h2><p>全部大原始记录使用gzip无损归档，解压字节SHA在汇总中。训练权重留在D本地忽略目录，仓库不包含权重。r2只有准备，未启动，已明确归档其被后续r3替代的状态。</p><p><a href="l3-5-m01-summary.json">机器汇总与归档身份</a> · <a href="m01-fitting/m01-fit-dev42-20261102-r1.plan.json">拟合计划</a> · <a href="m01-fitting/m01-infer-dev42-20261102-r3.plan.json">独立推理计划</a></p><p><a href="m01-fitting/m01-fit-dev42-20261102-r1.record.json.gz">完整拟合记录</a> · <a href="m01-fitting/m01-infer-dev42-20261102-r3.record.json.gz">完整推理记录</a> · <a href="m01-fitting/m01-infer-dev42-20261102-r3.record.windows.jsonl.gz">逐窗token原始事件</a></p><p>下一步应减少重复编码并改善候选条件融合，保持全事实覆盖，修复漏目标；再准备独立训练数据和正式校准，接入反应与共同结果。当前仍未完成跨窗语义验证、M01/M02协同、来源核验、浏览器或生产接线。</p></article></main></html>
