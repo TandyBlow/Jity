@@ -28,7 +28,7 @@ HERE = pathlib.Path(__file__).resolve().parent
 REPO = HERE.parent.parent.parent
 DOC = REPO / "design" / "world-engine-reports" / "components" / "n4-narrative-dev.md"
 
-from state_data import WORLD_STATE as WORLD, SCENES
+from state_data import WORLD_STATE as WORLD, SCENES, PERSONALITY_USE
 
 
 def F(fid, kind, eid, name, **kw):
@@ -103,14 +103,14 @@ CASES = [
         "narrative": "雾从石阶底下漫上来，沈砚把油布包往怀里按了按，一层一层"
                      "登上旧灯塔。塔顶的风比巷子里硬，吹得铜灯罩嗡嗡作响；他"
                      "换好备用灯芯，火苗重新站稳，胸口那口一直提着的气才慢慢"
-                     "落回去。前后不过八分钟，他却像在黑暗里走了很久。",
+                     "落回去。过了一会儿，他才像从黑暗里走出来。",
         "annotations": [
             A("雾从石阶底下漫上来，沈砚把油布包往怀里按了按，一层一层登上旧灯塔。",
               ["f0"], ["weather", "sensory", "gesture"]),
             A("塔顶的风比巷子里硬，吹得铜灯罩嗡嗡作响；他换好备用灯芯，火苗重新"
               "站稳，胸口那口一直提着的气才慢慢落回去。",
               ["f1", "f2"], ["sensory", "interiority"]),
-            A("前后不过八分钟，他却像在黑暗里走了很久。",
+            A("过了一会儿，他才像从黑暗里走出来。",
               ["f3"], ["time", "interiority"]),
         ],
     },
@@ -135,15 +135,15 @@ CASES = [
                         "at": "潮渡"},
         "narrative": "天刚亮，潮渡的黑水退到木桩以下，露出一截被潮水舔白的浅滩。"
                      "沈砚踩着湿滑的石阶下去，把陷在泥里的系泊绳一寸一寸拖回岸"
-                     "上；等他直起腰，外袍下摆已经结了一层白花花的盐霜。十二分"
-                     "钟，海风把他的手指吹得发僵，绳子却总算回到了木桩边。",
+                     "上；等他直起腰，外袍下摆已经结了一层白花花的盐霜。等他把绳子"
+                     "拖回木桩边，手指已经被海风吹得发僵。",
         "annotations": [
             A("天刚亮，潮渡的黑水退到木桩以下，露出一截被潮水舔白的浅滩。",
               [], ["scene", "weather", "sensory"]),
             A("沈砚踩着湿滑的石阶下去，把陷在泥里的系泊绳一寸一寸拖回岸上；"
               "等他直起腰，外袍下摆已经结了一层白花花的盐霜。",
               ["f0", "f1", "f2"], ["behavior", "sensory", "visual"]),
-            A("十二分钟，海风把他的手指吹得发僵，绳子却总算回到了木桩边。",
+            A("等他把绳子拖回木桩边，手指已经被海风吹得发僵。",
               ["f3"], ["time", "sensory"]),
         ],
     },
@@ -168,7 +168,7 @@ CASES = [
         "narrative": "雾把河面压得很低，潮渡的木桩只剩一截影子。沈砚在石阶尽头"
                      "站了一会儿，才听见船灯从雾里透出来；顾行舟把渡船靠上木桩，"
                      "缆绳在他手里绕了两圈，船身轻轻一磕，水面上的灯影就碎了。"
-                     "六分钟，雾没有散，船总算到了。",
+                     "雾没有散，船总算到了。",
         "annotations": [
             A("雾把河面压得很低，潮渡的木桩只剩一截影子。",
               [], ["weather", "scene"]),
@@ -177,7 +177,7 @@ CASES = [
             A("顾行舟把渡船靠上木桩，缆绳在他手里绕了两圈，船身轻轻一磕，水面"
               "上的灯影就碎了。",
               ["f1"], ["behavior", "sensory"]),
-            A("六分钟，雾没有散，船总算到了。",
+            A("雾没有散，船总算到了。",
               ["f2"], ["time", "weather"]),
         ],
     },
@@ -202,8 +202,8 @@ CASES = [
                         "at": "潮汐档案馆"},
         "narrative": "雨点密密地敲着档案馆的天窗，沈砚把潮汐簿摊在灯下，缺页的"
                      "边缘毛糙得像被咬过。他照着旧墨迹补完最后一个字，阿棠正好"
-                     "推门进来，把一叠干纸放在桌角，鞋底在门槛上蹭了两下。二十"
-                     "分钟，屋里只有笔尖和雨声，纸页终于接上了。",
+                     "推门进来，把一叠干纸放在桌角，鞋底在门槛上蹭了两下。屋里"
+                     "只有笔尖和雨声，纸页终于接上了。",
         "annotations": [
             A("雨点密密地敲着档案馆的天窗，沈砚把潮汐簿摊在灯下，缺页的边缘"
               "毛糙得像被咬过。",
@@ -212,7 +212,7 @@ CASES = [
               ["f0"], ["behavior"]),
             A("阿棠正好推门进来，把一叠干纸放在桌角，鞋底在门槛上蹭了两下。",
               ["f2", "f3"], ["behavior"]),
-            A("二十分钟，屋里只有笔尖和雨声，纸页终于接上了。",
+            A("屋里只有笔尖和雨声，纸页终于接上了。",
               ["f1"], ["time", "sensory"]),
         ],
     },
@@ -238,7 +238,7 @@ CASES = [
                         "at": "雾堤"},
         "narrative": "雾堤上的石阶被浪花打湿，沈砚摸着冰冷的铁链往上走，鞋底几"
                      "次打滑。他抓住钟绳，把雾警钟一下一下敲响；钟声撞进雾里，"
-                     "又被海风撕碎。四分钟，他的后背全是冷汗，手指抖得几乎握不"
+                     "又被海风撕碎。他的后背全是冷汗，手指抖得几乎握不"
                      "住绳子——直到钟声散尽，他才发觉自己一直屏着呼吸。",
         "annotations": [
             A("雾堤上的石阶被浪花打湿，沈砚摸着冰冷的铁链往上走，鞋底几次"
@@ -246,7 +246,7 @@ CASES = [
               ["f0"], ["weather", "scene", "sensory", "behavior"]),
             A("他抓住钟绳，把雾警钟一下一下敲响；钟声撞进雾里，又被海风撕碎。",
               ["f1"], ["behavior", "sensory"]),
-            A("四分钟，他的后背全是冷汗，手指抖得几乎握不住绳子——直到钟声"
+            A("他的后背全是冷汗，手指抖得几乎握不住绳子——直到钟声"
               "散尽，他才发觉自己一直屏着呼吸。",
               ["f2", "f3"], ["time", "interiority"]),
         ],
@@ -274,7 +274,7 @@ CASES = [
                         "at": "潮生巷"},
         "narrative": "潮生巷的雨还没停，沈砚摸黑进了屋，点亮桌角的蜡烛。抽屉最"
                      "底层压着一层旧纸，他一张张掀开，终于摸到那把冰凉的备用钥"
-                     "匙；铜齿磕在木板上，发出很轻的一声。三分钟，他攥着钥匙坐"
+                     "匙；铜齿磕在木板上，发出很轻的一声。他攥着钥匙坐"
                      "到床沿，才发现肩膀一直绷得发酸。",
         "annotations": [
             A("潮生巷的雨还没停，沈砚摸黑进了屋，点亮桌角的蜡烛。",
@@ -282,12 +282,12 @@ CASES = [
             A("抽屉最底层压着一层旧纸，他一张张掀开，终于摸到那把冰凉的备用"
               "钥匙；铜齿磕在木板上，发出很轻的一声。",
               ["f1"], ["behavior", "sensory"]),
-            A("三分钟，他攥着钥匙坐到床沿，才发现肩膀一直绷得发酸。",
+            A("他攥着钥匙坐到床沿，才发现肩膀一直绷得发酸。",
               ["f2", "f3"], ["time", "interiority"]),
         ],
     },
     {
-        "id": "n4n-07", "title": "档案馆的十五分钟",
+        "id": "n4n-07", "title": "档案馆的雨声",
         "facts": [
             noch("f0"),
             timef("f1", 15),
@@ -305,14 +305,14 @@ CASES = [
                         "at": "潮汐档案馆"},
         "narrative": "档案馆的雨声渐渐匀了，灯芯烧出一小截黑灰。沈砚把潮汐簿合"
                      "上，又翻开，指尖停在同一行字上；桌上的茶早就凉了，杯口凝"
-                     "着一圈水汽。十五分钟过去，门外没有脚步声，他也就没有起身。",
+                     "着一圈水汽。门外一直没有脚步声，他也就没有起身。",
         "annotations": [
             A("档案馆的雨声渐渐匀了，灯芯烧出一小截黑灰。",
               [], ["weather", "scene"]),
             A("沈砚把潮汐簿合上，又翻开，指尖停在同一行字上；桌上的茶早就凉了，"
               "杯口凝着一圈水汽。",
               ["f0"], ["behavior", "sensory"]),
-            A("十五分钟过去，门外没有脚步声，他也就没有起身。",
+            A("门外一直没有脚步声，他也就没有起身。",
               ["f0", "f1"], ["time", "interiority"]),
         ],
     },
@@ -338,14 +338,14 @@ CASES = [
         "narrative": "早市的帆布棚下全是白汽，鱼鳞在石板上闪成一片碎光。沈砚从"
                      "人缝里挤过去，正看见阿棠抱着一筐银鳞鱼往案板上送，鱼尾拍"
                      "得筐沿啪啪响；他往旁边让了一步，衣摆还是沾上了鱼鳞和泥水。"
-                     "五分钟，白汽还没有散，他低头看了一眼衣摆，又往前走了。",
+                     "白汽还没有散，他低头看了一眼衣摆，又往前走了。",
         "annotations": [
             A("早市的帆布棚下全是白汽，鱼鳞在石板上闪成一片碎光。",
               [], ["scene", "sensory"]),
             A("沈砚从人缝里挤过去，正看见阿棠抱着一筐银鳞鱼往案板上送，鱼尾"
               "拍得筐沿啪啪响；他往旁边让了一步，衣摆还是沾上了鱼鳞和泥水。",
               ["f0", "f1", "f2"], ["behavior", "sensory", "visual"]),
-            A("五分钟，白汽还没有散，他低头看了一眼衣摆，又往前走了。",
+            A("白汽还没有散，他低头看了一眼衣摆，又往前走了。",
               ["f3"], ["time", "behavior"]),
         ],
     },
@@ -371,7 +371,7 @@ CASES = [
         "narrative": "旧灯塔的旋梯里有股擦铜油的味道。叶知微正踮着脚擦灯罩，抹布"
                      "在铜框上转出一圈亮光；沈砚站在门口，本来想好的客气话到了"
                      "嘴边，却没有像往常那样咽回去，而是直接问她灯芯还够不够用。"
-                     "七分钟，灯罩被擦得透亮，他的话也比平时多了一句。",
+                     "灯罩被擦得透亮，他的话也比平时多了一句。",
         "annotations": [
             A("旧灯塔的旋梯里有股擦铜油的味道。",
               [], ["scene", "sensory"]),
@@ -380,7 +380,7 @@ CASES = [
             A("沈砚站在门口，本来想好的客气话到了嘴边，却没有像往常那样咽回去，"
               "而是直接问她灯芯还够不够用。",
               ["f0", "f1"], ["behavior"]),
-            A("七分钟，灯罩被擦得透亮，他的话也比平时多了一句。",
+            A("灯罩被擦得透亮，他的话也比平时多了一句。",
               ["f1", "f3"], ["time"]),
         ],
     },
@@ -406,7 +406,7 @@ CASES = [
         "narrative": "雨势小了些，潮生巷的纸灯笼一盏接一盏亮着，光落在湿石板上，"
                      "像一层薄薄的金箔。沈砚收了伞，沿着墙根慢慢往回走；鞋底踩"
                      "过水洼，凉气从裤脚钻上来，他却觉得胸口比出门时松了一点。"
-                     "六分钟，巷子不长，他走得比平时慢。",
+                     "巷子不长，他走得比平时慢。",
         "annotations": [
             A("雨势小了些，潮生巷的纸灯笼一盏接一盏亮着，光落在湿石板上，像"
               "一层薄薄的金箔。",
@@ -414,7 +414,7 @@ CASES = [
             A("沈砚收了伞，沿着墙根慢慢往回走；鞋底踩过水洼，凉气从裤脚钻"
               "上来，他却觉得胸口比出门时松了一点。",
               ["f0", "f1"], ["behavior", "sensory", "interiority"]),
-            A("六分钟，巷子不长，他走得比平时慢。",
+            A("巷子不长，他走得比平时慢。",
               ["f2"], ["time", "behavior"]),
         ],
     },
@@ -441,7 +441,7 @@ CASES = [
                         "at": "雾堤"},
         "narrative": "雾堤上的风比潮渡更横，浪头撞在石壁上，碎成一片白沫。韩渡"
                      "蹲在钟架下，把松脱的钟绳重新系紧；沈砚扶正被风吹歪的警示"
-                     "灯，灯罩里的火苗晃了两下，才勉强稳住。四分钟，他的掌心被"
+                     "灯，灯罩里的火苗晃了两下，才勉强稳住。他的掌心被"
                      "铁皮冰得发麻，心里那点没来由的慌却越压越重。",
         "annotations": [
             A("雾堤上的风比潮渡更横，浪头撞在石壁上，碎成一片白沫。",
@@ -450,12 +450,12 @@ CASES = [
               ["f1"], ["behavior"]),
             A("沈砚扶正被风吹歪的警示灯，灯罩里的火苗晃了两下，才勉强稳住。",
               ["f0", "f2"], ["behavior", "sensory"]),
-            A("四分钟，他的掌心被铁皮冰得发麻，心里那点没来由的慌却越压越重。",
+            A("他的掌心被铁皮冰得发麻，心里那点没来由的慌却越压越重。",
               ["f3", "f4"], ["time", "interiority"]),
         ],
     },
     {
-        "id": "n4n-12", "title": "潮渡的九分钟",
+        "id": "n4n-12", "title": "潮渡的船灯",
         "facts": [
             moved("f0", "char_shen", "沈砚", "潮生巷", "潮渡"),
             moved("f1", "char_gu", "顾行舟", "河心", "潮渡"),
@@ -475,7 +475,7 @@ CASES = [
                         "at": "潮渡"},
         "narrative": "潮渡的雾到夜里更重，船灯只剩一团模糊的黄。沈砚靠在木桩上，"
                      "没有像从前那样来回踱步；顾行舟的渡船从河心慢慢靠过来，船"
-                     "头切开水面，缆绳甩上木桩时发出一声闷响。九分钟，他一直没"
+                     "头切开水面，缆绳甩上木桩时发出一声闷响。他一直没"
                      "有催，等船停稳，才向前走了一步。",
         "annotations": [
             A("潮渡的雾到夜里更重，船灯只剩一团模糊的黄。",
@@ -485,7 +485,7 @@ CASES = [
             A("顾行舟的渡船从河心慢慢靠过来，船头切开水面，缆绳甩上木桩时"
               "发出一声闷响。",
               ["f1"], ["behavior", "sensory"]),
-            A("九分钟，他一直没有催，等船停稳，才向前走了一步。",
+            A("他一直没有催，等船停稳，才向前走了一步。",
               ["f2", "f3"], ["time", "behavior"]),
         ],
     },
@@ -501,9 +501,16 @@ def check_case(c):
             raise SystemExit(f"{c['id']}: annotation text not in narrative: "
                              f"{a['text'][:40]}")
         covered.update(a["covers"])
-    if covered != facts:
+    time_facts = {f["factId"] for f in c["facts"] if f["kind"] == "time"}
+    required = facts - time_facts
+    if covered != required:
         raise SystemExit(f"{c['id']}: coverage mismatch "
-                         f"missing={facts - covered} extra={covered - facts}")
+                         f"missing={required - covered} extra={covered - required}")
+    present_ids = set(c["sceneState"]["present"])
+    ctx_ids = {x["entityId"] for x in c.get("characterContext", [])}
+    if present_ids - ctx_ids:
+        raise SystemExit(f"{c['id']}: present characters missing from "
+                         f"characterContext: {present_ids - ctx_ids}")
     if "任务" in narrative or "目标" in narrative or "理智" in narrative \
             or "精神值" in narrative or "外貌" in narrative \
             or "个性" in narrative or "位置" in narrative:
@@ -519,6 +526,26 @@ def check_case(c):
 def main() -> int:
     for c in CASES:
         c.update(SCENES[c["id"]])
+        time_facts = {f["factId"] for f in c["facts"] if f["kind"] == "time"}
+        c["timeNarrative"] = ("vague" if c["id"] in ("n4n-01", "n4n-02")
+                              else "omitted")
+        for a in c["annotations"]:
+            if any(fid in time_facts for fid in a["covers"]):
+                a["covers"] = [fid for fid in a["covers"]
+                               if fid not in time_facts]
+                a["elaboration"] = [e for e in a["elaboration"]
+                                    if e != "time"]
+                if not any(e.startswith("time-") for e in a["elaboration"]):
+                    a["elaboration"].append("time-" + c["timeNarrative"])
+        c["characterContext"] = [
+            {"entityId": eid,
+             "name": WORLD["characters"][eid]["name"],
+             "personality": WORLD["characters"][eid]["personality"],
+             "appearance": WORLD["characters"][eid]["appearance"],
+             "inventory": WORLD["characters"][eid].get("inventory", []),
+             "use": "read"}
+            for eid in c["sceneState"]["present"]]
+        c["personalityUse"] = PERSONALITY_USE.get(c["id"], [])
         check_case(c)
     world_path = HERE / "world.json"
     corpus_path = HERE / "corpus.jsonl"
@@ -551,7 +578,8 @@ def _fact_line(f):
     if kind == "sanity_changed":
         return f"{f['from']} → {f['to']}（内部数值，叙事不打印）"
     if kind == "time":
-        return f"{f['amount']} {f['unit']}"
+        return (f"{f['amount']} {f['unit']}（内部；叙事不写具体时长，"
+                f"可省略/模糊）")
     if kind == "appearance_changed":
         return f"内部文本=“{f['text']}”；叙事用可见细节"
     if kind == "personality_changed":
@@ -600,7 +628,7 @@ def _write_review_md(world_path, corpus_path):
         "| 视角人物（沈砚）的心理 | 其他角色的内心（只能写可见行为） |",
         "| 连接、节奏、感官细节 | 任务标题/quest log 措辞；理智/外貌/个性/位置的"
         "数值面板 |",
-        "| 未具名的通用道具（brief 列出） | 产生承诺的具体对话 |",
+        "| brief/物品表列出的道具；角色个性可读取 | 产生承诺的具体对话 |",
         "",
         "任务 `goal` 只作隐藏动机，不能出现在正文；表面只写 `resultText`。"
         "理智变化用心理/生理反应表达，不打印数值。外貌/个性变化用可见细节"
@@ -665,12 +693,24 @@ def _write_review_md(world_path, corpus_path):
                   f"- 在场：{', '.join(charname(x) for x in ss['present'])}；"
                   f"可见物品：{', '.join(itemname(x) for x in ss['visibleItems']) or '无'}",
                   f"- 氛围：{ss['atmosphere']}",
+                  f"- 时间事实：内部；叙事={c['timeNarrative']}"
+                  "（不写具体时长）",
                   (f"- 场景物品覆盖："
                    + "；".join(f"{itemname(k)} → {json.dumps(v, ensure_ascii=False)}"
                               for k, v in ss.get("itemOverrides", {}).items())
                    if ss.get("itemOverrides") else "- 场景物品覆盖：无"),
                   f"- 隐藏动机：{', '.join(brief['hiddenMotivation']) or '无'}",
-                  "", "**Grounding（每个具体名词 → 状态）**", "",
+                  "", "**Character context（读取；不要求体现）**", "",
+                  "| 角色 | 个性（读取） | 外貌（读取） | inventory |",
+                  "| --- | --- | --- | --- |"]
+        for cc in c["characterContext"]:
+            lines.append(f"| {cc['name']} | {cc['personality']} | "
+                         f"{cc['appearance']} | "
+                         f"{', '.join(cc['inventory']) or '无'} |")
+        lines += ["", "本场使用（可无；只影响可见行为，不写他人内心）：", ""]
+        for u in c["personalityUse"]:
+            lines.append(f"- {u}")
+        lines += ["", "**Grounding（每个具体名词 → 状态）**", "",
                   "| 细节 | 状态来源 | 值 |",
                   "| --- | --- | --- |"]
         for g in c["grounding"]:
@@ -692,12 +732,15 @@ def _write_review_md(world_path, corpus_path):
                   "- [ ] 视角一致",
                   "- [ ] 无理智/外貌/个性/位置数值面板",
                   "- [ ] 每个具体名词都有状态依据（Grounding 表）",
+                  "- [ ] 时间不出现具体时长（可模糊/省略）",
+                  "- [ ] 角色个性已读取（不要求体现）",
                   ""]
     lines += ["## 已知缺口（先记录，不在审阅稿里假装完成）", "",
               "1. 当前 N1 没有 `outcome`/`resultText`，任务完成只有 `goal`；"
               "本稿假定上游提供结果文本。",
               "2. 当前 N5 的 G1 对理智/外貌/个性使用字段/数值式匹配；"
-              "本稿用心理/行为/视觉表达，需要新的语义/人工核对口径。",
+              "G3 要求精确时间值。本稿把时间事实留内部、正文只模糊或省略，"
+              "用心理/行为/视觉表达；G1/G3 都需要新的语义/人工核对口径。",
               "3. 本稿未跑模型、未训练、未做完整 B 冻结池隔离；"
               "训练前须重新跑隔离与预登记。",
               "4. 对话暂不纳入（避免模型替角色做出承诺）；如需对话，"

@@ -287,7 +287,7 @@ SCENES = {
               "container=塔顶；appearance=铜框玻璃罩，海风大时会嗡嗡响"),
             G("备用灯芯", "item_wick", "container=塔顶；after=铜灯罩"),
             G("火苗", "item_lamp_cover.state.lit", "true"),
-            G("八分钟", "fact f3", "8 minute"),
+            G("过了一会儿", "fact f3", "内部时间；只说模糊时间"),
         ],
     },
     "n4n-02": {
@@ -313,7 +313,7 @@ SCENES = {
             G("外袍", "item_coat", "holder=沈砚"),
             G("盐霜", "fact f2", "外袍下摆结了一层盐霜"),
             G("海风", "scene.weather", "海风"),
-            G("十二分钟", "fact f3", "12 minute"),
+            G("等他把绳子拖回木桩边", "fact f3", "内部时间；用“等”表示，不写具体时长"),
         ],
     },
     "n4n-03": {
@@ -337,7 +337,6 @@ SCENES = {
             G("渡船", "item_ferry", "container=栈桥"),
             G("缆绳", "item_mooring_rope", "container=栈桥"),
             G("水面", "loc_ferry.sublocations[0].appearance", "水面"),
-            G("六分钟", "fact f2", "6 minute"),
         ],
     },
     "n4n-04": {
@@ -362,7 +361,6 @@ SCENES = {
             G("干纸", "item_paper", "holder=阿棠 → 长桌"),
             G("桌角", "loc_archive.sublocations[0]", "长桌"),
             G("门槛", "loc_archive.features", "门槛"),
-            G("二十分钟", "fact f1", "20 minute"),
         ],
     },
     "n4n-05": {
@@ -385,7 +383,6 @@ SCENES = {
             G("钟声", "item_bell", "雾警钟的声音"),
             G("海风", "scene.wind", "迎海风"),
             G("雾", "scene.weather", "大雾"),
-            G("四分钟", "fact f3", "4 minute"),
             G("冷汗", "char_shen.body", "后背冷汗（心理/生理反应）"),
         ],
     },
@@ -412,7 +409,6 @@ SCENES = {
             G("木板", "loc_alley_room.appearance", "抽屉/木板"),
             G("床沿", "loc_alley_room.appearance", "床沿"),
             G("桌角", "loc_alley_room.appearance", "木桌"),
-            G("三分钟", "fact f3", "3 minute"),
             G("肩膀", "char_shen.body", "肩膀（生理反应）"),
         ],
     },
@@ -436,7 +432,6 @@ SCENES = {
             G("茶", "item_tea", "container=长桌"),
             G("水汽", "item_tea.appearance", "杯口凝着水汽"),
             G("门", "loc_archive.features", "门槛/门"),
-            G("十五分钟", "fact f1", "15 minute"),
         ],
     },
     "n4n-08": {
@@ -463,7 +458,6 @@ SCENES = {
             G("案板", "loc_market.features", "案板"),
             G("衣摆", "item_coat", "holder=沈砚"),
             G("泥水", "scene.atmosphere", "泥水"),
-            G("五分钟", "fact f3", "5 minute"),
         ],
     },
     "n4n-09": {
@@ -491,7 +485,6 @@ SCENES = {
             G("沈砚", "char_shen", "protagonist"),
             G("门口", "loc_lighthouse_spiral.appearance", "旋梯口/门口"),
             G("灯芯", "item_wick", "container=塔顶"),
-            G("七分钟", "fact f3", "7 minute"),
         ],
     },
     "n4n-10": {
@@ -513,7 +506,6 @@ SCENES = {
             G("伞", "item_umbrella", "holder=沈砚"),
             G("墙根", "loc_alley.features", "墙根"),
             G("水洼", "loc_alley.features", "水洼"),
-            G("六分钟", "fact f2", "6 minute"),
             G("凉气", "scene.weather", "夜雨凉气"),
         ],
     },
@@ -542,7 +534,6 @@ SCENES = {
             G("灯罩", "item_warning_lamp.appearance", "玻璃罩"),
             G("火苗", "item_warning_lamp.state.lit", "true"),
             G("铁皮", "item_warning_lamp.appearance", "铁皮警示灯"),
-            G("四分钟", "fact f3", "4 minute"),
             G("掌心", "char_shen.body", "掌心（生理反应）"),
         ],
     },
@@ -568,7 +559,28 @@ SCENES = {
             G("船头", "item_ferry.appearance", "旧木船，船头挂船灯"),
             G("水面", "loc_ferry.sublocations[0].appearance", "水面"),
             G("缆绳", "item_mooring_rope", "container=栈桥"),
-            G("九分钟", "fact f2", "9 minute"),
         ],
     },
+}
+
+
+PERSONALITY_USE = {
+    "n4n-01": ["沈砚：慢而细 → 一层一层登塔、把油布包按好；正文体现"],
+    "n4n-02": ["沈砚：慢而细 → 一寸一寸拖绳；正文体现"],
+    "n4n-03": ["沈砚：慢而细 → 在石阶尽头等；正文体现",
+               "顾行舟：话少 → 只写靠船动作，无对白；正文体现"],
+    "n4n-04": ["沈砚：慢而细 → 照旧墨迹补字；正文体现",
+               "阿棠：手脚快 → 推门、放纸；正文体现"],
+    "n4n-05": ["沈砚：慢而细 → 摸铁链往上走；正文主要写恐惧，未直接点明"],
+    "n4n-06": ["沈砚：慢而细 → 一张张掀开旧纸；正文体现"],
+    "n4n-07": ["沈砚：慢而细 → 合上又翻开、没有起身；正文未直接点明"],
+    "n4n-08": ["沈砚：慢而细 → 让一步、低头看衣摆；正文体现",
+               "阿棠：手脚快 → 抱鱼筐上案板；正文体现"],
+    "n4n-09": ["沈砚：个性变化 → 不把话咽回去；正文体现",
+               "叶知微：干脆 → 踮脚擦灯罩；正文体现"],
+    "n4n-10": ["沈砚：慢而细 → 走得比平时慢；正文体现"],
+    "n4n-11": ["沈砚：慢而细 → 扶正警示灯；正文体现",
+               "韩渡：规矩硬 → 蹲下系绳；正文体现"],
+    "n4n-12": ["沈砚：个性变化 → 没有踱步、没有催；正文体现",
+               "顾行舟：话少 → 只写靠船，无对白；正文体现"],
 }
