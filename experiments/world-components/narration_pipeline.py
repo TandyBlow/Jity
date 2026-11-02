@@ -58,7 +58,8 @@ import sys
 HERE = pathlib.Path(__file__).resolve().parent
 N2_DIR = HERE / "n2_selection"
 N4_DIR = HERE / "n4_corpus"
-for p in (str(N2_DIR), str(N4_DIR)):
+N4V2_DIR = HERE / "n4_corpus_v2"
+for p in (str(N2_DIR), str(N4_DIR), str(N4V2_DIR)):
     if p not in sys.path:
         sys.path.insert(0, p)
 
@@ -67,6 +68,7 @@ from n3_n4_fixture import check_interface, stub_tokens  # noqa: E402
 from n4_render import render_input  # noqa: E402
 import corpus_check  # noqa: E402
 import n2_perspective  # noqa: E402
+import n3_organize  # noqa: E402
 
 REPO = HERE.parent.parent
 sys.path.insert(0, str(REPO / "backend"))
@@ -844,6 +846,121 @@ def hashlib_plan(plan: list) -> str:
     return hashlib.sha256(corpus_check.canon(plan).encode("utf-8")).hexdigest()
 
 
+# ---------- the v2 chain (commit 2): grouped interface + trained vocabulary
+
+# The vocabulary the v2 model track is TRAINED on (the frozen eight plus
+# the five kinds commit 1 extracts). The gate evidence is the v2 freeze
+# record (train report + holdout eval); until that record exists the v2
+# chain refuses to narrate.
+V2_MODEL_KINDS = FROZEN_MODEL_KINDS | {"subtask_added", "personality_removed",
+                                       "appearance_removed",
+                                       "position_relative", "slot_changed"}
+
+V2_TOKEN_LIMIT = 128  # the standing product gate over REAL tokens
+
+
+def run_pipeline_v2(point: dict, before: dict | None, perspective,
+                    may_policy: str = "select", gender_hints: dict | None = None,
+                    real_tok=None) -> dict:
+    """The v2 chain: N1 -> N2 (perspective rule) -> N3 (plan_v3: groups,
+    appellations, time attribution) -> N4v2 (render_v2 + the REAL-token
+    gate). The MODEL call itself stays with the composition runner; this
+    function produces everything the model needs and stops at every
+    structured boundary the v1 chain stops at. gender_hints is the
+    caller-supplied {entityId: male|female|unknown} map (the state record
+    carries no gender; without a hint an entity keeps its name — the safe
+    fallback)."""
+    from render_v2 import render_input_v2
+    out = {"pointId": point.get("pointId"), "version": point.get("version"),
+           "chain": "v2"}
+    resolved = n2_perspective.resolve_perspective(
+        point.get("state") or {}, (perspective or {}).get("entityId"),
+        (perspective or {}).get("type", "protagonist"))
+    if resolved["problems"]:
+        out["status"] = "incomplete"
+        out["reason"] = "perspective-unresolvable"
+        out["problems"] = resolved["problems"]
+        return out
+    persp = resolved["perspective"]
+    out["perspective"] = persp
+    n1 = extract_facts(point, before)
+    out["n1"] = {"factCount": len(n1["facts"]),
+                 "diagnostics": n1["diagnostics"]}
+    blocking = [d for d in n1["diagnostics"]
+                if d["code"] in INCOMPLETE_DIAGNOSTIC_CODES]
+    if blocking:
+        out["n1"]["blocking"] = blocking
+        out["status"] = "incomplete"
+        out["reason"] = "n1-cannot-express"
+        return out
+    subject_tasks = None
+    if persp.get("entityId"):
+        subject_tasks = ((point.get("state") or {}).get("characters")
+                         or {}).get(persp["entityId"], {}).get("tasks")
+    n2 = select_facts(n1["facts"], persp, may_policy=may_policy,
+                      subject_tasks=subject_tasks)
+    out["n2"] = {"arm": n2.get("arm"), "status": n2["status"],
+                 "mayPolicy": n2.get("mayPolicy"),
+                 "summary": n2.get("summary"),
+                 "decisions": n2.get("decisions"),
+                 "selectedCount": len(n2.get("selectedFactIds", []))}
+    if n2["status"] == "stopped":
+        out["status"] = "incomplete"
+        out["reason"] = "n2-must-without-visibility-ground"
+        out["n2"]["stops"] = n2.get("stops")
+        return out
+    if n2["status"] != "ok" or n2.get("invalidReferences") or n2.get("refusals"):
+        out["status"] = "stopped-at-n2"
+        out["n2"]["reason"] = n2.get("reason")
+        out["n2"]["invalidReferences"] = n2.get("invalidReferences")
+        return out
+    selected = [f for f in n1["facts"]
+                if f["factId"] in set(n2["selectedFactIds"])]
+    if n1["facts"] and not selected:
+        out["status"] = "incomplete"
+        out["reason"] = "n2-empty-selection"
+        return out
+    new_kinds = sorted({f["kind"] for f in selected} - V2_MODEL_KINDS)
+    if new_kinds:
+        out["status"] = "unsupported"
+        out["reason"] = "kind-awaiting-model-track"
+        out["kinds"] = new_kinds
+        return out
+    names = {f["entityId"]: f["name"] for f in selected if f.get("entityId")}
+    plan = n3_organize.plan_v3(selected, names, gender_hints)
+    if "refusal" in plan:
+        out["status"] = "stopped-at-n3"
+        out["n3"] = {"planner": "plan_v3", "refusal": plan["refusal"]}
+        return out
+    problems = n3_organize.check_plan_v3(plan, selected, names, gender_hints)
+    if problems:
+        out["status"] = "stopped-at-n3"
+        out["n3"] = {"planner": "plan_v3", "violations": problems}
+        return out
+    out["n3"] = {"planner": "plan_v3", "status": "ok",
+                 "groups": len(plan["sentences"]),
+                 "grants": sum(1 for s in plan["sentences"]
+                               for g in s["coreference"])}
+    out["plan"] = plan
+    out["selectedFacts"] = selected
+    render_text = render_input_v2(plan, selected)
+    out["n4"] = {"renderer": "render_v2", "status": "rendered"}
+    if real_tok is None:
+        out["status"] = "stopped-at-token-gate"
+        out["reason"] = ("no real tokenizer available to count the rendered "
+                         "input; refusing the model call")
+        return out
+    n_tokens = real_tok.count(render_text)
+    out["n4"]["inputTokensReal"] = n_tokens
+    if n_tokens > V2_TOKEN_LIMIT:
+        out["status"] = "unsupported"
+        out["unsupportedReason"] = "input-too-long-real"
+        return out
+    out["n4"]["renderText"] = render_text
+    out["status"] = "ready-for-model"
+    return out
+
+
 # ---------- the pipeline ----------------------------------------------------
 
 def run_pipeline(point: dict, before: dict | None, perspective,
@@ -1525,6 +1642,61 @@ def selftest() -> int:
                         "parentGoal": "修阁楼"})
           == "新任务：甲 接到「找梯子」（隶属「修阁楼」）",
           "S16 subtask render")
+
+    # S17 (commit 2): the v2 chain renders the GROUPED interface with an
+    # appellation grant and reaches ready-for-model; new kinds flow
+    st17 = copy.deepcopy(state)
+    st17["characters"]["char_pa"]["position"] = {"containerId": "loc_2",
+                                                 "slotId": None,
+                                                 "relativeTo": None}
+    st17["characters"]["char_pa"]["sanity"] = 14
+    st17["characters"]["char_pa"]["tasks"]["task_1"]["status"] = "achieved"
+    d17 = {"char_pa": {**moved_delta("char_pa", "loc_2"), "sanitySet": 14,
+                       "tasksAchieved": ["task_1"],
+                       "subtasksAdded": [{"id": "task_x", "ownerId": "char_pa",
+                                          "parentTaskId": "task_1",
+                                          "goal": "找梯子",
+                                          "status": "pending"}]}}
+    pt17 = point(d17, 5, st=st17)
+
+    class _Tok:
+        def count(self, text):
+            return 100
+
+    r17 = run_pipeline_v2(pt17, before, PERS,
+                          gender_hints={"char_pa": "male",
+                                        "char_pb": "male"},
+                          real_tok=_Tok())
+    check(r17["status"] == "ready-for-model"
+          and r17["n3"]["groups"] == 1
+          and r17["n3"]["grants"] == 1
+          and "称谓：管线甲=他" in r17["n4"]["renderText"]
+          and "新任务：管线甲" in r17["n4"]["renderText"],
+          f"S17 v2 chain: {r17['status']}/{r17.get('reason')}")
+    # the grants are data, not decoration: empty hints strip the 称谓 line
+    r17b = run_pipeline_v2(pt17, before, PERS, gender_hints={},
+                           real_tok=_Tok())
+    check(r17b["status"] == "ready-for-model"
+          and "称谓" not in r17b["n4"]["renderText"],
+          "S17 v2 ablated render (no grants)")
+
+    # S18: over the 128 real-token limit the v2 chain refuses BEFORE any
+    # model call
+    class _Big:
+        def count(self, text):
+            return 129
+
+    r18 = run_pipeline_v2(pt17, before, PERS, gender_hints={"char_pa": "male"},
+                          real_tok=_Big())
+    check(r18["status"] == "unsupported"
+          and r18.get("unsupportedReason") == "input-too-long-real",
+          f"S18 v2 over-limit: {r18['status']}")
+
+    # S19: no real tokenizer -> stopped-at-token-gate, never a guess
+    r19 = run_pipeline_v2(pt17, before, PERS, gender_hints={"char_pa": "male"},
+                          real_tok=None)
+    check(r19["status"] == "stopped-at-token-gate",
+          f"S19 v2 no-counter: {r19['status']}")
 
     for f in failures:
         print("SELFTEST FAIL:", f)

@@ -1,0 +1,4695 @@
+{
+ "purpose": "N4 v2 grouped-interface frozen-holdout eval (commit 2)",
+ "model": {
+  "dir": "experiments\\world-components\\n4_corpus_v2\\ckpt-v2",
+  "sha256": "e89739ec40981635af85312c4457e73b136d79f9b3e4656e3128ecf4a10de409"
+ },
+ "decode": {
+  "greedy": true,
+  "num_beams": 1,
+  "max_new_tokens": 128,
+  "deterministic_flags": true
+ },
+ "preRegistered": {
+  "thresholdRule": "max(0.5, dev_rate - 0.10), fixed on dev before test",
+  "devRate": 0.9863,
+  "threshold": 0.8863
+ },
+ "summary": {
+  "devRows": 85,
+  "devHardPass": 83,
+  "testRows": 66,
+  "testHardPass": 64,
+  "testPronounUsage": 1.0,
+  "ablationDiffers": "39/43",
+  "ablationRate": 0.907
+ },
+ "gates": {
+  "G_hard_all_pass": false,
+  "P1_pronoun_usage": true,
+  "P2_ablation_nonzero": true
+ },
+ "pass": false,
+ "dev": [
+  {
+   "rowId": "v2-a-quay:core-move-task-a_gubeiting-a_lamp-3minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：顾北汀=他）\n1. 位置：顾北汀 从咸水澳到灯寮\n2. 任务达成：顾北汀「熬一锅灯油」\n第2组（时间：无；称谓：海满=他）\n3. 现状：海满 已在灯寮\n第3组（时间：约三分钟）\n4. 现状：灯油瓮 已在灯寮\n5. 时间推进：约三分钟\n正文：",
+   "output": "顾北汀从咸水澳来到了灯寮。他办妥了任务「熬一锅灯油」。海满已在灯寮。三分钟过去了,灯油瓮已在灯寮。",
+   "outputTokens": 47,
+   "wallMs": 2470.8,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "顾北汀从咸水澳来到了灯寮。顾北汀办妥了任务「熬一锅灯油」。海满已在灯寮。三分钟过去了,灯油瓮已在灯寮。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-a-quay:core-move-task-a_gubeiting-a_fishshop-5minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：顾北汀=他）\n1. 位置：顾北汀 从咸水澳到鱼行\n2. 任务达成：顾北汀「熬一锅灯油」\n第2组（时间：约五分钟；称谓：阿禾=她）\n3. 现状：阿禾 已在鱼行\n4. 时间推进：约五分钟\n正文：",
+   "output": "顾北汀从咸水澳来到了鱼行。他办妥了任务「熬一锅灯油」。五分钟过去了,阿禾已在鱼行。",
+   "outputTokens": 39,
+   "wallMs": 1810.8,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "顾北汀从咸水澳来到了鱼行。顾北汀办妥了任务「熬一锅灯油」。五分钟过去了,阿禾已在鱼行。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-a-quay:core-move-task-a_gubeiting-a_fishshop-12minute:v1",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：顾北汀=他）\n1. 位置：顾北汀 从咸水澳到鱼行\n2. 任务达成：顾北汀「熬一锅灯油」\n第2组（时间：约十二分钟；称谓：阿禾=她）\n3. 现状：阿禾 已在鱼行\n4. 时间推进：约十二分钟\n正文：",
+   "output": "顾北汀离开了咸水澳,抵达了鱼行。他已达成任务「熬一锅灯油」。十二分钟过去了,阿禾已经在鱼行了。",
+   "outputTokens": 41,
+   "wallMs": 1892.5,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "顾北汀离开了咸水澳,抵达了鱼行。顾北汀已达成任务「熬一锅灯油」。十二分钟过去了,阿禾已经在鱼行了。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-a-quay:core-move-task-a_gubeiting-a_stilt-1hour:v2",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：顾北汀=他）\n1. 位置：顾北汀 从咸水澳到高脚棚\n2. 任务达成：顾北汀「熬一锅灯油」\n第2组（时间：无；称谓：水生=TA）\n3. 现状：水生 已在高脚棚\n第3组（时间：约一小时）\n4. 现状：三号帆 已在高脚棚\n5. 时间推进：约一小时\n正文：",
+   "output": "顾北汀离开了咸水澳,抵达了高脚棚。他已达成任务「熬一锅灯油」。水生已经在高脚棚了。一小时过去了,三号帆已经在高脚棚了。",
+   "outputTokens": 53,
+   "wallMs": 2381.5,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "顾北汀离开了咸水澳,抵达了高脚棚。他已达成任务「熬一锅灯油」。水生已经在高脚棚了。一小时过去了,三号帆已经在高脚棚了。",
+   "ablationDiffers": false
+  },
+  {
+   "rowId": "v2-a-quay:core-move-task-a_gubeiting-a_dryyard-1hour:v2",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：顾北汀=他）\n1. 位置：顾北汀 从咸水澳到晒场\n2. 任务达成：顾北汀「熬一锅灯油」\n第2组（时间：无；称谓：陈九=他）\n3. 现状：陈九 已在晒场\n第3组（时间：约一小时；称谓：渔丸=她）\n4. 现状：渔丸 已在晒场\n5. 时间推进：约一小时\n正文：",
+   "output": "顾北汀离开了咸水澳,抵达了晒场。他已达成任务「熬一锅灯油」。陈九已经在晒场了。一小时过去了,渔丸已经在晒场了。",
+   "outputTokens": 49,
+   "wallMs": 2319.5,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "顾北汀离开了咸水澳,抵达了晒场。顾北汀已达成任务「熬一锅灯油」。陈九已经在晒场了。一小时过去了,渔丸已经在晒场了。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-a-quay:core-move-task-a_ahe-a_quay-3minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：阿禾=她）\n1. 位置：阿禾 从鱼行到咸水澳\n2. 任务达成：阿禾「清点鲞货」\n第2组（时间：无；称谓：顾北汀=他）\n3. 现状：顾北汀 已在咸水澳\n第3组（时间：约三分钟；称谓：陈九=他）\n4. 现状：陈九 已在咸水澳\n5. 时间推进：约三分钟\n正文：",
+   "output": "阿禾从鱼行来到了咸水澳。她办妥了任务「清点鲞货」。顾北汀已在咸水澳。三分钟过去了,陈九已在咸水澳。",
+   "outputTokens": 46,
+   "wallMs": 2149.6,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "阿禾从鱼行来到了咸水澳。阿禾办妥了任务「清点鲞货」。顾北汀已在咸水澳。三分钟过去了,陈九已在咸水澳。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-a-quay:core-move-task-a_ahe-a_lamp-5minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：阿禾=她）\n1. 位置：阿禾 从鱼行到灯寮\n2. 任务达成：阿禾「清点鲞货」\n第2组（时间：无；称谓：海满=他）\n3. 现状：海满 已在灯寮\n第3组（时间：约五分钟）\n4. 现状：灯油瓮 已在灯寮\n5. 时间推进：约五分钟\n正文：",
+   "output": "阿禾从鱼行来到了灯寮。她办妥了任务「清点鲞货」。海满已在灯寮。五分钟过去了,灯油瓮已在灯寮。",
+   "outputTokens": 43,
+   "wallMs": 1910.6,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "阿禾从鱼行来到了灯寮。阿禾办妥了任务「清点鲞货」。海满已在灯寮。五分钟过去了,灯油瓮已在灯寮。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-a-quay:core-move-task-a_ahe-a_lamp-12minute:v1",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：阿禾=她）\n1. 位置：阿禾 从鱼行到灯寮\n2. 任务达成：阿禾「清点鲞货」\n第2组（时间：无；称谓：海满=他）\n3. 现状：海满 已在灯寮\n第3组（时间：约十二分钟）\n4. 现状：灯油瓮 已在灯寮\n5. 时间推进：约十二分钟\n正文：",
+   "output": "阿禾离开了鱼行,抵达了灯寮。她已达成任务「清点鲞货」。海满已经在灯寮了。十二分钟过去了,灯油瓮已经在灯寮了。",
+   "outputTokens": 46,
+   "wallMs": 2064.9,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "阿禾离开了鱼行,抵达了灯寮。阿禾已达成任务「清点鲞货」。海满已经在灯寮了。十二分钟过去了,灯油瓮已经在灯寮了。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-a-quay:core-move-task-a_ahe-a_stilt-1hour:v2",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：阿禾=她）\n1. 位置：阿禾 从鱼行到高脚棚\n2. 任务达成：阿禾「清点鲞货」\n第2组（时间：无；称谓：水生=TA）\n3. 现状：水生 已在高脚棚\n第3组（时间：约一小时）\n4. 现状：三号帆 已在高脚棚\n5. 时间推进：约一小时\n正文：",
+   "output": "阿禾离开了鱼行,抵达了高脚棚。她已达成任务「清点鲞货」。水生已经在高脚棚了。一小时过去了,三号帆已经在高脚棚了。",
+   "outputTokens": 49,
+   "wallMs": 2238.4,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "阿禾离开了鱼行,抵达了高脚棚。阿禾已达成任务「清点鲞货」。水生已经在高脚棚了。一小时过去了,三号帆已经在高脚棚了。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-a-quay:core-move-task-a_ahe-a_dryyard-1hour:v2",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：阿禾=她）\n1. 位置：阿禾 从鱼行到晒场\n2. 任务达成：阿禾「清点鲞货」\n第2组（时间：无；称谓：陈九=他）\n3. 现状：陈九 已在晒场\n第3组（时间：约一小时；称谓：渔丸=她）\n4. 现状：渔丸 已在晒场\n5. 时间推进：约一小时\n正文：",
+   "output": "阿禾离开了鱼行,抵达了晒场。她已达成任务「清点鲞货」。陈九已经在晒场了。一小时过去了,渔丸已经在晒场了。",
+   "outputTokens": 45,
+   "wallMs": 2113.4,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "阿禾离开了鱼行,抵达了晒场。阿禾已达成任务「清点鲞货」。陈九已经在晒场了。一小时过去了,渔丸已经在晒场了。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-a-quay:core-move-task-a_shuisheng-a_quay-3minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：水生=TA）\n1. 位置：水生 从高脚棚到咸水澳\n2. 任务达成：水生「修高脚棚的梯子」\n第2组（时间：无；称谓：顾北汀=他）\n3. 现状：顾北汀 已在咸水澳\n第3组（时间：约三分钟；称谓：陈九=他）\n4. 现状：陈九 已在咸水澳\n5. 时间推进：约三分钟\n正文：",
+   "output": "水生从高脚棚来到了咸水澳。TA办妥了任务「修高脚棚的梯子」。顾北汀已在咸水澳。三分钟过去了,陈九已在咸水澳。",
+   "outputTokens": 51,
+   "wallMs": 2301.5,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "水生从高脚棚来到了咸水澳。水生办妥了任务「修高脚棚的梯子」。顾北汀已在咸水澳。三分钟过去了,陈九已在咸水澳。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-a-quay:core-move-task-a_shuisheng-a_lamp-5minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：水生=TA）\n1. 位置：水生 从高脚棚到灯寮\n2. 任务达成：水生「修高脚棚的梯子」\n第2组（时间：无；称谓：海满=他）\n3. 现状：海满 已在灯寮\n第3组（时间：约五分钟）\n4. 现状：灯油瓮 已在灯寮\n5. 时间推进：约五分钟\n正文：",
+   "output": "水生从高脚棚来到了灯寮。TA办妥了任务「修高脚棚的梯子」。海满已在灯寮。五分钟过去了,灯油瓮已在灯寮。",
+   "outputTokens": 48,
+   "wallMs": 2251.4,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "水生从高脚棚来到了灯寮。他办妥了任务「修高脚棚的梯子」。海满已在灯寮。五分钟过去了,灯油瓮已在灯寮。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-a-quay:core-move-task-a_shuisheng-a_lamp-12minute:v1",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：水生=TA）\n1. 位置：水生 从高脚棚到灯寮\n2. 任务达成：水生「修高脚棚的梯子」\n第2组（时间：无；称谓：海满=他）\n3. 现状：海满 已在灯寮\n第3组（时间：约十二分钟）\n4. 现状：灯油瓮 已在灯寮\n5. 时间推进：约十二分钟\n正文：",
+   "output": "水生离开了高脚棚,抵达了灯寮。TA已达成任务「修高脚棚的梯子」。海满已经在灯寮了。十二分钟过去了,灯油瓮已经在灯寮了。",
+   "outputTokens": 51,
+   "wallMs": 2489.8,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "水生离开了高脚棚,抵达了灯寮。他已达成任务「修高脚棚的梯子」。海满已经在灯寮了。十二分钟过去了,灯油瓮已经在灯寮了。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-a-quay:core-move-task-a_shuisheng-a_fishshop-1hour:v2",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：水生=TA）\n1. 位置：水生 从高脚棚到鱼行\n2. 任务达成：水生「修高脚棚的梯子」\n第2组（时间：约一小时；称谓：阿禾=她）\n3. 现状：阿禾 已在鱼行\n4. 时间推进：约一小时\n正文：",
+   "output": "水生离开了高脚棚,抵达了鱼行。TA已达成任务「修高脚棚的梯子」。一小时过去了,阿禾已经在鱼行了。",
+   "outputTokens": 42,
+   "wallMs": 1957.8,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "水生离开了高脚棚,抵达了鱼行。他已达成任务「修高脚棚的梯子」。一小时过去了,阿禾已经在鱼行了。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-a-quay:core-move-task-a_shuisheng-a_dryyard-3minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：水生=TA）\n1. 位置：水生 从高脚棚到晒场\n2. 任务达成：水生「修高脚棚的梯子」\n第2组（时间：无；称谓：陈九=他）\n3. 现状：陈九 已在晒场\n第3组（时间：约三分钟；称谓：渔丸=她）\n4. 现状：渔丸 已在晒场\n5. 时间推进：约三分钟\n正文：",
+   "output": "水生从高脚棚来到了晒场。TA办妥了任务「修高脚棚的梯子」。陈九已在晒场。三分钟过去了,渔丸已在晒场。",
+   "outputTokens": 47,
+   "wallMs": 2105.0,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "水生从高脚棚来到了晒场。他办妥了任务「修高脚棚的梯子」。陈九已在晒场。三分钟过去了,渔丸已在晒场。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-a-quay:core-move-task-a_chenjiu_a-a_lamp-1hour:v2",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：陈九=他）\n1. 位置：陈九 从咸水澳到灯寮\n2. 任务达成：陈九「把咸鱼坯搬上晒场」\n第2组（时间：无；称谓：海满=他）\n3. 现状：海满 已在灯寮\n第3组（时间：约一小时）\n4. 现状：灯油瓮 已在灯寮\n5. 时间推进：约一小时\n正文：",
+   "output": "陈九离开了咸水澳,抵达了灯寮。他已达成任务「把咸鱼坯搬上晒场」。海满已经在灯寮了。一小时过去了,灯油瓮已经在灯寮了。",
+   "outputTokens": 51,
+   "wallMs": 2341.0,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "陈九离开了咸水澳,抵达了灯寮。陈九已达成任务「把咸鱼坯搬上晒场」。海满已经在灯寮了。一小时过去了,灯油瓮已经在灯寮了。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-a-quay:core-move-task-a_chenjiu_a-a_fishshop-3minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：陈九=他）\n1. 位置：陈九 从咸水澳到鱼行\n2. 任务达成：陈九「把咸鱼坯搬上晒场」\n第2组（时间：约三分钟；称谓：阿禾=她）\n3. 现状：阿禾 已在鱼行\n4. 时间推进：约三分钟\n正文：",
+   "output": "陈九从咸水澳来到了鱼行。他办妥了任务「把咸鱼坯搬上晒场」。三分钟过去了,阿禾已在鱼行。",
+   "outputTokens": 40,
+   "wallMs": 1882.5,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "陈九从咸水澳来到了鱼行。陈九办妥了任务「把咸鱼坯搬上晒场」。三分钟过去了,阿禾已在鱼行。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-a-quay:core-move-task-a_chenjiu_a-a_stilt-5minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：陈九=他）\n1. 位置：陈九 从咸水澳到高脚棚\n2. 任务达成：陈九「把咸鱼坯搬上晒场」\n第2组（时间：无；称谓：水生=TA）\n3. 现状：水生 已在高脚棚\n第3组（时间：约五分钟）\n4. 现状：三号帆 已在高脚棚\n5. 时间推进：约五分钟\n正文：",
+   "output": "陈九从咸水澳来到了高脚棚。他办妥了任务「把咸鱼坯搬上晒场」。水生已在高脚棚。五分钟过去了,三号帆已在高脚棚。",
+   "outputTokens": 51,
+   "wallMs": 2246.6,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "陈九从咸水澳来到了高脚棚。陈九办妥了任务「把咸鱼坯搬上晒场」。水生已在高脚棚。五分钟过去了,三号帆已在高脚棚。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-a-quay:core-move-task-a_chenjiu_a-a_stilt-12minute:v1",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：陈九=他）\n1. 位置：陈九 从咸水澳到高脚棚\n2. 任务达成：陈九「把咸鱼坯搬上晒场」\n第2组（时间：无；称谓：水生=TA）\n3. 现状：水生 已在高脚棚\n第3组（时间：约十二分钟）\n4. 现状：三号帆 已在高脚棚\n5. 时间推进：约十二分钟\n正文：",
+   "output": "陈九离开了咸水澳,抵达了高脚棚。他已达成任务「把咸鱼坯搬上晒场」。水生已经在高脚棚了。十二分钟过去了,三号帆已经在高脚棚了。",
+   "outputTokens": 54,
+   "wallMs": 2440.6,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "陈九离开了咸水澳,抵达了高脚棚。陈九已达成任务「把咸鱼坯搬上晒场」。水生已经在高脚棚了。十二分钟过去了,三号帆已经在高脚棚了。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-a-quay:core-move-task-a_chenjiu_a-a_dryyard-5minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无）\n1. 位置：陈九 从咸水澳到晒场\n2. 任务达成：陈九「把咸鱼坯搬上晒场」\n第2组（时间：无）\n3. 现状：陈九 已在晒场\n第3组（时间：约五分钟；称谓：渔丸=她）\n4. 现状：渔丸 已在晒场\n5. 时间推进：约五分钟\n正文：",
+   "output": "陈九从咸水澳来到了晒场。陈九办妥了任务「把咸鱼坯搬上晒场」。陈九已在晒场。五分钟过去了,渔丸已在晒场。",
+   "outputTokens": 48,
+   "wallMs": 2132.8,
+   "finishReason": "eos",
+   "pronounElicited": false,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": false,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   }
+  },
+  {
+   "rowId": "v2-a-quay:core-move-task-a_chenjiu_a-a_dryyard-12minute:v1",
+   "input": "叙事生成任务。\n第1组（时间：无）\n1. 位置：陈九 从咸水澳到晒场\n2. 任务达成：陈九「把咸鱼坯搬上晒场」\n第2组（时间：无）\n3. 现状：陈九 已在晒场\n第3组（时间：约十二分钟；称谓：渔丸=她）\n4. 现状：渔丸 已在晒场\n5. 时间推进：约十二分钟\n正文：",
+   "output": "陈九离开了咸水澳,抵达了晒场。陈九已达成任务「把咸鱼坯搬上晒场」。陈九已经在晒场了。十二分钟过去了,渔丸已经在晒场了。",
+   "outputTokens": 51,
+   "wallMs": 2304.9,
+   "finishReason": "eos",
+   "pronounElicited": false,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": false,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   }
+  },
+  {
+   "rowId": "v2-a-quay:core-move-task-a_chenjiu_b-a_quay-5minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无）\n1. 位置：陈九 从晒场到咸水澳\n2. 任务达成：陈九「翻晒场上的鱼干」\n第2组（时间：无；称谓：顾北汀=他）\n3. 现状：顾北汀 已在咸水澳\n第3组（时间：约五分钟）\n4. 现状：陈九 已在咸水澳\n5. 时间推进：约五分钟\n正文：",
+   "output": "陈九从晒场来到了咸水澳。陈九办妥了任务「翻晒场上的鱼干」。顾北汀已在咸水澳。五分钟过去了,陈九已在咸水澳。",
+   "outputTokens": 49,
+   "wallMs": 2252.0,
+   "finishReason": "eos",
+   "pronounElicited": false,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": false,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   }
+  },
+  {
+   "rowId": "v2-a-quay:core-move-task-a_chenjiu_b-a_quay-12minute:v1",
+   "input": "叙事生成任务。\n第1组（时间：无）\n1. 位置：陈九 从晒场到咸水澳\n2. 任务达成：陈九「翻晒场上的鱼干」\n第2组（时间：无；称谓：顾北汀=他）\n3. 现状：顾北汀 已在咸水澳\n第3组（时间：约十二分钟）\n4. 现状：陈九 已在咸水澳\n5. 时间推进：约十二分钟\n正文：",
+   "output": "陈九离开了晒场,抵达了咸水澳。陈九已达成任务「翻晒场上的鱼干」。顾北汀已经在咸水澳了。十二分钟过去了,陈九已经在咸水澳了。",
+   "outputTokens": 52,
+   "wallMs": 2423.0,
+   "finishReason": "eos",
+   "pronounElicited": false,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": false,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   }
+  },
+  {
+   "rowId": "v2-a-quay:core-move-task-a_chenjiu_b-a_lamp-1hour:v2",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：陈九=他）\n1. 位置：陈九 从晒场到灯寮\n2. 任务达成：陈九「翻晒场上的鱼干」\n第2组（时间：无；称谓：海满=他）\n3. 现状：海满 已在灯寮\n第3组（时间：约一小时）\n4. 现状：灯油瓮 已在灯寮\n5. 时间推进：约一小时\n正文：",
+   "output": "陈九离开了晒场,抵达了灯寮。他已达成任务「翻晒场上的鱼干」。海满已经在灯寮了。一小时过去了,灯油瓮已经在灯寮了。",
+   "outputTokens": 48,
+   "wallMs": 2152.2,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "陈九离开了晒场,抵达了灯寮。陈九已达成任务「翻晒场上的鱼干」。海满已经在灯寮了。一小时过去了,灯油瓮已经在灯寮了。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-a-quay:core-move-task-a_chenjiu_b-a_fishshop-3minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：陈九=他）\n1. 位置：陈九 从晒场到鱼行\n2. 任务达成：陈九「翻晒场上的鱼干」\n第2组（时间：约三分钟；称谓：阿禾=她）\n3. 现状：阿禾 已在鱼行\n4. 时间推进：约三分钟\n正文：",
+   "output": "陈九从晒场来到了鱼行。他办妥了任务「翻晒场上的鱼干」。三分钟过去了,阿禾已在鱼行。",
+   "outputTokens": 37,
+   "wallMs": 1765.0,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "陈九从晒场来到了鱼行。陈九办妥了任务「翻晒场上的鱼干」。三分钟过去了,阿禾已在鱼行。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-a-quay:core-move-task-a_chenjiu_b-a_stilt-3minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：陈九=他）\n1. 位置：陈九 从晒场到高脚棚\n2. 任务达成：陈九「翻晒场上的鱼干」\n第2组（时间：无；称谓：水生=TA）\n3. 现状：水生 已在高脚棚\n第3组（时间：约三分钟）\n4. 现状：三号帆 已在高脚棚\n5. 时间推进：约三分钟\n正文：",
+   "output": "陈九从晒场来到了高脚棚。他办妥了任务「翻晒场上的鱼干」。水生已在高脚棚。三分钟过去了,三号帆已在高脚棚。",
+   "outputTokens": 48,
+   "wallMs": 2442.3,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "陈九从晒场来到了高脚棚。陈九办妥了任务「翻晒场上的鱼干」。水生已在高脚棚。三分钟过去了,三号帆已在高脚棚。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-a-quay:core-move-task-a_yuwan-a_quay-3minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：渔丸=她）\n1. 位置：渔丸 从晒场到咸水澳\n2. 任务达成：渔丸「缝补晒场的苫布」\n第2组（时间：无；称谓：顾北汀=他）\n3. 现状：顾北汀 已在咸水澳\n第3组（时间：约三分钟；称谓：陈九=他）\n4. 现状：陈九 已在咸水澳\n5. 时间推进：约三分钟\n正文：",
+   "output": "渔丸从晒场来到了咸水澳。她办妥了任务「缝补晒场的苫布」。顾北汀已在咸水澳。三分钟过去了,陈九已在咸水澳。",
+   "outputTokens": 49,
+   "wallMs": 2265.9,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "渔丸从晒场来到了咸水澳。渔丸办妥了任务「缝补晒场的苫布」。顾北汀已在咸水澳。三分钟过去了,陈九已在咸水澳。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-a-quay:core-move-task-a_yuwan-a_lamp-5minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：渔丸=她）\n1. 位置：渔丸 从晒场到灯寮\n2. 任务达成：渔丸「缝补晒场的苫布」\n第2组（时间：无；称谓：海满=他）\n3. 现状：海满 已在灯寮\n第3组（时间：约五分钟）\n4. 现状：灯油瓮 已在灯寮\n5. 时间推进：约五分钟\n正文：",
+   "output": "渔丸从晒场来到了灯寮。她办妥了任务「缝补晒场的苫布」。海满已在灯寮。五分钟过去了,灯油瓮已在灯寮。",
+   "outputTokens": 46,
+   "wallMs": 2025.1,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "渔丸从晒场来到了灯寮。渔丸办妥了任务「缝补晒场的苫布」。海满已在灯寮。五分钟过去了,灯油瓮已在灯寮。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-a-quay:core-move-task-a_yuwan-a_lamp-12minute:v1",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：渔丸=她）\n1. 位置：渔丸 从晒场到灯寮\n2. 任务达成：渔丸「缝补晒场的苫布」\n第2组（时间：无；称谓：海满=他）\n3. 现状：海满 已在灯寮\n第3组（时间：约十二分钟）\n4. 现状：灯油瓮 已在灯寮\n5. 时间推进：约十二分钟\n正文：",
+   "output": "渔丸离开了晒场,抵达了灯寮。她已达成任务「缝补晒场的苫布」。海满已经在灯寮了。十二分钟过去了,灯油瓮已经在灯寮了。",
+   "outputTokens": 49,
+   "wallMs": 2260.7,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "渔丸离开了晒场,抵达了灯寮。他已达成任务「缝补晒场的苫布」。海满已经在灯寮了。十二分钟过去了,灯油瓮已经在灯寮了。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-a-quay:core-move-task-a_yuwan-a_fishshop-1hour:v2",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：渔丸=她）\n1. 位置：渔丸 从晒场到鱼行\n2. 任务达成：渔丸「缝补晒场的苫布」\n第2组（时间：约一小时；称谓：阿禾=她）\n3. 现状：阿禾 已在鱼行\n4. 时间推进：约一小时\n正文：",
+   "output": "渔丸离开了晒场,抵达了鱼行。她已达成任务「缝补晒场的苫布」。一小时过去了,阿禾已经在鱼行了。",
+   "outputTokens": 40,
+   "wallMs": 1841.8,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "渔丸离开了晒场,抵达了鱼行。他已达成任务「缝补晒场的苫布」。一小时过去了,阿禾已经在鱼行了。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-a-quay:core-move-task-a_yuwan-a_stilt-1hour:v2",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：渔丸=她）\n1. 位置：渔丸 从晒场到高脚棚\n2. 任务达成：渔丸「缝补晒场的苫布」\n第2组（时间：无；称谓：水生=TA）\n3. 现状：水生 已在高脚棚\n第3组（时间：约一小时）\n4. 现状：三号帆 已在高脚棚\n5. 时间推进：约一小时\n正文：",
+   "output": "渔丸离开了晒场,抵达了高脚棚。她已达成任务「缝补晒场的苫布」。水生已经在高脚棚了。一小时过去了,三号帆已经在高脚棚了。",
+   "outputTokens": 52,
+   "wallMs": 2380.8,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "渔丸离开了晒场,抵达了高脚棚。他已达成任务「缝补晒场的苫布」。水生已经在高脚棚了。一小时过去了,三号帆已经在高脚棚了。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-a-quay:core-move-task-a_haiman-a_quay-1hour:v2",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：海满=他）\n1. 位置：海满 从灯寮到咸水澳\n2. 任务达成：海满「给灯寮换灯芯」\n第2组（时间：无；称谓：顾北汀=他）\n3. 现状：顾北汀 已在咸水澳\n第3组（时间：约一小时；称谓：陈九=他）\n4. 现状：陈九 已在咸水澳\n5. 时间推进：约一小时\n正文：",
+   "output": "海满离开了灯寮,抵达了咸水澳。他已达成任务「给灯寮换灯芯」。顾北汀已经在咸水澳了。一小时过去了,陈九已经在咸水澳了。",
+   "outputTokens": 52,
+   "wallMs": 2304.7,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "海满离开了灯寮,抵达了咸水澳。海满已达成任务「给灯寮换灯芯」。顾北汀已经在咸水澳了。一小时过去了,陈九已经在咸水澳了。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-a-quay:core-move-task-a_haiman-a_fishshop-3minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：海满=他）\n1. 位置：海满 从灯寮到鱼行\n2. 任务达成：海满「给灯寮换灯芯」\n第2组（时间：约三分钟；称谓：阿禾=她）\n3. 现状：阿禾 已在鱼行\n4. 时间推进：约三分钟\n正文：",
+   "output": "海满从灯寮来到了鱼行。他办妥了任务「给灯寮换灯芯」。三分钟过去了,阿禾已在鱼行。",
+   "outputTokens": 38,
+   "wallMs": 1754.5,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "海满从灯寮来到了鱼行。海满办妥了任务「给灯寮换灯芯」。三分钟过去了,阿禾已在鱼行。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-a-quay:core-move-task-a_haiman-a_stilt-5minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：海满=他）\n1. 位置：海满 从灯寮到高脚棚\n2. 任务达成：海满「给灯寮换灯芯」\n第2组（时间：无；称谓：水生=TA）\n3. 现状：水生 已在高脚棚\n第3组（时间：约五分钟）\n4. 现状：三号帆 已在高脚棚\n5. 时间推进：约五分钟\n正文：",
+   "output": "海满从灯寮来到了高脚棚。他办妥了任务「给灯寮换灯芯」。水生已在高脚棚。五分钟过去了,三号帆已在高脚棚。",
+   "outputTokens": 49,
+   "wallMs": 2224.7,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "海满从灯寮来到了高脚棚。海满办妥了任务「给灯寮换灯芯」。水生已在高脚棚。五分钟过去了,三号帆已在高脚棚。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-a-quay:core-move-task-a_haiman-a_stilt-12minute:v1",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：海满=他）\n1. 位置：海满 从灯寮到高脚棚\n2. 任务达成：海满「给灯寮换灯芯」\n第2组（时间：无；称谓：水生=TA）\n3. 现状：水生 已在高脚棚\n第3组（时间：约十二分钟）\n4. 现状：三号帆 已在高脚棚\n5. 时间推进：约十二分钟\n正文：",
+   "output": "海满离开了灯寮,抵达了高脚棚。他已达成任务「给灯寮换灯芯」。水生已经在高脚棚了。十二分钟过去了,三号帆已经在高脚棚了。",
+   "outputTokens": 52,
+   "wallMs": 2262.5,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "海满离开了灯寮,抵达了高脚棚。他已达成任务「给灯寮换灯芯」。水生已经在高脚棚了。十二分钟过去了,三号帆已经在高脚棚了。",
+   "ablationDiffers": false
+  },
+  {
+   "rowId": "v2-a-quay:core-move-task-a_haiman-a_dryyard-5minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：海满=他）\n1. 位置：海满 从灯寮到晒场\n2. 任务达成：海满「给灯寮换灯芯」\n第2组（时间：无；称谓：陈九=他）\n3. 现状：陈九 已在晒场\n第3组（时间：约五分钟；称谓：渔丸=她）\n4. 现状：渔丸 已在晒场\n5. 时间推进：约五分钟\n正文：",
+   "output": "海满从灯寮来到了晒场。他办妥了任务「给灯寮换灯芯」。陈九已在晒场。五分钟过去了,渔丸已在晒场。",
+   "outputTokens": 45,
+   "wallMs": 2063.2,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "海满从灯寮来到了晒场。海满办妥了任务「给灯寮换灯芯」。陈九已在晒场。五分钟过去了,渔丸已在晒场。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-a-quay:core-move-task-a_haiman-a_dryyard-12minute:v1",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：海满=他）\n1. 位置：海满 从灯寮到晒场\n2. 任务达成：海满「给灯寮换灯芯」\n第2组（时间：无；称谓：陈九=他）\n3. 现状：陈九 已在晒场\n第3组（时间：约十二分钟；称谓：渔丸=她）\n4. 现状：渔丸 已在晒场\n5. 时间推进：约十二分钟\n正文：",
+   "output": "海满离开了灯寮,抵达了晒场。他已达成任务「给灯寮换灯芯」。陈九已经在晒场了。十二分钟过去了,渔丸已经在晒场了。",
+   "outputTokens": 48,
+   "wallMs": 2229.0,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "海满离开了灯寮,抵达了晒场。他已达成任务「给灯寮换灯芯」。陈九已经在晒场了。十二分钟过去了,渔丸已经在晒场了。",
+   "ablationDiffers": false
+  },
+  {
+   "rowId": "v2-a-quay:cross-reference-8minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：顾北汀=他）\n1. 位置：顾北汀 从咸水澳到鱼行\n2. 理智：顾北汀 10→14（上升）\n第2组（时间：约八分钟；称谓：阿禾=她）\n3. 任务达成：阿禾「清点鲞货」\n4. 时间推进：约八分钟\n正文：",
+   "output": "顾北汀从咸水澳来到了鱼行。他的精神值从10涨到了14。八分钟过去了,阿禾完成了任务「清点鲞货」。",
+   "outputTokens": 39,
+   "wallMs": 1639.2,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "顾北汀从咸水澳来到了鱼行。八分钟过去了,阿禾完成了任务「清点鲞货」。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-a-quay:cross-reference-15minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：顾北汀=他）\n1. 位置：顾北汀 从咸水澳到鱼行\n2. 理智：顾北汀 10→14（上升）\n第2组（时间：约十五分钟；称谓：阿禾=她）\n3. 任务达成：阿禾「清点鲞货」\n4. 时间推进：约十五分钟\n正文：",
+   "output": "顾北汀从咸水澳进入了鱼行。他的精神值从10涨到了14。十五分钟过去了,阿禾完成了任务「清点鲞货」。",
+   "outputTokens": 39,
+   "wallMs": 1873.4,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "顾北汀从咸水澳进入了鱼行。理智:顾北汀10→14(上升了)。十五分钟过去了,阿禾完成了任务「清点鲞货」。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-a-quay:gender-unknown-7minute:v1",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：水生=TA）\n1. 位置：水生 从高脚棚到鱼行\n2. 任务达成：水生「修高脚棚的梯子」\n第2组（时间：约七分钟；称谓：阿禾=她）\n3. 现状：阿禾 已在鱼行\n4. 时间推进：约七分钟\n正文：",
+   "output": "水生从高脚棚来到了鱼行。TA办妥了任务「修高脚棚的梯子」。七分钟过去了,阿禾已在鱼行。",
+   "outputTokens": 40,
+   "wallMs": 1865.0,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "水生从高脚棚来到了鱼行。水生办妥了任务「修高脚棚的梯子」。七分钟过去了,阿禾已在鱼行。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-a-quay:personality-remove:v0",
+   "input": "叙事生成任务。\n第1组（时间：约五分钟；称谓：顾北汀=他）\n1. 个性移除：顾北汀 不再保有「话多起来」\n2. 时间推进：约五分钟\n正文：",
+   "output": "五分钟过去了,顾北汀不再保有旧性子「话多起来」。",
+   "outputTokens": 21,
+   "wallMs": 918.1,
+   "finishReason": "eos",
+   "pronounElicited": false,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1"
+     ],
+     "pronounUsed": false,
+     "problems": [],
+     "residue": "，。"
+    },
+    "pass": true
+   }
+  },
+  {
+   "rowId": "v2-a-quay:new-slot:v0",
+   "input": "叙事生成任务。\n第1组（时间：约两分钟；称谓：顾北汀=他）\n1. 槽位：顾北汀 现在位于咸水澳的内格\n2. 时间推进：约两分钟\n正文：",
+   "output": "两分钟过去了,顾北汀现在位于咸水澳的内格。",
+   "outputTokens": 20,
+   "wallMs": 886.9,
+   "finishReason": "eos",
+   "pronounElicited": false,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1"
+     ],
+     "pronounUsed": false,
+     "problems": [],
+     "residue": "，。"
+    },
+    "pass": true
+   }
+  },
+  {
+   "rowId": "v2-a-quay:appearance-remove:v0",
+   "input": "叙事生成任务。\n第1组（时间：约四分钟；称谓：顾北汀=他）\n1. 外貌移除：顾北汀 不再保有「换上了蓑衣」\n2. 时间推进：约四分钟\n正文：",
+   "output": "四分钟过去了,顾北汀不再保有旧样貌「换上了蓑衣」。",
+   "outputTokens": 22,
+   "wallMs": 957.9,
+   "finishReason": "eos",
+   "pronounElicited": false,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1"
+     ],
+     "pronounUsed": false,
+     "problems": [],
+     "residue": "，。"
+    },
+    "pass": true
+   }
+  },
+  {
+   "rowId": "v2-b-post:core-move-task-b_shenshubai-b_backhill-2hour:v1",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：沈书白=他）\n1. 位置：沈书白 从青枫驿到后山道\n2. 任务达成：沈书白「封发驿传文书」\n第2组（时间：约两小时；称谓：豆子=他）\n3. 现状：豆子 已在后山道\n4. 时间推进：约两小时\n正文：",
+   "output": "沈书白离开了青枫驿,抵达了后山道。他已达成任务「封发驿传文书」。两小时过去了,豆子已经在后山道了。",
+   "outputTokens": 44,
+   "wallMs": 1946.5,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "沈书白离开了青枫驿,抵达了后山道。沈书白已达成任务「封发驿传文书」。两小时过去了,豆子已经在后山道了。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-b-post:core-move-task-b_shenshubai-b_kitchen-15minute:v2",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：沈书白=他）\n1. 位置：沈书白 从青枫驿到茶灶房\n2. 任务达成：沈书白「封发驿传文书」\n第2组（时间：无；称谓：谷雨=她）\n3. 现状：谷雨 已在茶灶房\n第3组（时间：约十五分钟）\n4. 现状：铜汤婆子 已在茶灶房\n5. 时间推进：约十五分钟\n正文：",
+   "output": "沈书白离开了青枫驿,抵达了茶灶房。他已达成任务「封发驿传文书」。谷雨已经在茶灶房了。十五分钟过去了,铜汤婆子已经在茶灶房了。",
+   "outputTokens": 55,
+   "wallMs": 2525.2,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "沈书白从青枫驿进入了茶灶房。沈书白完成了任务「封发驿传文书」。谷雨已在茶灶房。十五分钟过去了,铜汤婆子已在茶灶房。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-b-post:core-move-task-b_shenshubai-b_kitchen-90second:v2",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：沈书白=他）\n1. 位置：沈书白 从青枫驿到茶灶房\n2. 任务达成：沈书白「封发驿传文书」\n第2组（时间：无；称谓：谷雨=她）\n3. 现状：谷雨 已在茶灶房\n第3组（时间：约九十秒）\n4. 现状：铜汤婆子 已在茶灶房\n5. 时间推进：约九十秒\n正文：",
+   "output": "沈书白离开了青枫驿,抵达了茶灶房。他已达成任务「封发驿传文书」。谷雨已经在茶灶房了。九十秒过去了,铜汤婆子已经在茶灶房了。",
+   "outputTokens": 56,
+   "wallMs": 2452.2,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "沈书白离开了青枫驿,抵达了茶灶房。沈书白已达成任务「封发驿传文书」。谷雨已经在茶灶房了。九十秒过去了,铜汤婆子已经在茶灶房了。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-b-post:core-move-task-b_shenshubai-b_pass-40second:v1",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：沈书白=他）\n1. 位置：沈书白 从青枫驿到碑坳\n2. 任务达成：沈书白「封发驿传文书」\n第2组（时间：无；称谓：刘金=他）\n3. 现状：刘金 已在碑坳\n第3组（时间：约四十秒；称谓：雁七=她）\n4. 现状：雁七 已在碑坳\n5. 时间推进：约四十秒\n正文：",
+   "output": "沈书白离开了青枫驿,抵达了碑坳。他已达成任务「封发驿传文书」。刘金已经在碑坳了。四十秒过去了,雁七已经在碑坳了。",
+   "outputTokens": 50,
+   "wallMs": 2151.5,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "沈书白离开了青枫驿,抵达了碑坳。沈书白已达成任务「封发驿传文书」。刘金已经在碑坳了。四十秒过去了,雁七已经在碑坳了。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-b-post:core-move-task-b_guyu-b_post-2hour:v1",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：谷雨=她）\n1. 位置：谷雨 从茶灶房到青枫驿\n2. 任务达成：谷雨「烫一壶接风酒」\n第2组（时间：无；称谓：沈书白=他）\n3. 现状：沈书白 已在青枫驿\n第3组（时间：约两小时；称谓：双喜=TA）\n4. 现状：双喜 已在青枫驿\n5. 时间推进：约两小时\n正文：",
+   "output": "谷雨离开了茶灶房,抵达了青枫驿。她已达成任务「烫一壶接风酒」。沈书白已经在青枫驿了。两小时过去了,双喜已经在青枫驿了。",
+   "outputTokens": 53,
+   "wallMs": 2406.8,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "谷雨离开了茶灶房,抵达了青枫驿。他已达成任务「烫一壶接风酒」。沈书白已经在青枫驿了。两小时过去了,双喜已经在青枫驿了。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-b-post:core-move-task-b_guyu-b_backhill-15minute:v2",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：谷雨=她）\n1. 位置：谷雨 从茶灶房到后山道\n2. 任务达成：谷雨「烫一壶接风酒」\n第2组（时间：约十五分钟；称谓：豆子=他）\n3. 现状：豆子 已在后山道\n4. 时间推进：约十五分钟\n正文：",
+   "output": "谷雨离开了茶灶房,抵达了后山道。她已达成任务「烫一壶接风酒」。十五分钟过去了,豆子已经在后山道了。",
+   "outputTokens": 43,
+   "wallMs": 1857.8,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "谷雨从茶灶房进入了后山道。他完成了任务「烫一壶接风酒」。十五分钟过去了,豆子已在后山道。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-b-post:core-move-task-b_guyu-b_backhill-90second:v2",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：谷雨=她）\n1. 位置：谷雨 从茶灶房到后山道\n2. 任务达成：谷雨「烫一壶接风酒」\n第2组（时间：约九十秒；称谓：豆子=他）\n3. 现状：豆子 已在后山道\n4. 时间推进：约九十秒\n正文：",
+   "output": "谷雨离开了茶灶房,抵达了后山道。她已达成任务「烫一壶接风酒」。九十秒过去了,豆子已经在后山道了。",
+   "outputTokens": 44,
+   "wallMs": 1910.2,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "谷雨离开了茶灶房,抵达了后山道。他已达成任务「烫一壶接风酒」。九十秒过去了,豆子已经在后山道了。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-b-post:core-move-task-b_guyu-b_pass-40second:v1",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：谷雨=她）\n1. 位置：谷雨 从茶灶房到碑坳\n2. 任务达成：谷雨「烫一壶接风酒」\n第2组（时间：无；称谓：刘金=他）\n3. 现状：刘金 已在碑坳\n第3组（时间：约四十秒；称谓：雁七=她）\n4. 现状：雁七 已在碑坳\n5. 时间推进：约四十秒\n正文：",
+   "output": "谷雨离开了茶灶房,抵达了碑坳。她已达成任务「烫一壶接风酒」。刘金已经在碑坳了。四十秒过去了,雁七已经在碑坳了。",
+   "outputTokens": 49,
+   "wallMs": 2278.8,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "谷雨离开了茶灶房,抵达了碑坳。他已达成任务「烫一壶接风酒」。刘金已经在碑坳了。四十秒过去了,雁七已经在碑坳了。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-b-post:core-move-task-b_weituo-b_post-2hour:v1",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：魏驼=他）\n1. 位置：魏驼 从马厩到青枫驿\n2. 任务达成：魏驼「铡足三日草料」\n第2组（时间：无；称谓：沈书白=他）\n3. 现状：沈书白 已在青枫驿\n第3组（时间：约两小时；称谓：双喜=TA）\n4. 现状：双喜 已在青枫驿\n5. 时间推进：约两小时\n正文：",
+   "output": "魏驼离开了马厩,抵达了青枫驿。他已达成任务「铡足三日草料」。沈书白已经在青枫驿了。两小时过去了,双喜已经在青枫驿了。",
+   "outputTokens": 52,
+   "wallMs": 2349.3,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "魏驼离开了马厩,抵达了青枫驿。他已达成任务「铡足三日草料」。沈书白已经在青枫驿了。两小时过去了,双喜已经在青枫驿了。",
+   "ablationDiffers": false
+  },
+  {
+   "rowId": "v2-b-post:core-move-task-b_weituo-b_backhill-2hour:v1",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：魏驼=他）\n1. 位置：魏驼 从马厩到后山道\n2. 任务达成：魏驼「铡足三日草料」\n第2组（时间：约两小时；称谓：豆子=他）\n3. 现状：豆子 已在后山道\n4. 时间推进：约两小时\n正文：",
+   "output": "魏驼离开了马厩,抵达了后山道。他已达成任务「铡足三日草料」。两小时过去了,豆子已经在后山道了。",
+   "outputTokens": 42,
+   "wallMs": 1930.1,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "魏驼离开了马厩,抵达了后山道。魏驼已达成任务「铡足三日草料」。两小时过去了,豆子已经在后山道了。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-b-post:core-move-task-b_weituo-b_kitchen-15minute:v2",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：魏驼=他）\n1. 位置：魏驼 从马厩到茶灶房\n2. 任务达成：魏驼「铡足三日草料」\n第2组（时间：无；称谓：谷雨=她）\n3. 现状：谷雨 已在茶灶房\n第3组（时间：约十五分钟）\n4. 现状：铜汤婆子 已在茶灶房\n5. 时间推进：约十五分钟\n正文：",
+   "output": "魏驼离开了马厩,抵达了茶灶房。他已达成任务「铡足三日草料」。谷雨已经在茶灶房了。十五分钟过去了,铜汤婆子已经在茶灶房了。",
+   "outputTokens": 53,
+   "wallMs": 2425.8,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "魏驼离开了马厩,抵达了茶灶房。魏驼已达成任务「铡足三日草料」。谷雨已经在茶灶房了。十五分钟过去了,铜汤婆子已经在茶灶房了。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-b-post:core-move-task-b_weituo-b_kitchen-90second:v2",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：魏驼=他）\n1. 位置：魏驼 从马厩到茶灶房\n2. 任务达成：魏驼「铡足三日草料」\n第2组（时间：无；称谓：谷雨=她）\n3. 现状：谷雨 已在茶灶房\n第3组（时间：约九十秒）\n4. 现状：铜汤婆子 已在茶灶房\n5. 时间推进：约九十秒\n正文：",
+   "output": "魏驼离开了马厩,抵达了茶灶房。他已达成任务「铡足三日草料」。谷雨已经在茶灶房了。九十秒过去了,铜汤婆子已经在茶灶房了。",
+   "outputTokens": 54,
+   "wallMs": 2384.5,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "魏驼离开了马厩,抵达了茶灶房。魏驼已达成任务「铡足三日草料」。谷雨已经在茶灶房了。九十秒过去了,铜汤婆子已经在茶灶房了。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-b-post:core-move-task-b_weituo-b_pass-40second:v1",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：魏驼=他）\n1. 位置：魏驼 从马厩到碑坳\n2. 任务达成：魏驼「铡足三日草料」\n第2组（时间：无；称谓：刘金=他）\n3. 现状：刘金 已在碑坳\n第3组（时间：约四十秒；称谓：雁七=她）\n4. 现状：雁七 已在碑坳\n5. 时间推进：约四十秒\n正文：",
+   "output": "魏驼离开了马厩,抵达了碑坳。他已达成任务「铡足三日草料」。刘金已经在碑坳了。四十秒过去了,雁七已经在碑坳了。",
+   "outputTokens": 48,
+   "wallMs": 2043.5,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "魏驼离开了马厩,抵达了碑坳。魏驼已达成任务「铡足三日草料」。刘金已经在碑坳了。四十秒过去了,雁七已经在碑坳了。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-b-post:core-move-task-b_shuangxi-b_backhill-2hour:v1",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：双喜=TA）\n1. 位置：双喜 从青枫驿到后山道\n2. 任务达成：双喜「扫净正堂灯火」\n第2组（时间：约两小时；称谓：豆子=他）\n3. 现状：豆子 已在后山道\n4. 时间推进：约两小时\n正文：",
+   "output": "双喜离开了青枫驿,抵达了后山道。TA已达成任务「扫净正堂灯火」。两小时过去了,豆子已经在后山道了。",
+   "outputTokens": 43,
+   "wallMs": 1809.2,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "双喜离开了青枫驿,抵达了后山道。他已达成任务「扫净正堂灯火」。两小时过去了,豆子已经在后山道了。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-b-post:core-move-task-b_shuangxi-b_kitchen-15minute:v2",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：双喜=TA）\n1. 位置：双喜 从青枫驿到茶灶房\n2. 任务达成：双喜「扫净正堂灯火」\n第2组（时间：无；称谓：谷雨=她）\n3. 现状：谷雨 已在茶灶房\n第3组（时间：约十五分钟）\n4. 现状：铜汤婆子 已在茶灶房\n5. 时间推进：约十五分钟\n正文：",
+   "output": "双喜离开了青枫驿,抵达了茶灶房。TA已达成任务「扫净正堂灯火」。谷雨已经在茶灶房了。十五分钟过去了,铜汤婆子已经在茶灶房了。",
+   "outputTokens": 54,
+   "wallMs": 2365.6,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "双喜离开了青枫驿,抵达了茶灶房。他已达成任务「扫净正堂灯火」。谷雨已经在茶灶房了。十五分钟过去了,铜汤婆子已经在茶灶房了。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-b-post:core-move-task-b_shuangxi-b_kitchen-90second:v2",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：双喜=TA）\n1. 位置：双喜 从青枫驿到茶灶房\n2. 任务达成：双喜「扫净正堂灯火」\n第2组（时间：无；称谓：谷雨=她）\n3. 现状：谷雨 已在茶灶房\n第3组（时间：约九十秒）\n4. 现状：铜汤婆子 已在茶灶房\n5. 时间推进：约九十秒\n正文：",
+   "output": "双喜离开了青枫驿,抵达了茶灶房。TA已达成任务「扫净正堂灯火」。谷雨已经在茶灶房了。九十秒过去了,铜汤婆子已经在茶灶房了。",
+   "outputTokens": 55,
+   "wallMs": 2410.5,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "双喜离开了青枫驿,抵达了茶灶房。他已达成任务「扫净正堂灯火」。谷雨已经在茶灶房了。九十秒过去了,铜汤婆子已经在茶灶房了。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-b-post:core-move-task-b_shuangxi-b_pass-40second:v1",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：双喜=TA）\n1. 位置：双喜 从青枫驿到碑坳\n2. 任务达成：双喜「扫净正堂灯火」\n第2组（时间：无；称谓：刘金=他）\n3. 现状：刘金 已在碑坳\n第3组（时间：约四十秒；称谓：雁七=她）\n4. 现状：雁七 已在碑坳\n5. 时间推进：约四十秒\n正文：",
+   "output": "双喜离开了青枫驿,抵达了碑坳。TA已达成任务「扫净正堂灯火」。刘金已经在碑坳了。四十秒过去了,雁七已经在碑坳了。",
+   "outputTokens": 49,
+   "wallMs": 2062.0,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "双喜离开了青枫驿,抵达了碑坳。他已达成任务「扫净正堂灯火」。刘金已经在碑坳了。四十秒过去了,雁七已经在碑坳了。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-b-post:core-move-task-b_liujin_a-b_post-15minute:v2",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：刘金=他）\n1. 位置：刘金 从马厩到青枫驿\n2. 任务达成：刘金「钉牢马厩门轴」\n第2组（时间：无；称谓：沈书白=他）\n3. 现状：沈书白 已在青枫驿\n第3组（时间：约十五分钟；称谓：双喜=TA）\n4. 现状：双喜 已在青枫驿\n5. 时间推进：约十五分钟\n正文：",
+   "output": "刘金离开了马厩,抵达了青枫驿。他已达成任务「钉牢马厩门轴」。沈书白已经在青枫驿了。十五分钟过去了,双喜已经在青枫驿了。",
+   "outputTokens": 52,
+   "wallMs": 2272.1,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "刘金离开了马厩,抵达了青枫驿。刘金已达成任务「钉牢马厩门轴」。沈书白已经在青枫驿了。十五分钟过去了,双喜已经在青枫驿了。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-b-post:core-move-task-b_liujin_a-b_post-90second:v2",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：刘金=他）\n1. 位置：刘金 从马厩到青枫驿\n2. 任务达成：刘金「钉牢马厩门轴」\n第2组（时间：无；称谓：沈书白=他）\n3. 现状：沈书白 已在青枫驿\n第3组（时间：约九十秒；称谓：双喜=TA）\n4. 现状：双喜 已在青枫驿\n5. 时间推进：约九十秒\n正文：",
+   "output": "刘金离开了马厩,抵达了青枫驿。他已达成任务「钉牢马厩门轴」。沈书白已经在青枫驿了。九十秒过去了,双喜已经在青枫驿了。",
+   "outputTokens": 53,
+   "wallMs": 2365.5,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "刘金离开了马厩,抵达了青枫驿。刘金已达成任务「钉牢马厩门轴」。沈书白已经在青枫驿了。九十秒过去了,双喜已经在青枫驿了。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-b-post:core-move-task-b_liujin_a-b_backhill-15minute:v2",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：刘金=他）\n1. 位置：刘金 从马厩到后山道\n2. 任务达成：刘金「钉牢马厩门轴」\n第2组（时间：约十五分钟；称谓：豆子=他）\n3. 现状：豆子 已在后山道\n4. 时间推进：约十五分钟\n正文：",
+   "output": "刘金离开了马厩,抵达了后山道。他已达成任务「钉牢马厩门轴」。十五分钟过去了,豆子已经在后山道了。",
+   "outputTokens": 42,
+   "wallMs": 1970.4,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "刘金离开了马厩,抵达了后山道。刘金已达成任务「钉牢马厩门轴」。十五分钟过去了,豆子已经在后山道了。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-b-post:core-move-task-b_liujin_a-b_backhill-90second:v2",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：刘金=他）\n1. 位置：刘金 从马厩到后山道\n2. 任务达成：刘金「钉牢马厩门轴」\n第2组（时间：约九十秒；称谓：豆子=他）\n3. 现状：豆子 已在后山道\n4. 时间推进：约九十秒\n正文：",
+   "output": "刘金离开了马厩,抵达了后山道。他已达成任务「钉牢马厩门轴」。九十秒过去了,豆子已经在后山道了。",
+   "outputTokens": 43,
+   "wallMs": 2051.7,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "刘金离开了马厩,抵达了后山道。刘金已达成任务「钉牢马厩门轴」。九十秒过去了,豆子已经在后山道了。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-b-post:core-move-task-b_liujin_a-b_kitchen-40second:v1",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：刘金=他）\n1. 位置：刘金 从马厩到茶灶房\n2. 任务达成：刘金「钉牢马厩门轴」\n第2组（时间：无；称谓：谷雨=她）\n3. 现状：谷雨 已在茶灶房\n第3组（时间：约四十秒）\n4. 现状：铜汤婆子 已在茶灶房\n5. 时间推进：约四十秒\n正文：",
+   "output": "刘金离开了马厩,抵达了茶灶房。他已达成任务「钉牢马厩门轴」。谷雨已经在茶灶房了。四十秒过去了,铜汤婆子已经在茶灶房了。",
+   "outputTokens": 53,
+   "wallMs": 2440.3,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "刘金离开了马厩,抵达了茶灶房。刘金已达成任务「钉牢马厩门轴」。谷雨已经在茶灶房了。四十秒过去了,铜汤婆子已经在茶灶房了。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-b-post:core-move-task-b_liujin_a-b_pass-2hour:v1",
+   "input": "叙事生成任务。\n第1组（时间：无）\n1. 位置：刘金 从马厩到碑坳\n2. 任务达成：刘金「钉牢马厩门轴」\n第2组（时间：无）\n3. 现状：刘金 已在碑坳\n第3组（时间：约两小时；称谓：雁七=她）\n4. 现状：雁七 已在碑坳\n5. 时间推进：约两小时\n正文：",
+   "output": "刘金离开了马厩,抵达了碑坳。刘金已达成任务「钉牢马厩门轴」。刘金已经在碑坳了。两小时过去了,雁七已经在碑坳了。",
+   "outputTokens": 49,
+   "wallMs": 2228.4,
+   "finishReason": "eos",
+   "pronounElicited": false,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": false,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   }
+  },
+  {
+   "rowId": "v2-b-post:core-move-task-b_liujin_b-b_post-15minute:v2",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：刘金=他）\n1. 位置：刘金 从碑坳到青枫驿\n2. 任务达成：刘金「清点碑坳的路签」\n第2组（时间：无；称谓：沈书白=他）\n3. 现状：沈书白 已在青枫驿\n第3组（时间：约十五分钟；称谓：双喜=TA）\n4. 现状：双喜 已在青枫驿\n5. 时间推进：约十五分钟\n正文：",
+   "output": "刘金离开了碑坳,抵达了青枫驿。他已达成任务「清点碑坳的路签」。沈书白已经在青枫驿了。十五分钟过去了,双喜已经在青枫驿了。",
+   "outputTokens": 53,
+   "wallMs": 2470.1,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "刘金离开了碑坳,抵达了青枫驿。刘金已达成任务「清点碑坳的路签」。沈书白已经在青枫驿了。十五分钟过去了,双喜已经在青枫驿了。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-b-post:core-move-task-b_liujin_b-b_post-90second:v2",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：刘金=他）\n1. 位置：刘金 从碑坳到青枫驿\n2. 任务达成：刘金「清点碑坳的路签」\n第2组（时间：无；称谓：沈书白=他）\n3. 现状：沈书白 已在青枫驿\n第3组（时间：约九十秒；称谓：双喜=TA）\n4. 现状：双喜 已在青枫驿\n5. 时间推进：约九十秒\n正文：",
+   "output": "刘金离开了碑坳,抵达了青枫驿。他已达成任务「清点碑坳的路签」。沈书白已经在青枫驿了。九十秒过去了,双喜已经在青枫驿了。",
+   "outputTokens": 54,
+   "wallMs": 2348.5,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "刘金离开了碑坳,抵达了青枫驿。刘金已达成任务「清点碑坳的路签」。沈书白已经在青枫驿了。九十秒过去了,双喜已经在青枫驿了。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-b-post:core-move-task-b_liujin_b-b_backhill-40second:v1",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：刘金=他）\n1. 位置：刘金 从碑坳到后山道\n2. 任务达成：刘金「清点碑坳的路签」\n第2组（时间：约四十秒；称谓：豆子=他）\n3. 现状：豆子 已在后山道\n4. 时间推进：约四十秒\n正文：",
+   "output": "刘金离开了碑坳,抵达了后山道。他已达成任务「清点碑坳的路签」。四十秒过去了,豆子已经在后山道了。",
+   "outputTokens": 43,
+   "wallMs": 1942.0,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "刘金离开了碑坳,抵达了后山道。刘金已达成任务「清点碑坳的路签」。四十秒过去了,豆子已经在后山道了。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-b-post:core-move-task-b_liujin_b-b_kitchen-2hour:v1",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：刘金=他）\n1. 位置：刘金 从碑坳到茶灶房\n2. 任务达成：刘金「清点碑坳的路签」\n第2组（时间：无；称谓：谷雨=她）\n3. 现状：谷雨 已在茶灶房\n第3组（时间：约两小时）\n4. 现状：铜汤婆子 已在茶灶房\n5. 时间推进：约两小时\n正文：",
+   "output": "刘金离开了碑坳,抵达了茶灶房。他已达成任务「清点碑坳的路签」。谷雨已经在茶灶房了。两小时过去了,铜汤婆子已经在茶灶房了。",
+   "outputTokens": 54,
+   "wallMs": 2476.5,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "刘金离开了碑坳,抵达了茶灶房。刘金已达成任务「清点碑坳的路签」。谷雨已经在茶灶房了。两小时过去了,铜汤婆子已经在茶灶房了。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-b-post:core-move-task-b_liujin_b-b_stable-40second:v1",
+   "input": "叙事生成任务。\n第1组（时间：无）\n1. 位置：刘金 从碑坳到马厩\n2. 任务达成：刘金「清点碑坳的路签」\n第2组（时间：无；称谓：魏驼=他）\n3. 现状：魏驼 已在马厩\n第3组（时间：无）\n4. 现状：刘金 已在马厩\n第4组（时间：约四十秒）\n5. 现状：旧鞍鞯 已在马厩\n6. 时间推进：约四十秒\n正文：",
+   "output": "刘金离开了碑坳,抵达了马厩。刘金已达成任务「清点碑坳的路签」。魏驼已经在马厩了。四十秒过去了,旧鞍鞯已经在马厩了。",
+   "outputTokens": 51,
+   "wallMs": 2495.6,
+   "finishReason": "eos",
+   "pronounElicited": false,
+   "verdict": {
+    "gates": {
+     "G1_alignment": false,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f4",
+      "f5"
+     ],
+     "pronounUsed": false,
+     "problems": [
+      "uncovered:f3:positioned_at"
+     ],
+     "residue": "。。。，。"
+    },
+    "pass": false
+   }
+  },
+  {
+   "rowId": "v2-b-post:core-move-task-b_yanqi-b_post-2hour:v1",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：雁七=她）\n1. 位置：雁七 从碑坳到青枫驿\n2. 任务达成：雁七「核对碑坳的路条」\n第2组（时间：无；称谓：沈书白=他）\n3. 现状：沈书白 已在青枫驿\n第3组（时间：约两小时；称谓：双喜=TA）\n4. 现状：双喜 已在青枫驿\n5. 时间推进：约两小时\n正文：",
+   "output": "雁七离开了碑坳,抵达了青枫驿。她已达成任务「核对碑坳的路条」。沈书白已经在青枫驿了。两小时过去了,双喜已经在青枫驿了。",
+   "outputTokens": 53,
+   "wallMs": 2392.7,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "雁七离开了碑坳,抵达了青枫驿。他已达成任务「核对碑坳的路条」。沈书白已经在青枫驿了。两小时过去了,双喜已经在青枫驿了。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-b-post:core-move-task-b_yanqi-b_backhill-15minute:v2",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：雁七=她）\n1. 位置：雁七 从碑坳到后山道\n2. 任务达成：雁七「核对碑坳的路条」\n第2组（时间：约十五分钟；称谓：豆子=他）\n3. 现状：豆子 已在后山道\n4. 时间推进：约十五分钟\n正文：",
+   "output": "雁七离开了碑坳,抵达了后山道。她已达成任务「核对碑坳的路条」。十五分钟过去了,豆子已经在后山道了。",
+   "outputTokens": 43,
+   "wallMs": 1938.6,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "雁七从碑坳进入了后山道。他完成了任务「核对碑坳的路条」。十五分钟过去了,豆子已在后山道。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-b-post:core-move-task-b_yanqi-b_backhill-90second:v2",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：雁七=她）\n1. 位置：雁七 从碑坳到后山道\n2. 任务达成：雁七「核对碑坳的路条」\n第2组（时间：约九十秒；称谓：豆子=他）\n3. 现状：豆子 已在后山道\n4. 时间推进：约九十秒\n正文：",
+   "output": "雁七离开了碑坳,抵达了后山道。她已达成任务「核对碑坳的路条」。九十秒过去了,豆子已经在后山道了。",
+   "outputTokens": 44,
+   "wallMs": 2033.6,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "雁七离开了碑坳,抵达了后山道。他已达成任务「核对碑坳的路条」。九十秒过去了,豆子已经在后山道了。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-b-post:core-move-task-b_yanqi-b_kitchen-40second:v1",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：雁七=她）\n1. 位置：雁七 从碑坳到茶灶房\n2. 任务达成：雁七「核对碑坳的路条」\n第2组（时间：无；称谓：谷雨=她）\n3. 现状：谷雨 已在茶灶房\n第3组（时间：约四十秒）\n4. 现状：铜汤婆子 已在茶灶房\n5. 时间推进：约四十秒\n正文：",
+   "output": "雁七离开了碑坳,抵达了茶灶房。她已达成任务「核对碑坳的路条」。谷雨已经在茶灶房了。四十秒过去了,铜汤婆子已经在茶灶房了。",
+   "outputTokens": 54,
+   "wallMs": 2546.1,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "雁七离开了碑坳,抵达了茶灶房。他已达成任务「核对碑坳的路条」。谷雨已经在茶灶房了。四十秒过去了,铜汤婆子已经在茶灶房了。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-b-post:core-move-task-b_douzi-b_post-2hour:v1",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：豆子=他）\n1. 位置：豆子 从后山道到青枫驿\n2. 任务达成：豆子「背柴到后山道茶灶」\n第2组（时间：无；称谓：沈书白=他）\n3. 现状：沈书白 已在青枫驿\n第3组（时间：约两小时；称谓：双喜=TA）\n4. 现状：双喜 已在青枫驿\n5. 时间推进：约两小时\n正文：",
+   "output": "豆子离开了后山道,抵达了青枫驿。他已达成任务「背柴到后山道茶灶」。沈书白已经在青枫驿了。两小时过去了,双喜已经在青枫驿了。",
+   "outputTokens": 55,
+   "wallMs": 2452.0,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "豆子离开了后山道,抵达了青枫驿。他已达成任务「背柴到后山道茶灶」。沈书白已经在青枫驿了。两小时过去了,双喜已经在青枫驿了。",
+   "ablationDiffers": false
+  },
+  {
+   "rowId": "v2-b-post:core-move-task-b_douzi-b_kitchen-15minute:v2",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：豆子=他）\n1. 位置：豆子 从后山道到茶灶房\n2. 任务达成：豆子「背柴到后山道茶灶」\n第2组（时间：无；称谓：谷雨=她）\n3. 现状：谷雨 已在茶灶房\n第3组（时间：约十五分钟）\n4. 现状：铜汤婆子 已在茶灶房\n5. 时间推进：约十五分钟\n正文：",
+   "output": "豆子离开了后山道,抵达了茶灶房。他已达成任务「背柴到后山道茶灶」。谷雨已经在茶灶房了。十五分钟过去了,铜汤婆子已经在茶灶房了。",
+   "outputTokens": 56,
+   "wallMs": 2609.4,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "豆子从后山道进入了茶灶房。他完成了任务「背柴到后山道茶灶」。谷雨已在茶灶房。十五分钟过去了,铜汤婆子已在茶灶房。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-b-post:core-move-task-b_douzi-b_kitchen-90second:v2",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：豆子=他）\n1. 位置：豆子 从后山道到茶灶房\n2. 任务达成：豆子「背柴到后山道茶灶」\n第2组（时间：无；称谓：谷雨=她）\n3. 现状：谷雨 已在茶灶房\n第3组（时间：约九十秒）\n4. 现状：铜汤婆子 已在茶灶房\n5. 时间推进：约九十秒\n正文：",
+   "output": "豆子离开了后山道,抵达了茶灶房。他已达成任务「背柴到后山道茶灶」。谷雨已经在茶灶房了。九十秒过去了,铜汤婆子已经在茶灶房了。",
+   "outputTokens": 57,
+   "wallMs": 2776.9,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "豆子离开了后山道,抵达了茶灶房。他已达成任务「背柴到后山道茶灶」。谷雨已经在茶灶房了。九十秒过去了,铜汤婆子已经在茶灶房了。",
+   "ablationDiffers": false
+  },
+  {
+   "rowId": "v2-b-post:core-move-task-b_douzi-b_pass-40second:v1",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：豆子=他）\n1. 位置：豆子 从后山道到碑坳\n2. 任务达成：豆子「背柴到后山道茶灶」\n第2组（时间：无；称谓：刘金=他）\n3. 现状：刘金 已在碑坳\n第3组（时间：约四十秒；称谓：雁七=她）\n4. 现状：雁七 已在碑坳\n5. 时间推进：约四十秒\n正文：",
+   "output": "豆子离开了后山道,抵达了碑坳。他已达成任务「背柴到后山道茶灶」。刘金已经在碑坳了。四十秒过去了,雁七已经在碑坳了。",
+   "outputTokens": 51,
+   "wallMs": 2271.4,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "豆子离开了后山道,抵达了碑坳。他已达成任务「背柴到后山道茶灶」。刘金已经在碑坳了。四十秒过去了,雁七已经在碑坳了。",
+   "ablationDiffers": false
+  },
+  {
+   "rowId": "v2-b-post:cross-reference-8minute:v1",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：沈书白=他）\n1. 位置：沈书白 从青枫驿到茶灶房\n2. 理智：沈书白 10→14（上升）\n第2组（时间：无；称谓：谷雨=她）\n3. 任务达成：谷雨「烫一壶接风酒」\n第3组（时间：约八分钟）\n4. 现状：铜汤婆子 已在茶灶房\n5. 时间推进：约八分钟\n正文：",
+   "output": "沈书白从青枫驿来到了茶灶房。他的精神值从10涨到了14。谷雨完成了任务「烫一壶接风酒」。八分钟过去了,铜汤婆子已在茶灶房。",
+   "outputTokens": 52,
+   "wallMs": 2468.8,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "沈书白从青枫驿来到了茶灶房。他的精神值从10涨到了14。谷雨完成了任务「烫一壶接风酒」。八分钟过去了,铜汤婆子已在茶灶房。",
+   "ablationDiffers": false
+  },
+  {
+   "rowId": "v2-b-post:cross-reference-15minute:v1",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：沈书白=他）\n1. 位置：沈书白 从青枫驿到茶灶房\n2. 理智：沈书白 10→14（上升）\n第2组（时间：无；称谓：谷雨=她）\n3. 任务达成：谷雨「烫一壶接风酒」\n第3组（时间：约十五分钟）\n4. 现状：铜汤婆子 已在茶灶房\n5. 时间推进：约十五分钟\n正文：",
+   "output": "沈书白从青枫驿进入了茶灶房。他的精神值从10涨到了14。谷雨完成了任务「烫一壶接风酒」。十五分钟过去了,铜汤婆子已在茶灶房。",
+   "outputTokens": 52,
+   "wallMs": 2451.8,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "沈书白从青枫驿进入了茶灶房。他的精神值从10涨到了14。谷雨完成了任务「烫一壶接风酒」。十五分钟过去了,铜汤婆子已在茶灶房。",
+   "ablationDiffers": false
+  },
+  {
+   "rowId": "v2-b-post:same-name:v0",
+   "input": "叙事生成任务。\n第1组（时间：无）\n1. 任务达成：刘金「钉牢马厩门轴」\n第2组（时间：约四分钟）\n2. 任务达成：刘金「清点碑坳的路签」\n3. 时间推进：约四分钟\n正文：",
+   "output": "刘金办妥了任务「钉牢马厩门轴」。四分钟过去了,刘金办妥了任务「清点碑坳的路签」。",
+   "outputTokens": 37,
+   "wallMs": 1589.5,
+   "finishReason": "eos",
+   "pronounElicited": false,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G5_same_name_bare": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2"
+     ],
+     "pronounUsed": false,
+     "problems": [],
+     "residue": "。，。"
+    },
+    "pass": true
+   }
+  },
+  {
+   "rowId": "v2-b-post:group-order-0:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：谷雨=她）\n1. 位置：谷雨 从茶灶房到青枫驿\n第2组（时间：无；称谓：沈书白=他）\n2. 任务达成：沈书白「换左辕马的掌」\n第3组（时间：约五分钟；称谓：双喜=TA）\n3. 现状：双喜 已在青枫驿\n4. 时间推进：约五分钟\n正文：",
+   "output": "谷雨从茶灶房来到了青枫驿。沈书白办妥了任务「换左辕马的掌」。五分钟过去了,双喜已在青枫驿。",
+   "outputTokens": 43,
+   "wallMs": 2003.6,
+   "finishReason": "eos",
+   "pronounElicited": false,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "pronounUsed": false,
+     "problems": [],
+     "residue": "。。，。"
+    },
+    "pass": true
+   }
+  },
+  {
+   "rowId": "v2-b-post:new-subtask:v0",
+   "input": "叙事生成任务。\n第1组（时间：约三分钟；称谓：沈书白=他）\n1. 任务达成：沈书白「封发驿传文书」\n2. 新任务：沈书白 接到「先借到长梯」（隶属「封发驿传文书」）\n3. 时间推进：约三分钟\n正文：",
+   "output": "三分钟过去了,沈书白完成了任务「封发驿传文书」。",
+   "outputTokens": 21,
+   "wallMs": 936.8,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": false,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f2"
+     ],
+     "pronounUsed": false,
+     "problems": [
+      "uncovered:f1:subtask_added"
+     ],
+     "residue": "，。"
+    },
+    "pass": false
+   },
+   "ablatedOutput": "三分钟过去了,沈书白完成了任务「封发驿传文书」。沈书白接到了新任务「先借到长梯」(隶属「封发驿传文书」)",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-b-post:appearance-modify:v0",
+   "input": "叙事生成任务。\n第1组（时间：约四分钟；称谓：沈书白=他）\n1. 外貌：沈书白 换上了蓑衣\n2. 时间推进：约四分钟\n正文：",
+   "output": "四分钟过去了,沈书白换上了蓑衣。",
+   "outputTokens": 16,
+   "wallMs": 823.7,
+   "finishReason": "eos",
+   "pronounElicited": false,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1"
+     ],
+     "pronounUsed": false,
+     "problems": [],
+     "residue": "，。"
+    },
+    "pass": true
+   }
+  }
+ ],
+ "test": [
+  {
+   "rowId": "v2-c-salt:core-move-task-c_wenrenjing-c_windmill-5minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：闻人镜=他）\n1. 位置：闻人镜 从老盐滩到风车埠\n2. 任务达成：闻人镜「收拢三畦盐卤」\n第2组（时间：无；称谓：小满=TA）\n3. 现状：小满 已在风车埠\n第3组（时间：约五分钟；称谓：盐伯=他）\n4. 现状：盐伯 已在风车埠\n5. 时间推进：约五分钟\n正文：",
+   "output": "闻人镜从老盐滩来到了风车埠。他办妥了任务「收拢三畦盐卤」。小满已在风车埠。五分钟过去了,盐伯已在风车埠。",
+   "outputTokens": 50,
+   "wallMs": 2156.6,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "闻人镜从老盐滩来到了风车埠。闻人镜办妥了任务「收拢三畦盐卤」。小满已在风车埠。五分钟过去了,盐伯已在风车埠。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-c-salt:core-move-task-c_wenrenjing-c_windmill-3minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：闻人镜=他）\n1. 位置：闻人镜 从老盐滩到风车埠\n2. 任务达成：闻人镜「收拢三畦盐卤」\n第2组（时间：无；称谓：小满=TA）\n3. 现状：小满 已在风车埠\n第3组（时间：约三分钟；称谓：盐伯=他）\n4. 现状：盐伯 已在风车埠\n5. 时间推进：约三分钟\n正文：",
+   "output": "闻人镜从老盐滩来到了风车埠。他办妥了任务「收拢三畦盐卤」。小满已在风车埠。三分钟过去了,盐伯已在风车埠。",
+   "outputTokens": 50,
+   "wallMs": 2294.6,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "闻人镜从老盐滩来到了风车埠。闻人镜办妥了任务「收拢三畦盐卤」。小满已在风车埠。三分钟过去了,盐伯已在风车埠。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-c-salt:core-move-task-c_wenrenjing-c_granary-5minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：闻人镜=他）\n1. 位置：闻人镜 从老盐滩到官仓\n2. 任务达成：闻人镜「收拢三畦盐卤」\n第2组（时间：约五分钟；称谓：秦叔=他）\n3. 现状：秦叔 已在官仓\n4. 时间推进：约五分钟\n正文：",
+   "output": "闻人镜从老盐滩来到了官仓。他办妥了任务「收拢三畦盐卤」。五分钟过去了,秦叔已在官仓。",
+   "outputTokens": 40,
+   "wallMs": 1905.3,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "闻人镜从老盐滩来到了官仓。闻人镜办妥了任务「收拢三畦盐卤」。五分钟过去了,秦叔已在官仓。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-c-salt:core-move-task-c_wenrenjing-c_granary-3minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：闻人镜=他）\n1. 位置：闻人镜 从老盐滩到官仓\n2. 任务达成：闻人镜「收拢三畦盐卤」\n第2组（时间：约三分钟；称谓：秦叔=他）\n3. 现状：秦叔 已在官仓\n4. 时间推进：约三分钟\n正文：",
+   "output": "闻人镜从老盐滩来到了官仓。他办妥了任务「收拢三畦盐卤」。三分钟过去了,秦叔已在官仓。",
+   "outputTokens": 40,
+   "wallMs": 1906.1,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "闻人镜从老盐滩来到了官仓。闻人镜办妥了任务「收拢三畦盐卤」。三分钟过去了,秦叔已在官仓。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-c-salt:core-move-task-c_wenrenjing-c_wharf-5minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：闻人镜=他）\n1. 位置：闻人镜 从老盐滩到盐埠头\n2. 任务达成：闻人镜「收拢三畦盐卤」\n第2组（时间：无；称谓：秦叔=他）\n3. 现状：秦叔 已在盐埠头\n第3组（时间：约五分钟；称谓：阿葵=她）\n4. 现状：阿葵 已在盐埠头\n5. 时间推进：约五分钟\n正文：",
+   "output": "闻人镜从老盐滩来到了盐埠头。他办妥了任务「收拢三畦盐卤」。秦叔已在盐埠头。五分钟过去了,阿葵已在盐埠头。",
+   "outputTokens": 50,
+   "wallMs": 2351.2,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "闻人镜从老盐滩来到了盐埠头。他办妥了任务「收拢三畦盐卤」。秦叔已在盐埠头。五分钟过去了,阿葵已在盐埠头。",
+   "ablationDiffers": false
+  },
+  {
+   "rowId": "v2-c-salt:core-move-task-c_wenrenjing-c_wharf-3minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：闻人镜=他）\n1. 位置：闻人镜 从老盐滩到盐埠头\n2. 任务达成：闻人镜「收拢三畦盐卤」\n第2组（时间：无；称谓：秦叔=他）\n3. 现状：秦叔 已在盐埠头\n第3组（时间：约三分钟；称谓：阿葵=她）\n4. 现状：阿葵 已在盐埠头\n5. 时间推进：约三分钟\n正文：",
+   "output": "闻人镜从老盐滩来到了盐埠头。他办妥了任务「收拢三畦盐卤」。秦叔已在盐埠头。三分钟过去了,阿葵已在盐埠头。",
+   "outputTokens": 50,
+   "wallMs": 2262.3,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "闻人镜从老盐滩来到了盐埠头。他办妥了任务「收拢三畦盐卤」。秦叔已在盐埠头。三分钟过去了,阿葵已在盐埠头。",
+   "ablationDiffers": false
+  },
+  {
+   "rowId": "v2-c-salt:core-move-task-c_liufuyi-c_flats-5minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：柳拂衣=她）\n1. 位置：柳拂衣 从团盐棚到老盐滩\n2. 任务达成：柳拂衣「苫盖盐垛的草席」\n第2组（时间：约五分钟；称谓：闻人镜=他）\n3. 现状：闻人镜 已在老盐滩\n4. 时间推进：约五分钟\n正文：",
+   "output": "柳拂衣从团盐棚来到了老盐滩。她办妥了任务「苫盖盐垛的草席」。五分钟过去了,闻人镜已在老盐滩。",
+   "outputTokens": 44,
+   "wallMs": 2065.0,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "柳拂衣从团盐棚来到了老盐滩。柳拂衣办妥了任务「苫盖盐垛的草席」。五分钟过去了,闻人镜已在老盐滩。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-c-salt:core-move-task-c_liufuyi-c_flats-3minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：柳拂衣=她）\n1. 位置：柳拂衣 从团盐棚到老盐滩\n2. 任务达成：柳拂衣「苫盖盐垛的草席」\n第2组（时间：约三分钟；称谓：闻人镜=他）\n3. 现状：闻人镜 已在老盐滩\n4. 时间推进：约三分钟\n正文：",
+   "output": "柳拂衣从团盐棚来到了老盐滩。她办妥了任务「苫盖盐垛的草席」。三分钟过去了,闻人镜已在老盐滩。",
+   "outputTokens": 44,
+   "wallMs": 2069.5,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "柳拂衣从团盐棚来到了老盐滩。柳拂衣办妥了任务「苫盖盐垛的草席」。三分钟过去了,闻人镜已在老盐滩。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-c-salt:core-move-task-c_liufuyi-c_windmill-5minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：柳拂衣=她）\n1. 位置：柳拂衣 从团盐棚到风车埠\n2. 任务达成：柳拂衣「苫盖盐垛的草席」\n第2组（时间：无；称谓：小满=TA）\n3. 现状：小满 已在风车埠\n第3组（时间：约五分钟；称谓：盐伯=他）\n4. 现状：盐伯 已在风车埠\n5. 时间推进：约五分钟\n正文：",
+   "output": "柳拂衣从团盐棚来到了风车埠。她办妥了任务「苫盖盐垛的草席」。小满已在风车埠。五分钟过去了,盐伯已在风车埠。",
+   "outputTokens": 51,
+   "wallMs": 2373.1,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "柳拂衣从团盐棚来到了风车埠。柳拂衣办妥了任务「苫盖盐垛的草席」。小满已在风车埠。五分钟过去了,盐伯已在风车埠。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-c-salt:core-move-task-c_liufuyi-c_windmill-3minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：柳拂衣=她）\n1. 位置：柳拂衣 从团盐棚到风车埠\n2. 任务达成：柳拂衣「苫盖盐垛的草席」\n第2组（时间：无；称谓：小满=TA）\n3. 现状：小满 已在风车埠\n第3组（时间：约三分钟；称谓：盐伯=他）\n4. 现状：盐伯 已在风车埠\n5. 时间推进：约三分钟\n正文：",
+   "output": "柳拂衣从团盐棚来到了风车埠。她办妥了任务「苫盖盐垛的草席」。小满已在风车埠。三分钟过去了,盐伯已在风车埠。",
+   "outputTokens": 51,
+   "wallMs": 2374.3,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "柳拂衣从团盐棚来到了风车埠。柳拂衣办妥了任务「苫盖盐垛的草席」。小满已在风车埠。三分钟过去了,盐伯已在风车埠。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-c-salt:core-move-task-c_liufuyi-c_granary-5minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：柳拂衣=她）\n1. 位置：柳拂衣 从团盐棚到官仓\n2. 任务达成：柳拂衣「苫盖盐垛的草席」\n第2组（时间：约五分钟；称谓：秦叔=他）\n3. 现状：秦叔 已在官仓\n4. 时间推进：约五分钟\n正文：",
+   "output": "柳拂衣从团盐棚来到了官仓。她办妥了任务「苫盖盐垛的草席」。五分钟过去了,秦叔已在官仓。",
+   "outputTokens": 41,
+   "wallMs": 1762.0,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "柳拂衣从团盐棚来到了官仓。柳拂衣办妥了任务「苫盖盐垛的草席」。五分钟过去了,秦叔已在官仓。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-c-salt:core-move-task-c_liufuyi-c_granary-3minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：柳拂衣=她）\n1. 位置：柳拂衣 从团盐棚到官仓\n2. 任务达成：柳拂衣「苫盖盐垛的草席」\n第2组（时间：约三分钟；称谓：秦叔=他）\n3. 现状：秦叔 已在官仓\n4. 时间推进：约三分钟\n正文：",
+   "output": "柳拂衣从团盐棚来到了官仓。她办妥了任务「苫盖盐垛的草席」。三分钟过去了,秦叔已在官仓。",
+   "outputTokens": 41,
+   "wallMs": 1801.4,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "柳拂衣从团盐棚来到了官仓。柳拂衣办妥了任务「苫盖盐垛的草席」。三分钟过去了,秦叔已在官仓。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-c-salt:core-move-task-c_liufuyi-c_wharf-5minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：柳拂衣=她）\n1. 位置：柳拂衣 从团盐棚到盐埠头\n2. 任务达成：柳拂衣「苫盖盐垛的草席」\n第2组（时间：无；称谓：秦叔=他）\n3. 现状：秦叔 已在盐埠头\n第3组（时间：约五分钟；称谓：阿葵=她）\n4. 现状：阿葵 已在盐埠头\n5. 时间推进：约五分钟\n正文：",
+   "output": "柳拂衣从团盐棚来到了盐埠头。她办妥了任务「苫盖盐垛的草席」。秦叔已在盐埠头。五分钟过去了,阿葵已在盐埠头。",
+   "outputTokens": 51,
+   "wallMs": 2297.0,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "柳拂衣从团盐棚来到了盐埠头。柳拂衣办妥了任务「苫盖盐垛的草席」。秦叔已在盐埠头。五分钟过去了,阿葵已在盐埠头。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-c-salt:core-move-task-c_liufuyi-c_wharf-3minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：柳拂衣=她）\n1. 位置：柳拂衣 从团盐棚到盐埠头\n2. 任务达成：柳拂衣「苫盖盐垛的草席」\n第2组（时间：无；称谓：秦叔=他）\n3. 现状：秦叔 已在盐埠头\n第3组（时间：约三分钟；称谓：阿葵=她）\n4. 现状：阿葵 已在盐埠头\n5. 时间推进：约三分钟\n正文：",
+   "output": "柳拂衣从团盐棚来到了盐埠头。她办妥了任务「苫盖盐垛的草席」。秦叔已在盐埠头。三分钟过去了,阿葵已在盐埠头。",
+   "outputTokens": 51,
+   "wallMs": 2392.7,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "柳拂衣从团盐棚来到了盐埠头。柳拂衣办妥了任务「苫盖盐垛的草席」。秦叔已在盐埠头。三分钟过去了,阿葵已在盐埠头。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-c-salt:core-move-task-c_xiaoman-c_flats-5minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：小满=TA）\n1. 位置：小满 从风车埠到老盐滩\n2. 任务达成：小满「给风车上油」\n第2组（时间：约五分钟；称谓：闻人镜=他）\n3. 现状：闻人镜 已在老盐滩\n4. 时间推进：约五分钟\n正文：",
+   "output": "小满从风车埠来到了老盐滩。TA办妥了任务「给风车上油」。五分钟过去了,闻人镜已在老盐滩。",
+   "outputTokens": 41,
+   "wallMs": 1736.8,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "小满从风车埠来到了老盐滩。他办妥了任务「给风车上油」。五分钟过去了,闻人镜已在老盐滩。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-c-salt:core-move-task-c_xiaoman-c_flats-3minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：小满=TA）\n1. 位置：小满 从风车埠到老盐滩\n2. 任务达成：小满「给风车上油」\n第2组（时间：约三分钟；称谓：闻人镜=他）\n3. 现状：闻人镜 已在老盐滩\n4. 时间推进：约三分钟\n正文：",
+   "output": "小满从风车埠来到了老盐滩。TA办妥了任务「给风车上油」。三分钟过去了,闻人镜已在老盐滩。",
+   "outputTokens": 41,
+   "wallMs": 3052.3,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "小满从风车埠来到了老盐滩。他办妥了任务「给风车上油」。三分钟过去了,闻人镜已在老盐滩。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-c-salt:core-move-task-c_xiaoman-c_granary-5minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：小满=TA）\n1. 位置：小满 从风车埠到官仓\n2. 任务达成：小满「给风车上油」\n第2组（时间：约五分钟；称谓：秦叔=他）\n3. 现状：秦叔 已在官仓\n4. 时间推进：约五分钟\n正文：",
+   "output": "小满从风车埠来到了官仓。TA办妥了任务「给风车上油」。五分钟过去了,秦叔已在官仓。",
+   "outputTokens": 38,
+   "wallMs": 951.5,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "小满从风车埠来到了官仓。他办妥了任务「给风车上油」。五分钟过去了,秦叔已在官仓。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-c-salt:core-move-task-c_xiaoman-c_granary-3minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：小满=TA）\n1. 位置：小满 从风车埠到官仓\n2. 任务达成：小满「给风车上油」\n第2组（时间：约三分钟；称谓：秦叔=他）\n3. 现状：秦叔 已在官仓\n4. 时间推进：约三分钟\n正文：",
+   "output": "小满从风车埠来到了官仓。TA办妥了任务「给风车上油」。三分钟过去了,秦叔已在官仓。",
+   "outputTokens": 38,
+   "wallMs": 1215.2,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "小满从风车埠来到了官仓。他办妥了任务「给风车上油」。三分钟过去了,秦叔已在官仓。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-c-salt:core-move-task-c_xiaoman-c_wharf-5minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：小满=TA）\n1. 位置：小满 从风车埠到盐埠头\n2. 任务达成：小满「给风车上油」\n第2组（时间：无；称谓：秦叔=他）\n3. 现状：秦叔 已在盐埠头\n第3组（时间：约五分钟；称谓：阿葵=她）\n4. 现状：阿葵 已在盐埠头\n5. 时间推进：约五分钟\n正文：",
+   "output": "小满从风车埠来到了盐埠头。TA办妥了任务「给风车上油」。秦叔已在盐埠头。五分钟过去了,阿葵已在盐埠头。",
+   "outputTokens": 48,
+   "wallMs": 1460.2,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "小满从风车埠来到了盐埠头。他办妥了任务「给风车上油」。秦叔已在盐埠头。五分钟过去了,阿葵已在盐埠头。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-c-salt:core-move-task-c_xiaoman-c_wharf-3minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：小满=TA）\n1. 位置：小满 从风车埠到盐埠头\n2. 任务达成：小满「给风车上油」\n第2组（时间：无；称谓：秦叔=他）\n3. 现状：秦叔 已在盐埠头\n第3组（时间：约三分钟；称谓：阿葵=她）\n4. 现状：阿葵 已在盐埠头\n5. 时间推进：约三分钟\n正文：",
+   "output": "小满从风车埠来到了盐埠头。TA办妥了任务「给风车上油」。秦叔已在盐埠头。三分钟过去了,阿葵已在盐埠头。",
+   "outputTokens": 48,
+   "wallMs": 1373.4,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "小满从风车埠来到了盐埠头。他办妥了任务「给风车上油」。秦叔已在盐埠头。三分钟过去了,阿葵已在盐埠头。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-c-salt:core-move-task-c_qinshu_a-c_flats-5minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：秦叔=他）\n1. 位置：秦叔 从官仓到老盐滩\n2. 任务达成：秦叔「盘点官仓的存盐」\n第2组（时间：约五分钟；称谓：闻人镜=他）\n3. 现状：闻人镜 已在老盐滩\n4. 时间推进：约五分钟\n正文：",
+   "output": "秦叔从官仓来到了老盐滩。他办妥了任务「盘点官仓的存盐」。五分钟过去了,闻人镜已在老盐滩。",
+   "outputTokens": 42,
+   "wallMs": 19720753.7,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "秦叔从官仓来到了老盐滩。秦叔办妥了任务「盘点官仓的存盐」。五分钟过去了,闻人镜已在老盐滩。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-c-salt:core-move-task-c_qinshu_a-c_flats-3minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：秦叔=他）\n1. 位置：秦叔 从官仓到老盐滩\n2. 任务达成：秦叔「盘点官仓的存盐」\n第2组（时间：约三分钟；称谓：闻人镜=他）\n3. 现状：闻人镜 已在老盐滩\n4. 时间推进：约三分钟\n正文：",
+   "output": "秦叔从官仓来到了老盐滩。他办妥了任务「盘点官仓的存盐」。三分钟过去了,闻人镜已在老盐滩。",
+   "outputTokens": 42,
+   "wallMs": 1102.3,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "秦叔从官仓来到了老盐滩。秦叔办妥了任务「盘点官仓的存盐」。三分钟过去了,闻人镜已在老盐滩。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-c-salt:core-move-task-c_qinshu_a-c_windmill-5minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：秦叔=他）\n1. 位置：秦叔 从官仓到风车埠\n2. 任务达成：秦叔「盘点官仓的存盐」\n第2组（时间：无；称谓：小满=TA）\n3. 现状：小满 已在风车埠\n第3组（时间：约五分钟；称谓：盐伯=他）\n4. 现状：盐伯 已在风车埠\n5. 时间推进：约五分钟\n正文：",
+   "output": "秦叔从官仓来到了风车埠。他办妥了任务「盘点官仓的存盐」。小满已在风车埠。五分钟过去了,盐伯已在风车埠。",
+   "outputTokens": 49,
+   "wallMs": 1083.1,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "秦叔从官仓来到了风车埠。秦叔办妥了任务「盘点官仓的存盐」。小满已在风车埠。五分钟过去了,盐伯已在风车埠。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-c-salt:core-move-task-c_qinshu_a-c_windmill-3minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：秦叔=他）\n1. 位置：秦叔 从官仓到风车埠\n2. 任务达成：秦叔「盘点官仓的存盐」\n第2组（时间：无；称谓：小满=TA）\n3. 现状：小满 已在风车埠\n第3组（时间：约三分钟；称谓：盐伯=他）\n4. 现状：盐伯 已在风车埠\n5. 时间推进：约三分钟\n正文：",
+   "output": "秦叔从官仓来到了风车埠。他办妥了任务「盘点官仓的存盐」。小满已在风车埠。三分钟过去了,盐伯已在风车埠。",
+   "outputTokens": 49,
+   "wallMs": 1100.0,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "秦叔从官仓来到了风车埠。秦叔办妥了任务「盘点官仓的存盐」。小满已在风车埠。三分钟过去了,盐伯已在风车埠。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-c-salt:core-move-task-c_qinshu_a-c_wharf-5minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无）\n1. 位置：秦叔 从官仓到盐埠头\n2. 任务达成：秦叔「盘点官仓的存盐」\n第2组（时间：无）\n3. 现状：秦叔 已在盐埠头\n第3组（时间：约五分钟；称谓：阿葵=她）\n4. 现状：阿葵 已在盐埠头\n5. 时间推进：约五分钟\n正文：",
+   "output": "秦叔从官仓来到了盐埠头。秦叔办妥了任务「盘点官仓的存盐」。秦叔已在盐埠头。五分钟过去了,阿葵已在盐埠头。",
+   "outputTokens": 50,
+   "wallMs": 1246.7,
+   "finishReason": "eos",
+   "pronounElicited": false,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": false,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   }
+  },
+  {
+   "rowId": "v2-c-salt:core-move-task-c_qinshu_a-c_wharf-3minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无）\n1. 位置：秦叔 从官仓到盐埠头\n2. 任务达成：秦叔「盘点官仓的存盐」\n第2组（时间：无）\n3. 现状：秦叔 已在盐埠头\n第3组（时间：约三分钟；称谓：阿葵=她）\n4. 现状：阿葵 已在盐埠头\n5. 时间推进：约三分钟\n正文：",
+   "output": "秦叔从官仓来到了盐埠头。秦叔办妥了任务「盘点官仓的存盐」。秦叔已在盐埠头。三分钟过去了,阿葵已在盐埠头。",
+   "outputTokens": 50,
+   "wallMs": 984.3,
+   "finishReason": "eos",
+   "pronounElicited": false,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": false,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   }
+  },
+  {
+   "rowId": "v2-c-salt:core-move-task-c_qinshu_b-c_flats-5minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：秦叔=他）\n1. 位置：秦叔 从盐埠头到老盐滩\n2. 任务达成：秦叔「码好盐埠头的盐包」\n第2组（时间：约五分钟；称谓：闻人镜=他）\n3. 现状：闻人镜 已在老盐滩\n4. 时间推进：约五分钟\n正文：",
+   "output": "秦叔从盐埠头来到了老盐滩。他办妥了任务「码好盐埠头的盐包」。五分钟过去了,闻人镜已在老盐滩。",
+   "outputTokens": 43,
+   "wallMs": 988.2,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "秦叔从盐埠头来到了老盐滩。秦叔办妥了任务「码好盐埠头的盐包」。五分钟过去了,闻人镜已在老盐滩。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-c-salt:core-move-task-c_qinshu_b-c_flats-3minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：秦叔=他）\n1. 位置：秦叔 从盐埠头到老盐滩\n2. 任务达成：秦叔「码好盐埠头的盐包」\n第2组（时间：约三分钟；称谓：闻人镜=他）\n3. 现状：闻人镜 已在老盐滩\n4. 时间推进：约三分钟\n正文：",
+   "output": "秦叔从盐埠头来到了老盐滩。他办妥了任务「码好盐埠头的盐包」。三分钟过去了,闻人镜已在老盐滩。",
+   "outputTokens": 43,
+   "wallMs": 1084.6,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "秦叔从盐埠头来到了老盐滩。秦叔办妥了任务「码好盐埠头的盐包」。三分钟过去了,闻人镜已在老盐滩。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-c-salt:core-move-task-c_qinshu_b-c_windmill-5minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：秦叔=他）\n1. 位置：秦叔 从盐埠头到风车埠\n2. 任务达成：秦叔「码好盐埠头的盐包」\n第2组（时间：无；称谓：小满=TA）\n3. 现状：小满 已在风车埠\n第3组（时间：约五分钟；称谓：盐伯=他）\n4. 现状：盐伯 已在风车埠\n5. 时间推进：约五分钟\n正文：",
+   "output": "秦叔从盐埠头来到了风车埠。他办妥了任务「码好盐埠头的盐包」。小满已在风车埠。五分钟过去了,盐伯已在风车埠。",
+   "outputTokens": 50,
+   "wallMs": 1231.1,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "秦叔从盐埠头来到了风车埠。秦叔办妥了任务「码好盐埠头的盐包」。小满已在风车埠。五分钟过去了,盐伯已在风车埠。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-c-salt:core-move-task-c_qinshu_b-c_windmill-3minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：秦叔=他）\n1. 位置：秦叔 从盐埠头到风车埠\n2. 任务达成：秦叔「码好盐埠头的盐包」\n第2组（时间：无；称谓：小满=TA）\n3. 现状：小满 已在风车埠\n第3组（时间：约三分钟；称谓：盐伯=他）\n4. 现状：盐伯 已在风车埠\n5. 时间推进：约三分钟\n正文：",
+   "output": "秦叔从盐埠头来到了风车埠。他办妥了任务「码好盐埠头的盐包」。小满已在风车埠。三分钟过去了,盐伯已在风车埠。",
+   "outputTokens": 50,
+   "wallMs": 1293.7,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "秦叔从盐埠头来到了风车埠。秦叔办妥了任务「码好盐埠头的盐包」。小满已在风车埠。三分钟过去了,盐伯已在风车埠。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-c-salt:core-move-task-c_qinshu_b-c_granary-5minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无）\n1. 位置：秦叔 从盐埠头到官仓\n2. 任务达成：秦叔「码好盐埠头的盐包」\n第2组（时间：约五分钟）\n3. 现状：秦叔 已在官仓\n4. 时间推进：约五分钟\n正文：",
+   "output": "秦叔从盐埠头来到了官仓。秦叔办妥了任务「码好盐埠头的盐包」。五分钟过去了,秦叔已在官仓。",
+   "outputTokens": 41,
+   "wallMs": 1070.5,
+   "finishReason": "eos",
+   "pronounElicited": false,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "pronounUsed": false,
+     "problems": [],
+     "residue": "。。，。"
+    },
+    "pass": true
+   }
+  },
+  {
+   "rowId": "v2-c-salt:core-move-task-c_qinshu_b-c_granary-3minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无）\n1. 位置：秦叔 从盐埠头到官仓\n2. 任务达成：秦叔「码好盐埠头的盐包」\n第2组（时间：约三分钟）\n3. 现状：秦叔 已在官仓\n4. 时间推进：约三分钟\n正文：",
+   "output": "秦叔从盐埠头来到了官仓。秦叔办妥了任务「码好盐埠头的盐包」。三分钟过去了,秦叔已在官仓。",
+   "outputTokens": 41,
+   "wallMs": 1070.2,
+   "finishReason": "eos",
+   "pronounElicited": false,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "pronounUsed": false,
+     "problems": [],
+     "residue": "。。，。"
+    },
+    "pass": true
+   }
+  },
+  {
+   "rowId": "v2-c-salt:core-move-task-c_yanbo-c_flats-5minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：盐伯=他）\n1. 位置：盐伯 从风车埠到老盐滩\n2. 任务达成：盐伯「查看风车叶片」\n第2组（时间：约五分钟；称谓：闻人镜=他）\n3. 现状：闻人镜 已在老盐滩\n4. 时间推进：约五分钟\n正文：",
+   "output": "盐伯从风车埠来到了老盐滩。他办妥了任务「查看风车叶片」。五分钟过去了,闻人镜已在老盐滩。",
+   "outputTokens": 41,
+   "wallMs": 1023.2,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "盐伯从风车埠来到了老盐滩。盐伯办妥了任务「查看风车叶片」。五分钟过去了,闻人镜已在老盐滩。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-c-salt:core-move-task-c_yanbo-c_flats-3minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：盐伯=他）\n1. 位置：盐伯 从风车埠到老盐滩\n2. 任务达成：盐伯「查看风车叶片」\n第2组（时间：约三分钟；称谓：闻人镜=他）\n3. 现状：闻人镜 已在老盐滩\n4. 时间推进：约三分钟\n正文：",
+   "output": "盐伯从风车埠来到了老盐滩。他办妥了任务「查看风车叶片」。三分钟过去了,闻人镜已在老盐滩。",
+   "outputTokens": 41,
+   "wallMs": 963.3,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "盐伯从风车埠来到了老盐滩。盐伯办妥了任务「查看风车叶片」。三分钟过去了,闻人镜已在老盐滩。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-c-salt:core-move-task-c_yanbo-c_granary-5minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：盐伯=他）\n1. 位置：盐伯 从风车埠到官仓\n2. 任务达成：盐伯「查看风车叶片」\n第2组（时间：约五分钟；称谓：秦叔=他）\n3. 现状：秦叔 已在官仓\n4. 时间推进：约五分钟\n正文：",
+   "output": "盐伯从风车埠来到了官仓。他办妥了任务「查看风车叶片」。五分钟过去了,秦叔已在官仓。",
+   "outputTokens": 38,
+   "wallMs": 921.5,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "盐伯从风车埠来到了官仓。盐伯办妥了任务「查看风车叶片」。五分钟过去了,秦叔已在官仓。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-c-salt:core-move-task-c_yanbo-c_granary-3minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：盐伯=他）\n1. 位置：盐伯 从风车埠到官仓\n2. 任务达成：盐伯「查看风车叶片」\n第2组（时间：约三分钟；称谓：秦叔=他）\n3. 现状：秦叔 已在官仓\n4. 时间推进：约三分钟\n正文：",
+   "output": "盐伯从风车埠来到了官仓。他办妥了任务「查看风车叶片」。三分钟过去了,秦叔已在官仓。",
+   "outputTokens": 38,
+   "wallMs": 962.1,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "盐伯从风车埠来到了官仓。盐伯办妥了任务「查看风车叶片」。三分钟过去了,秦叔已在官仓。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-c-salt:core-move-task-c_yanbo-c_wharf-5minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：盐伯=他）\n1. 位置：盐伯 从风车埠到盐埠头\n2. 任务达成：盐伯「查看风车叶片」\n第2组（时间：无；称谓：秦叔=他）\n3. 现状：秦叔 已在盐埠头\n第3组（时间：约五分钟；称谓：阿葵=她）\n4. 现状：阿葵 已在盐埠头\n5. 时间推进：约五分钟\n正文：",
+   "output": "盐伯从风车埠来到了盐埠头。他办妥了任务「查看风车叶片」。秦叔已在盐埠头。五分钟过去了,阿葵已在盐埠头。",
+   "outputTokens": 48,
+   "wallMs": 1200.7,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "盐伯从风车埠来到了盐埠头。他办妥了任务「查看风车叶片」。秦叔已在盐埠头。五分钟过去了,阿葵已在盐埠头。",
+   "ablationDiffers": false
+  },
+  {
+   "rowId": "v2-c-salt:core-move-task-c_yanbo-c_wharf-3minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：盐伯=他）\n1. 位置：盐伯 从风车埠到盐埠头\n2. 任务达成：盐伯「查看风车叶片」\n第2组（时间：无；称谓：秦叔=他）\n3. 现状：秦叔 已在盐埠头\n第3组（时间：约三分钟；称谓：阿葵=她）\n4. 现状：阿葵 已在盐埠头\n5. 时间推进：约三分钟\n正文：",
+   "output": "盐伯从风车埠来到了盐埠头。他办妥了任务「查看风车叶片」。秦叔已在盐埠头。三分钟过去了,阿葵已在盐埠头。",
+   "outputTokens": 48,
+   "wallMs": 1144.8,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "盐伯从风车埠来到了盐埠头。他办妥了任务「查看风车叶片」。秦叔已在盐埠头。三分钟过去了,阿葵已在盐埠头。",
+   "ablationDiffers": false
+  },
+  {
+   "rowId": "v2-c-salt:core-move-task-c_akui-c_flats-5minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：阿葵=她）\n1. 位置：阿葵 从盐埠头到老盐滩\n2. 任务达成：阿葵「数清盐埠头的筐」\n第2组（时间：约五分钟；称谓：闻人镜=他）\n3. 现状：闻人镜 已在老盐滩\n4. 时间推进：约五分钟\n正文：",
+   "output": "阿葵从盐埠头来到了老盐滩。她办妥了任务「数清盐埠头的筐」。五分钟过去了,闻人镜已在老盐滩。",
+   "outputTokens": 41,
+   "wallMs": 997.2,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "阿葵从盐埠头来到了老盐滩。阿葵办妥了任务「数清盐埠头的筐」。五分钟过去了,闻人镜已在老盐滩。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-c-salt:core-move-task-c_akui-c_flats-3minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：阿葵=她）\n1. 位置：阿葵 从盐埠头到老盐滩\n2. 任务达成：阿葵「数清盐埠头的筐」\n第2组（时间：约三分钟；称谓：闻人镜=他）\n3. 现状：闻人镜 已在老盐滩\n4. 时间推进：约三分钟\n正文：",
+   "output": "阿葵从盐埠头来到了老盐滩。她办妥了任务「数清盐埠头的筐」。三分钟过去了,闻人镜已在老盐滩。",
+   "outputTokens": 41,
+   "wallMs": 1083.5,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "阿葵从盐埠头来到了老盐滩。阿葵办妥了任务「数清盐埠头的筐」。三分钟过去了,闻人镜已在老盐滩。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-c-salt:core-move-task-c_akui-c_windmill-5minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：阿葵=她）\n1. 位置：阿葵 从盐埠头到风车埠\n2. 任务达成：阿葵「数清盐埠头的筐」\n第2组（时间：无；称谓：小满=TA）\n3. 现状：小满 已在风车埠\n第3组（时间：约五分钟；称谓：盐伯=他）\n4. 现状：盐伯 已在风车埠\n5. 时间推进：约五分钟\n正文：",
+   "output": "阿葵从盐埠头来到了风车埠。她办妥了任务「数清盐埠头的筐」。小满已在风车埠。五分钟过去了,盐伯已在风车埠。",
+   "outputTokens": 48,
+   "wallMs": 1227.5,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "阿葵从盐埠头来到了风车埠。阿葵办妥了任务「数清盐埠头的筐」。小满已在风车埠。五分钟过去了,盐伯已在风车埠。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-c-salt:core-move-task-c_akui-c_windmill-3minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：阿葵=她）\n1. 位置：阿葵 从盐埠头到风车埠\n2. 任务达成：阿葵「数清盐埠头的筐」\n第2组（时间：无；称谓：小满=TA）\n3. 现状：小满 已在风车埠\n第3组（时间：约三分钟；称谓：盐伯=他）\n4. 现状：盐伯 已在风车埠\n5. 时间推进：约三分钟\n正文：",
+   "output": "阿葵从盐埠头来到了风车埠。她办妥了任务「数清盐埠头的筐」。小满已在风车埠。三分钟过去了,盐伯已在风车埠。",
+   "outputTokens": 48,
+   "wallMs": 1234.9,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "阿葵从盐埠头来到了风车埠。阿葵办妥了任务「数清盐埠头的筐」。小满已在风车埠。三分钟过去了,盐伯已在风车埠。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-c-salt:core-move-task-c_akui-c_granary-5minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：阿葵=她）\n1. 位置：阿葵 从盐埠头到官仓\n2. 任务达成：阿葵「数清盐埠头的筐」\n第2组（时间：约五分钟；称谓：秦叔=他）\n3. 现状：秦叔 已在官仓\n4. 时间推进：约五分钟\n正文：",
+   "output": "阿葵从盐埠头来到了官仓。她办妥了任务「数清盐埠头的筐」。五分钟过去了,秦叔已在官仓。",
+   "outputTokens": 38,
+   "wallMs": 924.1,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "阿葵从盐埠头来到了官仓。阿葵办妥了任务「数清盐埠头的筐」。五分钟过去了,秦叔已在官仓。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-c-salt:core-move-task-c_akui-c_granary-3minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：阿葵=她）\n1. 位置：阿葵 从盐埠头到官仓\n2. 任务达成：阿葵「数清盐埠头的筐」\n第2组（时间：约三分钟；称谓：秦叔=他）\n3. 现状：秦叔 已在官仓\n4. 时间推进：约三分钟\n正文：",
+   "output": "阿葵从盐埠头来到了官仓。她办妥了任务「数清盐埠头的筐」。三分钟过去了,秦叔已在官仓。",
+   "outputTokens": 38,
+   "wallMs": 892.8,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "阿葵从盐埠头来到了官仓。阿葵办妥了任务「数清盐埠头的筐」。三分钟过去了,秦叔已在官仓。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-c-salt:cross-reference-8minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：闻人镜=他）\n1. 位置：闻人镜 从老盐滩到官仓\n2. 理智：闻人镜 10→14（上升）\n第2组（时间：约八分钟；称谓：秦叔=他）\n3. 任务达成：秦叔「盘点官仓的存盐」\n4. 时间推进：约八分钟\n正文：",
+   "output": "闻人镜从老盐滩来到了官仓。他的精神值从10涨到了14。八分钟过去了,秦叔完成了任务「盘点官仓的存盐」。",
+   "outputTokens": 42,
+   "wallMs": 1038.3,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "闻人镜从老盐滩来到了官仓。八分钟过去了,秦叔完成了任务「盘点官仓的存盐」。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-c-salt:alternating-6minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：闻人镜=他）\n1. 位置：闻人镜 从老盐滩到官仓\n第2组（时间：无；称谓：秦叔=他）\n2. 任务达成：秦叔「盘点官仓的存盐」\n第3组（时间：约六分钟；称谓：柳拂衣=她）\n3. 位置：柳拂衣 从团盐棚到老盐滩\n4. 时间推进：约六分钟\n正文：",
+   "output": "闻人镜从老盐滩来到了官仓。秦叔办妥了任务「盘点官仓的存盐」。六分钟过去了,柳拂衣从团盐棚来到了老盐滩。",
+   "outputTokens": 48,
+   "wallMs": 1098.5,
+   "finishReason": "eos",
+   "pronounElicited": false,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "pronounUsed": false,
+     "problems": [],
+     "residue": "。。，。"
+    },
+    "pass": true
+   }
+  },
+  {
+   "rowId": "v2-c-salt:same-name:v0",
+   "input": "叙事生成任务。\n第1组（时间：无）\n1. 任务达成：秦叔「盘点官仓的存盐」\n第2组（时间：约四分钟）\n2. 任务达成：秦叔「码好盐埠头的盐包」\n3. 时间推进：约四分钟\n正文：",
+   "output": "秦叔完成了任务「盘点官仓的存盐」。四分钟过去了,秦叔完成了任务「码好盐埠头的盐包」。",
+   "outputTokens": 34,
+   "wallMs": 767.7,
+   "finishReason": "eos",
+   "pronounElicited": false,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G5_same_name_bare": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2"
+     ],
+     "pronounUsed": false,
+     "problems": [],
+     "residue": "。，。"
+    },
+    "pass": true
+   }
+  },
+  {
+   "rowId": "v2-c-salt:gender-unknown-7minute:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：小满=TA）\n1. 位置：小满 从风车埠到官仓\n2. 任务达成：小满「给风车上油」\n第2组（时间：约七分钟；称谓：秦叔=他）\n3. 现状：秦叔 已在官仓\n4. 时间推进：约七分钟\n正文：",
+   "output": "小满从风车埠来到了官仓。TA办妥了任务「给风车上油」。七分钟过去了,秦叔已在官仓。",
+   "outputTokens": 38,
+   "wallMs": 829.3,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "。。，。"
+    },
+    "pass": true
+   },
+   "ablatedOutput": "小满从风车埠来到了官仓。他办妥了任务「给风车上油」。七分钟过去了,秦叔已在官仓。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-c-salt:conflict-shared-goal:v0",
+   "input": "叙事生成任务。\n第1组（时间：无）\n1. 任务达成：秦叔「合力抬盐包」\n第2组（时间：约三分钟）\n2. 任务达成：秦叔「合力抬盐包」\n3. 时间推进：约三分钟\n正文：",
+   "output": "秦叔完成了任务「合力抬盐包」。三分钟过去了,秦叔完成了任务「合力抬盐包」。",
+   "outputTokens": 30,
+   "wallMs": 671.6,
+   "finishReason": "eos",
+   "pronounElicited": false,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G4_conflict_names": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2"
+     ],
+     "pronounUsed": false,
+     "problems": [],
+     "residue": "。，。"
+    },
+    "pass": true
+   }
+  },
+  {
+   "rowId": "v2-c-salt:time-lead-9:v0",
+   "input": "叙事生成任务。\n第1组（时间：约九分钟；称谓：闻人镜=他）\n1. 时间推进：约九分钟\n2. 位置：闻人镜 从老盐滩到官仓\n第2组（时间：无；称谓：秦叔=他）\n3. 任务达成：秦叔「盘点官仓的存盐」\n正文：",
+   "output": "九分钟过去了,闻人镜从老盐滩来到了官仓。秦叔完成了任务「盘点官仓的存盐」。",
+   "outputTokens": 32,
+   "wallMs": 698.1,
+   "finishReason": "eos",
+   "pronounElicited": false,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2"
+     ],
+     "pronounUsed": false,
+     "problems": [],
+     "residue": "，。。"
+    },
+    "pass": true
+   }
+  },
+  {
+   "rowId": "v2-c-salt:time-mid-9:v0",
+   "input": "叙事生成任务。\n第1组（时间：约九分钟；称谓：闻人镜=他）\n1. 位置：闻人镜 从老盐滩到官仓\n2. 时间推进：约九分钟\n第2组（时间：无；称谓：秦叔=他）\n3. 任务达成：秦叔「盘点官仓的存盐」\n正文：",
+   "output": "九分钟过去了,闻人镜从老盐滩来到了官仓。秦叔完成了任务「盘点官仓的存盐」。",
+   "outputTokens": 32,
+   "wallMs": 718.4,
+   "finishReason": "eos",
+   "pronounElicited": false,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2"
+     ],
+     "pronounUsed": false,
+     "problems": [],
+     "residue": "，。。"
+    },
+    "pass": true
+   }
+  },
+  {
+   "rowId": "v2-c-salt:time-tail-9:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：闻人镜=他）\n1. 位置：闻人镜 从老盐滩到官仓\n第2组（时间：约九分钟；称谓：秦叔=他）\n2. 任务达成：秦叔「盘点官仓的存盐」\n3. 时间推进：约九分钟\n正文：",
+   "output": "闻人镜从老盐滩来到了官仓。九分钟过去了,秦叔完成了任务「盘点官仓的存盐」。",
+   "outputTokens": 33,
+   "wallMs": 733.5,
+   "finishReason": "eos",
+   "pronounElicited": false,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2"
+     ],
+     "pronounUsed": false,
+     "problems": [],
+     "residue": "。，。"
+    },
+    "pass": true
+   }
+  },
+  {
+   "rowId": "v2-c-salt:group-order-0:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：秦叔=他）\n1. 位置：秦叔 从官仓到老盐滩\n第2组（时间：约五分钟；称谓：闻人镜=他）\n2. 任务达成：闻人镜「封存团盐棚的盐垛」\n3. 时间推进：约五分钟\n正文：",
+   "output": "秦叔从官仓来到了老盐滩。五分钟过去了,闻人镜办妥了任务「封存团盐棚的盐垛」。",
+   "outputTokens": 36,
+   "wallMs": 788.5,
+   "finishReason": "eos",
+   "pronounElicited": false,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2"
+     ],
+     "pronounUsed": false,
+     "problems": [],
+     "residue": "。，。"
+    },
+    "pass": true
+   }
+  },
+  {
+   "rowId": "v2-c-salt:personality-add:v0",
+   "input": "叙事生成任务。\n第1组（时间：约五分钟；称谓：闻人镜=他）\n1. 个性：闻人镜变得缄默\n2. 时间推进：约五分钟\n正文：",
+   "output": "五分钟过去了,闻人镜变得变得缄默。",
+   "outputTokens": 16,
+   "wallMs": 344.5,
+   "finishReason": "eos",
+   "pronounElicited": false,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1"
+     ],
+     "pronounUsed": false,
+     "problems": [],
+     "residue": "，。"
+    },
+    "pass": true
+   }
+  },
+  {
+   "rowId": "v2-c-salt:personality-modify:v0",
+   "input": "叙事生成任务。\n第1组（时间：约五分钟；称谓：闻人镜=他）\n1. 个性：闻人镜话多起来\n2. 时间推进：约五分钟\n正文：",
+   "output": "五分钟过去了,闻人镜变得话多起来。",
+   "outputTokens": 16,
+   "wallMs": 357.9,
+   "finishReason": "eos",
+   "pronounElicited": false,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1"
+     ],
+     "pronounUsed": false,
+     "problems": [],
+     "residue": "，。"
+    },
+    "pass": true
+   }
+  },
+  {
+   "rowId": "v2-c-salt:personality-remove:v0",
+   "input": "叙事生成任务。\n第1组（时间：约五分钟；称谓：闻人镜=他）\n1. 个性移除：闻人镜 不再保有「话多起来」\n2. 时间推进：约五分钟\n正文：",
+   "output": "五分钟过去了,闻人镜不再保有旧性子「话多起来」。",
+   "outputTokens": 21,
+   "wallMs": 460.1,
+   "finishReason": "eos",
+   "pronounElicited": false,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1"
+     ],
+     "pronounUsed": false,
+     "problems": [],
+     "residue": "，。"
+    },
+    "pass": true
+   }
+  },
+  {
+   "rowId": "v2-c-salt:new-relative:v0",
+   "input": "叙事生成任务。\n第1组（时间：约两分钟；称谓：闻人镜=他）\n1. 相对位置：闻人镜 现在在柳拂衣旁边\n2. 时间推进：约两分钟\n正文：",
+   "output": "两分钟过去了,闻人镜现在在柳拂衣旁边。",
+   "outputTokens": 18,
+   "wallMs": 402.7,
+   "finishReason": "eos",
+   "pronounElicited": false,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1"
+     ],
+     "pronounUsed": false,
+     "problems": [],
+     "residue": "，。"
+    },
+    "pass": true
+   }
+  },
+  {
+   "rowId": "v2-c-salt:new-slot:v0",
+   "input": "叙事生成任务。\n第1组（时间：约两分钟；称谓：闻人镜=他）\n1. 槽位：闻人镜 现在位于老盐滩的内格\n2. 时间推进：约两分钟\n正文：",
+   "output": "两分钟过去了,闻人镜现在位于老盐滩的内格。",
+   "outputTokens": 20,
+   "wallMs": 441.0,
+   "finishReason": "eos",
+   "pronounElicited": false,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1"
+     ],
+     "pronounUsed": false,
+     "problems": [],
+     "residue": "，。"
+    },
+    "pass": true
+   }
+  },
+  {
+   "rowId": "v2-c-salt:new-subtask:v0",
+   "input": "叙事生成任务。\n第1组（时间：约三分钟；称谓：闻人镜=他）\n1. 任务达成：闻人镜「收拢三畦盐卤」\n2. 新任务：闻人镜 接到「先借到长梯」（隶属「收拢三畦盐卤」）\n3. 时间推进：约三分钟\n正文：",
+   "output": "三分钟过去了,闻人镜完成了任务「收拢三畦盐卤」。他接到了新任务「先借到长梯」(隶属「收拢三畦盐卤」)",
+   "outputTokens": 44,
+   "wallMs": 987.0,
+   "finishReason": "eos",
+   "pronounElicited": true,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": false
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f2"
+     ],
+     "pronounUsed": true,
+     "problems": [],
+     "residue": "，。"
+    },
+    "pass": false
+   },
+   "ablatedOutput": "三分钟过去了,闻人镜完成了任务「收拢三畦盐卤」。",
+   "ablationDiffers": true
+  },
+  {
+   "rowId": "v2-c-salt:appearance-modify:v0",
+   "input": "叙事生成任务。\n第1组（时间：约四分钟；称谓：闻人镜=他）\n1. 外貌：闻人镜 换上了蓑衣\n2. 时间推进：约四分钟\n正文：",
+   "output": "四分钟过去了,闻人镜换上了蓑衣。",
+   "outputTokens": 16,
+   "wallMs": 360.3,
+   "finishReason": "eos",
+   "pronounElicited": false,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1"
+     ],
+     "pronounUsed": false,
+     "problems": [],
+     "residue": "，。"
+    },
+    "pass": true
+   }
+  },
+  {
+   "rowId": "v2-c-salt:appearance-remove:v0",
+   "input": "叙事生成任务。\n第1组（时间：约四分钟；称谓：闻人镜=他）\n1. 外貌移除：闻人镜 不再保有「换上了蓑衣」\n2. 时间推进：约四分钟\n正文：",
+   "output": "四分钟过去了,闻人镜不再保有旧样貌「换上了蓑衣」。",
+   "outputTokens": 22,
+   "wallMs": 485.1,
+   "finishReason": "eos",
+   "pronounElicited": false,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1"
+     ],
+     "pronounUsed": false,
+     "problems": [],
+     "residue": "，。"
+    },
+    "pass": true
+   }
+  },
+  {
+   "rowId": "v2-c-salt:co-presence:v0",
+   "input": "叙事生成任务。\n第1组（时间：无；称谓：闻人镜=他）\n1. 位置：闻人镜 从老盐滩到团盐棚\n第2组（时间：无；称谓：柳拂衣=她）\n2. 现状：柳拂衣 已在团盐棚\n第3组（时间：无）\n3. 现状：官秤 已在团盐棚\n第4组（时间：约五分钟）\n4. 现状：旧苫席 已在团盐棚\n5. 时间推进：约五分钟\n正文：",
+   "output": "闻人镜从老盐滩来到了团盐棚。柳拂衣已在团盐棚。五分钟过去了,旧苫席已在团盐棚。",
+   "outputTokens": 39,
+   "wallMs": 874.2,
+   "finishReason": "eos",
+   "pronounElicited": false,
+   "verdict": {
+    "gates": {
+     "G1_alignment": false,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1",
+      "f3",
+      "f4"
+     ],
+     "pronounUsed": false,
+     "problems": [
+      "uncovered:f2:positioned_at"
+     ],
+     "residue": "。。，。"
+    },
+    "pass": false
+   }
+  },
+  {
+   "rowId": "v2-c-salt:no-change-0:v0",
+   "input": "叙事生成任务。\n第1组（时间：约零分钟）\n1. 时间推进：约零分钟\n2. 无变化\n正文：",
+   "output": "前后大约零分钟。一切如旧。",
+   "outputTokens": 12,
+   "wallMs": 272.4,
+   "finishReason": "eos",
+   "pronounElicited": false,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1"
+     ],
+     "pronounUsed": false,
+     "problems": [],
+     "residue": "。。"
+    },
+    "pass": true
+   }
+  },
+  {
+   "rowId": "v2-c-salt:no-change-10:v0",
+   "input": "叙事生成任务。\n第1组（时间：约十分钟）\n1. 时间推进：约十分钟\n2. 无变化\n正文：",
+   "output": "前后大约十分钟。一切如旧。",
+   "outputTokens": 12,
+   "wallMs": 261.1,
+   "finishReason": "eos",
+   "pronounElicited": false,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1"
+     ],
+     "pronounUsed": false,
+     "problems": [],
+     "residue": "。。"
+    },
+    "pass": true
+   }
+  },
+  {
+   "rowId": "v2-c-salt:loc-appearance-1:v0",
+   "input": "叙事生成任务。\n第1组（时间：约六分钟）\n1. 外貌：团盐棚 檐下的灯笼蒙了层盐霜\n2. 时间推进：约六分钟\n正文：",
+   "output": "六分钟过去了,团盐棚的外观变了:檐下的灯笼蒙了层盐霜。",
+   "outputTokens": 26,
+   "wallMs": 575.9,
+   "finishReason": "eos",
+   "pronounElicited": false,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1"
+     ],
+     "pronounUsed": false,
+     "problems": [],
+     "residue": "，。"
+    },
+    "pass": true
+   }
+  },
+  {
+   "rowId": "v2-c-salt:loc-appearance-2:v0",
+   "input": "叙事生成任务。\n第1组（时间：约六分钟）\n1. 外貌：风车埠 檐下的灯笼蒙了层盐霜\n2. 时间推进：约六分钟\n正文：",
+   "output": "六分钟过去了,风车埠的外观变了:檐下的灯笼蒙了层盐霜。",
+   "outputTokens": 26,
+   "wallMs": 575.0,
+   "finishReason": "eos",
+   "pronounElicited": false,
+   "verdict": {
+    "gates": {
+     "G1_alignment": true,
+     "G2_no_fabrication": true,
+     "G3_time": true,
+     "G6_no_truncation": true
+    },
+    "align": {
+     "covered": [
+      "f0",
+      "f1"
+     ],
+     "pronounUsed": false,
+     "problems": [],
+     "residue": "，。"
+    },
+    "pass": true
+   }
+  }
+ ]
+}

@@ -1,0 +1,44 @@
+{
+ "purpose": "N4 v2 grouped-interface finetune (commit 2)",
+ "base": {
+  "dir": "base/randeng-t5-77m",
+  "sha256": "5cdc572109cf25914b43fede20a6949b5fbf50b3a091a9c445fac60059bf5557"
+ },
+ "data": {
+  "corpus": "corpus_v2/train-v2.jsonl",
+  "corpusSha256": "ba7464fb01408a4bf79e53cc0782fb254af27e96a6bf7bc7ce8b4ed2e420cdd0",
+  "trainPairs": 429,
+  "devHeldOut": 85,
+  "holdoutFrozen": {
+   "rows": 66,
+   "sha256": "897dfd706b4f916ca630473a588430a4cb9ca5b91271916eeafe5cac99bb56c5"
+  }
+ },
+ "hyper": {
+  "seed": 20261102,
+  "epochs": 12,
+  "steps": 648,
+  "batch": 8,
+  "lr": 0.0001,
+  "optimizer": "AdamW",
+  "precision": "fp32",
+  "maxInput": 160,
+  "maxOutput": 96,
+  "device": "NVIDIA GeForce RTX 4090 D"
+ },
+ "lossFirst5": [
+  4.2695,
+  2.9419,
+  2.9283,
+  2.2541,
+  2.2778
+ ],
+ "lossLast5": [
+  0.0308,
+  0.0224,
+  0.0115,
+  0.0155,
+  0.0427
+ ],
+ "wallSeconds": 37.1
+}
