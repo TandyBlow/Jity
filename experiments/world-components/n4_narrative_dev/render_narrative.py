@@ -81,7 +81,7 @@ def _fact_line(f, world):
     return f"{name}{json.dumps(f, ensure_ascii=False)}"
 
 
-def render_input(case, world):
+def _context_lines(case, world):
     ss = case["sceneState"]
     path = " → ".join(_loc_name(world, x) for x in ss["locationPath"])
     deepest = ss["locationPath"][-1]
@@ -99,6 +99,20 @@ def render_input(case, world):
         items.append(f"{_item_name(world, iid)}（{_item_appearance(world, iid)}）")
     if items:
         lines.append("可见物：" + "；".join(items) + "。")
+    return lines
+
+
+def _tail_lines():
+    return [
+        "视角：沈砚（第三人称限知）；只写沈砚的内心，他人只写可见动作。",
+        "要求：不要写任务标题、数值面板、具体时长、"
+        "‘性格/外貌’字段名；不要新增未列出的具名人物/物品/地点。",
+        "正文：",
+    ]
+
+
+def render_input(case, world):
+    lines = _context_lines(case, world)
     lines.append("这一拍：")
     n = 0
     has_time = False
@@ -112,13 +126,36 @@ def render_input(case, world):
             lines.append(f"{n}. {line}")
     if has_time:
         lines.append("时间：过去了一会儿（不写具体时长）。")
-    lines.append("视角：沈砚（第三人称限知）；只写沈砚的内心，"
-                 "他人只写可见动作。")
-    lines.append("要求：不要写任务标题、数值面板、具体时长、"
-                 "‘性格/外貌’字段名；不要新增未列出的具名人物/物品/地点。")
-    lines.append("正文：")
+    lines.extend(_tail_lines())
     return "\n".join(lines)
 
+
+def render_plan_input(case, plan, world):
+    """N4 input from the N2-selected N3 plan (grouped facts + per-group time)."""
+    if "refusal" in plan:
+        return "PLAN REFUSAL: " + json.dumps(plan["refusal"], ensure_ascii=False)
+    lines = _context_lines(case, world)
+    by_id = {f["factId"]: f for f in case["facts"]}
+    lines.append("这一拍（按叙述分组）：")
+    has_group_time = False
+    for s in plan["sentences"]:
+        lines.append(f"第 {s['index'] + 1} 组：")
+        n = 0
+        for fid in s["factIds"]:
+            f = by_id[fid]
+            if f["kind"] == "time":
+                continue
+            line = _fact_line(f, world)
+            if line:
+                n += 1
+                lines.append(f"{n}. {line}")
+        if s.get("time"):
+            has_group_time = True
+            lines.append("这一组之后，过去了一会儿（不写具体时长）。")
+    if not has_group_time and any(f["kind"] == "time" for f in case["facts"]):
+        lines.append("时间：过去了一会儿（不写具体时长）。")
+    lines.extend(_tail_lines())
+    return "\n".join(lines)
 
 def main():
     import json as _json

@@ -28,6 +28,13 @@
 #
 # This module is pure: no imports from the pipeline, no I/O, no labels — it
 # never reads answer keys or gold files.
+#
+# N4 narrative arm (opt-in, visible_other_actions=True): another entity's
+# co-located moved/outcome/appearance change is a `may` fact (selectable),
+# because the viewpoint can see the action. Task goal/status and inner
+# states remain invisible. The old v2 arm keeps the flag False, so its
+# only-others behaviour is unchanged; `outcome` is the surface action result
+# and is deliberately distinct from the internal `task_achieved`.
 
 RELATION_CN = {"under": "下方", "above": "上方", "beside": "旁边",
                "in_front_of": "前方", "behind": "后方"}
@@ -36,8 +43,12 @@ PERSPECTIVE_TYPES = {"protagonist", "location-limited", "omniscient"}
 
 # kinds an ordinary co-located observer can perceive happening
 OBSERVABLE_KINDS = {"moved", "positioned_at", "task_achieved", "subtask_added",
-                    "appearance_changed", "appearance_removed",
+                    "outcome", "appearance_changed", "appearance_removed",
                     "position_relative", "slot_changed"}
+# `outcome` is the SURFACE action result (resultText); `task_achieved` is the
+# internal task status/goal. They are deliberately distinct: another
+# character's visible action result is narratable, while another character's
+# task goal/status is not (the task-goal leak this branch is fixing).
 # inner states of OTHERS: never observable, whatever the location — the
 # anti-secret rule (co-location is not a visibility ground for these)
 INNER_KINDS = {"personality_changed", "personality_removed", "sanity_changed"}
@@ -46,6 +57,14 @@ MUST_POSITION_KINDS = {"moved", "positioned_at", "position_relative",
                        "slot_changed"}
 
 MAY_POLICIES = {"omit", "select"}
+
+# N4 narrative selection arm: visible actions/changes of OTHER characters are
+# narratable when co-located. This is opt-in because the frozen v2 arm keeps
+# its only-others policy. Internal task status/goals remain excluded.
+VISIBLE_OTHER_ACTION_KINDS = {
+    "moved", "positioned_at", "position_relative", "slot_changed",
+    "outcome", "appearance_changed", "appearance_removed",
+}
 
 
 def resolve_perspective(state: dict, subject_id: str | None = None,
@@ -158,7 +177,8 @@ def _omniscient_focus(facts: list) -> tuple[set, str]:
 
 def classify_facts(facts: list, perspective: dict,
                    subject_tasks: dict | None = None,
-                   may_policy: str = "select") -> dict:  # frozen rule-arm default
+                   may_policy: str = "select",
+                   visible_other_actions: bool = False) -> dict:
     """Classify every fact and apply the selection policy. Returns
     {"status": "ok"|"stopped", "stops", "refusals", "decisions",
      "selectedFactIds", "summary"}.
@@ -169,7 +189,11 @@ def classify_facts(facts: list, perspective: dict,
     with a recorded reason). The v2 product pipeline passes "omit" by
     default; "select" must be requested explicitly and is never evidence of
     narrative salience. Invisible facts are never selected under either
-    policy."""
+    policy.
+    visible_other_actions: opt-in N4 narrative arm. When True, another
+    entity's co-located moved/outcome/appearance change is `may`; task
+    goal/status and inner states stay invisible. Default False preserves
+    the frozen v2 arm."""
     if may_policy not in MAY_POLICIES:
         return {"status": "stopped",
                 "stops": [{"code": "unknown-may-policy", "policy": may_policy}],
@@ -199,7 +223,8 @@ def classify_facts(facts: list, perspective: dict,
                              "reason": f"未知事实种类 {kind}，拒绝分类（不猜测可见性）"})
             continue
         cls, sel_ground, reason = _classify_one(
-            fact, perspective, focus, goals, visible, ground)
+            fact, perspective, focus, goals, visible, ground,
+            visible_other_actions=visible_other_actions)
         if cls == "stop":
             stops.append({"factId": fid, "code": "must-without-visibility-ground",
                           "ground": ground, "reason": reason})
@@ -227,7 +252,8 @@ def classify_facts(facts: list, perspective: dict,
 
 
 def _classify_one(fact: dict, perspective: dict, focus: set,
-                  goals: set, visible: bool, ground: str) -> tuple:
+                  goals: set, visible: bool, ground: str,
+                  visible_other_actions: bool = False) -> tuple:
     """One fact's class + recorded ground + Chinese reason. Returns
     ("stop", ground, reason) when a must fact has no visibility ground."""
     fid, kind = fact.get("factId"), fact.get("kind")
@@ -252,6 +278,8 @@ def _classify_one(fact: dict, perspective: dict, focus: set,
         return "invisible", "only-others-nonfocus", \
             "全知视角下非焦点人物的事实，省略"
     if is_self:
+        if kind == "outcome":
+            return "must", "self-outcome", "视角人物自己的可见行动结果，必述"
         if kind == "task_achieved":
             return "must", "self-task", "视角人物自己的任务达成，必述"
         if kind == "subtask_added":
@@ -282,6 +310,8 @@ def _classify_one(fact: dict, perspective: dict, focus: set,
         if ground == "other-location":
             return "invisible", ground, "发生在视角人物感知范围之外，省略"
         return "invisible", ground, "视角人物不可见，省略"
+    if visible_other_actions and kind in VISIBLE_OTHER_ACTION_KINDS:
+        return "may", ground, "他人在同地的可见动作/变化，可写可省（N4 叙事选择臂）"
     if eid is None:
         # global facts (time / no_change) belong to no one
         return "may", ground, "全局事实，可写可省"
