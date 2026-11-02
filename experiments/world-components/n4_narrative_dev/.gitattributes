@@ -1,0 +1,3 @@
+# Review corpus files keep their authored LF bytes.
+*.jsonl -text
+*.json -text
