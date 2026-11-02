@@ -5,7 +5,9 @@
 # Grouping follows the frozen rubric semantics (the D2 rule arm's R1-R6,
 # reimplemented standalone so the registered module stays byte-stable):
 #   R1  entity buckets in first-appearance order
-#   R2  transitive merge via verbatim identical task goals
+#   R2  transitive merge via verbatim identical task goals AT THE SAME
+#       resolved location (a goal string alone is not evidence of one shared
+#       event; a missing location never merges)
 #   R2b same-name entities NEVER share a group (同名消歧: a merged group
 #       would force the narration to conflate two people)
 #   R3  a time fact joins the input-order predecessor's group (leading
@@ -60,10 +62,11 @@ def plan_v3(selected_facts: list, names: dict,
             entity_order.append(e)
         buckets[e].append(f["factId"])
     if not entity_order:
-        if any(f["kind"] == "time" for f in selected_facts) \
-                and any(f["kind"] == "no_change" for f in selected_facts):
-            # the no_change convention: a global no-change point with its
-            # time advance forms ONE group (no grants — nobody to address)
+        if any(f["kind"] == "no_change" for f in selected_facts):
+            # the no_change convention: a global no-change point forms ONE
+            # group, with its time advance when one exists (no grants — nobody
+            # to address). A lone no_change (root/no-time point) is still a
+            # legal plan: refusing it would drop the selected fact.
             fids = [f["factId"] for f in selected_facts]
             t = next((f for f in selected_facts if f["kind"] == "time"), None)
             return {"sentences": [{"index": 0, "factIds": fids,
@@ -97,16 +100,22 @@ def plan_v3(selected_facts: list, names: dict,
             e = parent[e]
         return e
 
+    # R2: merge only when the verbatim goal AND the resolved location agree.
+    # Keying by (goal, at) also lets three facts merge pairwise by place
+    # (A@L1, B@L2, C@L1 -> {A,C} and {B}); a missing location never merges.
     seen_goal = {}
     for f in selected_facts:
         if f["kind"] == "task_achieved":
-            g = f["goal"]
-            if g in seen_goal:
-                a, b = find(seen_goal[g]), find(f["entityId"])
+            g, at = f["goal"], f.get("at")
+            if not at or f.get("atAmbiguous"):
+                continue  # missing/ambiguous location is not shared-event evidence
+            key = (g, at)
+            if key in seen_goal:
+                a, b = find(seen_goal[key]), find(f["entityId"])
                 if a != b:
                     parent[a] = b
             else:
-                seen_goal[g] = f["entityId"]
+                seen_goal[key] = f["entityId"]
 
     groups, group_of_entity = [], {}
     for e in entity_order:
