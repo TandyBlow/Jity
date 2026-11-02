@@ -1,0 +1,1811 @@
+{
+ "purpose": "N4 scene sentence: environment + POV interiority",
+ "data": {
+  "train": 105,
+  "dev": 15,
+  "newWorldHoldout": 12
+ },
+ "hyper": {
+  "seed": 20261103,
+  "epochs": 150,
+  "batch": 8,
+  "lr": 0.0001,
+  "optimizer": "AdamW",
+  "precision": "fp32",
+  "maxInput": 256,
+  "maxOutput": 48,
+  "device": "NVIDIA GeForce RTX 4090 D"
+ },
+ "loss": {
+  "train": 0.0769,
+  "dev": 2.895,
+  "newWorld": 5.1322
+ },
+ "results": {
+  "train": {
+   "rows": 105,
+   "binding": 105,
+   "actionHit": 105,
+   "exactNormalized": 42
+  },
+  "dev": {
+   "rows": 15,
+   "binding": 15,
+   "actionHit": 15,
+   "exactNormalized": 1
+  },
+  "newWorld": {
+   "rows": 12,
+   "binding": 7,
+   "actionHit": 7,
+   "exactNormalized": 0
+  }
+ },
+ "history": [
+  {
+   "epoch": 25,
+   "devLoss": 1.9407
+  },
+  {
+   "epoch": 50,
+   "devLoss": 2.2139
+  },
+  {
+   "epoch": 75,
+   "devLoss": 2.1684
+  },
+  {
+   "epoch": 100,
+   "devLoss": 2.3642
+  },
+  {
+   "epoch": 125,
+   "devLoss": 2.2052
+  },
+  {
+   "epoch": 150,
+   "devLoss": 2.5237
+  }
+ ],
+ "wallSeconds": 112.8,
+ "samples": {
+  "train": [
+   {
+    "pairId": "sc:n4n-02",
+    "kind": "scene",
+    "signature": [
+     "loc_ferry|黎明|低潮，海风，湿冷|河口风|天刚亮"
+    ],
+    "output": "天刚亮,潮水退到木桩以下,浅滩露了出来。",
+    "target": "天刚亮，潮水退到木桩以下，浅滩露了出来。",
+    "exactNormalized": true,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-03",
+    "kind": "scene",
+    "signature": [
+     "loc_ferry|黄昏|雾，河面低|河口风|船灯"
+    ],
+    "output": "雾压着河面,船灯只剩一团模糊的黄。",
+    "target": "雾压着河面，船灯只剩一团模糊的黄。",
+    "exactNormalized": true,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-04",
+    "kind": "scene",
+    "signature": [
+     "loc_archive|午后|雨|无（室内）|铜灯"
+    ],
+    "output": "雨点落在天窗上,铜灯把长桌照出一圈暖光。",
+    "target": "雨点落在天窗上，铜灯把长桌照出一圈暖光。",
+    "exactNormalized": true,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-05",
+    "kind": "scene",
+    "signature": [
+     "loc_seawall|夜|大雾，浪高|迎海风|无（雾中）"
+    ],
+    "output": "大雾把石堤裹住,浪声从雾里一阵阵撞过来。",
+    "target": "大雾把石堤裹住，浪声从雾里一阵阵撞过来。",
+    "exactNormalized": true,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-06",
+    "kind": "scene",
+    "signature": [
+     "loc_alley|夜|雨|低（室内）|蜡烛"
+    ],
+    "output": "雨声压在窗外,蜡烛的火苗只有一小截。",
+    "target": "雨声压在窗外，蜡烛的火苗只有一小截。",
+    "exactNormalized": true,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-07",
+    "kind": "scene",
+    "signature": [
+     "loc_archive|夜|雨渐匀|无（室内）|铜灯"
+    ],
+    "output": "夜里的雨声匀下来了,铜灯照着一桌纸页。",
+    "target": "夜里的雨声匀下来了，铜灯照着一桌纸页。",
+    "exactNormalized": true,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-08",
+    "kind": "scene",
+    "signature": [
+     "loc_market|清晨|潮湿，白汽|低（棚下）|棚下散光"
+    ],
+    "output": "清晨的早市全是白汽,鱼鳞在石板上闪成碎光。",
+    "target": "清晨的早市全是白汽，鱼鳞在石板上闪成碎光。",
+    "exactNormalized": true,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-10",
+    "kind": "scene",
+    "signature": [
+     "loc_alley|夜|雨渐小|低（窄巷）|纸灯笼"
+    ],
+    "output": "雨小了些,纸灯笼的光落在湿石板上。",
+    "target": "雨小了些，纸灯笼的光落在湿石板上。",
+    "exactNormalized": true,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-11",
+    "kind": "scene",
+    "signature": [
+     "loc_seawall|夜|雾，风横，浪高|迎海风|警示灯"
+    ],
+    "output": "雾里只有警示灯亮着,风从堤面横着扫过去。",
+    "target": "雾里只有警示灯亮着，风从堤面横着扫过去。",
+    "exactNormalized": true,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-12",
+    "kind": "scene",
+    "signature": [
+     "loc_ferry|夜|雾|河口风|船灯"
+    ],
+    "output": "夜里雾更重,船灯只剩一团模糊的黄。",
+    "target": "夜里雾更重，船灯只剩一团模糊的黄。",
+    "exactNormalized": true,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-13",
+    "kind": "scene",
+    "signature": [
+     "loc_alley|入夜|小雨，湿冷|低（窄巷挡风）|纸灯笼"
+    ],
+    "output": "入夜的雨细得几乎没有声音,灯笼的光落在水沟里。",
+    "target": "入夜的雨细得几乎没有声音，灯笼的光落在水沟里。",
+    "exactNormalized": true,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-14",
+    "kind": "scene",
+    "signature": [
+     "loc_lighthouse|夜|海雾，海风|高（塔顶海风直吹）|铜框信号灯还亮着"
+    ],
+    "output": "海雾把塔顶围住,铜框信号灯还亮着。",
+    "target": "海雾把塔顶围住，铜框信号灯还亮着。",
+    "exactNormalized": true,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-15",
+    "kind": "scene",
+    "signature": [
+     "loc_ferry|黎明|雾，低潮|中（河口风）|船灯"
+    ],
+    "output": "黎明的水汽贴着栈桥,船灯在雾里只剩一点黄。",
+    "target": "黎明前雾还没散，船灯在水汽里晃。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-16",
+    "kind": "scene",
+    "signature": [
+     "loc_ferry|黎明|低潮，海风，湿冷|中（河口风）|退潮后的冷光"
+    ],
+    "output": "退潮后的浅滩泛着一层冷光,泥腥味很重。",
+    "target": "退潮后的浅滩泛着一层冷光，泥腥味很重。",
+    "exactNormalized": true,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-18",
+    "kind": "scene",
+    "signature": [
+     "loc_seawall|黄昏|雾，浪大|高（迎海风）|警示灯"
+    ],
+    "output": "浪一阵阵撞上石壁,白沫落在脚边的石阶上。",
+    "target": "黄昏的雾压着海堤，警示灯被风吹得发晃。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-19",
+    "kind": "scene",
+    "signature": [
+     "loc_market|清晨|白汽，人流|低（棚下）|帆布棚下"
+    ],
+    "output": "清晨的棚下全是蒸汽,人影在雾里挤来挤去。",
+    "target": "帆布棚下全是白汽，鱼鳞被鞋底踩得发亮。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-20",
+    "kind": "scene",
+    "signature": [
+     "loc_ferry|黄昏|雾，河面低|中（河口风）|船灯"
+    ],
+    "output": "雾从河面漫上栈桥,船灯在水汽里晃。",
+    "target": "雾从河面漫上栈桥，船灯在水汽里晃。",
+    "exactNormalized": true,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-21",
+    "kind": "scene",
+    "signature": [
+     "loc_alley|夜|雨，潮气重|低（窄巷挡风）|蜡烛"
+    ],
+    "output": "潮气从墙根漫上来,蜡烛烧得只剩半截。",
+    "target": "潮气从墙根漫上来，蜡烛烧得只剩半截。",
+    "exactNormalized": true,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-22",
+    "kind": "scene",
+    "signature": [
+     "loc_seawall|夜|雾，海风|高（迎海风）|警示灯"
+    ],
+    "output": "夜里的雾压着海堤,警示灯在风里发晃。",
+    "target": "夜里的雾压着海堤，警示灯在风里发晃。",
+    "exactNormalized": true,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-23",
+    "kind": "scene",
+    "signature": [
+     "loc_archive|午后|雨，天窗漏雨|无（室内）|铜灯"
+    ],
+    "output": "纸页和墨迹混着潮气,天窗的水滴落在石地上。",
+    "target": "纸页和墨迹混着潮气，天窗的水滴落在石地上。",
+    "exactNormalized": true,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-24",
+    "kind": "scene",
+    "signature": [
+     "loc_market|上午|晴，白汽散了一半|低（棚下）|帆布棚下"
+    ],
+    "output": "上午的白汽散了一半,帆布棚下只剩几只空筐。",
+    "target": "上午的白汽散了一半，帆布棚下只剩几只空筐。",
+    "exactNormalized": true,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-26",
+    "kind": "scene",
+    "signature": [
+     "loc_ferry|清晨|雾，水汽重|中（河口风）|船灯"
+    ],
+    "output": "清晨的雾还没散,船灯在水汽里透出一点黄。",
+    "target": "清晨的雾还没散，船灯在水汽里透出一点黄。",
+    "exactNormalized": true,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-27",
+    "kind": "scene",
+    "signature": [
+     "loc_archive|午后|雨刚停|无（室内）|铜灯"
+    ],
+    "output": "雨刚停,天窗上还挂着水珠,铜灯亮着。",
+    "target": "雨刚停，天窗上还挂着水珠，铜灯亮着。",
+    "exactNormalized": true,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-28",
+    "kind": "scene",
+    "signature": [
+     "loc_seawall|黄昏|雾，浪大|高（迎海风）|警示灯"
+    ],
+    "output": "浪头撞在石壁上,白沫还没退,风又扫过来。",
+    "target": "浪头撞在石壁上，白沫还没退，风又扫过来。",
+    "exactNormalized": true,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-29",
+    "kind": "scene",
+    "signature": [
+     "loc_lighthouse|夜|海雾，海风|高（塔顶海风直吹）|铜框信号灯"
+    ],
+    "output": "海雾把塔顶的轮廓磨淡了,铜框信号灯亮着。",
+    "target": "海雾把塔顶的轮廓磨淡了，铜框信号灯亮着。",
+    "exactNormalized": true,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-30",
+    "kind": "scene",
+    "signature": [
+     "loc_archive|午后|细雨，天窗漏雨|无（室内）|铜灯"
+    ],
+    "output": "细雨落在天窗上,铜灯的光晕里浮着一点灰尘。",
+    "target": "细雨落在天窗上，铜灯的光晕里浮着一点灰尘。",
+    "exactNormalized": true,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-31",
+    "kind": "scene",
+    "signature": [
+     "loc_market|清晨|白汽，湿冷|低（棚下）|帆布棚下"
+    ],
+    "output": "清晨的湿冷混着白汽,帆布棚下全是水光。",
+    "target": "清晨的湿冷混着白汽，帆布棚下全是水光。",
+    "exactNormalized": true,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-32",
+    "kind": "scene",
+    "signature": [
+     "loc_ferry|夜|雾，水汽重|中（河口风）|船灯"
+    ],
+    "output": "夜里的水汽压在河面上,船灯只剩一点光。",
+    "target": "夜里的水汽压在河面上，船灯只剩一点光。",
+    "exactNormalized": true,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-34",
+    "kind": "scene",
+    "signature": [
+     "loc_alley|夜|雨，潮气重|低（窄巷挡风）|蜡烛"
+    ],
+    "output": "窗外的雨不急不缓,屋里的光很小。",
+    "target": "雨声不急不缓，屋里的木头泛着湿气。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-35",
+    "kind": "scene",
+    "signature": [
+     "loc_lighthouse|黎明|海雾，湿冷|高（塔顶海风直吹）|雾里的塔身"
+    ],
+    "output": "黎明的海雾贴着石阶,塔身只剩一个轮廓。",
+    "target": "黎明的海雾贴着石阶，塔身只剩一个轮廓。",
+    "exactNormalized": true,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-36",
+    "kind": "scene",
+    "signature": [
+     "loc_lighthouse|夜|海雾，海风|高（塔顶海风直吹）|铜框信号灯"
+    ],
+    "output": "夜里的海风从塔顶灌下来,灯罩嗡嗡响。",
+    "target": "夜里的海风从塔顶灌下来，灯罩嗡嗡响。",
+    "exactNormalized": true,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-37",
+    "kind": "scene",
+    "signature": [
+     "loc_lighthouse|黄昏|海雾，湿冷|高（塔顶海风直吹）|铜框窗"
+    ],
+    "output": "黄昏的雾从窄窗渗进来,铜框上全是水汽。",
+    "target": "黄昏的雾从窄窗渗进来，旋梯里有股擦铜油的味道。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-38",
+    "kind": "scene",
+    "signature": [
+     "loc_ferry|黎明|雾，低潮|中（河口风）|船灯"
+    ],
+    "output": "黎明的水汽贴着栈桥,船灯在雾里只剩一点黄。",
+    "target": "低潮的栈桥露出湿泥，木桩上挂着水珠。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-39",
+    "kind": "scene",
+    "signature": [
+     "loc_ferry|黎明|低潮，海风，湿冷|中（河口风）|退潮后的冷光"
+    ],
+    "output": "退潮后的浅滩泛着一层冷光,泥腥味很重。",
+    "target": "黎明的水汽贴在脸上，滩面上留着水痕。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-40",
+    "kind": "scene",
+    "signature": [
+     "loc_archive|午后|雨，天窗漏雨|无（室内）|铜灯"
+    ],
+    "output": "午后屋里很暗,只有铜灯照着一桌摊开的纸页。",
+    "target": "天窗漏下的雨敲在石地上，铜灯的光晕里浮着细尘。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-42",
+    "kind": "scene",
+    "signature": [
+     "loc_market|清晨|白汽，人流|低（棚下）|帆布棚下"
+    ],
+    "output": "清晨的棚下全是蒸汽,人影在雾里挤来挤去。",
+    "target": "清晨的早市很挤，蒸汽混着鱼腥味。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-43",
+    "kind": "scene",
+    "signature": [
+     "loc_alley|午后|晴，石板半干|低（窄巷挡风）|纸灯笼"
+    ],
+    "output": "午后的光斜进巷子,石板上的水痕慢慢变浅。",
+    "target": "午后的光落在巷子里，石板还留着水痕。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-44",
+    "kind": "scene",
+    "signature": [
+     "loc_lighthouse|夜|海雾，海风|高（塔顶海风直吹）|铜框信号灯"
+    ],
+    "output": "夜里的海风从塔顶灌下来,灯罩嗡嗡响。",
+    "target": "塔顶的雾被海风吹得一阵一阵，灯罩里全是水汽。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-45",
+    "kind": "scene",
+    "signature": [
+     "loc_lighthouse|黄昏|海雾，湿冷|高（塔顶海风直吹）|铜框窗"
+    ],
+    "output": "黄昏的雾从窄窗渗进来,铜框上全是水汽。",
+    "target": "海雾贴着石阶，铜框窗只透进一线灰光。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-46",
+    "kind": "scene",
+    "signature": [
+     "loc_ferry|黎明|雾，低潮|中（河口风）|船灯"
+    ],
+    "output": "黎明的水汽贴着栈桥,船灯在雾里只剩一点黄。",
+    "target": "黎明的水汽贴着栈桥，船灯在雾里只剩一点黄。",
+    "exactNormalized": true,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-47",
+    "kind": "scene",
+    "signature": [
+     "loc_archive|午后|雨，天窗漏雨|无（室内）|铜灯"
+    ],
+    "output": "午后屋里很暗,只有铜灯照着一桌摊开的纸页。",
+    "target": "午后屋里很暗，只有铜灯照着一桌摊开的纸页。",
+    "exactNormalized": true,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-48",
+    "kind": "scene",
+    "signature": [
+     "loc_seawall|黄昏|雾，浪大|高（迎海风）|警示灯"
+    ],
+    "output": "浪一阵阵撞上石壁,白沫落在脚边的石阶上。",
+    "target": "浪一阵阵撞上石壁，白沫落在脚边的石阶上。",
+    "exactNormalized": true,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-50",
+    "kind": "scene",
+    "signature": [
+     "loc_lighthouse|夜|海雾，海风|高（塔顶海风直吹）|铜框信号灯"
+    ],
+    "output": "夜里的海风从塔顶灌下来,灯罩嗡嗡响。",
+    "target": "铜框信号灯亮着，光只落在脚边一小片石地上。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-51",
+    "kind": "scene",
+    "signature": [
+     "loc_lighthouse|黄昏|海雾，湿冷|高（塔顶海风直吹）|铜框窗"
+    ],
+    "output": "黄昏的雾从窄窗渗进来,铜框上全是水汽。",
+    "target": "黄昏的雾从窄窗渗进来，铜框上全是水汽。",
+    "exactNormalized": true,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-52",
+    "kind": "scene",
+    "signature": [
+     "loc_ferry|黎明|雾，低潮|中（河口风）|船灯"
+    ],
+    "output": "黎明的水汽贴着栈桥,船灯在雾里只剩一点黄。",
+    "target": "低潮的木桩露出湿泥，水面上浮着一层薄雾。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-53",
+    "kind": "scene",
+    "signature": [
+     "loc_archive|午后|雨，天窗漏雨|无（室内）|铜灯"
+    ],
+    "output": "午后屋里很暗,只有铜灯照着一桌摊开的纸页。",
+    "target": "雨声从屋顶压下来，纸页的边角被潮气泡得发软。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-54",
+    "kind": "scene",
+    "signature": [
+     "loc_seawall|黄昏|雾，浪大|高（迎海风）|警示灯"
+    ],
+    "output": "浪一阵阵撞上石壁,白沫落在脚边的石阶上。",
+    "target": "海风很硬，堤上的警示灯一直在晃。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-55",
+    "kind": "scene",
+    "signature": [
+     "loc_alley|夜|雨，潮气重|低（窄巷挡风）|蜡烛"
+    ],
+    "output": "窗外的雨不急不缓,屋里的光很小。",
+    "target": "夜里的巷子很潮，蜡烛的火苗照不亮墙角。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-56",
+    "kind": "scene",
+    "signature": [
+     "loc_lighthouse|夜|海雾，海风|高（塔顶海风直吹）|铜框信号灯"
+    ],
+    "output": "夜里的海风从塔顶灌下来,灯罩嗡嗡响。",
+    "target": "夜里的海风很硬，塔顶的灯罩一直嗡嗡响。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-58",
+    "kind": "scene",
+    "signature": [
+     "loc_ferry|黎明|低潮，海风，湿冷|中（河口风）|退潮后的冷光"
+    ],
+    "output": "退潮后的浅滩泛着一层冷光,泥腥味很重。",
+    "target": "退潮后的泥滩泛着冷光，海风吹得人发僵。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-59",
+    "kind": "scene",
+    "signature": [
+     "loc_archive|午后|雨，天窗漏雨|无（室内）|铜灯"
+    ],
+    "output": "午后屋里很暗,只有铜灯照着一桌摊开的纸页。",
+    "target": "铜灯的火苗很稳，天窗那一片玻璃全是水痕。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-60",
+    "kind": "scene",
+    "signature": [
+     "loc_seawall|黄昏|雾，浪大|高（迎海风）|警示灯"
+    ],
+    "output": "浪一阵阵撞上石壁,白沫落在脚边的石阶上。",
+    "target": "雾里看不清远处的浪，只听见石壁被撞得发闷。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-61",
+    "kind": "scene",
+    "signature": [
+     "loc_alley|夜|雨，潮气重|低（窄巷挡风）|蜡烛"
+    ],
+    "output": "窗外的雨不急不缓,屋里的光很小。",
+    "target": "雨声压在瓦上，屋里的木头泛着湿气。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-62",
+    "kind": "scene",
+    "signature": [
+     "loc_lighthouse|夜|海雾，海风|高（塔顶海风直吹）|铜框信号灯"
+    ],
+    "output": "夜里的海风从塔顶灌下来,灯罩嗡嗡响。",
+    "target": "雾贴着塔身往上爬，塔下的海面看不见了。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-63",
+    "kind": "scene",
+    "signature": [
+     "loc_ferry|黎明|雾，低潮|中（河口风）|船灯"
+    ],
+    "output": "黎明的水汽贴着栈桥,船灯在雾里只剩一点黄。",
+    "target": "船灯的光落在水面上，被雾揉成一小团。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-64",
+    "kind": "scene",
+    "signature": [
+     "loc_ferry|黎明|低潮，海风，湿冷|中（河口风）|退潮后的冷光"
+    ],
+    "output": "退潮后的浅滩泛着一层冷光,泥腥味很重。",
+    "target": "浅滩上留着水痕，泥腥味被风送过来。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-66",
+    "kind": "scene",
+    "signature": [
+     "loc_lighthouse|夜|海雾，海风|高（塔顶海风直吹）|铜框信号灯"
+    ],
+    "output": "夜里的海风从塔顶灌下来,灯罩嗡嗡响。",
+    "target": "海雾把塔顶的轮廓磨淡了，铜框信号灯亮着。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-67",
+    "kind": "scene",
+    "signature": [
+     "loc_archive|午后|雨，天窗漏雨|无（室内）|铜灯"
+    ],
+    "output": "午后屋里很暗,只有铜灯照着一桌摊开的纸页。",
+    "target": "纸页和墨迹混着潮气，天窗的水滴落在石地上。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-68",
+    "kind": "scene",
+    "signature": [
+     "loc_seawall|黄昏|雾，浪大|高（迎海风）|警示灯"
+    ],
+    "output": "浪一阵阵撞上石壁,白沫落在脚边的石阶上。",
+    "target": "黄昏的雾压着海堤，警示灯被风吹得发晃。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-69",
+    "kind": "scene",
+    "signature": [
+     "loc_market|清晨|白汽，人流|低（棚下）|帆布棚下"
+    ],
+    "output": "清晨的棚下全是蒸汽,人影在雾里挤来挤去。",
+    "target": "鱼鳞粘在湿石板上，被来往的鞋底踩得发亮。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-70",
+    "kind": "scene",
+    "signature": [
+     "loc_lighthouse|夜|海雾，海风|高（塔顶海风直吹）|铜框信号灯"
+    ],
+    "output": "夜里的海风从塔顶灌下来,灯罩嗡嗡响。",
+    "target": "夜里的海风从塔顶灌下来，灯罩嗡嗡响。",
+    "exactNormalized": true,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-71",
+    "kind": "scene",
+    "signature": [
+     "loc_archive|午后|雨，天窗漏雨|无（室内）|铜灯"
+    ],
+    "output": "午后屋里很暗,只有铜灯照着一桌摊开的纸页。",
+    "target": "天窗漏下的雨敲在石地上，铜灯的光晕里浮着细尘。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-72",
+    "kind": "scene",
+    "signature": [
+     "loc_seawall|黄昏|雾，浪大|高（迎海风）|警示灯"
+    ],
+    "output": "浪一阵阵撞上石壁,白沫落在脚边的石阶上。",
+    "target": "浪头撞在石壁上，白沫还没退，风又扫过来。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-74",
+    "kind": "scene",
+    "signature": [
+     "loc_lighthouse|夜|海雾，海风|高（塔顶海风直吹）|铜框信号灯"
+    ],
+    "output": "夜里的海风从塔顶灌下来,灯罩嗡嗡响。",
+    "target": "塔顶的雾被海风吹得一阵一阵，灯罩里全是水汽。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-75",
+    "kind": "scene",
+    "signature": [
+     "loc_archive|午后|雨，天窗漏雨|无（室内）|铜灯"
+    ],
+    "output": "午后屋里很暗,只有铜灯照着一桌摊开的纸页。",
+    "target": "午后屋里很暗，只有铜灯照着一桌摊开的纸页。",
+    "exactNormalized": true,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-76",
+    "kind": "scene",
+    "signature": [
+     "loc_seawall|黄昏|雾，浪大|高（迎海风）|警示灯"
+    ],
+    "output": "浪一阵阵撞上石壁,白沫落在脚边的石阶上。",
+    "target": "黄昏的雾贴着堤面走，警示灯的光被浪沫打散。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-77",
+    "kind": "scene",
+    "signature": [
+     "loc_lighthouse|夜|海雾，海风|高（塔顶海风直吹）|铜框信号灯"
+    ],
+    "output": "夜里的海风从塔顶灌下来,灯罩嗡嗡响。",
+    "target": "铜框信号灯亮着，光只落在脚边一小片石地上。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-78",
+    "kind": "scene",
+    "signature": [
+     "loc_archive|午后|雨，天窗漏雨|无（室内）|铜灯"
+    ],
+    "output": "午后屋里很暗,只有铜灯照着一桌摊开的纸页。",
+    "target": "雨声从屋顶压下来，纸页的边角被潮气泡得发软。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-79",
+    "kind": "scene",
+    "signature": [
+     "loc_seawall|黄昏|雾，浪大|高（迎海风）|警示灯"
+    ],
+    "output": "浪一阵阵撞上石壁,白沫落在脚边的石阶上。",
+    "target": "浪一阵阵撞上石壁，白沫落在脚边的石阶上。",
+    "exactNormalized": true,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-80",
+    "kind": "scene",
+    "signature": [
+     "loc_market|清晨|白汽，人流|低（棚下）|帆布棚下"
+    ],
+    "output": "清晨的棚下全是蒸汽,人影在雾里挤来挤去。",
+    "target": "早市的水声、脚步声和蒸汽混在一起。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-82",
+    "kind": "scene",
+    "signature": [
+     "loc_archive|午后|雨，天窗漏雨|无（室内）|铜灯"
+    ],
+    "output": "午后屋里很暗,只有铜灯照着一桌摊开的纸页。",
+    "target": "铜灯的火苗很稳，天窗那一片玻璃全是水痕。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-83",
+    "kind": "scene",
+    "signature": [
+     "loc_seawall|黄昏|雾，浪大|高（迎海风）|警示灯"
+    ],
+    "output": "浪一阵阵撞上石壁,白沫落在脚边的石阶上。",
+    "target": "海风很硬，堤上的警示灯一直在晃。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-84",
+    "kind": "scene",
+    "signature": [
+     "loc_market|清晨|白汽，人流|低（棚下）|帆布棚下"
+    ],
+    "output": "清晨的棚下全是蒸汽,人影在雾里挤来挤去。",
+    "target": "帆布棚下全是白汽，鱼鳞被鞋底踩得发亮。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-85",
+    "kind": "scene",
+    "signature": [
+     "loc_lighthouse|夜|海雾，海风|高（塔顶海风直吹）|铜框信号灯"
+    ],
+    "output": "夜里的海风从塔顶灌下来,灯罩嗡嗡响。",
+    "target": "雾贴着塔身往上爬，塔下的海面看不见了。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-86",
+    "kind": "scene",
+    "signature": [
+     "loc_archive|午后|雨，天窗漏雨|无（室内）|铜灯"
+    ],
+    "output": "午后屋里很暗,只有铜灯照着一桌摊开的纸页。",
+    "target": "雨点密密地敲着天窗，铜灯把长桌照出一圈暖光。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-87",
+    "kind": "scene",
+    "signature": [
+     "loc_seawall|黄昏|雾，浪大|高（迎海风）|警示灯"
+    ],
+    "output": "浪一阵阵撞上石壁,白沫落在脚边的石阶上。",
+    "target": "雾里看不清远处的浪，只听见石壁被撞得发闷。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-88",
+    "kind": "scene",
+    "signature": [
+     "loc_alley|入夜|小雨，湿冷|低（窄巷挡风）|纸灯笼"
+    ],
+    "output": "入夜的雨细得听不见,灯笼的光落在水洼里。",
+    "target": "入夜的雨细得听不见，灯笼的光落在水洼里。",
+    "exactNormalized": true,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-90",
+    "kind": "scene",
+    "signature": [
+     "loc_lighthouse|黎明|海雾，湿冷|高（塔顶海风直吹）|雾里的塔身"
+    ],
+    "output": "黎明的海雾贴着石阶,塔身只剩一个轮廓。",
+    "target": "天刚亮，雾水把石阶打得湿滑，铁链冰凉。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-91",
+    "kind": "scene",
+    "signature": [
+     "loc_lighthouse|夜|海雾，海风|高（塔顶海风直吹）|铜框信号灯"
+    ],
+    "output": "夜里的海风从塔顶灌下来,灯罩嗡嗡响。",
+    "target": "海雾把塔顶的轮廓磨淡了，铜框信号灯亮着。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-92",
+    "kind": "scene",
+    "signature": [
+     "loc_lighthouse|黄昏|海雾，湿冷|高（塔顶海风直吹）|铜框窗"
+    ],
+    "output": "黄昏的雾从窄窗渗进来,铜框上全是水汽。",
+    "target": "旋梯里的擦铜油味很重，墙上的油痕发暗。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-93",
+    "kind": "scene",
+    "signature": [
+     "loc_ferry|黎明|雾，低潮|中（河口风）|船灯"
+    ],
+    "output": "黎明的水汽贴着栈桥,船灯在雾里只剩一点黄。",
+    "target": "黎明前雾还没散，船灯在水汽里晃。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-94",
+    "kind": "scene",
+    "signature": [
+     "loc_ferry|黎明|低潮，海风，湿冷|中（河口风）|退潮后的冷光"
+    ],
+    "output": "退潮后的浅滩泛着一层冷光,泥腥味很重。",
+    "target": "天刚亮，滩面的水光一片一片地亮起来。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-95",
+    "kind": "scene",
+    "signature": [
+     "loc_archive|午后|雨，天窗漏雨|无（室内）|铜灯"
+    ],
+    "output": "午后屋里很暗,只有铜灯照着一桌摊开的纸页。",
+    "target": "纸页和墨迹混着潮气，天窗的水滴落在石地上。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-96",
+    "kind": "scene",
+    "signature": [
+     "loc_seawall|黄昏|雾，浪大|高（迎海风）|警示灯"
+    ],
+    "output": "浪一阵阵撞上石壁,白沫落在脚边的石阶上。",
+    "target": "黄昏的雾压着海堤，警示灯被风吹得发晃。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-98",
+    "kind": "scene",
+    "signature": [
+     "loc_alley|午后|晴，石板半干|低（窄巷挡风）|纸灯笼"
+    ],
+    "output": "午后的光斜进巷子,石板上的水痕慢慢变浅。",
+    "target": "纸灯笼在墙上晃，水沟里的积水映着光。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-99",
+    "kind": "scene",
+    "signature": [
+     "loc_lighthouse|夜|海雾，海风|高（塔顶海风直吹）|铜框信号灯"
+    ],
+    "output": "夜里的海风从塔顶灌下来,灯罩嗡嗡响。",
+    "target": "夜里的海风从塔顶灌下来，灯罩嗡嗡响。",
+    "exactNormalized": true,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-100",
+    "kind": "scene",
+    "signature": [
+     "loc_lighthouse|黄昏|海雾，湿冷|高（塔顶海风直吹）|铜框窗"
+    ],
+    "output": "黄昏的雾从窄窗渗进来,铜框上全是水汽。",
+    "target": "窄窗只透进一线灰光，石阶上湿得打滑。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-101",
+    "kind": "scene",
+    "signature": [
+     "loc_ferry|黎明|雾，低潮|中（河口风）|船灯"
+    ],
+    "output": "黎明的水汽贴着栈桥,船灯在雾里只剩一点黄。",
+    "target": "低潮的栈桥露出湿泥，木桩上挂着水珠。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-102",
+    "kind": "scene",
+    "signature": [
+     "loc_archive|午后|雨，天窗漏雨|无（室内）|铜灯"
+    ],
+    "output": "午后屋里很暗,只有铜灯照着一桌摊开的纸页。",
+    "target": "天窗漏下的雨敲在石地上，铜灯的光晕里浮着细尘。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-103",
+    "kind": "scene",
+    "signature": [
+     "loc_seawall|黄昏|雾，浪大|高（迎海风）|警示灯"
+    ],
+    "output": "浪一阵阵撞上石壁,白沫落在脚边的石阶上。",
+    "target": "浪头撞在石壁上，白沫还没退，风又扫过来。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-104",
+    "kind": "scene",
+    "signature": [
+     "loc_market|清晨|白汽，人流|低（棚下）|帆布棚下"
+    ],
+    "output": "清晨的棚下全是蒸汽,人影在雾里挤来挤去。",
+    "target": "清晨的棚下全是蒸汽，人影在雾里挤来挤去。",
+    "exactNormalized": true,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-106",
+    "kind": "scene",
+    "signature": [
+     "loc_lighthouse|黄昏|海雾，湿冷|高（塔顶海风直吹）|铜框窗"
+    ],
+    "output": "黄昏的雾从窄窗渗进来,铜框上全是水汽。",
+    "target": "海雾贴在半层的窗上，铜框冰凉。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-107",
+    "kind": "scene",
+    "signature": [
+     "loc_ferry|黎明|雾，低潮|中（河口风）|船灯"
+    ],
+    "output": "黎明的水汽贴着栈桥,船灯在雾里只剩一点黄。",
+    "target": "黎明的水汽贴着栈桥，船灯在雾里只剩一点黄。",
+    "exactNormalized": true,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-108",
+    "kind": "scene",
+    "signature": [
+     "loc_archive|午后|雨，天窗漏雨|无（室内）|铜灯"
+    ],
+    "output": "午后屋里很暗,只有铜灯照着一桌摊开的纸页。",
+    "target": "午后屋里很暗，只有铜灯照着一桌摊开的纸页。",
+    "exactNormalized": true,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-109",
+    "kind": "scene",
+    "signature": [
+     "loc_seawall|黄昏|雾，浪大|高（迎海风）|警示灯"
+    ],
+    "output": "浪一阵阵撞上石壁,白沫落在脚边的石阶上。",
+    "target": "黄昏的雾贴着堤面走，警示灯的光被浪沫打散。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-110",
+    "kind": "scene",
+    "signature": [
+     "loc_alley|入夜|小雨，湿冷|低（窄巷挡风）|纸灯笼"
+    ],
+    "output": "入夜的雨细得听不见,灯笼的光落在水洼里。",
+    "target": "窄巷挡着风，湿冷从石板下面透上来。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-111",
+    "kind": "scene",
+    "signature": [
+     "loc_alley|夜|雨，潮气重|低（窄巷挡风）|蜡烛"
+    ],
+    "output": "窗外的雨不急不缓,屋里的光很小。",
+    "target": "窗外的雨不急不缓，屋里的光很小。",
+    "exactNormalized": true,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-112",
+    "kind": "scene",
+    "signature": [
+     "loc_lighthouse|黎明|海雾，湿冷|高（塔顶海风直吹）|雾里的塔身"
+    ],
+    "output": "黎明的海雾贴着石阶,塔身只剩一个轮廓。",
+    "target": "黎明的雾把塔身裹住，只露出上半截石壁。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-114",
+    "kind": "scene",
+    "signature": [
+     "loc_lighthouse|黄昏|海雾，湿冷|高（塔顶海风直吹）|铜框窗"
+    ],
+    "output": "黄昏的雾从窄窗渗进来,铜框上全是水汽。",
+    "target": "黄昏的雾从窄窗渗进来，旋梯里有股擦铜油的味道。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-115",
+    "kind": "scene",
+    "signature": [
+     "loc_ferry|黎明|雾，低潮|中（河口风）|船灯"
+    ],
+    "output": "黎明的水汽贴着栈桥,船灯在雾里只剩一点黄。",
+    "target": "低潮的木桩露出湿泥，水面上浮着一层薄雾。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-116",
+    "kind": "scene",
+    "signature": [
+     "loc_ferry|黎明|低潮，海风，湿冷|中（河口风）|退潮后的冷光"
+    ],
+    "output": "退潮后的浅滩泛着一层冷光,泥腥味很重。",
+    "target": "低潮的栈桥露出发黑的木头，湿冷从脚底上来。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-117",
+    "kind": "scene",
+    "signature": [
+     "loc_archive|午后|雨，天窗漏雨|无（室内）|铜灯"
+    ],
+    "output": "午后屋里很暗,只有铜灯照着一桌摊开的纸页。",
+    "target": "雨声从屋顶压下来，纸页的边角被潮气泡得发软。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-118",
+    "kind": "scene",
+    "signature": [
+     "loc_seawall|黄昏|雾，浪大|高（迎海风）|警示灯"
+    ],
+    "output": "浪一阵阵撞上石壁,白沫落在脚边的石阶上。",
+    "target": "浪一阵阵撞上石壁，白沫落在脚边的石阶上。",
+    "exactNormalized": true,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-119",
+    "kind": "scene",
+    "signature": [
+     "loc_market|清晨|白汽，人流|低（棚下）|帆布棚下"
+    ],
+    "output": "清晨的棚下全是蒸汽,人影在雾里挤来挤去。",
+    "target": "鱼鳞粘在湿石板上，被来往的鞋底踩得发亮。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-120",
+    "kind": "scene",
+    "signature": [
+     "loc_alley|午后|晴，石板半干|低（窄巷挡风）|纸灯笼"
+    ],
+    "output": "午后的光斜进巷子,石板上的水痕慢慢变浅。",
+    "target": "午后的光斜进巷子，石板上的水痕慢慢变浅。",
+    "exactNormalized": true,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   }
+  ],
+  "dev": [
+   {
+    "pairId": "sc:n4n-01",
+    "kind": "scene",
+    "signature": [
+     "loc_lighthouse|夜|夜雾，海风|塔顶海风直吹|塔顶铜灯已点亮"
+    ],
+    "output": "夜里的海风从塔顶灌下来,灯罩嗡嗡响。",
+    "target": "夜雾把塔顶围住，铜灯的光只照到脚边。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-09",
+    "kind": "scene",
+    "signature": [
+     "loc_lighthouse|傍晚|海风|旋梯口海风|海光从窄窗照进来"
+    ],
+    "output": "旋梯口的海风从窄窗照进来,擦铜油味很重。",
+    "target": "傍晚的海光从窄窗照进旋梯，墙上的铜油痕发暗。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-17",
+    "kind": "scene",
+    "signature": [
+     "loc_archive|午后|雨，天窗漏雨|无（室内）|铜灯"
+    ],
+    "output": "午后屋里很暗,只有铜灯照着一桌摊开的纸页。",
+    "target": "雨点密密地敲着天窗，铜灯把长桌照出一圈暖光。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-25",
+    "kind": "scene",
+    "signature": [
+     "loc_lighthouse|夜|海雾，湿冷|高（塔顶海风直吹）|塔顶灯火"
+    ],
+    "output": "海雾贴着石阶,塔顶灯火一直在晃。",
+    "target": "海雾贴着塔身，塔顶的灯火在雾里发白。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-33",
+    "kind": "scene",
+    "signature": [
+     "loc_alley|入夜|小雨，湿冷|低（窄巷挡风）|纸灯笼"
+    ],
+    "output": "入夜的雨细得听不见,灯笼的光落在水洼里。",
+    "target": "巷子很窄，湿冷的风被石墙挡在外面。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-41",
+    "kind": "scene",
+    "signature": [
+     "loc_seawall|黄昏|雾，浪大|高（迎海风）|警示灯"
+    ],
+    "output": "浪一阵阵撞上石壁,白沫落在脚边的石阶上。",
+    "target": "黄昏的雾贴着堤面走，警示灯的光被浪沫打散。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-49",
+    "kind": "scene",
+    "signature": [
+     "loc_market|清晨|白汽，人流|低（棚下）|帆布棚下"
+    ],
+    "output": "清晨的棚下全是蒸汽,人影在雾里挤来挤去。",
+    "target": "清晨的棚下全是蒸汽，人影在雾里挤来挤去。",
+    "exactNormalized": true,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-57",
+    "kind": "scene",
+    "signature": [
+     "loc_ferry|黎明|雾，低潮|中（河口风）|船灯"
+    ],
+    "output": "黎明的水汽贴着栈桥,船灯在雾里只剩一点黄。",
+    "target": "河口的雾还没散，栈桥的木板上结着水珠。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-65",
+    "kind": "scene",
+    "signature": [
+     "loc_archive|午后|雨，天窗漏雨|无（室内）|铜灯"
+    ],
+    "output": "午后屋里很暗,只有铜灯照着一桌摊开的纸页。",
+    "target": "雨点密密地敲着天窗，铜灯把长桌照出一圈暖光。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-73",
+    "kind": "scene",
+    "signature": [
+     "loc_market|清晨|白汽，人流|低（棚下）|帆布棚下"
+    ],
+    "output": "清晨的棚下全是蒸汽,人影在雾里挤来挤去。",
+    "target": "帆布棚顶被蒸汽熏得发亮，鱼腥味很重。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-81",
+    "kind": "scene",
+    "signature": [
+     "loc_lighthouse|夜|海雾，海风|高（塔顶海风直吹）|铜框信号灯"
+    ],
+    "output": "夜里的海风从塔顶灌下来,灯罩嗡嗡响。",
+    "target": "夜里的海风很硬，塔顶的灯罩一直嗡嗡响。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-89",
+    "kind": "scene",
+    "signature": [
+     "loc_alley|夜|雨，潮气重|低（窄巷挡风）|蜡烛"
+    ],
+    "output": "窗外的雨不急不缓,屋里的光很小。",
+    "target": "潮气从门缝钻进来，烛火晃了两下又稳住。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-97",
+    "kind": "scene",
+    "signature": [
+     "loc_market|清晨|白汽，人流|低（棚下）|帆布棚下"
+    ],
+    "output": "清晨的棚下全是蒸汽,人影在雾里挤来挤去。",
+    "target": "清晨的早市很挤，蒸汽混着鱼腥味。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-105",
+    "kind": "scene",
+    "signature": [
+     "loc_lighthouse|夜|海雾，海风|高（塔顶海风直吹）|铜框信号灯"
+    ],
+    "output": "夜里的海风从塔顶灌下来,灯罩嗡嗡响。",
+    "target": "塔顶的雾被海风吹得一阵一阵，灯罩里全是水汽。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sc:n4n-113",
+    "kind": "scene",
+    "signature": [
+     "loc_lighthouse|夜|海雾，海风|高（塔顶海风直吹）|铜框信号灯"
+    ],
+    "output": "夜里的海风从塔顶灌下来,灯罩嗡嗡响。",
+    "target": "铜框信号灯亮着，光只落在脚边一小片石地上。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   }
+  ],
+  "newWorld": [
+   {
+    "pairId": "sch:n4w-01",
+    "kind": "scene",
+    "signature": [
+     "loc_inn|傍晚|雪，屋檐挂冰凌|低（石墙挡风）|炭火"
+    ],
+    "output": "傍晚的雪透出一层冰凌,木门透出一层冰凌。",
+    "target": "云关驿的屋檐挂满冰凌，门里透出炭火的暖光。",
+    "exactNormalized": false,
+    "binding": false,
+    "reasons": [
+     "repeated-noun",
+     "repetition"
+    ],
+    "actionHit": false
+   },
+   {
+    "pairId": "sch:n4w-02",
+    "kind": "scene",
+    "signature": [
+     "loc_inn|傍晚|雪|低（石墙挡风）|炭火"
+    ],
+    "output": "傍晚的雪压在石墙上,铜壶还留着水痕。",
+    "target": "雪落在石墙上，大堂里的炭盆烧得正旺。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sch:n4w-03",
+    "kind": "scene",
+    "signature": [
+     "loc_pass|夜|风，雪粒|高（山口横风）|马灯"
+    ],
+    "output": "夜里的雨不急不缓,马灯在瓦上晃。",
+    "target": "风把雪粒吹成横线，马棚里黑得很快。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sch:n4w-04",
+    "kind": "scene",
+    "signature": [
+     "loc_tower|黄昏|雪，风|高（台顶直风）|灰白天色"
+    ],
+    "output": "黄昏的雪被风吹得发晃,木梯被风吹得发晃。",
+    "target": "黄昏的天色发白，台顶的风把铃绳吹得乱响。",
+    "exactNormalized": false,
+    "binding": false,
+    "reasons": [
+     "repeated-noun",
+     "repetition"
+    ],
+    "actionHit": false
+   },
+   {
+    "pairId": "sch:n4w-05",
+    "kind": "scene",
+    "signature": [
+     "loc_inn|夜|风，窗纸轻响|低（石墙挡风）|油灯"
+    ],
+    "output": "夜里的木门挡着风,油灯在光里只有油灯的光。",
+    "target": "风让窗纸轻轻响，客房里的油灯很小。",
+    "exactNormalized": false,
+    "binding": false,
+    "reasons": [
+     "repeated-noun"
+    ],
+    "actionHit": false
+   },
+   {
+    "pairId": "sch:n4w-06",
+    "kind": "scene",
+    "signature": [
+     "loc_brook|清晨|雪，溪面结冰|中（溪谷风）|灰白"
+    ],
+    "output": "清晨的雪只透进水面,冰面被风吹得发僵。",
+    "target": "清晨的溪面结着薄冰，灰白的光从桥下透出来。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sch:n4w-07",
+    "kind": "scene",
+    "signature": [
+     "loc_pass|清晨|雪，横风|高（山口横风）|灰白"
+    ],
+    "output": "清晨的横风很硬,石堆上全是水痕。",
+    "target": "清晨的横风把经幡吹得笔直，雪粒打在石堆上。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sch:n4w-08",
+    "kind": "scene",
+    "signature": [
+     "loc_pass|午后|风，雪粒|高（山口横风）|门缝的光"
+    ],
+    "output": "午后光斜进石道,雪粒被风吹得发晃。",
+    "target": "门缝里透进一线光，干草堆在角落里。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sch:n4w-09",
+    "kind": "scene",
+    "signature": [
+     "loc_pass|夜|风，雪|高（山口横风）|马灯"
+    ],
+    "output": "夜里的雨不急不缓,风从山口横扫过来。",
+    "target": "风把雪吹进门缝，马灯的光落在干草上。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   },
+   {
+    "pairId": "sch:n4w-10",
+    "kind": "scene",
+    "signature": [
+     "loc_inn|夜|雪|低（石墙挡风）|炭火"
+    ],
+    "output": "夜里的木门挡着风,木门只透进石壁。",
+    "target": "夜里的雪很静，炭盆的火只剩一点暗红。",
+    "exactNormalized": false,
+    "binding": false,
+    "reasons": [
+     "repeated-noun"
+    ],
+    "actionHit": false
+   },
+   {
+    "pairId": "sch:n4w-11",
+    "kind": "scene",
+    "signature": [
+     "loc_inn|傍晚|雪停|低（石墙挡风）|炭火"
+    ],
+    "output": "夜里的木门露出湿泥,木门上挂着水珠。",
+    "target": "雪停在傍晚，屋檐不再滴水，炭盆还亮着。",
+    "exactNormalized": false,
+    "binding": false,
+    "reasons": [
+     "repeated-noun"
+    ],
+    "actionHit": false
+   },
+   {
+    "pairId": "sch:n4w-12",
+    "kind": "scene",
+    "signature": [
+     "loc_pass|清晨|雪，横风|高（山口横风）|灰白"
+    ],
+    "output": "清晨的横风很硬,石道上还留着水痕。",
+    "target": "清晨的横风把经幡吹得笔直，雪粒打在石堆上。",
+    "exactNormalized": false,
+    "binding": true,
+    "reasons": [],
+    "actionHit": true
+   }
+  ]
+ },
+ "notes": [
+  "Scene sentences may not narrate events, name people, or add places; the fact clauses come from the verbalizer step.",
+  "New-world pairs are zero-shot: unseen location, weather and props."
+ ]
+}

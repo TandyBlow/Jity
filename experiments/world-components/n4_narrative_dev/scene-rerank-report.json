@@ -10,8 +10,8 @@
   },
   "newWorld": {
    "rows": 12,
-   "rerankOk": 12,
-   "firstSampleOk": 12
+   "rerankOk": 11,
+   "firstSampleOk": 6
   }
  },
  "samples": {
@@ -21,27 +21,27 @@
     "key": "loc_lighthouse|夜|夜雾，海风|塔顶海风直吹|塔顶铜灯已点亮",
     "candidates": [
      {
-      "text": "夜里的海风从塔顶灌下来,灯罩嗡嗡响。",
+      "text": "夜里的海风很硬,塔顶铜灯罩一直嗡嗡响。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "夜里的海风从塔顶灌下来,灯罩嗡嗡响。",
+      "text": "夜里的海风很硬,塔顶铜灯罩一直嗡嗡响。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "夜里的海风从塔顶灌下来,铜灯罩嗡嗡响。",
+      "text": "夜里的海风很硬,塔顶铜灯罩一直嗡嗡响。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "夜里的海风从塔顶灌下来,灯罩嗡嗡响。",
+      "text": "夜里的海风很硬,塔顶铜灯罩一直嗡嗡响。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "夜里的海风从塔顶灌下来,灯罩嗡嗡响。",
+      "text": "夜里的海风很硬,塔顶铜灯罩一直嗡嗡响。",
       "ok": true,
       "reasons": []
      },
@@ -63,37 +63,41 @@
     "key": "loc_lighthouse|傍晚|海风|旋梯口海风|海光从窄窗照进来",
     "candidates": [
      {
-      "text": "傍晚的海风从窄窗照进来,铜框窗透进一线灰光。",
+      "text": "旋梯里的海风很硬,铜框窗只透进一线灰光。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "傍晚的海风从窄窗照进来,铜框窗透进一线灰光。",
+      "text": "傍晚的海风从窄窗照进来,铜框窗透出一层擦铜油的味道。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "傍晚的海风从窄窗照进来,铜框窗透进海光。",
+      "text": "窄窗照着铜框窗,铜框窗只透进一线灰光。",
+      "ok": false,
+      "reasons": [
+       "repeated-noun"
+      ]
+     },
+     {
+      "text": "旋梯口的海风从窄窗照进来,擦铜油味很重。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "傍晚的海风从窄窗照进来,铜框窗透进一线灰光。",
+      "text": "海风从窄窗照进来,铜框窗透出一层擦铜油的味道。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "傍晚的海风从窄窗照进来,铜框窗透进一线灰光。",
-      "ok": true,
-      "reasons": []
-     },
-     {
-      "text": "傍晚的海风从窄窗照进来,铜框窗透进一线灰光。",
-      "ok": true,
-      "reasons": []
+      "text": "窄窗照着铜框窗,铜框窗只透进一线灰光。",
+      "ok": false,
+      "reasons": [
+       "repeated-noun"
+      ]
      }
     ],
-    "output": "傍晚的海风从窄窗照进来,铜框窗透进一线灰光。",
+    "output": "旋梯口的海风从窄窗照进来,擦铜油味很重。",
     "target": "傍晚的海光从窄窗照进旋梯，墙上的铜油痕发暗。",
     "reasons": [],
     "foreignProps": [],
@@ -105,37 +109,37 @@
     "key": "loc_archive|午后|雨，天窗漏雨|无（室内）|铜灯",
     "candidates": [
      {
-      "text": "纸页和墨迹混着潮气,天窗的水滴落在石地上。",
+      "text": "天窗漏下的雨敲在石地上,铜灯的光晕里浮着细尘。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "雨点密密地敲着天窗,铜灯把长桌照出一圈暖光。",
+      "text": "午后屋里很暗,只有铜灯照着一桌摊开的纸页。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "纸页和墨迹混着潮气,天窗的水滴落在石地上。",
+      "text": "午后屋里很暗,只有铜灯照着一桌摊开的纸页。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "雨点密密地敲着天窗,铜灯把长桌照出一圈暖光。",
+      "text": "雨声从屋顶压下来,纸页的边角被潮气泡得发软。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "雨点密密地敲着天窗,铜灯把长桌照出一圈暖光。",
+      "text": "午后屋里很暗,只有铜灯照着一桌摊开的纸页。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "雨点密密地敲着天窗,铜灯把长桌照出一圈暖光。",
+      "text": "午后屋里很暗,只有铜灯照着一桌摊开的纸页。",
       "ok": true,
       "reasons": []
      }
     ],
-    "output": "雨点密密地敲着天窗,铜灯把长桌照出一圈暖光。",
+    "output": "天窗漏下的雨敲在石地上,铜灯的光晕里浮着细尘。",
     "target": "雨点密密地敲着天窗，铜灯把长桌照出一圈暖光。",
     "reasons": [],
     "foreignProps": [],
@@ -147,37 +151,41 @@
     "key": "loc_lighthouse|夜|海雾，湿冷|高（塔顶海风直吹）|塔顶灯火",
     "candidates": [
      {
-      "text": "海雾贴着石阶,塔顶灯火只透进一线灰光。",
+      "text": "海雾贴着石阶,塔顶灯火一直在晃。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "海雾贴着石阶,塔顶灯火只透进一线灰光。",
+      "text": "海雾贴着石阶,塔顶灯火只剩几只轮廓。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "海雾贴着石阶,塔顶灯火只透进一线灰光。",
+      "text": "海雾贴着石阶,塔顶灯火一直在晃。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "夜里的海雾贴着石阶,塔顶灯火只透进一线灰光。",
-      "ok": true,
-      "reasons": []
+      "text": "海雾把塔顶的轮廓磨淡了,塔顶灯火还没散,光只落在脚边一小片石地上。",
+      "ok": false,
+      "reasons": [
+       "repeated-noun"
+      ]
      },
      {
-      "text": "海雾贴着石阶,塔顶灯火只透进一线灰光。",
-      "ok": true,
-      "reasons": []
+      "text": "海雾把塔顶的轮廓磨淡了,塔顶灯火一直在晃。",
+      "ok": false,
+      "reasons": [
+       "repeated-noun"
+      ]
      },
      {
-      "text": "海雾贴着石阶,塔顶灯火只透进一线灰光。",
+      "text": "海雾贴着石阶,塔顶灯火一直在晃。",
       "ok": true,
       "reasons": []
      }
     ],
-    "output": "海雾贴着石阶,塔顶灯火只透进一线灰光。",
+    "output": "海雾贴着石阶,塔顶灯火一直在晃。",
     "target": "海雾贴着塔身，塔顶的灯火在雾里发白。",
     "reasons": [],
     "foreignProps": [],
@@ -189,37 +197,37 @@
     "key": "loc_alley|入夜|小雨，湿冷|低（窄巷挡风）|纸灯笼",
     "candidates": [
      {
-      "text": "入夜的雨细得几乎没有声音,灯笼的光落在水沟里。",
+      "text": "入夜的雨细得听不见,灯笼的光落在水洼里。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "入夜的雨细得几乎没有声音,灯笼的光落在水沟里。",
+      "text": "入夜的雨细得听不见,灯笼的光落在水洼里。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "入夜的雨细得几乎没有声音,灯笼的光落在水沟里。",
+      "text": "入夜的雨细得听不见,灯笼的光落在水洼里。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "入夜的雨细得几乎没有声音,灯笼的光落在水沟里。",
+      "text": "入夜的雨细得听不见,灯笼的光落在水洼里。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "巷子很窄,湿冷的风被石墙挡在外面。",
+      "text": "入夜的雨细得听不见,灯笼的光落在水洼里。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "入夜的雨细得几乎没有声音,灯笼的光落在水沟里。",
+      "text": "入夜的雨细得听不见,灯笼的光落在水洼里。",
       "ok": true,
       "reasons": []
      }
     ],
-    "output": "巷子很窄,湿冷的风被石墙挡在外面。",
+    "output": "入夜的雨细得听不见,灯笼的光落在水洼里。",
     "target": "巷子很窄，湿冷的风被石墙挡在外面。",
     "reasons": [],
     "foreignProps": [],
@@ -231,38 +239,38 @@
     "key": "loc_seawall|黄昏|雾，浪大|高（迎海风）|警示灯",
     "candidates": [
      {
-      "text": "黄昏的雾压着海堤,警示灯被风吹得发晃。",
+      "text": "浪一阵阵撞上石壁,白沫落在脚边的石阶上。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "浪头撞在石壁上,白沫还没退,风又扫过来。",
+      "text": "浪一阵阵撞上石壁,白沫落在脚边的石阶上。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "黄昏的雾压着海堤,警示灯被风吹得发晃。",
+      "text": "黄昏的雾贴着堤面走,警示灯的光被浪沫打散。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "浪头撞在石壁上,白沫还没退,风又扫过来。",
+      "text": "浪一阵阵撞上石壁,白沫落在脚边的石阶上。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "浪头撞在石壁上,白沫还没退,风又扫过来。",
+      "text": "黄昏的雾贴着堤面走,警示灯的光被浪沫打散。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "浪头撞在石壁上,白沫还没退,风又扫过来。",
+      "text": "黄昏的雾贴着堤面走,警示灯的光被浪沫打散。",
       "ok": true,
       "reasons": []
      }
     ],
-    "output": "黄昏的雾压着海堤,警示灯被风吹得发晃。",
-    "target": "黄昏的雾压着海堤，警示灯被风吹得发晃。",
+    "output": "浪一阵阵撞上石壁,白沫落在脚边的石阶上。",
+    "target": "黄昏的雾贴着堤面走，警示灯的光被浪沫打散。",
     "reasons": [],
     "foreignProps": [],
     "ok": true,
@@ -273,7 +281,12 @@
     "key": "loc_market|清晨|白汽，人流|低（棚下）|帆布棚下",
     "candidates": [
      {
-      "text": "清晨的早市很挤,蒸汽混着鱼腥味。",
+      "text": "清晨的棚下全是蒸汽,人影在雾里挤来挤去。",
+      "ok": true,
+      "reasons": []
+     },
+     {
+      "text": "清晨的棚下全是蒸汽,人影在雾里挤来挤去。",
       "ok": true,
       "reasons": []
      },
@@ -283,28 +296,23 @@
       "reasons": []
      },
      {
-      "text": "清晨的早市很挤,蒸汽混着鱼腥味。",
+      "text": "早市的水声、脚步声和蒸汽混在一起。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "清晨的早市很挤,蒸汽混着鱼腥味。",
+      "text": "清晨的棚下全是蒸汽,人影在雾里挤来挤去。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "清晨的早市很挤,蒸汽混着鱼腥味。",
-      "ok": true,
-      "reasons": []
-     },
-     {
-      "text": "清晨的早市很挤,蒸汽混着鱼腥味。",
+      "text": "清晨的棚下全是蒸汽,人影在雾里挤来挤去。",
       "ok": true,
       "reasons": []
      }
     ],
-    "output": "清晨的早市很挤,蒸汽混着鱼腥味。",
-    "target": "帆布棚下全是白汽，鱼鳞被鞋底踩得发亮。",
+    "output": "清晨的棚下全是蒸汽,人影在雾里挤来挤去。",
+    "target": "清晨的棚下全是蒸汽，人影在雾里挤来挤去。",
     "reasons": [],
     "foreignProps": [],
     "ok": true,
@@ -315,7 +323,17 @@
     "key": "loc_ferry|黎明|雾，低潮|中（河口风）|船灯",
     "candidates": [
      {
-      "text": "黎明前雾还没散,船灯在水汽里晃。",
+      "text": "黎明的水汽贴着栈桥,船灯在雾里只剩一点黄。",
+      "ok": true,
+      "reasons": []
+     },
+     {
+      "text": "黎明的水汽贴着栈桥,船灯在雾里只剩一点黄。",
+      "ok": true,
+      "reasons": []
+     },
+     {
+      "text": "黎明的水汽贴着栈桥,船灯在雾里只剩一点黄。",
       "ok": true,
       "reasons": []
      },
@@ -325,28 +343,18 @@
       "reasons": []
      },
      {
-      "text": "黎明前雾还没散,船灯在水汽里晃。",
+      "text": "黎明的水汽贴着栈桥,船灯在雾里只剩一点黄。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "黎明前雾还没散,船灯在水汽里晃。",
-      "ok": true,
-      "reasons": []
-     },
-     {
-      "text": "黎明前雾还没散,船灯在水汽里晃。",
-      "ok": true,
-      "reasons": []
-     },
-     {
-      "text": "黎明前雾还没散,船灯在水汽里晃。",
+      "text": "低潮的木桩露出湿泥,水面上浮着一层薄雾。",
       "ok": true,
       "reasons": []
      }
     ],
-    "output": "低潮的栈桥露出湿泥,木桩上挂着水珠。",
-    "target": "黎明前雾还没散，船灯在水汽里晃。",
+    "output": "黎明的水汽贴着栈桥,船灯在雾里只剩一点黄。",
+    "target": "河口的雾还没散，栈桥的木板上结着水珠。",
     "reasons": [],
     "foreignProps": [],
     "ok": true,
@@ -357,37 +365,37 @@
     "key": "loc_archive|午后|雨，天窗漏雨|无（室内）|铜灯",
     "candidates": [
      {
-      "text": "纸页和墨迹混着潮气,天窗的水滴落在石地上。",
+      "text": "天窗漏下的雨敲在石地上,铜灯的光晕里浮着细尘。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "雨点密密地敲着天窗,铜灯把长桌照出一圈暖光。",
+      "text": "雨声从屋顶压下来,纸页的边角被潮气泡得发软。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "雨点密密地敲着天窗,铜灯把长桌照出一圈暖光。",
+      "text": "雨声从屋顶压下来,纸页的边角被潮气泡得发软。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "雨点密密地敲着天窗,铜灯把长桌照出一圈暖光。",
+      "text": "天窗漏下的雨敲在石地上,铜灯的光晕里浮着细尘。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "雨点密密地敲着天窗,铜灯把长桌照出一圈暖光。",
+      "text": "铜灯的火苗很稳,天窗那一片玻璃全是水痕。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "雨点密密地敲着天窗,铜灯把长桌照出一圈暖光。",
+      "text": "雨声从屋顶压下来,纸页的边角被潮气泡得发软。",
       "ok": true,
       "reasons": []
      }
     ],
-    "output": "雨点密密地敲着天窗,铜灯把长桌照出一圈暖光。",
+    "output": "天窗漏下的雨敲在石地上,铜灯的光晕里浮着细尘。",
     "target": "雨点密密地敲着天窗，铜灯把长桌照出一圈暖光。",
     "reasons": [],
     "foreignProps": [],
@@ -399,7 +407,22 @@
     "key": "loc_market|清晨|白汽，人流|低（棚下）|帆布棚下",
     "candidates": [
      {
-      "text": "清晨的早市很挤,蒸汽混着鱼腥味。",
+      "text": "鱼鳞粘在湿石板上,被来往的鞋底踩得发亮。",
+      "ok": true,
+      "reasons": []
+     },
+     {
+      "text": "鱼鳞粘在湿石板上,被来往的鞋底踩得发亮。",
+      "ok": true,
+      "reasons": []
+     },
+     {
+      "text": "清晨的棚下全是蒸汽,人影在雾里挤来挤去。",
+      "ok": true,
+      "reasons": []
+     },
+     {
+      "text": "清晨的棚下全是蒸汽,人影在雾里挤来挤去。",
       "ok": true,
       "reasons": []
      },
@@ -409,28 +432,13 @@
       "reasons": []
      },
      {
-      "text": "清晨的早市很挤,蒸汽混着鱼腥味。",
-      "ok": true,
-      "reasons": []
-     },
-     {
-      "text": "清晨的早市很挤,蒸汽混着鱼腥味。",
-      "ok": true,
-      "reasons": []
-     },
-     {
-      "text": "清晨的早市很挤,蒸汽混着鱼腥味。",
-      "ok": true,
-      "reasons": []
-     },
-     {
-      "text": "清晨的早市很挤,蒸汽混着鱼腥味。",
+      "text": "清晨的棚下全是蒸汽,人影在雾里挤来挤去。",
       "ok": true,
       "reasons": []
      }
     ],
     "output": "帆布棚下全是白汽,鱼鳞被鞋底踩得发亮。",
-    "target": "帆布棚下全是白汽，鱼鳞被鞋底踩得发亮。",
+    "target": "帆布棚顶被蒸汽熏得发亮，鱼腥味很重。",
     "reasons": [],
     "foreignProps": [],
     "ok": true,
@@ -456,7 +464,7 @@
       "reasons": []
      },
      {
-      "text": "夜里的海风从塔顶灌下来,灯罩嗡嗡响。",
+      "text": "塔顶的雾被海风吹得一阵一阵,灯罩里全是水汽。",
       "ok": true,
       "reasons": []
      },
@@ -466,13 +474,13 @@
       "reasons": []
      },
      {
-      "text": "海雾把塔顶的轮廓磨淡了,铜框信号灯亮着。",
+      "text": "夜里的海风从塔顶灌下来,灯罩嗡嗡响。",
       "ok": true,
       "reasons": []
      }
     ],
     "output": "夜里的海风从塔顶灌下来,灯罩嗡嗡响。",
-    "target": "海雾把塔顶的轮廓磨淡了，铜框信号灯亮着。",
+    "target": "夜里的海风很硬，塔顶的灯罩一直嗡嗡响。",
     "reasons": [],
     "foreignProps": [],
     "ok": true,
@@ -483,7 +491,12 @@
     "key": "loc_alley|夜|雨，潮气重|低（窄巷挡风）|蜡烛",
     "candidates": [
      {
-      "text": "雨声不急不缓,屋里的木头泛着湿气。",
+      "text": "窗外的雨不急不缓,屋里的光很小。",
+      "ok": true,
+      "reasons": []
+     },
+     {
+      "text": "窗外的雨不急不缓,屋里的光很小。",
       "ok": true,
       "reasons": []
      },
@@ -493,28 +506,23 @@
       "reasons": []
      },
      {
-      "text": "雨声不急不缓,屋里的木头泛着湿气。",
+      "text": "窗外的雨不急不缓,屋里的光很小。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "雨声不急不缓,屋里的木头泛着湿气。",
+      "text": "夜里的巷子很潮,蜡烛的火苗照不亮墙角。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "雨声不急不缓,屋里的木头泛着湿气。",
-      "ok": true,
-      "reasons": []
-     },
-     {
-      "text": "雨声不急不缓,屋里的木头泛着湿气。",
+      "text": "窗外的雨不急不缓,屋里的光很小。",
       "ok": true,
       "reasons": []
      }
     ],
-    "output": "雨声不急不缓,屋里的木头泛着湿气。",
-    "target": "潮气从墙根漫上来，蜡烛烧得只剩半截。",
+    "output": "夜里的巷子很潮,蜡烛的火苗照不亮墙角。",
+    "target": "潮气从门缝钻进来，烛火晃了两下又稳住。",
     "reasons": [],
     "foreignProps": [],
     "ok": true,
@@ -525,7 +533,7 @@
     "key": "loc_market|清晨|白汽，人流|低（棚下）|帆布棚下",
     "candidates": [
      {
-      "text": "清晨的早市很挤,蒸汽混着鱼腥味。",
+      "text": "清晨的棚下全是蒸汽,人影在雾里挤来挤去。",
       "ok": true,
       "reasons": []
      },
@@ -535,12 +543,12 @@
       "reasons": []
      },
      {
-      "text": "清晨的早市很挤,蒸汽混着鱼腥味。",
+      "text": "早市的水声、脚步声和蒸汽混在一起。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "清晨的早市很挤,蒸汽混着鱼腥味。",
+      "text": "清晨的棚下全是蒸汽,人影在雾里挤来挤去。",
       "ok": true,
       "reasons": []
      },
@@ -567,7 +575,7 @@
     "key": "loc_lighthouse|夜|海雾，海风|高（塔顶海风直吹）|铜框信号灯",
     "candidates": [
      {
-      "text": "夜里的海风从塔顶灌下来,灯罩嗡嗡响。",
+      "text": "雾贴着塔身往上爬,塔下的海面看不见了。",
       "ok": true,
       "reasons": []
      },
@@ -577,28 +585,28 @@
       "reasons": []
      },
      {
-      "text": "夜里的海风从塔顶灌下来,灯罩嗡嗡响。",
+      "text": "塔顶的雾被海风吹得一阵一阵,灯罩里全是水汽。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "夜里的海风从塔顶灌下来,灯罩嗡嗡响。",
+      "text": "夜里的海风很硬,塔顶的灯罩一直嗡嗡响。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "夜里的海风从塔顶灌下来,灯罩嗡嗡响。",
+      "text": "夜里的海风很硬,塔顶的灯罩一直嗡嗡响。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "夜里的海风从塔顶灌下来,灯罩嗡嗡响。",
+      "text": "雾贴着塔身往上爬,塔下的海面看不见了。",
       "ok": true,
       "reasons": []
      }
     ],
     "output": "夜里的海风从塔顶灌下来,灯罩嗡嗡响。",
-    "target": "海雾把塔顶的轮廓磨淡了，铜框信号灯亮着。",
+    "target": "塔顶的雾被海风吹得一阵一阵，灯罩里全是水汽。",
     "reasons": [],
     "foreignProps": [],
     "ok": true,
@@ -609,12 +617,17 @@
     "key": "loc_lighthouse|夜|海雾，海风|高（塔顶海风直吹）|铜框信号灯",
     "candidates": [
      {
-      "text": "夜里的海风从塔顶灌下来,灯罩嗡嗡响。",
+      "text": "塔顶的雾被海风吹得一阵一阵,灯罩里全是水汽。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "夜里的海风从塔顶灌下来,灯罩嗡嗡响。",
+      "text": "铜框信号灯亮着,光只落在脚边一小片石地上。",
+      "ok": true,
+      "reasons": []
+     },
+     {
+      "text": "夜里的海风很硬,塔顶的灯罩一直嗡嗡响。",
       "ok": true,
       "reasons": []
      },
@@ -632,15 +645,10 @@
       "text": "夜里的海风从塔顶灌下来,灯罩嗡嗡响。",
       "ok": true,
       "reasons": []
-     },
-     {
-      "text": "夜里的海风从塔顶灌下来,灯罩嗡嗡响。",
-      "ok": true,
-      "reasons": []
      }
     ],
-    "output": "夜里的海风从塔顶灌下来,灯罩嗡嗡响。",
-    "target": "夜里的海风从塔顶灌下来，灯罩嗡嗡响。",
+    "output": "塔顶的雾被海风吹得一阵一阵,灯罩里全是水汽。",
+    "target": "铜框信号灯亮着，光只落在脚边一小片石地上。",
     "reasons": [],
     "foreignProps": [],
     "ok": true,
@@ -653,83 +661,81 @@
     "key": "loc_inn|傍晚|雪，屋檐挂冰凌|低（石墙挡风）|炭火",
     "candidates": [
      {
-      "text": "傍晚的雪被石墙挡在外面,屋檐还留着水痕。",
+      "text": "傍晚的雪从石墙挡下来,冰凌从石墙透上来。",
+      "ok": false,
+      "reasons": [
+       "repeated-noun"
+      ]
+     },
+     {
+      "text": "傍晚的雪透进石墙,木门透出一层薄雾。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "傍晚的雪被石墙挡在外面,屋檐还留着水痕。",
+      "text": "傍晚的雪只透进石墙,木门上挂着冰凌。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "傍晚的雪从石墙挡下来,屋檐还留着水痕。",
+      "text": "傍晚的雪只透进石墙,木门上全是水汽。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "傍晚的雪被石墙挡在外面,屋檐还留着水痕。",
+      "text": "傍晚的雪只透进石墙,木门上挂着冰凌。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "傍晚的雪被石墙挡在外面,屋檐还留着水痕。",
-      "ok": true,
-      "reasons": []
-     },
-     {
-      "text": "傍晚的雪从石墙挡过来,屋檐还留着水痕。",
+      "text": "傍晚的雪透进石壁,木门透出一层薄雾。",
       "ok": true,
       "reasons": []
      }
     ],
-    "output": "傍晚的雪被石墙挡在外面,屋檐还留着水痕。",
+    "output": "傍晚的雪透进石墙,木门透出一层薄雾。",
     "target": "云关驿的屋檐挂满冰凌，门里透出炭火的暖光。",
     "reasons": [],
     "foreignProps": [],
     "ok": true,
-    "firstSampleOk": true
+    "firstSampleOk": false
    },
    {
     "pairId": "sch:n4w-02",
     "key": "loc_inn|傍晚|雪|低（石墙挡风）|炭火",
     "candidates": [
      {
-      "text": "傍晚的雪还没退,木门挡在外面。",
+      "text": "傍晚的雪很硬,木门上还挂着水珠,铜壶烧得发软。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "傍晚的雪还没退,木门挡在外面。",
+      "text": "傍晚的雪压在石墙上,铜壶还留着水痕。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "傍晚的雪还没退,木门上挂着水珠,铜壶冒着灰尘。",
+      "text": "傍晚的雪很硬,木门那一片冰凉。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "傍晚的雪还没退,木门上挂着水珠,铜壶还没退,铜壶还没退,火壶还留着水痕。",
-      "ok": false,
-      "reasons": [
-       "repetition"
-      ]
-     },
-     {
-      "text": "傍晚的雪还没散,木门上挂着水珠,铜壶冒着灰尘。",
+      "text": "傍晚的雪还没散,炭火的火苗照不亮墙角。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "傍晚的雪还没退,木门上还挂着水珠,铜壶还没退,火壶还没退,石墙挡在外面。",
-      "ok": false,
-      "reasons": [
-       "repetition"
-      ]
+      "text": "傍晚的雪还没散,铁壶烧得只剩半截。",
+      "ok": true,
+      "reasons": []
+     },
+     {
+      "text": "傍晚的雪还没散,木门上还挂着水珠。",
+      "ok": true,
+      "reasons": []
      }
     ],
-    "output": "傍晚的雪还没退,木门上挂着水珠,铜壶冒着灰尘。",
+    "output": "傍晚的雪很硬,木门上还挂着水珠,铜壶烧得发软。",
     "target": "雪落在石墙上，大堂里的炭盆烧得正旺。",
     "reasons": [],
     "foreignProps": [],
@@ -741,37 +747,46 @@
     "key": "loc_pass|夜|风，雪粒|高（山口横风）|马灯",
     "candidates": [
      {
-      "text": "夜里的雪粒压在山上,马灯在石道上晃。",
+      "text": "夜里的风从山口横扫过来,雪粒被风吹得发晃。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "夜里的雪粒压在山上,马灯把石道围住,马灯亮着。",
+      "text": "夜里的雨不急不缓,马灯在风里发晃。",
+      "ok": false,
+      "reasons": [
+       "weather-mismatch"
+      ]
+     },
+     {
+      "text": "夜里的雨不急不缓,风口岭里的雪粒被风吹得发晃。",
+      "ok": false,
+      "reasons": [
+       "weather-mismatch",
+       "repeated-noun"
+      ]
+     },
+     {
+      "text": "夜里的雨不急不缓,马灯在风里只有一小截。",
+      "ok": false,
+      "reasons": [
+       "weather-mismatch"
+      ]
+     },
+     {
+      "text": "夜里的巷子很暗,墙上的雪痕发暗。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "夜里的雪粒压在山上,马灯还留着水痕。",
-      "ok": true,
-      "reasons": []
-     },
-     {
-      "text": "夜里的雪粒压在山上,马灯把石道照出一圈暖光。",
-      "ok": true,
-      "reasons": []
-     },
-     {
-      "text": "夜里的雪粒压在山上,马灯在石道里晃。",
-      "ok": true,
-      "reasons": []
-     },
-     {
-      "text": "夜里的雪粒压在山上,马灯在石堆里晃。",
-      "ok": true,
-      "reasons": []
+      "text": "夜里的雨敲在石道上,雪粒被风吹得发晃。",
+      "ok": false,
+      "reasons": [
+       "weather-mismatch"
+      ]
      }
     ],
-    "output": "夜里的雪粒压在山上,马灯在石道上晃。",
+    "output": "夜里的风从山口横扫过来,雪粒被风吹得发晃。",
     "target": "风把雪粒吹成横线，马棚里黑得很快。",
     "reasons": [],
     "foreignProps": [],
@@ -783,125 +798,139 @@
     "key": "loc_tower|黄昏|雪，风|高（台顶直风）|灰白天色",
     "candidates": [
      {
-      "text": "黄昏的雾从台顶灌下来,铃绳被风吹得发晃。",
+      "text": "黄昏的雪被风吹得发晃,木梯被风吹得发晃。",
+      "ok": false,
+      "reasons": [
+       "repeated-noun",
+       "repetition"
+      ]
+     },
+     {
+      "text": "黄昏的雪被风吹得发晃,风从台顶灌下来。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "黄昏的雾从台顶灌下来,铃绳被风吹得发晃。",
+      "text": "黄昏的雪被风吹得发晃,只露出上半截石壁。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "黄昏的雾从台顶灌下来,铃绳被风吹得发晃。",
+      "text": "黄昏的雨压在台上,铜铃架被风吹得发晃。",
+      "ok": false,
+      "reasons": [
+       "weather-mismatch"
+      ]
+     },
+     {
+      "text": "黄昏的雪被风吹得发晃,风又扫过来。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "黄昏的雾从台顶灌下来,铃绳被风吹得发晃。",
-      "ok": true,
-      "reasons": []
-     },
-     {
-      "text": "黄昏的雾从台顶灌下来,铃绳被风吹得发晃。",
-      "ok": true,
-      "reasons": []
-     },
-     {
-      "text": "黄昏的雾从台顶灌下来,铃绳被风吹得发晃。",
+      "text": "黄昏的雪被风吹得发晃,风又扫过来。",
       "ok": true,
       "reasons": []
      }
     ],
-    "output": "黄昏的雾从台顶灌下来,铃绳被风吹得发晃。",
+    "output": "黄昏的雪被风吹得发晃,风从台顶灌下来。",
     "target": "黄昏的天色发白，台顶的风把铃绳吹得乱响。",
     "reasons": [],
     "foreignProps": [],
     "ok": true,
-    "firstSampleOk": true
+    "firstSampleOk": false
    },
    {
     "pairId": "sch:n4w-05",
     "key": "loc_inn|夜|风，窗纸轻响|低（石墙挡风）|油灯",
     "candidates": [
      {
-      "text": "夜里的雾从墙挡下来,木门只透进一线灰光。",
+      "text": "夜里的木门挡着风,油灯在光里只有油灯的光。",
+      "ok": false,
+      "reasons": [
+       "repeated-noun"
+      ]
+     },
+     {
+      "text": "夜里的木门挡着风,油灯在光里只有油灯的光。",
+      "ok": false,
+      "reasons": [
+       "repeated-noun"
+      ]
+     },
+     {
+      "text": "夜里的木门只有油灯的光,只有石墙挡着风。",
+      "ok": false,
+      "reasons": [
+       "repeated-noun"
+      ]
+     },
+     {
+      "text": "夜里的木门挡着风,油灯在风里只有油灯的光。",
+      "ok": false,
+      "reasons": [
+       "repeated-noun"
+      ]
+     },
+     {
+      "text": "夜里的木门挡着风,油灯的光被风吹得发晃。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "夜里的风从石墙挡进来,油灯的光落在石墙上。",
-      "ok": true,
-      "reasons": []
-     },
-     {
-      "text": "夜里的风从石墙挡进来,油灯的光被石墙挡在外面。",
-      "ok": true,
-      "reasons": []
-     },
-     {
-      "text": "夜里的风从石墙挡过来,油灯的光被石墙挡在外面。",
-      "ok": true,
-      "reasons": []
-     },
-     {
-      "text": "夜里的风从石墙挡下来,油灯的光被风吹得发晃。",
-      "ok": true,
-      "reasons": []
-     },
-     {
-      "text": "夜里的风从石墙挡进来,油灯的光被石墙挡在外面。",
-      "ok": true,
-      "reasons": []
+      "text": "夜里的木门挡着风,油灯在雾里只有油灯的光。",
+      "ok": false,
+      "reasons": [
+       "repeated-noun"
+      ]
      }
     ],
-    "output": "夜里的雾从墙挡下来,木门只透进一线灰光。",
+    "output": "夜里的木门挡着风,油灯的光被风吹得发晃。",
     "target": "风让窗纸轻轻响，客房里的油灯很小。",
     "reasons": [],
     "foreignProps": [],
     "ok": true,
-    "firstSampleOk": true
+    "firstSampleOk": false
    },
    {
     "pairId": "sch:n4w-06",
     "key": "loc_brook|清晨|雪，溪面结冰|中（溪谷风）|灰白",
     "candidates": [
      {
-      "text": "清晨的雪还留着水痕,石桥上挂着水珠。",
+      "text": "清晨的雪还没散,冰面被风吹得发僵。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "清晨的雪还留着水痕,冰面上还留着水痕。",
+      "text": "清晨的雪还没散,冰面被风吹得发僵。",
+      "ok": true,
+      "reasons": []
+     },
+     {
+      "text": "清晨的雪只透进水面,冰面的边角被雪光打散。",
+      "ok": true,
+      "reasons": []
+     },
+     {
+      "text": "清晨的雪只透进水面,冰面被风吹得发僵。",
+      "ok": true,
+      "reasons": []
+     },
+     {
+      "text": "清晨的雪只透进水面,冰面被风吹得发僵。",
+      "ok": true,
+      "reasons": []
+     },
+     {
+      "text": "清晨的雪被冰面揉成一小团,冰面被风吹得发僵。",
       "ok": false,
       "reasons": [
-       "repetition"
-      ]
-     },
-     {
-      "text": "清晨的雪面结冰了些,冰面被鞋底踩得发亮。",
-      "ok": true,
-      "reasons": []
-     },
-     {
-      "text": "清晨的雪还留着水痕,石桥上挂着水珠。",
-      "ok": true,
-      "reasons": []
-     },
-     {
-      "text": "清晨的雪还留着水痕,冰面被鞋底踩得发亮。",
-      "ok": true,
-      "reasons": []
-     },
-     {
-      "text": "清晨的雪还留着水痕,冰面上还留着水痕。",
-      "ok": false,
-      "reasons": [
-       "repetition"
+       "bad-bei-agent",
+       "repeated-noun"
       ]
      }
     ],
-    "output": "清晨的雪还留着水痕,石桥上挂着水珠。",
+    "output": "清晨的雪还没散,冰面被风吹得发僵。",
     "target": "清晨的溪面结着薄冰，灰白的光从桥下透出来。",
     "reasons": [],
     "foreignProps": [],
@@ -913,37 +942,37 @@
     "key": "loc_pass|清晨|雪，横风|高（山口横风）|灰白",
     "candidates": [
      {
-      "text": "清晨的雪还没散,经幡被风吹得发晃。",
+      "text": "清晨的横风很硬,石堆上全是水痕。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "清晨的雪还没散,经幡被风吹得发晃。",
+      "text": "清晨的横风很硬,石堆上全是水痕。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "清晨的雪被风吹得发晃,风从山口横扫过来。",
+      "text": "清晨的横风很硬,石堆上全是水痕。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "清晨的雪还没散,经幡被风吹得发晃。",
+      "text": "清晨的横风很硬,石堆上的雪痕慢慢变浅。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "清晨的雪还没散,经幡被风吹得发晃。",
+      "text": "清晨的雪被风吹得发僵,风从石堆下面透上来。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "清晨的雪被风吹得发晃,风从山口横扫过来。",
+      "text": "清晨的横风很硬,石堆上的雪痕慢慢变浅。",
       "ok": true,
       "reasons": []
      }
     ],
-    "output": "清晨的雪还没散,经幡被风吹得发晃。",
+    "output": "清晨的横风很硬,石堆上全是水痕。",
     "target": "清晨的横风把经幡吹得笔直，雪粒打在石堆上。",
     "reasons": [],
     "foreignProps": [],
@@ -955,7 +984,22 @@
     "key": "loc_pass|午后|风，雪粒|高（山口横风）|门缝的光",
     "candidates": [
      {
-      "text": "午后的光落在石道上,雪粒被风吹得发晃。",
+      "text": "午后的光斜进石道,雪粒在角落里闪成碎光。",
+      "ok": true,
+      "reasons": []
+     },
+     {
+      "text": "午后的光斜进石道,雪粒被风吹得发晃。",
+      "ok": true,
+      "reasons": []
+     },
+     {
+      "text": "午后光斜进石道,雪粒被风吹得发晃。",
+      "ok": true,
+      "reasons": []
+     },
+     {
+      "text": "午后光斜进石道,雪粒被风吹得发晃。",
       "ok": true,
       "reasons": []
      },
@@ -965,27 +1009,12 @@
       "reasons": []
      },
      {
-      "text": "午后的光落在石道上,雪粒被风吹得发晃。",
-      "ok": true,
-      "reasons": []
-     },
-     {
-      "text": "午后的光落在石道上,雪粒被鞋底踩得发亮。",
-      "ok": true,
-      "reasons": []
-     },
-     {
-      "text": "雨点密密地敲着石道,雪粒被风吹得发晃。",
-      "ok": true,
-      "reasons": []
-     },
-     {
-      "text": "午后的风从山口渗进来,雪粒被风吹得发晃。",
+      "text": "午后光落在石道上,雪粒被风吹得发晃。",
       "ok": true,
       "reasons": []
      }
     ],
-    "output": "午后的光落在石道上,雪粒被风吹得发晃。",
+    "output": "午后的光斜进石道,雪粒在角落里闪成碎光。",
     "target": "门缝里透进一线光，干草堆在角落里。",
     "reasons": [],
     "foreignProps": [],
@@ -997,111 +1026,128 @@
     "key": "loc_pass|夜|风，雪|高（山口横风）|马灯",
     "candidates": [
      {
-      "text": "夜里的雪泥混着干草味,马灯还留着水痕。",
+      "text": "夜里的风从山口横扫过来,马灯的光晕还没散,风又扫过来。",
+      "ok": false,
+      "reasons": [
+       "repeated-noun"
+      ]
+     },
+     {
+      "text": "夜里的巷子很暗,墙上的雪痕发暗。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "夜里的雪泥混着湿气,马灯把石堆照出一圈暖光。",
+      "text": "夜里的风从山口横扫过来,马灯的光被风吹得发晃。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "夜里的雪泥混着湿气,马灯把石道照出一圈暖光。",
-      "ok": true,
-      "reasons": []
+      "text": "夜里的雨不急不缓,风从山口横扫过来。",
+      "ok": false,
+      "reasons": [
+       "weather-mismatch"
+      ]
      },
      {
-      "text": "夜里的雪泥混着湿草,马灯在石堆里晃。",
-      "ok": true,
-      "reasons": []
+      "text": "夜里的雨不急不缓,雪场里的木头泛着湿气。",
+      "ok": false,
+      "reasons": [
+       "weather-mismatch",
+       "repeated-noun"
+      ]
      },
      {
-      "text": "夜里的雪泥混着湿草,马灯把石道照出一圈暖光。",
-      "ok": true,
-      "reasons": []
-     },
-     {
-      "text": "夜里的雪泥混着湿草,马灯把石堆磨淡了。",
-      "ok": true,
-      "reasons": []
+      "text": "夜里的雨不急不缓,雪把石道裹住。",
+      "ok": false,
+      "reasons": [
+       "weather-mismatch"
+      ]
      }
     ],
-    "output": "夜里的雪泥混着湿气,马灯把石堆照出一圈暖光。",
+    "output": "夜里的风从山口横扫过来,马灯的光被风吹得发晃。",
     "target": "风把雪吹进门缝，马灯的光落在干草上。",
     "reasons": [],
     "foreignProps": [],
     "ok": true,
-    "firstSampleOk": true
+    "firstSampleOk": false
    },
    {
     "pairId": "sch:n4w-10",
     "key": "loc_inn|夜|雪|低（石墙挡风）|炭火",
     "candidates": [
      {
-      "text": "夜里的雪从石墙挡过来,木门把木门挡在外面。",
-      "ok": true,
-      "reasons": []
+      "text": "夜里的木门挡着风,木门只透进石阶。",
+      "ok": false,
+      "reasons": [
+       "repeated-noun"
+      ]
      },
      {
-      "text": "夜里的雪从墙挡进来,木门被风吹得发晃。",
-      "ok": true,
-      "reasons": []
+      "text": "夜里的木门挡着风,木门只透进石壁。",
+      "ok": false,
+      "reasons": [
+       "repeated-noun"
+      ]
      },
      {
-      "text": "夜里的雪从石墙挡进来,雪沫被风吹得发晃。",
-      "ok": true,
-      "reasons": []
+      "text": "夜里的木门挡着风,木门只透进石壁。",
+      "ok": false,
+      "reasons": [
+       "repeated-noun"
+      ]
      },
      {
-      "text": "夜里的雪从石墙挡进来,雪沫被风吹得发晃。",
-      "ok": true,
-      "reasons": []
+      "text": "夜里的木门挡着风,木门只透进一线灰光。",
+      "ok": false,
+      "reasons": [
+       "repeated-noun"
+      ]
      },
      {
-      "text": "夜里的雪从石墙挡下来,雪沫被风吹得发晃。",
-      "ok": true,
-      "reasons": []
+      "text": "夜里的木门挡着风,木门只透进石阶。",
+      "ok": false,
+      "reasons": [
+       "repeated-noun"
+      ]
      },
      {
-      "text": "夜里的雪从墙挡下来,木门把石墙挡在外面。",
-      "ok": true,
-      "reasons": []
+      "text": "夜里的木门挡着风,木门只透进石壁。",
+      "ok": false,
+      "reasons": [
+       "repeated-noun"
+      ]
      }
     ],
-    "output": "夜里的雪从石墙挡过来,木门把木门挡在外面。",
+    "output": "夜里的木门挡着风,木门只透进石阶。",
     "target": "夜里的雪很静，炭盆的火只剩一点暗红。",
-    "reasons": [],
+    "reasons": [
+     "repeated-noun"
+    ],
     "foreignProps": [],
-    "ok": true,
-    "firstSampleOk": true
+    "ok": false,
+    "firstSampleOk": false
    },
    {
     "pairId": "sch:n4w-11",
     "key": "loc_inn|傍晚|雪停|低（石墙挡风）|炭火",
     "candidates": [
      {
-      "text": "傍晚的雪停了,木门只透进一线灰光。",
-      "ok": true,
-      "reasons": []
+      "text": "夜里的木门露出湿泥,木门上挂着水珠。",
+      "ok": false,
+      "reasons": [
+       "repeated-noun"
+      ]
      },
      {
-      "text": "雪停了,木门只剩几只空筐。",
-      "ok": true,
-      "reasons": []
+      "text": "夜里的木门露出湿泥,木门上挂着水珠。",
+      "ok": false,
+      "reasons": [
+       "repeated-noun"
+      ]
      },
      {
-      "text": "傍晚的雪停了,木门只透进一线灰光。",
-      "ok": true,
-      "reasons": []
-     },
-     {
-      "text": "夜里的雪停在石墙上,木门只剩一点光。",
-      "ok": true,
-      "reasons": []
-     },
-     {
-      "text": "傍晚的雪停了,木门只透进一线灰光。",
+      "text": "傍晚的雪停了,木门只透进石阶。",
       "ok": true,
       "reasons": []
      },
@@ -1109,51 +1155,66 @@
       "text": "傍晚的雪停了,木门只透进一线灰光。",
       "ok": true,
       "reasons": []
+     },
+     {
+      "text": "傍晚的雪停在石墙上,木门只透进石阶。",
+      "ok": true,
+      "reasons": []
+     },
+     {
+      "text": "夜里的木门露出湿泥,木门上挂着水珠。",
+      "ok": false,
+      "reasons": [
+       "repeated-noun"
+      ]
      }
     ],
-    "output": "傍晚的雪停了,木门只透进一线灰光。",
+    "output": "傍晚的雪停了,木门只透进石阶。",
     "target": "雪停在傍晚，屋檐不再滴水，炭盆还亮着。",
     "reasons": [],
     "foreignProps": [],
     "ok": true,
-    "firstSampleOk": true
+    "firstSampleOk": false
    },
    {
     "pairId": "sch:n4w-12",
     "key": "loc_pass|清晨|雪，横风|高（山口横风）|灰白",
     "candidates": [
      {
-      "text": "清晨的雪还没散,雪泥被风吹得发晃。",
+      "text": "清晨的横风很硬,石道还留着水痕。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "清晨的雪被石道围住,雪泥被雪埋了一半。",
+      "text": "清晨的横风很硬,石道还留着水痕。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "清晨的雪被石道裹住,雪泥被石堆裹住。",
+      "text": "清晨的雪被风吹得发晃,脚边的石阶被风吹得发僵。",
+      "ok": false,
+      "reasons": [
+       "repeated-noun",
+       "repetition"
+      ]
+     },
+     {
+      "text": "清晨的横风很硬,石道上全是水汽。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "清晨的雪被石道围住,雪泥被石道打得发晃。",
+      "text": "清晨的横风很硬,木头上挂着水珠。",
       "ok": true,
       "reasons": []
      },
      {
-      "text": "清晨的雪被石道围住,雪泥被雪泥踩得发晃。",
-      "ok": true,
-      "reasons": []
-     },
-     {
-      "text": "清晨的雪被石道裹住,雪泥被雪泥踩得发晃。",
+      "text": "清晨的横风很硬,石道上的雪痕慢慢变浅。",
       "ok": true,
       "reasons": []
      }
     ],
-    "output": "清晨的雪被石道裹住,雪泥被石堆裹住。",
+    "output": "清晨的横风很硬,石道还留着水痕。",
     "target": "清晨的横风把经幡吹得笔直，雪粒打在石堆上。",
     "reasons": [],
     "foreignProps": [],
