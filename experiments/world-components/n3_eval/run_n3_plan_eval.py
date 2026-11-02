@@ -18,13 +18,16 @@
 #      legal group (coverage; refusing it would drop a selected fact).
 #   G5 coreference: a grant requires a gender hint, a plan-wide unique name
 #      and no same-pronoun collision inside the group; unknown -> TA;
-#      no hint / duplicate name -> no grant.
+#      no hint / duplicate name -> no grant. Cross-group guard ON: a grant is
+#      also denied when the PREVIOUS group contains a different entity with
+#      the same pronoun. Guard OFF is the legacy arm (reproduces old v2 plans),
+#      tested explicitly as a comparison, not as the product default.
 #   G6 order: within-group input order; groups by minimum input index
 #      (the frozen entity-bucket R1 convention, recorded not re-litigated).
 #   G7 refusals: ill-formed ids, lone time, and no-entity plans refuse.
 #
 # Usage: python experiments/world-components/n3_eval/run_n3_plan_eval.py
-# Output: artifacts/world-components/n3-plan-v3-eval-r1.json
+# Output: artifacts/world-components/n3-plan-v3-eval-r2.json
 
 import json
 import pathlib
@@ -65,11 +68,11 @@ def noch(fid):
 
 
 def case(name, facts, names, hints=None, groups=None, times=None,
-         grants=None, consecutive=None, refusal=None):
+         grants=None, consecutive=None, refusal=None, guard=True):
     return {"name": name, "facts": facts, "names": names,
             "hints": hints or {}, "groups": groups, "times": times,
             "grants": grants, "consecutive": consecutive,
-            "refusal": refusal}
+            "refusal": refusal, "guard": guard}
 
 
 def group_sets(plan):
@@ -97,7 +100,8 @@ def expected_grants(grants):
 
 
 def eval_case(c):
-    plan = n3_organize.plan_v3(c["facts"], c["names"], c["hints"])
+    plan = n3_organize.plan_v3(c["facts"], c["names"], c["hints"],
+                               cross_group_guard=c["guard"])
     rec = {"name": c["name"], "plan": plan, "checks": {}}
     if c["refusal"]:
         got = json.dumps(plan.get("refusal") or {}, ensure_ascii=False)
@@ -109,7 +113,8 @@ def eval_case(c):
         rec["pass"] = False
         return rec
     problems = n3_organize.check_plan_v3(plan, c["facts"], c["names"],
-                                         c["hints"])
+                                         c["hints"],
+                                         cross_group_guard=c["guard"])
     rec["checks"]["G1_invariants"] = not problems
     rec["invariantProblems"] = problems
     got_groups = group_sets(plan)
@@ -200,6 +205,23 @@ def main() -> int:
              n_ab, groups=[["f0", "f1"]], times={"f0": 0}),
         case("no-change-lone",
              [noch("f0")], n_ab, groups=[["f0"]], times={}),
+        # cross-group pronoun guard
+        case("coref-cross-group-same-pronoun",
+             [moved("f0", A, "甲", L1), task("f1", B, "乙", "补网", L1)],
+             n_ab, hints={A: "male", B: "male"},
+             groups=[["f0"], ["f1"]],
+             grants=[(A, "他"), (None, None)]),
+        case("coref-cross-group-three",
+             [moved("f0", A, "甲", L1), task("f1", B, "乙", "补网", L1),
+              moved("f2", C, "丙", L1)],
+             n_ab, hints={A: "male", B: "male", C: "female"},
+             groups=[["f0"], ["f1"], ["f2"]],
+             grants=[(A, "他"), (None, None), (C, "她")]),
+        case("coref-cross-group-legacy",
+             [moved("f0", A, "甲", L1), task("f1", B, "乙", "补网", L1)],
+             n_ab, hints={A: "male", B: "male"},
+             groups=[["f0"], ["f1"]],
+             grants=[(A, "他"), (B, "他")], guard=False),
         # refusals
         case("time-orphan", [timef("f0")], n_ab, refusal="time-orphan"),
         case("no-entity",
@@ -260,9 +282,8 @@ def main() -> int:
         "summary": {"cases": len(cases), "passed": len(cases) - len(failures),
                     "failed": failures},
         "remainingGaps": [
-            "cross-group pronoun ambiguity is not modeled; grants are "
-            "group-local, so two adjacent groups may each license 他/她 "
-            "without a plan-level chain",
+            "the cross-group guard only checks the PREVIOUS group; longer-"
+            "range salience / a full pronoun chain is not modeled",
             "time attachment to a preceding scene group is the frozen "
             "predecessor convention, not a semantic scope",
             "entity buckets can reorder interleaved input facts (R1 frozen; "
@@ -271,8 +292,11 @@ def main() -> int:
             "still fit the 128-token gate",
         ],
         "pass": not failures,
+        "baselineNote": "base 25 cases: old plan_v3 20/25; the three guard "
+                        "cases are new in r2 (the legacy arm is the explicit "
+                        "guard-off comparison)",
     }
-    out = REPO / "artifacts" / "world-components" / "n3-plan-v3-eval-r1.json"
+    out = REPO / "artifacts" / "world-components" / "n3-plan-v3-eval-r2.json"
     out.write_text(json.dumps(archive, ensure_ascii=False, indent=1) + "\n",
                    encoding="utf-8", newline="\n")
     for r in results:

@@ -22,6 +22,11 @@
 #     pronoun string — otherwise the bare name (the safe fallback; a
 #     granted pronoun is a capability, a name is not a failure)
 #   - name-only grants emit nothing (absence of a grant = use the name)
+#   - cross-group guard (default on): a grant in group i is denied when the
+#     PREVIOUS group contains a different entity with the same pronoun; a
+#     pronoun at the start of a new group would otherwise be able to refer
+#     back to the previous group's subject. The guard is previous-group
+#     only; longer-range salience/chain is still unmodeled.
 # Time attribution: a group carrying a time fact exposes it as `time`.
 #
 # Hard invariants (checked by check_plan_v3): union(factIds) == selected
@@ -43,7 +48,8 @@ def _ill_formed(selected_facts: list) -> list:
 
 
 def plan_v3(selected_facts: list, names: dict,
-            gender_hints: dict | None = None) -> dict:
+            gender_hints: dict | None = None,
+            cross_group_guard: bool = True) -> dict:
     """-> {"sentences": [...], "edges": {...}} or raises nothing; refusals
     return {"refusal": {"class", "reason"}} like the D2 rule arm."""
     problems = _ill_formed(selected_facts)
@@ -166,16 +172,29 @@ def plan_v3(selected_facts: list, names: dict,
     groups = [g for g in groups if g]
     groups.sort(key=lambda g: min(order[fid] for fid in g))
 
+    group_entities = []
+    for g in groups:
+        ents = set()
+        for fid in g:
+            f = selected_facts[order[fid]]
+            if f.get("entityId"):
+                ents.add(f["entityId"])
+        group_entities.append(ents)
+
     sentences = []
+    prev_entities = set()
     for gi, g in enumerate(groups):
-        grants = _appellation_grants(g, selected_facts, order, names, hints,
-                                     name_counts)
+        grants = _appellation_grants(
+            g, selected_facts, order, names, hints, name_counts,
+            prev_entities=(prev_entities
+                           if cross_group_guard and gi > 0 else None))
         time_fact = next((selected_facts[order[fid]] for fid in g
                           if selected_facts[order[fid]]["kind"] == "time"), None)
         sentences.append({
             "index": gi, "factIds": g, "coreference": grants,
             "time": ({"amount": time_fact["amount"], "unit": time_fact["unit"]}
                      if time_fact else None)})
+        prev_entities = group_entities[gi]
     return {"sentences": sentences, "edges": edges}
 
 
@@ -206,7 +225,8 @@ def _split_same_name(groups: list, selected_facts: list, order: dict,
 
 
 def _appellation_grants(group_fids: list, selected_facts: list, order: dict,
-                        names: dict, hints: dict, name_counts: dict) -> list:
+                        names: dict, hints: dict, name_counts: dict,
+                        prev_entities: set | None = None) -> list:
     """One grant per entity in the group whose PRONOUN is licensed:
     gender hint present, display name unique plan-wide, and the pronoun
     string not already granted to another entity in this group. The
@@ -227,6 +247,12 @@ def _appellation_grants(group_fids: list, selected_facts: list, order: dict,
         if name and name_counts.get(name, 0) > 1:
             continue  # 同名: never pronominalise a duplicated name
         pronoun = PRONOUN_BY_GENDER[hint]
+        if prev_entities and any(
+                x != eid and PRONOUN_BY_GENDER.get(hints.get(x)) == pronoun
+                for x in prev_entities):
+            # cross-group same-pronoun collision: the previous group already
+            # has a different entity that this pronoun could refer to
+            continue
         if pronoun in taken:
             # in-group pronoun collision: FIRST takes the pronoun, later
             # same-pronoun entities keep their names (the grant table
@@ -239,7 +265,8 @@ def _appellation_grants(group_fids: list, selected_facts: list, order: dict,
 
 
 def check_plan_v3(plan: dict, selected_facts: list, names: dict,
-                  gender_hints: dict | None = None) -> list:
+                  gender_hints: dict | None = None,
+                  cross_group_guard: bool = True) -> list:
     """Hard invariants for a v3 plan; empty list = holds."""
     problems = []
     if "refusal" in plan:
@@ -280,6 +307,37 @@ def check_plan_v3(plan: dict, selected_facts: list, names: dict,
                     problems.append(f"same-name entities share group "
                                     f"{s.get('index')}: {nm}")
                 name_to_eid[nm] = eid
+    # cross-group guard: a grant in group i is illegal when the previous
+    # group carries a different entity with the same pronoun. Also keep one
+    # pronoun per entity across the plan (the chain must not switch).
+    group_entities = []
+    for s in plan["sentences"]:
+        ents = set()
+        for fid in s["factIds"]:
+            fact = by_id.get(fid)
+            if fact and fact.get("entityId"):
+                ents.add(fact["entityId"])
+        group_entities.append(ents)
+    if cross_group_guard:
+        for i in range(1, len(plan["sentences"])):
+            prev = group_entities[i - 1]
+            for ref in plan["sentences"][i].get("coreference") or []:
+                p = ref.get("pronoun")
+                e = ref["refersTo"]
+                if any(x != e and PRONOUN_BY_GENDER.get(hints.get(x)) == p
+                       for x in prev):
+                    problems.append(
+                        f"cross-group pronoun collision at group {i}: "
+                        f"{e} {p} vs {sorted(prev)}")
+    seen_pronoun = {}
+    for s in plan["sentences"]:
+        for ref in s.get("coreference") or []:
+            e = ref["refersTo"]
+            p = ref.get("pronoun")
+            if e in seen_pronoun and seen_pronoun[e] != p:
+                problems.append(f"pronoun chain switches for {e}: "
+                                f"{seen_pronoun[e]} -> {p}")
+            seen_pronoun[e] = p
     # time attribution: a time fact in exactly one group and that group's
     # time equals it
     for fid in fact_ids:

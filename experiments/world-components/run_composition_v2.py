@@ -16,9 +16,10 @@
 # Browser evidence remains a separate archive (commit 3).
 #
 # This archived composition is the SELECT arm (may_policy="select", time and
-# other visible may facts included). The v2 pipeline default is OMIT; the
-# select arm is a labelled comparison and must not be read as the product
-# default. gender_hints is likewise an experimental input, not state.
+# other visible may facts included) with the LEGACY cross-group guard OFF
+# (cross_group_guard=False). The v2 pipeline default is OMIT + guard ON; both
+# switches are explicit here so the archived plans are reproducible and are
+# never read as the product default. gender_hints is likewise experimental.
 
 import argparse
 import copy
@@ -125,6 +126,7 @@ def run_scenario_v2(n4, tok_gate, name, point, before, gender_hints, expect,
                                 {"type": "protagonist"},
                                 may_policy="select",
                                 gender_hints=gender_hints,
+                                cross_group_guard=False,
                                 real_tok=tok_gate)
     rec["stages"]["chain"] = {k: chain.get(k) for k in
                               ("status", "reason", "unsupportedReason",
@@ -160,7 +162,8 @@ def run_scenario_v2(n4, tok_gate, name, point, before, gender_hints, expect,
         # the differential would overweight one draw.
         ablated = np_.run_pipeline_v2(
             point, before, perspective or {"type": "protagonist"},
-            may_policy="select", gender_hints={}, real_tok=tok_gate)
+            may_policy="select", gender_hints={},
+            cross_group_guard=False, real_tok=tok_gate)
         if ablated["status"] == "ready-for-model":
             gen2 = n4.generate(ablated["n4"]["renderText"])
             rec["ablation"] = {"inputWithoutGrants": ablated["n4"]["renderText"],

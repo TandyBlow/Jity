@@ -847,6 +847,7 @@ V2_TOKEN_LIMIT = 128  # the standing product gate over REAL tokens
 def run_pipeline_v2(point: dict, before: dict | None, perspective,
                     may_policy: str = "omit",
                     gender_hints: dict | None = None,
+                    cross_group_guard: bool = True,
                     real_tok=None) -> dict:
     """The v2 chain: N1 -> N2 (perspective rule) -> N3 (plan_v3: groups,
     appellations, time attribution) -> N4v2 (render_v2 + the REAL-token
@@ -862,7 +863,12 @@ def run_pipeline_v2(point: dict, before: dict | None, perspective,
     gender_hints is an EXPERIMENTAL caller-supplied
     {entityId: male|female|unknown} map, NOT part of the state contract.
     None/{} keeps every name (the safe fallback); a pronoun is licensed only
-    when an explicit hint exists. Do not source this from inferred UI state."""
+    when an explicit hint exists. Do not source this from inferred UI state.
+
+    cross_group_guard defaults to True: a pronoun is not licensed when the
+    previous group contains a different entity with the same pronoun. Set it
+    to False only to reproduce the legacy v2 plans; the product path keeps
+    it on."""
     from render_v2 import render_input_v2
     out = {"pointId": point.get("pointId"), "version": point.get("version"),
            "chain": "v2"}
@@ -920,12 +926,16 @@ def run_pipeline_v2(point: dict, before: dict | None, perspective,
         out["kinds"] = new_kinds
         return out
     names = {f["entityId"]: f["name"] for f in selected if f.get("entityId")}
-    plan = n3_organize.plan_v3(selected, names, gender_hints)
+    plan = n3_organize.plan_v3(
+        selected, names, gender_hints,
+        cross_group_guard=cross_group_guard)
     if "refusal" in plan:
         out["status"] = "stopped-at-n3"
         out["n3"] = {"planner": "plan_v3", "refusal": plan["refusal"]}
         return out
-    problems = n3_organize.check_plan_v3(plan, selected, names, gender_hints)
+    problems = n3_organize.check_plan_v3(
+        plan, selected, names, gender_hints,
+        cross_group_guard=cross_group_guard)
     if problems:
         out["status"] = "stopped-at-n3"
         out["n3"] = {"planner": "plan_v3", "violations": problems}
@@ -1718,6 +1728,38 @@ def selftest() -> int:
           and "约五分钟" in r17d["n4"]["renderText"],
           f"S17d v2 select arm: {r17d['status']}/"
           f"{r17d['n2']['summary']['mayPolicy']}")
+
+    # S17e (review round): the cross-group pronoun guard reaches the real
+    # v2 chain. A (male) and B (male) are in separate groups; A's tracked
+    # task is completed by B at the same place. The guard licenses only A's
+    # pronoun; B keeps its name, so the input never contains 管线乙=他.
+    st17e = copy.deepcopy(state)
+    st17e["characters"]["char_pa"]["position"] = {"containerId": "loc_2",
+                                                 "slotId": None,
+                                                 "relativeTo": None}
+    st17e["characters"]["char_pa"]["sanity"] = 14
+    st17e["characters"]["char_pa"]["tasks"]["task_2"]["goal"] = "晒网"
+    st17e["characters"]["char_pb"]["position"] = {"containerId": "loc_2",
+                                                 "slotId": None,
+                                                 "relativeTo": None}
+    st17e["characters"]["char_pb"]["tasks"]["task_3"]["goal"] = "晒网"
+    st17e["characters"]["char_pb"]["tasks"]["task_3"]["status"] = "achieved"
+    d17e = {"char_pa": {**moved_delta("char_pa", "loc_2"), "sanitySet": 14},
+            "char_pb": {"entityId": "char_pb", "positionSet": None,
+                        "appearanceChanges": [], "personalityChanges": [],
+                        "subtasksAdded": [], "tasksAchieved": ["task_3"],
+                        "sanitySet": None}}
+    r17e = run_pipeline_v2(point(d17e, 8, st=st17e), before, PERS,
+                           gender_hints={"char_pa": "male",
+                                         "char_pb": "male"},
+                           real_tok=_Tok())
+    check(r17e["status"] == "ready-for-model"
+          and r17e["n3"]["groups"] == 2
+          and r17e["n3"]["grants"] == 1
+          and "称谓：管线甲=他" in r17e["n4"]["renderText"]
+          and "管线乙=他" not in r17e["n4"]["renderText"],
+          f"S17e cross-group guard: {r17e['status']}/"
+          f"{r17e.get('n3')}")
 
     # S18: over the 128 real-token limit the v2 chain refuses BEFORE any
     # model call

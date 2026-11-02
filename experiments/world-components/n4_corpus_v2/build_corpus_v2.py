@@ -18,6 +18,11 @@
 # change: presence is not "noticed"), so rerunning this file now produces a
 # DIFFERENT corpus. Do not overwrite the frozen v2 archive with it; a new
 # corpus/freeze is a separate, pre-registered run.
+#
+# The N3 cross-group pronoun guard is now ON by default: it changes the
+# coreference grants of 214 of the 580 existing plans (fact groups/time are
+# unchanged). The committed corpus is therefore the legacy guard-off
+# convention; do not treat a rerun as the frozen v2 set.
 # The test split is written FIRST with its freeze registration (row count,
 # case coverage, sha256) — the freeze lands before any training run and the
 # training corpus must not contain family C rows (asserted at build time).
