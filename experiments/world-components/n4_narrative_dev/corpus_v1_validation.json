@@ -1,0 +1,833 @@
+[
+ {
+  "id": "n4n-13",
+  "title": "巷口的灯影",
+  "n2Status": "ok",
+  "n2Summary": {
+   "must": 0,
+   "may": 2,
+   "invisible": 0,
+   "selected": 2,
+   "mayPolicy": "select"
+  },
+  "dropped": [],
+  "planProblems": [],
+  "plan": {
+   "sentences": [
+    {
+     "index": 0,
+     "factIds": [
+      "f0",
+      "f1"
+     ],
+     "coreference": [],
+     "time": {
+      "amount": 6,
+      "unit": "minute"
+     }
+    }
+   ],
+   "edges": {
+    "consecutive-time": false
+   }
+  },
+  "packStatus": "ok",
+  "inputVersion": "n4-input-pack-v0.1",
+  "inputTokens": 277,
+  "targetTokens": 71,
+  "target": "雨把潮生巷的纸灯笼打得发亮，沈砚沿着墙根慢慢走，鞋底踩过水洼，灯影晃了晃又稳住。排水沟里的水声不急不缓，巷子还是老样子；他站了一会儿，巷子里什么也没有再发生。"
+ },
+ {
+  "id": "n4n-14",
+  "title": "塔顶的风声",
+  "n2Status": "ok",
+  "n2Summary": {
+   "must": 1,
+   "may": 1,
+   "invisible": 0,
+   "selected": 2,
+   "mayPolicy": "select"
+  },
+  "dropped": [],
+  "planProblems": [],
+  "plan": {
+   "sentences": [
+    {
+     "index": 0,
+     "factIds": [
+      "f0",
+      "f1"
+     ],
+     "coreference": [],
+     "time": {
+      "amount": 10,
+      "unit": "minute"
+     }
+    }
+   ],
+   "edges": {
+    "consecutive-time": false
+   }
+  },
+  "packStatus": "ok",
+  "inputVersion": "n4-input-pack-v0.1",
+  "inputTokens": 316,
+  "targetTokens": 75,
+  "target": "海雾把旧灯塔的轮廓磨淡了，沈砚沿着湿滑的石阶上到塔顶，铁链在风里轻轻碰着石壁。铜框信号灯还亮着，火苗被玻璃罩护住，没有灭；他看了一会儿，风把袖口吹得鼓起来。"
+ },
+ {
+  "id": "n4n-15",
+  "title": "潮渡的早班船",
+  "n2Status": "ok",
+  "n2Summary": {
+   "must": 1,
+   "may": 2,
+   "invisible": 0,
+   "selected": 3,
+   "mayPolicy": "select"
+  },
+  "dropped": [],
+  "planProblems": [],
+  "plan": {
+   "sentences": [
+    {
+     "index": 0,
+     "factIds": [
+      "f0"
+     ],
+     "coreference": [],
+     "time": null
+    },
+    {
+     "index": 1,
+     "factIds": [
+      "f1",
+      "f2"
+     ],
+     "coreference": [],
+     "time": {
+      "amount": 7,
+      "unit": "minute"
+     }
+    }
+   ],
+   "edges": {
+    "consecutive-time": false
+   }
+  },
+  "packStatus": "ok",
+  "inputVersion": "n4-input-pack-v0.1",
+  "inputTokens": 371,
+  "targetTokens": 81,
+  "target": "天刚亮，潮渡的木桩上还挂着夜里的水珠。沈砚从巷子出来，在栈桥边站住；顾行舟的渡船从河心慢慢靠过来，船头压开一层薄雾，缆绳在木桩上绕了两圈。船停稳了，水面上的灯影也静下来。"
+ },
+ {
+  "id": "n4n-16",
+  "title": "浅滩的冷光",
+  "n2Status": "ok",
+  "n2Summary": {
+   "must": 1,
+   "may": 2,
+   "invisible": 0,
+   "selected": 3,
+   "mayPolicy": "select"
+  },
+  "dropped": [],
+  "planProblems": [],
+  "plan": {
+   "sentences": [
+    {
+     "index": 0,
+     "factIds": [
+      "f0",
+      "f1",
+      "f2"
+     ],
+     "coreference": [],
+     "time": {
+      "amount": 12,
+      "unit": "minute"
+     }
+    }
+   ],
+   "edges": {
+    "consecutive-time": false
+   }
+  },
+  "packStatus": "ok",
+  "inputVersion": "n4-input-pack-v0.1",
+  "inputTokens": 344,
+  "targetTokens": 76,
+  "target": "退潮后的浅滩泛着一层冷光，沈砚踩着湿泥走到水边，弯腰摸了摸露出来的系泊绳。等他直起身，外袍下摆已经沾满泥水，边角结出一圈白盐；他抖了抖衣摆，海风把咸味吹到脸上。"
+ },
+ {
+  "id": "n4n-17",
+  "title": "档案馆的墨迹",
+  "n2Status": "ok",
+  "n2Summary": {
+   "must": 1,
+   "may": 2,
+   "invisible": 0,
+   "selected": 3,
+   "mayPolicy": "select"
+  },
+  "dropped": [],
+  "planProblems": [],
+  "plan": {
+   "sentences": [
+    {
+     "index": 0,
+     "factIds": [
+      "f0",
+      "f1",
+      "f2"
+     ],
+     "coreference": [],
+     "time": {
+      "amount": 15,
+      "unit": "minute"
+     }
+    }
+   ],
+   "edges": {
+    "consecutive-time": false
+   }
+  },
+  "packStatus": "ok",
+  "inputVersion": "n4-input-pack-v0.1",
+  "inputTokens": 358,
+  "targetTokens": 71,
+  "target": "档案馆的天窗漏下一线雨光，沈砚把潮汐簿摊在铜灯下，照着页边的旧墨迹一笔一笔补。缺页终于接上了，他的指尖也沾了墨；他合上簿子，听见门槛外的雨声比刚才轻了一些。"
+ },
+ {
+  "id": "n4n-18",
+  "title": "雾堤的钟绳",
+  "n2Status": "ok",
+  "n2Summary": {
+   "must": 0,
+   "may": 3,
+   "invisible": 0,
+   "selected": 3,
+   "mayPolicy": "select"
+  },
+  "dropped": [],
+  "planProblems": [],
+  "plan": {
+   "sentences": [
+    {
+     "index": 0,
+     "factIds": [
+      "f0",
+      "f1",
+      "f2"
+     ],
+     "coreference": [],
+     "time": {
+      "amount": 9,
+      "unit": "minute"
+     }
+    }
+   ],
+   "edges": {
+    "consecutive-time": false
+   }
+  },
+  "packStatus": "ok",
+  "inputVersion": "n4-input-pack-v0.1",
+  "inputTokens": 379,
+  "targetTokens": 83,
+  "target": "雾堤上的风把浪沫吹到石阶上，韩渡从潮渡那边上来，蹲在钟架下，把松脱的钟绳一圈一圈重新系紧。钟绳绷直了，他才站起来，用手背擦了一下眉毛上的雾水；沈砚站在堤边，听见钟架在风里轻轻响。"
+ },
+ {
+  "id": "n4n-19",
+  "title": "早市的鱼筐",
+  "n2Status": "ok",
+  "n2Summary": {
+   "must": 1,
+   "may": 3,
+   "invisible": 0,
+   "selected": 4,
+   "mayPolicy": "select"
+  },
+  "dropped": [],
+  "planProblems": [],
+  "plan": {
+   "sentences": [
+    {
+     "index": 0,
+     "factIds": [
+      "f0",
+      "f2",
+      "f3"
+     ],
+     "coreference": [],
+     "time": {
+      "amount": 8,
+      "unit": "minute"
+     }
+    },
+    {
+     "index": 1,
+     "factIds": [
+      "f1"
+     ],
+     "coreference": [],
+     "time": null
+    }
+   ],
+   "edges": {
+    "consecutive-time": false
+   }
+  },
+  "packStatus": "ok",
+  "inputVersion": "n4-input-pack-v0.1",
+  "inputTokens": 405,
+  "targetTokens": 76,
+  "target": "早市的帆布棚下白汽不散，鱼鳞在石板上闪成细碎的光。沈砚从人缝里挤过去，正看见阿棠抱着一筐银鳞鱼往案板上送，鱼尾拍得筐沿啪啪响；他侧身让开，袖口还是沾了一点腥水。"
+ },
+ {
+  "id": "n4n-20",
+  "title": "潮渡的问话",
+  "n2Status": "ok",
+  "n2Summary": {
+   "must": 1,
+   "may": 3,
+   "invisible": 0,
+   "selected": 4,
+   "mayPolicy": "select"
+  },
+  "dropped": [],
+  "planProblems": [],
+  "plan": {
+   "sentences": [
+    {
+     "index": 0,
+     "factIds": [
+      "f0",
+      "f2",
+      "f3"
+     ],
+     "coreference": [],
+     "time": {
+      "amount": 6,
+      "unit": "minute"
+     }
+    },
+    {
+     "index": 1,
+     "factIds": [
+      "f1"
+     ],
+     "coreference": [],
+     "time": null
+    }
+   ],
+   "edges": {
+    "consecutive-time": false
+   }
+  },
+  "packStatus": "ok",
+  "inputVersion": "n4-input-pack-v0.1",
+  "inputTokens": 372,
+  "targetTokens": 71,
+  "target": "雾从河面漫上栈桥，顾行舟把渡船系在木桩上。沈砚本来想像往常那样把话咽回去，却先开口问了潮水什么时候退；话出口后，他自己也愣了一下。顾行舟抬头看了看天，说还得等一阵。"
+ },
+ {
+  "id": "n4n-21",
+  "title": "雨里的抽屉",
+  "n2Status": "ok",
+  "n2Summary": {
+   "must": 1,
+   "may": 2,
+   "invisible": 0,
+   "selected": 3,
+   "mayPolicy": "select"
+  },
+  "dropped": [],
+  "planProblems": [],
+  "plan": {
+   "sentences": [
+    {
+     "index": 0,
+     "factIds": [
+      "f0",
+      "f1",
+      "f2"
+     ],
+     "coreference": [],
+     "time": {
+      "amount": 5,
+      "unit": "minute"
+     }
+    }
+   ],
+   "edges": {
+    "consecutive-time": false
+   }
+  },
+  "packStatus": "ok",
+  "inputVersion": "n4-input-pack-v0.1",
+  "inputTokens": 344,
+  "targetTokens": 71,
+  "target": "潮生巷的雨声压在窗外，沈砚点亮蜡烛，拉开抽屉最底层。旧纸下面压着那把黄铜钥匙，齿口已经磨圆；他把钥匙捏在手里，指腹沾了一层薄灰，烛火在墙上晃了一下。"
+ },
+ {
+  "id": "n4n-22",
+  "title": "雾堤的警示灯",
+  "n2Status": "ok",
+  "n2Summary": {
+   "must": 2,
+   "may": 1,
+   "invisible": 0,
+   "selected": 3,
+   "mayPolicy": "select"
+  },
+  "dropped": [],
+  "planProblems": [],
+  "plan": {
+   "sentences": [
+    {
+     "index": 0,
+     "factIds": [
+      "f0",
+      "f1",
+      "f2"
+     ],
+     "coreference": [],
+     "time": {
+      "amount": 7,
+      "unit": "minute"
+     }
+    }
+   ],
+   "edges": {
+    "consecutive-time": false
+   }
+  },
+  "packStatus": "ok",
+  "inputVersion": "n4-input-pack-v0.1",
+  "inputTokens": 335,
+  "targetTokens": 75,
+  "target": "雾堤上的风比巷口硬得多，警示灯被吹得歪向一边，铁皮壳子哐哐响。沈砚伸手把它扳正，玻璃罩里的火苗晃了两下，才慢慢稳住；他松开手，才发现自己的呼吸一直提着，这会儿才落下去。"
+ },
+ {
+  "id": "n4n-23",
+  "title": "潮汐簿与干纸",
+  "n2Status": "ok",
+  "n2Summary": {
+   "must": 1,
+   "may": 3,
+   "invisible": 0,
+   "selected": 4,
+   "mayPolicy": "select"
+  },
+  "dropped": [],
+  "planProblems": [],
+  "plan": {
+   "sentences": [
+    {
+     "index": 0,
+     "factIds": [
+      "f0"
+     ],
+     "coreference": [],
+     "time": null
+    },
+    {
+     "index": 1,
+     "factIds": [
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "coreference": [],
+     "time": {
+      "amount": 12,
+      "unit": "minute"
+     }
+    }
+   ],
+   "edges": {
+    "consecutive-time": false
+   }
+  },
+  "packStatus": "ok",
+  "inputVersion": "n4-input-pack-v0.1",
+  "inputTokens": 415,
+  "targetTokens": 76,
+  "target": "铜灯把长桌照出一圈暖光，沈砚把潮汐簿的缺页对齐，照着旧墨迹慢慢补。最后一笔落下，他袖口也蹭了一道墨；阿棠正好从早市过来，把一叠干纸放在桌角，鞋底在门槛上蹭了两下。"
+ },
+ {
+  "id": "n4n-24",
+  "title": "早市的空筐",
+  "n2Status": "ok",
+  "n2Summary": {
+   "must": 0,
+   "may": 2,
+   "invisible": 0,
+   "selected": 2,
+   "mayPolicy": "select"
+  },
+  "dropped": [],
+  "planProblems": [],
+  "plan": {
+   "sentences": [
+    {
+     "index": 0,
+     "factIds": [
+      "f0",
+      "f1"
+     ],
+     "coreference": [],
+     "time": {
+      "amount": 10,
+      "unit": "minute"
+     }
+    }
+   ],
+   "edges": {
+    "consecutive-time": false
+   }
+  },
+  "packStatus": "ok",
+  "inputVersion": "n4-input-pack-v0.1",
+  "inputTokens": 309,
+  "targetTokens": 69,
+  "target": "早市的白汽散了一半，帆布棚下只剩几只空筐，鱼鳞粘在石板上，被来往的鞋底踩得发亮。沈砚在摊棚前站了一会儿，案板已经收了，人流慢慢稀下去，什么也没有再发生。"
+ },
+ {
+  "id": "n4n-25",
+  "title": "灯塔的石阶",
+  "n2Status": "ok",
+  "n2Summary": {
+   "must": 1,
+   "may": 2,
+   "invisible": 0,
+   "selected": 3,
+   "mayPolicy": "select"
+  },
+  "dropped": [],
+  "planProblems": [],
+  "plan": {
+   "sentences": [
+    {
+     "index": 0,
+     "factIds": [
+      "f0",
+      "f1",
+      "f2"
+     ],
+     "coreference": [],
+     "time": {
+      "amount": 8,
+      "unit": "minute"
+     }
+    }
+   ],
+   "edges": {
+    "consecutive-time": false
+   }
+  },
+  "packStatus": "ok",
+  "inputVersion": "n4-input-pack-v0.1",
+  "inputTokens": 328,
+  "targetTokens": 69,
+  "target": "海雾贴着石阶往上爬，沈砚扶着靠海的铁链一步步走，链环上的锈蹭到掌心。他走到塔顶时，外袍下摆已经被雾水打湿，贴在腿上；风一吹，凉意顺着衣角钻上来。"
+ },
+ {
+  "id": "n4n-26",
+  "title": "潮渡的缆绳",
+  "n2Status": "ok",
+  "n2Summary": {
+   "must": 0,
+   "may": 3,
+   "invisible": 0,
+   "selected": 3,
+   "mayPolicy": "select"
+  },
+  "dropped": [],
+  "planProblems": [],
+  "plan": {
+   "sentences": [
+    {
+     "index": 0,
+     "factIds": [
+      "f0",
+      "f1",
+      "f2"
+     ],
+     "coreference": [],
+     "time": {
+      "amount": 7,
+      "unit": "minute"
+     }
+    }
+   ],
+   "edges": {
+    "consecutive-time": false
+   }
+  },
+  "packStatus": "ok",
+  "inputVersion": "n4-input-pack-v0.1",
+  "inputTokens": 356,
+  "targetTokens": 65,
+  "target": "雾把潮渡的木桩藏了一半，顾行舟从河心把渡船靠过来，弯腰把缆绳绕上木桩。等他直起身，手上的茧被水泡得发白；他没有说话，只把船头又推正了一点。"
+ },
+ {
+  "id": "n4n-27",
+  "title": "档案馆的门槛",
+  "n2Status": "ok",
+  "n2Summary": {
+   "must": 1,
+   "may": 2,
+   "invisible": 0,
+   "selected": 3,
+   "mayPolicy": "select"
+  },
+  "dropped": [],
+  "planProblems": [],
+  "plan": {
+   "sentences": [
+    {
+     "index": 0,
+     "factIds": [
+      "f0"
+     ],
+     "coreference": [],
+     "time": null
+    },
+    {
+     "index": 1,
+     "factIds": [
+      "f1",
+      "f2"
+     ],
+     "coreference": [],
+     "time": {
+      "amount": 6,
+      "unit": "minute"
+     }
+    }
+   ],
+   "edges": {
+    "consecutive-time": false
+   }
+  },
+  "packStatus": "ok",
+  "inputVersion": "n4-input-pack-v0.1",
+  "inputTokens": 388,
+  "targetTokens": 81,
+  "target": "雨停了一会儿，档案馆的门槛被鞋底磨得发亮。沈砚从潮生巷过来，把湿伞靠在门边；阿棠随后抱着一叠干纸进门，纸角被风掀起。两人都没有说话，长桌上的铜灯还亮着，雨声只剩天窗上零星几滴。"
+ },
+ {
+  "id": "n4n-28",
+  "title": "雾堤的白沫",
+  "n2Status": "ok",
+  "n2Summary": {
+   "must": 2,
+   "may": 1,
+   "invisible": 0,
+   "selected": 3,
+   "mayPolicy": "select"
+  },
+  "dropped": [],
+  "planProblems": [],
+  "plan": {
+   "sentences": [
+    {
+     "index": 0,
+     "factIds": [
+      "f0",
+      "f1",
+      "f2"
+     ],
+     "coreference": [],
+     "time": {
+      "amount": 9,
+      "unit": "minute"
+     }
+    }
+   ],
+   "edges": {
+    "consecutive-time": false
+   }
+  },
+  "packStatus": "ok",
+  "inputVersion": "n4-input-pack-v0.1",
+  "inputTokens": 335,
+  "targetTokens": 62,
+  "target": "浪头撞在雾堤的石壁上，白沫翻上堤面，又被风撕碎。沈砚沿着石阶往上走，铁链在手里冰凉；他站到钟架旁，胸口那阵发紧的感觉慢慢松开了。"
+ },
+ {
+  "id": "n4n-29",
+  "title": "塔顶的玻璃罩",
+  "n2Status": "ok",
+  "n2Summary": {
+   "must": 0,
+   "may": 3,
+   "invisible": 0,
+   "selected": 3,
+   "mayPolicy": "select"
+  },
+  "dropped": [],
+  "planProblems": [],
+  "plan": {
+   "sentences": [
+    {
+     "index": 0,
+     "factIds": [
+      "f0",
+      "f1",
+      "f2"
+     ],
+     "coreference": [],
+     "time": {
+      "amount": 10,
+      "unit": "minute"
+     }
+    }
+   ],
+   "edges": {
+    "consecutive-time": false
+   }
+  },
+  "packStatus": "ok",
+  "inputVersion": "n4-input-pack-v0.1",
+  "inputTokens": 399,
+  "targetTokens": 88,
+  "target": "海风把塔顶的铜框吹得发冷，叶知微从潮渡上来，蹲在信号灯旁，用抹布把玻璃罩上的盐雾一圈圈擦掉。灯罩透亮起来，火苗的影子落在她袖口的铜油上；沈砚站在旋梯口，没有上前，只听见风从灯罩边缘擦过去。"
+ },
+ {
+  "id": "n4n-30",
+  "title": "档案馆的呼吸",
+  "n2Status": "ok",
+  "n2Summary": {
+   "must": 2,
+   "may": 1,
+   "invisible": 0,
+   "selected": 3,
+   "mayPolicy": "select"
+  },
+  "dropped": [],
+  "planProblems": [],
+  "plan": {
+   "sentences": [
+    {
+     "index": 0,
+     "factIds": [
+      "f0",
+      "f1",
+      "f2"
+     ],
+     "coreference": [],
+     "time": {
+      "amount": 6,
+      "unit": "minute"
+     }
+    }
+   ],
+   "edges": {
+    "consecutive-time": false
+   }
+  },
+  "packStatus": "ok",
+  "inputVersion": "n4-input-pack-v0.1",
+  "inputTokens": 334,
+  "targetTokens": 63,
+  "target": "档案馆的天窗漏着细雨，沈砚把湿伞靠在门槛边，在长桌前坐下。铜灯的光落在摊开的潮汐簿上，他翻了两页，呼吸渐渐匀了；雨声还在，但不再催他。"
+ },
+ {
+  "id": "n4n-31",
+  "title": "早市的鱼鳞",
+  "n2Status": "ok",
+  "n2Summary": {
+   "must": 1,
+   "may": 2,
+   "invisible": 0,
+   "selected": 3,
+   "mayPolicy": "select"
+  },
+  "dropped": [],
+  "planProblems": [],
+  "plan": {
+   "sentences": [
+    {
+     "index": 0,
+     "factIds": [
+      "f0"
+     ],
+     "coreference": [],
+     "time": null
+    },
+    {
+     "index": 1,
+     "factIds": [
+      "f1",
+      "f2"
+     ],
+     "coreference": [],
+     "time": {
+      "amount": 7,
+      "unit": "minute"
+     }
+    }
+   ],
+   "edges": {
+    "consecutive-time": false
+   }
+  },
+  "packStatus": "ok",
+  "inputVersion": "n4-input-pack-v0.1",
+  "inputTokens": 373,
+  "targetTokens": 74,
+  "target": "早市的帆布棚下全是白汽，阿棠蹲在鱼筐边挑鱼，围裙上又添了一层银亮的鱼鳞。沈砚从潮生巷过来，在摊棚外站住；鱼尾拍起的水花溅到石板上，很快被来往的鞋底踩开。"
+ },
+ {
+  "id": "n4n-32",
+  "title": "潮渡的最后一班船",
+  "n2Status": "ok",
+  "n2Summary": {
+   "must": 3,
+   "may": 2,
+   "invisible": 0,
+   "selected": 5,
+   "mayPolicy": "select"
+  },
+  "dropped": [],
+  "planProblems": [],
+  "plan": {
+   "sentences": [
+    {
+     "index": 0,
+     "factIds": [
+      "f0",
+      "f2",
+      "f3",
+      "f4"
+     ],
+     "coreference": [],
+     "time": {
+      "amount": 12,
+      "unit": "minute"
+     }
+    },
+    {
+     "index": 1,
+     "factIds": [
+      "f1"
+     ],
+     "coreference": [],
+     "time": null
+    }
+   ],
+   "edges": {
+    "consecutive-time": false
+   }
+  },
+  "packStatus": "ok",
+  "inputVersion": "n4-input-pack-v0.1",
+  "inputTokens": 386,
+  "targetTokens": 74,
+  "target": "雾把潮渡的船灯压成一团黄，沈砚在栈桥边等了很久，终于看见顾行舟的渡船从河心靠过来。船靠稳时，他那口一直提着的气才松开；船身轻轻一晃，木桩上的缆绳也跟着响了一声。"
+ }
+]
