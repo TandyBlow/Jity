@@ -107,7 +107,7 @@ C使用不同的隔离开发集，这些数值只给历史规模和失败模式�
 
 **N4 扩样 v1（2026-11-02，已审通过）：** 同一 `n4n-fog-harbor` 世界新增 20 例（n4n-13…32），覆盖 no_change/moved/outcome/appearance/personality/sanity/time 的新组合；20/20 通过 N2→N3→N4.0 校验，无丢弃事实，输入 **265–403** tokens，目标 **62–88** tokens。这是**已审开发稿，未训练**；审阅稿 `n4-narrative-dev-v1.md`，机器可读 `corpus_v1.jsonl`，校验 `corpus_v1_validation.json`。下一步先做 32 例 pilot（22 train / 4 dev / 6 frozen holdout），再扩到 ≥100。
 
-**N4 扩样 v2（2026-11-02，矩阵稿待审）：** 11 场景 × 8 事实模式 = **88 例**（n4n-33…120），同一 `n4n-fog-harbor` 世界。88/88 通过 N2→N3→N4.0 校验，无丢弃事实；输入 265–422 tokens、目标 53–92 tokens。这是**矩阵稿，允许结构重复，事实必须准；未训练**。审阅稿 `n4-narrative-dev-v2.md`，机器可读 `corpus_v2.jsonl`，校验 `corpus_v2_validation.json`。加上已审的 12+20 例，总计 120 例；审过后按 100 train / 8 dev / 12 holdout 建正式对，再训练。
+**N4 扩样 v2（2026-11-02，手工改写稿待审）：** 11 场景 × 8 事实模式 = **88 例**（n4n-33…120），同一 `n4n-fog-harbor` 世界。88/88 通过 N2→N3→N4.0 校验，无丢弃事实；输入 265–422 tokens、目标 60–84 tokens。正文已逐条手工改写；**未训练**。审阅稿 `n4-narrative-dev-v2.md`，机器可读 `corpus_v2.jsonl`，校验 `corpus_v2_validation.json`。加上已审的 12+20 例，总计 120 例；审过后按 100 train / 8 dev / 12 holdout 建正式对，再训练。
 
 **N4 32 例 pilot（2026-11-02）：** 22 train / 4 dev / 6 frozen same-world holdout，固定 120 epochs。结果：train **22/22** 归一化逐字相同、dev **0/4**、holdout **0/6**（loss 0.0016 / 6.5155 / 6.3927）。输出出现训练样本复读（n4n-26、n4n-32 基本复读 n4n-20；n4n-31 靠近 n4n-08）。**这是记忆，不是泛化；22 条训练样本远不够。** 下一步扩到 ≥100 条并考虑新世界族 holdout，不加 epochs。报告 `artifacts/world-components/n4-pilot-r1.json`；计划 §7 `n4-training-plan.md`。
 

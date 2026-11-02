@@ -92,7 +92,7 @@
 3. 预登记 N4 质量门与 N5 核对判据；不得用 9/9 训练拟合冒充泛化。
 4. 训练/评测统一标点归一；展示层再决定是否转全角。
 
-首批 20 例已审通过；88 例矩阵稿待审（[`n4-narrative-dev-v2.md`](n4-narrative-dev-v2.md)），总计 120 例。审过后按 100 train / 8 dev / 12 holdout 建正式对；32 例 pilot 已证明 22 条只够记忆。
+首批 20 例已审通过；88 例手工改写稿待审（[`n4-narrative-dev-v2.md`](n4-narrative-dev-v2.md)），总计 120 例。审过后按 100 train / 8 dev / 12 holdout 建正式对；32 例 pilot 已证明 22 条只够记忆。
 
 ## 7. 32 例 scaling pilot（2026-11-02）
 
