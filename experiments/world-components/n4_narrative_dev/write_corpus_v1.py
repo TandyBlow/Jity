@@ -597,7 +597,7 @@ def build(case):
             for f in case["facts"] if f["kind"] == "personality_changed"
         ],
         "contract": "n4-narrative-v0", "split": "dev-review",
-        "reviewStatus": "pending",
+        "reviewStatus": "approved",
     }
 
 
@@ -613,7 +613,7 @@ def main():
         "# N4 叙事开发语料 v1（20 例，待审）",
         "",
         "日期：2026-11-02。同一 `n4n-fog-harbor` 世界，新增 20 例；"
-        "**待用户审阅，未训练**。当前 N4 生成模型未训练；N4.0 结构化输入"
+        "**用户 2026-11-02 审阅通过，未训练**。当前 N4 生成模型未训练；N4.0 结构化输入"
         "合并后重跑仍 9/9 训练拟合、0/3 check；这是记忆，不是泛化；"
         "下一步是扩样。",
         "",
@@ -679,10 +679,10 @@ def main():
         for item in c["grounding"]:
             lines.append(f"| {item['detail']} | {item['source']} | "
                          f"{item['value']} |")
-        lines += ["", "- [ ] 事实全覆盖", "- [ ] 无任务标题/数值/具体时长",
-                  "- [ ] 无新增具名实体/物品/地点",
-                  "- [ ] 无他人内心/承诺性对话",
-                  "- [ ] 视角一致，场景/行为/心理自然", ""]
+        lines += ["", "- [x] 事实全覆盖", "- [x] 无任务标题/数值/具体时长",
+                  "- [x] 无新增具名实体/物品/地点",
+                  "- [x] 无他人内心/承诺性对话",
+                  "- [x] 视角一致，场景/行为/心理自然", ""]
     OUT_DOC.write_text("\n".join(lines).rstrip("\n") + "\n", encoding="utf-8",
                        newline="\n")
     print(f"wrote {len(rows)} cases -> {OUT_JSONL}")

@@ -92,4 +92,21 @@
 3. 预登记 N4 质量门与 N5 核对判据；不得用 9/9 训练拟合冒充泛化。
 4. 训练/评测统一标点归一；展示层再决定是否转全角。
 
-首批 20 例草案已生成，见 [`n4-narrative-dev-v1.md`](n4-narrative-dev-v1.md)；**审阅通过前不进入训练**。
+首批 20 例已审通过，见 [`n4-narrative-dev-v1.md`](n4-narrative-dev-v1.md)。下一步做 32 例 pilot（22 train / 4 dev / 6 frozen holdout），再扩到 ≥100。
+
+## 7. 32 例 scaling pilot（2026-11-02）
+
+22 train / 4 dev / 6 frozen same-world holdout。固定 120 epochs、不用 dev 早停；最终模型（epoch 120）用于报告。报告：`artifacts/world-components/n4-pilot-r1.json`。
+
+| split | rows | loss | 归一化逐字相同 |
+| --- | --- | --- | --- |
+| train | 22 | 0.0016 | **22/22** |
+| dev | 4 | 6.5155 | **0/4** |
+| holdout | 6 | 6.3927 | **0/6** |
+
+- 22 条训练样本全部记住；dev/holdout 全失败。
+- 输出出现**训练样本复读**：n4n-26 与 n4n-32 的输出基本就是训练集 n4n-20 的目标；n4n-31 靠近 n4n-08。说明模型在检索训练场景，不是按事实重组。
+- 第一次 early-stop 跑在 epoch 20 停下（train 0/22，欠拟合），不能用于 scaling 判断；上表是固定 120 epochs 的结果。
+- 同世界 holdout 都 0/6，说明 22 条训练样本量远不够；下一步不是加 epochs，而是扩样，并考虑用新世界族做 holdout。
+
+**结论：** N4.0 输入可学，但 22 条只能记忆。正式训练前至少扩到 ≥100 条训练样本；扩样后仍需同口径复测，不能拿 22/22 train 当质量。
