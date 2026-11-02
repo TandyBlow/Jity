@@ -161,7 +161,7 @@ python -X utf8 experiments/world-components/n4_narrative_dev/test_pipeline_narra
 5. **随身物品重复**：同一物品同时出现在“随身”和“可见物”；v0 未改，避免破坏旧预览。
 6. **旧句子 renderer 保留**：`renderer.py` 继续服务冻结 v2/v3 模型与字节回归，不是新 N4 输入契约。
 7. **环境条件下沉到地点外貌，生产来源未接线**：`time/weather/wind/light/atmosphere` 不再单列；当前语料把它们并入 `地点外貌`，但值是审阅夹具。生产应由 `LocationState.appearance` 的 `initialAppearance`/`appearanceChanges` 提供，wind 的静态依据是 `windExposure`；B/server 或场景/时间系统写入，缺失条件省略并记诊断。
-8. **9/9 过拟合结果对应合并前的输入**：本次把环境条件并入 `地点外貌` 后输入字节变了；正式训练前需用新输入重跑 9/3 检查，不能把旧 9/9 直接当作新契约证据。
+8. **9/9 只在训练集上**：环境条件并入 `地点外貌` 后重跑仍是 9/9 train、0/3 check；这是 9 条样本的记忆，不是泛化。正式训练前需扩样并冻结留出。
 
 ## 下一步
 
