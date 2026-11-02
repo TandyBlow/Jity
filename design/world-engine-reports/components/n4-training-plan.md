@@ -333,3 +333,45 @@ loss 从 22 例 pilot 的 holdout 6.3927 降到 2.7521，但不是因为学会�
 1. 槽位臂接入 N4.0：现象清单从 `LocationState.features` + `LocationState.appearanceChanges` 推导，表层库按 world 分文件。
 2. 事实层 verbalizer 与槽位场景层已可拼成整段（本报告即由两段拼成），下一步做端到端回归与延迟测量。
 3. 记录作者的建库成本（每世界 17 现象 × 6 句）作为产品取舍依据。
+
+## 19. 分支收尾（2026-11-02）
+
+本分支（`world-components`）到此收束：所有实验跑完、结论写清、失败保留。本节是唯一的状态口径。
+
+### 交付物
+
+| 组件 | 产物 | 阶段 |
+| --- | --- | --- |
+| N4.0 输入装配 | `n4_input_renderer/{packer,scene_context}.py`；120 例 pack ok；fail-closed 单元测试 | 离线验证 |
+| N4 整段叙事模型 | 12/20/88/120 例语料、pilot/formal/240ep 报告、`ckpt-formal` | 离线验证后**否决**（新世界 0/12） |
+| N4 事实 verbalizer | 229 对手写语料 + 23 新世界；`ckpt-verbalizer2`；新世界 **22/23** 绑定 | 已训练＋离线验证，**未接线** |
+| 场景层 | 槽位臂（`scene_bank.py` 102 句）事实/结构/长度/搭配/多样性五项全过；场景模型臂否决 | 离线验证，**未接线** |
+| 合成 | `compose_full.py`（模型臂）/`compose_slots.py`（槽位臂）：事实 12/12 | 离线验证 |
+| N5 核对 | 本分支未改动；程序判据沿用，关系头 G2 仍未过 | 保持原状态 |
+
+### 本分支确立的四条判据结论
+
+1. **端到端整段生成（77M T5，100 条）不可用**：新世界 0/12，且输出更接近某条训练目标（20 条里 19 条），是检索不是组合；240 epochs 后 train 79/100、holdout 仍 0/12，不是欠拟合。
+2. **token 级 copy 约束、coverage 重排都救不了**：OOV 359→2 但相似度反降；覆盖判据只看名字出现，不看角色绑定。
+3. **拆成单 fact → 单句后可用**：同一 77M 模型新世界绑定 22/23（6 候选过滤），说明瓶颈是任务形状，不是参数量。
+4. **场景层用槽位臂优于模型**：12/12 结构、12/12 长度、0 搭配错、24/25 唯一句；但槽位臂不是零样本，每个世界要写现象表层库（本例 102 句）。
+
+### 未完成（交接清单）
+
+1. **命名与推导**：`现象` 拆成 `props`（来自 `LocationState.features`）与 `conditions`（来自 time/weather/wind + 地点）；当前 `雪粒/冰面/溪水` 混在 props 里，从 features 推导会漏。
+2. **接线**：verbalizer、槽位臂、合成、N4.0 均未接入 B 页面与服务端；`resultText` 生产来源、environment→地点外貌 的生产写入仍未做。
+3. **浏览器侧**：verbalizer 未导出 ONNX，未测真实浏览器延迟；约 4 s 交互目标尚未在拆分方案下复测。
+4. **N5**：覆盖/方向校验尚未接合成输出；关系头 G2 失败记录不变。
+5. **产品取舍**：需要“任意新世界自动生成”时，模型路线必须以槽位臂为对照基线（同判据五项），否则默认用槽位臂。
+
+### 复跑命令
+
+```
+python -X utf8 experiments/world-components/n4_input_renderer/test_packer.py
+python -X utf8 experiments/world-components/n4_narrative_dev/test_pipeline_narrative.py
+python -X utf8 experiments/world-components/n4_narrative_dev/validate_corpus_v2.py
+python -X utf8 experiments/world-components/n4_narrative_dev/validate_verbalizer.py
+python -X utf8 experiments/world-components/n4_narrative_dev/validate_scene_corpus.py
+python -X utf8 experiments/world-components/n4_narrative_dev/compose_full.py
+python -X utf8 experiments/world-components/n4_narrative_dev/compose_slots.py
+```
