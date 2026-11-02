@@ -1,0 +1,10 @@
+{
+ "freeze": "n4-v3-holdout (N4 optimization experiment) -- family-C rows REUSED from the v2 frozen holdout with N3 guard-on plans and the merged-target composer; frozen before any v3 training run. This is a direct A/B comparison, not a new independent holdout.",
+ "file": "holdout-v3.jsonl",
+ "rows": 66,
+ "familyId": "v2-c-salt",
+ "sha256": "c6f675a8652cc552eefadaf8d4f6bb3eb8ae5c188393029d000af04e8a564147",
+ "source": "experiments/world-components/n4_corpus_v2/corpus_v2/holdout-v2.jsonl",
+ "sourceSha256": "897dfd706b4f916ca630473a588430a4cb9ca5b91271916eeafe5cac99bb56c5",
+ "criteria": "same G1/G2/G3/G4/G5/G6 and P1/P2 machinery as eval_n4_v2.py; reused test family"
+}

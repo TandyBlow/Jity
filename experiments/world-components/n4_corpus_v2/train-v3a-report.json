@@ -1,0 +1,45 @@
+{
+ "purpose": "N4 v3a alignment finetune (guard-on N3 plans + old one-fact-per-sentence targets)",
+ "base": {
+  "dir": "~/n4v2_run/base/randeng-t5-77m",
+  "sha256": "5cdc572109cf25914b43fede20a6949b5fbf50b3a091a9c445fac60059bf5557",
+  "pathRedacted": true
+ },
+ "data": {
+  "corpus": "corpus_v3a/train-v3.jsonl",
+  "corpusSha256": "b8782c07df90ffb5782d5fe7881952a581c61aa7cc88c8ae83f66e1c90e81459",
+  "trainPairs": 429,
+  "devHeldOut": 85,
+  "holdoutFrozen": {
+   "rows": 66,
+   "sha256": "9fbbd136e0bcae88d04dafe39d7732f6160ab3245b7a0bcc2499f4d9ca98fc4a"
+  }
+ },
+ "hyper": {
+  "seed": 20261102,
+  "epochs": 12,
+  "steps": 648,
+  "batch": 8,
+  "lr": 0.0001,
+  "optimizer": "AdamW",
+  "precision": "fp32",
+  "maxInput": 160,
+  "maxOutput": 96,
+  "device": "NVIDIA GeForce RTX 4090 D"
+ },
+ "lossFirst5": [
+  4.5006,
+  3.3768,
+  2.8732,
+  2.5608,
+  2.4438
+ ],
+ "lossLast5": [
+  0.0068,
+  0.0065,
+  0.016,
+  0.0075,
+  0.0092
+ ],
+ "wallSeconds": 36.5
+}

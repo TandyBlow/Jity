@@ -68,6 +68,9 @@ _tf.__path__ = []
 sys.modules.setdefault("tensorflow", _tf)
 
 HERE = pathlib.Path(__file__).resolve().parent
+CORPUS_DIR = HERE / "corpus_v2"
+TRAIN_FILE = "train-v2.jsonl"
+HOLDOUT_FILE = "holdout-v2.jsonl"
 WC = HERE.parent
 sys.path.insert(0, str(WC))
 sys.path.insert(0, str(WC / "n4_corpus"))
@@ -314,12 +317,12 @@ def run_eval(model_dir: pathlib.Path, out_path: pathlib.Path,
 
     def rows_of(name):
         return [json.loads(l) for l in
-                (HERE / "corpus_v2" / name).read_text(encoding="utf-8")
+                (CORPUS_DIR / name).read_text(encoding="utf-8")
                 .splitlines() if l.strip()]
 
-    dev = rows_of("train-v2.jsonl")
+    dev = rows_of(TRAIN_FILE)
     dev = [r for r in dev if r["split"] == "dev"]
-    test = rows_of("holdout-v2.jsonl")
+    test = rows_of(HOLDOUT_FILE)
     if max_rows:
         dev, test = dev[:max_rows], test[:max_rows]
 
@@ -369,7 +372,10 @@ def run_eval(model_dir: pathlib.Path, out_path: pathlib.Path,
         "P2_ablation_nonzero": bool(diffs) if t_pron else True,
     }
     archive = {
-        "purpose": "N4 v2 grouped-interface frozen-holdout eval (commit 2)",
+        "purpose": "N4 grouped-interface frozen-holdout eval (v2 machinery; "
+                   "corpus selected by --corpus-dir)",
+        "corpus": {"dir": CORPUS_DIR.name, "train": TRAIN_FILE,
+                   "holdout": HOLDOUT_FILE},
         "model": {"dir": str(model_dir),
                   "sha256": hashlib.sha256(
                       (model_dir / "model.safetensors").read_bytes()
@@ -406,9 +412,9 @@ def selfcheck() -> int:
     """The aligner must cover 100% of the COMPOSER targets — the corpus
     and the judgement machinery agree before any model enters."""
     failures = []
-    for name in ("train-v2.jsonl", "holdout-v2.jsonl"):
+    for name in (TRAIN_FILE, HOLDOUT_FILE):
         rows = [json.loads(l) for l in
-                (HERE / "corpus_v2" / name).read_text(encoding="utf-8")
+                (CORPUS_DIR / name).read_text(encoding="utf-8")
                 .splitlines() if l.strip()]
         for r in rows:
             v = judge_row(r, r["text"], "eos")
@@ -417,8 +423,8 @@ def selfcheck() -> int:
                                 f"{v['align']['problems'][:3]}")
     for f in failures[:20]:
         print("SELFCHECK FAIL:", f)
-    print(f"v2 aligner selfcheck: {'PASS' if not failures else 'FAIL'} "
-          f"({len(failures)} failures)")
+    print(f"aligner selfcheck [{CORPUS_DIR.name}]: "
+          f"{'PASS' if not failures else 'FAIL'} ({len(failures)} failures)")
     return 1 if failures else 0
 
 
@@ -429,7 +435,19 @@ def main() -> int:
     parser.add_argument("--model", default=None)
     parser.add_argument("--out", default=None)
     parser.add_argument("--max-rows", type=int, default=None)
+    parser.add_argument("--corpus-dir", default=None)
+    parser.add_argument("--train-file", default=None)
+    parser.add_argument("--holdout-file", default=None)
     args = parser.parse_args()
+    global CORPUS_DIR, TRAIN_FILE, HOLDOUT_FILE
+    if args.corpus_dir:
+        CORPUS_DIR = pathlib.Path(args.corpus_dir)
+    if args.train_file:
+        TRAIN_FILE = args.train_file
+    elif (CORPUS_DIR / "train-v3.jsonl").exists():
+        TRAIN_FILE, HOLDOUT_FILE = "train-v3.jsonl", "holdout-v3.jsonl"
+    if args.holdout_file:
+        HOLDOUT_FILE = args.holdout_file
     if args.selfcheck:
         return selfcheck()
     if args.eval:

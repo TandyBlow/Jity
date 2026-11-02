@@ -1,0 +1,46 @@
+{
+ "purpose": "N4 v3 style diagnostic: surface shift under merged same-entity targets; surface only, not a quality gate",
+ "corpus": "corpus_v3/holdout-v3.jsonl",
+ "rows": 66,
+ "models": {
+  "v2_on_v3_inputs": {
+   "eval": "n4-v3-holdout-eval-v2model.json",
+   "testHardPass": 48,
+   "testRows": 66,
+   "meanSentencesPerGroup": 1.72,
+   "meanFactsPerSentence": 1.684,
+   "totalSentences": 123
+  },
+  "v3a_oneFactTargets": {
+   "eval": "n4-v3a-holdout-eval-v3amodel.json",
+   "testHardPass": 60,
+   "testRows": 66,
+   "meanSentencesPerGroup": 1.735,
+   "meanFactsPerSentence": 1.556,
+   "totalSentences": 124
+  },
+  "v3b_mergedTargets": {
+   "eval": "n4-v3-holdout-eval-v3model.json",
+   "testHardPass": 62,
+   "testRows": 66,
+   "meanSentencesPerGroup": 1.025,
+   "meanFactsPerSentence": 2.636,
+   "totalSentences": 76
+  }
+ },
+ "targets": {
+  "merged_v3": {
+   "corpusReport": "n4-v3-corpus-report.json",
+   "meanSentencesPerGroup": 1.04,
+   "meanFactsPerSentence": 2.41,
+   "totalSentences": 78
+  },
+  "oneFact_v3a": {
+   "corpusReport": "n4-v3a-corpus-report.json",
+   "meanSentencesPerGroup": 1.667,
+   "meanFactsPerSentence": 1.504,
+   "totalSentences": 125
+  }
+ },
+ "finding": "The merged targets transferred: v3b emits ~1.03 sentences per group and ~2.64 facts per sentence, close to the merged target (1.04/2.41), versus ~1.72/1.68 for the one-fact models. But v3b passes 62/66 hard gates vs the old v2-on-v2 64/66, and the guard-on alternating row still fails (v3b omits the middle task; v3a misattributes it to the next actor). Style moved; hard fidelity did not improve, so v3b is an experimental arm, not the replacement default."
+}

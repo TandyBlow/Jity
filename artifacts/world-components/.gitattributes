@@ -28,3 +28,6 @@ n5-*.json -text
 
 # N3 plan diagnostics keep the archived LF bytes.
 n3-*.json -text
+
+# N4 v3/v3a experiment evidence keeps the archived LF bytes.
+n4-v3*.json -text

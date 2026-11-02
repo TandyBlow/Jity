@@ -7,3 +7,11 @@ corpus_v2/n5/*.jsonl -text
 corpus_v2/n5/*.json -text
 train-v2-report.json -text
 train-n5-report.json -text
+
+# N4 v3/v3a experiment corpora and reports keep their archived LF bytes.
+corpus_v3/*.jsonl -text
+corpus_v3/*.json -text
+corpus_v3a/*.jsonl -text
+corpus_v3a/*.json -text
+train-v3-report.json -text
+train-v3a-report.json -text
