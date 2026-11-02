@@ -1,0 +1,9 @@
+# Frozen v2 corpora are pinned by sha256 in holdout-v2-freeze.json /
+# n5/test-freeze.json and checked by the trainers. Keep the committed LF
+# bytes on every checkout so the guards hold under core.autocrlf=true.
+corpus_v2/*.jsonl -text
+corpus_v2/*.json -text
+corpus_v2/n5/*.jsonl -text
+corpus_v2/n5/*.json -text
+train-v2-report.json -text
+train-n5-report.json -text

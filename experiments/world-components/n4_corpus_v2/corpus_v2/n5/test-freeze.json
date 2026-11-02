@@ -1,0 +1,21 @@
+{
+ "freeze": "n5-relation-test (commit 3) -- frozen BEFORE head training; perturbations are programmatic and recorded per pair; family C only",
+ "file": "test.jsonl",
+ "rows": 758,
+ "classDistribution": {
+  "support": 256,
+  "contradiction": 246,
+  "unknown": 256
+ },
+ "perturbations": [
+  "cross-row-sentence",
+  "direction-flip",
+  "goal-misattribution",
+  "number-error",
+  "relation-flip",
+  "role-swap",
+  "text-swap",
+  "unit-error"
+ ],
+ "sha256": "ea68c9accc07b5232d0b3662c73fd69085c87a02c5602a84b3971b5b3da457ef"
+}

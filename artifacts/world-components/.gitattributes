@@ -21,3 +21,7 @@ n3-rulearm-diag16.json -text
 n3-rulearm-probes.json -text
 n3-rulearm-delivery.md -text
 n3-n4-fixtures.json -text
+
+# v2/N5 evidence keeps the archived bytes (hashes are cited in the reports).
+n4-v2-browser-*.json -text
+n5-*.json -text
