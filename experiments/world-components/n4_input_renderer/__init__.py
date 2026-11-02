@@ -1,10 +1,15 @@
-# N4 formal component: narrative input renderer (program-only).
+# N4.0 narrative input packing (program sub-step of the N4 generation model).
 #
-# New numbering (2026-11-02):
-#   N4 = input rendering (this package)
-#   N5 = narrative generation (old N4)
-#   N6 = verification (old N5)
+# Numbering (2026-11-02, option A):
+#   N1 extraction -> N2 selection -> N3 organization
+#   -> N4.0 structured input packing (this package, program)
+#   -> N4 narrative generation (model)
+#   -> N5 verification
+#
+# The legacy sentence-row renderer is kept for the frozen v2/v3 models and
+# byte regression; pack_narrative_input is the new N4 input contract.
 
+from .packer import N4_INPUT_VERSION, pack_narrative_input  # noqa: F401
 from .renderer import (  # noqa: F401
     N4_VERSION,
     N4RenderError,

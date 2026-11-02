@@ -16,7 +16,7 @@
 - **唯一 prompt**：模型臂只使用下述模板（含 R1–R6 规则原文），不针对结果调参、改写或加提示。跑输即归档失败。
 - **总重试 1 次**：每次调用若输出不可解析为合法 JSON（或违反 H1/H2 结构检查），允许带固定的重试后缀重试一次；两次都失败计该条目失败。
 - **盲 A/B 只作佐证**：如需佐证，仅允许记录输入顺序翻转等呈现变体的行为差异，不进判据、不改变主判定。
-- 模型臂对象按 [model-training-runtime.md](model-training-runtime.md) §3.1：instruct 生成臂（现役 0.6B）先行；编码器 pairwise 头不消费本 prompt，另行登记。
+- 模型臂对象按 [model-training-runtime.md](model-training-runtime.md) §3.1：instruct 生成臂（0.6B 已退役，候选待定）先行；编码器 pairwise 头不消费本 prompt，另行登记。
 
 ## 输入装配规则（冻结对象）
 

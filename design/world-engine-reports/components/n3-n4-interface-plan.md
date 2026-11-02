@@ -1,8 +1,6 @@
 # N3→N4 接口约束方案与非模型夹具
 
 日期：2026-10-30。提交人：C 实现者。基线：`world-components@b97adb2`（= origin，已核实）；工作区仅未跟踪的 `signoff-f9c1190.md`（原样保留）与冻结产物，零改动。
-
-> **编号迁移（2026-11-02）：** 本文的 N4 指旧成句组件，现为 N5；现 N4=叙事输入渲染（[契约](n4-input-renderer.md)）。正文与夹具保留旧编号。
 状态：**方案 v2＋夹具，待 C 审查者复审**。本方案定义的是**待实现、待验证的接口约束**，不是已接线能力；本轮不训练、不调用真实模型、不实现任何回退。
 修订记录：v1（`8626082`）→ v2（`291f5ae`）→ v3（`641efe8`）→ v4（`ee406e0`）→ **v5（本笔，按一项独立反例修正姓名层级）**：**实体姓名从 `state.initial.characters/locations/items[eid].name`（Initial* 定义）解析**——动态 `state.characters/locations/items` 是 `CharacterState/ItemState/LocationState`，无 name 字段，伪造动态 name 不能通过（夹具 FFAK1）；任务正文仍从动态 `state.characters[eid].tasks[tid]` 解析。**正向状态夹具改经 pydantic `WorldState.model_validate` 真实校验后 dump**（含 initial/动态双层任务定义、位置引用与固定实体注册表校验），不再手写近似结构（v4 及更早：：① **任务与姓名解析绑定已提交状态**——任务正文从 `state.characters[eid].tasks[tid]`（goal/status/ownerId）解析、实体姓名从 state 实体表解析并核对（`name-mismatch`）；不存在调用者自带的独立注册表，同时篡改事实与旁路注册表的绕过不再存在；② **世界身份按正式层级校验**——`state.worldId`（WorldState 字段），缺失即 `world-missing` 停止，前后状态 `state.worldId` 不一致报 `world-mismatch`（不再比较顶层不存在字段）；v3 及更早：：① 来源模型改按**实际 schema**——任务完成由 `EntityDelta.tasksAchieved` 的**任务 ID** 表示，任务正文从权威任务注册表解析（id→goal/ownerId/status），时间为 `TimeAdvance.duration.{amount,unit}`，不再使用简化形状或自称「真实形状」；② 绑定增加**归属核对**（fact.entityId == source.entityId，否则 `ownership-mismatch`）与逐字段内容验证；夹具明确支持类型集（task_achieved、time），**未支持类型显式拒绝**（`unsupported-fact-kind`）；③ 根点校验区分**缺字段与显式 null**——GetStateData 各键必须存在（根点取显式 null/null/{}），键缺失或必填字段为 null 均记读取不完整（`missing-<field>`）；④ token 计数直接作用于**共享渲染器 `n4_render.render_input` 的实际输出**（确定性程序，无模型——完整提示头、事实行、尾部），仅分词为桩；不再使用自造渲染文本。
 

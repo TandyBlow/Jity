@@ -527,7 +527,7 @@ prepare_successor 后 P1 不再接收新单元或修改阶段候选。P1 前只�
 
 WebLLM 作为对照候选，其官方文档提供 WebGPU 推理和 Worker 接入；仅在同一任务、设备和输出要求下比较后决定是否新增运行时。[WebLLM 官方文档](https://webllm.mlc.ai/docs/)、[Worker 接入说明](https://webllm.mlc.ai/docs/user/advanced_usage.html)
 
-模型先使用仓库已经做过实验的 Qwen3-0.6B，建议以 Qwen3-1.7B 作为容量对照。这两者均有官方模型卡；其存在及标称能力不代表浏览器中文工作流质量达标。量化权重来源、文件校验、聊天模板和运行时兼容性另行锁定。[Qwen3-0.6B](https://huggingface.co/Qwen/Qwen3-0.6B)、[Qwen3-1.7B](https://huggingface.co/Qwen/Qwen3-1.7B)
+模型选型不再预置 Qwen3-0.6B：真实 Edge＋wllama 的叙事实测 mean 14.0 s、p50 13.5 s，N2 选择约 24 s，超过交互预算，已退役（[C 退役记录](world-engine-reports/components/model-retirement-qwen3-06b.md)）。生成候选先评估 Randeng-T5-77M（ORT-web 已适配）；wllama 作为运行时保留，但不绑定 0.6B。若未来重新评估 0.6B，须按同任务、同判据给出真实浏览器延迟与质量，不能仅凭模型小或换运行时重新列为候选。
 
 已核对本地安装的 `@wllama/wllama` 3.8.1 类型声明：支持 GBNF `grammar` 和 OAI 兼容的 `response_format.json_schema`，可据此实现 generateStructured。Qwen3 调用统一设置 `chat_template_kwargs: { enable_thinking: false }`，沿用 `run-task-trial.mjs` 的现有方式；实际提示模板及参数进入运行记录。输出格式合法性由受约束解码及 schema 校验保障，语义正确性另行评测；约束生成中止或截断仍算失败，schema 通过不等于状态变化正确。
 

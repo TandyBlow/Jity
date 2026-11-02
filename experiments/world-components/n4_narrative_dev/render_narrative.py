@@ -4,7 +4,7 @@
 #
 # New numbering (2026-11-02): N4 = input renderer, N5 = generation,
 # N6 = verification. See design/world-engine-reports/components/
-# n4-input-renderer.md.
+# n4-input-packing.md.
 
 import json
 import pathlib

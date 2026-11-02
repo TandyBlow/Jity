@@ -63,11 +63,20 @@ def main():
     assert present == ["char_pa"], present
     assert not any(x.startswith("npc") for x in present), present
     assert [c["name"] for c in out["sceneContext"]["characterContext"]] ==         ["管线甲"], out["sceneContext"]
-    assert "管线甲把铜铃挂回了钟楼。" in out["input"], out["input"]
+    assert out["inputVersion"].startswith("n4-input-pack"), out
+    assert "f0｜结果｜管线甲｜把铜铃挂回了钟楼" in out["input"], out["input"]
+    # the new N4.0 contract carries records, not pre-written sentences
+    assert "管线甲把铜铃挂回了钟楼。" not in out["input"], out["input"]
     # the internal goal may be a substring of the result text? In this
     # fixture it is not a contiguous substring; assert it never leaks.
     assert "把铜铃挂回钟楼" not in out["input"], out["input"]
     assert "task_achieved" not in out["input"], out["input"]
+
+    legacy_out = pn.run_narrative_pipeline(
+        point, before, {"type": "protagonist"}, environment=ENV,
+        input_format="legacy")
+    assert legacy_out["inputVersion"].startswith("n4-legacy-sentence")
+    assert "管线甲把铜铃挂回了钟楼。" in legacy_out["input"]
 
     point2, before2 = build_point(False)
     out2 = pn.run_narrative_pipeline(

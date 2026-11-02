@@ -120,11 +120,11 @@ def main() -> int:
         "日期：2026-11-02。语料已审通过；本文件验证 **N2 → N3 → N4 输入**"
         " 的真实链路，不训练、不调用模型。N1 的 `outcome/resultText` 已在"
         " `narrative_outcome=True` 下实现（缺 resultText 停机，见 "
-        "`n4-narrative-runner.md`）；本预览仍用已审 facts 验证 N2/N3/N4。",
+        "`n4-narrative-runner.md`）；本预览仍用已审 facts 验证 N2/N3/旧句子输入。",
         "",
-        "> **编号迁移（2026-11-02）：** 当前 N4=叙事输入渲染"
-        "（[契约](n4-input-renderer.md)），旧 N4 成句=N5，旧 N5 核对=N6。"
-        "本预览的 N4 指输入渲染；选择臂服务于 N5。",
+        "> **输入版本（2026-11-02）：** 本文是旧句子输入（legacy），仅供冻结"
+        " v2/v3 模型与字节回归；当前 N4 输入契约是 N4.0 结构化记录，见"
+        " `n4-narrative-input-packing-preview.md`。N4=生成模型，N5=核对。",
         "",
         "## 链路",
         "",
@@ -133,7 +133,7 @@ def main() -> int:
         "3. N3 `plan_v3` + `check_plan_v3`；",
         "4. N4 `render_plan_input`。",
         "",
-        "`visible_other_actions` 是新增的 N5 叙事选择臂：他人在同地的可见"
+        "`visible_other_actions` 是新增的 N4 叙事选择臂：他人在同地的可见"
         "移动/行动结果/可见变化是 `may`；他人的任务 goal/status 和内心状态"
         "仍然不可见。旧 v2 臂不传此参数，行为不变。",
         "",

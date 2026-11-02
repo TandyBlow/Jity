@@ -1,4 +1,4 @@
-# Record the N4 input-renderer regression evidence.
+# Record the N4.0 legacy sentence-renderer regression evidence.
 #
 # Run after test_renderer.py passes:
 #   python -X utf8 experiments/world-components/n4_input_renderer/record_evidence.py
@@ -32,7 +32,7 @@ SOURCES = [
     "experiments/world-components/n4_narrative_dev/world.json",
     "experiments/world-components/n4_narrative_dev/pipeline_preview.json",
     "experiments/world-components/n4_narrative_dev/input_preview.json",
-    "design/world-engine-reports/components/n4-input-renderer.md",
+    "design/world-engine-reports/components/n4-input-packing.md",
 ]
 
 UNITS = [
@@ -61,8 +61,9 @@ def main():
     for name in UNITS:
         getattr(tests, name)()
     payload = {
-        "component": "N4",
-        "name": "narrative input renderer",
+        "component": "N4.0-legacy-sentence",
+        "name": "legacy sentence-row renderer",
+        "role": "legacy path for frozen v2/v3 models; not the current N4 input contract",
         "version": renderer.N4_VERSION,
         "date": "2026-11-02",
         "parentCommit": git_head(),

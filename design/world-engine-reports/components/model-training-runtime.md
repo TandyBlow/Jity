@@ -1,10 +1,12 @@
 # 交付项 2：模型、训练与运行时方案表
 
-日期：2026-10-28。版本：C方案表0.3（0.2 → 0.3 追加 §3.1 任务进度表与 F14–F17：N4 六类短计划离线通过、N2 首轮对照、T5 零样本不适用该形状、0.6B 生成编号不懂视角；0.1 经 2026-10-29 复核轮修订：Mengzi 参数实数、F4 计时口径、F11 快照归属、MiniRBT 许可关闭、F2 版本来源注记）。依据：[组件接口表](component-contracts.md)（`79b8fa4`）、[C任务边界](README.md)（`886dfe8`）。本文只交方案与已核实事实，不运行模型、不产生质量结论；质量数字由交付项3的隔离实验产出。
+日期：2026-10-28。版本：C方案表0.3（0.2 → 0.3 追加 §3.1 任务进度表与 F14–F17：N4 六类短计划离线通过、N2 首轮对照、T5 零样本不适用该形状、生成骨干编号不懂视角；0.1 经 2026-10-29 复核轮修订：Mengzi 参数实数、F4 计时口径、F11 快照归属、MiniRBT 许可关闭、F2 版本来源注记）。依据：[组件接口表](component-contracts.md)（`79b8fa4`）、[C任务边界](README.md)（`886dfe8`）。本文只交方案与已核实事实，不运行模型、不产生质量结论；质量数字由交付项3的隔离实验产出。
 
 证据分三类，引用时区分：**[实测]**=本仓库已提交试验/归档（可复跑核对）；**[核实]**=本轮本机核实（注明方法）；**[外部]**=官方模型卡/README（2026-10-28 抓取，锁定权重时逐项复核）。下载体积不是参数量，模型卡能力不代表本项目达标。
 
-> **编号迁移（2026-11-02）：** 当前编号 N4=叙事输入渲染、N5=成句、N6=核对（见 [N4 输入渲染器](n4-input-renderer.md)）。本文历史 F 条目与旧正文沿用旧编号（旧 N4=成句、旧 N5=核对）；§3.1 与 §4 的当前表已改新编号。冻结证据文件名不重命名。
+> **Qwen3-0.6B 已退役（2026-11-02）：** 真实 Edge＋wllama 单次叙事 mean 13.986 s、p50 13.497 s，N2 选择约 24 s，远超约 4 s 的交互目标。本文当前候选表/路线已移除它；历史 F 条目中的 0.6B 数字保留为退役证据。见 [退役记录](model-retirement-qwen3-06b.md)。
+
+> **编号（2026-11-02）：** 当前编号 N4=叙事生成模型、N4.0=程序输入装配、N5=核对（见 [N4.0 输入装配](n4-input-packing.md)）。本文历史 F 条目中的 N4 成句/N5 核对与此一致；冻结证据文件名不重命名。
 
 ## 1. 已定事实（直接约束选型，不改）
 
@@ -26,25 +28,27 @@
 
 ## 2. 骨干候选表（README 必填字段逐项）
 
-| 字段 | MiniRBT-H256（编码器骨干首选） | Randeng-T5-77M-MultiTask（生成候选） | Mengzi-T5-base（容量对照） | Qwen3-0.6B（现役基线/对照臂） |
-| --- | --- | --- | --- | --- |
-| 全参数量 | 官方 10.4M（6层×隐256×8头）[外部] | 官方 77,440,384，复核轮与 safetensors.total 逐位一致 [外部] | **247,577,856（≈247.6M）**：HF safetensors.total 实数（复核轮经 mirror API 取元数据，未下载权重）[核实]；口径=encoder 7.08M/层＋decoder 9.44M/层（self 2.36M＋cross-attention 2.36M＋FF 4.72M，12+12 层）＋输入嵌入 24.67M＋lm_head 独立 24.67M（`tie_word_embeddings:false`）；独立复算 247,585,536 与实数差 7,680（LN/偏置零头）；此前 0.1 版 ≈223M 推算作废 | 0.6B；GGUF Q4_K_M 文件体积以锁定权重为准 |
-| 架构/任务头方式 | BERT 编码器；每任务一个轻头（池化分类头／逐 token 标注头／句对 cross-encoder 打分头），**一份骨干多任务共享** | T5 encoder-decoder，text2text；任务即提示词模板 | 同左 | decoder-only chat；结构输出靠 GBNF/schema 约束 |
-| 中文能力依据 | WWM 预训练＋两阶段蒸馏（官方README）；本仓库旧任务分类 8/8 旧批泛化、Python 侧 11/12 [外部+实测] | 在 Randeng-T5-77M 上用 100+ 中文多任务数据集（30万+样本）统一 text2text 微调；卡仅演示标签/摘要类短输出，无流畅度评测 [外部] | 300GB 中文语料预训练；卡无质量评测；社区用途为标点恢复/问答 [外部] | 本仓库叙事评测归档：requireTime 定档 natural 10/16，四失败模式已知 [实测] |
-| 微调/蒸馏需求 | 每任务头全参微调（官方建议 lr≈1e-4、多于常规轮数）；微调期蒸馏可选非必需 | 先零样本测模板任务；N4 成句需本项目数据微调/评测；蒸馏暂不需要（模型够小） | 本轮仅作容量对照，不微调起步 | 不微调（基线臂）；提示词与操作点已归档 |
-| 隔离开发样本 | 从接口表 V01–V09 检查族派生；标注=程序枚举＋人工复核，不用模型自标；按 README 排除 hv-*/nv-*/ns-* 及改名派生 | 同左；成句样本另需"事实计划→正文"成对语料，正文以程序模板句＋人工改写为种子 | 仅对照，不建训练样本 | 沿用已归档操作点作对照，不重用样本 |
-| 离线框架 | torch 2.7.0+cu126＋transformers 4.57.3（已装，F12） | 同左＋**sentencepiece（缺，装后再跑）** | 同左 | llama.cpp 离线转换（工具与版本在 GGUF 化时锁定） |
-| 导出图 | `torch.onnx` → fp32＋int8 dynamic（已走通，F6） | 未做；路径=optimum/手工导出 encoder、decoder、decoder-with-past 三图（相对位置桶与 KV cache 须保留） | 同左 | GGUF 转换即导出；转换脚本对 t5 架构的支持以锁定版本实测为准 |
-| 量化 | int8 dynamic 已实测可跑（F4）；fp32 作对照 | fp16 先行；int8 后做且必须做量化前后质量对照 | 同左 | Q4_K_M 已归档（F9） |
-| 浏览器运行时 | ORT-web 1.30 直驱＋手写分词器（已实测，F2/F4） | 首选 wllama GGUF（F10 架构字符串在，端到端未测）；备选 ORT 直驱（须自实现 JS sentencepiece＋decoder 循环，成本高，除非 wllama 路径证伪否则不做） | 同左（体积更大） | wllama（已接入，F9） |
-| 分词器 | JS 手写 BertTokenizerFast 等价（中文按字、lowercase、ASCII wordpiece 回退），在跑对照 Python 参考 id 校验通过 [实测] | sentencepiece（unigram）；**浏览器侧 JS 实现是 T5 路线的最大单点成本**，wllama 路径则由 GGUF 内嵌 tokenizer 解决 | 同左 | GGUF 内嵌，llama.cpp 处理 |
-| 取消/生成循环 | `session.run` 不可中途取消→AbortSignal 外包＋迟到结果按接口表 §2.1 隔离丢弃；加载与解码循环可取消 | wllama 有中断 API；ORT 直驱路径同左；生成循环=encoder 一次＋decoder 逐步（带 past），步数上限与早停显式配置 | 同左 | wllama 中断已在使用 |
+> 下表已移除 Qwen3-0.6B 列；其历史数字只保留在退役记录与归档证据中，当前选型不再考虑。
+
+| 字段 | MiniRBT-H256（编码器骨干首选） | Randeng-T5-77M-MultiTask（生成候选） | Mengzi-T5-base（容量对照） |
+| --- | --- | --- | --- |
+| 全参数量 | 官方 10.4M（6层×隐256×8头）[外部] | 官方 77,440,384，复核轮与 safetensors.total 逐位一致 [外部] | **247,577,856（≈247.6M）**：HF safetensors.total 实数（复核轮经 mirror API 取元数据，未下载权重）[核实]；口径=encoder 7.08M/层＋decoder 9.44M/层（self 2.36M＋cross-attention 2.36M＋FF 4.72M，12+12 层）＋输入嵌入 24.67M＋lm_head 独立 24.67M（`tie_word_embeddings:false`）；独立复算 247,585,536 与实数差 7,680（LN/偏置零头）；此前 0.1 版 ≈223M 推算作废 |
+| 架构/任务头方式 | BERT 编码器；每任务一个轻头（池化分类头／逐 token 标注头／句对 cross-encoder 打分头），**一份骨干多任务共享** | T5 encoder-decoder，text2text；任务即提示词模板 | 同左 |
+| 中文能力依据 | WWM 预训练＋两阶段蒸馏（官方README）；本仓库旧任务分类 8/8 旧批泛化、Python 侧 11/12 [外部+实测] | 在 Randeng-T5-77M 上用 100+ 中文多任务数据集（30万+样本）统一 text2text 微调；卡仅演示标签/摘要类短输出，无流畅度评测 [外部] | 300GB 中文语料预训练；卡无质量评测；社区用途为标点恢复/问答 [外部] |
+| 微调/蒸馏需求 | 每任务头全参微调（官方建议 lr≈1e-4、多于常规轮数）；微调期蒸馏可选非必需 | 先零样本测模板任务；N4 成句需本项目数据微调/评测；蒸馏暂不需要（模型够小） | 本轮仅作容量对照，不微调起步 |
+| 隔离开发样本 | 从接口表 V01–V09 检查族派生；标注=程序枚举＋人工复核，不用模型自标；按 README 排除 hv-*/nv-*/ns-* 及改名派生 | 同左；成句样本另需"事实计划→正文"成对语料，正文以程序模板句＋人工改写为种子 | 仅对照，不建训练样本 |
+| 离线框架 | torch 2.7.0+cu126＋transformers 4.57.3（已装，F12） | 同左＋**sentencepiece（缺，装后再跑）** | 同左 |
+| 导出图 | `torch.onnx` → fp32＋int8 dynamic（已走通，F6） | 未做；路径=optimum/手工导出 encoder、decoder、decoder-with-past 三图（相对位置桶与 KV cache 须保留） | 同左 |
+| 量化 | int8 dynamic 已实测可跑（F4）；fp32 作对照 | fp16 先行；int8 后做且必须做量化前后质量对照 | 同左 |
+| 浏览器运行时 | ORT-web 1.30 直驱＋手写分词器（已实测，F2/F4） | 首选 wllama GGUF（F10 架构字符串在，端到端未测）；备选 ORT 直驱（须自实现 JS sentencepiece＋decoder 循环，成本高，除非 wllama 路径证伪否则不做） | 同左（体积更大） |
+| 分词器 | JS 手写 BertTokenizerFast 等价（中文按字、lowercase、ASCII wordpiece 回退），在跑对照 Python 参考 id 校验通过 [实测] | sentencepiece（unigram）；**浏览器侧 JS 实现是 T5 路线的最大单点成本**，wllama 路径则由 GGUF 内嵌 tokenizer 解决 | 同左 |
+| 取消/生成循环 | `session.run` 不可中途取消→AbortSignal 外包＋迟到结果按接口表 §2.1 隔离丢弃；加载与解码循环可取消 | wllama 有中断 API；ORT 直驱路径同左；生成循环=encoder 一次＋decoder 逐步（带 past），步数上限与早停显式配置 | 同左 |
 
 许可状态：**三候选均声明 Apache-2.0**——Randeng/Mengzi 模型卡 [外部]；MiniRBT 经 `hfl/minirbt-h256` 模型卡 `cardData.license` 与 `license:apache-2.0` tag 核实（复核轮关闭；GitHub README 本身未标许可）。落实口径：Randeng 仓库无 LICENSE 文件（siblings 仅 README/config/权重/tokenizer，复核轮确认），Mengzi/MiniRBT 锁定权重时核对 LICENSE 文件；声明均以模型卡标签为准写入运行记录。
 
 ## 3. 组件×任务×方案映射
 
-**首轮原则（防过度设计）：** 交付项3的首轮实验，一切生成类任务先走现有 Qwen3-0.6B＋wllama 通路（已接入、成本已归档），一切判别类任务先在生成骨干同一调用内完成（现任务形状即如此）；小模型头作为**逐个对照臂**验证，只有同时赢在质量和环境内总成本才替换。编码器骨干一份、多头共享，浏览器只加载一份 int8 权重；生成骨干一份（首轮 Qwen3-0.6B，T5 质量验证通过后才换）。
+**首轮原则（防过度设计）：** 交付项3的首轮实验，生成类任务先在 Randeng-T5-77M（ORT-web）上验证，判别类任务先在生成骨干同一调用内完成（现任务形状即如此）；小模型头作为**逐个对照臂**验证，只有同时赢在质量和环境内总成本才替换。编码器骨干一份、多头共享，浏览器只加载一份 int8 权重；生成骨干候选待定（T5-77M 先验），**Qwen3-0.6B 已退役**。
 
 | 任务（接口表） | 形状 | 首轮方案 | 小模型对照臂（第3项验证目标） | 优先级依据 |
 | --- | --- | --- | --- | --- |
@@ -63,9 +67,9 @@
 | C7 N1 事实提取 | 程序枚举＋可选归类 | 程序（接口表 §5.2 已定：不让生成模型猜差异） | 编码器"变化类型"归类头仅作可选加速，不承担正确性 | V07 |
 | C7 N2 内容选择 | 打分/引用选择 | 生成骨干（mustExpress 由程序硬性保底全收，模型只表达 mayMention 取舍——必述漏选=失败不变） | **编码器打分头（事实条目×视角）**：首轮优先验证 | 首批聚焦叙事 |
 | C7 N3 组织表达 | 排序/分组/指代 | 生成骨干 | 编码器 pairwise 排序头；指代建议属生成侧 | 首批聚焦叙事 |
-| C7 N4 输入渲染 | 程序确定性渲染 | 无模型（N4.1 场景上下文＋N4.2 输入文本） | 无 | V08 |
-| C7 N5 成句 | 短文本生成 | Qwen3-0.6B（现役） | **Randeng-T5-77M 微调臂**：先离线验证质量（含模板种子微调语料），质量过了再走 wllama GGUF 端到端实测；浏览器化是质量门之后的事 | 首批聚焦叙事 |
-| C7 N6 核对 | 程序核对＋语义复核 | 程序为主＋人工复核 | 编码器 NLI/一致性头仅作候选，不自动放行 | V08 |
+| C7 N4.0 输入装配 | 程序确定性装配 | 无模型（场景上下文＋结构化记录） | 无 | V08 |
+| C7 N4 成句 | 短文本生成 | Randeng-T5-77M（ORT-web 已适配，质量待验证） | —（0.6B 已退役） | 首批聚焦叙事 |
+| C7 N5 核对 | 程序核对＋语义复核 | 程序为主＋人工复核 | 编码器 NLI/一致性头仅作候选，不自动放行 | V08 |
 
 ### 3.1 任务进度（复核轮 21 修复）
 
@@ -75,12 +79,12 @@
 
 | 任务 | 首选候选（当前依据） | 备选 | 阶段 | 本轮新增证据 |
 | --- | --- | --- | --- | --- |
-| N4 输入渲染 | 程序确定性渲染（N4.1 场景上下文＋N4.2 输入文本） | 无模型 | **已实现 v0.1**：12 组/12 扁平预览字节一致＋fail-closed 单元 | `n4-input-renderer-r1.json`、`n4_input_renderer/test_renderer.py` |
-| N5 成句 | Randeng-T5-77M 全参微调 `r3-direction`（方向由程序给出） | Qwen3-0.6B（现役基线，未微调） | **离线验证通过**（六类短计划 44/44）；浏览器与接线未验证 | `n4-holdout-eval-r3-direction.json`、`n4-offline-package-r3-direction.json`（D3 离线包） |
-| N2 内容选择 | MiniRBT 编码器打分头（事实×视角）——**尚未训练** | 0.6B instruct 生成编号（旧判据两轮均 4/16） | **v3 AI 标注冻结并重算，无模型通过；D1 不触发降级** | `n2-selection-r2.json`、`n2-labels-v3.json`、`n2-must-v3.json` |
-| N3 组织表达 | 程序基线 B1/B2 先行（窄形状） | 0.6B instruct | **基线已实现＋I2 探针通过；模型臂未跑** | `n3-baselines-r1.json`、`n3-factids-smoke-r1.json`；承接见[N2 报告](n2-content-selection.md) §6 |
-| N6 核对 | 程序识别器（Python，v5） | 编码器一致性头（不自动放行） | 离线可用 | `corpus_check.py`、13 例篡改自检 |
-| C2/C3/C4/C5/C6/C1 | 生成骨干单调用（Qwen3-0.6B）为起点 | 编码器头拆分 | 仅方案 | — |
+| N4.0 输入装配 | 程序确定性装配（场景上下文＋结构化记录） | 无模型 | **已实现 v0.1**：12 例 pack ok＋fail-closed 单元 | `n4-input-packing-r1.json`、`n4_input_renderer/test_packer.py` |
+| N4 成句 | Randeng-T5-77M 全参微调 `r3-direction`（方向由程序给出） | —（0.6B 已退役） | **离线验证通过**（六类短计划 44/44）；浏览器与接线未验证 | `n4-holdout-eval-r3-direction.json`、`n4-offline-package-r3-direction.json`（D3 离线包） |
+| N2 内容选择 | MiniRBT 编码器打分头（事实×视角）——**尚未训练** | 生成骨干 instruct（候选待定；0.6B 已退役） | **v3 AI 标注冻结并重算，无模型通过；D1 不触发降级** | `n2-selection-r2.json`、`n2-labels-v3.json`、`n2-must-v3.json` |
+| N3 组织表达 | 程序基线 B1/B2 先行（窄形状） | 生成骨干 instruct（候选待定） | **基线已实现＋I2 探针通过；模型臂未跑** | `n3-baselines-r1.json`、`n3-factids-smoke-r1.json`；承接见[N2 报告](n2-content-selection.md) §6 |
+| N5 核对 | 程序识别器（Python，v5） | 编码器一致性头（不自动放行） | 离线可用 | `corpus_check.py`、13 例篡改自检 |
+| C2/C3/C4/C5/C6/C1 | 生成骨干单调用（候选待定）为起点 | 编码器头拆分 | 仅方案 | — |
 
 补充事实（本轮实测，编号续 §1）：
 
@@ -104,11 +108,11 @@
 | F30 | N4 v2 浏览器适配（commit 3）：encoder＋self-KV decoder 图在 headless Edge＋ORT-web 单线程 wasm 中跑 grouped 接口；8 个 family-C 场景 **8/8 分词 ID 与 Python 一致、8/8 token 序列与 ORT-python 精确一致、文本逐字相同**；生成 0.29–2.00 秒（步均 26–51 ms），冷加载 3.56 秒。浏览器文本经 v2 判据 **6/8**，失败与离线 holdout 相同（co-presence case 属旧 N1 口径）。**HF↔ORT 的 fp32 再结合漂移**：8 例仅 2 例逐 token 精确，6 例在近并列 token 处翻转（logit 差约 1e-5）；浏览器对齐目标为 ORT-python 同引擎族，不宣称 HF 精确等价 | [实测] | `n4-v2-browser-adapter.json`、`n4-v2-browser-parity-python.json` |
 | F31 | N5 关系头（commit 3）：MiniRBT-H256＋masked-mean-pool＋linear(3)，数据来自 v2 语料（训练 6764 pair：5919 train＋845 dev；冻结测试 758：256/246/256，8 类程序扰动，family C only，freeze sha 先登记）。HPC 8 epochs/1480 steps/31.3 秒。阈值在 dev 上按预登记规则固定为 0.4/0.4；冻结测试 support 0.9805、contradiction 0.9959、wrongPass 0、**wrongReject 5/256**、unknown→unknown 0.8906。G1/G3/G4 通过，**G2 失败，pass:false**；不调阈、不改门 | [实测] | `n5-corpus-report.json`、`train-n5-report.json`、`n5-relation-eval.json` |
 | F35 | N3 跨组代词守卫 smoke（真实 ckpt-v2，4 个历史 v2 行，facts 固定以隔离 N3）：守卫移除 3 个授权（cross-reference 1、alternating 1、core-move-task 1；conflict 0），旧/新计划的事实组与时间完全一致；按**新计划**判分，**3/4 通过** v2 硬门。alternating 行模型仍用“他”把秦叔的任务挂到闻人镜，G1/G2 失败；r1 曾用旧计划的授权判分而误报 4/4，r2 更正并保留 r1 作为判分错误记录。**守卫必要但不充分，N4 在 guard-on 输入下仍需重训/评估**；旧 v2 语料/评测仍是 guard-off 口径 | [实测] | `n3-coref-guard-smoke-r2.json`、`run_coref_guard_smoke.py`（r1 保留为错误判分记录） |
-| F42 | N4 场景上下文 builder：从权威状态 + 已选事实构建地点路径/外貌、人物外貌/个性/inventory、可见物；present = 主体 + 携带已选事实的实体，**不做全员扫描**（100 个无事实 NPC 测试只出现主体）；天气/风/光/时段由显式 environment overlay 提供，缺失即省略、不发明。`run_narrative_pipeline` 已接入；`test_pipeline_narrative.py` PASS。跨组件缺口：WorldState.Task 尚无 resultText，N1 outcome 仍是 dict fixture | [test] | `n4-narrative-runner.md`、`n4_narrative_dev/{build_scene_context.py,pipeline_narrative.py,test_pipeline_narrative.py}` |
-| F41 | N4 叙事 runner（N1 outcome/resultText）：`extract_facts(narrative_outcome=True)` 产出 `outcome+resultText`，缺 resultText 阻塞 `task-outcome-unavailable`，不退回 goal；`run_narrative_pipeline` 串 N1→N2(select+visible_other_actions)→N3 plan_v3→N4 `render_plan_input`；`test_pipeline_narrative.py` PASS（有 resultText 输入含结果、不含 goal；缺 resultText 无 input）；旧 v2 默认 task_achieved 与 selftest PASS | [test] | `n4-narrative-runner.md`、`n4_narrative_dev/{pipeline_narrative.py,test_pipeline_narrative.py}` |
-| F40 | N2→N3→N4 管线输入预览 v0（已审通过语料）：N2 `select + visible_other_actions=True` 选入同地他人 moved/outcome/可见变化（task goal/status 与 inner state 仍不可见），N3 `plan_v3`，N4 `render_plan_input`。12/12 无丢弃 fact，N3 `check_plan_v3` 全 ok；输入 **251–347** tokens，目标 75–99。旧 v2 臂不传 flag，行为不变；N1 仍未产出 `outcome/resultText`，`run_pipeline_v2` 未参数化，故为直接 N2→N3→N4 预览，不是生产链；未训练 | [preview] | `n4-narrative-pipeline-input-preview.md`、`n4_narrative_dev/{preview_pipeline_inputs.py,pipeline_preview.json,render_narrative.py}` |
-| F39 | N4 叙事输入预览 v0（已审通过语料）：12 例输入 **238–329** 真实 token，目标 **75–99**；输入含场景/地点外貌/小地点/可见物/在场人物性格与外貌/事实约束，任务 goal/ID 不进入，理智只给呼吸方向，时间只写“过去了一会儿”；不含具体时长、数值面板、任务标题。当前 v2 N4 `max_input=160`/`max_output=96` 不够；新训练建议 `max_input≥384`、`max_output≥128`（T5 支持 512）。12 例只是开发集，训练需扩样；未训练 | [待接线] | `n4-narrative-input-preview.md`、`n4_narrative_dev/{render_narrative.py,preview_inputs.py,input_preview.json}` |
-| F38 | N4 叙事开发语料 v0（已审通过）：新世界族 `n4n-fog-harbor` 12 例，目标是场景/行为/视角心理，不是逐条复述；任务 goal 仅隐藏动机，表面只用 resultText；时间事实只内部、正文不写具体时长；理智用心理/行为、外貌/个性用可见细节；角色个性写入语料读取上下文（不要求体现；N4 renderer 尚未接线）；禁止新增具名实体/物品/地点、他人内心、新增世界事件、承诺性对话与数值面板。世界状态含地点外貌/小地点层级/物品表/人物 inventory，每例有 sceneState 与逐句 Grounding；语料与 v2/v3 零人名/地名命中；`outcome`/定性理智是提议契约，N1/N5 未实现；未跑模型、未训练，12 例 reviewStatus=approved（用户 2026-11-02 审阅通过；开发集，非训练集/留出集） | [已审通过] | `n4-narrative-dev.md`、`n4_narrative_dev/{world.json,corpus.jsonl,review-checklist.json}` |
+| F42 | N4.0 场景上下文 builder：从权威状态 + 已选事实构建地点路径/外貌、人物外貌/个性/inventory、可见物；present = 主体 + 携带已选事实的实体，**不做全员扫描**（100 个无事实 NPC 测试只出现主体）；天气/风/光/时段由显式 environment overlay 提供，缺失即省略、不发明。`run_narrative_pipeline` 已接入；`test_pipeline_narrative.py` PASS。跨组件缺口：WorldState.Task 尚无 resultText，N1 outcome 仍是 dict fixture | [test] | `n4-narrative-runner.md`、`n4_narrative_dev/{build_scene_context.py,pipeline_narrative.py,test_pipeline_narrative.py}` |
+| F41 | N4.0 叙事 runner（N1 outcome/resultText；legacy 句子输入）：`extract_facts(narrative_outcome=True)` 产出 `outcome+resultText`，缺 resultText 阻塞 `task-outcome-unavailable`，不退回 goal；`run_narrative_pipeline` 串 N1→N2(select+visible_other_actions)→N3 plan_v3→N4.0 legacy `render_plan_input`；`test_pipeline_narrative.py` PASS（有 resultText 输入含结果、不含 goal；缺 resultText 无 input）；旧 v2 默认 task_achieved 与 selftest PASS | [test] | `n4-narrative-runner.md`、`n4_narrative_dev/{pipeline_narrative.py,test_pipeline_narrative.py}` |
+| F40 | N2→N3→N4.0 旧句子输入预览 v0（已审通过语料）：N2 `select + visible_other_actions=True` 选入同地他人 moved/outcome/可见变化（task goal/status 与 inner state 仍不可见），N3 `plan_v3`，N4.0 legacy `render_plan_input`。12/12 无丢弃 fact，N3 `check_plan_v3` 全 ok；输入 **251–347** tokens，目标 75–99。旧 v2 臂不传 flag，行为不变；N1 仍未产出 `outcome/resultText`，`run_pipeline_v2` 未参数化，故为直接 N2→N3→N4 预览，不是生产链；未训练 | [preview] | `n4-narrative-pipeline-input-preview.md`、`n4_narrative_dev/{preview_pipeline_inputs.py,pipeline_preview.json,render_narrative.py}` |
+| F39 | N4.0 旧句子输入预览 v0（已审通过语料）：12 例输入 **238–329** 真实 token，目标 **75–99**；输入含场景/地点外貌/小地点/可见物/在场人物性格与外貌/事实约束，任务 goal/ID 不进入，理智只给呼吸方向，时间只写“过去了一会儿”；不含具体时长、数值面板、任务标题。当前 v2 N4 `max_input=160`/`max_output=96` 不够；新训练建议 `max_input≥384`、`max_output≥128`（T5 支持 512）。12 例只是开发集，训练需扩样；未训练 | [待接线] | `n4-narrative-input-preview.md`、`n4_narrative_dev/{render_narrative.py,preview_inputs.py,input_preview.json}` |
+| F38 | N4 叙事开发语料 v0（已审通过）：新世界族 `n4n-fog-harbor` 12 例，目标是场景/行为/视角心理，不是逐条复述；任务 goal 仅隐藏动机，表面只用 resultText；时间事实只内部、正文不写具体时长；理智用心理/行为、外貌/个性用可见细节；角色个性写入语料读取上下文（不要求体现；N4 renderer 尚未接线）；禁止新增具名实体/物品/地点、他人内心、新增世界事件、承诺性对话与数值面板。世界状态含地点外貌/小地点层级/物品表/人物 inventory，每例有 sceneState 与逐句 Grounding；语料与 v2/v3 零人名/地名命中；`outcome`/定性理智是提议契约，N1/N4 未实现；未跑模型、未训练，12 例 reviewStatus=approved（用户 2026-11-02 审阅通过；开发集，非训练集/留出集） | [已审通过] | `n4-narrative-dev.md`、`n4_narrative_dev/{world.json,corpus.jsonl,review-checklist.json}` |
 | F36 | N4 v3 语料/目标（优化实验）：从 v2 行派生，事实/世界固定；删旧 N1 共现 positioned_at 886 条；N3 guard-on plan；compose_v3 把同一实体内事实合并成一句（不同实体不合并）。v3 目标 78 句（v2 193），平均 1.04 句/组、2.41 事实/句；v3a 为同输入、旧的一事实一句目标（125 句，1.67/1.50）。family-C 行复用 v2 冻结行，是直接对照，不是新独立留出集 | [实测] | `n4-v3-corpus-report.json`、`n4-v3a-corpus-report.json`、`build_corpus_v3*.py`、`compose_v3.py` |
 | F37 | N4 v3 训练/评测：HPC RTX 4090D，12 epochs/648 步/约 41 秒，基座复用远程。guard-on 输入上旧 v2 模型 48/66；v3a（一事实一句）60/66；v3b（merged）62/66，表面 1.03 句/组、2.64 事实/句，合并风格成功转移。v3b 失败 4 行：alternating 丢中间任务、same-name 重复首任务、time-mid 任务挂先行者、new-subtask 括号残缺。**硬门未超过历史 v2-on-v2 64/66；v3b 是 guard-on 候选，不是默认替换**。旧 v2 仍是 guard-off 基线 | [实测] | `n4-v3-holdout-eval-v3model.json`、`n4-v3a-holdout-eval-v3amodel.json`、`n4-v3-holdout-eval-v2model.json`、`n4-v3-style-diagnostic.json`、`train-v3-report.json`、`train-v3a-report.json` |
 | F34 | N3 程序规则诊断（审查后）：`n3_eval/run_n3_plan_eval.py` **28 个构造用例**（基础 25 + 跨组守卫 3），判据先登记；基础 25 旧 plan_v3 20/25，修正后 25/25；含守卫 28/28。修正：R2 同目标合并增加“同解析地点且地点名不歧义”前提（地点不同/缺失/歧义不合并；三条按地点成对合并）；孤立 no_change 改为合法单组；**跨组代词守卫默认开**（前一组存在不同同代词实体则拒绝授权，legacy 关守卫可复现旧 v2 计划）。重跑 v2 全部 580 个计划：组/时间 0 差异；守卫开启时 214 行（194 train + 20 holdout）coref 变化，legacy 关守卫 0 差异；组合链 select+legacy 臂 3/6 状态不变。仍留：守卫仅看前一组/长程链、场景时间作用域、实体桶重排、组大小/句界。N3 模型臂未跑 | [实测] | `n3-plan-v3-eval-r2.json`、`n3-coref-guard-impact-r1.json`、`run_n3_plan_eval.py`、`run_coref_guard_impact.py` |
@@ -129,17 +133,17 @@
 | U6 理智对照臂 | 分桶分类头 / 回归头 | V04 有个性变化的联动样本 | 同上 | 与生成臂同批对照 |
 | N2 选择打分 | H256 打分头（条目×视角/必选标签） | V08 派生：mustExpress/mayMention/省略理由 | 同上 | 必述漏选=硬失败单列 |
 | N3 排序 | H256 pairwise 头 | V08：句序、指代链 | 同上 | 逆序/碎序分列 |
-| N5 成句 | Randeng-T5-77M 全参微调（含卡上 100 extra token 的 resize 注意项 [外部]）；**v2 grouped 接口（commit 2）** | "事实计划→正文"成对语料：程序模板句为种子＋人工改写（隔离新建）；**v2 改为程序 case-matrix 生成、先冻结后训练** | 77M cuda 分钟级；fp16 先行；**v2 实测 12 epochs/648 步/37.1 秒（HPC RTX 4090D）** | 离线：事实忠实/必述覆盖/时间/空点/中文自然度＋人工核对；**扁平 44/44 已过；v2 64/66（2 处残留）**；浏览器适配已做（v2 8/8 token 对齐） |
-| 共同结果/反应/行动文本（升级臂） | Mengzi-T5-base 或 Qwen3-1.7B（仅当 Qwen3-0.6B 质量不达标才启动） | 不预建 | 届时定 | 届时定 |
+| N4 成句 | Randeng-T5-77M 全参微调（含卡上 100 extra token 的 resize 注意项 [外部]）；**v2 grouped 接口（commit 2）** | "事实计划→正文"成对语料：程序模板句为种子＋人工改写（隔离新建）；**v2 改为程序 case-matrix 生成、先冻结后训练** | 77M cuda 分钟级；fp16 先行；**v2 实测 12 epochs/648 步/37.1 秒（HPC RTX 4090D）** | 离线：事实忠实/必述覆盖/时间/空点/中文自然度＋人工核对；**扁平 44/44 已过；v2 64/66（2 处残留）**；浏览器适配已做（v2 8/8 token 对齐） |
+| 共同结果/反应/行动文本（升级臂） | Mengzi-T5-base 或 Qwen3-1.7B（仅当 T5-77M 质量不达标才启动） | 不预建 | 届时定 | 届时定 |
 
 不做的事：不训七份独立权重（骨干共享）；不先做蒸馏（教师标数据=程序枚举＋人工，模型蒸馏等小头质量瓶颈出现再议）；不用模型生成训练数据当监督源（接口表 §2.2 语义候选不得自证）。
 
-**例外（方向 2026-10-29 问答选定；条款文本未经单独确认，以下为待确认草案）：N5 成句语料按事实/风格分层。** 事实计划由程序枚举构造并经权威校验；模型生成正文改写行。模型改写正文**承载事实主张**，逐条事实审核（planRefs 下标、必述覆盖、人物归属、方向、数值、任务引语、新增事件扫描）是其**准入条件**，不因生成用途的称呼而豁免；全部改写行另须协调人抽验，带 `rewriter` 标记、可整组剔除做消融对照。该例外仅覆盖 N5 正文改写行；上段约束对事实标签、判别头语料及其他监督来源继续适用；条款文本经单独确认前不作为已批准的方案变更。语料按组交付抽验，通过后才进微调；首批行数是构造与训练流程试验，不预设足以训练好 77M。
+**例外（方向 2026-10-29 问答选定；条款文本未经单独确认，以下为待确认草案）：N4 成句语料按事实/风格分层。** 事实计划由程序枚举构造并经权威校验；模型生成正文改写行。模型改写正文**承载事实主张**，逐条事实审核（planRefs 下标、必述覆盖、人物归属、方向、数值、任务引语、新增事件扫描）是其**准入条件**，不因生成用途的称呼而豁免；全部改写行另须协调人抽验，带 `rewriter` 标记、可整组剔除做消融对照。该例外仅覆盖 N4 正文改写行；上段约束对事实标签、判别头语料及其他监督来源继续适用；条款文本经单独确认前不作为已批准的方案变更。语料按组交付抽验，通过后才进微调；首批行数是构造与训练流程试验，不预设足以训练好 77M。
 
 ## 5. 运行时选型结论（本项交付核心）
 
 1. **编码器路线（已定，不再重开）：** ORT-web 1.30.0 vendored 稳定版直驱＋手写 BertTokenizer 等价分词器＋int8 dynamic，单线程（F1–F4）。重评 transformers.js 的唯一条件：其新版修复 F1 全部三条且其 pinned ORT 在本环境不再挂起——否则不立项。
-2. **生成路线（两步走）：** 近期全部生成任务用 Qwen3-0.6B＋wllama 跑质量基线；Randeng-T5-77M 先离线质量验证（含微调）。N5 的浏览器路径已走 ORT 直驱＋自实现 sentencepiece（sentencepiece-js），扁平 r3-direction 7/7、v2 grouped 8/8 token 对齐；wllama GGUF 端到端（F10）保留为生成骨干候选，不因 N5 结果自动推广到其他生成任务。**v2 质量门未全绿（64/66），浏览器适配通过不解除质量缺口与 B 侧接线验收。**
+2. **生成路线（两步走）：** 生成任务先在 Randeng-T5-77M（ORT-web）上验证质量；Qwen3-0.6B 已因浏览器延迟退役，不再作为基线。N4 的浏览器路径已走 ORT 直驱＋自实现 sentencepiece（sentencepiece-js），扁平 r3-direction 7/7、v2 grouped 8/8 token 对齐；wllama GGUF 端到端（F10）保留为备选运行时，不预设为生成骨干。**v2 质量门未全绿（64/66），浏览器适配通过不解除质量缺口与 B 侧接线验收。**
 3. **共存与加载：** 编码器 int8 权重约 10–12MB 一份＋生成骨干一份；wllama 与 ORT 会话可并存但总内存与切换开销由第3项实测计总账（README 第4项交付要求），本文不预设数字。
 4. **取消语义：** 统一 AbortSignal；ORT 不可中断 `run`，靠迟到隔离（接口表 §2.1）；wllama 用其已有中断。加载阶段可取消。
 5. **WebGPU（jsep 文件已 staged 但从未测）：** 不立项、不做承诺；单线程 wasm 已满足编码器头量级（F4 毫秒级），生成侧瓶颈在自回归步数而非并行度。

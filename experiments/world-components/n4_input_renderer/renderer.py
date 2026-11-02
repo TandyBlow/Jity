@@ -1,12 +1,16 @@
-# N4 formal component: narrative input renderer (program-only, deterministic).
+# N4.0 legacy sentence-row renderer (program-only, deterministic).
 #
-# New numbering (2026-11-02):
-#   N1 fact extraction -> N2 selection -> N3 organization plan
-#   -> N4 narrative input rendering (this module)
-#   -> N5 narrative generation (old N4)
-#   -> N6 verification (old N5)
+# Numbering (2026-11-02, option A):
+#   N4.0 = structured input packing (packer.py, current N4 input contract)
+#   N4   = narrative generation (model)
+#   N5   = verification
 #
-# N4 owns the model-facing input contract. It does NOT choose facts, group
+# This module keeps the old sentence-row format for the frozen v2/v3 models
+# and the byte-identical 12-case regression. It is NOT the new N4 input
+# contract: it pre-writes full fact sentences, which the model would have to
+# rewrite. New work uses packer.pack_narrative_input.
+#
+# N4.0 owns the model-facing input contract. It does NOT choose facts, group
 # facts, write prose, call a model, or touch state. It only turns the N1
 # facts + N3 plan + N4.1 scene context into one byte-stable prompt for N5.
 #
@@ -18,12 +22,12 @@
 #   - `outcome` requires resultText; the task goal is never rendered;
 #   - time amount/unit is never rendered, only "过去了一会儿";
 #   - missing scene/character/world fields fail instead of printing None;
-#   - environment fields that are absent are omitted (N4.1 records a
-#     diagnostic); N4 never invents weather/light.
+#   - environment fields that are absent are omitted (N4.0 records a
+#     diagnostic); N4.0 never invents weather/light.
 
 import json
 
-N4_VERSION = "n4-input-renderer-v0.1"
+N4_VERSION = "n4-legacy-sentence-v0.1"
 
 SUPPORTED_KINDS = {
     "moved",

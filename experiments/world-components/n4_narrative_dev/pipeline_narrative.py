@@ -23,7 +23,8 @@ import n4_input_renderer as n4r  # noqa: E402
 
 
 def run_narrative_pipeline(point, before, perspective, scene_context=None,
-                           world=None, environment=None, may_policy="select"):
+                           world=None, environment=None, may_policy="select",
+                           input_format="structured"):
     out = {"pointId": point.get("pointId"),
            "version": point.get("version"),
            "chain": "narrative-n4"}
@@ -102,9 +103,25 @@ def run_narrative_pipeline(point, before, perspective, scene_context=None,
             "sceneState": scene_context["sceneState"],
             "characterContext": scene_context["characterContext"]}
     try:
-        input_text = n4r.render_plan_input(
-            case, plan, world, strict=True,
-            selected_fact_ids=[f["factId"] for f in selected])
+        selected_ids = [f["factId"] for f in selected]
+        if input_format == "legacy":
+            input_text = n4r.render_plan_input(
+                case, plan, world, strict=True,
+                selected_fact_ids=selected_ids)
+            out["inputVersion"] = n4r.N4_VERSION
+        else:
+            packed = n4r.pack_narrative_input(
+                case, plan, world, selected_fact_ids=selected_ids,
+                scene_diagnostics=out.get("sceneDiagnostics") or [])
+            if packed["status"] != "ok":
+                out.update(status="incomplete",
+                           reason="n4-input-pack-failed",
+                           code=packed.get("code"),
+                           detail=packed.get("detail"))
+                return out
+            input_text = packed["input"]
+            out["inputVersion"] = packed["version"]
+            out["inputDiagnostics"] = packed["diagnostics"]
     except n4r.N4RenderError as exc:
         out.update(status="incomplete", reason="n4-render-failed",
                    code=exc.code, detail=exc.detail)

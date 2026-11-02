@@ -2,6 +2,8 @@
 
 状态：2026-10-24，分支 `world-browser`。批次一范围（用户指令）：HTTP transport 默认 fetch 绑定修复 + B2 串行推理队列、取消与结构化输出。本文是 [分工文档](../browser-world-state-work-split.md) §四 B2 行的实现层补充，只覆盖已交付与下一批边界，不宣称未实现的能力。
 
+> **Qwen3-0.6B 已退役（2026-11-02）：** 文中以 0.6B 输出形态为依据的 codec 记录为历史证据；模型本身不再作为候选。见 [退役记录](components/model-retirement-qwen3-06b.md)。
+
 ## 0. 交付边界
 
 本批已交付：`http-transport` 默认 fetch 绑定修复（`83dbe3b`）；`src/lib/world-engine/runtime/` 下的串行队列、结构化输出校验、引擎接口与 wllama 适配器、模型端口（占位编码器）。全部在 Node 侧以确定性测试验收（fake 引擎控制时序）。

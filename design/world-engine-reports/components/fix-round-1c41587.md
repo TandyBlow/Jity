@@ -2,6 +2,8 @@
 
 对应 C 复审报告 `c-review-1c41587`（未签认；审查者本地保留，不作为提交证据）的四项阻塞与两项纠正。**状态更新（第一笔提交时）：本轮改动已随三笔预算的第一笔提交入库；下文「未提交——预算用尽」的表述为当时状态记录，保留不改。提交清单见 `fix-round-commit-manifest.json`（已按第一笔整改：双哈希、无自哈希，校验脚本 `experiments/world-components/verify_commit_manifest.py`）。** 以下每项给出改动位置与独立复验命令。
 
+> **Qwen3-0.6B 已退役（2026-11-02）：** 本文的 0.6B 暂停门/批准状态是历史记录；模型已退役，不再有“解除暂停后启用”的路径。见 [退役记录](model-retirement-qwen3-06b.md)。
+
 ## #1 空生成 / N5 事实检查失败 / 语义待核 → 明确非成功状态；汇总反映 N5
 
 - 改动：`run_composition.py` 的 `run_scenario`——最终状态由 N5 推导：空输出 → `empty-output`；N5 fails → `n5-failed`；语义待核 → `n5-review-pending`；否则 `ok`。归档新增 `n5Summary`（真场景与对照分列），汇总门 `pass` 因状态编码 N5 而必然反映之。
