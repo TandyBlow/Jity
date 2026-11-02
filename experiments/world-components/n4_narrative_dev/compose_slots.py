@@ -22,58 +22,10 @@ from compose_full import (PRONOUN, TARGET_MAX, TARGET_MIN, grams,  # noqa: E402
                           load_report, repeated_inside)
 from scene_check import check as scene_check  # noqa: E402
 
-# phenomenon -> surface forms, conditioned only on what the scene data says
-SURFACE = {
-    # 云关驿
-    "屋檐冰凌": ["屋檐挂着一排冰凌，雪水顺着檐口往下滴。",
-                 "檐口的冰凌很厚，风一过就发出细响。"],
-    "木门": ["木门上结着一层霜，推手的地方已经磨亮。",
-             "木门缝里透出炭火的暖光。"],
-    "炭火": ["炭盆里的火压得很低，映得墙上发红。",
-             "炭火的气味在大堂里散不开。"],
-    "石阶": ["石阶上落着雪，踩过的地方留下水印。",
-             "石阶被雪水打湿，边角结着薄冰。"],
-    # 风口岭
-    "石道": ["石道被雪埋了一半，只露出几块灰石。",
-             "石道上的雪被风推成一道一道的棱。"],
-    "雪粒": ["雪粒被横风吹成一片白线。",
-             "雪粒打在石头上，声音又密又轻。"],
-    "石堆": ["石堆上压着雪，边角露出经幡的绳头。",
-             "石堆被雪盖住，只剩一个模糊的轮廓。"],
-    "经幡": ["经幡被风吹得笔直，布角啪啪作响。",
-             "经幡在风里翻卷，绳结上挂着冰碴。"],
-    "旧马棚": ["旧马棚的门板歪着，里面堆着干草。",
-               "马棚里黑得很快，干草的气味很重。"],
-    # 雪溪
-    "石桥": ["石桥的栏上结着薄冰，桥下的水声很轻。",
-             "石桥面积着雪，中间被踩出一条湿痕。"],
-    "冰面": ["溪面结着薄冰，底下还有一线黑水。",
-             "冰面反着灰白的光，边上有碎冰。"],
-    "枯草": ["岸边的枯草被雪压弯，露出几根硬茎。",
-             "枯草从雪里支出来，被风吹得发抖。"],
-    "溪水": ["溪水在冰缝里流，声音断断续续。",
-             "水边的雪被浸得发灰。"],
-    # 望雪台
-    "石台": ["石台被雪盖住，只有台沿露出石色。",
-             "石台面上结着冰，脚踩上去发滑。"],
-    "木梯": ["木梯上落着雪，横档被踩得发亮。",
-             "木梯的绳子冻硬了，风一吹就贴在柱子上。"],
-    "铜铃架": ["铜铃架在风里轻响，铃身上挂着霜。",
-               "铜铃架的木头冻裂了一道口子。"],
-    "铃绳": ["铃绳被风吹得乱甩，打在柱子上。",
-             "铃绳冻得发硬，垂在台边。"],
-}
-# weather-only slots, used when a second sentence is needed
-WEATHER_SURFACE = {
-    "雪": ["雪一直没有停，风把雪吹得斜着落。",
-           "雪压在石头上，边角落出一层白。"],
-    "风": ["风从山口灌下来，带着雪沫。",
-           "风很硬，吹得衣角发紧。"],
-    "雾": ["雾贴着地面走，远处的石头看不清。",
-           "雾里只看得见脚下几步。"],
-    "雨": ["雨点打在木头和石头上，声音很密。",
-           "雨丝斜着落进来，地上很快湿了。"],
-}
+import scene_bank  # noqa: E402
+
+SURFACE = scene_bank.SURFACE
+WEATHER_SURFACE = scene_bank.WEATHER
 
 
 def weather_key(scene):
@@ -90,17 +42,49 @@ def phenomena(world, root_id):
     return out or list(SURFACE)[:2]
 
 
-def pick(case, world):
+_ASSIGN = {}
+
+
+def pick(case, world, index):
+    """Round-robin over the location's own phenomena so that the 12 cases do
+    not reuse the same sentence; the index is the case ordinal, not a hash,
+    so assignments are stable and inspectable."""
     sc = case["sceneState"]
     root = sc["locationPath"][0]
     pool = phenomena(world, root)
-    seed = int(hashlib.sha256(case["id"].encode()).hexdigest(), 16)
-    first = pool[seed % len(pool)]
-    out = [SURFACE[first][seed % len(SURFACE[first])]]
-    if len("".join(out)) < 26:
-        wx = WEATHER_SURFACE[weather_key(" ".join([sc["weather"], sc["atmosphere"]]))]
-        out.append(wx[seed % len(wx)])
-    return out
+    out = []
+    for k, name in enumerate(pool):
+        variants = SURFACE[name]
+        out.append(variants[(index + k) % len(variants)])
+    return pool, out
+
+
+def choose_openers(case, world, index, clauses):
+    """Take up to three sentences: first a location phenomenon, then weather
+    lines, stopping once the paragraph reaches the lower bound."""
+    pool, loc_variants = pick(case, world, index)
+    weather_key_ = weather_key(" ".join([case["sceneState"]["weather"],
+                                         case["sceneState"].get("atmosphere", "")]))
+    wx = WEATHER_SURFACE[weather_key_]
+    order = [loc_variants[index % len(loc_variants)]] + [
+        loc_variants[(index + 2) % len(loc_variants)],
+        wx[index % len(wx)],
+        loc_variants[(index + 4) % len(loc_variants)],
+    ]
+    chosen, used, total = [], set(), sum(len(c) for c in clauses)
+    for cand in order:
+        if len(chosen) >= 3:
+            break
+        if cand in chosen or repeated_inside(cand):
+            continue
+        if chosen and len(grams(cand) & used) >= 2:
+            continue
+        chosen.append(cand)
+        used |= grams(cand)
+        total += len(cand)
+        if total >= TARGET_MIN:
+            break
+    return chosen
 
 
 def build_row(case, world):
@@ -160,15 +144,7 @@ def main():
                 last = head
             clauses.append(t)
 
-        openers = pick(case, world)
-        # second opener only when the first is too short and they do not echo
-        if len(openers[0]) + sum(len(c) for c in clauses) < TARGET_MIN:
-            for cand in pick(case, world):
-                if (cand not in openers
-                        and len(grams(cand) & grams(openers[0])) < 2):
-                    if not repeated_inside(cand):
-                        openers.append(cand)
-                        break
+        openers = choose_openers(case, world, len(results), clauses)
         paragraph = "".join(openers) + "".join(clauses)
         row = build_row(case, world)
         struct = [scene_check(row, o) for o in openers]

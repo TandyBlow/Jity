@@ -27,12 +27,18 @@ ACTION_VERBS = ["推开", "走进", "回到", "坐到", "拿起", "放下", "搬
                 "拖", "擦掉", "系紧", "敲响", "扶正", "翻出", "换好",
                 "送到", "挂到", "清开", "开口", "问"]
 SCENE_TOKENS = ["雨", "雾", "雪", "风", "光", "灯", "炭", "潮", "浪",
-                "水", "冰", "石", "纸", "铜", "木", "草", "汽", "声"]
+                "水", "冰", "石", "纸", "铜", "木", "草", "汽", "声",
+                "布", "铃", "幡", "桥", "梯", "门", "盆", "檐", "绳",
+                "桩", "灰", "霜", "火"]
 
 
 AGENT_NOUNS = ["风", "雨", "雪", "雾", "浪", "光", "灯", "潮", "汽", "水"]
 PASSIVE_AGENTS = ["风", "雪", "雨", "雾", "浪", "鞋底", "石墙",
-                  "浪沫", "蒸汽", "潮气", "撞", "水", "光"]
+                  "浪沫", "蒸汽", "潮气", "撞", "水", "光", "霜", "冰"]
+# Chinese allows 被 + verb with the agent omitted (雪被扫开); these are fine.
+PASSIVE_VERBS = ["扫", "踩", "吹", "压", "扯", "磨", "冻", "浸", "打",
+                 "盖", "埋", "遮", "推", "掀", "烤", "熏", "泡", "染",
+                 "扯", "卷", "冲", "刮", "冻住", "吹散"]
 
 
 def bad_ba_construction(text):
@@ -53,6 +59,8 @@ def bad_bei_construction(text):
         if ch != "被" or i + 3 > len(text):
             continue
         agent = text[i + 1:i + 6]
+        if any(v in agent for v in PASSIVE_VERBS):
+            continue
         if not any(a in agent for a in PASSIVE_AGENTS):
             return True
     return False
