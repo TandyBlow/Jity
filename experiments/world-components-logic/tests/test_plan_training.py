@@ -117,8 +117,110 @@ class TrainingPreparationTests(unittest.TestCase):
         self.assertFalse(summary['plannerModelImplemented']);self.assertFalse(summary['realizerTrained'])
         self.assertTrue(summary['realizerTrainerImplemented']);self.assertEqual(len(files),4)
 
+    def test_original_candidate_materials_remain_exact_after_trainer_extension(self):
+        _,files=trainer.build_materials()
+        for path,raw in files.items():self.assertEqual(path.read_bytes(),raw,str(path))
+
+    def test_smoke_plan_freezes_only_two_numeric_fixtures_and_no_business_labels(self):
+        with tempfile.TemporaryDirectory() as d:
+            path=Path(d)/'plan.json'
+            with mock.patch.object(trainer.old,'paths',return_value=(path,Path(d)/'record.json')),mock.patch.object(trainer,'observe_m02',return_value={'allSixFilesFullyRehashedAndVerified':True}),mock.patch.object(trainer,'observe_environment',return_value={'registeredVersionsMatch':True}):
+                trainer.inspection_plan('unit-fixture',smoke=True);plan=json.loads(path.read_text())
+                trainer.verify_inspection(plan)
+        self.assertEqual(plan['syntheticExamples'],list(trainer.SYNTHETIC_EXAMPLES));self.assertEqual(plan['config']['steps'],2)
+        self.assertEqual(plan['businessSourceGroups'],0);self.assertEqual(plan['businessTrainingSteps'],0)
+        self.assertEqual(plan['businessInferenceCalls'],0);self.assertNotIn('reviewClaims',plan)
+
+    def test_changed_synthetic_tokens_or_business_counts_fail_before_model_verification(self):
+        plan={'purpose':'real_m02_synthetic_training_save_reload_only','config':trainer.SMOKE_CONFIG,
+              'formalEvaluationAllowed':False,'protocolSha256':trainer.sha256_file(trainer.SMOKE_PROTOCOL),
+              'syntheticExamples':copy.deepcopy(list(trainer.SYNTHETIC_EXAMPLES)),'syntheticExamplesSha256':trainer.digest(list(trainer.SYNTHETIC_EXAMPLES)),
+              'syntheticOptimizerSteps':2,'businessSourceGroups':0,'businessTrainingSteps':0,'businessInferenceCalls':0,
+              'adapterScope':'disposable_synthetic_fixture_never_business_inference','schema':'jity-d-realizer-smoke-plan-v1',
+              'arms':['smoke'],'cases':[{'caseId':'m02-synthetic-training-smoke'}]}
+        for key,value in (('businessTrainingSteps',1),('businessInferenceCalls',1),('arms',['fit']),('syntheticOptimizerSteps',80)):
+            bad=copy.deepcopy(plan);bad[key]=value
+            with mock.patch.object(trainer,'observe_m02') as model:
+                with self.assertRaisesRegex(ValueError,'scope drift'):trainer.verify_inspection(bad)
+                model.assert_not_called()
+        bad=copy.deepcopy(plan);bad['syntheticExamples'][0]['labels'][0]=999
+        with self.assertRaisesRegex(ValueError,'scope drift'):trainer.verify_inspection(bad)
+
+    def test_missing_historical_source_is_not_silently_accepted(self):
+        with mock.patch.object(trainer.subprocess,'check_output',return_value=''):
+            with self.assertRaisesRegex(ValueError,'unavailable'):trainer.verify_historical_file(trainer.BASE/'does-not-exist.py','0'*64)
+
+    def test_smoke_entry_uses_same_supervised_path_without_review_export(self):
+        import experiment
+        from contextlib import redirect_stdout
+        import io
+        with mock.patch.object(trainer,'inspection_plan',return_value=Path('/tmp/unit.json')) as prepare,redirect_stdout(io.StringIO()):
+            self.assertEqual(experiment.main(['train-smoke','--prepare','unit-only']),0)
+            prepare.assert_called_once_with('unit-only',smoke=True)
+        with mock.patch.object(trainer,'execute_inspection',return_value=3) as execute:
+            self.assertEqual(experiment.main(['train-smoke','--execute','unit.json']),3)
+            execute.assert_called_once_with(Path('unit.json'))
+
+    def test_real_smoke_archive_reconstructs_every_forward_and_never_becomes_business_training(self):
+        summary=trainer.observed_smoke();check=summary['realModelSyntheticCheck']
+        self.assertEqual(check['syntheticOptimizerSteps'],2)
+        self.assertEqual(sum(summary['forwardPhaseCounts'].values()),check['modelTopForwardCalls'])
+        self.assertEqual(summary['businessTrainingSteps'],0);self.assertEqual(summary['businessInferenceCalls'],0)
+        self.assertFalse(summary['realizerTrained']);self.assertFalse(summary['semanticQualityApproved'])
+        self.assertEqual(summary['fullRequest500msStatus'],'unverified')
+        self.assertEqual(summary['review']['missingReviews'],12)
+
+    def test_synthetic_step_count_and_semantic_claim_tampering_are_rejected(self):
+        _,path=trainer.old.paths(trainer.SMOKE_RUN);original=trainer.run.read_json
+        for mode in ('steps','semantic'):
+            record=original(path)
+            if mode=='steps':record['syntheticOptimizerSteps']=1
+            else:record['attempts'][0]['syntheticFullModelCheck']['semanticQualityApproved']=True
+            def read(p):return copy.deepcopy(record) if p==path else original(p)
+            with mock.patch.object(trainer.run,'read_json',side_effect=read):
+                with self.assertRaises(ValueError):trainer.observed_smoke()
+
 
 class NumericImplementationTests(unittest.TestCase):
+    def test_complete_t5_forward_backward_disk_reload_and_token_equivalence_on_random_tiny_model(self):
+        # Random tiny T5, not the pretrained M02 and not a business source.
+        python=trainer.ROOT/'.local/world-components-logic/venv/bin/python'
+        code=r'''
+import sys,tempfile,json
+from pathlib import Path
+from unittest import mock
+sys.path.insert(0,sys.argv[1])
+import torch
+from transformers import T5Config,T5ForConditionalGeneration
+import plan_training as t
+torch.set_num_threads(1);torch.manual_seed(42)
+model=T5ForConditionalGeneration(T5Config(vocab_size=64,d_model=8,d_kv=4,d_ff=16,num_layers=8,num_decoder_layers=8,num_heads=2,dropout_rate=0.,decoder_start_token_id=0,eos_token_id=1,pad_token_id=0)).eval()
+events=[]
+with tempfile.TemporaryDirectory() as directory,mock.patch.object(t,'ROOT',Path(directory)):
+ result=t.real_model_smoke(torch,model,{'runId':'unit-tiny','syntheticExamples':list(t.SYNTHETIC_EXAMPLES),'config':t.SMOKE_CONFIG},lambda n,p:events.append((n,p.copy())))
+ path=Path(directory)/result['checkpoint']['path']
+ assert path.exists() and t.sha256_file(path)==result['checkpoint']['sha256']
+ state=torch.load(path,weights_only=True)
+ assert len(state)==96 and all(n.endswith(('.lora_A','.lora_B')) for n in state)
+ with torch.no_grad():
+  for p in model.parameters():
+   if p.requires_grad:p.zero_()
+ before=t.old.tensor_hash(t.adapter_state(model))
+ try:t.save_reload_adapter(torch,model,path.parent,result['checkpoint']['sourceTensorSha256'],lambda *_:None);raise AssertionError('overwrote checkpoint')
+ except FileExistsError:pass
+ assert t.old.tensor_hash(t.adapter_state(model))==before
+assert result['sourceParameters']<100000 and result['adapterModules']==48 and result['syntheticOptimizerSteps']==2
+assert result['sourceBaseUnchanged'] and result['reloadedLogitsExact'] and result['reloadedGeneratedTokensExact']
+assert sum(n=='training_step_started' for n,p in events)==2 and sum(n=='training_step_settled' for n,p in events)==2
+assert sum(n=='model_forward_started' for n,p in events)==result['modelTopForwardCalls']
+assert sum(n=='model_forward_settled' for n,p in events)==result['modelTopForwardCalls']
+assert result['businessTrainingSteps']==0 and result['businessInferenceCalls']==0
+print(json.dumps({'fullTinyT5SmokePassed':True,'syntheticOptimizerSteps':2,'pretrainedModelUsed':False}))
+'''
+        result=subprocess.run([str(python),'-c',code,str(BASE)],capture_output=True,text=True,timeout=30)
+        self.assertEqual(result.returncode,0,result.stderr)
+        self.assertTrue(json.loads(result.stdout)['fullTinyT5SmokePassed'])
+
     def test_actual_autograd_freeze_padding_fit_loop_and_checkpoint_reload(self):
         # Uses a tiny numeric module, not M02 or any business scenario/label.
         python=trainer.ROOT/'.local/world-components-logic/venv/bin/python'

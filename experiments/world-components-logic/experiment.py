@@ -249,12 +249,14 @@ def execute_plan(path,*,paths,verify,worker_script,settle_stages,arms):
 
 
 def status():
-    summary=read_json(ART/'l3-14-realizer-training-readiness-summary.json')
+    smoke=(ART/'l3-15-realizer-smoke-summary.json').exists()
+    summary=read_json(ART/('l3-15-realizer-smoke-summary.json' if smoke else 'l3-14-realizer-training-readiness-summary.json'))
     result={'stage':summary['stage'],'entrypoint':'experiments/world-components-logic/experiment.py',
             'implementation':'experiments/world-components-logic/plan_training.py','latestBatch':summary['batchId'],
-            'lastModelRun':summary['lastModelRun'],'resultPage':'artifacts/world-components-logic/l3-14-realizer-training-readiness.html',
+            'lastModelRun':summary['lastModelRun'],'resultPage':'artifacts/world-components-logic/'+('l3-15-realizer-smoke.html' if smoke else 'l3-14-realizer-training-readiness.html'),
             'draftSourceGroups':summary['draftSourceGroups'],'review':summary['review'],
             'realizerTrainerImplemented':summary.get('realizerTrainerImplemented',False),'inspection':summary.get('inspection'),
+            'syntheticTrainingCheck':summary.get('realModelSyntheticCheck'),
             'plannerModelImplemented':summary['plannerModelImplemented'],'realizerTrained':summary['realizerTrained'],
             'formalEvaluationAllowed':summary['formalEvaluationAllowed'],'fullRequest500msStatus':summary['fullRequest500msStatus'],
             'modelExecutionPerformed':False}
@@ -271,7 +273,8 @@ def check():
               [str(BASE/'m01_shared_report.py'),'--chain','--check'],
               [str(BASE/'m01_shared_report.py'),'--focus','--check'],
               [str(BASE/'action_plan.py'),'--check'],
-              [str(BASE/'plan_training.py'),'--check-materials']]
+              [str(BASE/'plan_training.py'),'--check-materials'],
+              [str(BASE/'plan_training.py'),'--check-smoke']]
     env=dict(os.environ,PYTHONDONTWRITEBYTECODE='1')
     for args in commands:
         result=subprocess.run([sys.executable,*args],cwd=ROOT,env=env)
@@ -292,6 +295,9 @@ def main(argv=None):
     inspection=sub.add_parser('train-inspect',help='prepare or execute no-business M02 adapter inspection')
     inspection_group=inspection.add_mutually_exclusive_group(required=True)
     inspection_group.add_argument('--prepare');inspection_group.add_argument('--execute',type=Path)
+    smoke=sub.add_parser('train-smoke',help='real M02 synthetic numeric training and disk reload; no business labels')
+    smoke_group=smoke.add_mutually_exclusive_group(required=True)
+    smoke_group.add_argument('--prepare');smoke_group.add_argument('--execute',type=Path);smoke_group.add_argument('--report',action='store_true')
     training=sub.add_parser('train-prepare',help='freeze a reviewed-source adapter training batch')
     training.add_argument('run_id');training.add_argument('--reviews',type=Path,required=True)
     sub.add_parser('train-execute',help='execute a previously frozen reviewed training batch').add_argument('plan',type=Path)
@@ -305,12 +311,17 @@ def main(argv=None):
         s=action_plan.prepare_materials(write=args.write_new)
         print(json.dumps({'batchId':s['batchId'],'newPlanLabelsReviewed':s['review']['newPlanLabelsReviewed'],'trainingSteps':0,'modelInferenceCalls':0},ensure_ascii=False))
         return 0
-    if args.command in ('train-data','train-inspect','train-prepare','train-execute'):
+    if args.command in ('train-data','train-inspect','train-smoke','train-prepare','train-execute'):
         import plan_training
         if args.command=='train-data':
             print(json.dumps(plan_training.prepare_materials(write=args.write_new),ensure_ascii=False,indent=2));return 0
         if args.command=='train-inspect':
             if args.prepare:print(plan_training.inspection_plan(args.prepare));return 0
+            return plan_training.execute_inspection(args.execute)
+        if args.command=='train-smoke':
+            if args.prepare:print(plan_training.inspection_plan(args.prepare,smoke=True));return 0
+            if args.report:
+                s=plan_training.smoke_materials(write=True);print(json.dumps({'batchId':s['batchId'],'businessTrainingSteps':0,'syntheticOptimizerSteps':s['realModelSyntheticCheck']['syntheticOptimizerSteps']}));return 0
             return plan_training.execute_inspection(args.execute)
         if args.command=='train-prepare':print(plan_training.training_plan(args.run_id,args.reviews));return 0
         return plan_training.execute_training(args.plan)

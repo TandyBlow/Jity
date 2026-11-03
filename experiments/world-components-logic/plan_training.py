@@ -1,12 +1,13 @@
 """D short-realizer training implementation, candidate sources and model inspection.
 
-No draft is used for neural training. Inspection loads M02 without a forward;
-numeric gradient checks use a separate tiny synthetic tensor module only.
+No draft is used for neural training. Original inspection has no M02 forward;
+the separate smoke run exercises the real model on fixed synthetic token IDs.
 """
 from __future__ import annotations
 import argparse
 import copy
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -24,12 +25,21 @@ ROOT=contract.ROOT;BASE=Path(__file__).resolve().parent;ART=ROOT/'artifacts/worl
 DATA=BASE/'data/action-plan-training';BATCH='d-realizer-new12-r1'
 PROTOCOL=ROOT/'design/world-engine-reports/components-logic/realizer-training-protocol.md'
 CODE=('plan_training.py','action_plan.py','experiment.py','m01_probe.py','generate_dev_drafts.py','lab.py','pilot_codec.py','prepare_run_batch.py','run_pilot.py')
+MATERIAL_COMMIT='b24767af571a30e73ab1b10b015600e4ebe0dab7'
+MATERIAL_AUTHOR_SHA='9c23ab9ac60dd4ecad26f148c8b6268a5012b05b757bf9e21595ff8898720fd3'
+SMOKE_PROTOCOL=PROTOCOL.with_name('realizer-training-smoke-protocol.md')
+SMOKE_RUN='m02-realizer-smoke-20261104-r1'
 CONFIG={'device':'cpu','threads':1,'concurrency':1,'seed':42,'rank':4,'alpha':8,
         'optimizer':'AdamW','learningRate':0.001,'weightDecay':0.01,'maxGradNorm':1.0,
         'steps':80,'batchSize':2,'maxInputTokens':256,'maxTargetTokens':64,
         'maxNewTokens':64,'doSample':False,'numBeams':1,'earlyStopping':False,
         'frozenBackboneEval':True,'processWallSeconds':120,'maxResidentMiB':2048,
         'attemptsPerCase':1,'gradientAccumulation':1,'adapterDropout':0.0}
+SMOKE_CONFIG={**CONFIG,'steps':2,'maxInputTokens':16,'maxTargetTokens':8,'maxNewTokens':8}
+SYNTHETIC_EXAMPLES=(
+    {'sourceGroup':'synthetic-numeric-01','inputIds':[5,11,17,23,29,7,13,19,25,31,9,15,1],'labels':[6,12,18,24,30,8,1]},
+    {'sourceGroup':'synthetic-numeric-02','inputIds':[31,25,19,13,7,29,23,17,1],'labels':[9,15,21,27,1]},
+)
 # Newly authored source candidates; shared schema helpers are not borrowed stories.
 # Each train/development row has a distinct world, people and task; semantic
 # independence from other sources is still UNVERIFIED, not established by hashes.
@@ -198,7 +208,14 @@ def collate(torch,examples,pad_id):
 
 def fit_adapter(torch,model,tokenizer,train_rows,config,checkpoint):
     """Actual teacher-forced adapter training; caller must verify review/plan first."""
-    model.eval();examples=[tokenize_example(tokenizer,r,config) for r in train_rows]
+    examples=[tokenize_example(tokenizer,r,config) for r in train_rows]
+    return fit_encoded_adapter(torch,model,examples,tokenizer.pad_token_id,config,checkpoint)
+
+
+def fit_encoded_adapter(torch,model,examples,pad_id,config,checkpoint):
+    """Shared numeric training loop; production callers gate reviewed data first."""
+    model.eval()
+    if not examples:raise ValueError('empty adapter training batch')
     if len({e['sourceGroup'] for e in examples})!=len(examples):raise ValueError('training source duplicate')
     params=[p for p in model.parameters() if p.requires_grad]
     if not params:raise ValueError('no learned adapter parameters')
@@ -207,13 +224,35 @@ def fit_adapter(torch,model,tokenizer,train_rows,config,checkpoint):
     for step in range(config['steps']):
         batch=[examples[order[(step*config['batchSize']+j)%len(order)]] for j in range(config['batchSize'])]
         checkpoint('training_step_started',{'step':step+1,'sourceGroups':[e['sourceGroup'] for e in batch]})
-        optimizer.zero_grad(set_to_none=True);output=model(**collate(torch,batch,tokenizer.pad_token_id));loss=output.loss
+        optimizer.zero_grad(set_to_none=True);output=model(**collate(torch,batch,pad_id));loss=output.loss
         if not torch.isfinite(loss):raise ValueError('nonfinite training loss')
         loss.backward();norm=torch.nn.utils.clip_grad_norm_(params,config['maxGradNorm'])
         if not torch.isfinite(norm):raise ValueError('nonfinite adapter gradient')
         optimizer.step();value=float(loss.detach());losses.append(value)
         checkpoint('training_step_settled',{'step':step+1,'loss':value,'gradientNorm':float(norm)})
     return losses
+
+
+def save_reload_adapter(torch,model,destination,source_hash,checkpoint):
+    """Exercise the same durable adapter-only save/load path in fit and smoke."""
+    if old.tensor_hash(base_state(model))!=source_hash:raise ValueError('frozen source weights changed before save')
+    weights=adapter_state(model);adapter_hash=old.tensor_hash(weights)
+    if not weights:raise ValueError('empty adapter checkpoint')
+    destination.mkdir(parents=True,exist_ok=False);path=destination/'adapter.pt'
+    checkpoint('adapter_save_started',{'path':str(path.relative_to(ROOT)),'tensorSha256':adapter_hash})
+    with path.open('xb') as stream:
+        torch.save(weights,stream);stream.flush();os.fsync(stream.fileno())
+    identity={'path':str(path.relative_to(ROOT)),'sha256':sha256_file(path),
+              'tensorSha256':adapter_hash,'sourceTensorSha256':source_hash}
+    checkpoint('adapter_saved',identity)
+    with torch.no_grad():
+        for p in model.parameters():
+            if p.requires_grad:p.zero_()
+    if any(torch.count_nonzero(p) for p in model.parameters() if p.requires_grad):raise ValueError('adapter clear failed')
+    checkpoint('adapter_cleared',{'tensorSha256':old.tensor_hash(adapter_state(model)),'allTrainableZero':True})
+    restore_adapter(model,torch.load(path,map_location='cpu',weights_only=True))
+    if old.tensor_hash(adapter_state(model))!=adapter_hash or old.tensor_hash(base_state(model))!=source_hash:raise ValueError('adapter checkpoint reload or base mismatch')
+    checkpoint('adapter_reloaded',identity);return identity
 
 
 def synthetic_gradient_check(torch):
@@ -233,34 +272,109 @@ def synthetic_gradient_check(torch):
             'baseUnchanged':True,'checkpointReloadExact':True,'projectModelTrainingSteps':0,'businessInferenceCalls':0}
 
 
-def inspection_plan(run_id):
+def inspection_plan(run_id,*,smoke=False):
     pp,rp=old.paths(run_id)
     if pp.exists() or rp.exists():raise FileExistsError('use new inspection id')
     model=observe_m02(ROOT);environment=observe_environment(ROOT)
     if not model['allSixFilesFullyRehashedAndVerified'] or not environment['registeredVersionsMatch']:raise ValueError('M02/environment verification failed')
-    plan={'schema':'jity-d-realizer-inspection-plan-v1','runId':run_id,'sourceHead':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
-        'preparedAt':timestamp(),'purpose':'model_layout_and_synthetic_gradient_only_no_project_forward',
-        'config':CONFIG.copy(),'cases':[{'caseId':'m02-adapter-layout-only'}],'arms':['inspect'],
+    plan={'schema':'jity-d-realizer-smoke-plan-v1' if smoke else 'jity-d-realizer-inspection-plan-v1','runId':run_id,'sourceHead':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
+        'preparedAt':timestamp(),'purpose':'real_m02_synthetic_training_save_reload_only' if smoke else 'model_layout_and_synthetic_gradient_only_no_project_forward',
+        'config':(SMOKE_CONFIG if smoke else CONFIG).copy(),'cases':[{'caseId':'m02-synthetic-training-smoke' if smoke else 'm02-adapter-layout-only'}],'arms':['smoke' if smoke else 'inspect'],
         'code':{str((BASE/n).relative_to(ROOT)):sha256_file(BASE/n) for n in CODE},
-        'protocolSha256':sha256_file(PROTOCOL),'model':model,'environment':environment,
+        'protocolSha256':sha256_file(SMOKE_PROTOCOL if smoke else PROTOCOL),'model':model,'environment':environment,
         'candidatePacketSha256':packet_identity(candidate_rows()),'trainingLabelsReviewed':0,
         'formalEvaluationAllowed':False,'businessTrainingSteps':0,'businessInferenceCalls':0,
-        'authorization':'用户继续工作；D独立CPU单线程模型装配与合成张量工程检查，不用业务草稿'}
+        'authorization':'用户继续工作；D独立CPU单线程模型装配与合成数字工程检查，不用业务草稿'}
+    if smoke:
+        plan.update(syntheticExamples=copy.deepcopy(list(SYNTHETIC_EXAMPLES)),syntheticExamplesSha256=digest(list(SYNTHETIC_EXAMPLES)),
+                    syntheticOptimizerSteps=2,businessSourceGroups=0,adapterScope='disposable_synthetic_fixture_never_business_inference')
     exclusive(pp,plan);return pp
 
 
 def verify_inspection(plan):
-    if plan['config']!=CONFIG or plan['purpose']!='model_layout_and_synthetic_gradient_only_no_project_forward' or plan['formalEvaluationAllowed'] is not False:raise ValueError('inspection scope drift')
-    if plan['protocolSha256']!=sha256_file(PROTOCOL):raise ValueError('inspection protocol drift')
+    smoke=plan['purpose']=='real_m02_synthetic_training_save_reload_only'
+    expected_purpose='real_m02_synthetic_training_save_reload_only' if smoke else 'model_layout_and_synthetic_gradient_only_no_project_forward'
+    if plan['config']!=(SMOKE_CONFIG if smoke else CONFIG) or plan['purpose']!=expected_purpose or plan['formalEvaluationAllowed'] is not False:raise ValueError('inspection scope drift')
+    if plan['protocolSha256']!=sha256_file(SMOKE_PROTOCOL if smoke else PROTOCOL):raise ValueError('inspection protocol drift')
+    if smoke and (plan.get('syntheticExamples')!=list(SYNTHETIC_EXAMPLES) or plan.get('syntheticExamplesSha256')!=digest(list(SYNTHETIC_EXAMPLES))
+                  or plan.get('syntheticOptimizerSteps')!=2 or plan.get('businessSourceGroups')!=0
+                  or plan.get('adapterScope')!='disposable_synthetic_fixture_never_business_inference'
+                  or plan.get('businessTrainingSteps')!=0 or plan.get('businessInferenceCalls')!=0
+                  or plan.get('schema')!='jity-d-realizer-smoke-plan-v1' or plan.get('arms')!=['smoke']
+                  or plan.get('cases')!=[{'caseId':'m02-synthetic-training-smoke'}]):raise ValueError('synthetic fixture scope drift')
     for name,h in plan['code'].items():
         if sha256_file(ROOT/name)!=h:raise ValueError('executed source drift: '+name)
     if plan['model']!=observe_m02(ROOT) or plan['environment']!=observe_environment(ROOT):raise ValueError('inspection model/environment drift')
     if plan['candidatePacketSha256']!=packet_identity(candidate_rows()):raise ValueError('source candidates drift')
 
 
+def real_model_smoke(torch,model,plan,checkpoint):
+    """No scene text, no tokenizer and no semantic labels; actual M02 autograd."""
+    examples=copy.deepcopy(plan['syntheticExamples']);config=plan['config']
+    if examples!=list(SYNTHETIC_EXAMPLES):raise ValueError('synthetic fixture identity drift')
+    for row in examples:
+        if any(type(v) is not int or v<=0 or v>=model.config.vocab_size for v in row['inputIds']+row['labels']):raise ValueError('synthetic token outside vocabulary')
+        if row['inputIds'][-1]!=model.config.eos_token_id or row['labels'][-1]!=model.config.eos_token_id:raise ValueError('synthetic EOS mismatch')
+    batch=collate(torch,examples,model.config.pad_token_id);source_hash=old.tensor_hash(model.state_dict())
+    source_parameters=sum(p.numel() for p in model.parameters())
+    phase={'name':'source_reference'};forwards=[];active=[]
+    def before(module,args,kwargs):
+        event={'index':len(forwards),'phase':phase['name'],'gradEnabled':torch.is_grad_enabled(),
+               'inputTensorShapes':{n:list(v.shape) for n,v in kwargs.items() if torch.is_tensor(v)},
+               'startedMonotonicNs':time.monotonic_ns(),'status':'started'}
+        forwards.append(event);active.append(event);checkpoint('model_forward_started',event)
+    def after(module,args,kwargs,output):
+        event=active.pop();event['status']='complete' if output is not None else 'failed'
+        if output is not None:
+            event.update(logitsShape=list(output.logits.shape),logitsSha256=old.tensor_hash({'logits':output.logits.detach()}))
+            if output.loss is not None:event['loss']=float(output.loss.detach())
+        event['elapsedThroughOutputHashMs']=(time.monotonic_ns()-event['startedMonotonicNs'])/1e6
+        checkpoint('model_forward_settled',event)
+    hooks=[model.register_forward_pre_hook(before,with_kwargs=True),model.register_forward_hook(after,with_kwargs=True,always_call=True)]
+    try:
+        with torch.inference_mode():source_logits=model(**batch).logits.detach().clone()
+        topology=install_lora(torch,model,config['rank'],config['alpha']);initial=adapter_state(model)
+        phase['name']='zero_adapter_equivalence'
+        with torch.inference_mode():zero_logits=model(**batch).logits.detach().clone()
+        if not torch.equal(source_logits,zero_logits):raise ValueError('zero adapter differs from real source model')
+        checkpoint('zero_adapter_equivalence',{'exact':True,'logitsSha256':old.tensor_hash({'logits':source_logits})})
+        phase['name']='synthetic_optimizer'
+        losses=fit_encoded_adapter(torch,model,examples,model.config.pad_token_id,config,checkpoint)
+        changed=[n for n,p in adapter_state(model).items() if not torch.equal(initial[n],p)]
+        if not changed or not all(p.grad is None for p in model.parameters() if not p.requires_grad):raise ValueError('synthetic adapter update/base gradient mismatch')
+        if not all(torch.isfinite(p).all() for p in model.parameters() if p.requires_grad):raise ValueError('nonfinite adapter tensor')
+        phase['name']='fitted_teacher_forced'
+        with torch.inference_mode():fitted=model(**batch).logits.detach().clone()
+        if torch.equal(fitted,source_logits):raise ValueError('actual full-model output did not change')
+        def generate(name):
+            phase['name']=name;start=time.perf_counter()
+            with torch.inference_mode():tokens=model.generate(input_ids=batch['input_ids'],attention_mask=batch['attention_mask'],max_new_tokens=config['maxNewTokens'],do_sample=False,num_beams=1).tolist()
+            payload={'tokenIds':tokens,'maxNewTokens':config['maxNewTokens'],'elapsedMs':(time.perf_counter()-start)*1000,'semanticMeaning':'none_synthetic_numeric_fixture'}
+            checkpoint(name,payload);return payload
+        first=generate('synthetic_generation_before_reload')
+        checkpoint_identity=save_reload_adapter(torch,model,ROOT/'.local/world-components-logic/realizer-smoke'/plan['runId'],source_hash,checkpoint)
+        phase['name']='reloaded_teacher_forced'
+        with torch.inference_mode():reloaded=model(**batch).logits.detach().clone()
+        second=generate('synthetic_generation_after_reload')
+        if not torch.equal(fitted,reloaded) or first['tokenIds']!=second['tokenIds']:raise ValueError('full-model outputs differ after disk reload')
+        if old.tensor_hash(base_state(model))!=source_hash:raise ValueError('source base changed during synthetic training')
+        checkpoint('full_model_reload_equivalence',{'logitsExact':True,'generatedTokensExact':True,'sourceBaseUnchanged':True})
+        return {'sourceParameters':source_parameters,'trainableAdapterParameters':sum(p.numel() for p in model.parameters() if p.requires_grad),
+            'totalInferenceParameters':sum(p.numel() for p in model.parameters()),'adapterModules':len(topology),'targetModules':topology,
+            'syntheticOptimizerSteps':len(losses),'syntheticExamples':examples,'losses':losses,'lossTrendIsNotSemanticQuality':True,
+            'changedAdapterTensors':changed,'sourceBaseUnchanged':True,'baseGradientsAbsent':True,
+            'zeroAdapterLogitsExact':True,'reloadedLogitsExact':True,'reloadedGeneratedTokensExact':True,
+            'fittedLogitsSha256':old.tensor_hash({'logits':fitted}),'checkpoint':checkpoint_identity,
+            'syntheticGenerations':[first,second],'modelTopForwardCalls':len(forwards),'modelForwards':forwards,
+            'businessTrainingSteps':0,'businessInferenceCalls':0,'semanticQualityApproved':False,'fullRequestMeasured':False}
+    finally:
+        for hook in hooks:hook.remove()
+
+
 def inspection_worker(path):
-    plan=run.read_json(path);_,out=old.paths(plan['runId']);slots=run.planned_slots(plan,('inspect',))
-    report={'schema':'jity-d-realizer-inspection-record-v1','runId':plan['runId'],'planSha256':sha256_file(path),
+    plan=run.read_json(path);_,out=old.paths(plan['runId']);smoke=plan['purpose']=='real_m02_synthetic_training_save_reload_only'
+    slots=run.planned_slots(plan,('smoke' if smoke else 'inspect',))
+    report={'schema':'jity-d-realizer-smoke-record-v1' if smoke else 'jity-d-realizer-inspection-record-v1','runId':plan['runId'],'planSha256':sha256_file(path),
         'status':'running','stages':[],'attempts':[],'attemptSlots':slots,'activeAttempt':None,'forwardAttempts':[],
         'trainingSteps':0,'businessInferenceCalls':0,'formalEvaluationAllowed':False,'fullRequestMeasured':False}
     exclusive(out,report);stage=lambda n,f:run.record_stage(report,out,n,f)
@@ -269,7 +383,7 @@ def inspection_worker(path):
         import torch
         from transformers import T5ForConditionalGeneration
         torch.set_num_threads(1);torch.set_num_interop_threads(1);torch.manual_seed(42)
-        model=stage('load_m02_no_forward',lambda:T5ForConditionalGeneration.from_pretrained(ROOT/plan['model']['directory'],local_files_only=True,weights_only=True).eval())
+        model=stage('load_m02',lambda:T5ForConditionalGeneration.from_pretrained(ROOT/plan['model']['directory'],local_files_only=True,weights_only=True).eval())
         forward_calls=[0]
         hook=model.register_forward_pre_hook(lambda *_:forward_calls.__setitem__(0,forward_calls[0]+1))
         source_hash=old.tensor_hash(model.state_dict());source_params=sum(p.numel() for p in model.parameters())
@@ -280,16 +394,21 @@ def inspection_worker(path):
             journal.append('attempt_start',a)
             def checkpoint(name,payload):
                 e={k:a[k] for k in ('arm','caseId','repeat')};e.update(name=name,payload=payload);journal.append('attempt_checkpoint',e);a['checkpoints'].append(copy.deepcopy(e))
-            topology=install_lora(torch,model,CONFIG['rank'],CONFIG['alpha'])
-            trainable=sum(p.numel() for p in model.parameters() if p.requires_grad)
-            zeros=all(not torch.count_nonzero(p) for n,p in model.named_parameters() if n.endswith('.lora_B'))
-            if trainable!=172032 or not zeros or old.tensor_hash(base_state(model))!=source_hash:raise ValueError('adapter/base layout mismatch')
-            a['layout']={'sourceParameters':source_params,'trainableAdapterParameters':trainable,
-                         'totalInferenceParameters':sum(p.numel() for p in model.parameters()),'targetModules':topology,
-                         'initialOutputMatricesZero':True,'sourceBaseUnchanged':True}
-            checkpoint('adapter_layout',a['layout']);a['syntheticCheck']=synthetic_gradient_check(torch);checkpoint('synthetic_numeric_check',a['syntheticCheck'])
-            if forward_calls[0]!=0 or old.tensor_hash(base_state(model))!=source_hash:raise ValueError('source model executed or changed during inspection')
-            hook.remove();a['projectForwardCalls']=forward_calls[0];a['status']='complete';a['settledAt']=timestamp()
+            if smoke:
+                a['syntheticFullModelCheck']=real_model_smoke(torch,model,plan,checkpoint)
+                if forward_calls[0]!=a['syntheticFullModelCheck']['modelTopForwardCalls']:raise ValueError('synthetic forward accounting mismatch')
+            else:
+                topology=install_lora(torch,model,CONFIG['rank'],CONFIG['alpha'])
+                trainable=sum(p.numel() for p in model.parameters() if p.requires_grad)
+                zeros=all(not torch.count_nonzero(p) for n,p in model.named_parameters() if n.endswith('.lora_B'))
+                if trainable!=172032 or not zeros or old.tensor_hash(base_state(model))!=source_hash:raise ValueError('adapter/base layout mismatch')
+                a['layout']={'sourceParameters':source_params,'trainableAdapterParameters':trainable,
+                             'totalInferenceParameters':sum(p.numel() for p in model.parameters()),'targetModules':topology,
+                             'initialOutputMatricesZero':True,'sourceBaseUnchanged':True}
+                checkpoint('adapter_layout',a['layout']);a['syntheticCheck']=synthetic_gradient_check(torch);checkpoint('synthetic_numeric_check',a['syntheticCheck'])
+                if forward_calls[0]!=0:raise ValueError('source model executed during layout inspection')
+            if old.tensor_hash(base_state(model))!=source_hash:raise ValueError('source model changed during inspection')
+            hook.remove();a['syntheticModelForwardCalls']=forward_calls[0];a['projectForwardCalls']=0;a['status']='complete';a['settledAt']=timestamp()
             t=time.perf_counter();journal.append('attempt_result',a);result_ms=(time.perf_counter()-t)*1000
             timing={k:a[k] for k in ('arm','caseId','repeat')}
             timing.update(resultJournalMs=result_ms,snapshotEndMs=0.,elapsedThroughResultMs=(time.monotonic_ns()-a['startedMonotonicNs'])/1e6)
@@ -303,7 +422,17 @@ def inspection_worker(path):
 
 
 def execute_inspection(path):
-    return run.execute_plan(path,paths=old.paths,verify=verify_inspection,worker_script=Path(__file__),settle_stages=old.settle_stages,arms=('inspect',))
+    plan=run.read_json(path);arms=('smoke',) if plan['purpose']=='real_m02_synthetic_training_save_reload_only' else ('inspect',)
+    result=run.execute_plan(path,paths=old.paths,verify=verify_inspection,worker_script=Path(__file__),settle_stages=old.settle_stages,arms=arms)
+    if arms==('smoke',):
+        _,out=old.paths(plan['runId']);record=run.read_json(out)
+        events=[c for a in record.get('attempts',[]) for c in a.get('checkpoints',[])]
+        record.update(syntheticTrainingStepAttempts=sum(c['name']=='training_step_started' for c in events),
+                      syntheticOptimizerSteps=sum(c['name']=='training_step_settled' for c in events),
+                      syntheticForwardAttempts=sum(c['name']=='model_forward_started' for c in events),
+                      syntheticForwardsCompleted=sum(c['name']=='model_forward_settled' and c['payload']['status']=='complete' for c in events))
+        save(out,record)
+    return result
 
 def training_plan(run_id,review_path):
     claims=run.read_json(review_path)
@@ -363,16 +492,8 @@ def training_worker(path):
                 if name=='generation_started':report['businessGenerationCalls']+=1
             a['losses']=fit_adapter(torch,model,tokenizer,train,CONFIG,checkpoint)
             if old.tensor_hash(base_state(model))!=source_hash:raise ValueError('frozen source weights changed during fitting')
-            weights=adapter_state(model);adapter_hash=old.tensor_hash(weights)
-            destination=ROOT/'.local/world-components-logic/realizer-adapters'/plan['runId'];destination.mkdir(parents=True,exist_ok=False)
-            checkpoint_path=destination/'adapter.pt'
-            with checkpoint_path.open('xb') as stream:torch.save(weights,stream)
-            with torch.no_grad():
-                for p in model.parameters():
-                    if p.requires_grad:p.zero_()
-            reloaded=torch.load(checkpoint_path,map_location='cpu',weights_only=True);restore_adapter(model,reloaded)
-            if old.tensor_hash(adapter_state(model))!=adapter_hash:raise ValueError('adapter checkpoint reload mismatch')
-            a['checkpoint']={'path':str(checkpoint_path.relative_to(ROOT)),'sha256':sha256_file(checkpoint_path),'tensorSha256':adapter_hash,'sourceTensorSha256':source_hash}
+            a['checkpoint']=save_reload_adapter(torch,model,ROOT/'.local/world-components-logic/realizer-adapters'/plan['runId'],source_hash,checkpoint)
+            adapter_hash=a['checkpoint']['tensorSha256']
             checkpoint('adapter_frozen',a['checkpoint']);a['predictions']=[]
             # No labels enter generation; both train and dev first outputs retained.
             for row in train+dev:
@@ -452,9 +573,12 @@ def build_materials():
     prior_hashes={digest(c['input']) for c in prior_cases if isinstance(c,dict) and 'input' in c}
     own_hashes=[r['sourceInputSha256'] for r in rows]
     if len(set(own_hashes))!=12 or set(own_hashes)&prior_hashes:raise ValueError('exact source duplication detected')
+    # Preserve the actual L3-14 authoring version after extending this module.
+    original=subprocess.check_output(['git','show',MATERIAL_COMMIT+':'+str(Path(__file__).relative_to(ROOT))],cwd=ROOT)
+    if __import__('hashlib').sha256(original).hexdigest()!=MATERIAL_AUTHOR_SHA:raise ValueError('original candidate authoring source unavailable')
     manifest={'schema':'jity-d-realizer-training-source-candidates-v1','batchId':BATCH,'packetSha256':packet_identity(rows),
         'fileSha256':__import__('hashlib').sha256(raw).hexdigest(),'sourceHead':'49189351cf0a04a0cc3fafd15a8eab0248b1a10d',
-        'authoringCodeSha256':sha256_file(Path(__file__)),'protocolSha256':sha256_file(PROTOCOL),
+        'authoringCodeSha256':MATERIAL_AUTHOR_SHA,'protocolSha256':sha256_file(PROTOCOL),
         'sources':[{'annotationId':r['annotationId'],'annotationSha256':digest(r),'sourceGroup':r['sourceGroup'],
                     'role':r['role'],'sourceInputSha256':r['sourceInputSha256'],'coverage':r['coverage']} for r in rows],
         'ownDExactInputOverlap':0,'comparisonSources':{str(p.relative_to(ROOT)):sha256_file(p) for p in (old_inputs,round_inputs)},
@@ -507,8 +631,91 @@ def prepare_materials(write=False):
                 with path.open('xb') as f:f.write(raw)
     return summary
 
+
+def verify_historical_file(path,expected):
+    if path.exists() and sha256_file(path)==expected:return
+    name=str(path.relative_to(ROOT))
+    revisions=subprocess.check_output(['git','log','-30','--format=%H','--',name],cwd=ROOT,text=True).splitlines()
+    for revision in revisions:
+        raw=subprocess.check_output(['git','show',revision+':'+name],cwd=ROOT)
+        if __import__('hashlib').sha256(raw).hexdigest()==expected:return
+    raise ValueError('executed source/protocol unavailable: '+name)
+
+
+def observed_smoke():
+    pp,rp=old.paths(SMOKE_RUN);plan=run.read_json(pp);record=run.read_json(rp)
+    if (record['planSha256']!=sha256_file(pp) or record['status']!='diagnostic_completed'
+            or record['supervisor']['stopReason'] is not None or record['supervisor']['exitCode']!=0):raise ValueError('synthetic smoke incomplete')
+    if (plan['purpose']!='real_m02_synthetic_training_save_reload_only' or plan['config']!=SMOKE_CONFIG
+            or plan['syntheticExamples']!=list(SYNTHETIC_EXAMPLES) or plan['syntheticExamplesSha256']!=digest(list(SYNTHETIC_EXAMPLES))
+            or plan['businessTrainingSteps']!=0 or plan['businessInferenceCalls']!=0 or plan['businessSourceGroups']!=0
+            or plan['formalEvaluationAllowed'] is not False):raise ValueError('synthetic recorded scope drift')
+    for name,h in plan['code'].items():verify_historical_file(ROOT/name,h)
+    verify_historical_file(SMOKE_PROTOCOL,plan['protocolSha256'])
+    replay=copy.deepcopy(record);run.reconcile_journal(replay,rp.with_suffix('.journal.jsonl'),'read_only_material_check')
+    if replay['attempts']!=record['attempts'] or replay['journalRecovery']!=record['journalRecovery']:raise ValueError('synthetic journal reconstruction differs')
+    if len(record['attempts'])!=1:raise ValueError('synthetic slot count drift')
+    a=record['attempts'][0];check=a['syntheticFullModelCheck'];events=a['checkpoints'];forwards=check['modelForwards']
+    if (a['status']!='complete' or a['projectForwardCalls']!=0 or check['sourceParameters']!=77440384
+            or check['trainableAdapterParameters']!=172032 or check['totalInferenceParameters']!=77612416 or check['adapterModules']!=48
+            or check['syntheticExamples']!=list(SYNTHETIC_EXAMPLES) or check['syntheticOptimizerSteps']!=2
+            or len(check['losses'])!=2 or not check['changedAdapterTensors']
+            or any(not check[k] for k in ('sourceBaseUnchanged','baseGradientsAbsent','zeroAdapterLogitsExact','reloadedLogitsExact','reloadedGeneratedTokensExact'))
+            or check['businessTrainingSteps']!=0 or check['businessInferenceCalls']!=0
+            or check['semanticQualityApproved'] is not False or check['fullRequestMeasured'] is not False
+            or record['trainingSteps']!=0 or not record['sourceFilesUnchanged']):raise ValueError('synthetic result identity drift')
+    starts=[c['payload'] for c in events if c['name']=='training_step_started'];settled=[c['payload'] for c in events if c['name']=='training_step_settled']
+    if ([c['step'] for c in starts]!=[1,2] or [c['step'] for c in settled]!=[1,2]
+            or [c['loss'] for c in settled]!=check['losses'] or record['syntheticTrainingStepAttempts']!=2 or record['syntheticOptimizerSteps']!=2):raise ValueError('synthetic step ledger mismatch')
+    for row in starts:
+        if set(row['sourceGroups'])!={e['sourceGroup'] for e in SYNTHETIC_EXAMPLES}:raise ValueError('synthetic training batch drift')
+    expected_phases={'source_reference':1,'zero_adapter_equivalence':1,'synthetic_optimizer':2,'fitted_teacher_forced':1,'reloaded_teacher_forced':1}
+    phases={p:sum(f['phase']==p for f in forwards) for p in {f['phase'] for f in forwards}}
+    for phase,count in expected_phases.items():
+        if phases.get(phase)!=count:raise ValueError('synthetic forward phase count drift')
+    for phase in ('synthetic_generation_before_reload','synthetic_generation_after_reload'):
+        if not 1<=phases.get(phase,0)<=SMOKE_CONFIG['maxNewTokens']:raise ValueError('synthetic generation count drift')
+    if set(phases)!=set(expected_phases)|{'synthetic_generation_before_reload','synthetic_generation_after_reload'}:raise ValueError('unexpected model forward phase')
+    if any(f['index']!=i or f['status']!='complete' or f['gradEnabled']!=(f['phase']=='synthetic_optimizer') for i,f in enumerate(forwards)):raise ValueError('synthetic forward gradient/status drift')
+    forward_events=[c['payload'] for c in events if c['name']=='model_forward_settled']
+    if (forward_events!=forwards or len(forwards)!=check['modelTopForwardCalls'] or a['syntheticModelForwardCalls']!=len(forwards)
+            or record['syntheticForwardAttempts']!=len(forwards) or record['syntheticForwardsCompleted']!=len(forwards)):raise ValueError('synthetic forward ledger mismatch')
+    names=[c['name'] for c in events]
+    if not names.index('adapter_save_started')<names.index('adapter_saved')<names.index('adapter_cleared')<names.index('adapter_reloaded')<names.index('full_model_reload_equivalence'):raise ValueError('synthetic checkpoint order drift')
+    if not next(c['payload'] for c in events if c['name']=='adapter_cleared')['allTrainableZero']:raise ValueError('synthetic adapter was not cleared')
+    before,after=check['syntheticGenerations']
+    if before['tokenIds']!=after['tokenIds'] or before['maxNewTokens']!=8 or after['maxNewTokens']!=8:raise ValueError('synthetic generated tokens differ')
+    return {'schema':'jity-d-realizer-synthetic-training-summary-v1','date':'2026-11-04','batchId':SMOKE_RUN,
+        'stage':'L3-15 real M02 synthetic training and disk reload check; no business training',
+        'scope':'engineering_numeric_fixture_not_action_training_or_latency_evaluation','lastModelRun':'action-focus-dev42-20261104-r2',
+        'draftSourceGroups':12,'review':reconcile_reviews(candidate_rows()),'realizerTrainerImplemented':True,
+        'plannerModelImplemented':False,'realizerTrained':False,'businessTrainingSteps':0,'businessInferenceCalls':0,
+        'formalEvaluationAllowed':False,'semanticQualityApproved':False,'fullRequest500msStatus':'unverified',
+        'realModelSyntheticCheck':check,'forwardPhaseCounts':phases,'supervisor':record['supervisor'],
+        'planSha256':sha256_file(pp),'recordSha256':sha256_file(rp),'journalSha256':sha256_file(rp.with_suffix('.journal.jsonl'))}
+
+
+def smoke_materials(write=False):
+    import html
+    summary=observed_smoke();check=summary['realModelSyntheticCheck'];e=lambda v:html.escape(str(v))
+    document='''<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'"><title>L3-15 真实模型训练通路检查</title><style>body{margin:0;background:#f4f6f8;color:#20313e;font:16px/1.7 system-ui}main{max-width:1000px;margin:auto;padding:24px}section{background:white;padding:24px;border-radius:12px;margin:20px 0}pre{white-space:pre-wrap;overflow-wrap:anywhere}table{border-collapse:collapse;width:100%}td,th{padding:10px;text-align:left;border-bottom:1px solid #ddd}.warn{color:#a7352e}</style><main><p>D / L3-15 · 2026-11-04</p><h1>真实77M模型的训练、存档和重载已跑通</h1><section><h2>本次解决了什么？</h2><p>上次实际77M模型只做了装配，训练更新在8维小模拟层上检查。这次用真实原模型和两行合成数字输入，实际走完前向、反向更新、写入磁盘、清空适配参数、重载和生成对照。训练和存档函数与将来的业务训练共用。</p><p class="warn">这是数值工程检查。没有使用游戏场景或新增未审标签，也没有训练业务模型；12组新标签仍待核对，动作规划器仍未实现，质量与完整500ms尚未通过。</p></section>'''
+    document+=f'<section><h2>实际检查结果</h2><table><tr><th>项目</th><th>结果</th></tr><tr><td>原模型参数 / 新增可训练参数</td><td>{check["sourceParameters"]:,} / {check["trainableAdapterParameters"]:,}；总推理仍{check["totalInferenceParameters"]:,}</td></tr><tr><td>实际合成优化步数</td><td>{check["syntheticOptimizerSteps"]}步；业务训练0步</td></tr><tr><td>零适配层与原模型</td><td>完整logits逐值相同</td></tr><tr><td>底座是否保持不变</td><td>张量SHA与源文件均不变，无底座梯度</td></tr><tr><td>磁盘重载后</td><td>适配张量、完整logits、生成token逐值相同</td></tr><tr><td>实际顶层模型前向</td><td>{check["modelTopForwardCalls"]}次，含两个优化步骤和全部生成解码</td></tr><tr><td>监督进程总耗时 / RSS</td><td>{summary["supervisor"]["wallMs"]/1000:.2f}秒 / {summary["supervisor"]["observedPeakResidentMiB"]:.2f}MiB，CPU单线程</td></tr></table><p>原始合成损失：{e(check["losses"])}。损失变化只说明数值计算发生，不能表示模型理解了行动。这里的耗时包括准备和工程核查，不是游戏性能成绩。</p></section>'
+    document+='<section><h2>下一步</h2><p>新标签/来源核对齐备后固定真实小批训练实例，训练短表达器，再验证真实动作规划与协作链；不能把“给好计划再成句”当成模型自主选择行动。</p></section>'
+    document+=f'<section><details><summary>全部原始数字、调用和检查结果</summary><pre>{e(json.dumps(summary,ensure_ascii=False,indent=2))}</pre></details><p><a href="l3-15-realizer-smoke-summary.json">机器汇总</a> · <a href="m01-fitting/{SMOKE_RUN}.plan.json">冻结计划</a> · <a href="m01-fitting/{SMOKE_RUN}.record.json">原始记录</a> · <a href="m01-fitting/{SMOKE_RUN}.record.journal.jsonl">完整事件</a> · <a href="l3-14-realizer-training-readiness.html">12组候选和上批准备</a> · <a href="../../design/world-engine-reports/components-logic/realizer-training-smoke-protocol.md">本批协议</a></p></section></main></html>'
+    files={ART/'l3-15-realizer-smoke-summary.json':(json.dumps(summary,ensure_ascii=False,indent=2)+'\n').encode(),ART/'l3-15-realizer-smoke.html':document.encode()}
+    for path,raw in files.items():
+        if path.exists() and path.read_bytes()!=raw:raise ValueError('preserve delivered synthetic result: '+str(path))
+        if not write and not path.exists():raise ValueError('synthetic result material missing')
+    if write:
+        for path,raw in files.items():
+            if not path.exists():
+                with path.open('xb') as stream:stream.write(raw)
+    return summary
+
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('--worker',type=Path);p.add_argument('--numeric-check',action='store_true');p.add_argument('--check-materials',action='store_true');a=p.parse_args()
+    p=argparse.ArgumentParser();p.add_argument('--worker',type=Path);p.add_argument('--numeric-check',action='store_true');p.add_argument('--check-materials',action='store_true');p.add_argument('--check-smoke',action='store_true');a=p.parse_args()
+    if a.check_smoke:
+        s=smoke_materials();print(json.dumps({'batchId':s['batchId'],'businessTrainingSteps':0,'syntheticOptimizerSteps':s['realModelSyntheticCheck']['syntheticOptimizerSteps']}));raise SystemExit(0)
     if a.check_materials:
         s=prepare_materials();print(json.dumps({'batchId':s['batchId'],'trainingSteps':0,'businessInferenceCalls':0,'formalEvaluationAllowed':False}));raise SystemExit(0)
     if a.numeric_check:
