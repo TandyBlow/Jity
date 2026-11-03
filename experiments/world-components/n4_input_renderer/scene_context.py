@@ -154,13 +154,31 @@ def build_scene_context(state, perspective, selected_facts,
             diagnostics.append({"code": "environment-field-missing",
                                 "field": key})
 
-    world_view = {"locations": {}, "items": {}, "characters": {}}
+    world_view = {"locations": {}, "items": {}, "characters": {}, "parents": {}}
     for lid in path_ids:
         world_view["locations"][lid] = {
             "name": _loc_name(state, lid),
             "appearance": _appearance(state, "locations", lid),
             "sublocations": [],
         }
+    # 同一父地点下的兄弟子地点：站在塔顶时，石阶/旋梯也在这一栋楼里，
+    # 它们的描写（铁链、擦铜油味）是模型可以合法使用的材料。
+    for lid in list(path_ids):
+        parent = initial_locs.get(lid, {}).get("parentLocationId")
+        world_view["parents"][lid] = parent
+        if parent is None:
+            continue
+        for sib, ent in initial_locs.items():
+            if (ent or {}).get("parentLocationId") != parent:
+                continue
+            world_view["parents"].setdefault(sib, parent)
+            if sib in world_view["locations"]:
+                continue
+            world_view["locations"][sib] = {
+                "name": _loc_name(state, sib),
+                "appearance": _appearance(state, "locations", sib),
+                "sublocations": [],
+            }
     for iid in item_ids:
         world_view["items"][iid] = {
             "name": _item_name(state, iid),

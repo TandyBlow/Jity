@@ -116,7 +116,26 @@ def _validate_scene(case, world):
     for lid in path:
         _loc_name(world, lid)
     deepest = path[-1]
-    appearance = _loc_appearance(world, deepest)
+    # 整条地点链的外貌都要给：站在"塔顶"时，金标准会写到"石阶""旋梯"
+    # "擦铜油味"——那些写在父地点上。只给叶子的话这些词不在输入里，
+    # 模型写出来就成了"新增名词"，写不出来又显得漏了场景。
+    chain = []
+    for lid in path:
+        a = _loc_appearance(world, lid)
+        if a and a not in chain:
+            chain.append(a)
+    # 同一栋建筑的兄弟子地点也写进来：站在塔顶时，"石阶""旋梯""铁链"
+    # "擦铜油味"都在这栋楼里，金标准会写到它们；只给当前那一层，模型写出
+    # 来就成了"新增名词"。
+    parent_of = (world or {}).get("parents") or {}
+    cur = parent_of.get(deepest)
+    if cur:
+        for lid, par in parent_of.items():
+            if par == cur and lid not in path:
+                a = _loc_appearance(world, lid)
+                if a and a not in chain:
+                    chain.append(a)
+    appearance = "；".join(chain)
     character_context = case.get("characterContext")
     if not isinstance(character_context, list):
         raise N4RenderError("scene-character-context-invalid", None)
@@ -167,6 +186,14 @@ def pack_narrative_input(case, plan, world, selected_fact_ids=None,
         lines = ["叙事任务。", "场景：",
                  f"地点={'>'.join(path_names)}",
                  f"地点外貌={'；'.join(appearance_parts)}"]
+        # 同一栋楼里还有哪些地方（名字要写出来，否则正文提到"巷子"会被
+        # 判成新增名词）
+        siblings = [v["name"] for lid, v in (world.get("locations") or {}).items()
+                    if lid not in path and (world.get("parents") or {}).get(lid)
+                    and (world.get("parents") or {}).get(lid) ==
+                    (world.get("parents") or {}).get(path[-1])]
+        if siblings:
+            lines.append(f"同栋={'、'.join(siblings)}")
 
         lines.append("人物：")
         for name, personality, char_appearance, inv in characters:
