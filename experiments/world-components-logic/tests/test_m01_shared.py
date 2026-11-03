@@ -104,7 +104,7 @@ class SharedPlanTests(unittest.TestCase):
         self.assertEqual(p['round1TrainingQuota'],0);self.assertEqual(p['newIndependentTrainingGroups'],0)
 
     def test_rehashed_resource_or_threshold_changes_are_rejected(self):
-        for k,v in {'reducedEncoderLayerIndices':[0,5],'eventAnchor':'rules','threads':2,'threshold':.1,'fusionWidth':64,'featureCacheForTiming':True,'processWallSeconds':3600}.items():
+        for k,v in {'trainingSteps':1,'headsFrozen':False,'reducedEncoderLayerIndices':[0,5],'eventAnchor':'rules','threads':2,'threshold':.1,'fusionWidth':64,'featureCacheForTiming':True,'processWallSeconds':3600}.items():
             p=self.plan();p['config'][k]=v;p['configSha256']=shared.digest(p['config'])
             with self.assertRaisesRegex(ValueError,'policy'):shared.verify(p)
 
@@ -120,13 +120,13 @@ class SharedPlanTests(unittest.TestCase):
 
 
 class SharedInterruptionTests(unittest.TestCase):
-    def test_stop_before_child_journal_keeps_all_sixty_unstarted_slots(self):
+    def test_stop_before_child_journal_keeps_all_forty_unstarted_slots(self):
         plan={'config':{'attemptsPerCase':5},'cases':[{'caseId':str(i)} for i in range(4)]}
         with tempfile.TemporaryDirectory() as t:
             p=Path(t)/'plan.json';p.write_text(json.dumps(plan))
             r=shared.unstarted_record(plan,p)
-        self.assertEqual(len(r['attemptSlots']),60);self.assertEqual(r['unexecutedAttempts'],60)
-        self.assertEqual(len({(x['arm'],x['caseId'],x['repeat']) for x in r['attemptSlots']}),60)
+        self.assertEqual(len(r['attemptSlots']),40);self.assertEqual(r['unexecutedAttempts'],40)
+        self.assertEqual(len({(x['arm'],x['caseId'],x['repeat']) for x in r['attemptSlots']}),40)
 
     def test_interrupted_shared_arm_does_not_replace_completed_legacy_slot(self):
         done={'arm':'legacy','caseId':'case','repeat':0,'status':'complete'}
@@ -150,12 +150,12 @@ class SharedInterruptionTests(unittest.TestCase):
 
 class ExperimentEntryTests(unittest.TestCase):
     def test_status_and_default_do_not_import_models_or_write_plans(self):
-        with mock.patch.object(experiment,'read_json',return_value={'runs':[{'runId':'m01-event-dev42-20261102-r1','quality':{}}],'formalEvaluationAllowed':False,'fullRequest500msStatus':'unverified'}),mock.patch.dict(sys.modules,{'torch':None,'transformers':None}),mock.patch.object(shared,'prepare') as prepare,mock.patch.object(shared,'execute') as execute:
+        with mock.patch.object(experiment,'read_json',return_value={'runs':[{'runId':'m01-journal-dev42-20261103-r1','quality':{}}],'formalEvaluationAllowed':False,'fullRequest500msStatus':'unverified'}),mock.patch.dict(sys.modules,{'torch':None,'transformers':None}),mock.patch.object(shared,'prepare') as prepare,mock.patch.object(shared,'execute') as execute:
             for args in ([],['status']):
                 output=io.StringIO()
                 with redirect_stdout(output):self.assertEqual(experiment.main(args),0)
                 status=json.loads(output.getvalue());self.assertFalse(status['modelExecutionPerformed'])
-                self.assertEqual(status['latestRun'],'m01-event-dev42-20261102-r1')
+                self.assertEqual(status['latestRun'],'m01-journal-dev42-20261103-r1')
             prepare.assert_not_called();execute.assert_not_called()
 
     def test_prepare_and_execute_delegate_to_the_current_model(self):
@@ -171,7 +171,7 @@ class ExperimentEntryTests(unittest.TestCase):
     def test_check_runs_only_tests_and_report_verification(self):
         with mock.patch.object(experiment.subprocess,'run',return_value=mock.Mock(returncode=0)) as run,redirect_stdout(io.StringIO()):
             self.assertEqual(experiment.check(),0)
-        self.assertEqual(run.call_count,5)
+        self.assertEqual(run.call_count,6)
         for call in run.call_args_list:
             args=call.args[0]
             self.assertNotIn('--execute',args);self.assertNotIn('--prepare',args)

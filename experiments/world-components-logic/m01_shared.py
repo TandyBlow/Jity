@@ -5,7 +5,6 @@ No model import at module load. Prior inference code/evidence remains immutable.
 from __future__ import annotations
 
 import argparse
-import copy
 from functools import partial
 import importlib.metadata
 import json
@@ -26,18 +25,18 @@ from experiment import read_json,settle_attempts,settle_events
 ROOT=old.ROOT
 BASE=old.BASE
 ART=old.ART
-PROTOCOL=ROOT/'design/world-engine-reports/components-logic/m01-event-depth-probe.md'
+PROTOCOL=ROOT/'design/world-engine-reports/components-logic/m01-journal-probe.md'
 OLD_PLAN=ART/'m01-fit-dev42-20261102-r1.plan.json'
 OLD_RECORD=ART/'m01-fit-dev42-20261102-r1.record.json.gz'
-BASELINE_PLAN=ART/'m01-shared-dev42-20261102-r3.plan.json'
-BASELINE_RECORD=ART/'m01-shared-dev42-20261102-r3.record.json.gz'
-ARMS=('baseline','event','event2')
-CONFIG={'device':'cpu','threads':1,'concurrency':1,'seed':42,'limit':512,
-        'stepsPerHead':200,'learningRate':.0003,'weightDecay':.01,'threshold':.5,
-        'fusionWidth':32,'attemptsPerCase':5,'processWallSeconds':120,
-        'maxResidentMiB':2048,'encoderFrozen':True,'earlyStopping':False,
-        'featureCacheForTiming':False,'featureCacheForFitOnly':True,
-        'reducedEncoderLayerIndices':[0,1],'eventAnchor':'D03_source_actionText_only'}
+BASELINE_PLAN=ART/'m01-event-dev42-20261102-r1.plan.json'
+BASELINE_RECORD=ART/'m01-event-dev42-20261102-r1.record.json.gz'
+ARMS=('snapshot','append')
+CONFIG={'device':'cpu','threads':1,'concurrency':1,'seed':42,'limit':512,'trainingSteps':0,
+        'threshold':.5,'fusionWidth':32,'attemptsPerCase':5,'processWallSeconds':120,
+        'maxResidentMiB':2048,'encoderFrozen':True,'headsFrozen':True,'featureCacheForTiming':False,
+        'reducedEncoderLayerIndices':[0,1],'eventAnchor':'D03_source_actionText_only',
+        'journalFormat':'d-append-v1','attemptBoundaryFsync':True}
+
 planned_slots=partial(experiment.planned_slots,arms=ARMS)
 unstarted_record=partial(experiment.unstarted_record,arms=ARMS)
 
@@ -51,7 +50,7 @@ def baseline_identity():
     return {'planSha256':sha256_file(BASELINE_PLAN),'recordSha256':sha256_file(BASELINE_RECORD),
             'planPath':str(BASELINE_PLAN.relative_to(ROOT)),'recordPath':str(BASELINE_RECORD.relative_to(ROOT)),
             'datasetSha256':p['datasetSha256'],'checkpoint':r['checkpoint'],
-            'trainedHeadSha256':r['trainedHeadSha256'],'model':p['model']}
+            'trainedHeadSha256':r['trainedHeadSha256']['event2'],'encoder':r['encoderVariants']['event2'],'model':p['model']}
 
 
 def prepare(run_id):
@@ -60,7 +59,7 @@ def prepare(run_id):
     rows,review=old.dataset();baseline=baseline_identity();model=old.model_identity()
     if baseline['datasetSha256']!=digest(rows) or model!=baseline['model']:raise ValueError('baseline dataset/model drift')
     code=[BASE/name for name in ('experiment.py','m01_shared.py','m01_probe.py','fact_windows.py','pilot_codec.py','lab.py','run_pilot.py','review_io.py','prepare_run_batch.py')]
-    plan={'schema':'jity-d-m01-event-depth-plan-v1','runId':run_id,'preparedAt':timestamp(),
+    plan={'schema':'jity-d-m01-journal-plan-v1','runId':run_id,'preparedAt':timestamp(),
           'sourceHead':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
           'protocolPath':str(PROTOCOL.relative_to(ROOT)),'protocolSha256':sha256_file(PROTOCOL),
           'inheritedProtocolSha256':sha256_file(PROTOCOL.with_name('m01-shared-probe.md')),
@@ -68,7 +67,7 @@ def prepare(run_id):
           'config':CONFIG.copy(),'configSha256':digest(CONFIG),'dataset':rows,'datasetSha256':digest(rows),
           'cases':[r['case'] for r in rows if r['role']=='retained_development'],
           'review':review,'model':model,'baseline':baseline,'environment':observe_environment(ROOT),
-          'authorization':{'instruction':'继续','scope':'bounded_D_single_thread_event_anchor_depth_probe',
+          'authorization':{'instruction':'没问题，按照之前说的方案，继续下一步任务','scope':'bounded_D_single_thread_frozen_checkpoint_journal_probe',
                            'resourceWindow':'current_user_requested_turn_single_CPU_thread_no_GPU_no_BC'},
           'arms':list(ARMS),'formalEvaluationAllowed':False,'sourceIndependence':'unverified',
           'retainedDevelopmentPreviouslyObserved':True,'newIndependentTrainingGroups':0,'round1TrainingQuota':0}
@@ -219,16 +218,14 @@ def predict(case,data,head,torch):
 
 
 def worker(path):
-    plan=read_json(path);_,out=old.paths(plan['runId']);events=out.with_suffix('.windows.jsonl')
-    slots=planned_slots(plan)
-    report={'schema':'jity-d-m01-event-depth-record-v1','runId':plan['runId'],'planSha256':sha256_file(path),
+    plan=read_json(path);_,out=old.paths(plan['runId']);slots=planned_slots(plan)
+    report={'schema':'jity-d-m01-journal-record-v1','runId':plan['runId'],'planSha256':sha256_file(path),
             'status':'running','stages':[],'attempts':[],'attemptSlots':slots,'activeAttempt':None,
-            'forwardAttempts':[],'activeForward':None,'featureCoverage':[],'fitLosses':{},
+            'forwardAttempts':[],'activeForward':None,'trainingSteps':0,'featureCacheUsed':False,
             'formalEvaluationAllowed':False,'semanticQualityApproved':False,'fullRequestMeasured':False,
             'sourceIndependence':'unverified'}
     exclusive(out,report)
-    def stage(name,fn):
-        return experiment.record_stage(report,out,name,fn)
+    stage=lambda name,fn:experiment.record_stage(report,out,name,fn)
     try:
         stage('verify_plan',lambda:verify(plan))
         def stack():
@@ -238,114 +235,77 @@ def worker(path):
             return torch,BertModel,BertTokenizer
         torch,BertModel,BertTokenizer=stage('dependency_import',stack)
         report['actualRuntime']={'python':sys.executable,'pythonVersion':platform.python_version(),'device':'cpu',
-             'threads':torch.get_num_threads(),'interopThreads':torch.get_num_interop_threads(),
-             'dependencies':{n:importlib.metadata.version(n) for n in ('torch','transformers','tokenizers','numpy')}}
+            'threads':torch.get_num_threads(),'interopThreads':torch.get_num_interop_threads(),
+            'dependencies':{n:importlib.metadata.version(n) for n in ('torch','transformers','tokenizers','numpy')}}
         directory=ROOT/plan['model']['directory']
         tokenizer=stage('tokenizer_load',lambda:BertTokenizer.from_pretrained(directory,local_files_only=True))
         encoder,info=stage('encoder_load',lambda:BertModel.from_pretrained(directory,local_files_only=True,trust_remote_code=False,
-                         weights_only=True,add_pooling_layer=False,output_loading_info=True))
+            weights_only=True,add_pooling_layer=False,output_loading_info=True))
         if info['missing_keys'] or info.get('mismatched_keys') or any(not k.startswith('cls.') for k in info['unexpected_keys']):raise ValueError('uninitialized encoder')
-        encoder.eval()
+        encoder.encoder.layer=torch.nn.ModuleList([encoder.encoder.layer[i] for i in plan['config']['reducedEncoderLayerIndices']])
+        encoder.config.num_hidden_layers=len(encoder.encoder.layer);encoder.eval()
         for p in encoder.parameters():p.requires_grad_(False)
-        before=old.tensor_hash(encoder.state_dict());report['encoderParameters']=sum(p.numel() for p in encoder.parameters())
-        baseline_state=stage('baseline_checkpoint_load',lambda:torch.load(ROOT/plan['baseline']['checkpoint']['path'],map_location='cpu',weights_only=True))
-        heads={'baseline':{t:make_head(torch,encoder.config.hidden_size) for t in ('D02','D03')}}
-        for task,head in heads['baseline'].items():
-            head.load_state_dict(baseline_state[task]);head.eval()
-            if old.tensor_hash(head.state_dict())!=plan['baseline']['trainedHeadSha256'][task]:raise ValueError('baseline head identity drift')
-        reduced=copy.deepcopy(encoder)
-        reduced.encoder.layer=torch.nn.ModuleList([reduced.encoder.layer[i] for i in plan['config']['reducedEncoderLayerIndices']])
-        reduced.config.num_hidden_layers=len(reduced.encoder.layer);reduced.eval()
-        encoders={'baseline':encoder,'event':encoder,'event2':reduced}
-        encoder_hashes={a:old.tensor_hash(e.state_dict()) for a,e in encoders.items()}
-        report['encoderVariants']={a:{'layers':len(e.encoder.layer),'parameters':sum(p.numel() for p in e.parameters()),
-            'tensorSha256':encoder_hashes[a]} for a,e in encoders.items()}
-        for arm in ARMS[1:]:
-            torch.manual_seed(plan['config']['seed'])
-            heads[arm]={t:make_head(torch,encoder.config.hidden_size,plan['config']['fusionWidth']) for t in ('D02','D03')}
-        report['headParametersPerArm']={a:sum(p.numel() for h in hs.values() for p in h.parameters()) for a,hs in heads.items()}
-        cache={}
-        with events.open('x',encoding='utf-8') as log:
-            context={'phase':'feature_fit','arm':None}
-            def journal(e):
-                e.update(context)
-                if e['status']=='running':
-                    e['eventId']=len(report['forwardAttempts']);e['forwardIndex']=e['eventId']
-                    report['forwardAttempts'].append({k:v for k,v in e.items() if k not in ('inputIds','tokenTypeIds','factSpans')})
-                    report['activeForward']=report['forwardAttempts'][-1]
-                else:
-                    report['forwardAttempts'][e['eventId']]={k:v for k,v in e.items() if k not in ('inputIds','tokenTypeIds','factSpans')}
-                    report['activeForward']=None
-                log.write(json.dumps(e,ensure_ascii=False,separators=(',',':'))+'\n');log.flush()
-            def encode_fit():
-                for arm in ARMS[1:]:
-                    context['arm']=arm;cache[arm]={}
-                    for row in plan['dataset']:
-                        data,cov=features(row['case'],tokenizer,encoders[arm],torch,journal,event_anchor=True)
-                        cache[arm][row['case']['caseId']]=data
-                        report['featureCoverage'].append({'arm':arm,'caseId':row['case']['caseId'],'role':row['role'],'coverage':cov})
-            stage('shared_feature_extraction',encode_fit)
-            def fit_heads():
-                for arm in ARMS[1:]:
-                    report['fitLosses'][arm]={}
-                    for task,head in heads[arm].items():
-                        rows=[r for r in plan['dataset'] if r['case']['task']==task and r['role']=='fit']
-                        y=torch.tensor([v for r in rows for v in old.labels(r)],dtype=torch.float32)
-                        positives=int(y.sum());negatives=len(y)-positives
-                        if not positives or not negatives:raise ValueError('missing fitting class')
-                        loss_fn=torch.nn.BCEWithLogitsLoss(pos_weight=torch.tensor(negatives/positives))
-                        opt=torch.optim.AdamW(head.parameters(),lr=plan['config']['learningRate'],weight_decay=plan['config']['weightDecay'])
-                        report['fitLosses'][arm][task]=[]
-                        for step in range(plan['config']['stepsPerHead']):
-                            opt.zero_grad();logits=torch.cat([head(cache[arm][r['case']['caseId']]) for r in rows]);loss=loss_fn(logits,y)
-                            if not torch.isfinite(loss):raise ValueError('nonfinite fitting loss')
-                            loss.backward();opt.step();report['fitLosses'][arm][task].append(float(loss.detach()))
-                        head.eval()
-            stage('fit_shared_heads',fit_heads)
-            report['encoderUnchanged']=all(encoder_hashes[a]==old.tensor_hash(e.state_dict()) for a,e in encoders.items())
-            if not report['encoderUnchanged']:raise ValueError('encoder was changed')
-            report['encoderTensorSha256']=before
-            report['trainedHeadSha256']={a:{t:old.tensor_hash(h.state_dict()) for t,h in hs.items()} for a,hs in heads.items()}
-            checkpoint=old.LOCAL/'checkpoints'/f"{plan['runId']}.pt";checkpoint.parent.mkdir(parents=True,exist_ok=True)
-            with checkpoint.open('xb') as f:torch.save({a:{t:h.state_dict() for t,h in heads[a].items()} for a in ARMS[1:]},f)
-            report['checkpoint']={'path':str(checkpoint.relative_to(ROOT)),'sha256':sha256_file(checkpoint),'contains':'four_event_anchor_heads_only'}
-            state=stage('shared_checkpoint_reload',lambda:torch.load(checkpoint,map_location='cpu',weights_only=True))
-            for arm in ARMS[1:]:
-                for task,head in heads[arm].items():
-                    head.load_state_dict(state[arm][task]);head.eval()
-                    if old.tensor_hash(head.state_dict())!=report['trainedHeadSha256'][arm][task]:raise ValueError('shared checkpoint tensor drift')
-            report['fitAndDevelopmentPredictions']=[]
-            for arm in ARMS[1:]:
-                for row in plan['dataset']:
-                    probabilities,decoded=predict(row['case'],cache[arm][row['case']['caseId']],heads[arm][row['case']['task']],torch)
-                    report['fitAndDevelopmentPredictions'].append({'arm':arm,'caseId':row['case']['caseId'],'task':row['case']['task'],
-                        'role':row['role'],'label':row['label'],'probabilities':probabilities,'decoded':decoded})
-            cases={c['caseId']:c for c in plan['cases']}
+        identity={'layers':len(encoder.encoder.layer),'parameters':sum(p.numel() for p in encoder.parameters()),
+                  'tensorSha256':old.tensor_hash(encoder.state_dict())}
+        if identity!=plan['baseline']['encoder']:raise ValueError('fixed encoder identity drift')
+        report['encoder']=identity
+        state=stage('checkpoint_load',lambda:torch.load(ROOT/plan['baseline']['checkpoint']['path'],map_location='cpu',weights_only=True))
+        heads={t:make_head(torch,encoder.config.hidden_size,plan['config']['fusionWidth']) for t in ('D02','D03')}
+        for task,head in heads.items():
+            head.load_state_dict(state['event2'][task]);head.eval()
+            for p in head.parameters():p.requires_grad_(False)
+            if old.tensor_hash(head.state_dict())!=plan['baseline']['trainedHeadSha256'][task]:raise ValueError('fixed head identity drift')
+        report['trainedHeadSha256']=plan['baseline']['trainedHeadSha256']
+        report['checkpoint']=plan['baseline']['checkpoint']
+        report['headParameters']=sum(p.numel() for h in heads.values() for p in h.parameters())
+        cases={c['caseId']:c for c in plan['cases']}
+        with experiment.AppendJournal(out.with_suffix('.journal.jsonl'),report['planSha256']) as journal:
+            journal.append('begin',{'runId':plan['runId'],'slots':slots})
+            # Save setup once. Later append-only items do not rewrite this snapshot.
+            save(out,report)
             for index,slot in enumerate(slots):
-                case=cases[slot['caseId']];context.update(phase='inference',arm=slot['arm'],repeat=slot['repeat'])
+                case=cases[slot['caseId']]
                 a={**slot,'status':'started','startedAt':timestamp(),'startedMonotonicNs':time.monotonic_ns(),
-                   'featureCacheUsed':False,'generationStarted':False,'fullRequestMeasured':False}
+                   'featureCacheUsed':False,'fullRequestMeasured':False}
                 report['activeAttempt']=a;report['attemptSlots'][index]=a
-                jt=time.perf_counter();save(out,report);a['startJournalMs']=(time.perf_counter()-jt)*1000
+                jt=time.perf_counter();journal.append('attempt_start',a);start_ms=(time.perf_counter()-jt)*1000
+                jt=time.perf_counter()
+                if slot['arm']=='snapshot':save(out,report)
+                snapshot_start=(time.perf_counter()-jt)*1000
+                def on_window(e):
+                    e.update(phase='inference',arm=slot['arm'],repeat=slot['repeat'])
+                    if e['status']=='running':
+                        e['eventId']=len(report['forwardAttempts']);e['forwardIndex']=e['eventId']
+                        report['forwardAttempts'].append(dict(e));report['activeForward']=report['forwardAttempts'][-1]
+                    else:
+                        report['forwardAttempts'][e['eventId']]=dict(e);report['activeForward']=None
+                    journal.append('window',e)
                 try:
-                    data,cov=features(case,tokenizer,encoders[slot['arm']],torch,journal,event_anchor=slot['arm']!='baseline')
-                    t=time.perf_counter()
-                    probabilities,decoded=predict(case,data,heads[slot['arm']][case['task']],torch)
-                    a.update(status='complete',inputSha256=digest(case['input']),coverage=cov,
-                             probabilities=probabilities,decoded=decoded,headMs=(time.perf_counter()-t)*1000)
-                except Exception as e:a.update(status='failed',error={'type':type(e).__name__,'message':str(e)})
-                finally:
-                    a.update(elapsedMs=(time.monotonic_ns()-a['startedMonotonicNs'])/1e6,settledAt=timestamp(),settledMonotonicNs=time.monotonic_ns())
+                    data,cov=features(case,tokenizer,encoder,torch,on_window,event_anchor=True)
+                    t=time.perf_counter();probabilities,decoded=predict(case,data,heads[case['task']],torch)
+                    a.update(status='complete',inputSha256=digest(case['input']),coverage=cov,probabilities=probabilities,
+                             decoded=decoded,headMs=(time.perf_counter()-t)*1000)
+                except Exception as error:a.update(status='failed',error={'type':type(error).__name__,'message':str(error)})
+                a.update(settledAt=timestamp(),startJournalMs=start_ms,snapshotStartMs=snapshot_start)
+                jt=time.perf_counter();journal.append('attempt_result',a);result_ms=(time.perf_counter()-jt)*1000
                 report['attempts'].append(a);report['activeAttempt']=None
-                jt=time.perf_counter();save(out,report);a['endJournalMs']=(time.perf_counter()-jt)*1000
-                a['elapsedIncludingEndJournalMs']=(time.monotonic_ns()-a['startedMonotonicNs'])/1e6
+                jt=time.perf_counter()
+                if slot['arm']=='snapshot':save(out,report)
+                end_ms=(time.perf_counter()-jt)*1000
+                timing={k:a[k] for k in ('arm','caseId','repeat')}
+                timing.update(resultJournalMs=result_ms,snapshotEndMs=end_ms,
+                    elapsedThroughResultMs=(time.monotonic_ns()-a['startedMonotonicNs'])/1e6)
+                jt=time.perf_counter();journal.append('attempt_settled',timing);a.update(timing)
+                a['telemetryJournalMs']=(time.perf_counter()-jt)*1000
+                a['elapsedIncludingTelemetryMs']=(time.monotonic_ns()-a['startedMonotonicNs'])/1e6
+        report['encoderUnchanged']=identity['tensorSha256']==old.tensor_hash(encoder.state_dict())
+        report['headsUnchanged']=all(old.tensor_hash(h.state_dict())==report['trainedHeadSha256'][t] for t,h in heads.items())
+        if not report['encoderUnchanged'] or not report['headsUnchanged']:raise ValueError('inference modified weights')
         report['status']='diagnostic_completed' if all(a['status']=='complete' for a in report['attempts']) else 'failed'
-    except Exception as e:report.update(status='failed',error={'type':type(e).__name__,'message':str(e)})
+    except Exception as error:report.update(status='failed',error={'type':type(error).__name__,'message':str(error)})
     finally:
-        if report['activeAttempt'] is not None:settle_attempts(report,'worker_exception')
-        report['unexecutedAttempts']=sum(x['status']=='not_started' for x in report['attemptSlots'])
-        if events.exists():report['windowEventsSha256']=sha256_file(events)
-        report['finishedAt']=timestamp();save(out,report)
+        report['finishedAt']=timestamp();report['unexecutedAttempts']=sum(a['status']=='not_started' for a in slots)
+        save(out,report)
     return 0 if report['status']=='diagnostic_completed' else 1
 
 

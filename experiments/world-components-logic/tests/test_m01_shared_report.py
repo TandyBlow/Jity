@@ -138,4 +138,59 @@ class EventDepthReportTests(unittest.TestCase):
                 report.verify_event_source('experiments/world-components-logic/m01_shared.py','expected')
 
 
+class JournalReportTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        run=report.JOURNAL_RUN;data=report.DATA
+        cls.plan=json.loads((data/(run+'.plan.json')).read_bytes())
+        cls.record=report.read_archive(data/(run+'.record.json.gz'))
+        cls.journal=data/(run+'.record.journal.jsonl.gz')
+        cls.baseline=report.read_archive(report.JOURNAL_BASE_RECORD)
+
+    def check(self,plan=None,record=None):
+        return report.validate_journal_run(plan or self.plan,record or self.record,self.journal,self.baseline)
+
+    def test_complete_frozen_batch_rebuilds_and_never_promotes_scope(self):
+        self.check();summary,files=report.build_journal()
+        self.assertEqual(summary['runs'][0]['trainingSteps'],0)
+        self.assertFalse(summary['semanticQualityApproved']);self.assertEqual(summary['fullRequest500msStatus'],'unverified')
+        for p,raw in files.items():self.assertEqual(p.read_bytes(),raw)
+
+    def test_changed_prediction_or_missing_attempt_cannot_hide_behind_status(self):
+        for mutate in (lambda r:r['attempts'][0].update(probabilities=[.999]),lambda r:r['attempts'].pop()):
+            r=copy.deepcopy(self.record);mutate(r)
+            with self.assertRaises(ValueError):self.check(record=r)
+
+    def test_changed_checkpoint_encoder_and_training_are_rejected(self):
+        for mutate in (lambda r:r.update(trainingSteps=1),lambda r:r['encoder'].update(parameters=1),
+                       lambda r:r['checkpoint'].update(sha256='wrong')):
+            r=copy.deepcopy(self.record);mutate(r)
+            with self.assertRaises(ValueError):self.check(record=r)
+
+    def test_missing_telemetry_cost_is_rejected(self):
+        r=copy.deepcopy(self.record)
+        for field in ('attempts','attemptSlots'):
+            r[field][0]['elapsedIncludingTelemetryMs']=r[field][0]['elapsedThroughResultMs']
+        with self.assertRaisesRegex(ValueError,'timing'):self.check(record=r)
+
+    def test_omitted_fact_window_or_candidate_is_rejected(self):
+        for mutate in (lambda r:r['forwardAttempts'].pop(),
+                       lambda r:r['attempts'][0]['coverage'].update(targets=[])):
+            r=copy.deepcopy(self.record);mutate(r)
+            with self.assertRaises(ValueError):self.check(record=r)
+
+    def test_threshold_or_case_substitution_is_rejected(self):
+        p=copy.deepcopy(self.plan);p['config']['threshold']=.1;p['configSha256']=report.shared.digest(p['config'])
+        with self.assertRaisesRegex(ValueError,'policy'):self.check(plan=p)
+        p=copy.deepcopy(self.plan);p['cases']=p['cases'][:-1]
+        with self.assertRaisesRegex(ValueError,'cases/model'):self.check(plan=p)
+
+    def test_replay_is_idempotent_and_preserves_original_compressed_bytes(self):
+        import experiment
+        raw=self.journal.read_bytes();r=copy.deepcopy(self.record)
+        experiment.reconcile_journal(r,self.journal,'first');first=copy.deepcopy(r)
+        experiment.reconcile_journal(r,self.journal,'second')
+        self.assertEqual(r,first);self.assertEqual(raw,self.journal.read_bytes())
+
+
 if __name__=='__main__':unittest.main()

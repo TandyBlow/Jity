@@ -1,6 +1,6 @@
 # D / L3 当前入口与实验记录
 
-## 当前从这里开始（2026-11-02）
+## 当前从这里开始（2026-11-03）
 
 日常使用 `experiment.py` 一个入口；模型实现仍在 `m01_shared.py`。当前模型结论从已有汇总读取，不在多份说明中手工重复维护数值。当前阶段是探索性离线验证，尚无质量/局部50ms/完整500ms通过结论；任务范围以[工作树说明](../../design/world-engine-reports/components-logic/README.md)为准。
 
@@ -11,20 +11,20 @@ python3 experiments/world-components-logic/experiment.py status
 python3 experiments/world-components-logic/experiment.py check
 ```
 
-`status`只读当前状态，`check`运行工程测试并核验三份历史结果报告和本批动作/截层报告，二者不导入模型、不训练或推理。实际新批次使用D独立环境：
+`status`只读当前状态，`check`运行工程测试并核验四份历史结果报告和本批追加日志报告，二者不导入模型、不训练或推理。实际新批次使用D独立环境：
 
 ```bash
 .local/world-components-logic/venv/bin/python experiments/world-components-logic/experiment.py prepare NEW_RUN_ID
 .local/world-components-logic/venv/bin/python experiments/world-components-logic/experiment.py execute /absolute/NEW_RUN_ID.plan.json
 ```
 
-`prepare`核对本地模型/数据/环境并冻结新计划，不运行模型；`execute`会真实训练和推理，须符合该批工作安排，使用新run-id且仍限CPU单线程、120秒/2048MiB。本次已按附批协议执行动作表示/截层比较，结果由`status`读取。旧计划绑定旧代码，不能用当前代码覆盖重跑；历史复现须恢复原提交与环境后登记新批次。
+`prepare`核对本地模型/数据/环境并冻结新计划，不运行模型；`execute`在本批只加载固定检查点并真实推理，训练0步，须符合该批工作安排，使用新run-id且仍限CPU单线程、120秒/2048MiB。本次已按附批协议执行snapshot/append对比，模型输入/权重/概率不变；结果由`status`读取。旧计划绑定旧代码，不能用当前代码覆盖重跑；历史复现须恢复原提交与环境后登记新批次。
 
 | 角色 | 文件/位置 | 维护方式 |
 |---|---|---|
-| 当前运行入口与公共流程 | `experiment.py` | 入口、资源监督、阶段计时、记录和中断收尾共同复用 |
-| 当前模型实验实现 | `m01_shared.py` | 完整事实编码、候选融合、拟合与预测，后续算法主要改这里及对应测试 |
-| 当前结果核验/展示 | `m01_shared_report.py`、`artifacts/world-components-logic/l3-7-*` | 报告核验原计划/记录，不以当前算法源码替代历史执行版本 |
+| 当前运行入口与公共流程 | `experiment.py` | 入口、资源监督、阶段计时、追加日志与中断只读重放共同复用 |
+| 当前模型实验实现 | `m01_shared.py` | 完整事实编码、候选融合和冻结模型推理，拟合历史由对应Git提交定位 |
+| 当前结果核验/展示 | `m01_shared_report.py`、`artifacts/world-components-logic/l3-8-*` | 报告核验原计划/记录，不以当前算法源码替代历史执行版本 |
 | 共享基础工具 | `lab.py`、`fact_windows.py`、`pilot_codec.py` | 守卫、事实编码和原输入核对，按实际职责维护 |
 | 历史模型入口 | `runtime_smoke.py`、`run_pilot.py`、`m01_probe.py`、`m01_infer.py` | 保留原记录/测试及被复用工具，不作为当前日常入口 |
 | 数据/审阅准备 | `data/`、`prepare_*`、`review_io.py` | 原资料及工具保留，按实际数据工作使用，不冒充模型能力 |
