@@ -16,11 +16,36 @@ import re
 import sys
 
 HERE = pathlib.Path(__file__).resolve().parent
-CORPUS = HERE / "scene_manual.jsonl"
+CORPUS = HERE / "scene_manual_v2.jsonl"
 HOLDOUT = ["瓦檐", "石碑", "铁锁", "布幌", "芦苇", "冰锥", "草垛", "木桶",
            "石径", "旧布", "草绳", "霜凌"]
 COLD = ["雪", "霜", "冰", "冻", "寒"]
-MAX_IN, MAX_OUT = 192, 48
+MAX_IN, MAX_OUT = 224, 48
+
+# What the thing actually is. N4.0 can supply this from item/location data;
+# without it the model can only swap nouns into known sentence skeletons.
+DESC = {
+    "石阶": "一级一级的石制台阶", "石墙": "石块垒成的墙",
+    "石板": "铺地的平整石块", "石桥": "跨溪的石拱桥",
+    "门槛": "门下横着的木条或石条", "木门": "木板拼成的门",
+    "门板": "门上可拆卸的木板", "木梯": "木制的梯子",
+    "木栏": "木制的栏杆", "窗框": "固定窗纸的木框",
+    "木凳": "木制的坐凳", "铁链": "一环扣一环的铁链",
+    "铜铃": "铜制的小铃", "灯罩": "罩住灯火的罩子",
+    "铜壶": "烧水用的铜壶", "麻绳": "麻纤维绞成的绳",
+    "草帘": "草茎编成的帘子", "帆布": "厚布做的篷布",
+    "窗纸": "糊窗的薄纸", "冰面": "结冰的水面",
+    "水洼": "积在低处的水", "溪水": "溪里流动的水",
+    "枯草": "干枯的草", "树枝": "树的枝条",
+    "苔藓": "贴地生长的绿苔", "炭火": "烧红的炭",
+    "油灯": "烧油的灯", "纸灯笼": "纸糊的灯笼",
+    "雪粒": "细小的雪", "雾气": "悬浮在空中的小水珠",
+    "浪头": "涌起的波浪",
+    "瓦檐": "屋檐最外一溜瓦", "石碑": "路边刻字的石头",
+    "铁锁": "挂在门上的铁锁", "布幌": "铺面外挂的布招牌",
+    "芦苇": "水边空心的髙草", "冰锥": "檐下结的尖冰",
+    "草垛": "堆起来的干草", "木桶": "箍着铁圈的木容器",
+}
 
 
 def load():
@@ -29,19 +54,42 @@ def load():
 
 
 def build_input(noun, loc, scene):
-    return (
-        "场景短句。\n"
-        f"地点={loc}\n"
-        f"场景={scene}\n"
-        f"现象={noun}\n"
-        "要求：围绕现象写一到两句环境描写；只写这个季节和天气下看得见的东西；"
-        "不写人物动作、任务、数值、时长；不新增人物、物品、地点。\n"
-        "短句："
-    )
+    parts = [
+        "场景短句。",
+        "地点=" + loc,
+        "场景=" + scene,
+        "现象=" + noun,
+        "现象说明=" + DESC[noun],
+        "要求：围绕现象写一到两句环境描写；只写这个地点、天气和光线下"
+        "看得见的东西；不写人物动作、任务、数值、时长；"
+        "不新增人物、物品、地点。",
+        "短句：",
+    ]
+    return chr(10).join(parts) + chr(10)
 
 
 def norm(t):
     return t.replace("，", ",").replace("；", ";").strip("。")
+
+
+def grams4(t):
+    return {t[i:i + 4] for i in range(max(0, len(t) - 3))}
+
+
+def foreign_overlap(text, own_noun, by_noun):
+    """Largest 4-gram overlap with any sentence of a DIFFERENT noun.
+    High values mean the model borrowed another object's wording."""
+    g = grams4(text)
+    if not g:
+        return 0.0
+    best = 0.0
+    for other, targets in by_noun.items():
+        if other == own_noun:
+            continue
+        for t in targets:
+            ov = len(g & grams4(t)) / len(g)
+            best = max(best, ov)
+    return best
 
 
 def cold_violation(scene, text):
@@ -125,6 +173,10 @@ def main():
             outs.append(tok.decode(g[0], skip_special_tokens=True))
         return outs
 
+    by_noun = {}
+    for r in train:
+        by_noun.setdefault(r["noun"], []).append(r["target"])
+
     def report(rows_, label):
         outs = gen(rows_)
         named = sum(1 for r, t in zip(rows_, outs) if r["noun"] in t)
@@ -132,12 +184,18 @@ def main():
                    if norm(t) in {norm(x["target"]) for x in train})
         viol = sum(1 for r, t in zip(rows_, outs)
                    if cold_violation(r["scene"], t))
+        foreign = [foreign_overlap(t, r["noun"], by_noun)
+                   for r, t in zip(rows_, outs)]
+        f_mean = round(sum(foreign) / max(1, len(foreign)), 3)
+        f_bad = sum(1 for x in foreign if x >= 0.5)
         print(f"{label}: named {named}/{len(rows_)} verbatim {verb} "
-              f"season-violation {viol}", flush=True)
+              f"condition-violation {viol} foreign4 {f_mean} "
+              f"(>=0.5: {f_bad})", flush=True)
         for r, t in zip(rows_, outs):
             print(f"  {r['noun']:5s} [{r['scene']:16s}] {t}", flush=True)
         return {"rows": len(rows_), "named": named, "verbatim": verb,
-                "seasonViolation": viol,
+                "conditionViolation": viol, "foreign4Mean": f_mean,
+                "foreign4Bad": f_bad,
                 "samples": [{"noun": r["noun"], "loc": r["loc"],
                              "scene": r["scene"], "target": r["target"],
                              "output": t} for r, t in zip(rows_, outs)]}
