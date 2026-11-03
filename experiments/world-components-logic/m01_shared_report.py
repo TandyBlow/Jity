@@ -681,11 +681,179 @@ def render_compiled(summary,record):
 
 
 
+# Three-stage diagnostic: audit saved bytes only, no model loading or generation.
+CHAIN_PREFIX='action-chain-dev42-20261104-'
+CHAIN_CASES=('dev-d02-01','dev-d02-03','dev-d02-05','dev-d02-07')
+CHAIN_NOTES={
+ 'dev-d02-01':'待执行的推门/交钥匙命令；生成应是动作尝试。',
+ 'dev-d02-03':'六米检修井无跨越设施；应skip，不生成文字、不分析目标。',
+ 'dev-d02-05':'旧命令已消费；当前任务是保护纸卷免于漏水。',
+ 'dev-d02-07':'当前NPC p2须处理滑向桌边的秤盘，不能代替p3核对粮袋。'}
+CHAIN_TEXT_OBSERVATIONS={
+ 'r1':{'已消费或过期输入只作背景,不再执行','请只概括当前人物p1接下来尝试的一个动作;已消费或过期输入只作背景','请只概括当前人物p2接下来尝试的一个动作;已消费或过期输入只作背景'},
+ 'r2':{'程青(甲)接下来打算怎样完成眼前的任务','纪遥(甲)接下来打算怎样完成眼前的任务','外貌','当前人物资料:{"共用文本":[],"格式":"无损表格1'},
+ 'r3':{'打开侧门，进入值班室交钥匙。','拿起纸卷箱，递给管理员。','核对粮袋封口'}}
+
+
+def validate_chain_run(plan,record,journal_path,version,baseline):
+    import copy
+    import experiment
+    from action_chain import target_case,instruction_prompt
+    from lab import decode_output
+    from run_pilot import digest
+    if (tuple(c['caseId'] for c in plan['cases'])!=CHAIN_CASES or digest(plan['cases'])!=plan['casesSha256']
+            or digest(plan['config'])!=plan['configSha256']):raise ValueError('chain case/config identity mismatch')
+    expected_arms=['instruct'] if version=='r3' else ['qa','summary']
+    expected_repeats=1 if version=='r3' else 3
+    expected_parameters={'m01':7120384,**({'generator':494032768} if version=='r3' else {'m02':77440384})}
+    if (plan['arms']!=expected_arms or plan['config']['attemptsPerCase']!=expected_repeats
+            or record['modelParameters']!=expected_parameters or record['headParameters']!=180418):raise ValueError('chain model/slot identity mismatch')
+    for item in (plan,record):
+        if item['formalEvaluationAllowed'] is not False:raise ValueError('formal evaluation scope widened')
+    if (plan['newIndependentTrainingGroups']!=0 or plan['round1TrainingQuota']!=0 or record['trainingSteps']!=0
+            or record['fullRequestMeasured'] is not False or record['semanticQualityApproved'] is not False
+            or not record['modelWeightsUnchanged'] or not record['headsUnchanged']):raise ValueError('chain authority/scope drift')
+    if plan['performancePolicy']!={'effectiveDate':'2026-11-04','localHardLimitMs':None,'localReferenceMs':50,'fullNonNarrativeTargetMs':500,'fullRequestMeasured':False}:raise ValueError('performance policy drift')
+    key=lambda a:(a['arm'],a['caseId'],a['repeat'])
+    slots=experiment.planned_slots(plan,plan['arms'])
+    if [key(a) for a in record['attempts']]!=[key(s) for s in slots] or record['unexecutedAttempts']!=0:raise ValueError('chain attempt count/order mismatch')
+    replay=copy.deepcopy(record);experiment.reconcile_journal(replay,journal_path,'report_read_only_audit')
+    for k in ('attempts','attemptSlots','forwardAttempts','journalRecovery'):
+        if replay[k]!=record[k]:raise ValueError('chain journal reconstruction mismatch: '+k)
+    if record['journalRecovery']['partialTailBytes'] or record['journalRecovery']['modelCallsDuringReplay']!=0:raise ValueError('chain incomplete journal')
+    if record['status']!='diagnostic_completed' or record['failedChains']!=0 or record['completedChains']!=len(slots):raise ValueError('chain completion changed')
+    if (record['actualRuntime']['threads']!=1 or record['actualRuntime']['interopThreads']!=1
+            or record['actualRuntime']['device']!='cpu' or record['supervisor']['stopReason'] is not None
+            or record['supervisor']['exitCode']!=0):raise ValueError('chain execution policy changed')
+    if record['supervisor']['observedPeakResidentMiB']>plan['config']['maxResidentMiB'] or record['supervisor']['wallMs']>plan['config']['processWallSeconds']*1000:raise ValueError('chain resource violation')
+    previous={x['caseId']:x for x in baseline['fitAndDevelopmentPredictions'] if x['arm']=='event2'}
+    cases={c['caseId']:c for c in plan['cases']};generated=set();decoder_calls=0;step_windows=0;skip=0
+    for a in record['attempts']:
+        c=cases[a['caseId']];decision=a['decision'];checkpoints=a['checkpoints']
+        if a['status']!='complete' or a['fullRequestMeasured'] is not False:raise ValueError('chain incomplete/scope mismatch')
+        if (decision['probabilities']!=previous[c['caseId']]['probabilities'] or decision['decoded']!=previous[c['caseId']]['decoded']):raise ValueError('original M01 decision changed')
+        validate_coverage(c,decision['coverage'],'shared')
+        def cp(name):return [x['payload'] for x in checkpoints if x['name']==name]
+        if cp('decision_saved')!=[decision]:raise ValueError('decision checkpoint missing')
+        windows=[w for w in record['forwardAttempts'] if key(w)==key(a)]
+        def match_windows(phase,expected):
+            observed=[w for w in windows if w['phase']==phase]
+            if len(observed)!=len(expected):raise ValueError('chain window denominator mismatch')
+            for event,w in zip(observed,expected):
+                if event['status']!='complete' or any(event[k]!=w[k] for k in ('inputIds','tokenTypeIds','factIds','factSpans','totalTokens')):raise ValueError('chain window payload mismatch')
+            return len(observed)
+        step_windows+=match_windows('decision',decision['coverage']['windows'])
+        if decision['decoded']['kind']=='skip':
+            skip+=1
+            if ('generation' in a or 'targets' in a or cp('generation_started') or cp('candidate_frozen_for_diagnostic')
+                    or len(windows)!=len(decision['coverage']['windows']) or [s['step'] for s in a['steps']]!=['decision']):raise ValueError('skip unexpectedly invoked downstream')
+            continue
+        g=a['generation'];raw=g['raw'];generated.add(raw)
+        if (not g['finishedWithEos'] or not raw.strip() or len(raw)>240 or g['rawUtf8Sha256']!=hashlib.sha256(raw.encode()).hexdigest()
+                or g['parsed']!=decode_output('D02',json.dumps({'kind':'act','text':raw}),c)
+                or g['semanticReview']!='pending_not_approved'):raise ValueError('generated candidate bytes/schema changed')
+        if cp('generation_output')!=[g if 'parsed' not in g else {k:v for k,v in g.items() if k!='parsed'}] or cp('generated_candidate')!=[g]:raise ValueError('generation checkpoint mismatch')
+        calls=g['decoderForwardAttempts'];decoder_calls+=calls
+        if cp('decoder_step_started')!=[{'step':i} for i in range(1,calls+1)] or cp('generation_settled')[0]['decoderForwardAttempts']!=calls:raise ValueError('decoder attempt count mismatch')
+        if version=='r3':
+            context=g['context'];messages,value=instruction_prompt(c)
+            if (context['sourceInput']!=value or context['sourceInputSha256']!=digest(value) or context['messages']!=messages
+                    or context['inputTokens']!=len(context['inputTokenIds']) or not 0<context['inputTokens']<=4096
+                    or cp('generation_started')!=[context] or calls!=len(g['outputTokenIds'])
+                    or any(w['phase']=='generation' for w in windows)):raise ValueError('instruction context/forward mismatch')
+        else:
+            frames=g['frames'];facts=frames['factRecords']
+            if (restore(facts)!=c['input'] or frames['inputSha256']!=digest(c['input']) or frames['factSha256']!=digest(facts)
+                    or [i for w in frames['windows'] for i in w['factIds']]!=list(range(len(facts)))
+                    or any(w['totalTokens']!=len(w['inputIds']) or w['totalTokens']>512 for w in frames['windows'])
+                    or g['memoryTokens']!=sum(w['totalTokens'] for w in frames['windows']) or calls!=len(g['outputTokenIds'])-1):raise ValueError('T5 full memory/forward mismatch')
+            started=cp('generation_started')
+            if len(started)!=1 or started[0]['frames']!=frames or started[0]['memoryTokens']!=g['memoryTokens']:raise ValueError('T5 memory checkpoint mismatch')
+            step_windows+=match_windows('generation',frames['windows'])
+        target=a['targets'];child=target_case(c,raw)
+        if target['case']!=child:raise ValueError('generated text/roster not faithfully handed over')
+        if cp('candidate_frozen_for_diagnostic')!=[{'actionText':raw,'utf8Sha256':g['rawUtf8Sha256'],'targetCase':child,'semanticApproved':False}]:raise ValueError('diagnostic freeze changed')
+        validate_coverage(child,target['coverage'],'shared')
+        selected=[p for p,value in zip(child['input']['candidateIds'],target['probabilities']) if value>=.5]
+        ids=[x['targetId'] for x in target['decoded']['targets']]
+        if ids!=selected or len(target['probabilities'])!=len(child['input']['candidateIds']) or target['semanticReview']!='pending_not_approved':raise ValueError('target output/probability mismatch')
+        decode_output('D03',json.dumps(target['decoded']),child)
+        step_windows+=match_windows('targets',target['coverage']['windows'])
+        if [s['step'] for s in a['steps']]!=['decision','generation','targets'] or any(s['status']!='complete' for s in a['steps']):raise ValueError('chain stage mismatch')
+        if sum(s['elapsedMs'] for s in a['steps'])>a['elapsedIncludingTelemetryMs'] or a['elapsedIncludingTelemetryMs']<a['elapsedThroughResultMs']:raise ValueError('chain timing omitted work')
+    if generated!=CHAIN_TEXT_OBSERVATIONS[version] or step_windows!=len(record['forwardAttempts']):raise ValueError('observed output/forward ledger changed')
+    return {'skipNoDownstream':skip,'generationCalls':len(slots)-skip,'targetCalls':len(slots)-skip,
+            'encoderForwardWindows':step_windows,'decoderForwardAttempts':decoder_calls}
+
+
+def build_chain():
+    import tempfile
+    runs=[];records=[];archives=[];baseline=read_archive(DATA/'m01-event-dev42-20261102-r1.record.json.gz')
+    for version in ('r1','r2','r3'):
+        run_id=CHAIN_PREFIX+version;pp=DATA/(run_id+'.plan.json');rp=DATA/(run_id+'.record.json.gz');jp=DATA/(run_id+'.record.journal.jsonl.gz')
+        plan=json.loads(pp.read_bytes());record=read_archive(rp);raw=gzip.decompress(jp.read_bytes())
+        if record['planSha256']!=sha256_file(pp) or record['journalRecovery']['sha256']!=hashlib.sha256(raw).hexdigest():raise ValueError('chain plan/journal digest mismatch')
+        if plan['baseline']!=shared.baseline_identity():raise ValueError('original fixed checkpoint evidence changed')
+        for name,expected in plan['code'].items():
+            snapshot=DATA/f'code/action_chain-{version}.py'
+            if name.endswith('/action_chain.py') and version in ('r1','r2'):
+                if sha256_file(snapshot)!=expected:raise ValueError('historical chain source changed')
+            else:verify_event_source(name,expected)
+        if sha256_file(ROOT/plan['protocolPath'])!=plan['protocolSha256']:raise ValueError('chain protocol changed')
+        with tempfile.TemporaryDirectory() as directory:
+            path=Path(directory)/'events.jsonl';path.write_bytes(raw)
+            counts=validate_chain_run(plan,record,path,version,baseline)
+        timing=[]
+        for arm in plan['arms']:
+            for c in plan['cases']:
+                rows=[a for a in record['attempts'] if a['arm']==arm and a['caseId']==c['caseId']]
+                times=[a['elapsedIncludingTelemetryMs'] for a in rows]
+                timing.append({'arm':arm,'caseId':c['caseId'],'observations':len(rows),'p50Ms':statistics.median(times),'maxMs':max(times),
+                    'over500msObservations':sum(v>500 for v in times),'stepsMeanMs':{s['step']:statistics.mean(next(x['elapsedMs'] for x in a['steps'] if x['step']==s['step']) for a in rows) for s in rows[0]['steps']}})
+        quality_observation={'decisionRegressionMatched':len(record['attempts']),'generatedSemanticFailuresObserved':2 if version=='r3' else counts['generationCalls'],
+            'generatedPromptEchoFailuresObserved':0 if version=='r3' else counts['generationCalls'],
+            'generatedTaskOrActorFailuresObserved':2 if version=='r3' else 0,'generatedPlausibleCandidatesPendingReview':1 if version=='r3' else 0,
+            'targetSemanticQuality':'unverified_dynamic_candidates_all_empty_upstream_invalid_or_pending','formalSemanticPass':False}
+        runs.append({'runId':run_id,'generator':'M03 Qwen2.5-0.5B-Instruct FP32' if version=='r3' else 'M02 T5-77M',
+            'completedEngineeringChains':len(record['attempts']),'counts':counts,'quality':quality_observation,
+            'modelParameters':record['modelParameters'],'headParameters':record['headParameters'],'trainingSteps':0,'weightsAndHeadsUnchanged':True,
+            'supervisor':record['supervisor'],'preparationStages':[{k:s[k] for k in ('stage','elapsedMs','status')} for s in record['stages']],
+            'timing':timing,'local50msHardGate':False,'fullRequestMeasured':False})
+        records.append(record)
+        for p in (rp,jp):archives.append({'path':str(p.relative_to(ROOT)),'gzipSha256':sha256_file(p),'rawSha256':hashlib.sha256(gzip.decompress(p.read_bytes())).hexdigest()})
+    summary={'schema':'jity-d-action-chain-summary-v1','date':'2026-11-04','scope':'old_exposed_development_three_stage_diagnostic',
+        'formalEvaluationAllowed':False,'semanticQualityApproved':False,'fullRequest500msStatus':'unverified','local50msHardGate':False,
+        'fullNonNarrativeTargetMs':500,'newIndependentTrainingGroups':0,'round1TrainingQuota':0,'runs':runs,'archives':archives}
+    return summary,{ART/'l3-11-action-chain-summary.json':(json.dumps(summary,ensure_ascii=False,indent=2)+'\n').encode(),
+                    ART/'l3-11-action-chain-results.html':render_chain(summary,records).encode()}
+
+
+def render_chain(summary,records):
+    e=lambda x:html.escape(str(x))
+    parts=['''<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'"><title>L3 行动三步协作实测</title><style>body{margin:0;background:#f4f6f8;color:#20313e;font:16px/1.7 system-ui}main{max-width:1100px;margin:auto;padding:24px}section{background:white;padding:22px;border-radius:12px;margin:20px 0}table{width:100%;border-collapse:collapse;font-size:14px}td,th{padding:10px;text-align:left;border-bottom:1px solid #ddd}.scroll{overflow:auto}pre{white-space:pre-wrap;overflow-wrap:anywhere}.bad{color:#a7352e}h1{font-size:28px}small{color:#526472}</style><main><p>D / L3 · 2026-11-04 · 离线诊断</p><h1>先判断要不要动，再写动作，最后找牵连人物</h1><section><h2>流程跑通了，模型方案还不能验收</h2><p>程序真实串起了三步：M01判断行动/跳过 → 生成模型写动作 → 原文交回M01分析目标。共52条尝试，39次实际生成，39次目标分析；13次skip均跳过后两步。没有手写动作代替模型。</p><p>前两批77M模型共36次输出都在重复提示、问题或字段。改用494M指令模型后，3次生成中1条符合眼前任务的基本方向，另外2条有任务/人物错误；这只是实现者观察，尚无正式语义通过。所有目标输出均为空，不能据此算目标正确。</p><p class="bad">指令模型的3条生成链耗时1322–1558ms，已经超过完整500ms目标；只测了三步，完整非叙事还未测。50ms现只作参考，不再硬性否决。没有通过L3，也未接入游戏。</p></section><section><h2>指令模型：逐条看真实答案</h2><div class="scroll"><table><tr><th>场景/要求</th><th>真实输出</th><th>观察</th><th>三步总计ms</th></tr>''']
+    observations={'dev-d02-01':'符合推门/交钥匙基本方向；待复核，未签通过。','dev-d02-03':'M01输出skip；后两步未调用。','dev-d02-05':'混入旧命令的“管理员”，未明确保护纸卷免于漏水。','dev-d02-07':'写了p3的任务，当前p2保管秤盘的任务遗漏。'}
+    for a in records[-1]['attempts']:
+        parts.append(f'<tr><td>{e(a["caseId"])}<br>{e(CHAIN_NOTES[a["caseId"]])}</td><td>{e(a.get("generation",{}).get("raw","未调用生成"))}</td><td>{e(observations[a["caseId"]])}</td><td>{a["elapsedIncludingTelemetryMs"]:.2f}</td></tr>')
+    parts.append('</table></div><p>“空目标”是模型实际输出，尚未形成按生成原文审过的目标真值，不能算正确。没有生成的skip题也没有伪造空目标。</p></section><section><h2>慢在哪里？</h2><p>指令模型每条文字生成约1209–1425ms，行动判断约52–73ms、目标约55–56ms；文字生成是主要瓶颈。三条仅7–11次生成前向，输入预填充也在其中。加载和文件校验另记准备成本，不塞进热请求，也不填为0。</p><p>下一步先修正当前人物/任务的输入定位，保留完整世界作为共同记忆，复测是否仍混淆；同时把“决定具体动作”和“表达成句”进一步拆开，研究更小模型/短输出或经过独立数据训练的专用头。未达500ms的本配置不能直接定为最终方案。</p></section>')
+    for r,record in zip(summary['runs'],records):
+        parts.append(f'<section><h2>{e(r["runId"])} · {e(r["generator"])}</h2><p>{r["completedEngineeringChains"]}条工程链完成；CPU单线程、训练0步，骨干与头前后哈希不变。进程{r["supervisor"]["wallMs"]/1000:.2f}秒，采样RSS {r["supervisor"]["observedPeakResidentMiB"]:.2f}MiB。M03单批RSS上限4096MiB；M02单批2048MiB。</p><div class="scroll"><table><tr><th>格式/题目</th><th>次数</th><th>总计中位/最大ms</th><th>超过500ms</th></tr>')
+        for t in r['timing']:parts.append(f'<tr><td>{e(t["arm"])} / {e(t["caseId"])}</td><td>{t["observations"]}</td><td>{t["p50Ms"]:.2f} / {t["maxMs"]:.2f}</td><td>{t["over500msObservations"]}</td></tr>')
+        outputs=[{k:a[k] for k in ('arm','caseId','repeat','decision','generation','targets','steps','elapsedIncludingTelemetryMs') if k in a} for a in record['attempts']]
+        # Coverage/token evidence remains in archives; keep this page easy to read.
+        for a in outputs:
+            for k in ('decision','targets'):
+                if k in a:a[k]={x:v for x,v in a[k].items() if x not in ('coverage','case')}
+            if 'generation' in a:a['generation']={x:v for x,v in a['generation'].items() if x not in ('frames','context','outputTokenIds')}
+        parts.append(f'</table></div><details><summary>全部真实答案、概率与分步耗时</summary><pre>{e(json.dumps(outputs,ensure_ascii=False,indent=2))}</pre></details><details><summary>模型规模、调用数、准备开销和质量范围</summary><pre>{e(json.dumps(r,ensure_ascii=False,indent=2))}</pre></details><p><a href="m01-fitting/{r["runId"]}.plan.json">冻结计划</a> · <a href="m01-fitting/{r["runId"]}.record.json.gz">完整记录</a> · <a href="m01-fitting/{r["runId"]}.record.journal.jsonl.gz">完整事件</a></p></section>')
+    parts.append('<section><h2>本次范围</h2><p>仍使用4道已公开旧题：01/03原为拟合、05/07原为保留开发，重复次数不当新题。r1协议“0107曾参与拟合”为笔误，冻结原件保留，实际角色依原event2记录。新90组未用、训练0步。来源核验与独立复核尚待补齐；反应、共同结果、状态变化、浏览器及生产接线未测。离线冻结checkpoint只保存候选原文，semanticApproved=false，不是A服务采纳。</p><p>M01为两层7.12M编码器+两判断头；M02为77.44M T5，M03为494.03M Qwen2.5指令模型（固定BF16源文件、FP32运行）。生成模型均本地，权重与依赖不入库。日志包含原始文字及实际生成前向，中断重放只恢复台账，不重采样。</p><p>计时从本条输入准备前直到最终遥测写入完成，含阶段交接、flush/fsync；批末汇总在进程wall，监督器退出后重放未单独计时。没有把不同批次数字相加成全请求成绩。</p><p><a href="l3-11-action-chain-summary.json">机器汇总与归档SHA</a> · <a href="l3-10-m01-compiled-results.html">上一批历史结果</a></p></section></main></html>')
+    return ''.join(parts)
+
+
 def main():
     p=argparse.ArgumentParser(description=__doc__);m=p.add_mutually_exclusive_group(required=True)
     m.add_argument('--check',action='store_true');m.add_argument('--write-new',action='store_true')
-    flavor=p.add_mutually_exclusive_group();flavor.add_argument('--event',action='store_true');flavor.add_argument('--journal',action='store_true');flavor.add_argument('--input',action='store_true');flavor.add_argument('--compiled',action='store_true');a=p.parse_args()
-    summary,files=build_compiled() if a.compiled else build_input() if a.input else build_journal() if a.journal else build_event() if a.event else build()
+    flavor=p.add_mutually_exclusive_group();flavor.add_argument('--event',action='store_true');flavor.add_argument('--journal',action='store_true');flavor.add_argument('--input',action='store_true');flavor.add_argument('--compiled',action='store_true');flavor.add_argument('--chain',action='store_true');a=p.parse_args()
+    summary,files=build_chain() if a.chain else build_compiled() if a.compiled else build_input() if a.input else build_journal() if a.journal else build_event() if a.event else build()
     for path,raw in files.items():
         if path.exists() and path.read_bytes()!=raw:raise ValueError('report differs; preserve earlier version')
         if a.check and not path.exists():raise ValueError('report missing')

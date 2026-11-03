@@ -1,0 +1,527 @@
+{
+  "schema": "jity-d-action-chain-summary-v1",
+  "date": "2026-11-04",
+  "scope": "old_exposed_development_three_stage_diagnostic",
+  "formalEvaluationAllowed": false,
+  "semanticQualityApproved": false,
+  "fullRequest500msStatus": "unverified",
+  "local50msHardGate": false,
+  "fullNonNarrativeTargetMs": 500,
+  "newIndependentTrainingGroups": 0,
+  "round1TrainingQuota": 0,
+  "runs": [
+    {
+      "runId": "action-chain-dev42-20261104-r1",
+      "generator": "M02 T5-77M",
+      "completedEngineeringChains": 24,
+      "counts": {
+        "skipNoDownstream": 6,
+        "generationCalls": 18,
+        "targetCalls": 18,
+        "encoderForwardWindows": 222,
+        "decoderForwardAttempts": 342
+      },
+      "quality": {
+        "decisionRegressionMatched": 24,
+        "generatedSemanticFailuresObserved": 18,
+        "generatedPromptEchoFailuresObserved": 18,
+        "generatedTaskOrActorFailuresObserved": 0,
+        "generatedPlausibleCandidatesPendingReview": 0,
+        "targetSemanticQuality": "unverified_dynamic_candidates_all_empty_upstream_invalid_or_pending",
+        "formalSemanticPass": false
+      },
+      "modelParameters": {
+        "m01": 7120384,
+        "m02": 77440384
+      },
+      "headParameters": 180418,
+      "trainingSteps": 0,
+      "weightsAndHeadsUnchanged": true,
+      "supervisor": {
+        "error": null,
+        "exitCode": 0,
+        "measurement": "ps_rss_every250ms",
+        "observedPeakResidentMiB": 891.15625,
+        "stopReason": null,
+        "wallMs": 12064.998707995983
+      },
+      "preparationStages": [
+        {
+          "stage": "verify_plan",
+          "elapsedMs": 203.010292,
+          "status": "complete"
+        },
+        {
+          "stage": "dependency_import",
+          "elapsedMs": 2296.903833,
+          "status": "complete"
+        },
+        {
+          "stage": "m01_tokenizer",
+          "elapsedMs": 20.337791,
+          "status": "complete"
+        },
+        {
+          "stage": "m01_encoder",
+          "elapsedMs": 34.271166,
+          "status": "complete"
+        },
+        {
+          "stage": "m01_heads",
+          "elapsedMs": 1.492625,
+          "status": "complete"
+        },
+        {
+          "stage": "m02_tokenizer",
+          "elapsedMs": 64.864333,
+          "status": "complete"
+        },
+        {
+          "stage": "m02_generator",
+          "elapsedMs": 32.37925,
+          "status": "complete"
+        }
+      ],
+      "timing": [
+        {
+          "arm": "qa",
+          "caseId": "dev-d02-01",
+          "observations": 3,
+          "p50Ms": 416.851875,
+          "maxMs": 445.634042,
+          "over500msObservations": 0,
+          "stepsMeanMs": {
+            "decision": 61.07227734173648,
+            "generation": 299.02919466258027,
+            "targets": 58.719153001826875
+          }
+        },
+        {
+          "arm": "qa",
+          "caseId": "dev-d02-03",
+          "observations": 3,
+          "p50Ms": 58.950292,
+          "maxMs": 59.443959,
+          "over500msObservations": 0,
+          "stepsMeanMs": {
+            "decision": 55.655347338567175
+          }
+        },
+        {
+          "arm": "qa",
+          "caseId": "dev-d02-05",
+          "observations": 3,
+          "p50Ms": 410.946708,
+          "maxMs": 414.41225,
+          "over500msObservations": 0,
+          "stepsMeanMs": {
+            "decision": 55.128013996485,
+            "generation": 288.3729170037744,
+            "targets": 59.425625329216324
+          }
+        },
+        {
+          "arm": "qa",
+          "caseId": "dev-d02-07",
+          "observations": 3,
+          "p50Ms": 410.010125,
+          "maxMs": 414.894292,
+          "over500msObservations": 0,
+          "stepsMeanMs": {
+            "decision": 55.03005565454563,
+            "generation": 290.1744026554904,
+            "targets": 59.23841665692938
+          }
+        },
+        {
+          "arm": "summary",
+          "caseId": "dev-d02-01",
+          "observations": 3,
+          "p50Ms": 466.079667,
+          "maxMs": 505.307667,
+          "over500msObservations": 1,
+          "stepsMeanMs": {
+            "decision": 54.65566665710261,
+            "generation": 337.84895833620493,
+            "targets": 77.83516634178038
+          }
+        },
+        {
+          "arm": "summary",
+          "caseId": "dev-d02-03",
+          "observations": 3,
+          "p50Ms": 59.090167,
+          "maxMs": 60.42275,
+          "over500msObservations": 0,
+          "stepsMeanMs": {
+            "decision": 55.93534733634442
+          }
+        },
+        {
+          "arm": "summary",
+          "caseId": "dev-d02-05",
+          "observations": 3,
+          "p50Ms": 460.326208,
+          "maxMs": 549.291208,
+          "over500msObservations": 1,
+          "stepsMeanMs": {
+            "decision": 55.43544432536388,
+            "generation": 366.4507219994751,
+            "targets": 59.895458340179175
+          }
+        },
+        {
+          "arm": "summary",
+          "caseId": "dev-d02-07",
+          "observations": 3,
+          "p50Ms": 457.171833,
+          "maxMs": 459.550917,
+          "over500msObservations": 0,
+          "stepsMeanMs": {
+            "decision": 54.11262466805056,
+            "generation": 336.02270834186737,
+            "targets": 60.175264331822596
+          }
+        }
+      ],
+      "local50msHardGate": false,
+      "fullRequestMeasured": false
+    },
+    {
+      "runId": "action-chain-dev42-20261104-r2",
+      "generator": "M02 T5-77M",
+      "completedEngineeringChains": 24,
+      "counts": {
+        "skipNoDownstream": 6,
+        "generationCalls": 18,
+        "targetCalls": 18,
+        "encoderForwardWindows": 240,
+        "decoderForwardAttempts": 276
+      },
+      "quality": {
+        "decisionRegressionMatched": 24,
+        "generatedSemanticFailuresObserved": 18,
+        "generatedPromptEchoFailuresObserved": 18,
+        "generatedTaskOrActorFailuresObserved": 0,
+        "generatedPlausibleCandidatesPendingReview": 0,
+        "targetSemanticQuality": "unverified_dynamic_candidates_all_empty_upstream_invalid_or_pending",
+        "formalSemanticPass": false
+      },
+      "modelParameters": {
+        "m01": 7120384,
+        "m02": 77440384
+      },
+      "headParameters": 180418,
+      "trainingSteps": 0,
+      "weightsAndHeadsUnchanged": true,
+      "supervisor": {
+        "error": null,
+        "exitCode": 0,
+        "measurement": "ps_rss_every250ms",
+        "observedPeakResidentMiB": 956.390625,
+        "stopReason": null,
+        "wallMs": 13120.427916001063
+      },
+      "preparationStages": [
+        {
+          "stage": "verify_plan",
+          "elapsedMs": 202.6505,
+          "status": "complete"
+        },
+        {
+          "stage": "dependency_import",
+          "elapsedMs": 1683.48225,
+          "status": "complete"
+        },
+        {
+          "stage": "m01_tokenizer",
+          "elapsedMs": 13.963333,
+          "status": "complete"
+        },
+        {
+          "stage": "m01_encoder",
+          "elapsedMs": 23.691291,
+          "status": "complete"
+        },
+        {
+          "stage": "m01_heads",
+          "elapsedMs": 1.460917,
+          "status": "complete"
+        },
+        {
+          "stage": "m02_tokenizer",
+          "elapsedMs": 63.040042,
+          "status": "complete"
+        },
+        {
+          "stage": "m02_generator",
+          "elapsedMs": 29.460125,
+          "status": "complete"
+        }
+      ],
+      "timing": [
+        {
+          "arm": "qa",
+          "caseId": "dev-d02-01",
+          "observations": 3,
+          "p50Ms": 513.72975,
+          "maxMs": 520.065292,
+          "over500msObservations": 3,
+          "stepsMeanMs": {
+            "decision": 55.12393066116298,
+            "generation": 391.16122233099304,
+            "targets": 60.16762500318388
+          }
+        },
+        {
+          "arm": "qa",
+          "caseId": "dev-d02-03",
+          "observations": 3,
+          "p50Ms": 61.814708,
+          "maxMs": 62.253458,
+          "over500msObservations": 0,
+          "stepsMeanMs": {
+            "decision": 57.93826366425492
+          }
+        },
+        {
+          "arm": "qa",
+          "caseId": "dev-d02-05",
+          "observations": 3,
+          "p50Ms": 526.048125,
+          "maxMs": 536.965708,
+          "over500msObservations": 3,
+          "stepsMeanMs": {
+            "decision": 56.658985995454714,
+            "generation": 401.0944999948454,
+            "targets": 60.28083333512768
+          }
+        },
+        {
+          "arm": "qa",
+          "caseId": "dev-d02-07",
+          "observations": 3,
+          "p50Ms": 463.30875,
+          "maxMs": 468.643917,
+          "over500msObservations": 0,
+          "stepsMeanMs": {
+            "decision": 55.13687500691352,
+            "generation": 342.82597232959233,
+            "targets": 57.656277679294966
+          }
+        },
+        {
+          "arm": "summary",
+          "caseId": "dev-d02-01",
+          "observations": 3,
+          "p50Ms": 566.526417,
+          "maxMs": 610.068625,
+          "over500msObservations": 3,
+          "stepsMeanMs": {
+            "decision": 56.53533333679661,
+            "generation": 440.25968066610704,
+            "targets": 74.74581933153483
+          }
+        },
+        {
+          "arm": "summary",
+          "caseId": "dev-d02-03",
+          "observations": 3,
+          "p50Ms": 61.35975,
+          "maxMs": 63.6955,
+          "over500msObservations": 0,
+          "stepsMeanMs": {
+            "decision": 57.89427766770435
+          }
+        },
+        {
+          "arm": "summary",
+          "caseId": "dev-d02-05",
+          "observations": 3,
+          "p50Ms": 543.838625,
+          "maxMs": 551.793625,
+          "over500msObservations": 3,
+          "stepsMeanMs": {
+            "decision": 55.939666664926335,
+            "generation": 421.0339999990538,
+            "targets": 61.16452732627901
+          }
+        },
+        {
+          "arm": "summary",
+          "caseId": "dev-d02-07",
+          "observations": 3,
+          "p50Ms": 548.709625,
+          "maxMs": 552.248208,
+          "over500msObservations": 3,
+          "stepsMeanMs": {
+            "decision": 55.32794400157096,
+            "generation": 426.9105140119791,
+            "targets": 59.52209699898958
+          }
+        }
+      ],
+      "local50msHardGate": false,
+      "fullRequestMeasured": false
+    },
+    {
+      "runId": "action-chain-dev42-20261104-r3",
+      "generator": "M03 Qwen2.5-0.5B-Instruct FP32",
+      "completedEngineeringChains": 4,
+      "counts": {
+        "skipNoDownstream": 1,
+        "generationCalls": 3,
+        "targetCalls": 3,
+        "encoderForwardWindows": 28,
+        "decoderForwardAttempts": 27
+      },
+      "quality": {
+        "decisionRegressionMatched": 4,
+        "generatedSemanticFailuresObserved": 2,
+        "generatedPromptEchoFailuresObserved": 0,
+        "generatedTaskOrActorFailuresObserved": 2,
+        "generatedPlausibleCandidatesPendingReview": 1,
+        "targetSemanticQuality": "unverified_dynamic_candidates_all_empty_upstream_invalid_or_pending",
+        "formalSemanticPass": false
+      },
+      "modelParameters": {
+        "generator": 494032768,
+        "m01": 7120384
+      },
+      "headParameters": 180418,
+      "trainingSteps": 0,
+      "weightsAndHeadsUnchanged": true,
+      "supervisor": {
+        "error": null,
+        "exitCode": 0,
+        "measurement": "ps_rss_every250ms",
+        "observedPeakResidentMiB": 2802.953125,
+        "stopReason": null,
+        "wallMs": 11246.006750006927
+      },
+      "preparationStages": [
+        {
+          "stage": "verify_plan",
+          "elapsedMs": 480.278125,
+          "status": "complete"
+        },
+        {
+          "stage": "dependency_import",
+          "elapsedMs": 2256.443167,
+          "status": "complete"
+        },
+        {
+          "stage": "m01_tokenizer",
+          "elapsedMs": 23.254667,
+          "status": "complete"
+        },
+        {
+          "stage": "m01_encoder",
+          "elapsedMs": 33.359208,
+          "status": "complete"
+        },
+        {
+          "stage": "m01_heads",
+          "elapsedMs": 1.456625,
+          "status": "complete"
+        },
+        {
+          "stage": "m03_tokenizer",
+          "elapsedMs": 154.739792,
+          "status": "complete"
+        },
+        {
+          "stage": "m03_generator",
+          "elapsedMs": 462.427667,
+          "status": "complete"
+        }
+      ],
+      "timing": [
+        {
+          "arm": "instruct",
+          "caseId": "dev-d02-01",
+          "observations": 1,
+          "p50Ms": 1558.432084,
+          "maxMs": 1558.432084,
+          "over500msObservations": 1,
+          "stepsMeanMs": {
+            "decision": 73.27279198216274,
+            "generation": 1425.4990829795133,
+            "targets": 54.68791598104872
+          }
+        },
+        {
+          "arm": "instruct",
+          "caseId": "dev-d02-03",
+          "observations": 1,
+          "p50Ms": 55.286125,
+          "maxMs": 55.286125,
+          "over500msObservations": 0,
+          "stepsMeanMs": {
+            "decision": 52.26562501047738
+          }
+        },
+        {
+          "arm": "instruct",
+          "caseId": "dev-d02-05",
+          "observations": 1,
+          "p50Ms": 1388.670625,
+          "maxMs": 1388.670625,
+          "over500msObservations": 1,
+          "stepsMeanMs": {
+            "decision": 52.5138329830952,
+            "generation": 1275.3954590007197,
+            "targets": 55.59095801436342
+          }
+        },
+        {
+          "arm": "instruct",
+          "caseId": "dev-d02-07",
+          "observations": 1,
+          "p50Ms": 1321.990541,
+          "maxMs": 1321.990541,
+          "over500msObservations": 1,
+          "stepsMeanMs": {
+            "decision": 51.955708011519164,
+            "generation": 1209.2237920151092,
+            "targets": 55.99300001631491
+          }
+        }
+      ],
+      "local50msHardGate": false,
+      "fullRequestMeasured": false
+    }
+  ],
+  "archives": [
+    {
+      "path": "artifacts/world-components-logic/m01-fitting/action-chain-dev42-20261104-r1.record.json.gz",
+      "gzipSha256": "e3cdb991b274ef646c3e4b33d2299292c231aa9e0ff0dba23001b1935469f849",
+      "rawSha256": "7e9d3eb55bb3c2b52565bd328a687fa65e519cad84639ae31a745050829efdb3"
+    },
+    {
+      "path": "artifacts/world-components-logic/m01-fitting/action-chain-dev42-20261104-r1.record.journal.jsonl.gz",
+      "gzipSha256": "74f993a41612575e23fbe943c5504f6c8c9c485971d3e326166b15f01f344eb3",
+      "rawSha256": "a543257a3c903878a24e13397fe84a5218cf5999eb846883e27a3dba56d762d5"
+    },
+    {
+      "path": "artifacts/world-components-logic/m01-fitting/action-chain-dev42-20261104-r2.record.json.gz",
+      "gzipSha256": "7c542ae618251a4ca2021cfb1a90d64ecc6050f91c86eee4155ea1fa35b28e1e",
+      "rawSha256": "8de3981c2e5adb2c8990c9110ff52c29c79ef3c65436d0a2264ce9a2fc457802"
+    },
+    {
+      "path": "artifacts/world-components-logic/m01-fitting/action-chain-dev42-20261104-r2.record.journal.jsonl.gz",
+      "gzipSha256": "70259406f58c469425a8498dd2e4d0adcfaa8ac6ba3620e0de1b74e2e45de46f",
+      "rawSha256": "76a061971e9781f940cbd81c0e28d84c31bb4255dbb49e2db7e85ae68b8a5b0f"
+    },
+    {
+      "path": "artifacts/world-components-logic/m01-fitting/action-chain-dev42-20261104-r3.record.json.gz",
+      "gzipSha256": "a4db74e13605fd8587a125e7ad5192bec4a58160f01e3d016d37614ab5db4561",
+      "rawSha256": "70605ee88bf9d5fd94e5137d415be02347b46bcbb31d78c6e6940d61124a336e"
+    },
+    {
+      "path": "artifacts/world-components-logic/m01-fitting/action-chain-dev42-20261104-r3.record.journal.jsonl.gz",
+      "gzipSha256": "0d739cf095873e8ccfdcc4ddce97b457c3036112f32c62c89103a4e00d40e715",
+      "rawSha256": "9e7b3f0bc8211991ffe337915cac512c751c56b0777fdc300cbb4373b0321cb8"
+    }
+  ]
+}

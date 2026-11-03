@@ -155,7 +155,13 @@ def reconcile_journal(report,path,reason):
         elif kind=='attempt_result':
             if active is None or result is not None or key(data)!=key(active) or active_window is not None:raise ValueError('unmatched/duplicate attempt result')
             if data['status'] not in ('complete','failed'):raise ValueError('invalid attempt result status')
+            if data.get('checkpoints',[])!=active.get('checkpoints',[]):raise ValueError('attempt checkpoint history mismatch')
             result=copy.deepcopy(data)
+        elif kind=='attempt_checkpoint':
+            if active is None or result is not None or key(data)!=key(active):raise ValueError('checkpoint outside active attempt')
+            if (set(data)!={'arm','caseId','repeat','name','payload'} or not isinstance(data['name'],str)
+                    or not isinstance(data['payload'],dict)):raise ValueError('invalid checkpoint envelope')
+            active.setdefault('checkpoints',[]).append(copy.deepcopy(data))
         elif kind=='attempt_settled':
             if active is None or result is None or key(data)!=key(active):raise ValueError('timing without result')
             if set(data)!={'arm','caseId','repeat','resultJournalMs','snapshotEndMs','elapsedThroughResultMs'}:raise ValueError('invalid timing fields')
@@ -241,10 +247,10 @@ def execute_plan(path,*,paths,verify,worker_script,settle_stages,arms):
 
 
 def status():
-    summary=read_json(ART/'l3-10-m01-compiled-summary.json');latest=summary['runs'][-1]
+    summary=read_json(ART/'l3-11-action-chain-summary.json');latest=summary['runs'][-1]
     result={'stage':'L3 exploratory offline validation','entrypoint':'experiments/world-components-logic/experiment.py',
-            'implementation':'experiments/world-components-logic/m01_shared.py','latestRun':latest['runId'],
-            'resultPage':'artifacts/world-components-logic/l3-10-m01-compiled-results.html','quality':latest['quality'],
+            'implementation':'experiments/world-components-logic/action_chain.py','latestRun':latest['runId'],
+            'resultPage':'artifacts/world-components-logic/l3-11-action-chain-results.html','quality':latest['quality'],
             'formalEvaluationAllowed':summary['formalEvaluationAllowed'],'fullRequest500msStatus':summary['fullRequest500msStatus'],
             'modelExecutionPerformed':False}
     print(json.dumps(result,ensure_ascii=False,indent=2));return 0
@@ -256,7 +262,8 @@ def check():
               [str(BASE/'m01_shared_report.py'),'--event','--check'],
               [str(BASE/'m01_shared_report.py'),'--journal','--check'],
               [str(BASE/'m01_shared_report.py'),'--input','--check'],
-              [str(BASE/'m01_shared_report.py'),'--compiled','--check']]
+              [str(BASE/'m01_shared_report.py'),'--compiled','--check'],
+              [str(BASE/'m01_shared_report.py'),'--chain','--check']]
     env=dict(os.environ,PYTHONDONTWRITEBYTECODE='1')
     for args in commands:
         result=subprocess.run([sys.executable,*args],cwd=ROOT,env=env)
@@ -275,9 +282,9 @@ def main(argv=None):
     args=parser.parse_args(argv)
     if args.command in (None,'status'):return status()
     if args.command=='check':return check()
-    import m01_shared
-    if args.command=='prepare':print(m01_shared.prepare(args.run_id));return 0
-    return m01_shared.execute(args.plan)
+    import action_chain
+    if args.command=='prepare':print(action_chain.prepare(args.run_id));return 0
+    return action_chain.execute(args.plan)
 
 
 if __name__=='__main__':raise SystemExit(main())

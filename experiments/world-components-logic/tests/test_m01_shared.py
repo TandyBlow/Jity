@@ -13,6 +13,7 @@ from unittest import mock
 BASE=Path(__file__).resolve().parents[1];sys.path.insert(0,str(BASE))
 import m01_shared as shared
 import experiment
+import action_chain
 from fact_windows import fact_text,restore
 
 
@@ -250,28 +251,28 @@ class SharedInterruptionTests(unittest.TestCase):
 
 class ExperimentEntryTests(unittest.TestCase):
     def test_status_and_default_do_not_import_models_or_write_plans(self):
-        with mock.patch.object(experiment,'read_json',return_value={'runs':[{'runId':'m01-compiled-dev42-20261103-r1','quality':{}}],'formalEvaluationAllowed':False,'fullRequest500msStatus':'unverified'}),mock.patch.dict(sys.modules,{'torch':None,'transformers':None}),mock.patch.object(shared,'prepare') as prepare,mock.patch.object(shared,'execute') as execute:
+        with mock.patch.object(experiment,'read_json',return_value={'runs':[{'runId':'action-chain-dev42-20261104-r1','quality':{}}],'formalEvaluationAllowed':False,'fullRequest500msStatus':'unverified'}),mock.patch.dict(sys.modules,{'torch':None,'transformers':None}),mock.patch.object(action_chain,'prepare') as prepare,mock.patch.object(action_chain,'execute') as execute:
             for args in ([],['status']):
                 output=io.StringIO()
                 with redirect_stdout(output):self.assertEqual(experiment.main(args),0)
                 status=json.loads(output.getvalue());self.assertFalse(status['modelExecutionPerformed'])
-                self.assertEqual(status['latestRun'],'m01-compiled-dev42-20261103-r1')
+                self.assertEqual(status['latestRun'],'action-chain-dev42-20261104-r1')
             prepare.assert_not_called();execute.assert_not_called()
 
     def test_prepare_and_execute_delegate_to_the_current_model(self):
-        with mock.patch.object(shared,'prepare',return_value=Path('/tmp/new-plan.json')) as prepare,redirect_stdout(io.StringIO()):
+        with mock.patch.object(action_chain,'prepare',return_value=Path('/tmp/new-plan.json')) as prepare,redirect_stdout(io.StringIO()):
             self.assertEqual(experiment.main(['prepare','new-id']),0);prepare.assert_called_once_with('new-id')
-        with mock.patch.object(shared,'execute',return_value=3) as execute:
+        with mock.patch.object(action_chain,'execute',return_value=3) as execute:
             self.assertEqual(experiment.main(['execute','new-plan.json']),3);execute.assert_called_once_with(Path('new-plan.json'))
 
     def test_check_stops_on_failure_without_executing_model(self):
-        with mock.patch.object(experiment.subprocess,'run',return_value=mock.Mock(returncode=7)) as run,mock.patch.object(shared,'execute') as execute:
+        with mock.patch.object(experiment.subprocess,'run',return_value=mock.Mock(returncode=7)) as run,mock.patch.object(action_chain,'execute') as execute:
             self.assertEqual(experiment.check(),7);self.assertEqual(run.call_count,1);execute.assert_not_called()
 
     def test_check_runs_only_tests_and_report_verification(self):
         with mock.patch.object(experiment.subprocess,'run',return_value=mock.Mock(returncode=0)) as run,redirect_stdout(io.StringIO()):
             self.assertEqual(experiment.check(),0)
-        self.assertEqual(run.call_count,8)
+        self.assertEqual(run.call_count,9)
         for call in run.call_args_list:
             args=call.args[0]
             self.assertNotIn('--execute',args);self.assertNotIn('--prepare',args)
