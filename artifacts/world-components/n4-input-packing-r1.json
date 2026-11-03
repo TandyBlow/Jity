@@ -4,7 +4,7 @@
  "role": "program sub-step of the N4 generation model; structured records, no pre-written fact sentences",
  "version": "n4-input-pack-v0.1",
  "date": "2026-11-02",
- "parentCommit": "491ab2c9e30227f69954f003c7fb4c056e27c02d",
+ "parentCommit": "ace72394b098324db6c56bcd50b0fce7883676dd",
  "numbering": {
   "N4.0": "input packing (program)",
   "N4": "generation (model)",
@@ -58,7 +58,7 @@
   "WorldState.Task has no resultText; the protocol source is FrozenGroupView.members[].resultText, not task status."
  ],
  "sources": {
-  "experiments/world-components/n4_input_renderer/packer.py": "0053e5f599ecc486ab0d6a64520008eaf8e14cef4d8af52a4285fcb6f95833db",
+  "experiments/world-components/n4_input_renderer/packer.py": "d9a9068ad115604ac243991d3b970ec7b4a27868db912be93f1ca62a7142e6cc",
   "experiments/world-components/n4_input_renderer/scene_context.py": "3edd636483076ded13723f8dc0f551e09f6cc060c8e379f0184888e59a9e53c8",
   "experiments/world-components/n4_input_renderer/renderer.py": "8ce82a05b24466c6d9afc64c0ea655290ada197bc9871f52fe600a633173b902",
   "experiments/world-components/n4_input_renderer/test_packer.py": "6e0641277a4cd8dbb31837a224159c1b3a7422e2576b15fa114108411126da63",
@@ -69,7 +69,7 @@
   "experiments/world-components/n4_narrative_dev/world.json": "f096f5bdb7539f5b1b3b71eb49bd43b6b1ad53b4fa2ec186ae4b54e00ec6d35c",
   "experiments/world-components/n4_narrative_dev/pipeline_preview.json": "b1bfa7aabfd1075ebecb9cd2fb2f5bdb3b8c2e21f635d69dd0c8b1cc26cbbf89",
   "experiments/world-components/n4_narrative_dev/pack_preview.json": "b59fbd85c20125b0612b47490921766a824c7035881f1446e314df1625cb4158",
-  "design/world-engine-reports/components/n4-input-packing.md": "225eb94c0c3a29cf9b6fe0973e1d70a1e0cbce695cd0702f4ced347f1750c2ce",
+  "design/world-engine-reports/components/n4-input-packing.md": "3c963431ed912b6b1c99f89a386d7f7ebbdf02d1ea03deb5b9bea62248e4a63e",
   "design/world-engine-reports/components/n4-narrative-input-packing-preview.md": "472262c166e6b13670a5a09bb5a932281194fe52cd6821776758c44f3858c35d"
  }
 }

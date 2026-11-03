@@ -111,6 +111,43 @@ def container_name(state: dict, position) -> str | None:
     return None
 
 
+def enclosing_location(state: dict, position, depth: int = 0) -> str | None:
+    """The nearest LOCATION that contains `position`.
+
+    A container may be another character or an item (an item picked up is
+    `containerId=<holder>`). Using the direct container name as the fact's
+    place produced two defects: (a) N2 read `at=顾北汀` as "not where the
+    viewpoint is" and dropped the fact, and (b) the record rendered as
+    "灯油瓮 灯寮→顾北汀", which is not narratable. The place of a fact is
+    always the enclosing location; the direct container is carried
+    separately (`to`).
+    """
+    if not position or depth > 8:
+        return None
+    cid = position.get("containerId")
+    if cid is None:
+        return None
+    initial = (state or {}).get("initial") or {}
+    locations = initial.get("locations") or {}
+    if cid in locations:
+        return (locations[cid] or {}).get("name")
+    for group in ("characters", "items"):
+        if cid in ((initial.get(group) or {})):
+            holder = ((state or {}).get(group) or {}).get(cid) or {}
+            return enclosing_location(state, holder.get("position"), depth + 1)
+    return None
+
+
+def container_is_holder(state: dict, container_id: str | None) -> bool:
+    """True when the container is a character or an item, i.e. the position
+    means "carried by", not "standing in"."""
+    if container_id is None:
+        return False
+    initial = (state or {}).get("initial") or {}
+    return any(container_id in ((initial.get(g) or {}))
+               for g in ("characters", "items"))
+
+
 def slot_label(state: dict, container_id: str | None, slot_id: str) -> str | None:
     """A slot's display label from the container's registered slots (the
     initial registry is immutable, so before and after lookups agree)."""
@@ -235,7 +272,11 @@ def extract_facts(point: dict, before: dict | None,
         facts.append(fact)
 
     def location_of(ent):
-        return container_name(state, (ent or {}).get("position")) if ent else None
+        # enclosing LOCATION, not the direct container: an entity held by a
+        # character lives at that character's location (see
+        # enclosing_location's docstring for the two defects this fixes)
+        return (enclosing_location(state, (ent or {}).get("position"))
+                if ent else None)
 
     ta = point.get("timeAdvance")
     for eid, d in deltas.items():
@@ -350,7 +391,10 @@ def extract_facts(point: dict, before: dict | None,
                                     "aspect": "slotId"}})
             if not same_container:
                 add({"kind": "moved", "entityId": eid, "name": name,
-                     "from": frm, "to": to, "at": to,
+                     "from": frm, "to": to,
+                     "at": (location_of(live_after) or to),
+                     "heldBy": (to if container_is_holder(
+                         state, (pos_after or {}).get("containerId")) else None),
                      "source": {"entityId": eid, "field": "positionSet"}})
             elif not aspects:
                 # positionSet equals the before position and no aspect

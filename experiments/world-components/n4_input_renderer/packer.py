@@ -13,7 +13,6 @@
 
 from .renderer import (  # noqa: F401
     N4RenderError,
-    SUPPORTED_KINDS,
     _find_location,
     _item_appearance,
     _item_name,
@@ -27,20 +26,41 @@ from .renderer import (  # noqa: F401
 
 N4_INPUT_VERSION = "n4-input-pack-v0.1"
 
+# Every N1 fact kind this packer can express. Deliberately NOT
+# renderer.SUPPORTED_KINDS: that set belongs to the frozen legacy sentence
+# renderer (v2/v3 checkpoints) and must keep its byte behaviour. The
+# narrative packer reads structured records, so it can carry the kinds the
+# legacy renderer refuses (relative position, slot, subtask, removals).
+PACK_KINDS = {
+    "moved", "outcome", "sanity_changed", "appearance_changed",
+    "appearance_removed", "personality_changed", "personality_removed",
+    "position_relative", "slot_changed", "subtask_added",
+    "task_achieved", "no_change", "time",
+}
+
 KIND_LABEL = {
     "moved": "移动",
     "outcome": "结果",
+    "task_achieved": "任务达成",
+    "subtask_added": "新任务",
     "sanity_changed": "理智",
     "appearance_changed": "外貌",
+    "appearance_removed": "外貌消失",
     "personality_changed": "行为倾向",
+    "personality_removed": "行为倾向消失",
+    "position_relative": "相对位置",
+    "slot_changed": "所在格位",
     "no_change": "无变化",
     "time": "时间",
 }
 
+RELATION_CN = {"under": "下方", "above": "上方", "beside": "旁边",
+               "in_front_of": "前方", "behind": "后方"}
+
 
 def _fact_payload(fact):
     kind = fact.get("kind")
-    if kind not in SUPPORTED_KINDS:
+    if kind not in PACK_KINDS:
         raise N4RenderError("unsupported-fact-kind", kind)
     if kind == "time":
         return "时间经过"
@@ -48,18 +68,36 @@ def _fact_payload(fact):
         return "—"
     name = _text(fact, "name")
     if kind == "moved":
+        # an item inside a character reads as "picked up", not as a walk
+        if fact.get("heldBy"):
+            return f"{name}｜被{fact['heldBy']}拿起"
         return f"{name}｜{_text(fact, 'from')}→{_text(fact, 'to')}"
     if kind == "outcome":
         return f"{name}｜{_text(fact, 'resultText', 'outcome-result-missing')}"
+    if kind == "task_achieved":
+        return f"{name}｜{_text(fact, 'goal')}"
+    if kind == "subtask_added":
+        return f"{name}｜{_text(fact, 'goal')}（属于：{_text(fact, 'parentGoal')}）"
     if kind == "sanity_changed":
         before = _number(fact, "from")
         after = _number(fact, "to")
         direction = "上升" if after > before else "下降" if after < before else "不变"
         return f"{name}｜{direction}"
-    if kind == "appearance_changed":
+    if kind in ("appearance_changed", "appearance_removed",
+                "personality_changed", "personality_removed"):
         return f"{name}｜{_text(fact, 'text')}"
-    if kind == "personality_changed":
-        return f"{name}｜{_text(fact, 'text')}"
+    if kind == "position_relative":
+        rel = RELATION_CN.get(fact.get("relation"), fact.get("relation"))
+        target = _text(fact, "targetName")
+        op = fact.get("op")
+        if op == "removed":
+            return f"{name}｜不再在{target}的{rel}"
+        return f"{name}｜在{target}的{rel}"
+    if kind == "slot_changed":
+        label = _text(fact, "slotLabel")
+        if fact.get("op") == "removed":
+            return f"{name}｜离开{_text(fact, 'at')}的{label}"
+        return f"{name}｜在{_text(fact, 'at')}的{label}"
     raise N4RenderError("unsupported-fact-kind", f"{kind}:{fact.get('factId')}")
 
 
