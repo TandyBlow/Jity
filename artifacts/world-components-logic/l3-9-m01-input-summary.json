@@ -1,0 +1,597 @@
+{
+  "schema": "jity-d-input-runtime-summary-v1",
+  "date": "2026-11-03",
+  "scope": "frozen_checkpoint_exposed_development_inference_only",
+  "formalEvaluationAllowed": false,
+  "semanticQualityApproved": false,
+  "fullRequest500msStatus": "unverified",
+  "newIndependentTrainingGroups": 0,
+  "round1TrainingQuota": 0,
+  "runs": [
+    {
+      "runId": "m01-input-dev42-20261103-r2",
+      "quality": {
+        "reference": {
+          "D02": {
+            "fit": {
+              "matched": 0,
+              "groups": 0
+            },
+            "retained_development": {
+              "matched": 2,
+              "groups": 2
+            }
+          },
+          "D03": {
+            "fit": {
+              "matched": 0,
+              "groups": 0,
+              "requiredTargets": 0,
+              "missedTargets": 0,
+              "extraTargets": 0
+            },
+            "retained_development": {
+              "matched": 2,
+              "groups": 2,
+              "requiredTargets": 2,
+              "missedTargets": 0,
+              "extraTargets": 0
+            }
+          }
+        },
+        "packed": {
+          "D02": {
+            "fit": {
+              "matched": 0,
+              "groups": 0
+            },
+            "retained_development": {
+              "matched": 2,
+              "groups": 2
+            }
+          },
+          "D03": {
+            "fit": {
+              "matched": 0,
+              "groups": 0,
+              "requiredTargets": 0,
+              "missedTargets": 0,
+              "extraTargets": 0
+            },
+            "retained_development": {
+              "matched": 2,
+              "groups": 2,
+              "requiredTargets": 2,
+              "missedTargets": 0,
+              "extraTargets": 0
+            }
+          }
+        },
+        "fast": {
+          "D02": {
+            "fit": {
+              "matched": 0,
+              "groups": 0
+            },
+            "retained_development": {
+              "matched": 2,
+              "groups": 2
+            }
+          },
+          "D03": {
+            "fit": {
+              "matched": 0,
+              "groups": 0,
+              "requiredTargets": 0,
+              "missedTargets": 0,
+              "extraTargets": 0
+            },
+            "retained_development": {
+              "matched": 2,
+              "groups": 2,
+              "requiredTargets": 2,
+              "missedTargets": 0,
+              "extraTargets": 0
+            }
+          }
+        },
+        "eager": {
+          "D02": {
+            "fit": {
+              "matched": 0,
+              "groups": 0
+            },
+            "retained_development": {
+              "matched": 2,
+              "groups": 2
+            }
+          },
+          "D03": {
+            "fit": {
+              "matched": 0,
+              "groups": 0,
+              "requiredTargets": 0,
+              "missedTargets": 0,
+              "extraTargets": 0
+            },
+            "retained_development": {
+              "matched": 2,
+              "groups": 2,
+              "requiredTargets": 2,
+              "missedTargets": 0,
+              "extraTargets": 0
+            }
+          }
+        }
+      },
+      "timing": [
+        {
+          "arm": "reference",
+          "caseId": "dev-d02-03",
+          "observations": 5,
+          "p50Ms": 64.902125,
+          "maxMs": 75.607875,
+          "meanMs": 66.52974160000001,
+          "componentsMeanMs": {
+            "encoderMs": 50.98183320951648,
+            "packMs": 10.671749990433455,
+            "poolAndDigestMs": 0.7794997887685895,
+            "tensorMs": 0.21120061282999814,
+            "windowJournalMs": 1.5152009727898985,
+            "headMs": 0.5301749974023551,
+            "startJournalMs": 0.053924997337162495,
+            "snapshotStartMs": 5.000620149075985e-05,
+            "resultJournalMs": 0.9746502037160099,
+            "snapshotEndMs": 5.039619281888008e-05,
+            "telemetryJournalMs": 0.06214160239323974,
+            "otherMs": 0.7492648224185103
+          },
+          "local50ms": "fail"
+        },
+        {
+          "arm": "reference",
+          "caseId": "dev-d02-05",
+          "observations": 5,
+          "p50Ms": 62.5585,
+          "maxMs": 64.613292,
+          "meanMs": 63.0037832,
+          "componentsMeanMs": {
+            "encoderMs": 48.868341802153736,
+            "packMs": 10.199216607725248,
+            "poolAndDigestMs": 0.5483496061060578,
+            "tensorMs": 0.14309920952655375,
+            "windowJournalMs": 1.4479493955150247,
+            "headMs": 0.16487479442730546,
+            "startJournalMs": 0.05613339599221945,
+            "snapshotStartMs": 4.979665391147137e-05,
+            "resultJournalMs": 1.0055835940875113,
+            "snapshotEndMs": 5.820184014737606e-05,
+            "telemetryJournalMs": 0.06697520730085671,
+            "otherMs": 0.5031515886714288
+          },
+          "local50ms": "fail"
+        },
+        {
+          "arm": "reference",
+          "caseId": "dev-d03-02",
+          "observations": 5,
+          "p50Ms": 68.014708,
+          "maxMs": 68.966708,
+          "meanMs": 67.6092582,
+          "componentsMeanMs": {
+            "encoderMs": 52.15409920201637,
+            "packMs": 10.971158411120996,
+            "poolAndDigestMs": 0.5877827818039805,
+            "tensorMs": 0.15332538168877363,
+            "windowJournalMs": 1.5243584348354489,
+            "headMs": 0.36032479838468134,
+            "startJournalMs": 0.06632499862462282,
+            "snapshotStartMs": 4.9802474677562714e-05,
+            "resultJournalMs": 1.027308398624882,
+            "snapshotEndMs": 4.180474206805229e-05,
+            "telemetryJournalMs": 0.07009160472080112,
+            "otherMs": 0.694392580962699
+          },
+          "local50ms": "fail"
+        },
+        {
+          "arm": "reference",
+          "caseId": "dev-d03-06",
+          "observations": 5,
+          "p50Ms": 67.655041,
+          "maxMs": 68.30975,
+          "meanMs": 67.62710799999999,
+          "componentsMeanMs": {
+            "encoderMs": 52.27450839593075,
+            "packMs": 11.222566600190476,
+            "poolAndDigestMs": 0.5645833851303905,
+            "tensorMs": 0.14975001686252654,
+            "windowJournalMs": 1.5304996049962938,
+            "headMs": 0.2228165918495506,
+            "startJournalMs": 0.06584160146303475,
+            "snapshotStartMs": 3.3603282645344734e-05,
+            "resultJournalMs": 1.085933408467099,
+            "snapshotEndMs": 5.040201358497143e-05,
+            "telemetryJournalMs": 0.07880838820710778,
+            "otherMs": 0.43171600160653156
+          },
+          "local50ms": "fail"
+        },
+        {
+          "arm": "packed",
+          "caseId": "dev-d02-03",
+          "observations": 5,
+          "p50Ms": 59.844875,
+          "maxMs": 60.05,
+          "meanMs": 59.2832752,
+          "componentsMeanMs": {
+            "encoderMs": 50.035033019958064,
+            "packMs": 5.447958403965458,
+            "poolAndDigestMs": 0.5479492130689323,
+            "tensorMs": 0.14081658446229994,
+            "windowJournalMs": 1.4651338278781623,
+            "headMs": 0.16841660253703594,
+            "startJournalMs": 0.050216587260365486,
+            "snapshotStartMs": 5.860929377377033e-05,
+            "resultJournalMs": 1.020358398091048,
+            "snapshotEndMs": 5.820184014737606e-05,
+            "telemetryJournalMs": 0.06022500456310809,
+            "otherMs": 0.3470507470816031
+          },
+          "local50ms": "fail"
+        },
+        {
+          "arm": "packed",
+          "caseId": "dev-d02-05",
+          "observations": 5,
+          "p50Ms": 58.215709,
+          "maxMs": 58.3655,
+          "meanMs": 57.5608084,
+          "componentsMeanMs": {
+            "encoderMs": 48.189691797597334,
+            "packMs": 5.440716806333512,
+            "poolAndDigestMs": 0.5313082016073167,
+            "tensorMs": 0.14008399448357522,
+            "windowJournalMs": 1.4643500151578337,
+            "headMs": 0.17234999686479568,
+            "startJournalMs": 0.05365860997699201,
+            "snapshotStartMs": 6.659538485109806e-05,
+            "resultJournalMs": 1.0823334043379873,
+            "snapshotEndMs": 8.320785127580166e-05,
+            "telemetryJournalMs": 0.06360800471156836,
+            "otherMs": 0.42255776569295733
+          },
+          "local50ms": "fail"
+        },
+        {
+          "arm": "packed",
+          "caseId": "dev-d03-02",
+          "observations": 5,
+          "p50Ms": 62.494125,
+          "maxMs": 65.967875,
+          "meanMs": 62.4262832,
+          "componentsMeanMs": {
+            "encoderMs": 52.439824800239876,
+            "packMs": 5.884716397849843,
+            "poolAndDigestMs": 0.5843076098244637,
+            "tensorMs": 0.15161700430326164,
+            "windowJournalMs": 1.5493083745241165,
+            "headMs": 0.17653300310485065,
+            "startJournalMs": 0.05736659513786435,
+            "snapshotStartMs": 4.180474206805229e-05,
+            "resultJournalMs": 1.086416793987155,
+            "snapshotEndMs": 4.159519448876381e-05,
+            "telemetryJournalMs": 0.07181639666669071,
+            "otherMs": 0.4242928244253221
+          },
+          "local50ms": "fail"
+        },
+        {
+          "arm": "packed",
+          "caseId": "dev-d03-06",
+          "observations": 5,
+          "p50Ms": 61.336958,
+          "maxMs": 63.335208,
+          "meanMs": 61.6583166,
+          "componentsMeanMs": {
+            "encoderMs": 51.814874599222094,
+            "packMs": 5.767433386063203,
+            "poolAndDigestMs": 0.5594245914835483,
+            "tensorMs": 0.14559239498339593,
+            "windowJournalMs": 1.536574208876118,
+            "headMs": 0.16119160572998226,
+            "startJournalMs": 0.06035839905962348,
+            "snapshotStartMs": 4.1996827349066734e-05,
+            "resultJournalMs": 1.0742917947936803,
+            "snapshotEndMs": 4.1601015254855156e-05,
+            "telemetryJournalMs": 0.07004180224612355,
+            "otherMs": 0.4684502196996263
+          },
+          "local50ms": "fail"
+        },
+        {
+          "arm": "fast",
+          "caseId": "dev-d02-03",
+          "observations": 5,
+          "p50Ms": 57.954792,
+          "maxMs": 58.09325,
+          "meanMs": 57.1729586,
+          "componentsMeanMs": {
+            "encoderMs": 50.569424603600055,
+            "packMs": 2.7448916051071137,
+            "poolAndDigestMs": 0.5498751881532371,
+            "tensorMs": 0.1449338044039905,
+            "windowJournalMs": 1.4595499960705638,
+            "headMs": 0.19803338800556958,
+            "startJournalMs": 0.05755840102210641,
+            "snapshotStartMs": 4.140310920774937e-05,
+            "resultJournalMs": 0.9015164047013968,
+            "snapshotEndMs": 5.820184014737606e-05,
+            "telemetryJournalMs": 0.07004179642535746,
+            "otherMs": 0.4770338075612557
+          },
+          "local50ms": "fail"
+        },
+        {
+          "arm": "fast",
+          "caseId": "dev-d02-05",
+          "observations": 5,
+          "p50Ms": 54.746083,
+          "maxMs": 56.508541,
+          "meanMs": 54.9914916,
+          "componentsMeanMs": {
+            "encoderMs": 48.583850607974455,
+            "packMs": 2.6903168007265776,
+            "poolAndDigestMs": 0.5263910163193941,
+            "tensorMs": 0.14101678389124572,
+            "windowJournalMs": 1.4282833901233971,
+            "headMs": 0.1417331979610026,
+            "startJournalMs": 0.05607500206679106,
+            "snapshotStartMs": 6.640329957008362e-05,
+            "resultJournalMs": 0.9155083913356066,
+            "snapshotEndMs": 4.1996827349066734e-05,
+            "telemetryJournalMs": 0.055583007633686066,
+            "otherMs": 0.4526250018409286
+          },
+          "local50ms": "fail"
+        },
+        {
+          "arm": "fast",
+          "caseId": "dev-d03-02",
+          "observations": 5,
+          "p50Ms": 59.684959,
+          "maxMs": 60.931875,
+          "meanMs": 59.5306836,
+          "componentsMeanMs": {
+            "encoderMs": 52.57566720247269,
+            "packMs": 2.870491601061076,
+            "poolAndDigestMs": 0.5853499984368682,
+            "tensorMs": 0.14887459110468626,
+            "windowJournalMs": 1.4890511811245233,
+            "headMs": 0.20441659726202488,
+            "startJournalMs": 0.06094179698266089,
+            "snapshotStartMs": 5.019828677177429e-05,
+            "resultJournalMs": 1.1022499995306134,
+            "snapshotEndMs": 6.640329957008362e-05,
+            "telemetryJournalMs": 0.06787480087950826,
+            "otherMs": 0.4256492295590135
+          },
+          "local50ms": "fail"
+        },
+        {
+          "arm": "fast",
+          "caseId": "dev-d03-06",
+          "observations": 5,
+          "p50Ms": 58.3325,
+          "maxMs": 60.636333,
+          "meanMs": 58.651816600000004,
+          "componentsMeanMs": {
+            "encoderMs": 51.56666659167968,
+            "packMs": 2.925058000255376,
+            "poolAndDigestMs": 0.5507830006536096,
+            "tensorMs": 0.14231620589271188,
+            "windowJournalMs": 1.5079089906066656,
+            "headMs": 0.22372480598278344,
+            "startJournalMs": 0.0654500094242394,
+            "snapshotStartMs": 4.16068360209465e-05,
+            "resultJournalMs": 1.1364668025635183,
+            "snapshotEndMs": 6.640329957008362e-05,
+            "telemetryJournalMs": 0.0704331963788718,
+            "otherMs": 0.4629009864269591
+          },
+          "local50ms": "fail"
+        },
+        {
+          "arm": "eager",
+          "caseId": "dev-d02-03",
+          "observations": 5,
+          "p50Ms": 68.986125,
+          "maxMs": 75.319,
+          "meanMs": 70.017892,
+          "componentsMeanMs": {
+            "encoderMs": 63.29075858811848,
+            "packMs": 2.834341599373147,
+            "poolAndDigestMs": 0.5630836123600602,
+            "tensorMs": 0.14719139435328543,
+            "windowJournalMs": 1.4731830160599202,
+            "headMs": 0.17470840830355883,
+            "startJournalMs": 0.062050396809354424,
+            "snapshotStartMs": 5.841138772666454e-05,
+            "resultJournalMs": 0.9936584043316543,
+            "snapshotEndMs": 5.020410753786564e-05,
+            "telemetryJournalMs": 0.07140000234358013,
+            "otherMs": 0.40740796245169975
+          },
+          "local50ms": "fail"
+        },
+        {
+          "arm": "eager",
+          "caseId": "dev-d02-05",
+          "observations": 5,
+          "p50Ms": 66.71275,
+          "maxMs": 73.767791,
+          "meanMs": 68.0557416,
+          "componentsMeanMs": {
+            "encoderMs": 61.50150019675493,
+            "packMs": 2.6719584071543068,
+            "poolAndDigestMs": 0.5444499780423939,
+            "tensorMs": 0.1423917943611741,
+            "windowJournalMs": 1.4432585623580962,
+            "headMs": 0.18804999417625368,
+            "startJournalMs": 0.05553339724428952,
+            "snapshotStartMs": 5.0209928303956985e-05,
+            "resultJournalMs": 1.0047251998912543,
+            "snapshotEndMs": 4.139728844165802e-05,
+            "telemetryJournalMs": 0.06675040349364281,
+            "otherMs": 0.43703205930691524
+          },
+          "local50ms": "fail"
+        },
+        {
+          "arm": "eager",
+          "caseId": "dev-d03-02",
+          "observations": 5,
+          "p50Ms": 70.64275,
+          "maxMs": 85.796167,
+          "meanMs": 73.6896834,
+          "componentsMeanMs": {
+            "encoderMs": 65.69025820936076,
+            "packMs": 3.238166600931436,
+            "poolAndDigestMs": 0.6026082148309797,
+            "tensorMs": 0.1635831838939339,
+            "windowJournalMs": 1.6584578319452703,
+            "headMs": 0.3360336064361036,
+            "startJournalMs": 0.056816404685378075,
+            "snapshotStartMs": 6.659538485109806e-05,
+            "resultJournalMs": 1.082008407684043,
+            "snapshotEndMs": 5.7998113334178925e-05,
+            "telemetryJournalMs": 0.07345839985646307,
+            "otherMs": 0.7881679468774507
+          },
+          "local50ms": "fail"
+        },
+        {
+          "arm": "eager",
+          "caseId": "dev-d03-06",
+          "observations": 5,
+          "p50Ms": 70.725583,
+          "maxMs": 73.605917,
+          "meanMs": 71.4452084,
+          "componentsMeanMs": {
+            "encoderMs": 64.41968322033063,
+            "packMs": 2.9157085984479636,
+            "poolAndDigestMs": 0.5806331872008741,
+            "tensorMs": 0.14655839768238366,
+            "windowJournalMs": 1.4941419882234186,
+            "headMs": 0.16909180558286607,
+            "startJournalMs": 0.059025001246482134,
+            "snapshotStartMs": 4.1601015254855156e-05,
+            "resultJournalMs": 1.0538749978877604,
+            "snapshotEndMs": 4.159519448876381e-05,
+            "telemetryJournalMs": 0.07092520827427506,
+            "otherMs": 0.5354827989136055
+          },
+          "local50ms": "fail"
+        }
+      ],
+      "comparisons": {
+        "reference": {
+          "exactProbabilities": true,
+          "maxAbsoluteProbabilityDelta": 0.0,
+          "identicalDecisions": true,
+          "repeatStable": true,
+          "registeredEquivalenceGate": "pass"
+        },
+        "packed": {
+          "exactProbabilities": true,
+          "maxAbsoluteProbabilityDelta": 0.0,
+          "identicalDecisions": true,
+          "repeatStable": true,
+          "registeredEquivalenceGate": "pass"
+        },
+        "fast": {
+          "exactProbabilities": true,
+          "maxAbsoluteProbabilityDelta": 0.0,
+          "identicalDecisions": true,
+          "repeatStable": true,
+          "registeredEquivalenceGate": "pass"
+        },
+        "eager": {
+          "exactProbabilities": false,
+          "maxAbsoluteProbabilityDelta": 1.1920928955078125e-07,
+          "identicalDecisions": true,
+          "repeatStable": true,
+          "registeredEquivalenceGate": "pass"
+        }
+      },
+      "tokenizationAuditGroups": 20,
+      "trainingSteps": 0,
+      "timedInferenceItems": 80,
+      "forwardWindows": 320,
+      "journalEvents": 881,
+      "encoder": {
+        "layers": 2,
+        "parameters": 7120384,
+        "tensorSha256": "6bbafd3213e907abef347a0fd96179bf4282d987c1b3000d0498aca1feafb40b"
+      },
+      "headParameters": 180418,
+      "checkpoint": {
+        "contains": "four_event_anchor_heads_only",
+        "path": ".local/world-components-logic/checkpoints/m01-event-dev42-20261102-r1.pt",
+        "sha256": "a390a148c81f6a1300908c876a7de905d3af90abd75332fa926189fb86380b56"
+      },
+      "weightsUnchanged": true,
+      "encoderRuntimes": {
+        "eager": {
+          "attentionClasses": [
+            "BertSelfAttention",
+            "BertSelfAttention"
+          ],
+          "attentionImplementation": "eager"
+        },
+        "sdpa": {
+          "attentionClasses": [
+            "BertSdpaSelfAttention",
+            "BertSdpaSelfAttention"
+          ],
+          "attentionImplementation": "sdpa"
+        }
+      },
+      "tokenizerClasses": {
+        "fast": "BertTokenizerFast",
+        "slow": "BertTokenizer"
+      },
+      "supervisor": {
+        "error": null,
+        "exitCode": 0,
+        "measurement": "ps_rss_every250ms",
+        "observedPeakResidentMiB": 553.3125,
+        "stopReason": null,
+        "wallMs": 8387.699208018603
+      },
+      "timingScope": "all per-item work and journals; batch final write in process wall, supervisor replay unmeasured"
+    }
+  ],
+  "firstPreparationFailure": {
+    "runId": "m01-input-dev42-20261103-r1",
+    "status": "failed",
+    "error": {
+      "message": "not a JSON value",
+      "type": "LabValidationError"
+    },
+    "businessCalls": 0,
+    "unstartedItems": 80
+  },
+  "archives": [
+    {
+      "path": "artifacts/world-components-logic/m01-fitting/m01-input-dev42-20261103-r2.record.json.gz",
+      "gzipSha256": "a462c964e959d944e5a147090e784352718dd8474e7d69750e50839d7d44259e",
+      "rawSha256": "bbf350ae21733010db4410a3dc32b337306bd6e313d5fd99d8436badea76af2d"
+    },
+    {
+      "path": "artifacts/world-components-logic/m01-fitting/m01-input-dev42-20261103-r2.record.journal.jsonl.gz",
+      "gzipSha256": "03b495cda95386bd14071b83f7edadb2e6433ee7da5e3b9bde41e750a0f8abcd",
+      "rawSha256": "e046be9658796d983ca0a3b083fb39522cc7d2c0308b60ccf453905aad11761d"
+    }
+  ]
+}

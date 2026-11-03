@@ -1,0 +1,1744 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'"><title>L3 输入准备与编码执行对比</title><style>body{margin:0;background:#f4f6f8;color:#20313e;font:16px/1.7 system-ui}main{max-width:1150px;margin:auto;padding:24px}section{background:white;padding:22px;border-radius:12px;margin:20px 0}.scroll{overflow:auto}table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;padding:9px;border-bottom:1px solid #ddd}pre{white-space:pre-wrap;overflow-wrap:anywhere}.bad{color:#a7352e}h1{font-size:28px}</style><main><p>D / L3 · 2026-11-03 · 固定两层模型，训练0步</p><h1>减少重复整理输入，再比较编码方式</h1><p>完整资料和所有人物保留；20组旧开发输入在推理前逐项核对优化前后的全部token与事实跨度，任何差异都停止。业务测试仍只有4道反复看过的开发题，四种方案各重复5次，共80次推理。</p><section><h2>先看输出有没有变化</h2><p>前3臂要求分数逐值一致；eager注意力在运行前登记最大概率差≤0.000001、行动/目标判定完全一致。浮点计算顺序不同与改模型权重分别记录，不能因判断相同就声称分数完全相同。</p><div class="scroll"><table><tr><th>方案</th><th>分数逐值一致</th><th>最大概率差</th><th>所有判定一致</th><th>已登记一致性门</th></tr><tr><td>原输入准备</td><td>True</td><td>0</td><td>True</td><td>pass</td></tr><tr><td>去掉重复分词</td><td>True</td><td>0</td><td>True</td><td>pass</td></tr><tr><td>快速分词＋单次装箱</td><td>True</td><td>0</td><td>True</td><td>pass</td></tr><tr><td>快速分词＋eager编码</td><td>False</td><td>1.192092896e-07</td><td>True</td><td>pass</td></tr></table></div><p>一致性门只检查改动前后是否可比，不等于新题质量通过。原4题答案已公开，不能据此宣布泛化。</p></section><section><h2>同批整项耗时，包含输入与记录</h2><div class="scroll"><table><tr><th>题目</th><th>原方案中位/最大ms</th><th>单次分词中位/最大ms</th><th>快速分词中位/最大ms</th><th>eager中位/最大ms</th></tr><tr><td>dev-d02-03</td><td>64.90/75.61</td><td>59.84/60.05</td><td>57.95/58.09</td><td>68.99/75.32</td></tr><tr><td>dev-d02-05</td><td>62.56/64.61</td><td>58.22/58.37</td><td>54.75/56.51</td><td>66.71/73.77</td></tr><tr><td>dev-d03-02</td><td>68.01/68.97</td><td>62.49/65.97</td><td>59.68/60.93</td><td>70.64/85.80</td></tr><tr><td>dev-d03-06</td><td>67.66/68.31</td><td>61.34/63.34</td><td>58.33/60.64</td><td>70.73/73.61</td></tr></table></div><p>所有臂都重新分词、执行全部窗口，不缓存特征；计入结果落盘和尾部遥测写入。局部是否超过50ms见下表；每题仅5次，即便本批全部低于50也只能记有限观察，完整500ms仍未测。</p><div class="scroll"><table><tr><th>方案</th><th>题目</th><th>输入准备平均ms</th><th>编码平均ms</th><th>局部50ms</th></tr><tr><td>原输入准备</td><td>dev-d02-03</td><td>10.672</td><td>50.982</td><td>fail</td></tr><tr><td>原输入准备</td><td>dev-d02-05</td><td>10.199</td><td>48.868</td><td>fail</td></tr><tr><td>原输入准备</td><td>dev-d03-02</td><td>10.971</td><td>52.154</td><td>fail</td></tr><tr><td>原输入准备</td><td>dev-d03-06</td><td>11.223</td><td>52.275</td><td>fail</td></tr><tr><td>去掉重复分词</td><td>dev-d02-03</td><td>5.448</td><td>50.035</td><td>fail</td></tr><tr><td>去掉重复分词</td><td>dev-d02-05</td><td>5.441</td><td>48.190</td><td>fail</td></tr><tr><td>去掉重复分词</td><td>dev-d03-02</td><td>5.885</td><td>52.440</td><td>fail</td></tr><tr><td>去掉重复分词</td><td>dev-d03-06</td><td>5.767</td><td>51.815</td><td>fail</td></tr><tr><td>快速分词＋单次装箱</td><td>dev-d02-03</td><td>2.745</td><td>50.569</td><td>fail</td></tr><tr><td>快速分词＋单次装箱</td><td>dev-d02-05</td><td>2.690</td><td>48.584</td><td>fail</td></tr><tr><td>快速分词＋单次装箱</td><td>dev-d03-02</td><td>2.870</td><td>52.576</td><td>fail</td></tr><tr><td>快速分词＋单次装箱</td><td>dev-d03-06</td><td>2.925</td><td>51.567</td><td>fail</td></tr><tr><td>快速分词＋eager编码</td><td>dev-d02-03</td><td>2.834</td><td>63.291</td><td>fail</td></tr><tr><td>快速分词＋eager编码</td><td>dev-d02-05</td><td>2.672</td><td>61.502</td><td>fail</td></tr><tr><td>快速分词＋eager编码</td><td>dev-d03-02</td><td>3.238</td><td>65.690</td><td>fail</td></tr><tr><td>快速分词＋eager编码</td><td>dev-d03-06</td><td>2.916</td><td>64.420</td><td>fail</td></tr></table></div></section><section><h2>执行范围与失败记录</h2><p class="bad">模型权重/判断头不变，不代表任务能力已通过。行动仍只判做/不做，反应、行动描述和共同结果没有接线；完整500ms、浏览器/生产与独立新题质量都未测。</p><p>第一批在生成输入核对哈希时把元组传给只接收JSON的工具而失败，0次业务推理、80项未开始；原计划/记录和执行源码保留。修正记录代码并补回归后，另用r2批次执行，未改分词策略或训练参数。</p><p>CPU单线程/并发1，120秒/2048MiB监督上限；批末汇总包含在子进程总耗时但未单独计时，监督器重放耗时未测。本页主指标是每项完成，不冒充完整游戏请求。</p></section><section><details><summary>全部汇总、模型身份和分项耗时</summary><pre>{
+  &quot;runId&quot;: &quot;m01-input-dev42-20261103-r2&quot;,
+  &quot;quality&quot;: {
+    &quot;reference&quot;: {
+      &quot;D02&quot;: {
+        &quot;fit&quot;: {
+          &quot;matched&quot;: 0,
+          &quot;groups&quot;: 0
+        },
+        &quot;retained_development&quot;: {
+          &quot;matched&quot;: 2,
+          &quot;groups&quot;: 2
+        }
+      },
+      &quot;D03&quot;: {
+        &quot;fit&quot;: {
+          &quot;matched&quot;: 0,
+          &quot;groups&quot;: 0,
+          &quot;requiredTargets&quot;: 0,
+          &quot;missedTargets&quot;: 0,
+          &quot;extraTargets&quot;: 0
+        },
+        &quot;retained_development&quot;: {
+          &quot;matched&quot;: 2,
+          &quot;groups&quot;: 2,
+          &quot;requiredTargets&quot;: 2,
+          &quot;missedTargets&quot;: 0,
+          &quot;extraTargets&quot;: 0
+        }
+      }
+    },
+    &quot;packed&quot;: {
+      &quot;D02&quot;: {
+        &quot;fit&quot;: {
+          &quot;matched&quot;: 0,
+          &quot;groups&quot;: 0
+        },
+        &quot;retained_development&quot;: {
+          &quot;matched&quot;: 2,
+          &quot;groups&quot;: 2
+        }
+      },
+      &quot;D03&quot;: {
+        &quot;fit&quot;: {
+          &quot;matched&quot;: 0,
+          &quot;groups&quot;: 0,
+          &quot;requiredTargets&quot;: 0,
+          &quot;missedTargets&quot;: 0,
+          &quot;extraTargets&quot;: 0
+        },
+        &quot;retained_development&quot;: {
+          &quot;matched&quot;: 2,
+          &quot;groups&quot;: 2,
+          &quot;requiredTargets&quot;: 2,
+          &quot;missedTargets&quot;: 0,
+          &quot;extraTargets&quot;: 0
+        }
+      }
+    },
+    &quot;fast&quot;: {
+      &quot;D02&quot;: {
+        &quot;fit&quot;: {
+          &quot;matched&quot;: 0,
+          &quot;groups&quot;: 0
+        },
+        &quot;retained_development&quot;: {
+          &quot;matched&quot;: 2,
+          &quot;groups&quot;: 2
+        }
+      },
+      &quot;D03&quot;: {
+        &quot;fit&quot;: {
+          &quot;matched&quot;: 0,
+          &quot;groups&quot;: 0,
+          &quot;requiredTargets&quot;: 0,
+          &quot;missedTargets&quot;: 0,
+          &quot;extraTargets&quot;: 0
+        },
+        &quot;retained_development&quot;: {
+          &quot;matched&quot;: 2,
+          &quot;groups&quot;: 2,
+          &quot;requiredTargets&quot;: 2,
+          &quot;missedTargets&quot;: 0,
+          &quot;extraTargets&quot;: 0
+        }
+      }
+    },
+    &quot;eager&quot;: {
+      &quot;D02&quot;: {
+        &quot;fit&quot;: {
+          &quot;matched&quot;: 0,
+          &quot;groups&quot;: 0
+        },
+        &quot;retained_development&quot;: {
+          &quot;matched&quot;: 2,
+          &quot;groups&quot;: 2
+        }
+      },
+      &quot;D03&quot;: {
+        &quot;fit&quot;: {
+          &quot;matched&quot;: 0,
+          &quot;groups&quot;: 0,
+          &quot;requiredTargets&quot;: 0,
+          &quot;missedTargets&quot;: 0,
+          &quot;extraTargets&quot;: 0
+        },
+        &quot;retained_development&quot;: {
+          &quot;matched&quot;: 2,
+          &quot;groups&quot;: 2,
+          &quot;requiredTargets&quot;: 2,
+          &quot;missedTargets&quot;: 0,
+          &quot;extraTargets&quot;: 0
+        }
+      }
+    }
+  },
+  &quot;timing&quot;: [
+    {
+      &quot;arm&quot;: &quot;reference&quot;,
+      &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+      &quot;observations&quot;: 5,
+      &quot;p50Ms&quot;: 64.902125,
+      &quot;maxMs&quot;: 75.607875,
+      &quot;meanMs&quot;: 66.52974160000001,
+      &quot;componentsMeanMs&quot;: {
+        &quot;encoderMs&quot;: 50.98183320951648,
+        &quot;packMs&quot;: 10.671749990433455,
+        &quot;poolAndDigestMs&quot;: 0.7794997887685895,
+        &quot;tensorMs&quot;: 0.21120061282999814,
+        &quot;windowJournalMs&quot;: 1.5152009727898985,
+        &quot;headMs&quot;: 0.5301749974023551,
+        &quot;startJournalMs&quot;: 0.053924997337162495,
+        &quot;snapshotStartMs&quot;: 5.000620149075985e-05,
+        &quot;resultJournalMs&quot;: 0.9746502037160099,
+        &quot;snapshotEndMs&quot;: 5.039619281888008e-05,
+        &quot;telemetryJournalMs&quot;: 0.06214160239323974,
+        &quot;otherMs&quot;: 0.7492648224185103
+      },
+      &quot;local50ms&quot;: &quot;fail&quot;
+    },
+    {
+      &quot;arm&quot;: &quot;reference&quot;,
+      &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+      &quot;observations&quot;: 5,
+      &quot;p50Ms&quot;: 62.5585,
+      &quot;maxMs&quot;: 64.613292,
+      &quot;meanMs&quot;: 63.0037832,
+      &quot;componentsMeanMs&quot;: {
+        &quot;encoderMs&quot;: 48.868341802153736,
+        &quot;packMs&quot;: 10.199216607725248,
+        &quot;poolAndDigestMs&quot;: 0.5483496061060578,
+        &quot;tensorMs&quot;: 0.14309920952655375,
+        &quot;windowJournalMs&quot;: 1.4479493955150247,
+        &quot;headMs&quot;: 0.16487479442730546,
+        &quot;startJournalMs&quot;: 0.05613339599221945,
+        &quot;snapshotStartMs&quot;: 4.979665391147137e-05,
+        &quot;resultJournalMs&quot;: 1.0055835940875113,
+        &quot;snapshotEndMs&quot;: 5.820184014737606e-05,
+        &quot;telemetryJournalMs&quot;: 0.06697520730085671,
+        &quot;otherMs&quot;: 0.5031515886714288
+      },
+      &quot;local50ms&quot;: &quot;fail&quot;
+    },
+    {
+      &quot;arm&quot;: &quot;reference&quot;,
+      &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+      &quot;observations&quot;: 5,
+      &quot;p50Ms&quot;: 68.014708,
+      &quot;maxMs&quot;: 68.966708,
+      &quot;meanMs&quot;: 67.6092582,
+      &quot;componentsMeanMs&quot;: {
+        &quot;encoderMs&quot;: 52.15409920201637,
+        &quot;packMs&quot;: 10.971158411120996,
+        &quot;poolAndDigestMs&quot;: 0.5877827818039805,
+        &quot;tensorMs&quot;: 0.15332538168877363,
+        &quot;windowJournalMs&quot;: 1.5243584348354489,
+        &quot;headMs&quot;: 0.36032479838468134,
+        &quot;startJournalMs&quot;: 0.06632499862462282,
+        &quot;snapshotStartMs&quot;: 4.9802474677562714e-05,
+        &quot;resultJournalMs&quot;: 1.027308398624882,
+        &quot;snapshotEndMs&quot;: 4.180474206805229e-05,
+        &quot;telemetryJournalMs&quot;: 0.07009160472080112,
+        &quot;otherMs&quot;: 0.694392580962699
+      },
+      &quot;local50ms&quot;: &quot;fail&quot;
+    },
+    {
+      &quot;arm&quot;: &quot;reference&quot;,
+      &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+      &quot;observations&quot;: 5,
+      &quot;p50Ms&quot;: 67.655041,
+      &quot;maxMs&quot;: 68.30975,
+      &quot;meanMs&quot;: 67.62710799999999,
+      &quot;componentsMeanMs&quot;: {
+        &quot;encoderMs&quot;: 52.27450839593075,
+        &quot;packMs&quot;: 11.222566600190476,
+        &quot;poolAndDigestMs&quot;: 0.5645833851303905,
+        &quot;tensorMs&quot;: 0.14975001686252654,
+        &quot;windowJournalMs&quot;: 1.5304996049962938,
+        &quot;headMs&quot;: 0.2228165918495506,
+        &quot;startJournalMs&quot;: 0.06584160146303475,
+        &quot;snapshotStartMs&quot;: 3.3603282645344734e-05,
+        &quot;resultJournalMs&quot;: 1.085933408467099,
+        &quot;snapshotEndMs&quot;: 5.040201358497143e-05,
+        &quot;telemetryJournalMs&quot;: 0.07880838820710778,
+        &quot;otherMs&quot;: 0.43171600160653156
+      },
+      &quot;local50ms&quot;: &quot;fail&quot;
+    },
+    {
+      &quot;arm&quot;: &quot;packed&quot;,
+      &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+      &quot;observations&quot;: 5,
+      &quot;p50Ms&quot;: 59.844875,
+      &quot;maxMs&quot;: 60.05,
+      &quot;meanMs&quot;: 59.2832752,
+      &quot;componentsMeanMs&quot;: {
+        &quot;encoderMs&quot;: 50.035033019958064,
+        &quot;packMs&quot;: 5.447958403965458,
+        &quot;poolAndDigestMs&quot;: 0.5479492130689323,
+        &quot;tensorMs&quot;: 0.14081658446229994,
+        &quot;windowJournalMs&quot;: 1.4651338278781623,
+        &quot;headMs&quot;: 0.16841660253703594,
+        &quot;startJournalMs&quot;: 0.050216587260365486,
+        &quot;snapshotStartMs&quot;: 5.860929377377033e-05,
+        &quot;resultJournalMs&quot;: 1.020358398091048,
+        &quot;snapshotEndMs&quot;: 5.820184014737606e-05,
+        &quot;telemetryJournalMs&quot;: 0.06022500456310809,
+        &quot;otherMs&quot;: 0.3470507470816031
+      },
+      &quot;local50ms&quot;: &quot;fail&quot;
+    },
+    {
+      &quot;arm&quot;: &quot;packed&quot;,
+      &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+      &quot;observations&quot;: 5,
+      &quot;p50Ms&quot;: 58.215709,
+      &quot;maxMs&quot;: 58.3655,
+      &quot;meanMs&quot;: 57.5608084,
+      &quot;componentsMeanMs&quot;: {
+        &quot;encoderMs&quot;: 48.189691797597334,
+        &quot;packMs&quot;: 5.440716806333512,
+        &quot;poolAndDigestMs&quot;: 0.5313082016073167,
+        &quot;tensorMs&quot;: 0.14008399448357522,
+        &quot;windowJournalMs&quot;: 1.4643500151578337,
+        &quot;headMs&quot;: 0.17234999686479568,
+        &quot;startJournalMs&quot;: 0.05365860997699201,
+        &quot;snapshotStartMs&quot;: 6.659538485109806e-05,
+        &quot;resultJournalMs&quot;: 1.0823334043379873,
+        &quot;snapshotEndMs&quot;: 8.320785127580166e-05,
+        &quot;telemetryJournalMs&quot;: 0.06360800471156836,
+        &quot;otherMs&quot;: 0.42255776569295733
+      },
+      &quot;local50ms&quot;: &quot;fail&quot;
+    },
+    {
+      &quot;arm&quot;: &quot;packed&quot;,
+      &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+      &quot;observations&quot;: 5,
+      &quot;p50Ms&quot;: 62.494125,
+      &quot;maxMs&quot;: 65.967875,
+      &quot;meanMs&quot;: 62.4262832,
+      &quot;componentsMeanMs&quot;: {
+        &quot;encoderMs&quot;: 52.439824800239876,
+        &quot;packMs&quot;: 5.884716397849843,
+        &quot;poolAndDigestMs&quot;: 0.5843076098244637,
+        &quot;tensorMs&quot;: 0.15161700430326164,
+        &quot;windowJournalMs&quot;: 1.5493083745241165,
+        &quot;headMs&quot;: 0.17653300310485065,
+        &quot;startJournalMs&quot;: 0.05736659513786435,
+        &quot;snapshotStartMs&quot;: 4.180474206805229e-05,
+        &quot;resultJournalMs&quot;: 1.086416793987155,
+        &quot;snapshotEndMs&quot;: 4.159519448876381e-05,
+        &quot;telemetryJournalMs&quot;: 0.07181639666669071,
+        &quot;otherMs&quot;: 0.4242928244253221
+      },
+      &quot;local50ms&quot;: &quot;fail&quot;
+    },
+    {
+      &quot;arm&quot;: &quot;packed&quot;,
+      &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+      &quot;observations&quot;: 5,
+      &quot;p50Ms&quot;: 61.336958,
+      &quot;maxMs&quot;: 63.335208,
+      &quot;meanMs&quot;: 61.6583166,
+      &quot;componentsMeanMs&quot;: {
+        &quot;encoderMs&quot;: 51.814874599222094,
+        &quot;packMs&quot;: 5.767433386063203,
+        &quot;poolAndDigestMs&quot;: 0.5594245914835483,
+        &quot;tensorMs&quot;: 0.14559239498339593,
+        &quot;windowJournalMs&quot;: 1.536574208876118,
+        &quot;headMs&quot;: 0.16119160572998226,
+        &quot;startJournalMs&quot;: 0.06035839905962348,
+        &quot;snapshotStartMs&quot;: 4.1996827349066734e-05,
+        &quot;resultJournalMs&quot;: 1.0742917947936803,
+        &quot;snapshotEndMs&quot;: 4.1601015254855156e-05,
+        &quot;telemetryJournalMs&quot;: 0.07004180224612355,
+        &quot;otherMs&quot;: 0.4684502196996263
+      },
+      &quot;local50ms&quot;: &quot;fail&quot;
+    },
+    {
+      &quot;arm&quot;: &quot;fast&quot;,
+      &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+      &quot;observations&quot;: 5,
+      &quot;p50Ms&quot;: 57.954792,
+      &quot;maxMs&quot;: 58.09325,
+      &quot;meanMs&quot;: 57.1729586,
+      &quot;componentsMeanMs&quot;: {
+        &quot;encoderMs&quot;: 50.569424603600055,
+        &quot;packMs&quot;: 2.7448916051071137,
+        &quot;poolAndDigestMs&quot;: 0.5498751881532371,
+        &quot;tensorMs&quot;: 0.1449338044039905,
+        &quot;windowJournalMs&quot;: 1.4595499960705638,
+        &quot;headMs&quot;: 0.19803338800556958,
+        &quot;startJournalMs&quot;: 0.05755840102210641,
+        &quot;snapshotStartMs&quot;: 4.140310920774937e-05,
+        &quot;resultJournalMs&quot;: 0.9015164047013968,
+        &quot;snapshotEndMs&quot;: 5.820184014737606e-05,
+        &quot;telemetryJournalMs&quot;: 0.07004179642535746,
+        &quot;otherMs&quot;: 0.4770338075612557
+      },
+      &quot;local50ms&quot;: &quot;fail&quot;
+    },
+    {
+      &quot;arm&quot;: &quot;fast&quot;,
+      &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+      &quot;observations&quot;: 5,
+      &quot;p50Ms&quot;: 54.746083,
+      &quot;maxMs&quot;: 56.508541,
+      &quot;meanMs&quot;: 54.9914916,
+      &quot;componentsMeanMs&quot;: {
+        &quot;encoderMs&quot;: 48.583850607974455,
+        &quot;packMs&quot;: 2.6903168007265776,
+        &quot;poolAndDigestMs&quot;: 0.5263910163193941,
+        &quot;tensorMs&quot;: 0.14101678389124572,
+        &quot;windowJournalMs&quot;: 1.4282833901233971,
+        &quot;headMs&quot;: 0.1417331979610026,
+        &quot;startJournalMs&quot;: 0.05607500206679106,
+        &quot;snapshotStartMs&quot;: 6.640329957008362e-05,
+        &quot;resultJournalMs&quot;: 0.9155083913356066,
+        &quot;snapshotEndMs&quot;: 4.1996827349066734e-05,
+        &quot;telemetryJournalMs&quot;: 0.055583007633686066,
+        &quot;otherMs&quot;: 0.4526250018409286
+      },
+      &quot;local50ms&quot;: &quot;fail&quot;
+    },
+    {
+      &quot;arm&quot;: &quot;fast&quot;,
+      &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+      &quot;observations&quot;: 5,
+      &quot;p50Ms&quot;: 59.684959,
+      &quot;maxMs&quot;: 60.931875,
+      &quot;meanMs&quot;: 59.5306836,
+      &quot;componentsMeanMs&quot;: {
+        &quot;encoderMs&quot;: 52.57566720247269,
+        &quot;packMs&quot;: 2.870491601061076,
+        &quot;poolAndDigestMs&quot;: 0.5853499984368682,
+        &quot;tensorMs&quot;: 0.14887459110468626,
+        &quot;windowJournalMs&quot;: 1.4890511811245233,
+        &quot;headMs&quot;: 0.20441659726202488,
+        &quot;startJournalMs&quot;: 0.06094179698266089,
+        &quot;snapshotStartMs&quot;: 5.019828677177429e-05,
+        &quot;resultJournalMs&quot;: 1.1022499995306134,
+        &quot;snapshotEndMs&quot;: 6.640329957008362e-05,
+        &quot;telemetryJournalMs&quot;: 0.06787480087950826,
+        &quot;otherMs&quot;: 0.4256492295590135
+      },
+      &quot;local50ms&quot;: &quot;fail&quot;
+    },
+    {
+      &quot;arm&quot;: &quot;fast&quot;,
+      &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+      &quot;observations&quot;: 5,
+      &quot;p50Ms&quot;: 58.3325,
+      &quot;maxMs&quot;: 60.636333,
+      &quot;meanMs&quot;: 58.651816600000004,
+      &quot;componentsMeanMs&quot;: {
+        &quot;encoderMs&quot;: 51.56666659167968,
+        &quot;packMs&quot;: 2.925058000255376,
+        &quot;poolAndDigestMs&quot;: 0.5507830006536096,
+        &quot;tensorMs&quot;: 0.14231620589271188,
+        &quot;windowJournalMs&quot;: 1.5079089906066656,
+        &quot;headMs&quot;: 0.22372480598278344,
+        &quot;startJournalMs&quot;: 0.0654500094242394,
+        &quot;snapshotStartMs&quot;: 4.16068360209465e-05,
+        &quot;resultJournalMs&quot;: 1.1364668025635183,
+        &quot;snapshotEndMs&quot;: 6.640329957008362e-05,
+        &quot;telemetryJournalMs&quot;: 0.0704331963788718,
+        &quot;otherMs&quot;: 0.4629009864269591
+      },
+      &quot;local50ms&quot;: &quot;fail&quot;
+    },
+    {
+      &quot;arm&quot;: &quot;eager&quot;,
+      &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+      &quot;observations&quot;: 5,
+      &quot;p50Ms&quot;: 68.986125,
+      &quot;maxMs&quot;: 75.319,
+      &quot;meanMs&quot;: 70.017892,
+      &quot;componentsMeanMs&quot;: {
+        &quot;encoderMs&quot;: 63.29075858811848,
+        &quot;packMs&quot;: 2.834341599373147,
+        &quot;poolAndDigestMs&quot;: 0.5630836123600602,
+        &quot;tensorMs&quot;: 0.14719139435328543,
+        &quot;windowJournalMs&quot;: 1.4731830160599202,
+        &quot;headMs&quot;: 0.17470840830355883,
+        &quot;startJournalMs&quot;: 0.062050396809354424,
+        &quot;snapshotStartMs&quot;: 5.841138772666454e-05,
+        &quot;resultJournalMs&quot;: 0.9936584043316543,
+        &quot;snapshotEndMs&quot;: 5.020410753786564e-05,
+        &quot;telemetryJournalMs&quot;: 0.07140000234358013,
+        &quot;otherMs&quot;: 0.40740796245169975
+      },
+      &quot;local50ms&quot;: &quot;fail&quot;
+    },
+    {
+      &quot;arm&quot;: &quot;eager&quot;,
+      &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+      &quot;observations&quot;: 5,
+      &quot;p50Ms&quot;: 66.71275,
+      &quot;maxMs&quot;: 73.767791,
+      &quot;meanMs&quot;: 68.0557416,
+      &quot;componentsMeanMs&quot;: {
+        &quot;encoderMs&quot;: 61.50150019675493,
+        &quot;packMs&quot;: 2.6719584071543068,
+        &quot;poolAndDigestMs&quot;: 0.5444499780423939,
+        &quot;tensorMs&quot;: 0.1423917943611741,
+        &quot;windowJournalMs&quot;: 1.4432585623580962,
+        &quot;headMs&quot;: 0.18804999417625368,
+        &quot;startJournalMs&quot;: 0.05553339724428952,
+        &quot;snapshotStartMs&quot;: 5.0209928303956985e-05,
+        &quot;resultJournalMs&quot;: 1.0047251998912543,
+        &quot;snapshotEndMs&quot;: 4.139728844165802e-05,
+        &quot;telemetryJournalMs&quot;: 0.06675040349364281,
+        &quot;otherMs&quot;: 0.43703205930691524
+      },
+      &quot;local50ms&quot;: &quot;fail&quot;
+    },
+    {
+      &quot;arm&quot;: &quot;eager&quot;,
+      &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+      &quot;observations&quot;: 5,
+      &quot;p50Ms&quot;: 70.64275,
+      &quot;maxMs&quot;: 85.796167,
+      &quot;meanMs&quot;: 73.6896834,
+      &quot;componentsMeanMs&quot;: {
+        &quot;encoderMs&quot;: 65.69025820936076,
+        &quot;packMs&quot;: 3.238166600931436,
+        &quot;poolAndDigestMs&quot;: 0.6026082148309797,
+        &quot;tensorMs&quot;: 0.1635831838939339,
+        &quot;windowJournalMs&quot;: 1.6584578319452703,
+        &quot;headMs&quot;: 0.3360336064361036,
+        &quot;startJournalMs&quot;: 0.056816404685378075,
+        &quot;snapshotStartMs&quot;: 6.659538485109806e-05,
+        &quot;resultJournalMs&quot;: 1.082008407684043,
+        &quot;snapshotEndMs&quot;: 5.7998113334178925e-05,
+        &quot;telemetryJournalMs&quot;: 0.07345839985646307,
+        &quot;otherMs&quot;: 0.7881679468774507
+      },
+      &quot;local50ms&quot;: &quot;fail&quot;
+    },
+    {
+      &quot;arm&quot;: &quot;eager&quot;,
+      &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+      &quot;observations&quot;: 5,
+      &quot;p50Ms&quot;: 70.725583,
+      &quot;maxMs&quot;: 73.605917,
+      &quot;meanMs&quot;: 71.4452084,
+      &quot;componentsMeanMs&quot;: {
+        &quot;encoderMs&quot;: 64.41968322033063,
+        &quot;packMs&quot;: 2.9157085984479636,
+        &quot;poolAndDigestMs&quot;: 0.5806331872008741,
+        &quot;tensorMs&quot;: 0.14655839768238366,
+        &quot;windowJournalMs&quot;: 1.4941419882234186,
+        &quot;headMs&quot;: 0.16909180558286607,
+        &quot;startJournalMs&quot;: 0.059025001246482134,
+        &quot;snapshotStartMs&quot;: 4.1601015254855156e-05,
+        &quot;resultJournalMs&quot;: 1.0538749978877604,
+        &quot;snapshotEndMs&quot;: 4.159519448876381e-05,
+        &quot;telemetryJournalMs&quot;: 0.07092520827427506,
+        &quot;otherMs&quot;: 0.5354827989136055
+      },
+      &quot;local50ms&quot;: &quot;fail&quot;
+    }
+  ],
+  &quot;comparisons&quot;: {
+    &quot;reference&quot;: {
+      &quot;exactProbabilities&quot;: true,
+      &quot;maxAbsoluteProbabilityDelta&quot;: 0.0,
+      &quot;identicalDecisions&quot;: true,
+      &quot;repeatStable&quot;: true,
+      &quot;registeredEquivalenceGate&quot;: &quot;pass&quot;
+    },
+    &quot;packed&quot;: {
+      &quot;exactProbabilities&quot;: true,
+      &quot;maxAbsoluteProbabilityDelta&quot;: 0.0,
+      &quot;identicalDecisions&quot;: true,
+      &quot;repeatStable&quot;: true,
+      &quot;registeredEquivalenceGate&quot;: &quot;pass&quot;
+    },
+    &quot;fast&quot;: {
+      &quot;exactProbabilities&quot;: true,
+      &quot;maxAbsoluteProbabilityDelta&quot;: 0.0,
+      &quot;identicalDecisions&quot;: true,
+      &quot;repeatStable&quot;: true,
+      &quot;registeredEquivalenceGate&quot;: &quot;pass&quot;
+    },
+    &quot;eager&quot;: {
+      &quot;exactProbabilities&quot;: false,
+      &quot;maxAbsoluteProbabilityDelta&quot;: 1.1920928955078125e-07,
+      &quot;identicalDecisions&quot;: true,
+      &quot;repeatStable&quot;: true,
+      &quot;registeredEquivalenceGate&quot;: &quot;pass&quot;
+    }
+  },
+  &quot;tokenizationAuditGroups&quot;: 20,
+  &quot;trainingSteps&quot;: 0,
+  &quot;timedInferenceItems&quot;: 80,
+  &quot;forwardWindows&quot;: 320,
+  &quot;journalEvents&quot;: 881,
+  &quot;encoder&quot;: {
+    &quot;layers&quot;: 2,
+    &quot;parameters&quot;: 7120384,
+    &quot;tensorSha256&quot;: &quot;6bbafd3213e907abef347a0fd96179bf4282d987c1b3000d0498aca1feafb40b&quot;
+  },
+  &quot;headParameters&quot;: 180418,
+  &quot;checkpoint&quot;: {
+    &quot;contains&quot;: &quot;four_event_anchor_heads_only&quot;,
+    &quot;path&quot;: &quot;.local/world-components-logic/checkpoints/m01-event-dev42-20261102-r1.pt&quot;,
+    &quot;sha256&quot;: &quot;a390a148c81f6a1300908c876a7de905d3af90abd75332fa926189fb86380b56&quot;
+  },
+  &quot;weightsUnchanged&quot;: true,
+  &quot;encoderRuntimes&quot;: {
+    &quot;eager&quot;: {
+      &quot;attentionClasses&quot;: [
+        &quot;BertSelfAttention&quot;,
+        &quot;BertSelfAttention&quot;
+      ],
+      &quot;attentionImplementation&quot;: &quot;eager&quot;
+    },
+    &quot;sdpa&quot;: {
+      &quot;attentionClasses&quot;: [
+        &quot;BertSdpaSelfAttention&quot;,
+        &quot;BertSdpaSelfAttention&quot;
+      ],
+      &quot;attentionImplementation&quot;: &quot;sdpa&quot;
+    }
+  },
+  &quot;tokenizerClasses&quot;: {
+    &quot;fast&quot;: &quot;BertTokenizerFast&quot;,
+    &quot;slow&quot;: &quot;BertTokenizer&quot;
+  },
+  &quot;supervisor&quot;: {
+    &quot;error&quot;: null,
+    &quot;exitCode&quot;: 0,
+    &quot;measurement&quot;: &quot;ps_rss_every250ms&quot;,
+    &quot;observedPeakResidentMiB&quot;: 553.3125,
+    &quot;stopReason&quot;: null,
+    &quot;wallMs&quot;: 8387.699208018603
+  },
+  &quot;timingScope&quot;: &quot;all per-item work and journals; batch final write in process wall, supervisor replay unmeasured&quot;
+}</pre></details><details><summary>全部80次原始分数和预测</summary><pre>[
+  {
+    &quot;arm&quot;: &quot;reference&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+    &quot;repeat&quot;: 0,
+    &quot;probabilities&quot;: [
+      0.020226359367370605
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;skip&quot;
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 75.607875
+  },
+  {
+    &quot;arm&quot;: &quot;packed&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+    &quot;repeat&quot;: 0,
+    &quot;probabilities&quot;: [
+      0.020226359367370605
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;skip&quot;
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 57.720417
+  },
+  {
+    &quot;arm&quot;: &quot;fast&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+    &quot;repeat&quot;: 0,
+    &quot;probabilities&quot;: [
+      0.020226359367370605
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;skip&quot;
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 55.824542
+  },
+  {
+    &quot;arm&quot;: &quot;eager&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+    &quot;repeat&quot;: 0,
+    &quot;probabilities&quot;: [
+      0.020226340740919113
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;skip&quot;
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 75.319
+  },
+  {
+    &quot;arm&quot;: &quot;reference&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+    &quot;repeat&quot;: 0,
+    &quot;probabilities&quot;: [
+      0.9756626486778259
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 61.231666
+  },
+  {
+    &quot;arm&quot;: &quot;packed&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+    &quot;repeat&quot;: 0,
+    &quot;probabilities&quot;: [
+      0.9756626486778259
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 55.004916
+  },
+  {
+    &quot;arm&quot;: &quot;fast&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+    &quot;repeat&quot;: 0,
+    &quot;probabilities&quot;: [
+      0.9756626486778259
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 53.570417
+  },
+  {
+    &quot;arm&quot;: &quot;eager&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+    &quot;repeat&quot;: 0,
+    &quot;probabilities&quot;: [
+      0.9756626486778259
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 73.767791
+  },
+  {
+    &quot;arm&quot;: &quot;reference&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+    &quot;repeat&quot;: 0,
+    &quot;probabilities&quot;: [
+      0.01315467432141304,
+      0.023671815171837807,
+      0.01782318577170372
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 68.014708
+  },
+  {
+    &quot;arm&quot;: &quot;packed&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+    &quot;repeat&quot;: 0,
+    &quot;probabilities&quot;: [
+      0.01315467432141304,
+      0.023671815171837807,
+      0.01782318577170372
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 65.967875
+  },
+  {
+    &quot;arm&quot;: &quot;fast&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+    &quot;repeat&quot;: 0,
+    &quot;probabilities&quot;: [
+      0.01315467432141304,
+      0.023671815171837807,
+      0.01782318577170372
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 60.931875
+  },
+  {
+    &quot;arm&quot;: &quot;eager&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+    &quot;repeat&quot;: 0,
+    &quot;probabilities&quot;: [
+      0.01315467432141304,
+      0.02367180399596691,
+      0.017823193222284317
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 85.796167
+  },
+  {
+    &quot;arm&quot;: &quot;reference&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+    &quot;repeat&quot;: 0,
+    &quot;probabilities&quot;: [
+      0.022675814107060432,
+      0.912228524684906,
+      0.9493820667266846
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: [
+        {
+          &quot;targetId&quot;: &quot;p2&quot;
+        },
+        {
+          &quot;targetId&quot;: &quot;p3&quot;
+        }
+      ]
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 68.30975
+  },
+  {
+    &quot;arm&quot;: &quot;packed&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+    &quot;repeat&quot;: 0,
+    &quot;probabilities&quot;: [
+      0.022675814107060432,
+      0.912228524684906,
+      0.9493820667266846
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: [
+        {
+          &quot;targetId&quot;: &quot;p2&quot;
+        },
+        {
+          &quot;targetId&quot;: &quot;p3&quot;
+        }
+      ]
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 62.20025
+  },
+  {
+    &quot;arm&quot;: &quot;fast&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+    &quot;repeat&quot;: 0,
+    &quot;probabilities&quot;: [
+      0.022675814107060432,
+      0.912228524684906,
+      0.9493820667266846
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: [
+        {
+          &quot;targetId&quot;: &quot;p2&quot;
+        },
+        {
+          &quot;targetId&quot;: &quot;p3&quot;
+        }
+      ]
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 57.713833
+  },
+  {
+    &quot;arm&quot;: &quot;eager&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+    &quot;repeat&quot;: 0,
+    &quot;probabilities&quot;: [
+      0.02267582342028618,
+      0.9122284054756165,
+      0.949381947517395
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: [
+        {
+          &quot;targetId&quot;: &quot;p2&quot;
+        },
+        {
+          &quot;targetId&quot;: &quot;p3&quot;
+        }
+      ]
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 72.645208
+  },
+  {
+    &quot;arm&quot;: &quot;eager&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+    &quot;repeat&quot;: 1,
+    &quot;probabilities&quot;: [
+      0.020226340740919113
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;skip&quot;
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 70.089459
+  },
+  {
+    &quot;arm&quot;: &quot;fast&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+    &quot;repeat&quot;: 1,
+    &quot;probabilities&quot;: [
+      0.020226359367370605
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;skip&quot;
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 57.954792
+  },
+  {
+    &quot;arm&quot;: &quot;packed&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+    &quot;repeat&quot;: 1,
+    &quot;probabilities&quot;: [
+      0.020226359367370605
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;skip&quot;
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 58.760209
+  },
+  {
+    &quot;arm&quot;: &quot;reference&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+    &quot;repeat&quot;: 1,
+    &quot;probabilities&quot;: [
+      0.020226359367370605
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;skip&quot;
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 65.179333
+  },
+  {
+    &quot;arm&quot;: &quot;eager&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+    &quot;repeat&quot;: 1,
+    &quot;probabilities&quot;: [
+      0.9756626486778259
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 66.71275
+  },
+  {
+    &quot;arm&quot;: &quot;fast&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+    &quot;repeat&quot;: 1,
+    &quot;probabilities&quot;: [
+      0.9756626486778259
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 54.000917
+  },
+  {
+    &quot;arm&quot;: &quot;packed&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+    &quot;repeat&quot;: 1,
+    &quot;probabilities&quot;: [
+      0.9756626486778259
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 57.979292
+  },
+  {
+    &quot;arm&quot;: &quot;reference&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+    &quot;repeat&quot;: 1,
+    &quot;probabilities&quot;: [
+      0.9756626486778259
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 64.361958
+  },
+  {
+    &quot;arm&quot;: &quot;eager&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+    &quot;repeat&quot;: 1,
+    &quot;probabilities&quot;: [
+      0.01315467432141304,
+      0.02367180399596691,
+      0.017823193222284317
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 69.357667
+  },
+  {
+    &quot;arm&quot;: &quot;fast&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+    &quot;repeat&quot;: 1,
+    &quot;probabilities&quot;: [
+      0.01315467432141304,
+      0.023671815171837807,
+      0.01782318577170372
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 59.751125
+  },
+  {
+    &quot;arm&quot;: &quot;packed&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+    &quot;repeat&quot;: 1,
+    &quot;probabilities&quot;: [
+      0.01315467432141304,
+      0.023671815171837807,
+      0.01782318577170372
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 60.644875
+  },
+  {
+    &quot;arm&quot;: &quot;reference&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+    &quot;repeat&quot;: 1,
+    &quot;probabilities&quot;: [
+      0.01315467432141304,
+      0.023671815171837807,
+      0.01782318577170372
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 67.039583
+  },
+  {
+    &quot;arm&quot;: &quot;eager&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+    &quot;repeat&quot;: 1,
+    &quot;probabilities&quot;: [
+      0.02267582342028618,
+      0.9122284054756165,
+      0.949381947517395
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: [
+        {
+          &quot;targetId&quot;: &quot;p2&quot;
+        },
+        {
+          &quot;targetId&quot;: &quot;p3&quot;
+        }
+      ]
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 69.600167
+  },
+  {
+    &quot;arm&quot;: &quot;fast&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+    &quot;repeat&quot;: 1,
+    &quot;probabilities&quot;: [
+      0.022675814107060432,
+      0.912228524684906,
+      0.9493820667266846
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: [
+        {
+          &quot;targetId&quot;: &quot;p2&quot;
+        },
+        {
+          &quot;targetId&quot;: &quot;p3&quot;
+        }
+      ]
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 59.045917
+  },
+  {
+    &quot;arm&quot;: &quot;packed&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+    &quot;repeat&quot;: 1,
+    &quot;probabilities&quot;: [
+      0.022675814107060432,
+      0.912228524684906,
+      0.9493820667266846
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: [
+        {
+          &quot;targetId&quot;: &quot;p2&quot;
+        },
+        {
+          &quot;targetId&quot;: &quot;p3&quot;
+        }
+      ]
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 61.264834
+  },
+  {
+    &quot;arm&quot;: &quot;reference&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+    &quot;repeat&quot;: 1,
+    &quot;probabilities&quot;: [
+      0.022675814107060432,
+      0.912228524684906,
+      0.9493820667266846
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: [
+        {
+          &quot;targetId&quot;: &quot;p2&quot;
+        },
+        {
+          &quot;targetId&quot;: &quot;p3&quot;
+        }
+      ]
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 67.655041
+  },
+  {
+    &quot;arm&quot;: &quot;reference&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+    &quot;repeat&quot;: 2,
+    &quot;probabilities&quot;: [
+      0.020226359367370605
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;skip&quot;
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 64.406625
+  },
+  {
+    &quot;arm&quot;: &quot;packed&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+    &quot;repeat&quot;: 2,
+    &quot;probabilities&quot;: [
+      0.020226359367370605
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;skip&quot;
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 60.040875
+  },
+  {
+    &quot;arm&quot;: &quot;fast&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+    &quot;repeat&quot;: 2,
+    &quot;probabilities&quot;: [
+      0.020226359367370605
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;skip&quot;
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 58.09325
+  },
+  {
+    &quot;arm&quot;: &quot;eager&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+    &quot;repeat&quot;: 2,
+    &quot;probabilities&quot;: [
+      0.020226340740919113
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;skip&quot;
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 68.078667
+  },
+  {
+    &quot;arm&quot;: &quot;reference&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+    &quot;repeat&quot;: 2,
+    &quot;probabilities&quot;: [
+      0.9756626486778259
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 62.5585
+  },
+  {
+    &quot;arm&quot;: &quot;packed&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+    &quot;repeat&quot;: 2,
+    &quot;probabilities&quot;: [
+      0.9756626486778259
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 58.215709
+  },
+  {
+    &quot;arm&quot;: &quot;fast&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+    &quot;repeat&quot;: 2,
+    &quot;probabilities&quot;: [
+      0.9756626486778259
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 56.1315
+  },
+  {
+    &quot;arm&quot;: &quot;eager&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+    &quot;repeat&quot;: 2,
+    &quot;probabilities&quot;: [
+      0.9756626486778259
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 66.486166
+  },
+  {
+    &quot;arm&quot;: &quot;reference&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+    &quot;repeat&quot;: 2,
+    &quot;probabilities&quot;: [
+      0.01315467432141304,
+      0.023671815171837807,
+      0.01782318577170372
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 68.245417
+  },
+  {
+    &quot;arm&quot;: &quot;packed&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+    &quot;repeat&quot;: 2,
+    &quot;probabilities&quot;: [
+      0.01315467432141304,
+      0.023671815171837807,
+      0.01782318577170372
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 62.494125
+  },
+  {
+    &quot;arm&quot;: &quot;fast&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+    &quot;repeat&quot;: 2,
+    &quot;probabilities&quot;: [
+      0.01315467432141304,
+      0.023671815171837807,
+      0.01782318577170372
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 58.746625
+  },
+  {
+    &quot;arm&quot;: &quot;eager&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+    &quot;repeat&quot;: 2,
+    &quot;probabilities&quot;: [
+      0.01315467432141304,
+      0.02367180399596691,
+      0.017823193222284317
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 69.483333
+  },
+  {
+    &quot;arm&quot;: &quot;reference&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+    &quot;repeat&quot;: 2,
+    &quot;probabilities&quot;: [
+      0.022675814107060432,
+      0.912228524684906,
+      0.9493820667266846
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: [
+        {
+          &quot;targetId&quot;: &quot;p2&quot;
+        },
+        {
+          &quot;targetId&quot;: &quot;p3&quot;
+        }
+      ]
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 67.541583
+  },
+  {
+    &quot;arm&quot;: &quot;packed&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+    &quot;repeat&quot;: 2,
+    &quot;probabilities&quot;: [
+      0.022675814107060432,
+      0.912228524684906,
+      0.9493820667266846
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: [
+        {
+          &quot;targetId&quot;: &quot;p2&quot;
+        },
+        {
+          &quot;targetId&quot;: &quot;p3&quot;
+        }
+      ]
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 60.154333
+  },
+  {
+    &quot;arm&quot;: &quot;fast&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+    &quot;repeat&quot;: 2,
+    &quot;probabilities&quot;: [
+      0.022675814107060432,
+      0.912228524684906,
+      0.9493820667266846
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: [
+        {
+          &quot;targetId&quot;: &quot;p2&quot;
+        },
+        {
+          &quot;targetId&quot;: &quot;p3&quot;
+        }
+      ]
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 58.3325
+  },
+  {
+    &quot;arm&quot;: &quot;eager&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+    &quot;repeat&quot;: 2,
+    &quot;probabilities&quot;: [
+      0.02267582342028618,
+      0.9122284054756165,
+      0.949381947517395
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: [
+        {
+          &quot;targetId&quot;: &quot;p2&quot;
+        },
+        {
+          &quot;targetId&quot;: &quot;p3&quot;
+        }
+      ]
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 70.725583
+  },
+  {
+    &quot;arm&quot;: &quot;eager&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+    &quot;repeat&quot;: 3,
+    &quot;probabilities&quot;: [
+      0.020226340740919113
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;skip&quot;
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 68.986125
+  },
+  {
+    &quot;arm&quot;: &quot;fast&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+    &quot;repeat&quot;: 3,
+    &quot;probabilities&quot;: [
+      0.020226359367370605
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;skip&quot;
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 55.902542
+  },
+  {
+    &quot;arm&quot;: &quot;packed&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+    &quot;repeat&quot;: 3,
+    &quot;probabilities&quot;: [
+      0.020226359367370605
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;skip&quot;
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 60.05
+  },
+  {
+    &quot;arm&quot;: &quot;reference&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+    &quot;repeat&quot;: 3,
+    &quot;probabilities&quot;: [
+      0.020226359367370605
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;skip&quot;
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 62.55275
+  },
+  {
+    &quot;arm&quot;: &quot;eager&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+    &quot;repeat&quot;: 3,
+    &quot;probabilities&quot;: [
+      0.9756626486778259
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 66.913084
+  },
+  {
+    &quot;arm&quot;: &quot;fast&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+    &quot;repeat&quot;: 3,
+    &quot;probabilities&quot;: [
+      0.9756626486778259
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 54.746083
+  },
+  {
+    &quot;arm&quot;: &quot;packed&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+    &quot;repeat&quot;: 3,
+    &quot;probabilities&quot;: [
+      0.9756626486778259
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 58.238625
+  },
+  {
+    &quot;arm&quot;: &quot;reference&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+    &quot;repeat&quot;: 3,
+    &quot;probabilities&quot;: [
+      0.9756626486778259
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 62.2535
+  },
+  {
+    &quot;arm&quot;: &quot;eager&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+    &quot;repeat&quot;: 3,
+    &quot;probabilities&quot;: [
+      0.01315467432141304,
+      0.02367180399596691,
+      0.017823193222284317
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 73.1685
+  },
+  {
+    &quot;arm&quot;: &quot;fast&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+    &quot;repeat&quot;: 3,
+    &quot;probabilities&quot;: [
+      0.01315467432141304,
+      0.023671815171837807,
+      0.01782318577170372
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 59.684959
+  },
+  {
+    &quot;arm&quot;: &quot;packed&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+    &quot;repeat&quot;: 3,
+    &quot;probabilities&quot;: [
+      0.01315467432141304,
+      0.023671815171837807,
+      0.01782318577170372
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 63.259583
+  },
+  {
+    &quot;arm&quot;: &quot;reference&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+    &quot;repeat&quot;: 3,
+    &quot;probabilities&quot;: [
+      0.01315467432141304,
+      0.023671815171837807,
+      0.01782318577170372
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 65.779875
+  },
+  {
+    &quot;arm&quot;: &quot;eager&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+    &quot;repeat&quot;: 3,
+    &quot;probabilities&quot;: [
+      0.02267582342028618,
+      0.9122284054756165,
+      0.949381947517395
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: [
+        {
+          &quot;targetId&quot;: &quot;p2&quot;
+        },
+        {
+          &quot;targetId&quot;: &quot;p3&quot;
+        }
+      ]
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 73.605917
+  },
+  {
+    &quot;arm&quot;: &quot;fast&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+    &quot;repeat&quot;: 3,
+    &quot;probabilities&quot;: [
+      0.022675814107060432,
+      0.912228524684906,
+      0.9493820667266846
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: [
+        {
+          &quot;targetId&quot;: &quot;p2&quot;
+        },
+        {
+          &quot;targetId&quot;: &quot;p3&quot;
+        }
+      ]
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 60.636333
+  },
+  {
+    &quot;arm&quot;: &quot;packed&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+    &quot;repeat&quot;: 3,
+    &quot;probabilities&quot;: [
+      0.022675814107060432,
+      0.912228524684906,
+      0.9493820667266846
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: [
+        {
+          &quot;targetId&quot;: &quot;p2&quot;
+        },
+        {
+          &quot;targetId&quot;: &quot;p3&quot;
+        }
+      ]
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 63.335208
+  },
+  {
+    &quot;arm&quot;: &quot;reference&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+    &quot;repeat&quot;: 3,
+    &quot;probabilities&quot;: [
+      0.022675814107060432,
+      0.912228524684906,
+      0.9493820667266846
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: [
+        {
+          &quot;targetId&quot;: &quot;p2&quot;
+        },
+        {
+          &quot;targetId&quot;: &quot;p3&quot;
+        }
+      ]
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 66.659375
+  },
+  {
+    &quot;arm&quot;: &quot;reference&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+    &quot;repeat&quot;: 4,
+    &quot;probabilities&quot;: [
+      0.020226359367370605
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;skip&quot;
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 64.902125
+  },
+  {
+    &quot;arm&quot;: &quot;packed&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+    &quot;repeat&quot;: 4,
+    &quot;probabilities&quot;: [
+      0.020226359367370605
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;skip&quot;
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 59.844875
+  },
+  {
+    &quot;arm&quot;: &quot;fast&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+    &quot;repeat&quot;: 4,
+    &quot;probabilities&quot;: [
+      0.020226359367370605
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;skip&quot;
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 58.089667
+  },
+  {
+    &quot;arm&quot;: &quot;eager&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-03&quot;,
+    &quot;repeat&quot;: 4,
+    &quot;probabilities&quot;: [
+      0.020226340740919113
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;skip&quot;
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 67.616209
+  },
+  {
+    &quot;arm&quot;: &quot;reference&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+    &quot;repeat&quot;: 4,
+    &quot;probabilities&quot;: [
+      0.9756626486778259
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 64.613292
+  },
+  {
+    &quot;arm&quot;: &quot;packed&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+    &quot;repeat&quot;: 4,
+    &quot;probabilities&quot;: [
+      0.9756626486778259
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 58.3655
+  },
+  {
+    &quot;arm&quot;: &quot;fast&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+    &quot;repeat&quot;: 4,
+    &quot;probabilities&quot;: [
+      0.9756626486778259
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 56.508541
+  },
+  {
+    &quot;arm&quot;: &quot;eager&quot;,
+    &quot;caseId&quot;: &quot;dev-d02-05&quot;,
+    &quot;repeat&quot;: 4,
+    &quot;probabilities&quot;: [
+      0.9756626486778259
+    ],
+    &quot;decoded&quot;: {
+      &quot;kind&quot;: &quot;act&quot;
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 66.398917
+  },
+  {
+    &quot;arm&quot;: &quot;reference&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+    &quot;repeat&quot;: 4,
+    &quot;probabilities&quot;: [
+      0.01315467432141304,
+      0.023671815171837807,
+      0.01782318577170372
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 68.966708
+  },
+  {
+    &quot;arm&quot;: &quot;packed&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+    &quot;repeat&quot;: 4,
+    &quot;probabilities&quot;: [
+      0.01315467432141304,
+      0.023671815171837807,
+      0.01782318577170372
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 59.764958
+  },
+  {
+    &quot;arm&quot;: &quot;fast&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+    &quot;repeat&quot;: 4,
+    &quot;probabilities&quot;: [
+      0.01315467432141304,
+      0.023671815171837807,
+      0.01782318577170372
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 58.538834
+  },
+  {
+    &quot;arm&quot;: &quot;eager&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-02&quot;,
+    &quot;repeat&quot;: 4,
+    &quot;probabilities&quot;: [
+      0.01315467432141304,
+      0.02367180399596691,
+      0.017823193222284317
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: []
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 70.64275
+  },
+  {
+    &quot;arm&quot;: &quot;reference&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+    &quot;repeat&quot;: 4,
+    &quot;probabilities&quot;: [
+      0.022675814107060432,
+      0.912228524684906,
+      0.9493820667266846
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: [
+        {
+          &quot;targetId&quot;: &quot;p2&quot;
+        },
+        {
+          &quot;targetId&quot;: &quot;p3&quot;
+        }
+      ]
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 67.969791
+  },
+  {
+    &quot;arm&quot;: &quot;packed&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+    &quot;repeat&quot;: 4,
+    &quot;probabilities&quot;: [
+      0.022675814107060432,
+      0.912228524684906,
+      0.9493820667266846
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: [
+        {
+          &quot;targetId&quot;: &quot;p2&quot;
+        },
+        {
+          &quot;targetId&quot;: &quot;p3&quot;
+        }
+      ]
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 61.336958
+  },
+  {
+    &quot;arm&quot;: &quot;fast&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+    &quot;repeat&quot;: 4,
+    &quot;probabilities&quot;: [
+      0.022675814107060432,
+      0.912228524684906,
+      0.9493820667266846
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: [
+        {
+          &quot;targetId&quot;: &quot;p2&quot;
+        },
+        {
+          &quot;targetId&quot;: &quot;p3&quot;
+        }
+      ]
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 57.5305
+  },
+  {
+    &quot;arm&quot;: &quot;eager&quot;,
+    &quot;caseId&quot;: &quot;dev-d03-06&quot;,
+    &quot;repeat&quot;: 4,
+    &quot;probabilities&quot;: [
+      0.02267582342028618,
+      0.9122284054756165,
+      0.949381947517395
+    ],
+    &quot;decoded&quot;: {
+      &quot;targets&quot;: [
+        {
+          &quot;targetId&quot;: &quot;p2&quot;
+        },
+        {
+          &quot;targetId&quot;: &quot;p3&quot;
+        }
+      ]
+    },
+    &quot;elapsedIncludingTelemetryMs&quot;: 70.649167
+  }
+]</pre></details><p><a href="m01-fitting/m01-input-dev42-20261103-r2.plan.json">冻结计划</a> · <a href="m01-fitting/m01-input-dev42-20261103-r2.record.json.gz">完整记录</a> · <a href="m01-fitting/m01-input-dev42-20261103-r2.record.journal.jsonl.gz">完整事件</a> · <a href="l3-9-m01-input-summary.json">机器汇总</a> · <a href="l3-8-m01-journal-results.html">上一批</a></p></section></main></html>

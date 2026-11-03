@@ -367,7 +367,7 @@ JOURNAL_BASE_PLAN=DATA/(EVENT_RUN+'.plan.json')
 JOURNAL_BASE_RECORD=DATA/(EVENT_RUN+'.record.json.gz')
 
 
-def validate_journal_run(plan,record,journal_path,baseline):
+def validate_journal_run(plan,record,journal_path,baseline,*,arms=JOURNAL_ARMS,allow_probability_drift=False):
     import copy
     import experiment
     if (record['status']!='diagnostic_completed' or record['supervisor']['exitCode']!=0 or record['supervisor']['stopReason'] is not None
@@ -389,10 +389,14 @@ def validate_journal_run(plan,record,journal_path,baseline):
     for key in ('attempts','attemptSlots','forwardAttempts','unexecutedAttempts'):
         if replay[key]!=record[key]:raise ValueError('journal/snapshot mismatch: '+key)
     entries,partial=experiment.read_journal(journal_path,record['planSha256'])
-    if partial or len(entries)!=441:raise ValueError('journal event count mismatch')
-    cases={c['caseId']:c for c in plan['cases']};expected={(a,c,i) for a in JOURNAL_ARMS for c in cases for i in range(5)}
+    cases={c['caseId']:c for c in plan['cases']}
+    count=len(cases)*len(arms)*5
+    prior_inputs={a['caseId']:a['coverage'] for a in baseline['attempts'] if a['arm']=='event2'}
+    window_count=sum(len(prior_inputs[c]['windows']) for c in cases)*len(arms)*5
+    if partial or len(entries)!=1+count*3+window_count*2:raise ValueError('journal event count mismatch')
+    expected={(a,c,i) for a in arms for c in cases for i in range(5)}
     for field in ('attempts','attemptSlots'):
-        if len(record[field])!=40 or {(a['arm'],a['caseId'],a['repeat']) for a in record[field]}!=expected:raise ValueError('attempt count mismatch')
+        if len(record[field])!=count or {(a['arm'],a['caseId'],a['repeat']) for a in record[field]}!=expected:raise ValueError('attempt count mismatch')
     predictions={r['caseId']:r for r in baseline['fitAndDevelopmentPredictions'] if r['arm']=='event2'}
     old_inputs={a['caseId']:a['coverage'] for a in baseline['attempts'] if a['arm']=='event2'}
     trace=[]
@@ -407,13 +411,18 @@ def validate_journal_run(plan,record,journal_path,baseline):
             raise ValueError('previous encoded windows changed')
         if cov['eventAnchorFactIds']!=shared.event_indices(c,cov['factRecords']) or a['inputSha256']!=shared.digest(c['input']):raise ValueError('input/anchor changed')
         ref=predictions[a['caseId']]
-        if a['probabilities']!=ref['probabilities'] or a['decoded']!=ref['decoded']:raise ValueError('frozen prediction changed')
+        if not allow_probability_drift and (a['probabilities']!=ref['probabilities'] or a['decoded']!=ref['decoded']):raise ValueError('frozen prediction changed')
+        values=a['probabilities'];targets=cov['targets']
+        if len(values)!=len(targets) or any(not math.isfinite(v) or not 0<=v<=1 for v in values):raise ValueError('invalid probability vector')
+        decoded=({'kind':'act' if values[0]>=.5 else 'skip'} if c['task']=='D02' else
+                 {'targets':[{'targetId':t} for t,p in zip(targets,values) if p>=.5]})
+        if a['decoded']!=decoded:raise ValueError('decision threshold changed')
         parts=list(cov['timing'].values())+[a[k] for k in ('headMs','startJournalMs','snapshotStartMs','resultJournalMs','snapshotEndMs','telemetryJournalMs')]
         total=a['elapsedIncludingTelemetryMs']
         if any(not math.isfinite(x) or x<0 for x in parts+[total]) or total+0.001<sum(parts) or total<a['elapsedThroughResultMs']+a['telemetryJournalMs']:
             raise ValueError('inclusive journal timing mismatch')
         for i,w in enumerate(cov['windows']):trace.append((a,i,w))
-    if len(trace)!=160 or len(record['forwardAttempts'])!=160:raise ValueError('window count mismatch')
+    if len(trace)!=window_count or len(record['forwardAttempts'])!=window_count:raise ValueError('window count mismatch')
     for i,((a,index,w),e) in enumerate(zip(trace,record['forwardAttempts'])):
         if e['status']!='complete' or e['eventId']!=i or (e['arm'],e['caseId'],e['repeat'],e['windowIndex'])!=(a['arm'],a['caseId'],a['repeat'],index):raise ValueError('window identity mismatch')
         for key in ('inputIds','tokenTypeIds','factIds','factSpans','payloadTokens','totalTokens'):
@@ -473,11 +482,111 @@ def render_journal(summary,record):
 
 
 
+INPUT_RUN='m01-input-dev42-20261103-r2'
+INPUT_ARMS=('reference','packed','fast','eager')
+INPUT_POLICIES={
+    'reference':{'packing':'reference','tokenizer':'slow','attention':'sdpa'},
+    'packed':{'packing':'single','tokenizer':'slow','attention':'sdpa'},
+    'fast':{'packing':'batch','tokenizer':'fast','attention':'sdpa'},
+    'eager':{'packing':'batch','tokenizer':'fast','attention':'eager'}}
+
+
+def validate_input_run(plan,record,journal_path,baseline):
+    predictions=validate_journal_run(plan,record,journal_path,baseline,arms=INPUT_ARMS,allow_probability_drift=True)
+    if plan['config']['runtimeArms']!=INPUT_POLICIES or plan['config']['probabilityTolerance']!=1e-6:raise ValueError('input/runtime comparison policy changed')
+    rows=record['tokenizationAudit']
+    if len(rows)!=20 or [r['caseId'] for r in rows]!=[r['case']['caseId'] for r in plan['dataset']]:raise ValueError('token audit coverage changed')
+    for r in rows:
+        if set(r['optimizedSha256'])!={'single','batch'} or set(r['optimizedSha256'].values())!={r['referenceSha256']}:raise ValueError('token audit differs')
+    if record['tokenizerClasses']!={'slow':'BertTokenizer','fast':'BertTokenizerFast'}:raise ValueError('tokenizer identity changed')
+    expected={'sdpa':{'attentionImplementation':'sdpa','attentionClasses':['BertSdpaSelfAttention']*2},
+              'eager':{'attentionImplementation':'eager','attentionClasses':['BertSelfAttention']*2}}
+    if record['encoderRuntimes']!=expected:raise ValueError('actual attention implementation changed')
+    return predictions
+
+
+
+def compare_probabilities(selected,predictions,tolerance,require_exact):
+    exact=all(a['probabilities']==predictions[a['caseId']]['probabilities'] for a in selected)
+    same=all(a['decoded']==predictions[a['caseId']]['decoded'] for a in selected)
+    delta=max(abs(p-q) for a in selected for p,q in zip(a['probabilities'],predictions[a['caseId']]['probabilities']))
+    stable=all(a['probabilities']==next(x['probabilities'] for x in selected if x['caseId']==a['caseId']) for a in selected)
+    gate=(exact if require_exact else delta<=tolerance) and same and stable
+    return {'exactProbabilities':exact,'maxAbsoluteProbabilityDelta':delta,'identicalDecisions':same,
+            'repeatStable':stable,'registeredEquivalenceGate':'pass' if gate else 'fail'}
+
+def build_input():
+    pp=DATA/(INPUT_RUN+'.plan.json');rp=DATA/(INPUT_RUN+'.record.json.gz');jp=DATA/(INPUT_RUN+'.record.journal.jsonl.gz')
+    plan=json.loads(pp.read_bytes());record=read_archive(rp);raw=gzip.decompress(jp.read_bytes());baseline=read_archive(JOURNAL_BASE_RECORD)
+    if record['planSha256']!=sha256_file(pp) or record['journalRecovery']['sha256']!=hashlib.sha256(raw).hexdigest():raise ValueError('input evidence digest mismatch')
+    if plan['baseline']['planSha256']!=sha256_file(JOURNAL_BASE_PLAN) or plan['baseline']['recordSha256']!=sha256_file(JOURNAL_BASE_RECORD):raise ValueError('fixed model evidence changed')
+    for name,h in plan['code'].items():verify_event_source(name,h)
+    if sha256_file(ROOT/plan['protocolPath'])!=plan['protocolSha256']:raise ValueError('input protocol changed')
+    predictions=validate_input_run(plan,record,jp,baseline);timing=[];comparisons={};qualities={}
+    for arm in INPUT_ARMS:
+        selected=[a for a in record['attempts'] if a['arm']==arm]
+        comparisons[arm]=compare_probabilities(selected,predictions,plan['config']['probabilityTolerance'],arm!='eager')
+        rows=[]
+        for case in plan['cases']:
+            a=next(a for a in selected if a['caseId']==case['caseId']);ref=predictions[case['caseId']]
+            rows.append({**ref,'decoded':a['decoded'],'probabilities':a['probabilities']})
+            attempts=[a for a in selected if a['caseId']==case['caseId']];values=[a['elapsedIncludingTelemetryMs'] for a in attempts]
+            parts={k:statistics.mean(a['coverage']['timing'][k] for a in attempts) for k in attempts[0]['coverage']['timing']}
+            parts.update({k:statistics.mean(a[k] for a in attempts) for k in ('headMs','startJournalMs','snapshotStartMs','resultJournalMs','snapshotEndMs','telemetryJournalMs')})
+            parts['otherMs']=statistics.mean(values)-sum(parts.values())
+            timing.append({'arm':arm,'caseId':case['caseId'],'observations':len(attempts),'p50Ms':statistics.median(values),
+                'maxMs':max(values),'meanMs':statistics.mean(values),'componentsMeanMs':parts,
+                'local50ms':'fail' if max(values)>50 else 'unverified_insufficient_observations'})
+        qualities[arm]=quality(rows)
+    first=INPUT_RUN.replace('-r2','-r1');fp=DATA/(first+'.plan.json');fr=DATA/(first+'.record.json')
+    failed_plan=json.loads(fp.read_bytes());failure=json.loads(fr.read_bytes());snapshot=DATA/'code/m01_input-r1.py'
+    if failure['planSha256']!=sha256_file(fp) or failure['attempts'] or failure['unexecutedAttempts']!=80 or failure['forwardAttempts']:raise ValueError('pre-inference failure evidence changed')
+    for name,h in failed_plan['code'].items():
+        if name.endswith('/m01_shared.py'):
+            if sha256_file(snapshot)!=h:raise ValueError('failed source snapshot mismatch')
+        else:verify_event_source(name,h)
+    run={'runId':INPUT_RUN,'quality':qualities,'timing':timing,'comparisons':comparisons,'tokenizationAuditGroups':20,
+         'trainingSteps':0,'timedInferenceItems':80,'forwardWindows':320,'journalEvents':881,
+         'encoder':record['encoder'],'headParameters':record['headParameters'],'checkpoint':record['checkpoint'],
+         'weightsUnchanged':True,'encoderRuntimes':record['encoderRuntimes'],'tokenizerClasses':record['tokenizerClasses'],
+         'supervisor':record['supervisor'],'timingScope':'all per-item work and journals; batch final write in process wall, supervisor replay unmeasured'}
+    summary={'schema':'jity-d-input-runtime-summary-v1','date':'2026-11-03','scope':'frozen_checkpoint_exposed_development_inference_only',
+        'formalEvaluationAllowed':False,'semanticQualityApproved':False,'fullRequest500msStatus':'unverified',
+        'newIndependentTrainingGroups':0,'round1TrainingQuota':0,'runs':[run],
+        'firstPreparationFailure':{'runId':first,'status':failure['status'],'error':failure['error'],'businessCalls':0,'unstartedItems':80},
+        'archives':[{'path':str(p.relative_to(ROOT)),'gzipSha256':sha256_file(p),
+            'rawSha256':hashlib.sha256(gzip.decompress(p.read_bytes())).hexdigest()} for p in (rp,jp)]}
+    return summary,{ART/'l3-9-m01-input-summary.json':(json.dumps(summary,ensure_ascii=False,indent=2)+'\n').encode(),
+                    ART/'l3-9-m01-input-results.html':render_input(summary,record).encode()}
+
+
+def render_input(summary,record):
+    e=lambda x:html.escape(str(x));run=summary['runs'][0]
+    names={'reference':'原输入准备','packed':'去掉重复分词','fast':'快速分词＋单次装箱','eager':'快速分词＋eager编码'}
+    parts=['''<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'"><title>L3 输入准备与编码执行对比</title><style>body{margin:0;background:#f4f6f8;color:#20313e;font:16px/1.7 system-ui}main{max-width:1150px;margin:auto;padding:24px}section{background:white;padding:22px;border-radius:12px;margin:20px 0}.scroll{overflow:auto}table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;padding:9px;border-bottom:1px solid #ddd}pre{white-space:pre-wrap;overflow-wrap:anywhere}.bad{color:#a7352e}h1{font-size:28px}</style><main><p>D / L3 · 2026-11-03 · 固定两层模型，训练0步</p><h1>减少重复整理输入，再比较编码方式</h1><p>完整资料和所有人物保留；20组旧开发输入在推理前逐项核对优化前后的全部token与事实跨度，任何差异都停止。业务测试仍只有4道反复看过的开发题，四种方案各重复5次，共80次推理。</p><section><h2>先看输出有没有变化</h2><p>前3臂要求分数逐值一致；eager注意力在运行前登记最大概率差≤0.000001、行动/目标判定完全一致。浮点计算顺序不同与改模型权重分别记录，不能因判断相同就声称分数完全相同。</p><div class="scroll"><table><tr><th>方案</th><th>分数逐值一致</th><th>最大概率差</th><th>所有判定一致</th><th>已登记一致性门</th></tr>''']
+    for a,c in run['comparisons'].items():
+        parts.append(f'<tr><td>{names[a]}</td><td>{e(c["exactProbabilities"])}</td><td>{c["maxAbsoluteProbabilityDelta"]:.10g}</td><td>{e(c["identicalDecisions"])}</td><td>{e(c["registeredEquivalenceGate"])}</td></tr>')
+    parts.append('</table></div><p>一致性门只检查改动前后是否可比，不等于新题质量通过。原4题答案已公开，不能据此宣布泛化。</p></section><section><h2>同批整项耗时，包含输入与记录</h2><div class="scroll"><table><tr><th>题目</th><th>原方案中位/最大ms</th><th>单次分词中位/最大ms</th><th>快速分词中位/最大ms</th><th>eager中位/最大ms</th></tr>')
+    for cid in sorted({r['caseId'] for r in run['timing']}):
+        parts.append(f'<tr><td>{e(cid)}</td>')
+        for arm in INPUT_ARMS:
+            t=next(t for t in run['timing'] if t['arm']==arm and t['caseId']==cid)
+            parts.append(f'<td>{t["p50Ms"]:.2f}/{t["maxMs"]:.2f}</td>')
+        parts.append('</tr>')
+    parts.append('</table></div><p>所有臂都重新分词、执行全部窗口，不缓存特征；计入结果落盘和尾部遥测写入。局部是否超过50ms见下表；每题仅5次，即便本批全部低于50也只能记有限观察，完整500ms仍未测。</p><div class="scroll"><table><tr><th>方案</th><th>题目</th><th>输入准备平均ms</th><th>编码平均ms</th><th>局部50ms</th></tr>')
+    for t in run['timing']:
+        c=t['componentsMeanMs'];parts.append(f'<tr><td>{names[t["arm"]]}</td><td>{e(t["caseId"])}</td><td>{c["packMs"]:.3f}</td><td>{c["encoderMs"]:.3f}</td><td>{e(t["local50ms"])}</td></tr>')
+    parts.append('</table></div></section><section><h2>执行范围与失败记录</h2><p class="bad">模型权重/判断头不变，不代表任务能力已通过。行动仍只判做/不做，反应、行动描述和共同结果没有接线；完整500ms、浏览器/生产与独立新题质量都未测。</p><p>第一批在生成输入核对哈希时把元组传给只接收JSON的工具而失败，0次业务推理、80项未开始；原计划/记录和执行源码保留。修正记录代码并补回归后，另用r2批次执行，未改分词策略或训练参数。</p><p>CPU单线程/并发1，120秒/2048MiB监督上限；批末汇总包含在子进程总耗时但未单独计时，监督器重放耗时未测。本页主指标是每项完成，不冒充完整游戏请求。</p></section>')
+    parts.append(f'<section><details><summary>全部汇总、模型身份和分项耗时</summary><pre>{e(json.dumps(run,ensure_ascii=False,indent=2))}</pre></details><details><summary>全部80次原始分数和预测</summary><pre>{e(json.dumps([{k:a[k] for k in ("arm","caseId","repeat","probabilities","decoded","elapsedIncludingTelemetryMs")} for a in record["attempts"]],ensure_ascii=False,indent=2))}</pre></details><p><a href="m01-fitting/{INPUT_RUN}.plan.json">冻结计划</a> · <a href="m01-fitting/{INPUT_RUN}.record.json.gz">完整记录</a> · <a href="m01-fitting/{INPUT_RUN}.record.journal.jsonl.gz">完整事件</a> · <a href="l3-9-m01-input-summary.json">机器汇总</a> · <a href="l3-8-m01-journal-results.html">上一批</a></p></section></main></html>')
+    return ''.join(parts)
+
+
+
 def main():
     p=argparse.ArgumentParser(description=__doc__);m=p.add_mutually_exclusive_group(required=True)
     m.add_argument('--check',action='store_true');m.add_argument('--write-new',action='store_true')
-    flavor=p.add_mutually_exclusive_group();flavor.add_argument('--event',action='store_true');flavor.add_argument('--journal',action='store_true');a=p.parse_args()
-    summary,files=build_journal() if a.journal else build_event() if a.event else build()
+    flavor=p.add_mutually_exclusive_group();flavor.add_argument('--event',action='store_true');flavor.add_argument('--journal',action='store_true');flavor.add_argument('--input',action='store_true');a=p.parse_args()
+    summary,files=build_input() if a.input else build_journal() if a.journal else build_event() if a.event else build()
     for path,raw in files.items():
         if path.exists() and path.read_bytes()!=raw:raise ValueError('report differs; preserve earlier version')
         if a.check and not path.exists():raise ValueError('report missing')

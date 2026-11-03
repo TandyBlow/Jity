@@ -17,6 +17,8 @@ from fact_windows import fact_text,restore
 
 
 class Tokenizer:
+    cls_token_id=101
+    sep_token_id=102
     def encode(self,text,**kwargs):return [ord(c) for c in text]
     def num_special_tokens_to_add(self,pair):return 3
     def build_inputs_with_special_tokens(self,a,b):return [101]+a+[102]+b+[102]
@@ -80,6 +82,70 @@ class SharedFactTests(unittest.TestCase):
 
 
 
+class PackingOptimizationTests(unittest.TestCase):
+    class CountingTokenizer(Tokenizer):
+        def __init__(self):self.calls=0;self.batches=0
+        def encode(self,text,**kwargs):self.calls+=1;return super().encode(text,**kwargs)
+        def __call__(self,texts,**kwargs):
+            self.batches+=1
+            if kwargs!={'add_special_tokens':False,'padding':False,'truncation':False}:raise AssertionError('unsafe tokenization options')
+            return {'input_ids':[[ord(c) for c in text] for text in texts]}
+
+    def test_all_twenty_inputs_and_spans_equal_reference_without_second_tokenization(self):
+        for row in shared.old.dataset()[0]:
+            c=row['case'];old=self.CountingTokenizer();ref=shared.pack(c,old)
+            for mode in ('single','batch'):
+                tok=self.CountingTokenizer();self.assertEqual(shared.pack(c,tok,mode=mode),ref)
+                self.assertEqual(tok.calls,1+len(ref[1]) if mode=='single' else 0)
+                self.assertEqual(tok.batches,1 if mode=='batch' else 0)
+                shared.pack(c,tok,mode=mode)
+                self.assertEqual(tok.calls,2*(1+len(ref[1])) if mode=='single' else 0)
+                self.assertEqual(tok.batches,2 if mode=='batch' else 0)
+            self.assertEqual(old.calls,2*(1+len(ref[1])))
+
+    def test_unicode_empty_containers_and_null_have_same_encoded_representation(self):
+        c=copy.deepcopy(shared.old.dataset()[0][0]['case'])
+        c['input']['world']['characters'][0]['appearance']='中文 é é 🙂 换行\n引号" [0] null'
+        for mode in ('single','batch'):
+            tok=self.CountingTokenizer()
+            self.assertEqual(shared.pack(c,tok,mode=mode),shared.pack(c,self.CountingTokenizer()))
+
+    def test_overflow_and_empty_tokens_are_rejected_for_both_optimized_modes(self):
+        c=copy.deepcopy(shared.old.dataset()[0][0]['case'])
+        c['input']['world']['characters'][0]['appearance']='长'*1000
+        for mode in ('single','batch'):
+            with self.assertRaisesRegex(ValueError,'atomic fact'):shared.pack(c,self.CountingTokenizer(),mode=mode)
+        c=shared.old.dataset()[0][0]['case'];tok=self.CountingTokenizer()
+        tok.encode=lambda text,**kwargs:[]
+        with self.assertRaisesRegex(ValueError,'empty fact'):shared.pack(c,tok,mode='single')
+
+    def test_non_bert_special_layout_and_dropped_batch_item_are_rejected(self):
+        c=shared.old.dataset()[0][0]['case'];tok=self.CountingTokenizer()
+        tok.build_inputs_with_special_tokens=lambda a,b:[999]+a+[102]+b+[102]
+        with self.assertRaisesRegex(ValueError,'layout'):shared.pack(c,tok,mode='single')
+        class Missing(self.CountingTokenizer):
+            def __call__(self,texts,**kwargs):return {'input_ids':[[1]]}
+        with self.assertRaisesRegex(ValueError,'batch coverage'):shared.pack(c,Missing(),mode='batch')
+
+    def test_real_preparation_audit_returns_json_safe_hashes_for_all_twenty_groups(self):
+        rows=shared.old.dataset()[0]
+        audit=shared.audit_tokens(rows,{'slow':self.CountingTokenizer(),'fast':self.CountingTokenizer()})
+        self.assertEqual([r['caseId'] for r in audit],[r['case']['caseId'] for r in rows])
+        shared.canonical_bytes(audit)
+        for r in audit:self.assertEqual(set(r['optimizedSha256'].values()),{r['referenceSha256']})
+
+    def test_fast_tokenizer_difference_is_rejected_before_inference(self):
+        class Different(self.CountingTokenizer):
+            def __call__(self,texts,**kwargs):
+                result=super().__call__(texts,**kwargs);result['input_ids'][1][0]+=1;return result
+        with self.assertRaisesRegex(ValueError,'tokenization changed input'):
+            shared.audit_tokens(shared.old.dataset()[0],{'slow':self.CountingTokenizer(),'fast':Different()})
+
+    def test_unknown_mode_does_not_silently_run_a_different_encoding(self):
+        with self.assertRaisesRegex(ValueError,'unknown packing'):
+            shared.pack(shared.old.dataset()[0][0]['case'],self.CountingTokenizer(),mode='unknown')
+
+
 class SharedPlanTests(unittest.TestCase):
     def setUp(self):
         rows,_=shared.old.dataset();oldplan=shared.read_json(shared.OLD_PLAN)
@@ -120,13 +186,13 @@ class SharedPlanTests(unittest.TestCase):
 
 
 class SharedInterruptionTests(unittest.TestCase):
-    def test_stop_before_child_journal_keeps_all_forty_unstarted_slots(self):
+    def test_stop_before_child_journal_keeps_all_eighty_unstarted_slots(self):
         plan={'config':{'attemptsPerCase':5},'cases':[{'caseId':str(i)} for i in range(4)]}
         with tempfile.TemporaryDirectory() as t:
             p=Path(t)/'plan.json';p.write_text(json.dumps(plan))
             r=shared.unstarted_record(plan,p)
-        self.assertEqual(len(r['attemptSlots']),40);self.assertEqual(r['unexecutedAttempts'],40)
-        self.assertEqual(len({(x['arm'],x['caseId'],x['repeat']) for x in r['attemptSlots']}),40)
+        self.assertEqual(len(r['attemptSlots']),80);self.assertEqual(r['unexecutedAttempts'],80)
+        self.assertEqual(len({(x['arm'],x['caseId'],x['repeat']) for x in r['attemptSlots']}),80)
 
     def test_interrupted_shared_arm_does_not_replace_completed_legacy_slot(self):
         done={'arm':'legacy','caseId':'case','repeat':0,'status':'complete'}
@@ -150,12 +216,12 @@ class SharedInterruptionTests(unittest.TestCase):
 
 class ExperimentEntryTests(unittest.TestCase):
     def test_status_and_default_do_not_import_models_or_write_plans(self):
-        with mock.patch.object(experiment,'read_json',return_value={'runs':[{'runId':'m01-journal-dev42-20261103-r1','quality':{}}],'formalEvaluationAllowed':False,'fullRequest500msStatus':'unverified'}),mock.patch.dict(sys.modules,{'torch':None,'transformers':None}),mock.patch.object(shared,'prepare') as prepare,mock.patch.object(shared,'execute') as execute:
+        with mock.patch.object(experiment,'read_json',return_value={'runs':[{'runId':'m01-input-dev42-20261103-r2','quality':{}}],'formalEvaluationAllowed':False,'fullRequest500msStatus':'unverified'}),mock.patch.dict(sys.modules,{'torch':None,'transformers':None}),mock.patch.object(shared,'prepare') as prepare,mock.patch.object(shared,'execute') as execute:
             for args in ([],['status']):
                 output=io.StringIO()
                 with redirect_stdout(output):self.assertEqual(experiment.main(args),0)
                 status=json.loads(output.getvalue());self.assertFalse(status['modelExecutionPerformed'])
-                self.assertEqual(status['latestRun'],'m01-journal-dev42-20261103-r1')
+                self.assertEqual(status['latestRun'],'m01-input-dev42-20261103-r2')
             prepare.assert_not_called();execute.assert_not_called()
 
     def test_prepare_and_execute_delegate_to_the_current_model(self):
@@ -171,7 +237,7 @@ class ExperimentEntryTests(unittest.TestCase):
     def test_check_runs_only_tests_and_report_verification(self):
         with mock.patch.object(experiment.subprocess,'run',return_value=mock.Mock(returncode=0)) as run,redirect_stdout(io.StringIO()):
             self.assertEqual(experiment.check(),0)
-        self.assertEqual(run.call_count,6)
+        self.assertEqual(run.call_count,7)
         for call in run.call_args_list:
             args=call.args[0]
             self.assertNotIn('--execute',args);self.assertNotIn('--prepare',args)

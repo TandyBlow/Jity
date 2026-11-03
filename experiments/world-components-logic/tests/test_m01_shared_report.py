@@ -193,4 +193,62 @@ class JournalReportTests(unittest.TestCase):
         self.assertEqual(r,first);self.assertEqual(raw,self.journal.read_bytes())
 
 
+class InputRuntimeReportTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        run=report.INPUT_RUN;data=report.DATA
+        cls.plan=json.loads((data/(run+'.plan.json')).read_bytes())
+        cls.record=report.read_archive(data/(run+'.record.json.gz'))
+        cls.journal=data/(run+'.record.journal.jsonl.gz')
+        cls.baseline=report.read_archive(report.JOURNAL_BASE_RECORD)
+
+    def check(self,plan=None,record=None):
+        return report.validate_input_run(plan or self.plan,record or self.record,self.journal,self.baseline)
+
+    def test_complete_80_attempt_batch_and_failure_evidence_rebuild_without_promotion(self):
+        self.check();summary,files=report.build_input()
+        self.assertEqual(summary['firstPreparationFailure']['businessCalls'],0)
+        self.assertEqual(summary['firstPreparationFailure']['unstartedItems'],80)
+        self.assertFalse(summary['semanticQualityApproved']);self.assertEqual(summary['fullRequest500msStatus'],'unverified')
+        self.assertEqual(summary['runs'][0]['forwardWindows'],320)
+        for p,raw in files.items():self.assertEqual(p.read_bytes(),raw)
+
+    def test_changed_token_audit_roster_or_hash_is_rejected(self):
+        for mutate in (lambda r:r['tokenizationAudit'].pop(),
+                       lambda r:r['tokenizationAudit'][0]['optimizedSha256'].update(batch='different')):
+            r=copy.deepcopy(self.record);mutate(r)
+            with self.assertRaisesRegex(ValueError,'token audit'):self.check(record=r)
+
+    def test_attention_backend_or_tokenizer_cannot_be_misreported(self):
+        r=copy.deepcopy(self.record);r['encoderRuntimes']['eager']['attentionImplementation']='sdpa'
+        with self.assertRaisesRegex(ValueError,'attention'):self.check(record=r)
+        r=copy.deepcopy(self.record);r['tokenizerClasses']['fast']='BertTokenizer'
+        with self.assertRaisesRegex(ValueError,'tokenizer'):self.check(record=r)
+
+    def test_numeric_tolerance_cannot_hide_a_changed_decision(self):
+        ref={'case':{'probabilities':[.4999999],'decoded':{'kind':'skip'}}}
+        candidate=[{'caseId':'case','probabilities':[.5000001],'decoded':{'kind':'act'}}]
+        result=report.compare_probabilities(candidate,ref,1e-6,False)
+        self.assertLess(result['maxAbsoluteProbabilityDelta'],1e-6)
+        self.assertEqual(result['registeredEquivalenceGate'],'fail')
+
+    def test_exact_gate_rejects_drift_and_tolerance_does_not_hide_unstable_repeats(self):
+        ref={'case':{'probabilities':[.1],'decoded':{'kind':'skip'}}}
+        candidate=[{'caseId':'case','probabilities':[.1000001],'decoded':{'kind':'skip'}}]
+        self.assertEqual(report.compare_probabilities(candidate,ref,1e-6,True)['registeredEquivalenceGate'],'fail')
+        candidate.append({'caseId':'case','probabilities':[.1000002],'decoded':{'kind':'skip'}})
+        self.assertFalse(report.compare_probabilities(candidate,ref,1e-6,False)['repeatStable'])
+
+    def test_omitted_arm_or_window_is_rejected_even_with_complete_status(self):
+        for field in ('attempts','forwardAttempts'):
+            r=copy.deepcopy(self.record);r[field].pop()
+            with self.assertRaises(ValueError):self.check(record=r)
+
+    def test_changing_tolerance_or_arm_mapping_is_rejected(self):
+        for mutate in (lambda p:p['config'].update(probabilityTolerance=.1),
+                       lambda p:p['config']['runtimeArms']['eager'].update(attention='sdpa')):
+            p=copy.deepcopy(self.plan);mutate(p);p['configSha256']=report.shared.digest(p['config'])
+            with self.assertRaisesRegex(ValueError,'policy changed'):self.check(plan=p)
+
+
 if __name__=='__main__':unittest.main()

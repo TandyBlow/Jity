@@ -57,13 +57,19 @@ def fact_text(fact):
     return canonical_bytes([path,fact['value']]).decode('utf-8')+'\n'
 
 
-def make_windows(value, tokenizer, prefix, limit=512):
+def make_windows(value, tokenizer, prefix, limit=512, *, with_spans=False, batch_tokenize=False):
     facts=flatten(value)
     if canonical_bytes(restore(facts))!=canonical_bytes(value): raise ValueError('fact round trip mismatch')
-    prefix_ids=tokenizer.encode(prefix,add_special_tokens=False)
+    if batch_tokenize:
+        encoded=tokenizer([prefix]+[fact_text(f) for f in facts],add_special_tokens=False,
+                          padding=False,truncation=False)['input_ids']
+        if len(encoded)!=len(facts)+1:raise ValueError('tokenizer batch coverage mismatch')
+        prefix_ids=encoded[0];parts=encoded[1:]
+    else:
+        prefix_ids=tokenizer.encode(prefix,add_special_tokens=False);parts=None
     budget=limit-len(prefix_ids)-tokenizer.num_special_tokens_to_add(pair=True)
     if budget<=0: raise ValueError('prefix exceeds token budget')
-    windows=[]; ids=[]; indices=[]
+    windows=[]; ids=[]; indices=[];spans=[]
     def emit():
         if not indices: return
         full=tokenizer.build_inputs_with_special_tokens(prefix_ids,ids)
@@ -71,10 +77,17 @@ def make_windows(value, tokenizer, prefix, limit=512):
         if len(full)>limit or len(types)!=len(full): raise ValueError('invalid window budget/types')
         windows.append({'inputIds':full,'tokenTypeIds':types,'factIds':indices.copy(),
                         'payloadTokens':len(ids),'totalTokens':len(full)})
+        if with_spans:
+            offset=len(prefix_ids)+2
+            if full[:offset]!=[tokenizer.cls_token_id]+prefix_ids+[tokenizer.sep_token_id] or full[offset:-1]!=ids or full[-1]!=tokenizer.sep_token_id:
+                raise ValueError('unsupported BERT pair layout')
+            windows[-1]['factSpans']=[{'factIndex':i,'start':offset+a,'end':offset+b} for i,a,b in spans]
     for index,fact in enumerate(facts):
-        part=tokenizer.encode(fact_text(fact),add_special_tokens=False)
+        part=parts[index] if parts is not None else tokenizer.encode(fact_text(fact),add_special_tokens=False)
+        if with_spans and not part:raise ValueError('empty fact tokens')
         if len(part)>budget: raise ValueError(f'atomic fact {index} exceeds window budget; no truncation allowed')
-        if len(ids)+len(part)>budget: emit();ids=[];indices=[]
+        if len(ids)+len(part)>budget: emit();ids=[];indices=[];spans=[]
+        if with_spans:spans.append((index,len(ids),len(ids)+len(part)))
         ids.extend(part);indices.append(index)
     emit()
     if [i for w in windows for i in w['factIds']]!=list(range(len(facts))): raise ValueError('incomplete fact coverage')

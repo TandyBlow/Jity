@@ -10,6 +10,7 @@ import json
 import math
 from pathlib import Path
 import statistics
+import subprocess
 
 from fact_windows import restore
 from lab import canonical_bytes,sha256_file
@@ -55,7 +56,9 @@ def build():
     snapshot=DATA/'code/m01_probe-fit-r1.py'
     if sha256_file(snapshot)!=fitplan['code']['experiments/world-components-logic/m01_probe.py']:raise ValueError('fitting source snapshot mismatch')
     for name,h in plan['code'].items():
-        if sha256_file(ROOT/name)!=h:raise ValueError('executed inference code mismatch')
+        if sha256_file(ROOT/name)==h:continue
+        raw=subprocess.check_output(['git','show','f3c5bbfbad7fc0110b67666e31c4dd36e6f9698d:'+name],cwd=ROOT)
+        if hashlib.sha256(raw).hexdigest()!=h:raise ValueError('executed inference code mismatch')
     if fitted['checkpoint']!=plan['checkpoint'] or not fitted['encoderUnchanged']:raise ValueError('trained identity mismatch')
     events_raw=raw_archive(INFER+'.record.windows.jsonl')
     if hashlib.sha256(events_raw).hexdigest()!=record['windowEventsSha256']:raise ValueError('window event stream mismatch')

@@ -4,6 +4,7 @@ import copy
 import json
 import sys
 import unittest
+from unittest import mock
 
 BASE=Path(__file__).resolve().parents[1];sys.path.insert(0,str(BASE))
 import m01_report as report
@@ -48,6 +49,11 @@ class M01ReportTests(unittest.TestCase):
             elif field=='plan':bad['fitPlanSha256']='0'*64
             else:bad['trainedHeadSha256']['D02']='0'*64
             with self.assertRaises(ValueError):report.verify_fit_evidence(bad,record,plan,fitted)
+
+
+    def test_changed_current_fact_windows_still_requires_exact_historical_source(self):
+        with mock.patch.object(report.subprocess,'check_output',return_value=b'wrong historical source'):
+            with self.assertRaisesRegex(ValueError,'inference code mismatch'):report.build()
 
 
 if __name__=='__main__':unittest.main()
