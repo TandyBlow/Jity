@@ -670,7 +670,7 @@ def observed_smoke():
     for row in starts:
         if set(row['sourceGroups'])!={e['sourceGroup'] for e in SYNTHETIC_EXAMPLES}:raise ValueError('synthetic training batch drift')
     expected_phases={'source_reference':1,'zero_adapter_equivalence':1,'synthetic_optimizer':2,'fitted_teacher_forced':1,'reloaded_teacher_forced':1}
-    phases={p:sum(f['phase']==p for f in forwards) for p in {f['phase'] for f in forwards}}
+    phases={p:sum(f['phase']==p for f in forwards) for p in sorted({f['phase'] for f in forwards})}
     for phase,count in expected_phases.items():
         if phases.get(phase)!=count:raise ValueError('synthetic forward phase count drift')
     for phase in ('synthetic_generation_before_reload','synthetic_generation_after_reload'):

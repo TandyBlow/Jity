@@ -2,7 +2,7 @@
 
 ## 当前从这里开始（2026-11-04）
 
-日常使用`experiment.py`一个入口。当前`plan_training.py`已实现M02短表达适配层训练程序和12组新来源候选；业务训练0，新标签0/12复核，真实检查仅模型装配与独立合成数值。`action_plan.py`继续保留L3-13契约/旧10组草稿，原42意见、新90卡不变。最近业务实测仍L3-12失败，完整500ms未通过；[当前查看页](../../artifacts/world-components-logic/l3-14-realizer-training-readiness.html)。
+日常使用`experiment.py`一个入口。当前L3-15已在真实M02上跑通合成数字前向/反向、适配层磁盘存档、清空后重载和完整输出一致性；2合成优化步/22前向不计业务训练。12组新来源仍0/12复核，业务训练0。`action_plan.py`保留L3-13契约/旧10组草稿，原42意见、新90卡不变。最近业务实测仍L3-12失败，完整500ms未通过；[当前结果页](../../artifacts/world-components-logic/l3-15-realizer-smoke.html)。
 
 从仓库根目录运行：
 
@@ -12,7 +12,7 @@ python3 experiments/world-components-logic/experiment.py check
 python3 experiments/world-components-logic/experiment.py train-data
 ```
 
-`status`区分最新准备批与最近模型批；`check`运行工程测试、九份模型历史报告、L3-13与L3-14准备材料核验，不导入模型。`plan-data`只核验准备文件，`plan-data --write-new`仅写缺少的相同批次文件、拒绝覆盖异稿。当前没有已审核的动作计划训练实例；以下prepare/execute仍是历史L3-12诊断，不能当成新规划器训练命令：
+`status`区分最新工程批与最近业务模型批；`check`运行工程测试、九份模型历史报告、L3-13/14准备材料和L3-15记录核验，不加载预训练模型。数值单元测试使用随机小模型，不运行M02。`plan-data`只核验准备文件，`plan-data --write-new`仅写缺少的相同批次文件、拒绝覆盖异稿。当前没有已审核的动作计划训练实例；以下prepare/execute仍是历史L3-12诊断，不能当成新规划器训练命令：
 
 ```bash
 .local/world-components-logic/venv/bin/python experiments/world-components-logic/experiment.py prepare NEW_RUN_ID
@@ -158,3 +158,10 @@ python3 experiments/world-components-logic/m01_shared_report.py --check
 实际无业务检查：原M02 77,440,384参数、48适配位置、172,032可训练，总推理77,612,416；不把0.17M说成整个模型。只做装配无M02 forward，另用8维数值层8步验证梯度和重载，业务指标仍0。原记录/哈希日志在m01-fitting，模型/以后适配层只在D .local忽略目录。
 
 [分词检查](../../artifacts/world-components-logic/l3-14-realizer-tokenizer-check.json)记录12组完整输入/目标token和哈希，最大169/25，符合256/64限制；只分词无神经前向。训练实现的真实业务路径、表达质量、开放规划器、浏览器/生产及完整500ms均未验收。参考[训练协议](../../design/world-engine-reports/components-logic/realizer-training-protocol.md)。
+
+
+## 真实M02合成数字训练通路（2026-11-04）
+
+`train-smoke --prepare NEW_ID`固定合成数字检查计划；`train-smoke --execute PLAN`复用同一监督器，加载真实原M02，在两行固定token上执行2步适配层优化，并检查零适配/原模型一致、底座无梯度/不变、磁盘存档/清空重载后logits及全部生成token一致。`train-smoke --report`只读核原日志并新建结果材料，拒绝覆盖异稿。固定[协议](../../design/world-engine-reports/components-logic/realizer-training-smoke-protocol.md)先于实际执行，CPU1线程/并发1/120秒/2048MiB。
+
+实际r1为22次顶层前向，4.16秒/RSS727.41MiB；不是业务训练、语义或500ms成绩。合成适配层仅在D忽略目录`realizer-smoke/`，与将来的`realizer-adapters/`业务训练身份隔离，不纳入模型候选。原12候选/新90卡/旧42意见原样，业务训练0。`plan_training.py --check-smoke`只读核计划/代码/记录/哈希日志；原材料的作者源码按b24767a固定Git字节核验，不随活动代码升级改写。查看[本批结果](../../artifacts/world-components-logic/l3-15-realizer-smoke.html)。

@@ -1,0 +1,1226 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'"><title>L3-15 真实模型训练通路检查</title><style>body{margin:0;background:#f4f6f8;color:#20313e;font:16px/1.7 system-ui}main{max-width:1000px;margin:auto;padding:24px}section{background:white;padding:24px;border-radius:12px;margin:20px 0}pre{white-space:pre-wrap;overflow-wrap:anywhere}table{border-collapse:collapse;width:100%}td,th{padding:10px;text-align:left;border-bottom:1px solid #ddd}.warn{color:#a7352e}</style><main><p>D / L3-15 · 2026-11-04</p><h1>真实77M模型的训练、存档和重载已跑通</h1><section><h2>本次解决了什么？</h2><p>上次实际77M模型只做了装配，训练更新在8维小模拟层上检查。这次用真实原模型和两行合成数字输入，实际走完前向、反向更新、写入磁盘、清空适配参数、重载和生成对照。训练和存档函数与将来的业务训练共用。</p><p class="warn">这是数值工程检查。没有使用游戏场景或新增未审标签，也没有训练业务模型；12组新标签仍待核对，动作规划器仍未实现，质量与完整500ms尚未通过。</p></section><section><h2>实际检查结果</h2><table><tr><th>项目</th><th>结果</th></tr><tr><td>原模型参数 / 新增可训练参数</td><td>77,440,384 / 172,032；总推理仍77,612,416</td></tr><tr><td>实际合成优化步数</td><td>2步；业务训练0步</td></tr><tr><td>零适配层与原模型</td><td>完整logits逐值相同</td></tr><tr><td>底座是否保持不变</td><td>张量SHA与源文件均不变，无底座梯度</td></tr><tr><td>磁盘重载后</td><td>适配张量、完整logits、生成token逐值相同</td></tr><tr><td>实际顶层模型前向</td><td>22次，含两个优化步骤和全部生成解码</td></tr><tr><td>监督进程总耗时 / RSS</td><td>4.16秒 / 727.41MiB，CPU单线程</td></tr></table><p>原始合成损失：[13.446211814880371, 12.614121437072754]。损失变化只说明数值计算发生，不能表示模型理解了行动。这里的耗时包括准备和工程核查，不是游戏性能成绩。</p></section><section><h2>下一步</h2><p>新标签/来源核对齐备后固定真实小批训练实例，训练短表达器，再验证真实动作规划与协作链；不能把“给好计划再成句”当成模型自主选择行动。</p></section><section><details><summary>全部原始数字、调用和检查结果</summary><pre>{
+  &quot;schema&quot;: &quot;jity-d-realizer-synthetic-training-summary-v1&quot;,
+  &quot;date&quot;: &quot;2026-11-04&quot;,
+  &quot;batchId&quot;: &quot;m02-realizer-smoke-20261104-r1&quot;,
+  &quot;stage&quot;: &quot;L3-15 real M02 synthetic training and disk reload check; no business training&quot;,
+  &quot;scope&quot;: &quot;engineering_numeric_fixture_not_action_training_or_latency_evaluation&quot;,
+  &quot;lastModelRun&quot;: &quot;action-focus-dev42-20261104-r2&quot;,
+  &quot;draftSourceGroups&quot;: 12,
+  &quot;review&quot;: {
+    &quot;reviewedGroups&quot;: 0,
+    &quot;missingReviews&quot;: 12,
+    &quot;trainingDataReady&quot;: false,
+    &quot;formalEvaluationAllowed&quot;: false
+  },
+  &quot;realizerTrainerImplemented&quot;: true,
+  &quot;plannerModelImplemented&quot;: false,
+  &quot;realizerTrained&quot;: false,
+  &quot;businessTrainingSteps&quot;: 0,
+  &quot;businessInferenceCalls&quot;: 0,
+  &quot;formalEvaluationAllowed&quot;: false,
+  &quot;semanticQualityApproved&quot;: false,
+  &quot;fullRequest500msStatus&quot;: &quot;unverified&quot;,
+  &quot;realModelSyntheticCheck&quot;: {
+    &quot;adapterModules&quot;: 48,
+    &quot;baseGradientsAbsent&quot;: true,
+    &quot;businessInferenceCalls&quot;: 0,
+    &quot;businessTrainingSteps&quot;: 0,
+    &quot;changedAdapterTensors&quot;: [
+      &quot;encoder.block.0.layer.0.SelfAttention.q.lora_A&quot;,
+      &quot;encoder.block.0.layer.0.SelfAttention.q.lora_B&quot;,
+      &quot;encoder.block.0.layer.0.SelfAttention.v.lora_A&quot;,
+      &quot;encoder.block.0.layer.0.SelfAttention.v.lora_B&quot;,
+      &quot;encoder.block.1.layer.0.SelfAttention.q.lora_A&quot;,
+      &quot;encoder.block.1.layer.0.SelfAttention.q.lora_B&quot;,
+      &quot;encoder.block.1.layer.0.SelfAttention.v.lora_A&quot;,
+      &quot;encoder.block.1.layer.0.SelfAttention.v.lora_B&quot;,
+      &quot;encoder.block.2.layer.0.SelfAttention.q.lora_A&quot;,
+      &quot;encoder.block.2.layer.0.SelfAttention.q.lora_B&quot;,
+      &quot;encoder.block.2.layer.0.SelfAttention.v.lora_A&quot;,
+      &quot;encoder.block.2.layer.0.SelfAttention.v.lora_B&quot;,
+      &quot;encoder.block.3.layer.0.SelfAttention.q.lora_A&quot;,
+      &quot;encoder.block.3.layer.0.SelfAttention.q.lora_B&quot;,
+      &quot;encoder.block.3.layer.0.SelfAttention.v.lora_A&quot;,
+      &quot;encoder.block.3.layer.0.SelfAttention.v.lora_B&quot;,
+      &quot;encoder.block.4.layer.0.SelfAttention.q.lora_A&quot;,
+      &quot;encoder.block.4.layer.0.SelfAttention.q.lora_B&quot;,
+      &quot;encoder.block.4.layer.0.SelfAttention.v.lora_A&quot;,
+      &quot;encoder.block.4.layer.0.SelfAttention.v.lora_B&quot;,
+      &quot;encoder.block.5.layer.0.SelfAttention.q.lora_A&quot;,
+      &quot;encoder.block.5.layer.0.SelfAttention.q.lora_B&quot;,
+      &quot;encoder.block.5.layer.0.SelfAttention.v.lora_A&quot;,
+      &quot;encoder.block.5.layer.0.SelfAttention.v.lora_B&quot;,
+      &quot;encoder.block.6.layer.0.SelfAttention.q.lora_A&quot;,
+      &quot;encoder.block.6.layer.0.SelfAttention.q.lora_B&quot;,
+      &quot;encoder.block.6.layer.0.SelfAttention.v.lora_A&quot;,
+      &quot;encoder.block.6.layer.0.SelfAttention.v.lora_B&quot;,
+      &quot;encoder.block.7.layer.0.SelfAttention.q.lora_A&quot;,
+      &quot;encoder.block.7.layer.0.SelfAttention.q.lora_B&quot;,
+      &quot;encoder.block.7.layer.0.SelfAttention.v.lora_A&quot;,
+      &quot;encoder.block.7.layer.0.SelfAttention.v.lora_B&quot;,
+      &quot;decoder.block.0.layer.0.SelfAttention.q.lora_A&quot;,
+      &quot;decoder.block.0.layer.0.SelfAttention.q.lora_B&quot;,
+      &quot;decoder.block.0.layer.0.SelfAttention.v.lora_A&quot;,
+      &quot;decoder.block.0.layer.0.SelfAttention.v.lora_B&quot;,
+      &quot;decoder.block.0.layer.1.EncDecAttention.q.lora_A&quot;,
+      &quot;decoder.block.0.layer.1.EncDecAttention.q.lora_B&quot;,
+      &quot;decoder.block.0.layer.1.EncDecAttention.v.lora_A&quot;,
+      &quot;decoder.block.0.layer.1.EncDecAttention.v.lora_B&quot;,
+      &quot;decoder.block.1.layer.0.SelfAttention.q.lora_A&quot;,
+      &quot;decoder.block.1.layer.0.SelfAttention.q.lora_B&quot;,
+      &quot;decoder.block.1.layer.0.SelfAttention.v.lora_A&quot;,
+      &quot;decoder.block.1.layer.0.SelfAttention.v.lora_B&quot;,
+      &quot;decoder.block.1.layer.1.EncDecAttention.q.lora_A&quot;,
+      &quot;decoder.block.1.layer.1.EncDecAttention.q.lora_B&quot;,
+      &quot;decoder.block.1.layer.1.EncDecAttention.v.lora_A&quot;,
+      &quot;decoder.block.1.layer.1.EncDecAttention.v.lora_B&quot;,
+      &quot;decoder.block.2.layer.0.SelfAttention.q.lora_A&quot;,
+      &quot;decoder.block.2.layer.0.SelfAttention.q.lora_B&quot;,
+      &quot;decoder.block.2.layer.0.SelfAttention.v.lora_A&quot;,
+      &quot;decoder.block.2.layer.0.SelfAttention.v.lora_B&quot;,
+      &quot;decoder.block.2.layer.1.EncDecAttention.q.lora_A&quot;,
+      &quot;decoder.block.2.layer.1.EncDecAttention.q.lora_B&quot;,
+      &quot;decoder.block.2.layer.1.EncDecAttention.v.lora_A&quot;,
+      &quot;decoder.block.2.layer.1.EncDecAttention.v.lora_B&quot;,
+      &quot;decoder.block.3.layer.0.SelfAttention.q.lora_A&quot;,
+      &quot;decoder.block.3.layer.0.SelfAttention.q.lora_B&quot;,
+      &quot;decoder.block.3.layer.0.SelfAttention.v.lora_A&quot;,
+      &quot;decoder.block.3.layer.0.SelfAttention.v.lora_B&quot;,
+      &quot;decoder.block.3.layer.1.EncDecAttention.q.lora_A&quot;,
+      &quot;decoder.block.3.layer.1.EncDecAttention.q.lora_B&quot;,
+      &quot;decoder.block.3.layer.1.EncDecAttention.v.lora_A&quot;,
+      &quot;decoder.block.3.layer.1.EncDecAttention.v.lora_B&quot;,
+      &quot;decoder.block.4.layer.0.SelfAttention.q.lora_A&quot;,
+      &quot;decoder.block.4.layer.0.SelfAttention.q.lora_B&quot;,
+      &quot;decoder.block.4.layer.0.SelfAttention.v.lora_A&quot;,
+      &quot;decoder.block.4.layer.0.SelfAttention.v.lora_B&quot;,
+      &quot;decoder.block.4.layer.1.EncDecAttention.q.lora_A&quot;,
+      &quot;decoder.block.4.layer.1.EncDecAttention.q.lora_B&quot;,
+      &quot;decoder.block.4.layer.1.EncDecAttention.v.lora_A&quot;,
+      &quot;decoder.block.4.layer.1.EncDecAttention.v.lora_B&quot;,
+      &quot;decoder.block.5.layer.0.SelfAttention.q.lora_A&quot;,
+      &quot;decoder.block.5.layer.0.SelfAttention.q.lora_B&quot;,
+      &quot;decoder.block.5.layer.0.SelfAttention.v.lora_A&quot;,
+      &quot;decoder.block.5.layer.0.SelfAttention.v.lora_B&quot;,
+      &quot;decoder.block.5.layer.1.EncDecAttention.q.lora_A&quot;,
+      &quot;decoder.block.5.layer.1.EncDecAttention.q.lora_B&quot;,
+      &quot;decoder.block.5.layer.1.EncDecAttention.v.lora_A&quot;,
+      &quot;decoder.block.5.layer.1.EncDecAttention.v.lora_B&quot;,
+      &quot;decoder.block.6.layer.0.SelfAttention.q.lora_A&quot;,
+      &quot;decoder.block.6.layer.0.SelfAttention.q.lora_B&quot;,
+      &quot;decoder.block.6.layer.0.SelfAttention.v.lora_A&quot;,
+      &quot;decoder.block.6.layer.0.SelfAttention.v.lora_B&quot;,
+      &quot;decoder.block.6.layer.1.EncDecAttention.q.lora_A&quot;,
+      &quot;decoder.block.6.layer.1.EncDecAttention.q.lora_B&quot;,
+      &quot;decoder.block.6.layer.1.EncDecAttention.v.lora_A&quot;,
+      &quot;decoder.block.6.layer.1.EncDecAttention.v.lora_B&quot;,
+      &quot;decoder.block.7.layer.0.SelfAttention.q.lora_A&quot;,
+      &quot;decoder.block.7.layer.0.SelfAttention.q.lora_B&quot;,
+      &quot;decoder.block.7.layer.0.SelfAttention.v.lora_A&quot;,
+      &quot;decoder.block.7.layer.0.SelfAttention.v.lora_B&quot;,
+      &quot;decoder.block.7.layer.1.EncDecAttention.q.lora_A&quot;,
+      &quot;decoder.block.7.layer.1.EncDecAttention.q.lora_B&quot;,
+      &quot;decoder.block.7.layer.1.EncDecAttention.v.lora_A&quot;,
+      &quot;decoder.block.7.layer.1.EncDecAttention.v.lora_B&quot;
+    ],
+    &quot;checkpoint&quot;: {
+      &quot;path&quot;: &quot;.local/world-components-logic/realizer-smoke/m02-realizer-smoke-20261104-r1/adapter.pt&quot;,
+      &quot;sha256&quot;: &quot;95f030ecb2c2949594a9397f258b76fb41a84359993c17aeb9c7df744910660a&quot;,
+      &quot;sourceTensorSha256&quot;: &quot;cceb3639c60ad49a2416f965c8a74c1fb632d6cf122b2922c9265b3fb2b311c4&quot;,
+      &quot;tensorSha256&quot;: &quot;d7f29038dbdf3b59fbde2d67e07883c8346b894db7d4894de7ad6b53b323964f&quot;
+    },
+    &quot;fittedLogitsSha256&quot;: &quot;fc4c68b7aaa426b62d045744bfc4a702112fd01783462e636f43af5ad00799f3&quot;,
+    &quot;fullRequestMeasured&quot;: false,
+    &quot;lossTrendIsNotSemanticQuality&quot;: true,
+    &quot;losses&quot;: [
+      13.446211814880371,
+      12.614121437072754
+    ],
+    &quot;modelForwards&quot;: [
+      {
+        &quot;elapsedThroughOutputHashMs&quot;: 23.480042,
+        &quot;gradEnabled&quot;: false,
+        &quot;index&quot;: 0,
+        &quot;inputTensorShapes&quot;: {
+          &quot;attention_mask&quot;: [
+            2,
+            13
+          ],
+          &quot;input_ids&quot;: [
+            2,
+            13
+          ],
+          &quot;labels&quot;: [
+            2,
+            7
+          ]
+        },
+        &quot;logitsSha256&quot;: &quot;dc5d183ec16a9e867e463f752f1531100b2a7c119fd30d1fabd2e7e439c30aec&quot;,
+        &quot;logitsShape&quot;: [
+          2,
+          7,
+          32596
+        ],
+        &quot;loss&quot;: 13.446211814880371,
+        &quot;phase&quot;: &quot;source_reference&quot;,
+        &quot;startedMonotonicNs&quot;: 193774969118916,
+        &quot;status&quot;: &quot;complete&quot;
+      },
+      {
+        &quot;elapsedThroughOutputHashMs&quot;: 33.95575,
+        &quot;gradEnabled&quot;: false,
+        &quot;index&quot;: 1,
+        &quot;inputTensorShapes&quot;: {
+          &quot;attention_mask&quot;: [
+            2,
+            13
+          ],
+          &quot;input_ids&quot;: [
+            2,
+            13
+          ],
+          &quot;labels&quot;: [
+            2,
+            7
+          ]
+        },
+        &quot;logitsSha256&quot;: &quot;dc5d183ec16a9e867e463f752f1531100b2a7c119fd30d1fabd2e7e439c30aec&quot;,
+        &quot;logitsShape&quot;: [
+          2,
+          7,
+          32596
+        ],
+        &quot;loss&quot;: 13.446211814880371,
+        &quot;phase&quot;: &quot;zero_adapter_equivalence&quot;,
+        &quot;startedMonotonicNs&quot;: 193774995195833,
+        &quot;status&quot;: &quot;complete&quot;
+      },
+      {
+        &quot;elapsedThroughOutputHashMs&quot;: 27.167084,
+        &quot;gradEnabled&quot;: true,
+        &quot;index&quot;: 2,
+        &quot;inputTensorShapes&quot;: {
+          &quot;attention_mask&quot;: [
+            2,
+            13
+          ],
+          &quot;input_ids&quot;: [
+            2,
+            13
+          ],
+          &quot;labels&quot;: [
+            2,
+            7
+          ]
+        },
+        &quot;logitsSha256&quot;: &quot;dc5d183ec16a9e867e463f752f1531100b2a7c119fd30d1fabd2e7e439c30aec&quot;,
+        &quot;logitsShape&quot;: [
+          2,
+          7,
+          32596
+        ],
+        &quot;loss&quot;: 13.446211814880371,
+        &quot;phase&quot;: &quot;synthetic_optimizer&quot;,
+        &quot;startedMonotonicNs&quot;: 193775031882541,
+        &quot;status&quot;: &quot;complete&quot;
+      },
+      {
+        &quot;elapsedThroughOutputHashMs&quot;: 33.406,
+        &quot;gradEnabled&quot;: true,
+        &quot;index&quot;: 3,
+        &quot;inputTensorShapes&quot;: {
+          &quot;attention_mask&quot;: [
+            2,
+            13
+          ],
+          &quot;input_ids&quot;: [
+            2,
+            13
+          ],
+          &quot;labels&quot;: [
+            2,
+            7
+          ]
+        },
+        &quot;logitsSha256&quot;: &quot;e6d71de3551c13f11e58fef12de43a6c95666ae5dee04b74acd6dc4cf4e81a7f&quot;,
+        &quot;logitsShape&quot;: [
+          2,
+          7,
+          32596
+        ],
+        &quot;loss&quot;: 12.614121437072754,
+        &quot;phase&quot;: &quot;synthetic_optimizer&quot;,
+        &quot;startedMonotonicNs&quot;: 193775090553291,
+        &quot;status&quot;: &quot;complete&quot;
+      },
+      {
+        &quot;elapsedThroughOutputHashMs&quot;: 23.849375,
+        &quot;gradEnabled&quot;: false,
+        &quot;index&quot;: 4,
+        &quot;inputTensorShapes&quot;: {
+          &quot;attention_mask&quot;: [
+            2,
+            13
+          ],
+          &quot;input_ids&quot;: [
+            2,
+            13
+          ],
+          &quot;labels&quot;: [
+            2,
+            7
+          ]
+        },
+        &quot;logitsSha256&quot;: &quot;fc4c68b7aaa426b62d045744bfc4a702112fd01783462e636f43af5ad00799f3&quot;,
+        &quot;logitsShape&quot;: [
+          2,
+          7,
+          32596
+        ],
+        &quot;loss&quot;: 12.138773918151855,
+        &quot;phase&quot;: &quot;fitted_teacher_forced&quot;,
+        &quot;startedMonotonicNs&quot;: 193775147841250,
+        &quot;status&quot;: &quot;complete&quot;
+      },
+      {
+        &quot;elapsedThroughOutputHashMs&quot;: 11.405791,
+        &quot;gradEnabled&quot;: false,
+        &quot;index&quot;: 5,
+        &quot;inputTensorShapes&quot;: {
+          &quot;attention_mask&quot;: [
+            2,
+            13
+          ],
+          &quot;cache_position&quot;: [
+            1
+          ],
+          &quot;decoder_input_ids&quot;: [
+            2,
+            1
+          ]
+        },
+        &quot;logitsSha256&quot;: &quot;ad8f9b115bdd626372fbea600f87dc6827ab520541f9ff7846b5ad0450988823&quot;,
+        &quot;logitsShape&quot;: [
+          2,
+          1,
+          32596
+        ],
+        &quot;phase&quot;: &quot;synthetic_generation_before_reload&quot;,
+        &quot;startedMonotonicNs&quot;: 193775181342875,
+        &quot;status&quot;: &quot;complete&quot;
+      },
+      {
+        &quot;elapsedThroughOutputHashMs&quot;: 10.212417,
+        &quot;gradEnabled&quot;: false,
+        &quot;index&quot;: 6,
+        &quot;inputTensorShapes&quot;: {
+          &quot;attention_mask&quot;: [
+            2,
+            13
+          ],
+          &quot;cache_position&quot;: [
+            1
+          ],
+          &quot;decoder_input_ids&quot;: [
+            2,
+            1
+          ]
+        },
+        &quot;logitsSha256&quot;: &quot;e3f61624cac4a10916f4bf61e1fec32de3c848a6eb90f6f24befc4b77b2eca44&quot;,
+        &quot;logitsShape&quot;: [
+          2,
+          1,
+          32596
+        ],
+        &quot;phase&quot;: &quot;synthetic_generation_before_reload&quot;,
+        &quot;startedMonotonicNs&quot;: 193775193097708,
+        &quot;status&quot;: &quot;complete&quot;
+      },
+      {
+        &quot;elapsedThroughOutputHashMs&quot;: 10.34625,
+        &quot;gradEnabled&quot;: false,
+        &quot;index&quot;: 7,
+        &quot;inputTensorShapes&quot;: {
+          &quot;attention_mask&quot;: [
+            2,
+            13
+          ],
+          &quot;cache_position&quot;: [
+            1
+          ],
+          &quot;decoder_input_ids&quot;: [
+            2,
+            1
+          ]
+        },
+        &quot;logitsSha256&quot;: &quot;a0014e9db6eb35b8acbbfe37d8e4c83b1018cdf4d3a480bb5f7703f9343bb44e&quot;,
+        &quot;logitsShape&quot;: [
+          2,
+          1,
+          32596
+        ],
+        &quot;phase&quot;: &quot;synthetic_generation_before_reload&quot;,
+        &quot;startedMonotonicNs&quot;: 193775203731791,
+        &quot;status&quot;: &quot;complete&quot;
+      },
+      {
+        &quot;elapsedThroughOutputHashMs&quot;: 9.783208,
+        &quot;gradEnabled&quot;: false,
+        &quot;index&quot;: 8,
+        &quot;inputTensorShapes&quot;: {
+          &quot;attention_mask&quot;: [
+            2,
+            13
+          ],
+          &quot;cache_position&quot;: [
+            1
+          ],
+          &quot;decoder_input_ids&quot;: [
+            2,
+            1
+          ]
+        },
+        &quot;logitsSha256&quot;: &quot;492a7a956d64b4758d6979c4456da67c50ef1da3d5f8b8439e07fef4db5a007f&quot;,
+        &quot;logitsShape&quot;: [
+          2,
+          1,
+          32596
+        ],
+        &quot;phase&quot;: &quot;synthetic_generation_before_reload&quot;,
+        &quot;startedMonotonicNs&quot;: 193775214398083,
+        &quot;status&quot;: &quot;complete&quot;
+      },
+      {
+        &quot;elapsedThroughOutputHashMs&quot;: 9.965708,
+        &quot;gradEnabled&quot;: false,
+        &quot;index&quot;: 9,
+        &quot;inputTensorShapes&quot;: {
+          &quot;attention_mask&quot;: [
+            2,
+            13
+          ],
+          &quot;cache_position&quot;: [
+            1
+          ],
+          &quot;decoder_input_ids&quot;: [
+            2,
+            1
+          ]
+        },
+        &quot;logitsSha256&quot;: &quot;737bf1b9b2f061381af66414ef43d121f45942c706dca8208d73f2e355901b15&quot;,
+        &quot;logitsShape&quot;: [
+          2,
+          1,
+          32596
+        ],
+        &quot;phase&quot;: &quot;synthetic_generation_before_reload&quot;,
+        &quot;startedMonotonicNs&quot;: 193775224468583,
+        &quot;status&quot;: &quot;complete&quot;
+      },
+      {
+        &quot;elapsedThroughOutputHashMs&quot;: 10.243166,
+        &quot;gradEnabled&quot;: false,
+        &quot;index&quot;: 10,
+        &quot;inputTensorShapes&quot;: {
+          &quot;attention_mask&quot;: [
+            2,
+            13
+          ],
+          &quot;cache_position&quot;: [
+            1
+          ],
+          &quot;decoder_input_ids&quot;: [
+            2,
+            1
+          ]
+        },
+        &quot;logitsSha256&quot;: &quot;c2a91ba3dfa1e002b5b27160459b0a93d35f2f3d84bff0968d1de2c4c182f583&quot;,
+        &quot;logitsShape&quot;: [
+          2,
+          1,
+          32596
+        ],
+        &quot;phase&quot;: &quot;synthetic_generation_before_reload&quot;,
+        &quot;startedMonotonicNs&quot;: 193775234828875,
+        &quot;status&quot;: &quot;complete&quot;
+      },
+      {
+        &quot;elapsedThroughOutputHashMs&quot;: 10.627667,
+        &quot;gradEnabled&quot;: false,
+        &quot;index&quot;: 11,
+        &quot;inputTensorShapes&quot;: {
+          &quot;attention_mask&quot;: [
+            2,
+            13
+          ],
+          &quot;cache_position&quot;: [
+            1
+          ],
+          &quot;decoder_input_ids&quot;: [
+            2,
+            1
+          ]
+        },
+        &quot;logitsSha256&quot;: &quot;54f8fa672476f81859d3f7e556f967950a196882e6060c8415630c3610dadfc3&quot;,
+        &quot;logitsShape&quot;: [
+          2,
+          1,
+          32596
+        ],
+        &quot;phase&quot;: &quot;synthetic_generation_before_reload&quot;,
+        &quot;startedMonotonicNs&quot;: 193775245413791,
+        &quot;status&quot;: &quot;complete&quot;
+      },
+      {
+        &quot;elapsedThroughOutputHashMs&quot;: 10.435667,
+        &quot;gradEnabled&quot;: false,
+        &quot;index&quot;: 12,
+        &quot;inputTensorShapes&quot;: {
+          &quot;attention_mask&quot;: [
+            2,
+            13
+          ],
+          &quot;cache_position&quot;: [
+            1
+          ],
+          &quot;decoder_input_ids&quot;: [
+            2,
+            1
+          ]
+        },
+        &quot;logitsSha256&quot;: &quot;eecf3cbd14f143eb7e9e43fd3b83c743f2c9696ceb0b1ed85d3241e3c1d6a728&quot;,
+        &quot;logitsShape&quot;: [
+          2,
+          1,
+          32596
+        ],
+        &quot;phase&quot;: &quot;synthetic_generation_before_reload&quot;,
+        &quot;startedMonotonicNs&quot;: 193775256431916,
+        &quot;status&quot;: &quot;complete&quot;
+      },
+      {
+        &quot;elapsedThroughOutputHashMs&quot;: 25.8495,
+        &quot;gradEnabled&quot;: false,
+        &quot;index&quot;: 13,
+        &quot;inputTensorShapes&quot;: {
+          &quot;attention_mask&quot;: [
+            2,
+            13
+          ],
+          &quot;input_ids&quot;: [
+            2,
+            13
+          ],
+          &quot;labels&quot;: [
+            2,
+            7
+          ]
+        },
+        &quot;logitsSha256&quot;: &quot;fc4c68b7aaa426b62d045744bfc4a702112fd01783462e636f43af5ad00799f3&quot;,
+        &quot;logitsShape&quot;: [
+          2,
+          7,
+          32596
+        ],
+        &quot;loss&quot;: 12.138773918151855,
+        &quot;phase&quot;: &quot;reloaded_teacher_forced&quot;,
+        &quot;startedMonotonicNs&quot;: 193775614871791,
+        &quot;status&quot;: &quot;complete&quot;
+      },
+      {
+        &quot;elapsedThroughOutputHashMs&quot;: 10.545917,
+        &quot;gradEnabled&quot;: false,
+        &quot;index&quot;: 14,
+        &quot;inputTensorShapes&quot;: {
+          &quot;attention_mask&quot;: [
+            2,
+            13
+          ],
+          &quot;cache_position&quot;: [
+            1
+          ],
+          &quot;decoder_input_ids&quot;: [
+            2,
+            1
+          ]
+        },
+        &quot;logitsSha256&quot;: &quot;ad8f9b115bdd626372fbea600f87dc6827ab520541f9ff7846b5ad0450988823&quot;,
+        &quot;logitsShape&quot;: [
+          2,
+          1,
+          32596
+        ],
+        &quot;phase&quot;: &quot;synthetic_generation_after_reload&quot;,
+        &quot;startedMonotonicNs&quot;: 193775650813958,
+        &quot;status&quot;: &quot;complete&quot;
+      },
+      {
+        &quot;elapsedThroughOutputHashMs&quot;: 10.646375,
+        &quot;gradEnabled&quot;: false,
+        &quot;index&quot;: 15,
+        &quot;inputTensorShapes&quot;: {
+          &quot;attention_mask&quot;: [
+            2,
+            13
+          ],
+          &quot;cache_position&quot;: [
+            1
+          ],
+          &quot;decoder_input_ids&quot;: [
+            2,
+            1
+          ]
+        },
+        &quot;logitsSha256&quot;: &quot;e3f61624cac4a10916f4bf61e1fec32de3c848a6eb90f6f24befc4b77b2eca44&quot;,
+        &quot;logitsShape&quot;: [
+          2,
+          1,
+          32596
+        ],
+        &quot;phase&quot;: &quot;synthetic_generation_after_reload&quot;,
+        &quot;startedMonotonicNs&quot;: 193775661670458,
+        &quot;status&quot;: &quot;complete&quot;
+      },
+      {
+        &quot;elapsedThroughOutputHashMs&quot;: 10.614333,
+        &quot;gradEnabled&quot;: false,
+        &quot;index&quot;: 16,
+        &quot;inputTensorShapes&quot;: {
+          &quot;attention_mask&quot;: [
+            2,
+            13
+          ],
+          &quot;cache_position&quot;: [
+            1
+          ],
+          &quot;decoder_input_ids&quot;: [
+            2,
+            1
+          ]
+        },
+        &quot;logitsSha256&quot;: &quot;a0014e9db6eb35b8acbbfe37d8e4c83b1018cdf4d3a480bb5f7703f9343bb44e&quot;,
+        &quot;logitsShape&quot;: [
+          2,
+          1,
+          32596
+        ],
+        &quot;phase&quot;: &quot;synthetic_generation_after_reload&quot;,
+        &quot;startedMonotonicNs&quot;: 193775672666500,
+        &quot;status&quot;: &quot;complete&quot;
+      },
+      {
+        &quot;elapsedThroughOutputHashMs&quot;: 10.017791,
+        &quot;gradEnabled&quot;: false,
+        &quot;index&quot;: 17,
+        &quot;inputTensorShapes&quot;: {
+          &quot;attention_mask&quot;: [
+            2,
+            13
+          ],
+          &quot;cache_position&quot;: [
+            1
+          ],
+          &quot;decoder_input_ids&quot;: [
+            2,
+            1
+          ]
+        },
+        &quot;logitsSha256&quot;: &quot;492a7a956d64b4758d6979c4456da67c50ef1da3d5f8b8439e07fef4db5a007f&quot;,
+        &quot;logitsShape&quot;: [
+          2,
+          1,
+          32596
+        ],
+        &quot;phase&quot;: &quot;synthetic_generation_after_reload&quot;,
+        &quot;startedMonotonicNs&quot;: 193775683593500,
+        &quot;status&quot;: &quot;complete&quot;
+      },
+      {
+        &quot;elapsedThroughOutputHashMs&quot;: 10.139416,
+        &quot;gradEnabled&quot;: false,
+        &quot;index&quot;: 18,
+        &quot;inputTensorShapes&quot;: {
+          &quot;attention_mask&quot;: [
+            2,
+            13
+          ],
+          &quot;cache_position&quot;: [
+            1
+          ],
+          &quot;decoder_input_ids&quot;: [
+            2,
+            1
+          ]
+        },
+        &quot;logitsSha256&quot;: &quot;737bf1b9b2f061381af66414ef43d121f45942c706dca8208d73f2e355901b15&quot;,
+        &quot;logitsShape&quot;: [
+          2,
+          1,
+          32596
+        ],
+        &quot;phase&quot;: &quot;synthetic_generation_after_reload&quot;,
+        &quot;startedMonotonicNs&quot;: 193775693893750,
+        &quot;status&quot;: &quot;complete&quot;
+      },
+      {
+        &quot;elapsedThroughOutputHashMs&quot;: 11.056208,
+        &quot;gradEnabled&quot;: false,
+        &quot;index&quot;: 19,
+        &quot;inputTensorShapes&quot;: {
+          &quot;attention_mask&quot;: [
+            2,
+            13
+          ],
+          &quot;cache_position&quot;: [
+            1
+          ],
+          &quot;decoder_input_ids&quot;: [
+            2,
+            1
+          ]
+        },
+        &quot;logitsSha256&quot;: &quot;c2a91ba3dfa1e002b5b27160459b0a93d35f2f3d84bff0968d1de2c4c182f583&quot;,
+        &quot;logitsShape&quot;: [
+          2,
+          1,
+          32596
+        ],
+        &quot;phase&quot;: &quot;synthetic_generation_after_reload&quot;,
+        &quot;startedMonotonicNs&quot;: 193775704373000,
+        &quot;status&quot;: &quot;complete&quot;
+      },
+      {
+        &quot;elapsedThroughOutputHashMs&quot;: 11.368583,
+        &quot;gradEnabled&quot;: false,
+        &quot;index&quot;: 20,
+        &quot;inputTensorShapes&quot;: {
+          &quot;attention_mask&quot;: [
+            2,
+            13
+          ],
+          &quot;cache_position&quot;: [
+            1
+          ],
+          &quot;decoder_input_ids&quot;: [
+            2,
+            1
+          ]
+        },
+        &quot;logitsSha256&quot;: &quot;54f8fa672476f81859d3f7e556f967950a196882e6060c8415630c3610dadfc3&quot;,
+        &quot;logitsShape&quot;: [
+          2,
+          1,
+          32596
+        ],
+        &quot;phase&quot;: &quot;synthetic_generation_after_reload&quot;,
+        &quot;startedMonotonicNs&quot;: 193775715784333,
+        &quot;status&quot;: &quot;complete&quot;
+      },
+      {
+        &quot;elapsedThroughOutputHashMs&quot;: 12.835583,
+        &quot;gradEnabled&quot;: false,
+        &quot;index&quot;: 21,
+        &quot;inputTensorShapes&quot;: {
+          &quot;attention_mask&quot;: [
+            2,
+            13
+          ],
+          &quot;cache_position&quot;: [
+            1
+          ],
+          &quot;decoder_input_ids&quot;: [
+            2,
+            1
+          ]
+        },
+        &quot;logitsSha256&quot;: &quot;eecf3cbd14f143eb7e9e43fd3b83c743f2c9696ceb0b1ed85d3241e3c1d6a728&quot;,
+        &quot;logitsShape&quot;: [
+          2,
+          1,
+          32596
+        ],
+        &quot;phase&quot;: &quot;synthetic_generation_after_reload&quot;,
+        &quot;startedMonotonicNs&quot;: 193775727494208,
+        &quot;status&quot;: &quot;complete&quot;
+      }
+    ],
+    &quot;modelTopForwardCalls&quot;: 22,
+    &quot;reloadedGeneratedTokensExact&quot;: true,
+    &quot;reloadedLogitsExact&quot;: true,
+    &quot;semanticQualityApproved&quot;: false,
+    &quot;sourceBaseUnchanged&quot;: true,
+    &quot;sourceParameters&quot;: 77440384,
+    &quot;syntheticExamples&quot;: [
+      {
+        &quot;inputIds&quot;: [
+          5,
+          11,
+          17,
+          23,
+          29,
+          7,
+          13,
+          19,
+          25,
+          31,
+          9,
+          15,
+          1
+        ],
+        &quot;labels&quot;: [
+          6,
+          12,
+          18,
+          24,
+          30,
+          8,
+          1
+        ],
+        &quot;sourceGroup&quot;: &quot;synthetic-numeric-01&quot;
+      },
+      {
+        &quot;inputIds&quot;: [
+          31,
+          25,
+          19,
+          13,
+          7,
+          29,
+          23,
+          17,
+          1
+        ],
+        &quot;labels&quot;: [
+          9,
+          15,
+          21,
+          27,
+          1
+        ],
+        &quot;sourceGroup&quot;: &quot;synthetic-numeric-02&quot;
+      }
+    ],
+    &quot;syntheticGenerations&quot;: [
+      {
+        &quot;elapsedMs&quot;: 95.3375419776421,
+        &quot;maxNewTokens&quot;: 8,
+        &quot;semanticMeaning&quot;: &quot;none_synthetic_numeric_fixture&quot;,
+        &quot;tokenIds&quot;: [
+          [
+            0,
+            259,
+            4170,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            32595,
+            261,
+            16001,
+            261,
+            16001,
+            261,
+            16001,
+            1
+          ]
+        ]
+      },
+      {
+        &quot;elapsedMs&quot;: 99.62991700740531,
+        &quot;maxNewTokens&quot;: 8,
+        &quot;semanticMeaning&quot;: &quot;none_synthetic_numeric_fixture&quot;,
+        &quot;tokenIds&quot;: [
+          [
+            0,
+            259,
+            4170,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            32595,
+            261,
+            16001,
+            261,
+            16001,
+            261,
+            16001,
+            1
+          ]
+        ]
+      }
+    ],
+    &quot;syntheticOptimizerSteps&quot;: 2,
+    &quot;targetModules&quot;: [
+      {
+        &quot;alpha&quot;: 8,
+        &quot;inputFeatures&quot;: 512,
+        &quot;name&quot;: &quot;encoder.block.0.layer.0.SelfAttention.q&quot;,
+        &quot;outputFeatures&quot;: 384,
+        &quot;rank&quot;: 4
+      },
+      {
+        &quot;alpha&quot;: 8,
+        &quot;inputFeatures&quot;: 512,
+        &quot;name&quot;: &quot;encoder.block.0.layer.0.SelfAttention.v&quot;,
+        &quot;outputFeatures&quot;: 384,
+        &quot;rank&quot;: 4
+      },
+      {
+        &quot;alpha&quot;: 8,
+        &quot;inputFeatures&quot;: 512,
+        &quot;name&quot;: &quot;encoder.block.1.layer.0.SelfAttention.q&quot;,
+        &quot;outputFeatures&quot;: 384,
+        &quot;rank&quot;: 4
+      },
+      {
+        &quot;alpha&quot;: 8,
+        &quot;inputFeatures&quot;: 512,
+        &quot;name&quot;: &quot;encoder.block.1.layer.0.SelfAttention.v&quot;,
+        &quot;outputFeatures&quot;: 384,
+        &quot;rank&quot;: 4
+      },
+      {
+        &quot;alpha&quot;: 8,
+        &quot;inputFeatures&quot;: 512,
+        &quot;name&quot;: &quot;encoder.block.2.layer.0.SelfAttention.q&quot;,
+        &quot;outputFeatures&quot;: 384,
+        &quot;rank&quot;: 4
+      },
+      {
+        &quot;alpha&quot;: 8,
+        &quot;inputFeatures&quot;: 512,
+        &quot;name&quot;: &quot;encoder.block.2.layer.0.SelfAttention.v&quot;,
+        &quot;outputFeatures&quot;: 384,
+        &quot;rank&quot;: 4
+      },
+      {
+        &quot;alpha&quot;: 8,
+        &quot;inputFeatures&quot;: 512,
+        &quot;name&quot;: &quot;encoder.block.3.layer.0.SelfAttention.q&quot;,
+        &quot;outputFeatures&quot;: 384,
+        &quot;rank&quot;: 4
+      },
+      {
+        &quot;alpha&quot;: 8,
+        &quot;inputFeatures&quot;: 512,
+        &quot;name&quot;: &quot;encoder.block.3.layer.0.SelfAttention.v&quot;,
+        &quot;outputFeatures&quot;: 384,
+        &quot;rank&quot;: 4
+      },
+      {
+        &quot;alpha&quot;: 8,
+        &quot;inputFeatures&quot;: 512,
+        &quot;name&quot;: &quot;encoder.block.4.layer.0.SelfAttention.q&quot;,
+        &quot;outputFeatures&quot;: 384,
+        &quot;rank&quot;: 4
+      },
+      {
+        &quot;alpha&quot;: 8,
+        &quot;inputFeatures&quot;: 512,
+        &quot;name&quot;: &quot;encoder.block.4.layer.0.SelfAttention.v&quot;,
+        &quot;outputFeatures&quot;: 384,
+        &quot;rank&quot;: 4
+      },
+      {
+        &quot;alpha&quot;: 8,
+        &quot;inputFeatures&quot;: 512,
+        &quot;name&quot;: &quot;encoder.block.5.layer.0.SelfAttention.q&quot;,
+        &quot;outputFeatures&quot;: 384,
+        &quot;rank&quot;: 4
+      },
+      {
+        &quot;alpha&quot;: 8,
+        &quot;inputFeatures&quot;: 512,
+        &quot;name&quot;: &quot;encoder.block.5.layer.0.SelfAttention.v&quot;,
+        &quot;outputFeatures&quot;: 384,
+        &quot;rank&quot;: 4
+      },
+      {
+        &quot;alpha&quot;: 8,
+        &quot;inputFeatures&quot;: 512,
+        &quot;name&quot;: &quot;encoder.block.6.layer.0.SelfAttention.q&quot;,
+        &quot;outputFeatures&quot;: 384,
+        &quot;rank&quot;: 4
+      },
+      {
+        &quot;alpha&quot;: 8,
+        &quot;inputFeatures&quot;: 512,
+        &quot;name&quot;: &quot;encoder.block.6.layer.0.SelfAttention.v&quot;,
+        &quot;outputFeatures&quot;: 384,
+        &quot;rank&quot;: 4
+      },
+      {
+        &quot;alpha&quot;: 8,
+        &quot;inputFeatures&quot;: 512,
+        &quot;name&quot;: &quot;encoder.block.7.layer.0.SelfAttention.q&quot;,
+        &quot;outputFeatures&quot;: 384,
+        &quot;rank&quot;: 4
+      },
+      {
+        &quot;alpha&quot;: 8,
+        &quot;inputFeatures&quot;: 512,
+        &quot;name&quot;: &quot;encoder.block.7.layer.0.SelfAttention.v&quot;,
+        &quot;outputFeatures&quot;: 384,
+        &quot;rank&quot;: 4
+      },
+      {
+        &quot;alpha&quot;: 8,
+        &quot;inputFeatures&quot;: 512,
+        &quot;name&quot;: &quot;decoder.block.0.layer.0.SelfAttention.q&quot;,
+        &quot;outputFeatures&quot;: 384,
+        &quot;rank&quot;: 4
+      },
+      {
+        &quot;alpha&quot;: 8,
+        &quot;inputFeatures&quot;: 512,
+        &quot;name&quot;: &quot;decoder.block.0.layer.0.SelfAttention.v&quot;,
+        &quot;outputFeatures&quot;: 384,
+        &quot;rank&quot;: 4
+      },
+      {
+        &quot;alpha&quot;: 8,
+        &quot;inputFeatures&quot;: 512,
+        &quot;name&quot;: &quot;decoder.block.0.layer.1.EncDecAttention.q&quot;,
+        &quot;outputFeatures&quot;: 384,
+        &quot;rank&quot;: 4
+      },
+      {
+        &quot;alpha&quot;: 8,
+        &quot;inputFeatures&quot;: 512,
+        &quot;name&quot;: &quot;decoder.block.0.layer.1.EncDecAttention.v&quot;,
+        &quot;outputFeatures&quot;: 384,
+        &quot;rank&quot;: 4
+      },
+      {
+        &quot;alpha&quot;: 8,
+        &quot;inputFeatures&quot;: 512,
+        &quot;name&quot;: &quot;decoder.block.1.layer.0.SelfAttention.q&quot;,
+        &quot;outputFeatures&quot;: 384,
+        &quot;rank&quot;: 4
+      },
+      {
+        &quot;alpha&quot;: 8,
+        &quot;inputFeatures&quot;: 512,
+        &quot;name&quot;: &quot;decoder.block.1.layer.0.SelfAttention.v&quot;,
+        &quot;outputFeatures&quot;: 384,
+        &quot;rank&quot;: 4
+      },
+      {
+        &quot;alpha&quot;: 8,
+        &quot;inputFeatures&quot;: 512,
+        &quot;name&quot;: &quot;decoder.block.1.layer.1.EncDecAttention.q&quot;,
+        &quot;outputFeatures&quot;: 384,
+        &quot;rank&quot;: 4
+      },
+      {
+        &quot;alpha&quot;: 8,
+        &quot;inputFeatures&quot;: 512,
+        &quot;name&quot;: &quot;decoder.block.1.layer.1.EncDecAttention.v&quot;,
+        &quot;outputFeatures&quot;: 384,
+        &quot;rank&quot;: 4
+      },
+      {
+        &quot;alpha&quot;: 8,
+        &quot;inputFeatures&quot;: 512,
+        &quot;name&quot;: &quot;decoder.block.2.layer.0.SelfAttention.q&quot;,
+        &quot;outputFeatures&quot;: 384,
+        &quot;rank&quot;: 4
+      },
+      {
+        &quot;alpha&quot;: 8,
+        &quot;inputFeatures&quot;: 512,
+        &quot;name&quot;: &quot;decoder.block.2.layer.0.SelfAttention.v&quot;,
+        &quot;outputFeatures&quot;: 384,
+        &quot;rank&quot;: 4
+      },
+      {
+        &quot;alpha&quot;: 8,
+        &quot;inputFeatures&quot;: 512,
+        &quot;name&quot;: &quot;decoder.block.2.layer.1.EncDecAttention.q&quot;,
+        &quot;outputFeatures&quot;: 384,
+        &quot;rank&quot;: 4
+      },
+      {
+        &quot;alpha&quot;: 8,
+        &quot;inputFeatures&quot;: 512,
+        &quot;name&quot;: &quot;decoder.block.2.layer.1.EncDecAttention.v&quot;,
+        &quot;outputFeatures&quot;: 384,
+        &quot;rank&quot;: 4
+      },
+      {
+        &quot;alpha&quot;: 8,
+        &quot;inputFeatures&quot;: 512,
+        &quot;name&quot;: &quot;decoder.block.3.layer.0.SelfAttention.q&quot;,
+        &quot;outputFeatures&quot;: 384,
+        &quot;rank&quot;: 4
+      },
+      {
+        &quot;alpha&quot;: 8,
+        &quot;inputFeatures&quot;: 512,
+        &quot;name&quot;: &quot;decoder.block.3.layer.0.SelfAttention.v&quot;,
+        &quot;outputFeatures&quot;: 384,
+        &quot;rank&quot;: 4
+      },
+      {
+        &quot;alpha&quot;: 8,
+        &quot;inputFeatures&quot;: 512,
+        &quot;name&quot;: &quot;decoder.block.3.layer.1.EncDecAttention.q&quot;,
+        &quot;outputFeatures&quot;: 384,
+        &quot;rank&quot;: 4
+      },
+      {
+        &quot;alpha&quot;: 8,
+        &quot;inputFeatures&quot;: 512,
+        &quot;name&quot;: &quot;decoder.block.3.layer.1.EncDecAttention.v&quot;,
+        &quot;outputFeatures&quot;: 384,
+        &quot;rank&quot;: 4
+      },
+      {
+        &quot;alpha&quot;: 8,
+        &quot;inputFeatures&quot;: 512,
+        &quot;name&quot;: &quot;decoder.block.4.layer.0.SelfAttention.q&quot;,
+        &quot;outputFeatures&quot;: 384,
+        &quot;rank&quot;: 4
+      },
+      {
+        &quot;alpha&quot;: 8,
+        &quot;inputFeatures&quot;: 512,
+        &quot;name&quot;: &quot;decoder.block.4.layer.0.SelfAttention.v&quot;,
+        &quot;outputFeatures&quot;: 384,
+        &quot;rank&quot;: 4
+      },
+      {
+        &quot;alpha&quot;: 8,
+        &quot;inputFeatures&quot;: 512,
+        &quot;name&quot;: &quot;decoder.block.4.layer.1.EncDecAttention.q&quot;,
+        &quot;outputFeatures&quot;: 384,
+        &quot;rank&quot;: 4
+      },
+      {
+        &quot;alpha&quot;: 8,
+        &quot;inputFeatures&quot;: 512,
+        &quot;name&quot;: &quot;decoder.block.4.layer.1.EncDecAttention.v&quot;,
+        &quot;outputFeatures&quot;: 384,
+        &quot;rank&quot;: 4
+      },
+      {
+        &quot;alpha&quot;: 8,
+        &quot;inputFeatures&quot;: 512,
+        &quot;name&quot;: &quot;decoder.block.5.layer.0.SelfAttention.q&quot;,
+        &quot;outputFeatures&quot;: 384,
+        &quot;rank&quot;: 4
+      },
+      {
+        &quot;alpha&quot;: 8,
+        &quot;inputFeatures&quot;: 512,
+        &quot;name&quot;: &quot;decoder.block.5.layer.0.SelfAttention.v&quot;,
+        &quot;outputFeatures&quot;: 384,
+        &quot;rank&quot;: 4
+      },
+      {
+        &quot;alpha&quot;: 8,
+        &quot;inputFeatures&quot;: 512,
+        &quot;name&quot;: &quot;decoder.block.5.layer.1.EncDecAttention.q&quot;,
+        &quot;outputFeatures&quot;: 384,
+        &quot;rank&quot;: 4
+      },
+      {
+        &quot;alpha&quot;: 8,
+        &quot;inputFeatures&quot;: 512,
+        &quot;name&quot;: &quot;decoder.block.5.layer.1.EncDecAttention.v&quot;,
+        &quot;outputFeatures&quot;: 384,
+        &quot;rank&quot;: 4
+      },
+      {
+        &quot;alpha&quot;: 8,
+        &quot;inputFeatures&quot;: 512,
+        &quot;name&quot;: &quot;decoder.block.6.layer.0.SelfAttention.q&quot;,
+        &quot;outputFeatures&quot;: 384,
+        &quot;rank&quot;: 4
+      },
+      {
+        &quot;alpha&quot;: 8,
+        &quot;inputFeatures&quot;: 512,
+        &quot;name&quot;: &quot;decoder.block.6.layer.0.SelfAttention.v&quot;,
+        &quot;outputFeatures&quot;: 384,
+        &quot;rank&quot;: 4
+      },
+      {
+        &quot;alpha&quot;: 8,
+        &quot;inputFeatures&quot;: 512,
+        &quot;name&quot;: &quot;decoder.block.6.layer.1.EncDecAttention.q&quot;,
+        &quot;outputFeatures&quot;: 384,
+        &quot;rank&quot;: 4
+      },
+      {
+        &quot;alpha&quot;: 8,
+        &quot;inputFeatures&quot;: 512,
+        &quot;name&quot;: &quot;decoder.block.6.layer.1.EncDecAttention.v&quot;,
+        &quot;outputFeatures&quot;: 384,
+        &quot;rank&quot;: 4
+      },
+      {
+        &quot;alpha&quot;: 8,
+        &quot;inputFeatures&quot;: 512,
+        &quot;name&quot;: &quot;decoder.block.7.layer.0.SelfAttention.q&quot;,
+        &quot;outputFeatures&quot;: 384,
+        &quot;rank&quot;: 4
+      },
+      {
+        &quot;alpha&quot;: 8,
+        &quot;inputFeatures&quot;: 512,
+        &quot;name&quot;: &quot;decoder.block.7.layer.0.SelfAttention.v&quot;,
+        &quot;outputFeatures&quot;: 384,
+        &quot;rank&quot;: 4
+      },
+      {
+        &quot;alpha&quot;: 8,
+        &quot;inputFeatures&quot;: 512,
+        &quot;name&quot;: &quot;decoder.block.7.layer.1.EncDecAttention.q&quot;,
+        &quot;outputFeatures&quot;: 384,
+        &quot;rank&quot;: 4
+      },
+      {
+        &quot;alpha&quot;: 8,
+        &quot;inputFeatures&quot;: 512,
+        &quot;name&quot;: &quot;decoder.block.7.layer.1.EncDecAttention.v&quot;,
+        &quot;outputFeatures&quot;: 384,
+        &quot;rank&quot;: 4
+      }
+    ],
+    &quot;totalInferenceParameters&quot;: 77612416,
+    &quot;trainableAdapterParameters&quot;: 172032,
+    &quot;zeroAdapterLogitsExact&quot;: true
+  },
+  &quot;forwardPhaseCounts&quot;: {
+    &quot;fitted_teacher_forced&quot;: 1,
+    &quot;reloaded_teacher_forced&quot;: 1,
+    &quot;source_reference&quot;: 1,
+    &quot;synthetic_generation_after_reload&quot;: 8,
+    &quot;synthetic_generation_before_reload&quot;: 8,
+    &quot;synthetic_optimizer&quot;: 2,
+    &quot;zero_adapter_equivalence&quot;: 1
+  },
+  &quot;supervisor&quot;: {
+    &quot;error&quot;: null,
+    &quot;exitCode&quot;: 0,
+    &quot;measurement&quot;: &quot;ps_rss_every250ms&quot;,
+    &quot;observedPeakResidentMiB&quot;: 727.40625,
+    &quot;stopReason&quot;: null,
+    &quot;wallMs&quot;: 4156.361542001832
+  },
+  &quot;planSha256&quot;: &quot;3eec50498a97c3588372a6f0ca2396729279991f3d90b6d10935856c9d971cd3&quot;,
+  &quot;recordSha256&quot;: &quot;0edd390783f9763ac569f5f8429303ef2cf3608dd7fe6d4b2e30127c37cbbf14&quot;,
+  &quot;journalSha256&quot;: &quot;781f0f18f81a89600827b8c9c984efbce95dd1c74ff136cac489fd5a56f42ecb&quot;
+}</pre></details><p><a href="l3-15-realizer-smoke-summary.json">机器汇总</a> · <a href="m01-fitting/m02-realizer-smoke-20261104-r1.plan.json">冻结计划</a> · <a href="m01-fitting/m02-realizer-smoke-20261104-r1.record.json">原始记录</a> · <a href="m01-fitting/m02-realizer-smoke-20261104-r1.record.journal.jsonl">完整事件</a> · <a href="l3-14-realizer-training-readiness.html">12组候选和上批准备</a> · <a href="../../design/world-engine-reports/components-logic/realizer-training-smoke-protocol.md">本批协议</a></p></section></main></html>

@@ -180,6 +180,14 @@ class TrainingPreparationTests(unittest.TestCase):
             with mock.patch.object(trainer.run,'read_json',side_effect=read):
                 with self.assertRaises(ValueError):trainer.observed_smoke()
 
+    def test_rendered_smoke_materials_are_identical_across_process_hash_seeds(self):
+        import os
+        for seed in ('0','9'):
+            result=subprocess.run([sys.executable,str(trainer.BASE/'plan_training.py'),'--check-smoke'],
+                capture_output=True,text=True,timeout=20,env={**os.environ,'PYTHONHASHSEED':seed,'PYTHONDONTWRITEBYTECODE':'1'})
+            self.assertEqual(result.returncode,0,result.stderr)
+            self.assertEqual(json.loads(result.stdout)['businessTrainingSteps'],0)
+
 
 class NumericImplementationTests(unittest.TestCase):
     def test_complete_t5_forward_backward_disk_reload_and_token_equivalence_on_random_tiny_model(self):
