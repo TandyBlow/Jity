@@ -52,6 +52,8 @@ OBSERVABLE_KINDS = {"moved", "positioned_at", "task_achieved", "subtask_added",
 # inner states of OTHERS: never observable, whatever the location — the
 # anti-secret rule (co-location is not a visibility ground for these)
 INNER_KINDS = {"personality_changed", "personality_removed", "sanity_changed"}
+# 性情变化可以从行为看出来；理智变化纯属内部，同处一地也看不到
+PERSONALITY_KINDS = {"personality_changed", "personality_removed"}
 # the subject's own position facts are must-say (rubric §2.3c 位置)
 MUST_POSITION_KINDS = {"moved", "positioned_at", "position_relative",
                        "slot_changed"}
@@ -94,7 +96,8 @@ def resolve_perspective(state: dict, subject_id: str | None = None,
     if at is None:
         return {"perspective": None,
                 "problems": [f"perspective-position-unresolvable:{subject}"]}
-    return {"perspective": {"type": ptype, "entityId": subject, "at": at},
+    return {"perspective": {"type": ptype, "entityId": subject, "at": at,
+                            "atPath": location_path_ids(state, entry.get("position"))},
             "problems": []}
 
 
@@ -113,6 +116,37 @@ def _container_name_of_state(state: dict, position) -> str | None:
     return None
 
 
+def location_path_ids(state: dict, position) -> list:
+    """Location ids from the entity's own container up to the root.
+
+    Two entities deep in the same building (塔顶 / 石阶) had different leaf
+    names, so co-location compared by leaf name called them "elsewhere" and
+    a three-person scene silently lost two people. The path lets the
+    visibility ground ask "same building?" instead of "same leaf?".
+    """
+    out, cid, depth = [], None, 0
+    if not position:
+        return out
+    cid = position.get("containerId")
+    initial = (state or {}).get("initial") or {}
+    locations = initial.get("locations") or {}
+    while cid is not None and depth < 12:
+        ent = locations.get(cid)
+        if ent is None:
+            break
+        out.append(cid)
+        cid = ent.get("parentLocationId")
+        depth += 1
+    return out
+
+
+def shares_location(fact_path, view_path) -> bool:
+    """True when the two location chains intersect (same building)."""
+    if not fact_path or not view_path:
+        return False
+    return bool(set(fact_path) & set(view_path))
+
+
 def subject_task_goals(subject_tasks: dict | None) -> set:
     """Goals of the subject's tasks that are still in progress — the
     tracked-task must rule only follows tasks the subject is chasing."""
@@ -124,7 +158,8 @@ def subject_task_goals(subject_tasks: dict | None) -> set:
     return out
 
 
-def _visibility_ground(fact: dict, perspective: dict) -> tuple[bool, str]:
+def _visibility_ground(fact: dict, perspective: dict,
+                       visible_other_personality: bool = False) -> tuple[bool, str]:
     """(visible, ground) per the rubric §3 order, with the anti-secret
     strengthening: co-location never makes another entity's inner state
     visible."""
@@ -143,6 +178,17 @@ def _visibility_ground(fact: dict, perspective: dict) -> tuple[bool, str]:
         if scope is not None and scope == perspective.get("at"):
             return True, "co-location"
         return False, "other-location"
+    if fact.get("atPath") and shares_location(fact["atPath"],
+                                              perspective.get("atPath") or []):
+        if kind in INNER_KINDS:
+            # 他人的性情变化可以"看得出来"，但只作为行为迹象；他人的理智
+            # 变化仍然不可见（那是纯内部状态）
+            if visible_other_personality and kind in PERSONALITY_KINDS:
+                return True, "co-located-behavior"
+            return False, "inner-state-private"
+        if kind in OBSERVABLE_KINDS:
+            return True, "co-location"
+        return False, f"unknown-kind-observability:{kind}"
     if fact.get("at") is not None and fact["at"] == perspective.get("at"):
         if kind in INNER_KINDS:
             return False, "inner-state-private"
@@ -178,7 +224,8 @@ def _omniscient_focus(facts: list) -> tuple[set, str]:
 def classify_facts(facts: list, perspective: dict,
                    subject_tasks: dict | None = None,
                    may_policy: str = "select",
-                   visible_other_actions: bool = False) -> dict:
+                   visible_other_actions: bool = False,
+                   visible_other_personality: bool = False) -> dict:
     """Classify every fact and apply the selection policy. Returns
     {"status": "ok"|"stopped", "stops", "refusals", "decisions",
      "selectedFactIds", "summary"}.
@@ -215,7 +262,9 @@ def classify_facts(facts: list, perspective: dict,
                              "code": "malformed-fact",
                              "reason": "事实缺少合法 factId 或 kind，拒绝分类"})
             continue
-        visible, ground = _visibility_ground(fact, perspective)
+        visible, ground = _visibility_ground(
+            fact, perspective,
+            visible_other_personality=visible_other_personality)
         eid = fact.get("entityId")
         if visible and kind not in OBSERVABLE_KINDS and kind not in INNER_KINDS \
                 and kind not in ("time", "no_change"):
@@ -310,6 +359,9 @@ def _classify_one(fact: dict, perspective: dict, focus: set,
         if ground == "other-location":
             return "invisible", ground, "发生在视角人物感知范围之外，省略"
         return "invisible", ground, "视角人物不可见，省略"
+    if ground == "co-located-behavior" and kind in PERSONALITY_KINDS:
+        return "may", ground, ("他人在同地的性情变化，只写成可见的行为或视角人物的推测，"
+                               "可写可省")
     if visible_other_actions and kind in VISIBLE_OTHER_ACTION_KINDS:
         return "may", ground, "他人在同地的可见动作/变化，可写可省（N4 叙事选择臂）"
     if eid is None:

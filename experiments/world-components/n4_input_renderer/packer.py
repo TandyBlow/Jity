@@ -58,7 +58,7 @@ RELATION_CN = {"under": "下方", "above": "上方", "beside": "旁边",
                "in_front_of": "前方", "behind": "后方"}
 
 
-def _fact_payload(fact):
+def _fact_payload(fact, pov_entity=None):
     kind = fact.get("kind")
     if kind not in PACK_KINDS:
         raise N4RenderError("unsupported-fact-kind", kind)
@@ -83,8 +83,13 @@ def _fact_payload(fact):
         after = _number(fact, "to")
         direction = "上升" if after > before else "下降" if after < before else "不变"
         return f"{name}｜{direction}"
-    if kind in ("appearance_changed", "appearance_removed",
-                "personality_changed", "personality_removed"):
+    if kind in ("appearance_changed", "appearance_removed"):
+        return f"{name}｜{_text(fact, 'text')}"
+    if kind in ("personality_changed", "personality_removed"):
+        # 他人的性情看不见，只能从行为上"觉出来"。标记成观察，免得模型
+        # 直接把它当成已知的内心事实写出来。
+        if pov_entity and fact.get("entityId") and fact["entityId"] != pov_entity:
+            return f"{name}｜（从行为看）{_text(fact, 'text')}"
         return f"{name}｜{_text(fact, 'text')}"
     if kind == "position_relative":
         rel = RELATION_CN.get(fact.get("relation"), fact.get("relation"))
@@ -174,6 +179,7 @@ def pack_narrative_input(case, plan, world, selected_fact_ids=None,
         else:
             lines.append("无")
 
+        pov_entity = (case.get("perspective") or {}).get("entityId")
         plan_ids = {fid for s in plan["sentences"] for fid in s["factIds"]}
         extra_time = _selected_time_facts(facts, plan_ids)
         included = plan_ids | set(extra_time)
@@ -185,7 +191,7 @@ def pack_narrative_input(case, plan, world, selected_fact_ids=None,
             label = KIND_LABEL.get(f.get("kind"))
             if label is None:
                 raise N4RenderError("unsupported-fact-kind", f.get("kind"))
-            lines.append(f"{fid}｜{label}｜{_fact_payload(f)}")
+            lines.append(f"{fid}｜{label}｜{_fact_payload(f, pov_entity)}")
 
         lines.append("分组：")
         has_group_time = False
@@ -206,6 +212,12 @@ def pack_narrative_input(case, plan, world, selected_fact_ids=None,
         lines.append("要求：写场景、行动与视角人物心理；不写任务标题、"
                      "数值面板、具体时长、字段名；不新增未列出的具名人物/"
                      "物品/地点；他人只写可见动作。")
+        if any(f.get("kind") in ("personality_changed", "personality_removed")
+               and f.get("entityId") and f["entityId"] != case.get(
+                   "perspective", {}).get("entityId")
+               for f in facts if f.get("factId") in included):
+            lines.append("他人的性情变化只能写成看得见的行为或说话方式，"
+                         "或者视角人物心里的一句猜测；全篇最多点一次，不要反复提。")
         lines.append("正文：")
         out["input"] = "\n".join(lines)
     except N4RenderError as exc:

@@ -252,6 +252,30 @@ def extract_facts(point: dict, before: dict | None,
     facts, diagnostics = [], []
     ambiguous = name_counts(state)
 
+    def location_path(position):
+        """Location ids from the container up to the root (see
+        n2_perspective.location_path_ids: leaf names are not enough to decide
+        "same place", two rooms of one building have different leaves)."""
+        out, cid, depth = [], (position or {}).get("containerId"), 0
+        locations = ((state or {}).get("initial") or {}).get("locations") or {}
+        while cid is not None and depth < 12 and cid in locations:
+            out.append(cid)
+            cid = (locations[cid] or {}).get("parentLocationId")
+            depth += 1
+        # a position inside a character/item still belongs to a location
+        if not out and position:
+            loc = enclosing_location(state, position)
+            if loc:
+                for lid, ent in locations.items():
+                    if (ent or {}).get("name") == loc:
+                        out = location_path(ent.get("position")
+                                           or {"containerId": lid})
+                        break
+                else:
+                    out = [lid for lid, ent in locations.items()
+                           if (ent or {}).get("name") == loc]
+        return out
+
     def add(fact):
         # factId is owned HERE so every constructor site sequences the same
         # way; duplicate names are flagged on the fact, never merged, and
@@ -268,6 +292,11 @@ def extract_facts(point: dict, before: dict | None,
         for key in ("name", "targetName", "from", "to", "at"):
             if fact.get(key):
                 fact[key + "Ambiguous"] = ambiguous.get(fact[key], 0) > 1
+        # every fact carries its location chain so visibility can ask "same
+        # building" instead of "same leaf name"
+        if fact.get("entityId"):
+            ent = _after_entity(state, fact["entityId"])
+            fact["atPath"] = location_path((ent or {}).get("position"))
         fact["ref"] = len(facts)
         facts.append(fact)
 
