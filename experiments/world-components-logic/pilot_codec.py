@@ -79,3 +79,28 @@ def unpack(packed):
             return {INVERSE.get(k, k): decode(v) for k, v in node.items()}
         return copy.deepcopy(node)
     return decode(packed['资料'])
+
+
+def readable(value):
+    """Translate field names only; preserve all values, lists, order and nulls."""
+    def convert(node,mapping):
+        if isinstance(node,list):return [convert(x,mapping) for x in node]
+        if isinstance(node,dict):
+            names=[mapping.get(k,k) for k in node]
+            if len(set(names))!=len(names):raise ValueError('readable field collision')
+            return {mapping.get(k,k):convert(v,mapping) for k,v in node.items()}
+        return copy.deepcopy(node)
+    result=convert(value,FIELDS)
+    if convert(result,INVERSE)!=value:raise ValueError('readable input cannot be restored')
+    return result
+
+
+def restore_readable(value):
+    def convert(node):
+        if isinstance(node,list):return [convert(x) for x in node]
+        if isinstance(node,dict):
+            names=[INVERSE.get(k,k) for k in node]
+            if len(set(names))!=len(names):raise ValueError('readable field collision')
+            return {INVERSE.get(k,k):convert(v) for k,v in node.items()}
+        return copy.deepcopy(node)
+    return convert(value)

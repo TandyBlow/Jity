@@ -11,21 +11,21 @@ python3 experiments/world-components-logic/experiment.py status
 python3 experiments/world-components-logic/experiment.py check
 ```
 
-`status`只读当前状态，`check`运行工程测试并核验七份历史结果报告和本批三步协作报告，二者不导入模型、不训练或推理。实际新批次使用D独立环境：
+`status`只读当前状态，`check`运行工程测试并核验八份历史结果报告和本批人物/精度报告，二者不导入模型、不训练或推理。实际新批次使用D独立环境：
 
 ```bash
 .local/world-components-logic/venv/bin/python experiments/world-components-logic/experiment.py prepare NEW_RUN_ID
 .local/world-components-logic/venv/bin/python experiments/world-components-logic/experiment.py execute /absolute/NEW_RUN_ID.plan.json
 ```
 
-`prepare`核对本地模型/数据/环境并冻结新计划，不运行模型；`execute`真实执行本批三步协作，训练0步，使用新run-id。当前M03批CPU单线程/并发1、120秒/4096MiB，原M02批为2048MiB；两者资源限制分别保留。M01固定event2检查点，生成模型使用已登记M03/Qwen2.5-0.5B-Instruct的完整本地文件，FP32运行，无远程代码/共享缓存。当前生成质量和速度都未通过，不能将本入口作为产品方案。旧计划绑定旧代码，不能用当前代码覆盖重跑；历史复现须恢复原提交与环境后登记新批次。
+`prepare`核对本地模型/数据/环境并冻结新计划，不运行模型；`execute`真实执行本批三步协作，训练0步，使用新run-id。当前M03/readable批CPU单线程/并发1、120秒/4096MiB，原M02批为2048MiB；各批资源限制分别保留。当前活动配置仅FP32/逐字段可读输入；此前三臂动态8位批按其计划和实际源码恢复后另用新id，不用当前配置覆盖重跑。M01固定event2检查点，生成模型使用已登记M03/Qwen2.5-0.5B-Instruct的完整本地文件，FP32运行，无远程代码/共享缓存。当前生成质量和速度都未通过，不能将本入口作为产品方案。旧计划绑定旧代码，不能用当前代码覆盖重跑；历史复现须恢复原提交与环境后登记新批次。
 
 | 角色 | 文件/位置 | 维护方式 |
 |---|---|---|
 | 当前运行入口与公共流程 | `experiment.py` | 入口、资源监督、阶段计时、追加日志与中断只读重放共同复用 |
 | 当前协作实现 | `action_chain.py` | 行动判断、真实生成与原文目标交接；复用公共监督/日志 |
 | M01基础实现 | `m01_shared.py` | 完整事实编码、候选融合和冻结模型推理，拟合历史由对应Git提交定位 |
-| 当前结果核验/展示 | `m01_shared_report.py`、`artifacts/world-components-logic/l3-11-*` | 报告核验原计划/记录，不以当前算法源码替代历史执行版本 |
+| 当前结果核验/展示 | `m01_shared_report.py`、`artifacts/world-components-logic/l3-12-*` | 报告核验原计划/记录，不以当前算法源码替代历史执行版本 |
 | 共享基础工具 | `lab.py`、`fact_windows.py`、`pilot_codec.py` | 守卫、事实编码和原输入核对，按实际职责维护 |
 | 历史模型入口 | `runtime_smoke.py`、`run_pilot.py`、`m01_probe.py`、`m01_infer.py` | 保留原记录/测试及被复用工具，不作为当前日常入口 |
 | 数据/审阅准备 | `data/`、`prepare_*`、`review_io.py` | 原资料及工具保留，按实际数据工作使用，不冒充模型能力 |
@@ -33,7 +33,7 @@ python3 experiments/world-components-logic/experiment.py check
 
 后续试验优先复用同一入口，以配置和新批次计划表达差异；不按每轮试验复制一套监督器或新建状态页。新职责确实需要独立模块时再拆文件。已有模型头质量和完整500ms问题继续按最新标准解决，不以整理目录代替实测。
 
-历史报告核验优先检查已保存源码；当前文件已变化时，使用本地Git中的实际执行提交 `d3b21a53eb901fdfded100ae41a3201d7bbb05b5` 并核SHA。浅克隆缺少该提交会明确报错，不自动下载或放宽核验；直接查看已归档HTML不需要运行检查。既有r1/r2快照和全部记录原样保留，动作/截层批次追加新计划、证据与结果；本次同一提交内两次失败提示的实际源码按SHA保存为只读证据快照；当前源码变化后从本地Git按已登记SHA查找实际执行字节，找不到时明确失败。
+历史报告核验优先检查已保存源码；当前文件已变化时，使用本地Git中的实际执行提交 `d3b21a53eb901fdfded100ae41a3201d7bbb05b5` 并核SHA。浅克隆缺少该提交会明确报错，不自动下载或放宽核验；直接查看已归档HTML不需要运行检查。既有r1/r2快照和全部记录原样保留，动作/截层批次追加新计划、证据与结果；同一提交内失败提示或精度附批的实际源码按SHA保存为只读证据快照；当前源码变化后从本地Git按已登记SHA查找实际执行字节，找不到时明确失败。
 
 ## 历史准备快照（2026-10-31）
 
@@ -128,3 +128,10 @@ python3 experiments/world-components-logic/m01_shared_report.py --check
 [结果页](../../artifacts/world-components-logic/l3-11-action-chain-results.html)包含三批全部52条尝试、39次生成和39次目标分析。两批77M零样本输出都复述提示；494M指令模型能写动作，但三条中两条有明显人物/任务问题，一条待复核，生成链1322–1558ms超500ms。原输入全部保留，skip不调用后两步，空目标不计正确；所有结果均为旧题探索，不是正式语义验收。
 
 `m01_shared_report.py --chain --check`只读核验计划/源码/协议、gzip原字节哈希、日志重放、原判别概率、完整上下文、生成原文和下游逐字交接、全部调用/计时。新增attempt_checkpoint是实验台账，不接管游戏权威；模型/头均冻结，无训练、新90组使用、浏览器接线或生产写入。下一笔处理人物/任务定位和生成瓶颈，不能仅因放宽50ms把本次结果当通过。
+
+
+## 人物定位、编码与精度实测（2026-11-04）
+
+[最新结果页](../../artifacts/world-components-logic/l3-12-action-focus-results.html)保存48条新流程、36次生成。重复人物原资料和逐字段中文JSON均仍执行旧命令/混淆人物；本机qnnpack动态8位更慢且退化，未采用为达标方案。新增生成顶层前/后钩子区分完整输入prefill与后续decode；不删除模型真实上下文。计时/所有失败/全部重复可展开，完整500ms与正式质量继续未通过。
+
+`m01_shared_report.py --focus --check`复用三步证据核验，并检查实际前向配对/成本、169个量化模块整数/qparams/残余浮点身份和focus/int8逐token输入相同；旧三步报告字节保持不变。`pilot_codec.readable/restore_readable`只替换字段名、无损往返；没有程序写动作或按内容筛世界。下一步转动作选择/引用计划与短表达的专用小模型拆分，先登记独立监督数据与训练协议。

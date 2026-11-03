@@ -1,0 +1,2636 @@
+{
+  "schema": "jity-d-action-focus-summary-v1",
+  "date": "2026-11-04",
+  "scope": "exposed_development_actor_representation_precision_probe",
+  "formalEvaluationAllowed": false,
+  "semanticQualityApproved": false,
+  "fullRequest500msStatus": "unverified",
+  "local50msHardGate": false,
+  "fullNonNarrativeTargetMs": 500,
+  "trainingSteps": 0,
+  "newIndependentTrainingGroups": 0,
+  "round1TrainingQuota": 0,
+  "runs": [
+    {
+      "runId": "action-focus-dev42-20261104-r1",
+      "quality": [
+        {
+          "arm": "focus",
+          "generatedAttempts": 9,
+          "obviousTaskActorOrMetaFailures": 6,
+          "plausibleCandidatesPendingReview": 3,
+          "skipAttempts": 3,
+          "distinctSourceCases": 4,
+          "formalSemanticPass": false,
+          "targetQuality": "unverified_all_empty_not_automatically_correct"
+        },
+        {
+          "arm": "focus_int8",
+          "generatedAttempts": 9,
+          "obviousTaskActorOrMetaFailures": 9,
+          "plausibleCandidatesPendingReview": 0,
+          "skipAttempts": 3,
+          "distinctSourceCases": 4,
+          "formalSemanticPass": false,
+          "targetQuality": "unverified_all_empty_not_automatically_correct"
+        },
+        {
+          "arm": "original",
+          "generatedAttempts": 9,
+          "obviousTaskActorOrMetaFailures": 6,
+          "plausibleCandidatesPendingReview": 3,
+          "skipAttempts": 3,
+          "distinctSourceCases": 4,
+          "formalSemanticPass": false,
+          "targetQuality": "unverified_all_empty_not_automatically_correct"
+        }
+      ],
+      "timing": [
+        {
+          "arm": "focus",
+          "caseId": "dev-d02-01",
+          "observations": 3,
+          "p50Ms": 2050.956375,
+          "maxMs": 2123.682417,
+          "over500msObservations": 3,
+          "generationMeanMs": 1956.2591663367737,
+          "inputTokens": 711,
+          "prefillMeanMs": 1407.7771249999998,
+          "decodeMeanMs": 538.3283336666667,
+          "generationNonForwardMeanMs": 10.15370767010692
+        },
+        {
+          "arm": "focus",
+          "caseId": "dev-d02-03",
+          "observations": 3,
+          "p50Ms": 56.604167,
+          "maxMs": 58.596166,
+          "over500msObservations": 0,
+          "generationMeanMs": null,
+          "inputTokens": null,
+          "prefillMeanMs": null,
+          "decodeMeanMs": null,
+          "generationNonForwardMeanMs": null
+        },
+        {
+          "arm": "focus",
+          "caseId": "dev-d02-05",
+          "observations": 3,
+          "p50Ms": 2154.395416,
+          "maxMs": 2163.21325,
+          "over500msObservations": 3,
+          "generationMeanMs": 2033.6952919897158,
+          "inputTokens": 724,
+          "prefillMeanMs": 1412.0665696666667,
+          "decodeMeanMs": 610.402819,
+          "generationNonForwardMeanMs": 11.225903323049124
+        },
+        {
+          "arm": "focus",
+          "caseId": "dev-d02-07",
+          "observations": 3,
+          "p50Ms": 1844.508125,
+          "maxMs": 1876.822959,
+          "over500msObservations": 3,
+          "generationMeanMs": 1736.9088473302934,
+          "inputTokens": 717,
+          "prefillMeanMs": 1408.2900693333333,
+          "decodeMeanMs": 322.022028,
+          "generationNonForwardMeanMs": 6.596749996959791
+        },
+        {
+          "arm": "focus_int8",
+          "caseId": "dev-d02-01",
+          "observations": 3,
+          "p50Ms": 6554.3545,
+          "maxMs": 7175.227875,
+          "over500msObservations": 3,
+          "generationMeanMs": 6640.852624996721,
+          "inputTokens": 711,
+          "prefillMeanMs": 6262.755583666667,
+          "decodeMeanMs": 373.1677633333333,
+          "generationNonForwardMeanMs": 4.929277996720884
+        },
+        {
+          "arm": "focus_int8",
+          "caseId": "dev-d02-03",
+          "observations": 3,
+          "p50Ms": 53.329209,
+          "maxMs": 54.927125,
+          "over500msObservations": 0,
+          "generationMeanMs": null,
+          "inputTokens": null,
+          "prefillMeanMs": null,
+          "decodeMeanMs": null,
+          "generationNonForwardMeanMs": null
+        },
+        {
+          "arm": "focus_int8",
+          "caseId": "dev-d02-05",
+          "observations": 3,
+          "p50Ms": 7303.754709,
+          "maxMs": 7323.3995,
+          "over500msObservations": 3,
+          "generationMeanMs": 7188.276458667436,
+          "inputTokens": 724,
+          "prefillMeanMs": 6179.425069333333,
+          "decodeMeanMs": 997.8349716666667,
+          "generationNonForwardMeanMs": 11.016417667436448
+        },
+        {
+          "arm": "focus_int8",
+          "caseId": "dev-d02-07",
+          "observations": 3,
+          "p50Ms": 7073.572041,
+          "maxMs": 7251.241083,
+          "over500msObservations": 3,
+          "generationMeanMs": 7011.134972339884,
+          "inputTokens": 717,
+          "prefillMeanMs": 6169.592083,
+          "decodeMeanMs": 832.8424586666666,
+          "generationNonForwardMeanMs": 8.700430673216639
+        },
+        {
+          "arm": "original",
+          "caseId": "dev-d02-01",
+          "observations": 3,
+          "p50Ms": 1536.072208,
+          "maxMs": 1581.507333,
+          "over500msObservations": 3,
+          "generationMeanMs": 1390.7923056782845,
+          "inputTokens": 527,
+          "prefillMeanMs": 891.3029306666666,
+          "decodeMeanMs": 489.41679133333326,
+          "generationNonForwardMeanMs": 10.072583678284218
+        },
+        {
+          "arm": "original",
+          "caseId": "dev-d02-03",
+          "observations": 3,
+          "p50Ms": 56.961916,
+          "maxMs": 57.608,
+          "over500msObservations": 0,
+          "generationMeanMs": null,
+          "inputTokens": null,
+          "prefillMeanMs": null,
+          "decodeMeanMs": null,
+          "generationNonForwardMeanMs": null
+        },
+        {
+          "arm": "original",
+          "caseId": "dev-d02-05",
+          "observations": 3,
+          "p50Ms": 1428.279833,
+          "maxMs": 1430.834416,
+          "over500msObservations": 3,
+          "generationMeanMs": 1311.2940140029725,
+          "inputTokens": 534,
+          "prefillMeanMs": 919.1349306666667,
+          "decodeMeanMs": 385.003056,
+          "generationNonForwardMeanMs": 7.156027336305972
+        },
+        {
+          "arm": "original",
+          "caseId": "dev-d02-07",
+          "observations": 3,
+          "p50Ms": 1336.193416,
+          "maxMs": 1341.9275,
+          "over500msObservations": 3,
+          "generationMeanMs": 1219.991166658777,
+          "inputTokens": 534,
+          "prefillMeanMs": 920.091625,
+          "decodeMeanMs": 293.698945,
+          "generationNonForwardMeanMs": 6.200596658776931
+        }
+      ],
+      "counts": {
+        "skipNoDownstream": 9,
+        "generationCalls": 27,
+        "targetCalls": 27,
+        "encoderForwardWindows": 252,
+        "decoderForwardAttempts": 252
+      },
+      "supervisor": {
+        "error": null,
+        "exitCode": 0,
+        "measurement": "ps_rss_every250ms",
+        "observedPeakResidentMiB": 3403.546875,
+        "stopReason": null,
+        "wallMs": 104969.08787501161
+      },
+      "completedEngineeringChains": 36,
+      "modelParameters": {
+        "generator": 494032768,
+        "m01": 7120384
+      },
+      "headParameters": 180418,
+      "trainingSteps": 0,
+      "variantsStableWithinEachRepresentation": true,
+      "sourceFilesUnchanged": true,
+      "quantizedIdentity": {
+        "quantizedModules": [
+          {
+            "biasSha256": "55d4fc9a7d8ae369ac58c8043cae35c863856564790d3a601d6ce9bb0c4d7b13",
+            "dtype": "torch.qint8",
+            "integerSha256": "f303423b3ba94e84b9b743950071b539752a54ddf219c212c15e7a35cfc06958",
+            "name": "model.layers.0.self_attn.q_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.009620098397135735,
+            "shape": [
+              896,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "454a8fedc4893d3989a79f01fb66f8e8fb344fd3e7374bcbd3680cc58eaae1dc",
+            "dtype": "torch.qint8",
+            "integerSha256": "3e85595f10cc310a143e1368932212b288181a4cf96b10f78c68d44abf4f3406",
+            "name": "model.layers.0.self_attn.k_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.008026961237192154,
+            "shape": [
+              128,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "b792cbd12513ea144e66c0cf666a53e3f6fdd8c8a1b3affbaf990c18701ab12d",
+            "dtype": "torch.qint8",
+            "integerSha256": "654e8b4451012a36559019e56a030f7e785edbb04453806d32b3dfbadfe442e4",
+            "name": "model.layers.0.self_attn.v_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0009497549035586417,
+            "shape": [
+              128,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "f34e80e1f02157aaac2cc01fdc6a43250822504c222940e86ca45401935e238e",
+            "dtype": "torch.qint8",
+            "integerSha256": "f17424e8cfa1b08170fa9ff65ebccaaff8d4e128fa007caa4416741b7523c292",
+            "name": "model.layers.0.self_attn.o_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.004411764908581972,
+            "shape": [
+              896,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "4f40221ae3dd38fb7c2817c5350b982de1fd5a19ed85e0ef66ecf722cb7e4645",
+            "dtype": "torch.qint8",
+            "integerSha256": "17ca9fc11dd869a5d565491aab2c7f5de2ab68d66f2e1fbcdbc5fab5abad2a4e",
+            "name": "model.layers.0.mlp.gate_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.003860294120386243,
+            "shape": [
+              4864,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "4f40221ae3dd38fb7c2817c5350b982de1fd5a19ed85e0ef66ecf722cb7e4645",
+            "dtype": "torch.qint8",
+            "integerSha256": "cc38996842815fdc62fa9c3fdd77e0b2a3ee447637662160560364e33127641f",
+            "name": "model.layers.0.mlp.up_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.002190563827753067,
+            "shape": [
+              4864,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "f34e80e1f02157aaac2cc01fdc6a43250822504c222940e86ca45401935e238e",
+            "dtype": "torch.qint8",
+            "integerSha256": "59ce410ded7a6b5d668005510b77dd0ab70c0e47666d14a1117fbd8df2ef6ec3",
+            "name": "model.layers.0.mlp.down_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0023897059727460146,
+            "shape": [
+              896,
+              4864
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "0de41c34bb806c8da7bb9adc01a7bd586cd6d0bcaa4f9790a95fe9cf51dfc980",
+            "dtype": "torch.qint8",
+            "integerSha256": "10e79ae0a875ec4620ccbfdff7f712c8626b3fc2fb17ffdf5209aba0629a22c1",
+            "name": "model.layers.1.self_attn.q_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0027113971300423145,
+            "shape": [
+              896,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "761f9bfa5b2f3699750421e736f1bd5e9c89b4c858f94cba993fc8fd03d949fe",
+            "dtype": "torch.qint8",
+            "integerSha256": "decda18ec92aef583868d484028f1409aae434c2c3ac8dfe0e74e09915dcdb24",
+            "name": "model.layers.1.self_attn.k_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.002236519707366824,
+            "shape": [
+              128,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "e45fcc146e7f7c79561b7b883be81a7f59287763539607bb9787d3ad1c9d9e4c",
+            "dtype": "torch.qint8",
+            "integerSha256": "0e386287068203ad1380a8afb3b47697f3f5a18780a54bb778696bd6f5b6869c",
+            "name": "model.layers.1.self_attn.v_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0006472120294347405,
+            "shape": [
+              128,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "f34e80e1f02157aaac2cc01fdc6a43250822504c222940e86ca45401935e238e",
+            "dtype": "torch.qint8",
+            "integerSha256": "60d26b4237558d2dd30744141964ed391e8928f9bd79b36f740d9531d3ed5f3f",
+            "name": "model.layers.1.self_attn.o_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.001616115216165781,
+            "shape": [
+              896,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "4f40221ae3dd38fb7c2817c5350b982de1fd5a19ed85e0ef66ecf722cb7e4645",
+            "dtype": "torch.qint8",
+            "integerSha256": "0745b746c4219fdb9cb81d4d631e0139c35dc14bac6943b226a4b764be7f6e06",
+            "name": "model.layers.1.mlp.gate_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.003232230432331562,
+            "shape": [
+              4864,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "4f40221ae3dd38fb7c2817c5350b982de1fd5a19ed85e0ef66ecf722cb7e4645",
+            "dtype": "torch.qint8",
+            "integerSha256": "feeeae9329a2d9bdcdd05b33a9fb8001474289cbce2cab3525f076947f768a9d",
+            "name": "model.layers.1.mlp.up_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.00214460794813931,
+            "shape": [
+              4864,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "f34e80e1f02157aaac2cc01fdc6a43250822504c222940e86ca45401935e238e",
+            "dtype": "torch.qint8",
+            "integerSha256": "6bfd184f7e5659776e017a182ce5b58be950b0aee5ca26358769ff162ca0480e",
+            "name": "model.layers.1.mlp.down_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.002818627515807748,
+            "shape": [
+              896,
+              4864
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "a66bc8b6464c7b581210194483db50ba4aefb86b6336b8d34f788ef84f85ce80",
+            "dtype": "torch.qint8",
+            "integerSha256": "891f1949c79717997660049656b4d1ff7a9389f6b21608fb6147071aea61f1e6",
+            "name": "model.layers.2.self_attn.q_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0027267157565802336,
+            "shape": [
+              896,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "6c57c40f466d9116f1ae021c5a4754242c1ccefe764a86c178d5987914a628de",
+            "dtype": "torch.qint8",
+            "integerSha256": "2e739a2d0043cbf461ebcd47283e7a885c7b5326f676314c33431d6df427071d",
+            "name": "model.layers.2.self_attn.k_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0020373775623738766,
+            "shape": [
+              128,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "9504e83338a5642b64bcff94a4e3a8c08b1bf685b373cd160e2d4183977f03da",
+            "dtype": "torch.qint8",
+            "integerSha256": "732a6491aee569600445ad77d83a8c12999a3d8abec413df9bb9f2978ac1f609",
+            "name": "model.layers.2.self_attn.v_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0007506127585656941,
+            "shape": [
+              128,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "f34e80e1f02157aaac2cc01fdc6a43250822504c222940e86ca45401935e238e",
+            "dtype": "torch.qint8",
+            "integerSha256": "ab4b137a4acc0f7394dce089040b958b7363fc69b5541f724343cea5f87f52c7",
+            "name": "model.layers.2.self_attn.o_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.004227941390126944,
+            "shape": [
+              896,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "4f40221ae3dd38fb7c2817c5350b982de1fd5a19ed85e0ef66ecf722cb7e4645",
+            "dtype": "torch.qint8",
+            "integerSha256": "684a7965f04ae992e9a1329241ab5951a33a56c26eaa0d8ad914d34331ccd4f7",
+            "name": "model.layers.2.mlp.gate_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.003553921589627862,
+            "shape": [
+              4864,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "4f40221ae3dd38fb7c2817c5350b982de1fd5a19ed85e0ef66ecf722cb7e4645",
+            "dtype": "torch.qint8",
+            "integerSha256": "8a8f32b032429497deacb5a98e6eb58b7e4be363e8b31ee7f7f31e0fca8d983e",
+            "name": "model.layers.2.mlp.up_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.004993872717022896,
+            "shape": [
+              4864,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "f34e80e1f02157aaac2cc01fdc6a43250822504c222940e86ca45401935e238e",
+            "dtype": "torch.qint8",
+            "integerSha256": "c23570969f313cd033108489a3e1404921ca1f5bb9a0cc82318d71cd16a17c08",
+            "name": "model.layers.2.mlp.down_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0034620098304003477,
+            "shape": [
+              896,
+              4864
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "f68e47c957a3805d22a9e036e0d29d2b26d428c9f72e178fb20d2cf011218277",
+            "dtype": "torch.qint8",
+            "integerSha256": "4da96994b7df2377df311507a06dd3d0ca159bcc24b48006c840bd084e2f27ad",
+            "name": "model.layers.3.self_attn.q_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0020220589358359575,
+            "shape": [
+              896,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "d7ad4e9f8bfab6855b4fcc5ec3a225aac160c5c2dd8ebe55c496814860f0ab99",
+            "dtype": "torch.qint8",
+            "integerSha256": "efd24d9996a49a614ea8f56cc18bf7928ced29f43d7b62f4cf3d9c59c4440a57",
+            "name": "model.layers.3.self_attn.k_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0015165441436693072,
+            "shape": [
+              128,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "9036c61f315bbb9396e5cc17aca98716453597c213a68c0d43ad1ca21dc596d0",
+            "dtype": "torch.qint8",
+            "integerSha256": "62db57d10d8d8237c1b858917c82f5a3ef30ad74f359d883382819c0e888ef59",
+            "name": "model.layers.3.self_attn.v_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0006778492825105786,
+            "shape": [
+              128,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "f34e80e1f02157aaac2cc01fdc6a43250822504c222940e86ca45401935e238e",
+            "dtype": "torch.qint8",
+            "integerSha256": "7712a04b8c95392fe89a22ef6468b8f3c0c64185124f831a5e6b9f648788a00c",
+            "name": "model.layers.3.self_attn.o_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0023743873462080956,
+            "shape": [
+              896,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "4f40221ae3dd38fb7c2817c5350b982de1fd5a19ed85e0ef66ecf722cb7e4645",
+            "dtype": "torch.qint8",
+            "integerSha256": "d466e8a3a0bfb4f1f323036c92b4d30d8d9baa1343a8de7a17c3773c176ce650",
+            "name": "model.layers.3.mlp.gate_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0024509804788976908,
+            "shape": [
+              4864,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "4f40221ae3dd38fb7c2817c5350b982de1fd5a19ed85e0ef66ecf722cb7e4645",
+            "dtype": "torch.qint8",
+            "integerSha256": "c4c05b625d6c79cd2807e0859d7e972ffa31a1ac2b774f68f104aa2e222bf9b4",
+            "name": "model.layers.3.mlp.up_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.002527573611587286,
+            "shape": [
+              4864,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "f34e80e1f02157aaac2cc01fdc6a43250822504c222940e86ca45401935e238e",
+            "dtype": "torch.qint8",
+            "integerSha256": "bf282df0ddca22eba3f9dcf7c4df409166a5f1b6122dde04aaf0ae713eddc453",
+            "name": "model.layers.3.mlp.down_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.004013480618596077,
+            "shape": [
+              896,
+              4864
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "639ee47f81df86fb43fa1b4ba2769954a06b4272cd77fa8d65c12a58a11fdb27",
+            "dtype": "torch.qint8",
+            "integerSha256": "e12bd73230bee65a4b0da23dc1257c8ea4c4dbe47d511975ed6fc3b54a5bade7",
+            "name": "model.layers.4.self_attn.q_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0016697304090484977,
+            "shape": [
+              896,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "0991b1e91da80bf07f7a343c1773d0ebd9307dbf9bccbdb1cd6d8b99edde634f",
+            "dtype": "torch.qint8",
+            "integerSha256": "c8f7ed02391607c0d560fc5d06778c61e00ef9aa14bf5f0c561504c8a2406bad",
+            "name": "model.layers.4.self_attn.k_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.001424632384441793,
+            "shape": [
+              128,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "c4dbdf9b73b2e461967f22fc2868508a96b8f8731020d92a89be8f43a787b1fb",
+            "dtype": "torch.qint8",
+            "integerSha256": "529519110472474fc5ed07f16298311d00412e50e75729de8fe3a5faf5e9e95f",
+            "name": "model.layers.4.self_attn.v_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0008655024576000869,
+            "shape": [
+              128,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "f34e80e1f02157aaac2cc01fdc6a43250822504c222940e86ca45401935e238e",
+            "dtype": "torch.qint8",
+            "integerSha256": "8aa8f5f2f76a16d837c66ba55c78b743bfadb9c1014e28768bd4c23929636f26",
+            "name": "model.layers.4.self_attn.o_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.002512254985049367,
+            "shape": [
+              896,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "4f40221ae3dd38fb7c2817c5350b982de1fd5a19ed85e0ef66ecf722cb7e4645",
+            "dtype": "torch.qint8",
+            "integerSha256": "4e94b839fc60318ba67a0750f8c81d09ac6c9cd0198ad6ba9d4e15f3b1923f59",
+            "name": "model.layers.4.mlp.gate_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0031403186731040478,
+            "shape": [
+              4864,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "4f40221ae3dd38fb7c2817c5350b982de1fd5a19ed85e0ef66ecf722cb7e4645",
+            "dtype": "torch.qint8",
+            "integerSha256": "d3753b73bb0cee3346452a48f58fea2c0a9a96a8d58af2b46d46a6bf0e7cead2",
+            "name": "model.layers.4.mlp.up_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.004166666883975267,
+            "shape": [
+              4864,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "f34e80e1f02157aaac2cc01fdc6a43250822504c222940e86ca45401935e238e",
+            "dtype": "torch.qint8",
+            "integerSha256": "acab21fbca29ada03523eaf10b5427dcf9188772dab7143c549a613bb14aa5ea",
+            "name": "model.layers.4.mlp.down_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0036917892284691334,
+            "shape": [
+              896,
+              4864
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "50f3ce43f7a2a1b1621c06bdc7edba7a8761ea894342df3ce6d04112d80833b2",
+            "dtype": "torch.qint8",
+            "integerSha256": "4f34a48790283ae9338437e21d56f72ed7a384b0dced83ef7b964829322d64bb",
+            "name": "model.layers.5.self_attn.q_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0019914216827601194,
+            "shape": [
+              896,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "a57db93c2440b7c22b315a4db3216f3575d73c7da335d5d3a72aaaa775b8c8ee",
+            "dtype": "torch.qint8",
+            "integerSha256": "038b265cafea58e387014ef4b84a7bbfd16b35be777fd82a8700cc9502ce6ce1",
+            "name": "model.layers.5.self_attn.k_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0016467524692416191,
+            "shape": [
+              128,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "2b18043c05abba46ab57f7128e955f6d40cbdc13c3f7d54920a85dfa1de3b717",
+            "dtype": "torch.qint8",
+            "integerSha256": "77fa0174d6854f450c4f9b32cac507070c7f8cfa99b68b9431cbd67f10ced413",
+            "name": "model.layers.5.self_attn.v_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0007391237886622548,
+            "shape": [
+              128,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "f34e80e1f02157aaac2cc01fdc6a43250822504c222940e86ca45401935e238e",
+            "dtype": "torch.qint8",
+            "integerSha256": "1c23b96093fc0b480a47a31d933849a5139b36ff892e4467e1fd10d38a29fc9c",
+            "name": "model.layers.5.self_attn.o_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0023590687196701765,
+            "shape": [
+              896,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "4f40221ae3dd38fb7c2817c5350b982de1fd5a19ed85e0ef66ecf722cb7e4645",
+            "dtype": "torch.qint8",
+            "integerSha256": "575b88497f29b099c2273df26716fde796207c23bf87c1faeb5c33666441e9c4",
+            "name": "model.layers.5.mlp.gate_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0023590687196701765,
+            "shape": [
+              4864,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "4f40221ae3dd38fb7c2817c5350b982de1fd5a19ed85e0ef66ecf722cb7e4645",
+            "dtype": "torch.qint8",
+            "integerSha256": "73a01d90d18f24819fd89def24b945f4ada477f348f728f6c6e97cf1785707cb",
+            "name": "model.layers.5.mlp.up_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.006158088333904743,
+            "shape": [
+              4864,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "f34e80e1f02157aaac2cc01fdc6a43250822504c222940e86ca45401935e238e",
+            "dtype": "torch.qint8",
+            "integerSha256": "f09a4ad80385fceeaddf34e01a7bee28f7c8540f284bcf09b34c2c773a6a231c",
+            "name": "model.layers.5.mlp.down_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.004319853149354458,
+            "shape": [
+              896,
+              4864
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "5849378383cafc4fca3ccf4ae0f58e4426f81c901fff0ae47a492358e1a05a89",
+            "dtype": "torch.qint8",
+            "integerSha256": "9520c55b5f978d120ac623ef27a12722c4c53af5a017c9cc8d71e03152ddf36c",
+            "name": "model.layers.6.self_attn.q_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0030024510342627764,
+            "shape": [
+              896,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "f1e366c75896d065a0f3ebd815b8680b5edd1548e78399bf3b7bbcf45acfe54d",
+            "dtype": "torch.qint8",
+            "integerSha256": "6d6e80208e4b0c296f6afa587d0db3ef8d4cd0896e90ffb3dff722408adcce83",
+            "name": "model.layers.6.self_attn.k_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0015088848304003477,
+            "shape": [
+              128,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "2d774b1d20e6d3f8ceb4589ae0876417c9bad0d8150bb3930bc8c48461622609",
+            "dtype": "torch.qint8",
+            "integerSha256": "f5414e88429d07076b80da2939fb513ce30fd214a3fbf859cbe8caea4f041e08",
+            "name": "model.layers.6.self_attn.v_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0006816789391450584,
+            "shape": [
+              128,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "f34e80e1f02157aaac2cc01fdc6a43250822504c222940e86ca45401935e238e",
+            "dtype": "torch.qint8",
+            "integerSha256": "4a516ef97e34af9248325622fb334e8816b66cc8d3cea52fd9d8e48e873cc5de",
+            "name": "model.layers.6.self_attn.o_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0033547794446349144,
+            "shape": [
+              896,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "4f40221ae3dd38fb7c2817c5350b982de1fd5a19ed85e0ef66ecf722cb7e4645",
+            "dtype": "torch.qint8",
+            "integerSha256": "659e9a6f07a87975de9360752968557adbd664208b1d5e49688b3a9e69c63c39",
+            "name": "model.layers.6.mlp.gate_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0030943627934902906,
+            "shape": [
+              4864,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "4f40221ae3dd38fb7c2817c5350b982de1fd5a19ed85e0ef66ecf722cb7e4645",
+            "dtype": "torch.qint8",
+            "integerSha256": "2524a21de75a9a16c7c87c2d157ef3b5e32faba8f43f037cbfdee58e78d3f55d",
+            "name": "model.layers.6.mlp.up_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0029564951546490192,
+            "shape": [
+              4864,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "f34e80e1f02157aaac2cc01fdc6a43250822504c222940e86ca45401935e238e",
+            "dtype": "torch.qint8",
+            "integerSha256": "d5493119970581d1c917f833275615917534794c348d1c1360ebc9c84148c8ed",
+            "name": "model.layers.6.mlp.down_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0033241421915590763,
+            "shape": [
+              896,
+              4864
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "8d6e7af26f72cb85a3432dc90248dd75c29dfa539534ea125803a4ab262d6e62",
+            "dtype": "torch.qint8",
+            "integerSha256": "a88691b3fa9c08ae03a43e872d7e6a02f22ae547a8a9efd3c4c65b89e6bf4315",
+            "name": "model.layers.7.self_attn.q_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0020067403092980385,
+            "shape": [
+              896,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "e7164316fb6d5f2cc7795464aa3580ec43d36c9ca124d605ab33a34aa8534eb4",
+            "dtype": "torch.qint8",
+            "integerSha256": "3b93fae8ccabb6f116c97b6be0f499413b4ea4e053176c3cbd5839e58da76562",
+            "name": "model.layers.7.self_attn.k_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.001937806373462081,
+            "shape": [
+              128,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "78cbd03dc1f87f1bbaabf6e56425f641e84d5b2966a785f0cb598ee77ae2332d",
+            "dtype": "torch.qint8",
+            "integerSha256": "9ac592103ef2deff8d0c532ba1315fe2fee49bc08a98957c81b312c441a20c14",
+            "name": "model.layers.7.self_attn.v_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0008080576080828905,
+            "shape": [
+              128,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "f34e80e1f02157aaac2cc01fdc6a43250822504c222940e86ca45401935e238e",
+            "dtype": "torch.qint8",
+            "integerSha256": "860b9769cfbba59ac56c2d6beacce35fd88a41afb311ed74bc0ac2a694898155",
+            "name": "model.layers.7.self_attn.o_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0037377451080828905,
+            "shape": [
+              896,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "4f40221ae3dd38fb7c2817c5350b982de1fd5a19ed85e0ef66ecf722cb7e4645",
+            "dtype": "torch.qint8",
+            "integerSha256": "034dda6938251d139ecaf86c65c4029d64c25fa70285ab59aa4cd34f06ca263b",
+            "name": "model.layers.7.mlp.gate_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.002573529491201043,
+            "shape": [
+              4864,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "4f40221ae3dd38fb7c2817c5350b982de1fd5a19ed85e0ef66ecf722cb7e4645",
+            "dtype": "torch.qint8",
+            "integerSha256": "29f721db13a9c53f6abe39b4f0d248d55cefc9bd9a745242332c8eaddf942559",
+            "name": "model.layers.7.mlp.up_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0045343139208853245,
+            "shape": [
+              4864,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "f34e80e1f02157aaac2cc01fdc6a43250822504c222940e86ca45401935e238e",
+            "dtype": "torch.qint8",
+            "integerSha256": "d07fbf9d9c328874755e87d7fc2ec313052d1837e77702b80bfa94c6d4598ac6",
+            "name": "model.layers.7.mlp.down_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0032628676854074,
+            "shape": [
+              896,
+              4864
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "df9ea1f7855ceea85c194d72024121301fc67ccee245cd90fe9b7a68d43db5d7",
+            "dtype": "torch.qint8",
+            "integerSha256": "7392525af582466a32d5fd80eb85c3b2c98b51be2d363f407ae9df8914e3744e",
+            "name": "model.layers.8.self_attn.q_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.013235294260084629,
+            "shape": [
+              896,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "696ce657b9257faef49b2e0bea075673583373c8052c4782c5b2dddc5c0c5438",
+            "dtype": "torch.qint8",
+            "integerSha256": "b7962a4c128e056a20302f56cb79962386a1f5302dc2ae67f531340dab363a01",
+            "name": "model.layers.8.self_attn.k_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0017846201080828905,
+            "shape": [
+              128,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "fe755149b2eab5efb8463c72e4b48cb4bf4213e0d13b366a7ad0ef01db3c321b",
+            "dtype": "torch.qint8",
+            "integerSha256": "1c4709c7f726e3bb9c295db495099efd0def86570d667e0bfe199b48cced6d07",
+            "name": "model.layers.8.self_attn.v_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0011488971067592502,
+            "shape": [
+              128,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "f34e80e1f02157aaac2cc01fdc6a43250822504c222940e86ca45401935e238e",
+            "dtype": "torch.qint8",
+            "integerSha256": "21a401abeb7057400c397514f3419337162245a0150fae51c24eddbb625cdac3",
+            "name": "model.layers.8.self_attn.o_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0026194853708148003,
+            "shape": [
+              896,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "4f40221ae3dd38fb7c2817c5350b982de1fd5a19ed85e0ef66ecf722cb7e4645",
+            "dtype": "torch.qint8",
+            "integerSha256": "c7433e396027594fedb33a9b0d2e3bc3ce6dcadb1ce863986b9a4f9fa5470ca8",
+            "name": "model.layers.8.mlp.gate_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.002527573611587286,
+            "shape": [
+              4864,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "4f40221ae3dd38fb7c2817c5350b982de1fd5a19ed85e0ef66ecf722cb7e4645",
+            "dtype": "torch.qint8",
+            "integerSha256": "070183d001bdb3aeac14a03b3e63c43a9dabb4669166d002f7d93ce35c4bc27e",
+            "name": "model.layers.8.mlp.up_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0030177696608006954,
+            "shape": [
+              4864,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "f34e80e1f02157aaac2cc01fdc6a43250822504c222940e86ca45401935e238e",
+            "dtype": "torch.qint8",
+            "integerSha256": "1000a1419c83ad297d710e96ce4cc0dcc233f8255d2ca5df79c1b06f24d36e36",
+            "name": "model.layers.8.mlp.down_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0026960785035043955,
+            "shape": [
+              896,
+              4864
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "58e1fb1c7774b1bd111179399aabde8dec1a0e64bdcdd0cacb22edf0ad2f685f",
+            "dtype": "torch.qint8",
+            "integerSha256": "beb43fbdea4bebd9bc7abdb216fcd35de501f467db33887cecabdd277d5b7920",
+            "name": "model.layers.9.self_attn.q_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0018229166744276881,
+            "shape": [
+              896,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "096adf729f19a357a6fd176f26b1fe28e77f81b38cec2012280ffded4935238f",
+            "dtype": "torch.qint8",
+            "integerSha256": "82f50036a13cdbf9a89846ec9d55e8ba0d07029fa141a63c557a7b054bef704b",
+            "name": "model.layers.9.self_attn.k_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0020373775623738766,
+            "shape": [
+              128,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "2c9f93e491458eadbc38c0d55bd43551c2a40c8e8b2569b4dd374e241643938a",
+            "dtype": "torch.qint8",
+            "integerSha256": "211265b88ba0b1a4ea49d1e83431dab0e56655fc9df3b0dd5c03da9e1e261f86",
+            "name": "model.layers.9.self_attn.v_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0008578431443311274,
+            "shape": [
+              128,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "f34e80e1f02157aaac2cc01fdc6a43250822504c222940e86ca45401935e238e",
+            "dtype": "torch.qint8",
+            "integerSha256": "f6500cea604e1fb76e764c6e0a1a33ad3055d8d453389c01ed88a663a1c639aa",
+            "name": "model.layers.9.self_attn.o_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.003615196095779538,
+            "shape": [
+              896,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "4f40221ae3dd38fb7c2817c5350b982de1fd5a19ed85e0ef66ecf722cb7e4645",
+            "dtype": "torch.qint8",
+            "integerSha256": "5dc21220e7f89cd677e6542728fb394a9a3ab96875d296d32af5e18bf8d1ad85",
+            "name": "model.layers.9.mlp.gate_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.003507965710014105,
+            "shape": [
+              4864,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "4f40221ae3dd38fb7c2817c5350b982de1fd5a19ed85e0ef66ecf722cb7e4645",
+            "dtype": "torch.qint8",
+            "integerSha256": "8eddf47d1fe463e3814a97b89a9a340ba7595d70215e93437b4b6246dbf95f77",
+            "name": "model.layers.9.mlp.up_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0033088235650211573,
+            "shape": [
+              4864,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "f34e80e1f02157aaac2cc01fdc6a43250822504c222940e86ca45401935e238e",
+            "dtype": "torch.qint8",
+            "integerSha256": "9be7ef93a0af88065d53979061b4f286d785b6821d80c22cc1e0038f4ed88a37",
+            "name": "model.layers.9.mlp.down_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.004656862933188677,
+            "shape": [
+              896,
+              4864
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "88bf6f625fc836464b1d1b12b33b543a449b3399d0aab733b4c373110f4d6abf",
+            "dtype": "torch.qint8",
+            "integerSha256": "a729747578604215e8248185f4aa70d4d2b363dd1d9f19344896fa0dab12644a",
+            "name": "model.layers.10.self_attn.q_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0024509804788976908,
+            "shape": [
+              896,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "9b3d9bf22e98268a44d427e735adcf8c3334af3f28de46cfae7fb65427c45f15",
+            "dtype": "torch.qint8",
+            "integerSha256": "73faf955655c538c943d2fc80671ebc14b800b687be54899c0ccb3e6254828d0",
+            "name": "model.layers.10.self_attn.k_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0015088848304003477,
+            "shape": [
+              128,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "a1095427d1e0251b0b3b52451e1e745f4453f0fb083194982f29f75cb6155399",
+            "dtype": "torch.qint8",
+            "integerSha256": "6a088f223c643f10e46bbd4a13f3eb0d31d2f1a986abb877d05d8dae783add5c",
+            "name": "model.layers.10.self_attn.v_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0010416667209938169,
+            "shape": [
+              128,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "f34e80e1f02157aaac2cc01fdc6a43250822504c222940e86ca45401935e238e",
+            "dtype": "torch.qint8",
+            "integerSha256": "20f714a2f25f83040f9f994a2d97bd6e41da4f2c438dda1e506fb71405eaf19d",
+            "name": "model.layers.10.self_attn.o_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0026194853708148003,
+            "shape": [
+              896,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "4f40221ae3dd38fb7c2817c5350b982de1fd5a19ed85e0ef66ecf722cb7e4645",
+            "dtype": "torch.qint8",
+            "integerSha256": "48afd4979cd70b0eecbada62ec8fead5addd7959ae58416df69fb3f36072f525",
+            "name": "model.layers.10.mlp.gate_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.004595588427037001,
+            "shape": [
+              4864,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "4f40221ae3dd38fb7c2817c5350b982de1fd5a19ed85e0ef66ecf722cb7e4645",
+            "dtype": "torch.qint8",
+            "integerSha256": "fa752559fd6ccdb54b4708f037a83c8347709b16dc54403fa05f1c989e706357",
+            "name": "model.layers.10.mlp.up_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0033700980711728334,
+            "shape": [
+              4864,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "f34e80e1f02157aaac2cc01fdc6a43250822504c222940e86ca45401935e238e",
+            "dtype": "torch.qint8",
+            "integerSha256": "3f10f191e13ceddf234cb31cb78197efd18950fe4b9e4f04a4d8ef52c3a327fc",
+            "name": "model.layers.10.mlp.down_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.003569240216165781,
+            "shape": [
+              896,
+              4864
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "dabea21949358f9d77d33b504d18aef532daf7dff243df193e5797e7074aa5c4",
+            "dtype": "torch.qint8",
+            "integerSha256": "4918ba9721c2a3ee05393aaa65d3221fc94e20c1999ea7199f34049cc2b03777",
+            "name": "model.layers.11.self_attn.q_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0018152573611587286,
+            "shape": [
+              896,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "5639b02dc44763890684549449de4823236897b6e26e12b4011cdba6ba1f48cb",
+            "dtype": "torch.qint8",
+            "integerSha256": "92b4402ce2e53f4050d5e176f0b62aa084d1e4dec510343531fbbebd0b715f2f",
+            "name": "model.layers.11.self_attn.k_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0018382353009656072,
+            "shape": [
+              128,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "5c727f093cf2e2b65aa7456a50c0a625116832b64e1f9b167a5c073886de3b12",
+            "dtype": "torch.qint8",
+            "integerSha256": "c8cfd16c8351945724a432048824e7b7300cfccfd41936484cc18e9a3520ce1a",
+            "name": "model.layers.11.self_attn.v_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0007123161922208965,
+            "shape": [
+              128,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "f34e80e1f02157aaac2cc01fdc6a43250822504c222940e86ca45401935e238e",
+            "dtype": "torch.qint8",
+            "integerSha256": "e17d23782ca4f86d842e30960425659d2d0da3c090104ee16db445edd2c8d797",
+            "name": "model.layers.11.self_attn.o_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0045343139208853245,
+            "shape": [
+              896,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "4f40221ae3dd38fb7c2817c5350b982de1fd5a19ed85e0ef66ecf722cb7e4645",
+            "dtype": "torch.qint8",
+            "integerSha256": "ef856ef06e9d2b99c32227ec7a3d36993b2a34a02597cc3d40f9c4673b587880",
+            "name": "model.layers.11.mlp.gate_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.003875612746924162,
+            "shape": [
+              4864,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "4f40221ae3dd38fb7c2817c5350b982de1fd5a19ed85e0ef66ecf722cb7e4645",
+            "dtype": "torch.qint8",
+            "integerSha256": "328c6ca1613d7d2d2d8890f6bcf55d014753ebbab2cac56ad7f238b867a22e7f",
+            "name": "model.layers.11.mlp.up_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.005330882500857115,
+            "shape": [
+              4864,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "f34e80e1f02157aaac2cc01fdc6a43250822504c222940e86ca45401935e238e",
+            "dtype": "torch.qint8",
+            "integerSha256": "e3526887f713bf0d2a890640ae2b5e2f75f1a3ff2702bb38c8336aa1bdd085cb",
+            "name": "model.layers.11.mlp.down_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.004687500186264515,
+            "shape": [
+              896,
+              4864
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "0829a1836da7cc9b10b43eaec53465b218c0467473d33be221fab376b382204b",
+            "dtype": "torch.qint8",
+            "integerSha256": "935e63cce64ace447b07216e37e3340568833f072d070c680ba8a789b3413616",
+            "name": "model.layers.12.self_attn.q_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0020373775623738766,
+            "shape": [
+              896,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "5be9e6b3ab817c7ab02f6cafc24d30d35768ba2bb81f5fb1cf8339bf7d798d25",
+            "dtype": "torch.qint8",
+            "integerSha256": "fa5c316409bab509b983aaadf317c5e54716e34f6bcb4c4164ae7f270b93fb1b",
+            "name": "model.layers.12.self_attn.k_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0014782475773245096,
+            "shape": [
+              128,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "492e128e45ac138a5f40a3b10ffae990032ac80715e414572fa836d06c37ac6b",
+            "dtype": "torch.qint8",
+            "integerSha256": "bf74f3a16fa021e6e56640cc9656f09bc7fccfd7f684435097cc371e89bdb979",
+            "name": "model.layers.12.self_attn.v_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.001056985347531736,
+            "shape": [
+              128,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "f34e80e1f02157aaac2cc01fdc6a43250822504c222940e86ca45401935e238e",
+            "dtype": "torch.qint8",
+            "integerSha256": "6ef99215a7fd1332f3591eaaace86f2c28c005dd21dc0135519dba9ed3b0123a",
+            "name": "model.layers.12.self_attn.o_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.002542892238125205,
+            "shape": [
+              896,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "4f40221ae3dd38fb7c2817c5350b982de1fd5a19ed85e0ef66ecf722cb7e4645",
+            "dtype": "torch.qint8",
+            "integerSha256": "00cf0803acf264d074a2b56fab1e11736100f40acebc2ef65d70da938ccca0a2",
+            "name": "model.layers.12.mlp.gate_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0026348039973527193,
+            "shape": [
+              4864,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "4f40221ae3dd38fb7c2817c5350b982de1fd5a19ed85e0ef66ecf722cb7e4645",
+            "dtype": "torch.qint8",
+            "integerSha256": "e13a714fbfc9ddd348595fd4632d9eae2fcaebd971e9f4571a55186db09c048d",
+            "name": "model.layers.12.mlp.up_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0030177696608006954,
+            "shape": [
+              4864,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "f34e80e1f02157aaac2cc01fdc6a43250822504c222940e86ca45401935e238e",
+            "dtype": "torch.qint8",
+            "integerSha256": "b3b3ede221bb37fefea6a5f6d26afdcc7f6f9c19eeefb097f851e9f088813b5f",
+            "name": "model.layers.12.mlp.down_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0034466912038624287,
+            "shape": [
+              896,
+              4864
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "e654176502cd63eb36ea6bc1c3280ad53bf90c73bd33c5ab2ffe4a6c4f4cecfb",
+            "dtype": "torch.qint8",
+            "integerSha256": "d9fbc042eea27cf7934a14211187362478bf393a0a50e8a108b2caa1798437ba",
+            "name": "model.layers.13.self_attn.q_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.003523284336552024,
+            "shape": [
+              896,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "d62e77fd2ceb14d86e820333269ba8d0649c38cfd7fa49e1332bfe0c16ec719a",
+            "dtype": "torch.qint8",
+            "integerSha256": "7faa105e8d690a4784f2ab63e181227e4617a9c3e4e7a42eaa4ee5ca5f0c27eb",
+            "name": "model.layers.13.self_attn.k_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.002236519707366824,
+            "shape": [
+              128,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "9a3335e3e68941a9f4fb1c215817280f6c84de42ba122209e04417ca83c7b8a2",
+            "dtype": "torch.qint8",
+            "integerSha256": "af52faff591b8afaa4fd3b0ac958bb5875d87ce4e9325ced3ca27f4f5aa7f9bd",
+            "name": "model.layers.13.self_attn.v_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0008999693673104048,
+            "shape": [
+              128,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "f34e80e1f02157aaac2cc01fdc6a43250822504c222940e86ca45401935e238e",
+            "dtype": "torch.qint8",
+            "integerSha256": "2b96a99fd4a7d5abb9fb38384763e94ce23660b14c4b2e33dbb0f9cec226dda2",
+            "name": "model.layers.13.self_attn.o_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.002864583395421505,
+            "shape": [
+              896,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "4f40221ae3dd38fb7c2817c5350b982de1fd5a19ed85e0ef66ecf722cb7e4645",
+            "dtype": "torch.qint8",
+            "integerSha256": "55db80088f05246649081569b594b50713240f8da6b680c0163aec4513df5ec4",
+            "name": "model.layers.13.mlp.gate_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0034466912038624287,
+            "shape": [
+              4864,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "4f40221ae3dd38fb7c2817c5350b982de1fd5a19ed85e0ef66ecf722cb7e4645",
+            "dtype": "torch.qint8",
+            "integerSha256": "469742af99064d9a205c1111a7253e3295f0a10d3a2f9a1410914a0af499442d",
+            "name": "model.layers.13.mlp.up_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0037377451080828905,
+            "shape": [
+              4864,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "f34e80e1f02157aaac2cc01fdc6a43250822504c222940e86ca45401935e238e",
+            "dtype": "torch.qint8",
+            "integerSha256": "0e6dd580ee653238a17bb4ae704de2a924bcc8458d35e92aa1e95bfad467f69c",
+            "name": "model.layers.13.mlp.down_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.004044117871671915,
+            "shape": [
+              896,
+              4864
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "3c9af3114d032e777c52c1667f14dd9aba74ecaa528152d8203f4b45ad7daaac",
+            "dtype": "torch.qint8",
+            "integerSha256": "937b4e7a5146165c813ce8d5b9dbcb4dc3c28feb0f785e1f2067cb7bfae545e9",
+            "name": "model.layers.14.self_attn.q_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0019607844296842813,
+            "shape": [
+              896,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "63310a3c13574caaef1b79a0774b4d4bf3adda2402c93e1269d4fceeced62813",
+            "dtype": "torch.qint8",
+            "integerSha256": "61b2c829e9a231e79edc4e40208cec1335c68fd109df16d765d3e4a2a2acefef",
+            "name": "model.layers.14.self_attn.k_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0014629289507865906,
+            "shape": [
+              128,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "d8d6bea6e309f614e463e12273cf1bd6605e7a4b760b70da4467b7ce7b2f3919",
+            "dtype": "torch.qint8",
+            "integerSha256": "ab7ff1d6b374b5c71c14379ad570c0b38b746a05f55d43c95702d36c910678ea",
+            "name": "model.layers.14.self_attn.v_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.001056985347531736,
+            "shape": [
+              128,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "f34e80e1f02157aaac2cc01fdc6a43250822504c222940e86ca45401935e238e",
+            "dtype": "torch.qint8",
+            "integerSha256": "1d80ead56fc946d38785f9d5fb0fa24eff6d19e6a7a8ca4a2caa76bb4be75e04",
+            "name": "model.layers.14.self_attn.o_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0029718137811869383,
+            "shape": [
+              896,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "4f40221ae3dd38fb7c2817c5350b982de1fd5a19ed85e0ef66ecf722cb7e4645",
+            "dtype": "torch.qint8",
+            "integerSha256": "1d3461067e96171677ac75a8e880670c8587b74a07edb6300801e1529f2869f5",
+            "name": "model.layers.14.mlp.gate_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0037224264815449715,
+            "shape": [
+              4864,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "4f40221ae3dd38fb7c2817c5350b982de1fd5a19ed85e0ef66ecf722cb7e4645",
+            "dtype": "torch.qint8",
+            "integerSha256": "c7ed997a1b2d7916d08219ee1e0eac0c95fd420b23bcbc742de2a84dd5cc2d34",
+            "name": "model.layers.14.mlp.up_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0037224264815449715,
+            "shape": [
+              4864,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "f34e80e1f02157aaac2cc01fdc6a43250822504c222940e86ca45401935e238e",
+            "dtype": "torch.qint8",
+            "integerSha256": "c8af9969c8810fa537e690c04a9b561068d4743bc2eae89486455d18c7925982",
+            "name": "model.layers.14.mlp.down_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0033241421915590763,
+            "shape": [
+              896,
+              4864
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "460537f2cfdf8649873f073dc63678ed835e0514ac579d5cbd70d914daa3cb92",
+            "dtype": "torch.qint8",
+            "integerSha256": "848149b434484f7aaa679120aa710be3f43ac1542252e303b104627fba614320",
+            "name": "model.layers.15.self_attn.q_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0016544117825105786,
+            "shape": [
+              896,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "95c1979c1b6834e4bb7db1984f91ffe7c55fd9449eeafc77481f41e54dd60f57",
+            "dtype": "torch.qint8",
+            "integerSha256": "33891fea4d771e20bc19e4a3db4897f4ed9934e89a1329df3ca64107e7ff982d",
+            "name": "model.layers.15.self_attn.k_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0014859068905934691,
+            "shape": [
+              128,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "7d5515cf6e304d558c7062f152f4d9e807a21b84798c8ccfce956b3a6e621447",
+            "dtype": "torch.qint8",
+            "integerSha256": "6785c0fd28a15852729b53fe3abdea12515b19fa9696837dd1511cdd73ddcd96",
+            "name": "model.layers.15.self_attn.v_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0010186887811869383,
+            "shape": [
+              128,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "f34e80e1f02157aaac2cc01fdc6a43250822504c222940e86ca45401935e238e",
+            "dtype": "torch.qint8",
+            "integerSha256": "78c0ecfb04cf6a67df527fd64be5fd6c367dc9777aa0bca7980f1d44e2e34ef4",
+            "name": "model.layers.15.self_attn.o_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0029871324077248573,
+            "shape": [
+              896,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "4f40221ae3dd38fb7c2817c5350b982de1fd5a19ed85e0ef66ecf722cb7e4645",
+            "dtype": "torch.qint8",
+            "integerSha256": "aeb8caea01e455ae21a4c9607645a3c9af8706b3fb8b9d9c0a655fe9ec8ea1e6",
+            "name": "model.layers.15.mlp.gate_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0037683823611587286,
+            "shape": [
+              4864,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "4f40221ae3dd38fb7c2817c5350b982de1fd5a19ed85e0ef66ecf722cb7e4645",
+            "dtype": "torch.qint8",
+            "integerSha256": "2bd187885991d982f41963e0949dba0c1e6e08a947ad1685beae261f4843e7d9",
+            "name": "model.layers.15.mlp.up_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.005943627562373877,
+            "shape": [
+              4864,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "f34e80e1f02157aaac2cc01fdc6a43250822504c222940e86ca45401935e238e",
+            "dtype": "torch.qint8",
+            "integerSha256": "449f2aec5828f4c1e676d4b53cc72471b3b17498b32f836476b32571eed52555",
+            "name": "model.layers.15.mlp.down_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0034160539507865906,
+            "shape": [
+              896,
+              4864
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "c0873697a47fa3439d5a1581b488e39ff2ea472b0c6f1ca9b6c5a71af3eb69b4",
+            "dtype": "torch.qint8",
+            "integerSha256": "de08fd1bd0bb6d0844fbe092dd2022e67cfb3560d66d48e496e60a39943e99c2",
+            "name": "model.layers.16.self_attn.q_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0031096814200282097,
+            "shape": [
+              896,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "f3d992fedde0e3919de33d72ebb30a07409628d526cb03e150814a678519a7fb",
+            "dtype": "torch.qint8",
+            "integerSha256": "2170b6169e279ef6d81db164609e4eb3e4b6af1f929b82ead51338518a76a330",
+            "name": "model.layers.16.self_attn.k_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0016927083488553762,
+            "shape": [
+              128,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "1da7bfe7967fc96ba742b889588d67cf3b47d852f0fe48a58d44548fb9d22ee9",
+            "dtype": "torch.qint8",
+            "integerSha256": "0ff1cf5a08f0d8ee84c5dcda80549af2f6b9a60283bf5ad102a0dcdda8d0b07c",
+            "name": "model.layers.16.self_attn.v_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0015012255171313882,
+            "shape": [
+              128,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "f34e80e1f02157aaac2cc01fdc6a43250822504c222940e86ca45401935e238e",
+            "dtype": "torch.qint8",
+            "integerSha256": "5ec32346e3698848f5e275c0d3ccf9398e4b1eaccc2a4f8d1f78407720f42fef",
+            "name": "model.layers.16.self_attn.o_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.00246629910543561,
+            "shape": [
+              896,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "4f40221ae3dd38fb7c2817c5350b982de1fd5a19ed85e0ef66ecf722cb7e4645",
+            "dtype": "torch.qint8",
+            "integerSha256": "8bd5fcb62adb7c7cfbcf31ae977c0b8732ec5cec19b32e86eb093be9a806097b",
+            "name": "model.layers.16.mlp.gate_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.003278186311945319,
+            "shape": [
+              4864,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "4f40221ae3dd38fb7c2817c5350b982de1fd5a19ed85e0ef66ecf722cb7e4645",
+            "dtype": "torch.qint8",
+            "integerSha256": "a438b34a24f7ae86341c48dd3b78d2e3691eaed3cd564684dea68d5545f84f51",
+            "name": "model.layers.16.mlp.up_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0030024510342627764,
+            "shape": [
+              4864,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "f34e80e1f02157aaac2cc01fdc6a43250822504c222940e86ca45401935e238e",
+            "dtype": "torch.qint8",
+            "integerSha256": "92374aa55165463cced41599d03b6a53e029489e3dcaaa38a5e04d1140065a05",
+            "name": "model.layers.16.mlp.down_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0034773284569382668,
+            "shape": [
+              896,
+              4864
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "2c0090ff523f629f171948b4de3494f91b2bdc2fca41d9fc4518b29311241aa8",
+            "dtype": "torch.qint8",
+            "integerSha256": "f4d3daa1b4cc290e543496ab6eddfdca9139a116888cf1fbf0fb38e63d9ef792",
+            "name": "model.layers.17.self_attn.q_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.00214460794813931,
+            "shape": [
+              896,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "44f6ed0f1b0bc612c5bfdcbbf0fe5818f4cae22f4c5665423d831c9ec4c6e6cc",
+            "dtype": "torch.qint8",
+            "integerSha256": "1ddc713ab3dc58640a053dcdc7b8798ddc88cbfe4c2e77eabb8408c2ca70fcf8",
+            "name": "model.layers.17.self_attn.k_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0016084559028968215,
+            "shape": [
+              128,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "2ce4b49424e326191f4e56edd68094fd4fcd5a11c997ad6e3a9dbb1ecd0e7f65",
+            "dtype": "torch.qint8",
+            "integerSha256": "c5b81dfb87242b3b152dda1b5d88ed183378439eda9762d67c25169c349761c3",
+            "name": "model.layers.17.self_attn.v_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0012408088659867644,
+            "shape": [
+              128,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "f34e80e1f02157aaac2cc01fdc6a43250822504c222940e86ca45401935e238e",
+            "dtype": "torch.qint8",
+            "integerSha256": "4113b6969516d2473414e9d8906b236fd25a5ef05ef7f71a2f9bd9e12b56c226",
+            "name": "model.layers.17.self_attn.o_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.002159926574677229,
+            "shape": [
+              896,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "4f40221ae3dd38fb7c2817c5350b982de1fd5a19ed85e0ef66ecf722cb7e4645",
+            "dtype": "torch.qint8",
+            "integerSha256": "f9c3244db2e221a58b0f04761fb694ea81e0db59f5aaf2c1791da75247137d09",
+            "name": "model.layers.17.mlp.gate_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0037683823611587286,
+            "shape": [
+              4864,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "4f40221ae3dd38fb7c2817c5350b982de1fd5a19ed85e0ef66ecf722cb7e4645",
+            "dtype": "torch.qint8",
+            "integerSha256": "0ce178a019e1eb63304a9a73f20ee82b9c62461b0d9cac3b91f284ada307c23d",
+            "name": "model.layers.17.mlp.up_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.00179227942135185,
+            "shape": [
+              4864,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "f34e80e1f02157aaac2cc01fdc6a43250822504c222940e86ca45401935e238e",
+            "dtype": "torch.qint8",
+            "integerSha256": "bc4e5b22b1e2534ff19e911f99b7163fa66d4d4f7ad5ad208c6b72d6a9a0df8b",
+            "name": "model.layers.17.mlp.down_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.002818627515807748,
+            "shape": [
+              896,
+              4864
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "7ddbb01c83de56651c04257bf18dd03505f1352ec8e1378179a2c7411317e951",
+            "dtype": "torch.qint8",
+            "integerSha256": "e701e9d9a23d62c11b1b5dd6e62033e4c8a3d5ac6abeca09bf2e40fb0418e40d",
+            "name": "model.layers.18.self_attn.q_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0030330882873386145,
+            "shape": [
+              896,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "2953cc462b4abad217290f6ebc12b1fa05769bd1cdf652103a2face8d248c0f7",
+            "dtype": "torch.qint8",
+            "integerSha256": "79cfd7ef86c06bf9e19f30b3715b89fcdf64198287b04bf7a4b98a942f4cae0f",
+            "name": "model.layers.18.self_attn.k_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0018918504938483238,
+            "shape": [
+              128,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "dba0e7fb745b2b427594f04da6b27fa17830c904c71ac7e5b42d0d9ad24ce037",
+            "dtype": "torch.qint8",
+            "integerSha256": "ddb17746f394f518903f2b34cbe0f6d05da771a2e8958f3b88e2a8c68f8428df",
+            "name": "model.layers.18.self_attn.v_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0009459252469241619,
+            "shape": [
+              128,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "f34e80e1f02157aaac2cc01fdc6a43250822504c222940e86ca45401935e238e",
+            "dtype": "torch.qint8",
+            "integerSha256": "d03ade3c0dcb0d96a77e028cd642068480cdac973f8af9817b5334655d0768cf",
+            "name": "model.layers.18.self_attn.o_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.001953125,
+            "shape": [
+              896,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "4f40221ae3dd38fb7c2817c5350b982de1fd5a19ed85e0ef66ecf722cb7e4645",
+            "dtype": "torch.qint8",
+            "integerSha256": "8c3421866530bea7b641c565618b593841a02dd681997bda6a1728deee09ba33",
+            "name": "model.layers.18.mlp.gate_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0031403186731040478,
+            "shape": [
+              4864,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "4f40221ae3dd38fb7c2817c5350b982de1fd5a19ed85e0ef66ecf722cb7e4645",
+            "dtype": "torch.qint8",
+            "integerSha256": "2071937d2b0f19b17a1bab2af6e59726fb4ebc98feb536d234980fc9db0fc962",
+            "name": "model.layers.18.mlp.up_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0026194853708148003,
+            "shape": [
+              4864,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "f34e80e1f02157aaac2cc01fdc6a43250822504c222940e86ca45401935e238e",
+            "dtype": "torch.qint8",
+            "integerSha256": "788052b182c788c8ea2e954aa586fa179d9b7ae26bca98b218bb3a502a9a1980",
+            "name": "model.layers.18.mlp.down_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.003538602963089943,
+            "shape": [
+              896,
+              4864
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "41c1be696ee321b0434d2b496370c8bff50a3da04a8a3e170985a60b71c7298f",
+            "dtype": "torch.qint8",
+            "integerSha256": "070ca9a3e6ac91e3f199e3ed88c35b7e16bb70fdbdc86bcf26cb1545f1f9841f",
+            "name": "model.layers.19.self_attn.q_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0017999387346208096,
+            "shape": [
+              896,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "c9839f6c39b27a8c402eaebb4dd9247648201a532a543cb1ed5a44b298a52b46",
+            "dtype": "torch.qint8",
+            "integerSha256": "f85449b137c4387dc8de214f2c3d501b7e2b0817d23a022d4c3c57438fecb2e9",
+            "name": "model.layers.19.self_attn.k_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.001439951010979712,
+            "shape": [
+              128,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "11e865e3c9a1677c793a71763f78f3974a895cf9f5315b5bc568ccaf86924a38",
+            "dtype": "torch.qint8",
+            "integerSha256": "e302ace70b90335e364021a9c4d687a1a3dd70583b3b81a13b01676a2150f7d9",
+            "name": "model.layers.19.self_attn.v_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0011106005404144526,
+            "shape": [
+              128,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "f34e80e1f02157aaac2cc01fdc6a43250822504c222940e86ca45401935e238e",
+            "dtype": "torch.qint8",
+            "integerSha256": "e1db0a587cb4119518a356cc2cc7ebcf34f00f63d0cf4980285c65684565ce2c",
+            "name": "model.layers.19.self_attn.o_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.002205882454290986,
+            "shape": [
+              896,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "4f40221ae3dd38fb7c2817c5350b982de1fd5a19ed85e0ef66ecf722cb7e4645",
+            "dtype": "torch.qint8",
+            "integerSha256": "3cfb2664c37ba35609900f5178045617e8e56813433eb576722834efbd78dc3d",
+            "name": "model.layers.19.mlp.gate_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.004564951173961163,
+            "shape": [
+              4864,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "4f40221ae3dd38fb7c2817c5350b982de1fd5a19ed85e0ef66ecf722cb7e4645",
+            "dtype": "torch.qint8",
+            "integerSha256": "4fa37c543de3c34f4929024e2bdf14be577180ccf8d69e89857fff4ea398f648",
+            "name": "model.layers.19.mlp.up_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0033241421915590763,
+            "shape": [
+              4864,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "f34e80e1f02157aaac2cc01fdc6a43250822504c222940e86ca45401935e238e",
+            "dtype": "torch.qint8",
+            "integerSha256": "46fb4848d6195d87e9f79944070fd4adccb62ac1974faad82a0aded1e1ee8c98",
+            "name": "model.layers.19.mlp.down_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.002481617731973529,
+            "shape": [
+              896,
+              4864
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "5b8b41b5875594c53c32ac6ec961d4361ce067b5f89f397656f2fdac6c0e4938",
+            "dtype": "torch.qint8",
+            "integerSha256": "0fc89c25cfbc8fd3070902662065c4d471e2afa1a6ce75ba09a021d187f7052a",
+            "name": "model.layers.20.self_attn.q_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0017310049152001739,
+            "shape": [
+              896,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "1bd428373a6fed51489efd9dae8ff71e7b238028f32d13dae1bc30aebe0c0512",
+            "dtype": "torch.qint8",
+            "integerSha256": "dbb7ca601bba6fc8088c1815fec21914728c29c777d1a8eccbb944ec1282dd59",
+            "name": "model.layers.20.self_attn.k_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0014859068905934691,
+            "shape": [
+              128,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "e5e45d034376da7ca207c31946fb83f100aa90c01cb7ff8e1f224973d5a453d8",
+            "dtype": "torch.qint8",
+            "integerSha256": "75cc5f6ee50ae8683d12b3cf76a8053f1569d8ef24cbb099cafc92211d2da0c5",
+            "name": "model.layers.20.self_attn.v_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0018152573611587286,
+            "shape": [
+              128,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "f34e80e1f02157aaac2cc01fdc6a43250822504c222940e86ca45401935e238e",
+            "dtype": "torch.qint8",
+            "integerSha256": "74bbd320dab397233dbe992e96d340a60f545cf238313a413e4cbdcf8fd1606d",
+            "name": "model.layers.20.self_attn.o_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0030024510342627764,
+            "shape": [
+              896,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "4f40221ae3dd38fb7c2817c5350b982de1fd5a19ed85e0ef66ecf722cb7e4645",
+            "dtype": "torch.qint8",
+            "integerSha256": "55cc827a0219b113b2dffbbe35fc96cce6c9ad994fbad64901cac2046d4ae144",
+            "name": "model.layers.20.mlp.gate_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.004227941390126944,
+            "shape": [
+              4864,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "4f40221ae3dd38fb7c2817c5350b982de1fd5a19ed85e0ef66ecf722cb7e4645",
+            "dtype": "torch.qint8",
+            "integerSha256": "d3164ffe66327168e665a44eb2c958929ad4ad7d5bd9a1c6abdb08060ff09071",
+            "name": "model.layers.20.mlp.up_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0033241421915590763,
+            "shape": [
+              4864,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "f34e80e1f02157aaac2cc01fdc6a43250822504c222940e86ca45401935e238e",
+            "dtype": "torch.qint8",
+            "integerSha256": "447ac47d556042886f1b484422e65df5447aa74916127ebdb6d17929d39755bb",
+            "name": "model.layers.20.mlp.down_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.002833946142345667,
+            "shape": [
+              896,
+              4864
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "bbe17bd06b63c1809195b6dd4a1457bb672f2e6eb314ec6b583e0588acf36266",
+            "dtype": "torch.qint8",
+            "integerSha256": "eddd3b6fde7d436ce0b6bb14e3539d06c2c251de8ff4f7088eacd6eef996528f",
+            "name": "model.layers.21.self_attn.q_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0017999387346208096,
+            "shape": [
+              896,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "a86312715b2ab398894f43c5e328d53c852862788b95520812bcdcf07c7594d2",
+            "dtype": "torch.qint8",
+            "integerSha256": "b5bae90e02fb42817113f6b6a368596fd9fb3b4ee191ed0f3d95a8825c3c68ba",
+            "name": "model.layers.21.self_attn.k_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.001455269637517631,
+            "shape": [
+              128,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "0832c0257126b23db1a69577e49851333aea6465c338db823bcd6961730831df",
+            "dtype": "torch.qint8",
+            "integerSha256": "1b26673570b136c81c63ff32c28c28ef5f4f996d1a7d1a746d92c7c29e99fd4c",
+            "name": "model.layers.21.self_attn.v_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0023437500931322575,
+            "shape": [
+              128,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "f34e80e1f02157aaac2cc01fdc6a43250822504c222940e86ca45401935e238e",
+            "dtype": "torch.qint8",
+            "integerSha256": "3d370679589577a8241e03bc3005592e3c9a245cd1d965a3643bf747e3f0b106",
+            "name": "model.layers.21.self_attn.o_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0026348039973527193,
+            "shape": [
+              896,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "4f40221ae3dd38fb7c2817c5350b982de1fd5a19ed85e0ef66ecf722cb7e4645",
+            "dtype": "torch.qint8",
+            "integerSha256": "2194d9d8b99dc0d0a2484cc067bb19bf1f4b899ab328154375239e8083cd9de3",
+            "name": "model.layers.21.mlp.gate_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.004564951173961163,
+            "shape": [
+              4864,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "4f40221ae3dd38fb7c2817c5350b982de1fd5a19ed85e0ef66ecf722cb7e4645",
+            "dtype": "torch.qint8",
+            "integerSha256": "18b4cd75fa83f7c1ee8cee4a6ebc7db5f434a155467954f121200bf204e4448d",
+            "name": "model.layers.21.mlp.up_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.005943627562373877,
+            "shape": [
+              4864,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "f34e80e1f02157aaac2cc01fdc6a43250822504c222940e86ca45401935e238e",
+            "dtype": "torch.qint8",
+            "integerSha256": "13adcca44d26bfd84c86ab1da7d1d2febb7fef43fa773836ffd9c352d563d3a5",
+            "name": "model.layers.21.mlp.down_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0049019609577953815,
+            "shape": [
+              896,
+              4864
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "d40027b9a06390eba3378604c15d0df03771e79e620e54199dc110edf68863d2",
+            "dtype": "torch.qint8",
+            "integerSha256": "18eefe3cfc9b019685b18d29260289e9343f68d5dab73901669782b32e11dc75",
+            "name": "model.layers.22.self_attn.q_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0020220589358359575,
+            "shape": [
+              896,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "e6e68005964865273bb83308d530d6c20ed9beb349dbee36d70aaeee04a1ca5f",
+            "dtype": "torch.qint8",
+            "integerSha256": "bcd4ef12ceb6d6c2b8c7e954067f9e752a9be585923d72e06bf856872b78963d",
+            "name": "model.layers.22.self_attn.k_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0012867647456005216,
+            "shape": [
+              128,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "ff2c99bf3fedb2d76d41576d2fa749526a7dcb0953cf1b70153bfdbae868aa11",
+            "dtype": "torch.qint8",
+            "integerSha256": "56554146e3c7a440f263361aee6d39814021828c0b2a60b5ff189d0dc5e7746e",
+            "name": "model.layers.22.self_attn.v_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0016620710957795382,
+            "shape": [
+              128,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "f34e80e1f02157aaac2cc01fdc6a43250822504c222940e86ca45401935e238e",
+            "dtype": "torch.qint8",
+            "integerSha256": "4b0f1a519726c3d8ebb0af88dcdc79c1c27b9cd1d9579dbb21461ad0dd00a4ae",
+            "name": "model.layers.22.self_attn.o_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.002236519707366824,
+            "shape": [
+              896,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "4f40221ae3dd38fb7c2817c5350b982de1fd5a19ed85e0ef66ecf722cb7e4645",
+            "dtype": "torch.qint8",
+            "integerSha256": "2a3eb06b98d8f09642cae2d4dcf8b1eebdbafa2359c904cf98f85aa7007be032",
+            "name": "model.layers.22.mlp.gate_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.005974264815449715,
+            "shape": [
+              4864,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "4f40221ae3dd38fb7c2817c5350b982de1fd5a19ed85e0ef66ecf722cb7e4645",
+            "dtype": "torch.qint8",
+            "integerSha256": "0bc67f6744e588be13a20f2e9395115e985e27cca9bbf2fe2684d064cb2ea326",
+            "name": "model.layers.22.mlp.up_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.002910539275035262,
+            "shape": [
+              4864,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "f34e80e1f02157aaac2cc01fdc6a43250822504c222940e86ca45401935e238e",
+            "dtype": "torch.qint8",
+            "integerSha256": "8e5cb079e41f334fe1b3d639bd7f7c52aca8d60555beda632362518a271daa0a",
+            "name": "model.layers.22.mlp.down_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0026194853708148003,
+            "shape": [
+              896,
+              4864
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "0ca94d3745c6541e3ec17b6681c10012a08b4b9bd87191e90d959d9821bccd97",
+            "dtype": "torch.qint8",
+            "integerSha256": "141f47f0a7ef08383a4a03b6b66fe82ee1bc2c1ea5e53ab0238ea1c61de6e413",
+            "name": "model.layers.23.self_attn.q_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0018995098071172833,
+            "shape": [
+              896,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "4691304c0e80e7d8dcf3c0a92ea82cfe62122db4d465bd3e13046dad2571021b",
+            "dtype": "torch.qint8",
+            "integerSha256": "103cb714e4aa6d75dfcc21189bbeb77df059a7eb82d61103bea5e99b7fda5d21",
+            "name": "model.layers.23.self_attn.k_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0016237745294347405,
+            "shape": [
+              128,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "0ca88bd98abeeec7cf360c53c81336ee3c7c88bca7f37afb2d7c320a4967c569",
+            "dtype": "torch.qint8",
+            "integerSha256": "c8f87f84fcd6efedfd74cc11c588dbe0e03e36f45fbf13eeb4e72f5c65da0d42",
+            "name": "model.layers.23.self_attn.v_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0019148284336552024,
+            "shape": [
+              128,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "f34e80e1f02157aaac2cc01fdc6a43250822504c222940e86ca45401935e238e",
+            "dtype": "torch.qint8",
+            "integerSha256": "094066ca48fb28250b9b542ed2b96544b55bc22f5f2de5f6943d3d405ee5be94",
+            "name": "model.layers.23.self_attn.o_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.007230392191559076,
+            "shape": [
+              896,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "4f40221ae3dd38fb7c2817c5350b982de1fd5a19ed85e0ef66ecf722cb7e4645",
+            "dtype": "torch.qint8",
+            "integerSha256": "98ffd6b1ae7e5785ba264c3bf41acad553c184e5af15c223caa6b8e44e35b3ad",
+            "name": "model.layers.23.mlp.gate_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.002803308889269829,
+            "shape": [
+              4864,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "4f40221ae3dd38fb7c2817c5350b982de1fd5a19ed85e0ef66ecf722cb7e4645",
+            "dtype": "torch.qint8",
+            "integerSha256": "a652cf34b27e8ff7f5793abad9c95fb47cda24dbe33fddfc2de96b326e298817",
+            "name": "model.layers.23.mlp.up_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0023284314665943384,
+            "shape": [
+              4864,
+              896
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "f34e80e1f02157aaac2cc01fdc6a43250822504c222940e86ca45401935e238e",
+            "dtype": "torch.qint8",
+            "integerSha256": "21e819c5ef85ee5d49475cebf35fbe997152aa05bf54997eb8a161cbbc7095fc",
+            "name": "model.layers.23.mlp.down_proj",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.004136029630899429,
+            "shape": [
+              896,
+              4864
+            ],
+            "zeroPoint": 0
+          },
+          {
+            "biasSha256": "79df304f9f6d686b3a834961728e5deee48be834ac411df809dee22a16404654",
+            "dtype": "torch.qint8",
+            "integerSha256": "cd873a9c5682c0f16f368ed2fa0f5c6266cd17dc8f8f26a789eab6d49f6610a0",
+            "name": "lm_head",
+            "qscheme": "torch.per_tensor_affine",
+            "scale": 0.0015778186498209834,
+            "shape": [
+              151936,
+              896
+            ],
+            "zeroPoint": 0
+          }
+        ],
+        "quantizedWeightElements": 493961216,
+        "residualParameterElements": 136178560,
+        "residualTensorSha256": "e41584406ef0e2f316c7eeb2e56beeee9ae87bed219abe3bce04bc573c948c6d",
+        "sha256": "146cb867693d42100358aaf744e3c081420f92a46062cb2c51bc734eec94d58b"
+      },
+      "preparationStages": [
+        {
+          "stage": "verify_plan",
+          "status": "complete",
+          "elapsedMs": 479.173875
+        },
+        {
+          "stage": "dependency_import",
+          "status": "complete",
+          "elapsedMs": 2138.644042
+        },
+        {
+          "stage": "m01_tokenizer",
+          "status": "complete",
+          "elapsedMs": 18.734125
+        },
+        {
+          "stage": "m01_encoder",
+          "status": "complete",
+          "elapsedMs": 31.062542
+        },
+        {
+          "stage": "m01_heads",
+          "status": "complete",
+          "elapsedMs": 1.481542
+        },
+        {
+          "stage": "m03_tokenizer",
+          "status": "complete",
+          "elapsedMs": 148.085625
+        },
+        {
+          "stage": "m03_generator",
+          "status": "complete",
+          "elapsedMs": 478.196291
+        },
+        {
+          "stage": "qnnpack_dynamic_quantization",
+          "status": "complete",
+          "elapsedMs": 1308.735916
+        }
+      ],
+      "fullRequestMeasured": false,
+      "formalEvaluationAllowed": false
+    },
+    {
+      "runId": "action-focus-dev42-20261104-r2",
+      "quality": [
+        {
+          "arm": "readable",
+          "generatedAttempts": 9,
+          "obviousTaskActorOrMetaFailures": 6,
+          "plausibleCandidatesPendingReview": 3,
+          "skipAttempts": 3,
+          "distinctSourceCases": 4,
+          "formalSemanticPass": false,
+          "targetQuality": "unverified_all_empty_not_automatically_correct"
+        }
+      ],
+      "timing": [
+        {
+          "arm": "readable",
+          "caseId": "dev-d02-01",
+          "observations": 3,
+          "p50Ms": 2068.842042,
+          "maxMs": 2134.927375,
+          "over500msObservations": 3,
+          "generationMeanMs": 1966.7256109920952,
+          "inputTokens": 719,
+          "prefillMeanMs": 1405.3600276666666,
+          "decodeMeanMs": 551.18332,
+          "generationNonForwardMeanMs": 10.182263325428343
+        },
+        {
+          "arm": "readable",
+          "caseId": "dev-d02-03",
+          "observations": 3,
+          "p50Ms": 56.698917,
+          "maxMs": 142.814,
+          "over500msObservations": 0,
+          "generationMeanMs": null,
+          "inputTokens": null,
+          "prefillMeanMs": null,
+          "decodeMeanMs": null,
+          "generationNonForwardMeanMs": null
+        },
+        {
+          "arm": "readable",
+          "caseId": "dev-d02-05",
+          "observations": 3,
+          "p50Ms": 2133.63325,
+          "maxMs": 2141.724625,
+          "over500msObservations": 3,
+          "generationMeanMs": 1997.0835833422218,
+          "inputTokens": 735,
+          "prefillMeanMs": 1439.3456663333334,
+          "decodeMeanMs": 548.0848883333333,
+          "generationNonForwardMeanMs": 9.653028675555333
+        },
+        {
+          "arm": "readable",
+          "caseId": "dev-d02-07",
+          "observations": 3,
+          "p50Ms": 1887.589958,
+          "maxMs": 1888.277333,
+          "over500msObservations": 3,
+          "generationMeanMs": 1750.283389003016,
+          "inputTokens": 728,
+          "prefillMeanMs": 1420.639125,
+          "decodeMeanMs": 322.17348566666664,
+          "generationNonForwardMeanMs": 7.47077833634944
+        }
+      ],
+      "counts": {
+        "skipNoDownstream": 3,
+        "generationCalls": 9,
+        "targetCalls": 9,
+        "encoderForwardWindows": 84,
+        "decoderForwardAttempts": 87
+      },
+      "supervisor": {
+        "error": null,
+        "exitCode": 0,
+        "measurement": "ps_rss_every250ms",
+        "observedPeakResidentMiB": 3094.203125,
+        "stopReason": null,
+        "wallMs": 24941.112708009314
+      },
+      "completedEngineeringChains": 12,
+      "modelParameters": {
+        "generator": 494032768,
+        "m01": 7120384
+      },
+      "headParameters": 180418,
+      "trainingSteps": 0,
+      "variantsStableWithinEachRepresentation": true,
+      "sourceFilesUnchanged": true,
+      "quantizedIdentity": null,
+      "preparationStages": [
+        {
+          "stage": "verify_plan",
+          "status": "complete",
+          "elapsedMs": 470.500208
+        },
+        {
+          "stage": "dependency_import",
+          "status": "complete",
+          "elapsedMs": 1898.461458
+        },
+        {
+          "stage": "m01_tokenizer",
+          "status": "complete",
+          "elapsedMs": 13.068208
+        },
+        {
+          "stage": "m01_encoder",
+          "status": "complete",
+          "elapsedMs": 22.740625
+        },
+        {
+          "stage": "m01_heads",
+          "status": "complete",
+          "elapsedMs": 1.555542
+        },
+        {
+          "stage": "m03_tokenizer",
+          "status": "complete",
+          "elapsedMs": 136.115875
+        },
+        {
+          "stage": "m03_generator",
+          "status": "complete",
+          "elapsedMs": 475.685459
+        }
+      ],
+      "fullRequestMeasured": false,
+      "formalEvaluationAllowed": false
+    }
+  ],
+  "archives": [
+    {
+      "path": "artifacts/world-components-logic/m01-fitting/action-focus-dev42-20261104-r1.record.json.gz",
+      "gzipSha256": "264ec72a2c90335e8bbe47c428973d9a36428d88f2fdeaf1b6d0ac50a644b881",
+      "rawSha256": "7a44a94600317727d7dbb3dbe0f5798d5f0f352c7f07032ba4b3772fa3d397e5"
+    },
+    {
+      "path": "artifacts/world-components-logic/m01-fitting/action-focus-dev42-20261104-r1.record.journal.jsonl.gz",
+      "gzipSha256": "09a57957541f0bb524e18e701b3b6f455350cbaa249201c0f6b85d19d11484b8",
+      "rawSha256": "1067189426b335e53bec41b8d6348ca23f8c4b7b63664037ca06a416b6c2775a"
+    },
+    {
+      "path": "artifacts/world-components-logic/m01-fitting/action-focus-dev42-20261104-r2.record.json.gz",
+      "gzipSha256": "7da8dd14745fe8dad1d50817eb2ed8ec34d76ab4425443f558694767dca52916",
+      "rawSha256": "a2483812e432a8274aa5c1e42dab77f0b332424cedeb593f7807d99174eebef3"
+    },
+    {
+      "path": "artifacts/world-components-logic/m01-fitting/action-focus-dev42-20261104-r2.record.journal.jsonl.gz",
+      "gzipSha256": "0b02b647dbe42b2ef50cf62d8db2e216cf03509c93c80a0b062aef38cb1c06ed",
+      "rawSha256": "7badab98a34e4738c91e177d9b7f0650e2eda4e7a11c426d0151ce95f3d93e05"
+    }
+  ]
+}

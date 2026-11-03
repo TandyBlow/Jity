@@ -1,7 +1,7 @@
 """Current D experiment entry point and shared execution bookkeeping.
 
 status/check never import a model or prepare/execute a model batch. Model-specific
-packing, heads, fitting and predictions belong to m01_shared, loaded on demand.
+collaboration belongs to action_chain and its M01 helpers, loaded on demand.
 """
 from __future__ import annotations
 
@@ -40,9 +40,11 @@ def record_stage(report,out,name,fn):
 
 
 def planned_slots(plan,arms):
+    blocks=plan['config'].get('armBlocks',[list(arms)])
+    if not blocks or any(not b for b in blocks) or [a for b in blocks for a in b]!=list(arms):raise ValueError('invalid registered arm blocks')
     return [{'arm':arm,'caseId':case['caseId'],'repeat':repeat,'status':'not_started'}
-            for repeat in range(plan['config']['attemptsPerCase']) for case in plan['cases']
-            for arm in (arms if repeat%2==0 else arms[::-1])]
+            for block in blocks for repeat in range(plan['config']['attemptsPerCase']) for case in plan['cases']
+            for arm in (block if repeat%2==0 else block[::-1])]
 
 
 def unstarted_record(plan,path,arms):
@@ -247,10 +249,10 @@ def execute_plan(path,*,paths,verify,worker_script,settle_stages,arms):
 
 
 def status():
-    summary=read_json(ART/'l3-11-action-chain-summary.json');latest=summary['runs'][-1]
+    summary=read_json(ART/'l3-12-action-focus-summary.json');latest=summary['runs'][-1]
     result={'stage':'L3 exploratory offline validation','entrypoint':'experiments/world-components-logic/experiment.py',
             'implementation':'experiments/world-components-logic/action_chain.py','latestRun':latest['runId'],
-            'resultPage':'artifacts/world-components-logic/l3-11-action-chain-results.html','quality':latest['quality'],
+            'resultPage':'artifacts/world-components-logic/l3-12-action-focus-results.html','quality':latest['quality'],
             'formalEvaluationAllowed':summary['formalEvaluationAllowed'],'fullRequest500msStatus':summary['fullRequest500msStatus'],
             'modelExecutionPerformed':False}
     print(json.dumps(result,ensure_ascii=False,indent=2));return 0
@@ -263,7 +265,8 @@ def check():
               [str(BASE/'m01_shared_report.py'),'--journal','--check'],
               [str(BASE/'m01_shared_report.py'),'--input','--check'],
               [str(BASE/'m01_shared_report.py'),'--compiled','--check'],
-              [str(BASE/'m01_shared_report.py'),'--chain','--check']]
+              [str(BASE/'m01_shared_report.py'),'--chain','--check'],
+              [str(BASE/'m01_shared_report.py'),'--focus','--check']]
     env=dict(os.environ,PYTHONDONTWRITEBYTECODE='1')
     for args in commands:
         result=subprocess.run([sys.executable,*args],cwd=ROOT,env=env)
@@ -277,7 +280,7 @@ def main(argv=None):
     sub=parser.add_subparsers(dest='command')
     sub.add_parser('status',help='read current status only (default)')
     sub.add_parser('check',help='run lightweight tests and verify archived reports; no models')
-    sub.add_parser('prepare',help='freeze a new shared-encoder batch; requires local model files').add_argument('run_id')
+    sub.add_parser('prepare',help='freeze a new current collaboration batch; requires local model files').add_argument('run_id')
     sub.add_parser('execute',help='run inference on a frozen current batch; no training').add_argument('plan',type=Path)
     args=parser.parse_args(argv)
     if args.command in (None,'status'):return status()

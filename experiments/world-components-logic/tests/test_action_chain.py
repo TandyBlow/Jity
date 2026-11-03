@@ -66,6 +66,68 @@ class ActionChainTests(unittest.TestCase):
             r={'runId':'test','planSha256':'test-sha','attemptSlots':[slot], 'attempts':[],'status':'running'}
             with self.assertRaisesRegex(ValueError,'outside active'):experiment.reconcile_journal(r,p,'exit')
 
+class ActorFocusTests(unittest.TestCase):
+    def test_focus_repeats_the_actual_actor_all_fields_without_selecting_actions(self):
+        for c in chain.dataset()[0]:
+            before=copy.deepcopy(c);focus=chain.actor_context(c)
+            actor=next(p for p in c['input']['world']['characters'] if p['id']==c['input']['actorId'])
+            self.assertEqual(focus['actor'],actor);self.assertEqual(focus['advance'],c['input']['advance'])
+            self.assertEqual(c,before)
+        npc=chain.dataset()[0][-1]
+        self.assertEqual(chain.actor_context(npc)['actor']['id'],'p2')
+        self.assertIn('秤盘',chain.actor_context(npc)['actor']['tasks'][0]['text'])
+
+    def test_focus_and_int8_have_identical_complete_inputs_and_prompts(self):
+        from pilot_codec import unpack
+        for c in chain.dataset()[0]:
+            a,value=chain.instruction_prompt(c,'focus');b,other=chain.instruction_prompt(c,'focus_int8')
+            self.assertEqual(a,b);self.assertEqual(value,other);self.assertEqual(value,c['input'])
+            packed=a[1]['content'].split('完整世界工作态（无损表格编码）：')[1].split('\n本次行动者')[0]
+            self.assertEqual(unpack(json.loads(packed)),c['input'])
+            repeated=a[1]['content'].split('本次行动者原始资料（从上文逐字段复制）：')[1].split('\n只决定')[0]
+            self.assertEqual(unpack(json.loads(repeated)),chain.actor_context(c))
+            self.assertNotIn('mustRespect',json.dumps(a));self.assertNotIn('draftExpected',json.dumps(a))
+
+    def test_original_prompt_stays_equal_to_last_batch(self):
+        for c in chain.dataset()[0]:self.assertEqual(chain.instruction_prompt(c,'original'),chain.instruction_prompt(c))
+
+    def test_precision_blocks_preserve_every_slot_and_do_not_switch_back(self):
+        plan=json.loads((chain.ART/'action-focus-dev42-20261104-r1.plan.json').read_bytes())
+        slots=experiment.planned_slots(plan,plan['arms'])
+        self.assertEqual(len(slots),36);self.assertTrue(all(s['arm']!='focus_int8' for s in slots[:24]))
+        self.assertTrue(all(s['arm']=='focus_int8' for s in slots[24:]))
+        self.assertEqual(len({(s['arm'],s['caseId'],s['repeat']) for s in slots}),36)
+        self.assertEqual([s['arm'] for s in slots[8:10]],['focus','original'])
+
+    def test_invalid_blocks_rejected_before_execution(self):
+        for blocks in ([['original'],['focus_int8']], [['original','focus'],['focus']], [[],list(chain.ARMS)]):
+            plan={'cases':chain.dataset()[0],'config':{**chain.CONFIG,'armBlocks':blocks}}
+            with self.assertRaisesRegex(ValueError,'arm blocks'):experiment.planned_slots(plan,chain.ARMS)
+
+class ReadableInputTests(unittest.TestCase):
+    def test_readable_full_input_and_actor_roundtrip_without_tables_or_refs(self):
+        from pilot_codec import readable,restore_readable
+        for c in chain.dataset()[0]:
+            value=c['input'];encoded=readable(value)
+            self.assertEqual(restore_readable(encoded),value)
+            self.assertIsInstance(encoded['世界']['人物'],list)
+            self.assertEqual(len(encoded['世界']['人物']),len(value['world']['characters']))
+            messages,_=chain.instruction_prompt(c,'readable')
+            full=messages[1]['content'].split('完整世界工作态（逐字段JSON，无表格和同文引用）：')[1].split('\n当前行动者')[0]
+            self.assertEqual(restore_readable(json.loads(full)),value)
+            self.assertNotIn('mustRespect',json.dumps(messages));self.assertNotIn('draftExpected',json.dumps(messages))
+
+    def test_consumed_text_is_preserved_with_state_translation_not_a_new_command(self):
+        c=chain.dataset()[0][2];messages,_=chain.instruction_prompt(c,'readable')
+        text=messages[1]['content'];self.assertIn(c['input']['advance']['inputText'],text)
+        self.assertIn('已经消费的旧输入',text);self.assertIn('不重新执行',text)
+
+    def test_unknown_keys_missing_null_and_special_characters_roundtrip(self):
+        from pilot_codec import readable,restore_readable
+        value={'strange':{'text':'换行\n\"和引号','extra':None},'list':[True,False,0,{},[]]}
+        self.assertEqual(restore_readable(readable(value)),value)
+        with self.assertRaises(ValueError):readable({'id':'p1','编号':'p2'})
+
 class ChainEvidenceTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -114,6 +176,53 @@ class ChainEvidenceTests(unittest.TestCase):
         self.assertEqual([r['quality']['generatedSemanticFailuresObserved'] for r in summary['runs']],[18,18,2])
         self.assertTrue(all(not r['quality']['formalSemanticPass'] for r in summary['runs']))
 
+
+class GenerationProfileTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        import m01_shared_report as report
+        cls.report=report
+        cls.record=report.read_archive(report.DATA/'action-focus-dev42-20261104-r1.record.json.gz')
+
+    def sample(self):return copy.deepcopy(next(a for a in self.record['attempts'] if 'generation' in a))
+
+    def test_actual_forward_events_cover_prefill_and_every_generated_token(self):
+        a=self.sample();self.report.validate_generation_forwards(a['generation'],a['checkpoints'])
+        rows=a['generation']['forwardTimings'];self.assertEqual(rows[0]['phase'],'prefill')
+        self.assertEqual(rows[0]['inputTokens'],a['generation']['context']['inputTokens'])
+        self.assertTrue(all(r['inputTokens']==1 for r in rows[1:]))
+        self.assertEqual(len(rows),len(a['generation']['outputTokenIds']))
+
+    def test_missing_or_misclassified_full_input_prefill_is_rejected(self):
+        for change in ('drop','phase','tokens'):
+            a=self.sample();g=a['generation']
+            if change=='drop':g['forwardTimings'].pop(0)
+            elif change=='phase':g['forwardTimings'][0]['phase']='decode'
+            else:g['forwardTimings'][0]['inputTokens']=1
+            with self.assertRaisesRegex(ValueError,'coverage/count'):self.report.validate_generation_forwards(g,a['checkpoints'])
+
+    def test_forward_completion_or_cost_cannot_be_invented(self):
+        a=self.sample();a['checkpoints']=[c for c in a['checkpoints'] if c['name']!='generator_forward_settled']
+        with self.assertRaisesRegex(ValueError,'hooks not paired'):self.report.validate_generation_forwards(a['generation'],a['checkpoints'])
+        a=self.sample();a['generation']['generationMs']=0
+        with self.assertRaisesRegex(ValueError,'time omitted'):self.report.validate_generation_forwards(a['generation'],a['checkpoints'])
+
+    def test_actual_quantized_variant_has_all_linear_weights_and_stays_stable(self):
+        self.report.validate_quantized_identity(self.record)
+        q=self.record['generatorVariants']['qint8']['before']
+        self.assertEqual(len(q['quantizedModules']),169)
+        self.assertGreater(q['quantizedWeightElements'],q['residualParameterElements'])
+        broken=copy.deepcopy(self.record);broken['generatorVariants']['qint8']['after']['quantizedModules'].pop()
+        with self.assertRaisesRegex(ValueError,'weights drift'):self.report.validate_quantized_identity(broken)
+
+    def test_all_failed_directions_are_present_and_not_promoted_to_pass(self):
+        summary,_=self.report.build_focus()
+        qualities=[q for r in summary['runs'] for q in r['quality']]
+        self.assertEqual(sum(q['generatedAttempts'] for q in qualities),36)
+        self.assertEqual(sum(q['obviousTaskActorOrMetaFailures'] for q in qualities),27)
+        self.assertTrue(all(not q['formalSemanticPass'] for q in qualities))
+        self.assertEqual(summary['fullRequest500msStatus'],'unverified')
+        self.assertFalse(summary['local50msHardGate'])
 
 class FetchIdentityTests(unittest.TestCase):
     def spec(self,raw,kind):

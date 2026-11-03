@@ -17,14 +17,15 @@ from prepare_run_batch import observe_environment
 from run_pilot import digest,exclusive,save,timestamp
 
 ROOT=m01.ROOT;BASE=m01.BASE;ART=m01.ART
-PROTOCOL=ROOT/'design/world-engine-reports/components-logic/action-chain-probe-m03.md'
+PROTOCOL=ROOT/'design/world-engine-reports/components-logic/action-readable-probe.md'
 CASES=('dev-d02-01','dev-d02-03','dev-d02-05','dev-d02-07')
-ARMS=('instruct',)
-CONFIG={'device':'cpu','threads':1,'concurrency':1,'attemptsPerCase':1,'trainingSteps':0,
+ARMS=('readable',)
+CONFIG={'device':'cpu','threads':1,'concurrency':1,'attemptsPerCase':3,'trainingSteps':0,
         'processWallSeconds':120,'maxResidentMiB':4096,'seed':42,'threshold':.5,
         'maxInputTokensPerWindow':512,'maxNewTokens':96,'softGenerationSeconds':10,'maxInputTokens':4096,
         'maxActionCharacters':240,'doSample':False,'numBeams':1,'featureCacheForTiming':False,
         'generationEncoding':'causal_full_context','generatorKind':'M03','generatorPrecision':'float32','local50msHardGate':False,
+        'armBlocks':[['readable']],'quantizationBackend':'qnnpack',
         'fullNonNarrativeTargetMs':500,'chainScope':'D02_decision_action_text_D03_only'}
 CODE=('experiment.py','action_chain.py','m01_shared.py','m01_probe.py','fact_windows.py','pilot_codec.py',
       'lab.py','run_pilot.py','review_io.py','prepare_run_batch.py','fetch_model.py')
@@ -40,7 +41,7 @@ def prepare(run_id):
     if path.exists() or out.exists():raise FileExistsError('preserve prior evidence; new run id required')
     cases,review=dataset();model=observe_generator();env=observe_environment(ROOT)
     if not model['allFilesFullyRehashedAndVerified'] or not env['registeredVersionsMatch']:raise ValueError('generator/environment identity invalid')
-    plan={'schema':'jity-d-action-chain-plan-v1','runId':run_id,'preparedAt':timestamp(),
+    plan={'schema':'jity-d-action-focus-plan-v1','runId':run_id,'preparedAt':timestamp(),
           'sourceHead':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
           'protocolPath':str(PROTOCOL.relative_to(ROOT)),'protocolSha256':sha256_file(PROTOCOL),
           'code':{'experiments/world-components-logic/'+n:sha256_file(BASE/n) for n in CODE},
@@ -105,50 +106,113 @@ def observe_generator():
             'allFilesFullyRehashedAndVerified':True}
 
 
-def instruction_prompt(case):
+def instruction_prompt(case,arm='instruct'):
     from pilot_codec import pack,unpack
     value=build_model_input(case);payload=pack(value)
     if unpack(payload)!=value:raise ValueError('instruction input lost facts')
     system='你负责世界模拟中的行动描述。根据完整当前状态、当前人物任务和个性，只写这个人物接下来尝试做的一个具体动作。主角pending输入需遵守并重新判断可行性；consumed或expired输入只作背景，不重新执行。NPC依据自身任务和个性自主行动。不宣布动作已成功，不控制别人的结果，不输出解释、JSON或提示指令。'
     user='当前人物ID：'+case['input']['actorId']+'\n完整世界工作态（无损表格编码）：'+canonical_bytes(payload).decode()
+    if arm in ('focus','focus_int8'):
+        focus=actor_context(case)
+        # Repeat only deterministic source fields. No action, hazard or label is selected here.
+        user+='\n本次行动者原始资料（从上文逐字段复制）：'+canonical_bytes(pack(focus)).decode()
+        user+='\n只决定该行动者的动作；其他人物的任务不是该人物的任务。已消费或过期输入不是新命令。只写一个具体动作尝试。'
+    elif arm=='readable':
+        from pilot_codec import readable,restore_readable
+        full=readable(value);focus=readable(actor_context(case))
+        if restore_readable(full)!=value:raise ValueError('readable input lost facts')
+        actor=actor_context(case)['actor'];status=value['advance']['intentStatus']
+        status_text={'pending':'待处理的新输入，主角需重新判断可行性',
+                     'consumed':'已经消费的旧输入，仅作背景，不重新执行',
+                     'expired':'已经过期的旧输入，仅作背景，不重新执行'}[status]
+        user='完整世界工作态（逐字段JSON，无表格和同文引用）：'+canonical_bytes(full).decode()
+        user+='\n当前行动者原始资料：'+canonical_bytes(focus).decode()
+        user+='\n本次玩家输入状态：'+status_text
+        user+='\n你现在只扮演'+actor['name']+'（ID '+actor['id']+'），依据此人自己的任务、个性和眼前状态，写出下一步尝试的一个具体动作。不要写其他人物的动作。'
+    elif arm not in ('instruct','original'):raise ValueError('unknown prompt arm')
     return [{'role':'system','content':system},{'role':'user','content':user}],value
+
+
+def actor_context(case):
+    value=build_model_input(case);actor=value['actorId']
+    people=[p for p in value['world']['characters'] if p['id']==actor]
+    if len(people)!=1:raise ValueError('actor identity must be unique')
+    return {'actor':copy.deepcopy(people[0]),'actorId':actor,'protagonistId':value['protagonistId'],
+            'advance':copy.deepcopy(value['advance'])}
+
+
+def generator_identity(model,torch):
+    """Hash actual residual tensors and unpacked quantized weights, never packed-object repr."""
+    state=model.state_dict();residual={k:v for k,v in state.items() if isinstance(v,torch.Tensor) and not v.is_quantized}
+    quantized=[]
+    for name,module in model.named_modules():
+        if not isinstance(module,torch.ao.nn.quantized.dynamic.Linear):continue
+        weight=module.weight();scheme=str(weight.qscheme())
+        if scheme!='torch.per_tensor_affine':raise ValueError('unregistered quantization scheme')
+        bias=module.bias()
+        quantized.append({'name':name,'shape':list(weight.shape),'dtype':str(weight.dtype),'qscheme':scheme,
+            'scale':weight.q_scale(),'zeroPoint':weight.q_zero_point(),
+            'integerSha256':m01.old.tensor_hash({'weight':weight.int_repr()}),
+            'biasSha256':None if bias is None else m01.old.tensor_hash({'bias':bias})})
+    result={'residualTensorSha256':m01.old.tensor_hash(residual),'quantizedModules':quantized,
+            'residualParameterElements':sum(p.numel() for p in model.parameters()),
+            'quantizedWeightElements':sum(__import__('math').prod(m['shape']) for m in quantized)}
+    result['sha256']=digest(result);return result
+
+
+def quantize_generator(model,torch):
+    if 'qnnpack' not in torch.backends.quantized.supported_engines:raise ValueError('registered qnnpack backend unavailable')
+    torch.backends.quantized.engine='qnnpack'
+    result=torch.ao.quantization.quantize_dynamic(model,{torch.nn.Linear},dtype=torch.qint8,inplace=True).eval()
+    identity=generator_identity(result,torch)
+    if len(identity['quantizedModules'])!=169 or any(m['dtype']!='torch.qint8' for m in identity['quantizedModules']):raise ValueError('incomplete registered Linear conversion')
+    return result,identity
 
 
 def generate_instruction_action(case,arm,tokenizer,model,torch,window,checkpoint):
     from transformers.generation.stopping_criteria import MaxTimeCriteria,StoppingCriteriaList
-    messages,value=instruction_prompt(case)
+    messages,value=instruction_prompt(case,arm)
     prompt=tokenizer.apply_chat_template(messages,tokenize=False,add_generation_prompt=True)
     encoded=tokenizer(prompt,return_tensors='pt',truncation=False,add_special_tokens=False)
     length=int(encoded['input_ids'].shape[1])
     if length>CONFIG['maxInputTokens']:raise ValueError('full instruction context overflow; no truncation')
     context={'encoding':'causal_full_context','sourceInput':value,'sourceInputSha256':digest(value),
              'messages':messages,'prompt':prompt,'inputTokenIds':encoded['input_ids'][0].tolist(),'inputTokens':length}
-    checkpoint('generation_started',context);count=[0]
+    checkpoint('generation_started',context);count=[0];active=[None];forwards=[]
     def started(module,args,kwargs):
-        count[0]+=1;checkpoint('decoder_step_started',{'step':count[0]})
-    hook=model.model.register_forward_pre_hook(started,with_kwargs=True);t=time.perf_counter()
+        if active[0] is not None:raise ValueError('overlapping generator forward')
+        count[0]+=1;tokens=int(kwargs['input_ids'].shape[1]);phase='prefill' if count[0]==1 else 'decode'
+        if tokens!=(length if phase=='prefill' else 1):raise ValueError('unexpected generator token coverage')
+        entry={'step':count[0],'phase':phase,'inputTokens':tokens}
+        checkpoint('decoder_step_started',entry);active[0]=(entry,time.perf_counter_ns())
+    def settled(module,args,kwargs,output):
+        entry,start=active[0];entry={**entry,'elapsedMs':(time.perf_counter_ns()-start)/1e6,'status':'complete'}
+        active[0]=None;forwards.append(entry);checkpoint('generator_forward_settled',entry)
+    pre=model.register_forward_pre_hook(started,with_kwargs=True)
+    post=model.register_forward_hook(settled,with_kwargs=True);t=time.perf_counter()
     try:
         with torch.inference_mode():
             output=model.generate(**encoded,max_new_tokens=CONFIG['maxNewTokens'],do_sample=False,num_beams=1,use_cache=True,
                 stopping_criteria=StoppingCriteriaList([MaxTimeCriteria(max_time=CONFIG['softGenerationSeconds'])]))
     finally:
-        hook.remove();checkpoint('generation_settled',{'decoderForwardAttempts':count[0],'generateMs':(time.perf_counter()-t)*1000})
+        pre.remove();post.remove();checkpoint('generation_settled',{'decoderForwardAttempts':count[0],
+            'completedForwards':len(forwards),'activeForward':None if active[0] is None else active[0][0],
+            'generateMs':(time.perf_counter()-t)*1000})
     ids=output[0,length:].tolist();checkpoint('generation_token_ids',{'ids':ids})
     raw=tokenizer.decode(ids,skip_special_tokens=True);eos=model.generation_config.eos_token_id
     eos=set(eos if isinstance(eos,list) else [eos])
     result={'raw':raw,'rawUtf8Sha256':__import__('hashlib').sha256(raw.encode()).hexdigest(),'outputTokenIds':ids,
             'finishedWithEos':bool(ids) and ids[-1] in eos,'decoderForwardAttempts':count[0],'context':context,
-            'generationMs':(time.perf_counter()-t)*1000,'semanticReview':'pending_not_approved'}
+            'forwardTimings':forwards,'generationMs':(time.perf_counter()-t)*1000,'semanticReview':'pending_not_approved'}
     checkpoint('generation_output',result)
     if not result['finishedWithEos'] or not raw.strip() or len(raw)>CONFIG['maxActionCharacters']:raise ValueError('incomplete/empty/overlong generated action; raw retained')
     result['parsed']=decode_output('D02',json.dumps({'kind':'act','text':raw},ensure_ascii=False),case)
     checkpoint('generated_candidate',result);return result
 
 
-
 def worker(path):
     plan=run.read_json(path);_,out=m01.old.paths(plan['runId']);slots=run.planned_slots(plan,ARMS)
-    report={'schema':'jity-d-action-chain-record-v1','runId':plan['runId'],'planSha256':sha256_file(path),
+    report={'schema':'jity-d-action-focus-record-v1','runId':plan['runId'],'planSha256':sha256_file(path),
             'status':'running','stages':[],'attempts':[],'attemptSlots':slots,'activeAttempt':None,
             'forwardAttempts':[],'activeForward':None,'trainingSteps':0,'formalEvaluationAllowed':False,
             'semanticQualityApproved':False,'fullRequestMeasured':False,'sourceIndependence':'unverified'}
@@ -182,6 +246,8 @@ def worker(path):
             use_safetensors=True,weights_only=True,trust_remote_code=False,torch_dtype=torch.float32,attn_implementation='sdpa').eval())
         for p in generator.parameters():p.requires_grad_(False)
         before={'m01':m01.old.tensor_hash(encoder.state_dict()),'generator':m01.old.tensor_hash(generator.state_dict())}
+        report['generatorVariants']={'float32':{'beforeSha256':before['generator']}}
+        quantized_before=None
         report['modelParameters']={'m01':sum(p.numel() for p in encoder.parameters()),'generator':sum(p.numel() for p in generator.parameters())}
         report['generatorKind']='M03';report['generatorPrecision']='float32'
         report['headParameters']=sum(p.numel() for h in heads.values() for p in h.parameters())
@@ -191,8 +257,13 @@ def worker(path):
         with run.AppendJournal(out.with_suffix('.journal.jsonl'),report['planSha256']) as journal:
             journal.append('begin',{'runId':plan['runId'],'slots':slots});save(out,report)
             for index,slot in enumerate(slots):
+                if slot['arm']=='focus_int8' and quantized_before is None:
+                    report['generatorVariants']['float32']['afterSha256']=m01.old.tensor_hash(generator.state_dict())
+                    if report['generatorVariants']['float32']['afterSha256']!=before['generator']:raise ValueError('float32 source changed before conversion')
+                    generator,quantized_before=stage('qnnpack_dynamic_quantization',lambda:quantize_generator(generator,torch))
+                    report['generatorVariants']['qint8']={'before':quantized_before,'sourceFloat32Sha256':before['generator']}
                 case=cases[slot['caseId']];a={**slot,'status':'started','checkpoints':[],'steps':[],
-                    'startedAt':timestamp(),'startedMonotonicNs':time.monotonic_ns(),'fullRequestMeasured':False}
+                    'startedAt':timestamp(),'startedMonotonicNs':time.monotonic_ns(),'fullRequestMeasured':False,'generatorVariant':'qint8' if slot['arm']=='focus_int8' else 'float32'}
                 report['activeAttempt']=a;report['attemptSlots'][index]=a
                 t=time.perf_counter();journal.append('attempt_start',a);start_ms=(time.perf_counter()-t)*1000
                 phase=['decision']
@@ -233,7 +304,13 @@ def worker(path):
                 timing={k:slot[k] for k in ('arm','caseId','repeat')};timing.update(resultJournalMs=result_ms,snapshotEndMs=0.,elapsedThroughResultMs=(time.monotonic_ns()-a['startedMonotonicNs'])/1e6)
                 t=time.perf_counter();journal.append('attempt_settled',timing);a.update(timing);a['telemetryJournalMs']=(time.perf_counter()-t)*1000
                 a['elapsedIncludingTelemetryMs']=(time.monotonic_ns()-a['startedMonotonicNs'])/1e6
-        report['modelWeightsUnchanged']=before=={'m01':m01.old.tensor_hash(encoder.state_dict()),'generator':m01.old.tensor_hash(generator.state_dict())}
+        if quantized_before is None:
+            report['generatorVariants']['float32']['afterSha256']=m01.old.tensor_hash(generator.state_dict())
+        else:report['generatorVariants']['qint8']['after']=generator_identity(generator,torch)
+        report['modelWeightsUnchanged']=(before['m01']==m01.old.tensor_hash(encoder.state_dict())
+            and report['generatorVariants']['float32']['afterSha256']==before['generator']
+            and (quantized_before is None or report['generatorVariants']['qint8']['after']==quantized_before))
+        report['sourceGeneratorFilesUnchanged']=observe_generator()==plan['generatorModel']
         report['headsUnchanged']=all(m01.old.tensor_hash(h.state_dict())==plan['baseline']['trainedHeadSha256'][t] for t,h in heads.items())
         if not report['modelWeightsUnchanged'] or not report['headsUnchanged']:raise ValueError('model/head changed during inference')
         report['completedChains']=sum(a['status']=='complete' for a in report['attempts'])

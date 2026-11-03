@@ -703,9 +703,9 @@ def validate_chain_run(plan,record,journal_path,version,baseline):
     from run_pilot import digest
     if (tuple(c['caseId'] for c in plan['cases'])!=CHAIN_CASES or digest(plan['cases'])!=plan['casesSha256']
             or digest(plan['config'])!=plan['configSha256']):raise ValueError('chain case/config identity mismatch')
-    expected_arms=['instruct'] if version=='r3' else ['qa','summary']
+    expected_arms=['readable'] if version=='readable' else ['original','focus','focus_int8'] if version=='focus' else ['instruct'] if version=='r3' else ['qa','summary']
     expected_repeats=1 if version=='r3' else 3
-    expected_parameters={'m01':7120384,**({'generator':494032768} if version=='r3' else {'m02':77440384})}
+    expected_parameters={'m01':7120384,**({'generator':494032768} if version in ('r3','focus','readable') else {'m02':77440384})}
     if (plan['arms']!=expected_arms or plan['config']['attemptsPerCase']!=expected_repeats
             or record['modelParameters']!=expected_parameters or record['headParameters']!=180418):raise ValueError('chain model/slot identity mismatch')
     for item in (plan,record):
@@ -754,9 +754,11 @@ def validate_chain_run(plan,record,journal_path,version,baseline):
                 or g['semanticReview']!='pending_not_approved'):raise ValueError('generated candidate bytes/schema changed')
         if cp('generation_output')!=[g if 'parsed' not in g else {k:v for k,v in g.items() if k!='parsed'}] or cp('generated_candidate')!=[g]:raise ValueError('generation checkpoint mismatch')
         calls=g['decoderForwardAttempts'];decoder_calls+=calls
-        if cp('decoder_step_started')!=[{'step':i} for i in range(1,calls+1)] or cp('generation_settled')[0]['decoderForwardAttempts']!=calls:raise ValueError('decoder attempt count mismatch')
-        if version=='r3':
-            context=g['context'];messages,value=instruction_prompt(c)
+        if cp('generation_settled')[0]['decoderForwardAttempts']!=calls:raise ValueError('decoder attempt count mismatch')
+        if version in ('focus','readable'):validate_generation_forwards(g,checkpoints)
+        elif cp('decoder_step_started')!=[{'step':i} for i in range(1,calls+1)]:raise ValueError('decoder attempt count mismatch')
+        if version in ('r3','focus','readable'):
+            context=g['context'];messages,value=instruction_prompt(c,a['arm']) if version in ('focus','readable') else instruction_prompt(c)
             if (context['sourceInput']!=value or context['sourceInputSha256']!=digest(value) or context['messages']!=messages
                     or context['inputTokens']!=len(context['inputTokenIds']) or not 0<context['inputTokens']<=4096
                     or cp('generation_started')!=[context] or calls!=len(g['outputTokenIds'])
@@ -781,9 +783,40 @@ def validate_chain_run(plan,record,journal_path,version,baseline):
         step_windows+=match_windows('targets',target['coverage']['windows'])
         if [s['step'] for s in a['steps']]!=['decision','generation','targets'] or any(s['status']!='complete' for s in a['steps']):raise ValueError('chain stage mismatch')
         if sum(s['elapsedMs'] for s in a['steps'])>a['elapsedIncludingTelemetryMs'] or a['elapsedIncludingTelemetryMs']<a['elapsedThroughResultMs']:raise ValueError('chain timing omitted work')
-    if generated!=CHAIN_TEXT_OBSERVATIONS[version] or step_windows!=len(record['forwardAttempts']):raise ValueError('observed output/forward ledger changed')
+    if (version not in ('focus','readable') and generated!=CHAIN_TEXT_OBSERVATIONS[version]) or step_windows!=len(record['forwardAttempts']):raise ValueError('observed output/forward ledger changed')
     return {'skipNoDownstream':skip,'generationCalls':len(slots)-skip,'targetCalls':len(slots)-skip,
             'encoderForwardWindows':step_windows,'decoderForwardAttempts':decoder_calls}
+
+
+def validate_generation_forwards(g,checkpoints):
+    calls=g['decoderForwardAttempts'];rows=g['forwardTimings'];length=g['context']['inputTokens']
+    expected=[{'step':i,'phase':'prefill' if i==1 else 'decode','inputTokens':length if i==1 else 1} for i in range(1,calls+1)]
+    if len(rows)!=calls or [{k:r[k] for k in ('step','phase','inputTokens')} for r in rows]!=expected:raise ValueError('generator forward coverage/count mismatch')
+    if any(r['status']!='complete' or not math.isfinite(r['elapsedMs']) or r['elapsedMs']<0 for r in rows):raise ValueError('generator forward incomplete')
+    if sum(r['elapsedMs'] for r in rows)>g['generationMs']:raise ValueError('forward time omitted from generation')
+    cp=lambda n:[c['payload'] for c in checkpoints if c['name']==n]
+    if cp('decoder_step_started')!=expected or cp('generator_forward_settled')!=rows:raise ValueError('generator hooks not paired')
+    settled=cp('generation_settled')
+    if len(settled)!=1 or settled[0]['completedForwards']!=calls or settled[0]['activeForward'] is not None:raise ValueError('incomplete generation forward settlement')
+
+
+def validate_quantized_identity(record):
+    variants=record['generatorVariants'];fp=variants['float32']
+    if 'qint8' not in variants:
+        if fp['beforeSha256']!=fp['afterSha256'] or record['sourceGeneratorFilesUnchanged'] is not True:raise ValueError('float32 source weights/files changed')
+        return
+    q=variants['qint8']
+    if fp['beforeSha256']!=fp['afterSha256'] or q['sourceFloat32Sha256']!=fp['beforeSha256'] or q['before']!=q['after']:raise ValueError('variant weights drift')
+    value=q['before']
+    if shared.digest({k:v for k,v in value.items() if k!='sha256'})!=value['sha256']:raise ValueError('quantized identity digest mismatch')
+    shapes={'self_attn.q_proj':[896,896],'self_attn.k_proj':[128,896],'self_attn.v_proj':[128,896],'self_attn.o_proj':[896,896],
+            'mlp.gate_proj':[4864,896],'mlp.up_proj':[4864,896],'mlp.down_proj':[896,4864]}
+    expected={f'model.layers.{i}.{name}':shape for i in range(24) for name,shape in shapes.items()};expected['lm_head']=[151936,896]
+    rows=value['quantizedModules']
+    if len(rows)!=169 or {r['name']:r['shape'] for r in rows}!=expected:raise ValueError('quantized module coverage mismatch')
+    if any(r['dtype']!='torch.qint8' or r['qscheme']!='torch.per_tensor_affine' or not math.isfinite(r['scale']) or r['scale']<=0 for r in rows):raise ValueError('quantization precision mismatch')
+    if sum(math.prod(r['shape']) for r in rows)!=value['quantizedWeightElements'] or value['residualParameterElements']<151936*896:raise ValueError('quantized element accounting mismatch')
+    if record['sourceGeneratorFilesUnchanged'] is not True:raise ValueError('source model files changed')
 
 
 def build_chain():
@@ -849,11 +882,114 @@ def render_chain(summary,records):
     return ''.join(parts)
 
 
+FOCUS_PREFIX='action-focus-dev42-20261104-'
+FOCUS_TEXTS={
+ 'original':{'dev-d02-01':'打开侧门，进入值班室交钥匙。','dev-d02-05':'拿起纸卷箱，递给管理员。','dev-d02-07':'核对粮袋封口'},
+ 'focus':{'dev-d02-01':'打开侧门，进入值班室交钥匙。','dev-d02-05':'把刚才那张借阅凭条送给管理员。','dev-d02-07':'核对粮袋封口'},
+ 'focus_int8':{'dev-d02-01':'员的反应。','dev-d02-05':'把刚才那张借阅凭条给管理员。','dev-d02-07':'角色正在进行中。请稍候答复。'},
+ 'readable':{'dev-d02-01':'打开侧门，进入值班室交钥匙。','dev-d02-05':'将刚才的借阅凭条交给管理员。','dev-d02-07':'核对粮袋封口'}}
+
+
+def focus_quality(attempts):
+    # Human-readable implementation observations tied to these exact outputs.
+    # This is not an automatic semantic grader or independent signoff.
+    rows=[]
+    for arm in sorted({a['arm'] for a in attempts}):
+        selected=[a for a in attempts if a['arm']==arm];generated=[a for a in selected if 'generation' in a]
+        for a in generated:
+            if a['generation']['raw']!=FOCUS_TEXTS[arm][a['caseId']]:raise ValueError('focus observed output changed')
+        failed=len(generated) if arm=='focus_int8' else sum(a['caseId'] in ('dev-d02-05','dev-d02-07') for a in generated)
+        rows.append({'arm':arm,'generatedAttempts':len(generated),'obviousTaskActorOrMetaFailures':failed,
+            'plausibleCandidatesPendingReview':len(generated)-failed,'skipAttempts':len(selected)-len(generated),
+            'distinctSourceCases':len({a['caseId'] for a in selected}),'formalSemanticPass':False,
+            'targetQuality':'unverified_all_empty_not_automatically_correct'})
+    return rows
+
+
+def focus_timing(attempts):
+    result=[]
+    for arm in sorted({a['arm'] for a in attempts}):
+        for cid in CHAIN_CASES:
+            rows=[a for a in attempts if a['arm']==arm and a['caseId']==cid];times=[a['elapsedIncludingTelemetryMs'] for a in rows]
+            g=[a['generation'] for a in rows if 'generation' in a]
+            result.append({'arm':arm,'caseId':cid,'observations':len(rows),'p50Ms':statistics.median(times),'maxMs':max(times),
+                'over500msObservations':sum(v>500 for v in times),'generationMeanMs':statistics.mean(x['generationMs'] for x in g) if g else None,
+                'inputTokens':g[0]['context']['inputTokens'] if g else None,
+                'prefillMeanMs':statistics.mean(x['forwardTimings'][0]['elapsedMs'] for x in g) if g else None,
+                'decodeMeanMs':statistics.mean(sum(t['elapsedMs'] for t in x['forwardTimings'][1:]) for x in g) if g else None,
+                'generationNonForwardMeanMs':statistics.mean(x['generationMs']-sum(t['elapsedMs'] for t in x['forwardTimings']) for x in g) if g else None})
+    return result
+
+
+def build_focus():
+    import tempfile
+    runs=[];records=[];archives=[];baseline=read_archive(DATA/'m01-event-dev42-20261102-r1.record.json.gz')
+    for version,validator in (('r1','focus'),('r2','readable')):
+        rid=FOCUS_PREFIX+version;pp=DATA/(rid+'.plan.json');rp=DATA/(rid+'.record.json.gz');jp=DATA/(rid+'.record.journal.jsonl.gz')
+        plan=json.loads(pp.read_bytes());record=read_archive(rp);raw=gzip.decompress(jp.read_bytes())
+        if record['planSha256']!=sha256_file(pp) or record['journalRecovery']['sha256']!=hashlib.sha256(raw).hexdigest():raise ValueError('focus evidence digest mismatch')
+        if plan['baseline']!=shared.baseline_identity() or sha256_file(ROOT/plan['protocolPath'])!=plan['protocolSha256']:raise ValueError('focus source/protocol drift')
+        for name,h in plan['code'].items():
+            snapshot=DATA/('code/'+Path(name).stem+'-focus-r1.py')
+            if version=='r1' and Path(name).name in ('experiment.py','action_chain.py'):
+                if sha256_file(snapshot)!=h:raise ValueError('focus r1 executed source changed')
+            else:verify_event_source(name,h)
+        with tempfile.TemporaryDirectory() as d:
+            path=Path(d)/'events.jsonl';path.write_bytes(raw)
+            counts=validate_chain_run(plan,record,path,validator,baseline)
+        validate_quantized_identity(record)
+        if version=='r1':
+            if plan['config']['armBlocks']!=[['original','focus'],['focus_int8']]:raise ValueError('precision ordering drift')
+            if any(a['generatorVariant']!=('qint8' if a['arm']=='focus_int8' else 'float32') for a in record['attempts']):raise ValueError('attempt precision drift')
+            # Quantized/floating focus uses identical prompt and exact full token IDs.
+            by_key={(a['arm'],a['caseId'],a['repeat']):a for a in record['attempts']}
+            for a in record['attempts']:
+                if a['arm']=='focus_int8' and 'generation' in a:
+                    b=by_key[('focus',a['caseId'],a['repeat'])]
+                    if a['generation']['context']!=b['generation']['context']:raise ValueError('precision comparison input changed')
+        elif any(a['generatorVariant']!='float32' for a in record['attempts']) or 'qint8' in record['generatorVariants']:raise ValueError('readable unexpectedly quantized')
+        runs.append({'runId':rid,'quality':focus_quality(record['attempts']),'timing':focus_timing(record['attempts']),
+            'counts':counts,'supervisor':record['supervisor'],'completedEngineeringChains':len(record['attempts']),
+            'modelParameters':record['modelParameters'],'headParameters':record['headParameters'],'trainingSteps':0,
+            'variantsStableWithinEachRepresentation':record['modelWeightsUnchanged'],'sourceFilesUnchanged':record['sourceGeneratorFilesUnchanged'],
+            'quantizedIdentity':record['generatorVariants'].get('qint8',{}).get('before'),
+            'preparationStages':[{k:x[k] for k in ('stage','status','elapsedMs')} for x in record['stages']],
+            'fullRequestMeasured':False,'formalEvaluationAllowed':False})
+        records.append(record)
+        for p in (rp,jp):archives.append({'path':str(p.relative_to(ROOT)),'gzipSha256':sha256_file(p),'rawSha256':hashlib.sha256(gzip.decompress(p.read_bytes())).hexdigest()})
+    summary={'schema':'jity-d-action-focus-summary-v1','date':'2026-11-04','scope':'exposed_development_actor_representation_precision_probe',
+        'formalEvaluationAllowed':False,'semanticQualityApproved':False,'fullRequest500msStatus':'unverified','local50msHardGate':False,
+        'fullNonNarrativeTargetMs':500,'trainingSteps':0,'newIndependentTrainingGroups':0,'round1TrainingQuota':0,'runs':runs,'archives':archives}
+    return summary,{ART/'l3-12-action-focus-summary.json':(json.dumps(summary,ensure_ascii=False,indent=2)+'\n').encode(),
+                    ART/'l3-12-action-focus-results.html':render_focus(summary,records).encode()}
+
+
+def render_focus(summary,records):
+    e=lambda v:html.escape(str(v))
+    parts=['''<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'"><title>L3 人物定位和生成耗时对照</title><style>body{margin:0;background:#f4f6f8;color:#20313e;font:16px/1.7 system-ui}main{max-width:1100px;margin:auto;padding:24px}section{background:white;padding:22px;border-radius:12px;margin:20px 0}table{width:100%;border-collapse:collapse;font-size:14px}td,th{padding:10px;text-align:left;border-bottom:1px solid #ddd}.scroll{overflow:auto}pre{white-space:pre-wrap;overflow-wrap:anywhere}.bad{color:#a7352e}</style><main><p>D / L3 · 2026-11-04 · 两批真实离线对照</p><h1>重复人物资料、改中文JSON、换8位计算，有没有用？</h1><section><h2>这三种改法都没有解决问题</h2><p>两批共48条工程流程，36次真实生成和目标分析，12次skip均未调用下游。各方案仍只有4道旧题，重复3次不是新题。原世界、人物、任务和输入原文完整保留，没有手写动作。</p><p>重复当前人物资料仍会重做已消费命令、执行别人的任务；改为逐字段中文JSON也没有纠正。原FP32基线的三题中位约1.34–1.54秒、最大1.58秒，重复资料/可读JSON中位约1.84–2.15秒、最大2.16秒。新增输入增加了等待。</p><p class="bad">本机qnnpack动态8位版本更慢：约6.53–7.32秒，且出现“员的反应”“角色正在进行中”等退化。它没有通过质量或500ms目标。结论仅针对这台机器、这个模型和本次实现，不泛化为所有8位推理都没用。</p><p>全部生成链都超过500ms；完整非叙事请求仍未测，50ms仅参考。动作选择与表达仍需进一步拆分，当前零样本方案不能直接交给游戏使用。</p></section><section><h2>现在知道时间花在哪里了</h2><p>原版每条约891–920ms用于完整输入预填充、294–489ms用于后续生成；加人物资料后预填充约1408–1412ms；本机动态8位预填充约6.17–6.26秒。瓶颈首先在长输入通过生成骨干，不能只缩短一句话或重复字段解决。</p><p>前向计时包含生成模型顶层及输出投影；钩子/日志成本在生成总计和三步总计中保留。转换与权重散列属于准备单列；模型原文件没有改写。下一步转向可学习的动作选择/引用计划与短表达拆分，研究更小的专用模型及独立监督数据；不会用抄任务或固定规则替代语义判断。</p></section>''']
+    for run,record in zip(summary['runs'],records):
+        parts.append(f'<section><h2>{e(run["runId"])}</h2><p>{run["completedEngineeringChains"]}条工程链；进程{run["supervisor"]["wallMs"]/1000:.2f}秒，采样RSS {run["supervisor"]["observedPeakResidentMiB"]:.2f}MiB，未触及120秒/4096MiB保护；CPU单线程/并发1、训练0步。</p><div class="scroll"><table><tr><th>方案/题目</th><th>真实生成原文（各3次相同）</th><th>三步中位/最大ms</th><th>输入读取/后续生成平均ms</th></tr>')
+        for row in run['timing']:
+            text=FOCUS_TEXTS[row['arm']].get(row['caseId'],'未调用生成/目标（skip）')
+            phase='未调用' if row['prefillMeanMs'] is None else f'{row["prefillMeanMs"]:.2f} / {row["decodeMeanMs"]:.2f}'
+            parts.append(f'<tr><td>{e(row["arm"])}<br>{e(row["caseId"])}</td><td>{e(text)}</td><td>{row["p50Ms"]:.2f} / {row["maxMs"]:.2f}</td><td>{phase}</td></tr>')
+        parts.append('</table></div><p>01动作基本方向候选待复核，03为skip；05仍混入已消费旧命令，07仍混淆人物或输出元话语；int8的01也退化。所有目标均空，未建立按生成原文审过的真值，不能计目标正确。</p>')
+        outputs=[]
+        for a in record['attempts']:
+            outputs.append({'arm':a['arm'],'caseId':a['caseId'],'repeat':a['repeat'],'status':a['status'],
+                'decision':a['decision']['decoded'],'text':a.get('generation',{}).get('raw'),
+                'targets':a.get('targets',{}).get('decoded'),'elapsedMs':a['elapsedIncludingTelemetryMs'],
+                'steps':a['steps'],'forwardTimings':a.get('generation',{}).get('forwardTimings')})
+        parts.append(f'<details><summary>全部尝试、每步答案和每次前向耗时</summary><pre>{e(json.dumps(outputs,ensure_ascii=False,indent=2))}</pre></details><details><summary>全部质量范围、计时、模型身份和准备开销</summary><pre>{e(json.dumps(run,ensure_ascii=False,indent=2))}</pre></details><p><a href="m01-fitting/{run["runId"]}.plan.json">冻结计划</a> · <a href="m01-fitting/{run["runId"]}.record.json.gz">完整原始记录</a> · <a href="m01-fitting/{run["runId"]}.record.journal.jsonl.gz">完整日志</a></p></section>')
+    parts.append('''<section><h2>验收边界与失败处理</h2><p>工程流程和证据可核验；当前生成质量未通过，局部已超500ms，L3未完成。01/03曾拟合、05/07为已公开保留开发，正式独立质量未签；新90组未用，无新训练。反应、共同结果、状态变化、浏览器和生产未测。</p><p>精度臂先完成FP32再就地转换，不是完全交错性能实验。169个Linear含输出头使用qint8，嵌入等仍FP32；共享输出头转换后单独打包，因此剩余parameters数不能冒充模型变小。分别核对浮点推理前后和量化变体前后身份，不声称两种表示字节相同。qnnpack有reduce_range行为警告，原进程日志保留。</p><p>完整输入每次重新读取，未跨题缓存。每条含输入/交接/校验/flush/fsync及末尾遥测；批末汇总在进程wall、监督器退出后重放未单列计时。原始记录和失败源码保留，加载/转换另列。<a href="l3-12-action-focus-summary.json">机器汇总及原字节SHA</a> · <a href="l3-11-action-chain-results.html">上一批三步协作</a> · <a href="https://docs.pytorch.org/docs/main/generated/torch.ao.quantization.quantize_dynamic.html">PyTorch动态量化API依据</a></p></section></main></html>''')
+    return ''.join(parts)
+
+
 def main():
     p=argparse.ArgumentParser(description=__doc__);m=p.add_mutually_exclusive_group(required=True)
     m.add_argument('--check',action='store_true');m.add_argument('--write-new',action='store_true')
-    flavor=p.add_mutually_exclusive_group();flavor.add_argument('--event',action='store_true');flavor.add_argument('--journal',action='store_true');flavor.add_argument('--input',action='store_true');flavor.add_argument('--compiled',action='store_true');flavor.add_argument('--chain',action='store_true');a=p.parse_args()
-    summary,files=build_chain() if a.chain else build_compiled() if a.compiled else build_input() if a.input else build_journal() if a.journal else build_event() if a.event else build()
+    flavor=p.add_mutually_exclusive_group();flavor.add_argument('--event',action='store_true');flavor.add_argument('--journal',action='store_true');flavor.add_argument('--input',action='store_true');flavor.add_argument('--compiled',action='store_true');flavor.add_argument('--chain',action='store_true');flavor.add_argument('--focus',action='store_true');a=p.parse_args()
+    summary,files=build_focus() if a.focus else build_chain() if a.chain else build_compiled() if a.compiled else build_input() if a.input else build_journal() if a.journal else build_event() if a.event else build()
     for path,raw in files.items():
         if path.exists() and path.read_bytes()!=raw:raise ValueError('report differs; preserve earlier version')
         if a.check and not path.exists():raise ValueError('report missing')
