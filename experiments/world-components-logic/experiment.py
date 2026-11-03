@@ -249,11 +249,12 @@ def execute_plan(path,*,paths,verify,worker_script,settle_stages,arms):
 
 
 def status():
-    summary=read_json(ART/'l3-13-action-plan-preparation-summary.json')
+    summary=read_json(ART/'l3-14-realizer-training-readiness-summary.json')
     result={'stage':summary['stage'],'entrypoint':'experiments/world-components-logic/experiment.py',
-            'implementation':'experiments/world-components-logic/action_plan.py','latestBatch':summary['batchId'],
-            'lastModelRun':summary['lastModelRun'],'resultPage':'artifacts/world-components-logic/l3-13-action-plan-preparation.html',
+            'implementation':'experiments/world-components-logic/plan_training.py','latestBatch':summary['batchId'],
+            'lastModelRun':summary['lastModelRun'],'resultPage':'artifacts/world-components-logic/l3-14-realizer-training-readiness.html',
             'draftSourceGroups':summary['draftSourceGroups'],'review':summary['review'],
+            'realizerTrainerImplemented':summary.get('realizerTrainerImplemented',False),'inspection':summary.get('inspection'),
             'plannerModelImplemented':summary['plannerModelImplemented'],'realizerTrained':summary['realizerTrained'],
             'formalEvaluationAllowed':summary['formalEvaluationAllowed'],'fullRequest500msStatus':summary['fullRequest500msStatus'],
             'modelExecutionPerformed':False}
@@ -269,7 +270,8 @@ def check():
               [str(BASE/'m01_shared_report.py'),'--compiled','--check'],
               [str(BASE/'m01_shared_report.py'),'--chain','--check'],
               [str(BASE/'m01_shared_report.py'),'--focus','--check'],
-              [str(BASE/'action_plan.py'),'--check']]
+              [str(BASE/'action_plan.py'),'--check'],
+              [str(BASE/'plan_training.py'),'--check-materials']]
     env=dict(os.environ,PYTHONDONTWRITEBYTECODE='1')
     for args in commands:
         result=subprocess.run([sys.executable,*args],cwd=ROOT,env=env)
@@ -285,6 +287,14 @@ def main(argv=None):
     sub.add_parser('check',help='run lightweight tests and verify archived reports; no models')
     plan_data=sub.add_parser('plan-data',help='check/write current action-plan preparation; no models')
     plan_data.add_argument('--write-new',action='store_true')
+    training_data=sub.add_parser('train-data',help='current new-source candidate and training-readiness materials; no models')
+    training_data.add_argument('--write-new',action='store_true')
+    inspection=sub.add_parser('train-inspect',help='prepare or execute no-business M02 adapter inspection')
+    inspection_group=inspection.add_mutually_exclusive_group(required=True)
+    inspection_group.add_argument('--prepare');inspection_group.add_argument('--execute',type=Path)
+    training=sub.add_parser('train-prepare',help='freeze a reviewed-source adapter training batch')
+    training.add_argument('run_id');training.add_argument('--reviews',type=Path,required=True)
+    sub.add_parser('train-execute',help='execute a previously frozen reviewed training batch').add_argument('plan',type=Path)
     sub.add_parser('prepare',help='freeze the historical L3-12 diagnostic; current work uses plan-data').add_argument('run_id')
     sub.add_parser('execute',help='run inference on a frozen current batch; no training').add_argument('plan',type=Path)
     args=parser.parse_args(argv)
@@ -295,6 +305,15 @@ def main(argv=None):
         s=action_plan.prepare_materials(write=args.write_new)
         print(json.dumps({'batchId':s['batchId'],'newPlanLabelsReviewed':s['review']['newPlanLabelsReviewed'],'trainingSteps':0,'modelInferenceCalls':0},ensure_ascii=False))
         return 0
+    if args.command in ('train-data','train-inspect','train-prepare','train-execute'):
+        import plan_training
+        if args.command=='train-data':
+            print(json.dumps(plan_training.prepare_materials(write=args.write_new),ensure_ascii=False,indent=2));return 0
+        if args.command=='train-inspect':
+            if args.prepare:print(plan_training.inspection_plan(args.prepare));return 0
+            return plan_training.execute_inspection(args.execute)
+        if args.command=='train-prepare':print(plan_training.training_plan(args.run_id,args.reviews));return 0
+        return plan_training.execute_training(args.plan)
     import action_chain
     if args.command=='prepare':print(action_chain.prepare(args.run_id));return 0
     return action_chain.execute(args.plan)

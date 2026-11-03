@@ -2,17 +2,17 @@
 
 ## 当前从这里开始（2026-11-04）
 
-日常使用`experiment.py`一个入口。当前工作是`action_plan.py`的动作计划/短表达准备：10组旧来源新计划及5份短表达标签草稿、结构和来源检查、表达输入预览；未审0可用，训练/模型调用0。最近真实模型结果仍为L3-12，质量/完整500ms未通过。50ms仅参考，任务范围见[工作树说明](../../design/world-engine-reports/components-logic/README.md)。
+日常使用`experiment.py`一个入口。当前`plan_training.py`已实现M02短表达适配层训练程序和12组新来源候选；业务训练0，新标签0/12复核，真实检查仅模型装配与独立合成数值。`action_plan.py`继续保留L3-13契约/旧10组草稿，原42意见、新90卡不变。最近业务实测仍L3-12失败，完整500ms未通过；[当前查看页](../../artifacts/world-components-logic/l3-14-realizer-training-readiness.html)。
 
 从仓库根目录运行：
 
 ```bash
 python3 experiments/world-components-logic/experiment.py status
 python3 experiments/world-components-logic/experiment.py check
-python3 experiments/world-components-logic/experiment.py plan-data
+python3 experiments/world-components-logic/experiment.py train-data
 ```
 
-`status`区分最新准备批与最近模型批；`check`运行工程测试、九份模型历史报告和本批准备材料核验，不导入模型。`plan-data`只核验准备文件，`plan-data --write-new`仅写缺少的相同批次文件、拒绝覆盖异稿。当前没有已审核的动作计划训练实例；以下prepare/execute仍是历史L3-12诊断，不能当成新规划器训练命令：
+`status`区分最新准备批与最近模型批；`check`运行工程测试、九份模型历史报告、L3-13与L3-14准备材料核验，不导入模型。`plan-data`只核验准备文件，`plan-data --write-new`仅写缺少的相同批次文件、拒绝覆盖异稿。当前没有已审核的动作计划训练实例；以下prepare/execute仍是历史L3-12诊断，不能当成新规划器训练命令：
 
 ```bash
 .local/world-components-logic/venv/bin/python experiments/world-components-logic/experiment.py prepare NEW_RUN_ID
@@ -24,7 +24,8 @@ python3 experiments/world-components-logic/experiment.py plan-data
 | 角色 | 文件/位置 | 维护方式 |
 |---|---|---|
 | 当前运行入口与公共流程 | `experiment.py` | 入口、资源监督、阶段计时、追加日志与中断只读重放共同复用 |
-| 当前计划准备 | `action_plan.py` | 计划结构/来源、10旧来源新标签草稿、全量选择器输入、表达预览及拟合提案守卫；不跑模型 |
+| 当前训练实现与新来源 | `plan_training.py` | 短表达适配层训练、未审新来源、布局/数值检查及材料；训练需已核标签/冻结实例 |
+| 原计划契约与准备 | `action_plan.py` | 计划结构/来源、10旧来源新标签草稿、全量选择器输入、表达预览及拟合提案守卫；不跑模型 |
 | 最近模型协作实现 | `action_chain.py` | L3-12行动判断、真实生成与原文目标交接；复用公共监督/日志 |
 | M01基础实现 | `m01_shared.py` | 完整事实编码、候选融合和冻结模型推理，拟合历史由对应Git提交定位 |
 | 模型结果核验/展示 | `m01_shared_report.py`、`artifacts/world-components-logic/l3-12-*` | 报告核验原计划/记录，不以当前算法源码替代历史执行版本 |
@@ -146,3 +147,14 @@ python3 experiments/world-components-logic/m01_shared_report.py --check
 `action_plan.py`只验证结构/typed ID/引用/来源和构建输入；即使动作内容不合理，结构合法也不会成为semanticApproved。planner完整输入不含标注计划；realizer短输入只是未审计划预览，不能视为真实规划/全量覆盖。新计划意见与旧场景意见按批次/annotationSHA隔离，拟合导出也只是8fit/2保留开发提案，不是新独立训练集或执行授权。当前新标签未审、实际导出0、训练0。
 
 用途勘误：原记录一直为01/07 fit、03/05 retained_development，前两页文字说明曾写反；最初r1协议“0107曾拟合”并非笔误。当前页与新材料读取原记录，历史页面/协议/数值字节保持。后续先补独立动作计划监督数据/标签和冻结训练配置，再分别验证真实选择与短表达；原审核不用重做，不能把AI草稿自签成真值。
+
+
+## 短表达训练器与12个新来源候选（2026-11-04）
+
+日常`train-data`只读核验新来源/训练准备，`--write-new`仅写缺少的同批文件。`train-inspect --prepare NEW_ID`冻结无业务检查，`train-inspect --execute PLAN`加载原模型装适配层、做合成数值检查，禁止业务输入。`train-prepare NEW_ID --reviews REVIEW_JSON`先核本12组意见与SHA再冻结真实训练实例，缺新标签意见在模型加载/写计划前拒绝；`train-execute PLAN`才实际训练。旧`prepare/execute`仍是L3-12诊断，不是训练命令。
+
+新场景/计划/表达候选在`data/action-plan-training/`，6训练候选/6开发候选、全部未审；同源/语义独立性未核实，不能只按哈希宣布独立集完成。当前已审0/12、业务训练/推理0、无已训练适配权重；原L3-13的10旧组仍独立保留。人工给定计划的表达训练不等于开放规划能力。
+
+实际无业务检查：原M02 77,440,384参数、48适配位置、172,032可训练，总推理77,612,416；不把0.17M说成整个模型。只做装配无M02 forward，另用8维数值层8步验证梯度和重载，业务指标仍0。原记录/哈希日志在m01-fitting，模型/以后适配层只在D .local忽略目录。
+
+[分词检查](../../artifacts/world-components-logic/l3-14-realizer-tokenizer-check.json)记录12组完整输入/目标token和哈希，最大169/25，符合256/64限制；只分词无神经前向。训练实现的真实业务路径、表达质量、开放规划器、浏览器/生产及完整500ms均未验收。参考[训练协议](../../design/world-engine-reports/components-logic/realizer-training-protocol.md)。

@@ -1,0 +1,72 @@
+{
+  "schema": "jity-d-realizer-training-readiness-summary-v1",
+  "date": "2026-11-04",
+  "batchId": "d-realizer-new12-r1",
+  "stage": "L3 short-realizer trainer and new source candidates; business training not started",
+  "scope": "trainer_implementation_candidate_annotations_and_no_business_model_inspection",
+  "draftSourceGroups": 12,
+  "trainCandidateGroups": 6,
+  "developmentCandidateGroups": 6,
+  "coverage": [
+    "destination",
+    "object",
+    "open_verb_no_entity",
+    "ordered_steps",
+    "recipient_utterance",
+    "tool"
+  ],
+  "review": {
+    "reviewedGroups": 0,
+    "missingReviews": 12,
+    "trainingDataReady": false,
+    "formalEvaluationAllowed": false
+  },
+  "realizerTrainerImplemented": true,
+  "plannerModelImplemented": false,
+  "realizerTrained": false,
+  "trainingSteps": 0,
+  "businessInferenceCalls": 0,
+  "newIndependentTrainingGroups": 0,
+  "round1TrainingQuota": 0,
+  "formalEvaluationAllowed": false,
+  "semanticQualityApproved": false,
+  "fullRequest500msStatus": "unverified",
+  "local50msHardGate": false,
+  "lastModelRun": "action-focus-dev42-20261104-r2",
+  "inspection": {
+    "status": "layout_and_numeric_checks_passed_no_business_training",
+    "runId": "m02-realizer-inspect-20261104-r1",
+    "sourceModelForwardCalls": 0,
+    "sourceParameters": 77440384,
+    "trainableAdapterParameters": 172032,
+    "totalInferenceParameters": 77612416,
+    "adapterModules": 48,
+    "syntheticNumericCheck": {
+      "baseUnchanged": true,
+      "businessInferenceCalls": 0,
+      "checkpointReloadExact": true,
+      "lossFirst": 1.336303472518921,
+      "lossLast": 0.5219462513923645,
+      "projectModelTrainingSteps": 0,
+      "syntheticOptimizerSteps": 8
+    },
+    "supervisor": {
+      "error": null,
+      "exitCode": 0,
+      "measurement": "ps_rss_every250ms",
+      "observedPeakResidentMiB": 687.3125,
+      "stopReason": null,
+      "wallMs": 3631.451207998907
+    },
+    "planSha256": "55cafa1a78bd02828498e8ffa548045030c040dd073aae4c1d83dd1401df9f13",
+    "recordSha256": "bf53565b17bc1cebabb64af9fd3a8e00653f597b686321d720ca1ead8aed1c22",
+    "journalSha256": "c33187898e6ed27374f23dd5562cd7962bb89c933c893dadb0b5a41bf2298c95"
+  },
+  "missingBeforeBusinessTraining": [
+    "new_plan_and_expression_label_review",
+    "source_semantic_independence_for_formal_claims",
+    "frozen_reviewed_training_instance"
+  ],
+  "sourceManifest": "experiments/world-components-logic/data/action-plan-training/source-manifest.json",
+  "packetSha256": "42e1a4114ed097c3d9e84d8f83a64cfb9ee72266cb203f1aac4f50b20e8cf908"
+}
