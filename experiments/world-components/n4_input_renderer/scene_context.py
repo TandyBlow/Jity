@@ -96,13 +96,28 @@ def build_scene_context(state, perspective, selected_facts,
 
     # present = subject + entities with a SELECTED fact at this scene.
     # Never iterate state.characters to build a roster.
+    #
+    # "at this scene" is the same question N2 answers for visibility: the
+    # chains must intersect, not the leaf names. A fact recorded at the
+    # parent location ("潮渡") used to be dropped from a scene at its own
+    # sub-location ("栈桥"), so 顾行舟 arrived and the model was never told
+    # who he was.
+    scene_path = set(path_ids)
+    # 场景链上的所有名字：一次变动记在父地点（"潮渡"）上时，站在它的子地点
+    # （"栈桥"）也算同一处；反之记在子地点上的人不会因为场景在父地点就混进来
+    scene_names = {_loc_name(state, lid) for lid in path_ids}
+
+    def _here(f):
+        if (f.get("at") or f.get("to")) in scene_names:
+            return True
+        return bool(set(f.get("atPath") or []) & scene_path)
+
     present = [subject]
     for f in selected_facts or []:
         eid = f.get("entityId")
         if not eid or eid == subject or eid in present:
             continue
-        at = f.get("at") or f.get("to")
-        if at == loc_name and eid in characters:
+        if eid in characters and _here(f):
             present.append(eid)
 
     item_ids = []
