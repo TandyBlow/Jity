@@ -1,0 +1,135 @@
+{
+  "schema": "jity-d-action-plan-preparation-summary-v1",
+  "date": "2026-11-04",
+  "batchId": "d-action-plan-old10-r1",
+  "stage": "L3 action-plan preparation; no new model execution",
+  "scope": "contract_and_old_source_annotation_drafts_only",
+  "expressionDrafts": 5,
+  "draftSourceGroups": 10,
+  "actDrafts": 5,
+  "skipDrafts": 5,
+  "originalRoles": {
+    "dev-d02-01": "fit",
+    "dev-d02-02": "fit",
+    "dev-d02-03": "retained_development",
+    "dev-d02-04": "fit",
+    "dev-d02-05": "retained_development",
+    "dev-d02-06": "fit",
+    "dev-d02-07": "fit",
+    "dev-d02-08": "fit",
+    "dev-d02-09": "fit",
+    "dev-d02-10": "fit"
+  },
+  "review": {
+    "newPlanLabelsReviewed": 0,
+    "missingPlanReviews": 10,
+    "exploratoryFitExportAllowed": false,
+    "formalEvaluationAllowed": false
+  },
+  "preparedDataset": "experiments/world-components-logic/data/action-plan/drafts.jsonl",
+  "plannerModelImplemented": false,
+  "realizerTrained": false,
+  "trainingSteps": 0,
+  "modelInferenceCalls": 0,
+  "newIndependentTrainingGroups": 0,
+  "round1TrainingQuota": 0,
+  "formalEvaluationAllowed": false,
+  "semanticQualityApproved": false,
+  "fullRequest500msStatus": "unverified",
+  "local50msHardGate": false,
+  "lastModelRun": "action-focus-dev42-20261104-r2",
+  "packetSha256": "84254b319638ad27db028c37631da722369e37454d97e70d3b5d65d37e935ff1",
+  "inputSizes": [
+    {
+      "annotationId": "plan-dev-d02-01",
+      "kind": "act",
+      "fullPlannerPayloadBytes": 1390,
+      "realizerPreviewBytes": 710,
+      "expressionCalled": false,
+      "sourceRole": "fit"
+    },
+    {
+      "annotationId": "plan-dev-d02-02",
+      "kind": "act",
+      "fullPlannerPayloadBytes": 1384,
+      "realizerPreviewBytes": 456,
+      "expressionCalled": false,
+      "sourceRole": "fit"
+    },
+    {
+      "annotationId": "plan-dev-d02-03",
+      "kind": "skip",
+      "fullPlannerPayloadBytes": 1513,
+      "realizerPreviewBytes": null,
+      "expressionCalled": false,
+      "sourceRole": "retained_development"
+    },
+    {
+      "annotationId": "plan-dev-d02-04",
+      "kind": "skip",
+      "fullPlannerPayloadBytes": 1417,
+      "realizerPreviewBytes": null,
+      "expressionCalled": false,
+      "sourceRole": "fit"
+    },
+    {
+      "annotationId": "plan-dev-d02-05",
+      "kind": "act",
+      "fullPlannerPayloadBytes": 1421,
+      "realizerPreviewBytes": 360,
+      "expressionCalled": false,
+      "sourceRole": "retained_development"
+    },
+    {
+      "annotationId": "plan-dev-d02-06",
+      "kind": "skip",
+      "fullPlannerPayloadBytes": 1418,
+      "realizerPreviewBytes": null,
+      "expressionCalled": false,
+      "sourceRole": "fit"
+    },
+    {
+      "annotationId": "plan-dev-d02-07",
+      "kind": "act",
+      "fullPlannerPayloadBytes": 1398,
+      "realizerPreviewBytes": 285,
+      "expressionCalled": false,
+      "sourceRole": "fit"
+    },
+    {
+      "annotationId": "plan-dev-d02-08",
+      "kind": "act",
+      "fullPlannerPayloadBytes": 1375,
+      "realizerPreviewBytes": 357,
+      "expressionCalled": false,
+      "sourceRole": "fit"
+    },
+    {
+      "annotationId": "plan-dev-d02-09",
+      "kind": "skip",
+      "fullPlannerPayloadBytes": 1380,
+      "realizerPreviewBytes": null,
+      "expressionCalled": false,
+      "sourceRole": "fit"
+    },
+    {
+      "annotationId": "plan-dev-d02-10",
+      "kind": "skip",
+      "fullPlannerPayloadBytes": 1420,
+      "realizerPreviewBytes": null,
+      "expressionCalled": false,
+      "sourceRole": "fit"
+    }
+  ],
+  "erratum": {
+    "correctFitExamples": [
+      "dev-d02-01",
+      "dev-d02-07"
+    ],
+    "correctRetainedDevelopmentExamples": [
+      "dev-d02-03",
+      "dev-d02-05"
+    ],
+    "scope": "L3-11/12 role descriptions only; original roles, numeric results and historical bytes unchanged"
+  }
+}

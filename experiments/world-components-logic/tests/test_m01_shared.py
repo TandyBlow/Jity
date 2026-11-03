@@ -251,12 +251,15 @@ class SharedInterruptionTests(unittest.TestCase):
 
 class ExperimentEntryTests(unittest.TestCase):
     def test_status_and_default_do_not_import_models_or_write_plans(self):
-        with mock.patch.object(experiment,'read_json',return_value={'runs':[{'runId':'action-chain-dev42-20261104-r1','quality':{}}],'formalEvaluationAllowed':False,'fullRequest500msStatus':'unverified'}),mock.patch.dict(sys.modules,{'torch':None,'transformers':None}),mock.patch.object(action_chain,'prepare') as prepare,mock.patch.object(action_chain,'execute') as execute:
+        summary={'stage':'preparation','batchId':'plan-batch','lastModelRun':'prior-model-run',
+                 'draftSourceGroups':10,'review':{'newPlanLabelsReviewed':0},'plannerModelImplemented':False,
+                 'realizerTrained':False,'formalEvaluationAllowed':False,'fullRequest500msStatus':'unverified'}
+        with mock.patch.object(experiment,'read_json',return_value=summary),mock.patch.dict(sys.modules,{'torch':None,'transformers':None}),mock.patch.object(action_chain,'prepare') as prepare,mock.patch.object(action_chain,'execute') as execute:
             for args in ([],['status']):
                 output=io.StringIO()
                 with redirect_stdout(output):self.assertEqual(experiment.main(args),0)
                 status=json.loads(output.getvalue());self.assertFalse(status['modelExecutionPerformed'])
-                self.assertEqual(status['latestRun'],'action-chain-dev42-20261104-r1')
+                self.assertEqual(status['latestBatch'],'plan-batch');self.assertEqual(status['lastModelRun'],'prior-model-run')
             prepare.assert_not_called();execute.assert_not_called()
 
     def test_prepare_and_execute_delegate_to_the_current_model(self):
@@ -272,7 +275,7 @@ class ExperimentEntryTests(unittest.TestCase):
     def test_check_runs_only_tests_and_report_verification(self):
         with mock.patch.object(experiment.subprocess,'run',return_value=mock.Mock(returncode=0)) as run,redirect_stdout(io.StringIO()):
             self.assertEqual(experiment.check(),0)
-        self.assertEqual(run.call_count,10)
+        self.assertEqual(run.call_count,11)
         for call in run.call_args_list:
             args=call.args[0]
             self.assertNotIn('--execute',args);self.assertNotIn('--prepare',args)

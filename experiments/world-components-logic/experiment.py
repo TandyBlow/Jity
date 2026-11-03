@@ -249,10 +249,12 @@ def execute_plan(path,*,paths,verify,worker_script,settle_stages,arms):
 
 
 def status():
-    summary=read_json(ART/'l3-12-action-focus-summary.json');latest=summary['runs'][-1]
-    result={'stage':'L3 exploratory offline validation','entrypoint':'experiments/world-components-logic/experiment.py',
-            'implementation':'experiments/world-components-logic/action_chain.py','latestRun':latest['runId'],
-            'resultPage':'artifacts/world-components-logic/l3-12-action-focus-results.html','quality':latest['quality'],
+    summary=read_json(ART/'l3-13-action-plan-preparation-summary.json')
+    result={'stage':summary['stage'],'entrypoint':'experiments/world-components-logic/experiment.py',
+            'implementation':'experiments/world-components-logic/action_plan.py','latestBatch':summary['batchId'],
+            'lastModelRun':summary['lastModelRun'],'resultPage':'artifacts/world-components-logic/l3-13-action-plan-preparation.html',
+            'draftSourceGroups':summary['draftSourceGroups'],'review':summary['review'],
+            'plannerModelImplemented':summary['plannerModelImplemented'],'realizerTrained':summary['realizerTrained'],
             'formalEvaluationAllowed':summary['formalEvaluationAllowed'],'fullRequest500msStatus':summary['fullRequest500msStatus'],
             'modelExecutionPerformed':False}
     print(json.dumps(result,ensure_ascii=False,indent=2));return 0
@@ -266,7 +268,8 @@ def check():
               [str(BASE/'m01_shared_report.py'),'--input','--check'],
               [str(BASE/'m01_shared_report.py'),'--compiled','--check'],
               [str(BASE/'m01_shared_report.py'),'--chain','--check'],
-              [str(BASE/'m01_shared_report.py'),'--focus','--check']]
+              [str(BASE/'m01_shared_report.py'),'--focus','--check'],
+              [str(BASE/'action_plan.py'),'--check']]
     env=dict(os.environ,PYTHONDONTWRITEBYTECODE='1')
     for args in commands:
         result=subprocess.run([sys.executable,*args],cwd=ROOT,env=env)
@@ -280,11 +283,18 @@ def main(argv=None):
     sub=parser.add_subparsers(dest='command')
     sub.add_parser('status',help='read current status only (default)')
     sub.add_parser('check',help='run lightweight tests and verify archived reports; no models')
-    sub.add_parser('prepare',help='freeze a new current collaboration batch; requires local model files').add_argument('run_id')
+    plan_data=sub.add_parser('plan-data',help='check/write current action-plan preparation; no models')
+    plan_data.add_argument('--write-new',action='store_true')
+    sub.add_parser('prepare',help='freeze the historical L3-12 diagnostic; current work uses plan-data').add_argument('run_id')
     sub.add_parser('execute',help='run inference on a frozen current batch; no training').add_argument('plan',type=Path)
     args=parser.parse_args(argv)
     if args.command in (None,'status'):return status()
     if args.command=='check':return check()
+    if args.command=='plan-data':
+        import action_plan
+        s=action_plan.prepare_materials(write=args.write_new)
+        print(json.dumps({'batchId':s['batchId'],'newPlanLabelsReviewed':s['review']['newPlanLabelsReviewed'],'trainingSteps':0,'modelInferenceCalls':0},ensure_ascii=False))
+        return 0
     import action_chain
     if args.command=='prepare':print(action_chain.prepare(args.run_id));return 0
     return action_chain.execute(args.plan)

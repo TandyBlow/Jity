@@ -1,0 +1,1809 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'"><title>L3 动作计划准备</title><style>body{margin:0;background:#f4f6f8;color:#20313e;font:16px/1.7 system-ui}main{max-width:1100px;margin:auto;padding:24px}section{background:white;padding:22px;border-radius:12px;margin:20px 0}table{width:100%;border-collapse:collapse;font-size:14px}td,th{padding:10px;text-align:left;border-bottom:1px solid #ddd}.scroll{overflow:auto}pre{white-space:pre-wrap;overflow-wrap:anywhere}.warn{color:#a7352e}</style><main><p>D / L3 · 2026-11-04 · 数据与组件准备</p><h1>先决定具体做什么，再把计划说成一句话</h1><section><h2>这次完成了什么？</h2><p>定义了可校验的动作计划：谁来做、准备尝试什么、涉及哪个物品/工具/地点/人物、依据哪些原事实。准备10组旧D02场景的AI计划草稿（5行动、5跳过），另有5份短表达参考草稿，对应8拟合/2保留开发，源输入及旧审核意见保持原样。</p><p class="warn">这是准备材料，不是模型答案。新动作计划标签尚未人工复核，当前可导出的拟合包为0；没有训练、模型推理或500ms新成绩。原42题初审仍有效，不要求重审原题。</p><p>结构合法只说明ID/字段/引用有效，不说明动作合理。模型仍须负责语义选择；程序不能抄任务充当动作。完整世界继续进入拟议选择器，表达器的短输入只用于表达已经明确的计划；当前选择器未实现，不能拿短输入大小当完整覆盖或速度通过。</p></section><section><h2>分工与下一步</h2><ol><li>程序按ID提供完整事实和当前人物，检查引用及来源身份。</li><li>专用小模型选择具体动作/引用计划；需要新监督数据，尚未训练。</li><li>小生成器将计划表达为尝试，不添加成功结果或控制其他人；尚未训练。</li><li>原文交回现有目标分析，程序继续掌握准入、骰点、状态应用和保存。</li></ol><p>候选排序只能检验给定候选内的判断，开放候选生成仍须保留并验证；语义计划不能被固定动作清单替代。下一批先完善计划标签和独立训练来源，冻结训练/计算配置后分开验证选择与表达，再合起来测真实500ms。</p></section><section><h2>用途说明更正</h2><p>原始分组：01、07是fit；03、05是retained_development。L3-11/12曾写成01/03拟合、05/07保留，且错误地把最初协议的“0107曾拟合”称为笔误，这些说明有误。原始模型记录中的角色一直正确，数值不受影响；此处更正，历史原件字节保留。</p></section><section><h2>dev-d02-01 · fit</h2><p><strong>AI计划草稿／未复核／不可训练。</strong></p><p>当前人物：程青（甲）（p1）<br>该人物任务：将交接钥匙送至值班室。（pending）<br>玩家原文：推开侧门，进入值班室交钥匙。<br>输入状态：待处理新输入</p><p>以下均是<strong>准备尝试</strong>，没有宣布执行成功：</p><div class="scroll"><table><tr><th>动作词</th><th>对象</th><th>工具</th><th>目的地</th><th>接收人</th><th>拟传达内容</th></tr><tr><td>推开</td><td>侧门</td><td>无</td><td>无</td><td>无</td><td>无</td></tr><tr><td>进入</td><td>无</td><td>无</td><td>值班室</td><td>无</td><td>无</td></tr><tr><td>递交</td><td>交接钥匙</td><td>无</td><td>无</td><td>闻雪（乙）</td><td>无</td></tr></table></div><p><strong>短表达参考草稿（AI写作，不是模型输出）：</strong>程青尝试推开侧门，进入值班室，将交接钥匙递给闻雪。</p><p>原题已审约束（只作核对依据，不自动批准新计划）：可以尝试推门并交接，但描述为行动意图，不能预先宣布交接成功。<br>原题禁止项：把钥匙交接已完成当作输入中自带事实。</p><details><summary>结构化计划、完整原场景与表达输入草稿</summary><pre>{
+  &quot;planDraft&quot;: {
+    &quot;actorId&quot;: &quot;p1&quot;,
+    &quot;kind&quot;: &quot;act&quot;,
+    &quot;mode&quot;: &quot;attempt&quot;,
+    &quot;basis&quot;: [
+      &quot;/advance&quot;,
+      &quot;/world/characters/0/tasks/0&quot;,
+      &quot;/world/places/1&quot;
+    ],
+    &quot;steps&quot;: [
+      {
+        &quot;verb&quot;: &quot;推开&quot;,
+        &quot;utterance&quot;: null,
+        &quot;objects&quot;: [
+          {
+            &quot;kind&quot;: &quot;item&quot;,
+            &quot;id&quot;: &quot;item_2&quot;
+          }
+        ],
+        &quot;tools&quot;: [],
+        &quot;destinations&quot;: [],
+        &quot;recipients&quot;: []
+      },
+      {
+        &quot;verb&quot;: &quot;进入&quot;,
+        &quot;utterance&quot;: null,
+        &quot;objects&quot;: [],
+        &quot;tools&quot;: [],
+        &quot;destinations&quot;: [
+          {
+            &quot;kind&quot;: &quot;place&quot;,
+            &quot;id&quot;: &quot;loc_b&quot;
+          }
+        ],
+        &quot;recipients&quot;: []
+      },
+      {
+        &quot;verb&quot;: &quot;递交&quot;,
+        &quot;utterance&quot;: null,
+        &quot;objects&quot;: [
+          {
+            &quot;kind&quot;: &quot;item&quot;,
+            &quot;id&quot;: &quot;item_1&quot;
+          }
+        ],
+        &quot;tools&quot;: [],
+        &quot;destinations&quot;: [],
+        &quot;recipients&quot;: [
+          {
+            &quot;kind&quot;: &quot;character&quot;,
+            &quot;id&quot;: &quot;p2&quot;
+          }
+        ]
+      }
+    ]
+  },
+  &quot;originalInput&quot;: {
+    &quot;actorId&quot;: &quot;p1&quot;,
+    &quot;advance&quot;: {
+      &quot;inputText&quot;: &quot;推开侧门，进入值班室交钥匙。&quot;,
+      &quot;intentStatus&quot;: &quot;pending&quot;
+    },
+    &quot;confirmedPrefix&quot;: [],
+    &quot;protagonistId&quot;: &quot;p1&quot;,
+    &quot;world&quot;: {
+      &quot;characters&quot;: [
+        {
+          &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+          &quot;id&quot;: &quot;p1&quot;,
+          &quot;name&quot;: &quot;程青（甲）&quot;,
+          &quot;personality&quot;: [
+            &quot;守时，愿意按可行指令办事。&quot;
+          ],
+          &quot;position&quot;: {
+            &quot;containerId&quot;: &quot;loc_a&quot;,
+            &quot;slot&quot;: &quot;地面&quot;
+          },
+          &quot;sanity&quot;: 65,
+          &quot;tasks&quot;: [
+            {
+              &quot;id&quot;: &quot;task_p1&quot;,
+              &quot;parentId&quot;: null,
+              &quot;status&quot;: &quot;pending&quot;,
+              &quot;text&quot;: &quot;将交接钥匙送至值班室。&quot;
+            }
+          ]
+        },
+        {
+          &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+          &quot;id&quot;: &quot;p2&quot;,
+          &quot;name&quot;: &quot;闻雪（乙）&quot;,
+          &quot;personality&quot;: [
+            &quot;耐心核对交接。&quot;
+          ],
+          &quot;position&quot;: {
+            &quot;containerId&quot;: &quot;loc_b&quot;,
+            &quot;slot&quot;: &quot;地面&quot;
+          },
+          &quot;sanity&quot;: 65,
+          &quot;tasks&quot;: [
+            {
+              &quot;id&quot;: &quot;task_p2&quot;,
+              &quot;parentId&quot;: null,
+              &quot;status&quot;: &quot;pending&quot;,
+              &quot;text&quot;: &quot;等待接收钥匙。&quot;
+            }
+          ]
+        },
+        {
+          &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+          &quot;id&quot;: &quot;p3&quot;,
+          &quot;name&quot;: &quot;韩远（丙）&quot;,
+          &quot;personality&quot;: [
+            &quot;专注书面核查。&quot;
+          ],
+          &quot;position&quot;: {
+            &quot;containerId&quot;: &quot;loc_a&quot;,
+            &quot;slot&quot;: &quot;地面&quot;
+          },
+          &quot;sanity&quot;: 65,
+          &quot;tasks&quot;: [
+            {
+              &quot;id&quot;: &quot;task_p3&quot;,
+              &quot;parentId&quot;: null,
+              &quot;status&quot;: &quot;pending&quot;,
+              &quot;text&quot;: &quot;核对墙上的闭馆清单。&quot;
+            }
+          ]
+        }
+      ],
+      &quot;items&quot;: [
+        {
+          &quot;id&quot;: &quot;item_1&quot;,
+          &quot;name&quot;: &quot;交接钥匙&quot;,
+          &quot;position&quot;: {
+            &quot;containerId&quot;: &quot;p1&quot;,
+            &quot;slot&quot;: &quot;可见位置&quot;
+          }
+        },
+        {
+          &quot;id&quot;: &quot;item_2&quot;,
+          &quot;name&quot;: &quot;侧门&quot;,
+          &quot;position&quot;: {
+            &quot;containerId&quot;: &quot;loc_a&quot;,
+            &quot;slot&quot;: &quot;可见位置&quot;
+          }
+        }
+      ],
+      &quot;places&quot;: [
+        {
+          &quot;id&quot;: &quot;loc_outer&quot;,
+          &quot;name&quot;: &quot;旧城展馆&quot;,
+          &quot;parentId&quot;: null
+        },
+        {
+          &quot;id&quot;: &quot;loc_a&quot;,
+          &quot;name&quot;: &quot;侧廊，侧门已解锁且可推开&quot;,
+          &quot;parentId&quot;: &quot;loc_outer&quot;
+        },
+        {
+          &quot;id&quot;: &quot;loc_b&quot;,
+          &quot;name&quot;: &quot;值班室&quot;,
+          &quot;parentId&quot;: &quot;loc_outer&quot;
+        }
+      ],
+      &quot;time&quot;: &quot;2031-04-18T10:20:00+08:00&quot;
+    }
+  },
+  &quot;realizerPreview&quot;: {
+    &quot;wouldCallExpression&quot;: true,
+    &quot;sourceInputSha256&quot;: &quot;3c54ae85fcffed894360b9ff317588182a014b7387679beea863d4feac9cccf8&quot;,
+    &quot;planSha256&quot;: &quot;87d753f8ac568779aba284f4524e29b6d8798ff9abd88231d09ef0df6f0d5cc5&quot;,
+    &quot;payload&quot;: {
+      &quot;actorId&quot;: &quot;p1&quot;,
+      &quot;mode&quot;: &quot;attempt&quot;,
+      &quot;steps&quot;: [
+        {
+          &quot;verb&quot;: &quot;推开&quot;,
+          &quot;utterance&quot;: null,
+          &quot;objects&quot;: [
+            {
+              &quot;kind&quot;: &quot;item&quot;,
+              &quot;id&quot;: &quot;item_2&quot;
+            }
+          ],
+          &quot;tools&quot;: [],
+          &quot;destinations&quot;: [],
+          &quot;recipients&quot;: []
+        },
+        {
+          &quot;verb&quot;: &quot;进入&quot;,
+          &quot;utterance&quot;: null,
+          &quot;objects&quot;: [],
+          &quot;tools&quot;: [],
+          &quot;destinations&quot;: [
+            {
+              &quot;kind&quot;: &quot;place&quot;,
+              &quot;id&quot;: &quot;loc_b&quot;
+            }
+          ],
+          &quot;recipients&quot;: []
+        },
+        {
+          &quot;verb&quot;: &quot;递交&quot;,
+          &quot;utterance&quot;: null,
+          &quot;objects&quot;: [
+            {
+              &quot;kind&quot;: &quot;item&quot;,
+              &quot;id&quot;: &quot;item_1&quot;
+            }
+          ],
+          &quot;tools&quot;: [],
+          &quot;destinations&quot;: [],
+          &quot;recipients&quot;: [
+            {
+              &quot;kind&quot;: &quot;character&quot;,
+              &quot;id&quot;: &quot;p2&quot;
+            }
+          ]
+        }
+      ],
+      &quot;lexicon&quot;: [
+        {
+          &quot;kind&quot;: &quot;character&quot;,
+          &quot;id&quot;: &quot;p1&quot;,
+          &quot;name&quot;: &quot;程青（甲）&quot;
+        },
+        {
+          &quot;kind&quot;: &quot;item&quot;,
+          &quot;id&quot;: &quot;item_2&quot;,
+          &quot;name&quot;: &quot;侧门&quot;
+        },
+        {
+          &quot;kind&quot;: &quot;place&quot;,
+          &quot;id&quot;: &quot;loc_b&quot;,
+          &quot;name&quot;: &quot;值班室&quot;
+        },
+        {
+          &quot;kind&quot;: &quot;item&quot;,
+          &quot;id&quot;: &quot;item_1&quot;,
+          &quot;name&quot;: &quot;交接钥匙&quot;
+        },
+        {
+          &quot;kind&quot;: &quot;character&quot;,
+          &quot;id&quot;: &quot;p2&quot;,
+          &quot;name&quot;: &quot;闻雪（乙）&quot;
+        }
+      ]
+    },
+    &quot;planOrigin&quot;: &quot;assistant_annotation_draft_not_model_prediction&quot;,
+    &quot;allowedForModelUse&quot;: false,
+    &quot;plannerFullCoverageRequired&quot;: true,
+    &quot;modelExecuted&quot;: false
+  }
+}</pre></details><p>绑定源SHA：3c54ae85fcffed894360b9ff317588182a014b7387679beea863d4feac9cccf8</p></section><section><h2>dev-d02-02 · fit</h2><p><strong>AI计划草稿／未复核／不可训练。</strong></p><p>当前人物：罗舟（甲）（p1）<br>该人物任务：通知对岸的船长可以开始靠岸。（pending）<br>玩家原文：用铃锤敲响铜铃通知船长。<br>输入状态：待处理新输入</p><p>以下均是<strong>准备尝试</strong>，没有宣布执行成功：</p><div class="scroll"><table><tr><th>动作词</th><th>对象</th><th>工具</th><th>目的地</th><th>接收人</th><th>拟传达内容</th></tr><tr><td>敲击</td><td>铜铃</td><td>铃锤</td><td>无</td><td>许栖（乙）</td><td>可以开始靠岸</td></tr></table></div><p><strong>短表达参考草稿（AI写作，不是模型输出）：</strong>罗舟尝试用铃锤敲击铜铃，向许栖传达可以开始靠岸的信号。</p><p>原题已审约束（只作核对依据，不自动批准新计划）：生成敲铃或发出约定信号的尝试，不能提前移动对岸人物。<br>原题禁止项：敲铃即等同船已靠岸。</p><details><summary>结构化计划、完整原场景与表达输入草稿</summary><pre>{
+  &quot;planDraft&quot;: {
+    &quot;actorId&quot;: &quot;p1&quot;,
+    &quot;kind&quot;: &quot;act&quot;,
+    &quot;mode&quot;: &quot;attempt&quot;,
+    &quot;basis&quot;: [
+      &quot;/advance&quot;,
+      &quot;/world/characters/0/tasks/0&quot;,
+      &quot;/world/items&quot;
+    ],
+    &quot;steps&quot;: [
+      {
+        &quot;verb&quot;: &quot;敲击&quot;,
+        &quot;utterance&quot;: &quot;可以开始靠岸&quot;,
+        &quot;objects&quot;: [
+          {
+            &quot;kind&quot;: &quot;item&quot;,
+            &quot;id&quot;: &quot;item_1&quot;
+          }
+        ],
+        &quot;tools&quot;: [
+          {
+            &quot;kind&quot;: &quot;item&quot;,
+            &quot;id&quot;: &quot;item_2&quot;
+          }
+        ],
+        &quot;destinations&quot;: [],
+        &quot;recipients&quot;: [
+          {
+            &quot;kind&quot;: &quot;character&quot;,
+            &quot;id&quot;: &quot;p2&quot;
+          }
+        ]
+      }
+    ]
+  },
+  &quot;originalInput&quot;: {
+    &quot;actorId&quot;: &quot;p1&quot;,
+    &quot;advance&quot;: {
+      &quot;inputText&quot;: &quot;用铃锤敲响铜铃通知船长。&quot;,
+      &quot;intentStatus&quot;: &quot;pending&quot;
+    },
+    &quot;confirmedPrefix&quot;: [],
+    &quot;protagonistId&quot;: &quot;p1&quot;,
+    &quot;world&quot;: {
+      &quot;characters&quot;: [
+        {
+          &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+          &quot;id&quot;: &quot;p1&quot;,
+          &quot;name&quot;: &quot;罗舟（甲）&quot;,
+          &quot;personality&quot;: [
+            &quot;谨慎且愿意主动沟通。&quot;
+          ],
+          &quot;position&quot;: {
+            &quot;containerId&quot;: &quot;loc_a&quot;,
+            &quot;slot&quot;: &quot;地面&quot;
+          },
+          &quot;sanity&quot;: 65,
+          &quot;tasks&quot;: [
+            {
+              &quot;id&quot;: &quot;task_p1&quot;,
+              &quot;parentId&quot;: null,
+              &quot;status&quot;: &quot;pending&quot;,
+              &quot;text&quot;: &quot;通知对岸的船长可以开始靠岸。&quot;
+            }
+          ]
+        },
+        {
+          &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+          &quot;id&quot;: &quot;p2&quot;,
+          &quot;name&quot;: &quot;许栖（乙）&quot;,
+          &quot;personality&quot;: [
+            &quot;不凭猜测开船。&quot;
+          ],
+          &quot;position&quot;: {
+            &quot;containerId&quot;: &quot;loc_b&quot;,
+            &quot;slot&quot;: &quot;地面&quot;
+          },
+          &quot;sanity&quot;: 65,
+          &quot;tasks&quot;: [
+            {
+              &quot;id&quot;: &quot;task_p2&quot;,
+              &quot;parentId&quot;: null,
+              &quot;status&quot;: &quot;pending&quot;,
+              &quot;text&quot;: &quot;听见明确通知后再准备靠岸。&quot;
+            }
+          ]
+        },
+        {
+          &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+          &quot;id&quot;: &quot;p3&quot;,
+          &quot;name&quot;: &quot;孔宁（丙）&quot;,
+          &quot;personality&quot;: [
+            &quot;秩序感强。&quot;
+          ],
+          &quot;position&quot;: {
+            &quot;containerId&quot;: &quot;loc_a&quot;,
+            &quot;slot&quot;: &quot;地面&quot;
+          },
+          &quot;sanity&quot;: 65,
+          &quot;tasks&quot;: [
+            {
+              &quot;id&quot;: &quot;task_p3&quot;,
+              &quot;parentId&quot;: null,
+              &quot;status&quot;: &quot;pending&quot;,
+              &quot;text&quot;: &quot;守住乘客排队边线。&quot;
+            }
+          ]
+        }
+      ],
+      &quot;items&quot;: [
+        {
+          &quot;id&quot;: &quot;item_1&quot;,
+          &quot;name&quot;: &quot;铜铃&quot;,
+          &quot;position&quot;: {
+            &quot;containerId&quot;: &quot;loc_a&quot;,
+            &quot;slot&quot;: &quot;可见位置&quot;
+          }
+        },
+        {
+          &quot;id&quot;: &quot;item_2&quot;,
+          &quot;name&quot;: &quot;铃锤&quot;,
+          &quot;position&quot;: {
+            &quot;containerId&quot;: &quot;p1&quot;,
+            &quot;slot&quot;: &quot;可见位置&quot;
+          }
+        }
+      ],
+      &quot;places&quot;: [
+        {
+          &quot;id&quot;: &quot;loc_outer&quot;,
+          &quot;name&quot;: &quot;沙洲渡口&quot;,
+          &quot;parentId&quot;: null
+        },
+        {
+          &quot;id&quot;: &quot;loc_a&quot;,
+          &quot;name&quot;: &quot;上船台，铜铃在手边&quot;,
+          &quot;parentId&quot;: &quot;loc_outer&quot;
+        },
+        {
+          &quot;id&quot;: &quot;loc_b&quot;,
+          &quot;name&quot;: &quot;对岸系泊台&quot;,
+          &quot;parentId&quot;: &quot;loc_outer&quot;
+        }
+      ],
+      &quot;time&quot;: &quot;2031-04-18T10:20:00+08:00&quot;
+    }
+  },
+  &quot;realizerPreview&quot;: {
+    &quot;wouldCallExpression&quot;: true,
+    &quot;sourceInputSha256&quot;: &quot;b6fe7a6828eaf812fdce3eb3e3f220fb6c1f44a143e645e4c40798f92ff7af73&quot;,
+    &quot;planSha256&quot;: &quot;0c1200e008e8f4b674f08bf2cb15ea799decdbf50023382a7975f28dd2f6f3f4&quot;,
+    &quot;payload&quot;: {
+      &quot;actorId&quot;: &quot;p1&quot;,
+      &quot;mode&quot;: &quot;attempt&quot;,
+      &quot;steps&quot;: [
+        {
+          &quot;verb&quot;: &quot;敲击&quot;,
+          &quot;utterance&quot;: &quot;可以开始靠岸&quot;,
+          &quot;objects&quot;: [
+            {
+              &quot;kind&quot;: &quot;item&quot;,
+              &quot;id&quot;: &quot;item_1&quot;
+            }
+          ],
+          &quot;tools&quot;: [
+            {
+              &quot;kind&quot;: &quot;item&quot;,
+              &quot;id&quot;: &quot;item_2&quot;
+            }
+          ],
+          &quot;destinations&quot;: [],
+          &quot;recipients&quot;: [
+            {
+              &quot;kind&quot;: &quot;character&quot;,
+              &quot;id&quot;: &quot;p2&quot;
+            }
+          ]
+        }
+      ],
+      &quot;lexicon&quot;: [
+        {
+          &quot;kind&quot;: &quot;character&quot;,
+          &quot;id&quot;: &quot;p1&quot;,
+          &quot;name&quot;: &quot;罗舟（甲）&quot;
+        },
+        {
+          &quot;kind&quot;: &quot;item&quot;,
+          &quot;id&quot;: &quot;item_1&quot;,
+          &quot;name&quot;: &quot;铜铃&quot;
+        },
+        {
+          &quot;kind&quot;: &quot;item&quot;,
+          &quot;id&quot;: &quot;item_2&quot;,
+          &quot;name&quot;: &quot;铃锤&quot;
+        },
+        {
+          &quot;kind&quot;: &quot;character&quot;,
+          &quot;id&quot;: &quot;p2&quot;,
+          &quot;name&quot;: &quot;许栖（乙）&quot;
+        }
+      ]
+    },
+    &quot;planOrigin&quot;: &quot;assistant_annotation_draft_not_model_prediction&quot;,
+    &quot;allowedForModelUse&quot;: false,
+    &quot;plannerFullCoverageRequired&quot;: true,
+    &quot;modelExecuted&quot;: false
+  }
+}</pre></details><p>绑定源SHA：b6fe7a6828eaf812fdce3eb3e3f220fb6c1f44a143e645e4c40798f92ff7af73</p></section><section><h2>dev-d02-03 · retained_development</h2><p><strong>AI计划草稿／未复核／不可训练。</strong></p><p>当前人物：顾岚（甲）（p1）<br>该人物任务：等待工程师提供安全跨越方案，目前不冒险越井。（pending）<br>玩家原文：现在一步跨过六米检修井到东侧。<br>输入状态：待处理新输入</p><p>计划草稿：不采取新的动作；后续表达器不调用。是否合理仍按场景核对。</p><p>原题已审约束（只作核对依据，不自动批准新计划）：当前命令不可执行且无迫切替代行动，允许明确判断后skip。<br>原题禁止项：生成瞬移、凭空跳跃能力或不存在的桥。</p><details><summary>结构化计划、完整原场景与表达输入草稿</summary><pre>{
+  &quot;planDraft&quot;: {
+    &quot;actorId&quot;: &quot;p1&quot;,
+    &quot;kind&quot;: &quot;skip&quot;,
+    &quot;mode&quot;: &quot;attempt&quot;,
+    &quot;basis&quot;: [
+      &quot;/advance&quot;,
+      &quot;/world/places/1&quot;,
+      &quot;/world/characters/0/tasks/0&quot;
+    ],
+    &quot;steps&quot;: []
+  },
+  &quot;originalInput&quot;: {
+    &quot;actorId&quot;: &quot;p1&quot;,
+    &quot;advance&quot;: {
+      &quot;inputText&quot;: &quot;现在一步跨过六米检修井到东侧。&quot;,
+      &quot;intentStatus&quot;: &quot;pending&quot;
+    },
+    &quot;confirmedPrefix&quot;: [],
+    &quot;protagonistId&quot;: &quot;p1&quot;,
+    &quot;world&quot;: {
+      &quot;characters&quot;: [
+        {
+          &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+          &quot;id&quot;: &quot;p1&quot;,
+          &quot;name&quot;: &quot;顾岚（甲）&quot;,
+          &quot;personality&quot;: [
+            &quot;重视安全，不会凭空获得跳跃能力。&quot;
+          ],
+          &quot;position&quot;: {
+            &quot;containerId&quot;: &quot;loc_a&quot;,
+            &quot;slot&quot;: &quot;地面&quot;
+          },
+          &quot;sanity&quot;: 65,
+          &quot;tasks&quot;: [
+            {
+              &quot;id&quot;: &quot;task_p1&quot;,
+              &quot;parentId&quot;: null,
+              &quot;status&quot;: &quot;pending&quot;,
+              &quot;text&quot;: &quot;等待工程师提供安全跨越方案，目前不冒险越井。&quot;
+            }
+          ]
+        },
+        {
+          &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+          &quot;id&quot;: &quot;p2&quot;,
+          &quot;name&quot;: &quot;简工（乙）&quot;,
+          &quot;personality&quot;: [
+            &quot;按工程条件判断。&quot;
+          ],
+          &quot;position&quot;: {
+            &quot;containerId&quot;: &quot;loc_a&quot;,
+            &quot;slot&quot;: &quot;地面&quot;
+          },
+          &quot;sanity&quot;: 65,
+          &quot;tasks&quot;: [
+            {
+              &quot;id&quot;: &quot;task_p2&quot;,
+              &quot;parentId&quot;: null,
+              &quot;status&quot;: &quot;pending&quot;,
+              &quot;text&quot;: &quot;核对断梯尺寸后安排更换。&quot;
+            }
+          ]
+        },
+        {
+          &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+          &quot;id&quot;: &quot;p3&quot;,
+          &quot;name&quot;: &quot;聂禾（丙）&quot;,
+          &quot;personality&quot;: [
+            &quot;遵守隔离要求。&quot;
+          ],
+          &quot;position&quot;: {
+            &quot;containerId&quot;: &quot;loc_b&quot;,
+            &quot;slot&quot;: &quot;地面&quot;
+          },
+          &quot;sanity&quot;: 65,
+          &quot;tasks&quot;: [
+            {
+              &quot;id&quot;: &quot;task_p3&quot;,
+              &quot;parentId&quot;: null,
+              &quot;status&quot;: &quot;pending&quot;,
+              &quot;text&quot;: &quot;在东平台等候，不改变井口状态。&quot;
+            }
+          ]
+        }
+      ],
+      &quot;items&quot;: [
+        {
+          &quot;id&quot;: &quot;item_1&quot;,
+          &quot;name&quot;: &quot;断梯&quot;,
+          &quot;position&quot;: {
+            &quot;containerId&quot;: &quot;loc_a&quot;,
+            &quot;slot&quot;: &quot;可见位置&quot;
+          }
+        },
+        {
+          &quot;id&quot;: &quot;item_2&quot;,
+          &quot;name&quot;: &quot;检修记录册&quot;,
+          &quot;position&quot;: {
+            &quot;containerId&quot;: &quot;p2&quot;,
+            &quot;slot&quot;: &quot;可见位置&quot;
+          }
+        }
+      ],
+      &quot;places&quot;: [
+        {
+          &quot;id&quot;: &quot;loc_outer&quot;,
+          &quot;name&quot;: &quot;冰窖检修站&quot;,
+          &quot;parentId&quot;: null
+        },
+        {
+          &quot;id&quot;: &quot;loc_a&quot;,
+          &quot;name&quot;: &quot;六米宽检修井西侧，梯子断裂，无跨越设施&quot;,
+          &quot;parentId&quot;: &quot;loc_outer&quot;
+        },
+        {
+          &quot;id&quot;: &quot;loc_b&quot;,
+          &quot;name&quot;: &quot;检修井东侧封闭平台&quot;,
+          &quot;parentId&quot;: &quot;loc_outer&quot;
+        }
+      ],
+      &quot;time&quot;: &quot;2031-04-18T10:20:00+08:00&quot;
+    }
+  },
+  &quot;realizerPreview&quot;: {
+    &quot;wouldCallExpression&quot;: false,
+    &quot;reason&quot;: &quot;skip_no_expression&quot;,
+    &quot;modelExecuted&quot;: false
+  }
+}</pre></details><p>绑定源SHA：228ecb09b2420cfc06867d9d128ebbbb7418835188f353c0c7b7a847c05fe75f</p></section><section><h2>dev-d02-04 · fit</h2><p><strong>AI计划草稿／未复核／不可训练。</strong></p><p>当前人物：叶寻（甲）（p1）<br>该人物任务：在检疫灯变绿前原地等候；灯当前为红色。（pending）<br>玩家原文：登上这里的潜水艇，潜到海底。<br>输入状态：待处理新输入</p><p>计划草稿：不采取新的动作；后续表达器不调用。是否合理仍按场景核对。</p><p>原题已审约束（只作核对依据，不自动批准新计划）：已登记实体和空间均不支持命令，合法skip，不把输入缺失当原因。<br>原题禁止项：新增潜水艇、海底地点或传送能力。</p><details><summary>结构化计划、完整原场景与表达输入草稿</summary><pre>{
+  &quot;planDraft&quot;: {
+    &quot;actorId&quot;: &quot;p1&quot;,
+    &quot;kind&quot;: &quot;skip&quot;,
+    &quot;mode&quot;: &quot;attempt&quot;,
+    &quot;basis&quot;: [
+      &quot;/advance&quot;,
+      &quot;/world/items&quot;,
+      &quot;/world/characters/0/tasks/0&quot;
+    ],
+    &quot;steps&quot;: []
+  },
+  &quot;originalInput&quot;: {
+    &quot;actorId&quot;: &quot;p1&quot;,
+    &quot;advance&quot;: {
+      &quot;inputText&quot;: &quot;登上这里的潜水艇，潜到海底。&quot;,
+      &quot;intentStatus&quot;: &quot;pending&quot;
+    },
+    &quot;confirmedPrefix&quot;: [],
+    &quot;protagonistId&quot;: &quot;p1&quot;,
+    &quot;world&quot;: {
+      &quot;characters&quot;: [
+        {
+          &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+          &quot;id&quot;: &quot;p1&quot;,
+          &quot;name&quot;: &quot;叶寻（甲）&quot;,
+          &quot;personality&quot;: [
+            &quot;不会杜撰工具或擅闯隔离区。&quot;
+          ],
+          &quot;position&quot;: {
+            &quot;containerId&quot;: &quot;loc_a&quot;,
+            &quot;slot&quot;: &quot;地面&quot;
+          },
+          &quot;sanity&quot;: 65,
+          &quot;tasks&quot;: [
+            {
+              &quot;id&quot;: &quot;task_p1&quot;,
+              &quot;parentId&quot;: null,
+              &quot;status&quot;: &quot;pending&quot;,
+              &quot;text&quot;: &quot;在检疫灯变绿前原地等候；灯当前为红色。&quot;
+            }
+          ]
+        },
+        {
+          &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+          &quot;id&quot;: &quot;p2&quot;,
+          &quot;name&quot;: &quot;蔡澄（乙）&quot;,
+          &quot;personality&quot;: [
+            &quot;专注检疫工作。&quot;
+          ],
+          &quot;position&quot;: {
+            &quot;containerId&quot;: &quot;loc_b&quot;,
+            &quot;slot&quot;: &quot;地面&quot;
+          },
+          &quot;sanity&quot;: 65,
+          &quot;tasks&quot;: [
+            {
+              &quot;id&quot;: &quot;task_p2&quot;,
+              &quot;parentId&quot;: null,
+              &quot;status&quot;: &quot;pending&quot;,
+              &quot;text&quot;: &quot;检查苗床标签。&quot;
+            }
+          ]
+        },
+        {
+          &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+          &quot;id&quot;: &quot;p3&quot;,
+          &quot;name&quot;: &quot;沈茵（丙）&quot;,
+          &quot;personality&quot;: [
+            &quot;谨慎守规。&quot;
+          ],
+          &quot;position&quot;: {
+            &quot;containerId&quot;: &quot;loc_a&quot;,
+            &quot;slot&quot;: &quot;地面&quot;
+          },
+          &quot;sanity&quot;: 65,
+          &quot;tasks&quot;: [
+            {
+              &quot;id&quot;: &quot;task_p3&quot;,
+              &quot;parentId&quot;: null,
+              &quot;status&quot;: &quot;pending&quot;,
+              &quot;text&quot;: &quot;维持候检区秩序。&quot;
+            }
+          ]
+        }
+      ],
+      &quot;items&quot;: [
+        {
+          &quot;id&quot;: &quot;item_1&quot;,
+          &quot;name&quot;: &quot;检疫灯&quot;,
+          &quot;position&quot;: {
+            &quot;containerId&quot;: &quot;loc_a&quot;,
+            &quot;slot&quot;: &quot;可见位置&quot;
+          }
+        },
+        {
+          &quot;id&quot;: &quot;item_2&quot;,
+          &quot;name&quot;: &quot;苗床标签&quot;,
+          &quot;position&quot;: {
+            &quot;containerId&quot;: &quot;loc_b&quot;,
+            &quot;slot&quot;: &quot;可见位置&quot;
+          }
+        }
+      ],
+      &quot;places&quot;: [
+        {
+          &quot;id&quot;: &quot;loc_outer&quot;,
+          &quot;name&quot;: &quot;检疫温室&quot;,
+          &quot;parentId&quot;: null
+        },
+        {
+          &quot;id&quot;: &quot;loc_a&quot;,
+          &quot;name&quot;: &quot;候检区，出口封闭，无载具入口&quot;,
+          &quot;parentId&quot;: &quot;loc_outer&quot;
+        },
+        {
+          &quot;id&quot;: &quot;loc_b&quot;,
+          &quot;name&quot;: &quot;隔离苗床&quot;,
+          &quot;parentId&quot;: &quot;loc_outer&quot;
+        }
+      ],
+      &quot;time&quot;: &quot;2031-04-18T10:20:00+08:00&quot;
+    }
+  },
+  &quot;realizerPreview&quot;: {
+    &quot;wouldCallExpression&quot;: false,
+    &quot;reason&quot;: &quot;skip_no_expression&quot;,
+    &quot;modelExecuted&quot;: false
+  }
+}</pre></details><p>绑定源SHA：373f9021cd33430c43b1b573fc77a4b805e91b6fcb9f44697c7a4f1dbd1d0b87</p></section><section><h2>dev-d02-05 · retained_development</h2><p><strong>AI计划草稿／未复核／不可训练。</strong></p><p>当前人物：纪遥（甲）（p1）<br>该人物任务：优先保护自己负责的纸卷不被眼前漏水浸湿。（pending）<br>玩家原文：把刚才那张借阅凭条送给管理员。<br>输入状态：已消费旧输入</p><p>以下均是<strong>准备尝试</strong>，没有宣布执行成功：</p><div class="scroll"><table><tr><th>动作词</th><th>对象</th><th>工具</th><th>目的地</th><th>接收人</th><th>拟传达内容</th></tr><tr><td>覆盖</td><td>纸卷箱</td><td>遮水布</td><td>无</td><td>无</td><td>无</td></tr></table></div><p><strong>短表达参考草稿（AI写作，不是模型输出）：</strong>纪遥尝试用遮水布覆盖纸卷箱。</p><p>原题已审约束（只作核对依据，不自动批准新计划）：自主采取覆盖纸卷/移离水边等合理行动，原命令仅作背景。<br>原题禁止项：重新执行已经消费的送凭条命令。</p><details><summary>结构化计划、完整原场景与表达输入草稿</summary><pre>{
+  &quot;planDraft&quot;: {
+    &quot;actorId&quot;: &quot;p1&quot;,
+    &quot;kind&quot;: &quot;act&quot;,
+    &quot;mode&quot;: &quot;attempt&quot;,
+    &quot;basis&quot;: [
+      &quot;/advance/intentStatus&quot;,
+      &quot;/world/characters/0/tasks/0&quot;,
+      &quot;/world/places/1&quot;,
+      &quot;/world/items&quot;
+    ],
+    &quot;steps&quot;: [
+      {
+        &quot;verb&quot;: &quot;覆盖&quot;,
+        &quot;utterance&quot;: null,
+        &quot;objects&quot;: [
+          {
+            &quot;kind&quot;: &quot;item&quot;,
+            &quot;id&quot;: &quot;item_1&quot;
+          }
+        ],
+        &quot;tools&quot;: [
+          {
+            &quot;kind&quot;: &quot;item&quot;,
+            &quot;id&quot;: &quot;item_2&quot;
+          }
+        ],
+        &quot;destinations&quot;: [],
+        &quot;recipients&quot;: []
+      }
+    ]
+  },
+  &quot;originalInput&quot;: {
+    &quot;actorId&quot;: &quot;p1&quot;,
+    &quot;advance&quot;: {
+      &quot;inputText&quot;: &quot;把刚才那张借阅凭条送给管理员。&quot;,
+      &quot;intentStatus&quot;: &quot;consumed&quot;
+    },
+    &quot;confirmedPrefix&quot;: [],
+    &quot;protagonistId&quot;: &quot;p1&quot;,
+    &quot;world&quot;: {
+      &quot;characters&quot;: [
+        {
+          &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+          &quot;id&quot;: &quot;p1&quot;,
+          &quot;name&quot;: &quot;纪遥（甲）&quot;,
+          &quot;personality&quot;: [
+            &quot;见到风险会主动保护资料。&quot;
+          ],
+          &quot;position&quot;: {
+            &quot;containerId&quot;: &quot;loc_a&quot;,
+            &quot;slot&quot;: &quot;地面&quot;
+          },
+          &quot;sanity&quot;: 65,
+          &quot;tasks&quot;: [
+            {
+              &quot;id&quot;: &quot;task_p1&quot;,
+              &quot;parentId&quot;: null,
+              &quot;status&quot;: &quot;pending&quot;,
+              &quot;text&quot;: &quot;优先保护自己负责的纸卷不被眼前漏水浸湿。&quot;
+            }
+          ]
+        },
+        {
+          &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+          &quot;id&quot;: &quot;p2&quot;,
+          &quot;name&quot;: &quot;柳川（乙）&quot;,
+          &quot;personality&quot;: [
+            &quot;积极协作。&quot;
+          ],
+          &quot;position&quot;: {
+            &quot;containerId&quot;: &quot;loc_b&quot;,
+            &quot;slot&quot;: &quot;地面&quot;
+          },
+          &quot;sanity&quot;: 65,
+          &quot;tasks&quot;: [
+            {
+              &quot;id&quot;: &quot;task_p2&quot;,
+              &quot;parentId&quot;: null,
+              &quot;status&quot;: &quot;pending&quot;,
+              &quot;text&quot;: &quot;通知维修人员处理屋顶漏水。&quot;
+            }
+          ]
+        },
+        {
+          &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+          &quot;id&quot;: &quot;p3&quot;,
+          &quot;name&quot;: &quot;陶白（丙）&quot;,
+          &quot;personality&quot;: [
+            &quot;做事细致。&quot;
+          ],
+          &quot;position&quot;: {
+            &quot;containerId&quot;: &quot;loc_a&quot;,
+            &quot;slot&quot;: &quot;地面&quot;
+          },
+          &quot;sanity&quot;: 65,
+          &quot;tasks&quot;: [
+            {
+              &quot;id&quot;: &quot;task_p3&quot;,
+              &quot;parentId&quot;: null,
+              &quot;status&quot;: &quot;pending&quot;,
+              &quot;text&quot;: &quot;清点桌面的封签。&quot;
+            }
+          ]
+        }
+      ],
+      &quot;items&quot;: [
+        {
+          &quot;id&quot;: &quot;item_1&quot;,
+          &quot;name&quot;: &quot;纸卷箱&quot;,
+          &quot;position&quot;: {
+            &quot;containerId&quot;: &quot;loc_a&quot;,
+            &quot;slot&quot;: &quot;可见位置&quot;
+          }
+        },
+        {
+          &quot;id&quot;: &quot;item_2&quot;,
+          &quot;name&quot;: &quot;遮水布&quot;,
+          &quot;position&quot;: {
+            &quot;containerId&quot;: &quot;p1&quot;,
+            &quot;slot&quot;: &quot;可见位置&quot;
+          }
+        }
+      ],
+      &quot;places&quot;: [
+        {
+          &quot;id&quot;: &quot;loc_outer&quot;,
+          &quot;name&quot;: &quot;河岸档案室&quot;,
+          &quot;parentId&quot;: null
+        },
+        {
+          &quot;id&quot;: &quot;loc_a&quot;,
+          &quot;name&quot;: &quot;漏水靠近纸卷架的阅档室&quot;,
+          &quot;parentId&quot;: &quot;loc_outer&quot;
+        },
+        {
+          &quot;id&quot;: &quot;loc_b&quot;,
+          &quot;name&quot;: &quot;干燥走廊&quot;,
+          &quot;parentId&quot;: &quot;loc_outer&quot;
+        }
+      ],
+      &quot;time&quot;: &quot;2031-04-18T10:20:00+08:00&quot;
+    }
+  },
+  &quot;realizerPreview&quot;: {
+    &quot;wouldCallExpression&quot;: true,
+    &quot;sourceInputSha256&quot;: &quot;91389de63be4c63472fa5f9c3612d33a77b1f6fa13ca7e47903d7b0c368e6ac4&quot;,
+    &quot;planSha256&quot;: &quot;c9d50ac2a51deab1dc0e2cb30cc2a1ba1be7f70d9ab7ae72162ed147b3d74294&quot;,
+    &quot;payload&quot;: {
+      &quot;actorId&quot;: &quot;p1&quot;,
+      &quot;mode&quot;: &quot;attempt&quot;,
+      &quot;steps&quot;: [
+        {
+          &quot;verb&quot;: &quot;覆盖&quot;,
+          &quot;utterance&quot;: null,
+          &quot;objects&quot;: [
+            {
+              &quot;kind&quot;: &quot;item&quot;,
+              &quot;id&quot;: &quot;item_1&quot;
+            }
+          ],
+          &quot;tools&quot;: [
+            {
+              &quot;kind&quot;: &quot;item&quot;,
+              &quot;id&quot;: &quot;item_2&quot;
+            }
+          ],
+          &quot;destinations&quot;: [],
+          &quot;recipients&quot;: []
+        }
+      ],
+      &quot;lexicon&quot;: [
+        {
+          &quot;kind&quot;: &quot;character&quot;,
+          &quot;id&quot;: &quot;p1&quot;,
+          &quot;name&quot;: &quot;纪遥（甲）&quot;
+        },
+        {
+          &quot;kind&quot;: &quot;item&quot;,
+          &quot;id&quot;: &quot;item_1&quot;,
+          &quot;name&quot;: &quot;纸卷箱&quot;
+        },
+        {
+          &quot;kind&quot;: &quot;item&quot;,
+          &quot;id&quot;: &quot;item_2&quot;,
+          &quot;name&quot;: &quot;遮水布&quot;
+        }
+      ]
+    },
+    &quot;planOrigin&quot;: &quot;assistant_annotation_draft_not_model_prediction&quot;,
+    &quot;allowedForModelUse&quot;: false,
+    &quot;plannerFullCoverageRequired&quot;: true,
+    &quot;modelExecuted&quot;: false
+  }
+}</pre></details><p>绑定源SHA：91389de63be4c63472fa5f9c3612d33a77b1f6fa13ca7e47903d7b0c368e6ac4</p></section><section><h2>dev-d02-06 · fit</h2><p><strong>AI计划草稿／未复核／不可训练。</strong></p><p>当前人物：傅星（甲）（p1）<br>该人物任务：本次观测记录已封袋，等待交班。（achieved）<br>玩家原文：重新测一次刚才已经结束的观测。<br>输入状态：已过期旧输入</p><p>计划草稿：不采取新的动作；后续表达器不调用。是否合理仍按场景核对。</p><p>原题已审约束（只作核对依据，不自动批准新计划）：没有新任务或刺激时，按当前状态判断skip；旧命令不是新输入。<br>原题禁止项：仅因旧输入正文存在就再次执行命令。</p><details><summary>结构化计划、完整原场景与表达输入草稿</summary><pre>{
+  &quot;planDraft&quot;: {
+    &quot;actorId&quot;: &quot;p1&quot;,
+    &quot;kind&quot;: &quot;skip&quot;,
+    &quot;mode&quot;: &quot;attempt&quot;,
+    &quot;basis&quot;: [
+      &quot;/advance/intentStatus&quot;,
+      &quot;/world/characters/0/tasks/0&quot;,
+      &quot;/world/places/1&quot;
+    ],
+    &quot;steps&quot;: []
+  },
+  &quot;originalInput&quot;: {
+    &quot;actorId&quot;: &quot;p1&quot;,
+    &quot;advance&quot;: {
+      &quot;inputText&quot;: &quot;重新测一次刚才已经结束的观测。&quot;,
+      &quot;intentStatus&quot;: &quot;expired&quot;
+    },
+    &quot;confirmedPrefix&quot;: [],
+    &quot;protagonistId&quot;: &quot;p1&quot;,
+    &quot;world&quot;: {
+      &quot;characters&quot;: [
+        {
+          &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+          &quot;id&quot;: &quot;p1&quot;,
+          &quot;name&quot;: &quot;傅星（甲）&quot;,
+          &quot;personality&quot;: [
+            &quot;耐心，不为制造行动而行动。&quot;
+          ],
+          &quot;position&quot;: {
+            &quot;containerId&quot;: &quot;loc_a&quot;,
+            &quot;slot&quot;: &quot;地面&quot;
+          },
+          &quot;sanity&quot;: 65,
+          &quot;tasks&quot;: [
+            {
+              &quot;id&quot;: &quot;task_p1&quot;,
+              &quot;parentId&quot;: null,
+              &quot;status&quot;: &quot;achieved&quot;,
+              &quot;text&quot;: &quot;本次观测记录已封袋，等待交班。&quot;
+            }
+          ]
+        },
+        {
+          &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+          &quot;id&quot;: &quot;p2&quot;,
+          &quot;name&quot;: &quot;陆原（乙）&quot;,
+          &quot;personality&quot;: [
+            &quot;安静专注。&quot;
+          ],
+          &quot;position&quot;: {
+            &quot;containerId&quot;: &quot;loc_b&quot;,
+            &quot;slot&quot;: &quot;地面&quot;
+          },
+          &quot;sanity&quot;: 65,
+          &quot;tasks&quot;: [
+            {
+              &quot;id&quot;: &quot;task_p2&quot;,
+              &quot;parentId&quot;: null,
+              &quot;status&quot;: &quot;pending&quot;,
+              &quot;text&quot;: &quot;整理自己的器材。&quot;
+            }
+          ]
+        },
+        {
+          &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+          &quot;id&quot;: &quot;p3&quot;,
+          &quot;name&quot;: &quot;姜眠（丙）&quot;,
+          &quot;personality&quot;: [
+            &quot;从容。&quot;
+          ],
+          &quot;position&quot;: {
+            &quot;containerId&quot;: &quot;loc_a&quot;,
+            &quot;slot&quot;: &quot;地面&quot;
+          },
+          &quot;sanity&quot;: 65,
+          &quot;tasks&quot;: [
+            {
+              &quot;id&quot;: &quot;task_p3&quot;,
+              &quot;parentId&quot;: null,
+              &quot;status&quot;: &quot;pending&quot;,
+              &quot;text&quot;: &quot;等候下一班到达，不主动打断他人。&quot;
+            }
+          ]
+        }
+      ],
+      &quot;items&quot;: [
+        {
+          &quot;id&quot;: &quot;item_1&quot;,
+          &quot;name&quot;: &quot;观测记录板&quot;,
+          &quot;position&quot;: {
+            &quot;containerId&quot;: &quot;loc_a&quot;,
+            &quot;slot&quot;: &quot;可见位置&quot;
+          }
+        },
+        {
+          &quot;id&quot;: &quot;item_2&quot;,
+          &quot;name&quot;: &quot;已封好的记录袋&quot;,
+          &quot;position&quot;: {
+            &quot;containerId&quot;: &quot;p1&quot;,
+            &quot;slot&quot;: &quot;可见位置&quot;
+          }
+        }
+      ],
+      &quot;places&quot;: [
+        {
+          &quot;id&quot;: &quot;loc_outer&quot;,
+          &quot;name&quot;: &quot;山顶观测亭&quot;,
+          &quot;parentId&quot;: null
+        },
+        {
+          &quot;id&quot;: &quot;loc_a&quot;,
+          &quot;name&quot;: &quot;值守区，设备稳定&quot;,
+          &quot;parentId&quot;: &quot;loc_outer&quot;
+        },
+        {
+          &quot;id&quot;: &quot;loc_b&quot;,
+          &quot;name&quot;: &quot;器材间&quot;,
+          &quot;parentId&quot;: &quot;loc_outer&quot;
+        }
+      ],
+      &quot;time&quot;: &quot;2031-04-18T10:20:00+08:00&quot;
+    }
+  },
+  &quot;realizerPreview&quot;: {
+    &quot;wouldCallExpression&quot;: false,
+    &quot;reason&quot;: &quot;skip_no_expression&quot;,
+    &quot;modelExecuted&quot;: false
+  }
+}</pre></details><p>绑定源SHA：64d9bdef211e4a212bc0593701a4395ccd27af278c8a209c1079847da62b62ae</p></section><section><h2>dev-d02-07 · fit</h2><p><strong>AI计划草稿／未复核／不可训练。</strong></p><p>当前人物：陈砚（乙）（p2）<br>该人物任务：保管秤盘，避免跌落损坏。（pending）<br>玩家原文：主角先前要求核对收据。<br>输入状态：已消费旧输入</p><p>以下均是<strong>准备尝试</strong>，没有宣布执行成功：</p><div class="scroll"><table><tr><th>动作词</th><th>对象</th><th>工具</th><th>目的地</th><th>接收人</th><th>拟传达内容</th></tr><tr><td>伸手稳住</td><td>秤盘</td><td>无</td><td>无</td><td>无</td><td>无</td></tr></table></div><p><strong>短表达参考草稿（AI写作，不是模型输出）：</strong>陈砚尝试伸手稳住秤盘。</p><p>原题已审约束（只作核对依据，不自动批准新计划）：NPC依据自身任务和当前风险去稳住秤盘。<br>原题禁止项：将NPC固定skip，或让NPC代主角重复处理旧输入。</p><details><summary>结构化计划、完整原场景与表达输入草稿</summary><pre>{
+  &quot;planDraft&quot;: {
+    &quot;actorId&quot;: &quot;p2&quot;,
+    &quot;kind&quot;: &quot;act&quot;,
+    &quot;mode&quot;: &quot;attempt&quot;,
+    &quot;basis&quot;: [
+      &quot;/world/characters/1/tasks/0&quot;,
+      &quot;/world/characters/1/personality&quot;,
+      &quot;/world/places/1&quot;
+    ],
+    &quot;steps&quot;: [
+      {
+        &quot;verb&quot;: &quot;伸手稳住&quot;,
+        &quot;utterance&quot;: null,
+        &quot;objects&quot;: [
+          {
+            &quot;kind&quot;: &quot;item&quot;,
+            &quot;id&quot;: &quot;item_1&quot;
+          }
+        ],
+        &quot;tools&quot;: [],
+        &quot;destinations&quot;: [],
+        &quot;recipients&quot;: []
+      }
+    ]
+  },
+  &quot;originalInput&quot;: {
+    &quot;actorId&quot;: &quot;p2&quot;,
+    &quot;advance&quot;: {
+      &quot;inputText&quot;: &quot;主角先前要求核对收据。&quot;,
+      &quot;intentStatus&quot;: &quot;consumed&quot;
+    },
+    &quot;confirmedPrefix&quot;: [],
+    &quot;protagonistId&quot;: &quot;p1&quot;,
+    &quot;world&quot;: {
+      &quot;characters&quot;: [
+        {
+          &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+          &quot;id&quot;: &quot;p1&quot;,
+          &quot;name&quot;: &quot;章晏（甲）&quot;,
+          &quot;personality&quot;: [
+            &quot;不干扰仓管工作。&quot;
+          ],
+          &quot;position&quot;: {
+            &quot;containerId&quot;: &quot;loc_b&quot;,
+            &quot;slot&quot;: &quot;地面&quot;
+          },
+          &quot;sanity&quot;: 65,
+          &quot;tasks&quot;: [
+            {
+              &quot;id&quot;: &quot;task_p1&quot;,
+              &quot;parentId&quot;: null,
+              &quot;status&quot;: &quot;achieved&quot;,
+              &quot;text&quot;: &quot;等候自己已完成封袋的收据。&quot;
+            }
+          ]
+        },
+        {
+          &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+          &quot;id&quot;: &quot;p2&quot;,
+          &quot;name&quot;: &quot;陈砚（乙）&quot;,
+          &quot;personality&quot;: [
+            &quot;对自己职责内的突发风险反应积极。&quot;
+          ],
+          &quot;position&quot;: {
+            &quot;containerId&quot;: &quot;loc_a&quot;,
+            &quot;slot&quot;: &quot;地面&quot;
+          },
+          &quot;sanity&quot;: 65,
+          &quot;tasks&quot;: [
+            {
+              &quot;id&quot;: &quot;task_p2&quot;,
+              &quot;parentId&quot;: null,
+              &quot;status&quot;: &quot;pending&quot;,
+              &quot;text&quot;: &quot;保管秤盘，避免跌落损坏。&quot;
+            }
+          ]
+        },
+        {
+          &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+          &quot;id&quot;: &quot;p3&quot;,
+          &quot;name&quot;: &quot;石冬（丙）&quot;,
+          &quot;personality&quot;: [
+            &quot;专注细节。&quot;
+          ],
+          &quot;position&quot;: {
+            &quot;containerId&quot;: &quot;loc_b&quot;,
+            &quot;slot&quot;: &quot;地面&quot;
+          },
+          &quot;sanity&quot;: 65,
+          &quot;tasks&quot;: [
+            {
+              &quot;id&quot;: &quot;task_p3&quot;,
+              &quot;parentId&quot;: null,
+              &quot;status&quot;: &quot;pending&quot;,
+              &quot;text&quot;: &quot;核对粮袋封口。&quot;
+            }
+          ]
+        }
+      ],
+      &quot;items&quot;: [
+        {
+          &quot;id&quot;: &quot;item_1&quot;,
+          &quot;name&quot;: &quot;秤盘&quot;,
+          &quot;position&quot;: {
+            &quot;containerId&quot;: &quot;loc_a&quot;,
+            &quot;slot&quot;: &quot;可见位置&quot;
+          }
+        },
+        {
+          &quot;id&quot;: &quot;item_2&quot;,
+          &quot;name&quot;: &quot;粮袋&quot;,
+          &quot;position&quot;: {
+            &quot;containerId&quot;: &quot;loc_b&quot;,
+            &quot;slot&quot;: &quot;可见位置&quot;
+          }
+        }
+      ],
+      &quot;places&quot;: [
+        {
+          &quot;id&quot;: &quot;loc_outer&quot;,
+          &quot;name&quot;: &quot;南门粮仓&quot;,
+          &quot;parentId&quot;: null
+        },
+        {
+          &quot;id&quot;: &quot;loc_a&quot;,
+          &quot;name&quot;: &quot;称量台，秤盘正在滑向桌边&quot;,
+          &quot;parentId&quot;: &quot;loc_outer&quot;
+        },
+        {
+          &quot;id&quot;: &quot;loc_b&quot;,
+          &quot;name&quot;: &quot;封袋区&quot;,
+          &quot;parentId&quot;: &quot;loc_outer&quot;
+        }
+      ],
+      &quot;time&quot;: &quot;2031-04-18T10:20:00+08:00&quot;
+    }
+  },
+  &quot;realizerPreview&quot;: {
+    &quot;wouldCallExpression&quot;: true,
+    &quot;sourceInputSha256&quot;: &quot;1fc4e6ab2cfccd07286335c490ec5f967d2fd6671058301172376011be21d86a&quot;,
+    &quot;planSha256&quot;: &quot;591d20a10b5ec08e7ada166286f734f0f4860bfd89b22982e4c571dcb7c389e9&quot;,
+    &quot;payload&quot;: {
+      &quot;actorId&quot;: &quot;p2&quot;,
+      &quot;mode&quot;: &quot;attempt&quot;,
+      &quot;steps&quot;: [
+        {
+          &quot;verb&quot;: &quot;伸手稳住&quot;,
+          &quot;utterance&quot;: null,
+          &quot;objects&quot;: [
+            {
+              &quot;kind&quot;: &quot;item&quot;,
+              &quot;id&quot;: &quot;item_1&quot;
+            }
+          ],
+          &quot;tools&quot;: [],
+          &quot;destinations&quot;: [],
+          &quot;recipients&quot;: []
+        }
+      ],
+      &quot;lexicon&quot;: [
+        {
+          &quot;kind&quot;: &quot;character&quot;,
+          &quot;id&quot;: &quot;p2&quot;,
+          &quot;name&quot;: &quot;陈砚（乙）&quot;
+        },
+        {
+          &quot;kind&quot;: &quot;item&quot;,
+          &quot;id&quot;: &quot;item_1&quot;,
+          &quot;name&quot;: &quot;秤盘&quot;
+        }
+      ]
+    },
+    &quot;planOrigin&quot;: &quot;assistant_annotation_draft_not_model_prediction&quot;,
+    &quot;allowedForModelUse&quot;: false,
+    &quot;plannerFullCoverageRequired&quot;: true,
+    &quot;modelExecuted&quot;: false
+  }
+}</pre></details><p>绑定源SHA：1fc4e6ab2cfccd07286335c490ec5f967d2fd6671058301172376011be21d86a</p></section><section><h2>dev-d02-08 · fit</h2><p><strong>AI计划草稿／未复核／不可训练。</strong></p><p>当前人物：魏澜（乙）（p2）<br>该人物任务：保护工作台上的计时器安全。（pending）<br>玩家原文：主角昨日提出的报时请求。<br>输入状态：已过期旧输入</p><p>以下均是<strong>准备尝试</strong>，没有宣布执行成功：</p><div class="scroll"><table><tr><th>动作词</th><th>对象</th><th>工具</th><th>目的地</th><th>接收人</th><th>拟传达内容</th></tr><tr><td>稳住</td><td>沙漏</td><td>固定楔</td><td>无</td><td>无</td><td>无</td></tr></table></div><p><strong>短表达参考草稿（AI写作，不是模型输出）：</strong>魏澜尝试用固定楔稳住沙漏。</p><p>原题已审约束（只作核对依据，不自动批准新计划）：NPC可自主稳住沙漏或用固定楔支撑，不能只看过期输入。<br>原题禁止项：直接宣告沙漏已经永久固定，或凭空添加新工具。</p><details><summary>结构化计划、完整原场景与表达输入草稿</summary><pre>{
+  &quot;planDraft&quot;: {
+    &quot;actorId&quot;: &quot;p2&quot;,
+    &quot;kind&quot;: &quot;act&quot;,
+    &quot;mode&quot;: &quot;attempt&quot;,
+    &quot;basis&quot;: [
+      &quot;/advance/intentStatus&quot;,
+      &quot;/world/characters/1/tasks/0&quot;,
+      &quot;/world/places/1&quot;,
+      &quot;/world/items&quot;
+    ],
+    &quot;steps&quot;: [
+      {
+        &quot;verb&quot;: &quot;稳住&quot;,
+        &quot;utterance&quot;: null,
+        &quot;objects&quot;: [
+          {
+            &quot;kind&quot;: &quot;item&quot;,
+            &quot;id&quot;: &quot;item_1&quot;
+          }
+        ],
+        &quot;tools&quot;: [
+          {
+            &quot;kind&quot;: &quot;item&quot;,
+            &quot;id&quot;: &quot;item_2&quot;
+          }
+        ],
+        &quot;destinations&quot;: [],
+        &quot;recipients&quot;: []
+      }
+    ]
+  },
+  &quot;originalInput&quot;: {
+    &quot;actorId&quot;: &quot;p2&quot;,
+    &quot;advance&quot;: {
+      &quot;inputText&quot;: &quot;主角昨日提出的报时请求。&quot;,
+      &quot;intentStatus&quot;: &quot;expired&quot;
+    },
+    &quot;confirmedPrefix&quot;: [],
+    &quot;protagonistId&quot;: &quot;p1&quot;,
+    &quot;world&quot;: {
+      &quot;characters&quot;: [
+        {
+          &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+          &quot;id&quot;: &quot;p1&quot;,
+          &quot;name&quot;: &quot;苏望（甲）&quot;,
+          &quot;personality&quot;: [
+            &quot;尊重维修员工作。&quot;
+          ],
+          &quot;position&quot;: {
+            &quot;containerId&quot;: &quot;loc_b&quot;,
+            &quot;slot&quot;: &quot;地面&quot;
+          },
+          &quot;sanity&quot;: 65,
+          &quot;tasks&quot;: [
+            {
+              &quot;id&quot;: &quot;task_p1&quot;,
+              &quot;parentId&quot;: null,
+              &quot;status&quot;: &quot;pending&quot;,
+              &quot;text&quot;: &quot;等待检修完成后再验收。&quot;
+            }
+          ]
+        },
+        {
+          &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+          &quot;id&quot;: &quot;p2&quot;,
+          &quot;name&quot;: &quot;魏澜（乙）&quot;,
+          &quot;personality&quot;: [
+            &quot;珍惜工具，愿意及时协助。&quot;
+          ],
+          &quot;position&quot;: {
+            &quot;containerId&quot;: &quot;loc_a&quot;,
+            &quot;slot&quot;: &quot;地面&quot;
+          },
+          &quot;sanity&quot;: 65,
+          &quot;tasks&quot;: [
+            {
+              &quot;id&quot;: &quot;task_p2&quot;,
+              &quot;parentId&quot;: null,
+              &quot;status&quot;: &quot;pending&quot;,
+              &quot;text&quot;: &quot;保护工作台上的计时器安全。&quot;
+            }
+          ]
+        },
+        {
+          &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+          &quot;id&quot;: &quot;p3&quot;,
+          &quot;name&quot;: &quot;殷笛（丙）&quot;,
+          &quot;personality&quot;: [
+            &quot;细心。&quot;
+          ],
+          &quot;position&quot;: {
+            &quot;containerId&quot;: &quot;loc_b&quot;,
+            &quot;slot&quot;: &quot;地面&quot;
+          },
+          &quot;sanity&quot;: 65,
+          &quot;tasks&quot;: [
+            {
+              &quot;id&quot;: &quot;task_p3&quot;,
+              &quot;parentId&quot;: null,
+              &quot;status&quot;: &quot;pending&quot;,
+              &quot;text&quot;: &quot;记录齿轮编号。&quot;
+            }
+          ]
+        }
+      ],
+      &quot;items&quot;: [
+        {
+          &quot;id&quot;: &quot;item_1&quot;,
+          &quot;name&quot;: &quot;沙漏&quot;,
+          &quot;position&quot;: {
+            &quot;containerId&quot;: &quot;loc_a&quot;,
+            &quot;slot&quot;: &quot;可见位置&quot;
+          }
+        },
+        {
+          &quot;id&quot;: &quot;item_2&quot;,
+          &quot;name&quot;: &quot;固定楔&quot;,
+          &quot;position&quot;: {
+            &quot;containerId&quot;: &quot;p2&quot;,
+            &quot;slot&quot;: &quot;可见位置&quot;
+          }
+        }
+      ],
+      &quot;places&quot;: [
+        {
+          &quot;id&quot;: &quot;loc_outer&quot;,
+          &quot;name&quot;: &quot;北钟楼&quot;,
+          &quot;parentId&quot;: null
+        },
+        {
+          &quot;id&quot;: &quot;loc_a&quot;,
+          &quot;name&quot;: &quot;敞窗工作台，沙漏倾斜&quot;,
+          &quot;parentId&quot;: &quot;loc_outer&quot;
+        },
+        {
+          &quot;id&quot;: &quot;loc_b&quot;,
+          &quot;name&quot;: &quot;齿轮检修层&quot;,
+          &quot;parentId&quot;: &quot;loc_outer&quot;
+        }
+      ],
+      &quot;time&quot;: &quot;2031-04-18T10:20:00+08:00&quot;
+    }
+  },
+  &quot;realizerPreview&quot;: {
+    &quot;wouldCallExpression&quot;: true,
+    &quot;sourceInputSha256&quot;: &quot;7267efe8c2d05fa7934800ed466ca55132c8726e28ed2849424e1d1077567c3d&quot;,
+    &quot;planSha256&quot;: &quot;0eb4b80d4c81f63aa13e816a1f4360f92b43bb5ae62060cc5a89b2c8b8a3e131&quot;,
+    &quot;payload&quot;: {
+      &quot;actorId&quot;: &quot;p2&quot;,
+      &quot;mode&quot;: &quot;attempt&quot;,
+      &quot;steps&quot;: [
+        {
+          &quot;verb&quot;: &quot;稳住&quot;,
+          &quot;utterance&quot;: null,
+          &quot;objects&quot;: [
+            {
+              &quot;kind&quot;: &quot;item&quot;,
+              &quot;id&quot;: &quot;item_1&quot;
+            }
+          ],
+          &quot;tools&quot;: [
+            {
+              &quot;kind&quot;: &quot;item&quot;,
+              &quot;id&quot;: &quot;item_2&quot;
+            }
+          ],
+          &quot;destinations&quot;: [],
+          &quot;recipients&quot;: []
+        }
+      ],
+      &quot;lexicon&quot;: [
+        {
+          &quot;kind&quot;: &quot;character&quot;,
+          &quot;id&quot;: &quot;p2&quot;,
+          &quot;name&quot;: &quot;魏澜（乙）&quot;
+        },
+        {
+          &quot;kind&quot;: &quot;item&quot;,
+          &quot;id&quot;: &quot;item_1&quot;,
+          &quot;name&quot;: &quot;沙漏&quot;
+        },
+        {
+          &quot;kind&quot;: &quot;item&quot;,
+          &quot;id&quot;: &quot;item_2&quot;,
+          &quot;name&quot;: &quot;固定楔&quot;
+        }
+      ]
+    },
+    &quot;planOrigin&quot;: &quot;assistant_annotation_draft_not_model_prediction&quot;,
+    &quot;allowedForModelUse&quot;: false,
+    &quot;plannerFullCoverageRequired&quot;: true,
+    &quot;modelExecuted&quot;: false
+  }
+}</pre></details><p>绑定源SHA：7267efe8c2d05fa7934800ed466ca55132c8726e28ed2849424e1d1077567c3d</p></section><section><h2>dev-d02-09 · fit</h2><p><strong>AI计划草稿／未复核／不可训练。</strong></p><p>当前人物：冉苓（乙）（p2）<br>该人物任务：本批药包已封存，等待店主核验。（achieved）<br>玩家原文：主角先前让店主确认价格。<br>输入状态：已消费旧输入</p><p>计划草稿：不采取新的动作；后续表达器不调用。是否合理仍按场景核对。</p><p>原题已审约束（只作核对依据，不自动批准新计划）：NPC无待办或新刺激时可以合法skip。<br>原题禁止项：为了有动作而拆开已封药包；把主角旧命令当NPC任务。</p><details><summary>结构化计划、完整原场景与表达输入草稿</summary><pre>{
+  &quot;planDraft&quot;: {
+    &quot;actorId&quot;: &quot;p2&quot;,
+    &quot;kind&quot;: &quot;skip&quot;,
+    &quot;mode&quot;: &quot;attempt&quot;,
+    &quot;basis&quot;: [
+      &quot;/advance/intentStatus&quot;,
+      &quot;/world/characters/1/tasks/0&quot;,
+      &quot;/world/places/1&quot;
+    ],
+    &quot;steps&quot;: []
+  },
+  &quot;originalInput&quot;: {
+    &quot;actorId&quot;: &quot;p2&quot;,
+    &quot;advance&quot;: {
+      &quot;inputText&quot;: &quot;主角先前让店主确认价格。&quot;,
+      &quot;intentStatus&quot;: &quot;consumed&quot;
+    },
+    &quot;confirmedPrefix&quot;: [],
+    &quot;protagonistId&quot;: &quot;p1&quot;,
+    &quot;world&quot;: {
+      &quot;characters&quot;: [
+        {
+          &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+          &quot;id&quot;: &quot;p1&quot;,
+          &quot;name&quot;: &quot;季良（甲）&quot;,
+          &quot;personality&quot;: [
+            &quot;有耐心。&quot;
+          ],
+          &quot;position&quot;: {
+            &quot;containerId&quot;: &quot;loc_b&quot;,
+            &quot;slot&quot;: &quot;地面&quot;
+          },
+          &quot;sanity&quot;: 65,
+          &quot;tasks&quot;: [
+            {
+              &quot;id&quot;: &quot;task_p1&quot;,
+              &quot;parentId&quot;: null,
+              &quot;status&quot;: &quot;pending&quot;,
+              &quot;text&quot;: &quot;安静等候店主回来。&quot;
+            }
+          ]
+        },
+        {
+          &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+          &quot;id&quot;: &quot;p2&quot;,
+          &quot;name&quot;: &quot;冉苓（乙）&quot;,
+          &quot;personality&quot;: [
+            &quot;不重复拆封已完成工作。&quot;
+          ],
+          &quot;position&quot;: {
+            &quot;containerId&quot;: &quot;loc_a&quot;,
+            &quot;slot&quot;: &quot;地面&quot;
+          },
+          &quot;sanity&quot;: 65,
+          &quot;tasks&quot;: [
+            {
+              &quot;id&quot;: &quot;task_p2&quot;,
+              &quot;parentId&quot;: null,
+              &quot;status&quot;: &quot;achieved&quot;,
+              &quot;text&quot;: &quot;本批药包已封存，等待店主核验。&quot;
+            }
+          ]
+        },
+        {
+          &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+          &quot;id&quot;: &quot;p3&quot;,
+          &quot;name&quot;: &quot;柏舟（丙）&quot;,
+          &quot;personality&quot;: [
+            &quot;做事安静。&quot;
+          ],
+          &quot;position&quot;: {
+            &quot;containerId&quot;: &quot;loc_b&quot;,
+            &quot;slot&quot;: &quot;地面&quot;
+          },
+          &quot;sanity&quot;: 65,
+          &quot;tasks&quot;: [
+            {
+              &quot;id&quot;: &quot;task_p3&quot;,
+              &quot;parentId&quot;: null,
+              &quot;status&quot;: &quot;pending&quot;,
+              &quot;text&quot;: &quot;检查空货架标签。&quot;
+            }
+          ]
+        }
+      ],
+      &quot;items&quot;: [
+        {
+          &quot;id&quot;: &quot;item_1&quot;,
+          &quot;name&quot;: &quot;封存药包&quot;,
+          &quot;position&quot;: {
+            &quot;containerId&quot;: &quot;loc_a&quot;,
+            &quot;slot&quot;: &quot;可见位置&quot;
+          }
+        },
+        {
+          &quot;id&quot;: &quot;item_2&quot;,
+          &quot;name&quot;: &quot;配药清单&quot;,
+          &quot;position&quot;: {
+            &quot;containerId&quot;: &quot;p2&quot;,
+            &quot;slot&quot;: &quot;可见位置&quot;
+          }
+        }
+      ],
+      &quot;places&quot;: [
+        {
+          &quot;id&quot;: &quot;loc_outer&quot;,
+          &quot;name&quot;: &quot;巷口药铺&quot;,
+          &quot;parentId&quot;: null
+        },
+        {
+          &quot;id&quot;: &quot;loc_a&quot;,
+          &quot;name&quot;: &quot;封药柜台，药包封存完好&quot;,
+          &quot;parentId&quot;: &quot;loc_outer&quot;
+        },
+        {
+          &quot;id&quot;: &quot;loc_b&quot;,
+          &quot;name&quot;: &quot;储药间&quot;,
+          &quot;parentId&quot;: &quot;loc_outer&quot;
+        }
+      ],
+      &quot;time&quot;: &quot;2031-04-18T10:20:00+08:00&quot;
+    }
+  },
+  &quot;realizerPreview&quot;: {
+    &quot;wouldCallExpression&quot;: false,
+    &quot;reason&quot;: &quot;skip_no_expression&quot;,
+    &quot;modelExecuted&quot;: false
+  }
+}</pre></details><p>绑定源SHA：544814278b2777cb45b213e77851d361ded99471fac83758f1e112ac096a0a2d</p></section><section><h2>dev-d02-10 · fit</h2><p><strong>AI计划草稿／未复核／不可训练。</strong></p><p>当前人物：曲澄（乙）（p2）<br>该人物任务：在下一记录时刻到来前继续原地观察；现在没有警情。（pending）<br>玩家原文：主角上一个观察时段的询问。<br>输入状态：已过期旧输入</p><p>计划草稿：不采取新的动作；后续表达器不调用。是否合理仍按场景核对。</p><p>原题已审约束（只作核对依据，不自动批准新计划）：当前无需启动新行动，连续观察背景不必每槽重写成新动作。<br>原题禁止项：杜撰洪水或重复回答过期命令。</p><details><summary>结构化计划、完整原场景与表达输入草稿</summary><pre>{
+  &quot;planDraft&quot;: {
+    &quot;actorId&quot;: &quot;p2&quot;,
+    &quot;kind&quot;: &quot;skip&quot;,
+    &quot;mode&quot;: &quot;attempt&quot;,
+    &quot;basis&quot;: [
+      &quot;/advance/intentStatus&quot;,
+      &quot;/world/characters/1/tasks/0&quot;,
+      &quot;/world/places/1&quot;
+    ],
+    &quot;steps&quot;: []
+  },
+  &quot;originalInput&quot;: {
+    &quot;actorId&quot;: &quot;p2&quot;,
+    &quot;advance&quot;: {
+      &quot;inputText&quot;: &quot;主角上一个观察时段的询问。&quot;,
+      &quot;intentStatus&quot;: &quot;expired&quot;
+    },
+    &quot;confirmedPrefix&quot;: [],
+    &quot;protagonistId&quot;: &quot;p1&quot;,
+    &quot;world&quot;: {
+      &quot;characters&quot;: [
+        {
+          &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+          &quot;id&quot;: &quot;p1&quot;,
+          &quot;name&quot;: &quot;廖舟（甲）&quot;,
+          &quot;personality&quot;: [
+            &quot;愿意等候。&quot;
+          ],
+          &quot;position&quot;: {
+            &quot;containerId&quot;: &quot;loc_b&quot;,
+            &quot;slot&quot;: &quot;地面&quot;
+          },
+          &quot;sanity&quot;: 65,
+          &quot;tasks&quot;: [
+            {
+              &quot;id&quot;: &quot;task_p1&quot;,
+              &quot;parentId&quot;: null,
+              &quot;status&quot;: &quot;pending&quot;,
+              &quot;text&quot;: &quot;在屋内等候汇总结果。&quot;
+            }
+          ]
+        },
+        {
+          &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+          &quot;id&quot;: &quot;p2&quot;,
+          &quot;name&quot;: &quot;曲澄（乙）&quot;,
+          &quot;personality&quot;: [
+            &quot;克制，不凭空制造紧急事件。&quot;
+          ],
+          &quot;position&quot;: {
+            &quot;containerId&quot;: &quot;loc_a&quot;,
+            &quot;slot&quot;: &quot;地面&quot;
+          },
+          &quot;sanity&quot;: 65,
+          &quot;tasks&quot;: [
+            {
+              &quot;id&quot;: &quot;task_p2&quot;,
+              &quot;parentId&quot;: null,
+              &quot;status&quot;: &quot;pending&quot;,
+              &quot;text&quot;: &quot;在下一记录时刻到来前继续原地观察；现在没有警情。&quot;
+            }
+          ]
+        },
+        {
+          &quot;appearance&quot;: &quot;衣物完整，双手可自由活动，无已知伤势。&quot;,
+          &quot;id&quot;: &quot;p3&quot;,
+          &quot;name&quot;: &quot;盛禾（丙）&quot;,
+          &quot;personality&quot;: [
+            &quot;专注归档。&quot;
+          ],
+          &quot;position&quot;: {
+            &quot;containerId&quot;: &quot;loc_b&quot;,
+            &quot;slot&quot;: &quot;地面&quot;
+          },
+          &quot;sanity&quot;: 65,
+          &quot;tasks&quot;: [
+            {
+              &quot;id&quot;: &quot;task_p3&quot;,
+              &quot;parentId&quot;: null,
+              &quot;status&quot;: &quot;pending&quot;,
+              &quot;text&quot;: &quot;整理旧巡查表。&quot;
+            }
+          ]
+        }
+      ],
+      &quot;items&quot;: [
+        {
+          &quot;id&quot;: &quot;item_1&quot;,
+          &quot;name&quot;: &quot;水位刻度尺&quot;,
+          &quot;position&quot;: {
+            &quot;containerId&quot;: &quot;loc_a&quot;,
+            &quot;slot&quot;: &quot;可见位置&quot;
+          }
+        },
+        {
+          &quot;id&quot;: &quot;item_2&quot;,
+          &quot;name&quot;: &quot;巡查表&quot;,
+          &quot;position&quot;: {
+            &quot;containerId&quot;: &quot;p2&quot;,
+            &quot;slot&quot;: &quot;可见位置&quot;
+          }
+        }
+      ],
+      &quot;places&quot;: [
+        {
+          &quot;id&quot;: &quot;loc_outer&quot;,
+          &quot;name&quot;: &quot;青石堤坝&quot;,
+          &quot;parentId&quot;: null
+        },
+        {
+          &quot;id&quot;: &quot;loc_a&quot;,
+          &quot;name&quot;: &quot;水位观察岗，水面平稳&quot;,
+          &quot;parentId&quot;: &quot;loc_outer&quot;
+        },
+        {
+          &quot;id&quot;: &quot;loc_b&quot;,
+          &quot;name&quot;: &quot;堤内值班屋&quot;,
+          &quot;parentId&quot;: &quot;loc_outer&quot;
+        }
+      ],
+      &quot;time&quot;: &quot;2031-04-18T10:20:00+08:00&quot;
+    }
+  },
+  &quot;realizerPreview&quot;: {
+    &quot;wouldCallExpression&quot;: false,
+    &quot;reason&quot;: &quot;skip_no_expression&quot;,
+    &quot;modelExecuted&quot;: false
+  }
+}</pre></details><p>绑定源SHA：3ff603f77079849e342e7f36f7c98ecaa5bb70e3920d428f0a7ed6ee563d3d7c</p></section><section><details><summary>准备状态、来源及输入字节大小（不是计时）</summary><pre>{
+  &quot;schema&quot;: &quot;jity-d-action-plan-preparation-summary-v1&quot;,
+  &quot;date&quot;: &quot;2026-11-04&quot;,
+  &quot;batchId&quot;: &quot;d-action-plan-old10-r1&quot;,
+  &quot;stage&quot;: &quot;L3 action-plan preparation; no new model execution&quot;,
+  &quot;scope&quot;: &quot;contract_and_old_source_annotation_drafts_only&quot;,
+  &quot;expressionDrafts&quot;: 5,
+  &quot;draftSourceGroups&quot;: 10,
+  &quot;actDrafts&quot;: 5,
+  &quot;skipDrafts&quot;: 5,
+  &quot;originalRoles&quot;: {
+    &quot;dev-d02-01&quot;: &quot;fit&quot;,
+    &quot;dev-d02-02&quot;: &quot;fit&quot;,
+    &quot;dev-d02-03&quot;: &quot;retained_development&quot;,
+    &quot;dev-d02-04&quot;: &quot;fit&quot;,
+    &quot;dev-d02-05&quot;: &quot;retained_development&quot;,
+    &quot;dev-d02-06&quot;: &quot;fit&quot;,
+    &quot;dev-d02-07&quot;: &quot;fit&quot;,
+    &quot;dev-d02-08&quot;: &quot;fit&quot;,
+    &quot;dev-d02-09&quot;: &quot;fit&quot;,
+    &quot;dev-d02-10&quot;: &quot;fit&quot;
+  },
+  &quot;review&quot;: {
+    &quot;newPlanLabelsReviewed&quot;: 0,
+    &quot;missingPlanReviews&quot;: 10,
+    &quot;exploratoryFitExportAllowed&quot;: false,
+    &quot;formalEvaluationAllowed&quot;: false
+  },
+  &quot;preparedDataset&quot;: &quot;experiments/world-components-logic/data/action-plan/drafts.jsonl&quot;,
+  &quot;plannerModelImplemented&quot;: false,
+  &quot;realizerTrained&quot;: false,
+  &quot;trainingSteps&quot;: 0,
+  &quot;modelInferenceCalls&quot;: 0,
+  &quot;newIndependentTrainingGroups&quot;: 0,
+  &quot;round1TrainingQuota&quot;: 0,
+  &quot;formalEvaluationAllowed&quot;: false,
+  &quot;semanticQualityApproved&quot;: false,
+  &quot;fullRequest500msStatus&quot;: &quot;unverified&quot;,
+  &quot;local50msHardGate&quot;: false,
+  &quot;lastModelRun&quot;: &quot;action-focus-dev42-20261104-r2&quot;,
+  &quot;packetSha256&quot;: &quot;84254b319638ad27db028c37631da722369e37454d97e70d3b5d65d37e935ff1&quot;,
+  &quot;inputSizes&quot;: [
+    {
+      &quot;annotationId&quot;: &quot;plan-dev-d02-01&quot;,
+      &quot;kind&quot;: &quot;act&quot;,
+      &quot;fullPlannerPayloadBytes&quot;: 1390,
+      &quot;realizerPreviewBytes&quot;: 710,
+      &quot;expressionCalled&quot;: false,
+      &quot;sourceRole&quot;: &quot;fit&quot;
+    },
+    {
+      &quot;annotationId&quot;: &quot;plan-dev-d02-02&quot;,
+      &quot;kind&quot;: &quot;act&quot;,
+      &quot;fullPlannerPayloadBytes&quot;: 1384,
+      &quot;realizerPreviewBytes&quot;: 456,
+      &quot;expressionCalled&quot;: false,
+      &quot;sourceRole&quot;: &quot;fit&quot;
+    },
+    {
+      &quot;annotationId&quot;: &quot;plan-dev-d02-03&quot;,
+      &quot;kind&quot;: &quot;skip&quot;,
+      &quot;fullPlannerPayloadBytes&quot;: 1513,
+      &quot;realizerPreviewBytes&quot;: null,
+      &quot;expressionCalled&quot;: false,
+      &quot;sourceRole&quot;: &quot;retained_development&quot;
+    },
+    {
+      &quot;annotationId&quot;: &quot;plan-dev-d02-04&quot;,
+      &quot;kind&quot;: &quot;skip&quot;,
+      &quot;fullPlannerPayloadBytes&quot;: 1417,
+      &quot;realizerPreviewBytes&quot;: null,
+      &quot;expressionCalled&quot;: false,
+      &quot;sourceRole&quot;: &quot;fit&quot;
+    },
+    {
+      &quot;annotationId&quot;: &quot;plan-dev-d02-05&quot;,
+      &quot;kind&quot;: &quot;act&quot;,
+      &quot;fullPlannerPayloadBytes&quot;: 1421,
+      &quot;realizerPreviewBytes&quot;: 360,
+      &quot;expressionCalled&quot;: false,
+      &quot;sourceRole&quot;: &quot;retained_development&quot;
+    },
+    {
+      &quot;annotationId&quot;: &quot;plan-dev-d02-06&quot;,
+      &quot;kind&quot;: &quot;skip&quot;,
+      &quot;fullPlannerPayloadBytes&quot;: 1418,
+      &quot;realizerPreviewBytes&quot;: null,
+      &quot;expressionCalled&quot;: false,
+      &quot;sourceRole&quot;: &quot;fit&quot;
+    },
+    {
+      &quot;annotationId&quot;: &quot;plan-dev-d02-07&quot;,
+      &quot;kind&quot;: &quot;act&quot;,
+      &quot;fullPlannerPayloadBytes&quot;: 1398,
+      &quot;realizerPreviewBytes&quot;: 285,
+      &quot;expressionCalled&quot;: false,
+      &quot;sourceRole&quot;: &quot;fit&quot;
+    },
+    {
+      &quot;annotationId&quot;: &quot;plan-dev-d02-08&quot;,
+      &quot;kind&quot;: &quot;act&quot;,
+      &quot;fullPlannerPayloadBytes&quot;: 1375,
+      &quot;realizerPreviewBytes&quot;: 357,
+      &quot;expressionCalled&quot;: false,
+      &quot;sourceRole&quot;: &quot;fit&quot;
+    },
+    {
+      &quot;annotationId&quot;: &quot;plan-dev-d02-09&quot;,
+      &quot;kind&quot;: &quot;skip&quot;,
+      &quot;fullPlannerPayloadBytes&quot;: 1380,
+      &quot;realizerPreviewBytes&quot;: null,
+      &quot;expressionCalled&quot;: false,
+      &quot;sourceRole&quot;: &quot;fit&quot;
+    },
+    {
+      &quot;annotationId&quot;: &quot;plan-dev-d02-10&quot;,
+      &quot;kind&quot;: &quot;skip&quot;,
+      &quot;fullPlannerPayloadBytes&quot;: 1420,
+      &quot;realizerPreviewBytes&quot;: null,
+      &quot;expressionCalled&quot;: false,
+      &quot;sourceRole&quot;: &quot;fit&quot;
+    }
+  ],
+  &quot;erratum&quot;: {
+    &quot;correctFitExamples&quot;: [
+      &quot;dev-d02-01&quot;,
+      &quot;dev-d02-07&quot;
+    ],
+    &quot;correctRetainedDevelopmentExamples&quot;: [
+      &quot;dev-d02-03&quot;,
+      &quot;dev-d02-05&quot;
+    ],
+    &quot;scope&quot;: &quot;L3-11/12 role descriptions only; original roles, numeric results and historical bytes unchanged&quot;
+  }
+}</pre></details><p><a href="l3-13-action-plan-preparation-summary.json">机器状态</a> · <a href="../../experiments/world-components-logic/data/action-plan/drafts.jsonl">全部计划草稿</a> · <a href="../../experiments/world-components-logic/data/action-plan/source-manifest.json">来源/哈希清单</a> · <a href="l3-12-action-focus-results.html">上批真实实测</a></p></section></main></html>

@@ -861,6 +861,9 @@ def build_chain():
                     ART/'l3-11-action-chain-results.html':render_chain(summary,records).encode()}
 
 
+# Historical render below preserves original report bytes, including the now
+# corrected prose about fitting roles. Actual roles were always correct in the
+# raw event2 record; current erratum lives in L3-13 preparation and README §35.
 def render_chain(summary,records):
     e=lambda x:html.escape(str(x))
     parts=['''<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'"><title>L3 行动三步协作实测</title><style>body{margin:0;background:#f4f6f8;color:#20313e;font:16px/1.7 system-ui}main{max-width:1100px;margin:auto;padding:24px}section{background:white;padding:22px;border-radius:12px;margin:20px 0}table{width:100%;border-collapse:collapse;font-size:14px}td,th{padding:10px;text-align:left;border-bottom:1px solid #ddd}.scroll{overflow:auto}pre{white-space:pre-wrap;overflow-wrap:anywhere}.bad{color:#a7352e}h1{font-size:28px}small{color:#526472}</style><main><p>D / L3 · 2026-11-04 · 离线诊断</p><h1>先判断要不要动，再写动作，最后找牵连人物</h1><section><h2>流程跑通了，模型方案还不能验收</h2><p>程序真实串起了三步：M01判断行动/跳过 → 生成模型写动作 → 原文交回M01分析目标。共52条尝试，39次实际生成，39次目标分析；13次skip均跳过后两步。没有手写动作代替模型。</p><p>前两批77M模型共36次输出都在重复提示、问题或字段。改用494M指令模型后，3次生成中1条符合眼前任务的基本方向，另外2条有任务/人物错误；这只是实现者观察，尚无正式语义通过。所有目标输出均为空，不能据此算目标正确。</p><p class="bad">指令模型的3条生成链耗时1322–1558ms，已经超过完整500ms目标；只测了三步，完整非叙事还未测。50ms现只作参考，不再硬性否决。没有通过L3，也未接入游戏。</p></section><section><h2>指令模型：逐条看真实答案</h2><div class="scroll"><table><tr><th>场景/要求</th><th>真实输出</th><th>观察</th><th>三步总计ms</th></tr>''']

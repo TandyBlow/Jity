@@ -2,16 +2,17 @@
 
 ## 当前从这里开始（2026-11-04）
 
-日常使用 `experiment.py` 一个入口；当前三步协作在 `action_chain.py`，M01编码与判断复用 `m01_shared.py`。当前模型结论从已有汇总读取，不在多份说明中手工重复维护数值。当前阶段是探索性离线验证，尚无正式质量/完整500ms通过结论；局部50ms按用户最新要求仅作参考；任务范围以[工作树说明](../../design/world-engine-reports/components-logic/README.md)为准。
+日常使用`experiment.py`一个入口。当前工作是`action_plan.py`的动作计划/短表达准备：10组旧来源新计划及5份短表达标签草稿、结构和来源检查、表达输入预览；未审0可用，训练/模型调用0。最近真实模型结果仍为L3-12，质量/完整500ms未通过。50ms仅参考，任务范围见[工作树说明](../../design/world-engine-reports/components-logic/README.md)。
 
 从仓库根目录运行：
 
 ```bash
 python3 experiments/world-components-logic/experiment.py status
 python3 experiments/world-components-logic/experiment.py check
+python3 experiments/world-components-logic/experiment.py plan-data
 ```
 
-`status`只读当前状态，`check`运行工程测试并核验八份历史结果报告和本批人物/精度报告，二者不导入模型、不训练或推理。实际新批次使用D独立环境：
+`status`区分最新准备批与最近模型批；`check`运行工程测试、九份模型历史报告和本批准备材料核验，不导入模型。`plan-data`只核验准备文件，`plan-data --write-new`仅写缺少的相同批次文件、拒绝覆盖异稿。当前没有已审核的动作计划训练实例；以下prepare/execute仍是历史L3-12诊断，不能当成新规划器训练命令：
 
 ```bash
 .local/world-components-logic/venv/bin/python experiments/world-components-logic/experiment.py prepare NEW_RUN_ID
@@ -23,9 +24,10 @@ python3 experiments/world-components-logic/experiment.py check
 | 角色 | 文件/位置 | 维护方式 |
 |---|---|---|
 | 当前运行入口与公共流程 | `experiment.py` | 入口、资源监督、阶段计时、追加日志与中断只读重放共同复用 |
-| 当前协作实现 | `action_chain.py` | 行动判断、真实生成与原文目标交接；复用公共监督/日志 |
+| 当前计划准备 | `action_plan.py` | 计划结构/来源、10旧来源新标签草稿、全量选择器输入、表达预览及拟合提案守卫；不跑模型 |
+| 最近模型协作实现 | `action_chain.py` | L3-12行动判断、真实生成与原文目标交接；复用公共监督/日志 |
 | M01基础实现 | `m01_shared.py` | 完整事实编码、候选融合和冻结模型推理，拟合历史由对应Git提交定位 |
-| 当前结果核验/展示 | `m01_shared_report.py`、`artifacts/world-components-logic/l3-12-*` | 报告核验原计划/记录，不以当前算法源码替代历史执行版本 |
+| 模型结果核验/展示 | `m01_shared_report.py`、`artifacts/world-components-logic/l3-12-*` | 报告核验原计划/记录，不以当前算法源码替代历史执行版本 |
 | 共享基础工具 | `lab.py`、`fact_windows.py`、`pilot_codec.py` | 守卫、事实编码和原输入核对，按实际职责维护 |
 | 历史模型入口 | `runtime_smoke.py`、`run_pilot.py`、`m01_probe.py`、`m01_infer.py` | 保留原记录/测试及被复用工具，不作为当前日常入口 |
 | 数据/审阅准备 | `data/`、`prepare_*`、`review_io.py` | 原资料及工具保留，按实际数据工作使用，不冒充模型能力 |
@@ -135,3 +137,12 @@ python3 experiments/world-components-logic/m01_shared_report.py --check
 [最新结果页](../../artifacts/world-components-logic/l3-12-action-focus-results.html)保存48条新流程、36次生成。重复人物原资料和逐字段中文JSON均仍执行旧命令/混淆人物；本机qnnpack动态8位更慢且退化，未采用为达标方案。新增生成顶层前/后钩子区分完整输入prefill与后续decode；不删除模型真实上下文。计时/所有失败/全部重复可展开，完整500ms与正式质量继续未通过。
 
 `m01_shared_report.py --focus --check`复用三步证据核验，并检查实际前向配对/成本、169个量化模块整数/qparams/残余浮点身份和focus/int8逐token输入相同；旧三步报告字节保持不变。`pilot_codec.readable/restore_readable`只替换字段名、无损往返；没有程序写动作或按内容筛世界。下一步转动作选择/引用计划与短表达的专用小模型拆分，先登记独立监督数据与训练协议。
+
+
+## 动作计划/短表达准备（2026-11-04）
+
+[准备查看页](../../artifacts/world-components-logic/l3-13-action-plan-preparation.html)用中文列出每个人物、原任务、输入状态、拟尝试动作的对象/工具/目的地/接收人和旧约束；结构化细节可展开。当前是AI标签草稿，没有新的模型答案或500ms成绩。`data/action-plan/`保存10项计划及5份短表达参考草稿和来源/哈希，旧42题意见不变、新90组未用。
+
+`action_plan.py`只验证结构/typed ID/引用/来源和构建输入；即使动作内容不合理，结构合法也不会成为semanticApproved。planner完整输入不含标注计划；realizer短输入只是未审计划预览，不能视为真实规划/全量覆盖。新计划意见与旧场景意见按批次/annotationSHA隔离，拟合导出也只是8fit/2保留开发提案，不是新独立训练集或执行授权。当前新标签未审、实际导出0、训练0。
+
+用途勘误：原记录一直为01/07 fit、03/05 retained_development，前两页文字说明曾写反；最初r1协议“0107曾拟合”并非笔误。当前页与新材料读取原记录，历史页面/协议/数值字节保持。后续先补独立动作计划监督数据/标签和冻结训练配置，再分别验证真实选择与短表达；原审核不用重做，不能把AI草稿自签成真值。
