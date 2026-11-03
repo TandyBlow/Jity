@@ -25,22 +25,21 @@ from experiment import read_json,settle_attempts,settle_events
 ROOT=old.ROOT
 BASE=old.BASE
 ART=old.ART
-PROTOCOL=ROOT/'design/world-engine-reports/components-logic/m01-input-runtime-probe.md'
+PROTOCOL=ROOT/'design/world-engine-reports/components-logic/m01-compiled-runtime-probe.md'
 OLD_PLAN=ART/'m01-fit-dev42-20261102-r1.plan.json'
 OLD_RECORD=ART/'m01-fit-dev42-20261102-r1.record.json.gz'
 BASELINE_PLAN=ART/'m01-event-dev42-20261102-r1.plan.json'
 BASELINE_RECORD=ART/'m01-event-dev42-20261102-r1.record.json.gz'
-ARMS=('reference','packed','fast','eager')
+ARMS=('fast','compiled')
 CONFIG={'device':'cpu','threads':1,'concurrency':1,'seed':42,'limit':512,'trainingSteps':0,
-        'threshold':.5,'fusionWidth':32,'attemptsPerCase':5,'processWallSeconds':120,
+        'threshold':.5,'fusionWidth':32,'attemptsPerCase':20,'processWallSeconds':120,
         'maxResidentMiB':2048,'encoderFrozen':True,'headsFrozen':True,'featureCacheForTiming':False,
         'reducedEncoderLayerIndices':[0,1],'eventAnchor':'D03_source_actionText_only',
         'journalFormat':'d-append-v1','attemptBoundaryFsync':True,
-        'probabilityTolerance':1e-6,'runtimeArms':{
-            'reference':{'packing':'reference','tokenizer':'slow','attention':'sdpa'},
-            'packed':{'packing':'single','tokenizer':'slow','attention':'sdpa'},
+        'probabilityTolerance':1e-6,'hiddenAtol':1e-5,'hiddenRtol':1e-5,'runtimeArms':{
             'fast':{'packing':'batch','tokenizer':'fast','attention':'sdpa'},
-            'eager':{'packing':'batch','tokenizer':'fast','attention':'eager'}}}
+            'compiled':{'packing':'batch','tokenizer':'fast','attention':'compiled'}}}
+
 
 planned_slots=partial(experiment.planned_slots,arms=ARMS)
 unstarted_record=partial(experiment.unstarted_record,arms=ARMS)
@@ -64,7 +63,7 @@ def prepare(run_id):
     rows,review=old.dataset();baseline=baseline_identity();model=old.model_identity()
     if baseline['datasetSha256']!=digest(rows) or model!=baseline['model']:raise ValueError('baseline dataset/model drift')
     code=[BASE/name for name in ('experiment.py','m01_shared.py','m01_probe.py','fact_windows.py','pilot_codec.py','lab.py','run_pilot.py','review_io.py','prepare_run_batch.py')]
-    plan={'schema':'jity-d-m01-input-runtime-plan-v1','runId':run_id,'preparedAt':timestamp(),
+    plan={'schema':'jity-d-m01-compiled-runtime-plan-v1','runId':run_id,'preparedAt':timestamp(),
           'sourceHead':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
           'protocolPath':str(PROTOCOL.relative_to(ROOT)),'protocolSha256':sha256_file(PROTOCOL),
           'inheritedProtocolSha256':sha256_file(PROTOCOL.with_name('m01-shared-probe.md')),
@@ -72,7 +71,7 @@ def prepare(run_id):
           'config':CONFIG.copy(),'configSha256':digest(CONFIG),'dataset':rows,'datasetSha256':digest(rows),
           'cases':[r['case'] for r in rows if r['role']=='retained_development'],
           'review':review,'model':model,'baseline':baseline,'environment':observe_environment(ROOT),
-          'authorization':{'instruction':'好继续工作','scope':'bounded_D_single_thread_frozen_input_runtime_probe',
+          'authorization':{'instruction':'继续','scope':'bounded_D_single_thread_frozen_compiled_runtime_probe',
                            'resourceWindow':'current_user_requested_turn_single_CPU_thread_no_GPU_no_BC'},
           'arms':list(ARMS),'formalEvaluationAllowed':False,'sourceIndependence':'unverified',
           'retainedDevelopmentPreviouslyObserved':True,'newIndependentTrainingGroups':0,'round1TrainingQuota':0}
@@ -240,9 +239,93 @@ def predict(case,data,head,torch):
     return values,decoded
 
 
+def validate_compiled_metadata(shapes,dtypes,devices,mask_all_ones,types_valid,ids_valid):
+    if (len(shapes)!=3 or any(s!=shapes[0] for s in shapes) or len(shapes[0])!=2
+            or shapes[0][0]!=1 or not 3<=shapes[0][1]<=512):raise ValueError('unsupported compiled input shape')
+    if dtypes!=['torch.int64']*3 or devices!=['cpu']*3:raise ValueError('unsupported compiled dtype/device')
+    if not mask_all_ones or not types_valid or not ids_valid:raise ValueError('compiled graph requires complete unpadded BERT tokens')
+
+
+def compiled_adapter(module,torch,vocab_size):
+    from types import SimpleNamespace
+    class Adapter:
+        def __call__(self,*,input_ids,token_type_ids,attention_mask):
+            tensors=(input_ids,token_type_ids,attention_mask)
+            validate_compiled_metadata([list(t.shape) for t in tensors],[str(t.dtype) for t in tensors],
+                [t.device.type for t in tensors],bool(torch.all(attention_mask==1)),
+                bool(torch.all((token_type_ids>=0)&(token_type_ids<=1))),
+                bool(torch.all((input_ids>=0)&(input_ids<vocab_size))))
+            return SimpleNamespace(last_hidden_state=module(input_ids,token_type_ids))
+    return Adapter()
+
+
+def compile_encoder(encoder,torch,example,path,report,out,setup_log):
+    """Specialize to full, unpadded encoder windows; audit before business use."""
+    class EncoderGraph(torch.nn.Module):
+        def __init__(self,source):super().__init__();self.source=source
+        def forward(self,input_ids,token_type_ids):
+            hidden=self.source.embeddings(input_ids=input_ids,token_type_ids=token_type_ids)
+            return self.source.encoder(hidden,attention_mask=None,head_mask=None,use_cache=False,return_dict=False)[0]
+    ids=torch.tensor([example['inputIds']],dtype=torch.long);types=torch.tensor([example['tokenTypeIds']],dtype=torch.long)
+    count=[0];hook=encoder.encoder.register_forward_hook(lambda *args:count.__setitem__(0,count[0]+1))
+    event={'phase':'trace_compile','window':example,'status':'running','startedAt':timestamp(),'forwardCallsObserved':0}
+    setup_log.write(json.dumps(event,ensure_ascii=False)+'\n');setup_log.flush();start=time.perf_counter()
+    try:
+        with torch.inference_mode():
+            traced=torch.jit.trace(EncoderGraph(encoder).eval(),(ids,types),check_trace=False,strict=True)
+            frozen=torch.jit.freeze(traced.eval(),optimize_numerics=False)
+        if count[0]!=1:raise ValueError('unexpected trace forward count')
+        path.parent.mkdir(parents=True,exist_ok=True)
+        with path.open('xb') as f:torch.jit.save(frozen,f)
+        loaded=torch.jit.load(str(path),map_location='cpu').eval()
+        report['compiledArtifact']={'path':str(path.relative_to(ROOT)),'sha256':sha256_file(path),
+            'graphSha256':digest(str(loaded.inlined_graph)),'optimizeNumerics':False,'checkTrace':False,
+            'specialization':'batch1_CPU_int64_unpadded_full_attention_encoder_only',
+            'sourceEncoderTensorSha256':report['encoder']['tensorSha256']}
+        event.update(status='complete',artifactSha256=report['compiledArtifact']['sha256'])
+        return compiled_adapter(loaded,torch,encoder.config.vocab_size)
+    except Exception as error:event.update(status='failed',error=str(error));raise
+    finally:
+        hook.remove();event.update(forwardCallsObserved=count[0],elapsedMs=(time.perf_counter()-start)*1000,settledAt=timestamp())
+        setup_log.write(json.dumps(event,ensure_ascii=False)+'\n');setup_log.flush()
+        report['traceSetup']=event;save(out,report)
+
+
+def audit_compiled(rows,tokenizer,encoder,compiled,torch,setup_log):
+    audits=[];forward_index=0
+    def call(arm,case,w,fn):
+        nonlocal forward_index
+        e={'phase':'hidden_audit','arm':arm,'caseId':case['caseId'],'windowIndex':w['auditWindowIndex'],
+           'forwardIndex':forward_index,'window':w,'status':'running','startedAt':timestamp()}
+        forward_index+=1;setup_log.write(json.dumps(e,ensure_ascii=False)+'\n');setup_log.flush();t=time.perf_counter()
+        try:
+            with torch.inference_mode():hidden=fn()
+            e.update(status='complete',hiddenSha256=old.tensor_hash({'hidden':hidden}))
+            return hidden
+        except Exception as error:e.update(status='failed',error=str(error));raise
+        finally:
+            e.update(elapsedMs=(time.perf_counter()-t)*1000,settledAt=timestamp())
+            setup_log.write(json.dumps(e,ensure_ascii=False)+'\n');setup_log.flush()
+    for row in rows:
+        case=row['case'];_,_,windows=pack(case,tokenizer,mode='batch')
+        for index,w in enumerate(windows):
+            w={**w,'auditWindowIndex':index}
+            tensors={'input_ids':torch.tensor([w['inputIds']],dtype=torch.long),
+                     'token_type_ids':torch.tensor([w['tokenTypeIds']],dtype=torch.long),
+                     'attention_mask':torch.ones((1,w['totalTokens']),dtype=torch.long)}
+            a=call('fast',case,w,lambda:encoder(**tensors).last_hidden_state)
+            b=call('compiled',case,w,lambda:compiled(**tensors).last_hidden_state)
+            delta=float((a-b).abs().max());close=bool(torch.allclose(a,b,atol=CONFIG['hiddenAtol'],rtol=CONFIG['hiddenRtol']))
+            audits.append({'caseId':case['caseId'],'windowIndex':index,'tokens':w['totalTokens'],
+                           'inputSha256':digest(w),'maxAbsoluteHiddenDelta':delta,'allClose':close,'exact':bool(torch.equal(a,b))})
+            if not close:raise ValueError('compiled hidden output differs: '+case['caseId']+'/'+str(index))
+    return audits
+
+
+
 def worker(path):
     plan=read_json(path);_,out=old.paths(plan['runId']);slots=planned_slots(plan)
-    report={'schema':'jity-d-m01-input-runtime-record-v1','runId':plan['runId'],'planSha256':sha256_file(path),
+    report={'schema':'jity-d-m01-compiled-runtime-record-v1','runId':plan['runId'],'planSha256':sha256_file(path),
             'status':'running','stages':[],'attempts':[],'attemptSlots':slots,'activeAttempt':None,
             'forwardAttempts':[],'activeForward':None,'trainingSteps':0,'featureCacheUsed':False,
             'formalEvaluationAllowed':False,'semanticQualityApproved':False,'fullRequestMeasured':False,
@@ -265,7 +348,7 @@ def worker(path):
                     'fast':stage('fast_tokenizer_load',lambda:BertTokenizerFast.from_pretrained(directory,local_files_only=True))}
         report['tokenizationAudit']=stage('exact_tokenization_audit',lambda:audit_tokens(plan['dataset'],tokenizers))
         encoders={};runtime_identity={}
-        for implementation in ('sdpa','eager'):
+        for implementation in ('sdpa',):
             encoder,info=stage(implementation+'_encoder_load',lambda impl=implementation:BertModel.from_pretrained(
                 directory,local_files_only=True,trust_remote_code=False,weights_only=True,add_pooling_layer=False,
                 output_loading_info=True,attn_implementation=impl))
@@ -290,6 +373,16 @@ def worker(path):
         report['trainedHeadSha256']=plan['baseline']['trainedHeadSha256']
         report['checkpoint']=plan['baseline']['checkpoint']
         report['headParameters']=sum(p.numel() for h in heads.values() for p in h.parameters())
+        setup_path=out.with_suffix('.setup.jsonl')
+        with setup_path.open('x',encoding='utf-8') as setup_log:
+            example=pack(plan['cases'][0],tokenizers['fast'],mode='batch')[2][0]
+            artifact=old.LOCAL/'compiled'/f"{plan['runId']}.pt"
+            compiled=stage('trace_freeze_reload',lambda:compile_encoder(encoder,torch,example,artifact,report,out,setup_log))
+            report['compiledHiddenAudit']=stage('complete_hidden_audit',lambda:audit_compiled(
+                plan['dataset'],tokenizers['fast'],encoder,compiled,torch,setup_log))
+        report['setupEventsSha256']=sha256_file(setup_path)
+        # The source encoder remains separate for pre/post weight identity checks.
+        source_encoders=dict(encoders);encoders['compiled']=compiled
         cases={c['caseId']:c for c in plan['cases']}
         with experiment.AppendJournal(out.with_suffix('.journal.jsonl'),report['planSha256']) as journal:
             journal.append('begin',{'runId':plan['runId'],'slots':slots})
@@ -332,7 +425,7 @@ def worker(path):
                 jt=time.perf_counter();journal.append('attempt_settled',timing);a.update(timing)
                 a['telemetryJournalMs']=(time.perf_counter()-jt)*1000
                 a['elapsedIncludingTelemetryMs']=(time.monotonic_ns()-a['startedMonotonicNs'])/1e6
-        report['encoderUnchanged']=all(identity['tensorSha256']==old.tensor_hash(e.state_dict()) for e in encoders.values())
+        report['encoderUnchanged']=all(identity['tensorSha256']==old.tensor_hash(e.state_dict()) for e in source_encoders.values())
         report['headsUnchanged']=all(old.tensor_hash(h.state_dict())==report['trainedHeadSha256'][t] for t,h in heads.items())
         if not report['encoderUnchanged'] or not report['headsUnchanged']:raise ValueError('inference modified weights')
         report['status']='diagnostic_completed' if all(a['status']=='complete' for a in report['attempts']) else 'failed'

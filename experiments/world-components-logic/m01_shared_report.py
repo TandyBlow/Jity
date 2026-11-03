@@ -367,14 +367,14 @@ JOURNAL_BASE_PLAN=DATA/(EVENT_RUN+'.plan.json')
 JOURNAL_BASE_RECORD=DATA/(EVENT_RUN+'.record.json.gz')
 
 
-def validate_journal_run(plan,record,journal_path,baseline,*,arms=JOURNAL_ARMS,allow_probability_drift=False):
+def validate_journal_run(plan,record,journal_path,baseline,*,arms=JOURNAL_ARMS,allow_probability_drift=False,attempts_per_case=5):
     import copy
     import experiment
     if (record['status']!='diagnostic_completed' or record['supervisor']['exitCode']!=0 or record['supervisor']['stopReason'] is not None
             or record['unexecutedAttempts'] or record.get('journalRecoveryError') or record['journalRecovery']['partialTailBytes']):raise ValueError('incomplete journal run')
     if (record['trainingSteps']!=0 or not record['encoderUnchanged'] or not record['headsUnchanged']
             or plan['config']['trainingSteps']!=0 or plan['configSha256']!=shared.digest(plan['config'])):raise ValueError('fixed inference policy drift')
-    for key,value in {'threshold':.5,'reducedEncoderLayerIndices':[0,1],'attemptsPerCase':5,'featureCacheForTiming':False,
+    for key,value in {'threshold':.5,'reducedEncoderLayerIndices':[0,1],'attemptsPerCase':attempts_per_case,'featureCacheForTiming':False,
                       'headsFrozen':True,'attemptBoundaryFsync':True}.items():
         if plan['config'][key]!=value:raise ValueError('fixed inference policy drift: '+key)
     if (plan['formalEvaluationAllowed'] is not False or record['semanticQualityApproved'] is not False or record['fullRequestMeasured'] is not False
@@ -390,11 +390,11 @@ def validate_journal_run(plan,record,journal_path,baseline,*,arms=JOURNAL_ARMS,a
         if replay[key]!=record[key]:raise ValueError('journal/snapshot mismatch: '+key)
     entries,partial=experiment.read_journal(journal_path,record['planSha256'])
     cases={c['caseId']:c for c in plan['cases']}
-    count=len(cases)*len(arms)*5
+    count=len(cases)*len(arms)*attempts_per_case
     prior_inputs={a['caseId']:a['coverage'] for a in baseline['attempts'] if a['arm']=='event2'}
-    window_count=sum(len(prior_inputs[c]['windows']) for c in cases)*len(arms)*5
+    window_count=sum(len(prior_inputs[c]['windows']) for c in cases)*len(arms)*attempts_per_case
     if partial or len(entries)!=1+count*3+window_count*2:raise ValueError('journal event count mismatch')
-    expected={(a,c,i) for a in arms for c in cases for i in range(5)}
+    expected={(a,c,i) for a in arms for c in cases for i in range(attempts_per_case)}
     for field in ('attempts','attemptSlots'):
         if len(record[field])!=count or {(a['arm'],a['caseId'],a['repeat']) for a in record[field]}!=expected:raise ValueError('attempt count mismatch')
     predictions={r['caseId']:r for r in baseline['fitAndDevelopmentPredictions'] if r['arm']=='event2'}
@@ -582,11 +582,110 @@ def render_input(summary,record):
 
 
 
+COMPILED_RUN='m01-compiled-dev42-20261103-r1'
+COMPILED_ARMS=('fast','compiled')
+COMPILED_POLICIES={'fast':{'packing':'batch','tokenizer':'fast','attention':'sdpa'},
+                   'compiled':{'packing':'batch','tokenizer':'fast','attention':'compiled'}}
+
+
+def validate_compiled_run(plan,record,journal_path,setup,baseline):
+    predictions=validate_journal_run(plan,record,journal_path,baseline,arms=COMPILED_ARMS,
+                                   allow_probability_drift=True,attempts_per_case=20)
+    c=plan['config']
+    if (c['runtimeArms']!=COMPILED_POLICIES or c['hiddenAtol']!=1e-5 or c['hiddenRtol']!=1e-5
+            or c['probabilityTolerance']!=1e-6):raise ValueError('compiled policy changed')
+    artifact=record['compiledArtifact']
+    if artifact['optimizeNumerics'] is not False or artifact['checkTrace'] is not False or artifact['sourceEncoderTensorSha256']!=record['encoder']['tensorSha256']:
+        raise ValueError('compiled artifact identity changed')
+    if (not artifact['path'].startswith('.local/world-components-logic/compiled/')
+            or len(artifact['sha256'])!=64 or len(artifact['graphSha256'])!=64):raise ValueError('invalid local compiled artifact')
+    if record['encoderRuntimes']!={'sdpa':{'attentionImplementation':'sdpa','attentionClasses':['BertSdpaSelfAttention']*2}}:raise ValueError('source encoder runtime changed')
+    trace=[e for e in setup if e['phase']=='trace_compile']
+    if len(trace)!=2 or trace[0]['status']!='running' or trace[1]['status']!='complete' or trace[1]['forwardCallsObserved']!=1:raise ValueError('trace invocation accounting changed')
+    if trace[1]!=record['traceSetup'] or trace[1]['artifactSha256']!=artifact['sha256']:raise ValueError('trace artifact mismatch')
+    audit=record['compiledHiddenAudit'];source={r['caseId']:r['coverage']['windows'] for r in baseline['featureCoverage'] if r['arm']=='event2'}
+    expected=[(r['case']['caseId'],i,w) for r in plan['dataset'] for i,w in enumerate(source[r['case']['caseId']])]
+    if len(audit)!=83 or len(expected)!=83:raise ValueError('complete hidden audit coverage changed')
+    events=[e for e in setup if e['phase']=='hidden_audit']
+    if len(events)!=332 or len(setup)!=334:raise ValueError('setup forward event count changed')
+    keys=('inputIds','tokenTypeIds','factIds','factSpans','payloadTokens','totalTokens')
+    index=0
+    for a,(cid,wi,w) in zip(audit,expected):
+        if (a['caseId'],a['windowIndex'],a['tokens'])!=(cid,wi,w['totalTokens']) or not a['allClose']:raise ValueError('hidden comparison failed/missing')
+        if not math.isfinite(a['maxAbsoluteHiddenDelta']) or a['maxAbsoluteHiddenDelta']<0:raise ValueError('invalid hidden delta')
+        hashes=[]
+        for arm in COMPILED_ARMS:
+            start,end=events[index*2:index*2+2]
+            for e in (start,end):
+                if (e['arm'],e['caseId'],e['windowIndex'],e['forwardIndex'])!=(arm,cid,wi,index):raise ValueError('setup forward identity changed')
+                if {k:e['window'][k] for k in keys}!={k:w[k] for k in keys}:raise ValueError('setup input changed')
+            if start['status']!='running' or end['status']!='complete':raise ValueError('incomplete setup forward')
+            if a['inputSha256']!=shared.digest(end['window']):raise ValueError('hidden audit input digest changed')
+            hashes.append(end['hiddenSha256']);index+=1
+        if a['exact']!=(hashes[0]==hashes[1]) or (a['exact'] and a['maxAbsoluteHiddenDelta']!=0):raise ValueError('hidden exactness misreported')
+    return predictions
+
+
+def build_compiled():
+    pp=DATA/(COMPILED_RUN+'.plan.json');rp=DATA/(COMPILED_RUN+'.record.json.gz')
+    jp=DATA/(COMPILED_RUN+'.record.journal.jsonl.gz');sp=DATA/(COMPILED_RUN+'.record.setup.jsonl.gz')
+    plan=json.loads(pp.read_bytes());record=read_archive(rp);baseline=read_archive(JOURNAL_BASE_RECORD)
+    journal=gzip.decompress(jp.read_bytes());setup_raw=gzip.decompress(sp.read_bytes())
+    if (record['planSha256']!=sha256_file(pp) or record['journalRecovery']['sha256']!=hashlib.sha256(journal).hexdigest()
+            or record['setupEventsSha256']!=hashlib.sha256(setup_raw).hexdigest()):raise ValueError('compiled evidence digest mismatch')
+    if plan['baseline']['planSha256']!=sha256_file(JOURNAL_BASE_PLAN) or plan['baseline']['recordSha256']!=sha256_file(JOURNAL_BASE_RECORD):raise ValueError('original model evidence changed')
+    for name,h in plan['code'].items():verify_event_source(name,h)
+    if sha256_file(ROOT/plan['protocolPath'])!=plan['protocolSha256']:raise ValueError('compiled protocol changed')
+    setup=[json.loads(line) for line in setup_raw.splitlines() if line.strip()]
+    predictions=validate_compiled_run(plan,record,jp,setup,baseline);timing=[];comparisons={};qualities={}
+    for arm in COMPILED_ARMS:
+        selected=[a for a in record['attempts'] if a['arm']==arm]
+        comparisons[arm]=compare_probabilities(selected,predictions,1e-6,arm=='fast');rows=[]
+        for case in plan['cases']:
+            attempts=[a for a in selected if a['caseId']==case['caseId']];values=sorted(a['elapsedIncludingTelemetryMs'] for a in attempts)
+            a=attempts[0];rows.append({**predictions[a['caseId']],'decoded':a['decoded'],'probabilities':a['probabilities']})
+            parts={k:statistics.mean(a['coverage']['timing'][k] for a in attempts) for k in attempts[0]['coverage']['timing']}
+            parts.update({k:statistics.mean(a[k] for a in attempts) for k in ('headMs','startJournalMs','snapshotStartMs','resultJournalMs','snapshotEndMs','telemetryJournalMs')})
+            parts['otherMs']=statistics.mean(values)-sum(parts.values())
+            timing.append({'arm':arm,'caseId':case['caseId'],'observations':20,'p50Ms':statistics.median(values),
+                'p95Ms':values[18],'maxMs':max(values),'meanMs':statistics.mean(values),'componentsMeanMs':parts,
+                'over50msObservations':sum(v>50 for v in values),
+                'local50ms':'fail' if max(values)>50 else 'within_budget_observed_workload_only'})
+        qualities[arm]=quality(rows)
+    run={'runId':COMPILED_RUN,'quality':qualities,'timing':timing,'comparisons':comparisons,
+         'trainingSteps':0,'timedInferenceItems':160,'businessForwardWindows':640,'journalEvents':1761,
+         'setupForwardCalls':167,'setupHiddenWindows':83,'allHiddenOutputsExact':all(r['exact'] for r in record['compiledHiddenAudit']),
+         'encoder':record['encoder'],'headParameters':record['headParameters'],'checkpoint':record['checkpoint'],
+         'weightsUnchanged':True,'compiledArtifact':record['compiledArtifact'],'supervisor':record['supervisor'],
+         'preparationStages':[{k:s[k] for k in ('stage','status','elapsedMs')} for s in record['stages']],
+         'timingScope':'warm preloaded inference incl per-item journals; setup separate; final write in process wall; supervisor replay unmeasured'}
+    summary={'schema':'jity-d-compiled-summary-v1','date':'2026-11-03','scope':'frozen_checkpoint_exposed_development_compilation_probe',
+        'formalEvaluationAllowed':False,'semanticQualityApproved':False,'fullRequest500msStatus':'unverified',
+        'newIndependentTrainingGroups':0,'round1TrainingQuota':0,'runs':[run],
+        'archives':[{'path':str(p.relative_to(ROOT)),'gzipSha256':sha256_file(p),
+            'rawSha256':hashlib.sha256(gzip.decompress(p.read_bytes())).hexdigest()} for p in (rp,jp,sp)]}
+    return summary,{ART/'l3-10-m01-compiled-summary.json':(json.dumps(summary,ensure_ascii=False,indent=2)+'\n').encode(),
+                    ART/'l3-10-m01-compiled-results.html':render_compiled(summary,record).encode()}
+
+
+def render_compiled(summary,record):
+    e=lambda x:html.escape(str(x));run=summary['runs'][0]
+    parts=['''<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'"><title>L3 编码计算图对比</title><style>body{margin:0;background:#f4f6f8;color:#20313e;font:16px/1.7 system-ui}main{max-width:1100px;margin:auto;padding:24px}section{background:white;padding:22px;border-radius:12px;margin:20px 0}table{width:100%;border-collapse:collapse;font-size:14px}td,th{padding:10px;text-align:left;border-bottom:1px solid #ddd}.scroll{overflow:auto}pre{white-space:pre-wrap;overflow-wrap:anywhere}.bad{color:#a7352e}h1{font-size:28px}</style><main><p>D / L3 · 2026-11-03 · 固定模型的执行试验</p><h1>提前整理成计算图，能再快多少？</h1><p>原模型和判断头不变、训练0步；完整资料和所有人物保留。两种执行方式各在4道旧开发题上重复20次，共160次业务推理。</p><section><h2>结果：只快约1毫秒，仍未达标</h2><p>转换前后83个核对窗口的完整隐藏输出完全相同，160次业务推理的概率与原两层版逐值一致，行动/目标判断不变。但计算图的每项中位仍约53–57ms，全部80次均超过50ms，当前不能据此验收。</p><p class="bad">这条转换路线收益有限。全部原始观测保留，下一步需继续研究更小的执行表示或任务/模型拆分；独立新题质量、生成协同和完整500毫秒计算仍未验证。</p></section><section><h2>同一批完整单项计时</h2><div class="scroll"><table><tr><th>题目</th><th>原执行p50/p95/最大ms</th><th>计算图p50/p95/最大ms</th><th>计算图超过50ms</th></tr>''']
+    for cid in sorted({r['caseId'] for r in run['timing']}):
+        a=next(t for t in run['timing'] if t['arm']=='fast' and t['caseId']==cid)
+        b=next(t for t in run['timing'] if t['arm']=='compiled' and t['caseId']==cid)
+        parts.append(f'<tr><td>{e(cid)}</td><td>{a["p50Ms"]:.2f}/{a["p95Ms"]:.2f}/{a["maxMs"]:.2f}</td><td>{b["p50Ms"]:.2f}/{b["p95Ms"]:.2f}/{b["maxMs"]:.2f}</td><td>{b["over50msObservations"]}/20</td></tr>')
+    parts.append('</table></div><p>原执行有一次105.70ms观测，原样保留；p95不能隐藏超时。每项从输入准备前计到结果/尾部遥测写入完成，包含计算图输入检查；转换/加载/核对属于单列准备阶段。批末汇总在子进程wall中，监督器重放耗时未测。</p></section><section><h2>转换时做了哪些检查？</h2><p>一次trace前向、20组完整83窗口×两个方案共166次核对前向，总计167次准备前向另行记账。转换/保存/重载约136ms，完整核对约2.22秒；没有把准备时间写成0。实际转换图保存在D本地忽略目录，按原源编码器SHA、文件和图SHA识别。</p><p>图只支持CPU、单份输入、完整无padding窗口，使用前检查形状/类型/词表/掩码。未覆盖的输入明确拒绝。原池化与判断头保持同一计算；不升级为浏览器支持或游戏恢复验收。</p><p>仍只有4个反复使用的开发场景，重复20次只扩展延迟观察，不能扩称20倍独立新题或语义通过。行动描述、反应、共同结果和完整500ms均待验证。</p></section>')
+    parts.append(f'<section><details><summary>模型/计算图身份、准备耗时及全部分项</summary><pre>{e(json.dumps(run,ensure_ascii=False,indent=2))}</pre></details><details><summary>查看全部160次原始概率与计时</summary><pre>{e(json.dumps([{k:a[k] for k in ("arm","caseId","repeat","probabilities","decoded","elapsedIncludingTelemetryMs")} for a in record["attempts"]],ensure_ascii=False,indent=2))}</pre></details><p><a href="m01-fitting/{COMPILED_RUN}.plan.json">冻结计划</a> · <a href="m01-fitting/{COMPILED_RUN}.record.json.gz">完整记录</a> · <a href="m01-fitting/{COMPILED_RUN}.record.journal.jsonl.gz">业务事件</a> · <a href="m01-fitting/{COMPILED_RUN}.record.setup.jsonl.gz">全部准备前向</a> · <a href="l3-10-m01-compiled-summary.json">机器汇总</a> · <a href="l3-9-m01-input-results.html">上一批</a></p></section></main></html>')
+    return ''.join(parts)
+
+
+
 def main():
     p=argparse.ArgumentParser(description=__doc__);m=p.add_mutually_exclusive_group(required=True)
     m.add_argument('--check',action='store_true');m.add_argument('--write-new',action='store_true')
-    flavor=p.add_mutually_exclusive_group();flavor.add_argument('--event',action='store_true');flavor.add_argument('--journal',action='store_true');flavor.add_argument('--input',action='store_true');a=p.parse_args()
-    summary,files=build_input() if a.input else build_journal() if a.journal else build_event() if a.event else build()
+    flavor=p.add_mutually_exclusive_group();flavor.add_argument('--event',action='store_true');flavor.add_argument('--journal',action='store_true');flavor.add_argument('--input',action='store_true');flavor.add_argument('--compiled',action='store_true');a=p.parse_args()
+    summary,files=build_compiled() if a.compiled else build_input() if a.input else build_journal() if a.journal else build_event() if a.event else build()
     for path,raw in files.items():
         if path.exists() and path.read_bytes()!=raw:raise ValueError('report differs; preserve earlier version')
         if a.check and not path.exists():raise ValueError('report missing')

@@ -146,6 +146,40 @@ class PackingOptimizationTests(unittest.TestCase):
             shared.pack(shared.old.dataset()[0][0]['case'],self.CountingTokenizer(),mode='unknown')
 
 
+class CompiledInputTests(unittest.TestCase):
+    def valid(self,**changes):
+        args={'shapes':[[1,512]]*3,'dtypes':['torch.int64']*3,'devices':['cpu']*3,
+              'mask_all_ones':True,'types_valid':True,'ids_valid':True}
+        args.update(changes);return args
+
+    def test_only_complete_single_cpu_windows_are_accepted(self):
+        shared.validate_compiled_metadata(**self.valid())
+        shared.validate_compiled_metadata(**self.valid(shapes=[[1,3]]*3))
+        for shapes in ([[2,512]]*3,[[1,513]]*3,[[1,2]]*3,[[1,4],[1,3],[1,4]],[[512]]*3):
+            with self.assertRaisesRegex(ValueError,'shape'):shared.validate_compiled_metadata(**self.valid(shapes=shapes))
+
+    def test_padding_different_precision_or_unknown_ids_cannot_silently_enter_graph(self):
+        for change in ({'dtypes':['torch.float32']*3},{'devices':['mps']*3},
+                       {'mask_all_ones':False},{'types_valid':False},{'ids_valid':False}):
+            with self.assertRaises(ValueError):shared.validate_compiled_metadata(**self.valid(**change))
+
+    def test_adapter_checks_mask_before_executing_graph(self):
+        class Tensor:
+            def __init__(self,value):
+                self.value=value;self.shape=[1,4];self.dtype='torch.int64';self.device=mock.Mock(type='cpu')
+            def __eq__(self,x):return self.value==x
+            def __ge__(self,x):return self.value>=x
+            def __le__(self,x):return self.value<=x
+            def __lt__(self,x):return self.value<x
+        torch=mock.Mock();torch.all.side_effect=lambda x:x
+        module=mock.Mock(return_value='hidden')
+        adapter=shared.compiled_adapter(module,torch,21128);ids=Tensor(1);types=Tensor(0)
+        self.assertEqual(adapter(input_ids=ids,token_type_ids=types,attention_mask=Tensor(1)).last_hidden_state,'hidden')
+        module.assert_called_once_with(ids,types);module.reset_mock()
+        with self.assertRaises(ValueError):adapter(input_ids=ids,token_type_ids=types,attention_mask=Tensor(0))
+        module.assert_not_called()
+
+
 class SharedPlanTests(unittest.TestCase):
     def setUp(self):
         rows,_=shared.old.dataset();oldplan=shared.read_json(shared.OLD_PLAN)
@@ -186,13 +220,13 @@ class SharedPlanTests(unittest.TestCase):
 
 
 class SharedInterruptionTests(unittest.TestCase):
-    def test_stop_before_child_journal_keeps_all_eighty_unstarted_slots(self):
-        plan={'config':{'attemptsPerCase':5},'cases':[{'caseId':str(i)} for i in range(4)]}
+    def test_stop_before_child_journal_keeps_all_160_unstarted_slots(self):
+        plan={'config':{'attemptsPerCase':20},'cases':[{'caseId':str(i)} for i in range(4)]}
         with tempfile.TemporaryDirectory() as t:
             p=Path(t)/'plan.json';p.write_text(json.dumps(plan))
             r=shared.unstarted_record(plan,p)
-        self.assertEqual(len(r['attemptSlots']),80);self.assertEqual(r['unexecutedAttempts'],80)
-        self.assertEqual(len({(x['arm'],x['caseId'],x['repeat']) for x in r['attemptSlots']}),80)
+        self.assertEqual(len(r['attemptSlots']),160);self.assertEqual(r['unexecutedAttempts'],160)
+        self.assertEqual(len({(x['arm'],x['caseId'],x['repeat']) for x in r['attemptSlots']}),160)
 
     def test_interrupted_shared_arm_does_not_replace_completed_legacy_slot(self):
         done={'arm':'legacy','caseId':'case','repeat':0,'status':'complete'}
@@ -216,12 +250,12 @@ class SharedInterruptionTests(unittest.TestCase):
 
 class ExperimentEntryTests(unittest.TestCase):
     def test_status_and_default_do_not_import_models_or_write_plans(self):
-        with mock.patch.object(experiment,'read_json',return_value={'runs':[{'runId':'m01-input-dev42-20261103-r2','quality':{}}],'formalEvaluationAllowed':False,'fullRequest500msStatus':'unverified'}),mock.patch.dict(sys.modules,{'torch':None,'transformers':None}),mock.patch.object(shared,'prepare') as prepare,mock.patch.object(shared,'execute') as execute:
+        with mock.patch.object(experiment,'read_json',return_value={'runs':[{'runId':'m01-compiled-dev42-20261103-r1','quality':{}}],'formalEvaluationAllowed':False,'fullRequest500msStatus':'unverified'}),mock.patch.dict(sys.modules,{'torch':None,'transformers':None}),mock.patch.object(shared,'prepare') as prepare,mock.patch.object(shared,'execute') as execute:
             for args in ([],['status']):
                 output=io.StringIO()
                 with redirect_stdout(output):self.assertEqual(experiment.main(args),0)
                 status=json.loads(output.getvalue());self.assertFalse(status['modelExecutionPerformed'])
-                self.assertEqual(status['latestRun'],'m01-input-dev42-20261103-r2')
+                self.assertEqual(status['latestRun'],'m01-compiled-dev42-20261103-r1')
             prepare.assert_not_called();execute.assert_not_called()
 
     def test_prepare_and_execute_delegate_to_the_current_model(self):
@@ -237,7 +271,7 @@ class ExperimentEntryTests(unittest.TestCase):
     def test_check_runs_only_tests_and_report_verification(self):
         with mock.patch.object(experiment.subprocess,'run',return_value=mock.Mock(returncode=0)) as run,redirect_stdout(io.StringIO()):
             self.assertEqual(experiment.check(),0)
-        self.assertEqual(run.call_count,7)
+        self.assertEqual(run.call_count,8)
         for call in run.call_args_list:
             args=call.args[0]
             self.assertNotIn('--execute',args);self.assertNotIn('--prepare',args)

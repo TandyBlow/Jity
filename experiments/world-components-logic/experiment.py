@@ -241,10 +241,10 @@ def execute_plan(path,*,paths,verify,worker_script,settle_stages,arms):
 
 
 def status():
-    summary=read_json(ART/'l3-9-m01-input-summary.json');latest=summary['runs'][-1]
+    summary=read_json(ART/'l3-10-m01-compiled-summary.json');latest=summary['runs'][-1]
     result={'stage':'L3 exploratory offline validation','entrypoint':'experiments/world-components-logic/experiment.py',
             'implementation':'experiments/world-components-logic/m01_shared.py','latestRun':latest['runId'],
-            'resultPage':'artifacts/world-components-logic/l3-9-m01-input-results.html','quality':latest['quality'],
+            'resultPage':'artifacts/world-components-logic/l3-10-m01-compiled-results.html','quality':latest['quality'],
             'formalEvaluationAllowed':summary['formalEvaluationAllowed'],'fullRequest500msStatus':summary['fullRequest500msStatus'],
             'modelExecutionPerformed':False}
     print(json.dumps(result,ensure_ascii=False,indent=2));return 0
@@ -255,7 +255,8 @@ def check():
               *[[str(BASE/name),'--check'] for name in ('pilot_report.py','m01_report.py','m01_shared_report.py')],
               [str(BASE/'m01_shared_report.py'),'--event','--check'],
               [str(BASE/'m01_shared_report.py'),'--journal','--check'],
-              [str(BASE/'m01_shared_report.py'),'--input','--check']]
+              [str(BASE/'m01_shared_report.py'),'--input','--check'],
+              [str(BASE/'m01_shared_report.py'),'--compiled','--check']]
     env=dict(os.environ,PYTHONDONTWRITEBYTECODE='1')
     for args in commands:
         result=subprocess.run([sys.executable,*args],cwd=ROOT,env=env)

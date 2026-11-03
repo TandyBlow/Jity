@@ -11,20 +11,20 @@ python3 experiments/world-components-logic/experiment.py status
 python3 experiments/world-components-logic/experiment.py check
 ```
 
-`status`只读当前状态，`check`运行工程测试并核验五份历史结果报告和本批输入/执行报告，二者不导入模型、不训练或推理。实际新批次使用D独立环境：
+`status`只读当前状态，`check`运行工程测试并核验六份历史结果报告和本批计算图报告，二者不导入模型、不训练或推理。实际新批次使用D独立环境：
 
 ```bash
 .local/world-components-logic/venv/bin/python experiments/world-components-logic/experiment.py prepare NEW_RUN_ID
 .local/world-components-logic/venv/bin/python experiments/world-components-logic/experiment.py execute /absolute/NEW_RUN_ID.plan.json
 ```
 
-`prepare`核对本地模型/数据/环境并冻结新计划，不运行模型；`execute`在本批只加载固定检查点并真实推理，训练0步，须符合该批工作安排，使用新run-id且仍限CPU单线程、120秒/2048MiB。本次已按附批协议执行原分词、单次分词、快速分词及eager执行四臂比较；模型权重不变，分数一致性与耗时分别由`status`和结果页读取。旧计划绑定旧代码，不能用当前代码覆盖重跑；历史复现须恢复原提交与环境后登记新批次。
+`prepare`核对本地模型/数据/环境并冻结新计划，不运行模型；`execute`在本批只加载固定检查点并真实推理，训练0步，须符合该批工作安排，使用新run-id且仍限CPU单线程、120秒/2048MiB。本批比较原快速执行与FP32计算图：转换/核对属于准备，业务各20次/题；源权重和判断头不变，结果由`status`读取。转换图保存在D本地忽略目录，不入库。旧计划绑定旧代码，不能用当前代码覆盖重跑；历史复现须恢复原提交与环境后登记新批次。
 
 | 角色 | 文件/位置 | 维护方式 |
 |---|---|---|
 | 当前运行入口与公共流程 | `experiment.py` | 入口、资源监督、阶段计时、追加日志与中断只读重放共同复用 |
 | 当前模型实验实现 | `m01_shared.py` | 完整事实编码、候选融合和冻结模型推理，拟合历史由对应Git提交定位 |
-| 当前结果核验/展示 | `m01_shared_report.py`、`artifacts/world-components-logic/l3-9-*` | 报告核验原计划/记录，不以当前算法源码替代历史执行版本 |
+| 当前结果核验/展示 | `m01_shared_report.py`、`artifacts/world-components-logic/l3-10-*` | 报告核验原计划/记录，不以当前算法源码替代历史执行版本 |
 | 共享基础工具 | `lab.py`、`fact_windows.py`、`pilot_codec.py` | 守卫、事实编码和原输入核对，按实际职责维护 |
 | 历史模型入口 | `runtime_smoke.py`、`run_pilot.py`、`m01_probe.py`、`m01_infer.py` | 保留原记录/测试及被复用工具，不作为当前日常入口 |
 | 数据/审阅准备 | `data/`、`prepare_*`、`review_io.py` | 原资料及工具保留，按实际数据工作使用，不冒充模型能力 |

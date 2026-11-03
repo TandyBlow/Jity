@@ -251,4 +251,60 @@ class InputRuntimeReportTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,'policy changed'):self.check(plan=p)
 
 
+class CompiledReportTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        run=report.COMPILED_RUN;data=report.DATA
+        cls.plan=json.loads((data/(run+'.plan.json')).read_bytes())
+        cls.record=report.read_archive(data/(run+'.record.json.gz'))
+        cls.journal=data/(run+'.record.journal.jsonl.gz')
+        cls.setup=[json.loads(line) for line in gzip.decompress((data/(run+'.record.setup.jsonl.gz')).read_bytes()).splitlines()]
+        cls.baseline=report.read_archive(report.JOURNAL_BASE_RECORD)
+
+    def check(self,plan=None,record=None,setup=None):
+        return report.validate_compiled_run(plan or self.plan,record or self.record,self.journal,
+                                           setup or self.setup,self.baseline)
+
+    def test_full_160_attempts_and_167_setup_forwards_validate_without_promotion(self):
+        self.check();summary,files=report.build_compiled();run=summary['runs'][0]
+        self.assertEqual(run['setupForwardCalls'],167);self.assertEqual(run['businessForwardWindows'],640)
+        self.assertFalse(summary['semanticQualityApproved']);self.assertEqual(summary['fullRequest500msStatus'],'unverified')
+        self.assertTrue(all(t['over50msObservations']==20 for t in run['timing']))
+        for p,raw in files.items():self.assertEqual(p.read_bytes(),raw)
+
+    def test_omitted_setup_forward_or_wrong_shape_is_rejected(self):
+        es=copy.deepcopy(self.setup);es.pop()
+        with self.assertRaisesRegex(ValueError,'setup forward event count'):self.check(setup=es)
+        es=copy.deepcopy(self.setup);es[2]['window']['inputIds']=[101,102]
+        with self.assertRaisesRegex(ValueError,'setup input changed'):self.check(setup=es)
+
+    def test_changed_trace_count_or_artifact_identity_is_rejected(self):
+        es=copy.deepcopy(self.setup);es[1]['forwardCallsObserved']=0
+        with self.assertRaisesRegex(ValueError,'trace invocation'):self.check(setup=es)
+        r=copy.deepcopy(self.record);r['compiledArtifact']['sourceEncoderTensorSha256']='wrong'
+        with self.assertRaisesRegex(ValueError,'artifact identity'):self.check(record=r)
+
+    def test_hidden_mismatch_cannot_be_hidden_by_final_predictions(self):
+        r=copy.deepcopy(self.record);r['compiledHiddenAudit'][0]['allClose']=False
+        with self.assertRaisesRegex(ValueError,'hidden comparison'):self.check(record=r)
+        r=copy.deepcopy(self.record);r['compiledHiddenAudit'][0]['maxAbsoluteHiddenDelta']=.01
+        with self.assertRaisesRegex(ValueError,'exactness'):self.check(record=r)
+
+    def test_twenty_repeats_and_all_windows_cannot_be_dropped(self):
+        r=copy.deepcopy(self.record);r['attempts'].pop()
+        with self.assertRaises(ValueError):self.check(record=r)
+        r=copy.deepcopy(self.record);r['forwardAttempts'].pop()
+        with self.assertRaises(ValueError):self.check(record=r)
+
+    def test_changed_numeric_policy_is_rejected(self):
+        p=copy.deepcopy(self.plan);p['config']['hiddenAtol']=.1;p['configSha256']=report.shared.digest(p['config'])
+        with self.assertRaisesRegex(ValueError,'compiled policy'):self.check(plan=p)
+
+    def test_p95_does_not_remove_the_slow_observation_from_maximum(self):
+        summary,_=report.build_compiled()
+        row=next(t for t in summary['runs'][0]['timing'] if t['arm']=='fast' and t['caseId']=='dev-d03-06')
+        self.assertGreater(row['maxMs'],100);self.assertGreater(row['maxMs'],row['p95Ms'])
+        self.assertEqual(row['observations'],20);self.assertEqual(row['local50ms'],'fail')
+
+
 if __name__=='__main__':unittest.main()
