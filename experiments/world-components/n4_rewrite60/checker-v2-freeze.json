@@ -1,0 +1,34 @@
+{
+ "checker": "checker.py v2",
+ "v2Adds": [
+  "repeated-span",
+  "repeated-4gram",
+  "sentence-runaway",
+  "impossible-space"
+ ],
+ "v2Why": "v1 只查'不犯什么错'，放过了复读与崩裂的输出；四项阈值取自人工稿上界（重复片段 5 字 / 4 字串 2 次 / 单句 49 字）",
+ "sha256": "a1dabc460d99d39dec31d5a9de3d114a046463906d68b1578d61b344a0afbef7",
+ "world": "world.json",
+ "worldNames": 66,
+ "thresholds": {
+  "minChars": 60,
+  "copyRun": 8,
+  "contentMin": {
+   "outcome": 0.2,
+   "task_achieved": 0.2,
+   "subtask_added": 0.8
+  },
+  "maxRepeatedSpan": 8,
+  "max4gram": 2,
+  "maxSentence": 65
+ },
+ "calibration": {
+  "rows": 60,
+  "pass": 60
+ },
+ "tamper": {
+  "cases": 11,
+  "caught": 11
+ },
+ "registeredBeforeAnyModelRun": true
+}

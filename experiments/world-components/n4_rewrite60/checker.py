@@ -121,6 +121,35 @@ def check_row(row, world, cfg):
         V.append({"layer": 1, "code": "too-short",
                   "detail": f"正文只有 {len(n_text)} 字"})
 
+    # ---- 第一层补：复读与句子崩裂
+    flat = norm(text)
+    if len(flat) > 12:
+        worst, worst_span = 0, ""
+        for L in range(4, len(flat) // 2 + 1):
+            hit = next((flat[i:i + L] for i in range(len(flat) - L + 1)
+                        if flat.count(flat[i:i + L]) >= 2), None)
+            if hit:
+                worst, worst_span = L, hit
+        if worst > cfg["maxRepeatedSpan"]:
+            V.append({"layer": 1, "code": "repeated-span",
+                      "detail": f"连续 {worst} 字重复：{worst_span[:16]}"})
+    from collections import Counter as _C
+    c4 = _C(flat[i:i + 4] for i in range(max(0, len(flat) - 3)))
+    over = [(k, v) for k, v in c4.items() if v > cfg["max4gram"]]
+    if over:
+        k, v = max(over, key=lambda kv: kv[1])
+        V.append({"layer": 1, "code": "repeated-4gram",
+                  "detail": f"「{k}」重复 {v} 次"})
+    sents_all = [x for x in re.split(r"(?<=[。；！？])", text) if x.strip()]
+    long_s = [x for x in sents_all if len(norm(x)) > cfg["maxSentence"]]
+    if long_s:
+        V.append({"layer": 1, "code": "sentence-runaway",
+                  "detail": f"单句 {len(norm(long_s[0]))} 字，最长允许 {cfg['maxSentence']}"})
+    # 把人物放进物品里（"站在木桌的抽屉里"）
+    if re.search(r"(站在|坐在|走进|进入|钻进|陷进|落在)[^，。；]{0,10}的[^，。；]{0,4}(里|中)", text):
+        V.append({"layer": 1, "code": "impossible-space",
+                  "detail": "人物被放进了某个物品内部"})
+
     # ---- 第二层：抄袭输入（只查事实记录行）
     # 世界外貌描述本来就该复用（“厚纸簿，缺一页，边缘毛糙”写给模型就是要它
     # 用来描写），所以只查事实行被原样搬进正文。
@@ -294,6 +323,8 @@ def tamper(text, facts, world):
         # 删掉所有与结果原文有交集的句子（单句细节删改检出不了，见 KNOWN BLIND SPOTS）
         keep = [x for x in sents if coverage(key, x) == 0]
         out.append(("结果整段缺失", "".join(keep)))
+    out.append(("复读", t.rstrip("。") + "他站着，站着站着站着站着，站着站着站着站着。"))
+    out.append(("放进抽屉", t.rstrip("。") + "他站在木桌的抽屉里。"))
     return out
 
 
@@ -309,7 +340,10 @@ def main() -> int:
     #   3. 文笔、心理是否可信、比喻是否误导，一律不查
     cfg = {"minChars": 60, "copyRun": 8,
            "contentMin": {"outcome": 0.20, "task_achieved": 0.20,
-                          "subtask_added": 0.80}}
+                          "subtask_added": 0.80},
+           # 以下三项的上界也来自人工稿：最长重复片段 5 字、同一 4 字串最多 2 次、
+           # 单句最长 49 字。超过就说明在复读或句子已经拼接崩了。
+           "maxRepeatedSpan": 8, "max4gram": 2, "maxSentence": 65}
     world = load_world_names()
     rows = [json.loads(l) for l in CORPUS.read_text(encoding="utf-8").splitlines()
             if l.strip()]
@@ -342,7 +376,12 @@ def main() -> int:
     total = len(tamper(base["target"], base["facts"], world))
     if "--freeze" in sys.argv and len(fails) == 0 and caught == total:
         src = pathlib.Path(__file__).read_bytes()
-        rec = {"checker": "checker.py v1",
+        rec = {"checker": "checker.py v2",
+               "v2Adds": ["repeated-span", "repeated-4gram",
+                          "sentence-runaway", "impossible-space"],
+               "v2Why": "v1 只查'不犯什么错'，放过了复读与崩裂的输出；"
+                        "四项阈值取自人工稿上界（重复片段 5 字 / 4 字串 2 次 / "
+                        "单句 49 字）",
                "sha256": hashlib.sha256(src).hexdigest(),
                "world": str(WORLD.name),
                "worldNames": len(world["names"]),
@@ -350,9 +389,9 @@ def main() -> int:
                "calibration": {"rows": len(rows), "pass": len(rows) - len(fails)},
                "tamper": {"cases": total, "caught": caught},
                "registeredBeforeAnyModelRun": True}
-        (HERE / "checker-v1-freeze.json").write_text(
+        (HERE / "checker-v2-freeze.json").write_text(
             json.dumps(rec, ensure_ascii=False, indent=1), encoding="utf-8")
-        print("\n已冻结：checker-v1-freeze.json")
+        print("\n已冻结：checker-v2-freeze.json")
     return 0 if not fails and caught == 6 else 1
 
 
