@@ -158,20 +158,39 @@ def authorized_draft_data(authorization):
           'scope','configSha256','trainGroups','developmentGroups','humanLabelReviews','labelProvenance',
           'sourceIndependence','formalEvaluationAllowed','sourceRisksAcknowledged'}
     if not isinstance(authorization,dict) or set(authorization)!=keys:raise ValueError('explicit draft-run authorization record required')
-    rows=audited_candidate_rows();train=[r for r in rows if r['role']=='train_candidate'];dev=[r for r in rows if r['role']=='development_candidate']
-    if (authorization['schema']!='jity-d-realizer-draft-run-authorization-v1' or authorization['runId']!=FIT_RUN
-            or authorization['batchId']!=AUDIT_BATCH or authorization['packetSha256']!=packet_identity(rows,batch_id=AUDIT_BATCH)
-            or authorization['userInstruction']!='可以开始吧' or not isinstance(authorization['context'],str) or not authorization['context'].strip()
-            or authorization['sourceHead']!='3bb31434e44e58f0e0e513b1468ed4c67217bd36'
+    import realizer_expansion as expansion
+    profile=fit_profile(authorization['runId']);rows=profile['rows']
+    train=[r for r in rows if r['role']=='train_candidate'];dev=[r for r in rows if r['role']=='development_candidate']
+    if (authorization['schema']!='jity-d-realizer-draft-run-authorization-v1' or authorization['runId'] not in (FIT_RUN,expansion.RUN)
+            or authorization['batchId']!=profile['batchId'] or authorization['packetSha256']!=profile['packetSha256']
+            or authorization['userInstruction']!=profile['instruction'] or not isinstance(authorization['context'],str) or not authorization['context'].strip()
+            or authorization['sourceHead']!=profile['sourceHead']
             or not isinstance(authorization['authorizedAt'],str) or not authorization['authorizedAt'].strip()
             or authorization['scope']!='one_small_draft_fit_with_all_before_after_outputs_no_formal_claims'
-            or authorization['configSha256']!=digest(CONFIG)
+            or authorization['configSha256']!=digest(profile['config'])
             or authorization['humanLabelReviews']!=0 or authorization['labelProvenance']!='assistant_checked_draft_not_human_gold'
             or authorization['sourceIndependence']!='unverified' or authorization['formalEvaluationAllowed'] is not False
             or authorization['sourceRisksAcknowledged']!=['realizer-new-05','realizer-new-06']
-            or authorization['trainGroups']!=[r['sourceGroup'] for r in train]
-            or authorization['developmentGroups']!=[r['sourceGroup'] for r in dev]):raise ValueError('draft-run authorization scope/data drift')
+            or authorization['trainGroups']!=list(dict.fromkeys(r['sourceGroup'] for r in train))
+            or authorization['developmentGroups']!=list(dict.fromkeys(r['sourceGroup'] for r in dev))):raise ValueError('draft-run authorization scope/data drift')
     return train,dev
+
+
+def fit_profile(run_id):
+    import realizer_expansion as expansion
+    if run_id==expansion.RUN:
+        _,old_record=old.paths(FIT_RUN);checkpoint=run.read_json(old_record)['attempts'][0]['checkpoint']
+        return {'rows':expansion.rows(),'batchId':expansion.BATCH,'packetSha256':expansion.packet(),
+            'manifest':expansion.DATA/'source-manifest.json','config':{**CONFIG,'allowGroupedExamples':True},
+            'protocol':expansion.PROTOCOL,'instruction':'继续','sourceHead':expansion.HEAD,
+            'comparison':'previous_frozen_adapter_then_fresh_source_fit_all_48_first_outputs',
+            'baseline':{'checkpoint':checkpoint,'recordSha256':sha256_file(old_record)},'stage':'L3-18',
+            'page':'l3-18-realizer-expanded','materialCheck':expansion.materials}
+    return {'rows':audited_candidate_rows(),'batchId':AUDIT_BATCH,
+        'packetSha256':packet_identity(audited_candidate_rows(),batch_id=AUDIT_BATCH),'manifest':AUDIT_DATA/'source-manifest.json',
+        'config':CONFIG,'protocol':FIT_PROTOCOL,'instruction':'可以开始吧','sourceHead':'3bb31434e44e58f0e0e513b1468ed4c67217bd36',
+        'comparison':'all_twelve_before_fit_and_after_frozen_reload_first_generation_only','baseline':None,
+        'stage':'L3-17','page':'l3-17-realizer-fit','materialCheck':label_audit_materials}
 
 
 def admitted_training_data(plan):
@@ -179,7 +198,7 @@ def admitted_training_data(plan):
         if plan.get('reviewClaims') is not None or plan.get('humanLabelReviewedGroups')!=0:raise ValueError('draft authorization cannot fabricate human label review')
         train,dev=authorized_draft_data(plan.get('draftAuthorization'))
         if plan['runId']!=plan['draftAuthorization']['runId']:raise ValueError('authorization belongs to another run')
-        if plan.get('exploratoryProtocolSha256')!=sha256_file(FIT_PROTOCOL):raise ValueError('exploratory protocol drift')
+        if plan.get('exploratoryProtocolSha256')!=sha256_file(fit_profile(plan['runId'])['protocol']):raise ValueError('exploratory protocol drift')
         return train,dev
     if plan['purpose']!='reviewed_candidate_plan_to_text_adapter_fit_not_open_planner':raise ValueError('unknown training admission scope')
     return reviewed_data(plan['reviewClaims'])
@@ -232,7 +251,7 @@ def tokenize_example(tokenizer,row,config=CONFIG):
     y=tokenizer.encode(row['expressionDraft'],add_special_tokens=True,truncation=False)
     if not x or len(x)>config['maxInputTokens'] or not y or len(y)>config['maxTargetTokens']:raise ValueError('complete expression example exceeds registered token limits')
     if y[-1]!=tokenizer.eos_token_id:raise ValueError('target EOS missing')
-    return {'inputIds':x,'labels':y,'sourceGroup':row['sourceGroup'],'inputSha256':digest(realizer_payload(row)),'targetSha256':row['expressionSha256']}
+    return {'inputIds':x,'labels':y,'sourceGroup':row['sourceGroup'],'annotationId':row['annotationId'],'inputSha256':digest(realizer_payload(row)),'targetSha256':row['expressionSha256']}
 
 
 def collate(torch,examples,pad_id):
@@ -255,14 +274,19 @@ def fit_encoded_adapter(torch,model,examples,pad_id,config,checkpoint):
     """Shared numeric training loop; production callers gate reviewed data first."""
     model.eval()
     if not examples:raise ValueError('empty adapter training batch')
-    if len({e['sourceGroup'] for e in examples})!=len(examples):raise ValueError('training source duplicate')
+    if config.get('allowGroupedExamples'):
+        if any(not e.get('annotationId') for e in examples) or len({e['annotationId'] for e in examples})!=len(examples):raise ValueError('duplicate/missing grouped training annotation')
+    elif len({e['sourceGroup'] for e in examples})!=len(examples):raise ValueError('training source duplicate')
     params=[p for p in model.parameters() if p.requires_grad]
     if not params:raise ValueError('no learned adapter parameters')
     optimizer=torch.optim.AdamW(params,lr=config['learningRate'],weight_decay=config['weightDecay'])
     generator=torch.Generator().manual_seed(config['seed']);order=torch.randperm(len(examples),generator=generator).tolist();losses=[]
     for step in range(config['steps']):
         batch=[examples[order[(step*config['batchSize']+j)%len(order)]] for j in range(config['batchSize'])]
-        started=time.monotonic_ns();checkpoint('training_step_started',{'step':step+1,'sourceGroups':[e['sourceGroup'] for e in batch],'startedMonotonicNs':started})
+        payload={'step':step+1,'sourceGroups':[e['sourceGroup'] for e in batch],'startedMonotonicNs':time.monotonic_ns()}
+        started=payload['startedMonotonicNs']
+        if config.get('allowGroupedExamples'):payload['annotationIds']=[e['annotationId'] for e in batch]
+        checkpoint('training_step_started',payload)
         optimizer.zero_grad(set_to_none=True);output=model(**collate(torch,batch,pad_id));loss=output.loss
         if not torch.isfinite(loss):raise ValueError('nonfinite training loss')
         loss.backward();norm=torch.nn.utils.clip_grad_norm_(params,config['maxGradNorm'])
@@ -479,7 +503,7 @@ def training_plan(run_id,review_path=None,*,authorization_path=None):
     authorization=run.read_json(authorization_path) if authorization_path is not None else None
     train,dev=authorized_draft_data(authorization) if authorization_path is not None else reviewed_data(claims)
     if authorization_path is not None and run_id!=authorization['runId']:raise ValueError('authorization belongs to another run')
-    label_audit_materials()
+    profile=fit_profile(run_id);profile['materialCheck']()
     pp,rp=old.paths(run_id)
     if pp.exists() or rp.exists():raise FileExistsError('use a new training id')
     model=observe_m02(ROOT);environment=observe_environment(ROOT)
@@ -487,47 +511,50 @@ def training_plan(run_id,review_path=None,*,authorization_path=None):
     plan={'schema':'jity-d-realizer-training-plan-v1','runId':run_id,'preparedAt':timestamp(),
           'sourceHead':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
           'purpose':'user_authorized_draft_plan_to_text_exploratory_adapter_fit' if authorization_path is not None else 'reviewed_candidate_plan_to_text_adapter_fit_not_open_planner',
-          'config':CONFIG.copy(),'cases':[{'caseId':'m02-reviewed-realizer-fit'}],'arms':['fit'],
-          'code':{str((BASE/n).relative_to(ROOT)):sha256_file(BASE/n) for n in CODE},
+          'config':profile['config'].copy(),'cases':[{'caseId':'m02-reviewed-realizer-fit'}],'arms':['fit'],
+          'code':{str((BASE/n).relative_to(ROOT)):sha256_file(BASE/n) for n in CODE+(('realizer_expansion.py',) if profile['baseline'] else ())},
           'protocolSha256':sha256_file(PROTOCOL),'model':model,'environment':environment,
           'reviewClaims':claims,'reviewFileSha256':sha256_file(review_path) if review_path is not None else None,
-          'candidateBatchId':AUDIT_BATCH,'candidatePacketSha256':packet_identity(audited_candidate_rows(),batch_id=AUDIT_BATCH),
-          'candidateAuditManifestSha256':sha256_file(AUDIT_DATA/'source-manifest.json'),'trainGroups':[r['sourceGroup'] for r in train],
-          'developmentGroups':[r['sourceGroup'] for r in dev],'formalEvaluationAllowed':False,
+          'candidateBatchId':profile['batchId'],'candidatePacketSha256':profile['packetSha256'],
+          'candidateAuditManifestSha256':sha256_file(profile['manifest']),'trainGroups':list(dict.fromkeys(r['sourceGroup'] for r in train)),
+          'developmentGroups':list(dict.fromkeys(r['sourceGroup'] for r in dev)),'formalEvaluationAllowed':False,
           'sourceIndependence':'unverified','newIndependentTrainingGroups':0,'fullRequestMeasured':False}
     if authorization_path is not None:
         plan.update(draftAuthorization=authorization,authorizationFileSha256=sha256_file(authorization_path),
-                    exploratoryProtocolSha256=sha256_file(FIT_PROTOCOL),humanLabelReviewedGroups=0,
-                    outputComparison='all_twelve_before_fit_and_after_frozen_reload_first_generation_only')
+                    exploratoryProtocolSha256=sha256_file(profile['protocol']),humanLabelReviewedGroups=0,
+                    outputComparison=profile['comparison'])
+    if profile['baseline']:plan['baselineAdapter']=profile['baseline']
     exclusive(pp,plan);return pp
 
 
 def verify_training(plan):
+    profile=fit_profile(plan.get('runId',''))
     if (plan['purpose'] not in ('reviewed_candidate_plan_to_text_adapter_fit_not_open_planner','user_authorized_draft_plan_to_text_exploratory_adapter_fit')
-            or plan['config']!=CONFIG or plan['formalEvaluationAllowed'] is not False):raise ValueError('training scope/config drift')
+            or plan['config']!=profile['config'] or plan['formalEvaluationAllowed'] is not False):raise ValueError('training scope/config drift')
     train,dev=admitted_training_data(plan)
-    if plan['purpose'].startswith('user_authorized') and plan.get('outputComparison')!='all_twelve_before_fit_and_after_frozen_reload_first_generation_only':raise ValueError('before/after comparison scope drift')
-    label_audit_materials()
-    if (plan['trainGroups']!=[r['sourceGroup'] for r in train] or plan['developmentGroups']!=[r['sourceGroup'] for r in dev]
-            or plan.get('candidateBatchId')!=AUDIT_BATCH
-            or plan['candidatePacketSha256']!=packet_identity(audited_candidate_rows(),batch_id=AUDIT_BATCH)
-            or plan.get('candidateAuditManifestSha256')!=sha256_file(AUDIT_DATA/'source-manifest.json')):raise ValueError('training source/role drift')
+    if plan['purpose'].startswith('user_authorized') and plan.get('outputComparison')!=profile['comparison']:raise ValueError('before/after comparison scope drift')
+    profile['materialCheck']()
+    if (plan['trainGroups']!=list(dict.fromkeys(r['sourceGroup'] for r in train)) or plan['developmentGroups']!=list(dict.fromkeys(r['sourceGroup'] for r in dev))
+            or plan.get('candidateBatchId')!=profile['batchId'] or plan['candidatePacketSha256']!=profile['packetSha256']
+            or plan.get('candidateAuditManifestSha256')!=sha256_file(profile['manifest'])):raise ValueError('training source/role drift')
+    if profile['baseline']:
+        if plan.get('baselineAdapter')!=profile['baseline'] or sha256_file(ROOT/profile['baseline']['checkpoint']['path'])!=profile['baseline']['checkpoint']['sha256']:raise ValueError('frozen baseline adapter drift')
     if plan['protocolSha256']!=sha256_file(PROTOCOL):raise ValueError('training protocol drift')
     for name,h in plan['code'].items():
         if sha256_file(ROOT/name)!=h:raise ValueError('training code drift')
     if plan['model']!=observe_m02(ROOT) or plan['environment']!=observe_environment(ROOT):raise ValueError('training model/environment drift')
 
 
-def generate_expressions(torch,model,tokenizer,rows,phase,checkpoint):
+def generate_expressions(torch,model,tokenizer,rows,phase,checkpoint,config=CONFIG):
     from transformers.generation.stopping_criteria import MaxTimeCriteria,StoppingCriteriaList
     predictions=[]
     for row in rows:
         start=time.perf_counter();checkpoint('generation_started',{'annotationId':row['annotationId'],'role':row['role'],'phase':phase})
         text=input_text(row);input_ids=tokenizer.encode(text,add_special_tokens=True,truncation=False)
-        if not input_ids or len(input_ids)>CONFIG['maxInputTokens']:raise ValueError('complete generation input exceeds registered token limit')
+        if not input_ids or len(input_ids)>config['maxInputTokens']:raise ValueError('complete generation input exceeds registered token limit')
         ids=torch.tensor([input_ids]);count=[0];hook=model.register_forward_pre_hook(lambda *_:count.__setitem__(0,count[0]+1))
         try:
-            with torch.inference_mode():output=model.generate(input_ids=ids,attention_mask=torch.ones_like(ids),max_new_tokens=CONFIG['maxNewTokens'],do_sample=False,num_beams=1,
+            with torch.inference_mode():output=model.generate(input_ids=ids,attention_mask=torch.ones_like(ids),max_new_tokens=config['maxNewTokens'],do_sample=False,num_beams=1,
                 stopping_criteria=StoppingCriteriaList([MaxTimeCriteria(max_time=3)]))
         finally:hook.remove()
         tokens=output[0].tolist();raw=tokenizer.decode(tokens,skip_special_tokens=True)
@@ -535,7 +562,7 @@ def generate_expressions(torch,model,tokenizer,rows,phase,checkpoint):
         prediction={'annotationId':row['annotationId'],'sourceGroup':row['sourceGroup'],'role':row['role'],'phase':phase,
             'inputText':text,'inputTokenIds':input_ids,'inputSha256':digest(realizer_payload(row)),
             'raw':raw,'tokenIds':tokens,'modelTopForwardCalls':count[0],'eos':eos,
-            'stopStatus':'eos' if eos else 'max_new_tokens' if len(tokens)-1>=CONFIG['maxNewTokens'] else 'soft_time_or_other_incomplete',
+            'stopStatus':'eos' if eos else 'max_new_tokens' if len(tokens)-1>=config['maxNewTokens'] else 'soft_time_or_other_incomplete',
             'semanticReview':'pending_not_approved','scope':'provided_draft_plan_expression_only_not_open_planner',
             'elapsedMs':(time.perf_counter()-start)*1000}
         checkpoint('generation_output',prediction)
@@ -546,7 +573,7 @@ def generate_expressions(torch,model,tokenizer,rows,phase,checkpoint):
 
 
 def training_worker(path):
-    plan=run.read_json(path);_,out=old.paths(plan['runId']);slots=run.planned_slots(plan,('fit',))
+    plan=run.read_json(path);config=plan['config'];_,out=old.paths(plan['runId']);slots=run.planned_slots(plan,('fit',))
     report={'schema':'jity-d-realizer-training-record-v1','runId':plan['runId'],'planSha256':sha256_file(path),
         'status':'running','stages':[],'attempts':[],'attemptSlots':slots,'activeAttempt':None,'forwardAttempts':[],
         'trainingSteps':0,'businessGenerationCalls':0,'formalEvaluationAllowed':False,'semanticQualityApproved':False,'fullRequestMeasured':False}
@@ -555,11 +582,11 @@ def training_worker(path):
         stage('verify_training_admission_and_plan',lambda:verify_training(plan));train,dev=admitted_training_data(plan)
         import torch
         from transformers import T5ForConditionalGeneration,T5Tokenizer
-        torch.set_num_threads(1);torch.set_num_interop_threads(1);torch.manual_seed(CONFIG['seed'])
+        torch.set_num_threads(1);torch.set_num_interop_threads(1);torch.manual_seed(config['seed'])
         directory=ROOT/plan['model']['directory']
         tokenizer=stage('tokenizer',lambda:T5Tokenizer.from_pretrained(directory,local_files_only=True,extra_ids=0,legacy=True))
         model=stage('source_model',lambda:T5ForConditionalGeneration.from_pretrained(directory,local_files_only=True,weights_only=True).eval())
-        source_hash=old.tensor_hash(model.state_dict());report['topology']=install_lora(torch,model,CONFIG['rank'],CONFIG['alpha'])
+        source_hash=old.tensor_hash(model.state_dict());report['topology']=install_lora(torch,model,config['rank'],config['alpha'])
         phase={'name':'before_fit'};model_counts={};encoder_counts={}
         def increment(counts):counts[phase['name']]=counts.get(phase['name'],0)+1
         model_hook=model.register_forward_pre_hook(lambda *_:increment(model_counts))
@@ -573,15 +600,25 @@ def training_worker(path):
                 if name=='training_step_settled':report['trainingSteps']=payload['step']
                 if name=='generation_started':report['businessGenerationCalls']+=1
             # Each phase has its first complete output; no retry/best-output pick.
+            initial_adapter=adapter_state(model)
+            if plan.get('baselineAdapter'):
+                baseline=plan['baselineAdapter']['checkpoint']
+                restore_adapter(model,torch.load(ROOT/baseline['path'],map_location='cpu',weights_only=True))
+                if old.tensor_hash(adapter_state(model))!=baseline['tensorSha256']:raise ValueError('baseline tensor identity drift')
+                checkpoint('baseline_adapter_loaded',baseline)
             if plan['purpose'].startswith('user_authorized'):
-                a['beforePredictions']=generate_expressions(torch,model,tokenizer,train+dev,'before_fit',checkpoint)
+                a['beforePredictions']=generate_expressions(torch,model,tokenizer,train+dev,'before_fit',checkpoint,config)
+            if plan.get('baselineAdapter'):
+                restore_adapter(model,initial_adapter)
+                if old.tensor_hash(adapter_state(model))!=old.tensor_hash(initial_adapter):raise ValueError('fresh adapter reset mismatch')
+                checkpoint('fresh_adapter_restored',{'tensorSha256':old.tensor_hash(initial_adapter)})
             phase['name']='training'
-            a['losses']=fit_adapter(torch,model,tokenizer,train,CONFIG,checkpoint)
+            a['losses']=fit_adapter(torch,model,tokenizer,train,config,checkpoint)
             if old.tensor_hash(base_state(model))!=source_hash:raise ValueError('frozen source weights changed during fitting')
             a['checkpoint']=save_reload_adapter(torch,model,ROOT/'.local/world-components-logic/realizer-adapters'/plan['runId'],source_hash,checkpoint)
             adapter_hash=a['checkpoint']['tensorSha256']
             checkpoint('adapter_frozen',a['checkpoint']);phase['name']='after_fit'
-            a['predictions']=generate_expressions(torch,model,tokenizer,train+dev,'after_fit',checkpoint)
+            a['predictions']=generate_expressions(torch,model,tokenizer,train+dev,'after_fit',checkpoint,config)
             if old.tensor_hash(base_state(model))!=source_hash or old.tensor_hash(adapter_state(model))!=adapter_hash:raise ValueError('inference changed frozen model/adapter')
             model_hook.remove();encoder_hook.remove()
             a['modelTopForwardCallsByPhase']=model_counts;a['encoderForwardCallsByPhase']=encoder_counts
@@ -878,20 +915,19 @@ def label_audit_materials(write=False):
     return summary
 
 
-def observed_fit():
+def observed_fit(run_id=FIT_RUN):
     """Read-only evidence reconstruction; no weight load and no semantic judge."""
     import math
     import statistics
-    pp,rp=old.paths(FIT_RUN);plan=run.read_json(pp);record=run.read_json(rp)
+    profile=fit_profile(run_id);pp,rp=old.paths(run_id);plan=run.read_json(pp);record=run.read_json(rp)
     if record['planSha256']!=sha256_file(pp):raise ValueError('fit plan identity drift')
-    if plan['purpose']!='user_authorized_draft_plan_to_text_exploratory_adapter_fit' or plan['config']!=CONFIG or plan['formalEvaluationAllowed'] is not False:raise ValueError('fit scope drift')
+    if plan['purpose']!='user_authorized_draft_plan_to_text_exploratory_adapter_fit' or plan['config']!=profile['config'] or plan['formalEvaluationAllowed'] is not False:raise ValueError('fit scope drift')
     train,dev=admitted_training_data(plan);rows=train+dev
-    authorization_path=ART/'m01-fitting'/f'{FIT_RUN}.authorization.json'
+    authorization_path=ART/'m01-fitting'/f'{run_id}.authorization.json'
     if sha256_file(authorization_path)!=plan['authorizationFileSha256'] or run.read_json(authorization_path)!=plan['draftAuthorization']:raise ValueError('fit authorization evidence drift')
-    if (plan['candidatePacketSha256']!=packet_identity(audited_candidate_rows(),batch_id=AUDIT_BATCH)
-            or plan['candidateAuditManifestSha256']!=sha256_file(AUDIT_DATA/'source-manifest.json')):raise ValueError('fit source revision drift')
+    if (plan['candidatePacketSha256']!=profile['packetSha256'] or plan['candidateAuditManifestSha256']!=sha256_file(profile['manifest'])):raise ValueError('fit source revision drift')
     for name,h in plan['code'].items():verify_historical_file(ROOT/name,h)
-    verify_historical_file(PROTOCOL,plan['protocolSha256']);verify_historical_file(FIT_PROTOCOL,plan['exploratoryProtocolSha256'])
+    verify_historical_file(PROTOCOL,plan['protocolSha256']);verify_historical_file(profile['protocol'],plan['exploratoryProtocolSha256'])
     replay=copy.deepcopy(record);journal=rp.with_suffix('.journal.jsonl')
     if journal.exists():
         run.reconcile_journal(replay,journal,'read_only_result_check')
@@ -904,6 +940,7 @@ def observed_fit():
     train_groups={r['sourceGroup'] for r in train};exposures={r['sourceGroup']:0 for r in train}
     for step in starts:
         if len(step['sourceGroups'])!=2 or not set(step['sourceGroups'])<=train_groups:raise ValueError('development or unknown group used for gradient')
+        if profile['baseline'] and (len(step.get('annotationIds',[]))!=2 or any((a,g) not in {(r['annotationId'],r['sourceGroup']) for r in train} for a,g in zip(step['annotationIds'],step['sourceGroups']))):raise ValueError('wrong grouped example used for gradient')
         for group in step['sourceGroups']:exposures[group]+=1
     if any(not math.isfinite(s['loss']) or not math.isfinite(s['gradientNorm']) or s['elapsedThroughUpdateMs']<0 for s in steps):raise ValueError('invalid recorded training cost/loss')
     generations=[c['payload'] for c in events if c['name']=='generation_output'];begun=[c['payload'] for c in events if c['name']=='generation_started']
@@ -924,15 +961,19 @@ def observed_fit():
     checkpoint=next((c['payload'] for c in events if c['name']=='adapter_frozen'),None)
     counts=None
     if complete:
-        if (len(starts)!=80 or len(steps)!=80 or len(generations)!=24 or len(begun)!=24
+        if (len(starts)!=80 or len(steps)!=80 or len(generations)!=2*len(rows) or len(begun)!=2*len(rows)
                 or checkpoint is None or not record['sourceWeightsUnchanged'] or not record['sourceFilesUnchanged']
                 or record['supervisor']['stopReason'] is not None or record['supervisor']['exitCode']!=0):raise ValueError('completed fit missing required work')
         for phase,items in by_phase.items():
             if [p['annotationId'] for p in items]!=[r['annotationId'] for r in rows]:raise ValueError('fit phase omitted/reordered a source')
         counts=next(c['payload'] for c in events if c['name']=='model_forward_accounting')
         if counts['modelTopForwardCallsByPhase']!={'training':80,**{phase:sum(p['modelTopForwardCalls'] for p in items) for phase,items in by_phase.items()}}:raise ValueError('fit top forward count differs')
-        if counts['encoderForwardCallsByPhase']!={'training':80,'before_fit':12,'after_fit':12}:raise ValueError('fit encoder forward count differs')
+        if counts['encoderForwardCallsByPhase']!={'training':80,'before_fit':len(rows),'after_fit':len(rows)}:raise ValueError('fit encoder forward count differs')
         if record['attempts'][0]['losses']!=[s['loss'] for s in steps]:raise ValueError('fit loss snapshots differ')
+        if profile['baseline']:
+            baseline=next(c['payload'] for c in events if c['name']=='baseline_adapter_loaded')
+            if plan.get('baselineAdapter')!=profile['baseline'] or baseline!=profile['baseline']['checkpoint']:raise ValueError('fit comparison baseline drift')
+            if not any(c['name']=='fresh_adapter_restored' for c in events):raise ValueError('new fit did not reset source adapter')
     comparisons=[]
     for row in rows:
         pair={phase:next((p for p in items if p['annotationId']==row['annotationId']),None) for phase,items in by_phase.items()}
@@ -943,9 +984,9 @@ def observed_fit():
         'maxMs':max((p['elapsedIncludingOutputJournalMs'] for p in items),default=None),
         'eosOutputs':sum(p['eos'] for p in items),'exactReferenceStrings':sum(p['raw']==lookup[p['annotationId']]['expressionDraft'] for p in items)}
         for role in ('train_candidate','development_candidate')} for phase,predictions in by_phase.items()}
-    return {'schema':'jity-d-realizer-exploratory-fit-summary-v1','date':'2026-11-04','batchId':FIT_RUN,
+    summary={'schema':'jity-d-realizer-exploratory-fit-summary-v1','date':'2026-11-04','batchId':run_id,
         'stage':'L3-17 first user-authorized short-realizer draft fit and before/after outputs','runStatus':record['status'],
-        'lastModelRun':FIT_RUN,'draftSourceGroups':12,'review':reconcile_reviews(audited_candidate_rows(),batch_id=AUDIT_BATCH),
+        'lastModelRun':run_id,'draftSourceGroups':len({r['sourceGroup'] for r in rows}),'review':reconcile_reviews(audited_candidate_rows(),batch_id=AUDIT_BATCH) if not profile['baseline'] else {'reviewedGroups':0,'missingReviews':len(rows),'trainingDataReady':False,'formalEvaluationAllowed':False},
         'labelProvenance':'assistant_checked_draft_not_human_gold','userAuthorizedExploratoryFit':True,
         'trainingStepAttempts':len(starts),'trainingSteps':len(steps),'generationAttempts':len(begun),'generationsWithSavedOutputs':len(generations),
         'trainGroupExposures':exposures,'losses':[s['loss'] for s in steps],'trainingCosts':steps,
@@ -956,12 +997,17 @@ def observed_fit():
         'semanticReviewStatus':'assistant_output_review_separate_not_formal_approval',
         'supervisor':record['supervisor'],'preparationStages':record['stages'],
         'planSha256':sha256_file(pp),'recordSha256':sha256_file(rp),'journalSha256':sha256_file(journal) if journal.exists() else None}
+    if profile['baseline']:
+        summary.update(stage='L3-18 expanded draft data versus frozen first-fit adapter',baselineAdapter=profile['baseline'],
+                       trainingExamples=len(train),developmentExamples=len(dev),newSourceCandidateGroups=18,newExamples=36)
+        for p in comparisons:p['cohort']='new_training' if p['annotationId'].startswith('expanded-') and p['role']=='train_candidate' else 'new_development' if p['annotationId'].startswith('expanded-') else 'old_training' if p['role']=='train_candidate' else 'old_development_regression'
+    return summary
 
 
-def fit_materials(write=False):
+def fit_materials(write=False,run_id=FIT_RUN):
     import html
-    e=lambda v:html.escape(str(v));summary=observed_fit()
-    review_path=ART/'m01-fitting'/f'{FIT_RUN}.output-review.json'
+    profile=fit_profile(run_id);e=lambda v:html.escape(str(v));summary=observed_fit(run_id)
+    review_path=ART/'m01-fitting'/f'{run_id}.output-review.json'
     review=run.read_json(review_path)
     if (review.get('schema')!='jity-d-realizer-assistant-output-review-v1' or review.get('recordSha256')!=summary['recordSha256']
             or review.get('reviewer')!='assistant' or review.get('formalEvaluationAllowed') is not False):raise ValueError('output review identity/scope mismatch')
@@ -975,6 +1021,10 @@ def fit_materials(write=False):
     summary['assistantOutputReview']=review;summary['assistantOutputReviewSha256']=sha256_file(review_path)
     summary['assistantQualityCounts']={phase:{role:{v:sum(verdicts[(p['annotationId'],phase)]['verdict']==v for p in summary['comparisons'] if p['role']==role and p[phase] is not None)
         for v in ('candidate_correct','fail','uncertain')} for role in ('train_candidate','development_candidate')} for phase in ('before_fit','after_fit')}
+    if profile['baseline']:
+        summary['cohortQualityCounts']={phase:{cohort:{v:sum(verdicts[(p['annotationId'],phase)]['verdict']==v for p in summary['comparisons'] if p['cohort']==cohort) for v in ('candidate_correct','fail','uncertain')} for cohort in ('old_training','new_training','old_development_regression','new_development')} for phase in ('before_fit','after_fit')}
+        new_dev=[p for p in summary['comparisons'] if p['cohort']=='new_development']
+        summary['newDevelopmentGroupsAllVariantsCorrect']={phase:sum(all(verdicts[(p['annotationId'],phase)]['verdict']=='candidate_correct' for p in new_dev if p['sourceGroup']==g) for g in sorted({p['sourceGroup'] for p in new_dev})) for phase in ('before_fit','after_fit')}
     document='''<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'"><title>L3-17 首批真实短表达训练</title><style>body{margin:0;background:#f4f6f8;color:#20313e;font:16px/1.7 system-ui}main{max-width:1100px;margin:auto;padding:24px}section{background:#fff;padding:22px;border-radius:12px;margin:20px 0}pre{white-space:pre-wrap;overflow-wrap:anywhere}.warn{color:#a7352e}table{width:100%;border-collapse:collapse}td,th{padding:10px;text-align:left;border-bottom:1px solid #ddd}</style><main><p>D / L3-17 · 2026-11-04</p><h1>首批真实短表达训练：全部前后输出</h1>'''
     document+=f'<section><h2>实际做了什么</h2><p>按用户“可以开始吧”授权，以修订2的6条助手核对草稿训练、6条作开发检查。原77M底座冻结，只训练172,032个适配参数；实际完成{summary["trainingSteps"]}/80步，保存{summary["generationsWithSavedOutputs"]}/24次前后首次生成。状态：{e(summary["runStatus"])}。</p><p class="warn">标签仍为助手草稿，人工已审0；以下语义意见为助手预检。每侧仅6题，05/06同题型来源风险保留，不签独立泛化、开放规划或完整500ms。训练后能写句子也不等于能自主选择行动。</p><p>进程总耗时{summary["supervisor"]["wallMs"]/1000:.2f}秒，RSS{summary["supervisor"]["observedPeakResidentMiB"]:.2f}MiB；这是整批训练/准备/生成的成本，不是单次游戏响应时间。</p><details><summary>两阶段质量观察与完整局部耗时</summary><pre>{e(json.dumps({"assistant":summary["assistantQualityCounts"],"cost":summary["costObservations"]},ensure_ascii=False,indent=2))}</pre></details></section>'
     for item in summary['comparisons']:
@@ -986,7 +1036,13 @@ def fit_materials(write=False):
             document+=f'<h3>{label} · {e(v["verdict"])}</h3><p>{e(p["raw"])}</p><p>助手核对：{e(v["reason"])}</p><p>{p["elapsedIncludingOutputJournalMs"]:.2f}ms · {e(p["stopStatus"])} · 顶层前向{p["modelTopForwardCalls"]}次</p><details><summary>完整实际输入与原始token/计时</summary><pre>{e(json.dumps(p,ensure_ascii=False,indent=2))}</pre></details>'
         document+='</section>'
     document+=f'<section><details><summary>原始汇总、每步损失与运行身份</summary><pre>{e(json.dumps(summary,ensure_ascii=False,indent=2))}</pre></details><p><a href="l3-17-realizer-fit-summary.json">机器汇总</a> · <a href="m01-fitting/{FIT_RUN}.authorization.json">用户运行授权记录</a> · <a href="m01-fitting/{FIT_RUN}.plan.json">冻结计划</a> · <a href="m01-fitting/{FIT_RUN}.record.json">原始记录</a> · <a href="m01-fitting/{FIT_RUN}.record.journal.jsonl">全部事件</a> · <a href="m01-fitting/{FIT_RUN}.output-review.json">助手逐项输出核对</a> · <a href="l3-16-label-audit.html">原数据核对</a></p></section></main></html>'
-    files={ART/'l3-17-realizer-fit-summary.json':(json.dumps(summary,ensure_ascii=False,indent=2)+'\n').encode(),ART/'l3-17-realizer-fit.html':document.encode()}
+    if profile['baseline']:
+        document=document.replace('L3-17','L3-18').replace('首批真实短表达训练','扩充样本训练对照').replace(FIT_RUN,run_id).replace('l3-17-realizer-fit',profile['page'])
+        document=document.replace('按用户“可以开始吧”授权，以修订2的6条助手核对草稿训练、6条作开发检查。','按用户“继续”授权，新增18组36条相关变体。30条训练、12条新开发、6条旧开发回归；旧开发不进训练。前阶段为上批冻结适配层，后阶段为从相同原底座重新初始化、训练80步的新适配层。')
+        document=document.replace('/24次前后首次生成','/96次两臂首次生成').replace('每侧仅6题','相关变体按组不跨边，来源未核')
+        document=document.replace('训练前 ·','旧模型 ·').replace('训练后 ·','扩充训练模型 ·')
+        document=document.replace('</h1>','</h1><section><h2>新旧开发分开观察</h2><pre>'+e(json.dumps({'cohorts':summary['cohortQualityCounts'],'newGroupsBothCorrect':summary['newDevelopmentGroupsAllVariantsCorrect']},ensure_ascii=False,indent=2))+'</pre><p>新开发12条属于6组，两个变体都对才计该组一致；这些仍是助手草稿预检，不签独立泛化或500ms。</p></section>',1)
+    files={ART/(profile['page']+'-summary.json'):(json.dumps(summary,ensure_ascii=False,indent=2)+'\n').encode(),ART/(profile['page']+'.html'):document.encode()}
     for path,raw in files.items():
         if path.exists() and path.read_bytes()!=raw:raise ValueError('preserve original fit report: '+str(path))
         if not write and not path.exists():raise ValueError('fit report missing')
@@ -997,7 +1053,10 @@ def fit_materials(write=False):
     return summary
 
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('--worker',type=Path);p.add_argument('--numeric-check',action='store_true');p.add_argument('--check-materials',action='store_true');p.add_argument('--check-smoke',action='store_true');p.add_argument('--check-audit',action='store_true');p.add_argument('--check-fit',action='store_true');a=p.parse_args()
+    p=argparse.ArgumentParser();p.add_argument('--worker',type=Path);p.add_argument('--numeric-check',action='store_true');p.add_argument('--check-materials',action='store_true');p.add_argument('--check-smoke',action='store_true');p.add_argument('--check-audit',action='store_true');p.add_argument('--check-fit',action='store_true');p.add_argument('--check-expanded',action='store_true');a=p.parse_args()
+    if a.check_expanded:
+        import realizer_expansion as expansion
+        expansion.materials();s=fit_materials(run_id=expansion.RUN);print(json.dumps({'trainingSteps':s['trainingSteps'],'generationAttempts':s['generationAttempts'],'formalEvaluationAllowed':False}));raise SystemExit(0)
     if a.check_fit:
         s=fit_materials();print(json.dumps({'trainingSteps':s['trainingSteps'],'generationAttempts':s['generationAttempts'],'formalEvaluationAllowed':False}));raise SystemExit(0)
     if a.check_audit:

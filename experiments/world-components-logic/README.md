@@ -2,7 +2,7 @@
 
 ## 当前从这里开始（2026-11-04）
 
-日常使用`experiment.py`一个入口。当前L3-17已按用户“可以开始吧”授权完成首批真实草稿训练：6训练/6开发、80步、24次前后生成；原底座冻结，适配层已存盘重载。助手输出预检训练6/6合理，开发3/6合理、3项明显错误，完整500ms未通过；[当前结果页](../../artifacts/world-components-logic/l3-17-realizer-fit.html)。人工标签已审仍0、来源未核，授权记录与人工标签意见分开。
+日常使用`experiment.py`一个入口。当前L3-18扩18组36条关联变体后，30训练/18检查、80步及96次对照完成。助手预检新开发4合理/6错/2含糊，6组仅1组双变体均合理；旧开发仍3/6且有语序退化，质量/完整500ms未通过。[当前结果页](../../artifacts/world-components-logic/l3-18-realizer-expanded.html)。人审0/来源未核，旧证据保留。
 
 从仓库根目录运行：
 
@@ -12,6 +12,8 @@ python3 experiments/world-components-logic/experiment.py check
 python3 experiments/world-components-logic/experiment.py train-data
 python3 experiments/world-components-logic/experiment.py train-audit
 python3 experiments/world-components-logic/experiment.py train-report
+python3 experiments/world-components-logic/experiment.py train-expand
+python3 experiments/world-components-logic/experiment.py train-report --run-id m02-realizer-expanded-20261104-r1
 ```
 
 `status`区分最新工程/数据批与最近业务模型批；`check`运行工程测试、九份历史模型报告及L3-13至17材料/训练记录核验，不加载预训练模型。数值单元测试使用随机小模型，不运行M02。`train-data`保留r1历史核验，`train-audit`核r2数据，`train-report`核本次真实拟合及全24输出；`--write-new`只新建相同材料，拒绝覆盖异稿。以下prepare/execute仍是历史L3-12诊断，不能当成新规划器训练命令：
@@ -183,3 +185,9 @@ python3 experiments/world-components-logic/m01_shared_report.py --check
 真实r1：80优化步，24生成；顶层调用before102/training80/after171，encoder12/80/12；14.42秒/RSS1337.77MiB、CPU1，原文件/底座SHA不变，适配层存档仅在D忽略目录。训练后助手预检训练6条合理、开发3条合理/3条错，错误为04缺对象、08人物/接收关系混乱、10物品/步骤错误。局部82–164ms，完整500ms/正式质量未验；开发题已公开，不当独立封存。
 
 `train-report`只读重放原日志、校验训练组隔离/全部尝试/输入/token/输出与助手意见；`--write-new`只新建结果材料。再次execute原计划会因原记录存在而拒绝，不会续训或重采样。新训练需另行登记相应数据/授权，当前授权绑定本次唯一runId。权重不入库，没有浏览器或生产接线。
+
+## 扩充样本与冻结模型对照（2026-11-04）
+
+`realizer_expansion.py`只管理18组/36条新草稿及来源，训练/日志/报告继续复用`plan_training.py`。30训练含原6条与新24条；18开发含原6条已曝光回归和12新条。相关变体按sourceGroup不跨边，annotationId唯一，逐步同时登记；旧失败开发不进训练，全部来源仍未核实。
+
+用户“继续”授权本轮有界探索。runId为m02-realizer-expanded-20261104-r1，先加载上批冻结适配层比较，再精确恢复新初始化重训80步，非续训。原M02底座冻结/超参/资源保护不变；96次生成、80优化步、全部失败/含糊/退化保留。结果见[新旧对照](../../artifacts/world-components-logic/l3-18-realizer-expanded.html)及[协议](../../design/world-engine-reports/components-logic/realizer-expansion-protocol.md)。`train-expand`只读/只新建，`train-report --run-id`核指定批次；`check`同时核L3-18，需使用D独立venv运行完整检查，系统Python可能没有实验依赖。权重/本地依赖不入库。

@@ -249,13 +249,14 @@ def execute_plan(path,*,paths,verify,worker_script,settle_stages,arms):
 
 
 def status():
+    expanded=(ART/'l3-18-realizer-expanded-summary.json').exists()
     fit=(ART/'l3-17-realizer-fit-summary.json').exists()
     audit=(ART/'l3-16-label-audit-summary.json').exists()
     smoke=(ART/'l3-15-realizer-smoke-summary.json').exists()
-    summary=read_json(ART/('l3-17-realizer-fit-summary.json' if fit else 'l3-16-label-audit-summary.json' if audit else 'l3-15-realizer-smoke-summary.json' if smoke else 'l3-14-realizer-training-readiness-summary.json'))
+    summary=read_json(ART/('l3-18-realizer-expanded-summary.json' if expanded else 'l3-17-realizer-fit-summary.json' if fit else 'l3-16-label-audit-summary.json' if audit else 'l3-15-realizer-smoke-summary.json' if smoke else 'l3-14-realizer-training-readiness-summary.json'))
     result={'stage':summary['stage'],'entrypoint':'experiments/world-components-logic/experiment.py',
             'implementation':'experiments/world-components-logic/plan_training.py','latestBatch':summary['batchId'],
-            'lastModelRun':summary['lastModelRun'],'resultPage':'artifacts/world-components-logic/'+('l3-17-realizer-fit.html' if fit else 'l3-16-label-audit.html' if audit else 'l3-15-realizer-smoke.html' if smoke else 'l3-14-realizer-training-readiness.html'),
+            'lastModelRun':summary['lastModelRun'],'resultPage':'artifacts/world-components-logic/'+('l3-18-realizer-expanded.html' if expanded else 'l3-17-realizer-fit.html' if fit else 'l3-16-label-audit.html' if audit else 'l3-15-realizer-smoke.html' if smoke else 'l3-14-realizer-training-readiness.html'),
             'draftSourceGroups':summary['draftSourceGroups'],'review':summary['review'],
             'realizerTrainerImplemented':summary.get('realizerTrainerImplemented',False),'inspection':summary.get('inspection'),
             'syntheticTrainingCheck':summary.get('realModelSyntheticCheck'),
@@ -280,7 +281,7 @@ def check():
               [str(BASE/'plan_training.py'),'--check-materials'],
               [str(BASE/'plan_training.py'),'--check-smoke'],
               [str(BASE/'plan_training.py'),'--check-audit'],
-              [str(BASE/'plan_training.py'),'--check-fit']]
+              [str(BASE/'plan_training.py'),'--check-fit'],[str(BASE/'plan_training.py'),'--check-expanded']]
     env=dict(os.environ,PYTHONDONTWRITEBYTECODE='1')
     for args in commands:
         result=subprocess.run([sys.executable,*args],cwd=ROOT,env=env)
@@ -300,6 +301,8 @@ def main(argv=None):
     training_data.add_argument('--write-new',action='store_true')
     label_audit=sub.add_parser('train-audit',help='twelve-label assistant precheck and corrected r2 candidates; no models')
     label_audit.add_argument('--write-new',action='store_true')
+    expansion=sub.add_parser('train-expand',help='expanded grouped draft supervision data; no model execution')
+    expansion.add_argument('--write-new',action='store_true')
     inspection=sub.add_parser('train-inspect',help='prepare or execute no-business M02 adapter inspection')
     inspection_group=inspection.add_mutually_exclusive_group(required=True)
     inspection_group.add_argument('--prepare');inspection_group.add_argument('--execute',type=Path)
@@ -312,11 +315,15 @@ def main(argv=None):
     sub.add_parser('train-execute',help='execute a previously frozen reviewed training batch').add_argument('plan',type=Path)
     fit_report=sub.add_parser('train-report',help='read-only first fit outputs and assistant review report')
     fit_report.add_argument('--write-new',action='store_true')
+    fit_report.add_argument('--run-id',default='m02-realizer-fit-20261104-r1')
     sub.add_parser('prepare',help='freeze the historical L3-12 diagnostic; current work uses plan-data').add_argument('run_id')
     sub.add_parser('execute',help='run inference on a frozen current batch; no training').add_argument('plan',type=Path)
     args=parser.parse_args(argv)
     if args.command in (None,'status'):return status()
     if args.command=='check':return check()
+    if args.command=='train-expand':
+        import realizer_expansion
+        print(json.dumps(realizer_expansion.materials(write=args.write_new),ensure_ascii=False));return 0
     if args.command=='plan-data':
         import action_plan
         s=action_plan.prepare_materials(write=args.write_new)
@@ -339,7 +346,7 @@ def main(argv=None):
             return plan_training.execute_inspection(args.execute)
         if args.command=='train-prepare':print(plan_training.training_plan(args.run_id,args.reviews,authorization_path=args.authorization));return 0
         if args.command=='train-report':
-            s=plan_training.fit_materials(write=args.write_new);print(json.dumps({'batchId':s['batchId'],'trainingSteps':s['trainingSteps'],'generationAttempts':s['generationAttempts']},ensure_ascii=False));return 0
+            s=plan_training.fit_materials(write=args.write_new,run_id=args.run_id);print(json.dumps({'batchId':s['batchId'],'trainingSteps':s['trainingSteps'],'generationAttempts':s['generationAttempts']},ensure_ascii=False));return 0
         return plan_training.execute_training(args.plan)
     import action_chain
     if args.command=='prepare':print(action_chain.prepare(args.run_id));return 0

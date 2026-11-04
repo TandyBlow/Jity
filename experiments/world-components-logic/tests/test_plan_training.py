@@ -219,6 +219,68 @@ class TrainingPreparationTests(unittest.TestCase):
             self.assertEqual(result.returncode,0,result.stderr)
             self.assertEqual(json.loads(result.stdout)['trainingSteps'],80)
 
+    def test_expansion_has_eighteen_groups_with_paired_variants_on_the_same_side(self):
+        import realizer_expansion as x
+        rows=x.new_rows();self.assertEqual(len(rows),36)
+        self.assertEqual(len({r['sourceGroup'] for r in rows}),18)
+        for group in {r['sourceGroup'] for r in rows}:
+            siblings=[r for r in rows if r['sourceGroup']==group]
+            self.assertEqual({r['variant'] for r in siblings},{'a','b'})
+            self.assertEqual(len({r['role'] for r in siblings}),1)
+            self.assertEqual(siblings[1]['sourceCase']['derivedFrom'],siblings[0]['annotationId'])
+        for row in rows:
+            self.assertFalse(row['trainingEligible']);self.assertFalse(trainer.contract.validate_candidate(row['sourceCase'],row['planDraft'])['semanticApproved'])
+
+    def test_expansion_keeps_old_development_out_of_training_and_binds_current_authorization(self):
+        import realizer_expansion as x
+        auth=trainer.run.read_json(x.ART/'m01-fitting'/f'{x.RUN}.authorization.json')
+        train,dev=trainer.authorized_draft_data(auth)
+        self.assertEqual((len(train),len(dev)),(30,18))
+        self.assertFalse(set(r['sourceGroup'] for r in train)&set(r['sourceGroup'] for r in dev))
+        self.assertTrue(all(r['annotationId'] not in {a['annotationId'] for a in train} for r in trainer.audited_candidate_rows() if r['role']=='development_candidate'))
+        profile=trainer.fit_profile(x.RUN)
+        self.assertEqual(profile['baseline']['checkpoint'],trainer.observed_fit()['checkpoint'])
+        self.assertEqual(profile['config']['steps'],80);self.assertTrue(profile['config']['allowGroupedExamples'])
+        bad=copy.deepcopy(auth);bad['trainGroups'].append(dev[-1]['sourceGroup'])
+        with self.assertRaises(ValueError):trainer.authorized_draft_data(bad)
+
+    def test_expanded_complete_token_inputs_and_targets_fit_without_truncation(self):
+        import realizer_expansion as x
+        record=trainer.run.read_json(x.ART/'l3-18-expanded-tokenizer-check.json')
+        self.assertEqual(record['packetSha256'],x.packet());self.assertEqual(len(record['examples']),48)
+        self.assertEqual(record['neuralForwardCalls'],0);self.assertFalse(record['neuralModelLoaded'])
+        self.assertLessEqual(record['maxInputTokens'],256);self.assertLessEqual(record['maxTargetTokens'],64)
+        for row,encoded in zip(x.rows(),record['examples']):
+            self.assertEqual(encoded['annotationId'],row['annotationId'])
+            self.assertEqual(encoded['inputSha256'],trainer.digest(trainer.realizer_payload(row)))
+            self.assertEqual(encoded['labels'][-1],1)
+
+    def test_expanded_run_accounts_for_variants_baseline_reset_and_all_ninety_six_outputs(self):
+        import realizer_expansion as x
+        s=trainer.observed_fit(x.RUN)
+        self.assertEqual((s['trainingSteps'],s['generationAttempts'],s['generationsWithSavedOutputs']),(80,96,96))
+        self.assertEqual(s['modelForwardCounts']['encoderForwardCallsByPhase'],{'before_fit':48,'training':80,'after_fit':48})
+        self.assertEqual(len(s['trainGroupExposures']),18);self.assertEqual(sum(s['trainGroupExposures'].values()),160)
+        self.assertEqual(s['baselineAdapter']['checkpoint'],trainer.observed_fit()['checkpoint'])
+        for p in s['comparisons']:self.assertEqual(p['before_fit']['inputTokenIds'],p['after_fit']['inputTokenIds'])
+        self.assertFalse(s['formalEvaluationAllowed']);self.assertEqual(s['newIndependentTrainingGroups'],0)
+
+    def test_expanded_report_preserves_regressions_uncertainty_and_group_denominator(self):
+        import realizer_expansion as x
+        s=trainer.fit_materials(run_id=x.RUN);counts=s['cohortQualityCounts']
+        self.assertEqual(counts['after_fit']['old_development_regression']['candidate_correct'],3)
+        self.assertEqual(counts['after_fit']['new_development'],{'candidate_correct':4,'fail':6,'uncertain':2})
+        self.assertEqual(s['newDevelopmentGroupsAllVariantsCorrect'],{'before_fit':0,'after_fit':1})
+        self.assertEqual(sum(counts['after_fit']['new_development'].values()),12)
+        self.assertEqual(s['review']['missingReviews'],48)
+
+    def test_expanded_report_is_deterministic_without_loading_models(self):
+        import os
+        for seed in ('0','9'):
+            result=subprocess.run([sys.executable,str(trainer.BASE/'plan_training.py'),'--check-expanded'],capture_output=True,text=True,timeout=30,
+                env={**os.environ,'PYTHONHASHSEED':seed,'PYTHONDONTWRITEBYTECODE':'1'})
+            self.assertEqual(result.returncode,0,result.stderr)
+
     def test_tokenization_retains_complete_separate_input_and_target(self):
         tokenizer=Tokenizer();row=self.rows[0]
         encoded=trainer.tokenize_example(tokenizer,row,{**trainer.CONFIG,'maxInputTokens':10000,'maxTargetTokens':10000})
