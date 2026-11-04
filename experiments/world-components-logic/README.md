@@ -2,7 +2,7 @@
 
 ## 当前从这里开始（2026-11-04）
 
-日常使用`experiment.py`一个入口。当前L3-18扩18组36条关联变体后，30训练/18检查、80步及96次对照完成。助手预检新开发4合理/6错/2含糊，6组仅1组双变体均合理；旧开发仍3/6且有语序退化，质量/完整500ms未通过。[当前结果页](../../artifacts/world-components-logic/l3-18-realizer-expanded.html)。人审0/来源未核，旧证据保留。
+日常使用`experiment.py`一个入口。当前L3-19在上批冻结模型上比较整段/逐步表达，18开发例×2臂×3次=108尝试/123生成，训练0步。13单步控制不变；5多步题整段1合理、逐步0合理且更慢，暂不采用直接拆分。[当前结果页](../../artifacts/world-components-logic/l3-19-realizer-steps.html)。质量/完整500ms仍未通过，人审0/来源未核，旧证据保留。
 
 从仓库根目录运行：
 
@@ -191,3 +191,9 @@ python3 experiments/world-components-logic/m01_shared_report.py --check
 `realizer_expansion.py`只管理18组/36条新草稿及来源，训练/日志/报告继续复用`plan_training.py`。30训练含原6条与新24条；18开发含原6条已曝光回归和12新条。相关变体按sourceGroup不跨边，annotationId唯一，逐步同时登记；旧失败开发不进训练，全部来源仍未核实。
 
 用户“继续”授权本轮有界探索。runId为m02-realizer-expanded-20261104-r1，先加载上批冻结适配层比较，再精确恢复新初始化重训80步，非续训。原M02底座冻结/超参/资源保护不变；96次生成、80优化步、全部失败/含糊/退化保留。结果见[新旧对照](../../artifacts/world-components-logic/l3-18-realizer-expanded.html)及[协议](../../design/world-engine-reports/components-logic/realizer-expansion-protocol.md)。`train-expand`只读/只新建，`train-report --run-id`核指定批次；`check`同时核L3-18，需使用D独立venv运行完整检查，系统Python可能没有实验依赖。权重/本地依赖不入库。
+
+## 冻结模型的完整计划/逐步表达诊断（2026-11-04）
+
+`realizer_steps.py`只投影给定步骤、保序保留模型原文，运行复用统一生成函数/监督/哈希日志；不以程序补角色、动作、成功结果或连接词。原18开发题、上批固定权重、单线程/并发1不变。`experiment.py realizer-steps --prepare NEW_ID`固定计划，`--execute PLAN`真实推理，`--report`只读核记录/助手意见并新建报告；当前唯一注册id为m02-realizer-steps-20261104-r1，原记录不可覆盖。`realizer_steps.py --check`不加载模型，`check`同时核此批。
+
+实际108整项/123生成、3重复/题/臂，802事件。13单步控制输入/原文一致，5多步whole1合理/steps0合理；多步完整成本中位97.37→143.31ms，最大114.07→176.57ms。原模型不改/训练0步，质量未通过；只有表达输入职责改变，没有上游开放规划或完整500ms/浏览器生产结果。完整[协议](../../design/world-engine-reports/components-logic/realizer-step-protocol.md)和[结果](../../artifacts/world-components-logic/l3-19-realizer-steps.html)保留失败、所有子调用/重复及原始计时。

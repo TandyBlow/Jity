@@ -249,14 +249,15 @@ def execute_plan(path,*,paths,verify,worker_script,settle_stages,arms):
 
 
 def status():
+    steps=(ART/'l3-19-realizer-steps-summary.json').exists()
     expanded=(ART/'l3-18-realizer-expanded-summary.json').exists()
     fit=(ART/'l3-17-realizer-fit-summary.json').exists()
     audit=(ART/'l3-16-label-audit-summary.json').exists()
     smoke=(ART/'l3-15-realizer-smoke-summary.json').exists()
-    summary=read_json(ART/('l3-18-realizer-expanded-summary.json' if expanded else 'l3-17-realizer-fit-summary.json' if fit else 'l3-16-label-audit-summary.json' if audit else 'l3-15-realizer-smoke-summary.json' if smoke else 'l3-14-realizer-training-readiness-summary.json'))
+    summary=read_json(ART/('l3-19-realizer-steps-summary.json' if steps else 'l3-18-realizer-expanded-summary.json' if expanded else 'l3-17-realizer-fit-summary.json' if fit else 'l3-16-label-audit-summary.json' if audit else 'l3-15-realizer-smoke-summary.json' if smoke else 'l3-14-realizer-training-readiness-summary.json'))
     result={'stage':summary['stage'],'entrypoint':'experiments/world-components-logic/experiment.py',
             'implementation':'experiments/world-components-logic/plan_training.py','latestBatch':summary['batchId'],
-            'lastModelRun':summary['lastModelRun'],'resultPage':'artifacts/world-components-logic/'+('l3-18-realizer-expanded.html' if expanded else 'l3-17-realizer-fit.html' if fit else 'l3-16-label-audit.html' if audit else 'l3-15-realizer-smoke.html' if smoke else 'l3-14-realizer-training-readiness.html'),
+            'lastModelRun':summary['lastModelRun'],'resultPage':'artifacts/world-components-logic/'+('l3-19-realizer-steps.html' if steps else 'l3-18-realizer-expanded.html' if expanded else 'l3-17-realizer-fit.html' if fit else 'l3-16-label-audit.html' if audit else 'l3-15-realizer-smoke.html' if smoke else 'l3-14-realizer-training-readiness.html'),
             'draftSourceGroups':summary['draftSourceGroups'],'review':summary['review'],
             'realizerTrainerImplemented':summary.get('realizerTrainerImplemented',False),'inspection':summary.get('inspection'),
             'syntheticTrainingCheck':summary.get('realModelSyntheticCheck'),
@@ -281,7 +282,8 @@ def check():
               [str(BASE/'plan_training.py'),'--check-materials'],
               [str(BASE/'plan_training.py'),'--check-smoke'],
               [str(BASE/'plan_training.py'),'--check-audit'],
-              [str(BASE/'plan_training.py'),'--check-fit'],[str(BASE/'plan_training.py'),'--check-expanded']]
+              [str(BASE/'plan_training.py'),'--check-fit'],[str(BASE/'plan_training.py'),'--check-expanded'],
+              [str(BASE/'realizer_steps.py'),'--check']]
     env=dict(os.environ,PYTHONDONTWRITEBYTECODE='1')
     for args in commands:
         result=subprocess.run([sys.executable,*args],cwd=ROOT,env=env)
@@ -316,11 +318,20 @@ def main(argv=None):
     fit_report=sub.add_parser('train-report',help='read-only first fit outputs and assistant review report')
     fit_report.add_argument('--write-new',action='store_true')
     fit_report.add_argument('--run-id',default='m02-realizer-fit-20261104-r1')
+    steps=sub.add_parser('realizer-steps',help='frozen whole versus ordered step expression diagnostic')
+    step_mode=steps.add_mutually_exclusive_group(required=True)
+    step_mode.add_argument('--prepare');step_mode.add_argument('--execute',type=Path)
+    step_mode.add_argument('--report',action='store_true')
     sub.add_parser('prepare',help='freeze the historical L3-12 diagnostic; current work uses plan-data').add_argument('run_id')
     sub.add_parser('execute',help='run inference on a frozen current batch; no training').add_argument('plan',type=Path)
     args=parser.parse_args(argv)
     if args.command in (None,'status'):return status()
     if args.command=='check':return check()
+    if args.command=='realizer-steps':
+        import realizer_steps
+        if args.prepare:print(realizer_steps.prepare(args.prepare));return 0
+        if args.execute:return realizer_steps.execute(args.execute)
+        s=realizer_steps.materials(write=True);print(json.dumps({'attempts':s['attemptCount'],'generationCalls':s['generationCalls'],'trainingSteps':0}));return 0
     if args.command=='train-expand':
         import realizer_expansion
         print(json.dumps(realizer_expansion.materials(write=args.write_new),ensure_ascii=False));return 0
