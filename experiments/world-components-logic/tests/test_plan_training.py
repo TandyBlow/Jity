@@ -144,6 +144,81 @@ class TrainingPreparationTests(unittest.TestCase):
             (Path(d)/'candidates.jsonl').write_text('unrelated data')
             with self.assertRaisesRegex(ValueError,'preserve delivered label audit'):trainer.label_audit_materials(write=True)
 
+    def authorization(self):
+        return trainer.run.read_json(trainer.ART/'m01-fitting'/f'{trainer.FIT_RUN}.authorization.json')
+
+    def test_recorded_user_authorization_keeps_drafts_and_zero_human_reviews(self):
+        auth=self.authorization();train,dev=trainer.authorized_draft_data(auth)
+        self.assertEqual(len(train),6);self.assertEqual(len(dev),6)
+        self.assertEqual(auth['humanLabelReviews'],0);self.assertFalse(auth['formalEvaluationAllowed'])
+        self.assertTrue(all(not r['trainingEligible'] for r in train+dev))
+        with self.assertRaises(ValueError):trainer.reviewed_data(auth)
+
+    def test_authorization_cannot_expand_data_config_run_or_formal_claims(self):
+        for key,value in (('runId','another-run'),('batchId',trainer.BATCH),('packetSha256','0'*64),
+                          ('configSha256','0'*64),('humanLabelReviews',12),('formalEvaluationAllowed',True),
+                          ('sourceRisksAcknowledged',[]),('trainGroups',[]),('userInstruction','')):
+            auth=self.authorization();auth[key]=value
+            with self.assertRaisesRegex(ValueError,'scope/data drift'):trainer.authorized_draft_data(auth)
+
+    def test_explicit_authorization_plan_freezes_before_after_without_fabricated_review(self):
+        auth=self.authorization()
+        with tempfile.TemporaryDirectory() as d:
+            path=Path(d)/'plan.json';receipt=Path(d)/'authorization.json';receipt.write_text(json.dumps(auth))
+            with mock.patch.object(trainer.old,'paths',return_value=(path,Path(d)/'record.json')),mock.patch.object(trainer,'observe_m02',return_value={'allSixFilesFullyRehashedAndVerified':True}),mock.patch.object(trainer,'observe_environment',return_value={'registeredVersionsMatch':True}):
+                trainer.training_plan(trainer.FIT_RUN,authorization_path=receipt);plan=json.loads(path.read_text());trainer.verify_training(plan)
+                self.assertIsNone(plan['reviewClaims']);self.assertEqual(plan['humanLabelReviewedGroups'],0)
+                self.assertIn('before_fit_and_after',plan['outputComparison'])
+                bad=copy.deepcopy(plan);bad['humanLabelReviewedGroups']=12
+                with self.assertRaisesRegex(ValueError,'fabricate'):trainer.verify_training(bad)
+
+    def test_absent_or_wrong_run_authorization_refuses_before_dependencies_or_plan_write(self):
+        with self.assertRaisesRegex(ValueError,'choose reviewed'):trainer.training_plan('none')
+        path=trainer.ART/'m01-fitting'/f'{trainer.FIT_RUN}.authorization.json'
+        with mock.patch.object(trainer,'observe_m02') as model,mock.patch.object(trainer.old,'paths') as paths:
+            with self.assertRaisesRegex(ValueError,'another run'):trainer.training_plan('another-run',authorization_path=path)
+            model.assert_not_called();paths.assert_not_called()
+
+    def test_real_fit_archive_accounts_for_all_optimizer_steps_sources_and_first_outputs(self):
+        s=trainer.observed_fit()
+        self.assertEqual(s['trainingSteps'],80);self.assertEqual(s['generationAttempts'],24)
+        self.assertEqual(s['generationsWithSavedOutputs'],24);self.assertTrue(s['realizerTrained'])
+        self.assertEqual(sum(s['trainGroupExposures'].values()),160)
+        self.assertEqual(s['modelForwardCounts']['encoderForwardCallsByPhase'],{'before_fit':12,'training':80,'after_fit':12})
+        self.assertEqual(s['review']['reviewedGroups'],0);self.assertFalse(s['formalEvaluationAllowed'])
+        self.assertFalse(s['semanticQualityApproved']);self.assertEqual(s['fullRequest500msStatus'],'unverified')
+        for pair in s['comparisons']:
+            self.assertEqual(pair['before_fit']['inputTokenIds'],pair['after_fit']['inputTokenIds'])
+
+    def test_assistant_output_review_keeps_three_development_failures_and_punctuation_variants(self):
+        s=trainer.fit_materials();counts=s['assistantQualityCounts']
+        self.assertEqual(counts['after_fit']['train_candidate']['candidate_correct'],6)
+        self.assertEqual(counts['after_fit']['development_candidate'],{'candidate_correct':3,'fail':3,'uncertain':0})
+        failed={d['annotationId'] for d in s['assistantOutputReview']['decisions'] if d['phase']=='after_fit' and d['verdict']=='fail'}
+        self.assertEqual(failed,{'realizer-new-04','realizer-new-08','realizer-new-10'})
+        self.assertEqual(counts['before_fit']['development_candidate']['candidate_correct'],0)
+        self.assertFalse(s['semanticQualityApproved'])
+
+    def test_fit_training_source_or_saved_prediction_tampering_is_rejected(self):
+        _,path=trainer.old.paths(trainer.FIT_RUN);original=trainer.run.read_json
+        for mode in ('source','prediction'):
+            record=original(path)
+            if mode=='source':
+                event=next(c for c in record['attempts'][0]['checkpoints'] if c['name']=='training_step_started')
+                event['payload']['sourceGroups'][0]='d-realizer-new-source-02'
+            else:record['attempts'][0]['predictions'][0]['raw']='invented corrected output'
+            def read(p):return copy.deepcopy(record) if p==path else original(p)
+            with mock.patch.object(trainer.run,'read_json',side_effect=read):
+                with self.assertRaisesRegex(ValueError,'journal reconstruction'):trainer.observed_fit()
+
+    def test_fit_report_is_stable_across_process_hash_seeds_without_running_model(self):
+        import os
+        for seed in ('0','9'):
+            result=subprocess.run([sys.executable,str(trainer.BASE/'plan_training.py'),'--check-fit'],capture_output=True,text=True,timeout=20,
+                env={**os.environ,'PYTHONHASHSEED':seed,'PYTHONDONTWRITEBYTECODE':'1'})
+            self.assertEqual(result.returncode,0,result.stderr)
+            self.assertEqual(json.loads(result.stdout)['trainingSteps'],80)
+
     def test_tokenization_retains_complete_separate_input_and_target(self):
         tokenizer=Tokenizer();row=self.rows[0]
         encoded=trainer.tokenize_example(tokenizer,row,{**trainer.CONFIG,'maxInputTokens':10000,'maxTargetTokens':10000})
@@ -248,6 +323,32 @@ class TrainingPreparationTests(unittest.TestCase):
 
 
 class NumericImplementationTests(unittest.TestCase):
+    def test_expression_generation_never_reads_target_and_logs_phase_tokens_and_stopping(self):
+        python=trainer.ROOT/'.local/world-components-logic/venv/bin/python'
+        code=r'''
+import sys,json
+sys.path.insert(0,sys.argv[1])
+import torch
+import plan_training as t
+torch.set_num_threads(1)
+class Tokenizer:
+ eos_token_id=1
+ def encode(self,text,**kw):assert kw=={'add_special_tokens':True,'truncation':False};return [3,4,1]
+ def decode(self,tokens,**kw):return 'numeric fixture output'
+class Numeric(torch.nn.Module):
+ def forward(self,input_ids):return input_ids
+ def generate(self,input_ids,**kw):self(input_ids);return torch.tensor([[0,8,1]])
+row=t.audited_candidate_rows()[0];row['expressionDraft']=object()
+events=[];result=t.generate_expressions(torch,Numeric(),Tokenizer(),[row],'before_fit',lambda n,p:events.append((n,p)))
+assert result[0]['eos'] and result[0]['stopStatus']=='eos' and result[0]['modelTopForwardCalls']==1
+assert result[0]['phase']=='before_fit' and result[0]['inputTokenIds']==[3,4,1]
+assert [n for n,p in events]==['generation_started','generation_output','generation_timing']
+assert result[0]['elapsedIncludingOutputJournalMs']>=result[0]['elapsedMs']
+print(json.dumps({'targetNeverRead':True,'phaseAndRawTokensSaved':True,'pretrainedModelUsed':False}))
+'''
+        result=subprocess.run([str(python),'-c',code,str(BASE)],capture_output=True,text=True,timeout=30)
+        self.assertEqual(result.returncode,0,result.stderr);self.assertTrue(json.loads(result.stdout)['targetNeverRead'])
+
     def test_complete_t5_forward_backward_disk_reload_and_token_equivalence_on_random_tiny_model(self):
         # Random tiny T5, not the pretrained M02 and not a business source.
         python=trainer.ROOT/'.local/world-components-logic/venv/bin/python'

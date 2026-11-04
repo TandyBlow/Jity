@@ -2,7 +2,7 @@
 
 ## 当前从这里开始（2026-11-04）
 
-日常使用`experiment.py`一个入口。当前L3-16已由助手逐项核对12组，修正10号缺失灯具/灯芯位置为r2；11项未发现阻断矛盾。参考句/表达输入及原6训练/6开发不变，05/06同题型来源风险保留。人工已审仍0/12、业务训练0。此前L3-15真实M02合成通路通过，最近业务结果仍L3-12失败，完整500ms未通过；[当前核对页](../../artifacts/world-components-logic/l3-16-label-audit.html)。
+日常使用`experiment.py`一个入口。当前L3-17已按用户“可以开始吧”授权完成首批真实草稿训练：6训练/6开发、80步、24次前后生成；原底座冻结，适配层已存盘重载。助手输出预检训练6/6合理，开发3/6合理、3项明显错误，完整500ms未通过；[当前结果页](../../artifacts/world-components-logic/l3-17-realizer-fit.html)。人工标签已审仍0、来源未核，授权记录与人工标签意见分开。
 
 从仓库根目录运行：
 
@@ -11,9 +11,10 @@ python3 experiments/world-components-logic/experiment.py status
 python3 experiments/world-components-logic/experiment.py check
 python3 experiments/world-components-logic/experiment.py train-data
 python3 experiments/world-components-logic/experiment.py train-audit
+python3 experiments/world-components-logic/experiment.py train-report
 ```
 
-`status`区分最新工程/数据批与最近业务模型批；`check`运行工程测试、九份模型历史报告、L3-13/14材料、L3-15记录和L3-16核对/修订数据核验，不加载预训练模型。数值单元测试使用随机小模型，不运行M02。`train-data`保留r1历史核验，`train-audit`核当前r2与逐项理由；`--write-new`只新建相同材料，拒绝覆盖异稿。当前没有已审核的动作计划训练实例；以下prepare/execute仍是历史L3-12诊断，不能当成新规划器训练命令：
+`status`区分最新工程/数据批与最近业务模型批；`check`运行工程测试、九份历史模型报告及L3-13至17材料/训练记录核验，不加载预训练模型。数值单元测试使用随机小模型，不运行M02。`train-data`保留r1历史核验，`train-audit`核r2数据，`train-report`核本次真实拟合及全24输出；`--write-new`只新建相同材料，拒绝覆盖异稿。以下prepare/execute仍是历史L3-12诊断，不能当成新规划器训练命令：
 
 ```bash
 .local/world-components-logic/venv/bin/python experiments/world-components-logic/experiment.py prepare NEW_RUN_ID
@@ -173,3 +174,12 @@ python3 experiments/world-components-logic/m01_shared_report.py --check
 `train-audit`只读核对记录和`data/action-plan-training/r2/`，`--write-new`新建材料；核对规则/逐项理由见[说明](../../design/world-engine-reports/components-logic/label-audit.md)。只有10号补初始灯具和灯芯嵌套位置、更新计划basis/哈希，12条表达输入/标签保持原文。原r1/sourceGroup/split不改，05/06同源风险保留；助手核对不会生成真实人工意见或训练实例。
 
 `train-prepare --reviews`及`train-execute`现在按r2批次/packet/annotation及修订manifest核验；完整旧r1意见也不能打开新训练。缺r2意见仍在加载模型前拒绝。原r1材料及L3-15原执行源码可从固定Git身份核验，未追溯修改。本次业务模型/训练0，语义和500ms无新结果。
+
+
+## 首批真实短表达探索训练（2026-11-04）
+
+用户在知悉样本少/人工未审后“可以开始吧”，据此新增窄范围`--authorization`入口，和`--reviews`互斥。authorization只说明唯一runId/r2 packet/配置/6+6组/来源风险/正式许可false，不生成逐题人工同意。当前固定80步、全12条训练前后各首次生成，不按开发答案调参/早停。原人工review路径和未授权拒绝仍保留，旧批次材料不追溯改写。执行依据见[探索协议](../../design/world-engine-reports/components-logic/realizer-exploratory-fit-protocol.md)。
+
+真实r1：80优化步，24生成；顶层调用before102/training80/after171，encoder12/80/12；14.42秒/RSS1337.77MiB、CPU1，原文件/底座SHA不变，适配层存档仅在D忽略目录。训练后助手预检训练6条合理、开发3条合理/3条错，错误为04缺对象、08人物/接收关系混乱、10物品/步骤错误。局部82–164ms，完整500ms/正式质量未验；开发题已公开，不当独立封存。
+
+`train-report`只读重放原日志、校验训练组隔离/全部尝试/输入/token/输出与助手意见；`--write-new`只新建结果材料。再次execute原计划会因原记录存在而拒绝，不会续训或重采样。新训练需另行登记相应数据/授权，当前授权绑定本次唯一runId。权重不入库，没有浏览器或生产接线。
