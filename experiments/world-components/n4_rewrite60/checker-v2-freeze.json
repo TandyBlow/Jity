@@ -7,7 +7,7 @@
   "impossible-space"
  ],
  "v2Why": "v1 只查'不犯什么错'，放过了复读与崩裂的输出；四项阈值取自人工稿上界（重复片段 5 字 / 4 字串 2 次 / 单句 49 字）",
- "sha256": "a1dabc460d99d39dec31d5a9de3d114a046463906d68b1578d61b344a0afbef7",
+ "sha256": "ced975ede6c5041790284ca8b1de2d45ab7d1a3f3405df4f4622611f1f2b6cf1",
  "world": "world.json",
  "worldNames": 66,
  "thresholds": {

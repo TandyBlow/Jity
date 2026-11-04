@@ -146,9 +146,16 @@ def check_row(row, world, cfg):
         V.append({"layer": 1, "code": "sentence-runaway",
                   "detail": f"单句 {len(norm(long_s[0]))} 字，最长允许 {cfg['maxSentence']}"})
     # 把人物放进物品里（"站在木桌的抽屉里"）
-    if re.search(r"(站在|坐在|走进|进入|钻进|陷进|落在)[^，。；]{0,10}的[^，。；]{0,4}(里|中)", text):
-        V.append({"layer": 1, "code": "impossible-space",
-                  "detail": "人物被放进了某个物品内部"})
+    # 只查"人物"被放进物品里：动词前 6 个字内必须有人的名字或代词，
+    # 否则"雨落在院子里的水沟里"这类写景会误判。
+    for m in re.finditer(r"(站在|坐在|走进|进入|钻进|陷进)[^，。；]{0,10}的[^，。；]{0,4}(里|中)",
+                         text):
+        head = text[max(0, m.start() - 6):m.start()]
+        if any(w in head for w in ("他", "她", "沈砚")) or any(
+                n in head for n in char_names):
+            V.append({"layer": 1, "code": "impossible-space",
+                      "detail": f"人物被放进物品内部：{m.group(0)[:14]}"})
+            break
 
     # ---- 第二层：抄袭输入（只查事实记录行）
     # 世界外貌描述本来就该复用（“厚纸簿，缺一页，边缘毛糙”写给模型就是要它
