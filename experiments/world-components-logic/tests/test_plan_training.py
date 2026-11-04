@@ -81,10 +81,68 @@ class TrainingPreparationTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'human reviewer'):trainer.reconcile_reviews(self.rows,c)
 
     def test_complete_synthetic_claims_preserve_six_train_six_dev_only(self):
-        train,dev=trainer.reviewed_data(self.claims())
+        with self.assertRaisesRegex(ValueError,'superseded'):trainer.reviewed_data(self.claims())
+        rows=trainer.audited_candidate_rows();claims=self.claims()
+        claims.update(batchId=trainer.AUDIT_BATCH,packetSha256=trainer.packet_identity(rows,batch_id=trainer.AUDIT_BATCH),
+            decisions=[{'annotationId':r['annotationId'],'annotationSha256':trainer.digest(r),'decision':'agree','note':'synthetic test fixture only'} for r in rows])
+        train,dev=trainer.reviewed_data(claims)
         self.assertEqual(len(train),6);self.assertEqual(len(dev),6)
         self.assertFalse({r['sourceGroup'] for r in train}&{r['sourceGroup'] for r in dev})
         self.assertFalse(trainer.reconcile_reviews(self.rows,self.claims())['formalEvaluationAllowed'])
+
+    def test_audited_revision_repairs_missing_lamp_and_preserves_all_expression_inputs(self):
+        revised=trainer.audited_candidate_rows();changed=[]
+        for old,new in zip(self.rows,revised):
+            if old!=new:changed.append(old['annotationId'])
+            self.assertEqual(old['sourceGroup'],new['sourceGroup']);self.assertEqual(old['role'],new['role'])
+            self.assertEqual(old['expressionDraft'],new['expressionDraft'])
+            self.assertEqual(trainer.input_text(old),trainer.input_text(new))
+            self.assertFalse(new['trainingEligible']);self.assertEqual(new['sourceIndependence'],'unverified')
+            self.assertFalse(trainer.contract.validate_candidate(new['sourceCase'],new['planDraft'])['semanticApproved'])
+        self.assertEqual(changed,['realizer-new-10'])
+        before=self.rows[9];after=revised[9];items=after['sourceCase']['input']['world']['items']
+        self.assertEqual(before['sourceCase']['input']['world']['items'][0]['position']['containerId'],'loc_a')
+        self.assertEqual(items[0]['position']['containerId'],items[2]['id'])
+        self.assertIn('冷却',items[2]['appearance']);self.assertIn('松开',items[2]['appearance'])
+        self.assertEqual(after['revisionOfAnnotationSha256'],trainer.digest(before))
+        for pointer in ('/world/items/0','/world/items/2'):
+            self.assertIn(pointer,after['planDraft']['basis'])
+            self.assertIn(trainer.contract.resolve_pointer(after['sourceCase']['input'],pointer),items)
+
+    def test_assistant_precheck_never_opens_human_review_or_training(self):
+        audit=trainer.label_audit_materials()
+        self.assertEqual(audit['checkedAnnotations'],12);self.assertEqual(audit['correctedSourceInputs'],1)
+        self.assertEqual(audit['review']['reviewedGroups'],0);self.assertFalse(audit['review']['trainingDataReady'])
+        self.assertEqual(audit['newIndependentTrainingGroups'],0)
+        self.assertFalse(any(e['humanReviewPerformed'] for e in audit['entries']))
+        with self.assertRaises(ValueError):trainer.reviewed_data(audit)
+        self.assertEqual(audit['sourceRisks'][0]['caseIds'],['realizer-new-05','realizer-new-06'])
+
+    def test_old_batch_claims_cannot_approve_new_context_revision(self):
+        with self.assertRaisesRegex(ValueError,'batch drift'):
+            trainer.reconcile_reviews(trainer.audited_candidate_rows(),self.claims(),batch_id=trainer.AUDIT_BATCH)
+
+    def test_future_training_plan_binds_revised_source_and_audit_without_executing_model(self):
+        rows=trainer.audited_candidate_rows();claims=self.claims()
+        claims.update(batchId=trainer.AUDIT_BATCH,packetSha256=trainer.packet_identity(rows,batch_id=trainer.AUDIT_BATCH),
+            decisions=[{'annotationId':r['annotationId'],'annotationSha256':trainer.digest(r),'decision':'agree','note':'synthetic test fixture only'} for r in rows])
+        with tempfile.TemporaryDirectory() as d:
+            path=Path(d)/'plan.json';review=Path(d)/'unit-receipt.json';review.write_text(json.dumps(claims))
+            with mock.patch.object(trainer.old,'paths',return_value=(path,Path(d)/'record.json')),mock.patch.object(trainer,'observe_m02',return_value={'allSixFilesFullyRehashedAndVerified':True}),mock.patch.object(trainer,'observe_environment',return_value={'registeredVersionsMatch':True}):
+                trainer.training_plan('unit-fixture-not-a-business-run',review);plan=json.loads(path.read_text());trainer.verify_training(plan)
+                self.assertEqual(plan['candidateBatchId'],trainer.AUDIT_BATCH)
+                self.assertEqual(plan['candidateAuditManifestSha256'],trainer.sha256_file(trainer.AUDIT_DATA/'source-manifest.json'))
+                self.assertFalse(plan['formalEvaluationAllowed'])
+
+    def test_audit_materials_are_stable_across_hash_seeds_and_cannot_overwrite_other_revision(self):
+        import os
+        for seed in ('0','9'):
+            result=subprocess.run([sys.executable,str(trainer.BASE/'plan_training.py'),'--check-audit'],capture_output=True,text=True,timeout=20,
+                env={**os.environ,'PYTHONHASHSEED':seed,'PYTHONDONTWRITEBYTECODE':'1'})
+            self.assertEqual(result.returncode,0,result.stderr)
+        with tempfile.TemporaryDirectory() as d,mock.patch.object(trainer,'AUDIT_DATA',Path(d)):
+            (Path(d)/'candidates.jsonl').write_text('unrelated data')
+            with self.assertRaisesRegex(ValueError,'preserve delivered label audit'):trainer.label_audit_materials(write=True)
 
     def test_tokenization_retains_complete_separate_input_and_target(self):
         tokenizer=Tokenizer();row=self.rows[0]

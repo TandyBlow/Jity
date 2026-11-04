@@ -2,7 +2,7 @@
 
 ## 当前从这里开始（2026-11-04）
 
-日常使用`experiment.py`一个入口。当前L3-15已在真实M02上跑通合成数字前向/反向、适配层磁盘存档、清空后重载和完整输出一致性；2合成优化步/22前向不计业务训练。12组新来源仍0/12复核，业务训练0。`action_plan.py`保留L3-13契约/旧10组草稿，原42意见、新90卡不变。最近业务实测仍L3-12失败，完整500ms未通过；[当前结果页](../../artifacts/world-components-logic/l3-15-realizer-smoke.html)。
+日常使用`experiment.py`一个入口。当前L3-16已由助手逐项核对12组，修正10号缺失灯具/灯芯位置为r2；11项未发现阻断矛盾。参考句/表达输入及原6训练/6开发不变，05/06同题型来源风险保留。人工已审仍0/12、业务训练0。此前L3-15真实M02合成通路通过，最近业务结果仍L3-12失败，完整500ms未通过；[当前核对页](../../artifacts/world-components-logic/l3-16-label-audit.html)。
 
 从仓库根目录运行：
 
@@ -10,9 +10,10 @@
 python3 experiments/world-components-logic/experiment.py status
 python3 experiments/world-components-logic/experiment.py check
 python3 experiments/world-components-logic/experiment.py train-data
+python3 experiments/world-components-logic/experiment.py train-audit
 ```
 
-`status`区分最新工程批与最近业务模型批；`check`运行工程测试、九份模型历史报告、L3-13/14准备材料和L3-15记录核验，不加载预训练模型。数值单元测试使用随机小模型，不运行M02。`plan-data`只核验准备文件，`plan-data --write-new`仅写缺少的相同批次文件、拒绝覆盖异稿。当前没有已审核的动作计划训练实例；以下prepare/execute仍是历史L3-12诊断，不能当成新规划器训练命令：
+`status`区分最新工程/数据批与最近业务模型批；`check`运行工程测试、九份模型历史报告、L3-13/14材料、L3-15记录和L3-16核对/修订数据核验，不加载预训练模型。数值单元测试使用随机小模型，不运行M02。`train-data`保留r1历史核验，`train-audit`核当前r2与逐项理由；`--write-new`只新建相同材料，拒绝覆盖异稿。当前没有已审核的动作计划训练实例；以下prepare/execute仍是历史L3-12诊断，不能当成新规划器训练命令：
 
 ```bash
 .local/world-components-logic/venv/bin/python experiments/world-components-logic/experiment.py prepare NEW_RUN_ID
@@ -165,3 +166,10 @@ python3 experiments/world-components-logic/m01_shared_report.py --check
 `train-smoke --prepare NEW_ID`固定合成数字检查计划；`train-smoke --execute PLAN`复用同一监督器，加载真实原M02，在两行固定token上执行2步适配层优化，并检查零适配/原模型一致、底座无梯度/不变、磁盘存档/清空重载后logits及全部生成token一致。`train-smoke --report`只读核原日志并新建结果材料，拒绝覆盖异稿。固定[协议](../../design/world-engine-reports/components-logic/realizer-training-smoke-protocol.md)先于实际执行，CPU1线程/并发1/120秒/2048MiB。
 
 实际r1为22次顶层前向，4.16秒/RSS727.41MiB；不是业务训练、语义或500ms成绩。合成适配层仅在D忽略目录`realizer-smoke/`，与将来的`realizer-adapters/`业务训练身份隔离，不纳入模型候选。原12候选/新90卡/旧42意见原样，业务训练0。`plan_training.py --check-smoke`只读核计划/代码/记录/哈希日志；原材料的作者源码按b24767a固定Git字节核验，不随活动代码升级改写。查看[本批结果](../../artifacts/world-components-logic/l3-15-realizer-smoke.html)。
+
+
+## 十二组逐项核对与修订2（2026-11-04）
+
+`train-audit`只读核对记录和`data/action-plan-training/r2/`，`--write-new`新建材料；核对规则/逐项理由见[说明](../../design/world-engine-reports/components-logic/label-audit.md)。只有10号补初始灯具和灯芯嵌套位置、更新计划basis/哈希，12条表达输入/标签保持原文。原r1/sourceGroup/split不改，05/06同源风险保留；助手核对不会生成真实人工意见或训练实例。
+
+`train-prepare --reviews`及`train-execute`现在按r2批次/packet/annotation及修订manifest核验；完整旧r1意见也不能打开新训练。缺r2意见仍在加载模型前拒绝。原r1材料及L3-15原执行源码可从固定Git身份核验，未追溯修改。本次业务模型/训练0，语义和500ms无新结果。

@@ -23,6 +23,7 @@ from prepare_run_batch import observe_environment,observe_m02
 
 ROOT=contract.ROOT;BASE=Path(__file__).resolve().parent;ART=ROOT/'artifacts/world-components-logic'
 DATA=BASE/'data/action-plan-training';BATCH='d-realizer-new12-r1'
+AUDIT_BATCH='d-realizer-new12-r2';AUDIT_DATA=DATA/'r2'
 PROTOCOL=ROOT/'design/world-engine-reports/components-logic/realizer-training-protocol.md'
 CODE=('plan_training.py','action_plan.py','experiment.py','m01_probe.py','generate_dev_drafts.py','lab.py','pilot_codec.py','prepare_run_batch.py','run_pilot.py')
 MATERIAL_COMMIT='b24767af571a30e73ab1b10b015600e4ebe0dab7'
@@ -101,13 +102,13 @@ def candidate_rows():
     return rows
 
 
-def packet_identity(rows):return digest({'batchId':BATCH,'rows':rows})
+def packet_identity(rows,*,batch_id=BATCH):return digest({'batchId':batch_id,'rows':rows})
 
 
-def reconcile_reviews(rows,claims=None):
+def reconcile_reviews(rows,claims=None,*,batch_id=BATCH):
     if claims is None:return {'reviewedGroups':0,'missingReviews':len(rows),'trainingDataReady':False,'formalEvaluationAllowed':False}
     if not isinstance(claims,dict) or set(claims)!={'schema','batchId','packetSha256','reviewer','decisions'}:raise ValueError('new source review packet required')
-    if claims['schema']!='jity-d-realizer-training-review-v1' or claims['batchId']!=BATCH or claims['packetSha256']!=packet_identity(rows):raise ValueError('training review batch drift')
+    if claims['schema']!='jity-d-realizer-training-review-v1' or claims['batchId']!=batch_id or claims['packetSha256']!=packet_identity(rows,batch_id=batch_id):raise ValueError('training review batch drift')
     if not isinstance(claims['reviewer'],str) or not claims['reviewer'].strip() or claims['reviewer'].strip().lower() in ('assistant','model','ai'):raise ValueError('human reviewer claim required')
     expected={r['annotationId']:r for r in rows};seen=set();agreed=0
     if not isinstance(claims['decisions'],list):raise ValueError('review decisions required')
@@ -139,8 +140,11 @@ def input_text(row):return '将动作计划写成一句尝试，不添加成功�
 
 
 def reviewed_data(claims):
-    rows=candidate_rows();status=reconcile_reviews(rows,claims)
+    rows=audited_candidate_rows() if isinstance(claims,dict) and claims.get('batchId')==AUDIT_BATCH else candidate_rows()
+    batch_id=AUDIT_BATCH if isinstance(claims,dict) and claims.get('batchId')==AUDIT_BATCH else BATCH
+    status=reconcile_reviews(rows,claims,batch_id=batch_id)
     if not status['trainingDataReady']:raise ValueError('training labels are not fully reviewed')
+    if batch_id!=AUDIT_BATCH:raise ValueError('source revision superseded by r2 context correction; review corrected packet')
     train=[r for r in rows if r['role']=='train_candidate'];dev=[r for r in rows if r['role']=='development_candidate']
     if len(train)!=6 or len(dev)!=6 or {r['sourceGroup'] for r in train}&{r['sourceGroup'] for r in dev}:raise ValueError('registered train/development groups drift')
     return train,dev
@@ -437,6 +441,7 @@ def execute_inspection(path):
 def training_plan(run_id,review_path):
     claims=run.read_json(review_path)
     train,dev=reviewed_data(claims)  # Before any artifact/model import or load.
+    label_audit_materials()
     pp,rp=old.paths(run_id)
     if pp.exists() or rp.exists():raise FileExistsError('use a new training id')
     model=observe_m02(ROOT);environment=observe_environment(ROOT)
@@ -448,7 +453,8 @@ def training_plan(run_id,review_path):
           'code':{str((BASE/n).relative_to(ROOT)):sha256_file(BASE/n) for n in CODE},
           'protocolSha256':sha256_file(PROTOCOL),'model':model,'environment':environment,
           'reviewClaims':claims,'reviewFileSha256':sha256_file(review_path),
-          'candidatePacketSha256':packet_identity(candidate_rows()),'trainGroups':[r['sourceGroup'] for r in train],
+          'candidateBatchId':AUDIT_BATCH,'candidatePacketSha256':packet_identity(audited_candidate_rows(),batch_id=AUDIT_BATCH),
+          'candidateAuditManifestSha256':sha256_file(AUDIT_DATA/'source-manifest.json'),'trainGroups':[r['sourceGroup'] for r in train],
           'developmentGroups':[r['sourceGroup'] for r in dev],'formalEvaluationAllowed':False,
           'sourceIndependence':'unverified','newIndependentTrainingGroups':0,'fullRequestMeasured':False}
     exclusive(pp,plan);return pp
@@ -458,8 +464,11 @@ def verify_training(plan):
     if (plan['purpose']!='reviewed_candidate_plan_to_text_adapter_fit_not_open_planner'
             or plan['config']!=CONFIG or plan['formalEvaluationAllowed'] is not False):raise ValueError('training scope/config drift')
     train,dev=reviewed_data(plan['reviewClaims'])
+    label_audit_materials()
     if (plan['trainGroups']!=[r['sourceGroup'] for r in train] or plan['developmentGroups']!=[r['sourceGroup'] for r in dev]
-            or plan['candidatePacketSha256']!=packet_identity(candidate_rows())):raise ValueError('training source/role drift')
+            or plan.get('candidateBatchId')!=AUDIT_BATCH
+            or plan['candidatePacketSha256']!=packet_identity(audited_candidate_rows(),batch_id=AUDIT_BATCH)
+            or plan.get('candidateAuditManifestSha256')!=sha256_file(AUDIT_DATA/'source-manifest.json')):raise ValueError('training source/role drift')
     if plan['protocolSha256']!=sha256_file(PROTOCOL):raise ValueError('training protocol drift')
     for name,h in plan['code'].items():
         if sha256_file(ROOT/name)!=h:raise ValueError('training code drift')
@@ -712,8 +721,103 @@ def smoke_materials(write=False):
                 with path.open('xb') as stream:stream.write(raw)
     return summary
 
+
+# These are authored assistant judgments, not a semantic rule engine or a human
+# review receipt. The checks below only guard their source/version identities.
+AUDIT_NOTES={
+ '01':'主角pending输入与当前任务均要求合上铜印匣；计划引用已有item_1，表达只说尝试，没有宣布匣子已合好。',
+ '02':'主角pending输入要求打开木笛盒；计划只先尝试打开，没有擅自写成已经查看完收纳情况。',
+ '03':'当前NPC是林芩p2，软毛刷在p2身上，托盘在同一位置；清扫依据自己的待办任务，未重做consumed登记请求。',
+ '04':'当前NPC沈墨p2使用自己持有的竹夹夹试茶片，表达保留工具/对象；expired计时询问没有被重新执行。',
+ '05':'渠澈p1从封蜡台走向已登记的验章桌，只表达移动尝试，没有提前完成当班事务。与06为相近移动题型，独立性待核。',
+ '06':'覃漪p1的pending输入和任务均支持走向资料柜；未宣告已完成星表整理。与05为相近移动题型，独立性待核。',
+ '07':'季玄p1向另一人物闻简p2提出停机请求；压版机已登记，原话保留，没有写成闻简已服从或机器已停止。',
+ '08':'安砚p2基于自身任务向闻简p1请求样签，人物方向正确；consumed釉温请求未重做，也未把样签转移写成既成事实。',
+ '09':'先尝试把折尺放进量尺袋，再尝试把袋子放到标定台；对象/容器/地点及顺序保留，没有新增人物或物品。',
+ '10':'原任务涉及从已熄灭灯具抽出旧灯芯，但灯具未登记，灯芯却直接在桌面。r2补item_3灯具及灯芯嵌套位置和可抽出条件；计划/表达的动作及次序不改。',
+ '11':'楚澜p2按自己的待办任务尝试回想字音；开放动词无需伪造物品ID，未重做consumed编号请求，未宣告已经想起。',
+ '12':'谷雨p2按待办任务尝试辨听滴水间隔；expired报时询问不作为新命令，未新增数值答案或宣告辨听成功。',
+}
+AUDIT_BASE_COMMIT='bbf930cd21e9f47a0c69e80a4c1f1b06a5b69a02'
+
+
+def audited_candidate_rows():
+    rows=copy.deepcopy(candidate_rows());row=next(r for r in rows if r['annotationId']=='realizer-new-10')
+    original_sha=digest(row);w=row['sourceCase']['input']['world']
+    w['items'].append({'id':'item_3','name':'已熄灭灯具','position':{'containerId':'loc_a','slot':'可见位置'},
+                       'appearance':'已熄灭并冷却，灯芯座已松开，可徒手取出旧灯芯。'})
+    w['items'][0]['position']={'containerId':'item_3','slot':'已松开的灯芯座'}
+    row['planDraft']['basis']+=['/world/items/0','/world/items/2']
+    row.update(sourceInputSha256=digest(row['sourceCase']['input']),planSha256=digest(row['planDraft']),
+               revisionOfAnnotationSha256=original_sha)
+    for r in rows:
+        contract.validate_candidate(r['sourceCase'],r['planDraft'])
+        if r['sourceInputSha256']!=digest(r['sourceCase']['input']) or r['planSha256']!=digest(r['planDraft']):raise ValueError('audited source/plan hash drift')
+    return rows
+
+
+def label_audit_materials(write=False):
+    import html
+    e=lambda v:html.escape(str(v));original=candidate_rows();revised=audited_candidate_rows()
+    saved=[json.loads(line) for line in (DATA/'candidates.jsonl').read_text().splitlines() if line.strip()]
+    if saved!=original:raise ValueError('preserve original r1 candidates')
+    entries=[]
+    for a,b in zip(original,revised):
+        if any(a[k]!=b[k] for k in ('annotationId','sourceGroup','role','coverage','expressionDraft','expressionSha256')):raise ValueError('audit changed labels or source roles')
+        if input_text(a)!=input_text(b):raise ValueError('audit changed expression input')
+        key=a['annotationId'][-2:]
+        entries.append({'annotationId':a['annotationId'],'sourceGroup':a['sourceGroup'],'role':a['role'],'coverage':a['coverage'],
+            'originalAnnotationSha256':digest(a),'revisedAnnotationSha256':digest(b),
+            'verdict':'context_gap_corrected' if key=='10' else 'no_blocking_contradiction_found',
+            'assistantReason':AUDIT_NOTES[key],'humanReviewPerformed':False})
+    raw=b''.join(canonical_bytes(r)+b'\n' for r in revised)
+    manifest={'schema':'jity-d-realizer-candidate-revision-v1','batchId':AUDIT_BATCH,'supersedes':BATCH,
+        'sourceHead':AUDIT_BASE_COMMIT,'originalDataSha256':sha256_file(DATA/'candidates.jsonl'),
+        'originalManifestSha256':sha256_file(DATA/'source-manifest.json'),
+        'originalPacketSha256':packet_identity(original),'packetSha256':packet_identity(revised,batch_id=AUDIT_BATCH),
+        'fileSha256':__import__('hashlib').sha256(raw).hexdigest(),'auditKind':'assistant_precheck_not_human_label_approval',
+        'sources':[{k:r[k] for k in ('annotationId','sourceGroup','role','sourceInputSha256','planSha256','expressionSha256')}|{'annotationSha256':digest(r)} for r in revised],
+        'sourceGroupsPreserved':True,'newIndependentTrainingGroups':0,'semanticSourceIndependence':'unverified',
+        'trainingEligible':False,'formalEvaluationAllowed':False}
+    summary={'schema':'jity-d-realizer-assistant-label-audit-v1','date':'2026-11-04','batchId':AUDIT_BATCH,
+        'stage':'L3-16 twelve candidate labels audited by assistant; one source context repaired',
+        'reviewKind':'assistant_precheck_not_human_label_approval','auditAuthor':'assistant',
+        'auditSpecificationSha256':digest(AUDIT_NOTES),'checkedAnnotations':12,'originalWithoutBlockingFinding':11,
+        'correctedSourceInputs':1,'changedExpressionTargets':0,'changedRealizerInputs':0,
+        'originalDataSha256':manifest['originalDataSha256'],'originalPacketSha256':manifest['originalPacketSha256'],
+        'packetSha256':manifest['packetSha256'],'draftSourceGroups':12,'trainCandidateGroups':6,'developmentCandidateGroups':6,
+        'review':reconcile_reviews(revised,batch_id=AUDIT_BATCH),'entries':entries,
+        'sourceRisks':[{'caseIds':['realizer-new-05','realizer-new-06'],'risk':'similar_movement_to_workstation_family_cross_split',
+            'note':'两题均从工作台走向另一工作点，不能只用换名/哈希不同证明独立；保留原角色，不签独立泛化，正式比较前需同源复核。'}],
+        'coverageLimits':['all_12_are_act_expression_examples_not_act_skip_training','no_wrong_plan_negatives',
+                          'no_open_planner_reaction_or_joint_outcome_validation','only_one_candidate_per_split_per_coverage'],
+        'namePolicy':'甲/乙为schema helper附加的显示后缀；参考句省略后缀，各场景基础姓名唯一，无人物方向混淆；不要求参考句逐字唯一。',
+        'realizerTrainerImplemented':True,'plannerModelImplemented':False,'realizerTrained':False,
+        'formalEvaluationAllowed':False,'semanticQualityApproved':False,'fullRequest500msStatus':'unverified',
+        'businessTrainingSteps':0,'businessInferenceCalls':0,'lastModelRun':'action-focus-dev42-20261104-r2',
+        'trainingPacketSupersedes':BATCH,'sourceIndependence':'unverified','newIndependentTrainingGroups':0}
+    document='''<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'"><title>L3-16 十二组标签核对</title><style>body{margin:0;background:#f4f6f8;color:#20313e;font:16px/1.7 system-ui}main{max-width:1100px;margin:auto;padding:24px}section{background:#fff;padding:22px;border-radius:12px;margin:20px 0}pre{white-space:pre-wrap;overflow-wrap:anywhere}.warn{color:#a7352e}table{width:100%;border-collapse:collapse}td,th{padding:10px;text-align:left;border-bottom:1px solid #ddd}</style><main><p>D / L3-16 · 2026-11-04</p><h1>12组已逐条核对，修正1处场景缺口</h1><section><p>逐条核对人物及任务、pending/consumed/expired处理、动作引用、工具/对象/目的地/接收人、步骤次序和“只描述尝试”。其余11项未发现阻断矛盾，第10项已保存修订2；12条表达输入和参考句保持原文。</p><p>本页是助手的数据预检记录，人工复核数量仍为0，不生成或冒充人工回执；本次没有运行模型或训练。</p></section><section><h2>修正了什么？</h2><p>第10题要求从灯具抽出旧灯芯，原场景却没有灯具，且灯芯直接在桌面。修订2在初始场景补登记item_3已熄灭灯具，明确冷却/灯芯座已松开，灯芯位置指向灯具，并将两项证据加入计划basis。动作仍是“抽出灯芯，再放入瓷碟”，没有改答案迎合模型；这属于实验初态补全，运行中不会由程序新增实体。</p><p>原版文件和组名保留；修订版不会被算作额外12个独立来源，旧批次回执也不能直接套用。</p></section><section><h2>另外发现的范围限制</h2><p class="warn">第5/6题是相近的移动工作点题型，需继续核对来源关系；哈希不同不能证明语义独立。本批全部是act后的表达样本，不能用来证明行动/不行动判断、开放动作规划、反应或共同结果能力。每类每边只有1组，不签泛化或完整500ms。</p></section>'''
+    for item,row in zip(entries,revised):
+        c=row['sourceCase'];person=contract.lookup(c)[('character',c['input']['actorId'])]
+        document+=f'<section><h2>{e(row["annotationId"])} · {e(row["coverage"])} · {e(row["role"])}</h2><p><strong>{"已补齐场景缺口" if item["verdict"]=="context_gap_corrected" else "预检未发现阻断矛盾"}</strong></p><p>当前人物：{e(person["name"])}；任务：{e(person["tasks"][0]["text"])}。</p><p>玩家输入（{e(c["input"]["advance"]["intentStatus"])}）：{e(c["input"]["advance"]["inputText"])}</p><p>参考表达：{e(row["expressionDraft"])}</p><p>核对依据：{e(item["assistantReason"])}</p><details><summary>完整修订场景与计划</summary><pre>{e(json.dumps(row,ensure_ascii=False,indent=2))}</pre></details></section>'
+    document+='<section><p><a href="l3-16-label-audit-summary.json">核对记录</a> · <a href="../../experiments/world-components-logic/data/action-plan-training/r2/candidates.jsonl">修订2数据</a> · <a href="../../experiments/world-components-logic/data/action-plan-training/r2/source-manifest.json">修订身份与来源</a> · <a href="l3-14-realizer-training-readiness.html">原始12组</a></p></section></main></html>'
+    files={AUDIT_DATA/'candidates.jsonl':raw,AUDIT_DATA/'source-manifest.json':canonical_bytes(manifest)+b'\n',
+        ART/'l3-16-label-audit-summary.json':(json.dumps(summary,ensure_ascii=False,indent=2)+'\n').encode(),
+        ART/'l3-16-label-audit.html':document.encode()}
+    for path,raw in files.items():
+        if path.exists() and path.read_bytes()!=raw:raise ValueError('preserve delivered label audit: '+str(path))
+        if not write and not path.exists():raise ValueError('label audit material missing: '+str(path))
+    if write:
+        for path,raw in files.items():
+            path.parent.mkdir(parents=True,exist_ok=True)
+            if not path.exists():
+                with path.open('xb') as stream:stream.write(raw)
+    return summary
+
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('--worker',type=Path);p.add_argument('--numeric-check',action='store_true');p.add_argument('--check-materials',action='store_true');p.add_argument('--check-smoke',action='store_true');a=p.parse_args()
+    p=argparse.ArgumentParser();p.add_argument('--worker',type=Path);p.add_argument('--numeric-check',action='store_true');p.add_argument('--check-materials',action='store_true');p.add_argument('--check-smoke',action='store_true');p.add_argument('--check-audit',action='store_true');a=p.parse_args()
+    if a.check_audit:
+        s=label_audit_materials();print(json.dumps({'checkedAnnotations':s['checkedAnnotations'],'correctedSourceInputs':1,'businessTrainingSteps':0}));raise SystemExit(0)
     if a.check_smoke:
         s=smoke_materials();print(json.dumps({'batchId':s['batchId'],'businessTrainingSteps':0,'syntheticOptimizerSteps':s['realModelSyntheticCheck']['syntheticOptimizerSteps']}));raise SystemExit(0)
     if a.check_materials:
