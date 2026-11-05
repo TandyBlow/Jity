@@ -4155,9 +4155,16 @@
       "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\next-inputs\\world-components\\n4-probe-r1.jsonl",
       "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree",
       "note": "Frozen with the target-audit round; see artifacts/validation-freeze-r1/"
+    },
+    "world-components/n4-relation-r1.jsonl": {
+      "sha256": "0cc83b299078f456de4dfb07b419077dadab01a76137d6ea86599f8731aa7171",
+      "bytes": 9580,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\next-inputs\\world-components\\n4-relation-r1.jsonl",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree",
+      "note": "Frozen with the target-audit round; see artifacts/validation-freeze-r1/"
     }
   },
-  "previousPinSha256": "a57d188ea91106a42bb26cdb10bf197679a0d7f58b714b35cc1342f2ddb80285",
+  "previousPinSha256": "19c06693a646167a55ba0692561c20dd4f93de4bfc3f793392593536fe12d1da",
   "evidencePolicy": {
     "authority": "Files under artifacts/next-inputs are the authoritative inputs for this offline revision.",
     "historicalCopies": "Retained for existing freeze references; never regenerate or update in place. Every pinned read verifies their bytes too.",
