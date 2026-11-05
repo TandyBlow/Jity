@@ -2,7 +2,7 @@
 
 ## 当前从这里开始（2026-11-04）
 
-日常使用`experiment.py`一个入口。当前L3-19在上批冻结模型上比较整段/逐步表达，18开发例×2臂×3次=108尝试/123生成，训练0步。13单步控制不变；5多步题整段1合理、逐步0合理且更慢，暂不采用直接拆分。[当前结果页](../../artifacts/world-components-logic/l3-19-realizer-steps.html)。质量/完整500ms仍未通过，人审0/来源未核，旧证据保留。
+日常使用`experiment.py`一个入口。当前L3-20固定同一30训练／18开发，仅将训练80步改为320步；96次首次生成，前80步损失逐值复现。新开发合理4/12→7/12，双变体都合理1/6→2/6组；原开发仍3明确合理，另2错／1含糊，训练30条均合理。[当前结果页](../../artifacts/world-components-logic/l3-20-realizer-budget320.html)。增加训练有局部收益，角色／容器／多步问题仍在，质量／完整500ms未通过，人审0／来源未核，旧证据保留。
 
 从仓库根目录运行：
 
@@ -197,3 +197,9 @@ python3 experiments/world-components-logic/m01_shared_report.py --check
 `realizer_steps.py`只投影给定步骤、保序保留模型原文，运行复用统一生成函数/监督/哈希日志；不以程序补角色、动作、成功结果或连接词。原18开发题、上批固定权重、单线程/并发1不变。`experiment.py realizer-steps --prepare NEW_ID`固定计划，`--execute PLAN`真实推理，`--report`只读核记录/助手意见并新建报告；当前唯一注册id为m02-realizer-steps-20261104-r1，原记录不可覆盖。`realizer_steps.py --check`不加载模型，`check`同时核此批。
 
 实际108整项/123生成、3重复/题/臂，802事件。13单步控制输入/原文一致，5多步whole1合理/steps0合理；多步完整成本中位97.37→143.31ms，最大114.07→176.57ms。原模型不改/训练0步，质量未通过；只有表达输入职责改变，没有上游开放规划或完整500ms/浏览器生产结果。完整[协议](../../design/world-engine-reports/components-logic/realizer-step-protocol.md)和[结果](../../artifacts/world-components-logic/l3-19-realizer-steps.html)保留失败、所有子调用/重复及原始计时。
+
+## 固定数据的80／320步对照（2026-11-05）
+
+`m02-realizer-budget320-20261105-r1`复用原训练／监督／报告模块，不新建运行器。按[协议](../../design/world-engine-reports/components-logic/realizer-training-budget-protocol.md)，`train-prepare RUN --authorization FILE`先冻结身份与全部配置，`train-execute PLAN`执行唯一一次，`train-report --run-id RUN --write-new`新建结果，`plan_training.py --check-budget`只读复验；`status/check`现在同时覆盖本批。原计划不可重复execute，原报告异稿不可覆盖。
+
+先加载冻结80步适配层作48次基线，再恢复同一seed42初始化重训320步，非续训；全部数据和其他超参不变，前80步损失逐值相同。实际640样本次／96首次生成／940事件，49.601秒／RSS1461.734MiB、CPU1，开发不进梯度；原文件／底座不变，新适配层存盘清空重载SHA核对，权重不入库。新开发4合理／6错／2含糊→7合理／5错／0含糊，原开发仍3合理，另2错／1含糊，不能隐藏退化或把拟合loss当质量。局部77–170ms，各题仅一次；质量／完整500ms／上游规划／反应与共同结果／浏览器生产仍未验。[全部结果](../../artifacts/world-components-logic/l3-20-realizer-budget320.html)供逐项查看，下一步转角色／引用表示及监督比较。

@@ -281,6 +281,76 @@ class TrainingPreparationTests(unittest.TestCase):
                 env={**os.environ,'PYTHONHASHSEED':seed,'PYTHONDONTWRITEBYTECODE':'1'})
             self.assertEqual(result.returncode,0,result.stderr)
 
+    def test_budget_comparison_changes_only_steps_and_loads_frozen_eighty_step_baseline(self):
+        import realizer_expansion as x
+        baseline=trainer.fit_profile(x.RUN);longer=trainer.fit_profile(trainer.BUDGET_RUN)
+        self.assertEqual(longer['rows'],baseline['rows'])
+        self.assertEqual(longer['packetSha256'],baseline['packetSha256'])
+        self.assertEqual(longer['config'],{**baseline['config'],'steps':320})
+        self.assertEqual(longer['baseline']['checkpoint'],trainer.observed_fit(x.RUN)['checkpoint'])
+        self.assertEqual(longer['stage'],'L3-20');self.assertEqual(longer['protocol'],trainer.BUDGET_PROTOCOL)
+
+    def test_budget_controls_detect_changed_baseline_tokens_and_report_loss_tolerance(self):
+        import realizer_expansion as x
+        parent=trainer.observed_fit(x.RUN)
+        current={'losses':parent['losses']+[0.0]*240,'comparisons':[
+            {'annotationId':p['annotationId'],'before_fit':copy.deepcopy(p['after_fit'])} for p in parent['comparisons']]}
+        observed=trainer.budget_controls(current,parent)
+        self.assertTrue(observed['first80WithinTolerance']);self.assertTrue(observed['first80LossesExact'])
+        self.assertEqual(observed['baselineOutputsReproduced'],48)
+        current['losses'][0]+=0.01
+        self.assertFalse(trainer.budget_controls(current,parent)['first80WithinTolerance'])
+        current['comparisons'][0]['before_fit']['tokenIds'][0]=999
+        with self.assertRaisesRegex(ValueError,'baseline no longer reproduces'):trainer.budget_controls(current,parent)
+
+    def test_interrupted_budget_controls_do_not_invent_outputs_or_completed_training(self):
+        import realizer_expansion as x
+        parent=trainer.observed_fit(x.RUN)
+        current={'losses':parent['losses'][:2],'comparisons':[
+            {'annotationId':p['annotationId'],'before_fit':None} for p in parent['comparisons']]}
+        result=trainer.budget_controls(current,parent)
+        self.assertEqual(result['baselineOutputsReproduced'],0)
+        self.assertFalse(result['first80WithinTolerance']);self.assertFalse(result['first80LossesExact'])
+
+    def test_budget_authorization_preserves_same_draft_data_and_rejects_old_config(self):
+        auth=trainer.run.read_json(trainer.ART/'m01-fitting'/f'{trainer.BUDGET_RUN}.authorization.json')
+        train,dev=trainer.authorized_draft_data(auth)
+        self.assertEqual((len(train),len(dev)),(30,18));self.assertEqual(auth['humanLabelReviews'],0)
+        bad=copy.deepcopy(auth);bad['configSha256']=trainer.digest({**trainer.fit_profile(trainer.BUDGET_RUN)['config'],'steps':80})
+        with self.assertRaisesRegex(ValueError,'scope/data drift'):trainer.authorized_draft_data(bad)
+
+    def test_budget_archive_counts_all_steps_outputs_and_reproducible_prefix(self):
+        s=trainer.observed_fit(trainer.BUDGET_RUN)
+        self.assertEqual((s['trainingStepAttempts'],s['trainingSteps'],s['generationAttempts'],s['generationsWithSavedOutputs']),(320,320,96,96))
+        self.assertEqual(sum(s['trainGroupExposures'].values()),640)
+        self.assertEqual(s['trainingBudgetComparison']['baselineOutputsReproduced'],48)
+        self.assertTrue(s['trainingBudgetComparison']['first80LossesExact'])
+        self.assertEqual(s['modelForwardCounts']['encoderForwardCallsByPhase'],{'before_fit':48,'training':320,'after_fit':48})
+        self.assertEqual(s['newSourceCandidateGroups'],0);self.assertEqual(s['newExamples'],0)
+        for pair in s['comparisons']:
+            self.assertEqual(pair['before_fit']['inputTokenIds'],pair['after_fit']['inputTokenIds'])
+            self.assertTrue(pair['before_fit']['eos'] and pair['after_fit']['eos'])
+
+    def test_budget_report_keeps_ambiguous_and_failed_development_without_formal_claims(self):
+        s=trainer.fit_materials(run_id=trainer.BUDGET_RUN)
+        decisions={(d['annotationId'],d['phase']):d for d in s['assistantOutputReview']['decisions']}
+        self.assertEqual(len(decisions),96)
+        self.assertEqual(decisions['realizer-new-12','after_fit']['verdict'],'uncertain')
+        self.assertEqual(decisions['expanded-12-b','after_fit']['verdict'],'fail')
+        for phase in ('before_fit','after_fit'):
+            self.assertEqual(sum(s['cohortQualityCounts'][phase]['new_development'].values()),12)
+            self.assertEqual(sum(s['cohortQualityCounts'][phase]['old_development_regression'].values()),6)
+        self.assertFalse(s['semanticQualityApproved']);self.assertFalse(s['formalEvaluationAllowed'])
+        self.assertFalse(s['plannerModelImplemented']);self.assertEqual(s['fullRequest500msStatus'],'unverified')
+
+    def test_budget_report_is_deterministic_without_model_execution(self):
+        import os
+        for seed in ('0','9'):
+            result=subprocess.run([sys.executable,str(trainer.BASE/'plan_training.py'),'--check-budget'],capture_output=True,text=True,timeout=30,
+                env={**os.environ,'PYTHONHASHSEED':seed,'PYTHONDONTWRITEBYTECODE':'1'})
+            self.assertEqual(result.returncode,0,result.stderr)
+            self.assertEqual(json.loads(result.stdout)['trainingSteps'],320)
+
     def test_tokenization_retains_complete_separate_input_and_target(self):
         tokenizer=Tokenizer();row=self.rows[0]
         encoded=trainer.tokenize_example(tokenizer,row,{**trainer.CONFIG,'maxInputTokens':10000,'maxTargetTokens':10000})

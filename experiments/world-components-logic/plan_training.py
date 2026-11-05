@@ -25,8 +25,10 @@ ROOT=contract.ROOT;BASE=Path(__file__).resolve().parent;ART=ROOT/'artifacts/worl
 DATA=BASE/'data/action-plan-training';BATCH='d-realizer-new12-r1'
 AUDIT_BATCH='d-realizer-new12-r2';AUDIT_DATA=DATA/'r2'
 FIT_RUN='m02-realizer-fit-20261104-r1'
+BUDGET_RUN='m02-realizer-budget320-20261105-r1'
 PROTOCOL=ROOT/'design/world-engine-reports/components-logic/realizer-training-protocol.md'
 FIT_PROTOCOL=PROTOCOL.with_name('realizer-exploratory-fit-protocol.md')
+BUDGET_PROTOCOL=PROTOCOL.with_name('realizer-training-budget-protocol.md')
 CODE=('plan_training.py','action_plan.py','experiment.py','m01_probe.py','generate_dev_drafts.py','lab.py','pilot_codec.py','prepare_run_batch.py','run_pilot.py')
 MATERIAL_COMMIT='b24767af571a30e73ab1b10b015600e4ebe0dab7'
 MATERIAL_AUTHOR_SHA='9c23ab9ac60dd4ecad26f148c8b6268a5012b05b757bf9e21595ff8898720fd3'
@@ -161,7 +163,7 @@ def authorized_draft_data(authorization):
     import realizer_expansion as expansion
     profile=fit_profile(authorization['runId']);rows=profile['rows']
     train=[r for r in rows if r['role']=='train_candidate'];dev=[r for r in rows if r['role']=='development_candidate']
-    if (authorization['schema']!='jity-d-realizer-draft-run-authorization-v1' or authorization['runId'] not in (FIT_RUN,expansion.RUN)
+    if (authorization['schema']!='jity-d-realizer-draft-run-authorization-v1' or authorization['runId'] not in (FIT_RUN,expansion.RUN,BUDGET_RUN)
             or authorization['batchId']!=profile['batchId'] or authorization['packetSha256']!=profile['packetSha256']
             or authorization['userInstruction']!=profile['instruction'] or not isinstance(authorization['context'],str) or not authorization['context'].strip()
             or authorization['sourceHead']!=profile['sourceHead']
@@ -178,14 +180,15 @@ def authorized_draft_data(authorization):
 
 def fit_profile(run_id):
     import realizer_expansion as expansion
-    if run_id==expansion.RUN:
-        _,old_record=old.paths(FIT_RUN);checkpoint=run.read_json(old_record)['attempts'][0]['checkpoint']
+    if run_id in (expansion.RUN,BUDGET_RUN):
+        longer=run_id==BUDGET_RUN
+        _,old_record=old.paths(expansion.RUN if longer else FIT_RUN);checkpoint=run.read_json(old_record)['attempts'][0]['checkpoint']
         return {'rows':expansion.rows(),'batchId':expansion.BATCH,'packetSha256':expansion.packet(),
-            'manifest':expansion.DATA/'source-manifest.json','config':{**CONFIG,'allowGroupedExamples':True},
-            'protocol':expansion.PROTOCOL,'instruction':'继续','sourceHead':expansion.HEAD,
+            'manifest':expansion.DATA/'source-manifest.json','config':{**CONFIG,'allowGroupedExamples':True,'steps':320 if longer else 80},
+            'protocol':BUDGET_PROTOCOL if longer else expansion.PROTOCOL,'instruction':'继续','sourceHead':'5fffdc9c192ea69fb6afceeb0907b29cb78f76b2' if longer else expansion.HEAD,
             'comparison':'previous_frozen_adapter_then_fresh_source_fit_all_48_first_outputs',
-            'baseline':{'checkpoint':checkpoint,'recordSha256':sha256_file(old_record)},'stage':'L3-18',
-            'page':'l3-18-realizer-expanded','materialCheck':expansion.materials}
+            'baseline':{'checkpoint':checkpoint,'recordSha256':sha256_file(old_record)},'stage':'L3-20' if longer else 'L3-18',
+            'page':'l3-20-realizer-budget320' if longer else 'l3-18-realizer-expanded','materialCheck':expansion.materials}
     return {'rows':audited_candidate_rows(),'batchId':AUDIT_BATCH,
         'packetSha256':packet_identity(audited_candidate_rows(),batch_id=AUDIT_BATCH),'manifest':AUDIT_DATA/'source-manifest.json',
         'config':CONFIG,'protocol':FIT_PROTOCOL,'instruction':'可以开始吧','sourceHead':'3bb31434e44e58f0e0e513b1468ed4c67217bd36',
@@ -919,7 +922,7 @@ def observed_fit(run_id=FIT_RUN):
     """Read-only evidence reconstruction; no weight load and no semantic judge."""
     import math
     import statistics
-    profile=fit_profile(run_id);pp,rp=old.paths(run_id);plan=run.read_json(pp);record=run.read_json(rp)
+    profile=fit_profile(run_id);expected_steps=profile['config']['steps'];pp,rp=old.paths(run_id);plan=run.read_json(pp);record=run.read_json(rp)
     if record['planSha256']!=sha256_file(pp):raise ValueError('fit plan identity drift')
     if plan['purpose']!='user_authorized_draft_plan_to_text_exploratory_adapter_fit' or plan['config']!=profile['config'] or plan['formalEvaluationAllowed'] is not False:raise ValueError('fit scope drift')
     train,dev=admitted_training_data(plan);rows=train+dev
@@ -935,7 +938,7 @@ def observed_fit(run_id=FIT_RUN):
     events=[c for a in record.get('attempts',[]) for c in a.get('checkpoints',[])]
     starts=[c['payload'] for c in events if c['name']=='training_step_started'];steps=[c['payload'] for c in events if c['name']=='training_step_settled']
     if ([s['step'] for s in starts]!=list(range(1,len(starts)+1)) or [s['step'] for s in steps]!=list(range(1,len(steps)+1))
-            or len(starts)>80 or len(steps)>len(starts) or record['trainingSteps']!=len(steps)
+            or len(starts)>expected_steps or len(steps)>len(starts) or record['trainingSteps']!=len(steps)
             or record['trainingStepAttempts']!=len(starts)):raise ValueError('fit optimizer ledger mismatch')
     train_groups={r['sourceGroup'] for r in train};exposures={r['sourceGroup']:0 for r in train}
     for step in starts:
@@ -961,14 +964,14 @@ def observed_fit(run_id=FIT_RUN):
     checkpoint=next((c['payload'] for c in events if c['name']=='adapter_frozen'),None)
     counts=None
     if complete:
-        if (len(starts)!=80 or len(steps)!=80 or len(generations)!=2*len(rows) or len(begun)!=2*len(rows)
+        if (len(starts)!=expected_steps or len(steps)!=expected_steps or len(generations)!=2*len(rows) or len(begun)!=2*len(rows)
                 or checkpoint is None or not record['sourceWeightsUnchanged'] or not record['sourceFilesUnchanged']
                 or record['supervisor']['stopReason'] is not None or record['supervisor']['exitCode']!=0):raise ValueError('completed fit missing required work')
         for phase,items in by_phase.items():
             if [p['annotationId'] for p in items]!=[r['annotationId'] for r in rows]:raise ValueError('fit phase omitted/reordered a source')
         counts=next(c['payload'] for c in events if c['name']=='model_forward_accounting')
-        if counts['modelTopForwardCallsByPhase']!={'training':80,**{phase:sum(p['modelTopForwardCalls'] for p in items) for phase,items in by_phase.items()}}:raise ValueError('fit top forward count differs')
-        if counts['encoderForwardCallsByPhase']!={'training':80,'before_fit':len(rows),'after_fit':len(rows)}:raise ValueError('fit encoder forward count differs')
+        if counts['modelTopForwardCallsByPhase']!={'training':expected_steps,**{phase:sum(p['modelTopForwardCalls'] for p in items) for phase,items in by_phase.items()}}:raise ValueError('fit top forward count differs')
+        if counts['encoderForwardCallsByPhase']!={'training':expected_steps,'before_fit':len(rows),'after_fit':len(rows)}:raise ValueError('fit encoder forward count differs')
         if record['attempts'][0]['losses']!=[s['loss'] for s in steps]:raise ValueError('fit loss snapshots differ')
         if profile['baseline']:
             baseline=next(c['payload'] for c in events if c['name']=='baseline_adapter_loaded')
@@ -991,7 +994,7 @@ def observed_fit(run_id=FIT_RUN):
         'trainingStepAttempts':len(starts),'trainingSteps':len(steps),'generationAttempts':len(begun),'generationsWithSavedOutputs':len(generations),
         'trainGroupExposures':exposures,'losses':[s['loss'] for s in steps],'trainingCosts':steps,
         'modelForwardCounts':counts,'checkpoint':checkpoint,'comparisons':comparisons,'costObservations':costs,
-        'realizerTrainerImplemented':True,'plannerModelImplemented':False,'realizerTrained':len(steps)==80 and checkpoint is not None,
+        'realizerTrainerImplemented':True,'plannerModelImplemented':False,'realizerTrained':len(steps)==expected_steps and checkpoint is not None,
         'formalEvaluationAllowed':False,'semanticQualityApproved':False,'fullRequest500msStatus':'unverified',
         'sourceIndependence':'unverified','sourceRisks':['realizer-new-05','realizer-new-06'],'newIndependentTrainingGroups':0,
         'semanticReviewStatus':'assistant_output_review_separate_not_formal_approval',
@@ -1001,7 +1004,57 @@ def observed_fit(run_id=FIT_RUN):
         summary.update(stage='L3-18 expanded draft data versus frozen first-fit adapter',baselineAdapter=profile['baseline'],
                        trainingExamples=len(train),developmentExamples=len(dev),newSourceCandidateGroups=18,newExamples=36)
         for p in comparisons:p['cohort']='new_training' if p['annotationId'].startswith('expanded-') and p['role']=='train_candidate' else 'new_development' if p['annotationId'].startswith('expanded-') else 'old_training' if p['role']=='train_candidate' else 'old_development_regression'
+    if run_id==BUDGET_RUN:
+        import realizer_expansion as expansion
+        parent=observed_fit(expansion.RUN)
+        summary.update(date='2026-11-05',stage='L3-20 fixed 80 versus 320 training-step budget comparison',
+            newSourceCandidateGroups=0,newExamples=0,retainedExpansionExamples=36,
+            trainingBudgetComparison=budget_controls(summary,parent))
     return summary
+
+
+def budget_controls(current,parent):
+    """Report control checks without turning numerical fit into a quality judge."""
+    previous={p['annotationId']:p['after_fit'] for p in parent['comparisons']}
+    saved=[p for p in current['comparisons'] if p['before_fit'] is not None]
+    for p in saved:
+        before=p['before_fit'];old_prediction=previous[p['annotationId']]
+        if any(before[key]!=old_prediction[key] for key in ('inputTokenIds','tokenIds','raw')):
+            raise ValueError('80-step baseline no longer reproduces parent model')
+    compared=current['losses'][:80];differences=[abs(a-b) for a,b in zip(compared,parent['losses'])]
+    return {'baselineSteps':80,'newSteps':fit_profile(BUDGET_RUN)['config']['steps'],
+        'baselineRecordSha256':parent['recordSha256'],'baselineOutputsReproduced':len(saved),
+        'first80LossMaxAbsoluteDifference':max(differences,default=None),
+        'first80LossesExact':compared==parent['losses'],'preRegisteredLossTolerance':1e-6,
+        'first80WithinTolerance':len(differences)==80 and max(differences)<=1e-6}
+
+
+def budget_document(summary,verdicts):
+    import html
+    e=lambda value:html.escape(str(value))
+    labels={'old_training':'原训练6题','new_training':'新增训练24题',
+            'old_development_regression':'原开发回归6题','new_development':'新开发12题／6组'}
+    document='''<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'"><title>L3-20 80步与320步训练对照</title><style>body{margin:0;background:#f4f6f8;color:#20313e;font:16px/1.7 system-ui}main{max-width:1100px;margin:auto;padding:24px}section{background:#fff;padding:22px;border-radius:12px;margin:20px 0}pre{white-space:pre-wrap;overflow-wrap:anywhere}.warn{color:#a7352e}table{width:100%;border-collapse:collapse}td,th{padding:10px;text-align:left;border-bottom:1px solid #ddd}article{border-top:1px solid #ddd;padding-top:12px}</style><main><p>D / L3-20 · 2026-11-05</p><h1>同一批数据，多训练一些有没有帮助？</h1>'''
+    document+=f'<section><h2>这轮只改变训练步数</h2><p>同一77M底座、同一适配层结构、30条训练与18条开发、相同初始化与其他参数。已有80步模型作基线；新模型从原底座重新训练320步，没有接着旧模型续训，开发题不参与梯度。实际完成{summary["trainingSteps"]}/320步，保存{summary["generationsWithSavedOutputs"]}/96条首次输出，无重试或择优。</p><p class="warn">所有标签仍为助手核对草稿，人审0，来源独立性未核实。下列合理／错误／含糊均为助手预检，不是正式质量验收。只测试给定动作计划的表达；开放规划、反应、共同结果、完整500ms、浏览器与生产仍未通过。</p><p>整批进程{summary["supervisor"]["wallMs"]/1000:.2f}秒，峰值RSS {summary["supervisor"]["observedPeakResidentMiB"]:.2f}MiB。这包括训练、准备及96次生成，不是单次游戏等待。</p><table><thead><tr><th>用途</th><th>80步：合理／错误／含糊</th><th>320步：合理／错误／含糊</th></tr></thead><tbody>'
+    for cohort,label in labels.items():
+        cells=[]
+        for phase in ('before_fit','after_fit'):
+            counts=summary['cohortQualityCounts'][phase][cohort]
+            cells.append('／'.join(str(counts[k]) for k in ('candidate_correct','fail','uncertain')))
+        document+=f'<tr><td>{label}</td><td>{cells[0]}</td><td>{cells[1]}</td></tr>'
+    groups=summary['newDevelopmentGroupsAllVariantsCorrect']
+    document+=f'</tbody></table><p>新开发6组中，两变体都合理的组数：{groups["before_fit"]} → {groups["after_fit"]}。相关变体不当作独立来源，已曝光开发题也不转封存。</p><details><summary>控制检查与局部完整生成耗时</summary><pre>{e(json.dumps({"controls":summary["trainingBudgetComparison"],"cost":summary["costObservations"]},ensure_ascii=False,indent=2))}</pre><p>局部计时包含完整分词、生成及原文落盘；尾部计时事件与批末汇总在进程总时间。每题每模型仅一次，质量不同时不能据此签提速或完整500ms。</p></details></section>'
+    for item in summary['comparisons']:
+        document+=f'<section><h2>{e(item["annotationId"])} · {labels[item["cohort"]]}</h2><p>参考草稿：{e(item["referenceDraft"])}</p>'
+        for phase,label in (('before_fit','80步模型'),('after_fit','320步模型')):
+            prediction=item[phase]
+            if prediction is None:
+                document+=f'<p>{label}：未保存输出，不补写或重采样。</p>';continue
+            decision=verdicts[(item['annotationId'],phase)]
+            document+=f'<article><h3>{label} · {e(decision["verdict"])}</h3><p>{e(prediction["raw"])}</p><p>助手核对：{e(decision["reason"])}</p><p>{prediction["elapsedIncludingOutputJournalMs"]:.2f}ms · {e(prediction["stopStatus"])} · 顶层前向{prediction["modelTopForwardCalls"]}次</p></article>'
+        document+='</section>'
+    document+=f'<section><h2>全部证据</h2><p><a href="l3-20-realizer-budget320-summary.json">完整汇总与所有输入/token/逐步损失</a> · <a href="m01-fitting/{BUDGET_RUN}.authorization.json">运行授权记录</a> · <a href="m01-fitting/{BUDGET_RUN}.plan.json">冻结计划</a> · <a href="m01-fitting/{BUDGET_RUN}.record.json">原始记录</a> · <a href="m01-fitting/{BUDGET_RUN}.record.journal.jsonl">全部事件</a> · <a href="m01-fitting/{BUDGET_RUN}.output-review.json">助手逐项核对</a> · <a href="l3-18-realizer-expanded.html">80步原始结果</a></p></section></main></html>'
+    return document
 
 
 def fit_materials(write=False,run_id=FIT_RUN):
@@ -1025,23 +1078,26 @@ def fit_materials(write=False,run_id=FIT_RUN):
         summary['cohortQualityCounts']={phase:{cohort:{v:sum(verdicts[(p['annotationId'],phase)]['verdict']==v for p in summary['comparisons'] if p['cohort']==cohort) for v in ('candidate_correct','fail','uncertain')} for cohort in ('old_training','new_training','old_development_regression','new_development')} for phase in ('before_fit','after_fit')}
         new_dev=[p for p in summary['comparisons'] if p['cohort']=='new_development']
         summary['newDevelopmentGroupsAllVariantsCorrect']={phase:sum(all(verdicts[(p['annotationId'],phase)]['verdict']=='candidate_correct' for p in new_dev if p['sourceGroup']==g) for g in sorted({p['sourceGroup'] for p in new_dev})) for phase in ('before_fit','after_fit')}
-    document='''<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'"><title>L3-17 首批真实短表达训练</title><style>body{margin:0;background:#f4f6f8;color:#20313e;font:16px/1.7 system-ui}main{max-width:1100px;margin:auto;padding:24px}section{background:#fff;padding:22px;border-radius:12px;margin:20px 0}pre{white-space:pre-wrap;overflow-wrap:anywhere}.warn{color:#a7352e}table{width:100%;border-collapse:collapse}td,th{padding:10px;text-align:left;border-bottom:1px solid #ddd}</style><main><p>D / L3-17 · 2026-11-04</p><h1>首批真实短表达训练：全部前后输出</h1>'''
-    document+=f'<section><h2>实际做了什么</h2><p>按用户“可以开始吧”授权，以修订2的6条助手核对草稿训练、6条作开发检查。原77M底座冻结，只训练172,032个适配参数；实际完成{summary["trainingSteps"]}/80步，保存{summary["generationsWithSavedOutputs"]}/24次前后首次生成。状态：{e(summary["runStatus"])}。</p><p class="warn">标签仍为助手草稿，人工已审0；以下语义意见为助手预检。每侧仅6题，05/06同题型来源风险保留，不签独立泛化、开放规划或完整500ms。训练后能写句子也不等于能自主选择行动。</p><p>进程总耗时{summary["supervisor"]["wallMs"]/1000:.2f}秒，RSS{summary["supervisor"]["observedPeakResidentMiB"]:.2f}MiB；这是整批训练/准备/生成的成本，不是单次游戏响应时间。</p><details><summary>两阶段质量观察与完整局部耗时</summary><pre>{e(json.dumps({"assistant":summary["assistantQualityCounts"],"cost":summary["costObservations"]},ensure_ascii=False,indent=2))}</pre></details></section>'
-    for item in summary['comparisons']:
-        document+=f'<section><h2>{e(item["annotationId"])} · {e(item["role"])} · {e(item["coverage"])}</h2><p>参考草稿：{e(item["referenceDraft"])}</p>'
-        for phase,label in (('before_fit','训练前'),('after_fit','训练后')):
-            p=item[phase]
-            if p is None:document+=f'<p>{label}：没有已保存输出，未补写或重采样。</p>';continue
-            v=verdicts[(item['annotationId'],phase)]
-            document+=f'<h3>{label} · {e(v["verdict"])}</h3><p>{e(p["raw"])}</p><p>助手核对：{e(v["reason"])}</p><p>{p["elapsedIncludingOutputJournalMs"]:.2f}ms · {e(p["stopStatus"])} · 顶层前向{p["modelTopForwardCalls"]}次</p><details><summary>完整实际输入与原始token/计时</summary><pre>{e(json.dumps(p,ensure_ascii=False,indent=2))}</pre></details>'
-        document+='</section>'
-    document+=f'<section><details><summary>原始汇总、每步损失与运行身份</summary><pre>{e(json.dumps(summary,ensure_ascii=False,indent=2))}</pre></details><p><a href="l3-17-realizer-fit-summary.json">机器汇总</a> · <a href="m01-fitting/{FIT_RUN}.authorization.json">用户运行授权记录</a> · <a href="m01-fitting/{FIT_RUN}.plan.json">冻结计划</a> · <a href="m01-fitting/{FIT_RUN}.record.json">原始记录</a> · <a href="m01-fitting/{FIT_RUN}.record.journal.jsonl">全部事件</a> · <a href="m01-fitting/{FIT_RUN}.output-review.json">助手逐项输出核对</a> · <a href="l3-16-label-audit.html">原数据核对</a></p></section></main></html>'
-    if profile['baseline']:
-        document=document.replace('L3-17','L3-18').replace('首批真实短表达训练','扩充样本训练对照').replace(FIT_RUN,run_id).replace('l3-17-realizer-fit',profile['page'])
-        document=document.replace('按用户“可以开始吧”授权，以修订2的6条助手核对草稿训练、6条作开发检查。','按用户“继续”授权，新增18组36条相关变体。30条训练、12条新开发、6条旧开发回归；旧开发不进训练。前阶段为上批冻结适配层，后阶段为从相同原底座重新初始化、训练80步的新适配层。')
-        document=document.replace('/24次前后首次生成','/96次两臂首次生成').replace('每侧仅6题','相关变体按组不跨边，来源未核')
-        document=document.replace('训练前 ·','旧模型 ·').replace('训练后 ·','扩充训练模型 ·')
-        document=document.replace('</h1>','</h1><section><h2>新旧开发分开观察</h2><pre>'+e(json.dumps({'cohorts':summary['cohortQualityCounts'],'newGroupsBothCorrect':summary['newDevelopmentGroupsAllVariantsCorrect']},ensure_ascii=False,indent=2))+'</pre><p>新开发12条属于6组，两个变体都对才计该组一致；这些仍是助手草稿预检，不签独立泛化或500ms。</p></section>',1)
+    if run_id==BUDGET_RUN:
+        document=budget_document(summary,verdicts)
+    else:
+        document='''<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'"><title>L3-17 首批真实短表达训练</title><style>body{margin:0;background:#f4f6f8;color:#20313e;font:16px/1.7 system-ui}main{max-width:1100px;margin:auto;padding:24px}section{background:#fff;padding:22px;border-radius:12px;margin:20px 0}pre{white-space:pre-wrap;overflow-wrap:anywhere}.warn{color:#a7352e}table{width:100%;border-collapse:collapse}td,th{padding:10px;text-align:left;border-bottom:1px solid #ddd}</style><main><p>D / L3-17 · 2026-11-04</p><h1>首批真实短表达训练：全部前后输出</h1>'''
+        document+=f'<section><h2>实际做了什么</h2><p>按用户“可以开始吧”授权，以修订2的6条助手核对草稿训练、6条作开发检查。原77M底座冻结，只训练172,032个适配参数；实际完成{summary["trainingSteps"]}/80步，保存{summary["generationsWithSavedOutputs"]}/24次前后首次生成。状态：{e(summary["runStatus"])}。</p><p class="warn">标签仍为助手草稿，人工已审0；以下语义意见为助手预检。每侧仅6题，05/06同题型来源风险保留，不签独立泛化、开放规划或完整500ms。训练后能写句子也不等于能自主选择行动。</p><p>进程总耗时{summary["supervisor"]["wallMs"]/1000:.2f}秒，RSS{summary["supervisor"]["observedPeakResidentMiB"]:.2f}MiB；这是整批训练/准备/生成的成本，不是单次游戏响应时间。</p><details><summary>两阶段质量观察与完整局部耗时</summary><pre>{e(json.dumps({"assistant":summary["assistantQualityCounts"],"cost":summary["costObservations"]},ensure_ascii=False,indent=2))}</pre></details></section>'
+        for item in summary['comparisons']:
+            document+=f'<section><h2>{e(item["annotationId"])} · {e(item["role"])} · {e(item["coverage"])}</h2><p>参考草稿：{e(item["referenceDraft"])}</p>'
+            for phase,label in (('before_fit','训练前'),('after_fit','训练后')):
+                p=item[phase]
+                if p is None:document+=f'<p>{label}：没有已保存输出，未补写或重采样。</p>';continue
+                v=verdicts[(item['annotationId'],phase)]
+                document+=f'<h3>{label} · {e(v["verdict"])}</h3><p>{e(p["raw"])}</p><p>助手核对：{e(v["reason"])}</p><p>{p["elapsedIncludingOutputJournalMs"]:.2f}ms · {e(p["stopStatus"])} · 顶层前向{p["modelTopForwardCalls"]}次</p><details><summary>完整实际输入与原始token/计时</summary><pre>{e(json.dumps(p,ensure_ascii=False,indent=2))}</pre></details>'
+            document+='</section>'
+        document+=f'<section><details><summary>原始汇总、每步损失与运行身份</summary><pre>{e(json.dumps(summary,ensure_ascii=False,indent=2))}</pre></details><p><a href="l3-17-realizer-fit-summary.json">机器汇总</a> · <a href="m01-fitting/{FIT_RUN}.authorization.json">用户运行授权记录</a> · <a href="m01-fitting/{FIT_RUN}.plan.json">冻结计划</a> · <a href="m01-fitting/{FIT_RUN}.record.json">原始记录</a> · <a href="m01-fitting/{FIT_RUN}.record.journal.jsonl">全部事件</a> · <a href="m01-fitting/{FIT_RUN}.output-review.json">助手逐项输出核对</a> · <a href="l3-16-label-audit.html">原数据核对</a></p></section></main></html>'
+        if profile['baseline']:
+            document=document.replace('L3-17','L3-18').replace('首批真实短表达训练','扩充样本训练对照').replace(FIT_RUN,run_id).replace('l3-17-realizer-fit',profile['page'])
+            document=document.replace('按用户“可以开始吧”授权，以修订2的6条助手核对草稿训练、6条作开发检查。','按用户“继续”授权，新增18组36条相关变体。30条训练、12条新开发、6条旧开发回归；旧开发不进训练。前阶段为上批冻结适配层，后阶段为从相同原底座重新初始化、训练80步的新适配层。')
+            document=document.replace('/24次前后首次生成','/96次两臂首次生成').replace('每侧仅6题','相关变体按组不跨边，来源未核')
+            document=document.replace('训练前 ·','旧模型 ·').replace('训练后 ·','扩充训练模型 ·')
+            document=document.replace('</h1>','</h1><section><h2>新旧开发分开观察</h2><pre>'+e(json.dumps({'cohorts':summary['cohortQualityCounts'],'newGroupsBothCorrect':summary['newDevelopmentGroupsAllVariantsCorrect']},ensure_ascii=False,indent=2))+'</pre><p>新开发12条属于6组，两个变体都对才计该组一致；这些仍是助手草稿预检，不签独立泛化或500ms。</p></section>',1)
     files={ART/(profile['page']+'-summary.json'):(json.dumps(summary,ensure_ascii=False,indent=2)+'\n').encode(),ART/(profile['page']+'.html'):document.encode()}
     for path,raw in files.items():
         if path.exists() and path.read_bytes()!=raw:raise ValueError('preserve original fit report: '+str(path))
@@ -1053,7 +1109,9 @@ def fit_materials(write=False,run_id=FIT_RUN):
     return summary
 
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('--worker',type=Path);p.add_argument('--numeric-check',action='store_true');p.add_argument('--check-materials',action='store_true');p.add_argument('--check-smoke',action='store_true');p.add_argument('--check-audit',action='store_true');p.add_argument('--check-fit',action='store_true');p.add_argument('--check-expanded',action='store_true');a=p.parse_args()
+    p=argparse.ArgumentParser();p.add_argument('--worker',type=Path);p.add_argument('--numeric-check',action='store_true');p.add_argument('--check-materials',action='store_true');p.add_argument('--check-smoke',action='store_true');p.add_argument('--check-audit',action='store_true');p.add_argument('--check-fit',action='store_true');p.add_argument('--check-expanded',action='store_true');p.add_argument('--check-budget',action='store_true');a=p.parse_args()
+    if a.check_budget:
+        s=fit_materials(run_id=BUDGET_RUN);print(json.dumps({'trainingSteps':s['trainingSteps'],'generationAttempts':s['generationAttempts'],'formalEvaluationAllowed':False}));raise SystemExit(0)
     if a.check_expanded:
         import realizer_expansion as expansion
         expansion.materials();s=fit_materials(run_id=expansion.RUN);print(json.dumps({'trainingSteps':s['trainingSteps'],'generationAttempts':s['generationAttempts'],'formalEvaluationAllowed':False}));raise SystemExit(0)
