@@ -1,0 +1,75 @@
+{
+ "purpose": "cf24 quality baseline on u240: raw output, mechanical verdicts, training overlap, human review, the edit-layer improvement, and the negative input-rule variant",
+ "policy": "Selected immutable records; ordinary run output stays local.",
+ "device": "cpu",
+ "gpuValidated": false,
+ "modelSha256": "ab8a98264ee6b4f83eba17d624d7b92b23522c8eacef07d07a5be960e390184a",
+ "inputPinSha256": "5956c4607771b2e522e7dd23eb8c5e2feeaeeb91ca3d4b6340ee47aa71c8a77a",
+ "unitFileSha256": "a94f7a13eb617c9fe6fcbd3acec0e1e7bfa519fe5a4b69b8b4d26f7a9635468b",
+ "note": "cf24-u240-moved-rule has no review file: the static-fragment review cannot see new wording, so that run is judged in the report from its raw output.",
+ "files": [
+  {
+   "path": "artifacts/next-acceptance/cf24-u240-baseline/cf24-u240-baseline/cf24-baseline.json",
+   "sourceRun": "cf24-u240-baseline",
+   "sourceFile": "cf24-baseline.json",
+   "bytes": 137379,
+   "sha256": "cb153939fc58feb9b534169167d5fe7a5259bd407bd5d560ea7773cfaf496c3e"
+  },
+  {
+   "path": "artifacts/next-acceptance/cf24-u240-baseline/cf24-u240-baseline/cf24-mechanical.json",
+   "sourceRun": "cf24-u240-baseline",
+   "sourceFile": "cf24-mechanical.json",
+   "bytes": 19648,
+   "sha256": "7e2bca51eadf43ad70edd3a4e195900f6b630077aadd8b38fd4f49d382bb8e68"
+  },
+  {
+   "path": "artifacts/next-acceptance/cf24-u240-baseline/cf24-u240-baseline/cf24-overlap.json",
+   "sourceRun": "cf24-u240-baseline",
+   "sourceFile": "cf24-overlap.json",
+   "bytes": 20213,
+   "sha256": "51dedce5047c4f13eefb8dcd6470414767ae1e4e5b0e4a3100709be58c198330"
+  },
+  {
+   "path": "artifacts/next-acceptance/cf24-u240-baseline/cf24-u240-baseline/cf24-review.json",
+   "sourceRun": "cf24-u240-baseline",
+   "sourceFile": "cf24-review.json",
+   "bytes": 21891,
+   "sha256": "79c9908dd8a3726a94775ac7607f63aee4b3231cb74af61386f4890db066d2aa"
+  },
+  {
+   "path": "artifacts/next-acceptance/cf24-u240-baseline/cf24-u240-baseline/cf24-edited.json",
+   "sourceRun": "cf24-u240-baseline",
+   "sourceFile": "cf24-edited.json",
+   "bytes": 140302,
+   "sha256": "62e23492d1e1f2301b47fc7d1f0e28c30c0fc0ac3bb22bc765f5cc945ba29129"
+  },
+  {
+   "path": "artifacts/next-acceptance/cf24-u240-baseline/cf24-u240-baseline/cf24-mechanical-cf24-edited.json",
+   "sourceRun": "cf24-u240-baseline",
+   "sourceFile": "cf24-mechanical-cf24-edited.json",
+   "bytes": 19120,
+   "sha256": "f5b4140fba8f8f2c6e34894014e9dbedfa2528ac4e7a1ea0360d8dfce490db30"
+  },
+  {
+   "path": "artifacts/next-acceptance/cf24-u240-baseline/cf24-u240-baseline/cf24-review-edited.json",
+   "sourceRun": "cf24-u240-baseline",
+   "sourceFile": "cf24-review-edited.json",
+   "bytes": 21086,
+   "sha256": "6e5726c3498ef5cd07afe8ab561e89b042a1cdd7c842500e1e0cc336fdd76760"
+  },
+  {
+   "path": "artifacts/next-acceptance/cf24-u240-baseline/cf24-u240-moved-rule/cf24-baseline.json",
+   "sourceRun": "cf24-u240-moved-rule",
+   "sourceFile": "cf24-baseline.json",
+   "bytes": 138226,
+   "sha256": "b276cfd62eb4499b00e8ee061703df6795f1821e41176ebda8848d6a51c3d214"
+  },
+  {
+   "path": "artifacts/next-acceptance/cf24-u240-baseline/cf24-u240-moved-rule/cf24-mechanical.json",
+   "sourceRun": "cf24-u240-moved-rule",
+   "sourceFile": "cf24-mechanical.json",
+   "bytes": 19510,
+   "sha256": "4a24d398eb0a514efa7c308b5632ad800121bbebac51ee9958172f0c076432c3"
+  }
+ ]
+}
