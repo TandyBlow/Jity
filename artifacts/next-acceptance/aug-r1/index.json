@@ -1,0 +1,159 @@
+{
+ "purpose": "shape augmentation from the moved weights: 12 location-reference rows versus 12 rows in shapes the pools already teach",
+ "job": {
+  "id": 240263,
+  "replacedRun": 240259,
+  "gpu": "NVIDIA GeForce RTX 4090 D",
+  "node": "hpcgpu13",
+  "units": 606
+ },
+ "contrast": "inputs and targets differ between arms; this is a shape augmentation contrast, not label-only",
+ "thresholds": {
+  "improvement": "on the 10 frozen frame probes the experiment passes at least 4/10 and at least 3 more than both the start and the control arm",
+  "largeFailure": "the experiment passes 2/10 or fewer, or attribution errors reach 7/10",
+  "factRegression": "machine S below 85/76/24 on cf24/final24/moved24, or human-final below the start arm",
+  "addedRegression": "added text above the start arm total of 2",
+  "languageRegression": "language defects above the start arm count on cf24",
+  "note": "any regression blocks an overall pass even if the frame column improves"
+ },
+ "frames": {
+  "moved": {
+   "pass": 1,
+   "relationKept": 7,
+   "attributionWrong": 9,
+   "syntaxBroken": 8
+  },
+  "ctl": {
+   "pass": 2,
+   "relationKept": 8,
+   "attributionWrong": 8,
+   "syntaxBroken": 8
+  },
+  "exp": {
+   "pass": 8,
+   "relationKept": 8,
+   "attributionWrong": 2,
+   "syntaxBroken": 0
+  }
+ },
+ "facts": {
+  "moved": {
+   "cf24": 85,
+   "final24": 76,
+   "moved24": 24,
+   "humanFinal": 185
+  },
+  "ctl": {
+   "cf24": 83,
+   "final24": 75,
+   "moved24": 24,
+   "humanFinal": 185,
+   "reviews": 3
+  },
+  "exp": {
+   "cf24": 82,
+   "final24": 75,
+   "moved24": 24,
+   "humanFinal": 184,
+   "reviews": 3,
+   "wrong": 1
+  }
+ },
+ "added": {
+  "moved": 2,
+  "ctl": 0,
+  "exp": 0
+ },
+ "verdict": {
+  "improvement": true,
+  "largeFailure": false,
+  "factRegression": true,
+  "addedRegression": false,
+  "languageRegression": false,
+  "overall": "not passed",
+  "reason": "the frame column improves 1/10 -> 8/10 and syntax breakage 8 -> 0, but the same shape now drops the reference name, which costs one fact unit (t22:f1) and two probes"
+ },
+ "mechanism": "all 12 experiment exemplars embed the name inside the value, so the model learned to lead with the relation and take the name from the value; when the value has no name it is dropped",
+ "files": [
+  {
+   "path": "artifacts/next-acceptance/aug-r1/moved-cf24/cf24-baseline.json",
+   "bytes": 137399,
+   "sha256": "b75c59a34ecd7b840af407f6891d2607cf7e6c9a04c2d3dbf9a24c7c086ad78c"
+  },
+  {
+   "path": "artifacts/next-acceptance/aug-r1/moved-final24/final24-baseline.json",
+   "bytes": 114913,
+   "sha256": "2a680d2d1cca6a5745e0ce71a8c7e5b7d3d17dc9c771089cb1985e7bd6fa8fb8"
+  },
+  {
+   "path": "artifacts/next-acceptance/aug-r1/moved-moved24/moved24-baseline.json",
+   "bytes": 38266,
+   "sha256": "12991ddd6951bf7e28bbc4d66bc19e6ddb489771d538e79602ee0d6c131e52b5"
+  },
+  {
+   "path": "artifacts/next-acceptance/aug-r1/moved-relation/relation-baseline.json",
+   "bytes": 17398,
+   "sha256": "ca526c3c9c678ef5799b02c251b033789187162dbcae609a99dba69531af1e2d"
+  },
+  {
+   "path": "artifacts/next-acceptance/aug-r1/ctl-cf24/cf24-baseline.json",
+   "bytes": 137394,
+   "sha256": "1db7b893c58a672e599c54f9d954fa0ba7e377704e02910475dda12ff3551760"
+  },
+  {
+   "path": "artifacts/next-acceptance/aug-r1/ctl-final24/final24-baseline.json",
+   "bytes": 114978,
+   "sha256": "cbcc8f116125f038d6c152c2aaec70951af0e7c0d1767be247e380060b8be07c"
+  },
+  {
+   "path": "artifacts/next-acceptance/aug-r1/ctl-moved24/moved24-baseline.json",
+   "bytes": 38296,
+   "sha256": "08d2edc68b2dbcee2581a35bf401cb19b84f47c9971814980a59ec083e894e27"
+  },
+  {
+   "path": "artifacts/next-acceptance/aug-r1/ctl-relation/relation-baseline.json",
+   "bytes": 17401,
+   "sha256": "b122f956a3bf8735580b0064c8544237a601cd6b7a32c1735fbbf681df59c59f"
+  },
+  {
+   "path": "artifacts/next-acceptance/aug-r1/exp-cf24/cf24-baseline.json",
+   "bytes": 137359,
+   "sha256": "d6e470d1d55d2e6a149dc03b653d279c9b8a86544a8f1f6df69b6aec76af306a"
+  },
+  {
+   "path": "artifacts/next-acceptance/aug-r1/exp-final24/final24-baseline.json",
+   "bytes": 114915,
+   "sha256": "7203fc42f1d597e55dd785ab39767e188d42e90b603739b8101dbd21030d6d6e"
+  },
+  {
+   "path": "artifacts/next-acceptance/aug-r1/exp-moved24/moved24-baseline.json",
+   "bytes": 38248,
+   "sha256": "95f7dd219d1549523582437d7bf95a07f325a500b0678ece9aafc433826adc16"
+  },
+  {
+   "path": "artifacts/next-acceptance/aug-r1/exp-relation/relation-baseline.json",
+   "bytes": 17332,
+   "sha256": "af24f78029a47725146a2e4f3f804dcc9fbe88f08ef574ed43c609687546f151"
+  },
+  {
+   "path": "artifacts/next-acceptance/aug-r1/frame-judged.json",
+   "bytes": 7184,
+   "sha256": "347776e7b595ac66e348fb38f62bee7fec8e537728b37fd05ab8f9885a57b7aa"
+  },
+  {
+   "path": "artifacts/next-acceptance/aug-r1/aug-freeze.json",
+   "bytes": 9002,
+   "sha256": "e8869d5e6f483777279ca145a5fda1c05607ddd2ce50a6908e7f5779381dd100"
+  },
+  {
+   "path": "artifacts/next-acceptance/aug-r1/train-ctl.json",
+   "bytes": 2035,
+   "sha256": "2f3aed372bfaaab6d4a7cf755c5965777a598adf262afc696bbb1cb25530de08"
+  },
+  {
+   "path": "artifacts/next-acceptance/aug-r1/train-exp.json",
+   "bytes": 2034,
+   "sha256": "ff7f203ec10f0b9138fd3977db326ae4fd6c72d81f15284627a56d72eba896da"
+  }
+ ]
+}

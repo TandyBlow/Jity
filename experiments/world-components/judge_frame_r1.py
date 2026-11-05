@@ -30,7 +30,9 @@ def checks(probe, text):
     other = other_entity(probe)
     kept = relation in text
     role = 'ok'
-    if text.count(name) >= 2:
+    if name not in text:
+        role = 'missing'
+    elif text.count(name) >= 2:
         role = 'duplicated'
     elif name + '的' in text:
         after = text.split(name + '的', 1)[1]
