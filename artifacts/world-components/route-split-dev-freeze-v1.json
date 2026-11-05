@@ -1,0 +1,22 @@
+{
+  "version": "route-split-dev-v1",
+  "created": "2026-11-05",
+  "source": "verbalizer_pairs.jsonl",
+  "out": "dev-units-v1.jsonl",
+  "sha256": "af32783d4c956c8871e593003d41284437fd48183c04291ab0a396852e484089",
+  "units": 14,
+  "kinds": {
+    "moved": 6,
+    "outcome": 3,
+    "sanity_changed": 1,
+    "appearance_changed": 2,
+    "personality_changed": 1,
+    "no_change": 1
+  },
+  "routing": {
+    "act": 9,
+    "state": 4,
+    "no_change": 1
+  },
+  "use": "full-workflow dev for checkpoint-pair selection only; the 215 diagnostic units and the 10 real rounds are reporting-only"
+}

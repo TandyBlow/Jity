@@ -1,0 +1,1744 @@
+{
+  "version": "route-split-analysis-v1",
+  "selectedPoint": 240,
+  "decodeBudgetSeconds": 20.0,
+  "byScope": {
+    "diagnostic": {
+      "units": 215,
+      "control": {
+        "units": 215,
+        "mustExpress": 212,
+        "binding": 215,
+        "repetition": 3,
+        "addition": 18,
+        "clean": 197
+      },
+      "routed": {
+        "units": 215,
+        "mustExpress": 207,
+        "binding": 215,
+        "repetition": 8,
+        "addition": 19,
+        "clean": 187
+      },
+      "deltaRoutedMinusControl": {
+        "mustExpress": -5,
+        "binding": 0,
+        "repetition": -5,
+        "addition": -1
+      },
+      "textChanged": 56,
+      "sameText": 159,
+      "sameTextFlagged": 2,
+      "changedButNoMetricDelta": 32
+    },
+    "round": {
+      "units": 50,
+      "control": {
+        "units": 50,
+        "mustExpress": 50,
+        "binding": 50,
+        "repetition": 15,
+        "addition": 0,
+        "clean": 35
+      },
+      "routed": {
+        "units": 50,
+        "mustExpress": 49,
+        "binding": 49,
+        "repetition": 6,
+        "addition": 4,
+        "clean": 40
+      },
+      "deltaRoutedMinusControl": {
+        "mustExpress": -1,
+        "binding": -1,
+        "repetition": 9,
+        "addition": -4
+      },
+      "textChanged": 31,
+      "sameText": 19,
+      "sameTextFlagged": 0,
+      "changedButNoMetricDelta": 12
+    }
+  },
+  "byGroup": {
+    "act": {
+      "units": 119,
+      "control": {
+        "units": 119,
+        "mustExpress": 116,
+        "binding": 119,
+        "repetition": 3,
+        "addition": 14,
+        "clean": 105
+      },
+      "routed": {
+        "units": 119,
+        "mustExpress": 117,
+        "binding": 119,
+        "repetition": 8,
+        "addition": 13,
+        "clean": 102
+      },
+      "deltaRoutedMinusControl": {
+        "mustExpress": 1,
+        "binding": 0,
+        "repetition": -5,
+        "addition": 1
+      },
+      "textChanged": 29,
+      "sameText": 90,
+      "sameTextFlagged": 1,
+      "changedButNoMetricDelta": 12
+    },
+    "state": {
+      "units": 134,
+      "control": {
+        "units": 134,
+        "mustExpress": 134,
+        "binding": 134,
+        "repetition": 15,
+        "addition": 4,
+        "clean": 115
+      },
+      "routed": {
+        "units": 134,
+        "mustExpress": 127,
+        "binding": 133,
+        "repetition": 6,
+        "addition": 10,
+        "clean": 113
+      },
+      "deltaRoutedMinusControl": {
+        "mustExpress": -7,
+        "binding": -1,
+        "repetition": 9,
+        "addition": -6
+      },
+      "textChanged": 58,
+      "sameText": 76,
+      "sameTextFlagged": 1,
+      "changedButNoMetricDelta": 32
+    },
+    "shared-control": {
+      "units": 12,
+      "control": {
+        "units": 12,
+        "mustExpress": 12,
+        "binding": 12,
+        "repetition": 0,
+        "addition": 0,
+        "clean": 12
+      },
+      "routed": {
+        "units": 12,
+        "mustExpress": 12,
+        "binding": 12,
+        "repetition": 0,
+        "addition": 0,
+        "clean": 12
+      },
+      "deltaRoutedMinusControl": {
+        "mustExpress": 0,
+        "binding": 0,
+        "repetition": 0,
+        "addition": 0
+      },
+      "textChanged": 0,
+      "sameText": 12,
+      "sameTextFlagged": 0,
+      "changedButNoMetricDelta": 0
+    }
+  },
+  "bySet": {
+    "diagnostic/final24": {
+      "units": 76,
+      "control": {
+        "units": 76,
+        "mustExpress": 75,
+        "binding": 76,
+        "repetition": 1,
+        "addition": 5,
+        "clean": 71
+      },
+      "routed": {
+        "units": 76,
+        "mustExpress": 73,
+        "binding": 76,
+        "repetition": 4,
+        "addition": 7,
+        "clean": 64
+      },
+      "deltaRoutedMinusControl": {
+        "mustExpress": -2,
+        "binding": 0,
+        "repetition": -3,
+        "addition": -2
+      },
+      "textChanged": 18,
+      "sameText": 58,
+      "sameTextFlagged": 0,
+      "changedButNoMetricDelta": 9
+    },
+    "diagnostic/cf24": {
+      "units": 85,
+      "control": {
+        "units": 85,
+        "mustExpress": 83,
+        "binding": 85,
+        "repetition": 2,
+        "addition": 11,
+        "clean": 74
+      },
+      "routed": {
+        "units": 85,
+        "mustExpress": 81,
+        "binding": 85,
+        "repetition": 3,
+        "addition": 8,
+        "clean": 73
+      },
+      "deltaRoutedMinusControl": {
+        "mustExpress": -2,
+        "binding": 0,
+        "repetition": -1,
+        "addition": 3
+      },
+      "textChanged": 28,
+      "sameText": 57,
+      "sameTextFlagged": 1,
+      "changedButNoMetricDelta": 15
+    },
+    "diagnostic/object18": {
+      "units": 18,
+      "control": {
+        "units": 18,
+        "mustExpress": 18,
+        "binding": 18,
+        "repetition": 0,
+        "addition": 2,
+        "clean": 16
+      },
+      "routed": {
+        "units": 18,
+        "mustExpress": 17,
+        "binding": 18,
+        "repetition": 0,
+        "addition": 3,
+        "clean": 15
+      },
+      "deltaRoutedMinusControl": {
+        "mustExpress": -1,
+        "binding": 0,
+        "repetition": 0,
+        "addition": -1
+      },
+      "textChanged": 8,
+      "sameText": 10,
+      "sameTextFlagged": 1,
+      "changedButNoMetricDelta": 7
+    },
+    "diagnostic/expand36": {
+      "units": 36,
+      "control": {
+        "units": 36,
+        "mustExpress": 36,
+        "binding": 36,
+        "repetition": 0,
+        "addition": 0,
+        "clean": 36
+      },
+      "routed": {
+        "units": 36,
+        "mustExpress": 36,
+        "binding": 36,
+        "repetition": 1,
+        "addition": 1,
+        "clean": 35
+      },
+      "deltaRoutedMinusControl": {
+        "mustExpress": 0,
+        "binding": 0,
+        "repetition": -1,
+        "addition": -1
+      },
+      "textChanged": 2,
+      "sameText": 34,
+      "sameTextFlagged": 0,
+      "changedButNoMetricDelta": 1
+    },
+    "round/train-r1": {
+      "units": 5,
+      "control": {
+        "units": 5,
+        "mustExpress": 5,
+        "binding": 5,
+        "repetition": 1,
+        "addition": 0,
+        "clean": 4
+      },
+      "routed": {
+        "units": 5,
+        "mustExpress": 5,
+        "binding": 5,
+        "repetition": 1,
+        "addition": 0,
+        "clean": 4
+      },
+      "deltaRoutedMinusControl": {
+        "mustExpress": 0,
+        "binding": 0,
+        "repetition": 0,
+        "addition": 0
+      },
+      "textChanged": 3,
+      "sameText": 2,
+      "sameTextFlagged": 0,
+      "changedButNoMetricDelta": 1
+    },
+    "round/train-r2": {
+      "units": 5,
+      "control": {
+        "units": 5,
+        "mustExpress": 5,
+        "binding": 5,
+        "repetition": 3,
+        "addition": 0,
+        "clean": 2
+      },
+      "routed": {
+        "units": 5,
+        "mustExpress": 5,
+        "binding": 5,
+        "repetition": 0,
+        "addition": 0,
+        "clean": 5
+      },
+      "deltaRoutedMinusControl": {
+        "mustExpress": 0,
+        "binding": 0,
+        "repetition": 3,
+        "addition": 0
+      },
+      "textChanged": 3,
+      "sameText": 2,
+      "sameTextFlagged": 0,
+      "changedButNoMetricDelta": 0
+    },
+    "round/train-r3": {
+      "units": 5,
+      "control": {
+        "units": 5,
+        "mustExpress": 5,
+        "binding": 5,
+        "repetition": 2,
+        "addition": 0,
+        "clean": 3
+      },
+      "routed": {
+        "units": 5,
+        "mustExpress": 5,
+        "binding": 5,
+        "repetition": 1,
+        "addition": 2,
+        "clean": 3
+      },
+      "deltaRoutedMinusControl": {
+        "mustExpress": 0,
+        "binding": 0,
+        "repetition": 1,
+        "addition": -2
+      },
+      "textChanged": 3,
+      "sameText": 2,
+      "sameTextFlagged": 0,
+      "changedButNoMetricDelta": 1
+    },
+    "round/train-r4": {
+      "units": 5,
+      "control": {
+        "units": 5,
+        "mustExpress": 5,
+        "binding": 5,
+        "repetition": 2,
+        "addition": 0,
+        "clean": 3
+      },
+      "routed": {
+        "units": 5,
+        "mustExpress": 5,
+        "binding": 5,
+        "repetition": 1,
+        "addition": 0,
+        "clean": 4
+      },
+      "deltaRoutedMinusControl": {
+        "mustExpress": 0,
+        "binding": 0,
+        "repetition": 1,
+        "addition": 0
+      },
+      "textChanged": 3,
+      "sameText": 2,
+      "sameTextFlagged": 0,
+      "changedButNoMetricDelta": 2
+    },
+    "round/train-r5": {
+      "units": 5,
+      "control": {
+        "units": 5,
+        "mustExpress": 5,
+        "binding": 5,
+        "repetition": 1,
+        "addition": 0,
+        "clean": 4
+      },
+      "routed": {
+        "units": 5,
+        "mustExpress": 5,
+        "binding": 5,
+        "repetition": 1,
+        "addition": 1,
+        "clean": 3
+      },
+      "deltaRoutedMinusControl": {
+        "mustExpress": 0,
+        "binding": 0,
+        "repetition": 0,
+        "addition": -1
+      },
+      "textChanged": 4,
+      "sameText": 1,
+      "sameTextFlagged": 0,
+      "changedButNoMetricDelta": 2
+    },
+    "round/fixture-r1": {
+      "units": 5,
+      "control": {
+        "units": 5,
+        "mustExpress": 5,
+        "binding": 5,
+        "repetition": 1,
+        "addition": 0,
+        "clean": 4
+      },
+      "routed": {
+        "units": 5,
+        "mustExpress": 5,
+        "binding": 5,
+        "repetition": 1,
+        "addition": 0,
+        "clean": 4
+      },
+      "deltaRoutedMinusControl": {
+        "mustExpress": 0,
+        "binding": 0,
+        "repetition": 0,
+        "addition": 0
+      },
+      "textChanged": 3,
+      "sameText": 2,
+      "sameTextFlagged": 0,
+      "changedButNoMetricDelta": 1
+    },
+    "round/fixture-r2": {
+      "units": 5,
+      "control": {
+        "units": 5,
+        "mustExpress": 5,
+        "binding": 5,
+        "repetition": 1,
+        "addition": 0,
+        "clean": 4
+      },
+      "routed": {
+        "units": 5,
+        "mustExpress": 4,
+        "binding": 4,
+        "repetition": 0,
+        "addition": 0,
+        "clean": 4
+      },
+      "deltaRoutedMinusControl": {
+        "mustExpress": -1,
+        "binding": -1,
+        "repetition": 1,
+        "addition": 0
+      },
+      "textChanged": 3,
+      "sameText": 2,
+      "sameTextFlagged": 0,
+      "changedButNoMetricDelta": 1
+    },
+    "round/fixture-r3": {
+      "units": 5,
+      "control": {
+        "units": 5,
+        "mustExpress": 5,
+        "binding": 5,
+        "repetition": 1,
+        "addition": 0,
+        "clean": 4
+      },
+      "routed": {
+        "units": 5,
+        "mustExpress": 5,
+        "binding": 5,
+        "repetition": 0,
+        "addition": 0,
+        "clean": 5
+      },
+      "deltaRoutedMinusControl": {
+        "mustExpress": 0,
+        "binding": 0,
+        "repetition": 1,
+        "addition": 0
+      },
+      "textChanged": 3,
+      "sameText": 2,
+      "sameTextFlagged": 0,
+      "changedButNoMetricDelta": 2
+    },
+    "round/fixture-r4": {
+      "units": 5,
+      "control": {
+        "units": 5,
+        "mustExpress": 5,
+        "binding": 5,
+        "repetition": 2,
+        "addition": 0,
+        "clean": 3
+      },
+      "routed": {
+        "units": 5,
+        "mustExpress": 5,
+        "binding": 5,
+        "repetition": 0,
+        "addition": 0,
+        "clean": 5
+      },
+      "deltaRoutedMinusControl": {
+        "mustExpress": 0,
+        "binding": 0,
+        "repetition": 2,
+        "addition": 0
+      },
+      "textChanged": 3,
+      "sameText": 2,
+      "sameTextFlagged": 0,
+      "changedButNoMetricDelta": 1
+    },
+    "round/fixture-r5": {
+      "units": 5,
+      "control": {
+        "units": 5,
+        "mustExpress": 5,
+        "binding": 5,
+        "repetition": 1,
+        "addition": 0,
+        "clean": 4
+      },
+      "routed": {
+        "units": 5,
+        "mustExpress": 5,
+        "binding": 5,
+        "repetition": 1,
+        "addition": 1,
+        "clean": 3
+      },
+      "deltaRoutedMinusControl": {
+        "mustExpress": 0,
+        "binding": 0,
+        "repetition": 0,
+        "addition": -1
+      },
+      "textChanged": 3,
+      "sameText": 2,
+      "sameTextFlagged": 0,
+      "changedButNoMetricDelta": 1
+    }
+  },
+  "byGroupAndSet": {
+    "act/diagnostic/final24": {
+      "units": 39,
+      "control": {
+        "units": 39,
+        "mustExpress": 38,
+        "binding": 39,
+        "repetition": 1,
+        "addition": 4,
+        "clean": 35
+      },
+      "routed": {
+        "units": 39,
+        "mustExpress": 39,
+        "binding": 39,
+        "repetition": 4,
+        "addition": 5,
+        "clean": 32
+      },
+      "deltaRoutedMinusControl": {
+        "mustExpress": 1,
+        "binding": 0,
+        "repetition": -3,
+        "addition": -1
+      },
+      "textChanged": 9,
+      "sameText": 30,
+      "sameTextFlagged": 0,
+      "changedButNoMetricDelta": 4
+    },
+    "state/diagnostic/final24": {
+      "units": 29,
+      "control": {
+        "units": 29,
+        "mustExpress": 29,
+        "binding": 29,
+        "repetition": 0,
+        "addition": 1,
+        "clean": 28
+      },
+      "routed": {
+        "units": 29,
+        "mustExpress": 26,
+        "binding": 29,
+        "repetition": 0,
+        "addition": 2,
+        "clean": 24
+      },
+      "deltaRoutedMinusControl": {
+        "mustExpress": -3,
+        "binding": 0,
+        "repetition": 0,
+        "addition": -1
+      },
+      "textChanged": 9,
+      "sameText": 20,
+      "sameTextFlagged": 0,
+      "changedButNoMetricDelta": 5
+    },
+    "shared-control/diagnostic/final24": {
+      "units": 8,
+      "control": {
+        "units": 8,
+        "mustExpress": 8,
+        "binding": 8,
+        "repetition": 0,
+        "addition": 0,
+        "clean": 8
+      },
+      "routed": {
+        "units": 8,
+        "mustExpress": 8,
+        "binding": 8,
+        "repetition": 0,
+        "addition": 0,
+        "clean": 8
+      },
+      "deltaRoutedMinusControl": {
+        "mustExpress": 0,
+        "binding": 0,
+        "repetition": 0,
+        "addition": 0
+      },
+      "textChanged": 0,
+      "sameText": 8,
+      "sameTextFlagged": 0,
+      "changedButNoMetricDelta": 0
+    },
+    "act/diagnostic/cf24": {
+      "units": 53,
+      "control": {
+        "units": 53,
+        "mustExpress": 51,
+        "binding": 53,
+        "repetition": 2,
+        "addition": 10,
+        "clean": 43
+      },
+      "routed": {
+        "units": 53,
+        "mustExpress": 51,
+        "binding": 53,
+        "repetition": 3,
+        "addition": 7,
+        "clean": 44
+      },
+      "deltaRoutedMinusControl": {
+        "mustExpress": 0,
+        "binding": 0,
+        "repetition": -1,
+        "addition": 3
+      },
+      "textChanged": 19,
+      "sameText": 34,
+      "sameTextFlagged": 1,
+      "changedButNoMetricDelta": 8
+    },
+    "state/diagnostic/cf24": {
+      "units": 32,
+      "control": {
+        "units": 32,
+        "mustExpress": 32,
+        "binding": 32,
+        "repetition": 0,
+        "addition": 1,
+        "clean": 31
+      },
+      "routed": {
+        "units": 32,
+        "mustExpress": 30,
+        "binding": 32,
+        "repetition": 0,
+        "addition": 1,
+        "clean": 29
+      },
+      "deltaRoutedMinusControl": {
+        "mustExpress": -2,
+        "binding": 0,
+        "repetition": 0,
+        "addition": 0
+      },
+      "textChanged": 9,
+      "sameText": 23,
+      "sameTextFlagged": 0,
+      "changedButNoMetricDelta": 7
+    },
+    "state/diagnostic/object18": {
+      "units": 14,
+      "control": {
+        "units": 14,
+        "mustExpress": 14,
+        "binding": 14,
+        "repetition": 0,
+        "addition": 2,
+        "clean": 12
+      },
+      "routed": {
+        "units": 14,
+        "mustExpress": 13,
+        "binding": 14,
+        "repetition": 0,
+        "addition": 3,
+        "clean": 11
+      },
+      "deltaRoutedMinusControl": {
+        "mustExpress": -1,
+        "binding": 0,
+        "repetition": 0,
+        "addition": -1
+      },
+      "textChanged": 8,
+      "sameText": 6,
+      "sameTextFlagged": 1,
+      "changedButNoMetricDelta": 7
+    },
+    "act/diagnostic/object18": {
+      "units": 4,
+      "control": {
+        "units": 4,
+        "mustExpress": 4,
+        "binding": 4,
+        "repetition": 0,
+        "addition": 0,
+        "clean": 4
+      },
+      "routed": {
+        "units": 4,
+        "mustExpress": 4,
+        "binding": 4,
+        "repetition": 0,
+        "addition": 0,
+        "clean": 4
+      },
+      "deltaRoutedMinusControl": {
+        "mustExpress": 0,
+        "binding": 0,
+        "repetition": 0,
+        "addition": 0
+      },
+      "textChanged": 0,
+      "sameText": 4,
+      "sameTextFlagged": 0,
+      "changedButNoMetricDelta": 0
+    },
+    "act/diagnostic/expand36": {
+      "units": 23,
+      "control": {
+        "units": 23,
+        "mustExpress": 23,
+        "binding": 23,
+        "repetition": 0,
+        "addition": 0,
+        "clean": 23
+      },
+      "routed": {
+        "units": 23,
+        "mustExpress": 23,
+        "binding": 23,
+        "repetition": 1,
+        "addition": 1,
+        "clean": 22
+      },
+      "deltaRoutedMinusControl": {
+        "mustExpress": 0,
+        "binding": 0,
+        "repetition": -1,
+        "addition": -1
+      },
+      "textChanged": 1,
+      "sameText": 22,
+      "sameTextFlagged": 0,
+      "changedButNoMetricDelta": 0
+    },
+    "state/diagnostic/expand36": {
+      "units": 9,
+      "control": {
+        "units": 9,
+        "mustExpress": 9,
+        "binding": 9,
+        "repetition": 0,
+        "addition": 0,
+        "clean": 9
+      },
+      "routed": {
+        "units": 9,
+        "mustExpress": 9,
+        "binding": 9,
+        "repetition": 0,
+        "addition": 0,
+        "clean": 9
+      },
+      "deltaRoutedMinusControl": {
+        "mustExpress": 0,
+        "binding": 0,
+        "repetition": 0,
+        "addition": 0
+      },
+      "textChanged": 1,
+      "sameText": 8,
+      "sameTextFlagged": 0,
+      "changedButNoMetricDelta": 1
+    },
+    "shared-control/diagnostic/expand36": {
+      "units": 4,
+      "control": {
+        "units": 4,
+        "mustExpress": 4,
+        "binding": 4,
+        "repetition": 0,
+        "addition": 0,
+        "clean": 4
+      },
+      "routed": {
+        "units": 4,
+        "mustExpress": 4,
+        "binding": 4,
+        "repetition": 0,
+        "addition": 0,
+        "clean": 4
+      },
+      "deltaRoutedMinusControl": {
+        "mustExpress": 0,
+        "binding": 0,
+        "repetition": 0,
+        "addition": 0
+      },
+      "textChanged": 0,
+      "sameText": 4,
+      "sameTextFlagged": 0,
+      "changedButNoMetricDelta": 0
+    },
+    "state/round/train-r1": {
+      "units": 5,
+      "control": {
+        "units": 5,
+        "mustExpress": 5,
+        "binding": 5,
+        "repetition": 1,
+        "addition": 0,
+        "clean": 4
+      },
+      "routed": {
+        "units": 5,
+        "mustExpress": 5,
+        "binding": 5,
+        "repetition": 1,
+        "addition": 0,
+        "clean": 4
+      },
+      "deltaRoutedMinusControl": {
+        "mustExpress": 0,
+        "binding": 0,
+        "repetition": 0,
+        "addition": 0
+      },
+      "textChanged": 3,
+      "sameText": 2,
+      "sameTextFlagged": 0,
+      "changedButNoMetricDelta": 1
+    },
+    "state/round/train-r2": {
+      "units": 5,
+      "control": {
+        "units": 5,
+        "mustExpress": 5,
+        "binding": 5,
+        "repetition": 3,
+        "addition": 0,
+        "clean": 2
+      },
+      "routed": {
+        "units": 5,
+        "mustExpress": 5,
+        "binding": 5,
+        "repetition": 0,
+        "addition": 0,
+        "clean": 5
+      },
+      "deltaRoutedMinusControl": {
+        "mustExpress": 0,
+        "binding": 0,
+        "repetition": 3,
+        "addition": 0
+      },
+      "textChanged": 3,
+      "sameText": 2,
+      "sameTextFlagged": 0,
+      "changedButNoMetricDelta": 0
+    },
+    "state/round/train-r3": {
+      "units": 5,
+      "control": {
+        "units": 5,
+        "mustExpress": 5,
+        "binding": 5,
+        "repetition": 2,
+        "addition": 0,
+        "clean": 3
+      },
+      "routed": {
+        "units": 5,
+        "mustExpress": 5,
+        "binding": 5,
+        "repetition": 1,
+        "addition": 2,
+        "clean": 3
+      },
+      "deltaRoutedMinusControl": {
+        "mustExpress": 0,
+        "binding": 0,
+        "repetition": 1,
+        "addition": -2
+      },
+      "textChanged": 3,
+      "sameText": 2,
+      "sameTextFlagged": 0,
+      "changedButNoMetricDelta": 1
+    },
+    "state/round/train-r4": {
+      "units": 5,
+      "control": {
+        "units": 5,
+        "mustExpress": 5,
+        "binding": 5,
+        "repetition": 2,
+        "addition": 0,
+        "clean": 3
+      },
+      "routed": {
+        "units": 5,
+        "mustExpress": 5,
+        "binding": 5,
+        "repetition": 1,
+        "addition": 0,
+        "clean": 4
+      },
+      "deltaRoutedMinusControl": {
+        "mustExpress": 0,
+        "binding": 0,
+        "repetition": 1,
+        "addition": 0
+      },
+      "textChanged": 3,
+      "sameText": 2,
+      "sameTextFlagged": 0,
+      "changedButNoMetricDelta": 2
+    },
+    "state/round/train-r5": {
+      "units": 5,
+      "control": {
+        "units": 5,
+        "mustExpress": 5,
+        "binding": 5,
+        "repetition": 1,
+        "addition": 0,
+        "clean": 4
+      },
+      "routed": {
+        "units": 5,
+        "mustExpress": 5,
+        "binding": 5,
+        "repetition": 1,
+        "addition": 1,
+        "clean": 3
+      },
+      "deltaRoutedMinusControl": {
+        "mustExpress": 0,
+        "binding": 0,
+        "repetition": 0,
+        "addition": -1
+      },
+      "textChanged": 4,
+      "sameText": 1,
+      "sameTextFlagged": 0,
+      "changedButNoMetricDelta": 2
+    },
+    "state/round/fixture-r1": {
+      "units": 5,
+      "control": {
+        "units": 5,
+        "mustExpress": 5,
+        "binding": 5,
+        "repetition": 1,
+        "addition": 0,
+        "clean": 4
+      },
+      "routed": {
+        "units": 5,
+        "mustExpress": 5,
+        "binding": 5,
+        "repetition": 1,
+        "addition": 0,
+        "clean": 4
+      },
+      "deltaRoutedMinusControl": {
+        "mustExpress": 0,
+        "binding": 0,
+        "repetition": 0,
+        "addition": 0
+      },
+      "textChanged": 3,
+      "sameText": 2,
+      "sameTextFlagged": 0,
+      "changedButNoMetricDelta": 1
+    },
+    "state/round/fixture-r2": {
+      "units": 5,
+      "control": {
+        "units": 5,
+        "mustExpress": 5,
+        "binding": 5,
+        "repetition": 1,
+        "addition": 0,
+        "clean": 4
+      },
+      "routed": {
+        "units": 5,
+        "mustExpress": 4,
+        "binding": 4,
+        "repetition": 0,
+        "addition": 0,
+        "clean": 4
+      },
+      "deltaRoutedMinusControl": {
+        "mustExpress": -1,
+        "binding": -1,
+        "repetition": 1,
+        "addition": 0
+      },
+      "textChanged": 3,
+      "sameText": 2,
+      "sameTextFlagged": 0,
+      "changedButNoMetricDelta": 1
+    },
+    "state/round/fixture-r3": {
+      "units": 5,
+      "control": {
+        "units": 5,
+        "mustExpress": 5,
+        "binding": 5,
+        "repetition": 1,
+        "addition": 0,
+        "clean": 4
+      },
+      "routed": {
+        "units": 5,
+        "mustExpress": 5,
+        "binding": 5,
+        "repetition": 0,
+        "addition": 0,
+        "clean": 5
+      },
+      "deltaRoutedMinusControl": {
+        "mustExpress": 0,
+        "binding": 0,
+        "repetition": 1,
+        "addition": 0
+      },
+      "textChanged": 3,
+      "sameText": 2,
+      "sameTextFlagged": 0,
+      "changedButNoMetricDelta": 2
+    },
+    "state/round/fixture-r4": {
+      "units": 5,
+      "control": {
+        "units": 5,
+        "mustExpress": 5,
+        "binding": 5,
+        "repetition": 2,
+        "addition": 0,
+        "clean": 3
+      },
+      "routed": {
+        "units": 5,
+        "mustExpress": 5,
+        "binding": 5,
+        "repetition": 0,
+        "addition": 0,
+        "clean": 5
+      },
+      "deltaRoutedMinusControl": {
+        "mustExpress": 0,
+        "binding": 0,
+        "repetition": 2,
+        "addition": 0
+      },
+      "textChanged": 3,
+      "sameText": 2,
+      "sameTextFlagged": 0,
+      "changedButNoMetricDelta": 1
+    },
+    "state/round/fixture-r5": {
+      "units": 5,
+      "control": {
+        "units": 5,
+        "mustExpress": 5,
+        "binding": 5,
+        "repetition": 1,
+        "addition": 0,
+        "clean": 4
+      },
+      "routed": {
+        "units": 5,
+        "mustExpress": 5,
+        "binding": 5,
+        "repetition": 1,
+        "addition": 1,
+        "clean": 3
+      },
+      "deltaRoutedMinusControl": {
+        "mustExpress": 0,
+        "binding": 0,
+        "repetition": 0,
+        "addition": -1
+      },
+      "textChanged": 3,
+      "sameText": 2,
+      "sameTextFlagged": 0,
+      "changedButNoMetricDelta": 1
+    }
+  },
+  "changedButNoMetricDelta": [
+    {
+      "scope": "diagnostic",
+      "set": "final24",
+      "unitId": "v01:f1",
+      "kind": "outcome",
+      "group": "act",
+      "factText": "把松脱的钟绳重新系紧",
+      "controlText": "韩渡把松脱的钟绳重新系紧,钟绳绷直。",
+      "routedText": "韩渡把松脱的钟绳重新系紧,钟绳绷直了。",
+      "controlFlags": [
+        "semantic-repeat:钟绳",
+        "extra-state:绷直"
+      ],
+      "routedFlags": [
+        "semantic-repeat:钟绳",
+        "extra-state:绷直"
+      ]
+    },
+    {
+      "scope": "diagnostic",
+      "set": "final24",
+      "unitId": "v07:f0",
+      "kind": "appearance_changed",
+      "group": "state",
+      "factText": "灯罩上积了灰",
+      "controlText": "铜灯的外貌变化,灯罩上积了灰。",
+      "routedText": "铜灯的灯罩上积了灰。",
+      "controlFlags": [],
+      "routedFlags": []
+    },
+    {
+      "scope": "diagnostic",
+      "set": "final24",
+      "unitId": "v08:f0",
+      "kind": "appearance_changed",
+      "group": "state",
+      "factText": "玻璃罩被风吹歪",
+      "controlText": "警示灯的外貌变化,玻璃罩被风吹歪。",
+      "routedText": "警示灯的玻璃罩被风吹歪。",
+      "controlFlags": [],
+      "routedFlags": []
+    },
+    {
+      "scope": "diagnostic",
+      "set": "final24",
+      "unitId": "v08:f1",
+      "kind": "appearance_changed",
+      "group": "state",
+      "factText": "磨出了毛边",
+      "controlText": "钟绳的外貌变化,磨出了毛边。",
+      "routedText": "钟绳磨出了毛边。",
+      "controlFlags": [],
+      "routedFlags": []
+    },
+    {
+      "scope": "diagnostic",
+      "set": "final24",
+      "unitId": "v10:f0",
+      "kind": "appearance_changed",
+      "group": "state",
+      "factText": "链环上结了锈",
+      "controlText": "铁链的外貌变化,链环上结了锈。",
+      "routedText": "铁链的链环上结了锈。",
+      "controlFlags": [],
+      "routedFlags": []
+    },
+    {
+      "scope": "diagnostic",
+      "set": "final24",
+      "unitId": "v10:f1",
+      "kind": "appearance_changed",
+      "group": "state",
+      "factText": "玻璃上蒙了盐雾",
+      "controlText": "铜灯罩的外貌变化,玻璃上蒙了盐雾。",
+      "routedText": "铜灯罩的玻璃上蒙了盐雾。",
+      "controlFlags": [
+        "extra-object:铜灯"
+      ],
+      "routedFlags": [
+        "extra-object:铜灯"
+      ]
+    },
+    {
+      "scope": "diagnostic",
+      "set": "final24",
+      "unitId": "v12:f0",
+      "kind": "moved",
+      "group": "act",
+      "factText": "潮生巷 → 早市",
+      "controlText": "阿棠从潮生巷出来,蹲到早市。",
+      "routedText": "阿棠从潮生巷一路走到早市,鱼筐在案板上沾着鱼鳞。",
+      "controlFlags": [
+        "extra-action:蹲"
+      ],
+      "routedFlags": [
+        "extra-object:鱼鳞"
+      ]
+    },
+    {
+      "scope": "diagnostic",
+      "set": "final24",
+      "unitId": "v14:f0",
+      "kind": "moved",
+      "group": "act",
+      "factText": "潮汐档案馆 → 潮渡",
+      "controlText": "沈砚从潮汐档案馆出来,一直走到潮渡栈桥边。",
+      "routedText": "沈砚从潮汐档案馆出来,船头抵住潮渡。",
+      "controlFlags": [],
+      "routedFlags": []
+    },
+    {
+      "scope": "diagnostic",
+      "set": "final24",
+      "unitId": "v20:f0",
+      "kind": "moved",
+      "group": "act",
+      "factText": "潮生巷 → 潮渡",
+      "controlText": "沈砚从潮生巷一路走到潮渡栈桥边。",
+      "routedText": "沈砚从潮生巷一路走到潮渡。",
+      "controlFlags": [],
+      "routedFlags": []
+    },
+    {
+      "scope": "diagnostic",
+      "set": "cf24",
+      "unitId": "t07:f1",
+      "kind": "outcome",
+      "group": "act",
+      "factText": "把松脱的钟绳重新系紧",
+      "controlText": "韩渡把松脱的钟绳重新系紧,钟绳绷直。",
+      "routedText": "韩渡把松脱的钟绳重新系紧,钟绳绷直了。",
+      "controlFlags": [
+        "semantic-repeat:钟绳",
+        "extra-state:绷直"
+      ],
+      "routedFlags": [
+        "semantic-repeat:钟绳",
+        "extra-state:绷直"
+      ]
+    },
+    {
+      "scope": "diagnostic",
+      "set": "cf24",
+      "unitId": "t08:f0",
+      "kind": "outcome",
+      "group": "act",
+      "factText": "把银鳞鱼搬上案板",
+      "controlText": "阿棠把银鳞鱼搬上案板,石板上沾满白汽。",
+      "routedText": "阿棠把银鳞鱼搬上案板。",
+      "controlFlags": [],
+      "routedFlags": []
+    },
+    {
+      "scope": "diagnostic",
+      "set": "cf24",
+      "unitId": "t09:f0",
+      "kind": "moved",
+      "group": "act",
+      "factText": "早市 → 潮汐档案馆",
+      "controlText": "叶知微从早市过来,推开档案馆的门。",
+      "routedText": "叶知微从早市上来,走进档案馆。",
+      "controlFlags": [],
+      "routedFlags": []
+    },
+    {
+      "scope": "diagnostic",
+      "set": "cf24",
+      "unitId": "t09:f2",
+      "kind": "outcome",
+      "group": "act",
+      "factText": "把一叠干纸放在桌角",
+      "controlText": "叶知微把干纸放在桌角。",
+      "routedText": "叶知微把一叠干纸放在桌角,纸页还带着潮气。",
+      "controlFlags": [],
+      "routedFlags": []
+    },
+    {
+      "scope": "diagnostic",
+      "set": "cf24",
+      "unitId": "t11:f1",
+      "kind": "outcome",
+      "group": "act",
+      "factText": "把灯罩擦得透亮",
+      "controlText": "叶知微把灯罩擦得透亮,玻璃罩上不再有雾。",
+      "routedText": "叶知微把灯罩擦得透亮,玻璃罩不再发暗。",
+      "controlFlags": [
+        "extra-state:不再"
+      ],
+      "routedFlags": [
+        "extra-state:不再/发暗"
+      ]
+    },
+    {
+      "scope": "diagnostic",
+      "set": "cf24",
+      "unitId": "t15:f0",
+      "kind": "moved",
+      "group": "act",
+      "factText": "潮生巷 → 潮渡",
+      "controlText": "韩渡从潮生巷一路走到潮渡栈桥边。",
+      "routedText": "韩渡从潮生巷一路走到潮渡。",
+      "controlFlags": [],
+      "routedFlags": []
+    },
+    {
+      "scope": "diagnostic",
+      "set": "cf24",
+      "unitId": "t16:f0",
+      "kind": "moved",
+      "group": "act",
+      "factText": "潮汐档案馆 → 潮生巷",
+      "controlText": "沈砚从潮汐档案馆出来,走到潮生巷。",
+      "routedText": "沈砚从潮汐档案馆出来,走进潮生巷。",
+      "controlFlags": [],
+      "routedFlags": []
+    },
+    {
+      "scope": "diagnostic",
+      "set": "cf24",
+      "unitId": "t17:f1",
+      "kind": "outcome",
+      "group": "act",
+      "factText": "把银鳞鱼搬上案板",
+      "controlText": "阿棠把银鳞鱼搬上案板,石板上沾满白汽。",
+      "routedText": "阿棠把银鳞鱼搬上案板。",
+      "controlFlags": [],
+      "routedFlags": []
+    },
+    {
+      "scope": "diagnostic",
+      "set": "cf24",
+      "unitId": "t20:f0",
+      "kind": "appearance_changed",
+      "group": "state",
+      "factText": "铜框玻璃罩被风吹歪",
+      "controlText": "警示灯的外貌变化,铜框玻璃罩被风吹歪。",
+      "routedText": "警示灯的铜框玻璃罩被风吹歪。",
+      "controlFlags": [],
+      "routedFlags": []
+    },
+    {
+      "scope": "diagnostic",
+      "set": "cf24",
+      "unitId": "t20:f1",
+      "kind": "appearance_changed",
+      "group": "state",
+      "factText": "磨出了毛边",
+      "controlText": "钟绳的外貌变化,磨出了毛边。",
+      "routedText": "钟绳磨出了毛边。",
+      "controlFlags": [],
+      "routedFlags": []
+    },
+    {
+      "scope": "diagnostic",
+      "set": "cf24",
+      "unitId": "t21:f1",
+      "kind": "appearance_changed",
+      "group": "state",
+      "factText": "灯罩上积了灰",
+      "controlText": "铜灯的外貌变化,灯罩上积了灰。",
+      "routedText": "铜灯的灯罩上积了灰。",
+      "controlFlags": [],
+      "routedFlags": []
+    },
+    {
+      "scope": "diagnostic",
+      "set": "cf24",
+      "unitId": "t22:f1",
+      "kind": "appearance_changed",
+      "group": "state",
+      "factText": "缠着的旧缆绳断了",
+      "controlText": "木桩上缠着的旧缆绳断了。",
+      "routedText": "木桩的缠着的旧缆绳断了。",
+      "controlFlags": [],
+      "routedFlags": []
+    },
+    {
+      "scope": "diagnostic",
+      "set": "cf24",
+      "unitId": "t23:f0",
+      "kind": "appearance_changed",
+      "group": "state",
+      "factText": "玻璃上蒙了盐雾",
+      "controlText": "铜灯罩的外貌变化,玻璃上蒙了盐雾。",
+      "routedText": "铜灯罩的玻璃上蒙了盐雾。",
+      "controlFlags": [
+        "extra-object:铜灯"
+      ],
+      "routedFlags": [
+        "extra-object:铜灯"
+      ]
+    },
+    {
+      "scope": "diagnostic",
+      "set": "cf24",
+      "unitId": "t23:f1",
+      "kind": "appearance_changed",
+      "group": "state",
+      "factText": "链环上结了锈",
+      "controlText": "铁链的外貌变化,链环上结了锈。",
+      "routedText": "铁链的链环上结了锈。",
+      "controlFlags": [],
+      "routedFlags": []
+    },
+    {
+      "scope": "diagnostic",
+      "set": "cf24",
+      "unitId": "t24:f1",
+      "kind": "appearance_changed",
+      "group": "state",
+      "factText": "里面积了泥",
+      "controlText": "排水沟里的外貌变化,里面积了泥。",
+      "routedText": "排水沟的里面积了泥。",
+      "controlFlags": [],
+      "routedFlags": []
+    },
+    {
+      "scope": "diagnostic",
+      "set": "object18",
+      "unitId": "qa1B",
+      "kind": "appearance_changed",
+      "group": "state",
+      "factText": "表面结了皮",
+      "controlText": "墨的外貌变化,表面结了皮。",
+      "routedText": "墨的表面结了皮。",
+      "controlFlags": [],
+      "routedFlags": []
+    },
+    {
+      "scope": "diagnostic",
+      "set": "object18",
+      "unitId": "qa2B",
+      "kind": "appearance_changed",
+      "group": "state",
+      "factText": "船板裂了缝",
+      "controlText": "渡船的外貌变化,船板裂了缝。",
+      "routedText": "渡船的船板裂了缝。",
+      "controlFlags": [],
+      "routedFlags": []
+    },
+    {
+      "scope": "diagnostic",
+      "set": "object18",
+      "unitId": "qb1A",
+      "kind": "appearance_changed",
+      "group": "state",
+      "factText": "烧黑了一截",
+      "controlText": "灯芯的外貌变化,烧黑了一截。",
+      "routedText": "灯芯烧黑了一截。",
+      "controlFlags": [],
+      "routedFlags": []
+    },
+    {
+      "scope": "diagnostic",
+      "set": "object18",
+      "unitId": "qb2A",
+      "kind": "appearance_changed",
+      "group": "state",
+      "factText": "伞骨断了一根",
+      "controlText": "油纸伞的外貌变化,伞骨断了一根。",
+      "routedText": "油纸伞的伞骨断了一根。",
+      "controlFlags": [],
+      "routedFlags": []
+    },
+    {
+      "scope": "diagnostic",
+      "set": "object18",
+      "unitId": "qd2A",
+      "kind": "appearance_changed",
+      "group": "state",
+      "factText": "缠的旧绳断了",
+      "controlText": "木桩上缠的旧绳断了。",
+      "routedText": "木桩的缠的旧绳断了。",
+      "controlFlags": [],
+      "routedFlags": []
+    },
+    {
+      "scope": "diagnostic",
+      "set": "object18",
+      "unitId": "qd2B",
+      "kind": "appearance_changed",
+      "group": "state",
+      "factText": "中间断了一股",
+      "controlText": "缆绳的外貌变化,中间断了一股。",
+      "routedText": "缆绳的中间断了一股。",
+      "controlFlags": [],
+      "routedFlags": []
+    },
+    {
+      "scope": "diagnostic",
+      "set": "object18",
+      "unitId": "qd3B",
+      "kind": "appearance_changed",
+      "group": "state",
+      "factText": "洒了半罐",
+      "controlText": "擦铜油的外貌变化,洒了半罐。",
+      "routedText": "擦铜油洒了半罐。",
+      "controlFlags": [
+        "extra-object:铜油"
+      ],
+      "routedFlags": [
+        "extra-object:铜油"
+      ]
+    },
+    {
+      "scope": "diagnostic",
+      "set": "expand36",
+      "unitId": "cb3A",
+      "kind": "appearance_changed",
+      "group": "state",
+      "factText": "眉毛上挂着雾水",
+      "controlText": "韩渡眉毛上挂着雾水。",
+      "routedText": "韩渡的眉毛上挂着雾水。",
+      "controlFlags": [],
+      "routedFlags": []
+    },
+    {
+      "scope": "round",
+      "set": "train-r1",
+      "unitId": "f0",
+      "kind": "appearance_changed",
+      "group": "state",
+      "factText": "袖口沾了雨",
+      "controlText": "沈砚的袖口沾了雨。",
+      "routedText": "沈砚的袖口沾了雨,短句没有了。",
+      "controlFlags": [],
+      "routedFlags": []
+    },
+    {
+      "scope": "round",
+      "set": "train-r3",
+      "unitId": "f0",
+      "kind": "appearance_changed",
+      "group": "state",
+      "factText": "被雨打湿半幅",
+      "controlText": "沈砚的外貌变化,被雨打湿半幅。",
+      "routedText": "沈砚被雨打湿半幅,短句没有了。",
+      "controlFlags": [],
+      "routedFlags": []
+    },
+    {
+      "scope": "round",
+      "set": "train-r4",
+      "unitId": "f0",
+      "kind": "appearance_changed",
+      "group": "state",
+      "factText": "围巾松开一截",
+      "controlText": "沈砚的围巾松开一截。",
+      "routedText": "沈砚的围巾松开一截,纸张了张嘴。",
+      "controlFlags": [],
+      "routedFlags": []
+    },
+    {
+      "scope": "round",
+      "set": "train-r4",
+      "unitId": "f1",
+      "kind": "appearance_changed",
+      "group": "state",
+      "factText": "脸色发白",
+      "controlText": "沈砚的脸色发白,脸色发白。",
+      "routedText": "沈砚的脸色发白,发白。",
+      "controlFlags": [
+        "semantic-repeat:脸色"
+      ],
+      "routedFlags": [
+        "semantic-repeat:发白"
+      ]
+    },
+    {
+      "scope": "round",
+      "set": "train-r5",
+      "unitId": "f1",
+      "kind": "appearance_changed",
+      "group": "state",
+      "factText": "脚踝肿了一块",
+      "controlText": "沈砚的脚踝肿了一块。",
+      "routedText": "沈砚的脚踝肿了一块,纸张了张嘴。",
+      "controlFlags": [],
+      "routedFlags": []
+    },
+    {
+      "scope": "round",
+      "set": "train-r5",
+      "unitId": "f3",
+      "kind": "appearance_changed",
+      "group": "state",
+      "factText": "指尖磨出茧",
+      "controlText": "叶知微的指尖磨出茧。",
+      "routedText": "叶知微的指尖磨出茧,短句是叶知微的。",
+      "controlFlags": [],
+      "routedFlags": []
+    },
+    {
+      "scope": "round",
+      "set": "fixture-r1",
+      "unitId": "f0",
+      "kind": "appearance_changed",
+      "group": "state",
+      "factText": "袖口沾了雨",
+      "controlText": "林川的袖口沾了雨。",
+      "routedText": "林川的袖口沾了雨,短句。",
+      "controlFlags": [],
+      "routedFlags": []
+    },
+    {
+      "scope": "round",
+      "set": "fixture-r2",
+      "unitId": "f4",
+      "kind": "appearance_changed",
+      "group": "state",
+      "factText": "鬓发被雾打湿",
+      "controlText": "陈默的鬓发被雾打湿。",
+      "routedText": "陈默的鬓发被雾打湿,短句写完。",
+      "controlFlags": [],
+      "routedFlags": []
+    },
+    {
+      "scope": "round",
+      "set": "fixture-r3",
+      "unitId": "f0",
+      "kind": "appearance_changed",
+      "group": "state",
+      "factText": "被雨打湿半幅",
+      "controlText": "林川的外套被雨打湿半幅。",
+      "routedText": "林川被雨打湿半幅。",
+      "controlFlags": [],
+      "routedFlags": []
+    },
+    {
+      "scope": "round",
+      "set": "fixture-r3",
+      "unitId": "f1",
+      "kind": "appearance_changed",
+      "group": "state",
+      "factText": "袖口开了线",
+      "controlText": "林川的袖口开了线。",
+      "routedText": "林川的袖口开了线,短句。",
+      "controlFlags": [],
+      "routedFlags": []
+    },
+    {
+      "scope": "round",
+      "set": "fixture-r4",
+      "unitId": "f0",
+      "kind": "appearance_changed",
+      "group": "state",
+      "factText": "围巾松开一截",
+      "controlText": "林川的围巾松开一截。",
+      "routedText": "林川的围巾松开一截,纸张了张嘴。",
+      "controlFlags": [],
+      "routedFlags": []
+    },
+    {
+      "scope": "round",
+      "set": "fixture-r5",
+      "unitId": "f1",
+      "kind": "appearance_changed",
+      "group": "state",
+      "factText": "脚踝肿了一块",
+      "controlText": "林川的脚踝肿了一块。",
+      "routedText": "林川的脚踝肿了一块,纸张了张嘴。",
+      "controlFlags": [],
+      "routedFlags": []
+    }
+  ],
+  "sameTextFlagged": [
+    {
+      "scope": "diagnostic",
+      "set": "cf24",
+      "unitId": "t11:f0",
+      "kind": "moved",
+      "group": "act",
+      "text": "沈砚从潮生巷一路走到旧灯塔脚下,抬头看了看塔身。",
+      "controlFlags": [
+        "extra-action:抬头",
+        "extra-object:脚"
+      ],
+      "routedFlags": [
+        "extra-action:抬头",
+        "extra-object:脚"
+      ]
+    },
+    {
+      "scope": "diagnostic",
+      "set": "object18",
+      "unitId": "qb1B",
+      "kind": "appearance_changed",
+      "group": "state",
+      "text": "铜灯罩被擦得发亮。",
+      "controlFlags": [
+        "extra-object:铜灯"
+      ],
+      "routedFlags": [
+        "extra-object:铜灯"
+      ]
+    }
+  ],
+  "metricSource": "mechanical judge_expression.py; not human semantic gold",
+  "manualReview": "route-split-manual-review-v1.json"
+}

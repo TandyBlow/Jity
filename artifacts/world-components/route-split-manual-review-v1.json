@@ -1,0 +1,1039 @@
+{
+  "version": "route-split-manual-review-v1",
+  "created": "2026-11-05",
+  "reviewBasis": "every text-different pair (87); the two flagged same-text pairs were also read",
+  "judgeRole": "mechanical flags used only as pointers; verdicts from reading fact vs output",
+  "cases": {
+    "act-021": {
+      "scope": "diagnostic",
+      "set": "final24",
+      "unitId": "v01:f0",
+      "kind": "moved",
+      "group": "act",
+      "verdict": "regressed",
+      "level": "content",
+      "note": "新增“蹲”动作"
+    },
+    "act-022": {
+      "scope": "diagnostic",
+      "set": "final24",
+      "unitId": "v01:f1",
+      "kind": "outcome",
+      "group": "act",
+      "verdict": "equivalent",
+      "level": "content",
+      "note": "两边都加“钟绳绷直”，共同缺陷"
+    },
+    "act-023": {
+      "scope": "diagnostic",
+      "set": "final24",
+      "unitId": "v05:f2",
+      "kind": "outcome",
+      "group": "act",
+      "verdict": "mixed",
+      "level": "content",
+      "note": "control 加玻璃/雾；routed 复述“透亮”"
+    },
+    "state-011": {
+      "scope": "diagnostic",
+      "set": "final24",
+      "unitId": "v07:f0",
+      "kind": "appearance_changed",
+      "group": "state",
+      "verdict": "improved",
+      "level": "surface",
+      "note": "去掉“外貌变化”字段回声"
+    },
+    "state-012": {
+      "scope": "diagnostic",
+      "set": "final24",
+      "unitId": "v08:f0",
+      "kind": "appearance_changed",
+      "group": "state",
+      "verdict": "improved",
+      "level": "surface",
+      "note": "去掉“外貌变化”字段回声"
+    },
+    "state-013": {
+      "scope": "diagnostic",
+      "set": "final24",
+      "unitId": "v08:f1",
+      "kind": "appearance_changed",
+      "group": "state",
+      "verdict": "improved",
+      "level": "surface",
+      "note": "去掉“外貌变化”字段回声"
+    },
+    "state-014": {
+      "scope": "diagnostic",
+      "set": "final24",
+      "unitId": "v10:f0",
+      "kind": "appearance_changed",
+      "group": "state",
+      "verdict": "improved",
+      "level": "surface",
+      "note": "去掉“外貌变化”字段回声"
+    },
+    "state-015": {
+      "scope": "diagnostic",
+      "set": "final24",
+      "unitId": "v10:f1",
+      "kind": "appearance_changed",
+      "group": "state",
+      "verdict": "improved",
+      "level": "surface",
+      "note": "去掉“外貌变化”字段回声；两边仍有“铜灯”标记"
+    },
+    "act-024": {
+      "scope": "diagnostic",
+      "set": "final24",
+      "unitId": "v11:f0",
+      "kind": "moved",
+      "group": "act",
+      "verdict": "regressed",
+      "level": "content",
+      "note": "新增“脚下/抬头看档案馆”"
+    },
+    "act-025": {
+      "scope": "diagnostic",
+      "set": "final24",
+      "unitId": "v12:f0",
+      "kind": "moved",
+      "group": "act",
+      "verdict": "mixed",
+      "level": "content",
+      "note": "control 加“蹲”；routed 加“鱼鳞/案板”状态"
+    },
+    "act-026": {
+      "scope": "diagnostic",
+      "set": "final24",
+      "unitId": "v13:f1",
+      "kind": "outcome",
+      "group": "act",
+      "verdict": "mixed",
+      "level": "content",
+      "note": "control 漏“塔顶”且多“铜油”；routed 主事实对但复述“换好”"
+    },
+    "act-027": {
+      "scope": "diagnostic",
+      "set": "final24",
+      "unitId": "v14:f0",
+      "kind": "moved",
+      "group": "act",
+      "verdict": "regressed",
+      "level": "content",
+      "note": "“船头抵住潮渡”主语错，人物移动变成船"
+    },
+    "state-016": {
+      "scope": "diagnostic",
+      "set": "final24",
+      "unitId": "v14:f2",
+      "kind": "sanity_changed",
+      "group": "state",
+      "verdict": "regressed",
+      "level": "content",
+      "note": "sanity 输出截断“把想问”"
+    },
+    "act-028": {
+      "scope": "diagnostic",
+      "set": "final24",
+      "unitId": "v18:f0",
+      "kind": "moved",
+      "group": "act",
+      "verdict": "regressed",
+      "level": "content",
+      "note": "新增“蹲”动作"
+    },
+    "state-017": {
+      "scope": "diagnostic",
+      "set": "final24",
+      "unitId": "v18:f2",
+      "kind": "sanity_changed",
+      "group": "state",
+      "verdict": "regressed",
+      "level": "content",
+      "note": "sanity 输出截断“把想问”"
+    },
+    "state-018": {
+      "scope": "diagnostic",
+      "set": "final24",
+      "unitId": "v19:f1",
+      "kind": "sanity_changed",
+      "group": "state",
+      "verdict": "regressed",
+      "level": "content",
+      "note": "事实 12→9 是下降，routed 写“呼吸慢慢匀下来”，方向相反"
+    },
+    "act-029": {
+      "scope": "diagnostic",
+      "set": "final24",
+      "unitId": "v20:f0",
+      "kind": "moved",
+      "group": "act",
+      "verdict": "equivalent",
+      "level": "content",
+      "note": "两边都到潮渡，措辞不同"
+    },
+    "state-019": {
+      "scope": "diagnostic",
+      "set": "final24",
+      "unitId": "v20:f1",
+      "kind": "sanity_changed",
+      "group": "state",
+      "verdict": "mixed",
+      "level": "content",
+      "note": "方向对（9→12），但新增“松开手”动作"
+    },
+    "act-001": {
+      "scope": "diagnostic",
+      "set": "cf24",
+      "unitId": "t03:f0",
+      "kind": "outcome",
+      "group": "act",
+      "verdict": "improved",
+      "level": "content",
+      "note": "去掉 control 的“玻璃罩上不再有雾”额外状态"
+    },
+    "act-002": {
+      "scope": "diagnostic",
+      "set": "cf24",
+      "unitId": "t05:f0",
+      "kind": "outcome",
+      "group": "act",
+      "verdict": "improved",
+      "level": "content",
+      "note": "去掉 control 的“钟绳绷直”额外状态/复述"
+    },
+    "act-003": {
+      "scope": "diagnostic",
+      "set": "cf24",
+      "unitId": "t07:f0",
+      "kind": "moved",
+      "group": "act",
+      "verdict": "regressed",
+      "level": "content",
+      "note": "丢掉目的地雾堤，改成“抬头看钟绳”新增动作"
+    },
+    "act-004": {
+      "scope": "diagnostic",
+      "set": "cf24",
+      "unitId": "t07:f1",
+      "kind": "outcome",
+      "group": "act",
+      "verdict": "equivalent",
+      "level": "content",
+      "note": "两边都加“钟绳绷直”，routed 只多“了”；共同缺陷"
+    },
+    "act-005": {
+      "scope": "diagnostic",
+      "set": "cf24",
+      "unitId": "t08:f0",
+      "kind": "outcome",
+      "group": "act",
+      "verdict": "improved",
+      "level": "content",
+      "note": "去掉 control 的“石板上沾满白汽”额外状态"
+    },
+    "act-006": {
+      "scope": "diagnostic",
+      "set": "cf24",
+      "unitId": "t09:f0",
+      "kind": "moved",
+      "group": "act",
+      "verdict": "improved",
+      "level": "content",
+      "note": "去掉 control 的“推开…门”新增动作"
+    },
+    "act-007": {
+      "scope": "diagnostic",
+      "set": "cf24",
+      "unitId": "t09:f2",
+      "kind": "outcome",
+      "group": "act",
+      "verdict": "regressed",
+      "level": "content",
+      "note": "新增“纸页还带着潮气”未授权状态"
+    },
+    "state-001": {
+      "scope": "diagnostic",
+      "set": "cf24",
+      "unitId": "t10:f3",
+      "kind": "sanity_changed",
+      "group": "state",
+      "verdict": "regressed",
+      "level": "content",
+      "note": "sanity 输出截断“把想问”，没有表达 12→9 的发紧"
+    },
+    "common-001": {
+      "scope": "diagnostic",
+      "set": "cf24",
+      "unitId": "t11:f0",
+      "kind": "moved",
+      "group": "act",
+      "verdict": "common-defect",
+      "level": "content",
+      "note": "两边都加“抬头看塔身/脚下”，共同缺陷"
+    },
+    "act-008": {
+      "scope": "diagnostic",
+      "set": "cf24",
+      "unitId": "t11:f1",
+      "kind": "outcome",
+      "group": "act",
+      "verdict": "mixed",
+      "level": "content",
+      "note": "两边都加未授权状态（不再有雾 / 不再发暗）"
+    },
+    "act-009": {
+      "scope": "diagnostic",
+      "set": "cf24",
+      "unitId": "t11:f2",
+      "kind": "outcome",
+      "group": "act",
+      "verdict": "improved",
+      "level": "content",
+      "note": "把“备用灯芯”改成事实的“塔顶灯芯”；仍多“不再发暗”"
+    },
+    "act-010": {
+      "scope": "diagnostic",
+      "set": "cf24",
+      "unitId": "t12:f0",
+      "kind": "moved",
+      "group": "act",
+      "verdict": "mixed",
+      "level": "content",
+      "note": "control 加“蹲”，routed 加“抱着鱼筐”，两边都新增"
+    },
+    "act-011": {
+      "scope": "diagnostic",
+      "set": "cf24",
+      "unitId": "t13:f1",
+      "kind": "outcome",
+      "group": "act",
+      "verdict": "regressed",
+      "level": "content",
+      "note": "“干纸把干纸放在桌角”复述且主语错"
+    },
+    "act-012": {
+      "scope": "diagnostic",
+      "set": "cf24",
+      "unitId": "t14:f0",
+      "kind": "moved",
+      "group": "act",
+      "verdict": "regressed",
+      "level": "content",
+      "note": "丢掉目的地雾堤，改成“抬头看钟绳”"
+    },
+    "act-013": {
+      "scope": "diagnostic",
+      "set": "cf24",
+      "unitId": "t15:f0",
+      "kind": "moved",
+      "group": "act",
+      "verdict": "equivalent",
+      "level": "content",
+      "note": "两边都到潮渡，措辞不同"
+    },
+    "act-014": {
+      "scope": "diagnostic",
+      "set": "cf24",
+      "unitId": "t16:f0",
+      "kind": "moved",
+      "group": "act",
+      "verdict": "equivalent",
+      "level": "content",
+      "note": "两边都到潮生巷，措辞不同"
+    },
+    "state-002": {
+      "scope": "diagnostic",
+      "set": "cf24",
+      "unitId": "t16:f2",
+      "kind": "sanity_changed",
+      "group": "state",
+      "verdict": "regressed",
+      "level": "content",
+      "note": "同 state-001，截断且缺方向"
+    },
+    "act-015": {
+      "scope": "diagnostic",
+      "set": "cf24",
+      "unitId": "t17:f0",
+      "kind": "moved",
+      "group": "act",
+      "verdict": "regressed",
+      "level": "content",
+      "note": "“鱼筐从石板上摸到鱼”语义错乱且新增事件"
+    },
+    "act-016": {
+      "scope": "diagnostic",
+      "set": "cf24",
+      "unitId": "t17:f1",
+      "kind": "outcome",
+      "group": "act",
+      "verdict": "improved",
+      "level": "content",
+      "note": "去掉 control 的“石板上沾满白汽”"
+    },
+    "act-017": {
+      "scope": "diagnostic",
+      "set": "cf24",
+      "unitId": "t18:f1",
+      "kind": "outcome",
+      "group": "act",
+      "verdict": "improved",
+      "level": "content",
+      "note": "去掉 control 的“玻璃罩上不再有雾”"
+    },
+    "state-003": {
+      "scope": "diagnostic",
+      "set": "cf24",
+      "unitId": "t20:f0",
+      "kind": "appearance_changed",
+      "group": "state",
+      "verdict": "improved",
+      "level": "surface",
+      "note": "去掉“外貌变化”字段回声"
+    },
+    "state-004": {
+      "scope": "diagnostic",
+      "set": "cf24",
+      "unitId": "t20:f1",
+      "kind": "appearance_changed",
+      "group": "state",
+      "verdict": "improved",
+      "level": "surface",
+      "note": "去掉“外貌变化”字段回声"
+    },
+    "state-005": {
+      "scope": "diagnostic",
+      "set": "cf24",
+      "unitId": "t21:f1",
+      "kind": "appearance_changed",
+      "group": "state",
+      "verdict": "improved",
+      "level": "surface",
+      "note": "去掉“外貌变化”字段回声"
+    },
+    "state-006": {
+      "scope": "diagnostic",
+      "set": "cf24",
+      "unitId": "t22:f1",
+      "kind": "appearance_changed",
+      "group": "state",
+      "verdict": "regressed",
+      "level": "content",
+      "note": "“木桩的缠着的旧缆绳”语法坏于 control"
+    },
+    "state-007": {
+      "scope": "diagnostic",
+      "set": "cf24",
+      "unitId": "t23:f0",
+      "kind": "appearance_changed",
+      "group": "state",
+      "verdict": "equivalent",
+      "level": "content",
+      "note": "两边都多“铜灯”标记；都去掉/保留字段回声，实质相同"
+    },
+    "state-008": {
+      "scope": "diagnostic",
+      "set": "cf24",
+      "unitId": "t23:f1",
+      "kind": "appearance_changed",
+      "group": "state",
+      "verdict": "improved",
+      "level": "surface",
+      "note": "去掉“外貌变化”字段回声"
+    },
+    "act-018": {
+      "scope": "diagnostic",
+      "set": "cf24",
+      "unitId": "t23:f2",
+      "kind": "outcome",
+      "group": "act",
+      "verdict": "mixed",
+      "level": "content",
+      "note": "control“亮亮”别扭；routed 复述“透亮”"
+    },
+    "act-019": {
+      "scope": "diagnostic",
+      "set": "cf24",
+      "unitId": "t23:f3",
+      "kind": "outcome",
+      "group": "act",
+      "verdict": "improved",
+      "level": "content",
+      "note": "把“灯芯”改成事实的“塔顶灯芯”；仍多“不再发暗”"
+    },
+    "state-009": {
+      "scope": "diagnostic",
+      "set": "cf24",
+      "unitId": "t24:f1",
+      "kind": "appearance_changed",
+      "group": "state",
+      "verdict": "improved",
+      "level": "surface",
+      "note": "去掉“外貌变化”字段回声，句子更顺"
+    },
+    "state-020": {
+      "scope": "diagnostic",
+      "set": "object18",
+      "unitId": "qa1B",
+      "kind": "appearance_changed",
+      "group": "state",
+      "verdict": "improved",
+      "level": "surface",
+      "note": "去掉“外貌变化”字段回声"
+    },
+    "state-021": {
+      "scope": "diagnostic",
+      "set": "object18",
+      "unitId": "qa2B",
+      "kind": "appearance_changed",
+      "group": "state",
+      "verdict": "improved",
+      "level": "surface",
+      "note": "去掉“外貌变化”字段回声"
+    },
+    "state-022": {
+      "scope": "diagnostic",
+      "set": "object18",
+      "unitId": "qb1A",
+      "kind": "appearance_changed",
+      "group": "state",
+      "verdict": "improved",
+      "level": "surface",
+      "note": "去掉“外貌变化”字段回声"
+    },
+    "common-002": {
+      "scope": "diagnostic",
+      "set": "object18",
+      "unitId": "qb1B",
+      "kind": "appearance_changed",
+      "group": "state",
+      "verdict": "common-false-positive",
+      "level": "surface",
+      "note": "机械判据把“铜灯罩”切成“铜灯”；正文与事实一致，非缺陷"
+    },
+    "state-023": {
+      "scope": "diagnostic",
+      "set": "object18",
+      "unitId": "qb2A",
+      "kind": "appearance_changed",
+      "group": "state",
+      "verdict": "improved",
+      "level": "surface",
+      "note": "去掉“外貌变化”字段回声"
+    },
+    "state-024": {
+      "scope": "diagnostic",
+      "set": "object18",
+      "unitId": "qd2A",
+      "kind": "appearance_changed",
+      "group": "state",
+      "verdict": "regressed",
+      "level": "content",
+      "note": "“木桩的缠的旧绳”语法坏于 control"
+    },
+    "state-025": {
+      "scope": "diagnostic",
+      "set": "object18",
+      "unitId": "qd2B",
+      "kind": "appearance_changed",
+      "group": "state",
+      "verdict": "improved",
+      "level": "surface",
+      "note": "去掉“外貌变化”字段回声"
+    },
+    "state-026": {
+      "scope": "diagnostic",
+      "set": "object18",
+      "unitId": "qd3A",
+      "kind": "appearance_changed",
+      "group": "state",
+      "verdict": "regressed",
+      "level": "content",
+      "note": "“抹布拧不干”变成“手指不听使唤”，主体和内容都错"
+    },
+    "state-027": {
+      "scope": "diagnostic",
+      "set": "object18",
+      "unitId": "qd3B",
+      "kind": "appearance_changed",
+      "group": "state",
+      "verdict": "improved",
+      "level": "surface",
+      "note": "去掉“外貌变化”字段回声；两边仍有“铜油”标记"
+    },
+    "state-010": {
+      "scope": "diagnostic",
+      "set": "expand36",
+      "unitId": "cb3A",
+      "kind": "appearance_changed",
+      "group": "state",
+      "verdict": "equivalent",
+      "level": "content",
+      "note": "两边都可接受，只差“的”"
+    },
+    "act-020": {
+      "scope": "diagnostic",
+      "set": "expand36",
+      "unitId": "ce4A",
+      "kind": "moved",
+      "group": "act",
+      "verdict": "regressed",
+      "level": "content",
+      "note": "新增“脚下/抬头看档案馆”"
+    },
+    "state-043": {
+      "scope": "round",
+      "set": "train-r1",
+      "unitId": "f0",
+      "kind": "appearance_changed",
+      "group": "state",
+      "verdict": "regressed",
+      "level": "content",
+      "note": "追加“短句没有了”提示词回声"
+    },
+    "state-044": {
+      "scope": "round",
+      "set": "train-r1",
+      "unitId": "f1",
+      "kind": "appearance_changed",
+      "group": "state",
+      "verdict": "mixed",
+      "level": "content",
+      "note": "去掉 control 复述，但追加“短句没有了”"
+    },
+    "state-045": {
+      "scope": "round",
+      "set": "train-r1",
+      "unitId": "f3",
+      "kind": "appearance_changed",
+      "group": "state",
+      "verdict": "regressed",
+      "level": "content",
+      "note": "追加“泥”复述"
+    },
+    "state-046": {
+      "scope": "round",
+      "set": "train-r2",
+      "unitId": "f0",
+      "kind": "appearance_changed",
+      "group": "state",
+      "verdict": "improved",
+      "level": "content",
+      "note": "去掉 control 的“灯罩蒙了灰”复述"
+    },
+    "state-047": {
+      "scope": "round",
+      "set": "train-r2",
+      "unitId": "f1",
+      "kind": "appearance_changed",
+      "group": "state",
+      "verdict": "mixed",
+      "level": "content",
+      "note": "去掉 control 复述，但追加“短句没有再说了”"
+    },
+    "state-048": {
+      "scope": "round",
+      "set": "train-r2",
+      "unitId": "f4",
+      "kind": "appearance_changed",
+      "group": "state",
+      "verdict": "mixed",
+      "level": "content",
+      "note": "control 有“脸上没有雾打湿”怪句；routed 追加“短句没有了”"
+    },
+    "state-049": {
+      "scope": "round",
+      "set": "train-r3",
+      "unitId": "f0",
+      "kind": "appearance_changed",
+      "group": "state",
+      "verdict": "regressed",
+      "level": "content",
+      "note": "丢掉“外套”，又追加“短句没有了”"
+    },
+    "state-050": {
+      "scope": "round",
+      "set": "train-r3",
+      "unitId": "f1",
+      "kind": "appearance_changed",
+      "group": "state",
+      "verdict": "mixed",
+      "level": "content",
+      "note": "去掉 control 复述，但加“贴在手腕上”错对象"
+    },
+    "state-051": {
+      "scope": "round",
+      "set": "train-r3",
+      "unitId": "f3",
+      "kind": "appearance_changed",
+      "group": "state",
+      "verdict": "regressed",
+      "level": "content",
+      "note": "去掉 control 复述，却加“手腕磨塌了”错对象+复述"
+    },
+    "state-052": {
+      "scope": "round",
+      "set": "train-r4",
+      "unitId": "f0",
+      "kind": "appearance_changed",
+      "group": "state",
+      "verdict": "regressed",
+      "level": "content",
+      "note": "追加“纸张了张嘴”错乱"
+    },
+    "state-053": {
+      "scope": "round",
+      "set": "train-r4",
+      "unitId": "f1",
+      "kind": "appearance_changed",
+      "group": "state",
+      "verdict": "equivalent",
+      "level": "content",
+      "note": "两边都复述“发白”，共同缺陷"
+    },
+    "state-054": {
+      "scope": "round",
+      "set": "train-r4",
+      "unitId": "f4",
+      "kind": "appearance_changed",
+      "group": "state",
+      "verdict": "mixed",
+      "level": "content",
+      "note": "去掉 control 复述，但加“心跳才慢下来”未授权心理"
+    },
+    "state-055": {
+      "scope": "round",
+      "set": "train-r5",
+      "unitId": "f1",
+      "kind": "appearance_changed",
+      "group": "state",
+      "verdict": "regressed",
+      "level": "content",
+      "note": "追加“纸张了张嘴”错乱"
+    },
+    "state-056": {
+      "scope": "round",
+      "set": "train-r5",
+      "unitId": "f2",
+      "kind": "appearance_changed",
+      "group": "state",
+      "verdict": "mixed",
+      "level": "content",
+      "note": "去掉 control 复述，但加“贴在手腕上”错对象"
+    },
+    "state-057": {
+      "scope": "round",
+      "set": "train-r5",
+      "unitId": "f3",
+      "kind": "appearance_changed",
+      "group": "state",
+      "verdict": "regressed",
+      "level": "content",
+      "note": "追加“短句是叶知微的”提示词回声"
+    },
+    "state-058": {
+      "scope": "round",
+      "set": "train-r5",
+      "unitId": "f4",
+      "kind": "appearance_changed",
+      "group": "state",
+      "verdict": "regressed",
+      "level": "content",
+      "note": "追加“泥”复述"
+    },
+    "state-028": {
+      "scope": "round",
+      "set": "fixture-r1",
+      "unitId": "f0",
+      "kind": "appearance_changed",
+      "group": "state",
+      "verdict": "regressed",
+      "level": "content",
+      "note": "追加“短句”提示词回声"
+    },
+    "state-029": {
+      "scope": "round",
+      "set": "fixture-r1",
+      "unitId": "f1",
+      "kind": "appearance_changed",
+      "group": "state",
+      "verdict": "mixed",
+      "level": "content",
+      "note": "去掉 control 复述，但追加“短句没有催”"
+    },
+    "state-030": {
+      "scope": "round",
+      "set": "fixture-r1",
+      "unitId": "f3",
+      "kind": "appearance_changed",
+      "group": "state",
+      "verdict": "regressed",
+      "level": "content",
+      "note": "追加“泥”复述"
+    },
+    "state-031": {
+      "scope": "round",
+      "set": "fixture-r2",
+      "unitId": "f1",
+      "kind": "appearance_changed",
+      "group": "state",
+      "verdict": "mixed",
+      "level": "content",
+      "note": "去掉 control 复述，但追加“短句没有催”"
+    },
+    "state-032": {
+      "scope": "round",
+      "set": "fixture-r2",
+      "unitId": "f2",
+      "kind": "appearance_changed",
+      "group": "state",
+      "verdict": "regressed",
+      "level": "content",
+      "note": "丢掉主体“周宁”，binding 失败"
+    },
+    "state-033": {
+      "scope": "round",
+      "set": "fixture-r2",
+      "unitId": "f4",
+      "kind": "appearance_changed",
+      "group": "state",
+      "verdict": "regressed",
+      "level": "content",
+      "note": "追加“短句写完”提示词回声"
+    },
+    "state-034": {
+      "scope": "round",
+      "set": "fixture-r3",
+      "unitId": "f0",
+      "kind": "appearance_changed",
+      "group": "state",
+      "verdict": "regressed",
+      "level": "content",
+      "note": "丢掉“外套”，变成“林川被雨打湿”"
+    },
+    "state-035": {
+      "scope": "round",
+      "set": "fixture-r3",
+      "unitId": "f1",
+      "kind": "appearance_changed",
+      "group": "state",
+      "verdict": "regressed",
+      "level": "content",
+      "note": "追加“短句”提示词回声"
+    },
+    "state-036": {
+      "scope": "round",
+      "set": "fixture-r3",
+      "unitId": "f3",
+      "kind": "appearance_changed",
+      "group": "state",
+      "verdict": "mixed",
+      "level": "content",
+      "note": "去掉 control 复述，但追加“纸张了张嘴”错乱"
+    },
+    "state-037": {
+      "scope": "round",
+      "set": "fixture-r4",
+      "unitId": "f0",
+      "kind": "appearance_changed",
+      "group": "state",
+      "verdict": "regressed",
+      "level": "content",
+      "note": "追加“纸张了张嘴”错乱"
+    },
+    "state-038": {
+      "scope": "round",
+      "set": "fixture-r4",
+      "unitId": "f1",
+      "kind": "appearance_changed",
+      "group": "state",
+      "verdict": "mixed",
+      "level": "content",
+      "note": "去掉 control 复述，但追加“短句没有催”"
+    },
+    "state-039": {
+      "scope": "round",
+      "set": "fixture-r4",
+      "unitId": "f4",
+      "kind": "appearance_changed",
+      "group": "state",
+      "verdict": "improved",
+      "level": "content",
+      "note": "去掉 control 的“肩头落着灰”复述"
+    },
+    "state-040": {
+      "scope": "round",
+      "set": "fixture-r5",
+      "unitId": "f1",
+      "kind": "appearance_changed",
+      "group": "state",
+      "verdict": "regressed",
+      "level": "content",
+      "note": "追加“纸张了张嘴”错乱"
+    },
+    "state-041": {
+      "scope": "round",
+      "set": "fixture-r5",
+      "unitId": "f2",
+      "kind": "appearance_changed",
+      "group": "state",
+      "verdict": "mixed",
+      "level": "content",
+      "note": "去掉 control 复述，但加“贴在手腕上”错对象"
+    },
+    "state-042": {
+      "scope": "round",
+      "set": "fixture-r5",
+      "unitId": "f4",
+      "kind": "appearance_changed",
+      "group": "state",
+      "verdict": "regressed",
+      "level": "content",
+      "note": "追加“泥”复述"
+    }
+  },
+  "counts": {
+    "overall": {
+      "cases": 87,
+      "verdicts": {
+        "regressed": 35,
+        "equivalent": 8,
+        "mixed": 18,
+        "improved": 26
+      },
+      "levels": {
+        "content": 71,
+        "surface": 16
+      }
+    },
+    "act": {
+      "cases": 29,
+      "verdicts": {
+        "regressed": 10,
+        "equivalent": 5,
+        "mixed": 6,
+        "improved": 8
+      },
+      "levels": {
+        "content": 29
+      }
+    },
+    "state": {
+      "cases": 58,
+      "verdicts": {
+        "improved": 18,
+        "regressed": 25,
+        "mixed": 12,
+        "equivalent": 3
+      },
+      "levels": {
+        "surface": 16,
+        "content": 42
+      }
+    },
+    "stateDiagnostic": {
+      "cases": 27,
+      "verdicts": {
+        "improved": 16,
+        "regressed": 8,
+        "mixed": 1,
+        "equivalent": 2
+      },
+      "levels": {
+        "surface": 16,
+        "content": 11
+      }
+    },
+    "stateRounds": {
+      "cases": 31,
+      "verdicts": {
+        "regressed": 17,
+        "mixed": 11,
+        "improved": 2,
+        "equivalent": 1
+      },
+      "levels": {
+        "content": 31
+      }
+    }
+  },
+  "sameTextReview": {
+    "reviewed": 178,
+    "method": "all same-text rows scanned; suspicious field echoes, added actions, repeated clauses and double-的 were read against the fact",
+    "commonDefects": [
+      {
+        "key": "diagnostic/cf24/t11:f0",
+        "kind": "moved",
+        "text": "沈砚从潮生巷一路走到旧灯塔脚下,抬头看了看塔身。",
+        "defect": "新增“脚下/抬头看塔身”动作与对象；机械判据已标出"
+      },
+      {
+        "key": "diagnostic/cf24/t13:f0",
+        "kind": "moved",
+        "text": "叶知微从早市过来,推开档案馆的门。",
+        "defect": "新增“推开”动作；机械词表未收录，未标出"
+      },
+      {
+        "key": "diagnostic/cf24/t21:f0",
+        "kind": "appearance_changed",
+        "text": "潮汐簿的缺页的边缘毛糙。",
+        "defect": "双层“的”语法；机械判据未标出"
+      },
+      {
+        "key": "diagnostic/expand36/ce2B",
+        "kind": "no_change",
+        "text": "雾堤上的钟架没有新的变化,堤面没有新的变化。",
+        "defect": "同一“没有新的变化”复述两次；机械判据未标出"
+      },
+      {
+        "key": "diagnostic/expand36/ce3B",
+        "kind": "no_change",
+        "text": "栈桥边的雾水被关在身后,没有新的变化。",
+        "defect": "“被关在身后”是未授权状态/事件；机械判据未标出"
+      },
+      {
+        "key": "diagnostic/expand36/ce4B",
+        "kind": "no_change",
+        "text": "他等了一会儿,场景里没有新的变化。",
+        "defect": "新增“等了一会儿”动作，并回声“场景”字段；机械判据未标出"
+      },
+      {
+        "key": "diagnostic/final24/v03:f3",
+        "kind": "no_change",
+        "text": "他等了一会儿,场景里没有新的变化。",
+        "defect": "同上"
+      },
+      {
+        "key": "diagnostic/final24/v11:f2",
+        "kind": "no_change",
+        "text": "他等了一会儿,场景里没有新的变化。",
+        "defect": "同上"
+      },
+      {
+        "key": "diagnostic/final24/v21:f1",
+        "kind": "no_change",
+        "text": "他等了一会儿,场景里没有新的变化。",
+        "defect": "同上"
+      },
+      {
+        "key": "diagnostic/final24/v22:f1",
+        "kind": "no_change",
+        "text": "他等了一会儿,场景里没有新的变化。",
+        "defect": "同上"
+      }
+    ],
+    "commonFalsePositive": [
+      {
+        "key": "diagnostic/object18/qb1B",
+        "kind": "appearance_changed",
+        "text": "铜灯罩被擦得发亮。",
+        "note": "机械判据把“铜灯罩”切成“铜灯”并报额外物件；正文与事实一致，不是缺陷"
+      }
+    ],
+    "unreviewedNote": "the remaining same-text rows looked clean on this scan; they are still mechanical-screen clean, not human-certified absolute quality"
+  },
+  "metricSource": "manual reading of every text-different pair; mechanical judge used only as pointer"
+}

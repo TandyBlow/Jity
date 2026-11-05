@@ -1,0 +1,69 @@
+{
+  "version": "route-split-judge-calibration-v1",
+  "created": "2026-11-05",
+  "judge": "judge_expression.py (vocabulary-driven, mechanical)",
+  "rows": {
+    "diag2-v2best": {
+      "file": "diag2-v2best.json",
+      "historicalRecorded": {
+        "criterion": "continuous-fragment pass count",
+        "value": "202/215",
+        "humanSemanticGold": false,
+        "note": "7 definite unsupported + 6 pending review (boundary-arm-closing-record.md 1.1); this is not a human semantic gold label"
+      },
+      "mechanical": {
+        "units": 215,
+        "mustExpress": 209,
+        "binding": 211,
+        "repetition": 9,
+        "addition": 21,
+        "extraAction": 1,
+        "extraObject": 16,
+        "extraState": 5,
+        "clean": 186
+      }
+    },
+    "diag-b240": {
+      "file": "diag-b240.json",
+      "checkpointAttribution": "unconfirmed",
+      "usableAsU240Control": false,
+      "note": "the filename says b240, while two units read 玻璃罩; the output signature does not uniquely identify a checkpoint and the source conflict is unresolved. Do not use this archive as the u240 control.",
+      "mechanical": {
+        "units": 215,
+        "mustExpress": 215,
+        "binding": 214,
+        "repetition": 9,
+        "addition": 13,
+        "extraAction": 6,
+        "extraObject": 5,
+        "extraState": 3,
+        "clean": 196
+      }
+    },
+    "diag-b": {
+      "file": "diag-b.json",
+      "checkpointAttribution": "archive filename only",
+      "note": "baseline arm archive; no independent identity check in this round",
+      "mechanical": {
+        "units": 215,
+        "mustExpress": 208,
+        "binding": 215,
+        "repetition": 0,
+        "addition": 16,
+        "extraAction": 2,
+        "extraObject": 13,
+        "extraState": 5,
+        "clean": 196
+      }
+    }
+  },
+  "historicalRowsAreNotControls": true,
+  "reading": [
+    "the mechanical judge is a vocabulary-bounded screen, not a human semantic gold standard; its own false positives and false negatives are known",
+    "the v2-best historical number is a continuous-fragment pass count (202/215), not 202 human-verified facts",
+    "diag-b240 has no confirmed checkpoint identity: 玻璃罩 appears in two units but is not unique to u240, and the filename/source conflict is unresolved",
+    "the diag-b240 mechanical row is retained only to show judge behaviour; it is not the u240 control and is not used in the A/B conclusion",
+    "this calibration is sufficient to show the judge bias; no further calibration round is run here",
+    "A/B differences are reported per metric with the flagged lists attached for manual reading, and the clean total is not used to declare a winner"
+  ]
+}
