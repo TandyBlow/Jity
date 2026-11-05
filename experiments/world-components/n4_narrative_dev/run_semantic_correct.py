@@ -13,11 +13,15 @@ import re
 import time
 import urllib.request
 
-ROOT = pathlib.Path('D:/others/Jity')
-A1 = ROOT / 'artifacts' / 'cohesion-split' / 'a1.jsonl'
-A1_FREEZE = ROOT / 'artifacts' / 'cohesion-split' / 'a1-freeze.json'
-OUT = ROOT / 'artifacts' / 'cohesion-split' / 'semantic-correct-results.jsonl'
-SUMMARY = ROOT / 'artifacts' / 'cohesion-split' / 'semantic-correct-summary.json'
+import sys as _paths_sys
+_paths_sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
+from component_paths import PATHS
+
+ROOT = PATHS.worktree
+A1 = PATHS.input('cohesion-split/a1.jsonl')
+A1_FREEZE = PATHS.input('cohesion-split/a1-freeze.json')
+OUT = PATHS.output('cohesion-split/semantic-correct-results.jsonl')
+SUMMARY = PATHS.output('cohesion-split/semantic-correct-summary.json')
 
 OLLAMA = 'http://127.0.0.1:11434/api/generate'
 MODEL = 'qwen2.5:7b'
@@ -192,6 +196,7 @@ def check_and_apply(row, parsed):
 
 
 def main():
+    OUT.parent.mkdir(parents=True, exist_ok=True)
     rows = [json.loads(l) for l in A1.read_text(encoding='utf-8').splitlines() if l.strip()]
     freeze = load(A1_FREEZE)
     results = []

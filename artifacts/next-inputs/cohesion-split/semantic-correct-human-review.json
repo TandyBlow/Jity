@@ -1,0 +1,180 @@
+[
+  {
+    "sourceId": "fixture-r1",
+    "status": "pending",
+    "categories": [
+      "pending-correct-repetition",
+      "ambiguous-span"
+    ],
+    "note": "提出删第二处“指节发白”，但 span 在 A0 出现两次，程序无法安全定位；未应用。"
+  },
+  {
+    "sourceId": "fixture-r2",
+    "status": "pending",
+    "categories": [
+      "pending-correct-repetition",
+      "ambiguous-span"
+    ],
+    "note": "提出删第二处“掌心出汗”，span 歧义；未应用。"
+  },
+  {
+    "sourceId": "fixture-r3",
+    "status": "pending",
+    "categories": [
+      "proposed-legal-mistake",
+      "invalid-span"
+    ],
+    "note": "提出删“周宁的指缝里塞着泥”这个合法事实；span 不在 A0（前面是句号不是逗号）；未应用。"
+  },
+  {
+    "sourceId": "fixture-r4",
+    "status": "pending",
+    "categories": [
+      "pending-correct-repetition",
+      "unsafe-period"
+    ],
+    "note": "提出删“，发白发白。”包含句号，会把下一句拼上来；未应用。"
+  },
+  {
+    "sourceId": "fixture-r5",
+    "status": "pending",
+    "categories": [
+      "pending-correct-addition",
+      "unsafe-period",
+      "type-wrong"
+    ],
+    "note": "提出删“，袖口被雨浸透。”包含句号，会拼句；未应用。"
+  },
+  {
+    "sourceId": "train-r1",
+    "status": "pending",
+    "categories": [
+      "pending-correct-repetition",
+      "ambiguous-span"
+    ],
+    "note": "提出删第二处“指节发白”，span 歧义；未应用。"
+  },
+  {
+    "sourceId": "train-r2",
+    "status": "pending",
+    "categories": [
+      "pending-correct-addition",
+      "unsafe-period",
+      "missing-reference",
+      "type-wrong"
+    ],
+    "note": "提出删“，手背上沾着水沫。”包含句末句号，会缺句号；未应用。另漏了 f1 的“手腕上沾着盐沫”。"
+  },
+  {
+    "sourceId": "train-r3",
+    "status": "pending",
+    "categories": [
+      "proposed-legal-mistake",
+      "unsafe-period"
+    ],
+    "note": "提出删合法的 f3“叶知微的鞋跟磨塌了。”，包含句号；事实覆盖下降，未应用。"
+  },
+  {
+    "sourceId": "train-r4",
+    "status": "pending",
+    "categories": [
+      "pending-correct-repetition",
+      "unsafe-period",
+      "missing-reference"
+    ],
+    "note": "提出删“，发白发白。”包含句号；未应用。另漏了 f4 的第二处“肩头落着灰”。"
+  },
+  {
+    "sourceId": "train-r5",
+    "status": "keep",
+    "categories": [
+      "missing-reference"
+    ],
+    "note": "没有提出删除“，袖口被雨浸透”；A0 的这处新增保留。"
+  },
+  {
+    "sourceId": "v01",
+    "status": "deleted",
+    "categories": [
+      "applied-correct-addition",
+      "type-wrong",
+      "missing-reference"
+    ],
+    "note": "应用删“，钟绳绷直了”；这是未经支持的结果，但模型标成 repetition。另漏了“，蹲到雾堤的钟架下”。"
+  },
+  {
+    "sourceId": "v02",
+    "status": "pending",
+    "categories": [
+      "invalid-span"
+    ],
+    "note": "提出删“、鱼筐、案板…”这类场景清单；A0 里没有这个 span，是幻觉；未应用。"
+  },
+  {
+    "sourceId": "v03",
+    "status": "pending",
+    "categories": [
+      "proposed-legal-mistake"
+    ],
+    "note": "提出删合法的 no_change 事实“四下安静，没有新的事情发生。”；事实覆盖下降，未应用。"
+  },
+  {
+    "sourceId": "v05",
+    "status": "pending",
+    "categories": [
+      "pending-correct-addition",
+      "unsafe-period",
+      "type-wrong"
+    ],
+    "note": "提出删“，玻璃上不再有雾。”包含句号，会拼句；未应用。"
+  },
+  {
+    "sourceId": "v06",
+    "status": "pending",
+    "categories": [
+      "proposed-legal-mistake"
+    ],
+    "note": "提出删合法的 f1“沈砚的袖口沾了雨。”；事实覆盖下降，未应用。"
+  },
+  {
+    "sourceId": "t01",
+    "status": "pending",
+    "categories": [
+      "proposed-legal-mistake"
+    ],
+    "note": "提出删合法的 f1“，指尖沾了墨”；事实覆盖下降，未应用。"
+  },
+  {
+    "sourceId": "t05",
+    "status": "pending",
+    "categories": [
+      "proposed-legal-mistake"
+    ],
+    "note": "提出删合法的 f1“，把雾警钟敲响，”；事实覆盖下降，未应用。"
+  },
+  {
+    "sourceId": "t19",
+    "status": "pending",
+    "categories": [
+      "proposed-legal-mistake",
+      "invalid-span"
+    ],
+    "note": "提出删“、鱼筐”，span 不在 A0；意图是删合法的 f2；未应用。"
+  },
+  {
+    "sourceId": "double-d010",
+    "status": "keep",
+    "categories": [
+      "correct-keep"
+    ],
+    "note": "保留双项事实“衣领湿了，肩头也湿了”，正确。"
+  },
+  {
+    "sourceId": "double-d011",
+    "status": "keep",
+    "categories": [
+      "correct-keep"
+    ],
+    "note": "保留双项事实“手背沾了泥，帽檐也沾了泥”，正确。"
+  }
+]

@@ -1,5 +1,10 @@
 # world-components-next 工作树交接
 
+> **后续更新（2026-11-05）：** 已将初始快照提交为 `714f171`，并实现独立输入、输出和显式模型配置。
+> 原分支继续开发，没有冻结或清理。运行与合并边界以
+> [next-worktree.md](design/world-engine-reports/components/next-worktree.md) 为准。
+> 下文仅保留最初复制时的历史记录；其中“尚未提交”和资源未配置等状态已被本次更新取代。
+
 创建日期：2026-11-05。来源：`D:/others/Jity/.local/world-components-worktree`。
 
 分支从 `world-components` 末端 `f725d123964408beeab5991d119027e90b28f68a` 创建。

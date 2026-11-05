@@ -1,0 +1,14 @@
+{
+ "purpose": "N3 rule arm independent probes (T-P1..T-P7)",
+ "results": {
+  "T-P1": true,
+  "T-P2": true,
+  "T-P3a": true,
+  "T-P3b": true,
+  "T-P4": true,
+  "T-P5": true,
+  "T-P6": true,
+  "T-P7": true
+ },
+ "pass": true
+}

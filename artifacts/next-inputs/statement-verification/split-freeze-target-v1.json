@@ -1,0 +1,202 @@
+{
+  "version": "statement-verification-target-pairs-v1",
+  "created": "2026-11-05",
+  "task": "target-expression paired material; no training",
+  "counts": {
+    "totalExamples": 248,
+    "totalPairs": 124,
+    "byCategory": {
+      "background": 62,
+      "body": 62,
+      "extra-action": 62,
+      "visible-state": 62
+    },
+    "bySplit": {
+      "confirm": 48,
+      "dev": 40,
+      "train": 160
+    },
+    "byCategorySplit": {
+      "background:confirm": 12,
+      "body:confirm": 12,
+      "extra-action:confirm": 12,
+      "visible-state:confirm": 12,
+      "background:dev": 10,
+      "body:dev": 10,
+      "extra-action:dev": 10,
+      "visible-state:dev": 10,
+      "background:train": 40,
+      "body:train": 40,
+      "extra-action:train": 40,
+      "visible-state:train": 40
+    },
+    "byMode": {
+      "authorization": 128,
+      "statement": 120
+    },
+    "byLabel": {
+      "supported": 124,
+      "unsupported": 124
+    },
+    "pairModeByCategorySplit": {
+      "background:confirm": {
+        "authorization": 3,
+        "statement": 3
+      },
+      "background:dev": {
+        "statement": 2,
+        "authorization": 3
+      },
+      "background:train": {
+        "authorization": 10,
+        "statement": 10
+      },
+      "body:confirm": {
+        "statement": 3,
+        "authorization": 3
+      },
+      "body:dev": {
+        "authorization": 3,
+        "statement": 2
+      },
+      "body:train": {
+        "statement": 10,
+        "authorization": 10
+      },
+      "extra-action:confirm": {
+        "authorization": 3,
+        "statement": 3
+      },
+      "extra-action:dev": {
+        "statement": 2,
+        "authorization": 3
+      },
+      "extra-action:train": {
+        "authorization": 10,
+        "statement": 10
+      },
+      "visible-state:confirm": {
+        "authorization": 3,
+        "statement": 3
+      },
+      "visible-state:dev": {
+        "authorization": 3,
+        "statement": 2
+      },
+      "visible-state:train": {
+        "statement": 10,
+        "authorization": 10
+      }
+    },
+    "familySize": {
+      "tgt:background:confirm:confirm-01": 3,
+      "tgt:background:confirm:confirm-02": 3,
+      "tgt:body:confirm:confirm-01": 3,
+      "tgt:body:confirm:confirm-02": 3,
+      "tgt:extra-action:confirm:confirm-01": 3,
+      "tgt:extra-action:confirm:confirm-02": 3,
+      "tgt:visible-state:confirm:confirm-01": 3,
+      "tgt:visible-state:confirm:confirm-02": 3,
+      "tgt:background:dev:dev-01": 2,
+      "tgt:background:dev:dev-02": 3,
+      "tgt:body:dev:dev-01": 2,
+      "tgt:body:dev:dev-02": 3,
+      "tgt:extra-action:dev:dev-01": 2,
+      "tgt:extra-action:dev:dev-02": 3,
+      "tgt:visible-state:dev:dev-01": 2,
+      "tgt:visible-state:dev:dev-02": 3,
+      "tgt:background:train:train-01": 4,
+      "tgt:background:train:train-02": 4,
+      "tgt:background:train:train-03": 4,
+      "tgt:background:train:train-04": 4,
+      "tgt:background:train:train-05": 4,
+      "tgt:body:train:train-01": 4,
+      "tgt:body:train:train-02": 4,
+      "tgt:body:train:train-03": 4,
+      "tgt:body:train:train-04": 4,
+      "tgt:body:train:train-05": 4,
+      "tgt:extra-action:train:train-01": 4,
+      "tgt:extra-action:train:train-02": 4,
+      "tgt:extra-action:train:train-03": 4,
+      "tgt:extra-action:train:train-04": 4,
+      "tgt:extra-action:train:train-05": 4,
+      "tgt:visible-state:train:train-01": 4,
+      "tgt:visible-state:train:train-02": 4,
+      "tgt:visible-state:train:train-03": 4,
+      "tgt:visible-state:train:train-04": 4,
+      "tgt:visible-state:train:train-05": 4
+    }
+  },
+  "generalCapability": {
+    "n": 298,
+    "labels": {
+      "supported": 149,
+      "unsupported": 149
+    }
+  },
+  "hashes": {
+    "pairs-target-v1.jsonl": "746c0f0754bbae536d34a513280e714f6c33eb3c92804cb37aec46efac79a603",
+    "general-capability-v1.jsonl": "259ecbd03f82a33b53a7d57b19b15766eb9f873fad63ee6489e2382be212d5fb",
+    "regression-v1.jsonl": "6e060bb7ab6c666e9cf9f317ef1e18f5009e9722559d76be5920174482d27a58"
+  },
+  "auditIssueCount": 0,
+  "auditSha256": "50f5e9cc1a82ad6aa7a1b4b0c4589836433e9be4265464c7637c93ccf41797c2",
+  "pairs": "4 categories x (20 train + 5 dev + 6 confirm); source/template family split",
+  "review": {
+    "summary": "artifacts/statement-verification/review-target-v1-summary.json",
+    "summarySha256": "3045018d8df3190e1e537ad53ec9342d877ad67d5ff9ca6e16657b22ab124717",
+    "jsonl": "artifacts/statement-verification/review-target-v1.jsonl",
+    "jsonlSha256": "cb3662667e71e7eb41e568ef644b252264eec8407ab9f061d7e80d5223ac3578",
+    "md": "artifacts/statement-verification/review-target-v1.md",
+    "mdSha256": "4a037a0fa634698b24fe34da4139888d90ec93e91bfd58ef9b537ec2e37703ad",
+    "reviewer": "assistant (same model)",
+    "reviewType": "复看 / re-read, not independent human gold",
+    "notIndependent": true,
+    "scope": {
+      "families": 36,
+      "familiesRepresented": 36,
+      "pairs": 64,
+      "examples": 128,
+      "confirmPairs": 24,
+      "confirmExamples": 48,
+      "focusFamilies": [
+        "notcleared",
+        "see",
+        "through",
+        "when"
+      ],
+      "focusPairs": 16,
+      "bodyFamilies": 9,
+      "bodyRepresentativePairs": 9
+    },
+    "labelChanges": [],
+    "materialEdits": [
+      {
+        "pairId": "tgt:visible-state:train:train-04:p02",
+        "field": "candidateText/state_bad",
+        "old": "窗纸补好",
+        "new": "窗纸揭过",
+        "reason": "F1=把窗纸补好 与候选“窗纸补好”动作/结果语义过近；改为“揭过”，保持 unsupported 标签，避免把动作结果当状态授权。"
+      },
+      {
+        "pairId": "tgt:visible-state:confirm:confirm-02:p03",
+        "field": "candidateText/state_bad",
+        "old": "窗纸糊好",
+        "new": "窗纸换过",
+        "reason": "F1=把窗纸补好 与候选“窗纸糊好”动作/结果语义过近；改为“换过”，保持 unsupported 标签。"
+      }
+    ],
+    "judgmentScope": "标签只判 candidateText 在上下文中的含义；fullText 只帮助恢复主体/语境，不是授权来源；不判整段正文是否干净。"
+  },
+  "trainingProtocol": {
+    "path": "artifacts/statement-verification/training-protocol-target-v1.json",
+    "sha256": "8f38a05196cd5c042a7c98a1a593ee7ebcbebdab2a4eaa571773e09ffb5bf353"
+  },
+  "trainingBudget": {
+    "updates": 300,
+    "evalEvery": 25,
+    "epochs": 60,
+    "stepsPerEpoch": 5,
+    "batch": 32
+  }
+}

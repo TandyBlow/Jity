@@ -13,10 +13,14 @@ HERE = pathlib.Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 import fact_contract as FC  # noqa: E402
 
-ART = HERE.parents[2] / 'artifacts'
-DIAG = ART / 'world-components'
-ROUNDS = pathlib.Path('D:/others/Jity/artifacts/world-provenance/pairs')
-OUT = ART / 'decode-compare'
+import sys as _paths_sys
+_paths_sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
+from component_paths import PATHS
+
+ART = PATHS.inputs
+DIAG = PATHS.input('world-components')
+ROUNDS = PATHS.input('world-provenance/pairs')
+OUT = PATHS.output('decode-compare')
 
 SERVICE_HEADER = ('短句任务。\n地点=潮汐档案馆>长桌\n'
                   '地点可见=潮汐簿、铜灯、干纸、墨、笔架、门槛、天窗、长桌\n'

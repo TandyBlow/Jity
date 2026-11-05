@@ -7,14 +7,19 @@ from collections import Counter
 
 import run_organize_v2 as R
 
-ROOT = pathlib.Path('D:/others/Jity')
-A1 = ROOT / 'artifacts/cohesion-split/a1.jsonl'
-RESULTS = ROOT / 'artifacts/cohesion-split/organize-v2-results.jsonl'
-OUT = ROOT / 'artifacts/cohesion-split/organize-v2-scores.jsonl'
-SUMMARY = ROOT / 'artifacts/cohesion-split/organize-v2-scores-summary.json'
+import sys as _paths_sys
+_paths_sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
+from component_paths import PATHS
+
+ROOT = PATHS.worktree
+A1 = PATHS.input('cohesion-split/a1.jsonl')
+RESULTS = PATHS.output('cohesion-split/organize-v2-results.jsonl')
+OUT = PATHS.output('cohesion-split/organize-v2-scores.jsonl')
+SUMMARY = PATHS.output('cohesion-split/organize-v2-scores-summary.json')
 
 
 def main():
+    OUT.parent.mkdir(parents=True, exist_ok=True)
     rows = {r['sourceId']: r for r in R.load_jsonl(A1)}
     results = R.load_jsonl(RESULTS)
     scored = []

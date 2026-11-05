@@ -23,3 +23,6 @@ train-v3a-report.json -text
 "review_statement_verify.py" -text
 "train_verify_binary.py" -text
 "verify_input.py" -text
+build_statement_verify.py whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+build_target_pairs.py whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+train_verify_binary.py whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol

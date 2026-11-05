@@ -6,8 +6,12 @@ import re
 import sys
 
 HERE = pathlib.Path(__file__).resolve().parent
-ROOT = HERE.parents[2]
-OUT = ROOT / 'artifacts' / 'cohesion-split'
+import sys as _paths_sys
+_paths_sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
+from component_paths import PATHS
+
+ROOT = PATHS.worktree
+OUT = PATHS.output('cohesion-split')
 
 REST_OK = set('的着了也，。、；上下里外把到从过再又还向在是有没有')
 

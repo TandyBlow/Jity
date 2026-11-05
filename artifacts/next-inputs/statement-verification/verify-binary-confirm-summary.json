@@ -1,0 +1,129 @@
+{
+  "selected": {
+    "epoch": 12,
+    "t_conf": 0.53
+  },
+  "metrics": {
+    "n": 124,
+    "nSupported": 62,
+    "nUnsupported": 62,
+    "confusion": {
+      "supported->supported": 59,
+      "supported->unsupported": 3,
+      "supported->uncertain": 0,
+      "unsupported->supported": 2,
+      "unsupported->unsupported": 60,
+      "unsupported->uncertain": 0
+    },
+    "unsupportedRecall": 0.967741935483871,
+    "legalRejection": 0.04838709677419355,
+    "legalPending": 0.0,
+    "unsupportedPrecision": 0.9523809523809523,
+    "overallUncertainRate": 0.0,
+    "uncertainCount": 0
+  },
+  "gates": {
+    "unsupportedRecall>=0.80": true,
+    "legalRejection<=0.05": true,
+    "legalPending<=0.15": true
+  },
+  "pass": true,
+  "category": {
+    "general": {
+      "n": 108,
+      "nSupported": 54,
+      "nUnsupported": 54,
+      "confusion": {
+        "supported->supported": 54,
+        "supported->unsupported": 0,
+        "supported->uncertain": 0,
+        "unsupported->supported": 1,
+        "unsupported->unsupported": 53,
+        "unsupported->uncertain": 0
+      },
+      "unsupportedRecall": 0.9814814814814815,
+      "legalRejection": 0.0,
+      "legalPending": 0.0,
+      "unsupportedPrecision": 1.0,
+      "overallUncertainRate": 0.0,
+      "uncertainCount": 0
+    },
+    "body": {
+      "n": 4,
+      "nSupported": 2,
+      "nUnsupported": 2,
+      "confusion": {
+        "supported->supported": 1,
+        "supported->unsupported": 1,
+        "supported->uncertain": 0,
+        "unsupported->supported": 0,
+        "unsupported->unsupported": 2,
+        "unsupported->uncertain": 0
+      },
+      "unsupportedRecall": 1.0,
+      "legalRejection": 0.5,
+      "legalPending": 0.0,
+      "unsupportedPrecision": 0.6666666666666666,
+      "overallUncertainRate": 0.0,
+      "uncertainCount": 0
+    },
+    "background": {
+      "n": 4,
+      "nSupported": 2,
+      "nUnsupported": 2,
+      "confusion": {
+        "supported->supported": 2,
+        "supported->unsupported": 0,
+        "supported->uncertain": 0,
+        "unsupported->supported": 1,
+        "unsupported->unsupported": 1,
+        "unsupported->uncertain": 0
+      },
+      "unsupportedRecall": 0.5,
+      "legalRejection": 0.0,
+      "legalPending": 0.0,
+      "unsupportedPrecision": 1.0,
+      "overallUncertainRate": 0.0,
+      "uncertainCount": 0
+    },
+    "visible-state": {
+      "n": 4,
+      "nSupported": 2,
+      "nUnsupported": 2,
+      "confusion": {
+        "supported->supported": 2,
+        "supported->unsupported": 0,
+        "supported->uncertain": 0,
+        "unsupported->supported": 0,
+        "unsupported->unsupported": 2,
+        "unsupported->uncertain": 0
+      },
+      "unsupportedRecall": 1.0,
+      "legalRejection": 0.0,
+      "legalPending": 0.0,
+      "unsupportedPrecision": 1.0,
+      "overallUncertainRate": 0.0,
+      "uncertainCount": 0
+    },
+    "extra-action": {
+      "n": 4,
+      "nSupported": 2,
+      "nUnsupported": 2,
+      "confusion": {
+        "supported->supported": 0,
+        "supported->unsupported": 2,
+        "supported->uncertain": 0,
+        "unsupported->supported": 0,
+        "unsupported->unsupported": 2,
+        "unsupported->uncertain": 0
+      },
+      "unsupportedRecall": 1.0,
+      "legalRejection": 1.0,
+      "legalPending": 0.0,
+      "unsupportedPrecision": 0.5,
+      "overallUncertainRate": 0.0,
+      "uncertainCount": 0
+    }
+  },
+  "boundaryExcluded": 1
+}

@@ -1,0 +1,69 @@
+{
+ "purpose": "three-arm data readiness, counted from disk",
+ "paragraph": {
+  "n4n": {
+   "file": "formal_pairs.jsonl",
+   "rows": 120,
+   "bySplit": {
+    "formal-train": 100,
+    "formal-holdout": 12,
+    "formal-dev": 8
+   }
+  },
+  "corpus140": {
+   "file": "../n4_rewrite60/corpus140.jsonl",
+   "rows": 140,
+   "bySplit": {
+    "train": 100,
+    "dev": 20,
+    "test": 20
+   },
+   "note": "old dev/test contaminated: 18 rows moved to train; cannot serve as unseen test"
+  }
+ },
+ "fact": {
+  "n4n": {
+   "file": "verbalizer_pairs.jsonl",
+   "rows": 229,
+   "sourcesCovered": 120,
+   "factsPerSource": {
+    "3": 22,
+    "2": 59,
+    "1": 37,
+    "4": 2
+   },
+   "byInheritedSplit": {
+    "formal-train": 194,
+    "formal-holdout": 21,
+    "formal-dev": 14
+   },
+   "sourcesWithoutFactTarget": [],
+   "note": "file labels every row 'vb-train'; splits must be inherited from the source split, not from the file"
+  },
+  "corpus140": {
+   "rows": 0,
+   "note": "no per-fact targets exist for corpus140"
+  }
+ },
+ "group": {
+  "n4n": {
+   "rows": 0,
+   "note": "no N3 plan or group-level target for n4n rows"
+  },
+  "corpus140": {
+   "rows": 0,
+   "note": "corpus140 rows carry facts but no plan/group targets"
+  },
+  "elsewhere": {
+   "n4_corpus_v2": "grouped targets exist for the A/B/C families, which are a different source family and not comparable to n4n"
+  }
+ },
+ "verdict": {
+  "sharedSourceFamily": "n4n (120 sources)",
+  "paragraphReady": true,
+  "factReady": true,
+  "groupReady": false,
+  "threeArmsComparable": false,
+  "blocker": "group targets need factId-level alignment; punctuation splitting is not accepted as alignment"
+ }
+}

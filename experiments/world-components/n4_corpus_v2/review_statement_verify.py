@@ -6,11 +6,15 @@ from __future__ import annotations
 import json, pathlib, re, sys
 from collections import defaultdict
 
-ROOT = pathlib.Path('D:/others/Jity')
-PAIRS = ROOT / 'artifacts' / 'statement-verification' / 'pairs-v1.jsonl'
-REGRESSION = ROOT / 'artifacts' / 'statement-verification' / 'regression-v1.jsonl'
-OUT = ROOT / 'artifacts' / 'statement-verification' / 'review-v1.jsonl'
-OUT_MD = ROOT / 'artifacts' / 'statement-verification' / 'review-v1.md'
+import sys as _paths_sys
+_paths_sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
+from component_paths import PATHS
+
+ROOT = PATHS.worktree
+PAIRS = PATHS.input('statement-verification/pairs-v1.jsonl')
+REGRESSION = PATHS.input('statement-verification/regression-v1.jsonl')
+OUT = PATHS.output('statement-verification/review-v1.jsonl')
+OUT_MD = PATHS.output('statement-verification/review-v1.md')
 
 
 def grams(t):
@@ -59,6 +63,7 @@ def flags(r, by_pair):
 
 
 def main():
+    OUT.parent.mkdir(parents=True, exist_ok=True)
     rows = [json.loads(l) for l in PAIRS.read_text(encoding='utf-8').splitlines() if l.strip()]
     reg = [json.loads(l) for l in REGRESSION.read_text(encoding='utf-8').splitlines() if l.strip()]
     by_pair = defaultdict(list)

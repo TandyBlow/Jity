@@ -1,0 +1,195 @@
+{
+ "purpose": "N3->N4 interface fixture verification (non-model)",
+ "tokenCounter": "deterministic 6-char stub over the REAL shared render_input output (n4_render.py); only the tokenizer is a stub",
+ "sourceModel": "WorldState/EntityDelta per contracts.py, positive-path state built through pydantic WorldState.model_validate: task ids in tasksAchieved resolved against the dynamic state.characters[eid].tasks; entity names from state.initial.*[eid].name (dynamic state carries no names); world identity = state.worldId; GetStateData keys must exist (root = explicit null/null/{})",
+ "interfaceConstraints": {
+  "maxFactsPerRun": 4,
+  "maxInputTokens": 128,
+  "coreferenceConsumed": false,
+  "invariantsArePrecondition": true,
+  "unsupportedPreservesPlan": true,
+  "rangeCheckedOnFlattenedRun": true,
+  "supportedFactKinds": [
+   "task_achieved",
+   "time"
+  ]
+ },
+ "results": {
+  "F01": {
+   "description": "1 fact in range, schema-checked state",
+   "expected": "accepted",
+   "got": "accepted",
+   "pass": true
+  },
+  "F04": {
+   "description": "4 facts flattened (upper bound)",
+   "expected": "accepted",
+   "got": "accepted",
+   "pass": true
+  },
+  "F05": {
+   "description": "5 facts in one group over limit",
+   "expected": "unsupported:plan-too-long",
+   "got": "unsupported:plan-too-long",
+   "pass": true
+  },
+  "F52": {
+   "description": "3+2 grouping cannot bypass: flattened 5",
+   "expected": "unsupported:plan-too-long",
+   "got": "unsupported:plan-too-long",
+   "pass": true
+  },
+  "FT128": {
+   "description": "128 stub tokens over the REAL shared renderer output",
+   "expected": "accepted",
+   "got": "accepted",
+   "pass": true
+  },
+  "FT129": {
+   "description": "129 stub tokens",
+   "expected": "unsupported:input-too-long",
+   "got": "unsupported:input-too-long",
+   "pass": true
+  },
+  "FM01": {
+   "description": "plan missing a factId",
+   "expected": "error:plan-fact-mismatch:missing",
+   "got": "error:plan-fact-mismatch:missing",
+   "pass": true
+  },
+  "FM02": {
+   "description": "plan duplicate factId",
+   "expected": "error:plan-fact-mismatch:duplicate",
+   "got": "error:plan-fact-mismatch:duplicate",
+   "pass": true
+  },
+  "FM03": {
+   "description": "plan unknown factId",
+   "expected": "error:plan-fact-mismatch:unknown",
+   "got": "error:plan-fact-mismatch:unknown",
+   "pass": true
+  },
+  "FO01": {
+   "description": "order follows plan sentence order",
+   "expected": "accepted",
+   "got": "accepted",
+   "pass": true
+  },
+  "FT01": {
+   "description": "time after its predecessor passes through",
+   "expected": "accepted",
+   "got": "accepted",
+   "pass": true
+  },
+  "FN01": {
+   "description": "same name different entities; anchored refs legal",
+   "expected": "accepted",
+   "got": "accepted",
+   "pass": true
+  },
+  "FX01": {
+   "description": "cross-group reference: I2 violation stops acceptance",
+   "expected": "error:plan-invariant-violation",
+   "got": "error:plan-invariant-violation",
+   "pass": true
+  },
+  "FB01": {
+   "description": "non-root point without before record",
+   "expected": "binding-failed:missing-before",
+   "got": "binding-failed:missing-before",
+   "pass": true
+  },
+  "FB02": {
+   "description": "version discontinuity",
+   "expected": "binding-failed:version-gap",
+   "got": "binding-failed:version-gap",
+   "pass": true
+  },
+  "FB03": {
+   "description": "missing stateDigest value",
+   "expected": "binding-failed:missing-stateDigest",
+   "got": "binding-failed:missing-stateDigest",
+   "pass": true
+  },
+  "FBL1": {
+   "description": "predecessor identity mismatch",
+   "expected": "binding-failed:predecessor-identity-mismatch",
+   "got": "binding-failed:predecessor-identity-mismatch",
+   "pass": true,
+   "kind": "binding-only"
+  },
+  "FBR1": {
+   "description": "legal root point (explicit null/null/{})",
+   "expected": "bound",
+   "got": "bound",
+   "pass": true,
+   "kind": "binding-only"
+  },
+  "FBR2": {
+   "description": "root point carrying timeAdvance",
+   "expected": "binding-failed:root-with-time",
+   "got": "binding-failed:root-with-time",
+   "pass": true,
+   "kind": "binding-only"
+  },
+  "FBM1": {
+   "description": "GetStateData keys removed (incomplete read)",
+   "expected": "binding-failed:missing-previousPointId,missing-timeAdvance",
+   "got": "binding-failed:missing-previousPointId,missing-timeAdvance",
+   "pass": true,
+   "kind": "binding-only"
+  },
+  "FOWN1": {
+   "description": "fact entity differs from its source entity",
+   "expected": "binding-failed:ownership-mismatch:f1",
+   "got": "binding-failed:ownership-mismatch:f1",
+   "pass": true
+  },
+  "FSC1": {
+   "description": "goal diverges from the dynamic state task definition",
+   "expected": "binding-failed:source-content-mismatch:f1:task",
+   "got": "binding-failed:source-content-mismatch:f1:task",
+   "pass": true
+  },
+  "FTT1": {
+   "description": "time amount diverges from TimeAdvance.duration",
+   "expected": "binding-failed:source-content-mismatch:f1:timeAdvance",
+   "got": "binding-failed:source-content-mismatch:f1:timeAdvance",
+   "pass": true
+  },
+  "FUK1": {
+   "description": "unsupported fact kind refused, not silently accepted",
+   "expected": "binding-failed:unsupported-fact-kind:f1:personality_changed",
+   "got": "binding-failed:unsupported-fact-kind:f1:personality_changed",
+   "pass": true
+  },
+  "FNAM1": {
+   "description": "fact name diverges from the initial entity definition",
+   "expected": "binding-failed:name-mismatch:f1",
+   "got": "binding-failed:name-mismatch:f1",
+   "pass": true
+  },
+  "FFAK1": {
+   "description": "forged name in the DYNAMIC state cannot pass (names live in state.initial.*)",
+   "expected": "binding-failed:name-mismatch:f1",
+   "got": "binding-failed:name-mismatch:f1",
+   "pass": true
+  },
+  "FWLD1": {
+   "description": "before.state.worldId differs",
+   "expected": "binding-failed:world-mismatch",
+   "got": "binding-failed:world-mismatch",
+   "pass": true,
+   "kind": "binding-only"
+  },
+  "FWLD2": {
+   "description": "state.worldId absent",
+   "expected": "binding-failed:world-missing",
+   "got": "binding-failed:world-missing",
+   "pass": true,
+   "kind": "binding-only"
+  }
+ },
+ "failures": [],
+ "pass": true
+}

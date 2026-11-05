@@ -1,0 +1,100 @@
+{
+ "worldId": "world_1",
+ "units": [
+  {
+   "factId": "f0",
+   "entityId": "char_shen",
+   "name": "沈砚",
+   "kind": "appearance_changed",
+   "text": "帽檐压出折痕",
+   "pointId": "train_r5_p1",
+   "evidenceId": "train_r5_p1/char_shen/appearance/train_r5_p1_1",
+   "sequence": 13
+  },
+  {
+   "factId": "f1",
+   "entityId": "char_shen",
+   "name": "沈砚",
+   "kind": "appearance_changed",
+   "text": "脚踝肿了一块",
+   "pointId": "train_r5_p1",
+   "evidenceId": "train_r5_p1/char_shen/appearance/train_r5_p1_2",
+   "sequence": 13
+  },
+  {
+   "factId": "f2",
+   "entityId": "char_gu",
+   "name": "顾行舟",
+   "kind": "appearance_changed",
+   "text": "衣领被雨浸透",
+   "pointId": "train_r5_p2",
+   "evidenceId": "train_r5_p2/char_gu/appearance/train_r5_p2_1",
+   "sequence": 14
+  },
+  {
+   "factId": "f3",
+   "entityId": "char_ye",
+   "name": "叶知微",
+   "kind": "appearance_changed",
+   "text": "指尖磨出茧",
+   "pointId": "train_r5_p3",
+   "evidenceId": "train_r5_p3/char_ye/appearance/train_r5_p3_1",
+   "sequence": 15
+  },
+  {
+   "factId": "f4",
+   "entityId": "char_ye",
+   "name": "叶知微",
+   "kind": "appearance_changed",
+   "text": "膝盖沾了泥",
+   "pointId": "train_r5_p3",
+   "evidenceId": "train_r5_p3/char_ye/appearance/train_r5_p3_2",
+   "sequence": 15
+  }
+ ],
+ "points": [
+  {
+   "id": "train_r5_p1",
+   "sequence": 13,
+   "previousPointId": "train_r4_p3",
+   "time": {
+    "boundary": "elapsed",
+    "duration": {
+     "amount": 2,
+     "unit": "second"
+    }
+   }
+  },
+  {
+   "id": "train_r5_p2",
+   "sequence": 14,
+   "previousPointId": "train_r5_p1",
+   "time": {
+    "boundary": "elapsed",
+    "duration": {
+     "amount": 3,
+     "unit": "second"
+    }
+   }
+  },
+  {
+   "id": "train_r5_p3",
+   "sequence": 15,
+   "previousPointId": "train_r5_p2",
+   "time": {
+    "boundary": "elapsed",
+    "duration": {
+     "amount": 1,
+     "unit": "second"
+    }
+   }
+  }
+ ],
+ "requestedRelations": [
+  {
+   "type": "before",
+   "fromFactId": "f2",
+   "toFactId": "f3"
+  }
+ ]
+}

@@ -1,0 +1,106 @@
+{
+  "version": "target-training-protocol-v1",
+  "created": "2026-11-05",
+  "purpose": "target-expression binary verification; 300 updates; old checkpoint frozen comparison",
+  "init": {
+    "base": ".local\\world-components-worktree\\experiments\\world-components\\assets\\minirbt-h256-snapshot",
+    "baseModelSha256": "6728ca573fd5197f28198eb7e6119a76e4d5dc626f953fca8c0dc5ba2798f9fc",
+    "fromBaseOnly": true,
+    "loadOldCheckpoint": false
+  },
+  "oldComparison": {
+    "checkpoint": ".local\\world-components-worktree\\experiments\\world-components\\n4_corpus_v2\\ckpt-verify-binary\\selected.pt",
+    "checkpointSha256": "28b304167f1dd387d11d18634115072183479f5b6d3de186befde8548dffd784",
+    "selectedJson": ".local\\world-components-worktree\\experiments\\world-components\\n4_corpus_v2\\ckpt-verify-binary\\selected.json",
+    "selectedJsonSha256": "ead1428dbc1d20c032548f36b8d43d29dda143934bc3f5199b151de2e622c85c",
+    "tConf": 0.53,
+    "use": "evaluate new target confirm once with frozen old checkpoint/t_conf; no tuning"
+  },
+  "data": {
+    "targetTrainPairs": 80,
+    "targetTrainExamples": 160,
+    "targetDevPairs": 20,
+    "targetDevExamples": 40,
+    "targetConfirmPairs": 24,
+    "targetConfirmExamples": 48,
+    "generalCapabilityExamples": 298,
+    "regressionExamples": 36,
+    "targetPairsSha256": "746c0f0754bbae536d34a513280e714f6c33eb3c92804cb37aec46efac79a603",
+    "generalCapabilitySha256": "259ecbd03f82a33b53a7d57b19b15766eb9f873fad63ee6489e2382be212d5fb",
+    "regressionSha256": "6e060bb7ab6c666e9cf9f317ef1e18f5009e9722559d76be5920174482d27a58",
+    "reviewSummary": "artifacts\\statement-verification\\review-target-v1-summary.json",
+    "reviewSummarySha256": "3045018d8df3190e1e537ad53ec9342d877ad67d5ff9ca6e16657b22ab124717"
+  },
+  "budget": {
+    "updates": 300,
+    "evalEvery": 25,
+    "evalCount": 12,
+    "epochs": 60,
+    "stepsPerEpoch": 5,
+    "batch": 32,
+    "lr": 3e-05,
+    "optimizer": "AdamW",
+    "loss": "CrossEntropyLoss",
+    "seed": 20261104,
+    "earlyStop": false,
+    "secondBudget": false,
+    "note": "target train 160 examples; 160/32=5 steps/epoch; 60 epochs =300 updates; not 12 epochs"
+  },
+  "selection": {
+    "dev": "target dev (40 examples)",
+    "tGrid": "0.50..0.99 step 0.01",
+    "baseLabel": "p_unsupported >= 0.5 => unsupported else supported",
+    "rejectRule": "max(p_supported,p_unsupported) < t_conf => uncertain",
+    "continuousGates": {
+      "unsupportedRecallMin": 0.8,
+      "legalRejectionMax": 0.05,
+      "legalPendingMax": 0.15
+    },
+    "order": [
+      "max unsupportedRecall",
+      "min legalRejection",
+      "min legalPending",
+      "earliest update",
+      "lowest t_conf"
+    ],
+    "confirmTuning": false
+  },
+  "confirm": {
+    "examples": 48,
+    "supported": 24,
+    "unsupported": 24,
+    "integerGates": {
+      "unsupportedRecall": {
+        "min": 20,
+        "of": 24
+      },
+      "legalRejection": {
+        "max": 1,
+        "of": 24
+      },
+      "legalPending": {
+        "max": 3,
+        "of": 24
+      }
+    },
+    "once": true,
+    "noTuning": true,
+    "categoryPerExample": true
+  },
+  "evaluation": {
+    "generalCapability": "new selected model only; no selection; report separately",
+    "regression": "20-source regression; new selected model only; separate; no selection",
+    "oldComparison": "old selected model on new target confirm once",
+    "sourceStatus": "not_implemented",
+    "sourceHead": false,
+    "service": false,
+    "autoDelete": false
+  },
+  "files": {
+    "pairs": "artifacts\\statement-verification\\pairs-target-v1.jsonl",
+    "general": "artifacts\\statement-verification\\general-capability-v1.jsonl",
+    "regression": "artifacts\\statement-verification\\regression-v1.jsonl",
+    "audit": "artifacts\\statement-verification\\audit-target-v1.json",
+    "auditSha256": "50f5e9cc1a82ad6aa7a1b4b0c4589836433e9be4265464c7637c93ccf41797c2"
+  }
+}

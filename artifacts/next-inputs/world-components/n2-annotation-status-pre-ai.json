@@ -1,0 +1,18 @@
+{
+  "purpose": "N2 v3 annotation status (D1)",
+  "status": "awaiting-reviewer-labels",
+  "rubric": {
+    "file": "design\\world-engine-reports\\components\\n2-annotation-rubric.md",
+    "sha256": "69f3f4f121af885edab048446d80bd49b0c7d316154cef9bc3ac027d5aed6631"
+  },
+  "labelsA": {
+    "file": "labels-c-impl.jsonl",
+    "sha256": "8485736630279e85a611448f8cd5bfd99d0c7cd5c2de63ece176c801ba6ea026"
+  },
+  "labelsB": {
+    "file": "labels-c-reviewer.jsonl",
+    "present": false
+  },
+  "generatedAt": "2026-10-29T08:55:15+00:00",
+  "generatedFromCommit": "f34e992fa48f2fa078ac28b563fdbc09d87314d4"
+}

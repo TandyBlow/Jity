@@ -10,14 +10,19 @@ from collections import Counter
 
 import run_semantic_correct as R
 
-ROOT = pathlib.Path('D:/others/Jity')
-A1 = ROOT / 'artifacts' / 'cohesion-split' / 'a1.jsonl'
-RESULTS = ROOT / 'artifacts' / 'cohesion-split' / 'semantic-correct-results.jsonl'
-OUT = ROOT / 'artifacts' / 'cohesion-split' / 'semantic-correct-scores.jsonl'
-SUMMARY = ROOT / 'artifacts' / 'cohesion-split' / 'semantic-correct-scores-summary.json'
+import sys as _paths_sys
+_paths_sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
+from component_paths import PATHS
+
+ROOT = PATHS.worktree
+A1 = PATHS.input('cohesion-split/a1.jsonl')
+RESULTS = PATHS.output('cohesion-split/semantic-correct-results.jsonl')
+OUT = PATHS.output('cohesion-split/semantic-correct-scores.jsonl')
+SUMMARY = PATHS.output('cohesion-split/semantic-correct-scores-summary.json')
 
 
 def main():
+    OUT.parent.mkdir(parents=True, exist_ok=True)
     rows = {r['sourceId']: r for r in
             (json.loads(l) for l in A1.read_text(encoding='utf-8').splitlines() if l.strip())}
     results = [json.loads(l) for l in RESULTS.read_text(encoding='utf-8').splitlines() if l.strip()]

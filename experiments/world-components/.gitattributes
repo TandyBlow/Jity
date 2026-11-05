@@ -1,3 +1,9 @@
 # Per-file snapshot bytes (next-baseline); do not replace with a wildcard.
 # Existing text blobs use explicit checkout EOL; newly tracked bytes use -text.
 "n3_organize.py" text eol=crlf
+
+# New development sources retain their authored bytes.
+component_paths.py -text
+test_component_paths.py -text
+test_component_runtime.py -text
+run_component.py -text

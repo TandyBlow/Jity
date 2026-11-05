@@ -1,0 +1,70 @@
+{
+  "version": "organization-v2/1",
+  "created": "2026-11-04",
+  "contractDoc": "design/world-engine-reports/expression-contract-v2.md",
+  "contractSha256": "48029bd8b46b5ad573231ed381cb825c8f8e965739b20e2644c3b4613a530309",
+  "a1Freeze": "artifacts/cohesion-split/a1-freeze.json",
+  "a1Sha256": "e3c470b171e1d02430c33b86765796239d90f847c453023ddd7ec782e144c546",
+  "decisions": [
+    {
+      "id": "bg-predicate",
+      "decision": "只允许已有授权内容；没有完整描述就不写带谓词的背景；本轮不改世界协议。"
+    },
+    {
+      "id": "bg-nounphrase",
+      "decision": "允许名词短语；每个原子都必须有依据，不能从“薄雾”补出“清晨”。"
+    },
+    {
+      "id": "bg-frame",
+      "decision": "“浓雾里”允许作为当前场景框架；雾必须属于该场景；不能把起点天气套到终点；不能添加人物看见/感到/受影响。"
+    },
+    {
+      "id": "coord-also",
+      "decision": "“也/都”允许，但不能仅凭谓语字面相同；两个原有断言的主体/对象/否定/模态/取值必须保持；“都”的范围只含明确列出的对象。"
+    },
+    {
+      "id": "reorder",
+      "decision": "事实重排继续关闭；本轮只验证新开的组织操作。"
+    },
+    {
+      "id": "zhe-li",
+      "decision": "“着、里”不按词表豁免；判断完整表达是否改变状态或位置关系。"
+    }
+  ],
+  "operations": {
+    "allowed": [
+      "bg/1",
+      "coord/1",
+      "ref/1",
+      "seg/1",
+      "recast/1"
+    ],
+    "ruleBaseline": [
+      "merge/1",
+      "conn/1",
+      "endpoint/1"
+    ],
+    "correction": [
+      "corr-dedup/1",
+      "corr-drop/1",
+      "corr-fix/1"
+    ],
+    "closed": [
+      "x-reorder/1",
+      "x-time/1",
+      "x-simul/1",
+      "x-pobj/1",
+      "x-bgexp/1",
+      "x-causal/1",
+      "x-new/1"
+    ]
+  },
+  "verdicts": [
+    "pass",
+    "review",
+    "reject"
+  ],
+  "reviewPolicy": "pass 只表示机械规则未发现问题；review 需人工/判分器复核；账本是待核对声明，不是正确性证明。",
+  "scope": "20 源开发对照；A1 是人工纠错条件；B 通过只证明组织能力，不代表自动端到端 workflow。",
+  "a1FreezeSha256": "e7edb3c03fc79dc2cdd9fc06869c8be07a95fad2edfc25b8045312024f436c20"
+}

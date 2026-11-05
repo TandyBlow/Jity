@@ -1,0 +1,122 @@
+{
+ "purpose": "D2 N3 model-arm formal prompt freeze. Prompt bytes signed by both C reviewer and project owner; decoding config recorded here awaits owner approval BEFORE any inference.",
+ "decision": "D2",
+ "registeredAt": "2026-10-29",
+ "status": "PROMPT-FROZEN / DECODE-APPROVAL-PENDING-UNIFIED / RUNNER-BYTES-PENDING-REVIEW / MODELID-UNPINNED-PAUSE",
+ "prompt": {
+  "file": "experiments/world-components/n2_selection/d2-n3-prompt-draft.md",
+  "version": "v2",
+  "sha256": "a7697894d54f0afbf07ccd79b2e1a8db40a0e07f4a0156b221812ac088199bea",
+  "verifiedAgainst": {
+   "workingTree": "a7697894d54f0afbf07ccd79b2e1a8db40a0e07f4a0156b221812ac088199bea",
+   "gitBlobHead": "a7697894d54f0afbf07ccd79b2e1a8db40a0e07f4a0156b221812ac088199bea"
+  },
+  "frozenScope": "模板、固定重试后缀、输入装配规则、预登记口径（修订记录节以下全部正文）",
+  "reviewerSignOff": {
+   "who": "C reviewer",
+   "round": 25,
+   "sha256": "a7697894d54f0afbf07ccd79b2e1a8db40a0e07f4a0156b221812ac088199bea",
+   "nature": "CONDITIONAL: byte acknowledgment of the prompt v2 text only, with record corrections required (output-shape exactness, H2 anchoring-only semantics, model/runtime/runner pinning); the unconditional sign-off is to be filed as signoff-<hash>.md after round-27 closure"
+  },
+  "ownerSignOff": {
+   "who": "project owner",
+   "sha256": "a7697894d54f0afbf07ccd79b2e1a8db40a0e07f4a0156b221812ac088199bea",
+   "recordedAt": "2026-10-29",
+   "conditions": [
+    "解码配置写入本记录并报批后才可开跑",
+    "通过线按预登记执行，不调参"
+   ]
+  }
+ },
+ "decodingConfig": {
+  "approval": "PENDING-TRACEABLE-OWNER-CONFIRMATION",
+  "sampling": "greedy（do_sample=false，temperature=0，top_p=1.0，top_k=0）",
+  "seed": 20261029,
+  "maxNewTokens": 512,
+  "contextWindow": 4096,
+  "quantization": "无量化：离线 transformers 原始权重；门设备为 cuda bfloat16（见 gateDevice），cpu float32 属非门臂、单列报告，不与门合并",
+  "runtime": "待实现（见 runner 块，NOT-IMPLEMENTED）；浏览器 wllama Q4_K_M 路径属后续浏览器批，不混报不混计时",
+  "retry": "每条目至多 1 次重试，重试后缀逐字取 prompt 文件；两次失败计该条目失败",
+  "logging": "逐调用归档原始输入/输出、尝试次数、设备、耗时；结构违规视同该次失败进入重试",
+  "rationale": "贪心+固定 seed 消除采样自由度（无可调项即无可调参空间）；max_new_tokens 余量口径见 maxNewTokensRationale（实测 321–386 token，1.3–1.6×）；4096 上下文与 C 线既有臂谱系一致",
+  "gateDevice": "cuda bfloat16 is THE gate; a cpu run would be a separately reported arm (float32), never merged with the cuda gate",
+  "maxNewTokensRationale": "reviewer-measured widest frozen-gold item renders ~321-386 tokens; 512 gives a 1.3-1.6x margin, and truncation (finish_reason=length) is recorded as its own failure class",
+  "approvalNote": "PENDING (unified 2026-11-02 per coordinator ruling): no traceable owner original exists; see approvalProvenance. Real inference remains refused by this gate, the unpinned modelId (0.6B pause, independent of approval) and runner.status.",
+  "modelId": null,
+  "modelIdNote": "UNPINNED: the only gate-eligible generative candidate is the 0.6B causal LM, whose inference is paused by coordinator directive. The runner refuses real inference on the missing modelId, which encodes the pause. Pin modelId when the pause is lifted; no other field changes.",
+  "approvalProvenance": {
+   "ownerConfirmation": {
+    "date": "2026-11-02",
+    "channel": "coordination channel (owner answered the implementer's direct question on the record of this approval)",
+    "statement": "owner confirmed the greedy / maxNewTokens=512 decode configuration approval is valid and chose to record it now",
+    "primarySessionRecord": "none in the repository - the original 2026-11-01 exchange lives outside reviewer-visible history; this entry is the owner's dated re-confirmation, not a link to it",
+    "reviewerAction": "verify this round; the classification of this evidence level is the reviewer's call"
+   },
+   "priorAssertion": {
+    "date": "2026-11-01",
+    "note": "the implementer-asserted approval the review flagged (c-review-1c41587 审批和运行记录核查); superseded by the dated owner confirmation above"
+   },
+   "unifiedPending": {
+    "date": "2026-11-02",
+    "ruling": "coordinator directive relayed with the 11-02 re-review: unify to pending — neither the implementer-relayed assertion (2026-11-01) nor the in-channel owner confirmation (2026-11-02) is accepted as an approval basis; only a traceable owner original can serve; even a future approval does NOT lift the 0.6B inference pause",
+    "eventKeptForProvenance": "the 2026-11-02 confirmation event is retained above as a recorded fact, not as an approval basis"
+   }
+  }
+ },
+ "passLine": {
+  "reference": "artifacts/world-components/d2-preregistration-revision.json",
+  "h1": "all items",
+  "h2": "all items",
+  "g1F1": 0.8,
+  "g2Accuracy": 0.8,
+  "pronounProduction": 0.5,
+  "g3": 0.75,
+  "g4": "report only",
+  "tuning": "跑输即归档失败，本批不调参、不改 prompt、不重生成 gold",
+  "scope": "8-item only",
+  "gateDiscrimination": "B1 G1F1=0.5333 prod=0.25 G3=0.0; B2 G1F1=0.0 prod=0.0 G3=0.25 - both FAIL; reproduced by selftest T14"
+ },
+ "evaluation": {
+  "metricTool": {
+   "file": "experiments/world-components/n2_selection/d2_metrics.py",
+   "sha256": "a3a349b908edd92a126f34fc530f6ce25a62b5f15283bacf7a16733adc00131c"
+  },
+  "gold": {
+   "file": "artifacts/world-components/n2-labels-d2-gold.jsonl",
+   "sha256": "cb86aa46c4328cb971721d4ddce38bb4b0429fdc245e5405f193e0a6a99e9c63"
+  },
+  "inputSets": {
+   "capability8": "facts 即已选集（输入序）",
+   "v2set16": "diagnostic-only: H1/H2 over target-intersected facts (facts input order), no organisation gold so G1-G4 undefined, gate=false, verdict.pass never true; see d2_metrics.py --scope diagnostic16",
+   "denominators": "16 项与 8 项分开报告，不合并分母"
+  },
+  "blindAB": "只作佐证记录，不进判据",
+  "toolBlobSha256": "a3a349b908edd92a126f34fc530f6ce25a62b5f15283bacf7a16733adc00131c",
+  "toolBlobSha256Note": "equals git show HEAD:<file> | sha256sum; working tree is byte-identical (-text/eol=lf pins)"
+ },
+ "limits": [
+  "本冻结不含浏览器运行时验证",
+  "编码器 pairwise 头不消费本 prompt，另行登记",
+  "冻结后任何字段改动需重新报批"
+ ],
+ "runner": {
+  "status": "PENDING-REVIEW",
+  "sha256": "798289cdd7a62cc299ec0216bdf00b3326c662fdb939f034696fd7f15a2a5769",
+  "contract": [
+   "input assembly: json.dumps(viewpoint, ensure_ascii=False), the selected fact list, literal <条目ID> replacement; no other rewriting of the frozen prompt text",
+   "parsing: first top-level JSON object only, no repair",
+   "retry: suffix taken verbatim from the prompt file, at most one retry per item",
+   "failure classes: parse failure / structural violation / finish_reason truncation (its own class) / timeout",
+   "logging: per-call raw input/output, attempt count, device, dtype, wall time, token counts, finish_reason",
+   "the runner bytes are pinned into this record before any model inference"
+  ],
+  "pinnedAt": "2026-11-01",
+  "signoff": "signoff-f9c1190.md (runner implementation review passed)",
+  "previouslyPinned": {
+   "sha256": "7189e233d93c870e459696ca609e04e9f26d8730a52400231e12123ee8bac0a2",
+   "signoff": "signoff-f9c1190.md (implementation review passed)",
+   "note": "bytes superseded by the fix-round precheck change; the reviewed diff is reproducible from the repository history"
+  },
+  "changeReason": "fix round 1c41587 #4/#6: the 0.6B pause gate moved into precheck_real (before any model or library loading); awaiting reviewer re-verification before EXECUTABLE"
+ }
+}

@@ -1,0 +1,405 @@
+pin.json -text
+world-components/d2-gold-metrics-selfcheck.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/d2-metrics-preregistration.json -text
+world-components/d2-n3-prompt-freeze.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/d2-preregistration-revision.json -text
+world-components/n1-n5-composition-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n1-n5-composition-r2.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n1-n5-composition-r3.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n1-n5-composition-v2-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n2-annotation-status-pre-ai.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n2-annotation-status.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n2-encoder-arm-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n2-isolation-d2.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n2-isolation-r2.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n2-labels-d2-gold.json -text
+world-components/n2-labels-d2-gold.jsonl -text
+world-components/n2-labels-v3.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n2-must-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n2-must-v3.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n2-perspective-rule-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n2-selection-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n2-selection-r2.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n3-baselines-r1.json -text
+world-components/n3-coref-guard-impact-r1.json -text
+world-components/n3-coref-guard-smoke-r1.json -text
+world-components/n3-coref-guard-smoke-r2.json -text
+world-components/n3-factids-smoke-r1.json -text
+world-components/n3-freeze-amendment-r1.json -text
+world-components/n3-n4-fixtures.json -text
+world-components/n3-plan-v3-eval-r1.json -text
+world-components/n3-plan-v3-eval-r2.json -text
+world-components/n3-rulearm-delivery.md -text
+world-components/n3-rulearm-diag16.json -text
+world-components/n3-rulearm-gate8-r2.json -text
+world-components/n3-rulearm-gate8.json -text
+world-components/n3-rulearm-probes.json -text
+world-components/n3-rulearm-registration-r2.json -text
+world-components/n3-rulearm-registration.json -text
+world-components/n3-runner-stub-diag16.json -text
+world-components/n3-runner-stub-gate8.json -text
+world-components/n4-ablation-confirm-review.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-ablation-confirm24.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-arm-fact-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-arm-fact-r2.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-arm-paragraph-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-arm-paragraph-r2.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-arm-readiness-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-arm1-obj24.json -text
+world-components/n4-arm2-confirm40.json -text
+world-components/n4-baseline-confirm40.json -text
+world-components/n4-baseline-obj24.json -text
+world-components/n4-batch1-amendment-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-browser-adapter-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-browser-adapter-r2.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-browser-probe-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-ce-422.json -text
+world-components/n4-ce-431.json -text
+world-components/n4-ce-base.json -text
+world-components/n4-ce-final-summary.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-ce-final-v2.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-ce-screen.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-ce-two-level-clean.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-ce-u240.json -text
+world-components/n4-ce-ubest.json -text
+world-components/n4-cf-fact-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-cf-pairs-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-cf-paragraph-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-cf24-ablation-B.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-cf24-contract.jsonl -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-cf24-fact-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-cf24-freeze.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-cf24-groups-v2.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-cf24-materials-v2.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-cf24-materials.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-cf24-mix-review.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-cf24-moved-strict.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-cf24-paragraph-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-cf24-review-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-cf24-scoring-v2.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-cf24v2-ablation-review-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-cf24v2-fact.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-cf24v2-factB.json -text
+world-components/n4-cf24v2-group.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-cf24v2-manual-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-cf24v2-paragraph.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-compose-full-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-compose-full-r2.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-compose-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-compose-slots-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-compose-slots-r2.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-confirm-A.json -text
+world-components/n4-confirm-B.json -text
+world-components/n4-confirm40-3arm.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-confirm40-ab.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-conservative-agg.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-conservative-edit-48-v2.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-conservative-edit-48.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-conservative-edit-check.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-contract-fixed-summary.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-edit12-alignment.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-edit12-pairs.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-eval-credibility-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-expand-arm-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-expand-cf24-review.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-expand-confirm-mix.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-expand-confirm36-units.jsonl -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-expand-confirm40-units.jsonl -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-expand-confirm40.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-expand-freeze.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-expand-train80-clean.jsonl -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-expand-train80.jsonl -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-expand2-arm-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-expand2-cf24-review.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-expand2-freeze.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-expand36-contract.jsonl -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-expand78-unified.jsonl -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-final24-422.json -text
+world-components/n4-final24-431.json -text
+world-components/n4-final24-base.json -text
+world-components/n4-final24-contract.jsonl -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-final24-freeze.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-final24-review.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-final24.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-final24.jsonl -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-finetune-eval-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-finetune-eval-r2-large.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-finetune-eval-r2-small.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-finetune-eval-r3-direction.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-finetune-train-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-finetune-train-r2-large.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-finetune-train-r2-small.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-finetune-train-r3-direction.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-fitting-diag.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-formal-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-formal240-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-grammar-violations.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-group-arm-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-group-arm-r3.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-group-arm-review-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-group-diag-prefix-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-group-diag-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-group-diag-r2.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-group-freeze.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-group-material-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-group-plan-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-group-plan-r2.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-group-target-audit-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-group-target-revision-list-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-holdout-copy-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-holdout-eval-r3-direction.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-holdout-freeze-verify-r3-direction.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-holdout-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-holdout-rerank-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-hpc-smoke-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-input-packing-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-input-renderer-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-int8-quality-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-judge-regression-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-lang-baseline-mech.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-lang-baseline.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-materials-defect-account.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-mix-compare-freeze.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-mix422-draws.jsonl -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-mix422.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-mix431-draws.jsonl -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-mix431.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-moved-sampling-account.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-object-confirm-3arm.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-object-confirm-ab.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-object-confirm-mix.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-object-confirm-review.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-object-confirm18-units.jsonl -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-object-confirm24-units.jsonl -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-object-confirm24.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-object-materials-defect.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-object-train40-clean.jsonl -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-object-train40.jsonl -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-object18-contract.jsonl -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-object34-unified.jsonl -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-offline-package-r3-direction.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-pilot-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-relation-authorization.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-run-exclusions-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-run-freeze-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-sanity-422.json -text
+world-components/n4-sanity-431.json -text
+world-components/n4-sanity-base.json -text
+world-components/n4-sanity-contract-units.jsonl -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-sanity-contract2-units.jsonl -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-sanity2-422.json -text
+world-components/n4-sanity2-431.json -text
+world-components/n4-sanity2-base.json -text
+world-components/n4-scene-coco-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-scene-manual-desc-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-scene-manual-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-scene-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-scene-r2.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-scene-rerank-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-scene-rerank-r2.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-scenegen-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-scenevb-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-sequence-policy-verify-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-struct-overfit-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-struct-overfit-r2.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-struct-overfit-r3.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-token-budget-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-training-contract-audit.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-training-target-audit.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-training-unified-diff.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-two-arm-freeze.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-two-arm-manifest-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-two-arm-review-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-two-arm-score-r2.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-unified-eval.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-unified-train.json -text
+world-components/n4-unified-vs-431.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-units-regression-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-v2-browser-adapter.json -text
+world-components/n4-v2-browser-parity-python.json -text
+world-components/n4-v2-corpus-report.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-v2-holdout-eval.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-v3-corpus-report.json -text
+world-components/n4-v3-holdout-eval-v2model.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-v3-holdout-eval-v3model.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-v3-style-diagnostic.json -text
+world-components/n4-v3a-corpus-report.json -text
+world-components/n4-v3a-holdout-eval-v3amodel.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-verbalizer-latency-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-verbalizer-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n4-verbalizer-rerank-r1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/n5-browser-probe.json -text
+world-components/n5-corpus-report.json -text
+world-components/n5-onnx-export.json -text
+world-components/n5-relation-eval.json -text
+world-components/randeng-smoke.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/review-148f412.md -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/review-cf22a65.md -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/signoff-a86d5f1.md -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/signoff-d5ca042.md -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/signoff-dd2a513.md -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/signoff-f0c7ae7.md -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-components/signoff-f9c1190.md -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+decode-compare/arm-ab.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+decode-compare/beam-cache-equivalence.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+decode-compare/cases.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+decode-compare/cases.manifest.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+decode-compare/confirm40-ab.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+decode-compare/confirm40-cases.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+decode-compare/confirm40-scores.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+decode-compare/confirm40.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+decode-compare/confirm40.manifest.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+decode-compare/diag215-ab.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+decode-compare/diag215-cases.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+decode-compare/diag215-scores.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+decode-compare/scores.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-provenance/chain-edit-result.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-provenance/chain-out.json -text
+world-provenance/chain-units.jsonl -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-provenance/mixed-plan.json -text
+world-provenance/mixed-result.json -text
+world-provenance/mixed-round-authorized.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-provenance/mixed-round.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-provenance/mixed-timeout-f3.json -text
+world-provenance/mixed-timeout-f4.json -text
+world-provenance/n3-authorized-relation.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-provenance/boundary-confirm40.jsonl -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-provenance/boundary-manifest.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-provenance/boundary-train.json -text
+world-provenance/boundary-train80.jsonl -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-provenance/boundary2-confirm40.jsonl -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-provenance/boundary2-manifest.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-provenance/boundary2-train.json -text
+world-provenance/boundary2-train80.jsonl -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-provenance/confirm-b.json -text
+world-provenance/confirm-b240.json -text
+world-provenance/confirm-u240.json -text
+world-provenance/confirm2-u240.json -text
+world-provenance/confirm2-v2-240.json -text
+world-provenance/confirm2-v2best.json -text
+world-provenance/diag-b.json -text
+world-provenance/diag-b240.json -text
+world-provenance/diag2-v2best.json -text
+world-provenance/narration-page.json -text
+world-provenance/pairs/fixture-r1-authorized.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-provenance/pairs/fixture-r1-plan.json -text
+world-provenance/pairs/fixture-r1-round.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-provenance/pairs/fixture-r2-authorized.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-provenance/pairs/fixture-r2-plan.json -text
+world-provenance/pairs/fixture-r2-round.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-provenance/pairs/fixture-r3-authorized.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-provenance/pairs/fixture-r3-plan.json -text
+world-provenance/pairs/fixture-r3-round.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-provenance/pairs/fixture-r4-authorized.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-provenance/pairs/fixture-r4-plan.json -text
+world-provenance/pairs/fixture-r4-round.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-provenance/pairs/fixture-r5-authorized.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-provenance/pairs/fixture-r5-plan.json -text
+world-provenance/pairs/fixture-r5-round.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-provenance/pairs/pair-worlds.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-provenance/pairs/rounds-out.jsonl -text
+world-provenance/pairs/rounds.jsonl -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-provenance/pairs/train-r1-authorized.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-provenance/pairs/train-r1-plan.json -text
+world-provenance/pairs/train-r1-round.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-provenance/pairs/train-r2-authorized.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-provenance/pairs/train-r2-plan.json -text
+world-provenance/pairs/train-r2-round.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-provenance/pairs/train-r3-authorized.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-provenance/pairs/train-r3-plan.json -text
+world-provenance/pairs/train-r3-round.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-provenance/pairs/train-r4-authorized.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-provenance/pairs/train-r4-plan.json -text
+world-provenance/pairs/train-r4-round.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-provenance/pairs/train-r5-authorized.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-provenance/pairs/train-r5-plan.json -text
+world-provenance/pairs/train-r5-round.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-provenance/provenance-browser-verify.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-provenance/provenance-browser.json -text
+world-provenance/rounds-b.jsonl -text
+world-provenance/rounds-b240.jsonl -text
+world-provenance/rounds-v2.jsonl -text
+world-provenance/train-r1-authorized.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+cohesion-split/a1-freeze.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+cohesion-split/a1.jsonl -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+cohesion-split/background-candidates.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+cohesion-split/background-select-human-review.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+cohesion-split/background-select-results.jsonl -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+cohesion-split/background-select-run-manifest.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+cohesion-split/background-select-summary.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+cohesion-split/blind.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+cohesion-split/dw-results.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+cohesion-split/dw-scores.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+cohesion-split/organize-v2-human-review.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+cohesion-split/organize-v2-results.jsonl -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+cohesion-split/organize-v2-run-manifest.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+cohesion-split/organize-v2-scores-summary.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+cohesion-split/organize-v2-scores.jsonl -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+cohesion-split/organize-v2-smoke.jsonl -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+cohesion-split/organize-v2-smoke2.jsonl -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+cohesion-split/organize-v2-summary.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+cohesion-split/plan-compare.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+cohesion-split/plan-results.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+cohesion-split/results.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+cohesion-split/scores.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+cohesion-split/semantic-correct-human-review.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+cohesion-split/semantic-correct-results.jsonl -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+cohesion-split/semantic-correct-run-manifest.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+cohesion-split/semantic-correct-scores-summary.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+cohesion-split/semantic-correct-scores.jsonl -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+cohesion-split/semantic-correct-summary.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+cohesion-split/v2-criteria-freeze.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+statement-verification/audit-target-v1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+statement-verification/audit.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+statement-verification/general-capability-v1.jsonl -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+statement-verification/joint-dev.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+statement-verification/joint-freeze-v1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+statement-verification/joint-general-confirm-summary.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+statement-verification/joint-general-confirm.jsonl -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+statement-verification/joint-regression-summary.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+statement-verification/joint-regression.jsonl -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+statement-verification/joint-run-manifest-v1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+statement-verification/joint-target-confirm-summary.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+statement-verification/joint-target-confirm.jsonl -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+statement-verification/joint-train-report.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+statement-verification/joint-training-protocol-v1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+statement-verification/label-compatibility-v1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+statement-verification/metric-freeze.json -text
+statement-verification/pairs-target-v1.jsonl -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+statement-verification/pairs-v1.jsonl -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+statement-verification/regression-v1.jsonl -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+statement-verification/review-target-v1-summary.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+statement-verification/review-target-v1.jsonl -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+statement-verification/review-target-v1.md -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+statement-verification/review-v1-summary.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+statement-verification/review-v1.jsonl -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+statement-verification/review-v1.md -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+statement-verification/split-freeze-target-v1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+statement-verification/split-freeze.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+statement-verification/target-confirm-new-summary.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+statement-verification/target-confirm-new.jsonl -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+statement-verification/target-confirm-old-summary.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+statement-verification/target-confirm-old.jsonl -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+statement-verification/target-dev.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+statement-verification/target-general-new.jsonl -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+statement-verification/target-general-summary.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+statement-verification/target-regression-new.jsonl -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+statement-verification/target-regression-summary.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+statement-verification/target-run-manifest-v1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+statement-verification/target-train-report.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+statement-verification/train-verify-binary-report.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+statement-verification/training-protocol-target-v1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+statement-verification/verify-binary-boundary.jsonl -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+statement-verification/verify-binary-confirm-summary.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+statement-verification/verify-binary-confirm.jsonl -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+statement-verification/verify-binary-dev.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+statement-verification/verify-binary-regression-summary.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+statement-verification/verify-binary-regression.jsonl -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+statement-verification/verify-binary-run-manifest.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-boundary/boundary-confirm40.jsonl -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-boundary/boundary-train80.jsonl -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-boundary/boundary2-confirm40.jsonl -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-boundary/boundary2-train80.jsonl -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+world-boundary/rounds-b.jsonl -text
+world-boundary/rounds-b240.jsonl -text
+world-boundary/rounds-v2.jsonl -text

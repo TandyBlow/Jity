@@ -14,11 +14,15 @@ import pathlib
 import time
 import urllib.request
 
-ROOT = pathlib.Path('D:/others/Jity')
-CAND = ROOT / 'artifacts' / 'cohesion-split' / 'background-candidates.json'
-A1_FREEZE = ROOT / 'artifacts' / 'cohesion-split' / 'a1-freeze.json'
-OUT = ROOT / 'artifacts' / 'cohesion-split' / 'background-select-results.jsonl'
-SUMMARY = ROOT / 'artifacts' / 'cohesion-split' / 'background-select-summary.json'
+import sys as _paths_sys
+_paths_sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
+from component_paths import PATHS
+
+ROOT = PATHS.worktree
+CAND = PATHS.input('cohesion-split/background-candidates.json')
+A1_FREEZE = PATHS.input('cohesion-split/a1-freeze.json')
+OUT = PATHS.output('cohesion-split/background-select-results.jsonl')
+SUMMARY = PATHS.output('cohesion-split/background-select-summary.json')
 
 OLLAMA = 'http://127.0.0.1:11434/api/generate'
 MODEL = 'qwen2.5:7b'
@@ -144,6 +148,7 @@ def check(row, parsed, choice, output):
 
 
 def main():
+    OUT.parent.mkdir(parents=True, exist_ok=True)
     rows = load(CAND)
     a1_freeze = load(A1_FREEZE)
     prompt_hash = hashlib.sha256(PROMPT_VERSION.encode('utf-8')).hexdigest()

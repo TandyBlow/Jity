@@ -1,0 +1,165 @@
+{
+  "version": "statement-verification-target-review-v1",
+  "reviewDate": "2026-11-05",
+  "reviewer": "assistant (same model)",
+  "reviewType": "复看 / re-read, not independent human gold",
+  "judgmentScope": "标签只判 candidateText 在上下文中的含义；fullText 只帮助恢复主体/语境，不是授权来源；不判整段正文是否干净。",
+  "scope": {
+    "families": 36,
+    "familiesRepresented": 36,
+    "pairs": 64,
+    "examples": 128,
+    "confirmPairs": 24,
+    "confirmExamples": 48,
+    "focusFamilies": [
+      "notcleared",
+      "see",
+      "through",
+      "when"
+    ],
+    "focusPairs": 16,
+    "bodyFamilies": 9,
+    "bodyRepresentativePairs": 9
+  },
+  "focusReview": {
+    "when": "时间框“时”不改变候选状态；候选状态由 scene 的状态项授权。",
+    "see": "“看见”是感知框，不额外授权候选状态；候选状态由 scene 的状态项授权。",
+    "through": "“隔着”是语境/遮挡框，不额外授权背景；候选背景由 scene 的背景项授权。",
+    "notcleared": "“还没散”是持续状态，属于正文语境，不是候选；候选只取背景词。若判整句，该持续状态并未被 scene 授权；本任务不判整句。"
+  },
+  "bodyReview": {
+    "stateChangePositives": [
+      {
+        "pairId": "tgt:body:confirm:confirm-01:p01",
+        "family": "tgt:body:confirm:confirm-01",
+        "candidate": "鞋面沾了泥",
+        "fact": "鞋面沾了泥"
+      },
+      {
+        "pairId": "tgt:body:confirm:confirm-02:p01",
+        "family": "tgt:body:confirm:confirm-02",
+        "candidate": "手背被竹篾划出血痕",
+        "fact": "手背被竹篾划出血痕"
+      },
+      {
+        "pairId": "tgt:body:dev:dev-01:p02",
+        "family": "tgt:body:dev:dev-01",
+        "candidate": "手腕上青了一块",
+        "fact": "手腕上青了一块"
+      },
+      {
+        "pairId": "tgt:body:dev:dev-02:p01",
+        "family": "tgt:body:dev:dev-02",
+        "candidate": "衣摆湿了",
+        "fact": "衣摆湿了"
+      },
+      {
+        "pairId": "tgt:body:train:train-01:p02",
+        "family": "tgt:body:train:train-01",
+        "candidate": "手腕被缆绳勒出红痕",
+        "fact": "手腕被缆绳勒出红痕"
+      },
+      {
+        "pairId": "tgt:body:train:train-02:p03",
+        "family": "tgt:body:train:train-02",
+        "candidate": "鞋面沾了泥水",
+        "fact": "鞋面沾了泥水"
+      },
+      {
+        "pairId": "tgt:body:train:train-03:p04",
+        "family": "tgt:body:train:train-03",
+        "candidate": "下颌沾着油光",
+        "fact": "下颌沾着油光"
+      },
+      {
+        "pairId": "tgt:body:train:train-04:p01",
+        "family": "tgt:body:train:train-04",
+        "candidate": "手背上沾着灯油",
+        "fact": "手背上沾着灯油"
+      },
+      {
+        "pairId": "tgt:body:train:train-05:p02",
+        "family": "tgt:body:train:train-05",
+        "candidate": "额角贴着膏药",
+        "fact": "额角贴着膏药"
+      }
+    ],
+    "finding": "所有 body 代表正例都是身体状态/状态变化（勒得发白、湿透、起了青包、划出血痕等），不是只有静态外貌照抄。"
+  },
+  "confirmReview": {
+    "pairs": 24,
+    "examples": 48,
+    "finding": "逐对检查；标签与候选/授权一致；未发现需要改标签的项。"
+  },
+  "labelChanges": [],
+  "notes": [
+    "when/see/through/notcleared 的额外时间/感知/遮挡/持续含义都在 candidate 之外；若把整句当标签，notcleared 会多出未授权持续状态。",
+    "body 正文只帮助恢复主体；body 正例的授权仍是 F1 身体事实，不是正文本身。",
+    "复看由同一助手完成，不是独立人工金标。"
+  ],
+  "focusPairIds": [
+    "tgt:background:train:train-04:p01",
+    "tgt:background:train:train-04:p02",
+    "tgt:background:train:train-04:p03",
+    "tgt:background:train:train-04:p04",
+    "tgt:background:train:train-05:p01",
+    "tgt:background:train:train-05:p02",
+    "tgt:background:train:train-05:p03",
+    "tgt:background:train:train-05:p04",
+    "tgt:visible-state:train:train-03:p01",
+    "tgt:visible-state:train:train-03:p02",
+    "tgt:visible-state:train:train-03:p03",
+    "tgt:visible-state:train:train-03:p04",
+    "tgt:visible-state:train:train-05:p01",
+    "tgt:visible-state:train:train-05:p02",
+    "tgt:visible-state:train:train-05:p03",
+    "tgt:visible-state:train:train-05:p04"
+  ],
+  "confirmPairIds": [
+    "tgt:background:confirm:confirm-01:p01",
+    "tgt:background:confirm:confirm-01:p02",
+    "tgt:background:confirm:confirm-01:p03",
+    "tgt:background:confirm:confirm-02:p01",
+    "tgt:background:confirm:confirm-02:p02",
+    "tgt:background:confirm:confirm-02:p03",
+    "tgt:body:confirm:confirm-01:p01",
+    "tgt:body:confirm:confirm-01:p02",
+    "tgt:body:confirm:confirm-01:p03",
+    "tgt:body:confirm:confirm-02:p01",
+    "tgt:body:confirm:confirm-02:p02",
+    "tgt:body:confirm:confirm-02:p03",
+    "tgt:extra-action:confirm:confirm-01:p01",
+    "tgt:extra-action:confirm:confirm-01:p02",
+    "tgt:extra-action:confirm:confirm-01:p03",
+    "tgt:extra-action:confirm:confirm-02:p01",
+    "tgt:extra-action:confirm:confirm-02:p02",
+    "tgt:extra-action:confirm:confirm-02:p03",
+    "tgt:visible-state:confirm:confirm-01:p01",
+    "tgt:visible-state:confirm:confirm-01:p02",
+    "tgt:visible-state:confirm:confirm-01:p03",
+    "tgt:visible-state:confirm:confirm-02:p01",
+    "tgt:visible-state:confirm:confirm-02:p02",
+    "tgt:visible-state:confirm:confirm-02:p03"
+  ],
+  "files": {
+    "reviewJsonlSha256": "cb3662667e71e7eb41e568ef644b252264eec8407ab9f061d7e80d5223ac3578",
+    "pairsSha256": "746c0f0754bbae536d34a513280e714f6c33eb3c92804cb37aec46efac79a603",
+    "reviewMdSha256": "4a037a0fa634698b24fe34da4139888d90ec93e91bfd58ef9b537ec2e37703ad"
+  },
+  "materialEdits": [
+    {
+      "pairId": "tgt:visible-state:train:train-04:p02",
+      "field": "candidateText/state_bad",
+      "old": "窗纸补好",
+      "new": "窗纸揭过",
+      "reason": "F1=把窗纸补好 与候选“窗纸补好”动作/结果语义过近；改为“揭过”，保持 unsupported 标签，避免把动作结果当状态授权。"
+    },
+    {
+      "pairId": "tgt:visible-state:confirm:confirm-02:p03",
+      "field": "candidateText/state_bad",
+      "old": "窗纸糊好",
+      "new": "窗纸换过",
+      "reason": "F1=把窗纸补好 与候选“窗纸糊好”动作/结果语义过近；改为“换过”，保持 unsupported 标签。"
+    }
+  ]
+}

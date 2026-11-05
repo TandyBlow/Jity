@@ -1,0 +1,186 @@
+{
+ "pipeline": "n4-pipeline/1",
+ "components": {
+  "factContract": "fact_contract.py",
+  "validator": "world-relation-validator/1",
+  "relationEdit": "relation-edit/1",
+  "conservativeEdit": "edit-layer/2"
+ },
+ "timing": {
+  "readAndBind": 0.008,
+  "authorize": 0.0,
+  "modelLoad": 3.671,
+  "generate": 0.821,
+  "generatePerFact": {
+   "f0": 0.374,
+   "f1": 0.079,
+   "f2": 0.092,
+   "f3": 0.072,
+   "f4": 0.078,
+   "f5": 0.124
+  },
+  "edit": 0.0
+ },
+ "original": "指节发白袖口沾了雨斗篷下摆湿了一片鞋底沾了泥袖口湿到肘部帽檐压得很低",
+ "authorization": {
+  "verdict": "partial",
+  "validatorVersion": "world-relation-validator/1",
+  "relations": [
+   {
+    "type": "before",
+    "fromFactId": "f2",
+    "toFactId": "f3",
+    "evidence": [
+     {
+      "type": "event",
+      "evidenceId": "p2/person_b/appearance/person_b_1"
+     },
+     {
+      "type": "event",
+      "evidenceId": "p3/person_c/appearance/person_c_1"
+     }
+    ],
+    "authorization": {
+     "verdict": "pass",
+     "validatorVersion": "world-relation-validator/1"
+    },
+    "elapsedSeconds": 1
+   }
+  ],
+  "rejected": [
+   {
+    "relation": {
+     "type": "before",
+     "fromFactId": "f5",
+     "toFactId": "f4"
+    },
+    "problems": [
+     "relations[0]: 两端证据点不在同一 chain，无法比较"
+    ]
+   }
+  ],
+  "problems": []
+ },
+ "generation": [
+  {
+   "factId": "f0",
+   "name": "林川",
+   "kind": "appearance_changed",
+   "text": "林川的指节发白,指节发白。",
+   "complete": true,
+   "timeoutForced": false,
+   "seconds": 0.374
+  },
+  {
+   "factId": "f1",
+   "name": "林川",
+   "kind": "appearance_changed",
+   "text": "林川的袖口沾了雨。",
+   "complete": true,
+   "timeoutForced": false,
+   "seconds": 0.079
+  },
+  {
+   "factId": "f2",
+   "name": "周宁",
+   "kind": "appearance_changed",
+   "text": "周宁的斗篷下摆湿了一片。",
+   "complete": true,
+   "timeoutForced": false,
+   "seconds": 0.092
+  },
+  {
+   "factId": "f3",
+   "name": "陈默",
+   "kind": "appearance_changed",
+   "text": "陈默的鞋底沾了泥。",
+   "complete": true,
+   "timeoutForced": false,
+   "seconds": 0.072
+  },
+  {
+   "factId": "f4",
+   "name": "陈默",
+   "kind": "appearance_changed",
+   "text": "陈默的袖口湿到肘部。",
+   "complete": true,
+   "timeoutForced": false,
+   "seconds": 0.078
+  },
+  {
+   "factId": "f5",
+   "name": "沈禾",
+   "kind": "appearance_changed",
+   "text": "沈禾的帽檐压得很低,袖口还带着硬币。",
+   "complete": true,
+   "timeoutForced": false,
+   "seconds": 0.124
+  }
+ ],
+ "incompleteFacts": [],
+ "edit": {
+  "text": "林川的指节发白，指节发白，袖口沾了雨。周宁的斗篷下摆湿了一片。随后，陈默的鞋底沾了泥。陈默的袖口湿到肘部。沈禾的帽檐压得很低，袖口还带着硬币。",
+  "blocks": [
+   [
+    "f0",
+    "f1"
+   ],
+   [
+    "f2"
+   ],
+   [
+    "f3"
+   ],
+   [
+    "f4"
+   ],
+   [
+    "f5"
+   ]
+  ],
+  "mergeOps": [
+   {
+    "op": "删姓名＋的",
+    "factId": "f1",
+    "afterFactId": "f0"
+   },
+   {
+    "op": "合句（逗号串联）",
+    "mergedFactIds": [
+     "f0",
+     "f1"
+    ]
+   }
+  ],
+  "mergeDropped": [
+   {
+    "reason": "endpoint-keeps-boundary",
+    "pair": [
+     "f3",
+     "f4"
+    ]
+   }
+  ],
+  "connectorOps": [
+   {
+    "op": "加“随后”",
+    "fromFactId": "f2",
+    "toFactId": "f3",
+    "evidence": [
+     {
+      "type": "event",
+      "evidenceId": "p2/person_b/appearance/person_b_1"
+     },
+     {
+      "type": "event",
+      "evidenceId": "p3/person_c/appearance/person_c_1"
+     }
+    ],
+    "validatorVersion": "world-relation-validator/1"
+   }
+  ],
+  "connectorFallbacks": []
+ },
+ "edited": "林川的指节发白，指节发白，袖口沾了雨。周宁的斗篷下摆湿了一片。随后，陈默的鞋底沾了泥。陈默的袖口湿到肘部。沈禾的帽檐压得很低，袖口还带着硬币。",
+ "sourceComplete": true
+}

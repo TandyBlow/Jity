@@ -1,0 +1,2138 @@
+{
+  "purpose": "N3 structured organisation-plan baselines r1 (B1/B2), deterministic program arms",
+  "planShape": "sentences[{index, factIds, coreference[{mention, refersTo}]}]; no prose (prose stays in N4)",
+  "selection": {
+    "source": "v2 program target (items.jsonl)",
+    "note": "not an N2 model output",
+    "v3Gate": "pending D1 annotation; if v3 vs v2 must differs by more than 2/16 items, these 16 inputs are rebuilt"
+  },
+  "metricScope": "structural stats only. H1/H2/G1-G4 are MODEL-ARM metrics and are not computed here; the earlier ①–⑤ list is superseded by the joint decisions D1/D2. No coreference antecedent score and no readability score is claimed.",
+  "provenance": {
+    "items": "c574d44ebc48a254942fff276cffd18d8607281b6e3617299c1cc0e35cc947fa",
+    "code": {
+      "n3_plan.py": "11824a208acdb4cc0f790072be9a9672dbb2171eb087a8b61b88f52fab8e8e09",
+      "run_n3_baselines.py": "0ee43d4dac5a97e6cbfbf9846bb8e380bfbe737198747f22022519609fc33dbc"
+    },
+    "generatedAt": "2026-10-29T09:11:21+00:00",
+    "generatedFromCommit": "83f56701272d0ae4808ff28777c8dbb8d0c8e770"
+  },
+  "summary": {
+    "items": 16,
+    "b1GroupsTotal": 36,
+    "b2GroupsTotal": 52,
+    "b1FactsPerGroupMean": 1.46,
+    "invariantViolations": 0,
+    "tamperVerdict": "PASS"
+  },
+  "items": [
+    {
+      "itemId": "n2-01",
+      "selectedIds": [
+        "f1",
+        "f2",
+        "f3"
+      ],
+      "B1": {
+        "plan": {
+          "baseline": "B1",
+          "sentences": [
+            {
+              "index": 0,
+              "factIds": [
+                "f1",
+                "f2"
+              ],
+              "coreference": [
+                {
+                  "mention": "裴行舟",
+                  "refersTo": "char_400"
+                },
+                {
+                  "mention": "裴行舟",
+                  "refersTo": "char_400"
+                }
+              ]
+            },
+            {
+              "index": 1,
+              "factIds": [
+                "f3"
+              ],
+              "coreference": [
+                {
+                  "mention": "半窗书舍",
+                  "refersTo": "loc_402"
+                }
+              ]
+            }
+          ],
+          "note": "kind priority + actor cohesion; names only, no pronouns"
+        },
+        "stats": {
+          "groups": 2,
+          "factsPerGroupMean": 1.5,
+          "multiFactGroups": 1,
+          "actorCohesiveGroups": 1,
+          "mentions": 3,
+          "factIds": [
+            "f1",
+            "f2",
+            "f3"
+          ]
+        },
+        "invariantViolations": []
+      },
+      "B2": {
+        "plan": {
+          "baseline": "B2",
+          "sentences": [
+            {
+              "index": 0,
+              "factIds": [
+                "f1"
+              ],
+              "coreference": [
+                {
+                  "mention": "裴行舟",
+                  "refersTo": "char_400"
+                }
+              ]
+            },
+            {
+              "index": 1,
+              "factIds": [
+                "f2"
+              ],
+              "coreference": [
+                {
+                  "mention": "裴行舟",
+                  "refersTo": "char_400"
+                }
+              ]
+            },
+            {
+              "index": 2,
+              "factIds": [
+                "f3"
+              ],
+              "coreference": [
+                {
+                  "mention": "半窗书舍",
+                  "refersTo": "loc_402"
+                }
+              ]
+            }
+          ],
+          "note": "plan order kept, one fact per sentence group"
+        },
+        "stats": {
+          "groups": 3,
+          "factsPerGroupMean": 1.0,
+          "multiFactGroups": 0,
+          "actorCohesiveGroups": 0,
+          "mentions": 3,
+          "factIds": [
+            "f1",
+            "f2",
+            "f3"
+          ]
+        },
+        "invariantViolations": []
+      }
+    },
+    {
+      "itemId": "n2-02",
+      "selectedIds": [
+        "f1",
+        "f2",
+        "f3"
+      ],
+      "B1": {
+        "plan": {
+          "baseline": "B1",
+          "sentences": [
+            {
+              "index": 0,
+              "factIds": [
+                "f1",
+                "f2"
+              ],
+              "coreference": [
+                {
+                  "mention": "沈拾",
+                  "refersTo": "char_401"
+                },
+                {
+                  "mention": "沈拾",
+                  "refersTo": "char_401"
+                }
+              ]
+            },
+            {
+              "index": 1,
+              "factIds": [
+                "f3"
+              ],
+              "coreference": [
+                {
+                  "mention": "竹影茶棚",
+                  "refersTo": "loc_403"
+                }
+              ]
+            }
+          ],
+          "note": "kind priority + actor cohesion; names only, no pronouns"
+        },
+        "stats": {
+          "groups": 2,
+          "factsPerGroupMean": 1.5,
+          "multiFactGroups": 1,
+          "actorCohesiveGroups": 1,
+          "mentions": 3,
+          "factIds": [
+            "f1",
+            "f2",
+            "f3"
+          ]
+        },
+        "invariantViolations": []
+      },
+      "B2": {
+        "plan": {
+          "baseline": "B2",
+          "sentences": [
+            {
+              "index": 0,
+              "factIds": [
+                "f1"
+              ],
+              "coreference": [
+                {
+                  "mention": "沈拾",
+                  "refersTo": "char_401"
+                }
+              ]
+            },
+            {
+              "index": 1,
+              "factIds": [
+                "f2"
+              ],
+              "coreference": [
+                {
+                  "mention": "沈拾",
+                  "refersTo": "char_401"
+                }
+              ]
+            },
+            {
+              "index": 2,
+              "factIds": [
+                "f3"
+              ],
+              "coreference": [
+                {
+                  "mention": "竹影茶棚",
+                  "refersTo": "loc_403"
+                }
+              ]
+            }
+          ],
+          "note": "plan order kept, one fact per sentence group"
+        },
+        "stats": {
+          "groups": 3,
+          "factsPerGroupMean": 1.0,
+          "multiFactGroups": 0,
+          "actorCohesiveGroups": 0,
+          "mentions": 3,
+          "factIds": [
+            "f1",
+            "f2",
+            "f3"
+          ]
+        },
+        "invariantViolations": []
+      }
+    },
+    {
+      "itemId": "n2-03",
+      "selectedIds": [
+        "f1",
+        "f2",
+        "f3"
+      ],
+      "B1": {
+        "plan": {
+          "baseline": "B1",
+          "sentences": [
+            {
+              "index": 0,
+              "factIds": [
+                "f1",
+                "f2"
+              ],
+              "coreference": [
+                {
+                  "mention": "岑半夏",
+                  "refersTo": "char_402"
+                },
+                {
+                  "mention": "岑半夏",
+                  "refersTo": "char_402"
+                }
+              ]
+            },
+            {
+              "index": 1,
+              "factIds": [
+                "f3"
+              ],
+              "coreference": [
+                {
+                  "mention": "西栅桥",
+                  "refersTo": "loc_404"
+                }
+              ]
+            }
+          ],
+          "note": "kind priority + actor cohesion; names only, no pronouns"
+        },
+        "stats": {
+          "groups": 2,
+          "factsPerGroupMean": 1.5,
+          "multiFactGroups": 1,
+          "actorCohesiveGroups": 1,
+          "mentions": 3,
+          "factIds": [
+            "f1",
+            "f2",
+            "f3"
+          ]
+        },
+        "invariantViolations": []
+      },
+      "B2": {
+        "plan": {
+          "baseline": "B2",
+          "sentences": [
+            {
+              "index": 0,
+              "factIds": [
+                "f1"
+              ],
+              "coreference": [
+                {
+                  "mention": "岑半夏",
+                  "refersTo": "char_402"
+                }
+              ]
+            },
+            {
+              "index": 1,
+              "factIds": [
+                "f2"
+              ],
+              "coreference": [
+                {
+                  "mention": "岑半夏",
+                  "refersTo": "char_402"
+                }
+              ]
+            },
+            {
+              "index": 2,
+              "factIds": [
+                "f3"
+              ],
+              "coreference": [
+                {
+                  "mention": "西栅桥",
+                  "refersTo": "loc_404"
+                }
+              ]
+            }
+          ],
+          "note": "plan order kept, one fact per sentence group"
+        },
+        "stats": {
+          "groups": 3,
+          "factsPerGroupMean": 1.0,
+          "multiFactGroups": 0,
+          "actorCohesiveGroups": 0,
+          "mentions": 3,
+          "factIds": [
+            "f1",
+            "f2",
+            "f3"
+          ]
+        },
+        "invariantViolations": []
+      }
+    },
+    {
+      "itemId": "n2-04",
+      "selectedIds": [
+        "f1",
+        "f2",
+        "f3"
+      ],
+      "B1": {
+        "plan": {
+          "baseline": "B1",
+          "sentences": [
+            {
+              "index": 0,
+              "factIds": [
+                "f1",
+                "f2"
+              ],
+              "coreference": [
+                {
+                  "mention": "顾知白",
+                  "refersTo": "char_403"
+                },
+                {
+                  "mention": "顾知白",
+                  "refersTo": "char_403"
+                }
+              ]
+            },
+            {
+              "index": 1,
+              "factIds": [
+                "f3"
+              ],
+              "coreference": [
+                {
+                  "mention": "瓦窑",
+                  "refersTo": "loc_405"
+                }
+              ]
+            }
+          ],
+          "note": "kind priority + actor cohesion; names only, no pronouns"
+        },
+        "stats": {
+          "groups": 2,
+          "factsPerGroupMean": 1.5,
+          "multiFactGroups": 1,
+          "actorCohesiveGroups": 1,
+          "mentions": 3,
+          "factIds": [
+            "f1",
+            "f2",
+            "f3"
+          ]
+        },
+        "invariantViolations": []
+      },
+      "B2": {
+        "plan": {
+          "baseline": "B2",
+          "sentences": [
+            {
+              "index": 0,
+              "factIds": [
+                "f1"
+              ],
+              "coreference": [
+                {
+                  "mention": "顾知白",
+                  "refersTo": "char_403"
+                }
+              ]
+            },
+            {
+              "index": 1,
+              "factIds": [
+                "f2"
+              ],
+              "coreference": [
+                {
+                  "mention": "顾知白",
+                  "refersTo": "char_403"
+                }
+              ]
+            },
+            {
+              "index": 2,
+              "factIds": [
+                "f3"
+              ],
+              "coreference": [
+                {
+                  "mention": "瓦窑",
+                  "refersTo": "loc_405"
+                }
+              ]
+            }
+          ],
+          "note": "plan order kept, one fact per sentence group"
+        },
+        "stats": {
+          "groups": 3,
+          "factsPerGroupMean": 1.0,
+          "multiFactGroups": 0,
+          "actorCohesiveGroups": 0,
+          "mentions": 3,
+          "factIds": [
+            "f1",
+            "f2",
+            "f3"
+          ]
+        },
+        "invariantViolations": []
+      }
+    },
+    {
+      "itemId": "n2-05",
+      "selectedIds": [
+        "f1",
+        "f2",
+        "f3"
+      ],
+      "B1": {
+        "plan": {
+          "baseline": "B1",
+          "sentences": [
+            {
+              "index": 0,
+              "factIds": [
+                "f1",
+                "f3"
+              ],
+              "coreference": [
+                {
+                  "mention": "岑半夏",
+                  "refersTo": "char_402"
+                },
+                {
+                  "mention": "岑半夏",
+                  "refersTo": "char_402"
+                }
+              ]
+            },
+            {
+              "index": 1,
+              "factIds": [
+                "f2"
+              ],
+              "coreference": [
+                {
+                  "mention": "石阶码头",
+                  "refersTo": "loc_400"
+                }
+              ]
+            }
+          ],
+          "note": "kind priority + actor cohesion; names only, no pronouns"
+        },
+        "stats": {
+          "groups": 2,
+          "factsPerGroupMean": 1.5,
+          "multiFactGroups": 1,
+          "actorCohesiveGroups": 1,
+          "mentions": 3,
+          "factIds": [
+            "f1",
+            "f3",
+            "f2"
+          ]
+        },
+        "invariantViolations": []
+      },
+      "B2": {
+        "plan": {
+          "baseline": "B2",
+          "sentences": [
+            {
+              "index": 0,
+              "factIds": [
+                "f1"
+              ],
+              "coreference": [
+                {
+                  "mention": "岑半夏",
+                  "refersTo": "char_402"
+                }
+              ]
+            },
+            {
+              "index": 1,
+              "factIds": [
+                "f2"
+              ],
+              "coreference": [
+                {
+                  "mention": "石阶码头",
+                  "refersTo": "loc_400"
+                }
+              ]
+            },
+            {
+              "index": 2,
+              "factIds": [
+                "f3"
+              ],
+              "coreference": [
+                {
+                  "mention": "岑半夏",
+                  "refersTo": "char_402"
+                }
+              ]
+            }
+          ],
+          "note": "plan order kept, one fact per sentence group"
+        },
+        "stats": {
+          "groups": 3,
+          "factsPerGroupMean": 1.0,
+          "multiFactGroups": 0,
+          "actorCohesiveGroups": 0,
+          "mentions": 3,
+          "factIds": [
+            "f1",
+            "f2",
+            "f3"
+          ]
+        },
+        "invariantViolations": []
+      }
+    },
+    {
+      "itemId": "n2-06",
+      "selectedIds": [
+        "f1",
+        "f2",
+        "f3"
+      ],
+      "B1": {
+        "plan": {
+          "baseline": "B1",
+          "sentences": [
+            {
+              "index": 0,
+              "factIds": [
+                "f1",
+                "f3"
+              ],
+              "coreference": [
+                {
+                  "mention": "顾知白",
+                  "refersTo": "char_403"
+                },
+                {
+                  "mention": "顾知白",
+                  "refersTo": "char_403"
+                }
+              ]
+            },
+            {
+              "index": 1,
+              "factIds": [
+                "f2"
+              ],
+              "coreference": [
+                {
+                  "mention": "旧钟铺",
+                  "refersTo": "loc_401"
+                }
+              ]
+            }
+          ],
+          "note": "kind priority + actor cohesion; names only, no pronouns"
+        },
+        "stats": {
+          "groups": 2,
+          "factsPerGroupMean": 1.5,
+          "multiFactGroups": 1,
+          "actorCohesiveGroups": 1,
+          "mentions": 3,
+          "factIds": [
+            "f1",
+            "f3",
+            "f2"
+          ]
+        },
+        "invariantViolations": []
+      },
+      "B2": {
+        "plan": {
+          "baseline": "B2",
+          "sentences": [
+            {
+              "index": 0,
+              "factIds": [
+                "f1"
+              ],
+              "coreference": [
+                {
+                  "mention": "顾知白",
+                  "refersTo": "char_403"
+                }
+              ]
+            },
+            {
+              "index": 1,
+              "factIds": [
+                "f2"
+              ],
+              "coreference": [
+                {
+                  "mention": "旧钟铺",
+                  "refersTo": "loc_401"
+                }
+              ]
+            },
+            {
+              "index": 2,
+              "factIds": [
+                "f3"
+              ],
+              "coreference": [
+                {
+                  "mention": "顾知白",
+                  "refersTo": "char_403"
+                }
+              ]
+            }
+          ],
+          "note": "plan order kept, one fact per sentence group"
+        },
+        "stats": {
+          "groups": 3,
+          "factsPerGroupMean": 1.0,
+          "multiFactGroups": 0,
+          "actorCohesiveGroups": 0,
+          "mentions": 3,
+          "factIds": [
+            "f1",
+            "f2",
+            "f3"
+          ]
+        },
+        "invariantViolations": []
+      }
+    },
+    {
+      "itemId": "n2-07",
+      "selectedIds": [
+        "f1",
+        "f2",
+        "f3"
+      ],
+      "B1": {
+        "plan": {
+          "baseline": "B1",
+          "sentences": [
+            {
+              "index": 0,
+              "factIds": [
+                "f1",
+                "f3"
+              ],
+              "coreference": [
+                {
+                  "mention": "陆停云",
+                  "refersTo": "char_404"
+                },
+                {
+                  "mention": "陆停云",
+                  "refersTo": "char_404"
+                }
+              ]
+            },
+            {
+              "index": 1,
+              "factIds": [
+                "f2"
+              ],
+              "coreference": [
+                {
+                  "mention": "半窗书舍",
+                  "refersTo": "loc_402"
+                }
+              ]
+            }
+          ],
+          "note": "kind priority + actor cohesion; names only, no pronouns"
+        },
+        "stats": {
+          "groups": 2,
+          "factsPerGroupMean": 1.5,
+          "multiFactGroups": 1,
+          "actorCohesiveGroups": 1,
+          "mentions": 3,
+          "factIds": [
+            "f1",
+            "f3",
+            "f2"
+          ]
+        },
+        "invariantViolations": []
+      },
+      "B2": {
+        "plan": {
+          "baseline": "B2",
+          "sentences": [
+            {
+              "index": 0,
+              "factIds": [
+                "f1"
+              ],
+              "coreference": [
+                {
+                  "mention": "陆停云",
+                  "refersTo": "char_404"
+                }
+              ]
+            },
+            {
+              "index": 1,
+              "factIds": [
+                "f2"
+              ],
+              "coreference": [
+                {
+                  "mention": "半窗书舍",
+                  "refersTo": "loc_402"
+                }
+              ]
+            },
+            {
+              "index": 2,
+              "factIds": [
+                "f3"
+              ],
+              "coreference": [
+                {
+                  "mention": "陆停云",
+                  "refersTo": "char_404"
+                }
+              ]
+            }
+          ],
+          "note": "plan order kept, one fact per sentence group"
+        },
+        "stats": {
+          "groups": 3,
+          "factsPerGroupMean": 1.0,
+          "multiFactGroups": 0,
+          "actorCohesiveGroups": 0,
+          "mentions": 3,
+          "factIds": [
+            "f1",
+            "f2",
+            "f3"
+          ]
+        },
+        "invariantViolations": []
+      }
+    },
+    {
+      "itemId": "n2-08",
+      "selectedIds": [
+        "f1",
+        "f2",
+        "f3"
+      ],
+      "B1": {
+        "plan": {
+          "baseline": "B1",
+          "sentences": [
+            {
+              "index": 0,
+              "factIds": [
+                "f1",
+                "f3"
+              ],
+              "coreference": [
+                {
+                  "mention": "白蘅",
+                  "refersTo": "char_405"
+                },
+                {
+                  "mention": "白蘅",
+                  "refersTo": "char_405"
+                }
+              ]
+            },
+            {
+              "index": 1,
+              "factIds": [
+                "f2"
+              ],
+              "coreference": [
+                {
+                  "mention": "竹影茶棚",
+                  "refersTo": "loc_403"
+                }
+              ]
+            }
+          ],
+          "note": "kind priority + actor cohesion; names only, no pronouns"
+        },
+        "stats": {
+          "groups": 2,
+          "factsPerGroupMean": 1.5,
+          "multiFactGroups": 1,
+          "actorCohesiveGroups": 1,
+          "mentions": 3,
+          "factIds": [
+            "f1",
+            "f3",
+            "f2"
+          ]
+        },
+        "invariantViolations": []
+      },
+      "B2": {
+        "plan": {
+          "baseline": "B2",
+          "sentences": [
+            {
+              "index": 0,
+              "factIds": [
+                "f1"
+              ],
+              "coreference": [
+                {
+                  "mention": "白蘅",
+                  "refersTo": "char_405"
+                }
+              ]
+            },
+            {
+              "index": 1,
+              "factIds": [
+                "f2"
+              ],
+              "coreference": [
+                {
+                  "mention": "竹影茶棚",
+                  "refersTo": "loc_403"
+                }
+              ]
+            },
+            {
+              "index": 2,
+              "factIds": [
+                "f3"
+              ],
+              "coreference": [
+                {
+                  "mention": "白蘅",
+                  "refersTo": "char_405"
+                }
+              ]
+            }
+          ],
+          "note": "plan order kept, one fact per sentence group"
+        },
+        "stats": {
+          "groups": 3,
+          "factsPerGroupMean": 1.0,
+          "multiFactGroups": 0,
+          "actorCohesiveGroups": 0,
+          "mentions": 3,
+          "factIds": [
+            "f1",
+            "f2",
+            "f3"
+          ]
+        },
+        "invariantViolations": []
+      }
+    },
+    {
+      "itemId": "n2-09",
+      "selectedIds": [
+        "f1",
+        "f2",
+        "f3"
+      ],
+      "B1": {
+        "plan": {
+          "baseline": "B1",
+          "sentences": [
+            {
+              "index": 0,
+              "factIds": [
+                "f1",
+                "f3"
+              ],
+              "coreference": [
+                {
+                  "mention": "裴行舟",
+                  "refersTo": "char_400"
+                },
+                {
+                  "mention": "裴行舟",
+                  "refersTo": "char_400"
+                }
+              ]
+            },
+            {
+              "index": 1,
+              "factIds": [
+                "f2"
+              ],
+              "coreference": [
+                {
+                  "mention": "沈拾",
+                  "refersTo": "char_401"
+                }
+              ]
+            }
+          ],
+          "note": "kind priority + actor cohesion; names only, no pronouns"
+        },
+        "stats": {
+          "groups": 2,
+          "factsPerGroupMean": 1.5,
+          "multiFactGroups": 1,
+          "actorCohesiveGroups": 1,
+          "mentions": 3,
+          "factIds": [
+            "f1",
+            "f3",
+            "f2"
+          ]
+        },
+        "invariantViolations": []
+      },
+      "B2": {
+        "plan": {
+          "baseline": "B2",
+          "sentences": [
+            {
+              "index": 0,
+              "factIds": [
+                "f1"
+              ],
+              "coreference": [
+                {
+                  "mention": "裴行舟",
+                  "refersTo": "char_400"
+                }
+              ]
+            },
+            {
+              "index": 1,
+              "factIds": [
+                "f2"
+              ],
+              "coreference": [
+                {
+                  "mention": "沈拾",
+                  "refersTo": "char_401"
+                }
+              ]
+            },
+            {
+              "index": 2,
+              "factIds": [
+                "f3"
+              ],
+              "coreference": [
+                {
+                  "mention": "裴行舟",
+                  "refersTo": "char_400"
+                }
+              ]
+            }
+          ],
+          "note": "plan order kept, one fact per sentence group"
+        },
+        "stats": {
+          "groups": 3,
+          "factsPerGroupMean": 1.0,
+          "multiFactGroups": 0,
+          "actorCohesiveGroups": 0,
+          "mentions": 3,
+          "factIds": [
+            "f1",
+            "f2",
+            "f3"
+          ]
+        },
+        "invariantViolations": []
+      }
+    },
+    {
+      "itemId": "n2-10",
+      "selectedIds": [
+        "f1",
+        "f2",
+        "f3"
+      ],
+      "B1": {
+        "plan": {
+          "baseline": "B1",
+          "sentences": [
+            {
+              "index": 0,
+              "factIds": [
+                "f1",
+                "f3"
+              ],
+              "coreference": [
+                {
+                  "mention": "沈拾",
+                  "refersTo": "char_401"
+                },
+                {
+                  "mention": "沈拾",
+                  "refersTo": "char_401"
+                }
+              ]
+            },
+            {
+              "index": 1,
+              "factIds": [
+                "f2"
+              ],
+              "coreference": [
+                {
+                  "mention": "岑半夏",
+                  "refersTo": "char_402"
+                }
+              ]
+            }
+          ],
+          "note": "kind priority + actor cohesion; names only, no pronouns"
+        },
+        "stats": {
+          "groups": 2,
+          "factsPerGroupMean": 1.5,
+          "multiFactGroups": 1,
+          "actorCohesiveGroups": 1,
+          "mentions": 3,
+          "factIds": [
+            "f1",
+            "f3",
+            "f2"
+          ]
+        },
+        "invariantViolations": []
+      },
+      "B2": {
+        "plan": {
+          "baseline": "B2",
+          "sentences": [
+            {
+              "index": 0,
+              "factIds": [
+                "f1"
+              ],
+              "coreference": [
+                {
+                  "mention": "沈拾",
+                  "refersTo": "char_401"
+                }
+              ]
+            },
+            {
+              "index": 1,
+              "factIds": [
+                "f2"
+              ],
+              "coreference": [
+                {
+                  "mention": "岑半夏",
+                  "refersTo": "char_402"
+                }
+              ]
+            },
+            {
+              "index": 2,
+              "factIds": [
+                "f3"
+              ],
+              "coreference": [
+                {
+                  "mention": "沈拾",
+                  "refersTo": "char_401"
+                }
+              ]
+            }
+          ],
+          "note": "plan order kept, one fact per sentence group"
+        },
+        "stats": {
+          "groups": 3,
+          "factsPerGroupMean": 1.0,
+          "multiFactGroups": 0,
+          "actorCohesiveGroups": 0,
+          "mentions": 3,
+          "factIds": [
+            "f1",
+            "f2",
+            "f3"
+          ]
+        },
+        "invariantViolations": []
+      }
+    },
+    {
+      "itemId": "n2-11",
+      "selectedIds": [
+        "f1",
+        "f2",
+        "f3"
+      ],
+      "B1": {
+        "plan": {
+          "baseline": "B1",
+          "sentences": [
+            {
+              "index": 0,
+              "factIds": [
+                "f1",
+                "f3"
+              ],
+              "coreference": [
+                {
+                  "mention": "岑半夏",
+                  "refersTo": "char_402"
+                },
+                {
+                  "mention": "岑半夏",
+                  "refersTo": "char_402"
+                }
+              ]
+            },
+            {
+              "index": 1,
+              "factIds": [
+                "f2"
+              ],
+              "coreference": [
+                {
+                  "mention": "顾知白",
+                  "refersTo": "char_403"
+                }
+              ]
+            }
+          ],
+          "note": "kind priority + actor cohesion; names only, no pronouns"
+        },
+        "stats": {
+          "groups": 2,
+          "factsPerGroupMean": 1.5,
+          "multiFactGroups": 1,
+          "actorCohesiveGroups": 1,
+          "mentions": 3,
+          "factIds": [
+            "f1",
+            "f3",
+            "f2"
+          ]
+        },
+        "invariantViolations": []
+      },
+      "B2": {
+        "plan": {
+          "baseline": "B2",
+          "sentences": [
+            {
+              "index": 0,
+              "factIds": [
+                "f1"
+              ],
+              "coreference": [
+                {
+                  "mention": "岑半夏",
+                  "refersTo": "char_402"
+                }
+              ]
+            },
+            {
+              "index": 1,
+              "factIds": [
+                "f2"
+              ],
+              "coreference": [
+                {
+                  "mention": "顾知白",
+                  "refersTo": "char_403"
+                }
+              ]
+            },
+            {
+              "index": 2,
+              "factIds": [
+                "f3"
+              ],
+              "coreference": [
+                {
+                  "mention": "岑半夏",
+                  "refersTo": "char_402"
+                }
+              ]
+            }
+          ],
+          "note": "plan order kept, one fact per sentence group"
+        },
+        "stats": {
+          "groups": 3,
+          "factsPerGroupMean": 1.0,
+          "multiFactGroups": 0,
+          "actorCohesiveGroups": 0,
+          "mentions": 3,
+          "factIds": [
+            "f1",
+            "f2",
+            "f3"
+          ]
+        },
+        "invariantViolations": []
+      }
+    },
+    {
+      "itemId": "n2-12",
+      "selectedIds": [
+        "f1",
+        "f2",
+        "f3"
+      ],
+      "B1": {
+        "plan": {
+          "baseline": "B1",
+          "sentences": [
+            {
+              "index": 0,
+              "factIds": [
+                "f1",
+                "f3"
+              ],
+              "coreference": [
+                {
+                  "mention": "顾知白",
+                  "refersTo": "char_403"
+                },
+                {
+                  "mention": "顾知白",
+                  "refersTo": "char_403"
+                }
+              ]
+            },
+            {
+              "index": 1,
+              "factIds": [
+                "f2"
+              ],
+              "coreference": [
+                {
+                  "mention": "陆停云",
+                  "refersTo": "char_404"
+                }
+              ]
+            }
+          ],
+          "note": "kind priority + actor cohesion; names only, no pronouns"
+        },
+        "stats": {
+          "groups": 2,
+          "factsPerGroupMean": 1.5,
+          "multiFactGroups": 1,
+          "actorCohesiveGroups": 1,
+          "mentions": 3,
+          "factIds": [
+            "f1",
+            "f3",
+            "f2"
+          ]
+        },
+        "invariantViolations": []
+      },
+      "B2": {
+        "plan": {
+          "baseline": "B2",
+          "sentences": [
+            {
+              "index": 0,
+              "factIds": [
+                "f1"
+              ],
+              "coreference": [
+                {
+                  "mention": "顾知白",
+                  "refersTo": "char_403"
+                }
+              ]
+            },
+            {
+              "index": 1,
+              "factIds": [
+                "f2"
+              ],
+              "coreference": [
+                {
+                  "mention": "陆停云",
+                  "refersTo": "char_404"
+                }
+              ]
+            },
+            {
+              "index": 2,
+              "factIds": [
+                "f3"
+              ],
+              "coreference": [
+                {
+                  "mention": "顾知白",
+                  "refersTo": "char_403"
+                }
+              ]
+            }
+          ],
+          "note": "plan order kept, one fact per sentence group"
+        },
+        "stats": {
+          "groups": 3,
+          "factsPerGroupMean": 1.0,
+          "multiFactGroups": 0,
+          "actorCohesiveGroups": 0,
+          "mentions": 3,
+          "factIds": [
+            "f1",
+            "f2",
+            "f3"
+          ]
+        },
+        "invariantViolations": []
+      }
+    },
+    {
+      "itemId": "n2-13",
+      "selectedIds": [
+        "f1",
+        "f2",
+        "f3",
+        "f4"
+      ],
+      "B1": {
+        "plan": {
+          "baseline": "B1",
+          "sentences": [
+            {
+              "index": 0,
+              "factIds": [
+                "f1",
+                "f2"
+              ],
+              "coreference": [
+                {
+                  "mention": "裴行舟",
+                  "refersTo": "char_400"
+                },
+                {
+                  "mention": "裴行舟",
+                  "refersTo": "char_400"
+                }
+              ]
+            },
+            {
+              "index": 1,
+              "factIds": [
+                "f3"
+              ],
+              "coreference": [
+                {
+                  "mention": "沈拾",
+                  "refersTo": "char_401"
+                }
+              ]
+            },
+            {
+              "index": 2,
+              "factIds": [
+                "f4"
+              ],
+              "coreference": [
+                {
+                  "mention": "西栅桥",
+                  "refersTo": "loc_404"
+                }
+              ]
+            }
+          ],
+          "note": "kind priority + actor cohesion; names only, no pronouns"
+        },
+        "stats": {
+          "groups": 3,
+          "factsPerGroupMean": 1.33,
+          "multiFactGroups": 1,
+          "actorCohesiveGroups": 1,
+          "mentions": 4,
+          "factIds": [
+            "f1",
+            "f2",
+            "f3",
+            "f4"
+          ]
+        },
+        "invariantViolations": []
+      },
+      "B2": {
+        "plan": {
+          "baseline": "B2",
+          "sentences": [
+            {
+              "index": 0,
+              "factIds": [
+                "f1"
+              ],
+              "coreference": [
+                {
+                  "mention": "裴行舟",
+                  "refersTo": "char_400"
+                }
+              ]
+            },
+            {
+              "index": 1,
+              "factIds": [
+                "f2"
+              ],
+              "coreference": [
+                {
+                  "mention": "裴行舟",
+                  "refersTo": "char_400"
+                }
+              ]
+            },
+            {
+              "index": 2,
+              "factIds": [
+                "f3"
+              ],
+              "coreference": [
+                {
+                  "mention": "沈拾",
+                  "refersTo": "char_401"
+                }
+              ]
+            },
+            {
+              "index": 3,
+              "factIds": [
+                "f4"
+              ],
+              "coreference": [
+                {
+                  "mention": "西栅桥",
+                  "refersTo": "loc_404"
+                }
+              ]
+            }
+          ],
+          "note": "plan order kept, one fact per sentence group"
+        },
+        "stats": {
+          "groups": 4,
+          "factsPerGroupMean": 1.0,
+          "multiFactGroups": 0,
+          "actorCohesiveGroups": 0,
+          "mentions": 4,
+          "factIds": [
+            "f1",
+            "f2",
+            "f3",
+            "f4"
+          ]
+        },
+        "invariantViolations": []
+      }
+    },
+    {
+      "itemId": "n2-14",
+      "selectedIds": [
+        "f1",
+        "f2",
+        "f3",
+        "f4"
+      ],
+      "B1": {
+        "plan": {
+          "baseline": "B1",
+          "sentences": [
+            {
+              "index": 0,
+              "factIds": [
+                "f1",
+                "f2"
+              ],
+              "coreference": [
+                {
+                  "mention": "沈拾",
+                  "refersTo": "char_401"
+                },
+                {
+                  "mention": "沈拾",
+                  "refersTo": "char_401"
+                }
+              ]
+            },
+            {
+              "index": 1,
+              "factIds": [
+                "f3"
+              ],
+              "coreference": [
+                {
+                  "mention": "岑半夏",
+                  "refersTo": "char_402"
+                }
+              ]
+            },
+            {
+              "index": 2,
+              "factIds": [
+                "f4"
+              ],
+              "coreference": [
+                {
+                  "mention": "瓦窑",
+                  "refersTo": "loc_405"
+                }
+              ]
+            }
+          ],
+          "note": "kind priority + actor cohesion; names only, no pronouns"
+        },
+        "stats": {
+          "groups": 3,
+          "factsPerGroupMean": 1.33,
+          "multiFactGroups": 1,
+          "actorCohesiveGroups": 1,
+          "mentions": 4,
+          "factIds": [
+            "f1",
+            "f2",
+            "f3",
+            "f4"
+          ]
+        },
+        "invariantViolations": []
+      },
+      "B2": {
+        "plan": {
+          "baseline": "B2",
+          "sentences": [
+            {
+              "index": 0,
+              "factIds": [
+                "f1"
+              ],
+              "coreference": [
+                {
+                  "mention": "沈拾",
+                  "refersTo": "char_401"
+                }
+              ]
+            },
+            {
+              "index": 1,
+              "factIds": [
+                "f2"
+              ],
+              "coreference": [
+                {
+                  "mention": "沈拾",
+                  "refersTo": "char_401"
+                }
+              ]
+            },
+            {
+              "index": 2,
+              "factIds": [
+                "f3"
+              ],
+              "coreference": [
+                {
+                  "mention": "岑半夏",
+                  "refersTo": "char_402"
+                }
+              ]
+            },
+            {
+              "index": 3,
+              "factIds": [
+                "f4"
+              ],
+              "coreference": [
+                {
+                  "mention": "瓦窑",
+                  "refersTo": "loc_405"
+                }
+              ]
+            }
+          ],
+          "note": "plan order kept, one fact per sentence group"
+        },
+        "stats": {
+          "groups": 4,
+          "factsPerGroupMean": 1.0,
+          "multiFactGroups": 0,
+          "actorCohesiveGroups": 0,
+          "mentions": 4,
+          "factIds": [
+            "f1",
+            "f2",
+            "f3",
+            "f4"
+          ]
+        },
+        "invariantViolations": []
+      }
+    },
+    {
+      "itemId": "n2-15",
+      "selectedIds": [
+        "f1",
+        "f2",
+        "f3",
+        "f4"
+      ],
+      "B1": {
+        "plan": {
+          "baseline": "B1",
+          "sentences": [
+            {
+              "index": 0,
+              "factIds": [
+                "f1",
+                "f2"
+              ],
+              "coreference": [
+                {
+                  "mention": "岑半夏",
+                  "refersTo": "char_402"
+                },
+                {
+                  "mention": "岑半夏",
+                  "refersTo": "char_402"
+                }
+              ]
+            },
+            {
+              "index": 1,
+              "factIds": [
+                "f3"
+              ],
+              "coreference": [
+                {
+                  "mention": "顾知白",
+                  "refersTo": "char_403"
+                }
+              ]
+            },
+            {
+              "index": 2,
+              "factIds": [
+                "f4"
+              ],
+              "coreference": [
+                {
+                  "mention": "石阶码头",
+                  "refersTo": "loc_400"
+                }
+              ]
+            }
+          ],
+          "note": "kind priority + actor cohesion; names only, no pronouns"
+        },
+        "stats": {
+          "groups": 3,
+          "factsPerGroupMean": 1.33,
+          "multiFactGroups": 1,
+          "actorCohesiveGroups": 1,
+          "mentions": 4,
+          "factIds": [
+            "f1",
+            "f2",
+            "f3",
+            "f4"
+          ]
+        },
+        "invariantViolations": []
+      },
+      "B2": {
+        "plan": {
+          "baseline": "B2",
+          "sentences": [
+            {
+              "index": 0,
+              "factIds": [
+                "f1"
+              ],
+              "coreference": [
+                {
+                  "mention": "岑半夏",
+                  "refersTo": "char_402"
+                }
+              ]
+            },
+            {
+              "index": 1,
+              "factIds": [
+                "f2"
+              ],
+              "coreference": [
+                {
+                  "mention": "岑半夏",
+                  "refersTo": "char_402"
+                }
+              ]
+            },
+            {
+              "index": 2,
+              "factIds": [
+                "f3"
+              ],
+              "coreference": [
+                {
+                  "mention": "顾知白",
+                  "refersTo": "char_403"
+                }
+              ]
+            },
+            {
+              "index": 3,
+              "factIds": [
+                "f4"
+              ],
+              "coreference": [
+                {
+                  "mention": "石阶码头",
+                  "refersTo": "loc_400"
+                }
+              ]
+            }
+          ],
+          "note": "plan order kept, one fact per sentence group"
+        },
+        "stats": {
+          "groups": 4,
+          "factsPerGroupMean": 1.0,
+          "multiFactGroups": 0,
+          "actorCohesiveGroups": 0,
+          "mentions": 4,
+          "factIds": [
+            "f1",
+            "f2",
+            "f3",
+            "f4"
+          ]
+        },
+        "invariantViolations": []
+      }
+    },
+    {
+      "itemId": "n2-16",
+      "selectedIds": [
+        "f1",
+        "f2",
+        "f3",
+        "f4"
+      ],
+      "B1": {
+        "plan": {
+          "baseline": "B1",
+          "sentences": [
+            {
+              "index": 0,
+              "factIds": [
+                "f1",
+                "f2"
+              ],
+              "coreference": [
+                {
+                  "mention": "顾知白",
+                  "refersTo": "char_403"
+                },
+                {
+                  "mention": "顾知白",
+                  "refersTo": "char_403"
+                }
+              ]
+            },
+            {
+              "index": 1,
+              "factIds": [
+                "f3"
+              ],
+              "coreference": [
+                {
+                  "mention": "陆停云",
+                  "refersTo": "char_404"
+                }
+              ]
+            },
+            {
+              "index": 2,
+              "factIds": [
+                "f4"
+              ],
+              "coreference": [
+                {
+                  "mention": "旧钟铺",
+                  "refersTo": "loc_401"
+                }
+              ]
+            }
+          ],
+          "note": "kind priority + actor cohesion; names only, no pronouns"
+        },
+        "stats": {
+          "groups": 3,
+          "factsPerGroupMean": 1.33,
+          "multiFactGroups": 1,
+          "actorCohesiveGroups": 1,
+          "mentions": 4,
+          "factIds": [
+            "f1",
+            "f2",
+            "f3",
+            "f4"
+          ]
+        },
+        "invariantViolations": []
+      },
+      "B2": {
+        "plan": {
+          "baseline": "B2",
+          "sentences": [
+            {
+              "index": 0,
+              "factIds": [
+                "f1"
+              ],
+              "coreference": [
+                {
+                  "mention": "顾知白",
+                  "refersTo": "char_403"
+                }
+              ]
+            },
+            {
+              "index": 1,
+              "factIds": [
+                "f2"
+              ],
+              "coreference": [
+                {
+                  "mention": "顾知白",
+                  "refersTo": "char_403"
+                }
+              ]
+            },
+            {
+              "index": 2,
+              "factIds": [
+                "f3"
+              ],
+              "coreference": [
+                {
+                  "mention": "陆停云",
+                  "refersTo": "char_404"
+                }
+              ]
+            },
+            {
+              "index": 3,
+              "factIds": [
+                "f4"
+              ],
+              "coreference": [
+                {
+                  "mention": "旧钟铺",
+                  "refersTo": "loc_401"
+                }
+              ]
+            }
+          ],
+          "note": "plan order kept, one fact per sentence group"
+        },
+        "stats": {
+          "groups": 4,
+          "factsPerGroupMean": 1.0,
+          "multiFactGroups": 0,
+          "actorCohesiveGroups": 0,
+          "mentions": 4,
+          "factIds": [
+            "f1",
+            "f2",
+            "f3",
+            "f4"
+          ]
+        },
+        "invariantViolations": []
+      }
+    }
+  ],
+  "tamper": {
+    "purpose": "mutation probe for I1/I2: a valid B1 plan is broken on purpose; every applicable mutation must be caught",
+    "cases": {
+      "crossGroupEntity": {
+        "applicable": 16,
+        "detected": 16
+      },
+      "globalFactId": {
+        "applicable": 16,
+        "detected": 16
+      },
+      "unknownEntity": {
+        "applicable": 16,
+        "detected": 16
+      },
+      "wrongMention": {
+        "applicable": 16,
+        "detected": 16
+      },
+      "droppedFact": {
+        "applicable": 16,
+        "detected": 16
+      },
+      "duplicatedFact": {
+        "applicable": 16,
+        "detected": 16
+      },
+      "fabricatedFact": {
+        "applicable": 16,
+        "detected": 16
+      },
+      "fabricatedFirst": {
+        "applicable": 16,
+        "detected": 16
+      },
+      "emptyGroup": {
+        "applicable": 16,
+        "detected": 16
+      }
+    },
+    "controls": {
+      "validPlans": 16,
+      "zeroProblems": 16
+    },
+    "summary": {
+      "applicable": 144,
+      "detected": 144,
+      "misses": 0
+    },
+    "perItem": [
+      {
+        "itemId": "n2-01",
+        "groups": 2,
+        "crossGroupEntityAvailable": true,
+        "globalFactIdAvailable": true
+      },
+      {
+        "itemId": "n2-02",
+        "groups": 2,
+        "crossGroupEntityAvailable": true,
+        "globalFactIdAvailable": true
+      },
+      {
+        "itemId": "n2-03",
+        "groups": 2,
+        "crossGroupEntityAvailable": true,
+        "globalFactIdAvailable": true
+      },
+      {
+        "itemId": "n2-04",
+        "groups": 2,
+        "crossGroupEntityAvailable": true,
+        "globalFactIdAvailable": true
+      },
+      {
+        "itemId": "n2-05",
+        "groups": 2,
+        "crossGroupEntityAvailable": true,
+        "globalFactIdAvailable": true
+      },
+      {
+        "itemId": "n2-06",
+        "groups": 2,
+        "crossGroupEntityAvailable": true,
+        "globalFactIdAvailable": true
+      },
+      {
+        "itemId": "n2-07",
+        "groups": 2,
+        "crossGroupEntityAvailable": true,
+        "globalFactIdAvailable": true
+      },
+      {
+        "itemId": "n2-08",
+        "groups": 2,
+        "crossGroupEntityAvailable": true,
+        "globalFactIdAvailable": true
+      },
+      {
+        "itemId": "n2-09",
+        "groups": 2,
+        "crossGroupEntityAvailable": true,
+        "globalFactIdAvailable": true
+      },
+      {
+        "itemId": "n2-10",
+        "groups": 2,
+        "crossGroupEntityAvailable": true,
+        "globalFactIdAvailable": true
+      },
+      {
+        "itemId": "n2-11",
+        "groups": 2,
+        "crossGroupEntityAvailable": true,
+        "globalFactIdAvailable": true
+      },
+      {
+        "itemId": "n2-12",
+        "groups": 2,
+        "crossGroupEntityAvailable": true,
+        "globalFactIdAvailable": true
+      },
+      {
+        "itemId": "n2-13",
+        "groups": 3,
+        "crossGroupEntityAvailable": true,
+        "globalFactIdAvailable": true
+      },
+      {
+        "itemId": "n2-14",
+        "groups": 3,
+        "crossGroupEntityAvailable": true,
+        "globalFactIdAvailable": true
+      },
+      {
+        "itemId": "n2-15",
+        "groups": 3,
+        "crossGroupEntityAvailable": true,
+        "globalFactIdAvailable": true
+      },
+      {
+        "itemId": "n2-16",
+        "groups": 3,
+        "crossGroupEntityAvailable": true,
+        "globalFactIdAvailable": true
+      }
+    ],
+    "misses": [],
+    "verdict": "PASS"
+  },
+  "smoke": {
+    "archive": "artifacts\\world-components\\n3-factids-smoke-r1.json",
+    "generatedThisRun": false,
+    "note": "factIds consumer smoke only; see the separate archive"
+  },
+  "disclaimers": [
+    "B1/B2 are program baselines: their grouping/order numbers are guarantees, not achievements",
+    "model arms for N3 are NOT run yet; the baselines are the numbers they must beat",
+    "coreference suggestions are NAMES only; no pronoun is generated and N4 does not consume coreference",
+    "significance target definition inherits N2's open question (human confirmation pending)"
+  ]
+}

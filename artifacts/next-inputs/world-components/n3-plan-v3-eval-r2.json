@@ -1,0 +1,922 @@
+{
+ "purpose": "N3 plan_v3 development diagnostic (review round): same-goal place precondition, lone no_change coverage, time attribution, same-name split and pronoun grants",
+ "scope": "development diagnostic, not a formal holdout; no naturalness or end-to-end quality claim",
+ "criteria": {
+  "G1": "check_plan_v3 empty",
+  "G2": "merge iff same goal AND same non-null, non-ambiguous location; pairwise by place; missing/different/ambiguous location never merges",
+  "G3": "same-name entities never share a group; no grant for a duplicated name",
+  "G4": "leading time -> first entity group; else predecessor group; consecutive times share; lone time refused; lone no_change is one legal group",
+  "G5": "grant needs hint + unique name + no in-group pronoun collision; unknown -> TA; no hint -> no grant",
+  "G6": "within-group input order; groups by minimum input index",
+  "G7": "ill-formed/lone-time/no-entity refuse"
+ },
+ "cases": [
+  {
+   "name": "single-entity-order",
+   "plan": {
+    "sentences": [
+     {
+      "index": 0,
+      "factIds": [
+       "f0",
+       "f1"
+      ],
+      "coreference": [],
+      "time": null
+     }
+    ],
+    "edges": {
+     "consecutive-time": false
+    }
+   },
+   "checks": {
+    "G1_invariants": true,
+    "G2_groups": true
+   },
+   "invariantProblems": [],
+   "pass": true
+  },
+  {
+   "name": "two-entities-first-appearance",
+   "plan": {
+    "sentences": [
+     {
+      "index": 0,
+      "factIds": [
+       "f0"
+      ],
+      "coreference": [],
+      "time": null
+     },
+     {
+      "index": 1,
+      "factIds": [
+       "f1"
+      ],
+      "coreference": [],
+      "time": null
+     }
+    ],
+    "edges": {
+     "consecutive-time": false
+    }
+   },
+   "checks": {
+    "G1_invariants": true,
+    "G2_groups": true
+   },
+   "invariantProblems": [],
+   "pass": true
+  },
+  {
+   "name": "entity-bucket-interleaved",
+   "plan": {
+    "sentences": [
+     {
+      "index": 0,
+      "factIds": [
+       "f0",
+       "f2"
+      ],
+      "coreference": [],
+      "time": null
+     },
+     {
+      "index": 1,
+      "factIds": [
+       "f1"
+      ],
+      "coreference": [],
+      "time": null
+     }
+    ],
+    "edges": {
+     "consecutive-time": false
+    }
+   },
+   "checks": {
+    "G1_invariants": true,
+    "G2_groups": true
+   },
+   "invariantProblems": [],
+   "pass": true
+  },
+  {
+   "name": "same-goal-same-place",
+   "plan": {
+    "sentences": [
+     {
+      "index": 0,
+      "factIds": [
+       "f0",
+       "f1"
+      ],
+      "coreference": [],
+      "time": null
+     }
+    ],
+    "edges": {
+     "consecutive-time": false
+    }
+   },
+   "checks": {
+    "G1_invariants": true,
+    "G2_groups": true
+   },
+   "invariantProblems": [],
+   "pass": true
+  },
+  {
+   "name": "same-goal-different-place",
+   "plan": {
+    "sentences": [
+     {
+      "index": 0,
+      "factIds": [
+       "f0"
+      ],
+      "coreference": [],
+      "time": null
+     },
+     {
+      "index": 1,
+      "factIds": [
+       "f1"
+      ],
+      "coreference": [],
+      "time": null
+     }
+    ],
+    "edges": {
+     "consecutive-time": false
+    }
+   },
+   "checks": {
+    "G1_invariants": true,
+    "G2_groups": true
+   },
+   "invariantProblems": [],
+   "pass": true
+  },
+  {
+   "name": "same-goal-missing-place",
+   "plan": {
+    "sentences": [
+     {
+      "index": 0,
+      "factIds": [
+       "f0"
+      ],
+      "coreference": [],
+      "time": null
+     },
+     {
+      "index": 1,
+      "factIds": [
+       "f1"
+      ],
+      "coreference": [],
+      "time": null
+     }
+    ],
+    "edges": {
+     "consecutive-time": false
+    }
+   },
+   "checks": {
+    "G1_invariants": true,
+    "G2_groups": true
+   },
+   "invariantProblems": [],
+   "pass": true
+  },
+  {
+   "name": "same-goal-ambiguous-place",
+   "plan": {
+    "sentences": [
+     {
+      "index": 0,
+      "factIds": [
+       "f0"
+      ],
+      "coreference": [],
+      "time": null
+     },
+     {
+      "index": 1,
+      "factIds": [
+       "f1"
+      ],
+      "coreference": [],
+      "time": null
+     }
+    ],
+    "edges": {
+     "consecutive-time": false
+    }
+   },
+   "checks": {
+    "G1_invariants": true,
+    "G2_groups": true
+   },
+   "invariantProblems": [],
+   "pass": true
+  },
+  {
+   "name": "same-goal-three-places",
+   "plan": {
+    "sentences": [
+     {
+      "index": 0,
+      "factIds": [
+       "f0",
+       "f2"
+      ],
+      "coreference": [],
+      "time": null
+     },
+     {
+      "index": 1,
+      "factIds": [
+       "f1"
+      ],
+      "coreference": [],
+      "time": null
+     }
+    ],
+    "edges": {
+     "consecutive-time": false
+    }
+   },
+   "checks": {
+    "G1_invariants": true,
+    "G2_groups": true
+   },
+   "invariantProblems": [],
+   "pass": true
+  },
+  {
+   "name": "same-name-shared-goal",
+   "plan": {
+    "sentences": [
+     {
+      "index": 0,
+      "factIds": [
+       "f0"
+      ],
+      "coreference": [],
+      "time": null
+     },
+     {
+      "index": 1,
+      "factIds": [
+       "f1"
+      ],
+      "coreference": [],
+      "time": null
+     }
+    ],
+    "edges": {
+     "consecutive-time": false
+    }
+   },
+   "checks": {
+    "G1_invariants": true,
+    "G2_groups": true,
+    "G5_grants": true
+   },
+   "invariantProblems": [],
+   "pass": true
+  },
+  {
+   "name": "same-name-other-facts",
+   "plan": {
+    "sentences": [
+     {
+      "index": 0,
+      "factIds": [
+       "f0"
+      ],
+      "coreference": [],
+      "time": null
+     },
+     {
+      "index": 1,
+      "factIds": [
+       "f1"
+      ],
+      "coreference": [],
+      "time": null
+     }
+    ],
+    "edges": {
+     "consecutive-time": false
+    }
+   },
+   "checks": {
+    "G1_invariants": true,
+    "G2_groups": true,
+    "G5_grants": true
+   },
+   "invariantProblems": [],
+   "pass": true
+  },
+  {
+   "name": "time-leading",
+   "plan": {
+    "sentences": [
+     {
+      "index": 0,
+      "factIds": [
+       "f0",
+       "f1"
+      ],
+      "coreference": [],
+      "time": {
+       "amount": 5,
+       "unit": "minute"
+      }
+     }
+    ],
+    "edges": {
+     "consecutive-time": false
+    }
+   },
+   "checks": {
+    "G1_invariants": true,
+    "G2_groups": true,
+    "G4_time": true
+   },
+   "invariantProblems": [],
+   "pass": true
+  },
+  {
+   "name": "time-middle",
+   "plan": {
+    "sentences": [
+     {
+      "index": 0,
+      "factIds": [
+       "f0",
+       "f1"
+      ],
+      "coreference": [],
+      "time": {
+       "amount": 5,
+       "unit": "minute"
+      }
+     },
+     {
+      "index": 1,
+      "factIds": [
+       "f2"
+      ],
+      "coreference": [],
+      "time": null
+     }
+    ],
+    "edges": {
+     "consecutive-time": false
+    }
+   },
+   "checks": {
+    "G1_invariants": true,
+    "G2_groups": true,
+    "G4_time": true
+   },
+   "invariantProblems": [],
+   "pass": true
+  },
+  {
+   "name": "time-trailing",
+   "plan": {
+    "sentences": [
+     {
+      "index": 0,
+      "factIds": [
+       "f0"
+      ],
+      "coreference": [],
+      "time": null
+     },
+     {
+      "index": 1,
+      "factIds": [
+       "f1",
+       "f2"
+      ],
+      "coreference": [],
+      "time": {
+       "amount": 5,
+       "unit": "minute"
+      }
+     }
+    ],
+    "edges": {
+     "consecutive-time": false
+    }
+   },
+   "checks": {
+    "G1_invariants": true,
+    "G2_groups": true,
+    "G4_time": true
+   },
+   "invariantProblems": [],
+   "pass": true
+  },
+  {
+   "name": "time-after-scene",
+   "plan": {
+    "sentences": [
+     {
+      "index": 0,
+      "factIds": [
+       "f0"
+      ],
+      "coreference": [],
+      "time": null
+     },
+     {
+      "index": 1,
+      "factIds": [
+       "f1",
+       "f2"
+      ],
+      "coreference": [],
+      "time": {
+       "amount": 5,
+       "unit": "minute"
+      }
+     }
+    ],
+    "edges": {
+     "consecutive-time": false
+    }
+   },
+   "checks": {
+    "G1_invariants": true,
+    "G2_groups": true,
+    "G4_time": true
+   },
+   "invariantProblems": [],
+   "pass": true
+  },
+  {
+   "name": "time-consecutive",
+   "plan": {
+    "sentences": [
+     {
+      "index": 0,
+      "factIds": [
+       "f0",
+       "f1",
+       "f2"
+      ],
+      "coreference": [],
+      "time": {
+       "amount": 5,
+       "unit": "minute"
+      }
+     }
+    ],
+    "edges": {
+     "consecutive-time": true
+    }
+   },
+   "checks": {
+    "G1_invariants": true,
+    "G2_groups": true,
+    "G4_time": true,
+    "G4_consecutive": true
+   },
+   "invariantProblems": [],
+   "pass": true
+  },
+  {
+   "name": "no-change-time",
+   "plan": {
+    "sentences": [
+     {
+      "index": 0,
+      "factIds": [
+       "f0",
+       "f1"
+      ],
+      "coreference": [],
+      "time": {
+       "amount": 5,
+       "unit": "minute"
+      }
+     }
+    ],
+    "edges": {
+     "consecutive-time": false
+    }
+   },
+   "checks": {
+    "G1_invariants": true,
+    "G2_groups": true,
+    "G4_time": true
+   },
+   "invariantProblems": [],
+   "pass": true
+  },
+  {
+   "name": "no-change-lone",
+   "plan": {
+    "sentences": [
+     {
+      "index": 0,
+      "factIds": [
+       "f0"
+      ],
+      "coreference": [],
+      "time": null
+     }
+    ],
+    "edges": {
+     "consecutive-time": false
+    }
+   },
+   "checks": {
+    "G1_invariants": true,
+    "G2_groups": true,
+    "G4_time": true
+   },
+   "invariantProblems": [],
+   "pass": true
+  },
+  {
+   "name": "coref-cross-group-same-pronoun",
+   "plan": {
+    "sentences": [
+     {
+      "index": 0,
+      "factIds": [
+       "f0"
+      ],
+      "coreference": [
+       {
+        "mention": "他",
+        "refersTo": "e_a",
+        "pronoun": "他",
+        "name": "甲"
+       }
+      ],
+      "time": null
+     },
+     {
+      "index": 1,
+      "factIds": [
+       "f1"
+      ],
+      "coreference": [],
+      "time": null
+     }
+    ],
+    "edges": {
+     "consecutive-time": false
+    }
+   },
+   "checks": {
+    "G1_invariants": true,
+    "G2_groups": true,
+    "G5_grants": true
+   },
+   "invariantProblems": [],
+   "pass": true
+  },
+  {
+   "name": "coref-cross-group-three",
+   "plan": {
+    "sentences": [
+     {
+      "index": 0,
+      "factIds": [
+       "f0"
+      ],
+      "coreference": [
+       {
+        "mention": "他",
+        "refersTo": "e_a",
+        "pronoun": "他",
+        "name": "甲"
+       }
+      ],
+      "time": null
+     },
+     {
+      "index": 1,
+      "factIds": [
+       "f1"
+      ],
+      "coreference": [],
+      "time": null
+     },
+     {
+      "index": 2,
+      "factIds": [
+       "f2"
+      ],
+      "coreference": [
+       {
+        "mention": "她",
+        "refersTo": "e_c",
+        "pronoun": "她",
+        "name": "丙"
+       }
+      ],
+      "time": null
+     }
+    ],
+    "edges": {
+     "consecutive-time": false
+    }
+   },
+   "checks": {
+    "G1_invariants": true,
+    "G2_groups": true,
+    "G5_grants": true
+   },
+   "invariantProblems": [],
+   "pass": true
+  },
+  {
+   "name": "coref-cross-group-legacy",
+   "plan": {
+    "sentences": [
+     {
+      "index": 0,
+      "factIds": [
+       "f0"
+      ],
+      "coreference": [
+       {
+        "mention": "他",
+        "refersTo": "e_a",
+        "pronoun": "他",
+        "name": "甲"
+       }
+      ],
+      "time": null
+     },
+     {
+      "index": 1,
+      "factIds": [
+       "f1"
+      ],
+      "coreference": [
+       {
+        "mention": "他",
+        "refersTo": "e_b",
+        "pronoun": "他",
+        "name": "乙"
+       }
+      ],
+      "time": null
+     }
+    ],
+    "edges": {
+     "consecutive-time": false
+    }
+   },
+   "checks": {
+    "G1_invariants": true,
+    "G2_groups": true,
+    "G5_grants": true
+   },
+   "invariantProblems": [],
+   "pass": true
+  },
+  {
+   "name": "time-orphan",
+   "plan": {
+    "refusal": {
+     "class": "unsupported",
+     "reason": "time-orphan: a lone time fact has no entity group to attach to"
+    }
+   },
+   "checks": {
+    "refusal": true
+   },
+   "pass": true
+  },
+  {
+   "name": "no-entity",
+   "plan": {
+    "refusal": {
+     "class": "unsupported",
+     "reason": "no-entity: an empty plan would drop selected facts"
+    }
+   },
+   "checks": {
+    "refusal": true
+   },
+   "pass": true
+  },
+  {
+   "name": "ill-formed-duplicate",
+   "plan": {
+    "refusal": {
+     "class": "ill-formed",
+     "reason": "duplicate factId"
+    }
+   },
+   "checks": {
+    "refusal": true
+   },
+   "pass": true
+  },
+  {
+   "name": "coref-unique",
+   "plan": {
+    "sentences": [
+     {
+      "index": 0,
+      "factIds": [
+       "f0"
+      ],
+      "coreference": [
+       {
+        "mention": "他",
+        "refersTo": "e_a",
+        "pronoun": "他",
+        "name": "甲"
+       }
+      ],
+      "time": null
+     },
+     {
+      "index": 1,
+      "factIds": [
+       "f1"
+      ],
+      "coreference": [
+       {
+        "mention": "她",
+        "refersTo": "e_b",
+        "pronoun": "她",
+        "name": "乙"
+       }
+      ],
+      "time": null
+     }
+    ],
+    "edges": {
+     "consecutive-time": false
+    }
+   },
+   "checks": {
+    "G1_invariants": true,
+    "G2_groups": true,
+    "G5_grants": true
+   },
+   "invariantProblems": [],
+   "pass": true
+  },
+  {
+   "name": "coref-duplicate-name",
+   "plan": {
+    "sentences": [
+     {
+      "index": 0,
+      "factIds": [
+       "f0"
+      ],
+      "coreference": [],
+      "time": null
+     },
+     {
+      "index": 1,
+      "factIds": [
+       "f1"
+      ],
+      "coreference": [],
+      "time": null
+     }
+    ],
+    "edges": {
+     "consecutive-time": false
+    }
+   },
+   "checks": {
+    "G1_invariants": true,
+    "G2_groups": true,
+    "G5_grants": true
+   },
+   "invariantProblems": [],
+   "pass": true
+  },
+  {
+   "name": "coref-same-pronoun-group",
+   "plan": {
+    "sentences": [
+     {
+      "index": 0,
+      "factIds": [
+       "f0",
+       "f1"
+      ],
+      "coreference": [
+       {
+        "mention": "他",
+        "refersTo": "e_a",
+        "pronoun": "他",
+        "name": "甲"
+       }
+      ],
+      "time": null
+     }
+    ],
+    "edges": {
+     "consecutive-time": false
+    }
+   },
+   "checks": {
+    "G1_invariants": true,
+    "G2_groups": true,
+    "G5_grants": true
+   },
+   "invariantProblems": [],
+   "pass": true
+  },
+  {
+   "name": "coref-no-hint",
+   "plan": {
+    "sentences": [
+     {
+      "index": 0,
+      "factIds": [
+       "f0"
+      ],
+      "coreference": [],
+      "time": null
+     },
+     {
+      "index": 1,
+      "factIds": [
+       "f1"
+      ],
+      "coreference": [],
+      "time": null
+     }
+    ],
+    "edges": {
+     "consecutive-time": false
+    }
+   },
+   "checks": {
+    "G1_invariants": true,
+    "G2_groups": true,
+    "G5_grants": true
+   },
+   "invariantProblems": [],
+   "pass": true
+  },
+  {
+   "name": "coref-unknown",
+   "plan": {
+    "sentences": [
+     {
+      "index": 0,
+      "factIds": [
+       "f0"
+      ],
+      "coreference": [
+       {
+        "mention": "TA",
+        "refersTo": "e_a",
+        "pronoun": "TA",
+        "name": "甲"
+       }
+      ],
+      "time": null
+     }
+    ],
+    "edges": {
+     "consecutive-time": false
+    }
+   },
+   "checks": {
+    "G1_invariants": true,
+    "G2_groups": true,
+    "G5_grants": true
+   },
+   "invariantProblems": [],
+   "pass": true
+  }
+ ],
+ "summary": {
+  "cases": 28,
+  "passed": 28,
+  "failed": []
+ },
+ "remainingGaps": [
+  "the cross-group guard only checks the PREVIOUS group; longer-range salience / a full pronoun chain is not modeled",
+  "time attachment to a preceding scene group is the frozen predecessor convention, not a semantic scope",
+  "entity buckets can reorder interleaved input facts (R1 frozen; recorded here, not re-litigated)",
+  "group size / sentence boundary is not constrained; N4 must still fit the 128-token gate"
+ ],
+ "pass": true,
+ "baselineNote": "base 25 cases: old plan_v3 20/25; the three guard cases are new in r2 (the legacy arm is the explicit guard-off comparison)"
+}

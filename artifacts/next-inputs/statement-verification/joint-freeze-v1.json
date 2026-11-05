@@ -1,0 +1,18 @@
+{
+  "version": "joint-freeze-v1",
+  "created": "2026-11-05",
+  "protocol": "artifacts\\statement-verification\\joint-training-protocol-v1.json",
+  "protocolSha256": "20ec731168e95a292579550102ce79f3f90b9efbe1a356c5cc6988ff54c64266",
+  "generalTrain": 754,
+  "targetTrain": 160,
+  "generalDev": 190,
+  "targetDev": 40,
+  "generalConfirm": 108,
+  "targetConfirm": 48,
+  "regression": 36,
+  "batch": "16+16",
+  "updates": 300,
+  "evalEvery": 25,
+  "labelContract": "判断指定候选跨度在当前上下文中表达的内容，是否得到权威授权支持。候选可以是句子、分句或短语。正文只用于恢复主体、指代及影响候选含义的否定、条件等语境；正文中其他独立陈述不纳入本次判定，也不构成授权来源。",
+  "noNewBlind": true
+}

@@ -1,0 +1,336 @@
+{
+ "checkerSha256": "8b4ffd84e0ef2dab91085e764f517798429daf11886c86708279c650848578fe",
+ "reference": {
+  "rows": 140,
+  "pass": 123,
+  "review": 16,
+  "fail": 0,
+  "reviewReasons": {
+   "actor-mismatch": 5,
+   "result-tail-missing": 8,
+   "partial-outcome": 7,
+   "actor-unnamed": 2
+  },
+  "reviewIds": [
+   "r33",
+   "r35",
+   "r52",
+   "r59",
+   "r66",
+   "r101",
+   "r110",
+   "r114",
+   "r117",
+   "r120",
+   "n4n-02",
+   "n4n-04",
+   "n4n-05",
+   "n4n-09",
+   "r127",
+   "r130"
+  ]
+ },
+ "probes": [
+  {
+   "id": "p01",
+   "category": "actor-swap",
+   "expect": "review",
+   "got": "review",
+   "judged": "hit",
+   "codes": [
+    "actor-unnamed",
+    "actor-unnamed"
+   ],
+   "why": "把完成动作的人从沈砚换成同样在输入里的韩渡（全篇再没点沈砚）"
+  },
+  {
+   "id": "p02",
+   "category": "negated-result",
+   "expect": "fail",
+   "got": "fail",
+   "judged": "hit",
+   "codes": [
+    "negated-result"
+   ],
+   "why": "把已经完成的结果写成没完成"
+  },
+  {
+   "id": "p03",
+   "category": "outsider-name",
+   "expect": "fail",
+   "got": "fail",
+   "judged": "hit",
+   "codes": [
+    "new-name-outsider"
+   ],
+   "why": "加入世界册和输入里都没有的具名人物，出现两次"
+  },
+  {
+   "id": "p04",
+   "category": "direction-reversed",
+   "expect": "fail",
+   "got": "fail",
+   "judged": "hit",
+   "codes": [
+    "new-entity"
+   ],
+   "why": "把移动方向写反"
+  },
+  {
+   "id": "p05",
+   "category": "dropped-result",
+   "expect": "review",
+   "got": "review",
+   "judged": "hit",
+   "codes": [
+    "result-tail-missing"
+   ],
+   "why": "删掉结果里的关键动作，只留一个相关小动作；词面对不起来，只能进复核"
+  },
+  {
+   "id": "p06",
+   "category": "copied-input",
+   "expect": "fail",
+   "got": "fail",
+   "judged": "hit",
+   "codes": [
+    "template"
+   ],
+   "why": "把输入的事实记录行原样搬进正文"
+  },
+  {
+   "id": "p07",
+   "category": "contradiction-same-object",
+   "expect": "fail",
+   "got": "fail",
+   "judged": "hit",
+   "codes": [
+    "contradiction:lamp-out-lit"
+   ],
+   "why": "同一个物体先写灭、后写亮"
+  },
+  {
+   "id": "p08",
+   "category": "sanity-number",
+   "expect": "fail",
+   "got": "fail",
+   "judged": "hit",
+   "codes": [
+    "sanity-explicit"
+   ],
+   "why": "把理智写成数值"
+  },
+  {
+   "id": "p09",
+   "category": "actor-unnamed",
+   "expect": "review",
+   "got": "review",
+   "judged": "hit",
+   "codes": [
+    "actor-unnamed",
+    "actor-unnamed"
+   ],
+   "why": "全篇只用代词指代视角人物，一次也没点过名，无法确认是谁做的"
+  },
+  {
+   "id": "p10",
+   "category": "partial-result",
+   "expect": "review",
+   "got": "review",
+   "judged": "hit",
+   "codes": [
+    "result-tail-missing"
+   ],
+   "why": "结果只对上一部分，规则无法确认细节是否完整"
+  },
+  {
+   "id": "p11",
+   "category": "cold-hot-coexist",
+   "expect": "pass",
+   "got": "pass",
+   "judged": "hit",
+   "codes": [],
+   "why": "不同物体一冷一热同时存在"
+  },
+  {
+   "id": "p12",
+   "category": "two-lamps",
+   "expect": "pass",
+   "got": "pass",
+   "judged": "hit",
+   "codes": [],
+   "why": "远处的灯灭了，眼前这盏还亮"
+  },
+  {
+   "id": "p13",
+   "category": "pronoun-only",
+   "expect": "pass",
+   "got": "pass",
+   "judged": "hit",
+   "codes": [],
+   "why": "第二次提到视角人物用代词"
+  },
+  {
+   "id": "p14",
+   "category": "reordered",
+   "expect": "pass",
+   "got": "pass",
+   "judged": "hit",
+   "codes": [],
+   "why": "段落顺序调换"
+  },
+  {
+   "id": "p15",
+   "category": "added-dialogue",
+   "expect": "pass",
+   "got": "pass",
+   "judged": "hit",
+   "codes": [],
+   "why": "加入不改变事实的对话"
+  },
+  {
+   "id": "p16",
+   "category": "local-actor-swap",
+   "expect": "review",
+   "got": "review",
+   "judged": "hit",
+   "codes": [
+    "actor-unclear",
+    "actor-mismatch"
+   ],
+   "why": "只换动作句的主语，别处仍点名沈砚；全篇点过名不能证明这一句归属正确"
+  },
+  {
+   "id": "p17",
+   "category": "origin-crossed",
+   "expect": "review",
+   "got": "review",
+   "judged": "hit",
+   "codes": [
+    "origin-crossed",
+    "origin-crossed"
+   ],
+   "why": "把两个人的出发地互换，名字都还在"
+  },
+  {
+   "id": "p18",
+   "category": "outsider-once",
+   "expect": "fail",
+   "got": "fail",
+   "judged": "hit",
+   "codes": [
+    "new-name-outsider"
+   ],
+   "why": "册外人物只出现一次"
+  },
+  {
+   "id": "p19",
+   "category": "near-far-lamps",
+   "expect": "pass",
+   "got": "pass",
+   "judged": "hit",
+   "codes": [],
+   "why": "近处和远处各有一盏灯，一灭一亮"
+  },
+  {
+   "id": "p20",
+   "category": "other-negation",
+   "expect": "pass",
+   "got": "pass",
+   "judged": "hit",
+   "codes": [],
+   "why": "否定的主语是另一个人，视角人物的事实没有被否定"
+  }
+ ],
+ "probesSummary": {
+  "total": 20,
+  "hit": 20,
+  "softMiss": 0,
+  "miss": 0
+ },
+ "tamper": {
+  "cases": 14,
+  "caught": 14,
+  "detail": [
+   {
+    "case": "加数字时长",
+    "verdict": "fail",
+    "caught": true
+   },
+   {
+    "case": "加书名号",
+    "verdict": "fail",
+    "caught": true
+   },
+   {
+    "case": "加世界册人名",
+    "verdict": "fail",
+    "caught": true
+   },
+   {
+    "case": "抄输入",
+    "verdict": "fail",
+    "caught": true
+   },
+   {
+    "case": "截断",
+    "verdict": "fail",
+    "caught": true
+   },
+   {
+    "case": "空串",
+    "verdict": "fail",
+    "caught": true
+   },
+   {
+    "case": "理智写成数值",
+    "verdict": "fail",
+    "caught": true
+   },
+   {
+    "case": "方向写反",
+    "verdict": "fail",
+    "caught": true
+   },
+   {
+    "case": "结果整段缺失",
+    "verdict": "fail",
+    "caught": true
+   },
+   {
+    "case": "复读",
+    "verdict": "fail",
+    "caught": true
+   },
+   {
+    "case": "放进抽屉",
+    "verdict": "fail",
+    "caught": true
+   },
+   {
+    "case": "破折号",
+    "verdict": "fail",
+    "caught": true
+   },
+   {
+    "case": "半角逗号",
+    "verdict": "fail",
+    "caught": true
+   },
+   {
+    "case": "自相矛盾",
+    "verdict": "fail",
+    "caught": true
+   }
+  ]
+ },
+ "dataErrors": [
+  {
+   "id": "n4n-03",
+   "errors": [
+    "f1: from=河心 不在实体表"
+   ]
+  }
+ ],
+ "blocking": []
+}

@@ -1,0 +1,155 @@
+{
+ "pipeline": "n4-pipeline/1",
+ "components": {
+  "factContract": "fact_contract.py",
+  "validator": "world-relation-validator/1",
+  "relationEdit": "relation-edit/1",
+  "conservativeEdit": "edit-layer/2"
+ },
+ "timing": {
+  "readAndBind": 0.0,
+  "authorize": 0.0,
+  "modelLoad": 3.638,
+  "generate": 0.791,
+  "generatePerFact": {
+   "f0": 0.347,
+   "f1": 0.081,
+   "f2": 0.095,
+   "f3": 0.055,
+   "f4": 0.083,
+   "f5": 0.13
+  },
+  "edit": 0.0
+ },
+ "original": "指节发白袖口沾了雨斗篷下摆湿了一片鞋底沾了泥袖口湿到肘部帽檐压得很低",
+ "authorization": {
+  "verdict": "partial",
+  "validatorVersion": "world-relation-validator/1",
+  "relations": [],
+  "rejected": [
+   {
+    "relation": {
+     "type": "before",
+     "fromFactId": "f5",
+     "toFactId": "f4"
+    },
+    "problems": [
+     "relations[0]: 两端证据点不在同一 chain，无法比较"
+    ]
+   }
+  ],
+  "problems": [],
+  "droppedForIncomplete": [
+   "f3"
+  ]
+ },
+ "generation": [
+  {
+   "factId": "f0",
+   "name": "林川",
+   "kind": "appearance_changed",
+   "text": "林川的指节发白,指节发白。",
+   "complete": true,
+   "timeoutForced": false,
+   "seconds": 0.347
+  },
+  {
+   "factId": "f1",
+   "name": "林川",
+   "kind": "appearance_changed",
+   "text": "林川的袖口沾了雨。",
+   "complete": true,
+   "timeoutForced": false,
+   "seconds": 0.081
+  },
+  {
+   "factId": "f2",
+   "name": "周宁",
+   "kind": "appearance_changed",
+   "text": "周宁的斗篷下摆湿了一片。",
+   "complete": true,
+   "timeoutForced": false,
+   "seconds": 0.095
+  },
+  {
+   "factId": "f3",
+   "name": "陈默",
+   "kind": "appearance_changed",
+   "text": "陈默的鞋底沾了",
+   "complete": false,
+   "timeoutForced": true,
+   "seconds": 0.055
+  },
+  {
+   "factId": "f4",
+   "name": "陈默",
+   "kind": "appearance_changed",
+   "text": "陈默的袖口湿到肘部。",
+   "complete": true,
+   "timeoutForced": false,
+   "seconds": 0.083
+  },
+  {
+   "factId": "f5",
+   "name": "沈禾",
+   "kind": "appearance_changed",
+   "text": "沈禾的帽檐压得很低,袖口还带着硬币。",
+   "complete": true,
+   "timeoutForced": false,
+   "seconds": 0.13
+  }
+ ],
+ "incompleteFacts": [
+  "f3"
+ ],
+ "edit": {
+  "text": "林川的指节发白，指节发白，袖口沾了雨。周宁的斗篷下摆湿了一片。陈默的鞋底沾了，袖口湿到肘部。沈禾的帽檐压得很低，袖口还带着硬币。",
+  "blocks": [
+   [
+    "f0",
+    "f1"
+   ],
+   [
+    "f2"
+   ],
+   [
+    "f3",
+    "f4"
+   ],
+   [
+    "f5"
+   ]
+  ],
+  "mergeOps": [
+   {
+    "op": "删姓名＋的",
+    "factId": "f1",
+    "afterFactId": "f0"
+   },
+   {
+    "op": "合句（逗号串联）",
+    "mergedFactIds": [
+     "f0",
+     "f1"
+    ]
+   },
+   {
+    "op": "删姓名＋的",
+    "factId": "f4",
+    "afterFactId": "f3"
+   },
+   {
+    "op": "合句（逗号串联）",
+    "mergedFactIds": [
+     "f3",
+     "f4"
+    ]
+   }
+  ],
+  "mergeDropped": [],
+  "connectorOps": [],
+  "connectorFallbacks": []
+ },
+ "edited": "林川的指节发白，指节发白，袖口沾了雨。周宁的斗篷下摆湿了一片。陈默的鞋底沾了，袖口湿到肘部。沈禾的帽檐压得很低，袖口还带着硬币。",
+ "sourceComplete": false
+}

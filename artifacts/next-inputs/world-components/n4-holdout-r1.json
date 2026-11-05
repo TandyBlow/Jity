@@ -1,0 +1,199 @@
+{
+ "purpose": "N4 new-world zero-shot holdout; no training",
+ "ckpt": "ckpt-formal (n4n-fog-harbor, 100 train)",
+ "data": {
+  "freeze": {
+   "scope": "N4 new-world zero-shot holdout; not used for training",
+   "date": "2026-11-02",
+   "ids": [
+    "n4w-01",
+    "n4w-02",
+    "n4w-03",
+    "n4w-04",
+    "n4w-05",
+    "n4w-06",
+    "n4w-07",
+    "n4w-08",
+    "n4w-09",
+    "n4w-10",
+    "n4w-11",
+    "n4w-12"
+   ],
+   "inputSha256": "015f23593c7523bdc40ba1048f873a6ebcb749f2633a6cf587ed7b2d17ebd9a3",
+   "targetSha256": "d1ab5abcc4b9ab74c78b9009df4c9ce6eee163c3e853ebfe3e2f2bf7d129b4bb",
+   "rows": 12
+  },
+  "rows": 12
+ },
+ "results": {
+  "exactNormalized": 0,
+  "meanRatio": 0.231,
+  "rowsWithOldNames": 0,
+  "rowsWithNewNames": 12
+ },
+ "samples": [
+  {
+   "rowId": "n4-holdout:n4w-01",
+   "sourceId": "n4w-01",
+   "exactNormalized": false,
+   "ratio": 0.26,
+   "oldNameHits": [],
+   "newNameHits": [
+    "陆行",
+    "云关驿",
+    "风口岭"
+   ],
+   "output": "雾从云关驿的石墙上漫上来,陆行从风口岭过来,在长桌旁点亮铁链。铁盆在风里轻燃,火把炉火吹得发僵;他看了一会儿,屋檐的水滴在石壁上晃了一下。",
+   "target": "云关驿的屋檐挂满冰凌，陆行从风口岭下来，推开结霜的木门。大堂里的炭火味扑到脸上，他把皮袄领口拢了拢，站在门边听了一会儿风雪。"
+  },
+  {
+   "rowId": "n4-holdout:n4w-02",
+   "sourceId": "n4w-02",
+   "exactNormalized": false,
+   "ratio": 0.107,
+   "oldNameHits": [],
+   "newNameHits": [
+    "陆行",
+    "云关驿"
+   ],
+   "output": "雨丝斜着落进云关驿的石墙上,陆行站在铜壶旁。等他把炭盆添满了,铜壶被烧得发白;他抖了抖衣摆,又被风撕碎。铜壶被烧得发白,他又被风撕碎。",
+   "target": "祁婶蹲在炭盆边，把最后一块炭添进去，火苗重新窜起来。她围裙上沾着炭灰，手背被热气烘得发红；陆行在长桌旁坐下，铜壶里的水正好响了。"
+  },
+  {
+   "rowId": "n4-holdout:n4w-03",
+   "sourceId": "n4w-03",
+   "exactNormalized": false,
+   "ratio": 0.288,
+   "oldNameHits": [],
+   "newNameHits": [
+    "陆行",
+    "阿洛",
+    "风口岭"
+   ],
+   "output": "风口岭的铁皮马灯在风口岭里黑得很快,陆行站在铁皮棚旁。阿洛把马灯点着,铜铃在玻璃罩里闪成一片裂纹;他抖了抖手指,把铁皮衣摆一圈一圈接一圈。风从巷子灌下来。",
+   "target": "旧马棚里黑得很快，阿洛把马灯从门板上取下来，划亮火折子点上。灯罩里那点火光晃了两下，她手指沾了灯油，在围裙上擦了擦；风从破门板缝里钻进来。"
+  },
+  {
+   "rowId": "n4-holdout:n4w-04",
+   "sourceId": "n4w-04",
+   "exactNormalized": false,
+   "ratio": 0.178,
+   "oldNameHits": [],
+   "newNameHits": [
+    "陆行",
+    "石青",
+    "云关驿"
+   ],
+   "output": "黄昏的雾从台顶渗进来,陆行从云关驿过来,把铜铃挂到台顶。铜铃被风吹得发冷,石青抱着一层薄冰,把绳梯系在绳梯上;他松开手,手指已经冻得僵硬,手指已经结着冰碴。",
+   "target": "石青从驿里出来，沿着木梯上到望雪台，把铜铃挂回铃架。风把铃绳吹得乱响，他伸手按住铃舌；台下的驿道只剩一条灰白的线。"
+  },
+  {
+   "rowId": "n4-holdout:n4w-05",
+   "sourceId": "n4w-05",
+   "exactNormalized": false,
+   "ratio": 0.252,
+   "oldNameHits": [],
+   "newNameHits": [
+    "陆行",
+    "云关驿",
+    "风口岭"
+   ],
+   "output": "雾从云关驿的木床里漫上旧地图,陆行从风口岭过来,把旧地图推向木床。胸口那阵发紧的感觉慢慢松开,他才把手拢在袖子里,站了一会儿才坐下去。",
+   "target": "陆行推开客房的门，油灯还亮着。他掀开枕头，从底下抽出那张卷了边的旧地图；纸页带着潮气，他把它摊在床沿，胸口那点没着落的感觉才慢慢定下来。"
+  },
+  {
+   "rowId": "n4-holdout:n4w-06",
+   "sourceId": "n4w-06",
+   "exactNormalized": false,
+   "ratio": 0.293,
+   "oldNameHits": [],
+   "newNameHits": [
+    "陆行",
+    "雪溪"
+   ],
+   "output": "雪溪的冰面被冰冷打湿,陆行踩着冰冷的石桥往上走,弯腰摸了摸衣摆,弯腰摸了摸衣摆。等他直起身,外袍下摆已经结了一层薄冰,手指已经结了一层薄冰;他抖了抖衣摆,河风把袖口吹得发僵。",
+   "target": "雪溪的石桥下只剩一线黑水，陆行踩着冰碴走到桥中央。风从溪面卷上来，外袍下摆很快结了一层薄冰；他扶住桥栏，听见冰面在脚下轻轻响。"
+  },
+  {
+   "rowId": "n4-holdout:n4w-07",
+   "sourceId": "n4w-07",
+   "exactNormalized": false,
+   "ratio": 0.375,
+   "oldNameHits": [],
+   "newNameHits": [
+    "陆行",
+    "阿洛",
+    "云关驿",
+    "风口岭"
+   ],
+   "output": "风口岭的雪杖被风吹得发白,陆行正从云关驿过来,弯腰把雪杖绕上石堆。阿洛本来想像往常那样把风吹得发冷,却先开口问了一句,他自己也愣了一下。",
+   "target": "风把隘口的经幡吹得笔直，陆行和阿洛一前一后走到石堆旁。陆行本来想像往常那样把话咽回去，却先问了一句雪杖还撑不撑得住；阿洛把杖尖在石头上磕了磕，说还硬着。"
+  },
+  {
+   "rowId": "n4-holdout:n4w-08",
+   "sourceId": "n4w-08",
+   "exactNormalized": false,
+   "ratio": 0.28,
+   "oldNameHits": [],
+   "newNameHits": [
+    "陆行",
+    "风口岭"
+   ],
+   "output": "风口岭的风口岭有一道横风,陆行站在马棚外。铁链在石阶上,铁链在石地上留下一道裂纹;他看了一会儿,旧马棚上什么也没有再发生。铜铃被玻璃罩系着,木板上的锈蹭到掌心。",
+   "target": "旧马棚里堆着干草，风从门缝里吹进来，草屑在光里打转。陆行靠在门框上等了一会儿，马灯没有亮，铜铃也没有响；棚里什么也没有再发生。"
+  },
+  {
+   "rowId": "n4-holdout:n4w-09",
+   "sourceId": "n4w-09",
+   "exactNormalized": false,
+   "ratio": 0.186,
+   "oldNameHits": [],
+   "newNameHits": [
+    "陆行",
+    "风口岭"
+   ],
+   "output": "风口岭的风把旧马棚吹得发冷,陆行把药包送往马棚,拉开铁链往上走。手指冻裂了,铁链在手里冰凉;他站了一会儿,他才发现自己的呼吸一直提着,这会儿才落下去。",
+   "target": "陆行把油纸包着的药粉送到马棚，放在干草边的木箱上。回来时风更硬了，他缩着肩走回驿里；胸口那点发紧的感觉没有散，手指也冻得不听使唤。"
+  },
+  {
+   "rowId": "n4-holdout:n4w-10",
+   "sourceId": "n4w-10",
+   "exactNormalized": false,
+   "ratio": 0.209,
+   "oldNameHits": [],
+   "newNameHits": [
+    "石青",
+    "云关驿"
+   ],
+   "output": "云关驿的雪还没散,石青在石墙上站住,抱着冰碴,靠在铁链上。等他直起身,肩上落了一层雪,手指已经冻裂,手背蹭过炭盆;他抬头看了看风向往上走,把绳梯拢在腿上;他把绳梯拢在手里,又往上走。",
+   "target": "石青从望雪台下来，推门进驿时，肩上落了一层雪。他把绳梯靠在门边，抖了抖灰棉袍；陆行看见他眉毛上也结着霜，炭盆的火光在门内晃。"
+  },
+  {
+   "rowId": "n4-holdout:n4w-11",
+   "sourceId": "n4w-11",
+   "exactNormalized": false,
+   "ratio": 0.215,
+   "oldNameHits": [],
+   "newNameHits": [
+    "云关驿"
+   ],
+   "output": "云关驿的雪停了一会儿,铁盆在风里轻轻晃,铁盆在风里轻响。他看了一会儿,屋檐的木板已经碎了;屋檐里的火没有停,长桌上的铜壶已经熄灭,木板上的火没有熄。",
+   "target": "雪停在傍晚，云关驿的屋檐不再滴水。陆行坐在长桌旁，铜壶里的水已经凉了；门外没有人来，炭盆里的火也只剩下一点暗红。"
+  },
+  {
+   "rowId": "n4-holdout:n4w-12",
+   "sourceId": "n4w-12",
+   "exactNormalized": false,
+   "ratio": 0.13,
+   "oldNameHits": [],
+   "newNameHits": [
+    "陆行",
+    "阿洛",
+    "云关驿",
+    "风口岭"
+   ],
+   "output": "风口岭的雪链被冰冷打湿,陆行从云关驿过来,把雪杖靠在石堆上。阿洛从云关驿那边上来,把冰箱里的冰雪清开;冰箱里的冰箱一层层移过去,又被风口吹得发僵。",
+   "target": "阿洛从驿里出来，沿着驿道往风口岭走，把积雪一锹一锹清到路边。雪沫被风吹起来，粘在她的帽檐上；等她直起腰，驿道的石面终于露出一点灰。"
+  }
+ ]
+}

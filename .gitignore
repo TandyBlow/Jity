@@ -93,6 +93,8 @@ scripts/_*.txt
 /backend/tests/test_state_extractor.py
 
 # === Experiments and local research files ===
+# Component source files remain visible as development adds new scripts.
+# Corpora and reports below keep their explicit allowlist; runtime weights stay local.
 # New component research is versioned via an explicit file allowlist.
 experiments/*
 !experiments/world-components/
@@ -280,3 +282,13 @@ artifacts/benchmark/minirbt-h256-snapshot/
 
 # === Local tooling ignore list (ZCode); duplicates .gitignore ===
 .zcodeignore
+
+# Current component development: new source files must appear in git status.
+!experiments/world-components/*.py
+!experiments/world-components/n4_narrative_dev/*.py
+!experiments/world-components/n4_corpus_v2/*.py
+!experiments/world-components/n4_rewrite60/*.py
+# Read-only model resources and generated training weights never enter run evidence.
+artifacts/next-runs/**/*.safetensors
+artifacts/next-runs/**/*.pt
+artifacts/next-runs/**/*.bin

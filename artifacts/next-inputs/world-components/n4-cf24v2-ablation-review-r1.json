@@ -1,0 +1,450 @@
+{
+ "purpose": "单事实臂输入消融 A/B（去掉视角行里的无关人物名）",
+ "A": {
+  "verdicts": {
+   "S": 80,
+   "O": 2,
+   "C": 1,
+   "A": 2
+  },
+  "unsupportedSources": [
+   "t01",
+   "t12",
+   "t15",
+   "t23"
+  ],
+  "clean": 16
+ },
+ "B": {
+  "verdicts": {
+   "S": 81,
+   "O": 3,
+   "C": 1,
+   "A": 0
+  },
+  "unsupportedSources": [
+   "t01",
+   "t12",
+   "t14",
+   "t15"
+  ],
+  "clean": 17
+ },
+ "rows": [
+  {
+   "sourceId": "t01",
+   "A": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S"
+   },
+   "B": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S"
+   },
+   "A_clean": false,
+   "B_clean": false,
+   "changed": []
+  },
+  {
+   "sourceId": "t02",
+   "A": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S"
+   },
+   "B": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S"
+   },
+   "A_clean": true,
+   "B_clean": true,
+   "changed": []
+  },
+  {
+   "sourceId": "t03",
+   "A": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S"
+   },
+   "B": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S"
+   },
+   "A_clean": true,
+   "B_clean": true,
+   "changed": []
+  },
+  {
+   "sourceId": "t04",
+   "A": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S"
+   },
+   "B": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S"
+   },
+   "A_clean": true,
+   "B_clean": true,
+   "changed": []
+  },
+  {
+   "sourceId": "t05",
+   "A": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S"
+   },
+   "B": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S"
+   },
+   "A_clean": true,
+   "B_clean": true,
+   "changed": []
+  },
+  {
+   "sourceId": "t06",
+   "A": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S"
+   },
+   "B": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S"
+   },
+   "A_clean": true,
+   "B_clean": true,
+   "changed": []
+  },
+  {
+   "sourceId": "t07",
+   "A": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S",
+    "f3": "S"
+   },
+   "B": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S",
+    "f3": "S"
+   },
+   "A_clean": true,
+   "B_clean": true,
+   "changed": []
+  },
+  {
+   "sourceId": "t08",
+   "A": {
+    "f0": "S",
+    "f1": "A",
+    "f2": "S",
+    "f3": "A"
+   },
+   "B": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S",
+    "f3": "S"
+   },
+   "A_clean": false,
+   "B_clean": true,
+   "changed": [
+    "f1",
+    "f3"
+   ]
+  },
+  {
+   "sourceId": "t09",
+   "A": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S",
+    "f3": "S"
+   },
+   "B": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S",
+    "f3": "S"
+   },
+   "A_clean": true,
+   "B_clean": true,
+   "changed": []
+  },
+  {
+   "sourceId": "t10",
+   "A": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S",
+    "f3": "S"
+   },
+   "B": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S",
+    "f3": "S"
+   },
+   "A_clean": true,
+   "B_clean": true,
+   "changed": []
+  },
+  {
+   "sourceId": "t11",
+   "A": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S",
+    "f3": "S"
+   },
+   "B": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S",
+    "f3": "S"
+   },
+   "A_clean": true,
+   "B_clean": true,
+   "changed": []
+  },
+  {
+   "sourceId": "t12",
+   "A": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S",
+    "f3": "S"
+   },
+   "B": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S",
+    "f3": "S"
+   },
+   "A_clean": false,
+   "B_clean": false,
+   "changed": []
+  },
+  {
+   "sourceId": "t13",
+   "A": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S"
+   },
+   "B": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S"
+   },
+   "A_clean": true,
+   "B_clean": true,
+   "changed": []
+  },
+  {
+   "sourceId": "t14",
+   "A": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S"
+   },
+   "B": {
+    "f0": "O",
+    "f1": "S",
+    "f2": "S"
+   },
+   "A_clean": true,
+   "B_clean": false,
+   "changed": [
+    "f0"
+   ]
+  },
+  {
+   "sourceId": "t15",
+   "A": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S"
+   },
+   "B": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S"
+   },
+   "A_clean": false,
+   "B_clean": false,
+   "changed": []
+  },
+  {
+   "sourceId": "t16",
+   "A": {
+    "f0": "S",
+    "f1": "C",
+    "f2": "S"
+   },
+   "B": {
+    "f0": "S",
+    "f1": "C",
+    "f2": "S"
+   },
+   "A_clean": false,
+   "B_clean": false,
+   "changed": []
+  },
+  {
+   "sourceId": "t17",
+   "A": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S"
+   },
+   "B": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S"
+   },
+   "A_clean": true,
+   "B_clean": true,
+   "changed": []
+  },
+  {
+   "sourceId": "t18",
+   "A": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S",
+    "f3": "S"
+   },
+   "B": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S",
+    "f3": "S"
+   },
+   "A_clean": true,
+   "B_clean": true,
+   "changed": []
+  },
+  {
+   "sourceId": "t19",
+   "A": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S",
+    "f3": "S"
+   },
+   "B": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S",
+    "f3": "S"
+   },
+   "A_clean": true,
+   "B_clean": true,
+   "changed": []
+  },
+  {
+   "sourceId": "t20",
+   "A": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S",
+    "f3": "S"
+   },
+   "B": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S",
+    "f3": "S"
+   },
+   "A_clean": true,
+   "B_clean": true,
+   "changed": []
+  },
+  {
+   "sourceId": "t21",
+   "A": {
+    "f0": "O",
+    "f1": "S",
+    "f2": "S",
+    "f3": "S"
+   },
+   "B": {
+    "f0": "O",
+    "f1": "S",
+    "f2": "S",
+    "f3": "S"
+   },
+   "A_clean": false,
+   "B_clean": false,
+   "changed": []
+  },
+  {
+   "sourceId": "t22",
+   "A": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S",
+    "f3": "S"
+   },
+   "B": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S",
+    "f3": "S"
+   },
+   "A_clean": true,
+   "B_clean": true,
+   "changed": []
+  },
+  {
+   "sourceId": "t23",
+   "A": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S",
+    "f3": "S"
+   },
+   "B": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S",
+    "f3": "S"
+   },
+   "A_clean": false,
+   "B_clean": true,
+   "changed": []
+  },
+  {
+   "sourceId": "t24",
+   "A": {
+    "f0": "S",
+    "f1": "O",
+    "f2": "S",
+    "f3": "S"
+   },
+   "B": {
+    "f0": "S",
+    "f1": "O",
+    "f2": "S",
+    "f3": "S"
+   },
+   "A_clean": false,
+   "B_clean": false,
+   "changed": []
+  }
+ ]
+}

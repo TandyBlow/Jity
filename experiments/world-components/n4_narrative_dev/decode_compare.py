@@ -15,6 +15,8 @@ import time
 
 HERE = pathlib.Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
+sys.path.insert(0, str(HERE.parent))
+from component_paths import PATHS  # noqa: E402
 import fact_contract as FC  # noqa: E402
 from sequence_policy import generate_greedy  # noqa: E402
 
@@ -96,13 +98,17 @@ def generate_beam(model, encoded, width=2, timeout_seconds=20.0):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--ckpt', required=True)
+    parser.add_argument('--model', '--ckpt', dest='ckpt', default=None)
     parser.add_argument('--cases', required=True)
     parser.add_argument('--out', required=True)
     parser.add_argument('--budget', type=float, default=20.0)
     parser.add_argument('--width', type=int, default=2)
     parser.add_argument('--limit', type=int, default=0)
     args = parser.parse_args()
+    args.ckpt = str(PATHS.model(args.ckpt))
+    args.cases = str(PATHS.input(args.cases))
+    args.out = str(PATHS.output(args.out))
+    pathlib.Path(args.out).parent.mkdir(parents=True, exist_ok=True)
 
     import torch
     from transformers.models.t5.modeling_t5 import T5ForConditionalGeneration

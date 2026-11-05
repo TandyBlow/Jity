@@ -40,15 +40,19 @@ from transformers.models.bert.modeling_bert import BertModel
 from transformers.models.bert.tokenization_bert import BertTokenizer
 
 HERE = pathlib.Path(__file__).resolve().parent
-ROOT = pathlib.Path('D:/others/Jity')
-ART = ROOT / 'artifacts' / 'statement-verification'
-PAIRS = ART / 'pairs-v1.jsonl'
-REGRESSION = ART / 'regression-v1.jsonl'
-FREEZE = ART / 'split-freeze.json'
-METRIC = ART / 'metric-freeze.json'
-REVIEW = ART / 'review-v1-summary.json'
+import sys as _paths_sys
+_paths_sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
+from component_paths import PATHS
+
+ROOT = PATHS.worktree
+ART = PATHS.output('statement-verification')
+PAIRS = PATHS.input('statement-verification/pairs-v1.jsonl')
+REGRESSION = PATHS.input('statement-verification/regression-v1.jsonl')
+FREEZE = PATHS.input('statement-verification/split-freeze.json')
+METRIC = PATHS.input('statement-verification/metric-freeze.json')
+REVIEW = PATHS.input('statement-verification/review-v1-summary.json')
 BASE = HERE.parent / 'assets' / 'minirbt-h256-snapshot'
-CKPT = HERE / 'ckpt-verify-binary'
+CKPT = None
 SEED = 20261104
 EPOCHS = 12
 BATCH = 32
@@ -230,6 +234,17 @@ def write_jsonl(path, rows, preds, extra=None):
 
 
 def main():
+    import argparse
+    global BASE, CKPT
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--base', required=True)
+    parser.add_argument('--out', required=True, help='Checkpoint directory under N4_OUTPUT_ROOT')
+    args = parser.parse_args()
+    BASE = pathlib.Path(args.base).resolve()
+    CKPT = PATHS.checkpoint(args.out)
+    if CKPT.is_relative_to(BASE) or BASE.is_relative_to(CKPT):
+        raise ValueError('Training output overlaps the base model')
+    ART.mkdir(parents=True, exist_ok=True)
     t0 = time.perf_counter()
     freeze, metric, review = check_frozen()
     rows, train_all, dev_all, confirm_all, reg = load_rows()

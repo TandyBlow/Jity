@@ -11,17 +11,22 @@ import sys
 HERE = pathlib.Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
-ART = HERE.parents[2] / 'artifacts'
-DECODE = ART / 'decode-compare'
+import sys as _paths_sys
+_paths_sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
+from component_paths import PATHS
+
+ART = PATHS.inputs
+DECODE = PATHS.output('decode-compare')
 import argparse
 _parser = argparse.ArgumentParser()
-_parser.add_argument('--cases', default=str(DECODE / 'cases.json'))
+_parser.add_argument('--cases', default=str(PATHS.input('decode-compare/cases.json')))
 _parser.add_argument('--result', default=str(DECODE / 'arm-ab.json'))
 _parser.add_argument('--out', default=str(DECODE / 'scores.json'))
 ARGS = _parser.parse_args()
-CASES = pathlib.Path(ARGS.cases)
-RESULT = pathlib.Path(ARGS.result)
-DIAG = ART / 'world-components'
+CASES = PATHS.input(ARGS.cases)
+RESULT = PATHS.output(ARGS.result)
+DIAG = PATHS.input('world-components')
+ARGS.out = str(PATHS.output(ARGS.out))
 
 ALIAS = {'潮汐档案馆': ['档案馆'], '潮渡': ['渡口', '栈桥'], '旧灯塔': ['灯塔'],
          '雾堤': ['堤面', '堤上'], '潮生巷': ['巷子'], '早市': ['集市']}

@@ -8,11 +8,15 @@ from __future__ import annotations
 import hashlib, json, pathlib, re, sys
 from collections import Counter, defaultdict
 
-ROOT = pathlib.Path('D:/others/Jity')
-ART = ROOT / 'artifacts' / 'statement-verification'
+import sys as _paths_sys
+_paths_sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
+from component_paths import PATHS
+
+ROOT = PATHS.worktree
+ART = PATHS.output('statement-verification')
 OUT = ART / 'pairs-target-v1.jsonl'
-REG = ART / 'regression-v1.jsonl'
-OLD = ART / 'pairs-v1.jsonl'
+REG = PATHS.input('statement-verification/regression-v1.jsonl')
+OLD = PATHS.input('statement-verification/pairs-v1.jsonl')
 CAP = ART / 'general-capability-v1.jsonl'
 AUDIT = ART / 'audit-target-v1.json'
 FREEZE = ART / 'split-freeze-target-v1.json'

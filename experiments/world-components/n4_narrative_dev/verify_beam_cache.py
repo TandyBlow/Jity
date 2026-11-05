@@ -13,7 +13,11 @@ sys.path.insert(0, str(HERE))
 import fact_contract as FC  # noqa: E402
 from beam_decode import generate_beam_cached, generate_beam_recompute  # noqa: E402
 
-ART = HERE.parents[2] / 'artifacts' / 'decode-compare'
+import sys as _paths_sys
+_paths_sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
+from component_paths import PATHS
+
+ART = PATHS.input('decode-compare')
 
 
 def load_cases():
@@ -51,10 +55,13 @@ def pick(cases):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--ckpt', default='D:/others/Jity/.local/models')
+    parser.add_argument('--model', '--ckpt', dest='ckpt', default=None)
     parser.add_argument('--budget', type=float, default=20.0)
-    parser.add_argument('--out', default=str(ART / 'beam-cache-equivalence.json'))
+    parser.add_argument('--out', default=str(PATHS.output('decode-compare/beam-cache-equivalence.json')))
     args = parser.parse_args()
+    args.ckpt = str(PATHS.model(args.ckpt))
+    args.out = str(PATHS.output(args.out))
+    pathlib.Path(args.out).parent.mkdir(parents=True, exist_ok=True)
 
     import torch
     from transformers.models.t5.modeling_t5 import T5ForConditionalGeneration

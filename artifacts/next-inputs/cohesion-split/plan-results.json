@@ -1,0 +1,1920 @@
+{
+ "model": "qwen2.5:7b",
+ "sources": [
+  {
+   "sourceId": "fixture-r1",
+   "facts": [
+    {
+     "factId": "f0",
+     "name": "林川",
+     "kind": "appearance_changed",
+     "factText": "袖口沾了雨",
+     "u240": "林川的袖口沾了雨。"
+    },
+    {
+     "factId": "f1",
+     "name": "林川",
+     "kind": "appearance_changed",
+     "factText": "指节发白",
+     "u240": "林川的指节发白,指节发白。"
+    },
+    {
+     "factId": "f2",
+     "name": "周宁",
+     "kind": "appearance_changed",
+     "factText": "斗篷下摆湿了一片",
+     "u240": "周宁的斗篷下摆湿了一片。"
+    },
+    {
+     "factId": "f3",
+     "name": "陈默",
+     "kind": "appearance_changed",
+     "factText": "鞋底沾了泥",
+     "u240": "陈默的鞋底沾了泥。"
+    },
+    {
+     "factId": "f4",
+     "name": "陈默",
+     "kind": "appearance_changed",
+     "factText": "袖口湿到肘部",
+     "u240": "陈默的袖口湿到肘部。"
+    }
+   ],
+   "relations": [
+    [
+     "f2",
+     "f3"
+    ]
+   ],
+   "background": [
+    {
+     "fragmentId": "bg1",
+     "text": "潮汐档案馆",
+     "source": "地点"
+    },
+    {
+     "fragmentId": "bg2",
+     "text": "夜",
+     "source": "场景"
+    },
+    {
+     "fragmentId": "bg3",
+     "text": "浓雾",
+     "source": "场景"
+    }
+   ],
+   "promptChars": 1049,
+   "seconds": 3.14,
+   "raw": "{\n  \"paragraphs\": [\"f0\", \"f1\", \"f2\", \"f3\", \"f4\"],\n  \"units\": [\n    {\"factIds\": [\"f0\", \"f1\"], \"subject\": \"keep\"},\n    {\"factIds\": [\"f2\"], \"subject\": \"keep\"},\n    {\"factIds\": [\"f3\", \"f4\"], \"subject\": \"keep\"}\n  ],\n  \"background\": [],\n  \"connections\": [\"r0\"]\n}",
+   "A": "林川的袖口沾了雨，指节发白，指节发白。周宁的斗篷下摆湿了一片。随后，陈默的鞋底沾了泥。陈默的袖口湿到肘部。",
+   "plan": {
+    "paragraphs": [
+     "f0",
+     "f1",
+     "f2",
+     "f3",
+     "f4"
+    ],
+    "units": [
+     {
+      "factIds": [
+       "f0",
+       "f1"
+      ],
+      "subject": "keep"
+     },
+     {
+      "factIds": [
+       "f2"
+      ],
+      "subject": "keep"
+     },
+     {
+      "factIds": [
+       "f3",
+       "f4"
+      ],
+      "subject": "keep"
+     }
+    ],
+    "background": [],
+    "connections": [
+     "r0"
+    ]
+   },
+   "planValid": false,
+   "problems": [
+    "段落划分没有按顺序覆盖全部事实"
+   ],
+   "B": null
+  },
+  {
+   "sourceId": "fixture-r2",
+   "facts": [
+    {
+     "factId": "f0",
+     "name": "林川",
+     "kind": "appearance_changed",
+     "factText": "灯罩蒙了灰",
+     "u240": "林川的灯罩蒙了灰。"
+    },
+    {
+     "factId": "f1",
+     "name": "林川",
+     "kind": "appearance_changed",
+     "factText": "掌心出汗",
+     "u240": "林川的掌心出汗,掌心出汗。"
+    },
+    {
+     "factId": "f2",
+     "name": "周宁",
+     "kind": "appearance_changed",
+     "factText": "钟绳磨出了毛边",
+     "u240": "周宁的钟绳磨出了毛边。"
+    },
+    {
+     "factId": "f3",
+     "name": "陈默",
+     "kind": "appearance_changed",
+     "factText": "衣角结了盐霜",
+     "u240": "陈默的衣角结了盐霜。"
+    },
+    {
+     "factId": "f4",
+     "name": "陈默",
+     "kind": "appearance_changed",
+     "factText": "鬓发被雾打湿",
+     "u240": "陈默的鬓发被雾打湿。"
+    }
+   ],
+   "relations": [
+    [
+     "f2",
+     "f3"
+    ]
+   ],
+   "background": [
+    {
+     "fragmentId": "bg1",
+     "text": "潮汐档案馆",
+     "source": "地点"
+    },
+    {
+     "fragmentId": "bg2",
+     "text": "夜",
+     "source": "场景"
+    },
+    {
+     "fragmentId": "bg3",
+     "text": "浓雾",
+     "source": "场景"
+    }
+   ],
+   "promptChars": 1049,
+   "seconds": 2.6,
+   "raw": "{\n  \"paragraphs\": [\"f0\", \"f1\", \"f2\", \"f3\", \"f4\"],\n  \"units\": [\n    {\"factIds\": [\"f0\", \"f1\"], \"subject\": \"keep\"},\n    {\"factIds\": [\"f2\"], \"subject\": \"keep\"},\n    {\"factIds\": [\"f3\", \"f4\"], \"subject\": \"keep\"}\n  ],\n  \"background\": [],\n  \"connections\": [\"r0\"]\n}",
+   "A": "林川的灯罩蒙了灰，掌心出汗，掌心出汗。周宁的钟绳磨出了毛边。随后，陈默的衣角结了盐霜。陈默的鬓发被雾打湿。",
+   "plan": {
+    "paragraphs": [
+     "f0",
+     "f1",
+     "f2",
+     "f3",
+     "f4"
+    ],
+    "units": [
+     {
+      "factIds": [
+       "f0",
+       "f1"
+      ],
+      "subject": "keep"
+     },
+     {
+      "factIds": [
+       "f2"
+      ],
+      "subject": "keep"
+     },
+     {
+      "factIds": [
+       "f3",
+       "f4"
+      ],
+      "subject": "keep"
+     }
+    ],
+    "background": [],
+    "connections": [
+     "r0"
+    ]
+   },
+   "planValid": false,
+   "problems": [
+    "段落划分没有按顺序覆盖全部事实"
+   ],
+   "B": null
+  },
+  {
+   "sourceId": "fixture-r3",
+   "facts": [
+    {
+     "factId": "f0",
+     "name": "林川",
+     "kind": "appearance_changed",
+     "factText": "被雨打湿半幅",
+     "u240": "林川被雨打湿半幅。"
+    },
+    {
+     "factId": "f1",
+     "name": "林川",
+     "kind": "appearance_changed",
+     "factText": "袖口开了线",
+     "u240": "林川的袖口开了线。"
+    },
+    {
+     "factId": "f2",
+     "name": "周宁",
+     "kind": "appearance_changed",
+     "factText": "指缝里塞着泥",
+     "u240": "周宁的指缝里塞着泥。"
+    },
+    {
+     "factId": "f3",
+     "name": "陈默",
+     "kind": "appearance_changed",
+     "factText": "鞋跟磨塌了",
+     "u240": "陈默的鞋跟磨塌了。"
+    },
+    {
+     "factId": "f4",
+     "name": "陈默",
+     "kind": "appearance_changed",
+     "factText": "裤脚沾了铜油",
+     "u240": "陈默的裤脚沾了铜油。"
+    }
+   ],
+   "relations": [
+    [
+     "f2",
+     "f3"
+    ]
+   ],
+   "background": [
+    {
+     "fragmentId": "bg1",
+     "text": "潮汐档案馆",
+     "source": "地点"
+    },
+    {
+     "fragmentId": "bg2",
+     "text": "夜",
+     "source": "场景"
+    },
+    {
+     "fragmentId": "bg3",
+     "text": "浓雾",
+     "source": "场景"
+    }
+   ],
+   "promptChars": 1043,
+   "seconds": 2.61,
+   "raw": "{\n  \"paragraphs\": [\"f0\", \"f1\", \"f2\", \"f3\", \"f4\"],\n  \"units\": [\n    {\"factIds\": [\"f0\", \"f1\"], \"subject\": \"keep\"},\n    {\"factIds\": [\"f2\"], \"subject\": \"keep\"},\n    {\"factIds\": [\"f3\", \"f4\"], \"subject\": \"keep\"}\n  ],\n  \"background\": [],\n  \"connections\": [\"r0\"]\n}",
+   "A": "林川被雨打湿半幅，袖口开了线。周宁的指缝里塞着泥。随后，陈默的鞋跟磨塌了。陈默的裤脚沾了铜油。",
+   "plan": {
+    "paragraphs": [
+     "f0",
+     "f1",
+     "f2",
+     "f3",
+     "f4"
+    ],
+    "units": [
+     {
+      "factIds": [
+       "f0",
+       "f1"
+      ],
+      "subject": "keep"
+     },
+     {
+      "factIds": [
+       "f2"
+      ],
+      "subject": "keep"
+     },
+     {
+      "factIds": [
+       "f3",
+       "f4"
+      ],
+      "subject": "keep"
+     }
+    ],
+    "background": [],
+    "connections": [
+     "r0"
+    ]
+   },
+   "planValid": false,
+   "problems": [
+    "段落划分没有按顺序覆盖全部事实"
+   ],
+   "B": null
+  },
+  {
+   "sourceId": "fixture-r4",
+   "facts": [
+    {
+     "factId": "f0",
+     "name": "林川",
+     "kind": "appearance_changed",
+     "factText": "围巾松开一截",
+     "u240": "林川的围巾松开一截。"
+    },
+    {
+     "factId": "f1",
+     "name": "林川",
+     "kind": "appearance_changed",
+     "factText": "脸色发白",
+     "u240": "林川的脸色发白,发白发白。"
+    },
+    {
+     "factId": "f2",
+     "name": "周宁",
+     "kind": "appearance_changed",
+     "factText": "背上溅了泥点",
+     "u240": "周宁的背上溅了泥点。"
+    },
+    {
+     "factId": "f3",
+     "name": "陈默",
+     "kind": "appearance_changed",
+     "factText": "手背蹭破了皮",
+     "u240": "陈默的手背蹭破了皮。"
+    },
+    {
+     "factId": "f4",
+     "name": "陈默",
+     "kind": "appearance_changed",
+     "factText": "肩头落着灰",
+     "u240": "陈默的肩头落着灰。"
+    }
+   ],
+   "relations": [
+    [
+     "f2",
+     "f3"
+    ]
+   ],
+   "background": [
+    {
+     "fragmentId": "bg1",
+     "text": "潮汐档案馆",
+     "source": "地点"
+    },
+    {
+     "fragmentId": "bg2",
+     "text": "夜",
+     "source": "场景"
+    },
+    {
+     "fragmentId": "bg3",
+     "text": "浓雾",
+     "source": "场景"
+    }
+   ],
+   "promptChars": 1047,
+   "seconds": 3.09,
+   "raw": "{\n  \"paragraphs\": [\"f0\", \"f1\", \"f2\", \"f3\", \"f4\"],\n  \"units\": [\n    {\"factIds\": [\"f0\"], \"subject\": \"keep\"},\n    {\"factIds\": [\"f1\"], \"subject\": \"keep\"},\n    {\"factIds\": [\"f2\"], \"subject\": \"keep\"},\n    {\"factIds\": [\"f3\"], \"subject\": \"keep\"},\n    {\"factIds\": [\"f4\"], \"subject\": \"keep\"}\n  ],\n  \"background\": [],\n  \"connections\": []\n}",
+   "A": "林川的围巾松开一截，脸色发白，发白发白。周宁的背上溅了泥点。随后，陈默的手背蹭破了皮。陈默的肩头落着灰。",
+   "plan": {
+    "paragraphs": [
+     "f0",
+     "f1",
+     "f2",
+     "f3",
+     "f4"
+    ],
+    "units": [
+     {
+      "factIds": [
+       "f0"
+      ],
+      "subject": "keep"
+     },
+     {
+      "factIds": [
+       "f1"
+      ],
+      "subject": "keep"
+     },
+     {
+      "factIds": [
+       "f2"
+      ],
+      "subject": "keep"
+     },
+     {
+      "factIds": [
+       "f3"
+      ],
+      "subject": "keep"
+     },
+     {
+      "factIds": [
+       "f4"
+      ],
+      "subject": "keep"
+     }
+    ],
+    "background": [],
+    "connections": []
+   },
+   "planValid": false,
+   "problems": [
+    "段落划分没有按顺序覆盖全部事实"
+   ],
+   "B": null
+  },
+  {
+   "sourceId": "fixture-r5",
+   "facts": [
+    {
+     "factId": "f0",
+     "name": "林川",
+     "kind": "appearance_changed",
+     "factText": "帽檐压出折痕",
+     "u240": "林川的帽檐压出折痕。"
+    },
+    {
+     "factId": "f1",
+     "name": "林川",
+     "kind": "appearance_changed",
+     "factText": "脚踝肿了一块",
+     "u240": "林川的脚踝肿了一块。"
+    },
+    {
+     "factId": "f2",
+     "name": "周宁",
+     "kind": "appearance_changed",
+     "factText": "衣领被雨浸透",
+     "u240": "周宁的衣领被雨浸透,袖口被雨浸透。"
+    },
+    {
+     "factId": "f3",
+     "name": "陈默",
+     "kind": "appearance_changed",
+     "factText": "指尖磨出茧",
+     "u240": "陈默的指尖磨出茧。"
+    },
+    {
+     "factId": "f4",
+     "name": "陈默",
+     "kind": "appearance_changed",
+     "factText": "膝盖沾了泥",
+     "u240": "陈默的膝盖沾了泥。"
+    }
+   ],
+   "relations": [
+    [
+     "f2",
+     "f3"
+    ]
+   ],
+   "background": [
+    {
+     "fragmentId": "bg1",
+     "text": "潮汐档案馆",
+     "source": "地点"
+    },
+    {
+     "fragmentId": "bg2",
+     "text": "夜",
+     "source": "场景"
+    },
+    {
+     "fragmentId": "bg3",
+     "text": "浓雾",
+     "source": "场景"
+    }
+   ],
+   "promptChars": 1051,
+   "seconds": 2.62,
+   "raw": "{\n  \"paragraphs\": [\"f0\", \"f1\", \"f2\", \"f3\", \"f4\"],\n  \"units\": [\n    {\"factIds\": [\"f0\", \"f1\"], \"subject\": \"keep\"},\n    {\"factIds\": [\"f2\"], \"subject\": \"keep\"},\n    {\"factIds\": [\"f3\", \"f4\"], \"subject\": \"keep\"}\n  ],\n  \"background\": [],\n  \"connections\": [\"r0\"]\n}",
+   "A": "林川的帽檐压出折痕，脚踝肿了一块。周宁的衣领被雨浸透，袖口被雨浸透。随后，陈默的指尖磨出茧。陈默的膝盖沾了泥。",
+   "plan": {
+    "paragraphs": [
+     "f0",
+     "f1",
+     "f2",
+     "f3",
+     "f4"
+    ],
+    "units": [
+     {
+      "factIds": [
+       "f0",
+       "f1"
+      ],
+      "subject": "keep"
+     },
+     {
+      "factIds": [
+       "f2"
+      ],
+      "subject": "keep"
+     },
+     {
+      "factIds": [
+       "f3",
+       "f4"
+      ],
+      "subject": "keep"
+     }
+    ],
+    "background": [],
+    "connections": [
+     "r0"
+    ]
+   },
+   "planValid": false,
+   "problems": [
+    "段落划分没有按顺序覆盖全部事实"
+   ],
+   "B": null
+  },
+  {
+   "sourceId": "train-r1",
+   "facts": [
+    {
+     "factId": "f0",
+     "name": "沈砚",
+     "kind": "appearance_changed",
+     "factText": "袖口沾了雨",
+     "u240": "沈砚的袖口沾了雨。"
+    },
+    {
+     "factId": "f1",
+     "name": "沈砚",
+     "kind": "appearance_changed",
+     "factText": "指节发白",
+     "u240": "沈砚的指节发白,指节发白。"
+    },
+    {
+     "factId": "f2",
+     "name": "顾行舟",
+     "kind": "appearance_changed",
+     "factText": "斗篷下摆湿了一片",
+     "u240": "顾行舟的斗篷下摆湿了一片。"
+    },
+    {
+     "factId": "f3",
+     "name": "叶知微",
+     "kind": "appearance_changed",
+     "factText": "鞋底沾了泥",
+     "u240": "叶知微的鞋底沾了泥。"
+    },
+    {
+     "factId": "f4",
+     "name": "叶知微",
+     "kind": "appearance_changed",
+     "factText": "袖口湿到肘部",
+     "u240": "叶知微的袖口湿到肘部。"
+    }
+   ],
+   "relations": [
+    [
+     "f2",
+     "f3"
+    ]
+   ],
+   "background": [
+    {
+     "fragmentId": "bg1",
+     "text": "潮汐档案馆",
+     "source": "地点"
+    },
+    {
+     "fragmentId": "bg2",
+     "text": "夜",
+     "source": "场景"
+    },
+    {
+     "fragmentId": "bg3",
+     "text": "浓雾",
+     "source": "场景"
+    }
+   ],
+   "promptChars": 1055,
+   "seconds": 2.7,
+   "raw": "{\n  \"paragraphs\": [\"f0\", \"f1\", \"f2\", \"f3\", \"f4\"],\n  \"units\": [\n    {\"factIds\": [\"f0\", \"f1\"], \"subject\": \"keep\"},\n    {\"factIds\": [\"f2\"], \"subject\": \"keep\"},\n    {\"factIds\": [\"f3\", \"f4\"], \"subject\": \"keep\"}\n  ],\n  \"background\": [],\n  \"connections\": [\"r0\"]\n}",
+   "A": "沈砚的袖口沾了雨，指节发白，指节发白。顾行舟的斗篷下摆湿了一片。随后，叶知微的鞋底沾了泥。叶知微的袖口湿到肘部。",
+   "plan": {
+    "paragraphs": [
+     "f0",
+     "f1",
+     "f2",
+     "f3",
+     "f4"
+    ],
+    "units": [
+     {
+      "factIds": [
+       "f0",
+       "f1"
+      ],
+      "subject": "keep"
+     },
+     {
+      "factIds": [
+       "f2"
+      ],
+      "subject": "keep"
+     },
+     {
+      "factIds": [
+       "f3",
+       "f4"
+      ],
+      "subject": "keep"
+     }
+    ],
+    "background": [],
+    "connections": [
+     "r0"
+    ]
+   },
+   "planValid": false,
+   "problems": [
+    "段落划分没有按顺序覆盖全部事实"
+   ],
+   "B": null
+  },
+  {
+   "sourceId": "train-r2",
+   "facts": [
+    {
+     "factId": "f0",
+     "name": "沈砚",
+     "kind": "appearance_changed",
+     "factText": "灯罩蒙了灰",
+     "u240": "沈砚的灯罩蒙了灰。"
+    },
+    {
+     "factId": "f1",
+     "name": "沈砚",
+     "kind": "appearance_changed",
+     "factText": "掌心出汗",
+     "u240": "沈砚的掌心出汗,手腕上沾着盐沫。"
+    },
+    {
+     "factId": "f2",
+     "name": "顾行舟",
+     "kind": "appearance_changed",
+     "factText": "钟绳磨出了毛边",
+     "u240": "顾行舟的钟绳磨出了毛边。"
+    },
+    {
+     "factId": "f3",
+     "name": "叶知微",
+     "kind": "appearance_changed",
+     "factText": "衣角结了盐霜",
+     "u240": "叶知微的衣角结了盐霜。"
+    },
+    {
+     "factId": "f4",
+     "name": "叶知微",
+     "kind": "appearance_changed",
+     "factText": "鬓发被雾打湿",
+     "u240": "叶知微的鬓发被雾打湿,手背上沾着水沫。"
+    }
+   ],
+   "relations": [
+    [
+     "f2",
+     "f3"
+    ]
+   ],
+   "background": [
+    {
+     "fragmentId": "bg1",
+     "text": "潮汐档案馆",
+     "source": "地点"
+    },
+    {
+     "fragmentId": "bg2",
+     "text": "夜",
+     "source": "场景"
+    },
+    {
+     "fragmentId": "bg3",
+     "text": "浓雾",
+     "source": "场景"
+    }
+   ],
+   "promptChars": 1066,
+   "seconds": 2.62,
+   "raw": "{\n  \"paragraphs\": [\"f0\", \"f1\", \"f2\", \"f3\", \"f4\"],\n  \"units\": [\n    {\"factIds\": [\"f0\", \"f1\"], \"subject\": \"keep\"},\n    {\"factIds\": [\"f2\"], \"subject\": \"keep\"},\n    {\"factIds\": [\"f3\", \"f4\"], \"subject\": \"keep\"}\n  ],\n  \"background\": [],\n  \"connections\": [\"r0\"]\n}",
+   "A": "沈砚的灯罩蒙了灰，掌心出汗，手腕上沾着盐沫。顾行舟的钟绳磨出了毛边。随后，叶知微的衣角结了盐霜。叶知微的鬓发被雾打湿，手背上沾着水沫。",
+   "plan": {
+    "paragraphs": [
+     "f0",
+     "f1",
+     "f2",
+     "f3",
+     "f4"
+    ],
+    "units": [
+     {
+      "factIds": [
+       "f0",
+       "f1"
+      ],
+      "subject": "keep"
+     },
+     {
+      "factIds": [
+       "f2"
+      ],
+      "subject": "keep"
+     },
+     {
+      "factIds": [
+       "f3",
+       "f4"
+      ],
+      "subject": "keep"
+     }
+    ],
+    "background": [],
+    "connections": [
+     "r0"
+    ]
+   },
+   "planValid": false,
+   "problems": [
+    "段落划分没有按顺序覆盖全部事实"
+   ],
+   "B": null
+  },
+  {
+   "sourceId": "train-r3",
+   "facts": [
+    {
+     "factId": "f0",
+     "name": "沈砚",
+     "kind": "appearance_changed",
+     "factText": "被雨打湿半幅",
+     "u240": "沈砚被雨打湿半幅。"
+    },
+    {
+     "factId": "f1",
+     "name": "沈砚",
+     "kind": "appearance_changed",
+     "factText": "袖口开了线",
+     "u240": "沈砚的袖口开了线。"
+    },
+    {
+     "factId": "f2",
+     "name": "顾行舟",
+     "kind": "appearance_changed",
+     "factText": "指缝里塞着泥",
+     "u240": "顾行舟的指缝里塞着泥。"
+    },
+    {
+     "factId": "f3",
+     "name": "叶知微",
+     "kind": "appearance_changed",
+     "factText": "鞋跟磨塌了",
+     "u240": "叶知微的鞋跟磨塌了。"
+    },
+    {
+     "factId": "f4",
+     "name": "叶知微",
+     "kind": "appearance_changed",
+     "factText": "裤脚沾了铜油",
+     "u240": "叶知微的裤脚沾了铜油。"
+    }
+   ],
+   "relations": [
+    [
+     "f2",
+     "f3"
+    ]
+   ],
+   "background": [
+    {
+     "fragmentId": "bg1",
+     "text": "潮汐档案馆",
+     "source": "地点"
+    },
+    {
+     "fragmentId": "bg2",
+     "text": "夜",
+     "source": "场景"
+    },
+    {
+     "fragmentId": "bg3",
+     "text": "浓雾",
+     "source": "场景"
+    }
+   ],
+   "promptChars": 1049,
+   "seconds": 2.73,
+   "raw": "{\n  \"paragraphs\": [\"f0\", \"f1\", \"f2\", \"f3\", \"f4\"],\n  \"units\": [\n    {\"factIds\": [\"f0\", \"f1\"], \"subject\": \"keep\"},\n    {\"factIds\": [\"f2\"], \"subject\": \"keep\"},\n    {\"factIds\": [\"f3\", \"f4\"], \"subject\": \"keep\"}\n  ],\n  \"background\": [],\n  \"connections\": [\"r0\"]\n}",
+   "A": "沈砚被雨打湿半幅，袖口开了线。顾行舟的指缝里塞着泥。随后，叶知微的鞋跟磨塌了。叶知微的裤脚沾了铜油。",
+   "plan": {
+    "paragraphs": [
+     "f0",
+     "f1",
+     "f2",
+     "f3",
+     "f4"
+    ],
+    "units": [
+     {
+      "factIds": [
+       "f0",
+       "f1"
+      ],
+      "subject": "keep"
+     },
+     {
+      "factIds": [
+       "f2"
+      ],
+      "subject": "keep"
+     },
+     {
+      "factIds": [
+       "f3",
+       "f4"
+      ],
+      "subject": "keep"
+     }
+    ],
+    "background": [],
+    "connections": [
+     "r0"
+    ]
+   },
+   "planValid": false,
+   "problems": [
+    "段落划分没有按顺序覆盖全部事实"
+   ],
+   "B": null
+  },
+  {
+   "sourceId": "train-r4",
+   "facts": [
+    {
+     "factId": "f0",
+     "name": "沈砚",
+     "kind": "appearance_changed",
+     "factText": "围巾松开一截",
+     "u240": "沈砚的围巾松开一截。"
+    },
+    {
+     "factId": "f1",
+     "name": "沈砚",
+     "kind": "appearance_changed",
+     "factText": "脸色发白",
+     "u240": "沈砚的脸色发白,发白发白。"
+    },
+    {
+     "factId": "f2",
+     "name": "顾行舟",
+     "kind": "appearance_changed",
+     "factText": "背上溅了泥点",
+     "u240": "顾行舟的背上溅了泥点。"
+    },
+    {
+     "factId": "f3",
+     "name": "叶知微",
+     "kind": "appearance_changed",
+     "factText": "手背蹭破了皮",
+     "u240": "叶知微的手背蹭破了皮。"
+    },
+    {
+     "factId": "f4",
+     "name": "叶知微",
+     "kind": "appearance_changed",
+     "factText": "肩头落着灰",
+     "u240": "叶知微的肩头落着灰,肩头落着灰。"
+    }
+   ],
+   "relations": [
+    [
+     "f2",
+     "f3"
+    ]
+   ],
+   "background": [
+    {
+     "fragmentId": "bg1",
+     "text": "潮汐档案馆",
+     "source": "地点"
+    },
+    {
+     "fragmentId": "bg2",
+     "text": "夜",
+     "source": "场景"
+    },
+    {
+     "fragmentId": "bg3",
+     "text": "浓雾",
+     "source": "场景"
+    }
+   ],
+   "promptChars": 1059,
+   "seconds": 3.05,
+   "raw": "{\n  \"paragraphs\": [\"f0\", \"f1\", \"f2\", \"f3\", \"f4\"],\n  \"units\": [\n    {\"factIds\": [\"f0\"], \"subject\": \"keep\"},\n    {\"factIds\": [\"f1\"], \"subject\": \"keep\"},\n    {\"factIds\": [\"f2\"], \"subject\": \"keep\"},\n    {\"factIds\": [\"f3\"], \"subject\": \"keep\"},\n    {\"factIds\": [\"f4\"], \"subject\": \"keep\"}\n  ],\n  \"background\": [],\n  \"connections\": []\n}",
+   "A": "沈砚的围巾松开一截，脸色发白，发白发白。顾行舟的背上溅了泥点。随后，叶知微的手背蹭破了皮。叶知微的肩头落着灰，肩头落着灰。",
+   "plan": {
+    "paragraphs": [
+     "f0",
+     "f1",
+     "f2",
+     "f3",
+     "f4"
+    ],
+    "units": [
+     {
+      "factIds": [
+       "f0"
+      ],
+      "subject": "keep"
+     },
+     {
+      "factIds": [
+       "f1"
+      ],
+      "subject": "keep"
+     },
+     {
+      "factIds": [
+       "f2"
+      ],
+      "subject": "keep"
+     },
+     {
+      "factIds": [
+       "f3"
+      ],
+      "subject": "keep"
+     },
+     {
+      "factIds": [
+       "f4"
+      ],
+      "subject": "keep"
+     }
+    ],
+    "background": [],
+    "connections": []
+   },
+   "planValid": false,
+   "problems": [
+    "段落划分没有按顺序覆盖全部事实"
+   ],
+   "B": null
+  },
+  {
+   "sourceId": "train-r5",
+   "facts": [
+    {
+     "factId": "f0",
+     "name": "沈砚",
+     "kind": "appearance_changed",
+     "factText": "帽檐压出折痕",
+     "u240": "沈砚的帽檐压出折痕。"
+    },
+    {
+     "factId": "f1",
+     "name": "沈砚",
+     "kind": "appearance_changed",
+     "factText": "脚踝肿了一块",
+     "u240": "沈砚的脚踝肿了一块。"
+    },
+    {
+     "factId": "f2",
+     "name": "顾行舟",
+     "kind": "appearance_changed",
+     "factText": "衣领被雨浸透",
+     "u240": "顾行舟的衣领被雨浸透,袖口被雨浸透。"
+    },
+    {
+     "factId": "f3",
+     "name": "叶知微",
+     "kind": "appearance_changed",
+     "factText": "指尖磨出茧",
+     "u240": "叶知微的指尖磨出茧。"
+    },
+    {
+     "factId": "f4",
+     "name": "叶知微",
+     "kind": "appearance_changed",
+     "factText": "膝盖沾了泥",
+     "u240": "叶知微的膝盖沾了泥。"
+    }
+   ],
+   "relations": [
+    [
+     "f2",
+     "f3"
+    ]
+   ],
+   "background": [
+    {
+     "fragmentId": "bg1",
+     "text": "潮汐档案馆",
+     "source": "地点"
+    },
+    {
+     "fragmentId": "bg2",
+     "text": "夜",
+     "source": "场景"
+    },
+    {
+     "fragmentId": "bg3",
+     "text": "浓雾",
+     "source": "场景"
+    }
+   ],
+   "promptChars": 1057,
+   "seconds": 2.58,
+   "raw": "{\n  \"paragraphs\": [\"f0\", \"f1\", \"f2\", \"f3\", \"f4\"],\n  \"units\": [\n    {\"factIds\": [\"f0\", \"f1\"], \"subject\": \"keep\"},\n    {\"factIds\": [\"f2\"], \"subject\": \"keep\"},\n    {\"factIds\": [\"f3\", \"f4\"], \"subject\": \"keep\"}\n  ],\n  \"background\": [],\n  \"connections\": [\"r0\"]\n}",
+   "A": "沈砚的帽檐压出折痕，脚踝肿了一块。顾行舟的衣领被雨浸透，袖口被雨浸透。随后，叶知微的指尖磨出茧。叶知微的膝盖沾了泥。",
+   "plan": {
+    "paragraphs": [
+     "f0",
+     "f1",
+     "f2",
+     "f3",
+     "f4"
+    ],
+    "units": [
+     {
+      "factIds": [
+       "f0",
+       "f1"
+      ],
+      "subject": "keep"
+     },
+     {
+      "factIds": [
+       "f2"
+      ],
+      "subject": "keep"
+     },
+     {
+      "factIds": [
+       "f3",
+       "f4"
+      ],
+      "subject": "keep"
+     }
+    ],
+    "background": [],
+    "connections": [
+     "r0"
+    ]
+   },
+   "planValid": false,
+   "problems": [
+    "段落划分没有按顺序覆盖全部事实"
+   ],
+   "B": null
+  },
+  {
+   "sourceId": "v01",
+   "facts": [
+    {
+     "factId": "f0",
+     "name": "沈砚",
+     "kind": "moved",
+     "factText": "潮渡→雾堤",
+     "u240": "沈砚从潮渡上来,蹲到雾堤的钟架下。"
+    },
+    {
+     "factId": "f1",
+     "name": "韩渡",
+     "kind": "outcome",
+     "factText": "把松脱的钟绳重新系紧",
+     "u240": "韩渡把松脱的钟绳重新系紧,钟绳绷直了。"
+    },
+    {
+     "factId": "f2",
+     "name": "沈砚",
+     "kind": "outcome",
+     "factText": "把警示灯扶正",
+     "u240": "沈砚把警示灯扶正。"
+    },
+    {
+     "factId": "f3",
+     "name": "韩渡",
+     "kind": "appearance_changed",
+     "factText": "袖口沾了盐沫",
+     "u240": "韩渡的袖口沾了盐沫。"
+    }
+   ],
+   "relations": [],
+   "background": [
+    {
+     "fragmentId": "bg1",
+     "text": "雾堤",
+     "source": "地点"
+    },
+    {
+     "fragmentId": "bg2",
+     "text": "夜",
+     "source": "场景"
+    },
+    {
+     "fragmentId": "bg3",
+     "text": "浓雾",
+     "source": "场景"
+    },
+    {
+     "fragmentId": "bg4",
+     "text": "警示灯",
+     "source": "场景"
+    }
+   ],
+   "promptChars": 1025,
+   "seconds": 2.07,
+   "raw": "{\n  \"paragraphs\": [\"f0\", \"f1\", \"f2\", \"f3\"],\n  \"units\": [{\"factIds\": [\"f0\", \"f1\"], \"subject\": \"keep\"}, {\"factIds\": [\"f2\", \"f3\"], \"subject\": \"keep\"}],\n  \"background\": [],\n  \"connections\": []\n}",
+   "A": "沈砚从潮渡上来，蹲到雾堤的钟架下。韩渡把松脱的钟绳重新系紧，钟绳绷直了。沈砚把警示灯扶正。韩渡的袖口沾了盐沫。",
+   "plan": {
+    "paragraphs": [
+     "f0",
+     "f1",
+     "f2",
+     "f3"
+    ],
+    "units": [
+     {
+      "factIds": [
+       "f0",
+       "f1"
+      ],
+      "subject": "keep"
+     },
+     {
+      "factIds": [
+       "f2",
+       "f3"
+      ],
+      "subject": "keep"
+     }
+    ],
+    "background": [],
+    "connections": []
+   },
+   "planValid": false,
+   "problems": [
+    "跨主体合并：['f0', 'f1']",
+    "跨主体合并：['f2', 'f3']",
+    "段落划分没有按顺序覆盖全部事实"
+   ],
+   "B": null
+  },
+  {
+   "sourceId": "v02",
+   "facts": [
+    {
+     "factId": "f0",
+     "name": "阿棠",
+     "kind": "outcome",
+     "factText": "把银鳞鱼按大小分开装进鱼筐",
+     "u240": "阿棠把银鳞鱼按大小分开装进鱼筐。"
+    },
+    {
+     "factId": "f1",
+     "name": "顾行舟",
+     "kind": "outcome",
+     "factText": "把抹布拧干",
+     "u240": "顾行舟把抹布拧干。"
+    },
+    {
+     "factId": "f2",
+     "name": "顾行舟",
+     "kind": "appearance_changed",
+     "factText": "手背上沾了鱼鳞",
+     "u240": "顾行舟的手背上沾了鱼鳞。"
+    }
+   ],
+   "relations": [],
+   "background": [
+    {
+     "fragmentId": "bg1",
+     "text": "早市",
+     "source": "地点"
+    },
+    {
+     "fragmentId": "bg2",
+     "text": "清晨",
+     "source": "场景"
+    },
+    {
+     "fragmentId": "bg3",
+     "text": "薄雾",
+     "source": "场景"
+    },
+    {
+     "fragmentId": "bg4",
+     "text": "棚下散光",
+     "source": "场景"
+    }
+   ],
+   "promptChars": 991,
+   "seconds": 1.87,
+   "raw": "{\n  \"paragraphs\": [\"f0\", \"f1\", \"f2\"],\n  \"units\": [{\"factIds\": [\"f0\"], \"subject\": \"keep\"}, {\"factIds\": [\"f1\", \"f2\"], \"subject\": \"omit\"}],\n  \"background\": [],\n  \"connections\": []\n}",
+   "A": "阿棠把银鳞鱼按大小分开装进鱼筐。顾行舟把抹布拧干，手背上沾了鱼鳞。",
+   "plan": {
+    "paragraphs": [
+     "f0",
+     "f1",
+     "f2"
+    ],
+    "units": [
+     {
+      "factIds": [
+       "f0"
+      ],
+      "subject": "keep"
+     },
+     {
+      "factIds": [
+       "f1",
+       "f2"
+      ],
+      "subject": "omit"
+     }
+    ],
+    "background": [],
+    "connections": []
+   },
+   "planValid": false,
+   "problems": [
+    "省略主语但上文不是同一主体：['f1', 'f2']",
+    "段落划分没有按顺序覆盖全部事实"
+   ],
+   "B": null
+  },
+  {
+   "sourceId": "v03",
+   "facts": [
+    {
+     "factId": "f0",
+     "name": "沈砚",
+     "kind": "outcome",
+     "factText": "把潮汐簿缺的那页补全",
+     "u240": "沈砚把潮汐簿缺的那页补全。"
+    },
+    {
+     "factId": "f1",
+     "name": "叶知微",
+     "kind": "outcome",
+     "factText": "把干纸码成一小摞",
+     "u240": "叶知微把干纸码成一小摞。"
+    },
+    {
+     "factId": "f2",
+     "name": "叶知微",
+     "kind": "appearance_changed",
+     "factText": "指尖沾了墨",
+     "u240": "叶知微的指尖沾了墨。"
+    },
+    {
+     "factId": "f3",
+     "name": null,
+     "kind": "no_change",
+     "factText": "None→None",
+     "u240": "四下安静,没有新的事情发生。"
+    }
+   ],
+   "relations": [],
+   "background": [
+    {
+     "fragmentId": "bg1",
+     "text": "潮汐档案馆",
+     "source": "地点"
+    },
+    {
+     "fragmentId": "bg2",
+     "text": "夜",
+     "source": "场景"
+    },
+    {
+     "fragmentId": "bg3",
+     "text": "小雨",
+     "source": "场景"
+    },
+    {
+     "fragmentId": "bg4",
+     "text": "铜灯",
+     "source": "场景"
+    }
+   ],
+   "promptChars": 1030,
+   "seconds": 2.33,
+   "raw": "{\n  \"paragraphs\": [\"f0\", \"f1\", \"f2\", \"f3\"],\n  \"units\": [{\"factIds\": [\"f0\"], \"subject\": \"keep\"}, {\"factIds\": [\"f1\", \"f2\"], \"subject\": \"omit\"}, {\"factIds\": [\"f3\"], \"subject\": \"keep\"}],\n  \"background\": [],\n  \"connections\": []\n}",
+   "A": "沈砚把潮汐簿缺的那页补全。叶知微把干纸码成一小摞，指尖沾了墨。四下安静，没有新的事情发生。",
+   "plan": {
+    "paragraphs": [
+     "f0",
+     "f1",
+     "f2",
+     "f3"
+    ],
+    "units": [
+     {
+      "factIds": [
+       "f0"
+      ],
+      "subject": "keep"
+     },
+     {
+      "factIds": [
+       "f1",
+       "f2"
+      ],
+      "subject": "omit"
+     },
+     {
+      "factIds": [
+       "f3"
+      ],
+      "subject": "keep"
+     }
+    ],
+    "background": [],
+    "connections": []
+   },
+   "planValid": false,
+   "problems": [
+    "省略主语但上文不是同一主体：['f1', 'f2']",
+    "段落划分没有按顺序覆盖全部事实"
+   ],
+   "B": null
+  },
+  {
+   "sourceId": "v05",
+   "facts": [
+    {
+     "factId": "f0",
+     "name": "叶知微",
+     "kind": "appearance_changed",
+     "factText": "袖口沾了铜油",
+     "u240": "叶知微的袖口沾了铜油。"
+    },
+    {
+     "factId": "f1",
+     "name": "沈砚",
+     "kind": "appearance_changed",
+     "factText": "手背上沾了铜油",
+     "u240": "沈砚的手背上沾了铜油。"
+    },
+    {
+     "factId": "f2",
+     "name": "叶知微",
+     "kind": "outcome",
+     "factText": "把灯罩擦得透亮",
+     "u240": "叶知微把灯罩擦得透亮,玻璃上不再有雾。"
+    },
+    {
+     "factId": "f3",
+     "name": null,
+     "kind": "no_change",
+     "factText": "None→None",
+     "u240": "塔顶的灯还亮着,什么也没有再发生。"
+    }
+   ],
+   "relations": [],
+   "background": [
+    {
+     "fragmentId": "bg1",
+     "text": "旧灯塔",
+     "source": "地点"
+    },
+    {
+     "fragmentId": "bg2",
+     "text": "夜",
+     "source": "场景"
+    },
+    {
+     "fragmentId": "bg3",
+     "text": "夜雾",
+     "source": "场景"
+    },
+    {
+     "fragmentId": "bg4",
+     "text": "塔顶铜灯已点亮",
+     "source": "场景"
+    }
+   ],
+   "promptChars": 1039,
+   "seconds": 2.35,
+   "raw": "{\n  \"paragraphs\": [\"f0\", \"f1\", \"f2\", \"f3\"],\n  \"units\": [\n    {\"factIds\": [\"f0\", \"f1\"], \"subject\": \"keep\"},\n    {\"factIds\": [\"f2\"], \"subject\": \"keep\"},\n    {\"factIds\": [\"f3\"], \"subject\": \"omit\"}\n  ],\n  \"background\": [],\n  \"connections\": []\n}",
+   "A": "叶知微的袖口沾了铜油。沈砚的手背上沾了铜油。叶知微把灯罩擦得透亮，玻璃上不再有雾。塔顶的灯还亮着，什么也没有再发生。",
+   "plan": {
+    "paragraphs": [
+     "f0",
+     "f1",
+     "f2",
+     "f3"
+    ],
+    "units": [
+     {
+      "factIds": [
+       "f0",
+       "f1"
+      ],
+      "subject": "keep"
+     },
+     {
+      "factIds": [
+       "f2"
+      ],
+      "subject": "keep"
+     },
+     {
+      "factIds": [
+       "f3"
+      ],
+      "subject": "omit"
+     }
+    ],
+    "background": [],
+    "connections": []
+   },
+   "planValid": false,
+   "problems": [
+    "跨主体合并：['f0', 'f1']",
+    "省略主语但上文不是同一主体：['f3']",
+    "段落划分没有按顺序覆盖全部事实"
+   ],
+   "B": null
+  },
+  {
+   "sourceId": "v06",
+   "facts": [
+    {
+     "factId": "f0",
+     "name": "阿棠",
+     "kind": "appearance_changed",
+     "factText": "鞋底沾了湿石板的水",
+     "u240": "阿棠的鞋底沾了湿石板的水。"
+    },
+    {
+     "factId": "f1",
+     "name": "沈砚",
+     "kind": "appearance_changed",
+     "factText": "袖口沾了雨",
+     "u240": "沈砚的袖口沾了雨。"
+    },
+    {
+     "factId": "f2",
+     "name": "阿棠",
+     "kind": "outcome",
+     "factText": "把纸灯笼扶正",
+     "u240": "阿棠把纸灯笼扶正。"
+    }
+   ],
+   "relations": [],
+   "background": [
+    {
+     "fragmentId": "bg1",
+     "text": "潮生巷",
+     "source": "地点"
+    },
+    {
+     "fragmentId": "bg2",
+     "text": "雨后",
+     "source": "场景"
+    },
+    {
+     "fragmentId": "bg3",
+     "text": "雨停",
+     "source": "场景"
+    },
+    {
+     "fragmentId": "bg4",
+     "text": "纸灯笼",
+     "source": "场景"
+    }
+   ],
+   "promptChars": 978,
+   "seconds": 2.11,
+   "raw": "{\n  \"paragraphs\": [\"f0\", \"f1\", \"f2\"],\n  \"units\": [{\"factIds\": [\"f0\"], \"subject\": \"keep\"}, {\"factIds\": [\"f1\"], \"subject\": \"omit\"}, {\"factIds\": [\"f2\"], \"subject\": \"keep\"}],\n  \"background\": [],\n  \"connections\": []\n}",
+   "A": "阿棠的鞋底沾了湿石板的水。沈砚的袖口沾了雨。阿棠把纸灯笼扶正。",
+   "plan": {
+    "paragraphs": [
+     "f0",
+     "f1",
+     "f2"
+    ],
+    "units": [
+     {
+      "factIds": [
+       "f0"
+      ],
+      "subject": "keep"
+     },
+     {
+      "factIds": [
+       "f1"
+      ],
+      "subject": "omit"
+     },
+     {
+      "factIds": [
+       "f2"
+      ],
+      "subject": "keep"
+     }
+    ],
+    "background": [],
+    "connections": []
+   },
+   "planValid": false,
+   "problems": [
+    "省略主语但上文不是同一主体：['f1']",
+    "段落划分没有按顺序覆盖全部事实"
+   ],
+   "B": null
+  },
+  {
+   "sourceId": "t01",
+   "facts": [
+    {
+     "factId": "f0",
+     "name": "沈砚",
+     "kind": "outcome",
+     "factText": "把潮汐簿缺的那页补全",
+     "u240": "沈砚把潮汐簿缺的那页补全。"
+    },
+    {
+     "factId": "f1",
+     "name": "沈砚",
+     "kind": "appearance_changed",
+     "factText": "指尖沾了墨",
+     "u240": "沈砚的指尖沾了墨。"
+    },
+    {
+     "factId": "f2",
+     "name": "沈砚",
+     "kind": "outcome",
+     "factText": "把簿子合上推到桌角",
+     "u240": "沈砚把簿子合上推到桌角。"
+    }
+   ],
+   "relations": [],
+   "background": [
+    {
+     "fragmentId": "bg1",
+     "text": "潮汐档案馆",
+     "source": "地点"
+    },
+    {
+     "fragmentId": "bg2",
+     "text": "夜",
+     "source": "场景"
+    },
+    {
+     "fragmentId": "bg3",
+     "text": "小雨",
+     "source": "场景"
+    },
+    {
+     "fragmentId": "bg4",
+     "text": "铜灯",
+     "source": "场景"
+    }
+   ],
+   "promptChars": 985,
+   "seconds": 2.1,
+   "raw": "{\n  \"paragraphs\": [\"f0\", \"f1\", \"f2\"],\n  \"units\": [{\"factIds\": [\"f0\"], \"subject\": \"keep\"}, {\"factIds\": [\"f1\"], \"subject\": \"omit\"}, {\"factIds\": [\"f2\"], \"subject\": \"keep\"}],\n  \"background\": [],\n  \"connections\": []\n}",
+   "A": "沈砚把潮汐簿缺的那页补全，指尖沾了墨，把簿子合上推到桌角。",
+   "plan": {
+    "paragraphs": [
+     "f0",
+     "f1",
+     "f2"
+    ],
+    "units": [
+     {
+      "factIds": [
+       "f0"
+      ],
+      "subject": "keep"
+     },
+     {
+      "factIds": [
+       "f1"
+      ],
+      "subject": "omit"
+     },
+     {
+      "factIds": [
+       "f2"
+      ],
+      "subject": "keep"
+     }
+    ],
+    "background": [],
+    "connections": []
+   },
+   "planValid": false,
+   "problems": [
+    "段落划分没有按顺序覆盖全部事实"
+   ],
+   "B": null
+  },
+  {
+   "sourceId": "t05",
+   "facts": [
+    {
+     "factId": "f0",
+     "name": "韩渡",
+     "kind": "outcome",
+     "factText": "把松脱的钟绳重新系紧",
+     "u240": "韩渡把松脱的钟绳重新系紧。"
+    },
+    {
+     "factId": "f1",
+     "name": "韩渡",
+     "kind": "outcome",
+     "factText": "把雾警钟敲响",
+     "u240": "韩渡把雾警钟敲响。"
+    },
+    {
+     "factId": "f2",
+     "name": "韩渡",
+     "kind": "appearance_changed",
+     "factText": "手背上沾着盐沫",
+     "u240": "韩渡的手背上沾着盐沫。"
+    }
+   ],
+   "relations": [],
+   "background": [
+    {
+     "fragmentId": "bg1",
+     "text": "雾堤",
+     "source": "地点"
+    },
+    {
+     "fragmentId": "bg2",
+     "text": "夜",
+     "source": "场景"
+    },
+    {
+     "fragmentId": "bg3",
+     "text": "浓雾",
+     "source": "场景"
+    },
+    {
+     "fragmentId": "bg4",
+     "text": "警示灯",
+     "source": "场景"
+    }
+   ],
+   "promptChars": 981,
+   "seconds": 1.87,
+   "raw": "{\n  \"paragraphs\": [\"f0\", \"f1\", \"f2\"],\n  \"units\": [{\"factIds\": [\"f0\", \"f1\"], \"subject\": \"keep\"}, {\"factIds\": [\"f2\"], \"subject\": \"omit\"}],\n  \"background\": [],\n  \"connections\": []\n}",
+   "A": "韩渡把松脱的钟绳重新系紧，把雾警钟敲响，手背上沾着盐沫。",
+   "plan": {
+    "paragraphs": [
+     "f0",
+     "f1",
+     "f2"
+    ],
+    "units": [
+     {
+      "factIds": [
+       "f0",
+       "f1"
+      ],
+      "subject": "keep"
+     },
+     {
+      "factIds": [
+       "f2"
+      ],
+      "subject": "omit"
+     }
+    ],
+    "background": [],
+    "connections": []
+   },
+   "planValid": false,
+   "problems": [
+    "段落划分没有按顺序覆盖全部事实"
+   ],
+   "B": null
+  },
+  {
+   "sourceId": "t19",
+   "facts": [
+    {
+     "factId": "f0",
+     "name": "阿棠",
+     "kind": "appearance_changed",
+     "factText": "袖口沾了鱼鳞",
+     "u240": "阿棠的袖口沾了鱼鳞。"
+    },
+    {
+     "factId": "f1",
+     "name": "沈砚",
+     "kind": "appearance_changed",
+     "factText": "外袍下摆沾了泥水",
+     "u240": "沈砚的外袍下摆沾了泥水。"
+    },
+    {
+     "factId": "f2",
+     "name": "阿棠",
+     "kind": "outcome",
+     "factText": "把银鳞鱼装进鱼筐",
+     "u240": "阿棠把银鳞鱼装进鱼筐。"
+    },
+    {
+     "factId": "f3",
+     "name": "沈砚",
+     "kind": "outcome",
+     "factText": "把油纸伞收拢靠在摊棚边",
+     "u240": "沈砚把油纸伞收拢靠在摊棚边。"
+    }
+   ],
+   "relations": [],
+   "background": [
+    {
+     "fragmentId": "bg1",
+     "text": "早市",
+     "source": "地点"
+    },
+    {
+     "fragmentId": "bg2",
+     "text": "清晨",
+     "source": "场景"
+    },
+    {
+     "fragmentId": "bg3",
+     "text": "薄雾",
+     "source": "场景"
+    },
+    {
+     "fragmentId": "bg4",
+     "text": "棚下散光",
+     "source": "场景"
+    }
+   ],
+   "promptChars": 1025,
+   "seconds": 2.03,
+   "raw": "{\n  \"paragraphs\": [\"f0\", \"f1\", \"f2\", \"f3\"],\n  \"units\": [{\"factIds\": [\"f0\", \"f1\"], \"subject\": \"keep\"}, {\"factIds\": [\"f2\", \"f3\"], \"subject\": \"keep\"}],\n  \"background\": [],\n  \"connections\": []\n}",
+   "A": "阿棠的袖口沾了鱼鳞。沈砚的外袍下摆沾了泥水。阿棠把银鳞鱼装进鱼筐。沈砚把油纸伞收拢靠在摊棚边。",
+   "plan": {
+    "paragraphs": [
+     "f0",
+     "f1",
+     "f2",
+     "f3"
+    ],
+    "units": [
+     {
+      "factIds": [
+       "f0",
+       "f1"
+      ],
+      "subject": "keep"
+     },
+     {
+      "factIds": [
+       "f2",
+       "f3"
+      ],
+      "subject": "keep"
+     }
+    ],
+    "background": [],
+    "connections": []
+   },
+   "planValid": false,
+   "problems": [
+    "跨主体合并：['f0', 'f1']",
+    "跨主体合并：['f2', 'f3']",
+    "段落划分没有按顺序覆盖全部事实"
+   ],
+   "B": null
+  },
+  {
+   "sourceId": "double-d010",
+   "facts": [
+    {
+     "factId": "f0",
+     "name": "沈砚",
+     "kind": "appearance_changed",
+     "factText": "衣领湿了，肩头也湿了",
+     "u240": "沈砚的衣领湿了,肩头也湿了。"
+    }
+   ],
+   "relations": [],
+   "background": [
+    {
+     "fragmentId": "bg1",
+     "text": "潮汐档案馆",
+     "source": "地点"
+    },
+    {
+     "fragmentId": "bg2",
+     "text": "夜",
+     "source": "场景"
+    },
+    {
+     "fragmentId": "bg3",
+     "text": "浓雾",
+     "source": "场景"
+    }
+   ],
+   "promptChars": 899,
+   "seconds": 1.22,
+   "raw": "{\n  \"paragraphs\": [\"f0\"],\n  \"units\": [{\"factIds\": [\"f0\"], \"subject\": \"keep\"}],\n  \"background\": [],\n  \"connections\": []\n}",
+   "A": "沈砚的衣领湿了，肩头也湿了。",
+   "plan": {
+    "paragraphs": [
+     "f0"
+    ],
+    "units": [
+     {
+      "factIds": [
+       "f0"
+      ],
+      "subject": "keep"
+     }
+    ],
+    "background": [],
+    "connections": []
+   },
+   "planValid": false,
+   "problems": [
+    "段落划分没有按顺序覆盖全部事实"
+   ],
+   "B": null
+  },
+  {
+   "sourceId": "double-d011",
+   "facts": [
+    {
+     "factId": "f0",
+     "name": "顾行舟",
+     "kind": "appearance_changed",
+     "factText": "手背沾了泥，帽檐也沾了泥",
+     "u240": "顾行舟的手背沾了泥,帽檐也沾了泥。"
+    }
+   ],
+   "relations": [],
+   "background": [
+    {
+     "fragmentId": "bg1",
+     "text": "潮汐档案馆",
+     "source": "地点"
+    },
+    {
+     "fragmentId": "bg2",
+     "text": "夜",
+     "source": "场景"
+    },
+    {
+     "fragmentId": "bg3",
+     "text": "浓雾",
+     "source": "场景"
+    }
+   ],
+   "promptChars": 905,
+   "seconds": 1.19,
+   "raw": "{\n  \"paragraphs\": [\"f0\"],\n  \"units\": [{\"factIds\": [\"f0\"], \"subject\": \"keep\"}],\n  \"background\": [],\n  \"connections\": []\n}",
+   "A": "顾行舟的手背沾了泥，帽檐也沾了泥。",
+   "plan": {
+    "paragraphs": [
+     "f0"
+    ],
+    "units": [
+     {
+      "factIds": [
+       "f0"
+      ],
+      "subject": "keep"
+     }
+    ],
+    "background": [],
+    "connections": []
+   },
+   "planValid": false,
+   "problems": [
+    "段落划分没有按顺序覆盖全部事实"
+   ],
+   "B": null
+  }
+ ]
+}

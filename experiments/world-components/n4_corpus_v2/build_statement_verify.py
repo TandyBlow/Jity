@@ -22,13 +22,17 @@ sys.path.insert(0, str(HERE))
 
 from build_n5_pairs import fact_desc, group_sentence_spans  # noqa: E402
 
-ROOT = pathlib.Path('D:/others/Jity')
-OUT_DIR = ROOT / 'artifacts' / 'statement-verification'
+import sys as _paths_sys
+_paths_sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
+from component_paths import PATHS
+
+ROOT = PATHS.worktree
+OUT_DIR = PATHS.output('statement-verification')
 PAIRS = OUT_DIR / 'pairs-v1.jsonl'
 REGRESSION = OUT_DIR / 'regression-v1.jsonl'
 FREEZE = OUT_DIR / 'split-freeze.json'
 AUDIT = OUT_DIR / 'audit.json'
-A1 = ROOT / 'artifacts' / 'cohesion-split' / 'a1.jsonl'
+A1 = PATHS.input('cohesion-split/a1.jsonl')
 
 NAMES = ['祁岸', '苏禾', '陆行', '白棠', '顾临', '叶舟', '江晚', '程野',
          '许棠', '韩青', '温砚', '沈川', '林渡', '谢迟', '商陆', '闻溪',

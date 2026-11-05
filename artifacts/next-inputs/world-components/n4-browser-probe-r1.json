@@ -1,0 +1,103 @@
+{
+ "purpose": "N4 browser minimal-feasibility probe (batch 1): frozen r3-direction T5 encoder-decoder ONNX graphs on ORT-web single-thread wasm in headless Chromium; token-id parity against the ORT-python greedy reference per case",
+ "environment": {
+  "onnxruntimeWeb": {
+   "ortWebVersion": "1.30.0"
+  },
+  "execution": "wasm, numThreads=1 (documented single-thread constraint)",
+  "browser": "playwright chromium (headless)",
+  "graphs": {
+   "encoder.onnx": 142418864,
+   "decoder_step.onnx": 234486157
+  },
+  "fp32": true,
+  "note": "int8 quantization and JS sentencepiece belong to the later adaptation batch; localhost static server, so load times are not network-representative"
+ },
+ "result": {
+  "ortVersion": null,
+  "numThreads": 1,
+  "sessionLoadMs": 7029.8,
+  "cases": [
+   {
+    "name": "n4h-loc-01",
+    "scope": "frozen-holdout",
+    "matched": true,
+    "browserIdCount": 16,
+    "referenceIdCount": 16,
+    "encoderMs": 357.7,
+    "generationMs": 1910.4,
+    "meanStepMs": 112.4,
+    "steps": 17
+   },
+   {
+    "name": "n4h-empty-01",
+    "scope": "frozen-holdout",
+    "matched": true,
+    "browserIdCount": 10,
+    "referenceIdCount": 10,
+    "encoderMs": 108.3,
+    "generationMs": 918.4,
+    "meanStepMs": 83.5,
+    "steps": 11
+   },
+   {
+    "name": "n4h-task-01",
+    "scope": "frozen-holdout",
+    "matched": true,
+    "browserIdCount": 20,
+    "referenceIdCount": 20,
+    "encoderMs": 161.7,
+    "generationMs": 2893.1,
+    "meanStepMs": 137.8,
+    "steps": 21
+   },
+   {
+    "name": "n4h-chain-01",
+    "scope": "frozen-holdout",
+    "matched": true,
+    "browserIdCount": 33,
+    "referenceIdCount": 33,
+    "encoderMs": 268.1,
+    "generationMs": 6598.6,
+    "meanStepMs": 194.1,
+    "steps": 34
+   },
+   {
+    "name": "synthetic-ext-1",
+    "scope": "batch1-extension",
+    "matched": true,
+    "browserIdCount": 16,
+    "referenceIdCount": 16,
+    "encoderMs": 141.3,
+    "generationMs": 1874.3,
+    "meanStepMs": 110.3,
+    "steps": 17
+   },
+   {
+    "name": "synthetic-ext-2",
+    "scope": "batch1-extension",
+    "matched": true,
+    "browserIdCount": 11,
+    "referenceIdCount": 11,
+    "encoderMs": 98.4,
+    "generationMs": 1076,
+    "meanStepMs": 89.7,
+    "steps": 12
+   },
+   {
+    "name": "synthetic-ext-3",
+    "scope": "batch1-extension",
+    "matched": true,
+    "browserIdCount": 10,
+    "referenceIdCount": 10,
+    "encoderMs": 107.7,
+    "generationMs": 884.9,
+    "meanStepMs": 80.4,
+    "steps": 11
+   }
+  ],
+  "allMatched": true
+ },
+ "wallMs": 24848,
+ "pass": true
+}

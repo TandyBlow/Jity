@@ -1,0 +1,112 @@
+{
+ "base": {
+  "object18": {
+   "facts": {
+    "O": 5,
+    "S": 11,
+    "A": 2
+   },
+   "total": 18,
+   "clean": 11,
+   "sources": 18
+  },
+  "expand36": {
+   "facts": {
+    "S": 34,
+    "A": 2
+   },
+   "total": 36,
+   "clean": 34,
+   "sources": 36
+  },
+  "final24": {
+   "facts": {
+    "S": 67,
+    "A": 7,
+    "O": 2
+   },
+   "total": 76,
+   "clean": 16,
+   "sources": 24
+  },
+  "cf24": {
+   "facts": {
+    "S": 77,
+    "A": 6,
+    "O": 2
+   },
+   "total": 85,
+   "clean": 17,
+   "sources": 24
+  }
+ },
+ "422": {
+  "object18": {
+   "facts": {
+    "S": 18
+   },
+   "total": 18,
+   "clean": 18,
+   "sources": 18
+  },
+  "expand36": {
+   "facts": {
+    "S": 36
+   },
+   "total": 36,
+   "clean": 36,
+   "sources": 36
+  },
+  "final24": {
+   "facts": {
+    "S": 76
+   },
+   "total": 76,
+   "clean": 24,
+   "sources": 24
+  },
+  "cf24": {
+   "facts": {
+    "S": 83,
+    "O": 2
+   },
+   "total": 85,
+   "clean": 22,
+   "sources": 24
+  }
+ },
+ "431": {
+  "object18": {
+   "facts": {
+    "S": 18
+   },
+   "total": 18,
+   "clean": 18,
+   "sources": 18
+  },
+  "expand36": {
+   "facts": {
+    "S": 36
+   },
+   "total": 36,
+   "clean": 36,
+   "sources": 36
+  },
+  "final24": {
+   "facts": {
+    "S": 76
+   },
+   "total": 76,
+   "clean": 24,
+   "sources": 24
+  },
+  "cf24": {
+   "facts": {
+    "S": 85
+   },
+   "total": 85,
+   "clean": 24,
+   "sources": 24
+  }
+ }
+}

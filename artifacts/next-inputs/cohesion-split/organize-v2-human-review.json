@@ -1,0 +1,122 @@
+[
+  {
+    "sourceId": "fixture-r1",
+    "textVerdict": "fail",
+    "gain": "变差",
+    "note": "把关系目标 f3 与 f4 合并，f4 主语省略；“随后”被去掉。"
+  },
+  {
+    "sourceId": "fixture-r2",
+    "textVerdict": "fail",
+    "gain": "变差",
+    "note": "把 f2/f3 端点并进同一句，f4 主语省略；“随后”被去掉。"
+  },
+  {
+    "sourceId": "fixture-r3",
+    "textVerdict": "fail",
+    "gain": "变差",
+    "note": "把 f2/f3 端点并进同一句，f4 主语省略；“随后”被去掉。"
+  },
+  {
+    "sourceId": "fixture-r4",
+    "textVerdict": "fail",
+    "gain": "变差",
+    "note": "把 f2/f3 端点并进同一句，f4 主语省略；“随后”被去掉。"
+  },
+  {
+    "sourceId": "fixture-r5",
+    "textVerdict": "fail",
+    "gain": "变差",
+    "note": "把 f2/f3 端点并进同一句，f4 主语省略；“随后”被去掉。"
+  },
+  {
+    "sourceId": "train-r1",
+    "textVerdict": "fail",
+    "gain": "变差",
+    "note": "把关系目标 f3 与 f4 合并，f4 主语省略；“随后”被去掉。"
+  },
+  {
+    "sourceId": "train-r2",
+    "textVerdict": "fail",
+    "gain": "变差",
+    "note": "把 f2/f3 端点并进同一句；“随后”被挪到 f4 前，关系范围改变。"
+  },
+  {
+    "sourceId": "train-r3",
+    "textVerdict": "fail",
+    "gain": "变差",
+    "note": "端点合并；把 f4 的“沾了铜油”接到顾行舟身上，主体/对象被换；跳过了 f2。"
+  },
+  {
+    "sourceId": "train-r4",
+    "textVerdict": "fail",
+    "gain": "变差",
+    "note": "把 f2/f3 端点并进同一句，f4 主语省略；“随后”被去掉。"
+  },
+  {
+    "sourceId": "train-r5",
+    "textVerdict": "fail",
+    "gain": "变差",
+    "note": "把 f2/f3/f4 并成一句，端点句界被跨过，f4 主语省略。"
+  },
+  {
+    "sourceId": "v01",
+    "textVerdict": "fail",
+    "gain": "变差",
+    "note": "同主体 coord 跳过 f2；把“袖口沾了盐沫”改成“把袖口沾了盐沫”，谓词/对象关系变了。"
+  },
+  {
+    "sourceId": "v02",
+    "textVerdict": "pass",
+    "gain": "持平",
+    "note": "没有操作，文本与 A1 相同。"
+  },
+  {
+    "sourceId": "v03",
+    "textVerdict": "review",
+    "gain": "持平",
+    "note": "只把 no_change 事实的逗号改成分号；账本标成 recast 并漏 f2、多 f0。"
+  },
+  {
+    "sourceId": "v05",
+    "textVerdict": "review",
+    "gain": "持平",
+    "note": "第二处把人物与场景物件并成一句；复核未发现新增关系、改变归属或歧义，不判硬违规；账本 seg 漏 f3 仍是账本错误。"
+  },
+  {
+    "sourceId": "v06",
+    "textVerdict": "pass",
+    "gain": "略有改善",
+    "note": "把 f0/f1 两个主体并列成一句，文本合法；但账本标成 recast 多事实。"
+  },
+  {
+    "sourceId": "t01",
+    "textVerdict": "pass",
+    "gain": "略有改善",
+    "note": "分号后省略主语；全段仅沈砚，主体唯一可恢复，不判残句。账本标成 coord 同主体并漏 f1，仍是账本错误。"
+  },
+  {
+    "sourceId": "t05",
+    "textVerdict": "review",
+    "gain": "持平",
+    "note": "分号后“手背上沾着盐沫”省略了“韩渡的”；文本可读，但账本标成 coord 同主体并漏 f2。"
+  },
+  {
+    "sourceId": "t19",
+    "textVerdict": "pass",
+    "gain": "略有改善",
+    "note": "两处跨主体并列都合法，文本接近目标；但没有背景；账本标成 recast 多事实。"
+  },
+  {
+    "sourceId": "double-d010",
+    "textVerdict": "pass",
+    "gain": "持平",
+    "note": "没有操作，文本与 A1 相同。"
+  },
+  {
+    "sourceId": "double-d011",
+    "textVerdict": "pass",
+    "gain": "持平",
+    "note": "没有操作，文本与 A1 相同。"
+  }
+]

@@ -1,0 +1,24 @@
+{
+  "model": "qwen2.5:7b",
+  "promptVersion": "semantic-correct/1",
+  "a1Sha256": "e3c470b171e1d02430c33b86765796239d90f847c453023ddd7ec782e144c546",
+  "sourceCount": 20,
+  "parseOk": 20,
+  "parseFail": 0,
+  "statusCounts": {
+    "pending": 12,
+    "deleted": 5,
+    "keep": 3
+  },
+  "proposedCount": 17,
+  "appliedCount": 5,
+  "flagCounts": {
+    "ambiguous-span": 3,
+    "span-not-found": 3,
+    "missing-final-period": 1,
+    "fact-coverage-drop:f3": 2,
+    "fact-coverage-drop:f1": 3
+  },
+  "totalSeconds": 38.56,
+  "meanSeconds": 1.93
+}

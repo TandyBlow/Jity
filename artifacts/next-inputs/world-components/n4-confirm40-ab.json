@@ -1,0 +1,477 @@
+{
+ "purpose": "确认集 40：冻结基线 vs 扩容臂（同一输入、同一生成配置）",
+ "base": {
+  "verdicts": {
+   "S": 37,
+   "O": 1,
+   "C": 0,
+   "A": 2
+  },
+  "clean": 37
+ },
+ "expand": {
+  "verdicts": {
+   "S": 40,
+   "O": 0,
+   "C": 0,
+   "A": 0
+  },
+  "clean": 40
+ },
+ "paired": {
+  "base_wrong_expand_right": [
+   "ca4B",
+   "cb3B",
+   "cd2B"
+  ],
+  "base_right_expand_wrong": [],
+  "both_wrong": [],
+  "both_right": [
+   "ca1A",
+   "ca1B",
+   "ca2A",
+   "ca2B",
+   "ca3A",
+   "ca3B",
+   "ca4A",
+   "cb1A",
+   "cb1B",
+   "cb2A",
+   "cb2B",
+   "cb3A",
+   "cb4A",
+   "cb4B",
+   "cc1A",
+   "cc1B",
+   "cc2A",
+   "cc2B",
+   "cc3A",
+   "cc3B",
+   "cc4A",
+   "cc4B",
+   "cd1A",
+   "cd1B",
+   "cd2A",
+   "cd3A",
+   "cd3B",
+   "cd4A",
+   "cd4B",
+   "ce1A",
+   "ce1B",
+   "ce2A",
+   "ce2B",
+   "ce3A",
+   "ce3B",
+   "ce4A",
+   "ce4B"
+  ]
+ },
+ "rows": [
+  {
+   "unitId": "ca1A",
+   "category": "action_actor",
+   "base": "S",
+   "expand": "S",
+   "base_unsupported": [],
+   "expand_unsupported": [],
+   "base_clean": true,
+   "expand_clean": true
+  },
+  {
+   "unitId": "ca1B",
+   "category": "action_actor",
+   "base": "S",
+   "expand": "S",
+   "base_unsupported": [],
+   "expand_unsupported": [],
+   "base_clean": true,
+   "expand_clean": true
+  },
+  {
+   "unitId": "ca2A",
+   "category": "action_actor",
+   "base": "S",
+   "expand": "S",
+   "base_unsupported": [],
+   "expand_unsupported": [],
+   "base_clean": true,
+   "expand_clean": true
+  },
+  {
+   "unitId": "ca2B",
+   "category": "action_actor",
+   "base": "S",
+   "expand": "S",
+   "base_unsupported": [],
+   "expand_unsupported": [],
+   "base_clean": true,
+   "expand_clean": true
+  },
+  {
+   "unitId": "ca3A",
+   "category": "action_actor",
+   "base": "S",
+   "expand": "S",
+   "base_unsupported": [],
+   "expand_unsupported": [],
+   "base_clean": true,
+   "expand_clean": true
+  },
+  {
+   "unitId": "ca3B",
+   "category": "action_actor",
+   "base": "S",
+   "expand": "S",
+   "base_unsupported": [],
+   "expand_unsupported": [],
+   "base_clean": true,
+   "expand_clean": true
+  },
+  {
+   "unitId": "ca4A",
+   "category": "action_actor",
+   "base": "S",
+   "expand": "S",
+   "base_unsupported": [],
+   "expand_unsupported": [],
+   "base_clean": true,
+   "expand_clean": true
+  },
+  {
+   "unitId": "ca4B",
+   "category": "action_actor",
+   "base": "A",
+   "expand": "S",
+   "base_unsupported": [
+    "阿棠把案板擦干净（应为顾行舟）"
+   ],
+   "expand_unsupported": [],
+   "base_clean": false,
+   "expand_clean": true
+  },
+  {
+   "unitId": "cb1A",
+   "category": "owner",
+   "base": "S",
+   "expand": "S",
+   "base_unsupported": [],
+   "expand_unsupported": [],
+   "base_clean": true,
+   "expand_clean": true
+  },
+  {
+   "unitId": "cb1B",
+   "category": "owner",
+   "base": "S",
+   "expand": "S",
+   "base_unsupported": [],
+   "expand_unsupported": [],
+   "base_clean": true,
+   "expand_clean": true
+  },
+  {
+   "unitId": "cb2A",
+   "category": "owner",
+   "base": "S",
+   "expand": "S",
+   "base_unsupported": [],
+   "expand_unsupported": [],
+   "base_clean": true,
+   "expand_clean": true
+  },
+  {
+   "unitId": "cb2B",
+   "category": "owner",
+   "base": "S",
+   "expand": "S",
+   "base_unsupported": [],
+   "expand_unsupported": [],
+   "base_clean": true,
+   "expand_clean": true
+  },
+  {
+   "unitId": "cb3A",
+   "category": "owner",
+   "base": "S",
+   "expand": "S",
+   "base_unsupported": [],
+   "expand_unsupported": [],
+   "base_clean": true,
+   "expand_clean": true
+  },
+  {
+   "unitId": "cb3B",
+   "category": "owner",
+   "base": "A",
+   "expand": "S",
+   "base_unsupported": [
+    "韩渡抹了一把眉毛（应为沈砚）"
+   ],
+   "expand_unsupported": [],
+   "base_clean": false,
+   "expand_clean": true
+  },
+  {
+   "unitId": "cb4A",
+   "category": "owner",
+   "base": "S",
+   "expand": "S",
+   "base_unsupported": [],
+   "expand_unsupported": [],
+   "base_clean": true,
+   "expand_clean": true
+  },
+  {
+   "unitId": "cb4B",
+   "category": "owner",
+   "base": "S",
+   "expand": "S",
+   "base_unsupported": [],
+   "expand_unsupported": [],
+   "base_clean": true,
+   "expand_clean": true
+  },
+  {
+   "unitId": "cc1A",
+   "category": "container",
+   "base": "S",
+   "expand": "S",
+   "base_unsupported": [],
+   "expand_unsupported": [],
+   "base_clean": true,
+   "expand_clean": true
+  },
+  {
+   "unitId": "cc1B",
+   "category": "container",
+   "base": "S",
+   "expand": "S",
+   "base_unsupported": [],
+   "expand_unsupported": [],
+   "base_clean": true,
+   "expand_clean": true
+  },
+  {
+   "unitId": "cc2A",
+   "category": "container",
+   "base": "S",
+   "expand": "S",
+   "base_unsupported": [],
+   "expand_unsupported": [],
+   "base_clean": true,
+   "expand_clean": true
+  },
+  {
+   "unitId": "cc2B",
+   "category": "container",
+   "base": "S",
+   "expand": "S",
+   "base_unsupported": [],
+   "expand_unsupported": [],
+   "base_clean": true,
+   "expand_clean": true
+  },
+  {
+   "unitId": "cc3A",
+   "category": "container",
+   "base": "S",
+   "expand": "S",
+   "base_unsupported": [],
+   "expand_unsupported": [],
+   "base_clean": true,
+   "expand_clean": true
+  },
+  {
+   "unitId": "cc3B",
+   "category": "container",
+   "base": "S",
+   "expand": "S",
+   "base_unsupported": [],
+   "expand_unsupported": [],
+   "base_clean": true,
+   "expand_clean": true
+  },
+  {
+   "unitId": "cc4A",
+   "category": "container",
+   "base": "S",
+   "expand": "S",
+   "base_unsupported": [],
+   "expand_unsupported": [],
+   "base_clean": true,
+   "expand_clean": true
+  },
+  {
+   "unitId": "cc4B",
+   "category": "container",
+   "base": "S",
+   "expand": "S",
+   "base_unsupported": [],
+   "expand_unsupported": [],
+   "base_clean": true,
+   "expand_clean": true
+  },
+  {
+   "unitId": "cd1A",
+   "category": "binding",
+   "base": "S",
+   "expand": "S",
+   "base_unsupported": [],
+   "expand_unsupported": [],
+   "base_clean": true,
+   "expand_clean": true
+  },
+  {
+   "unitId": "cd1B",
+   "category": "binding",
+   "base": "S",
+   "expand": "S",
+   "base_unsupported": [],
+   "expand_unsupported": [],
+   "base_clean": true,
+   "expand_clean": true
+  },
+  {
+   "unitId": "cd2A",
+   "category": "binding",
+   "base": "S",
+   "expand": "S",
+   "base_unsupported": [],
+   "expand_unsupported": [],
+   "base_clean": true,
+   "expand_clean": true
+  },
+  {
+   "unitId": "cd2B",
+   "category": "binding",
+   "base": "O",
+   "expand": "S",
+   "base_unsupported": [
+    "把缆绳绕在石阶上：栏杆这一对象缺失"
+   ],
+   "expand_unsupported": [],
+   "base_clean": false,
+   "expand_clean": true
+  },
+  {
+   "unitId": "cd3A",
+   "category": "binding",
+   "base": "S",
+   "expand": "S",
+   "base_unsupported": [],
+   "expand_unsupported": [],
+   "base_clean": true,
+   "expand_clean": true
+  },
+  {
+   "unitId": "cd3B",
+   "category": "binding",
+   "base": "S",
+   "expand": "S",
+   "base_unsupported": [],
+   "expand_unsupported": [],
+   "base_clean": true,
+   "expand_clean": true
+  },
+  {
+   "unitId": "cd4A",
+   "category": "binding",
+   "base": "S",
+   "expand": "S",
+   "base_unsupported": [],
+   "expand_unsupported": [],
+   "base_clean": true,
+   "expand_clean": true
+  },
+  {
+   "unitId": "cd4B",
+   "category": "binding",
+   "base": "S",
+   "expand": "S",
+   "base_unsupported": [],
+   "expand_unsupported": [],
+   "base_clean": true,
+   "expand_clean": true
+  },
+  {
+   "unitId": "ce1A",
+   "category": "change_nochange",
+   "base": "S",
+   "expand": "S",
+   "base_unsupported": [],
+   "expand_unsupported": [],
+   "base_clean": true,
+   "expand_clean": true
+  },
+  {
+   "unitId": "ce1B",
+   "category": "change_nochange",
+   "base": "S",
+   "expand": "S",
+   "base_unsupported": [],
+   "expand_unsupported": [],
+   "base_clean": true,
+   "expand_clean": true
+  },
+  {
+   "unitId": "ce2A",
+   "category": "change_nochange",
+   "base": "S",
+   "expand": "S",
+   "base_unsupported": [],
+   "expand_unsupported": [],
+   "base_clean": true,
+   "expand_clean": true
+  },
+  {
+   "unitId": "ce2B",
+   "category": "change_nochange",
+   "base": "S",
+   "expand": "S",
+   "base_unsupported": [],
+   "expand_unsupported": [],
+   "base_clean": true,
+   "expand_clean": true
+  },
+  {
+   "unitId": "ce3A",
+   "category": "change_nochange",
+   "base": "S",
+   "expand": "S",
+   "base_unsupported": [],
+   "expand_unsupported": [],
+   "base_clean": true,
+   "expand_clean": true
+  },
+  {
+   "unitId": "ce3B",
+   "category": "change_nochange",
+   "base": "S",
+   "expand": "S",
+   "base_unsupported": [],
+   "expand_unsupported": [],
+   "base_clean": true,
+   "expand_clean": true
+  },
+  {
+   "unitId": "ce4A",
+   "category": "change_nochange",
+   "base": "S",
+   "expand": "S",
+   "base_unsupported": [],
+   "expand_unsupported": [],
+   "base_clean": true,
+   "expand_clean": true
+  },
+  {
+   "unitId": "ce4B",
+   "category": "change_nochange",
+   "base": "S",
+   "expand": "S",
+   "base_unsupported": [],
+   "expand_unsupported": [],
+   "base_clean": true,
+   "expand_clean": true
+  }
+ ]
+}

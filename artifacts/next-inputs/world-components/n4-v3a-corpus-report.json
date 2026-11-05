@@ -1,0 +1,38 @@
+{
+ "purpose": "N4 v3a corpus: same v2 facts/worlds, current N3 guard-on plans, old one-fact-per-sentence targets",
+ "scope": "derived corpus for the N4 optimization experiment; family-C rows are reused from v2 and are not a new independent holdout",
+ "source": {
+  "train": "n4_corpus_v2/corpus_v2/train-v2.jsonl",
+  "holdout": "n4_corpus_v2/corpus_v2/holdout-v2.jsonl",
+  "trainSha256": "ba7464fb01408a4bf79e53cc0782fb254af27e96a6bf7bc7ce8b4ed2e420cdd0",
+  "holdoutSha256": "897dfd706b4f916ca630473a588430a4cb9ca5b91271916eeafe5cac99bb56c5"
+ },
+ "counts": {
+  "trainDev": 514,
+  "test": 66,
+  "droppedPositionedAt": 886
+ },
+ "targetStyle": {
+  "v2": {
+   "meanSentencesPerGroup": 1.35,
+   "meanFactsPerSentence": 1.326,
+   "sentences": 193
+  },
+  "v3": {
+   "meanSentencesPerGroup": 1.667,
+   "meanFactsPerSentence": 1.504,
+   "sentences": 125
+  },
+  "trainRowsWithFewerSentences": 468
+ },
+ "freeze": {
+  "freeze": "n4-v3a-holdout (N4 alignment ablation) -- family-C rows REUSED from the v2 frozen holdout with N3 guard-on plans and the merged-target composer; frozen before any v3 training run. This is a direct A/B comparison, not a new independent holdout.",
+  "file": "holdout-v3.jsonl",
+  "rows": 66,
+  "familyId": "v2-c-salt",
+  "sha256": "9fbbd136e0bcae88d04dafe39d7732f6160ab3245b7a0bcc2499f4d9ca98fc4a",
+  "source": "experiments/world-components/n4_corpus_v2/corpus_v2/holdout-v2.jsonl",
+  "sourceSha256": "897dfd706b4f916ca630473a588430a4cb9ca5b91271916eeafe5cac99bb56c5",
+  "criteria": "same G1/G2/G3/G4/G5/G6 and P1/P2 machinery as eval_n4_v2.py; reused test family"
+ }
+}

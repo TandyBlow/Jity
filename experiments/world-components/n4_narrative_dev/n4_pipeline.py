@@ -15,6 +15,8 @@ import time
 
 HERE = pathlib.Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
+sys.path.insert(0, str(HERE.parent))
+from component_paths import PATHS  # noqa: E402
 import fact_contract as FC  # noqa: E402
 from conservative_edit import VERSION as EDIT_VERSION, edit_source  # noqa: E402
 from relation_edit import (CONNECTOR, VALIDATOR, VERSION as RELATION_VERSION,  # noqa: E402
@@ -206,11 +208,15 @@ def two_layer_edit(units, verdict, person_names=None):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--round', required=True)
-    parser.add_argument('--ckpt', required=True)
+    parser.add_argument('--model', '--ckpt', dest='ckpt', default=None)
     parser.add_argument('--out', required=True)
     parser.add_argument('--budget', type=float, default=20.0)
     parser.add_argument('--timeout-fact', default=None)
     args = parser.parse_args()
+    args.ckpt = str(PATHS.model(args.ckpt))
+    args.round = str(PATHS.input(args.round))
+    args.out = str(PATHS.output(args.out))
+    pathlib.Path(args.out).parent.mkdir(parents=True, exist_ok=True)
 
     result = {'pipeline': PIPELINE_VERSION, 'components': {
         'factContract': 'fact_contract.py', 'validator': VALIDATOR,

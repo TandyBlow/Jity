@@ -1,0 +1,10 @@
+{
+ "file": "confirm40.json",
+ "sha256": "1fd89415e9f8456509e375a0aa4ae4054254170e492b7777aca798a750041628",
+ "counts": {
+  "single": 10,
+  "double": 10,
+  "moved": 10,
+  "object": 10
+ }
+}

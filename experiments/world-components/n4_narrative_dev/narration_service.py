@@ -20,7 +20,9 @@ import time
 
 HERE = pathlib.Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
-ROOT = HERE.parents[2]
+sys.path.insert(0, str(HERE.parent))
+from component_paths import PATHS  # noqa: E402
+ROOT = PATHS.worktree
 sys.path.insert(0, str(ROOT / 'backend'))
 
 import fact_contract as FC  # noqa: E402
@@ -41,6 +43,8 @@ class Engine:
     """Loads u240 once and answers one request at a time."""
 
     def __init__(self, model_dir, rounds_dir):
+        model_dir = PATHS.model(model_dir)
+        rounds_dir = PATHS.input(rounds_dir)
         import torch
         from transformers.models.t5.modeling_t5 import T5ForConditionalGeneration
         from transformers.models.t5.tokenization_t5 import T5Tokenizer
@@ -77,9 +81,12 @@ class Engine:
                       for p in self.rounds_dir.glob('*-authorized.json'))
 
     def load_round(self, round_id):
-        path = self.rounds_dir / f'{round_id}-authorized.json'
-        if not path.exists():
+        if not round_id or any(char in round_id for char in ('/', '\\', ':')):
             raise KeyError(round_id)
+        try:
+            path = PATHS.input(self.rounds_dir / f'{round_id}-authorized.json')
+        except FileNotFoundError:
+            raise KeyError(round_id) from None
         return json.loads(path.read_text(encoding='utf-8'))
 
     # ---- generation -----------------------------------------------------
@@ -292,8 +299,8 @@ def create_app(engine):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--model', default=str(ROOT / '.local' / 'models'))
-    parser.add_argument('--rounds', default=str(ROOT / 'artifacts' / 'world-provenance'))
+    parser.add_argument('--model', default=None, help='Read-only local checkpoint; fallback: N4_MODEL_DIR')
+    parser.add_argument('--rounds', default='world-provenance/pairs', help='Directory in the pinned input snapshot')
     parser.add_argument('--host', default='127.0.0.1')
     parser.add_argument('--port', type=int, default=8031)
     args = parser.parse_args()

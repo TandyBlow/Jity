@@ -96,3 +96,17 @@
 "two_arm_data.py" -text
 "verify_beam_cache.py" -text
 "verify_sequence_policy.py" -text
+
+# New development sources retain their authored bytes.
+smoke_component_runtime.py -text
+build_decode_confirm.py whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+decode_compare.py whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+n4_pipeline.py whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+narration_service.py whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+run_cohesion_split.py whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+run_organize_v2.py whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+run_planner_split.py whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+run_semantic_correct.py whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+score_cohesion_split.py whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+score_decode_compare.py whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+score_split_dw.py whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol

@@ -1,0 +1,4533 @@
+{
+ "greedy": {
+  "support": 213,
+  "binding": 0,
+  "direction": 2,
+  "repeat": 0,
+  "extra": 42
+ },
+ "beam": {
+  "support": 215,
+  "binding": 0,
+  "direction": 4,
+  "repeat": 0,
+  "extra": 37
+ },
+ "details": [
+  {
+   "caseId": "v01:f0",
+   "group": "moved",
+   "fact": "沈砚｜移动｜潮渡→雾堤",
+   "greedy": {
+    "text": "沈砚从潮渡上来,蹲到雾堤的钟架下。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "潮渡来,蹲雾堤"
+   },
+   "beam": {
+    "text": "沈砚从潮渡上来,走进雾堤。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "潮渡来,走进雾堤"
+   }
+  },
+  {
+   "caseId": "v01:f1",
+   "group": "outcome",
+   "fact": "韩渡｜结果｜把松脱的钟绳重新系紧",
+   "greedy": {
+    "text": "韩渡把松脱的钟绳重新系紧,钟绳绷直了。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ",绷直"
+   },
+   "beam": {
+    "text": "韩渡把松脱的钟绳重新系紧。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "v01:f2",
+   "group": "outcome",
+   "fact": "沈砚｜结果｜把警示灯扶正",
+   "greedy": {
+    "text": "沈砚把警示灯扶正。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "沈砚把警示灯扶正。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "v01:f3",
+   "group": "appearance_changed",
+   "fact": "韩渡｜外貌变化｜袖口沾了盐沫",
+   "greedy": {
+    "text": "韩渡的袖口沾了盐沫。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "韩渡的袖口沾了盐沫。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "v02:f0",
+   "group": "outcome",
+   "fact": "阿棠｜结果｜把银鳞鱼按大小分开装进鱼筐",
+   "greedy": {
+    "text": "阿棠把银鳞鱼按大小分开装进鱼筐。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "阿棠把银鳞鱼按大小分开装进鱼筐。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "v02:f1",
+   "group": "outcome",
+   "fact": "顾行舟｜结果｜把抹布拧干",
+   "greedy": {
+    "text": "顾行舟把抹布拧干。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "顾行舟把抹布拧干。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "v02:f2",
+   "group": "appearance_changed",
+   "fact": "顾行舟｜外貌变化｜手背上沾了鱼鳞",
+   "greedy": {
+    "text": "顾行舟的手背上沾了鱼鳞。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "顾行舟的手背上沾了鱼鳞。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "v03:f0",
+   "group": "outcome",
+   "fact": "沈砚｜结果｜把潮汐簿缺的那页补全",
+   "greedy": {
+    "text": "沈砚把潮汐簿缺的那页补全。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "沈砚把潮汐簿缺的那页补全。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "v03:f1",
+   "group": "outcome",
+   "fact": "叶知微｜结果｜把干纸码成一小摞",
+   "greedy": {
+    "text": "叶知微把干纸码成一小摞。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "叶知微把干纸码成一小摞。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "v03:f2",
+   "group": "appearance_changed",
+   "fact": "叶知微｜外貌变化｜指尖沾了墨",
+   "greedy": {
+    "text": "叶知微的指尖沾了墨。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "叶知微的指尖沾了墨。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "v03:f3",
+   "group": "no_change",
+   "fact": "场景｜无变化",
+   "greedy": {
+    "text": "四下安静,没有新的事情发生。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "四安静,新事情发生"
+   },
+   "beam": {
+    "text": "四下安静,没有新的事情发生。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "四安静,新事情发生"
+   }
+  },
+  {
+   "caseId": "v04:f0",
+   "group": "outcome",
+   "fact": "顾行舟｜结果｜把渡船系在栈桥的木桩上",
+   "greedy": {
+    "text": "顾行舟把渡船系在栈桥的木桩上。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "顾行舟把渡船系在栈桥的木桩上。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "v04:f1",
+   "group": "outcome",
+   "fact": "韩渡｜结果｜把系泊绳收成一卷",
+   "greedy": {
+    "text": "韩渡把系泊绳收成一卷。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "韩渡把系泊绳收成一卷。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "v04:f2",
+   "group": "appearance_changed",
+   "fact": "韩渡｜外貌变化｜手背上沾了盐沫",
+   "greedy": {
+    "text": "韩渡的手背上沾了盐沫。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "韩渡的手背上沾了盐沫。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "v05:f0",
+   "group": "appearance_changed",
+   "fact": "叶知微｜外貌变化｜袖口沾了铜油",
+   "greedy": {
+    "text": "叶知微的袖口沾了铜油。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "叶知微的袖口沾了铜油。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "v05:f1",
+   "group": "appearance_changed",
+   "fact": "沈砚｜外貌变化｜手背上沾了铜油",
+   "greedy": {
+    "text": "沈砚的手背上沾了铜油。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "沈砚的手背上沾了铜油。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "v05:f2",
+   "group": "outcome",
+   "fact": "叶知微｜结果｜把灯罩擦得透亮",
+   "greedy": {
+    "text": "叶知微把灯罩擦得透亮,玻璃上不再有雾。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ",玻璃不雾"
+   },
+   "beam": {
+    "text": "叶知微把灯罩擦得透亮。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "v05:f3",
+   "group": "no_change",
+   "fact": "场景｜无变化",
+   "greedy": {
+    "text": "塔顶的灯还亮着,什么也没有再发生。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "塔顶灯亮,什么发生"
+   },
+   "beam": {
+    "text": "塔顶的灯还亮着,什么也没有再发生。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "塔顶灯亮,什么发生"
+   }
+  },
+  {
+   "caseId": "v06:f0",
+   "group": "appearance_changed",
+   "fact": "阿棠｜外貌变化｜鞋底沾了湿石板的水",
+   "greedy": {
+    "text": "阿棠的鞋底沾了湿石板的水。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "阿棠的鞋底沾了湿石板的水。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "v06:f1",
+   "group": "appearance_changed",
+   "fact": "沈砚｜外貌变化｜袖口沾了雨",
+   "greedy": {
+    "text": "沈砚的袖口沾了雨。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "沈砚的袖口沾了雨。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "v06:f2",
+   "group": "outcome",
+   "fact": "阿棠｜结果｜把纸灯笼扶正",
+   "greedy": {
+    "text": "阿棠把纸灯笼扶正。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "阿棠把纸灯笼扶正。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "v07:f0",
+   "group": "appearance_changed",
+   "fact": "铜灯｜外貌变化｜灯罩上积了灰",
+   "greedy": {
+    "text": "铜灯的灯罩上积了灰。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "铜灯的灯罩上积了灰。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "v07:f1",
+   "group": "appearance_changed",
+   "fact": "潮汐簿｜外貌变化｜封面蒙了一层灰",
+   "greedy": {
+    "text": "潮汐簿的封面蒙了一层灰。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "潮汐簿的封面蒙了一层灰。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "v07:f2",
+   "group": "outcome",
+   "fact": "沈砚｜结果｜把铜灯擦亮",
+   "greedy": {
+    "text": "沈砚把铜灯擦亮。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "沈砚把铜灯擦亮。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "v08:f0",
+   "group": "appearance_changed",
+   "fact": "警示灯｜外貌变化｜玻璃罩被风吹歪",
+   "greedy": {
+    "text": "警示灯的玻璃罩被风吹歪。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "警示灯的玻璃罩被风吹歪。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "v08:f1",
+   "group": "appearance_changed",
+   "fact": "钟绳｜外貌变化｜磨出了毛边",
+   "greedy": {
+    "text": "钟绳磨出了毛边。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "钟绳磨出了毛边。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "v08:f2",
+   "group": "outcome",
+   "fact": "韩渡｜结果｜把钟绳重新绕在钟架上",
+   "greedy": {
+    "text": "韩渡把钟绳重新绕在钟架上。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "韩渡把钟绳重新绕在钟架上。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "v09:f0",
+   "group": "appearance_changed",
+   "fact": "鱼筐｜外貌变化｜边沿沾着鱼鳞",
+   "greedy": {
+    "text": "鱼筐的边沿沾着鱼鳞。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "鱼筐的边沿沾着鱼鳞。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "v09:f1",
+   "group": "appearance_changed",
+   "fact": "案板｜外貌变化｜边沿沾着鱼鳞",
+   "greedy": {
+    "text": "案板的边沿沾着鱼鳞。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "案板的边沿沾着鱼鳞。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "v09:f2",
+   "group": "outcome",
+   "fact": "阿棠｜结果｜把银鳞鱼装进鱼筐",
+   "greedy": {
+    "text": "阿棠把银鳞鱼装进鱼筐。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "阿棠把银鳞鱼装进鱼筐。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "v10:f0",
+   "group": "appearance_changed",
+   "fact": "铁链｜外貌变化｜链环上结了锈",
+   "greedy": {
+    "text": "铁链的链环上结了锈。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "铁链的链环上结了锈。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "v10:f1",
+   "group": "appearance_changed",
+   "fact": "铜灯罩｜外貌变化｜玻璃上蒙了盐雾",
+   "greedy": {
+    "text": "铜灯罩的玻璃上蒙了盐雾。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "铜灯罩的玻璃上蒙了盐雾。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "v10:f2",
+   "group": "outcome",
+   "fact": "叶知微｜结果｜把擦铜油放回梯脚",
+   "greedy": {
+    "text": "叶知微把擦铜油放回梯脚。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "叶知微把擦铜油放回梯脚。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "v11:f0",
+   "group": "moved",
+   "fact": "沈砚｜移动｜潮生巷→潮汐档案馆",
+   "greedy": {
+    "text": "沈砚从潮生巷一路走到潮汐档案馆门口。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "潮生巷一路走潮汐档案馆门口"
+   },
+   "beam": {
+    "text": "沈砚从潮生巷一路走到潮汐档案馆门口。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "潮生巷一路走潮汐档案馆门口"
+   }
+  },
+  {
+   "caseId": "v11:f1",
+   "group": "outcome",
+   "fact": "沈砚｜结果｜把铜灯挪到门槛边",
+   "greedy": {
+    "text": "沈砚把铜灯挪到门槛边。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "沈砚把铜灯挪到门槛边。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "v11:f2",
+   "group": "no_change",
+   "fact": "场景｜无变化",
+   "greedy": {
+    "text": "四下安静,没有新的事情发生。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "四安静,新事情发生"
+   },
+   "beam": {
+    "text": "四下安静,没有新的事情发生。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "四安静,新事情发生"
+   }
+  },
+  {
+   "caseId": "v11:f3",
+   "group": "appearance_changed",
+   "fact": "沈砚｜外貌变化｜袖口沾了墨",
+   "greedy": {
+    "text": "沈砚的袖口沾了墨。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "沈砚的袖口沾了墨。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "v12:f0",
+   "group": "moved",
+   "fact": "阿棠｜移动｜潮生巷→早市",
+   "greedy": {
+    "text": "阿棠从潮生巷一路走到早市,帆布棚下散光。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "潮生巷一路走早市,散光"
+   },
+   "beam": {
+    "text": "阿棠从潮生巷一路走到早市,帆布棚下散光。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "潮生巷一路走早市,散光"
+   }
+  },
+  {
+   "caseId": "v12:f1",
+   "group": "outcome",
+   "fact": "阿棠｜结果｜把银鳞鱼搬上案板",
+   "greedy": {
+    "text": "阿棠把银鳞鱼搬上案板。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "阿棠把银鳞鱼搬上案板。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "v12:f2",
+   "group": "appearance_changed",
+   "fact": "阿棠｜外貌变化｜辫梢沾了白汽",
+   "greedy": {
+    "text": "阿棠的辫梢沾了白汽。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "阿棠的辫梢沾了白汽。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "v13:f0",
+   "group": "moved",
+   "fact": "叶知微｜移动｜潮渡→旧灯塔",
+   "greedy": {
+    "text": "叶知微从潮渡一路走到旧灯塔脚下,抬头看了看塔身。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "潮渡一路走旧灯塔脚,抬头看看塔身"
+   },
+   "beam": {
+    "text": "叶知微从潮渡上来,走进旧灯塔。",
+    "support": true,
+    "binding": false,
+    "direction": true,
+    "repeat": false,
+    "extra": "潮渡来,走进旧灯塔"
+   }
+  },
+  {
+   "caseId": "v13:f1",
+   "group": "outcome",
+   "fact": "叶知微｜结果｜换好塔顶的灯芯",
+   "greedy": {
+    "text": "叶知微换好塔顶的灯芯。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "叶知微换好塔顶的灯芯。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "v13:f2",
+   "group": "appearance_changed",
+   "fact": "叶知微｜外貌变化｜袖口沾了铜油",
+   "greedy": {
+    "text": "叶知微的袖口沾了铜油。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "叶知微的袖口沾了铜油。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "v14:f0",
+   "group": "moved",
+   "fact": "沈砚｜移动｜潮汐档案馆→潮渡",
+   "greedy": {
+    "text": "沈砚从潮汐档案馆出来,走进潮渡。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "潮汐档案馆出来,走进潮渡"
+   },
+   "beam": {
+    "text": "沈砚从潮汐档案馆出来,走进潮渡。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "潮汐档案馆出来,走进潮渡"
+   }
+  },
+  {
+   "caseId": "v14:f1",
+   "group": "outcome",
+   "fact": "沈砚｜结果｜把系泊绳拖回岸上",
+   "greedy": {
+    "text": "沈砚把系泊绳拖回岸上。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "沈砚把系泊绳拖回岸上。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "v14:f2",
+   "group": "sanity_changed",
+   "fact": "沈砚｜状态变化｜发紧",
+   "greedy": {
+    "text": "沈砚的呼吸有些发紧,手指也不太听使唤。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "呼吸些,手指不太听使唤"
+   },
+   "beam": {
+    "text": "沈砚的呼吸有些发紧,手指也不太听使唤。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "呼吸些,手指不太听使唤"
+   }
+  },
+  {
+   "caseId": "v15:f0",
+   "group": "outcome",
+   "fact": "沈砚｜结果｜把备用钥匙塞进油布包的内层",
+   "greedy": {
+    "text": "沈砚把备用钥匙塞进油布包的内层。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "沈砚把备用钥匙塞进油布包的内层。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "v15:f1",
+   "group": "outcome",
+   "fact": "沈砚｜结果｜把干纸夹进潮汐簿的扉页",
+   "greedy": {
+    "text": "沈砚把干纸夹进潮汐簿的扉页。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "沈砚把干纸夹进潮汐簿的扉页。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "v15:f2",
+   "group": "outcome",
+   "fact": "沈砚｜结果｜把潮汐簿合上推到桌角",
+   "greedy": {
+    "text": "沈砚把潮汐簿合上推到桌角。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "沈砚把潮汐簿合上推到桌角。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "v16:f0",
+   "group": "outcome",
+   "fact": "阿棠｜结果｜把抹布塞进鱼筐底下",
+   "greedy": {
+    "text": "阿棠把抹布塞进鱼筐底下。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "阿棠把抹布塞进鱼筐底下。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "v16:f1",
+   "group": "outcome",
+   "fact": "阿棠｜结果｜把银鳞鱼摆在案板旁边",
+   "greedy": {
+    "text": "阿棠把银鳞鱼摆在案板旁边。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "阿棠把银鳞鱼摆在案板旁边。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "v16:f2",
+   "group": "appearance_changed",
+   "fact": "阿棠｜外貌变化｜袖口沾了鱼鳞",
+   "greedy": {
+    "text": "阿棠的袖口沾了鱼鳞。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "阿棠的袖口沾了鱼鳞。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "v17:f0",
+   "group": "outcome",
+   "fact": "叶知微｜结果｜把灯芯收进铜灯罩底下",
+   "greedy": {
+    "text": "叶知微把灯芯收进铜灯罩底下。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "叶知微把灯芯收进铜灯罩底下。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "v17:f1",
+   "group": "outcome",
+   "fact": "叶知微｜结果｜把油壶搁在铜灯罩上",
+   "greedy": {
+    "text": "叶知微把油壶搁在铜灯罩上。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "叶知微把油壶搁在铜灯罩上。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "v17:f2",
+   "group": "appearance_changed",
+   "fact": "叶知微｜外貌变化｜指尖沾了铜油",
+   "greedy": {
+    "text": "叶知微的指尖沾了铜油。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "叶知微的指尖沾了铜油。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "v18:f0",
+   "group": "moved",
+   "fact": "沈砚｜移动｜潮渡→雾堤",
+   "greedy": {
+    "text": "沈砚从潮渡上来,蹲到雾堤的钟架下。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "潮渡来,蹲雾堤"
+   },
+   "beam": {
+    "text": "沈砚从潮渡上来,走进雾堤。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "潮渡来,走进雾堤"
+   }
+  },
+  {
+   "caseId": "v18:f1",
+   "group": "outcome",
+   "fact": "沈砚｜结果｜把雾警钟敲响",
+   "greedy": {
+    "text": "沈砚把雾警钟敲响。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "沈砚把雾警钟敲响。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "v18:f2",
+   "group": "sanity_changed",
+   "fact": "沈砚｜状态变化｜发紧",
+   "greedy": {
+    "text": "沈砚的呼吸有些发紧,手指也不太听使唤。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "呼吸些,手指不太听使唤"
+   },
+   "beam": {
+    "text": "沈砚的呼吸有些发紧,手指也不太听使唤。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "呼吸些,手指不太听使唤"
+   }
+  },
+  {
+   "caseId": "v19:f0",
+   "group": "outcome",
+   "fact": "叶知微｜结果｜把干纸放在桌角",
+   "greedy": {
+    "text": "叶知微把干纸放在桌角。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "叶知微把干纸放在桌角。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "v19:f1",
+   "group": "sanity_changed",
+   "fact": "叶知微｜状态变化｜发紧",
+   "greedy": {
+    "text": "叶知微的呼吸有些发紧,手指也不太听使唤。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "呼吸些,手指不太听使唤"
+   },
+   "beam": {
+    "text": "叶知微的呼吸有些发紧,手指也不太听使唤。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "呼吸些,手指不太听使唤"
+   }
+  },
+  {
+   "caseId": "v19:f2",
+   "group": "no_change",
+   "fact": "场景｜无变化",
+   "greedy": {
+    "text": "四下安静,没有新的事情发生。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "四安静,新事情发生"
+   },
+   "beam": {
+    "text": "四下安静,没有新的事情发生。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "四安静,新事情发生"
+   }
+  },
+  {
+   "caseId": "v20:f0",
+   "group": "moved",
+   "fact": "沈砚｜移动｜潮生巷→潮渡",
+   "greedy": {
+    "text": "沈砚从潮生巷一路走到潮渡,鞋底在木桩旁站住。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "潮生巷一路走潮渡,鞋底旁站住"
+   },
+   "beam": {
+    "text": "沈砚从潮生巷一路走到潮渡。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "潮生巷一路走潮渡"
+   }
+  },
+  {
+   "caseId": "v20:f1",
+   "group": "sanity_changed",
+   "fact": "沈砚｜状态变化｜放松",
+   "greedy": {
+    "text": "沈砚松开手,才发现自己一直提着的那口气落回去了。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "松开手,才发现自己一直提那口气落回去"
+   },
+   "beam": {
+    "text": "沈砚松开手,才发现自己一直提着的那口气落回去了。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "松开手,才发现自己一直提那口气落回去"
+   }
+  },
+  {
+   "caseId": "v20:f2",
+   "group": "outcome",
+   "fact": "沈砚｜结果｜把渡船推离栈桥",
+   "greedy": {
+    "text": "沈砚把渡船推离栈桥。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "沈砚把渡船推离栈桥。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "v21:f0",
+   "group": "outcome",
+   "fact": "沈砚｜结果｜把铜灯挪到长桌另一头",
+   "greedy": {
+    "text": "沈砚把铜灯挪到长桌另一头。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "沈砚把铜灯挪到长桌另一头。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "v21:f1",
+   "group": "no_change",
+   "fact": "场景｜无变化",
+   "greedy": {
+    "text": "四下安静,没有新的事情发生。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "四安静,新事情发生"
+   },
+   "beam": {
+    "text": "四下安静,没有新的事情发生。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "四安静,新事情发生"
+   }
+  },
+  {
+   "caseId": "v21:f2",
+   "group": "appearance_changed",
+   "fact": "沈砚｜外貌变化｜指尖沾了墨",
+   "greedy": {
+    "text": "沈砚的指尖沾了墨。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "沈砚的指尖沾了墨。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "v22:f0",
+   "group": "outcome",
+   "fact": "阿棠｜结果｜把鱼筐放在门槛边",
+   "greedy": {
+    "text": "阿棠把鱼筐放在门槛边。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "阿棠把鱼筐放在门槛边。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "v22:f1",
+   "group": "no_change",
+   "fact": "场景｜无变化",
+   "greedy": {
+    "text": "周围没有新的事情发生,什么也没有再发生。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "周围新事情发生,什么发生"
+   },
+   "beam": {
+    "text": "四下安静,没有新的事情发生。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "四安静,新事情发生"
+   }
+  },
+  {
+   "caseId": "v22:f2",
+   "group": "appearance_changed",
+   "fact": "阿棠｜外貌变化｜鞋底沾了湿石板的水",
+   "greedy": {
+    "text": "阿棠的鞋底沾了湿石板的水。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "阿棠的鞋底沾了湿石板的水。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "v23:f0",
+   "group": "outcome",
+   "fact": "顾行舟｜结果｜把缆绳绕上摊棚边的木桩",
+   "greedy": {
+    "text": "顾行舟把缆绳绕上摊棚边的木桩。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "顾行舟把缆绳绕上摊棚边的木桩。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "v23:f1",
+   "group": "no_change",
+   "fact": "场景｜无变化",
+   "greedy": {
+    "text": "四下安静,没有新的事情发生。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "四安静,新事情发生"
+   },
+   "beam": {
+    "text": "四下安静,没有新的事情发生。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "四安静,新事情发生"
+   }
+  },
+  {
+   "caseId": "v23:f2",
+   "group": "appearance_changed",
+   "fact": "顾行舟｜外貌变化｜手背上沾了鱼鳞",
+   "greedy": {
+    "text": "顾行舟的手背上沾了鱼鳞。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "顾行舟的手背上沾了鱼鳞。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "v24:f0",
+   "group": "outcome",
+   "fact": "韩渡｜结果｜把钟绳解开",
+   "greedy": {
+    "text": "韩渡把钟绳解开。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "韩渡把钟绳解开。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "v24:f1",
+   "group": "no_change",
+   "fact": "场景｜无变化",
+   "greedy": {
+    "text": "周围没有新的事情发生,什么也没有再发生。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "周围新事情发生,什么发生"
+   },
+   "beam": {
+    "text": "四下安静,没有新的事情发生。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "四安静,新事情发生"
+   }
+  },
+  {
+   "caseId": "v24:f2",
+   "group": "appearance_changed",
+   "fact": "韩渡｜外貌变化｜手背上沾了盐沫",
+   "greedy": {
+    "text": "韩渡的手背上沾了盐沫。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "韩渡的手背上沾了盐沫。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t01:f0",
+   "group": "outcome",
+   "fact": "沈砚｜结果｜把潮汐簿缺的那页补全",
+   "greedy": {
+    "text": "沈砚把潮汐簿缺的那页补全。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "沈砚把潮汐簿缺的那页补全。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t01:f1",
+   "group": "appearance_changed",
+   "fact": "沈砚｜外貌变化｜指尖沾了墨",
+   "greedy": {
+    "text": "沈砚的指尖沾了墨。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "沈砚的指尖沾了墨。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t01:f2",
+   "group": "outcome",
+   "fact": "沈砚｜结果｜把簿子合上推到桌角",
+   "greedy": {
+    "text": "沈砚把簿子合上推到桌角。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "沈砚把簿子合上推到桌角。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t02:f0",
+   "group": "outcome",
+   "fact": "阿棠｜结果｜把银鳞鱼按大小分开装进两只鱼筐",
+   "greedy": {
+    "text": "阿棠把银鳞鱼按大小分开装进两只鱼筐。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "阿棠把银鳞鱼按大小分开装进两只鱼筐。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t02:f1",
+   "group": "appearance_changed",
+   "fact": "阿棠｜外貌变化｜袖口沾了鱼鳞",
+   "greedy": {
+    "text": "阿棠的袖口沾了鱼鳞。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "阿棠的袖口沾了鱼鳞。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t02:f2",
+   "group": "outcome",
+   "fact": "阿棠｜结果｜把空鱼筐摞到摊棚边上",
+   "greedy": {
+    "text": "阿棠把空鱼筐摞到摊棚边上。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "阿棠把空鱼筐摞到摊棚边上。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t03:f0",
+   "group": "outcome",
+   "fact": "叶知微｜结果｜把灯罩擦得透亮",
+   "greedy": {
+    "text": "叶知微把灯罩擦得透亮。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "叶知微把灯罩擦得透亮。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t03:f1",
+   "group": "appearance_changed",
+   "fact": "叶知微｜外貌变化｜袖口沾了铜油",
+   "greedy": {
+    "text": "叶知微的袖口沾了铜油。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "叶知微的袖口沾了铜油。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t03:f2",
+   "group": "outcome",
+   "fact": "叶知微｜结果｜把抹布搭回梯脚",
+   "greedy": {
+    "text": "叶知微把抹布搭回梯脚。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "叶知微把抹布搭回梯脚。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t04:f0",
+   "group": "outcome",
+   "fact": "顾行舟｜结果｜把缆绳在木桩上绕了三圈",
+   "greedy": {
+    "text": "顾行舟把缆绳在木桩上绕了三圈。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "顾行舟把缆绳在木桩上绕了三圈。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t04:f1",
+   "group": "outcome",
+   "fact": "顾行舟｜结果｜把渡船推离栈桥",
+   "greedy": {
+    "text": "顾行舟把渡船推离栈桥。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "顾行舟把渡船推离栈桥。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t04:f2",
+   "group": "appearance_changed",
+   "fact": "顾行舟｜外貌变化｜外袍下摆被雾水打湿",
+   "greedy": {
+    "text": "顾行舟的外袍下摆被雾水打湿。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "顾行舟的外袍下摆被雾水打湿。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t05:f0",
+   "group": "outcome",
+   "fact": "韩渡｜结果｜把松脱的钟绳重新系紧",
+   "greedy": {
+    "text": "韩渡把松脱的钟绳重新系紧。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "韩渡把松脱的钟绳重新系紧。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t05:f1",
+   "group": "outcome",
+   "fact": "韩渡｜结果｜把雾警钟敲响",
+   "greedy": {
+    "text": "韩渡把雾警钟敲响。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "韩渡把雾警钟敲响。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t05:f2",
+   "group": "appearance_changed",
+   "fact": "韩渡｜外貌变化｜手背上沾着盐沫",
+   "greedy": {
+    "text": "韩渡的手背上沾着盐沫。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "韩渡的手背上沾着盐沫。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t06:f0",
+   "group": "outcome",
+   "fact": "沈砚｜结果｜把油纸伞收拢靠在墙根",
+   "greedy": {
+    "text": "沈砚把油纸伞收拢靠在墙根。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "沈砚把油纸伞收拢靠在墙根。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t06:f1",
+   "group": "outcome",
+   "fact": "沈砚｜结果｜把被风吹歪的纸灯笼扶正",
+   "greedy": {
+    "text": "沈砚把被风吹歪的纸灯笼扶正。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "沈砚把被风吹歪的纸灯笼扶正。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t06:f2",
+   "group": "appearance_changed",
+   "fact": "沈砚｜外貌变化｜鞋底沾了湿石板的水",
+   "greedy": {
+    "text": "沈砚的鞋底沾了湿石板的水。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "沈砚的鞋底沾了湿石板的水。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t07:f0",
+   "group": "moved",
+   "fact": "沈砚｜移动｜潮渡→雾堤",
+   "greedy": {
+    "text": "沈砚从潮渡一路走到雾堤,鞋底在石阶边站了一会儿。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "潮渡一路走雾堤,鞋底边站一会儿"
+   },
+   "beam": {
+    "text": "沈砚从潮渡上来,蹲到雾堤的钟架下。",
+    "support": true,
+    "binding": false,
+    "direction": true,
+    "repeat": false,
+    "extra": "潮渡来,蹲雾堤"
+   }
+  },
+  {
+   "caseId": "t07:f1",
+   "group": "outcome",
+   "fact": "韩渡｜结果｜把松脱的钟绳重新系紧",
+   "greedy": {
+    "text": "韩渡把松脱的钟绳重新系紧,钟绳绷直了。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ",绷直"
+   },
+   "beam": {
+    "text": "韩渡把松脱的钟绳重新系紧。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t07:f2",
+   "group": "outcome",
+   "fact": "沈砚｜结果｜把雾警钟敲响",
+   "greedy": {
+    "text": "沈砚把雾警钟敲响。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "沈砚把雾警钟敲响。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t07:f3",
+   "group": "appearance_changed",
+   "fact": "韩渡｜外貌变化｜手背上沾着盐沫",
+   "greedy": {
+    "text": "韩渡的手背上沾着盐沫。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "韩渡的手背上沾着盐沫。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t08:f0",
+   "group": "outcome",
+   "fact": "阿棠｜结果｜把银鳞鱼搬上案板",
+   "greedy": {
+    "text": "阿棠把银鳞鱼搬上案板。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "阿棠把银鳞鱼搬上案板。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t08:f1",
+   "group": "outcome",
+   "fact": "顾行舟｜结果｜把缆绳绕上摊棚边的木桩",
+   "greedy": {
+    "text": "顾行舟把缆绳绕上摊棚边的木桩。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "顾行舟把缆绳绕上摊棚边的木桩。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t08:f2",
+   "group": "appearance_changed",
+   "fact": "阿棠｜外貌变化｜辫梢沾了白汽",
+   "greedy": {
+    "text": "阿棠的辫梢沾了白汽。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "阿棠的辫梢沾了白汽。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t08:f3",
+   "group": "appearance_changed",
+   "fact": "顾行舟｜外貌变化｜外袍下摆沾了泥水",
+   "greedy": {
+    "text": "顾行舟的外袍下摆沾了泥水。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "顾行舟的外袍下摆沾了泥水。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t09:f0",
+   "group": "moved",
+   "fact": "叶知微｜移动｜早市→潮汐档案馆",
+   "greedy": {
+    "text": "叶知微从早市过来,走进档案馆。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "早市来,走进档案馆"
+   },
+   "beam": {
+    "text": "叶知微从早市过来,走进档案馆。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "早市来,走进档案馆"
+   }
+  },
+  {
+   "caseId": "t09:f1",
+   "group": "outcome",
+   "fact": "沈砚｜结果｜把潮汐簿摊在铜灯下",
+   "greedy": {
+    "text": "沈砚把潮汐簿摊在铜灯下。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "沈砚把潮汐簿摊在铜灯下。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t09:f2",
+   "group": "outcome",
+   "fact": "叶知微｜结果｜把一叠干纸放在桌角",
+   "greedy": {
+    "text": "叶知微把一叠干纸放在桌角。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "叶知微把一叠干纸放在桌角。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t09:f3",
+   "group": "appearance_changed",
+   "fact": "沈砚｜外貌变化｜袖口沾了墨",
+   "greedy": {
+    "text": "沈砚的袖口沾了墨。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "沈砚的袖口沾了墨。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t10:f0",
+   "group": "outcome",
+   "fact": "顾行舟｜结果｜把渡船系在栈桥的木桩上",
+   "greedy": {
+    "text": "顾行舟把渡船系在栈桥的木桩上。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "顾行舟把渡船系在栈桥的木桩上。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t10:f1",
+   "group": "outcome",
+   "fact": "沈砚｜结果｜把系泊绳从浅滩拖回岸上",
+   "greedy": {
+    "text": "沈砚把系泊绳从浅滩拖回岸上。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "沈砚把系泊绳从浅滩拖回岸上。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t10:f2",
+   "group": "appearance_changed",
+   "fact": "顾行舟｜外貌变化｜外袍下摆被雾水打湿",
+   "greedy": {
+    "text": "顾行舟的外袍下摆被雾水打湿。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "顾行舟的外袍下摆被雾水打湿。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t10:f3",
+   "group": "sanity_changed",
+   "fact": "沈砚｜状态变化｜发紧",
+   "greedy": {
+    "text": "沈砚的呼吸有些发紧,手指也不太听使唤。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "呼吸些,手指不太听使唤"
+   },
+   "beam": {
+    "text": "沈砚的呼吸有些发紧,手指也不太听使唤。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "呼吸些,手指不太听使唤"
+   }
+  },
+  {
+   "caseId": "t11:f0",
+   "group": "moved",
+   "fact": "沈砚｜移动｜潮生巷→旧灯塔",
+   "greedy": {
+    "text": "沈砚从潮生巷一路走到旧灯塔脚下,抬头看了看塔身。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "潮生巷一路走旧灯塔脚,抬头看看塔身"
+   },
+   "beam": {
+    "text": "沈砚从潮生巷一路走到旧灯塔脚下,抬头看了看塔身。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "潮生巷一路走旧灯塔脚,抬头看看塔身"
+   }
+  },
+  {
+   "caseId": "t11:f1",
+   "group": "outcome",
+   "fact": "叶知微｜结果｜把灯罩擦得透亮",
+   "greedy": {
+    "text": "叶知微把玻璃罩上的盐雾擦得透亮,玻璃罩透亮起来。",
+    "support": false,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "盐雾擦得透亮,透亮起来"
+   },
+   "beam": {
+    "text": "叶知微把灯罩擦得透亮,玻璃罩已经透亮。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ",已经透亮"
+   }
+  },
+  {
+   "caseId": "t11:f2",
+   "group": "outcome",
+   "fact": "沈砚｜结果｜换好塔顶的灯芯",
+   "greedy": {
+    "text": "沈砚换好塔顶的灯芯。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "沈砚换好塔顶的灯芯。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t11:f3",
+   "group": "appearance_changed",
+   "fact": "叶知微｜外貌变化｜袖口沾了铜油",
+   "greedy": {
+    "text": "叶知微的袖口沾了铜油。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "叶知微的袖口沾了铜油。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t12:f0",
+   "group": "moved",
+   "fact": "阿棠｜移动｜早市→潮生巷",
+   "greedy": {
+    "text": "阿棠从早市过来,抱起一叠纸进了潮生巷。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "早市来,抱起一叠纸进潮生巷"
+   },
+   "beam": {
+    "text": "阿棠从早市过来,抱起一叠纸进了潮生巷。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "早市来,抱起一叠纸进潮生巷"
+   }
+  },
+  {
+   "caseId": "t12:f1",
+   "group": "outcome",
+   "fact": "沈砚｜结果｜把油纸伞收拢靠在墙根",
+   "greedy": {
+    "text": "沈砚把油纸伞收拢靠在墙根。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "沈砚把油纸伞收拢靠在墙根。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t12:f2",
+   "group": "outcome",
+   "fact": "阿棠｜结果｜把鱼筐放在门槛边",
+   "greedy": {
+    "text": "阿棠把鱼筐放在门槛边。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "阿棠把鱼筐放在门槛边。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t12:f3",
+   "group": "appearance_changed",
+   "fact": "沈砚｜外貌变化｜鞋底沾了湿石板的水",
+   "greedy": {
+    "text": "沈砚的鞋底沾了湿石板的水。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "沈砚的鞋底沾了湿石板的水。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t13:f0",
+   "group": "moved",
+   "fact": "叶知微｜移动｜早市→潮汐档案馆",
+   "greedy": {
+    "text": "叶知微从早市过来,走进档案馆。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "早市来,走进档案馆"
+   },
+   "beam": {
+    "text": "叶知微从早市过来,走进档案馆。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "早市来,走进档案馆"
+   }
+  },
+  {
+   "caseId": "t13:f1",
+   "group": "outcome",
+   "fact": "叶知微｜结果｜把一叠干纸放在桌角",
+   "greedy": {
+    "text": "叶知微把一叠干纸放在桌角。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "叶知微把一叠干纸放在桌角。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t13:f2",
+   "group": "appearance_changed",
+   "fact": "叶知微｜外貌变化｜袖口沾了墨",
+   "greedy": {
+    "text": "叶知微的袖口沾了墨。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "叶知微的袖口沾了墨。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t14:f0",
+   "group": "moved",
+   "fact": "顾行舟｜移动｜潮渡→雾堤",
+   "greedy": {
+    "text": "顾行舟从潮渡上来,走进雾堤。",
+    "support": true,
+    "binding": false,
+    "direction": true,
+    "repeat": false,
+    "extra": "潮渡来,走进雾堤"
+   },
+   "beam": {
+    "text": "顾行舟从潮渡上来,走进雾堤。",
+    "support": true,
+    "binding": false,
+    "direction": true,
+    "repeat": false,
+    "extra": "潮渡来,走进雾堤"
+   }
+  },
+  {
+   "caseId": "t14:f1",
+   "group": "outcome",
+   "fact": "顾行舟｜结果｜把缆绳绕在钟架上",
+   "greedy": {
+    "text": "顾行舟把缆绳绕在钟架上。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "顾行舟把缆绳绕在钟架上。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t14:f2",
+   "group": "appearance_changed",
+   "fact": "顾行舟｜外貌变化｜外袍下摆被雾水打湿",
+   "greedy": {
+    "text": "顾行舟的外袍下摆被雾水打湿。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "顾行舟的外袍下摆被雾水打湿。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t15:f0",
+   "group": "moved",
+   "fact": "韩渡｜移动｜潮生巷→潮渡",
+   "greedy": {
+    "text": "韩渡从潮生巷一路走到潮渡,鞋底在木桩旁站住。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "潮生巷一路走潮渡,鞋底旁站住"
+   },
+   "beam": {
+    "text": "韩渡从潮生巷一路走到潮渡。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "潮生巷一路走潮渡"
+   }
+  },
+  {
+   "caseId": "t15:f1",
+   "group": "outcome",
+   "fact": "韩渡｜结果｜把渡船推离栈桥",
+   "greedy": {
+    "text": "韩渡把渡船推离栈桥。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "韩渡把渡船推离栈桥。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t15:f2",
+   "group": "appearance_changed",
+   "fact": "韩渡｜外貌变化｜手背沾着盐沫",
+   "greedy": {
+    "text": "韩渡的手背沾着盐沫。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "韩渡的手背沾着盐沫。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t16:f0",
+   "group": "moved",
+   "fact": "沈砚｜移动｜潮汐档案馆→潮生巷",
+   "greedy": {
+    "text": "沈砚从潮汐档案馆出来,走进潮生巷。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "潮汐档案馆出来,走进潮生巷"
+   },
+   "beam": {
+    "text": "沈砚从潮汐档案馆出来,走进潮生巷。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "潮汐档案馆出来,走进潮生巷"
+   }
+  },
+  {
+   "caseId": "t16:f1",
+   "group": "outcome",
+   "fact": "沈砚｜结果｜把备用钥匙塞进油布包的内层",
+   "greedy": {
+    "text": "沈砚把备用钥匙塞进油布包的内层。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "沈砚把备用钥匙塞进油布包的内层。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t16:f2",
+   "group": "sanity_changed",
+   "fact": "沈砚｜状态变化｜发紧",
+   "greedy": {
+    "text": "沈砚的呼吸有些发紧,手指也不太听使唤。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "呼吸些,手指不太听使唤"
+   },
+   "beam": {
+    "text": "沈砚的呼吸有些发紧,手指也不太听使唤。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "呼吸些,手指不太听使唤"
+   }
+  },
+  {
+   "caseId": "t17:f0",
+   "group": "moved",
+   "fact": "阿棠｜移动｜潮生巷→早市",
+   "greedy": {
+    "text": "阿棠从潮生巷一路走到早市,鱼筐上沾着鱼鳞。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "潮生巷一路走早市,沾鱼鳞"
+   },
+   "beam": {
+    "text": "阿棠从潮生巷一路走到早市。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "潮生巷一路走早市"
+   }
+  },
+  {
+   "caseId": "t17:f1",
+   "group": "outcome",
+   "fact": "阿棠｜结果｜把银鳞鱼搬上案板",
+   "greedy": {
+    "text": "阿棠把银鳞鱼搬上案板。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "阿棠把银鳞鱼搬上案板。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t17:f2",
+   "group": "appearance_changed",
+   "fact": "阿棠｜外貌变化｜辫梢沾了白汽",
+   "greedy": {
+    "text": "阿棠的辫梢沾了白汽。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "阿棠的辫梢沾了白汽。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t18:f0",
+   "group": "moved",
+   "fact": "叶知微｜移动｜潮渡→旧灯塔",
+   "greedy": {
+    "text": "叶知微从潮渡上来,走进旧灯塔。",
+    "support": true,
+    "binding": false,
+    "direction": true,
+    "repeat": false,
+    "extra": "潮渡来,走进旧灯塔"
+   },
+   "beam": {
+    "text": "叶知微从潮渡上来,走进旧灯塔。",
+    "support": true,
+    "binding": false,
+    "direction": true,
+    "repeat": false,
+    "extra": "潮渡来,走进旧灯塔"
+   }
+  },
+  {
+   "caseId": "t18:f1",
+   "group": "outcome",
+   "fact": "叶知微｜结果｜把灯罩擦得透亮",
+   "greedy": {
+    "text": "叶知微把灯罩擦得透亮。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "叶知微把灯罩擦得透亮。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t18:f2",
+   "group": "appearance_changed",
+   "fact": "叶知微｜外貌变化｜袖口沾了铜油",
+   "greedy": {
+    "text": "叶知微的袖口沾了铜油。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "叶知微的袖口沾了铜油。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t18:f3",
+   "group": "outcome",
+   "fact": "叶知微｜结果｜把抹布搭回梯脚",
+   "greedy": {
+    "text": "叶知微把抹布搭回梯脚。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "叶知微把抹布搭回梯脚。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t19:f0",
+   "group": "appearance_changed",
+   "fact": "阿棠｜外貌变化｜袖口沾了鱼鳞",
+   "greedy": {
+    "text": "阿棠的袖口沾了鱼鳞。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "阿棠的袖口沾了鱼鳞。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t19:f1",
+   "group": "appearance_changed",
+   "fact": "沈砚｜外貌变化｜外袍下摆沾了泥水",
+   "greedy": {
+    "text": "沈砚的外袍下摆沾了泥水。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "沈砚的外袍下摆沾了泥水。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t19:f2",
+   "group": "outcome",
+   "fact": "阿棠｜结果｜把银鳞鱼装进鱼筐",
+   "greedy": {
+    "text": "阿棠把银鳞鱼装进鱼筐。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "阿棠把银鳞鱼装进鱼筐。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t19:f3",
+   "group": "outcome",
+   "fact": "沈砚｜结果｜把油纸伞收拢靠在摊棚边",
+   "greedy": {
+    "text": "沈砚把油纸伞收拢靠在摊棚边。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "沈砚把油纸伞收拢靠在摊棚边。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t20:f0",
+   "group": "appearance_changed",
+   "fact": "警示灯｜外貌变化｜铜框玻璃罩被风吹歪",
+   "greedy": {
+    "text": "警示灯的铜框玻璃罩被风吹歪。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "警示灯的铜框玻璃罩被风吹歪。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t20:f1",
+   "group": "appearance_changed",
+   "fact": "钟绳｜外貌变化｜磨出了毛边",
+   "greedy": {
+    "text": "钟绳磨出了毛边。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "钟绳磨出了毛边。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t20:f2",
+   "group": "outcome",
+   "fact": "沈砚｜结果｜把警示灯扶正",
+   "greedy": {
+    "text": "沈砚把警示灯扶正。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "沈砚把警示灯扶正。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t20:f3",
+   "group": "outcome",
+   "fact": "韩渡｜结果｜把钟绳重新绕在钟架上",
+   "greedy": {
+    "text": "韩渡把钟绳重新绕在钟架上。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "韩渡把钟绳重新绕在钟架上。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t21:f0",
+   "group": "appearance_changed",
+   "fact": "潮汐簿｜外貌变化｜缺页的边缘毛糙",
+   "greedy": {
+    "text": "潮汐簿的缺页的边缘毛糙。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "潮汐簿的缺页的边缘毛糙。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t21:f1",
+   "group": "appearance_changed",
+   "fact": "铜灯｜外貌变化｜灯罩上积了灰",
+   "greedy": {
+    "text": "铜灯的灯罩上积了灰。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "铜灯的灯罩上积了灰。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t21:f2",
+   "group": "outcome",
+   "fact": "沈砚｜结果｜把铜灯擦亮",
+   "greedy": {
+    "text": "沈砚把铜灯擦亮。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "沈砚把铜灯擦亮。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t21:f3",
+   "group": "outcome",
+   "fact": "叶知微｜结果｜把干纸放在桌角",
+   "greedy": {
+    "text": "叶知微把干纸放在桌角。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "叶知微把干纸放在桌角。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t22:f0",
+   "group": "appearance_changed",
+   "fact": "系泊绳｜外貌变化｜泥水结了一层白盐",
+   "greedy": {
+    "text": "系泊绳的泥水结了一层白盐。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "系泊绳的泥水结了一层白盐。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t22:f1",
+   "group": "appearance_changed",
+   "fact": "木桩｜外貌变化｜缠着的旧缆绳断了",
+   "greedy": {
+    "text": "木桩缠着的旧缆绳断了。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "木桩缠着的旧缆绳断了。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t22:f2",
+   "group": "outcome",
+   "fact": "顾行舟｜结果｜把缆绳重新绕上木桩",
+   "greedy": {
+    "text": "顾行舟把缆绳重新绕上木桩。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "顾行舟把缆绳重新绕上木桩。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t22:f3",
+   "group": "outcome",
+   "fact": "沈砚｜结果｜把系泊绳拖回岸上",
+   "greedy": {
+    "text": "沈砚把系泊绳拖回岸上。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "沈砚把系泊绳拖回岸上。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t23:f0",
+   "group": "appearance_changed",
+   "fact": "铜灯罩｜外貌变化｜玻璃上蒙了盐雾",
+   "greedy": {
+    "text": "铜灯罩的玻璃上蒙了盐雾。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "铜灯罩的玻璃上蒙了盐雾。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t23:f1",
+   "group": "appearance_changed",
+   "fact": "铁链｜外貌变化｜链环上结了锈",
+   "greedy": {
+    "text": "铁链的链环上结了锈。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "铁链的链环上结了锈。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t23:f2",
+   "group": "outcome",
+   "fact": "叶知微｜结果｜把灯罩擦得透亮",
+   "greedy": {
+    "text": "叶知微把灯罩擦得透亮,玻璃罩已经透亮。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ",已经透亮"
+   },
+   "beam": {
+    "text": "叶知微把灯罩擦得透亮。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t23:f3",
+   "group": "outcome",
+   "fact": "沈砚｜结果｜换好塔顶的灯芯",
+   "greedy": {
+    "text": "沈砚换好塔顶的灯芯。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "沈砚换好塔顶的灯芯。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t24:f0",
+   "group": "appearance_changed",
+   "fact": "纸灯笼｜外貌变化｜被风扯破一角",
+   "greedy": {
+    "text": "纸灯笼被风扯破一角。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "纸灯笼被风扯破一角。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t24:f1",
+   "group": "appearance_changed",
+   "fact": "排水沟｜外貌变化｜里面积了泥",
+   "greedy": {
+    "text": "排水沟的里面积了泥。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "排水沟的里面积了泥。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t24:f2",
+   "group": "outcome",
+   "fact": "沈砚｜结果｜把纸灯笼扶正",
+   "greedy": {
+    "text": "沈砚把纸灯笼扶正。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "沈砚把纸灯笼扶正。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "t24:f3",
+   "group": "outcome",
+   "fact": "阿棠｜结果｜把鱼筐放在门槛边",
+   "greedy": {
+    "text": "阿棠把鱼筐放在门槛边。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "阿棠把鱼筐放在门槛边。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "qa1B",
+   "group": "appearance_changed",
+   "fact": "墨｜外貌变化｜表面结了皮",
+   "greedy": {
+    "text": "墨上结了皮。",
+    "support": false,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "结皮"
+   },
+   "beam": {
+    "text": "墨的表面结了皮。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "qa2A",
+   "group": "appearance_changed",
+   "fact": "船灯｜外貌变化｜罩子裂了缝",
+   "greedy": {
+    "text": "船灯的罩子裂了缝。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "船灯的罩子裂了缝。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "qa2B",
+   "group": "appearance_changed",
+   "fact": "渡船｜外貌变化｜船板裂了缝",
+   "greedy": {
+    "text": "渡船的船板裂了缝。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "渡船的船板裂了缝。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "qa3A",
+   "group": "appearance_changed",
+   "fact": "抹布｜外貌变化｜边角磨破了",
+   "greedy": {
+    "text": "抹布的边角磨破了。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "抹布的边角磨破了。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "qa3B",
+   "group": "appearance_changed",
+   "fact": "银鳞鱼｜外貌变化｜鳞片掉了两片",
+   "greedy": {
+    "text": "银鳞鱼的鳞片掉了两片。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "银鳞鱼的鳞片掉了两片。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "qb1A",
+   "group": "appearance_changed",
+   "fact": "灯芯｜外貌变化｜烧黑了一截",
+   "greedy": {
+    "text": "灯芯烧黑了一截。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "灯芯烧黑了一截。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "qb1B",
+   "group": "appearance_changed",
+   "fact": "铜灯罩｜外貌变化｜被擦得发亮",
+   "greedy": {
+    "text": "铜灯罩被擦得发亮。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "铜灯罩被擦得发亮。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "qb2A",
+   "group": "appearance_changed",
+   "fact": "油纸伞｜外貌变化｜伞骨断了一根",
+   "greedy": {
+    "text": "油纸伞的伞骨断了一根。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "油纸伞的伞骨断了一根。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "qb2B",
+   "group": "appearance_changed",
+   "fact": "油纸伞｜外貌变化｜被靠在墙根",
+   "greedy": {
+    "text": "油纸伞被靠在墙根。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "油纸伞被靠在墙根。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "qc2A",
+   "group": "outcome",
+   "fact": "顾行舟｜结果｜把船灯挂到栈桥的托架下",
+   "greedy": {
+    "text": "顾行舟把船灯挂到栈桥的托架下。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "顾行舟把船灯挂到栈桥的托架下。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "qc2B",
+   "group": "outcome",
+   "fact": "顾行舟｜结果｜把船灯挂到船头前的木桩上",
+   "greedy": {
+    "text": "顾行舟把船灯挂到船头前的木桩上。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "顾行舟把船灯挂到船头前的木桩上。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "qc3A",
+   "group": "outcome",
+   "fact": "韩渡｜结果｜把警示灯挂回钟架上",
+   "greedy": {
+    "text": "韩渡把警示灯挂回钟架上。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "韩渡把警示灯挂回钟架上。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "qc3B",
+   "group": "outcome",
+   "fact": "韩渡｜结果｜把警示灯挂回铁链上",
+   "greedy": {
+    "text": "韩渡把警示灯挂回铁链上。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "韩渡把警示灯挂回铁链上。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "qd1A",
+   "group": "appearance_changed",
+   "fact": "干纸｜外貌变化｜边缘发了黄",
+   "greedy": {
+    "text": "干纸的边缘发了黄。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "干纸的边缘发了黄。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "qd2A",
+   "group": "appearance_changed",
+   "fact": "木桩｜外貌变化｜缠的旧绳断了",
+   "greedy": {
+    "text": "木桩缠的旧绳断了。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "木桩缠的旧绳断了。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "qd2B",
+   "group": "appearance_changed",
+   "fact": "缆绳｜外貌变化｜中间断了一股",
+   "greedy": {
+    "text": "缆绳的中间断了一股。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "缆绳的中间断了一股。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "qd3A",
+   "group": "appearance_changed",
+   "fact": "抹布｜外貌变化｜拧不干",
+   "greedy": {
+    "text": "抹布拧不干。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "抹布拧不干。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "qd3B",
+   "group": "appearance_changed",
+   "fact": "擦铜油｜外貌变化｜洒了半罐",
+   "greedy": {
+    "text": "擦铜油的洒了半罐。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "擦铜油的洒了半罐。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "ca1A",
+   "group": "outcome",
+   "fact": "沈砚｜结果｜把船灯的灯罩扣回去",
+   "greedy": {
+    "text": "沈砚把船灯的灯罩扣回去。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "沈砚把船灯的灯罩扣回去。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "ca1B",
+   "group": "outcome",
+   "fact": "顾行舟｜结果｜把船灯的灯罩扣回去",
+   "greedy": {
+    "text": "顾行舟把船灯的灯罩扣回去。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "顾行舟把船灯的灯罩扣回去。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "ca2A",
+   "group": "outcome",
+   "fact": "叶知微｜结果｜把擦铜油放回油壶边",
+   "greedy": {
+    "text": "叶知微把擦铜油放回油壶边。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "叶知微把擦铜油放回油壶边。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "ca2B",
+   "group": "outcome",
+   "fact": "沈砚｜结果｜把擦铜油放回油壶边",
+   "greedy": {
+    "text": "沈砚把擦铜油放回油壶边。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "沈砚把擦铜油放回油壶边。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "ca3A",
+   "group": "outcome",
+   "fact": "沈砚｜结果｜把铁链绕回钟架上",
+   "greedy": {
+    "text": "沈砚把铁链绕回钟架上。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "沈砚把铁链绕回钟架上。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "ca3B",
+   "group": "outcome",
+   "fact": "韩渡｜结果｜把铁链绕回钟架上",
+   "greedy": {
+    "text": "韩渡把铁链绕回钟架上。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "韩渡把铁链绕回钟架上。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "ca4A",
+   "group": "outcome",
+   "fact": "阿棠｜结果｜把案板擦干净",
+   "greedy": {
+    "text": "阿棠把案板擦干净。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "阿棠把案板擦干净。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "ca4B",
+   "group": "outcome",
+   "fact": "顾行舟｜结果｜把案板擦干净",
+   "greedy": {
+    "text": "顾行舟把案板擦干净。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "顾行舟把案板擦干净。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "cb1A",
+   "group": "appearance_changed",
+   "fact": "顾行舟｜外貌变化｜袖口沾了盐沫",
+   "greedy": {
+    "text": "顾行舟的袖口沾了盐沫。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "顾行舟的袖口沾了盐沫。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "cb1B",
+   "group": "appearance_changed",
+   "fact": "沈砚｜外貌变化｜袖口沾了盐沫",
+   "greedy": {
+    "text": "沈砚的袖口沾了盐沫。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "沈砚的袖口沾了盐沫。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "cb2A",
+   "group": "appearance_changed",
+   "fact": "叶知微｜外貌变化｜指尖沾了干纸的毛边",
+   "greedy": {
+    "text": "叶知微的指尖沾了干纸的毛边。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "叶知微的指尖沾了干纸的毛边。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "cb2B",
+   "group": "appearance_changed",
+   "fact": "沈砚｜外貌变化｜指尖沾了干纸的毛边",
+   "greedy": {
+    "text": "沈砚的指尖沾了干纸的毛边。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "沈砚的指尖沾了干纸的毛边。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "cb3A",
+   "group": "appearance_changed",
+   "fact": "韩渡｜外貌变化｜眉毛上挂着雾水",
+   "greedy": {
+    "text": "韩渡眉毛上挂着雾水。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "韩渡眉毛上挂着雾水。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "cb3B",
+   "group": "appearance_changed",
+   "fact": "沈砚｜外貌变化｜眉毛上挂着雾水",
+   "greedy": {
+    "text": "沈砚的眉毛上挂着雾水。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "沈砚的眉毛上挂着雾水。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "cb4A",
+   "group": "appearance_changed",
+   "fact": "叶知微｜外貌变化｜围裙上沾了铜油",
+   "greedy": {
+    "text": "叶知微的围裙上沾了铜油。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "叶知微的围裙上沾了铜油。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "cb4B",
+   "group": "appearance_changed",
+   "fact": "沈砚｜外貌变化｜围裙上沾了铜油",
+   "greedy": {
+    "text": "沈砚的围裙上沾了铜油。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "沈砚的围裙上沾了铜油。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "cc1A",
+   "group": "outcome",
+   "fact": "沈砚｜结果｜把湿伞塞进门槛下的空隙",
+   "greedy": {
+    "text": "沈砚把湿伞塞进门槛下的空隙。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "沈砚把湿伞塞进门槛下的空隙。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "cc1B",
+   "group": "outcome",
+   "fact": "沈砚｜结果｜把湿伞立在门槛外",
+   "greedy": {
+    "text": "沈砚把湿伞立在门槛外。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "沈砚把湿伞立在门槛外。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "cc3A",
+   "group": "outcome",
+   "fact": "阿棠｜结果｜把抹布塞进鱼筐底下",
+   "greedy": {
+    "text": "阿棠把抹布塞进鱼筐底下。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "阿棠把抹布塞进鱼筐底下。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "cc3B",
+   "group": "outcome",
+   "fact": "阿棠｜结果｜把抹布铺在鱼筐上面",
+   "greedy": {
+    "text": "阿棠把抹布铺在鱼筐上面。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "阿棠把抹布铺在鱼筐上面。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "cc4A",
+   "group": "outcome",
+   "fact": "顾行舟｜结果｜把船灯挂在栈桥的托架下",
+   "greedy": {
+    "text": "顾行舟把船灯挂在栈桥的托架下。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "顾行舟把船灯挂在栈桥的托架下。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "cc4B",
+   "group": "outcome",
+   "fact": "顾行舟｜结果｜把船灯摆在栈桥的托架上",
+   "greedy": {
+    "text": "顾行舟把船灯摆在栈桥的托架上。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "顾行舟把船灯摆在栈桥的托架上。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "cd2A",
+   "group": "outcome",
+   "fact": "顾行舟｜结果｜把缆绳绕在栈桥的木桩上",
+   "greedy": {
+    "text": "顾行舟把缆绳绕在栈桥的木桩上。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "顾行舟把缆绳绕在栈桥的木桩上。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "cd2B",
+   "group": "outcome",
+   "fact": "顾行舟｜结果｜把缆绳绕在石阶的栏杆上",
+   "greedy": {
+    "text": "顾行舟把缆绳绕在石阶的栏杆上。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "顾行舟把缆绳绕在石阶的栏杆上。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "cd3A",
+   "group": "outcome",
+   "fact": "阿棠｜结果｜把鱼筐放在案板边上",
+   "greedy": {
+    "text": "阿棠把鱼筐放在案板边上。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "阿棠把鱼筐放在案板边上。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "cd3B",
+   "group": "outcome",
+   "fact": "阿棠｜结果｜把鱼筐放在帆布棚外",
+   "greedy": {
+    "text": "阿棠把鱼筐放在帆布棚外。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "阿棠把鱼筐放在帆布棚外。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "cd4A",
+   "group": "outcome",
+   "fact": "叶知微｜结果｜把擦铜油放回梯脚",
+   "greedy": {
+    "text": "叶知微把擦铜油放回梯脚。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "叶知微把擦铜油放回梯脚。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "cd4B",
+   "group": "outcome",
+   "fact": "叶知微｜结果｜把擦铜油放在长桌上",
+   "greedy": {
+    "text": "叶知微把擦铜油放在长桌上。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "叶知微把擦铜油放在长桌上。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "ce1A",
+   "group": "appearance_changed",
+   "fact": "叶知微｜外貌变化｜指尖沾了铜油",
+   "greedy": {
+    "text": "叶知微的指尖沾了铜油。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "叶知微的指尖沾了铜油。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "ce1B",
+   "group": "no_change",
+   "fact": "场景｜无变化",
+   "greedy": {
+    "text": "塔顶的灯还亮着,什么也没有再发生。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "塔顶灯亮,什么发生"
+   },
+   "beam": {
+    "text": "塔顶的灯还亮着,什么也没有再发生。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "塔顶灯亮,什么发生"
+   }
+  },
+  {
+   "caseId": "ce2A",
+   "group": "outcome",
+   "fact": "沈砚｜结果｜把钟绳绕回钟架上",
+   "greedy": {
+    "text": "沈砚把钟绳绕回钟架上。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "沈砚把钟绳绕回钟架上。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "ce2B",
+   "group": "no_change",
+   "fact": "场景｜无变化",
+   "greedy": {
+    "text": "周围没有新的事情发生,什么也没有再发生。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "周围新事情发生,什么发生"
+   },
+   "beam": {
+    "text": "四下安静,没有新的事情发生。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "四安静,新事情发生"
+   }
+  },
+  {
+   "caseId": "ce3A",
+   "group": "outcome",
+   "fact": "顾行舟｜结果｜把船灯挂回托架上",
+   "greedy": {
+    "text": "顾行舟把船灯挂回托架上。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "顾行舟把船灯挂回托架上。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "ce3B",
+   "group": "no_change",
+   "fact": "场景｜无变化",
+   "greedy": {
+    "text": "四下安静,没有新的事情发生。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "四安静,新事情发生"
+   },
+   "beam": {
+    "text": "四下安静,没有新的事情发生。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "四安静,新事情发生"
+   }
+  },
+  {
+   "caseId": "ce4A",
+   "group": "moved",
+   "fact": "沈砚｜移动｜潮生巷→潮汐档案馆",
+   "greedy": {
+    "text": "沈砚从潮生巷一路走到潮汐档案馆。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "潮生巷一路走潮汐档案馆"
+   },
+   "beam": {
+    "text": "沈砚从潮生巷一路走到潮汐档案馆。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "潮生巷一路走潮汐档案馆"
+   }
+  },
+  {
+   "caseId": "ce4B",
+   "group": "no_change",
+   "fact": "场景｜无变化",
+   "greedy": {
+    "text": "四下安静,没有新的事情发生。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "四安静,新事情发生"
+   },
+   "beam": {
+    "text": "四下安静,没有新的事情发生。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "四安静,新事情发生"
+   }
+  }
+ ]
+}

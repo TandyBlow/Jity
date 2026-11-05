@@ -1,0 +1,23 @@
+{
+ "arm": "u240",
+ "rows": [
+  {
+   "unitId": "chain:f0",
+   "factId": "f0",
+   "kind": "appearance_changed",
+   "name": "林川",
+   "text": "林川的袖口沾了雨。",
+   "complete": true,
+   "seconds": 1.36
+  },
+  {
+   "unitId": "chain:f1",
+   "factId": "f1",
+   "kind": "appearance_changed",
+   "name": "周宁",
+   "text": "周宁的斗篷下摆湿了一片。",
+   "complete": true,
+   "seconds": 0.1
+  }
+ ]
+}

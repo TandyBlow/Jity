@@ -11,7 +11,11 @@ HERE = pathlib.Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 import fact_contract as FC  # noqa: E402
 
-ART = HERE.parents[2] / 'artifacts' / 'decode-compare'
+import sys as _paths_sys
+_paths_sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
+from component_paths import PATHS
+
+ART = PATHS.output('decode-compare')
 PEOPLE = ('沈砚', '顾行舟', '叶知微', '阿棠', '韩渡')
 PARTS = ('衣领', '下摆', '鞋面', '手背', '指尖', '鬓角', '肩头', '膝盖',
          '帽檐', '围巾', '腰侧', '发梢', '掌心', '耳后', '脚踝', '裤脚', '前襟', '背脊')
@@ -36,7 +40,7 @@ PLACES = {
     '早市': ('早市', '银鳞鱼、鱼筐、案板、抹布、帆布棚、石板、白汽', '清晨；薄雾；棚下散光'),
 }
 
-BOUNDARY_DIR = HERE.parents[2] / 'artifacts' / 'world-boundary'
+BOUNDARY_DIR = PATHS.input('world-boundary')
 PRIOR = set()
 for previous in ('boundary-train80.jsonl', 'boundary-confirm40.jsonl',
                  'boundary2-train80.jsonl', 'boundary2-confirm40.jsonl'):

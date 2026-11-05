@@ -1,0 +1,42 @@
+{
+  "metrics": {
+    "n": 298,
+    "nSupported": 149,
+    "nUnsupported": 149,
+    "confusion": {
+      "supported->supported": 4,
+      "supported->unsupported": 145,
+      "supported->uncertain": 0,
+      "unsupported->supported": 1,
+      "unsupported->unsupported": 148,
+      "unsupported->uncertain": 0
+    },
+    "unsupportedRecall": 0.9932885906040269,
+    "legalRejection": 0.9731543624161074,
+    "legalPending": 0.0,
+    "unsupportedPrecision": 0.5051194539249146,
+    "uncertainRate": 0.0,
+    "uncertainCount": 0
+  },
+  "category": {
+    "general": {
+      "n": 298,
+      "nSupported": 149,
+      "nUnsupported": 149,
+      "confusion": {
+        "supported->supported": 4,
+        "supported->unsupported": 145,
+        "supported->uncertain": 0,
+        "unsupported->supported": 1,
+        "unsupported->unsupported": 148,
+        "unsupported->uncertain": 0
+      },
+      "unsupportedRecall": 0.9932885906040269,
+      "legalRejection": 0.9731543624161074,
+      "legalPending": 0.0,
+      "unsupportedPrecision": 0.5051194539249146,
+      "uncertainRate": 0.0,
+      "uncertainCount": 0
+    }
+  }
+}

@@ -15,12 +15,16 @@ import urllib.request
 HERE = pathlib.Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
-ROOT = HERE.parents[2]
-OUT = ROOT / 'artifacts' / 'cohesion-split'
-DECODE = ROOT / 'artifacts' / 'decode-compare'
-DIAG_OUT = ROOT / 'artifacts' / 'world-components' / 'n4-ce-u240.json'
-ROUNDS_OUT = pathlib.Path('D:/others/Jity/artifacts/world-provenance/pairs/rounds-out.jsonl')
-ROUNDS_DIR = pathlib.Path('D:/others/Jity/artifacts/world-provenance/pairs')
+import sys as _paths_sys
+_paths_sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
+from component_paths import PATHS
+
+ROOT = PATHS.worktree
+OUT = PATHS.output('cohesion-split')
+DECODE = PATHS.input('decode-compare')
+DIAG_OUT = PATHS.input('world-components/n4-ce-u240.json')
+ROUNDS_OUT = PATHS.input('world-provenance/pairs/rounds-out.jsonl')
+ROUNDS_DIR = PATHS.input('world-provenance/pairs')
 
 OLLAMA = 'http://127.0.0.1:11434/api/generate'
 MODEL = 'qwen2.5:7b'
@@ -61,7 +65,7 @@ def diag_inputs():
     inputs = {}
     for name in ('n4-final24-contract.jsonl', 'n4-cf24-contract.jsonl',
                  'n4-object18-contract.jsonl', 'n4-expand36-contract.jsonl'):
-        path = ROOT / 'artifacts' / 'world-components' / name
+        path = PATHS.input('world-components/' + name)
         for line in path.read_text(encoding='utf-8').splitlines():
             if line.strip():
                 unit = json.loads(line)

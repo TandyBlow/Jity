@@ -17,12 +17,16 @@ import re
 import time
 import urllib.request
 
-ROOT = pathlib.Path('D:/others/Jity')
-A1 = ROOT / 'artifacts' / 'cohesion-split' / 'a1.jsonl'
-A1_FREEZE = ROOT / 'artifacts' / 'cohesion-split' / 'a1-freeze.json'
-CRITERIA = ROOT / 'artifacts' / 'cohesion-split' / 'v2-criteria-freeze.json'
-OUT = ROOT / 'artifacts' / 'cohesion-split' / 'organize-v2-results.jsonl'
-SUMMARY = ROOT / 'artifacts' / 'cohesion-split' / 'organize-v2-summary.json'
+import sys as _paths_sys
+_paths_sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
+from component_paths import PATHS
+
+ROOT = PATHS.worktree
+A1 = PATHS.input('cohesion-split/a1.jsonl')
+A1_FREEZE = PATHS.input('cohesion-split/a1-freeze.json')
+CRITERIA = PATHS.input('cohesion-split/v2-criteria-freeze.json')
+OUT = PATHS.output('cohesion-split/organize-v2-results.jsonl')
+SUMMARY = PATHS.output('cohesion-split/organize-v2-summary.json')
 
 OLLAMA = 'http://127.0.0.1:11434/api/generate'
 MODEL = 'qwen2.5:7b'
@@ -301,7 +305,7 @@ def main():
     freeze = json.loads(A1_FREEZE.read_text(encoding='utf-8'))
     criteria = json.loads(CRITERIA.read_text(encoding='utf-8'))
     prompt_hash = hashlib.sha256(PROMPT_VERSION.encode('utf-8')).hexdigest()
-    out_path = pathlib.Path(args.out)
+    out_path = PATHS.output(args.out)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     started = time.perf_counter()
     results = []

@@ -1,0 +1,112 @@
+{
+ "worldId": "world_1",
+ "units": [
+  {
+   "factId": "f0",
+   "entityId": "person_a",
+   "name": "林川",
+   "kind": "appearance_changed",
+   "text": "灯罩蒙了灰",
+   "pointId": "fixture_r2_p1",
+   "evidenceId": "fixture_r2_p1/person_a/appearance/fixture_r2_p1_1",
+   "sequence": 4
+  },
+  {
+   "factId": "f1",
+   "entityId": "person_a",
+   "name": "林川",
+   "kind": "appearance_changed",
+   "text": "掌心出汗",
+   "pointId": "fixture_r2_p1",
+   "evidenceId": "fixture_r2_p1/person_a/appearance/fixture_r2_p1_2",
+   "sequence": 4
+  },
+  {
+   "factId": "f2",
+   "entityId": "person_b",
+   "name": "周宁",
+   "kind": "appearance_changed",
+   "text": "钟绳磨出了毛边",
+   "pointId": "fixture_r2_p2",
+   "evidenceId": "fixture_r2_p2/person_b/appearance/fixture_r2_p2_1",
+   "sequence": 5
+  },
+  {
+   "factId": "f3",
+   "entityId": "person_c",
+   "name": "陈默",
+   "kind": "appearance_changed",
+   "text": "衣角结了盐霜",
+   "pointId": "fixture_r2_p3",
+   "evidenceId": "fixture_r2_p3/person_c/appearance/fixture_r2_p3_1",
+   "sequence": 6
+  },
+  {
+   "factId": "f4",
+   "entityId": "person_c",
+   "name": "陈默",
+   "kind": "appearance_changed",
+   "text": "鬓发被雾打湿",
+   "pointId": "fixture_r2_p3",
+   "evidenceId": "fixture_r2_p3/person_c/appearance/fixture_r2_p3_2",
+   "sequence": 6
+  }
+ ],
+ "points": [
+  {
+   "id": "fixture_r2_p1",
+   "sequence": 4,
+   "previousPointId": "fixture_r1_p3",
+   "time": {
+    "boundary": "elapsed",
+    "duration": {
+     "amount": 2,
+     "unit": "second"
+    }
+   }
+  },
+  {
+   "id": "fixture_r2_p2",
+   "sequence": 5,
+   "previousPointId": "fixture_r2_p1",
+   "time": {
+    "boundary": "elapsed",
+    "duration": {
+     "amount": 3,
+     "unit": "second"
+    }
+   }
+  },
+  {
+   "id": "fixture_r2_p3",
+   "sequence": 6,
+   "previousPointId": "fixture_r2_p2",
+   "time": {
+    "boundary": "elapsed",
+    "duration": {
+     "amount": 1,
+     "unit": "second"
+    }
+   }
+  },
+  {
+   "id": "fixture_r3_p1",
+   "sequence": 7,
+   "previousPointId": "fixture_r2_p3",
+   "time": {
+    "boundary": "elapsed",
+    "duration": {
+     "amount": 2,
+     "unit": "second"
+    }
+   }
+  }
+ ],
+ "requestedRelations": [
+  {
+   "type": "before",
+   "fromFactId": "f2",
+   "toFactId": "f3"
+  }
+ ]
+}

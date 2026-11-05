@@ -23,8 +23,12 @@ sys.path.insert(0, str(HERE))
 import n4_pipeline as P  # noqa: E402
 from conservative_edit import strip_subject  # noqa: E402
 
-ROOT = HERE.parents[2]
-OUT = ROOT / 'artifacts' / 'cohesion-split'
+import sys as _paths_sys
+_paths_sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
+from component_paths import PATHS
+
+ROOT = PATHS.worktree
+OUT = PATHS.output('cohesion-split')
 D = json.loads((OUT / 'dw-results.json').read_text(encoding='utf-8'))
 
 OLLAMA = 'http://127.0.0.1:11434/api/generate'

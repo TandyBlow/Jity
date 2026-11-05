@@ -1,0 +1,284 @@
+{
+ "rows": [
+  {
+   "unitId": "ca1A",
+   "category": "action_actor",
+   "text": "沈砚把船灯的灯罩扣回去。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "ca1B",
+   "category": "action_actor",
+   "text": "顾行舟把船灯的灯罩扣回去。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "ca2A",
+   "category": "action_actor",
+   "text": "叶知微把擦铜油放回油壶边。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "ca2B",
+   "category": "action_actor",
+   "text": "沈砚把擦铜油放回油壶边。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "ca3A",
+   "category": "action_actor",
+   "text": "沈砚把铁链绕回钟架上。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "ca3B",
+   "category": "action_actor",
+   "text": "韩渡把铁链绕回钟架上。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "ca4A",
+   "category": "action_actor",
+   "text": "阿棠把案板擦干净。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "ca4B",
+   "category": "action_actor",
+   "text": "顾行舟把案板擦干净。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "cb1A",
+   "category": "owner",
+   "text": "顾行舟的袖口沾了盐沫。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "cb1B",
+   "category": "owner",
+   "text": "沈砚的袖口沾了盐沫。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "cb2A",
+   "category": "owner",
+   "text": "叶知微的指尖沾了干纸的毛边。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "cb2B",
+   "category": "owner",
+   "text": "沈砚的指尖沾了干纸的毛边。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "cb3A",
+   "category": "owner",
+   "text": "韩渡的眉毛上挂着雾水。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "cb3B",
+   "category": "owner",
+   "text": "沈砚的眉毛上挂着雾水。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "cb4A",
+   "category": "owner",
+   "text": "叶知微的围裙上沾了铜油。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "cb4B",
+   "category": "owner",
+   "text": "沈砚的围裙上沾了铜油。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "cc1A",
+   "category": "container",
+   "text": "沈砚把湿伞塞进门槛下的空隙。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "cc1B",
+   "category": "container",
+   "text": "沈砚把湿伞立在门槛外。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "cc2A",
+   "category": "container",
+   "text": "沈砚把旧纸压进潮汐簿里。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "cc2B",
+   "category": "container",
+   "text": "沈砚把旧纸摊在潮汐簿上。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "cc3A",
+   "category": "container",
+   "text": "阿棠把抹布塞进鱼筐底下。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "cc3B",
+   "category": "container",
+   "text": "阿棠把抹布铺在鱼筐上面。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "cc4A",
+   "category": "container",
+   "text": "顾行舟把船灯挂在栈桥的托架下。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "cc4B",
+   "category": "container",
+   "text": "顾行舟把船灯摆在栈桥的托架上。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "cd1A",
+   "category": "binding",
+   "text": "沈砚把冷茶放在门槛边。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "cd1B",
+   "category": "binding",
+   "text": "沈砚把冷茶放在长桌尽头。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "cd2A",
+   "category": "binding",
+   "text": "顾行舟把缆绳绕在栈桥的木桩上。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "cd2B",
+   "category": "binding",
+   "text": "顾行舟把缆绳绕在石阶的栏杆上。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "cd3A",
+   "category": "binding",
+   "text": "阿棠把鱼筐放在案板边上。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "cd3B",
+   "category": "binding",
+   "text": "阿棠把鱼筐放在帆布棚外。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "cd4A",
+   "category": "binding",
+   "text": "叶知微把擦铜油放回梯脚。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "cd4B",
+   "category": "binding",
+   "text": "叶知微把擦铜油放在长桌上。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "ce1A",
+   "category": "change_nochange",
+   "text": "叶知微的指尖沾了铜油。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "ce1B",
+   "category": "change_nochange",
+   "text": "塔顶的灯还亮着,什么也没有再发生。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "ce2A",
+   "category": "change_nochange",
+   "text": "沈砚把钟绳绕回钟架上。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "ce2B",
+   "category": "change_nochange",
+   "text": "雾堤里的雾没有新的变化,什么也没有再发生。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "ce3A",
+   "category": "change_nochange",
+   "text": "顾行舟把船灯挂回托架上。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "ce3B",
+   "category": "change_nochange",
+   "text": "栈桥边的木桩上没有新的变化。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "ce4A",
+   "category": "change_nochange",
+   "text": "沈砚从潮生巷一路走到潮汐档案馆脚下,抬头看了看档案馆。",
+   "stopReason": "eos",
+   "complete": true
+  },
+  {
+   "unitId": "ce4B",
+   "category": "change_nochange",
+   "text": "屋里没有新的变化,什么也没有再发生。",
+   "stopReason": "eos",
+   "complete": true
+  }
+ ]
+}

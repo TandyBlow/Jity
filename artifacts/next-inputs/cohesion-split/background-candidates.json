@@ -1,0 +1,1146 @@
+[
+  {
+    "sourceId": "fixture-r1",
+    "place": "潮汐档案馆>长桌",
+    "scene": "夜；浓雾",
+    "A1": "林川的袖口沾了雨，指节发白。周宁的斗篷下摆湿了一片。随后，陈默的鞋底沾了泥。陈默的袖口湿到肘部。",
+    "sentences": [
+      "林川的袖口沾了雨，指节发白。",
+      "周宁的斗篷下摆湿了一片。",
+      "随后，陈默的鞋底沾了泥。",
+      "陈默的袖口湿到肘部。"
+    ],
+    "backgrounds": [
+      {
+        "backgroundId": "b0",
+        "atom": "夜",
+        "display": "夜里",
+        "source": "scene",
+        "frameUsable": true
+      },
+      {
+        "backgroundId": "b1",
+        "atom": "浓雾",
+        "display": "浓雾里",
+        "source": "scene",
+        "frameUsable": true
+      }
+    ],
+    "slots": [
+      {
+        "slotId": "s0",
+        "afterSentence": 0,
+        "mode": "prefix",
+        "description": "段首，作前置框架（背景，+ 第一句）"
+      },
+      {
+        "slotId": "s1",
+        "afterSentence": 1,
+        "mode": "standalone",
+        "description": "第 1 句后，独立背景句"
+      },
+      {
+        "slotId": "s2",
+        "afterSentence": 2,
+        "mode": "standalone",
+        "description": "第 2 句后，独立背景句"
+      },
+      {
+        "slotId": "s3",
+        "afterSentence": 3,
+        "mode": "standalone",
+        "description": "第 3 句后，独立背景句"
+      },
+      {
+        "slotId": "s4",
+        "afterSentence": 4,
+        "mode": "standalone",
+        "description": "最后一句后，独立背景句"
+      }
+    ]
+  },
+  {
+    "sourceId": "fixture-r2",
+    "place": "潮汐档案馆>长桌",
+    "scene": "夜；浓雾",
+    "A1": "林川的灯罩蒙了灰，掌心出汗。周宁的钟绳磨出了毛边。随后，陈默的衣角结了盐霜。陈默的鬓发被雾打湿。",
+    "sentences": [
+      "林川的灯罩蒙了灰，掌心出汗。",
+      "周宁的钟绳磨出了毛边。",
+      "随后，陈默的衣角结了盐霜。",
+      "陈默的鬓发被雾打湿。"
+    ],
+    "backgrounds": [
+      {
+        "backgroundId": "b0",
+        "atom": "夜",
+        "display": "夜里",
+        "source": "scene",
+        "frameUsable": true
+      },
+      {
+        "backgroundId": "b1",
+        "atom": "浓雾",
+        "display": "浓雾里",
+        "source": "scene",
+        "frameUsable": true
+      }
+    ],
+    "slots": [
+      {
+        "slotId": "s0",
+        "afterSentence": 0,
+        "mode": "prefix",
+        "description": "段首，作前置框架（背景，+ 第一句）"
+      },
+      {
+        "slotId": "s1",
+        "afterSentence": 1,
+        "mode": "standalone",
+        "description": "第 1 句后，独立背景句"
+      },
+      {
+        "slotId": "s2",
+        "afterSentence": 2,
+        "mode": "standalone",
+        "description": "第 2 句后，独立背景句"
+      },
+      {
+        "slotId": "s3",
+        "afterSentence": 3,
+        "mode": "standalone",
+        "description": "第 3 句后，独立背景句"
+      },
+      {
+        "slotId": "s4",
+        "afterSentence": 4,
+        "mode": "standalone",
+        "description": "最后一句后，独立背景句"
+      }
+    ]
+  },
+  {
+    "sourceId": "fixture-r3",
+    "place": "潮汐档案馆>长桌",
+    "scene": "夜；浓雾",
+    "A1": "林川被雨打湿半幅，袖口开了线。周宁的指缝里塞着泥。随后，陈默的鞋跟磨塌了。陈默的裤脚沾了铜油。",
+    "sentences": [
+      "林川被雨打湿半幅，袖口开了线。",
+      "周宁的指缝里塞着泥。",
+      "随后，陈默的鞋跟磨塌了。",
+      "陈默的裤脚沾了铜油。"
+    ],
+    "backgrounds": [
+      {
+        "backgroundId": "b0",
+        "atom": "夜",
+        "display": "夜里",
+        "source": "scene",
+        "frameUsable": true
+      },
+      {
+        "backgroundId": "b1",
+        "atom": "浓雾",
+        "display": "浓雾里",
+        "source": "scene",
+        "frameUsable": true
+      }
+    ],
+    "slots": [
+      {
+        "slotId": "s0",
+        "afterSentence": 0,
+        "mode": "prefix",
+        "description": "段首，作前置框架（背景，+ 第一句）"
+      },
+      {
+        "slotId": "s1",
+        "afterSentence": 1,
+        "mode": "standalone",
+        "description": "第 1 句后，独立背景句"
+      },
+      {
+        "slotId": "s2",
+        "afterSentence": 2,
+        "mode": "standalone",
+        "description": "第 2 句后，独立背景句"
+      },
+      {
+        "slotId": "s3",
+        "afterSentence": 3,
+        "mode": "standalone",
+        "description": "第 3 句后，独立背景句"
+      },
+      {
+        "slotId": "s4",
+        "afterSentence": 4,
+        "mode": "standalone",
+        "description": "最后一句后，独立背景句"
+      }
+    ]
+  },
+  {
+    "sourceId": "fixture-r4",
+    "place": "潮汐档案馆>长桌",
+    "scene": "夜；浓雾",
+    "A1": "林川的围巾松开一截，脸色发白。周宁的背上溅了泥点。随后，陈默的手背蹭破了皮。陈默的肩头落着灰。",
+    "sentences": [
+      "林川的围巾松开一截，脸色发白。",
+      "周宁的背上溅了泥点。",
+      "随后，陈默的手背蹭破了皮。",
+      "陈默的肩头落着灰。"
+    ],
+    "backgrounds": [
+      {
+        "backgroundId": "b0",
+        "atom": "夜",
+        "display": "夜里",
+        "source": "scene",
+        "frameUsable": true
+      },
+      {
+        "backgroundId": "b1",
+        "atom": "浓雾",
+        "display": "浓雾里",
+        "source": "scene",
+        "frameUsable": true
+      }
+    ],
+    "slots": [
+      {
+        "slotId": "s0",
+        "afterSentence": 0,
+        "mode": "prefix",
+        "description": "段首，作前置框架（背景，+ 第一句）"
+      },
+      {
+        "slotId": "s1",
+        "afterSentence": 1,
+        "mode": "standalone",
+        "description": "第 1 句后，独立背景句"
+      },
+      {
+        "slotId": "s2",
+        "afterSentence": 2,
+        "mode": "standalone",
+        "description": "第 2 句后，独立背景句"
+      },
+      {
+        "slotId": "s3",
+        "afterSentence": 3,
+        "mode": "standalone",
+        "description": "第 3 句后，独立背景句"
+      },
+      {
+        "slotId": "s4",
+        "afterSentence": 4,
+        "mode": "standalone",
+        "description": "最后一句后，独立背景句"
+      }
+    ]
+  },
+  {
+    "sourceId": "fixture-r5",
+    "place": "潮汐档案馆>长桌",
+    "scene": "夜；浓雾",
+    "A1": "林川的帽檐压出折痕，脚踝肿了一块。周宁的衣领被雨浸透。随后，陈默的指尖磨出茧。陈默的膝盖沾了泥。",
+    "sentences": [
+      "林川的帽檐压出折痕，脚踝肿了一块。",
+      "周宁的衣领被雨浸透。",
+      "随后，陈默的指尖磨出茧。",
+      "陈默的膝盖沾了泥。"
+    ],
+    "backgrounds": [
+      {
+        "backgroundId": "b0",
+        "atom": "夜",
+        "display": "夜里",
+        "source": "scene",
+        "frameUsable": true
+      },
+      {
+        "backgroundId": "b1",
+        "atom": "浓雾",
+        "display": "浓雾里",
+        "source": "scene",
+        "frameUsable": true
+      }
+    ],
+    "slots": [
+      {
+        "slotId": "s0",
+        "afterSentence": 0,
+        "mode": "prefix",
+        "description": "段首，作前置框架（背景，+ 第一句）"
+      },
+      {
+        "slotId": "s1",
+        "afterSentence": 1,
+        "mode": "standalone",
+        "description": "第 1 句后，独立背景句"
+      },
+      {
+        "slotId": "s2",
+        "afterSentence": 2,
+        "mode": "standalone",
+        "description": "第 2 句后，独立背景句"
+      },
+      {
+        "slotId": "s3",
+        "afterSentence": 3,
+        "mode": "standalone",
+        "description": "第 3 句后，独立背景句"
+      },
+      {
+        "slotId": "s4",
+        "afterSentence": 4,
+        "mode": "standalone",
+        "description": "最后一句后，独立背景句"
+      }
+    ]
+  },
+  {
+    "sourceId": "train-r1",
+    "place": "潮汐档案馆>长桌",
+    "scene": "夜；浓雾",
+    "A1": "沈砚的袖口沾了雨，指节发白。顾行舟的斗篷下摆湿了一片。随后，叶知微的鞋底沾了泥。叶知微的袖口湿到肘部。",
+    "sentences": [
+      "沈砚的袖口沾了雨，指节发白。",
+      "顾行舟的斗篷下摆湿了一片。",
+      "随后，叶知微的鞋底沾了泥。",
+      "叶知微的袖口湿到肘部。"
+    ],
+    "backgrounds": [
+      {
+        "backgroundId": "b0",
+        "atom": "夜",
+        "display": "夜里",
+        "source": "scene",
+        "frameUsable": true
+      },
+      {
+        "backgroundId": "b1",
+        "atom": "浓雾",
+        "display": "浓雾里",
+        "source": "scene",
+        "frameUsable": true
+      }
+    ],
+    "slots": [
+      {
+        "slotId": "s0",
+        "afterSentence": 0,
+        "mode": "prefix",
+        "description": "段首，作前置框架（背景，+ 第一句）"
+      },
+      {
+        "slotId": "s1",
+        "afterSentence": 1,
+        "mode": "standalone",
+        "description": "第 1 句后，独立背景句"
+      },
+      {
+        "slotId": "s2",
+        "afterSentence": 2,
+        "mode": "standalone",
+        "description": "第 2 句后，独立背景句"
+      },
+      {
+        "slotId": "s3",
+        "afterSentence": 3,
+        "mode": "standalone",
+        "description": "第 3 句后，独立背景句"
+      },
+      {
+        "slotId": "s4",
+        "afterSentence": 4,
+        "mode": "standalone",
+        "description": "最后一句后，独立背景句"
+      }
+    ]
+  },
+  {
+    "sourceId": "train-r2",
+    "place": "潮汐档案馆>长桌",
+    "scene": "夜；浓雾",
+    "A1": "沈砚的灯罩蒙了灰，掌心出汗。顾行舟的钟绳磨出了毛边。随后，叶知微的衣角结了盐霜。叶知微的鬓发被雾打湿。",
+    "sentences": [
+      "沈砚的灯罩蒙了灰，掌心出汗。",
+      "顾行舟的钟绳磨出了毛边。",
+      "随后，叶知微的衣角结了盐霜。",
+      "叶知微的鬓发被雾打湿。"
+    ],
+    "backgrounds": [
+      {
+        "backgroundId": "b0",
+        "atom": "夜",
+        "display": "夜里",
+        "source": "scene",
+        "frameUsable": true
+      },
+      {
+        "backgroundId": "b1",
+        "atom": "浓雾",
+        "display": "浓雾里",
+        "source": "scene",
+        "frameUsable": true
+      }
+    ],
+    "slots": [
+      {
+        "slotId": "s0",
+        "afterSentence": 0,
+        "mode": "prefix",
+        "description": "段首，作前置框架（背景，+ 第一句）"
+      },
+      {
+        "slotId": "s1",
+        "afterSentence": 1,
+        "mode": "standalone",
+        "description": "第 1 句后，独立背景句"
+      },
+      {
+        "slotId": "s2",
+        "afterSentence": 2,
+        "mode": "standalone",
+        "description": "第 2 句后，独立背景句"
+      },
+      {
+        "slotId": "s3",
+        "afterSentence": 3,
+        "mode": "standalone",
+        "description": "第 3 句后，独立背景句"
+      },
+      {
+        "slotId": "s4",
+        "afterSentence": 4,
+        "mode": "standalone",
+        "description": "最后一句后，独立背景句"
+      }
+    ]
+  },
+  {
+    "sourceId": "train-r3",
+    "place": "潮汐档案馆>长桌",
+    "scene": "夜；浓雾",
+    "A1": "沈砚被雨打湿半幅，袖口开了线。顾行舟的指缝里塞着泥。随后，叶知微的鞋跟磨塌了。叶知微的裤脚沾了铜油。",
+    "sentences": [
+      "沈砚被雨打湿半幅，袖口开了线。",
+      "顾行舟的指缝里塞着泥。",
+      "随后，叶知微的鞋跟磨塌了。",
+      "叶知微的裤脚沾了铜油。"
+    ],
+    "backgrounds": [
+      {
+        "backgroundId": "b0",
+        "atom": "夜",
+        "display": "夜里",
+        "source": "scene",
+        "frameUsable": true
+      },
+      {
+        "backgroundId": "b1",
+        "atom": "浓雾",
+        "display": "浓雾里",
+        "source": "scene",
+        "frameUsable": true
+      }
+    ],
+    "slots": [
+      {
+        "slotId": "s0",
+        "afterSentence": 0,
+        "mode": "prefix",
+        "description": "段首，作前置框架（背景，+ 第一句）"
+      },
+      {
+        "slotId": "s1",
+        "afterSentence": 1,
+        "mode": "standalone",
+        "description": "第 1 句后，独立背景句"
+      },
+      {
+        "slotId": "s2",
+        "afterSentence": 2,
+        "mode": "standalone",
+        "description": "第 2 句后，独立背景句"
+      },
+      {
+        "slotId": "s3",
+        "afterSentence": 3,
+        "mode": "standalone",
+        "description": "第 3 句后，独立背景句"
+      },
+      {
+        "slotId": "s4",
+        "afterSentence": 4,
+        "mode": "standalone",
+        "description": "最后一句后，独立背景句"
+      }
+    ]
+  },
+  {
+    "sourceId": "train-r4",
+    "place": "潮汐档案馆>长桌",
+    "scene": "夜；浓雾",
+    "A1": "沈砚的围巾松开一截，脸色发白。顾行舟的背上溅了泥点。随后，叶知微的手背蹭破了皮。叶知微的肩头落着灰。",
+    "sentences": [
+      "沈砚的围巾松开一截，脸色发白。",
+      "顾行舟的背上溅了泥点。",
+      "随后，叶知微的手背蹭破了皮。",
+      "叶知微的肩头落着灰。"
+    ],
+    "backgrounds": [
+      {
+        "backgroundId": "b0",
+        "atom": "夜",
+        "display": "夜里",
+        "source": "scene",
+        "frameUsable": true
+      },
+      {
+        "backgroundId": "b1",
+        "atom": "浓雾",
+        "display": "浓雾里",
+        "source": "scene",
+        "frameUsable": true
+      }
+    ],
+    "slots": [
+      {
+        "slotId": "s0",
+        "afterSentence": 0,
+        "mode": "prefix",
+        "description": "段首，作前置框架（背景，+ 第一句）"
+      },
+      {
+        "slotId": "s1",
+        "afterSentence": 1,
+        "mode": "standalone",
+        "description": "第 1 句后，独立背景句"
+      },
+      {
+        "slotId": "s2",
+        "afterSentence": 2,
+        "mode": "standalone",
+        "description": "第 2 句后，独立背景句"
+      },
+      {
+        "slotId": "s3",
+        "afterSentence": 3,
+        "mode": "standalone",
+        "description": "第 3 句后，独立背景句"
+      },
+      {
+        "slotId": "s4",
+        "afterSentence": 4,
+        "mode": "standalone",
+        "description": "最后一句后，独立背景句"
+      }
+    ]
+  },
+  {
+    "sourceId": "train-r5",
+    "place": "潮汐档案馆>长桌",
+    "scene": "夜；浓雾",
+    "A1": "沈砚的帽檐压出折痕，脚踝肿了一块。顾行舟的衣领被雨浸透。随后，叶知微的指尖磨出茧。叶知微的膝盖沾了泥。",
+    "sentences": [
+      "沈砚的帽檐压出折痕，脚踝肿了一块。",
+      "顾行舟的衣领被雨浸透。",
+      "随后，叶知微的指尖磨出茧。",
+      "叶知微的膝盖沾了泥。"
+    ],
+    "backgrounds": [
+      {
+        "backgroundId": "b0",
+        "atom": "夜",
+        "display": "夜里",
+        "source": "scene",
+        "frameUsable": true
+      },
+      {
+        "backgroundId": "b1",
+        "atom": "浓雾",
+        "display": "浓雾里",
+        "source": "scene",
+        "frameUsable": true
+      }
+    ],
+    "slots": [
+      {
+        "slotId": "s0",
+        "afterSentence": 0,
+        "mode": "prefix",
+        "description": "段首，作前置框架（背景，+ 第一句）"
+      },
+      {
+        "slotId": "s1",
+        "afterSentence": 1,
+        "mode": "standalone",
+        "description": "第 1 句后，独立背景句"
+      },
+      {
+        "slotId": "s2",
+        "afterSentence": 2,
+        "mode": "standalone",
+        "description": "第 2 句后，独立背景句"
+      },
+      {
+        "slotId": "s3",
+        "afterSentence": 3,
+        "mode": "standalone",
+        "description": "第 3 句后，独立背景句"
+      },
+      {
+        "slotId": "s4",
+        "afterSentence": 4,
+        "mode": "standalone",
+        "description": "最后一句后，独立背景句"
+      }
+    ]
+  },
+  {
+    "sourceId": "v01",
+    "place": "雾堤>堤面",
+    "scene": "夜；浓雾；警示灯",
+    "A1": "沈砚从潮渡上来。韩渡把松脱的钟绳重新系紧。沈砚把警示灯扶正。韩渡的袖口沾了盐沫。",
+    "sentences": [
+      "沈砚从潮渡上来。",
+      "韩渡把松脱的钟绳重新系紧。",
+      "沈砚把警示灯扶正。",
+      "韩渡的袖口沾了盐沫。"
+    ],
+    "backgrounds": [
+      {
+        "backgroundId": "b0",
+        "atom": "夜",
+        "display": "夜里",
+        "source": "scene",
+        "frameUsable": true
+      },
+      {
+        "backgroundId": "b1",
+        "atom": "浓雾",
+        "display": "浓雾里",
+        "source": "scene",
+        "frameUsable": true
+      },
+      {
+        "backgroundId": "b2",
+        "atom": "警示灯",
+        "display": "警示灯",
+        "source": "scene",
+        "frameUsable": false
+      }
+    ],
+    "slots": [
+      {
+        "slotId": "s0",
+        "afterSentence": 0,
+        "mode": "prefix",
+        "description": "段首，作前置框架（背景，+ 第一句）"
+      },
+      {
+        "slotId": "s1",
+        "afterSentence": 1,
+        "mode": "standalone",
+        "description": "第 1 句后，独立背景句"
+      },
+      {
+        "slotId": "s2",
+        "afterSentence": 2,
+        "mode": "standalone",
+        "description": "第 2 句后，独立背景句"
+      },
+      {
+        "slotId": "s3",
+        "afterSentence": 3,
+        "mode": "standalone",
+        "description": "第 3 句后，独立背景句"
+      },
+      {
+        "slotId": "s4",
+        "afterSentence": 4,
+        "mode": "standalone",
+        "description": "最后一句后，独立背景句"
+      }
+    ]
+  },
+  {
+    "sourceId": "v02",
+    "place": "早市",
+    "scene": "清晨；薄雾；棚下散光",
+    "A1": "阿棠把银鳞鱼按大小分开装进鱼筐。顾行舟把抹布拧干，手背上沾了鱼鳞。",
+    "sentences": [
+      "阿棠把银鳞鱼按大小分开装进鱼筐。",
+      "顾行舟把抹布拧干，手背上沾了鱼鳞。"
+    ],
+    "backgrounds": [
+      {
+        "backgroundId": "b0",
+        "atom": "清晨",
+        "display": "清晨",
+        "source": "scene",
+        "frameUsable": true
+      },
+      {
+        "backgroundId": "b1",
+        "atom": "薄雾",
+        "display": "薄雾里",
+        "source": "scene",
+        "frameUsable": true
+      },
+      {
+        "backgroundId": "b2",
+        "atom": "棚下散光",
+        "display": "棚下散着光",
+        "source": "scene",
+        "frameUsable": true
+      }
+    ],
+    "slots": [
+      {
+        "slotId": "s0",
+        "afterSentence": 0,
+        "mode": "prefix",
+        "description": "段首，作前置框架（背景，+ 第一句）"
+      },
+      {
+        "slotId": "s1",
+        "afterSentence": 1,
+        "mode": "standalone",
+        "description": "第 1 句后，独立背景句"
+      },
+      {
+        "slotId": "s2",
+        "afterSentence": 2,
+        "mode": "standalone",
+        "description": "最后一句后，独立背景句"
+      }
+    ]
+  },
+  {
+    "sourceId": "v03",
+    "place": "潮汐档案馆",
+    "scene": "夜；小雨；铜灯",
+    "A1": "沈砚把潮汐簿缺的那页补全。叶知微把干纸码成一小摞，指尖沾了墨。四下安静，没有新的事情发生。",
+    "sentences": [
+      "沈砚把潮汐簿缺的那页补全。",
+      "叶知微把干纸码成一小摞，指尖沾了墨。",
+      "四下安静，没有新的事情发生。"
+    ],
+    "backgrounds": [
+      {
+        "backgroundId": "b0",
+        "atom": "夜",
+        "display": "夜里",
+        "source": "scene",
+        "frameUsable": true
+      },
+      {
+        "backgroundId": "b1",
+        "atom": "小雨",
+        "display": "小雨里",
+        "source": "scene",
+        "frameUsable": true
+      },
+      {
+        "backgroundId": "b2",
+        "atom": "铜灯",
+        "display": "铜灯",
+        "source": "scene",
+        "frameUsable": false
+      }
+    ],
+    "slots": [
+      {
+        "slotId": "s0",
+        "afterSentence": 0,
+        "mode": "prefix",
+        "description": "段首，作前置框架（背景，+ 第一句）"
+      },
+      {
+        "slotId": "s1",
+        "afterSentence": 1,
+        "mode": "standalone",
+        "description": "第 1 句后，独立背景句"
+      },
+      {
+        "slotId": "s2",
+        "afterSentence": 2,
+        "mode": "standalone",
+        "description": "第 2 句后，独立背景句"
+      },
+      {
+        "slotId": "s3",
+        "afterSentence": 3,
+        "mode": "standalone",
+        "description": "最后一句后，独立背景句"
+      }
+    ]
+  },
+  {
+    "sourceId": "v05",
+    "place": "旧灯塔>塔顶",
+    "scene": "夜；夜雾；塔顶铜灯已点亮",
+    "A1": "叶知微的袖口沾了铜油。沈砚的手背上沾了铜油。叶知微把灯罩擦得透亮。塔顶的灯还亮着，什么也没有再发生。",
+    "sentences": [
+      "叶知微的袖口沾了铜油。",
+      "沈砚的手背上沾了铜油。",
+      "叶知微把灯罩擦得透亮。",
+      "塔顶的灯还亮着，什么也没有再发生。"
+    ],
+    "backgrounds": [
+      {
+        "backgroundId": "b0",
+        "atom": "夜",
+        "display": "夜里",
+        "source": "scene",
+        "frameUsable": true
+      },
+      {
+        "backgroundId": "b1",
+        "atom": "夜雾",
+        "display": "夜雾里",
+        "source": "scene",
+        "frameUsable": true
+      },
+      {
+        "backgroundId": "b2",
+        "atom": "塔顶铜灯已点亮",
+        "display": "塔顶铜灯已点亮",
+        "source": "scene",
+        "frameUsable": false
+      }
+    ],
+    "slots": [
+      {
+        "slotId": "s0",
+        "afterSentence": 0,
+        "mode": "prefix",
+        "description": "段首，作前置框架（背景，+ 第一句）"
+      },
+      {
+        "slotId": "s1",
+        "afterSentence": 1,
+        "mode": "standalone",
+        "description": "第 1 句后，独立背景句"
+      },
+      {
+        "slotId": "s2",
+        "afterSentence": 2,
+        "mode": "standalone",
+        "description": "第 2 句后，独立背景句"
+      },
+      {
+        "slotId": "s3",
+        "afterSentence": 3,
+        "mode": "standalone",
+        "description": "第 3 句后，独立背景句"
+      },
+      {
+        "slotId": "s4",
+        "afterSentence": 4,
+        "mode": "standalone",
+        "description": "最后一句后，独立背景句"
+      }
+    ]
+  },
+  {
+    "sourceId": "v06",
+    "place": "潮生巷",
+    "scene": "雨后；雨停；纸灯笼",
+    "A1": "阿棠的鞋底沾了湿石板的水。沈砚的袖口沾了雨。阿棠把纸灯笼扶正。",
+    "sentences": [
+      "阿棠的鞋底沾了湿石板的水。",
+      "沈砚的袖口沾了雨。",
+      "阿棠把纸灯笼扶正。"
+    ],
+    "backgrounds": [
+      {
+        "backgroundId": "b0",
+        "atom": "雨后",
+        "display": "雨后",
+        "source": "scene",
+        "frameUsable": true
+      },
+      {
+        "backgroundId": "b1",
+        "atom": "雨停",
+        "display": "雨停",
+        "source": "scene",
+        "frameUsable": true
+      },
+      {
+        "backgroundId": "b2",
+        "atom": "纸灯笼",
+        "display": "纸灯笼",
+        "source": "scene",
+        "frameUsable": false
+      }
+    ],
+    "slots": [
+      {
+        "slotId": "s0",
+        "afterSentence": 0,
+        "mode": "prefix",
+        "description": "段首，作前置框架（背景，+ 第一句）"
+      },
+      {
+        "slotId": "s1",
+        "afterSentence": 1,
+        "mode": "standalone",
+        "description": "第 1 句后，独立背景句"
+      },
+      {
+        "slotId": "s2",
+        "afterSentence": 2,
+        "mode": "standalone",
+        "description": "第 2 句后，独立背景句"
+      },
+      {
+        "slotId": "s3",
+        "afterSentence": 3,
+        "mode": "standalone",
+        "description": "最后一句后，独立背景句"
+      }
+    ]
+  },
+  {
+    "sourceId": "t01",
+    "place": "潮汐档案馆",
+    "scene": "夜；小雨；铜灯",
+    "A1": "沈砚把潮汐簿缺的那页补全，指尖沾了墨，把簿子合上推到桌角。",
+    "sentences": [
+      "沈砚把潮汐簿缺的那页补全，指尖沾了墨，把簿子合上推到桌角。"
+    ],
+    "backgrounds": [
+      {
+        "backgroundId": "b0",
+        "atom": "夜",
+        "display": "夜里",
+        "source": "scene",
+        "frameUsable": true
+      },
+      {
+        "backgroundId": "b1",
+        "atom": "小雨",
+        "display": "小雨里",
+        "source": "scene",
+        "frameUsable": true
+      },
+      {
+        "backgroundId": "b2",
+        "atom": "铜灯",
+        "display": "铜灯",
+        "source": "scene",
+        "frameUsable": false
+      }
+    ],
+    "slots": [
+      {
+        "slotId": "s0",
+        "afterSentence": 0,
+        "mode": "prefix",
+        "description": "段首，作前置框架（背景，+ 第一句）"
+      },
+      {
+        "slotId": "s1",
+        "afterSentence": 1,
+        "mode": "standalone",
+        "description": "最后一句后，独立背景句"
+      }
+    ]
+  },
+  {
+    "sourceId": "t05",
+    "place": "雾堤>堤面",
+    "scene": "夜；浓雾；警示灯",
+    "A1": "韩渡把松脱的钟绳重新系紧，把雾警钟敲响，手背上沾着盐沫。",
+    "sentences": [
+      "韩渡把松脱的钟绳重新系紧，把雾警钟敲响，手背上沾着盐沫。"
+    ],
+    "backgrounds": [
+      {
+        "backgroundId": "b0",
+        "atom": "夜",
+        "display": "夜里",
+        "source": "scene",
+        "frameUsable": true
+      },
+      {
+        "backgroundId": "b1",
+        "atom": "浓雾",
+        "display": "浓雾里",
+        "source": "scene",
+        "frameUsable": true
+      },
+      {
+        "backgroundId": "b2",
+        "atom": "警示灯",
+        "display": "警示灯",
+        "source": "scene",
+        "frameUsable": false
+      }
+    ],
+    "slots": [
+      {
+        "slotId": "s0",
+        "afterSentence": 0,
+        "mode": "prefix",
+        "description": "段首，作前置框架（背景，+ 第一句）"
+      },
+      {
+        "slotId": "s1",
+        "afterSentence": 1,
+        "mode": "standalone",
+        "description": "最后一句后，独立背景句"
+      }
+    ]
+  },
+  {
+    "sourceId": "t19",
+    "place": "早市",
+    "scene": "清晨；薄雾；棚下散光",
+    "A1": "阿棠的袖口沾了鱼鳞。沈砚的外袍下摆沾了泥水。阿棠把银鳞鱼装进鱼筐。沈砚把油纸伞收拢靠在摊棚边。",
+    "sentences": [
+      "阿棠的袖口沾了鱼鳞。",
+      "沈砚的外袍下摆沾了泥水。",
+      "阿棠把银鳞鱼装进鱼筐。",
+      "沈砚把油纸伞收拢靠在摊棚边。"
+    ],
+    "backgrounds": [
+      {
+        "backgroundId": "b0",
+        "atom": "清晨",
+        "display": "清晨",
+        "source": "scene",
+        "frameUsable": true
+      },
+      {
+        "backgroundId": "b1",
+        "atom": "薄雾",
+        "display": "薄雾里",
+        "source": "scene",
+        "frameUsable": true
+      },
+      {
+        "backgroundId": "b2",
+        "atom": "棚下散光",
+        "display": "棚下散着光",
+        "source": "scene",
+        "frameUsable": true
+      }
+    ],
+    "slots": [
+      {
+        "slotId": "s0",
+        "afterSentence": 0,
+        "mode": "prefix",
+        "description": "段首，作前置框架（背景，+ 第一句）"
+      },
+      {
+        "slotId": "s1",
+        "afterSentence": 1,
+        "mode": "standalone",
+        "description": "第 1 句后，独立背景句"
+      },
+      {
+        "slotId": "s2",
+        "afterSentence": 2,
+        "mode": "standalone",
+        "description": "第 2 句后，独立背景句"
+      },
+      {
+        "slotId": "s3",
+        "afterSentence": 3,
+        "mode": "standalone",
+        "description": "第 3 句后，独立背景句"
+      },
+      {
+        "slotId": "s4",
+        "afterSentence": 4,
+        "mode": "standalone",
+        "description": "最后一句后，独立背景句"
+      }
+    ]
+  },
+  {
+    "sourceId": "double-d010",
+    "place": "潮汐档案馆>长桌",
+    "scene": "夜；浓雾",
+    "A1": "沈砚的衣领湿了，肩头也湿了。",
+    "sentences": [
+      "沈砚的衣领湿了，肩头也湿了。"
+    ],
+    "backgrounds": [
+      {
+        "backgroundId": "b0",
+        "atom": "夜",
+        "display": "夜里",
+        "source": "scene",
+        "frameUsable": true
+      },
+      {
+        "backgroundId": "b1",
+        "atom": "浓雾",
+        "display": "浓雾里",
+        "source": "scene",
+        "frameUsable": true
+      }
+    ],
+    "slots": [
+      {
+        "slotId": "s0",
+        "afterSentence": 0,
+        "mode": "prefix",
+        "description": "段首，作前置框架（背景，+ 第一句）"
+      },
+      {
+        "slotId": "s1",
+        "afterSentence": 1,
+        "mode": "standalone",
+        "description": "最后一句后，独立背景句"
+      }
+    ]
+  },
+  {
+    "sourceId": "double-d011",
+    "place": "潮汐档案馆>长桌",
+    "scene": "夜；浓雾",
+    "A1": "顾行舟的手背沾了泥，帽檐也沾了泥。",
+    "sentences": [
+      "顾行舟的手背沾了泥，帽檐也沾了泥。"
+    ],
+    "backgrounds": [
+      {
+        "backgroundId": "b0",
+        "atom": "夜",
+        "display": "夜里",
+        "source": "scene",
+        "frameUsable": true
+      },
+      {
+        "backgroundId": "b1",
+        "atom": "浓雾",
+        "display": "浓雾里",
+        "source": "scene",
+        "frameUsable": true
+      }
+    ],
+    "slots": [
+      {
+        "slotId": "s0",
+        "afterSentence": 0,
+        "mode": "prefix",
+        "description": "段首，作前置框架（背景，+ 第一句）"
+      },
+      {
+        "slotId": "s1",
+        "afterSentence": 1,
+        "mode": "standalone",
+        "description": "最后一句后，独立背景句"
+      }
+    ]
+  }
+]

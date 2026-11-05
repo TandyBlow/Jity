@@ -1,0 +1,96 @@
+{
+ "train": [
+  {
+   "round": 1,
+   "points": [
+    "train_r1_p1",
+    "train_r1_p2",
+    "train_r1_p3"
+   ],
+   "worldId": "world_1"
+  },
+  {
+   "round": 2,
+   "points": [
+    "train_r2_p1",
+    "train_r2_p2",
+    "train_r2_p3"
+   ],
+   "worldId": "world_1"
+  },
+  {
+   "round": 3,
+   "points": [
+    "train_r3_p1",
+    "train_r3_p2",
+    "train_r3_p3"
+   ],
+   "worldId": "world_1"
+  },
+  {
+   "round": 4,
+   "points": [
+    "train_r4_p1",
+    "train_r4_p2",
+    "train_r4_p3"
+   ],
+   "worldId": "world_1"
+  },
+  {
+   "round": 5,
+   "points": [
+    "train_r5_p1",
+    "train_r5_p2",
+    "train_r5_p3"
+   ],
+   "worldId": "world_1"
+  }
+ ],
+ "fixture": [
+  {
+   "round": 1,
+   "points": [
+    "fixture_r1_p1",
+    "fixture_r1_p2",
+    "fixture_r1_p3"
+   ],
+   "worldId": "world_1"
+  },
+  {
+   "round": 2,
+   "points": [
+    "fixture_r2_p1",
+    "fixture_r2_p2",
+    "fixture_r2_p3"
+   ],
+   "worldId": "world_1"
+  },
+  {
+   "round": 3,
+   "points": [
+    "fixture_r3_p1",
+    "fixture_r3_p2",
+    "fixture_r3_p3"
+   ],
+   "worldId": "world_1"
+  },
+  {
+   "round": 4,
+   "points": [
+    "fixture_r4_p1",
+    "fixture_r4_p2",
+    "fixture_r4_p3"
+   ],
+   "worldId": "world_1"
+  },
+  {
+   "round": 5,
+   "points": [
+    "fixture_r5_p1",
+    "fixture_r5_p2",
+    "fixture_r5_p3"
+   ],
+   "worldId": "world_1"
+  }
+ ]
+}

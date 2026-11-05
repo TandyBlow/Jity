@@ -1,0 +1,2478 @@
+{
+  "version": "component-inputs/1",
+  "createdAt": "2026-11-05T07:59:47.155392+00:00",
+  "assumptions": [
+    "Offline byte snapshot, not a live server contract.",
+    "Server world-state/provenance changes after this capture require an explicit new input revision and review.",
+    "Copied validator verdicts are inputs, not newly validated server results.",
+    "Source evidence and new generated outputs are kept separate."
+  ],
+  "files": {
+    "world-components/d2-gold-metrics-selfcheck.json": {
+      "sha256": "628b00d3c4e38f3b90c56da5c44d704fadbfac1a565b5c9162bf4748a0398259",
+      "bytes": 3728,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\d2-gold-metrics-selfcheck.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/d2-metrics-preregistration.json": {
+      "sha256": "95a945797c2fde6641e99e3f5749cfdeee87179ef7544f9d9d3229ec55d67c9a",
+      "bytes": 1840,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\d2-metrics-preregistration.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/d2-n3-prompt-freeze.json": {
+      "sha256": "63e2b746f1de55a164eb534da9bc89b90089868fe9d16730ba7ba5230a432007",
+      "bytes": 8000,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\d2-n3-prompt-freeze.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/d2-preregistration-revision.json": {
+      "sha256": "0afb78af21ce149841531b94076a980d7759435b2bda9aaab7df861c49186934",
+      "bytes": 7042,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\d2-preregistration-revision.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n1-n5-composition-r1.json": {
+      "sha256": "2e7bcf42a477614b1a585ed497d368a8fd726008590abd7363ba94f4da05ae59",
+      "bytes": 5145,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n1-n5-composition-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n1-n5-composition-r2.json": {
+      "sha256": "4f1ed76a3b056efe5b965af213ce99f65f496fa2cf4a423f9c80a7052ea350a6",
+      "bytes": 15168,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n1-n5-composition-r2.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n1-n5-composition-r3.json": {
+      "sha256": "dc5938057d521d3ab583b8d03c9b253dfffe5747eec8e25804b3fe7b8ef870c7",
+      "bytes": 20388,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n1-n5-composition-r3.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n1-n5-composition-v2-r1.json": {
+      "sha256": "fcdc4a35f555028aef3f386ee635295e01b45435416557f2a4776caaa4b37e56",
+      "bytes": 9226,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n1-n5-composition-v2-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n2-annotation-status-pre-ai.json": {
+      "sha256": "30eb83e39c039d163db5bf32d58ccca6fd36a523460797149cb2a1cf9aff5da1",
+      "bytes": 616,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n2-annotation-status-pre-ai.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n2-annotation-status.json": {
+      "sha256": "11e37814794f2feabc858503ffbc8086c9954292b2a303a226efd1f701a864b9",
+      "bytes": 7653,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n2-annotation-status.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n2-encoder-arm-r1.json": {
+      "sha256": "a154352fb3d76f278931358b4479ea1fb1fbd3052b2788dcba738ee49b839d44",
+      "bytes": 25697,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n2-encoder-arm-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n2-isolation-d2.json": {
+      "sha256": "4413c30fa856727d72916d25599af973c75db739781ca07ae68c49de73c4beaa",
+      "bytes": 4295,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n2-isolation-d2.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n2-isolation-r2.json": {
+      "sha256": "88784c4c4f802b07d18b474b0faaabd1322f2d0966727e9ffc9cc488ae9a44a1",
+      "bytes": 16873,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n2-isolation-r2.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n2-labels-d2-gold.json": {
+      "sha256": "8026434e9c7f705ed3ba13ff5e339a69bf54b27cba79019747b3812e085d5f4a",
+      "bytes": 3748,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n2-labels-d2-gold.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n2-labels-d2-gold.jsonl": {
+      "sha256": "cb86aa46c4328cb971721d4ddce38bb4b0429fdc245e5405f193e0a6a99e9c63",
+      "bytes": 3896,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n2-labels-d2-gold.jsonl",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n2-labels-v3.json": {
+      "sha256": "b7ffaf94f00cbea0ae47941d53dfa3f04b5659f1a32c83341e1c56e8df1ac889",
+      "bytes": 15969,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n2-labels-v3.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n2-must-r1.json": {
+      "sha256": "a423e486140a6eacb3586bef012c459ffbd2380e002626a2bfa83adae62524a6",
+      "bytes": 62669,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n2-must-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n2-must-v3.json": {
+      "sha256": "59664cf9d4584e7afde73ea93856089fa782e65a5013fe77e156a36e7b1c1ecf",
+      "bytes": 91898,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n2-must-v3.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n2-perspective-rule-r1.json": {
+      "sha256": "02637f06dc4a5ba47d66f654362bd714f14e9f9591f46e5d4ef41a54d7e0d09b",
+      "bytes": 31762,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n2-perspective-rule-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n2-selection-r1.json": {
+      "sha256": "057190313e722fa0d92f3ec85d1ff3b1e213f99e8f70cb9fcce6a53a3a140f31",
+      "bytes": 66627,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n2-selection-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n2-selection-r2.json": {
+      "sha256": "19a6c0d77fc7b47c2d59cc58bde9a01e8c1cb602dea549ea3e137b9e5c664f65",
+      "bytes": 87776,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n2-selection-r2.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n3-baselines-r1.json": {
+      "sha256": "5509c1fd068a1ec9a4d09fb1af71bf58fbed1e14ec4a449c0a2504b3f2d98fba",
+      "bytes": 50445,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n3-baselines-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n3-coref-guard-impact-r1.json": {
+      "sha256": "301b4f3e47d927e6a2d98240ca1e5bedcae66bc50def69f4d2dca8f1cb55e604",
+      "bytes": 13665,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n3-coref-guard-impact-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n3-coref-guard-smoke-r1.json": {
+      "sha256": "79615b8ddd3c05154d25f9cd889e66531caafceee89767691389393c6ed72f1e",
+      "bytes": 5766,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n3-coref-guard-smoke-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n3-coref-guard-smoke-r2.json": {
+      "sha256": "d8051754818ef1a9726dec51c7706e6b8208fe15fa5ec6a4dc5ff1e8fcbeff96",
+      "bytes": 6231,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n3-coref-guard-smoke-r2.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n3-factids-smoke-r1.json": {
+      "sha256": "11c6345681c83f5c96493aa1a47bdfd7abb77c271c6f7e0c9f7c990a93a0f71d",
+      "bytes": 14497,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n3-factids-smoke-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n3-freeze-amendment-r1.json": {
+      "sha256": "6024925ef40504709039a7b0649003092ced8d7042481f04b4ac1562f532c5e2",
+      "bytes": 4179,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n3-freeze-amendment-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n3-n4-fixtures.json": {
+      "sha256": "eee3c3ade465a5b104d75c7e113907133510e25d8d752d85307592503c5e40c2",
+      "bytes": 6159,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n3-n4-fixtures.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n3-plan-v3-eval-r1.json": {
+      "sha256": "0be2e9a7a52e1445a36688958a0dad44246a8b7d3e3e05d4b5b47d9f57b861d2",
+      "bytes": 13227,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n3-plan-v3-eval-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n3-plan-v3-eval-r2.json": {
+      "sha256": "10db6772e0a1b8a26b51cf6d44a6ebad12c21b170efee15381871ec4399ae75a",
+      "bytes": 15637,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n3-plan-v3-eval-r2.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n3-rulearm-delivery.md": {
+      "sha256": "520e618b91c8040bddb7ef9b9009af7b21df1bfba287de8220d21fadbcedb05c",
+      "bytes": 1531,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n3-rulearm-delivery.md",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n3-rulearm-diag16.json": {
+      "sha256": "357201a8c3ddcb097f0f81652c10f20f7e774102af5f56ca72247b934001983a",
+      "bytes": 13357,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n3-rulearm-diag16.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n3-rulearm-gate8-r2.json": {
+      "sha256": "bd8940ac2bcd8ea981a143d22960ed64d8e984547f8485724c88cf7c7fb1a471",
+      "bytes": 12228,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n3-rulearm-gate8-r2.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n3-rulearm-gate8.json": {
+      "sha256": "0d3354881512685c9d695a8c3b8e3ddd92af83fbb0feb2ac9e7a5b3ab28c21b0",
+      "bytes": 12229,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n3-rulearm-gate8.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n3-rulearm-probes.json": {
+      "sha256": "4293bf3ff665e2133cd1580b337d0e65e3b3dc5141fbf891ad158848020dd349",
+      "bytes": 224,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n3-rulearm-probes.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n3-rulearm-registration-r2.json": {
+      "sha256": "de7e8c894c536eb64ee2517ad0c909edc35e2cd77e67979f30686dacb39f410f",
+      "bytes": 5112,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n3-rulearm-registration-r2.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n3-rulearm-registration.json": {
+      "sha256": "cbdc6be8532c9ccc6229c1d5947a4a4ce991121dee855e725f4109dd5487d370",
+      "bytes": 3182,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n3-rulearm-registration.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n3-runner-stub-diag16.json": {
+      "sha256": "90623439ae4fc0f1f8fcbc6b07eb9bf85eaef4100216b8336b30ac639f5deec8",
+      "bytes": 44247,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n3-runner-stub-diag16.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n3-runner-stub-gate8.json": {
+      "sha256": "f5d3fc0282a62a37130ea61bf55d49d7e3adbd2f763dc6cebbb1ef7967b9bfe5",
+      "bytes": 30075,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n3-runner-stub-gate8.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-ablation-confirm-review.json": {
+      "sha256": "870c389475e1edfcf0f6db2b708c12fc2c304be372d6e585df739a0dee46a1f1",
+      "bytes": 6048,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-ablation-confirm-review.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-ablation-confirm24.json": {
+      "sha256": "ac87f90f67e5e7d9b85360ad0c5e437b580df844e09a575ffda2f4b0d54e6ec9",
+      "bytes": 38175,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-ablation-confirm24.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-arm-fact-r1.json": {
+      "sha256": "b69d8487e9a2e73a42e17a12dfe31a2524e9c0726db636bd25cf6c56adb6c3aa",
+      "bytes": 14761,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-arm-fact-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-arm-fact-r2.json": {
+      "sha256": "8b8f49ea87d93e431e134ca3fcd2dad805d6e2aef67c9f2607020cda6bce4cd5",
+      "bytes": 14798,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-arm-fact-r2.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-arm-paragraph-r1.json": {
+      "sha256": "b5647fdcfac2552ca0541a42767f1d4a823198d9b32a45f516dfc9cced2c1477",
+      "bytes": 15430,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-arm-paragraph-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-arm-paragraph-r2.json": {
+      "sha256": "573173b1ecb52a2f95b6855e93f5b876d251da397621df454dc95bcbe2349485",
+      "bytes": 15474,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-arm-paragraph-r2.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-arm-readiness-r1.json": {
+      "sha256": "c05fc7ec2c19ab991afe17f526574cf0aea7ab7a7326a2069c6b636bc7aab48e",
+      "bytes": 1710,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-arm-readiness-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-arm1-obj24.json": {
+      "sha256": "e7b731bcf41c79e10057506e59ee144dd3427864f2af317ca775935dd9ee22f3",
+      "bytes": 3768,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-arm1-obj24.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-arm2-confirm40.json": {
+      "sha256": "9cecbb9ab5164334d5f6a73a0a2274f749deedb7ef2f819ccf3297237daa5d51",
+      "bytes": 6272,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-arm2-confirm40.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-baseline-confirm40.json": {
+      "sha256": "aae6e8df6f460d6d4863b85271e195e18dbc3c740f4cf6f656cea280ad3be658",
+      "bytes": 6877,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-baseline-confirm40.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-baseline-obj24.json": {
+      "sha256": "f5b8459b28e8b2532d5d2bd24ef199c19b1ebedcafb284ea8ae4a6ab357ed008",
+      "bytes": 4164,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-baseline-obj24.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-batch1-amendment-r1.json": {
+      "sha256": "595842da67f8a2bd7fcec3a9973868e95bc861a8ba53b6f330a955d2bd495e30",
+      "bytes": 4659,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-batch1-amendment-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-browser-adapter-r1.json": {
+      "sha256": "5f7746f5e6a099e6d46905020e5364f6493fcc9d2a47dbaabebbdd4364200c3f",
+      "bytes": 8772,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-browser-adapter-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-browser-adapter-r2.json": {
+      "sha256": "926a332a1e96fdd22422dfb5933414f2d805de7bb51e8995712f7f8768a006f1",
+      "bytes": 9026,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-browser-adapter-r2.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-browser-probe-r1.json": {
+      "sha256": "8b9eb18990e35faab9c7ca7adbbd50a1d34efec5638d34ecada8ce72a1c03b72",
+      "bytes": 2621,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-browser-probe-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-ce-422.json": {
+      "sha256": "a9afc0c641b4986595281e30ff8ef6915badd96b31e3fe3e10b34abd4c2d04c6",
+      "bytes": 33822,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-ce-422.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-ce-431.json": {
+      "sha256": "36483feb44cb976c1ccf6ed510a62614871c9260ffb86e22a21a9fa7f1df412e",
+      "bytes": 33794,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-ce-431.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-ce-base.json": {
+      "sha256": "554e4148d8a98d1209ca5d5b86b5c8b970e6c61742ae2524640ea175bfaac977",
+      "bytes": 36376,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-ce-base.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-ce-final-summary.json": {
+      "sha256": "ee24412e09d79e800b98da4916663cee9e179b0e6658114b943e7c74d48635cc",
+      "bytes": 1460,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-ce-final-summary.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-ce-final-v2.json": {
+      "sha256": "b49cd76d941d48c02604f5b64d09c6bacdb2ff5d34ccae6ed2a3a265081c4b3b",
+      "bytes": 2157,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-ce-final-v2.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-ce-screen.json": {
+      "sha256": "ad11c606accc10597693c39bf958381cfc8771f93db027a52421daede7a6809d",
+      "bytes": 204707,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-ce-screen.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-ce-two-level-clean.json": {
+      "sha256": "121ddc9e42b7a3d6d61190ade6847835df60f21564389ba289b3454aa9604e05",
+      "bytes": 2025,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-ce-two-level-clean.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-ce-u240.json": {
+      "sha256": "f4aab00eb4e226f40c77d15481d8263402c4a73c567f80b2d870b30b398b2d76",
+      "bytes": 32799,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-ce-u240.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-ce-ubest.json": {
+      "sha256": "f4aab00eb4e226f40c77d15481d8263402c4a73c567f80b2d870b30b398b2d76",
+      "bytes": 32799,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-ce-ubest.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-cf-fact-r1.json": {
+      "sha256": "9d7ec453fb18c0cb77626c60e609b07a463571495611819586b6b0cf9da683a2",
+      "bytes": 18063,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-cf-fact-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-cf-pairs-r1.json": {
+      "sha256": "b5cf9648d51c420d133cdc5b58fe38a5d516788e4b0c01bc695b7c1580c64230",
+      "bytes": 66197,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-cf-pairs-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-cf-paragraph-r1.json": {
+      "sha256": "591e1b7027d85acb495c1d8f627bcdf5c01c2636449d6f6dc127ca23ceef36bd",
+      "bytes": 23434,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-cf-paragraph-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-cf24-ablation-B.json": {
+      "sha256": "4b5a2b1f0154674de74146782d53cf4857ee498018fd659ab740ece2808aee6f",
+      "bytes": 52050,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-cf24-ablation-B.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-cf24-contract.jsonl": {
+      "sha256": "a94f7a13eb617c9fe6fcbd3acec0e1e7bfa519fe5a4b69b8b4d26f7a9635468b",
+      "bytes": 68504,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-cf24-contract.jsonl",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-cf24-fact-r1.json": {
+      "sha256": "3fd3767900db9502083594a17b7003c8a7c2aa607022c3437838fe301c00ca85",
+      "bytes": 19005,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-cf24-fact-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-cf24-freeze.json": {
+      "sha256": "68810893e4a568d2bdec5b2ddf26e83ff98999ecb509e6acdbd6812f15820536",
+      "bytes": 263,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-cf24-freeze.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-cf24-groups-v2.json": {
+      "sha256": "2c13f1bc2e9f9ec53fffa1a0217650809220bbeaf9e25028794efb5b0697bfa2",
+      "bytes": 68209,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-cf24-groups-v2.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-cf24-materials-v2.json": {
+      "sha256": "e570a5b9d958f10ebf939916b0ea6e505a1da8a8187a8677b9b58797fa3c54b3",
+      "bytes": 97987,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-cf24-materials-v2.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-cf24-materials.json": {
+      "sha256": "4c3ada9d7a180cd41c1ef09e02cc04700c2b20e77ea2bbb6e83ddee88a24972c",
+      "bytes": 92350,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-cf24-materials.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-cf24-mix-review.json": {
+      "sha256": "291b5bffbac740f6bd77545b624a4d30c57240324d7eaaffa397bf2f178920f8",
+      "bytes": 8189,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-cf24-mix-review.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-cf24-moved-strict.json": {
+      "sha256": "7f934c402ef0da0cfe5ac40efdbd2a4bc4ba86708cf8c82846ebd3e5a7ec3556",
+      "bytes": 1326,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-cf24-moved-strict.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-cf24-paragraph-r1.json": {
+      "sha256": "5ed1cafe8574958d4102a1861d68482ae0d1360bbc3d40b6264d50e286cfa13f",
+      "bytes": 12407,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-cf24-paragraph-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-cf24-review-r1.json": {
+      "sha256": "70b71044beef9a9f7c4e66e6410df62b9ba4c9094673febf8159dd47df805716",
+      "bytes": 27311,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-cf24-review-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-cf24-scoring-v2.json": {
+      "sha256": "451f6ebfdd464dfea348b97b3a8f63b6d121c588b65d3852d729f0e248142921",
+      "bytes": 21525,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-cf24-scoring-v2.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-cf24v2-ablation-review-r1.json": {
+      "sha256": "15bdee03a22658c6969d3c84b1ada48c7d97e671a73ec6a401d884d00bc51670",
+      "bytes": 6306,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-cf24v2-ablation-review-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-cf24v2-fact.json": {
+      "sha256": "4bee7869cfca9a7fc8f13dc9adbd5b0f857e94358bc780fe8cd8ab4ecb604364",
+      "bytes": 17625,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-cf24v2-fact.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-cf24v2-factB.json": {
+      "sha256": "67a96f0a9a44730567588db18cd947b0c74cfb75db2450e91f69437cfc94943a",
+      "bytes": 6839,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-cf24v2-factB.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-cf24v2-group.json": {
+      "sha256": "c0f4ac76313ef455696c7cf5b0655102291ee7e425881b4d309b1a1288929638",
+      "bytes": 18001,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-cf24v2-group.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-cf24v2-manual-r1.json": {
+      "sha256": "ee8ef94fd4aa4fe4db35120e10953595ddf5130c30e7000fc17c922d502d92f0",
+      "bytes": 8754,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-cf24v2-manual-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-cf24v2-paragraph.json": {
+      "sha256": "8a50b2f2f1cc8371b2b4fae01d87daa0b3608bdef88d7d7a7f4bf76ac46dabc3",
+      "bytes": 10873,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-cf24v2-paragraph.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-compose-full-r1.json": {
+      "sha256": "db8777e1543ec1ad6f51a02ab10f01a0ae31027aaab7b09e544e7eac4a80d3c1",
+      "bytes": 4805,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-compose-full-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-compose-full-r2.json": {
+      "sha256": "b892fafb24ecbf9ef2973754649503f5d3d30b56573d15c8fb1d37726fd529b2",
+      "bytes": 5135,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-compose-full-r2.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-compose-r1.json": {
+      "sha256": "2225fcbccb3289414c0df7ccc99a7aecfb2399d0ec29ec68a44463aebcaa2956",
+      "bytes": 4099,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-compose-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-compose-slots-r1.json": {
+      "sha256": "9cda174a88456906d2af05f7dc923dd2ae2a4a890aabe9b44646bd3b55fea489",
+      "bytes": 6301,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-compose-slots-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-compose-slots-r2.json": {
+      "sha256": "11331955a0c3643889c24a50c109a17efda8638be819f31c4a091f746a5c70cb",
+      "bytes": 6445,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-compose-slots-r2.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-confirm-A.json": {
+      "sha256": "84e2cf33abd146f2da1624fb72ef6741f101174e416f2991ff7d59bc182c9d64",
+      "bytes": 5291,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-confirm-A.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-confirm-B.json": {
+      "sha256": "02007f5c222a780f8ff020620db33acea90ed0715ed54db431d8ba3b1c3d66b8",
+      "bytes": 5276,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-confirm-B.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-confirm40-3arm.json": {
+      "sha256": "a69a5f7ae5103f7c64fcfd3f77f72602bf4ca1c73d7bccafad37c5453dfa4101",
+      "bytes": 639,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-confirm40-3arm.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-confirm40-ab.json": {
+      "sha256": "09b28db88e3de80aa3d903ae9a39bdef5c0ca402757cf24f6bf7132bf5deebe3",
+      "bytes": 9341,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-confirm40-ab.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-conservative-agg.json": {
+      "sha256": "c6c0f68d8768ab9119c95f05fa3e3ce477cb9aa03adf2ab6b8869060bcd20d42",
+      "bytes": 149,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-conservative-agg.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-conservative-edit-48-v2.json": {
+      "sha256": "58ae6e75581fe3bdcc10ceff3d4c15452e2db7d072dd2846db3235247ed93601",
+      "bytes": 34473,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-conservative-edit-48-v2.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-conservative-edit-48.json": {
+      "sha256": "0b670044b96ddf40b448c40f292a525c077cfed83ddf17dffb93b208a80a23a3",
+      "bytes": 26734,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-conservative-edit-48.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-conservative-edit-check.json": {
+      "sha256": "2d9d3050b97fe1acdd655dcedd8ea295ca87b617c2a92e32e80c40f6f2b2e528",
+      "bytes": 3232,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-conservative-edit-check.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-contract-fixed-summary.json": {
+      "sha256": "c4c041ae195022187b313f7d2e82434bf6a8c0346fccf7337d42a3ff4e51c529",
+      "bytes": 947,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-contract-fixed-summary.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-edit12-alignment.json": {
+      "sha256": "11c0599507b985ba2c3114ad1eeab9e1af278feb86293127a802fc6d00eacb7e",
+      "bytes": 173,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-edit12-alignment.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-edit12-pairs.json": {
+      "sha256": "f759d11dd8a55882b44271979c9174f522fa98d0f85abdde5bafcf56bab5be6f",
+      "bytes": 8264,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-edit12-pairs.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-eval-credibility-r1.json": {
+      "sha256": "029950922c354a9e575cc57da476d8df09b3a8f8e8ed4dfa5ec107c45be46a7b",
+      "bytes": 6625,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-eval-credibility-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-expand-arm-r1.json": {
+      "sha256": "a0c0ccbd27c466547a7dcc872f6c6c5f0fb9c3b0535cb4f0b6a28056d6584c77",
+      "bytes": 25248,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-expand-arm-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-expand-cf24-review.json": {
+      "sha256": "7b8cb22bf1e065c98385e46162904418dfbac2241bf8bb1a0619faf2c245f7f9",
+      "bytes": 7299,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-expand-cf24-review.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-expand-confirm-mix.json": {
+      "sha256": "8738a54eb6d3006a66ad301735b06d352f227a138d566d45e409b35933355619",
+      "bytes": 327,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-expand-confirm-mix.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-expand-confirm36-units.jsonl": {
+      "sha256": "c7fcb7747901dfe410a455d7f6de6b07f72a13af4e7542ed8c0f6dbef1410c79",
+      "bytes": 30433,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-expand-confirm36-units.jsonl",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-expand-confirm40-units.jsonl": {
+      "sha256": "f5b22b3a6d9fae00197ec27e043357aa3702d6c5f594b47d785d6643099506a1",
+      "bytes": 33807,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-expand-confirm40-units.jsonl",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-expand-confirm40.json": {
+      "sha256": "52ef34e3d55de7ca09b2f7a1458de23655d156e4257708d686e5ef859096ec4d",
+      "bytes": 718,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-expand-confirm40.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-expand-freeze.json": {
+      "sha256": "615108fbd00fecfa3aed99f47780a1ada56d1fcb7934ae6a791e00e9c4a2c531",
+      "bytes": 820,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-expand-freeze.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-expand-train80-clean.jsonl": {
+      "sha256": "c50f7cb1628fa885fea3956008392979aea9bd2592d74161e34166fac3ba1536",
+      "bytes": 57570,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-expand-train80-clean.jsonl",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-expand-train80.jsonl": {
+      "sha256": "0ec054e9d1bb3182e39f9dc512ef8286f7f3a176c50e3d02ea082fdff118c7c2",
+      "bytes": 59054,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-expand-train80.jsonl",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-expand2-arm-r1.json": {
+      "sha256": "f2002cc44188b7373ee444b8264e02bf9ef213f8068bda336f5ebd11dd319b00",
+      "bytes": 27597,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-expand2-arm-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-expand2-cf24-review.json": {
+      "sha256": "dfa14d9941e85db05605a347628668a0b88003689e9a25c39fbcd9f01ed8785e",
+      "bytes": 3857,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-expand2-cf24-review.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-expand2-freeze.json": {
+      "sha256": "ccf841c72d157251803a7dccc434729c6498718fd5f4ca76f9b83f1b48308267",
+      "bytes": 768,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-expand2-freeze.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-expand36-contract.jsonl": {
+      "sha256": "780ad181d5418f16ed2f77e26d0b88a0d9853ce461b6b239a8e9b8d8d81a8b8b",
+      "bytes": 26225,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-expand36-contract.jsonl",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-expand78-unified.jsonl": {
+      "sha256": "9fc2f3543cba3ed2828893a62f31d5bdfdd3660cc09941b30a3a607df6685acb",
+      "bytes": 57726,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-expand78-unified.jsonl",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-final24-422.json": {
+      "sha256": "09ff580b3e789c389d7a758c242955952fb67eede63b89ef72f7e5de4e50ef6f",
+      "bytes": 11543,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-final24-422.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-final24-431.json": {
+      "sha256": "098f96d37d594f068f0ae3ebcad46a8268840abf66de034a909a0795b72d99fa",
+      "bytes": 11418,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-final24-431.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-final24-base.json": {
+      "sha256": "e63b32b287c3fffd8a7c03203f20fb01bf8c395f03e86caaeb9ea086656db46b",
+      "bytes": 12679,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-final24-base.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-final24-contract.jsonl": {
+      "sha256": "0010c06289801d71792c3c4eaf9d51f382027a03c05ba193eedfe9fec994f0e2",
+      "bytes": 55952,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-final24-contract.jsonl",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-final24-freeze.json": {
+      "sha256": "0183a77e85be404efe21ad9f972bab77a9ada83af5aeab3899aed91506c76ca5",
+      "bytes": 537,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-final24-freeze.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-final24-review.json": {
+      "sha256": "aa52fb7cf1ad4b522f5540362c4c35def083790b1bc02a3a26c6568ac1a457c1",
+      "bytes": 20835,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-final24-review.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-final24.json": {
+      "sha256": "46ebbb32abd76cd87abb8c650eb2e8168937bdccdf740af6ebeb6eed70ef2943",
+      "bytes": 75790,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-final24.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-final24.jsonl": {
+      "sha256": "6ec8b0b1abbedf702e4d0c3f873bf76111d75ee0b29fab4809ee7ef53d4477f0",
+      "bytes": 57189,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-final24.jsonl",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-finetune-eval-r1.json": {
+      "sha256": "f30ea2cbff1b89bc44c4d76ce45acec6f8b56fc790b0ace01bc8041e56da57d4",
+      "bytes": 19359,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-finetune-eval-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-finetune-eval-r2-large.json": {
+      "sha256": "041b9f3b678686260dfa766c54d52d58eb5cddfad65a5aea4034293b1511414e",
+      "bytes": 99742,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-finetune-eval-r2-large.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-finetune-eval-r2-small.json": {
+      "sha256": "7aafccbb103f25e43404913907161548e793cc55206ed0a09d10eb6673b67d86",
+      "bytes": 101413,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-finetune-eval-r2-small.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-finetune-eval-r3-direction.json": {
+      "sha256": "11c44cc55ac578cbdae6890251213191cb58d692a15859d928dcca715af3015e",
+      "bytes": 99360,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-finetune-eval-r3-direction.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-finetune-train-r1.json": {
+      "sha256": "4b1890433f4db2f500da4eff44b2c1a41edc447c96c78ea0bda7ee290aa49c13",
+      "bytes": 2764,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-finetune-train-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-finetune-train-r2-large.json": {
+      "sha256": "50cd86b66725c5eb506ab0931cecaea115e6dee732b88cd9853d81d96dd250e6",
+      "bytes": 3781,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-finetune-train-r2-large.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-finetune-train-r2-small.json": {
+      "sha256": "aab8dcb516f56fc0ae7d180b34f48444f1f69cba3f0c1d008fd574fa12a7aa80",
+      "bytes": 4389,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-finetune-train-r2-small.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-finetune-train-r3-direction.json": {
+      "sha256": "5e673353341de3f8b4977757702c2d897b5e2f606a9ebed8fd0f0b7e1bb2c950",
+      "bytes": 3789,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-finetune-train-r3-direction.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-fitting-diag.json": {
+      "sha256": "d26c3e89654fc0229a79a4f7a35aa4239a059a1b7ab7a656b5c26d9190becf6b",
+      "bytes": 59409,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-fitting-diag.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-formal-r1.json": {
+      "sha256": "997cf745f6c04ccbabb26fb35a2d7c253f38918b58a4e2071169048175720d6c",
+      "bytes": 75256,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-formal-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-formal240-r1.json": {
+      "sha256": "a0eb31902b92d315cf22d1ebd7e10ba9ab1a6a4d871c3230705473ec1be34b1f",
+      "bytes": 74826,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-formal240-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-grammar-violations.json": {
+      "sha256": "aa1294f0b4c328c5509857ad03afee9ef9a6036ab3be08a3e3f96652cab86db8",
+      "bytes": 430,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-grammar-violations.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-group-arm-r1.json": {
+      "sha256": "30661336e18b750f733bf8dcfc2fb6af05318cf900f3a735415f3646440b1ccf",
+      "bytes": 42217,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-group-arm-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-group-arm-r3.json": {
+      "sha256": "100bf485781bcf145aef661a1dd9429c5796fe9772a8a4b9623925430c0d1b11",
+      "bytes": 42429,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-group-arm-r3.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-group-arm-review-r1.json": {
+      "sha256": "a2c15dbfe195a5dbfd09ac2bc98839ffb3c6e3df8ad519a05fae4710ebfd46c3",
+      "bytes": 20451,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-group-arm-review-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-group-diag-prefix-r1.json": {
+      "sha256": "0409ef02211d5c00cef7a565f6e688f2d3251e53ce65e3c449bae1283be7cf84",
+      "bytes": 12857,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-group-diag-prefix-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-group-diag-r1.json": {
+      "sha256": "9f5180f893091af874468b6beef0fd35a8707fb63e93b573b8bd0a48860076ae",
+      "bytes": 32738,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-group-diag-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-group-diag-r2.json": {
+      "sha256": "aa8bc5371f1e16824932b5813a8bf46da6c949de2256c528185cac0cc3b511c4",
+      "bytes": 32721,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-group-diag-r2.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-group-freeze.json": {
+      "sha256": "2fa65a35eb0b67a07abe5d520b49ca78061cb87e563d2a74c9eb35e998df8c4c",
+      "bytes": 280,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-group-freeze.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-group-material-r1.json": {
+      "sha256": "8353f75e809ede190e8a3cd6bb0ef3ada74bd931d8a2b4f13ffc3d708874467f",
+      "bytes": 24652,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-group-material-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-group-plan-r1.json": {
+      "sha256": "4a91e37bf2c9dcf915bb77516947bdac316a3bec2e4c584a986e6d4826d9906c",
+      "bytes": 300369,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-group-plan-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-group-plan-r2.json": {
+      "sha256": "c8000f7cccf8916818761dc96e8438fcbc5ef740d4dae3f12b301a3072334728",
+      "bytes": 308995,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-group-plan-r2.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-group-target-audit-r1.json": {
+      "sha256": "e7a6701bdd6a042f8c658de9936bf6f11889efab17850650370aa3ace4ed7a7e",
+      "bytes": 26782,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-group-target-audit-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-group-target-revision-list-r1.json": {
+      "sha256": "eaeb70dbf3589129dd8b3556e730639999d2192ccfba582054e3e71f32e5c491",
+      "bytes": 14844,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-group-target-revision-list-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-holdout-copy-r1.json": {
+      "sha256": "ecedb314f9128080abc4a1f8944c2925579e9edf8354ff6ce608940f219e0ec1",
+      "bytes": 9495,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-holdout-copy-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-holdout-eval-r3-direction.json": {
+      "sha256": "3a2485ff87b5df8d73448d3be22efc2d935aea17e1121a0241d6814cdee0f094",
+      "bytes": 76503,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-holdout-eval-r3-direction.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-holdout-freeze-verify-r3-direction.json": {
+      "sha256": "947f6203c30bc50833f1d75c5d1ed46c5076d4f9cdb0638e22fde46ec0a51c53",
+      "bytes": 1547,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-holdout-freeze-verify-r3-direction.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-holdout-r1.json": {
+      "sha256": "e3140410f0488de6d0eaad57602b89dd3dde55fd4161138a01c68de8a89e21d5",
+      "bytes": 8665,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-holdout-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-holdout-rerank-r1.json": {
+      "sha256": "58f6a1da973a798ee3d0aec4c9751625e195afbc8429a219e8f9fc5881718e5d",
+      "bytes": 41411,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-holdout-rerank-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-hpc-smoke-r1.json": {
+      "sha256": "1779c9d9015527119273e22df61944a05136bc16d7f593b0e008acf07a6f5ad6",
+      "bytes": 2895,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-hpc-smoke-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-input-packing-r1.json": {
+      "sha256": "6feff5fbb18a6e86053523d84cc3fb6e6fe08510bdc20c111a5bf19dcbc650a9",
+      "bytes": 3599,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-input-packing-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-input-renderer-r1.json": {
+      "sha256": "83ba55456045de623260a53d6852491e4b1089e23776463a348dea4eb79bf699",
+      "bytes": 3138,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-input-renderer-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-int8-quality-r1.json": {
+      "sha256": "aa7971fcc61984288854981b52d7718f373590eef4f93675a797ad2b8ab9cb00",
+      "bytes": 3185,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-int8-quality-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-judge-regression-r1.json": {
+      "sha256": "4187e2bd6c31271eea56d5d99dc4389908b2cdd58d9f8cf320f5dd262bfe1c54",
+      "bytes": 4024,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-judge-regression-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-lang-baseline-mech.json": {
+      "sha256": "894481115d3f21d02754b04b131cfa535c6d46d21a072d5b5c9a3874e8a8edc3",
+      "bytes": 14654,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-lang-baseline-mech.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-lang-baseline.json": {
+      "sha256": "30db46224b0c9d112b70c1de737475b48935fd2a4e337126d6d28ed0b4d478e5",
+      "bytes": 12365,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-lang-baseline.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-materials-defect-account.json": {
+      "sha256": "fa174d642428d50d6fbb75f54bdb662a68f984da1dcdb6e957eeaf4f06222eb0",
+      "bytes": 1516,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-materials-defect-account.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-mix-compare-freeze.json": {
+      "sha256": "a449c3eb60810945cd34af10b2d9517cbf58deee72a9b42d560974c6b89f5773",
+      "bytes": 565,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-mix-compare-freeze.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-mix422-draws.jsonl": {
+      "sha256": "dd76b926dba4e6806fe420aae3f8384a0a520701e49d901d3786079075fde2bb",
+      "bytes": 1784118,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-mix422-draws.jsonl",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-mix422.json": {
+      "sha256": "cb04ff72325a91ebffb1c57b8170737e3d91bef12660717c8df683a58b11c09a",
+      "bytes": 12472,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-mix422.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-mix431-draws.jsonl": {
+      "sha256": "0a32a30158a39ba3ddcf80ceb14652255f38dee24232b582e50f02480d6ffffb",
+      "bytes": 1769547,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-mix431-draws.jsonl",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-mix431.json": {
+      "sha256": "35e2c85aede6f247db64553f3f909e06c4b931d3a695cc04ff40c4559c5542fe",
+      "bytes": 12420,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-mix431.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-moved-sampling-account.json": {
+      "sha256": "9ef8ccf0d123d3068d30494cff69a5ae84c589b248c1649ebaf97451dc619adf",
+      "bytes": 1060,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-moved-sampling-account.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-object-confirm-3arm.json": {
+      "sha256": "3af0acab1daf4d8713960eb3af7f4117c88f4e1f1557e728d69179d784cf2865",
+      "bytes": 874,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-object-confirm-3arm.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-object-confirm-ab.json": {
+      "sha256": "128333ff383a15fb5d027e7b29d0d51a19b20b33ce85e43031b900c67704b983",
+      "bytes": 6358,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-object-confirm-ab.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-object-confirm-mix.json": {
+      "sha256": "67f44a2ab7a098722c60abbed0d5adde7ef10487d1c3d2513fb44783e19abffc",
+      "bytes": 465,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-object-confirm-mix.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-object-confirm-review.json": {
+      "sha256": "a63c128ecd7c551981e031ce1b2156354257a12b07999ba466dc13162483b612",
+      "bytes": 3991,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-object-confirm-review.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-object-confirm18-units.jsonl": {
+      "sha256": "afe52d7d2360faf951755222e5436774a94fcff8e6e5be6bf151e1f127d25f6d",
+      "bytes": 14948,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-object-confirm18-units.jsonl",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-object-confirm24-units.jsonl": {
+      "sha256": "c77b2428142d14bde5d7b16ad749357b47294f666340ad7ce56f5f7987970335",
+      "bytes": 19884,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-object-confirm24-units.jsonl",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-object-confirm24.json": {
+      "sha256": "3c2fee0d622aef2485c8bf4093ac45e2f79a7eb056b15469cf3eafbfc5d4cac7",
+      "bytes": 3238,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-object-confirm24.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-object-materials-defect.json": {
+      "sha256": "36cda53240dc379a14fe4b643a09044f077d460f4ffbb2a3d9db438f2d108650",
+      "bytes": 419,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-object-materials-defect.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-object-train40-clean.jsonl": {
+      "sha256": "2856ce3d56912e3e7380cd11522c8170898369ce59c0e6e66f9269a8ce6a966a",
+      "bytes": 25043,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-object-train40-clean.jsonl",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-object-train40.jsonl": {
+      "sha256": "dec8d67362d2c48d429fec4e2084c7d14d133920c8c6f788d9221d91ebfffe96",
+      "bytes": 29577,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-object-train40.jsonl",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-object18-contract.jsonl": {
+      "sha256": "3571d9eb65c48a2be9db7fef5add4a29e2c9ff2084b4badb5b18510df7553091",
+      "bytes": 13271,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-object18-contract.jsonl",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-object34-unified.jsonl": {
+      "sha256": "24777a8948a798a1e9b590dcff2a8fccbbe0513e5ff2978bb182648cbe2155ef",
+      "bytes": 25187,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-object34-unified.jsonl",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-offline-package-r3-direction.json": {
+      "sha256": "d45645eb293d035277dd784df6e15b27bedd066e311656e3e92105d9bcadd33c",
+      "bytes": 4866,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-offline-package-r3-direction.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-pilot-r1.json": {
+      "sha256": "d0145fdf96a33ed2c17f03c09903f9d1054d96c8b9bf251b5b204eb3152090d7",
+      "bytes": 23589,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-pilot-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-relation-authorization.json": {
+      "sha256": "56d8a41441dcc5beee50bc9ec2badce3cc28f85d3cad713a804ecf63b4fd26d2",
+      "bytes": 2692,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-relation-authorization.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-run-exclusions-r1.json": {
+      "sha256": "e6de176bb9157438ccd9cd0f84c27556a5e40190c45e3b61c9806f05d0cd9fbb",
+      "bytes": 520,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-run-exclusions-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-run-freeze-r1.json": {
+      "sha256": "bb0f439838a1a0f6b45571abd6f103465cdff12aee2a3fca0a458a1ccb57f3cc",
+      "bytes": 3212,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-run-freeze-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-sanity-422.json": {
+      "sha256": "7310d1cdd23841fdeeb1714824856310fa82ae0dd402ebc633aed91fe3e551f3",
+      "bytes": 2128,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-sanity-422.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-sanity-431.json": {
+      "sha256": "ae20c181895398a7705e887402a8153aa9ae529af78f432b1fb1d4d4c34349a9",
+      "bytes": 1899,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-sanity-431.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-sanity-base.json": {
+      "sha256": "516fd4a8517edf74c1c0fc69b215b1d6d3c38951e397eb711c8ead57b15ab290",
+      "bytes": 2110,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-sanity-base.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-sanity-contract-units.jsonl": {
+      "sha256": "5b60767c8bece99dccd45cb88fc0a468af9422a1184e44b8e9718bae3021eaf0",
+      "bytes": 8144,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-sanity-contract-units.jsonl",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-sanity-contract2-units.jsonl": {
+      "sha256": "c0c74c0c8492318a0ae35d2c723ff48743e5ce6b32f276d02e220e878902f79c",
+      "bytes": 4726,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-sanity-contract2-units.jsonl",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-sanity2-422.json": {
+      "sha256": "0e04550821d4b24a1ca903ffc1e3d41ab19ef7a3302c939f13790b20239a3c32",
+      "bytes": 1033,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-sanity2-422.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-sanity2-431.json": {
+      "sha256": "bd1c67f51f9108addb25e983a513ed2fcceccd575b7f0b4615fc960101e7db93",
+      "bytes": 1036,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-sanity2-431.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-sanity2-base.json": {
+      "sha256": "282f02b2fad5ee68a4c991cae87861a396b381e0cfe83963119a1a65800c256b",
+      "bytes": 1021,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-sanity2-base.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-scene-coco-r1.json": {
+      "sha256": "13faa092a6413a8fc21127ff7cc6e329436abe8bf8172a99293bfb08b0e5d1f9",
+      "bytes": 2941,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-scene-coco-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-scene-manual-desc-r1.json": {
+      "sha256": "86cb0ad6a6941c859306c8199435f39e95cec91b14ceb690ab935e58ed50ac64",
+      "bytes": 13075,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-scene-manual-desc-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-scene-manual-r1.json": {
+      "sha256": "da52ab46508242c5c586606acea33aa41d2bab0f8c2542dcb1a65a890a409c32",
+      "bytes": 19251,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-scene-manual-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-scene-r1.json": {
+      "sha256": "acd09bc9b6bde2eb0354edd7797fe4c5b7939d6a169ec1e2db7f9359f7a4235c",
+      "bytes": 55491,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-scene-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-scene-r2.json": {
+      "sha256": "3c200837061e1edd3da3740ce7389cd4133158b373dcd8c373deca8a8cda364c",
+      "bytes": 55929,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-scene-r2.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-scene-rerank-r1.json": {
+      "sha256": "77513b943205f72fb6dbb75871f86dda68c7a7c39c7cf3ded5fb7783acfa1d8c",
+      "bytes": 32217,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-scene-rerank-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-scene-rerank-r2.json": {
+      "sha256": "4f686422dbd7239466dd6cb09d1d8e88147093f40792dc9ee26aaaa3386c5f4a",
+      "bytes": 33342,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-scene-rerank-r2.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-scenegen-r1.json": {
+      "sha256": "02d5ae343abf7215694b4424ce044a95dd71a1d48cc9e01d3c013621969b0cd2",
+      "bytes": 87962,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-scenegen-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-scenevb-r1.json": {
+      "sha256": "d38a8ff68234d6c6e4739ace986621c06685cb36ec39f02c93bbe44d795b0d1f",
+      "bytes": 16408,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-scenevb-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-sequence-policy-verify-r1.json": {
+      "sha256": "aa3d38c263899daf9623cd4e42ef0bb134aea1b732a1997175af4dbf1b54468a",
+      "bytes": 4112,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-sequence-policy-verify-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-struct-overfit-r1.json": {
+      "sha256": "fde6841bc8e94e6cb75611513017e72989d57f5ba6d486b4c40908351b30b528",
+      "bytes": 10972,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-struct-overfit-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-struct-overfit-r2.json": {
+      "sha256": "07d94ec6122c3324fc62dd53017deb9ea3b801a5866d4331858717fa4f0751fd",
+      "bytes": 11057,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-struct-overfit-r2.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-struct-overfit-r3.json": {
+      "sha256": "f522c51b5b0feb603f6810e4c96ec84f2738cd166a163582be04058634213013",
+      "bytes": 11148,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-struct-overfit-r3.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-token-budget-r1.json": {
+      "sha256": "3ea9bd4de6fd1c8a891acad1733972146ed31bd90c8066b5c641fa7921e8e70e",
+      "bytes": 19535,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-token-budget-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-training-contract-audit.json": {
+      "sha256": "51acd500f815f959943911eee6687ba67a5e1e8769af76d22e366c7f1ac8e3e1",
+      "bytes": 734,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-training-contract-audit.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-training-target-audit.json": {
+      "sha256": "900f12f6dd2af184c7d102ae6a44d917c478c4fdd12f3a58305ad71897dbc74a",
+      "bytes": 371,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-training-target-audit.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-training-unified-diff.json": {
+      "sha256": "707fa8eb19eedbfcb49c6c5308320d86daa96a54785cebd07ce66f2d5a479317",
+      "bytes": 18547,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-training-unified-diff.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-two-arm-freeze.json": {
+      "sha256": "4c572ed3307ac8e97bf26a5dbaed90ccddcc3e08e5e5be2b710ba96da964fc6f",
+      "bytes": 545,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-two-arm-freeze.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-two-arm-manifest-r1.json": {
+      "sha256": "6a0aded58f7f7bef0404decc8b63401e7bd503eae0c0d1130f2ef6f46b8dc9e9",
+      "bytes": 40556,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-two-arm-manifest-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-two-arm-review-r1.json": {
+      "sha256": "f53633d36da5dd3a8d0a08ad59d8cdc7de292c50188e43ab5c239f3d82d4cb9d",
+      "bytes": 19007,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-two-arm-review-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-two-arm-score-r2.json": {
+      "sha256": "a8001d8585f4e038b97f71ef1da848ed29028a88c9e2bbe558f0e2d94cff094e",
+      "bytes": 9127,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-two-arm-score-r2.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-unified-eval.json": {
+      "sha256": "3635718a1e129a6d47408c8876388e22104373b72acb9ec7258b2aa92c64f05e",
+      "bytes": 1263,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-unified-eval.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-unified-train.json": {
+      "sha256": "251b53626b7594703bed68bb3052c4ce99bbabf357246601546262168d5fbc40",
+      "bytes": 325569,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-unified-train.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-unified-vs-431.json": {
+      "sha256": "a690347a4974915c3fcf2be844e80c0c6aca30239d1eadebd3ee700647ec994f",
+      "bytes": 8639,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-unified-vs-431.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-units-regression-r1.json": {
+      "sha256": "a4fd2e406fa90fdb096961d2ff0a1d594fb964a5cce988a9e41caa8e92541fd4",
+      "bytes": 4409,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-units-regression-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-v2-browser-adapter.json": {
+      "sha256": "d3dd00c55229e6dcf3448b0c233438363e4a6264025c0204471e5ac2b4661ae8",
+      "bytes": 19807,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-v2-browser-adapter.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-v2-browser-parity-python.json": {
+      "sha256": "60cf9b413d082f2c645568fd41cd7d4ccab6e803bb849f10868a3a5a0b3e8aba",
+      "bytes": 18975,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-v2-browser-parity-python.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-v2-corpus-report.json": {
+      "sha256": "6c7693e236e10d1527a097271c26f21582ed847660d2286e0d1e2925800fa6b0",
+      "bytes": 29915,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-v2-corpus-report.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-v2-holdout-eval.json": {
+      "sha256": "14760f4da68993d82d7c23c73b58cb02fba4eba4ae59c0748765455bb4c33195",
+      "bytes": 182909,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-v2-holdout-eval.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-v3-corpus-report.json": {
+      "sha256": "7a80200bf2714ad29a125316c020bd9bd1fdbd5b6668db41cbf0fd60ec26705c",
+      "bytes": 1578,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-v3-corpus-report.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-v3-holdout-eval-v2model.json": {
+      "sha256": "364a03d83a3368062b6bc845735b2e659460d723baceff02f4a336534fcb276a",
+      "bytes": 164551,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-v3-holdout-eval-v2model.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-v3-holdout-eval-v3model.json": {
+      "sha256": "5c868369a912d5b93d347ccd590704a6564dd4285e72d548c62cfe82d7b762eb",
+      "bytes": 154631,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-v3-holdout-eval-v3model.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-v3-style-diagnostic.json": {
+      "sha256": "71b525488839e24bf1687289fb8a1b8443fb74c51091a05b5ce9738627ae77d3",
+      "bytes": 1644,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-v3-style-diagnostic.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-v3a-corpus-report.json": {
+      "sha256": "0ce6ac1b5fbbbbd47819282c4e63b9c10e853bf561a31eb44c804274551ec530",
+      "bytes": 1585,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-v3a-corpus-report.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-v3a-holdout-eval-v3amodel.json": {
+      "sha256": "3fff3a08dc6d963d1cbd979d4318155670e23d5f299e3bb6a50991420567b791",
+      "bytes": 155619,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-v3a-holdout-eval-v3amodel.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-verbalizer-latency-r1.json": {
+      "sha256": "4e35c0d236e89618bd505770b8441bc2bcc40f7cc7021f63f64538912fb76630",
+      "bytes": 507,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-verbalizer-latency-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-verbalizer-r1.json": {
+      "sha256": "48b9717d00ba5c17219f931e65d31a35ecf915c0c3a00022dfb58e284a7f26c0",
+      "bytes": 103984,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-verbalizer-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n4-verbalizer-rerank-r1.json": {
+      "sha256": "9730da22c522a549fb577c9a8911669204c44e66bf5ba1f86664878a1bac9b95",
+      "bytes": 19933,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n4-verbalizer-rerank-r1.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n5-browser-probe.json": {
+      "sha256": "1e9332265a3c02295e03f32c90c445929c7c670804b2b996a519431d8bf0e774",
+      "bytes": 34437,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n5-browser-probe.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n5-corpus-report.json": {
+      "sha256": "fc6a83e7741954dd8ec798c50f5999a1ced2b96ed089af2f736833be0ee416f1",
+      "bytes": 670,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n5-corpus-report.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n5-onnx-export.json": {
+      "sha256": "f28e42bc48fd137bf837f57cd68f7852fd9ce56494a7244db41288ea54441405",
+      "bytes": 61784,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n5-onnx-export.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/n5-relation-eval.json": {
+      "sha256": "69391ae1f25decd1507779479724b128d743a89f999b227b6267d1cddeda0a18",
+      "bytes": 162982,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\n5-relation-eval.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/randeng-smoke.json": {
+      "sha256": "899f90f6168ee52c8825524f52bd8a59e8464e8cf4b986ebff77c71df338a5a3",
+      "bytes": 4284,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\randeng-smoke.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/review-148f412.md": {
+      "sha256": "a059edbab881b22babe27511cd064a8a2ec32b305ae75711b62dab4bab1f2ee2",
+      "bytes": 8927,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\review-148f412.md",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/review-cf22a65.md": {
+      "sha256": "5e5999be7ec69e7d30cf135ce4adda111368ca97a71364d6e8fc09c5492d44bd",
+      "bytes": 7479,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\review-cf22a65.md",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/signoff-a86d5f1.md": {
+      "sha256": "d6dd2c6bf7a8e5b8b855a477b98fd74091d4b7c3242979e061503eb5ece27f9a",
+      "bytes": 2296,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\signoff-a86d5f1.md",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/signoff-d5ca042.md": {
+      "sha256": "7f6ea55b6c4bb29080924329b724772b0f26dd49789a7f0d8e7590fff77d4615",
+      "bytes": 5780,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\signoff-d5ca042.md",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/signoff-dd2a513.md": {
+      "sha256": "aff02048cfe25f21de46601af621beffab4f2b4460925c115eff20f32a2d1f02",
+      "bytes": 3083,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\signoff-dd2a513.md",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/signoff-f0c7ae7.md": {
+      "sha256": "bb6760c257f1166a344dd4446724bc51bda37fabbe2ecba3d1d9de8a1cac6acc",
+      "bytes": 3763,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\signoff-f0c7ae7.md",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-components/signoff-f9c1190.md": {
+      "sha256": "c698885c1a766c2d7e814fc52be65ec6abdf3b6b0a00cd059ddbdef6ea7cf9d4",
+      "bytes": 6063,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-components\\signoff-f9c1190.md",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "decode-compare/arm-ab.json": {
+      "sha256": "005d2d14d7fee03236b65735c30906bf7d87e07c8ee49165cd5d2d0f78413787",
+      "bytes": 46570,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\decode-compare\\arm-ab.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "decode-compare/beam-cache-equivalence.json": {
+      "sha256": "b26912fafa7dd7b021b12fc9b2f16c695eb0eaeed3e238cc88cf7cc7437c200b",
+      "bytes": 10452,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\decode-compare\\beam-cache-equivalence.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "decode-compare/cases.json": {
+      "sha256": "48dbda093ef85ee2923f5456797ca14d13bb97736e90ce2afda5a230b64f6dad",
+      "bytes": 54890,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\decode-compare\\cases.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "decode-compare/cases.manifest.json": {
+      "sha256": "edc2aea8713a4b34171c08f7e182a104c2a6594857a5e8780e0e5d139dc176fa",
+      "bytes": 174,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\decode-compare\\cases.manifest.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "decode-compare/confirm40-ab.json": {
+      "sha256": "a95f323c9e008f164c1ed43d35eb81b4ab76f8ca8e6cdcd81c786709bfdda12f",
+      "bytes": 21399,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\decode-compare\\confirm40-ab.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "decode-compare/confirm40-cases.json": {
+      "sha256": "0894b81c915c8034ae77e8a265906141940db64d8305fcae166435fa51ee3c3b",
+      "bytes": 18389,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\decode-compare\\confirm40-cases.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "decode-compare/confirm40-scores.json": {
+      "sha256": "b393118198c585f73ae3a1719b4db4c42ad74549596f2d66202f9485d2bc4635",
+      "bytes": 21026,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\decode-compare\\confirm40-scores.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "decode-compare/confirm40.json": {
+      "sha256": "1fd89415e9f8456509e375a0aa4ae4054254170e492b7777aca798a750041628",
+      "bytes": 17502,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\decode-compare\\confirm40.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "decode-compare/confirm40.manifest.json": {
+      "sha256": "6bfd48987bcef0be3abca11e066c7165cc58b57387af94bacefb01028c6269f2",
+      "bytes": 196,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\decode-compare\\confirm40.manifest.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "decode-compare/diag215-ab.json": {
+      "sha256": "0b450798b0f14f8f5926eec6d42022d8d7ba4bfc57743324d34c7a29ffec8f65",
+      "bytes": 112217,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\decode-compare\\diag215-ab.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "decode-compare/diag215-cases.json": {
+      "sha256": "ff26d980039e3371867ab035d78ee6a5a7e6d8521666b75fdab27dd84e87334e",
+      "bytes": 164411,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\decode-compare\\diag215-cases.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "decode-compare/diag215-scores.json": {
+      "sha256": "e43006f1fbcf7f89f53fcf3be685770c94aa8f19a520046ff09b065b478119bb",
+      "bytes": 107926,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\decode-compare\\diag215-scores.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "decode-compare/scores.json": {
+      "sha256": "9e55ce5af98cf7e37ae299c31022d04174f46239b305fcc7d64deebd686b42aa",
+      "bytes": 44551,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\decode-compare\\scores.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-provenance/chain-edit-result.json": {
+      "sha256": "1e10cca89a4be633cd0224c4aadd927a19ac06f4cbe7ab4a804d4d79a02de709",
+      "bytes": 1198,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-provenance\\chain-edit-result.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-provenance/chain-out.json": {
+      "sha256": "4d47e27ad1b3570c1ea3c77464eeedabf36cdcd2eac981f62993580baf2f0adc",
+      "bytes": 418,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-provenance\\chain-out.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-provenance/chain-units.jsonl": {
+      "sha256": "abdb7f8ded65bc11c68483559a2e98d74107a6d44b8b483dc3442cbcd2b5e832",
+      "bytes": 1523,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-provenance\\chain-units.jsonl",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-provenance/mixed-plan.json": {
+      "sha256": "a71f238c9e557f00d180a9d94d5b50708265162627f10eec7782fb77cf3ef186",
+      "bytes": 251,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-provenance\\mixed-plan.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree",
+      "otherSourceCopies": [
+        {
+          "path": "D:\\others\\Jity\\artifacts\\world-provenance\\mixed-plan.json",
+          "sha256": "a71f238c9e557f00d180a9d94d5b50708265162627f10eec7782fb77cf3ef186"
+        }
+      ]
+    },
+    "world-provenance/mixed-result.json": {
+      "sha256": "a03e579e73510a7ccad1a903b602c0c0dfb3ffed9ce1e3a088719a96461f7445",
+      "bytes": 3939,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-provenance\\mixed-result.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree",
+      "otherSourceCopies": [
+        {
+          "path": "D:\\others\\Jity\\artifacts\\world-provenance\\mixed-result.json",
+          "sha256": "a03e579e73510a7ccad1a903b602c0c0dfb3ffed9ce1e3a088719a96461f7445"
+        }
+      ]
+    },
+    "world-provenance/mixed-round-authorized.json": {
+      "sha256": "8bad51100279114ab0df31ae07e6893187462938000d4b5ccfe8f03c69ca9063",
+      "bytes": 3411,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-provenance\\mixed-round-authorized.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree",
+      "otherSourceCopies": [
+        {
+          "path": "D:\\others\\Jity\\artifacts\\world-provenance\\mixed-round-authorized.json",
+          "sha256": "8bad51100279114ab0df31ae07e6893187462938000d4b5ccfe8f03c69ca9063"
+        }
+      ]
+    },
+    "world-provenance/mixed-round.json": {
+      "sha256": "f658981e96503314f6f5c8d18a54ec582604f10e9b5603fd1cce347b8ec02f87",
+      "bytes": 2591,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-provenance\\mixed-round.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree",
+      "otherSourceCopies": [
+        {
+          "path": "D:\\others\\Jity\\artifacts\\world-provenance\\mixed-round.json",
+          "sha256": "f658981e96503314f6f5c8d18a54ec582604f10e9b5603fd1cce347b8ec02f87"
+        }
+      ]
+    },
+    "world-provenance/mixed-timeout-f3.json": {
+      "sha256": "adceb95fa688e16146c16dd51b01acc2bed2acc6ed481caf9fe9e285aaa72c00",
+      "bytes": 3238,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-provenance\\mixed-timeout-f3.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree",
+      "otherSourceCopies": [
+        {
+          "path": "D:\\others\\Jity\\artifacts\\world-provenance\\mixed-timeout-f3.json",
+          "sha256": "adceb95fa688e16146c16dd51b01acc2bed2acc6ed481caf9fe9e285aaa72c00"
+        }
+      ]
+    },
+    "world-provenance/mixed-timeout-f4.json": {
+      "sha256": "db912a60530e3bb4c3b662225da9159f78b819db93f114f9da2042c5a89164cc",
+      "bytes": 3965,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-provenance\\mixed-timeout-f4.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree",
+      "otherSourceCopies": [
+        {
+          "path": "D:\\others\\Jity\\artifacts\\world-provenance\\mixed-timeout-f4.json",
+          "sha256": "db912a60530e3bb4c3b662225da9159f78b819db93f114f9da2042c5a89164cc"
+        }
+      ]
+    },
+    "world-provenance/n3-authorized-relation.json": {
+      "sha256": "9e3589231d45d7ce8e9cb108502fc0e09f6a91dd34dc8529ff47c6f175e0a335",
+      "bytes": 1415,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-provenance\\n3-authorized-relation.json",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree",
+      "otherSourceCopies": [
+        {
+          "path": "D:\\others\\Jity\\artifacts\\world-provenance\\n3-authorized-relation.json",
+          "sha256": "9e3589231d45d7ce8e9cb108502fc0e09f6a91dd34dc8529ff47c6f175e0a335"
+        }
+      ]
+    },
+    "world-provenance/boundary-confirm40.jsonl": {
+      "sha256": "daa0e8f41a52abcd075e71fb538c57cdcaa151a416393b6b41e09e9d5a97f79f",
+      "bytes": 18767,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\world-provenance\\boundary-confirm40.jsonl",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "world-provenance/boundary-manifest.json": {
+      "sha256": "1c1a99adf4b11469bf8d84ce3b5c2d13fae425b26a8ea9d54ca2bfb3f43703a3",
+      "bytes": 1125,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\world-provenance\\boundary-manifest.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "world-provenance/boundary-train.json": {
+      "sha256": "da2a3e43ec59ef0c4c00e7a32f8ee4efdc0d4e381a1949a6d1f5af9c6cea82b8",
+      "bytes": 875,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\world-provenance\\boundary-train.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "world-provenance/boundary-train80.jsonl": {
+      "sha256": "c554eb20faf9a25226b29f97fd96f34ef05f9ef97aaa2bfa8beb1ef25276ffe2",
+      "bytes": 36104,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\world-provenance\\boundary-train80.jsonl",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "world-provenance/boundary2-confirm40.jsonl": {
+      "sha256": "c8d12c5ea2064235ffe3348169cea3b474b0039f12d1b67626cdce7c1dd43547",
+      "bytes": 19831,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\world-provenance\\boundary2-confirm40.jsonl",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "world-provenance/boundary2-manifest.json": {
+      "sha256": "6479bb039a6c4d171b2931d137e30069853593c345c8e9e4c0fcbad3896a3034",
+      "bytes": 1259,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\world-provenance\\boundary2-manifest.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "world-provenance/boundary2-train.json": {
+      "sha256": "dcc0bc4adaf49867a4664d3bc0dc96312db4aaa9de95134db407d7aca926eee2",
+      "bytes": 876,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\world-provenance\\boundary2-train.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "world-provenance/boundary2-train80.jsonl": {
+      "sha256": "3e8149b1c6ef720411e3ab71fcb7044018fcaea34299b12faf8318094c40668d",
+      "bytes": 37358,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\world-provenance\\boundary2-train80.jsonl",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "world-provenance/confirm-b.json": {
+      "sha256": "93c74f04be4227015a7985497264a265aeda84d78b531028d5869b7793f220b9",
+      "bytes": 7627,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\world-provenance\\confirm-b.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "world-provenance/confirm-b240.json": {
+      "sha256": "34a0325f5c18c9e10b6c009971e69565a049c66f59e9ef9182a671f3c7bb346e",
+      "bytes": 7654,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\world-provenance\\confirm-b240.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "world-provenance/confirm-u240.json": {
+      "sha256": "b1587353ee2463e836c8d497ff1e3d5fc13010d3c6102fea4d98eb9422064cc7",
+      "bytes": 7667,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\world-provenance\\confirm-u240.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "world-provenance/confirm2-u240.json": {
+      "sha256": "ac4d56afadd2044bc4fe348cc32bbb86b6d2ab304cd23a6537a61ea1a9d2c772",
+      "bytes": 7813,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\world-provenance\\confirm2-u240.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "world-provenance/confirm2-v2-240.json": {
+      "sha256": "b2003ead717c36cef0e26325f832b3f5bdfa044e908b16294430b3797db4e2e7",
+      "bytes": 7806,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\world-provenance\\confirm2-v2-240.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "world-provenance/confirm2-v2best.json": {
+      "sha256": "c96a561103fe8196a05728f2030dffb8d5e41c937f4673f8b556fa4d71960ce2",
+      "bytes": 7806,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\world-provenance\\confirm2-v2best.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "world-provenance/diag-b.json": {
+      "sha256": "72d90e56f98585ea847e617db4231d03a4702119fef5284a9edec0a3b6f3a637",
+      "bytes": 39805,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\world-provenance\\diag-b.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "world-provenance/diag-b240.json": {
+      "sha256": "d8436c10723977b9b29ddd368a01875e0b4a87dd8938b24a2d9569ded38a4168",
+      "bytes": 39535,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\world-provenance\\diag-b240.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "world-provenance/diag2-v2best.json": {
+      "sha256": "ce9686f051cd8659874aeb2a71ee6c5d2dd664508accfbd970bd90c5389bd650",
+      "bytes": 40108,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\world-provenance\\diag2-v2best.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "world-provenance/narration-page.json": {
+      "sha256": "3e48b49468dce1ae942e53988a708e1af2af02829e23bd8e33af51bfbb04a853",
+      "bytes": 2796,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\world-provenance\\narration-page.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "world-provenance/pairs/fixture-r1-authorized.json": {
+      "sha256": "f7619a71382374ac6c8775260ffe9af99b0d163d5ed192d73c89bbe62c93482d",
+      "bytes": 2995,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\world-provenance\\pairs\\fixture-r1-authorized.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "world-provenance/pairs/fixture-r1-plan.json": {
+      "sha256": "bf1636165227e00c93dd25500af5c5a915e3f21b28a016f7de80b5af4e2e6f33",
+      "bytes": 64,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\world-provenance\\pairs\\fixture-r1-plan.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "world-provenance/pairs/fixture-r1-round.json": {
+      "sha256": "9c21ea6df34516986eda63da52756de76b77e1bf801baa6e7445ccb884c093c3",
+      "bytes": 2359,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\world-provenance\\pairs\\fixture-r1-round.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "world-provenance/pairs/fixture-r2-authorized.json": {
+      "sha256": "4ac8a4860f16f7c50ef9db6247936d9b96a338f84320a32045d261cbb0b76a2a",
+      "bytes": 3002,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\world-provenance\\pairs\\fixture-r2-authorized.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "world-provenance/pairs/fixture-r2-plan.json": {
+      "sha256": "bf1636165227e00c93dd25500af5c5a915e3f21b28a016f7de80b5af4e2e6f33",
+      "bytes": 64,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\world-provenance\\pairs\\fixture-r2-plan.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "world-provenance/pairs/fixture-r2-round.json": {
+      "sha256": "e000193bbb80c545ed147c5173dd94e2b89ab4e441775167f700b713b8c5782a",
+      "bytes": 2366,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\world-provenance\\pairs\\fixture-r2-round.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "world-provenance/pairs/fixture-r3-authorized.json": {
+      "sha256": "10d8eb590af684dce93f4773ee28f06a85a83a724e9810e5d0a16140b8a85528",
+      "bytes": 3003,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\world-provenance\\pairs\\fixture-r3-authorized.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "world-provenance/pairs/fixture-r3-plan.json": {
+      "sha256": "bf1636165227e00c93dd25500af5c5a915e3f21b28a016f7de80b5af4e2e6f33",
+      "bytes": 64,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\world-provenance\\pairs\\fixture-r3-plan.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "world-provenance/pairs/fixture-r3-round.json": {
+      "sha256": "561e94493baf1f759a46b9429d7253cdb29419e2cd5afc20647bdaffcd6fef4f",
+      "bytes": 2367,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\world-provenance\\pairs\\fixture-r3-round.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "world-provenance/pairs/fixture-r4-authorized.json": {
+      "sha256": "0505c140b876131777adaa2c7fcfb1c36aefa05b786e7eb2d0e84bd560b606a0",
+      "bytes": 3008,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\world-provenance\\pairs\\fixture-r4-authorized.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "world-provenance/pairs/fixture-r4-plan.json": {
+      "sha256": "bf1636165227e00c93dd25500af5c5a915e3f21b28a016f7de80b5af4e2e6f33",
+      "bytes": 64,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\world-provenance\\pairs\\fixture-r4-plan.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "world-provenance/pairs/fixture-r4-round.json": {
+      "sha256": "64b55cb75dc2548fa498578cfa3c989c1d0cbd641872594c5039a37cab3a46cb",
+      "bytes": 2372,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\world-provenance\\pairs\\fixture-r4-round.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "world-provenance/pairs/fixture-r5-authorized.json": {
+      "sha256": "8f75058aff3c0b2a2a82f4d31844a916f4803fcb1a836b4acd46677dd3958a02",
+      "bytes": 2797,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\world-provenance\\pairs\\fixture-r5-authorized.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "world-provenance/pairs/fixture-r5-plan.json": {
+      "sha256": "bf1636165227e00c93dd25500af5c5a915e3f21b28a016f7de80b5af4e2e6f33",
+      "bytes": 64,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\world-provenance\\pairs\\fixture-r5-plan.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "world-provenance/pairs/fixture-r5-round.json": {
+      "sha256": "8e70bf1458ed780d052f12185d1f2687013f20011557f7eeb82a87f63e52d0c1",
+      "bytes": 2161,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\world-provenance\\pairs\\fixture-r5-round.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "world-provenance/pairs/pair-worlds.json": {
+      "sha256": "533142dfa010c39497b2e1975ac51cb6bcc0148d867d88b58039393bef5da454",
+      "bytes": 1409,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\world-provenance\\pairs\\pair-worlds.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "world-provenance/pairs/rounds-out.jsonl": {
+      "sha256": "9d62218a643c6bfaff2f353badb91248084d2a387ce23bb114afb036ecacf490",
+      "bytes": 27990,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\world-provenance\\pairs\\rounds-out.jsonl",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "world-provenance/pairs/rounds.jsonl": {
+      "sha256": "3bfeb248ce2101d55bcf82fcf941571788e03cb7db9384fd8c191146e35acd8c",
+      "bytes": 23609,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\world-provenance\\pairs\\rounds.jsonl",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "world-provenance/pairs/train-r1-authorized.json": {
+      "sha256": "832e8a55140089b7534c71d303179c8ffe0eccc87309c3ee0a04a105ba36df07",
+      "bytes": 2948,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\world-provenance\\pairs\\train-r1-authorized.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "world-provenance/pairs/train-r1-plan.json": {
+      "sha256": "bf1636165227e00c93dd25500af5c5a915e3f21b28a016f7de80b5af4e2e6f33",
+      "bytes": 64,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\world-provenance\\pairs\\train-r1-plan.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "world-provenance/pairs/train-r1-round.json": {
+      "sha256": "240a09529a74ea0b83745d2b4c63e05ef20b13212acfcf88997dea412e2bdd97",
+      "bytes": 2322,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\world-provenance\\pairs\\train-r1-round.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "world-provenance/pairs/train-r2-authorized.json": {
+      "sha256": "d5616ac5cf82bef938009e4746384104b9b5557a6e9fcc75a4ea80457ea09b67",
+      "bytes": 2953,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\world-provenance\\pairs\\train-r2-authorized.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "world-provenance/pairs/train-r2-plan.json": {
+      "sha256": "bf1636165227e00c93dd25500af5c5a915e3f21b28a016f7de80b5af4e2e6f33",
+      "bytes": 64,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\world-provenance\\pairs\\train-r2-plan.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "world-provenance/pairs/train-r2-round.json": {
+      "sha256": "2a985ef768199a822416801fd315405fdeda5b1f10a098f8b8b78a7cc011d3a3",
+      "bytes": 2327,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\world-provenance\\pairs\\train-r2-round.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "world-provenance/pairs/train-r3-authorized.json": {
+      "sha256": "86e7791e5889f5e3abd7dd3f552b88216d0934972b11e2ff265fcad36132cd22",
+      "bytes": 2954,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\world-provenance\\pairs\\train-r3-authorized.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "world-provenance/pairs/train-r3-plan.json": {
+      "sha256": "bf1636165227e00c93dd25500af5c5a915e3f21b28a016f7de80b5af4e2e6f33",
+      "bytes": 64,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\world-provenance\\pairs\\train-r3-plan.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "world-provenance/pairs/train-r3-round.json": {
+      "sha256": "d977abcb0045de62e1af806903e3a30ea201ba747e5e77e4fd13cc064262a181",
+      "bytes": 2328,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\world-provenance\\pairs\\train-r3-round.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "world-provenance/pairs/train-r4-authorized.json": {
+      "sha256": "5c03c646709a805cc8424603dfd4580c3eb1eed5debea2609353625d69515e91",
+      "bytes": 2959,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\world-provenance\\pairs\\train-r4-authorized.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "world-provenance/pairs/train-r4-plan.json": {
+      "sha256": "bf1636165227e00c93dd25500af5c5a915e3f21b28a016f7de80b5af4e2e6f33",
+      "bytes": 64,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\world-provenance\\pairs\\train-r4-plan.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "world-provenance/pairs/train-r4-round.json": {
+      "sha256": "97b0b33f12002f0980f0110766cb1a004f37aa44cba11bd810ef5285d2bad70d",
+      "bytes": 2333,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\world-provenance\\pairs\\train-r4-round.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "world-provenance/pairs/train-r5-authorized.json": {
+      "sha256": "51e43edc90b030dd95a0d6a78d7f6b38ef9bad8e42842d1b9ee3b87756b2e890",
+      "bytes": 2752,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\world-provenance\\pairs\\train-r5-authorized.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "world-provenance/pairs/train-r5-plan.json": {
+      "sha256": "bf1636165227e00c93dd25500af5c5a915e3f21b28a016f7de80b5af4e2e6f33",
+      "bytes": 64,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\world-provenance\\pairs\\train-r5-plan.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "world-provenance/pairs/train-r5-round.json": {
+      "sha256": "9306a600ac355a245126f194ab4b6f8a8f2c20f3e0f9086019e5231aa7da123b",
+      "bytes": 2126,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\world-provenance\\pairs\\train-r5-round.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "world-provenance/provenance-browser-verify.json": {
+      "sha256": "18715dd03b6b283a2304d0e897f7127cddfe0958ceba979c29f7f3f353b8c66d",
+      "bytes": 589,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\world-provenance\\provenance-browser-verify.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "world-provenance/provenance-browser.json": {
+      "sha256": "3197c94216e027ab912e37b0a0072c71cc130698e3abb3d005810e154c337d23",
+      "bytes": 814,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\world-provenance\\provenance-browser.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "world-provenance/rounds-b.jsonl": {
+      "sha256": "7b5055af3a66bb6c638620b43c0baec3f7b53ac81e69c775b3f17a88d7004110",
+      "bytes": 27471,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\world-provenance\\rounds-b.jsonl",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "world-provenance/rounds-b240.jsonl": {
+      "sha256": "eec18ca1caba8b356f48b43d52753262fc4ba880384cf0ce3ab95e255e42f3d4",
+      "bytes": 27462,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\world-provenance\\rounds-b240.jsonl",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "world-provenance/rounds-v2.jsonl": {
+      "sha256": "cf684d46596293cb579e3dc2f40711cee86e6a7571295b1840a014d5ec4caa1c",
+      "bytes": 27735,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\world-provenance\\rounds-v2.jsonl",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "world-provenance/train-r1-authorized.json": {
+      "sha256": "832e8a55140089b7534c71d303179c8ffe0eccc87309c3ee0a04a105ba36df07",
+      "bytes": 2948,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\world-provenance\\train-r1-authorized.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "cohesion-split/a1-freeze.json": {
+      "sha256": "e7edb3c03fc79dc2cdd9fc06869c8be07a95fad2edfc25b8045312024f436c20",
+      "bytes": 2450,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\cohesion-split\\a1-freeze.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "cohesion-split/a1.jsonl": {
+      "sha256": "e3c470b171e1d02430c33b86765796239d90f847c453023ddd7ec782e144c546",
+      "bytes": 23417,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\cohesion-split\\a1.jsonl",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "cohesion-split/background-candidates.json": {
+      "sha256": "f7a1e7bab4425b2694e31be28b03e6288236e890334676235615a185f3b0eafe",
+      "bytes": 31593,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\cohesion-split\\background-candidates.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "cohesion-split/background-select-human-review.json": {
+      "sha256": "feb06294239fd0548c206adaf191e5b766aeb19f36a687ea8792e7034b01da30",
+      "bytes": 5611,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\cohesion-split\\background-select-human-review.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "cohesion-split/background-select-results.jsonl": {
+      "sha256": "2eed4ff6804c3845e26a6fb483cf3bb4fb75d035acaa1a4031ca042ba048e9e7",
+      "bytes": 68072,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\cohesion-split\\background-select-results.jsonl",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "cohesion-split/background-select-run-manifest.json": {
+      "sha256": "d9f0d57aad42874869d0176e5e3b1c2cdf022e1003368ec81548d5884c557b1e",
+      "bytes": 1025,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\cohesion-split\\background-select-run-manifest.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "cohesion-split/background-select-summary.json": {
+      "sha256": "2f468e45db86827a8a41ae67992fe4c7c0e2b0849cff81ae2b797e248cc575dd",
+      "bytes": 1005,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\cohesion-split\\background-select-summary.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "cohesion-split/blind.json": {
+      "sha256": "0817f91257320c77014986270204ce16d013b87060e7f6e021d9fff37921eae1",
+      "bytes": 10037,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\cohesion-split\\blind.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "cohesion-split/dw-results.json": {
+      "sha256": "c7b8af7a506ba4c0198983b23c463b63e7eae478e33bd04e5ce2926578aaa9a7",
+      "bytes": 77446,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\cohesion-split\\dw-results.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "cohesion-split/dw-scores.json": {
+      "sha256": "8ad0df60b14effb02a9a672b689e38276bf1a1f17d9997bdea6a1e869bfd77e9",
+      "bytes": 52569,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\cohesion-split\\dw-scores.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "cohesion-split/organize-v2-human-review.json": {
+      "sha256": "5a8683a4098ed314aa42f477e2b9c40b9c56ae0b11ced91e73045e7a39e95078",
+      "bytes": 3871,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\cohesion-split\\organize-v2-human-review.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "cohesion-split/organize-v2-results.jsonl": {
+      "sha256": "c2378a71d9a1dcfa41d4dfdd2d5259b077d90eac73a9b90cebc59e04f729b096",
+      "bytes": 84656,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\cohesion-split\\organize-v2-results.jsonl",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "cohesion-split/organize-v2-run-manifest.json": {
+      "sha256": "ee57e6d4ee159128a56dc3947a9e3761ce361e59f009ac78472056f8c7549163",
+      "bytes": 1315,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\cohesion-split\\organize-v2-run-manifest.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "cohesion-split/organize-v2-scores-summary.json": {
+      "sha256": "2b2df93ac52fb8a156acee077325b26527fc3d81e05c7572a83f631a431f1f60",
+      "bytes": 538,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\cohesion-split\\organize-v2-scores-summary.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "cohesion-split/organize-v2-scores.jsonl": {
+      "sha256": "462225e6584ee8a3f5c901775bc7aa8fc403be2ba326375e6e0bde75f5c1d894",
+      "bytes": 13476,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\cohesion-split\\organize-v2-scores.jsonl",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "cohesion-split/organize-v2-smoke.jsonl": {
+      "sha256": "8d9da612de3434ce7e538922a68959e90fa1e60e70a8f89eee9253932956e93b",
+      "bytes": 4078,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\cohesion-split\\organize-v2-smoke.jsonl",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "cohesion-split/organize-v2-smoke2.jsonl": {
+      "sha256": "0cd84d6727356abedb11f87be194f3bffe3b5a48b3be1a5d9c86927c8f73641b",
+      "bytes": 4544,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\cohesion-split\\organize-v2-smoke2.jsonl",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "cohesion-split/organize-v2-summary.json": {
+      "sha256": "a1ac0d01453041ca201f54902fcb5b5525146ce0e9e224e292eb9de63c07b50d",
+      "bytes": 1513,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\cohesion-split\\organize-v2-summary.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "cohesion-split/plan-compare.json": {
+      "sha256": "a29593e2f83d59a5a5108edd1e7a8547c524523854784a533df05eb62b5fc5e0",
+      "bytes": 7081,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\cohesion-split\\plan-compare.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "cohesion-split/plan-results.json": {
+      "sha256": "aea22287e1c33a1321c256cc211ae3073b8a188a4e4ddacd79f9b0f3152aeb97",
+      "bytes": 44948,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\cohesion-split\\plan-results.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "cohesion-split/results.json": {
+      "sha256": "3ac6f00e89c2fe36214e87c964ec13887e695237d91d23957e433b58512b2adb",
+      "bytes": 25641,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\cohesion-split\\results.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "cohesion-split/scores.json": {
+      "sha256": "3f6342f4d67a5ad72a0884d9822391e08f806516d7acac35130cb02f2993f9c9",
+      "bytes": 27892,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\cohesion-split\\scores.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "cohesion-split/semantic-correct-human-review.json": {
+      "sha256": "b617e679542c493f151f28683280f41fc5d175bb7be442dbdc7a31fee51712e3",
+      "bytes": 5139,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\cohesion-split\\semantic-correct-human-review.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "cohesion-split/semantic-correct-results.jsonl": {
+      "sha256": "247b21c71af41e6d470abc57c198e4bcee10c3d93143c69f21d6eafa5147a014",
+      "bytes": 85256,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\cohesion-split\\semantic-correct-results.jsonl",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "cohesion-split/semantic-correct-run-manifest.json": {
+      "sha256": "c8daf81160156697778a0310fdebe51814844dd88b28aa44f02f30dbf747acb4",
+      "bytes": 1315,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\cohesion-split\\semantic-correct-run-manifest.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "cohesion-split/semantic-correct-scores-summary.json": {
+      "sha256": "d5795c323f283a4afa6f880272e7159635135751f3a7585e45d081b37d0f63e3",
+      "bytes": 400,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\cohesion-split\\semantic-correct-scores-summary.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "cohesion-split/semantic-correct-scores.jsonl": {
+      "sha256": "988ba4b2aa42948c5463b80f134941073b0a9eda06bce1509ecb8d4ab6555c07",
+      "bytes": 13215,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\cohesion-split\\semantic-correct-scores.jsonl",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "cohesion-split/semantic-correct-summary.json": {
+      "sha256": "1797da31497305f498fd36f3c950580ded9e13e5d8cec9d8ef2deffeb81b6fea",
+      "bytes": 564,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\cohesion-split\\semantic-correct-summary.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "cohesion-split/v2-criteria-freeze.json": {
+      "sha256": "425e8794cb4397c8e2a9eeaa8dda580d94e4b846dabe0543df80c290ca852837",
+      "bytes": 2377,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\cohesion-split\\v2-criteria-freeze.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "statement-verification/audit-target-v1.json": {
+      "sha256": "50f5e9cc1a82ad6aa7a1b4b0c4589836433e9be4265464c7637c93ccf41797c2",
+      "bytes": 4161,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\statement-verification\\audit-target-v1.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "statement-verification/audit.json": {
+      "sha256": "5711a72b55ddfdb83301ee865f6259865697c7c97e9b9c663f2653f3fb7c31f0",
+      "bytes": 2692,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\statement-verification\\audit.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "statement-verification/general-capability-v1.jsonl": {
+      "sha256": "259ecbd03f82a33b53a7d57b19b15766eb9f873fad63ee6489e2382be212d5fb",
+      "bytes": 425252,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\statement-verification\\general-capability-v1.jsonl",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "statement-verification/joint-dev.json": {
+      "sha256": "b295e31b4e5f041548582abcf148b5c0f5d631743ded0fe2390c4ef5b5743e8b",
+      "bytes": 864952,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\statement-verification\\joint-dev.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "statement-verification/joint-freeze-v1.json": {
+      "sha256": "e264e7a04f451aaf62eb267bb12c5e4ad7b524ea3ee7a9948cbd0f842dbbdc35",
+      "bytes": 808,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\statement-verification\\joint-freeze-v1.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "statement-verification/joint-general-confirm-summary.json": {
+      "sha256": "5efd8b1ba294fb020eb3132826ec54751204078c0ad58855c17d091e3719eb53",
+      "bytes": 1299,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\statement-verification\\joint-general-confirm-summary.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "statement-verification/joint-general-confirm.jsonl": {
+      "sha256": "eeae8c2ec99447884398e7a6278f388c8c72f0dd8dfb7bc6d5739740dfa169bf",
+      "bytes": 45146,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\statement-verification\\joint-general-confirm.jsonl",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "statement-verification/joint-regression-summary.json": {
+      "sha256": "1df3d1802907255c8d4b5d273fb245a7da5fd493b2ab0397f62d29b6bfa2fe70",
+      "bytes": 3665,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\statement-verification\\joint-regression-summary.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "statement-verification/joint-regression.jsonl": {
+      "sha256": "58190a481b807199fb0f7cb7df6c0030be925c1096dbdb8d077a76eba68a8027",
+      "bytes": 13474,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\statement-verification\\joint-regression.jsonl",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "statement-verification/joint-run-manifest-v1.json": {
+      "sha256": "88fa9c24032e44430d9bdeba9eb942165334424b35985022a4e74fae93e27b85",
+      "bytes": 12822,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\statement-verification\\joint-run-manifest-v1.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "statement-verification/joint-target-confirm-summary.json": {
+      "sha256": "155a596d056813547265bd76e631f8e520147fe3ce6b5f967d750eaeceb93ea8",
+      "bytes": 2835,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\statement-verification\\joint-target-confirm-summary.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "statement-verification/joint-target-confirm.jsonl": {
+      "sha256": "f4ed5df916ff698262df5ac0aa56667078ac91d20744f971afb0336fef677247",
+      "bytes": 18076,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\statement-verification\\joint-target-confirm.jsonl",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "statement-verification/joint-train-report.json": {
+      "sha256": "5e2ba2c951a59418e887655345c041dd8f98d975e7dbc64ee80a46a052c15526",
+      "bytes": 14117,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\statement-verification\\joint-train-report.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "statement-verification/joint-training-protocol-v1.json": {
+      "sha256": "20ec731168e95a292579550102ce79f3f90b9efbe1a356c5cc6988ff54c64266",
+      "bytes": 3987,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\statement-verification\\joint-training-protocol-v1.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "statement-verification/label-compatibility-v1.json": {
+      "sha256": "29f1cd55719e050e66bf5efaf7b0f292691b7160a7b6e6d3e9e82fb04f9ed311",
+      "bytes": 5280,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\statement-verification\\label-compatibility-v1.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "statement-verification/metric-freeze.json": {
+      "sha256": "6014c7d2feca07c4615c354c089f704317040d2a2db8e977834ad60845f6552e",
+      "bytes": 2991,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\statement-verification\\metric-freeze.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "statement-verification/pairs-target-v1.jsonl": {
+      "sha256": "746c0f0754bbae536d34a513280e714f6c33eb3c92804cb37aec46efac79a603",
+      "bytes": 208916,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\statement-verification\\pairs-target-v1.jsonl",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "statement-verification/pairs-v1.jsonl": {
+      "sha256": "ff67a4cda56c02f49d653cba21bb512e4564fd2289f8e9d7ba25738b675c630e",
+      "bytes": 1525046,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\statement-verification\\pairs-v1.jsonl",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "statement-verification/regression-v1.jsonl": {
+      "sha256": "6e060bb7ab6c666e9cf9f317ef1e18f5009e9722559d76be5920174482d27a58",
+      "bytes": 54843,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\statement-verification\\regression-v1.jsonl",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "statement-verification/review-target-v1-summary.json": {
+      "sha256": "3045018d8df3190e1e537ad53ec9342d877ad67d5ff9ca6e16657b22ab124717",
+      "bytes": 6712,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\statement-verification\\review-target-v1-summary.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "statement-verification/review-target-v1.jsonl": {
+      "sha256": "cb3662667e71e7eb41e568ef644b252264eec8407ab9f061d7e80d5223ac3578",
+      "bytes": 151159,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\statement-verification\\review-target-v1.jsonl",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "statement-verification/review-target-v1.md": {
+      "sha256": "4a037a0fa634698b24fe34da4139888d90ec93e91bfd58ef9b537ec2e37703ad",
+      "bytes": 7179,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\statement-verification\\review-target-v1.md",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "statement-verification/review-v1-summary.json": {
+      "sha256": "490c3dbf3a190b4f39d2d4e12d1492f9af98f9e0fe57d2c35d3d29ea4c833794",
+      "bytes": 2135,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\statement-verification\\review-v1-summary.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "statement-verification/review-v1.jsonl": {
+      "sha256": "d19457faaca92f78feb0556955b37992ed5c61a988e900ce67ff9c6274634b50",
+      "bytes": 334652,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\statement-verification\\review-v1.jsonl",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "statement-verification/review-v1.md": {
+      "sha256": "f13d900fedc6367890c81c491c3af7644fbb2872881e90d1f02d2aa98c957199",
+      "bytes": 127533,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\statement-verification\\review-v1.md",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "statement-verification/split-freeze-target-v1.json": {
+      "sha256": "0c0d3a99ce14a8aec9d6b08c241bbfee26cf857b5a3e2f89de7a31f739f2439c",
+      "bytes": 6637,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\statement-verification\\split-freeze-target-v1.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "statement-verification/split-freeze.json": {
+      "sha256": "914dcf6522ef65ed2e7b79c717ef9d2d12976d90e351095c35e2681909a56ebf",
+      "bytes": 2608,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\statement-verification\\split-freeze.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "statement-verification/target-confirm-new-summary.json": {
+      "sha256": "0cb489bc16875ad65f8f49e212b8b1ee7880f122d185a0a4da8de72517d0b1b8",
+      "bytes": 3200,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\statement-verification\\target-confirm-new-summary.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "statement-verification/target-confirm-new.jsonl": {
+      "sha256": "c907e8825efd993bd212fa68ad1d0342fb29ff4d2f805bec4c7eb491e9257ddb",
+      "bytes": 18088,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\statement-verification\\target-confirm-new.jsonl",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "statement-verification/target-confirm-old-summary.json": {
+      "sha256": "5e51dce80ed9827c23d084e5da0013889f37b33eb6511aaef156f26ae13b3ba1",
+      "bytes": 3264,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\statement-verification\\target-confirm-old-summary.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "statement-verification/target-confirm-old.jsonl": {
+      "sha256": "845f66196b589457bb4a49855f245b4d8c57e0b82321b3eb0fe023170c9696ce",
+      "bytes": 18165,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\statement-verification\\target-confirm-old.jsonl",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "statement-verification/target-dev.json": {
+      "sha256": "c469239d7f5b721ba0f0bb290acf49fd5601313c6bc617d6d9691263313002c0",
+      "bytes": 367397,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\statement-verification\\target-dev.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "statement-verification/target-general-new.jsonl": {
+      "sha256": "8194bc0a2d509f9a55dd9a834208f1cf58c093bbe20659766440b0979241c0fe",
+      "bytes": 135628,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\statement-verification\\target-general-new.jsonl",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "statement-verification/target-general-summary.json": {
+      "sha256": "7e83dadb02575d32400b8c73ff382c99c44e0d79692b2b9935b9b4f8fe43f9c7",
+      "bytes": 1159,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\statement-verification\\target-general-summary.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "statement-verification/target-regression-new.jsonl": {
+      "sha256": "b01231f87dbad6261dfc220b6d293b1d327d6e8700432ff6549eb65cd4b8ca05",
+      "bytes": 13511,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\statement-verification\\target-regression-new.jsonl",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "statement-verification/target-regression-summary.json": {
+      "sha256": "cd8fa322879d4bd1c6e3b2c6d5519a6ac6af3973bd2436946e8074ce380dd85c",
+      "bytes": 3724,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\statement-verification\\target-regression-summary.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "statement-verification/target-run-manifest-v1.json": {
+      "sha256": "b82bb466620c1755825dda6a1c31081dd88b0e1b201dce1f3eb407b3e71eb578",
+      "bytes": 13309,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\statement-verification\\target-run-manifest-v1.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "statement-verification/target-train-report.json": {
+      "sha256": "cbc44f7d5c8de2712054c78b97b830c4220b31e0e568f6138394ea9dde10fc18",
+      "bytes": 417521,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\statement-verification\\target-train-report.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "statement-verification/train-verify-binary-report.json": {
+      "sha256": "2f414f6a8f10d9e5dd8f7f65c126c2b2086770ec6ab943c6c9747314595f129a",
+      "bytes": 441581,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\statement-verification\\train-verify-binary-report.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "statement-verification/training-protocol-target-v1.json": {
+      "sha256": "8f38a05196cd5c042a7c98a1a593ee7ebcbebdab2a4eaa571773e09ffb5bf353",
+      "bytes": 4000,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\statement-verification\\training-protocol-target-v1.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "statement-verification/verify-binary-boundary.jsonl": {
+      "sha256": "23be736114696234c455f195d9d79590ac133f3db0a36ec0cafd7b8ba219a6d1",
+      "bytes": 1230,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\statement-verification\\verify-binary-boundary.jsonl",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "statement-verification/verify-binary-confirm-summary.json": {
+      "sha256": "eba3e1d33e1882cdad430e77bd58c014cbfb28532777e5944c93ccf9dd650852",
+      "bytes": 3542,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\statement-verification\\verify-binary-confirm-summary.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "statement-verification/verify-binary-confirm.jsonl": {
+      "sha256": "e17e0b23feb2d4a1f115d907f859e63da3d838da3481973a3f4bc211cf2d8c90",
+      "bytes": 53549,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\statement-verification\\verify-binary-confirm.jsonl",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "statement-verification/verify-binary-dev.json": {
+      "sha256": "fb2be90a4232b561909537f965c892f340f489b19e57ed3b91119d6fa2ff39cb",
+      "bytes": 405323,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\statement-verification\\verify-binary-dev.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "statement-verification/verify-binary-regression-summary.json": {
+      "sha256": "a376c4f3fad791527be33846a272e46d715af149e3688b09500e31d68a50a175",
+      "bytes": 3709,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\statement-verification\\verify-binary-regression-summary.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "statement-verification/verify-binary-regression.jsonl": {
+      "sha256": "426c58d0fa8b50ec4a845a5db8b170caf98a4b0a25a7e00d262693fa257b7b36",
+      "bytes": 13534,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\statement-verification\\verify-binary-regression.jsonl",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "statement-verification/verify-binary-run-manifest.json": {
+      "sha256": "ac72c566ad0f3973c1b640cbaed9cc762d7c599f6d9be20ae0ec43d5df4bf16a",
+      "bytes": 9140,
+      "sourcePath": "D:\\others\\Jity\\artifacts\\statement-verification\\verify-binary-run-manifest.json",
+      "sourceWorktree": "D:\\others\\Jity"
+    },
+    "world-boundary/boundary-confirm40.jsonl": {
+      "sha256": "daa0e8f41a52abcd075e71fb538c57cdcaa151a416393b6b41e09e9d5a97f79f",
+      "bytes": 18767,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-boundary\\boundary-confirm40.jsonl",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-boundary/boundary-train80.jsonl": {
+      "sha256": "c554eb20faf9a25226b29f97fd96f34ef05f9ef97aaa2bfa8beb1ef25276ffe2",
+      "bytes": 36104,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-boundary\\boundary-train80.jsonl",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-boundary/boundary2-confirm40.jsonl": {
+      "sha256": "c8d12c5ea2064235ffe3348169cea3b474b0039f12d1b67626cdce7c1dd43547",
+      "bytes": 19831,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-boundary\\boundary2-confirm40.jsonl",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-boundary/boundary2-train80.jsonl": {
+      "sha256": "3e8149b1c6ef720411e3ab71fcb7044018fcaea34299b12faf8318094c40668d",
+      "bytes": 37358,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-boundary\\boundary2-train80.jsonl",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-boundary/rounds-b.jsonl": {
+      "sha256": "7b5055af3a66bb6c638620b43c0baec3f7b53ac81e69c775b3f17a88d7004110",
+      "bytes": 27471,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-boundary\\rounds-b.jsonl",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-boundary/rounds-b240.jsonl": {
+      "sha256": "eec18ca1caba8b356f48b43d52753262fc4ba880384cf0ce3ab95e255e42f3d4",
+      "bytes": 27462,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-boundary\\rounds-b240.jsonl",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    },
+    "world-boundary/rounds-v2.jsonl": {
+      "sha256": "cf684d46596293cb579e3dc2f40711cee86e6a7571295b1840a014d5ec4caa1c",
+      "bytes": 27735,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\world-boundary\\rounds-v2.jsonl",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree"
+    }
+  }
+}

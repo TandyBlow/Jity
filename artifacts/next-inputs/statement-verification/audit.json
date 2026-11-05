@@ -1,0 +1,120 @@
+{
+  "counts": {
+    "total": 1163,
+    "trainDevConfirm": 1127,
+    "regression": 36,
+    "bySplit": {
+      "train": 787,
+      "dev": 215,
+      "confirm": 125
+    },
+    "byLabel": {
+      "train:supported": 393,
+      "train:unsupported": 393,
+      "dev:supported": 107,
+      "dev:unsupported": 107,
+      "confirm:supported": 62,
+      "confirm:unsupported": 62,
+      "confirm:uncertain": 1,
+      "dev:uncertain": 1,
+      "train:uncertain": 1
+    },
+    "byCategory": {
+      "train:general": 754,
+      "dev:general": 190,
+      "confirm:general": 108,
+      "train:background": 8,
+      "dev:background": 6,
+      "confirm:background": 4,
+      "train:body": 8,
+      "dev:body": 6,
+      "confirm:body": 4,
+      "train:extra-action": 8,
+      "dev:extra-action": 6,
+      "confirm:extra-action": 4,
+      "confirm:uncertain": 1,
+      "dev:uncertain": 1,
+      "train:uncertain": 1,
+      "train:visible-state": 8,
+      "dev:visible-state": 6,
+      "confirm:visible-state": 4
+    },
+    "byOrigin": {
+      "train:n5-derived": 754,
+      "dev:n5-derived": 190,
+      "confirm:n5-derived": 108,
+      "train:synthetic": 33,
+      "dev:synthetic": 25,
+      "confirm:synthetic": 17
+    }
+  },
+  "length": {
+    "confirm:supported": {
+      "n": 62,
+      "mean": 12.19,
+      "min": 3,
+      "max": 27
+    },
+    "confirm:unsupported": {
+      "n": 62,
+      "mean": 12.19,
+      "min": 3,
+      "max": 27
+    },
+    "confirm:uncertain": {
+      "n": 1,
+      "mean": 5.0,
+      "min": 5,
+      "max": 5
+    },
+    "dev:supported": {
+      "n": 107,
+      "mean": 12.29,
+      "min": 2,
+      "max": 17
+    },
+    "dev:unsupported": {
+      "n": 107,
+      "mean": 12.29,
+      "min": 2,
+      "max": 17
+    },
+    "dev:uncertain": {
+      "n": 1,
+      "mean": 5.0,
+      "min": 5,
+      "max": 5
+    },
+    "train:supported": {
+      "n": 393,
+      "mean": 12.93,
+      "min": 3,
+      "max": 27
+    },
+    "train:unsupported": {
+      "n": 393,
+      "mean": 12.93,
+      "min": 3,
+      "max": 27
+    },
+    "train:uncertain": {
+      "n": 1,
+      "mean": 5.0,
+      "min": 5,
+      "max": 5
+    }
+  },
+  "issues": [],
+  "issueCount": 0,
+  "n5Skipped": {
+    "duplicate-fact": 3,
+    "no-single-fact-sentence": 27
+  },
+  "dedupDropped": 4,
+  "dedupDroppedPairs": 2,
+  "hashes": {
+    "pairs-v1.jsonl": "ff67a4cda56c02f49d653cba21bb512e4564fd2289f8e9d7ba25738b675c630e",
+    "regression-v1.jsonl": "6e060bb7ab6c666e9cf9f317ef1e18f5009e9722559d76be5920174482d27a58",
+    "a1.jsonl": "e3c470b171e1d02430c33b86765796239d90f847c453023ddd7ec782e144c546"
+  }
+}

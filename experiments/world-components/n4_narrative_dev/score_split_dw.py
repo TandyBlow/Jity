@@ -4,8 +4,12 @@ import pathlib
 import re
 
 HERE = pathlib.Path(__file__).resolve().parent
-ROOT = HERE.parents[2]
-OUT = ROOT / 'artifacts' / 'cohesion-split'
+import sys as _paths_sys
+_paths_sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
+from component_paths import PATHS
+
+ROOT = PATHS.worktree
+OUT = PATHS.output('cohesion-split')
 SPLIT = '的了也把在被着得，。、；'
 SPECULATION = ('仿佛', '似乎', '显然', '为了', '因为', '像是', '可能', '也许', '好像')
 TEMPORAL = ('随后', '接着', '然后', '于是', '随着', '之后')

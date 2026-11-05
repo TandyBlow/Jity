@@ -1,0 +1,43 @@
+{
+  "model": "qwen2.5:7b",
+  "promptVersion": "organize-v2-prompt/1",
+  "promptHash": "62cc8c07dd9d09e1957307a962f83ca2ca60ab52329630be6f37ef2777e5b05b",
+  "a1Sha256": "e3c470b171e1d02430c33b86765796239d90f847c453023ddd7ec782e144c546",
+  "criteriaSha256": "425e8794cb4397c8e2a9eeaa8dda580d94e4b846dabe0543df80c290ca852837",
+  "contractSha256": "48029bd8b46b5ad573231ed381cb825c8f8e965739b20e2644c3b4613a530309",
+  "sourceCount": 20,
+  "parseOk": 20,
+  "parseFail": 0,
+  "totalSeconds": 69.54,
+  "meanSeconds": 3.47,
+  "opCounts": {
+    "coord/1": 14,
+    "recast/1": 3,
+    "seg/1": 1
+  },
+  "flagCounts": {
+    "coord-not-contiguous": 8,
+    "endpoint-in-coord": 10,
+    "op-missing-fact:f3": 2,
+    "text-order-review": 4,
+    "op-missing-fact:f2": 7,
+    "source-not-in-A1": 2,
+    "op-extra-fact:f1": 1,
+    "coord-same-subject": 3,
+    "recast-multi-fact": 3,
+    "op-extra-fact:f0": 1,
+    "op-missing-fact:f1": 1,
+    "subjectless-clause": 1
+  },
+  "promptTemplateSha256": "d17bf4cd9e62a20776c00c965c108beb1c369de2abbe9a9dd678d7a034a6b54e",
+  "promptBundleSha256": "89a0f5a2df6a8feff41eea833d58bfdf8e6cd26a555eb48645239f113fd0fe2b",
+  "runnerSha256": "67320cebb8c92ba1a9e26b97198d8972369ef8f0bce54c4944132829c5094aa9",
+  "runnerFlagCounts": {
+    "endpoint-in-coord": 10,
+    "text-order-review": 4,
+    "source-not-in-A1": 2
+  },
+  "sourcesWithFlags": 17,
+  "sourcesWithoutFlags": 3,
+  "scoring": "score_organize_v2.py；程序检查，不是正确性证明。"
+}

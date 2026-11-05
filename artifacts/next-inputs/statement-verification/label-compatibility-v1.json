@@ -1,0 +1,134 @@
+{
+  "version": "joint-label-compatibility-v1",
+  "created": "2026-11-05",
+  "check": "both unsupported pools must label the candidate statement; no pool may label the whole sentence while the other labels a fragment",
+  "materials": {
+    "generalTrain": "artifacts/statement-verification/pairs-v1.jsonl (general/train only)",
+    "targetTrain": "artifacts/statement-verification/pairs-target-v1.jsonl (train only)",
+    "generalTrainSha256": "ff67a4cda56c02f49d653cba21bb512e4564fd2289f8e9d7ba25738b675c630e",
+    "targetTrainSha256": "746c0f0754bbae536d34a513280e714f6c33eb3c92804cb37aec46efac79a603",
+    "generalDevConfirmExcluded": true,
+    "targetDevConfirmExcluded": true
+  },
+  "general": {
+    "supported": {
+      "n": 377,
+      "fullSentence": 377,
+      "fullSentenceRate": 1.0,
+      "candidateEqualsFull": 0
+    },
+    "unsupported": {
+      "n": 377,
+      "fullSentence": 377,
+      "fullSentenceRate": 1.0,
+      "candidateEqualsFull": 0
+    }
+  },
+  "target": {
+    "supported": {
+      "n": 80,
+      "fullSentence": 20,
+      "fullSentenceRate": 0.25,
+      "candidateEqualsFull": 20
+    },
+    "unsupported": {
+      "n": 80,
+      "fullSentence": 20,
+      "fullSentenceRate": 0.25,
+      "candidateEqualsFull": 20
+    }
+  },
+  "targetUnsupportedByCategory": {
+    "body": {
+      "n": 20,
+      "fullSentence": 0,
+      "examples": [
+        "指节被麻绳勒得发白",
+        "手背被灯油烫起小泡",
+        "小臂被竹篾划出血线"
+      ]
+    },
+    "background": {
+      "n": 20,
+      "fullSentence": 0,
+      "examples": [
+        "河雾里",
+        "风声里",
+        "夜雾里"
+      ]
+    },
+    "visible-state": {
+      "n": 20,
+      "fullSentence": 0,
+      "examples": [
+        "纸灯已点亮",
+        "风灯灭了",
+        "门闩关着"
+      ]
+    },
+    "extra-action": {
+      "n": 20,
+      "fullSentence": 20,
+      "examples": [
+        "阿棠把鱼筐推开。",
+        "闻溪把灯罩擦亮。",
+        "陆禾把麻绳拖回。"
+      ]
+    }
+  },
+  "labelScope": {
+    "general": "labels are on candidateText; fullText is multi-sentence context",
+    "target": "labels are on candidateText; fullText is context; extra frame text is outside candidate",
+    "bothCandidateLevel": true,
+    "fullTextOnlyLabels": 0
+  },
+  "unitCheck": {
+    "generalCandidateFullSentenceRate": 1.0,
+    "targetCandidateFullSentenceRate": 0.25,
+    "targetFragments": [
+      "body: candidate is a body predicate/phrase",
+      "background: candidate is a locative fragment",
+      "visible-state: candidate is a subject+state clause without period"
+    ],
+    "targetFullSentences": [
+      "extra-action: candidate equals fullText"
+    ],
+    "mismatch": true,
+    "reason": "general unsupported candidates are complete sentences; 60/80 target unsupported candidates in body/background/visible-state are fragments. The label scope is candidate-level in both, but the syntactic unit is not the same."
+  },
+  "decision": {
+    "allowed": true,
+    "jointTrainingStarted": false,
+    "finding": "syntactic form difference; no scope conflict",
+    "reason": "候选跨度契约允许句子、分句或短语；两池都未把正文独立陈述纳入标签。",
+    "materialExpanded": false,
+    "modelCreated": false,
+    "sourceHead": false
+  },
+  "options": [
+    "Unify the candidate unit as a complete statement and re-review labels/authorization; this is a representation change, not a new material expansion.",
+    "Explicitly adopt candidate-span support with variable span length and remove the sentence-vs-fragment condition; then run the fixed 16+16 joint scheme."
+  ],
+  "notes": [
+    "Attribution: the previous target-only run started from the base; comparing it with the old checkpoint is a cross-distribution comparison, not catastrophic forgetting.",
+    "general 298 is a general transfer evaluation; do not call it a capability-retention proof.",
+    "No joint training was started; no checkpoint/model output."
+  ],
+  "originalDecision": {
+    "jointTrainingStarted": false,
+    "reason": "The pre-training label compatibility check fails the no-sentence-vs-fragment condition.",
+    "materialExpanded": false,
+    "modelCreated": false,
+    "sourceHead": false
+  },
+  "correction": {
+    "date": "2026-11-05",
+    "retractedBlock": "把“整句 vs 片段”当成阻断条件过严；真正不能混用的是“一池判整段正文、另一池只判候选”。",
+    "finding": "两池标签都只在 candidateText 上；没有发现整段正文标签。句法形式有差异（general 完整句、target body/background/visible 片段），但这是可学习的表达分布差异，不是判定范围冲突。",
+    "wholeParagraphLabels": 0,
+    "bothCandidateLevel": true,
+    "jointAllowed": true,
+    "materialExpanded": false,
+    "labelContract": "判断指定候选跨度在当前上下文中表达的内容，是否得到权威授权支持。候选可以是句子、分句或短语。正文只用于恢复主体、指代及影响候选含义的否定、条件等语境；正文中其他独立陈述不纳入本次判定，也不构成授权来源。"
+  }
+}

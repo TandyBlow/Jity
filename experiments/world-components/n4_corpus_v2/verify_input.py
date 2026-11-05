@@ -10,9 +10,13 @@ import json
 import pathlib
 import sys
 
-ROOT = pathlib.Path('D:/others/Jity')
-PAIRS = ROOT / 'artifacts' / 'statement-verification' / 'pairs-v1.jsonl'
-REGRESSION = ROOT / 'artifacts' / 'statement-verification' / 'regression-v1.jsonl'
+import sys as _paths_sys
+_paths_sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
+from component_paths import PATHS
+
+ROOT = PATHS.worktree
+PAIRS = PATHS.input('statement-verification/pairs-v1.jsonl')
+REGRESSION = PATHS.input('statement-verification/regression-v1.jsonl')
 LABELS = ('supported', 'unsupported', 'uncertain')
 
 
