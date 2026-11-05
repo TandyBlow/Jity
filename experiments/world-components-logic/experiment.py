@@ -249,6 +249,7 @@ def execute_plan(path,*,paths,verify,worker_script,settle_stages,arms):
 
 
 def status():
+    slots=(ART/'l3-22-realizer-slots-summary.json').exists()
     search=(ART/'l3-21-realizer-grid-summary.json').exists()
     budget=(ART/'l3-20-realizer-budget320-summary.json').exists()
     steps=(ART/'l3-19-realizer-steps-summary.json').exists()
@@ -256,10 +257,10 @@ def status():
     fit=(ART/'l3-17-realizer-fit-summary.json').exists()
     audit=(ART/'l3-16-label-audit-summary.json').exists()
     smoke=(ART/'l3-15-realizer-smoke-summary.json').exists()
-    summary=read_json(ART/('l3-21-realizer-grid-summary.json' if search else 'l3-20-realizer-budget320-summary.json' if budget else 'l3-19-realizer-steps-summary.json' if steps else 'l3-18-realizer-expanded-summary.json' if expanded else 'l3-17-realizer-fit-summary.json' if fit else 'l3-16-label-audit-summary.json' if audit else 'l3-15-realizer-smoke-summary.json' if smoke else 'l3-14-realizer-training-readiness-summary.json'))
+    summary=read_json(ART/('l3-22-realizer-slots-summary.json' if slots else 'l3-21-realizer-grid-summary.json' if search else 'l3-20-realizer-budget320-summary.json' if budget else 'l3-19-realizer-steps-summary.json' if steps else 'l3-18-realizer-expanded-summary.json' if expanded else 'l3-17-realizer-fit-summary.json' if fit else 'l3-16-label-audit-summary.json' if audit else 'l3-15-realizer-smoke-summary.json' if smoke else 'l3-14-realizer-training-readiness-summary.json'))
     result={'stage':summary['stage'],'entrypoint':'experiments/world-components-logic/experiment.py',
-            'implementation':'experiments/world-components-logic/'+('realizer_search.py' if search else 'plan_training.py'),'latestBatch':summary['batchId'],
-            'lastModelRun':summary['lastModelRun'],'resultPage':'artifacts/world-components-logic/'+('l3-21-realizer-grid.html' if search else 'l3-20-realizer-budget320.html' if budget else 'l3-19-realizer-steps.html' if steps else 'l3-18-realizer-expanded.html' if expanded else 'l3-17-realizer-fit.html' if fit else 'l3-16-label-audit.html' if audit else 'l3-15-realizer-smoke.html' if smoke else 'l3-14-realizer-training-readiness.html'),
+            'implementation':'experiments/world-components-logic/'+('realizer_slots.py' if slots else 'realizer_search.py' if search else 'plan_training.py'),'latestBatch':summary['batchId'],
+            'lastModelRun':summary['lastModelRun'],'resultPage':'artifacts/world-components-logic/'+('l3-22-realizer-slots.html' if slots else 'l3-21-realizer-grid.html' if search else 'l3-20-realizer-budget320.html' if budget else 'l3-19-realizer-steps.html' if steps else 'l3-18-realizer-expanded.html' if expanded else 'l3-17-realizer-fit.html' if fit else 'l3-16-label-audit.html' if audit else 'l3-15-realizer-smoke.html' if smoke else 'l3-14-realizer-training-readiness.html'),
             'draftSourceGroups':summary['draftSourceGroups'],'review':summary['review'],
             'realizerTrainerImplemented':summary.get('realizerTrainerImplemented',False),'inspection':summary.get('inspection'),
             'syntheticTrainingCheck':summary.get('realModelSyntheticCheck'),
@@ -286,7 +287,7 @@ def check():
               [str(BASE/'plan_training.py'),'--check-audit'],
               [str(BASE/'plan_training.py'),'--check-fit'],[str(BASE/'plan_training.py'),'--check-expanded'],
               [str(BASE/'realizer_steps.py'),'--check'],[str(BASE/'plan_training.py'),'--check-budget'],
-              [str(BASE/'realizer_search.py'),'--check']]
+              [str(BASE/'realizer_search.py'),'--check'],[str(BASE/'realizer_slots.py'),'--check']]
     env=dict(os.environ,PYTHONDONTWRITEBYTECODE='1')
     for args in commands:
         result=subprocess.run([sys.executable,*args],cwd=ROOT,env=env)
@@ -329,11 +330,24 @@ def main(argv=None):
     search_mode=search.add_mutually_exclusive_group(required=True)
     search_mode.add_argument('--prepare',action='store_true');search_mode.add_argument('--execute',type=Path)
     search_mode.add_argument('--select',action='store_true');search_mode.add_argument('--report',action='store_true')
+    slots=sub.add_parser('realizer-slots',help='controlled references with source-ID name/literal restoration')
+    slot_mode=slots.add_mutually_exclusive_group(required=True)
+    slot_mode.add_argument('--data',action='store_true');slot_mode.add_argument('--tokenize',action='store_true')
+    slot_mode.add_argument('--prepare',action='store_true');slot_mode.add_argument('--execute',type=Path)
+    slot_mode.add_argument('--report',action='store_true')
     sub.add_parser('prepare',help='freeze the historical L3-12 diagnostic; current work uses plan-data').add_argument('run_id')
     sub.add_parser('execute',help='run inference on a frozen current batch; no training').add_argument('plan',type=Path)
     args=parser.parse_args(argv)
     if args.command in (None,'status'):return status()
     if args.command=='check':return check()
+    if args.command=='realizer-slots':
+        import realizer_slots
+        if args.data:print(json.dumps(realizer_slots.source_materials(write=True),ensure_ascii=False));return 0
+        if args.tokenize:
+            value=realizer_slots.tokenizer_materials(write=True);print(json.dumps({k:value[k] for k in ('maxNaturalInputTokens','maxSlotInputTokens','maxSlotTargetTokens','neuralForwardCalls')}));return 0
+        if args.prepare:print(realizer_slots.prepare());return 0
+        if args.execute:return realizer_slots.execute(args.execute)
+        value=realizer_slots.materials(write=True);print(json.dumps({'trainingSteps':value['trainingSteps'],'generations':value['generationAttempts'],'promotion':value['promotionStatus']}));return 0
     if args.command=='realizer-search':
         import realizer_search
         if args.prepare:print(realizer_search.prepare());return 0

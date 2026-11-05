@@ -140,7 +140,10 @@ def realizer_payload(row):
     return {'人物':by_id[('character',c['input']['actorId'])],'语气':'尝试','计划':steps}
 
 
-def input_text(row):return '将动作计划写成一句尝试，不添加成功结果：'+canonical_bytes(realizer_payload(row)).decode()
+def payload_text(payload):return '将动作计划写成一句尝试，不添加成功结果：'+canonical_bytes(payload).decode()
+
+
+def input_text(row):return payload_text(realizer_payload(row))
 
 
 def reviewed_data(claims):
@@ -248,13 +251,16 @@ def restore_adapter(model,state):
         for n,p in parameters.items():p.copy_(state[n])
 
 
-def tokenize_example(tokenizer,row,config=CONFIG):
+def tokenize_example(tokenizer,row,config=CONFIG,*,payload_builder=None,target_text=None):
     # All source names/steps are retained. The target is never placed in input.
-    x=tokenizer.encode(input_text(row),add_special_tokens=True,truncation=False)
-    y=tokenizer.encode(row['expressionDraft'],add_special_tokens=True,truncation=False)
+    payload=realizer_payload(row) if payload_builder is None else payload_builder(row)
+    text=input_text(row) if payload_builder is None else payload_text(payload)
+    target=row['expressionDraft'] if target_text is None else target_text
+    x=tokenizer.encode(text,add_special_tokens=True,truncation=False)
+    y=tokenizer.encode(target,add_special_tokens=True,truncation=False)
     if not x or len(x)>config['maxInputTokens'] or not y or len(y)>config['maxTargetTokens']:raise ValueError('complete expression example exceeds registered token limits')
     if y[-1]!=tokenizer.eos_token_id:raise ValueError('target EOS missing')
-    return {'inputIds':x,'labels':y,'sourceGroup':row['sourceGroup'],'annotationId':row['annotationId'],'inputSha256':digest(realizer_payload(row)),'targetSha256':row['expressionSha256']}
+    return {'inputIds':x,'labels':y,'sourceGroup':row['sourceGroup'],'annotationId':row['annotationId'],'inputSha256':digest(payload),'targetSha256':row['expressionSha256'] if target_text is None else digest(target)}
 
 
 def collate(torch,examples,pad_id):
@@ -548,12 +554,14 @@ def verify_training(plan):
     if plan['model']!=observe_m02(ROOT) or plan['environment']!=observe_environment(ROOT):raise ValueError('training model/environment drift')
 
 
-def generate_expressions(torch,model,tokenizer,rows,phase,checkpoint,config=CONFIG):
+def generate_expressions(torch,model,tokenizer,rows,phase,checkpoint,config=CONFIG,*,payload_builder=None):
     from transformers.generation.stopping_criteria import MaxTimeCriteria,StoppingCriteriaList
     predictions=[]
     for row in rows:
         start=time.perf_counter();checkpoint('generation_started',{'annotationId':row['annotationId'],'role':row['role'],'phase':phase})
-        text=input_text(row);input_ids=tokenizer.encode(text,add_special_tokens=True,truncation=False)
+        payload=realizer_payload(row) if payload_builder is None else payload_builder(row)
+        text=input_text(row) if payload_builder is None else payload_text(payload)
+        input_ids=tokenizer.encode(text,add_special_tokens=True,truncation=False)
         if not input_ids or len(input_ids)>config['maxInputTokens']:raise ValueError('complete generation input exceeds registered token limit')
         ids=torch.tensor([input_ids]);count=[0];hook=model.register_forward_pre_hook(lambda *_:count.__setitem__(0,count[0]+1))
         try:
@@ -563,7 +571,7 @@ def generate_expressions(torch,model,tokenizer,rows,phase,checkpoint,config=CONF
         tokens=output[0].tolist();raw=tokenizer.decode(tokens,skip_special_tokens=True)
         eos=bool(tokens) and tokens[-1]==tokenizer.eos_token_id
         prediction={'annotationId':row['annotationId'],'sourceGroup':row['sourceGroup'],'role':row['role'],'phase':phase,
-            'inputText':text,'inputTokenIds':input_ids,'inputSha256':digest(realizer_payload(row)),
+            'inputText':text,'inputTokenIds':input_ids,'inputSha256':digest(payload),
             'raw':raw,'tokenIds':tokens,'modelTopForwardCalls':count[0],'eos':eos,
             'stopStatus':'eos' if eos else 'max_new_tokens' if len(tokens)-1>=config['maxNewTokens'] else 'soft_time_or_other_incomplete',
             'semanticReview':'pending_not_approved','scope':'provided_draft_plan_expression_only_not_open_planner',
