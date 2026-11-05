@@ -43,10 +43,45 @@ class ComponentPaths:
         return path
 
     def _pin(self):
+        """Parsed pin.json; the cache key is the manifest's own bytes.
+
+        A timestamp/size key would miss a same-size rewrite that keeps the mtime,
+        so freshness is decided by hashing the manifest (196 KB, ~1 ms).
+        """
         pin = self.inputs / 'pin.json'
         if not pin.is_file():
             raise FileNotFoundError(f'Missing frozen input manifest: {pin}')
-        return json.loads(pin.read_text(encoding='utf-8'))
+        raw = pin.read_bytes()
+        key = hashlib.sha256(raw).hexdigest()
+        cached = getattr(self, '_pin_cache', None)
+        if cached is not None and cached[0] == key:
+            return cached[1]
+        manifest = json.loads(raw.decode('utf-8'))
+        self._pin_cache = (key, manifest)
+        return manifest
+
+    def _index(self):
+        """Lookup tables for pin records, rebuilt only when pin.json changes.
+
+        Only the manifest structure is cached: every call still re-reads and
+        re-hashes the pinned bytes and their historical copies.
+        """
+        manifest = self._pin()
+        key = self._pin_cache[0]
+        cached = getattr(self, '_index_cache', None)
+        if cached is not None and cached[0] == key:
+            return cached[1]
+        exact, under = {}, {}
+        for name, record in manifest['files'].items():
+            path = self.inputs / name
+            exact.setdefault(path, []).append((name, record))
+            for directory in path.parents:
+                if not directory.is_relative_to(self.inputs):
+                    break
+                under.setdefault(directory, []).append((name, record))
+        index = (exact, under)
+        self._index_cache = (key, index)
+        return index
 
     def input(self, relative):
         path = self._inside(self.inputs / relative)
@@ -54,9 +89,8 @@ class ComponentPaths:
             raise ValueError(f'Input escapes frozen input directory: {path}')
         if not path.exists():
             raise FileNotFoundError(f'Missing frozen input: {path}')
-        records = self._pin()['files']
-        selected = [(name, record) for name, record in records.items()
-                    if self.inputs / name == path or (self.inputs / name).is_relative_to(path)]
+        exact, under = self._index()
+        selected = (exact.get(path) or []) + (under.get(path) or [])
         if not selected:
             raise ValueError(f'Input is not recorded in pin.json: {path}')
         for name, record in selected:
