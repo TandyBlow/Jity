@@ -34,10 +34,12 @@ def fact_signature(fact, kind):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--run-dir', required=True)
+    parser.add_argument('--units', default=UNIT_FILE, help='Pinned unit file to check')
+    parser.add_argument('--out', default='cf24-overlap.json')
     args = parser.parse_args()
     paths = ComponentPaths()
     run_dir = paths.output(args.run_dir)
-    units = [json.loads(line) for line in paths.input(UNIT_FILE).read_text(encoding='utf-8').splitlines() if line.strip()]
+    units = [json.loads(line) for line in paths.input(args.units).read_text(encoding='utf-8').splitlines() if line.strip()]
 
     signatures, inputs = {}, {}
     for label, local, pinned in POOLS:
@@ -68,14 +70,14 @@ def main():
                         'kind': unit['kind'], 'signature': list(signature),
                         'label': label, 'trainingPools': sorted(set(evidence))})
 
-    report = {'unitFile': UNIT_FILE,
+    report = {'unitFile': args.units,
               'pools': [label for label, _, _ in POOLS],
               'criterion': 'independent = neither the rendered input nor the fact signature occurs in a training pool',
               'counts': {'units': len(units), 'independent': len(independent), 'seen': len(seen)},
               'independentUnits': independent,
               'seenUnits': seen,
               'records': records}
-    out = run_dir / 'cf24-overlap.json'
+    out = run_dir / args.out
     out.write_text(json.dumps(report, ensure_ascii=False, indent=1) + '\n', encoding='utf-8', newline='\n')
     print(json.dumps(report['counts'], ensure_ascii=False))
     print('seen:', seen)

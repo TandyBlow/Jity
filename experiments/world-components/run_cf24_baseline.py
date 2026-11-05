@@ -44,6 +44,8 @@ def sha256(path):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--model', required=True, help='Read-only model directory')
+    parser.add_argument('--units', default=UNIT_FILE, help='Pinned unit file to generate from')
+    parser.add_argument('--out-name', default='cf24-baseline.json')
     parser.add_argument('--run-dir', required=True, help='New directory under artifacts/next-runs')
     parser.add_argument('--budget', type=float, default=20.0, help='Wall-clock seconds per unit')
     parser.add_argument('--limit', type=int, default=0, help='Debug only: stop after N units')
@@ -56,7 +58,7 @@ def main():
     run_dir = paths.output(args.run_dir)
     if run_dir.exists() and any(run_dir.iterdir()):
         raise SystemExit(f'Run directory already holds evidence: {run_dir}')
-    unit_path = paths.input(UNIT_FILE)
+    unit_path = paths.input(args.units)
     model_dir = paths.model(args.model)
 
     import torch
@@ -115,12 +117,12 @@ def main():
                    'budgetSeconds': args.budget},
         'variant': {'name': args.variant, 'rule': rule,
                     'unitsChanged': sum(1 for unit in units if variant_input(unit, rule) != unit['input'])},
-        'units': {'file': UNIT_FILE, 'sha256': sha256(unit_path), 'count': len(units)},
+        'units': {'file': args.units, 'sha256': sha256(unit_path), 'count': len(units)},
         'loadSeconds': round(load_seconds, 3),
         'totalSeconds': round(time.perf_counter() - started, 3),
         'rows': rows,
     }
-    out = run_dir / 'cf24-baseline.json'
+    out = run_dir / args.out_name
     out.write_text(json.dumps(report, ensure_ascii=False, indent=1) + '\n', encoding='utf-8', newline='\n')
     print('->', out)
 

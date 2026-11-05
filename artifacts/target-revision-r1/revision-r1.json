@@ -1,0 +1,1090 @@
+{
+ "purpose": "training-target revision r1: unsupported details and restatements only",
+ "scope": "moved tails carrying neither endpoint; trailing clauses stating another fact; trailing clauses restating the result",
+ "outOfScope": "syntax defects (two-level 的, 的里面, possessive mismatch)",
+ "counts": {
+  "tableRows": 85,
+  "changed": 50,
+  "kept": 35
+ },
+ "reasonCounts": {
+  "T1": 22,
+  "T2": 15,
+  "T3": 13
+ },
+ "pools": {
+  "verbalizer": {
+   "path": "verbalizer-revised.jsonl",
+   "rows": 233,
+   "sha256": "252d627e8f59984469dbfb2606d129d10c0664828df512db35e23a06ea80cd59",
+   "original": "experiments\\world-components\\n4_narrative_dev\\verbalizer_pairs.jsonl",
+   "originalSha256": "2681b4d84e25b862903e15845dcee097fc4ffe086a8a4e499873cfd9d7183908"
+  },
+  "expand78": {
+   "path": "expand78-revised.jsonl",
+   "rows": 78,
+   "sha256": "69ed22500dab06d67a2bcdf301b8858fd4b334986e53193aca4a04dc2d6f1319",
+   "original": "artifacts\\next-inputs\\world-components\\n4-expand78-unified.jsonl",
+   "originalSha256": "9fc2f3543cba3ed2828893a62f31d5bdfdd3660cc09941b30a3a607df6685acb"
+  },
+  "object34": {
+   "path": "object34-revised.jsonl",
+   "rows": 34,
+   "sha256": "07e4cb446e0b3d1ea9f03cd8108bc1c225273a4fd2b549f714e20553372171d4",
+   "original": "artifacts\\next-inputs\\world-components\\n4-object34-unified.jsonl",
+   "originalSha256": "24777a8948a798a1e9b590dcff2a8fccbbe0513e5ff2978bb182648cbe2155ef"
+  }
+ },
+ "table": [
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-01:f0",
+   "kind": "moved",
+   "fact": "沈砚｜移动｜潮生巷→旧灯塔",
+   "original": "沈砚沿着石阶走进旧灯塔，鞋底在潮气里打滑。",
+   "action": "keep",
+   "reason": "M0",
+   "why": "原目标没写起点，删除尾句也补不回来（需改写，超出删除范围）"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-01:f1",
+   "kind": "outcome",
+   "fact": "沈砚｜结果｜换好了塔顶的灯芯",
+   "original": "沈砚换好备用灯芯，火苗重新站稳。",
+   "action": "revise",
+   "reason": "T3",
+   "revised": "沈砚换好备用灯芯。",
+   "deleted": [
+    "火苗重新站稳"
+   ],
+   "why": "尾句重复了同一个结果"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-04:f3",
+   "kind": "outcome",
+   "fact": "阿棠｜结果｜把一叠干纸放在桌角",
+   "original": "阿棠把一叠干纸放在桌角，纸角被风掀起。",
+   "action": "revise",
+   "reason": "T2",
+   "revised": "阿棠把一叠干纸放在桌角。",
+   "deleted": [
+    "纸角被风掀起"
+   ],
+   "why": "追加了另一条事实"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-08:f0",
+   "kind": "moved",
+   "fact": "沈砚｜移动｜潮生巷→早市",
+   "original": "沈砚从潮生巷挤进早市，帆布棚下的白汽扑到脸上。",
+   "action": "revise",
+   "reason": "T1",
+   "revised": "沈砚从潮生巷挤进早市。",
+   "deleted": [
+    "帆布棚下的白汽扑到脸上"
+   ],
+   "why": "移动之后追加了事实之外的动作或状态"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-08:f1",
+   "kind": "outcome",
+   "fact": "阿棠｜结果｜把一筐银鳞鱼搬上案板",
+   "original": "阿棠把一筐银鳞鱼搬上案板，鱼尾拍得筐沿响。",
+   "action": "revise",
+   "reason": "T1",
+   "revised": "阿棠把一筐银鳞鱼搬上案板。",
+   "deleted": [
+    "鱼尾拍得筐沿响"
+   ],
+   "why": "移动之后追加了事实之外的动作或状态"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-09:f2",
+   "kind": "outcome",
+   "fact": "叶知微｜结果｜把灯罩擦得透亮",
+   "original": "叶知微把玻璃罩上的盐雾擦掉，灯罩透亮起来。",
+   "action": "keep",
+   "reason": "M0",
+   "why": "删除后结果值覆盖率下降"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-12:f0",
+   "kind": "moved",
+   "fact": "沈砚｜移动｜潮生巷→潮渡",
+   "original": "沈砚沿着石阶下到潮渡，河风把外袍下摆吹起来。",
+   "action": "keep",
+   "reason": "M0",
+   "why": "原目标没写起点，删除尾句也补不回来（需改写，超出删除范围）"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-14:f0",
+   "kind": "moved",
+   "fact": "沈砚｜移动｜潮生巷→旧灯塔",
+   "original": "沈砚从潮生巷一路走到旧灯塔脚下，抬头看了看塔身。",
+   "action": "revise",
+   "reason": "T1",
+   "revised": "沈砚从潮生巷一路走到旧灯塔脚下。",
+   "deleted": [
+    "抬头看了看塔身"
+   ],
+   "why": "移动之后追加了事实之外的动作或状态"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-15:f1",
+   "kind": "moved",
+   "fact": "顾行舟｜移动｜河心→潮渡",
+   "original": "顾行舟把船停在潮渡，缆绳在木桩上绕了两圈。",
+   "action": "keep",
+   "reason": "M0",
+   "why": "原目标没写起点，删除尾句也补不回来（需改写，超出删除范围）"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-16:f1",
+   "kind": "appearance_changed",
+   "fact": "沈砚｜外貌变化｜外袍下摆沾满泥水，边角结了一圈白盐",
+   "original": "沈砚的外袍下摆沾满泥水，边角结了一圈白盐。",
+   "action": "keep",
+   "reason": "M0",
+   "why": "删除后结果值覆盖率下降"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-17:f0",
+   "kind": "outcome",
+   "fact": "沈砚｜结果｜把潮汐簿缺的那页补全了",
+   "original": "沈砚把潮汐簿缺的那页补全，合上了簿子。",
+   "action": "revise",
+   "reason": "T1",
+   "revised": "沈砚把潮汐簿缺的那页补全。",
+   "deleted": [
+    "合上了簿子"
+   ],
+   "why": "移动之后追加了事实之外的动作或状态"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-17:f1",
+   "kind": "appearance_changed",
+   "fact": "沈砚｜外貌变化｜指尖沾了墨",
+   "original": "沈砚的指尖沾了墨，在纸边蹭了蹭。",
+   "action": "revise",
+   "reason": "T1",
+   "revised": "沈砚的指尖沾了墨。",
+   "deleted": [
+    "在纸边蹭了蹭"
+   ],
+   "why": "移动之后追加了事实之外的动作或状态"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-18:f1",
+   "kind": "outcome",
+   "fact": "韩渡｜结果｜把松脱的钟绳重新系紧",
+   "original": "韩渡把松脱的钟绳重新系紧，钟绳绷直了。",
+   "action": "revise",
+   "reason": "T3",
+   "revised": "韩渡把松脱的钟绳重新系紧。",
+   "deleted": [
+    "钟绳绷直了"
+   ],
+   "why": "尾句重复了同一个结果"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-19:f0",
+   "kind": "moved",
+   "fact": "沈砚｜移动｜潮生巷→早市",
+   "original": "沈砚走到早市的摊棚外，鱼鳞在石板上反光。",
+   "action": "keep",
+   "reason": "M0",
+   "why": "原目标没写起点，删除尾句也补不回来（需改写，超出删除范围）"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-22:f0",
+   "kind": "outcome",
+   "fact": "沈砚｜结果｜把被风吹歪的警示灯扶正",
+   "original": "沈砚扶正警示灯，玻璃罩里的火苗晃了两下。",
+   "action": "revise",
+   "reason": "T2",
+   "revised": "沈砚扶正警示灯。",
+   "deleted": [
+    "玻璃罩里的火苗晃了两下"
+   ],
+   "why": "追加了另一条事实"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-23:f1",
+   "kind": "outcome",
+   "fact": "沈砚｜结果｜把潮汐簿缺的那页补全了",
+   "original": "沈砚把潮汐簿缺的那页补全，指尖沾了墨。",
+   "action": "revise",
+   "reason": "T2",
+   "revised": "沈砚把潮汐簿缺的那页补全。",
+   "deleted": [
+    "指尖沾了墨"
+   ],
+   "why": "追加了另一条事实"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-25:f0",
+   "kind": "moved",
+   "fact": "沈砚｜移动｜潮生巷→旧灯塔",
+   "original": "沈砚沿着石阶走进旧灯塔，鞋底在潮气里打滑。",
+   "action": "keep",
+   "reason": "M0",
+   "why": "原目标没写起点，删除尾句也补不回来（需改写，超出删除范围）"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-25:f1",
+   "kind": "appearance_changed",
+   "fact": "沈砚｜外貌变化｜外袍下摆被雾水打湿",
+   "original": "沈砚的外袍下摆被雾水打湿，贴在腿上。",
+   "action": "revise",
+   "reason": "T3",
+   "revised": "沈砚的外袍下摆被雾水打湿。",
+   "deleted": [
+    "贴在腿上"
+   ],
+   "why": "尾句重复了同一个结果"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-27:f1",
+   "kind": "moved",
+   "fact": "阿棠｜移动｜早市→潮汐档案馆",
+   "original": "阿棠走进档案馆，鞋底在门槛上蹭了两下。",
+   "action": "keep",
+   "reason": "M0",
+   "why": "原目标没写起点，删除尾句也补不回来（需改写，超出删除范围）"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-30:f0",
+   "kind": "moved",
+   "fact": "沈砚｜移动｜潮生巷→潮汐档案馆",
+   "original": "沈砚走到潮汐档案馆门口，把湿伞收在手里。",
+   "action": "keep",
+   "reason": "M0",
+   "why": "原目标没写起点，删除尾句也补不回来（需改写，超出删除范围）"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-31:f0",
+   "kind": "moved",
+   "fact": "沈砚｜移动｜潮生巷→早市",
+   "original": "沈砚穿过早市的人流，在鱼摊前站住。",
+   "action": "keep",
+   "reason": "M0",
+   "why": "原目标没写起点，删除尾句也补不回来（需改写，超出删除范围）"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-32:f1",
+   "kind": "moved",
+   "fact": "顾行舟｜移动｜河心→潮渡",
+   "original": "顾行舟把船停在潮渡，缆绳在木桩上绕了两圈。",
+   "action": "keep",
+   "reason": "M0",
+   "why": "原目标没写起点，删除尾句也补不回来（需改写，超出删除范围）"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-32:f2",
+   "kind": "outcome",
+   "fact": "沈砚｜结果｜在潮渡等到了最后一班船",
+   "original": "沈砚在潮渡等到最后一班船，船灯从雾里透出来。",
+   "action": "revise",
+   "reason": "T2",
+   "revised": "沈砚在潮渡等到最后一班船。",
+   "deleted": [
+    "船灯从雾里透出来"
+   ],
+   "why": "追加了另一条事实"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-36:f0",
+   "kind": "moved",
+   "fact": "沈砚｜移动｜潮生巷→旧灯塔",
+   "original": "沈砚从潮生巷一路走到旧灯塔脚下，抬头看了看塔身。",
+   "action": "revise",
+   "reason": "T1",
+   "revised": "沈砚从潮生巷一路走到旧灯塔脚下。",
+   "deleted": [
+    "抬头看了看塔身"
+   ],
+   "why": "移动之后追加了事实之外的动作或状态"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-38:f0",
+   "kind": "moved",
+   "fact": "沈砚｜移动｜潮生巷→潮渡",
+   "original": "沈砚沿着石阶下到潮渡，河风把外袍下摆吹起来。",
+   "action": "keep",
+   "reason": "M0",
+   "why": "原目标没写起点，删除尾句也补不回来（需改写，超出删除范围）"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-39:f0",
+   "kind": "moved",
+   "fact": "沈砚｜移动｜旧灯塔→潮渡",
+   "original": "沈砚回到潮渡，木桩上还挂着水珠。",
+   "action": "keep",
+   "reason": "M0",
+   "why": "原目标没写起点，删除尾句也补不回来（需改写，超出删除范围）"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-40:f0",
+   "kind": "moved",
+   "fact": "沈砚｜移动｜潮生巷→潮汐档案馆",
+   "original": "沈砚进了潮汐档案馆，在长桌边停下。",
+   "action": "keep",
+   "reason": "M0",
+   "why": "原目标没写起点，删除尾句也补不回来（需改写，超出删除范围）"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-42:f0",
+   "kind": "moved",
+   "fact": "沈砚｜移动｜潮生巷→早市",
+   "original": "沈砚从潮生巷挤进早市，帆布棚下的白汽扑到脸上。",
+   "action": "revise",
+   "reason": "T1",
+   "revised": "沈砚从潮生巷挤进早市。",
+   "deleted": [
+    "帆布棚下的白汽扑到脸上"
+   ],
+   "why": "移动之后追加了事实之外的动作或状态"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-44:f0",
+   "kind": "moved",
+   "fact": "沈砚｜移动｜潮生巷→旧灯塔",
+   "original": "沈砚沿着石阶走进旧灯塔，鞋底在潮气里打滑。",
+   "action": "keep",
+   "reason": "M0",
+   "why": "原目标没写起点，删除尾句也补不回来（需改写，超出删除范围）"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-45:f0",
+   "kind": "moved",
+   "fact": "沈砚｜移动｜潮生巷→旧灯塔",
+   "original": "沈砚从潮生巷一路走到旧灯塔脚下，抬头看了看塔身。",
+   "action": "revise",
+   "reason": "T1",
+   "revised": "沈砚从潮生巷一路走到旧灯塔脚下。",
+   "deleted": [
+    "抬头看了看塔身"
+   ],
+   "why": "移动之后追加了事实之外的动作或状态"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-45:f1",
+   "kind": "moved",
+   "fact": "叶知微｜移动｜潮渡→旧灯塔",
+   "original": "叶知微到了旧灯塔，袖口带着铜油味。",
+   "action": "keep",
+   "reason": "M0",
+   "why": "原目标没写起点，删除尾句也补不回来（需改写，超出删除范围）"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-48:f0",
+   "kind": "moved",
+   "fact": "沈砚｜移动｜潮渡→雾堤",
+   "original": "沈砚从潮渡一路走到雾堤，风把他的袖口吹得鼓起来。",
+   "action": "revise",
+   "reason": "T1",
+   "revised": "沈砚从潮渡一路走到雾堤。",
+   "deleted": [
+    "风把他的袖口吹得鼓起来"
+   ],
+   "why": "移动之后追加了事实之外的动作或状态"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-49:f0",
+   "kind": "moved",
+   "fact": "沈砚｜移动｜潮生巷→早市",
+   "original": "沈砚走到早市的摊棚外，鱼鳞在石板上反光。",
+   "action": "keep",
+   "reason": "M0",
+   "why": "原目标没写起点，删除尾句也补不回来（需改写，超出删除范围）"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-49:f1",
+   "kind": "moved",
+   "fact": "阿棠｜移动｜潮生巷→早市",
+   "original": "阿棠从潮生巷走进早市，围裙上沾着鱼鳞。",
+   "action": "revise",
+   "reason": "T1",
+   "revised": "阿棠从潮生巷走进早市。",
+   "deleted": [
+    "围裙上沾着鱼鳞"
+   ],
+   "why": "移动之后追加了事实之外的动作或状态"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-51:f0",
+   "kind": "moved",
+   "fact": "沈砚｜移动｜潮生巷→旧灯塔",
+   "original": "沈砚沿着石阶走进旧灯塔，鞋底在潮气里打滑。",
+   "action": "keep",
+   "reason": "M0",
+   "why": "原目标没写起点，删除尾句也补不回来（需改写，超出删除范围）"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-53:f0",
+   "kind": "moved",
+   "fact": "沈砚｜移动｜潮生巷→潮汐档案馆",
+   "original": "沈砚走到潮汐档案馆门口，把湿伞收在手里。",
+   "action": "keep",
+   "reason": "M0",
+   "why": "原目标没写起点，删除尾句也补不回来（需改写，超出删除范围）"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-54:f1",
+   "kind": "moved",
+   "fact": "韩渡｜移动｜潮渡→雾堤",
+   "original": "韩渡到了雾堤，眉毛上挂着雾水。",
+   "action": "keep",
+   "reason": "M0",
+   "why": "原目标没写起点，删除尾句也补不回来（需改写，超出删除范围）"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-56:f0",
+   "kind": "outcome",
+   "fact": "沈砚｜结果｜换好了塔顶的灯芯",
+   "original": "沈砚换好了塔顶的灯芯，铜灯罩不再发暗。",
+   "action": "revise",
+   "reason": "T3",
+   "revised": "沈砚换好了塔顶的灯芯。",
+   "deleted": [
+    "铜灯罩不再发暗"
+   ],
+   "why": "尾句重复了同一个结果"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-57:f0",
+   "kind": "outcome",
+   "fact": "沈砚｜结果｜在潮渡等到了最后一班船",
+   "original": "沈砚在潮渡等到了最后一班渡船，船灯从雾里透出来。",
+   "action": "revise",
+   "reason": "T2",
+   "revised": "沈砚在潮渡等到了最后一班渡船。",
+   "deleted": [
+    "船灯从雾里透出来"
+   ],
+   "why": "追加了另一条事实"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-58:f0",
+   "kind": "outcome",
+   "fact": "沈砚｜结果｜把系泊绳从浅滩拖了回来",
+   "original": "沈砚把系泊绳从浅滩拖回来，外袍下摆沾满泥水。",
+   "action": "revise",
+   "reason": "T2",
+   "revised": "沈砚把系泊绳从浅滩拖回来。",
+   "deleted": [
+    "外袍下摆沾满泥水"
+   ],
+   "why": "追加了另一条事实"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-60:f0",
+   "kind": "outcome",
+   "fact": "沈砚｜结果｜敲响了雾堤上的雾警钟",
+   "original": "沈砚一下一下拉动钟绳，雾警钟的声音撞进雾里。",
+   "action": "keep",
+   "reason": "M0",
+   "why": "删除尾句后“敲响”只剩拉动动作，结果表达不完整"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-62:f0",
+   "kind": "outcome",
+   "fact": "沈砚｜结果｜换好了塔顶的灯芯",
+   "original": "沈砚换好了塔顶的灯芯，退开半步看火苗。",
+   "action": "revise",
+   "reason": "T1",
+   "revised": "沈砚换好了塔顶的灯芯。",
+   "deleted": [
+    "退开半步看火苗"
+   ],
+   "why": "移动之后追加了事实之外的动作或状态"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-63:f0",
+   "kind": "outcome",
+   "fact": "沈砚｜结果｜在潮渡等到了最后一班船",
+   "original": "沈砚在潮渡等到了最后一班船，才向前走了一步。",
+   "action": "revise",
+   "reason": "T1",
+   "revised": "沈砚在潮渡等到了最后一班船。",
+   "deleted": [
+    "才向前走了一步"
+   ],
+   "why": "移动之后追加了事实之外的动作或状态"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-64:f0",
+   "kind": "outcome",
+   "fact": "沈砚｜结果｜把系泊绳从浅滩拖了回来",
+   "original": "沈砚把系泊绳从浅滩拖了回来，绳子还在滴水。",
+   "action": "revise",
+   "reason": "T2",
+   "revised": "沈砚把系泊绳从浅滩拖了回来。",
+   "deleted": [
+    "绳子还在滴水"
+   ],
+   "why": "追加了另一条事实"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-65:f0",
+   "kind": "outcome",
+   "fact": "沈砚｜结果｜把潮汐簿缺的那页补全了",
+   "original": "沈砚把潮汐簿缺的那页补全，合上了簿子。",
+   "action": "revise",
+   "reason": "T1",
+   "revised": "沈砚把潮汐簿缺的那页补全。",
+   "deleted": [
+    "合上了簿子"
+   ],
+   "why": "移动之后追加了事实之外的动作或状态"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-66:f0",
+   "kind": "outcome",
+   "fact": "叶知微｜结果｜把灯罩擦得透亮",
+   "original": "叶知微把灯罩擦得透亮，玻璃上不再有雾。",
+   "action": "revise",
+   "reason": "T3",
+   "revised": "叶知微把灯罩擦得透亮。",
+   "deleted": [
+    "玻璃上不再有雾"
+   ],
+   "why": "尾句重复了同一个结果"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-66:f1",
+   "kind": "appearance_changed",
+   "fact": "叶知微｜外貌变化｜袖口沾了铜油",
+   "original": "叶知微的袖口沾了铜油，在灯影里发亮。",
+   "action": "revise",
+   "reason": "T3",
+   "revised": "叶知微的袖口沾了铜油。",
+   "deleted": [
+    "在灯影里发亮"
+   ],
+   "why": "尾句重复了同一个结果"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-67:f0",
+   "kind": "outcome",
+   "fact": "阿棠｜结果｜把一叠干纸放在桌角",
+   "original": "阿棠把干纸放到桌角，又伸手按住。",
+   "action": "revise",
+   "reason": "T1",
+   "revised": "阿棠把干纸放到桌角。",
+   "deleted": [
+    "又伸手按住"
+   ],
+   "why": "移动之后追加了事实之外的动作或状态"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-67:f1",
+   "kind": "appearance_changed",
+   "fact": "阿棠｜外貌变化｜鞋底带着早市的泥水",
+   "original": "阿棠的鞋底带着早市的泥水，在门槛上蹭了两下。",
+   "action": "revise",
+   "reason": "T1",
+   "revised": "阿棠的鞋底带着早市的泥水。",
+   "deleted": [
+    "在门槛上蹭了两下"
+   ],
+   "why": "移动之后追加了事实之外的动作或状态"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-68:f0",
+   "kind": "outcome",
+   "fact": "韩渡｜结果｜把松脱的钟绳重新系紧",
+   "original": "韩渡把松脱的钟绳重新系紧，手背上沾着盐沫。",
+   "action": "revise",
+   "reason": "T2",
+   "revised": "韩渡把松脱的钟绳重新系紧。",
+   "deleted": [
+    "手背上沾着盐沫"
+   ],
+   "why": "追加了另一条事实"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-69:f0",
+   "kind": "outcome",
+   "fact": "阿棠｜结果｜把一筐银鳞鱼搬上案板",
+   "original": "阿棠把银鳞鱼搬上案板，水花溅到石板上。",
+   "action": "revise",
+   "reason": "T2",
+   "revised": "阿棠把银鳞鱼搬上案板。",
+   "deleted": [
+    "水花溅到石板上"
+   ],
+   "why": "追加了另一条事实"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-69:f1",
+   "kind": "appearance_changed",
+   "fact": "阿棠｜外貌变化｜辫梢沾了白汽",
+   "original": "阿棠的辫梢沾了白汽，发梢微微发潮。",
+   "action": "revise",
+   "reason": "T3",
+   "revised": "阿棠的辫梢沾了白汽。",
+   "deleted": [
+    "发梢微微发潮"
+   ],
+   "why": "尾句重复了同一个结果"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-70:f0",
+   "kind": "outcome",
+   "fact": "叶知微｜结果｜把灯罩擦得透亮",
+   "original": "叶知微把玻璃罩上的盐雾擦掉，灯罩透亮起来。",
+   "action": "keep",
+   "reason": "M0",
+   "why": "删除后结果值覆盖率下降"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-71:f0",
+   "kind": "outcome",
+   "fact": "阿棠｜结果｜把一叠干纸放在桌角",
+   "original": "阿棠把一叠干纸放在桌角，纸页还带着潮气。",
+   "action": "revise",
+   "reason": "T2",
+   "revised": "阿棠把一叠干纸放在桌角。",
+   "deleted": [
+    "纸页还带着潮气"
+   ],
+   "why": "追加了另一条事实"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-73:f0",
+   "kind": "outcome",
+   "fact": "阿棠｜结果｜把一筐银鳞鱼搬上案板",
+   "original": "阿棠把一筐银鳞鱼搬上案板，鱼尾拍得筐沿响。",
+   "action": "revise",
+   "reason": "T1",
+   "revised": "阿棠把一筐银鳞鱼搬上案板。",
+   "deleted": [
+    "鱼尾拍得筐沿响"
+   ],
+   "why": "移动之后追加了事实之外的动作或状态"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-75:f0",
+   "kind": "outcome",
+   "fact": "阿棠｜结果｜把一叠干纸放在桌角",
+   "original": "阿棠把一叠干纸放在桌角，纸角被风掀起。",
+   "action": "revise",
+   "reason": "T2",
+   "revised": "阿棠把一叠干纸放在桌角。",
+   "deleted": [
+    "纸角被风掀起"
+   ],
+   "why": "追加了另一条事实"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-76:f0",
+   "kind": "outcome",
+   "fact": "韩渡｜结果｜把松脱的钟绳重新系紧",
+   "original": "韩渡把松脱的钟绳重新系紧，钟绳绷直了。",
+   "action": "revise",
+   "reason": "T3",
+   "revised": "韩渡把松脱的钟绳重新系紧。",
+   "deleted": [
+    "钟绳绷直了"
+   ],
+   "why": "尾句重复了同一个结果"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-77:f0",
+   "kind": "moved",
+   "fact": "叶知微｜移动｜潮渡→旧灯塔",
+   "original": "叶知微到了旧灯塔，袖口带着铜油味。",
+   "action": "keep",
+   "reason": "M0",
+   "why": "原目标没写起点，删除尾句也补不回来（需改写，超出删除范围）"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-77:f1",
+   "kind": "outcome",
+   "fact": "叶知微｜结果｜把灯罩擦得透亮",
+   "original": "叶知微把灯罩擦得透亮，玻璃上不再有雾。",
+   "action": "revise",
+   "reason": "T3",
+   "revised": "叶知微把灯罩擦得透亮。",
+   "deleted": [
+    "玻璃上不再有雾"
+   ],
+   "why": "尾句重复了同一个结果"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-78:f0",
+   "kind": "moved",
+   "fact": "阿棠｜移动｜早市→潮汐档案馆",
+   "original": "阿棠走进档案馆，鞋底在门槛上蹭了两下。",
+   "action": "keep",
+   "reason": "M0",
+   "why": "原目标没写起点，删除尾句也补不回来（需改写，超出删除范围）"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-78:f1",
+   "kind": "outcome",
+   "fact": "阿棠｜结果｜把一叠干纸放在桌角",
+   "original": "阿棠把干纸放到桌角，又伸手按住。",
+   "action": "revise",
+   "reason": "T1",
+   "revised": "阿棠把干纸放到桌角。",
+   "deleted": [
+    "又伸手按住"
+   ],
+   "why": "移动之后追加了事实之外的动作或状态"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-79:f1",
+   "kind": "outcome",
+   "fact": "韩渡｜结果｜把松脱的钟绳重新系紧",
+   "original": "韩渡把松脱的钟绳重新系紧，手背上沾着盐沫。",
+   "action": "revise",
+   "reason": "T2",
+   "revised": "韩渡把松脱的钟绳重新系紧。",
+   "deleted": [
+    "手背上沾着盐沫"
+   ],
+   "why": "追加了另一条事实"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-81:f1",
+   "kind": "outcome",
+   "fact": "叶知微｜结果｜把灯罩擦得透亮",
+   "original": "叶知微把玻璃罩上的盐雾擦掉，灯罩透亮起来。",
+   "action": "keep",
+   "reason": "M0",
+   "why": "删除后结果值覆盖率下降"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-82:f1",
+   "kind": "outcome",
+   "fact": "阿棠｜结果｜把一叠干纸放在桌角",
+   "original": "阿棠把一叠干纸放在桌角，纸页还带着潮气。",
+   "action": "revise",
+   "reason": "T2",
+   "revised": "阿棠把一叠干纸放在桌角。",
+   "deleted": [
+    "纸页还带着潮气"
+   ],
+   "why": "追加了另一条事实"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-84:f0",
+   "kind": "moved",
+   "fact": "阿棠｜移动｜潮生巷→早市",
+   "original": "阿棠到了早市，把鱼筐放在案板边。",
+   "action": "keep",
+   "reason": "M0",
+   "why": "原目标没写起点，删除尾句也补不回来（需改写，超出删除范围）"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-84:f1",
+   "kind": "outcome",
+   "fact": "阿棠｜结果｜把一筐银鳞鱼搬上案板",
+   "original": "阿棠把银鳞鱼搬上案板，水花溅到石板上。",
+   "action": "revise",
+   "reason": "T2",
+   "revised": "阿棠把银鳞鱼搬上案板。",
+   "deleted": [
+    "水花溅到石板上"
+   ],
+   "why": "追加了另一条事实"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-86:f1",
+   "kind": "outcome",
+   "fact": "阿棠｜结果｜把一叠干纸放在桌角",
+   "original": "阿棠把一叠干纸放在桌角，纸角被风掀起。",
+   "action": "revise",
+   "reason": "T2",
+   "revised": "阿棠把一叠干纸放在桌角。",
+   "deleted": [
+    "纸角被风掀起"
+   ],
+   "why": "追加了另一条事实"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-87:f0",
+   "kind": "moved",
+   "fact": "韩渡｜移动｜潮渡→雾堤",
+   "original": "韩渡到了雾堤，眉毛上挂着雾水。",
+   "action": "keep",
+   "reason": "M0",
+   "why": "原目标没写起点，删除尾句也补不回来（需改写，超出删除范围）"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-87:f1",
+   "kind": "outcome",
+   "fact": "韩渡｜结果｜把松脱的钟绳重新系紧",
+   "original": "韩渡把松脱的钟绳重新系紧，钟绳绷直了。",
+   "action": "revise",
+   "reason": "T3",
+   "revised": "韩渡把松脱的钟绳重新系紧。",
+   "deleted": [
+    "钟绳绷直了"
+   ],
+   "why": "尾句重复了同一个结果"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-91:f0",
+   "kind": "appearance_changed",
+   "fact": "沈砚｜外貌变化｜外袍下摆被海风掀起",
+   "original": "沈砚的外袍下摆被海风掀起，衣角拍在腿上。",
+   "action": "revise",
+   "reason": "T3",
+   "revised": "沈砚的外袍下摆被海风掀起。",
+   "deleted": [
+    "衣角拍在腿上"
+   ],
+   "why": "尾句重复了同一个结果"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-93:f0",
+   "kind": "appearance_changed",
+   "fact": "沈砚｜外貌变化｜袖口被河风打湿",
+   "original": "沈砚的袖口被河风打湿，贴在手腕上。",
+   "action": "revise",
+   "reason": "T3",
+   "revised": "沈砚的袖口被河风打湿。",
+   "deleted": [
+    "贴在手腕上"
+   ],
+   "why": "尾句重复了同一个结果"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-97:f0",
+   "kind": "appearance_changed",
+   "fact": "沈砚｜外貌变化｜衣摆沾了泥水",
+   "original": "沈砚的衣摆沾了泥水，边角沉甸甸地垂着。",
+   "action": "revise",
+   "reason": "T3",
+   "revised": "沈砚的衣摆沾了泥水。",
+   "deleted": [
+    "边角沉甸甸地垂着"
+   ],
+   "why": "尾句重复了同一个结果"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-98:f0",
+   "kind": "appearance_changed",
+   "fact": "沈砚｜外貌变化｜鞋底沾了湿石板的水",
+   "original": "沈砚的鞋底沾了湿石板的水，在身后留下浅印。",
+   "action": "revise",
+   "reason": "T1",
+   "revised": "沈砚的鞋底沾了湿石板的水。",
+   "deleted": [
+    "在身后留下浅印"
+   ],
+   "why": "移动之后追加了事实之外的动作或状态"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-99:f0",
+   "kind": "moved",
+   "fact": "叶知微｜移动｜潮渡→旧灯塔",
+   "original": "叶知微到了旧灯塔，袖口带着铜油味。",
+   "action": "keep",
+   "reason": "M0",
+   "why": "原目标没写起点，删除尾句也补不回来（需改写，超出删除范围）"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-99:f1",
+   "kind": "moved",
+   "fact": "沈砚｜移动｜潮生巷→旧灯塔",
+   "original": "沈砚从潮生巷一路走到旧灯塔脚下，抬头看了看塔身。",
+   "action": "revise",
+   "reason": "T1",
+   "revised": "沈砚从潮生巷一路走到旧灯塔脚下。",
+   "deleted": [
+    "抬头看了看塔身"
+   ],
+   "why": "移动之后追加了事实之外的动作或状态"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-101:f0",
+   "kind": "moved",
+   "fact": "顾行舟｜移动｜河心→潮渡",
+   "original": "顾行舟把船停在潮渡，缆绳在木桩上绕了两圈。",
+   "action": "keep",
+   "reason": "M0",
+   "why": "原目标没写起点，删除尾句也补不回来（需改写，超出删除范围）"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-101:f1",
+   "kind": "moved",
+   "fact": "沈砚｜移动｜潮生巷→潮渡",
+   "original": "沈砚沿着石阶下到潮渡，河风把外袍下摆吹起来。",
+   "action": "keep",
+   "reason": "M0",
+   "why": "原目标没写起点，删除尾句也补不回来（需改写，超出删除范围）"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-102:f0",
+   "kind": "moved",
+   "fact": "阿棠｜移动｜早市→潮汐档案馆",
+   "original": "阿棠走进档案馆，鞋底在门槛上蹭了两下。",
+   "action": "keep",
+   "reason": "M0",
+   "why": "原目标没写起点，删除尾句也补不回来（需改写，超出删除范围）"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-102:f1",
+   "kind": "moved",
+   "fact": "沈砚｜移动｜潮生巷→潮汐档案馆",
+   "original": "沈砚进了潮汐档案馆，在长桌边停下。",
+   "action": "keep",
+   "reason": "M0",
+   "why": "原目标没写起点，删除尾句也补不回来（需改写，超出删除范围）"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-104:f0",
+   "kind": "moved",
+   "fact": "阿棠｜移动｜潮生巷→早市",
+   "original": "阿棠从潮生巷走进早市，围裙上沾着鱼鳞。",
+   "action": "revise",
+   "reason": "T1",
+   "revised": "阿棠从潮生巷走进早市。",
+   "deleted": [
+    "围裙上沾着鱼鳞"
+   ],
+   "why": "移动之后追加了事实之外的动作或状态"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-104:f1",
+   "kind": "moved",
+   "fact": "沈砚｜移动｜潮生巷→早市",
+   "original": "沈砚穿过早市的人流，在鱼摊前站住。",
+   "action": "keep",
+   "reason": "M0",
+   "why": "原目标没写起点，删除尾句也补不回来（需改写，超出删除范围）"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-105:f1",
+   "kind": "moved",
+   "fact": "沈砚｜移动｜潮生巷→旧灯塔",
+   "original": "沈砚沿着石阶走进旧灯塔，鞋底在潮气里打滑。",
+   "action": "keep",
+   "reason": "M0",
+   "why": "原目标没写起点，删除尾句也补不回来（需改写，超出删除范围）"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-106:f0",
+   "kind": "moved",
+   "fact": "叶知微｜移动｜潮渡→旧灯塔",
+   "original": "叶知微到了旧灯塔，袖口带着铜油味。",
+   "action": "keep",
+   "reason": "M0",
+   "why": "原目标没写起点，删除尾句也补不回来（需改写，超出删除范围）"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-106:f1",
+   "kind": "moved",
+   "fact": "沈砚｜移动｜潮生巷→旧灯塔",
+   "original": "沈砚从潮生巷一路走到旧灯塔脚下，抬头看了看塔身。",
+   "action": "revise",
+   "reason": "T1",
+   "revised": "沈砚从潮生巷一路走到旧灯塔脚下。",
+   "deleted": [
+    "抬头看了看塔身"
+   ],
+   "why": "移动之后追加了事实之外的动作或状态"
+  },
+  {
+   "pool": "verbalizer",
+   "id": "vb:n4n-109:f1",
+   "kind": "moved",
+   "fact": "沈砚｜移动｜潮渡→雾堤",
+   "original": "沈砚从潮渡一路走到雾堤，风把他的袖口吹得鼓起来。",
+   "action": "revise",
+   "reason": "T1",
+   "revised": "沈砚从潮渡一路走到雾堤。",
+   "deleted": [
+    "风把他的袖口吹得鼓起来"
+   ],
+   "why": "移动之后追加了事实之外的动作或状态"
+  }
+ ]
+}
