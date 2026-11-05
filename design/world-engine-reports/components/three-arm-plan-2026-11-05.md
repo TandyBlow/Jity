@@ -88,7 +88,7 @@ C 既修了事实又删了尾句。所以这套设计能分开“修事实”和
 - 三臂目标序列不同，池子 bundle 哈希分别是 `48725e46…`（A）、`a528facb…`（B）、`da1062bb…`（C）；
 - 起点权重固定为 u240（`ab8a9826…`），步数 240、batch 8、lr 3e-4、seed 20261102、mix 4:3:1 三臂相同。
 
-## 5. 提交脚本（未运行）
+## 5. 提交脚本
 
 `experiments/world-components/hpc_three_arm.sh`：
 
@@ -104,9 +104,9 @@ N4_MODEL_DIR=<u240 权重目录> bash experiments/world-components/hpc_three_arm
 3. **采样自检**：训练后读三份 `train-report.json`，断言 `idSha256` 三臂相同、`targetSha256` 三臂互不相同。
    如果哪一天采样序列不一致，这一步会失败，而不是事后靠人眼发现。
 
-dry-run 已在本机跑过：preflight 全部通过，三条命令正确，没有创建任何训练目录、没有加载模型。
-评测不在这个脚本里：训练完在**同一设备**上对三个臂分别跑 cf24、final24、moved24，再各自做
-overlap / score / review；moved24 单独报告。
+dry-run 在本机跑过；真正提交改走项目现成的 Paramiko 入口（`frontend/scripts/_hpc_*.py`，本地工具不入库），
+实际执行记录见第 7 节。评测不在这个脚本里：训练完在**同一设备**上对三个臂分别跑 cf24、final24、moved24，
+再各自做 overlap / score / review；moved24 单独报告。
 
 ## 6. 验收口径（先写死，训练后再看）
 
@@ -136,3 +136,45 @@ overlap / score / review；moved24 单独报告。
 核对本轮起点与池子哈希后再提交，不需要用户重新提供 HPC 凭据。
 
 moved24 保持冻结（`653a4be0…`），不根据它的输出改目标或选参。
+
+## 7. HPC 实跑记录（2026-11-05）
+
+入口：项目已有的 `frontend/scripts/_hpc_crf.py`（Paramiko，凭据来自本机已有文件），本次只新增一个调度脚本
+`frontend/scripts/_hpc_three_arm.py`（本地工具，与其它 `_hpc_*` 一样不入库）。远端目录 `~/n4arm3`。
+
+提交前核对（全部通过）：
+
+| 项 | 结果 |
+| --- | --- |
+| 分区 | `gpu`，State=UP，11 节点 hpcgpu01-03/08-15，83 卡（其中 4090 72 卡，hpcgpu01 为 V100×4），排队 0 |
+| 远端环境 | Python 3.11.17、torch 2.5.1+cu124、transformers 4.51.3、sentencepiece 0.2.2 |
+| 起点权重 | `~/n4uni/ckpt-u240`：`model.safetensors ab8a9826…`、`config.json cd553527…`、`spiece.model c65feffa…`，与本地 u240 逐字节相同 |
+| 输入哈希 | 9 个臂池文件的 sha 与行数逐条等于 `three-arm-freeze.json`；三臂 ID 顺序 `09bf6b3f…` |
+| 既有评测输入 | 远端 `n4-final24-contract.jsonl 0010c062…`、`n4-cf24-contract.jsonl a94f7a13…` 与本地一致 |
+
+作业记录：
+
+| 作业 | 结果 |
+| --- | --- |
+| 239914 | 训练跑完，但 `--run-dir` 多写了一层（`artifacts/next-runs/artifacts/next-runs/…`），采样自检读不到报告；作废 |
+| **239916** | 记录用的运行。`COMPLETED 00:00:56`，device=cuda，三臂各 14.2–14.5 秒 |
+
+| 臂 | 末步 loss | 权重 sha | 采样 |
+| --- | --- | --- | --- |
+| A 原始目标 | 0.1386 | `5846fabf…` | 同一 ID 序列 |
+| B 只修事实 | 0.1474 | `7f943051…` | 同一 ID 序列 |
+| C 完整审计 | 0.1578 | `08276c0c…` | 同一 ID 序列 |
+
+三臂 `idSha256 = 335097b9319ec4b187ec64253850b7c193985590dd5a22bed1102cda4ed6c6d1` 完全相同，
+`targetSha256` 互不相同。超参与本地两臂轮相同（240 步、batch 8、4:3:1、lr 3e-4、seed 20261102、fp32）。
+权重留在集群 `~/n4arm3/artifacts/next-runs/three-arm-<arm>/ckpt`（各 309,783,976 字节），**没有下载**。
+
+取回报告时被仓库的脱敏闸拦下（报告含远端家目录路径）。处理方式：远端先把 `base.dir` 里的家目录前缀换成 `<HOME>`、
+把原文件的 sha 记在 `fetch.remoteSha256`，再取回；本地保存的就是这份脱敏后的字节。证据在
+`artifacts/next-acceptance/three-arm-r1/`（三份报告 + `index.json`）。
+
+注意两点：
+
+- 混合卡集群（V100 与 4090）。这次分到 **RTX 4090 D（24 GB）**，节点 hpcgpu08，作业运行 21:42:41–21:43:37。
+  训练是 fp32、T5-77M，两种卡都够用；记录型号是因为下一轮若换卡，训练时间不可直接比较。
+- 评测尚未跑。三份权重留 在集群上，评测方案与结果另起一轮记录。

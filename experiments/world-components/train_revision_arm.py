@@ -124,7 +124,7 @@ def main():
         'device': device,
         'base': {'dir': str(base), 'files': {name: sha256(base / name)
                                              for name in ('config.json', 'spiece.model', 'model.safetensors')}},
-        'pools': [{'path': str(pathlib.Path(p).resolve().relative_to(ComponentPaths().worktree)),
+        'pools': [{'path': pathlib.Path(p).resolve().relative_to(ComponentPaths().worktree).as_posix(),
                    'rows': len(rows), 'sha256': sha256(p)} for p, rows in zip(args.pool, pools)],
         'hyper': {'steps': args.steps, 'batch': args.batch, 'mix': mix, 'lr': args.lr,
                   'seed': args.seed, 'precision': 'fp32', 'optimizer': 'AdamW'},

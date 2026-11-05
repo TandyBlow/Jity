@@ -17,58 +17,58 @@
   "modelSha256": "ab8a98264ee6b4f83eba17d624d7b92b23522c8eacef07d07a5be960e390184a"
  },
  "sourcePools": {
-  "verbalizer": "experiments\\world-components\\n4_narrative_dev\\verbalizer_pairs.jsonl",
-  "expand78": "artifacts\\next-inputs\\world-components\\n4-expand78-unified.jsonl",
-  "object34": "artifacts\\next-inputs\\world-components\\n4-object34-unified.jsonl"
+  "verbalizer": "experiments/world-components/n4_narrative_dev/verbalizer_pairs.jsonl",
+  "expand78": "artifacts/next-inputs/world-components/n4-expand78-unified.jsonl",
+  "object34": "artifacts/next-inputs/world-components/n4-object34-unified.jsonl"
  },
  "files": {
   "a": {
    "verbalizer": {
-    "path": "artifacts\\three-arm-r1\\arm-a-verbalizer.jsonl",
+    "path": "artifacts/three-arm-r1/arm-a-verbalizer.jsonl",
     "rows": 229,
     "sha256": "7db74eff10a6dddf647f55307bb011cc967250bc3aa8e02a9a71fda0c9e88a84"
    },
    "expand78": {
-    "path": "artifacts\\three-arm-r1\\arm-a-expand78.jsonl",
+    "path": "artifacts/three-arm-r1/arm-a-expand78.jsonl",
     "rows": 78,
     "sha256": "92109cbda137cb4219f7c6ea925edaf52c406946c9c02dc21745c901255b78c0"
    },
    "object34": {
-    "path": "artifacts\\three-arm-r1\\arm-a-object34.jsonl",
+    "path": "artifacts/three-arm-r1/arm-a-object34.jsonl",
     "rows": 34,
     "sha256": "5f1e373c271f147a830d9344625e7e931c3cec036bbda817b562b826e1e0758e"
    }
   },
   "b": {
    "verbalizer": {
-    "path": "artifacts\\three-arm-r1\\arm-b-verbalizer.jsonl",
+    "path": "artifacts/three-arm-r1/arm-b-verbalizer.jsonl",
     "rows": 229,
     "sha256": "947c2a11b80a3adcb57a42815d16f4c90fdd09ff48fa2f0aec50c56ba53ef955"
    },
    "expand78": {
-    "path": "artifacts\\three-arm-r1\\arm-b-expand78.jsonl",
+    "path": "artifacts/three-arm-r1/arm-b-expand78.jsonl",
     "rows": 78,
     "sha256": "92109cbda137cb4219f7c6ea925edaf52c406946c9c02dc21745c901255b78c0"
    },
    "object34": {
-    "path": "artifacts\\three-arm-r1\\arm-b-object34.jsonl",
+    "path": "artifacts/three-arm-r1/arm-b-object34.jsonl",
     "rows": 34,
     "sha256": "5f1e373c271f147a830d9344625e7e931c3cec036bbda817b562b826e1e0758e"
    }
   },
   "c": {
    "verbalizer": {
-    "path": "artifacts\\three-arm-r1\\arm-c-verbalizer.jsonl",
+    "path": "artifacts/three-arm-r1/arm-c-verbalizer.jsonl",
     "rows": 229,
     "sha256": "ffc07355e3d268cdabd896095958a445ffa04dd04462aea1aa474246d82216fd"
    },
    "expand78": {
-    "path": "artifacts\\three-arm-r1\\arm-c-expand78.jsonl",
+    "path": "artifacts/three-arm-r1/arm-c-expand78.jsonl",
     "rows": 78,
     "sha256": "92109cbda137cb4219f7c6ea925edaf52c406946c9c02dc21745c901255b78c0"
    },
    "object34": {
-    "path": "artifacts\\three-arm-r1\\arm-c-object34.jsonl",
+    "path": "artifacts/three-arm-r1/arm-c-object34.jsonl",
     "rows": 34,
     "sha256": "5f1e373c271f147a830d9344625e7e931c3cec036bbda817b562b826e1e0758e"
    }

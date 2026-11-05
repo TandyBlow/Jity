@@ -1,0 +1,87 @@
+{
+ "purpose": "equal-budget continuation for the target-revision round",
+ "arm": "control-original-targets",
+ "device": "cuda",
+ "base": {
+  "dir": "<HOME>/n4uni/ckpt-u240",
+  "files": {
+   "config.json": "cd553527a919b8292894d4e8cc043fcb1a45c60586f9dfa4399f7b2b2e657a9e",
+   "spiece.model": "c65feffa65ff0378759778193852083d23349cb1b40c906e9463a12f8076ff32",
+   "model.safetensors": "ab8a98264ee6b4f83eba17d624d7b92b23522c8eacef07d07a5be960e390184a"
+  }
+ },
+ "pools": [
+  {
+   "path": "artifacts/three-arm-r1/arm-a-verbalizer.jsonl",
+   "rows": 229,
+   "sha256": "7db74eff10a6dddf647f55307bb011cc967250bc3aa8e02a9a71fda0c9e88a84"
+  },
+  {
+   "path": "artifacts/three-arm-r1/arm-a-expand78.jsonl",
+   "rows": 78,
+   "sha256": "92109cbda137cb4219f7c6ea925edaf52c406946c9c02dc21745c901255b78c0"
+  },
+  {
+   "path": "artifacts/three-arm-r1/arm-a-object34.jsonl",
+   "rows": 34,
+   "sha256": "5f1e373c271f147a830d9344625e7e931c3cec036bbda817b562b826e1e0758e"
+  }
+ ],
+ "hyper": {
+  "steps": 240,
+  "batch": 8,
+  "mix": [
+   4,
+   3,
+   1
+  ],
+  "lr": 0.0003,
+  "seed": 20261102,
+  "precision": "fp32",
+  "optimizer": "AdamW"
+ },
+ "sampling": {
+  "ids": 1920,
+  "idSha256": "335097b9319ec4b187ec64253850b7c193985590dd5a22bed1102cda4ed6c6d1",
+  "targetSha256": "e91fd8af9a31ead48ffd55ca566de93f8ae4f8d8ed132b9edf9c26c09c9bd922"
+ },
+ "losses": [
+  {
+   "step": 1,
+   "loss": 0.239
+  },
+  {
+   "step": 40,
+   "loss": 0.4232
+  },
+  {
+   "step": 80,
+   "loss": 0.4563
+  },
+  {
+   "step": 120,
+   "loss": 0.5018
+  },
+  {
+   "step": 160,
+   "loss": 0.3457
+  },
+  {
+   "step": 200,
+   "loss": 0.1412
+  },
+  {
+   "step": 240,
+   "loss": 0.1386
+  }
+ ],
+ "seconds": 14.5,
+ "checkpoint": {
+  "dir": "artifacts/next-runs/three-arm-a/ckpt",
+  "modelSha256": "5846fabfe594bee67201bd8a5db37bb356773280a878abc9dd6333a9e71982f1"
+ },
+ "fetch": {
+  "remoteSha256": "9d89302d47458b1449845b41a7c67e4550e3798fb18dc7b5028c67ca9f29bee7",
+  "redaction": "home path in base.dir replaced with <HOME> before download"
+ }
+}

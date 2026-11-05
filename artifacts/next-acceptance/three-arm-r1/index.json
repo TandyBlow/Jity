@@ -1,0 +1,106 @@
+{
+ "purpose": "equal-budget three-arm continuation from u240 on the HPC: original targets, fact-only repair, full audit",
+ "policy": "Selected immutable records promoted from the HPC run; ordinary run output stays local.",
+ "job": {
+  "id": 239916,
+  "state": "COMPLETED",
+  "elapsed": "00:00:56",
+  "partition": "gpu",
+  "gres": "gpu:1",
+  "nodes": 1,
+  "note": "job 239914 wrote one directory too deep (--run-dir included the outputs prefix); it was discarded and 239916 is the recorded run",
+  "gpu": "NVIDIA GeForce RTX 4090 D, 24564 MiB",
+  "startedAt": "2026-11-05T21:42:41+08:00",
+  "finishedAt": "2026-11-05T21:43:37+08:00"
+ },
+ "environment": {
+  "python": "3.11.17",
+  "torch": "2.5.1+cu124",
+  "transformers": "4.51.3",
+  "device": "cuda",
+  "precision": "fp32"
+ },
+ "base": {
+  "dir": "<HOME>/n4uni/ckpt-u240",
+  "filesSha256": {
+   "model.safetensors": "ab8a98264ee6b4f83eba17d624d7b92b23522c8eacef07d07a5be960e390184a",
+   "config.json": "cd553527a919b8292894d4e8cc043fcb1a45c60586f9dfa4399f7b2b2e657a9e",
+   "spiece.model": "c65feffa65ff0378759778193852083d23349cb1b40c906e9463a12f8076ff32"
+  },
+  "matchesLocalU240": true
+ },
+ "freeze": "artifacts/three-arm-r1/three-arm-freeze.json",
+ "samplingIdentity": {
+  "idsEqualAcrossArms": true,
+  "idSha256": "335097b9319ec4b187ec64253850b7c193985590dd5a22bed1102cda4ed6c6d1",
+  "targetsDistinct": true
+ },
+ "redaction": "The remote report holds the absolute home path in base.dir. Before download the cluster replaced that prefix with <HOME> and recorded the original file sha in fetch.remoteSha256; the copy is byte-identical to the redacted remote file.",
+ "checkpoints": {
+  "location": "<HOME>/n4arm3/artifacts/next-runs/three-arm-<arm>/ckpt",
+  "bytes": 309783976,
+  "note": "kept on the cluster; not downloaded",
+  "bytesPerArm": {
+   "a": 309783976,
+   "b": 309783976,
+   "c": 309783976
+  }
+ },
+ "files": [
+  {
+   "arm": "a",
+   "label": "control-original-targets",
+   "path": "artifacts/next-acceptance/three-arm-r1/three-arm-a/train-report.json",
+   "bytes": 1988,
+   "sha256": "78a35297cd5679af30be2c04773a8352392678f8c0620f5fcc0072918f4791af",
+   "remoteReportSha256": "9d89302d47458b1449845b41a7c67e4550e3798fb18dc7b5028c67ca9f29bee7",
+   "checkpointSha256": "5846fabfe594bee67201bd8a5db37bb356773280a878abc9dd6333a9e71982f1",
+   "sampling": {
+    "ids": 1920,
+    "idSha256": "335097b9319ec4b187ec64253850b7c193985590dd5a22bed1102cda4ed6c6d1",
+    "targetSha256": "e91fd8af9a31ead48ffd55ca566de93f8ae4f8d8ed132b9edf9c26c09c9bd922"
+   },
+   "lastLoss": {
+    "step": 240,
+    "loss": 0.1386
+   }
+  },
+  {
+   "arm": "b",
+   "label": "conservative-fact-repair",
+   "path": "artifacts/next-acceptance/three-arm-r1/three-arm-b/train-report.json",
+   "bytes": 1989,
+   "sha256": "7c882faf0b2e8fb2d3d33d39975bb4bc9c6fbdf5e80006dd4abb93d7c25d260f",
+   "remoteReportSha256": "ba0ee457627d96e8633bca8c1e6225fde5a9517cb29cdc39a9118dd82d5eed65",
+   "checkpointSha256": "7f94305155c9bca5102e2f805856e0f44a939f6cb0ad8b9338c781db3f29f6cc",
+   "sampling": {
+    "ids": 1920,
+    "idSha256": "335097b9319ec4b187ec64253850b7c193985590dd5a22bed1102cda4ed6c6d1",
+    "targetSha256": "119198ff27a9c6c266970377957fc27ec2deac311c5376e7aa6590aba16adfc7"
+   },
+   "lastLoss": {
+    "step": 240,
+    "loss": 0.1474
+   }
+  },
+  {
+   "arm": "c",
+   "label": "full-audit-targets",
+   "path": "artifacts/next-acceptance/three-arm-r1/three-arm-c/train-report.json",
+   "bytes": 1980,
+   "sha256": "c4580569fa22b3eb77e81ceb305084be2c6633efa13bc3054559f09d0503fb5c",
+   "remoteReportSha256": "d8745698b6662d89e12b0b939a4744912c697ba21c58a83800930dc391e478d2",
+   "checkpointSha256": "08276c0caa1605408d145f5efea5bc0e22edb106f5accb2888c187bb9a484c9c",
+   "sampling": {
+    "ids": 1920,
+    "idSha256": "335097b9319ec4b187ec64253850b7c193985590dd5a22bed1102cda4ed6c6d1",
+    "targetSha256": "0f3d962119317bd293672e98625e5f0b3d2327d311cbd4448dd8ed6925e841d0"
+   },
+   "lastLoss": {
+    "step": 240,
+    "loss": 0.1578
+   }
+  }
+ ],
+ "next": "Evaluation is not part of this record: three checkpoints x cf24 / final24 / moved24 on the same device, moved24 reported separately."
+}

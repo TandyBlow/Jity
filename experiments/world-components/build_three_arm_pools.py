@@ -80,7 +80,7 @@ def main():
         assert [unit_id(r) for r in per_arm['a']] == [unit_id(r) for r in per_arm['b']] == \
                [unit_id(r) for r in per_arm['c']]
     record = {'plan': PLAN, 'base': BASE,
-              'sourcePools': {name: str(path.relative_to(WORKTREE)) for name, path in POOLS},
+              'sourcePools': {name: path.relative_to(WORKTREE).as_posix() for name, path in POOLS},
               'files': {}, 'rows': {}, 'changedRows': {}, 'bundleSha256': {}}
     # One file per arm and per source pool, so --mix 4,3,1 keeps its meaning and the
     # three arms feed the sampler the same pool sizes in the same order.
@@ -92,7 +92,7 @@ def main():
             text = ''.join(json.dumps(row, ensure_ascii=False) + chr(10) for row in rows)
             path.write_text(text, encoding='utf-8', newline=chr(10))
             body = path.read_bytes()
-            files[name] = {'path': str(path.relative_to(WORKTREE)), 'rows': len(rows),
+            files[name] = {'path': path.relative_to(WORKTREE).as_posix(), 'rows': len(rows),
                            'sha256': hashlib.sha256(body).hexdigest()}
             digest.update(hashlib.sha256(body).digest())
         record['files'][arm] = files
