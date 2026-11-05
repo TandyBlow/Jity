@@ -15,8 +15,8 @@
  "pools": {
   "verbalizer": {
    "path": "verbalizer-revised.jsonl",
-   "rows": 233,
-   "sha256": "252d627e8f59984469dbfb2606d129d10c0664828df512db35e23a06ea80cd59",
+   "rows": 229,
+   "sha256": "dd1240b98831faeac0a9fe5d7e72a1662a72b286e542dd23ca3b6775659eb00e",
    "original": "experiments\\world-components\\n4_narrative_dev\\verbalizer_pairs.jsonl",
    "originalSha256": "2681b4d84e25b862903e15845dcee097fc4ffe086a8a4e499873cfd9d7183908"
   },

@@ -165,8 +165,6 @@ def main():
                                 'T2': '追加了另一条事实',
                                 'T3': '尾句重复了同一个结果'}[record['reason']]
                 new_row = dict(row, target=revised)
-                out_rows.append(new_row)
-                counts['changed'] += 1
                 # the revision must still carry the subject and the fact value
                 refusal = None
                 if subject and subject not in revised:
@@ -183,10 +181,11 @@ def main():
                     del entry['revised']
                     del entry['deleted']
                     out_rows.append(row)
-                    counts['changed'] -= 1
                     counts['kept'] += 1
                     table.append(entry)
                     continue
+                out_rows.append(new_row)
+                counts['changed'] += 1
             else:
                 entry['why'] = record['why']
                 out_rows.append(row)

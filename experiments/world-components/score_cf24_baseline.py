@@ -51,10 +51,27 @@ def coverage(key, text):
 def world_names():
     world = json.loads((HERE / 'n4_narrative_dev' / 'world.json').read_text(encoding='utf-8'))
     people = {c['name'] for c in world['characters'].values()}
-    places = {p['name'] for p in world['locations'].values()}
-    for place in world['locations'].values():
-        places.update(sub['name'] for sub in place.get('sublocations', []))
-    return people, places
+    places, children = set(), {}
+    for location in world['locations'].values():
+        name = location['name']
+        places.add(name)
+        kids = [sub['name'] for sub in location.get('sublocations', [])]
+        children[name] = set(kids)
+        places.update(kids)
+    return people, places, children
+
+
+def authorised(place, allowed, children):
+    """A place is authorised when listed, an alias of a listed place, or a
+    sublocation of one (the input names only the parent on its 地点 line)."""
+    if place in allowed:
+        return True
+    for name in allowed:
+        if place in ALIASES.get(name, []) or place in children.get(name, set()):
+            return True
+        if name in ALIASES.get(place, []) or name in children.get(place, set()):
+            return True
+    return False
 
 
 def clause_split(text):
@@ -146,17 +163,18 @@ def extra_flags(unit, text):
     if unit['kind'] == 'moved':
         for clause in moved_tail(text, unit['fact']):
             flags.append('extra-tail:' + clause)
-    people, places = world_names()
+    people, places, children = world_names()
     subject = unit['fact'].get('name') or ''
     fact = unit['fact']
     allowed_places, visible = parse_context(unit)
     allowed_places |= {fact.get('from'), fact.get('to')} - {None}
+    allowed_places |= visible          # props listed as visible are authorised
     fact_text = json.dumps(fact, ensure_ascii=False)
     for person in sorted(people):
         if person in text and person != subject and person not in fact_text:
             flags.append('other-actor:' + person)
     for place in sorted(places):
-        if place in text and place not in allowed_places and place not in fact_text:
+        if place in text and place not in fact_text and not authorised(place, allowed_places, children):
             flags.append('other-place:' + place)
     return flags
 

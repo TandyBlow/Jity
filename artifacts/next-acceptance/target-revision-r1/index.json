@@ -1,0 +1,140 @@
+{
+ "purpose": "equal-budget two-arm continuation from u240: original targets vs revised targets, evaluated on cf24 (dev) and final24 (validation)",
+ "policy": "Selected immutable records; ordinary run output stays local.",
+ "trainingDevice": "local CUDA GPU (HPC was not reachable from this session)",
+ "evaluationDevice": "cpu",
+ "base": {
+  "modelSha256": "ab8a98264ee6b4f83eba17d624d7b92b23522c8eacef07d07a5be960e390184a"
+ },
+ "freeze": "artifacts/validation-freeze-r1/freeze.json",
+ "revision": "artifacts/target-revision-r1/revision-r1.json",
+ "verdict": "failed: fact completeness dropped in both arms; treatment lost more than control",
+ "files": [
+  {
+   "path": "artifacts/next-acceptance/target-revision-r1/cf24-arm-control/train-report.json",
+   "run": "cf24-arm-control",
+   "file": "train-report.json",
+   "bytes": 1902,
+   "sha256": "438d0e570191d7c042cb52482f4ed2559259b0881c1375ecef4c9ce5cae5e551"
+  },
+  {
+   "path": "artifacts/next-acceptance/target-revision-r1/cf24-arm-treatment/train-report.json",
+   "run": "cf24-arm-treatment",
+   "file": "train-report.json",
+   "bytes": 1861,
+   "sha256": "0d752d548488891c32a1f325597a21aa8c6dfca22ac0cec4e2195f6e9a333c9a"
+  },
+  {
+   "path": "artifacts/next-acceptance/target-revision-r1/cf24-ctrl/cf24-baseline.json",
+   "run": "cf24-ctrl",
+   "file": "cf24-baseline.json",
+   "bytes": 137554,
+   "sha256": "b39ee6418b38781ca3cb641f81f1a357195f9f17eca3db7ad4a13a92ea91b7f5"
+  },
+  {
+   "path": "artifacts/next-acceptance/target-revision-r1/cf24-ctrl/cf24-mechanical.json",
+   "run": "cf24-ctrl",
+   "file": "cf24-mechanical.json",
+   "bytes": 19865,
+   "sha256": "2152b8082830a10e5e2b6644f62c6d713fd128ab8182753c4ebcfe0283053157"
+  },
+  {
+   "path": "artifacts/next-acceptance/target-revision-r1/cf24-ctrl/cf24-review.json",
+   "run": "cf24-ctrl",
+   "file": "cf24-review.json",
+   "bytes": 21094,
+   "sha256": "346eee94aaf040470075b9849ffb7e8e5fe572b70040f826ea80118ac6142789"
+  },
+  {
+   "path": "artifacts/next-acceptance/target-revision-r1/cf24-ctrl/cf24-edited.json",
+   "run": "cf24-ctrl",
+   "file": "cf24-edited.json",
+   "bytes": 140755,
+   "sha256": "cd92686d758250c5ed3c89aca58628c462ae24bfe378554d62297737d5ec3aa2"
+  },
+  {
+   "path": "artifacts/next-acceptance/target-revision-r1/cf24-ctrl/cf24-mechanical-cf24-edited.json",
+   "run": "cf24-ctrl",
+   "file": "cf24-mechanical-cf24-edited.json",
+   "bytes": 19224,
+   "sha256": "f4037cdc2c8543da3fc27a8224f7accaf3b77de8cf5184465b66c077535ccdb9"
+  },
+  {
+   "path": "artifacts/next-acceptance/target-revision-r1/cf24-treat/cf24-baseline.json",
+   "run": "cf24-treat",
+   "file": "cf24-baseline.json",
+   "bytes": 137275,
+   "sha256": "8d416ea59b8a6298f1b17fd102062c02aefe40c8bc9d98d82d1859f87374c7af"
+  },
+  {
+   "path": "artifacts/next-acceptance/target-revision-r1/cf24-treat/cf24-mechanical.json",
+   "run": "cf24-treat",
+   "file": "cf24-mechanical.json",
+   "bytes": 19006,
+   "sha256": "5a7fa0ba44ddaf274455e4cbc96b2449a4a350f8a6755e42da06b00bb028898b"
+  },
+  {
+   "path": "artifacts/next-acceptance/target-revision-r1/cf24-treat/cf24-review.json",
+   "run": "cf24-treat",
+   "file": "cf24-review.json",
+   "bytes": 20503,
+   "sha256": "d050dfae6a87b17a1f90c7c00b966d1b56b73eea814ded3738823d59175d9914"
+  },
+  {
+   "path": "artifacts/next-acceptance/target-revision-r1/cf24-treat/cf24-edited.json",
+   "run": "cf24-treat",
+   "file": "cf24-edited.json",
+   "bytes": 139153,
+   "sha256": "7c6903df15d0b471549443251e14cb9ca72e8b5f7eb0fdd46fd2d9395d66a776"
+  },
+  {
+   "path": "artifacts/next-acceptance/target-revision-r1/cf24-treat/cf24-mechanical-cf24-edited.json",
+   "run": "cf24-treat",
+   "file": "cf24-mechanical-cf24-edited.json",
+   "bytes": 19004,
+   "sha256": "82d62087074cbdcc068eafd96ea2d5283e00e41099bbe420fea10edb00b0f89e"
+  },
+  {
+   "path": "artifacts/next-acceptance/target-revision-r1/val-u240/val-baseline.json",
+   "run": "val-u240",
+   "file": "val-baseline.json",
+   "bytes": 114808,
+   "sha256": "2f9a2d088c386c5c0fc62fc2a1a3735d3a6513b2ff69a8a82d0ebed898ab88f3"
+  },
+  {
+   "path": "artifacts/next-acceptance/target-revision-r1/val-u240/cf24-mechanical-val-baseline.json",
+   "run": "val-u240",
+   "file": "cf24-mechanical-val-baseline.json",
+   "bytes": 17480,
+   "sha256": "78126a81e84c8e52019e6bd7bdb92e0555a102270e79009dfa6a5e41bb9dec3a"
+  },
+  {
+   "path": "artifacts/next-acceptance/target-revision-r1/val-ctrl/val-baseline.json",
+   "run": "val-ctrl",
+   "file": "val-baseline.json",
+   "bytes": 114943,
+   "sha256": "e2992234d1a9c71046064a5fc9854b1c0ced5d64ece0464957e3e483ba295d2e"
+  },
+  {
+   "path": "artifacts/next-acceptance/target-revision-r1/val-ctrl/cf24-mechanical-val-baseline.json",
+   "run": "val-ctrl",
+   "file": "cf24-mechanical-val-baseline.json",
+   "bytes": 17448,
+   "sha256": "d82f5b7252bd1817637e4b508593114d935e6b1b76faddae0c26e344c7bcfb69"
+  },
+  {
+   "path": "artifacts/next-acceptance/target-revision-r1/val-treat/val-baseline.json",
+   "run": "val-treat",
+   "file": "val-baseline.json",
+   "bytes": 114888,
+   "sha256": "d2bd8dcc8b77094d864aabb6c42297792848e510af73e1e4f8a71a7dcba1480a"
+  },
+  {
+   "path": "artifacts/next-acceptance/target-revision-r1/val-treat/cf24-mechanical-val-baseline.json",
+   "run": "val-treat",
+   "file": "cf24-mechanical-val-baseline.json",
+   "bytes": 17234,
+   "sha256": "825f3c15d89841bce7c3fd337f2f2faa0e3b9b349287013a8cab0d9cb92a2911"
+  }
+ ]
+}

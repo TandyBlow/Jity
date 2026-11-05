@@ -1,0 +1,83 @@
+{
+ "purpose": "equal-budget continuation for the target-revision round",
+ "arm": "treatment-revised-targets",
+ "device": "cuda",
+ "base": {
+  "dir": "D:\\others\\Jity\\.local\\models",
+  "files": {
+   "config.json": "cd553527a919b8292894d4e8cc043fcb1a45c60586f9dfa4399f7b2b2e657a9e",
+   "spiece.model": "c65feffa65ff0378759778193852083d23349cb1b40c906e9463a12f8076ff32",
+   "model.safetensors": "ab8a98264ee6b4f83eba17d624d7b92b23522c8eacef07d07a5be960e390184a"
+  }
+ },
+ "pools": [
+  {
+   "path": "artifacts\\target-revision-r1\\verbalizer-revised.jsonl",
+   "rows": 229,
+   "sha256": "dd1240b98831faeac0a9fe5d7e72a1662a72b286e542dd23ca3b6775659eb00e"
+  },
+  {
+   "path": "artifacts\\target-revision-r1\\expand78-revised.jsonl",
+   "rows": 78,
+   "sha256": "69ed22500dab06d67a2bcdf301b8858fd4b334986e53193aca4a04dc2d6f1319"
+  },
+  {
+   "path": "artifacts\\target-revision-r1\\object34-revised.jsonl",
+   "rows": 34,
+   "sha256": "07e4cb446e0b3d1ea9f03cd8108bc1c225273a4fd2b549f714e20553372171d4"
+  }
+ ],
+ "hyper": {
+  "steps": 240,
+  "batch": 8,
+  "mix": [
+   4,
+   3,
+   1
+  ],
+  "lr": 0.0003,
+  "seed": 20261102,
+  "precision": "fp32",
+  "optimizer": "AdamW"
+ },
+ "sampling": {
+  "ids": 1920,
+  "idSha256": "335097b9319ec4b187ec64253850b7c193985590dd5a22bed1102cda4ed6c6d1",
+  "targetSha256": "9657c3506f949ba318b9e149b9458197a04c05d41835a0d70492040905301216"
+ },
+ "losses": [
+  {
+   "step": 1,
+   "loss": 0.2656
+  },
+  {
+   "step": 40,
+   "loss": 0.4135
+  },
+  {
+   "step": 80,
+   "loss": 0.406
+  },
+  {
+   "step": 120,
+   "loss": 0.4571
+  },
+  {
+   "step": 160,
+   "loss": 0.3328
+  },
+  {
+   "step": 200,
+   "loss": 0.1092
+  },
+  {
+   "step": 240,
+   "loss": 0.1243
+  }
+ ],
+ "seconds": 99.0,
+ "checkpoint": {
+  "dir": "artifacts\\next-runs\\cf24-arm-treatment\\ckpt",
+  "modelSha256": "afb1ae3f3bca54516f636580c01003d3b37f628d0bd3ce07a85b2ee5e19176a1"
+ }
+}

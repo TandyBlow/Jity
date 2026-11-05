@@ -1,0 +1,83 @@
+{
+ "purpose": "equal-budget continuation for the target-revision round",
+ "arm": "control-original-targets",
+ "device": "cuda",
+ "base": {
+  "dir": "D:\\others\\Jity\\.local\\models",
+  "files": {
+   "config.json": "cd553527a919b8292894d4e8cc043fcb1a45c60586f9dfa4399f7b2b2e657a9e",
+   "spiece.model": "c65feffa65ff0378759778193852083d23349cb1b40c906e9463a12f8076ff32",
+   "model.safetensors": "ab8a98264ee6b4f83eba17d624d7b92b23522c8eacef07d07a5be960e390184a"
+  }
+ },
+ "pools": [
+  {
+   "path": "experiments\\world-components\\n4_narrative_dev\\verbalizer_pairs.jsonl",
+   "rows": 229,
+   "sha256": "2681b4d84e25b862903e15845dcee097fc4ffe086a8a4e499873cfd9d7183908"
+  },
+  {
+   "path": "artifacts\\next-inputs\\world-components\\n4-expand78-unified.jsonl",
+   "rows": 78,
+   "sha256": "9fc2f3543cba3ed2828893a62f31d5bdfdd3660cc09941b30a3a607df6685acb"
+  },
+  {
+   "path": "artifacts\\next-inputs\\world-components\\n4-object34-unified.jsonl",
+   "rows": 34,
+   "sha256": "24777a8948a798a1e9b590dcff2a8fccbbe0513e5ff2978bb182648cbe2155ef"
+  }
+ ],
+ "hyper": {
+  "steps": 240,
+  "batch": 8,
+  "mix": [
+   4,
+   3,
+   1
+  ],
+  "lr": 0.0003,
+  "seed": 20261102,
+  "precision": "fp32",
+  "optimizer": "AdamW"
+ },
+ "sampling": {
+  "ids": 1920,
+  "idSha256": "335097b9319ec4b187ec64253850b7c193985590dd5a22bed1102cda4ed6c6d1",
+  "targetSha256": "e91fd8af9a31ead48ffd55ca566de93f8ae4f8d8ed132b9edf9c26c09c9bd922"
+ },
+ "losses": [
+  {
+   "step": 1,
+   "loss": 0.3001
+  },
+  {
+   "step": 40,
+   "loss": 0.4397
+  },
+  {
+   "step": 80,
+   "loss": 0.3655
+  },
+  {
+   "step": 120,
+   "loss": 0.4907
+  },
+  {
+   "step": 160,
+   "loss": 0.3748
+  },
+  {
+   "step": 200,
+   "loss": 0.1341
+  },
+  {
+   "step": 240,
+   "loss": 0.123
+  }
+ ],
+ "seconds": 80.7,
+ "checkpoint": {
+  "dir": "artifacts\\next-runs\\cf24-arm-control\\ckpt",
+  "modelSha256": "d203d0eff2772b8c1b0e9cf811f4148f06ad2745d22712d24bc1c7315bbc0e1e"
+ }
+}
