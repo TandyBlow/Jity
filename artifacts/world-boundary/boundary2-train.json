@@ -1,0 +1,75 @@
+{
+ "arm": "boundary-4o2e1obj1b",
+ "mix": [
+  4,
+  2,
+  1,
+  1
+ ],
+ "seed": 20261102,
+ "counts": {
+  "orig": 190,
+  "expand": 78,
+  "object": 34,
+  "boundary": 80,
+  "dev": 14
+ },
+ "history": [
+  {
+   "step": 240,
+   "devLoss": 0.9381
+  },
+  {
+   "step": 480,
+   "devLoss": 0.9269
+  },
+  {
+   "step": 720,
+   "devLoss": 0.9668
+  },
+  {
+   "step": 960,
+   "devLoss": 1.109
+  },
+  {
+   "step": 1200,
+   "devLoss": 1.1028
+  },
+  {
+   "step": 1440,
+   "devLoss": 1.0926
+  },
+  {
+   "step": 1680,
+   "devLoss": 1.1798
+  },
+  {
+   "step": 1920,
+   "devLoss": 1.1054
+  },
+  {
+   "step": 2160,
+   "devLoss": 1.144
+  },
+  {
+   "step": 2400,
+   "devLoss": 1.4005
+  },
+  {
+   "step": 2640,
+   "devLoss": 1.1698
+  },
+  {
+   "step": 2880,
+   "devLoss": 1.3653
+  }
+ ],
+ "train": {
+  "updates": 2880,
+  "wallSeconds": 188.8
+ },
+ "selectedCheckpoint": {
+  "step": 480,
+  "devLoss": 0.9269
+ }
+}

@@ -1,0 +1,8 @@
+{
+ "n4-object-train40-clean.jsonl": "2856ce3d56912e3e7380cd11522c8170898369ce59c0e6e66f9269a8ce6a966a",
+ "n4-expand-train80-clean.jsonl": "c50f7cb1628fa885fea3956008392979aea9bd2592d74161e34166fac3ba1536",
+ "run_mix_compare.py": "9a87ba8e7a6d697fcbfe8f01fee377862b8e44a0efc20d17de5881b21161ee5f",
+ "sequence_policy.py": "283203fd88fba3a5e92d45ef4e431ce8e0a1285d308e43ea3fbf451e4b55523f",
+ "verbalizer_pairs": "2681b4d84e25b862903e15845dcee097fc4ffe086a8a4e499873cfd9d7183908",
+ "manifest": "6a0aded58f7f7bef0404decc8b63401e7bd503eae0c0d1130f2ef6f46b8dc9e9"
+}

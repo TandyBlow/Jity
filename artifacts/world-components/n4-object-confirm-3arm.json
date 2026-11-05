@@ -1,0 +1,60 @@
+{
+ "purpose": "物件确认集：三臂比较（有效 18 条）",
+ "excluded": [
+  "qa1A",
+  "qb3A",
+  "qb3B",
+  "qc1A",
+  "qc1B",
+  "qd1B"
+ ],
+ "excludedReason": "事实主体或引用的物件不在该单元的地点可见列表（precheck 判定）",
+ "base": {
+  "verdicts": {
+   "S": 10,
+   "O": 1,
+   "C": 4,
+   "A": 3
+  },
+  "clean": 10
+ },
+ "arm1": {
+  "verdicts": {
+   "S": 14,
+   "O": 3,
+   "C": 1,
+   "A": 0
+  },
+  "clean": 14
+ },
+ "arm2": {
+  "verdicts": {
+   "S": 18,
+   "O": 0,
+   "C": 0,
+   "A": 0
+  },
+  "clean": 18
+ },
+ "paired": {
+  "arm1_wrong_arm2_right": [
+   "qa2B",
+   "qb1B",
+   "qb2A",
+   "qd3B"
+  ],
+  "arm1_right_arm2_wrong": [],
+  "base_wrong_arm1_right": [
+   "qa1B",
+   "qa3A",
+   "qa3B",
+   "qc2B",
+   "qd2B",
+   "qd3A"
+  ],
+  "base_right_arm1_wrong": [
+   "qa2B",
+   "qb1B"
+  ]
+ }
+}

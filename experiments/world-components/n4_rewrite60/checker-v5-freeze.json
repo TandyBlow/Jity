@@ -1,0 +1,72 @@
+{
+ "checker": "checker.py v5",
+ "sha256": "e2b2a893cc478c66909b58906ff22ad6a290d506c7063535099b5767da4672fd",
+ "world": "world.json",
+ "thresholds": {
+  "minChars": 60,
+  "copyRun": 8,
+  "contentMin": {
+   "outcome": 0.2,
+   "task_achieved": 0.2,
+   "subtask_added": 0.8
+  },
+  "reviewCoverage": 0.45,
+  "maxRepeatedSpan": 8,
+  "max4gram": 2,
+  "maxSentence": 65
+ },
+ "reference": {
+  "rows": 140,
+  "pass": 127,
+  "review": 13,
+  "fail": 0,
+  "reviewIds": [
+   "r52",
+   "r59",
+   "r66",
+   "r101",
+   "r110",
+   "r120",
+   "n4n-02",
+   "n4n-04",
+   "n4n-05",
+   "n4n-09",
+   "r124",
+   "r127",
+   "r130"
+  ]
+ },
+ "probes": {
+  "file": "semantic_probes.jsonl",
+  "cases": 15,
+  "hit": 15,
+  "categories": [
+   "actor-swap",
+   "actor-unnamed",
+   "added-dialogue",
+   "cold-hot-coexist",
+   "contradiction-same-object",
+   "copied-input",
+   "direction-reversed",
+   "dropped-result",
+   "negated-result",
+   "outsider-name",
+   "partial-result",
+   "pronoun-only",
+   "reordered",
+   "sanity-number",
+   "two-lamps"
+  ]
+ },
+ "tamper": {
+  "cases": 14,
+  "caught": 14
+ },
+ "whyV5": "v4 的 140/140 只证明参考稿在这批复用词上没被判错，不证明事实核对可靠：换主体、写成否定、册外新人物都直接放过，还把‘不同物体一冷一热’和‘远近两盏灯’判成矛盾。v5 把‘判不了’单独列成复核，并用 15 条带答案的样本计分。",
+ "knownBlindSpots": [
+  "谁做的这件事：小句主语不是事实主体时只进复核，不判违规",
+  "结果只做了一半：词面覆盖对不上才进复核，可能漏",
+  "文笔、心理是否可信、比喻是否误导：不查"
+ ],
+ "registeredBeforeAnyModelRun": true
+}

@@ -1,0 +1,5 @@
+# Per-file snapshot bytes (next-baseline); do not replace with a wildcard.
+# Existing text blobs use explicit checkout EOL; newly tracked bytes use -text.
+"browser_texts.tmp.json" -text
+"int8_quality.json" -text
+"v2_browser_texts.tmp.json" -text

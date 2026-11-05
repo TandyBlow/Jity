@@ -1,0 +1,6 @@
+{
+ "requestedRelations": [
+  {"fromFactId": "f2", "toFactId": "f3", "note": "周宁 → 陈默，跨主体，p2→p3 有 1 秒推进"},
+  {"fromFactId": "f5", "toFactId": "f4", "note": "故意写反，用来验证授权失败只回退这一条"}
+ ]
+}

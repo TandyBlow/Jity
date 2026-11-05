@@ -1,0 +1,81 @@
+{
+ "runs": [
+  {
+   "kind": "blind",
+   "setSha256": "cc7d2aafd5d7597fc5d6bb8bbebb2dcc6346bf3413dc6b0afbf54bf4fbf54f87",
+   "checkerSha256": "22a78b5382162d9f209c600a759f7d7d3d011cc7f3cb7d772c55bea2ab14831b",
+   "at": "2026-11-04T14:50:59",
+   "cases": 48,
+   "letThrough": 13,
+   "escalated": 4,
+   "falseReject": 0,
+   "review": 0
+  },
+  {
+   "kind": "post-tuning",
+   "setSha256": "cc7d2aafd5d7597fc5d6bb8bbebb2dcc6346bf3413dc6b0afbf54bf4fbf54f87",
+   "checkerSha256": "7fab82860b6080cc725117a671569bce5b322477f44dda82531f598b9e739209",
+   "at": "2026-11-04T14:51:19",
+   "cases": 48,
+   "letThrough": 5,
+   "escalated": 9,
+   "falseReject": 0,
+   "review": 0
+  },
+  {
+   "kind": "post-tuning",
+   "setSha256": "cc7d2aafd5d7597fc5d6bb8bbebb2dcc6346bf3413dc6b0afbf54bf4fbf54f87",
+   "checkerSha256": "f262cda5aad92a9903b907552fc20b1461928650faa5f05e6d3cb2844cab137d",
+   "at": "2026-11-04T14:51:36",
+   "cases": 48,
+   "letThrough": 2,
+   "escalated": 12,
+   "falseReject": 0,
+   "review": 0
+  },
+  {
+   "kind": "post-tuning",
+   "setSha256": "cc7d2aafd5d7597fc5d6bb8bbebb2dcc6346bf3413dc6b0afbf54bf4fbf54f87",
+   "checkerSha256": "234f0878ec02e57a931d8cce49b3d59c57568e47cf060996004fda494d9f68c5",
+   "at": "2026-11-04T14:51:44",
+   "cases": 48,
+   "letThrough": 2,
+   "escalated": 12,
+   "falseReject": 0,
+   "review": 0
+  },
+  {
+   "kind": "post-tuning",
+   "setSha256": "cc7d2aafd5d7597fc5d6bb8bbebb2dcc6346bf3413dc6b0afbf54bf4fbf54f87",
+   "checkerSha256": "8b4ffd84e0ef2dab91085e764f517798429daf11886c86708279c650848578fe",
+   "at": "2026-11-04T14:52:32",
+   "cases": 48,
+   "letThrough": 2,
+   "escalated": 12,
+   "falseReject": 0,
+   "review": 0
+  },
+  {
+   "kind": "post-tuning",
+   "setSha256": "cc7d2aafd5d7597fc5d6bb8bbebb2dcc6346bf3413dc6b0afbf54bf4fbf54f87",
+   "checkerSha256": "8b4ffd84e0ef2dab91085e764f517798429daf11886c86708279c650848578fe",
+   "at": "2026-11-04T14:53:26",
+   "cases": 48,
+   "letThrough": 2,
+   "escalated": 12,
+   "falseReject": 0,
+   "review": 0
+  },
+  {
+   "kind": "post-tuning",
+   "setSha256": "cc7d2aafd5d7597fc5d6bb8bbebb2dcc6346bf3413dc6b0afbf54bf4fbf54f87",
+   "checkerSha256": "8b4ffd84e0ef2dab91085e764f517798429daf11886c86708279c650848578fe",
+   "at": "2026-11-04T14:53:32",
+   "cases": 48,
+   "letThrough": 2,
+   "escalated": 12,
+   "falseReject": 0,
+   "review": 0
+  }
+ ]
+}

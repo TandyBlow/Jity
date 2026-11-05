@@ -1,0 +1,128 @@
+{
+ "base": {
+  "object18": {
+   "facts": 18,
+   "S": 11,
+   "factClean": 11,
+   "bothClean": 7,
+   "srcs": 18,
+   "dupDe": 0,
+   "labelEcho": 10,
+   "valueLeak": 0
+  },
+  "expand36": {
+   "facts": 36,
+   "S": 34,
+   "factClean": 34,
+   "bothClean": 34,
+   "srcs": 36,
+   "dupDe": 0,
+   "labelEcho": 0,
+   "valueLeak": 0
+  },
+  "final24": {
+   "facts": 76,
+   "S": 67,
+   "factClean": 16,
+   "bothClean": 16,
+   "srcs": 24,
+   "dupDe": 0,
+   "labelEcho": 3,
+   "valueLeak": 0
+  },
+  "cf24": {
+   "facts": 85,
+   "S": 77,
+   "factClean": 17,
+   "bothClean": 17,
+   "srcs": 24,
+   "dupDe": 0,
+   "labelEcho": 2,
+   "valueLeak": 0
+  }
+ },
+ "422": {
+  "object18": {
+   "facts": 18,
+   "S": 18,
+   "factClean": 18,
+   "bothClean": 7,
+   "srcs": 18,
+   "dupDe": 0,
+   "labelEcho": 11,
+   "valueLeak": 0
+  },
+  "expand36": {
+   "facts": 36,
+   "S": 36,
+   "factClean": 36,
+   "bothClean": 36,
+   "srcs": 36,
+   "dupDe": 0,
+   "labelEcho": 0,
+   "valueLeak": 0
+  },
+  "final24": {
+   "facts": 76,
+   "S": 76,
+   "factClean": 24,
+   "bothClean": 20,
+   "srcs": 24,
+   "dupDe": 0,
+   "labelEcho": 4,
+   "valueLeak": 0
+  },
+  "cf24": {
+   "facts": 85,
+   "S": 83,
+   "factClean": 22,
+   "bothClean": 17,
+   "srcs": 24,
+   "dupDe": 0,
+   "labelEcho": 5,
+   "valueLeak": 0
+  }
+ },
+ "431": {
+  "object18": {
+   "facts": 18,
+   "S": 18,
+   "factClean": 18,
+   "bothClean": 9,
+   "srcs": 18,
+   "dupDe": 1,
+   "labelEcho": 8,
+   "valueLeak": 0
+  },
+  "expand36": {
+   "facts": 36,
+   "S": 36,
+   "factClean": 36,
+   "bothClean": 36,
+   "srcs": 36,
+   "dupDe": 0,
+   "labelEcho": 0,
+   "valueLeak": 0
+  },
+  "final24": {
+   "facts": 76,
+   "S": 76,
+   "factClean": 24,
+   "bothClean": 21,
+   "srcs": 24,
+   "dupDe": 0,
+   "labelEcho": 3,
+   "valueLeak": 0
+  },
+  "cf24": {
+   "facts": 85,
+   "S": 85,
+   "factClean": 24,
+   "bothClean": 20,
+   "srcs": 24,
+   "dupDe": 1,
+   "labelEcho": 4,
+   "valueLeak": 0
+  }
+ }
+}

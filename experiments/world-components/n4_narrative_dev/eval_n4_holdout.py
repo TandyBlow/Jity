@@ -17,11 +17,12 @@ from transformers.generation.logits_process import LogitsProcessor, LogitsProces
 from transformers.models.t5.modeling_t5 import T5ForConditionalGeneration
 from transformers.models.t5.tokenization_t5 import T5Tokenizer
 
+from sequence_policy import (DEFAULT_GENERATION_TIMEOUT, generate_greedy,
+                             generation_timeout, sequence_policy)
+
 HERE = pathlib.Path(__file__).resolve().parent
 PAIRS = HERE / "holdout_pairs.jsonl"
 FREEZE = HERE / "holdout-freeze.json"
-MAX_INPUT = 512
-MAX_OUTPUT = 128
 
 OLD_NAMES = ["沈砚", "顾行舟", "叶知微", "阿棠", "韩渡",
              "潮生巷", "旧灯塔", "潮渡", "潮汐档案馆", "雾堤", "早市"]
@@ -54,6 +55,8 @@ def norm_punct(text):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--ckpt", default=str(pathlib.Path("ckpt-formal")))
+    parser.add_argument("--generation-timeout", type=generation_timeout,
+                        default=DEFAULT_GENERATION_TIMEOUT)
     parser.add_argument("--copy-constraint", action="store_true",
                         help="restrict output tokens to input + punctuation/"
                              "function words")
@@ -75,8 +78,7 @@ def main():
 
     samples = []
     for r in rows:
-        enc = tok(r["input"], return_tensors="pt", truncation=True,
-                  max_length=MAX_INPUT).to(device)
+        enc = tok(r["input"], return_tensors="pt", truncation=False).to(device)
         processors = None
         allowed = None
         if args.copy_constraint:
@@ -86,10 +88,8 @@ def main():
             allowed.add(tok.eos_token_id)
             allowed.add(tok.pad_token_id)
             processors = LogitsProcessorList([CopyConstraint(allowed)])
-        with torch.no_grad():
-            gen = model.generate(**enc, max_new_tokens=MAX_OUTPUT,
-                                 num_beams=1, do_sample=False,
-                                 logits_processor=processors)
+        gen, completion = generate_greedy(
+            model, enc, args.generation_timeout, logits_processor=processors)
         text = tok.decode(gen[0], skip_special_tokens=True)
         old_hits = [n for n in OLD_NAMES if n in text]
         new_hits = [n for n in NEW_NAMES if n in text]
@@ -98,7 +98,9 @@ def main():
         samples.append({
             "rowId": r["rowId"], "sourceId": r["sourceId"],
             "oovTokens": len(oov),
-            "exactNormalized": norm_punct(text) == norm_punct(r["target"]),
+            "exactNormalized": completion["complete"] and
+                               norm_punct(text) == norm_punct(r["target"]),
+            "generation": completion,
             "ratio": round(difflib.SequenceMatcher(
                 None, text, r["target"]).ratio(), 3),
             "oldNameHits": old_hits,
@@ -113,9 +115,11 @@ def main():
     report = {
         "purpose": "N4 new-world zero-shot holdout; no training",
         "mode": "copy-constraint" if args.copy_constraint else "free",
+        "sequencePolicy": sequence_policy(args.generation_timeout),
         "ckpt": "ckpt-formal (n4n-fog-harbor, 100 train)",
         "data": {"freeze": freeze, "rows": len(rows)},
         "results": {
+            "completed": sum(s["generation"]["complete"] for s in samples),
             "exactNormalized": sum(1 for s in samples
                                    if s["exactNormalized"]),
             "meanRatio": mean("ratio"),

@@ -1,0 +1,8 @@
+{
+ "formal_pairs.jsonl": "bda3afb3f037554619c0476f7e07a2f35ee0faf7fb668b2482286be3c9d2a175",
+ "verbalizer_pairs.jsonl": "2681b4d84e25b862903e15845dcee097fc4ffe086a8a4e499873cfd9d7183908",
+ "two-arm-manifest.json": "6a0aded58f7f7bef0404decc8b63401e7bd503eae0c0d1130f2ef6f46b8dc9e9",
+ "run_arm.py": "07c2785f7fdfad98799fa7b2fb67a78c319aab57f1e82bca131ddfecaa7987ee",
+ "sequence_policy.py": "283203fd88fba3a5e92d45ef4e431ce8e0a1285d308e43ea3fbf451e4b55523f",
+ "run_cf.py": "5ae0afb2a4ffec023401db4cfe325fcb4ec629f07ba4625960100168161be305"
+}

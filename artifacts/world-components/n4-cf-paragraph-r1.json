@@ -1,0 +1,823 @@
+{
+ "arm": "paragraph",
+ "checkpoint": "ckpt-paragraph",
+ "budgetSeconds": 20.0,
+ "rows": [
+  {
+   "pairId": "A-01",
+   "family": "A",
+   "sourceId": "n4n-63",
+   "factId": "f0",
+   "variant": "orig",
+   "expect": {
+    "subject": "顾行舟",
+    "oldSubject": "沈砚",
+    "arm": "paragraph"
+   },
+   "output": "潮渡的雾还没散,沈砚在潮渡的栈桥边站住。最后一班渡船从河边出来,缆绳在雾里只剩一团黄;他站了一会儿,栈桥上什么也没有再发生。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 55,
+   "seconds": 0.605
+  },
+  {
+   "pairId": "A-01",
+   "family": "A",
+   "sourceId": "n4n-63",
+   "factId": "f0",
+   "variant": "mod",
+   "expect": {
+    "subject": "顾行舟",
+    "oldSubject": "沈砚",
+    "arm": "paragraph"
+   },
+   "output": "潮渡的雾还没散,沈砚在潮渡的栈桥边站住。顾行舟在潮渡的栈桥边站住,船灯只剩一团黄;他站了一会儿,栈桥上什么也没有再发生。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 56,
+   "seconds": 0.383
+  },
+  {
+   "pairId": "A-02",
+   "family": "A",
+   "sourceId": "n4n-63",
+   "factId": "f0",
+   "variant": "orig",
+   "expect": {
+    "subject": "顾行舟",
+    "oldSubject": "沈砚",
+    "arm": "fact"
+   },
+   "output": "潮渡的雾从潮渡涌上来,沈砚在潮渡等到了最后一班船。渡船从河口过来,船灯亮着,船灯亮着。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 40,
+   "seconds": 0.274
+  },
+  {
+   "pairId": "A-02",
+   "family": "A",
+   "sourceId": "n4n-63",
+   "factId": "f0",
+   "variant": "mod",
+   "expect": {
+    "subject": "顾行舟",
+    "oldSubject": "沈砚",
+    "arm": "fact"
+   },
+   "output": "潮渡的雾从河口吹过来,顾行舟在潮渡等到了最后一班船。渡船从河口过来,船灯亮着水面,船灯亮着。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 43,
+   "seconds": 0.295
+  },
+  {
+   "pairId": "A-03",
+   "family": "A",
+   "sourceId": "n4n-64",
+   "factId": "f0",
+   "variant": "orig",
+   "expect": {
+    "subject": "顾行舟",
+    "oldSubject": "沈砚",
+    "arm": "paragraph"
+   },
+   "output": "退潮后的浅滩泛着冷光,沈砚把系泊绳拖回泥里,等他直起身,把系泊绳拖回泥里,才慢慢拖回去。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 43,
+   "seconds": 0.294
+  },
+  {
+   "pairId": "A-03",
+   "family": "A",
+   "sourceId": "n4n-64",
+   "factId": "f0",
+   "variant": "mod",
+   "expect": {
+    "subject": "顾行舟",
+    "oldSubject": "沈砚",
+    "arm": "paragraph"
+   },
+   "output": "退潮后的浅滩泛着冷光,顾行舟把系泊绳拖了回来,系泊绳在浅滩上拖了回来,系泊绳在水边慢慢拖回去。等他直起身,他才发现自己的呼吸一直提着,心里很酸。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 63,
+   "seconds": 0.429
+  },
+  {
+   "pairId": "A-04",
+   "family": "A",
+   "sourceId": "n4n-64",
+   "factId": "f0",
+   "variant": "orig",
+   "expect": {
+    "subject": "顾行舟",
+    "oldSubject": "沈砚",
+    "arm": "fact"
+   },
+   "output": "潮渡的潮水吹到浅滩,沈砚站在河边。水面没有风,海风把潮渡吹到水面,海风把潮水吹到水面。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 43,
+   "seconds": 0.294
+  },
+  {
+   "pairId": "A-04",
+   "family": "A",
+   "sourceId": "n4n-64",
+   "factId": "f0",
+   "variant": "mod",
+   "expect": {
+    "subject": "顾行舟",
+    "oldSubject": "沈砚",
+    "arm": "fact"
+   },
+   "output": "潮渡的潮水吹到浅滩,沈砚站在河边。沈砚站在潮渡边,把系泊绳从浅滩拖了回来,等船停在水面。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 43,
+   "seconds": 0.294
+  },
+  {
+   "pairId": "A-05",
+   "family": "A",
+   "sourceId": "n4n-65",
+   "factId": "f0",
+   "variant": "orig",
+   "expect": {
+    "subject": "顾行舟",
+    "oldSubject": "沈砚",
+    "arm": "paragraph"
+   },
+   "output": "档案馆的天窗漏着雨,沈砚把潮汐簿摊在铜灯下,把缺页补完,纸页在纸边发白。他把缺页补完后,他才慢慢补完。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 51,
+   "seconds": 0.428
+  },
+  {
+   "pairId": "A-05",
+   "family": "A",
+   "sourceId": "n4n-65",
+   "factId": "f0",
+   "variant": "mod",
+   "expect": {
+    "subject": "顾行舟",
+    "oldSubject": "沈砚",
+    "arm": "paragraph"
+   },
+   "output": "档案馆的天窗漏着雨,顾行舟把潮汐簿摊在铜灯下,把缺页补完,纸页在纸边发暗。他把缺页补完后,他才慢慢补完。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 52,
+   "seconds": 0.355
+  },
+  {
+   "pairId": "A-06",
+   "family": "A",
+   "sourceId": "n4n-65",
+   "factId": "f0",
+   "variant": "orig",
+   "expect": {
+    "subject": "顾行舟",
+    "oldSubject": "沈砚",
+    "arm": "fact"
+   },
+   "output": "雨点敲着档案馆的天窗,沈砚在长桌边站住。天窗漏着雨,天窗漏了雨,天窗漏了雨,天窗漏了雨,天窗漏了雨,天窗漏了雨,天窗漏了雨。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 63,
+   "seconds": 0.43
+  },
+  {
+   "pairId": "A-06",
+   "family": "A",
+   "sourceId": "n4n-65",
+   "factId": "f0",
+   "variant": "mod",
+   "expect": {
+    "subject": "顾行舟",
+    "oldSubject": "沈砚",
+    "arm": "fact"
+   },
+   "output": "雨点敲着档案馆的天窗,顾行舟把潮汐簿补完,把潮汐簿补完后,把门槛补完。铜灯亮着,天窗漏了,门槛被雨淋湿了,门槛被门槛上的雨水推开。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 65,
+   "seconds": 0.441
+  },
+  {
+   "pairId": "A-07",
+   "family": "A",
+   "sourceId": "n4n-73",
+   "factId": "f0",
+   "variant": "orig",
+   "expect": {
+    "subject": "沈砚",
+    "oldSubject": "阿棠",
+    "arm": "paragraph"
+   },
+   "output": "早市的帆布棚下白汽不散,沈砚站在摊棚外。阿棠从摊棚外出来,把一筐银鳞鱼搬上案板,鱼尾拍得筐沿啪啪响;鱼尾拍得筐沿啪啪响,石板上的水光晃了晃。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 67,
+   "seconds": 0.456
+  },
+  {
+   "pairId": "A-07",
+   "family": "A",
+   "sourceId": "n4n-73",
+   "factId": "f0",
+   "variant": "mod",
+   "expect": {
+    "subject": "沈砚",
+    "oldSubject": "阿棠",
+    "arm": "paragraph"
+   },
+   "output": "早市的帆布棚下白汽不散,沈砚站在摊棚外。阿棠从摊棚外出来,抱着一筐银鳞鱼往案板上送,鱼尾拍得筐沿啪啪响;他辫梢沾了白汽,鱼尾拍得筐沿啪啪响。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 68,
+   "seconds": 0.461
+  },
+  {
+   "pairId": "A-08",
+   "family": "A",
+   "sourceId": "n4n-73",
+   "factId": "f0",
+   "variant": "orig",
+   "expect": {
+    "subject": "沈砚",
+    "oldSubject": "阿棠",
+    "arm": "fact"
+   },
+   "output": "早市的帆布棚下白汽不散,沈砚站在摊棚外。阿棠从摊棚外挤进来,把一筐银鳞鱼搬上案板,石板上的银鳞鱼搬上案板。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 52,
+   "seconds": 0.354
+  },
+  {
+   "pairId": "A-08",
+   "family": "A",
+   "sourceId": "n4n-73",
+   "factId": "f0",
+   "variant": "mod",
+   "expect": {
+    "subject": "沈砚",
+    "oldSubject": "阿棠",
+    "arm": "fact"
+   },
+   "output": "早市的帆布棚下白汽不散,白汽在石板上站住。白汽在摊棚下,白汽在摊棚下站住。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 39,
+   "seconds": 0.269
+  },
+  {
+   "pairId": "B-01",
+   "family": "B",
+   "sourceId": "n4n-40",
+   "factId": "f0",
+   "variant": "orig",
+   "expect": {
+    "origin": "旧灯塔",
+    "oldOrigin": "潮生巷",
+    "destination": "潮汐档案馆",
+    "arm": "paragraph"
+   },
+   "output": "雨点敲着档案馆的天窗,沈砚从潮生巷过来,把湿伞靠在门边。铜灯的光落在天窗上,他听见天窗的雨声,他听见天窗的雨声。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 55,
+   "seconds": 0.375
+  },
+  {
+   "pairId": "B-01",
+   "family": "B",
+   "sourceId": "n4n-40",
+   "factId": "f0",
+   "variant": "mod",
+   "expect": {
+    "origin": "旧灯塔",
+    "oldOrigin": "潮生巷",
+    "destination": "潮汐档案馆",
+    "arm": "paragraph"
+   },
+   "output": "雨点敲着档案馆的天窗,沈砚在长桌前站住。铜灯的光落在天窗上,沈砚坐在长桌前。铜灯的光落在纸页边,他听见天窗的雨声,他听见天窗的雨声。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 64,
+   "seconds": 0.435
+  },
+  {
+   "pairId": "B-02",
+   "family": "B",
+   "sourceId": "n4n-41",
+   "factId": "f0",
+   "variant": "orig",
+   "expect": {
+    "origin": "旧灯塔",
+    "oldOrigin": "潮渡",
+    "destination": "雾堤",
+    "arm": "paragraph"
+   },
+   "output": "雾堤上的风把浪沫吹到石阶上,沈砚从潮渡上来,蹲在钟架下,把雾警钟从堤面慢慢往上走。钟架轻响,他站了一会儿,堤面又静下来。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 57,
+   "seconds": 0.389
+  },
+  {
+   "pairId": "B-02",
+   "family": "B",
+   "sourceId": "n4n-41",
+   "factId": "f0",
+   "variant": "mod",
+   "expect": {
+    "origin": "旧灯塔",
+    "oldOrigin": "潮渡",
+    "destination": "雾堤",
+    "arm": "paragraph"
+   },
+   "output": "雾堤上的风把浪沫吹到石阶上,沈砚站在钟架旁。警示灯在风里发晃,他站了一会儿,堤面又被风吹得发晃。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 47,
+   "seconds": 0.321
+  },
+  {
+   "pairId": "B-03",
+   "family": "B",
+   "sourceId": "n4n-43",
+   "factId": "f0",
+   "variant": "orig",
+   "expect": {
+    "origin": "旧灯塔",
+    "oldOrigin": "潮渡",
+    "destination": "潮生巷",
+    "arm": "paragraph"
+   },
+   "output": "雨丝斜着落进潮生巷,沈砚从潮渡过来,蹲在纸灯笼下,蹲在水沟里。纸灯笼的光落在水沟里,水沟里还有积水。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 49,
+   "seconds": 0.334
+  },
+  {
+   "pairId": "B-03",
+   "family": "B",
+   "sourceId": "n4n-43",
+   "factId": "f0",
+   "variant": "mod",
+   "expect": {
+    "origin": "旧灯塔",
+    "oldOrigin": "潮渡",
+    "destination": "潮生巷",
+    "arm": "paragraph"
+   },
+   "output": "雨丝斜着落进潮生巷,沈砚从旧灯塔那边过来,把伞靠在水沟里。水沟里的积水没有散,他听见排水沟的水声。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 46,
+   "seconds": 0.315
+  },
+  {
+   "pairId": "B-04",
+   "family": "B",
+   "sourceId": "n4n-52",
+   "factId": "f0",
+   "variant": "orig",
+   "expect": {
+    "origin": "旧灯塔",
+    "oldOrigin": "潮生巷",
+    "destination": "潮渡",
+    "arm": "paragraph"
+   },
+   "output": "潮渡的雾还没散,沈砚从潮生巷过来,顾行舟从河心靠过来,把渡船靠在栈桥边。顾行舟从河心靠过来,把缆绳绕上木桩,船灯在雾里只剩一团黄。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 63,
+   "seconds": 0.428
+  },
+  {
+   "pairId": "B-04",
+   "family": "B",
+   "sourceId": "n4n-52",
+   "factId": "f0",
+   "variant": "mod",
+   "expect": {
+    "origin": "旧灯塔",
+    "oldOrigin": "潮生巷",
+    "destination": "潮渡",
+    "arm": "paragraph"
+   },
+   "output": "潮渡的雾还没散,沈砚从河心靠过来,顾行舟的渡船从河心靠过来,把渡船靠在木桩上。顾行舟从河心靠过来,把缆绳绕上木桩,船灯在雾里只剩一团黄。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 66,
+   "seconds": 0.449
+  },
+  {
+   "pairId": "B-05",
+   "family": "B",
+   "sourceId": "n4n-53",
+   "factId": "f0",
+   "variant": "orig",
+   "expect": {
+    "origin": "旧灯塔",
+    "oldOrigin": "潮生巷",
+    "destination": "潮汐档案馆",
+    "arm": "paragraph"
+   },
+   "output": "雨点敲着档案馆的天窗,沈砚从潮生巷过来,把湿伞靠在门边。阿棠从早市过来,抱着一叠干纸,把湿伞靠在门边。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 50,
+   "seconds": 0.341
+  },
+  {
+   "pairId": "B-05",
+   "family": "B",
+   "sourceId": "n4n-53",
+   "factId": "f0",
+   "variant": "mod",
+   "expect": {
+    "origin": "旧灯塔",
+    "oldOrigin": "潮生巷",
+    "destination": "潮汐档案馆",
+    "arm": "paragraph"
+   },
+   "output": "雨点敲着档案馆的天窗,沈砚从旧灯塔过来,把湿伞靠在门边。阿棠从早市过来,抱着一叠干纸,把湿伞靠在门边。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 50,
+   "seconds": 0.342
+  },
+  {
+   "pairId": "B-06",
+   "family": "B",
+   "sourceId": "n4n-54",
+   "factId": "f0",
+   "variant": "orig",
+   "expect": {
+    "origin": "旧灯塔",
+    "oldOrigin": "潮渡",
+    "destination": "雾堤",
+    "arm": "paragraph"
+   },
+   "output": "雾堤上的风把浪沫吹到石阶上,沈砚站在钟架旁。韩渡从潮渡那边上来,蹲在钟架下,蹲在钟架下。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 43,
+   "seconds": 0.295
+  },
+  {
+   "pairId": "B-06",
+   "family": "B",
+   "sourceId": "n4n-54",
+   "factId": "f0",
+   "variant": "mod",
+   "expect": {
+    "origin": "旧灯塔",
+    "oldOrigin": "潮渡",
+    "destination": "雾堤",
+    "arm": "paragraph"
+   },
+   "output": "雾堤上的风把浪沫吹到石阶上,韩渡从潮渡那边上来,蹲在钟架下。韩渡从潮渡那边上来,蹲在钟架下,蹲在钟架下。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 51,
+   "seconds": 0.348
+  },
+  {
+   "pairId": "B-07",
+   "family": "B",
+   "sourceId": "n4n-86",
+   "factId": "f0",
+   "variant": "orig",
+   "expect": {
+    "origin": "旧灯塔",
+    "oldOrigin": "早市",
+    "destination": "潮汐档案馆",
+    "arm": "paragraph"
+   },
+   "output": "雨点敲着档案馆的天窗,沈砚在长桌边站住。阿棠从早市过来,把一叠干纸放在桌角,纸角被门口的风掀起。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 45,
+   "seconds": 0.307
+  },
+  {
+   "pairId": "B-07",
+   "family": "B",
+   "sourceId": "n4n-86",
+   "factId": "f0",
+   "variant": "mod",
+   "expect": {
+    "origin": "旧灯塔",
+    "oldOrigin": "早市",
+    "destination": "潮汐档案馆",
+    "arm": "paragraph"
+   },
+   "output": "雨点敲着档案馆的天窗,沈砚在长桌边站住。阿棠从旧灯塔外出来,把一叠干纸放在桌角,纸角被门口的风掀起。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 47,
+   "seconds": 0.322
+  },
+  {
+   "pairId": "B-08",
+   "family": "B",
+   "sourceId": "n4n-87",
+   "factId": "f0",
+   "variant": "orig",
+   "expect": {
+    "origin": "旧灯塔",
+    "oldOrigin": "潮渡",
+    "destination": "雾堤",
+    "arm": "paragraph"
+   },
+   "output": "雾堤上的风把浪沫吹到石阶上,韩渡从潮渡那边上来,蹲在钟架下,把松脱的钟绳重新系紧;韩渡把松脱的钟绳重新系紧,钟绳绷直了,才慢慢松脱。钟绳绷直了,他才站起来。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 74,
+   "seconds": 0.503
+  },
+  {
+   "pairId": "B-08",
+   "family": "B",
+   "sourceId": "n4n-87",
+   "factId": "f0",
+   "variant": "mod",
+   "expect": {
+    "origin": "旧灯塔",
+    "oldOrigin": "潮渡",
+    "destination": "雾堤",
+    "arm": "paragraph"
+   },
+   "output": "雾堤上的风把浪沫吹到石阶上,韩渡从旧灯塔上来,蹲在钟架下,把松脱的钟绳重新系紧;钟绳绷直了,他才站起来。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 50,
+   "seconds": 0.341
+  },
+  {
+   "pairId": "C-01",
+   "family": "C",
+   "sourceId": "n4n-63",
+   "factId": "f0",
+   "variant": "orig",
+   "expect": {
+    "completion": false,
+    "arm": "paragraph"
+   },
+   "output": "潮渡的雾还没散,沈砚在潮渡的栈桥边站住。最后一班渡船从河边出来,缆绳在雾里只剩一团黄;他站了一会儿,栈桥上什么也没有再发生。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 55,
+   "seconds": 0.375
+  },
+  {
+   "pairId": "C-01",
+   "family": "C",
+   "sourceId": "n4n-63",
+   "factId": "f0",
+   "variant": "mod",
+   "expect": {
+    "completion": false,
+    "arm": "paragraph"
+   },
+   "output": "潮渡的雾还没散,沈砚从潮渡上来,踩着旧木桩往上走,踩着旧木桩往上走。木桩上挂了一盏灯,雾还没散。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 46,
+   "seconds": 0.315
+  },
+  {
+   "pairId": "C-02",
+   "family": "C",
+   "sourceId": "n4n-63",
+   "factId": "f0",
+   "variant": "orig",
+   "expect": {
+    "completion": false,
+    "arm": "fact"
+   },
+   "output": "潮渡的雾从潮渡涌上来,沈砚在潮渡等到了最后一班船。渡船从河口过来,船灯亮着,船灯亮着。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 40,
+   "seconds": 0.274
+  },
+  {
+   "pairId": "C-02",
+   "family": "C",
+   "sourceId": "n4n-63",
+   "factId": "f0",
+   "variant": "mod",
+   "expect": {
+    "completion": false,
+    "arm": "fact"
+   },
+   "output": "潮渡的雾从潮渡口涌上来,沈砚站在河口。渡船从河口涌上来,船灯的光落在木桩上;船灯亮着,水面没有变化。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 46,
+   "seconds": 0.315
+  },
+  {
+   "pairId": "C-03",
+   "family": "C",
+   "sourceId": "n4n-64",
+   "factId": "f0",
+   "variant": "orig",
+   "expect": {
+    "completion": false,
+    "arm": "paragraph"
+   },
+   "output": "退潮后的浅滩泛着冷光,沈砚把系泊绳拖回泥里,等他直起身,把系泊绳拖回泥里,才慢慢拖回去。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 43,
+   "seconds": 0.294
+  },
+  {
+   "pairId": "C-03",
+   "family": "C",
+   "sourceId": "n4n-64",
+   "factId": "f0",
+   "variant": "mod",
+   "expect": {
+    "completion": false,
+    "arm": "paragraph"
+   },
+   "output": "退潮后的浅滩泛着冷光,沈砚踩着湿泥走到泥里。他站了一会儿,滩面已经湿滑了,水面已经磨淡了。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 42,
+   "seconds": 0.288
+  },
+  {
+   "pairId": "C-04",
+   "family": "C",
+   "sourceId": "n4n-64",
+   "factId": "f0",
+   "variant": "orig",
+   "expect": {
+    "completion": false,
+    "arm": "fact"
+   },
+   "output": "潮渡的潮水吹到浅滩,沈砚站在河边。水面没有风,海风把潮渡吹到水面,海风把潮水吹到水面。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 43,
+   "seconds": 0.294
+  },
+  {
+   "pairId": "C-04",
+   "family": "C",
+   "sourceId": "n4n-64",
+   "factId": "f0",
+   "variant": "mod",
+   "expect": {
+    "completion": false,
+    "arm": "fact"
+   },
+   "output": "低潮后的冷光照着河口的风,沈砚站在河边。海风把潮渡吹到河边,海风把潮渡吹到水面,海风把潮水吹到水面。海风把潮渡吹到水面,海风吹到水面,海风把潮水吹到水面,海风把潮水吹到水面。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 86,
+   "seconds": 0.585
+  },
+  {
+   "pairId": "C-05",
+   "family": "C",
+   "sourceId": "n4n-65",
+   "factId": "f0",
+   "variant": "orig",
+   "expect": {
+    "completion": false,
+    "arm": "paragraph"
+   },
+   "output": "档案馆的天窗漏着雨,沈砚把潮汐簿摊在铜灯下,把缺页补完,纸页在纸边发白。他把缺页补完后,他才慢慢补完。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 51,
+   "seconds": 0.348
+  },
+  {
+   "pairId": "C-05",
+   "family": "C",
+   "sourceId": "n4n-65",
+   "factId": "f0",
+   "variant": "mod",
+   "expect": {
+    "completion": false,
+    "arm": "paragraph"
+   },
+   "output": "档案馆的天窗漏着雨,沈砚在长桌前站住。铜灯的光落在天窗上,沈砚坐在长桌前。他把湿伞靠在门槛上,听见天窗的雨声慢慢缓过来,才发现自己呼吸很快。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 63,
+   "seconds": 0.427
+  },
+  {
+   "pairId": "C-06",
+   "family": "C",
+   "sourceId": "n4n-65",
+   "factId": "f0",
+   "variant": "orig",
+   "expect": {
+    "completion": false,
+    "arm": "fact"
+   },
+   "output": "雨点敲着档案馆的天窗,沈砚在长桌边站住。天窗漏着雨,天窗漏了雨,天窗漏了雨,天窗漏了雨,天窗漏了雨,天窗漏了雨,天窗漏了雨。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 63,
+   "seconds": 0.428
+  },
+  {
+   "pairId": "C-06",
+   "family": "C",
+   "sourceId": "n4n-65",
+   "factId": "f0",
+   "variant": "mod",
+   "expect": {
+    "completion": false,
+    "arm": "fact"
+   },
+   "output": "雨点敲着档案馆的天窗,沈砚站在长桌旁。天窗漏着雨,天窗漏着雨,天窗漏着雨,天窗漏着雨。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 43,
+   "seconds": 0.295
+  },
+  {
+   "pairId": "C-07",
+   "family": "C",
+   "sourceId": "n4n-73",
+   "factId": "f0",
+   "variant": "orig",
+   "expect": {
+    "completion": false,
+    "arm": "paragraph"
+   },
+   "output": "早市的帆布棚下白汽不散,沈砚站在摊棚外。阿棠从摊棚外出来,把一筐银鳞鱼搬上案板,鱼尾拍得筐沿啪啪响;鱼尾拍得筐沿啪啪响,石板上的水光晃了晃。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 67,
+   "seconds": 0.457
+  },
+  {
+   "pairId": "C-07",
+   "family": "C",
+   "sourceId": "n4n-73",
+   "factId": "f0",
+   "variant": "mod",
+   "expect": {
+    "completion": false,
+    "arm": "paragraph"
+   },
+   "output": "早市的帆布棚下白汽不散,沈砚站在摊棚外。阿棠辫梢沾了白汽,围裙上还沾着鱼鳞。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 39,
+   "seconds": 0.268
+  },
+  {
+   "pairId": "C-08",
+   "family": "C",
+   "sourceId": "n4n-73",
+   "factId": "f0",
+   "variant": "orig",
+   "expect": {
+    "completion": false,
+    "arm": "fact"
+   },
+   "output": "早市的帆布棚下白汽不散,沈砚站在摊棚外。阿棠从摊棚外挤进来,把一筐银鳞鱼搬上案板,石板上的银鳞鱼搬上案板。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 52,
+   "seconds": 0.354
+  },
+  {
+   "pairId": "C-08",
+   "family": "C",
+   "sourceId": "n4n-73",
+   "factId": "f0",
+   "variant": "mod",
+   "expect": {
+    "completion": false,
+    "arm": "fact"
+   },
+   "output": "早市的帆布棚下白汽从摊棚下出来,白汽从摊棚下出来。白汽从摊棚下出来,摊棚下没有变化。",
+   "stopReason": "eos",
+   "complete": true,
+   "newTokens": 39,
+   "seconds": 0.267
+  }
+ ]
+}

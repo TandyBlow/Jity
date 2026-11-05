@@ -1,0 +1,41 @@
+{
+ "purpose": "确认40：剔除 4 条缺陷单元后的三臂比较（36 条有效）",
+ "excluded": [
+  "cc2A",
+  "cc2B",
+  "cd1A",
+  "cd1B"
+ ],
+ "base": {
+  "verdicts": {
+   "S": 33,
+   "O": 1,
+   "C": 0,
+   "A": 2
+  },
+  "clean": 33
+ },
+ "arm1": {
+  "clean": 36,
+  "note": "臂1 在 40 条上全 S，36 条有效上仍全 S"
+ },
+ "arm2": {
+  "clean": 36,
+  "identicalToArm1": 32,
+  "differs": [
+   "ce2B",
+   "ce3B",
+   "ce4A",
+   "ce4B"
+  ]
+ },
+ "paired": {
+  "base_wrong_arm1_right": [
+   "ca4B",
+   "cb3B",
+   "cd2B"
+  ],
+  "base_right_arm1_wrong": [],
+  "arm1_vs_arm2_factDifference": 0
+ }
+}

@@ -1,0 +1,9 @@
+{
+ "file": "cases.json",
+ "sha256": "48dbda093ef85ee2923f5456797ca14d13bb97736e90ce2afda5a230b64f6dad",
+ "counts": {
+  "round": 50,
+  "defect": 20,
+  "clean": 20
+ }
+}

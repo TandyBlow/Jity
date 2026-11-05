@@ -1,0 +1,35 @@
+{
+ "orig190": {
+  "rows": 229,
+  "correctOrder": 215,
+  "wrongOrder": 0,
+  "other": 14,
+  "examples": [
+   "OTHER: 场景｜无变化",
+   "OTHER: 场景｜无变化",
+   "OTHER: 场景｜无变化"
+  ]
+ },
+ "expand78": {
+  "rows": 78,
+  "correctOrder": 0,
+  "wrongOrder": 78,
+  "other": 0,
+  "examples": [
+   "结果｜沈砚｜把铜灯挪到长桌另一头",
+   "结果｜阿棠｜把铜灯挪到长桌另一头",
+   "结果｜沈砚｜把潮汐簿合上"
+  ]
+ },
+ "object34": {
+  "rows": 34,
+  "correctOrder": 0,
+  "wrongOrder": 34,
+  "other": 0,
+  "examples": [
+   "外观｜鱼筐｜边沿沾着鱼鳞",
+   "外观｜案板｜边沿沾着鱼鳞",
+   "外观｜缆绳｜末端起了毛"
+  ]
+ }
+}

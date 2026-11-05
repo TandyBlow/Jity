@@ -20,6 +20,10 @@ import torch
 from transformers.models.t5.modeling_t5 import T5ForConditionalGeneration
 from transformers.models.t5.tokenization_t5 import T5Tokenizer
 
+from sequence_policy import (DEFAULT_GENERATION_TIMEOUT, encode_training_batch,
+                             rethrow_oom,
+                             generate_greedy, generation_timeout, sequence_policy)
+
 HERE = pathlib.Path(__file__).resolve().parent
 TRAIN = HERE / "verbalizer_pairs.jsonl"
 HOLDOUT = HERE / "verbalizer_holdout.jsonl"
@@ -27,8 +31,6 @@ BASE = pathlib.Path("base/randeng-t5-77m")
 SEED = 20261103
 BATCH = 8
 LR = 1e-4
-MAX_INPUT = 256
-MAX_OUTPUT = 64
 DEV_EVERY = 7
 
 PEOPLE, PLACES = set(), set()
@@ -149,6 +151,8 @@ def main():
     ap.add_argument("--out", default="ckpt-verbalizer")
     ap.add_argument("--eval-only", action="store_true")
     ap.add_argument("--ckpt", default="ckpt-verbalizer")
+    ap.add_argument("--generation-timeout", type=generation_timeout,
+                    default=DEFAULT_GENERATION_TIMEOUT)
     args = ap.parse_args()
 
     rows = [json.loads(l) for l in TRAIN.read_text(encoding="utf-8").splitlines()
@@ -174,14 +178,7 @@ def main():
     random.seed(SEED)
 
     def encode(batch):
-        enc = tok([r["input"] for r in batch], padding=True, truncation=True,
-                  max_length=MAX_INPUT, return_tensors="pt")
-        with tok.as_target_tokenizer():
-            lab = tok([r["target"] for r in batch], padding=True,
-                      truncation=True, max_length=MAX_OUTPUT,
-                      return_tensors="pt")
-        lab.input_ids[lab.input_ids == tok.pad_token_id] = -100
-        return enc, lab
+        return encode_training_batch(tok, batch)
 
     def split_loss(batch):
         enc, lab = encode(batch)
@@ -193,13 +190,23 @@ def main():
     def generate(batch):
         outs = []
         for r in batch:
-            enc = tok(r["input"], return_tensors="pt", truncation=True,
-                      max_length=MAX_INPUT).to(device)
-            with torch.no_grad():
-                gen = model.generate(**enc, max_new_tokens=MAX_OUTPUT,
-                                     num_beams=1, do_sample=False)
-            outs.append(tok.decode(gen[0], skip_special_tokens=True))
+            enc = tok(r["input"], return_tensors="pt", truncation=False).to(device)
+            gen, completion = generate_greedy(model, enc, args.generation_timeout)
+            outs.append((tok.decode(gen[0], skip_special_tokens=True), completion))
         return outs
+
+    def scored_sample(row, generated):
+        text, completion = generated
+        result = check(row, text)
+        if not completion["complete"]:
+            result["binding"] = False
+            result["actionHit"] = False
+            result["reasons"].append("generation-incomplete")
+        return dict(pairId=row["pairId"], kind=row["kind"],
+                    signature=row["signature"], output=text, target=row["target"],
+                    generation=completion,
+                    exactNormalized=completion["complete"] and
+                    norm_punct(text) == norm_punct(row["target"]), **result)
 
     if args.eval_only:
         model.eval()
@@ -210,12 +217,8 @@ def main():
         for label, batch, texts in (("train", train, train_samples),
                                     ("dev", dev, dev_samples),
                                     ("newWorld", hold, hold_samples)):
-            samples = [dict(pairId=r["pairId"], kind=r["kind"],
-                            signature=r["signature"], output=t,
-                            target=r["target"],
-                            exactNormalized=norm_punct(t) == norm_punct(r["target"]),
-                            **check(r, t))
-                       for r, t in zip(batch, texts)]
+            samples = [scored_sample(r, generated)
+                       for r, generated in zip(batch, texts)]
             res[label] = samples
             print(f"{label}: binding {sum(x['binding'] for x in samples)}"
                   f"/{len(samples)}", flush=True)
@@ -226,6 +229,7 @@ def main():
         out = {
             "purpose": "N4 fact verbalizer eval-only",
             "ckpt": args.ckpt,
+            "sequencePolicy": sequence_policy(args.generation_timeout),
             "results": {k: {"rows": len(v),
                             "binding": sum(x["binding"] for x in v),
                             "actionHit": sum(x["actionHit"] for x in v),
@@ -252,7 +256,10 @@ def main():
             batch = [train[i] for i in order[s:s + BATCH]]
             enc, lab = encode(batch)
             enc = {k: v.to(device) for k, v in enc.items()}
-            out = model(**enc, labels=lab.input_ids.to(device))
+            try:
+                out = model(**enc, labels=lab.input_ids.to(device))
+            except torch.cuda.OutOfMemoryError as exc:
+                rethrow_oom(exc, enc, lab.input_ids)
             opt.zero_grad()
             out.loss.backward()
             opt.step()
@@ -271,15 +278,8 @@ def main():
     def evaluate(batch, label):
         texts = generate(batch)
         samples = []
-        for r, t in zip(batch, texts):
-            c = check(r, t)
-            samples.append({
-                "pairId": r["pairId"], "kind": r["kind"],
-                "signature": r["signature"], "output": t,
-                "target": r["target"],
-                "exactNormalized": norm_punct(t) == norm_punct(r["target"]),
-                **c,
-            })
+        for r, generated in zip(batch, texts):
+            samples.append(scored_sample(r, generated))
         print(f"{label}: binding {sum(s['binding'] for s in samples)}"
               f"/{len(samples)}", flush=True)
         return samples
@@ -302,7 +302,8 @@ def main():
                  "newWorldHoldout": len(hold)},
         "hyper": {"seed": SEED, "epochs": args.epochs, "batch": BATCH,
                   "lr": LR, "optimizer": "AdamW", "precision": "fp32",
-                  "maxInput": MAX_INPUT, "maxOutput": MAX_OUTPUT,
+                  "maxInput": None, "maxOutput": None,
+                  "sequencePolicy": sequence_policy(args.generation_timeout),
                   "device": torch.cuda.get_device_name(0)},
         "loss": {"train": split_loss(train), "dev": split_loss(dev),
                  "newWorld": split_loss(hold)},

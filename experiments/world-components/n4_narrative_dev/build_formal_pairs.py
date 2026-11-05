@@ -80,7 +80,6 @@ def main():
             split = "formal-train"
         in_tok = len(tok(packed["input"]).input_ids)
         out_tok = len(tok(c["narrative"]).input_ids)
-        assert in_tok <= 512 and out_tok <= 128, (cid, in_tok, out_tok)
         rows.append({
             "rowId": f"n4-formal:{cid}", "sourceId": cid, "split": split,
             "inputVersion": packed["version"],

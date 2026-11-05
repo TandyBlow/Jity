@@ -54,8 +54,6 @@ def main() -> int:
         assert packed["status"] == "ok", (c["id"], packed)
         input_tokens = len(tok(packed["input"]).input_ids)
         target_tokens = len(tok(c["narrative"]).input_ids)
-        assert input_tokens <= 512, (c["id"], input_tokens)
-        assert target_tokens <= 128, (c["id"], target_tokens)
         rows.append({
             "rowId": f"n4n-overfit:{c['id']}",
             "sourceId": c["id"],

@@ -1,0 +1,13 @@
+# Per-file snapshot bytes (next-baseline); do not replace with a wildcard.
+# Existing text blobs use explicit checkout EOL; newly tracked bytes use -text.
+"chain-edit-result.json" -text
+"chain-out.json" -text
+"chain-units.jsonl" -text
+"drive-narration-page.cjs" -text
+"mixed-plan.json" -text
+"mixed-result.json" -text
+"mixed-round-authorized.json" -text
+"mixed-round.json" -text
+"mixed-timeout-f3.json" -text
+"mixed-timeout-f4.json" -text
+"n3-authorized-relation.json" -text

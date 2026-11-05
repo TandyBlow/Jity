@@ -1,0 +1,649 @@
+{
+ "arm": "fact",
+ "seed": 20261102,
+ "batch": 8,
+ "lr": 0.0003,
+ "epochs": 120,
+ "base": "~/n4v2_run/base/randeng-t5-77m",
+ "device": "NVIDIA GeForce RTX 4090 D",
+ "budgetSecondsPerSource": 20.0,
+ "counts": {
+  "sources": 118,
+  "train": 98,
+  "dev": 8,
+  "test": 12,
+  "trainUnits": 190,
+  "targetTokensPerEpoch": 3475,
+  "exposuresPerSource": 120
+ },
+ "steps": 0,
+ "history": [
+  {
+   "epoch": 10,
+   "devLoss": 0.8511
+  },
+  {
+   "epoch": 20,
+   "devLoss": 0.9363
+  },
+  {
+   "epoch": 30,
+   "devLoss": 0.9323
+  },
+  {
+   "epoch": 40,
+   "devLoss": 1.1116
+  },
+  {
+   "epoch": 50,
+   "devLoss": 1.0479
+  },
+  {
+   "epoch": 60,
+   "devLoss": 1.3479
+  },
+  {
+   "epoch": 70,
+   "devLoss": 1.3517
+  },
+  {
+   "epoch": 80,
+   "devLoss": 1.3709
+  },
+  {
+   "epoch": 90,
+   "devLoss": 1.518
+  },
+  {
+   "epoch": 100,
+   "devLoss": 1.2371
+  },
+  {
+   "epoch": 110,
+   "devLoss": 1.1906
+  },
+  {
+   "epoch": 120,
+   "devLoss": 1.5968
+  }
+ ],
+ "train": {
+  "optimizerSteps": 2880,
+  "wallSeconds": 158.0,
+  "targetTokensTotal": 417000,
+  "peakAllocatedGB": 2.561
+ },
+ "selectedCheckpoint": {
+  "epoch": 10,
+  "devLoss": 0.8511
+ },
+ "generation": {
+  "dev": [
+   {
+    "sourceId": "n4n-41",
+    "complete": true,
+    "seconds": 0.114,
+    "stopReasons": [
+     "eos"
+    ],
+    "output": "沈砚从潮渡上来,走进雾堤。",
+    "references": [
+     "沈砚离开潮渡，沿着石阶上了雾堤。"
+    ],
+    "calls": [
+     {
+      "factId": "f0",
+      "stopReason": "eos",
+      "complete": true,
+      "newTokens": 13,
+      "seconds": 0.112952
+     }
+    ]
+   },
+   {
+    "sourceId": "n4n-52",
+    "complete": true,
+    "seconds": 0.328,
+    "stopReasons": [
+     "eos",
+     "eos"
+    ],
+    "output": "沈砚沿着石阶下到潮渡,河风把外袍下摆吹起来。顾行舟把船停在潮渡,缆绳在木桩上绕了两圈。",
+    "references": [
+     "沈砚从潮生巷出来，在潮渡的栈桥边站住。",
+     "顾行舟从河心划过来，船头抵住潮渡的栈桥。"
+    ],
+    "calls": [
+     {
+      "factId": "f0",
+      "stopReason": "eos",
+      "complete": true,
+      "newTokens": 23,
+      "seconds": 0.163524
+     },
+     {
+      "factId": "f1",
+      "stopReason": "eos",
+      "complete": true,
+      "newTokens": 23,
+      "seconds": 0.162794
+     }
+    ]
+   },
+   {
+    "sourceId": "n4n-63",
+    "complete": true,
+    "seconds": 0.287,
+    "stopReasons": [
+     "eos",
+     "eos"
+    ],
+    "output": "沈砚在潮渡等到了最后一班船,船灯从雾里透出来。沈砚靠在墙边站了一会儿,心跳才慢下来。",
+    "references": [
+     "沈砚在潮渡等到了最后一班船，才向前走了一步。",
+     "沈砚松开手，才发现自己一直提着的那口气落回去了。"
+    ],
+    "calls": [
+     {
+      "factId": "f0",
+      "stopReason": "eos",
+      "complete": true,
+      "newTokens": 21,
+      "seconds": 0.149582
+     },
+     {
+      "factId": "f1",
+      "stopReason": "eos",
+      "complete": true,
+      "newTokens": 19,
+      "seconds": 0.135705
+     }
+    ]
+   },
+   {
+    "sourceId": "n4n-73",
+    "complete": true,
+    "seconds": 0.274,
+    "stopReasons": [
+     "eos",
+     "eos"
+    ],
+    "output": "阿棠把银鳞鱼搬上案板,鱼尾拍在案板上。阿棠的辫梢沾了白汽,发梢微微发潮。",
+    "references": [
+     "阿棠把一筐银鳞鱼搬上案板，鱼尾拍得筐沿响。",
+     "阿棠从蒸汽里出来，辫梢挂着白汽。"
+    ],
+    "calls": [
+     {
+      "factId": "f0",
+      "stopReason": "eos",
+      "complete": true,
+      "newTokens": 20,
+      "seconds": 0.143173
+     },
+     {
+      "factId": "f1",
+      "stopReason": "eos",
+      "complete": true,
+      "newTokens": 18,
+      "seconds": 0.128634
+     }
+    ]
+   },
+   {
+    "sourceId": "n4n-86",
+    "complete": true,
+    "seconds": 0.26,
+    "stopReasons": [
+     "eos",
+     "eos"
+    ],
+    "output": "阿棠从早市过来,抱着一叠干纸进了档案馆。阿棠把干纸放到桌角,纸角被风掀起。",
+    "references": [
+     "阿棠离开早市，把干纸送到潮汐档案馆。",
+     "阿棠把一叠干纸放在桌角，纸角被风掀起。"
+    ],
+    "calls": [
+     {
+      "factId": "f0",
+      "stopReason": "eos",
+      "complete": true,
+      "newTokens": 18,
+      "seconds": 0.129085
+     },
+     {
+      "factId": "f1",
+      "stopReason": "eos",
+      "complete": true,
+      "newTokens": 18,
+      "seconds": 0.128915
+     }
+    ]
+   },
+   {
+    "sourceId": "n4n-97",
+    "complete": true,
+    "seconds": 0.136,
+    "stopReasons": [
+     "eos"
+    ],
+    "output": "沈砚的衣摆沾了泥水,在鱼摊前站住。",
+    "references": [
+     "沈砚的衣摆沾了泥水，边角沉甸甸地垂着。"
+    ],
+    "calls": [
+     {
+      "factId": "f0",
+      "stopReason": "eos",
+      "complete": true,
+      "newTokens": 19,
+      "seconds": 0.135529
+     }
+    ]
+   },
+   {
+    "sourceId": "n4n-108",
+    "complete": true,
+    "seconds": 0.39,
+    "stopReasons": [
+     "eos",
+     "eos",
+     "eos"
+    ],
+    "output": "阿棠从早市过来,抱着一叠干纸进了档案馆。沈砚走到潮汐档案馆门口,把干纸送到潮汐档案馆。沈砚没有再把话咽回去,直接问了出来。",
+    "references": [
+     "阿棠从早市过来，抱着一叠干纸进了档案馆。",
+     "沈砚从潮生巷过来，推开档案馆的门。",
+     "沈砚开口时没有停顿，话已经出口。"
+    ],
+    "calls": [
+     {
+      "factId": "f0",
+      "stopReason": "eos",
+      "complete": true,
+      "newTokens": 18,
+      "seconds": 0.128979
+     },
+     {
+      "factId": "f1",
+      "stopReason": "eos",
+      "complete": true,
+      "newTokens": 20,
+      "seconds": 0.143061
+     },
+     {
+      "factId": "f2",
+      "stopReason": "eos",
+      "complete": true,
+      "newTokens": 16,
+      "seconds": 0.115091
+     }
+    ]
+   },
+   {
+    "sourceId": "n4n-119",
+    "complete": true,
+    "seconds": 0.102,
+    "stopReasons": [
+     "eos"
+    ],
+    "output": "他等了一会儿,场景里没有新的变化。",
+    "references": [
+     "周围没有别的动静，什么也没有再发生。"
+    ],
+    "calls": [
+     {
+      "factId": "f0",
+      "stopReason": "eos",
+      "complete": true,
+      "newTokens": 14,
+      "seconds": 0.101479
+     }
+    ]
+   }
+  ],
+  "test": [
+   {
+    "sourceId": "n4n-40",
+    "complete": true,
+    "seconds": 0.143,
+    "stopReasons": [
+     "eos"
+    ],
+    "output": "沈砚走到潮汐档案馆门口,把干纸送到潮汐档案馆。",
+    "references": [
+     "沈砚进了潮汐档案馆，在长桌边停下。"
+    ],
+    "calls": [
+     {
+      "factId": "f0",
+      "stopReason": "eos",
+      "complete": true,
+      "newTokens": 20,
+      "seconds": 0.142206
+     }
+    ]
+   },
+   {
+    "sourceId": "n4n-43",
+    "complete": true,
+    "seconds": 0.102,
+    "stopReasons": [
+     "eos"
+    ],
+    "output": "沈砚从潮渡回来,走进潮生巷。",
+    "references": [
+     "沈砚离开潮渡，沿着墙根回到潮生巷。"
+    ],
+    "calls": [
+     {
+      "factId": "f0",
+      "stopReason": "eos",
+      "complete": true,
+      "newTokens": 14,
+      "seconds": 0.101396
+     }
+    ]
+   },
+   {
+    "sourceId": "n4n-53",
+    "complete": true,
+    "seconds": 0.273,
+    "stopReasons": [
+     "eos",
+     "eos"
+    ],
+    "output": "沈砚走到潮汐档案馆门口,把干纸送到潮汐档案馆。阿棠从早市过来,抱着一叠干纸进了档案馆。",
+    "references": [
+     "沈砚走到潮汐档案馆门口，把湿伞收在手里。",
+     "阿棠离开早市，把干纸送到潮汐档案馆。"
+    ],
+    "calls": [
+     {
+      "factId": "f0",
+      "stopReason": "eos",
+      "complete": true,
+      "newTokens": 20,
+      "seconds": 0.14213
+     },
+     {
+      "factId": "f1",
+      "stopReason": "eos",
+      "complete": true,
+      "newTokens": 18,
+      "seconds": 0.128689
+     }
+    ]
+   },
+   {
+    "sourceId": "n4n-54",
+    "complete": true,
+    "seconds": 0.217,
+    "stopReasons": [
+     "eos",
+     "eos"
+    ],
+    "output": "沈砚从潮渡上来,走进雾堤。韩渡从潮渡上来,蹲到雾堤的钟架下。",
+    "references": [
+     "沈砚从潮渡上来，扶着铁链走到雾堤的钟架旁。",
+     "韩渡到了雾堤，眉毛上挂着雾水。"
+    ],
+    "calls": [
+     {
+      "factId": "f0",
+      "stopReason": "eos",
+      "complete": true,
+      "newTokens": 13,
+      "seconds": 0.094119
+     },
+     {
+      "factId": "f1",
+      "stopReason": "eos",
+      "complete": true,
+      "newTokens": 17,
+      "seconds": 0.12172
+     }
+    ]
+   },
+   {
+    "sourceId": "n4n-64",
+    "complete": true,
+    "seconds": 0.28,
+    "stopReasons": [
+     "eos",
+     "eos"
+    ],
+    "output": "沈砚把系泊绳从浅滩拖回来,绳子从浅滩拖回来。沈砚的呼吸有些发紧,手指也不太听使唤。",
+    "references": [
+     "沈砚把系泊绳从浅滩拖了回来，绳子还在滴水。",
+     "沈砚按住胸口，那阵闷意没有散。"
+    ],
+    "calls": [
+     {
+      "factId": "f0",
+      "stopReason": "eos",
+      "complete": true,
+      "newTokens": 22,
+      "seconds": 0.156568
+     },
+     {
+      "factId": "f1",
+      "stopReason": "eos",
+      "complete": true,
+      "newTokens": 17,
+      "seconds": 0.121697
+     }
+    ]
+   },
+   {
+    "sourceId": "n4n-65",
+    "complete": true,
+    "seconds": 0.28,
+    "stopReasons": [
+     "eos",
+     "eos"
+    ],
+    "output": "沈砚把潮汐簿缺的那页补全,又回到了档案馆。沈砚靠在墙边站了一会儿,心跳才慢下来。",
+    "references": [
+     "沈砚把潮汐簿缺的那页补全，合上了簿子。",
+     "沈砚靠在墙边站了一会儿，心跳才慢下来。"
+    ],
+    "calls": [
+     {
+      "factId": "f0",
+      "stopReason": "eos",
+      "complete": true,
+      "newTokens": 20,
+      "seconds": 0.142322
+     },
+     {
+      "factId": "f1",
+      "stopReason": "eos",
+      "complete": true,
+      "newTokens": 19,
+      "seconds": 0.135712
+     }
+    ]
+   },
+   {
+    "sourceId": "n4n-74",
+    "complete": true,
+    "seconds": 0.286,
+    "stopReasons": [
+     "eos",
+     "eos"
+    ],
+    "output": "叶知微把玻璃罩上的盐雾擦掉,灯罩透亮起来。叶知微的袖口沾了铜油,在灯影里发亮。",
+    "references": [
+     "叶知微用抹布把灯罩擦得透亮。",
+     "叶知微抬起手，袖口那片铜油很显眼。"
+    ],
+    "calls": [
+     {
+      "factId": "f0",
+      "stopReason": "eos",
+      "complete": true,
+      "newTokens": 20,
+      "seconds": 0.142018
+     },
+     {
+      "factId": "f1",
+      "stopReason": "eos",
+      "complete": true,
+      "newTokens": 20,
+      "seconds": 0.142251
+     }
+    ]
+   },
+   {
+    "sourceId": "n4n-75",
+    "complete": true,
+    "seconds": 0.286,
+    "stopReasons": [
+     "eos",
+     "eos"
+    ],
+    "output": "阿棠把干纸放到桌角,纸角被风掀起。阿棠的鞋底带着早市的泥水,在门槛上蹭了两下。",
+    "references": [
+     "阿棠把一叠干纸放在桌角，纸角被风掀起。",
+     "阿棠在石地上留下几个泥水印子。"
+    ],
+    "calls": [
+     {
+      "factId": "f0",
+      "stopReason": "eos",
+      "complete": true,
+      "newTokens": 18,
+      "seconds": 0.128514
+     },
+     {
+      "factId": "f1",
+      "stopReason": "eos",
+      "complete": true,
+      "newTokens": 22,
+      "seconds": 0.155578
+     }
+    ]
+   },
+   {
+    "sourceId": "n4n-87",
+    "complete": true,
+    "seconds": 0.259,
+    "stopReasons": [
+     "eos",
+     "eos"
+    ],
+    "output": "韩渡从潮渡上来,蹲到雾堤的钟架下。韩渡把松脱的钟绳重新系紧,钟绳绷直了。",
+    "references": [
+     "韩渡到了雾堤，眉毛上挂着雾水。",
+     "韩渡把松脱的钟绳重新系紧，钟绳绷直了。"
+    ],
+    "calls": [
+     {
+      "factId": "f0",
+      "stopReason": "eos",
+      "complete": true,
+      "newTokens": 17,
+      "seconds": 0.121635
+     },
+     {
+      "factId": "f1",
+      "stopReason": "eos",
+      "complete": true,
+      "newTokens": 19,
+      "seconds": 0.135738
+     }
+    ]
+   },
+   {
+    "sourceId": "n4n-98",
+    "complete": true,
+    "seconds": 0.102,
+    "stopReasons": [
+     "eos"
+    ],
+    "output": "沈砚的鞋底沾了湿石板的水。",
+    "references": [
+     "沈砚的鞋底沾了湿石板的水，在身后留下浅印。"
+    ],
+    "calls": [
+     {
+      "factId": "f0",
+      "stopReason": "eos",
+      "complete": true,
+      "newTokens": 14,
+      "seconds": 0.101336
+     }
+    ]
+   },
+   {
+    "sourceId": "n4n-109",
+    "complete": true,
+    "seconds": 0.34,
+    "stopReasons": [
+     "eos",
+     "eos",
+     "eos"
+    ],
+    "output": "韩渡从潮渡上来,蹲到雾堤的钟架下。沈砚从潮渡上来,走进雾堤。沈砚本来想把话咽回去,这次却先开了口。",
+    "references": [
+     "韩渡离开潮渡，沿着石阶上到雾堤。",
+     "沈砚从潮渡一路走到雾堤，风把他的袖口吹得鼓起来。",
+     "沈砚本来想把话咽回去，这次却先开了口。"
+    ],
+    "calls": [
+     {
+      "factId": "f0",
+      "stopReason": "eos",
+      "complete": true,
+      "newTokens": 17,
+      "seconds": 0.122065
+     },
+     {
+      "factId": "f1",
+      "stopReason": "eos",
+      "complete": true,
+      "newTokens": 13,
+      "seconds": 0.094502
+     },
+     {
+      "factId": "f2",
+      "stopReason": "eos",
+      "complete": true,
+      "newTokens": 17,
+      "seconds": 0.12149
+     }
+    ]
+   },
+   {
+    "sourceId": "n4n-120",
+    "complete": true,
+    "seconds": 0.102,
+    "stopReasons": [
+     "eos"
+    ],
+    "output": "他等了一会儿,场景里没有新的变化。",
+    "references": [
+     "他等了一会儿，场景里没有新的变化。"
+    ],
+    "calls": [
+     {
+      "factId": "f0",
+      "stopReason": "eos",
+      "complete": true,
+      "newTokens": 14,
+      "seconds": 0.101197
+     }
+    ]
+   }
+  ]
+ },
+ "summary": {
+  "devComplete": 8,
+  "devSources": 8,
+  "testComplete": 12,
+  "testSources": 12,
+  "devLatencySeconds": 1.891,
+  "testLatencySeconds": 2.67
+ }
+}

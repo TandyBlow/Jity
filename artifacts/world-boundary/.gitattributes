@@ -1,0 +1,22 @@
+# Per-file snapshot bytes (next-baseline); do not replace with a wildcard.
+# Existing text blobs use explicit checkout EOL; newly tracked bytes use -text.
+"boundary-confirm40.jsonl" -text
+"boundary-manifest.json" -text
+"boundary-train.json" -text
+"boundary-train80.jsonl" -text
+"boundary2-confirm40.jsonl" -text
+"boundary2-manifest.json" -text
+"boundary2-train.json" -text
+"boundary2-train80.jsonl" -text
+"confirm-b.json" -text
+"confirm-b240.json" -text
+"confirm-u240.json" -text
+"confirm2-u240.json" -text
+"confirm2-v2-240.json" -text
+"confirm2-v2best.json" -text
+"diag-b.json" -text
+"diag-b240.json" -text
+"diag2-v2best.json" -text
+"rounds-b.jsonl" -text
+"rounds-b240.jsonl" -text
+"rounds-v2.jsonl" -text

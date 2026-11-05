@@ -1,2 +1,34 @@
 # D1's unchanged rubric was registered with LF bytes.
 n2-annotation-rubric.md text eol=lf
+
+# Per-file snapshot bytes (next-baseline); do not replace with a wildcard.
+# Existing text blobs use explicit checkout EOL; newly tracked bytes use -text.
+"README.md" text eol=crlf
+"n4-ablation-confirm-result.md" -text
+"n4-cf24-result.md" -text
+"n4-cf24-v2-result.md" -text
+"n4-conservative-edit-baseline.md" -text
+"n4-edit-layer-freeze.md" -text
+"n4-expand2-object-result.md" -text
+"n4-expand80-result.md" -text
+"n4-fact-arm-input-ablation.md" -text
+"n4-final24-confirmation.md" -text
+"n4-group-arm-material.md" -text
+"n4-group-arm-result.md" -text
+"n4-group-diagnosis.md" -text
+"n4-group-target-revision-result.md" -text
+"n4-minimal-edit-stage.md" -text
+"n4-mix-ratio-comparison.md" -text
+"n4-object-arm-comparison.md" -text
+"n4-relation-authorization.md" -text
+"n4-sanity-contract-fix-result.md" -text
+"n4-sanity-fact-contract.md" -text
+"n4-single-fact-baseline-freeze.md" -text
+"n4-stage-close-2026-11-04.md" -text
+"n4-stage-v2-transition.md" -text
+"n4-task-shape-comparison.md" -text
+"n4-training-contract-audit.md" -text
+"n4-training-contract-unified.md" -text
+"n4-training-plan.md" -text
+"n4-two-arm-result.md" -text
+"n4-version-decision-2026-11-04.md" -text

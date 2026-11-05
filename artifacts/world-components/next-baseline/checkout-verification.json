@@ -1,0 +1,23 @@
+{
+  "autocrlf": false,
+  "snapshotFilesMatched": 342,
+  "runFreezeMatches": {
+    "experiments\\world-components\\n4_narrative_dev\\train_n4_formal.py": true,
+    "experiments\\world-components\\n4_narrative_dev\\train_n4_struct.py": true,
+    "experiments\\world-components\\n4_narrative_dev\\train_verbalizer.py": true,
+    "experiments\\world-components\\n4_narrative_dev\\eval_n4_holdout.py": true,
+    "experiments\\world-components\\n4_narrative_dev\\sequence_policy.py": true,
+    "experiments\\world-components\\n4_narrative_dev\\smoke_full_length.py": true,
+    "experiments\\world-components\\n4_narrative_dev\\verify_sequence_policy.py": true,
+    "experiments\\world-components\\n4_narrative_dev\\test_sequence_policy.py": true,
+    "experiments\\world-components\\n4_narrative_dev\\formal_pairs.jsonl": true,
+    "experiments\\world-components\\n4_narrative_dev\\verbalizer_pairs.jsonl": true,
+    "experiments\\world-components\\n4_narrative_dev\\holdout_pairs.jsonl": true,
+    "experiments\\world-components\\n4_rewrite60\\corpus140.jsonl": true,
+    "experiments\\world-components\\n4_rewrite60\\checker.py": true,
+    "experiments\\world-components\\n4_rewrite60\\checker-v7-freeze.json": true,
+    "experiments\\world-components\\n4_rewrite60\\isolated-v1\\isolated-v1.jsonl": true,
+    "experiments\\world-components\\n4_rewrite60\\isolated-v1\\isolated-v1.labels.json": true
+  },
+  "stagedFiles": 363
+}

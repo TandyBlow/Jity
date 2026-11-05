@@ -1,0 +1,486 @@
+{
+  "purpose": "Encoding audit; no model inference or quality score",
+  "scriptSha256": "0ee8579d385b2de79a12309741bfb97ff2aadc873940b8e11be22a83841e2a0c",
+  "transformersVersion": "4.57.3",
+  "tokenizer": "D:\\others\\Jity\\.local\\world-components-worktree\\experiments\\world-components\\assets\\randeng-t5-77m",
+  "tokenizerFiles": {
+    "spiece.model": "c65feffa65ff0378759778193852083d23349cb1b40c906e9463a12f8076ff32",
+    "tokenizer_config.json": "af072c7d91576727b73b161e484110848724c5243d6256ee8c2e505f0b044880",
+    "special_tokens_map.json": "09059cedc26bc46bc09a52f05b92d4922e11917e87f3b92059bb1a63a59ab2c4"
+  },
+  "legacy": false,
+  "addSpecialTokens": true,
+  "truncationSide": "right",
+  "budgets": {
+    "input": 512,
+    "targetIncludingEOS": 128
+  },
+  "corpora": [
+    {
+      "path": "experiments\\world-components\\n4_narrative_dev\\training_pairs.jsonl",
+      "sha256": "2338c6dd3ec5a306009cebfeb4089320e61948c707a193e4c09f8477eac6eb6c",
+      "rows": 12,
+      "inputTokens": {
+        "min": 287,
+        "median": 332.5,
+        "max": 390
+      },
+      "targetTokens": {
+        "min": 75,
+        "median": 93.5,
+        "max": 99
+      },
+      "inputOverflow": 0,
+      "targetOverflow": 0,
+      "bothFit": 12,
+      "fits768Input256Target": 12,
+      "bySplit": {
+        "overfit-train": {
+          "rows": 9,
+          "inputOverflow": 0,
+          "targetOverflow": 0,
+          "bothFit": 9
+        },
+        "overfit-check": {
+          "rows": 3,
+          "inputOverflow": 0,
+          "targetOverflow": 0,
+          "bothFit": 3
+        }
+      },
+      "overflowRows": []
+    },
+    {
+      "path": "experiments\\world-components\\n4_narrative_dev\\formal_pairs.jsonl",
+      "sha256": "bda3afb3f037554619c0476f7e07a2f35ee0faf7fb668b2482286be3c9d2a175",
+      "rows": 120,
+      "inputTokens": {
+        "min": 265,
+        "median": 346.0,
+        "max": 422
+      },
+      "targetTokens": {
+        "min": 60,
+        "median": 69.0,
+        "max": 99
+      },
+      "inputOverflow": 0,
+      "targetOverflow": 0,
+      "bothFit": 120,
+      "fits768Input256Target": 120,
+      "bySplit": {
+        "formal-train": {
+          "rows": 100,
+          "inputOverflow": 0,
+          "targetOverflow": 0,
+          "bothFit": 100
+        },
+        "formal-holdout": {
+          "rows": 12,
+          "inputOverflow": 0,
+          "targetOverflow": 0,
+          "bothFit": 12
+        },
+        "formal-dev": {
+          "rows": 8,
+          "inputOverflow": 0,
+          "targetOverflow": 0,
+          "bothFit": 8
+        }
+      },
+      "overflowRows": []
+    },
+    {
+      "path": "experiments\\world-components\\n4_rewrite60\\corpus140.jsonl",
+      "sha256": "986201851612f04148125ec387bce7caead141cf077d8ea84b3b78071720f2ac",
+      "rows": 140,
+      "inputTokens": {
+        "min": 320,
+        "median": 417.5,
+        "max": 574
+      },
+      "targetTokens": {
+        "min": 72,
+        "median": 95.0,
+        "max": 200
+      },
+      "inputOverflow": 8,
+      "targetOverflow": 25,
+      "bothFit": 109,
+      "fits768Input256Target": 140,
+      "bySplit": {
+        "train": {
+          "rows": 100,
+          "inputOverflow": 5,
+          "targetOverflow": 15,
+          "bothFit": 81
+        },
+        "dev": {
+          "rows": 20,
+          "inputOverflow": 2,
+          "targetOverflow": 0,
+          "bothFit": 18
+        },
+        "test": {
+          "rows": 20,
+          "inputOverflow": 1,
+          "targetOverflow": 10,
+          "bothFit": 10
+        }
+      },
+      "overflowRows": [
+        {
+          "id": "r01",
+          "split": "train",
+          "inputTokens": 494,
+          "targetTokens": 172,
+          "targetTruncation": {
+            "removedTokens": 44,
+            "retainedTail": "。 韩渡站在钟架旁边,旧呢外套从肩头裂到腰,本人却一句没提,只把衣襟按了按",
+            "droppedTail": "。 沈砚低头看自己的手,忽然觉出指头在抖。不是因为疼。雾里什么也看不见,越是看不见,心里越像被什么攥了一把。"
+          }
+        },
+        {
+          "id": "r02",
+          "split": "train",
+          "inputTokens": 555,
+          "targetTokens": 176,
+          "inputTruncation": {
+            "removedTokens": 43,
+            "retainedTail": "沈砚;第三人称限知;只写沈砚的内心,他人只写可见动作。 要求:写场景、行动与视角",
+            "droppedTail": "人物心理;不写任务标题、数值面板、具体时长、字段名;不新增未列出的具名人物/物品/地点;他人只写可见动作。 正文:"
+          },
+          "targetTruncation": {
+            "removedTokens": 48,
+            "retainedTail": "人谁也没有先开口。沈砚抬手摸了一下额角,那里已经肿起一块,热得发胀。 他忽然明白",
+            "droppedTail": "这不是两个人恰好路过。石阶只有一条,他们一上一下,把他夹在中间。心里那点侥幸一点点退下去,退到只剩一个念头:得从这里出去。"
+          }
+        },
+        {
+          "id": "r03",
+          "split": "train",
+          "inputTokens": 413,
+          "targetTokens": 166,
+          "targetTruncation": {
+            "removedTokens": 38,
+            "retainedTail": "骨上那根修过的弯钩露出来。灯影里多了一个人的轮廓,肩上搭着缆绳。 心里那点稳",
+            "droppedTail": "当被磨掉一层。他忽然想不起自己出门时有没有锁门,这件小事在脑子里转了两圈,怎么也摁不下去。"
+          }
+        },
+        {
+          "id": "r04",
+          "split": "train",
+          "inputTokens": 390,
+          "targetTokens": 157,
+          "targetTruncation": {
+            "removedTokens": 29,
+            "retainedTail": "了半个港区,什么也没有带回来;这会儿坐着,反倒觉得那一路的脚步声还在耳边响。 手指",
+            "droppedTail": "按在纸上,迟迟没有翻页。屋里静得能听见灯芯烧到水汽的那一点轻响。"
+          }
+        },
+        {
+          "id": "r05",
+          "split": "train",
+          "inputTokens": 410,
+          "targetTokens": 143,
+          "targetTruncation": {
+            "removedTokens": 15,
+            "retainedTail": "罐口的油痕还是湿的。 心里那根弦无声地绷紧。他没有去碰罐子,只把位置记下来",
+            "droppedTail": ":谁在这儿动过手,动完为什么不再收好。"
+          }
+        },
+        {
+          "id": "r06",
+          "split": "train",
+          "inputTokens": 361,
+          "targetTokens": 132,
+          "targetTruncation": {
+            "removedTokens": 4,
+            "retainedTail": "掉了。 他站着听了一会儿浪。手里有东西,心里反倒定了些;至少这一回,是他自己伸手",
+            "droppedTail": "去拿的。"
+          }
+        },
+        {
+          "id": "r07",
+          "split": "train",
+          "inputTokens": 451,
+          "targetTokens": 141,
+          "targetTruncation": {
+            "removedTokens": 13,
+            "retainedTail": "簿一起推到桌角。 灯亮着,纸上的旧墨迹看得清了。他忽然觉得这一件小事做成",
+            "droppedTail": "之后,别的那些悬着的事也不那么压人了。"
+          }
+        },
+        {
+          "id": "r08",
+          "split": "train",
+          "inputTokens": 437,
+          "targetTokens": 176,
+          "targetTruncation": {
+            "removedTokens": 48,
+            "retainedTail": "它捏在手心掂了掂,才揣进怀里。 两个人都没有多说什么。顾行舟转身要走,走了",
+            "droppedTail": "两步又停下,回头看了他一眼。 沈砚站在原地,忽然觉出这件事比自己想的要重,把钥匙交出去,就是把一半的退路也交了出去。"
+          }
+        },
+        {
+          "id": "r10",
+          "split": "train",
+          "inputTokens": 395,
+          "targetTokens": 144,
+          "targetTruncation": {
+            "removedTokens": 16,
+            "retainedTail": "那道口子。 他知道她手脚快,也知道这处摊棚里谁的手更快。心里那点疑影没有说",
+            "droppedTail": "出口,只把视线在她围裙上多停了一息。"
+          }
+        },
+        {
+          "id": "r11",
+          "split": "train",
+          "inputTokens": 489,
+          "targetTokens": 165,
+          "targetTruncation": {
+            "removedTokens": 37,
+            "retainedTail": "船上的人绕了两圈。撑船的那位今天话多了些,说了两句才想起收缆绳,这不像他。",
+            "droppedTail": "等到这一班,沈砚心里反倒空了:没有想好的话,也没有把握。只是觉得总得等到最后一班,才算把今天过完。"
+          }
+        },
+        {
+          "id": "r12",
+          "split": "train",
+          "inputTokens": 455,
+          "targetTokens": 175,
+          "targetTruncation": {
+            "removedTokens": 47,
+            "retainedTail": "绳头重新绕紧。绳子粗麻,绕到第三圈,沈砚才觉出自己的手在抖。 他松开手,",
+            "droppedTail": "退开半步。雾里看不见对方的脸,只听见呼吸。方才那一下用了多少力气,他自己也说不清;想明白这件事的时候,心里像落了一块石头。"
+          }
+        },
+        {
+          "id": "r15",
+          "split": "train",
+          "inputTokens": 392,
+          "targetTokens": 137,
+          "targetTruncation": {
+            "removedTokens": 9,
+            "retainedTail": "窗里过来,吹在湿的地方有点凉。奇怪的是心反倒定了,手上有一处疼得清楚,别的那些乱麻似",
+            "droppedTail": "的事,就都排到后面去了。"
+          }
+        },
+        {
+          "id": "r17",
+          "split": "train",
+          "inputTokens": 385,
+          "targetTokens": 133,
+          "targetTruncation": {
+            "removedTokens": 5,
+            "retainedTail": "只是等最后一班船,现在多了一件要做的事。他忽然发现自己并不讨厌这样:有一件明确的事压着,别的念头",
+            "droppedTail": "就安静了。"
+          }
+        },
+        {
+          "id": "r18",
+          "split": "train",
+          "inputTokens": 504,
+          "targetTokens": 160,
+          "targetTruncation": {
+            "removedTokens": 32,
+            "retainedTail": ",谁也没有先开口。 船灯还没点,水面只剩一层灰亮。 沈砚站在木桩边,忽然",
+            "droppedTail": "觉出这一天的分量:人都在,话一句也没有说出口。雾把每个人都收得很小,小到只剩下脚步声。"
+          }
+        },
+        {
+          "id": "r20",
+          "split": "train",
+          "inputTokens": 368,
+          "targetTokens": 137,
+          "targetTruncation": {
+            "removedTokens": 9,
+            "retainedTail": "那根一直绷着的弦却慢慢松了,松下来,反而更沉。他忽然想清楚一件事:这一夜等不等",
+            "droppedTail": "得到,明天都要照原来的样子来。"
+          }
+        },
+        {
+          "id": "r21",
+          "split": "train",
+          "inputTokens": 571,
+          "targetTokens": 124,
+          "inputTruncation": {
+            "removedTokens": 59,
+            "retainedTail": "4 f5|组后时间=过去了一会儿 视角:沈砚;第三人称限知;只写沈砚的内心,",
+            "droppedTail": "他人只写可见动作。 要求:写场景、行动与视角人物心理;不写任务标题、数值面板、具体时长、字段名;不新增未列出的具名人物/物品/地点;他人只写可见动作。 正文:"
+          }
+        },
+        {
+          "id": "r44",
+          "split": "train",
+          "inputTokens": 574,
+          "targetTokens": 92,
+          "inputTruncation": {
+            "removedTokens": 62,
+            "retainedTail": "3|f2 f3|组后时间=过去了一会儿 视角:沈砚;第三人称限知;只写沈砚",
+            "droppedTail": "的内心,他人只写可见动作。 要求:写场景、行动与视角人物心理;不写任务标题、数值面板、具体时长、字段名;不新增未列出的具名人物/物品/地点;他人只写可见动作。 正文:"
+          }
+        },
+        {
+          "id": "r59",
+          "split": "train",
+          "inputTokens": 542,
+          "targetTokens": 109,
+          "inputTruncation": {
+            "removedTokens": 30,
+            "retainedTail": "的内心,他人只写可见动作。 要求:写场景、行动与视角人物心理;不写任务标题、数值面板、",
+            "droppedTail": "具体时长、字段名;不新增未列出的具名人物/物品/地点;他人只写可见动作。 正文:"
+          }
+        },
+        {
+          "id": "r93",
+          "split": "train",
+          "inputTokens": 515,
+          "targetTokens": 98,
+          "inputTruncation": {
+            "removedTokens": 3,
+            "retainedTail": "数值面板、具体时长、字段名;不新增未列出的具名人物/物品/地点;他人只写可见动作。",
+            "droppedTail": "正文:"
+          }
+        },
+        {
+          "id": "r106",
+          "split": "dev",
+          "inputTokens": 520,
+          "targetTokens": 96,
+          "inputTruncation": {
+            "removedTokens": 8,
+            "retainedTail": "不写任务标题、数值面板、具体时长、字段名;不新增未列出的具名人物/物品/地点;他人",
+            "droppedTail": "只写可见动作。 正文:"
+          }
+        },
+        {
+          "id": "r119",
+          "split": "dev",
+          "inputTokens": 543,
+          "targetTokens": 85,
+          "inputTruncation": {
+            "removedTokens": 31,
+            "retainedTail": "砚的内心,他人只写可见动作。 要求:写场景、行动与视角人物心理;不写任务标题、数值面板",
+            "droppedTail": "、具体时长、字段名;不新增未列出的具名人物/物品/地点;他人只写可见动作。 正文:"
+          }
+        },
+        {
+          "id": "n4n-01",
+          "split": "test",
+          "inputTokens": 446,
+          "targetTokens": 200,
+          "targetTruncation": {
+            "removedTokens": 72,
+            "retainedTail": "上了塔顶,风忽然大起来,吹得铜灯罩嗡嗡地响,火苗贴着玻璃罩晃。他解开油",
+            "droppedTail": "布包,纸里的灯芯还干着,带着未散的油味。换好之后,火苗重新立住。他在风里站了一会儿没有走,先把手在衣襟上擦干,才慢慢觉得脑子清亮起来,这一路想过的事,到这时候才一条条排开。"
+          }
+        },
+        {
+          "id": "n4n-02",
+          "split": "test",
+          "inputTokens": 406,
+          "targetTokens": 143,
+          "targetTruncation": {
+            "removedTokens": 15,
+            "retainedTail": "下摆已经结了一层盐霜,硬硬地贴在小腿上。风从河口吹过来,冷得贴人。他站",
+            "droppedTail": "着喘了一会儿,才把绳子绕好提起来。"
+          }
+        },
+        {
+          "id": "n4n-03",
+          "split": "test",
+          "inputTokens": 445,
+          "targetTokens": 131,
+          "targetTruncation": {
+            "removedTokens": 3,
+            "retainedTail": ",又慢慢拼回去。他一句话也没说,把绳头往木桩上又绕了一道,手背上的茧被水浸得",
+            "droppedTail": "发白。"
+          }
+        },
+        {
+          "id": "n4n-04",
+          "split": "test",
+          "inputTokens": 515,
+          "targetTokens": 149,
+          "inputTruncation": {
+            "removedTokens": 3,
+            "retainedTail": "数值面板、具体时长、字段名;不新增未列出的具名人物/物品/地点;他人只写可见动作。",
+            "droppedTail": "正文:"
+          },
+          "targetTruncation": {
+            "removedTokens": 21,
+            "retainedTail": "时他还没抬头,阿棠抱着一叠干纸进来,围裙上沾着鱼鳞,纸往桌角一放,鞋",
+            "droppedTail": "底在门槛上蹭了两下才转出去。屋里又只剩雨声。"
+          }
+        },
+        {
+          "id": "n4n-05",
+          "split": "test",
+          "inputTokens": 413,
+          "targetTokens": 182,
+          "targetTruncation": {
+            "removedTokens": 54,
+            "retainedTail": "不出去,被海风推回来,闷闷地压在耳朵上。 拉完他站着没动,手上还攥着",
+            "droppedTail": "绳子。雾没有因为钟响散开,堤面上也没有别的声音。他忽然发现自己刚才一直屏着气,到这时候才慢慢松下来。有些事情想不明白,越是想,越觉得心里空了一块。"
+          }
+        },
+        {
+          "id": "n4n-06",
+          "split": "test",
+          "inputTokens": 422,
+          "targetTokens": 130,
+          "targetTruncation": {
+            "removedTokens": 2,
+            "retainedTail": "了,握在手里还是凉的。窗外的雨声一阵一阵,他坐在床沿上听了一会儿,忽然不那么急",
+            "droppedTail": "了。"
+          }
+        },
+        {
+          "id": "n4n-07",
+          "split": "test",
+          "inputTokens": 401,
+          "targetTokens": 152,
+          "targetTruncation": {
+            "removedTokens": 24,
+            "retainedTail": "。桌上的茶早凉了,杯口凝着一圈水汽,慢慢散开。 门槛外一直没有脚步声。他",
+            "droppedTail": "坐了一会儿,什么也没有发生;这一夜就这样过去了一段,长得让人心里发空。"
+          }
+        },
+        {
+          "id": "n4n-08",
+          "split": "test",
+          "inputTokens": 444,
+          "targetTokens": 147,
+          "targetTruncation": {
+            "removedTokens": 19,
+            "retainedTail": "子边,鱼鳞和泥水一起沾上去。 阿棠抬头笑着说了句什么,被棚下的嘈杂盖掉了。他没",
+            "droppedTail": "听清,也没有追问,站在原地看了一会儿才往回走。"
+          }
+        },
+        {
+          "id": "n4n-09",
+          "split": "test",
+          "inputTokens": 498,
+          "targetTokens": 158,
+          "targetTruncation": {
+            "removedTokens": 30,
+            "retainedTail": "的船就看不见了。 沈砚本来想好的话到了嘴边,这一次没有咽回去。他直接问她,灯芯还",
+            "droppedTail": "够不够用。话出口之后两个人都愣了一下,叶知微抬起眼睛看他,手里的抹布停在半空。"
+          }
+        },
+        {
+          "id": "n4n-10",
+          "split": "test",
+          "inputTokens": 370,
+          "targetTokens": 136,
+          "targetTruncation": {
+            "removedTokens": 8,
+            "retainedTail": "停了一下。巷子很静,静得能听见自己的呼吸。这一趟走下来,他反倒不急着了,脑子里的事",
+            "droppedTail": "一件件回到该在的位置上。"
+          }
+        }
+      ]
+    }
+  ]
+}

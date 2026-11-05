@@ -1,0 +1,936 @@
+{
+ "summary": {
+  "width": 2,
+  "budget": 20.0,
+  "cases": 40,
+  "greedySeconds": 14.88,
+  "beamSeconds": 51.45,
+  "greedyComplete": 40,
+  "beamComplete": 40,
+  "greedySteps": 561,
+  "beamSteps": 669,
+  "beamTruncated": 0
+ },
+ "rows": [
+  {
+   "caseId": "d000",
+   "source": "confirm",
+   "group": "appearance_changed",
+   "kind": "appearance_changed",
+   "name": "沈砚",
+   "factText": "膝盖湿了",
+   "greedy": {
+    "text": "沈砚的膝盖湿了。",
+    "complete": true,
+    "steps": 10,
+    "seconds": 2.881
+   },
+   "beam": {
+    "text": "沈砚的膝盖湿了。",
+    "complete": true,
+    "steps": 15,
+    "seconds": 1.485,
+    "candidates": 3,
+    "truncated": false,
+    "score": -0.517
+   }
+  },
+  {
+   "caseId": "d001",
+   "source": "confirm",
+   "group": "appearance_changed",
+   "kind": "appearance_changed",
+   "name": "沈砚",
+   "factText": "膝盖结了盐霜",
+   "greedy": {
+    "text": "沈砚的膝盖结了盐霜。",
+    "complete": true,
+    "steps": 12,
+    "seconds": 0.256
+   },
+   "beam": {
+    "text": "沈砚的膝盖结了盐霜。",
+    "complete": true,
+    "steps": 19,
+    "seconds": 1.458,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.263
+   }
+  },
+  {
+   "caseId": "d002",
+   "source": "confirm",
+   "group": "appearance_changed",
+   "kind": "appearance_changed",
+   "name": "沈砚",
+   "factText": "膝盖落着灰",
+   "greedy": {
+    "text": "沈砚的膝盖落着灰,袖口沾着铜油。",
+    "complete": true,
+    "steps": 18,
+    "seconds": 0.384
+   },
+   "beam": {
+    "text": "沈砚的膝盖落着灰。",
+    "complete": true,
+    "steps": 22,
+    "seconds": 1.722,
+    "candidates": 4,
+    "truncated": false,
+    "score": -0.9155
+   }
+  },
+  {
+   "caseId": "d003",
+   "source": "confirm",
+   "group": "appearance_changed",
+   "kind": "appearance_changed",
+   "name": "沈砚",
+   "factText": "膝盖冻得发僵",
+   "greedy": {
+    "text": "沈砚的膝盖冻得发僵,胸口发僵。",
+    "complete": true,
+    "steps": 17,
+    "seconds": 0.347
+   },
+   "beam": {
+    "text": "沈砚的膝盖冻得发僵。",
+    "complete": true,
+    "steps": 17,
+    "seconds": 1.239,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.9638
+   }
+  },
+  {
+   "caseId": "d004",
+   "source": "confirm",
+   "group": "appearance_changed",
+   "kind": "appearance_changed",
+   "name": "沈砚",
+   "factText": "帽檐结了盐霜",
+   "greedy": {
+    "text": "沈砚的帽檐结了盐霜。",
+    "complete": true,
+    "steps": 12,
+    "seconds": 0.269
+   },
+   "beam": {
+    "text": "沈砚的帽檐结了盐霜。",
+    "complete": true,
+    "steps": 21,
+    "seconds": 1.751,
+    "candidates": 3,
+    "truncated": false,
+    "score": -0.2077
+   }
+  },
+  {
+   "caseId": "d005",
+   "source": "confirm",
+   "group": "appearance_changed",
+   "kind": "appearance_changed",
+   "name": "沈砚",
+   "factText": "围巾结了盐霜",
+   "greedy": {
+    "text": "沈砚的围巾结了盐霜。",
+    "complete": true,
+    "steps": 12,
+    "seconds": 0.258
+   },
+   "beam": {
+    "text": "沈砚的围巾结了盐霜。",
+    "complete": true,
+    "steps": 21,
+    "seconds": 1.657,
+    "candidates": 4,
+    "truncated": false,
+    "score": -0.2136
+   }
+  },
+  {
+   "caseId": "d006",
+   "source": "confirm",
+   "group": "appearance_changed",
+   "kind": "appearance_changed",
+   "name": "沈砚",
+   "factText": "发梢结了盐霜",
+   "greedy": {
+    "text": "沈砚发梢结了盐霜。",
+    "complete": true,
+    "steps": 11,
+    "seconds": 0.233
+   },
+   "beam": {
+    "text": "沈砚发梢结了盐霜。",
+    "complete": true,
+    "steps": 12,
+    "seconds": 1.011,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.7655
+   }
+  },
+  {
+   "caseId": "d007",
+   "source": "confirm",
+   "group": "appearance_changed",
+   "kind": "appearance_changed",
+   "name": "沈砚",
+   "factText": "掌心沾了泥",
+   "greedy": {
+    "text": "沈砚的掌心沾了泥。",
+    "complete": true,
+    "steps": 11,
+    "seconds": 0.23
+   },
+   "beam": {
+    "text": "沈砚的掌心沾了泥。",
+    "complete": true,
+    "steps": 11,
+    "seconds": 1.347,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.6615
+   }
+  },
+  {
+   "caseId": "d008",
+   "source": "confirm",
+   "group": "appearance_changed",
+   "kind": "appearance_changed",
+   "name": "沈砚",
+   "factText": "掌心结了盐霜",
+   "greedy": {
+    "text": "沈砚的掌心结了盐霜。",
+    "complete": true,
+    "steps": 12,
+    "seconds": 0.505
+   },
+   "beam": {
+    "text": "沈砚的掌心结了盐霜。",
+    "complete": true,
+    "steps": 12,
+    "seconds": 1.073,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.7041
+   }
+  },
+  {
+   "caseId": "d009",
+   "source": "confirm",
+   "group": "appearance_changed",
+   "kind": "appearance_changed",
+   "name": "沈砚",
+   "factText": "掌心落着灰",
+   "greedy": {
+    "text": "沈砚的掌心落着灰。",
+    "complete": true,
+    "steps": 11,
+    "seconds": 0.265
+   },
+   "beam": {
+    "text": "沈砚的掌心落着灰。",
+    "complete": true,
+    "steps": 18,
+    "seconds": 1.365,
+    "candidates": 3,
+    "truncated": false,
+    "score": -0.7741
+   }
+  },
+  {
+   "caseId": "d010",
+   "source": "confirm",
+   "group": "appearance_changed",
+   "kind": "appearance_changed",
+   "name": "沈砚",
+   "factText": "衣领湿了，肩头也湿了",
+   "greedy": {
+    "text": "沈砚的衣领湿了,肩头也湿了。",
+    "complete": true,
+    "steps": 16,
+    "seconds": 0.362
+   },
+   "beam": {
+    "text": "沈砚的衣领湿了,肩头也湿了。",
+    "complete": true,
+    "steps": 16,
+    "seconds": 1.227,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.1682
+   }
+  },
+  {
+   "caseId": "d011",
+   "source": "confirm",
+   "group": "appearance_changed",
+   "kind": "appearance_changed",
+   "name": "顾行舟",
+   "factText": "手背沾了泥，帽檐也沾了泥",
+   "greedy": {
+    "text": "顾行舟的手背沾了泥,帽檐也沾了泥。",
+    "complete": true,
+    "steps": 18,
+    "seconds": 0.444
+   },
+   "beam": {
+    "text": "顾行舟的手背沾了泥,帽檐也沾了泥。",
+    "complete": true,
+    "steps": 18,
+    "seconds": 1.38,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.4411
+   }
+  },
+  {
+   "caseId": "d012",
+   "source": "confirm",
+   "group": "appearance_changed",
+   "kind": "appearance_changed",
+   "name": "叶知微",
+   "factText": "肩头结了盐霜，发梢也结了盐霜",
+   "greedy": {
+    "text": "叶知微的肩头结了盐霜,发梢也结了盐霜。",
+    "complete": true,
+    "steps": 21,
+    "seconds": 0.437
+   },
+   "beam": {
+    "text": "叶知微的肩头结了盐霜,发梢也结了盐霜。",
+    "complete": true,
+    "steps": 22,
+    "seconds": 1.66,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.2317
+   }
+  },
+  {
+   "caseId": "d013",
+   "source": "confirm",
+   "group": "appearance_changed",
+   "kind": "appearance_changed",
+   "name": "阿棠",
+   "factText": "围巾落着灰，脚踝也落着灰",
+   "greedy": {
+    "text": "阿棠的围巾落着灰,脚踝也落着灰。",
+    "complete": true,
+    "steps": 17,
+    "seconds": 0.342
+   },
+   "beam": {
+    "text": "阿棠的围巾落着灰,脚踝也落着灰。",
+    "complete": true,
+    "steps": 17,
+    "seconds": 1.256,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.0902
+   }
+  },
+  {
+   "caseId": "d014",
+   "source": "confirm",
+   "group": "appearance_changed",
+   "kind": "appearance_changed",
+   "name": "韩渡",
+   "factText": "掌心冻得发僵，背脊也冻得发僵",
+   "greedy": {
+    "text": "韩渡的掌心冻得发僵,背脊也冻得发僵。",
+    "complete": true,
+    "steps": 19,
+    "seconds": 0.376
+   },
+   "beam": {
+    "text": "韩渡的掌心冻得发僵,背脊也冻得发僵。",
+    "complete": true,
+    "steps": 19,
+    "seconds": 1.408,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.6023
+   }
+  },
+  {
+   "caseId": "d015",
+   "source": "confirm",
+   "group": "appearance_changed",
+   "kind": "appearance_changed",
+   "name": "沈砚",
+   "factText": "裤脚蹭破了皮，鞋面沾了泥",
+   "greedy": {
+    "text": "沈砚的裤脚蹭破了皮,鞋面沾了泥。",
+    "complete": true,
+    "steps": 18,
+    "seconds": 0.398
+   },
+   "beam": {
+    "text": "沈砚的裤脚蹭破了皮,鞋面沾了泥。",
+    "complete": true,
+    "steps": 18,
+    "seconds": 1.407,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.204
+   }
+  },
+  {
+   "caseId": "d016",
+   "source": "confirm",
+   "group": "appearance_changed",
+   "kind": "appearance_changed",
+   "name": "顾行舟",
+   "factText": "衣领湿了，鬓角结了盐霜",
+   "greedy": {
+    "text": "顾行舟的衣领湿了,鬓角结了盐霜。",
+    "complete": true,
+    "steps": 18,
+    "seconds": 0.438
+   },
+   "beam": {
+    "text": "顾行舟的衣领湿了,鬓角结了盐霜。",
+    "complete": true,
+    "steps": 19,
+    "seconds": 1.408,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.0722
+   }
+  },
+  {
+   "caseId": "d017",
+   "source": "confirm",
+   "group": "appearance_changed",
+   "kind": "appearance_changed",
+   "name": "叶知微",
+   "factText": "手背沾了泥，帽檐落着灰",
+   "greedy": {
+    "text": "叶知微的手背沾了泥,帽檐落着灰。",
+    "complete": true,
+    "steps": 17,
+    "seconds": 0.345
+   },
+   "beam": {
+    "text": "叶知微的手背沾了泥,帽檐落着灰。",
+    "complete": true,
+    "steps": 17,
+    "seconds": 1.396,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.5218
+   }
+  },
+  {
+   "caseId": "d018",
+   "source": "confirm",
+   "group": "appearance_changed",
+   "kind": "appearance_changed",
+   "name": "阿棠",
+   "factText": "肩头结了盐霜，发梢冻得发僵",
+   "greedy": {
+    "text": "阿棠的肩头结了盐霜,发梢冻得发僵。",
+    "complete": true,
+    "steps": 18,
+    "seconds": 0.367
+   },
+   "beam": {
+    "text": "阿棠的肩头结了盐霜,发梢冻得发僵。",
+    "complete": true,
+    "steps": 19,
+    "seconds": 1.415,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.2522
+   }
+  },
+  {
+   "caseId": "d019",
+   "source": "confirm",
+   "group": "appearance_changed",
+   "kind": "appearance_changed",
+   "name": "韩渡",
+   "factText": "围巾落着灰，脚踝蹭破了皮",
+   "greedy": {
+    "text": "韩渡的围巾落着灰,脚踝蹭破了皮。",
+    "complete": true,
+    "steps": 17,
+    "seconds": 0.356
+   },
+   "beam": {
+    "text": "韩渡的围巾落着灰,脚踝蹭破了皮。",
+    "complete": true,
+    "steps": 17,
+    "seconds": 1.224,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.2288
+   }
+  },
+  {
+   "caseId": "d020",
+   "source": "confirm",
+   "group": "moved",
+   "kind": "moved",
+   "name": "沈砚",
+   "factText": "潮渡→雾堤",
+   "greedy": {
+    "text": "沈砚从潮渡上来,走进雾堤。",
+    "complete": true,
+    "steps": 13,
+    "seconds": 0.284
+   },
+   "beam": {
+    "text": "沈砚从潮渡上来,走进雾堤。",
+    "complete": true,
+    "steps": 13,
+    "seconds": 0.931,
+    "candidates": 2,
+    "truncated": false,
+    "score": -1.7561
+   }
+  },
+  {
+   "caseId": "d021",
+   "source": "confirm",
+   "group": "moved",
+   "kind": "moved",
+   "name": "顾行舟",
+   "factText": "雾堤→潮渡",
+   "greedy": {
+    "text": "顾行舟从雾堤下下到潮渡。",
+    "complete": true,
+    "steps": 14,
+    "seconds": 0.288
+   },
+   "beam": {
+    "text": "顾行舟从雾堤下下到潮渡。",
+    "complete": true,
+    "steps": 22,
+    "seconds": 1.585,
+    "candidates": 2,
+    "truncated": false,
+    "score": -3.3743
+   }
+  },
+  {
+   "caseId": "d022",
+   "source": "confirm",
+   "group": "moved",
+   "kind": "moved",
+   "name": "叶知微",
+   "factText": "潮生巷→早市",
+   "greedy": {
+    "text": "叶知微从潮生巷一路走到早市,帆布棚下散光。",
+    "complete": true,
+    "steps": 21,
+    "seconds": 0.404
+   },
+   "beam": {
+    "text": "叶知微从潮生巷一路走到早市。",
+    "complete": true,
+    "steps": 21,
+    "seconds": 1.521,
+    "candidates": 2,
+    "truncated": false,
+    "score": -2.0429
+   }
+  },
+  {
+   "caseId": "d023",
+   "source": "confirm",
+   "group": "moved",
+   "kind": "moved",
+   "name": "阿棠",
+   "factText": "早市→潮生巷",
+   "greedy": {
+    "text": "阿棠从早市过来,走进潮生巷。",
+    "complete": true,
+    "steps": 13,
+    "seconds": 0.297
+   },
+   "beam": {
+    "text": "阿棠从早市过来,走进潮生巷。",
+    "complete": true,
+    "steps": 17,
+    "seconds": 1.381,
+    "candidates": 3,
+    "truncated": false,
+    "score": -2.8805
+   }
+  },
+  {
+   "caseId": "d024",
+   "source": "confirm",
+   "group": "moved",
+   "kind": "moved",
+   "name": "韩渡",
+   "factText": "潮汐档案馆→潮渡",
+   "greedy": {
+    "text": "韩渡从潮汐档案馆出来,走到潮渡的栈桥边。",
+    "complete": true,
+    "steps": 18,
+    "seconds": 0.384
+   },
+   "beam": {
+    "text": "韩渡从潮汐档案馆出来,走进潮渡。",
+    "complete": true,
+    "steps": 18,
+    "seconds": 1.338,
+    "candidates": 3,
+    "truncated": false,
+    "score": -2.4948
+   }
+  },
+  {
+   "caseId": "d025",
+   "source": "confirm",
+   "group": "moved",
+   "kind": "moved",
+   "name": "沈砚",
+   "factText": "潮渡→潮汐档案馆",
+   "greedy": {
+    "text": "沈砚从潮渡过来,走进档案馆。",
+    "complete": true,
+    "steps": 13,
+    "seconds": 0.276
+   },
+   "beam": {
+    "text": "沈砚从潮渡上来,走进档案馆。",
+    "complete": true,
+    "steps": 13,
+    "seconds": 0.981,
+    "candidates": 2,
+    "truncated": false,
+    "score": -2.1491
+   }
+  },
+  {
+   "caseId": "d026",
+   "source": "confirm",
+   "group": "moved",
+   "kind": "moved",
+   "name": "顾行舟",
+   "factText": "旧灯塔→雾堤",
+   "greedy": {
+    "text": "顾行舟从旧灯塔出来,走到雾堤的钟架下。",
+    "complete": true,
+    "steps": 19,
+    "seconds": 0.37
+   },
+   "beam": {
+    "text": "顾行舟从旧灯塔出来,走进雾堤。",
+    "complete": true,
+    "steps": 19,
+    "seconds": 1.443,
+    "candidates": 3,
+    "truncated": false,
+    "score": -3.5722
+   }
+  },
+  {
+   "caseId": "d027",
+   "source": "confirm",
+   "group": "moved",
+   "kind": "moved",
+   "name": "叶知微",
+   "factText": "雾堤→旧灯塔",
+   "greedy": {
+    "text": "叶知微从雾堤上来,走进旧灯塔。",
+    "complete": true,
+    "steps": 15,
+    "seconds": 0.329
+   },
+   "beam": {
+    "text": "叶知微从雾堤上来,走进旧灯塔。",
+    "complete": true,
+    "steps": 15,
+    "seconds": 1.138,
+    "candidates": 2,
+    "truncated": false,
+    "score": -2.4017
+   }
+  },
+  {
+   "caseId": "d028",
+   "source": "confirm",
+   "group": "moved",
+   "kind": "moved",
+   "name": "阿棠",
+   "factText": "早市→潮渡",
+   "greedy": {
+    "text": "阿棠从早市过来,抱起栈桥。",
+    "complete": true,
+    "steps": 13,
+    "seconds": 0.277
+   },
+   "beam": {
+    "text": "阿棠从早市过来,抱起栈桥。",
+    "complete": true,
+    "steps": 17,
+    "seconds": 1.297,
+    "candidates": 2,
+    "truncated": false,
+    "score": -4.3229
+   }
+  },
+  {
+   "caseId": "d029",
+   "source": "confirm",
+   "group": "moved",
+   "kind": "moved",
+   "name": "韩渡",
+   "factText": "潮生巷→潮汐档案馆",
+   "greedy": {
+    "text": "韩渡从潮生巷一路走到潮汐档案馆。",
+    "complete": true,
+    "steps": 14,
+    "seconds": 0.276
+   },
+   "beam": {
+    "text": "韩渡从潮生巷一路走到潮汐档案馆。",
+    "complete": true,
+    "steps": 15,
+    "seconds": 1.177,
+    "candidates": 2,
+    "truncated": false,
+    "score": -1.8918
+   }
+  },
+  {
+   "caseId": "d030",
+   "source": "confirm",
+   "group": "appearance_changed",
+   "kind": "appearance_changed",
+   "name": "铜灯罩",
+   "factText": "蒙了盐雾",
+   "greedy": {
+    "text": "铜灯罩蒙了盐雾。",
+    "complete": true,
+    "steps": 10,
+    "seconds": 0.238
+   },
+   "beam": {
+    "text": "铜灯罩蒙了盐雾。",
+    "complete": true,
+    "steps": 18,
+    "seconds": 1.414,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.0662
+   }
+  },
+  {
+   "caseId": "d031",
+   "source": "confirm",
+   "group": "appearance_changed",
+   "kind": "appearance_changed",
+   "name": "抹布",
+   "factText": "裂了缝",
+   "greedy": {
+    "text": "抹布裂了缝。",
+    "complete": true,
+    "steps": 8,
+    "seconds": 0.168
+   },
+   "beam": {
+    "text": "抹布裂了缝。",
+    "complete": true,
+    "steps": 11,
+    "seconds": 0.79,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.6621
+   }
+  },
+  {
+   "caseId": "d032",
+   "source": "confirm",
+   "group": "appearance_changed",
+   "kind": "appearance_changed",
+   "name": "潮汐簿",
+   "factText": "边角磨破",
+   "greedy": {
+    "text": "潮汐簿的边角磨破,玻璃罩已经点亮。",
+    "complete": true,
+    "steps": 17,
+    "seconds": 0.315
+   },
+   "beam": {
+    "text": "潮汐簿的边角磨破。",
+    "complete": true,
+    "steps": 17,
+    "seconds": 1.222,
+    "candidates": 3,
+    "truncated": false,
+    "score": -0.9617
+   }
+  },
+  {
+   "caseId": "d033",
+   "source": "confirm",
+   "group": "appearance_changed",
+   "kind": "appearance_changed",
+   "name": "钟绳",
+   "factText": "生了锈",
+   "greedy": {
+    "text": "钟绳生了锈。",
+    "complete": true,
+    "steps": 8,
+    "seconds": 0.18
+   },
+   "beam": {
+    "text": "钟绳生了锈。",
+    "complete": true,
+    "steps": 14,
+    "seconds": 0.955,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.031
+   }
+  },
+  {
+   "caseId": "d034",
+   "source": "confirm",
+   "group": "appearance_changed",
+   "kind": "appearance_changed",
+   "name": "警示灯",
+   "factText": "沾了铜油",
+   "greedy": {
+    "text": "警示灯的沾了铜油。",
+    "complete": true,
+    "steps": 11,
+    "seconds": 0.229
+   },
+   "beam": {
+    "text": "警示灯的沾了铜油。",
+    "complete": true,
+    "steps": 11,
+    "seconds": 0.776,
+    "candidates": 2,
+    "truncated": false,
+    "score": -1.0914
+   }
+  },
+  {
+   "caseId": "d035",
+   "source": "confirm",
+   "group": "appearance_changed",
+   "kind": "appearance_changed",
+   "name": "铁链",
+   "factText": "落着灰",
+   "greedy": {
+    "text": "铁链落着灰。",
+    "complete": true,
+    "steps": 8,
+    "seconds": 0.171
+   },
+   "beam": {
+    "text": "铁链落着灰。",
+    "complete": true,
+    "steps": 15,
+    "seconds": 1.038,
+    "candidates": 3,
+    "truncated": false,
+    "score": -0.6891
+   }
+  },
+  {
+   "caseId": "d036",
+   "source": "confirm",
+   "group": "appearance_changed",
+   "kind": "appearance_changed",
+   "name": "案板",
+   "factText": "蒙了盐雾",
+   "greedy": {
+    "text": "案板蒙了盐雾。",
+    "complete": true,
+    "steps": 9,
+    "seconds": 0.186
+   },
+   "beam": {
+    "text": "案板蒙了盐雾。",
+    "complete": true,
+    "steps": 17,
+    "seconds": 1.19,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.1694
+   }
+  },
+  {
+   "caseId": "d037",
+   "source": "confirm",
+   "group": "appearance_changed",
+   "kind": "appearance_changed",
+   "name": "鱼筐",
+   "factText": "裂了缝",
+   "greedy": {
+    "text": "鱼筐裂了缝。",
+    "complete": true,
+    "steps": 8,
+    "seconds": 0.165
+   },
+   "beam": {
+    "text": "鱼筐裂了缝。",
+    "complete": true,
+    "steps": 14,
+    "seconds": 0.976,
+    "candidates": 2,
+    "truncated": false,
+    "score": -0.2458
+   }
+  },
+  {
+   "caseId": "d038",
+   "source": "confirm",
+   "group": "appearance_changed",
+   "kind": "appearance_changed",
+   "name": "油纸伞",
+   "factText": "边角磨破",
+   "greedy": {
+    "text": "油纸伞的边角磨破,边角磨破。",
+    "complete": true,
+    "steps": 16,
+    "seconds": 0.391
+   },
+   "beam": {
+    "text": "油纸伞的边角磨破。",
+    "complete": true,
+    "steps": 16,
+    "seconds": 1.171,
+    "candidates": 2,
+    "truncated": false,
+    "score": -1.0284
+   }
+  },
+  {
+   "caseId": "d039",
+   "source": "confirm",
+   "group": "appearance_changed",
+   "kind": "appearance_changed",
+   "name": "缆绳",
+   "factText": "生了锈",
+   "greedy": {
+    "text": "缆绳生了锈。",
+    "complete": true,
+    "steps": 8,
+    "seconds": 0.164
+   },
+   "beam": {
+    "text": "缆绳生了锈。",
+    "complete": true,
+    "steps": 16,
+    "seconds": 1.235,
+    "candidates": 3,
+    "truncated": false,
+    "score": -0.0411
+   }
+  }
+ ]
+}

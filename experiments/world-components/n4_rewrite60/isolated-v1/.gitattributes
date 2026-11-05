@@ -1,0 +1,8 @@
+# Per-file snapshot bytes (next-baseline); do not replace with a wildcard.
+# Existing text blobs use explicit checkout EOL; newly tracked bytes use -text.
+"isolated-v1.jsonl" -text
+"isolated-v1.labels.json" -text
+"isolated-v1.runs.json" -text
+"report.md" -text
+"world-b.json" -text
+"world-c.json" -text

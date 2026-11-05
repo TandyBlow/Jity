@@ -15,3 +15,11 @@ corpus_v3a/*.jsonl -text
 corpus_v3a/*.json -text
 train-v3-report.json -text
 train-v3a-report.json -text
+
+# Per-file snapshot bytes (next-baseline); do not replace with a wildcard.
+# Existing text blobs use explicit checkout EOL; newly tracked bytes use -text.
+"build_statement_verify.py" -text
+"build_target_pairs.py" -text
+"review_statement_verify.py" -text
+"train_verify_binary.py" -text
+"verify_input.py" -text

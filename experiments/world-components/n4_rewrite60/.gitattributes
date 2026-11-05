@@ -1,0 +1,18 @@
+# Per-file snapshot bytes (next-baseline); do not replace with a wildcard.
+# Existing text blobs use explicit checkout EOL; newly tracked bytes use -text.
+"README.md" text eol=crlf
+"build_isolated_v1.py" -text
+"checker-v4-freeze.json" -text
+"checker-v5-freeze.json" -text
+"checker-v6-freeze.json" -text
+"checker-v7-freeze.json" -text
+"checker.py" text eol=crlf
+"corpus100.jsonl" text eol=lf
+"corpus140.jsonl" -text
+"isolated.py" -text
+"make_probes.py" -text
+"regression.py" -text
+"regression_set.jsonl" -text
+"regression_set.prev.jsonl" -text
+"score_probes.py" -text
+"semantic_probes.jsonl" -text

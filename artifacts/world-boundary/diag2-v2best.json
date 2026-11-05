@@ -1,0 +1,1731 @@
+{
+ "n4-final24-contract": [
+  {
+   "unitId": "v01:f0",
+   "factId": "f0",
+   "name": "沈砚",
+   "expected": "",
+   "text": "沈砚从潮渡上来,推开雾堤的堤面。",
+   "complete": true
+  },
+  {
+   "unitId": "v01:f1",
+   "factId": "f1",
+   "name": "韩渡",
+   "expected": "把松脱的钟绳重新系紧",
+   "text": "韩渡把松脱的钟绳一圈一圈重新系紧,钟绳绷直了。",
+   "complete": true
+  },
+  {
+   "unitId": "v01:f2",
+   "factId": "f2",
+   "name": "沈砚",
+   "expected": "把警示灯扶正",
+   "text": "沈砚把警示灯扶正。",
+   "complete": true
+  },
+  {
+   "unitId": "v01:f3",
+   "factId": "f3",
+   "name": "韩渡",
+   "expected": "袖口沾了盐沫",
+   "text": "韩渡的袖口沾了盐沫。",
+   "complete": true
+  },
+  {
+   "unitId": "v02:f0",
+   "factId": "f0",
+   "name": "阿棠",
+   "expected": "把银鳞鱼按大小分开装进鱼筐",
+   "text": "阿棠把银鳞鱼按大小分开装进鱼筐。",
+   "complete": true
+  },
+  {
+   "unitId": "v02:f1",
+   "factId": "f1",
+   "name": "顾行舟",
+   "expected": "把抹布拧干",
+   "text": "顾行舟把抹布拧干。",
+   "complete": true
+  },
+  {
+   "unitId": "v02:f2",
+   "factId": "f2",
+   "name": "顾行舟",
+   "expected": "手背上沾了鱼鳞",
+   "text": "顾行舟的手背上沾了鱼鳞。",
+   "complete": true
+  },
+  {
+   "unitId": "v03:f0",
+   "factId": "f0",
+   "name": "沈砚",
+   "expected": "把潮汐簿缺的那页补全",
+   "text": "沈砚把潮汐簿缺的那页补全,贴在手腕上。",
+   "complete": true
+  },
+  {
+   "unitId": "v03:f1",
+   "factId": "f1",
+   "name": "叶知微",
+   "expected": "把干纸码成一小摞",
+   "text": "叶知微把干纸码成一小摞。",
+   "complete": true
+  },
+  {
+   "unitId": "v03:f2",
+   "factId": "f2",
+   "name": "叶知微",
+   "expected": "指尖沾了墨",
+   "text": "叶知微的指尖沾了墨。",
+   "complete": true
+  },
+  {
+   "unitId": "v03:f3",
+   "factId": "f3",
+   "name": null,
+   "expected": "",
+   "text": "长桌上的东西都还在原处,屋里没有新的变化。",
+   "complete": true
+  },
+  {
+   "unitId": "v04:f0",
+   "factId": "f0",
+   "name": "顾行舟",
+   "expected": "把渡船系在栈桥的木桩上",
+   "text": "顾行舟把渡船系在栈桥的木桩上。",
+   "complete": true
+  },
+  {
+   "unitId": "v04:f1",
+   "factId": "f1",
+   "name": "韩渡",
+   "expected": "把系泊绳收成一卷",
+   "text": "韩渡把系泊绳收成一卷。",
+   "complete": true
+  },
+  {
+   "unitId": "v04:f2",
+   "factId": "f2",
+   "name": "韩渡",
+   "expected": "手背上沾了盐沫",
+   "text": "韩渡的手背上沾了盐沫。",
+   "complete": true
+  },
+  {
+   "unitId": "v05:f0",
+   "factId": "f0",
+   "name": "叶知微",
+   "expected": "袖口沾了铜油",
+   "text": "叶知微擦完灯罩,袖口蹭上一道铜油。",
+   "complete": true
+  },
+  {
+   "unitId": "v05:f1",
+   "factId": "f1",
+   "name": "沈砚",
+   "expected": "手背上沾了铜油",
+   "text": "沈砚的手背上沾了铜油。",
+   "complete": true
+  },
+  {
+   "unitId": "v05:f2",
+   "factId": "f2",
+   "name": "叶知微",
+   "expected": "把灯罩擦得透亮",
+   "text": "叶知微把玻璃罩上的盐雾擦掉,灯罩透亮起来。",
+   "complete": true
+  },
+  {
+   "unitId": "v05:f3",
+   "factId": "f3",
+   "name": null,
+   "expected": "",
+   "text": "塔顶的灯还亮着,什么也没有再发生。",
+   "complete": true
+  },
+  {
+   "unitId": "v06:f0",
+   "factId": "f0",
+   "name": "阿棠",
+   "expected": "鞋底沾了湿石板的水",
+   "text": "阿棠的鞋底沾了湿石板的水。",
+   "complete": true
+  },
+  {
+   "unitId": "v06:f1",
+   "factId": "f1",
+   "name": "沈砚",
+   "expected": "袖口沾了雨",
+   "text": "沈砚的袖口沾了雨。",
+   "complete": true
+  },
+  {
+   "unitId": "v06:f2",
+   "factId": "f2",
+   "name": "阿棠",
+   "expected": "把纸灯笼扶正",
+   "text": "阿棠把纸灯笼扶正。",
+   "complete": true
+  },
+  {
+   "unitId": "v07:f0",
+   "factId": "f0",
+   "name": "铜灯",
+   "expected": "灯罩上积了灰",
+   "text": "铜灯的灯罩上积了灰。",
+   "complete": true
+  },
+  {
+   "unitId": "v07:f1",
+   "factId": "f1",
+   "name": "潮汐簿",
+   "expected": "封面蒙了一层灰",
+   "text": "潮汐簿的封面蒙了一层灰。",
+   "complete": true
+  },
+  {
+   "unitId": "v07:f2",
+   "factId": "f2",
+   "name": "沈砚",
+   "expected": "把铜灯擦亮",
+   "text": "沈砚把铜灯擦亮。",
+   "complete": true
+  },
+  {
+   "unitId": "v08:f0",
+   "factId": "f0",
+   "name": "警示灯",
+   "expected": "玻璃罩被风吹歪",
+   "text": "警示灯的玻璃罩被风吹歪。",
+   "complete": true
+  },
+  {
+   "unitId": "v08:f1",
+   "factId": "f1",
+   "name": "钟绳",
+   "expected": "磨出了毛边",
+   "text": "钟绳磨出了毛边。",
+   "complete": true
+  },
+  {
+   "unitId": "v08:f2",
+   "factId": "f2",
+   "name": "韩渡",
+   "expected": "把钟绳重新绕在钟架上",
+   "text": "韩渡把钟绳重新绕在钟架上。",
+   "complete": true
+  },
+  {
+   "unitId": "v09:f0",
+   "factId": "f0",
+   "name": "鱼筐",
+   "expected": "边沿沾着鱼鳞",
+   "text": "鱼筐的边沿沾着鱼鳞。",
+   "complete": true
+  },
+  {
+   "unitId": "v09:f1",
+   "factId": "f1",
+   "name": "案板",
+   "expected": "边沿沾着鱼鳞",
+   "text": "案板的边沿沾着鱼鳞。",
+   "complete": true
+  },
+  {
+   "unitId": "v09:f2",
+   "factId": "f2",
+   "name": "阿棠",
+   "expected": "把银鳞鱼装进鱼筐",
+   "text": "阿棠把银鳞鱼装进鱼筐。",
+   "complete": true
+  },
+  {
+   "unitId": "v10:f0",
+   "factId": "f0",
+   "name": "铁链",
+   "expected": "链环上结了锈",
+   "text": "铁链的链环上结了锈。",
+   "complete": true
+  },
+  {
+   "unitId": "v10:f1",
+   "factId": "f1",
+   "name": "铜灯罩",
+   "expected": "玻璃上蒙了盐雾",
+   "text": "铜灯罩的玻璃上蒙了盐雾。",
+   "complete": true
+  },
+  {
+   "unitId": "v10:f2",
+   "factId": "f2",
+   "name": "叶知微",
+   "expected": "把擦铜油放回梯脚",
+   "text": "叶知微把擦铜油放回梯脚。",
+   "complete": true
+  },
+  {
+   "unitId": "v11:f0",
+   "factId": "f0",
+   "name": "沈砚",
+   "expected": "",
+   "text": "沈砚从潮生巷过来,推开档案馆的门。",
+   "complete": true
+  },
+  {
+   "unitId": "v11:f1",
+   "factId": "f1",
+   "name": "沈砚",
+   "expected": "把铜灯挪到门槛边",
+   "text": "沈砚把铜灯挪到门槛边。",
+   "complete": true
+  },
+  {
+   "unitId": "v11:f2",
+   "factId": "f2",
+   "name": null,
+   "expected": "",
+   "text": "长桌上的东西都还在原处,屋里没有新的变化。",
+   "complete": true
+  },
+  {
+   "unitId": "v11:f3",
+   "factId": "f3",
+   "name": "沈砚",
+   "expected": "袖口沾了墨",
+   "text": "沈砚的袖口沾了墨。",
+   "complete": true
+  },
+  {
+   "unitId": "v12:f0",
+   "factId": "f0",
+   "name": "阿棠",
+   "expected": "",
+   "text": "阿棠从潮生巷走进早市,帆布棚下的雨声被关在身后。",
+   "complete": true
+  },
+  {
+   "unitId": "v12:f1",
+   "factId": "f1",
+   "name": "阿棠",
+   "expected": "把银鳞鱼搬上案板",
+   "text": "阿棠把银鳞鱼搬上案板。",
+   "complete": true
+  },
+  {
+   "unitId": "v12:f2",
+   "factId": "f2",
+   "name": "阿棠",
+   "expected": "辫梢沾了白汽",
+   "text": "阿棠的辫梢沾了白汽。",
+   "complete": true
+  },
+  {
+   "unitId": "v13:f0",
+   "factId": "f0",
+   "name": "叶知微",
+   "expected": "",
+   "text": "叶知微从潮渡一路走到旧灯塔脚下,走进旧灯塔。",
+   "complete": true
+  },
+  {
+   "unitId": "v13:f1",
+   "factId": "f1",
+   "name": "叶知微",
+   "expected": "换好塔顶的灯芯",
+   "text": "叶知微换好塔顶的灯芯,退开半步看灯芯。",
+   "complete": true
+  },
+  {
+   "unitId": "v13:f2",
+   "factId": "f2",
+   "name": "叶知微",
+   "expected": "袖口沾了铜油",
+   "text": "叶知微的袖口沾了铜油。",
+   "complete": true
+  },
+  {
+   "unitId": "v14:f0",
+   "factId": "f0",
+   "name": "沈砚",
+   "expected": "",
+   "text": "沈砚从潮汐档案馆出来,回到潮渡。",
+   "complete": true
+  },
+  {
+   "unitId": "v14:f1",
+   "factId": "f1",
+   "name": "沈砚",
+   "expected": "把系泊绳拖回岸上",
+   "text": "沈砚把系泊绳拖回岸上。",
+   "complete": true
+  },
+  {
+   "unitId": "v14:f2",
+   "factId": "f2",
+   "name": "沈砚",
+   "expected": "",
+   "text": "沈砚的呼吸有些发紧,手指也不太听使唤。",
+   "complete": true
+  },
+  {
+   "unitId": "v15:f0",
+   "factId": "f0",
+   "name": "沈砚",
+   "expected": "把备用钥匙塞进油布包的内层",
+   "text": "沈砚把备用钥匙塞进油布包的内层。",
+   "complete": true
+  },
+  {
+   "unitId": "v15:f1",
+   "factId": "f1",
+   "name": "沈砚",
+   "expected": "把干纸夹进潮汐簿的扉页",
+   "text": "沈砚把干纸夹进潮汐簿的扉页。",
+   "complete": true
+  },
+  {
+   "unitId": "v15:f2",
+   "factId": "f2",
+   "name": "沈砚",
+   "expected": "把潮汐簿合上推到桌角",
+   "text": "沈砚把潮汐簿合上推到桌角。",
+   "complete": true
+  },
+  {
+   "unitId": "v16:f0",
+   "factId": "f0",
+   "name": "阿棠",
+   "expected": "把抹布塞进鱼筐底下",
+   "text": "阿棠把抹布塞进鱼筐底下。",
+   "complete": true
+  },
+  {
+   "unitId": "v16:f1",
+   "factId": "f1",
+   "name": "阿棠",
+   "expected": "把银鳞鱼摆在案板旁边",
+   "text": "阿棠把银鳞鱼摆在案板旁边。",
+   "complete": true
+  },
+  {
+   "unitId": "v16:f2",
+   "factId": "f2",
+   "name": "阿棠",
+   "expected": "袖口沾了鱼鳞",
+   "text": "阿棠的袖口沾了鱼鳞。",
+   "complete": true
+  },
+  {
+   "unitId": "v17:f0",
+   "factId": "f0",
+   "name": "叶知微",
+   "expected": "把灯芯收进铜灯罩底下",
+   "text": "叶知微把灯芯收进铜灯罩底下。",
+   "complete": true
+  },
+  {
+   "unitId": "v17:f1",
+   "factId": "f1",
+   "name": "叶知微",
+   "expected": "把油壶搁在铜灯罩上",
+   "text": "叶知微把油壶搁在铜灯罩上。",
+   "complete": true
+  },
+  {
+   "unitId": "v17:f2",
+   "factId": "f2",
+   "name": "叶知微",
+   "expected": "指尖沾了铜油",
+   "text": "叶知微的指尖沾了铜油。",
+   "complete": true
+  },
+  {
+   "unitId": "v18:f0",
+   "factId": "f0",
+   "name": "沈砚",
+   "expected": "",
+   "text": "沈砚从潮渡上来,推开雾堤的堤面。",
+   "complete": true
+  },
+  {
+   "unitId": "v18:f1",
+   "factId": "f1",
+   "name": "沈砚",
+   "expected": "把雾警钟敲响",
+   "text": "沈砚把雾警钟敲响。",
+   "complete": true
+  },
+  {
+   "unitId": "v18:f2",
+   "factId": "f2",
+   "name": "沈砚",
+   "expected": "",
+   "text": "沈砚的呼吸有些发紧,手指也不太听使唤。",
+   "complete": true
+  },
+  {
+   "unitId": "v19:f0",
+   "factId": "f0",
+   "name": "叶知微",
+   "expected": "把干纸放在桌角",
+   "text": "叶知微把干纸放在桌角。",
+   "complete": true
+  },
+  {
+   "unitId": "v19:f1",
+   "factId": "f1",
+   "name": "叶知微",
+   "expected": "",
+   "text": "叶知微的呼吸有些发紧,手指也不太听使唤。",
+   "complete": true
+  },
+  {
+   "unitId": "v19:f2",
+   "factId": "f2",
+   "name": null,
+   "expected": "",
+   "text": "长桌上的东西都还在原处,屋里没有新的变化。",
+   "complete": true
+  },
+  {
+   "unitId": "v20:f0",
+   "factId": "f0",
+   "name": "沈砚",
+   "expected": "",
+   "text": "沈砚从潮生巷一路走到潮渡,缆绳在木桩旁绕了两圈。",
+   "complete": true
+  },
+  {
+   "unitId": "v20:f1",
+   "factId": "f1",
+   "name": "沈砚",
+   "expected": "",
+   "text": "沈砚的呼吸慢慢匀下来,胸口那点发紧的感觉散了。",
+   "complete": true
+  },
+  {
+   "unitId": "v20:f2",
+   "factId": "f2",
+   "name": "沈砚",
+   "expected": "把渡船推离栈桥",
+   "text": "沈砚把渡船推离栈桥。",
+   "complete": true
+  },
+  {
+   "unitId": "v21:f0",
+   "factId": "f0",
+   "name": "沈砚",
+   "expected": "把铜灯挪到长桌另一头",
+   "text": "沈砚把铜灯挪到长桌另一头。",
+   "complete": true
+  },
+  {
+   "unitId": "v21:f1",
+   "factId": "f1",
+   "name": null,
+   "expected": "",
+   "text": "长桌上的东西都还在原处,屋里没有新的变化。",
+   "complete": true
+  },
+  {
+   "unitId": "v21:f2",
+   "factId": "f2",
+   "name": "沈砚",
+   "expected": "指尖沾了墨",
+   "text": "沈砚的指尖沾了墨。",
+   "complete": true
+  },
+  {
+   "unitId": "v22:f0",
+   "factId": "f0",
+   "name": "阿棠",
+   "expected": "把鱼筐放在门槛边",
+   "text": "阿棠把鱼筐放在门槛边。",
+   "complete": true
+  },
+  {
+   "unitId": "v22:f1",
+   "factId": "f1",
+   "name": null,
+   "expected": "",
+   "text": "水沟里的光没有动,巷子里没有新的变化。",
+   "complete": true
+  },
+  {
+   "unitId": "v22:f2",
+   "factId": "f2",
+   "name": "阿棠",
+   "expected": "鞋底沾了湿石板的水",
+   "text": "阿棠的鞋底沾了湿石板的水。",
+   "complete": true
+  },
+  {
+   "unitId": "v23:f0",
+   "factId": "f0",
+   "name": "顾行舟",
+   "expected": "把缆绳绕上摊棚边的木桩",
+   "text": "顾行舟把缆绳绕上摊棚边的木桩。",
+   "complete": true
+  },
+  {
+   "unitId": "v23:f1",
+   "factId": "f1",
+   "name": null,
+   "expected": "",
+   "text": "棚下人来人往,早市没有新的变化。",
+   "complete": true
+  },
+  {
+   "unitId": "v23:f2",
+   "factId": "f2",
+   "name": "顾行舟",
+   "expected": "手背上沾了鱼鳞",
+   "text": "顾行舟的手背上沾了鱼鳞。",
+   "complete": true
+  },
+  {
+   "unitId": "v24:f0",
+   "factId": "f0",
+   "name": "韩渡",
+   "expected": "把钟绳解开",
+   "text": "韩渡把钟绳解开。",
+   "complete": true
+  },
+  {
+   "unitId": "v24:f1",
+   "factId": "f1",
+   "name": null,
+   "expected": "",
+   "text": "雾堤上的风一直吹,堤面没有新的变化。",
+   "complete": true
+  },
+  {
+   "unitId": "v24:f2",
+   "factId": "f2",
+   "name": "韩渡",
+   "expected": "手背上沾了盐沫",
+   "text": "韩渡的手背上沾了盐沫。",
+   "complete": true
+  }
+ ],
+ "n4-cf24-contract": [
+  {
+   "unitId": "t01:f0",
+   "factId": "f0",
+   "name": "沈砚",
+   "expected": "把潮汐簿缺的那页补全",
+   "text": "沈砚把潮汐簿缺的那页补全,贴在手腕上。",
+   "complete": true
+  },
+  {
+   "unitId": "t01:f1",
+   "factId": "f1",
+   "name": "沈砚",
+   "expected": "指尖沾了墨",
+   "text": "沈砚的指尖沾了墨。",
+   "complete": true
+  },
+  {
+   "unitId": "t01:f2",
+   "factId": "f2",
+   "name": "沈砚",
+   "expected": "把簿子合上推到桌角",
+   "text": "沈砚把簿子合上推到桌角。",
+   "complete": true
+  },
+  {
+   "unitId": "t02:f0",
+   "factId": "f0",
+   "name": "阿棠",
+   "expected": "把银鳞鱼按大小分开装进两只鱼筐",
+   "text": "阿棠把银鳞鱼按大小分开装进两只鱼筐。",
+   "complete": true
+  },
+  {
+   "unitId": "t02:f1",
+   "factId": "f1",
+   "name": "阿棠",
+   "expected": "袖口沾了鱼鳞",
+   "text": "阿棠的袖口沾了鱼鳞。",
+   "complete": true
+  },
+  {
+   "unitId": "t02:f2",
+   "factId": "f2",
+   "name": "阿棠",
+   "expected": "把空鱼筐摞到摊棚边上",
+   "text": "阿棠把空鱼筐摞到摊棚边上。",
+   "complete": true
+  },
+  {
+   "unitId": "t03:f0",
+   "factId": "f0",
+   "name": "叶知微",
+   "expected": "把灯罩擦得透亮",
+   "text": "叶知微把玻璃罩擦得透亮。",
+   "complete": true
+  },
+  {
+   "unitId": "t03:f1",
+   "factId": "f1",
+   "name": "叶知微",
+   "expected": "袖口沾了铜油",
+   "text": "叶知微的袖口沾了铜油。",
+   "complete": true
+  },
+  {
+   "unitId": "t03:f2",
+   "factId": "f2",
+   "name": "叶知微",
+   "expected": "把抹布搭回梯脚",
+   "text": "叶知微把抹布搭回梯脚。",
+   "complete": true
+  },
+  {
+   "unitId": "t04:f0",
+   "factId": "f0",
+   "name": "顾行舟",
+   "expected": "把缆绳在木桩上绕了三圈",
+   "text": "顾行舟把缆绳在木桩上绕了三圈。",
+   "complete": true
+  },
+  {
+   "unitId": "t04:f1",
+   "factId": "f1",
+   "name": "顾行舟",
+   "expected": "把渡船推离栈桥",
+   "text": "顾行舟把渡船推离栈桥。",
+   "complete": true
+  },
+  {
+   "unitId": "t04:f2",
+   "factId": "f2",
+   "name": "顾行舟",
+   "expected": "外袍下摆被雾水打湿",
+   "text": "顾行舟的外袍下摆被雾水打湿。",
+   "complete": true
+  },
+  {
+   "unitId": "t05:f0",
+   "factId": "f0",
+   "name": "韩渡",
+   "expected": "把松脱的钟绳重新系紧",
+   "text": "韩渡把松脱的钟绳一圈一圈重新系紧,钟绳绷直了。",
+   "complete": true
+  },
+  {
+   "unitId": "t05:f1",
+   "factId": "f1",
+   "name": "韩渡",
+   "expected": "把雾警钟敲响",
+   "text": "韩渡把雾警钟敲响。",
+   "complete": true
+  },
+  {
+   "unitId": "t05:f2",
+   "factId": "f2",
+   "name": "韩渡",
+   "expected": "手背上沾着盐沫",
+   "text": "韩渡的手背上沾着盐沫。",
+   "complete": true
+  },
+  {
+   "unitId": "t06:f0",
+   "factId": "f0",
+   "name": "沈砚",
+   "expected": "把油纸伞收拢靠在墙根",
+   "text": "沈砚把油纸伞收拢靠在墙根。",
+   "complete": true
+  },
+  {
+   "unitId": "t06:f1",
+   "factId": "f1",
+   "name": "沈砚",
+   "expected": "把被风吹歪的纸灯笼扶正",
+   "text": "沈砚把被风吹歪的纸灯笼扶正。",
+   "complete": true
+  },
+  {
+   "unitId": "t06:f2",
+   "factId": "f2",
+   "name": "沈砚",
+   "expected": "鞋底沾了湿石板的水",
+   "text": "沈砚的鞋底沾了湿石板的水。",
+   "complete": true
+  },
+  {
+   "unitId": "t07:f0",
+   "factId": "f0",
+   "name": "沈砚",
+   "expected": "",
+   "text": "沈砚从潮渡一路走到雾堤,钟绳从潮渡上来。",
+   "complete": true
+  },
+  {
+   "unitId": "t07:f1",
+   "factId": "f1",
+   "name": "韩渡",
+   "expected": "把松脱的钟绳重新系紧",
+   "text": "韩渡把松脱的钟绳一圈一圈重新系紧,钟绳绷直了。",
+   "complete": true
+  },
+  {
+   "unitId": "t07:f2",
+   "factId": "f2",
+   "name": "沈砚",
+   "expected": "把雾警钟敲响",
+   "text": "沈砚把雾警钟敲响。",
+   "complete": true
+  },
+  {
+   "unitId": "t07:f3",
+   "factId": "f3",
+   "name": "韩渡",
+   "expected": "手背上沾着盐沫",
+   "text": "韩渡的手背上沾着盐沫。",
+   "complete": true
+  },
+  {
+   "unitId": "t08:f0",
+   "factId": "f0",
+   "name": "阿棠",
+   "expected": "把银鳞鱼搬上案板",
+   "text": "阿棠把银鳞鱼搬上案板,鱼尾拍得鱼尾。",
+   "complete": true
+  },
+  {
+   "unitId": "t08:f1",
+   "factId": "f1",
+   "name": "顾行舟",
+   "expected": "把缆绳绕上摊棚边的木桩",
+   "text": "顾行舟把缆绳绕上摊棚边的木桩。",
+   "complete": true
+  },
+  {
+   "unitId": "t08:f2",
+   "factId": "f2",
+   "name": "阿棠",
+   "expected": "辫梢沾了白汽",
+   "text": "阿棠的辫梢沾了白汽,发梢发潮。",
+   "complete": true
+  },
+  {
+   "unitId": "t08:f3",
+   "factId": "f3",
+   "name": "顾行舟",
+   "expected": "外袍下摆沾了泥水",
+   "text": "顾行舟的外袍下摆沾了泥水。",
+   "complete": true
+  },
+  {
+   "unitId": "t09:f0",
+   "factId": "f0",
+   "name": "叶知微",
+   "expected": "",
+   "text": "叶知微到了潮汐档案馆,袖口带着潮气。",
+   "complete": true
+  },
+  {
+   "unitId": "t09:f1",
+   "factId": "f1",
+   "name": "沈砚",
+   "expected": "把潮汐簿摊在铜灯下",
+   "text": "沈砚把潮汐簿摊在铜灯下。",
+   "complete": true
+  },
+  {
+   "unitId": "t09:f2",
+   "factId": "f2",
+   "name": "叶知微",
+   "expected": "把一叠干纸放在桌角",
+   "text": "叶知微把一叠干纸放在桌角。",
+   "complete": true
+  },
+  {
+   "unitId": "t09:f3",
+   "factId": "f3",
+   "name": "沈砚",
+   "expected": "袖口沾了墨",
+   "text": "沈砚的袖口沾了墨。",
+   "complete": true
+  },
+  {
+   "unitId": "t10:f0",
+   "factId": "f0",
+   "name": "顾行舟",
+   "expected": "把渡船系在栈桥的木桩上",
+   "text": "顾行舟把渡船系在栈桥的木桩上。",
+   "complete": true
+  },
+  {
+   "unitId": "t10:f1",
+   "factId": "f1",
+   "name": "沈砚",
+   "expected": "把系泊绳从浅滩拖回岸上",
+   "text": "沈砚把系泊绳从浅滩拖回岸上。",
+   "complete": true
+  },
+  {
+   "unitId": "t10:f2",
+   "factId": "f2",
+   "name": "顾行舟",
+   "expected": "外袍下摆被雾水打湿",
+   "text": "顾行舟的外袍下摆被雾水打湿。",
+   "complete": true
+  },
+  {
+   "unitId": "t10:f3",
+   "factId": "f3",
+   "name": "沈砚",
+   "expected": "",
+   "text": "沈砚的呼吸有些发紧,手指也不太听使唤。",
+   "complete": true
+  },
+  {
+   "unitId": "t11:f0",
+   "factId": "f0",
+   "name": "沈砚",
+   "expected": "",
+   "text": "沈砚从潮生巷一路走到旧灯塔脚下,抬头看了看塔身。",
+   "complete": true
+  },
+  {
+   "unitId": "t11:f1",
+   "factId": "f1",
+   "name": "叶知微",
+   "expected": "把灯罩擦得透亮",
+   "text": "叶知微把玻璃罩擦得透亮,玻璃罩不再发暗。",
+   "complete": true
+  },
+  {
+   "unitId": "t11:f2",
+   "factId": "f2",
+   "name": "沈砚",
+   "expected": "换好塔顶的灯芯",
+   "text": "沈砚换好塔顶的灯芯,退开半步看火苗。",
+   "complete": true
+  },
+  {
+   "unitId": "t11:f3",
+   "factId": "f3",
+   "name": "叶知微",
+   "expected": "袖口沾了铜油",
+   "text": "叶知微擦完灯罩,袖口蹭上一道铜油。",
+   "complete": true
+  },
+  {
+   "unitId": "t12:f0",
+   "factId": "f0",
+   "name": "阿棠",
+   "expected": "",
+   "text": "阿棠从早市过来,抱着一叠水珠进了潮生巷。",
+   "complete": true
+  },
+  {
+   "unitId": "t12:f1",
+   "factId": "f1",
+   "name": "沈砚",
+   "expected": "把油纸伞收拢靠在墙根",
+   "text": "沈砚把油纸伞收拢靠在墙根。",
+   "complete": true
+  },
+  {
+   "unitId": "t12:f2",
+   "factId": "f2",
+   "name": "阿棠",
+   "expected": "把鱼筐放在门槛边",
+   "text": "阿棠把鱼筐放在门槛边。",
+   "complete": true
+  },
+  {
+   "unitId": "t12:f3",
+   "factId": "f3",
+   "name": "沈砚",
+   "expected": "鞋底沾了湿石板的水",
+   "text": "沈砚的鞋底沾了湿石板的水。",
+   "complete": true
+  },
+  {
+   "unitId": "t13:f0",
+   "factId": "f0",
+   "name": "叶知微",
+   "expected": "",
+   "text": "叶知微到了潮汐档案馆,袖口带着铜灯。",
+   "complete": true
+  },
+  {
+   "unitId": "t13:f1",
+   "factId": "f1",
+   "name": "叶知微",
+   "expected": "把一叠干纸放在桌角",
+   "text": "叶知微把一叠干纸放在桌角。",
+   "complete": true
+  },
+  {
+   "unitId": "t13:f2",
+   "factId": "f2",
+   "name": "叶知微",
+   "expected": "袖口沾了墨",
+   "text": "叶知微的袖口沾了墨。",
+   "complete": true
+  },
+  {
+   "unitId": "t14:f0",
+   "factId": "f0",
+   "name": "顾行舟",
+   "expected": "",
+   "text": "顾行舟从潮渡一路走到雾堤,缆绳在石阶上绕了两圈。",
+   "complete": true
+  },
+  {
+   "unitId": "t14:f1",
+   "factId": "f1",
+   "name": "顾行舟",
+   "expected": "把缆绳绕在钟架上",
+   "text": "顾行舟把缆绳绕在钟架上。",
+   "complete": true
+  },
+  {
+   "unitId": "t14:f2",
+   "factId": "f2",
+   "name": "顾行舟",
+   "expected": "外袍下摆被雾水打湿",
+   "text": "顾行舟的外袍下摆被雾水打湿。",
+   "complete": true
+  },
+  {
+   "unitId": "t15:f0",
+   "factId": "f0",
+   "name": "韩渡",
+   "expected": "",
+   "text": "韩渡从潮生巷一路走到潮渡,河风把外袍下摆吹起来。",
+   "complete": true
+  },
+  {
+   "unitId": "t15:f1",
+   "factId": "f1",
+   "name": "韩渡",
+   "expected": "把渡船推离栈桥",
+   "text": "韩渡把渡船推离栈桥。",
+   "complete": true
+  },
+  {
+   "unitId": "t15:f2",
+   "factId": "f2",
+   "name": "韩渡",
+   "expected": "手背沾着盐沫",
+   "text": "韩渡的手背沾着盐沫。",
+   "complete": true
+  },
+  {
+   "unitId": "t16:f0",
+   "factId": "f0",
+   "name": "沈砚",
+   "expected": "",
+   "text": "沈砚从潮汐档案馆出来,回到潮生巷。",
+   "complete": true
+  },
+  {
+   "unitId": "t16:f1",
+   "factId": "f1",
+   "name": "沈砚",
+   "expected": "把备用钥匙塞进油布包的内层",
+   "text": "沈砚把备用钥匙塞进油布包的内层。",
+   "complete": true
+  },
+  {
+   "unitId": "t16:f2",
+   "factId": "f2",
+   "name": "沈砚",
+   "expected": "",
+   "text": "沈砚的呼吸有些发紧,手指也不太听使唤。",
+   "complete": true
+  },
+  {
+   "unitId": "t17:f0",
+   "factId": "f0",
+   "name": "阿棠",
+   "expected": "",
+   "text": "阿棠从潮生巷走进早市,帆布棚下的雨声被关在身后。",
+   "complete": true
+  },
+  {
+   "unitId": "t17:f1",
+   "factId": "f1",
+   "name": "阿棠",
+   "expected": "把银鳞鱼搬上案板",
+   "text": "阿棠把银鳞鱼搬上案板,鱼尾拍得鱼尾。",
+   "complete": true
+  },
+  {
+   "unitId": "t17:f2",
+   "factId": "f2",
+   "name": "阿棠",
+   "expected": "辫梢沾了白汽",
+   "text": "阿棠的辫梢沾了白汽,发梢发潮。",
+   "complete": true
+  },
+  {
+   "unitId": "t18:f0",
+   "factId": "f0",
+   "name": "叶知微",
+   "expected": "",
+   "text": "叶知微从潮渡上来,走进旧灯塔。",
+   "complete": true
+  },
+  {
+   "unitId": "t18:f1",
+   "factId": "f1",
+   "name": "叶知微",
+   "expected": "把灯罩擦得透亮",
+   "text": "叶知微把玻璃罩擦得透亮。",
+   "complete": true
+  },
+  {
+   "unitId": "t18:f2",
+   "factId": "f2",
+   "name": "叶知微",
+   "expected": "袖口沾了铜油",
+   "text": "叶知微的袖口沾了铜油。",
+   "complete": true
+  },
+  {
+   "unitId": "t18:f3",
+   "factId": "f3",
+   "name": "叶知微",
+   "expected": "把抹布搭回梯脚",
+   "text": "叶知微把抹布搭回梯脚。",
+   "complete": true
+  },
+  {
+   "unitId": "t19:f0",
+   "factId": "f0",
+   "name": "阿棠",
+   "expected": "袖口沾了鱼鳞",
+   "text": "阿棠的袖口沾了鱼鳞。",
+   "complete": true
+  },
+  {
+   "unitId": "t19:f1",
+   "factId": "f1",
+   "name": "沈砚",
+   "expected": "外袍下摆沾了泥水",
+   "text": "沈砚的外袍下摆沾了泥水。",
+   "complete": true
+  },
+  {
+   "unitId": "t19:f2",
+   "factId": "f2",
+   "name": "阿棠",
+   "expected": "把银鳞鱼装进鱼筐",
+   "text": "阿棠把银鳞鱼装进鱼筐,水花溅到石板上。",
+   "complete": true
+  },
+  {
+   "unitId": "t19:f3",
+   "factId": "f3",
+   "name": "沈砚",
+   "expected": "把油纸伞收拢靠在摊棚边",
+   "text": "沈砚把油纸伞收拢靠在摊棚边。",
+   "complete": true
+  },
+  {
+   "unitId": "t20:f0",
+   "factId": "f0",
+   "name": "警示灯",
+   "expected": "铜框玻璃罩被风吹歪",
+   "text": "警示灯的铜框玻璃罩被风吹歪。",
+   "complete": true
+  },
+  {
+   "unitId": "t20:f1",
+   "factId": "f1",
+   "name": "钟绳",
+   "expected": "磨出了毛边",
+   "text": "钟绳磨出了毛边。",
+   "complete": true
+  },
+  {
+   "unitId": "t20:f2",
+   "factId": "f2",
+   "name": "沈砚",
+   "expected": "把警示灯扶正",
+   "text": "沈砚把警示灯扶正。",
+   "complete": true
+  },
+  {
+   "unitId": "t20:f3",
+   "factId": "f3",
+   "name": "韩渡",
+   "expected": "把钟绳重新绕在钟架上",
+   "text": "韩渡把钟绳重新绕在钟架上。",
+   "complete": true
+  },
+  {
+   "unitId": "t21:f0",
+   "factId": "f0",
+   "name": "潮汐簿",
+   "expected": "缺页的边缘毛糙",
+   "text": "潮汐簿的缺页的边缘毛糙已经染上墨色。",
+   "complete": true
+  },
+  {
+   "unitId": "t21:f1",
+   "factId": "f1",
+   "name": "铜灯",
+   "expected": "灯罩上积了灰",
+   "text": "铜灯的灯罩上积了灰。",
+   "complete": true
+  },
+  {
+   "unitId": "t21:f2",
+   "factId": "f2",
+   "name": "沈砚",
+   "expected": "把铜灯擦亮",
+   "text": "沈砚把铜灯擦亮。",
+   "complete": true
+  },
+  {
+   "unitId": "t21:f3",
+   "factId": "f3",
+   "name": "叶知微",
+   "expected": "把干纸放在桌角",
+   "text": "叶知微把干纸放在桌角。",
+   "complete": true
+  },
+  {
+   "unitId": "t22:f0",
+   "factId": "f0",
+   "name": "系泊绳",
+   "expected": "泥水结了一层白盐",
+   "text": "系泊绳的泥水结了一层白盐。",
+   "complete": true
+  },
+  {
+   "unitId": "t22:f1",
+   "factId": "f1",
+   "name": "木桩",
+   "expected": "缠着的旧缆绳断了",
+   "text": "木桩上的缠着的旧缆绳断了。",
+   "complete": true
+  },
+  {
+   "unitId": "t22:f2",
+   "factId": "f2",
+   "name": "顾行舟",
+   "expected": "把缆绳重新绕上木桩",
+   "text": "顾行舟把缆绳重新绕上木桩。",
+   "complete": true
+  },
+  {
+   "unitId": "t22:f3",
+   "factId": "f3",
+   "name": "沈砚",
+   "expected": "把系泊绳拖回岸上",
+   "text": "沈砚把系泊绳拖回岸上。",
+   "complete": true
+  },
+  {
+   "unitId": "t23:f0",
+   "factId": "f0",
+   "name": "铜灯罩",
+   "expected": "玻璃上蒙了盐雾",
+   "text": "铜灯罩的玻璃上蒙了盐雾。",
+   "complete": true
+  },
+  {
+   "unitId": "t23:f1",
+   "factId": "f1",
+   "name": "铁链",
+   "expected": "链环上结了锈",
+   "text": "铁链的链环上结了锈。",
+   "complete": true
+  },
+  {
+   "unitId": "t23:f2",
+   "factId": "f2",
+   "name": "叶知微",
+   "expected": "把灯罩擦得透亮",
+   "text": "叶知微把玻璃罩擦得透亮,玻璃罩不再发暗。",
+   "complete": true
+  },
+  {
+   "unitId": "t23:f3",
+   "factId": "f3",
+   "name": "沈砚",
+   "expected": "换好塔顶的灯芯",
+   "text": "沈砚换好塔顶的灯芯,火苗重新站稳。",
+   "complete": true
+  },
+  {
+   "unitId": "t24:f0",
+   "factId": "f0",
+   "name": "纸灯笼",
+   "expected": "被风扯破一角",
+   "text": "纸灯笼被风扯破一角。",
+   "complete": true
+  },
+  {
+   "unitId": "t24:f1",
+   "factId": "f1",
+   "name": "排水沟",
+   "expected": "里面积了泥",
+   "text": "排水沟的里面积了泥。",
+   "complete": true
+  },
+  {
+   "unitId": "t24:f2",
+   "factId": "f2",
+   "name": "沈砚",
+   "expected": "把纸灯笼扶正",
+   "text": "沈砚把纸灯笼扶正。",
+   "complete": true
+  },
+  {
+   "unitId": "t24:f3",
+   "factId": "f3",
+   "name": "阿棠",
+   "expected": "把鱼筐放在门槛边",
+   "text": "阿棠把鱼筐放在门槛边。",
+   "complete": true
+  }
+ ],
+ "n4-object18-contract": [
+  {
+   "unitId": "qa1B",
+   "factId": "f0",
+   "name": "墨",
+   "expected": "表面结了皮",
+   "text": "墨的表面结了皮。",
+   "complete": true
+  },
+  {
+   "unitId": "qa2A",
+   "factId": "f0",
+   "name": "船灯",
+   "expected": "罩子裂了缝",
+   "text": "船灯的罩子裂了缝。",
+   "complete": true
+  },
+  {
+   "unitId": "qa2B",
+   "factId": "f0",
+   "name": "渡船",
+   "expected": "船板裂了缝",
+   "text": "渡船的船板裂了缝。",
+   "complete": true
+  },
+  {
+   "unitId": "qa3A",
+   "factId": "f0",
+   "name": "抹布",
+   "expected": "边角磨破了",
+   "text": "抹布棚下的边角磨破了。",
+   "complete": true
+  },
+  {
+   "unitId": "qa3B",
+   "factId": "f0",
+   "name": "银鳞鱼",
+   "expected": "鳞片掉了两片",
+   "text": "银鳞鱼的鳞片掉了两片。",
+   "complete": true
+  },
+  {
+   "unitId": "qb1A",
+   "factId": "f0",
+   "name": "灯芯",
+   "expected": "烧黑了一截",
+   "text": "灯芯烧黑了一截。",
+   "complete": true
+  },
+  {
+   "unitId": "qb1B",
+   "factId": "f0",
+   "name": "铜灯罩",
+   "expected": "被擦得发亮",
+   "text": "铜灯罩被擦得发亮。",
+   "complete": true
+  },
+  {
+   "unitId": "qb2A",
+   "factId": "f0",
+   "name": "油纸伞",
+   "expected": "伞骨断了一根",
+   "text": "油纸伞的伞骨断了一根。",
+   "complete": true
+  },
+  {
+   "unitId": "qb2B",
+   "factId": "f0",
+   "name": "油纸伞",
+   "expected": "被靠在墙根",
+   "text": "油纸伞被靠在墙根。",
+   "complete": true
+  },
+  {
+   "unitId": "qc2A",
+   "factId": "f0",
+   "name": "顾行舟",
+   "expected": "把船灯挂到栈桥的托架下",
+   "text": "顾行舟把船灯挂到栈桥的托架下。",
+   "complete": true
+  },
+  {
+   "unitId": "qc2B",
+   "factId": "f0",
+   "name": "顾行舟",
+   "expected": "把船灯挂到船头前的木桩上",
+   "text": "顾行舟把船灯挂到船头前的木桩上。",
+   "complete": true
+  },
+  {
+   "unitId": "qc3A",
+   "factId": "f0",
+   "name": "韩渡",
+   "expected": "把警示灯挂回钟架上",
+   "text": "韩渡把警示灯挂回钟架上。",
+   "complete": true
+  },
+  {
+   "unitId": "qc3B",
+   "factId": "f0",
+   "name": "韩渡",
+   "expected": "把警示灯挂回铁链上",
+   "text": "韩渡把警示灯挂回铁链上。",
+   "complete": true
+  },
+  {
+   "unitId": "qd1A",
+   "factId": "f0",
+   "name": "干纸",
+   "expected": "边缘发了黄",
+   "text": "干纸的边缘发了黄。",
+   "complete": true
+  },
+  {
+   "unitId": "qd2A",
+   "factId": "f0",
+   "name": "木桩",
+   "expected": "缠的旧绳断了",
+   "text": "木桩缠的旧绳断了。",
+   "complete": true
+  },
+  {
+   "unitId": "qd2B",
+   "factId": "f0",
+   "name": "缆绳",
+   "expected": "中间断了一股",
+   "text": "缆绳的中间断了一股。",
+   "complete": true
+  },
+  {
+   "unitId": "qd3A",
+   "factId": "f0",
+   "name": "抹布",
+   "expected": "拧不干",
+   "text": "抹布上沾着铜油。",
+   "complete": true
+  },
+  {
+   "unitId": "qd3B",
+   "factId": "f0",
+   "name": "擦铜油",
+   "expected": "洒了半罐",
+   "text": "擦铜油的洒了半罐。",
+   "complete": true
+  }
+ ],
+ "n4-expand36-contract": [
+  {
+   "unitId": "ca1A",
+   "factId": "f0",
+   "name": "沈砚",
+   "expected": "把船灯的灯罩扣回去",
+   "text": "沈砚把船灯的灯罩扣回去,船灯从灯罩上沾了。",
+   "complete": true
+  },
+  {
+   "unitId": "ca1B",
+   "factId": "f0",
+   "name": "顾行舟",
+   "expected": "把船灯的灯罩扣回去",
+   "text": "顾行舟把船灯的灯罩扣回去,船灯从灯罩上沾了。",
+   "complete": true
+  },
+  {
+   "unitId": "ca2A",
+   "factId": "f0",
+   "name": "叶知微",
+   "expected": "把擦铜油放回油壶边",
+   "text": "叶知微把擦铜油放回油壶边。",
+   "complete": true
+  },
+  {
+   "unitId": "ca2B",
+   "factId": "f0",
+   "name": "沈砚",
+   "expected": "把擦铜油放回油壶边",
+   "text": "沈砚把擦铜油放回油壶边。",
+   "complete": true
+  },
+  {
+   "unitId": "ca3A",
+   "factId": "f0",
+   "name": "沈砚",
+   "expected": "把铁链绕回钟架上",
+   "text": "沈砚把铁链绕回钟架上。",
+   "complete": true
+  },
+  {
+   "unitId": "ca3B",
+   "factId": "f0",
+   "name": "韩渡",
+   "expected": "把铁链绕回钟架上",
+   "text": "韩渡把铁链绕回钟架上。",
+   "complete": true
+  },
+  {
+   "unitId": "ca4A",
+   "factId": "f0",
+   "name": "阿棠",
+   "expected": "把案板擦干净",
+   "text": "阿棠把案板擦干净,案板擦干净。",
+   "complete": true
+  },
+  {
+   "unitId": "ca4B",
+   "factId": "f0",
+   "name": "顾行舟",
+   "expected": "把案板擦干净",
+   "text": "顾行舟把案板擦干净。",
+   "complete": true
+  },
+  {
+   "unitId": "cb1A",
+   "factId": "f0",
+   "name": "顾行舟",
+   "expected": "袖口沾了盐沫",
+   "text": "顾行舟的袖口沾了盐沫。",
+   "complete": true
+  },
+  {
+   "unitId": "cb1B",
+   "factId": "f0",
+   "name": "沈砚",
+   "expected": "袖口沾了盐沫",
+   "text": "沈砚的袖口沾了盐沫。",
+   "complete": true
+  },
+  {
+   "unitId": "cb2A",
+   "factId": "f0",
+   "name": "叶知微",
+   "expected": "指尖沾了干纸的毛边",
+   "text": "叶知微的指尖沾了干纸的毛边。",
+   "complete": true
+  },
+  {
+   "unitId": "cb2B",
+   "factId": "f0",
+   "name": "沈砚",
+   "expected": "指尖沾了干纸的毛边",
+   "text": "沈砚的指尖沾了干纸的毛边。",
+   "complete": true
+  },
+  {
+   "unitId": "cb3A",
+   "factId": "f0",
+   "name": "韩渡",
+   "expected": "眉毛上挂着雾水",
+   "text": "韩渡的眉毛上挂着雾水。",
+   "complete": true
+  },
+  {
+   "unitId": "cb3B",
+   "factId": "f0",
+   "name": "沈砚",
+   "expected": "眉毛上挂着雾水",
+   "text": "沈砚的眉毛上挂着雾水。",
+   "complete": true
+  },
+  {
+   "unitId": "cb4A",
+   "factId": "f0",
+   "name": "叶知微",
+   "expected": "围裙上沾了铜油",
+   "text": "叶知微的围裙上沾了铜油。",
+   "complete": true
+  },
+  {
+   "unitId": "cb4B",
+   "factId": "f0",
+   "name": "沈砚",
+   "expected": "围裙上沾了铜油",
+   "text": "沈砚的围裙上沾了铜油。",
+   "complete": true
+  },
+  {
+   "unitId": "cc1A",
+   "factId": "f0",
+   "name": "沈砚",
+   "expected": "把湿伞塞进门槛下的空隙",
+   "text": "沈砚把湿伞塞进门槛下的空隙。",
+   "complete": true
+  },
+  {
+   "unitId": "cc1B",
+   "factId": "f0",
+   "name": "沈砚",
+   "expected": "把湿伞立在门槛外",
+   "text": "沈砚把湿伞立在门槛外。",
+   "complete": true
+  },
+  {
+   "unitId": "cc3A",
+   "factId": "f0",
+   "name": "阿棠",
+   "expected": "把抹布塞进鱼筐底下",
+   "text": "阿棠把抹布塞进鱼筐底下。",
+   "complete": true
+  },
+  {
+   "unitId": "cc3B",
+   "factId": "f0",
+   "name": "阿棠",
+   "expected": "把抹布铺在鱼筐上面",
+   "text": "阿棠把抹布铺在鱼筐上面。",
+   "complete": true
+  },
+  {
+   "unitId": "cc4A",
+   "factId": "f0",
+   "name": "顾行舟",
+   "expected": "把船灯挂在栈桥的托架下",
+   "text": "顾行舟把船灯挂在栈桥的托架下。",
+   "complete": true
+  },
+  {
+   "unitId": "cc4B",
+   "factId": "f0",
+   "name": "顾行舟",
+   "expected": "把船灯摆在栈桥的托架上",
+   "text": "顾行舟把船灯摆在栈桥的托架上。",
+   "complete": true
+  },
+  {
+   "unitId": "cd2A",
+   "factId": "f0",
+   "name": "顾行舟",
+   "expected": "把缆绳绕在栈桥的木桩上",
+   "text": "顾行舟把缆绳绕在栈桥的木桩上。",
+   "complete": true
+  },
+  {
+   "unitId": "cd2B",
+   "factId": "f0",
+   "name": "顾行舟",
+   "expected": "把缆绳绕在石阶的栏杆上",
+   "text": "顾行舟把缆绳绕在石阶的栏杆上。",
+   "complete": true
+  },
+  {
+   "unitId": "cd3A",
+   "factId": "f0",
+   "name": "阿棠",
+   "expected": "把鱼筐放在案板边上",
+   "text": "阿棠把鱼筐放在案板边上。",
+   "complete": true
+  },
+  {
+   "unitId": "cd3B",
+   "factId": "f0",
+   "name": "阿棠",
+   "expected": "把鱼筐放在帆布棚外",
+   "text": "阿棠把鱼筐放在帆布棚外。",
+   "complete": true
+  },
+  {
+   "unitId": "cd4A",
+   "factId": "f0",
+   "name": "叶知微",
+   "expected": "把擦铜油放回梯脚",
+   "text": "叶知微把擦铜油放回梯脚。",
+   "complete": true
+  },
+  {
+   "unitId": "cd4B",
+   "factId": "f0",
+   "name": "叶知微",
+   "expected": "把擦铜油放在长桌上",
+   "text": "叶知微把擦铜油放在长桌上。",
+   "complete": true
+  },
+  {
+   "unitId": "ce1A",
+   "factId": "f0",
+   "name": "叶知微",
+   "expected": "指尖沾了铜油",
+   "text": "叶知微的指尖沾了铜油。",
+   "complete": true
+  },
+  {
+   "unitId": "ce1B",
+   "factId": "f0",
+   "name": null,
+   "expected": "",
+   "text": "塔顶的灯还亮着,什么也没有再发生。",
+   "complete": true
+  },
+  {
+   "unitId": "ce2A",
+   "factId": "f0",
+   "name": "沈砚",
+   "expected": "把钟绳绕回钟架上",
+   "text": "沈砚把钟绳绕回钟架上。",
+   "complete": true
+  },
+  {
+   "unitId": "ce2B",
+   "factId": "f0",
+   "name": null,
+   "expected": "",
+   "text": "雾堤上的风一直吹,堤面没有新的变化。",
+   "complete": true
+  },
+  {
+   "unitId": "ce3A",
+   "factId": "f0",
+   "name": "顾行舟",
+   "expected": "把船灯挂回托架上",
+   "text": "顾行舟把船灯挂回托架上。",
+   "complete": true
+  },
+  {
+   "unitId": "ce3B",
+   "factId": "f0",
+   "name": null,
+   "expected": "",
+   "text": "栈桥边的水面晃了晃,没有新的变化。",
+   "complete": true
+  },
+  {
+   "unitId": "ce4A",
+   "factId": "f0",
+   "name": "沈砚",
+   "expected": "",
+   "text": "沈砚从潮生巷过来,推开档案馆的门。",
+   "complete": true
+  },
+  {
+   "unitId": "ce4B",
+   "factId": "f0",
+   "name": null,
+   "expected": "",
+   "text": "长桌上的东西都还在原处,屋里没有新的变化。",
+   "complete": true
+  }
+ ],
+ "wallSeconds": 25.3
+}

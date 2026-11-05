@@ -1,3 +1,98 @@
 # Review corpus files keep their authored LF bytes.
 *.jsonl -text
 *.json -text
+
+# Per-file snapshot bytes (next-baseline); do not replace with a wildcard.
+# Existing text blobs use explicit checkout EOL; newly tracked bytes use -text.
+"arm_readiness.py" -text
+"audit_token_budget.py" -text
+"beam_decode.py" -text
+"boundary_data.py" -text
+"boundary_data_v2.py" -text
+"build_chain_units.py" -text
+"build_decode_cases.py" -text
+"build_decode_confirm.py" -text
+"build_formal_pairs.py" text eol=lf
+"cf24_materials.py" -text
+"cf_pairs.py" -text
+"check_edit.py" -text
+"confirm24.py" -text
+"conservative_edit.py" -text
+"convert_contract.py" -text
+"convert_training.py" -text
+"decode_compare.py" -text
+"diagnose_group.py" -text
+"eval_n4_holdout.py" text eol=lf
+"eval_units.py" -text
+"expand_confirm.py" -text
+"expand_data.py" -text
+"expand_pairs.py" -text
+"export_training_pairs.py" text eol=lf
+"fact_contract.py" -text
+"final24.py" -text
+"freeze_run.py" -text
+"gen_scene_corpus.py" text eol=lf
+"group_materials.py" -text
+"group_plan.py" -text
+"holdout-report-copy.json" -text
+"holdout-report-rerank.json" -text
+"holdout-report.json" -text
+"n4_pipeline.py" -text
+"n4_server.py" -text
+"narration_service.py" -text
+"object_data.py" -text
+"object_pairs.py" -text
+"precheck.py" -text
+"relation_contract.py" -text
+"relation_edit.py" -text
+"rerun_cf24.py" -text
+"run_ablation_b.py" -text
+"run_arm.py" -text
+"run_background_select.py" -text
+"run_boundary_arm.py" -text
+"run_cf.py" -text
+"run_cf24.py" -text
+"run_chain_edit.py" -text
+"run_chain_units.py" -text
+"run_cohesion_split.py" -text
+"run_confirm24.py" -text
+"run_conservative_edit.py" -text
+"run_contract_eval.py" -text
+"run_expand2_arm.py" -text
+"run_expand_arm.py" -text
+"run_group_arm.py" -text
+"run_mix_compare.py" -text
+"run_mix_unified.py" -text
+"run_organize_v2.py" -text
+"run_planner_split.py" -text
+"run_semantic_correct.py" -text
+"run_split_dw.py" -text
+"run_units_generic.py" -text
+"scene-manual-report.json" text eol=lf
+"scene-manual-v2-report.json" -text
+"scene_manual.jsonl" text eol=lf
+"scene_manual_b2.jsonl" -text
+"scenegen_holdout.jsonl" -text
+"score_cohesion_split.py" -text
+"score_contract.py" -text
+"score_decode_compare.py" -text
+"score_organize_v2.py" -text
+"score_semantic_correct.py" -text
+"score_split_dw.py" -text
+"sequence_policy.py" -text
+"smoke_full_length.py" -text
+"test_conservative_edit.py" -text
+"test_fact_contract.py" -text
+"test_relation_contract.py" -text
+"test_relation_edit.py" -text
+"test_sequence_policy.py" -text
+"train-formal-report.json" -text
+"train-formal240-report.json" -text
+"train-pilot-report.json" -text
+"train-struct-report.json" -text
+"train_n4_formal.py" text eol=crlf
+"train_n4_struct.py" text eol=crlf
+"train_verbalizer.py" text eol=crlf
+"two_arm_data.py" -text
+"verify_beam_cache.py" -text
+"verify_sequence_policy.py" -text

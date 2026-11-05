@@ -1,0 +1,20 @@
+{
+ "id": "mini-river",
+ "name": "青石渡（测试用迷你世界）",
+ "locations": {
+  "loc_qingshi": {
+   "name": "青石渡",
+   "features": ["青石阶", "渡桩"],
+   "sublocations": [{"name": "渡口棚"}]
+  },
+  "loc_oldstore": {"name": "旧仓", "features": ["仓门"], "sublocations": []}
+ },
+ "characters": {
+  "char_qin": {"name": "秦望"},
+  "char_liu": {"name": "柳七"}
+ },
+ "items": {
+  "item_pole": {"name": "竹篙"},
+  "item_lamp": {"name": "油灯"}
+ }
+}

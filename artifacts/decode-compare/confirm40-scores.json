@@ -1,0 +1,858 @@
+{
+ "greedy": {
+  "support": 40,
+  "binding": 0,
+  "direction": 1,
+  "repeat": 1,
+  "extra": 24
+ },
+ "beam": {
+  "support": 40,
+  "binding": 0,
+  "direction": 2,
+  "repeat": 0,
+  "extra": 20
+ },
+ "details": [
+  {
+   "caseId": "d000",
+   "group": "appearance_changed",
+   "fact": "沈砚｜外貌变化｜膝盖湿了",
+   "greedy": {
+    "text": "沈砚的膝盖湿了。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "沈砚的膝盖湿了。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "d001",
+   "group": "appearance_changed",
+   "fact": "沈砚｜外貌变化｜膝盖结了盐霜",
+   "greedy": {
+    "text": "沈砚的膝盖结了盐霜。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "沈砚的膝盖结了盐霜。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "d002",
+   "group": "appearance_changed",
+   "fact": "沈砚｜外貌变化｜膝盖落着灰",
+   "greedy": {
+    "text": "沈砚的膝盖落着灰,袖口沾着铜油。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ",袖口沾铜油"
+   },
+   "beam": {
+    "text": "沈砚的膝盖落着灰。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "d003",
+   "group": "appearance_changed",
+   "fact": "沈砚｜外貌变化｜膝盖冻得发僵",
+   "greedy": {
+    "text": "沈砚的膝盖冻得发僵,胸口发僵。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ",胸口发僵"
+   },
+   "beam": {
+    "text": "沈砚的膝盖冻得发僵。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "d004",
+   "group": "appearance_changed",
+   "fact": "沈砚｜外貌变化｜帽檐结了盐霜",
+   "greedy": {
+    "text": "沈砚的帽檐结了盐霜。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "沈砚的帽檐结了盐霜。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "d005",
+   "group": "appearance_changed",
+   "fact": "沈砚｜外貌变化｜围巾结了盐霜",
+   "greedy": {
+    "text": "沈砚的围巾结了盐霜。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "沈砚的围巾结了盐霜。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "d006",
+   "group": "appearance_changed",
+   "fact": "沈砚｜外貌变化｜发梢结了盐霜",
+   "greedy": {
+    "text": "沈砚发梢结了盐霜。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "沈砚发梢结了盐霜。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "d007",
+   "group": "appearance_changed",
+   "fact": "沈砚｜外貌变化｜掌心沾了泥",
+   "greedy": {
+    "text": "沈砚的掌心沾了泥。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "沈砚的掌心沾了泥。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "d008",
+   "group": "appearance_changed",
+   "fact": "沈砚｜外貌变化｜掌心结了盐霜",
+   "greedy": {
+    "text": "沈砚的掌心结了盐霜。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "沈砚的掌心结了盐霜。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "d009",
+   "group": "appearance_changed",
+   "fact": "沈砚｜外貌变化｜掌心落着灰",
+   "greedy": {
+    "text": "沈砚的掌心落着灰。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "沈砚的掌心落着灰。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "d010",
+   "group": "appearance_changed",
+   "fact": "沈砚｜外貌变化｜衣领湿了，肩头也湿了",
+   "greedy": {
+    "text": "沈砚的衣领湿了,肩头也湿了。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "衣领湿,肩头湿"
+   },
+   "beam": {
+    "text": "沈砚的衣领湿了,肩头也湿了。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "衣领湿,肩头湿"
+   }
+  },
+  {
+   "caseId": "d011",
+   "group": "appearance_changed",
+   "fact": "顾行舟｜外貌变化｜手背沾了泥，帽檐也沾了泥",
+   "greedy": {
+    "text": "顾行舟的手背沾了泥,帽檐也沾了泥。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "手背沾泥,帽檐沾泥"
+   },
+   "beam": {
+    "text": "顾行舟的手背沾了泥,帽檐也沾了泥。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "手背沾泥,帽檐沾泥"
+   }
+  },
+  {
+   "caseId": "d012",
+   "group": "appearance_changed",
+   "fact": "叶知微｜外貌变化｜肩头结了盐霜，发梢也结了盐霜",
+   "greedy": {
+    "text": "叶知微的肩头结了盐霜,发梢也结了盐霜。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "肩头结盐霜,发梢结盐霜"
+   },
+   "beam": {
+    "text": "叶知微的肩头结了盐霜,发梢也结了盐霜。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "肩头结盐霜,发梢结盐霜"
+   }
+  },
+  {
+   "caseId": "d013",
+   "group": "appearance_changed",
+   "fact": "阿棠｜外貌变化｜围巾落着灰，脚踝也落着灰",
+   "greedy": {
+    "text": "阿棠的围巾落着灰,脚踝也落着灰。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "围巾落灰,脚踝落灰"
+   },
+   "beam": {
+    "text": "阿棠的围巾落着灰,脚踝也落着灰。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "围巾落灰,脚踝落灰"
+   }
+  },
+  {
+   "caseId": "d014",
+   "group": "appearance_changed",
+   "fact": "韩渡｜外貌变化｜掌心冻得发僵，背脊也冻得发僵",
+   "greedy": {
+    "text": "韩渡的掌心冻得发僵,背脊也冻得发僵。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "掌心冻得发僵,背脊冻得发僵"
+   },
+   "beam": {
+    "text": "韩渡的掌心冻得发僵,背脊也冻得发僵。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "掌心冻得发僵,背脊冻得发僵"
+   }
+  },
+  {
+   "caseId": "d015",
+   "group": "appearance_changed",
+   "fact": "沈砚｜外貌变化｜裤脚蹭破了皮，鞋面沾了泥",
+   "greedy": {
+    "text": "沈砚的裤脚蹭破了皮,鞋面沾了泥。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "裤脚蹭破皮,鞋面沾泥"
+   },
+   "beam": {
+    "text": "沈砚的裤脚蹭破了皮,鞋面沾了泥。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "裤脚蹭破皮,鞋面沾泥"
+   }
+  },
+  {
+   "caseId": "d016",
+   "group": "appearance_changed",
+   "fact": "顾行舟｜外貌变化｜衣领湿了，鬓角结了盐霜",
+   "greedy": {
+    "text": "顾行舟的衣领湿了,鬓角结了盐霜。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "衣领湿,鬓角结盐霜"
+   },
+   "beam": {
+    "text": "顾行舟的衣领湿了,鬓角结了盐霜。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "衣领湿,鬓角结盐霜"
+   }
+  },
+  {
+   "caseId": "d017",
+   "group": "appearance_changed",
+   "fact": "叶知微｜外貌变化｜手背沾了泥，帽檐落着灰",
+   "greedy": {
+    "text": "叶知微的手背沾了泥,帽檐落着灰。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "手背沾泥,帽檐落灰"
+   },
+   "beam": {
+    "text": "叶知微的手背沾了泥,帽檐落着灰。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "手背沾泥,帽檐落灰"
+   }
+  },
+  {
+   "caseId": "d018",
+   "group": "appearance_changed",
+   "fact": "阿棠｜外貌变化｜肩头结了盐霜，发梢冻得发僵",
+   "greedy": {
+    "text": "阿棠的肩头结了盐霜,发梢冻得发僵。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "肩头结盐霜,发梢冻得发僵"
+   },
+   "beam": {
+    "text": "阿棠的肩头结了盐霜,发梢冻得发僵。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "肩头结盐霜,发梢冻得发僵"
+   }
+  },
+  {
+   "caseId": "d019",
+   "group": "appearance_changed",
+   "fact": "韩渡｜外貌变化｜围巾落着灰，脚踝蹭破了皮",
+   "greedy": {
+    "text": "韩渡的围巾落着灰,脚踝蹭破了皮。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "围巾落灰,脚踝蹭破皮"
+   },
+   "beam": {
+    "text": "韩渡的围巾落着灰,脚踝蹭破了皮。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "围巾落灰,脚踝蹭破皮"
+   }
+  },
+  {
+   "caseId": "d020",
+   "group": "moved",
+   "fact": "沈砚｜移动｜潮渡→雾堤",
+   "greedy": {
+    "text": "沈砚从潮渡上来,走进雾堤。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "潮渡来,走进雾堤"
+   },
+   "beam": {
+    "text": "沈砚从潮渡上来,走进雾堤。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "潮渡来,走进雾堤"
+   }
+  },
+  {
+   "caseId": "d021",
+   "group": "moved",
+   "fact": "顾行舟｜移动｜雾堤→潮渡",
+   "greedy": {
+    "text": "顾行舟从雾堤下下到潮渡。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "雾堤潮渡"
+   },
+   "beam": {
+    "text": "顾行舟从雾堤下下到潮渡。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "雾堤潮渡"
+   }
+  },
+  {
+   "caseId": "d022",
+   "group": "moved",
+   "fact": "叶知微｜移动｜潮生巷→早市",
+   "greedy": {
+    "text": "叶知微从潮生巷一路走到早市,帆布棚下散光。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "潮生巷一路走早市,帆布棚散光"
+   },
+   "beam": {
+    "text": "叶知微从潮生巷一路走到早市。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "潮生巷一路走早市"
+   }
+  },
+  {
+   "caseId": "d023",
+   "group": "moved",
+   "fact": "阿棠｜移动｜早市→潮生巷",
+   "greedy": {
+    "text": "阿棠从早市过来,走进潮生巷。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "早市来,走进潮生巷"
+   },
+   "beam": {
+    "text": "阿棠从早市过来,走进潮生巷。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "早市来,走进潮生巷"
+   }
+  },
+  {
+   "caseId": "d024",
+   "group": "moved",
+   "fact": "韩渡｜移动｜潮汐档案馆→潮渡",
+   "greedy": {
+    "text": "韩渡从潮汐档案馆出来,走到潮渡的栈桥边。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "潮汐档案馆出来,走潮渡栈桥边"
+   },
+   "beam": {
+    "text": "韩渡从潮汐档案馆出来,走进潮渡。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "潮汐档案馆出来,走进潮渡"
+   }
+  },
+  {
+   "caseId": "d025",
+   "group": "moved",
+   "fact": "沈砚｜移动｜潮渡→潮汐档案馆",
+   "greedy": {
+    "text": "沈砚从潮渡过来,走进档案馆。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "潮渡来,走进档案馆"
+   },
+   "beam": {
+    "text": "沈砚从潮渡上来,走进档案馆。",
+    "support": true,
+    "binding": false,
+    "direction": true,
+    "repeat": false,
+    "extra": "潮渡来,走进档案馆"
+   }
+  },
+  {
+   "caseId": "d026",
+   "group": "moved",
+   "fact": "顾行舟｜移动｜旧灯塔→雾堤",
+   "greedy": {
+    "text": "顾行舟从旧灯塔出来,走到雾堤的钟架下。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "旧灯塔出来,走雾堤钟架"
+   },
+   "beam": {
+    "text": "顾行舟从旧灯塔出来,走进雾堤。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "旧灯塔出来,走进雾堤"
+   }
+  },
+  {
+   "caseId": "d027",
+   "group": "moved",
+   "fact": "叶知微｜移动｜雾堤→旧灯塔",
+   "greedy": {
+    "text": "叶知微从雾堤上来,走进旧灯塔。",
+    "support": true,
+    "binding": false,
+    "direction": true,
+    "repeat": false,
+    "extra": "雾堤来,走进旧灯塔"
+   },
+   "beam": {
+    "text": "叶知微从雾堤上来,走进旧灯塔。",
+    "support": true,
+    "binding": false,
+    "direction": true,
+    "repeat": false,
+    "extra": "雾堤来,走进旧灯塔"
+   }
+  },
+  {
+   "caseId": "d028",
+   "group": "moved",
+   "fact": "阿棠｜移动｜早市→潮渡",
+   "greedy": {
+    "text": "阿棠从早市过来,抱起栈桥。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "早市来,抱起栈桥"
+   },
+   "beam": {
+    "text": "阿棠从早市过来,抱起栈桥。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "早市来,抱起栈桥"
+   }
+  },
+  {
+   "caseId": "d029",
+   "group": "moved",
+   "fact": "韩渡｜移动｜潮生巷→潮汐档案馆",
+   "greedy": {
+    "text": "韩渡从潮生巷一路走到潮汐档案馆。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "潮生巷一路走潮汐档案馆"
+   },
+   "beam": {
+    "text": "韩渡从潮生巷一路走到潮汐档案馆。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": "潮生巷一路走潮汐档案馆"
+   }
+  },
+  {
+   "caseId": "d030",
+   "group": "appearance_changed",
+   "fact": "铜灯罩｜外貌变化｜蒙了盐雾",
+   "greedy": {
+    "text": "铜灯罩蒙了盐雾。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "铜灯罩蒙了盐雾。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "d031",
+   "group": "appearance_changed",
+   "fact": "抹布｜外貌变化｜裂了缝",
+   "greedy": {
+    "text": "抹布裂了缝。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "抹布裂了缝。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "d032",
+   "group": "appearance_changed",
+   "fact": "潮汐簿｜外貌变化｜边角磨破",
+   "greedy": {
+    "text": "潮汐簿的边角磨破,玻璃罩已经点亮。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ",玻璃罩已经点亮"
+   },
+   "beam": {
+    "text": "潮汐簿的边角磨破。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "d033",
+   "group": "appearance_changed",
+   "fact": "钟绳｜外貌变化｜生了锈",
+   "greedy": {
+    "text": "钟绳生了锈。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "钟绳生了锈。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "d034",
+   "group": "appearance_changed",
+   "fact": "警示灯｜外貌变化｜沾了铜油",
+   "greedy": {
+    "text": "警示灯的沾了铜油。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "警示灯的沾了铜油。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "d035",
+   "group": "appearance_changed",
+   "fact": "铁链｜外貌变化｜落着灰",
+   "greedy": {
+    "text": "铁链落着灰。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "铁链落着灰。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "d036",
+   "group": "appearance_changed",
+   "fact": "案板｜外貌变化｜蒙了盐雾",
+   "greedy": {
+    "text": "案板蒙了盐雾。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "案板蒙了盐雾。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "d037",
+   "group": "appearance_changed",
+   "fact": "鱼筐｜外貌变化｜裂了缝",
+   "greedy": {
+    "text": "鱼筐裂了缝。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "鱼筐裂了缝。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "d038",
+   "group": "appearance_changed",
+   "fact": "油纸伞｜外貌变化｜边角磨破",
+   "greedy": {
+    "text": "油纸伞的边角磨破,边角磨破。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": true,
+    "extra": ","
+   },
+   "beam": {
+    "text": "油纸伞的边角磨破。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  },
+  {
+   "caseId": "d039",
+   "group": "appearance_changed",
+   "fact": "缆绳｜外貌变化｜生了锈",
+   "greedy": {
+    "text": "缆绳生了锈。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   },
+   "beam": {
+    "text": "缆绳生了锈。",
+    "support": true,
+    "binding": false,
+    "direction": false,
+    "repeat": false,
+    "extra": ""
+   }
+  }
+ ]
+}
