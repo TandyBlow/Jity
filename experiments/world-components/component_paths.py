@@ -33,6 +33,13 @@ class ComponentPaths:
         path = self._inside(self.outputs / relative)
         if not path.is_relative_to(self.outputs) or path.is_relative_to(self.inputs):
             raise ValueError(f'Output must stay under {self.outputs}: {path}')
+        pin = self.inputs / 'pin.json'
+        if pin.is_file():
+            for record in self._pin()['files'].values():
+                for copy in record.get('historicalCopies', []):
+                    archived = self._inside(copy['path'])
+                    if path.is_relative_to(archived) or archived.is_relative_to(path):
+                        raise ValueError(f'Output overlaps immutable historical evidence: {archived}')
         return path
 
     def _pin(self):
@@ -59,13 +66,20 @@ class ComponentPaths:
             actual = hashlib.sha256(source.read_bytes()).hexdigest()
             if actual != record['sha256']:
                 raise ValueError(f'Frozen input bytes changed: {name} ({actual} != {record["sha256"]})')
+            for copy in record.get('historicalCopies', []):
+                archived = self._inside(copy['path'])
+                if not archived.is_file():
+                    raise FileNotFoundError(f'Missing historical evidence copy: {archived}')
+                if hashlib.sha256(archived.read_bytes()).hexdigest() != record['sha256']:
+                    raise ValueError(f'Historical evidence drifted from pinned input: {archived}')
         return path
 
     def verify_inputs(self):
         records = self._pin()['files']
         for name in records:
             self.input(name)
-        return {'files': len(records), 'inputRoot': str(self.inputs), 'verified': True}
+        return {'files': len(records), 'inputRoot': str(self.inputs), 'verified': True,
+                'historicalCopiesVerified': sum(len(r.get('historicalCopies', [])) for r in records.values())}
 
     def model(self, explicit=None):
         """Shared models are read-only resources; an explicit location is required."""

@@ -36,6 +36,25 @@ class PathsTests(unittest.TestCase):
                 self.paths.output(path)
         self.assertFalse(self.paths.outputs.exists())
 
+    def test_historical_copy_is_immutable_and_drift_is_detected(self):
+        archive = self.root / 'archive/round.json'
+        archive.parent.mkdir()
+        archive.write_bytes((self.paths.inputs / 'round.json').read_bytes())
+        pin = self.paths.inputs / 'pin.json'
+        records = json.loads(pin.read_text())
+        records['files']['round.json']['historicalCopies'] = [{'path': 'archive/round.json'}]
+        pin.write_text(json.dumps(records))
+        self.assertEqual(self.paths.verify_inputs()['historicalCopiesVerified'], 1)
+        redirected = ComponentPaths(self.root, 'inputs', 'archive')
+        with self.assertRaisesRegex(ValueError, 'historical evidence'):
+            redirected.output('round.json')
+        archive.write_bytes(b'changed')
+        with self.assertRaisesRegex(ValueError, 'Historical evidence drifted'):
+            self.paths.input('round.json')
+        archive.unlink()
+        with self.assertRaises(FileNotFoundError):
+            self.paths.verify_inputs()
+
     def test_symlink_output_escape_is_rejected(self):
         self.paths.outputs.mkdir()
         outside = self.root.parent / 'other'

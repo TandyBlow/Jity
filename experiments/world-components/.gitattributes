@@ -6,4 +6,5 @@
 component_paths.py -text
 test_component_paths.py -text
 test_component_runtime.py -text
+test_component_runner.py -text
 run_component.py -text

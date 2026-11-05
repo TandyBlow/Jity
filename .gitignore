@@ -288,7 +288,5 @@ artifacts/benchmark/minirbt-h256-snapshot/
 !experiments/world-components/n4_narrative_dev/*.py
 !experiments/world-components/n4_corpus_v2/*.py
 !experiments/world-components/n4_rewrite60/*.py
-# Read-only model resources and generated training weights never enter run evidence.
-artifacts/next-runs/**/*.safetensors
-artifacts/next-runs/**/*.pt
-artifacts/next-runs/**/*.bin
+# Runs stay local. Promote selected immutable records to artifacts/next-acceptance/.
+artifacts/next-runs/
