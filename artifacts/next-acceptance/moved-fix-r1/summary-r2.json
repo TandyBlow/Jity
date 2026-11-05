@@ -1,0 +1,356 @@
+{
+ "counts": {
+  "c-cf24": {
+   "factMachine": {
+    "S": 85,
+    "O": 0,
+    "A": 0,
+    "REVIEW": 0
+   },
+   "factFinal": {
+    "supported": 85,
+    "unsupported": 0,
+    "downgradedByReview": 0
+   },
+   "issues": {
+    "fact": 0,
+    "added": 5,
+    "repeated": 0,
+    "language": 4
+   },
+   "movedIssues": {
+    "fact": 0,
+    "added": 5,
+    "repeated": 0,
+    "language": 1
+   },
+   "nonMovedIssues": {
+    "fact": 0,
+    "added": 0,
+    "repeated": 0,
+    "language": 3
+   },
+   "units": 85,
+   "unitsClean": 77,
+   "sources": 24,
+   "sourceCleanNoAdded": 19,
+   "sourceFullyClean": 16,
+   "independent": null,
+   "nonMovedUnits": 75
+  },
+  "control-cf24": {
+   "factMachine": {
+    "S": 83,
+    "O": 2,
+    "A": 0,
+    "REVIEW": 0
+   },
+   "factFinal": {
+    "supported": 83,
+    "unsupported": 2,
+    "downgradedByReview": 0
+   },
+   "issues": {
+    "fact": 2,
+    "added": 0,
+    "repeated": 0,
+    "language": 3
+   },
+   "movedIssues": {
+    "fact": 0,
+    "added": 0,
+    "repeated": 0,
+    "language": 0
+   },
+   "nonMovedIssues": {
+    "fact": 2,
+    "added": 0,
+    "repeated": 0,
+    "language": 3
+   },
+   "units": 85,
+   "unitsClean": 80,
+   "sources": 24,
+   "sourceCleanNoAdded": 22,
+   "sourceFullyClean": 19,
+   "independent": null,
+   "nonMovedUnits": 75
+  },
+  "moved-cf24": {
+   "factMachine": {
+    "S": 85,
+    "O": 0,
+    "A": 0,
+    "REVIEW": 0
+   },
+   "factFinal": {
+    "supported": 84,
+    "unsupported": 1,
+    "downgradedByReview": 1
+   },
+   "issues": {
+    "fact": 1,
+    "added": 1,
+    "repeated": 0,
+    "language": 3
+   },
+   "movedIssues": {
+    "fact": 0,
+    "added": 1,
+    "repeated": 0,
+    "language": 0
+   },
+   "nonMovedIssues": {
+    "fact": 1,
+    "added": 0,
+    "repeated": 0,
+    "language": 3
+   },
+   "units": 85,
+   "unitsClean": 80,
+   "sources": 24,
+   "sourceCleanNoAdded": 22,
+   "sourceFullyClean": 20,
+   "independent": null,
+   "nonMovedUnits": 75
+  },
+  "c-final24": {
+   "factMachine": {
+    "S": 76,
+    "O": 0,
+    "A": 0,
+    "REVIEW": 0
+   },
+   "factFinal": {
+    "supported": 76,
+    "unsupported": 0,
+    "downgradedByReview": 0
+   },
+   "issues": {
+    "fact": 0,
+    "added": 4,
+    "repeated": 0,
+    "language": 0
+   },
+   "movedIssues": {
+    "fact": 0,
+    "added": 4,
+    "repeated": 0,
+    "language": 0
+   },
+   "nonMovedIssues": {
+    "fact": 0,
+    "added": 0,
+    "repeated": 0,
+    "language": 0
+   },
+   "units": 76,
+   "unitsClean": 72,
+   "sources": 24,
+   "sourceCleanNoAdded": 20,
+   "sourceFullyClean": 20,
+   "independent": {
+    "units": 43,
+    "clean": 42
+   },
+   "nonMovedUnits": 69
+  },
+  "control-final24": {
+   "factMachine": {
+    "S": 73,
+    "O": 3,
+    "A": 0,
+    "REVIEW": 0
+   },
+   "factFinal": {
+    "supported": 73,
+    "unsupported": 3,
+    "downgradedByReview": 0
+   },
+   "issues": {
+    "fact": 3,
+    "added": 0,
+    "repeated": 0,
+    "language": 0
+   },
+   "movedIssues": {
+    "fact": 0,
+    "added": 0,
+    "repeated": 0,
+    "language": 0
+   },
+   "nonMovedIssues": {
+    "fact": 3,
+    "added": 0,
+    "repeated": 0,
+    "language": 0
+   },
+   "units": 76,
+   "unitsClean": 73,
+   "sources": 24,
+   "sourceCleanNoAdded": 21,
+   "sourceFullyClean": 21,
+   "independent": {
+    "units": 43,
+    "clean": 42
+   },
+   "nonMovedUnits": 69
+  },
+  "moved-final24": {
+   "factMachine": {
+    "S": 76,
+    "O": 0,
+    "A": 0,
+    "REVIEW": 0
+   },
+   "factFinal": {
+    "supported": 76,
+    "unsupported": 0,
+    "downgradedByReview": 0
+   },
+   "issues": {
+    "fact": 0,
+    "added": 6,
+    "repeated": 0,
+    "language": 0
+   },
+   "movedIssues": {
+    "fact": 0,
+    "added": 1,
+    "repeated": 0,
+    "language": 0
+   },
+   "nonMovedIssues": {
+    "fact": 0,
+    "added": 5,
+    "repeated": 0,
+    "language": 0
+   },
+   "units": 76,
+   "unitsClean": 70,
+   "sources": 24,
+   "sourceCleanNoAdded": 18,
+   "sourceFullyClean": 18,
+   "independent": {
+    "units": 43,
+    "clean": 38
+   },
+   "nonMovedUnits": 69
+  },
+  "c-moved24": {
+   "factMachine": {
+    "S": 24,
+    "O": 0,
+    "A": 0,
+    "REVIEW": 0
+   },
+   "factFinal": {
+    "supported": 24,
+    "unsupported": 0,
+    "downgradedByReview": 0
+   },
+   "issues": {
+    "fact": 0,
+    "added": 0,
+    "repeated": 0,
+    "language": 0
+   },
+   "movedIssues": {
+    "fact": 0,
+    "added": 0,
+    "repeated": 0,
+    "language": 0
+   },
+   "nonMovedIssues": {
+    "fact": 0,
+    "added": 0,
+    "repeated": 0,
+    "language": 0
+   },
+   "units": 24,
+   "unitsClean": 24,
+   "sources": 24,
+   "sourceCleanNoAdded": 24,
+   "sourceFullyClean": 24,
+   "independent": null,
+   "nonMovedUnits": 0
+  },
+  "control-moved24": {
+   "factMachine": {
+    "S": 24,
+    "O": 0,
+    "A": 0,
+    "REVIEW": 0
+   },
+   "factFinal": {
+    "supported": 23,
+    "unsupported": 1,
+    "downgradedByReview": 1
+   },
+   "issues": {
+    "fact": 1,
+    "added": 1,
+    "repeated": 0,
+    "language": 0
+   },
+   "movedIssues": {
+    "fact": 1,
+    "added": 1,
+    "repeated": 0,
+    "language": 0
+   },
+   "nonMovedIssues": {
+    "fact": 0,
+    "added": 0,
+    "repeated": 0,
+    "language": 0
+   },
+   "units": 24,
+   "unitsClean": 22,
+   "sources": 24,
+   "sourceCleanNoAdded": 22,
+   "sourceFullyClean": 22,
+   "independent": null,
+   "nonMovedUnits": 0
+  },
+  "moved-moved24": {
+   "factMachine": {
+    "S": 24,
+    "O": 0,
+    "A": 0,
+    "REVIEW": 0
+   },
+   "factFinal": {
+    "supported": 24,
+    "unsupported": 0,
+    "downgradedByReview": 0
+   },
+   "issues": {
+    "fact": 0,
+    "added": 0,
+    "repeated": 0,
+    "language": 0
+   },
+   "movedIssues": {
+    "fact": 0,
+    "added": 0,
+    "repeated": 0,
+    "language": 0
+   },
+   "nonMovedIssues": {
+    "fact": 0,
+    "added": 0,
+    "repeated": 0,
+    "language": 0
+   },
+   "units": 24,
+   "unitsClean": 24,
+   "sources": 24,
+   "sourceCleanNoAdded": 24,
+   "sourceFullyClean": 24,
+   "independent": null,
+   "nonMovedUnits": 0
+  }
+ },
+ "note": "factFinal downgrades a machine S when the read found coverage loss"
+}

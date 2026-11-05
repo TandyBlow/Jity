@@ -1,0 +1,240 @@
+{
+ "purpose": "moved-target repair arm: equal-budget continuation from C, evaluated against its own control",
+ "job": {
+  "id": 240172,
+  "gpu": "NVIDIA GeForce RTX 4090 D",
+  "node": "hpcgpu08",
+  "startedAt": "2026-11-05T22:17:21+08:00",
+  "finishedAt": "2026-11-05T22:19:48+08:00",
+  "units": 606,
+  "models": [
+   "c",
+   "control",
+   "moved"
+  ]
+ },
+ "environment": {
+  "python": "3.11.17",
+  "torch": "2.5.1+cu124",
+  "transformers": "4.51.3",
+  "cuda": "12.4",
+  "deviceName": "NVIDIA GeForce RTX 4090 D",
+  "fetch": {
+   "source": "job-meta.json",
+   "remoteSha256": "d9d68eb26abfc89edb79dc504627bc1398119cc8824531de7c40ea2ea40608a9",
+   "redaction": "home path in base.dir / model.dir replaced with <HOME> before download"
+  }
+ },
+ "pools": {
+  "freeze": "artifacts/moved-fix-r1/moved-fix-freeze.json",
+  "changedRows": 22,
+  "rows": 341,
+  "idOrderSha256": "1e0815465811369104f8d00b6a48e53969caee7ae664ffeed6348937b9558e07"
+ },
+ "training": {
+  "base": "08276c0c… (C)",
+  "steps": 240,
+  "batch": 8,
+  "mix": [
+   4,
+   3,
+   1
+  ],
+  "lr": 0.0003,
+  "seed": 20261102,
+  "idsEqualAcrossArms": true,
+  "targetsDistinct": true
+ },
+ "acceptance": {
+  "declared": "experiment reduces unsupported additions against the equal-budget control, facts not below the start C, non-moved added/repeat/language not worse",
+  "verdict": "failed",
+  "reasons": [
+   "added 2 vs control 1 on the three sets",
+   "one borderline coverage loss vs the start C",
+   "non-moved added 0 -> 5 on final24 no_change units"
+  ]
+ },
+ "knownRuleDefect": "the tail verb list has no 抱起; manual judgement counts C at 8/8, control 1/8, moved 0/8",
+ "files": [
+  {
+   "path": "artifacts/next-acceptance/moved-fix-r1/c-cf24/cf24-baseline.json",
+   "bytes": 137455,
+   "sha256": "98d8e64331da3d3e9be9d1543e61e58b57c0b134f0c3043453e10a5b0d75a5b8"
+  },
+  {
+   "path": "artifacts/next-acceptance/moved-fix-r1/c-cf24/cf24-mechanical.json",
+   "bytes": 18976,
+   "sha256": "7ade2acb8b20dadb7e4fbe36bd8292bf26136ce42905e8c94fad766689aa8160"
+  },
+  {
+   "path": "artifacts/next-acceptance/moved-fix-r1/c-cf24/cf24-overlap.json",
+   "bytes": 20213,
+   "sha256": "51dedce5047c4f13eefb8dcd6470414767ae1e4e5b0e4a3100709be58c198330"
+  },
+  {
+   "path": "artifacts/next-acceptance/moved-fix-r1/c-final24/final24-baseline.json",
+   "bytes": 115025,
+   "sha256": "9a589bd10e40ec4d731733cda7a3812d22ab199fea9faafe110ce68a19a2d9ff"
+  },
+  {
+   "path": "artifacts/next-acceptance/moved-fix-r1/c-final24/cf24-mechanical-final24-baseline.json",
+   "bytes": 17203,
+   "sha256": "7b4858c2297f0ff34d1822d9f8304a41e43ea8ae59e30b03f846a460a2579f3a"
+  },
+  {
+   "path": "artifacts/next-acceptance/moved-fix-r1/c-final24/final24-overlap.json",
+   "bytes": 17753,
+   "sha256": "78f5faa0086d4fe117f3a809e981a8207cbcc1c8b53b0626ce6c316a45a26e90"
+  },
+  {
+   "path": "artifacts/next-acceptance/moved-fix-r1/c-moved24/moved24-baseline.json",
+   "bytes": 38357,
+   "sha256": "985c4c9e9492b2ab130024f7a60584ea201cf2109570de73a7be944edf6de750"
+  },
+  {
+   "path": "artifacts/next-acceptance/moved-fix-r1/c-moved24/cf24-mechanical-moved24-baseline.json",
+   "bytes": 6303,
+   "sha256": "46190525c5f07bef195556f261daf79797720743d54b7ff64ed0e55ae4ec7f94"
+  },
+  {
+   "path": "artifacts/next-acceptance/moved-fix-r1/c-moved24/moved24-overlap.json",
+   "bytes": 5634,
+   "sha256": "da70198c7485fec0f9c281f1481dd369e8fa11764bea192f602e78df045e7f7a"
+  },
+  {
+   "path": "artifacts/next-acceptance/moved-fix-r1/c-probe/probe-baseline.json",
+   "bytes": 27814,
+   "sha256": "338df54a9fc844b490366ec67b477af4bcc42ae286bbd6136599a1b0a0c67adc"
+  },
+  {
+   "path": "artifacts/next-acceptance/moved-fix-r1/control-cf24/cf24-baseline.json",
+   "bytes": 137387,
+   "sha256": "327deb3e9aea2989a43bb5aacac63a7b90a34210362d938e2d1141c760482450"
+  },
+  {
+   "path": "artifacts/next-acceptance/moved-fix-r1/control-cf24/cf24-mechanical.json",
+   "bytes": 18922,
+   "sha256": "58454ccc01607b4aed21fbf604fc48a64e4e41fadda23d777a85577f7f8ed5f0"
+  },
+  {
+   "path": "artifacts/next-acceptance/moved-fix-r1/control-cf24/cf24-overlap.json",
+   "bytes": 20213,
+   "sha256": "51dedce5047c4f13eefb8dcd6470414767ae1e4e5b0e4a3100709be58c198330"
+  },
+  {
+   "path": "artifacts/next-acceptance/moved-fix-r1/control-final24/final24-baseline.json",
+   "bytes": 115006,
+   "sha256": "afa18065f80e48baf54f146f42b65b168bce324767bce7f5eecaebe155696794"
+  },
+  {
+   "path": "artifacts/next-acceptance/moved-fix-r1/control-final24/cf24-mechanical-final24-baseline.json",
+   "bytes": 17188,
+   "sha256": "e5fd8e18723ec6d37670f97bdd3b0e9b46aec98098e90a76ffbbda95f59bac3c"
+  },
+  {
+   "path": "artifacts/next-acceptance/moved-fix-r1/control-final24/final24-overlap.json",
+   "bytes": 17753,
+   "sha256": "78f5faa0086d4fe117f3a809e981a8207cbcc1c8b53b0626ce6c316a45a26e90"
+  },
+  {
+   "path": "artifacts/next-acceptance/moved-fix-r1/control-moved24/moved24-baseline.json",
+   "bytes": 38286,
+   "sha256": "8d57e2ad0a75a67f8baf1fa38f2c41af62681388de6678c3c36aa9058039a9c3"
+  },
+  {
+   "path": "artifacts/next-acceptance/moved-fix-r1/control-moved24/cf24-mechanical-moved24-baseline.json",
+   "bytes": 6229,
+   "sha256": "665e598a3d43db674eeb2d21fa72df923411cee531419cc993a7529b5ba16dcf"
+  },
+  {
+   "path": "artifacts/next-acceptance/moved-fix-r1/control-moved24/moved24-overlap.json",
+   "bytes": 5634,
+   "sha256": "da70198c7485fec0f9c281f1481dd369e8fa11764bea192f602e78df045e7f7a"
+  },
+  {
+   "path": "artifacts/next-acceptance/moved-fix-r1/control-probe/probe-baseline.json",
+   "bytes": 27662,
+   "sha256": "01ad7600d48bfefceb967a778dce372d5b6cc720f6a8a2b55b1f4940d4b84414"
+  },
+  {
+   "path": "artifacts/next-acceptance/moved-fix-r1/moved-cf24/cf24-baseline.json",
+   "bytes": 137397,
+   "sha256": "7063b6d5a55b2dc2e40621aa8abf3697756b2da59a2e1f42c779a97cd9e2039b"
+  },
+  {
+   "path": "artifacts/next-acceptance/moved-fix-r1/moved-cf24/cf24-mechanical.json",
+   "bytes": 18925,
+   "sha256": "62a415752eed9d930b2f21286ae73fd55f32bf7dd0d395353622f546067f507d"
+  },
+  {
+   "path": "artifacts/next-acceptance/moved-fix-r1/moved-cf24/cf24-overlap.json",
+   "bytes": 20213,
+   "sha256": "51dedce5047c4f13eefb8dcd6470414767ae1e4e5b0e4a3100709be58c198330"
+  },
+  {
+   "path": "artifacts/next-acceptance/moved-fix-r1/moved-final24/final24-baseline.json",
+   "bytes": 114916,
+   "sha256": "d8752e93abb40b3eb3c493d75e3102ac037661ef26db7703c6ba3bb504717e4f"
+  },
+  {
+   "path": "artifacts/next-acceptance/moved-fix-r1/moved-final24/cf24-mechanical-final24-baseline.json",
+   "bytes": 17310,
+   "sha256": "faf87037a56cee946087129e02fba3c51c6278e21d708b6e40c896d875058262"
+  },
+  {
+   "path": "artifacts/next-acceptance/moved-fix-r1/moved-final24/final24-overlap.json",
+   "bytes": 17753,
+   "sha256": "78f5faa0086d4fe117f3a809e981a8207cbcc1c8b53b0626ce6c316a45a26e90"
+  },
+  {
+   "path": "artifacts/next-acceptance/moved-fix-r1/moved-moved24/moved24-baseline.json",
+   "bytes": 38266,
+   "sha256": "6d12257ab113849a2ddde8fade155ca8eaaaaf7148feaa53fbf176db7012c378"
+  },
+  {
+   "path": "artifacts/next-acceptance/moved-fix-r1/moved-moved24/cf24-mechanical-moved24-baseline.json",
+   "bytes": 6209,
+   "sha256": "82c7e9d882abff0e2bb7f349703a2f2afa732c0d0d97abdf575d9ec952a3bd82"
+  },
+  {
+   "path": "artifacts/next-acceptance/moved-fix-r1/moved-moved24/moved24-overlap.json",
+   "bytes": 5634,
+   "sha256": "da70198c7485fec0f9c281f1481dd369e8fa11764bea192f602e78df045e7f7a"
+  },
+  {
+   "path": "artifacts/next-acceptance/moved-fix-r1/moved-probe/probe-baseline.json",
+   "bytes": 27640,
+   "sha256": "154cc6fbd6d2afee10c5abcd2f76ac7d8e970aabcf91aeb518fb3b9892dcdb09"
+  },
+  {
+   "path": "artifacts/next-acceptance/moved-fix-r1/review-r2.json",
+   "bytes": 6470,
+   "sha256": "20cc6ece3cf7a6f60621e4a907b411f5e45ef3082789917417183b714f1a3d8d"
+  },
+  {
+   "path": "artifacts/next-acceptance/moved-fix-r1/summary-r2.json",
+   "bytes": 5927,
+   "sha256": "a849d0773273ab5aaf5a3eca826a0a9f58b11444dc4113fa78c9302e75d71898"
+  },
+  {
+   "path": "artifacts/next-acceptance/moved-fix-r1/probe-judged-r2.json",
+   "bytes": 11640,
+   "sha256": "0797092f219269c710aaf9087b38990b84131dcedd9e6db75bb3146c33040db6"
+  },
+  {
+   "path": "artifacts/next-acceptance/moved-fix-r1/job-meta.json",
+   "bytes": 357,
+   "sha256": "d90c4ae9b5628c9a5e495ff106f9650e43c1abba1252fa78a40b78735aa4913c"
+  },
+  {
+   "path": "artifacts/next-acceptance/moved-fix-r1/train-control.json",
+   "bytes": 2074,
+   "sha256": "e30ba2f0f15d3d3301eea3c265840551317eb130df09e5f1950934c02fc021ae"
+  },
+  {
+   "path": "artifacts/next-acceptance/moved-fix-r1/train-moved.json",
+   "bytes": 2067,
+   "sha256": "cc6679485a3f4ac65c1b3267c583acb0654e7206c43ddd331227fd479aed2305"
+  }
+ ]
+}

@@ -1,0 +1,282 @@
+{
+ "purpose": "per-unit human review of the second-round runs (start C, control, moved)",
+ "rule": "same rule as round 1",
+ "carriedOver": {
+  "c": "the start arm is the already reviewed C on the same inputs; its outputs are unchanged",
+  "control,moved": "units whose output equals the start arm inherit its judgement"
+ },
+ "entries": [
+  {
+   "set": "cf24",
+   "arm": "c",
+   "unitId": "t09:f0",
+   "kind": "added",
+   "span": "推开档案馆的门",
+   "reason": "到达后追加动作"
+  },
+  {
+   "set": "cf24",
+   "arm": "c",
+   "unitId": "t12:f0",
+   "kind": "added",
+   "span": "抱着一叠鱼筐",
+   "reason": "事实外物件"
+  },
+  {
+   "set": "cf24",
+   "arm": "c",
+   "unitId": "t12:f0",
+   "kind": "language",
+   "span": "一叠鱼筐",
+   "reason": "量词与物件不搭"
+  },
+  {
+   "set": "cf24",
+   "arm": "c",
+   "unitId": "t13:f0",
+   "kind": "added",
+   "span": "推开档案馆的门",
+   "reason": "到达后追加动作"
+  },
+  {
+   "set": "cf24",
+   "arm": "c",
+   "unitId": "t16:f0",
+   "kind": "added",
+   "span": "在潮生巷站住",
+   "reason": "到达后追加状态"
+  },
+  {
+   "set": "cf24",
+   "arm": "c",
+   "unitId": "t17:f0",
+   "kind": "added",
+   "span": "穿过早市的人流",
+   "reason": "事实外实体"
+  },
+  {
+   "set": "cf24",
+   "arm": "c",
+   "unitId": "t21:f0",
+   "kind": "language",
+   "span": "潮汐簿的缺页的边缘",
+   "reason": "双层“的”，事实行自带"
+  },
+  {
+   "set": "cf24",
+   "arm": "c",
+   "unitId": "t22:f0",
+   "kind": "language",
+   "span": "系泊绳的泥水",
+   "reason": "所有格错位"
+  },
+  {
+   "set": "cf24",
+   "arm": "c",
+   "unitId": "t24:f1",
+   "kind": "language",
+   "span": "排水沟的里面",
+   "reason": "应为“排水沟里”"
+  },
+  {
+   "set": "final24",
+   "arm": "c",
+   "unitId": "v01:f0",
+   "kind": "added",
+   "span": "扶着铁链走到雾堤的钟架旁",
+   "reason": "身体细节与子地点"
+  },
+  {
+   "set": "final24",
+   "arm": "c",
+   "unitId": "v12:f0",
+   "kind": "added",
+   "span": "穿过早市的人流",
+   "reason": "事实外实体"
+  },
+  {
+   "set": "final24",
+   "arm": "c",
+   "unitId": "v14:f0",
+   "kind": "added",
+   "span": "在潮渡的栈桥边站住",
+   "reason": "到达后追加状态"
+  },
+  {
+   "set": "final24",
+   "arm": "c",
+   "unitId": "v18:f0",
+   "kind": "added",
+   "span": "扶着铁链走到雾堤的钟架旁",
+   "reason": "身体细节与子地点"
+  },
+  {
+   "set": "cf24",
+   "arm": "control",
+   "unitId": "t10:f3",
+   "kind": "fact",
+   "span": "那阵闷意没有散",
+   "reason": "理智 12→9 未写出变差的方向，机器判 O，人工确认"
+  },
+  {
+   "set": "cf24",
+   "arm": "control",
+   "unitId": "t16:f2",
+   "kind": "fact",
+   "span": "那阵闷意没有散",
+   "reason": "同上"
+  },
+  {
+   "set": "cf24",
+   "arm": "control",
+   "unitId": "t21:f0",
+   "kind": "language",
+   "span": "潮汐簿的缺页的边缘",
+   "reason": "与起点 C 同句，未被本臂改动"
+  },
+  {
+   "set": "cf24",
+   "arm": "control",
+   "unitId": "t22:f0",
+   "kind": "language",
+   "span": "系泊绳的泥水",
+   "reason": "与起点 C 同句，未被本臂改动"
+  },
+  {
+   "set": "cf24",
+   "arm": "control",
+   "unitId": "t24:f1",
+   "kind": "language",
+   "span": "排水沟的里面",
+   "reason": "与起点 C 同句，未被本臂改动"
+  },
+  {
+   "set": "final24",
+   "arm": "control",
+   "unitId": "v14:f2",
+   "kind": "fact",
+   "span": "那阵闷意没有散",
+   "reason": "理智 12→9 未写出变差的方向，机器判 O，人工确认"
+  },
+  {
+   "set": "final24",
+   "arm": "control",
+   "unitId": "v18:f2",
+   "kind": "fact",
+   "span": "那阵闷意没有散",
+   "reason": "理智 12→9 未写出变差的方向，机器判 O，人工确认"
+  },
+  {
+   "set": "final24",
+   "arm": "control",
+   "unitId": "v19:f1",
+   "kind": "fact",
+   "span": "那阵闷意没有散",
+   "reason": "理智 12→9 未写出变差的方向，机器判 O，人工确认"
+  },
+  {
+   "set": "moved24",
+   "arm": "control",
+   "unitId": "m17:f0",
+   "kind": "added",
+   "span": "抱着一叠干纸",
+   "reason": "携带物件不在事实里"
+  },
+  {
+   "set": "moved24",
+   "arm": "control",
+   "unitId": "m21:f0",
+   "kind": "fact",
+   "span": "潮渡",
+   "reason": "“在雾堤的栈桥边站住”没有写到终点潮渡，机器判 S，人工补判"
+  },
+  {
+   "set": "cf24",
+   "arm": "moved",
+   "unitId": "t17:f0",
+   "kind": "added",
+   "span": "穿过早市的人",
+   "reason": "“人”不在可见清单，事实外实体（比 C 的“人流”短，但仍是新增）"
+  },
+  {
+   "set": "cf24",
+   "arm": "moved",
+   "unitId": "t22:f1",
+   "kind": "fact",
+   "span": "缠着",
+   "reason": "事实值“缠着的旧缆绳”里的“缠着”没有出现，机器判 S，人工补判为边界覆盖不足"
+  },
+  {
+   "set": "cf24",
+   "arm": "moved",
+   "unitId": "t21:f0",
+   "kind": "language",
+   "span": "潮汐簿的缺页的边缘",
+   "reason": "与起点 C 同句，未被本臂改动"
+  },
+  {
+   "set": "cf24",
+   "arm": "moved",
+   "unitId": "t22:f0",
+   "kind": "language",
+   "span": "系泊绳的泥水",
+   "reason": "与起点 C 同句，未被本臂改动"
+  },
+  {
+   "set": "cf24",
+   "arm": "moved",
+   "unitId": "t24:f1",
+   "kind": "language",
+   "span": "排水沟的里面",
+   "reason": "与起点 C 同句，未被本臂改动"
+  },
+  {
+   "set": "final24",
+   "arm": "moved",
+   "unitId": "v03:f3",
+   "kind": "added",
+   "span": "站了一会儿",
+   "reason": "无变化句里追加了事实外的动作"
+  },
+  {
+   "set": "final24",
+   "arm": "moved",
+   "unitId": "v11:f2",
+   "kind": "added",
+   "span": "站了一会儿",
+   "reason": "无变化句里追加了事实外的动作"
+  },
+  {
+   "set": "final24",
+   "arm": "moved",
+   "unitId": "v19:f2",
+   "kind": "added",
+   "span": "站了一会儿",
+   "reason": "无变化句里追加了事实外的动作"
+  },
+  {
+   "set": "final24",
+   "arm": "moved",
+   "unitId": "v21:f1",
+   "kind": "added",
+   "span": "站了一会儿",
+   "reason": "无变化句里追加了事实外的动作"
+  },
+  {
+   "set": "final24",
+   "arm": "moved",
+   "unitId": "v22:f1",
+   "kind": "added",
+   "span": "等了一会儿",
+   "reason": "同上，且主语退化为“他”"
+  },
+  {
+   "set": "final24",
+   "arm": "moved",
+   "unitId": "v12:f0",
+   "kind": "added",
+   "span": "穿过早市的人",
+   "reason": "“人”不在可见清单，事实外实体"
+  }
+ ]
+}
