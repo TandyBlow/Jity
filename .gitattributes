@@ -33,3 +33,5 @@ artifacts/scoring-rule-r3/** -text
 artifacts/next-acceptance/scoring-rule-r3/** -text
 artifacts/next-acceptance/relation-r1/** -text
 artifacts/next-inputs/world-components/n4-relation-r1-rule.json -text
+artifacts/scoring-rule-r4/** -text
+artifacts/next-acceptance/frame-r1/** -text

@@ -1,0 +1,29 @@
+{
+ "version": "syntax-frame-r4",
+ "why": "The relation probes showed that a relation word can be present while the sentence is wrong. Relation presence is therefore demoted to a clue, and three checks are judged separately.",
+ "checks": {
+  "factRelation": {
+   "question": "is the arrangement in the fact still there",
+   "values": ["kept", "dropped", "distorted"],
+   "note": "kept requires the declared relation token; this is a clue and does not by itself pass the unit"
+  },
+  "entityAttribution": {
+   "question": "does the name keep the role the fact gives it (possessor / location reference / agent)",
+   "values": ["ok", "role-flip", "duplicated", "missing"],
+   "roleFlipRule": "the text contains <name>的 followed immediately by the other entity or by the relation phrase; that turns a location reference into a possessor",
+   "duplicatedRule": "the name string occurs two or more times"
+  },
+  "syntax": {
+   "question": "is the sentence well formed",
+   "values": ["ok", "broken"],
+   "brokenWhen": ["the name occurs twice", "the regex 的[^，。！？的]{1,6}的 matches", "a clause has no predicate after 的"]
+  }
+ },
+ "pass": "a unit passes only when factRelation=kept and entityAttribution=ok and syntax=ok",
+ "roleInventory": {
+  "possessor": "the name owns the following noun (潮汐簿的缺页, 鱼筐的边沿)",
+  "locationReference": "the name is where the value's own subject is attached or placed (木桩 in 缠着的旧缆绳断了, 长桌 in 盖在上面的干纸滑开了)",
+  "agent": "the name performs the action (沈砚把灯罩擦得透亮)"
+ },
+ "declared": "written before re-judging the archived relation outputs; the old retention-only judgement stays as is"
+}
