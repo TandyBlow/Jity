@@ -1,0 +1,107 @@
+{
+ "plan": {
+  "steps": 240,
+  "batch": 8,
+  "learningRate": 0.0003,
+  "seed": 20261102,
+  "mix": [
+   4,
+   3,
+   1
+  ],
+  "epochsPerPoolFromMix": true,
+  "note": "Same steps, batch, learning rate, seed, mix and starting weights for all three arms."
+ },
+ "base": {
+  "model": "D:/others/Jity/.local/models",
+  "modelSha256": "ab8a98264ee6b4f83eba17d624d7b92b23522c8eacef07d07a5be960e390184a"
+ },
+ "sourcePools": {
+  "verbalizer": "experiments\\world-components\\n4_narrative_dev\\verbalizer_pairs.jsonl",
+  "expand78": "artifacts\\next-inputs\\world-components\\n4-expand78-unified.jsonl",
+  "object34": "artifacts\\next-inputs\\world-components\\n4-object34-unified.jsonl"
+ },
+ "files": {
+  "a": {
+   "verbalizer": {
+    "path": "artifacts\\three-arm-r1\\arm-a-verbalizer.jsonl",
+    "rows": 229,
+    "sha256": "7db74eff10a6dddf647f55307bb011cc967250bc3aa8e02a9a71fda0c9e88a84"
+   },
+   "expand78": {
+    "path": "artifacts\\three-arm-r1\\arm-a-expand78.jsonl",
+    "rows": 78,
+    "sha256": "92109cbda137cb4219f7c6ea925edaf52c406946c9c02dc21745c901255b78c0"
+   },
+   "object34": {
+    "path": "artifacts\\three-arm-r1\\arm-a-object34.jsonl",
+    "rows": 34,
+    "sha256": "5f1e373c271f147a830d9344625e7e931c3cec036bbda817b562b826e1e0758e"
+   }
+  },
+  "b": {
+   "verbalizer": {
+    "path": "artifacts\\three-arm-r1\\arm-b-verbalizer.jsonl",
+    "rows": 229,
+    "sha256": "947c2a11b80a3adcb57a42815d16f4c90fdd09ff48fa2f0aec50c56ba53ef955"
+   },
+   "expand78": {
+    "path": "artifacts\\three-arm-r1\\arm-b-expand78.jsonl",
+    "rows": 78,
+    "sha256": "92109cbda137cb4219f7c6ea925edaf52c406946c9c02dc21745c901255b78c0"
+   },
+   "object34": {
+    "path": "artifacts\\three-arm-r1\\arm-b-object34.jsonl",
+    "rows": 34,
+    "sha256": "5f1e373c271f147a830d9344625e7e931c3cec036bbda817b562b826e1e0758e"
+   }
+  },
+  "c": {
+   "verbalizer": {
+    "path": "artifacts\\three-arm-r1\\arm-c-verbalizer.jsonl",
+    "rows": 229,
+    "sha256": "ffc07355e3d268cdabd896095958a445ffa04dd04462aea1aa474246d82216fd"
+   },
+   "expand78": {
+    "path": "artifacts\\three-arm-r1\\arm-c-expand78.jsonl",
+    "rows": 78,
+    "sha256": "92109cbda137cb4219f7c6ea925edaf52c406946c9c02dc21745c901255b78c0"
+   },
+   "object34": {
+    "path": "artifacts\\three-arm-r1\\arm-c-object34.jsonl",
+    "rows": 34,
+    "sha256": "5f1e373c271f147a830d9344625e7e931c3cec036bbda817b562b826e1e0758e"
+   }
+  }
+ },
+ "rows": {
+  "a": 341,
+  "b": 341,
+  "c": 341
+ },
+ "changedRows": {
+  "a": 0,
+  "b": 55,
+  "c": 106
+ },
+ "bundleSha256": {
+  "a": "48725e4667201f3fd2686e52220ea4452ccb4a63ebcb53207212a4912acf8def",
+  "b": "a528facb41d5626a07d5acb53c7d1b9fa28aea8edf5ea530177006cfcdcccf84",
+  "c": "da1062bb0267fee29ae9457f063959a97e607cd1bf181566477e71984b1c9aca"
+ },
+ "idOrder": {
+  "count": 341,
+  "sha256": "09bf6b3f1c17ed5421f46b915791c90d997acad6aa59e1bca335d9c3b4ab444c",
+  "identicalAcrossArms": true
+ },
+ "role": {
+  "a": "control: pool targets unchanged",
+  "b": "fact repair only; trailing clauses kept",
+  "c": "fact repair plus deletion of trailing clauses the fact does not support"
+ },
+ "limits": [
+  "Arm B does not isolate length: repairing a start or qualifier changes length too.",
+  "Arm C deletes tails and repairs facts together, so B vs C measures tail deletion on top of fact repair, not length alone.",
+  "No padding is added to any arm to match a length distribution."
+ ]
+}

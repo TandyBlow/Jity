@@ -285,6 +285,7 @@ artifacts/benchmark/minirbt-h256-snapshot/
 
 # Current component development: new source files must appear in git status.
 !experiments/world-components/*.py
+!experiments/world-components/*.sh
 !experiments/world-components/n4_narrative_dev/*.py
 !experiments/world-components/n4_corpus_v2/*.py
 !experiments/world-components/n4_rewrite60/*.py

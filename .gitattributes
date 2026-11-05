@@ -19,3 +19,7 @@ nul -text
 artifacts/target-audit-r1/** -text
 artifacts/target-revision-r1/** -text
 artifacts/validation-freeze-r1/** -text
+artifacts/three-arm-r1/** -text
+
+# Submission scripts run on Linux under bash; keep LF in the repository and out.
+experiments/world-components/*.sh text eol=lf

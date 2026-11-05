@@ -1,9 +1,10 @@
 {
  "summary": {
   "pairs": 341,
-  "flagged": 136,
-  "rewritten": 101,
+  "flagged": 141,
+  "rewritten": 106,
   "verdicts": {
+   "banned": 5,
    "extra-action": 36,
    "ok": 35,
    "qualifier": 6,
@@ -13,7 +14,7 @@
   },
   "meanChars": {
    "before": 16.18,
-   "after": 14.15
+   "after": 14.13
   },
   "lengthHistogram": {
    "before": {
@@ -33,7 +34,7 @@
    "沈砚开口时没有停顿，话已经出口。",
    "沈砚张了张嘴，把那句话说了出来。"
   ],
-  "note": "machine-clean rows were not read one by one; see report for the 44-row sample"
+  "note": "machine-clean rows were not read one by one; see report for the 41-row sample"
  },
  "records": [
   {
@@ -338,9 +339,9 @@
    "id": "vb:n4n-13:f0",
    "fact": "",
    "original": "他等了一会儿，场景里没有新的变化。",
-   "verdict": "machine-clean",
-   "revised": null,
-   "reason": ""
+   "verdict": "banned",
+   "revised": "他等了一会儿，周围没有新的变化。",
+   "reason": "目标里出现字段名“场景”，要求明确不写字段名"
   },
   {
    "pool": "verbalizer",
@@ -2012,9 +2013,9 @@
    "id": "vb:n4n-111:f0",
    "fact": "",
    "original": "他等了一会儿，场景里没有新的变化。",
-   "verdict": "machine-clean",
-   "revised": null,
-   "reason": ""
+   "verdict": "banned",
+   "revised": "他等了一会儿，周围没有新的变化。",
+   "reason": "目标里出现字段名“场景”，要求明确不写字段名"
   },
   {
    "pool": "verbalizer",
@@ -2039,9 +2040,9 @@
    "id": "vb:n4n-114:f0",
    "fact": "",
    "original": "他等了一会儿，场景里没有新的变化。",
-   "verdict": "machine-clean",
-   "revised": null,
-   "reason": ""
+   "verdict": "banned",
+   "revised": "他等了一会儿，周围没有新的变化。",
+   "reason": "目标里出现字段名“场景”，要求明确不写字段名"
   },
   {
    "pool": "verbalizer",
@@ -2066,9 +2067,9 @@
    "id": "vb:n4n-117:f0",
    "fact": "",
    "original": "他等了一会儿，场景里没有新的变化。",
-   "verdict": "machine-clean",
-   "revised": null,
-   "reason": ""
+   "verdict": "banned",
+   "revised": "他等了一会儿，周围没有新的变化。",
+   "reason": "目标里出现字段名“场景”，要求明确不写字段名"
   },
   {
    "pool": "verbalizer",
@@ -2093,9 +2094,9 @@
    "id": "vb:n4n-120:f0",
    "fact": "",
    "original": "他等了一会儿，场景里没有新的变化。",
-   "verdict": "machine-clean",
-   "revised": null,
-   "reason": ""
+   "verdict": "banned",
+   "revised": "他等了一会儿，周围没有新的变化。",
+   "reason": "目标里出现字段名“场景”，要求明确不写字段名"
   },
   {
    "pool": "expand78",

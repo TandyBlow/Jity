@@ -14,9 +14,9 @@
   }
  },
  "rows": 341,
- "flagged": 136,
+ "flagged": 141,
  "flagCounts": {
-  "banned": 1,
+  "banned": 6,
   "cue": 5,
   "endpoint": 33,
   "extra-clause": 130,
@@ -566,8 +566,10 @@
    "from": "",
    "to": "",
    "coverage": 1.0,
-   "flags": [],
-   "status": "machine-clean",
+   "flags": [
+    "banned"
+   ],
+   "status": "review",
    "pool": "verbalizer"
   },
   {
@@ -3663,8 +3665,10 @@
    "from": "",
    "to": "",
    "coverage": 1.0,
-   "flags": [],
-   "status": "machine-clean",
+   "flags": [
+    "banned"
+   ],
+   "status": "review",
    "pool": "verbalizer"
   },
   {
@@ -3708,8 +3712,10 @@
    "from": "",
    "to": "",
    "coverage": 1.0,
-   "flags": [],
-   "status": "machine-clean",
+   "flags": [
+    "banned"
+   ],
+   "status": "review",
    "pool": "verbalizer"
   },
   {
@@ -3753,8 +3759,10 @@
    "from": "",
    "to": "",
    "coverage": 1.0,
-   "flags": [],
-   "status": "machine-clean",
+   "flags": [
+    "banned"
+   ],
+   "status": "review",
    "pool": "verbalizer"
   },
   {
@@ -3798,8 +3806,10 @@
    "from": "",
    "to": "",
    "coverage": 1.0,
-   "flags": [],
-   "status": "machine-clean",
+   "flags": [
+    "banned"
+   ],
+   "status": "review",
    "pool": "verbalizer"
   },
   {

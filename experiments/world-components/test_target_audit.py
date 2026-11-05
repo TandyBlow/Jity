@@ -1,4 +1,5 @@
 """Checks for the target audit, the moved set and the two scorer fixes."""
+import hashlib
 import json
 import pathlib
 import sys
@@ -61,7 +62,7 @@ class TargetAudit(unittest.TestCase):
                 continue
             self.assertNotEqual(original, revised)
             self.assertGreater(len(revised), 0)
-            self.assertIn(verdict, {'extra-action', 'restatement', 'quantity', 'qualifier', 'start'})
+            self.assertIn(verdict, {'extra-action', 'restatement', 'quantity', 'qualifier', 'start', 'banned'})
 
     def test_audited_pools_parse_and_cover(self):
         for pool in ('verbalizer', 'expand78', 'object34'):
@@ -87,6 +88,43 @@ class MovedSet(unittest.TestCase):
         for row in rows:
             verdict, note, flags = score_cf24_baseline.judge(row, row['referenceTarget'])
             self.assertEqual((verdict, flags), ('S', []), (row['unitId'], note))
+
+
+class ThreeArmPlan(unittest.TestCase):
+    def test_every_fact_defect_has_a_conservative_variant(self):
+        for original, verdict, revised, _ in audit_decisions.DECISIONS:
+            if verdict in ('start', 'quantity', 'qualifier', 'banned'):
+                self.assertIn(original, audit_decisions.CONSERVATIVE, original)
+
+    def test_conservative_variant_keeps_the_trailing_clause(self):
+        # arm B repairs the fact but must not shorten the sentence
+        for original, fixed in audit_decisions.CONSERVATIVE.items():
+            self.assertGreaterEqual(len(fixed), len(original) - 2, (original, fixed))
+
+    def test_arms_share_ids_and_differ_in_targets(self):
+        freeze = json.loads((WORKTREE / 'artifacts/three-arm-r1/three-arm-freeze.json')
+                            .read_text(encoding='utf-8'))
+        self.assertEqual(freeze['rows'], {'a': 341, 'b': 341, 'c': 341})
+        self.assertTrue(freeze['idOrder']['identicalAcrossArms'])
+        shas = {arm: tuple(item['sha256'] for item in freeze['files'][arm].values()) for arm in 'abc'}
+        self.assertEqual(len({shas['a'], shas['b'], shas['c']}), 3)
+        for arm in 'abc':
+            for name, item in freeze['files'][arm].items():
+                path = WORKTREE / item['path']
+                data = path.read_bytes()
+                self.assertEqual(hashlib.sha256(data).hexdigest(), item['sha256'], (arm, name))
+                self.assertEqual(sum(1 for line in data.decode('utf-8').splitlines() if line.strip()),
+                                 item['rows'])
+
+    def test_manual_read_covers_every_unflagged_row(self):
+        body = json.loads((WORKTREE / 'artifacts/target-audit-r1/manual-read-r1.json')
+                          .read_text(encoding='utf-8'))
+        self.assertEqual(body['rows'], 205)
+        self.assertEqual(body['counts']['defect'], 5)
+        fixed = [row for row in body['records'] if row['outcome'] == 'defect']
+        for row in fixed:
+            self.assertTrue(row['fixedTo'])
+            self.assertNotIn('场景里', row['fixedTo'])
 
 
 if __name__ == '__main__':
