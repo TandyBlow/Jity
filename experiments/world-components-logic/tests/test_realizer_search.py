@@ -84,6 +84,63 @@ class GridTests(unittest.TestCase):
             path.write_bytes(b'different')
             with self.assertRaisesRegex(ValueError,'preserve unrelated archive'):search.archive_file(path)
 
+    def test_generation_snapshot_uses_bound_timing_without_ignoring_changed_text(self):
+        raw={'annotationId':'a','phase':'s080','raw':'unchanged'}
+        timings=[{'annotationId':'a','phase':'s080','elapsedIncludingOutputJournalMs':12.5}]
+        complete={**raw,'elapsedIncludingOutputJournalMs':12.5}
+        search.validate_generation_snapshot([complete],[raw],timings)
+        for key,value in (('raw','invented correction'),('elapsedIncludingOutputJournalMs',0.)):
+            bad={**complete,key:value}
+            with self.assertRaisesRegex(ValueError,'snapshot differs'):search.validate_generation_snapshot([bad],[raw],timings)
+
+    def test_overfitting_curve_requires_train_down_and_development_rebound(self):
+        def probe(step,train,dev):return {'step':step,'metrics':{'train_candidate':{'groupMacroNll':train},'development_candidate':{'groupMacroNll':dev}}}
+        self.assertTrue(search.overfitting_curve([probe(80,.1,.2),probe(320,.001,.3)])['trainingContinuedDownWhileDevelopmentRose'])
+        self.assertFalse(search.overfitting_curve([probe(80,.1,.3),probe(320,.001,.2)])['trainingContinuedDownWhileDevelopmentRose'])
+        self.assertFalse(search.overfitting_curve([probe(80,.1,.2),probe(320,.2,.3)])['trainingContinuedDownWhileDevelopmentRose'])
+
+    def test_archived_grid_counts_all_eighteen_candidates_and_seed_confirmation(self):
+        runs=[search.observed(e['runId']) for e in search.catalog()+search.confirmation_entries(search.locked_selection())]
+        self.assertEqual(len(runs),8)
+        self.assertEqual(sum(r['trainingSteps'] for r in runs),2560)
+        self.assertEqual(sum(r['generationCalls'] for r in runs),960)
+        self.assertEqual(sum(len(r['candidates']) for r in runs),20)
+        control=runs[2]['historicalControl']
+        self.assertTrue(all(v['adapterTensorExact'] and v['outputsExact'] and v['lossPrefixExact'] for v in control.values()))
+        self.assertTrue(all(r['supervisor']['stopReason'] is None for r in runs))
+
+    def test_tampered_training_source_is_rejected_by_archived_journal(self):
+        _,rp=search.t.old.paths(search.catalog()[0]['runId']);path=search.available(rp);read=search.t.run.read_json
+        bad=read(path);event=next(e for e in bad['attempts'][0]['checkpoints'] if e['name']=='training_step_started')
+        event['payload']['annotationIds'][0]='realizer-new-04'
+        with mock.patch.object(search.t.run,'read_json',side_effect=lambda p:copy.deepcopy(bad) if p==path else read(p)):
+            with self.assertRaisesRegex(ValueError,'journal reconstruction differs'):search.observed(search.catalog()[0]['runId'])
+
+    def test_compact_summary_preserves_all_outputs_and_points_to_full_token_evidence(self):
+        run=search.observed(search.catalog()[0]['runId']);compact=search.compact_trajectory(run)
+        self.assertEqual([p['raw'] for c in compact['candidates'] for p in c['predictions']],
+                         [p['raw'] for c in run['candidates'] for p in c['predictions']])
+        self.assertEqual(compact['recordSha256'],run['recordSha256'])
+        self.assertNotIn('inputTokenIds',json.dumps(compact))
+        self.assertTrue((search.ART/compact['recordArtifact']).exists())
+
+    def test_report_changes_did_not_change_executed_model_or_optimizer_path(self):
+        import ast,subprocess
+        before=ast.parse(subprocess.check_output(['git','show','6cb4ff1:experiments/world-components-logic/realizer_search.py'],text=True))
+        after=ast.parse(Path(search.__file__).read_text())
+        names=('worker','evaluate_loss','data','catalog','verify','prepare_trajectory','execute')
+        for name in names:
+            pick=lambda tree:next(n for n in tree.body if isinstance(n,ast.FunctionDef) and n.name==name)
+            self.assertEqual(ast.dump(pick(before)),ast.dump(pick(after)),name)
+
+    def test_final_report_is_deterministic_without_business_models(self):
+        import os,subprocess
+        for seed in ('0','9'):
+            result=subprocess.run([sys.executable,str(Path(search.__file__)),'--check'],capture_output=True,text=True,timeout=40,
+                env={**os.environ,'PYTHONHASHSEED':seed,'PYTHONDONTWRITEBYTECODE':'1'})
+            self.assertEqual(result.returncode,0,result.stderr)
+            self.assertEqual(json.loads(result.stdout)['gridPoints'],18)
+
     def test_every_unique_development_output_needs_its_own_bound_review(self):
         predictions=[{'annotationId':'a','raw':'text','role':'development_candidate'}]
         cell={'predictions':predictions};digest=search.t.digest('text')

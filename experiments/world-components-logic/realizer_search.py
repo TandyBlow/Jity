@@ -233,6 +233,12 @@ def archive_file(path):
     path.unlink()
 
 
+def validate_generation_snapshot(predictions,saved,timings):
+    timing={(v['phase'],v['annotationId']):v['elapsedIncludingOutputJournalMs'] for v in timings}
+    expected=[{**p,'elapsedIncludingOutputJournalMs':timing[p['phase'],p['annotationId']]} for p in saved]
+    if predictions!=expected:raise ValueError('grid generation snapshot differs')
+
+
 def observed(run_id):
     pp,rp=t.old.paths(run_id);plan=t.run.read_json(pp);record_path=available(rp);record=t.run.read_json(record_path);verify(plan,historical=True)
     if record['planSha256']!=t.sha256_file(pp):raise ValueError('grid plan identity mismatch')
@@ -247,7 +253,7 @@ def observed(run_id):
     if [e['step'] for e in started]!=list(range(1,plan['config']['steps']+1)) or [e['step'] for e in settled]!=[e['step'] for e in started]:raise ValueError('grid optimizer steps incomplete')
     allowed={(r['annotationId'],r['sourceGroup']) for r in train}
     for event in started:
-        if len(event['annotationIds'])!=2 or any(pair not in allowed for pair in zip(event['annotationIds'],event['sourceGroups'])):raise ValueError('development or unknown example reached gradient')
+        if len(event['annotationIds'])!=2 or len(event['sourceGroups'])!=2 or any(pair not in allowed for pair in zip(event['annotationIds'],event['sourceGroups'])):raise ValueError('development or unknown example reached gradient')
     probes=payloads('loss_probe');candidates=payloads('grid_candidate');generations=payloads('generation_output');timings=payloads('generation_timing')
     if [p['step'] for p in probes]!=plan['probeSteps'] or [c['step'] for c in candidates]!=plan['generationSteps']:raise ValueError('grid probe/checkpoint omitted')
     expected_ids=[r['annotationId'] for r in rows]
@@ -258,7 +264,8 @@ def observed(run_id):
     if len(generations)!=48*len(candidates) or len(payloads('generation_started'))!=len(generations):raise ValueError('grid dropped generation attempt')
     for candidate in candidates:
         phase=f's{candidate["step"]:03}'
-        if candidate['predictions']!=[p for p in generations if p['phase']==phase] or [p['annotationId'] for p in candidate['predictions']]!=expected_ids:raise ValueError('grid generation snapshot differs')
+        validate_generation_snapshot(candidate['predictions'],[p for p in generations if p['phase']==phase],timings)
+        if [p['annotationId'] for p in candidate['predictions']]!=expected_ids:raise ValueError('grid generation source order differs')
         for row,prediction in zip(rows,candidate['predictions']):
             if prediction['inputText']!=t.input_text(row) or prediction['inputSha256']!=t.digest(t.realizer_payload(row)) or prediction['role']!=row['role'] or prediction['sourceGroup']!=row['sourceGroup'] or prediction['modelTopForwardCalls']!=len(prediction['tokenIds'])-1 or prediction['eos']!=(prediction['tokenIds'][-1]==1):raise ValueError('grid output identity drift')
             timing=next(q for q in timings if q['phase']==phase and q['annotationId']==prediction['annotationId'])
@@ -280,7 +287,8 @@ def observed(run_id):
     return {'runId':run_id,'config':plan['config'],'probes':probes,'candidates':candidates,'supervisor':record['supervisor'],
         'trainingSteps':len(settled),'trainingSampleUses':2*len(started),'generationCalls':len(generations),
         'modelForwardCounts':counts,'historicalControl':control,'recordSha256':raw_sha(record_path),'journalSha256':raw_sha(journal),
-        'recordArtifact':str(record_path.relative_to(ART)),'journalArtifact':str(journal.relative_to(ART))}
+        'recordArtifact':str(record_path.relative_to(ART)),'journalArtifact':str(journal.relative_to(ART)),
+        'recordArtifactSha256':t.sha256_file(record_path),'journalArtifactSha256':t.sha256_file(journal)}
 
 
 def reviews(cells,path,record_hashes):
@@ -336,6 +344,30 @@ def locked_selection():
     return selection
 
 
+def overfitting_curve(probes):
+    best=min(probes,key=lambda p:p['metrics']['development_candidate']['groupMacroNll']);last=probes[-1]
+    train=lambda p:p['metrics']['train_candidate']['groupMacroNll']
+    dev=lambda p:p['metrics']['development_candidate']['groupMacroNll']
+    return {'bestObservedDevelopmentStep':best['step'],'bestDevelopmentGroupNll':dev(best),
+        'lastStep':last['step'],'lastTrainGroupNll':train(last),'lastDevelopmentGroupNll':dev(last),
+        'lastGeneralizationGap':dev(last)-train(last),'developmentReboundAfterBest':dev(last)-dev(best),
+        'trainingContinuedDownWhileDevelopmentRose':last['step']>best['step'] and train(last)<train(best) and dev(last)>dev(best)+1e-6,
+        'scope':'diagnostic_on_exposed_draft_tuning_set_not_independent_test'}
+
+
+def compact_trajectory(run):
+    """Keep outputs/metrics; full repeated token arrays stay in raw gzip records."""
+    result={k:v for k,v in run.items() if k not in ('probes','candidates')}
+    result['probes']=[{k:p[k] for k in ('step','metrics','elapsedMs')} for p in run['probes']]
+    result['candidates']=[]
+    for candidate in run['candidates']:
+        cell={k:v for k,v in candidate.items() if k not in ('predictions','lossProbe')}
+        cell['lossMetrics']=candidate['lossProbe']['metrics']
+        cell['predictions']=[{k:v for k,v in p.items() if k not in ('inputText','inputTokenIds','tokenIds')} for p in candidate['predictions']]
+        result['candidates'].append(cell)
+    return result
+
+
 def materials(write=False):
     if write:
         for entry in catalog()+confirmation_entries(locked_selection()):
@@ -355,7 +387,9 @@ def materials(write=False):
         'supersededPreparation':{'searchId':'m02-realizer-grid-20261105-r1','status':'failed_process_launch',
             'reason':'supervisor environment field absent; fixed in r2','modelCalls':0,'trainingSteps':0,
             'sourceSnapshotCommit':'62391bc','remainingTrajectoriesUnstarted':5},
-        'confirmationScores':confirmed,'trajectories':runs+confirmations,
+        'confirmationScores':confirmed,'trajectories':[compact_trajectory(r) for r in runs+confirmations],
+        'executionSourceSnapshotCommit':'6cb4ff1',
+        'overfittingDiagnostics':{r['runId']:overfitting_curve(r['probes']) for r in runs+confirmations},
         'trainingSteps':sum(r['trainingSteps'] for r in runs+confirmations),
         'generationAttempts':sum(r['generationCalls'] for r in runs+confirmations),
         'outputReviewSha256':t.sha256_file(REVIEW),'confirmationReviewSha256':t.sha256_file(CONFIRM_REVIEW)}
@@ -385,6 +419,7 @@ def render(summary,cells,decisions):
             m=probe['metrics'];document+=f'<tr><td>{probe["step"]}</td><td>{m["train_candidate"]["groupMacroNll"]:.6f}</td><td>{m["development_candidate"]["groupMacroNll"]:.6f}</td></tr>'
         document+=f'</table></div><p><a href="m01-fitting/{run["runId"]}.plan.json">冻结计划</a> · <a href="{e(run["recordArtifact"])}">原记录（无损gzip）</a> · <a href="{e(run["journalArtifact"])}">事件（无损gzip）</a></p>'
     document+=f'</section><section><h2>换seed7确认，没有继续调参</h2><pre>{e(json.dumps(summary["confirmationScores"],ensure_ascii=False,indent=2))}</pre><p>全部{len(summary["trajectories"])}条进程，合计训练{summary["trainingSteps"]}步、自由生成{summary["generationAttempts"]}次。每进程限CPU1线程／并发1、120秒／2048MiB；整批进程时间含训练、诊断、生成与存档，不能当作单次游戏等待。每题每模型生成一次，不签正式性能。</p></section>'
+    document+=f'<section><h2>过拟合诊断与未完成项</h2><pre>{e(json.dumps(summary["overfittingDiagnostics"],ensure_ascii=False,indent=2))}</pre><p>rank、batch、dropout等没有纳入本轮网格；数据来源独立性和人工标签仍待，不能把当前候选称为最适合。原r1在加载模型前因环境字段缺失而启动失败，0训练／0模型调用，原计划和源码保留；r2独立运行。实测源码在6cb4ff1，之后只修复报告对计时字段的比较，不重跑或改写模型答案。</p></section>'
     lookup={r['annotationId']:r for r in x.rows()}
     for cell in cells:
         document+=f'<section><details><summary>{e(cell["candidateId"])}：全部48条原文</summary>'
@@ -394,7 +429,7 @@ def render(summary,cells,decisions):
             if decision:document+=f'<p>助手{e(decision["verdict"])}：{e(decision["reason"])}</p>'
             document+=f'<p>{p["elapsedIncludingOutputJournalMs"]:.2f}ms · EOS {e(p["eos"])}</p>'
         document+='</details></section>'
-    document+=f'<section><h2>证据与方法</h2><p><a href="{PAGE}-summary.json">完整汇总／全部输入token与成本</a> · <a href="m01-fitting/{SEARCH}.manifest.json">冻结搜索清单</a> · <a href="m01-fitting/{SEARCH}.selection.json">锁定选择</a> · <a href="m01-fitting/{SEARCH}.output-review.json">全部开发原文的助手理由</a> · <a href="m01-fitting/{SEARCH}.confirmation-review.json">seed7助手理由</a> · <a href="https://scikit-learn.org/stable/modules/cross_validation.html">验证集与调参方法</a> · <a href="https://docs.pytorch.org/docs/2.7/generated/torch.nn.CrossEntropyLoss.html">有效token损失口径</a></p></section></main></html>'
+    document+=f'<section><h2>证据与方法</h2><p><a href="{PAGE}-summary.json">汇总／全部原文与成本（输入token见各轨迹原记录）</a> · <a href="m01-fitting/{SEARCH}.manifest.json">冻结搜索清单</a> · <a href="m01-fitting/{SEARCH}.selection.json">锁定选择</a> · <a href="m01-fitting/{SEARCH}.output-review.json">全部开发原文的助手理由</a> · <a href="m01-fitting/{SEARCH}.confirmation-review.json">seed7助手理由</a> · <a href="https://scikit-learn.org/stable/modules/cross_validation.html">验证集与调参方法</a> · <a href="https://docs.pytorch.org/docs/2.7/generated/torch.nn.CrossEntropyLoss.html">有效token损失口径</a></p></section></main></html>'
     return document
 
 

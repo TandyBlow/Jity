@@ -2,7 +2,7 @@
 
 ## 当前从这里开始（2026-11-04）
 
-日常使用`experiment.py`一个入口。当前L3-20固定同一30训练／18开发，仅将训练80步改为320步；96次首次生成，前80步损失逐值复现。新开发合理4/12→7/12，双变体都合理1/6→2/6组；原开发仍3明确合理，另2错／1含糊，训练30条均合理。[当前结果页](../../artifacts/world-components-logic/l3-20-realizer-budget320.html)。增加训练有局部收益，角色／容器／多步问题仍在，质量／完整500ms未通过，人审0／来源未核，旧证据保留。
+日常使用`experiment.py`一个入口。当前L3-21完成18点超参数网格与seed7确认：原配置有开发损失回升，0.003学习率／0.01衰减／320步为本轮候选，全部18开发题合理数seed42为14（原10）、seed7为13（原10）。8条模型轨迹／2560优化步／960生成；385项工程检查通过。[当前结果页](../../artifacts/world-components-logic/l3-21-realizer-grid.html)。候选仍有角色／容器／步骤及限定表达问题，不能称全局最优，质量／完整500ms未通过，人审0／来源未核，旧证据保留。
 
 从仓库根目录运行：
 
@@ -203,3 +203,11 @@ python3 experiments/world-components-logic/m01_shared_report.py --check
 `m02-realizer-budget320-20261105-r1`复用原训练／监督／报告模块，不新建运行器。按[协议](../../design/world-engine-reports/components-logic/realizer-training-budget-protocol.md)，`train-prepare RUN --authorization FILE`先冻结身份与全部配置，`train-execute PLAN`执行唯一一次，`train-report --run-id RUN --write-new`新建结果，`plan_training.py --check-budget`只读复验；`status/check`现在同时覆盖本批。原计划不可重复execute，原报告异稿不可覆盖。
 
 先加载冻结80步适配层作48次基线，再恢复同一seed42初始化重训320步，非续训；全部数据和其他超参不变，前80步损失逐值相同。实际640样本次／96首次生成／940事件，49.601秒／RSS1461.734MiB、CPU1，开发不进梯度；原文件／底座不变，新适配层存盘清空重载SHA核对，权重不入库。新开发4合理／6错／2含糊→7合理／5错／0含糊，原开发仍3合理，另2错／1含糊，不能隐藏退化或把拟合loss当质量。局部77–170ms，各题仅一次；质量／完整500ms／上游规划／反应与共同结果／浏览器生产仍未验。[全部结果](../../artifacts/world-components-logic/l3-20-realizer-budget320.html)供逐项查看，下一步转角色／引用表示及监督比较。
+
+## 超参数网格与过拟合检查（2026-11-05）
+
+`experiment.py realizer-search --prepare`冻结清单及6条连续训练计划，`--execute PLAN`复用现有监督器顺序运行；三个固定步数点形成18个参数候选，训练循环／优化器不中断重建。`--select`依据已绑定SHA的全部开发意见、组级优先规则锁定结果并生成seed7确认计划；`--report`无损压缩本批原记录，再只读核验／新建材料。`realizer_search.py --check`及统一check不运行业务模型，status显示本批。全部协议见[预登记](../../design/world-engine-reports/components-logic/realizer-search-protocol.md)。
+
+r1首条计划缺环境字段，在加载前失败；0模型／0训练，剩余5轨迹未启动，源码留62391bc。r2补环境／回归检查后独立冻结，8条实际模型轨迹执行源码在6cb4ff1，运行后只修复只读比较器的计时字段核对／轻量汇总，不重跑或改写答案。原记录与事件gzip无损、同时登记压缩文件及原字节SHA；重复token数组留原记录，不在汇总重复膨胀。权重／依赖／缓存仅D忽略目录，不入库。
+
+18点：学习率0.0003／0.001／0.003 × 衰减0.01／0.1 × 步数80／160／320。原配置有开发损失回升，本轮候选0.003／0.01／320：seed42全部开发14/18合理、9/12组（原10／5）；锁定后seed7为13/18、8/12组（原10／5），不按确认再挑参。候选仍有训练题漏步／拿错物品与开发语义错误／含糊、seed7损失回升，不称全局最优；rank／batch／dropout等未搜索。实际2560优化步／5120样本次、2304损失前向／960生成全EOS，509.497秒整批进程、峰值RSS1344.984MiB，CPU1／每进程120秒／2048MiB。开发用于调参，不能再当独立考试，质量／完整500ms未过。[全部曲线与答案](../../artifacts/world-components-logic/l3-21-realizer-grid.html)保留失败和确认；生产／浏览器／其他线不变。
