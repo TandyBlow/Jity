@@ -61,9 +61,28 @@ class GridTests(unittest.TestCase):
             root=Path(d)
             with mock.patch.object(search,'MANIFEST',root/'manifest.json'),mock.patch.object(search.t.old,'paths',side_effect=lambda r:(root/(r+'.plan.json'),root/(r+'.record.json'))),mock.patch.object(search.t,'observe_m02',return_value={'allSixFilesFullyRehashedAndVerified':True}) as model,mock.patch.object(search.t,'observe_environment',return_value={'registeredVersionsMatch':True}):
                 search.prepare();plan=search.t.run.read_json(root/(search.catalog()[0]['runId']+'.plan.json'))
+                self.assertEqual(plan['environment'],{'registeredVersionsMatch':True})
                 search.verify(plan);plan['config']['learningRate']=.5;model.reset_mock()
                 with self.assertRaisesRegex(ValueError,'unregistered grid trajectory'):search.verify(plan)
                 model.assert_not_called()
+
+    def test_supervisor_environment_cannot_be_removed_from_frozen_plan(self):
+        with tempfile.TemporaryDirectory() as d:
+            root=Path(d)
+            with mock.patch.object(search,'MANIFEST',root/'manifest.json'),mock.patch.object(search.t.old,'paths',side_effect=lambda r:(root/(r+'.plan.json'),root/(r+'.record.json'))),mock.patch.object(search.t,'observe_m02',return_value={'allSixFilesFullyRehashedAndVerified':True}) as model,mock.patch.object(search.t,'observe_environment',return_value={'registeredVersionsMatch':True,'venvExecutableRelativePath':'fixture-only'}):
+                search.prepare();plan=search.t.run.read_json(root/(search.catalog()[0]['runId']+'.plan.json'));del plan['environment'];model.reset_mock()
+                with self.assertRaisesRegex(ValueError,'manifest/environment/scope'):search.verify(plan)
+                model.assert_not_called()
+
+    def test_own_record_archival_preserves_uncompressed_identity_and_other_archives(self):
+        import gzip
+        with tempfile.TemporaryDirectory() as d:
+            path=Path(d)/'record.json';path.write_bytes(b'{"fixture":true}\n');before=search.raw_sha(path)
+            search.archive_file(path);packed=path.with_suffix('.json.gz')
+            self.assertFalse(path.exists());self.assertEqual(search.raw_sha(packed),before)
+            self.assertEqual(gzip.decompress(packed.read_bytes()),b'{"fixture":true}\n')
+            path.write_bytes(b'different')
+            with self.assertRaisesRegex(ValueError,'preserve unrelated archive'):search.archive_file(path)
 
     def test_every_unique_development_output_needs_its_own_bound_review(self):
         predictions=[{'annotationId':'a','raw':'text','role':'development_candidate'}]

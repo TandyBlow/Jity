@@ -18,7 +18,7 @@ import time
 import plan_training as t
 import realizer_expansion as x
 
-ROOT=t.ROOT;ART=t.ART;SEARCH='m02-realizer-grid-20261105-r1'
+ROOT=t.ROOT;ART=t.ART;SEARCH='m02-realizer-grid-20261105-r2'
 PROTOCOL=t.PROTOCOL.with_name('realizer-search-protocol.md')
 MANIFEST=ART/'m01-fitting'/f'{SEARCH}.manifest.json'
 SELECTION=ART/'m01-fitting'/f'{SEARCH}.selection.json'
@@ -70,6 +70,7 @@ def prepare_trajectory(manifest,entry,selection_sha=None):
     config=entry['config'];confirm=selection_sha is not None
     plan={'schema':'jity-d-realizer-grid-plan-v1','runId':entry['runId'],'preparedAt':t.timestamp(),
         'purpose':'draft_grid_seed_confirmation' if confirm else 'draft_grid_continuous_optimizer_trajectory',
+        'environment':manifest['environment'],
         'config':config,'cases':[{'caseId':'complete-training-trajectory'}],'arms':['grid'],
         'manifestSha256':t.sha256_file(MANIFEST),'selectionSha256':selection_sha,
         'probeSteps':[i for i in PROBES if i<=config['steps']],
@@ -103,7 +104,8 @@ def confirmation_entries(selection):
 
 def verify(plan,*,historical=False):
     manifest=t.run.read_json(MANIFEST);verify_manifest(manifest,historical=historical)
-    if plan['manifestSha256']!=t.sha256_file(MANIFEST) or plan['formalEvaluationAllowed'] is not False or plan['fullRequestMeasured'] is not False:raise ValueError('grid manifest/scope drift')
+    if (plan['manifestSha256']!=t.sha256_file(MANIFEST) or plan.get('environment')!=manifest['environment']
+            or plan['formalEvaluationAllowed'] is not False or plan['fullRequestMeasured'] is not False):raise ValueError('grid manifest/environment/scope drift')
     confirm=plan['purpose']=='draft_grid_seed_confirmation'
     entries=confirmation_entries(locked_selection()) if confirm else catalog()
     entry=next((e for e in entries if e['runId']==plan['runId']),None)
@@ -350,6 +352,9 @@ def materials(write=False):
         'realizerTrained':True,'realizerTrainerImplemented':True,'plannerModelImplemented':False,
         'semanticQualityApproved':False,'formalEvaluationAllowed':False,'fullRequest500msStatus':'unverified',
         'newExamples':0,'sourceIndependence':'unverified','gridPoints':18,'selection':selection,
+        'supersededPreparation':{'searchId':'m02-realizer-grid-20261105-r1','status':'failed_process_launch',
+            'reason':'supervisor environment field absent; fixed in r2','modelCalls':0,'trainingSteps':0,
+            'sourceSnapshotCommit':'62391bc','remainingTrajectoriesUnstarted':5},
         'confirmationScores':confirmed,'trajectories':runs+confirmations,
         'trainingSteps':sum(r['trainingSteps'] for r in runs+confirmations),
         'generationAttempts':sum(r['generationCalls'] for r in runs+confirmations),
