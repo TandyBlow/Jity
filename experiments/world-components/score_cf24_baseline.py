@@ -43,9 +43,19 @@ def bigrams(text):
     return {flat[i:i + 2] for i in range(len(flat) - 1)}
 
 
+def expand_aliases(text):
+    """Rewrite an alias to its canonical name so "档案馆" covers "潮汐档案馆"."""
+    out = text or ''
+    for canonical, aliases in ALIASES.items():
+        for alias in aliases:
+            if alias in out:
+                out = out.replace(alias, canonical)
+    return out
+
+
 def coverage(key, text):
-    key_grams = bigrams(key)
-    return len(key_grams & bigrams(text)) / len(key_grams) if key_grams else 1.0
+    key_grams = bigrams(expand_aliases(key))
+    return len(key_grams & bigrams(expand_aliases(text))) / len(key_grams) if key_grams else 1.0
 
 
 def world_names():

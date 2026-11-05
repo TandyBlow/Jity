@@ -14,3 +14,8 @@ artifacts/rule-facts/** text eol=lf
 # Windows reserved device names written by shell redirects (e.g. `>nul`).
 # They cannot be checked out on Windows, so they must never be tracked.
 nul -text
+
+# Target audit, target revision and the new movement set are re-hashed when read.
+artifacts/target-audit-r1/** -text
+artifacts/target-revision-r1/** -text
+artifacts/validation-freeze-r1/** -text

@@ -403,3 +403,4 @@ world-boundary/boundary2-train80.jsonl -text whitespace=blank-at-eol,blank-at-eo
 world-boundary/rounds-b.jsonl -text
 world-boundary/rounds-b240.jsonl -text
 world-boundary/rounds-v2.jsonl -text
+world-components/n4-moved24-contract.jsonl -text

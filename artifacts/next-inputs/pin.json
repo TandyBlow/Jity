@@ -1,6 +1,6 @@
 {
-  "version": "component-inputs/2",
-  "createdAt": "2026-11-05T07:59:47.155392+00:00",
+  "version": "component-inputs/3",
+  "createdAt": "2026-11-05T00:00:00+00:00",
   "assumptions": [
     "Offline byte snapshot, not a live server contract.",
     "Server world-state/provenance changes after this capture require an explicit new input revision and review.",
@@ -4141,9 +4141,16 @@
           "role": "immutable-historical-reference"
         }
       ]
+    },
+    "world-components/n4-moved24-contract.jsonl": {
+      "sha256": "653a4be02bb95682321f4ab477d0e2cdd6ad8df489f38a773f49ecd6d4b3b739",
+      "bytes": 19642,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\next-inputs\\world-components\\n4-moved24-contract.jsonl",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree",
+      "note": "Frozen with the target-audit round; see artifacts/validation-freeze-r1/"
     }
   },
-  "previousPinSha256": "1369ce80683a6058e8c913cea1b269ab7d598d7d0aa2edb6fe792a7b977ca940",
+  "previousPinSha256": "5956c4607771b2e522e7dd23eb8c5e2feeaeeb91ca3d4b6340ee47aa71c8a77a",
   "evidencePolicy": {
     "authority": "Files under artifacts/next-inputs are the authoritative inputs for this offline revision.",
     "historicalCopies": "Retained for existing freeze references; never regenerate or update in place. Every pinned read verifies their bytes too.",
