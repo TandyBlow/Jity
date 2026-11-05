@@ -1,0 +1,385 @@
+{
+ "purpose": "C remaining-error inventory, target trace and the frozen minimal-contrast probes",
+ "job": {
+  "id": 240093,
+  "gpu": "NVIDIA GeForce RTX 4090 D",
+  "units": 34,
+  "models": [
+   "u240",
+   "c"
+  ]
+ },
+ "frozenBeforeRun": {
+  "probes": "e5b29c2aea8bf28c69cc2906c6f9f5bdb8ad7917150e0f28316e2872d102b93e",
+  "rule": "7804e994f229793848446d813e9fe6d19ebb07de9087a30ec6bd9f23400369f3",
+  "judge": "experiments/world-components/judge_probe.py",
+  "note": "probes and rule were written and pinned before either model ran"
+ },
+ "pin": {
+  "version": "component-inputs/3",
+  "files": 406,
+  "sha256": "19c06693a646167a55ba0692561c20dd4f93de4bfc3f793392593536fe12d1da",
+  "previousPinSha256": "a57d188ea91106a42bb26cdb10bf197679a0d7f58b714b35cc1342f2ddb80285"
+ },
+ "counts": {
+  "u240-cf24": {
+   "factMachine": {
+    "S": 85,
+    "O": 0,
+    "A": 0,
+    "REVIEW": 0
+   },
+   "factFinal": {
+    "supported": 85,
+    "unsupported": 0,
+    "downgradedByReview": 0
+   },
+   "issues": {
+    "fact": 0,
+    "added": 6,
+    "repeated": 2,
+    "language": 3
+   },
+   "units": 85,
+   "unitsClean": 74,
+   "sources": 24,
+   "sourceCleanNoAdded": 19,
+   "sourceFullyClean": 15,
+   "independent": null
+  },
+  "a-cf24": {
+   "factMachine": {
+    "S": 83,
+    "O": 2,
+    "A": 0,
+    "REVIEW": 0
+   },
+   "factFinal": {
+    "supported": 83,
+    "unsupported": 2,
+    "downgradedByReview": 0
+   },
+   "issues": {
+    "fact": 2,
+    "added": 17,
+    "repeated": 0,
+    "language": 10
+   },
+   "units": 85,
+   "unitsClean": 65,
+   "sources": 24,
+   "sourceCleanNoAdded": 12,
+   "sourceFullyClean": 9,
+   "independent": null
+  },
+  "b-cf24": {
+   "factMachine": {
+    "S": 85,
+    "O": 0,
+    "A": 0,
+    "REVIEW": 0
+   },
+   "factFinal": {
+    "supported": 84,
+    "unsupported": 1,
+    "downgradedByReview": 1
+   },
+   "issues": {
+    "fact": 1,
+    "added": 10,
+    "repeated": 1,
+    "language": 5
+   },
+   "units": 85,
+   "unitsClean": 71,
+   "sources": 24,
+   "sourceCleanNoAdded": 16,
+   "sourceFullyClean": 15,
+   "independent": null
+  },
+  "c-cf24": {
+   "factMachine": {
+    "S": 85,
+    "O": 0,
+    "A": 0,
+    "REVIEW": 0
+   },
+   "factFinal": {
+    "supported": 85,
+    "unsupported": 0,
+    "downgradedByReview": 0
+   },
+   "issues": {
+    "fact": 0,
+    "added": 5,
+    "repeated": 0,
+    "language": 4
+   },
+   "units": 85,
+   "unitsClean": 77,
+   "sources": 24,
+   "sourceCleanNoAdded": 19,
+   "sourceFullyClean": 16,
+   "independent": null
+  },
+  "u240-final24": {
+   "factMachine": {
+    "S": 76,
+    "O": 0,
+    "A": 0,
+    "REVIEW": 0
+   },
+   "factFinal": {
+    "supported": 76,
+    "unsupported": 0,
+    "downgradedByReview": 0
+   },
+   "issues": {
+    "fact": 0,
+    "added": 5,
+    "repeated": 2,
+    "language": 0
+   },
+   "units": 76,
+   "unitsClean": 69,
+   "sources": 24,
+   "sourceCleanNoAdded": 19,
+   "sourceFullyClean": 17,
+   "independent": {
+    "units": 43,
+    "clean": 41,
+    "factSupported": 43
+   }
+  },
+  "a-final24": {
+   "factMachine": {
+    "S": 76,
+    "O": 0,
+    "A": 0,
+    "REVIEW": 0
+   },
+   "factFinal": {
+    "supported": 76,
+    "unsupported": 0,
+    "downgradedByReview": 0
+   },
+   "issues": {
+    "fact": 0,
+    "added": 7,
+    "repeated": 0,
+    "language": 2
+   },
+   "units": 76,
+   "unitsClean": 69,
+   "sources": 24,
+   "sourceCleanNoAdded": 18,
+   "sourceFullyClean": 18,
+   "independent": {
+    "units": 43,
+    "clean": 40,
+    "factSupported": 43
+   }
+  },
+  "b-final24": {
+   "factMachine": {
+    "S": 76,
+    "O": 0,
+    "A": 0,
+    "REVIEW": 0
+   },
+   "factFinal": {
+    "supported": 75,
+    "unsupported": 1,
+    "downgradedByReview": 1
+   },
+   "issues": {
+    "fact": 1,
+    "added": 7,
+    "repeated": 1,
+    "language": 1
+   },
+   "units": 76,
+   "unitsClean": 67,
+   "sources": 24,
+   "sourceCleanNoAdded": 17,
+   "sourceFullyClean": 16,
+   "independent": {
+    "units": 43,
+    "clean": 41,
+    "factSupported": 43
+   }
+  },
+  "c-final24": {
+   "factMachine": {
+    "S": 76,
+    "O": 0,
+    "A": 0,
+    "REVIEW": 0
+   },
+   "factFinal": {
+    "supported": 76,
+    "unsupported": 0,
+    "downgradedByReview": 0
+   },
+   "issues": {
+    "fact": 0,
+    "added": 4,
+    "repeated": 0,
+    "language": 0
+   },
+   "units": 76,
+   "unitsClean": 72,
+   "sources": 24,
+   "sourceCleanNoAdded": 20,
+   "sourceFullyClean": 20,
+   "independent": {
+    "units": 43,
+    "clean": 42,
+    "factSupported": 43
+   }
+  },
+  "u240-moved24": {
+   "factMachine": {
+    "S": 24,
+    "O": 0,
+    "A": 0,
+    "REVIEW": 0
+   },
+   "factFinal": {
+    "supported": 24,
+    "unsupported": 0,
+    "downgradedByReview": 0
+   },
+   "issues": {
+    "fact": 0,
+    "added": 0,
+    "repeated": 0,
+    "language": 2
+   },
+   "units": 24,
+   "unitsClean": 22,
+   "sources": 24,
+   "sourceCleanNoAdded": 24,
+   "sourceFullyClean": 22,
+   "independent": null
+  },
+  "a-moved24": {
+   "factMachine": {
+    "S": 22,
+    "O": 2,
+    "A": 0,
+    "REVIEW": 0
+   },
+   "factFinal": {
+    "supported": 22,
+    "unsupported": 2,
+    "downgradedByReview": 0
+   },
+   "issues": {
+    "fact": 2,
+    "added": 3,
+    "repeated": 1,
+    "language": 5
+   },
+   "units": 24,
+   "unitsClean": 16,
+   "sources": 24,
+   "sourceCleanNoAdded": 19,
+   "sourceFullyClean": 16,
+   "independent": null
+  },
+  "b-moved24": {
+   "factMachine": {
+    "S": 24,
+    "O": 0,
+    "A": 0,
+    "REVIEW": 0
+   },
+   "factFinal": {
+    "supported": 24,
+    "unsupported": 0,
+    "downgradedByReview": 0
+   },
+   "issues": {
+    "fact": 0,
+    "added": 1,
+    "repeated": 0,
+    "language": 0
+   },
+   "units": 24,
+   "unitsClean": 23,
+   "sources": 24,
+   "sourceCleanNoAdded": 23,
+   "sourceFullyClean": 23,
+   "independent": null
+  },
+  "c-moved24": {
+   "factMachine": {
+    "S": 24,
+    "O": 0,
+    "A": 0,
+    "REVIEW": 0
+   },
+   "factFinal": {
+    "supported": 24,
+    "unsupported": 0,
+    "downgradedByReview": 0
+   },
+   "issues": {
+    "fact": 0,
+    "added": 0,
+    "repeated": 0,
+    "language": 0
+   },
+   "units": 24,
+   "unitsClean": 24,
+   "sources": 24,
+   "sourceCleanNoAdded": 24,
+   "sourceFullyClean": 24,
+   "independent": null
+  }
+ },
+ "knownRuleDefect": "the tail verb list has no 抱起, so u240 p-t1a and C p-t1b carry a tail the rule does not flag; the rule is kept as written and the miss is reported",
+ "files": [
+  {
+   "path": "artifacts/next-acceptance/syntax-gap-r1/n4-probe-r1.jsonl",
+   "bytes": 15739,
+   "sha256": "e5b29c2aea8bf28c69cc2906c6f9f5bdb8ad7917150e0f28316e2872d102b93e"
+  },
+  {
+   "path": "artifacts/next-acceptance/syntax-gap-r1/n4-probe-r1-rule.json",
+   "bytes": 1537,
+   "sha256": "7804e994f229793848446d813e9fe6d19ebb07de9087a30ec6bd9f23400369f3"
+  },
+  {
+   "path": "artifacts/next-acceptance/syntax-gap-r1/probe-judged.json",
+   "bytes": 10763,
+   "sha256": "4aed93eed7d7738e097f5cbecb6e2aaa241bf5e7a3e9d6a26a128e8112e7e316"
+  },
+  {
+   "path": "artifacts/next-acceptance/syntax-gap-r1/c-error-trace.json",
+   "bytes": 3322,
+   "sha256": "58a33fec0f17f968d8da26449251cd9bd0c7c74965cb421de06d74b8bdaad389"
+  },
+  {
+   "path": "artifacts/next-acceptance/syntax-gap-r1/probe-u240/probe-baseline.json",
+   "bytes": 27753,
+   "sha256": "f3675a90457c7c1264b3ba333c8df6c5d3629cb59de092c4d9429c8175e2ff04"
+  },
+  {
+   "path": "artifacts/next-acceptance/syntax-gap-r1/probe-c/probe-baseline.json",
+   "bytes": 27814,
+   "sha256": "f06fb2d80d34170c06600c72ea7ab5b091c3e20dc9a8969453fc1afac21f13aa"
+  },
+  {
+   "path": "artifacts/next-acceptance/syntax-gap-r1/summary-r1.json",
+   "bytes": 5459,
+   "sha256": "54751c79456055bc0362c352aa9759bc363158e31e501a5cd4174c4303e0dbc1"
+  },
+  {
+   "path": "artifacts/next-acceptance/syntax-gap-r1/review-r1.json",
+   "bytes": 18428,
+   "sha256": "137edf9fd8826fc53519657c436ddf7752550a2ee2580da209e44198f7e0ec99"
+  }
+ ]
+}

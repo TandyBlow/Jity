@@ -1,0 +1,24 @@
+{
+ "version": "probe-r1",
+ "declaredBefore": "The 17 probes and this rule were written before either model was run.",
+ "factRule": "Reuse the frozen cf24 scorer: judge(fact, text) from score_cf24_baseline.py. A unit is supported only if the subject and every value of the fact appear; a moved unit needs both the starting point and the destination.",
+ "families": {
+  "tail": {
+   "applies": "kind=moved",
+   "rule": "Split the text at the first ， or ,. The second clause violates the arrival-only limit if it contains any verb of a post-arrival action from the fixed list. Movement verbs themselves (走进/走到/到了/回到/上到/下到/过来/出来) are allowed.",
+   "bannedVerbs": ["推开", "站住", "蹲到", "抬头", "扶着", "蹭", "拍", "掀", "散", "点亮", "绷直", "发暗", "滴", "晃", "透出", "沾着"]
+  },
+  "quantifier": {
+   "applies": "all kinds",
+   "rule": "Violation when 一叠 appears although the fact text does not contain 一叠, and the character right after 一叠 is not one of 纸/信/布.",
+   "allowedAfter": ["纸", "信", "布"]
+  },
+  "grammar": {
+   "applies": "kind=appearance_changed",
+   "doubleDe": "violation when the regex 的[^，。！？的]{1,5}的 matches",
+   "possessive": "violation when 绳的泥水 appears",
+   "li": "violation when 的里面 appears"
+  }
+ },
+ "outcome": "Each probe records the scorer verdict, the family violation and the matched span. No rule may be changed after seeing an output; a rule that turns out to be wrong stays recorded as wrong."
+}

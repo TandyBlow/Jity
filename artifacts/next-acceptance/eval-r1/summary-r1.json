@@ -1,11 +1,16 @@
 {
  "counts": {
   "u240-cf24": {
-   "verdicts": {
+   "factMachine": {
     "S": 85,
     "O": 0,
     "A": 0,
     "REVIEW": 0
+   },
+   "factFinal": {
+    "supported": 85,
+    "unsupported": 0,
+    "downgradedByReview": 0
    },
    "issues": {
     "fact": 0,
@@ -21,11 +26,16 @@
    "independent": null
   },
   "a-cf24": {
-   "verdicts": {
+   "factMachine": {
     "S": 83,
     "O": 2,
     "A": 0,
     "REVIEW": 0
+   },
+   "factFinal": {
+    "supported": 83,
+    "unsupported": 2,
+    "downgradedByReview": 0
    },
    "issues": {
     "fact": 2,
@@ -41,11 +51,16 @@
    "independent": null
   },
   "b-cf24": {
-   "verdicts": {
+   "factMachine": {
     "S": 85,
     "O": 0,
     "A": 0,
     "REVIEW": 0
+   },
+   "factFinal": {
+    "supported": 84,
+    "unsupported": 1,
+    "downgradedByReview": 1
    },
    "issues": {
     "fact": 1,
@@ -61,11 +76,16 @@
    "independent": null
   },
   "c-cf24": {
-   "verdicts": {
+   "factMachine": {
     "S": 85,
     "O": 0,
     "A": 0,
     "REVIEW": 0
+   },
+   "factFinal": {
+    "supported": 85,
+    "unsupported": 0,
+    "downgradedByReview": 0
    },
    "issues": {
     "fact": 0,
@@ -81,11 +101,16 @@
    "independent": null
   },
   "u240-final24": {
-   "verdicts": {
+   "factMachine": {
     "S": 76,
     "O": 0,
     "A": 0,
     "REVIEW": 0
+   },
+   "factFinal": {
+    "supported": 76,
+    "unsupported": 0,
+    "downgradedByReview": 0
    },
    "issues": {
     "fact": 0,
@@ -101,15 +126,20 @@
    "independent": {
     "units": 43,
     "clean": 41,
-    "factS": 43
+    "factSupported": 43
    }
   },
   "a-final24": {
-   "verdicts": {
+   "factMachine": {
     "S": 76,
     "O": 0,
     "A": 0,
     "REVIEW": 0
+   },
+   "factFinal": {
+    "supported": 76,
+    "unsupported": 0,
+    "downgradedByReview": 0
    },
    "issues": {
     "fact": 0,
@@ -125,15 +155,20 @@
    "independent": {
     "units": 43,
     "clean": 40,
-    "factS": 43
+    "factSupported": 43
    }
   },
   "b-final24": {
-   "verdicts": {
+   "factMachine": {
     "S": 76,
     "O": 0,
     "A": 0,
     "REVIEW": 0
+   },
+   "factFinal": {
+    "supported": 75,
+    "unsupported": 1,
+    "downgradedByReview": 1
    },
    "issues": {
     "fact": 1,
@@ -144,20 +179,25 @@
    "units": 76,
    "unitsClean": 67,
    "sources": 24,
-   "sourceCleanNoAdded": 18,
+   "sourceCleanNoAdded": 17,
    "sourceFullyClean": 16,
    "independent": {
     "units": 43,
     "clean": 41,
-    "factS": 43
+    "factSupported": 43
    }
   },
   "c-final24": {
-   "verdicts": {
+   "factMachine": {
     "S": 76,
     "O": 0,
     "A": 0,
     "REVIEW": 0
+   },
+   "factFinal": {
+    "supported": 76,
+    "unsupported": 0,
+    "downgradedByReview": 0
    },
    "issues": {
     "fact": 0,
@@ -173,15 +213,20 @@
    "independent": {
     "units": 43,
     "clean": 42,
-    "factS": 43
+    "factSupported": 43
    }
   },
   "u240-moved24": {
-   "verdicts": {
+   "factMachine": {
     "S": 24,
     "O": 0,
     "A": 0,
     "REVIEW": 0
+   },
+   "factFinal": {
+    "supported": 24,
+    "unsupported": 0,
+    "downgradedByReview": 0
    },
    "issues": {
     "fact": 0,
@@ -197,11 +242,16 @@
    "independent": null
   },
   "a-moved24": {
-   "verdicts": {
+   "factMachine": {
     "S": 22,
     "O": 2,
     "A": 0,
     "REVIEW": 0
+   },
+   "factFinal": {
+    "supported": 22,
+    "unsupported": 2,
+    "downgradedByReview": 0
    },
    "issues": {
     "fact": 2,
@@ -217,11 +267,16 @@
    "independent": null
   },
   "b-moved24": {
-   "verdicts": {
+   "factMachine": {
     "S": 24,
     "O": 0,
     "A": 0,
     "REVIEW": 0
+   },
+   "factFinal": {
+    "supported": 24,
+    "unsupported": 0,
+    "downgradedByReview": 0
    },
    "issues": {
     "fact": 0,
@@ -237,11 +292,16 @@
    "independent": null
   },
   "c-moved24": {
-   "verdicts": {
+   "factMachine": {
     "S": 24,
     "O": 0,
     "A": 0,
     "REVIEW": 0
+   },
+   "factFinal": {
+    "supported": 24,
+    "unsupported": 0,
+    "downgradedByReview": 0
    },
    "issues": {
     "fact": 0,
@@ -256,5 +316,6 @@
    "sourceFullyClean": 24,
    "independent": null
   }
- }
+ },
+ "note": "factMachine is the frozen scorer; factFinal turns a machine S into unsupported when the human read found coverage loss. Only factFinal may be quoted as support."
 }

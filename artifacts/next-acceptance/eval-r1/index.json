@@ -246,13 +246,17 @@
   },
   {
    "path": "artifacts/next-acceptance/eval-r1/summary-r1.json",
-   "bytes": 4078,
-   "sha256": "c34f3db16d7a1eaf4eab95e794ee467c86ba1c88e82302251f02caa66f21d4ca"
+   "bytes": 5459,
+   "sha256": "54751c79456055bc0362c352aa9759bc363158e31e501a5cd4174c4303e0dbc1"
   },
   {
    "path": "artifacts/next-acceptance/eval-r1/job-meta.json",
    "bytes": 138,
    "sha256": "d9d68eb26abfc89edb79dc504627bc1398119cc8824531de7c40ea2ea40608a9"
   }
- ]
+ ],
+ "factPolicy": {
+  "note": "factMachine is the frozen scorer; factFinal downgrades a machine S when the human read found coverage loss, so B is 84/85 on cf24 and 75/76 on final24",
+  "updated": "2026-11-05"
+ }
 }

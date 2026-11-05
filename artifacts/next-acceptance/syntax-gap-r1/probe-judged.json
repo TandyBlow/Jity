@@ -1,0 +1,492 @@
+{
+ "rule": "artifacts\\next-inputs\\world-components\\n4-probe-r1-rule.json",
+ "ruleVersion": "probe-r1",
+ "arms": {
+  "u240": [
+   {
+    "unitId": "p-t1a",
+    "family": "tail",
+    "variant": "original",
+    "baseUnit": "t12:f0",
+    "text": "阿棠从早市过来,抱起一叠纸进了潮生巷。",
+    "verdict": "S",
+    "note": "",
+    "issues": [],
+    "seconds": 0.378
+   },
+   {
+    "unitId": "p-t1b",
+    "family": "tail",
+    "variant": "scene-neutral",
+    "baseUnit": "t12:f0",
+    "text": "阿棠从早市过来,抱起一叠鱼筐进了潮生巷。",
+    "verdict": "S",
+    "note": "",
+    "issues": [],
+    "seconds": 0.137
+   },
+   {
+    "unitId": "p-t2a",
+    "family": "tail",
+    "variant": "original",
+    "baseUnit": "t09:f0",
+    "text": "叶知微从早市过来,走进档案馆。",
+    "verdict": "S",
+    "note": "",
+    "issues": [],
+    "seconds": 0.103
+   },
+   {
+    "unitId": "p-t2b",
+    "family": "tail",
+    "variant": "scene-neutral",
+    "baseUnit": "t09:f0",
+    "text": "叶知微从早市过来,走进档案馆。",
+    "verdict": "S",
+    "note": "",
+    "issues": [],
+    "seconds": 0.105
+   },
+   {
+    "unitId": "p-t3a",
+    "family": "tail",
+    "variant": "original",
+    "baseUnit": "v14:f0",
+    "text": "沈砚从潮汐档案馆出来,走进潮渡。",
+    "verdict": "S",
+    "note": "",
+    "issues": [],
+    "seconds": 0.112
+   },
+   {
+    "unitId": "p-t3b",
+    "family": "tail",
+    "variant": "scene-neutral",
+    "baseUnit": "v14:f0",
+    "text": "沈砚从潮汐档案馆出来,走到潮渡的栈桥。",
+    "verdict": "S",
+    "note": "",
+    "issues": [],
+    "seconds": 0.131
+   },
+   {
+    "unitId": "p-t4a",
+    "family": "tail",
+    "variant": "original",
+    "baseUnit": "m01:f0",
+    "text": "沈砚从早市上来,蹲到雾堤的钟架下。",
+    "verdict": "S",
+    "note": "",
+    "issues": [
+     {
+      "family": "tail",
+      "span": "蹲到雾堤的钟架下。",
+      "matched": "蹲到"
+     }
+    ],
+    "seconds": 0.131
+   },
+   {
+    "unitId": "p-t4b",
+    "family": "tail",
+    "variant": "scene-neutral",
+    "baseUnit": "m01:f0",
+    "text": "沈砚从早市上来,蹲到雾堤的钟架下。",
+    "verdict": "S",
+    "note": "",
+    "issues": [
+     {
+      "family": "tail",
+      "span": "蹲到雾堤的钟架下。",
+      "matched": "蹲到"
+     }
+    ],
+    "seconds": 0.13
+   },
+   {
+    "unitId": "p-q1a",
+    "family": "quantifier",
+    "variant": "original",
+    "baseUnit": "t12:f0",
+    "text": "阿棠从早市过来,抱起一叠纸进了潮生巷。",
+    "verdict": "S",
+    "note": "",
+    "issues": [],
+    "seconds": 0.13
+   },
+   {
+    "unitId": "p-q1b",
+    "family": "quantifier",
+    "variant": "destination-archive",
+    "baseUnit": "t12:f0",
+    "text": "阿棠从早市过来,抱着一叠纸在墙根上站了一会儿。",
+    "verdict": "O",
+    "note": "起点有 终点缺",
+    "issues": [],
+    "seconds": 0.158
+   },
+   {
+    "unitId": "p-q1c",
+    "family": "quantifier",
+    "variant": "outcome-control",
+    "baseUnit": "t12:f0",
+    "text": "阿棠把银鳞鱼装进鱼筐。",
+    "verdict": "S",
+    "note": "覆盖1.00",
+    "issues": [],
+    "seconds": 0.089
+   },
+   {
+    "unitId": "p-g1a",
+    "family": "grammar",
+    "variant": "original",
+    "baseUnit": "t21:f0",
+    "text": "潮汐簿的缺页的边缘毛糙。",
+    "verdict": "S",
+    "note": "覆盖1.00",
+    "issues": [
+     {
+      "family": "grammar",
+      "rule": "doubleDe",
+      "span": "的缺页的"
+     }
+    ],
+    "seconds": 0.102
+   },
+   {
+    "unitId": "p-g1b",
+    "family": "grammar",
+    "variant": "fact-cleaned",
+    "baseUnit": "t21:f0",
+    "text": "潮汐簿的缺页边缘毛糙。",
+    "verdict": "S",
+    "note": "覆盖1.00",
+    "issues": [],
+    "seconds": 0.095
+   },
+   {
+    "unitId": "p-g2a",
+    "family": "grammar",
+    "variant": "original",
+    "baseUnit": "t22:f0",
+    "text": "系泊绳的泥水结了一层白盐。",
+    "verdict": "S",
+    "note": "覆盖1.00",
+    "issues": [
+     {
+      "family": "grammar",
+      "rule": "possessive",
+      "span": "绳的泥水"
+     }
+    ],
+    "seconds": 0.102
+   },
+   {
+    "unitId": "p-g2b",
+    "family": "grammar",
+    "variant": "fact-rewritten",
+    "baseUnit": "t22:f0",
+    "text": "系泊绳的泥水在绳上结了一层白盐。",
+    "verdict": "S",
+    "note": "覆盖1.00",
+    "issues": [
+     {
+      "family": "grammar",
+      "rule": "possessive",
+      "span": "绳的泥水"
+     }
+    ],
+    "seconds": 0.124
+   },
+   {
+    "unitId": "p-g3a",
+    "family": "grammar",
+    "variant": "original",
+    "baseUnit": "t24:f1",
+    "text": "排水沟的里面积了泥。",
+    "verdict": "S",
+    "note": "覆盖1.00",
+    "issues": [
+     {
+      "family": "grammar",
+      "rule": "li",
+      "span": "的里面"
+     }
+    ],
+    "seconds": 0.075
+   },
+   {
+    "unitId": "p-g3b",
+    "family": "grammar",
+    "variant": "fact-cleaned",
+    "baseUnit": "t24:f1",
+    "text": "排水沟的沟里积了泥。",
+    "verdict": "S",
+    "note": "覆盖1.00",
+    "issues": [],
+    "seconds": 0.082
+   }
+  ],
+  "c": [
+   {
+    "unitId": "p-t1a",
+    "family": "tail",
+    "variant": "original",
+    "baseUnit": "t12:f0",
+    "text": "阿棠从早市过来,抱着一叠鱼筐进了潮生巷。",
+    "verdict": "S",
+    "note": "",
+    "issues": [],
+    "seconds": 0.38
+   },
+   {
+    "unitId": "p-t1b",
+    "family": "tail",
+    "variant": "scene-neutral",
+    "baseUnit": "t12:f0",
+    "text": "阿棠从早市过来,抱着一叠鱼筐进了潮生巷。",
+    "verdict": "S",
+    "note": "",
+    "issues": [],
+    "seconds": 0.138
+   },
+   {
+    "unitId": "p-t2a",
+    "family": "tail",
+    "variant": "original",
+    "baseUnit": "t09:f0",
+    "text": "叶知微从早市过来,推开档案馆的门。",
+    "verdict": "S",
+    "note": "",
+    "issues": [
+     {
+      "family": "tail",
+      "span": "推开档案馆的门。",
+      "matched": "推开"
+     }
+    ],
+    "seconds": 0.124
+   },
+   {
+    "unitId": "p-t2b",
+    "family": "tail",
+    "variant": "scene-neutral",
+    "baseUnit": "t09:f0",
+    "text": "叶知微从早市过来,推开档案馆的门。",
+    "verdict": "S",
+    "note": "",
+    "issues": [
+     {
+      "family": "tail",
+      "span": "推开档案馆的门。",
+      "matched": "推开"
+     }
+    ],
+    "seconds": 0.125
+   },
+   {
+    "unitId": "p-t3a",
+    "family": "tail",
+    "variant": "original",
+    "baseUnit": "v14:f0",
+    "text": "沈砚从潮汐档案馆出来,在潮渡的栈桥边站住。",
+    "verdict": "S",
+    "note": "",
+    "issues": [
+     {
+      "family": "tail",
+      "span": "在潮渡的栈桥边站住。",
+      "matched": "站住"
+     }
+    ],
+    "seconds": 0.154
+   },
+   {
+    "unitId": "p-t3b",
+    "family": "tail",
+    "variant": "scene-neutral",
+    "baseUnit": "v14:f0",
+    "text": "沈砚从潮汐档案馆出来,在潮渡的栈桥边站住。",
+    "verdict": "S",
+    "note": "",
+    "issues": [
+     {
+      "family": "tail",
+      "span": "在潮渡的栈桥边站住。",
+      "matched": "站住"
+     }
+    ],
+    "seconds": 0.152
+   },
+   {
+    "unitId": "p-t4a",
+    "family": "tail",
+    "variant": "original",
+    "baseUnit": "m01:f0",
+    "text": "沈砚从早市出来,在雾堤的钟架下站住。",
+    "verdict": "S",
+    "note": "",
+    "issues": [
+     {
+      "family": "tail",
+      "span": "在雾堤的钟架下站住。",
+      "matched": "站住"
+     }
+    ],
+    "seconds": 0.137
+   },
+   {
+    "unitId": "p-t4b",
+    "family": "tail",
+    "variant": "scene-neutral",
+    "baseUnit": "m01:f0",
+    "text": "沈砚从早市上来,蹲到雾堤的钟架下。",
+    "verdict": "S",
+    "note": "",
+    "issues": [
+     {
+      "family": "tail",
+      "span": "蹲到雾堤的钟架下。",
+      "matched": "蹲到"
+     }
+    ],
+    "seconds": 0.131
+   },
+   {
+    "unitId": "p-q1a",
+    "family": "quantifier",
+    "variant": "original",
+    "baseUnit": "t12:f0",
+    "text": "阿棠从早市过来,抱着一叠鱼筐进了潮生巷。",
+    "verdict": "S",
+    "note": "",
+    "issues": [
+     {
+      "family": "quantifier",
+      "span": "一叠鱼",
+      "matched": "鱼"
+     }
+    ],
+    "seconds": 0.137
+   },
+   {
+    "unitId": "p-q1b",
+    "family": "quantifier",
+    "variant": "destination-archive",
+    "baseUnit": "t12:f0",
+    "text": "阿棠从早市过来,抱着一叠鱼筐进了档案馆。",
+    "verdict": "S",
+    "note": "",
+    "issues": [
+     {
+      "family": "quantifier",
+      "span": "一叠鱼",
+      "matched": "鱼"
+     }
+    ],
+    "seconds": 0.13
+   },
+   {
+    "unitId": "p-q1c",
+    "family": "quantifier",
+    "variant": "outcome-control",
+    "baseUnit": "t12:f0",
+    "text": "阿棠把银鳞鱼装进鱼筐。",
+    "verdict": "S",
+    "note": "覆盖1.00",
+    "issues": [],
+    "seconds": 0.089
+   },
+   {
+    "unitId": "p-g1a",
+    "family": "grammar",
+    "variant": "original",
+    "baseUnit": "t21:f0",
+    "text": "潮汐簿的缺页的边缘毛糙。",
+    "verdict": "S",
+    "note": "覆盖1.00",
+    "issues": [
+     {
+      "family": "grammar",
+      "rule": "doubleDe",
+      "span": "的缺页的"
+     }
+    ],
+    "seconds": 0.102
+   },
+   {
+    "unitId": "p-g1b",
+    "family": "grammar",
+    "variant": "fact-cleaned",
+    "baseUnit": "t21:f0",
+    "text": "潮汐簿的缺页边缘毛糙。",
+    "verdict": "S",
+    "note": "覆盖1.00",
+    "issues": [],
+    "seconds": 0.096
+   },
+   {
+    "unitId": "p-g2a",
+    "family": "grammar",
+    "variant": "original",
+    "baseUnit": "t22:f0",
+    "text": "系泊绳的泥水结了一层白盐。",
+    "verdict": "S",
+    "note": "覆盖1.00",
+    "issues": [
+     {
+      "family": "grammar",
+      "rule": "possessive",
+      "span": "绳的泥水"
+     }
+    ],
+    "seconds": 0.103
+   },
+   {
+    "unitId": "p-g2b",
+    "family": "grammar",
+    "variant": "fact-rewritten",
+    "baseUnit": "t22:f0",
+    "text": "系泊绳的泥水在绳上结了一层白盐。",
+    "verdict": "S",
+    "note": "覆盖1.00",
+    "issues": [
+     {
+      "family": "grammar",
+      "rule": "possessive",
+      "span": "绳的泥水"
+     }
+    ],
+    "seconds": 0.124
+   },
+   {
+    "unitId": "p-g3a",
+    "family": "grammar",
+    "variant": "original",
+    "baseUnit": "t24:f1",
+    "text": "排水沟的里面积了泥。",
+    "verdict": "S",
+    "note": "覆盖1.00",
+    "issues": [
+     {
+      "family": "grammar",
+      "rule": "li",
+      "span": "的里面"
+     }
+    ],
+    "seconds": 0.075
+   },
+   {
+    "unitId": "p-g3b",
+    "family": "grammar",
+    "variant": "fact-cleaned",
+    "baseUnit": "t24:f1",
+    "text": "排水沟的沟里积了泥。",
+    "verdict": "S",
+    "note": "覆盖1.00",
+    "issues": [],
+    "seconds": 0.082
+   }
+  ]
+ }
+}

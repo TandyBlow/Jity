@@ -25,3 +25,5 @@ artifacts/three-arm-r1/** -text
 experiments/world-components/*.sh text eol=lf
 artifacts/next-acceptance/three-arm-r1/** -text
 artifacts/next-acceptance/eval-r1/** -text
+artifacts/next-acceptance/syntax-gap-r1/** -text
+artifacts/next-inputs/world-components/n4-probe-r1-rule.json -text
