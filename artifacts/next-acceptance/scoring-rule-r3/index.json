@@ -1,0 +1,46 @@
+{
+ "purpose": "fix the counting unit and the no_change allowance, then re-judge archived outputs",
+ "rule": {
+  "path": "artifacts/scoring-rule-r3/rule.json",
+  "sha256": "39df32f044114f3ac1dff6fb1f2eb1922ceceb7cfce750c2e72bcdc92b68233c"
+ },
+ "method": "mechanical for moved clause 2 and no_change; other kinds keep the recorded read; originals kept",
+ "changes": 51,
+ "outcome": {
+  "round1": "moved24 under-counted for all four models; C 0 -> 7",
+  "round2": "conditions 1 and 3 flip to pass; condition 2 fails by one modifier",
+  "verdict": "round 2 still not passed"
+ },
+ "knownGaps": [
+  "抱起 missing from the tail verb list (manual count kept)",
+  "in-clause path nouns such as 石滩 stay at the recorded judgement",
+  "the entity list is closed and extending it means a new rule freeze"
+ ],
+ "files": [
+  {
+   "path": "artifacts/next-acceptance/scoring-rule-r3/rule.json",
+   "bytes": 3478,
+   "sha256": "39df32f044114f3ac1dff6fb1f2eb1922ceceb7cfce750c2e72bcdc92b68233c"
+  },
+  {
+   "path": "artifacts/next-acceptance/scoring-rule-r3/rejudge-r3.json",
+   "bytes": 18771,
+   "sha256": "bba93c8142d66e38a7ab1b3eadec127f95573f66ce7562a91eab3e40d56b6291"
+  },
+  {
+   "path": "artifacts/next-acceptance/scoring-rule-r3/rejudge-summary-r3.json",
+   "bytes": 5318,
+   "sha256": "5558ac09ab7379d77dfaa90e42974b6ca2744fa906a68f60efe015403099011a"
+  },
+  {
+   "path": "artifacts/next-acceptance/scoring-rule-r3/review-r1.json",
+   "bytes": 18428,
+   "sha256": "137edf9fd8826fc53519657c436ddf7752550a2ee2580da209e44198f7e0ec99"
+  },
+  {
+   "path": "artifacts/next-acceptance/scoring-rule-r3/review-r2.json",
+   "bytes": 6470,
+   "sha256": "20cc6ece3cf7a6f60621e4a907b411f5e45ef3082789917417183b714f1a3d8d"
+  }
+ ]
+}
