@@ -1,0 +1,260 @@
+{
+ "counts": {
+  "u240-cf24": {
+   "verdicts": {
+    "S": 85,
+    "O": 0,
+    "A": 0,
+    "REVIEW": 0
+   },
+   "issues": {
+    "fact": 0,
+    "added": 6,
+    "repeated": 2,
+    "language": 3
+   },
+   "units": 85,
+   "unitsClean": 74,
+   "sources": 24,
+   "sourceCleanNoAdded": 19,
+   "sourceFullyClean": 15,
+   "independent": null
+  },
+  "a-cf24": {
+   "verdicts": {
+    "S": 83,
+    "O": 2,
+    "A": 0,
+    "REVIEW": 0
+   },
+   "issues": {
+    "fact": 2,
+    "added": 17,
+    "repeated": 0,
+    "language": 10
+   },
+   "units": 85,
+   "unitsClean": 65,
+   "sources": 24,
+   "sourceCleanNoAdded": 12,
+   "sourceFullyClean": 9,
+   "independent": null
+  },
+  "b-cf24": {
+   "verdicts": {
+    "S": 85,
+    "O": 0,
+    "A": 0,
+    "REVIEW": 0
+   },
+   "issues": {
+    "fact": 1,
+    "added": 10,
+    "repeated": 1,
+    "language": 5
+   },
+   "units": 85,
+   "unitsClean": 71,
+   "sources": 24,
+   "sourceCleanNoAdded": 16,
+   "sourceFullyClean": 15,
+   "independent": null
+  },
+  "c-cf24": {
+   "verdicts": {
+    "S": 85,
+    "O": 0,
+    "A": 0,
+    "REVIEW": 0
+   },
+   "issues": {
+    "fact": 0,
+    "added": 5,
+    "repeated": 0,
+    "language": 4
+   },
+   "units": 85,
+   "unitsClean": 77,
+   "sources": 24,
+   "sourceCleanNoAdded": 19,
+   "sourceFullyClean": 16,
+   "independent": null
+  },
+  "u240-final24": {
+   "verdicts": {
+    "S": 76,
+    "O": 0,
+    "A": 0,
+    "REVIEW": 0
+   },
+   "issues": {
+    "fact": 0,
+    "added": 5,
+    "repeated": 2,
+    "language": 0
+   },
+   "units": 76,
+   "unitsClean": 69,
+   "sources": 24,
+   "sourceCleanNoAdded": 19,
+   "sourceFullyClean": 17,
+   "independent": {
+    "units": 43,
+    "clean": 41,
+    "factS": 43
+   }
+  },
+  "a-final24": {
+   "verdicts": {
+    "S": 76,
+    "O": 0,
+    "A": 0,
+    "REVIEW": 0
+   },
+   "issues": {
+    "fact": 0,
+    "added": 7,
+    "repeated": 0,
+    "language": 2
+   },
+   "units": 76,
+   "unitsClean": 69,
+   "sources": 24,
+   "sourceCleanNoAdded": 18,
+   "sourceFullyClean": 18,
+   "independent": {
+    "units": 43,
+    "clean": 40,
+    "factS": 43
+   }
+  },
+  "b-final24": {
+   "verdicts": {
+    "S": 76,
+    "O": 0,
+    "A": 0,
+    "REVIEW": 0
+   },
+   "issues": {
+    "fact": 1,
+    "added": 7,
+    "repeated": 1,
+    "language": 1
+   },
+   "units": 76,
+   "unitsClean": 67,
+   "sources": 24,
+   "sourceCleanNoAdded": 18,
+   "sourceFullyClean": 16,
+   "independent": {
+    "units": 43,
+    "clean": 41,
+    "factS": 43
+   }
+  },
+  "c-final24": {
+   "verdicts": {
+    "S": 76,
+    "O": 0,
+    "A": 0,
+    "REVIEW": 0
+   },
+   "issues": {
+    "fact": 0,
+    "added": 4,
+    "repeated": 0,
+    "language": 0
+   },
+   "units": 76,
+   "unitsClean": 72,
+   "sources": 24,
+   "sourceCleanNoAdded": 20,
+   "sourceFullyClean": 20,
+   "independent": {
+    "units": 43,
+    "clean": 42,
+    "factS": 43
+   }
+  },
+  "u240-moved24": {
+   "verdicts": {
+    "S": 24,
+    "O": 0,
+    "A": 0,
+    "REVIEW": 0
+   },
+   "issues": {
+    "fact": 0,
+    "added": 0,
+    "repeated": 0,
+    "language": 2
+   },
+   "units": 24,
+   "unitsClean": 22,
+   "sources": 24,
+   "sourceCleanNoAdded": 24,
+   "sourceFullyClean": 22,
+   "independent": null
+  },
+  "a-moved24": {
+   "verdicts": {
+    "S": 22,
+    "O": 2,
+    "A": 0,
+    "REVIEW": 0
+   },
+   "issues": {
+    "fact": 2,
+    "added": 3,
+    "repeated": 1,
+    "language": 5
+   },
+   "units": 24,
+   "unitsClean": 16,
+   "sources": 24,
+   "sourceCleanNoAdded": 19,
+   "sourceFullyClean": 16,
+   "independent": null
+  },
+  "b-moved24": {
+   "verdicts": {
+    "S": 24,
+    "O": 0,
+    "A": 0,
+    "REVIEW": 0
+   },
+   "issues": {
+    "fact": 0,
+    "added": 1,
+    "repeated": 0,
+    "language": 0
+   },
+   "units": 24,
+   "unitsClean": 23,
+   "sources": 24,
+   "sourceCleanNoAdded": 23,
+   "sourceFullyClean": 23,
+   "independent": null
+  },
+  "c-moved24": {
+   "verdicts": {
+    "S": 24,
+    "O": 0,
+    "A": 0,
+    "REVIEW": 0
+   },
+   "issues": {
+    "fact": 0,
+    "added": 0,
+    "repeated": 0,
+    "language": 0
+   },
+   "units": 24,
+   "unitsClean": 24,
+   "sources": 24,
+   "sourceCleanNoAdded": 24,
+   "sourceFullyClean": 24,
+   "independent": null
+  }
+ }
+}

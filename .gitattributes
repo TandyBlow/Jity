@@ -24,3 +24,4 @@ artifacts/three-arm-r1/** -text
 # Submission scripts run on Linux under bash; keep LF in the repository and out.
 experiments/world-components/*.sh text eol=lf
 artifacts/next-acceptance/three-arm-r1/** -text
+artifacts/next-acceptance/eval-r1/** -text

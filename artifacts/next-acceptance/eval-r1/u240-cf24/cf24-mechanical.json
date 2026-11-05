@@ -1,0 +1,1013 @@
+{
+ "summary": {
+  "scoringVersion": "cf24-mechanical-v2-strict-moved",
+  "note": "mechanical first pass; flags need review",
+  "facts": {
+   "S": 85,
+   "O": 0,
+   "A": 0,
+   "REVIEW": 0
+  },
+  "sources": 24,
+  "cleanSources": 19,
+  "sourcesWithFlags": 5
+ },
+ "rows": [
+  {
+   "unitId": "t01:f0",
+   "sourceId": "t01",
+   "kind": "outcome",
+   "text": "沈砚把潮汐簿缺的那页补全。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t01:f1",
+   "sourceId": "t01",
+   "kind": "appearance_changed",
+   "text": "沈砚的指尖沾了墨。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t01:f2",
+   "sourceId": "t01",
+   "kind": "outcome",
+   "text": "沈砚把簿子合上推到桌角。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t02:f0",
+   "sourceId": "t02",
+   "kind": "outcome",
+   "text": "阿棠把银鳞鱼按大小分开装进两只鱼筐。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t02:f1",
+   "sourceId": "t02",
+   "kind": "appearance_changed",
+   "text": "阿棠的袖口沾了鱼鳞。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t02:f2",
+   "sourceId": "t02",
+   "kind": "outcome",
+   "text": "阿棠把空鱼筐摞到摊棚边上。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t03:f0",
+   "sourceId": "t03",
+   "kind": "outcome",
+   "text": "叶知微把灯罩擦得透亮。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t03:f1",
+   "sourceId": "t03",
+   "kind": "appearance_changed",
+   "text": "叶知微的袖口沾了铜油。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t03:f2",
+   "sourceId": "t03",
+   "kind": "outcome",
+   "text": "叶知微把抹布搭回梯脚。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t04:f0",
+   "sourceId": "t04",
+   "kind": "outcome",
+   "text": "顾行舟把缆绳在木桩上绕了三圈。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t04:f1",
+   "sourceId": "t04",
+   "kind": "outcome",
+   "text": "顾行舟把渡船推离栈桥。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t04:f2",
+   "sourceId": "t04",
+   "kind": "appearance_changed",
+   "text": "顾行舟的外袍下摆被雾水打湿。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t05:f0",
+   "sourceId": "t05",
+   "kind": "outcome",
+   "text": "韩渡把松脱的钟绳重新系紧。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t05:f1",
+   "sourceId": "t05",
+   "kind": "outcome",
+   "text": "韩渡把雾警钟敲响。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t05:f2",
+   "sourceId": "t05",
+   "kind": "appearance_changed",
+   "text": "韩渡的手背上沾着盐沫。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t06:f0",
+   "sourceId": "t06",
+   "kind": "outcome",
+   "text": "沈砚把油纸伞收拢靠在墙根。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t06:f1",
+   "sourceId": "t06",
+   "kind": "outcome",
+   "text": "沈砚把被风吹歪的纸灯笼扶正。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t06:f2",
+   "sourceId": "t06",
+   "kind": "appearance_changed",
+   "text": "沈砚的鞋底沾了湿石板的水。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t07:f0",
+   "sourceId": "t07",
+   "kind": "moved",
+   "text": "沈砚从潮渡一路走到雾堤,鞋底在石阶边站了一会儿。",
+   "verdict": "S",
+   "note": "",
+   "flags": [
+    "extra-tail:鞋底在石阶边站了一会儿"
+   ]
+  },
+  {
+   "unitId": "t07:f1",
+   "sourceId": "t07",
+   "kind": "outcome",
+   "text": "韩渡把松脱的钟绳重新系紧,钟绳绷直了。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t07:f2",
+   "sourceId": "t07",
+   "kind": "outcome",
+   "text": "沈砚把雾警钟敲响。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t07:f3",
+   "sourceId": "t07",
+   "kind": "appearance_changed",
+   "text": "韩渡的手背上沾着盐沫。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t08:f0",
+   "sourceId": "t08",
+   "kind": "outcome",
+   "text": "阿棠把银鳞鱼搬上案板。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t08:f1",
+   "sourceId": "t08",
+   "kind": "outcome",
+   "text": "顾行舟把缆绳绕上摊棚边的木桩。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t08:f2",
+   "sourceId": "t08",
+   "kind": "appearance_changed",
+   "text": "阿棠的辫梢沾了白汽。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t08:f3",
+   "sourceId": "t08",
+   "kind": "appearance_changed",
+   "text": "顾行舟的外袍下摆沾了泥水。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t09:f0",
+   "sourceId": "t09",
+   "kind": "moved",
+   "text": "叶知微从早市过来,走进档案馆。",
+   "verdict": "S",
+   "note": "",
+   "flags": []
+  },
+  {
+   "unitId": "t09:f1",
+   "sourceId": "t09",
+   "kind": "outcome",
+   "text": "沈砚把潮汐簿摊在铜灯下。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t09:f2",
+   "sourceId": "t09",
+   "kind": "outcome",
+   "text": "叶知微把一叠干纸放在桌角。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t09:f3",
+   "sourceId": "t09",
+   "kind": "appearance_changed",
+   "text": "沈砚的袖口沾了墨。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t10:f0",
+   "sourceId": "t10",
+   "kind": "outcome",
+   "text": "顾行舟把渡船系在栈桥的木桩上。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t10:f1",
+   "sourceId": "t10",
+   "kind": "outcome",
+   "text": "沈砚把系泊绳从浅滩拖回岸上。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t10:f2",
+   "sourceId": "t10",
+   "kind": "appearance_changed",
+   "text": "顾行舟的外袍下摆被雾水打湿。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t10:f3",
+   "sourceId": "t10",
+   "kind": "sanity_changed",
+   "text": "沈砚的呼吸有些发紧,手指也不太听使唤。",
+   "verdict": "S",
+   "note": "",
+   "flags": []
+  },
+  {
+   "unitId": "t11:f0",
+   "sourceId": "t11",
+   "kind": "moved",
+   "text": "沈砚从潮生巷一路走到旧灯塔脚下,抬头看了看塔身。",
+   "verdict": "S",
+   "note": "",
+   "flags": [
+    "extra-tail:抬头看了看塔身"
+   ]
+  },
+  {
+   "unitId": "t11:f1",
+   "sourceId": "t11",
+   "kind": "outcome",
+   "text": "叶知微把玻璃罩上的盐雾擦得透亮,玻璃罩透亮起来。",
+   "verdict": "S",
+   "note": "覆盖0.50",
+   "flags": [
+    "repeat:玻璃罩透亮起来"
+   ]
+  },
+  {
+   "unitId": "t11:f2",
+   "sourceId": "t11",
+   "kind": "outcome",
+   "text": "沈砚换好塔顶的灯芯。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t11:f3",
+   "sourceId": "t11",
+   "kind": "appearance_changed",
+   "text": "叶知微的袖口沾了铜油。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t12:f0",
+   "sourceId": "t12",
+   "kind": "moved",
+   "text": "阿棠从早市过来,抱起一叠纸进了潮生巷。",
+   "verdict": "S",
+   "note": "",
+   "flags": []
+  },
+  {
+   "unitId": "t12:f1",
+   "sourceId": "t12",
+   "kind": "outcome",
+   "text": "沈砚把油纸伞收拢靠在墙根。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t12:f2",
+   "sourceId": "t12",
+   "kind": "outcome",
+   "text": "阿棠把鱼筐放在门槛边。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t12:f3",
+   "sourceId": "t12",
+   "kind": "appearance_changed",
+   "text": "沈砚的鞋底沾了湿石板的水。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t13:f0",
+   "sourceId": "t13",
+   "kind": "moved",
+   "text": "叶知微从早市过来,走进档案馆。",
+   "verdict": "S",
+   "note": "",
+   "flags": []
+  },
+  {
+   "unitId": "t13:f1",
+   "sourceId": "t13",
+   "kind": "outcome",
+   "text": "叶知微把一叠干纸放在桌角。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t13:f2",
+   "sourceId": "t13",
+   "kind": "appearance_changed",
+   "text": "叶知微的袖口沾了墨。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t14:f0",
+   "sourceId": "t14",
+   "kind": "moved",
+   "text": "顾行舟从潮渡上来,走进雾堤。",
+   "verdict": "S",
+   "note": "",
+   "flags": []
+  },
+  {
+   "unitId": "t14:f1",
+   "sourceId": "t14",
+   "kind": "outcome",
+   "text": "顾行舟把缆绳绕在钟架上。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t14:f2",
+   "sourceId": "t14",
+   "kind": "appearance_changed",
+   "text": "顾行舟的外袍下摆被雾水打湿。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t15:f0",
+   "sourceId": "t15",
+   "kind": "moved",
+   "text": "韩渡从潮生巷一路走到潮渡,鞋底在木桩旁站住。",
+   "verdict": "S",
+   "note": "",
+   "flags": [
+    "extra-tail:鞋底在木桩旁站住"
+   ]
+  },
+  {
+   "unitId": "t15:f1",
+   "sourceId": "t15",
+   "kind": "outcome",
+   "text": "韩渡把渡船推离栈桥。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t15:f2",
+   "sourceId": "t15",
+   "kind": "appearance_changed",
+   "text": "韩渡的手背沾着盐沫。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t16:f0",
+   "sourceId": "t16",
+   "kind": "moved",
+   "text": "沈砚从潮汐档案馆出来,走进潮生巷。",
+   "verdict": "S",
+   "note": "",
+   "flags": []
+  },
+  {
+   "unitId": "t16:f1",
+   "sourceId": "t16",
+   "kind": "outcome",
+   "text": "沈砚把备用钥匙塞进油布包的内层。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t16:f2",
+   "sourceId": "t16",
+   "kind": "sanity_changed",
+   "text": "沈砚的呼吸有些发紧,手指也不太听使唤。",
+   "verdict": "S",
+   "note": "",
+   "flags": []
+  },
+  {
+   "unitId": "t17:f0",
+   "sourceId": "t17",
+   "kind": "moved",
+   "text": "阿棠从潮生巷一路走到早市,鱼筐上沾着鱼鳞。",
+   "verdict": "S",
+   "note": "",
+   "flags": [
+    "extra-tail:鱼筐上沾着鱼鳞"
+   ]
+  },
+  {
+   "unitId": "t17:f1",
+   "sourceId": "t17",
+   "kind": "outcome",
+   "text": "阿棠把银鳞鱼搬上案板。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t17:f2",
+   "sourceId": "t17",
+   "kind": "appearance_changed",
+   "text": "阿棠的辫梢沾了白汽。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t18:f0",
+   "sourceId": "t18",
+   "kind": "moved",
+   "text": "叶知微从潮渡上来,走进旧灯塔。",
+   "verdict": "S",
+   "note": "",
+   "flags": []
+  },
+  {
+   "unitId": "t18:f1",
+   "sourceId": "t18",
+   "kind": "outcome",
+   "text": "叶知微把灯罩擦得透亮。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t18:f2",
+   "sourceId": "t18",
+   "kind": "appearance_changed",
+   "text": "叶知微的袖口沾了铜油。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t18:f3",
+   "sourceId": "t18",
+   "kind": "outcome",
+   "text": "叶知微把抹布搭回梯脚。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t19:f0",
+   "sourceId": "t19",
+   "kind": "appearance_changed",
+   "text": "阿棠的袖口沾了鱼鳞。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t19:f1",
+   "sourceId": "t19",
+   "kind": "appearance_changed",
+   "text": "沈砚的外袍下摆沾了泥水。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t19:f2",
+   "sourceId": "t19",
+   "kind": "outcome",
+   "text": "阿棠把银鳞鱼装进鱼筐。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t19:f3",
+   "sourceId": "t19",
+   "kind": "outcome",
+   "text": "沈砚把油纸伞收拢靠在摊棚边。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t20:f0",
+   "sourceId": "t20",
+   "kind": "appearance_changed",
+   "text": "警示灯的铜框玻璃罩被风吹歪。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t20:f1",
+   "sourceId": "t20",
+   "kind": "appearance_changed",
+   "text": "钟绳磨出了毛边。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t20:f2",
+   "sourceId": "t20",
+   "kind": "outcome",
+   "text": "沈砚把警示灯扶正。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t20:f3",
+   "sourceId": "t20",
+   "kind": "outcome",
+   "text": "韩渡把钟绳重新绕在钟架上。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t21:f0",
+   "sourceId": "t21",
+   "kind": "appearance_changed",
+   "text": "潮汐簿的缺页的边缘毛糙。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": [
+    "double-de"
+   ]
+  },
+  {
+   "unitId": "t21:f1",
+   "sourceId": "t21",
+   "kind": "appearance_changed",
+   "text": "铜灯的灯罩上积了灰。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t21:f2",
+   "sourceId": "t21",
+   "kind": "outcome",
+   "text": "沈砚把铜灯擦亮。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t21:f3",
+   "sourceId": "t21",
+   "kind": "outcome",
+   "text": "叶知微把干纸放在桌角。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t22:f0",
+   "sourceId": "t22",
+   "kind": "appearance_changed",
+   "text": "系泊绳的泥水结了一层白盐。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t22:f1",
+   "sourceId": "t22",
+   "kind": "appearance_changed",
+   "text": "木桩缠着的旧缆绳断了。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t22:f2",
+   "sourceId": "t22",
+   "kind": "outcome",
+   "text": "顾行舟把缆绳重新绕上木桩。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t22:f3",
+   "sourceId": "t22",
+   "kind": "outcome",
+   "text": "沈砚把系泊绳拖回岸上。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t23:f0",
+   "sourceId": "t23",
+   "kind": "appearance_changed",
+   "text": "铜灯罩的玻璃上蒙了盐雾。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t23:f1",
+   "sourceId": "t23",
+   "kind": "appearance_changed",
+   "text": "铁链的链环上结了锈。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t23:f2",
+   "sourceId": "t23",
+   "kind": "outcome",
+   "text": "叶知微把灯罩擦得透亮,玻璃罩已经透亮。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t23:f3",
+   "sourceId": "t23",
+   "kind": "outcome",
+   "text": "沈砚换好塔顶的灯芯。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t24:f0",
+   "sourceId": "t24",
+   "kind": "appearance_changed",
+   "text": "纸灯笼被风扯破一角。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t24:f1",
+   "sourceId": "t24",
+   "kind": "appearance_changed",
+   "text": "排水沟的里面积了泥。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t24:f2",
+   "sourceId": "t24",
+   "kind": "outcome",
+   "text": "沈砚把纸灯笼扶正。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  },
+  {
+   "unitId": "t24:f3",
+   "sourceId": "t24",
+   "kind": "outcome",
+   "text": "阿棠把鱼筐放在门槛边。",
+   "verdict": "S",
+   "note": "覆盖1.00",
+   "flags": []
+  }
+ ],
+ "perSource": {
+  "t01": {
+   "verdicts": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S"
+   },
+   "flags": []
+  },
+  "t02": {
+   "verdicts": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S"
+   },
+   "flags": []
+  },
+  "t03": {
+   "verdicts": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S"
+   },
+   "flags": []
+  },
+  "t04": {
+   "verdicts": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S"
+   },
+   "flags": []
+  },
+  "t05": {
+   "verdicts": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S"
+   },
+   "flags": []
+  },
+  "t06": {
+   "verdicts": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S"
+   },
+   "flags": []
+  },
+  "t07": {
+   "verdicts": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S",
+    "f3": "S"
+   },
+   "flags": [
+    "extra-tail:鞋底在石阶边站了一会儿"
+   ]
+  },
+  "t08": {
+   "verdicts": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S",
+    "f3": "S"
+   },
+   "flags": []
+  },
+  "t09": {
+   "verdicts": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S",
+    "f3": "S"
+   },
+   "flags": []
+  },
+  "t10": {
+   "verdicts": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S",
+    "f3": "S"
+   },
+   "flags": []
+  },
+  "t11": {
+   "verdicts": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S",
+    "f3": "S"
+   },
+   "flags": [
+    "extra-tail:抬头看了看塔身",
+    "repeat:玻璃罩透亮起来"
+   ]
+  },
+  "t12": {
+   "verdicts": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S",
+    "f3": "S"
+   },
+   "flags": []
+  },
+  "t13": {
+   "verdicts": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S"
+   },
+   "flags": []
+  },
+  "t14": {
+   "verdicts": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S"
+   },
+   "flags": []
+  },
+  "t15": {
+   "verdicts": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S"
+   },
+   "flags": [
+    "extra-tail:鞋底在木桩旁站住"
+   ]
+  },
+  "t16": {
+   "verdicts": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S"
+   },
+   "flags": []
+  },
+  "t17": {
+   "verdicts": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S"
+   },
+   "flags": [
+    "extra-tail:鱼筐上沾着鱼鳞"
+   ]
+  },
+  "t18": {
+   "verdicts": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S",
+    "f3": "S"
+   },
+   "flags": []
+  },
+  "t19": {
+   "verdicts": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S",
+    "f3": "S"
+   },
+   "flags": []
+  },
+  "t20": {
+   "verdicts": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S",
+    "f3": "S"
+   },
+   "flags": []
+  },
+  "t21": {
+   "verdicts": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S",
+    "f3": "S"
+   },
+   "flags": [
+    "double-de"
+   ]
+  },
+  "t22": {
+   "verdicts": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S",
+    "f3": "S"
+   },
+   "flags": []
+  },
+  "t23": {
+   "verdicts": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S",
+    "f3": "S"
+   },
+   "flags": []
+  },
+  "t24": {
+   "verdicts": {
+    "f0": "S",
+    "f1": "S",
+    "f2": "S",
+    "f3": "S"
+   },
+   "flags": []
+  }
+ },
+ "scoredFile": "cf24-baseline.json"
+}

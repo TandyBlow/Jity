@@ -1,0 +1,1159 @@
+{
+ "unitFile": "world-components/n4-cf24-contract.jsonl",
+ "pools": [
+  "verbalizer_pairs",
+  "expand-train80",
+  "object-train40"
+ ],
+ "criterion": "independent = neither the rendered input nor the fact signature occurs in a training pool",
+ "counts": {
+  "units": 85,
+  "independent": 74,
+  "seen": 11
+ },
+ "independentUnits": [
+  "t01:f0",
+  "t01:f1",
+  "t01:f2",
+  "t02:f0",
+  "t02:f1",
+  "t02:f2",
+  "t03:f1",
+  "t03:f2",
+  "t04:f0",
+  "t04:f1",
+  "t04:f2",
+  "t05:f1",
+  "t05:f2",
+  "t06:f0",
+  "t06:f1",
+  "t06:f2",
+  "t07:f2",
+  "t07:f3",
+  "t08:f0",
+  "t08:f1",
+  "t08:f2",
+  "t08:f3",
+  "t09:f0",
+  "t09:f1",
+  "t09:f2",
+  "t09:f3",
+  "t10:f0",
+  "t10:f1",
+  "t10:f2",
+  "t10:f3",
+  "t11:f2",
+  "t11:f3",
+  "t12:f0",
+  "t12:f1",
+  "t12:f2",
+  "t12:f3",
+  "t13:f0",
+  "t13:f1",
+  "t13:f2",
+  "t14:f0",
+  "t14:f1",
+  "t14:f2",
+  "t15:f0",
+  "t15:f1",
+  "t15:f2",
+  "t16:f1",
+  "t16:f2",
+  "t17:f1",
+  "t17:f2",
+  "t18:f2",
+  "t18:f3",
+  "t19:f0",
+  "t19:f1",
+  "t19:f2",
+  "t19:f3",
+  "t20:f0",
+  "t20:f1",
+  "t20:f2",
+  "t20:f3",
+  "t21:f0",
+  "t21:f1",
+  "t21:f2",
+  "t21:f3",
+  "t22:f0",
+  "t22:f1",
+  "t22:f2",
+  "t22:f3",
+  "t23:f0",
+  "t23:f1",
+  "t23:f3",
+  "t24:f0",
+  "t24:f1",
+  "t24:f2",
+  "t24:f3"
+ ],
+ "seenUnits": [
+  "t03:f0",
+  "t05:f0",
+  "t07:f0",
+  "t07:f1",
+  "t11:f0",
+  "t11:f1",
+  "t16:f0",
+  "t17:f0",
+  "t18:f0",
+  "t18:f1",
+  "t23:f2"
+ ],
+ "records": [
+  {
+   "unitId": "t01:f0",
+   "sourceId": "t01",
+   "kind": "outcome",
+   "signature": [
+    "outcome",
+    "沈砚",
+    "把潮汐簿缺的那页补全"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t01:f1",
+   "sourceId": "t01",
+   "kind": "appearance_changed",
+   "signature": [
+    "appearance_changed",
+    "沈砚",
+    "指尖沾了墨"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t01:f2",
+   "sourceId": "t01",
+   "kind": "outcome",
+   "signature": [
+    "outcome",
+    "沈砚",
+    "把簿子合上推到桌角"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t02:f0",
+   "sourceId": "t02",
+   "kind": "outcome",
+   "signature": [
+    "outcome",
+    "阿棠",
+    "把银鳞鱼按大小分开装进两只鱼筐"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t02:f1",
+   "sourceId": "t02",
+   "kind": "appearance_changed",
+   "signature": [
+    "appearance_changed",
+    "阿棠",
+    "袖口沾了鱼鳞"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t02:f2",
+   "sourceId": "t02",
+   "kind": "outcome",
+   "signature": [
+    "outcome",
+    "阿棠",
+    "把空鱼筐摞到摊棚边上"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t03:f0",
+   "sourceId": "t03",
+   "kind": "outcome",
+   "signature": [
+    "outcome",
+    "叶知微",
+    "把灯罩擦得透亮"
+   ],
+   "label": "seen-fact",
+   "trainingPools": [
+    "verbalizer_pairs"
+   ]
+  },
+  {
+   "unitId": "t03:f1",
+   "sourceId": "t03",
+   "kind": "appearance_changed",
+   "signature": [
+    "appearance_changed",
+    "叶知微",
+    "袖口沾了铜油"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t03:f2",
+   "sourceId": "t03",
+   "kind": "outcome",
+   "signature": [
+    "outcome",
+    "叶知微",
+    "把抹布搭回梯脚"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t04:f0",
+   "sourceId": "t04",
+   "kind": "outcome",
+   "signature": [
+    "outcome",
+    "顾行舟",
+    "把缆绳在木桩上绕了三圈"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t04:f1",
+   "sourceId": "t04",
+   "kind": "outcome",
+   "signature": [
+    "outcome",
+    "顾行舟",
+    "把渡船推离栈桥"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t04:f2",
+   "sourceId": "t04",
+   "kind": "appearance_changed",
+   "signature": [
+    "appearance_changed",
+    "顾行舟",
+    "外袍下摆被雾水打湿"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t05:f0",
+   "sourceId": "t05",
+   "kind": "outcome",
+   "signature": [
+    "outcome",
+    "韩渡",
+    "把松脱的钟绳重新系紧"
+   ],
+   "label": "seen-fact",
+   "trainingPools": [
+    "verbalizer_pairs"
+   ]
+  },
+  {
+   "unitId": "t05:f1",
+   "sourceId": "t05",
+   "kind": "outcome",
+   "signature": [
+    "outcome",
+    "韩渡",
+    "把雾警钟敲响"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t05:f2",
+   "sourceId": "t05",
+   "kind": "appearance_changed",
+   "signature": [
+    "appearance_changed",
+    "韩渡",
+    "手背上沾着盐沫"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t06:f0",
+   "sourceId": "t06",
+   "kind": "outcome",
+   "signature": [
+    "outcome",
+    "沈砚",
+    "把油纸伞收拢靠在墙根"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t06:f1",
+   "sourceId": "t06",
+   "kind": "outcome",
+   "signature": [
+    "outcome",
+    "沈砚",
+    "把被风吹歪的纸灯笼扶正"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t06:f2",
+   "sourceId": "t06",
+   "kind": "appearance_changed",
+   "signature": [
+    "appearance_changed",
+    "沈砚",
+    "鞋底沾了湿石板的水"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t07:f0",
+   "sourceId": "t07",
+   "kind": "moved",
+   "signature": [
+    "moved",
+    "沈砚",
+    "潮渡",
+    "雾堤"
+   ],
+   "label": "seen-fact",
+   "trainingPools": [
+    "verbalizer_pairs"
+   ]
+  },
+  {
+   "unitId": "t07:f1",
+   "sourceId": "t07",
+   "kind": "outcome",
+   "signature": [
+    "outcome",
+    "韩渡",
+    "把松脱的钟绳重新系紧"
+   ],
+   "label": "seen-fact",
+   "trainingPools": [
+    "verbalizer_pairs"
+   ]
+  },
+  {
+   "unitId": "t07:f2",
+   "sourceId": "t07",
+   "kind": "outcome",
+   "signature": [
+    "outcome",
+    "沈砚",
+    "把雾警钟敲响"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t07:f3",
+   "sourceId": "t07",
+   "kind": "appearance_changed",
+   "signature": [
+    "appearance_changed",
+    "韩渡",
+    "手背上沾着盐沫"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t08:f0",
+   "sourceId": "t08",
+   "kind": "outcome",
+   "signature": [
+    "outcome",
+    "阿棠",
+    "把银鳞鱼搬上案板"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t08:f1",
+   "sourceId": "t08",
+   "kind": "outcome",
+   "signature": [
+    "outcome",
+    "顾行舟",
+    "把缆绳绕上摊棚边的木桩"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t08:f2",
+   "sourceId": "t08",
+   "kind": "appearance_changed",
+   "signature": [
+    "appearance_changed",
+    "阿棠",
+    "辫梢沾了白汽"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t08:f3",
+   "sourceId": "t08",
+   "kind": "appearance_changed",
+   "signature": [
+    "appearance_changed",
+    "顾行舟",
+    "外袍下摆沾了泥水"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t09:f0",
+   "sourceId": "t09",
+   "kind": "moved",
+   "signature": [
+    "moved",
+    "叶知微",
+    "早市",
+    "潮汐档案馆"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t09:f1",
+   "sourceId": "t09",
+   "kind": "outcome",
+   "signature": [
+    "outcome",
+    "沈砚",
+    "把潮汐簿摊在铜灯下"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t09:f2",
+   "sourceId": "t09",
+   "kind": "outcome",
+   "signature": [
+    "outcome",
+    "叶知微",
+    "把一叠干纸放在桌角"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t09:f3",
+   "sourceId": "t09",
+   "kind": "appearance_changed",
+   "signature": [
+    "appearance_changed",
+    "沈砚",
+    "袖口沾了墨"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t10:f0",
+   "sourceId": "t10",
+   "kind": "outcome",
+   "signature": [
+    "outcome",
+    "顾行舟",
+    "把渡船系在栈桥的木桩上"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t10:f1",
+   "sourceId": "t10",
+   "kind": "outcome",
+   "signature": [
+    "outcome",
+    "沈砚",
+    "把系泊绳从浅滩拖回岸上"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t10:f2",
+   "sourceId": "t10",
+   "kind": "appearance_changed",
+   "signature": [
+    "appearance_changed",
+    "顾行舟",
+    "外袍下摆被雾水打湿"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t10:f3",
+   "sourceId": "t10",
+   "kind": "sanity_changed",
+   "signature": [
+    "sanity_changed",
+    "沈砚",
+    12,
+    9
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t11:f0",
+   "sourceId": "t11",
+   "kind": "moved",
+   "signature": [
+    "moved",
+    "沈砚",
+    "潮生巷",
+    "旧灯塔"
+   ],
+   "label": "seen-fact",
+   "trainingPools": [
+    "verbalizer_pairs"
+   ]
+  },
+  {
+   "unitId": "t11:f1",
+   "sourceId": "t11",
+   "kind": "outcome",
+   "signature": [
+    "outcome",
+    "叶知微",
+    "把灯罩擦得透亮"
+   ],
+   "label": "seen-fact",
+   "trainingPools": [
+    "verbalizer_pairs"
+   ]
+  },
+  {
+   "unitId": "t11:f2",
+   "sourceId": "t11",
+   "kind": "outcome",
+   "signature": [
+    "outcome",
+    "沈砚",
+    "换好塔顶的灯芯"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t11:f3",
+   "sourceId": "t11",
+   "kind": "appearance_changed",
+   "signature": [
+    "appearance_changed",
+    "叶知微",
+    "袖口沾了铜油"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t12:f0",
+   "sourceId": "t12",
+   "kind": "moved",
+   "signature": [
+    "moved",
+    "阿棠",
+    "早市",
+    "潮生巷"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t12:f1",
+   "sourceId": "t12",
+   "kind": "outcome",
+   "signature": [
+    "outcome",
+    "沈砚",
+    "把油纸伞收拢靠在墙根"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t12:f2",
+   "sourceId": "t12",
+   "kind": "outcome",
+   "signature": [
+    "outcome",
+    "阿棠",
+    "把鱼筐放在门槛边"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t12:f3",
+   "sourceId": "t12",
+   "kind": "appearance_changed",
+   "signature": [
+    "appearance_changed",
+    "沈砚",
+    "鞋底沾了湿石板的水"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t13:f0",
+   "sourceId": "t13",
+   "kind": "moved",
+   "signature": [
+    "moved",
+    "叶知微",
+    "早市",
+    "潮汐档案馆"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t13:f1",
+   "sourceId": "t13",
+   "kind": "outcome",
+   "signature": [
+    "outcome",
+    "叶知微",
+    "把一叠干纸放在桌角"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t13:f2",
+   "sourceId": "t13",
+   "kind": "appearance_changed",
+   "signature": [
+    "appearance_changed",
+    "叶知微",
+    "袖口沾了墨"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t14:f0",
+   "sourceId": "t14",
+   "kind": "moved",
+   "signature": [
+    "moved",
+    "顾行舟",
+    "潮渡",
+    "雾堤"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t14:f1",
+   "sourceId": "t14",
+   "kind": "outcome",
+   "signature": [
+    "outcome",
+    "顾行舟",
+    "把缆绳绕在钟架上"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t14:f2",
+   "sourceId": "t14",
+   "kind": "appearance_changed",
+   "signature": [
+    "appearance_changed",
+    "顾行舟",
+    "外袍下摆被雾水打湿"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t15:f0",
+   "sourceId": "t15",
+   "kind": "moved",
+   "signature": [
+    "moved",
+    "韩渡",
+    "潮生巷",
+    "潮渡"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t15:f1",
+   "sourceId": "t15",
+   "kind": "outcome",
+   "signature": [
+    "outcome",
+    "韩渡",
+    "把渡船推离栈桥"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t15:f2",
+   "sourceId": "t15",
+   "kind": "appearance_changed",
+   "signature": [
+    "appearance_changed",
+    "韩渡",
+    "手背沾着盐沫"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t16:f0",
+   "sourceId": "t16",
+   "kind": "moved",
+   "signature": [
+    "moved",
+    "沈砚",
+    "潮汐档案馆",
+    "潮生巷"
+   ],
+   "label": "seen-fact",
+   "trainingPools": [
+    "verbalizer_pairs"
+   ]
+  },
+  {
+   "unitId": "t16:f1",
+   "sourceId": "t16",
+   "kind": "outcome",
+   "signature": [
+    "outcome",
+    "沈砚",
+    "把备用钥匙塞进油布包的内层"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t16:f2",
+   "sourceId": "t16",
+   "kind": "sanity_changed",
+   "signature": [
+    "sanity_changed",
+    "沈砚",
+    12,
+    9
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t17:f0",
+   "sourceId": "t17",
+   "kind": "moved",
+   "signature": [
+    "moved",
+    "阿棠",
+    "潮生巷",
+    "早市"
+   ],
+   "label": "seen-fact",
+   "trainingPools": [
+    "verbalizer_pairs"
+   ]
+  },
+  {
+   "unitId": "t17:f1",
+   "sourceId": "t17",
+   "kind": "outcome",
+   "signature": [
+    "outcome",
+    "阿棠",
+    "把银鳞鱼搬上案板"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t17:f2",
+   "sourceId": "t17",
+   "kind": "appearance_changed",
+   "signature": [
+    "appearance_changed",
+    "阿棠",
+    "辫梢沾了白汽"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t18:f0",
+   "sourceId": "t18",
+   "kind": "moved",
+   "signature": [
+    "moved",
+    "叶知微",
+    "潮渡",
+    "旧灯塔"
+   ],
+   "label": "seen-fact",
+   "trainingPools": [
+    "verbalizer_pairs"
+   ]
+  },
+  {
+   "unitId": "t18:f1",
+   "sourceId": "t18",
+   "kind": "outcome",
+   "signature": [
+    "outcome",
+    "叶知微",
+    "把灯罩擦得透亮"
+   ],
+   "label": "seen-fact",
+   "trainingPools": [
+    "verbalizer_pairs"
+   ]
+  },
+  {
+   "unitId": "t18:f2",
+   "sourceId": "t18",
+   "kind": "appearance_changed",
+   "signature": [
+    "appearance_changed",
+    "叶知微",
+    "袖口沾了铜油"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t18:f3",
+   "sourceId": "t18",
+   "kind": "outcome",
+   "signature": [
+    "outcome",
+    "叶知微",
+    "把抹布搭回梯脚"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t19:f0",
+   "sourceId": "t19",
+   "kind": "appearance_changed",
+   "signature": [
+    "appearance_changed",
+    "阿棠",
+    "袖口沾了鱼鳞"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t19:f1",
+   "sourceId": "t19",
+   "kind": "appearance_changed",
+   "signature": [
+    "appearance_changed",
+    "沈砚",
+    "外袍下摆沾了泥水"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t19:f2",
+   "sourceId": "t19",
+   "kind": "outcome",
+   "signature": [
+    "outcome",
+    "阿棠",
+    "把银鳞鱼装进鱼筐"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t19:f3",
+   "sourceId": "t19",
+   "kind": "outcome",
+   "signature": [
+    "outcome",
+    "沈砚",
+    "把油纸伞收拢靠在摊棚边"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t20:f0",
+   "sourceId": "t20",
+   "kind": "appearance_changed",
+   "signature": [
+    "appearance_changed",
+    "警示灯",
+    "铜框玻璃罩被风吹歪"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t20:f1",
+   "sourceId": "t20",
+   "kind": "appearance_changed",
+   "signature": [
+    "appearance_changed",
+    "钟绳",
+    "磨出了毛边"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t20:f2",
+   "sourceId": "t20",
+   "kind": "outcome",
+   "signature": [
+    "outcome",
+    "沈砚",
+    "把警示灯扶正"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t20:f3",
+   "sourceId": "t20",
+   "kind": "outcome",
+   "signature": [
+    "outcome",
+    "韩渡",
+    "把钟绳重新绕在钟架上"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t21:f0",
+   "sourceId": "t21",
+   "kind": "appearance_changed",
+   "signature": [
+    "appearance_changed",
+    "潮汐簿",
+    "缺页的边缘毛糙"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t21:f1",
+   "sourceId": "t21",
+   "kind": "appearance_changed",
+   "signature": [
+    "appearance_changed",
+    "铜灯",
+    "灯罩上积了灰"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t21:f2",
+   "sourceId": "t21",
+   "kind": "outcome",
+   "signature": [
+    "outcome",
+    "沈砚",
+    "把铜灯擦亮"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t21:f3",
+   "sourceId": "t21",
+   "kind": "outcome",
+   "signature": [
+    "outcome",
+    "叶知微",
+    "把干纸放在桌角"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t22:f0",
+   "sourceId": "t22",
+   "kind": "appearance_changed",
+   "signature": [
+    "appearance_changed",
+    "系泊绳",
+    "泥水结了一层白盐"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t22:f1",
+   "sourceId": "t22",
+   "kind": "appearance_changed",
+   "signature": [
+    "appearance_changed",
+    "木桩",
+    "缠着的旧缆绳断了"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t22:f2",
+   "sourceId": "t22",
+   "kind": "outcome",
+   "signature": [
+    "outcome",
+    "顾行舟",
+    "把缆绳重新绕上木桩"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t22:f3",
+   "sourceId": "t22",
+   "kind": "outcome",
+   "signature": [
+    "outcome",
+    "沈砚",
+    "把系泊绳拖回岸上"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t23:f0",
+   "sourceId": "t23",
+   "kind": "appearance_changed",
+   "signature": [
+    "appearance_changed",
+    "铜灯罩",
+    "玻璃上蒙了盐雾"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t23:f1",
+   "sourceId": "t23",
+   "kind": "appearance_changed",
+   "signature": [
+    "appearance_changed",
+    "铁链",
+    "链环上结了锈"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t23:f2",
+   "sourceId": "t23",
+   "kind": "outcome",
+   "signature": [
+    "outcome",
+    "叶知微",
+    "把灯罩擦得透亮"
+   ],
+   "label": "seen-fact",
+   "trainingPools": [
+    "verbalizer_pairs"
+   ]
+  },
+  {
+   "unitId": "t23:f3",
+   "sourceId": "t23",
+   "kind": "outcome",
+   "signature": [
+    "outcome",
+    "沈砚",
+    "换好塔顶的灯芯"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t24:f0",
+   "sourceId": "t24",
+   "kind": "appearance_changed",
+   "signature": [
+    "appearance_changed",
+    "纸灯笼",
+    "被风扯破一角"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t24:f1",
+   "sourceId": "t24",
+   "kind": "appearance_changed",
+   "signature": [
+    "appearance_changed",
+    "排水沟",
+    "里面积了泥"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t24:f2",
+   "sourceId": "t24",
+   "kind": "outcome",
+   "signature": [
+    "outcome",
+    "沈砚",
+    "把纸灯笼扶正"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  },
+  {
+   "unitId": "t24:f3",
+   "sourceId": "t24",
+   "kind": "outcome",
+   "signature": [
+    "outcome",
+    "阿棠",
+    "把鱼筐放在门槛边"
+   ],
+   "label": "independent",
+   "trainingPools": []
+  }
+ ]
+}

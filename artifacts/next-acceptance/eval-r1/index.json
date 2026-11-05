@@ -1,0 +1,258 @@
+{
+ "purpose": "same-device comparison of u240 and the three continuation arms over cf24, final24 and moved24",
+ "policy": "Selected immutable records promoted from the HPC run; ordinary run output stays local.",
+ "job": {
+  "id": 239990,
+  "state": "COMPLETED",
+  "partition": "gpu",
+  "gres": "gpu:1",
+  "nodes": 1,
+  "gpu": "NVIDIA GeForce RTX 4090 D, 24564 MiB",
+  "node": "hpcgpu08",
+  "startedAt": "2026-11-05T21:52:11+08:00",
+  "finishedAt": "2026-11-05T21:54:56+08:00",
+  "units": 740,
+  "note": "four models times three sets, one process per combination"
+ },
+ "environment": {
+  "python": "3.11.17",
+  "torch": "2.5.1+cu124",
+  "transformers": "4.51.3",
+  "threads": 4
+ },
+ "decode": {
+  "policy": "greedy, EOS or wall-clock budget, no length cap",
+  "budgetSeconds": 20.0
+ },
+ "models": {
+  "u240": {
+   "config.json": "cd553527a919b8292894d4e8cc043fcb1a45c60586f9dfa4399f7b2b2e657a9e",
+   "spiece.model": "c65feffa65ff0378759778193852083d23349cb1b40c906e9463a12f8076ff32",
+   "model.safetensors": "ab8a98264ee6b4f83eba17d624d7b92b23522c8eacef07d07a5be960e390184a"
+  },
+  "a": {
+   "config.json": "cd553527a919b8292894d4e8cc043fcb1a45c60586f9dfa4399f7b2b2e657a9e",
+   "spiece.model": "c65feffa65ff0378759778193852083d23349cb1b40c906e9463a12f8076ff32",
+   "model.safetensors": "5846fabfe594bee67201bd8a5db37bb356773280a878abc9dd6333a9e71982f1"
+  },
+  "b": {
+   "config.json": "cd553527a919b8292894d4e8cc043fcb1a45c60586f9dfa4399f7b2b2e657a9e",
+   "spiece.model": "c65feffa65ff0378759778193852083d23349cb1b40c906e9463a12f8076ff32",
+   "model.safetensors": "7f94305155c9bca5102e2f805856e0f44a939f6cb0ad8b9338c781db3f29f6cc"
+  },
+  "c": {
+   "config.json": "cd553527a919b8292894d4e8cc043fcb1a45c60586f9dfa4399f7b2b2e657a9e",
+   "spiece.model": "c65feffa65ff0378759778193852083d23349cb1b40c906e9463a12f8076ff32",
+   "model.safetensors": "08276c0caa1605408d145f5efea5bc0e22edb106f5accb2888c187bb9a484c9c"
+  }
+ },
+ "inputs": {
+  "cf24": "a94f7a13eb617c9fe6fcbd3acec0e1e7bfa519fe5a4b69b8b4d26f7a9635468b",
+  "final24": "0010c06289801d71792c3c4eaf9d51f382027a03c05ba193eedfe9fec994f0e2",
+  "moved24": "653a4be02bb95682321f4ab477d0e2cdd6ad8df489f38a773f49ecd6d4b3b739",
+  "pin": "component-inputs/3"
+ },
+ "deviceReproducibility": {
+  "u240-cf24": "85/85 outputs byte-identical to the earlier CPU run (artifacts/next-runs/cf24-u240-baseline)",
+  "u240-final24": "76/76 outputs byte-identical to the earlier CPU run (artifacts/next-runs/val-u240)",
+  "note": "greedy decoding reproduced across device and transformers 4.57.3 vs 4.51.3"
+ },
+ "redaction": "Reports carry the absolute model directory. Before download the cluster replaced the home prefix with <HOME> and recorded the original sha in fetch.remoteSha256.",
+ "files": [
+  {
+   "path": "artifacts/next-acceptance/eval-r1/u240-cf24/cf24-baseline.json",
+   "bytes": 137598,
+   "sha256": "21b7dcc454e5321cb615dcf53d8a9092e74b929630f61bb640e83d37070643d6"
+  },
+  {
+   "path": "artifacts/next-acceptance/eval-r1/u240-cf24/cf24-mechanical.json",
+   "bytes": 19596,
+   "sha256": "6553f8f69e28faf98a23f23cf8875c6a13c95a01500c78fe586185f91bd56324"
+  },
+  {
+   "path": "artifacts/next-acceptance/eval-r1/u240-cf24/cf24-overlap.json",
+   "bytes": 20213,
+   "sha256": "51dedce5047c4f13eefb8dcd6470414767ae1e4e5b0e4a3100709be58c198330"
+  },
+  {
+   "path": "artifacts/next-acceptance/eval-r1/u240-final24/final24-baseline.json",
+   "bytes": 115028,
+   "sha256": "447363d9e763f1631da6d1dec87036aba5a2fd73eeaf1ba944fb5dd967a2f01f"
+  },
+  {
+   "path": "artifacts/next-acceptance/eval-r1/u240-final24/cf24-mechanical-final24-baseline.json",
+   "bytes": 17484,
+   "sha256": "21acce3c91fc224e7e7d3dea51bc00fd221404ec778b9b1f258a0c8f0edda2f2"
+  },
+  {
+   "path": "artifacts/next-acceptance/eval-r1/u240-final24/final24-overlap.json",
+   "bytes": 17753,
+   "sha256": "78f5faa0086d4fe117f3a809e981a8207cbcc1c8b53b0626ce6c316a45a26e90"
+  },
+  {
+   "path": "artifacts/next-acceptance/eval-r1/u240-moved24/moved24-baseline.json",
+   "bytes": 38407,
+   "sha256": "07a3ed30fc5df4b648e8c31a0103848c002f05c993f7bfc3b8185af43f38022e"
+  },
+  {
+   "path": "artifacts/next-acceptance/eval-r1/u240-moved24/cf24-mechanical-moved24-baseline.json",
+   "bytes": 6386,
+   "sha256": "474a926aa25921600886c7e67b899cad2dc2617d03762b5e1e00b258085c13e2"
+  },
+  {
+   "path": "artifacts/next-acceptance/eval-r1/u240-moved24/moved24-overlap.json",
+   "bytes": 5634,
+   "sha256": "da70198c7485fec0f9c281f1481dd369e8fa11764bea192f602e78df045e7f7a"
+  },
+  {
+   "path": "artifacts/next-acceptance/eval-r1/a-cf24/cf24-baseline.json",
+   "bytes": 137819,
+   "sha256": "e1df09fe624f27d8044697c9d0894bfa71fb7eaa91c1782e90e728695178329d"
+  },
+  {
+   "path": "artifacts/next-acceptance/eval-r1/a-cf24/cf24-mechanical.json",
+   "bytes": 19981,
+   "sha256": "101dd103a707b2a5172f5f514c7a2a06cf856e261a58375ab4b2c50f293ed495"
+  },
+  {
+   "path": "artifacts/next-acceptance/eval-r1/a-cf24/cf24-overlap.json",
+   "bytes": 20213,
+   "sha256": "51dedce5047c4f13eefb8dcd6470414767ae1e4e5b0e4a3100709be58c198330"
+  },
+  {
+   "path": "artifacts/next-acceptance/eval-r1/a-final24/final24-baseline.json",
+   "bytes": 115164,
+   "sha256": "d1af163d8197736f0fc3555c2b1b3f24c69ee12ff4c45679b4c6bcc1ef62ba63"
+  },
+  {
+   "path": "artifacts/next-acceptance/eval-r1/a-final24/cf24-mechanical-final24-baseline.json",
+   "bytes": 17513,
+   "sha256": "2b61eb685b5aef46f1ca0c275b3b65119e93b8495cc9e2901b678f0269947d14"
+  },
+  {
+   "path": "artifacts/next-acceptance/eval-r1/a-final24/final24-overlap.json",
+   "bytes": 17753,
+   "sha256": "78f5faa0086d4fe117f3a809e981a8207cbcc1c8b53b0626ce6c316a45a26e90"
+  },
+  {
+   "path": "artifacts/next-acceptance/eval-r1/a-moved24/moved24-baseline.json",
+   "bytes": 38540,
+   "sha256": "a63e0208a5d1a7f53ae13ae7eb760605328c27bb27236df8ae4ed3d53cf8e3b7"
+  },
+  {
+   "path": "artifacts/next-acceptance/eval-r1/a-moved24/cf24-mechanical-moved24-baseline.json",
+   "bytes": 7073,
+   "sha256": "b7a065100db63761fca62c9dbf0ff64743cb6c366821e858850cea85aead619f"
+  },
+  {
+   "path": "artifacts/next-acceptance/eval-r1/a-moved24/moved24-overlap.json",
+   "bytes": 5634,
+   "sha256": "da70198c7485fec0f9c281f1481dd369e8fa11764bea192f602e78df045e7f7a"
+  },
+  {
+   "path": "artifacts/next-acceptance/eval-r1/b-cf24/cf24-baseline.json",
+   "bytes": 137675,
+   "sha256": "f4384df3256561c2cd71e20df7c850884710fdc8be8685c94d8eb912057336fe"
+  },
+  {
+   "path": "artifacts/next-acceptance/eval-r1/b-cf24/cf24-mechanical.json",
+   "bytes": 19518,
+   "sha256": "4b870ded03140d836946974e0667c883301549c6ebac6ceedd141a8f56a62fff"
+  },
+  {
+   "path": "artifacts/next-acceptance/eval-r1/b-cf24/cf24-overlap.json",
+   "bytes": 20213,
+   "sha256": "51dedce5047c4f13eefb8dcd6470414767ae1e4e5b0e4a3100709be58c198330"
+  },
+  {
+   "path": "artifacts/next-acceptance/eval-r1/b-final24/final24-baseline.json",
+   "bytes": 115132,
+   "sha256": "363acf085d07360e4588bf130c9936214b2d279232f3dedc6c5ee6e6a92be281"
+  },
+  {
+   "path": "artifacts/next-acceptance/eval-r1/b-final24/cf24-mechanical-final24-baseline.json",
+   "bytes": 17487,
+   "sha256": "c65f8fb0b6a666b74d3f3163df4b526041ec89c5c66965b529774e4f6d44c84f"
+  },
+  {
+   "path": "artifacts/next-acceptance/eval-r1/b-final24/final24-overlap.json",
+   "bytes": 17753,
+   "sha256": "78f5faa0086d4fe117f3a809e981a8207cbcc1c8b53b0626ce6c316a45a26e90"
+  },
+  {
+   "path": "artifacts/next-acceptance/eval-r1/b-moved24/moved24-baseline.json",
+   "bytes": 38419,
+   "sha256": "24b74124d5c483257cfb9e0f7cf61b9f9d2e4f72621945d8105858d0145ee631"
+  },
+  {
+   "path": "artifacts/next-acceptance/eval-r1/b-moved24/cf24-mechanical-moved24-baseline.json",
+   "bytes": 6458,
+   "sha256": "7fd22cacb5e9699313b5a93fbe26a6303fb8b75dee9b014da6479991c44310f6"
+  },
+  {
+   "path": "artifacts/next-acceptance/eval-r1/b-moved24/moved24-overlap.json",
+   "bytes": 5634,
+   "sha256": "da70198c7485fec0f9c281f1481dd369e8fa11764bea192f602e78df045e7f7a"
+  },
+  {
+   "path": "artifacts/next-acceptance/eval-r1/c-cf24/cf24-baseline.json",
+   "bytes": 137457,
+   "sha256": "3b4993323b99c41e54c2d791c9f35d268bda702e442c8ac071501382a9e390b3"
+  },
+  {
+   "path": "artifacts/next-acceptance/eval-r1/c-cf24/cf24-mechanical.json",
+   "bytes": 18976,
+   "sha256": "7ade2acb8b20dadb7e4fbe36bd8292bf26136ce42905e8c94fad766689aa8160"
+  },
+  {
+   "path": "artifacts/next-acceptance/eval-r1/c-cf24/cf24-overlap.json",
+   "bytes": 20213,
+   "sha256": "51dedce5047c4f13eefb8dcd6470414767ae1e4e5b0e4a3100709be58c198330"
+  },
+  {
+   "path": "artifacts/next-acceptance/eval-r1/c-final24/final24-baseline.json",
+   "bytes": 115035,
+   "sha256": "bdd7b0a73890b931633bafde4ce62af4e8c9a3dd1cf18e88203cef35e89fbdfa"
+  },
+  {
+   "path": "artifacts/next-acceptance/eval-r1/c-final24/cf24-mechanical-final24-baseline.json",
+   "bytes": 17203,
+   "sha256": "7b4858c2297f0ff34d1822d9f8304a41e43ea8ae59e30b03f846a460a2579f3a"
+  },
+  {
+   "path": "artifacts/next-acceptance/eval-r1/c-final24/final24-overlap.json",
+   "bytes": 17753,
+   "sha256": "78f5faa0086d4fe117f3a809e981a8207cbcc1c8b53b0626ce6c316a45a26e90"
+  },
+  {
+   "path": "artifacts/next-acceptance/eval-r1/c-moved24/moved24-baseline.json",
+   "bytes": 38351,
+   "sha256": "3e8315206bc08168f53961c46ea840a358ed313ddcdba6d322ff324597fd66aa"
+  },
+  {
+   "path": "artifacts/next-acceptance/eval-r1/c-moved24/cf24-mechanical-moved24-baseline.json",
+   "bytes": 6303,
+   "sha256": "46190525c5f07bef195556f261daf79797720743d54b7ff64ed0e55ae4ec7f94"
+  },
+  {
+   "path": "artifacts/next-acceptance/eval-r1/c-moved24/moved24-overlap.json",
+   "bytes": 5634,
+   "sha256": "da70198c7485fec0f9c281f1481dd369e8fa11764bea192f602e78df045e7f7a"
+  },
+  {
+   "path": "artifacts/next-acceptance/eval-r1/review-r1.json",
+   "bytes": 18428,
+   "sha256": "137edf9fd8826fc53519657c436ddf7752550a2ee2580da209e44198f7e0ec99"
+  },
+  {
+   "path": "artifacts/next-acceptance/eval-r1/summary-r1.json",
+   "bytes": 4078,
+   "sha256": "c34f3db16d7a1eaf4eab95e794ee467c86ba1c88e82302251f02caa66f21d4ca"
+  },
+  {
+   "path": "artifacts/next-acceptance/eval-r1/job-meta.json",
+   "bytes": 138,
+   "sha256": "d9d68eb26abfc89edb79dc504627bc1398119cc8824531de7c40ea2ea40608a9"
+  }
+ ]
+}
