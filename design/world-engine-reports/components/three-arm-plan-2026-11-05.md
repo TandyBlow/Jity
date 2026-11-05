@@ -123,7 +123,16 @@ overlap / score / review；moved24 单独报告。
 
 ## 7. 前置条件
 
-训练只在 HPC 上跑。当前会话进不去（`ssh hpc.bnbu.edu.cn` 拒绝本机密钥，只剩密码认证），
-用户也没有可提供的凭据，所以停在“池子 + 脚本 + dry-run”这一步。
+训练只在 HPC 上跑。此前把默认 `ssh` 密钥认证失败误判为项目缺少可用凭据，现已更正：
+主工作树 `frontend/scripts/_hpc_crf.py` 的 `Hpc` 类会在运行时读取已有本机凭据，
+通过 Paramiko 密码认证连接；既有 `_hpc_*.py` 派发脚本均可作为接入方式的参照。
+本机 `D:/software/Anaconda/python.exe` 已有 Paramiko，默认 `python` 所在环境没有，
+执行连接工具时需要选择正确的 Python 环境。凭据不得复制到本分支或打印。
+
+已沿该入口完成只读登录，确认 Slurm 22.05.6、远端 `crf` Python 环境以及历史基础权重存在。
+记录见 `artifacts/next-acceptance/hpc-access-r1/connectivity.json`。没有提交作业或执行训练；
+历史基础权重存在不等于本轮 u240 起点哈希已核验，GPU 分区和资源可分配性也尚未验证。
+三臂仍停在“池子 + 脚本 + dry-run”，下一步应复用已有连接工具准备独立远端目录和调度包装，
+核对本轮起点与池子哈希后再提交，不需要用户重新提供 HPC 凭据。
 
 moved24 保持冻结（`653a4be0…`），不根据它的输出改目标或选参。
