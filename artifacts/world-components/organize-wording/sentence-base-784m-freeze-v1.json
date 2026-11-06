@@ -1,8 +1,8 @@
 {
  "protocol": "sentence-base-784m-v1",
  "created": "2026-11-06",
- "status": "prechecks_passed",
- "training_started": false,
+ "status": "completed_safety_gate_failed",
+ "training_started": true,
  "model": {
   "id": "IDEA-CCNL/Randeng-T5-784M-MultiTask-Chinese",
   "nominal_parameters": "784M",
@@ -84,7 +84,16 @@
  "checkpoint_and_generation_identity": {
   "required": "save final weights, config, tokenizer files and hashes; save actual generated tokens, stop reason EOS/cap/timeout for every call",
   "length_precheck": "tokenize all prompts/targets; if max 512/128 is exceeded, stop; no silent truncation or temporary relaxation",
-  "not_run": "prechecks passed; training will save final weights and per-call records"
+  "completed": true,
+  "final_weight_sha256": "6abd0cdd93f07240526b32b54f2d4800ca33cba5d9cbaf3ce0db907a7d0b4ced",
+  "final_config_sha256": "d407a857d35067fd39a5126640ba46032675f6fde08e9bad875f95681e3e3606",
+  "final_tokenizer_sha256": "c65feffa65ff0378759778193852083d23349cb1b40c906e9463a12f8076ff32",
+  "remote_path": "~/sentence784_run/out/ckpt-final",
+  "eval_calls": 45,
+  "eos": 45,
+  "cap": 0,
+  "timeout": 0,
+  "note": "weights stored on HPC; repo contains hashes and raw results only"
  },
  "cost": {
   "estimate": "1-2 GPU-hours on a 24GB GPU for one arm plus evaluation; 2 person-days",
@@ -110,7 +119,7 @@
   "meaning": "same prompt/target text; tokenization is identical because the tokenizer file hash matches; no target/interface change"
  },
  "training": {
-  "started": false,
+  "started": true,
   "script": "experiments/world-components/organize_wording/train_sentence_scale_784.py",
   "script_sha256": "149522dce5850b58a1134a6a5ee1dec67de5a574bcbe5301a9cd8c70c7f13a16",
   "hpc_job": "experiments/world-components/organize_wording/hpc_sentence784_run.sh",
@@ -122,6 +131,47 @@
   "selection": "none; final point",
   "greedy": true,
   "same_optimizer": true,
-  "token_counts_may_differ": false
+  "token_counts_may_differ": false,
+  "completed": true,
+  "steps": 480,
+  "unique_calls": 134,
+  "target_tokens": 8323,
+  "facts_exposed": 831,
+  "max_input_tokens": 232,
+  "max_target_tokens": 35,
+  "wall_seconds": 87.18,
+  "peak_cuda_bytes": 16469425152,
+  "final_checkpoint": "~/sentence784_run/out/ckpt-final"
+ },
+ "result": {
+  "path": "design/world-engine-reports/components/sentence-base-784m-result-v1.md",
+  "audit": "artifacts/world-components/organize-wording/sentence-base-784m-audit-v1.json",
+  "run_dir": "artifacts/world-components/organize-wording/sentence-base-784m-run-v1",
+  "slurm_job_id": "241334",
+  "exit_code": 0,
+  "fixed_B_only": "0/6",
+  "regression_B_only": "2/13",
+  "total_B_only": "2/19",
+  "safety_gate": "failed",
+  "actual_failures": [
+   {
+    "sourceId": "t24",
+    "facts": [
+     "f0",
+     "f1"
+    ],
+    "reason": "f0 adds 衣角; B77 f0 was correct; f2 is restored but the group still fails"
+   },
+   {
+    "sourceId": "v20",
+    "facts": [
+     "f0",
+     "f1",
+     "f2"
+    ],
+    "reason": "f1 sanity is absent; f2 is restored; A77 sanity direction error recorded separately, does not cancel B loss"
+   }
+  ],
+  "note": "pre-run expected known_B_only was t24 f2 / v20 f2; post-run failures are t24 f0 addition / v20 f1 omission. No group-level safety gain."
  }
 }
