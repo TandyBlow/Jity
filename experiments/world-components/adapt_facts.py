@@ -15,6 +15,54 @@ import sqlite3
 DIRECTION = {'上': '上', '下': '下', '平': ''}
 
 
+REPLAY = {'module': None, 'error': None}
+
+
+def load_replay(backend):
+    """Import the production replay so a missing checkpoint is not treated as an unrecoverable state."""
+    if REPLAY['module'] is not None or REPLAY['error'] is not None:
+        return REPLAY['module']
+    import sys
+    sys.path.insert(0, str(pathlib.Path(backend)))
+    try:
+        from app.database.world_repository import replay_state, state_digest  # noqa: F401
+        REPLAY['module'] = (replay_state, state_digest)
+    except Exception as error:  # keep the adapter usable without the backend
+        REPLAY['error'] = '%s: %s' % (type(error).__name__, error)
+    return REPLAY['module']
+
+
+def resolve_state(db, world_id, point_id, backend):
+    """Checkpoint first, production replay second. Both are reported, neither is assumed."""
+    checkpoint = load_checkpoint(db, world_id, point_id)
+    point = load_point(db, world_id, point_id)
+    result = {'state': None, 'source': None, 'checkpointFound': checkpoint is not None,
+              'checkpointDigestMatchesPoint': bool(checkpoint and point and checkpoint['digest'] == point['state_digest']),
+              'replayOk': False, 'replayAgreesWithCheckpoint': None, 'replayError': None,
+              'replayedDigest': None, 'checkpointDigest': checkpoint['digest'] if checkpoint else None}
+    module = load_replay(backend)
+    if module is not None:
+        replay_state, state_digest = module
+        try:
+            state = replay_state(db, world_id, point_id)
+            digest = state_digest(state)
+            result['replayOk'] = True
+            result['replayedDigest'] = digest
+            result['replayAgreesWithCheckpoint'] = (digest == checkpoint['digest']
+                                                    if checkpoint is not None else None)
+            result['state'] = json.loads(state.model_dump_json())
+            result['source'] = 'replay'
+        except Exception as error:
+            result['replayError'] = '%s: %s' % (type(error).__name__, error)
+    if checkpoint is not None and result['checkpointDigestMatchesPoint']:
+        if result['state'] is None:
+            result['state'] = checkpoint['state']
+            result['source'] = 'checkpoint'
+    elif checkpoint is not None and result['state'] is None:
+        result['source'] = 'checkpoint rejected: digest does not match the point'
+    return result
+
+
 def connect(path):
     return sqlite3.connect('file:%s?mode=ro' % pathlib.Path(path).as_posix(), uri=True)
 
@@ -50,30 +98,41 @@ def name_of(names, entity_id):
     return names.get(entity_id, entity_id)
 
 
-def adapt_point(db, world_id, point_id, names=None):
+DEFAULT_BACKEND = 'D:/others/Jity/.local/agent-worktree/backend'
+
+
+def adapt_point(db, world_id, point_id, names=None, backend=DEFAULT_BACKEND):
     point = load_point(db, world_id, point_id)
     if point is None:
         return [], [{'pointId': point_id, 'gap': 'point not found'}]
-    facts, gaps = [], []
-    current = load_checkpoint(db, world_id, point_id)
-    if current is None:
-        gaps.append({'pointId': point_id, 'gap': 'current checkpoint missing'})
-        return facts, gaps
+    facts, gaps, not_displayed = [], [], []
+    current = resolve_state(db, world_id, point_id, backend)
     delta = json.loads(point['delta_json'] or '{}')
     previous_id = point['previous_point_id']
-    previous = load_checkpoint(db, world_id, previous_id) if previous_id else None
+    previous = resolve_state(db, world_id, previous_id, backend) if previous_id else None
+    if current['state'] is None:
+        gaps.append({'pointId': point_id, 'gap': 'state not recoverable',
+                     'checkpointFound': current['checkpointFound'],
+                     'replayError': current['replayError'],
+                     'checkpointDigestMatchesPoint': current['checkpointDigestMatchesPoint']})
+        return facts, gaps, not_displayed
     provenance = {
         'worldId': world_id, 'pointId': point_id, 'sequence': point['sequence'],
         'previousPointId': previous_id,
-        'currentCheckpointDigest': current['digest'][:12],
-        'currentDigestMatchesPoint': current['digest'] == point['state_digest'],
+        'stateSource': current['source'],
+        'currentCheckpointDigest': (current['checkpointDigest'] or '')[:12],
+        'currentDigestMatchesPoint': current['checkpointDigestMatchesPoint'],
+        'replayOk': current['replayOk'],
+        'replayAgreesWithCheckpoint': current['replayAgreesWithCheckpoint'],
+        'replayError': current['replayError'],
         'previousPointFound': previous_id is not None,
-        'previousCheckpointFound': previous is not None,
+        'previousStateSource': previous['source'] if previous else None,
+        'previousCheckpointFound': bool(previous and previous['checkpointFound']),
         'branchLinkedFrom': point['linked_from_point_id'],
     }
-    if previous and previous_id:
+    if previous and previous_id and previous['state'] is not None:
         prev_point = load_point(db, world_id, previous_id)
-        provenance['previousDigestMatchesPoint'] = bool(prev_point) and previous['digest'] == prev_point['state_digest']
+        provenance['previousDigestMatchesPoint'] = previous['checkpointDigestMatchesPoint']
         provenance['previousSequence'] = prev_point['sequence'] if prev_point else None
 
     if not delta:
@@ -81,7 +140,7 @@ def adapt_point(db, world_id, point_id, names=None):
                       'complete': True, 'scope': 'point', 'provenance': dict(provenance, entityId=None,
                                                                              fieldsRead=['delta_json'],
                                                                              adapted='empty delta at this point')})
-        return facts, gaps
+        return facts, gaps, not_displayed
 
     for entity_id, change in delta.items():
         fields = sorted(k for k, v in change.items() if k != 'entityId' and v not in (None, [], {}))
@@ -90,7 +149,7 @@ def adapt_point(db, world_id, point_id, names=None):
         if change.get('positionSet') is not None:
             target = change['positionSet']
             to_id = target.get('containerId')
-            if previous is None:
+            if previous is None or previous['state'] is None:
                 gaps.append(dict(base, gap='position change needs the predecessor state; none is committed'))
             else:
                 before = (previous['state'].get('characters') or {}).get(entity_id) or \
@@ -113,7 +172,7 @@ def adapt_point(db, world_id, point_id, names=None):
 
         if change.get('sanitySet') is not None:  # zero is a value, not an absence
             new_value = change['sanitySet']
-            if previous is None:
+            if previous is None or previous['state'] is None:
                 gaps.append(dict(base, gap='sanity change needs the predecessor state; none is committed'))
             else:
                 before = (previous['state'].get('characters') or {}).get(entity_id) or {}
@@ -141,42 +200,75 @@ def adapt_point(db, world_id, point_id, names=None):
                                                      adapted='text copied verbatim')})
 
         if change.get('tasksAchieved') or change.get('subtasksAdded'):
-            gaps.append(dict(base, gap='task delta has no display shape yet'))
+            not_displayed.append(dict(base, reason='task delta has no display shape yet, so it is not shown',
+                                      notAChange=True))
 
-    return facts, gaps
+    return facts, gaps, not_displayed
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--db', required=True)
+    parser.add_argument('--backend', default=DEFAULT_BACKEND)
     parser.add_argument('--world', action='append')
     parser.add_argument('--point', action='append')
-    parser.add_argument('--out-dir', default='artifacts/next-runs/adapt-r1')
+    parser.add_argument('--out-dir', default='artifacts/next-runs/adapt-r2')
     args = parser.parse_args()
     db = connect(args.db)
     worlds = args.world or [r[0] for r in db.execute('SELECT id FROM worlds ORDER BY id')]
-    facts, gaps, units = [], [], []
+    facts, gaps, not_displayed, blocks = [], [], [], []
     for world_id in worlds:
         names = labels(db, world_id)
         points = args.point or [r[0] for r in db.execute(
             'SELECT id FROM world_points WHERE world_id=? ORDER BY sequence', (world_id,))]
         for point_id in points:
-            point_facts, point_gaps = adapt_point(db, world_id, point_id, names)
+            point = load_point(db, world_id, point_id)
+            point_facts, point_gaps, point_unshown = adapt_point(db, world_id, point_id, names, args.backend)
             facts.extend(point_facts)
             gaps.extend(point_gaps)
-            units.append({'worldId': world_id, 'pointId': point_id, 'facts': len(point_facts),
-                          'gaps': len(point_gaps)})
+            not_displayed.extend(point_unshown)
+            blocks.append({'worldId': world_id, 'pointId': point_id,
+                           'sequence': point['sequence'] if point else None,
+                           'kind': point['kind'] if point else None,
+                           'previousPointId': point['previous_point_id'] if point else None,
+                           'delta': json.loads(point['delta_json']) if point and point['delta_json'] else None,
+                           'sentences': [f['sentence'] for f in point_facts],
+                           'notDisplayed': [u['reason'] for u in point_unshown],
+                           'gaps': [g['gap'] for g in point_gaps],
+                           'provenance': [{'entityId': f['provenance'].get('entityId'),
+                                           'stateSource': f['provenance'].get('stateSource'),
+                                           'fieldsRead': f['provenance'].get('fieldsRead'),
+                                           'checkpointDigestMatchesPoint': f['provenance'].get('currentDigestMatchesPoint'),
+                                           'replayOk': f['provenance'].get('replayOk'),
+                                           'replayAgreesWithCheckpoint': f['provenance'].get('replayAgreesWithCheckpoint')}
+                                          for f in point_facts]})
     out = pathlib.Path(args.out_dir)
     out.mkdir(parents=True, exist_ok=True)
-    (out / 'facts.json').write_text(json.dumps({'facts': facts}, ensure_ascii=False, indent=1) + '\n',
-                                    encoding='utf-8', newline='\n')
-    (out / 'gaps.json').write_text(json.dumps({'gaps': gaps}, ensure_ascii=False, indent=1) + '\n',
-                                   encoding='utf-8', newline='\n')
-    (out / 'points.json').write_text(json.dumps({'points': units}, ensure_ascii=False, indent=1) + '\n',
-                                     encoding='utf-8', newline='\n')
-    print('points %d facts %d gaps %d' % (len(units), len(facts), len(gaps)))
+    for name, payload in (('facts.json', {'facts': facts}), ('gaps.json', {'gaps': gaps}),
+                          ('not-displayed.json', {'notDisplayed': not_displayed}),
+                          ('preview.json', {'blocks': blocks})):
+        (out / name).write_text(json.dumps(payload, ensure_ascii=False, indent=1) + chr(10),
+                                encoding='utf-8', newline=chr(10))
+    lines = []
+    for block in blocks:
+        lines.append('[%s %s seq=%s] prev=%s delta=%s' % (
+            block['worldId'], block['pointId'], block['sequence'], block['previousPointId'],
+            json.dumps(block['delta'], ensure_ascii=False) if block['delta'] is not None else 'null'))
+        for sentence, prov in zip(block['sentences'], block['provenance']):
+            lines.append('    show  %s' % sentence)
+            lines.append('          source=%s fields=%s replayOk=%s agrees=%s' % (
+                prov['stateSource'], ','.join(prov['fieldsRead'] or []), prov['replayOk'],
+                prov['replayAgreesWithCheckpoint']))
+        for reason in block['notDisplayed']:
+            lines.append('    unshown  %s' % reason)
+        for gap in block['gaps']:
+            lines.append('    gap      %s' % gap)
+    (out / 'preview.txt').write_text(chr(10).join(lines) + chr(10), encoding='utf-8', newline=chr(10))
+    print('points %d facts %d gaps %d notDisplayed %d' % (len(blocks), len(facts), len(gaps), len(not_displayed)))
     for gap in gaps:
-        print('  %-6s %-10s %s' % (gap.get('pointId'), gap.get('entityId'), gap['gap']))
+        print('  GAP  %-8s %-10s %s' % (gap.get('pointId'), gap.get('entityId'), gap['gap']))
+    for item in not_displayed:
+        print('  UNSHOWN %-8s %-10s %s' % (item.get('pointId'), item.get('entityId'), item['reason']))
 
 
 if __name__ == '__main__':

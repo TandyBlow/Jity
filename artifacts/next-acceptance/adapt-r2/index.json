@@ -1,0 +1,103 @@
+{
+ "purpose": "end-to-end read-only preview: point, structured delta, display sentence, provenance and gaps on one screen",
+ "noModelCalls": true,
+ "noTraining": true,
+ "readOnly": true,
+ "noPageWiring": true,
+ "stateSource": {
+  "checkpoint": "used when it matches its digest and replay is unavailable",
+  "replay": "production replay_state, preferred; a missing checkpoint is not an unrecoverable state",
+  "reportedSeparately": "checkpoint digest comparison and replay verification are separate fields"
+ },
+ "fixture": {
+  "worlds": 2,
+  "points": 10,
+  "facts": 10,
+  "gaps": 1,
+  "notDisplayed": 1,
+  "cases": {
+   "recoveredByReplay": [
+    "p2",
+    "p3"
+   ],
+   "unrecoverable": [
+    "p7"
+   ],
+   "taskNotDisplayed": [
+    "p6"
+   ],
+   "noCrossWorldRead": [
+    "q1"
+   ]
+  }
+ },
+ "realHistory": {
+  "worlds": 5,
+  "points": 10,
+  "facts": 10,
+  "gaps": 0,
+  "note": "every committed delta is an empty object, so only point-scoped no-change sentences appear"
+ },
+ "boundaries": [
+  {
+   "case": "predecessor lacks the entity or the field",
+   "recordCanCarryIt": false,
+   "evidence": "the production apply_point rejects a delta on an unknown entity (KernelViolation id_unresolved), and characters always carry sanity and position",
+   "testedAt": "test_missing_field_in_the_predecessor_is_a_gap (adapter level)"
+  },
+  {
+   "case": "task delta",
+   "recordCanCarryIt": true,
+   "handling": "listed as not displayed, flagged notAChange, never rendered as a quiet point"
+  },
+  {
+   "case": "same predecessor splitting into two branches",
+   "recordCanCarryIt": false,
+   "evidence": "world_points has UNIQUE(world_id,previous_point_id) where previous_point_id is not null, so one point has one successor",
+   "testedAt": "two worlds instead: test_two_worlds_do_not_read_each_other"
+  },
+  {
+   "case": "state not recoverable",
+   "recordCanCarryIt": true,
+   "handling": "gap state not recoverable with the replay error attached, no sentence and no guessed origin"
+  }
+ ],
+ "acceptance": {
+  "supportedFacts": "accurate sentence plus provenance",
+  "unsupportedFacts": "explicit gap or not displayed",
+  "failedRecovery": "no guess",
+  "frozen": "adapter frozen at this commit"
+ },
+ "files": [
+  {
+   "path": "artifacts/next-acceptance/adapt-r2/fixture-preview.json",
+   "bytes": 6210,
+   "sha256": "793aa61c9f3adac5cab07cb0361ec21df5d16a6ae790c7bd183982204d3dc216"
+  },
+  {
+   "path": "artifacts/next-acceptance/adapt-r2/fixture-preview.txt",
+   "bytes": 2419,
+   "sha256": "fe9062fbcaeef15bf7a622b1ed6194adc6498cc1298aaffc8b59ae260fdf2740"
+  },
+  {
+   "path": "artifacts/next-acceptance/adapt-r2/fixture-gaps.json",
+   "bytes": 237,
+   "sha256": "eb8400057486d6d714c669e19ec879809632318f4c3728d00f105524ac497d36"
+  },
+  {
+   "path": "artifacts/next-acceptance/adapt-r2/fixture-not-displayed.json",
+   "bytes": 684,
+   "sha256": "362f0450551e957ecdc7753d7bab3e5dbfd680d39b99da6ffa06ad7933eb3198"
+  },
+  {
+   "path": "artifacts/next-acceptance/adapt-r2/real-preview.json",
+   "bytes": 4876,
+   "sha256": "49861402aa9809b2c93ce697b11a90c85b3d59b65f17dd70ec360025ba09ca07"
+  },
+  {
+   "path": "artifacts/next-acceptance/adapt-r2/real-preview.txt",
+   "bytes": 1537,
+   "sha256": "75dd6c3fd88e50580e3a35a4ab4603e4cd335b2a947e2f2ec0461db49564e645"
+  }
+ ]
+}
