@@ -1,0 +1,67 @@
+{
+ "version": "mixed-r1",
+ "question": "can mixed exemplars restore the reference name on no-name inputs while keeping the syntax gain",
+ "arms": {
+  "ctl": "aug-r1 experiment pools unchanged (11 of 12 values carry the name)",
+  "mix": "same 12 targets byte for byte; six inputs rewritten without the name in the value"
+ },
+ "start": "moved (bd5434b3), evaluated alongside; exp (e3de7659) is the previous arm and is quoted from its archive",
+ "devSets": {
+  "namepair": "12 paired probes (6 pairs), r4 three checks",
+  "relation": "10 relation probes, r4 three checks"
+ },
+ "acceptance": {
+  "bothSides": {
+   "rule": "on the 12 namepair probes the mix arm passes at least 10 of 12 under the r4 checks, AND at least 5 of 6 on each side separately",
+   "why": "no start arm is good on both halves at once: moved passes 6/6 without the name and 0/6 with it (prefix duplicates), exp passes 1/6 without it and 6/6 with it (name dropped)",
+   "start": {
+    "moved": {
+     "without": 6,
+     "with": 0
+    },
+    "exp": {
+     "without": 1,
+     "with": 6
+    },
+    "ctl": {
+     "without": 5,
+     "with": 0
+    }
+   }
+  },
+  "notNameOnly": {
+   "rule": "relation kept at least 11 of 12 and syntax broken at most 1 across all 12 probes",
+   "start": {
+    "moved": {
+     "relation": 9,
+     "syntaxBroken": 3
+    },
+    "exp": {
+     "relation": 12,
+     "syntaxBroken": 0
+    },
+    "ctl": {
+     "relation": 9,
+     "syntaxBroken": 4
+    }
+   }
+  },
+  "relationProbes": {
+   "rule": "at least 7 of 10 pass under r4",
+   "start": {
+    "exp": 8,
+    "moved": 1,
+    "ctl": 2
+   }
+  },
+  "regression": {
+   "fact": "human count on cf24+final24+moved24 at or above the start arm 184/185",
+   "added": "not above the start arm (0)",
+   "language": "not above the start arm (3 on cf24)",
+   "machine": "S/REV/A recorded per set and arm; the fact gate uses the human count, a new-round rule that does not rewrite earlier judgements"
+  },
+  "overall": "all of the above must hold; any single regression blocks a pass"
+ },
+ "notClaimed": "the namepair design cannot separate form from length, so a pass here is a statement about this intervention, not proof that input length is irrelevant",
+ "declaredBefore": "written before training"
+}

@@ -1,0 +1,94 @@
+{
+ "purpose": "r6 per-unit review: moved start, ctl (aug pools retrained), mix (mixed exemplars)",
+ "rule": "same reading rules as r3/r4; added counted by the r3 mechanical rule, then read",
+ "entries": [
+  {
+   "set": "cf24",
+   "arm": "moved",
+   "unitId": "t21:f0",
+   "kind": "language",
+   "span": "潮汐簿的缺页的边缘",
+   "reason": "双层“的”，事实行自带"
+  },
+  {
+   "set": "cf24",
+   "arm": "moved",
+   "unitId": "t22:f0",
+   "kind": "language",
+   "span": "系泊绳的泥水",
+   "reason": "所有格错位"
+  },
+  {
+   "set": "cf24",
+   "arm": "moved",
+   "unitId": "t24:f1",
+   "kind": "language",
+   "span": "排水沟的里面",
+   "reason": "应为“排水沟里”"
+  },
+  {
+   "set": "cf24",
+   "arm": "moved",
+   "unitId": "t22:f1",
+   "kind": "fact",
+   "span": "缠着",
+   "reason": "关系“缠着”丢失，机器判 S"
+  },
+  {
+   "set": "cf24",
+   "arm": "ctl",
+   "unitId": "t21:f0",
+   "kind": "language",
+   "span": "潮汐簿的缺页的边缘",
+   "reason": "与起点同句"
+  },
+  {
+   "set": "cf24",
+   "arm": "ctl",
+   "unitId": "t22:f0",
+   "kind": "language",
+   "span": "系泊绳的泥水",
+   "reason": "与起点同句"
+  },
+  {
+   "set": "cf24",
+   "arm": "ctl",
+   "unitId": "t24:f1",
+   "kind": "language",
+   "span": "排水沟的里面",
+   "reason": "与起点同句"
+  },
+  {
+   "set": "cf24",
+   "arm": "ctl",
+   "unitId": "t22:f1",
+   "kind": "fact",
+   "span": "木桩",
+   "reason": "改写丢参照物“木桩”，机器判 A"
+  },
+  {
+   "set": "cf24",
+   "arm": "mix",
+   "unitId": "t22:f0",
+   "kind": "language",
+   "span": "系泊绳的泥水",
+   "reason": "与起点同句，未改动"
+  },
+  {
+   "set": "cf24",
+   "arm": "mix",
+   "unitId": "t24:f1",
+   "kind": "language",
+   "span": "排水沟的里面",
+   "reason": "与起点同句，未改动"
+  },
+  {
+   "set": "cf24",
+   "arm": "mix",
+   "unitId": "t21:f0",
+   "kind": "fact",
+   "span": "缺页",
+   "reason": "“潮汐簿的边缘毛糙”把“缺页”替换成了书名，机器判 S（覆盖 0.67），人工记为事实替换"
+  }
+ ]
+}

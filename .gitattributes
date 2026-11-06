@@ -39,3 +39,5 @@ artifacts/aug-r1/** -text
 artifacts/next-acceptance/aug-r1/** -text
 artifacts/namepair-r1/** -text
 artifacts/next-acceptance/namepair-r1/** -text
+artifacts/mixed-r1/** -text
+artifacts/next-acceptance/mixed-r1/** -text

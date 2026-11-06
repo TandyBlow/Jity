@@ -1,0 +1,41 @@
+{
+ "counts": {
+  "moved": {
+   "machine": {
+    "S": 185,
+    "O": 0,
+    "A": 0,
+    "REVIEW": 0
+   },
+   "human": 184,
+   "units": 185,
+   "added": 2,
+   "language": 3
+  },
+  "ctl": {
+   "machine": {
+    "S": 181,
+    "O": 0,
+    "A": 1,
+    "REVIEW": 3
+   },
+   "human": 184,
+   "units": 185,
+   "added": 0,
+   "language": 3
+  },
+  "mix": {
+   "machine": {
+    "S": 185,
+    "O": 0,
+    "A": 0,
+    "REVIEW": 0
+   },
+   "human": 184,
+   "units": 185,
+   "added": 0,
+   "language": 2
+  }
+ },
+ "note": "machine counts are the frozen scorer; human counts start from the machine total and subtract units the read found unsupported (t22:f1 for moved, t22:f1 for ctl, t21:f0 for mix)"
+}

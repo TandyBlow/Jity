@@ -1,0 +1,100 @@
+{
+ "purpose": "mixed exemplars: six of the twelve inputs lose the name in the value, targets unchanged",
+ "base": "moved (bd5434b3)",
+ "control": "artifacts/aug-r1/pool-exp-*.jsonl, copied byte for byte",
+ "rewrite": {
+  "aug:01": {
+   "oldValue": "绕在桩上的旧缆绳断成两截",
+   "newValue": "绕着的旧缆绳断成两截"
+  },
+  "aug:02": {
+   "oldValue": "绞在桩上的缆绳松了",
+   "newValue": "绞着的缆绳松了"
+  },
+  "aug:06": {
+   "oldValue": "绕在链上的抹布滑下来",
+   "newValue": "绕着的抹布滑下来"
+  },
+  "aug:07": {
+   "oldValue": "压在筐底的银鳞鱼露出来",
+   "newValue": "压着的银鳞鱼露出来"
+  },
+  "aug:10": {
+   "oldValue": "堵在沟口的石板松了",
+   "newValue": "堵着的石板松了"
+  },
+  "aug:12": {
+   "oldValue": "夹在簿子里的干纸露出来",
+   "newValue": "夹着的干纸露出来"
+  }
+ },
+ "targetsPolicy": "targets are byte-identical between arms; the previous \"targets must differ\" assertion does not apply to this design",
+ "files": {
+  "verbalizer": {
+   "control": {
+    "path": "artifacts/mixed-r1/pool-ctl-verbalizer.jsonl",
+    "rows": 241,
+    "sha256": "36ecbc296dd60b5a8081e91c61578511f589c444f8322feca053fb827fe1a2dc"
+   },
+   "mix": {
+    "path": "artifacts/mixed-r1/pool-mix-verbalizer.jsonl",
+    "rows": 241,
+    "sha256": "9ec86908581606c3adc9a229badd9d262b33e1806502f3b6311109a9b1eb51a2",
+    "rewritten": 6
+   }
+  },
+  "expand78": {
+   "control": {
+    "path": "artifacts/mixed-r1/pool-ctl-expand78.jsonl",
+    "rows": 78,
+    "sha256": "92109cbda137cb4219f7c6ea925edaf52c406946c9c02dc21745c901255b78c0"
+   },
+   "mix": {
+    "path": "artifacts/mixed-r1/pool-mix-expand78.jsonl",
+    "rows": 78,
+    "sha256": "92109cbda137cb4219f7c6ea925edaf52c406946c9c02dc21745c901255b78c0",
+    "rewritten": 0
+   }
+  },
+  "object34": {
+   "control": {
+    "path": "artifacts/mixed-r1/pool-ctl-object34.jsonl",
+    "rows": 34,
+    "sha256": "5f1e373c271f147a830d9344625e7e931c3cec036bbda817b562b826e1e0758e"
+   },
+   "mix": {
+    "path": "artifacts/mixed-r1/pool-mix-object34.jsonl",
+    "rows": 34,
+    "sha256": "5f1e373c271f147a830d9344625e7e931c3cec036bbda817b562b826e1e0758e",
+    "rewritten": 0
+   }
+  }
+ },
+ "idOrder": {
+  "rows": 353,
+  "sha256": "748ec6af0cd54da3aeb7afe68c2fec776d2ef8a4f37996e2d554dfccade397aa"
+ },
+ "inputOrder": {
+  "control": "260fb259c27b08a4a321a3aaaf1026150e34e0a7bbb302f2ed21cdb93df83a8b",
+  "mix": "025a25b953a05c10ea5640bec4bac70e841813de9bf7c18561a91d9e7970b136",
+  "differing": [
+   "aug:01",
+   "aug:02",
+   "aug:06",
+   "aug:07",
+   "aug:10",
+   "aug:12"
+  ]
+ },
+ "targetOrder": {
+  "control": "8e41f721bb49e1b8125a1cbd38272d6e8cdf677bee9b8a3e3c5abb1c4abc957a",
+  "mix": "8e41f721bb49e1b8125a1cbd38272d6e8cdf677bee9b8a3e3c5abb1c4abc957a",
+  "identical": true
+ },
+ "nameInsideValue": {
+  "of": 12,
+  "control": 11,
+  "mix": 5,
+  "note": "counted by name or its short form; aug:03 has no name in the value in either arm because that row already read 压在上面的干纸露出边角"
+ }
+}

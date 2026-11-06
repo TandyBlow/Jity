@@ -1,0 +1,311 @@
+{
+ "rule": "syntax-frame-r4",
+ "arms": {
+  "moved": [
+   {
+    "unitId": "p-rel1",
+    "family": "relation",
+    "relation": "缠",
+    "text": "木桩的旧缆绳断了。",
+    "factRelation": "dropped",
+    "attribution": "role-flip",
+    "syntax": "ok",
+    "pass": false
+   },
+   {
+    "unitId": "p-rel2",
+    "family": "relation",
+    "relation": "挂",
+    "text": "木桩挂着的旧缆绳断了一截。",
+    "factRelation": "kept",
+    "attribution": "ok",
+    "syntax": "ok",
+    "pass": true
+   },
+   {
+    "unitId": "p-rel3",
+    "family": "relation",
+    "relation": "系",
+    "text": "木桩的系在桩上的缆绳松了。",
+    "factRelation": "kept",
+    "attribution": "role-flip",
+    "syntax": "broken",
+    "pass": false
+   },
+   {
+    "unitId": "p-rel4",
+    "family": "relation",
+    "relation": "套",
+    "text": "木桩的套在桩上的缆绳滑下来。",
+    "factRelation": "kept",
+    "attribution": "role-flip",
+    "syntax": "broken",
+    "pass": false
+   },
+   {
+    "unitId": "p-rel5",
+    "family": "relation",
+    "relation": "盖",
+    "text": "长桌的盖在上面的干纸滑开了。",
+    "factRelation": "kept",
+    "attribution": "role-flip",
+    "syntax": "broken",
+    "pass": false
+   },
+   {
+    "unitId": "p-rel6",
+    "family": "relation",
+    "relation": "插",
+    "text": "铜灯罩的插在罩里的备用灯芯歪了。",
+    "factRelation": "kept",
+    "attribution": "role-flip",
+    "syntax": "broken",
+    "pass": false
+   },
+   {
+    "unitId": "p-rel7",
+    "family": "relation",
+    "relation": "搭",
+    "text": "铁链搭在铁链上的抹布滑下来。",
+    "factRelation": "kept",
+    "attribution": "duplicated",
+    "syntax": "broken",
+    "pass": false
+   },
+   {
+    "unitId": "p-rel8",
+    "family": "relation",
+    "relation": "卡",
+    "text": "鱼筐的卡在筐边的银鳞鱼滑出来。",
+    "factRelation": "kept",
+    "attribution": "role-flip",
+    "syntax": "broken",
+    "pass": false
+   },
+   {
+    "unitId": "p-ctl1",
+    "family": "control",
+    "relation": "旁边",
+    "text": "木桩的旧缆绳断在木桩旁边。",
+    "factRelation": "kept",
+    "attribution": "duplicated",
+    "syntax": "broken",
+    "pass": false
+   },
+   {
+    "unitId": "p-ctl2",
+    "family": "control",
+    "relation": "泡",
+    "text": "系泊绳的缆绳泡在浅滩的水里。",
+    "factRelation": "kept",
+    "attribution": "role-flip",
+    "syntax": "broken",
+    "pass": false
+   }
+  ],
+  "ctl": [
+   {
+    "unitId": "p-rel1",
+    "family": "relation",
+    "relation": "缠",
+    "text": "缠着的旧缆绳断了。",
+    "factRelation": "kept",
+    "attribution": "missing",
+    "syntax": "ok",
+    "pass": false
+   },
+   {
+    "unitId": "p-rel2",
+    "family": "relation",
+    "relation": "挂",
+    "text": "挂着的旧缆绳断了一截。",
+    "factRelation": "kept",
+    "attribution": "missing",
+    "syntax": "ok",
+    "pass": false
+   },
+   {
+    "unitId": "p-rel3",
+    "family": "relation",
+    "relation": "系",
+    "text": "系在木桩上的缆绳松了。",
+    "factRelation": "kept",
+    "attribution": "ok",
+    "syntax": "ok",
+    "pass": true
+   },
+   {
+    "unitId": "p-rel4",
+    "family": "relation",
+    "relation": "套",
+    "text": "套在木桩上的缆绳滑下来。",
+    "factRelation": "kept",
+    "attribution": "ok",
+    "syntax": "ok",
+    "pass": true
+   },
+   {
+    "unitId": "p-rel5",
+    "family": "relation",
+    "relation": "盖",
+    "text": "盖在长桌上面的干纸滑开了。",
+    "factRelation": "kept",
+    "attribution": "ok",
+    "syntax": "ok",
+    "pass": true
+   },
+   {
+    "unitId": "p-rel6",
+    "family": "relation",
+    "relation": "插",
+    "text": "插在铜灯罩里的备用灯芯歪了。",
+    "factRelation": "kept",
+    "attribution": "ok",
+    "syntax": "ok",
+    "pass": true
+   },
+   {
+    "unitId": "p-rel7",
+    "family": "relation",
+    "relation": "搭",
+    "text": "搭在铁链上的抹布滑下来。",
+    "factRelation": "kept",
+    "attribution": "ok",
+    "syntax": "ok",
+    "pass": true
+   },
+   {
+    "unitId": "p-rel8",
+    "family": "relation",
+    "relation": "卡",
+    "text": "卡在鱼筐边的银鳞鱼滑出来。",
+    "factRelation": "kept",
+    "attribution": "ok",
+    "syntax": "ok",
+    "pass": true
+   },
+   {
+    "unitId": "p-ctl1",
+    "family": "control",
+    "relation": "旁边",
+    "text": "旧缆绳断在木桩旁边。",
+    "factRelation": "kept",
+    "attribution": "ok",
+    "syntax": "ok",
+    "pass": true
+   },
+   {
+    "unitId": "p-ctl2",
+    "family": "control",
+    "relation": "泡",
+    "text": "系泊绳泡在浅滩的水里。",
+    "factRelation": "kept",
+    "attribution": "ok",
+    "syntax": "ok",
+    "pass": true
+   }
+  ],
+  "mix": [
+   {
+    "unitId": "p-rel1",
+    "family": "relation",
+    "relation": "缠",
+    "text": "缠在木桩上的旧缆绳断了。",
+    "factRelation": "kept",
+    "attribution": "ok",
+    "syntax": "ok",
+    "pass": true
+   },
+   {
+    "unitId": "p-rel2",
+    "family": "relation",
+    "relation": "挂",
+    "text": "挂在木桩上的旧缆绳断了一截。",
+    "factRelation": "kept",
+    "attribution": "ok",
+    "syntax": "ok",
+    "pass": true
+   },
+   {
+    "unitId": "p-rel3",
+    "family": "relation",
+    "relation": "系",
+    "text": "系在木桩上的缆绳松了。",
+    "factRelation": "kept",
+    "attribution": "ok",
+    "syntax": "ok",
+    "pass": true
+   },
+   {
+    "unitId": "p-rel4",
+    "family": "relation",
+    "relation": "套",
+    "text": "套在木桩上的缆绳滑下来。",
+    "factRelation": "kept",
+    "attribution": "ok",
+    "syntax": "ok",
+    "pass": true
+   },
+   {
+    "unitId": "p-rel5",
+    "family": "relation",
+    "relation": "盖",
+    "text": "盖在长桌上面的干纸滑开了。",
+    "factRelation": "kept",
+    "attribution": "ok",
+    "syntax": "ok",
+    "pass": true
+   },
+   {
+    "unitId": "p-rel6",
+    "family": "relation",
+    "relation": "插",
+    "text": "插在铜灯罩里的备用灯芯歪了。",
+    "factRelation": "kept",
+    "attribution": "ok",
+    "syntax": "ok",
+    "pass": true
+   },
+   {
+    "unitId": "p-rel7",
+    "family": "relation",
+    "relation": "搭",
+    "text": "搭在铁链上的抹布滑下来。",
+    "factRelation": "kept",
+    "attribution": "ok",
+    "syntax": "ok",
+    "pass": true
+   },
+   {
+    "unitId": "p-rel8",
+    "family": "relation",
+    "relation": "卡",
+    "text": "卡在鱼筐边的银鳞鱼滑出来。",
+    "factRelation": "kept",
+    "attribution": "ok",
+    "syntax": "ok",
+    "pass": true
+   },
+   {
+    "unitId": "p-ctl1",
+    "family": "control",
+    "relation": "旁边",
+    "text": "旧缆绳断在木桩旁边。",
+    "factRelation": "kept",
+    "attribution": "ok",
+    "syntax": "ok",
+    "pass": true
+   },
+   {
+    "unitId": "p-ctl2",
+    "family": "control",
+    "relation": "泡",
+    "text": "系泊绳泡在浅滩的水里。",
+    "factRelation": "kept",
+    "attribution": "ok",
+    "syntax": "ok",
+    "pass": true
+   }
+  ]
+ }
+}
