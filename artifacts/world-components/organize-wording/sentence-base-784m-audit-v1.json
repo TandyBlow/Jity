@@ -1,0 +1,321 @@
+{
+ "run": "sentence-base-784m-run-v1",
+ "reviewed_by": "human review; automated group factPass shown for comparison",
+ "b_only_definition": "B has a safety loss; A errors are recorded separately and do not cancel B loss (same口径 as prior v07 review)",
+ "safety_gate": {
+  "fixed_multi_groups": 6,
+  "fixed_B_only": 0,
+  "regression_multi_groups": 13,
+  "regression_B_only": 2,
+  "total_B_only": "2/19",
+  "passed": false
+ },
+ "splits": {
+  "fixed": {
+   "groups": [
+    {
+     "sourceId": "n4n-109",
+     "facts": [
+      "f1",
+      "f2"
+     ],
+     "text": "沈砚从潮渡走到雾堤,开始愿意先开口。",
+     "automated_factPass": true,
+     "reviewed_pass": true,
+     "b_only": false,
+     "reason": ""
+    },
+    {
+     "sourceId": "n4n-64",
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "text": "沈砚把系泊绳从浅滩拖了回来,心里发紧。",
+     "automated_factPass": true,
+     "reviewed_pass": true,
+     "b_only": false,
+     "reason": ""
+    },
+    {
+     "sourceId": "n4n-65",
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "text": "沈砚把潮汐簿缺的那页补全了,心里松快了些。",
+     "automated_factPass": true,
+     "reviewed_pass": true,
+     "b_only": false,
+     "reason": ""
+    },
+    {
+     "sourceId": "n4n-74",
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "text": "叶知微把灯罩擦得透亮,袖口沾了铜油。",
+     "automated_factPass": true,
+     "reviewed_pass": true,
+     "b_only": false,
+     "reason": ""
+    },
+    {
+     "sourceId": "n4n-75",
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "text": "阿棠把一叠干纸放在桌角,鞋底带着早市的泥水。",
+     "automated_factPass": true,
+     "reviewed_pass": true,
+     "b_only": false,
+     "reason": ""
+    },
+    {
+     "sourceId": "n4n-87",
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "text": "韩渡从潮渡走到雾堤,把松脱的钟绳重新系紧。",
+     "automated_factPass": true,
+     "reviewed_pass": true,
+     "b_only": false,
+     "reason": ""
+    }
+   ]
+  },
+  "regression": {
+   "groups": [
+    {
+     "sourceId": "fixture-r5",
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "text": "林川的帽檐压出折痕,脚踝肿了一块。",
+     "automated_factPass": true,
+     "reviewed_pass": true,
+     "b_only": false,
+     "reason": ""
+    },
+    {
+     "sourceId": "t03",
+     "facts": [
+      "f0",
+      "f1",
+      "f2"
+     ],
+     "text": "叶知微把灯罩擦得透亮,袖口沾了铜油,把抹布搭回梯脚。",
+     "automated_factPass": true,
+     "reviewed_pass": true,
+     "b_only": false,
+     "reason": ""
+    },
+    {
+     "sourceId": "t08",
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "text": "阿棠把银鳞鱼搬上案板,顾行舟把缆绳绕上摊棚边的木桩。",
+     "automated_factPass": true,
+     "reviewed_pass": true,
+     "b_only": false,
+     "reason": ""
+    },
+    {
+     "sourceId": "t08",
+     "facts": [
+      "f2",
+      "f3"
+     ],
+     "text": "阿棠的辫梢沾了白汽,顾行舟的外袍下摆沾了泥水。",
+     "automated_factPass": true,
+     "reviewed_pass": true,
+     "b_only": false,
+     "reason": ""
+    },
+    {
+     "sourceId": "t22",
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "text": "系泊绳的泥水结了一层白盐,木桩的缠着的旧缆绳断了。",
+     "automated_factPass": true,
+     "reviewed_pass": true,
+     "b_only": false,
+     "reason": ""
+    },
+    {
+     "sourceId": "t22",
+     "facts": [
+      "f2",
+      "f3"
+     ],
+     "text": "顾行舟把缆绳重新绕上木桩,沈砚把系泊绳拖回岸上。",
+     "automated_factPass": true,
+     "reviewed_pass": true,
+     "b_only": false,
+     "reason": ""
+    },
+    {
+     "sourceId": "t24",
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "text": "纸灯笼的衣角被风扯破一角,排水沟的里面积了泥。",
+     "automated_factPass": true,
+     "reviewed_pass": false,
+     "b_only": true,
+     "reason": "f0 adds 「纸灯笼的衣角」 not in facts; B77 f0 was correct; B784 also adds f2, but the group still loses f0."
+    },
+    {
+     "sourceId": "t24",
+     "facts": [
+      "f2",
+      "f3"
+     ],
+     "text": "沈砚把纸灯笼扶正,阿棠把鱼筐放在门槛边。",
+     "automated_factPass": true,
+     "reviewed_pass": true,
+     "b_only": false,
+     "reason": ""
+    },
+    {
+     "sourceId": "train-r4",
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "text": "沈砚的围巾松开一截,脸色发白。",
+     "automated_factPass": true,
+     "reviewed_pass": true,
+     "b_only": false,
+     "reason": ""
+    },
+    {
+     "sourceId": "v07",
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "text": "铜灯的灯罩上积了灰,潮汐簿的封面蒙了一层灰。",
+     "automated_factPass": true,
+     "reviewed_pass": true,
+     "b_only": false,
+     "reason": ""
+    },
+    {
+     "sourceId": "v14",
+     "facts": [
+      "f0",
+      "f1",
+      "f2"
+     ],
+     "text": "沈砚从潮汐档案馆走到潮渡,把系泊绳拖回岸上,心里发紧。",
+     "automated_factPass": true,
+     "reviewed_pass": true,
+     "b_only": false,
+     "reason": ""
+    },
+    {
+     "sourceId": "v18",
+     "facts": [
+      "f0",
+      "f1",
+      "f2"
+     ],
+     "text": "沈砚从潮渡走到雾堤,把雾警钟敲响,心里发紧。",
+     "automated_factPass": true,
+     "reviewed_pass": true,
+     "b_only": false,
+     "reason": ""
+    },
+    {
+     "sourceId": "v20",
+     "facts": [
+      "f0",
+      "f1",
+      "f2"
+     ],
+     "text": "沈砚从潮生巷走到潮渡,把渡船推离栈桥。",
+     "automated_factPass": false,
+     "reviewed_pass": false,
+     "b_only": true,
+     "reason": "f1 (sanity 9→12) is absent; f2 is now present. A77 has the sanity direction wrong; that error is recorded separately and does not cancel B missing f1."
+    }
+   ]
+  }
+ },
+ "comparison_to_B77": {
+  "sources_compared": 25,
+  "identical_sources": 21,
+  "differing_sources": 4,
+  "differences": [
+   {
+    "split": "regression",
+    "sourceId": "t22",
+    "B77": "系泊绳的泥水结了一层白盐,木桩缠着的旧缆绳断了。顾行舟把缆绳重新绕上木桩,沈砚把系泊绳拖回岸上。",
+    "B784": "系泊绳的泥水结了一层白盐,木桩的缠着的旧缆绳断了。顾行舟把缆绳重新绕上木桩,沈砚把系泊绳拖回岸上。"
+   },
+   {
+    "split": "regression",
+    "sourceId": "t24",
+    "B77": "纸灯笼被风扯破一角,排水沟的里面积了泥。阿棠把鱼筐放在门槛边。",
+    "B784": "纸灯笼的衣角被风扯破一角,排水沟的里面积了泥。沈砚把纸灯笼扶正,阿棠把鱼筐放在门槛边。"
+   },
+   {
+    "split": "regression",
+    "sourceId": "v07",
+    "B77": "铜灯的灯罩上积了灰,封面蒙了一层灰。沈砚把铜灯擦亮。",
+    "B784": "铜灯的灯罩上积了灰,潮汐簿的封面蒙了一层灰。沈砚把铜灯擦亮。"
+   },
+   {
+    "split": "regression",
+    "sourceId": "v20",
+    "B77": "沈砚从潮生巷走到潮渡,心里松快了些。",
+    "B784": "沈砚从潮生巷走到潮渡,把渡船推离栈桥。"
+   }
+  ],
+  "conclusion": "No safety gain: t24 f2 is restored but f0 gains 衣角; v20 f2 is restored but f1 is lost; t22 grammar regresses; v07 becomes more explicit. 21/25 assembled texts are byte-identical."
+ },
+ "generation_stops": {
+  "fixed_eval_calls": 25,
+  "regression_eval_calls": 20,
+  "eos": 45,
+  "cap": 0,
+  "timeout": 0,
+  "note": "All completed before the 128-token cap; no silent truncation. Timeout field is false because generation completed; Slurm job limit was 01:30:00."
+ },
+ "training": {
+  "steps": 480,
+  "updates": 120,
+  "unique_calls": 134,
+  "target_tokens": 8323,
+  "facts_exposed": 831,
+  "max_input_tokens": 232,
+  "max_target_tokens": 35,
+  "peak_cuda_bytes": 16469425152,
+  "wall_seconds": 87.18,
+  "final_weight_sha256": "6abd0cdd93f07240526b32b54f2d4800ca33cba5d9cbaf3ce0db907a7d0b4ced",
+  "checkpoint_path": "~/sentence784_run/out/ckpt-final"
+ },
+ "comparison_to_A77": {
+  "fixed_B_only": "0/6",
+  "regression_B_only": "2/13",
+  "total": "2/19",
+  "gate": "failed",
+  "A77_errors_note": "A77 has its own errors (e.g. n4n-65 sanity direction and t24 grammar); those are not used to offset B losses."
+ },
+ "limitations": [
+  "one base, one seed, final point only; no selection",
+  "B-large-784 and B-large-77 were trained in different framework versions (784: torch 2.5.1/transformers 4.51.3 on HPC 4090; 77: local torch 2.7.0/transformers 4.57.3), so the comparison is not a pure numerical-identical rerun",
+  "tokenizer is byte-identical, so token counts and interfaces are identical",
+  "no A-large-784 and no B-small-784; no claim that 784M group-level is better than per-fact"
+ ]
+}

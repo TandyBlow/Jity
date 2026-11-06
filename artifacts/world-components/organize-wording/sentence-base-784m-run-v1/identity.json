@@ -1,0 +1,92 @@
+{
+ "run": "sentence-base-784m-run-v1",
+ "date": "2026-11-06",
+ "hpc": {
+  "host": "hpc.bnbu.edu.cn",
+  "job_id": "241334",
+  "partition": "gpu",
+  "node": "hpcgpu08",
+  "gpu": "NVIDIA GeForce RTX 4090 D 24GB",
+  "torch": "2.5.1+cu124",
+  "transformers": "4.51.3",
+  "python": "3.11",
+  "slurm_wall": "00:03:25",
+  "exit_code": 0
+ },
+ "checkpoint": {
+  "remote_path": "~/sentence784_run/out/ckpt-final",
+  "weights_sha256": "6abd0cdd93f07240526b32b54f2d4800ca33cba5d9cbaf3ce0db907a7d0b4ced",
+  "weights_bytes": 3136502664,
+  "config_sha256": "d407a857d35067fd39a5126640ba46032675f6fde08e9bad875f95681e3e3606",
+  "tokenizer_sha256": "c65feffa65ff0378759778193852083d23349cb1b40c906e9463a12f8076ff32"
+ },
+ "base": {
+  "weights_sha256": "53a9274353c0e873b6c61a84d5210bfc78d3d2f78653f7911eb5cf09a9b964ca",
+  "config_sha256": "ba0d13cb1086e7f9f5bd3fcf603ea3130becd8c3a14612a2f98fac1baf168f59",
+  "tokenizer_sha256": "c65feffa65ff0378759778193852083d23349cb1b40c906e9463a12f8076ff32"
+ },
+ "training": {
+  "steps": 480,
+  "updates": 120,
+  "unique_calls": 134,
+  "target_tokens": 8323,
+  "facts_exposed": 831,
+  "max_input_tokens": 232,
+  "max_target_tokens": 35,
+  "wall_seconds": 87.18,
+  "peak_cuda_bytes": 16469425152,
+  "selection": "none; final point"
+ },
+ "evaluation": {
+  "calls": 45,
+  "eos": 45,
+  "cap": 0,
+  "timeout": 0,
+  "fixed_B_only": "0/6",
+  "regression_B_only": "2/13",
+  "total_B_only": "2/19",
+  "gate": "failed"
+ },
+ "files": {
+  "material": {
+   "path": "artifacts/world-components/organize-wording/sentence-scale-v1.jsonl",
+   "sha256": "2f537830797986b7678566d0f90ff605749a7ad8f0aadef34cf7c6cd27f43816"
+  },
+  "replay": {
+   "path": "artifacts/world-components/organize-wording/sentence-scale-run-v1/sampled_calls-B-large.jsonl",
+   "sha256": "cc2f788a358e2b4a871afdbe0ec0f867976faf954c44ff910de22c8b7e23513f"
+  },
+  "freeze": {
+   "path": "artifacts/world-components/organize-wording/sentence-base-784m-freeze-v1.json",
+   "sha256": "d0894132dc3a19d9ffe516dd9f0b9b712d4898981eb144e3deac1076af6fe3ad"
+  },
+  "token_audit": {
+   "path": "artifacts/world-components/organize-wording/sentence-base-784m-token-audit-v1.json",
+   "sha256": "38c5f215fd0b8d4ee8cf65f41713b87603831694b79d7ad3db9f04525bf4f0ed"
+  },
+  "train_script": {
+   "path": "experiments/world-components/organize_wording/train_sentence_scale_784.py",
+   "sha256": "149522dce5850b58a1134a6a5ee1dec67de5a574bcbe5301a9cd8c70c7f13a16"
+  },
+  "job_script": {
+   "path": "experiments/world-components/organize_wording/hpc_sentence784_run.sh",
+   "sha256": "c442490501e61e23d8609f6d6cdc4e2260c58ead1a81384f2254caef85f46842"
+  },
+  "results": {
+   "path": "artifacts/world-components/organize-wording/sentence-base-784m-run-v1/results.json",
+   "sha256": "58e91538a790f289ac45196514763e42ab0445ca9bb6690f0796d3ea93b14c22"
+  },
+  "run_log": {
+   "path": "artifacts/world-components/organize-wording/sentence-base-784m-run-v1/run.log",
+   "sha256": "058ea35f2f6812528b33829d00093a3f7501443dc32eb00134ee27a40dd9fb93"
+  },
+  "audit": {
+   "path": "artifacts/world-components/organize-wording/sentence-base-784m-audit-v1.json",
+   "sha256": "8ab3f802007e17ef3178e1ff1d1bc86c7ceeec698aa536025a76e90e85e05535"
+  },
+  "report": {
+   "path": "design/world-engine-reports/components/sentence-base-784m-result-v1.md",
+   "sha256": "3025c800a03e4bbb7dd3652282cc8dbb1f7556f095188863af6a1b00ee2a34ec"
+  }
+ }
+}
