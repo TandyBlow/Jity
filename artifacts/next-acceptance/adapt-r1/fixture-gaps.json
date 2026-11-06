@@ -1,0 +1,24 @@
+{
+ "gaps": [
+  {
+   "pointId": "p2",
+   "gap": "current checkpoint missing"
+  },
+  {
+   "worldId": "world_1",
+   "pointId": "p3",
+   "sequence": 3,
+   "previousPointId": "p2",
+   "currentCheckpointDigest": "1f2473d32d4d",
+   "currentDigestMatchesPoint": true,
+   "previousPointFound": true,
+   "previousCheckpointFound": false,
+   "branchLinkedFrom": null,
+   "entityId": "person_c",
+   "fieldsRead": [
+    "positionSet"
+   ],
+   "gap": "position change needs the predecessor state; none is committed"
+  }
+ ]
+}

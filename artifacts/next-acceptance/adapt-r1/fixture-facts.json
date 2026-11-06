@@ -1,0 +1,130 @@
+{
+ "facts": [
+  {
+   "kind": "no_change",
+   "sentence": "第0点没有实体变化。",
+   "complete": true,
+   "scope": "point",
+   "provenance": {
+    "worldId": "world_1",
+    "pointId": "root_fx",
+    "sequence": 0,
+    "previousPointId": null,
+    "currentCheckpointDigest": "c89e78295e9c",
+    "currentDigestMatchesPoint": true,
+    "previousPointFound": false,
+    "previousCheckpointFound": false,
+    "branchLinkedFrom": null,
+    "entityId": null,
+    "fieldsRead": [
+     "delta_json"
+    ],
+    "adapted": "empty delta at this point"
+   }
+  },
+  {
+   "kind": "moved",
+   "sentence": "林川从走廊到门厅。",
+   "complete": true,
+   "from": "corridor",
+   "to": "hall",
+   "provenance": {
+    "worldId": "world_1",
+    "pointId": "p1",
+    "sequence": 1,
+    "previousPointId": "root_fx",
+    "currentCheckpointDigest": "2e8ae05ed5ee",
+    "currentDigestMatchesPoint": true,
+    "previousPointFound": true,
+    "previousCheckpointFound": true,
+    "branchLinkedFrom": null,
+    "previousDigestMatchesPoint": true,
+    "previousSequence": 0,
+    "entityId": "person_a",
+    "fieldsRead": [
+     "positionSet",
+     "sanitySet",
+     "previous.position"
+    ],
+    "adapted": "origin read from root_fx"
+   }
+  },
+  {
+   "kind": "sanity_changed",
+   "sentence": "林川的理智下降（10→7）。",
+   "complete": true,
+   "from": 10,
+   "to": 7,
+   "provenance": {
+    "worldId": "world_1",
+    "pointId": "p1",
+    "sequence": 1,
+    "previousPointId": "root_fx",
+    "currentCheckpointDigest": "2e8ae05ed5ee",
+    "currentDigestMatchesPoint": true,
+    "previousPointFound": true,
+    "previousCheckpointFound": true,
+    "branchLinkedFrom": null,
+    "previousDigestMatchesPoint": true,
+    "previousSequence": 0,
+    "entityId": "person_a",
+    "fieldsRead": [
+     "positionSet",
+     "sanitySet",
+     "previous.sanity"
+    ],
+    "adapted": "previous value read from root_fx"
+   }
+  },
+  {
+   "kind": "no_change",
+   "sentence": "第4点没有实体变化。",
+   "complete": true,
+   "scope": "point",
+   "provenance": {
+    "worldId": "world_1",
+    "pointId": "p4",
+    "sequence": 4,
+    "previousPointId": "p3",
+    "currentCheckpointDigest": "335601835631",
+    "currentDigestMatchesPoint": true,
+    "previousPointFound": true,
+    "previousCheckpointFound": true,
+    "branchLinkedFrom": null,
+    "previousDigestMatchesPoint": true,
+    "previousSequence": 3,
+    "entityId": null,
+    "fieldsRead": [
+     "delta_json"
+    ],
+    "adapted": "empty delta at this point"
+   }
+  },
+  {
+   "kind": "sanity_changed",
+   "sentence": "周宁的理智上升（0→4）。",
+   "complete": true,
+   "from": 0,
+   "to": 4,
+   "provenance": {
+    "worldId": "world_1",
+    "pointId": "p5",
+    "sequence": 5,
+    "previousPointId": "p4",
+    "currentCheckpointDigest": "fcbe00b3791b",
+    "currentDigestMatchesPoint": true,
+    "previousPointFound": true,
+    "previousCheckpointFound": true,
+    "branchLinkedFrom": null,
+    "previousDigestMatchesPoint": true,
+    "previousSequence": 4,
+    "entityId": "person_c",
+    "fieldsRead": [
+     "sanitySet",
+     "previous.sanity"
+    ],
+    "adapted": "previous value read from p4"
+   }
+  }
+ ]
+}

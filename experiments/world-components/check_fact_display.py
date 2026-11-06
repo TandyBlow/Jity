@@ -77,6 +77,10 @@ def check(fact, text):
     if kind == 'no_change':
         if any(w in text for w in WORLD_ACTION):
             return 'mismatch', 'the sentence asserts an action the record does not carry'
+        if not fact.get('scope'):
+            # the display refuses this fact for the same reason: the record does not say what the
+            # no-change covers, so no sentence can be authorised on its behalf
+            return 'undetermined', 'the record does not say what the no-change covers'
         if any(w in text for w in STASIS):
             return 'pass', 'an absence statement is present'
         return 'undetermined', 'no absence statement and no action either'

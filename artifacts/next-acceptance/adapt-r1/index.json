@@ -1,0 +1,131 @@
+{
+ "purpose": "read-only adapter from committed records to display facts, with provenance; replay of the same batch",
+ "noModelCalls": true,
+ "noTraining": true,
+ "readOnly": true,
+ "corrections": {
+  "wrongPassedScope": "0 of 1351 holds for this replay batch only",
+  "passRate": "15.0 percent this round; not a reliability figure",
+  "noChangeGate": "the no-change fact has no scope field, so model sentences for it are now undetermined too: 56 rows moved out of pass"
+ },
+ "display": {
+  "fixturePoints": 6,
+  "fixtureFacts": 5,
+  "fixtureGaps": 2,
+  "realPoints": 10,
+  "realFacts": 10,
+  "realGaps": 0,
+  "samples": [
+   {
+    "kind": "moved",
+    "sentence": "林川从走廊到门厅。",
+    "previousPointId": "root_fx",
+    "fieldsRead": [
+     "positionSet",
+     "sanitySet",
+     "previous.position"
+    ]
+   },
+   {
+    "kind": "sanity_changed",
+    "sentence": "林川的理智下降（10→7）。",
+    "previousPointId": "root_fx",
+    "fieldsRead": [
+     "positionSet",
+     "sanitySet",
+     "previous.sanity"
+    ]
+   },
+   {
+    "kind": "sanity_changed",
+    "sentence": "周宁的理智上升（0→4）。",
+    "previousPointId": "p4",
+    "fieldsRead": [
+     "sanitySet",
+     "previous.sanity"
+    ]
+   }
+  ]
+ },
+ "missingSources": [
+  {
+   "case": "current checkpoint absent",
+   "effect": "no fact for that point at all",
+   "fixturePoint": "p2"
+  },
+  {
+   "case": "predecessor checkpoint absent",
+   "effect": "origin would have to be guessed, so it is a gap",
+   "fixturePoint": "p3"
+  },
+  {
+   "case": "predecessor has no field for the entity",
+   "effect": "gap",
+   "fixturePoint": null
+  },
+  {
+   "case": "task delta",
+   "effect": "no display shape yet",
+   "fixturePoint": null
+  },
+  {
+   "case": "local corpus",
+   "effect": "all ten committed points carry an empty delta, so no fact path is exercised on real records",
+   "fixturePoint": null
+  }
+ ],
+ "checks": {
+  "previousStateReadFromPredecessor": "p1 adapted while the head is p5: the sentence says corridor to hall and sanity 10 to 7, the head says corridor at 4",
+  "zeroIsAValue": "p5 reads 0 to 4",
+  "noHeadFallback": "the adapter opens the database read-only and reads previous_point_id only",
+  "digestCheck": "every rendered fact reports currentDigestMatchesPoint"
+ },
+ "replay": {
+  "sentences": 1351,
+  "states": {
+   "undetermined": 1047,
+   "pass": 201,
+   "mismatch": 103
+  },
+  "passShare": 0.1488,
+  "undeterminedShare": 0.775,
+  "wrongPassed": [],
+  "rejectedButConveyed": 86,
+  "rejectedCauses": {
+   "no arrival: the destination is only name": 17,
+   "arrival holds, adds content": 69
+  }
+ },
+ "files": [
+  {
+   "path": "artifacts/next-acceptance/adapt-r1/fixture-facts.json",
+   "bytes": 3170,
+   "sha256": "bb1d9a91a18c5340f78abaabe9cae85a744d732931caa722894c2b0913a29a10"
+  },
+  {
+   "path": "artifacts/next-acceptance/adapt-r1/fixture-gaps.json",
+   "bytes": 511,
+   "sha256": "34e6766b3d310f58f7d2fc30d9a791e98307f6a99651b4e5a10dac1243339aea"
+  },
+  {
+   "path": "artifacts/next-acceptance/adapt-r1/real-facts.json",
+   "bytes": 5810,
+   "sha256": "2a06ea2196566166b9cbabe1cba7e02465205dcee4471e34f84bccd86262501e"
+  },
+  {
+   "path": "artifacts/next-acceptance/adapt-r1/real-points.json",
+   "bytes": 900,
+   "sha256": "d4e3c53d878b0e3a743e108cb785c2b5538430d2243188e524ae3d0684006869"
+  },
+  {
+   "path": "artifacts/next-acceptance/adapt-r1/replay-check.json",
+   "bytes": 315217,
+   "sha256": "1761873a96879e97ffab7df80615147ead2fdd02d86c7f3ebfea923484ba16a9"
+  },
+  {
+   "path": "artifacts/next-acceptance/adapt-r1/replay-metrics.json",
+   "bytes": 298,
+   "sha256": "c49ecb1e60218e4fcd1d9d581716355c840f225aa705b060cc5c9bd02ec36cc6"
+  }
+ ]
+}
