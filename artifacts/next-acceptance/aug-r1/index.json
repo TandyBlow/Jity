@@ -38,25 +38,40 @@
  },
  "facts": {
   "moved": {
-   "cf24": 85,
-   "final24": 76,
-   "moved24": 24,
-   "humanFinal": 185
+   "machineS": {
+    "cf24": 85,
+    "final24": 76,
+    "moved24": 24
+   },
+   "review": 0,
+   "a": 0,
+   "humanFinal": 184,
+   "humanTotal": 185,
+   "t22f1": "木桩的旧缆绳断了 — relation 缠着 dropped, machine S at coverage 0.71"
   },
   "ctl": {
-   "cf24": 83,
-   "final24": 75,
-   "moved24": 24,
+   "machineS": {
+    "cf24": 83,
+    "final24": 75,
+    "moved24": 24
+   },
+   "review": 3,
+   "a": 0,
    "humanFinal": 185,
-   "reviews": 3
+   "humanTotal": 185,
+   "t22f1": "木桩上缠着的旧缆绳断了 — relation kept, coverage 1.00"
   },
   "exp": {
-   "cf24": 82,
-   "final24": 75,
-   "moved24": 24,
+   "machineS": {
+    "cf24": 82,
+    "final24": 75,
+    "moved24": 24
+   },
+   "review": 3,
+   "a": 1,
    "humanFinal": 184,
-   "reviews": 3,
-   "wrong": 1
+   "humanTotal": 185,
+   "t22f1": "缠着的旧缆绳断了 — reference 木桩 dropped, machine A"
   }
  },
  "added": {
@@ -67,11 +82,13 @@
  "verdict": {
   "improvement": true,
   "largeFailure": false,
-  "factRegression": true,
+  "factRegressionMachineGate": true,
+  "factRegressionHuman": false,
   "addedRegression": false,
   "languageRegression": false,
   "overall": "not passed",
-  "reason": "the frame column improves 1/10 -> 8/10 and syntax breakage 8 -> 0, but the same shape now drops the reference name, which costs one fact unit (t22:f1) and two probes"
+  "reason": "the pre-registered machine gate fails because exp cf24 drops from 85 to 82; on the human count the start and the experiment are equal at 184/185, so this is the same failure changing form (relation lost -> reference lost), not a new fact regression",
+  "syntaxGain": "frame pass 1/10 -> 8/10, syntax breakage 8 -> 0"
  },
  "mechanism": "all 12 experiment exemplars embed the name inside the value, so the model learned to lead with the relation and take the name from the value; when the value has no name it is dropped",
  "files": [
@@ -155,5 +172,12 @@
    "bytes": 2034,
    "sha256": "ff7f203ec10f0b9138fd3977db326ae4fd6c72d81f15284627a56d72eba896da"
   }
- ]
+ ],
+ "correction": {
+  "date": "2026-11-05",
+  "what": "the first version of this index and of aug-r1-2026-11-05.md recorded moved at 185/185 while exp was judged by the frozen relation rule; the start arm must use the same rule",
+  "now": "both moved and exp are 184/185; ctl is 185/185",
+  "unchanged": "machine gate fail and the not-passed verdict"
+ },
+ "mechanismStatus": "hypothesis with support, not independently verified: every dropped-name unit is one whose fact value has no name; the alternative (the 12 exemplars simply push shorter openings) is not excluded"
 }
