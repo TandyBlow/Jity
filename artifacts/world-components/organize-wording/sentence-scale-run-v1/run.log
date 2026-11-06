@@ -1,0 +1,50 @@
+== training A-large
+`torch_dtype` is deprecated! Use `dtype` instead!
+A-large step 40 update 10
+A-large step 80 update 20
+A-large step 120 update 30
+A-large step 160 update 40
+A-large step 200 update 50
+A-large step 240 update 60
+A-large step 280 update 70
+A-large step 320 update 80
+A-large step 360 update 90
+A-large step 400 update 100
+A-large step 440 update 110
+A-large step 480 update 120
+== fixed A-large
+== regression A-large
+== training B-large
+B-large step 40 update 10
+B-large step 80 update 20
+B-large step 120 update 30
+B-large step 160 update 40
+B-large step 200 update 50
+B-large step 240 update 60
+B-large step 280 update 70
+B-large step 320 update 80
+B-large step 360 update 90
+B-large step 400 update 100
+B-large step 440 update 110
+B-large step 480 update 120
+== fixed B-large
+== regression B-large
+== training B-small
+B-small step 40 update 10
+B-small step 80 update 20
+B-small step 120 update 30
+B-small step 160 update 40
+B-small step 200 update 50
+B-small step 240 update 60
+B-small step 280 update 70
+B-small step 320 update 80
+B-small step 360 update 90
+B-small step 400 update 100
+B-small step 440 update 110
+B-small step 480 update 120
+== fixed B-small
+== regression B-small
+wrote D:\others\Jity\.local\world-components-worktree\artifacts\world-components\organize-wording\sentence-scale-run-v1\results.json
+A-large {"train_sources": 80, "train_calls": 231, "passes": 2.08, "sampled_unique_calls": 231, "all_calls": 231, "unseen_calls": [], "sampled_fact_exposures": 480, "sampled_target_tokens": 5400}
+B-large {"train_sources": 80, "train_calls": 134, "passes": 3.58, "sampled_unique_calls": 134, "all_calls": 134, "unseen_calls": [], "sampled_fact_exposures": 831, "sampled_target_tokens": 8323}
+B-small {"train_sources": 20, "train_calls": 42, "passes": 11.43, "sampled_unique_calls": 42, "all_calls": 42, "unseen_calls": [], "sampled_fact_exposures": 843, "sampled_target_tokens": 8704}

@@ -1,0 +1,390 @@
+{
+ "purpose": "manual paired audit of sentence-scale fixed 15 and regression 10; safety is on 19 multi-fact groups",
+ "counts": {
+  "fixed_multi_groups": 6,
+  "regression_multi_groups": 13,
+  "multi_groups_total": 19,
+  "B_only_safety_losses_B_large_vs_A_large": 3,
+  "B_only_sources": [
+   "t24",
+   "v07",
+   "v20"
+  ],
+  "A_large_fact_errors": [
+   "n4n-65 sanity direction",
+   "t24 f0/f1 grammar",
+   "v20 sanity direction"
+  ],
+  "expr_B_large_vs_A": {
+   "B": 17,
+   "A": 2,
+   "tie": 0
+  },
+  "expr_B_large_vs_B_small_multi": {
+   "B": 1,
+   "small": 2,
+   "tie": 16
+  },
+  "single_groups_fixed": 19,
+  "single_groups_regression": 7,
+  "B_large_single_regressions_vs_A": 0,
+  "B_small_single_failures": 11,
+  "B_small_bad_fixed_sources": 9,
+  "B_small_bad_fixed_sources_note": "n4n-109 (direction field on single), n4n-120 (scene hallucination), n4n-40/43/53/54 (direction field), v05/v21/v24 (field/meta/no_change replacement)"
+ },
+ "rows": [
+  {
+   "sourceId": "n4n-109",
+   "split": "fixed",
+   "facts": [
+    "f1",
+    "f2"
+   ],
+   "A_text": "沈砚从潮渡走到雾堤。沈砚开始愿意先开口。",
+   "B_large_text": "沈砚从潮渡走到雾堤,开始愿意先开口。",
+   "B_small_text": "沈砚从潮渡走到雾堤,开始愿意先开口。",
+   "A_factPass": true,
+   "B_large_factPass": true,
+   "B_small_factPass": true,
+   "B_only_safety_loss": false,
+   "expr_B_large_vs_A": "B",
+   "expr_B_large_vs_B_small": "tie",
+   "note": "B merges; B-small adds direction field only on its single f0 call"
+  },
+  {
+   "sourceId": "n4n-64",
+   "split": "fixed",
+   "facts": [
+    "f0",
+    "f1"
+   ],
+   "A_text": "沈砚把系泊绳从浅滩拖了回来。沈砚心里发紧。",
+   "B_large_text": "沈砚把系泊绳从浅滩拖了回来,心里发紧。",
+   "B_small_text": "沈砚把系泊绳从浅滩拖了回来,心里发紧。",
+   "A_factPass": true,
+   "B_large_factPass": true,
+   "B_small_factPass": true,
+   "B_only_safety_loss": false,
+   "expr_B_large_vs_A": "B",
+   "expr_B_large_vs_B_small": "tie",
+   "note": "B merges; both preserve facts"
+  },
+  {
+   "sourceId": "n4n-65",
+   "split": "fixed",
+   "facts": [
+    "f0",
+    "f1"
+   ],
+   "A_text": "沈砚把潮汐簿缺的那页补全了。沈砚心里发紧。",
+   "B_large_text": "沈砚把潮汐簿缺的那页补全了,心里松快了些。",
+   "B_small_text": "沈砚把潮汐簿缺的那页补全了,心里发紧。",
+   "A_factPass": true,
+   "B_large_factPass": true,
+   "B_small_factPass": true,
+   "B_only_safety_loss": false,
+   "expr_B_large_vs_A": "B",
+   "expr_B_large_vs_B_small": "B-large",
+   "note": "A-large says 发紧 but fact is 9->11 (松快); B-large correct; B-small says 发紧"
+  },
+  {
+   "sourceId": "n4n-74",
+   "split": "fixed",
+   "facts": [
+    "f0",
+    "f1"
+   ],
+   "A_text": "叶知微把灯罩擦得透亮。叶知微的袖口沾了铜油。",
+   "B_large_text": "叶知微把灯罩擦得透亮,袖口沾了铜油。",
+   "B_small_text": "叶知微把灯罩擦得透亮,袖口沾了铜油。",
+   "A_factPass": true,
+   "B_large_factPass": true,
+   "B_small_factPass": true,
+   "B_only_safety_loss": false,
+   "expr_B_large_vs_A": "B",
+   "expr_B_large_vs_B_small": "tie",
+   "note": "B merges; both preserve facts"
+  },
+  {
+   "sourceId": "n4n-75",
+   "split": "fixed",
+   "facts": [
+    "f0",
+    "f1"
+   ],
+   "A_text": "阿棠把一叠干纸放在桌角。阿棠的鞋底带着早市的泥水。",
+   "B_large_text": "阿棠把一叠干纸放在桌角,鞋底带着早市的泥水。",
+   "B_small_text": "阿棠把一叠干纸放在桌角,鞋底带着早市的泥水。",
+   "A_factPass": true,
+   "B_large_factPass": true,
+   "B_small_factPass": true,
+   "B_only_safety_loss": false,
+   "expr_B_large_vs_A": "B",
+   "expr_B_large_vs_B_small": "tie",
+   "note": "B merges; both preserve facts"
+  },
+  {
+   "sourceId": "n4n-87",
+   "split": "fixed",
+   "facts": [
+    "f0",
+    "f1"
+   ],
+   "A_text": "韩渡从潮渡走到雾堤。韩渡把松脱的钟绳重新系紧。",
+   "B_large_text": "韩渡从潮渡走到雾堤,把松脱的钟绳重新系紧。",
+   "B_small_text": "韩渡从潮渡走到雾堤,把松脱的钟绳重新系紧。",
+   "A_factPass": true,
+   "B_large_factPass": true,
+   "B_small_factPass": true,
+   "B_only_safety_loss": false,
+   "expr_B_large_vs_A": "B",
+   "expr_B_large_vs_B_small": "tie",
+   "note": "B merges; both preserve facts"
+  },
+  {
+   "sourceId": "fixture-r5",
+   "split": "regression",
+   "facts": [
+    "f0",
+    "f1"
+   ],
+   "A_text": "林川的帽檐压出折痕。林川的脚踝肿了一块。",
+   "B_large_text": "林川的帽檐压出折痕,脚踝肿了一块。",
+   "B_small_text": "林川的帽檐压出折痕,脚踝肿了一块。",
+   "A_factPass": true,
+   "B_large_factPass": true,
+   "B_small_factPass": true,
+   "B_only_safety_loss": false,
+   "expr_B_large_vs_A": "B",
+   "expr_B_large_vs_B_small": "tie",
+   "note": "B merges; both preserve facts"
+  },
+  {
+   "sourceId": "t03",
+   "split": "regression",
+   "facts": [
+    "f0",
+    "f1",
+    "f2"
+   ],
+   "A_text": "叶知微把灯罩擦得透亮。叶知微的袖口沾了铜油。叶知微把抹布搭回梯脚。",
+   "B_large_text": "叶知微把灯罩擦得透亮,袖口沾了铜油,把抹布搭回梯脚。",
+   "B_small_text": "叶知微把灯罩擦得透亮,袖口沾了铜油,把抹布搭回梯脚。",
+   "A_factPass": true,
+   "B_large_factPass": true,
+   "B_small_factPass": true,
+   "B_only_safety_loss": false,
+   "expr_B_large_vs_A": "B",
+   "expr_B_large_vs_B_small": "tie",
+   "note": "B merges; both preserve facts"
+  },
+  {
+   "sourceId": "t08",
+   "split": "regression",
+   "facts": [
+    "f0",
+    "f1"
+   ],
+   "A_text": "阿棠把银鳞鱼搬上案板。顾行舟把缆绳绕上摊棚边的木桩。",
+   "B_large_text": "阿棠把银鳞鱼搬上案板,顾行舟把缆绳绕上摊棚边的木桩。",
+   "B_small_text": "阿棠把银鳞鱼搬上案板,顾行舟把缆绳绕上摊棚边的木桩。",
+   "A_factPass": true,
+   "B_large_factPass": true,
+   "B_small_factPass": true,
+   "B_only_safety_loss": false,
+   "expr_B_large_vs_A": "B",
+   "expr_B_large_vs_B_small": "tie",
+   "note": "B merges; both preserve facts"
+  },
+  {
+   "sourceId": "t08",
+   "split": "regression",
+   "facts": [
+    "f2",
+    "f3"
+   ],
+   "A_text": "阿棠的辫梢沾了白汽。顾行舟的外袍下摆沾了泥水。",
+   "B_large_text": "阿棠的辫梢沾了白汽,顾行舟的外袍下摆沾了泥水。",
+   "B_small_text": "阿棠的辫梢沾了白汽,顾行舟的外袍下摆沾了泥水。",
+   "A_factPass": true,
+   "B_large_factPass": true,
+   "B_small_factPass": true,
+   "B_only_safety_loss": false,
+   "expr_B_large_vs_A": "B",
+   "expr_B_large_vs_B_small": "tie",
+   "note": "B merges; both preserve facts"
+  },
+  {
+   "sourceId": "t22",
+   "split": "regression",
+   "facts": [
+    "f0",
+    "f1"
+   ],
+   "A_text": "系泊绳泥水结了一层白盐。木桩缠着的旧缆绳断了。",
+   "B_large_text": "系泊绳的泥水结了一层白盐,木桩缠着的旧缆绳断了。",
+   "B_small_text": "系泊绳的泥水结了一层白盐,木桩缠着的旧缆绳断了。",
+   "A_factPass": true,
+   "B_large_factPass": true,
+   "B_small_factPass": true,
+   "B_only_safety_loss": false,
+   "expr_B_large_vs_A": "B",
+   "expr_B_large_vs_B_small": "tie",
+   "note": "A has 系泊绳泥水 grammar; B has 系泊绳的泥水; both preserve facts"
+  },
+  {
+   "sourceId": "t22",
+   "split": "regression",
+   "facts": [
+    "f2",
+    "f3"
+   ],
+   "A_text": "顾行舟把缆绳重新绕上木桩。沈砚把系泊绳拖回岸上。",
+   "B_large_text": "顾行舟把缆绳重新绕上木桩,沈砚把系泊绳拖回岸上。",
+   "B_small_text": "顾行舟把缆绳重新绕上木桩,沈砚把系泊绳拖回岸上。",
+   "A_factPass": true,
+   "B_large_factPass": true,
+   "B_small_factPass": true,
+   "B_only_safety_loss": false,
+   "expr_B_large_vs_A": "B",
+   "expr_B_large_vs_B_small": "tie",
+   "note": "B merges; both preserve facts"
+  },
+  {
+   "sourceId": "t24",
+   "split": "regression",
+   "facts": [
+    "f0",
+    "f1"
+   ],
+   "A_text": "纸灯笼的被风扯破一角。排水沟的里面积了泥。",
+   "B_large_text": "纸灯笼被风扯破一角,排水沟的里面积了泥。",
+   "B_small_text": "纸灯笼被风扯破一角,排水沟里面积了泥。",
+   "A_factPass": true,
+   "B_large_factPass": true,
+   "B_small_factPass": true,
+   "B_only_safety_loss": false,
+   "expr_B_large_vs_A": "B",
+   "expr_B_large_vs_B_small": "B-small",
+   "note": "A has 纸灯笼的/排水沟的 grammar; B-large better; B-small also corrects 排水沟里"
+  },
+  {
+   "sourceId": "t24",
+   "split": "regression",
+   "facts": [
+    "f2",
+    "f3"
+   ],
+   "A_text": "沈砚把纸灯笼扶正。阿棠把鱼筐放在门槛边。",
+   "B_large_text": "阿棠把鱼筐放在门槛边。",
+   "B_small_text": "阿棠把纸灯笼扶正,阿棠把鱼筐放在门槛边。",
+   "A_factPass": true,
+   "B_large_factPass": false,
+   "B_small_factPass": true,
+   "B_only_safety_loss": true,
+   "expr_B_large_vs_A": "A",
+   "expr_B_large_vs_B_small": "tie",
+   "note": "B-large omits f2 沈砚把纸灯笼扶正; B-small writes it but assigns to 阿棠 (actor swap); both fail differently"
+  },
+  {
+   "sourceId": "train-r4",
+   "split": "regression",
+   "facts": [
+    "f0",
+    "f1"
+   ],
+   "A_text": "沈砚的围巾松开一截。沈砚的脸色发白。",
+   "B_large_text": "沈砚的围巾松开一截,脸色发白。",
+   "B_small_text": "沈砚的围巾松开一截,脸色发白。",
+   "A_factPass": true,
+   "B_large_factPass": true,
+   "B_small_factPass": true,
+   "B_only_safety_loss": false,
+   "expr_B_large_vs_A": "B",
+   "expr_B_large_vs_B_small": "tie",
+   "note": "B merges; both preserve facts"
+  },
+  {
+   "sourceId": "v07",
+   "split": "regression",
+   "facts": [
+    "f0",
+    "f1"
+   ],
+   "A_text": "铜灯的灯罩上积了灰。潮汐簿的封面蒙了一层灰。",
+   "B_large_text": "铜灯的灯罩上积了灰,封面蒙了一层灰。",
+   "B_small_text": "铜灯的灯罩上积了灰,潮汐簿封面蒙了一层灰。",
+   "A_factPass": true,
+   "B_large_factPass": true,
+   "B_small_factPass": true,
+   "B_only_safety_loss": true,
+   "expr_B_large_vs_A": "A",
+   "expr_B_large_vs_B_small": "B-small",
+   "note": "B-large drops 潮汐簿, leaving 封面 with no owner; B-small writes 潮汐簿封面"
+  },
+  {
+   "sourceId": "v14",
+   "split": "regression",
+   "facts": [
+    "f0",
+    "f1",
+    "f2"
+   ],
+   "A_text": "沈砚从潮汐档案馆走到潮渡。沈砚把系泊绳拖回岸上。沈砚心里发紧。",
+   "B_large_text": "沈砚从潮汐档案馆走到潮渡,把系泊绳拖回岸上,心里发紧。",
+   "B_small_text": "沈砚从潮汐档案馆走到潮渡,把系泊绳拖回岸上,心里发紧。",
+   "A_factPass": true,
+   "B_large_factPass": true,
+   "B_small_factPass": true,
+   "B_only_safety_loss": false,
+   "expr_B_large_vs_A": "B",
+   "expr_B_large_vs_B_small": "tie",
+   "note": "B merges; both preserve facts"
+  },
+  {
+   "sourceId": "v18",
+   "split": "regression",
+   "facts": [
+    "f0",
+    "f1",
+    "f2"
+   ],
+   "A_text": "沈砚从潮渡走到雾堤。沈砚把雾警钟敲响。沈砚心里发紧。",
+   "B_large_text": "沈砚从潮渡走到雾堤,把雾警钟敲响,心里发紧。",
+   "B_small_text": "沈砚从潮渡走到雾堤,把雾警钟敲响,心里发紧。",
+   "A_factPass": true,
+   "B_large_factPass": true,
+   "B_small_factPass": true,
+   "B_only_safety_loss": false,
+   "expr_B_large_vs_A": "B",
+   "expr_B_large_vs_B_small": "tie",
+   "note": "B merges; both preserve facts"
+  },
+  {
+   "sourceId": "v20",
+   "split": "regression",
+   "facts": [
+    "f0",
+    "f1",
+    "f2"
+   ],
+   "A_text": "沈砚从潮生巷走到潮渡。沈砚心里发紧。沈砚把渡船推离栈桥。",
+   "B_large_text": "沈砚从潮生巷走到潮渡,心里松快了些。",
+   "B_small_text": "沈砚从潮生巷走到潮渡,把渡船推离栈桥。",
+   "A_factPass": true,
+   "B_large_factPass": false,
+   "B_small_factPass": false,
+   "B_only_safety_loss": true,
+   "expr_B_large_vs_A": "B",
+   "expr_B_large_vs_B_small": "tie",
+   "note": "A-large wrong direction 发紧; B-large correct 松快 but omits f2; B-small omits f1, keeps f2"
+  }
+ ],
+ "source_level_expression_B_large_vs_B_small": {
+  "B_large": 9,
+  "B_small": 1,
+  "tie": 15,
+  "note": "B-large wins all 9 fixed sources with B-small field/meta/no_change failures; B-small wins v07 by preserving 潮汐簿; remaining ties, including t24/v20 where both fail differently"
+ },
+ "conclusion": "B-large fixed multi groups have no B-only loss; regression retains 3 B-only losses (t24, v07, v20). The safety gate fails 3/19. B-large expression beats A-large 17/2 on multi groups and has no single-group regression. B-small is much worse on fixed (9/15 bad) but preserves v07; it also has 11 single-group failures. Data scale helps coverage/expression but does not clear the fixed-budget safety gate."
+}
