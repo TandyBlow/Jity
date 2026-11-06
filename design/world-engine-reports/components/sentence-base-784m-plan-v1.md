@@ -2,7 +2,7 @@
 
 状态：只交方案，不下载训练、不改材料、不训练。数据规模路线已按结果结束；这里只换一个基座，先验证设备、分词和单变量边界。
 
-> **冻结与执行前置（2026-11-06）：** 协议已写入 `artifacts/world-components/organize-wording/sentence-base-784m-freeze-v1.json`。三件事已冻结：①逐次复用 `sampled_calls-B-large.jsonl` 的 480 次调用顺序、source/call/fact/target 和优化配置，只把 tokenizer 造成的 token 数变化单列；②只做 B-large-784 对 B-large-77 的逐例得失，以及对 A-large-77 的 19 个多事实组 B-only 安全门，不设 A-large-784，不声称 784M 下组级优于逐事实；③训练前锁权重/config/tokenizer 哈希，保存最终权重和每次生成的 token/EOS/触顶/超时，长度检查不过即停。**实测设备：RTX 4060 Laptop 8188 MiB、系统内存 16 GB，不满足 784M 全参数 fp32 AdamW 所需的 24GB 级显存；本轮在下载/训练前停止，没有用 LoRA、量化、bf16 或 CPU 绕过。**
+> **冻结与执行前置（2026-11-06）：** 协议已写入 `artifacts/world-components/organize-wording/sentence-base-784m-freeze-v1.json`。三件事已冻结：①逐次复用 `sampled_calls-B-large.jsonl` 的 480 次调用顺序、source/call/fact/target 和优化配置；②只做 B-large-784 对 B-large-77 的逐例得失，以及对 A-large-77 的 19 个多事实组 B-only 安全门，不设 A-large-784，不声称 784M 下组级优于逐事实；③保存最终权重、权重/config/tokenizer 哈希、每次生成的 token/EOS/触顶/超时，长度检查不过即停。**实测：HPC `gpu` 分区 RTX 4090 D 24GB，前置检查通过；权重 `53a927…`、config `ba0d13…`、tokenizer `c65fef…`（与 77M 字节相同）；480 次复用 prompt 最大输入 232、目标 35，无截断，target token 逐条与 B-large-77 记录相同。**
 
 ## 1. 只选一个基座
 
@@ -13,7 +13,7 @@
 - 官方模型卡写明它基于 **mT5-large 的中文版**，先做中文语料自适应预训练，再在约 100 个中文数据集、30 万级样本的多任务 Text2Text 数据上训练；模型卡还报告了中文 zero-shot ZeroCLUE 的成绩。这是**不同的预训练路径和中文任务覆盖**，不是“77M 同配方放大”。来源：[模型卡](https://huggingface.co/IDEA-CCNL/Randeng-T5-784M-MultiTask-Chinese)。
 - 因此可作为“更大容量＋更广中文 Text2Text 预训练”的单一基座候选；它在中文组合表达上是否更好，仍要本项目实测，不能引用模型卡成绩当结论。
 
-必须同时记录一个限制：**这不是纯参数数量消融**。784M 走 mT5-large 路线，架构类和分词器都可能与当前 T5-77M 不同；所以“只换基座”包含架构/分词器差异。若要把差异拆成纯参数，本轮做不到，也不混入目标或接口改动来解释结果。
+必须同时记录一个限制：**这不是纯参数数量消融**。模型卡以 mT5-large 中文路线为初始化，但发布 config 实际是 `T5ForConditionalGeneration`（24 层、d_model 1024），tokenizer 与当前 77M **字节相同**（`c65fef…`）。因此本轮没有目标/分词/接口改动，仍是大基座及其预训练/规模差异，不是只改参数。
 
 ## 2. 固定材料与接口
 
@@ -26,9 +26,9 @@
 
 ## 3. 先做三项前置检查（训练前）
 
-1. **权重和分词器锁定**：下载后记录 784M 权重、config、tokenizer/`spiece.model` 的哈希；未锁定不训练。
-2. **分词长度审计**：把 120 源的全部 prompt 和 target 用 784M 的 tokenizer 编码，报告输入/目标 token 分布、超过 512/128 的条数和截断位置。当前接口不改；若超限，停止，另立长度/接口方案。
-3. **设备与显存**：当前 RTX 4060 Laptop 8GB **不够全参数微调 784M**；预计需要 **24GB 级 GPU**（A10/L4/4090 24GB 或同级）。不把 fp32 换成 LoRA/量化/bf16 来绕过；那会改变训练配置，属于另一实验。设备不可用就停止。
+1. **权重和分词器锁定**：权重 `53a927…`（3,136,623,589 bytes）、config `ba0d13…`、tokenizer `c65fef…` 已记录；tokenizer 与 77M 字节相同。
+2. **分词长度审计**：480 次复用 prompt 最大输入 **232**、目标 **35**；超过 512/128 的条数 **0**，target token 与 B-large-77 记录逐条相同。当前接口不改。
+3. **设备与显存**：本地 RTX 4060 Laptop 8GB 不够；使用 HPC `gpu` 分区 RTX 4090 D 24GB，前置检查通过。不把 fp32 换成 LoRA/量化/bf16；那会改变训练配置。
 
 ## 4. 训练与评价
 

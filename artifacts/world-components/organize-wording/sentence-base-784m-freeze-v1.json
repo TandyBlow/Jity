@@ -1,24 +1,33 @@
 {
  "protocol": "sentence-base-784m-v1",
  "created": "2026-11-06",
- "status": "blocked_device_precheck",
+ "status": "prechecks_passed",
  "training_started": false,
  "model": {
   "id": "IDEA-CCNL/Randeng-T5-784M-MultiTask-Chinese",
   "nominal_parameters": "784M",
   "architecture_note": "mT5-large Chinese route; not a pure parameter-count scaling of T5-77M; tokenizer/architecture audited before any run",
-  "weights_sha256": "not_locked; device precheck failed before download/training",
-  "config_sha256": "not_locked; device precheck failed before download/training",
-  "tokenizer_sha256": "not_locked; device precheck failed before download/training"
+  "weights_sha256": "53a9274353c0e873b6c61a84d5210bfc78d3d2f78653f7911eb5cf09a9b964ca",
+  "config_sha256": "ba0d13cb1086e7f9f5bd3fcf603ea3130becd8c3a14612a2f98fac1baf168f59",
+  "tokenizer_sha256": "c65feffa65ff0378759778193852083d23349cb1b40c906e9463a12f8076ff32",
+  "architecture": "T5ForConditionalGeneration",
+  "layers": 24,
+  "d_model": 1024,
+  "d_ff": 2816,
+  "vocab_size": 32596,
+  "weights_bytes": 3136623589,
+  "source_note": "Model card describes an mT5-large Chinese initialization; the released config is T5ForConditionalGeneration and the tokenizer is byte-identical to the 77M model. It is a larger pretrained base with changed pretraining/scale, not a pure parameter-count ablation.",
+  "locked": true
  },
  "device_precheck": {
-  "result": "fail",
-  "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
-  "gpu_memory_mib": 8188,
-  "ram_gb": 16,
+  "result": "pass",
+  "host": "hpc.bnbu.edu.cn",
+  "partition": "gpu",
+  "gpu": "NVIDIA GeForce RTX 4090 D",
+  "gpu_memory_gb": 24,
   "required": "24GB-class GPU for full fp32 AdamW fine-tuning of 784M",
-  "reason": "8GB cannot hold weights+gradients+Adam states for full fine-tuning; no silent switch to LoRA/quantization/bf16/CPU",
-  "action": "stop before download/training"
+  "local_note": "local RTX 4060 8GB is not used",
+  "action": "proceed after freeze commit"
  },
  "fixed_material": {
   "path": "artifacts/world-components/organize-wording/sentence-scale-v1.jsonl",
@@ -54,7 +63,10 @@
  "optimizer": {
   "name": "AdamW",
   "lr": 0.0005,
-  "betas": [0.9, 0.999],
+  "betas": [
+   0.9,
+   0.999
+  ],
   "eps": 1e-08,
   "weight_decay": 0.01,
   "warmup": 12,
@@ -72,7 +84,7 @@
  "checkpoint_and_generation_identity": {
   "required": "save final weights, config, tokenizer files and hashes; save actual generated tokens, stop reason EOS/cap/timeout for every call",
   "length_precheck": "tokenize all prompts/targets; if max 512/128 is exceeded, stop; no silent truncation or temporary relaxation",
-  "not_run": "device precheck failed before tokenizer/length audit"
+  "not_run": "prechecks passed; training will save final weights and per-call records"
  },
  "cost": {
   "estimate": "1-2 GPU-hours on a 24GB GPU for one arm plus evaluation; 2 person-days",
@@ -85,5 +97,31 @@
   "any B-only safety loss on the 19 multi-fact groups",
   "expression regression or single-group regression",
   "any failure stops the larger-base route; no added steps, ratios, second base, or organization module"
- ]
+ ],
+ "token_audit": {
+  "path": "artifacts/world-components/organize-wording/sentence-base-784m-token-audit-v1.json",
+  "sha256": "38c5f215fd0b8d4ee8cf65f41713b87603831694b79d7ad3db9f04525bf4f0ed",
+  "max_input_tokens": 232,
+  "max_target_tokens": 35,
+  "input_over_512": 0,
+  "target_over_128": 0,
+  "target_token_mismatches": 0,
+  "tokenizer_same_as_77m": true,
+  "meaning": "same prompt/target text; tokenization is identical because the tokenizer file hash matches; no target/interface change"
+ },
+ "training": {
+  "started": false,
+  "script": "experiments/world-components/organize_wording/train_sentence_scale_784.py",
+  "script_sha256": "149522dce5850b58a1134a6a5ee1dec67de5a574bcbe5301a9cd8c70c7f13a16",
+  "hpc_job": "experiments/world-components/organize_wording/hpc_sentence784_run.sh",
+  "base_local": "experiments/world-components/assets/randeng-t5-784m",
+  "base_remote": "~/sentence784_run/base/randeng-t5-784m",
+  "out_remote": "~/sentence784_run/out",
+  "replay_calls": 480,
+  "updates": 120,
+  "selection": "none; final point",
+  "greedy": true,
+  "same_optimizer": true,
+  "token_counts_may_differ": false
+ }
 }
