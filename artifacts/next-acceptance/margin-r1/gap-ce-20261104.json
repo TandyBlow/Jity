@@ -1,0 +1,222 @@
+{
+ "purpose": "does the direction margin cover the errors that actually occur at C",
+ "device": "cuda",
+ "model": "ckpt",
+ "group": "the six location-reference rolepair rows, whole",
+ "confirmedPreviously": {
+  "R02": "p-rp6b",
+  "R08": "p-rp4b",
+  "R09": "p-rp1b",
+  "R15": "p-rp3b",
+  "R17": "p-rp5b",
+  "R35": "p-rp3b",
+  "R36": "p-rp2b"
+ },
+ "marginThreshold": 1.0,
+ "rows": [
+  {
+   "unitId": "p-rp1b",
+   "pair": "rp1",
+   "name": "潮汐簿",
+   "other": "干纸",
+   "relation": "压",
+   "correct": "压在潮汐簿上的干纸滑开了。",
+   "reversed": "潮汐簿压着的干纸滑开了。",
+   "generated": "压着的干纸滑开了。",
+   "stop": null,
+   "sum": {
+    "correct": -0.142,
+    "reversed": -0.138,
+    "generated": -0.266
+   },
+   "mean": {
+    "correct": -0.011,
+    "reversed": -0.011,
+    "generated": -0.027
+   },
+   "tokens": [
+    13,
+    13,
+    10
+   ],
+   "marginSum": -0.005,
+   "marginMean": -0.0,
+   "lossActive": true,
+   "errorTags": [
+    "name-missing"
+   ],
+   "prefersGeneratedOverCorrect": false
+  },
+  {
+   "unitId": "p-rp2b",
+   "pair": "rp2",
+   "name": "木桩",
+   "other": "渡船",
+   "relation": "靠",
+   "correct": "靠在木桩上的渡船退了半尺。",
+   "reversed": "木桩靠着的渡船退了半尺。",
+   "generated": "靠着的渡船退了半尺。",
+   "stop": null,
+   "sum": {
+    "correct": -0.311,
+    "reversed": -0.603,
+    "generated": -0.681
+   },
+   "mean": {
+    "correct": -0.022,
+    "reversed": -0.043,
+    "generated": -0.057
+   },
+   "tokens": [
+    14,
+    14,
+    12
+   ],
+   "marginSum": 0.293,
+   "marginMean": 0.021,
+   "lossActive": true,
+   "errorTags": [
+    "name-missing"
+   ],
+   "prefersGeneratedOverCorrect": false
+  },
+  {
+   "unitId": "p-rp3b",
+   "pair": "rp3",
+   "name": "鱼筐",
+   "other": "银鳞鱼",
+   "relation": "堆",
+   "correct": "堆在鱼筐底的银鳞鱼露出来。",
+   "reversed": "鱼筐堆着的银鳞鱼露出来。",
+   "generated": "堆着的银鳞鱼露出来。",
+   "stop": null,
+   "sum": {
+    "correct": -0.246,
+    "reversed": -0.359,
+    "generated": -0.413
+   },
+   "mean": {
+    "correct": -0.018,
+    "reversed": -0.028,
+    "generated": -0.038
+   },
+   "tokens": [
+    14,
+    13,
+    11
+   ],
+   "marginSum": 0.113,
+   "marginMean": 0.01,
+   "lossActive": true,
+   "errorTags": [
+    "name-missing"
+   ],
+   "prefersGeneratedOverCorrect": false
+  },
+  {
+   "unitId": "p-rp4b",
+   "pair": "rp4",
+   "name": "铜灯罩",
+   "other": "灯芯",
+   "relation": "插",
+   "correct": "插在铜灯罩里的灯芯歪了。",
+   "reversed": "铜灯罩插着的灯芯歪了。",
+   "generated": "插着的灯芯歪了。",
+   "stop": null,
+   "sum": {
+    "correct": -0.098,
+    "reversed": -0.083,
+    "generated": -0.152
+   },
+   "mean": {
+    "correct": -0.008,
+    "reversed": -0.006,
+    "generated": -0.015
+   },
+   "tokens": [
+    13,
+    13,
+    10
+   ],
+   "marginSum": -0.014,
+   "marginMean": -0.001,
+   "lossActive": true,
+   "errorTags": [
+    "name-missing"
+   ],
+   "prefersGeneratedOverCorrect": false
+  },
+  {
+   "unitId": "p-rp5b",
+   "pair": "rp5",
+   "name": "石板",
+   "other": "油纸伞",
+   "relation": "靠",
+   "correct": "靠在石板上的油纸伞歪了。",
+   "reversed": "石板靠着的油纸伞歪了。",
+   "generated": "靠着的油纸伞歪了。",
+   "stop": null,
+   "sum": {
+    "correct": -0.112,
+    "reversed": -0.183,
+    "generated": -0.184
+   },
+   "mean": {
+    "correct": -0.009,
+    "reversed": -0.014,
+    "generated": -0.017
+   },
+   "tokens": [
+    13,
+    13,
+    11
+   ],
+   "marginSum": 0.07,
+   "marginMean": 0.005,
+   "lossActive": true,
+   "errorTags": [
+    "name-missing"
+   ],
+   "prefersGeneratedOverCorrect": false
+  },
+  {
+   "unitId": "p-rp6b",
+   "pair": "rp6",
+   "name": "钟架",
+   "other": "钟绳",
+   "relation": "搭",
+   "correct": "搭在钟架上的钟绳垂到堤面。",
+   "reversed": "钟架搭着的钟绳垂到堤面。",
+   "generated": "搭着的钟绳垂到堤面。",
+   "stop": null,
+   "sum": {
+    "correct": -0.006,
+    "reversed": -0.031,
+    "generated": -0.048
+   },
+   "mean": {
+    "correct": -0.0,
+    "reversed": -0.002,
+    "generated": -0.004
+   },
+   "tokens": [
+    14,
+    14,
+    12
+   ],
+   "marginSum": 0.024,
+   "marginMean": 0.002,
+   "lossActive": true,
+   "errorTags": [
+    "name-missing"
+   ],
+   "prefersGeneratedOverCorrect": false
+  }
+ ],
+ "optimizer": "never constructed",
+ "fetch": {
+  "source": "gap-ce-20261104.json",
+  "remoteSha256": "676e7ce3d1387758a98ad8953244af31d5e6a3e6bdfbac75ad4ef75c6c990a7d",
+  "redaction": "home path in base.dir / model.dir replaced with <HOME> before download"
+ }
+}

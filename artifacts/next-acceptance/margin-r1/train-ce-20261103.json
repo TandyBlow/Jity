@@ -1,0 +1,92 @@
+{
+ "purpose": "equal-budget continuation for the target-revision round",
+ "arm": "ce-20261103",
+ "device": "cuda",
+ "base": {
+  "dir": "<HOME>/n4arm3/artifacts/next-runs/three-arm-c/ckpt",
+  "files": {
+   "config.json": "cd553527a919b8292894d4e8cc043fcb1a45c60586f9dfa4399f7b2b2e657a9e",
+   "spiece.model": "c65feffa65ff0378759778193852083d23349cb1b40c906e9463a12f8076ff32",
+   "model.safetensors": "08276c0caa1605408d145f5efea5bc0e22edb106f5accb2888c187bb9a484c9c"
+  }
+ },
+ "pools": [
+  {
+   "path": "artifacts/three-arm-r1/arm-c-verbalizer.jsonl",
+   "rows": 229,
+   "sha256": "ffc07355e3d268cdabd896095958a445ffa04dd04462aea1aa474246d82216fd"
+  },
+  {
+   "path": "artifacts/three-arm-r1/arm-c-expand78.jsonl",
+   "rows": 78,
+   "sha256": "92109cbda137cb4219f7c6ea925edaf52c406946c9c02dc21745c901255b78c0"
+  },
+  {
+   "path": "artifacts/three-arm-r1/arm-c-object34.jsonl",
+   "rows": 34,
+   "sha256": "5f1e373c271f147a830d9344625e7e931c3cec036bbda817b562b826e1e0758e"
+  },
+  {
+   "path": "artifacts/margin-r1/train.jsonl",
+   "rows": 12,
+   "sha256": "c27db61740fb175c4142a40cab2aebb258b4a74aab6ddbb497ec3d38c5792eac"
+  }
+ ],
+ "hyper": {
+  "steps": 120,
+  "batch": 8,
+  "mix": [
+   4,
+   2,
+   1,
+   1
+  ],
+  "lr": 0.0001,
+  "seed": 20261103,
+  "precision": "fp32",
+  "optimizer": "AdamW",
+  "marginBeta": 0.0,
+  "margin": 1.0,
+  "negatives": "artifacts/margin-r1/train-negatives.jsonl",
+  "negativesSha256": "ea88111c5fefcf80be21d61798de3909565ab74684391c5f6a6f276665ba9a84",
+  "negativeRng": "not used"
+ },
+ "sampling": {
+  "ids": 960,
+  "idSha256": "e13abe12593995bced9d487ad87857090b30b822bf441343c99baf172dd5fc51",
+  "targetSha256": "647cb028d699f16e845c8b166f298094a94ce82e416ab8448b38b3603ec54755"
+ },
+ "losses": [
+  {
+   "step": 1,
+   "loss": 0.1957,
+   "ce": 0.1957
+  },
+  {
+   "step": 40,
+   "loss": 0.2638,
+   "ce": 0.2638
+  },
+  {
+   "step": 80,
+   "loss": 0.1806,
+   "ce": 0.1806
+  },
+  {
+   "step": 120,
+   "loss": 0.1436,
+   "ce": 0.1436
+  }
+ ],
+ "seconds": 7.6,
+ "checkpoint": {
+  "dir": "artifacts/next-runs/margin-ce-20261103/ckpt",
+  "modelSha256": "720e2bcfa399e7ad9728726c2c3ac590fa26efb852f6a416f5fa768d538ab0b7"
+ },
+ "snapshots": {},
+ "fetch": {
+  "source": "train-report.json",
+  "remoteSha256": "bde6c4337c410613ea9e6ba6c7b215a5d857b6dc4de153259ddd4a490c18c01d",
+  "redaction": "home path in base.dir / model.dir replaced with <HOME> before download"
+ }
+}

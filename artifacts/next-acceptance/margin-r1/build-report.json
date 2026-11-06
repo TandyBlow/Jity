@@ -1,0 +1,136 @@
+{
+ "purpose": "direction-margin arms: twelve training facts, eight holdout facts",
+ "train": 12,
+ "holdout": 8,
+ "failures": [],
+ "entityOverlap": [],
+ "relations": {
+  "train": [
+   "卡",
+   "压",
+   "堆",
+   "套",
+   "挂",
+   "插",
+   "搭",
+   "盖",
+   "系",
+   "缠",
+   "靠"
+  ],
+  "holdout": [
+   "压",
+   "堆",
+   "挂",
+   "插",
+   "搭",
+   "系",
+   "缠",
+   "靠"
+  ]
+ },
+ "pairs": [
+  {
+   "unitId": "mt01",
+   "correct": "压在石磨上的竹篓歪了。",
+   "reversed": "石磨压着的竹篓歪了。"
+  },
+  {
+   "unitId": "mt02",
+   "correct": "靠在木箱上的铁铲滑下来。",
+   "reversed": "木箱靠着的铁铲滑下来。"
+  },
+  {
+   "unitId": "mt03",
+   "correct": "堆在竹筐里的干柴露出来。",
+   "reversed": "竹筐堆着的干柴露出来。"
+  },
+  {
+   "unitId": "mt04",
+   "correct": "插在灯台里的蜡烛倒了。",
+   "reversed": "灯台插着的蜡烛倒了。"
+  },
+  {
+   "unitId": "mt05",
+   "correct": "搭在绳梯上的麻绳垂下来。",
+   "reversed": "绳梯搭着的麻绳垂下来。"
+  },
+  {
+   "unitId": "mt06",
+   "correct": "缠在木桶上的草绳散了。",
+   "reversed": "木桶缠着的草绳散了。"
+  },
+  {
+   "unitId": "mt07",
+   "correct": "挂在木钉上的铜盆晃了。",
+   "reversed": "木钉挂着的铜盆晃了。"
+  },
+  {
+   "unitId": "mt08",
+   "correct": "系在竹竿上的布条松了。",
+   "reversed": "竹竿系着的布条松了。"
+  },
+  {
+   "unitId": "mt09",
+   "correct": "套在陶罐上的铜环歪了。",
+   "reversed": "陶罐套着的铜环歪了。"
+  },
+  {
+   "unitId": "mt10",
+   "correct": "卡在石阶上的铁钉露出来。",
+   "reversed": "石阶卡着的铁钉露出来。"
+  },
+  {
+   "unitId": "mt11",
+   "correct": "盖在鱼篓上的油布滑开了。",
+   "reversed": "鱼篓盖着的油布滑开了。"
+  },
+  {
+   "unitId": "mt12",
+   "correct": "靠在石碾上的竹竿倒了。",
+   "reversed": "石碾靠着的竹竿倒了。"
+  }
+ ],
+ "holdoutPairs": [
+  {
+   "unitId": "mo01",
+   "correct": "压在石缸上的木板裂了。",
+   "reversed": "石缸压着的木板裂了。"
+  },
+  {
+   "unitId": "mo02",
+   "correct": "靠在木梯上的竹篙滑下来。",
+   "reversed": "木梯靠着的竹篙滑下来。"
+  },
+  {
+   "unitId": "mo03",
+   "correct": "堆在竹篮里的干草露出来。",
+   "reversed": "竹篮堆着的干草露出来。"
+  },
+  {
+   "unitId": "mo04",
+   "correct": "插在铜壶里的铁签歪了。",
+   "reversed": "铜壶插着的铁签歪了。"
+  },
+  {
+   "unitId": "mo05",
+   "correct": "搭在木凳上的草垫滑下来。",
+   "reversed": "木凳搭着的草垫滑下来。"
+  },
+  {
+   "unitId": "mo06",
+   "correct": "缠在铁锚上的麻线断了。",
+   "reversed": "铁锚缠着的麻线断了。"
+  },
+  {
+   "unitId": "mo07",
+   "correct": "挂在铁钩上的陶碗晃了。",
+   "reversed": "铁钩挂着的陶碗晃了。"
+  },
+  {
+   "unitId": "mo08",
+   "correct": "系在车辕上的布带松了。",
+   "reversed": "车辕系着的布带松了。"
+  }
+ ]
+}

@@ -59,3 +59,7 @@ artifacts/next-acceptance/calibration-r1/** -text
 artifacts/relation-direction-r1/** -text
 artifacts/next-acceptance/reldir-r1/** -text
 artifacts/next-acceptance/dircheck-r1/** -text
+artifacts/margin-r1/** -text
+artifacts/next-acceptance/margin-r1/** -text
+artifacts/margin-r1/** -text
+artifacts/next-acceptance/margin-r1/** -text

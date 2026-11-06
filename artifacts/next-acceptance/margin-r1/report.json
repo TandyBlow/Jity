@@ -1,0 +1,44 @@
+{
+ "purpose": "choose beta for the direction margin before any training; no weight changes",
+ "device": "cuda",
+ "model": "ckpt",
+ "rows": 12,
+ "margin": 1.0,
+ "gapsPerRow": [
+  0.6351,
+  0.6361,
+  -0.3254,
+  -0.0226,
+  -0.1517,
+  -0.4044,
+  -0.4157,
+  -0.575,
+  -0.2587,
+  0.2842,
+  0.0141,
+  0.9995
+ ],
+ "activeShare": 1.0,
+ "lossValues": {
+  "ce": 1.553,
+  "direction": 0.9654
+ },
+ "norms": {
+  "ce": 6.46289,
+  "direction": 8.67503
+ },
+ "cosine": 0.5258,
+ "proposal": {
+  "share": 0.3,
+  "beta": 0.2235,
+  "jointNorm": 7.66194,
+  "jointRatioToCe": 1.1855,
+  "upperBound": 8.40175
+ },
+ "optimizer": "never constructed",
+ "fetch": {
+  "source": "report.json",
+  "remoteSha256": "6f1bb9401b415bb6f1c7cd64233e29dd8242b758760db206e5fff32b5be880c2",
+  "redaction": "home path in base.dir / model.dir replaced with <HOME> before download"
+ }
+}

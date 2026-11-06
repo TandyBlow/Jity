@@ -45,6 +45,12 @@ def main():
     parser.add_argument('--run-dir', required=True)
     parser.add_argument('--out-name', default='ckpt')
     parser.add_argument('--arm', required=True, help='Arm label recorded in the report')
+    parser.add_argument('--negatives', default='',
+                        help='JSONL with unitId and a direction-reversed target; enables the margin term')
+    parser.add_argument('--margin-beta', type=float, default=0.0,
+                        help='Weight of the direction margin; zero keeps the arm identical to plain CE')
+    parser.add_argument('--margin', type=float, default=1.0,
+                        help='Margin in nats per token; a hyperparameter under test, not a quality bar')
     parser.add_argument('--save-at', default='',
                         help='Comma-separated steps to snapshot in addition to the last one; the '
                              'shorter run is then a prefix of the longer one by construction')
@@ -94,6 +100,18 @@ def main():
     save_at = sorted({int(part) for part in args.save_at.split(',') if part.strip()})
     if any(step < 1 or step > args.steps for step in save_at):
         raise SystemExit('--save-at steps must fall inside 1..steps')
+    negatives = {}
+    if args.negatives:
+        for line in pathlib.Path(args.negatives).read_text(encoding='utf-8').splitlines():
+            if line.strip():
+                item = json.loads(line)
+                negatives[item['unitId']] = item['negative']
+        if args.margin_beta > 0:
+            # only rows that carry a direction negative take part in the margin term
+            have = sum(1 for pool in pools for row in pool
+                       if (row.get('unitId') or row.get('pairId')) in negatives)
+            if have == 0:
+                raise SystemExit('No pool row has a direction negative')
     id_sequence, target_sequence, losses = [], [], []
     snapshots = {}
     run_dir.mkdir(parents=True, exist_ok=True)
@@ -114,9 +132,40 @@ def main():
             target_sequence.append(sha256_text(row['target']))
         encoded, labels = encode_training_batch(tokenizer, batch)
         encoded = {key: value.to(device) for key, value in encoded.items()}
-        out = model(**encoded, labels=labels.input_ids.to(device))
+        labels_ids = labels.input_ids.to(device)
+        out = model(**encoded, labels=labels_ids)
+        ce = out.loss
+        margin_value = None
+        if args.margin_beta > 0:
+            # The correct-target scores come from the forward that already ran. The reversed
+            # targets need their own forward; the fork keeps it from consuming dropout draws,
+            # so the control arm sees the same random stream step for step.
+            keys = [row.get('unitId') or row.get('pairId') for row in batch]
+            chosen = [i for i, key in enumerate(keys) if key in negatives]
+            if not chosen:
+                loss = ce
+            else:
+                logp = torch.log_softmax(out.logits.float(), dim=-1)
+                mask = labels_ids.ne(-100)
+                picked = logp.gather(2, labels_ids.clamp(min=0).unsqueeze(2)).squeeze(2)
+                s_correct = ((picked * mask).sum(1) / mask.sum(1))[chosen]
+                neg_labels = tokenizer(text_target=[negatives[keys[i]] for i in chosen],
+                                       padding=True, return_tensors='pt').input_ids.to(device)
+                neg_mask = neg_labels.ne(tokenizer.pad_token_id) & neg_labels.ne(-100)
+                index = torch.tensor(chosen, device=device)
+                sub_enc = {name: value.index_select(0, index) for name, value in encoded.items()}
+                with torch.random.fork_rng(devices=([torch.cuda.current_device()]
+                                                   if device == 'cuda' else [])):
+                    neg_out = model(**sub_enc, labels=neg_labels.masked_fill(~neg_mask, -100))
+                neg_logp = torch.log_softmax(neg_out.logits.float(), dim=-1)
+                neg_picked = neg_logp.gather(2, neg_labels.clamp(min=0).unsqueeze(2)).squeeze(2)
+                s_negative = (neg_picked * neg_mask).sum(1) / neg_mask.sum(1)
+                margin_value = torch.clamp(args.margin - s_correct + s_negative, min=0.0).mean()
+                loss = ce + args.margin_beta * margin_value
+        else:
+            loss = ce
         optimizer.zero_grad()
-        out.loss.backward()
+        loss.backward()
         optimizer.step()
         if step in save_at:
             snap = run_dir / ('%s-%d' % (args.out_name, step))
@@ -127,7 +176,11 @@ def main():
                                'ids': len(id_sequence),
                                'idSha256': sha256_text(chr(10).join(id_sequence))}
         if step % 40 == 0 or step == 1 or step == args.steps:
-            losses.append({'step': step, 'loss': round(float(out.loss), 4)})
+            record = {'step': step, 'loss': round(float(loss), 4),
+                      'ce': round(float(ce), 4)}
+            if margin_value is not None:
+                record['marginLoss'] = round(float(margin_value), 4)
+            losses.append(record)
             print('step %d loss %.4f' % (step, float(out.loss)), flush=True)
 
     ckpt = run_dir / args.out_name
@@ -143,7 +196,11 @@ def main():
         'pools': [{'path': pathlib.Path(p).resolve().relative_to(ComponentPaths().worktree).as_posix(),
                    'rows': len(rows), 'sha256': sha256(p)} for p, rows in zip(args.pool, pools)],
         'hyper': {'steps': args.steps, 'batch': args.batch, 'mix': mix, 'lr': args.lr,
-                  'seed': args.seed, 'precision': 'fp32', 'optimizer': 'AdamW'},
+                  'seed': args.seed, 'precision': 'fp32', 'optimizer': 'AdamW',
+                  'marginBeta': args.margin_beta, 'margin': args.margin,
+                  'negatives': (pathlib.Path(args.negatives).as_posix() if args.negatives else None),
+                  'negativesSha256': (sha256(args.negatives) if args.negatives else None),
+                  'negativeRng': ('fork_rng' if args.margin_beta > 0 else 'not used')},
         'sampling': {'ids': len(id_sequence), 'idSha256': sha256_text('\n'.join(id_sequence)),
                      'targetSha256': sha256_text('\n'.join(target_sequence))},
         'losses': losses,

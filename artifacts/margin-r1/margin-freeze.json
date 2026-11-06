@@ -1,0 +1,89 @@
+{
+ "version": "margin-r1",
+ "question": "does adding a direction margin to the CE objective improve free generation on the direction shape",
+ "start": {
+  "name": "C",
+  "modelSha256": "08276c0caa1605408d145f5efea5bc0e22edb106f5accb2888c187bb9a484c9c"
+ },
+ "config": {
+  "lr": 0.0001,
+  "steps": 120,
+  "batch": 8,
+  "mix": "4,2,1,1",
+  "precision": "fp32",
+  "optimizer": "AdamW",
+  "seeds": [
+   20261102,
+   20261103,
+   20261104
+  ]
+ },
+ "pools": {
+  "rows": 353,
+  "files": [
+   {
+    "path": "artifacts/three-arm-r1/arm-c-verbalizer.jsonl",
+    "rows": 229,
+    "sha256": "ffc07355e3d268cdabd896095958a445ffa04dd04462aea1aa474246d82216fd"
+   },
+   {
+    "path": "artifacts/three-arm-r1/arm-c-expand78.jsonl",
+    "rows": 78,
+    "sha256": "92109cbda137cb4219f7c6ea925edaf52c406946c9c02dc21745c901255b78c0"
+   },
+   {
+    "path": "artifacts/three-arm-r1/arm-c-object34.jsonl",
+    "rows": 34,
+    "sha256": "5f1e373c271f147a830d9344625e7e931c3cec036bbda817b562b826e1e0758e"
+   },
+   {
+    "path": "artifacts/margin-r1/train.jsonl",
+    "rows": 12,
+    "sha256": "c27db61740fb175c4142a40cab2aebb258b4a74aab6ddbb497ec3d38c5792eac"
+   }
+  ],
+  "note": "C pools plus twelve new direction facts; both arms read the same four pools in the same order"
+ },
+ "arms": {
+  "ce": "CE only, margin-beta 0",
+  "margin": "CE + beta * direction margin, same pools and sampling"
+ },
+ "margin": {
+  "beta": 0.2235,
+  "betaSource": "0.3 share of the CE gradient norm, measured on the training batch without updates (job 241202)",
+  "m": 1.0,
+  "mStatus": "hyperparameter under test, not a quality bar",
+  "negatives": "artifacts/margin-r1/train-negatives.jsonl",
+  "rng": "fork_rng around the negative forward"
+ },
+ "holdout": {
+  "file": "artifacts/margin-r1/holdout-units.jsonl",
+  "rows": 8,
+  "entities": "disjoint from the training facts and from the six confirmed rows",
+  "status": "this round only; not broad generalisation"
+ },
+ "acceptance": {
+  "primaryFreeGeneration": {
+   "rule": "the margin arm must get the direction right on at least 6 of 8 holdout rows and beat the CE arm by at least 2 rows; entities, state and syntax must not be worse",
+   "note": "a wider score gap alone does not pass"
+  },
+  "oldSets": {
+   "rule": "no new human-confirmed fact loss on cf24, final24 or moved24 relative to C in the margin arm; added text and syntax reported item by item and not offset by the gap",
+   "auxiliary": "margin widening on the six confirmed rows and on the holdout is recorded, and cannot compensate for a generation regression"
+  },
+  "reporting": "all three seeds reported per arm; no averaging that hides a failing seed"
+ },
+ "failConditions": [
+  "the score gap widens but free generation does not improve",
+  "the direction improves while new fact losses appear",
+  "only one seed passes"
+ ],
+ "notDoing": [
+  "no extra steps",
+  "no margin retuning",
+  "no span term",
+  "no input contract change",
+  "no post-editing"
+ ],
+ "declaredBefore": "written before training"
+}
