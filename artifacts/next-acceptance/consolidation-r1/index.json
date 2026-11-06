@@ -1,0 +1,426 @@
+{
+ "purpose": "consolidate five continuation rounds: lineage, gains, regressions, and why the route stops",
+ "budget": "240 steps, batch 8, mix 4:3:1, lr 3e-4, seed 20261102 for every round unless stated",
+ "lineage": [
+  {
+   "round": "eval-r1",
+   "arm": "u240",
+   "sets": {
+    "cf24": {
+     "counts": {
+      "S": 85
+     },
+     "units": 85,
+     "nonS": []
+    },
+    "final24": {
+     "counts": {
+      "S": 76
+     },
+     "units": 76,
+     "nonS": []
+    },
+    "moved24": {
+     "counts": {
+      "S": 24
+     },
+     "units": 24,
+     "nonS": []
+    }
+   }
+  },
+  {
+   "round": "eval-r1",
+   "arm": "a",
+   "sets": {
+    "cf24": {
+     "counts": {
+      "S": 83,
+      "O": 2
+     },
+     "units": 85,
+     "nonS": [
+      "t09:f0",
+      "t11:f0"
+     ]
+    },
+    "final24": {
+     "counts": {
+      "S": 76
+     },
+     "units": 76,
+     "nonS": []
+    },
+    "moved24": {
+     "counts": {
+      "S": 22,
+      "O": 2
+     },
+     "units": 24,
+     "nonS": [
+      "m14:f0",
+      "m24:f0"
+     ]
+    }
+   }
+  },
+  {
+   "round": "eval-r1",
+   "arm": "b",
+   "sets": {
+    "cf24": {
+     "counts": {
+      "S": 85
+     },
+     "units": 85,
+     "nonS": []
+    },
+    "final24": {
+     "counts": {
+      "S": 76
+     },
+     "units": 76,
+     "nonS": []
+    },
+    "moved24": {
+     "counts": {
+      "S": 24
+     },
+     "units": 24,
+     "nonS": []
+    }
+   }
+  },
+  {
+   "round": "eval-r1",
+   "arm": "c",
+   "sets": {
+    "cf24": {
+     "counts": {
+      "S": 85
+     },
+     "units": 85,
+     "nonS": []
+    },
+    "final24": {
+     "counts": {
+      "S": 76
+     },
+     "units": 76,
+     "nonS": []
+    },
+    "moved24": {
+     "counts": {
+      "S": 24
+     },
+     "units": 24,
+     "nonS": []
+    }
+   }
+  },
+  {
+   "round": "eval-r2",
+   "arm": "control",
+   "sets": {
+    "cf24": {
+     "counts": {
+      "S": 83,
+      "O": 2
+     },
+     "units": 85,
+     "nonS": [
+      "t10:f3",
+      "t16:f2"
+     ]
+    },
+    "final24": {
+     "counts": {
+      "S": 73,
+      "O": 3
+     },
+     "units": 76,
+     "nonS": [
+      "v14:f2",
+      "v18:f2",
+      "v19:f1"
+     ]
+    },
+    "moved24": {
+     "counts": {
+      "S": 24
+     },
+     "units": 24,
+     "nonS": []
+    }
+   }
+  },
+  {
+   "round": "eval-r2",
+   "arm": "moved",
+   "sets": {
+    "cf24": {
+     "counts": {
+      "S": 85
+     },
+     "units": 85,
+     "nonS": []
+    },
+    "final24": {
+     "counts": {
+      "S": 76
+     },
+     "units": 76,
+     "nonS": []
+    },
+    "moved24": {
+     "counts": {
+      "S": 24
+     },
+     "units": 24,
+     "nonS": []
+    }
+   }
+  },
+  {
+   "round": "eval-r6",
+   "arm": "moved",
+   "sets": {
+    "cf24": {
+     "counts": {
+      "S": 85
+     },
+     "units": 85,
+     "nonS": []
+    },
+    "final24": {
+     "counts": {
+      "S": 76
+     },
+     "units": 76,
+     "nonS": []
+    },
+    "moved24": {
+     "counts": {
+      "S": 24
+     },
+     "units": 24,
+     "nonS": []
+    }
+   }
+  },
+  {
+   "round": "eval-r6",
+   "arm": "ctl",
+   "sets": {
+    "cf24": {
+     "counts": {
+      "S": 82,
+      "REVIEW": 2,
+      "A": 1
+     },
+     "units": 85,
+     "nonS": [
+      "t08:f2",
+      "t17:f2",
+      "t22:f1"
+     ]
+    },
+    "final24": {
+     "counts": {
+      "S": 75,
+      "REVIEW": 1
+     },
+     "units": 76,
+     "nonS": [
+      "v12:f2"
+     ]
+    },
+    "moved24": {
+     "counts": {
+      "S": 24
+     },
+     "units": 24,
+     "nonS": []
+    }
+   }
+  },
+  {
+   "round": "eval-r6",
+   "arm": "mix",
+   "sets": {
+    "cf24": {
+     "counts": {
+      "S": 85
+     },
+     "units": 85,
+     "nonS": []
+    },
+    "final24": {
+     "counts": {
+      "S": 76
+     },
+     "units": 76,
+     "nonS": []
+    },
+    "moved24": {
+     "counts": {
+      "S": 24
+     },
+     "units": 24,
+     "nonS": []
+    }
+   }
+  },
+  {
+   "round": "eval-r9",
+   "arm": "mix",
+   "sets": {
+    "cf24": {
+     "counts": {
+      "S": 85
+     },
+     "units": 85,
+     "nonS": []
+    },
+    "final24": {
+     "counts": {
+      "S": 76
+     },
+     "units": 76,
+     "nonS": []
+    },
+    "moved24": {
+     "counts": {
+      "S": 24
+     },
+     "units": 24,
+     "nonS": []
+    }
+   }
+  },
+  {
+   "round": "eval-r9",
+   "arm": "ctl",
+   "sets": {
+    "cf24": {
+     "counts": {
+      "S": 83,
+      "A": 1,
+      "O": 1
+     },
+     "units": 85,
+     "nonS": [
+      "t22:f0",
+      "t24:f1"
+     ]
+    },
+    "final24": {
+     "counts": {
+      "S": 76
+     },
+     "units": 76,
+     "nonS": []
+    },
+    "moved24": {
+     "counts": {
+      "S": 24
+     },
+     "units": 24,
+     "nonS": []
+    }
+   }
+  },
+  {
+   "round": "eval-r9",
+   "arm": "dir",
+   "sets": {
+    "cf24": {
+     "counts": {
+      "S": 82,
+      "REVIEW": 2,
+      "A": 1
+     },
+     "units": 85,
+     "nonS": [
+      "t08:f2",
+      "t17:f2",
+      "t21:f0"
+     ]
+    },
+    "final24": {
+     "counts": {
+      "S": 76
+     },
+     "units": 76,
+     "nonS": []
+    },
+    "moved24": {
+     "counts": {
+      "S": 23,
+      "O": 1
+     },
+     "units": 24,
+     "nonS": [
+      "m05:f0"
+     ]
+    }
+   }
+  }
+ ],
+ "humanFactCounts": {
+  "eval-r1/u240": 185,
+  "eval-r1/a": 181,
+  "eval-r1/b": 183,
+  "eval-r1/c": 185,
+  "eval-r2/control": 179,
+  "eval-r2/moved": 184,
+  "eval-r6/moved": 184,
+  "eval-r6/ctl": 184,
+  "eval-r6/mix": 184,
+  "eval-r9/mix": 184,
+  "eval-r9/ctl": 183,
+  "eval-r9/dir": 183
+ },
+ "note": "human counts start from 185 units and subtract one per unit the read found unsupported",
+ "retractions": [
+  {
+   "what": "无变化句出现追加",
+   "status": "withdrawn",
+   "why": "waiting and staying were ruled authorised no-change renderings; the same clause cannot be both a training target and a regression",
+   "patchedIn": [
+    "eval-r1-2026-11-05.md section 5",
+    "dirpair-r1-2026-11-06.md section 5"
+   ]
+  }
+ ],
+ "causeStatus": {
+  "supported": "cross-set regressions over five rounds justify stopping the incremental route",
+  "notSupported": "they do not show the training objective is the root cause",
+  "candidates": [
+   "fixed lr and step count",
+   "cumulative continuation budget with no early stop",
+   "sampling coverage: 12 rows is 3.4 percent of 353 and is oversampled under 4:3:1",
+   "overlap between evaluation sets and design"
+  ]
+ },
+ "candidates": {
+  "A_optimisationDiagnosis": "vary lr and steps only, pools unchanged",
+  "B_groupedExpressions": "same fact rendered k ways, each checked for entity, relation and state",
+  "C_plainAugmentationWithHoldout": "more exemplars, acceptance on facts not used in design",
+  "D_constrainedDecoding": "rejected for now: adds an edit layer the scoring rule excludes"
+ },
+ "proposedNext": {
+  "start": "C (08276c0c) - the only checkpoint at 185/185 with no new loss",
+  "arms": "equal budget; control uses the same number of plain single-target rows",
+  "holdout": "12-16 new facts built after freezing, entity pairs and scenes unused in any probe",
+  "stopConditions": [
+   "holdout below control by fewer than 8 points",
+   "any new human-confirmed fact loss on the regression sets",
+   "any development probe 2 or more units below the control",
+   "any new tail addition"
+  ],
+  "order": "run the optimisation diagnosis first; its result sets the budget for the grouped arm",
+  "notExecuted": true
+ },
+ "humanCountingNote": "each entry starts from the 185 units of the three sets and subtracts one per unit the read found unsupported: A four (t09, t11, m14, m24); B two (glass modifier on t23 and v10); control six (five sanity-direction, one destination); moved one (t22:f1 relation); aug exp and mixed ctl one (t22:f1 reference); mix one (t21:f0 part replaced); dir two (t21:f0 whole missing, m05:f0 destination missing); r9 ctl two (t22:f0 name missing, t24:f1 state missing)"
+}
