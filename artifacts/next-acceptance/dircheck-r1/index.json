@@ -1,0 +1,144 @@
+{
+ "purpose": "does a direction margin cover the errors that actually occur at C",
+ "job": {
+  "id": 241201,
+  "device": "cuda",
+  "model": "C 08276c0c"
+ },
+ "group": "the six location-reference rolepair rows, taken whole; the seven blind-review reversals all map into this half",
+ "confirmedPreviously": {
+  "R02": "p-rp6b",
+  "R08": "p-rp4b",
+  "R09": "p-rp1b",
+  "R15": "p-rp3b",
+  "R17": "p-rp5b",
+  "R35": "p-rp3b",
+  "R36": "p-rp2b"
+ },
+ "reproduction": {
+  "rows": 6,
+  "directionErrors": 6,
+  "otherErrorTypes": [],
+  "verdict": "all six reproduce the reversal; none is repetition, omission or a possessive addition"
+ },
+ "scores": {
+  "p-rp1b": {
+   "sum": {
+    "correct": -0.223,
+    "reversed": -0.247,
+    "generated": -0.247
+   },
+   "mean": {
+    "correct": -0.017,
+    "reversed": -0.019,
+    "generated": -0.019
+   },
+   "marginMean": 0.002,
+   "marginSum": 0.025,
+   "active": true,
+   "tokens": 13
+  },
+  "p-rp2b": {
+   "sum": {
+    "correct": -0.504,
+    "reversed": -0.785,
+    "generated": -0.785
+   },
+   "mean": {
+    "correct": -0.036,
+    "reversed": -0.056,
+    "generated": -0.056
+   },
+   "marginMean": 0.02,
+   "marginSum": 0.281,
+   "active": true,
+   "tokens": 14
+  },
+  "p-rp3b": {
+   "sum": {
+    "correct": -0.985,
+    "reversed": -0.619,
+    "generated": -0.619
+   },
+   "mean": {
+    "correct": -0.07,
+    "reversed": -0.048,
+    "generated": -0.048
+   },
+   "marginMean": -0.023,
+   "marginSum": -0.366,
+   "active": true,
+   "tokens": 14
+  },
+  "p-rp4b": {
+   "sum": {
+    "correct": -0.318,
+    "reversed": -0.192,
+    "generated": -0.192
+   },
+   "mean": {
+    "correct": -0.024,
+    "reversed": -0.015,
+    "generated": -0.015
+   },
+   "marginMean": -0.01,
+   "marginSum": -0.126,
+   "active": true,
+   "tokens": 13
+  },
+  "p-rp5b": {
+   "sum": {
+    "correct": -0.207,
+    "reversed": -0.239,
+    "generated": -0.239
+   },
+   "mean": {
+    "correct": -0.016,
+    "reversed": -0.018,
+    "generated": -0.018
+   },
+   "marginMean": 0.002,
+   "marginSum": 0.032,
+   "active": true,
+   "tokens": 13
+  },
+  "p-rp6b": {
+   "sum": {
+    "correct": -0.049,
+    "reversed": -0.032,
+    "generated": -0.032
+   },
+   "mean": {
+    "correct": -0.003,
+    "reversed": -0.002,
+    "generated": -0.002
+   },
+   "marginMean": -0.001,
+   "marginSum": -0.017,
+   "active": true,
+   "tokens": 14
+  }
+ },
+ "finding": {
+  "pairwise": "the correct and reversed sentences score within 0.02 per token of each other, so the model does not prefer the wrong reading, it fails to separate the two",
+  "activation": "because the gap is about zero, all six rows activate at m = 1 with a term close to full strength",
+  "coverage": "the loss compares exactly these two sentences, so it is aimed at the observed error rather than at a proxy",
+  "limits": [
+   "the pair also changes the surface frame (压在X上的Y against X压着的Y), so what is learned may be the frame, not the direction",
+   "the preference is a tie, so training must create a one-nat separation rather than correct a strong wrong preference",
+   "all six rows are design rows, not a holdout"
+  ]
+ },
+ "corrections": [
+  "the margin pushes both sides: it raises the correct score as well as lowering the reversed one",
+  "a 3.7 percent gradient-norm rise does not imply a 3.7 percent update rise under AdamW",
+  "generating wrong while preferring the correct target is not a reason to start a margin; it signals the scoring proxy and free generation disagree, and a satisfied margin has no gradient"
+ ],
+ "files": [
+  {
+   "path": "artifacts/next-acceptance/dircheck-r1/report.json",
+   "bytes": 4693,
+   "sha256": "66d29eae1e8656b7c31ec8926cd31b160094bd5249bef793048e2b5a6fac19ad"
+  }
+ ]
+}
