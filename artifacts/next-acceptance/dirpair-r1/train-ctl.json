@@ -1,0 +1,88 @@
+{
+ "purpose": "equal-budget continuation for the target-revision round",
+ "arm": "dirpair-ctl",
+ "device": "cuda",
+ "base": {
+  "dir": "<HOME>/n4fix/artifacts/next-runs/mixed-mix/ckpt",
+  "files": {
+   "config.json": "cd553527a919b8292894d4e8cc043fcb1a45c60586f9dfa4399f7b2b2e657a9e",
+   "spiece.model": "c65feffa65ff0378759778193852083d23349cb1b40c906e9463a12f8076ff32",
+   "model.safetensors": "f84a7adf6f366960c231ee8be9280f98a5895df0e27e4be01e297ca5a2b265a0"
+  }
+ },
+ "pools": [
+  {
+   "path": "artifacts/dirpair-r1/pool-ctl-verbalizer.jsonl",
+   "rows": 241,
+   "sha256": "36ecbc296dd60b5a8081e91c61578511f589c444f8322feca053fb827fe1a2dc"
+  },
+  {
+   "path": "artifacts/dirpair-r1/pool-ctl-expand78.jsonl",
+   "rows": 78,
+   "sha256": "92109cbda137cb4219f7c6ea925edaf52c406946c9c02dc21745c901255b78c0"
+  },
+  {
+   "path": "artifacts/dirpair-r1/pool-ctl-object34.jsonl",
+   "rows": 34,
+   "sha256": "5f1e373c271f147a830d9344625e7e931c3cec036bbda817b562b826e1e0758e"
+  }
+ ],
+ "hyper": {
+  "steps": 240,
+  "batch": 8,
+  "mix": [
+   4,
+   3,
+   1
+  ],
+  "lr": 0.0003,
+  "seed": 20261102,
+  "precision": "fp32",
+  "optimizer": "AdamW"
+ },
+ "sampling": {
+  "ids": 1920,
+  "idSha256": "0793d32de88f351cc635c235ad23faa4a4620e034293e58f1fa859448ff4ab06",
+  "targetSha256": "bb0a301f53cfddfdcd07dca1f5ddd0b76d648185011677d592c64a1c0c163bb3"
+ },
+ "losses": [
+  {
+   "step": 1,
+   "loss": 0.03
+  },
+  {
+   "step": 40,
+   "loss": 0.0037
+  },
+  {
+   "step": 80,
+   "loss": 0.0742
+  },
+  {
+   "step": 120,
+   "loss": 0.0299
+  },
+  {
+   "step": 160,
+   "loss": 0.1423
+  },
+  {
+   "step": 200,
+   "loss": 0.1452
+  },
+  {
+   "step": 240,
+   "loss": 0.0927
+  }
+ ],
+ "seconds": 20.5,
+ "checkpoint": {
+  "dir": "artifacts/next-runs/dirpair-ctl/ckpt",
+  "modelSha256": "67c0dbdb010ce5f589f3ddeeb7d8bc668dd4f4354a858366d05f1428bdc9636c"
+ },
+ "fetch": {
+  "source": "train-report.json",
+  "remoteSha256": "a917673173adff88bb83f0927f56ea72ee4a21eb18b6f4370b0098f6ada7d71d",
+  "redaction": "home path in base.dir / model.dir replaced with <HOME> before download"
+ }
+}

@@ -1,0 +1,55 @@
+{
+ "version": "dirpair-r1",
+ "question": "does supervised direction contrast fix the direction error without paying for it in entities or state",
+ "arms": {
+  "ctl": "mixed pools unchanged (aug-r1 experiment block of 12 rows)",
+  "dir": "the same pools with that 12-row block replaced by six direction pairs"
+ },
+ "base": "mix (f84a7adf) for both arms; the start arm is evaluated alongside",
+ "pairDesign": {
+  "rows": 12,
+  "pairs": 6,
+  "perPair": "same two entities and same relation; one row names the place, the other names the actor",
+  "distinguishable": "the two rows differ in the name field and in the value, so the input alone tells which direction is wanted; nothing maps two different answers to the same input",
+  "targets": "both keep the two entities, the relation and the state",
+  "ids": "the six pairs reuse the same pairId slots as the block they replace, so the sampler draws the same id sequence"
+ },
+ "acceptance": {
+  "rolepairLocation": {
+   "rule": "pass at least 5 of 6, direction errors at most 1, entity losses at most 1",
+   "start": {
+    "pass": 3,
+    "directionErrors": 1,
+    "entityLosses": 2
+   }
+  },
+  "rolepairPossessor": {
+   "rule": "pass at least 5 of 6 and no part replaced",
+   "start": {
+    "pass": 6,
+    "replaced": 0
+   }
+  },
+  "namepair": {
+   "rule": "pass at least 10 of 12 and at least 4 of 6 on the without-name side",
+   "start": {
+    "pass": 10,
+    "withoutName": 4
+   }
+  },
+  "relationProbes": {
+   "rule": "pass at least 9 of 10",
+   "start": {
+    "pass": 10
+   }
+  },
+  "regression": {
+   "noNewFactLoss": "any new human-confirmed fact loss on cf24/final24/moved24 fails the round; the start arm already carries t21:f0",
+   "added": "not above the start arm (0)",
+   "language": "not above the start arm (2 on cf24)"
+  }
+ },
+ "stopRule": "if the direction improves while entity or state losses grow, the incremental continuation route stops here and the evidence is summarised for a different technical approach; no further per-case patching",
+ "sides": "possessor and location results are reported separately",
+ "declaredBefore": "written before training"
+}

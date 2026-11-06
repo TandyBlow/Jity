@@ -1,0 +1,280 @@
+{
+ "purpose": "direction-pair supervision: six pairs replace the augmentation block, same ids, same budget",
+ "job": {
+  "id": 241163,
+  "gpu": "NVIDIA GeForce RTX 4090 D",
+  "units": 657,
+  "arms": [
+   "mix",
+   "ctl",
+   "dir"
+  ]
+ },
+ "train": {
+  "base": "mix f84a7adf",
+  "ctlCkpt": "67c0dbdb",
+  "dirCkpt": "bd00b01d",
+  "ids": "0793d32d (identical in both arms)",
+  "targets": {
+   "ctl": "bb0a301f",
+   "dir": "8313d7b9"
+  },
+  "loss": {
+   "ctl": 0.0927,
+   "dir": 0.055
+  }
+ },
+ "rolepair": {
+  "mix": {
+   "pass": "9/12",
+   "possessorPass": "6/6",
+   "locationPass": "3/6",
+   "entityKept": "10/12",
+   "roleErrors": 1,
+   "roleErrorDetail": {
+    "replaced": 0,
+    "flip": 1,
+    "missing": 2
+   },
+   "relationKept": "6/6",
+   "syntaxBroken": 1,
+   "factS": "10/12"
+  },
+  "ctl": {
+   "pass": "8/12",
+   "possessorPass": "6/6",
+   "locationPass": "2/6",
+   "entityKept": "11/12",
+   "roleErrors": 1,
+   "roleErrorDetail": {
+    "replaced": 0,
+    "flip": 1,
+    "missing": 1
+   },
+   "relationKept": "6/6",
+   "syntaxBroken": 0,
+   "factS": "9/12"
+  },
+  "dir": {
+   "pass": "12/12",
+   "possessorPass": "6/6",
+   "locationPass": "6/6",
+   "entityKept": "12/12",
+   "roleErrors": 0,
+   "roleErrorDetail": {
+    "replaced": 0,
+    "flip": 0,
+    "missing": 0
+   },
+   "relationKept": "6/6",
+   "syntaxBroken": 0,
+   "factS": "12/12"
+  }
+ },
+ "namepair": {
+  "mix": {
+   "pass_all": "10/12",
+   "pass_with-name": "6/6",
+   "pass_without-name": "4/6",
+   "relationKept": "12/12",
+   "syntaxBroken": 1
+  },
+  "ctl": {
+   "pass_all": "10/12",
+   "pass_with-name": "6/6",
+   "pass_without-name": "4/6",
+   "relationKept": "12/12",
+   "syntaxBroken": 1
+  },
+  "dir": {
+   "pass_all": "10/12",
+   "pass_with-name": "4/6",
+   "pass_without-name": "6/6",
+   "relationKept": "12/12",
+   "syntaxBroken": 2
+  }
+ },
+ "relationProbes": {
+  "mix": {
+   "pass": 10,
+   "relationKept": 8,
+   "syntaxBroken": 0
+  },
+  "ctl": {
+   "pass": 8,
+   "relationKept": 8,
+   "syntaxBroken": 1
+  },
+  "dir": {
+   "pass": 6,
+   "relationKept": 6,
+   "syntaxBroken": 2
+  }
+ },
+ "evals": {
+  "mix": {
+   "cf24": "85/0/0/0",
+   "final24": "76/0/0/0",
+   "moved24": "24/0/0/0",
+   "added": 0,
+   "language": 2
+  },
+  "ctl": {
+   "cf24": "83/1/1/0",
+   "final24": "76/0/0/0",
+   "moved24": "24/0/0/0",
+   "added": 0,
+   "language": 2
+  },
+  "dir": {
+   "cf24": "82/0/1/2",
+   "final24": "76/0/0/0",
+   "moved24": "23/1/0/0",
+   "added": 3,
+   "language": 2
+  }
+ },
+ "verdict": {
+  "rolepairLocation": "passes: 6/6, no direction error, no entity loss",
+  "rolepairPossessor": "passes: 6/6, no part replaced",
+  "namepair": "total passes but the with-name side falls from 6/6 to 4/6 through duplicated names",
+  "relationProbes": "fails: 6/10 against the declared 9",
+  "newFactLoss": "fails: m05:f0 writes 案板上沾着石板, losing the destination",
+  "added": "fails: 3 new tails against the declared 0",
+  "overall": "not passed",
+  "nature": "not the anticipated trade of entities or state for direction - those held or improved. The cost landed elsewhere: relation retention, the with-name side, three tails and one new fact loss",
+  "stopRule": "the literal stop condition did not fire; the round fails anyway, and across five rounds each fix has cost something elsewhere, so the recommendation is to stop adding exemplars to this checkpoint and consolidate the evidence before choosing another method"
+ },
+ "files": [
+  {
+   "path": "artifacts/next-acceptance/dirpair-r1/mix-cf24/cf24-baseline.json",
+   "bytes": 137383,
+   "sha256": "f9206083754b3680d15e7692e06e0043a1e0426995e7b35a79db7d0f7682e872"
+  },
+  {
+   "path": "artifacts/next-acceptance/dirpair-r1/mix-final24/final24-baseline.json",
+   "bytes": 114908,
+   "sha256": "18b25695dd7507ad2d98064f73664f774999828d67c821475b442a5814caf409"
+  },
+  {
+   "path": "artifacts/next-acceptance/dirpair-r1/mix-moved24/moved24-baseline.json",
+   "bytes": 38265,
+   "sha256": "520cc76e989f56b1cf4cab50edd68c3014cddc9e3bf2e72f03a01cb7f34f7d92"
+  },
+  {
+   "path": "artifacts/next-acceptance/dirpair-r1/mix-relation/relation-baseline.json",
+   "bytes": 17352,
+   "sha256": "32208104bf0baf3c33262f8c900f3b2754b1cb3a0e43aee57196878511d1db5e"
+  },
+  {
+   "path": "artifacts/next-acceptance/dirpair-r1/mix-namepair/namepair-baseline.json",
+   "bytes": 20244,
+   "sha256": "5a1d284a169f3d3a503948faaf3608503422e5bbba68252b12bf64b98d5285b5"
+  },
+  {
+   "path": "artifacts/next-acceptance/dirpair-r1/mix-rolepair/rolepair-baseline.json",
+   "bytes": 19894,
+   "sha256": "f16151834dcb23c43425e301477d2f543362075b5937df4fa4bbe4ec2362fdad"
+  },
+  {
+   "path": "artifacts/next-acceptance/dirpair-r1/ctl-cf24/cf24-baseline.json",
+   "bytes": 137324,
+   "sha256": "cf8ce1c253a17bcf955bcbf777a6ef03424705524315bfbe7c266a5f4ad00b6d"
+  },
+  {
+   "path": "artifacts/next-acceptance/dirpair-r1/ctl-final24/final24-baseline.json",
+   "bytes": 114933,
+   "sha256": "f0ecc0a8cea0e9b6f45be658e8e8dc60ce0c02757a8ba0184dfca4c9acf3afdc"
+  },
+  {
+   "path": "artifacts/next-acceptance/dirpair-r1/ctl-moved24/moved24-baseline.json",
+   "bytes": 38385,
+   "sha256": "66ce4cc0b91b01733d90531341fdd2f5de6776e677d02c4d233c974858c7de76"
+  },
+  {
+   "path": "artifacts/next-acceptance/dirpair-r1/ctl-relation/relation-baseline.json",
+   "bytes": 17361,
+   "sha256": "7ab9ebf0bc7bd2e50ef6d320dc4a1a92873e2ad6a75a0037d7d343116a135cbb"
+  },
+  {
+   "path": "artifacts/next-acceptance/dirpair-r1/ctl-namepair/namepair-baseline.json",
+   "bytes": 20266,
+   "sha256": "9aec3492f33e8daf5d694a1f9f707beb97443ba36cf22065ecac4508ff3c15c2"
+  },
+  {
+   "path": "artifacts/next-acceptance/dirpair-r1/ctl-rolepair/rolepair-baseline.json",
+   "bytes": 19866,
+   "sha256": "2cebf25f5ec41f96feb883f542d04c238ca8fb46366e86e41fa3e2f2f78031c8"
+  },
+  {
+   "path": "artifacts/next-acceptance/dirpair-r1/dir-cf24/cf24-baseline.json",
+   "bytes": 137387,
+   "sha256": "817476658ca2ead8e9e15614bb143ffc2228de1d9490ebc5ea0d57ac0df3716e"
+  },
+  {
+   "path": "artifacts/next-acceptance/dirpair-r1/dir-final24/final24-baseline.json",
+   "bytes": 115020,
+   "sha256": "0831a3a3a6e448a23c2c75d495159f9778168af188aa042de5663801a46eb643"
+  },
+  {
+   "path": "artifacts/next-acceptance/dirpair-r1/dir-moved24/moved24-baseline.json",
+   "bytes": 38257,
+   "sha256": "36e5576d8d8ef8f8feb86423facb041982b5fdffb64b1a8ac0f39e81c0b94ba1"
+  },
+  {
+   "path": "artifacts/next-acceptance/dirpair-r1/dir-relation/relation-baseline.json",
+   "bytes": 17361,
+   "sha256": "1e011af68fb7674a5810e2fa86754c0fb26eeb5915604ee260c1b96e112d1188"
+  },
+  {
+   "path": "artifacts/next-acceptance/dirpair-r1/dir-namepair/namepair-baseline.json",
+   "bytes": 20265,
+   "sha256": "0f00988426a7bbef677f4c98a3b96e7787ce47704adc88254aeb8fad26d758fa"
+  },
+  {
+   "path": "artifacts/next-acceptance/dirpair-r1/dir-rolepair/rolepair-baseline.json",
+   "bytes": 19903,
+   "sha256": "66193c4f39bd254b4b77217744001767c20fa8e4ade62031b8e25dfec28921a2"
+  },
+  {
+   "path": "artifacts/next-acceptance/dirpair-r1/rolepair-judged.json",
+   "bytes": 14800,
+   "sha256": "b9126fb95f44a4314a0061212c48497a1fd688f018ea9d4f3655b95f99e7ef8b"
+  },
+  {
+   "path": "artifacts/next-acceptance/dirpair-r1/namepair-judged.json",
+   "bytes": 11811,
+   "sha256": "23e49fc5d4cf536045c999f5dd67ac33f0b44903dee0d468521e652b133aca8d"
+  },
+  {
+   "path": "artifacts/next-acceptance/dirpair-r1/frame-judged.json",
+   "bytes": 6962,
+   "sha256": "4acb276a4816b119030ccc1fa69ca2a0b84a67467942354eac13c5a63f0e6f83"
+  },
+  {
+   "path": "artifacts/next-acceptance/dirpair-r1/review-r9.json",
+   "bytes": 2257,
+   "sha256": "ef83a8c0c5579a2c52f12bbb006039d892283d829075a28da1298fd1d7f2edd5"
+  },
+  {
+   "path": "artifacts/next-acceptance/dirpair-r1/dirpair-freeze.json",
+   "bytes": 4135,
+   "sha256": "2fce13cba2c415969fc33bd6bff6d75fdce5476a16ef96bbd9fde957dee1c9ac"
+  },
+  {
+   "path": "artifacts/next-acceptance/dirpair-r1/dirpair-rule.json",
+   "bytes": 2124,
+   "sha256": "5235093efb1df6e3f7ff41025eb9fb127186ca5005f6bdd6e2ec447b4c0fd962"
+  },
+  {
+   "path": "artifacts/next-acceptance/dirpair-r1/train-ctl.json",
+   "bytes": 2047,
+   "sha256": "89f88c5f1c75c3ba3f4c37326d50dca620f119c49ffd51291aecf93a9c5d37fd"
+  },
+  {
+   "path": "artifacts/next-acceptance/dirpair-r1/train-dir.json",
+   "bytes": 2045,
+   "sha256": "cbd1cc294ec5ef008f9da05de427b742ebf58a3db89d2aac89e1546a378bbd19"
+  }
+ ]
+}
