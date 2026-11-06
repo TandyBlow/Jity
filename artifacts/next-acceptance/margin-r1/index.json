@@ -624,12 +624,25 @@
    }
   },
   "activationPerStep": "not recorded; only the four logged points exist",
-  "implication": "the direction term was zero from step 40 to the end, so the two arms differ only in the first few steps and the round tests this data, this beta and this mix rather than the loss in general",
+  "reading": "only the logged points are known: steps 40, 80 and 120 read zero in all three seeds and step 1 reads non-zero in two of them. A 40-step cadence cannot stand for the intervals between points, so no claim is made about the rest of the run",
+  "zeroIsAmbiguous": "a zero can mean the batch carried applicable negatives and none of them activated, or that the batch carried no applicable negative at all; with a 1 of 8 mix most steps hold zero or one direction row, and both cases log zero. Per-step applicable counts and activation counts were not recorded",
+  "implication": "undetermined: the actual period in which the auxiliary term contributed cannot be established, and the small difference between the arms is left as an open explanation rather than a finding",
+  "ifStudiedAgain": [
+   "log per-step applicable negative counts and activation counts",
+   "state the loss reduction convention: per row or per active term"
+  ],
   "betaReport": {
    "path": "artifacts/next-acceptance/margin-r1/marginbeta-report.json",
    "sha256": "dffdcec4e67544171efd241d75ecc8d4e43e92f81b235d5ca6fba91f2e82b6b0",
    "source": "copied out of the ignored run directory as selected evidence"
-  }
+  },
+  "retracted": [
+   "the direction term was zero from step 40 to the end",
+   "the gap had cleared m after the first few updates",
+   "the two arms differ only in the first few steps",
+   "the auxiliary term supplied no gradient for most of the run",
+   "this explains why the two arms are nearly the same"
+  ]
  },
  "closing": {
   "primaryCriterion": "failed: both arms reach 8 of 8 on the holdout, so the margin beats the control by zero rows",
