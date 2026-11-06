@@ -1,0 +1,536 @@
+{
+ "version": "semantic-review-r1",
+ "blind": true,
+ "shuffleSeed": 20261106,
+ "fields": {
+  "nameBinding": [
+   "ok",
+   "agent",
+   "flip",
+   "replaced",
+   "missing"
+  ],
+  "otherBinding": [
+   "ok",
+   "missing"
+  ],
+  "stateBinding": [
+   "ok",
+   "missing"
+  ],
+  "relationBinding": [
+   "ok",
+   "inverted",
+   "broken",
+   "dropped",
+   "n/a"
+  ]
+ },
+ "rule": "a row may carry several problems; nameBinding!=ok counts as a role error except when the name is absent (that is an omission); otherBinding!=ok counts as a noun omission",
+ "rows": [
+  {
+   "reviewId": "R01",
+   "pair": "rp2",
+   "expectedRole": "possessor",
+   "nameBinding": "ok",
+   "otherBinding": "ok",
+   "stateBinding": "ok",
+   "relationBinding": "n/a",
+   "problems": [],
+   "note": "",
+   "text": "木桩的桩身裂了一道缝。",
+   "factValue": "桩身裂了一道缝"
+  },
+  {
+   "reviewId": "R02",
+   "pair": "rp6",
+   "expectedRole": "locationReference",
+   "nameBinding": "agent",
+   "otherBinding": "ok",
+   "stateBinding": "ok",
+   "relationBinding": "inverted",
+   "problems": [
+    "role-direction"
+   ],
+   "note": "“钟架搭着”＝钟架在搭钟绳，位置参照变施事",
+   "text": "钟架搭着的钟绳垂到堤面。",
+   "factValue": "搭着的钟绳垂到堤面"
+  },
+  {
+   "reviewId": "R03",
+   "pair": "rp3",
+   "expectedRole": "possessor",
+   "nameBinding": "ok",
+   "otherBinding": "ok",
+   "stateBinding": "ok",
+   "relationBinding": "n/a",
+   "problems": [],
+   "note": "",
+   "text": "鱼筐底渗了水。",
+   "factValue": "筐底渗了水"
+  },
+  {
+   "reviewId": "R04",
+   "pair": "rp2",
+   "expectedRole": "possessor",
+   "nameBinding": "ok",
+   "otherBinding": "ok",
+   "stateBinding": "ok",
+   "relationBinding": "n/a",
+   "problems": [],
+   "note": "",
+   "text": "木桩的桩身裂了一道缝。",
+   "factValue": "桩身裂了一道缝"
+  },
+  {
+   "reviewId": "R05",
+   "pair": "rp1",
+   "expectedRole": "locationReference",
+   "nameBinding": "missing",
+   "otherBinding": "ok",
+   "stateBinding": "ok",
+   "relationBinding": "ok",
+   "problems": [
+    "noun-name"
+   ],
+   "note": "整条没有名称",
+   "text": "压着的干纸滑开了。",
+   "factValue": "压着的干纸滑开了"
+  },
+  {
+   "reviewId": "R06",
+   "pair": "rp5",
+   "expectedRole": "possessor",
+   "nameBinding": "ok",
+   "otherBinding": "ok",
+   "stateBinding": "ok",
+   "relationBinding": "n/a",
+   "problems": [],
+   "note": "",
+   "text": "石板的边角崩了一小块。",
+   "factValue": "边角崩了一小块"
+  },
+  {
+   "reviewId": "R07",
+   "pair": "rp6",
+   "expectedRole": "locationReference",
+   "nameBinding": "missing",
+   "otherBinding": "ok",
+   "stateBinding": "ok",
+   "relationBinding": "ok",
+   "problems": [
+    "noun-name"
+   ],
+   "note": "整条没有名称",
+   "text": "搭着的钟绳垂到堤面。",
+   "factValue": "搭着的钟绳垂到堤面"
+  },
+  {
+   "reviewId": "R08",
+   "pair": "rp4",
+   "expectedRole": "locationReference",
+   "nameBinding": "agent",
+   "otherBinding": "ok",
+   "stateBinding": "ok",
+   "relationBinding": "inverted",
+   "problems": [
+    "role-direction"
+   ],
+   "note": "“铜灯罩插着”＝灯罩在插灯芯",
+   "text": "铜灯罩插着的灯芯歪了。",
+   "factValue": "插着的灯芯歪了"
+  },
+  {
+   "reviewId": "R09",
+   "pair": "rp1",
+   "expectedRole": "locationReference",
+   "nameBinding": "agent",
+   "otherBinding": "ok",
+   "stateBinding": "ok",
+   "relationBinding": "inverted",
+   "problems": [
+    "role-direction"
+   ],
+   "note": "“潮汐簿压着”＝书在压纸",
+   "text": "潮汐簿压着的干纸滑开了。",
+   "factValue": "压着的干纸滑开了"
+  },
+  {
+   "reviewId": "R10",
+   "pair": "rp3",
+   "expectedRole": "locationReference",
+   "nameBinding": "ok",
+   "otherBinding": "ok",
+   "stateBinding": "ok",
+   "relationBinding": "ok",
+   "problems": [],
+   "note": "",
+   "text": "堆在鱼筐底的银鳞鱼露出来。",
+   "factValue": "堆着的银鳞鱼露出来"
+  },
+  {
+   "reviewId": "R11",
+   "pair": "rp4",
+   "expectedRole": "possessor",
+   "nameBinding": "ok",
+   "otherBinding": "ok",
+   "stateBinding": "ok",
+   "relationBinding": "n/a",
+   "problems": [],
+   "note": "",
+   "text": "铜灯罩的罩口积了铜绿。",
+   "factValue": "罩口积了铜绿"
+  },
+  {
+   "reviewId": "R12",
+   "pair": "rp1",
+   "expectedRole": "locationReference",
+   "nameBinding": "ok",
+   "otherBinding": "ok",
+   "stateBinding": "ok",
+   "relationBinding": "ok",
+   "problems": [],
+   "note": "",
+   "text": "压在潮汐簿上的干纸滑开了。",
+   "factValue": "压着的干纸滑开了"
+  },
+  {
+   "reviewId": "R13",
+   "pair": "rp6",
+   "expectedRole": "possessor",
+   "nameBinding": "ok",
+   "otherBinding": "ok",
+   "stateBinding": "ok",
+   "relationBinding": "n/a",
+   "problems": [],
+   "note": "",
+   "text": "钟架的横木磨出了毛边。",
+   "factValue": "横木磨出了毛边"
+  },
+  {
+   "reviewId": "R14",
+   "pair": "rp3",
+   "expectedRole": "possessor",
+   "nameBinding": "ok",
+   "otherBinding": "ok",
+   "stateBinding": "ok",
+   "relationBinding": "n/a",
+   "problems": [],
+   "note": "",
+   "text": "鱼筐底渗了水。",
+   "factValue": "筐底渗了水"
+  },
+  {
+   "reviewId": "R15",
+   "pair": "rp3",
+   "expectedRole": "locationReference",
+   "nameBinding": "agent",
+   "otherBinding": "ok",
+   "stateBinding": "ok",
+   "relationBinding": "inverted",
+   "problems": [
+    "role-direction"
+   ],
+   "note": "“鱼筐堆着”＝筐在堆鱼",
+   "text": "鱼筐堆着的银鳞鱼露出来。",
+   "factValue": "堆着的银鳞鱼露出来"
+  },
+  {
+   "reviewId": "R16",
+   "pair": "rp4",
+   "expectedRole": "possessor",
+   "nameBinding": "ok",
+   "otherBinding": "ok",
+   "stateBinding": "ok",
+   "relationBinding": "n/a",
+   "problems": [],
+   "note": "",
+   "text": "铜灯罩的罩口积了铜绿。",
+   "factValue": "罩口积了铜绿"
+  },
+  {
+   "reviewId": "R17",
+   "pair": "rp5",
+   "expectedRole": "locationReference",
+   "nameBinding": "agent",
+   "otherBinding": "ok",
+   "stateBinding": "ok",
+   "relationBinding": "inverted",
+   "problems": [
+    "role-direction"
+   ],
+   "note": "“石板靠着”＝石板在靠伞",
+   "text": "石板靠着的油纸伞歪了。",
+   "factValue": "靠着的油纸伞歪了"
+  },
+  {
+   "reviewId": "R18",
+   "pair": "rp6",
+   "expectedRole": "possessor",
+   "nameBinding": "ok",
+   "otherBinding": "ok",
+   "stateBinding": "ok",
+   "relationBinding": "n/a",
+   "problems": [],
+   "note": "",
+   "text": "钟架的横木磨出了毛边。",
+   "factValue": "横木磨出了毛边"
+  },
+  {
+   "reviewId": "R19",
+   "pair": "rp3",
+   "expectedRole": "possessor",
+   "nameBinding": "replaced",
+   "otherBinding": "missing",
+   "stateBinding": "ok",
+   "relationBinding": "n/a",
+   "problems": [
+    "role-replaced",
+    "noun-part"
+   ],
+   "note": "部件“筐底”被名称顶掉",
+   "text": "鱼筐渗了水。",
+   "factValue": "筐底渗了水"
+  },
+  {
+   "reviewId": "R20",
+   "pair": "rp2",
+   "expectedRole": "possessor",
+   "nameBinding": "ok",
+   "otherBinding": "ok",
+   "stateBinding": "ok",
+   "relationBinding": "n/a",
+   "problems": [],
+   "note": "",
+   "text": "木桩的桩身裂了一道缝。",
+   "factValue": "桩身裂了一道缝"
+  },
+  {
+   "reviewId": "R21",
+   "pair": "rp4",
+   "expectedRole": "possessor",
+   "nameBinding": "ok",
+   "otherBinding": "ok",
+   "stateBinding": "ok",
+   "relationBinding": "n/a",
+   "problems": [],
+   "note": "",
+   "text": "铜灯罩的罩口积了铜绿。",
+   "factValue": "罩口积了铜绿"
+  },
+  {
+   "reviewId": "R22",
+   "pair": "rp6",
+   "expectedRole": "locationReference",
+   "nameBinding": "flip",
+   "otherBinding": "ok",
+   "stateBinding": "ok",
+   "relationBinding": "broken",
+   "problems": [
+    "role-flip",
+    "syntax"
+   ],
+   "note": "“搭在钟架的”缺“上”，读成领属",
+   "text": "搭在钟架的钟绳垂到堤面。",
+   "factValue": "搭着的钟绳垂到堤面"
+  },
+  {
+   "reviewId": "R23",
+   "pair": "rp1",
+   "expectedRole": "possessor",
+   "nameBinding": "ok",
+   "otherBinding": "ok",
+   "stateBinding": "ok",
+   "relationBinding": "n/a",
+   "problems": [],
+   "note": "",
+   "text": "潮汐簿的缺页卷了边。",
+   "factValue": "缺页卷了边"
+  },
+  {
+   "reviewId": "R24",
+   "pair": "rp5",
+   "expectedRole": "possessor",
+   "nameBinding": "ok",
+   "otherBinding": "ok",
+   "stateBinding": "ok",
+   "relationBinding": "n/a",
+   "problems": [],
+   "note": "",
+   "text": "石板的边角崩了一小块。",
+   "factValue": "边角崩了一小块"
+  },
+  {
+   "reviewId": "R25",
+   "pair": "rp4",
+   "expectedRole": "locationReference",
+   "nameBinding": "ok",
+   "otherBinding": "missing",
+   "stateBinding": "ok",
+   "relationBinding": "ok",
+   "problems": [
+    "noun-other",
+    "repetition",
+    "location-wrong"
+   ],
+   "note": "“灯芯”整段丢失，且整句复读、位置写成“罩外”",
+   "text": "插在铜灯罩外,插在铜灯罩外歪了。",
+   "factValue": "插着的灯芯歪了"
+  },
+  {
+   "reviewId": "R26",
+   "pair": "rp5",
+   "expectedRole": "locationReference",
+   "nameBinding": "missing",
+   "otherBinding": "ok",
+   "stateBinding": "ok",
+   "relationBinding": "ok",
+   "problems": [
+    "noun-name"
+   ],
+   "note": "整条没有名称",
+   "text": "靠着的油纸伞歪了。",
+   "factValue": "靠着的油纸伞歪了"
+  },
+  {
+   "reviewId": "R27",
+   "pair": "rp5",
+   "expectedRole": "locationReference",
+   "nameBinding": "ok",
+   "otherBinding": "missing",
+   "stateBinding": "ok",
+   "relationBinding": "ok",
+   "problems": [
+    "noun-other"
+   ],
+   "note": "“油纸伞”丢失，剩下“靠在石板上歪了”",
+   "text": "靠在石板上歪了。",
+   "factValue": "靠着的油纸伞歪了"
+  },
+  {
+   "reviewId": "R28",
+   "pair": "rp1",
+   "expectedRole": "possessor",
+   "nameBinding": "ok",
+   "otherBinding": "ok",
+   "stateBinding": "ok",
+   "relationBinding": "n/a",
+   "problems": [],
+   "note": "",
+   "text": "潮汐簿的缺页卷了边。",
+   "factValue": "缺页卷了边"
+  },
+  {
+   "reviewId": "R29",
+   "pair": "rp6",
+   "expectedRole": "possessor",
+   "nameBinding": "ok",
+   "otherBinding": "ok",
+   "stateBinding": "ok",
+   "relationBinding": "n/a",
+   "problems": [],
+   "note": "",
+   "text": "钟架的横木磨出了毛边。",
+   "factValue": "横木磨出了毛边"
+  },
+  {
+   "reviewId": "R30",
+   "pair": "rp2",
+   "expectedRole": "locationReference",
+   "nameBinding": "ok",
+   "otherBinding": "ok",
+   "stateBinding": "ok",
+   "relationBinding": "ok",
+   "problems": [],
+   "note": "",
+   "text": "靠在木桩上的渡船退了半尺。",
+   "factValue": "靠着的渡船退了半尺"
+  },
+  {
+   "reviewId": "R31",
+   "pair": "rp4",
+   "expectedRole": "locationReference",
+   "nameBinding": "ok",
+   "otherBinding": "ok",
+   "stateBinding": "ok",
+   "relationBinding": "ok",
+   "problems": [
+    "syntax"
+   ],
+   "note": "“的插着的”的双“的”",
+   "text": "铜灯罩上的插着的灯芯歪了。",
+   "factValue": "插着的灯芯歪了"
+  },
+  {
+   "reviewId": "R32",
+   "pair": "rp1",
+   "expectedRole": "possessor",
+   "nameBinding": "ok",
+   "otherBinding": "ok",
+   "stateBinding": "ok",
+   "relationBinding": "n/a",
+   "problems": [],
+   "note": "",
+   "text": "潮汐簿的缺页卷了边。",
+   "factValue": "缺页卷了边"
+  },
+  {
+   "reviewId": "R33",
+   "pair": "rp2",
+   "expectedRole": "locationReference",
+   "nameBinding": "missing",
+   "otherBinding": "ok",
+   "stateBinding": "ok",
+   "relationBinding": "ok",
+   "problems": [
+    "noun-name"
+   ],
+   "note": "整条没有名称",
+   "text": "靠着的渡船退了半尺。",
+   "factValue": "靠着的渡船退了半尺"
+  },
+  {
+   "reviewId": "R34",
+   "pair": "rp5",
+   "expectedRole": "possessor",
+   "nameBinding": "ok",
+   "otherBinding": "ok",
+   "stateBinding": "ok",
+   "relationBinding": "n/a",
+   "problems": [],
+   "note": "",
+   "text": "石板的边角崩了一小块。",
+   "factValue": "边角崩了一小块"
+  },
+  {
+   "reviewId": "R35",
+   "pair": "rp3",
+   "expectedRole": "locationReference",
+   "nameBinding": "agent",
+   "otherBinding": "ok",
+   "stateBinding": "ok",
+   "relationBinding": "inverted",
+   "problems": [
+    "role-direction"
+   ],
+   "note": "“鱼筐堆着”＝筐在堆鱼",
+   "text": "鱼筐堆着的银鳞鱼露出来。",
+   "factValue": "堆着的银鳞鱼露出来"
+  },
+  {
+   "reviewId": "R36",
+   "pair": "rp2",
+   "expectedRole": "locationReference",
+   "nameBinding": "agent",
+   "otherBinding": "ok",
+   "stateBinding": "ok",
+   "relationBinding": "inverted",
+   "problems": [
+    "role-direction"
+   ],
+   "note": "“木桩靠着”＝木桩在靠渡船",
+   "text": "木桩靠着的渡船退了半尺。",
+   "factValue": "靠着的渡船退了半尺"
+  }
+ ]
+}
