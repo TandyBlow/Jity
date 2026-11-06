@@ -1,0 +1,95 @@
+{
+ "version": "optdiag-r1",
+ "question": "is the cross-set degradation explained by optimisation instability (learning rate and step count) rather than by the data change",
+ "start": {
+  "name": "C",
+  "ckpt": "artifacts/next-runs/three-arm-c/ckpt",
+  "modelSha256": "08276c0caa1605408d145f5efea5bc0e22edb106f5accb2888c187bb9a484c9c",
+  "humanFact": "185/185",
+  "note": "the only checkpoint with no new confirmed loss"
+ },
+ "pools": {
+  "rows": 341,
+  "mix": "4,3,1",
+  "batch": 8,
+  "files": [
+   {
+    "path": "artifacts/three-arm-r1/arm-c-verbalizer.jsonl",
+    "rows": 229,
+    "sha256": "ffc07355e3d268cdabd896095958a445ffa04dd04462aea1aa474246d82216fd"
+   },
+   {
+    "path": "artifacts/three-arm-r1/arm-c-expand78.jsonl",
+    "rows": 78,
+    "sha256": "92109cbda137cb4219f7c6ea925edaf52c406946c9c02dc21745c901255b78c0"
+   },
+   {
+    "path": "artifacts/three-arm-r1/arm-c-object34.jsonl",
+    "rows": 34,
+    "sha256": "5f1e373c271f147a830d9344625e7e931c3cec036bbda817b562b826e1e0758e"
+   }
+  ],
+  "note": "C pools unchanged: no movement repair, no new exemplars, no direction pairs"
+ },
+ "conditions": [
+  {
+   "name": "lr1e4-120",
+   "lr": 0.0001,
+   "steps": 120
+  },
+  {
+   "name": "lr1e4-240",
+   "lr": 0.0001,
+   "steps": 240
+  },
+  {
+   "name": "lr3e4-120",
+   "lr": 0.0003,
+   "steps": 120
+  },
+  {
+   "name": "lr3e4-240",
+   "lr": 0.0003,
+   "steps": 240
+  }
+ ],
+ "training": {
+  "seed": 20261102,
+  "precision": "fp32",
+  "optimizer": "AdamW",
+  "saveAt": [
+   120,
+   240
+  ],
+  "prefixRule": "both step counts come from one run per learning rate, so the 120-step checkpoint is the prefix of the 240-step one by construction; the two learning rates must share the id hash"
+ },
+ "evaluation": {
+  "models": [
+   "C",
+   "lr1e4-120",
+   "lr1e4-240",
+   "lr3e4-120",
+   "lr3e4-240"
+  ],
+  "sets": [
+   "cf24",
+   "final24",
+   "moved24",
+   "relation",
+   "namepair",
+   "rolepair"
+  ],
+  "device": "one RTX 4090 D, same job",
+  "decode": "greedy, EOS or 20 s, variant none"
+ },
+ "reporting": {
+  "primary": "an itemised list of new human-confirmed fact losses per condition against C; no totals are allowed to offset an entry",
+  "secondary": [
+   "added text",
+   "syntax",
+   "relation, namepair and rolepair changes"
+  ],
+  "unchangedRules": "scoring-rule-r3 and r4 read as frozen; machine and human columns stay separate"
+ },
+ "decisions": "no extension beyond 240 steps is started from an interim result; if a stable condition appears, the budget question is discussed separately; if all conditions degrade, the result is analysed and the grouped-expression arm is not started automatically"
+}

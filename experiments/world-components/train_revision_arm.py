@@ -45,6 +45,9 @@ def main():
     parser.add_argument('--run-dir', required=True)
     parser.add_argument('--out-name', default='ckpt')
     parser.add_argument('--arm', required=True, help='Arm label recorded in the report')
+    parser.add_argument('--save-at', default='',
+                        help='Comma-separated steps to snapshot in addition to the last one; the '
+                             'shorter run is then a prefix of the longer one by construction')
     args = parser.parse_args()
 
     systems = ComponentPaths()
@@ -88,7 +91,12 @@ def main():
     orders = [list(range(len(pool))) for pool in pools]
     cursor = [0] * len(pools)
 
+    save_at = sorted({int(part) for part in args.save_at.split(',') if part.strip()})
+    if any(step < 1 or step > args.steps for step in save_at):
+        raise SystemExit('--save-at steps must fall inside 1..steps')
     id_sequence, target_sequence, losses = [], [], []
+    snapshots = {}
+    run_dir.mkdir(parents=True, exist_ok=True)
     started = time.perf_counter()
     for step in range(1, args.steps + 1):
         batch = []
@@ -110,6 +118,14 @@ def main():
         optimizer.zero_grad()
         out.loss.backward()
         optimizer.step()
+        if step in save_at:
+            snap = run_dir / ('%s-%d' % (args.out_name, step))
+            model.save_pretrained(snap)
+            tokenizer.save_pretrained(snap)
+            snapshots[step] = {'dir': str(snap.relative_to(ComponentPaths().worktree)),
+                               'modelSha256': sha256(snap / 'model.safetensors'),
+                               'ids': len(id_sequence),
+                               'idSha256': sha256_text(chr(10).join(id_sequence))}
         if step % 40 == 0 or step == 1 or step == args.steps:
             losses.append({'step': step, 'loss': round(float(out.loss), 4)})
             print('step %d loss %.4f' % (step, float(out.loss)), flush=True)
@@ -134,6 +150,7 @@ def main():
         'seconds': round(time.perf_counter() - started, 1),
         'checkpoint': {'dir': str(ckpt.relative_to(ComponentPaths().worktree)),
                        'modelSha256': sha256(ckpt / 'model.safetensors')},
+        'snapshots': snapshots,
     }
     (run_dir / 'train-report.json').write_text(json.dumps(report, ensure_ascii=False, indent=1) + '\n',
                                                encoding='utf-8', newline='\n')

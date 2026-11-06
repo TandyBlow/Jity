@@ -422,5 +422,15 @@
   "order": "run the optimisation diagnosis first; its result sets the budget for the grouped arm",
   "notExecuted": true
  },
- "humanCountingNote": "each entry starts from the 185 units of the three sets and subtracts one per unit the read found unsupported: A four (t09, t11, m14, m24); B two (glass modifier on t23 and v10); control six (five sanity-direction, one destination); moved one (t22:f1 relation); aug exp and mixed ctl one (t22:f1 reference); mix one (t21:f0 part replaced); dir two (t21:f0 whole missing, m05:f0 destination missing); r9 ctl two (t22:f0 name missing, t24:f1 state missing)"
+ "humanCountingNote": "each entry starts from the 185 units of the three sets and subtracts one per unit the read found unsupported: A four (t09, t11, m14, m24); B two (glass modifier on t23 and v10); control six (five sanity-direction, one destination); moved one (t22:f1 relation); aug exp and mixed ctl one (t22:f1 reference); mix one (t21:f0 part replaced); dir two (t21:f0 whole missing, m05:f0 destination missing); r9 ctl two (t22:f0 name missing, t24:f1 state missing)",
+ "lossAccounting": {
+  "newLoss": "a unit that was supported and becomes unsupported",
+  "changedForm": "a unit that was already unsupported and only changes its failure shape; not counted as new, reported separately as a change of error type",
+  "appliesTo": {
+   "row5_moved": "t22:f1 supported at C, unsupported here -> new loss",
+   "row7_augExp": "t22:f1 already unsupported at moved -> changed form (relation -> reference)",
+   "row8_mixedCtl": "same pool and same weights as row 7 -> changed form",
+   "row11_dir": "t21:f0 already unsupported at mix -> changed form (part -> whole); m05:f0 is new"
+  }
+ }
 }

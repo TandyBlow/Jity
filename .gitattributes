@@ -49,3 +49,5 @@ artifacts/next-inputs/world-components/n4-explicit-r1-rule.json -text
 artifacts/dirpair-r1/** -text
 artifacts/next-acceptance/dirpair-r1/** -text
 artifacts/next-acceptance/consolidation-r1/** -text
+artifacts/optdiag-r1/** -text
+artifacts/next-acceptance/optdiag-r1/** -text

@@ -1,0 +1,486 @@
+{
+ "purpose": "optimisation diagnosis: same C pools, two learning rates, 120 and 240 step snapshots",
+ "job": {
+  "train": 241168,
+  "eval": 241170,
+  "gpu": "NVIDIA GeForce RTX 4090 D",
+  "unitsPerModel": 223,
+  "note": "38 units across relation, namepair and rolepair probes"
+ },
+ "start": "C 08276c0c, human 185/185",
+ "pools": "C pools 341 rows, bytes checked against the freeze before training",
+ "conditions": {
+  "C": {
+   "steps": 0,
+   "model": "08276c0c"
+  },
+  "lr1e4-120": {
+   "lr": 0.0001,
+   "steps": 120,
+   "model": "57c44f31"
+  },
+  "lr1e4-240": {
+   "lr": 0.0001,
+   "steps": 240,
+   "model": "dee94e51"
+  },
+  "lr3e4-120": {
+   "lr": 0.0003,
+   "steps": 120,
+   "model": "12289398"
+  },
+  "lr3e4-240": {
+   "lr": 0.0003,
+   "steps": 240,
+   "model": "d6360324"
+  }
+ },
+ "prefix": {
+  "idSha256": "335097b9",
+  "draws": {
+   "120": 960,
+   "240": 1920
+  },
+  "how": "one run per learning rate with --save-at 120, so the shorter checkpoint is the prefix by construction"
+ },
+ "reproducibility": "lr3e4-240 reproduces the earlier r2 control exactly: same weight hash and 185 of 185 identical rows",
+ "machine": {
+  "C": {
+   "cf24": {
+    "S": 85
+   },
+   "final24": {
+    "S": 76
+   },
+   "moved24": {
+    "S": 24
+   }
+  },
+  "lr1e4-120": {
+   "cf24": {
+    "S": 85
+   },
+   "final24": {
+    "S": 76
+   },
+   "moved24": {
+    "S": 24
+   }
+  },
+  "lr1e4-240": {
+   "cf24": {
+    "S": 85
+   },
+   "final24": {
+    "S": 76
+   },
+   "moved24": {
+    "S": 24
+   }
+  },
+  "lr3e4-120": {
+   "cf24": {
+    "S": 85
+   },
+   "final24": {
+    "S": 75,
+    "O": 1
+   },
+   "moved24": {
+    "S": 24
+   }
+  },
+  "lr3e4-240": {
+   "cf24": {
+    "S": 83,
+    "O": 2
+   },
+   "final24": {
+    "S": 73,
+    "O": 3
+   },
+   "moved24": {
+    "S": 24
+   }
+  }
+ },
+ "human": {
+  "C": "185/185",
+  "lr1e4-120": "185/185",
+  "lr1e4-240": "185/185",
+  "lr3e4-120": "183/185",
+  "lr3e4-240": "179/185"
+ },
+ "newLosses": {
+  "C": [],
+  "lr1e4-120": [],
+  "lr1e4-240": [],
+  "lr3e4-120": [
+   {
+    "unitId": "v20:f1",
+    "set": "final24",
+    "kind": "sanity up 9->12",
+    "text": "沈砚靠在潮渡的栈桥边。",
+    "why": "the recovery is gone: no change is expressed, so the increase is not conveyed",
+    "machine": "O (无方向)"
+   },
+   {
+    "unitId": "m10:f0",
+    "set": "moved24",
+    "kind": "moved 旧灯塔->潮汐档案馆",
+    "text": "叶知微离开旧灯塔,沿着潮汐档案馆。",
+    "why": "the clause never arrives; 沿着潮汐档案馆 is a path fragment without an arrival",
+    "machine": "S, missed by the scorer"
+   }
+  ],
+  "lr3e4-240": [
+   {
+    "unitId": "t10:f3",
+    "set": "cf24",
+    "kind": "sanity down 12->9",
+    "text": "沈砚按住胸口,那阵闷意没有散。",
+    "why": "the decrease is turned into stasis",
+    "machine": "O (无方向)"
+   },
+   {
+    "unitId": "t16:f2",
+    "set": "cf24",
+    "kind": "sanity down 12->9",
+    "text": "沈砚按住胸口,那阵闷意没有散。",
+    "why": "the decrease is turned into stasis",
+    "machine": "O (无方向)"
+   },
+   {
+    "unitId": "v14:f2",
+    "set": "final24",
+    "kind": "sanity down 12->9",
+    "text": "沈砚按住胸口,那阵闷意没有散。",
+    "why": "the decrease is turned into stasis",
+    "machine": "O (无方向)"
+   },
+   {
+    "unitId": "v18:f2",
+    "set": "final24",
+    "kind": "sanity down 12->9",
+    "text": "沈砚按住胸口,那阵闷意没有散。",
+    "why": "the decrease is turned into stasis",
+    "machine": "O (无方向)"
+   },
+   {
+    "unitId": "v19:f1",
+    "set": "final24",
+    "kind": "sanity down 12->9",
+    "text": "叶知微按住胸口,那阵闷意没有散。",
+    "why": "the decrease is turned into stasis",
+    "machine": "O (无方向)"
+   },
+   {
+    "unitId": "m21:f0",
+    "set": "moved24",
+    "kind": "moved 雾堤->潮渡",
+    "text": "韩渡从雾堤出来,在雾堤的栈桥边站住。",
+    "why": "the destination 潮渡 never appears and the pier is attached to 雾堤",
+    "machine": "S, missed by the scorer"
+   }
+  ]
+ },
+ "added": {
+  "C": {
+   "perSet": {
+    "cf24": 5,
+    "final24": 4,
+    "moved24": 7
+   },
+   "total": 16
+  },
+  "lr1e4-120": {
+   "perSet": {
+    "cf24": 0,
+    "final24": 1,
+    "moved24": 0
+   },
+   "total": 1
+  },
+  "lr1e4-240": {
+   "perSet": {
+    "cf24": 1,
+    "final24": 0,
+    "moved24": 8
+   },
+   "total": 9
+  },
+  "lr3e4-120": {
+   "perSet": {
+    "cf24": 2,
+    "final24": 2,
+    "moved24": 7
+   },
+   "total": 11
+  },
+  "lr3e4-240": {
+   "perSet": {
+    "cf24": 0,
+    "final24": 2,
+    "moved24": 2
+   },
+   "total": 4
+  }
+ },
+ "probes": {
+  "C": {
+   "rolepair": "9/12",
+   "namepairRelationKept": "8/12",
+   "namepairSyntaxBroken": 2,
+   "relationPass": 3,
+   "relationSyntaxBroken": 4
+  },
+  "lr1e4-120": {
+   "rolepair": "12/12",
+   "namepairRelationKept": "10/12",
+   "namepairSyntaxBroken": 4,
+   "relationPass": 3,
+   "relationSyntaxBroken": 7
+  },
+  "lr1e4-240": {
+   "rolepair": "12/12",
+   "namepairRelationKept": "12/12",
+   "namepairSyntaxBroken": 6,
+   "relationPass": 3,
+   "relationSyntaxBroken": 7
+  },
+  "lr3e4-120": {
+   "rolepair": "11/12",
+   "namepairRelationKept": "10/12",
+   "namepairSyntaxBroken": 5,
+   "relationPass": 4,
+   "relationSyntaxBroken": 5
+  },
+  "lr3e4-240": {
+   "rolepair": "12/12",
+   "namepairRelationKept": "10/12",
+   "namepairSyntaxBroken": 5,
+   "relationPass": 5,
+   "relationSyntaxBroken": 5
+  }
+ },
+ "reading": {
+  "lr1e4": "no new fact loss at either 120 or 240 steps",
+  "lr3e4": "two losses at 120 and six at 240, so the same continuation degrades at the higher rate",
+  "machineMisses": [
+   "m10:f0 at lr3e4-120",
+   "m21:f0 at lr3e4-240"
+  ]
+ },
+ "groupedArmGap": [
+  "sampling a group and grading a group is not a loss constraint",
+  "no constraint currently produces a gradient: entity, relation and state checks live in sampling and scoring only",
+  "need to state which constraints enter the loss, how negatives and their gradients are formed, and how exposure is held fixed before the arm can be compared with plain augmentation"
+ ],
+ "files": [
+  {
+   "path": "artifacts/next-acceptance/optdiag-r1/cf24-baseline.json",
+   "bytes": 137440,
+   "sha256": "48881e52f969aa822f8af1b50fb27b47292b2bd083b0f195a649e9f815e7cfb2"
+  },
+  {
+   "path": "artifacts/next-acceptance/optdiag-r1/final24-baseline.json",
+   "bytes": 115034,
+   "sha256": "517ac1e5e463bd54f57fc2f7bcce554f315922ff0c619aa585caff65982318a0"
+  },
+  {
+   "path": "artifacts/next-acceptance/optdiag-r1/moved24-baseline.json",
+   "bytes": 38353,
+   "sha256": "b0196473527d588856f5ac09ac6553d7c9b0ca9cb84ab3b5182bd0a096cc5c00"
+  },
+  {
+   "path": "artifacts/next-acceptance/optdiag-r1/relation-baseline.json",
+   "bytes": 17358,
+   "sha256": "a82bbc4fa4b7b5a149b32a88f2440a82e0dcb813ac8a564816c150d6933c30a1"
+  },
+  {
+   "path": "artifacts/next-acceptance/optdiag-r1/namepair-baseline.json",
+   "bytes": 20224,
+   "sha256": "e75eecb4946b9ce7a48d811f488315b5bad5abc143b3554068de530b3192bae8"
+  },
+  {
+   "path": "artifacts/next-acceptance/optdiag-r1/rolepair-baseline.json",
+   "bytes": 19863,
+   "sha256": "2dbc88b85c85a3152709caabf99e0cef79f35af88541e69adc028096a7b39c5e"
+  },
+  {
+   "path": "artifacts/next-acceptance/optdiag-r1/cf24-baseline.json",
+   "bytes": 137384,
+   "sha256": "4ee327815ddf7fb75d245a43e9e77796c444a7acb8749b610237a5f55a4d44ba"
+  },
+  {
+   "path": "artifacts/next-acceptance/optdiag-r1/final24-baseline.json",
+   "bytes": 114897,
+   "sha256": "af8b8047fef080eff1df6e34682befe13ddae5c282704eb0389c41b5833b20ed"
+  },
+  {
+   "path": "artifacts/next-acceptance/optdiag-r1/moved24-baseline.json",
+   "bytes": 38229,
+   "sha256": "25f0524d5a75494c60c09794e4dfb8fb59727574ca1cb57258ef30fccfff343b"
+  },
+  {
+   "path": "artifacts/next-acceptance/optdiag-r1/relation-baseline.json",
+   "bytes": 17403,
+   "sha256": "0cd5c7788f00017f37065e74bf69c16cc014fcbd17dd6c83d24d548a4d052a9c"
+  },
+  {
+   "path": "artifacts/next-acceptance/optdiag-r1/namepair-baseline.json",
+   "bytes": 20252,
+   "sha256": "500de0cf6cc40e2a9e4d3a4006eedc673d03e0547144f5ef1aba710718caa6e4"
+  },
+  {
+   "path": "artifacts/next-acceptance/optdiag-r1/rolepair-baseline.json",
+   "bytes": 19896,
+   "sha256": "0e18750219b96c08b70757f94619b0d14d9862133977fd3519188923c61a99cd"
+  },
+  {
+   "path": "artifacts/next-acceptance/optdiag-r1/cf24-baseline.json",
+   "bytes": 137456,
+   "sha256": "d1e81c6a4c4afb6cb6e715bb9fd337b4701fabdf7945f8f0ec36b780c1f07cb0"
+  },
+  {
+   "path": "artifacts/next-acceptance/optdiag-r1/final24-baseline.json",
+   "bytes": 114969,
+   "sha256": "1d70cc9c3c54113dfd09a7de9f2cc88dd528ad81b5a0f86abbbf2c44f5b0dc20"
+  },
+  {
+   "path": "artifacts/next-acceptance/optdiag-r1/moved24-baseline.json",
+   "bytes": 38448,
+   "sha256": "07efebcac0ab488b67a59404eb9b12321bfb9708ddba9c4d4f9ef6ed8e3142ea"
+  },
+  {
+   "path": "artifacts/next-acceptance/optdiag-r1/relation-baseline.json",
+   "bytes": 17399,
+   "sha256": "2ee2128d81d4a153d8696134993c42c54f872b64746584ca86abd7d3a172b004"
+  },
+  {
+   "path": "artifacts/next-acceptance/optdiag-r1/namepair-baseline.json",
+   "bytes": 20276,
+   "sha256": "b790234eb528cb3213075fd08b7e3b4e8d58fde9752e5fbefce9f8238311fe67"
+  },
+  {
+   "path": "artifacts/next-acceptance/optdiag-r1/rolepair-baseline.json",
+   "bytes": 19893,
+   "sha256": "8251e6f71a4168dcf32882516b48be60e79fdd7e181494eefe8a07a8b9db4a69"
+  },
+  {
+   "path": "artifacts/next-acceptance/optdiag-r1/cf24-baseline.json",
+   "bytes": 137411,
+   "sha256": "d68aee7d2d452b92596dadb389955a020c2065a2eda0ced86e297253a8ed5635"
+  },
+  {
+   "path": "artifacts/next-acceptance/optdiag-r1/final24-baseline.json",
+   "bytes": 115017,
+   "sha256": "345e3853447fe9e5401558288012f756a408f2f522b6ce583c6481f42d456233"
+  },
+  {
+   "path": "artifacts/next-acceptance/optdiag-r1/moved24-baseline.json",
+   "bytes": 38396,
+   "sha256": "493cef0191dafe51b54ce44dd7fc15d8ccbbdf1dc0447311f7abe0a9bc9d8056"
+  },
+  {
+   "path": "artifacts/next-acceptance/optdiag-r1/relation-baseline.json",
+   "bytes": 17384,
+   "sha256": "c301f408667dcfb6790526d57d9e77482015060204f3cd6bc14306a69deb7668"
+  },
+  {
+   "path": "artifacts/next-acceptance/optdiag-r1/namepair-baseline.json",
+   "bytes": 20256,
+   "sha256": "341c279d92c91c405b61b842ad448d878dd094ad0d0ddbe80d7504215ac55585"
+  },
+  {
+   "path": "artifacts/next-acceptance/optdiag-r1/rolepair-baseline.json",
+   "bytes": 19905,
+   "sha256": "2f6e6fe2e7df221651d5bbbdc3138228523d711bc0aef046f0402ced06004644"
+  },
+  {
+   "path": "artifacts/next-acceptance/optdiag-r1/cf24-baseline.json",
+   "bytes": 137373,
+   "sha256": "0edbf950d675115e4328caa6f3ca9e0a77d0e00dbfa02e067a564cad39c84bba"
+  },
+  {
+   "path": "artifacts/next-acceptance/optdiag-r1/final24-baseline.json",
+   "bytes": 114986,
+   "sha256": "71fb2566e8f0735285be46802dd6ef1811fff5a18ce7d9cc4116c234ec59366f"
+  },
+  {
+   "path": "artifacts/next-acceptance/optdiag-r1/moved24-baseline.json",
+   "bytes": 38282,
+   "sha256": "6db15847db1efc4bd24a6ccfe36be1b24f985de23cd67d2b09a64591ed78ed1e"
+  },
+  {
+   "path": "artifacts/next-acceptance/optdiag-r1/relation-baseline.json",
+   "bytes": 17390,
+   "sha256": "c29490dd75297a762918faa126f0585a75b717d1cce683b506f3ce4eb52dda35"
+  },
+  {
+   "path": "artifacts/next-acceptance/optdiag-r1/namepair-baseline.json",
+   "bytes": 20252,
+   "sha256": "3c8ef3eb6ad5cff2fa2d745636355b689654ff4dfd78212aba2e65c87ad15f8a"
+  },
+  {
+   "path": "artifacts/next-acceptance/optdiag-r1/rolepair-baseline.json",
+   "bytes": 19894,
+   "sha256": "b7d99caf102d611e27bb11dcdec0c867677303b45cb63fca59b9d8379271399a"
+  },
+  {
+   "path": "artifacts/next-acceptance/optdiag-r1/rolepair-judged.json",
+   "bytes": 24591,
+   "sha256": "31bfefa81cb671fa899ed2d1a77a048667edd28aed17f90db694c08f65baba8f"
+  },
+  {
+   "path": "artifacts/next-acceptance/optdiag-r1/namepair-judged.json",
+   "bytes": 19731,
+   "sha256": "6503023b0ea073ed7340d62f7221858a27ab6c9dffc6577b3f61c96ed245585e"
+  },
+  {
+   "path": "artifacts/next-acceptance/optdiag-r1/frame-judged.json",
+   "bytes": 11990,
+   "sha256": "422d2812086cd46d01331243e17791291861f1897a73021010914403426b57e6"
+  },
+  {
+   "path": "artifacts/next-acceptance/optdiag-r1/review-r10.json",
+   "bytes": 3883,
+   "sha256": "70e9ad3af5b8d38a0d9aa77ddba982a637567b2b6eb020144f4bf08890708eab"
+  },
+  {
+   "path": "artifacts/next-acceptance/optdiag-r1/lr1e4-120-diff.txt",
+   "bytes": 4692,
+   "sha256": "57a9f42c7e8b40408febff6c03558ee7aafb3f8542ffab857c6abb20d995e753"
+  },
+  {
+   "path": "artifacts/next-acceptance/optdiag-r1/lr1e4-240-diff.txt",
+   "bytes": 6618,
+   "sha256": "755df30c1afc7dc635e221cc6249b6bb04451f4ff9c46bd31fa22c6df0aee54c"
+  },
+  {
+   "path": "artifacts/next-acceptance/optdiag-r1/lr3e4-120-diff.txt",
+   "bytes": 5008,
+   "sha256": "53fa29c7cb7f86ea7257566d2446270eeb68beb0f9f19b6500f1f57d883f30ca"
+  },
+  {
+   "path": "artifacts/next-acceptance/optdiag-r1/lr3e4-240-diff.txt",
+   "bytes": 5527,
+   "sha256": "9ae02f62e37251c8d8967448c90c25141dadab1b4cac4bdd1be8a1d5f1b8c886"
+  },
+  {
+   "path": "artifacts/next-acceptance/optdiag-r1/optdiag-freeze.json",
+   "bytes": 2616,
+   "sha256": "ce81ebd35b0ea63d1657e5652974b97908691319146f7bf9c6194000c77fb922"
+  },
+  {
+   "path": "artifacts/next-acceptance/optdiag-r1/train-report.json",
+   "bytes": 2324,
+   "sha256": "bd12544188b5dc85780e7ac987a64199d30d23f99c0897df7be013fe8fb8adc5"
+  },
+  {
+   "path": "artifacts/next-acceptance/optdiag-r1/train-report.json",
+   "bytes": 2322,
+   "sha256": "0a88312a2613e6a9d5af85ddd54dd55cdd9bb3acb7726ae3c09895794269b3ed"
+  }
+ ]
+}
