@@ -1,0 +1,56 @@
+{
+ "purpose": "direction-only negatives for the margin calibration; no training",
+ "facts": 8,
+ "failures": [],
+ "pairs": [
+  {
+   "unitId": "rd01",
+   "relation": "挂",
+   "correct": "铜铃挂在门框上。",
+   "swapped": "门框挂在铜铃上。"
+  },
+  {
+   "unitId": "rd02",
+   "relation": "缠",
+   "correct": "麻绳缠在船桨上。",
+   "swapped": "船桨缠在麻绳上。"
+  },
+  {
+   "unitId": "rd03",
+   "relation": "系",
+   "correct": "布条系在栏杆上。",
+   "swapped": "栏杆系在布条上。"
+  },
+  {
+   "unitId": "rd04",
+   "relation": "搭",
+   "correct": "草席搭在木架上。",
+   "swapped": "木架搭在草席上。"
+  },
+  {
+   "unitId": "rd05",
+   "relation": "套",
+   "correct": "铜环套在门钉上。",
+   "swapped": "门钉套在铜环上。"
+  },
+  {
+   "unitId": "rd06",
+   "relation": "盖",
+   "correct": "油布盖在鱼筐上。",
+   "swapped": "鱼筐盖在油布上。"
+  },
+  {
+   "unitId": "rd07",
+   "relation": "插",
+   "correct": "铁钥插在锁孔里。",
+   "swapped": "锁孔插在铁钥里。"
+  },
+  {
+   "unitId": "rd08",
+   "relation": "卡",
+   "correct": "木楔卡在石缝里。",
+   "swapped": "石缝卡在木楔里。"
+  }
+ ],
+ "note": "entities and sentences are new; no overlap with the frozen relation probes or with any pool row"
+}

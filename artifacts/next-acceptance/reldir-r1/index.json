@@ -1,0 +1,179 @@
+{
+ "purpose": "relation-direction margin calibration: 8 legal direction pairs, margin only, k=1, no optimiser",
+ "job": {
+  "id": 241200,
+  "device": "cuda",
+  "model": "C 08276c0c",
+  "rows": 8
+ },
+ "set": {
+  "pairs": 8,
+  "failures": [],
+  "overlap": "entities and sentences are new; no overlap with the frozen relation probes or any pool row",
+  "assertions": "each entity once, same relation word, same tail, nothing else changed"
+ },
+ "generation": {
+  "rd01": {
+   "text": "门框的铜铃挂在门框上。",
+   "direction": "correct+repeat",
+   "stop": null
+  },
+  "rd02": {
+   "text": "船桨的麻绳缠在船桨上。",
+   "direction": "correct+repeat",
+   "stop": null
+  },
+  "rd03": {
+   "text": "栏杆的布条系在栏杆上。",
+   "direction": "correct+repeat",
+   "stop": null
+  },
+  "rd04": {
+   "text": "木架的草席搭在木架上。",
+   "direction": "correct+repeat",
+   "stop": null
+  },
+  "rd05": {
+   "text": "门钉的铜环套在门钉上。",
+   "direction": "correct+repeat",
+   "stop": null
+  },
+  "rd06": {
+   "text": "鱼筐的油布盖在鱼筐上。",
+   "direction": "correct+repeat",
+   "stop": null
+  },
+  "rd07": {
+   "text": "锁孔的铁钥插在锁孔里。",
+   "direction": "correct+repeat",
+   "stop": null
+  },
+  "rd08": {
+   "text": "石缝的木楔卡在石缝里。",
+   "direction": "correct+repeat",
+   "stop": null
+  }
+ },
+ "scores": {
+  "rd01": {
+   "sCorrect": -1.2231,
+   "sSwapped": -2.4328,
+   "sGenerated": -0.0138,
+   "margin": 1.2096
+  },
+  "rd02": {
+   "sCorrect": -0.9269,
+   "sSwapped": -2.3398,
+   "sGenerated": -0.0127,
+   "margin": 1.4129
+  },
+  "rd03": {
+   "sCorrect": -1.4971,
+   "sSwapped": -2.9869,
+   "sGenerated": -0.001,
+   "margin": 1.4898
+  },
+  "rd04": {
+   "sCorrect": -1.5281,
+   "sSwapped": -2.067,
+   "sGenerated": -0.0175,
+   "margin": 0.5388
+  },
+  "rd05": {
+   "sCorrect": -1.5474,
+   "sSwapped": -3.5737,
+   "sGenerated": -0.0009,
+   "margin": 2.0264
+  },
+  "rd06": {
+   "sCorrect": -1.5091,
+   "sSwapped": -3.3488,
+   "sGenerated": -0.0025,
+   "margin": 1.8396
+  },
+  "rd07": {
+   "sCorrect": -1.3548,
+   "sSwapped": -2.0445,
+   "sGenerated": -0.0029,
+   "margin": 0.6897
+  },
+  "rd08": {
+   "sCorrect": -1.0704,
+   "sSwapped": -3.7793,
+   "sGenerated": -0.0017,
+   "margin": 2.709
+  }
+ },
+ "activation": {
+  "threshold": 1.0,
+  "active": 2,
+  "n": 8,
+  "min": 0.5388,
+  "median": 1.4898,
+  "max": 2.709
+ },
+ "gradients": {
+  "scope": "all 190 parameter tensors, 8 rows, single batch",
+  "lossValues": {
+   "ce": 1.3321,
+   "direction": 0.0964
+  },
+  "norms": {
+   "ce": 6.66494,
+   "direction": 3.73238
+  },
+  "cosine": 0.1409,
+  "joint": {
+   "beta=0.1": {
+    "jointNorm": 6.72768,
+    "sumOfNorms": 7.03818,
+    "ratioToCe": 1.0094
+   },
+   "beta=0.3": {
+    "jointNorm": 6.91216,
+    "sumOfNorms": 7.78466,
+    "ratioToCe": 1.0371
+   },
+   "beta=1.0": {
+    "jointNorm": 8.08463,
+    "sumOfNorms": 10.39733,
+    "ratioToCe": 1.213
+   }
+  },
+  "upperBoundNote": "the weighted sum of norms is an upper bound, not the joint gradient",
+  "activeShare": 0.25
+ },
+ "dropoutRng": {
+  "step1Reproduces": 0.0,
+  "step1Forked": 0.0,
+  "step2NoFork": 22.049171,
+  "step2Forked": 0.0
+ },
+ "finding": {
+  "direction": "8 of 8 generations put the relation in the right order; the failure is a repeated anchor, not a direction error",
+  "targetPreference": "the model scores its own repeated-anchor sentence 1.2 to 1.5 nats per token above the training target on 8 of 8 rows",
+  "disconnect": "a direction margin would push on a choice the model already makes correctly, and cannot touch the repetition that keeps the target score low",
+  "notSupported": "this set does not support starting the direction-loss experiment; it also does not show direction is fine on the harder rows that failed earlier, because this set is single-relation, two-object and one-clause",
+  "corrections": [
+   "inactive negatives are an observation, not a reason to raise m",
+   "the weighted sum of norms is an upper bound; the joint gradient is computed here over all 190 parameter tensors and is 12.6 to 25 percent below the bound"
+  ]
+ },
+ "files": [
+  {
+   "path": "artifacts/next-acceptance/reldir-r1/set.jsonl",
+   "bytes": 6027,
+   "sha256": "e855e08ed345f00158a33ca967143b85fe67f61cecdc123f6ef8a7b795aad7fe"
+  },
+  {
+   "path": "artifacts/next-acceptance/reldir-r1/build-report.json",
+   "bytes": 1316,
+   "sha256": "c963c88a2bb38bda98893e6fbcbe176555c52114e3f6ad966cc7ac9780a89b8d"
+  },
+  {
+   "path": "artifacts/next-acceptance/reldir-r1/calibration-report.json",
+   "bytes": 3977,
+   "sha256": "33db80bf9d8427e574738daca8a9a5bc9e6111662a44aab7f72c4abeb762eb80"
+  }
+ ]
+}

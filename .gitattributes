@@ -56,3 +56,5 @@ artifacts/next-acceptance/seedrep-r1/** -text
 artifacts/constraint-spec-r1/** -text
 artifacts/calibration-r1/** -text
 artifacts/next-acceptance/calibration-r1/** -text
+artifacts/relation-direction-r1/** -text
+artifacts/next-acceptance/reldir-r1/** -text
