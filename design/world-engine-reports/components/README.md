@@ -18,6 +18,8 @@
 
 > **A 对 B_h 配对材料与协议（2026-11-06，未训练）：** 修正计划契约三处——`continuation/parallel` 只表示同主体组合／跨主体并列，不表示同时、先后或因果；`t01` 只支持省略主语、不写“他”；`train-r1` 的 `f3` 是 `before` 端点，保留独立句界，`edges` 加 `optional/required`。交付 11 个训练/验证源（5 train＋3 dev＋3 holdout，按场景组隔离）＋3 个回归（`t01`/`t19`/`train-r1`）；其中 6 条用现有人工编辑正文，5 条因原稿含代词/背景/合同外成分而重写干净目标，逐条标 `targetOrigin`。协议：同一基座、同一目标、逐源曝光、同优化与 greedy 解码，唯一变量是计划块；共同语境与授权关系两臂相同；事实/计划/表达三层分开评，表达改善不抵消事实错误；若 B_h 无收益，先查计划遵守率与 A/B_h 行为差异，再判断接口。材料在 `artifacts/world-components/organize-wording/pairs-v1.jsonl`（sha256 `f0e4f5d7…`）。见 [ab-sentence-pairing-v1.md](ab-sentence-pairing-v1.md)。
 
+> **24/8/12 配对材料与冻结协议（2026-11-06，未训练）：** 交付 44 源（24 train／8 dev／12 holdout）与单独冻结的 12 源 holdout；7 个场景组在每个划分都有，四类（同主体 9／跨主体 8／应分开 3／关系端点 4）齐全。目标全部 `authored-render-v1`（无代词/数字/背景），9 条 `before` 为 required、5 条理智写症状不写数值；`v18` 按理智契约纳入。基座固定 Randeng-T5-77M（权重哈希 `5cdc5721…`），1 源/步、累积 4、20 epoch＝120 次更新、每 epoch 评估、按 dev 事实 S 率选点、holdout 只跑一次；A/B_h 只差计划块。附 4 个 dev 源的两份合法计划做响应检查。缺口：无人工参考正文、holdout 是既有事实的新配对而非新回合、关系只覆盖外观类。见 [material-scaleup-v1.md](material-scaleup-v1.md)。
+
 > **Qwen3-0.6B 已退役（2026-11-02）：** 真实 Edge＋wllama 单次叙事 mean 13.986 s、p50 13.497 s，N2 选择约 24 s，远超约 4 s 的交互目标。当前候选/路线不再列出它；历史归档中的模型身份与数字保留为退役证据，见 [退役记录](model-retirement-qwen3-06b.md)。
 
 ## 目标与已确定边界
