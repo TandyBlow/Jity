@@ -337,19 +337,19 @@
    "sha256": "d691367e1088e869d92ce0f9cef522030cd102f070fe3885acbbef4da4eaf367"
   },
   {
-   "path": "artifacts/next-acceptance/margin-r1/C-moved24.json",
-   "bytes": 38350,
-   "sha256": "31f0f5eab3e270597bba2423ef7749258b654091c93a3360e4f838516d05f14f"
-  },
-  {
    "path": "artifacts/next-acceptance/margin-r1/C-holdout.json",
    "bytes": 12834,
    "sha256": "6ff7ceecb9d44c825da9acf883f7393b465d947ae876c18ab01378610349e993"
   },
   {
-   "path": "artifacts/next-acceptance/margin-r1/gap-C.json",
-   "bytes": 4692,
-   "sha256": "d31bbd05e0f59f7fdf1fefe04ff8185d18ec96dc13bdb1df203ac04c101b0b1b"
+   "path": "artifacts/next-acceptance/margin-r1/C-moved24.json",
+   "bytes": 38350,
+   "sha256": "31f0f5eab3e270597bba2423ef7749258b654091c93a3360e4f838516d05f14f"
+  },
+  {
+   "path": "artifacts/next-acceptance/margin-r1/build-report.json",
+   "bytes": 3062,
+   "sha256": "32d82d1bf3fb951b9fdac9130b7da7f0126e6484256635f0d2daf2a7264f717d"
   },
   {
    "path": "artifacts/next-acceptance/margin-r1/ce-20261102-cf24.json",
@@ -362,19 +362,14 @@
    "sha256": "bbde00de0348e986e87a8eb4d2b43eafd95dc2d54a095d4292dc5cec51fcf78e"
   },
   {
-   "path": "artifacts/next-acceptance/margin-r1/ce-20261102-moved24.json",
-   "bytes": 38337,
-   "sha256": "741060021bd0cb7a6019577ee6d8a32c5bc9f13d0338f03e6e08eb750a7c0361"
-  },
-  {
    "path": "artifacts/next-acceptance/margin-r1/ce-20261102-holdout.json",
    "bytes": 12801,
    "sha256": "4d108f67a6d436154263179743800d0397891227f3ad1e7e157dcd6e9fe0a0d7"
   },
   {
-   "path": "artifacts/next-acceptance/margin-r1/gap-ce-20261102.json",
-   "bytes": 4667,
-   "sha256": "a160724e29759659ed6e13b8b2ff738372a853809edabd1a0430c1930fd0f591"
+   "path": "artifacts/next-acceptance/margin-r1/ce-20261102-moved24.json",
+   "bytes": 38337,
+   "sha256": "741060021bd0cb7a6019577ee6d8a32c5bc9f13d0338f03e6e08eb750a7c0361"
   },
   {
    "path": "artifacts/next-acceptance/margin-r1/ce-20261103-cf24.json",
@@ -387,19 +382,14 @@
    "sha256": "196f6df7ef5cfe21ee3366512ad1611628fc1cd7b68299659ec3de8405753cb7"
   },
   {
-   "path": "artifacts/next-acceptance/margin-r1/ce-20261103-moved24.json",
-   "bytes": 38460,
-   "sha256": "a53ef32539be1273e9108f076b10f906a08c44bbbc828cd7aa3d0106a60922b3"
-  },
-  {
    "path": "artifacts/next-acceptance/margin-r1/ce-20261103-holdout.json",
    "bytes": 12804,
    "sha256": "e54475869a2efc914eb821617ab6b0d8621ec9f5624b574d9e1eb1628e5c35a0"
   },
   {
-   "path": "artifacts/next-acceptance/margin-r1/gap-ce-20261103.json",
-   "bytes": 4673,
-   "sha256": "f2b3cb9d0d5ec29bb0f846b9bc95fc94a2fa13fea347eb742fd6717f8cb3aae2"
+   "path": "artifacts/next-acceptance/margin-r1/ce-20261103-moved24.json",
+   "bytes": 38460,
+   "sha256": "a53ef32539be1273e9108f076b10f906a08c44bbbc828cd7aa3d0106a60922b3"
   },
   {
    "path": "artifacts/next-acceptance/margin-r1/ce-20261104-cf24.json",
@@ -412,19 +402,59 @@
    "sha256": "a3f909c455b25fd3dacef04bb6832ec012b91ce5b15ad8f8769f8f57a7cceaf5"
   },
   {
-   "path": "artifacts/next-acceptance/margin-r1/ce-20261104-moved24.json",
-   "bytes": 38400,
-   "sha256": "8245f376bad720691c02d7507e329460da28314b7422fecc4d078106fc155abe"
-  },
-  {
    "path": "artifacts/next-acceptance/margin-r1/ce-20261104-holdout.json",
    "bytes": 12803,
    "sha256": "547b23044d92382624afd1732299846384b6fb450232faa032997c8d5aafd1be"
   },
   {
+   "path": "artifacts/next-acceptance/margin-r1/ce-20261104-moved24.json",
+   "bytes": 38400,
+   "sha256": "8245f376bad720691c02d7507e329460da28314b7422fecc4d078106fc155abe"
+  },
+  {
+   "path": "artifacts/next-acceptance/margin-r1/gap-C.json",
+   "bytes": 4692,
+   "sha256": "d31bbd05e0f59f7fdf1fefe04ff8185d18ec96dc13bdb1df203ac04c101b0b1b"
+  },
+  {
+   "path": "artifacts/next-acceptance/margin-r1/gap-ce-20261102.json",
+   "bytes": 4667,
+   "sha256": "a160724e29759659ed6e13b8b2ff738372a853809edabd1a0430c1930fd0f591"
+  },
+  {
+   "path": "artifacts/next-acceptance/margin-r1/gap-ce-20261103.json",
+   "bytes": 4673,
+   "sha256": "f2b3cb9d0d5ec29bb0f846b9bc95fc94a2fa13fea347eb742fd6717f8cb3aae2"
+  },
+  {
    "path": "artifacts/next-acceptance/margin-r1/gap-ce-20261104.json",
    "bytes": 4652,
    "sha256": "2512fb197bed0753203a7ec6371df4777e63cf7d314665192966624ce838b704"
+  },
+  {
+   "path": "artifacts/next-acceptance/margin-r1/gap-mg-20261102.json",
+   "bytes": 4658,
+   "sha256": "ccf189e982db04fc2f1bdcb840d3b76f82acea865486403577ae25eaf3b8d1ca"
+  },
+  {
+   "path": "artifacts/next-acceptance/margin-r1/gap-mg-20261103.json",
+   "bytes": 4658,
+   "sha256": "663a511db5b5f0f8cdc7885df860f621b46586d07d221d98ad2e8af89be4369d"
+  },
+  {
+   "path": "artifacts/next-acceptance/margin-r1/gap-mg-20261104.json",
+   "bytes": 4652,
+   "sha256": "8833f533cd13a7ecbc9cc5124c90f2688585df81e657d605371791bd8d84f266"
+  },
+  {
+   "path": "artifacts/next-acceptance/margin-r1/margin-freeze.json",
+   "bytes": 2982,
+   "sha256": "a96c8fcd6cb05f429ad6662a98f10229cfbc234a487d17631275760aaa21e17e"
+  },
+  {
+   "path": "artifacts/next-acceptance/margin-r1/marginbeta-report.json",
+   "bytes": 841,
+   "sha256": "dffdcec4e67544171efd241d75ecc8d4e43e92f81b235d5ca6fba91f2e82b6b0"
   },
   {
    "path": "artifacts/next-acceptance/margin-r1/mg-20261102-cf24.json",
@@ -437,19 +467,14 @@
    "sha256": "177dde4110d7d8fb7a6eb05fc956651b3573f83a09e33c227cfb9b9eee590d0a"
   },
   {
-   "path": "artifacts/next-acceptance/margin-r1/mg-20261102-moved24.json",
-   "bytes": 38338,
-   "sha256": "c5d5cba0981b8cd50e7154ca8b72d2ce9c5da5b217d57014b9ac31b81b03934a"
-  },
-  {
    "path": "artifacts/next-acceptance/margin-r1/mg-20261102-holdout.json",
    "bytes": 12803,
    "sha256": "80c75142a1312ecbe829752b5dfc73c98e507f554d36229f3caa495f0c794b44"
   },
   {
-   "path": "artifacts/next-acceptance/margin-r1/gap-mg-20261102.json",
-   "bytes": 4658,
-   "sha256": "ccf189e982db04fc2f1bdcb840d3b76f82acea865486403577ae25eaf3b8d1ca"
+   "path": "artifacts/next-acceptance/margin-r1/mg-20261102-moved24.json",
+   "bytes": 38338,
+   "sha256": "c5d5cba0981b8cd50e7154ca8b72d2ce9c5da5b217d57014b9ac31b81b03934a"
   },
   {
    "path": "artifacts/next-acceptance/margin-r1/mg-20261103-cf24.json",
@@ -462,19 +487,14 @@
    "sha256": "175740414736d07f4818179eb8c6493383b4a8caf56a0a3514e9736bf279f532"
   },
   {
-   "path": "artifacts/next-acceptance/margin-r1/mg-20261103-moved24.json",
-   "bytes": 38466,
-   "sha256": "6bcf70b87b59be4a3d709fb29d34ad2282e16ca4a2750e5b12365e3cf82dd37b"
-  },
-  {
    "path": "artifacts/next-acceptance/margin-r1/mg-20261103-holdout.json",
    "bytes": 12804,
    "sha256": "b27dd2319203514c0ef3f9900af846df69b3fb1dd2abc7f3ec6f7743b6ffd2dd"
   },
   {
-   "path": "artifacts/next-acceptance/margin-r1/gap-mg-20261103.json",
-   "bytes": 4658,
-   "sha256": "663a511db5b5f0f8cdc7885df860f621b46586d07d221d98ad2e8af89be4369d"
+   "path": "artifacts/next-acceptance/margin-r1/mg-20261103-moved24.json",
+   "bytes": 38466,
+   "sha256": "6bcf70b87b59be4a3d709fb29d34ad2282e16ca4a2750e5b12365e3cf82dd37b"
   },
   {
    "path": "artifacts/next-acceptance/margin-r1/mg-20261104-cf24.json",
@@ -487,19 +507,14 @@
    "sha256": "d2e8a4c65ca1b3628515adfd012abcd5e943773c541edf9f5d94cf55a8479a66"
   },
   {
-   "path": "artifacts/next-acceptance/margin-r1/mg-20261104-moved24.json",
-   "bytes": 38383,
-   "sha256": "0c92b4f5b16bf2c7bdfdcd7877e6e24baf16c3ded2281bc75b97b4219a420fdc"
-  },
-  {
    "path": "artifacts/next-acceptance/margin-r1/mg-20261104-holdout.json",
    "bytes": 12804,
    "sha256": "4ef0c77e9d1a58020d0291c5bc700f2316e10d44fd80309fd2a6f450f096a6c9"
   },
   {
-   "path": "artifacts/next-acceptance/margin-r1/gap-mg-20261104.json",
-   "bytes": 4652,
-   "sha256": "8833f533cd13a7ecbc9cc5124c90f2688585df81e657d605371791bd8d84f266"
+   "path": "artifacts/next-acceptance/margin-r1/mg-20261104-moved24.json",
+   "bytes": 38383,
+   "sha256": "0c92b4f5b16bf2c7bdfdcd7877e6e24baf16c3ded2281bc75b97b4219a420fdc"
   },
   {
    "path": "artifacts/next-acceptance/margin-r1/train-ce-20261102.json",
@@ -530,21 +545,105 @@
    "path": "artifacts/next-acceptance/margin-r1/train-mg-20261104.json",
    "bytes": 2478,
    "sha256": "72012464c7eaeea0b5ae176caca44699105128067ad1316ad612172072d4a5e9"
-  },
-  {
-   "path": "artifacts/next-acceptance/margin-r1/report.json",
-   "bytes": 841,
-   "sha256": "dffdcec4e67544171efd241d75ecc8d4e43e92f81b235d5ca6fba91f2e82b6b0"
-  },
-  {
-   "path": "artifacts/next-acceptance/margin-r1/margin-freeze.json",
-   "bytes": 2982,
-   "sha256": "a96c8fcd6cb05f429ad6662a98f10229cfbc234a487d17631275760aaa21e17e"
-  },
-  {
-   "path": "artifacts/next-acceptance/margin-r1/build-report.json",
-   "bytes": 3062,
-   "sha256": "32d82d1bf3fb951b9fdac9130b7da7f0126e6484256635f0d2daf2a7264f717d"
   }
- ]
+ ],
+ "pairedBySeed": {
+  "20261102": {
+   "humanFacts": {
+    "ce-20261102": 180,
+    "mg-20261102": 180,
+    "delta": 0
+   },
+   "cf24": {
+    "ce-20261102": "82/74",
+    "mg-20261102": "82/74"
+   },
+   "holdoutDirections": {
+    "ce-20261102": 8,
+    "mg-20261102": 8,
+    "delta": 0
+   }
+  },
+  "20261103": {
+   "humanFacts": {
+    "ce-20261103": 183,
+    "mg-20261103": 184,
+    "delta": 1
+   },
+   "cf24": {
+    "ce-20261103": "83/76",
+    "mg-20261103": "84/76"
+   },
+   "holdoutDirections": {
+    "ce-20261103": 8,
+    "mg-20261103": 8,
+    "delta": 0
+   }
+  },
+  "20261104": {
+   "humanFacts": {
+    "ce-20261104": 181,
+    "mg-20261104": 183,
+    "delta": 2
+   },
+   "cf24": {
+    "ce-20261104": "82/75",
+    "mg-20261104": "83/76"
+   },
+   "holdoutDirections": {
+    "ce-20261104": 8,
+    "mg-20261104": 8,
+    "delta": 0
+   }
+  }
+ },
+ "archiveCheck": {
+  "sampling": {
+   "totalDraws": 960,
+   "directionPoolDraws": 120,
+   "perRowCounts": "not recorded: the trainer stores only the totals and the id hashes"
+  },
+  "trainingMargin": {
+   "mg-20261102": {
+    "1": 0.0,
+    "40": 0.0,
+    "80": 0.0,
+    "120": 0.0
+   },
+   "mg-20261103": {
+    "1": 0.8043,
+    "40": 0.0,
+    "80": 0.0,
+    "120": 0.0
+   },
+   "mg-20261104": {
+    "1": 0.1881,
+    "40": 0.0,
+    "80": 0.0,
+    "120": 0.0
+   }
+  },
+  "activationPerStep": "not recorded; only the four logged points exist",
+  "implication": "the direction term was zero from step 40 to the end, so the two arms differ only in the first few steps and the round tests this data, this beta and this mix rather than the loss in general",
+  "betaReport": {
+   "path": "artifacts/next-acceptance/margin-r1/marginbeta-report.json",
+   "sha256": "dffdcec4e67544171efd241d75ecc8d4e43e92f81b235d5ca6fba91f2e82b6b0",
+   "source": "copied out of the ignored run directory as selected evidence"
+  }
+ },
+ "closing": {
+  "primaryCriterion": "failed: both arms reach 8 of 8 on the holdout, so the margin beats the control by zero rows",
+  "regressions": "all six candidates carry a new fact loss on t22:f1",
+  "whatTheEvidenceSupports": [
+   "a local direction task can be fixed by plain CE",
+   "overall fact retention remains unsolved",
+   "this margin did not produce an acceptable improvement"
+  ],
+  "whatItDoesNotSupport": [
+   "that the margin loss is ineffective in general",
+   "that the twelve added facts are the sole cause, since both arms also continued training",
+   "that the C pool itself causes the dropped reference"
+  ],
+  "name": "CE plus direction-margin experiment, not passed"
+ }
 }
