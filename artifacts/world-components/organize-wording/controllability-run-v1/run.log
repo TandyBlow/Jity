@@ -1,0 +1,120 @@
+# Reconstructed from results.json after the run.
+# The live tee log was lost because the run directory did not exist when tee opened; the script created it afterwards.
+# results.json is authoritative; per-output token counts and stop reasons are exact.
+
+epoch 1 update 10 dev_loss 0.5652 dev_success 0/6
+   fixture-r4 no
+   t12 no
+   t20 no
+   train-r3 no
+   v09 no
+   v17 no
+epoch 2 update 20 dev_loss 0.3836 dev_success 0/6
+   fixture-r4 no
+   t12 no
+   t20 no
+   train-r3 no
+   v09 no
+   v17 no
+epoch 3 update 30 dev_loss 0.2178 dev_success 0/6
+   fixture-r4 no
+   t12 no
+   t20 no
+   train-r3 no
+   v09 no
+   v17 no
+epoch 4 update 40 dev_loss 0.2332 dev_success 0/6
+   fixture-r4 no
+   t12 no
+   t20 no
+   train-r3 no
+   v09 no
+   v17 no
+epoch 5 update 50 dev_loss 0.2548 dev_success 0/6
+   fixture-r4 no
+   t12 no
+   t20 no
+   train-r3 no
+   v09 no
+   v17 no
+epoch 6 update 60 dev_loss 0.1850 dev_success 0/6
+   fixture-r4 no
+   t12 no
+   t20 no
+   train-r3 no
+   v09 no
+   v17 no
+epoch 7 update 70 dev_loss 0.2246 dev_success 0/6
+   fixture-r4 no
+   t12 no
+   t20 no
+   train-r3 no
+   v09 no
+   v17 no
+epoch 8 update 80 dev_loss 0.2364 dev_success 0/6
+   fixture-r4 no
+   t12 no
+   t20 no
+   train-r3 no
+   v09 no
+   v17 no
+epoch 9 update 90 dev_loss 0.1673 dev_success 0/6
+   fixture-r4 no
+   t12 no
+   t20 no
+   train-r3 no
+   v09 no
+   v17 no
+epoch 10 update 100 dev_loss 0.1759 dev_success 0/6
+   fixture-r4 no
+   t12 no
+   t20 no
+   train-r3 no
+   v09 no
+   v17 no
+epoch 11 update 110 dev_loss 0.2017 dev_success 0/6
+   fixture-r4 no
+   t12 no
+   t20 no
+   train-r3 no
+   v09 no
+   v17 no
+epoch 12 update 120 dev_loss 0.2193 dev_success 0/6
+   fixture-r4 no
+   t12 no
+   t20 no
+   train-r3 no
+   v09 no
+   v17 no
+selected epoch 9 update 90 dev_success 0 dev_loss 0.1673
+holdout 0/10
+v07 PAIR-FAIL
+  A stop=eos tokens=49 fact=3/3 text=铜灯的灯罩上积了灰,潮汐簿的封面蒙了一层灰。沈砚把铜灯擦亮。
+  B stop=eos tokens=49 fact=3/3 text=铜灯的灯罩上积了灰,潮汐簿的封面蒙了一层灰。沈砚把铜灯擦亮。
+v18 PAIR-FAIL
+  A stop=eos tokens=49 fact=3/3 text=沈砚从潮渡走到雾堤。沈砚把雾警钟敲响。沈砚心里发紧。
+  B stop=eos tokens=49 fact=3/3 text=沈砚从潮渡走到雾堤。沈砚把雾警钟敲响。沈砚心里发紧。
+t22 PAIR-FAIL
+  A stop=eos tokens=49 fact=4/4 text=系泊绳的泥水结了一层白盐。木桩的缠着的旧缆绳断了。顾行舟把缆绳重新绕上木桩。沈砚把系泊绳拖回岸上。
+  B stop=eos tokens=49 fact=4/4 text=系泊绳的泥水结了一层白盐。木桩的缠着的旧缆绳断了。顾行舟把缆绳重新绕上木桩。沈砚把系泊绳拖回岸上。
+fixture-r5 PAIR-FAIL
+  A stop=eos tokens=50 fact=5/5 text=林川的帽檐压出折痕。林川的脚踝肿了一块。周宁的衣领被雨浸透。随后,陈默的指尖磨出茧。陈默的膝盖沾了泥。
+  B stop=eos tokens=50 fact=5/5 text=林川的帽檐压出折痕。林川的脚踝肿了一块。周宁的衣领被雨浸透。随后,陈默的指尖磨出茧。陈默的膝盖沾了泥。
+t03 PAIR-FAIL
+  A stop=eos tokens=50 fact=3/3 text=叶知微把灯罩擦得透亮,袖口沾了铜油。叶知微把抹布搭回梯脚。
+  B stop=eos tokens=50 fact=3/3 text=叶知微把灯罩擦得透亮。叶知微的袖口沾了铜油。叶知微把抹布搭回梯脚。
+t08 PAIR-FAIL
+  A stop=eos tokens=50 fact=4/4 text=阿棠把银鳞鱼搬上案板,把缆绳绕上摊棚边的木桩,辫梢沾了白汽,外袍下摆沾了泥水。
+  B stop=eos tokens=50 fact=4/4 text=阿棠把银鳞鱼搬上案板,把缆绳绕上摊棚边的木桩,辫梢沾了白汽,外袍下摆沾了泥水。
+t24 PAIR-FAIL
+  A stop=eos tokens=52 fact=4/4 text=纸灯笼的被风扯破一角,排水沟的里面积了泥。沈砚把纸灯笼扶正。阿棠把鱼筐放在门槛边。
+  B stop=eos tokens=52 fact=4/4 text=纸灯笼的被风扯破一角。排水沟的里面积了泥。沈砚把纸灯笼扶正。阿棠把鱼筐放在门槛边。
+train-r4 PAIR-FAIL
+  A stop=eos tokens=52 fact=5/5 text=沈砚的围巾松开一截。沈砚的脸色发白。顾行舟的背上溅了泥点。叶知微的手背蹭破了皮。叶知微的肩头落着灰。
+  B stop=eos tokens=52 fact=5/5 text=沈砚的围巾松开一截。沈砚的脸色发白。顾行舟的背上溅了泥点。叶知微的手背蹭破了皮。叶知微的肩头落着灰。
+v14 PAIR-FAIL
+  A stop=eos tokens=52 fact=3/3 text=沈砚从潮汐档案馆走到潮渡。沈砚把系泊绳拖回岸上。沈砚心里发紧。
+  B stop=eos tokens=52 fact=3/3 text=沈砚从潮汐档案馆走到潮渡。沈砚把系泊绳拖回岸上。沈砚心里发紧。
+v20 PAIR-FAIL
+  A stop=eos tokens=22 fact=2/3 text=沈砚从潮生巷走到潮渡。沈砚把渡船推离栈桥。
+  B stop=eos tokens=22 fact=2/3 text=沈砚从潮生巷走到潮渡。沈砚把渡船推离栈桥。

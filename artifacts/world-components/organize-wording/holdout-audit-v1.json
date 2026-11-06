@@ -97,7 +97,7 @@
    "arm": "A",
    "fact": "fail",
    "factIssues": [
-    "output hit max_new_tokens=128 and ended at 泥; f3/f4 omissions are truncation, not normal omission; repeated 围巾 11 times"
+    "output is exactly 128 tokens and ends at 泥; suspected cap, stop reason not recorded; f3/f4 may be truncated, not counted as normal omission; repeated 围巾 11 times"
    ],
    "plan": {
     "merged_pass": 1,
@@ -114,7 +114,8 @@
    },
    "expression": "truncated list",
    "preference": "B_h",
-   "truncated": true
+   "suspectedCap": true,
+   "stopReason": "not recorded"
   },
   {
    "sourceId": "train-r5",
