@@ -1,0 +1,500 @@
+{
+ "purpose": "supplementary same-update (90 updates) comparison, A epoch 15 vs B_h epoch 15; fixed regression material, not new confirmation",
+ "preferenceTally": {
+  "B_h": 4,
+  "A15": 3,
+  "tie": 5
+ },
+ "factPass": {
+  "A15": 4,
+  "B_h": 6
+ },
+ "planStructuralPass": {
+  "A15": 3,
+  "B_h": 4
+ },
+ "rows": [
+  {
+   "sourceId": "fixture-r5",
+   "arm": "A15",
+   "fact": "pass",
+   "factIssues": [],
+   "plan": {
+    "merged_pass": 1,
+    "merged_total": 1,
+    "separated_pass": 3,
+    "separated_total": 3,
+    "relation_pass": 1,
+    "relation_total": 1,
+    "omissions": [],
+    "structural_pass": true
+   },
+   "expression": "all facts; relation 随后; boundaries correct",
+   "preference": "A15"
+  },
+  {
+   "sourceId": "t03",
+   "arm": "A15",
+   "fact": "pass",
+   "factIssues": [],
+   "plan": {
+    "merged_pass": 1,
+    "merged_total": 1,
+    "separated_pass": 0,
+    "separated_total": 0,
+    "relation_pass": 0,
+    "relation_total": 0,
+    "omissions": [],
+    "structural_pass": true
+   },
+   "expression": "clean one-sentence chain",
+   "preference": "tie"
+  },
+  {
+   "sourceId": "t08",
+   "arm": "A15",
+   "fact": "fail",
+   "factIssues": [
+    "f2 阿棠的辫梢 attributed to 顾行舟"
+   ],
+   "plan": {
+    "merged_pass": 1,
+    "merged_total": 2,
+    "separated_pass": 0,
+    "separated_total": 1,
+    "relation_pass": 0,
+    "relation_total": 0,
+    "omissions": [],
+    "structural_pass": false
+   },
+   "expression": "f1 correct; one actor swap",
+   "preference": "A15"
+  },
+  {
+   "sourceId": "t24",
+   "arm": "A15",
+   "fact": "fail",
+   "factIssues": [
+    "only f3; f0/f1/f2 omitted"
+   ],
+   "plan": {
+    "merged_pass": 2,
+    "merged_total": 2,
+    "separated_pass": 0,
+    "separated_total": 1,
+    "relation_pass": 0,
+    "relation_total": 0,
+    "omissions": [
+     "f0",
+     "f1",
+     "f2"
+    ],
+    "structural_pass": false
+   },
+   "expression": "one short sentence",
+   "preference": "B_h"
+  },
+  {
+   "sourceId": "train-r4",
+   "arm": "A15",
+   "fact": "fail",
+   "factIssues": [
+    "f1 脸色发白 missing"
+   ],
+   "plan": {
+    "merged_pass": 1,
+    "merged_total": 1,
+    "separated_pass": 1,
+    "separated_total": 3,
+    "relation_pass": 0,
+    "relation_total": 1,
+    "omissions": [
+     "f1"
+    ],
+    "structural_pass": false
+   },
+   "expression": "f2/f3 merged; boundary fail",
+   "preference": "B_h"
+  },
+  {
+   "sourceId": "train-r5",
+   "arm": "A15",
+   "fact": "pass",
+   "factIssues": [],
+   "plan": {
+    "merged_pass": 1,
+    "merged_total": 1,
+    "separated_pass": 2,
+    "separated_total": 3,
+    "relation_pass": 0,
+    "relation_total": 1,
+    "omissions": [],
+    "structural_pass": false
+   },
+   "expression": "all facts; f2/f3 merged",
+   "preference": "tie"
+  },
+  {
+   "sourceId": "v05",
+   "arm": "A15",
+   "fact": "fail",
+   "factIssues": [
+    "f1 沈砚的手背 attributed ambiguously to 叶知微"
+   ],
+   "plan": {
+    "merged_pass": 0,
+    "merged_total": 0,
+    "separated_pass": 1,
+    "separated_total": 3,
+    "relation_pass": 0,
+    "relation_total": 0,
+    "omissions": [],
+    "structural_pass": false
+   },
+   "expression": "f3 no_change present",
+   "preference": "tie"
+  },
+  {
+   "sourceId": "v14",
+   "arm": "A15",
+   "fact": "fail",
+   "factIssues": [
+    "f2 sanity replaced by 什么也没有再发生"
+   ],
+   "plan": {
+    "merged_pass": 1,
+    "merged_total": 1,
+    "separated_pass": 0,
+    "separated_total": 0,
+    "relation_pass": 0,
+    "relation_total": 0,
+    "omissions": [
+     "f2"
+    ],
+    "structural_pass": false
+   },
+   "expression": "wrong no_change",
+   "preference": "B_h"
+  },
+  {
+   "sourceId": "v20",
+   "arm": "A15",
+   "fact": "fail",
+   "factIssues": [
+    "f1 sanity missing"
+   ],
+   "plan": {
+    "merged_pass": 1,
+    "merged_total": 1,
+    "separated_pass": 0,
+    "separated_total": 0,
+    "relation_pass": 0,
+    "relation_total": 0,
+    "omissions": [
+     "f1"
+    ],
+    "structural_pass": false
+   },
+   "expression": "two facts only",
+   "preference": "tie"
+  },
+  {
+   "sourceId": "v21",
+   "arm": "A15",
+   "fact": "pass",
+   "factIssues": [],
+   "plan": {
+    "merged_pass": 0,
+    "merged_total": 0,
+    "separated_pass": 2,
+    "separated_total": 2,
+    "relation_pass": 0,
+    "relation_total": 0,
+    "omissions": [],
+    "structural_pass": true
+   },
+   "expression": "all facts, separate",
+   "preference": "tie"
+  },
+  {
+   "sourceId": "v23",
+   "arm": "A15",
+   "fact": "fail",
+   "factIssues": [
+    "f1 no_change missing"
+   ],
+   "plan": {
+    "merged_pass": 0,
+    "merged_total": 0,
+    "separated_pass": 0,
+    "separated_total": 2,
+    "relation_pass": 0,
+    "relation_total": 0,
+    "omissions": [
+     "f1"
+    ],
+    "structural_pass": false
+   },
+   "expression": "repeats 顾行舟",
+   "preference": "B_h"
+  },
+  {
+   "sourceId": "v24",
+   "arm": "A15",
+   "fact": "fail",
+   "factIssues": [
+    "f1 no_change missing"
+   ],
+   "plan": {
+    "merged_pass": 0,
+    "merged_total": 0,
+    "separated_pass": 0,
+    "separated_total": 2,
+    "relation_pass": 0,
+    "relation_total": 0,
+    "omissions": [
+     "f1"
+    ],
+    "structural_pass": false
+   },
+   "expression": "no repetition",
+   "preference": "A15"
+  },
+  {
+   "sourceId": "fixture-r5",
+   "arm": "B_h",
+   "fact": "fail",
+   "factIssues": [
+    "wrong duplicate: 陈默的衣领被雨浸透 twice"
+   ],
+   "plan": {
+    "merged_pass": 1,
+    "merged_total": 1,
+    "separated_pass": 3,
+    "separated_total": 3,
+    "relation_pass": 1,
+    "relation_total": 1,
+    "omissions": [],
+    "structural_pass": true
+   },
+   "expression": "B_h repeats a wrong event; A15 is clean and has 随后",
+   "preference": "A15"
+  },
+  {
+   "sourceId": "t03",
+   "arm": "B_h",
+   "fact": "pass",
+   "factIssues": [],
+   "plan": {
+    "merged_pass": 1,
+    "merged_total": 1,
+    "separated_pass": 0,
+    "separated_total": 0,
+    "relation_pass": 0,
+    "relation_total": 0,
+    "omissions": [],
+    "structural_pass": true
+   },
+   "expression": "both clean",
+   "preference": "tie"
+  },
+  {
+   "sourceId": "t08",
+   "arm": "B_h",
+   "fact": "fail",
+   "factIssues": [
+    "f1 and f3 attributed to 阿棠"
+   ],
+   "plan": {
+    "merged_pass": 2,
+    "merged_total": 2,
+    "separated_pass": 0,
+    "separated_total": 1,
+    "relation_pass": 0,
+    "relation_total": 0,
+    "omissions": [],
+    "structural_pass": false
+   },
+   "expression": "A15 has one swap, B_h two",
+   "preference": "A15"
+  },
+  {
+   "sourceId": "t24",
+   "arm": "B_h",
+   "fact": "pass",
+   "factIssues": [],
+   "plan": {
+    "merged_pass": 2,
+    "merged_total": 2,
+    "separated_pass": 1,
+    "separated_total": 1,
+    "relation_pass": 0,
+    "relation_total": 0,
+    "omissions": [],
+    "structural_pass": true
+   },
+   "expression": "A15 drops three facts",
+   "preference": "B_h"
+  },
+  {
+   "sourceId": "train-r4",
+   "arm": "B_h",
+   "fact": "pass",
+   "factIssues": [],
+   "plan": {
+    "merged_pass": 1,
+    "merged_total": 1,
+    "separated_pass": 2,
+    "separated_total": 3,
+    "relation_pass": 0,
+    "relation_total": 1,
+    "omissions": [],
+    "structural_pass": false
+   },
+   "expression": "A15 misses f1; B_h has all facts but boundary fail",
+   "preference": "B_h"
+  },
+  {
+   "sourceId": "train-r5",
+   "arm": "B_h",
+   "fact": "pass",
+   "factIssues": [],
+   "plan": {
+    "merged_pass": 1,
+    "merged_total": 1,
+    "separated_pass": 2,
+    "separated_total": 3,
+    "relation_pass": 0,
+    "relation_total": 1,
+    "omissions": [],
+    "structural_pass": false
+   },
+   "expression": "both all facts, boundary fail",
+   "preference": "tie"
+  },
+  {
+   "sourceId": "v05",
+   "arm": "B_h",
+   "fact": "fail",
+   "factIssues": [
+    "f3 no_change replaced by 心里发紧"
+   ],
+   "plan": {
+    "merged_pass": 0,
+    "merged_total": 0,
+    "separated_pass": 0,
+    "separated_total": 3,
+    "relation_pass": 0,
+    "relation_total": 0,
+    "omissions": [
+     "f3"
+    ],
+    "structural_pass": false
+   },
+   "expression": "each has one fact wrong",
+   "preference": "tie"
+  },
+  {
+   "sourceId": "v14",
+   "arm": "B_h",
+   "fact": "pass",
+   "factIssues": [],
+   "plan": {
+    "merged_pass": 0,
+    "merged_total": 1,
+    "separated_pass": 0,
+    "separated_total": 0,
+    "relation_pass": 0,
+    "relation_total": 0,
+    "omissions": [],
+    "structural_pass": false
+   },
+   "expression": "A15 writes the wrong no_change; B_h correct",
+   "preference": "B_h"
+  },
+  {
+   "sourceId": "v20",
+   "arm": "B_h",
+   "fact": "fail",
+   "factIssues": [
+    "f1 sanity missing"
+   ],
+   "plan": {
+    "merged_pass": 1,
+    "merged_total": 1,
+    "separated_pass": 0,
+    "separated_total": 0,
+    "relation_pass": 0,
+    "relation_total": 0,
+    "omissions": [
+     "f1"
+    ],
+    "structural_pass": false
+   },
+   "expression": "both miss sanity",
+   "preference": "tie"
+  },
+  {
+   "sourceId": "v21",
+   "arm": "B_h",
+   "fact": "pass",
+   "factIssues": [],
+   "plan": {
+    "merged_pass": 0,
+    "merged_total": 0,
+    "separated_pass": 2,
+    "separated_total": 2,
+    "relation_pass": 0,
+    "relation_total": 0,
+    "omissions": [],
+    "structural_pass": true
+   },
+   "expression": "both correct",
+   "preference": "tie"
+  },
+  {
+   "sourceId": "v23",
+   "arm": "B_h",
+   "fact": "fail",
+   "factIssues": [
+    "f1 no_change missing"
+   ],
+   "plan": {
+    "merged_pass": 0,
+    "merged_total": 0,
+    "separated_pass": 0,
+    "separated_total": 2,
+    "relation_pass": 0,
+    "relation_total": 0,
+    "omissions": [
+     "f1"
+    ],
+    "structural_pass": false
+   },
+   "expression": "A15 repeats the name; both miss no_change",
+   "preference": "B_h"
+  },
+  {
+   "sourceId": "v24",
+   "arm": "B_h",
+   "fact": "fail",
+   "factIssues": [
+    "f1 no_change missing; f0 repeated"
+   ],
+   "plan": {
+    "merged_pass": 0,
+    "merged_total": 0,
+    "separated_pass": 0,
+    "separated_total": 2,
+    "relation_pass": 0,
+    "relation_total": 0,
+    "omissions": [
+     "f1"
+    ],
+    "structural_pass": false
+   },
+   "expression": "B_h repeats 解开钟绳; both miss no_change",
+   "preference": "A15"
+  }
+ ]
+}

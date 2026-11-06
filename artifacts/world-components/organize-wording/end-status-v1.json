@@ -1,0 +1,35 @@
+{
+ "method": "The original runs did not record stop reasons. Stored texts were re-tokenised with the same T5 tokenizer; a text at 128 tokens or ending without sentence-final punctuation is marked cap/incomplete, otherwise eos. A15 was generated with return_dict_in_generate and has exact stop reasons.",
+ "holdout": {
+  "A_selected": {
+   "outputs": 12,
+   "eos": 11,
+   "cap": 1,
+   "cap_sources": [
+    "train-r4"
+   ],
+   "normal_omissions": 8,
+   "truncated_omissions": 2
+  },
+  "B_h_selected": {
+   "outputs": 12,
+   "eos": 12,
+   "cap": 0,
+   "normal_omissions": 4,
+   "truncated_omissions": 0
+  },
+  "A15": {
+   "outputs": 12,
+   "eos": 12,
+   "cap": 0,
+   "normal_omissions": 8,
+   "truncated_omissions": 0
+  }
+ },
+ "plan_response": {
+  "outputs": 8,
+  "eos": 8,
+  "cap": 0
+ },
+ "note": "A selected train-r4 is the only cap; its f3/f4 omissions must not be counted as normal post-EOS omissions."
+}
