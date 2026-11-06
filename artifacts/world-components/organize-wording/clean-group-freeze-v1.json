@@ -1,0 +1,50 @@
+{
+ "created": "2026-11-06",
+ "material": "artifacts\\world-components\\organize-wording\\clean-group-v1.jsonl",
+ "material_sha256": "1391d0c77655a6bfc701d562f6856a5ff993c6a12c7b5795667f1923cb1d83c3",
+ "counts": {
+  "sources": 36,
+  "train": 20,
+  "dev": 6,
+  "holdout": 10,
+  "A_calls": {
+   "train": 74,
+   "dev": 24,
+   "holdout": 37
+  },
+  "B_calls": {
+   "train": 42,
+   "dev": 15,
+   "holdout": 20
+  },
+  "multi_groups": {
+   "train": 23,
+   "dev": 8,
+   "holdout": 13
+  }
+ },
+ "base": "experiments\\world-components\\assets\\randeng-t5-77m",
+ "base_hashes": {
+  "config.json": "9b2480c0a39fd09b6c40a879cb925a5f93dadb699f22f9a419a8b070a68fe8f5",
+  "model.safetensors": "5cdc572109cf25914b43fede20a6949b5fbf50b3a091a9c445fac60059bf5557",
+  "special_tokens_map.json": "09059cedc26bc46bc09a52f05b92d4922e11917e87f3b92059bb1a63a59ab2c4",
+  "spiece.model": "c65feffa65ff0378759778193852083d23349cb1b40c906e9463a12f8076ff32",
+  "tokenizer_config.json": "af072c7d91576727b73b161e484110848724c5243d6256ee8c2e505f0b044880"
+ },
+ "config": {
+  "steps": 480,
+  "accum": 4,
+  "updates": 120,
+  "lr": 0.0005,
+  "warmup": 12,
+  "seed": 13,
+  "max_in": 512,
+  "max_target": 128,
+  "max_new": 128,
+  "decode": "greedy",
+  "timeout": null,
+  "selection": "none; train exactly 120 optimizer updates; evaluate dev/holdout at 120 only"
+ },
+ "targets": "A = one fact per call, name restored; B = one group per call, original group clause with legal subject omission; both use the same clauses from the existing target; relation 随后 inserted by the program, not in targets",
+ "acceptance": "holdout 13 multi-fact groups: B-only safety loss (required fact / subject-object / semantic repetition / unsupported addition) must be 0; B expression wins >= losses; singleton groups are preservation checks; no selection"
+}

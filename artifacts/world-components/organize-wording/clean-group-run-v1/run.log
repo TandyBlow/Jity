@@ -1,0 +1,85 @@
+== training A
+`torch_dtype` is deprecated! Use `dtype` instead!
+A step 40 update 10
+A step 80 update 20
+A step 120 update 30
+A step 160 update 40
+A step 200 update 50
+A step 240 update 60
+A step 280 update 70
+A step 320 update 80
+A step 360 update 90
+A step 400 update 100
+A step 440 update 110
+A step 480 update 120
+== dev A
+== holdout A
+== training B
+B step 40 update 10
+B step 80 update 20
+B step 120 update 30
+B step 160 update 40
+B step 200 update 50
+B step 240 update 60
+B step 280 update 70
+B step 320 update 80
+B step 360 update 90
+B step 400 update 100
+B step 440 update 110
+B step 480 update 120
+== dev B
+== holdout B
+wrote D:\others\Jity\.local\world-components-worktree\artifacts\world-components\organize-wording\clean-group-run-v1\results.json
+
+ v07 
+ A 铜灯的灯罩上积了灰。潮汐簿的封面蒙了一层灰。沈砚把铜灯擦亮。 
+ B 铜灯的灯罩上积了灰,潮汐簿封面蒙了一层灰。沈砚把铜灯擦亮。
+  group ['f0', 'f1'] A 铜灯的灯罩上积了灰。潮汐簿的封面蒙了一层灰。 | B 铜灯的灯罩上积了灰,潮汐簿封面蒙了一层灰。 | fact True True
+
+ v18 
+ A 沈砚从潮渡走到雾堤。沈砚把雾警钟敲响。沈砚心里发紧。 
+ B 沈砚从潮渡走到雾堤,把雾警钟敲响,心里发紧。
+  group ['f0', 'f1', 'f2'] A 沈砚从潮渡走到雾堤。沈砚把雾警钟敲响。沈砚心里发紧。 | B 沈砚从潮渡走到雾堤,把雾警钟敲响,心里发紧。 | fact True True
+
+ t22 
+ A 系泊绳的泥水结了一层白盐。木桩的缠着的旧缆绳断了。顾行舟把缆绳重新绕上木桩。沈砚把系泊绳拖回岸上。 
+ B 系泊绳的泥水结了一层白盐,木桩缠着的旧缆绳断了。顾行舟把缆绳重新绕上木桩,沈砚把系泊绳拖回岸上。
+  group ['f0', 'f1'] A 系泊绳的泥水结了一层白盐。木桩的缠着的旧缆绳断了。 | B 系泊绳的泥水结了一层白盐,木桩缠着的旧缆绳断了。 | fact True True
+  group ['f2', 'f3'] A 顾行舟把缆绳重新绕上木桩。沈砚把系泊绳拖回岸上。 | B 顾行舟把缆绳重新绕上木桩,沈砚把系泊绳拖回岸上。 | fact True True
+
+ fixture-r5 
+ A 林川的帽檐压出折痕。林川的脚踝肿了一块。周宁的衣领被雨浸透。随后，陈默的指尖磨出茧。陈默的膝盖沾了泥。 
+ B 林川的帽檐压出折痕,脚踝肿了一块。周宁的衣领被雨浸透。随后，陈默的指尖磨出茧。陈默的膝盖沾了泥。
+  group ['f0', 'f1'] A 林川的帽檐压出折痕。林川的脚踝肿了一块。 | B 林川的帽檐压出折痕,脚踝肿了一块。 | fact True True
+
+ t03 
+ A 叶知微把灯罩擦得透亮。叶知微的袖口沾了铜油。叶知微把抹布搭回梯脚。 
+ B 叶知微把灯罩擦得透亮,袖口沾了铜油,把抹布搭回梯脚。
+  group ['f0', 'f1', 'f2'] A 叶知微把灯罩擦得透亮。叶知微的袖口沾了铜油。叶知微把抹布搭回梯脚。 | B 叶知微把灯罩擦得透亮,袖口沾了铜油,把抹布搭回梯脚。 | fact True True
+
+ t08 
+ A 阿棠把银鳞鱼搬上案板。顾行舟把缆绳绕上摊棚边的木桩。阿棠的辫梢沾了白汽。顾行舟的外袍下摆沾了泥水。 
+ B 阿棠把银鳞鱼搬上案板,顾行舟把缆绳绕上摊棚边的木桩。阿棠的辫梢沾了白汽,顾行舟的外袍下摆沾了泥水。
+  group ['f0', 'f1'] A 阿棠把银鳞鱼搬上案板。顾行舟把缆绳绕上摊棚边的木桩。 | B 阿棠把银鳞鱼搬上案板,顾行舟把缆绳绕上摊棚边的木桩。 | fact True True
+  group ['f2', 'f3'] A 阿棠的辫梢沾了白汽。顾行舟的外袍下摆沾了泥水。 | B 阿棠的辫梢沾了白汽,顾行舟的外袍下摆沾了泥水。 | fact True True
+
+ t24 
+ A 纸灯笼的风扯破一角。排水沟的里面积了泥。沈砚把纸灯笼扶正。阿棠把鱼筐放在门槛边。 
+ B 纸灯笼的被风扯破一角,排水沟里面积了泥。阿棠把鱼筐放在门槛边。
+  group ['f0', 'f1'] A 纸灯笼的风扯破一角。排水沟的里面积了泥。 | B 纸灯笼的被风扯破一角,排水沟里面积了泥。 | fact True True
+  group ['f2', 'f3'] A 沈砚把纸灯笼扶正。阿棠把鱼筐放在门槛边。 | B 阿棠把鱼筐放在门槛边。 | fact True False
+
+ train-r4 
+ A 沈砚的围巾松开一截。沈砚的脸色发白。顾行舟的背上溅了泥点。随后，叶知微的手背蹭破了皮。叶知微的肩头落着灰。 
+ B 沈砚的围巾松开一截,脸色发白。顾行舟的背上溅了泥点。随后，叶知微的手背蹭破了皮。叶知微的肩头落着灰。
+  group ['f0', 'f1'] A 沈砚的围巾松开一截。沈砚的脸色发白。 | B 沈砚的围巾松开一截,脸色发白。 | fact True True
+
+ v14 
+ A 沈砚从潮汐档案馆走到潮渡。沈砚把系泊绳拖回岸上。沈砚心里发紧。 
+ B 沈砚从潮汐档案馆走到潮渡,把系泊绳拖回岸上,心里发紧。
+  group ['f0', 'f1', 'f2'] A 沈砚从潮汐档案馆走到潮渡。沈砚把系泊绳拖回岸上。沈砚心里发紧。 | B 沈砚从潮汐档案馆走到潮渡,把系泊绳拖回岸上,心里发紧。 | fact True True
+
+ v20 
+ A 沈砚从潮生巷走到潮渡。沈砚心里发紧。沈砚把渡船推离栈桥。 
+ B 沈砚从潮生巷走到潮渡,把渡船推离栈桥。
+  group ['f0', 'f1', 'f2'] A 沈砚从潮生巷走到潮渡。沈砚心里发紧。沈砚把渡船推离栈桥。 | B 沈砚从潮生巷走到潮渡,把渡船推离栈桥。 | fact True False

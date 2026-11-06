@@ -1,0 +1,345 @@
+{
+ "purpose": "manual paired audit of the clean-supervision holdout; primary = B-only safety losses on multi-fact groups",
+ "counts": {
+  "multi_groups": 13,
+  "B_only_losses": 2,
+  "expr_B": 10,
+  "expr_A": 2,
+  "expr_tie": 1,
+  "singletons": 7,
+  "singleton_regressions": 0
+ },
+ "rows": [
+  {
+   "sourceId": "v07",
+   "facts": [
+    "f0",
+    "f1"
+   ],
+   "A_text": "铜灯的灯罩上积了灰。潮汐簿的封面蒙了一层灰。",
+   "B_text": "铜灯的灯罩上积了灰,潮汐簿封面蒙了一层灰。",
+   "A_factPass": true,
+   "B_factPass": true,
+   "A_actorOk": true,
+   "B_actorOk": true,
+   "semantic_repetition": false,
+   "unsupported_addition": false,
+   "expression_preference": "tie",
+   "B_only_safety_loss": false,
+   "note": "B drops 的 in 潮汐簿封面; both facts intact"
+  },
+  {
+   "sourceId": "v18",
+   "facts": [
+    "f0",
+    "f1",
+    "f2"
+   ],
+   "A_text": "沈砚从潮渡走到雾堤。沈砚把雾警钟敲响。沈砚心里发紧。",
+   "B_text": "沈砚从潮渡走到雾堤,把雾警钟敲响,心里发紧。",
+   "A_factPass": true,
+   "B_factPass": true,
+   "A_actorOk": true,
+   "B_actorOk": true,
+   "semantic_repetition": false,
+   "unsupported_addition": false,
+   "expression_preference": "B",
+   "B_only_safety_loss": false,
+   "note": "B merges all three; legal subject omission"
+  },
+  {
+   "sourceId": "t22",
+   "facts": [
+    "f0",
+    "f1"
+   ],
+   "A_text": "系泊绳的泥水结了一层白盐。木桩的缠着的旧缆绳断了。",
+   "B_text": "系泊绳的泥水结了一层白盐,木桩缠着的旧缆绳断了。",
+   "A_factPass": true,
+   "B_factPass": true,
+   "A_actorOk": true,
+   "B_actorOk": true,
+   "semantic_repetition": false,
+   "unsupported_addition": false,
+   "expression_preference": "B",
+   "B_only_safety_loss": false,
+   "note": "A has 木桩的缠着; B 木桩缠着; both have 系泊绳的 grammar issue"
+  },
+  {
+   "sourceId": "t22",
+   "facts": [
+    "f2",
+    "f3"
+   ],
+   "A_text": "顾行舟把缆绳重新绕上木桩。沈砚把系泊绳拖回岸上。",
+   "B_text": "顾行舟把缆绳重新绕上木桩,沈砚把系泊绳拖回岸上。",
+   "A_factPass": true,
+   "B_factPass": true,
+   "A_actorOk": true,
+   "B_actorOk": true,
+   "semantic_repetition": false,
+   "unsupported_addition": false,
+   "expression_preference": "B",
+   "B_only_safety_loss": false,
+   "note": "B merges two actions"
+  },
+  {
+   "sourceId": "fixture-r5",
+   "facts": [
+    "f0",
+    "f1"
+   ],
+   "A_text": "林川的帽檐压出折痕。林川的脚踝肿了一块。",
+   "B_text": "林川的帽檐压出折痕,脚踝肿了一块。",
+   "A_factPass": true,
+   "B_factPass": true,
+   "A_actorOk": true,
+   "B_actorOk": true,
+   "semantic_repetition": false,
+   "unsupported_addition": false,
+   "expression_preference": "B",
+   "B_only_safety_loss": false,
+   "note": "B merges; 随后 remains program-level"
+  },
+  {
+   "sourceId": "t03",
+   "facts": [
+    "f0",
+    "f1",
+    "f2"
+   ],
+   "A_text": "叶知微把灯罩擦得透亮。叶知微的袖口沾了铜油。叶知微把抹布搭回梯脚。",
+   "B_text": "叶知微把灯罩擦得透亮,袖口沾了铜油,把抹布搭回梯脚。",
+   "A_factPass": true,
+   "B_factPass": true,
+   "A_actorOk": true,
+   "B_actorOk": true,
+   "semantic_repetition": false,
+   "unsupported_addition": false,
+   "expression_preference": "B",
+   "B_only_safety_loss": false,
+   "note": "B merges all three"
+  },
+  {
+   "sourceId": "t08",
+   "facts": [
+    "f0",
+    "f1"
+   ],
+   "A_text": "阿棠把银鳞鱼搬上案板。顾行舟把缆绳绕上摊棚边的木桩。",
+   "B_text": "阿棠把银鳞鱼搬上案板,顾行舟把缆绳绕上摊棚边的木桩。",
+   "A_factPass": true,
+   "B_factPass": true,
+   "A_actorOk": true,
+   "B_actorOk": true,
+   "semantic_repetition": false,
+   "unsupported_addition": false,
+   "expression_preference": "B",
+   "B_only_safety_loss": false,
+   "note": "B keeps both names"
+  },
+  {
+   "sourceId": "t08",
+   "facts": [
+    "f2",
+    "f3"
+   ],
+   "A_text": "阿棠的辫梢沾了白汽。顾行舟的外袍下摆沾了泥水。",
+   "B_text": "阿棠的辫梢沾了白汽,顾行舟的外袍下摆沾了泥水。",
+   "A_factPass": true,
+   "B_factPass": true,
+   "A_actorOk": true,
+   "B_actorOk": true,
+   "semantic_repetition": false,
+   "unsupported_addition": false,
+   "expression_preference": "B",
+   "B_only_safety_loss": false,
+   "note": "B keeps both names"
+  },
+  {
+   "sourceId": "t24",
+   "facts": [
+    "f0",
+    "f1"
+   ],
+   "A_text": "纸灯笼的风扯破一角。排水沟的里面积了泥。",
+   "B_text": "纸灯笼的被风扯破一角,排水沟里面积了泥。",
+   "A_factPass": false,
+   "B_factPass": true,
+   "A_actorOk": false,
+   "B_actorOk": true,
+   "semantic_repetition": false,
+   "unsupported_addition": false,
+   "expression_preference": "B",
+   "B_only_safety_loss": false,
+   "note": "A: 纸灯笼的风扯破一角 / 排水沟的里面 — object/grammar error; B has 纸灯笼的被风 but keeps object; A-only error"
+  },
+  {
+   "sourceId": "t24",
+   "facts": [
+    "f2",
+    "f3"
+   ],
+   "A_text": "沈砚把纸灯笼扶正。阿棠把鱼筐放在门槛边。",
+   "B_text": "阿棠把鱼筐放在门槛边。",
+   "A_factPass": true,
+   "B_factPass": false,
+   "A_actorOk": true,
+   "B_actorOk": false,
+   "semantic_repetition": false,
+   "unsupported_addition": false,
+   "expression_preference": "A",
+   "B_only_safety_loss": true,
+   "note": "B only writes 阿棠把鱼筐放在门槛边; f2 沈砚把纸灯笼扶正 omitted"
+  },
+  {
+   "sourceId": "train-r4",
+   "facts": [
+    "f0",
+    "f1"
+   ],
+   "A_text": "沈砚的围巾松开一截。沈砚的脸色发白。",
+   "B_text": "沈砚的围巾松开一截,脸色发白。",
+   "A_factPass": true,
+   "B_factPass": true,
+   "A_actorOk": true,
+   "B_actorOk": true,
+   "semantic_repetition": false,
+   "unsupported_addition": false,
+   "expression_preference": "B",
+   "B_only_safety_loss": false,
+   "note": "B merges; 随后 remains"
+  },
+  {
+   "sourceId": "v14",
+   "facts": [
+    "f0",
+    "f1",
+    "f2"
+   ],
+   "A_text": "沈砚从潮汐档案馆走到潮渡。沈砚把系泊绳拖回岸上。沈砚心里发紧。",
+   "B_text": "沈砚从潮汐档案馆走到潮渡,把系泊绳拖回岸上,心里发紧。",
+   "A_factPass": true,
+   "B_factPass": true,
+   "A_actorOk": true,
+   "B_actorOk": true,
+   "semantic_repetition": false,
+   "unsupported_addition": false,
+   "expression_preference": "B",
+   "B_only_safety_loss": false,
+   "note": "B merges all three"
+  },
+  {
+   "sourceId": "v20",
+   "facts": [
+    "f0",
+    "f1",
+    "f2"
+   ],
+   "A_text": "沈砚从潮生巷走到潮渡。沈砚心里发紧。沈砚把渡船推离栈桥。",
+   "B_text": "沈砚从潮生巷走到潮渡,把渡船推离栈桥。",
+   "A_factPass": true,
+   "B_factPass": false,
+   "A_actorOk": true,
+   "B_actorOk": false,
+   "semantic_repetition": false,
+   "unsupported_addition": false,
+   "expression_preference": "A",
+   "B_only_safety_loss": true,
+   "note": "B omits f1 心里松快了些; A has all three"
+  }
+ ],
+ "singletons": [
+  {
+   "sourceId": "v07",
+   "facts": [
+    "f2"
+   ],
+   "A_text": "沈砚把铜灯擦亮。",
+   "B_text": "沈砚把铜灯擦亮。",
+   "A_factPass": true,
+   "B_factPass": true,
+   "preserved": true
+  },
+  {
+   "sourceId": "fixture-r5",
+   "facts": [
+    "f2"
+   ],
+   "A_text": "周宁的衣领被雨浸透。",
+   "B_text": "周宁的衣领被雨浸透。",
+   "A_factPass": true,
+   "B_factPass": true,
+   "preserved": true
+  },
+  {
+   "sourceId": "fixture-r5",
+   "facts": [
+    "f3"
+   ],
+   "A_text": "陈默的指尖磨出茧。",
+   "B_text": "陈默的指尖磨出茧。",
+   "A_factPass": true,
+   "B_factPass": true,
+   "preserved": true
+  },
+  {
+   "sourceId": "fixture-r5",
+   "facts": [
+    "f4"
+   ],
+   "A_text": "陈默的膝盖沾了泥。",
+   "B_text": "陈默的膝盖沾了泥。",
+   "A_factPass": true,
+   "B_factPass": true,
+   "preserved": true
+  },
+  {
+   "sourceId": "train-r4",
+   "facts": [
+    "f2"
+   ],
+   "A_text": "顾行舟的背上溅了泥点。",
+   "B_text": "顾行舟的背上溅了泥点。",
+   "A_factPass": true,
+   "B_factPass": true,
+   "preserved": true
+  },
+  {
+   "sourceId": "train-r4",
+   "facts": [
+    "f3"
+   ],
+   "A_text": "叶知微的手背蹭破了皮。",
+   "B_text": "叶知微的手背蹭破了皮。",
+   "A_factPass": true,
+   "B_factPass": true,
+   "preserved": true
+  },
+  {
+   "sourceId": "train-r4",
+   "facts": [
+    "f4"
+   ],
+   "A_text": "叶知微的肩头落着灰。",
+   "B_text": "叶知微的肩头落着灰。",
+   "A_factPass": true,
+   "B_factPass": true,
+   "preserved": true
+  }
+ ],
+ "devNotes": [
+  {
+   "sourceId": "train-r3",
+   "arm": "A",
+   "issue": "沈砚的雨打湿了半幅 — object/grammar error; fact content not clean",
+   "B": "correct 衣襟被雨打湿了半幅"
+  },
+  {
+   "sourceId": "t12",
+   "arm": "B",
+   "issue": "阿棠早市走到潮生巷,把油纸伞收拢… — drops 沈砚 and transfers his action to 阿棠",
+   "A": "correct two subjects"
+  }
+ ]
+}

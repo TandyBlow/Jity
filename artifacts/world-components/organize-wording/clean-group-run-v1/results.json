@@ -1,0 +1,1125 @@
+{
+ "material": "D:\\others\\Jity\\.local\\world-components-worktree\\artifacts\\world-components\\organize-wording\\clean-group-v1.jsonl",
+ "material_sha256": "1391d0c77655a6bfc701d562f6856a5ff993c6a12c7b5795667f1923cb1d83c3",
+ "freeze": "D:\\others\\Jity\\.local\\world-components-worktree\\artifacts\\world-components\\organize-wording\\clean-group-freeze-v1.json",
+ "freeze_sha256": "a0eb15028ce01d4ac7a449459eabd06ce7c0754bd1769fd1238f841da83b2e19",
+ "config": {
+  "steps": 480,
+  "accum": 4,
+  "updates": 120,
+  "lr": 0.0005,
+  "warmup": 12,
+  "seed": 13,
+  "max_in": 512,
+  "max_target": 128,
+  "max_new": 128,
+  "decode": "greedy",
+  "timeout": null,
+  "selection": "none; train exactly 120 optimizer updates; evaluate dev/holdout at 120 only"
+ },
+ "counts": {
+  "sources": 36,
+  "train": 20,
+  "dev": 6,
+  "holdout": 10,
+  "A_calls": {
+   "train": 74,
+   "dev": 24,
+   "holdout": 37
+  },
+  "B_calls": {
+   "train": 42,
+   "dev": 15,
+   "holdout": 20
+  },
+  "multi_groups": {
+   "train": 23,
+   "dev": 8,
+   "holdout": 13
+  }
+ },
+ "arms": {
+  "A": {
+   "stats": {
+    "arm": "A",
+    "train_calls": 74,
+    "steps": 480,
+    "passes": 6.49,
+    "sampled_fact_exposures": 480,
+    "sampled_target_tokens": 5510,
+    "facts_per_update": 4.0,
+    "target_tokens_per_update": 45.92
+   },
+   "dev": {
+    "fixture-r4": {
+     "assembled": "林川的围巾松开一截。林川的脸色发白。周宁的背上溅了泥点。随后，陈默的手背蹭破了皮。陈默的肩头落着灰。",
+     "calls": {
+      "fixture-r4:f0": {
+       "text": "林川的围巾松开一截。",
+       "new_tokens": 12,
+       "stop": "eos"
+      },
+      "fixture-r4:f1": {
+       "text": "林川的脸色发白。",
+       "new_tokens": 12,
+       "stop": "eos"
+      },
+      "fixture-r4:f2": {
+       "text": "周宁的背上溅了泥点。",
+       "new_tokens": 12,
+       "stop": "eos"
+      },
+      "fixture-r4:f3": {
+       "text": "陈默的手背蹭破了皮。",
+       "new_tokens": 12,
+       "stop": "eos"
+      },
+      "fixture-r4:f4": {
+       "text": "陈默的肩头落着灰。",
+       "new_tokens": 12,
+       "stop": "eos"
+      }
+     },
+     "groups": [
+      {
+       "facts": [
+        "f0",
+        "f1"
+       ],
+       "text": "林川的围巾松开一截。林川的脸色发白。",
+       "factPass": true
+      }
+     ]
+    },
+    "t12": {
+     "assembled": "阿棠从早市走到潮生巷。沈砚把油纸伞收拢靠在墙根。阿棠把鱼筐放在门槛边。沈砚的鞋底沾了湿石板的水。",
+     "calls": {
+      "t12:f0": {
+       "text": "阿棠从早市走到潮生巷。",
+       "new_tokens": 15,
+       "stop": "eos"
+      },
+      "t12:f1": {
+       "text": "沈砚把油纸伞收拢靠在墙根。",
+       "new_tokens": 15,
+       "stop": "eos"
+      },
+      "t12:f2": {
+       "text": "阿棠把鱼筐放在门槛边。",
+       "new_tokens": 15,
+       "stop": "eos"
+      },
+      "t12:f3": {
+       "text": "沈砚的鞋底沾了湿石板的水。",
+       "new_tokens": 15,
+       "stop": "eos"
+      }
+     },
+     "groups": [
+      {
+       "facts": [
+        "f0",
+        "f1"
+       ],
+       "text": "阿棠从早市走到潮生巷。沈砚把油纸伞收拢靠在墙根。",
+       "factPass": true
+      },
+      {
+       "facts": [
+        "f2",
+        "f3"
+       ],
+       "text": "阿棠把鱼筐放在门槛边。沈砚的鞋底沾了湿石板的水。",
+       "factPass": true
+      }
+     ]
+    },
+    "t20": {
+     "assembled": "警示灯的铜框玻璃罩被风吹歪。钟绳磨出了毛边。沈砚把警示灯扶正。韩渡把钟绳重新绕在钟架上。",
+     "calls": {
+      "t20:f0": {
+       "text": "警示灯的铜框玻璃罩被风吹歪。",
+       "new_tokens": 15,
+       "stop": "eos"
+      },
+      "t20:f1": {
+       "text": "钟绳磨出了毛边。",
+       "new_tokens": 15,
+       "stop": "eos"
+      },
+      "t20:f2": {
+       "text": "沈砚把警示灯扶正。",
+       "new_tokens": 15,
+       "stop": "eos"
+      },
+      "t20:f3": {
+       "text": "韩渡把钟绳重新绕在钟架上。",
+       "new_tokens": 15,
+       "stop": "eos"
+      }
+     },
+     "groups": [
+      {
+       "facts": [
+        "f0",
+        "f1"
+       ],
+       "text": "警示灯的铜框玻璃罩被风吹歪。钟绳磨出了毛边。",
+       "factPass": true
+      },
+      {
+       "facts": [
+        "f2",
+        "f3"
+       ],
+       "text": "沈砚把警示灯扶正。韩渡把钟绳重新绕在钟架上。",
+       "factPass": true
+      }
+     ]
+    },
+    "train-r3": {
+     "assembled": "沈砚的雨打湿了半幅。沈砚的袖口开了线。顾行舟的指缝里塞着泥。随后，叶知微的鞋跟磨塌了。叶知微的裤脚沾了铜油。",
+     "calls": {
+      "train-r3:f0": {
+       "text": "沈砚的雨打湿了半幅。",
+       "new_tokens": 13,
+       "stop": "eos"
+      },
+      "train-r3:f1": {
+       "text": "沈砚的袖口开了线。",
+       "new_tokens": 13,
+       "stop": "eos"
+      },
+      "train-r3:f2": {
+       "text": "顾行舟的指缝里塞着泥。",
+       "new_tokens": 13,
+       "stop": "eos"
+      },
+      "train-r3:f3": {
+       "text": "叶知微的鞋跟磨塌了。",
+       "new_tokens": 13,
+       "stop": "eos"
+      },
+      "train-r3:f4": {
+       "text": "叶知微的裤脚沾了铜油。",
+       "new_tokens": 13,
+       "stop": "eos"
+      }
+     },
+     "groups": [
+      {
+       "facts": [
+        "f0",
+        "f1"
+       ],
+       "text": "沈砚的雨打湿了半幅。沈砚的袖口开了线。",
+       "factPass": false
+      }
+     ]
+    },
+    "v09": {
+     "assembled": "鱼筐的边沿沾着鱼鳞。案板的边沿沾着鱼鳞。阿棠把银鳞鱼装进鱼筐。",
+     "calls": {
+      "v09:f0": {
+       "text": "鱼筐的边沿沾着鱼鳞。",
+       "new_tokens": 12,
+       "stop": "eos"
+      },
+      "v09:f1": {
+       "text": "案板的边沿沾着鱼鳞。",
+       "new_tokens": 12,
+       "stop": "eos"
+      },
+      "v09:f2": {
+       "text": "阿棠把银鳞鱼装进鱼筐。",
+       "new_tokens": 12,
+       "stop": "eos"
+      }
+     },
+     "groups": [
+      {
+       "facts": [
+        "f0",
+        "f1"
+       ],
+       "text": "鱼筐的边沿沾着鱼鳞。案板的边沿沾着鱼鳞。",
+       "factPass": true
+      }
+     ]
+    },
+    "v17": {
+     "assembled": "叶知微把灯芯收进铜灯罩底下。叶知微把油壶搁在铜灯罩上。叶知微的指尖沾了铜油。",
+     "calls": {
+      "v17:f0": {
+       "text": "叶知微把灯芯收进铜灯罩底下。",
+       "new_tokens": 16,
+       "stop": "eos"
+      },
+      "v17:f1": {
+       "text": "叶知微把油壶搁在铜灯罩上。",
+       "new_tokens": 16,
+       "stop": "eos"
+      },
+      "v17:f2": {
+       "text": "叶知微的指尖沾了铜油。",
+       "new_tokens": 16,
+       "stop": "eos"
+      }
+     },
+     "groups": [
+      {
+       "facts": [
+        "f0",
+        "f1",
+        "f2"
+       ],
+       "text": "叶知微把灯芯收进铜灯罩底下。叶知微把油壶搁在铜灯罩上。叶知微的指尖沾了铜油。",
+       "factPass": true
+      }
+     ]
+    }
+   },
+   "holdout": {
+    "v07": {
+     "assembled": "铜灯的灯罩上积了灰。潮汐簿的封面蒙了一层灰。沈砚把铜灯擦亮。",
+     "calls": {
+      "v07:f0": {
+       "text": "铜灯的灯罩上积了灰。",
+       "new_tokens": 13,
+       "stop": "eos"
+      },
+      "v07:f1": {
+       "text": "潮汐簿的封面蒙了一层灰。",
+       "new_tokens": 13,
+       "stop": "eos"
+      },
+      "v07:f2": {
+       "text": "沈砚把铜灯擦亮。",
+       "new_tokens": 13,
+       "stop": "eos"
+      }
+     },
+     "groups": [
+      {
+       "facts": [
+        "f0",
+        "f1"
+       ],
+       "text": "铜灯的灯罩上积了灰。潮汐簿的封面蒙了一层灰。",
+       "factPass": true
+      }
+     ]
+    },
+    "v18": {
+     "assembled": "沈砚从潮渡走到雾堤。沈砚把雾警钟敲响。沈砚心里发紧。",
+     "calls": {
+      "v18:f0": {
+       "text": "沈砚从潮渡走到雾堤。",
+       "new_tokens": 11,
+       "stop": "eos"
+      },
+      "v18:f1": {
+       "text": "沈砚把雾警钟敲响。",
+       "new_tokens": 11,
+       "stop": "eos"
+      },
+      "v18:f2": {
+       "text": "沈砚心里发紧。",
+       "new_tokens": 11,
+       "stop": "eos"
+      }
+     },
+     "groups": [
+      {
+       "facts": [
+        "f0",
+        "f1",
+        "f2"
+       ],
+       "text": "沈砚从潮渡走到雾堤。沈砚把雾警钟敲响。沈砚心里发紧。",
+       "factPass": true
+      }
+     ]
+    },
+    "t22": {
+     "assembled": "系泊绳的泥水结了一层白盐。木桩的缠着的旧缆绳断了。顾行舟把缆绳重新绕上木桩。沈砚把系泊绳拖回岸上。",
+     "calls": {
+      "t22:f0": {
+       "text": "系泊绳的泥水结了一层白盐。",
+       "new_tokens": 14,
+       "stop": "eos"
+      },
+      "t22:f1": {
+       "text": "木桩的缠着的旧缆绳断了。",
+       "new_tokens": 14,
+       "stop": "eos"
+      },
+      "t22:f2": {
+       "text": "顾行舟把缆绳重新绕上木桩。",
+       "new_tokens": 14,
+       "stop": "eos"
+      },
+      "t22:f3": {
+       "text": "沈砚把系泊绳拖回岸上。",
+       "new_tokens": 14,
+       "stop": "eos"
+      }
+     },
+     "groups": [
+      {
+       "facts": [
+        "f0",
+        "f1"
+       ],
+       "text": "系泊绳的泥水结了一层白盐。木桩的缠着的旧缆绳断了。",
+       "factPass": true
+      },
+      {
+       "facts": [
+        "f2",
+        "f3"
+       ],
+       "text": "顾行舟把缆绳重新绕上木桩。沈砚把系泊绳拖回岸上。",
+       "factPass": true
+      }
+     ]
+    },
+    "fixture-r5": {
+     "assembled": "林川的帽檐压出折痕。林川的脚踝肿了一块。周宁的衣领被雨浸透。随后，陈默的指尖磨出茧。陈默的膝盖沾了泥。",
+     "calls": {
+      "fixture-r5:f0": {
+       "text": "林川的帽檐压出折痕。",
+       "new_tokens": 12,
+       "stop": "eos"
+      },
+      "fixture-r5:f1": {
+       "text": "林川的脚踝肿了一块。",
+       "new_tokens": 12,
+       "stop": "eos"
+      },
+      "fixture-r5:f2": {
+       "text": "周宁的衣领被雨浸透。",
+       "new_tokens": 12,
+       "stop": "eos"
+      },
+      "fixture-r5:f3": {
+       "text": "陈默的指尖磨出茧。",
+       "new_tokens": 12,
+       "stop": "eos"
+      },
+      "fixture-r5:f4": {
+       "text": "陈默的膝盖沾了泥。",
+       "new_tokens": 12,
+       "stop": "eos"
+      }
+     },
+     "groups": [
+      {
+       "facts": [
+        "f0",
+        "f1"
+       ],
+       "text": "林川的帽檐压出折痕。林川的脚踝肿了一块。",
+       "factPass": true
+      }
+     ]
+    },
+    "t03": {
+     "assembled": "叶知微把灯罩擦得透亮。叶知微的袖口沾了铜油。叶知微把抹布搭回梯脚。",
+     "calls": {
+      "t03:f0": {
+       "text": "叶知微把灯罩擦得透亮。",
+       "new_tokens": 13,
+       "stop": "eos"
+      },
+      "t03:f1": {
+       "text": "叶知微的袖口沾了铜油。",
+       "new_tokens": 13,
+       "stop": "eos"
+      },
+      "t03:f2": {
+       "text": "叶知微把抹布搭回梯脚。",
+       "new_tokens": 13,
+       "stop": "eos"
+      }
+     },
+     "groups": [
+      {
+       "facts": [
+        "f0",
+        "f1",
+        "f2"
+       ],
+       "text": "叶知微把灯罩擦得透亮。叶知微的袖口沾了铜油。叶知微把抹布搭回梯脚。",
+       "factPass": true
+      }
+     ]
+    },
+    "t08": {
+     "assembled": "阿棠把银鳞鱼搬上案板。顾行舟把缆绳绕上摊棚边的木桩。阿棠的辫梢沾了白汽。顾行舟的外袍下摆沾了泥水。",
+     "calls": {
+      "t08:f0": {
+       "text": "阿棠把银鳞鱼搬上案板。",
+       "new_tokens": 16,
+       "stop": "eos"
+      },
+      "t08:f1": {
+       "text": "顾行舟把缆绳绕上摊棚边的木桩。",
+       "new_tokens": 16,
+       "stop": "eos"
+      },
+      "t08:f2": {
+       "text": "阿棠的辫梢沾了白汽。",
+       "new_tokens": 16,
+       "stop": "eos"
+      },
+      "t08:f3": {
+       "text": "顾行舟的外袍下摆沾了泥水。",
+       "new_tokens": 16,
+       "stop": "eos"
+      }
+     },
+     "groups": [
+      {
+       "facts": [
+        "f0",
+        "f1"
+       ],
+       "text": "阿棠把银鳞鱼搬上案板。顾行舟把缆绳绕上摊棚边的木桩。",
+       "factPass": true
+      },
+      {
+       "facts": [
+        "f2",
+        "f3"
+       ],
+       "text": "阿棠的辫梢沾了白汽。顾行舟的外袍下摆沾了泥水。",
+       "factPass": true
+      }
+     ]
+    },
+    "t24": {
+     "assembled": "纸灯笼的风扯破一角。排水沟的里面积了泥。沈砚把纸灯笼扶正。阿棠把鱼筐放在门槛边。",
+     "calls": {
+      "t24:f0": {
+       "text": "纸灯笼的风扯破一角。",
+       "new_tokens": 12,
+       "stop": "eos"
+      },
+      "t24:f1": {
+       "text": "排水沟的里面积了泥。",
+       "new_tokens": 12,
+       "stop": "eos"
+      },
+      "t24:f2": {
+       "text": "沈砚把纸灯笼扶正。",
+       "new_tokens": 12,
+       "stop": "eos"
+      },
+      "t24:f3": {
+       "text": "阿棠把鱼筐放在门槛边。",
+       "new_tokens": 12,
+       "stop": "eos"
+      }
+     },
+     "groups": [
+      {
+       "facts": [
+        "f0",
+        "f1"
+       ],
+       "text": "纸灯笼的风扯破一角。排水沟的里面积了泥。",
+       "factPass": true
+      },
+      {
+       "facts": [
+        "f2",
+        "f3"
+       ],
+       "text": "沈砚把纸灯笼扶正。阿棠把鱼筐放在门槛边。",
+       "factPass": true
+      }
+     ]
+    },
+    "train-r4": {
+     "assembled": "沈砚的围巾松开一截。沈砚的脸色发白。顾行舟的背上溅了泥点。随后，叶知微的手背蹭破了皮。叶知微的肩头落着灰。",
+     "calls": {
+      "train-r4:f0": {
+       "text": "沈砚的围巾松开一截。",
+       "new_tokens": 13,
+       "stop": "eos"
+      },
+      "train-r4:f1": {
+       "text": "沈砚的脸色发白。",
+       "new_tokens": 13,
+       "stop": "eos"
+      },
+      "train-r4:f2": {
+       "text": "顾行舟的背上溅了泥点。",
+       "new_tokens": 13,
+       "stop": "eos"
+      },
+      "train-r4:f3": {
+       "text": "叶知微的手背蹭破了皮。",
+       "new_tokens": 13,
+       "stop": "eos"
+      },
+      "train-r4:f4": {
+       "text": "叶知微的肩头落着灰。",
+       "new_tokens": 13,
+       "stop": "eos"
+      }
+     },
+     "groups": [
+      {
+       "facts": [
+        "f0",
+        "f1"
+       ],
+       "text": "沈砚的围巾松开一截。沈砚的脸色发白。",
+       "factPass": true
+      }
+     ]
+    },
+    "v14": {
+     "assembled": "沈砚从潮汐档案馆走到潮渡。沈砚把系泊绳拖回岸上。沈砚心里发紧。",
+     "calls": {
+      "v14:f0": {
+       "text": "沈砚从潮汐档案馆走到潮渡。",
+       "new_tokens": 13,
+       "stop": "eos"
+      },
+      "v14:f1": {
+       "text": "沈砚把系泊绳拖回岸上。",
+       "new_tokens": 13,
+       "stop": "eos"
+      },
+      "v14:f2": {
+       "text": "沈砚心里发紧。",
+       "new_tokens": 13,
+       "stop": "eos"
+      }
+     },
+     "groups": [
+      {
+       "facts": [
+        "f0",
+        "f1",
+        "f2"
+       ],
+       "text": "沈砚从潮汐档案馆走到潮渡。沈砚把系泊绳拖回岸上。沈砚心里发紧。",
+       "factPass": true
+      }
+     ]
+    },
+    "v20": {
+     "assembled": "沈砚从潮生巷走到潮渡。沈砚心里发紧。沈砚把渡船推离栈桥。",
+     "calls": {
+      "v20:f0": {
+       "text": "沈砚从潮生巷走到潮渡。",
+       "new_tokens": 12,
+       "stop": "eos"
+      },
+      "v20:f1": {
+       "text": "沈砚心里发紧。",
+       "new_tokens": 12,
+       "stop": "eos"
+      },
+      "v20:f2": {
+       "text": "沈砚把渡船推离栈桥。",
+       "new_tokens": 12,
+       "stop": "eos"
+      }
+     },
+     "groups": [
+      {
+       "facts": [
+        "f0",
+        "f1",
+        "f2"
+       ],
+       "text": "沈砚从潮生巷走到潮渡。沈砚心里发紧。沈砚把渡船推离栈桥。",
+       "factPass": true
+      }
+     ]
+    }
+   }
+  },
+  "B": {
+   "stats": {
+    "arm": "B",
+    "train_calls": 42,
+    "steps": 480,
+    "passes": 11.43,
+    "sampled_fact_exposures": 844,
+    "sampled_target_tokens": 8712,
+    "facts_per_update": 7.03,
+    "target_tokens_per_update": 72.6
+   },
+   "dev": {
+    "fixture-r4": {
+     "assembled": "林川的围巾松开一截,脸色发白。周宁的背上溅了泥点。随后，陈默的手背蹭破了皮。陈默的肩头落着灰。",
+     "calls": {
+      "fixture-r4:g1": {
+       "text": "林川的围巾松开一截,脸色发白。",
+       "new_tokens": 17,
+       "stop": "eos"
+      },
+      "fixture-r4:g2": {
+       "text": "周宁的背上溅了泥点。",
+       "new_tokens": 17,
+       "stop": "eos"
+      },
+      "fixture-r4:g3": {
+       "text": "陈默的手背蹭破了皮。",
+       "new_tokens": 17,
+       "stop": "eos"
+      },
+      "fixture-r4:g4": {
+       "text": "陈默的肩头落着灰。",
+       "new_tokens": 17,
+       "stop": "eos"
+      }
+     },
+     "groups": [
+      {
+       "facts": [
+        "f0",
+        "f1"
+       ],
+       "text": "林川的围巾松开一截,脸色发白。",
+       "factPass": true
+      }
+     ]
+    },
+    "t12": {
+     "assembled": "阿棠早市走到潮生巷,把油纸伞收拢靠在墙根。阿棠把鱼筐放在门槛边,鞋底沾了湿石板的水。",
+     "calls": {
+      "t12:g1": {
+       "text": "阿棠早市走到潮生巷,把油纸伞收拢靠在墙根。",
+       "new_tokens": 21,
+       "stop": "eos"
+      },
+      "t12:g2": {
+       "text": "阿棠把鱼筐放在门槛边,鞋底沾了湿石板的水。",
+       "new_tokens": 21,
+       "stop": "eos"
+      }
+     },
+     "groups": [
+      {
+       "facts": [
+        "f0",
+        "f1"
+       ],
+       "text": "阿棠早市走到潮生巷,把油纸伞收拢靠在墙根。",
+       "factPass": true
+      },
+      {
+       "facts": [
+        "f2",
+        "f3"
+       ],
+       "text": "阿棠把鱼筐放在门槛边,鞋底沾了湿石板的水。",
+       "factPass": true
+      }
+     ]
+    },
+    "t20": {
+     "assembled": "警示灯的铜框玻璃罩被风吹歪,钟绳磨出了毛边。沈砚把警示灯扶正,韩渡把钟绳重新绕在钟架上。",
+     "calls": {
+      "t20:g1": {
+       "text": "警示灯的铜框玻璃罩被风吹歪,钟绳磨出了毛边。",
+       "new_tokens": 23,
+       "stop": "eos"
+      },
+      "t20:g2": {
+       "text": "沈砚把警示灯扶正,韩渡把钟绳重新绕在钟架上。",
+       "new_tokens": 23,
+       "stop": "eos"
+      }
+     },
+     "groups": [
+      {
+       "facts": [
+        "f0",
+        "f1"
+       ],
+       "text": "警示灯的铜框玻璃罩被风吹歪,钟绳磨出了毛边。",
+       "factPass": true
+      },
+      {
+       "facts": [
+        "f2",
+        "f3"
+       ],
+       "text": "沈砚把警示灯扶正,韩渡把钟绳重新绕在钟架上。",
+       "factPass": true
+      }
+     ]
+    },
+    "train-r3": {
+     "assembled": "沈砚的衣襟被雨打湿了半幅,袖口开了线。顾行舟的指缝里塞着泥。随后，叶知微的鞋跟磨塌了。叶知微的裤脚沾了铜油。",
+     "calls": {
+      "train-r3:g1": {
+       "text": "沈砚的衣襟被雨打湿了半幅,袖口开了线。",
+       "new_tokens": 20,
+       "stop": "eos"
+      },
+      "train-r3:g2": {
+       "text": "顾行舟的指缝里塞着泥。",
+       "new_tokens": 20,
+       "stop": "eos"
+      },
+      "train-r3:g3": {
+       "text": "叶知微的鞋跟磨塌了。",
+       "new_tokens": 20,
+       "stop": "eos"
+      },
+      "train-r3:g4": {
+       "text": "叶知微的裤脚沾了铜油。",
+       "new_tokens": 20,
+       "stop": "eos"
+      }
+     },
+     "groups": [
+      {
+       "facts": [
+        "f0",
+        "f1"
+       ],
+       "text": "沈砚的衣襟被雨打湿了半幅,袖口开了线。",
+       "factPass": true
+      }
+     ]
+    },
+    "v09": {
+     "assembled": "鱼筐的边沿沾着鱼鳞,案板边沿沾着鱼鳞。阿棠把银鳞鱼装进鱼筐。",
+     "calls": {
+      "v09:g1": {
+       "text": "鱼筐的边沿沾着鱼鳞,案板边沿沾着鱼鳞。",
+       "new_tokens": 21,
+       "stop": "eos"
+      },
+      "v09:g2": {
+       "text": "阿棠把银鳞鱼装进鱼筐。",
+       "new_tokens": 21,
+       "stop": "eos"
+      }
+     },
+     "groups": [
+      {
+       "facts": [
+        "f0",
+        "f1"
+       ],
+       "text": "鱼筐的边沿沾着鱼鳞,案板边沿沾着鱼鳞。",
+       "factPass": true
+      }
+     ]
+    },
+    "v17": {
+     "assembled": "叶知微把灯芯收进铜灯罩底下,把油壶搁在铜灯罩上,指尖沾了铜油。",
+     "calls": {
+      "v17:g1": {
+       "text": "叶知微把灯芯收进铜灯罩底下,把油壶搁在铜灯罩上,指尖沾了铜油。",
+       "new_tokens": 33,
+       "stop": "eos"
+      }
+     },
+     "groups": [
+      {
+       "facts": [
+        "f0",
+        "f1",
+        "f2"
+       ],
+       "text": "叶知微把灯芯收进铜灯罩底下,把油壶搁在铜灯罩上,指尖沾了铜油。",
+       "factPass": true
+      }
+     ]
+    }
+   },
+   "holdout": {
+    "v07": {
+     "assembled": "铜灯的灯罩上积了灰,潮汐簿封面蒙了一层灰。沈砚把铜灯擦亮。",
+     "calls": {
+      "v07:g1": {
+       "text": "铜灯的灯罩上积了灰,潮汐簿封面蒙了一层灰。",
+       "new_tokens": 22,
+       "stop": "eos"
+      },
+      "v07:g2": {
+       "text": "沈砚把铜灯擦亮。",
+       "new_tokens": 22,
+       "stop": "eos"
+      }
+     },
+     "groups": [
+      {
+       "facts": [
+        "f0",
+        "f1"
+       ],
+       "text": "铜灯的灯罩上积了灰,潮汐簿封面蒙了一层灰。",
+       "factPass": true
+      }
+     ]
+    },
+    "v18": {
+     "assembled": "沈砚从潮渡走到雾堤,把雾警钟敲响,心里发紧。",
+     "calls": {
+      "v18:g1": {
+       "text": "沈砚从潮渡走到雾堤,把雾警钟敲响,心里发紧。",
+       "new_tokens": 22,
+       "stop": "eos"
+      }
+     },
+     "groups": [
+      {
+       "facts": [
+        "f0",
+        "f1",
+        "f2"
+       ],
+       "text": "沈砚从潮渡走到雾堤,把雾警钟敲响,心里发紧。",
+       "factPass": true
+      }
+     ]
+    },
+    "t22": {
+     "assembled": "系泊绳的泥水结了一层白盐,木桩缠着的旧缆绳断了。顾行舟把缆绳重新绕上木桩,沈砚把系泊绳拖回岸上。",
+     "calls": {
+      "t22:g1": {
+       "text": "系泊绳的泥水结了一层白盐,木桩缠着的旧缆绳断了。",
+       "new_tokens": 25,
+       "stop": "eos"
+      },
+      "t22:g2": {
+       "text": "顾行舟把缆绳重新绕上木桩,沈砚把系泊绳拖回岸上。",
+       "new_tokens": 25,
+       "stop": "eos"
+      }
+     },
+     "groups": [
+      {
+       "facts": [
+        "f0",
+        "f1"
+       ],
+       "text": "系泊绳的泥水结了一层白盐,木桩缠着的旧缆绳断了。",
+       "factPass": true
+      },
+      {
+       "facts": [
+        "f2",
+        "f3"
+       ],
+       "text": "顾行舟把缆绳重新绕上木桩,沈砚把系泊绳拖回岸上。",
+       "factPass": true
+      }
+     ]
+    },
+    "fixture-r5": {
+     "assembled": "林川的帽檐压出折痕,脚踝肿了一块。周宁的衣领被雨浸透。随后，陈默的指尖磨出茧。陈默的膝盖沾了泥。",
+     "calls": {
+      "fixture-r5:g1": {
+       "text": "林川的帽檐压出折痕,脚踝肿了一块。",
+       "new_tokens": 18,
+       "stop": "eos"
+      },
+      "fixture-r5:g2": {
+       "text": "周宁的衣领被雨浸透。",
+       "new_tokens": 18,
+       "stop": "eos"
+      },
+      "fixture-r5:g3": {
+       "text": "陈默的指尖磨出茧。",
+       "new_tokens": 18,
+       "stop": "eos"
+      },
+      "fixture-r5:g4": {
+       "text": "陈默的膝盖沾了泥。",
+       "new_tokens": 18,
+       "stop": "eos"
+      }
+     },
+     "groups": [
+      {
+       "facts": [
+        "f0",
+        "f1"
+       ],
+       "text": "林川的帽檐压出折痕,脚踝肿了一块。",
+       "factPass": true
+      }
+     ]
+    },
+    "t03": {
+     "assembled": "叶知微把灯罩擦得透亮,袖口沾了铜油,把抹布搭回梯脚。",
+     "calls": {
+      "t03:g1": {
+       "text": "叶知微把灯罩擦得透亮,袖口沾了铜油,把抹布搭回梯脚。",
+       "new_tokens": 28,
+       "stop": "eos"
+      }
+     },
+     "groups": [
+      {
+       "facts": [
+        "f0",
+        "f1",
+        "f2"
+       ],
+       "text": "叶知微把灯罩擦得透亮,袖口沾了铜油,把抹布搭回梯脚。",
+       "factPass": true
+      }
+     ]
+    },
+    "t08": {
+     "assembled": "阿棠把银鳞鱼搬上案板,顾行舟把缆绳绕上摊棚边的木桩。阿棠的辫梢沾了白汽,顾行舟的外袍下摆沾了泥水。",
+     "calls": {
+      "t08:g1": {
+       "text": "阿棠把银鳞鱼搬上案板,顾行舟把缆绳绕上摊棚边的木桩。",
+       "new_tokens": 26,
+       "stop": "eos"
+      },
+      "t08:g2": {
+       "text": "阿棠的辫梢沾了白汽,顾行舟的外袍下摆沾了泥水。",
+       "new_tokens": 26,
+       "stop": "eos"
+      }
+     },
+     "groups": [
+      {
+       "facts": [
+        "f0",
+        "f1"
+       ],
+       "text": "阿棠把银鳞鱼搬上案板,顾行舟把缆绳绕上摊棚边的木桩。",
+       "factPass": true
+      },
+      {
+       "facts": [
+        "f2",
+        "f3"
+       ],
+       "text": "阿棠的辫梢沾了白汽,顾行舟的外袍下摆沾了泥水。",
+       "factPass": true
+      }
+     ]
+    },
+    "t24": {
+     "assembled": "纸灯笼的被风扯破一角,排水沟里面积了泥。阿棠把鱼筐放在门槛边。",
+     "calls": {
+      "t24:g1": {
+       "text": "纸灯笼的被风扯破一角,排水沟里面积了泥。",
+       "new_tokens": 20,
+       "stop": "eos"
+      },
+      "t24:g2": {
+       "text": "阿棠把鱼筐放在门槛边。",
+       "new_tokens": 20,
+       "stop": "eos"
+      }
+     },
+     "groups": [
+      {
+       "facts": [
+        "f0",
+        "f1"
+       ],
+       "text": "纸灯笼的被风扯破一角,排水沟里面积了泥。",
+       "factPass": true
+      },
+      {
+       "facts": [
+        "f2",
+        "f3"
+       ],
+       "text": "阿棠把鱼筐放在门槛边。",
+       "factPass": false
+      }
+     ]
+    },
+    "train-r4": {
+     "assembled": "沈砚的围巾松开一截,脸色发白。顾行舟的背上溅了泥点。随后，叶知微的手背蹭破了皮。叶知微的肩头落着灰。",
+     "calls": {
+      "train-r4:g1": {
+       "text": "沈砚的围巾松开一截,脸色发白。",
+       "new_tokens": 17,
+       "stop": "eos"
+      },
+      "train-r4:g2": {
+       "text": "顾行舟的背上溅了泥点。",
+       "new_tokens": 17,
+       "stop": "eos"
+      },
+      "train-r4:g3": {
+       "text": "叶知微的手背蹭破了皮。",
+       "new_tokens": 17,
+       "stop": "eos"
+      },
+      "train-r4:g4": {
+       "text": "叶知微的肩头落着灰。",
+       "new_tokens": 17,
+       "stop": "eos"
+      }
+     },
+     "groups": [
+      {
+       "facts": [
+        "f0",
+        "f1"
+       ],
+       "text": "沈砚的围巾松开一截,脸色发白。",
+       "factPass": true
+      }
+     ]
+    },
+    "v14": {
+     "assembled": "沈砚从潮汐档案馆走到潮渡,把系泊绳拖回岸上,心里发紧。",
+     "calls": {
+      "v14:g1": {
+       "text": "沈砚从潮汐档案馆走到潮渡,把系泊绳拖回岸上,心里发紧。",
+       "new_tokens": 26,
+       "stop": "eos"
+      }
+     },
+     "groups": [
+      {
+       "facts": [
+        "f0",
+        "f1",
+        "f2"
+       ],
+       "text": "沈砚从潮汐档案馆走到潮渡,把系泊绳拖回岸上,心里发紧。",
+       "factPass": true
+      }
+     ]
+    },
+    "v20": {
+     "assembled": "沈砚从潮生巷走到潮渡,把渡船推离栈桥。",
+     "calls": {
+      "v20:g1": {
+       "text": "沈砚从潮生巷走到潮渡,把渡船推离栈桥。",
+       "new_tokens": 20,
+       "stop": "eos"
+      }
+     },
+     "groups": [
+      {
+       "facts": [
+        "f0",
+        "f1",
+        "f2"
+       ],
+       "text": "沈砚从潮生巷走到潮渡,把渡船推离栈桥。",
+       "factPass": false
+      }
+     ]
+    }
+   }
+  }
+ }
+}
