@@ -1,0 +1,1182 @@
+{
+ "arms": {
+  "moved": [
+   {
+    "unitId": "p-rp1aX",
+    "pair": "rp1",
+    "role": "possessor",
+    "originalText": "潮汐簿的缺页卷了边。",
+    "explicitText": "潮汐簿的缺页是潮汐簿的一部分。",
+    "original": {
+     "nameKept": true,
+     "entityKept": true,
+     "stateKept": true,
+     "direction": "ok",
+     "relation": "n/a",
+     "syntax": "ok",
+     "duplicate": false,
+     "pass": true
+    },
+    "explicit": {
+     "nameKept": true,
+     "entityKept": true,
+     "stateKept": false,
+     "direction": "ok",
+     "relation": "n/a",
+     "syntax": "broken",
+     "duplicate": true,
+     "pass": false
+    },
+    "originalValue": "缺页卷了边",
+    "explicitValue": "缺页是潮汐簿的一部分，卷了边",
+    "originalChars": 5,
+    "explicitChars": 14
+   },
+   {
+    "unitId": "p-rp1bX",
+    "pair": "rp1",
+    "role": "locationReference",
+    "originalText": "潮汐簿压着的干纸滑开了。",
+    "explicitText": "潮汐簿的干纸压在潮汐簿上,滑开了。",
+    "original": {
+     "nameKept": true,
+     "entityKept": true,
+     "stateKept": true,
+     "direction": "inverted",
+     "relation": "kept",
+     "syntax": "ok",
+     "duplicate": false,
+     "pass": false
+    },
+    "explicit": {
+     "nameKept": true,
+     "entityKept": true,
+     "stateKept": true,
+     "direction": "flip",
+     "relation": "kept",
+     "syntax": "broken",
+     "duplicate": true,
+     "pass": false
+    },
+    "originalValue": "压着的干纸滑开了",
+    "explicitValue": "干纸压在潮汐簿上，滑开了",
+    "originalChars": 8,
+    "explicitChars": 12
+   },
+   {
+    "unitId": "p-rp2aX",
+    "pair": "rp2",
+    "role": "possessor",
+    "originalText": "木桩的桩身裂了一道缝。",
+    "explicitText": "木桩的桩身裂了一道缝。",
+    "original": {
+     "nameKept": true,
+     "entityKept": true,
+     "stateKept": true,
+     "direction": "ok",
+     "relation": "n/a",
+     "syntax": "ok",
+     "duplicate": false,
+     "pass": true
+    },
+    "explicit": {
+     "nameKept": true,
+     "entityKept": true,
+     "stateKept": true,
+     "direction": "ok",
+     "relation": "n/a",
+     "syntax": "ok",
+     "duplicate": false,
+     "pass": true
+    },
+    "originalValue": "桩身裂了一道缝",
+    "explicitValue": "桩身是木桩的一部分，裂了一道缝",
+    "originalChars": 7,
+    "explicitChars": 15
+   },
+   {
+    "unitId": "p-rp2bX",
+    "pair": "rp2",
+    "role": "locationReference",
+    "originalText": "木桩靠着的渡船退了半尺。",
+    "explicitText": "木桩上还退了半尺。",
+    "original": {
+     "nameKept": true,
+     "entityKept": true,
+     "stateKept": true,
+     "direction": "inverted",
+     "relation": "kept",
+     "syntax": "ok",
+     "duplicate": false,
+     "pass": false
+    },
+    "explicit": {
+     "nameKept": true,
+     "entityKept": false,
+     "stateKept": true,
+     "direction": "ok",
+     "relation": "dropped",
+     "syntax": "ok",
+     "duplicate": false,
+     "pass": false
+    },
+    "originalValue": "靠着的渡船退了半尺",
+    "explicitValue": "渡船靠在木桩上，退了半尺",
+    "originalChars": 9,
+    "explicitChars": 12
+   },
+   {
+    "unitId": "p-rp3aX",
+    "pair": "rp3",
+    "role": "possessor",
+    "originalText": "鱼筐渗了水。",
+    "explicitText": "鱼筐渗了水。",
+    "original": {
+     "nameKept": true,
+     "entityKept": false,
+     "stateKept": true,
+     "direction": "replaced",
+     "relation": "n/a",
+     "syntax": "ok",
+     "duplicate": false,
+     "pass": false
+    },
+    "explicit": {
+     "nameKept": true,
+     "entityKept": false,
+     "stateKept": true,
+     "direction": "replaced",
+     "relation": "n/a",
+     "syntax": "ok",
+     "duplicate": false,
+     "pass": false
+    },
+    "originalValue": "筐底渗了水",
+    "explicitValue": "筐底是鱼筐的一部分，渗了水",
+    "originalChars": 5,
+    "explicitChars": 13
+   },
+   {
+    "unitId": "p-rp3bX",
+    "pair": "rp3",
+    "role": "locationReference",
+    "originalText": "鱼筐堆着的银鳞鱼露出来。",
+    "explicitText": "鱼筐的银鳞鱼堆在鱼筐底,露出来。",
+    "original": {
+     "nameKept": true,
+     "entityKept": true,
+     "stateKept": true,
+     "direction": "inverted",
+     "relation": "kept",
+     "syntax": "ok",
+     "duplicate": false,
+     "pass": false
+    },
+    "explicit": {
+     "nameKept": true,
+     "entityKept": true,
+     "stateKept": true,
+     "direction": "flip",
+     "relation": "kept",
+     "syntax": "broken",
+     "duplicate": true,
+     "pass": false
+    },
+    "originalValue": "堆着的银鳞鱼露出来",
+    "explicitValue": "银鳞鱼堆在鱼筐底，露出来",
+    "originalChars": 9,
+    "explicitChars": 12
+   },
+   {
+    "unitId": "p-rp4aX",
+    "pair": "rp4",
+    "role": "possessor",
+    "originalText": "铜灯罩的罩口积了铜绿。",
+    "explicitText": "铜灯罩的罩口积了铜绿。",
+    "original": {
+     "nameKept": true,
+     "entityKept": true,
+     "stateKept": true,
+     "direction": "ok",
+     "relation": "n/a",
+     "syntax": "ok",
+     "duplicate": false,
+     "pass": true
+    },
+    "explicit": {
+     "nameKept": true,
+     "entityKept": true,
+     "stateKept": true,
+     "direction": "ok",
+     "relation": "n/a",
+     "syntax": "ok",
+     "duplicate": false,
+     "pass": true
+    },
+    "originalValue": "罩口积了铜绿",
+    "explicitValue": "罩口是铜灯罩的一部分，积了铜绿",
+    "originalChars": 6,
+    "explicitChars": 15
+   },
+   {
+    "unitId": "p-rp4bX",
+    "pair": "rp4",
+    "role": "locationReference",
+    "originalText": "铜灯罩插着的灯芯歪了。",
+    "explicitText": "铜灯罩的灯芯插在铜灯罩里,歪了。",
+    "original": {
+     "nameKept": true,
+     "entityKept": true,
+     "stateKept": true,
+     "direction": "inverted",
+     "relation": "kept",
+     "syntax": "ok",
+     "duplicate": false,
+     "pass": false
+    },
+    "explicit": {
+     "nameKept": true,
+     "entityKept": true,
+     "stateKept": true,
+     "direction": "flip",
+     "relation": "kept",
+     "syntax": "broken",
+     "duplicate": true,
+     "pass": false
+    },
+    "originalValue": "插着的灯芯歪了",
+    "explicitValue": "灯芯插在铜灯罩里，歪了",
+    "originalChars": 7,
+    "explicitChars": 11
+   },
+   {
+    "unitId": "p-rp5aX",
+    "pair": "rp5",
+    "role": "possessor",
+    "originalText": "石板的边角崩了一小块。",
+    "explicitText": "石板的边角崩了一小块。",
+    "original": {
+     "nameKept": true,
+     "entityKept": true,
+     "stateKept": true,
+     "direction": "ok",
+     "relation": "n/a",
+     "syntax": "ok",
+     "duplicate": false,
+     "pass": true
+    },
+    "explicit": {
+     "nameKept": true,
+     "entityKept": true,
+     "stateKept": true,
+     "direction": "ok",
+     "relation": "n/a",
+     "syntax": "ok",
+     "duplicate": false,
+     "pass": true
+    },
+    "originalValue": "边角崩了一小块",
+    "explicitValue": "边角是石板的一部分，崩了一小块",
+    "originalChars": 7,
+    "explicitChars": 15
+   },
+   {
+    "unitId": "p-rp5bX",
+    "pair": "rp5",
+    "role": "locationReference",
+    "originalText": "石板靠着的油纸伞歪了。",
+    "explicitText": "石板的油纸伞靠在石板上,歪了。",
+    "original": {
+     "nameKept": true,
+     "entityKept": true,
+     "stateKept": true,
+     "direction": "inverted",
+     "relation": "kept",
+     "syntax": "ok",
+     "duplicate": false,
+     "pass": false
+    },
+    "explicit": {
+     "nameKept": true,
+     "entityKept": true,
+     "stateKept": true,
+     "direction": "flip",
+     "relation": "kept",
+     "syntax": "broken",
+     "duplicate": true,
+     "pass": false
+    },
+    "originalValue": "靠着的油纸伞歪了",
+    "explicitValue": "油纸伞靠在石板上，歪了",
+    "originalChars": 8,
+    "explicitChars": 11
+   },
+   {
+    "unitId": "p-rp6aX",
+    "pair": "rp6",
+    "role": "possessor",
+    "originalText": "钟架的横木磨出了毛边。",
+    "explicitText": "钟架的横木磨出了毛边。",
+    "original": {
+     "nameKept": true,
+     "entityKept": true,
+     "stateKept": true,
+     "direction": "ok",
+     "relation": "n/a",
+     "syntax": "ok",
+     "duplicate": false,
+     "pass": true
+    },
+    "explicit": {
+     "nameKept": true,
+     "entityKept": true,
+     "stateKept": true,
+     "direction": "ok",
+     "relation": "n/a",
+     "syntax": "ok",
+     "duplicate": false,
+     "pass": true
+    },
+    "originalValue": "横木磨出了毛边",
+    "explicitValue": "横木是钟架的一部分，磨出了毛边",
+    "originalChars": 7,
+    "explicitChars": 15
+   },
+   {
+    "unitId": "p-rp6bX",
+    "pair": "rp6",
+    "role": "locationReference",
+    "originalText": "钟架搭着的钟绳垂到堤面。",
+    "explicitText": "钟架的钟绳搭在钟架上,垂到堤面。",
+    "original": {
+     "nameKept": true,
+     "entityKept": true,
+     "stateKept": true,
+     "direction": "inverted",
+     "relation": "kept",
+     "syntax": "ok",
+     "duplicate": false,
+     "pass": false
+    },
+    "explicit": {
+     "nameKept": true,
+     "entityKept": true,
+     "stateKept": true,
+     "direction": "flip",
+     "relation": "kept",
+     "syntax": "broken",
+     "duplicate": true,
+     "pass": false
+    },
+    "originalValue": "搭着的钟绳垂到堤面",
+    "explicitValue": "钟绳搭在钟架上，垂到堤面",
+    "originalChars": 9,
+    "explicitChars": 12
+   }
+  ],
+  "ctl": [
+   {
+    "unitId": "p-rp1aX",
+    "pair": "rp1",
+    "role": "possessor",
+    "originalText": "潮汐簿的缺页卷了边。",
+    "explicitText": "潮汐簿的一部分,卷了边。",
+    "original": {
+     "nameKept": true,
+     "entityKept": true,
+     "stateKept": true,
+     "direction": "ok",
+     "relation": "n/a",
+     "syntax": "ok",
+     "duplicate": false,
+     "pass": true
+    },
+    "explicit": {
+     "nameKept": true,
+     "entityKept": false,
+     "stateKept": true,
+     "direction": "replaced",
+     "relation": "n/a",
+     "syntax": "ok",
+     "duplicate": false,
+     "pass": false
+    },
+    "originalValue": "缺页卷了边",
+    "explicitValue": "缺页是潮汐簿的一部分，卷了边",
+    "originalChars": 5,
+    "explicitChars": 14
+   },
+   {
+    "unitId": "p-rp1bX",
+    "pair": "rp1",
+    "role": "locationReference",
+    "originalText": "压着的干纸滑开了。",
+    "explicitText": "潮汐簿上滑开了。",
+    "original": {
+     "nameKept": false,
+     "entityKept": true,
+     "stateKept": true,
+     "direction": "missing",
+     "relation": "kept",
+     "syntax": "ok",
+     "duplicate": false,
+     "pass": false
+    },
+    "explicit": {
+     "nameKept": true,
+     "entityKept": false,
+     "stateKept": true,
+     "direction": "ok",
+     "relation": "dropped",
+     "syntax": "ok",
+     "duplicate": false,
+     "pass": false
+    },
+    "originalValue": "压着的干纸滑开了",
+    "explicitValue": "干纸压在潮汐簿上，滑开了",
+    "originalChars": 8,
+    "explicitChars": 12
+   },
+   {
+    "unitId": "p-rp2aX",
+    "pair": "rp2",
+    "role": "possessor",
+    "originalText": "木桩的桩身裂了一道缝。",
+    "explicitText": "木桩的一部分裂了一道缝。",
+    "original": {
+     "nameKept": true,
+     "entityKept": true,
+     "stateKept": true,
+     "direction": "ok",
+     "relation": "n/a",
+     "syntax": "ok",
+     "duplicate": false,
+     "pass": true
+    },
+    "explicit": {
+     "nameKept": true,
+     "entityKept": false,
+     "stateKept": true,
+     "direction": "replaced",
+     "relation": "n/a",
+     "syntax": "ok",
+     "duplicate": false,
+     "pass": false
+    },
+    "originalValue": "桩身裂了一道缝",
+    "explicitValue": "桩身是木桩的一部分，裂了一道缝",
+    "originalChars": 7,
+    "explicitChars": 15
+   },
+   {
+    "unitId": "p-rp2bX",
+    "pair": "rp2",
+    "role": "locationReference",
+    "originalText": "靠着的渡船退了半尺。",
+    "explicitText": "渡船靠在木桩上,退了半尺。",
+    "original": {
+     "nameKept": false,
+     "entityKept": true,
+     "stateKept": true,
+     "direction": "missing",
+     "relation": "kept",
+     "syntax": "ok",
+     "duplicate": false,
+     "pass": false
+    },
+    "explicit": {
+     "nameKept": true,
+     "entityKept": true,
+     "stateKept": true,
+     "direction": "ok",
+     "relation": "kept",
+     "syntax": "ok",
+     "duplicate": false,
+     "pass": true
+    },
+    "originalValue": "靠着的渡船退了半尺",
+    "explicitValue": "渡船靠在木桩上，退了半尺",
+    "originalChars": 9,
+    "explicitChars": 12
+   },
+   {
+    "unitId": "p-rp3aX",
+    "pair": "rp3",
+    "role": "possessor",
+    "originalText": "鱼筐底渗了水。",
+    "explicitText": "鱼筐底渗了水。",
+    "original": {
+     "nameKept": true,
+     "entityKept": true,
+     "stateKept": true,
+     "direction": "ok",
+     "relation": "n/a",
+     "syntax": "ok",
+     "duplicate": false,
+     "pass": true
+    },
+    "explicit": {
+     "nameKept": true,
+     "entityKept": true,
+     "stateKept": true,
+     "direction": "ok",
+     "relation": "n/a",
+     "syntax": "ok",
+     "duplicate": false,
+     "pass": true
+    },
+    "originalValue": "筐底渗了水",
+    "explicitValue": "筐底是鱼筐的一部分，渗了水",
+    "originalChars": 5,
+    "explicitChars": 13
+   },
+   {
+    "unitId": "p-rp3bX",
+    "pair": "rp3",
+    "role": "locationReference",
+    "originalText": "鱼筐堆着的银鳞鱼露出来。",
+    "explicitText": "银鳞鱼堆在鱼筐底,露出来。",
+    "original": {
+     "nameKept": true,
+     "entityKept": true,
+     "stateKept": true,
+     "direction": "inverted",
+     "relation": "kept",
+     "syntax": "ok",
+     "duplicate": false,
+     "pass": false
+    },
+    "explicit": {
+     "nameKept": true,
+     "entityKept": true,
+     "stateKept": true,
+     "direction": "ok",
+     "relation": "kept",
+     "syntax": "ok",
+     "duplicate": false,
+     "pass": true
+    },
+    "originalValue": "堆着的银鳞鱼露出来",
+    "explicitValue": "银鳞鱼堆在鱼筐底，露出来",
+    "originalChars": 9,
+    "explicitChars": 12
+   },
+   {
+    "unitId": "p-rp4aX",
+    "pair": "rp4",
+    "role": "possessor",
+    "originalText": "铜灯罩的罩口积了铜绿。",
+    "explicitText": "铜灯罩的一部分积了铜绿。",
+    "original": {
+     "nameKept": true,
+     "entityKept": true,
+     "stateKept": true,
+     "direction": "ok",
+     "relation": "n/a",
+     "syntax": "ok",
+     "duplicate": false,
+     "pass": true
+    },
+    "explicit": {
+     "nameKept": true,
+     "entityKept": false,
+     "stateKept": true,
+     "direction": "replaced",
+     "relation": "n/a",
+     "syntax": "ok",
+     "duplicate": false,
+     "pass": false
+    },
+    "originalValue": "罩口积了铜绿",
+    "explicitValue": "罩口是铜灯罩的一部分，积了铜绿",
+    "originalChars": 6,
+    "explicitChars": 15
+   },
+   {
+    "unitId": "p-rp4bX",
+    "pair": "rp4",
+    "role": "locationReference",
+    "originalText": "铜灯罩上的插着的灯芯歪了。",
+    "explicitText": "铜灯罩里的歪了。",
+    "original": {
+     "nameKept": true,
+     "entityKept": true,
+     "stateKept": true,
+     "direction": "ok",
+     "relation": "kept",
+     "syntax": "broken",
+     "duplicate": false,
+     "pass": false
+    },
+    "explicit": {
+     "nameKept": true,
+     "entityKept": false,
+     "stateKept": true,
+     "direction": "ok",
+     "relation": "dropped",
+     "syntax": "ok",
+     "duplicate": false,
+     "pass": false
+    },
+    "originalValue": "插着的灯芯歪了",
+    "explicitValue": "灯芯插在铜灯罩里，歪了",
+    "originalChars": 7,
+    "explicitChars": 11
+   },
+   {
+    "unitId": "p-rp5aX",
+    "pair": "rp5",
+    "role": "possessor",
+    "originalText": "石板的边角崩了一小块。",
+    "explicitText": "石板的边角崩了一小块。",
+    "original": {
+     "nameKept": true,
+     "entityKept": true,
+     "stateKept": true,
+     "direction": "ok",
+     "relation": "n/a",
+     "syntax": "ok",
+     "duplicate": false,
+     "pass": true
+    },
+    "explicit": {
+     "nameKept": true,
+     "entityKept": true,
+     "stateKept": true,
+     "direction": "ok",
+     "relation": "n/a",
+     "syntax": "ok",
+     "duplicate": false,
+     "pass": true
+    },
+    "originalValue": "边角崩了一小块",
+    "explicitValue": "边角是石板的一部分，崩了一小块",
+    "originalChars": 7,
+    "explicitChars": 15
+   },
+   {
+    "unitId": "p-rp5bX",
+    "pair": "rp5",
+    "role": "locationReference",
+    "originalText": "靠着的油纸伞歪了。",
+    "explicitText": "石板靠在石板上歪了。",
+    "original": {
+     "nameKept": false,
+     "entityKept": true,
+     "stateKept": true,
+     "direction": "missing",
+     "relation": "kept",
+     "syntax": "ok",
+     "duplicate": false,
+     "pass": false
+    },
+    "explicit": {
+     "nameKept": true,
+     "entityKept": false,
+     "stateKept": true,
+     "direction": "ok",
+     "relation": "kept",
+     "syntax": "broken",
+     "duplicate": true,
+     "pass": false
+    },
+    "originalValue": "靠着的油纸伞歪了",
+    "explicitValue": "油纸伞靠在石板上，歪了",
+    "originalChars": 8,
+    "explicitChars": 11
+   },
+   {
+    "unitId": "p-rp6aX",
+    "pair": "rp6",
+    "role": "possessor",
+    "originalText": "钟架的横木磨出了毛边。",
+    "explicitText": "钟架的横木磨出了毛边。",
+    "original": {
+     "nameKept": true,
+     "entityKept": true,
+     "stateKept": true,
+     "direction": "ok",
+     "relation": "n/a",
+     "syntax": "ok",
+     "duplicate": false,
+     "pass": true
+    },
+    "explicit": {
+     "nameKept": true,
+     "entityKept": true,
+     "stateKept": true,
+     "direction": "ok",
+     "relation": "n/a",
+     "syntax": "ok",
+     "duplicate": false,
+     "pass": true
+    },
+    "originalValue": "横木磨出了毛边",
+    "explicitValue": "横木是钟架的一部分，磨出了毛边",
+    "originalChars": 7,
+    "explicitChars": 15
+   },
+   {
+    "unitId": "p-rp6bX",
+    "pair": "rp6",
+    "role": "locationReference",
+    "originalText": "搭着的钟绳垂到堤面。",
+    "explicitText": "钟绳搭在钟架上。",
+    "original": {
+     "nameKept": false,
+     "entityKept": true,
+     "stateKept": true,
+     "direction": "missing",
+     "relation": "kept",
+     "syntax": "ok",
+     "duplicate": false,
+     "pass": false
+    },
+    "explicit": {
+     "nameKept": true,
+     "entityKept": true,
+     "stateKept": false,
+     "direction": "ok",
+     "relation": "kept",
+     "syntax": "ok",
+     "duplicate": false,
+     "pass": false
+    },
+    "originalValue": "搭着的钟绳垂到堤面",
+    "explicitValue": "钟绳搭在钟架上，垂到堤面",
+    "originalChars": 9,
+    "explicitChars": 12
+   }
+  ],
+  "mix": [
+   {
+    "unitId": "p-rp1aX",
+    "pair": "rp1",
+    "role": "possessor",
+    "originalText": "潮汐簿的缺页卷了边。",
+    "explicitText": "潮汐簿的一部分,卷了边。",
+    "original": {
+     "nameKept": true,
+     "entityKept": true,
+     "stateKept": true,
+     "direction": "ok",
+     "relation": "n/a",
+     "syntax": "ok",
+     "duplicate": false,
+     "pass": true
+    },
+    "explicit": {
+     "nameKept": true,
+     "entityKept": false,
+     "stateKept": true,
+     "direction": "replaced",
+     "relation": "n/a",
+     "syntax": "ok",
+     "duplicate": false,
+     "pass": false
+    },
+    "originalValue": "缺页卷了边",
+    "explicitValue": "缺页是潮汐簿的一部分，卷了边",
+    "originalChars": 5,
+    "explicitChars": 14
+   },
+   {
+    "unitId": "p-rp1bX",
+    "pair": "rp1",
+    "role": "locationReference",
+    "originalText": "压在潮汐簿上的干纸滑开了。",
+    "explicitText": "潮汐簿上的干纸压在潮汐簿上滑开了。",
+    "original": {
+     "nameKept": true,
+     "entityKept": true,
+     "stateKept": true,
+     "direction": "ok",
+     "relation": "kept",
+     "syntax": "ok",
+     "duplicate": false,
+     "pass": true
+    },
+    "explicit": {
+     "nameKept": true,
+     "entityKept": true,
+     "stateKept": true,
+     "direction": "ok",
+     "relation": "kept",
+     "syntax": "broken",
+     "duplicate": true,
+     "pass": false
+    },
+    "originalValue": "压着的干纸滑开了",
+    "explicitValue": "干纸压在潮汐簿上，滑开了",
+    "originalChars": 8,
+    "explicitChars": 12
+   },
+   {
+    "unitId": "p-rp2aX",
+    "pair": "rp2",
+    "role": "possessor",
+    "originalText": "木桩的桩身裂了一道缝。",
+    "explicitText": "木桩的一部分,裂了一道缝。",
+    "original": {
+     "nameKept": true,
+     "entityKept": true,
+     "stateKept": true,
+     "direction": "ok",
+     "relation": "n/a",
+     "syntax": "ok",
+     "duplicate": false,
+     "pass": true
+    },
+    "explicit": {
+     "nameKept": true,
+     "entityKept": false,
+     "stateKept": true,
+     "direction": "replaced",
+     "relation": "n/a",
+     "syntax": "ok",
+     "duplicate": false,
+     "pass": false
+    },
+    "originalValue": "桩身裂了一道缝",
+    "explicitValue": "桩身是木桩的一部分，裂了一道缝",
+    "originalChars": 7,
+    "explicitChars": 15
+   },
+   {
+    "unitId": "p-rp2bX",
+    "pair": "rp2",
+    "role": "locationReference",
+    "originalText": "靠在木桩上的渡船退了半尺。",
+    "explicitText": "渡口的水面晃了晃。",
+    "original": {
+     "nameKept": true,
+     "entityKept": true,
+     "stateKept": true,
+     "direction": "ok",
+     "relation": "kept",
+     "syntax": "ok",
+     "duplicate": false,
+     "pass": true
+    },
+    "explicit": {
+     "nameKept": false,
+     "entityKept": false,
+     "stateKept": false,
+     "direction": "missing",
+     "relation": "dropped",
+     "syntax": "ok",
+     "duplicate": false,
+     "pass": false
+    },
+    "originalValue": "靠着的渡船退了半尺",
+    "explicitValue": "渡船靠在木桩上，退了半尺",
+    "originalChars": 9,
+    "explicitChars": 12
+   },
+   {
+    "unitId": "p-rp3aX",
+    "pair": "rp3",
+    "role": "possessor",
+    "originalText": "鱼筐底渗了水。",
+    "explicitText": "鱼筐底渗了水。",
+    "original": {
+     "nameKept": true,
+     "entityKept": true,
+     "stateKept": true,
+     "direction": "ok",
+     "relation": "n/a",
+     "syntax": "ok",
+     "duplicate": false,
+     "pass": true
+    },
+    "explicit": {
+     "nameKept": true,
+     "entityKept": true,
+     "stateKept": true,
+     "direction": "ok",
+     "relation": "n/a",
+     "syntax": "ok",
+     "duplicate": false,
+     "pass": true
+    },
+    "originalValue": "筐底渗了水",
+    "explicitValue": "筐底是鱼筐的一部分，渗了水",
+    "originalChars": 5,
+    "explicitChars": 13
+   },
+   {
+    "unitId": "p-rp3bX",
+    "pair": "rp3",
+    "role": "locationReference",
+    "originalText": "堆在鱼筐底的银鳞鱼露出来。",
+    "explicitText": "银鳞鱼堆在鱼筐底露出来。",
+    "original": {
+     "nameKept": true,
+     "entityKept": true,
+     "stateKept": true,
+     "direction": "ok",
+     "relation": "kept",
+     "syntax": "ok",
+     "duplicate": false,
+     "pass": true
+    },
+    "explicit": {
+     "nameKept": true,
+     "entityKept": true,
+     "stateKept": true,
+     "direction": "ok",
+     "relation": "kept",
+     "syntax": "ok",
+     "duplicate": false,
+     "pass": true
+    },
+    "originalValue": "堆着的银鳞鱼露出来",
+    "explicitValue": "银鳞鱼堆在鱼筐底，露出来",
+    "originalChars": 9,
+    "explicitChars": 12
+   },
+   {
+    "unitId": "p-rp4aX",
+    "pair": "rp4",
+    "role": "possessor",
+    "originalText": "铜灯罩的罩口积了铜绿。",
+    "explicitText": "铜灯罩的一部分积了铜绿。",
+    "original": {
+     "nameKept": true,
+     "entityKept": true,
+     "stateKept": true,
+     "direction": "ok",
+     "relation": "n/a",
+     "syntax": "ok",
+     "duplicate": false,
+     "pass": true
+    },
+    "explicit": {
+     "nameKept": true,
+     "entityKept": false,
+     "stateKept": true,
+     "direction": "replaced",
+     "relation": "n/a",
+     "syntax": "ok",
+     "duplicate": false,
+     "pass": false
+    },
+    "originalValue": "罩口积了铜绿",
+    "explicitValue": "罩口是铜灯罩的一部分，积了铜绿",
+    "originalChars": 6,
+    "explicitChars": 15
+   },
+   {
+    "unitId": "p-rp4bX",
+    "pair": "rp4",
+    "role": "locationReference",
+    "originalText": "插在铜灯罩外,插在铜灯罩外歪了。",
+    "explicitText": "铜灯罩的灯芯插在铜灯罩里歪了。",
+    "original": {
+     "nameKept": true,
+     "entityKept": false,
+     "stateKept": true,
+     "direction": "ok",
+     "relation": "kept",
+     "syntax": "broken",
+     "duplicate": true,
+     "pass": false
+    },
+    "explicit": {
+     "nameKept": true,
+     "entityKept": true,
+     "stateKept": true,
+     "direction": "flip",
+     "relation": "kept",
+     "syntax": "broken",
+     "duplicate": true,
+     "pass": false
+    },
+    "originalValue": "插着的灯芯歪了",
+    "explicitValue": "灯芯插在铜灯罩里，歪了",
+    "originalChars": 7,
+    "explicitChars": 11
+   },
+   {
+    "unitId": "p-rp5aX",
+    "pair": "rp5",
+    "role": "possessor",
+    "originalText": "石板的边角崩了一小块。",
+    "explicitText": "石板的边角崩了一小块。",
+    "original": {
+     "nameKept": true,
+     "entityKept": true,
+     "stateKept": true,
+     "direction": "ok",
+     "relation": "n/a",
+     "syntax": "ok",
+     "duplicate": false,
+     "pass": true
+    },
+    "explicit": {
+     "nameKept": true,
+     "entityKept": true,
+     "stateKept": true,
+     "direction": "ok",
+     "relation": "n/a",
+     "syntax": "ok",
+     "duplicate": false,
+     "pass": true
+    },
+    "originalValue": "边角崩了一小块",
+    "explicitValue": "边角是石板的一部分，崩了一小块",
+    "originalChars": 7,
+    "explicitChars": 15
+   },
+   {
+    "unitId": "p-rp5bX",
+    "pair": "rp5",
+    "role": "locationReference",
+    "originalText": "靠在石板上歪了。",
+    "explicitText": "石板靠在石板上歪了。",
+    "original": {
+     "nameKept": true,
+     "entityKept": false,
+     "stateKept": true,
+     "direction": "ok",
+     "relation": "kept",
+     "syntax": "ok",
+     "duplicate": false,
+     "pass": false
+    },
+    "explicit": {
+     "nameKept": true,
+     "entityKept": false,
+     "stateKept": true,
+     "direction": "ok",
+     "relation": "kept",
+     "syntax": "broken",
+     "duplicate": true,
+     "pass": false
+    },
+    "originalValue": "靠着的油纸伞歪了",
+    "explicitValue": "油纸伞靠在石板上，歪了",
+    "originalChars": 8,
+    "explicitChars": 11
+   },
+   {
+    "unitId": "p-rp6aX",
+    "pair": "rp6",
+    "role": "possessor",
+    "originalText": "钟架的横木磨出了毛边。",
+    "explicitText": "钟架的横木磨出了毛边。",
+    "original": {
+     "nameKept": true,
+     "entityKept": true,
+     "stateKept": true,
+     "direction": "ok",
+     "relation": "n/a",
+     "syntax": "ok",
+     "duplicate": false,
+     "pass": true
+    },
+    "explicit": {
+     "nameKept": true,
+     "entityKept": true,
+     "stateKept": true,
+     "direction": "ok",
+     "relation": "n/a",
+     "syntax": "ok",
+     "duplicate": false,
+     "pass": true
+    },
+    "originalValue": "横木磨出了毛边",
+    "explicitValue": "横木是钟架的一部分，磨出了毛边",
+    "originalChars": 7,
+    "explicitChars": 15
+   },
+   {
+    "unitId": "p-rp6bX",
+    "pair": "rp6",
+    "role": "locationReference",
+    "originalText": "搭在钟架的钟绳垂到堤面。",
+    "explicitText": "钟绳搭在钟架上,垂到堤面。",
+    "original": {
+     "nameKept": true,
+     "entityKept": true,
+     "stateKept": true,
+     "direction": "flip",
+     "relation": "kept",
+     "syntax": "ok",
+     "duplicate": false,
+     "pass": false
+    },
+    "explicit": {
+     "nameKept": true,
+     "entityKept": true,
+     "stateKept": true,
+     "direction": "ok",
+     "relation": "kept",
+     "syntax": "ok",
+     "duplicate": false,
+     "pass": true
+    },
+    "originalValue": "搭着的钟绳垂到堤面",
+    "explicitValue": "钟绳搭在钟架上，垂到堤面",
+    "originalChars": 9,
+    "explicitChars": 12
+   }
+  ]
+ },
+ "summary": {
+  "moved": {
+   "original": {
+    "pass": 5,
+    "directionErrors": 7,
+    "nameMissing": 0,
+    "entityMissing": 1,
+    "stateMissing": 0,
+    "syntaxBroken": 0
+   },
+   "explicit": {
+    "pass": 4,
+    "directionErrors": 6,
+    "nameMissing": 0,
+    "entityMissing": 2,
+    "stateMissing": 1,
+    "syntaxBroken": 6
+   }
+  },
+  "ctl": {
+   "original": {
+    "pass": 6,
+    "directionErrors": 1,
+    "nameMissing": 4,
+    "entityMissing": 0,
+    "stateMissing": 0,
+    "syntaxBroken": 1
+   },
+   "explicit": {
+    "pass": 5,
+    "directionErrors": 3,
+    "nameMissing": 0,
+    "entityMissing": 6,
+    "stateMissing": 1,
+    "syntaxBroken": 1
+   }
+  },
+  "mix": {
+   "original": {
+    "pass": 9,
+    "directionErrors": 1,
+    "nameMissing": 0,
+    "entityMissing": 2,
+    "stateMissing": 0,
+    "syntaxBroken": 1
+   },
+   "explicit": {
+    "pass": 5,
+    "directionErrors": 4,
+    "nameMissing": 1,
+    "entityMissing": 5,
+    "stateMissing": 1,
+    "syntaxBroken": 3
+   }
+  }
+ }
+}

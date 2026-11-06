@@ -1,0 +1,124 @@
+{
+ "purpose": "input-expression test: the same facts with the direction stated in the value",
+ "job": {
+  "id": 241138,
+  "gpu": "NVIDIA GeForce RTX 4090 D",
+  "units": 72,
+  "arms": [
+   "moved",
+   "ctl",
+   "mix"
+  ]
+ },
+ "design": {
+  "variants": [
+   "original (frozen rolepair value)",
+   "explicit (direction stated in natural language)"
+  ],
+  "directionSource": "the source fact: the other object leads the name for location members, the part leads the name for possessor members; asserted at build time",
+  "length": "original values 7.2 characters on average, explicit 13.1; wording also changes, so no single-cause attribution is possible",
+  "originalRuns": "the original variants are read from the archived eval-r7 run, not re-run"
+ },
+ "summary": {
+  "moved": {
+   "original": {
+    "pass": 5,
+    "directionErrors": 7,
+    "nameMissing": 0,
+    "entityMissing": 1,
+    "stateMissing": 0,
+    "syntaxBroken": 0
+   },
+   "explicit": {
+    "pass": 4,
+    "directionErrors": 6,
+    "nameMissing": 0,
+    "entityMissing": 2,
+    "stateMissing": 1,
+    "syntaxBroken": 6
+   }
+  },
+  "ctl": {
+   "original": {
+    "pass": 6,
+    "directionErrors": 1,
+    "nameMissing": 4,
+    "entityMissing": 0,
+    "stateMissing": 0,
+    "syntaxBroken": 1
+   },
+   "explicit": {
+    "pass": 5,
+    "directionErrors": 3,
+    "nameMissing": 0,
+    "entityMissing": 6,
+    "stateMissing": 1,
+    "syntaxBroken": 1
+   }
+  },
+  "mix": {
+   "original": {
+    "pass": 9,
+    "directionErrors": 1,
+    "nameMissing": 0,
+    "entityMissing": 2,
+    "stateMissing": 0,
+    "syntaxBroken": 1
+   },
+   "explicit": {
+    "pass": 5,
+    "directionErrors": 4,
+    "nameMissing": 1,
+    "entityMissing": 5,
+    "stateMissing": 1,
+    "syntaxBroken": 3
+   }
+  }
+ },
+ "verdict": {
+  "moved": "fails: location direction still wrong (5/6 possessive), syntax 0 -> 5",
+  "ctl": "fails: location direction becomes 6/6 ok but 3 objects and 1 state are lost",
+  "mix": "fails: 2 direction errors, name missing 1, object missing 2, syntax 1 -> 3",
+  "overall": "explicit direction input does not stably reduce errors",
+  "possessorSide": "the check the round asked for: ctl and mix drop from 6/6 to 3/6 because they read \"X is a part of Y\" as \"Y's part\", replacing the part noun with 一部分"
+ },
+ "capabilityBoundary": "the input already states the direction, both nouns and the state, and the model still does not reproduce it; the gap is not missing information but keeping three elements stable at once",
+ "implementedFix": "the first judging pass did not check the location-side state because the probe builder had filled predicate with the possessor predicate; corrected and recounted, which adds one state loss each for ctl and mix. Rule unchanged",
+ "files": [
+  {
+   "path": "artifacts/next-acceptance/explicit-r1/explicit-moved/explicit-baseline.json",
+   "bytes": 20596,
+   "sha256": "bacb54d0de08111e1af3041caa0b85c0ab425685c0e80275742997201d2d1542"
+  },
+  {
+   "path": "artifacts/next-acceptance/explicit-r1/explicit-ctl/explicit-baseline.json",
+   "bytes": 20500,
+   "sha256": "e399ea34e9b66a9e7e9b5bd31240cd0d542d235b6c1c463382225e47f55e2dfc"
+  },
+  {
+   "path": "artifacts/next-acceptance/explicit-r1/explicit-mix/explicit-baseline.json",
+   "bytes": 20552,
+   "sha256": "331d7f320b5cf7428f9c59cee8c29956994451b6c8c14f3b694a5232d2a1eaed"
+  },
+  {
+   "path": "artifacts/next-acceptance/explicit-r1/explicit-judged.json",
+   "bytes": 29267,
+   "sha256": "faa7c67634fa4384506325cdfb799ad8861f9dad3a30a29f4ad7007033e271fd"
+  },
+  {
+   "path": "artifacts/next-acceptance/explicit-r1/explicit-summary.json",
+   "bytes": 926,
+   "sha256": "0dd56747786f7615319f384550793d1d463a3c81c2d21e37a2184b8c38b74f96"
+  },
+  {
+   "path": "artifacts/next-acceptance/explicit-r1/n4-explicit-r1.jsonl",
+   "bytes": 14361,
+   "sha256": "bec9f4e0e262c773c28733186b4b9e6542a708ba39b8eaa3ecbc66c60a5e816e"
+  },
+  {
+   "path": "artifacts/next-acceptance/explicit-r1/n4-explicit-r1-rule.json",
+   "bytes": 1944,
+   "sha256": "9f9c6b77008bc239c57fe58df4c8b14657f761ed566a7c5ff00fd6b4bcdbc91e"
+  }
+ ]
+}

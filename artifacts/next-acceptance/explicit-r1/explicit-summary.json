@@ -1,0 +1,56 @@
+{
+ "moved": {
+  "original": {
+   "pass": 5,
+   "directionErrors": 7,
+   "nameMissing": 0,
+   "entityMissing": 1,
+   "stateMissing": 0,
+   "syntaxBroken": 0
+  },
+  "explicit": {
+   "pass": 4,
+   "directionErrors": 6,
+   "nameMissing": 0,
+   "entityMissing": 2,
+   "stateMissing": 1,
+   "syntaxBroken": 6
+  }
+ },
+ "ctl": {
+  "original": {
+   "pass": 6,
+   "directionErrors": 1,
+   "nameMissing": 4,
+   "entityMissing": 0,
+   "stateMissing": 0,
+   "syntaxBroken": 1
+  },
+  "explicit": {
+   "pass": 5,
+   "directionErrors": 3,
+   "nameMissing": 0,
+   "entityMissing": 6,
+   "stateMissing": 1,
+   "syntaxBroken": 1
+  }
+ },
+ "mix": {
+  "original": {
+   "pass": 9,
+   "directionErrors": 1,
+   "nameMissing": 0,
+   "entityMissing": 2,
+   "stateMissing": 0,
+   "syntaxBroken": 1
+  },
+  "explicit": {
+   "pass": 5,
+   "directionErrors": 4,
+   "nameMissing": 1,
+   "entityMissing": 5,
+   "stateMissing": 1,
+   "syntaxBroken": 3
+  }
+ }
+}

@@ -44,3 +44,5 @@ artifacts/next-acceptance/mixed-r1/** -text
 artifacts/next-acceptance/rolepair-r1/** -text
 artifacts/next-inputs/world-components/n4-rolepair-r1-rule.json -text
 artifacts/next-acceptance/semantic-review-r1/** -text
+artifacts/next-acceptance/explicit-r1/** -text
+artifacts/next-inputs/world-components/n4-explicit-r1-rule.json -text

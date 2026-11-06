@@ -4176,9 +4176,16 @@
       "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\next-inputs\\world-components\\n4-rolepair-r1.jsonl",
       "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree",
       "note": "Frozen with the target-audit round; see artifacts/validation-freeze-r1/"
+    },
+    "world-components/n4-explicit-r1.jsonl": {
+      "sha256": "bec9f4e0e262c773c28733186b4b9e6542a708ba39b8eaa3ecbc66c60a5e816e",
+      "bytes": 14361,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\next-inputs\\world-components\\n4-explicit-r1.jsonl",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree",
+      "note": "Frozen with the target-audit round; see artifacts/validation-freeze-r1/"
     }
   },
-  "previousPinSha256": "adb465b0996fb51a7506ccc8b0cabebd2604f6e17b5001e1ad55265da219b311",
+  "previousPinSha256": "140201d2574b301c7a27e4382c139d3905eb58f4179219853ae34c4513764dfa",
   "evidencePolicy": {
     "authority": "Files under artifacts/next-inputs are the authoritative inputs for this offline revision.",
     "historicalCopies": "Retained for existing freeze references; never regenerate or update in place. Every pinned read verifies their bytes too.",
