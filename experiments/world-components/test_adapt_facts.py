@@ -47,8 +47,26 @@ class AdapterCases(unittest.TestCase):
         self.assertEqual(sanity['from'], 0)
         self.assertEqual(sanity['sentence'], '周宁的理智上升（0→4）。')
 
+    def test_bad_chain_with_a_matching_checkpoint_is_still_refused(self):
+        facts, gaps, _ = self.facts('t2', world='world_3')
+        self.assertEqual(facts, [])
+        self.assertEqual(len(gaps), 1)
+        self.assertIn('not used to mask', gaps[0]['gap'])
+        self.assertTrue(gaps[0]['checkpointFound'])
+        self.assertTrue(gaps[0]['checkpointDigestMatchesPoint'])
+        self.assertEqual(gaps[0]['replayFailure'], 'ledger')
+
+    def test_replay_unavailable_falls_back_to_the_checkpoint(self):
+        facts, gaps, _ = self.facts('u1', world='world_4')
+        self.assertEqual(gaps, [])
+        sanity = [f for f in facts if f['kind'] == 'sanity_changed'][0]
+        self.assertEqual(sanity['sentence'], '林川的理智下降（10→8）。')
+        self.assertEqual(sanity['provenance']['stateSource'], 'checkpoint')
+        self.assertFalse(sanity['provenance']['replayOk'])
+
     def test_unrecoverable_state_is_a_gap_not_a_guess(self):
-        facts, gaps, _ = self.facts('p7')
+        # replay cannot run and the checkpoint is gone, so there is nothing to show and nothing to guess
+        facts, gaps, _ = self.facts('u2', world='world_4')
         self.assertEqual(facts, [])
         self.assertTrue(any(g['gap'] == 'state not recoverable' for g in gaps))
 

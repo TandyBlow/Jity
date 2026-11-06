@@ -152,6 +152,75 @@ def main():
     db.execute('INSERT OR REPLACE INTO world_state_checkpoints (world_id,point_id,canonical_version,'
                'state_json,state_digest) VALUES (?,?,?,?,?)',
                ('world_2', 'root_w2', 'world-canonical-v1', root2.model_dump_json(), digest2))
+    # world_4: replay cannot run (its round row is missing) while its checkpoint still matches
+    fourth = dict(other)
+    fourth['worldId'] = 'world_4'
+    db.execute('INSERT OR REPLACE INTO worlds (id,initial_json,version,revision,paused,active_point_id,'
+               'active_round_id) VALUES (?,?,?,?,?,?,?)',
+               ('world_4', json.dumps(fourth, ensure_ascii=False), 1, 1, 0, 'u1', 'round_gone'))
+    db.execute("DELETE FROM world_points WHERE world_id='world_4'")
+    db.execute("DELETE FROM world_state_checkpoints WHERE world_id='world_4'")
+    db.execute("DELETE FROM world_rounds WHERE world_id='world_4'")
+    db.execute("DELETE FROM world_advances WHERE world_id='world_4'")
+    db.execute("INSERT OR REPLACE INTO world_advances (world_id,id,input_id,input_text,intent_status,ended) "
+               "VALUES (?,?,?,?,?,?)",
+               ('world_4', 'advance_gone', 'input_gone', None, 'consumed', 1))
+    initial_4 = WorldInitialState.model_validate_json(json.dumps(fourth, ensure_ascii=False))
+    root4 = build_initial_state(initial_4)
+    digest4 = state_digest(root4)
+    db.execute('INSERT INTO world_points (world_id,id,sequence,kind,previous_point_id,round_id,advance_id,'
+               'linked_from_point_id,time_json,delta_json,state_digest,narration_status,generation,claim_token,'
+               'claim_mode,claim_epoch,issued_at,expires_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+               ('world_4', 'root_w4', 0, 'root', None, None, None, None, None, None, digest4,
+                'ready', 1, 'claim_fixture', 'head', 1, 1, 2))
+    db.execute('INSERT OR REPLACE INTO world_state_checkpoints (world_id,point_id,canonical_version,'
+               'state_json,state_digest) VALUES (?,?,?,?,?)',
+               ('world_4', 'root_w4', 'world-canonical-v1', root4.model_dump_json(), digest4))
+    u1_delta = {'person_a': {'entityId': 'person_a', 'sanitySet': 8}}
+    s_u1 = apply_point(root4, projection(root4, 'u1', 1, 'normal', 'root_w4', u1_delta, world='world_4'))
+    write_point(db, 'u1', 1, 'root_w4', u1_delta, s_u1, world='world_4')
+    u2_delta = {'person_a': {'entityId': 'person_a', 'sanitySet': 5}}
+    s_u2 = apply_point(s_u1, projection(s_u1, 'u2', 2, 'normal', 'u1', u2_delta, world='world_4'))
+    write_point(db, 'u2', 2, 'u1', u2_delta, s_u2, world='world_4')
+    db.execute('DELETE FROM world_state_checkpoints WHERE world_id=? AND point_id=?', ('world_4', 'u2'))
+    # the round row the replay needs was never written, so only the checkpoint can answer
+
+    # world_3: a corrupted delta while every checkpoint is intact - replay must be refused, not masked
+    third = dict(other)
+    third['worldId'] = 'world_3'
+    db.execute('INSERT OR REPLACE INTO worlds (id,initial_json,version,revision,paused,active_point_id,'
+               'active_round_id) VALUES (?,?,?,?,?,?,?)',
+               ('world_3', json.dumps(third, ensure_ascii=False), 2, 1, 0, 't2', 'round_fixture'))
+    db.execute("INSERT OR REPLACE INTO world_advances (world_id,id,input_id,input_text,intent_status,ended) "
+               "VALUES (?,?,?,?,?,?)",
+               ('world_3', 'advance_fixture', 'input_fixture_3', None, 'consumed', 1))
+    db.execute("INSERT OR REPLACE INTO world_rounds (world_id,id,advance_id,trigger,intent_status,phase,"
+               "order_json,cursor,acted_json,visited_json,conclusion_json) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+               ('world_3', 'round_fixture', 'advance_fixture', 'automatic', 'consumed', 'complete',
+                '[]', 0, '[]', '[]', json.dumps({'kind': 'handback', 'closedBy': 'model', 'cancelReason': None})))
+    db.execute("DELETE FROM world_points WHERE world_id='world_3'")
+    db.execute("DELETE FROM world_state_checkpoints WHERE world_id='world_3'")
+    initial_3 = WorldInitialState.model_validate_json(json.dumps(third, ensure_ascii=False))
+    root3 = build_initial_state(initial_3)
+    digest3 = state_digest(root3)
+    db.execute('INSERT INTO world_points (world_id,id,sequence,kind,previous_point_id,round_id,advance_id,'
+               'linked_from_point_id,time_json,delta_json,state_digest,narration_status,generation,claim_token,'
+               'claim_mode,claim_epoch,issued_at,expires_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+               ('world_3', 'root_w3', 0, 'root', None, None, None, None, None, None, digest3,
+                'ready', 1, 'claim_fixture', 'head', 1, 1, 2))
+    db.execute('INSERT OR REPLACE INTO world_state_checkpoints (world_id,point_id,canonical_version,'
+               'state_json,state_digest) VALUES (?,?,?,?,?)',
+               ('world_3', 'root_w3', 'world-canonical-v1', root3.model_dump_json(), digest3))
+    t1_delta = {'person_a': {'entityId': 'person_a', 'sanitySet': 6}}
+    s_t1 = apply_point(root3, projection(root3, 't1', 1, 'normal', 'root_w3', t1_delta, world='world_3'))
+    write_point(db, 't1', 1, 'root_w3', t1_delta, s_t1, world='world_3')
+    t2_delta = {'person_a': {'entityId': 'person_a', 'sanitySet': 2}}
+    s_t2 = apply_point(s_t1, projection(s_t1, 't2', 2, 'normal', 't1', t2_delta, world='world_3'))
+    write_point(db, 't2', 2, 't1', t2_delta, s_t2, world='world_3')
+    # the chain is now inconsistent: the recorded delta no longer produces the recorded state
+    db.execute('UPDATE world_points SET delta_json=? WHERE world_id=? AND id=?',
+               (json.dumps({'person_a': {'entityId': 'person_a', 'sanitySet': 5}}), 'world_3', 't1'))
+
     q1_delta = {'person_a': {'entityId': 'person_a',
                              'positionSet': {'containerId': 'hall', 'slotId': None, 'relativeTo': None}}}
     s_q1 = apply_point(root2, projection(root2, 'q1', 1, 'normal', 'root_w2', q1_delta, world='world_2'))

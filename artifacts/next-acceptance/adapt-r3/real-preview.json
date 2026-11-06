@@ -1,0 +1,254 @@
+{
+ "blocks": [
+  {
+   "worldId": "world_1",
+   "pointId": "root_3",
+   "sequence": 0,
+   "kind": "root",
+   "previousPointId": null,
+   "delta": null,
+   "sentences": [
+    "第0点没有实体变化。"
+   ],
+   "notDisplayed": [],
+   "gaps": [],
+   "provenance": [
+    {
+     "entityId": null,
+     "stateSource": "replay",
+     "fieldsRead": [
+      "delta_json"
+     ],
+     "checkpointDigestMatchesPoint": true,
+     "replayOk": true,
+     "replayAgreesWithCheckpoint": true
+    }
+   ]
+  },
+  {
+   "worldId": "world_1",
+   "pointId": "point_8",
+   "sequence": 1,
+   "kind": "normal",
+   "previousPointId": "root_3",
+   "delta": {},
+   "sentences": [
+    "第1点没有实体变化。"
+   ],
+   "notDisplayed": [],
+   "gaps": [],
+   "provenance": [
+    {
+     "entityId": null,
+     "stateSource": "replay",
+     "fieldsRead": [
+      "delta_json"
+     ],
+     "checkpointDigestMatchesPoint": true,
+     "replayOk": true,
+     "replayAgreesWithCheckpoint": true
+    }
+   ]
+  },
+  {
+   "worldId": "world_13",
+   "pointId": "root_15",
+   "sequence": 0,
+   "kind": "root",
+   "previousPointId": null,
+   "delta": null,
+   "sentences": [
+    "第0点没有实体变化。"
+   ],
+   "notDisplayed": [],
+   "gaps": [],
+   "provenance": [
+    {
+     "entityId": null,
+     "stateSource": "replay",
+     "fieldsRead": [
+      "delta_json"
+     ],
+     "checkpointDigestMatchesPoint": true,
+     "replayOk": true,
+     "replayAgreesWithCheckpoint": true
+    }
+   ]
+  },
+  {
+   "worldId": "world_13",
+   "pointId": "point_20",
+   "sequence": 1,
+   "kind": "normal",
+   "previousPointId": "root_15",
+   "delta": {},
+   "sentences": [
+    "第1点没有实体变化。"
+   ],
+   "notDisplayed": [],
+   "gaps": [],
+   "provenance": [
+    {
+     "entityId": null,
+     "stateSource": "replay",
+     "fieldsRead": [
+      "delta_json"
+     ],
+     "checkpointDigestMatchesPoint": true,
+     "replayOk": true,
+     "replayAgreesWithCheckpoint": true
+    }
+   ]
+  },
+  {
+   "worldId": "world_13",
+   "pointId": "point_23",
+   "sequence": 2,
+   "kind": "normal",
+   "previousPointId": "point_20",
+   "delta": {},
+   "sentences": [
+    "第2点没有实体变化。"
+   ],
+   "notDisplayed": [],
+   "gaps": [],
+   "provenance": [
+    {
+     "entityId": null,
+     "stateSource": "replay",
+     "fieldsRead": [
+      "delta_json"
+     ],
+     "checkpointDigestMatchesPoint": true,
+     "replayOk": true,
+     "replayAgreesWithCheckpoint": true
+    }
+   ]
+  },
+  {
+   "worldId": "world_25",
+   "pointId": "root_27",
+   "sequence": 0,
+   "kind": "root",
+   "previousPointId": null,
+   "delta": null,
+   "sentences": [
+    "第0点没有实体变化。"
+   ],
+   "notDisplayed": [],
+   "gaps": [],
+   "provenance": [
+    {
+     "entityId": null,
+     "stateSource": "replay",
+     "fieldsRead": [
+      "delta_json"
+     ],
+     "checkpointDigestMatchesPoint": true,
+     "replayOk": true,
+     "replayAgreesWithCheckpoint": true
+    }
+   ]
+  },
+  {
+   "worldId": "world_30",
+   "pointId": "root_32",
+   "sequence": 0,
+   "kind": "root",
+   "previousPointId": null,
+   "delta": null,
+   "sentences": [
+    "第0点没有实体变化。"
+   ],
+   "notDisplayed": [],
+   "gaps": [],
+   "provenance": [
+    {
+     "entityId": null,
+     "stateSource": "replay",
+     "fieldsRead": [
+      "delta_json"
+     ],
+     "checkpointDigestMatchesPoint": true,
+     "replayOk": true,
+     "replayAgreesWithCheckpoint": true
+    }
+   ]
+  },
+  {
+   "worldId": "world_35",
+   "pointId": "root_37",
+   "sequence": 0,
+   "kind": "root",
+   "previousPointId": null,
+   "delta": null,
+   "sentences": [
+    "第0点没有实体变化。"
+   ],
+   "notDisplayed": [],
+   "gaps": [],
+   "provenance": [
+    {
+     "entityId": null,
+     "stateSource": "replay",
+     "fieldsRead": [
+      "delta_json"
+     ],
+     "checkpointDigestMatchesPoint": true,
+     "replayOk": true,
+     "replayAgreesWithCheckpoint": true
+    }
+   ]
+  },
+  {
+   "worldId": "world_35",
+   "pointId": "point_42",
+   "sequence": 1,
+   "kind": "normal",
+   "previousPointId": "root_37",
+   "delta": {},
+   "sentences": [
+    "第1点没有实体变化。"
+   ],
+   "notDisplayed": [],
+   "gaps": [],
+   "provenance": [
+    {
+     "entityId": null,
+     "stateSource": "replay",
+     "fieldsRead": [
+      "delta_json"
+     ],
+     "checkpointDigestMatchesPoint": true,
+     "replayOk": true,
+     "replayAgreesWithCheckpoint": true
+    }
+   ]
+  },
+  {
+   "worldId": "world_35",
+   "pointId": "point_45",
+   "sequence": 2,
+   "kind": "normal",
+   "previousPointId": "point_42",
+   "delta": {},
+   "sentences": [
+    "第2点没有实体变化。"
+   ],
+   "notDisplayed": [],
+   "gaps": [],
+   "provenance": [
+    {
+     "entityId": null,
+     "stateSource": "replay",
+     "fieldsRead": [
+      "delta_json"
+     ],
+     "checkpointDigestMatchesPoint": true,
+     "replayOk": true,
+     "replayAgreesWithCheckpoint": true
+    }
+   ]
+  }
+ ]
+}
