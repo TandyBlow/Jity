@@ -1,6 +1,8 @@
 # 24/8/12 配对材料与冻结协议（2026-11-06，未训练）
 
-状态：材料与协议已冻结；**没有启动训练、没有跑模型、没有改服务**。旧 5 源版本（[`ab-sentence-pairing-v1.md`](ab-sentence-pairing-v1.md)）降为格式样例与回归说明，不再作为训练材料。
+状态：材料与协议已冻结；训练已按本协议执行一次，结果见 `artifacts/world-components/organize-wording/ab-run-v1/report.md`。没有改服务，没有训练组织模型。旧 5 源版本（[`ab-sentence-pairing-v1.md`](ab-sentence-pairing-v1.md)）降为格式样例与回归说明。
+
+代码里的划分字段仍用 `split=holdout`；报告正文称“源隔离的固定留出”，这些事实此前已被项目查看，不是全新盲确认。
 
 ---
 
@@ -8,9 +10,11 @@
 
 | 文件 | 内容 | sha256 前 16 位 |
 | --- | --- | --- |
-| `artifacts/world-components/organize-wording/pairs-v2.jsonl` | 44 源：24 train／8 dev／12 holdout | `178684423c254ba5…` |
-| `artifacts/world-components/organize-wording/holdout-v1.jsonl` | 12 源留出，单独冻结 | `e554d90654fef7b2…` |
+| `artifacts/world-components/organize-wording/pairs-v2.jsonl` | 44 源：24 train／8 dev／12 固定留出（复核修正后） | `7e325dcc25460462…` |
+| `artifacts/world-components/organize-wording/holdout-v1.jsonl` | 12 源固定留出，单独冻结 | `e554d90654fef7b2…` |
 | `artifacts/world-components/organize-wording/plan-variants-v1.jsonl` | 4 个 dev 源，每源两份合法计划 | `1813bd179fb39e92…` |
+| `artifacts/world-components/organize-wording/review-v1.json` | 44 条目标／162 条事实的复核与 13 处修正 | — |
+| `artifacts/world-components/organize-wording/ab-run-v1/` | 结果、日志、逐源输出、计划响应 | — |
 
 44 源来自：35 个未进入旧 5 源样本的合成源（`n4-final24/cf24` 的事实）＋ 9 个带授权 `before` 的真实回合（`fixture-r1..r3`、`fixture-r5`、`train-r2..r5`，不含 `train-r1`）。旧样本的 11＋3 源不在其中，继续留在 `pairs-v1.jsonl` 作 dev/回归参考。
 
@@ -43,8 +47,8 @@
 | 曝光 | 24 步/epoch；batch=1；梯度累积 4 → 6 次优化/epoch；20 epoch＝480 步＝**120 次更新**；不做上采样 |
 | 优化 | AdamW，lr 5e-4，betas 0.9/0.999，eps 1e-8，wd 0.01，warmup 12 次更新，linear decay，clip 1.0，seed 13，fp32 |
 | 评估 | 每 epoch（24 步）在 8 个 dev 源上算 dev loss＋逐事实 S/O/C/A；不碰 holdout |
-| 选点 | 取 dev **事实层 S 率**最高的一轮；并列时取 dev loss 更低；patience 4 轮；恢复该轮；两臂同一规则。holdout 只在选点后跑一次，不因 holdout 结果换点 |
-| 解码 | greedy；max_new_tokens 256；无 beam、无长度奖励、无重复惩罚 |
+| 选点 | 取 dev **事实层 S 率**最高的一轮；并列时取 dev loss 更低；**取消 patience，两臂都跑满 120 次更新**；恢复该轮；两臂同一规则。固定留出只在选点后跑一次，不因留出结果换点 |
+| 解码 | greedy；max_new_tokens 128；无 beam、无长度奖励、无重复惩罚 |
 | 记录 | 数据/权重哈希、完整配置、逐源原始输出、耗时；两臂同格式 |
 
 **A 与 B_h 的唯一差别**：B_h 的 prompt 多一个计划块；基座、数据、目标、曝光、优化、解码、共同语境、授权关系全部相同。A 也能看到授权关系，不能只给 B_h。
@@ -117,8 +121,8 @@ B_h 在“正文：”前多：
 1. **没有人工参考正文**。44 条全是 `authored-render-v1`，风格偏模板化；表达层的结论只能当“管线信号”，不能当叙事质量结论。
 2. **留出不是全新的世界内容**。44 源的事实来自已存在的 48 源与 10 回合；holdout 是“新配对”，不是“新回合”。若要真正的新盲留出，需要另造回合，这不在本轮。
 3. **关系覆盖只有外观类**。9 条关系源的事实全是 `appearance_changed`，没有“关系＋结果/理智/移动”的组合。
-4. **没有人工复核这 162 条事实与 44 条目标**；渲染器可能产生“钟绳的磨出了毛边”这类别扭句，虽已修掉已知的几处，仍需逐条读一遍。
-5. **训练尚未启动**，上面所有数都不是模型结果。
+4. 这 162 条事实与 44 条目标已逐条通读，修了 13 处句子层面的问题（见 `review-v1.json`）；渲染目标仍然偏模板化，人工参考正文仍缺。
+5. 训练已执行一次（见下），但因为计划响应 0/4、选中曝光不同（A 18／B_h 90），这轮只能当探索性结果。
 
 ---
 
@@ -127,3 +131,17 @@ B_h 在“正文：”前多：
 - 事实：`n4-final24-contract.jsonl`、`n4-cf24-contract.jsonl`（本工作区）；9 个回合的 `artifacts/world-provenance/pairs/*-authorized.json`（主工作区）。
 - 旧材料与目标：[`ab-sentence-pairing-v1.md`](ab-sentence-pairing-v1.md)、`n4-edit12-pairs.json`、`manual-reachability-5.md`。
 - 基座哈希：`artifacts/world-components/randeng-smoke.json`。
+
+
+---
+
+## 7. 运行结果（2026-11-06）
+
+- 两臂各跑满 120 次更新；选中 A 为 epoch 3（18 次更新），B_h 为 epoch 15（90 次更新），**选中曝光不同**，不能称曝光相同。
+- 固定留出 12 源人工事实通过：A **2/12**，B_h **6/12**；B_h 仍有漏 no_change、`t08` 串主体、`fixture-r5` 新增错误事件。
+- B_h 计划结构通过 **4/12**，`before` 关系 **1/3**；合并检查大量是“整段一句”的空洞通过。
+- 计划响应 4 源 **0/4**：P1/P2 输出逐字相同，模型没有使用计划。
+- 表达偏好（人工逐源）：B_h 7、A 2、都差/相当 3；但 A 只训练了 18 次更新，差异与曝光混在一起。
+- 判断：训练目标的分组与事实默认分组一致，计划在训练里冗余；P2 式反事实分组没出现过。按预登记，这是材料/训练侧结果，**不宣布接口无效**。
+
+详见 [`report.md`](../../../artifacts/world-components/organize-wording/ab-run-v1/report.md)。

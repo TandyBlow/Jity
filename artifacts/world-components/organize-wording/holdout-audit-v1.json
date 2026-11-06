@@ -1,0 +1,509 @@
+{
+ "note": "manual audit of the 12 fixed holdout sources; automatic fact scores are coarse and were not used as the verdict",
+ "preferenceTally": {
+  "B_h": 7,
+  "A": 2,
+  "tie": 3
+ },
+ "factPass": {
+  "A": 2,
+  "B_h": 6
+ },
+ "planStructuralPass": {
+  "A": 1,
+  "B_h": 4
+ },
+ "rows": [
+  {
+   "sourceId": "fixture-r5",
+   "arm": "A",
+   "fact": "pass",
+   "factIssues": [],
+   "plan": {
+    "merged_pass": 1,
+    "merged_total": 1,
+    "separated_pass": 1,
+    "separated_total": 3,
+    "relation_pass": 0,
+    "relation_total": 1,
+    "omissions": [],
+    "structural_pass": false
+   },
+   "expression": "relation missing; four facts in one comma sentence; no new content",
+   "preference": "A"
+  },
+  {
+   "sourceId": "t03",
+   "arm": "A",
+   "fact": "pass",
+   "factIssues": [],
+   "plan": {
+    "merged_pass": 1,
+    "merged_total": 1,
+    "separated_pass": 0,
+    "separated_total": 0,
+    "relation_pass": 0,
+    "relation_total": 0,
+    "omissions": [],
+    "structural_pass": true
+   },
+   "expression": "f0 repeated twice, f1 repeated three times; severe repetition",
+   "preference": "B_h"
+  },
+  {
+   "sourceId": "t08",
+   "arm": "A",
+   "fact": "fail",
+   "factIssues": [
+    "f1 wrong: 顾行舟 given 阿棠 action; f2 subject ambiguous"
+   ],
+   "plan": {
+    "merged_pass": 1,
+    "merged_total": 2,
+    "separated_pass": 0,
+    "separated_total": 1,
+    "relation_pass": 0,
+    "relation_total": 0,
+    "omissions": [
+     "f1"
+    ],
+    "structural_pass": false
+   },
+   "expression": "g1 and g2 both run into one sentence",
+   "preference": "tie"
+  },
+  {
+   "sourceId": "t24",
+   "arm": "A",
+   "fact": "fail",
+   "factIssues": [
+    "f0 attributed to 沈砚 instead of 纸灯笼"
+   ],
+   "plan": {
+    "merged_pass": 2,
+    "merged_total": 2,
+    "separated_pass": 0,
+    "separated_total": 1,
+    "relation_pass": 0,
+    "relation_total": 0,
+    "omissions": [],
+    "structural_pass": false
+   },
+   "expression": "all four facts in one comma sentence",
+   "preference": "B_h"
+  },
+  {
+   "sourceId": "train-r4",
+   "arm": "A",
+   "fact": "fail",
+   "factIssues": [
+    "f3/f4 missing; 围巾 repeated 11 times"
+   ],
+   "plan": {
+    "merged_pass": 1,
+    "merged_total": 1,
+    "separated_pass": 0,
+    "separated_total": 3,
+    "relation_pass": 0,
+    "relation_total": 1,
+    "omissions": [
+     "f3",
+     "f4"
+    ],
+    "structural_pass": false
+   },
+   "expression": "truncated list",
+   "preference": "B_h"
+  },
+  {
+   "sourceId": "train-r5",
+   "arm": "A",
+   "fact": "fail",
+   "factIssues": [
+    "f3 missing"
+   ],
+   "plan": {
+    "merged_pass": 1,
+    "merged_total": 1,
+    "separated_pass": 0,
+    "separated_total": 3,
+    "relation_pass": 0,
+    "relation_total": 1,
+    "omissions": [
+     "f3"
+    ],
+    "structural_pass": false
+   },
+   "expression": "four facts in one comma sentence",
+   "preference": "B_h"
+  },
+  {
+   "sourceId": "v05",
+   "arm": "A",
+   "fact": "fail",
+   "factIssues": [
+    "f1 attributed to 叶知微 instead of 沈砚; f3 missing"
+   ],
+   "plan": {
+    "merged_pass": 0,
+    "merged_total": 0,
+    "separated_pass": 0,
+    "separated_total": 3,
+    "relation_pass": 0,
+    "relation_total": 0,
+    "omissions": [
+     "f3"
+    ],
+    "structural_pass": false
+   },
+   "expression": "repetition, no_change missing",
+   "preference": "B_h"
+  },
+  {
+   "sourceId": "v14",
+   "arm": "A",
+   "fact": "fail",
+   "factIssues": [
+    "sanity rendered as 理智的沈砚"
+   ],
+   "plan": {
+    "merged_pass": 1,
+    "merged_total": 1,
+    "separated_pass": 0,
+    "separated_total": 0,
+    "relation_pass": 0,
+    "relation_total": 0,
+    "omissions": [
+     "f2"
+    ],
+    "structural_pass": false
+   },
+   "expression": "malformed moved clause",
+   "preference": "B_h"
+  },
+  {
+   "sourceId": "v20",
+   "arm": "A",
+   "fact": "fail",
+   "factIssues": [
+    "sanity reversed (9→12) and written as digits; f1 malformed"
+   ],
+   "plan": {
+    "merged_pass": 1,
+    "merged_total": 1,
+    "separated_pass": 0,
+    "separated_total": 0,
+    "relation_pass": 0,
+    "relation_total": 0,
+    "omissions": [
+     "f1"
+    ],
+    "structural_pass": false
+   },
+   "expression": "digit leakage, malformed",
+   "preference": "B_h"
+  },
+  {
+   "sourceId": "v21",
+   "arm": "A",
+   "fact": "fail",
+   "factIssues": [
+    "f1 no_change missing"
+   ],
+   "plan": {
+    "merged_pass": 0,
+    "merged_total": 0,
+    "separated_pass": 0,
+    "separated_total": 2,
+    "relation_pass": 0,
+    "relation_total": 0,
+    "omissions": [
+     "f1"
+    ],
+    "structural_pass": false
+   },
+   "expression": "two facts merged",
+   "preference": "B_h"
+  },
+  {
+   "sourceId": "v23",
+   "arm": "A",
+   "fact": "fail",
+   "factIssues": [
+    "f1 no_change missing"
+   ],
+   "plan": {
+    "merged_pass": 0,
+    "merged_total": 0,
+    "separated_pass": 0,
+    "separated_total": 2,
+    "relation_pass": 0,
+    "relation_total": 0,
+    "omissions": [
+     "f1"
+    ],
+    "structural_pass": false
+   },
+   "expression": "two facts merged",
+   "preference": "B_h"
+  },
+  {
+   "sourceId": "v24",
+   "arm": "A",
+   "fact": "fail",
+   "factIssues": [
+    "f1 no_change missing"
+   ],
+   "plan": {
+    "merged_pass": 0,
+    "merged_total": 0,
+    "separated_pass": 0,
+    "separated_total": 2,
+    "relation_pass": 0,
+    "relation_total": 0,
+    "omissions": [
+     "f1"
+    ],
+    "structural_pass": false
+   },
+   "expression": "two facts merged; no repetition",
+   "preference": "A"
+  },
+  {
+   "sourceId": "fixture-r5",
+   "arm": "B_h",
+   "fact": "fail",
+   "factIssues": [
+    "new event: 陈默的衣领被雨浸透 twice, f2 content wrongly attributed to 陈默"
+   ],
+   "plan": {
+    "merged_pass": 1,
+    "merged_total": 1,
+    "separated_pass": 3,
+    "separated_total": 3,
+    "relation_pass": 1,
+    "relation_total": 1,
+    "omissions": [],
+    "structural_pass": true
+   },
+   "expression": "随后 present; f0/f1 merged; repetitive duplicate",
+   "preference": "A"
+  },
+  {
+   "sourceId": "t03",
+   "arm": "B_h",
+   "fact": "pass",
+   "factIssues": [],
+   "plan": {
+    "merged_pass": 1,
+    "merged_total": 1,
+    "separated_pass": 0,
+    "separated_total": 0,
+    "relation_pass": 0,
+    "relation_total": 0,
+    "omissions": [],
+    "structural_pass": true
+   },
+   "expression": "clean one-sentence chain",
+   "preference": "B_h"
+  },
+  {
+   "sourceId": "t08",
+   "arm": "B_h",
+   "fact": "fail",
+   "factIssues": [
+    "f1 and f3 attributed to 阿棠"
+   ],
+   "plan": {
+    "merged_pass": 2,
+    "merged_total": 2,
+    "separated_pass": 0,
+    "separated_total": 1,
+    "relation_pass": 0,
+    "relation_total": 0,
+    "omissions": [],
+    "structural_pass": false
+   },
+   "expression": "all four facts in one sentence; boundary missing",
+   "preference": "tie"
+  },
+  {
+   "sourceId": "t24",
+   "arm": "B_h",
+   "fact": "pass",
+   "factIssues": [],
+   "plan": {
+    "merged_pass": 2,
+    "merged_total": 2,
+    "separated_pass": 1,
+    "separated_total": 1,
+    "relation_pass": 0,
+    "relation_total": 0,
+    "omissions": [],
+    "structural_pass": true
+   },
+   "expression": "minor extra 的; grouping correct",
+   "preference": "B_h"
+  },
+  {
+   "sourceId": "train-r4",
+   "arm": "B_h",
+   "fact": "pass",
+   "factIssues": [],
+   "plan": {
+    "merged_pass": 1,
+    "merged_total": 1,
+    "separated_pass": 2,
+    "separated_total": 3,
+    "relation_pass": 0,
+    "relation_total": 1,
+    "omissions": [],
+    "structural_pass": false
+   },
+   "expression": "f2/f3 merged across a planned boundary",
+   "preference": "B_h"
+  },
+  {
+   "sourceId": "train-r5",
+   "arm": "B_h",
+   "fact": "pass",
+   "factIssues": [],
+   "plan": {
+    "merged_pass": 1,
+    "merged_total": 1,
+    "separated_pass": 2,
+    "separated_total": 3,
+    "relation_pass": 0,
+    "relation_total": 1,
+    "omissions": [],
+    "structural_pass": false
+   },
+   "expression": "f2/f3 merged across a planned boundary",
+   "preference": "B_h"
+  },
+  {
+   "sourceId": "v05",
+   "arm": "B_h",
+   "fact": "fail",
+   "factIssues": [
+    "f3 no_change replaced by 心里发紧"
+   ],
+   "plan": {
+    "merged_pass": 0,
+    "merged_total": 0,
+    "separated_pass": 0,
+    "separated_total": 3,
+    "relation_pass": 0,
+    "relation_total": 0,
+    "omissions": [
+     "f3"
+    ],
+    "structural_pass": false
+   },
+   "expression": "all facts in one comma sentence",
+   "preference": "B_h"
+  },
+  {
+   "sourceId": "v14",
+   "arm": "B_h",
+   "fact": "pass",
+   "factIssues": [],
+   "plan": {
+    "merged_pass": 0,
+    "merged_total": 1,
+    "separated_pass": 0,
+    "separated_total": 0,
+    "relation_pass": 0,
+    "relation_total": 0,
+    "omissions": [],
+    "structural_pass": false
+   },
+   "expression": "one planned group split into two sentences",
+   "preference": "B_h"
+  },
+  {
+   "sourceId": "v20",
+   "arm": "B_h",
+   "fact": "fail",
+   "factIssues": [
+    "f1 sanity missing"
+   ],
+   "plan": {
+    "merged_pass": 1,
+    "merged_total": 1,
+    "separated_pass": 0,
+    "separated_total": 0,
+    "relation_pass": 0,
+    "relation_total": 0,
+    "omissions": [
+     "f1"
+    ],
+    "structural_pass": false
+   },
+   "expression": "two facts, one comma sentence",
+   "preference": "B_h"
+  },
+  {
+   "sourceId": "v21",
+   "arm": "B_h",
+   "fact": "pass",
+   "factIssues": [],
+   "plan": {
+    "merged_pass": 0,
+    "merged_total": 0,
+    "separated_pass": 2,
+    "separated_total": 2,
+    "relation_pass": 0,
+    "relation_total": 0,
+    "omissions": [],
+    "structural_pass": true
+   },
+   "expression": "three sentences, grouping correct",
+   "preference": "B_h"
+  },
+  {
+   "sourceId": "v23",
+   "arm": "B_h",
+   "fact": "fail",
+   "factIssues": [
+    "f1 no_change missing"
+   ],
+   "plan": {
+    "merged_pass": 0,
+    "merged_total": 0,
+    "separated_pass": 0,
+    "separated_total": 2,
+    "relation_pass": 0,
+    "relation_total": 0,
+    "omissions": [
+     "f1"
+    ],
+    "structural_pass": false
+   },
+   "expression": "two facts merged",
+   "preference": "B_h"
+  },
+  {
+   "sourceId": "v24",
+   "arm": "B_h",
+   "fact": "fail",
+   "factIssues": [
+    "f1 no_change missing; f0 repeated twice"
+   ],
+   "plan": {
+    "merged_pass": 0,
+    "merged_total": 0,
+    "separated_pass": 0,
+    "separated_total": 2,
+    "relation_pass": 0,
+    "relation_total": 0,
+    "omissions": [
+     "f1"
+    ],
+    "structural_pass": false
+   },
+   "expression": "repetition",
+   "preference": "A"
+  }
+ ]
+}
