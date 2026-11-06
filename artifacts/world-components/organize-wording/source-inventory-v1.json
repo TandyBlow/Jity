@@ -1,0 +1,190 @@
+{
+ "sources": {
+  "pairs_v2": 44,
+  "n4_118": 118,
+  "unique_ids": 162,
+  "id_overlap": 0,
+  "exact_fact_signature_overlap": 0
+ },
+ "facts_groups": {
+  "pairs_v2": {
+   "facts": 162,
+   "groups": 102,
+   "multi_groups": 46,
+   "multi_sizes": {
+    "2": 33,
+    "3": 12,
+    "4": 1
+   },
+   "cross_multi": 22,
+   "same_multi": 24,
+   "edges": 9,
+   "all_single_sources": 6
+  },
+  "n4": {
+   "facts": 225,
+   "groups": 157,
+   "multi_groups": 64,
+   "multi_sizes": {
+    "2": 60,
+    "3": 4
+   },
+   "cross_multi": 0,
+   "same_multi": 64,
+   "edges": 0,
+   "all_single_sources": 54
+  },
+  "total": {
+   "facts": 387,
+   "groups": 259,
+   "multi_groups": 110,
+   "multi_sizes": {
+    "2": 93,
+    "3": 16,
+    "4": 1
+   },
+   "cross_multi": 22,
+   "same_multi": 88,
+   "edges": 9
+  }
+ },
+ "pools": {
+  "old_train_sources": 122,
+  "old_train_multi_sources": 74,
+  "old_train_single_sources": 46,
+  "old_dev_sources": 16,
+  "old_holdout_sources": 24,
+  "old_holdout_multi_sources": 14
+ },
+ "planned_split": {
+  "train": {
+   "sources": 80,
+   "facts": 180,
+   "groups": 117,
+   "multi_groups": 59,
+   "multi_sizes": {
+    "2": 55,
+    "3": 4
+   },
+   "cross_multi": 4,
+   "fact_counts": {
+    "1": 13,
+    "2": 38,
+    "3": 25,
+    "4": 4
+   },
+   "group_counts": {
+    "1": 53,
+    "2": 18,
+    "3": 8,
+    "4": 1
+   }
+  },
+  "dev": {
+   "sources": 15,
+   "facts": 57,
+   "groups": 30,
+   "multi_groups": 18,
+   "multi_sizes": {
+    "2": 10,
+    "3": 7,
+    "4": 1
+   },
+   "cross_multi": 6,
+   "fact_counts": {
+    "3": 7,
+    "4": 4,
+    "5": 4
+   },
+   "group_counts": {
+    "1": 8,
+    "2": 3,
+    "4": 4
+   }
+  },
+  "old_regression": {
+   "sources": 10,
+   "facts": 37,
+   "groups": 20,
+   "multi_groups": 13,
+   "multi_sizes": {
+    "2": 9,
+    "3": 4
+   },
+   "cross_multi": 7,
+   "ids": [
+    "fixture-r5",
+    "t03",
+    "t08",
+    "t24",
+    "train-r4",
+    "v14",
+    "v20",
+    "v07",
+    "v18",
+    "t22"
+   ],
+   "note": "7 pairs old holdout + v07/v18 old train + t22 old dev; t24/v20 included; all seen, regression only"
+  },
+  "new_fixed": {
+   "sources": 15,
+   "facts": 33,
+   "groups": 26,
+   "multi_groups": 7,
+   "multi_sizes": {
+    "2": 7
+   },
+   "cross_multi": 0,
+   "ids": [
+    "train-r5",
+    "n4n-109",
+    "n4n-120",
+    "n4n-40",
+    "n4n-43",
+    "n4n-53",
+    "n4n-54",
+    "n4n-64",
+    "n4n-65",
+    "n4n-74",
+    "n4n-75",
+    "n4n-87",
+    "n4n-98",
+    "v05",
+    "v21"
+   ],
+   "multi_ids": [
+    "train-r5",
+    "n4n-109",
+    "n4n-64",
+    "n4n-65",
+    "n4n-74",
+    "n4n-75",
+    "n4n-87"
+   ],
+   "unused_old_holdout": [
+    "v23",
+    "v24"
+   ],
+   "note": "all old holdout (final eval only, not training/selection); 7 multi + 8 all-single; seen, not blind"
+  }
+ },
+ "total_planned_sources": 120,
+ "budget": {
+  "steps": 480,
+  "accum": 4,
+  "updates": 120,
+  "A_train_unique_calls": 180,
+  "B_train_unique_calls": 117,
+  "A_passes_at_480": 2.67,
+  "B_passes_at_480": 4.1,
+  "note": "all unique train calls can be covered because 480>180/117; exact sampled counts after a run; no step increase; the 600/300 assumption in the proposal is not the actual 80/15 split"
+ },
+ "control": {
+  "clean_group_A_weights": "not saved; run directory has results.json/run.log only",
+  "clean_group_B_weights": "not saved",
+  "historical_ckpt_group": "not accessible; no file hash",
+  "same_eval_small_reference": "none; old clean-group outputs cover 10 seen regression sources, not the 15 new fixed sources",
+  "retrain_or_four_arm": "not done"
+ },
+ "verdict": "All 162 unique IDs were seen in prior A/B_h or group-arm train/dev/holdout. The 120-source split is feasible (80/15/10/15), but the 15 new fixed sources are seen old holdout, not blind, and only 7 are multi-fact. Target writing is not started. The small-material control is unavailable, so a large-material run could not attribute change to data scale. Do not start the 8-person-day build or training."
+}
