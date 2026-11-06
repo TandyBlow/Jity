@@ -58,7 +58,7 @@
   },
   "freeze": {
    "path": "artifacts/world-components/organize-wording/sentence-base-784m-freeze-v1.json",
-   "sha256": "d0894132dc3a19d9ffe516dd9f0b9b712d4898981eb144e3deac1076af6fe3ad"
+   "sha256": "1dd240b78bed482130f94de5774f95a4bbdd7e2300228e944cda748e1d85ff19"
   },
   "token_audit": {
    "path": "artifacts/world-components/organize-wording/sentence-base-784m-token-audit-v1.json",
