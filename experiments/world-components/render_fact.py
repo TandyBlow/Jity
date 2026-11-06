@@ -75,16 +75,22 @@ def render(fact):
                     'fields': {'name': bool(name), 'text': bool(text)}, 'complete': False}
         return {'sentence': '%s：%s。' % (name, text), 'gap': None,
                 'fields': {'name': True, 'text': True}, 'complete': True,
-                'note': 'no relation field, so no direction is claimed'}
+                'note': ('no structured relation field: the subject and the original fact text are shown, '
+                         'the direction is not verified')}
 
     if kind == 'no_change':
-        scope = _text(fact, 'name')
+        scope, span = _text(fact, 'name'), _text(fact, 'scope')
+        if not span:
+            # without a scope field the record cannot tell a quiet turn from one quiet entity, so the
+            # turn level sentence is not derivable here
+            return {'sentence': None,
+                    'gap': 'no_change carries no scope: an entity or action scope cannot be widened to the turn',
+                    'fields': {'name': bool(scope), 'scope': False}, 'complete': False}
         if scope:
             return {'sentence': '%s这一回合没有新的变化。' % scope, 'gap': None,
-                    'fields': {'name': True}, 'complete': True}
+                    'fields': {'name': True, 'scope': True}, 'complete': True}
         return {'sentence': '这一回合没有新的变化。', 'gap': None,
-                'fields': {}, 'complete': True,
-                'note': 'the record carries no scope, so the sentence claims no location'}
+                'fields': {'scope': True}, 'complete': True}
 
     return {'sentence': None, 'gap': 'unknown fact kind: %s' % kind, 'fields': {}, 'complete': False}
 

@@ -15,13 +15,16 @@ nothing else; a sentence outside them comes back undetermined rather than passed
 import re
 
 ARRIVAL = ('走到', '走进', '到了', '回到', '上到', '下到', '穿过', '走过', '上来', '下来',
-           '抵达', '来到', '进了', '开了')
+           '抵达', '来到', '进了', '开了', '开到', '走出', '出去')
 PATH_ONLY = ('沿着', '顺着')
 STASIS = ('没有变化', '没有新的变化', '没有散', '没有动', '没有好', '没事', '没有新的事情',
           '没有别的动静', '什么也没有再发生')
 IMPROVE = ('慢下来', '散了', '松开手', '匀下来', '落回去', '缓过来')
 WORSEN = ('发紧', '不听使唤', '闷意', '发沉')
 WORLD_ACTION = ('推开', '抱起', '抱着', '蹲到', '船头', '发光', '蹲下')
+# things a sentence can add on top of an arrival: a posture, a contact, an object or a second action
+ADDED = ('站住', '站了一会儿', '站着', '蹲到', '蹲在', '蹲下', '坐下', '扶着', '抱着', '抱起',
+         '推开', '船头', '抵住', '一叠', '发光', '擦了', '抹了', '把门带上')
 RELATION_WORDS = ('缠', '挂', '系', '套', '盖', '插', '搭', '卡', '压', '靠', '堆')
 
 
@@ -36,18 +39,27 @@ def check(fact, text):
         src, dst = fact.get('from') or '', fact.get('to') or ''
         if name and name not in text:
             return 'mismatch', 'subject %s missing' % name
-        if dst and dst not in text:
-            return 'mismatch', 'destination %s missing' % dst
         if src and src not in text:
             return 'mismatch', 'origin %s missing' % src
-        tail = text
-        for word in PATH_ONLY:
-            head, sep, rest = tail.partition(word)
-            if sep:
-                tail = rest
-        if any(v in text for v in ARRIVAL) or any(v in tail for v in ARRIVAL):
-            return 'pass', 'name, origin, destination and an arrival are present'
-        return 'mismatch', 'no arrival: the destination is only named, never reached'
+        abbreviated = False
+        if dst and dst not in text:
+            # a recorded place name may be written short; only a trailing form of three or more
+            # characters is accepted, and the pass says so
+            cut = [dst[i:] for i in range(1, max(1, len(dst) - 2))]
+            if any(len(c) >= 3 and c in text for c in cut):
+                abbreviated = True
+            else:
+                return 'mismatch', 'destination %s missing' % dst
+        arrival = any(v in text for v in ARRIVAL) or ('在' + dst in text) or (dst and dst in text and any(
+            v in text for v in ('在', '到', '进', '回', '上', '下', '过', '出')))
+        if not arrival:
+            return 'mismatch', 'no arrival: the destination is only named, never reached'
+        added = [w for w in ADDED if w in text]
+        if added:
+            return 'mismatch', 'the arrival holds but the clause adds %s' % '/'.join(added)
+        if abbreviated:
+            return 'pass', 'name, origin, an abbreviated destination and an arrival are present'
+        return 'pass', 'name, origin, destination and an arrival are present'
 
     if kind == 'sanity_changed':
         low, high = fact.get('from'), fact.get('to')
@@ -89,13 +101,13 @@ def check(fact, text):
             return 'mismatch', 'subject %s missing' % name
         if any(w in text for w in STASIS):
             return 'mismatch', 'a change is written as no change'
+        if any(w in text for w in ('没有', '没再', '不曾')) and any(w in body for w in ('沾', '补', '扶', '系', '裂')):
+            return 'mismatch', 'the change is negated in the sentence'
         if '在' in body and any(w in body for w in RELATION_WORDS):
             return 'undetermined', ('the fact text is relational but the record does not say which entity is the '
                                     'location, so the direction cannot be checked')
-        shared = shingles(body) & shingles(text)
-        if shared:
-            return 'pass', 'the subject and part of the state text are both present'
-        return 'undetermined', 'the state text is not recognisable in the sentence'
+        return 'undetermined', ('no structured relation fields and no supported shape: word overlap alone does '
+                                'not authorise a pass')
 
     return 'undetermined', 'unknown fact kind'
 

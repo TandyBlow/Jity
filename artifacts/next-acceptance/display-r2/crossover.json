@@ -1,0 +1,8 @@
+{
+ "('destination 潮汐档案馆 miss', 'mismatch', 'no arrival: the destination is only named, n')": 17,
+ "('no arrival: the destin', 'mismatch', 'the arrival holds but the clause adds 站住')": 12,
+ "('no arrival: the destin', 'mismatch', 'the arrival holds but the clause adds 船头/抵住')": 8,
+ "('no arrival: the destin', 'mismatch', 'the arrival holds but the clause adds 蹲到')": 7,
+ "('no arrival: the destin', 'pass', 'name, origin, destination and an arrival are')": 1,
+ "('destination 潮汐档案馆 miss', 'pass', 'name, origin, an abbreviated destination and')": 2
+}
