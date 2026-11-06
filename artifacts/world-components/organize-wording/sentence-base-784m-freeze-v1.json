@@ -1,0 +1,89 @@
+{
+ "protocol": "sentence-base-784m-v1",
+ "created": "2026-11-06",
+ "status": "blocked_device_precheck",
+ "training_started": false,
+ "model": {
+  "id": "IDEA-CCNL/Randeng-T5-784M-MultiTask-Chinese",
+  "nominal_parameters": "784M",
+  "architecture_note": "mT5-large Chinese route; not a pure parameter-count scaling of T5-77M; tokenizer/architecture audited before any run",
+  "weights_sha256": "not_locked; device precheck failed before download/training",
+  "config_sha256": "not_locked; device precheck failed before download/training",
+  "tokenizer_sha256": "not_locked; device precheck failed before download/training"
+ },
+ "device_precheck": {
+  "result": "fail",
+  "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+  "gpu_memory_mib": 8188,
+  "ram_gb": 16,
+  "required": "24GB-class GPU for full fp32 AdamW fine-tuning of 784M",
+  "reason": "8GB cannot hold weights+gradients+Adam states for full fine-tuning; no silent switch to LoRA/quantization/bf16/CPU",
+  "action": "stop before download/training"
+ },
+ "fixed_material": {
+  "path": "artifacts/world-components/organize-wording/sentence-scale-v1.jsonl",
+  "sha256": "2f537830797986b7678566d0f90ff605749a7ad8f0aadef34cf7c6cd27f43816",
+  "split": {
+   "train": 80,
+   "dev": 15,
+   "fixed": 15,
+   "regression": 10
+  },
+  "fixed_multi_sources": 6,
+  "regression_multi_groups": 13,
+  "multi_groups_total": 19,
+  "targets": "unchanged; no target/interface rewrite",
+  "known_B_only": [
+   "t24 f2",
+   "v20 f2"
+  ],
+  "withdrawn_review": "v07: owner of 封面 uniquely recoverable from visible list; not B-only; plan refs/expression issue"
+ },
+ "sampling_replay": {
+  "reference_arm": "B-large-77",
+  "reference_file": "artifacts/world-components/organize-wording/sentence-scale-run-v1/sampled_calls-B-large.jsonl",
+  "reference_sha256": "cc2f788a358e2b4a871afdbe0ec0f867976faf954c44ff910de22c8b7e23513f",
+  "rule": "reuse the 480 logged calls in exact order; same sourceId, callId, factIds, target, and optimizer configuration; tokenizer-induced token counts may differ and are recorded separately",
+  "steps": 480,
+  "accum": 4,
+  "updates": 120,
+  "selection": "none; final point",
+  "greedy": true,
+  "same_source_rows": 80
+ },
+ "optimizer": {
+  "name": "AdamW",
+  "lr": 0.0005,
+  "betas": [0.9, 0.999],
+  "eps": 1e-08,
+  "weight_decay": 0.01,
+  "warmup": 12,
+  "grad_clip": 1.0,
+  "max_input": 512,
+  "max_new": 128
+ },
+ "comparisons": {
+  "vs_B_large_77": "per-example gains and regressions in omission, attribution, repetition, addition, expression; gains and regressions separately, no net-score offset",
+  "vs_A_large_77": "original B-only safety gate on 19 multi-fact groups; fixed and regression reported separately; t24/v20 remain; v07 is not safety",
+  "no_A_large_784": true,
+  "no_claim_group_over_fact_at_784": true,
+  "promotion_if_pass": "offline joint-sentence candidate only; no organization training and no service replacement"
+ },
+ "checkpoint_and_generation_identity": {
+  "required": "save final weights, config, tokenizer files and hashes; save actual generated tokens, stop reason EOS/cap/timeout for every call",
+  "length_precheck": "tokenize all prompts/targets; if max 512/128 is exceeded, stop; no silent truncation or temporary relaxation",
+  "not_run": "device precheck failed before tokenizer/length audit"
+ },
+ "cost": {
+  "estimate": "1-2 GPU-hours on a 24GB GPU for one arm plus evaluation; 2 person-days",
+  "cap": "1 GPU-day and 2 person-days",
+  "note": "same 120 updates is not the same compute as 77M; report measured wall time, peak memory, per-step time and token counts"
+ },
+ "stop_conditions": [
+  "no 24GB-class device or OOM",
+  "tokenizer/interface/length requires a change",
+  "any B-only safety loss on the 19 multi-fact groups",
+  "expression regression or single-group regression",
+  "any failure stops the larger-base route; no added steps, ratios, second base, or organization module"
+ ]
+}

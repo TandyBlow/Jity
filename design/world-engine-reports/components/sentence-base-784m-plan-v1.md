@@ -2,6 +2,8 @@
 
 状态：只交方案，不下载训练、不改材料、不训练。数据规模路线已按结果结束；这里只换一个基座，先验证设备、分词和单变量边界。
 
+> **冻结与执行前置（2026-11-06）：** 协议已写入 `artifacts/world-components/organize-wording/sentence-base-784m-freeze-v1.json`。三件事已冻结：①逐次复用 `sampled_calls-B-large.jsonl` 的 480 次调用顺序、source/call/fact/target 和优化配置，只把 tokenizer 造成的 token 数变化单列；②只做 B-large-784 对 B-large-77 的逐例得失，以及对 A-large-77 的 19 个多事实组 B-only 安全门，不设 A-large-784，不声称 784M 下组级优于逐事实；③训练前锁权重/config/tokenizer 哈希，保存最终权重和每次生成的 token/EOS/触顶/超时，长度检查不过即停。**实测设备：RTX 4060 Laptop 8188 MiB、系统内存 16 GB，不满足 784M 全参数 fp32 AdamW 所需的 24GB 级显存；本轮在下载/训练前停止，没有用 LoRA、量化、bf16 或 CPU 绕过。**
+
 ## 1. 只选一个基座
 
 候选：**IDEA-CCNL/Randeng-T5-784M-MultiTask-Chinese**，不再同时试第二个模型。
