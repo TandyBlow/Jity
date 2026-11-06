@@ -1,0 +1,94 @@
+{
+ "purpose": "offline prototype: deterministic fact display, three-state check, replay over archived outputs",
+ "noModelCalls": true,
+ "display": {
+  "units": 205,
+  "complete": 205,
+  "gaps": 0,
+  "notes": {
+   "noRelationField": 150,
+   "noScope": 8
+  },
+  "shapes": {
+   "moved": "主体从起点到终点，有方向字时写上下",
+   "sanity": "主体理智上升/下降（a→b）",
+   "relation": "关系在锚点上／锚点关系着另一方",
+   "plain": "主体：状态文本",
+   "noChange": "这一回合没有新的变化"
+  }
+ },
+ "check": {
+  "sentences": 1351,
+  "states": {
+   "pass": 1164,
+   "undetermined": 123,
+   "mismatch": 64
+  },
+  "passShare": 0.8616,
+  "undeterminedShare": 0.091,
+  "wrongPassed": [
+   {
+    "arm": "ce-20261103",
+    "unitId": "t24:f1",
+    "why": "the subject and part of the state text are both present",
+    "text": "排水沟里的泥在墙根上蹭了泥。"
+   }
+  ],
+  "goodRejectedCount": 47,
+  "goodRejectedCauses": {
+   "place name abbreviated (档案馆 vs 潮汐档案馆)": 19,
+   "arrival verb outside the list (站住/抵住/蹲到/开到)": 28
+  },
+  "undeterminedReasons": {
+   "the fact text is relational but the record does not say which entity is the location, so the direction cannot be checked": 91,
+   "direction is neither confirmed nor contradicted": 31,
+   "the state text is not recognisable in the sentence": 1
+  }
+ },
+ "contractGaps": [
+  {
+   "gap": "relation fact carries no anchor, relation word or which side is the location",
+   "effect": "the display cannot claim direction and the checker cannot verify it: 91 of 123 undetermined rows come from here",
+   "example": "fact text 压在石缸上的木板裂了 with only a name, so 石缸压在石缸上的木板裂了 cannot be judged"
+  },
+  {
+   "gap": "no_change carries no scope",
+   "effect": "the display can only say this turn brought no change, not where"
+  },
+  {
+   "gap": "moved direction character may be absent in v2",
+   "effect": "the display degrades to from-to without claiming height"
+  },
+  {
+   "gap": "outcome carries only a predicate",
+   "effect": "the display reads 主体：谓语。 which is clear but not a full sentence"
+  }
+ ],
+ "reading": {
+  "priority": "wrong sentences passed is the number that matters: 1 of 1351",
+  "price": "47 correct sentences rejected (19 place abbreviations, 28 arrival verbs outside the list) and 123 undetermined",
+  "conclusion": "the page can state what happened without the model; the model sentence is an optional naturalisation layer at an 86.2 percent pass rate",
+  "notClaimed": [
+   "the checker covers every fact error; the generic branch only compares subject and state shingles",
+   "the pass rate transfers to the product; all 1351 come from the same units",
+   "the display reads naturally; outcome rows are clear rather than fluent"
+  ]
+ },
+ "files": [
+  {
+   "path": "artifacts/next-acceptance/display-r1/render-all.json",
+   "bytes": 78000,
+   "sha256": "71e04f05922986c56691423592a1ac674ab0ee4fa2ea0c6df32f696bdbb482ad"
+  },
+  {
+   "path": "artifacts/next-acceptance/display-r1/check.json",
+   "bytes": 269413,
+   "sha256": "d4b1ad7768f3f817e618cc7a8fd9fd30ad5ceca686da7ebb41972b25f924c203"
+  },
+  {
+   "path": "artifacts/next-acceptance/display-r1/metrics.json",
+   "bytes": 9297,
+   "sha256": "348bbeef9f7aa79bb7ee7b4c90497f35135acc17b400ca7636baab76f3a8570a"
+  }
+ ]
+}
