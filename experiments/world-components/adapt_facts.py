@@ -34,18 +34,28 @@ def load_replay(backend):
 
 INCONSISTENT = ('differs from the committed digest', 'not a contiguous committed chain',
                 'did not reach the requested point')
+# the only failures where a checkpoint may answer: replay could not start because a precondition is absent
+UNAVAILABLE = ('Committed point has no round',)
 
 
 def classify_replay_failure(error):
-    """A replay that cannot run is not the same as a replay that found the chain inconsistent.
+    """Three outcomes, and the default is the strict one.
 
-    The distinction matters: a checkpoint may answer the first case and must not mask the second.
-    The production replay reports both as LedgerMismatch, so the message decides which one it is.
+    ledger      replay reached the chain and found the state disagreeing with the recorded digest;
+                no checkpoint may answer, because a matching checkpoint is exactly what the mismatch
+                is about.
+    unavailable replay could not start for a named, whitelisted reason; a matching checkpoint may answer.
+    unknown     anything else, including a replay that is not importable and any message not on either
+                list; treated like ledger, so nothing is rendered on the strength of a checkpoint.
     """
     message = str(error)
-    if type(error).__name__ != 'LedgerMismatch':
+    if any(marker in message for marker in INCONSISTENT):
+        return 'ledger'
+    if any(marker in message for marker in UNAVAILABLE):
         return 'unavailable'
-    return 'ledger' if any(marker in message for marker in INCONSISTENT) else 'unavailable'
+    if type(error).__name__ == 'LedgerMismatch':
+        return 'unknown'
+    return 'unknown'
 
 
 def resolve_state(db, world_id, point_id, backend):
@@ -71,10 +81,12 @@ def resolve_state(db, world_id, point_id, backend):
         except Exception as error:
             result['replayError'] = '%s: %s' % (type(error).__name__, error)
             result['replayFailure'] = classify_replay_failure(error)
-    if result['state'] is None and result.get('replayFailure') == 'ledger':
+    if result['state'] is None and result.get('replayFailure') in ('ledger', 'unknown'):
         # the replay reached the chain and found it inconsistent; a checkpoint that agrees with the
         # point's own digest cannot settle that, so it is not used to paper over the mismatch
-        result['source'] = 'withheld: replay found an inconsistency'
+        result['source'] = ('withheld: replay found an inconsistency'
+                            if result['replayFailure'] == 'ledger'
+                            else 'withheld: replay failed for an unrecognised reason')
         return result
     if checkpoint is not None and result['checkpointDigestMatchesPoint']:
         if result['state'] is None:
@@ -134,8 +146,10 @@ def adapt_point(db, world_id, point_id, names=None, backend=DEFAULT_BACKEND):
     previous = resolve_state(db, world_id, previous_id, backend) if previous_id else None
     if current['state'] is None:
         gaps.append({'pointId': point_id,
-                     'gap': ('replay found an inconsistency; the checkpoint is not used to mask it'
-                             if current.get('replayFailure') == 'ledger' else 'state not recoverable'),
+                     'gap': {'ledger': 'replay found an inconsistency; the checkpoint is not used to mask it',
+                             'unknown': 'replay failed for an unrecognised reason; the checkpoint is not used',
+                             'unavailable': 'state not recoverable'}.get(current.get('replayFailure'),
+                                                                         'state not recoverable'),
                      'checkpointFound': current['checkpointFound'],
                      'checkpointWithheld': current['source'],
                      'replayFailure': current.get('replayFailure'),

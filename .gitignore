@@ -291,3 +291,4 @@ artifacts/benchmark/minirbt-h256-snapshot/
 !experiments/world-components/n4_rewrite60/*.py
 # Runs stay local. Promote selected immutable records to artifacts/next-acceptance/.
 artifacts/next-runs/
+frontend/artifacts/

@@ -1,0 +1,49 @@
+{
+ "gaps": [
+  {
+   "pointId": "p7",
+   "gap": "replay found an inconsistency; the checkpoint is not used to mask it",
+   "checkpointFound": false,
+   "checkpointWithheld": "withheld: replay found an inconsistency",
+   "replayFailure": "ledger",
+   "replayError": "LedgerMismatch: Replayed state differs from the committed digest",
+   "checkpointDigestMatchesPoint": false
+  },
+  {
+   "pointId": "t1",
+   "gap": "replay found an inconsistency; the checkpoint is not used to mask it",
+   "checkpointFound": true,
+   "checkpointWithheld": "withheld: replay found an inconsistency",
+   "replayFailure": "ledger",
+   "replayError": "LedgerMismatch: Replayed state differs from the committed digest",
+   "checkpointDigestMatchesPoint": true
+  },
+  {
+   "pointId": "t2",
+   "gap": "replay found an inconsistency; the checkpoint is not used to mask it",
+   "checkpointFound": true,
+   "checkpointWithheld": "withheld: replay found an inconsistency",
+   "replayFailure": "ledger",
+   "replayError": "LedgerMismatch: Replayed state differs from the committed digest",
+   "checkpointDigestMatchesPoint": true
+  },
+  {
+   "pointId": "u2",
+   "gap": "state not recoverable",
+   "checkpointFound": false,
+   "checkpointWithheld": null,
+   "replayFailure": "unavailable",
+   "replayError": "LedgerMismatch: Committed point has no round",
+   "checkpointDigestMatchesPoint": false
+  },
+  {
+   "pointId": "u3",
+   "gap": "state not recoverable",
+   "checkpointFound": false,
+   "checkpointWithheld": null,
+   "replayFailure": "unavailable",
+   "replayError": "LedgerMismatch: Committed point has no round",
+   "checkpointDigestMatchesPoint": false
+  }
+ ]
+}

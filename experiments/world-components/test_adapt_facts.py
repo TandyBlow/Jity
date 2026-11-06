@@ -64,6 +64,38 @@ class AdapterCases(unittest.TestCase):
         self.assertEqual(sanity['provenance']['stateSource'], 'checkpoint')
         self.assertFalse(sanity['provenance']['replayOk'])
 
+    def test_unknown_replay_failure_never_falls_back_to_the_checkpoint(self):
+        original = adapt_facts.resolve_state
+
+        def fake_resolve(db, world_id, point_id, backend):
+            return {'state': None, 'source': 'withheld: replay failed for an unrecognised reason',
+                    'checkpointFound': True, 'checkpointDigestMatchesPoint': True, 'replayOk': False,
+                    'replayFailure': 'unknown', 'replayAgreesWithCheckpoint': None,
+                    'replayError': 'RuntimeError: something new', 'replayedDigest': None,
+                    'checkpointDigest': 'x'}
+        adapt_facts.resolve_state = fake_resolve
+        try:
+            facts, gaps, _ = self.facts('u1', world='world_4')
+        finally:
+            adapt_facts.resolve_state = original
+        self.assertEqual(facts, [])
+        self.assertIn('unrecognised', gaps[0]['gap'])
+
+    def test_classification_defaults_to_the_strict_bucket(self):
+        class LedgerMismatch(Exception):
+            pass
+        self.assertEqual(adapt_facts.classify_replay_failure(LedgerMismatch('something new')), 'unknown')
+        self.assertEqual(adapt_facts.classify_replay_failure(RuntimeError('boom')), 'unknown')
+        self.assertEqual(adapt_facts.classify_replay_failure(
+            LedgerMismatch('Committed point has no round')), 'unavailable')
+        self.assertEqual(adapt_facts.classify_replay_failure(
+            LedgerMismatch('Replayed state differs from the committed digest')), 'ledger')
+
+    def test_empty_delta_with_a_failed_recovery_is_still_a_gap(self):
+        facts, gaps, _ = self.facts('u3', world='world_4')
+        self.assertEqual(facts, [])
+        self.assertTrue(any(g['gap'] == 'state not recoverable' for g in gaps))
+
     def test_unrecoverable_state_is_a_gap_not_a_guess(self):
         # replay cannot run and the checkpoint is gone, so there is nothing to show and nothing to guess
         facts, gaps, _ = self.facts('u2', world='world_4')

@@ -1,0 +1,474 @@
+{
+ "blocks": [
+  {
+   "worldId": "world_1",
+   "pointId": "root_fx",
+   "sequence": 0,
+   "kind": "root",
+   "previousPointId": null,
+   "delta": null,
+   "sentences": [
+    "第0点没有实体变化。"
+   ],
+   "notDisplayed": [],
+   "gaps": [],
+   "provenance": [
+    {
+     "entityId": null,
+     "stateSource": "replay",
+     "fieldsRead": [
+      "delta_json"
+     ],
+     "checkpointDigestMatchesPoint": true,
+     "replayOk": true,
+     "replayAgreesWithCheckpoint": true
+    }
+   ]
+  },
+  {
+   "worldId": "world_1",
+   "pointId": "p1",
+   "sequence": 1,
+   "kind": "normal",
+   "previousPointId": "root_fx",
+   "delta": {
+    "person_a": {
+     "entityId": "person_a",
+     "positionSet": {
+      "containerId": "hall",
+      "slotId": null,
+      "relativeTo": null
+     },
+     "sanitySet": 7
+    }
+   },
+   "sentences": [
+    "林川从走廊到门厅。",
+    "林川的理智下降（10→7）。"
+   ],
+   "notDisplayed": [],
+   "gaps": [],
+   "provenance": [
+    {
+     "entityId": "person_a",
+     "stateSource": "replay",
+     "fieldsRead": [
+      "positionSet",
+      "sanitySet",
+      "previous.position"
+     ],
+     "checkpointDigestMatchesPoint": true,
+     "replayOk": true,
+     "replayAgreesWithCheckpoint": true
+    },
+    {
+     "entityId": "person_a",
+     "stateSource": "replay",
+     "fieldsRead": [
+      "positionSet",
+      "sanitySet",
+      "previous.sanity"
+     ],
+     "checkpointDigestMatchesPoint": true,
+     "replayOk": true,
+     "replayAgreesWithCheckpoint": true
+    }
+   ]
+  },
+  {
+   "worldId": "world_1",
+   "pointId": "p2",
+   "sequence": 2,
+   "kind": "normal",
+   "previousPointId": "p1",
+   "delta": {
+    "person_c": {
+     "entityId": "person_c",
+     "appearanceChanges": [
+      {
+       "id": "ac_1",
+       "text": "袖口沾了水",
+       "supersedes": []
+      }
+     ],
+     "sanitySet": 0
+    }
+   },
+   "sentences": [
+    "周宁的理智下降（10→0）。",
+    "周宁：袖口沾了水。"
+   ],
+   "notDisplayed": [],
+   "gaps": [],
+   "provenance": [
+    {
+     "entityId": "person_c",
+     "stateSource": "replay",
+     "fieldsRead": [
+      "appearanceChanges",
+      "sanitySet",
+      "previous.sanity"
+     ],
+     "checkpointDigestMatchesPoint": false,
+     "replayOk": true,
+     "replayAgreesWithCheckpoint": null
+    },
+    {
+     "entityId": "person_c",
+     "stateSource": "replay",
+     "fieldsRead": [
+      "appearanceChanges",
+      "sanitySet",
+      "appearanceChanges"
+     ],
+     "checkpointDigestMatchesPoint": false,
+     "replayOk": true,
+     "replayAgreesWithCheckpoint": null
+    }
+   ]
+  },
+  {
+   "worldId": "world_1",
+   "pointId": "p3",
+   "sequence": 3,
+   "kind": "normal",
+   "previousPointId": "p2",
+   "delta": {
+    "person_c": {
+     "entityId": "person_c",
+     "positionSet": {
+      "containerId": "hall",
+      "slotId": null,
+      "relativeTo": null
+     }
+    }
+   },
+   "sentences": [
+    "周宁从走廊到门厅。"
+   ],
+   "notDisplayed": [],
+   "gaps": [],
+   "provenance": [
+    {
+     "entityId": "person_c",
+     "stateSource": "replay",
+     "fieldsRead": [
+      "positionSet",
+      "previous.position"
+     ],
+     "checkpointDigestMatchesPoint": true,
+     "replayOk": true,
+     "replayAgreesWithCheckpoint": true
+    }
+   ]
+  },
+  {
+   "worldId": "world_1",
+   "pointId": "p4",
+   "sequence": 4,
+   "kind": "normal",
+   "previousPointId": "p3",
+   "delta": {},
+   "sentences": [
+    "第4点没有实体变化。"
+   ],
+   "notDisplayed": [],
+   "gaps": [],
+   "provenance": [
+    {
+     "entityId": null,
+     "stateSource": "replay",
+     "fieldsRead": [
+      "delta_json"
+     ],
+     "checkpointDigestMatchesPoint": true,
+     "replayOk": true,
+     "replayAgreesWithCheckpoint": true
+    }
+   ]
+  },
+  {
+   "worldId": "world_1",
+   "pointId": "p5",
+   "sequence": 5,
+   "kind": "normal",
+   "previousPointId": "p4",
+   "delta": {
+    "person_c": {
+     "entityId": "person_c",
+     "sanitySet": 4
+    }
+   },
+   "sentences": [
+    "周宁的理智上升（0→4）。"
+   ],
+   "notDisplayed": [],
+   "gaps": [],
+   "provenance": [
+    {
+     "entityId": "person_c",
+     "stateSource": "replay",
+     "fieldsRead": [
+      "sanitySet",
+      "previous.sanity"
+     ],
+     "checkpointDigestMatchesPoint": true,
+     "replayOk": true,
+     "replayAgreesWithCheckpoint": true
+    }
+   ]
+  },
+  {
+   "worldId": "world_1",
+   "pointId": "p6",
+   "sequence": 6,
+   "kind": "normal",
+   "previousPointId": "p5",
+   "delta": {
+    "person_a": {
+     "entityId": "person_a",
+     "tasksAchieved": [
+      "task_watch"
+     ]
+    }
+   },
+   "sentences": [],
+   "notDisplayed": [
+    "task delta has no display shape yet, so it is not shown"
+   ],
+   "gaps": [],
+   "provenance": []
+  },
+  {
+   "worldId": "world_1",
+   "pointId": "p7",
+   "sequence": 7,
+   "kind": "normal",
+   "previousPointId": "p6",
+   "delta": {
+    "person_a": {
+     "entityId": "person_a",
+     "sanitySet": 3
+    }
+   },
+   "sentences": [],
+   "notDisplayed": [],
+   "gaps": [
+    "replay found an inconsistency; the checkpoint is not used to mask it"
+   ],
+   "provenance": []
+  },
+  {
+   "worldId": "world_2",
+   "pointId": "root_w2",
+   "sequence": 0,
+   "kind": "root",
+   "previousPointId": null,
+   "delta": null,
+   "sentences": [
+    "第0点没有实体变化。"
+   ],
+   "notDisplayed": [],
+   "gaps": [],
+   "provenance": [
+    {
+     "entityId": null,
+     "stateSource": "replay",
+     "fieldsRead": [
+      "delta_json"
+     ],
+     "checkpointDigestMatchesPoint": true,
+     "replayOk": true,
+     "replayAgreesWithCheckpoint": true
+    }
+   ]
+  },
+  {
+   "worldId": "world_2",
+   "pointId": "q1",
+   "sequence": 1,
+   "kind": "normal",
+   "previousPointId": "root_w2",
+   "delta": {
+    "person_a": {
+     "entityId": "person_a",
+     "positionSet": {
+      "containerId": "hall",
+      "slotId": null,
+      "relativeTo": null
+     }
+    }
+   },
+   "sentences": [
+    "林川从走廊到门厅。"
+   ],
+   "notDisplayed": [],
+   "gaps": [],
+   "provenance": [
+    {
+     "entityId": "person_a",
+     "stateSource": "replay",
+     "fieldsRead": [
+      "positionSet",
+      "previous.position"
+     ],
+     "checkpointDigestMatchesPoint": true,
+     "replayOk": true,
+     "replayAgreesWithCheckpoint": true
+    }
+   ]
+  },
+  {
+   "worldId": "world_3",
+   "pointId": "root_w3",
+   "sequence": 0,
+   "kind": "root",
+   "previousPointId": null,
+   "delta": null,
+   "sentences": [
+    "第0点没有实体变化。"
+   ],
+   "notDisplayed": [],
+   "gaps": [],
+   "provenance": [
+    {
+     "entityId": null,
+     "stateSource": "replay",
+     "fieldsRead": [
+      "delta_json"
+     ],
+     "checkpointDigestMatchesPoint": true,
+     "replayOk": true,
+     "replayAgreesWithCheckpoint": true
+    }
+   ]
+  },
+  {
+   "worldId": "world_3",
+   "pointId": "t1",
+   "sequence": 1,
+   "kind": "normal",
+   "previousPointId": "root_w3",
+   "delta": {
+    "person_a": {
+     "entityId": "person_a",
+     "sanitySet": 5
+    }
+   },
+   "sentences": [],
+   "notDisplayed": [],
+   "gaps": [
+    "replay found an inconsistency; the checkpoint is not used to mask it"
+   ],
+   "provenance": []
+  },
+  {
+   "worldId": "world_3",
+   "pointId": "t2",
+   "sequence": 2,
+   "kind": "normal",
+   "previousPointId": "t1",
+   "delta": {
+    "person_a": {
+     "entityId": "person_a",
+     "sanitySet": 2
+    }
+   },
+   "sentences": [],
+   "notDisplayed": [],
+   "gaps": [
+    "replay found an inconsistency; the checkpoint is not used to mask it"
+   ],
+   "provenance": []
+  },
+  {
+   "worldId": "world_4",
+   "pointId": "root_w4",
+   "sequence": 0,
+   "kind": "root",
+   "previousPointId": null,
+   "delta": null,
+   "sentences": [
+    "第0点没有实体变化。"
+   ],
+   "notDisplayed": [],
+   "gaps": [],
+   "provenance": [
+    {
+     "entityId": null,
+     "stateSource": "replay",
+     "fieldsRead": [
+      "delta_json"
+     ],
+     "checkpointDigestMatchesPoint": true,
+     "replayOk": true,
+     "replayAgreesWithCheckpoint": true
+    }
+   ]
+  },
+  {
+   "worldId": "world_4",
+   "pointId": "u1",
+   "sequence": 1,
+   "kind": "normal",
+   "previousPointId": "root_w4",
+   "delta": {
+    "person_a": {
+     "entityId": "person_a",
+     "sanitySet": 8
+    }
+   },
+   "sentences": [
+    "林川的理智下降（10→8）。"
+   ],
+   "notDisplayed": [],
+   "gaps": [],
+   "provenance": [
+    {
+     "entityId": "person_a",
+     "stateSource": "checkpoint",
+     "fieldsRead": [
+      "sanitySet",
+      "previous.sanity"
+     ],
+     "checkpointDigestMatchesPoint": true,
+     "replayOk": false,
+     "replayAgreesWithCheckpoint": null
+    }
+   ]
+  },
+  {
+   "worldId": "world_4",
+   "pointId": "u2",
+   "sequence": 2,
+   "kind": "normal",
+   "previousPointId": "u1",
+   "delta": {
+    "person_a": {
+     "entityId": "person_a",
+     "sanitySet": 5
+    }
+   },
+   "sentences": [],
+   "notDisplayed": [],
+   "gaps": [
+    "state not recoverable"
+   ],
+   "provenance": []
+  },
+  {
+   "worldId": "world_4",
+   "pointId": "u3",
+   "sequence": 3,
+   "kind": "normal",
+   "previousPointId": "u2",
+   "delta": {},
+   "sentences": [],
+   "notDisplayed": [],
+   "gaps": [
+    "state not recoverable"
+   ],
+   "provenance": []
+  }
+ ]
+}

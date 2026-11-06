@@ -1,0 +1,49 @@
+[world_1 root_fx seq=0] prev=None delta=null
+    show  第0点没有实体变化。
+          source=replay fields=delta_json replayOk=True agrees=True
+[world_1 p1 seq=1] prev=root_fx delta={"person_a": {"entityId": "person_a", "positionSet": {"containerId": "hall", "slotId": null, "relativeTo": null}, "sanitySet": 7}}
+    show  林川从走廊到门厅。
+          source=replay fields=positionSet,sanitySet,previous.position replayOk=True agrees=True
+    show  林川的理智下降（10→7）。
+          source=replay fields=positionSet,sanitySet,previous.sanity replayOk=True agrees=True
+[world_1 p2 seq=2] prev=p1 delta={"person_c": {"entityId": "person_c", "appearanceChanges": [{"id": "ac_1", "text": "袖口沾了水", "supersedes": []}], "sanitySet": 0}}
+    show  周宁的理智下降（10→0）。
+          source=replay fields=appearanceChanges,sanitySet,previous.sanity replayOk=True agrees=None
+    show  周宁：袖口沾了水。
+          source=replay fields=appearanceChanges,sanitySet,appearanceChanges replayOk=True agrees=None
+[world_1 p3 seq=3] prev=p2 delta={"person_c": {"entityId": "person_c", "positionSet": {"containerId": "hall", "slotId": null, "relativeTo": null}}}
+    show  周宁从走廊到门厅。
+          source=replay fields=positionSet,previous.position replayOk=True agrees=True
+[world_1 p4 seq=4] prev=p3 delta={}
+    show  第4点没有实体变化。
+          source=replay fields=delta_json replayOk=True agrees=True
+[world_1 p5 seq=5] prev=p4 delta={"person_c": {"entityId": "person_c", "sanitySet": 4}}
+    show  周宁的理智上升（0→4）。
+          source=replay fields=sanitySet,previous.sanity replayOk=True agrees=True
+[world_1 p6 seq=6] prev=p5 delta={"person_a": {"entityId": "person_a", "tasksAchieved": ["task_watch"]}}
+    unshown  task delta has no display shape yet, so it is not shown
+[world_1 p7 seq=7] prev=p6 delta={"person_a": {"entityId": "person_a", "sanitySet": 3}}
+    gap      replay found an inconsistency; the checkpoint is not used to mask it
+[world_2 root_w2 seq=0] prev=None delta=null
+    show  第0点没有实体变化。
+          source=replay fields=delta_json replayOk=True agrees=True
+[world_2 q1 seq=1] prev=root_w2 delta={"person_a": {"entityId": "person_a", "positionSet": {"containerId": "hall", "slotId": null, "relativeTo": null}}}
+    show  林川从走廊到门厅。
+          source=replay fields=positionSet,previous.position replayOk=True agrees=True
+[world_3 root_w3 seq=0] prev=None delta=null
+    show  第0点没有实体变化。
+          source=replay fields=delta_json replayOk=True agrees=True
+[world_3 t1 seq=1] prev=root_w3 delta={"person_a": {"entityId": "person_a", "sanitySet": 5}}
+    gap      replay found an inconsistency; the checkpoint is not used to mask it
+[world_3 t2 seq=2] prev=t1 delta={"person_a": {"entityId": "person_a", "sanitySet": 2}}
+    gap      replay found an inconsistency; the checkpoint is not used to mask it
+[world_4 root_w4 seq=0] prev=None delta=null
+    show  第0点没有实体变化。
+          source=replay fields=delta_json replayOk=True agrees=True
+[world_4 u1 seq=1] prev=root_w4 delta={"person_a": {"entityId": "person_a", "sanitySet": 8}}
+    show  林川的理智下降（10→8）。
+          source=checkpoint fields=sanitySet,previous.sanity replayOk=False agrees=None
+[world_4 u2 seq=2] prev=u1 delta={"person_a": {"entityId": "person_a", "sanitySet": 5}}
+    gap      state not recoverable
+[world_4 u3 seq=3] prev=u2 delta={}
+    gap      state not recoverable

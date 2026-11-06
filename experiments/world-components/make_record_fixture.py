@@ -183,6 +183,12 @@ def main():
     s_u2 = apply_point(s_u1, projection(s_u1, 'u2', 2, 'normal', 'u1', u2_delta, world='world_4'))
     write_point(db, 'u2', 2, 'u1', u2_delta, s_u2, world='world_4')
     db.execute('DELETE FROM world_state_checkpoints WHERE world_id=? AND point_id=?', ('world_4', 'u2'))
+    # u3: empty delta, no checkpoint, replay cannot run - failure must outrank the quiet reading
+    u3_delta = {}
+    s_u3 = apply_point(s_u2, projection(s_u2, 'x', 3, 'normal', 'u2', u3_delta, world='world_4'))
+    write_point(db, 'u3', 3, 'u2', u3_delta, s_u3, world='world_4')
+    db.execute('DELETE FROM world_state_checkpoints WHERE world_id=? AND point_id=?', ('world_4', 'u3'))
+    db.execute('UPDATE worlds SET active_point_id=?, version=3 WHERE id=?', ('u3', 'world_4'))
     # the round row the replay needs was never written, so only the checkpoint can answer
 
     # world_3: a corrupted delta while every checkpoint is intact - replay must be refused, not masked

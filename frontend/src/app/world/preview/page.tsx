@@ -3,7 +3,7 @@
  * 模型句不参与替换；来源只在诊断区展开。 */
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { describePreview } from './preview-state';
 
 const BASE = process.env.NEXT_PUBLIC_PREVIEW_URL ?? 'http://127.0.0.1:8711';
@@ -44,16 +44,28 @@ export default function PreviewPage() {
 
   const points = useMemo(() => worlds.find((w) => w.worldId === worldId)?.points ?? [], [worlds, worldId]);
 
+  // 只认最后一次选择：旧请求被中止，迟到结果也不落地
+  const sequence = useRef(0);
+  const inflight = useRef<AbortController | null>(null);
   const load = useCallback(async (world: string, point: string) => {
     if (!world || !point) return;
+    const id = sequence.current + 1;
+    sequence.current = id;
+    inflight.current?.abort();
+    const controller = new AbortController();
+    inflight.current = controller;
     try {
       const response = await fetch(
         `${BASE}/preview?world=${encodeURIComponent(world)}&point=${encodeURIComponent(point)}`,
+        { signal: controller.signal },
       );
       if (!response.ok) throw new Error(await response.text());
-      setData(await response.json());
+      const payload = await response.json();
+      if (sequence.current !== id) return;
+      setData(payload);
       setError('');
     } catch (cause) {
+      if (sequence.current !== id) return;
       setData(null);
       setError(`读取失败：${String(cause)}`);
     }
