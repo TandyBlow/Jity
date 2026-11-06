@@ -1,0 +1,68 @@
+{
+ "purpose": "seed replication for the lr 1e-4 / 120-step condition: seeds 20261103 and 20261104",
+ "start": "C 08276c0c",
+ "pools": "C pools 341 rows, unchanged",
+ "config": "lr 1e-4, 120 steps, batch 8, mix 4:3:1, fp32, AdamW",
+ "perSeed": {
+  "seed20261103": {
+   "newFactLossCount": 1,
+   "newFactLosses": [
+    {
+     "unitId": "m10:f0",
+     "set": "moved24",
+     "kind": "moved 旧灯塔->潮汐档案馆",
+     "text": "叶知微离开旧灯塔,沿着墙边站了一会儿。",
+     "why": "the destination 潮汐档案馆 is gone and the clause stalls at a wall; no arrival is expressed",
+     "machine": "O (起点有 终点缺)"
+    }
+   ],
+   "humanFact": "184/185",
+   "added": {
+    "cf24": 0,
+    "final24": 2,
+    "moved24": 5
+   },
+   "addedTotal": 7
+  },
+  "seed20261104": {
+   "newFactLossCount": 1,
+   "newFactLosses": [
+    {
+     "unitId": "t10:f3",
+     "set": "cf24",
+     "kind": "sanity down 12->9",
+     "text": "沈砚按住胸口,那阵闷意没有散。",
+     "why": "the decrease is turned into stasis",
+     "machine": "O (无方向)"
+    }
+   ],
+   "humanFact": "184/185",
+   "added": {
+    "cf24": 0,
+    "final24": 2,
+    "moved24": 5
+   },
+   "addedTotal": 7
+  }
+ },
+ "criteria": "new fact loss 0; added at most 4 of 185; no new syntax breakage on the three regression sets; probes reported separately",
+ "seed20261102Reference": {
+  "newFactLosses": 0,
+  "added": 1,
+  "note": "the earlier snapshot run, same data and config, different seed"
+ },
+ "verdict": "both new seeds fail",
+ "spread": {
+  "newFactLosses": {
+   "seed20261102": 0,
+   "seed20261103": 1,
+   "seed20261104": 1
+  },
+  "added": {
+   "seed20261102": 1,
+   "seed20261103": 7,
+   "seed20261104": 7
+  },
+  "whichUnits": "different units in each seed (m10 versus t10:f3), so the loss is not tied to one input"
+ }
+}

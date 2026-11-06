@@ -1,0 +1,269 @@
+{
+ "purpose": "seed replication for lr 1e-4 / 120 steps: two new seeds on the same C pools",
+ "job": {
+  "id": 241182,
+  "gpu": "NVIDIA GeForce RTX 4090 D"
+ },
+ "start": "C 08276c0c",
+ "pools": "C pools 341 rows, bytes checked against the freeze",
+ "config": {
+  "lr": 0.0001,
+  "steps": 120,
+  "batch": 8,
+  "mix": "4:3:1",
+  "precision": "fp32"
+ },
+ "seeds": {
+  "20261103": {
+   "ckpt": "aa8857b8",
+   "idSha256": "557d18b5653f",
+   "draws": 960,
+   "lastLoss": 0.1972
+  },
+  "20261104": {
+   "ckpt": "89fe9776",
+   "idSha256": "e1569b39207c",
+   "draws": 960,
+   "lastLoss": 0.0551
+  }
+ },
+ "machine": {
+  "C": {
+   "cf24": {
+    "S": 85
+   },
+   "final24": {
+    "S": 76
+   },
+   "moved24": {
+    "S": 24
+   }
+  },
+  "seed20261103": {
+   "cf24": {
+    "S": 85
+   },
+   "final24": {
+    "S": 76
+   },
+   "moved24": {
+    "S": 23,
+    "O": 1
+   }
+  },
+  "seed20261104": {
+   "cf24": {
+    "S": 84,
+    "O": 1
+   },
+   "final24": {
+    "S": 76
+   },
+   "moved24": {
+    "S": 24
+   }
+  }
+ },
+ "human": {
+  "C": "185/185",
+  "seed20261103": "184/185",
+  "seed20261104": "184/185"
+ },
+ "newLosses": {
+  "C": [],
+  "seed20261103": [
+   {
+    "unitId": "m10:f0",
+    "set": "moved24",
+    "kind": "moved 旧灯塔->潮汐档案馆",
+    "text": "叶知微离开旧灯塔,沿着墙边站了一会儿。",
+    "why": "the destination 潮汐档案馆 is gone and the clause stalls at a wall; no arrival is expressed",
+    "machine": "O (起点有 终点缺)"
+   }
+  ],
+  "seed20261104": [
+   {
+    "unitId": "t10:f3",
+    "set": "cf24",
+    "kind": "sanity down 12->9",
+    "text": "沈砚按住胸口,那阵闷意没有散。",
+    "why": "the decrease is turned into stasis",
+    "machine": "O (无方向)"
+   }
+  ]
+ },
+ "added": {
+  "C": 16,
+  "seed20261103": 7,
+  "seed20261104": 7
+ },
+ "probes": {
+  "C": {
+   "rolepair": "9/12",
+   "namepairRelationKept": "8/12",
+   "namepairSyntaxBroken": 2,
+   "relationPass": 3,
+   "relationSyntaxBroken": 4
+  },
+  "seed20261103": {
+   "rolepair": "12/12",
+   "namepairRelationKept": "10/12",
+   "namepairSyntaxBroken": 4,
+   "relationPass": 3,
+   "relationSyntaxBroken": 7
+  },
+  "seed20261104": {
+   "rolepair": "11/12",
+   "namepairRelationKept": "10/12",
+   "namepairSyntaxBroken": 4,
+   "relationPass": 3,
+   "relationSyntaxBroken": 7
+  }
+ },
+ "criteria": "new fact loss 0; added at most 4 of 185; no new syntax breakage on the three regression sets; probes separate",
+ "verdict": {
+  "seed20261103": "fails: one fact loss, seven added, one syntax break",
+  "seed20261104": "fails: one fact loss, seven added, no syntax break",
+  "conclusion": "the condition is not promoted; the earlier zero-loss result did not replicate; it stays a candidate only"
+ },
+ "spread": {
+  "newFactLosses": {
+   "seed20261102": 0,
+   "seed20261103": 1,
+   "seed20261104": 1
+  },
+  "added": {
+   "seed20261102": 1,
+   "seed20261103": 7,
+   "seed20261104": 7
+  },
+  "whichUnits": "different units in each seed (m10 versus t10:f3), so the loss is not tied to one input"
+ },
+ "files": [
+  {
+   "path": "artifacts/next-acceptance/seedrep-r1/cf24-baseline.json",
+   "bytes": 137452,
+   "sha256": "0608683199d684c6229b0ef631a73b1feb9c8e2db4e9aece9777c814637e65f3"
+  },
+  {
+   "path": "artifacts/next-acceptance/seedrep-r1/final24-baseline.json",
+   "bytes": 115037,
+   "sha256": "ef7421f6edf4cd25cca55269c2021de7a48f0a2343bb2e0bfae373f290cdc51e"
+  },
+  {
+   "path": "artifacts/next-acceptance/seedrep-r1/moved24-baseline.json",
+   "bytes": 38354,
+   "sha256": "bdbd80ed4bdd34dc236a9c5967ebbc3ec027de4e751cb32334eeb640bc19dc3c"
+  },
+  {
+   "path": "artifacts/next-acceptance/seedrep-r1/relation-baseline.json",
+   "bytes": 17356,
+   "sha256": "c8f40a8324406c7c15d28583b1092801ff3eb1ce330f564cf815873f087eea73"
+  },
+  {
+   "path": "artifacts/next-acceptance/seedrep-r1/namepair-baseline.json",
+   "bytes": 20224,
+   "sha256": "b2038e645d431387b45f3ba5fcd52445acfae5bbae4434dbc28d3aefa3a08694"
+  },
+  {
+   "path": "artifacts/next-acceptance/seedrep-r1/rolepair-baseline.json",
+   "bytes": 19861,
+   "sha256": "eeee966a17e053f62d1d7a98ff87b39a24cd5003c332e4b3a9683ecb8c8c2763"
+  },
+  {
+   "path": "artifacts/next-acceptance/seedrep-r1/cf24-baseline.json",
+   "bytes": 137408,
+   "sha256": "def4061e90005c1d28b6cdd80a04d736fbc18412bd44299fd416cfaff6faaa1a"
+  },
+  {
+   "path": "artifacts/next-acceptance/seedrep-r1/final24-baseline.json",
+   "bytes": 115051,
+   "sha256": "e465df79b44f9df0f8ab5ecad72253c35c29b6ec4930c8581c7e0f76d101e456"
+  },
+  {
+   "path": "artifacts/next-acceptance/seedrep-r1/moved24-baseline.json",
+   "bytes": 38390,
+   "sha256": "39c7b835e0368b05af290474c5494d17f5c16892c88757828d3e3cc28896698d"
+  },
+  {
+   "path": "artifacts/next-acceptance/seedrep-r1/relation-baseline.json",
+   "bytes": 17402,
+   "sha256": "10e94395312bb0a32c3363f07ffa75c244306df402c588b04e1c50249d3f6d8d"
+  },
+  {
+   "path": "artifacts/next-acceptance/seedrep-r1/namepair-baseline.json",
+   "bytes": 20252,
+   "sha256": "830ec3045419066f29264da185fd4e48e7bba8109f27d91dac951d0e4c46ff29"
+  },
+  {
+   "path": "artifacts/next-acceptance/seedrep-r1/rolepair-baseline.json",
+   "bytes": 19896,
+   "sha256": "c338c902d74c7c73a0d7c762c4f6830ac47c3cba4a2703c37a92198e171efa47"
+  },
+  {
+   "path": "artifacts/next-acceptance/seedrep-r1/cf24-baseline.json",
+   "bytes": 137369,
+   "sha256": "1457a5ff1adae063ad26a08daf1b4e2845acc97b4d6677fbaee40a24401f3778"
+  },
+  {
+   "path": "artifacts/next-acceptance/seedrep-r1/final24-baseline.json",
+   "bytes": 115037,
+   "sha256": "32d54c99ab450066852ed08c38655cb56c57402724b08e860c25f55729a97610"
+  },
+  {
+   "path": "artifacts/next-acceptance/seedrep-r1/moved24-baseline.json",
+   "bytes": 38323,
+   "sha256": "ff5a07d51aaef9674e0ae2838444704e135fe763de02631bcb132a1276151483"
+  },
+  {
+   "path": "artifacts/next-acceptance/seedrep-r1/relation-baseline.json",
+   "bytes": 17401,
+   "sha256": "9b76fdba23ec19a5e4775c542c2fc483989bccb6f0e7c16b2341139893c87f31"
+  },
+  {
+   "path": "artifacts/next-acceptance/seedrep-r1/namepair-baseline.json",
+   "bytes": 20252,
+   "sha256": "ceb85ca553d807e86347de1fb28504a6f7aaa53f932e14dc471715abcb7f6f81"
+  },
+  {
+   "path": "artifacts/next-acceptance/seedrep-r1/rolepair-baseline.json",
+   "bytes": 19887,
+   "sha256": "f8ecf07b64e4c7f0a179621c818a686848182aecf3d610cc3a22f25e820e606d"
+  },
+  {
+   "path": "artifacts/next-acceptance/seedrep-r1/rolepair-judged.json",
+   "bytes": 14769,
+   "sha256": "d390feb76d151cac1e15f33da0a385ca60b9d7cb62e27fdffeca5072f52d5db7"
+  },
+  {
+   "path": "artifacts/next-acceptance/seedrep-r1/namepair-judged.json",
+   "bytes": 11831,
+   "sha256": "8ec9a2fcbfee7e54302274119d61cd7af1a752cfcdb6744feffe5cc1e3d6bed2"
+  },
+  {
+   "path": "artifacts/next-acceptance/seedrep-r1/frame-judged.json",
+   "bytes": 7235,
+   "sha256": "aea48905e07fd9a84ec38982cd38d012eb152e158245c99bd1336c6ba44b00d1"
+  },
+  {
+   "path": "artifacts/next-acceptance/seedrep-r1/review-r11.json",
+   "bytes": 1818,
+   "sha256": "aedf7b259fd02ce1525fed95ec4a346b789a0ee7273e4bbf6226e22bcfc9120e"
+  },
+  {
+   "path": "artifacts/next-acceptance/seedrep-r1/train-report.json",
+   "bytes": 1946,
+   "sha256": "79715b9631e047645ea99a08b4f3abfa522aff18e9eae68bd59118fdfc7874e6"
+  },
+  {
+   "path": "artifacts/next-acceptance/seedrep-r1/train-report.json",
+   "bytes": 1947,
+   "sha256": "a38c4ae2f6cb7943d959c940c0d1372826583ccaf3d4a10f228d9c6affce93f3"
+  },
+  {
+   "path": "artifacts/next-acceptance/seedrep-r1/seedrep-freeze.json",
+   "bytes": 2742,
+   "sha256": "6a087172a2494f4eaf36d204e97e280fe986dc5127d18d010cd813458ccad220"
+  }
+ ]
+}

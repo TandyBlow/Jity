@@ -51,3 +51,5 @@ artifacts/next-acceptance/dirpair-r1/** -text
 artifacts/next-acceptance/consolidation-r1/** -text
 artifacts/optdiag-r1/** -text
 artifacts/next-acceptance/optdiag-r1/** -text
+artifacts/seedrep-r1/** -text
+artifacts/next-acceptance/seedrep-r1/** -text
