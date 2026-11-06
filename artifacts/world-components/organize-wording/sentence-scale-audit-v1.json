@@ -4,10 +4,9 @@
   "fixed_multi_groups": 6,
   "regression_multi_groups": 13,
   "multi_groups_total": 19,
-  "B_only_safety_losses_B_large_vs_A_large": 3,
+  "B_only_safety_losses_B_large_vs_A_large": 2,
   "B_only_sources": [
    "t24",
-   "v07",
    "v20"
   ],
   "A_large_fact_errors": [
@@ -30,7 +29,8 @@
   "B_large_single_regressions_vs_A": 0,
   "B_small_single_failures": 11,
   "B_small_bad_fixed_sources": 9,
-  "B_small_bad_fixed_sources_note": "n4n-109 (direction field on single), n4n-120 (scene hallucination), n4n-40/43/53/54 (direction field), v05/v21/v24 (field/meta/no_change replacement)"
+  "B_small_bad_fixed_sources_note": "n4n-109 (direction field on single), n4n-120 (scene hallucination), n4n-40/43/53/54 (direction field), v05/v21/v24 (field/meta/no_change replacement)",
+  "v07_review": "withdrawn; 潮汐簿 uniquely recoverable from visible list; no fact loss; plan refs not followed, expression only"
  },
  "rows": [
   {
@@ -317,10 +317,11 @@
    "A_factPass": true,
    "B_large_factPass": true,
    "B_small_factPass": true,
-   "B_only_safety_loss": true,
+   "B_only_safety_loss": false,
    "expr_B_large_vs_A": "A",
    "expr_B_large_vs_B_small": "B-small",
-   "note": "B-large drops 潮汐簿, leaving 封面 with no owner; B-small writes 潮汐簿封面"
+   "note": "reviewed full group + context: B-large says 封面蒙了一层灰; visible list has 潮汐簿 as the only item with a cover, so the owner is uniquely recoverable; the fact is not lost. Plan refs said name, so this is plan-compliance/expression, not B-only safety.",
+   "review": "withdrawn B-only on 2026-11-06; unique owner recoverable"
   },
   {
    "sourceId": "v14",
@@ -386,5 +387,5 @@
   "tie": 15,
   "note": "B-large wins all 9 fixed sources with B-small field/meta/no_change failures; B-small wins v07 by preserving 潮汐簿; remaining ties, including t24/v20 where both fail differently"
  },
- "conclusion": "B-large fixed multi groups have no B-only loss; regression retains 3 B-only losses (t24, v07, v20). The safety gate fails 3/19. B-large expression beats A-large 17/2 on multi groups and has no single-group regression. B-small is much worse on fixed (9/15 bad) but preserves v07; it also has 11 single-group failures. Data scale helps coverage/expression but does not clear the fixed-budget safety gate."
+ "conclusion": "B-large fixed multi groups have no B-only loss; regression retains 2 confirmed B-only losses (t24 f2, v20 f2). v07 is withdrawn after full-context review: 潮汐簿 is the only visible item with a cover, so the owner is uniquely recoverable; the plan asked for name, so it is plan-compliance/expression, not fact safety. Safety gate fails 2/19. B-large expression beats A-large 17/2 on multi groups and has no single-group regression. B-small is much worse on fixed (9/15 bad), but preserves the explicit owner in v07; it also has 11 single-group failures. Data-scale benefit appears mainly in single-fact groups and cross-source expression; it is consistent with increased coverage but the mechanism is not isolated. B-small fact/token exposure is not lower, so equal effective learning is not established."
 }
