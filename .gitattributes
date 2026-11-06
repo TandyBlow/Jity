@@ -53,3 +53,4 @@ artifacts/optdiag-r1/** -text
 artifacts/next-acceptance/optdiag-r1/** -text
 artifacts/seedrep-r1/** -text
 artifacts/next-acceptance/seedrep-r1/** -text
+artifacts/constraint-spec-r1/** -text

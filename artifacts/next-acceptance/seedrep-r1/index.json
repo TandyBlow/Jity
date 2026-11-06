@@ -265,5 +265,14 @@
    "bytes": 2742,
    "sha256": "6a087172a2494f4eaf36d204e97e280fe986dc5127d18d010cd813458ccad220"
   }
- ]
+ ],
+ "attribution": {
+  "supported": "the result is sensitive to the random training trajectory",
+  "notSupported": [
+   "that long-sentence component retention is the cause",
+   "that the variation comes from the sampling order alone"
+  ],
+  "reason": "the seed also drives dropout masks through torch.manual_seed while the model is in train() mode, so sampling order and dropout cannot be separated in this design",
+  "newBaseline": "none is promoted"
+ }
 }
