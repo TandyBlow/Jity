@@ -1,0 +1,33 @@
+{
+ "version": "namepair-r1",
+ "question": "does dropping the reference name depend on whether the name also appears inside the fact value",
+ "design": {
+  "pairs": 6,
+  "probes": 12,
+  "manipulation": "the fact value is written once with the reference name inside it (在…上 frame) and once without it (…着的 attributive frame); name field, relation, other entity and predicate are identical within a pair",
+  "sameProposition": "human-confirmed per pair: the relation, the object that acts and the predicate are the same; the only difference is whether the name is repeated inside the value",
+  "notDeletionEquivalent": "the two frames are not related by deleting the name, because Chinese locative frames need 在…上 or a bare 上; wording differs and that is recorded",
+  "length": "every with-name value is 3 characters longer (the name plus the frame); this pairing cannot separate form from length and no padding was added to either side"
+ },
+ "checks": {
+  "reference": [
+   "kept",
+   "dropped"
+  ],
+  "relation": [
+   "kept",
+   "dropped",
+   "distorted"
+  ],
+  "syntax": [
+   "ok",
+   "broken"
+  ],
+  "fact": "frozen cf24 scorer verdict, reported separately"
+ },
+ "syntaxRule": "same as syntax-frame-r4: name repeated, 的…的 nesting, or name+的 immediately followed by the other entity / the relation phrase",
+ "pairDivergence": "a pair diverges when its two members differ in reference retention",
+ "declaredDecision": "if an arm diverges on at least 3 of the 6 pairs, and in the same direction (kept with the name in the value, dropped without it), that arm shows input-form dependence. Fewer than 3, or mixed directions, means the pairing does not support the exemplar hypothesis and no insertion training is designed from it",
+ "regression": "cf24, final24 and moved24 stay unchanged as regression sets; the scoring rules are not modified",
+ "declaredBefore": "written before any model ran on these probes"
+}

@@ -4162,13 +4162,21 @@
       "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\next-inputs\\world-components\\n4-relation-r1.jsonl",
       "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree",
       "note": "Frozen with the target-audit round; see artifacts/validation-freeze-r1/"
+    },
+    "world-components/n4-namepair-r1.jsonl": {
+      "sha256": "dbe0656a487635bb30f3ac2e0e6d6da67d9936f5ab9ad09a8f58fc7796fd75e7",
+      "bytes": 11882,
+      "sourcePath": "D:\\others\\Jity\\.local\\world-components-next-worktree\\artifacts\\next-inputs\\world-components\\n4-namepair-r1.jsonl",
+      "sourceWorktree": "D:\\others\\Jity\\.local\\world-components-next-worktree",
+      "note": "revised in place before the run: the unit gained a fact block so the runner can read it"
     }
   },
-  "previousPinSha256": "19c06693a646167a55ba0692561c20dd4f93de4bfc3f793392593536fe12d1da",
+  "previousPinSha256": "009d978ceca9d122f434a98950608c03ca32e4ef15fa6911632dbb2c35ca52cc",
   "evidencePolicy": {
     "authority": "Files under artifacts/next-inputs are the authoritative inputs for this offline revision.",
     "historicalCopies": "Retained for existing freeze references; never regenerate or update in place. Every pinned read verifies their bytes too.",
     "revisionChange": "Metadata-only update. All 404 recorded input hashes and bytes remain unchanged.",
     "oldRunPin": "Existing run manifests refer to the version-1 pin at commit 3fe0647; do not rewrite those manifests."
-  }
+  },
+  "revisionNote": "n4-namepair-r1.jsonl was re-pinned before execution; no model had run on it yet"
 }

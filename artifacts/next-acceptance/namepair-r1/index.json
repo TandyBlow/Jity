@@ -1,0 +1,117 @@
+{
+ "purpose": "paired inference probes: same proposition with and without the reference name inside the fact value",
+ "job": {
+  "id": 241112,
+  "replacedRun": 241111,
+  "gpu": "NVIDIA GeForce RTX 4090 D",
+  "units": 36,
+  "models": [
+   "moved",
+   "ctl",
+   "exp"
+  ]
+ },
+ "frozenBeforeRun": {
+  "probes": "dbe0656a487635bb30f3ac2e0e6d6da67d9936f5ab9ad09a8f58fc7796fd75e7",
+  "rule": "06ed545e3826e16a566650efbc0708c769bfdf224e89f528590220a7e13df130"
+ },
+ "declaredDecision": "if an arm diverges on at least 3 of the 6 pairs, and in the same direction (kept with the name in the value, dropped without it), that arm shows input-form dependence. Fewer than 3, or mixed directions, means the pairing does not support the exemplar hypothesis and no insertion training is designed from it",
+ "summary": {
+  "moved": {
+   "referenceKept": "12/12",
+   "relationKept": "9/12",
+   "syntaxBroken": 3,
+   "pairsDivergent": 0,
+   "divergence": []
+  },
+  "ctl": {
+   "referenceKept": "12/12",
+   "relationKept": "9/12",
+   "syntaxBroken": 4,
+   "pairsDivergent": 0,
+   "divergence": []
+  },
+  "exp": {
+   "referenceKept": "7/12",
+   "relationKept": "12/12",
+   "syntaxBroken": 0,
+   "pairsDivergent": 5,
+   "divergence": [
+    {
+     "pair": "np1",
+     "withName": "kept",
+     "withoutName": "dropped",
+     "textA": "靠在木桩上的渡船晃了。",
+     "textB": "靠着的渡船晃了。"
+    },
+    {
+     "pair": "np2",
+     "withName": "kept",
+     "withoutName": "dropped",
+     "textA": "绕在系泊绳上的缆绳松了。",
+     "textB": "绕着的缆绳松了。"
+    },
+    {
+     "pair": "np4",
+     "withName": "kept",
+     "withoutName": "dropped",
+     "textA": "压在铜灯罩上的抹布滑下来。",
+     "textB": "压着的抹布滑下来。"
+    },
+    {
+     "pair": "np5",
+     "withName": "kept",
+     "withoutName": "dropped",
+     "textA": "压在石板上的油纸伞歪了。",
+     "textB": "压着的油纸伞歪了。"
+    },
+    {
+     "pair": "np6",
+     "withName": "kept",
+     "withoutName": "dropped",
+     "textA": "压在门槛上的干纸滑开了。",
+     "textB": "压着的干纸滑开了。"
+    }
+   ]
+  }
+ },
+ "reading": {
+  "exp": "name dropped on 5 of 6 without-name members and kept on all 6 with-name members; 5/6 crosses the declared line, so input-form dependence holds on this probe set",
+  "moved": "keeps the name by prefixing, producing duplicated names in 3 rows",
+  "ctl": "same strategy as moved, 4 broken rows",
+  "notSeparated": "the with-name value is 3 characters longer in every pair, so form and length are not separated; an equal-length control was not run"
+ },
+ "regression": "cf24, final24 and moved24 were not re-run; no scoring rule was changed",
+ "files": [
+  {
+   "path": "artifacts/next-acceptance/namepair-r1/namepair-moved/namepair-baseline.json",
+   "bytes": 20242,
+   "sha256": "9aecbda4a1d0222c663abcd3894c97869cfab6435d674ada693d4dbb449fbc27"
+  },
+  {
+   "path": "artifacts/next-acceptance/namepair-r1/namepair-ctl/namepair-baseline.json",
+   "bytes": 20236,
+   "sha256": "512911bbbb2b4edccb6371efeaefd57e1b68498f6615e406d4290abd134bb44f"
+  },
+  {
+   "path": "artifacts/next-acceptance/namepair-r1/namepair-exp/namepair-baseline.json",
+   "bytes": 20195,
+   "sha256": "bafdc687071e20e44b3d4415c8828b4e9366e664440d49d51b31f83094df50cb"
+  },
+  {
+   "path": "artifacts/next-acceptance/namepair-r1/namepair-judged.json",
+   "bytes": 12049,
+   "sha256": "43d99f2d20235d05c420ac090b7ed470b160c338c0503cb7f7e030092937707c"
+  },
+  {
+   "path": "artifacts/next-acceptance/namepair-r1/n4-namepair-r1.jsonl",
+   "bytes": 11882,
+   "sha256": "dbe0656a487635bb30f3ac2e0e6d6da67d9936f5ab9ad09a8f58fc7796fd75e7"
+  },
+  {
+   "path": "artifacts/next-acceptance/namepair-r1/n4-namepair-r1-rule.json",
+   "bytes": 1938,
+   "sha256": "06ed545e3826e16a566650efbc0708c769bfdf224e89f528590220a7e13df130"
+  }
+ ]
+}

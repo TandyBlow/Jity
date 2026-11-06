@@ -37,3 +37,5 @@ artifacts/scoring-rule-r4/** -text
 artifacts/next-acceptance/frame-r1/** -text
 artifacts/aug-r1/** -text
 artifacts/next-acceptance/aug-r1/** -text
+artifacts/namepair-r1/** -text
+artifacts/next-acceptance/namepair-r1/** -text
