@@ -1,0 +1,1154 @@
+{
+ "purpose": "calibrate the component-constraint machinery; no optimiser, no weight change",
+ "device": "cuda",
+ "model": "ckpt",
+ "rows": 48,
+ "facts": 24,
+ "alignment": {
+  "checked": 48,
+  "labelMismatch": [],
+  "spanMismatch": [],
+  "spanExpandedCount": 8,
+  "spanExpanded": [
+   {
+    "rowId": "05:a",
+    "component": "state",
+    "decoded": "结了一",
+    "expected": "结了"
+   },
+   {
+    "rowId": "05:b",
+    "component": "state",
+    "decoded": "结了一",
+    "expected": "结了"
+   },
+   {
+    "rowId": "10:a",
+    "component": "state",
+    "decoded": "放在",
+    "expected": "放"
+   },
+   {
+    "rowId": "10:b",
+    "component": "state",
+    "decoded": "放在",
+    "expected": "放"
+   },
+   {
+    "rowId": "19:a",
+    "component": "state",
+    "decoded": "等了一",
+    "expected": "等了"
+   },
+   {
+    "rowId": "19:b",
+    "component": "state",
+    "decoded": "等了一",
+    "expected": "等了"
+   },
+   {
+    "rowId": "23:a",
+    "component": "state",
+    "decoded": "沾了一",
+    "expected": "沾了"
+   },
+   {
+    "rowId": "23:b",
+    "component": "state",
+    "decoded": "沾了一",
+    "expected": "沾了"
+   }
+  ],
+  "note": "a sentencepiece token can straddle a character boundary, so the token span is the minimal covering range; expanded rows carry one extra token and are listed, not hidden"
+ },
+ "marginsByType": {
+  "name_drop": {
+   "n": 44,
+   "active": 20,
+   "min": 0.6925,
+   "median": 1.052,
+   "max": 2.7695
+  },
+  "other_vague": {
+   "n": 10,
+   "active": 0,
+   "min": 1.1368,
+   "median": 1.3907,
+   "max": 2.0932
+  },
+  "state_negated": {
+   "n": 10,
+   "active": 6,
+   "min": 0.8667,
+   "median": 0.9986,
+   "max": 1.4356
+  },
+  "state_stasis": {
+   "n": 20,
+   "active": 0,
+   "min": 2.1782,
+   "median": 2.9142,
+   "max": 3.7099
+  },
+  "state_event": {
+   "n": 4,
+   "active": 0,
+   "min": 5.9147,
+   "median": 5.9258,
+   "max": 6.036
+  }
+ },
+ "marginThreshold": 1.0,
+ "spanWeight": 2.0,
+ "gradient": {
+  "batchRows": [
+   "00:a",
+   "01:a",
+   "02:a",
+   "05:a",
+   "16:a"
+  ],
+  "subset": [
+   "lm_head.weight",
+   "encoder.block.7.layer.1.DenseReluDense.wo.weight",
+   "decoder.block.7.layer.0.SelfAttention.q.weight"
+  ],
+  "lossValues": {
+   "ce": 0.0619,
+   "span": 0.0672,
+   "margin": 0.0118
+  },
+  "norms": {
+   "ce": 0.37652,
+   "span": 0.39668,
+   "margin": 0.27623
+  },
+  "cosines": {
+   "ce.span": 0.9445,
+   "ce.margin": 0.3452,
+   "span.margin": 0.2586
+  },
+  "ratioOfAuxToCe": {
+   "span": 1.0845,
+   "margin": 0.19,
+   "byValue": 0.5992,
+   "byGradient": 0.7469
+  },
+  "marginActiveShare": 0.2222
+ },
+ "dropoutRng": {
+  "step1Reproduces": 0.0,
+  "step2NoFork": 59.312576,
+  "step2Forked": 0.0,
+  "step1Forked": 0.0,
+  "note": "an extra forward without a fork shifts the dropout stream of the next correct forward; wrapping it in fork_rng leaves that stream unchanged"
+ },
+ "perRow": [
+  {
+   "rowId": "00:a",
+   "kind": "moved",
+   "ce": 0.1341,
+   "spanLoss": 0.183,
+   "negatives": [
+    {
+     "type": "name_drop",
+     "margin": 1.3718,
+     "sCorrect": -0.1341,
+     "sNegative": -1.5059,
+     "active": false
+    },
+    {
+     "type": "other_vague",
+     "margin": 2.0932,
+     "sCorrect": -0.1341,
+     "sNegative": -2.2274,
+     "active": false
+    },
+    {
+     "type": "state_negated",
+     "margin": 1.3997,
+     "sCorrect": -0.1341,
+     "sNegative": -1.5338,
+     "active": false
+    }
+   ]
+  },
+  {
+   "rowId": "00:b",
+   "kind": "moved",
+   "ce": 0.171,
+   "spanLoss": 0.2334,
+   "negatives": [
+    {
+     "type": "name_drop",
+     "margin": 1.3415,
+     "sCorrect": -0.171,
+     "sNegative": -1.5126,
+     "active": false
+    },
+    {
+     "type": "other_vague",
+     "margin": 2.0188,
+     "sCorrect": -0.171,
+     "sNegative": -2.1898,
+     "active": false
+    },
+    {
+     "type": "state_negated",
+     "margin": 1.4356,
+     "sCorrect": -0.171,
+     "sNegative": -1.6066,
+     "active": false
+    }
+   ]
+  },
+  {
+   "rowId": "01:a",
+   "kind": "outcome",
+   "ce": 0.0001,
+   "spanLoss": 0.0001,
+   "negatives": [
+    {
+     "type": "name_drop",
+     "margin": 1.5953,
+     "sCorrect": -0.0001,
+     "sNegative": -1.5954,
+     "active": false
+    }
+   ]
+  },
+  {
+   "rowId": "01:b",
+   "kind": "outcome",
+   "ce": 0.0001,
+   "spanLoss": 0.0001,
+   "negatives": [
+    {
+     "type": "name_drop",
+     "margin": 1.6847,
+     "sCorrect": -0.0001,
+     "sNegative": -1.6848,
+     "active": false
+    }
+   ]
+  },
+  {
+   "rowId": "02:a",
+   "kind": "sanity_changed",
+   "ce": 0.1133,
+   "spanLoss": 0.0985,
+   "negatives": [
+    {
+     "type": "name_drop",
+     "margin": 0.9116,
+     "sCorrect": -0.1133,
+     "sNegative": -1.025,
+     "active": true
+    },
+    {
+     "type": "state_stasis",
+     "margin": 2.4382,
+     "sCorrect": -0.1133,
+     "sNegative": -2.5515,
+     "active": false
+    }
+   ]
+  },
+  {
+   "rowId": "02:b",
+   "kind": "sanity_changed",
+   "ce": 0.1212,
+   "spanLoss": 0.1054,
+   "negatives": [
+    {
+     "type": "name_drop",
+     "margin": 0.9483,
+     "sCorrect": -0.1212,
+     "sNegative": -1.0695,
+     "active": true
+    },
+    {
+     "type": "state_stasis",
+     "margin": 2.4838,
+     "sCorrect": -0.1212,
+     "sNegative": -2.605,
+     "active": false
+    }
+   ]
+  },
+  {
+   "rowId": "03:a",
+   "kind": "moved",
+   "ce": 0.1908,
+   "spanLoss": 0.254,
+   "negatives": [
+    {
+     "type": "name_drop",
+     "margin": 0.9183,
+     "sCorrect": -0.1908,
+     "sNegative": -1.1091,
+     "active": true
+    },
+    {
+     "type": "other_vague",
+     "margin": 1.5839,
+     "sCorrect": -0.1908,
+     "sNegative": -1.7747,
+     "active": false
+    },
+    {
+     "type": "state_negated",
+     "margin": 0.9089,
+     "sCorrect": -0.1908,
+     "sNegative": -1.0997,
+     "active": true
+    }
+   ]
+  },
+  {
+   "rowId": "03:b",
+   "kind": "moved",
+   "ce": 0.4523,
+   "spanLoss": 0.4812,
+   "negatives": [
+    {
+     "type": "name_drop",
+     "margin": 0.9601,
+     "sCorrect": -0.4523,
+     "sNegative": -1.4124,
+     "active": true
+    },
+    {
+     "type": "other_vague",
+     "margin": 1.7659,
+     "sCorrect": -0.4523,
+     "sNegative": -2.2182,
+     "active": false
+    },
+    {
+     "type": "state_negated",
+     "margin": 0.8667,
+     "sCorrect": -0.4523,
+     "sNegative": -1.319,
+     "active": true
+    }
+   ]
+  },
+  {
+   "rowId": "04:a",
+   "kind": "outcome",
+   "ce": 0.2886,
+   "spanLoss": 0.2492,
+   "negatives": [
+    {
+     "type": "name_drop",
+     "margin": 0.8103,
+     "sCorrect": -0.2886,
+     "sNegative": -1.0989,
+     "active": true
+    }
+   ]
+  },
+  {
+   "rowId": "04:b",
+   "kind": "outcome",
+   "ce": 0.2795,
+   "spanLoss": 0.2414,
+   "negatives": [
+    {
+     "type": "name_drop",
+     "margin": 0.8354,
+     "sCorrect": -0.2795,
+     "sNegative": -1.1148,
+     "active": true
+    }
+   ]
+  },
+  {
+   "rowId": "05:a",
+   "kind": "appearance_changed",
+   "ce": 0.0003,
+   "spanLoss": 0.0003,
+   "negatives": [
+    {
+     "type": "name_drop",
+     "margin": 1.609,
+     "sCorrect": -0.0003,
+     "sNegative": -1.6093,
+     "active": false
+    },
+    {
+     "type": "state_stasis",
+     "margin": 2.2392,
+     "sCorrect": -0.0003,
+     "sNegative": -2.2396,
+     "active": false
+    }
+   ]
+  },
+  {
+   "rowId": "05:b",
+   "kind": "appearance_changed",
+   "ce": 0.0004,
+   "spanLoss": 0.0004,
+   "negatives": [
+    {
+     "type": "name_drop",
+     "margin": 1.628,
+     "sCorrect": -0.0004,
+     "sNegative": -1.6284,
+     "active": false
+    },
+    {
+     "type": "state_stasis",
+     "margin": 2.1782,
+     "sCorrect": -0.0004,
+     "sNegative": -2.1786,
+     "active": false
+    }
+   ]
+  },
+  {
+   "rowId": "06:a",
+   "kind": "moved",
+   "ce": 0.0873,
+   "spanLoss": 0.0687,
+   "negatives": [
+    {
+     "type": "name_drop",
+     "margin": 0.7964,
+     "sCorrect": -0.0873,
+     "sNegative": -0.8837,
+     "active": true
+    },
+    {
+     "type": "other_vague",
+     "margin": 1.1368,
+     "sCorrect": -0.0873,
+     "sNegative": -1.2241,
+     "active": false
+    },
+    {
+     "type": "state_negated",
+     "margin": 0.9781,
+     "sCorrect": -0.0873,
+     "sNegative": -1.0654,
+     "active": true
+    }
+   ]
+  },
+  {
+   "rowId": "06:b",
+   "kind": "moved",
+   "ce": 0.5342,
+   "spanLoss": 0.4119,
+   "negatives": [
+    {
+     "type": "name_drop",
+     "margin": 0.8569,
+     "sCorrect": -0.5342,
+     "sNegative": -1.391,
+     "active": true
+    },
+    {
+     "type": "other_vague",
+     "margin": 1.3907,
+     "sCorrect": -0.5342,
+     "sNegative": -1.9248,
+     "active": false
+    },
+    {
+     "type": "state_negated",
+     "margin": 0.9784,
+     "sCorrect": -0.5342,
+     "sNegative": -1.5126,
+     "active": true
+    }
+   ]
+  },
+  {
+   "rowId": "07:a",
+   "kind": "moved",
+   "ce": 0.1315,
+   "spanLoss": 0.1608,
+   "negatives": [
+    {
+     "type": "name_drop",
+     "margin": 1.4634,
+     "sCorrect": -0.1315,
+     "sNegative": -1.5949,
+     "active": false
+    },
+    {
+     "type": "other_vague",
+     "margin": 1.3043,
+     "sCorrect": -0.1315,
+     "sNegative": -1.4358,
+     "active": false
+    },
+    {
+     "type": "state_negated",
+     "margin": 1.143,
+     "sCorrect": -0.1315,
+     "sNegative": -1.2745,
+     "active": false
+    }
+   ]
+  },
+  {
+   "rowId": "07:b",
+   "kind": "moved",
+   "ce": 1.1524,
+   "spanLoss": 0.9322,
+   "negatives": [
+    {
+     "type": "name_drop",
+     "margin": 1.8345,
+     "sCorrect": -1.1524,
+     "sNegative": -2.9869,
+     "active": false
+    },
+    {
+     "type": "other_vague",
+     "margin": 1.3076,
+     "sCorrect": -1.1524,
+     "sNegative": -2.46,
+     "active": false
+    },
+    {
+     "type": "state_negated",
+     "margin": 1.09,
+     "sCorrect": -1.1524,
+     "sNegative": -2.2424,
+     "active": false
+    }
+   ]
+  },
+  {
+   "rowId": "08:a",
+   "kind": "outcome",
+   "ce": 0.1864,
+   "spanLoss": 0.1631,
+   "negatives": [
+    {
+     "type": "name_drop",
+     "margin": 0.842,
+     "sCorrect": -0.1864,
+     "sNegative": -1.0284,
+     "active": true
+    }
+   ]
+  },
+  {
+   "rowId": "08:b",
+   "kind": "outcome",
+   "ce": 0.5167,
+   "spanLoss": 0.4521,
+   "negatives": [
+    {
+     "type": "name_drop",
+     "margin": 0.8768,
+     "sCorrect": -0.5167,
+     "sNegative": -1.3935,
+     "active": true
+    }
+   ]
+  },
+  {
+   "rowId": "09:a",
+   "kind": "moved",
+   "ce": 0.0583,
+   "spanLoss": 0.0524,
+   "negatives": [
+    {
+     "type": "name_drop",
+     "margin": 0.8167,
+     "sCorrect": -0.0583,
+     "sNegative": -0.8749,
+     "active": true
+    }
+   ]
+  },
+  {
+   "rowId": "09:b",
+   "kind": "moved",
+   "ce": 0.389,
+   "spanLoss": 0.3501,
+   "negatives": [
+    {
+     "type": "name_drop",
+     "margin": 0.9533,
+     "sCorrect": -0.389,
+     "sNegative": -1.3423,
+     "active": true
+    }
+   ]
+  },
+  {
+   "rowId": "10:a",
+   "kind": "outcome",
+   "ce": 0.0001,
+   "spanLoss": 0.0001,
+   "negatives": [
+    {
+     "type": "name_drop",
+     "margin": 1.1287,
+     "sCorrect": -0.0001,
+     "sNegative": -1.1289,
+     "active": false
+    }
+   ]
+  },
+  {
+   "rowId": "10:b",
+   "kind": "outcome",
+   "ce": 0.0001,
+   "spanLoss": 0.0001,
+   "negatives": [
+    {
+     "type": "name_drop",
+     "margin": 1.1209,
+     "sCorrect": -0.0001,
+     "sNegative": -1.121,
+     "active": false
+    }
+   ]
+  },
+  {
+   "rowId": "11:a",
+   "kind": "moved",
+   "ce": 0.0764,
+   "spanLoss": 0.0598,
+   "negatives": [
+    {
+     "type": "name_drop",
+     "margin": 1.0815,
+     "sCorrect": -0.0764,
+     "sNegative": -1.1579,
+     "active": false
+    },
+    {
+     "type": "other_vague",
+     "margin": 1.3608,
+     "sCorrect": -0.0764,
+     "sNegative": -1.4372,
+     "active": false
+    },
+    {
+     "type": "state_negated",
+     "margin": 0.9808,
+     "sCorrect": -0.0764,
+     "sNegative": -1.0573,
+     "active": true
+    }
+   ]
+  },
+  {
+   "rowId": "11:b",
+   "kind": "moved",
+   "ce": 0.1331,
+   "spanLoss": 0.1033,
+   "negatives": [
+    {
+     "type": "name_drop",
+     "margin": 1.045,
+     "sCorrect": -0.1331,
+     "sNegative": -1.1781,
+     "active": false
+    },
+    {
+     "type": "other_vague",
+     "margin": 1.1966,
+     "sCorrect": -0.1331,
+     "sNegative": -1.3297,
+     "active": false
+    },
+    {
+     "type": "state_negated",
+     "margin": 0.9986,
+     "sCorrect": -0.1331,
+     "sNegative": -1.1317,
+     "active": true
+    }
+   ]
+  },
+  {
+   "rowId": "12:a",
+   "kind": "sanity_changed",
+   "ce": 0.0517,
+   "spanLoss": 0.0419,
+   "negatives": [
+    {
+     "type": "name_drop",
+     "margin": 1.137,
+     "sCorrect": -0.0517,
+     "sNegative": -1.1887,
+     "active": false
+    },
+    {
+     "type": "state_stasis",
+     "margin": 2.9457,
+     "sCorrect": -0.0517,
+     "sNegative": -2.9975,
+     "active": false
+    }
+   ]
+  },
+  {
+   "rowId": "12:b",
+   "kind": "sanity_changed",
+   "ce": 0.0554,
+   "spanLoss": 0.0449,
+   "negatives": [
+    {
+     "type": "name_drop",
+     "margin": 1.1734,
+     "sCorrect": -0.0554,
+     "sNegative": -1.2288,
+     "active": false
+    },
+    {
+     "type": "state_stasis",
+     "margin": 2.9142,
+     "sCorrect": -0.0554,
+     "sNegative": -2.9696,
+     "active": false
+    }
+   ]
+  },
+  {
+   "rowId": "13:a",
+   "kind": "sanity_changed",
+   "ce": 0.2883,
+   "spanLoss": 0.5039,
+   "negatives": [
+    {
+     "type": "name_drop",
+     "margin": 0.7069,
+     "sCorrect": -0.2883,
+     "sNegative": -0.9952,
+     "active": true
+    },
+    {
+     "type": "state_stasis",
+     "margin": 3.4228,
+     "sCorrect": -0.2883,
+     "sNegative": -3.7111,
+     "active": false
+    }
+   ]
+  },
+  {
+   "rowId": "13:b",
+   "kind": "sanity_changed",
+   "ce": 0.318,
+   "spanLoss": 0.5558,
+   "negatives": [
+    {
+     "type": "name_drop",
+     "margin": 0.7143,
+     "sCorrect": -0.318,
+     "sNegative": -1.0323,
+     "active": true
+    },
+    {
+     "type": "state_stasis",
+     "margin": 3.4546,
+     "sCorrect": -0.318,
+     "sNegative": -3.7726,
+     "active": false
+    }
+   ]
+  },
+  {
+   "rowId": "14:a",
+   "kind": "no_change",
+   "ce": 0.2374,
+   "spanLoss": 0.2374,
+   "negatives": [
+    {
+     "type": "state_event",
+     "margin": 6.036,
+     "sCorrect": -0.2374,
+     "sNegative": -6.2734,
+     "active": false
+    }
+   ]
+  },
+  {
+   "rowId": "14:b",
+   "kind": "no_change",
+   "ce": 0.1801,
+   "spanLoss": 0.1801,
+   "negatives": [
+    {
+     "type": "state_event",
+     "margin": 5.9147,
+     "sCorrect": -0.1801,
+     "sNegative": -6.0948,
+     "active": false
+    }
+   ]
+  },
+  {
+   "rowId": "15:a",
+   "kind": "appearance_changed",
+   "ce": 0.0005,
+   "spanLoss": 0.0006,
+   "negatives": [
+    {
+     "type": "name_drop",
+     "margin": 1.6612,
+     "sCorrect": -0.0005,
+     "sNegative": -1.6617,
+     "active": false
+    },
+    {
+     "type": "state_stasis",
+     "margin": 3.0445,
+     "sCorrect": -0.0005,
+     "sNegative": -3.045,
+     "active": false
+    }
+   ]
+  },
+  {
+   "rowId": "15:b",
+   "kind": "appearance_changed",
+   "ce": 0.0006,
+   "spanLoss": 0.0007,
+   "negatives": [
+    {
+     "type": "name_drop",
+     "margin": 1.63,
+     "sCorrect": -0.0006,
+     "sNegative": -1.6306,
+     "active": false
+    },
+    {
+     "type": "state_stasis",
+     "margin": 2.9553,
+     "sCorrect": -0.0006,
+     "sNegative": -2.9559,
+     "active": false
+    }
+   ]
+  },
+  {
+   "rowId": "16:a",
+   "kind": "personality_changed",
+   "ce": 0.0431,
+   "spanLoss": 0.0348,
+   "negatives": [
+    {
+     "type": "name_drop",
+     "margin": 0.9825,
+     "sCorrect": -0.0431,
+     "sNegative": -1.0256,
+     "active": true
+    }
+   ]
+  },
+  {
+   "rowId": "16:b",
+   "kind": "personality_changed",
+   "ce": 0.0472,
+   "spanLoss": 0.0382,
+   "negatives": [
+    {
+     "type": "name_drop",
+     "margin": 0.9991,
+     "sCorrect": -0.0472,
+     "sNegative": -1.0463,
+     "active": true
+    }
+   ]
+  },
+  {
+   "rowId": "17:a",
+   "kind": "sanity_changed",
+   "ce": 0.0105,
+   "spanLoss": 0.0136,
+   "negatives": [
+    {
+     "type": "name_drop",
+     "margin": 0.6925,
+     "sCorrect": -0.0105,
+     "sNegative": -0.703,
+     "active": true
+    },
+    {
+     "type": "state_stasis",
+     "margin": 3.7099,
+     "sCorrect": -0.0105,
+     "sNegative": -3.7204,
+     "active": false
+    }
+   ]
+  },
+  {
+   "rowId": "17:b",
+   "kind": "sanity_changed",
+   "ce": 0.0176,
+   "spanLoss": 0.0241,
+   "negatives": [
+    {
+     "type": "name_drop",
+     "margin": 0.7277,
+     "sCorrect": -0.0176,
+     "sNegative": -0.7452,
+     "active": true
+    },
+    {
+     "type": "state_stasis",
+     "margin": 3.6678,
+     "sCorrect": -0.0176,
+     "sNegative": -3.6854,
+     "active": false
+    }
+   ]
+  },
+  {
+   "rowId": "18:a",
+   "kind": "personality_changed",
+   "ce": 0.0671,
+   "spanLoss": 0.0568,
+   "negatives": [
+    {
+     "type": "name_drop",
+     "margin": 0.9978,
+     "sCorrect": -0.0671,
+     "sNegative": -1.0648,
+     "active": true
+    }
+   ]
+  },
+  {
+   "rowId": "18:b",
+   "kind": "personality_changed",
+   "ce": 0.6741,
+   "spanLoss": 0.536,
+   "negatives": [
+    {
+     "type": "name_drop",
+     "margin": 1.052,
+     "sCorrect": -0.6741,
+     "sNegative": -1.7261,
+     "active": false
+    }
+   ]
+  },
+  {
+   "rowId": "19:a",
+   "kind": "no_change",
+   "ce": 0.0862,
+   "spanLoss": 0.0755,
+   "negatives": [
+    {
+     "type": "state_event",
+     "margin": 5.9258,
+     "sCorrect": -0.0862,
+     "sNegative": -6.012,
+     "active": false
+    }
+   ]
+  },
+  {
+   "rowId": "19:b",
+   "kind": "no_change",
+   "ce": 0.1469,
+   "spanLoss": 0.1279,
+   "negatives": [
+    {
+     "type": "state_event",
+     "margin": 5.9256,
+     "sCorrect": -0.1469,
+     "sNegative": -6.0725,
+     "active": false
+    }
+   ]
+  },
+  {
+   "rowId": "20:a",
+   "kind": "appearance_changed",
+   "ce": 0.0003,
+   "spanLoss": 0.0003,
+   "negatives": [
+    {
+     "type": "name_drop",
+     "margin": 0.9703,
+     "sCorrect": -0.0003,
+     "sNegative": -0.9706,
+     "active": true
+    },
+    {
+     "type": "state_stasis",
+     "margin": 2.2526,
+     "sCorrect": -0.0003,
+     "sNegative": -2.2529,
+     "active": false
+    }
+   ]
+  },
+  {
+   "rowId": "20:b",
+   "kind": "appearance_changed",
+   "ce": 0.0003,
+   "spanLoss": 0.0002,
+   "negatives": [
+    {
+     "type": "name_drop",
+     "margin": 1.0285,
+     "sCorrect": -0.0003,
+     "sNegative": -1.0288,
+     "active": false
+    },
+    {
+     "type": "state_stasis",
+     "margin": 2.2869,
+     "sCorrect": -0.0003,
+     "sNegative": -2.2872,
+     "active": false
+    }
+   ]
+  },
+  {
+   "rowId": "21:a",
+   "kind": "appearance_changed",
+   "ce": 0.0009,
+   "spanLoss": 0.001,
+   "negatives": [
+    {
+     "type": "name_drop",
+     "margin": 2.7695,
+     "sCorrect": -0.0009,
+     "sNegative": -2.7703,
+     "active": false
+    },
+    {
+     "type": "state_stasis",
+     "margin": 3.0951,
+     "sCorrect": -0.0009,
+     "sNegative": -3.0959,
+     "active": false
+    }
+   ]
+  },
+  {
+   "rowId": "21:b",
+   "kind": "appearance_changed",
+   "ce": 0.0012,
+   "spanLoss": 0.0015,
+   "negatives": [
+    {
+     "type": "name_drop",
+     "margin": 2.7019,
+     "sCorrect": -0.0012,
+     "sNegative": -2.7031,
+     "active": false
+    },
+    {
+     "type": "state_stasis",
+     "margin": 2.9739,
+     "sCorrect": -0.0012,
+     "sNegative": -2.9751,
+     "active": false
+    }
+   ]
+  },
+  {
+   "rowId": "22:a",
+   "kind": "appearance_changed",
+   "ce": 0.0017,
+   "spanLoss": 0.0025,
+   "negatives": [
+    {
+     "type": "name_drop",
+     "margin": 2.0191,
+     "sCorrect": -0.0017,
+     "sNegative": -2.0208,
+     "active": false
+    },
+    {
+     "type": "state_stasis",
+     "margin": 2.5274,
+     "sCorrect": -0.0017,
+     "sNegative": -2.5291,
+     "active": false
+    }
+   ]
+  },
+  {
+   "rowId": "22:b",
+   "kind": "appearance_changed",
+   "ce": 0.0021,
+   "spanLoss": 0.003,
+   "negatives": [
+    {
+     "type": "name_drop",
+     "margin": 2.0448,
+     "sCorrect": -0.0021,
+     "sNegative": -2.0469,
+     "active": false
+    },
+    {
+     "type": "state_stasis",
+     "margin": 2.63,
+     "sCorrect": -0.0021,
+     "sNegative": -2.6321,
+     "active": false
+    }
+   ]
+  },
+  {
+   "rowId": "23:a",
+   "kind": "appearance_changed",
+   "ce": 0.1596,
+   "spanLoss": 0.2437,
+   "negatives": [
+    {
+     "type": "name_drop",
+     "margin": 2.204,
+     "sCorrect": -0.1596,
+     "sNegative": -2.3635,
+     "active": false
+    },
+    {
+     "type": "state_stasis",
+     "margin": 2.5943,
+     "sCorrect": -0.1596,
+     "sNegative": -2.7539,
+     "active": false
+    }
+   ]
+  },
+  {
+   "rowId": "23:b",
+   "kind": "appearance_changed",
+   "ce": 0.1729,
+   "spanLoss": 0.264,
+   "negatives": [
+    {
+     "type": "name_drop",
+     "margin": 2.2465,
+     "sCorrect": -0.1729,
+     "sNegative": -2.4194,
+     "active": false
+    },
+    {
+     "type": "state_stasis",
+     "margin": 2.7161,
+     "sCorrect": -0.1729,
+     "sNegative": -2.889,
+     "active": false
+    }
+   ]
+  }
+ ],
+ "optimizer": "never constructed",
+ "fetch": {
+  "source": "calibration-report.json",
+  "remoteSha256": "a34af4c5df96460307801665af9fbb0602b43558ed3693462f90f1df5030a506",
+  "redaction": "home path in base.dir / model.dir replaced with <HOME> before download"
+ }
+}
