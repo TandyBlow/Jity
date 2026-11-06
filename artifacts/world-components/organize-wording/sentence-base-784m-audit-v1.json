@@ -1,7 +1,7 @@
 {
  "run": "sentence-base-784m-run-v1",
  "reviewed_by": "human review; automated group factPass shown for comparison",
- "b_only_definition": "B has a safety loss; A errors are recorded separately and do not cancel B loss (same口径 as prior v07 review)",
+ "b_only_definition": "B has a safety error item. A may have a different error in the same group; that A error is recorded separately and does not cancel B's error. This is not the claim that A is entirely correct and B is entirely wrong.",
  "safety_gate": {
   "fixed_multi_groups": 6,
   "fixed_B_only": 0,
@@ -172,7 +172,8 @@
      "automated_factPass": true,
      "reviewed_pass": false,
      "b_only": true,
-     "reason": "f0 adds 「纸灯笼的衣角」 not in facts; B77 f0 was correct; B784 also adds f2, but the group still loses f0."
+     "reason": "New error item in [f0,f1]: f0 writes 「纸灯笼的衣角」; old omission in [f2,f3] is eliminated (f2 is now present). The old group [f2,f3] now passes; do not label this as the old f2 omission group.",
+     "b_only_kind": "new_error_item"
     },
     {
      "sourceId": "t24",
@@ -247,7 +248,8 @@
      "automated_factPass": false,
      "reviewed_pass": false,
      "b_only": true,
-     "reason": "f1 (sanity 9→12) is absent; f2 is now present. A77 has the sanity direction wrong; that error is recorded separately and does not cancel B missing f1."
+     "reason": "New error item: f1 sanity is absent; f2 is now present. A77 has a different error (wrong sanity direction). B-only means B has a new error item; it does not mean A is correct for the whole group.",
+     "b_only_kind": "new_error_item"
     }
    ]
   }
@@ -317,5 +319,9 @@
   "B-large-784 and B-large-77 were trained in different framework versions (784: torch 2.5.1/transformers 4.51.3 on HPC 4090; 77: local torch 2.7.0/transformers 4.57.3), so the comparison is not a pure numerical-identical rerun",
   "tokenizer is byte-identical, so token counts and interfaces are identical",
   "no A-large-784 and no B-small-784; no claim that 784M group-level is better than per-fact"
+ ],
+ "safety_accounting_notes": [
+  "t24: the old omission was in the [f2,f3] group. That old omission is eliminated in B-large-784 (f2 is present). The new error is in the other group [f0,f1]: f0 adds 衣角. Record two separate events; do not reuse the old failure-group position.",
+  "v20: A-large-77 has the sanity direction wrong; B-large-784 omits sanity. These are different error items. B-only here means B has a new error item, not that A is correct for the whole group."
  ]
 }

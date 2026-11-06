@@ -1,0 +1,6636 @@
+{
+ "checkpoint": {
+  "path": "out/ckpt-final",
+  "weights_sha256": "6abd0cdd93f07240526b32b54f2d4800ca33cba5d9cbaf3ce0db907a7d0b4ced",
+  "tokenizer_sha256": "c65feffa65ff0378759778193852083d23349cb1b40c906e9463a12f8076ff32"
+ },
+ "material": "sentence-scale-v1.jsonl",
+ "material_sha256": "2f537830797986b7678566d0f90ff605749a7ad8f0aadef34cf7c6cd27f43816",
+ "previous": "out/results.json",
+ "previous_sha256": "58e91538a790f289ac45196514763e42ab0445ca9bb6690f0796d3ea93b14c22",
+ "max_input": 512,
+ "max_new": 128,
+ "splits": {
+  "train": {
+   "summary": {
+    "calls": 134,
+    "calls_pass": 134,
+    "calls_fail": 0,
+    "facts": 231,
+    "facts_pass": 231,
+    "facts_fail": 0,
+    "by_size": {
+     "2": {
+      "calls": 70,
+      "calls_pass": 70,
+      "calls_fail": 0,
+      "facts": 140,
+      "facts_pass": 140,
+      "facts_fail": 0
+     },
+     "1": {
+      "calls": 51,
+      "calls_pass": 51,
+      "calls_fail": 0,
+      "facts": 51,
+      "facts_pass": 51,
+      "facts_fail": 0
+     },
+     "3": {
+      "calls": 12,
+      "calls_pass": 12,
+      "calls_fail": 0,
+      "facts": 36,
+      "facts_pass": 36,
+      "facts_fail": 0
+     },
+     "4": {
+      "calls": 1,
+      "calls_pass": 1,
+      "calls_fail": 0,
+      "facts": 4,
+      "facts_pass": 4,
+      "facts_fail": 0
+     }
+    },
+    "by_relation": {
+     "same": {
+      "calls": 115,
+      "calls_pass": 115,
+      "calls_fail": 0,
+      "facts": 197,
+      "facts_pass": 197,
+      "facts_fail": 0
+     },
+     "cross": {
+      "calls": 15,
+      "calls_pass": 15,
+      "calls_fail": 0,
+      "facts": 30,
+      "facts_pass": 30,
+      "facts_fail": 0
+     },
+     "unknown": {
+      "calls": 4,
+      "calls_pass": 4,
+      "calls_fail": 0,
+      "facts": 4,
+      "facts_pass": 4,
+      "facts_fail": 0
+     }
+    },
+    "by_kind": {
+     "appearance_changed": {
+      "facts": 77,
+      "facts_pass": 77,
+      "facts_fail": 0,
+      "calls_with_kind": 77,
+      "calls_with_fail": 0
+     },
+     "moved": {
+      "facts": 48,
+      "facts_pass": 48,
+      "facts_fail": 0,
+      "calls_with_kind": 48,
+      "calls_with_fail": 0
+     },
+     "outcome": {
+      "facts": 73,
+      "facts_pass": 73,
+      "facts_fail": 0,
+      "calls_with_kind": 73,
+      "calls_with_fail": 0
+     },
+     "sanity_changed": {
+      "facts": 20,
+      "facts_pass": 20,
+      "facts_fail": 0,
+      "calls_with_kind": 20,
+      "calls_with_fail": 0
+     },
+     "personality_changed": {
+      "facts": 9,
+      "facts_pass": 9,
+      "facts_fail": 0,
+      "calls_with_kind": 9,
+      "calls_with_fail": 0
+     },
+     "no_change": {
+      "facts": 4,
+      "facts_pass": 4,
+      "facts_fail": 0,
+      "calls_with_kind": 4,
+      "calls_with_fail": 0
+     }
+    }
+   },
+   "calls": [
+    {
+     "sourceId": "fixture-r1",
+     "callId": "fixture-r1:g1",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "appearance_changed",
+      "appearance_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "appearance_changed",
+       "name": "林川",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "appearance_changed",
+       "name": "林川",
+       "pass": true
+      }
+     ],
+     "target": "林川的袖口沾了雨，指节发白。",
+     "actual": "林川的袖口沾了雨,指节发白。",
+     "new_tokens": 16,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.009155
+    },
+    {
+     "sourceId": "fixture-r1",
+     "callId": "fixture-r1:g2",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "appearance_changed"
+     ],
+     "facts": [
+      "f2"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f2",
+       "kind": "appearance_changed",
+       "name": "周宁",
+       "pass": true
+      }
+     ],
+     "target": "周宁的斗篷下摆湿了一片。",
+     "actual": "周宁的斗篷下摆湿了一片。",
+     "new_tokens": 13,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.002029
+    },
+    {
+     "sourceId": "fixture-r1",
+     "callId": "fixture-r1:g3",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "appearance_changed"
+     ],
+     "facts": [
+      "f3"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f3",
+       "kind": "appearance_changed",
+       "name": "陈默",
+       "pass": true
+      }
+     ],
+     "target": "陈默的鞋底沾了泥。",
+     "actual": "陈默的鞋底沾了泥。",
+     "new_tokens": 10,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.001708
+    },
+    {
+     "sourceId": "fixture-r1",
+     "callId": "fixture-r1:g4",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "appearance_changed"
+     ],
+     "facts": [
+      "f4"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f4",
+       "kind": "appearance_changed",
+       "name": "陈默",
+       "pass": true
+      }
+     ],
+     "target": "陈默的袖口湿到肘部。",
+     "actual": "陈默的袖口湿到肘部。",
+     "new_tokens": 11,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.002593
+    },
+    {
+     "sourceId": "fixture-r2",
+     "callId": "fixture-r2:g1",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "appearance_changed",
+      "appearance_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "appearance_changed",
+       "name": "林川",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "appearance_changed",
+       "name": "林川",
+       "pass": true
+      }
+     ],
+     "target": "林川的灯罩蒙了灰，掌心出汗。",
+     "actual": "林川的灯罩蒙了灰,掌心出汗。",
+     "new_tokens": 16,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.001184
+    },
+    {
+     "sourceId": "fixture-r2",
+     "callId": "fixture-r2:g2",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "appearance_changed"
+     ],
+     "facts": [
+      "f2"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f2",
+       "kind": "appearance_changed",
+       "name": "周宁",
+       "pass": true
+      }
+     ],
+     "target": "周宁的钟绳磨出了毛边。",
+     "actual": "周宁的钟绳磨出了毛边。",
+     "new_tokens": 12,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.005232
+    },
+    {
+     "sourceId": "fixture-r2",
+     "callId": "fixture-r2:g3",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "appearance_changed"
+     ],
+     "facts": [
+      "f3"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f3",
+       "kind": "appearance_changed",
+       "name": "陈默",
+       "pass": true
+      }
+     ],
+     "target": "陈默的衣角结了盐霜。",
+     "actual": "陈默的衣角结了盐霜。",
+     "new_tokens": 11,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.002986
+    },
+    {
+     "sourceId": "fixture-r2",
+     "callId": "fixture-r2:g4",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "appearance_changed"
+     ],
+     "facts": [
+      "f4"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f4",
+       "kind": "appearance_changed",
+       "name": "陈默",
+       "pass": true
+      }
+     ],
+     "target": "陈默的鬓发被雾打湿。",
+     "actual": "陈默的鬓发被雾打湿。",
+     "new_tokens": 11,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.00235
+    },
+    {
+     "sourceId": "fixture-r3",
+     "callId": "fixture-r3:g1",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "appearance_changed",
+      "appearance_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "appearance_changed",
+       "name": "林川",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "appearance_changed",
+       "name": "林川",
+       "pass": true
+      }
+     ],
+     "target": "林川的衣襟被雨打湿了半幅，袖口开了线。",
+     "actual": "林川的衣襟被雨打湿了半幅,袖口开了线。",
+     "new_tokens": 20,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.050072
+    },
+    {
+     "sourceId": "fixture-r3",
+     "callId": "fixture-r3:g2",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "appearance_changed"
+     ],
+     "facts": [
+      "f2"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f2",
+       "kind": "appearance_changed",
+       "name": "周宁",
+       "pass": true
+      }
+     ],
+     "target": "周宁的指缝里塞着泥。",
+     "actual": "周宁的指缝里塞着泥。",
+     "new_tokens": 12,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.007712
+    },
+    {
+     "sourceId": "fixture-r3",
+     "callId": "fixture-r3:g3",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "appearance_changed"
+     ],
+     "facts": [
+      "f3"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f3",
+       "kind": "appearance_changed",
+       "name": "陈默",
+       "pass": true
+      }
+     ],
+     "target": "陈默的鞋跟磨塌了。",
+     "actual": "陈默的鞋跟磨塌了。",
+     "new_tokens": 10,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.003907
+    },
+    {
+     "sourceId": "fixture-r3",
+     "callId": "fixture-r3:g4",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "appearance_changed"
+     ],
+     "facts": [
+      "f4"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f4",
+       "kind": "appearance_changed",
+       "name": "陈默",
+       "pass": true
+      }
+     ],
+     "target": "陈默的裤脚沾了铜油。",
+     "actual": "陈默的裤脚沾了铜油。",
+     "new_tokens": 11,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.003737
+    },
+    {
+     "sourceId": "fixture-r4",
+     "callId": "fixture-r4:g1",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "appearance_changed",
+      "appearance_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "appearance_changed",
+       "name": "林川",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "appearance_changed",
+       "name": "林川",
+       "pass": true
+      }
+     ],
+     "target": "林川的围巾松开一截，脸色发白。",
+     "actual": "林川的围巾松开一截,脸色发白。",
+     "new_tokens": 17,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.002397
+    },
+    {
+     "sourceId": "fixture-r4",
+     "callId": "fixture-r4:g2",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "appearance_changed"
+     ],
+     "facts": [
+      "f2"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f2",
+       "kind": "appearance_changed",
+       "name": "周宁",
+       "pass": true
+      }
+     ],
+     "target": "周宁的背上溅了泥点。",
+     "actual": "周宁的背上溅了泥点。",
+     "new_tokens": 12,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.004926
+    },
+    {
+     "sourceId": "fixture-r4",
+     "callId": "fixture-r4:g3",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "appearance_changed"
+     ],
+     "facts": [
+      "f3"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f3",
+       "kind": "appearance_changed",
+       "name": "陈默",
+       "pass": true
+      }
+     ],
+     "target": "陈默的手背蹭破了皮。",
+     "actual": "陈默的手背蹭破了皮。",
+     "new_tokens": 10,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.000618
+    },
+    {
+     "sourceId": "fixture-r4",
+     "callId": "fixture-r4:g4",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "appearance_changed"
+     ],
+     "facts": [
+      "f4"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f4",
+       "kind": "appearance_changed",
+       "name": "陈默",
+       "pass": true
+      }
+     ],
+     "target": "陈默的肩头落着灰。",
+     "actual": "陈默的肩头落着灰。",
+     "new_tokens": 10,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.059317
+    },
+    {
+     "sourceId": "n4n-01",
+     "callId": "n4n-01:g1",
+     "size": 3,
+     "relation": "same",
+     "kinds": [
+      "moved",
+      "outcome",
+      "sanity_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1",
+      "f2"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 3,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "moved",
+       "name": "沈砚",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "outcome",
+       "name": "沈砚",
+       "pass": true
+      },
+      {
+       "factId": "f2",
+       "kind": "sanity_changed",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "沈砚从潮生巷走到旧灯塔，换好了塔顶的灯芯，心里松快了些。",
+     "actual": "沈砚从潮生巷走到旧灯塔,换好了塔顶的灯芯,心里松快了些。",
+     "new_tokens": 27,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.18276
+    },
+    {
+     "sourceId": "n4n-02",
+     "callId": "n4n-02:g1",
+     "size": 3,
+     "relation": "same",
+     "kinds": [
+      "moved",
+      "outcome",
+      "appearance_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1",
+      "f2"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 3,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "moved",
+       "name": "沈砚",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "outcome",
+       "name": "沈砚",
+       "pass": true
+      },
+      {
+       "factId": "f2",
+       "kind": "appearance_changed",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "沈砚从旧灯塔走到潮渡，把系泊绳从浅滩拖了回来，外袍下摆结了一层盐霜。",
+     "actual": "沈砚从旧灯塔走到潮渡,把系泊绳从浅滩拖了回来,外袍下摆结了一层盐霜。",
+     "new_tokens": 33,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.004607
+    },
+    {
+     "sourceId": "n4n-04",
+     "callId": "n4n-04:g1",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "outcome"
+     ],
+     "facts": [
+      "f0"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "outcome",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "沈砚把潮汐簿缺的那页补全了。",
+     "actual": "沈砚把潮汐簿缺的那页补全了。",
+     "new_tokens": 15,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.004768
+    },
+    {
+     "sourceId": "n4n-04",
+     "callId": "n4n-04:g2",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "moved",
+      "outcome"
+     ],
+     "facts": [
+      "f2",
+      "f3"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f2",
+       "kind": "moved",
+       "name": "阿棠",
+       "pass": true
+      },
+      {
+       "factId": "f3",
+       "kind": "outcome",
+       "name": "阿棠",
+       "pass": true
+      }
+     ],
+     "target": "阿棠从早市走到潮汐档案馆，把一叠干纸放在桌角。",
+     "actual": "阿棠从早市走到潮汐档案馆,把一叠干纸放在桌角。",
+     "new_tokens": 21,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.017312
+    },
+    {
+     "sourceId": "n4n-05",
+     "callId": "n4n-05:g1",
+     "size": 3,
+     "relation": "same",
+     "kinds": [
+      "moved",
+      "outcome",
+      "sanity_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1",
+      "f2"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 3,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "moved",
+       "name": "沈砚",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "outcome",
+       "name": "沈砚",
+       "pass": true
+      },
+      {
+       "factId": "f2",
+       "kind": "sanity_changed",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "沈砚从潮汐档案馆走到雾堤，敲响了雾堤上的雾警钟，心里发紧。",
+     "actual": "沈砚从潮汐档案馆走到雾堤,敲响了雾堤上的雾警钟,心里发紧。",
+     "new_tokens": 27,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.038635
+    },
+    {
+     "sourceId": "n4n-06",
+     "callId": "n4n-06:g1",
+     "size": 3,
+     "relation": "same",
+     "kinds": [
+      "moved",
+      "outcome",
+      "sanity_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1",
+      "f2"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 3,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "moved",
+       "name": "沈砚",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "outcome",
+       "name": "沈砚",
+       "pass": true
+      },
+      {
+       "factId": "f2",
+       "kind": "sanity_changed",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "沈砚从潮汐档案馆走到潮生巷，从抽屉底层翻出了备用钥匙，心里松快了些。",
+     "actual": "沈砚从潮汐档案馆走到潮生巷,从抽屉底层翻出了备用钥匙,心里松快了些。",
+     "new_tokens": 31,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.010764
+    },
+    {
+     "sourceId": "n4n-09",
+     "callId": "n4n-09:g1",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "moved",
+      "personality_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "moved",
+       "name": "沈砚",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "personality_changed",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "沈砚从潮渡走到旧灯塔，不再把话咽回去。",
+     "actual": "沈砚从潮渡走到旧灯塔,不再把话咽回去。",
+     "new_tokens": 18,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.002093
+    },
+    {
+     "sourceId": "n4n-09",
+     "callId": "n4n-09:g2",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "outcome"
+     ],
+     "facts": [
+      "f2"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f2",
+       "kind": "outcome",
+       "name": "叶知微",
+       "pass": true
+      }
+     ],
+     "target": "叶知微把灯罩擦得透亮。",
+     "actual": "叶知微把灯罩擦得透亮。",
+     "new_tokens": 13,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.000764
+    },
+    {
+     "sourceId": "n4n-10",
+     "callId": "n4n-10:g1",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "moved",
+      "sanity_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "moved",
+       "name": "沈砚",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "sanity_changed",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "沈砚从旧灯塔走到潮生巷，心里松快了些。",
+     "actual": "沈砚从旧灯塔走到潮生巷,心里松快了些。",
+     "new_tokens": 19,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.596141
+    },
+    {
+     "sourceId": "n4n-100",
+     "callId": "n4n-100:g1",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "moved"
+     ],
+     "facts": [
+      "f0"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "moved",
+       "name": "叶知微",
+       "pass": true
+      }
+     ],
+     "target": "叶知微从潮渡走到旧灯塔。",
+     "actual": "叶知微从潮渡走到旧灯塔。",
+     "new_tokens": 13,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.002459
+    },
+    {
+     "sourceId": "n4n-100",
+     "callId": "n4n-100:g2",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "moved",
+      "personality_changed"
+     ],
+     "facts": [
+      "f1",
+      "f2"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f1",
+       "kind": "moved",
+       "name": "沈砚",
+       "pass": true
+      },
+      {
+       "factId": "f2",
+       "kind": "personality_changed",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "沈砚从潮生巷走到旧灯塔，不再把话咽回去。",
+     "actual": "沈砚从潮生巷走到旧灯塔,不再把话咽回去。",
+     "new_tokens": 19,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.002253
+    },
+    {
+     "sourceId": "n4n-101",
+     "callId": "n4n-101:g1",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "moved"
+     ],
+     "facts": [
+      "f0"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "moved",
+       "name": "顾行舟",
+       "pass": true
+      }
+     ],
+     "target": "顾行舟从河心走到潮渡。",
+     "actual": "顾行舟从河心走到潮渡。",
+     "new_tokens": 12,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.001593
+    },
+    {
+     "sourceId": "n4n-101",
+     "callId": "n4n-101:g2",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "moved",
+      "personality_changed"
+     ],
+     "facts": [
+      "f1",
+      "f2"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f1",
+       "kind": "moved",
+       "name": "沈砚",
+       "pass": true
+      },
+      {
+       "factId": "f2",
+       "kind": "personality_changed",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "沈砚从潮生巷走到潮渡，开始愿意先开口。",
+     "actual": "沈砚从潮生巷走到潮渡,开始愿意先开口。",
+     "new_tokens": 18,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.002005
+    },
+    {
+     "sourceId": "n4n-102",
+     "callId": "n4n-102:g1",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "moved"
+     ],
+     "facts": [
+      "f0"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "moved",
+       "name": "阿棠",
+       "pass": true
+      }
+     ],
+     "target": "阿棠从早市走到潮汐档案馆。",
+     "actual": "阿棠从早市走到潮汐档案馆。",
+     "new_tokens": 12,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.001621
+    },
+    {
+     "sourceId": "n4n-102",
+     "callId": "n4n-102:g2",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "moved",
+      "personality_changed"
+     ],
+     "facts": [
+      "f1",
+      "f2"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f1",
+       "kind": "moved",
+       "name": "沈砚",
+       "pass": true
+      },
+      {
+       "factId": "f2",
+       "kind": "personality_changed",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "沈砚从潮生巷走到潮汐档案馆，不再把话咽回去。",
+     "actual": "沈砚从潮生巷走到潮汐档案馆,不再把话咽回去。",
+     "new_tokens": 20,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.00417
+    },
+    {
+     "sourceId": "n4n-103",
+     "callId": "n4n-103:g1",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "moved"
+     ],
+     "facts": [
+      "f0"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "moved",
+       "name": "韩渡",
+       "pass": true
+      }
+     ],
+     "target": "韩渡从潮渡走到雾堤。",
+     "actual": "韩渡从潮渡走到雾堤。",
+     "new_tokens": 10,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.001906
+    },
+    {
+     "sourceId": "n4n-103",
+     "callId": "n4n-103:g2",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "moved",
+      "personality_changed"
+     ],
+     "facts": [
+      "f1",
+      "f2"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f1",
+       "kind": "moved",
+       "name": "沈砚",
+       "pass": true
+      },
+      {
+       "factId": "f2",
+       "kind": "personality_changed",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "沈砚从潮渡走到雾堤，开始愿意先开口。",
+     "actual": "沈砚从潮渡走到雾堤,开始愿意先开口。",
+     "new_tokens": 17,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.002105
+    },
+    {
+     "sourceId": "n4n-104",
+     "callId": "n4n-104:g1",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "moved"
+     ],
+     "facts": [
+      "f0"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "moved",
+       "name": "阿棠",
+       "pass": true
+      }
+     ],
+     "target": "阿棠从潮生巷走到早市。",
+     "actual": "阿棠从潮生巷走到早市。",
+     "new_tokens": 11,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.001309
+    },
+    {
+     "sourceId": "n4n-104",
+     "callId": "n4n-104:g2",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "moved",
+      "personality_changed"
+     ],
+     "facts": [
+      "f1",
+      "f2"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f1",
+       "kind": "moved",
+       "name": "沈砚",
+       "pass": true
+      },
+      {
+       "factId": "f2",
+       "kind": "personality_changed",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "沈砚从潮生巷走到早市，不再把话咽回去。",
+     "actual": "沈砚从潮生巷走到早市,不再把话咽回去。",
+     "new_tokens": 18,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.005393
+    },
+    {
+     "sourceId": "n4n-105",
+     "callId": "n4n-105:g1",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "moved"
+     ],
+     "facts": [
+      "f0"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "moved",
+       "name": "叶知微",
+       "pass": true
+      }
+     ],
+     "target": "叶知微从潮渡走到旧灯塔。",
+     "actual": "叶知微从潮渡走到旧灯塔。",
+     "new_tokens": 13,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.002994
+    },
+    {
+     "sourceId": "n4n-105",
+     "callId": "n4n-105:g2",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "moved",
+      "personality_changed"
+     ],
+     "facts": [
+      "f1",
+      "f2"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f1",
+       "kind": "moved",
+       "name": "沈砚",
+       "pass": true
+      },
+      {
+       "factId": "f2",
+       "kind": "personality_changed",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "沈砚从潮生巷走到旧灯塔，开始愿意先开口。",
+     "actual": "沈砚从潮生巷走到旧灯塔,开始愿意先开口。",
+     "new_tokens": 19,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.001692
+    },
+    {
+     "sourceId": "n4n-106",
+     "callId": "n4n-106:g1",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "moved"
+     ],
+     "facts": [
+      "f0"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "moved",
+       "name": "叶知微",
+       "pass": true
+      }
+     ],
+     "target": "叶知微从潮渡走到旧灯塔。",
+     "actual": "叶知微从潮渡走到旧灯塔。",
+     "new_tokens": 13,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.002459
+    },
+    {
+     "sourceId": "n4n-106",
+     "callId": "n4n-106:g2",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "moved",
+      "personality_changed"
+     ],
+     "facts": [
+      "f1",
+      "f2"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f1",
+       "kind": "moved",
+       "name": "沈砚",
+       "pass": true
+      },
+      {
+       "factId": "f2",
+       "kind": "personality_changed",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "沈砚从潮生巷走到旧灯塔，不再把话咽回去。",
+     "actual": "沈砚从潮生巷走到旧灯塔,不再把话咽回去。",
+     "new_tokens": 19,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.002253
+    },
+    {
+     "sourceId": "n4n-107",
+     "callId": "n4n-107:g1",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "moved"
+     ],
+     "facts": [
+      "f0"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "moved",
+       "name": "顾行舟",
+       "pass": true
+      }
+     ],
+     "target": "顾行舟从河心走到潮渡。",
+     "actual": "顾行舟从河心走到潮渡。",
+     "new_tokens": 12,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.001593
+    },
+    {
+     "sourceId": "n4n-107",
+     "callId": "n4n-107:g2",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "moved",
+      "personality_changed"
+     ],
+     "facts": [
+      "f1",
+      "f2"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f1",
+       "kind": "moved",
+       "name": "沈砚",
+       "pass": true
+      },
+      {
+       "factId": "f2",
+       "kind": "personality_changed",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "沈砚从潮生巷走到潮渡，开始愿意先开口。",
+     "actual": "沈砚从潮生巷走到潮渡,开始愿意先开口。",
+     "new_tokens": 18,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.002005
+    },
+    {
+     "sourceId": "n4n-11",
+     "callId": "n4n-11:g1",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "moved"
+     ],
+     "facts": [
+      "f0"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "moved",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "沈砚从潮渡走到雾堤。",
+     "actual": "沈砚从潮渡走到雾堤。",
+     "new_tokens": 11,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.001189
+    },
+    {
+     "sourceId": "n4n-11",
+     "callId": "n4n-11:g2",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "outcome"
+     ],
+     "facts": [
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f1",
+       "kind": "outcome",
+       "name": "韩渡",
+       "pass": true
+      }
+     ],
+     "target": "韩渡把松脱的钟绳重新系紧。",
+     "actual": "韩渡把松脱的钟绳重新系紧。",
+     "new_tokens": 13,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.00172
+    },
+    {
+     "sourceId": "n4n-11",
+     "callId": "n4n-11:g3",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "outcome",
+      "sanity_changed"
+     ],
+     "facts": [
+      "f2",
+      "f4"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f2",
+       "kind": "outcome",
+       "name": "沈砚",
+       "pass": true
+      },
+      {
+       "factId": "f4",
+       "kind": "sanity_changed",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "沈砚把被风吹歪的警示灯扶正，心里发紧。",
+     "actual": "沈砚把被风吹歪的警示灯扶正,心里发紧。",
+     "new_tokens": 20,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.069041
+    },
+    {
+     "sourceId": "n4n-16",
+     "callId": "n4n-16:g1",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "moved",
+      "appearance_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "moved",
+       "name": "沈砚",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "appearance_changed",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "沈砚从旧灯塔走到潮渡，外袍下摆沾满泥水，边角结了一圈白盐。",
+     "actual": "沈砚从旧灯塔走到潮渡,外袍下摆沾满泥水,边角结了一圈白盐。",
+     "new_tokens": 29,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.092055
+    },
+    {
+     "sourceId": "n4n-17",
+     "callId": "n4n-17:g1",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "outcome",
+      "appearance_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "outcome",
+       "name": "沈砚",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "appearance_changed",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "沈砚把潮汐簿缺的那页补全了，指尖沾了墨。",
+     "actual": "沈砚把潮汐簿缺的那页补全了,指尖沾了墨。",
+     "new_tokens": 21,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.000885
+    },
+    {
+     "sourceId": "n4n-18",
+     "callId": "n4n-18:g1",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "moved",
+      "outcome"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "moved",
+       "name": "韩渡",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "outcome",
+       "name": "韩渡",
+       "pass": true
+      }
+     ],
+     "target": "韩渡从潮渡走到雾堤，把松脱的钟绳重新系紧。",
+     "actual": "韩渡从潮渡走到雾堤,把松脱的钟绳重新系紧。",
+     "new_tokens": 20,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.007066
+    },
+    {
+     "sourceId": "n4n-21",
+     "callId": "n4n-21:g1",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "outcome",
+      "appearance_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "outcome",
+       "name": "沈砚",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "appearance_changed",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "沈砚从抽屉底层翻出了备用钥匙，指腹沾了薄灰。",
+     "actual": "沈砚从抽屉底层翻出了备用钥匙,指腹沾了薄灰。",
+     "new_tokens": 22,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.000866
+    },
+    {
+     "sourceId": "n4n-22",
+     "callId": "n4n-22:g1",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "outcome",
+      "sanity_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "outcome",
+       "name": "沈砚",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "sanity_changed",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "沈砚把被风吹歪的警示灯扶正，心里松快了些。",
+     "actual": "沈砚把被风吹歪的警示灯扶正,心里松快了些。",
+     "new_tokens": 22,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.029259
+    },
+    {
+     "sourceId": "n4n-23",
+     "callId": "n4n-23:g1",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "moved"
+     ],
+     "facts": [
+      "f0"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "moved",
+       "name": "阿棠",
+       "pass": true
+      }
+     ],
+     "target": "阿棠从早市走到潮汐档案馆。",
+     "actual": "阿棠从早市走到潮汐档案馆。",
+     "new_tokens": 12,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.001563
+    },
+    {
+     "sourceId": "n4n-23",
+     "callId": "n4n-23:g2",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "outcome",
+      "appearance_changed"
+     ],
+     "facts": [
+      "f1",
+      "f2"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f1",
+       "kind": "outcome",
+       "name": "沈砚",
+       "pass": true
+      },
+      {
+       "factId": "f2",
+       "kind": "appearance_changed",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "沈砚把潮汐簿缺的那页补全了，袖口蹭了一道墨。",
+     "actual": "沈砚把潮汐簿缺的那页补全了,袖口蹭了一道墨。",
+     "new_tokens": 22,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.000982
+    },
+    {
+     "sourceId": "n4n-25",
+     "callId": "n4n-25:g1",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "moved",
+      "appearance_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "moved",
+       "name": "沈砚",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "appearance_changed",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "沈砚从潮生巷走到旧灯塔，外袍下摆被雾水打湿。",
+     "actual": "沈砚从潮生巷走到旧灯塔,外袍下摆被雾水打湿。",
+     "new_tokens": 23,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.002007
+    },
+    {
+     "sourceId": "n4n-26",
+     "callId": "n4n-26:g1",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "moved",
+      "appearance_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "moved",
+       "name": "顾行舟",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "appearance_changed",
+       "name": "顾行舟",
+       "pass": true
+      }
+     ],
+     "target": "顾行舟从河心走到潮渡，手上的茧被水泡得发白。",
+     "actual": "顾行舟从河心走到潮渡,手上的茧被水泡得发白。",
+     "new_tokens": 22,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.016609
+    },
+    {
+     "sourceId": "n4n-28",
+     "callId": "n4n-28:g1",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "moved",
+      "sanity_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "moved",
+       "name": "沈砚",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "sanity_changed",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "沈砚从潮生巷走到雾堤，心里松快了些。",
+     "actual": "沈砚从潮生巷走到雾堤,心里松快了些。",
+     "new_tokens": 18,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.011528
+    },
+    {
+     "sourceId": "n4n-29",
+     "callId": "n4n-29:g1",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "moved",
+      "outcome"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "moved",
+       "name": "叶知微",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "outcome",
+       "name": "叶知微",
+       "pass": true
+      }
+     ],
+     "target": "叶知微从潮渡走到旧灯塔，把灯罩擦得透亮。",
+     "actual": "叶知微从潮渡走到旧灯塔,把灯罩擦得透亮。",
+     "new_tokens": 21,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.002935
+    },
+    {
+     "sourceId": "n4n-30",
+     "callId": "n4n-30:g1",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "moved",
+      "sanity_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "moved",
+       "name": "沈砚",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "sanity_changed",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "沈砚从潮生巷走到潮汐档案馆，心里松快了些。",
+     "actual": "沈砚从潮生巷走到潮汐档案馆,心里松快了些。",
+     "new_tokens": 20,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.009745
+    },
+    {
+     "sourceId": "n4n-32",
+     "callId": "n4n-32:g1",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "moved"
+     ],
+     "facts": [
+      "f0"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "moved",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "沈砚从潮生巷走到潮渡。",
+     "actual": "沈砚从潮生巷走到潮渡。",
+     "new_tokens": 12,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.004259
+    },
+    {
+     "sourceId": "n4n-32",
+     "callId": "n4n-32:g2",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "moved"
+     ],
+     "facts": [
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f1",
+       "kind": "moved",
+       "name": "顾行舟",
+       "pass": true
+      }
+     ],
+     "target": "顾行舟从河心走到潮渡。",
+     "actual": "顾行舟从河心走到潮渡。",
+     "new_tokens": 12,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.001532
+    },
+    {
+     "sourceId": "n4n-32",
+     "callId": "n4n-32:g3",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "outcome",
+      "sanity_changed"
+     ],
+     "facts": [
+      "f2",
+      "f3"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f2",
+       "kind": "outcome",
+       "name": "沈砚",
+       "pass": true
+      },
+      {
+       "factId": "f3",
+       "kind": "sanity_changed",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "沈砚在潮渡等到了最后一班船，心里松快了些。",
+     "actual": "沈砚在潮渡等到了最后一班船,心里松快了些。",
+     "new_tokens": 19,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.01173
+    },
+    {
+     "sourceId": "n4n-55",
+     "callId": "n4n-55:g1",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "outcome",
+      "sanity_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "outcome",
+       "name": "沈砚",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "sanity_changed",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "沈砚从抽屉底层翻出了备用钥匙，心里松快了些。",
+     "actual": "沈砚从抽屉底层翻出了备用钥匙,心里松快了些。",
+     "new_tokens": 21,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.00758
+    },
+    {
+     "sourceId": "n4n-56",
+     "callId": "n4n-56:g1",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "outcome",
+      "sanity_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "outcome",
+       "name": "沈砚",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "sanity_changed",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "沈砚换好了塔顶的灯芯，心里松快了些。",
+     "actual": "沈砚换好了塔顶的灯芯,心里松快了些。",
+     "new_tokens": 18,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.006518
+    },
+    {
+     "sourceId": "n4n-57",
+     "callId": "n4n-57:g1",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "outcome",
+      "sanity_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "outcome",
+       "name": "沈砚",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "sanity_changed",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "沈砚在潮渡等到了最后一班船，心里松快了些。",
+     "actual": "沈砚在潮渡等到了最后一班船,心里松快了些。",
+     "new_tokens": 19,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.010876
+    },
+    {
+     "sourceId": "n4n-58",
+     "callId": "n4n-58:g1",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "outcome",
+      "sanity_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "outcome",
+       "name": "沈砚",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "sanity_changed",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "沈砚把系泊绳从浅滩拖了回来，心里发紧。",
+     "actual": "沈砚把系泊绳从浅滩拖了回来,心里发紧。",
+     "new_tokens": 19,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.053672
+    },
+    {
+     "sourceId": "n4n-59",
+     "callId": "n4n-59:g1",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "outcome",
+      "sanity_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "outcome",
+       "name": "沈砚",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "sanity_changed",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "沈砚把潮汐簿缺的那页补全了，心里松快了些。",
+     "actual": "沈砚把潮汐簿缺的那页补全了,心里松快了些。",
+     "new_tokens": 21,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.009422
+    },
+    {
+     "sourceId": "n4n-60",
+     "callId": "n4n-60:g1",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "outcome",
+      "sanity_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "outcome",
+       "name": "沈砚",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "sanity_changed",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "沈砚敲响了雾堤上的雾警钟，心里发紧。",
+     "actual": "沈砚敲响了雾堤上的雾警钟,心里发紧。",
+     "new_tokens": 18,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.272493
+    },
+    {
+     "sourceId": "n4n-61",
+     "callId": "n4n-61:g1",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "outcome",
+      "sanity_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "outcome",
+       "name": "沈砚",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "sanity_changed",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "沈砚从抽屉底层翻出了备用钥匙，心里松快了些。",
+     "actual": "沈砚从抽屉底层翻出了备用钥匙,心里松快了些。",
+     "new_tokens": 21,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.00758
+    },
+    {
+     "sourceId": "n4n-62",
+     "callId": "n4n-62:g1",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "outcome",
+      "sanity_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "outcome",
+       "name": "沈砚",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "sanity_changed",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "沈砚换好了塔顶的灯芯，心里松快了些。",
+     "actual": "沈砚换好了塔顶的灯芯,心里松快了些。",
+     "new_tokens": 18,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.006518
+    },
+    {
+     "sourceId": "n4n-66",
+     "callId": "n4n-66:g1",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "outcome",
+      "appearance_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "outcome",
+       "name": "叶知微",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "appearance_changed",
+       "name": "叶知微",
+       "pass": true
+      }
+     ],
+     "target": "叶知微把灯罩擦得透亮，袖口沾了铜油。",
+     "actual": "叶知微把灯罩擦得透亮,袖口沾了铜油。",
+     "new_tokens": 20,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.000847
+    },
+    {
+     "sourceId": "n4n-67",
+     "callId": "n4n-67:g1",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "outcome",
+      "appearance_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "outcome",
+       "name": "阿棠",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "appearance_changed",
+       "name": "阿棠",
+       "pass": true
+      }
+     ],
+     "target": "阿棠把一叠干纸放在桌角，鞋底带着早市的泥水。",
+     "actual": "阿棠把一叠干纸放在桌角,鞋底带着早市的泥水。",
+     "new_tokens": 21,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.00271
+    },
+    {
+     "sourceId": "n4n-68",
+     "callId": "n4n-68:g1",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "outcome",
+      "appearance_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "outcome",
+       "name": "韩渡",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "appearance_changed",
+       "name": "韩渡",
+       "pass": true
+      }
+     ],
+     "target": "韩渡把松脱的钟绳重新系紧，眉毛上的雾水更重了。",
+     "actual": "韩渡把松脱的钟绳重新系紧,眉毛上的雾水更重了。",
+     "new_tokens": 22,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.00202
+    },
+    {
+     "sourceId": "n4n-69",
+     "callId": "n4n-69:g1",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "outcome",
+      "appearance_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "outcome",
+       "name": "阿棠",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "appearance_changed",
+       "name": "阿棠",
+       "pass": true
+      }
+     ],
+     "target": "阿棠把一筐银鳞鱼搬上案板，辫梢沾了白汽。",
+     "actual": "阿棠把一筐银鳞鱼搬上案板,辫梢沾了白汽。",
+     "new_tokens": 21,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.001145
+    },
+    {
+     "sourceId": "n4n-70",
+     "callId": "n4n-70:g1",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "outcome",
+      "appearance_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "outcome",
+       "name": "叶知微",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "appearance_changed",
+       "name": "叶知微",
+       "pass": true
+      }
+     ],
+     "target": "叶知微把灯罩擦得透亮，袖口沾了铜油。",
+     "actual": "叶知微把灯罩擦得透亮,袖口沾了铜油。",
+     "new_tokens": 20,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.000847
+    },
+    {
+     "sourceId": "n4n-71",
+     "callId": "n4n-71:g1",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "outcome",
+      "appearance_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "outcome",
+       "name": "阿棠",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "appearance_changed",
+       "name": "阿棠",
+       "pass": true
+      }
+     ],
+     "target": "阿棠把一叠干纸放在桌角，鞋底带着早市的泥水。",
+     "actual": "阿棠把一叠干纸放在桌角,鞋底带着早市的泥水。",
+     "new_tokens": 21,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.00271
+    },
+    {
+     "sourceId": "n4n-72",
+     "callId": "n4n-72:g1",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "outcome",
+      "appearance_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "outcome",
+       "name": "韩渡",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "appearance_changed",
+       "name": "韩渡",
+       "pass": true
+      }
+     ],
+     "target": "韩渡把松脱的钟绳重新系紧，眉毛上的雾水更重了。",
+     "actual": "韩渡把松脱的钟绳重新系紧,眉毛上的雾水更重了。",
+     "new_tokens": 22,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.00202
+    },
+    {
+     "sourceId": "n4n-76",
+     "callId": "n4n-76:g1",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "outcome",
+      "appearance_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "outcome",
+       "name": "韩渡",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "appearance_changed",
+       "name": "韩渡",
+       "pass": true
+      }
+     ],
+     "target": "韩渡把松脱的钟绳重新系紧，眉毛上的雾水更重了。",
+     "actual": "韩渡把松脱的钟绳重新系紧,眉毛上的雾水更重了。",
+     "new_tokens": 22,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.00202
+    },
+    {
+     "sourceId": "n4n-77",
+     "callId": "n4n-77:g1",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "moved",
+      "outcome"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "moved",
+       "name": "叶知微",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "outcome",
+       "name": "叶知微",
+       "pass": true
+      }
+     ],
+     "target": "叶知微从潮渡走到旧灯塔，把灯罩擦得透亮。",
+     "actual": "叶知微从潮渡走到旧灯塔,把灯罩擦得透亮。",
+     "new_tokens": 21,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.002932
+    },
+    {
+     "sourceId": "n4n-78",
+     "callId": "n4n-78:g1",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "moved",
+      "outcome"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "moved",
+       "name": "阿棠",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "outcome",
+       "name": "阿棠",
+       "pass": true
+      }
+     ],
+     "target": "阿棠从早市走到潮汐档案馆，把一叠干纸放在桌角。",
+     "actual": "阿棠从早市走到潮汐档案馆,把一叠干纸放在桌角。",
+     "new_tokens": 21,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.014353
+    },
+    {
+     "sourceId": "n4n-79",
+     "callId": "n4n-79:g1",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "moved",
+      "outcome"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "moved",
+       "name": "韩渡",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "outcome",
+       "name": "韩渡",
+       "pass": true
+      }
+     ],
+     "target": "韩渡从潮渡走到雾堤，把松脱的钟绳重新系紧。",
+     "actual": "韩渡从潮渡走到雾堤,把松脱的钟绳重新系紧。",
+     "new_tokens": 20,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.007066
+    },
+    {
+     "sourceId": "n4n-80",
+     "callId": "n4n-80:g1",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "moved",
+      "outcome"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "moved",
+       "name": "阿棠",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "outcome",
+       "name": "阿棠",
+       "pass": true
+      }
+     ],
+     "target": "阿棠从潮生巷走到早市，把一筐银鳞鱼搬上案板。",
+     "actual": "阿棠从潮生巷走到早市,把一筐银鳞鱼搬上案板。",
+     "new_tokens": 22,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.00436
+    },
+    {
+     "sourceId": "n4n-81",
+     "callId": "n4n-81:g1",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "moved",
+      "outcome"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "moved",
+       "name": "叶知微",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "outcome",
+       "name": "叶知微",
+       "pass": true
+      }
+     ],
+     "target": "叶知微从潮渡走到旧灯塔，把灯罩擦得透亮。",
+     "actual": "叶知微从潮渡走到旧灯塔,把灯罩擦得透亮。",
+     "new_tokens": 21,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.002932
+    },
+    {
+     "sourceId": "n4n-82",
+     "callId": "n4n-82:g1",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "moved",
+      "outcome"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "moved",
+       "name": "阿棠",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "outcome",
+       "name": "阿棠",
+       "pass": true
+      }
+     ],
+     "target": "阿棠从早市走到潮汐档案馆，把一叠干纸放在桌角。",
+     "actual": "阿棠从早市走到潮汐档案馆,把一叠干纸放在桌角。",
+     "new_tokens": 21,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.014353
+    },
+    {
+     "sourceId": "t02",
+     "callId": "t02:g1",
+     "size": 3,
+     "relation": "same",
+     "kinds": [
+      "outcome",
+      "appearance_changed",
+      "outcome"
+     ],
+     "facts": [
+      "f0",
+      "f1",
+      "f2"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 3,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "outcome",
+       "name": "阿棠",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "appearance_changed",
+       "name": "阿棠",
+       "pass": true
+      },
+      {
+       "factId": "f2",
+       "kind": "outcome",
+       "name": "阿棠",
+       "pass": true
+      }
+     ],
+     "target": "阿棠把银鳞鱼按大小分开装进两只鱼筐，袖口沾了鱼鳞，把空鱼筐摞到摊棚边上。",
+     "actual": "阿棠把银鳞鱼按大小分开装进两只鱼筐,袖口沾了鱼鳞,把空鱼筐摞到摊棚边上。",
+     "new_tokens": 36,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.006497
+    },
+    {
+     "sourceId": "t04",
+     "callId": "t04:g1",
+     "size": 3,
+     "relation": "same",
+     "kinds": [
+      "outcome",
+      "outcome",
+      "appearance_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1",
+      "f2"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 3,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "outcome",
+       "name": "顾行舟",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "outcome",
+       "name": "顾行舟",
+       "pass": true
+      },
+      {
+       "factId": "f2",
+       "kind": "appearance_changed",
+       "name": "顾行舟",
+       "pass": true
+      }
+     ],
+     "target": "顾行舟把缆绳在木桩上绕了三圈，把渡船推离栈桥，外袍下摆被雾水打湿。",
+     "actual": "顾行舟把缆绳在木桩上绕了三圈,把渡船推离栈桥,外袍下摆被雾水打湿。",
+     "new_tokens": 35,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.003529
+    },
+    {
+     "sourceId": "t06",
+     "callId": "t06:g1",
+     "size": 3,
+     "relation": "same",
+     "kinds": [
+      "outcome",
+      "outcome",
+      "appearance_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1",
+      "f2"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 3,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "outcome",
+       "name": "沈砚",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "outcome",
+       "name": "沈砚",
+       "pass": true
+      },
+      {
+       "factId": "f2",
+       "kind": "appearance_changed",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "沈砚把油纸伞收拢靠在墙根，把被风吹歪的纸灯笼扶正，鞋底沾了湿石板的水。",
+     "actual": "沈砚把油纸伞收拢靠在墙根,把被风吹歪的纸灯笼扶正,鞋底沾了湿石板的水。",
+     "new_tokens": 36,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.021538
+    },
+    {
+     "sourceId": "t10",
+     "callId": "t10:g1",
+     "size": 2,
+     "relation": "cross",
+     "kinds": [
+      "outcome",
+      "outcome"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "outcome",
+       "name": "顾行舟",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "outcome",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "顾行舟把渡船系在栈桥的木桩上，沈砚把系泊绳从浅滩拖回岸上。",
+     "actual": "顾行舟把渡船系在栈桥的木桩上,沈砚把系泊绳从浅滩拖回岸上。",
+     "new_tokens": 31,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.006521
+    },
+    {
+     "sourceId": "t10",
+     "callId": "t10:g2",
+     "size": 2,
+     "relation": "cross",
+     "kinds": [
+      "appearance_changed",
+      "sanity_changed"
+     ],
+     "facts": [
+      "f2",
+      "f3"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f2",
+       "kind": "appearance_changed",
+       "name": "顾行舟",
+       "pass": true
+      },
+      {
+       "factId": "f3",
+       "kind": "sanity_changed",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "顾行舟的外袍下摆被雾水打湿，沈砚心里发紧。",
+     "actual": "顾行舟的外袍下摆被雾水打湿,沈砚心里发紧。",
+     "new_tokens": 22,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.044784
+    },
+    {
+     "sourceId": "t11",
+     "callId": "t11:g1",
+     "size": 2,
+     "relation": "cross",
+     "kinds": [
+      "moved",
+      "outcome"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "moved",
+       "name": "沈砚",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "outcome",
+       "name": "叶知微",
+       "pass": true
+      }
+     ],
+     "target": "沈砚从潮生巷走到旧灯塔，叶知微把灯罩擦得透亮。",
+     "actual": "沈砚从潮生巷走到旧灯塔,叶知微把灯罩擦得透亮。",
+     "new_tokens": 24,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.007764
+    },
+    {
+     "sourceId": "t11",
+     "callId": "t11:g2",
+     "size": 2,
+     "relation": "cross",
+     "kinds": [
+      "outcome",
+      "appearance_changed"
+     ],
+     "facts": [
+      "f2",
+      "f3"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f2",
+       "kind": "outcome",
+       "name": "沈砚",
+       "pass": true
+      },
+      {
+       "factId": "f3",
+       "kind": "appearance_changed",
+       "name": "叶知微",
+       "pass": true
+      }
+     ],
+     "target": "沈砚换好塔顶的灯芯，叶知微的袖口沾了铜油。",
+     "actual": "沈砚换好塔顶的灯芯,叶知微的袖口沾了铜油。",
+     "new_tokens": 23,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.000973
+    },
+    {
+     "sourceId": "t12",
+     "callId": "t12:g1",
+     "size": 2,
+     "relation": "cross",
+     "kinds": [
+      "moved",
+      "outcome"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "moved",
+       "name": "阿棠",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "outcome",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "阿棠从早市走到潮生巷，沈砚把油纸伞收拢靠在墙根。",
+     "actual": "阿棠从早市走到潮生巷,沈砚把油纸伞收拢靠在墙根。",
+     "new_tokens": 24,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.01217
+    },
+    {
+     "sourceId": "t12",
+     "callId": "t12:g2",
+     "size": 2,
+     "relation": "cross",
+     "kinds": [
+      "outcome",
+      "appearance_changed"
+     ],
+     "facts": [
+      "f2",
+      "f3"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f2",
+       "kind": "outcome",
+       "name": "阿棠",
+       "pass": true
+      },
+      {
+       "factId": "f3",
+       "kind": "appearance_changed",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "阿棠把鱼筐放在门槛边，沈砚的鞋底沾了湿石板的水。",
+     "actual": "阿棠把鱼筐放在门槛边,沈砚的鞋底沾了湿石板的水。",
+     "new_tokens": 23,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.005789
+    },
+    {
+     "sourceId": "t14",
+     "callId": "t14:g1",
+     "size": 3,
+     "relation": "same",
+     "kinds": [
+      "moved",
+      "outcome",
+      "appearance_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1",
+      "f2"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 3,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "moved",
+       "name": "顾行舟",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "outcome",
+       "name": "顾行舟",
+       "pass": true
+      },
+      {
+       "factId": "f2",
+       "kind": "appearance_changed",
+       "name": "顾行舟",
+       "pass": true
+      }
+     ],
+     "target": "顾行舟从潮渡走到雾堤，把缆绳绕在钟架上，外袍下摆被雾水打湿。",
+     "actual": "顾行舟从潮渡走到雾堤,把缆绳绕在钟架上,外袍下摆被雾水打湿。",
+     "new_tokens": 31,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.00405
+    },
+    {
+     "sourceId": "t15",
+     "callId": "t15:g1",
+     "size": 3,
+     "relation": "same",
+     "kinds": [
+      "moved",
+      "outcome",
+      "appearance_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1",
+      "f2"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 3,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "moved",
+       "name": "韩渡",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "outcome",
+       "name": "韩渡",
+       "pass": true
+      },
+      {
+       "factId": "f2",
+       "kind": "appearance_changed",
+       "name": "韩渡",
+       "pass": true
+      }
+     ],
+     "target": "韩渡从潮生巷走到潮渡，把渡船推离栈桥，手背沾着盐沫。",
+     "actual": "韩渡从潮生巷走到潮渡,把渡船推离栈桥,手背沾着盐沫。",
+     "new_tokens": 26,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.007899
+    },
+    {
+     "sourceId": "t16",
+     "callId": "t16:g1",
+     "size": 3,
+     "relation": "same",
+     "kinds": [
+      "moved",
+      "outcome",
+      "sanity_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1",
+      "f2"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 3,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "moved",
+       "name": "沈砚",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "outcome",
+       "name": "沈砚",
+       "pass": true
+      },
+      {
+       "factId": "f2",
+       "kind": "sanity_changed",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "沈砚从潮汐档案馆走到潮生巷，把备用钥匙塞进油布包的内层，心里发紧。",
+     "actual": "沈砚从潮汐档案馆走到潮生巷,把备用钥匙塞进油布包的内层,心里发紧。",
+     "new_tokens": 31,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.033369
+    },
+    {
+     "sourceId": "t17",
+     "callId": "t17:g1",
+     "size": 3,
+     "relation": "same",
+     "kinds": [
+      "moved",
+      "outcome",
+      "appearance_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1",
+      "f2"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 3,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "moved",
+       "name": "阿棠",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "outcome",
+       "name": "阿棠",
+       "pass": true
+      },
+      {
+       "factId": "f2",
+       "kind": "appearance_changed",
+       "name": "阿棠",
+       "pass": true
+      }
+     ],
+     "target": "阿棠从潮生巷走到早市，把银鳞鱼搬上案板，辫梢沾了白汽。",
+     "actual": "阿棠从潮生巷走到早市,把银鳞鱼搬上案板,辫梢沾了白汽。",
+     "new_tokens": 27,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.004737
+    },
+    {
+     "sourceId": "t18",
+     "callId": "t18:g1",
+     "size": 4,
+     "relation": "same",
+     "kinds": [
+      "moved",
+      "outcome",
+      "appearance_changed",
+      "outcome"
+     ],
+     "facts": [
+      "f0",
+      "f1",
+      "f2",
+      "f3"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 4,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "moved",
+       "name": "叶知微",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "outcome",
+       "name": "叶知微",
+       "pass": true
+      },
+      {
+       "factId": "f2",
+       "kind": "appearance_changed",
+       "name": "叶知微",
+       "pass": true
+      },
+      {
+       "factId": "f3",
+       "kind": "outcome",
+       "name": "叶知微",
+       "pass": true
+      }
+     ],
+     "target": "叶知微从潮渡走到旧灯塔，把灯罩擦得透亮，袖口沾了铜油，把抹布搭回梯脚。",
+     "actual": "叶知微从潮渡走到旧灯塔,把灯罩擦得透亮,袖口沾了铜油,把抹布搭回梯脚。",
+     "new_tokens": 36,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.005621
+    },
+    {
+     "sourceId": "t20",
+     "callId": "t20:g1",
+     "size": 2,
+     "relation": "cross",
+     "kinds": [
+      "appearance_changed",
+      "appearance_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "appearance_changed",
+       "name": "警示灯",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "appearance_changed",
+       "name": "钟绳",
+       "pass": true
+      }
+     ],
+     "target": "警示灯铜框玻璃罩被风吹歪，钟绳磨出了毛边。",
+     "actual": "警示灯铜框玻璃罩被风吹歪,钟绳磨出了毛边。",
+     "new_tokens": 21,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.000724
+    },
+    {
+     "sourceId": "t20",
+     "callId": "t20:g2",
+     "size": 2,
+     "relation": "cross",
+     "kinds": [
+      "outcome",
+      "outcome"
+     ],
+     "facts": [
+      "f2",
+      "f3"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f2",
+       "kind": "outcome",
+       "name": "沈砚",
+       "pass": true
+      },
+      {
+       "factId": "f3",
+       "kind": "outcome",
+       "name": "韩渡",
+       "pass": true
+      }
+     ],
+     "target": "沈砚把警示灯扶正，韩渡把钟绳重新绕在钟架上。",
+     "actual": "沈砚把警示灯扶正,韩渡把钟绳重新绕在钟架上。",
+     "new_tokens": 23,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.005366
+    },
+    {
+     "sourceId": "t23",
+     "callId": "t23:g1",
+     "size": 2,
+     "relation": "cross",
+     "kinds": [
+      "appearance_changed",
+      "appearance_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "appearance_changed",
+       "name": "铜灯罩",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "appearance_changed",
+       "name": "铁链",
+       "pass": true
+      }
+     ],
+     "target": "铜灯罩的玻璃上蒙了盐雾，铁链的链环上结了锈。",
+     "actual": "铜灯罩的玻璃上蒙了盐雾,铁链的链环上结了锈。",
+     "new_tokens": 23,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.034713
+    },
+    {
+     "sourceId": "t23",
+     "callId": "t23:g2",
+     "size": 2,
+     "relation": "cross",
+     "kinds": [
+      "outcome",
+      "outcome"
+     ],
+     "facts": [
+      "f2",
+      "f3"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f2",
+       "kind": "outcome",
+       "name": "叶知微",
+       "pass": true
+      },
+      {
+       "factId": "f3",
+       "kind": "outcome",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "叶知微把灯罩擦得透亮，沈砚换好塔顶的灯芯。",
+     "actual": "叶知微把灯罩擦得透亮,沈砚换好塔顶的灯芯。",
+     "new_tokens": 23,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.000872
+    },
+    {
+     "sourceId": "train-r2",
+     "callId": "train-r2:g1",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "appearance_changed",
+      "appearance_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "appearance_changed",
+       "name": "沈砚",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "appearance_changed",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "沈砚的灯罩蒙了灰，掌心出汗。",
+     "actual": "沈砚的灯罩蒙了灰,掌心出汗。",
+     "new_tokens": 16,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.001734
+    },
+    {
+     "sourceId": "train-r2",
+     "callId": "train-r2:g2",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "appearance_changed"
+     ],
+     "facts": [
+      "f2"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f2",
+       "kind": "appearance_changed",
+       "name": "顾行舟",
+       "pass": true
+      }
+     ],
+     "target": "顾行舟的钟绳磨出了毛边。",
+     "actual": "顾行舟的钟绳磨出了毛边。",
+     "new_tokens": 13,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.003726
+    },
+    {
+     "sourceId": "train-r2",
+     "callId": "train-r2:g3",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "appearance_changed"
+     ],
+     "facts": [
+      "f3"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f3",
+       "kind": "appearance_changed",
+       "name": "叶知微",
+       "pass": true
+      }
+     ],
+     "target": "叶知微的衣角结了盐霜。",
+     "actual": "叶知微的衣角结了盐霜。",
+     "new_tokens": 13,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.00148
+    },
+    {
+     "sourceId": "train-r2",
+     "callId": "train-r2:g4",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "appearance_changed"
+     ],
+     "facts": [
+      "f4"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f4",
+       "kind": "appearance_changed",
+       "name": "叶知微",
+       "pass": true
+      }
+     ],
+     "target": "叶知微的鬓发被雾打湿。",
+     "actual": "叶知微的鬓发被雾打湿。",
+     "new_tokens": 13,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.001164
+    },
+    {
+     "sourceId": "train-r3",
+     "callId": "train-r3:g1",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "appearance_changed",
+      "appearance_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "appearance_changed",
+       "name": "沈砚",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "appearance_changed",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "沈砚的衣襟被雨打湿了半幅，袖口开了线。",
+     "actual": "沈砚的衣襟被雨打湿了半幅,袖口开了线。",
+     "new_tokens": 20,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.048684
+    },
+    {
+     "sourceId": "train-r3",
+     "callId": "train-r3:g2",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "appearance_changed"
+     ],
+     "facts": [
+      "f2"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f2",
+       "kind": "appearance_changed",
+       "name": "顾行舟",
+       "pass": true
+      }
+     ],
+     "target": "顾行舟的指缝里塞着泥。",
+     "actual": "顾行舟的指缝里塞着泥。",
+     "new_tokens": 13,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.003111
+    },
+    {
+     "sourceId": "train-r3",
+     "callId": "train-r3:g3",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "appearance_changed"
+     ],
+     "facts": [
+      "f3"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f3",
+       "kind": "appearance_changed",
+       "name": "叶知微",
+       "pass": true
+      }
+     ],
+     "target": "叶知微的鞋跟磨塌了。",
+     "actual": "叶知微的鞋跟磨塌了。",
+     "new_tokens": 12,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.002964
+    },
+    {
+     "sourceId": "train-r3",
+     "callId": "train-r3:g4",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "appearance_changed"
+     ],
+     "facts": [
+      "f4"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f4",
+       "kind": "appearance_changed",
+       "name": "叶知微",
+       "pass": true
+      }
+     ],
+     "target": "叶知微的裤脚沾了铜油。",
+     "actual": "叶知微的裤脚沾了铜油。",
+     "new_tokens": 13,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.001023
+    },
+    {
+     "sourceId": "train-r5",
+     "callId": "train-r5:g1",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "appearance_changed",
+      "appearance_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "appearance_changed",
+       "name": "沈砚",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "appearance_changed",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "沈砚的帽檐压出折痕，脚踝肿了一块。",
+     "actual": "沈砚的帽檐压出折痕,脚踝肿了一块。",
+     "new_tokens": 18,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.009185
+    },
+    {
+     "sourceId": "train-r5",
+     "callId": "train-r5:g2",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "appearance_changed"
+     ],
+     "facts": [
+      "f2"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f2",
+       "kind": "appearance_changed",
+       "name": "顾行舟",
+       "pass": true
+      }
+     ],
+     "target": "顾行舟的衣领被雨浸透。",
+     "actual": "顾行舟的衣领被雨浸透。",
+     "new_tokens": 12,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.009995
+    },
+    {
+     "sourceId": "train-r5",
+     "callId": "train-r5:g3",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "appearance_changed"
+     ],
+     "facts": [
+      "f3"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f3",
+       "kind": "appearance_changed",
+       "name": "叶知微",
+       "pass": true
+      }
+     ],
+     "target": "叶知微的指尖磨出茧。",
+     "actual": "叶知微的指尖磨出茧。",
+     "new_tokens": 12,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.003559
+    },
+    {
+     "sourceId": "train-r5",
+     "callId": "train-r5:g4",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "appearance_changed"
+     ],
+     "facts": [
+      "f4"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f4",
+       "kind": "appearance_changed",
+       "name": "叶知微",
+       "pass": true
+      }
+     ],
+     "target": "叶知微的膝盖沾了泥。",
+     "actual": "叶知微的膝盖沾了泥。",
+     "new_tokens": 12,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.000697
+    },
+    {
+     "sourceId": "v03",
+     "callId": "v03:g1",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "outcome"
+     ],
+     "facts": [
+      "f0"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "outcome",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "沈砚把潮汐簿缺的那页补全。",
+     "actual": "沈砚把潮汐簿缺的那页补全。",
+     "new_tokens": 14,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.001445
+    },
+    {
+     "sourceId": "v03",
+     "callId": "v03:g2",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "outcome"
+     ],
+     "facts": [
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f1",
+       "kind": "outcome",
+       "name": "叶知微",
+       "pass": true
+      }
+     ],
+     "target": "叶知微把干纸码成一小摞。",
+     "actual": "叶知微把干纸码成一小摞。",
+     "new_tokens": 14,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.001
+    },
+    {
+     "sourceId": "v03",
+     "callId": "v03:g3",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "appearance_changed"
+     ],
+     "facts": [
+      "f2"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f2",
+       "kind": "appearance_changed",
+       "name": "叶知微",
+       "pass": true
+      }
+     ],
+     "target": "叶知微的指尖沾了墨。",
+     "actual": "叶知微的指尖沾了墨。",
+     "new_tokens": 12,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.002886
+    },
+    {
+     "sourceId": "v03",
+     "callId": "v03:g4",
+     "size": 1,
+     "relation": "unknown",
+     "kinds": [
+      "no_change"
+     ],
+     "facts": [
+      "f3"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f3",
+       "kind": "no_change",
+       "name": null,
+       "pass": true
+      }
+     ],
+     "target": "什么也没有再发生。",
+     "actual": "什么也没有再发生。",
+     "new_tokens": 7,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.002568
+    },
+    {
+     "sourceId": "v04",
+     "callId": "v04:g1",
+     "size": 2,
+     "relation": "cross",
+     "kinds": [
+      "outcome",
+      "outcome"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "outcome",
+       "name": "顾行舟",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "outcome",
+       "name": "韩渡",
+       "pass": true
+      }
+     ],
+     "target": "顾行舟把渡船系在栈桥的木桩上，韩渡把系泊绳收成一卷。",
+     "actual": "顾行舟把渡船系在栈桥的木桩上,韩渡把系泊绳收成一卷。",
+     "new_tokens": 28,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.004953
+    },
+    {
+     "sourceId": "v04",
+     "callId": "v04:g2",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "appearance_changed"
+     ],
+     "facts": [
+      "f2"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f2",
+       "kind": "appearance_changed",
+       "name": "韩渡",
+       "pass": true
+      }
+     ],
+     "target": "韩渡的手背上沾了盐沫。",
+     "actual": "韩渡的手背上沾了盐沫。",
+     "new_tokens": 11,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.001597
+    },
+    {
+     "sourceId": "v06",
+     "callId": "v06:g1",
+     "size": 2,
+     "relation": "cross",
+     "kinds": [
+      "appearance_changed",
+      "appearance_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "appearance_changed",
+       "name": "阿棠",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "appearance_changed",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "阿棠的鞋底沾了湿石板的水，沈砚的袖口沾了雨。",
+     "actual": "阿棠的鞋底沾了湿石板的水,沈砚的袖口沾了雨。",
+     "new_tokens": 22,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.001084
+    },
+    {
+     "sourceId": "v06",
+     "callId": "v06:g2",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "outcome"
+     ],
+     "facts": [
+      "f2"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f2",
+       "kind": "outcome",
+       "name": "阿棠",
+       "pass": true
+      }
+     ],
+     "target": "阿棠把纸灯笼扶正。",
+     "actual": "阿棠把纸灯笼扶正。",
+     "new_tokens": 10,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.000826
+    },
+    {
+     "sourceId": "v08",
+     "callId": "v08:g1",
+     "size": 2,
+     "relation": "cross",
+     "kinds": [
+      "appearance_changed",
+      "appearance_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "appearance_changed",
+       "name": "警示灯",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "appearance_changed",
+       "name": "钟绳",
+       "pass": true
+      }
+     ],
+     "target": "警示灯的玻璃罩被风吹歪，钟绳磨出了毛边。",
+     "actual": "警示灯玻璃罩被风吹歪,钟绳磨出了毛边。",
+     "new_tokens": 19,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.104792
+    },
+    {
+     "sourceId": "v08",
+     "callId": "v08:g2",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "outcome"
+     ],
+     "facts": [
+      "f2"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f2",
+       "kind": "outcome",
+       "name": "韩渡",
+       "pass": true
+      }
+     ],
+     "target": "韩渡把钟绳重新绕在钟架上。",
+     "actual": "韩渡把钟绳重新绕在钟架上。",
+     "new_tokens": 13,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.001565
+    },
+    {
+     "sourceId": "v09",
+     "callId": "v09:g1",
+     "size": 2,
+     "relation": "cross",
+     "kinds": [
+      "appearance_changed",
+      "appearance_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "appearance_changed",
+       "name": "鱼筐",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "appearance_changed",
+       "name": "案板",
+       "pass": true
+      }
+     ],
+     "target": "鱼筐的边沿沾着鱼鳞，案板的边沿沾着鱼鳞。",
+     "actual": "鱼筐的边沿沾着鱼鳞,案板的边沿沾着鱼鳞。",
+     "new_tokens": 22,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.006758
+    },
+    {
+     "sourceId": "v09",
+     "callId": "v09:g2",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "outcome"
+     ],
+     "facts": [
+      "f2"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f2",
+       "kind": "outcome",
+       "name": "阿棠",
+       "pass": true
+      }
+     ],
+     "target": "阿棠把银鳞鱼装进鱼筐。",
+     "actual": "阿棠把银鳞鱼装进鱼筐。",
+     "new_tokens": 12,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.001
+    },
+    {
+     "sourceId": "v10",
+     "callId": "v10:g1",
+     "size": 2,
+     "relation": "cross",
+     "kinds": [
+      "appearance_changed",
+      "appearance_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "appearance_changed",
+       "name": "铁链",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "appearance_changed",
+       "name": "铜灯罩",
+       "pass": true
+      }
+     ],
+     "target": "铁链的链环上结了锈，铜灯罩的玻璃上蒙了盐雾。",
+     "actual": "铁链的链环上结了锈,铜灯罩的玻璃上蒙了盐雾。",
+     "new_tokens": 23,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.00945
+    },
+    {
+     "sourceId": "v10",
+     "callId": "v10:g2",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "outcome"
+     ],
+     "facts": [
+      "f2"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f2",
+       "kind": "outcome",
+       "name": "叶知微",
+       "pass": true
+      }
+     ],
+     "target": "叶知微把擦铜油放回梯脚。",
+     "actual": "叶知微把擦铜油放回梯脚。",
+     "new_tokens": 14,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.000781
+    },
+    {
+     "sourceId": "v11",
+     "callId": "v11:g1",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "moved",
+      "outcome"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "moved",
+       "name": "沈砚",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "outcome",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "沈砚从潮生巷走到潮汐档案馆，把铜灯挪到门槛边。",
+     "actual": "沈砚从潮生巷走到潮汐档案馆,把铜灯挪到门槛边。",
+     "new_tokens": 23,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.003629
+    },
+    {
+     "sourceId": "v11",
+     "callId": "v11:g2",
+     "size": 1,
+     "relation": "unknown",
+     "kinds": [
+      "no_change"
+     ],
+     "facts": [
+      "f2"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f2",
+       "kind": "no_change",
+       "name": null,
+       "pass": true
+      }
+     ],
+     "target": "什么也没有再发生。",
+     "actual": "什么也没有再发生。",
+     "new_tokens": 7,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.002648
+    },
+    {
+     "sourceId": "v11",
+     "callId": "v11:g3",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "appearance_changed"
+     ],
+     "facts": [
+      "f3"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f3",
+       "kind": "appearance_changed",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "沈砚的袖口沾了墨。",
+     "actual": "沈砚的袖口沾了墨。",
+     "new_tokens": 11,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.002329
+    },
+    {
+     "sourceId": "v17",
+     "callId": "v17:g1",
+     "size": 3,
+     "relation": "same",
+     "kinds": [
+      "outcome",
+      "outcome",
+      "appearance_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1",
+      "f2"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 3,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "outcome",
+       "name": "叶知微",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "outcome",
+       "name": "叶知微",
+       "pass": true
+      },
+      {
+       "factId": "f2",
+       "kind": "appearance_changed",
+       "name": "叶知微",
+       "pass": true
+      }
+     ],
+     "target": "叶知微把灯芯收进铜灯罩底下，把油壶搁在铜灯罩上，指尖沾了铜油。",
+     "actual": "叶知微把灯芯收进铜灯罩底下,把油壶搁在铜灯罩上,指尖沾了铜油。",
+     "new_tokens": 33,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.002799
+    },
+    {
+     "sourceId": "v19",
+     "callId": "v19:g1",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "outcome",
+      "sanity_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "outcome",
+       "name": "叶知微",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "sanity_changed",
+       "name": "叶知微",
+       "pass": true
+      }
+     ],
+     "target": "叶知微把干纸放在桌角，心里发紧。",
+     "actual": "叶知微把干纸放在桌角,心里发紧。",
+     "new_tokens": 16,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.010984
+    },
+    {
+     "sourceId": "v19",
+     "callId": "v19:g2",
+     "size": 1,
+     "relation": "unknown",
+     "kinds": [
+      "no_change"
+     ],
+     "facts": [
+      "f2"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f2",
+       "kind": "no_change",
+       "name": null,
+       "pass": true
+      }
+     ],
+     "target": "什么也没有再发生。",
+     "actual": "什么也没有再发生。",
+     "new_tokens": 7,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.002554
+    },
+    {
+     "sourceId": "v22",
+     "callId": "v22:g1",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "outcome"
+     ],
+     "facts": [
+      "f0"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "outcome",
+       "name": "阿棠",
+       "pass": true
+      }
+     ],
+     "target": "阿棠把鱼筐放在门槛边。",
+     "actual": "阿棠把鱼筐放在门槛边。",
+     "new_tokens": 11,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.00056
+    },
+    {
+     "sourceId": "v22",
+     "callId": "v22:g2",
+     "size": 1,
+     "relation": "unknown",
+     "kinds": [
+      "no_change"
+     ],
+     "facts": [
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f1",
+       "kind": "no_change",
+       "name": null,
+       "pass": true
+      }
+     ],
+     "target": "什么也没有再发生。",
+     "actual": "什么也没有再发生。",
+     "new_tokens": 7,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.015649
+    },
+    {
+     "sourceId": "v22",
+     "callId": "v22:g3",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "appearance_changed"
+     ],
+     "facts": [
+      "f2"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f2",
+       "kind": "appearance_changed",
+       "name": "阿棠",
+       "pass": true
+      }
+     ],
+     "target": "阿棠的鞋底沾了湿石板的水。",
+     "actual": "阿棠的鞋底沾了湿石板的水。",
+     "new_tokens": 13,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.000603
+    }
+   ]
+  },
+  "fixed": {
+   "summary": {
+    "calls": 25,
+    "calls_pass": 25,
+    "calls_fail": 0,
+    "facts": 31,
+    "facts_pass": 31,
+    "facts_fail": 0,
+    "by_size": {
+     "1": {
+      "calls": 19,
+      "calls_pass": 19,
+      "calls_fail": 0,
+      "facts": 19,
+      "facts_pass": 19,
+      "facts_fail": 0
+     },
+     "2": {
+      "calls": 6,
+      "calls_pass": 6,
+      "calls_fail": 0,
+      "facts": 12,
+      "facts_pass": 12,
+      "facts_fail": 0
+     }
+    },
+    "by_relation": {
+     "same": {
+      "calls": 21,
+      "calls_pass": 21,
+      "calls_fail": 0,
+      "facts": 27,
+      "facts_pass": 27,
+      "facts_fail": 0
+     },
+     "unknown": {
+      "calls": 4,
+      "calls_pass": 4,
+      "calls_fail": 0,
+      "facts": 4,
+      "facts_pass": 4,
+      "facts_fail": 0
+     }
+    },
+    "by_kind": {
+     "moved": {
+      "facts": 9,
+      "facts_pass": 9,
+      "facts_fail": 0,
+      "calls_with_kind": 9,
+      "calls_with_fail": 0
+     },
+     "personality_changed": {
+      "facts": 1,
+      "facts_pass": 1,
+      "facts_fail": 0,
+      "calls_with_kind": 1,
+      "calls_with_fail": 0
+     },
+     "no_change": {
+      "facts": 4,
+      "facts_pass": 4,
+      "facts_fail": 0,
+      "calls_with_kind": 4,
+      "calls_with_fail": 0
+     },
+     "outcome": {
+      "facts": 8,
+      "facts_pass": 8,
+      "facts_fail": 0,
+      "calls_with_kind": 8,
+      "calls_with_fail": 0
+     },
+     "sanity_changed": {
+      "facts": 2,
+      "facts_pass": 2,
+      "facts_fail": 0,
+      "calls_with_kind": 2,
+      "calls_with_fail": 0
+     },
+     "appearance_changed": {
+      "facts": 7,
+      "facts_pass": 7,
+      "facts_fail": 0,
+      "calls_with_kind": 7,
+      "calls_with_fail": 0
+     }
+    }
+   },
+   "calls": [
+    {
+     "sourceId": "n4n-109",
+     "callId": "n4n-109:g1",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "moved"
+     ],
+     "facts": [
+      "f0"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "moved",
+       "name": "韩渡",
+       "pass": true
+      }
+     ],
+     "target": "韩渡从潮渡走到雾堤。",
+     "actual": "韩渡从潮渡走到雾堤。",
+     "new_tokens": 10,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.001906
+    },
+    {
+     "sourceId": "n4n-109",
+     "callId": "n4n-109:g2",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "moved",
+      "personality_changed"
+     ],
+     "facts": [
+      "f1",
+      "f2"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f1",
+       "kind": "moved",
+       "name": "沈砚",
+       "pass": true
+      },
+      {
+       "factId": "f2",
+       "kind": "personality_changed",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "沈砚从潮渡走到雾堤，开始愿意先开口。",
+     "actual": "沈砚从潮渡走到雾堤,开始愿意先开口。",
+     "new_tokens": 17,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.002105
+    },
+    {
+     "sourceId": "n4n-120",
+     "callId": "n4n-120:g1",
+     "size": 1,
+     "relation": "unknown",
+     "kinds": [
+      "no_change"
+     ],
+     "facts": [
+      "f0"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "no_change",
+       "name": null,
+       "pass": true
+      }
+     ],
+     "target": "什么也没有再发生。",
+     "actual": "什么也没有再发生。",
+     "new_tokens": 7,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.003671
+    },
+    {
+     "sourceId": "n4n-40",
+     "callId": "n4n-40:g1",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "moved"
+     ],
+     "facts": [
+      "f0"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "moved",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "沈砚从潮生巷走到潮汐档案馆。",
+     "actual": "沈砚从潮生巷走到潮汐档案馆。",
+     "new_tokens": 14,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.003995
+    },
+    {
+     "sourceId": "n4n-43",
+     "callId": "n4n-43:g1",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "moved"
+     ],
+     "facts": [
+      "f0"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "moved",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "沈砚从潮渡走到潮生巷。",
+     "actual": "沈砚从潮渡走到潮生巷。",
+     "new_tokens": 12,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.039325
+    },
+    {
+     "sourceId": "n4n-53",
+     "callId": "n4n-53:g1",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "moved"
+     ],
+     "facts": [
+      "f0"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "moved",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "沈砚从潮生巷走到潮汐档案馆。",
+     "actual": "沈砚从潮生巷走到潮汐档案馆。",
+     "new_tokens": 14,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.003952
+    },
+    {
+     "sourceId": "n4n-53",
+     "callId": "n4n-53:g2",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "moved"
+     ],
+     "facts": [
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f1",
+       "kind": "moved",
+       "name": "阿棠",
+       "pass": true
+      }
+     ],
+     "target": "阿棠从早市走到潮汐档案馆。",
+     "actual": "阿棠从早市走到潮汐档案馆。",
+     "new_tokens": 12,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.001744
+    },
+    {
+     "sourceId": "n4n-54",
+     "callId": "n4n-54:g1",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "moved"
+     ],
+     "facts": [
+      "f0"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "moved",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "沈砚从潮渡走到雾堤。",
+     "actual": "沈砚从潮渡走到雾堤。",
+     "new_tokens": 11,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.001555
+    },
+    {
+     "sourceId": "n4n-54",
+     "callId": "n4n-54:g2",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "moved"
+     ],
+     "facts": [
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f1",
+       "kind": "moved",
+       "name": "韩渡",
+       "pass": true
+      }
+     ],
+     "target": "韩渡从潮渡走到雾堤。",
+     "actual": "韩渡从潮渡走到雾堤。",
+     "new_tokens": 10,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.001977
+    },
+    {
+     "sourceId": "n4n-64",
+     "callId": "n4n-64:g1",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "outcome",
+      "sanity_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "outcome",
+       "name": "沈砚",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "sanity_changed",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "沈砚把系泊绳从浅滩拖了回来，心里发紧。",
+     "actual": "沈砚把系泊绳从浅滩拖了回来,心里发紧。",
+     "new_tokens": 19,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.053672
+    },
+    {
+     "sourceId": "n4n-65",
+     "callId": "n4n-65:g1",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "outcome",
+      "sanity_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "outcome",
+       "name": "沈砚",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "sanity_changed",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "沈砚把潮汐簿缺的那页补全了，心里松快了些。",
+     "actual": "沈砚把潮汐簿缺的那页补全了,心里松快了些。",
+     "new_tokens": 21,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.009422
+    },
+    {
+     "sourceId": "n4n-74",
+     "callId": "n4n-74:g1",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "outcome",
+      "appearance_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "outcome",
+       "name": "叶知微",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "appearance_changed",
+       "name": "叶知微",
+       "pass": true
+      }
+     ],
+     "target": "叶知微把灯罩擦得透亮，袖口沾了铜油。",
+     "actual": "叶知微把灯罩擦得透亮,袖口沾了铜油。",
+     "new_tokens": 20,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.000847
+    },
+    {
+     "sourceId": "n4n-75",
+     "callId": "n4n-75:g1",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "outcome",
+      "appearance_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "outcome",
+       "name": "阿棠",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "appearance_changed",
+       "name": "阿棠",
+       "pass": true
+      }
+     ],
+     "target": "阿棠把一叠干纸放在桌角，鞋底带着早市的泥水。",
+     "actual": "阿棠把一叠干纸放在桌角,鞋底带着早市的泥水。",
+     "new_tokens": 21,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.00271
+    },
+    {
+     "sourceId": "n4n-87",
+     "callId": "n4n-87:g1",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "moved",
+      "outcome"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "moved",
+       "name": "韩渡",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "outcome",
+       "name": "韩渡",
+       "pass": true
+      }
+     ],
+     "target": "韩渡从潮渡走到雾堤，把松脱的钟绳重新系紧。",
+     "actual": "韩渡从潮渡走到雾堤,把松脱的钟绳重新系紧。",
+     "new_tokens": 20,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.007066
+    },
+    {
+     "sourceId": "n4n-98",
+     "callId": "n4n-98:g1",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "appearance_changed"
+     ],
+     "facts": [
+      "f0"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "appearance_changed",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "沈砚的鞋底沾了湿石板的水。",
+     "actual": "沈砚的鞋底沾了湿石板的水。",
+     "new_tokens": 14,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.002291
+    },
+    {
+     "sourceId": "v05",
+     "callId": "v05:g1",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "appearance_changed"
+     ],
+     "facts": [
+      "f0"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "appearance_changed",
+       "name": "叶知微",
+       "pass": true
+      }
+     ],
+     "target": "叶知微的袖口沾了铜油。",
+     "actual": "叶知微的袖口沾了铜油。",
+     "new_tokens": 13,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.001268
+    },
+    {
+     "sourceId": "v05",
+     "callId": "v05:g2",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "appearance_changed"
+     ],
+     "facts": [
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f1",
+       "kind": "appearance_changed",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "沈砚的手背上沾了铜油。",
+     "actual": "沈砚的手背上沾了铜油。",
+     "new_tokens": 12,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.001002
+    },
+    {
+     "sourceId": "v05",
+     "callId": "v05:g3",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "outcome"
+     ],
+     "facts": [
+      "f2"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f2",
+       "kind": "outcome",
+       "name": "叶知微",
+       "pass": true
+      }
+     ],
+     "target": "叶知微把灯罩擦得透亮。",
+     "actual": "叶知微把灯罩擦得透亮。",
+     "new_tokens": 13,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.000727
+    },
+    {
+     "sourceId": "v05",
+     "callId": "v05:g4",
+     "size": 1,
+     "relation": "unknown",
+     "kinds": [
+      "no_change"
+     ],
+     "facts": [
+      "f3"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f3",
+       "kind": "no_change",
+       "name": null,
+       "pass": true
+      }
+     ],
+     "target": "什么也没有再发生。",
+     "actual": "什么也没有再发生。",
+     "new_tokens": 7,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.002457
+    },
+    {
+     "sourceId": "v21",
+     "callId": "v21:g1",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "outcome"
+     ],
+     "facts": [
+      "f0"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "outcome",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "沈砚把铜灯挪到长桌另一头。",
+     "actual": "沈砚把铜灯挪到长桌另一头。",
+     "new_tokens": 14,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.001623
+    },
+    {
+     "sourceId": "v21",
+     "callId": "v21:g2",
+     "size": 1,
+     "relation": "unknown",
+     "kinds": [
+      "no_change"
+     ],
+     "facts": [
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f1",
+       "kind": "no_change",
+       "name": null,
+       "pass": true
+      }
+     ],
+     "target": "什么也没有再发生。",
+     "actual": "什么也没有再发生。",
+     "new_tokens": 7,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.002662
+    },
+    {
+     "sourceId": "v21",
+     "callId": "v21:g3",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "appearance_changed"
+     ],
+     "facts": [
+      "f2"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f2",
+       "kind": "appearance_changed",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "沈砚的指尖沾了墨。",
+     "actual": "沈砚的指尖沾了墨。",
+     "new_tokens": 11,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.006703
+    },
+    {
+     "sourceId": "v24",
+     "callId": "v24:g1",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "outcome"
+     ],
+     "facts": [
+      "f0"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "outcome",
+       "name": "韩渡",
+       "pass": true
+      }
+     ],
+     "target": "韩渡把钟绳解开。",
+     "actual": "韩渡把钟绳解开。",
+     "new_tokens": 9,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.003258
+    },
+    {
+     "sourceId": "v24",
+     "callId": "v24:g2",
+     "size": 1,
+     "relation": "unknown",
+     "kinds": [
+      "no_change"
+     ],
+     "facts": [
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f1",
+       "kind": "no_change",
+       "name": null,
+       "pass": true
+      }
+     ],
+     "target": "什么也没有再发生。",
+     "actual": "什么也没有再发生。",
+     "new_tokens": 7,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.163941
+    },
+    {
+     "sourceId": "v24",
+     "callId": "v24:g3",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "appearance_changed"
+     ],
+     "facts": [
+      "f2"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f2",
+       "kind": "appearance_changed",
+       "name": "韩渡",
+       "pass": true
+      }
+     ],
+     "target": "韩渡的手背上沾了盐沫。",
+     "actual": "韩渡的手背上沾了盐沫。",
+     "new_tokens": 11,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.001778
+    }
+   ]
+  },
+  "regression": {
+   "summary": {
+    "calls": 20,
+    "calls_pass": 19,
+    "calls_fail": 1,
+    "facts": 37,
+    "facts_pass": 36,
+    "facts_fail": 1,
+    "by_size": {
+     "2": {
+      "calls": 9,
+      "calls_pass": 9,
+      "calls_fail": 0,
+      "facts": 18,
+      "facts_pass": 18,
+      "facts_fail": 0
+     },
+     "1": {
+      "calls": 7,
+      "calls_pass": 7,
+      "calls_fail": 0,
+      "facts": 7,
+      "facts_pass": 7,
+      "facts_fail": 0
+     },
+     "3": {
+      "calls": 4,
+      "calls_pass": 3,
+      "calls_fail": 1,
+      "facts": 12,
+      "facts_pass": 11,
+      "facts_fail": 1
+     }
+    },
+    "by_relation": {
+     "same": {
+      "calls": 13,
+      "calls_pass": 12,
+      "calls_fail": 1,
+      "facts": 23,
+      "facts_pass": 22,
+      "facts_fail": 1
+     },
+     "cross": {
+      "calls": 7,
+      "calls_pass": 7,
+      "calls_fail": 0,
+      "facts": 14,
+      "facts_pass": 14,
+      "facts_fail": 0
+     }
+    },
+    "by_kind": {
+     "appearance_changed": {
+      "facts": 19,
+      "facts_pass": 19,
+      "facts_fail": 0,
+      "calls_with_kind": 19,
+      "calls_with_fail": 0
+     },
+     "outcome": {
+      "facts": 12,
+      "facts_pass": 12,
+      "facts_fail": 0,
+      "calls_with_kind": 12,
+      "calls_with_fail": 1
+     },
+     "moved": {
+      "facts": 3,
+      "facts_pass": 3,
+      "facts_fail": 0,
+      "calls_with_kind": 3,
+      "calls_with_fail": 1
+     },
+     "sanity_changed": {
+      "facts": 3,
+      "facts_pass": 2,
+      "facts_fail": 1,
+      "calls_with_kind": 3,
+      "calls_with_fail": 1
+     }
+    }
+   },
+   "calls": [
+    {
+     "sourceId": "fixture-r5",
+     "callId": "fixture-r5:g1",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "appearance_changed",
+      "appearance_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "appearance_changed",
+       "name": "林川",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "appearance_changed",
+       "name": "林川",
+       "pass": true
+      }
+     ],
+     "target": "林川的帽檐压出折痕，脚踝肿了一块。",
+     "actual": "林川的帽檐压出折痕,脚踝肿了一块。",
+     "new_tokens": 18,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.011186
+    },
+    {
+     "sourceId": "fixture-r5",
+     "callId": "fixture-r5:g2",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "appearance_changed"
+     ],
+     "facts": [
+      "f2"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f2",
+       "kind": "appearance_changed",
+       "name": "周宁",
+       "pass": true
+      }
+     ],
+     "target": "周宁的衣领被雨浸透。",
+     "actual": "周宁的衣领被雨浸透。",
+     "new_tokens": 11,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.01051
+    },
+    {
+     "sourceId": "fixture-r5",
+     "callId": "fixture-r5:g3",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "appearance_changed"
+     ],
+     "facts": [
+      "f3"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f3",
+       "kind": "appearance_changed",
+       "name": "陈默",
+       "pass": true
+      }
+     ],
+     "target": "陈默的指尖磨出茧。",
+     "actual": "陈默的指尖磨出茧。",
+     "new_tokens": 10,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.023323
+    },
+    {
+     "sourceId": "fixture-r5",
+     "callId": "fixture-r5:g4",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "appearance_changed"
+     ],
+     "facts": [
+      "f4"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f4",
+       "kind": "appearance_changed",
+       "name": "陈默",
+       "pass": true
+      }
+     ],
+     "target": "陈默的膝盖沾了泥。",
+     "actual": "陈默的膝盖沾了泥。",
+     "new_tokens": 10,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.001607
+    },
+    {
+     "sourceId": "t03",
+     "callId": "t03:g1",
+     "size": 3,
+     "relation": "same",
+     "kinds": [
+      "outcome",
+      "appearance_changed",
+      "outcome"
+     ],
+     "facts": [
+      "f0",
+      "f1",
+      "f2"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 3,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "outcome",
+       "name": "叶知微",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "appearance_changed",
+       "name": "叶知微",
+       "pass": true
+      },
+      {
+       "factId": "f2",
+       "kind": "outcome",
+       "name": "叶知微",
+       "pass": true
+      }
+     ],
+     "target": "叶知微把灯罩擦得透亮，袖口沾了铜油，把抹布搭回梯脚。",
+     "actual": "叶知微把灯罩擦得透亮,袖口沾了铜油,把抹布搭回梯脚。",
+     "new_tokens": 28,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.00172
+    },
+    {
+     "sourceId": "t08",
+     "callId": "t08:g1",
+     "size": 2,
+     "relation": "cross",
+     "kinds": [
+      "outcome",
+      "outcome"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "outcome",
+       "name": "阿棠",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "outcome",
+       "name": "顾行舟",
+       "pass": true
+      }
+     ],
+     "target": "阿棠把银鳞鱼搬上案板，顾行舟把缆绳绕上摊棚边的木桩。",
+     "actual": "阿棠把银鳞鱼搬上案板,顾行舟把缆绳绕上摊棚边的木桩。",
+     "new_tokens": 26,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.002
+    },
+    {
+     "sourceId": "t08",
+     "callId": "t08:g2",
+     "size": 2,
+     "relation": "cross",
+     "kinds": [
+      "appearance_changed",
+      "appearance_changed"
+     ],
+     "facts": [
+      "f2",
+      "f3"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f2",
+       "kind": "appearance_changed",
+       "name": "阿棠",
+       "pass": true
+      },
+      {
+       "factId": "f3",
+       "kind": "appearance_changed",
+       "name": "顾行舟",
+       "pass": true
+      }
+     ],
+     "target": "阿棠的辫梢沾了白汽，顾行舟的外袍下摆沾了泥水。",
+     "actual": "阿棠的辫梢沾了白汽,顾行舟的外袍下摆沾了泥水。",
+     "new_tokens": 24,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.008688
+    },
+    {
+     "sourceId": "t22",
+     "callId": "t22:g1",
+     "size": 2,
+     "relation": "cross",
+     "kinds": [
+      "appearance_changed",
+      "appearance_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "appearance_changed",
+       "name": "系泊绳",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "appearance_changed",
+       "name": "木桩",
+       "pass": true
+      }
+     ],
+     "target": "系泊绳上泥水结了一层白盐，木桩上缠着的旧缆绳断了。",
+     "actual": "系泊绳的泥水结了一层白盐,木桩的缠着的旧缆绳断了。",
+     "new_tokens": 26,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.455475
+    },
+    {
+     "sourceId": "t22",
+     "callId": "t22:g2",
+     "size": 2,
+     "relation": "cross",
+     "kinds": [
+      "outcome",
+      "outcome"
+     ],
+     "facts": [
+      "f2",
+      "f3"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f2",
+       "kind": "outcome",
+       "name": "顾行舟",
+       "pass": true
+      },
+      {
+       "factId": "f3",
+       "kind": "outcome",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "顾行舟把缆绳重新绕上木桩，沈砚把系泊绳拖回岸上。",
+     "actual": "顾行舟把缆绳重新绕上木桩,沈砚把系泊绳拖回岸上。",
+     "new_tokens": 25,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.001126
+    },
+    {
+     "sourceId": "t24",
+     "callId": "t24:g1",
+     "size": 2,
+     "relation": "cross",
+     "kinds": [
+      "appearance_changed",
+      "appearance_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "appearance_changed",
+       "name": "纸灯笼",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "appearance_changed",
+       "name": "排水沟",
+       "pass": true
+      }
+     ],
+     "target": "纸灯笼被风扯破一角，排水沟里面积了泥。",
+     "actual": "纸灯笼的衣角被风扯破一角,排水沟的里面积了泥。",
+     "new_tokens": 23,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.406074
+    },
+    {
+     "sourceId": "t24",
+     "callId": "t24:g2",
+     "size": 2,
+     "relation": "cross",
+     "kinds": [
+      "outcome",
+      "outcome"
+     ],
+     "facts": [
+      "f2",
+      "f3"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f2",
+       "kind": "outcome",
+       "name": "沈砚",
+       "pass": true
+      },
+      {
+       "factId": "f3",
+       "kind": "outcome",
+       "name": "阿棠",
+       "pass": true
+      }
+     ],
+     "target": "沈砚把纸灯笼扶正，阿棠把鱼筐放在门槛边。",
+     "actual": "沈砚把纸灯笼扶正,阿棠把鱼筐放在门槛边。",
+     "new_tokens": 21,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.70408
+    },
+    {
+     "sourceId": "train-r4",
+     "callId": "train-r4:g1",
+     "size": 2,
+     "relation": "same",
+     "kinds": [
+      "appearance_changed",
+      "appearance_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "appearance_changed",
+       "name": "沈砚",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "appearance_changed",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "沈砚的围巾松开一截，脸色发白。",
+     "actual": "沈砚的围巾松开一截,脸色发白。",
+     "new_tokens": 17,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.002389
+    },
+    {
+     "sourceId": "train-r4",
+     "callId": "train-r4:g2",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "appearance_changed"
+     ],
+     "facts": [
+      "f2"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f2",
+       "kind": "appearance_changed",
+       "name": "顾行舟",
+       "pass": true
+      }
+     ],
+     "target": "顾行舟的背上溅了泥点。",
+     "actual": "顾行舟的背上溅了泥点。",
+     "new_tokens": 13,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.006925
+    },
+    {
+     "sourceId": "train-r4",
+     "callId": "train-r4:g3",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "appearance_changed"
+     ],
+     "facts": [
+      "f3"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f3",
+       "kind": "appearance_changed",
+       "name": "叶知微",
+       "pass": true
+      }
+     ],
+     "target": "叶知微的手背蹭破了皮。",
+     "actual": "叶知微的手背蹭破了皮。",
+     "new_tokens": 12,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.001015
+    },
+    {
+     "sourceId": "train-r4",
+     "callId": "train-r4:g4",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "appearance_changed"
+     ],
+     "facts": [
+      "f4"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f4",
+       "kind": "appearance_changed",
+       "name": "叶知微",
+       "pass": true
+      }
+     ],
+     "target": "叶知微的肩头落着灰。",
+     "actual": "叶知微的肩头落着灰。",
+     "new_tokens": 12,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.016368
+    },
+    {
+     "sourceId": "v07",
+     "callId": "v07:g1",
+     "size": 2,
+     "relation": "cross",
+     "kinds": [
+      "appearance_changed",
+      "appearance_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "appearance_changed",
+       "name": "铜灯",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "appearance_changed",
+       "name": "潮汐簿",
+       "pass": true
+      }
+     ],
+     "target": "铜灯的灯罩上积了灰，潮汐簿的封面蒙了一层灰。",
+     "actual": "铜灯的灯罩上积了灰,潮汐簿的封面蒙了一层灰。",
+     "new_tokens": 23,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.234632
+    },
+    {
+     "sourceId": "v07",
+     "callId": "v07:g2",
+     "size": 1,
+     "relation": "same",
+     "kinds": [
+      "outcome"
+     ],
+     "facts": [
+      "f2"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 1,
+     "fact_results": [
+      {
+       "factId": "f2",
+       "kind": "outcome",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "沈砚把铜灯擦亮。",
+     "actual": "沈砚把铜灯擦亮。",
+     "new_tokens": 10,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.00185
+    },
+    {
+     "sourceId": "v14",
+     "callId": "v14:g1",
+     "size": 3,
+     "relation": "same",
+     "kinds": [
+      "moved",
+      "outcome",
+      "sanity_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1",
+      "f2"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 3,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "moved",
+       "name": "沈砚",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "outcome",
+       "name": "沈砚",
+       "pass": true
+      },
+      {
+       "factId": "f2",
+       "kind": "sanity_changed",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "沈砚从潮汐档案馆走到潮渡，把系泊绳拖回岸上，心里发紧。",
+     "actual": "沈砚从潮汐档案馆走到潮渡,把系泊绳拖回岸上,心里发紧。",
+     "new_tokens": 26,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.024247
+    },
+    {
+     "sourceId": "v18",
+     "callId": "v18:g1",
+     "size": 3,
+     "relation": "same",
+     "kinds": [
+      "moved",
+      "outcome",
+      "sanity_changed"
+     ],
+     "facts": [
+      "f0",
+      "f1",
+      "f2"
+     ],
+     "group_pass": true,
+     "passed_fact_count": 3,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "moved",
+       "name": "沈砚",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "outcome",
+       "name": "沈砚",
+       "pass": true
+      },
+      {
+       "factId": "f2",
+       "kind": "sanity_changed",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "沈砚从潮渡走到雾堤，把雾警钟敲响，心里发紧。",
+     "actual": "沈砚从潮渡走到雾堤,把雾警钟敲响,心里发紧。",
+     "new_tokens": 22,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.020569
+    },
+    {
+     "sourceId": "v20",
+     "callId": "v20:g1",
+     "size": 3,
+     "relation": "same",
+     "kinds": [
+      "moved",
+      "sanity_changed",
+      "outcome"
+     ],
+     "facts": [
+      "f0",
+      "f1",
+      "f2"
+     ],
+     "group_pass": false,
+     "passed_fact_count": 2,
+     "fact_results": [
+      {
+       "factId": "f0",
+       "kind": "moved",
+       "name": "沈砚",
+       "pass": true
+      },
+      {
+       "factId": "f1",
+       "kind": "sanity_changed",
+       "name": "沈砚",
+       "pass": false
+      },
+      {
+       "factId": "f2",
+       "kind": "outcome",
+       "name": "沈砚",
+       "pass": true
+      }
+     ],
+     "target": "沈砚从潮生巷走到潮渡，心里松快了些，把渡船推离栈桥。",
+     "actual": "沈砚从潮生巷走到潮渡,把渡船推离栈桥。",
+     "new_tokens": 20,
+     "stop": "eos",
+     "timeout": false,
+     "actual_total_logprob": -0.010294,
+     "omissions": [
+      {
+       "factId": "f1",
+       "kind": "sanity_changed",
+       "name": "沈砚",
+       "pass": false
+      }
+     ],
+     "actual_token_table": [
+      {
+       "i": 0,
+       "id": 259,
+       "token": "▁",
+       "logprob": -0.001134,
+       "p": 0.998867
+      },
+      {
+       "i": 1,
+       "id": 11000,
+       "token": "沈",
+       "logprob": -0.0,
+       "p": 1.0
+      },
+      {
+       "i": 2,
+       "id": 29839,
+       "token": "砚",
+       "logprob": 0.0,
+       "p": 1.0
+      },
+      {
+       "i": 3,
+       "id": 1730,
+       "token": "从",
+       "logprob": -0.000172,
+       "p": 0.999828
+      },
+      {
+       "i": 4,
+       "id": 6966,
+       "token": "潮",
+       "logprob": -2e-06,
+       "p": 0.999998
+      },
+      {
+       "i": 5,
+       "id": 1265,
+       "token": "生",
+       "logprob": -1.2e-05,
+       "p": 0.999988
+      },
+      {
+       "i": 6,
+       "id": 20722,
+       "token": "巷",
+       "logprob": 0.0,
+       "p": 1.0
+      },
+      {
+       "i": 7,
+       "id": 27606,
+       "token": "走到",
+       "logprob": -3.3e-05,
+       "p": 0.999967
+      },
+      {
+       "i": 8,
+       "id": 6966,
+       "token": "潮",
+       "logprob": -9e-06,
+       "p": 0.999991
+      },
+      {
+       "i": 9,
+       "id": 6850,
+       "token": "渡",
+       "logprob": -3e-06,
+       "p": 0.999997
+      },
+      {
+       "i": 10,
+       "id": 261,
+       "token": ",",
+       "logprob": -0.000472,
+       "p": 0.999528
+      },
+      {
+       "i": 11,
+       "id": 2704,
+       "token": "把",
+       "logprob": -0.008183,
+       "p": 0.99185
+      },
+      {
+       "i": 12,
+       "id": 6850,
+       "token": "渡",
+       "logprob": -5e-06,
+       "p": 0.999995
+      },
+      {
+       "i": 13,
+       "id": 4405,
+       "token": "船",
+       "logprob": -0.0,
+       "p": 1.0
+      },
+      {
+       "i": 14,
+       "id": 3883,
+       "token": "推",
+       "logprob": -0.0,
+       "p": 1.0
+      },
+      {
+       "i": 15,
+       "id": 5561,
+       "token": "离",
+       "logprob": -0.0,
+       "p": 1.0
+      },
+      {
+       "i": 16,
+       "id": 28796,
+       "token": "栈",
+       "logprob": -0.0,
+       "p": 1.0
+      },
+      {
+       "i": 17,
+       "id": 6541,
+       "token": "桥",
+       "logprob": 0.0,
+       "p": 1.0
+      },
+      {
+       "i": 18,
+       "id": 297,
+       "token": "。",
+       "logprob": -0.000254,
+       "p": 0.999746
+      },
+      {
+       "i": 19,
+       "id": 1,
+       "token": "</s>",
+       "logprob": -1.5e-05,
+       "p": 0.999985
+      }
+     ],
+     "target_token_table": [
+      {
+       "i": 0,
+       "id": 259,
+       "token": "▁",
+       "logprob": -0.001134,
+       "p": 0.998867
+      },
+      {
+       "i": 1,
+       "id": 11000,
+       "token": "沈",
+       "logprob": -0.0,
+       "p": 1.0
+      },
+      {
+       "i": 2,
+       "id": 29839,
+       "token": "砚",
+       "logprob": 0.0,
+       "p": 1.0
+      },
+      {
+       "i": 3,
+       "id": 1730,
+       "token": "从",
+       "logprob": -0.000172,
+       "p": 0.999828
+      },
+      {
+       "i": 4,
+       "id": 6966,
+       "token": "潮",
+       "logprob": -2e-06,
+       "p": 0.999998
+      },
+      {
+       "i": 5,
+       "id": 1265,
+       "token": "生",
+       "logprob": -1.2e-05,
+       "p": 0.999988
+      },
+      {
+       "i": 6,
+       "id": 20722,
+       "token": "巷",
+       "logprob": 0.0,
+       "p": 1.0
+      },
+      {
+       "i": 7,
+       "id": 27606,
+       "token": "走到",
+       "logprob": -3.3e-05,
+       "p": 0.999967
+      },
+      {
+       "i": 8,
+       "id": 6966,
+       "token": "潮",
+       "logprob": -9e-06,
+       "p": 0.999991
+      },
+      {
+       "i": 9,
+       "id": 6850,
+       "token": "渡",
+       "logprob": -3e-06,
+       "p": 0.999997
+      },
+      {
+       "i": 10,
+       "id": 261,
+       "token": ",",
+       "logprob": -0.000472,
+       "p": 0.999528
+      },
+      {
+       "i": 11,
+       "id": 20597,
+       "token": "心里",
+       "logprob": -5.052264,
+       "p": 0.006395
+      },
+      {
+       "i": 12,
+       "id": 3162,
+       "token": "松",
+       "logprob": -0.112093,
+       "p": 0.893961
+      },
+      {
+       "i": 13,
+       "id": 810,
+       "token": "快",
+       "logprob": -1e-06,
+       "p": 0.999999
+      },
+      {
+       "i": 14,
+       "id": 691,
+       "token": "了",
+       "logprob": -0.00011,
+       "p": 0.99989
+      },
+      {
+       "i": 15,
+       "id": 10756,
+       "token": "些",
+       "logprob": -0.000224,
+       "p": 0.999776
+      },
+      {
+       "i": 16,
+       "id": 261,
+       "token": ",",
+       "logprob": -7.29659,
+       "p": 0.000678
+      },
+      {
+       "i": 17,
+       "id": 2704,
+       "token": "把",
+       "logprob": -0.00446,
+       "p": 0.99555
+      },
+      {
+       "i": 18,
+       "id": 6850,
+       "token": "渡",
+       "logprob": -7e-06,
+       "p": 0.999993
+      },
+      {
+       "i": 19,
+       "id": 4405,
+       "token": "船",
+       "logprob": -1e-06,
+       "p": 0.999999
+      },
+      {
+       "i": 20,
+       "id": 3883,
+       "token": "推",
+       "logprob": -2e-06,
+       "p": 0.999998
+      },
+      {
+       "i": 21,
+       "id": 5561,
+       "token": "离",
+       "logprob": -1e-06,
+       "p": 0.999999
+      },
+      {
+       "i": 22,
+       "id": 28796,
+       "token": "栈",
+       "logprob": -2e-06,
+       "p": 0.999998
+      },
+      {
+       "i": 23,
+       "id": 6541,
+       "token": "桥",
+       "logprob": 0.0,
+       "p": 1.0
+      },
+      {
+       "i": 24,
+       "id": 297,
+       "token": "。",
+       "logprob": -0.000216,
+       "p": 0.999784
+      },
+      {
+       "i": 25,
+       "id": 1,
+       "token": "</s>",
+       "logprob": -8e-06,
+       "p": 0.999992
+      }
+     ],
+     "target_total_logprob": -12.467816,
+     "target_avg_logprob": -0.479531,
+     "actual_avg_logprob": -0.000515,
+     "target_loss": 0.479531,
+     "target_eos_logprob": -8e-06,
+     "actual_eos_logprob": -1.5e-05,
+     "actual_eos": true,
+     "target_chars": 26,
+     "actual_chars": 19
+    }
+   ]
+  }
+ },
+ "omission_details": [
+  {
+   "split": "regression",
+   "sourceId": "v20",
+   "callId": "v20:g1"
+  }
+ ],
+ "consistency_with_previous": {
+  "checked": 45,
+  "same": 45,
+  "different": []
+ }
+}

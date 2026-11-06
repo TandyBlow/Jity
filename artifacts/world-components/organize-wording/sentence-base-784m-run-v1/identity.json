@@ -82,11 +82,42 @@
   },
   "audit": {
    "path": "artifacts/world-components/organize-wording/sentence-base-784m-audit-v1.json",
-   "sha256": "8ab3f802007e17ef3178e1ff1d1bc86c7ceeec698aa536025a76e90e85e05535"
+   "sha256": "202a66d0109aac47ba200078733c9f1c2096d6ac54f4d48b11edbfde5a55ae59"
   },
   "report": {
    "path": "design/world-engine-reports/components/sentence-base-784m-result-v1.md",
-   "sha256": "3025c800a03e4bbb7dd3652282cc8dbb1f7556f095188863af6a1b00ee2a34ec"
+   "sha256": "aca3ea37e1e50d87450b4c37580feda33275f09f71b784205838531a7247d314"
+  },
+  "fit_script": {
+   "path": "experiments/world-components/organize_wording/diagnose_fit_784.py",
+   "sha256": "14e1bcca694b4c2f4cafd82ead6758f88cbd2425170d4b2f6be89f676854fea0"
+  },
+  "fit_job": {
+   "path": "experiments/world-components/organize_wording/hpc_fitdiag_784.sh",
+   "sha256": "f1a14518c29f8268d6b29b8336548890555ccd11e11700601e3eeb8d2cb6243a"
+  },
+  "fit_json": {
+   "path": "artifacts/world-components/organize-wording/sentence-base-784m-fit-diagnostic-v1/fit-diagnostic.json",
+   "sha256": "c33922d0d014678a519dc5c4b7e033c4729f095d97f3e224b35680a33826b7e4"
+  },
+  "fit_report": {
+   "path": "design/world-engine-reports/components/sentence-base-784m-fit-diagnostic-v1.md",
+   "sha256": "36270b7ec69f7acea814304308bd46a07cce3d691dadc8bdb516a8324d0eca0f"
   }
+ },
+ "diagnostic": {
+  "job_id": "241614",
+  "exit_code": 0,
+  "checkpoint_sha256": "6abd0cdd93f07240526b32b54f2d4800ca33cba5d9cbaf3ce0db907a7d0b4ced",
+  "train_groups": "134/134",
+  "train_facts": "231/231",
+  "fixed_groups": "25/25",
+  "fixed_facts": "31/31",
+  "regression_groups": "19/20",
+  "regression_facts": "36/37",
+  "only_omission": "v20 f1",
+  "non_omission_error": "t24 f0 衣角",
+  "consistency_with_previous": "45/45 texts identical",
+  "note": "t24 is not an omission; automated factPass lets it through, human review fails it"
  }
 }
