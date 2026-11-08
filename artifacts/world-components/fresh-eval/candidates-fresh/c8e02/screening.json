@@ -2,8 +2,8 @@
  "v1": {
   "id": "c8e02",
   "verdict": "candidate",
-  "signature": "moved*2|2|45s",
-  "fullSignature": "at*3+moved*2+sanity*5+task_pending*7|5|45s",
+  "signature": "moved*1|1|45s",
+  "fullSignature": "moved*1|1|45s",
   "mode": "new-world",
   "r1Version": "v1",
   "reasons": [],
@@ -12,8 +12,8 @@
  "v2": {
   "id": "c8e02",
   "verdict": "candidate",
-  "signature": "moved*2|2|45s",
-  "fullSignature": "at*3+moved*2+sanity*5+task_pending*7|5|45s",
+  "signature": "moved*1|1|45s",
+  "fullSignature": "moved*1|1|45s",
   "mode": "new-world",
   "r1Version": "v2",
   "reasons": [],

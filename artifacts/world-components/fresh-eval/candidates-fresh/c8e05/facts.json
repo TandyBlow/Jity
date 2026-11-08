@@ -30,8 +30,11 @@
    "phase": "change",
    "entityId": "fe_wen",
    "actor": "fe_wen",
+   "actorKind": "character",
    "name": "闻澈岑",
+   "fromId": "fy_pump",
    "from": "玄藻泵舱",
+   "toId": "fy_cal",
    "to": "砾脊校准间",
    "relativeTo": null,
    "fieldPath": "state.characters.fe_wen.position"
@@ -41,8 +44,15 @@
    "phase": "change",
    "entityId": "fi_seal",
    "actor": "fi_seal",
+   "actorKind": "item",
    "name": "锆丝封签",
+   "fromId": "fe_wen",
+   "from": "闻澈岑",
+   "fromKind": "character",
+   "toId": "fe_nie",
    "to": "聂汀穗",
+   "toKind": "character",
+   "holderChanged": true,
    "relativeTo": null,
    "fieldPath": "state.items.fi_seal.position"
   },
@@ -51,11 +61,56 @@
    "phase": "change",
    "entityId": "fi_seal",
    "actor": "fi_seal",
+   "actorKind": "item",
    "name": "锆丝封签",
    "text": "接合处新增一道横向压痕。",
    "fieldPath": "state.items.fi_seal.appearanceChanges"
   }
  ],
+ "mustExpress": [
+  {
+   "kind": "moved",
+   "phase": "change",
+   "entityId": "fe_wen",
+   "actor": "fe_wen",
+   "actorKind": "character",
+   "name": "闻澈岑",
+   "fromId": "fy_pump",
+   "from": "玄藻泵舱",
+   "toId": "fy_cal",
+   "to": "砾脊校准间",
+   "relativeTo": null,
+   "fieldPath": "state.characters.fe_wen.position"
+  },
+  {
+   "kind": "moved_entity",
+   "phase": "change",
+   "entityId": "fi_seal",
+   "actor": "fi_seal",
+   "actorKind": "item",
+   "name": "锆丝封签",
+   "fromId": "fe_wen",
+   "from": "闻澈岑",
+   "fromKind": "character",
+   "toId": "fe_nie",
+   "to": "聂汀穗",
+   "toKind": "character",
+   "holderChanged": true,
+   "relativeTo": null,
+   "fieldPath": "state.items.fi_seal.position"
+  },
+  {
+   "kind": "appearance_changed",
+   "phase": "change",
+   "entityId": "fi_seal",
+   "actor": "fi_seal",
+   "actorKind": "item",
+   "name": "锆丝封签",
+   "text": "接合处新增一道横向压痕。",
+   "fieldPath": "state.items.fi_seal.appearanceChanges"
+  }
+ ],
+ "mayMention": [],
  "standingRefs": [
   {
    "kind": "at",
@@ -63,6 +118,7 @@
    "entityId": "fe_nie",
    "actor": "fe_nie",
    "name": "聂汀穗",
+   "locationId": "fy_cal",
    "location": "砾脊校准间",
    "fieldPath": "state.characters.fe_nie.position"
   },
@@ -91,6 +147,7 @@
    "entityId": "fe_pu",
    "actor": "fe_pu",
    "name": "蒲砺弦",
+   "locationId": "fy_watch",
    "location": "弧砂观测台",
    "fieldPath": "state.characters.fe_pu.position"
   },
@@ -119,6 +176,7 @@
    "entityId": "fe_shao",
    "actor": "fe_shao",
    "name": "邵苇衡",
+   "locationId": "fy_store",
    "location": "霜珀备件库",
    "fieldPath": "state.characters.fe_shao.position"
   },
@@ -186,6 +244,7 @@
    "entityId": "fe_yu",
    "actor": "fe_yu",
    "name": "郁棠序",
+   "locationId": "fy_bridge",
    "location": "苔铎栈桥",
    "fieldPath": "state.characters.fe_yu.position"
   },

@@ -23,8 +23,11 @@
    "phase": "change",
    "entityId": "fe_shao",
    "actor": "fe_shao",
+   "actorKind": "character",
    "name": "邵苇衡",
+   "fromId": "fy_store",
    "from": "霜珀备件库",
+   "toId": "fy_relay",
    "to": "穹榛中继室",
    "relativeTo": null,
    "fieldPath": "state.characters.fe_shao.position"
@@ -34,11 +37,48 @@
    "phase": "change",
    "entityId": "fe_wen",
    "actor": "fe_wen",
+   "actorKind": "character",
    "name": "闻澈岑",
+   "fromId": "fy_pump",
    "from": "玄藻泵舱",
+   "toId": "fy_cal",
    "to": "砾脊校准间",
    "relativeTo": null,
    "fieldPath": "state.characters.fe_wen.position"
+  }
+ ],
+ "mustExpress": [
+  {
+   "kind": "moved",
+   "phase": "change",
+   "entityId": "fe_wen",
+   "actor": "fe_wen",
+   "actorKind": "character",
+   "name": "闻澈岑",
+   "fromId": "fy_pump",
+   "from": "玄藻泵舱",
+   "toId": "fy_cal",
+   "to": "砾脊校准间",
+   "relativeTo": null,
+   "fieldPath": "state.characters.fe_wen.position"
+  }
+ ],
+ "mayMention": [
+  {
+   "kind": "moved",
+   "phase": "change",
+   "entityId": "fe_shao",
+   "actor": "fe_shao",
+   "actorKind": "character",
+   "name": "邵苇衡",
+   "fromId": "fy_store",
+   "from": "霜珀备件库",
+   "toId": "fy_relay",
+   "to": "穹榛中继室",
+   "relativeTo": null,
+   "fieldPath": "state.characters.fe_shao.position",
+   "reason": "offstage-perspective",
+   "constraint": "限知视角：不在主体可见容器内的变化可以不提；若要提，不得写成主体亲眼所见或亲耳听到。"
   }
  ],
  "standingRefs": [
@@ -48,6 +88,7 @@
    "entityId": "fe_nie",
    "actor": "fe_nie",
    "name": "聂汀穗",
+   "locationId": "fy_cal",
    "location": "砾脊校准间",
    "fieldPath": "state.characters.fe_nie.position"
   },
@@ -76,6 +117,7 @@
    "entityId": "fe_pu",
    "actor": "fe_pu",
    "name": "蒲砺弦",
+   "locationId": "fy_watch",
    "location": "弧砂观测台",
    "fieldPath": "state.characters.fe_pu.position"
   },
@@ -162,6 +204,7 @@
    "entityId": "fe_yu",
    "actor": "fe_yu",
    "name": "郁棠序",
+   "locationId": "fy_bridge",
    "location": "苔铎栈桥",
    "fieldPath": "state.characters.fe_yu.position"
   },

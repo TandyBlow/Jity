@@ -1,12 +1,22 @@
 # `c8e06` 关注指令与世界事实分开
 
 - 覆盖：玩家关注、任务、多人物；视角：omniscient；时间：120 秒
-- 提交点：`world_47/point_53`，after 摘要 `a29e1dacef48966d…`
-- 页面投影支持：否（见下）
+- 提交点：`world_47/point_53`，after 摘要 `a29e1dacef48966d…`（读回校验通过）
+- 必述 2 条；可不提 1 条；现状引用 14 条
+
+## 四段状态
+
+| 段 | 状态 | 证据 |
+|---|---|---|
+| 世界状态已提交 | 是 | `point_53` + 读回 |
+| 页面投影接受该 Δ | 否 | P3-incomplete-numeric-cause、P5-no-perspective-filter |
+| 视角过滤已执行 | 否 | 页面路径无可见性判定 |
+| 叙事已生成 | 否 | 本轮不调用模型 |
 
 ## 能力不支持（单列，不算模型失败）
 
 - P3-incomplete-numeric-cause：任务/人格/理智未同时出现，投影会拒绝（`committed-narration.ts:38`）
+- P5-no-perspective-filter：页面叙事路径不做视角过滤：世界为真的远处变化会被照写，本条的限知/推迟要求只能由 N2 规则臂或人工判定（`committed-narration.ts:24-60`）
 
 ## 适用范围说明
 
@@ -19,11 +29,13 @@
 - [ ] 必须成立：这是本轮作者提供的合成玩家指令，不是真实玩家原话；只核验关注解析数据，不称N2已支持此功能。
 - [ ] 必须不出现：把未提供的人物或地点写进叙述
 - [ ] 必须不出现：把本点没有的变化写成发生
-- [ ] 不要求（输入未提供）：完整状态里未进入 mustExpress/currentState 的任何字段
+- [ ] 必须不出现：把 `闻澈岑` 的移动写成关注对象或任务达成依据
+- [ ] 不要求：完整状态里未进入 mustExpress/currentState 的任何字段
+- [ ] 不要求：省略 `闻澈岑` 的移动（玩家指令要求暂不展开）
 
 ## 程序检查
 
 - R1 v1：candidate；v2：candidate；是否翻转：否
 - R2（new-world）：零命中
-- R3 变化签名：`moved*2+task_achieved*1|2|120s`
+- R3 变化签名：`moved*1+task_achieved*1|1|120s`
 

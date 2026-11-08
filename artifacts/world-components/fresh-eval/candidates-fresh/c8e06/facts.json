@@ -26,8 +26,11 @@
    "phase": "change",
    "entityId": "fe_shao",
    "actor": "fe_shao",
+   "actorKind": "character",
    "name": "邵苇衡",
+   "fromId": "fy_store",
    "from": "霜珀备件库",
+   "toId": "fy_relay",
    "to": "穹榛中继室",
    "relativeTo": null,
    "fieldPath": "state.characters.fe_shao.position"
@@ -48,11 +51,59 @@
    "phase": "change",
    "entityId": "fe_wen",
    "actor": "fe_wen",
+   "actorKind": "character",
    "name": "闻澈岑",
+   "fromId": "fy_pump",
    "from": "玄藻泵舱",
+   "toId": "fy_cal",
    "to": "砾脊校准间",
    "relativeTo": null,
    "fieldPath": "state.characters.fe_wen.position"
+  }
+ ],
+ "mustExpress": [
+  {
+   "kind": "moved",
+   "phase": "change",
+   "entityId": "fe_shao",
+   "actor": "fe_shao",
+   "actorKind": "character",
+   "name": "邵苇衡",
+   "fromId": "fy_store",
+   "from": "霜珀备件库",
+   "toId": "fy_relay",
+   "to": "穹榛中继室",
+   "relativeTo": null,
+   "fieldPath": "state.characters.fe_shao.position"
+  },
+  {
+   "kind": "task_achieved",
+   "phase": "change",
+   "entityId": "fe_shao",
+   "actor": "fe_shao",
+   "name": "邵苇衡",
+   "taskId": "ft_relay",
+   "goal": "复核穹榛机架背面的联接编号",
+   "status": "achieved",
+   "fieldPath": "state.characters.fe_shao.tasks.ft_relay.status"
+  }
+ ],
+ "mayMention": [
+  {
+   "kind": "moved",
+   "phase": "change",
+   "entityId": "fe_wen",
+   "actor": "fe_wen",
+   "actorKind": "character",
+   "name": "闻澈岑",
+   "fromId": "fy_pump",
+   "from": "玄藻泵舱",
+   "toId": "fy_cal",
+   "to": "砾脊校准间",
+   "relativeTo": null,
+   "fieldPath": "state.characters.fe_wen.position",
+   "reason": "deferredByInstruction",
+   "constraint": "玩家指令要求本轮暂不展开该角色：可以不提；若要提，不得写成关注对象，也不得据此推出任务达成。"
   }
  ],
  "standingRefs": [
@@ -62,6 +113,7 @@
    "entityId": "fe_nie",
    "actor": "fe_nie",
    "name": "聂汀穗",
+   "locationId": "fy_cal",
    "location": "砾脊校准间",
    "fieldPath": "state.characters.fe_nie.position"
   },
@@ -90,6 +142,7 @@
    "entityId": "fe_pu",
    "actor": "fe_pu",
    "name": "蒲砺弦",
+   "locationId": "fy_watch",
    "location": "弧砂观测台",
    "fieldPath": "state.characters.fe_pu.position"
   },
@@ -166,6 +219,7 @@
    "entityId": "fe_yu",
    "actor": "fe_yu",
    "name": "郁棠序",
+   "locationId": "fy_bridge",
    "location": "苔铎栈桥",
    "fieldPath": "state.characters.fe_yu.position"
   },
