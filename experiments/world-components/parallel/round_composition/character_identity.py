@@ -60,6 +60,56 @@ def _describe(state, eid):
     return None, None, None
 
 
+def _candidates(state, eid):
+    """All authoritative descriptors for one entity, most specific first."""
+    out = []
+    pers = _last_change(state, eid, "personalityChanges")
+    if pers:
+        out.append((pers, "性格",
+                    f"characters.{eid}.personalityChanges[-1].text"))
+    else:
+        pers = _initial(state, eid).get("initialPersonality")
+        if pers:
+            out.append((pers, "性格",
+                        f"initial.characters.{eid}.initialPersonality"))
+    app = _last_change(state, eid, "appearanceChanges")
+    if app:
+        out.append((app, "外貌",
+                    f"characters.{eid}.appearanceChanges[-1].text"))
+    else:
+        app = _initial(state, eid).get("initialAppearance")
+        if app and app != "常态":
+            out.append((app, "外貌",
+                        f"initial.characters.{eid}.initialAppearance"))
+    return out
+
+
+def _pick_distinguishing(cands_by_eid):
+    """Choose a field whose values separate every actor in the group.
+
+    The first version stopped at personality and declared the group
+    indistinguishable when two personalities matched, even if appearances
+    differed. Now every candidate field is tried before giving up; the chosen
+    field must be present and distinct for all actors.
+    """
+    fields = []
+    for cands in cands_by_eid.values():
+        for _, field, _ in cands:
+            if field not in fields:
+                fields.append(field)
+    for field in fields:
+        values = {}
+        for eid, cands in cands_by_eid.items():
+            hit = next(((d, src) for d, f, src in cands if f == field), None)
+            if hit is None:
+                values = None
+                break
+            values[eid] = hit
+        if values and len({v[0] for v in values.values()}) == len(values):
+            return field, values
+    return None, None
+
+
 def build_identities(state):
     state = state or {}
     entries = {}
@@ -73,16 +123,20 @@ def build_identities(state):
     for eid, e in entries.items():
         by_name.setdefault(e["name"], []).append(eid)
     same = {}
+    same_field = {}
     indistinguishable = {}
     for name, eids in by_name.items():
         if len(eids) < 2:
             continue
-        descs = {entries[e]["descriptor"] for e in eids}
-        if None in descs or len(descs) < len(eids):
+        cands = {eid: _candidates(state, eid) for eid in eids}
+        field, values = _pick_distinguishing(cands)
+        if field is None:
             indistinguishable[name] = sorted(eids)
             continue
-        same[name] = {e: entries[e]["descriptor"] for e in sorted(eids)}
+        same[name] = {eid: values[eid][0] for eid in sorted(eids)}
+        same_field[name] = field
     return {"version": VERSION, "entries": entries, "sameName": same,
+            "sameNameField": same_field,
             "indistinguishable": indistinguishable}
 
 

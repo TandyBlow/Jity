@@ -25,6 +25,7 @@ import judge_v3 as v3  # noqa: E402
 import judge_v4 as v4  # noqa: E402
 import judge_v4_1 as v4_1  # noqa: E402
 import judge_v4_2 as v4_2  # noqa: E402
+import judge_v4_3 as v4_3  # noqa: E402
 import character_identity  # noqa: E402
 from judge_v3 import JudgeBlocked  # noqa: E402
 import real_batch_v3 as rb  # noqa: E402
@@ -48,7 +49,7 @@ def rejudge(run_doc, cases_by_id, judge_mod):
                "v3": {"status": old["status"], "hardPass": old["hardPass"],
                       "problems": old["problems"]}}
         try:
-            if judge_mod is v4_2:
+            if judge_mod in (v4_2, v4_3):
                 ids = character_identity.build_identities(
                     cases_by_id[cid]["point"]["state"])
                 new = judge_mod.judge(facts, must, chain["plan"], text, finish,
@@ -99,10 +100,11 @@ def rejudge(run_doc, cases_by_id, judge_mod):
 def main() -> int:
     import argparse
     ap = argparse.ArgumentParser()
-    ap.add_argument("--judge", choices=("v4", "v4.1", "v4.2"), default="v4")
+    ap.add_argument("--judge", choices=("v4", "v4.1", "v4.2", "v4.3"),
+                    default="v4")
     ap.add_argument("--out", default=None)
     args = ap.parse_args()
-    judge_mod = {"v4": v4, "v4.1": v4_1, "v4.2": v4_2}[args.judge]
+    judge_mod = {"v4": v4, "v4.1": v4_1, "v4.2": v4_2, "v4.3": v4_3}[args.judge]
     out_path = pathlib.Path(args.out) if args.out else OUT
     cases_doc = json.loads(
         (HERE / "fixtures" / "batch-v1-cases.json").read_text(encoding="utf-8"))

@@ -134,7 +134,7 @@ def main() -> int:
                      "can be checked against evidence instead of guessed",
              "texts": [
                  {"id": "c1", "authority": authority_good,
-                  "text": "管线甲从管线镇来到了钟楼，把铜铃挂回了钟楼。他靠着栏杆喘了口气。"},
+                  "text": "管线甲从管线镇来到了钟楼，把铜铃挂回了钟楼。他喘了口气。"},
                  {"id": "c2", "authority": authority_good,
                   "text": "管线甲从管线镇来到了钟楼，把铜铃挂回了钟楼。王五在楼梯口等他。"},
                  {"id": "c3", "authority": authority_good,
@@ -166,7 +166,10 @@ def main() -> int:
             "c4": "柳溪渡 is a place name that is not in the world; the trip "
                   "there is a separate added event",
             "c3": "the bell sound is an added event, not a proper name",
-            "c1": "the deep breath is an allowed feeling, not an event",
+            "c1": "the deep breath is an allowed feeling, not an event; the "
+                  "first version also mentioned 靠着栏杆, which was an added "
+                  "action on an object absent from the authority, so it was "
+                  "removed from the text",
             "c6": "the trembling fingers are an allowed feeling, not an event",
         },
     }

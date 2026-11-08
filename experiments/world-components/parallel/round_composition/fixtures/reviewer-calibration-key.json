@@ -30,7 +30,7 @@
   "c5": "the result is negated, so the fact is NOT conveyed",
   "c4": "柳溪渡 is a place name that is not in the world; the trip there is a separate added event",
   "c3": "the bell sound is an added event, not a proper name",
-  "c1": "the deep breath is an allowed feeling, not an event",
+  "c1": "the deep breath is an allowed feeling, not an event; the first version also mentioned 靠着栏杆, which was an added action on an object absent from the authority, so it was removed from the text",
   "c6": "the trembling fingers are an allowed feeling, not an event"
  }
 }

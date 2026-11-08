@@ -1,0 +1,240 @@
+{
+ "version": "review-v3-independent",
+ "reviewer": {
+  "kind": "ai-session",
+  "model": "<model name/version>",
+  "isolation": "fresh temporary session, no project history; given only reviewer-packet-v3.json and reviewer-calibration.json",
+  "startedAt": "<ISO time>",
+  "finishedAt": "<ISO time>",
+  "notHuman": true
+ },
+ "materials": [
+  "fixtures/reviewer-packet-v3.json",
+  "fixtures/reviewer-calibration.json"
+ ],
+ "calibration": {
+  "labels": [
+   {
+    "id": "c1",
+    "inventedProperNames": [],
+    "inventedEvents": [],
+    "factConveyed": true,
+    "evidence": "<quote>"
+   }
+  ],
+  "selfCheck": "compared with reviewer-calibration-key.json AFTER labelling"
+ },
+ "cases": [
+  {
+   "caseId": "rb-move-outcome",
+   "facts": [
+    {
+     "factId": "f0",
+     "conveyed": "<yes|no|undetermined>",
+     "evidence": "<verbatim quote>"
+    },
+    {
+     "factId": "f1",
+     "conveyed": "<yes|no|undetermined>",
+     "evidence": "<verbatim quote>"
+    }
+   ],
+   "sameNameConfused": "<yes|no|undetermined>",
+   "inventedProperNames": [],
+   "inventedEvents": [],
+   "povChanged": "<yes|no|undetermined>",
+   "readability": 0
+  },
+  {
+   "caseId": "rb-time-vague",
+   "facts": [
+    {
+     "factId": "f0",
+     "conveyed": "<yes|no|undetermined>",
+     "evidence": "<verbatim quote>"
+    },
+    {
+     "factId": "f1",
+     "conveyed": "<yes|no|undetermined>",
+     "evidence": "<verbatim quote>"
+    },
+    {
+     "factId": "f2",
+     "conveyed": "<yes|no|undetermined>",
+     "evidence": "<verbatim quote>"
+    }
+   ],
+   "sameNameConfused": "<yes|no|undetermined>",
+   "inventedProperNames": [],
+   "inventedEvents": [],
+   "povChanged": "<yes|no|undetermined>",
+   "readability": 0
+  },
+  {
+   "caseId": "rb-inner-change",
+   "facts": [
+    {
+     "factId": "f0",
+     "conveyed": "<yes|no|undetermined>",
+     "evidence": "<verbatim quote>"
+    },
+    {
+     "factId": "f1",
+     "conveyed": "<yes|no|undetermined>",
+     "evidence": "<verbatim quote>"
+    },
+    {
+     "factId": "f2",
+     "conveyed": "<yes|no|undetermined>",
+     "evidence": "<verbatim quote>"
+    }
+   ],
+   "sameNameConfused": "<yes|no|undetermined>",
+   "inventedProperNames": [],
+   "inventedEvents": [],
+   "povChanged": "<yes|no|undetermined>",
+   "readability": 0
+  },
+  {
+   "caseId": "rb-two-actors-move",
+   "facts": [
+    {
+     "factId": "f0",
+     "conveyed": "<yes|no|undetermined>",
+     "evidence": "<verbatim quote>"
+    },
+    {
+     "factId": "f1",
+     "conveyed": "<yes|no|undetermined>",
+     "evidence": "<verbatim quote>"
+    }
+   ],
+   "sameNameConfused": "<yes|no|undetermined>",
+   "inventedProperNames": [],
+   "inventedEvents": [],
+   "povChanged": "<yes|no|undetermined>",
+   "readability": 0
+  },
+  {
+   "caseId": "rb-same-name",
+   "facts": [
+    {
+     "factId": "f0",
+     "conveyed": "<yes|no|undetermined>",
+     "evidence": "<verbatim quote>"
+    },
+    {
+     "factId": "f1",
+     "conveyed": "<yes|no|undetermined>",
+     "evidence": "<verbatim quote>"
+    },
+    {
+     "factId": "f2",
+     "conveyed": "<yes|no|undetermined>",
+     "evidence": "<verbatim quote>"
+    }
+   ],
+   "sameNameConfused": "<yes|no|undetermined>",
+   "inventedProperNames": [],
+   "inventedEvents": [],
+   "povChanged": "<yes|no|undetermined>",
+   "readability": 0
+  },
+  {
+   "caseId": "rb-subtask",
+   "facts": [
+    {
+     "factId": "f0",
+     "conveyed": "<yes|no|undetermined>",
+     "evidence": "<verbatim quote>"
+    },
+    {
+     "factId": "f1",
+     "conveyed": "<yes|no|undetermined>",
+     "evidence": "<verbatim quote>"
+    }
+   ],
+   "sameNameConfused": "<yes|no|undetermined>",
+   "inventedProperNames": [],
+   "inventedEvents": [],
+   "povChanged": "<yes|no|undetermined>",
+   "readability": 0
+  },
+  {
+   "caseId": "rb-sanity-only",
+   "facts": [
+    {
+     "factId": "f0",
+     "conveyed": "<yes|no|undetermined>",
+     "evidence": "<verbatim quote>"
+    },
+    {
+     "factId": "f1",
+     "conveyed": "<yes|no|undetermined>",
+     "evidence": "<verbatim quote>"
+    }
+   ],
+   "sameNameConfused": "<yes|no|undetermined>",
+   "inventedProperNames": [],
+   "inventedEvents": [],
+   "povChanged": "<yes|no|undetermined>",
+   "readability": 0
+  },
+  {
+   "caseId": "rb-time-only",
+   "facts": [
+    {
+     "factId": "f0",
+     "conveyed": "<yes|no|undetermined>",
+     "evidence": "<verbatim quote>"
+    },
+    {
+     "factId": "f1",
+     "conveyed": "<yes|no|undetermined>",
+     "evidence": "<verbatim quote>"
+    }
+   ],
+   "sameNameConfused": "<yes|no|undetermined>",
+   "inventedProperNames": [],
+   "inventedEvents": [],
+   "povChanged": "<yes|no|undetermined>",
+   "readability": 0
+  },
+  {
+   "caseId": "rb-conflict-two-actors",
+   "facts": [
+    {
+     "factId": "f0",
+     "conveyed": "<yes|no|undetermined>",
+     "evidence": "<verbatim quote>"
+    },
+    {
+     "factId": "f1",
+     "conveyed": "<yes|no|undetermined>",
+     "evidence": "<verbatim quote>"
+    }
+   ],
+   "sameNameConfused": "<yes|no|undetermined>",
+   "inventedProperNames": [],
+   "inventedEvents": [],
+   "povChanged": "<yes|no|undetermined>",
+   "readability": 0
+  },
+  {
+   "caseId": "rb-move-other-appearance",
+   "facts": [
+    {
+     "factId": "f0",
+     "conveyed": "<yes|no|undetermined>",
+     "evidence": "<verbatim quote>"
+    }
+   ],
+   "sameNameConfused": "<yes|no|undetermined>",
+   "inventedProperNames": [],
+   "inventedEvents": [],
+   "povChanged": "<yes|no|undetermined>",
+   "readability": 0
+  }
+ ],
+ "notes": "labels only; disagreements are compared against review-v3.json and adjudicated separately, keeping both original records"
+}

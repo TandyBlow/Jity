@@ -43,14 +43,17 @@
 | `fixtures/review-v3-independent.json` | 独立复核记录（待填） |
 | `review-comparison-v3.md` | 一致率、分歧、裁定（待写） |
 
-## 5. 复核者来源（按 2026-11-09 裁决）
+## 5. 复核者来源（2026-11-09 裁决：隔离的新 AI 会话）
 
-已经看过旧 N6 判断与遗漏分析的会话（包括本实验的会话）**不能充当盲审**。可接受的来源只有两种：
+已经看过旧 N6 判断与遗漏分析的会话（包括本实验的会话）**不能充当盲审**。当前选择：**不带本项目历史上下文的临时 AI 会话**。
 
-1. 未接触旧结论的人员；
-2. 隔离的新会话（只给盲包与校准集，不给旧复核、分析报告或本文件的其他章节）。
+- 只提供 `fixtures/reviewer-packet-v3.json` 与 `fixtures/reviewer-calibration.json`；隐藏答案、旧版 N6、`fact-omission-v3.md` 与本文件。
+- 记录里必须写明：模型名称/版本、会话隔离方式、标注开始与结束时间，并注明**是 AI 复核，不是人工复核**。
+- 本会话（看过旧结论）不参与盲审，也不能代替它。
+- 记录模板：`fixtures/review-v3-independent-TEMPLATE.json`（10 个 caseId 与事实 id 已预填，等待填标签）。
+- 填写后先对校准答案，再进入 `review-comparison-v3.md` 的分歧比较；两份记录都保留，不覆盖。
 
-两种来源都要在最终记录里如实写明。目前尚未执行独立标注，`reviewStatus` 仍是 `pending-independent-review`。
+当前 `reviewStatus` 仍是 `pending-independent-review`：需要新的临时会话完成标注并把文件交回。
 
 ## 6. 与后续实验的关系
 

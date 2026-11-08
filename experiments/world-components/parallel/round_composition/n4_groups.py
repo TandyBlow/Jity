@@ -22,6 +22,7 @@ Usage:
     out["status"] in {"ok", "blocked", "error"}
 """
 
+import json
 import pathlib
 import sys
 
@@ -48,9 +49,23 @@ import character_identity  # noqa: E402
 
 VERSION = "n4-groups-v0.2"
 
-REQUIREMENT_LINE = ("要求：写场景、行动与视角人物心理；不写任务标题、"
-                    "数值面板、具体时长、字段名；不新增未列出的具名人物/"
-                    "物品/地点；他人只写可见动作。")
+# The requirement line the v3 batch ACTUALLY sent, taken from the registration.
+# The packer default is not enough: v3 replaced the line as a whole, so the A
+# arm and this renderer must carry the same replacement text, or the comparison
+# changes the writing constraints as well.
+REGISTRATION = HERE / "fixtures" / "batch-v3.json"
+DEFAULT_REQUIREMENT_LINE = ("要求：写场景、行动与视角人物心理；不写任务标题、"
+                            "数值面板、具体时长、字段名；不新增未列出的具名人物/"
+                            "物品/地点；他人只写可见动作。")
+
+
+def registered_requirement_line(path=REGISTRATION):
+    doc = json.loads(pathlib.Path(path).read_text(encoding="utf-8"))
+    line = ((doc.get("intervention") or {}).get("replacementLine")
+            or "").strip()
+    if not line.startswith("要求："):
+        raise N4RenderError("requirement-line-missing", str(path))
+    return line
 GROUP_RULES = ("写作要求：在正文里完整表达本组事实；"
                "移动需要交代起点、终点和人物。")
 
@@ -119,7 +134,7 @@ def _block(fact, state, same_names, seen_eids, identities=None):
             return None, {"factId": fid,
                           "reason": reason or "same-name-indistinguishable",
                           "detail": f"{name}: {reason}"}
-        field = (ids.get("entries", {}).get(eid) or {}).get("field") or "性格"
+        field = (ids.get("sameNameField") or {}).get(name) or             (ids.get("entries", {}).get(eid) or {}).get("field") or "性格"
         person = f"{name}（{field}={got[eid]}）"
     lines = [head]
     if kind in PERSON_LINE:
@@ -194,7 +209,8 @@ def _header(case, plan, world, facts, selected_fact_ids):
 
 
 def pack_grouped_input(case, plan, world, selected_fact_ids=None,
-                       scene_diagnostics=None, state=None):
+                       scene_diagnostics=None, state=None,
+                       requirement_line=None):
     out = {"version": VERSION,
            "diagnostics": list(scene_diagnostics or []),
            "productQualified": False, "blocked": []}
@@ -218,7 +234,7 @@ def pack_grouped_input(case, plan, world, selected_fact_ids=None,
         # differ in the fact arrangement below
         lines.append(f"视角：{pov}；第三人称限知；只写{pov}的内心，"
                      f"他人只写可见动作。")
-        lines.append(REQUIREMENT_LINE)
+        lines.append(requirement_line or registered_requirement_line())
         lines.append("")
         for sentence in plan["sentences"]:
             idx = sentence["index"] + 1

@@ -1,20 +1,20 @@
 {
  "version": "round-composition-manifest-v0.1",
  "experiment": "C7 / R11 offline round composition",
- "recordedAt": "2026-11-08T08:59:09.139390+00:00",
+ "recordedAt": "2026-11-08T09:18:35.802291+00:00",
  "worktree": "D:\\others\\Jity\\.local\\parallel\\c-round-composition",
  "git": {
   "branch": "exp/c-round-composition",
-  "headAtRecording": "af4f192c44a5ab1217371e7efbb63c25a0a4d6ff",
-  "headSubject": "C7 round composition: N5 v4.1 counter-fixes, grouped N4 renderer, reviewer packet corrected",
+  "headAtRecording": "a1e4b5a725d61c578a998d99c2cd079b24f878bc",
+  "headSubject": "C7 round composition: restore N4 global invariants, share identity record, N5 v4.2",
   "porcelain": [
    "M experiments/world-components/parallel/round_composition/README.md",
+   " M experiments/world-components/parallel/round_composition/character_identity.py",
    " M experiments/world-components/parallel/round_composition/fixtures/manifest.json",
    " M experiments/world-components/parallel/round_composition/fixtures/n4-groups-rb-move-outcome.txt",
    " M experiments/world-components/parallel/round_composition/fixtures/reviewer-calibration-key.json",
    " M experiments/world-components/parallel/round_composition/fixtures/reviewer-calibration.json",
    " M experiments/world-components/parallel/round_composition/make_reviewer_packet.py",
-   " M experiments/world-components/parallel/round_composition/n4-input-design.md",
    " M experiments/world-components/parallel/round_composition/n4_groups.py",
    " M experiments/world-components/parallel/round_composition/record_manifest.py",
    " M experiments/world-components/parallel/round_composition/rejudge_archives_v4.py",
@@ -151,8 +151,8 @@
    },
    {
     "path": "experiments/world-components/parallel/round_composition/README.md",
-    "sha256": "dd3f4f8a4c782e7f5a5ef4016931957e11807a1113928df75b67b5be8fda9362",
-    "bytes": 46705
+    "sha256": "42e46dddaf35d2e9012a23bbe8a4c79f5292b0d360a3f665dd185831d6dbb544",
+    "bytes": 49146
    },
    {
     "path": "experiments/world-components/parallel/round_composition/conclusion.md",
@@ -426,8 +426,8 @@
    },
    {
     "path": "experiments/world-components/parallel/round_composition/rejudge_archives_v4.py",
-    "sha256": "ea3b5d30a340f89adb1cb838a7c2e4b952d2dd0018a530bab6871062bb733c0d",
-    "bytes": 5489
+    "sha256": "b8651e2318cf93c67da0a034d378a7b9f3db83565ca11c59d6b2257f1cc52c46",
+    "bytes": 5579
    },
    {
     "path": "experiments/world-components/parallel/round_composition/n5-v4.md",
@@ -441,13 +441,13 @@
    },
    {
     "path": "experiments/world-components/parallel/round_composition/second-reviewer-plan.md",
-    "sha256": "341a38d5657182a1aa18749b78581d57b6497e0d5cfca1ff6e3aed223a8be587",
-    "bytes": 4251
+    "sha256": "918bb482219884d7d270374cd304ccbb8c19396fcbdaaec6eab4707a45319e80",
+    "bytes": 4768
    },
    {
     "path": "experiments/world-components/parallel/round_composition/make_reviewer_packet.py",
-    "sha256": "843c6f5ecc3225a37d64d8f9143084787fb2304bf2fe2511d928292978baab55",
-    "bytes": 9030
+    "sha256": "f95ba03a7f848ce22f5a24321d26c7eea820abff39dbaf398d099ab6bed0479d",
+    "bytes": 9227
    },
    {
     "path": "experiments/world-components/parallel/round_composition/fixtures/reviewer-packet-v3.json",
@@ -456,13 +456,13 @@
    },
    {
     "path": "experiments/world-components/parallel/round_composition/fixtures/reviewer-calibration.json",
-    "sha256": "6606d4049a0b04409cb19ef773731eb99b1a207c19bcf7c53f85d81b5c35ce17",
-    "bytes": 4115
+    "sha256": "bb34a13e6b50a4142a3e04cfd8c2eee057ad05f234be19d2cc35edcf5cefd509",
+    "bytes": 4103
    },
    {
     "path": "experiments/world-components/parallel/round_composition/fixtures/reviewer-calibration-key.json",
-    "sha256": "7808d2145205e1c6d4ebf4891b0193a0ef2ae9624a818aab282ab8d0d43b343b",
-    "bytes": 822
+    "sha256": "7ce09400ad553653ec3cb3fa48c3f9b07cc15ea9f340dcf971021cd2aaee846b",
+    "bytes": 968
    },
    {
     "path": "experiments/world-components/parallel/round_composition/judge_v4_1.py",
@@ -481,23 +481,23 @@
    },
    {
     "path": "experiments/world-components/parallel/round_composition/n4_groups.py",
-    "sha256": "06cd4f7ef7e3805395d8188e710d1804a07b50cdc40107939a6b18fb0c277980",
-    "bytes": 10792
+    "sha256": "031f40a83b6832b95433a2cd35d85d785429d3cc532183a969d78f4b01a05a7c",
+    "bytes": 11638
    },
    {
     "path": "experiments/world-components/parallel/round_composition/test_n4_groups.py",
-    "sha256": "d2942730fea76b8ca800322eee8a132d4e9fa5e6374e625bd1a6c5b1b051a3af",
-    "bytes": 8029
+    "sha256": "e100577a03071bf2b21e6025b2b76bdec3a9feed8709e9368e79b9e10f372702",
+    "bytes": 9348
    },
    {
     "path": "experiments/world-components/parallel/round_composition/fixtures/n4-groups-rb-move-outcome.txt",
-    "sha256": "782f3b4194813fd07a40db8e2ebfd13b242785acc0c30aa2ce84c56e82b18ed2",
-    "bytes": 725
+    "sha256": "998eb20cdb9d60e7d96e3a4d21db0756017b2f61ade0fd6364a22e0783663758",
+    "bytes": 929
    },
    {
     "path": "experiments/world-components/parallel/round_composition/character_identity.py",
-    "sha256": "2e044261070c0aa50178e1b78690c704ec8b563a66ad7ed7bffc83bf4e9519dd",
-    "bytes": 4275
+    "sha256": "83a820ae108350857d0eb3def0978540e007d7efb35a53e271d3786ed8e8d779",
+    "bytes": 6269
    },
    {
     "path": "experiments/world-components/parallel/round_composition/judge_v4_2.py",
@@ -513,6 +513,26 @@
     "path": "experiments/world-components/parallel/round_composition/n5-v4-2.md",
     "sha256": "3a48905c13d1ace1d2076b29f171d3477c54571aebc13b0c309e3b32dcdf4a3e",
     "bytes": 3326
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/judge_v4_3.py",
+    "sha256": "0c760fd8ec336acad97db3eeec029685d21016563b8e32995bca05b85bb57206",
+    "bytes": 20963
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/test_judge_v4_3.py",
+    "sha256": "37a142ddf6df208714f6cb1ef12feb2bc50a3e1684ceef60d6a47b00c1735eb1",
+    "bytes": 4971
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/n5-v4-3.md",
+    "sha256": "fdd24faed4635e60fa91461bc9e859d1784dbb99ed09627b691a10bf815a170a",
+    "bytes": 2127
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/fixtures/review-v3-independent-TEMPLATE.json",
+    "sha256": "531f6ffa1b983dd949562fa5c584833cb14e701e7369e8700820aa7e4c34ab54",
+    "bytes": 5542
    },
    {
     "path": "experiments/world-components/parallel/round_composition/compose.py",
@@ -546,6 +566,11 @@
    "path": "experiments\\world-components\\parallel\\round_composition\\out\\archive-rejudge-v4-2.json",
    "sha256": "d5ef2c04a9236f2bf5c2d7d9debb4ac4352a56277720713e872b95bfb24ab952",
    "bytes": 29061
+  },
+  {
+   "path": "experiments\\world-components\\parallel\\round_composition\\out\\archive-rejudge-v4-3.json",
+   "sha256": "91fc428ed27f55989efea3bcd0258cfc14aa2e50fffb4348098b7486922a54c8",
+   "bytes": 29046
   },
   {
    "path": "experiments\\world-components\\parallel\\round_composition\\out\\archive-rejudge-v4.json",

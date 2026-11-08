@@ -198,6 +198,12 @@ SOURCES = {
         "experiments/world-components/parallel/round_composition/"
         "test_judge_v4_2.py",
         "experiments/world-components/parallel/round_composition/n5-v4-2.md",
+        "experiments/world-components/parallel/round_composition/judge_v4_3.py",
+        "experiments/world-components/parallel/round_composition/"
+        "test_judge_v4_3.py",
+        "experiments/world-components/parallel/round_composition/n5-v4-3.md",
+        "experiments/world-components/parallel/round_composition/"
+        "fixtures/review-v3-independent-TEMPLATE.json",
         "experiments/world-components/parallel/round_composition/compose.py",
         "experiments/world-components/parallel/round_composition/"
         "make_fixtures.py",

@@ -24,6 +24,10 @@ sys.path.insert(0, str(HERE))
 
 import n4_groups  # noqa: E402
 import real_batch_v3 as rb  # noqa: E402
+import runner_guards as guards  # noqa: E402
+
+REG = json.loads((HERE / "fixtures" / "batch-v3.json")
+                 .read_text(encoding="utf-8"))
 
 CASES = json.loads((HERE / "fixtures" / "batch-v1-cases.json")
                    .read_text(encoding="utf-8"))["cases"]
@@ -58,7 +62,12 @@ def render(cid, facts_mutator=None, state_mutator=None, plan_mutator=None):
                                        state=state)
     v3 = rb.pack_narrative_input(packed, plan, scene["worldView"],
                                  selected_fact_ids=ids)
-    out["_v3"] = v3.get("input")
+    # the A arm is the input v3 ACTUALLY sent: the default line was replaced
+    # wholesale by the registered requirement text
+    if v3.get("input"):
+        out["_a_input"], _ = rb.apply_intervention(v3["input"], REG)
+    else:
+        out["_a_input"] = None
     return out, selected
 
 
@@ -125,9 +134,9 @@ def test_same_name_without_descriptor():
 
 def test_ab_invariants():
     out, _ = render("rb-move-outcome")
-    v3 = out["_v3"].split(chr(10))
+    a = out["_a_input"].split(chr(10))
     b = out["input"].split(chr(10))
-    v3_header = v3[:v3.index("事实：")]
+    v3_header = a[:a.index("事实：")]
     while v3_header and not v3_header[-1].strip():
         v3_header.pop()
     b_persp = next(i for i, l in enumerate(b) if l.startswith("视角："))
@@ -136,14 +145,32 @@ def test_ab_invariants():
         b_header.pop()
     check(v3_header == b_header,
           "A/B: scene, characters and visible blocks are byte identical")
-    v3_persp = next(l for l in v3 if l.startswith("视角："))
-    v3_req = next(l for l in v3 if l.startswith("要求："))
-    check(b[b_persp] == v3_persp,
+    a_persp = next(l for l in a if l.startswith("视角："))
+    a_req = next(l for l in a if l.startswith("要求："))
+    registered = REG["intervention"]["replacementLine"]
+    check(a_req == registered,
+          "A/B: the A arm carries the registered v3 requirement line")
+    check(b[b_persp] == a_persp,
           "A/B: the perspective line is byte identical")
-    check(b[b_persp + 1] == v3_req,
-          "A/B: the registered requirement line is byte identical")
-    check(out["input"].count(v3_req) == 1,
+    check(b[b_persp + 1] == a_req,
+          "A/B: the requirement line is byte identical to A")
+    check(out["input"].count(a_req) == 1,
           "A/B: the requirement line appears exactly once")
+
+    # final HTTP request: the body prompt must equal what was recorded, and the
+    # requirement line inside the two bodies must be identical
+    body_a = {"prompt": out["_a_input"], "stream": False,
+              "options": {"num_predict": 384}}
+    body_b = {"prompt": out["input"], "stream": False,
+              "options": {"num_predict": 384}}
+    guards.check_prompt(out["_a_input"], body_a["prompt"], 1)
+    guards.check_prompt(out["input"], body_b["prompt"], 1)
+    req_a = next(l for l in body_a["prompt"].split(chr(10))
+                 if l.startswith("要求："))
+    req_b = next(l for l in body_b["prompt"].split(chr(10))
+                 if l.startswith("要求："))
+    check(req_a == req_b == registered,
+          "A/B: the request bodies carry the same requirement line")
 
 
 def test_time_handling():
