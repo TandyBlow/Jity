@@ -35,6 +35,13 @@ v3 方案正文写的工作目录是 `experiments/world-components/parallel/c-co
 | `step1/narration-split-samples.export.json` | 从 TS 导出的冻结样本（源文件 SHA-256 记录在内） |
 | `export_samples.mjs` | 上述导出的可复现脚本 |
 | `probe_sentences.mjs` | 冻结前诊断：程序句送进冻结判分器的必述与残差结果 |
+| `run_frozen.py`、`step3/` | 24 条调用与 30 份初稿（`calls.jsonl`、`drafts.jsonl`、`run.json`、`preflight.json`） |
+| `score_drafts.mjs`、`step4/scores.json` | 冻结判分器自检＋评分，含共享授权词表残差 |
+| `step4/ballot/` | 遮蔽映射 `order.json` 与空选票 `ballot.json` |
+| `step4/run-report.md` | 生成／评分／评审材料报告（含第 5 步更正） |
+| `adjudicate.py`、`step5/clauses.jsonl`、`step5/adjudication.json` | 72 条分句的逐句核验（执行方 pre-check，待独立人工确认） |
+| `build_packet.py`、`step5/review-packet.md` | 盲评包：已提交事实背景＋甲/乙/丙，无臂名无评分 |
+| `step5/summary.md` | 人工核验与程序评分对照、责任划分、待定项 |
 
 ## 复现
 
