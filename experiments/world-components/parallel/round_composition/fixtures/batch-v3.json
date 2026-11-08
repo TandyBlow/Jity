@@ -1,0 +1,118 @@
+{
+ "version": "real-batch-v3",
+ "batchId": "real-batch-2026-11-08-v3-shape",
+ "registeredAt": "2026-11-08",
+ "purpose": "N4.0 requirement-line intervention: v2 showed the model writes complete passages but not the judged shapes. Only the requirement line changes here.",
+ "decisionRecord": {
+  "intervention": "replace the N4.0 requirement line as a whole",
+  "attribution": "whole-line intervention; results can only be attributed to the instruction set, not to any single clause",
+  "judge": "frozen (judge_v3, n5-v3); no vocabulary or frame change",
+  "budget": "384, unchanged from v2",
+  "povAndInnerState": "stay N6 findings, no hard gate"
+ },
+ "sameSamplesAsV2": {
+  "batchId": "real-batch-2026-11-08-v2-budget384",
+  "casesSha256": "36cb036714ef27c4ffc0d4e1c8eb4ddd474c6311d982b194f996859b0cb8dde7"
+ },
+ "sampleIds": [
+  "rb-move-outcome",
+  "rb-time-vague",
+  "rb-inner-change",
+  "rb-two-actors-move",
+  "rb-same-name",
+  "rb-subtask",
+  "rb-sanity-only",
+  "rb-time-only",
+  "rb-conflict-two-actors",
+  "rb-move-other-appearance"
+ ],
+ "sampleCount": 10,
+ "model": {
+  "name": "qwen2.5:7b",
+  "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+  "parameterSize": "7.6B",
+  "quantization": "Q4_K_M",
+  "family": "qwen2",
+  "runtime": "ollama",
+  "runtimeVersion": "0.40.15",
+  "endpoint": "http://127.0.0.1:11434/api/generate",
+  "transport": "local HTTP, no external network"
+ },
+ "decode": {
+  "temperature": 0,
+  "seed": 42,
+  "num_predict": 384,
+  "top_p": 1.0,
+  "top_k": 40,
+  "repeat_penalty": 1.0,
+  "stop": [],
+  "stream": false,
+  "system": null
+ },
+ "intervention": {
+  "kind": "requirement-line",
+  "originalLine": "要求：写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不新增未列出的具名人物/物品/地点；他人只写可见动作。",
+  "originalSha256": "c697483bebe0e42a6a5fe39ebc415ba9dcc66ceada9a08239102a774bbdb720c",
+  "replacementLine": "要求：只输出一段完整正文，最多六句；写场景、行动与视角人物心理；不写任务标题、数值面板、具体时长、字段名；不回显记录行、编号或小节标签；不写对话；完整表达下列每一条事实，移动要交代起点和终点；不新增未列出的具名人物/物品/地点或事件；他人只写可见动作，不写他人内心。",
+  "replacementSha256": "f187a4c591635b11efb6c713f364a90034aba20674bb77739cf0198dd950c5b7",
+  "transform": "replace the single line starting with 要求： in the packed N4.0 input; exactly one such line must exist and it must equal originalLine, otherwise the batch stops",
+  "scope": "all 10 samples; identical replacement text"
+ },
+ "retryPolicy": {
+  "maxSentenceAttempts": 2,
+  "feedback": "the previous attempt's hard-gate problems are appended to the retry request (recorded)",
+  "fallback": "program template when the kinds have a frame; the case status stays a failure"
+ },
+ "primaryMetric": {
+  "value": "first call only (attempt 1)",
+  "retry": "reported separately; never changes the primary number",
+  "denominator": "all 10 samples, including truncated ones",
+  "movementDenominator": "the 6 samples that carry a moved fact"
+ },
+ "acceptance": {
+  "mechanism": [
+   "10/10 samples record both the original and the intervened input, the raw response, finish reason, token counts, timing and the decision",
+   "no unhandled exception; the intervention fails closed if the requirement line is not found exactly once"
+  ],
+  "quality": [
+   "n5-pass means the hard gates passed ONLY",
+   "quality comes from N6 (semantic, independent of the N5 regex)",
+   "D4 counts proper names only (errata E5)",
+   "review is bound to attempt 1 (reviewedAttempt=1); retry texts stay pending"
+  ],
+  "tripwire": [
+   ">=3/10 samples failing the hard gates, OR >=2 failing port CALLS"
+  ]
+ },
+ "n6Rubric": {
+  "A_facts": "every selected fact is conveyed without contradiction",
+  "B_additions": "no new named entity/event, no goal leak, no format echo",
+  "C_pov": "no other character's inner state and no POV switch",
+  "D_completeness": "the passage ends as a complete sentence",
+  "independence": "an N5 regex miss is NOT an N6 reason; N6 judges what the text conveys",
+  "verdict": "pass only when A-D hold; unreadable -> undetermined"
+ },
+ "registrationRevision": {
+  "revision": 2,
+  "reason": "the first v3 attempt sent the ORIGINAL requirement line while archiving the intervened text (runner bug). The aborted run is preserved and the runner was fixed before any valid v3 result existed.",
+  "abortedArchive": "out/real-batch-v3-aborted-no-intervention.json",
+  "errata": "fixtures/errata-v3.json"
+ },
+ "errataInherited": {
+  "v1": "fixtures/errata-v1.json (E1 tripwire, E2 wording, E3 tokens, E4 time claim, E5 D4 rule)",
+  "v2": "fixtures/errata-v2.json (N6 semantic independence, attempt binding, movement denominator 6)"
+ },
+ "hashes": {
+  "cases": "36cb036714ef27c4ffc0d4e1c8eb4ddd474c6311d982b194f996859b0cb8dde7",
+  "judge": "5cfec7a82905cd9a6a7aae34033fa8081e8c177a9db3d5faa9d2b6380c171e54",
+  "runner": "d48bedcb1b36ca0b0fc98517c7530b8b11ea68f69b45efea221449530a7cf351",
+  "v2Registration": "592bd1e2599a093c6d024e73b33897401337a5ab511b13dc6493e84355e9a8ab",
+  "chain": {
+   "narration_pipeline.py": "5f8e311d21a279f735bb84574dbb2fb1a6f00d641460263728db8f61e6c06866",
+   "n2_perspective.py": "84a02c04d06e47d2e721d664c1bb5f8b824c45e6398c8730c482b9ac540affd2",
+   "n3_organize.py": "12b6db4728505105a5805ed61c09c540f56c989755ad0b9688147346a4254913",
+   "packer.py": "6e5d1e5e815740f49baa3d751fd455b2a3192499888f11e9472ddd0d0b67a1b7",
+   "scene_context.py": "57d71610864c33084b90c81bf2b78a7afd3bcac3077e203b1cf9dafa35cc8a78"
+  }
+ }
+}

@@ -1,0 +1,16 @@
+# DERIVED SUMMARY of out/real-batch-v3-reviewed.json
+# (generated from the archive; not a console log)
+# batch real-batch-2026-11-08-v3-shape model qwen2.5:7b 845dbda0ea48 num_predict=384
+
+rb-move-outcome            primary=n5-rejected  final=n5-rejected  finish=stop    out_tokens=  83 qualityPrimary=fail  qualityFinal=pending  d4=0 fallback=True
+rb-time-vague              primary=n5-rejected  final=n5-rejected  finish=stop    out_tokens=  83 qualityPrimary=fail  qualityFinal=pending  d4=0 fallback=True
+rb-inner-change            primary=n5-rejected  final=n5-rejected  finish=stop    out_tokens= 100 qualityPrimary=fail  qualityFinal=pending  d4=0 fallback=True
+rb-two-actors-move         primary=n5-rejected  final=n5-rejected  finish=stop    out_tokens=  82 qualityPrimary=fail  qualityFinal=pending  d4=0 fallback=True
+rb-same-name               primary=n5-rejected  final=n5-rejected  finish=stop    out_tokens= 100 qualityPrimary=fail  qualityFinal=pending  d4=0 fallback=True
+rb-subtask                 primary=n5-rejected  final=n5-rejected  finish=stop    out_tokens=  81 qualityPrimary=fail  qualityFinal=pending  d4=0 fallback=False
+rb-sanity-only             primary=n5-rejected  final=n5-rejected  finish=stop    out_tokens= 106 qualityPrimary=fail  qualityFinal=pending  d4=0 fallback=True
+rb-time-only               primary=n5-rejected  final=n5-rejected  finish=stop    out_tokens=  83 qualityPrimary=fail  qualityFinal=pending  d4=0 fallback=True
+rb-conflict-two-actors     primary=n5-rejected  final=n5-rejected  finish=stop    out_tokens= 121 qualityPrimary=fail  qualityFinal=pending  d4=0 fallback=True
+rb-move-other-appearance   primary=n5-rejected  final=n5-rejected  finish=stop    out_tokens=  77 qualityPrimary=fail  qualityFinal=pending  d4=0 fallback=True
+
+summary: {"total": 10, "primaryStatusCounts": {"n5-rejected": 10}, "finalStatusCounts": {"n5-rejected": 10}, "primaryN5Pass": 0, "finalN5Pass": 0, "primaryTruncated": 0, "hardGateFailSamples": 10, "portFailureCalls": 0, "retriedSamples": 10, "fallbacksUsed": 9, "tripwireTriggered": true, "qualityPassed": 0, "qualityPending": 0, "quality": {"fail": 10}, "qualityFailed": 10, "qualityUndetermined": 0, "d4Labeled": 10, "d4LabelCount": 0, "d4Inventions": 0, "reviewedAttempt": 1, "qualityPrimary": {"fail": 10}, "qualityFinalPending": 10}

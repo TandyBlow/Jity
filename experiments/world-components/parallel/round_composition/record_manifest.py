@@ -118,6 +118,29 @@ SOURCES = {
         "out/real-batch-v2-raw.jsonl",
         "experiments/world-components/parallel/round_composition/"
         "out/real-batch-v2-summary.txt",
+        # requirement-line intervention batch v3 + its aborted first run
+        "experiments/world-components/parallel/round_composition/"
+        "fixtures/errata-v2.json",
+        "experiments/world-components/parallel/round_composition/"
+        "fixtures/errata-v3.json",
+        "experiments/world-components/parallel/round_composition/"
+        "fixtures/batch-v3.json",
+        "experiments/world-components/parallel/round_composition/"
+        "fixtures/review-v3.json",
+        "experiments/world-components/parallel/round_composition/"
+        "make_real_batch_v3.py",
+        "experiments/world-components/parallel/round_composition/"
+        "real_batch_v3.py",
+        "experiments/world-components/parallel/round_composition/"
+        "write_review_v3.py",
+        "experiments/world-components/parallel/round_composition/"
+        "real-batch-v3.md",
+        "experiments/world-components/parallel/round_composition/"
+        "out/real-batch-v3-raw.jsonl",
+        "experiments/world-components/parallel/round_composition/"
+        "out/real-batch-v3-summary.txt",
+        "experiments/world-components/parallel/round_composition/"
+        "out/real-batch-v3-aborted-no-intervention.json",
         "experiments/world-components/parallel/round_composition/compose.py",
         "experiments/world-components/parallel/round_composition/"
         "make_fixtures.py",

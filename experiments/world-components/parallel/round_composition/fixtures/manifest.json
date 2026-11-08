@@ -1,18 +1,21 @@
 {
  "version": "round-composition-manifest-v0.1",
  "experiment": "C7 / R11 offline round composition",
- "recordedAt": "2026-11-08T07:28:47.213631+00:00",
+ "recordedAt": "2026-11-08T07:42:57.886859+00:00",
  "worktree": "D:\\others\\Jity\\.local\\parallel\\c-round-composition",
  "git": {
   "branch": "exp/c-round-composition",
-  "headAtRecording": "c5d2fab70f5e5ab2605e3ef52089a7c47690639f",
-  "headSubject": "C7 round composition: first real-model offline batch (10 samples, pre-registered)",
+  "headAtRecording": "bed6c03ff16021754d22c374438d62eccf1def80",
+  "headSubject": "C7 round composition: output-budget control 384 (v2) plus v1 errata",
   "porcelain": [
    "M experiments/world-components/parallel/round_composition/README.md",
    " M experiments/world-components/parallel/round_composition/apply_review.py",
    " M experiments/world-components/parallel/round_composition/fixtures/manifest.json",
-   " M experiments/world-components/parallel/round_composition/real-batch-v1.md",
+   " M experiments/world-components/parallel/round_composition/fixtures/review-v2.json",
+   " M experiments/world-components/parallel/round_composition/out/real-batch-v2-reviewed.json",
+   " M experiments/world-components/parallel/round_composition/real-batch-v2.md",
    " M experiments/world-components/parallel/round_composition/record_manifest.py",
+   " M experiments/world-components/parallel/round_composition/write_review_v2.py",
    "?? TASK.md"
   ]
  },
@@ -144,8 +147,8 @@
    },
    {
     "path": "experiments/world-components/parallel/round_composition/README.md",
-    "sha256": "4e76377fcde2aebc8d845ac3960ab807ba39d4d33386ad93deab8be5a2fc9155",
-    "bytes": 34882
+    "sha256": "53761df105e05917bff04564b44732ac958610d450bf90610e29541f84d76c1c",
+    "bytes": 36447
    },
    {
     "path": "experiments/world-components/parallel/round_composition/conclusion.md",
@@ -219,8 +222,8 @@
    },
    {
     "path": "experiments/world-components/parallel/round_composition/apply_review.py",
-    "sha256": "0f7ae4cadd193c4a423c3c0ed00fed2335debb7b003fc2a83dbb97d1d2f331fb",
-    "bytes": 4667
+    "sha256": "ca59bb33d55d07ec96262faea576f045bff2577eed1e376d41e5d66fc2486a63",
+    "bytes": 5476
    },
    {
     "path": "experiments/world-components/parallel/round_composition/real-batch-v1.md",
@@ -264,8 +267,8 @@
    },
    {
     "path": "experiments/world-components/parallel/round_composition/fixtures/review-v2.json",
-    "sha256": "4785965b3cb5d3be5a5ff8fd953602aad5548f74b0d8b56f72fa3b0999042c22",
-    "bytes": 21868
+    "sha256": "41954324dd015d6128e9d544fec1f87dc890365a2f553fd5720f8e40ec4325ea",
+    "bytes": 24631
    },
    {
     "path": "experiments/world-components/parallel/round_composition/make_real_batch_v2.py",
@@ -279,8 +282,8 @@
    },
    {
     "path": "experiments/world-components/parallel/round_composition/write_review_v2.py",
-    "sha256": "bd82519f1c01bbad46bb928ee0c23ecb588591f7813f43c193ace522947a519b",
-    "bytes": 11001
+    "sha256": "470c73c0e7104357ae1bb8f03a63baa3eb10426b3c9ce8af46154364fe32fd76",
+    "bytes": 12064
    },
    {
     "path": "experiments/world-components/parallel/round_composition/test_tripwire_v2.py",
@@ -289,8 +292,8 @@
    },
    {
     "path": "experiments/world-components/parallel/round_composition/real-batch-v2.md",
-    "sha256": "877e3ce79c521f737fafc090050cfe4d49857bc374ce0c684ae9625a2a6c53ef",
-    "bytes": 8463
+    "sha256": "79872a71700e8f4a5899436eadaee9a1ccd69acd4906debec0317e0a984d8928",
+    "bytes": 9190
    },
    {
     "path": "experiments/world-components/parallel/round_composition/out/real-batch-v2-raw.jsonl",
@@ -301,6 +304,61 @@
     "path": "experiments/world-components/parallel/round_composition/out/real-batch-v2-summary.txt",
     "sha256": "e62b0c2268ea7c2efcf7218b8070d0e51de3984cb5d5dbe79efc21dd5231e406",
     "bytes": 1964
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/fixtures/errata-v2.json",
+    "sha256": "ef2354d44dbc0912acc3502b01fc355be74e55ee5a0c12593528218a0007702b",
+    "bytes": 2315
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/fixtures/errata-v3.json",
+    "sha256": "ae51359de2b5298b0b4d21f36e4bf6102ce97f123ceb036a0f201be67f28ec77",
+    "bytes": 1164
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/fixtures/batch-v3.json",
+    "sha256": "c6cca23eb243f1c672ef1b57f4f2528aaae3648945a5149ab78002c53943fa03",
+    "bytes": 5710
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/fixtures/review-v3.json",
+    "sha256": "38c51fe3d58bb7ef6070d692babf8958764db6416baa83f5f71388c7e044637d",
+    "bytes": 13469
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/make_real_batch_v3.py",
+    "sha256": "7d701521f37d734d9abce5777ef24a4398be1c900f0aece66c253ae752b44b4d",
+    "bytes": 9520
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/real_batch_v3.py",
+    "sha256": "d48bedcb1b36ca0b0fc98517c7530b8b11ea68f69b45efea221449530a7cf351",
+    "bytes": 19774
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/write_review_v3.py",
+    "sha256": "c13bb0eb3b71ecea18c49ba10ea0771cec0860ed87ad30a3e8ef7cd4a0982829",
+    "bytes": 10894
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/real-batch-v3.md",
+    "sha256": "bec4dc1d0ade3f9d675d257b8beea623f0e5b58cf864fb5ac3b48a918373667a",
+    "bytes": 8564
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/out/real-batch-v3-raw.jsonl",
+    "sha256": "2853217f0c0cb92aebd058673614a75a108c5fda87485b2e5c306e7d21aace08",
+    "bytes": 84328
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/out/real-batch-v3-summary.txt",
+    "sha256": "955fd6fc36e0a36b91f35e45f5fa2391dac674e408af077f0f50d985f531ad2e",
+    "bytes": 2329
+   },
+   {
+    "path": "experiments/world-components/parallel/round_composition/out/real-batch-v3-aborted-no-intervention.json",
+    "sha256": "9e7c2318cfa4229e608dbb2d81b0ce56186c267fa1f08284d82a2748ae385d94",
+    "bytes": 328686
    },
    {
     "path": "experiments/world-components/parallel/round_composition/compose.py",
@@ -377,13 +435,28 @@
   },
   {
    "path": "experiments\\world-components\\parallel\\round_composition\\out\\real-batch-v2-reviewed.json",
-   "sha256": "560f4b1a70300e684315993155f0feecd6763f6291b136835d00743431e1f371",
-   "bytes": 336397
+   "sha256": "8da96520841615f414436b9ff0945ee48e10b1c70676ec71e3bea018545de078",
+   "bytes": 337833
   },
   {
    "path": "experiments\\world-components\\parallel\\round_composition\\out\\real-batch-v2.json",
    "sha256": "456dc6c9dfedfe158c17e189c0458c2c3574f2106f5fb684d89ad565ca95f387",
    "bytes": 313394
+  },
+  {
+   "path": "experiments\\world-components\\parallel\\round_composition\\out\\real-batch-v3-aborted-no-intervention.json",
+   "sha256": "9e7c2318cfa4229e608dbb2d81b0ce56186c267fa1f08284d82a2748ae385d94",
+   "bytes": 328686
+  },
+  {
+   "path": "experiments\\world-components\\parallel\\round_composition\\out\\real-batch-v3-reviewed.json",
+   "sha256": "fa941b61c03074d58a2d42acb137f811af4f642e407a60ee8d5377fad38b9100",
+   "bytes": 239620
+  },
+  {
+   "path": "experiments\\world-components\\parallel\\round_composition\\out\\real-batch-v3.json",
+   "sha256": "fc24c9fd849ca0fc33abee22e9e118d676a252bc1ab30bfdcfada9e004ae652d",
+   "bytes": 226173
   }
  ],
  "missing": [],

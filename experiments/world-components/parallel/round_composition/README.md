@@ -208,7 +208,7 @@ D1–D5 的裁决已经实施为一个**新的判定器**（`judge_v3.py`，版�
 | `compose.py` | 组合器（程序步骤 + 模拟端口 + N5 + 回退） | `0b4e359fa8e80516677c2a4450fdd2f6d13539f914bed06f703e4828c5bc9020` |
 | `make_fixtures.py` | 由登记的已提交状态生成输入点 | `c155c002a9812787a01bf186bf8b3d7691d44d344b1f2e1baa0db5c99f802735` |
 | `check_determinism.py` | v2/v3 各跑两遍比对（去掉计时字段） | `450eb7cea31e738750833ebd833b94ede792fd73fd95442a95897b54df78f424` |
-| `record_manifest.py` | 记录输入/输出哈希、N5 门覆盖（从归档实测）与 git 身份 | `2e03e470d74784eca79bba0402ef388139680d3fc97f8ed6920dda5d01bab9d2` |
+| `record_manifest.py` | 记录输入/输出哈希、N5 门覆盖（从归档实测）与 git 身份 | `4e4a756f317aed03f59123233897d22a95aee165a0455a603d42e735792e7256` |
 | `contract_probes.py` | 两个契约冲突的定点探针（读归档，不重跑组合） | `8c5925ae17f3fef597cf1f5a2a3bfe1d0275c639df2d06e73774ed5f7d4b355c` |
 | `contract-decisions.md` | D1–D5 裁决记录与执行边界 | `97797ca32bdb5fff620e1564d28029f76fbac5d034531753ec8721c86eed3bba` |
 | `judge_v3.py` | 裁决后的 N5 v3（`outcome` 帧、模糊时间、数据触发 G4/G5、`quality()`） | `5cfec7a82905cd9a6a7aae34033fa8081e8c177a9db3d5faa9d2b6380c171e54` |
@@ -275,8 +275,18 @@ D1–D5 的裁决已经实施为一个**新的判定器**（`judge_v3.py`，版�
 
 裁决：只把 `num_predict` 从 128 提到 384，样本、模型 digest、prompt、判定器与重试策略全部沿用 v1；主结果取**首次调用**，重试另列；截断样本留在分母。预登记 `fixtures/batch-v2.json`，v1 的五条勘误见 `fixtures/errata-v1.json`。
 
-**结果：** 首次调用自然结束从 0/10 升到 **8/10**，触顶从 10/10 降到 **2/10**（`rb-two-actors-move`、`rb-time-only`）；但硬门通过仍是 **0/10**，N6 仍 **10 fail**。所以 384 解决了「写不完」，没有解决「写的不是门要求的形态」：移动事实几乎从不以「从…来到…」出现，结果被改写，3 个样本还把小节标签或记录行抄进正文（其中 1 个篡改了记录里的起止地点）。D4 按收紧后的专名规则只有 1 条（`老李`）；物件/地点描写归 N6。
+**结果：** 首次调用自然结束从 0/10 升到 **8/10**，触顶从 10/10 降到 **2/10**（`rb-two-actors-move`、`rb-time-only`）；但硬门通过仍是 **0/10**，N6 仍 **10 fail**。所以 384 解决了「写不完」，没有解决「写的不是门要求的形态」。D4 按收紧后的专名规则只有 1 条（`老李`）；物件/地点描写归 N6。
+
+**口径更正（`fixtures/errata-v2.json`）**：N6 与 N5 独立——「将铜铃挂回原位」「雨水浸透外袍」「肩膀抵住了钟沿」算**已传达**，正则未匹配只记在 `n5Formal`；复核绑定**首次调用**（`reviewedAttempt=1`），重试正文未复核（`qualityFinal` 待核）；移动统计的分母是**6 个带移动事实的样本**（本批 6/6 未传达），不是全部 10 个。
 
 触发线按预登记原文实现（失败样本 ≥3 或端口失败调用 ≥2，边界测试 `test_tripwire_v2.py`），本批失败样本 10 → 触发，仍不继续下一批，直到形态对照批的裁决。
 
 文件：`fixtures/batch-v2.json`、`fixtures/review-v2.json`、`out/real-batch-v2.json`、`out/real-batch-v2-raw.jsonl`、`out/real-batch-v2-reviewed.json`、`real-batch-v2.md`。
+
+## 14. 要求行整体干预（real-batch-v3）
+
+按裁决只替换 N4.0 要求行（一段完整正文、不回显字段/编号、不写对话、完整表达每条事实、移动交代起终点、不新增事件、不写他人内心，原有禁止项保留），样本、模型 digest、384 预算、判定器与重试策略全部冻结。预登记 `fixtures/batch-v3.json`；第一次运行因运行器把原始要求行当提示词而作废，保留为 `out/real-batch-v3-aborted-no-intervention.json`，勘误 `fixtures/errata-v3.json`，修正后重跑。
+
+**结果：** 首次调用 **10/10 自然结束、0/10 触顶**（输出 77–121 tokens，v2 为 215–384）；小节标签/记录行回显 **0 例**、对话 **0 例**；硬门仍 **0/10**，N6 **10 fail**。形态指令生效，但没有带来过门：模型改用同义措辞，而门要求「从 A 来到 B」与权威结果原话。6 个带移动事实的样本里，语义上完整传达移动的 **0 个**（`rb-same-name` 只给了起点）。D4 专名 **0 条**；「新广场/旧工厂区/井盖」按 E5 归 N6。复核绑定首次调用，`qualityFinal` 待核。
+
+文件：`fixtures/batch-v3.json`、`fixtures/review-v3.json`、`out/real-batch-v3.json`、`out/real-batch-v3-raw.jsonl`、`out/real-batch-v3-reviewed.json`、`real-batch-v3.md`。

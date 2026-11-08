@@ -25,6 +25,8 @@ sys.path.insert(0, str(HERE))
 
 import judge_v3  # noqa: E402
 
+# All three paths are required: the v1 reviewed archive is a closed record and
+# must not be regenerated with newer fields by accident.
 DEFAULTS = {
     "run": HERE / "out" / "real-batch-v1.json",
     "review": HERE / "fixtures" / "review-v1.json",
@@ -34,9 +36,9 @@ DEFAULTS = {
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--run", default=str(DEFAULTS["run"]))
-    ap.add_argument("--review", default=str(DEFAULTS["review"]))
-    ap.add_argument("--out", default=str(DEFAULTS["out"]))
+    ap.add_argument("--run", required=True)
+    ap.add_argument("--review", required=True)
+    ap.add_argument("--out", required=True)
     args = ap.parse_args()
 
     run = json.loads(pathlib.Path(args.run).read_text(encoding="utf-8"))
@@ -65,14 +67,21 @@ def main() -> int:
         n6["reviewedAt"] = review["reviewedAt"]
         case["n6"] = n6
         case["quality"] = judge_v3.quality(n6)
+        # the review is bound to one attempt; later attempts (retries) are
+        # archived but not reviewed, so their quality stays pending
+        reviewed_attempt = review.get("reviewedAttempt", 1)
+        case["reviewedAttempt"] = reviewed_attempt
+        case["qualityPrimary"] = case["quality"]
+        case["qualityFinal"] = ("pending"
+                               if len(case["attempts"]) > reviewed_attempt
+                               else case["quality"])
         quality_counts[case["quality"]] = quality_counts.get(
             case["quality"], 0) + 1
         if entry.get("text") and case["attempts"]:
-            reviewed_text = entry["text"]
-            produced = [a.get("output") for a in case["attempts"]]
-            if reviewed_text not in produced:
-                raise SystemExit(f"{case['caseId']}: reviewed text is not one "
-                                 f"of the model outputs")
+            reviewed_att = case["attempts"][reviewed_attempt - 1]
+            if entry["text"] != reviewed_att.get("output"):
+                raise SystemExit(f"{case['caseId']}: reviewed text is not the "
+                                 f"output of attempt {reviewed_attempt}")
 
     run["review"] = {
         "source": f"fixtures/{pathlib.Path(args.review).name}",
@@ -93,6 +102,10 @@ def main() -> int:
     s["d4Labeled"] = sum(1 for c in run["cases"] if c["d4"]["checked"])
     s["d4LabelCount"] = sum(c["d4"]["count"] or 0 for c in run["cases"])
     s["d4Inventions"] = sum(len(c["d4"]["errors"]) for c in run["cases"])
+    s["reviewedAttempt"] = review.get("reviewedAttempt", 1)
+    s["qualityPrimary"] = {k: v for k, v in quality_counts.items()}
+    s["qualityFinalPending"] = sum(1 for c in run["cases"]
+                                   if c.get("qualityFinal") == "pending")
     run["caveat"] = (
         "n5-pass means the hard gates passed only. quality comes from the N6 "
         "review attached here; an n5 failure is never a quality pass. The "

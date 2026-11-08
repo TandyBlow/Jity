@@ -1,15 +1,55 @@
 {
- "version": "real-batch-v2-review",
+ "version": "real-batch-v2-review-r2",
  "batchId": "real-batch-2026-11-08-v2-budget384",
  "reviewedAt": "2026-11-08",
  "reviewer": "assistant-manual (single reviewer, same session that ran the batch)",
  "reviewStatus": "pending-independent-review",
- "scope": "the FIRST call text of each sample (primary metric); retry texts are archived but not re-reviewed here; template fallbacks are program output and are never reviewed as model text",
- "d4Rule": "proper names only (person/item/place), absent from the state registry AND from the authoritative text. Object/place descriptions (钟架/木梯/小巷/老邻居…) go to N6 notes, not D4 (errata E5).",
- "n6Rule": "A facts stated without contradiction; B no invented named entity/event/goal leak/format echo; C no other character's inner state and no POV switch; D the passage ends as a complete sentence. pass only when A-D hold; unreadable -> undetermined.",
+ "reviewedAttempt": 1,
+ "scope": "the FIRST call text of each sample; retry texts are archived but NOT reviewed (their quality stays pending); template fallbacks are program output and are never reviewed as model text",
+ "separationRule": "N5 (formal) and N6 (semantic) are judged independently. A regex miss is recorded under n5Formal only; an N6 reason must be a semantic judgement about what the text conveys.",
+ "d4Rule": "proper names only (person/item/place), absent from the state registry AND from the authoritative text; object/place descriptions go to N6 notes (errata E5)",
+ "n6Rule": "A facts conveyed without contradiction; B no invented named entity/event/goal leak/format echo; C no other character's inner state and no POV switch; D the passage ends as a complete sentence. pass only when A-D hold.",
+ "caseMeta": {
+  "rb-move-outcome": {
+   "hasMovedFact": true
+  },
+  "rb-time-vague": {
+   "hasMovedFact": true
+  },
+  "rb-inner-change": {
+   "hasMovedFact": false
+  },
+  "rb-two-actors-move": {
+   "hasMovedFact": true
+  },
+  "rb-same-name": {
+   "hasMovedFact": true
+  },
+  "rb-subtask": {
+   "hasMovedFact": true
+  },
+  "rb-sanity-only": {
+   "hasMovedFact": false
+  },
+  "rb-time-only": {
+   "hasMovedFact": false
+  },
+  "rb-conflict-two-actors": {
+   "hasMovedFact": false
+  },
+  "rb-move-other-appearance": {
+   "hasMovedFact": true
+  }
+ },
  "cases": {
   "rb-move-outcome": {
    "text": "钟楼的旧木门吱呀一声，管线甲推开门，迎面扑来的是陈旧的木香和岁月的尘埃。他环视了一圈，钟楼内部依旧保持着往日的沉寂，只有偶尔传来的风声，似乎在诉说着时间的故事。\n\n他走向钟楼中央的铜铃，那是一枚古老的铜铃，表面已经斑驳，但依旧散发着金属特有的光泽。管线甲轻轻抚摸着铜铃，心中涌起一股熟悉而沉稳的感觉。他记得，这枚铜铃曾是钟楼的灵魂，每当它被挂起，钟楼便能发出悠扬的钟声，提醒着镇上的人们时间的流转。\n\n他小心翼翼地将铜铃挂回原位，动作轻柔，生怕弄出一丝声响。铜铃在钟楼的钟架上稳稳当当地挂好，仿佛与钟楼融为一体。管线甲深吸一口气，心中涌起一股满足感。他完成了自己的任务，也仿佛完成了一次与过去的对话。\n\n他转身离开钟楼，心中默默许下愿望，希望这枚铜铃能继续守护着这个小镇，直到永远。",
+   "n5Formal": [
+    "uncovered:f0:moved",
+    "uncovered:f1:outcome",
+    "residue-name:管线甲",
+    "residue-name:管线甲"
+   ],
    "d4": {
     "annotations": []
    },
@@ -23,18 +63,24 @@
      "D": true
     },
     "reasons": [
-     "the move 管线镇→钟楼 is never stated; the text starts inside 钟楼",
-     "the result text 把铜铃挂回了钟楼 is paraphrased ('将铜铃挂回原位'), so the fact is not checkable",
-     "adds an invented backstory (铜铃曾是钟楼的灵魂) and a farewell scene"
+     "the text opens inside 钟楼 and never conveys the origin 管线镇, so the move as a whole (A→B) is not conveyed",
+     "invents a backstory (铜铃曾是钟楼的灵魂, 守护小镇的愿望) and a farewell scene"
     ],
     "observations": [
-     "passage complete (done_reason=stop, 246 tokens)",
-     "frame mismatch, not truncation, is the binding constraint here"
+     "the result is conveyed: '将铜铃挂回原位' says the bell was hung back, even though the wording differs from the record",
+     "the formal miss of the result frame is recorded under n5Formal only"
     ]
    }
   },
   "rb-time-vague": {
    "text": "钟楼的旧木门吱呀一声，管线甲推开门，迎面扑来的是陈旧的木香和岁月的尘埃。他环视了一圈，钟楼内部依旧保持着往日的沉寂，只有偶尔传来的风声，似乎在诉说着时间的故事。\n\n他走向钟楼中央的铜铃，那是一枚古老的铜铃，表面已经斑驳，但依旧散发着金属特有的光泽。管线甲轻轻抚摸着铜铃，心中涌起一股熟悉而温暖的感觉。他记得，这枚铜铃曾是钟楼的灵魂，每当它被挂起，钟声便会响起，提醒着镇上的人们时间的流转。\n\n他小心翼翼地将铜铃挂回原位，铜铃在钟楼的角落里发出轻微的碰撞声，仿佛在回应他的动作。管线甲深吸一口气，心中感到一种难以言喻的满足。他环视四周，确认铜铃已经挂好，这才转身离开钟楼。\n\n钟楼外，天色已晚，夕阳的余晖洒在旧木门上，给这古老的建筑披上了一层金色的外衣。管线甲走出钟楼，回头望了一眼，心中默默许下了一个愿望——希望这枚铜铃能继续守护着这个小镇，直到永远。",
+   "n5Formal": [
+    "uncovered:f0:moved",
+    "uncovered:f1:outcome",
+    "uncovered:time (no vague expression and no value)",
+    "residue-name:管线甲",
+    "residue-name:管线甲"
+   ],
    "d4": {
     "annotations": []
    },
@@ -48,14 +94,25 @@
      "D": true
     },
     "reasons": [
-     "the move and the result are never stated",
-     "time is written only as scenery ('夕阳的余晖'), not as an elapsed duration or a vague '过了一会儿'",
-     "adds invented content (守护小镇的愿望)"
+     "the move is not conveyed (the text is already inside)",
+     "no elapsed time is conveyed: '夕阳的余晖' marks time of day, not the passage of the eight minutes",
+     "invents an ending (守护小镇的愿望)"
+    ],
+    "observations": [
+     "the result is conveyed ('将铜铃挂回原位')"
     ]
    }
   },
   "rb-inner-change": {
    "text": "管线镇的雨下得不大，却也足够让这条小巷显得有些阴冷。雨水顺着破旧的屋檐滴落，打湿了地面，也浸透了管线甲的外袍。他站在巷口，目光穿过雨幕，似乎在寻找着什么。\n\n雨中的管线镇显得格外安静，偶尔传来的脚步声和远处的狗吠声，更添了几分寂寥。管线甲的呼吸有些急促，他尽量让自己冷静下来，强迫自己不去想那些不愉快的事情。\n\n他的话少了许多，只是偶尔轻声自语，像是在给自己打气。理智在这一刻显得尤为重要，他强迫自己不去想那些复杂的情绪，只是专注于眼前的任务。他知道自己需要保持冷静，才能更好地完成接下来的任务。\n\n雨水顺着外袍的领口滴落，管线甲的思绪却逐渐清晰。他知道自己不能被这些情绪所控制，必须保持冷静，才能更好地完成任务。他深吸一口气，试图让自己更加集中，然后缓缓转身，继续前行。",
+   "n5Formal": [
+    "uncovered:f0:appearance_changed",
+    "uncovered:f1:personality_changed",
+    "uncovered:f2:sanity_changed",
+    "residue-name:管线甲",
+    "residue-name:管线甲",
+    "residue-name:管线甲"
+   ],
    "d4": {
     "annotations": []
    },
@@ -69,14 +126,24 @@
      "D": true
     },
     "reasons": [
-     "the appearance change is shown as rain soaking the coat but never as the recorded change text",
-     "the personality text 话少了许多 appears, but without the frame, so it is not checkable",
-     "sanity is described only as '理智在这一刻显得尤为重要', not as a change"
+     "the sanity change is not conveyed: '理智在这一刻显得尤为重要' is a comment, not a change",
+     "invents an unexplained tension and a quest framing"
+    ],
+    "observations": [
+     "the appearance change is conveyed semantically (rain soaking the coat), although not in the record's words",
+     "the personality change is conveyed ('他的话少了许多')"
     ]
    }
   },
   "rb-two-actors-move": {
    "text": "钟楼的旧木门吱吱呀呀地发出声响，仿佛在诉说着岁月的沧桑。管线甲缓缓步入这座古老的建筑，心中不禁涌起一股沉稳而庄重的感觉。他环视四周，钟楼内部的陈旧感更加明显，墙壁上斑驳的痕迹记录着无数个日夜的风雨。\n\n他沿着狭窄的楼梯缓缓而上，每一步都显得格外谨慎。钟楼内部的光线昏暗，只有偶尔从高处透进来的微弱光线，使得整个空间显得更加神秘。管线甲心中暗自思量，这里似乎承载着许多未解之谜，而他此行的目的，就是揭开这些谜团。\n\n就在这时，他听到了一阵急促的脚步声，循声望去，只见管线乙匆匆忙忙地跑上楼梯，脸上带着急躁的神情。管线乙一见到管线甲，便急切地说道：“快，我们得赶紧，时间不多了！”\n\n管线甲微微皱眉，他习惯于冷静思考，而管线乙的急躁似乎有些影响他的节奏。但他没有多说什么，只是点了点头，示意自己明白情况的紧迫性。\n\n两人并肩走上钟楼的顶层，这里视野开阔，可以俯瞰整个管线镇。钟楼的顶部布满了岁月的痕迹，但依旧坚固。管线甲站在那里，心中默默整理着思绪，准备迎接接下来的任务。\n\n管线乙则显得有些不安，他来回踱步，时不时地看向钟楼的某个角落，似乎在寻找什么。管线甲知道，他必须保持冷静，才能更好地完成任务。\n\n“我们得找到那个装置，”管线乙急切地说，“时间不多了，我们必须尽快。”\n\n管线甲点了点头，他明白时间紧迫，但依然保持着沉稳的态度。他环视四周，心中默默规划着下一步的行动。钟",
+   "n5Formal": [
+    "uncovered:f0:moved",
+    "uncovered:f1:moved",
+    "residue-name:管线甲",
+    "residue-name:管线乙",
+    "truncated-or-unfinished"
+   ],
    "d4": {
     "annotations": []
    },
@@ -90,14 +157,22 @@
      "D": false
     },
     "reasons": [
-     "truncated at 384 tokens ('钟' at the end)",
-     "neither actor's move is stated",
+     "truncated at 384 tokens",
+     "neither actor's move is conveyed",
      "invents dialogue ('快，我们得赶紧，时间不多了！') and attributes urgency and intent to 管线乙"
     ]
    }
   },
   "rb-same-name": {
    "text": "钟楼的旧木门吱呀一声，管线甲缓缓推开门，一股陈旧的气息扑面而来。他深吸一口气，脚步沉稳地迈了进去。钟楼内部的光线昏暗，几缕光线从破旧的窗户中透进来，映照在斑驳的石墙上。甲心中默念着任务，尽量不去想这钟楼的破败，只专注于自己的脚步。\n\n他沿着狭窄的楼梯向上走去，每一步都显得格外谨慎。楼梯间里回荡着轻微的吱吱声，仿佛在诉说着这座钟楼的古老历史。甲的思绪飘忽不定，但很快被钟楼内偶尔传来的风声打断，他集中精神，继续前行。\n\n终于，他来到了钟楼的顶层。这里比想象中还要破旧，钟摆的金属声在空旷的空间中回荡，显得格外刺耳。甲环视四周，确认没有其他管线的存在后，他开始检查钟楼内部的管线系统。他小心翼翼地检查着每一个接口，确保没有漏水或松动的情况。\n\n就在这时，他听到了楼下传来急促的脚步声。甲心中一紧，但还是保持镇定，继续他的检查。脚步声越来越近，似乎有两个脚步声在同时移动。甲的心跳加速，但他强迫自己冷静下来，继续专注于手头的工作。\n\n脚步声终于在钟楼的底层停下，甲透过破旧的窗户，看到两个身影出现在钟楼下。一个是管线乙，他急躁地四处张望，似乎在寻找什么；另一个也是管线乙，他沉默地站在一旁，似乎在等待着什么。\n\n甲心中暗自警惕，但他还是尽量不去多想，继续他的检查。他希望这两个急躁的管线乙不会打扰到他的工作，毕竟任务的完成对他来说至关重要。",
+   "n5Formal": [
+    "uncovered:f0:moved",
+    "uncovered:f1:moved",
+    "uncovered:f2:moved",
+    "residue-name:管线甲",
+    "residue-name:管线乙",
+    "residue-name:管线乙"
+   ],
    "d4": {
     "annotations": []
    },
@@ -111,17 +186,22 @@
      "D": true
     },
     "reasons": [
-     "the three moves are never stated; the two 管线乙 are described as standing downstairs, not arriving",
-     "adds invented events (检查管线系统/脚步声/两个身影)"
+     "the two 管线乙 are described standing downstairs; no arrival is conveyed for any of the three actors",
+     "invents a pipeline inspection and approaching footsteps"
     ],
     "observations": [
-     "G4 triggered and was satisfied: both 管线乙 are mentioned separately",
-     "this is the first sample where the same-name discipline is met"
+     "G4 was triggered by data and satisfied: both 管线乙 are mentioned separately"
     ]
    }
   },
   "rb-subtask": {
    "text": "钟楼的旧木门吱呀一声，管线甲推开门，一股陈旧的气息扑面而来。他环视了一圈，钟楼内部显得更加破败，钟声偶尔从深处传来，带着一丝苍凉。\n\n他深吸一口气，开始在钟楼内寻找起新任务所需的梯子。钟楼内部的光线昏暗，只有几束微弱的光线从破损的窗户中透进来，使得整个空间显得更加阴冷。管线甲的脚步声在空旷的钟楼内回荡，他尽量放轻脚步，以免惊动了什么。\n\n他沿着狭窄的楼梯向上攀爬，每一步都显得格外小心。楼梯的木板有些松动，发出轻微的吱吱声，这让他更加谨慎。他心中默念着任务，希望能尽快找到梯子，完成任务。\n\n终于，在钟楼的二层，他发现了一个角落里堆放着几根旧木梯。这些梯子看起来已经很久没有使用过了，表面布满了灰尘和蜘蛛网。管线甲小心翼翼地将它们清理干净，确认没有其他障碍后，他开始将这些梯子拼接起来，准备将它们用于完成任务。\n\n他心中暗自庆幸，终于找到了梯子。他将梯子固定好，确保它们稳固可靠，然后开始攀爬。每一步都显得格外小心，他不想因为自己的疏忽而让任务失败。\n\n终于，他成功地将梯子固定在了钟楼的高处，为接下来的任务做好了准备。他心中暗自庆幸，这次任务应该能够顺利完成。他深吸一口气，准备开始下一步行动。",
+   "n5Formal": [
+    "uncovered:f0:moved",
+    "uncovered:f1:subtask_added",
+    "residue-name:管线甲",
+    "residue-name:管线甲"
+   ],
    "d4": {
     "annotations": []
    },
@@ -135,13 +215,20 @@
      "D": true
     },
     "reasons": [
-     "the move and the new subtask are never stated; the ladder is found and used, which is a different event",
-     "adds invented actions (cleaning, assembling, fixing the ladder)"
+     "the new subtask (being given 找梯子) is not conveyed; the text instead performs a search and assembly",
+     "the move is not conveyed",
+     "invents cleaning, assembling and fixing the ladder"
     ]
    }
   },
   "rb-sanity-only": {
    "text": "管线镇的清晨，雾气如同一层轻纱，缓缓弥漫在街道上。管线甲站在自家门前，深吸了一口湿润的空气，心中却不由自主地紧绷起来。他习惯性地环视四周，目光在每一个角落停留，寻找着可能的异常。\n\n“今天又是雾天，”管线甲低声自语，声音在寂静的街道上显得格外清晰，“得格外小心。”\n\n他缓缓走向镇中心，每一步都显得格外谨慎。雾气越来越浓，能见度降低，这让他更加警觉。他下意识地加快了脚步，尽量让自己保持清醒。\n\n“理智，别让雾气影响了你的判断。”管线甲在心中提醒自己，但他的眼神却透露出一丝不安。\n\n他穿过一条狭窄的巷道，巷道两旁的房屋在雾中若隐若现。突然，一阵轻微的响动从不远处传来，让管线甲的心跳不由自主地加快。\n\n“有人？”他低声自语，身体本能地做好了准备。\n\n他缓缓靠近声音来源，每一步都小心翼翼。雾气中，一个模糊的身影逐渐显现，是镇上的老邻居，老李。\n\n“老李，这么早出门？”管线甲的声音带着一丝紧张，但尽量保持平静。\n\n老李似乎也注意到了管线甲的紧张，他微笑着回应：“甲，你今天也格外警觉呢。”\n\n管线甲松了口气，但理智告诉他，不能放松警惕。“最近镇上出了些怪事，我也是小心些好。”他说。\n\n老李点点头，两人在雾中并肩前行，彼此间的对话不多，但管线甲感到心中的紧张逐渐缓解。\n\n“雾天，确实要多注意。”管线甲轻声说道，心中却在默默祈祷，希望今天能平安无事。",
+   "n5Formal": [
+    "uncovered:f0:personality_changed",
+    "uncovered:f1:sanity_changed",
+    "residue-name:管线甲",
+    "residue-name:管线甲"
+   ],
    "d4": {
     "annotations": [
      {
@@ -150,7 +237,7 @@
       "source": "human",
       "reviewStatus": "pending-independent-review",
       "isError": true,
-      "note": "a new person name that is in no registry or authoritative text"
+      "note": "a new person name absent from the registry and from the authoritative text"
      }
     ]
    },
@@ -164,7 +251,7 @@
      "D": true
     },
     "reasons": [
-     "neither the sanity drop nor the personality change is stated as a change",
+     "neither the sanity drop nor the personality change is conveyed as a change",
      "invents a neighbour 老李 and a dialogue with him"
     ],
     "observations": [
@@ -174,6 +261,10 @@
   },
   "rb-time-only": {
    "text": "管线镇依旧保持着那份宁静，街道上空无一人，只有偶尔传来的风声和远处传来的机器低鸣。管线甲站在镇中心的空地上，目光扫过四周，心中不禁生出一丝沉稳的思绪。\n\n他环顾四周，确认没有其他人后，缓缓地闭上了眼睛，开始进行他每日例行的检查。他的任务是确保管线镇的地下管道系统正常运行，任何细微的异常都可能影响到镇上的居民。沉稳的性格让他在面对复杂的工作时显得格外冷静。\n\n他睁开眼睛，目光落在不远处的一根管道上。这根管道连接着镇上的主要供水系统，任何问题都可能引发严重的后果。他走到管道旁，用手轻轻触碰，感受着管道的温度和震动。一切似乎都正常，没有发现任何异常。\n\n他继续沿着管道走向另一端，检查着每一个接头和阀门。每一步都显得格外谨慎，生怕错过任何一个细节。他的内心深处，是对这份工作的责任感和对镇上居民安全的担忧。\n\n过了一会儿，他完成了对这根管道的检查，确认一切正常。他松了一口气，心中暗自庆幸没有发现任何问题。他转身准备离开，但突然，他注意到管道旁的一块石头有些异样。他蹲下身，仔细观察，发现石头下似乎有些微的震动。\n\n他心中一紧，迅速站起身来，再次检查那块石头。震动似乎来自石头下方的管道。他用手轻轻敲击石头，果然，从石头下方传来了一阵轻微的响动。他意识到，这可能是管道内部有异物堵塞的迹象。\n\n他深吸一口气，决定进一步检查。他从随身携带的工具包中取出一个小型探测器，小心翼翼地放置在石头下方。探测器发出微弱的光芒，显示出了管道内部的情况",
+   "n5Formal": [
+    "uncovered:f1:no_change",
+    "truncated-or-unfinished"
+   ],
    "d4": {
     "annotations": []
    },
@@ -188,13 +279,19 @@
     },
     "reasons": [
      "truncated at 384 tokens",
-     "the no_change fact is not stated",
-     "invents a task ('确保地下管道系统正常运行'), a detector and a blockage"
+     "'一切如旧' is not conveyed: the text shows an inspection finding a possible blockage",
+     "invents a task, a detector and a blockage"
     ]
    }
   },
   "rb-conflict-two-actors": {
    "text": "场景：管线镇，一个宁静的小镇，偶尔传来远处的鸟鸣声，空气中弥漫着淡淡的泥土气息。镇上的街道空旷，只有偶尔经过的行人匆匆而过。\n\n管线甲站在钟楼前，钟楼的钟声在清晨的空气中显得格外沉闷。他深吸一口气，目光落在钟身上，心中默默盘算着如何将这沉重的钟抬离地面。\n\n行动与心理：\n管线甲深感责任重大，这钟是镇上人心中的寄托，也是镇魂。他缓缓走向钟身，心中默念着：“稳住，稳住。”他注意到管线乙正站在不远处，脸上带着急躁的表情，显然已经迫不及待想要开始。\n\n管线甲深吸一口气，调整好呼吸，然后缓缓蹲下，双手稳稳地抓住钟身的边缘。他心中默念着：“一、二、三。”然后猛地一用力，钟身微微颤动，但并未完全离开地面。\n\n管线乙见状，急躁地走上前来，肩膀抵住了钟沿，试图增加力量。管线甲感受到钟身的重量，心中暗自警惕，他必须保持冷静，否则这钟可能会因为力量不均而损坏。\n\n管线甲心中默念：“稳住，稳住。”他再次用力，这次他和管线乙的动作几乎同步，钟身终于缓缓抬离了地面。他心中松了一口气，但并未放松警惕，他知道这只是一个开始，接下来的每一步都至关重要。\n\n可见动作：\n管线乙急躁地走上前来，肩膀抵住了钟沿。",
+   "n5Formal": [
+    "uncovered:f0:outcome",
+    "uncovered:f1:outcome",
+    "residue-name:管线甲",
+    "residue-name:管线乙"
+   ],
    "d4": {
     "annotations": []
    },
@@ -202,20 +299,27 @@
     "status": "executed",
     "result": "fail",
     "rubric": {
-     "A": false,
+     "A": true,
      "B": false,
      "C": true,
      "D": true
     },
     "reasons": [
      "echoes the input section labels ('场景：', '行动与心理：', '可见动作：') into the prose",
-     "the second result text appears only as '肩膀抵住了钟沿' after more than the frame's window, so it is not checkable; the first result is paraphrased",
-     "adds invented inner speech and dialogue"
+     "invents inner speech and dialogue"
+    ],
+    "observations": [
+     "both result texts are conveyed semantically: the bell is lifted off the ground and 管线乙 braces its shoulder against the rim",
+     "the formal misses are recorded under n5Formal only"
     ]
    }
   },
   "rb-move-other-appearance": {
    "text": "钟楼的旧木结构在风中轻轻摇曳，仿佛在诉说着岁月的故事。管线甲缓缓步入这片古老的建筑，脚步声在空旷的钟楼内回荡，显得格外清晰。他环视四周，旧木的地板发出轻微的吱吱声，空气中弥漫着一股淡淡的霉味。\n\n他走向钟楼的中心，那里悬挂着巨大的钟，钟面上的数字已经模糊不清。管线甲停在钟前，目光落在钟面上，心中默默计算着时间。他沉稳地取出怀中的小本子，记录下这里的环境和时间信息。\n\nf0｜移动｜钟面→钟楼边缘\n管线甲沿着钟楼边缘走动，检查着墙壁和地面的状况。他注意到一处裂缝，轻轻用手触碰，确认没有危险。他继续前行，心中想着这次任务的目的。\n\nf0｜移动｜钟楼边缘→钟楼内部\n管线甲回到钟楼内部，再次检查了钟面和周围的环境。他发现一处隐蔽的角落，决定在这里稍作休息，整理一下思绪。\n\n管线甲坐在地上，环视四周，心中默默思考着接下来的步骤。他拿出小本子，记录下这次检查的结果，确保每一个细节都不遗漏。他深吸一口气，准备继续前进，完成这次任务。",
+   "n5Formal": [
+    "uncovered:f0:moved",
+    "residue-name:管线甲"
+   ],
    "d4": {
     "annotations": []
    },
@@ -229,17 +333,18 @@
      "D": true
     },
     "reasons": [
-     "copies and then HALLUCINATES the record line: 'f0｜移动｜钟面→钟楼边缘' and 'f0｜移动｜钟楼边缘→钟楼内部' do not match the fact (管线镇→钟楼)",
-     "the actual move is never stated in prose"
+     "the move is not conveyed; the text starts inside",
+     "copies and then rewrites the record line: 'f0｜移动｜钟面→钟楼边缘' and 'f0｜移动｜钟楼边缘→钟楼内部' contradict the fact (管线镇→钟楼)"
     ],
     "observations": [
-     "the worst format failure of the batch: the model treats the record line as copyable content and edits it"
+     "worst format failure of the batch: the model treats the record line as editable content"
     ]
    }
   }
  },
  "summary": {
   "reviewed": 10,
+  "reviewedAttempt": 1,
   "n6Executed": 10,
   "n6Pass": 0,
   "n6Fail": 10,
@@ -249,13 +354,39 @@
   "d4ProperNameList": [
    "老李"
   ],
-  "commonFindings": [
-   "8/10 first calls ended normally (done_reason=stop); 2 still hit the 384 cap. The cap is no longer the dominant cause.",
-   "no sample states the moved fact in a checkable form: the model opens inside the destination and never says 从…来到…",
-   "outcome facts are paraphrased, not quoted (the frame requires the authoritative result text in the same sentence as the subject)",
-   "format echo appears in 3 samples (section labels in rb-conflict, record lines in rb-move-other-appearance), one of them also hallucinating the record's values",
-   "the only genuine D4 proper name is 老李 in rb-sanity-only; object and place descriptions are N6 notes under errata E5"
+  "movedFactSamples": 6,
+  "movedFactSampleIds": [
+   "rb-move-outcome",
+   "rb-time-vague",
+   "rb-two-actors-move",
+   "rb-same-name",
+   "rb-subtask",
+   "rb-move-other-appearance"
   ],
-  "limit": "single reviewer; false negatives are not measurable here and the verdicts are pending independent review"
+  "movedNotConveyed": 6,
+  "factsConveyedSemantically": {
+   "rb-move-outcome": [
+    "outcome"
+   ],
+   "rb-time-vague": [
+    "outcome"
+   ],
+   "rb-inner-change": [
+    "appearance_changed",
+    "personality_changed"
+   ],
+   "rb-conflict-two-actors": [
+    "outcome",
+    "outcome"
+   ]
+  },
+  "commonFindings": [
+   "8/10 first calls ended normally (done_reason=stop); 2 hit the 384 cap",
+   "all 6 samples that carry a moved fact fail to convey the move; the denominator is 6, not 10",
+   "several facts ARE conveyed semantically and fail only the formal frame: 将铜铃挂回原位 conveys the result, the soaked coat conveys the appearance change, 肩膀抵住了钟沿 conveys the second result",
+   "3 samples echo section labels or record lines; one also rewrites the record's from/to values",
+   "the only genuine D4 proper name is 老李"
+  ],
+  "limit": "single reviewer; false negatives are not measurable here; verdicts are pending independent review"
  }
 }

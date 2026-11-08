@@ -1055,13 +1055,12 @@
      "D": true
     },
     "reasons": [
-     "the move 管线镇→钟楼 is never stated; the text starts inside 钟楼",
-     "the result text 把铜铃挂回了钟楼 is paraphrased ('将铜铃挂回原位'), so the fact is not checkable",
-     "adds an invented backstory (铜铃曾是钟楼的灵魂) and a farewell scene"
+     "the text opens inside 钟楼 and never conveys the origin 管线镇, so the move as a whole (A→B) is not conveyed",
+     "invents a backstory (铜铃曾是钟楼的灵魂, 守护小镇的愿望) and a farewell scene"
     ],
     "observations": [
-     "passage complete (done_reason=stop, 246 tokens)",
-     "frame mismatch, not truncation, is the binding constraint here"
+     "the result is conveyed: '将铜铃挂回原位' says the bell was hung back, even though the wording differs from the record",
+     "the formal miss of the result frame is recorded under n5Formal only"
     ],
     "reviewer": "assistant-manual (single reviewer, same session that ran the batch)",
     "reviewStatus": "pending-independent-review",
@@ -1228,7 +1227,10 @@
      18427.2,
      5933.8
     ]
-   }
+   },
+   "reviewedAttempt": 1,
+   "qualityPrimary": "fail",
+   "qualityFinal": "pending"
   },
   {
    "caseId": "rb-time-vague",
@@ -2313,9 +2315,12 @@
      "D": true
     },
     "reasons": [
-     "the move and the result are never stated",
-     "time is written only as scenery ('夕阳的余晖'), not as an elapsed duration or a vague '过了一会儿'",
-     "adds invented content (守护小镇的愿望)"
+     "the move is not conveyed (the text is already inside)",
+     "no elapsed time is conveyed: '夕阳的余晖' marks time of day, not the passage of the eight minutes",
+     "invents an ending (守护小镇的愿望)"
+    ],
+    "observations": [
+     "the result is conveyed ('将铜铃挂回原位')"
     ],
     "reviewer": "assistant-manual (single reviewer, same session that ran the batch)",
     "reviewStatus": "pending-independent-review",
@@ -2512,7 +2517,10 @@
      6613.3,
      5206.0
     ]
-   }
+   },
+   "reviewedAttempt": 1,
+   "qualityPrimary": "fail",
+   "qualityFinal": "pending"
   },
   {
    "caseId": "rb-inner-change",
@@ -3473,9 +3481,12 @@
      "D": true
     },
     "reasons": [
-     "the appearance change is shown as rain soaking the coat but never as the recorded change text",
-     "the personality text 话少了许多 appears, but without the frame, so it is not checkable",
-     "sanity is described only as '理智在这一刻显得尤为重要', not as a change"
+     "the sanity change is not conveyed: '理智在这一刻显得尤为重要' is a comment, not a change",
+     "invents an unexplained tension and a quest framing"
+    ],
+    "observations": [
+     "the appearance change is conveyed semantically (rain soaking the coat), although not in the record's words",
+     "the personality change is conveyed ('他的话少了许多')"
     ],
     "reviewer": "assistant-manual (single reviewer, same session that ran the batch)",
     "reviewStatus": "pending-independent-review",
@@ -3668,7 +3679,10 @@
      5261.3,
      3874.9
     ]
-   }
+   },
+   "reviewedAttempt": 1,
+   "qualityPrimary": "fail",
+   "qualityFinal": "pending"
   },
   {
    "caseId": "rb-two-actors-move",
@@ -4869,8 +4883,8 @@
      "D": false
     },
     "reasons": [
-     "truncated at 384 tokens ('钟' at the end)",
-     "neither actor's move is stated",
+     "truncated at 384 tokens",
+     "neither actor's move is conveyed",
      "invents dialogue ('快，我们得赶紧，时间不多了！') and attributes urgency and intent to 管线乙"
     ],
     "reviewer": "assistant-manual (single reviewer, same session that ran the batch)",
@@ -5044,7 +5058,10 @@
      9271.6,
      5451.7
     ]
-   }
+   },
+   "reviewedAttempt": 1,
+   "qualityPrimary": "fail",
+   "qualityFinal": "pending"
   },
   {
    "caseId": "rb-same-name",
@@ -6435,12 +6452,11 @@
      "D": true
     },
     "reasons": [
-     "the three moves are never stated; the two 管线乙 are described as standing downstairs, not arriving",
-     "adds invented events (检查管线系统/脚步声/两个身影)"
+     "the two 管线乙 are described standing downstairs; no arrival is conveyed for any of the three actors",
+     "invents a pipeline inspection and approaching footsteps"
     ],
     "observations": [
-     "G4 triggered and was satisfied: both 管线乙 are mentioned separately",
-     "this is the first sample where the same-name discipline is met"
+     "G4 was triggered by data and satisfied: both 管线乙 are mentioned separately"
     ],
     "reviewer": "assistant-manual (single reviewer, same session that ran the batch)",
     "reviewStatus": "pending-independent-review",
@@ -6647,7 +6663,10 @@
      9224.5,
      7972.8
     ]
-   }
+   },
+   "reviewedAttempt": 1,
+   "qualityPrimary": "fail",
+   "qualityFinal": "pending"
   },
   {
    "caseId": "rb-subtask",
@@ -7863,8 +7882,9 @@
      "D": true
     },
     "reasons": [
-     "the move and the new subtask are never stated; the ladder is found and used, which is a different event",
-     "adds invented actions (cleaning, assembling, fixing the ladder)"
+     "the new subtask (being given 找梯子) is not conveyed; the text instead performs a search and assembly",
+     "the move is not conveyed",
+     "invents cleaning, assembling and fixing the ladder"
     ],
     "reviewer": "assistant-manual (single reviewer, same session that ran the batch)",
     "reviewStatus": "pending-independent-review",
@@ -8022,7 +8042,10 @@
      8174.6,
      7551.2
     ]
-   }
+   },
+   "reviewedAttempt": 1,
+   "qualityPrimary": "fail",
+   "qualityFinal": "pending"
   },
   {
    "caseId": "rb-sanity-only",
@@ -9243,7 +9266,7 @@
      "D": true
     },
     "reasons": [
-     "neither the sanity drop nor the personality change is stated as a change",
+     "neither the sanity drop nor the personality change is conveyed as a change",
      "invents a neighbour 老李 and a dialogue with him"
     ],
     "observations": [
@@ -9414,7 +9437,10 @@
      9122.5,
      6863.7
     ]
-   }
+   },
+   "reviewedAttempt": 1,
+   "qualityPrimary": "fail",
+   "qualityFinal": "pending"
   },
   {
    "caseId": "rb-time-only",
@@ -10460,8 +10486,8 @@
     },
     "reasons": [
      "truncated at 384 tokens",
-     "the no_change fact is not stated",
-     "invents a task ('确保地下管道系统正常运行'), a detector and a blockage"
+     "'一切如旧' is not conveyed: the text shows an inspection finding a possible blockage",
+     "invents a task, a detector and a blockage"
     ],
     "reviewer": "assistant-manual (single reviewer, same session that ran the batch)",
     "reviewStatus": "pending-independent-review",
@@ -10638,7 +10664,10 @@
      9259.2,
      3148.2
     ]
-   }
+   },
+   "reviewedAttempt": 1,
+   "qualityPrimary": "fail",
+   "qualityFinal": "pending"
   },
   {
    "caseId": "rb-conflict-two-actors",
@@ -11824,15 +11853,18 @@
     "status": "executed",
     "result": "fail",
     "rubric": {
-     "A": false,
+     "A": true,
      "B": false,
      "C": true,
      "D": true
     },
     "reasons": [
      "echoes the input section labels ('场景：', '行动与心理：', '可见动作：') into the prose",
-     "the second result text appears only as '肩膀抵住了钟沿' after more than the frame's window, so it is not checkable; the first result is paraphrased",
-     "adds invented inner speech and dialogue"
+     "invents inner speech and dialogue"
+    ],
+    "observations": [
+     "both result texts are conveyed semantically: the bell is lifted off the ground and 管线乙 braces its shoulder against the rim",
+     "the formal misses are recorded under n5Formal only"
     ],
     "reviewer": "assistant-manual (single reviewer, same session that ran the batch)",
     "reviewStatus": "pending-independent-review",
@@ -12007,7 +12039,10 @@
      7869.0,
      6519.5
     ]
-   }
+   },
+   "reviewedAttempt": 1,
+   "qualityPrimary": "fail",
+   "qualityFinal": "pending"
   },
   {
    "caseId": "rb-move-other-appearance",
@@ -12997,11 +13032,11 @@
      "D": true
     },
     "reasons": [
-     "copies and then HALLUCINATES the record line: 'f0｜移动｜钟面→钟楼边缘' and 'f0｜移动｜钟楼边缘→钟楼内部' do not match the fact (管线镇→钟楼)",
-     "the actual move is never stated in prose"
+     "the move is not conveyed; the text starts inside",
+     "copies and then rewrites the record line: 'f0｜移动｜钟面→钟楼边缘' and 'f0｜移动｜钟楼边缘→钟楼内部' contradict the fact (管线镇→钟楼)"
     ],
     "observations": [
-     "the worst format failure of the batch: the model treats the record line as copyable content and edits it"
+     "worst format failure of the batch: the model treats the record line as editable content"
     ],
     "reviewer": "assistant-manual (single reviewer, same session that ran the batch)",
     "reviewStatus": "pending-independent-review",
@@ -13150,7 +13185,10 @@
      6647.6,
      5342.6
     ]
-   }
+   },
+   "reviewedAttempt": 1,
+   "qualityPrimary": "fail",
+   "qualityFinal": "pending"
   }
  ],
  "model": {
@@ -13230,7 +13268,12 @@
   "qualityUndetermined": 0,
   "d4Labeled": 10,
   "d4LabelCount": 1,
-  "d4Inventions": 1
+  "d4Inventions": 1,
+  "reviewedAttempt": 1,
+  "qualityPrimary": {
+   "fail": 10
+  },
+  "qualityFinalPending": 10
  },
  "caveat": "n5-pass means the hard gates passed only. quality comes from the N6 review attached here; an n5 failure is never a quality pass. The program-template fallbacks are recorded per sample but are not model output and are not reviewed.",
  "review": {
@@ -13238,11 +13281,12 @@
   "reviewer": "assistant-manual (single reviewer, same session that ran the batch)",
   "reviewStatus": "pending-independent-review",
   "reviewedAt": "2026-11-08",
-  "scope": "the FIRST call text of each sample (primary metric); retry texts are archived but not re-reviewed here; template fallbacks are program output and are never reviewed as model text",
-  "d4Rule": "proper names only (person/item/place), absent from the state registry AND from the authoritative text. Object/place descriptions (钟架/木梯/小巷/老邻居…) go to N6 notes, not D4 (errata E5).",
-  "n6Rule": "A facts stated without contradiction; B no invented named entity/event/goal leak/format echo; C no other character's inner state and no POV switch; D the passage ends as a complete sentence. pass only when A-D hold; unreadable -> undetermined.",
+  "scope": "the FIRST call text of each sample; retry texts are archived but NOT reviewed (their quality stays pending); template fallbacks are program output and are never reviewed as model text",
+  "d4Rule": "proper names only (person/item/place), absent from the state registry AND from the authoritative text; object/place descriptions go to N6 notes (errata E5)",
+  "n6Rule": "A facts conveyed without contradiction; B no invented named entity/event/goal leak/format echo; C no other character's inner state and no POV switch; D the passage ends as a complete sentence. pass only when A-D hold.",
   "summary": {
    "reviewed": 10,
+   "reviewedAttempt": 1,
    "n6Executed": 10,
    "n6Pass": 0,
    "n6Fail": 10,
@@ -13252,14 +13296,40 @@
    "d4ProperNameList": [
     "老李"
    ],
-   "commonFindings": [
-    "8/10 first calls ended normally (done_reason=stop); 2 still hit the 384 cap. The cap is no longer the dominant cause.",
-    "no sample states the moved fact in a checkable form: the model opens inside the destination and never says 从…来到…",
-    "outcome facts are paraphrased, not quoted (the frame requires the authoritative result text in the same sentence as the subject)",
-    "format echo appears in 3 samples (section labels in rb-conflict, record lines in rb-move-other-appearance), one of them also hallucinating the record's values",
-    "the only genuine D4 proper name is 老李 in rb-sanity-only; object and place descriptions are N6 notes under errata E5"
+   "movedFactSamples": 6,
+   "movedFactSampleIds": [
+    "rb-move-outcome",
+    "rb-time-vague",
+    "rb-two-actors-move",
+    "rb-same-name",
+    "rb-subtask",
+    "rb-move-other-appearance"
    ],
-   "limit": "single reviewer; false negatives are not measurable here and the verdicts are pending independent review"
+   "movedNotConveyed": 6,
+   "factsConveyedSemantically": {
+    "rb-move-outcome": [
+     "outcome"
+    ],
+    "rb-time-vague": [
+     "outcome"
+    ],
+    "rb-inner-change": [
+     "appearance_changed",
+     "personality_changed"
+    ],
+    "rb-conflict-two-actors": [
+     "outcome",
+     "outcome"
+    ]
+   },
+   "commonFindings": [
+    "8/10 first calls ended normally (done_reason=stop); 2 hit the 384 cap",
+    "all 6 samples that carry a moved fact fail to convey the move; the denominator is 6, not 10",
+    "several facts ARE conveyed semantically and fail only the formal frame: 将铜铃挂回原位 conveys the result, the soaked coat conveys the appearance change, 肩膀抵住了钟沿 conveys the second result",
+    "3 samples echo section labels or record lines; one also rewrites the record's from/to values",
+    "the only genuine D4 proper name is 老李"
+   ],
+   "limit": "single reviewer; false negatives are not measurable here; verdicts are pending independent review"
   }
  }
 }
